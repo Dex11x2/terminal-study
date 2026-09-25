@@ -1,0 +1,921 @@
+// كل درس هنا في مكان واحد:
+//   cmd      اسم الأمر (ولازم يبقى فريد جوه التاب، لأن التقدم محفوظ بيه)
+//   title    العنوان القصير، ودا اللي بيظهر كسؤال في «اختبرني»
+//   desc     الشرح. الفقرات مفصولة بسطر فاضي، و [[كلام]] بيتعرض كـ code
+//   example  المثال. كل سطر أمر، والسطور اللي بتبدأ بـ # تعليق
+//   try      التجربة اللي تعملها بإيدك
+//   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
+//   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
+//   deep     اختياري: why / how / when / mistakes
+//   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
+// ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
+
+TAB("diag", {
+  label: "تشخيص",
+  prompt: "$ ",
+  lab: R`dig +short example.com
+curl -sI https://example.com | head -1
+ssh deploy@203.0.113.10 'docker compose -f /var/www/myapp/compose.yml ps'`,
+  labText: "كل سيناريو خطوات مرتبة من الأسرع للأعمق. الأوامر اللي فيها ssh أو docker بتتنفذ على السيرفر، والباقي من جهازك. جرّبهم على سيرفر التجربة وهو سليم عشان تعرف الناتج الطبيعي.",
+  levels: {
+    "1": ["البداية", "تقسّم المشكلة لطبقات، وتعرف أنهي طبقة واقعة قبل ما تلمس حاجة"],
+    "2": ["المتوسط", "أشهر ١٠ أعطال على السيرفر، كل واحد برسالته وخطوات حله"],
+    "3": ["المتقدم", "البطء والهجمات والاختراق والـ rollback والحاجات اللي بتحصل من غير ما تعرف"]
+  },
+  categories: [
+    {
+      t: "المنهج: قسّم المشكلة",
+      l: 1,
+      n: "مش بتخمّن. بتمشي على السلّم من بره لجوه، وكل خطوة بتقفل احتمال",
+      items: [
+        {
+          cmd: "السلّم",
+          title: "الطلب بيمشي في ٦ طبقات، والعطل في واحدة",
+          desc: "من المتصفح للقاعدة: DNS بيحوّل الاسم لـ IP، والشبكة بتوصّل للسيرفر، والبورت مفتوح، و Nginx بيستقبل، والتطبيق بيرد، والقاعدة بتجاوب. كل أمر تحت بيختبر طبقة واحدة. أول طبقة تفشل هي مكان العطل، ومفيش داعي تدوّر في اللي بعدها.",
+          example: R`dig +short example.com
+ping -c 3 203.0.113.10
+nc -zv 203.0.113.10 443
+curl -sI https://example.com | head -1
+curl -sI http://127.0.0.1:3000/health | head -1
+docker exec api nc -zv db 5432`,
+          try: "نفّذ الست أوامر على موقعك وهو شغال، واحفظ الناتج الطبيعي. يوم العطل هتقارن.",
+          deep: {
+            why: "أشهر غلطة في التشخيص إنك تبدأ من الكود لأنه اللي انت عارفه. الطلب بيعدّي على ٦ طبقات قبل الكود، والعطل ممكن يبقى في أي واحدة. السلّم بيخليك تمشي بترتيب ثابت وتقفل احتمالات.",
+            how: R`الطبقات بالترتيب اللي الطلب بيمشي فيه:
+
+١. DNS: المتصفح بيسأل «example.com ده أنهي IP؟». [[dig +short]] لازم يرجع IP سيرفرك. لو فاضي أو IP قديم، العطل هنا ومفيش داعي تكمّل.
+
+٢. الشبكة: الـ IP ده بيرد؟ [[ping]] بيجاوب (مع تحفظ: بعض السيرفرات بتقفل ping).
+
+٣. البورت: فيه حد بيسمع على 443؟ [[nc -zv]] بيقول succeeded أو refused أو timeout. refused يعني السيرفر شغال بس Nginx واقع. timeout يعني فايروول.
+
+٤. Nginx: بيرد بـ HTTP؟ [[curl -sI]] وأول سطر فيه الـ status. 502 أو 504 معناها Nginx شغال والمشكلة بعده.
+
+٥. التطبيق: من جوه السيرفر، بيرد على 3000؟ لو لأ، التطبيق واقع.
+
+٦. القاعدة: التطبيق بيقدر يوصلها؟
+
+كل أمر بيختبر طبقة واحدة بس. أول واحد يفشل هو مكان العطل، وباقي التاب ده بيفصّل كل حالة.`,
+            when: "أول ٩٠ ثانية في أي عطل. قبل ما تفتح الكود أو تعمل ريستارت لأي حاجة.",
+            mistakes: "ريستارت عشوائي «يمكن يظبط». لو ظبط مش هتعرف السبب وهيرجع. امشي السلّم الأول."
+          },
+          lines: [
+            "١. DNS: الاسم بيتحوّل لـ IP سيرفرك؟",
+            "٢. الشبكة: السيرفر بيرد؟",
+            "٣. البورت: فيه حد بيسمع على 443؟",
+            "٤. Nginx: بيرد بـ HTTP؟ أول سطر فيه الـ status.",
+            "٥. التطبيق (من جوه السيرفر): بيرد على بورته؟",
+            "٦. القاعدة: التطبيق بيقدر يوصلها؟"
+          ]
+        },
+        {
+          cmd: "الموقع مش بيفتح خالص",
+          title: "المتصفح بيلف وبعدين timeout",
+          desc: "الطلب مش بيوصل أصلًا أو مفيش رد. الفرق بين رسايل المتصفح بيقولك كتير: «server IP address could not be found» مشكلة DNS، و«connection refused» وصلت ومفيش حد على البورت، و«timed out» حاجة بترمي الطلب في الطريق (فايروول أو السيرفر واقع).",
+          example: R`dig +short example.com @1.1.1.1
+ping -c 3 203.0.113.10
+nc -zv -w 5 203.0.113.10 443
+ssh deploy@203.0.113.10 'sudo ss -tlnp | grep -E ":80|:443"'
+ssh deploy@203.0.113.10 'sudo ufw status | head'
+ssh deploy@203.0.113.10 'systemctl is-active nginx'`,
+          try: "اقفل Nginx على سيرفر التجربة وشوف أنهي أمر من دول بيفشل الأول.",
+          deep: {
+            why: "مفيش رد خالص أصعب من error، لأن الـ error بيقولك مين رد. هنا لازم تعرف الطلب وقف فين.",
+            how: R`رسالة المتصفح أول دليل. «could not be found» أو DNS_PROBE: الطبقة الأولى، الاسم مش بيتحوّل لـ IP. [[dig @1.1.1.1]] بيسأل DNS عام بدل بتاعك عشان تستبعد كاش جهازك.
+
+«Connection refused»: وصلت للسيرفر وهو رد «مفيش حد على البورت ده». يعني السيرفر شغال والشبكة تمام، بس Nginx واقع أو بيسمع على بورت تاني. [[ss -tlnp]] بيوريك مين بيسمع على إيه.
+
+«Timed out»: الطلب راح ومحدش رد ولا رفض. إما السيرفر واقع تمامًا (ping مبيردش، ولوحة الاستضافة بتقول stopped)، أو الفايروول بيرمي الطلبات (ufw مش سامح بـ 80/443، أو Docker غيّر iptables).
+
+[[-w 5]] في nc مهلة ٥ ثواني بدل الانتظار الطويل.
+
+لو ssh نفسه مش شغال، الطبقة التانية واقعة أو الفايروول قفل كل حاجة: روح لـ console الاستضافة.`,
+            when: "لما المتصفح يلف من غير أي رد.",
+            mistakes: "تفتكر السيرفر واقع لأن ping مبيردش. سيرفرات كتير بتقفل ICMP. nc على 443 أدق."
+          },
+          lines: [
+            "الـ IP من DNS عام (يتخطى كاش جهازك).",
+            "السيرفر بيرد على الشبكة؟",
+            "البورت مفتوح؟ مهلة ٥ ثواني. refused غير timeout.",
+            "من جوه السيرفر: مين بيسمع على 80 و 443؟",
+            "الفايروول سامح بيهم؟",
+            "Nginx شغال؟"
+          ]
+        },
+        {
+          cmd: "البورت مقفول من بره بس",
+          title: "ss شغال و ufw سامح ومن بره timeout",
+          desc: "Nginx بيسمع، و ufw سامح، والموقع بيفتح من جوه السيرفر، ومن بره timeout. الطبقة المنسية: فايروول شركة الاستضافة (Cloud Firewall أو Security Group في لوحة Hetzner و DigitalOcean و AWS و Hostinger). ده قبل السيرفر، فمش بيبان في ufw. و tcpdump بيحسم: لو الطلب مش واصل الكارت، العطل بره السيرفر.",
+          example: R`nc -zv -w 5 203.0.113.10 443
+ssh deploy@203.0.113.10 'sudo ss -tlnp | grep ":443"'
+ssh deploy@203.0.113.10 'sudo ufw status verbose | grep -E "443|Default"'
+ssh deploy@203.0.113.10 'curl -skI https://127.0.0.1 -H "Host: example.com" | head -1'
+ssh deploy@203.0.113.10 'sudo timeout 20 tcpdump -ni any tcp port 443 -c 5'`,
+          try: "شغّل الأمر الأخير، وفي نفس الوقت nc من جهازك. لو tcpdump مطبعش ولا packet، افتح لوحة الاستضافة ودوّر على Firewall.",
+          deep: {
+            why: "كل الأدوات على السيرفر بتقول تمام، والموقع مش بيفتح. لأن الطلب بيتقفل قبل ما يوصل السيرفر أصلًا.",
+            how: R`[[nc]] من جهازك: timeout (مش refused) يعني حاجة بترمي الطلب.
+
+[[ss -tlnp]]: لازم [[0.0.0.0:443]] أو [[*:443]]. لو [[127.0.0.1:443]] يبقى بيسمع من جوه بس.
+
+[[ufw status verbose]]: 443 ALLOW، والـ Default.
+
+[[curl https://127.0.0.1]] من جوه: لو رد، Nginx والشهادة تمام.
+
+[[tcpdump]] وانت بتعمل nc من بره: لو ولا packet وصلت، العطل بين النت والسيرفر: فايروول الاستضافة، أو الـ IP غلط، أو المزوّد قافل البورت. لو وصلت ومفيش رد، ufw أو iptables.`,
+            when: "بعد ما تفتح بورت جديد (443/udp لـ HTTP/3، أو بورت SSH جديد) ومش شغال من بره.",
+            mistakes: "تفتح البورت في ufw بس وتنسى لوحة الاستضافة. وتفضل تعدّل Nginx والمشكلة مش على السيرفر خالص."
+          },
+          lines: [
+            "من جهازك: timeout ولا refused؟",
+            "Nginx بيسمع على 443 لكل الكروت (مش 127.0.0.1 بس)؟",
+            "ufw سامح بـ 443؟ والافتراضي إيه؟",
+            "من جوه السيرفر: Nginx بيرد؟",
+            "الـ packets واصلة الكارت أصلًا؟ لو لأ، فايروول الاستضافة."
+          ]
+        },
+        {
+          cmd: "بيفتح عند ناس ومش عند ناس",
+          title: "DNS متغير أو كاش",
+          desc: "لو الموقع شغال عندك وواقع عند عميل، غالبًا مش السيرفر. إما DNS لسه بينتشر بعد تغيير، أو كاش عند مزوّد النت بتاعه، أو ملف hosts عندك بيخليك تشوف سيرفر تاني. قارن إجابة كذا DNS.",
+          example: R`dig +short example.com @1.1.1.1
+dig +short example.com @8.8.8.8
+dig example.com +noall +answer
+dig NS example.com +short
+grep example.com /etc/hosts
+curl -sI https://example.com --resolve example.com:443:203.0.113.10 | head -1`,
+          try: "غيّر IP في DNS وراقب بـ dig على السيرفرين كل دقيقة لحد ما يتفقوا. لاحظ الـ TTL في ناتج dig.",
+          deep: {
+            why: "الشكوى: «الموقع واقع» وانت فاتحه قدامك شغال. الاتنين صح: بيشوفوا سيرفرين مختلفين.",
+            how: R`DNS مش قاعدة بيانات واحدة، كل مزوّد نت عنده كاش. لما تغيّر IP، كل كاش بيحتفظ بالقديم لحد ما الـ TTL (الوقت في سجل DNS، بالثواني) يخلص. TTL 3600 يعني ساعة، و 86400 يعني يوم. عشان كده قبل أي نقل، قلّل الـ TTL لـ 300 (٥ دقايق) قبل النقل بمدة أطول من الـ TTL القديم (يوم لو كان 86400).
+
+[[dig @1.1.1.1]] و [[dig @8.8.8.8]]: لو الاتنين رجعوا الجديد، التغيير سليم وبينتشر. لو واحد قديم، لسه في الكاش. و [[+noall +answer]] بيعرض الـ TTL المتبقي.
+
+[[dig NS]]: مين المسؤول عن الدومين. لو غيّرت nameservers (نقلت لـ Cloudflare مثلًا)، ده بياخد لحد يومين.
+
+[[/etc/hosts]]: لو لسه فيه سطر من تجربة قديمة، انت بتشوف سيرفر مش اللي الناس بتشوفه.
+
+[[--resolve]] في curl بيخليك تطلب الدومين من IP معين متجاهلًا DNS، فتختبر السيرفر الجديد قبل ما DNS ينتشر.
+
+ولو DNS سليم والمشكلة عند عميل واحد: كاش متصفحه، أو مزوّد نته بيحجب، أو IPv6 (سجل AAAA غلط).`,
+            when: "بعد أي تغيير DNS. ولما شكوى من ناس معينين.",
+            mistakes: "تغيّر IP وتقول «مش شغال» بعد دقيقة. استنى الـ TTL. وتنسى سطر في hosts."
+          },
+          lines: [
+            "الإجابة من Cloudflare DNS.",
+            "الإجابة من Google DNS. لازم يتفقوا.",
+            "الإجابة الكاملة مع الـ TTL المتبقي (بالثواني).",
+            "مين المسؤول عن الدومين (بعد نقل nameservers).",
+            "ملف hosts عندك فيه سطر بيخدعك؟",
+            "اطلب من IP معين متجاهلًا DNS: تختبر السيرفر الجديد قبل الانتشار."
+          ]
+        },
+        {
+          cmd: "شهادة SSL",
+          title: "بيفتح http ومش https، أو تحذير في المتصفح",
+          desc: "«Your connection is not private» أو NET::ERR_CERT_DATE_INVALID: الشهادة خلصت أو للدومين الغلط أو Nginx بيقرا شهادة قديمة. certbot بيجدد لوحده، بس لو بورت 80 اتقفل أو الـ cron وقف، التجديد بيفشل بصمت.",
+          example: R`echo | openssl s_client -connect example.com:443 -servername example.com 2>/dev/null | openssl x509 -noout -dates -subject
+sudo certbot certificates
+sudo certbot renew --dry-run
+sudo nginx -t && sudo systemctl reload nginx
+sudo ufw status | grep 80
+systemctl list-timers | grep certbot`,
+          try: "شوف notAfter في أول أمر. لو أقل من ٣٠ يوم والتجديد التلقائي شغال، المفروض يتجدد. لو مش بيتجدد، الأمر التالت هيقولك ليه.",
+          deep: {
+            why: "الشهادة بتخلص كل ٩٠ يوم. لو التجديد التلقائي وقف لأي سبب، الموقع بيفضل شغال لحد يوم الانتهاء وبعدين المتصفح يمنع الدخول. والأسباب دايمًا صامتة.",
+            how: R`الأمر الأول بيجيب الشهادة اللي السيرفر بيقدمها فعلًا ويطبع تواريخها. [[notAfter]] هو الانتهاء. لو عدى، دي المشكلة. لو الـ subject لدومين تاني، Nginx بيقدم شهادة غلط (غالبًا الـ default في sites-enabled).
+
+[[certbot certificates]] بيعرض الشهادات اللي certbot عامل، وتواريخها. لو الشهادة هنا جديدة والأمر الأول قديم، Nginx مش عامل reload بعد التجديد.
+
+[[renew --dry-run]] بيحاكي التجديد ويقولك لو هيفشل وليه. أشهر سبب: بورت 80 مقفول (certbot محتاجه للتحقق)، أو DNS مش بيشاور على السيرفر ده.
+
+[[nginx -t && reload]] بيخلي Nginx يقرا الشهادة الجديدة.
+
+[[list-timers]] بيتأكد إن timer التجديد موجود وشغال. لو مش موجود، certbot اتسطب بطريقة مالهاش timer.
+
+الحل لو خلصت: [[certbot renew --force-renewal]] بعد ما تصلّح السبب.`,
+            when: "تحذير في المتصفح. وكل شهر فحص وقائي بأول أمر (أو مراقبة أوتوماتيك).",
+            mistakes: "تقفل بورت 80 «عشان HTTPS بس». وتجدد بإيدك وتنسى reload."
+          },
+          lines: [
+            "الشهادة اللي السيرفر بيقدمها فعلًا: تواريخها ولمين.",
+            "الشهادات اللي certbot عامل، وتاريخ انتهائها.",
+            "حاكي التجديد واعرف لو هيفشل وليه.",
+            "اختبر إعدادات Nginx وخليه يقرا الشهادة الجديدة.",
+            "بورت 80 مفتوح؟ certbot محتاجه.",
+            "timer التجديد التلقائي موجود؟"
+          ]
+        }
+      ]
+    },
+    {
+      t: "السيرفر: أعطال شائعة",
+      l: 2,
+      n: "كل عطل ليه رسالة مميزة، والرسالة بتقولك تبدأ منين",
+      items: [
+        {
+          cmd: "502 Bad Gateway",
+          title: "Nginx شغال والتطبيق وراه مش بيرد",
+          desc: "502 معناها Nginx استقبل الطلب وحاول يوصّله للتطبيق على 127.0.0.1:3000 ومحدش رد. يعني الطبقات اللي قبل Nginx سليمة، والمشكلة في التطبيق: واقع، أو بيسمع على بورت تاني، أو لسه بيقوم.",
+          example: R`sudo tail -20 /var/log/nginx/error.log
+curl -sI http://127.0.0.1:3000/health
+docker compose ps
+docker compose logs --tail 50 api
+sudo ss -tlnp | grep 3000
+grep proxy_pass /etc/nginx/sites-enabled/*`,
+          try: "أول أمر هيطبع «connect() failed (111: Connection refused) while connecting to upstream». الرقم اللي بعد upstream هو البورت اللي Nginx بيحاول عليه. قارنه باللي التطبيق بيسمع عليه.",
+          deep: {
+            why: "502 أكتر error هتشوفه على VPS، ورسالته دقيقة: «انا Nginx شغال، بس اللي وراي مش بيرد». ده بيحذف نص الاحتمالات فورًا.",
+            how: R`Nginx بيسجّل في error.log بالظبط إيه اللي حصل: [[connect() failed (111: Connection refused) while connecting to upstream, upstream: "http://127.0.0.1:3000/"]]. الرقم 111 يعني مفيش حد بيسمع على البورت ده.
+
+[[curl 127.0.0.1:3000/health]] من السيرفر بيختبر التطبيق مباشرة. لو رد، التطبيق شغال والمشكلة إن Nginx بيطلب بورت مختلف (شوف proxy_pass). لو مردّش، التطبيق واقع.
+
+[[docker compose ps]]: الحالة. Exited أو Restarting يعني وقع. [[logs --tail 50]] السبب.
+
+[[ss -tlnp | grep 3000]]: مين بيسمع على 3000 فعلًا. لو فاضي، التطبيق مش بيسمع (ممكن بيسمع على 127.0.0.1 جوه الـ container وبورت compose مش مربوط).
+
+الحالة الخبيثة: التطبيق لسه بيقوم (بياخد ٣٠ ثانية) و 502 مؤقت. ومعاه إن Docker بيربط البورت على IPv4 بس و Nginx بيحاول على [[localhost]] اللي بيتحوّل لـ IPv6 أحيانًا. الحل: [[127.0.0.1]] في proxy_pass مش localhost.`,
+            when: "أي 502. وبعد كل deploy لحظات.",
+            mistakes: "تعمل restart لـ Nginx. نادرًا ما تكون المشكلة فيه في 502 (ولو proxy_pass غلط، restart مش هيصلّحه برضه). وتنسى تشوف error.log اللي فيه الإجابة."
+          },
+          lines: [
+            "آخر أخطاء Nginx: هتلاقي connect() failed والبورت اللي حاول عليه.",
+            "التطبيق بيرد مباشرة؟",
+            "حالة الـ containers.",
+            "آخر ٥٠ سطر من التطبيق.",
+            "مين بيسمع على 3000 فعلًا؟",
+            "Nginx بيوجّه لأنهي بورت؟ قارنه باللي فوق."
+          ]
+        },
+        {
+          cmd: "504 Gateway Timeout",
+          title: "التطبيق بيرد بس ببطء شديد",
+          desc: "504 يعني Nginx وصّل الطلب، والتطبيق مردّش في المهلة (60 ثانية افتراضيًا). التطبيق شغال بس حاجة معلّقة: استعلام بطيء، أو اتصال بخدمة خارجية معلّق، أو المعالج مشغول بالكامل.",
+          example: R`curl -o /dev/null -s -w "%{http_code} %{time_total}s\n" http://127.0.0.1:3000/api/orders
+docker stats --no-stream
+docker exec db psql -U postgres -c "SELECT pid, now()-query_start AS age, state, left(query,60) FROM pg_stat_activity WHERE state <> 'idle' ORDER BY age DESC LIMIT 5;"
+docker compose logs --since 5m api | grep -iE "timeout|slow|ECONNREFUSED"
+grep -E "proxy_read_timeout|proxy_connect_timeout" /etc/nginx/sites-enabled/*`,
+          try: "اطلب نفس الصفحة مباشرة من التطبيق بأول أمر: لو أخدت ٧٠ ثانية، المشكلة في التطبيق أو القاعدة مش في Nginx.",
+          deep: {
+            why: "504 أخطر من 502 لأن التطبيق «شغال». حاجة جواه بتاخد وقت أطول من مهلة Nginx، وغالبًا استعلام أو اتصال خارجي.",
+            how: R`الأمر الأول بيطلب الـ endpoint البطيء مباشرة من التطبيق ويطبع الوقت. لو ٦٠+ ثانية، المشكلة في التطبيق مش Nginx، وانت عارف أنهي endpoint.
+
+[[docker stats]]: لو المعالج 100٪ أو الرام على الحد، التطبيق مخنوق ومش قادر يرد.
+
+الاستعلام على pg_stat_activity بيوريك الاستعلامات الشغالة دلوقتي ومدتها. استعلام من ٤ دقايق = المتهم. غالبًا JOIN من غير index أو lock.
+
+[[grep timeout]] في اللوج: اتصال بخدمة خارجية (بوابة دفع، API) معلّق. الكود لازم يحط timeout على كل اتصال خارجي (٥ لـ ١٠ ثواني)، وإلا طلب واحد معلّق بيعلّق الكل.
+
+[[proxy_read_timeout]] في Nginx: الافتراضي 60 ثانية. رفعه بيخبّي المشكلة مش بيحلها، إلا لو الـ endpoint فعلًا محتاج وقت (تقرير كبير)، وساعتها الأصح background job.`,
+            when: "504 على endpoints معينة. وبطء عام قبل ما يوصل لـ 504.",
+            mistakes: "ترفع proxy_read_timeout لـ 300 وخلاص. الطلبات هتفضل بطيئة والاتصالات هتتراكم."
+          },
+          lines: [
+            "اطلب الـ endpoint مباشرة من التطبيق وقيس الوقت.",
+            "المعالج والرام لكل container.",
+            "الاستعلامات الشغالة دلوقتي ومدتها: أطولها المتهم.",
+            "اتصالات خارجية معلّقة في اللوج.",
+            "مهلة Nginx الحالية (الافتراضي 60 ثانية)."
+          ]
+        },
+        {
+          cmd: "500 من التطبيق",
+          title: "الكود نفسه وقع في طلب معين",
+          desc: "500 بيطلع من التطبيق نفسه (مش Nginx). exception في الكود: متغير بيئة ناقص، أو حقل null، أو migration متطبقتش. اللوج بتاع التطبيق فيه الـ stack trace، وده اللي بيقولك السطر.",
+          example: R`docker compose logs --since 10m api | grep -A 15 -iE "error|exception"
+curl -s -X POST http://127.0.0.1:3000/api/login -H "Content-Type: application/json" -d '{}' -i | head -5
+docker exec api env | grep -E "DATABASE_URL|JWT_SECRET|NODE_ENV" | sed 's/=.*/=***/'
+npx prisma migrate status
+git log --oneline -5`,
+          try: "اقرا الـ stack trace من تحت لفوق: أول سطر فيه مسار ملف من مشروعك (مش node_modules) هو مكان المشكلة.",
+          deep: {
+            why: "500 معناه exception في كودك. والخبر الكويس: الـ stack trace بيقولك الملف والسطر. الخبر الوحش: لازم تلاقيه في اللوج الصح.",
+            how: R`[[grep -A 15 error]] بيطبع الـ error و ١٥ سطر بعده، وده الـ stack trace. اقراه من تحت لفوق: السطور اللي فيها [[node_modules]] تخطاها، أول سطر فيه مسار من [[src/]] أو [[dist/]] هو مكان المشكلة.
+
+أشهر الأسباب بعد deploy: متغير بيئة ناقص على السيرفر (كان في .env بتاعك مش في .env بتاع السيرفر)، أو migration اتنسيت، أو مكتبة جديدة اتضافت والـ image متبنتش.
+
+[[curl -X POST ... -d '{}']]: إعادة إنتاج المشكلة بطلب فاضي. لو 500 مع body فاضي، الكود مش بيتعامل مع input ناقص.
+
+الأمر التالت بيعرض أسامي المتغيرات المهمة وبيخبّي قيمها (الـ sed بيستبدل اللي بعد =). لو واحد مش موجود، لقيت السبب.
+
+[[prisma migrate status]]: لو فيه migration pending، الكود بيطلب عمود مش موجود.
+
+[[git log]]: إيه اللي اتغير في آخر deploy. غالبًا المشكلة في آخر commit.`,
+            when: "أي 500. وبعد deploy على طول.",
+            mistakes: "تدوّر في الكود من غير stack trace. وتعمل console.log وتعيد deploy بدل ما تقرا اللوج الموجود."
+          },
+          lines: [
+            "الـ errors مع ١٥ سطر بعد كل واحد (الـ stack trace).",
+            "أعد إنتاج المشكلة بطلب فاضي وشوف الرد.",
+            "المتغيرات المهمة موجودة؟ (القيم مخفية).",
+            "فيه migration لسه متطبقتش؟",
+            "إيه اللي اتغير في آخر deploy."
+          ]
+        },
+        {
+          cmd: "الديسك اتملى",
+          title: "No space left on device",
+          desc: "كل حاجة بتبوظ مرة واحدة: القاعدة مش بتكتب، واللوجات بتفشل، وحتى ssh ممكن يتعب. المتهمين بالترتيب: لوجات Docker، وصور Docker القديمة، ولوجات النظام، وباك أب متراكم.",
+          example: R`df -h
+sudo du -xh --max-depth=1 / 2>/dev/null | sort -rh | head
+docker system df
+sudo du -sh /var/lib/docker/containers/*/*-json.log | sort -rh | head -5
+sudo journalctl --disk-usage
+docker system prune -f && sudo journalctl --vacuum-time=7d`,
+          try: "لوج container واحد ممكن يبقى جيجابايت. بعد ما تنضّف، حط حد في compose: logging max-size 10m.",
+          flag: "danger",
+          deep: {
+            why: "الديسك المليان بيبوّظ كل حاجة بطريقة غريبة: قاعدة البيانات بتطلع errors مش مفهومة، والتطبيق بيقع، و apt بيفشل. وأول علامة غالبًا «No space left on device» في لوج عشوائي.",
+            how: R`[[df -h]]: أنهي partition مليان. لو [[/]] على 100٪، كل حاجة بتتأثر.
+
+[[du -xh --max-depth=1 /]]: أكبر الفولدرات في الجذر. [[-x]] يفضل على نفس الـ filesystem. بعدين تدخل الأكبر وتكرر. أو [[ncdu]] لو متسطب.
+
+[[docker system df]]: Docker غالبًا المتهم الأول: صور قديمة من كل build، وbuild cache.
+
+لوجات الـ containers: كل container بيكتب لوجه في ملف JSON بيكبر للأبد لو مفيش حد. الأمر الرابع بيوريك أكبرهم. لوج واحد ممكن ٥ جيجا.
+
+[[journalctl --disk-usage]]: لوجات النظام.
+
+التنضيف: [[docker system prune]] للصور والكاش (خد بالك: بيمسح كمان أي container واقف)، و [[journalctl --vacuum-time=7d]] للوجات القديمة. لوج container بيتفضّى بـ [[truncate -s 0]] (مش rm، لأن الـ container فاتحه).
+
+وبعد التنضيف، الوقاية: [[logging: options: max-size: "10m", max-file: "3"]] في compose، و cron أسبوعي للـ prune.`,
+            when: "errors غريبة في كذا خدمة مرة واحدة. ومراقبة: تنبيه على 80٪.",
+            mistakes: "تمسح ملف لوج مفتوح بـ rm والمساحة متتحررش. truncate. وتمسح volumes Docker وانت مش متأكد فيها إيه."
+          },
+          lines: [
+            "أنهي partition مليان.",
+            "أكبر الفولدرات في الجذر.",
+            "Docker واكل قد إيه.",
+            "أكبر ٥ لوجات containers.",
+            "لوجات النظام.",
+            "نضّف Docker ولوجات أقدم من أسبوع."
+          ]
+        },
+        {
+          cmd: "فيه مساحة ولسه No space",
+          title: "df -i والملفات الممسوحة المفتوحة",
+          desc: "[[df -h]] بيقول ٤٠٪ والسيرفر بيقول No space left on device. سببين: الـ inodes خلصت (كل ملف بياخد inode، وملايين ملفات صغيرة زي cache أو sessions بتخلّصها قبل المساحة)، أو ملف كبير اتمسح بـ rm وعملية لسه فاتحاه فالمساحة متحررتش. [[df -i]] بيكشف الأولى، و [[lsof +L1]] التانية.",
+          example: R`df -h / && df -i /
+sudo du -x --inodes --max-depth=2 / 2>/dev/null | sort -rn | head
+sudo find /tmp /var/tmp -xdev -type f | wc -l
+sudo lsof -nP +L1 2>/dev/null | awk 'NR==1 || $7 > 100000000'
+docker compose restart api && df -h /`,
+          try: "لو IUse% في df -i على 100٪، الأمر التاني بيوريك أنهي فولدر فيه ملايين ملفات. ولو lsof طلّع ملف (deleted) كبير، ريستارت العملية اللي فاتحاه بيرجّع المساحة.",
+          deep: {
+            why: "الديسك مليان من غير ما df -h يقول كده. بتضيّع ساعة تدوّر على ملف كبير مش موجود.",
+            how: R`[[df -i]]: الـ inodes، وده عدد الملفات المسموح بيه على الـ filesystem. لو IUse% 100٪، مفيش ملف جديد يتعمل مهما كانت المساحة فاضية.
+
+[[du --inodes]]: زي du بس بيعد ملفات مش حجم. المتهمين: cache تطبيق بيعمل ملف لكل طلب، أو sessions، أو mail queue، أو node_modules كتير.
+
+[[lsof +L1]]: ملفات اتمسحت (NLINK 0) وعملية لسه فاتحاها. لوج اتمسح بـ rm وهو مفتوح: المساحة محجوزة لحد ما العملية تقفله. العمود السابع الحجم، والـ awk بيعرض اللي أكبر من ١٠٠ ميجا.
+
+الحل: للـ inodes امسح الملفات الصغيرة (find -delete على الفولدر المتهم) وصلّح اللي بيعملها. للمفتوح: ريستارت العملية، أو [[nginx -s reopen]] لو Nginx.`,
+            when: "No space و df -h فيه مساحة. أو du و df مش متفقين.",
+            mistakes: "تمسح لوج مفتوح بـ rm بدل truncate، فالمساحة متتحررش. وتدوّر بـ du على ملف مالوش مسار أصلًا."
+          },
+          lines: [
+            "المساحة والـ inodes: IUse% 100٪ = خلصت الملفات مش المساحة.",
+            "أنهي فولدر فيه أكتر عدد ملفات.",
+            "عدد الملفات في tmp (متهم معتاد).",
+            "ملفات ممسوحة لسه مفتوحة وأكبر من ١٠٠ ميجا.",
+            "ريستارت العملية اللي فاتحاها واتأكد إن المساحة رجعت."
+          ]
+        },
+        {
+          cmd: "المعالج 100٪",
+          title: "السيرفر بطيء وكل حاجة بتزحف",
+          desc: "عملية واحدة بتاكل المعالج: build شغال على الإنتاج، أو loop لا نهائي في الكود، أو بوت بيضرب الموقع، أو cron بيشتغل كل دقيقة بدل كل يوم. htop بيقولك مين، وبعدين بتفهم ليه.",
+          example: R`uptime
+top -bn1 | head -15
+docker stats --no-stream
+ps aux --sort=-%cpu | head -5
+sudo tail -100 /var/log/nginx/access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -5
+crontab -l`,
+          try: "الـ load average في uptime: لو أكبر من عدد الأنوية (nproc) السيرفر مشغول أكتر من طاقته. قارن.",
+          deep: {
+            why: "السيرفر بطيء وكل طلب بياخد ثواني. حد بياكل المعالج. السؤال مين، وبعدين ليه.",
+            how: R`[[uptime]]: الـ load average التلات أرقام (١ و ٥ و ١٥ دقيقة). قارنهم بعدد الأنوية. 4.0 على ٢ أنوية يعني ضعف الطاقة، والانتظار طويل.
+
+[[top -bn1]]: لقطة واحدة (batch mode) بدل الشاشة التفاعلية، مرتبة بالمعالج. أول عملية هي المتهم.
+
+[[docker stats]]: لو المتهم container، أنهي واحد.
+
+[[ps --sort=-%cpu]]: نفس المعلومة بتفاصيل الأمر الكامل.
+
+المتهمين المعتادين: build شغال على الإنتاج (npm run build بياكل كل الأنوية)، أو loop في الكود (endpoint بيلف على مليون صف)، أو بوت بيضرب الموقع (الأمر الخامس بيوريك أكتر IP في آخر ١٠٠ طلب)، أو cron بيشتغل كل دقيقة بالغلط ([[* * * * *]] بدل [[0 * * * *]])، أو تعدين عملات لو السيرفر متخترق (عملية باسم غريب من يوزر غريب).
+
+الإسعاف: [[kill]] للعملية أو [[docker stop]]. والحل حسب السبب: build في CI، وحدود CPU للـ containers، و rate limiting للبوتات.`,
+            when: "الموقع بطيء. load average عالي في المراقبة.",
+            mistakes: "ريستارت للسيرفر كله. لو السبب cron أو بوت هيرجع بعد دقيقة، وضيّعت الدليل."
+          },
+          lines: [
+            "الـ load average: قارنه بعدد الأنوية.",
+            "لقطة من top مرتبة بالمعالج.",
+            "لو المتهم container، أنهي واحد.",
+            "أعلى ٥ عمليات بالأمر الكامل.",
+            "أكتر IPs في آخر ١٠٠ طلب (بوت؟).",
+            "مهمة cron بتشتغل كل دقيقة بالغلط؟"
+          ]
+        },
+        {
+          cmd: "الرام خلصت",
+          title: "Killed أو exit code 137",
+          desc: "لينكس لما الرام تخلص بيقتل أكبر عملية (OOM killer). التطبيق بيختفي فجأة من غير error في لوجاته. المكان الوحيد اللي بيسجّل ده لوج الكيرنل. والحل غالبًا حد للـ container، أو swap، أو رام أكبر.",
+          example: R`free -h
+sudo dmesg -T | grep -i "out of memory" | tail -5
+sudo journalctl -k --since "1 hour ago" | grep -i oom
+docker inspect --format '{{.State.OOMKilled}} {{.State.ExitCode}}' api
+ps aux --sort=-%mem | head -5
+swapon --show`,
+          try: "لو dmesg فيه «Out of memory: Killed process 1234 (node)»، ده الدليل. رقم anon-rss في نفس السطر هو الرام اللي كانت واخداها وقت ما اتقتلت (docker stats بيوريك دلوقتي بس).",
+          deep: {
+            why: "أغرب عطل: التطبيق اختفى من غير error. لأن اللي قتله النظام نفسه مش الكود، فمفيش stack trace في لوج التطبيق.",
+            how: R`لينكس لما الرام والـ swap يخلصوا بيشغّل OOM killer: بيختار العملية اللي هتحرر أكبر مساحة (غالبًا تطبيقك أو القاعدة) ويقتلها بـ SIGKILL. العملية مش بتعرف حاجة، بتختفي.
+
+الدليل الوحيد في لوج الكيرنل: [[dmesg]] أو [[journalctl -k]]. السطر بيقول [[Out of memory: Killed process 1234 (node) total-vm:... anon-rss:...]]، والرقم anon-rss هو الرام اللي كانت واخداها.
+
+جوه Docker: [[OOMKilled: true]] و exit code 137 لو الـ container عدّى حد الرام بتاعه (memory limit). لو السيرفر كله خلص رام، الكيرنل بيقتل من غير ما Docker يسجّل OOMKilled.
+
+[[free -h]]: [[available]] هو الرقم المهم، مش free.
+
+[[ps --sort=-%mem]]: مين واكل الرام دلوقتي.
+
+[[swapon --show]]: فيه swap؟ سيرفر من غير swap بيقتل فورًا، معاه بيبطأ الأول وبيديك وقت.
+
+الحلول بالترتيب: swap (٢ جيجا، شرحناه في VPS)، وحد رام لكل container عشان container واحد ميوقعش الباقي، ورام أكبر لو الاستهلاك الطبيعي قريب من الحد، وتصليح الـ leak لو التطبيق بيكبر مع الوقت.`,
+            when: "التطبيق بيقع من غير error في لوجه. Exited (137). بطء شديد فجأة.",
+            mistakes: "تدوّر في لوج التطبيق على سبب مش هتلاقيه. وتشغّل build على سيرفر ١ جيجا من غير swap."
+          },
+          lines: [
+            "الرام: بص على available.",
+            "لوج الكيرنل: هل قتل عملية بسبب الذاكرة؟",
+            "نفس السؤال من journalctl.",
+            "الـ container اتقتل بسبب حد الرام بتاعه؟",
+            "أعلى ٥ عمليات في الرام دلوقتي.",
+            "فيه swap؟"
+          ]
+        },
+        {
+          cmd: "مش قادر أعمل SSH",
+          title: "Connection refused أو timed out أو Permission denied",
+          desc: "تلات رسايل، تلات أسباب. timed out: الفايروول أو السيرفر واقع. refused: السيرفر شغال بس sshd واقع أو على بورت تاني. Permission denied (publickey): المفتاح غلط أو صلاحياته أو اليوزر غلط. وفي كل الحالات console شركة الاستضافة هو الباب الخلفي.",
+          example: R`ssh -v deploy@203.0.113.10 2>&1 | grep -iE "connect|denied|offering|identity"
+nc -zv -w 5 203.0.113.10 22
+ssh -i ~/.ssh/id_ed25519 deploy@203.0.113.10
+ls -l ~/.ssh/id_ed25519
+ssh -p 2222 deploy@203.0.113.10
+ping -c 2 203.0.113.10`,
+          try: "[[-v]] بيطبع كل خطوة: هتشوف «Offering public key» وبعدها القبول أو الرفض. لو مفيش offering، ssh مش لاقي المفتاح أصلًا.",
+          deep: {
+            why: "SSH هو الباب. لو اتقفل، كل التشخيص التاني مستحيل. الرسالة بتقولك السبب، والـ console بتاعة الاستضافة هو الباب الخلفي دايمًا.",
+            how: R`[[ssh -v]] بيطبع كل خطوة: الاتصال، وتبادل المفاتيح، و«Offering public key: ~/.ssh/id_ed25519»، وبعدين القبول أو «Permission denied». الـ grep بيفلتر على السطور المهمة.
+
+«Connection timed out»: الطلب موصلش. [[nc -zv 22]] بيأكد. الأسباب: السيرفر واقف (لوحة الاستضافة)، أو ufw قفل 22 (عملت [[ufw enable]] قبل [[allow OpenSSH]])، أو fail2ban حظرك بعد محاولات فاشلة، أو الـ IP اتغير.
+
+«Connection refused»: السيرفر شغال بس sshd واقف أو على بورت تاني. [[-p 2222]] لو غيّرت البورت ونسيت.
+
+«Permission denied (publickey)»: وصلت و sshd رفض المفتاح. الأسباب: بتدخل بيوزر غلط (root بعد ما قفلته)، أو المفتاح مش موجود في authorized_keys بتاع اليوزر ده، أو صلاحيات المفتاح على جهازك ([[ls -l]] لازم 600)، أو صلاحيات .ssh على السيرفر (700 للفولدر و 600 للملف).
+
+الـ console من لوحة الاستضافة (Hostinger عندها) بتدخلك من غير شبكة: تصلّح ufw أو sshd_config أو authorized_keys منها.`,
+            when: "أي فشل SSH. وقبل ما تقفل أي جلسة بعد تعديل sshd أو ufw.",
+            mistakes: "تعدّل sshd_config وتعمل restart وتقفل الترمنال قبل ما تجرّب من نافذة تانية. ده أشهر سبب للانقفال."
+          },
+          lines: [
+            "كل خطوات الاتصال، مفلترة على المهم: وصلت؟ عرض مفتاح؟ اترفض؟",
+            "بورت 22 بيرد؟ (timeout فايروول، refused sshd واقف).",
+            "حدد المفتاح صراحة.",
+            "صلاحيات المفتاح لازم 600.",
+            "لو غيّرت البورت.",
+            "السيرفر شغال أصلًا؟"
+          ]
+        },
+        {
+          cmd: "قاعدة البيانات مش بترد",
+          title: "ECONNREFUSED أو too many connections",
+          desc: "التطبيق بيقول مش قادر يوصل للقاعدة. إما القاعدة واقعة، أو الاتصالات خلصت، أو DATABASE_URL فيه localhost بدل اسم الخدمة، أو الديسك اتملى فالقاعدة رفضت تكتب.",
+          example: R`docker compose ps db
+docker compose logs --tail 30 db
+docker exec api nc -zv db 5432
+docker exec db psql -U postgres -c "SELECT count(*), state FROM pg_stat_activity GROUP BY state;"
+docker exec api sh -c 'echo $DATABASE_URL' | sed 's/:[^:@]*@/:***@/'
+docker exec db psql -U postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'idle in transaction' AND now() - state_change > interval '5 minutes';"`,
+          try: "لو الاتصالات idle كتير، التطبيق بيفتح ومش بيقفل. الأمر الأخير إسعاف، والحل الحقيقي pooling أو إصلاح الكود.",
+          flag: "danger",
+          deep: {
+            why: "التطبيق شغال ومش عارف يوصل للقاعدة. الرسالة في لوج التطبيق بتفرق: ECONNREFUSED غير too many connections غير timeout.",
+            how: R`[[compose ps db]]: القاعدة شغالة أصلًا؟ ولو healthcheck موجود، healthy؟
+
+[[logs db]]: Postgres بيسجّل ليه مبيقبلش: [[FATAL: too many connections]]، أو [[could not write to file: No space left]]، أو [[database system is starting up]] بعد وقوع (recovery بياخد وقت).
+
+[[nc -zv db 5432]] من جوه التطبيق: الشبكة بين الـ containers سليمة؟ لو refused والقاعدة شغالة، مش على نفس الشبكة أو الاسم غلط.
+
+[[pg_stat_activity GROUP BY state]]: لو المجموع قريب من max_connections (100)، خلصت. ولو [[idle in transaction]] كتير، التطبيق بيفتح transactions ومش بيقفلها (bug أو اتصالات اتقطعت).
+
+الأمر الخامس بيعرض DATABASE_URL بالباسورد مخفي: [[localhost]] جوه container غلط، لازم [[db]].
+
+الأمر الأخير إسعاف: يقفل الاتصالات المعلّقة أكتر من ٥ دقايق. بيرجّع الموقع فورًا، بس لو السبب في الكود هيرجع. الحل الدائم pooling وإصلاح الكود.`,
+            when: "ECONNREFUSED، too many connections، أو timeouts في الاستعلامات.",
+            mistakes: "ترفع max_connections. وتعمل restart للقاعدة وفيها transactions شغالة."
+          },
+          lines: [
+            "القاعدة شغالة و healthy؟",
+            "Postgres بيقول إيه (too many connections؟ no space؟ starting up؟).",
+            "من جوه التطبيق: القاعدة بترد على البورت؟",
+            "الاتصالات بحالتها: قريبة من الحد؟ idle in transaction كتير؟",
+            "الـ URL اللي التطبيق بيستخدمه (باسورد مخفي): localhost ولا db؟",
+            "إسعاف: اقفل الاتصالات المعلّقة أكتر من ٥ دقايق."
+          ]
+        },
+        {
+          cmd: "الـ container بيقع ويقوم",
+          title: "Restarting في docker ps",
+          desc: "crash loop: التطبيق بيقوم، يقع في أول ثانية، Docker يرجّعه، ويقع تاني. السبب في أول سطور اللوج: متغير ناقص، أو بورت مشغول، أو القاعدة لسه مش جاهزة، أو الكود فيه syntax error من deploy ناقص.",
+          example: R`docker compose ps
+docker compose logs --tail 40 api
+docker inspect --format '{{.State.ExitCode}} {{.RestartCount}} {{.State.FinishedAt}}' api
+docker compose run --rm api node -e "require('./dist/server.js')"
+docker compose config | grep -A5 "environment"
+docker compose up api`,
+          try: "الأمر قبل الأخير بيشغّل الـ image بأمر مختلف عن CMD عشان تشوف الـ error كامل من غير ما Docker يرجّعه. والأخير من غير -d عشان تشوف اللوج لايف.",
+          deep: {
+            why: "restart policy بتعمل شغلها: بترجّع الـ container. بس لو بيقع في أول ثانية، بيفضل في loop، والحالة Restarting بتضللك إنه «شغال».",
+            how: R`[[compose ps]]: Restarting أو Up أقل من دقيقة باستمرار.
+
+[[logs --tail 40]]: اللوج بيتكرر مع كل محاولة، فأول سطور المحاولة الأخيرة فيها الـ error. غالبًا: [[Error: Cannot find module]] (build ناقص)، أو [[EADDRINUSE]] (نسختين)، أو [[ECONNREFUSED]] للقاعدة (قام قبلها)، أو [[SyntaxError]] (كود مكسور)، أو متغير undefined.
+
+[[inspect]]: ExitCode (1 error في الكود، 137 رام، 127 أمر مش موجود)، و RestartCount عدد المحاولات، و FinishedAt آخر وقوع.
+
+[[compose run --rm api node -e ...]]: بيشغّل container مؤقت من نفس الـ image بأمر مختلف، فتشوف الـ error كامل من غير ما Docker يرجّعه. و [[run --rm api sh]] يدخّلك جوه تفحص الملفات.
+
+[[config | grep environment]]: المتغيرات اللي Compose هيبعتها فعلًا، بعد قراية .env.
+
+[[up api]] من غير -d: بيشغّل ويطبع اللوج لايف في الترمنال، وCtrl+C يوقفه. أوضح طريقة تشوف تسلسل الأحداث.`,
+            when: "Restarting في ps. الموقع بيشتغل ثانية ويقع.",
+            mistakes: "تشيل restart policy عشان «يبطل يقع». هيفضل واقع بس من غير loop. اقرا اللوج."
+          },
+          lines: [
+            "الحالة: Restarting أو Up لثواني باستمرار.",
+            "الـ error في أول سطور آخر محاولة.",
+            "رقم الخروج وعدد المحاولات وآخر وقوع.",
+            "شغّل الـ image بأمر مختلف عشان تشوف الـ error كامل من غير loop.",
+            "المتغيرات اللي Compose هيبعتها فعلًا.",
+            "شغّل في المقدمة وشوف اللوج لايف."
+          ]
+        }
+      ]
+    },
+    {
+      t: "الأداء والحالات الغريبة",
+      l: 3,
+      n: "الموقع شغال بس فيه حاجة غلط: بطء، أو هجوم، أو حاجة بتحصل من غير ما تعرف",
+      items: [
+        {
+          cmd: "الموقع بطيء مش واقع",
+          title: "قيس قبل ما تخمّن",
+          desc: "«بطيء» مش تشخيص. قيس: الوقت من السيرفر نفسه، ومن بره. لو من السيرفر سريع ومن بره بطيء: الشبكة أو حجم الصفحة. لو الاتنين بطيئين: التطبيق أو القاعدة. وبعدين الاستعلامات البطيئة والـ Long Tasks.",
+          example: R`curl -o /dev/null -s -w "dns:%{time_namelookup} connect:%{time_connect} ttfb:%{time_starttransfer} total:%{time_total} size:%{size_download}\n" https://example.com
+curl -o /dev/null -s -w "%{time_total}\n" http://127.0.0.1:3000/
+docker exec db psql -U postgres -c "SELECT round(mean_exec_time) ms, calls, left(query,60) FROM pg_stat_statements ORDER BY total_exec_time DESC LIMIT 5;"
+uptime && free -h | head -2
+npx lighthouse https://example.com --preset=desktop --quiet --output=json | jq '.categories.performance.score'`,
+          try: "ttfb كبير (أكتر من 500ms) والـ total قريب منه: السيرفر بطيء. ttfb صغير و total كبير: الصفحة تقيلة (صور، JS).",
+          deep: {
+            why: "«بطيء» ممكن يبقى DNS بطيء، أو السيرفر بعيد، أو الكود بطيء، أو الصفحة تقيلة، أو المتصفح بطيء. كل واحد حل مختلف. القياس بيفرّق بينهم.",
+            how: R`الأمر الأول بيقسم وقت الطلب لمراحل: [[time_namelookup]] DNS، و [[time_connect]] الاتصال (بيعكس المسافة للسيرفر)، و [[time_starttransfer]] (TTFB) لحد أول byte من الرد، وده وقت السيرفر بيفكّر فيه، و [[time_total]] الكل، و [[size_download]] الحجم.
+
+القراية: TTFB كبير (أكتر من نص ثانية) = السيرفر أو التطبيق أو القاعدة. TTFB صغير و total كبير = الصفحة نفسها تقيلة أو الاتصال بطيء. connect كبير = السيرفر بعيد جغرافيًا أو الشبكة (CDN بيحل).
+
+الأمر التاني من السيرفر نفسه بيشيل الشبكة من المعادلة: لو سريع هنا وبطيء من بره، المشكلة شبكة أو Nginx (gzip، كاش، HTTP/2).
+
+[[pg_stat_statements]]: أعلى استعلامات في الوقت الإجمالي. غالبًا استعلام واحد أو اتنين هما ٨٠٪ من المشكلة.
+
+[[uptime && free]]: السيرفر مش مخنوق؟
+
+[[lighthouse]]: لو السيرفر سريع، المشكلة في الـ frontend (JS كبير، صور مش مضغوطة)، وده تاب المتصفح.`,
+            when: "أي شكوى بطء. وقياس دوري كل أسبوع تشوف الاتجاه.",
+            mistakes: "تكبّر السيرفر قبل ما تقيس. غالبًا index ناقص أو صورة ٥ ميجا، والسيرفر مش المشكلة."
+          },
+          lines: [
+            "وقت الطلب مقسّم: DNS، واتصال، و TTFB (السيرفر)، والكل، والحجم.",
+            "من السيرفر نفسه: يشيل الشبكة من المعادلة.",
+            "أثقل ٥ استعلامات في الوقت الإجمالي.",
+            "السيرفر مخنوق؟",
+            "درجة الأداء من Lighthouse (لو السيرفر سريع، المشكلة frontend)."
+          ]
+        },
+        {
+          cmd: "الـ deploy كسر الموقع",
+          title: "ارجع الأول، افهم بعدين",
+          desc: "بعد deploy الموقع وقع. القاعدة: الرجوع لآخر نسخة شغالة أولوية على الفهم. مع Git و Docker الرجوع دقيقة: checkout آخر commit شغال وأعد البناء، أو شغّل الـ image السابقة. وبعدين افهم على مهلك في branch.",
+          example: R`git log --oneline -5
+git checkout HEAD~1 -- . && docker compose up -d --build api
+docker images myapi --format '{{.Tag}} {{.CreatedAt}}' | head
+docker compose logs --tail 30 api
+npx prisma migrate status
+git checkout HEAD -- . && git revert HEAD --no-edit`,
+          try: "جرّب على سيرفر التجربة: اعمل commit يكسر التطبيق عمدًا، وقيس كام دقيقة بتاخد لحد ما ترجّعه. لو أكتر من ٥، اكتب سكربت rollback.",
+          flag: "danger",
+          deep: {
+            why: "الموقع كان شغال قبل الـ deploy بدقيقة. أسرع تشخيص هو الرجوع للنسخة اللي قبلها. الفهم بعدين، في branch، على مهلك.",
+            how: R`[[git log]]: آخر commits. اللي قبل الأخير هو اللي كان شغال.
+
+الرجوع بالكود: [[git checkout HEAD~1 -- .]] بيرجّع ملفات الـ commit السابق (من غير ما يغيّر الـ branch)، بس مش بيمسح الملفات الجديدة اللي الـ commit الأخير ضافها، و [[up -d --build]] يعيد البناء. دقيقتين والموقع رجع.
+
+الرجوع بالـ image (أسرع لو الصور بأرقام نسخ): [[docker images]] بيوريك النسخ الموجودة، تغيّر الـ tag في compose للسابقة و [[up -d]]. ثواني.
+
+[[migrate status]]: الخطر الحقيقي. لو الـ deploy عمل migration (مسح عمود مثلًا)، الكود القديم مش هيشتغل مع الـ schema الجديد. عشان كده الـ migrations الكاسرة بتتعمل على خطوتين (شرحناه في PostgreSQL).
+
+بعد ما الموقع يرجع: [[git revert HEAD]] بيعمل commit جديد بيلغي الأخير، فالتاريخ نضيف والـ branch متسقة. وبعدين تصلّح في branch.
+
+الدرس: deploy لـ staging الأول، أو على الأقل health check أوتوماتيك بعد deploy يرجّع لوحده لو فشل (سكربت deploy.sh في bash المستوى ٣ فيه الـ check).`,
+            when: "أي كسر بعد deploy مباشرة. الرجوع في أقل من ٥ دقايق هدف.",
+            mistakes: "تحاول تصلّح على الإنتاج وهو واقع. ارجع الأول. و deploy فيه migration كاسرة من غير خطة رجوع."
+          },
+          lines: [
+            "آخر commits: اللي قبل الأخير كان شغال.",
+            "رجّع ملفات الـ commit السابق وأعد البناء (دقيقتين).",
+            "أو الصور الموجودة بأرقامها: غيّر الـ tag في compose للسابقة.",
+            "اتأكد إنه رجع.",
+            "الخطر: migration اتطبقت والكود القديم مش هيشتغل معاها.",
+            "بعد ما يرجع: رجّع الملفات لـ HEAD (revert بيرفض لو فيه تعديلات)، وبعدين commit بيلغي الأخير."
+          ]
+        },
+        {
+          cmd: "بوت بيضرب الموقع",
+          title: "آلاف الطلبات من IP واحد",
+          desc: "المعالج عالي والـ access log بيجري. بوت بيدوّر على ثغرات (طلبات على wp-login و .env و phpmyadmin) أو scraper. الحل السريع حظر الـ IP، والدائم rate limiting في Nginx أو Cloudflare قدام الموقع.",
+          example: R`sudo tail -5000 /var/log/nginx/access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head
+sudo tail -5000 /var/log/nginx/access.log | awk '{print $7}' | sort | uniq -c | sort -rn | head
+sudo grep "198.51.100.7" /var/log/nginx/access.log | awk '{print $7}' | sort | uniq -c | sort -rn | head -5
+sudo ufw insert 1 deny from 198.51.100.7
+sudo tail -f /var/log/nginx/access.log | grep -vE "\.(css|js|png|jpg|svg|woff2)"
+sudo fail2ban-client status nginx-botsearch`,
+          try: "أول أمرين بيقولوك مين وعلى إيه. لو IP واحد عامل ٪٤٠ من الطلبات على مسارات غريبة، احظره. ولو مية IP مختلفين، ده هجوم موزّع ومحتاج Cloudflare.",
+          deep: {
+            why: "أي سيرفر على النت بيتفحص من بوتات طول الوقت: بتدوّر على WordPress و phpMyAdmin و .env و .git. أغلبها ضوضاء. بس بوت واحد عدواني بيوقّع سيرفر صغير.",
+            how: R`الأمر الأول: أكتر IPs في آخر ٥٠٠٠ طلب. لو IP واحد فيه آلاف والباقي عشرات، لقيته. التاني: أكتر المسارات المطلوبة. مسارات زي [[/wp-login.php]] أو [[/.env]] أو [[/phpmyadmin]] = بوت بيفحص ثغرات. التالت: الـ IP ده بيطلب إيه بالظبط.
+
+الإسعاف: [[ufw insert 1 deny from IP]]. الـ [[insert 1]] بيحط القاعدة في الأول عشان تتطبق قبل قواعد السماح.
+
+الأمر الخامس بيتابع الطلبات لايف من غير الملفات الثابتة، فتشوف الهجوم وهو بيحصل.
+
+fail2ban فيه jails جاهزة لـ Nginx: [[nginx-botsearch]] بيحظر أوتوماتيك اللي بيطلب مسارات مش موجودة كتير، و [[nginx-http-auth]] اللي بيغلط في باسورد basic auth. الاتنين لازم تفعّلهم في jail.local (enabled = true).
+
+الحل الدائم: Cloudflare قدام الموقع (مجاني): بيمتص الهجمات الموزعة، وبيقفل البوتات المعروفة، و rate limiting بقواعد. ومع Cloudflare، الفايروول يسمح بعناوين Cloudflare بس على 443، فمحدش يوصل السيرفر مباشرة.
+
+ولو الطلبات من مية IP مختلف بنفس النمط: هجوم موزّع (DDoS)، ومفيش حل على السيرفر نفسه غير Cloudflare.`,
+            when: "المعالج عالي والـ access log سريع. طلبات على مسارات غريبة.",
+            mistakes: "تحظر IP وتكتشف إنه Googlebot أو Cloudflare. اتأكد بـ [[whois IP]] أو reverse DNS الأول."
+          },
+          lines: [
+            "أكتر IPs في آخر ٥٠٠٠ طلب.",
+            "أكتر المسارات المطلوبة (wp-login و .env = بوت).",
+            "الـ IP المشبوه بيطلب إيه بالظبط.",
+            "احظره، والقاعدة في الأول عشان تتطبق قبل السماح.",
+            "تابع الطلبات لايف من غير الملفات الثابتة.",
+            "fail2ban بيحظر بوتات Nginx؟"
+          ]
+        },
+        {
+          cmd: "شك في اختراق",
+          title: "حاجة بتشتغل مش انت اللي شغّلتها",
+          desc: "علامات: عملية غريبة بتاكل المعالج (تعدين)، أو اتصالات خارجة لعناوين مش معروفة، أو ملفات جديدة في المشروع، أو cron مش بتاعك، أو يوزر جديد. الترتيب: اجمع الأدلة قبل ما تعمل أي حاجة، وبعدين اعزل، وبعدين ابني من جديد. متحاولش «تنضّف» سيرفر متخترق.",
+          example: R`ps aux --sort=-%cpu | head
+sudo ss -tnp state established | awk '{print $4}' | cut -d: -f1 | sort | uniq -c | sort -rn | head
+sudo find / -xdev -newer /var/log/lastlog -type f 2>/dev/null | grep -vE "^/(proc|sys|var/log|tmp)" | head -30
+sudo cat /etc/passwd | awk -F: '$3 == 0 || $3 >= 1000'
+sudo crontab -l; sudo ls -la /etc/cron.d /var/spool/cron/crontabs
+last -20 && sudo grep "Accepted" /var/log/auth.log | tail`,
+          try: "خد snapshot للسيرفر من لوحة الاستضافة قبل أي تعديل (ده الدليل). غيّر كل المفاتيح والباسوردات من جهاز نضيف. وابني سيرفر جديد من الصفر بالسكربتات، وانقل الداتا بعد ما تفحصها.",
+          deep: {
+            why: "أصعب حالة نفسيًا وتقنيًا. الغريزة إنك «تنضّف». الصح إنك تفترض إن كل حاجة على السيرفر مش موثوقة، تجمع الأدلة، وتبني من جديد.",
+            how: R`الأدلة أولًا، قبل أي ريستارت أو مسح: snapshot من لوحة الاستضافة للسيرفر كله.
+
+[[ps --sort=-%cpu]]: عملية بتاكل المعالج باسم عشوائي أو من يوزر غريب = تعدين غالبًا. [[ss -tnp established]]: اتصالات خارجة لعناوين مش بتاعتك (C&C أو تعدين). [[find -newer]]: ملفات اتعدلت من آخر login، في المشروع أو في /usr/bin. [[/etc/passwd]] بـ UID فوق 1000: يوزرز اتعملوا، و UID 0 لغير root: باب خلفي. [[crontab]] و [[/etc/cron.d]]: مهام مش بتاعتك بتضمن رجوع المهاجم. [[last]] و [[auth.log]]: مين دخل إمتى ومنين.
+
+بعد الأدلة: اعزل (ufw deny incoming ما عدا IP بتاعك، أو وقّف السيرفر من اللوحة).
+
+وبعدين من جهاز نضيف: غيّر كل حاجة: باسورد القاعدة، ومفاتيح API (Paymob، Supabase)، و JWT secret، ومفاتيح SSH. أي سر كان على السيرفر اعتبره مسروق.
+
+وابني سيرفر جديد من الصفر بسكربتات التجهيز (عشان كده السكربتات مهمة)، وانقل الداتا بعد فحصها (dump وافحص الجداول الغريبة). السيرفر القديم يتمسح بعد ما تخلص التحليل.
+
+وبعدها: إزاي دخل؟ ثغرة في مكتبة (npm audit)، أو باسورد ضعيف، أو بورت مفتوح، أو سر في GitHub. من غير ما تعرف، هيدخل تاني.`,
+            when: "أي علامة من اللي فوق. وفحص شهري وقائي بنفس الأوامر.",
+            mistakes: "تمسح العملية الغريبة وتكمّل شغل. المهاجم ساب باب تاني. و«الحماية» بتغيير باسورد واحد."
+          },
+          lines: [
+            "عملية غريبة بتاكل المعالج (تعدين؟).",
+            "اتصالات خارجة لعناوين مش بتاعتك.",
+            "ملفات اتعدلت من آخر login، بره الأماكن الطبيعية.",
+            "يوزرز اتعملوا (UID 1000 وأكتر)، وأي يوزر غير root بـ UID 0 = باب خلفي.",
+            "مهام cron مش بتاعتك (باب رجوع).",
+            "مين دخل إمتى ومنين."
+          ]
+        },
+        {
+          cmd: "cron مشتغلش",
+          title: "الباك أب مبقاش يتعمل من أسبوع",
+          desc: "المهمة في crontab بس مفيش نتيجة. الأسباب المعتادة: الأمر شغال من الترمنال بس مش من cron (PATH مختلف)، أو الناتج مش متوجّه لملف فمش شايف الـ error، أو صلاحيات، أو % في الأمر، أو السكربت نفسه بيفشل بصمت.",
+          example: R`grep CRON /var/log/syslog | tail -20
+crontab -l
+sudo tail -20 /var/log/backup.log
+env -i HOME=/home/deploy LOGNAME=deploy PATH=/usr/bin:/bin SHELL=/bin/sh /bin/sh -c '/home/deploy/backup.sh'
+which pg_dump docker
+systemctl status cron`,
+          try: "الأمر الرابع بيشغّل السكربت ببيئة فاضية زي cron بالظبط. لو فشل هنا ونجح من الترمنال، المشكلة PATH: اكتب المسارات الكاملة في السكربت.",
+          deep: {
+            why: "المهمة اللي بتشتغل «لوحدها» أخطر حاجة، لأن لما تقف محدش بيلاحظ. الباك أب اللي وقف من شهر بتكتشفه يوم ما تحتاجه.",
+            how: R`[[grep CRON /var/log/syslog]]: cron بيسجّل كل مهمة شغّلها بالوقت والأمر. لو المهمة مش موجودة هنا، cron مشغّلهاش أصلًا: الصيغة غلط، أو crontab اتحفظ بيوزر تاني، أو cron واقف ([[systemctl status cron]]). لو موجودة، اتشغّلت وفشلت.
+
+[[crontab -l]]: الصيغة. غلطات شائعة: [[%]] من غير escape (cron بيعتبرها سطر جديد)، ومسار نسبي، وسطر جديد ناقص في آخر الملف.
+
+[[tail backup.log]]: لو المهمة بتوجّه ناتجها للوج (وهي المفروض)، الـ error هنا. لو مفيش لوج، ضيف [[>> /var/log/backup.log 2>&1]] في آخر السطر، وده أول إصلاح.
+
+الأمر الرابع الأهم: [[env -i ... PATH=/usr/bin:/bin /bin/sh -c]] بيشغّل السكربت بنفس بيئة cron بالظبط (PATH قصير و sh مش bash): مفيش PATH بتاعك، ولا nvm، ولا aliases. لو فشل هنا ونجح من الترمنال، السبب PATH. [[which pg_dump docker]] بيديك المسارات الكاملة تكتبها في السكربت أو تحط [[PATH=...]] أول سطر في crontab.
+
+والوقاية: المهمة تبعتلك رسالة لو فشلت، أو healthchecks.io: المهمة بتطلب URL لما تنجح، ولو مطلبتش في الوقت المتوقع بيبعتلك تنبيه.`,
+            when: "أي مهمة مجدولة مبتشتغلش. وبعد ما تضيف مهمة: تأكد من syslog إنها اشتغلت أول مرة.",
+            mistakes: "تختبر السكربت من الترمنال بس. وتفترض إن الباك أب شغال لأنك ضفته في cron."
+          },
+          lines: [
+            "cron شغّل المهمة أصلًا؟ (لو مش هنا، الصيغة أو cron نفسه).",
+            "الصيغة: % من غير escape؟ مسار نسبي؟",
+            "لوج المهمة (لو موجّهة للوج زي ما المفروض).",
+            "شغّل السكربت ببيئة فاضية زي cron بالظبط: لو فشل هنا بس، المشكلة PATH.",
+            "المسارات الكاملة اللي تحطها في السكربت.",
+            "cron نفسه شغال؟"
+          ]
+        },
+        {
+          cmd: "الإيميلات مش بتوصل",
+          title: "بتتبعت من الكود وبتروح spam أو مبتوصلش",
+          desc: "السيرفرات الجديدة بورت 25 مقفول فيها غالبًا (الاستضافة بتقفله ضد السبام). والإيميل من غير SPF و DKIM بيروح spam. الحل العملي: خدمة إرسال (Resend، Postmark، SES) بـ API أو SMTP على 587، وسجلات DNS صح.",
+          example: R`nc -zv -w 5 smtp.resend.com 587
+nc -zv -w 5 gmail-smtp-in.l.google.com 25
+dig TXT send.example.com +short
+dig TXT resend._domainkey.example.com +short
+dig TXT _dmarc.example.com +short
+docker compose logs --since 30m api | grep -iE "mail|smtp|resend"`,
+          try: "ابعت إيميل لعنوان على mail-tester.com وشوف الدرجة والأسباب. غالبًا SPF أو DKIM ناقص.",
+          deep: {
+            why: "الكود بيقول «اتبعت» والمستخدم مش بيستلم، أو بيلاقيه في spam. البريد نظام له قواعده: بورتات، وسجلات DNS، وسمعة.",
+            how: R`[[nc 587]] لخدمة الإرسال: مفتوح؟ 587 هو بورت الإرسال الحديث (submission) وغالبًا مفتوح. [[nc 25]] لسيرفر جوجل: 25 هو بورت السيرفرات لبعض، والاستضافات بتقفله على VPS الجديدة ضد السبام. لو 25 مقفول، مينفعش تبعت مباشرة من السيرفر، ودي مش مشكلة لأن الأصح خدمة إرسال أصلًا.
+
+سجلات DNS التلاتة: [[TXT example.com]] فيه SPF: بيقول «مين مسموح له يبعت باسم دومينك» (Resend بيحطه على subdomain اسمه [[send]]: [[v=spf1 include:amazonses.com ~all]]، والقيمة الصح دايمًا من لوحة الخدمة). [[DKIM]] على subdomain الخدمة: توقيع رقمي بيثبت إن الرسالة متغيرتش، والخدمة بتديك القيمة. [[_dmarc]]: سياسة لو SPF/DKIM فشلوا.
+
+من غير التلاتة، Gmail بيحط الرسالة في spam أو يرفضها.
+
+[[logs | grep mail]]: الكود بعت فعلًا؟ الخدمة ردت بإيه؟ الخدمات بترجع id للرسالة وبيبقى ليها لوحة بتوريك اتسلّمت ولا bounced.
+
+mail-tester.com: تبعت إيميل لعنوان مؤقت وبيديك درجة من ١٠ مع كل سبب.`,
+            when: "إيميلات التسجيل والدفع مش واصلة. قبل إطلاق أي موقع بيبعت إيميل.",
+            mistakes: "تبعت من Gmail SMTP بحسابك الشخصي في الإنتاج. حدود صغيرة وبيتقفل. خدمة إرسال من الأول."
+          },
+          lines: [
+            "بورت الإرسال (587) لخدمتك مفتوح؟",
+            "بورت 25 مقفول غالبًا على VPS (وده عادي).",
+            "سجل SPF على subdomain الإرسال (send): مين مسموح له يبعت.",
+            "سجل DKIM بتاع الخدمة موجود؟",
+            "سياسة DMARC.",
+            "الكود بعت فعلًا؟ الخدمة ردت بإيه؟"
+          ]
+        },
+        {
+          cmd: "الساعة غلط",
+          title: "JWT expired فورًا، أو SSL errors غريبة",
+          desc: "لو ساعة السيرفر بعيدة عن الوقت الحقيقي بدقايق، التوكنات بتبقى منتهية قبل ما تبدأ، وشهادات SSL بتتعتبر غير صالحة، ولوجات مش منطقية. NTP المفروض يظبطها لوحده، بس ممكن يكون واقف.",
+          example: R`timedatectl
+date -u && curl -sI https://google.com | grep -i '^date'
+chronyc tracking 2>/dev/null || timedatectl show-timesync --all
+sudo systemctl restart systemd-timesyncd
+sudo timedatectl set-ntp true`,
+          try: "قارن ناتج date -u بالـ Date header اللي جاي من جوجل في الأمر التاني. لو الفرق أكتر من ثانيتين، NTP مش شغال.",
+          deep: {
+            why: "مش بتخطر على بال حد، وبتعمل أعراض تخليك تدوّر في الكود ساعات: توكن بينتهي فورًا، وشهادة «مش صالحة لسه»، ولوجات بتواريخ مستقبلية.",
+            how: R`[[timedatectl]] بيعرض الوقت المحلي و UTC وهل NTP مفعّل ومتزامن ([[System clock synchronized: yes]]).
+
+الأمر التاني اختبار مستقل: [[date -u]] وقت السيرفر، والـ [[Date]] header من جوجل وقتهم. الفرق لازم ثواني. لو دقايق، الساعة غلط.
+
+JWT فيه [[iat]] و [[exp]] بالثواني. لو السيرفر اللي بيوقّع (أو بيتحقق) ساعته متأخرة ٥ دقايق، توكن صالح ٥ دقايق بيبقى منتهي لحظة إصداره. ونفس الحاجة مع OTP و TOTP (Google Authenticator)، وشهادات SSL (notBefore في المستقبل).
+
+[[chronyc tracking]] أو [[timesyncd]]: حالة المزامنة والفرق بالمللي ثانية. [[restart systemd-timesyncd]] يعيد المزامنة. [[set-ntp true]] لو كانت مقفولة.
+
+على VPS الساعة بتتزامن من الـ hypervisor غالبًا، بس على بعض السيرفرات بتنحرف بعد suspend/resume أو لو NTP مقفول في الفايروول (UDP 123).`,
+            when: "أي غرابة في التوكنات أو الشهادات أو أوقات اللوج.",
+            mistakes: "تصلّح الساعة بـ [[date -s]] يدويًا. هترجع تنحرف. فعّل NTP."
+          },
+          lines: [
+            "الوقت وهل NTP متزامن.",
+            "قارن وقت السيرفر بالوقت اللي جوجل بيرجّعه في header.",
+            "حالة المزامنة والفرق.",
+            "أعد المزامنة.",
+            "فعّل NTP لو كان مقفول."
+          ]
+        },
+        {
+          cmd: "webhook مش واصل",
+          title: "الدفعة نجحت والطلب متفعّلش",
+          desc: "Paymob بيقول المعاملة نجحت، وعندك مفيش حاجة. السؤال الأول: الطلب وصل سيرفرك أصلًا؟ لوج Nginx بيجاوب. لو وصل ورجع 4xx/5xx، لوج التطبيق بيقول ليه. لو موصلش، الـ URL المسجّل عندهم غلط أو بيشاور على سيرفر قديم.",
+          example: R`sudo grep "/webhooks/paymob" /var/log/nginx/access.log | tail -10
+sudo grep "/webhooks/paymob" /var/log/nginx/access.log | awk '{print $9}' | sort | uniq -c
+docker compose logs --since 1h api | grep -i webhook
+curl -X POST https://example.com/webhooks/paymob -H "Content-Type: application/json" -d '{"obj":{"id":1,"success":true}}' -i | head -3
+dig +short example.com`,
+          try: "العمود التاسع في الأمر التاني هو الـ status اللي رجّعته: 401 معناه التوقيع بيفشل (المفتاح غلط)، 500 الكود بيقع، 404 المسار غلط.",
+          deep: {
+            why: "العميل دفع، وPaymob بتقول نجحت، والاشتراك مش متفعّل. المشكلة في سلسلة من ٤ حلقات، ولوج Nginx بيقولك الحلقة المكسورة.",
+            how: R`الحلقات: Paymob يبعت للـ URL المسجّل، يوصل Nginx، يوصل التطبيق، التطبيق يتحقق ويفعّل.
+
+الأمر الأول: كل طلبات مسار الـ webhook في لوج Nginx. لو فاضي، الطلب موصلش أصلًا: الـ URL في لوحة Paymob غلط أو بيشاور على سيرفر قديم ([[dig +short]] يتأكد)، أو Paymob لسه محاولش (بيحاول بعد ثواني من الدفع).
+
+التاني: الـ status codes اللي رجّعتها. 200 يعني التطبيق استلم ورد إنه تمام، فالمشكلة بعد كده في المنطق (التحقق من التكرار رفضها؟ الـ order id مش متطابق؟). 401 التوقيع فشل (HMAC secret غلط أو ترتيب الحقول). 404 المسار غلط. 500 الكود وقع. 502 التطبيق كان واقع وقتها.
+
+التالت: لوج التطبيق للـ webhook.
+
+الرابع: حاكي الطلب بإيدك على الـ URL العام (مش localhost) وشوف الرد. ده بيختبر Nginx والمسار من غير Paymob.
+
+ولوحة Paymob فيها سجل للـ webhooks المرسلة وردودها، وزرار إعادة إرسال. وده أسرع اختبار بعد أي تصليح.`,
+            when: "أي دفعة نجحت من غير تفعيل. وبعد نقل السيرفر (الـ URL!).",
+            mistakes: "تختبر بـ curl على localhost وتقول شغال. الـ URL العام هو اللي Paymob بتستخدمه."
+          },
+          lines: [
+            "طلبات مسار الـ webhook وصلت Nginx؟ لو فاضي، الـ URL عند Paymob غلط.",
+            "الـ status اللي رجّعته لكل طلب: 401 توقيع، 500 كود، 404 مسار.",
+            "لوج التطبيق للـ webhook.",
+            "حاكي الطلب على الـ URL العام (مش localhost).",
+            "الدومين بيشاور على السيرفر ده؟"
+          ]
+        },
+        {
+          cmd: "بعد reboot حاجات مقامتش",
+          title: "الموقع واقع بعد ريستارت السيرفر",
+          desc: "السيرفر قام بس التطبيق لأ. كل حاجة شغّلتها بإيدك (nohup، أو docker run من غير restart policy، أو pm2 من غير save) مش بترجع. اللي بيرجع: خدمات systemd المعمولة enable، و containers بـ restart policy.",
+          example: R`uptime
+systemctl --failed
+docker ps -a --format '{{.Names}} {{.Status}} {{.Label "com.docker.compose.project"}}'
+docker inspect --format '{{.Name}} {{.HostConfig.RestartPolicy.Name}}' $(docker ps -aq)
+systemctl is-enabled docker nginx postgresql 2>/dev/null
+pm2 list && pm2 resurrect`,
+          try: "بعد ما تصلّح، اعمل reboot تاني بإيدك وشوف كل حاجة بترجع. ده الاختبار الوحيد اللي بيثبت.",
+          deep: {
+            why: "الاستضافة عملت صيانة، أو الكيرنل اتحدّث، والسيرفر عمل ريستارت. اللي رجع هو اللي اتعمله enable، والباقي واقف. وده بيكشف كل حاجة كانت «شغالة بالصدفة».",
+            how: R`[[uptime]]: من إمتى السيرفر شغال. لو دقايق وانت معملتش ريستارت، السيرفر عمل reboot لوحده (أو اتقتل بـ OOM على مستوى الـ hypervisor).
+
+[[systemctl --failed]]: خدمات systemd حاولت تقوم وفشلت.
+
+[[docker ps -a]]: الـ containers وحالتها. اللي Exited مش مرجعش. الأمر الرابع بيوريك restart policy لكل واحد: [[no]] معناه مش هيرجع أبدًا.
+
+[[systemctl is-enabled docker nginx postgresql]]: الخدمات الأساسية enabled؟ Docker نفسه لو مش enabled، مفيش container هيقوم مهما كانت الـ policy.
+
+[[pm2 resurrect]]: لو بتستخدم pm2، بيرجّع التطبيقات من آخر [[pm2 save]]. ولو [[pm2 startup]] معمول، ده بيحصل لوحده.
+
+الأمر الطبيعي إنك تطبّق الوضع الصح: [[restart: unless-stopped]] في compose، و [[systemctl enable]] لكل خدمة، و [[pm2 save]]. وبعدين [[sudo reboot]] بإيدك في وقت هادي عشان تتأكد. الاختبار ده لازم يتعمل مرة على كل سيرفر قبل ما يبقى إنتاج.`,
+            when: "الموقع واقع و uptime قليل. وقبل ما أي سيرفر يبقى إنتاج.",
+            mistakes: "تشغّل كل حاجة بإيدك بعد الريستارت وتكمّل شغل. المرة الجاية هتحصل تاني الساعة ٣ الفجر."
+          },
+          lines: [
+            "من إمتى شغال: لو دقايق، reboot حصل.",
+            "خدمات فشلت في القيام.",
+            "الـ containers وحالتها ومشروعها.",
+            "restart policy لكل container: no = مش هيرجع.",
+            "الخدمات الأساسية enabled؟",
+            "رجّع تطبيقات pm2 من آخر save."
+          ]
+        },
+        {
+          cmd: "اعمل ده قبل ما تطلب مساعدة",
+          title: "إيه اللي تجمعه",
+          desc: "لما تطلب مساعدة (من زميل أو منتدى أو AI)، السؤال «الموقع واقع، ليه؟» ملوش إجابة. الأوامر دي بتجمع الصورة الكاملة في ملف واحد تبعته: النظام، والموارد، والخدمات، وآخر لوجات. من غير أسرار.",
+          example: R`{ hostnamectl; uptime; free -h; df -h /; } > /tmp/diag.txt 2>&1
+{ docker compose ps; docker compose logs --tail 50 --no-color; } >> /tmp/diag.txt 2>&1
+sudo tail -30 /var/log/nginx/error.log >> /tmp/diag.txt 2>&1
+{ curl -sI https://example.com | head -3; curl -sI http://127.0.0.1:3000/health | head -1; } >> /tmp/diag.txt 2>&1
+sed -i -E 's/(password|secret|token|key)=[^ ]+/\1=***/gi' /tmp/diag.txt
+wc -l /tmp/diag.txt && head -40 /tmp/diag.txt`,
+          try: "اعمل من ده سكربت diag.sh على كل سيرفر. وقت الأزمة مش وقت تفتكر الأوامر.",
+          deep: {
+            why: "«الموقع واقع ليه؟» سؤال مش بيتجاوب. اللي هيساعدك محتاج يشوف اللي انت شايفه. ودقيقة تجميع بتوفر ساعة أسئلة وأجوبة.",
+            how: R`الأقواس [[{ ...; }]] بتجمّع ناتج كذا أمر وتوجّهه مرة واحدة. الأمر الأول: النظام والموارد. التاني: حالة الـ containers وآخر ٥٠ سطر لوج ([[--no-color]] عشان الملف ميبقاش فيه رموز ألوان). التالت: أخطاء Nginx. الرابع: الرد من بره ومن جوه.
+
+الـ [[sed]] الأخير مهم: بيدوّر على أي [[password=]] أو [[secret=]] أو [[token=]] أو [[key=]] ويستبدل القيمة بنجوم، عشان لما تبعت الملف لحد أو تلزقه في محادثة متسرّبش أسرار. راجع الملف بعينك برضه قبل الإرسال.
+
+الملف ده هو اللي تبعته: فيه الأعراض (الـ status codes)، والحالة (ps)، والأدلة (اللوج)، والسياق (الموارد). أي حد يقدر يبدأ منه مباشرة.
+
+حوّله لسكربت [[diag.sh]] على كل سيرفر، وضيف عليه اللي يخص مشروعك (لوج التطبيق، حالة القاعدة). وقت العطل بتكتب أمر واحد.`,
+            when: "قبل ما تسأل أي حد. وكـ أول خطوة في أي عطل حتى لو هتحله لوحدك، لأنه بيرتّب الصورة.",
+            mistakes: "تبعت screenshot من الترمنال فيه سطرين. وتبعت لوج فيه DATABASE_URL كامل."
+          },
+          lines: [
+            "النظام والموارد في ملف.",
+            "حالة الـ containers وآخر لوج (من غير ألوان).",
+            "أخطاء Nginx.",
+            "الرد من بره ومن جوه.",
+            "اخفي أي password أو secret أو token في الملف.",
+            "راجعه قبل ما تبعته."
+          ]
+        }
+      ]
+    }
+  ]
+});

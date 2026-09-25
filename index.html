@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الترمنال بإيدك: bash و PowerShell و CMD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-shell="bash">
+
+<header class="hero wrap">
+  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
+  <h1>الترمنال بإيدك</h1>
+  <p class="lead">كل أمر هنا معاه شرح، ومثال تنسخه، وتجربة تعملها بنفسك. الأوامر متقسمة على ٣ مستويات: ابدأ بالمستوى ١، ومتنقلش للي بعده غير لما تكون علّمت على «جربتها» في أغلبه. الصفحة بتفتكر تقدمك.</p>
+  <div class="switch" role="tablist" aria-label="اختار الشيل">
+    <button class="sw" role="tab" data-s="start" aria-selected="false"><div class="top"><b>ابدأ من هنا</b><span>$ pwd</span></div><div class="bot">لو لسه بتبتدي: يعني إيه ترمنال، وإزاي تقرا أمر، والسيرفر والبورت و HTTP ببساطة</div></button>
+    <button class="sw" role="tab" data-s="wsl" aria-selected="false"><div class="top"><b>WSL على ويندوز</b><span>PS&gt; wsl --install</span></div><div class="bot">لينكس حقيقي جوه ويندوز: التسطيب، وفين تحط المشروع، و VS Code و Docker والشبكة والمشاكل المتكررة</div></button>
+    <button class="sw" role="tab" data-s="bash" aria-selected="true"><div class="top"><b>bash</b><span>$ ls -la</span></div><div class="bot">لينكس وماك وسيرفرات الـ VPS، وعلى ويندوز عن طريق WSL أو Git Bash</div></button>
+    <button class="sw" role="tab" data-s="git" aria-selected="false"><div class="top"><b>Git</b><span>(main)$ git status</span></div><div class="bot">نفس الأوامر في كل الشيلات. من أول commit لحد تصليح الغلطات</div></button>
+    <button class="sw" role="tab" data-s="vps" aria-selected="false"><div class="top"><b>VPS أوبونتو</b><span>$ sudo ufw status</span></div><div class="bot">إدارة سيرفر: تأمين ونشر وصيانة. مبني على تاب bash</div></button>
+    <button class="sw" role="tab" data-s="web" aria-selected="false"><div class="top"><b>المتصفح DevTools</b><span>&gt; fetch("/api/me")</span></div><div class="bot">Inspect و Network والـ status codes، وتبعت طلبات وتفهم الرد، وتفحص أي موقع</div></button>
+    <button class="sw" role="tab" data-s="node" aria-selected="false"><div class="top"><b>Node و npm</b><span>$ npm ci</span></div><div class="bot">نسخ Node والباكدجات والسكربتات، والإنتاج والتشخيص، و webhooks بوابات الدفع على جهازك</div></button>
+    <button class="sw" role="tab" data-s="pg" aria-selected="false"><div class="top"><b>PostgreSQL</b><span>app=# \d users</span></div><div class="bot">psql والصلاحيات والـ indexes و EXPLAIN، والباك أب اللي بيتجرّب، و migrations و Supabase</div></button>
+    <button class="sw" role="tab" data-s="docker" aria-selected="false"><div class="top"><b>Docker</b><span>$ docker compose up -d</span></div><div class="bot">images و containers، و Dockerfile صح، و Compose لمشروع كامل، والمشاكل على السيرفر</div></button>
+    <button class="sw" role="tab" data-s="gha" aria-selected="false"><div class="top"><b>GitHub Actions</b><span>$ gh run view --log-failed</span></div><div class="bot">CI مع كل push، و deploy على السيرفر بـ SSH، وموافقات، وإصدارات، و rollback من الموبايل</div></button>
+    <button class="sw" role="tab" data-s="nginx" aria-selected="false"><div class="top"><b>Nginx بعمق</b><span>$ nginx -t &amp;&amp; systemctl reload nginx</span></div><div class="bot">static و SPA و proxy كامل، وضغط وكاش وتحويلات وكذا موقع و rate limiting و WebSockets و blue-green</div></button>
+    <button class="sw" role="tab" data-s="diag" aria-selected="false"><div class="top"><b>التشخيص</b><span>$ curl -sI https://... | head -1</span></div><div class="bot">الموقع واقع: ٢٥ سيناريو بخطوات مرتبة، من 502 والديسك المليان لحد الاختراق والـ rollback</div></button>
+    <button class="sw" role="tab" data-s="sec" aria-selected="false"><div class="top"><b>أمان الموقع</b><span># تأمين مشاريعك</span></div><div class="bot">OWASP Top 10 بالكود الصح، وأدوات الفحص، وتشيك ليست قبل الرفع</div></button>
+    <button class="sw" role="tab" data-s="sshc" aria-selected="false"><div class="top"><b>ssh config</b><span>$ ssh prod</span></div><div class="bot">اسم لكل سيرفر، وأنماط، و jump hosts، ومفاتيح متعددة لـ GitHub، و tunnels في الملف</div></button>
+    <button class="sw" role="tab" data-s="ps" aria-selected="false"><div class="top"><b>PowerShell</b><span>PS&gt; Get-ChildItem</span></div><div class="bot">الشيل الحديث بتاع ويندوز، بيتعامل مع objects مش نص</div></button>
+    <button class="sw" role="tab" data-s="zsh" aria-selected="false"><div class="top"><b>zsh على الماك</b><span>% brew install tree</span></div><div class="bot">الشيل الافتراضي في الماك. هنا اللي بيختلف عن bash والحاجات الخاصة بالماك</div></button>
+    <button class="sw" role="tab" data-s="cmd" aria-selected="false"><div class="top"><b>CMD</b><span>C:\&gt; dir</span></div><div class="bot">الشيل القديم بتاع ويندوز، هتقابله في ملفات .bat وسكربتات قديمة</div></button>
+    <button class="sw" role="tab" data-s="glossary" aria-selected="false"><div class="top"><b>القاموس</b><span>$ man terms</span></div><div class="bot">كل مصطلح في سطرين: PID و daemon و socket و TTL و HMAC وغيرهم، مع أمر بيوريه ومكان شرحه</div></button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="intro">
+    <div>
+      <h2>مين فيهم تستخدمه إمتى</h2>
+      <p><b>الترمنال</b> هو الشباك اللي بتكتب فيه، و<b>الشيل</b> هو البرنامج اللي بيفهم اللي انت كاتبه وينفذه. Windows Terminal مثلًا شباك ممكن تفتح فيه PowerShell أو CMD أو bash.</p>
+      <p><b>bash</b> أهم واحد تتقنه لو شغلك فيه سيرفرات: أي VPS لينكس، Docker containers، و CI/CD كلها bash. ترمنال أوبونتو بيفتح عليه افتراضيًا (<code>Ctrl+Alt+T</code>)، وعلى ويندوز شغّله بـ <code>wsl --install</code>. كل أمر في تاب bash عليه علامة بتقولك شغال على الماك ولا لأ.</p>
+      <p><b>zsh</b> الشيل الافتراضي في الماك، ومتوافق مع bash في معظم الشغل اليومي. اتعلم تاب bash الأول، وبعدين تاب zsh للفروق وأوامر الماك.</p>
+      <p><b>PowerShell</b> لشغلك اليومي على ويندوز. أقوى بكتير من CMD لأن الـ pipe فيه بيعدّي objects ليها properties، فتقدر تفلتر وترتب من غير ما تقطّع نصوص.</p>
+      <p class="muted">CMD اعرف أساسياته بس، كفاية تقرا بيه سكربت .bat وتحل مشكلة سريعة.</p>
+    </div>
+    <div class="lab">
+      <h3>جهّز مكان التجربة الأول</h3>
+      <p id="labTxt"></p>
+      <div id="labBox"></div>
+    </div>
+  </div>
+  <div class="path">
+    <h2>ترتيب المذاكرة</h2>
+    <ol>
+      <li><button type="button" data-go="start" data-lv="0">ابدأ من هنا</button>: المفاهيم الأساسية بالراحة. متتخطاهاش حتى لو حاسس إنك فاهم.</li>
+      <li><button type="button" data-go="wsl" data-lv="1">WSL</button> لو على ويندوز: بعد «ابدأ من هنا» على طول، عشان تاب bash يشتغل عندك.</li>
+      <li><button type="button" data-go="bash" data-lv="1">bash المستوى ١</button>: التنقل والملفات والقراءة.</li>
+      <li><button type="button" data-go="git" data-lv="1">Git المستوى ١</button>: commit و log و diff و .gitignore. هتستخدمهم كل يوم.</li>
+      <li><button type="button" data-go="vps" data-lv="1">VPS المستوى ١</button> على ماكينة تجربة: apt و tmux و vim.</li>
+      <li><button type="button" data-go="bash" data-lv="2">bash المستوى ٢</button>: البحث والـ pipes والصلاحيات والعمليات وأساسيات الشبكات.</li>
+      <li><button type="button" data-go="git" data-lv="2">Git المستوى ٢</button>: branches و GitHub والـ conflicts.</li>
+      <li><button type="button" data-go="vps" data-lv="2">VPS المستوى ٢</button>: اليوزرز وتأمين SSH والفايروول و Nginx و SSL و Docker.</li>
+      <li><button type="button" data-go="bash" data-lv="3">bash المستوى ٣</button>: معالجة النصوص و jq والشبكات بعمق ولغة السكربتات.</li>
+      <li><button type="button" data-go="git" data-lv="3">Git المستوى ٣</button>: تصليح أي غلطة، و rebase، و reflog.</li>
+      <li><button type="button" data-go="vps" data-lv="3">VPS المستوى ٣</button>: cron والباك أب و systemd، وبعدين التحدي الكبير.</li>
+      <li><button type="button" data-go="web" data-lv="1">المتصفح المستوى ١</button> و <button type="button" data-go="web" data-lv="2">٢</button> مع أي مشروع ويب شغال عليه، و <button type="button" data-go="web" data-lv="3">٣</button> بعد bash المستوى ٣.</li>
+      <li><button type="button" data-go="node" data-lv="1">Node و npm المستوى ١</button> مع أول مشروع Node، و <button type="button" data-go="node" data-lv="3">٣</button> لما تبدأ تكامل دفع.</li>
+      <li><button type="button" data-go="pg" data-lv="1">PostgreSQL المستوى ١</button> مع أول قاعدة بيانات، و <button type="button" data-go="pg" data-lv="3">٣</button> قبل أول إنتاج حقيقي.</li>
+      <li><button type="button" data-go="docker" data-lv="1">Docker المستوى ١</button> بعد VPS المستوى ٢، و <button type="button" data-go="docker" data-lv="3">٣</button> قبل ما تعمل deploy حقيقي.</li>
+      <li><button type="button" data-go="gha" data-lv="1">GitHub Actions المستوى ١</button> بعد Git المستوى ٢، و <button type="button" data-go="gha" data-lv="3">٣</button> لما تبقى عايز deploy أوتوماتيك.</li>
+      <li><button type="button" data-go="diag" data-lv="1">التشخيص</button> بعد أول سيرفر حقيقي: اقراه مرة وهو شغال، وارجعله وقت العطل.</li>
+      <li><button type="button" data-go="sec" data-lv="1">أمان الموقع المستوى ١</button> بعد ما تبقى مرتاح في bash و Git و VPS و DevTools.</li>
+      <li><button type="button" data-go="sshc" data-lv="1">ssh config</button> مع تاني سيرفر. و <button type="button" data-go="glossary" data-lv="1">القاموس</button> مرجع لأي كلمة مش فاهمها.</li>
+      <li><button type="button" data-go="nginx" data-lv="1">Nginx بعمق</button> بعد VPS المستوى ٢، ولما تبقى عايز أكتر من موقع على السيرفر.</li>
+      <li><button type="button" data-go="ps" data-lv="0">PowerShell</button> أو <button type="button" data-go="zsh" data-lv="0">zsh</button> حسب جهازك، و <button type="button" data-go="cmd" data-lv="0">CMD</button> في الآخر.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="row">
+      <label class="search"><span aria-hidden="true">⌕</span><input id="q" type="search" placeholder="دوّر على أمر أو شرح… مثلًا grep أو بورت" aria-label="بحث في الأوامر"><kbd>/</kbd></label>
+      <div class="prog"><span id="shellName">bash</span>: جربت <b id="doneN">0</b> من <span id="allN">0</span></div>
+    </div>
+    <div class="meter"><i id="meter"></i></div>
+    <div class="lvls" role="group" aria-label="المستوى">
+      <button type="button" class="lv" data-l="0" aria-pressed="true">كل المستويات</button>
+      <button type="button" class="lv" data-l="1" aria-pressed="false">١ البداية</button>
+      <button type="button" class="lv" data-l="2" aria-pressed="false">٢ المتوسط</button>
+      <button type="button" class="lv" data-l="3" aria-pressed="false">٣ المتقدم</button>
+      <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات عشوائية من التاب والمستوى اللي انت فيهم، والأوامر اللي بتنساها بتتكرر أكتر">اختبرني</button>
+      <button type="button" class="quiz-btn" id="todoBtn" aria-pressed="false" title="بيخبّي الأوامر اللي علّمت عليها «جربتها»">اللي فاضل بس</button>
+      <button type="button" class="quiz-btn" id="briefBtn" aria-pressed="false" title="بيخبّي الشرح العميق ويسيب الخلاصة والمثال، للمراجعة السريعة">شرح مختصر</button>
+      <button type="button" class="quiz-btn" id="quizBtn" aria-pressed="false" title="بيخبّي الأوامر والشرح، وانت تفتكر الأمر من الوصف">وضع المراجعة</button>
+    </div>
+    <nav class="chips" id="chips" aria-label="الأقسام"></nav>
+  </div>
+</div>
+
+<main class="wrap" id="list"></main>
+
+<div class="wrap">
+  <section class="block" id="compare">
+    <h2>نفس المهمة في التلاتة</h2>
+    <p>أسرع طريقة تثبّت بيها: شوف المهمة، وحاول تفتكر الأمر في الشيل اللي بتتعلمه قبل ما تبص على العمود بتاعه.</p>
+    <div class="tbl"><table id="cmpT"></table></div>
+  </section>
+
+  <section class="block" id="missions">
+    <h2>تحديات تجمع كذا أمر مع بعض</h2>
+    <p>حل كل تحدي بنفسك الأول، وبعدين افتح الحل وقارن. التحديات دي شبه مواقف هتقابلك فعلًا في الشغل.</p>
+    <div id="mBox"></div>
+  </section>
+</div>
+
+<footer class="wrap">
+  لما تنسى أي أمر: <code>man grep</code> في bash، <code>Get-Help Copy-Item -Examples</code> في PowerShell، و <code>xcopy /?</code> في CMD.
+  <p>تقدمك وملاحظاتك محفوظين في المتصفح ده بس. خد نسخة منهم عشان متضيعش لو مسحت بيانات المتصفح أو غيّرت الجهاز.</p>
+  <div class="tools">
+    <button type="button" class="quiz-btn" id="exportBtn">نزّل نسخة من تقدمي</button>
+    <button type="button" class="quiz-btn" id="importBtn">رجّع نسخة</button>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+    <button type="button" class="quiz-btn" id="resetBtn">صفّر تقدم التاب ده</button>
+    <button type="button" class="quiz-btn" id="printBtn">اطبع التاب (أو احفظه PDF)</button>
+  </div>
+</footer>
+
+<dialog id="fc" aria-labelledby="fcQ">
+  <div class="fc-head"><span id="fcMeta"></span><button type="button" class="fc-x" id="fcClose" aria-label="قفل">✕</button></div>
+  <p class="fc-q" id="fcQ"></p>
+  <p class="fc-hint" id="fcHint"></p>
+  <div class="fc-ans" id="fcAns" hidden></div>
+  <div class="fc-actions">
+    <button type="button" id="fcShow">اكشف الإجابة</button>
+    <button type="button" id="fcKnow" hidden>عرفتها</button>
+    <button type="button" id="fcMiss" hidden>لسه، كرّرها</button>
+  </div>
+  <p class="fc-stat" id="fcStat"></p>
+</dialog>
+
+<script src="js/core.js"></script>
+<script src="js/tabs/start.js"></script>
+<script src="js/tabs/bash.js"></script>
+<script src="js/tabs/ps.js"></script>
+<script src="js/tabs/cmd.js"></script>
+<script src="js/tabs/zsh.js"></script>
+<script src="js/tabs/vps.js"></script>
+<script src="js/tabs/git.js"></script>
+<script src="js/tabs/web.js"></script>
+<script src="js/tabs/sec.js"></script>
+<script src="js/tabs/docker.js"></script>
+<script src="js/tabs/node.js"></script>
+<script src="js/tabs/pg.js"></script>
+<script src="js/tabs/diag.js"></script>
+<script src="js/tabs/gha.js"></script>
+<script src="js/tabs/wsl.js"></script>
+<script src="js/tabs/nginx.js"></script>
+<script src="js/tabs/sshc.js"></script>
+<script src="js/tabs/glossary.js"></script>
+<script src="js/extras.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

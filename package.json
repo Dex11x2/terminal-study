@@ -1,0 +1,9 @@
+{
+  "name": "terminal-study",
+  "private": true,
+  "description": "الترمنال بإيدك: صفحة مذاكرة للترمنال وإدارة السيرفرات",
+  "scripts": {
+    "check": "node tools/check.js",
+    "build": "node tools/check.js && node tools/build.js"
+  }
+}
