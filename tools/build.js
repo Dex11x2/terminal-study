@@ -12,7 +12,8 @@ html = html.replace(/<link rel="(manifest|icon|apple-touch-icon)"[^>]*>\n?/g, ''
 html = html.replace(/<link rel="stylesheet" href="([^"]+)">/g, (_, f) => '<style>\n' + read(f) + '</style>');
 const srcs = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]);
 if (!srcs.length) throw new Error('مفيش <script src> في index.html');
-const js = srcs.map(f => '/* ===== ' + f + ' ===== */\n' + read(f)).join('\n');
+// lessons about HTML can show </script>, which would end the inline <script>, so the < goes in as $__lt and core.js restores it
+const js = srcs.map(f => '/* ===== ' + f + ' ===== */\n' + (f.startsWith('js/tabs/') ? read(f).replace(/<(?=\/script)/gi, '$__lt') : read(f))).join('\n');
 if (/<\/script/i.test(js)) throw new Error('فيه </script> جوه الكود، هيكسر الملف الواحد');
 html = html.replace(/(?:<script src="[^"]+"><\/script>\n?)+/, () => '<script>\n' + js + '</script>\n');
 
