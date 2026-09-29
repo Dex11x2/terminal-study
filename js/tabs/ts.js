@@ -63,7 +63,12 @@ total("50", 2); // خطأ: Argument of type 'string' is not assignable to parame
             "قفلة الدالة.",
             "نداء سليم: الأنواع ماشية.",
             R`نداء غلط: TS بيعلّم عليه في المحرر وفي [[tsc]] قبل ما تشغّل حاجة.`
-          ]
+          ],
+          sol: R`في تاب «.JS» هتلاقي الدالة بقت [[function total(price, qty) {]] من غير [[: number]] ولا نوع الرجوع، والنداءين زي ما هما. وفي تاب Errors هتلاقي الخطأ على [[total("50", 2)]]: Argument of type 'string' is not assignable to parameter of type 'number' (TS2345).
+
+بعد ما تكتب [[total(Number("50"), 2)]] الخطأ بيختفي، لأن [[Number()]] بترجّع number. وبص على الـ JS تاني: السطر اتنقل زي ما هو، يعني التحويل ده كود حقيقي بيشتغل، مش نوع. وده الفرق: الأنواع اتمسحت، والكود اللي انت كتبته بإيدك هو اللي فضل.
+
+ملحوظة مهمة: حتى وفيه خطأ، الـ Playground (و [[tsc]] العادي) بيطلّع JS برضه، وفيه [[total("50", 2)]] اللي هترجع 100 عادي لأن JS بيحوّل. الخطأ مش بيمنع التشغيل لوحده، ولو عايز ده في مشروعك استخدم [[noEmitOnError]] أو افحص بـ [[tsc --noEmit]] في الـ CI.`
         },
         {
           cmd: "tsc و tsx",
@@ -99,7 +104,12 @@ npx tsc`,
             "Node 24 بيشغّل .ts مباشرة لو الكود أنواع بس (مفيش enum)، ومن غير فحص برضه.",
             "افحص أنواع المشروع كله من غير ما تطلّع ملفات.",
             R`افحص وطلّع JS. [[tsc --init]] بيسيب [[outDir]] متعلّق عليه، فشيل التعليق عن [["outDir": "./dist"]] (و [[rootDir]]) الأول، وبعدها الناتج يطلع في dist وتشغّله في الإنتاج بـ [[node dist/index.js]]. من غيره الـ .js بيتحط جنب الـ .ts.`
-          ]
+          ],
+          sol: R`[[npx tsx src/index.ts]] بيطبع [[5]] ومن غير أي تحذير، لأن tsx بيشيل الأنواع ويشغّل من غير ما يفحص. و [[npx tsc --noEmit]] بيطلّع:
+
+[[src/index.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.]] ومعاه exit code 1 (اتأكد بـ [[echo $?]])، وده اللي بيخلي الـ CI يقع.
+
+ونفس الكلام لو جربت [[node src/index.ts]] على Node حديث: هيطبع 5، لأنه برضه بيشيل الأنواع بس. لو [[tsc --noEmit]] مطلّعش حاجة، اتأكد إن الملف جوه [[src]] وإن [[tsconfig.json]] موجود في نفس الفولدر اللي بتشغّل منه.`
         }
       ]
     },
@@ -147,7 +157,10 @@ age = "28"; // خطأ: Type 'string' is not assignable to type 'number'`,
             "نداء سليم.",
             R`ناقص باراميتر: خطأ. في JS كان هيبقى [[undefined]] بهدوء.`,
             "المتغير اتعرّف number، فمينفعش يبقى string بعد كده."
-          ]
+          ],
+          sol: R`لما تخلي نوع الرجوع [[: number]]، الخطأ بيطلع جوه الدالة على سطر [[return]] (مرتين، مرة لكل فرع في الـ ternary): Type 'string' is not assignable to type 'number'. النداء [[greet("sara", true)]] ملوش ذنب، والمشكلة إن اللي بتقوله الدالة عن نفسها مش ماشي مع اللي بترجّعه فعلًا. وده فايدة إنك تكتب نوع الرجوع: الخطأ بيطلع في مكانه بدل ما يطلع بعيد عند اللي بيستخدم الدالة.
+
+ولما تمسح [[: string]] من [[name]]: Parameter 'name' implicitly has an 'any' type (TS7006). ده [[noImplicitAny]] اللي جوه [[strict]]. لو مطلعش الخطأ ده يبقى [[strict]] مقفول في الـ tsconfig أو في إعدادات الـ Playground.`
         },
         {
           cmd: "type inference",
@@ -188,7 +201,10 @@ count = "1"; // خطأ: النوع اتحدد number من أول قيمة`,
             R`[[toUpperCase]] بترجع string، فالدالة بترجع string.`,
             "قفلة الدالة.",
             "مينفعش: النوع اتحدد من أول قيمة."
-          ]
+          ],
+          sol: R`هتلاقي: [[count]] نوعه [[number]]، و [[method]] نوعه [["GET"]] بالظبط، و [[status]] نوعه [[string]]، و [[ids]] نوعه [[number[]]]، و [[doubled]] برضه [[number[]]]، و [[toUpper]] بتظهر [[(s: string) => string]].
+
+بعد ما تغيّر [[const method]] لـ [[let method]] النوع بيبقى [[string]]. السبب: [[let]] ممكن تتغير بعدين، فـ TS بيوسّع القيمة للنوع العام، أما [[const]] مش هتتغير، فبيسيبها literal. ولو لقيت [[method]] لسه [["GET"]]، اتأكد إنك مش بتبص على نسخة قديمة من الملف قبل الحفظ.`
         },
         {
           cmd: "function types",
@@ -239,7 +255,20 @@ sum(1, 2, 3); // 6`,
             R`الـ callback أخد نوع [[id]] من [[Handler]] لوحده.`,
             "الباقي اختياري.",
             "أي عدد باراميترات."
-          ]
+          ],
+          sol: R`[[onEach(["a"], (id: number) => {})]] بيطلّع TS2345: Argument of type '(id: number) => void' is not assignable to parameter of type 'Handler'، وتحتها Types of parameters 'id' and 'id' are incompatible. Type 'string' is not assignable to type 'number'. يعني الدالة بتاعتك مستنية number، و [[onEach]] هتبعتلها string.
+
+والـ Comparator زي الكود تحت. لاحظ إن [[a]] و [[b]] مكتوبلهمش نوع لأنهم بياخدوه من [[Comparator]]. الناتج: [[[ 'Sara', 'Omar' ]]] بالسن، و [[[ 'Omar', 'Sara' ]]] بالاسم. واستخدمنا [[[...users].sort]] عشان [[sort]] بتغيّر الـ array الأصلي.`,
+          solCode: R`type User = { id: number; name: string; age: number };
+type Comparator = (a: User, b: User) => number;
+const byAge: Comparator = (a, b) => a.age - b.age;
+const byName: Comparator = (a, b) => a.name.localeCompare(b.name);
+const users: User[] = [
+  { id: 1, name: "Sara", age: 22 },
+  { id: 2, name: "Omar", age: 27 },
+];
+console.log([...users].sort(byAge).map((u) => u.name));  // [ 'Sara', 'Omar' ]
+console.log([...users].sort(byName).map((u) => u.name)); // [ 'Omar', 'Sara' ]`
         },
         {
           cmd: "arrays و tuples",
@@ -280,7 +309,17 @@ const third = point[2]; // خطأ: الـ tuple طوله 2 بس`,
             "النوع بيمنع حاجة غلط تدخل الليستة.",
             R`[[readonly]] شال الـ methods اللي بتعدّل.`,
             "TS عارف الطول، فالمكان التالت غلط."
-          ]
+          ],
+          sol: R`مع [[[boolean, () => void]]] الاستخدام [[const [on, toggle] = useToggle()]] بيدي [[on: boolean]] و [[toggle: () => void]]. لما تشيل نوع الرجوع TS بيستنتج [[(boolean | (() => void))[]]]: array عادي، كل عنصر فيه ممكن يبقى أي واحد من الاتنين، فـ [[toggle()]] بتطلّع This expression is not callable. Not all constituents of type 'boolean | (() => void)' are callable.
+
+ومع [[return [on, toggle] as const]] النوع بيبقى [[readonly [boolean, () => void]]]: tuple تاني، و [[toggle()]] شغالة. ده بالظبط سبب إن custom hooks اللي بترجّع array لازم يا تكتب نوع الرجوع يا [[as const]].`,
+          solCode: R`function useToggle(initial = false) {
+  let on = initial;
+  const toggle = () => { on = !on; };
+  return [on, toggle] as const; // readonly [boolean, () => void]
+}
+const [on, toggle] = useToggle();
+toggle();`
         }
       ]
     },
@@ -330,7 +369,10 @@ const bad: User = { id: 2, name: "Mona" }; // خطأ: email ناقصة`,
             "مقبول برضه: structural typing.",
             "object مكتوب مباشرة وفيه اسم غلط: excess property check مسكه.",
             "خاصية إجبارية ناقصة."
-          ]
+          ],
+          sol: R`بعد ما تمسح [[email]] من [[admin]]: الخطأ بيطلع على [[sendWelcome(admin)]]: Property 'email' is missing in type '{ name: string; role: string; }' but required in type '{ name: string; email: string; }' (TS2741). الـ object نفسه مفيهوش غلط، الغلط لما تبعته لحاجة محتاجة [[email]].
+
+و [[sendWelcome({ ...admin, extra: 1 })]] (بعد ما ترجّع email) بيطلّع: Object literal may only specify known properties, and 'extra' does not exist (TS2353). يعني الخاصية الزيادة اللي كاتبها بإيدك في الـ literal بتتمسك، أما [[role]] اللي جاية من الـ spread بتعدّي عادي. ده excess property check: بيشتغل بس على الخصايص المكتوبة صريح في object literal، مش على متغير جاهز.`
         },
         {
           cmd: "? و readonly",
@@ -375,7 +417,10 @@ const city = p.address?.city;`,
             "TS مش هيسيبك تنادي method على حاجة ممكن تكون undefined.",
             R`[[?.]] بيرجع undefined لو phone مش موجود، و [[??]] بيحط البديل.`,
             R`نوعها [[string | undefined]].`
-          ]
+          ],
+          sol: R`[[const copy = { ...p, id: "x" }]] مفيهوش أي خطأ: [[readonly]] بتمنع تغيير الخاصية على نفس الـ object، إنما انت هنا بتعمل object جديد خالص.
+
+وبعد ما تغيّر [[phone?: string]] لـ [[phone: string | undefined]]: [[const p]] بيطلّع Property 'phone' is missing in type '{ id: string; name: string; }' but required in type 'Profile'. الفرق: [[?]] معناها الخاصية ممكن متكونش موجودة أصلًا، و [[string | undefined]] معناها لازم تكتبها حتى لو قيمتها undefined، يعني [[{ id: "u1", name: "Sara", phone: undefined }]].`
         },
         {
           cmd: "type و interface",
@@ -424,7 +469,10 @@ declaration merging: لو عرّفت نفس الـ interface مرتين، TS ب�
             "بقت جزء من User في كل مكان.",
             "قفلة.",
             "Admin دلوقتي فيه id و name و permissions، و avatarUrl الاختيارية."
-          ]
+          ],
+          sol: R`[[type User]] مرتين بيطلّع [[Duplicate identifier 'User']] (TS2300) على الاتنين، لأن type مش بيتدمج زي interface.
+
+و [[interface Bad extends User { name: number }]] بيطلّع خطأ فورًا على [[Bad]]: Interface 'Bad' incorrectly extends interface 'User'. Types of property 'name' are incompatible (TS2430). أما [[type Bad2 = User & { name: number }]] بيعدّي، و [[name]] فيه بقى [[string & number]] يعني [[never]]. أول ما تكتب [[const x: Bad2 = { id: "1", name: 5 }]] تاخد Type 'number' is not assignable to type 'never'، ورسالة زي دي صعب تفهم منها السبب. عشان كده extends أوضح لما بتبني نوع على نوع.`
         }
       ]
     },
@@ -476,7 +524,10 @@ formatId(true); // خطأ: boolean مش من ضمن الاتنين`,
             "قفلة.",
             "رقم: مقبول.",
             "نوع مش في الـ union."
-          ]
+          ],
+          sol: R`الخطأ بيطلع على [[return id.toFixed(0)]]: Property 'toFixed' does not exist on type 'number | boolean' (TS2339). بعد الـ if اللي شال string، اللي فاضل [[number | boolean]]، و [[toFixed]] مش موجودة على boolean.
+
+والحل إنك تفحص boolean كمان، مثلًا [[if (typeof id === "boolean") return id ? "yes" : "no";]] قبل [[toFixed]]. والفكرة: كل ما تزوّد نوع في union، TS بيوريك كل مكان في الكود افترض إن الأنواع أقل.`
         },
         {
           cmd: "literal types",
@@ -521,7 +572,10 @@ TS بيستنتج الـ literal لما القيمة مستحيل تتغير ([[
             "string أوسع من Method، فمرفوض.",
             R`[[const]]: النوع [["GET"]] بالظبط.`,
             "يعدّي."
-          ]
+          ],
+          sol: R`بعد [[request("/x", "]] المحرر بيعرض [[DELETE]] و [[GET]] و [[POST]] و [[PUT]] بس، مش أي string. ولو ظهرتلك اقتراحات كتير عشوائية، غالبًا انت في ملف .js أو مفيش TypeScript شغال في المحرر.
+
+وبعد [[let m: Method = "GET"]] الخطأ على [[request("/api/users", m)]] بيختفي، لأن نوع [[m]] بقى [[Method]] مش [[string]]. ولسه الأمان موجود: لو كتبت [[m = "PATCH"]] بعدها هتاخد خطأ عند الـ assignment نفسه.`
         },
         {
           cmd: "null و undefined",
@@ -570,7 +624,10 @@ TS بيضيّق النوع بعد أي فحص: [[if (found)]]، و [[if (found !
             "دالة بتقول صراحة إنها ممكن ترجع null.",
             R`لو [[find]] رجّعت undefined، رجّع null بدالها.`,
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تقفل [[strictNullChecks]] الخطأين بيختفوا: [[found.name]] و [[input.value]] بيعدّوا عادي، و [[found]] نوعها بقى [[User]] مش [[User | undefined]]. بس الكود لسه غلط: [[users.find]] بترجع undefined لأن مفيش user برقم 2، ولو شغلته هتاخد [[TypeError: Cannot read properties of undefined (reading 'name')]].
+
+يعني الإعداد ده مش بيصلّح حاجة، بيخبي الـ crash. رجّعه، وخلي كل مكان TS اشتكى فيه يتعامل مع الحالة الفاضية بـ if أو [[?.]] و [[??]].`
         },
         {
           cmd: "any و unknown و never",
@@ -623,7 +680,10 @@ function fail(msg: string): never {
             R`[[never]]: الدالة دي مبترجعش أبدًا.`,
             "دايمًا بترمي.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تخلي [[u]] نوعها any، كل الأخطاء بتختفي. ولما تشغّل بـ tsx، اللي بيقع هو السطر التاني [[a.foo.bar.baz()]]: [[TypeError: Cannot read properties of undefined (reading 'bar')]]، لأن [[a.foo]] قيمتها undefined، وأي سطر بعده مش هيتنفذ. أما [[u.foo]] لوحدها مش بتوقّع حاجة، بترجّع undefined بصمت.
+
+و [[const n: never = 5]] بيطلّع Type '5' is not assignable to type 'never' (TS2322): مفيش أي قيمة ينفع تتحط في never، ودي نفس الفكرة اللي بيقوم عليها exhaustive check.`
         },
         {
           cmd: "enum ولا union",
@@ -670,7 +730,10 @@ Object.values(Status).forEach((s) => console.log(s));`,
             "تنفع بالاسم من الـ object.",
             "وبالنص مباشرة.",
             "والقيم موجودة وقت التشغيل، فتقدر تلف عليها (dropdown مثلًا)."
-          ]
+          ],
+          sol: R`[[node file.ts]] بيقع قبل ما ينفّذ أي سطر: [[SyntaxError [ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]: TypeScript enum is not supported in strip-only mode]]. Node بيشيل الأنواع بس، و enum مش نوع، ده كود بيطلّع object وقت التشغيل، فـ Node مش عارف يعمل بيه إيه.
+
+بعد ما تشيل الـ enum (وكل حاجة بتستخدم [[RoleEnum]]) الملف بيشتغل ويطبع [[ACTIVE]] وبعدين [[BANNED]]. الـ [[as const]] نوع بس فبيتشال، والـ object عادي. ولو لسه بيقع بنفس الخطأ، دوّر على [[enum]] تاني أو [[namespace]] أو parameter properties في الكلاسات، ودول برضه مش مسموحين في strip-only.`
         }
       ]
     },
@@ -732,7 +795,10 @@ function total(items: number | number[]) {
             "رقم أو ليستة أرقام.",
             R`[[Array.isArray]] بيضيّق للـ array في فرع وللرقم في التاني.`,
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تمسح سطر [[value === null]]: [[value.toFixed(2)]] بيطلّع 'value' is possibly 'null' (TS18047). بعد typeof و instanceof اللي فاضل [[number | null]]، ومحدش شال null.
+
+ولو غيّرت instanceof لـ [[typeof value === "object"]]، النوع جوه الـ if بيبقى [[Date | null]] مش Date بس، لأن [[typeof null]] بيرجّع "object" (غلطة قديمة في JS). فـ [[value.toISOString()]] جواه بيطلّع نفس الخطأ 'value' is possibly 'null'. عشان كده instanceof أو فحص null الأول.`
         },
         {
           cmd: "discriminated unions",
@@ -781,7 +847,10 @@ function render(s: FetchState) {
             R`...و [[s.error]] موجودة.`,
             "قفلة الـ switch.",
             "قفلة الدالة."
-          ]
+          ],
+          sol: R`[[s.data]] جوه [[case "loading"]] بيطلّع Property 'data' does not exist on type '{ status: "loading"; }' (TS2339): جوه الـ case ده TS عارف إنها حالة loading بالظبط.
+
+ولما تضيف [[{ status: "idle" }]]، غالبًا مش هتلاقي أي خطأ: الدالة من غير نوع رجوع، فـ TS بيعتبر إنها ممكن ترجّع undefined لحالة idle ويسكت. لو كتبت نوع الرجوع [[: string]] هتاخد Function lacks ending return statement and return type does not include 'undefined' (TS2366)، وده تلميح بس، مش بيقولك أنهي حالة ناقصة. الدرس الجاي بيخلي الخطأ واضح ويسمّي الحالة.`
         },
         {
           cmd: "exhaustive check",
@@ -832,7 +901,10 @@ function area(s: Shape): number {
             "قفلة الـ default.",
             "قفلة الـ switch.",
             "قفلة الدالة."
-          ]
+          ],
+          sol: R`بعد [[case "rect"]] الخطأ بيختفي، لأن كل الحالات اتغطت واللي فاضل لـ default هو [[never]].
+
+ولما تضيف [[{ kind: "triangle"; base: number; height: number }]] الخطأ بيرجع على نفس السطر [[const unhandled: never = s]]: Type '{ kind: "triangle"; base: number; height: number; }' is not assignable to type 'never'. الرسالة فيها اسم الحالة الناقصة بالظبط. ولو مطلعش خطأ، اتأكد إن الـ default فيه [[never]] فعلًا، مش [[default: return 0]].`
         },
         {
           cmd: "type predicates (is)",
@@ -883,7 +955,22 @@ const clean = mixed.filter((x) => x !== undefined);`,
             R`guard للأدوار. [[includes]] على tuple ثابت مبتقبلش string، فبنوسّعه لـ [[readonly string[]]] الأول.`,
             "ليستة فيها undefined.",
             R`من TS 5.5، [[filter]] بفحص بسيط بيستنتج guard لوحده: الناتج [[string[]]].`
-          ]
+          ],
+          sol: R`لما [[isUser]] ترجّع [[boolean]]: [[data.name]] جوه الـ if بيطلّع 'data' is of type 'unknown' (TS18046). الـ boolean ملوش علاقة بـ [[data]] في نظر TS، إنما [[x is User]] بتقوله «لو رجّعت true، اعتبر x ده User».
+
+والـ assertion زي الكود تحت: بعد [[assertUser(data)]] السطر اللي بعده بيعرف إن [[data]] بقت User من غير if، والناتج [[Sara]]. ولو الداتا غلط، الدالة بترمي [[Error: مش User]] والكود اللي بعدها مش بيتنفذ. غلطة شائعة: تكتبها arrow function [[const assertUser = (x: unknown): asserts x is User => ...]] فتاخد TS2775 (Assertions require every name in the call target to be declared with an explicit type annotation). يا تكتبها function عادية، يا تدي الثابت نوع صريح.`,
+          solCode: R`type User = { id: string; name: string };
+function isUser(x: unknown): x is User {
+  return typeof x === "object" && x !== null &&
+    "id" in x && typeof x.id === "string" &&
+    "name" in x && typeof x.name === "string";
+}
+function assertUser(x: unknown): asserts x is User {
+  if (!isUser(x)) throw new Error("مش User");
+}
+const data: unknown = JSON.parse('{"id":"1","name":"Sara"}');
+assertUser(data);
+console.log(data.name); // Sara`
         }
       ]
     },
@@ -937,7 +1024,16 @@ const p = pair("age", 27);                  // [string, number]`,
             "بيرجع tuple.",
             "قفلة.",
             "كل مكان في الـ tuple بنوعه."
-          ]
+          ],
+          sol: R`مع [[last<T>]] الناتج نوعه [[{ id: number; name: string } | undefined]]، فلما تكتب [[u?.]] المحرر بيكمّلك [[id]] و [[name]]. والناتج [[Omar]]، و [[last([])]] بترجع [[undefined]] (وده سبب [[| undefined]] في النوع).
+
+مع [[any[]]] الناتج [[any]]: التكملة بتروح، وأي غلطة إملائية زي [[u.nmae]] بتعدّي من غير خطأ وترجع undefined وقت التشغيل.`,
+          solCode: R`function last<T>(arr: T[]): T | undefined {
+  return arr[arr.length - 1];
+}
+const users = [{ id: 1, name: "Sara" }, { id: 2, name: "Omar" }];
+const u = last(users);
+console.log(u?.name); // Omar`
         },
         {
           cmd: "generic constraints",
@@ -984,7 +1080,15 @@ pluck(users, "email"); // خطأ: "email" مش من مفاتيح العنصر`,
             "قفلة.",
             R`[[string[]]]، لأن name نوعها string.`,
             "مفتاح مش موجود."
-          ]
+          ],
+          sol: R`[[sortBy(users, "name")]] بيرجّع [[[ 'Omar', 'Sara' ]]]، و [[sortBy(users, "email")]] بيطلّع: Argument of type '"email"' is not assignable to parameter of type '"id" | "name"' (TS2345). والمحرر بيقترحلك المفتاحين دول بس.
+
+ولما تشيل [[extends keyof T]]، الخطأ بيتنقل لجوه الدالة: [[a[key]]] بيطلّع Type 'K' cannot be used to index type 'T' (TS2536)، لأن K بقت أي نوع، و TS مش ضامن إنها مفتاح في T.`,
+          solCode: R`function sortBy<T, K extends keyof T>(items: T[], key: K): T[] {
+  return [...items].sort((a, b) => (a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0));
+}
+const users = [{ id: "u2", name: "Sara" }, { id: "u1", name: "Omar" }];
+console.log(sortBy(users, "name").map((u) => u.name)); // [ 'Omar', 'Sara' ]`
         },
         {
           cmd: "generic types و defaults",
@@ -1027,7 +1131,22 @@ const b2: Box<number> = { value: 5 };`,
             "باراميتر ليه قيمة افتراضية.",
             "من غير ما تحدد، T هي string.",
             "أو تحدده."
-          ]
+          ],
+          sol: R`الحل تحت: [[Result<number>]] معناها [[E]] أخدت الـ default بتاعها string. [[parseAge("27")]] بعد الفحص بـ [[if (r.ok)]] بتديك [[r.value + 1]] = [[28]]، و [[parseAge("abc")]] بترجع [[{ ok: false, error: '«abc» مش سن صحيح' }]].
+
+الغلطة الشائعة: تعمل [[{ ok: boolean; value?: T; error?: E }]] object واحد. ساعتها [[if (r.ok)]] مش بتضيّق حاجة، و [[r.value]] هتفضل [[number | undefined]]. الـ union بـ [[ok: true]] و [[ok: false]] هو اللي بيخلي TS يعرف أنهي حالة.`,
+          solCode: R`type Result<T, E = string> = { ok: true; value: T } | { ok: false; error: E };
+function parseAge(input: string): Result<number> {
+  const n = Number(input);
+  if (!Number.isInteger(n) || n < 0 || n > 150) {
+    return { ok: false, error: $__bt«$__{input}» مش سن صحيح$__bt };
+  }
+  return { ok: true, value: n };
+}
+const r = parseAge("27");
+if (r.ok) console.log(r.value + 1); // 28
+else console.log(r.error);
+console.log(parseAge("abc")); // { ok: false, error: '«abc» مش سن صحيح' }`
         }
       ]
     },
@@ -1079,7 +1198,10 @@ type AnyRole = (typeof ROLES)[number]; // "admin" | "user" | "guest"`,
             "ينفع تنزل جوه.",
             "ليستة ثابتة.",
             R`[[[number]]] يعني «نوع أي عنصر»: union القيم.`
-          ]
+          ],
+          sol: R`بعد ما تضيف [[timeout: 5000]]: [[ConfigKey]] بقى [["apiUrl" | "retries" | "debug" | "timeout"]] لوحده، و [[getSetting("timeout")]] مسموح ونوعه [[number]]، من غير ما تلمس أي نوع.
+
+و [[type X = typeof User]] بيطلّع 'User' only refers to a type, but is being used as a value here (TS2693). [[typeof]] في مكان النوع بتاخد نوع قيمة موجودة وقت التشغيل (متغير أو دالة)، و [[User]] نوع ملوش قيمة. لو عايز النوع نفسه اكتب [[type X = User]].`
         },
         {
           cmd: "Partial و Required و Readonly",
@@ -1124,7 +1246,16 @@ frozen.name = "B"; // خطأ: readonly`,
             R`القيم الافتراضية لازم تغطي كل حاجة، فبنستخدم [[Required]].`,
             "نسخة للقراية بس.",
             "ممنوع التعديل."
-          ]
+          ],
+          sol: R`بعد ما تمسح [[lang]]: Property 'lang' is missing in type '{ theme: "light"; }' but required in type 'Required<Settings>' (TS2741).
+
+والـ merge زي الكود تحت: [[merge({ theme: "dark" })]] بترجع [[{ theme: 'dark', lang: 'ar' }]]. الفخ: [[merge({ lang: undefined })]] بترجع [[{ theme: 'light', lang: undefined }]]، لأن الـ spread بيكتب undefined فوق الـ default، و TS ساكت مع إن النوع بيقول Required. الإعداد [[exactOptionalPropertyTypes]] بيمسكها (TS2379)، وهو موجود في الـ tsconfig اللي [[tsc --init]] بيعمله في TS 7.`,
+          solCode: R`type Settings = { theme?: "light" | "dark"; lang?: "ar" | "en" };
+const defaults: Required<Settings> = { theme: "light", lang: "ar" };
+function merge(s: Settings): Required<Settings> {
+  return { ...defaults, ...s };
+}
+console.log(merge({ theme: "dark" })); // { theme: 'dark', lang: 'ar' }`
         },
         {
           cmd: "Pick و Omit و Record",
@@ -1167,7 +1298,10 @@ const labels: Record<Role, string> = { admin: "مدير", editor: "محرر" }; 
             "قفلة.",
             R`[[Record<string, T>]]: أي مفتاح string (cache بالـ id مثلًا).`,
             R`[[Record<Role, ...>]] بيمسك الدور الناقص: لو ضفت دور جديد، كل القواميس دي تطلّع خطأ.`
-          ]
+          ],
+          sol: R`بعد ما تضيف [[owner]]: [[permissions]] و [[labels]] بيطلّعوا Property 'owner' is missing in type ... but required in type 'Record<Role, ...>' (TS2741). و [[cache]] مش بيتأثر لأن مفاتيحه [[string]]. (و [[labels]] كان فيها خطأ [[viewer]] من الأول.) يعني [[Record<Role, ...>]] بيجبرك تفتكر كل مكان لازم يتحدّث.
+
+و [[Omit<User, "pasword">]] مش بيطلّع ولا خطأ، والنوع الناتج لسه فيه [[password]]. [[Omit]] بتقبل أي string كمفتاح، فالغلطة الإملائية بتسرّب الباسورد في [[PublicUser]]. [[Pick]] بقى بتمسكها، لأنها بتشترط [[K extends keyof T]].`
         },
         {
           cmd: "ReturnType و Parameters و Awaited",
@@ -1216,7 +1350,10 @@ type Timer = ReturnType<typeof setTimeout>;`,
             R`[[args[0]]] نوعها string.`,
             "قفلة.",
             "الكلاسيكية: نوع الـ timer بيفرق بين Node والمتصفح، فخده من الدالة نفسها."
-          ]
+          ],
+          sol: R`بعد ما تضيف [[unread: 3]] جوه [[stats]]، [[d.stats.unread]] بيبقى متاح في [[renderStats]] ونوعه [[number]] من غير ما تغيّر [[Dashboard]]. لأن [[Dashboard]] متحسب من الدالة نفسها: [[Awaited<ReturnType<typeof getDashboard>>]].
+
+ولو شغلت [[renderStats(await getDashboard("u1"))]] بعد ما تزوّد [[unread]] في الـ template هتاخد [[orders: 12, unread: 3]]. ولو لقيت Property 'unread' does not exist، يبقى انت كاتب نوع [[Dashboard]] بإيدك في حتة تانية بدل ما تشتقه.`
         },
         {
           cmd: "mapped types",
@@ -1260,7 +1397,10 @@ type FormSetters = Setters<SignupForm>;
             R`[[as]] بيعيد تسمية كل مفتاح ([[age]] بقت [[setAge]])، والقيمة دالة بتاخد نوع الحقل ([[T[K]]]).`,
             "قفلة.",
             R`الناتج فيه [[setEmail]] و [[setPassword]] و [[setAge]]، كل واحدة بنوعها.`
-          ]
+          ],
+          sol: R`بعد ما تضيف [[phone: string]]: [[touched]] بيطلّع Property 'phone' is missing in type '{ email: true; password: false; age: false; }' but required in type 'Touched<SignupForm>'. و [[errors]] مبيطلعش خطأ، لأن [[FormErrors]] كل خصايصه اختيارية بـ [[?]].
+
+و [[FormSetters]] لو حطيت الماوس عليه هتلاقي [[setPhone: (value: string) => void]] اتضافت لوحدها. لو ظهرت [[setphone]] بحرف صغير، انت ناسي [[Capitalize]].`
         },
         {
           cmd: "conditional types",
@@ -1307,7 +1447,16 @@ type U = Unwrap<Promise<string>>;                  // string`,
             R`[[number]].`,
             R`نفس الفكرة مع Promise (ده تقريبًا [[Awaited]]).`,
             R`[[string]].`
-          ]
+          ],
+          sol: R`[[ArgOf<(x: number) => void>]] بيطلع [[number]]، لأن [[infer A]] بتمسك نوع الباراميتر. ولو جربته على حاجة مش دالة زي [[ArgOf<string>]] بيطلع [[never]].
+
+و [[Exclude<Status, "idel">]] مش بيطلّع خطأ، والناتج هو الأربع حالات زي ما هم [["idle" | "loading" | "success" | "error"]]، لأن مفيش حاجة اسمها idel تتشال. [[Exclude]] مش بتشترط إن اللي بتشيله موجود. لو عايز حماية، اعمل نسخة بتاعتك: [[type StrictExclude<T, U extends T> = Exclude<T, U>]].`,
+          solCode: R`type ArgOf<F> = F extends (arg: infer A) => any ? A : never;
+type X = ArgOf<(x: number) => void>; // number
+type Status = "idle" | "loading" | "success" | "error";
+type StrictExclude<T, U extends T> = Exclude<T, U>;
+type Done = StrictExclude<Status, "idle" | "loading">; // "success" | "error"
+// type Bad = StrictExclude<Status, "idel">; // خطأ: "idel" مش من Status`
         }
       ]
     },
@@ -1359,7 +1508,10 @@ send(loose.method); // خطأ: string أوسع من Method`,
             R`من غير [[as const]]: نوع [[method]] بقى string.`,
             "دالة مستنية Method.",
             R`string مش مقبولة مكان [["GET" | "POST"]].`
-          ]
+          ],
+          sol: R`بعد [[const loose = { method: "GET" } as const]]، نوع [[loose.method]] بقى [["GET"]] مش string، فـ [[send(loose.method)]] بيعدّي.
+
+و [[methods.push("PUT")]] بيطلّع Property 'push' does not exist on type 'readonly ["GET", "POST"]' (TS2339). [[as const]] بيخلي الـ array tuple للقراية بس. ولاحظ إن الحماية دي من TS بس: وقت التشغيل الـ array عادي و push موجودة، فلو عايز تمنعها فعلًا استخدم [[Object.freeze]].`
         },
         {
           cmd: "satisfies",
@@ -1406,7 +1558,10 @@ const bad = { primary: "#0af" } satisfies Theme; // خطأ: danger ناقصة`,
             "TS عارف إن primary هنا string.",
             "وإن danger هنا tuple أرقام.",
             "وبرضه بيمسك المفتاح الناقص زي الـ annotation."
-          ]
+          ],
+          sol: R`[[secondary: "#333"]] في [[checked]] بيطلّع Object literal may only specify known properties, and 'secondary' does not exist in type 'Theme' (TS2353). [[satisfies]] بيفحص الشكل كامل: مفاتيح زيادة أو ناقصة.
+
+ولما تكتب [[{ primary: "#0af" } as Theme]] الخطأ بتاع [[danger]] الناقصة بيختفي. [[as]] بيقبل أي حاجة «قريبة كفاية» من النوع، ولو طبعت [[bad.danger]] هتاخد [[undefined]] مع إن النوع بيقول string أو tuple، وده بالظبط الـ bug اللي [[satisfies]] كان هيمنعه.`
         },
         {
           cmd: "as",
@@ -1445,7 +1600,16 @@ console.log(forced.toFixed(2)); // TypeError برضه`,
             "as مبيسمحش بتحويل بين نوعين ملهمش علاقة ببعض.",
             R`بس [[as unknown as]] بتعدّي أي حاجة لأي حاجة: علامة إن فيه حاجة غلط.`,
             "string على إنها number، والنتيجة crash."
-          ]
+          ],
+          sol: R`مع [[const user: unknown]]، [[user.name]] بيطلّع 'user' is of type 'unknown' (TS18046). لازم تفحص قبلها، زي الكود تحت، والناتج [[الداتا مفيهاش name]] بدل الـ TypeError اللي كان بيحصل مع [[as User]].
+
+و [[grep -rn "as unknown as" src]]: كل سطر بيطلع هو مكان كسرت فيه فحص TS مرتين. لو مطلعش حاجة ممتاز، ولو لقيت كتير غالبًا عند API responses أو mocks في الاختبارات. الأولى تتصلح بـ Zod (المستوى ٣)، والتانية مقبولة أكتر.`,
+          solCode: R`const user: unknown = JSON.parse('{"id": 1}');
+if (typeof user === "object" && user !== null && "name" in user && typeof user.name === "string") {
+  console.log(user.name.toUpperCase());
+} else {
+  console.log("الداتا مفيهاش name");
+}`
         },
         {
           cmd: "! (non-null)",
@@ -1488,7 +1652,10 @@ console.log(v.toFixed(1)); // TypeError`,
             "Map فيها مفتاح واحد.",
             R`[[!]] على [[get]] لمفتاح مش موجود.`,
             "crash: Cannot read properties of undefined."
-          ]
+          ],
+          sol: R`المطلوب هنا عدّ مش ناتج ثابت. كل سطر زي [[src/env.ts:1:const url = process.env.DATABASE_URL!;]] بيتحسب واحد. أما [[const k = process.env.API_KEY;]] من غير [[!]] مش هيطلع، وده كويس لأن TS هيجبرك تفحصه.
+
+لو العدد صفر ومشروعك فيه env كتير، اتأكد إنك بتدوّر في الفولدر الصح (ممكن [[app]] أو [[lib]] مش [[src]]). ولاحظ إن الـ grep ممكن يمسك [[process.env.X!== "a"]] لو مكتوبة من غير مسافة، ودي مقارنة مش non-null، فبص على كل سطر بعينك. وكل [[!]] حقيقي فيهم قراره: يا فحص صريح بيرمي خطأ واضح، يا تنقله لملف env واحد بـ Zod.`
         },
         {
           cmd: ".d.ts و @types",
@@ -1528,7 +1695,10 @@ declare module "untyped-lib";`,
             "...كـ default export.",
             "قفلة.",
             R`أقصر شكل: المكتبة موجودة وكل حاجة منها [[any]]. حل مؤقت بس.`
-          ]
+          ],
+          sol: R`بعد [[npm rm -D @types/express]] و [[npx tsc --noEmit]] هتشوف: [[error TS7016: Could not find a declaration file for module 'express'.]] وبعدها [['.../node_modules/express/index.js' implicitly has an 'any' type]] واقتراح [[npm i --save-dev @types/express]]. ومعاه أخطاء TS7006 على [[req]] و [[res]] في كل handler، لأنهم بقوا any.
+
+لو مطلعش أي خطأ، يا [[strict]] (أو [[noImplicitAny]]) مقفول، يا فيه نسخة من [[@types/express]] في [[node_modules]] في فولدر أعلى (TS بيدوّر لفوق). وبعد [[npm i -D @types/express]] الأخطاء بتختفي.`
         }
       ]
     },
@@ -2219,7 +2389,10 @@ prices.tea.toFixed(2); // خطأ: 'prices.tea' is possibly 'undefined'`,
             R`مفتاح مش موجود: [[number | undefined]]، وده الحقيقي.`,
             "قيمة بديلة.",
             R`حتى بالنقطة: الـ Record مش ضامن إن [[tea]] موجودة.`
-          ]
+          ],
+          sol: R`مفيش عدد صح. المهم تصنّف الأخطاء. هتلاقي أغلبها TS2532 (Object is possibly 'undefined') أو TS18048 ('x' is possibly 'undefined') على [[arr[0]]] و [[params[id]]] و [[map[key]]]. أما [[for...of]] و [[.map]] و [[.find]] (دي كانت undefined من الأول) مش هتتأثر.
+
+الحل لكل واحد: فحص ([[if (!first) return]])، أو default بـ [[??]]، أو [[.at(0)]] مع فحص. متحطش [[!]] على الكل عشان الأخطاء تختفي، كده رجعت لنفس المشكلة. ولو مطلعش ولا خطأ، اتأكد إنك حطيت الإعداد جوه [[compilerOptions]] مش برّاها.`
         },
         {
           cmd: "module و moduleResolution",
@@ -2272,7 +2445,10 @@ prices.tea.toFixed(2); // خطأ: 'prices.tea' is possibly 'undefined'`,
             "قفلة compilerOptions.",
             "الملفات اللي TS يفحصها.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[import { db } from "./db"]] بيطلّع: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean './db.js'? (TS2835).
+
+بعد ما تخليها [[./db.js]] الخطأ بيختفي، و [[tsc]] بيطلّع [[dist/main.js]] فيه [[./db.js]] زي ما هو، و [[node dist/main.js]] بيشتغل. TS مبيغيّرش الـ imports، فانت بتكتب اسم الملف اللي هيبقى موجود بعد الـ build، و TS بيعرف إن [[db.js]] أصله [[db.ts]]. الغلطة: تكتب [[./db.ts]]، فتاخد TS5097 (An import path can only end with a '.ts' extension when 'allowImportingTsExtensions' is enabled)، والإعداد ده مش بيشتغل غير مع [[noEmit]] (يعني حاجة تانية هي اللي بتشغّل الكود).`
         },
         {
           cmd: "paths",
@@ -2314,7 +2490,18 @@ prices.tea.toFixed(2); // خطأ: 'prices.tea' is possibly 'undefined'`,
             "قفلة paths.",
             "قفلة compilerOptions.",
             "قفلة."
-          ]
+          ],
+          sol: R`في Next هتلاقي [["paths": { "@/*": ["./src/*"] }]] (أو [["./*"]] لو مفيش src). وفي مشروع Node، [[tsc]] بيعدّي من غير أخطاء، و [[dist/index.js]] فيه [[import { db } from "@/lib/db.js"]] زي ما هو، و [[node dist/index.js]] بيقع بـ: [[Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from .../dist/index.js]]. Node فاكر [[@/lib]] اسم package.
+
+الحل اللي Node بيفهمه لوحده: subpath imports في package.json زي الكود تحت، و import بـ [[#lib/db.js]]. TS بيفهمها كمان ويوصل لـ [[src]] من غير paths. ([[#/]] لوحدها بدون اسم مش مقبولة في Node 22، فابدأ باسم زي [[#lib]].)`,
+          solCode: R`// package.json
+{
+  "type": "module",
+  "imports": { "#lib/*": "./dist/lib/*" }
+}
+// src/index.ts
+import { db } from "#lib/db.js";
+console.log(db);`
         }
       ]
     },
@@ -2368,7 +2555,22 @@ UserSchema.parse({ name: "S", email: "bad", tags: [] }); // بيرمي ZodError`
             R`[[parse]]: لو الداتا سليمة بترجعها بالنوع الصح وبالـ defaults.`,
             R`[[role]] موجودة مع إننا مبعتناهاش.`,
             R`داتا غلط: [[parse]] بترمي ZodError فيه كل المشاكل (name قصير و email غلط).`
-          ]
+          ],
+          sol: R`الناتج الأول [[user]]: الـ default اشتغل. وبعدين [[e.issues]] فيها عنصرين: واحد [[code: 'too_small']] و [[path: [ 'name' ]]] ورسالته Too small: expected string to have >=2 characters، والتاني [[code: 'invalid_format']] و [[format: 'email']] و [[path: [ 'email' ]]] ورسالته Invalid email address.
+
+في الـ catch، [[e]] نوعها unknown، فـ [[e.issues]] مباشرة بتطلّع 'e' is of type 'unknown'. افحص بـ [[e instanceof z.ZodError]] الأول. وبعد ما تضيف [[phone]] هتلاقي [[phone?: string | undefined]] في [[User]] لوحدها.`,
+          solCode: R`import * as z from "zod";
+const UserSchema = z.object({
+  name: z.string().min(2),
+  email: z.email(),
+  tags: z.array(z.string()).max(5),
+  phone: z.string().optional(),
+});
+try {
+  UserSchema.parse({ name: "S", email: "bad", tags: [] });
+} catch (e) {
+  if (e instanceof z.ZodError) console.log(e.issues);
+}`
         },
         {
           cmd: "safeParse",
@@ -2418,7 +2620,12 @@ console.log(validate({ email: "x", password: "123" }));
             R`نجاح: [[result.data]] نوعها [[{ email: string; password: string }]].`,
             "قفلة.",
             "الناتج: رسالة لكل حقل غلط."
-          ]
+          ],
+          sol: R`[[flattenError(...).fieldErrors]]: [[{ email: [ 'إيميل مش صحيح' ], password: [ '٨ حروف على الأقل' ] }]]، object مسطّح والمفتاح اسم الحقل.
+
+[[treeifyError]]: [[{ errors: [], properties: { email: { errors: ['إيميل مش صحيح'] }, password: { errors: ['٨ حروف على الأقل'] } } }]]، شجرة بنفس شكل الداتا. [[console.log]] هيعرضها [[[Object]]] لو متداخلة، فاطبعها بـ [[JSON.stringify(x, null, 2)]].
+
+[[prettifyError]]: string جاهز للّوج، كل خطأ في سطر بعلامة ✖ وتحته [[→ at email]] و [[→ at password]]. ولو لقيت الرسايل بالإنجليزي (Invalid email address)، يبقى [[{ error: "..." }]] مش متحطة أو مكتوبة [[message]] بالطريقة القديمة.`
         },
         {
           cmd: "env بـ Zod",
@@ -2471,7 +2678,10 @@ export const env = parsed.data;`,
             "...واقفل التطبيق. ده المهم: متكمّلش.",
             "قفلة.",
             "صدّر env مفحوص ونوعه معروف، واستخدمه بدل process.env في كل حتة."
-          ]
+          ],
+          sol: R`من غير [[JWT_SECRET]] التطبيق بيقف فورًا (exit code 1) ويطبع: [[متغيرات البيئة غلط:]] وتحتها [[✖ Invalid input: expected string, received undefined]] و [[→ at JWT_SECRET]]. ومع [[PORT=abc]]: [[✖ Invalid input: expected number, received NaN]] و [[→ at PORT]].
+
+خلي بالك إن .env لازم يتقري الأول ([[node --env-file=.env]] أو dotenv)، وإلا هتلاقي كل المتغيرات ناقصة. وفيه فخ: [[PORT=]] فاضية بتعدّي والتطبيق يقوم على بورت [[0]]، لأن [[z.coerce.number()]] بيحوّل الـ string الفاضي لـ 0. لو ده يفرق معاك زوّد [[.positive()]].`
         }
       ]
     },
@@ -2525,7 +2735,10 @@ export function Page() {
             "استخدام.",
             R`[[title]] إجباري، والزرار بياخد [[onClick]] و [[disabled]] زي [[<button>]] العادي.`,
             "قفلة."
-          ]
+          ],
+          sol: R`من غير [[title]]: Property 'title' is missing in type '{ children: Element; }' but required in type 'CardProps' (TS2741).
+
+و [[onClik]]: Property 'onClik' does not exist on type 'IntrinsicAttributes & ... ButtonHTMLAttributes<HTMLButtonElement> & ...'. Did you mean 'onClick'?، يعني [[ComponentProps<"button">]] جايب كل خصايص الزرار الحقيقية ومسك الغلطة. و [[variant="danger"]]: Type '"danger"' is not assignable to type '"ghost" | "primary" | undefined'.`
         },
         {
           cmd: "useState و events",
@@ -2580,7 +2793,10 @@ export function ProfileForm() {
             "قفلة الـ handler.",
             R`[[user?.name]] لأن user ممكن يبقى null.`,
             "قفلة."
-          ]
+          ],
+          sol: R`من غير [[<User | null>]]، [[useState(null)]] نوعه [[null]] بس. فـ [[setUser({ id: "1", name })]] بتطلّع Object literal may only specify known properties, and 'id' does not exist in type '(prevState: null) => null'، و [[user?.name]] في الـ JSX بتطلّع Property 'name' does not exist on type 'never'.
+
+ولما تكتب [[onChange={(e) => setName(e.currentTarget.value)}]] جوه الـ JSX، حط الماوس على [[e]] هتلاقيه [[ChangeEvent<HTMLInputElement, HTMLInputElement>]] لوحده. الـ handler المكتوب inline بياخد نوعه من الـ prop، والمفصول في متغير لازم تكتبله النوع.`
         },
         {
           cmd: "Express + Zod",
@@ -2633,7 +2849,10 @@ app.post("/orders", validate(CreateOrder), (req: Request<{}, {}, CreateOrder>, r
             R`الـ route: الـ validation الأول، وبعدين handler نوع الـ body فيه [[CreateOrder]] (التالت في [[Request<Params, ResBody, ReqBody>]]).`,
             R`[[req.body.qty]] نوعها number ومفحوصة فعلًا.`,
             "قفلة."
-          ]
+          ],
+          sol: R`الـ curl بيرجّع [[400]] والـ body: [[{"errors":{"qty":["Too big: expected number to be <=10"]}}]]. ومع [["qty":2]] بيرجّع [[201]] و [[{"productId":"p1","qty":2}]].
+
+بعد ما تشيل [[validate(CreateOrder)]]، [[npx tsc --noEmit]] مش بيطلّع ولا خطأ، والـ handler لسه شايف [[req.body.qty]] على إنه number. بس الـ request نفسه بيرجع [[201]] وفيه [["qty":50]]، وحتى [[{"qty":"lots"}]] من غير productId بيعدّي. [[Request<{}, {}, CreateOrder>]] وعد بس، والـ schema هي اللي بتفحص فعلًا.`
         },
         {
           cmd: "declare global",
@@ -2684,7 +2903,10 @@ app.get("/me", (req, res) => {
             R`TS عارف إن [[req.user]] ممكن يبقى undefined، فبيجبرك تفحص.`,
             R`بعد الفحص، [[user]] موجود بنوعه.`,
             "قفلة."
-          ]
+          ],
+          sol: R`من غير [[export {}]] الملف بيبقى script مش module. لو [[skipLibCheck]] مقفول هتشوف على الملف نفسه: Augmentations for the global scope can only be directly nested in external modules or ambient module declarations (TS2669). ومع [[skipLibCheck: true]] (الأشهر) الخطأ ده مش بيظهر، واللي بيظهر بس: Property 'user' does not exist on type 'Request<...>' (TS2339) على كل [[req.user]]، وده بيلخبط لأن السبب مش باين.
+
+ونفس خطأ TS2339 بيظهر لو الملف برّه [[include]]. بعد ما ترجّع [[export {}]] والملف جوه include، [[npx tsc --noEmit]] مش بيطلّع حاجة.`
         },
         {
           cmd: "Prisma types",
@@ -2735,7 +2957,10 @@ export function greet(u: UserCard) {
             "دالة (أو props لكومبوننت) بتاخد النوع ده.",
             R`TS عارف إن فيه name و _count بس. لو كتبت [[u.email]] هيطلع خطأ، لأنها مش في الـ select.`,
             "قفلة."
-          ]
+          ],
+          sol: R`بعد [[email: true]] في الـ select، [[u.email]] في [[greet]] بيشتغل ونوعه string من غير ما تلمس [[UserCard]]، لأن [[UserGetPayload]] بيتحسب من الـ select. ولو كتبت [[u.role]] من غير ما تختاره هتاخد Property 'role' does not exist on type '{ id: number; name: string; email: string; _count: { orders: number; }; }'.
+
+ولو غيّرت [[name]] لـ [[fullName]] وعملت generate و tsc: أول خطأ بيطلع في الـ select نفسه: Object literal may only specify known properties, and 'name' does not exist in type 'UserSelect<DefaultArgs>'. ولما تصلّحه لـ [[fullName: true]]، الخطأ بيتنقل لـ [[u.name]] في [[greet]]. يعني TS بيوديك من مكان للتاني لحد ما كل حاجة تتصلح. ولو مطلعش حاجة، غالبًا نسيت [[prisma generate]] والأنواع لسه القديمة.`
         },
         {
           cmd: "typed fetch",
@@ -2780,7 +3005,10 @@ console.log(repo.full_name, repo.stargazers_count);`,
             "schema للحاجات اللي هتستخدمها بس، مش الرد كله.",
             R`[[repo]] نوعها طالع من الـ schema، ومفحوص فعلًا.`,
             "آمن."
-          ]
+          ],
+          sol: R`الناتج: [[ZodError]] وفيه [["expected": "string"]] و [["code": "invalid_type"]] و [["path": [ "stargazers_count" ]]] و [["message": "Invalid input: expected string, received number"]]، والـ stack بيشاور على [[schema.parse(body)]]. قبل التعديل كان بيطبع [[microsoft/TypeScript]] وجنبه عدد النجوم.
+
+لو طلعلك [[Error: https://api.github.com/repos/microsoft/typescript رجّع 403]] بدل كده، ده GitHub مش Zod: الـ API من غير توكن ليه حد صغير في الساعة (أو الشبكة عندك حاجباه). استنى شوية، أو ابعت header [[Authorization]] بتوكن، أو جرّب على API تاني.`
         },
         {
           cmd: "branded types",
@@ -2829,7 +3057,17 @@ getUser("usr_1"); // خطأ: string عادي مش متفحص`,
             "مقبول.",
             "مرفوض: نفس الـ string بس العلامة مختلفة.",
             R`مرفوض: لازم يعدّي على [[toUserId]] الأول.`
-          ]
+          ],
+          sol: R`[[uid.toUpperCase()]] بتشتغل وبترجع [[USR_123]]: [[UserId]] لسه string ونوع زيادة مش موجود وقت التشغيل.
+
+ومن Zod النوع بيطلع [[string & $brand<"UserId">]]، مش نفس [[Brand<string, "UserId">]] بتاعنا. عشان كده مش بيتبدلوا: [[getUser(zid)]] بيطلّع Property '__brand' is missing، والعكس برضه خطأ. اختار طريقة واحدة في المشروع. و [[UserIdSchema.safeParse("ord_1").success]] بترجع [[false]]، يعني Zod بيفحص فعلًا قبل ما يدّي الـ brand.`,
+          solCode: R`import * as z from "zod";
+const UserIdSchema = z.string().startsWith("usr_").brand<"UserId">();
+type UserId = z.infer<typeof UserIdSchema>; // string & $brand<"UserId">
+function getUser(id: UserId) { return id; }
+getUser(UserIdSchema.parse("usr_5"));
+// getUser("usr_1"); // خطأ: string عادي مش UserId
+console.log(UserIdSchema.safeParse("ord_1").success); // false`
         }
       ]
     },
@@ -2859,7 +3097,10 @@ const r: Req = { url: "/", user: "u1" };`,
             "interface.",
             "نفس الاسم: اتدمج مع اللي فوقه.",
             "الشكل النهائي فيه الاتنين."
-          ]
+          ],
+          sol: R`[[type Req = { url: string }]] وتحتها [[type Req = { user?: string }]] بيطلّعوا [[Duplicate identifier 'Req']] (TS2300) على الاتنين. عشان تدمجهم بـ type لازم اسم جديد: [[type Req = Base & { user?: string }]].
+
+الإجابة النموذجية في الانترفيو: interface بتتدمج لو اتعرّفت مرتين (declaration merging)، وده اللي بيخليك تضيف على أنواع مكتبات زي [[Express.Request]]. و type بيقدر يعمل unions و tuples و mapped و conditional types، و interface لأ. وفي الشغل: interface لأشكال objects عامة أو هتتوسّع، و type لأي حاجة غير كده، والمهم تمشي على طريقة واحدة في المشروع.`
         },
         {
           cmd: "unknown بيجبرك تفحص",
@@ -2882,7 +3123,10 @@ if (typeof u === "string") u.toUpperCase();`,
             "TS ساكت، و push مش موجودة على string.",
             "unknown.",
             "لازم فحص الأول."
-          ]
+          ],
+          sol: R`[[u.toUpperCase()]] من غير if بيطلّع 'u' is of type 'unknown' (TS18046).
+
+الإجابة النموذجية: any بيقفل الفحص خالص، فتقدر تعمل أي حاجة، والغلط بيطلع وقت التشغيل (زي [[a.push]] على string: [[TypeError: a.push is not a function]]). و unknown معناها «ممكن يبقى أي حاجة، فافحص الأول». بتقبل أي قيمة، بس مش بتسمحلك تستخدمها غير بعد narrowing. استخدم unknown لأي داتا جاية من برّه (JSON و catch و API)، و any تقريبًا لأ.`
         },
         {
           cmd: "النوع كباراميتر",
@@ -2907,7 +3151,10 @@ users.get("u1")?.name;`,
             "قفلة.",
             "T اتستنتج بالشكل الكامل.",
             R`[[name]] متاحة: النوع مضاعش.`
-          ]
+          ],
+          sol: R`من غير generic، [[users.get("u1")?.name]] بيطلّع Property 'name' does not exist on type '{ id: string; }'، ونداء [[byId([{ id: "u1", name: "Sara" }])]] نفسه بيطلّع Object literal may only specify known properties, and 'name' does not exist. الدالة بقت شايفة [[{ id: string }]] بس.
+
+الإجابة النموذجية: generics لما دالة أو نوع بيشتغل مع أنواع كتير ولازم يفتكر النوع اللي دخل. مثال حقيقي: [[byId]] دي، أو [[ApiResponse<T>]]، أو [[Repository<T>]]، أو [[useState<T>]]. والـ constraint ([[T extends { id: string }]]) بيضمن الحد الأدنى اللي الدالة محتاجاه. وقول إن any مش بديل، لأنها بتضيّع النوع.`
         },
         {
           cmd: "نوع مفيهوش قيم",
@@ -2936,7 +3183,10 @@ function color(l: Level) {
             R`هنا l نوعها never. لو ضفت [["warn"]] للـ union، السطر ده هيطلّع خطأ.`,
             "unreachable.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تضيف [["warn"]] الخطأ بيطلع على [[const x: never = l]]: Type '"warn"' is not assignable to type 'never' (TS2322)، والرسالة فيها اسم الحالة الناقصة.
+
+الإجابة النموذجية: never نوع مفيهوش ولا قيمة. بيظهر في تلات أماكن: دالة مبترجعش أبدًا (بترمي خطأ أو loop لا نهائي)، واللي بيفضل من union بعد ما كل حالاته اتفحصت، وده اللي بنستخدمه في exhaustive check، والفلترة في conditional types ([[Exclude]] بيرجّع never للحاجة اللي بتتشال). وفرّقه عن void: void بترجع (undefined)، و never مبترجعش أصلًا.`
         },
         {
           cmd: "الشكل مش الاسم",
@@ -2963,7 +3213,10 @@ const p: Point = p3;`,
             "نوع.",
             "فيه خاصية زيادة.",
             "مقبول: متغير مش literal، فمفيش excess check."
-          ]
+          ],
+          sol: R`[[const p: Point = { x: 1, y: 2, z: 3 }]] بيطلّع Object literal may only specify known properties, and 'z' does not exist in type 'Point' (TS2353)، أما [[const p: Point = p3]] بيعدّي. الفرق excess property check: بيشتغل بس على object literal مكتوب مباشرة، لأن [[z]] هنا غالبًا غلطة. أما متغير جاهز فـ TS بيفحص الشكل بس، وفيه x و y فبيعدّي.
+
+الإجابة النموذجية: TS structural، يعني بيقارن الشكل مش الاسم، فـ [[Robot]] ينفع مكان [[Cat]] لأن ليهم نفس الخصايص. ولو محتاج nominal (UserId مش OrderId) استخدم branded types أو [[#private]] في الكلاسات.`
         },
         {
           cmd: "الأنواع بتتمسح",
@@ -2984,7 +3237,10 @@ console.log(typeof u.name); // number`,
             "النوع بيتمسح.",
             "as مبيعملش أي فحص.",
             "بيطبع number، مش string."
-          ]
+          ],
+          sol: R`tsx بيطبع [[number]]: [[as User]] مغيّرتش حاجة في الداتا، و [[name]] لسه 5.
+
+والـ JS اللي [[tsc]] طلّعه: [[const u = JSON.parse('{"name": 5}');]] و [[console.log(typeof u.name);]] بس، وكلمة User مش موجودة خالص، لا الـ interface ولا الـ as. الإجابة النموذجية: TS مبيعملش أي حاجة وقت التشغيل. بيفحص وقت الكتابة والـ build، وبعدين الأنواع بتتمسح. فالداتا اللي جاية من برّه لازم تتفحص بكود حقيقي (Zod أو type guards).`
         },
         {
           cmd: "بيطلّع كود runtime",
@@ -3007,7 +3263,10 @@ type Dir2 = (typeof Dir2)[keyof typeof Dir2];`,
             R`بيطبع ٤ مفاتيح مش ٢: reverse mapping.`,
             "البديل: object ثابت.",
             R`النوع: [["UP" | "DOWN"]].`
-          ]
+          ],
+          sol: R`[[node file.ts]]: [[SyntaxError [ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX]: TypeScript enum is not supported in strip-only mode]]. و [[npx tsx file.ts]] بيطبع [[[ '0', '1', 'Up', 'Down' ]]].
+
+الإجابة النموذجية: enum مش نوع وبس، ده بيطلّع object حقيقي. الـ numeric enum فيه reverse mapping، فـ [[Object.keys]] بيطلّع الأرقام والأسماء. ومش شغال مع strip-only (Node و [[erasableSyntaxOnly]])، وكمان الـ numeric enum بيقبل أي متغير نوعه number، حتى لو قيمته مش من الـ enum. البديل: [[as const]] object مع union type مشتق منه، أو union من strings على طول.`
         },
         {
           cmd: "أنواع مشتقة من نوع واحد",
@@ -3028,7 +3287,14 @@ type UserPatch = Partial<Omit<User, "id">>;`,
             "الموديل.",
             "للـ client.",
             "للتحديث."
-          ]
+          ],
+          sol: R`[[type MyPartial<T> = { [K in keyof T]?: T[K] }]]. لو حطيت الماوس على [[MyPartial<User>]] و [[Partial<User>]] هتلاقي نفس الشكل [[{ id?: string; email?: string; password?: string }]]، والاتنين بيتبدلوا من غير خطأ. ولو فتحت تعريف [[Partial]] (F12) هتلاقيه نفس السطر ده حرفيًا.
+
+الغلطة الشائعة: تكتب [[T[K] | undefined]] من غير [[?]]. ساعتها المفاتيح لسه إجبارية و [[{}]] بيطلّع missing the following properties. وفي الانترفيو قول utility types اللي بتستخدمها وليه: [[Omit]] عشان تشيل password، و [[Partial]] للـ PATCH، و [[Pick]] للـ previews، و [[Record]] للقواميس، و [[ReturnType]] و [[Awaited]] عشان متكررش أنواع.`,
+          solCode: R`type User = { id: string; email: string; password: string };
+type MyPartial<T> = { [K in keyof T]?: T[K] };
+const a: MyPartial<User> = {} as Partial<User>; // نفس النوع
+const b: Partial<User> = {} as MyPartial<User>;`
         },
         {
           cmd: "control flow analysis",
@@ -3051,7 +3317,10 @@ function show(r: Res) {
             "دالة.",
             R`بعد [[r.ok]]، كل فرع عارف شكله.`,
             "قفلة."
-          ]
+          ],
+          sol: R`[[return r.data]] من غير فحص بيطلّع Property 'data' does not exist on type 'Res'. Property 'data' does not exist on type '{ ok: false; error: string; }' (TS2339). يعني TS بيقولك بالظبط أنهي حالة ممكن متكونش فيها [[data]].
+
+الإجابة النموذجية: narrowing هو إن TS بيتابع الكود (if و return و switch) ويضيّق النوع في كل فرع. الأدوات: [[typeof]] و [[instanceof]] و [[in]] والمقارنة بـ [[===]]، و discriminant زي [[ok]] أو [[status]]، و type predicates بـ [[is]]، و assertion functions. ومن غير narrowing، union زي [[Res]] ملوش فايدة.`
         },
         {
           cmd: "افحص عند الحدود",
@@ -3074,7 +3343,10 @@ const todo = Todo.parse(await res.json());`,
             "schema للحاجات اللي هتستخدمها.",
             "الطلب.",
             R`فحص حقيقي، و [[todo]] نوعها [[{ id: number; title: string }]].`
-          ]
+          ],
+          sol: R`مع [[title: z.number()]] الـ parse بيرمي [[ZodError]] فيه [["expected": "number"]] و [["path": [ "title" ]]] و [["message": "Invalid input: expected number, received string"]]. TS نفسه مطلّعش أي خطأ، لأن الـ schema متسقة مع نفسها، والغلط اتكشف وقت التشغيل لما الداتا الحقيقية وصلت.
+
+الإجابة النموذجية: رد الـ API نوعه unknown لحد ما يتفحص. [[as Todo]] كذب على TS، و Zod (أو type guard) بيفحص فعلًا وبيدّيك النوع في نفس الوقت. افحص عند الحدود (fetch و req.body و env و localStorage)، وجوه الكود ثق في الأنواع. وخليك فاكر [[res.ok]] قبل الـ parse، وقرر هتعمل إيه مع الـ ZodError: log وخطأ واضح، مش crash.`
         },
         {
           cmd: "فحص، تصديق، فحص بنوع دقيق",
@@ -3097,14 +3369,17 @@ const c = {} as Cfg;`,
             R`[[a.port]] نوعها [[string | number]].`,
             R`[[b.port]] نوعها number.`,
             R`[[as]] مبيفحصش الشكل. هنا [[{}]] بالصدفة Cfg سليم (Record ممكن يبقى فاضي)، بس لو Cfg فيه خصايص إجبارية، [[as]] كانت هتعدّي الـ object الناقص، والـ annotation كانت هترفضه.`
-          ]
+          ],
+          sol: R`[[a.port.toFixed()]] بيطلّع Property 'toFixed' does not exist on type 'string | number' (TS2339)، لأن الـ annotation خلّت النوع [[Cfg]]، فـ port ممكن تبقى string. (ومع [[noUncheckedIndexedAccess]] كمان possibly undefined.) أما [[b.port.toFixed()]] بيعدّي، لأن satisfies فحصت، وسابت النوع الدقيق [[{ port: number }]].
+
+الإجابة النموذجية: [[: Type]] بيفحص وبيغيّر نوع المتغير للنوع العام. و [[as Type]] مش بيفحص تقريبًا، ده تصديق منك ([[{} as Cfg]] بيعدّي). و [[satisfies Type]] بيفحص وبيسيب النوع المستنتج. استخدم satisfies للـ config والـ objects الثابتة، و annotation لباراميترات الدوال والـ API العامة، و as بس لما انت فعلًا عارف أكتر من TS.`
         },
         {
           cmd: "strict أولًا",
           title: "إيه أهم إعدادات tsconfig بتبدأ بيها أي مشروع؟ (Essential tsconfig options)",
           desc: R`أول حاجة [[strict: true]]، ودي بتشغّل strictNullChecks و noImplicitAny وباقي العيلة، وبقت الافتراضي في TS 6 و 7 بس بكتبها صريح. وبضيف [[noUncheckedIndexedAccess]] عشان [[arr[0]]] تبقى ممكن undefined. وبعدين [[module]] و [[moduleResolution]] حسب البيئة: [[bundler]] مع Vite أو Next، و [[nodenext]] لسيرفر Node بيتبني بـ tsc. و [[target]] حديث زي es2024، و [[types: ["node"]]] في Node، و [[skipLibCheck]] للسرعة، و [[verbatimModuleSyntax]] عشان [[import type]]. وأخيرًا [[tsc --noEmit]] في CI، لأن الـ bundlers مبتفحصش.`,
           example: R`{ "compilerOptions": { "strict": true, "noUncheckedIndexedAccess": true, "module": "nodenext", "target": "es2024", "types": ["node"], "skipLibCheck": true } }`,
-          try: R`افتح tsconfig في آخر مشروع ليك وقارنه بالقايمة دي، وشغّل [[npx tsc --showConfig]] تشوف الإعدادات الفعلية بعد الـ defaults.`,
+          try: R`افتح tsconfig في آخر مشروع ليك وقارنه بالقايمة دي، وشغّل [[npx tsc --showConfig]] تشوف الإعدادات الفعلية بعد ما يدمج الـ extends (الـ defaults الضمنية زي strict في TS 7 مش بتظهر فيه).`,
           flag: "script",
           deep: {
             why: "بيختبر إنك بتفهم الإعدادات مش بتنسخها، وإنك عارف ليه المشروع ممكن يتبني ويقع وقت التشغيل.",
@@ -3114,7 +3389,10 @@ const c = {} as Cfg;`,
           },
           lines: [
             "الحد الأدنى لسيرفر Node."
-          ]
+          ],
+          sol: R`[[npx tsc --showConfig]] بيطبع الـ config بعد ما يدمج [[extends]] ويضيف الإعدادات اللي بتتحسب من غيرها (زي [[moduleResolution]] من [[module]]). بس مش بيطبع كل الـ defaults: في TS 7 [[strict]] شغال افتراضيًا ومش هيظهر لو مش مكتوب. عشان كده اكتبه صريح.
+
+الإجابة النموذجية بالترتيب: [[strict: true]]، و [[noUncheckedIndexedAccess]]، و [[module]]/[[moduleResolution]] حسب البيئة ([[nodenext]] لسيرفر بـ tsc، و [[bundler]] مع Vite و Next)، و [[target]] حديث، و [[types: ["node"]]] للسيرفر، و [[skipLibCheck]]، و [[verbatimModuleSyntax]]، و [[tsc --noEmit]] في الـ CI. واذكر ليه كل واحد، مش أساميهم بس.`
         }
       ]
     }
