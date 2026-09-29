@@ -65,7 +65,16 @@ function Counter() {
             "state اسمها count بتبدأ من 0، ومعاها setCount اللي بتغيّرها.",
             "الزرار بيعرض count، والضغطة بتغيّر الـ state بس. React هي اللي تحدّث الشاشة.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`الزرار يبدأ بـ [[0]] وكل ضغطة يزيد واحد. في React DevTools افتح تاب Components واختار [[Counter]]: تحت hooks هتلاقي [[State: 3]] مثلًا، والرقم بيتغير مع كل ضغطة في نفس اللحظة اللي الزرار بيتغير فيها. انت مكتبتش ولا سطر بيلمس الـ DOM: غيّرت الـ state بس، و React حسبت الشاشة من جديد.
+
+لو الصفحة بيضا والـ console فيه [[useState is not defined]]، نسيت الـ import. ولو فيه «does not provide an export named 'default'»، نسيت [[export default]]، لأن [[main.tsx]] بيعمل [[import App from './App']].`,
+          solCode: R`import { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}`
         },
         {
           cmd: "npm create vite",
@@ -99,7 +108,12 @@ npm run preview`,
             "شغّل dev server (عادةً على localhost:5173) بتحديث لحظي.",
             "اعمل build للإنتاج في فولدر dist.",
             "شغّل dist محليًا عشان تجرّبه قبل ما ترفعه."
-          ]
+          ],
+          sol: R`أول ما تحفظ [[App.tsx]] الكلمة بتتغير في المتصفح من غير reload، ولو كان فيه عداد ضغطت عليه هتلاقي رقمه لسه زي ما هو: ده Fast Refresh، بيبدّل كود الـ component ويحافظ على الـ state.
+
+بعد [[npm run build]] هتلاقي [[dist/index.html]]، وجوه [[dist/assets]] ملفات زي [[index-BRDr3nmD.js]] (حوالي 220kB، و 70kB بعد gzip في القالب الفاضي) و [[index-D64VDMd1.css]]، وجنبهم الصور اللي عملتلها import. الـ hash بيتغير بس لما محتوى الملف يتغير، فالمتصفح يقدر يكيّش الملف للأبد. والملفات اللي في [[public]] (زي [[favicon.svg]]) بتتنسخ زي ما هي من غير hash.
+
+الغلطة المشهورة: تفتح [[dist/index.html]] بدبل كليك فتلاقي صفحة بيضا، لأن المسارات [[/assets/...]] مطلقة ومش هتشتغل من [[file://]]. اتفرج على الـ build بـ [[npm run preview]] (على 4173).`
         },
         {
           cmd: "vite.config",
@@ -240,7 +254,10 @@ function Profile({ user }: { user: User }) {
             "قفلة الـ Fragment.",
             "قفلة القوس.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`أول تجربة: المحرر هيعلّم على [[class]] بـ «Property 'class' does not exist... Did you mean 'className'?»، بس Vite مبيعملش type check فالصفحة بتشتغل، وفي الـ console هتلاقي warning من React: «Invalid DOM property $__btclass$__bt. Did you mean $__btclassName$__bt?». يعني شغالة بالصدفة، والـ build ([[tsc -b]]) هيقع.
+
+تاني تجربة: الصفحة بتبقى بيضا وفي الـ console: «Objects are not valid as a React child (found: object with keys {name, avatar, isAdmin})». React بترسم نصوص وأرقام و elements و arrays منهم، لكن object عادي متعرفش ترسمه إزاي. الحل إنك تختار الحقل اللي عايزه: [[{user.name}]]. ولو شفت نفس الـ error مع [[Date]] أو Promise، نفس السبب: حوّلها لنص الأول.`
         },
         {
           cmd: "props",
@@ -285,7 +302,19 @@ export default function App() {
             "الأب اللي بيستخدم Button.",
             "بيبعت label كنص، و onClick كدالة بين { }.",
             "قفلة App."
-          ]
+          ],
+          sol: R`التلات زراير بيظهروا بالـ labels بتاعتهم. اللي بعتله [[variant="ghost"]] الـ class بتاعه [[btn btn-ghost]]، والباقيين [[btn btn-primary]] لأن الـ default في الـ destructuring اشتغل.
+
+مع [[variant="red"]] المحرر بيقول: «Type '"red"' is not assignable to type '"primary" | "ghost" | undefined'». لاحظ إن الصفحة في [[npm run dev]] ممكن تفضل شغالة والزرار ياخد [[btn-red]]، لأن Vite مبيعملش type check، لكن [[npm run build]] هيقع بنفس الـ error. ده بالظبط فايدة الـ union: الغلطة تتمسك قبل ما توصل للمستخدم.`,
+          solCode: R`export default function App() {
+  return (
+    <>
+      <Button label="Save" onClick={() => alert('saved')} />
+      <Button label="Cancel" variant="ghost" onClick={() => alert('cancel')} />
+      <Button label="Delete" onClick={() => alert('deleted')} />
+    </>
+  )
+}`
         },
         {
           cmd: "children",
@@ -333,7 +362,24 @@ export default function Orders() {
             "صفحة بتستخدم Card.",
             "زرار في actions، وفقرة في children.",
             "قفلة الصفحة."
-          ]
+          ],
+          sol: R`نفس الإطار (العنوان والزرار فوق) بيتكرر، والجسم هو اللي بيتغير: جدول في مرة وفورم في مرة. Card نفسه متغيرش ولا سطر، لأنه مش عارف ولا محتاج يعرف إيه اللي جواه.
+
+الـ Fragment بيخليك تبعت أكتر من عنصر في prop واحدة من غير div زيادة. لو بعتهم كـ array ([[actions={[<button/>, <button/>]}]]) هيشتغل بس هتلاقي warning إن كل child في list محتاج key. ولو TypeScript اشتكى إن [[children]] ناقصة، يبقى استخدمت Card من غير ما تحط حاجة بين الـ tags.`,
+          solCode: R`export function Pages() {
+  return (
+    <>
+      <Card title="Orders" actions={<><button>Export</button><button>Print</button></>}>
+        <table>
+          <tbody><tr><td>#1001</td><td>250 EGP</td></tr></tbody>
+        </table>
+      </Card>
+      <Card title="New customer">
+        <form><input name="name" placeholder="Name" /><button>Save</button></form>
+      </Card>
+    </>
+  )
+}`
         }
       ]
     },
@@ -389,7 +435,10 @@ export default function Counter() {
             "بيطبع مرة في كل render، فتشوف إن الأربع setState عملوا render واحد.",
             "اعرض الرقم، والضغطة تنادي addFour.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`التخمين الصح [[3]]، وأول ضغطة الزرار بيبقى 3 والـ console بيطبع [[render 3]] مرة واحدة (أو مرتين بنفس الرقم في Strict Mode). أول سطرين الاتنين بيقولوا «خليها [[0 + 1]]» لأن [[count]] في الـ render ده صفر، فالنتيجة 1. وبعدين الـ updater functions بتاخد آخر قيمة في الطابور: 2 ثم 3. والضغطة التانية توصّل لـ 6.
+
+الـ [[alert(count)]] بيطلع [[0]] في أول ضغطة (والقيمة القديمة في أي ضغطة بعدها)، لأن setCount مبتغيرش المتغير اللي في إيدك، هي بتطلب render جديد فيه count جديد. اللي بيخمّن 4 فاكر إن [[setCount(count + 1)]] بيقرا آخر قيمة، واللي متوقع 4 renders فاكر إن كل set بيرسم لوحده، والحقيقة إن React بتجمعهم (batching) في render واحد.`
         },
         {
           cmd: "events",
@@ -443,7 +492,10 @@ function SearchBox({ onSearch }: { onSearch: (q: string) => void }) {
             "قفلة الفورم.",
             "قفلة القوس.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`من غير [[type="button"]]، أي زرار جوه form نوعه الافتراضي [[submit]]، فدوسة Clear بتمسح الخانة وكمان بتعمل submit وتنادي onSearch. عشان كده أي زرار جوه فورم مش المقصود بيه الإرسال لازم تكتبله [[type="button"]].
+
+ومن غير [[e.preventDefault()]] المتصفح بيعمل اللي بيعمله مع أي فورم: يبعت GET لنفس الصفحة (هتلاقي [[?]] في آخر الـ URL) ويعمل reload، فكل الـ state بتضيع والـ console بيتمسح. لو لاحظت إن الـ log بتاعك «بيظهر ويختفي»، ده غالبًا السبب.`
         },
         {
           cmd: "immutable updates",
@@ -489,7 +541,16 @@ const moveTo = (city: string) =>
             "state فيها object جواه object.",
             "تغيير المدينة:",
             "انسخ user، وانسخ address جواه، وغيّر city بس."
-          ]
+          ],
+          sol: R`بالنسخة الغلط الـ checkbox مش بيتعلّم. انت عدّلت الـ object القديم ورجّعت نفس الـ array، فـ React قارنت بـ [[Object.is]] ولقت نفس المرجع، فمعملتش render خالص. والأسوأ إن البيانات نفسها اتغيرت فعلًا، فأول ما أي state تانية تعمل render الـ checkbox يتعلّم فجأة، وده bug صعب تتبعه.
+
+بالـ map كل ضغطة بترجع array جديدة فيها object جديد للعنصر اللي اتغير بس، فالـ render بيحصل والباقي زي ما هو بنفس المرجع (وده اللي بيخلي [[memo]] يشتغل صح بعدين).`,
+          solCode: R`// غلط: نفس المرجع، React مش هتعيد الرسم
+const toggleBad = (id: number) =>
+  setTodos(prev => { prev.find(t => t.id === id)!.done = true; return prev })
+// صح: array جديدة و object جديد للعنصر اللي اتغير بس
+const toggle = (id: number) =>
+  setTodos(prev => prev.map(t => (t.id === id ? { ...t, done: !t.done } : t)))`
         },
         {
           cmd: "conditional rendering",
@@ -534,7 +595,10 @@ function Orders({ orders, isLoading, error }: { orders: Order[]; isLoading: bool
             "قفلة الـ section.",
             "قفلة القوس.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`بـ array فاضية الـ section بيبقى فيه «No orders yet» وجنبها [[0]]. [[0 && <p/>]] نتيجتها [[0]] مش false، و React بترسم الأرقام (بتتجاهل false و null و undefined بس). في React Native ده مش مجرد صفر على الشاشة، ده crash لأن النص لازم يبقى جوه [[<Text>]].
+
+الحل: خلي الشرط boolean صريح، [[orders.length > 0 && ...]] زي المثال الأصلي، أو ternary. ولو شفت [[NaN]] على الشاشة فهو نفس المشكلة مع رقم تاني.`
         },
         {
           cmd: "key",
@@ -585,7 +649,10 @@ export default function People() {
             "قفلة الـ Fragment.",
             "قفلة القوس.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`بـ [[key={i}]]: بعد Remove first هتلاقي «Mona» ومعاها «hello». React شافت إن اللي اتشال هو key [[1]] (آخر واحد)، و key [[0]] لسه موجود، فخلّت الـ state بتاع أول Row (اللي فيه hello) وغيّرت الـ name بس لـ Mona.
+
+بـ [[key={p.id}]]: «Mona» والخانة فاضية، لأن React عرفت إن Row بتاع id 1 هو اللي اتمسح بالـ state بتاعته. القاعدة: الـ key لازم يتبع البيانات مش المكان. الـ index مقبول بس لو الـ list عمرها ما هتترتب أو يتشال منها أو يتضاف في نصها.`
         }
       ]
     },
@@ -639,7 +706,16 @@ export default function People() {
             "قفلة الفورم.",
             "قفلة القوس.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`هتكتب «a» وبعدين space فتختفي على طول، وبعدين «b»، فالقيمة [[ab]]. كل ضغطة بتعدّي على trim، والمسافة في آخر النص بتتشال قبل ما تترسم، والخانة بتعرض القيمة اللي في الـ state بس. (لو رجعت بالمؤشر لنص الكلام وكتبت space هتتكتب، لأنها مش في الطرف.)
+
+ده بيوريك إن الـ controlled input معناه إن الـ state هي الحقيقة الوحيدة: أي تحويل في onChange بيتطبّق على كل حرف. خزّن اللي المستخدم كتبه زي ما هو، ونضّفه وقت الـ submit.`,
+          solCode: R`<input type="email" value={email} onChange={e => setEmail(e.target.value)} />
+// ووقت الإرسال:
+function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault()
+  signup({ email: email.trim(), agreed })
+}`
         },
         {
           cmd: "lifting state up",
@@ -692,7 +768,22 @@ export default function Shop() {
             "قفلة main.",
             "قفلة القوس.",
             "قفلة Shop."
-          ]
+          ],
+          sol: R`بالنسخة الصح لو كتبت [[ph]] هتفضل Phone و Headphones بس، وأول ما تمسح يرجع الخمسة. Shop هو اللي شايل [[query]] وبيوزعها: FilterBar ياخدها ويبلّغ بالتغيير، و ProductList ياخدها ويفلتر.
+
+لما تنقل الـ state جوه FilterBar الكتابة بتشتغل عادي، بس ProductList بيعرض الخمسة دايمًا مهما كتبت، لأن القيمة بقت محبوسة جوه FilterBar ومفيش طريق توصل منه لأخوه. الـ data في React بتنزل من الأب للابن بس، فأي قيمة محتاجها اتنين لازم تطلع لأقرب أب مشترك.`,
+          solCode: R`const PRODUCTS = [
+  { id: 1, name: 'Laptop' },
+  { id: 2, name: 'Phone' },
+  { id: 3, name: 'Headphones' },
+  { id: 4, name: 'Keyboard' },
+  { id: 5, name: 'Mouse' },
+]
+// النسخة الغلط: الـ state جوه FilterBar
+function FilterBarAlone() {
+  const [query, setQuery] = useState('')
+  return <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" />
+}`
         },
         {
           cmd: "derived state",
@@ -741,7 +832,10 @@ function Cart({ items }: { items: Item[] }) {
             "قفلة الـ div.",
             "قفلة القوس.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`بالطريقة الغلط هتشوف في الـ console حاجة زي [[render 0]] ثم [[render 20]] أول ما الصفحة تفتح، ولما الـ items تتغير [[render 20]] ثم [[render 30]]. يعني كل تغيير = render بالقيمة القديمة، وبعدين effect يعمل set، وبعدين render تاني بالصح. الـ render الأول ده ممكن يبان للمستخدم كـ flash لرقم غلط، وفي Strict Mode العدد بيتضاعف.
+
+بالحساب وقت الرسم ([[const total = ...]]) كل تغيير = render واحد بالرقم الصح على طول، ومفيش state محتاجة تتزامن. لو الحساب تقيل فعلًا لفّه في [[useMemo]]، بس برضه مش state.`
         }
       ]
     },
@@ -797,7 +891,20 @@ function Cart({ items }: { items: Item[] }) {
             "قفلة الـ effect، والـ dependencies roomId بس: يتغير، يتقفل القديم ويتفتح جديد.",
             "اعرض الرسايل بالـ id كـ key.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`أول ما الصفحة تفتح في التطوير: [[connect general]]، [[disconnect general]]، [[connect general]]. ده Strict Mode بيركّب الـ component ويشيله ويركّبه تاني عشان يتأكد إن الـ cleanup سليم. ولما تدوس «sales»: [[disconnect general]] ثم [[connect sales]]، يعني الـ cleanup بتاع الـ effect القديم بيشتغل قبل الجديد. ولو دوست على نفس الأوضة اللي انت فيها مفيش حاجة بتطبع، لأن roomId متغيرش.
+
+هتلاقي كمان errors إن الـ WebSocket فشل، لأن [[example.com]] مش سيرفر chat حقيقي، ودا مش مشكلة في التجربة. الغلطة اللي تبان هنا: لو شلت الـ return، هتلاقي connect بس من غير disconnect، يعني كل تغيير أوضة بيسيب اتصال مفتوح والرسايل بتيجي من أوضتين.`,
+          solCode: R`export default function App() {
+  const [roomId, setRoomId] = useState('general')
+  return (
+    <>
+      <button onClick={() => setRoomId('general')}>general</button>
+      <button onClick={() => setRoomId('sales')}>sales</button>
+      <ChatRoom roomId={roomId} />
+    </>
+  )
+}`
         },
         {
           cmd: "dependency array",
@@ -854,7 +961,10 @@ function useFetchJson(url: string, method = 'GET') {
             "dependencies قيم بسيطة بتتقارن بالقيمة.",
             "رجّع البيانات.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[useFetchBad]] تاب Network بيتملي طلبات ورا بعض ومبيقفش. السلسلة: كل render بيعمل [[options = {}]] جديد، فـ [[load]] بتتعمل من جديد، فالـ effect بيشتغل ويبعت طلب، والرد بيعمل [[setData]] بـ object جديد، فـ render، وهكذا للأبد.
+
+مع [[useFetchJson]] طلب واحد (اتنين في Strict Mode وقت التطوير)، لأن [[url]] و [[method]] strings بتتقارن بالقيمة. لو جربت useFetchBad ولقيت طلب واحد بس، غالبًا [[/api/products]] مش موجود فبيرجع HTML و [[res.json()]] بيرمي error قبل [[setData]]، فالـ loop مبيكملش. خلي الـ endpoint يرجّع JSON حقيقي (أو استخدم ملف JSON في [[public]]) عشان تشوفه.`
         },
         {
           cmd: "You Might Not Need an Effect",
@@ -901,7 +1011,15 @@ useEffect(() => setComment(''), [userId])
             "الصح: الـ handler هو اللي بيبعت، في لحظة الضغطة نفسها.",
             "effect بيصفّر state لما prop تتغير، بعد ما الشاشة اترسمت بالتعليق القديم.",
             "الصح: key بالـ userId، فتغييره بيعمل component جديد بـ state فاضية."
-          ]
+          ],
+          sol: R`مفيش ناتج واحد هنا لأنه على الكود بتاعك، بس اللي المفروض تلاقيه: effects شكلها [[useEffect(() => setX(f(y)), [y])]]، وده حساب تحوّله لـ [[const x = f(y)]]. أو effect مستني flag زي submitted عشان يعمل حاجة، وده مكانه الـ handler. أو effect بيعمل reset لـ state لما prop تتغير، وده [[key]].
+
+بعد الشيل: عدد الـ renders بيقل (افتح React DevTools > Profiler وقارن)، ومفيش لحظة بتبان فيها قيمة قديمة. اللي يفضل effect: fetch (أو أحسن React Query)، و subscriptions (WebSocket، و [[addEventListener]] على window)، و timers، ومزامنة حاجة برا React زي [[document.title]]. لو الـ effect فيه set بس وملوش cleanup ولا بيكلم حاجة برا، غالبًا ملوش لازمة.`,
+          solCode: R`// قبل
+const [fullName, setFullName] = useState('')
+useEffect(() => setFullName(first + ' ' + last), [first, last])
+// بعد
+const fullName = first + ' ' + last`
         },
         {
           cmd: "race condition",
@@ -956,7 +1074,12 @@ function UserCard({ id }: { id: number }) {
             "خطأ.",
             "البيانات.",
             "قفلة."
-          ]
+          ],
+          sol: R`بالـ cleanup هتلاقي الطلبات القديمة في Network مكتوب جنبها [[(canceled)]] بالأحمر، والشاشة بتعرض «Loading...» لحد ما رد آخر id يوصل، وبعدين اسمه هو بس.
+
+من غير الـ cleanup كل الطلبات بتكمّل. الشرط [[result?.id !== id]] بيحميك من إنك تعرض user غلط، بس لو رد قديم وصل بعد الرد الجديد، الـ result بتبقى بتاعة id قديم فالشاشة تفضل «Loading...» للأبد. ومن غير الشرط والـ cleanup الاتنين، هتشوف اسم user تاني غير اللي في الـ URL، وده الـ race condition بعينه.
+
+ملحوظة: Slow 3G بيأخّر كل الطلبات بنفس القدر، فغالبًا الردود بتوصل بالترتيب ومش هتشوف اللخبطة. عشان تجبرها خلي الـ API يستنى وقت عشوائي (مثلًا [[setTimeout]] بين 0 و 3 ثواني قبل الرد).`
         },
         {
           cmd: "useRef",
@@ -1011,7 +1134,10 @@ function UserCard({ id }: { id: number }) {
             "قفلة stop.",
             "الوقت والأزرار، و [[ref={noteRef}]] بيربط العنصر بالـ ref.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`بنسخة الـ state: كل Start بيعمل render زيادة (وكذلك Stop)، لأن تغيير الـ timer id بقى تغيير state، مع إن الشاشة مش بتعرضه. حط [[console.log('render')]] في الـ component أو استخدم Profiler وهتشوفه. الـ ref بيتغير من غير ما React تعرف، ودا المطلوب لقيمة داخلية زي id الـ interval.
+
+في النسخة الأصلية لو ضغطت Start مرتين، التانية بترجع من أول سطر لأن [[timerRef.current]] مش null، فيفضل timer واحد والوقت بيعدّ بسرعته الطبيعية. لو شلت الـ if هتلاقي الوقت بيجري أسرع بالضعف، وبعد Stop يفضل شغال، لأن الـ ref اتكتب عليه id التاني والأول ضاع ومحدش هيوقفه.`
         }
       ]
     },
@@ -1071,7 +1197,17 @@ const ProductGrid = memo(function ProductGrid({ items, onAdd, onSort }: GridProp
             "component ملفوف في memo: بيتخطى الـ render لو الـ props زي ما هي.",
             "بيرسم الـ grid.",
             "قفلة memo."
-          ]
+          ],
+          sol: R`الأرقام بتختلف حسب الجهاز، بس هتلاقي حاجة زي: ٢٠ منتج أقل من [[0.1ms]]، و ٢٠ ألف منتج كذا ms (على جهازنا حوالي 5ms). القاعدة العملية من docs React: لو الحساب بياخد 1ms أو أكتر بشكل متكرر، useMemo تستاهل. تحت كده الـ memo نفسها (مقارنة الـ deps وحفظ النتيجة) تكاد تبقى بنفس التكلفة، والكود بقى أصعب في القراية.
+
+جرّب كمان بـ CPU throttling 4x من تاب Performance، لأن جهاز المستخدم غالبًا أبطأ من جهازك. والغلطة الشائعة: تقيس في dev وتفتكرها نفس الإنتاج، أو تقيس أول مرة بس، لأن useMemo مبتسرّعش أول render، هي بتوفر الـ renders اللي بعده.`,
+          solCode: R`console.time('filter')
+const visible = products
+  .filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
+  .sort((a, b) => (sort === 'price' ? a.price - b.price : a.name.localeCompare(b.name)))
+console.timeEnd('filter')
+// اعمل ٢٠ ألف منتج للتجربة:
+const products = Array.from({ length: 20_000 }, (_, i) => ({ id: String(i), name: 'Product ' + i, price: i % 1000 }))`
         },
         {
           cmd: "useContext",
@@ -1119,7 +1255,26 @@ export function useAuth() {
             "برا الـ provider؟ error واضح بدل null صامت.",
             "رجّع القيمة.",
             "قفلة."
-          ]
+          ],
+          sol: R`برا الـ provider الصفحة بتقع وفي الـ console (و overlay بتاع Vite) هتلاقي [[Error: useAuth must be used inside <AuthProvider>]]. ده أحسن من إن [[ctx]] يطلع null وتقع بعدين بـ «Cannot read properties of null» في مكان بعيد.
+
+الجزء التاني محتاج الـ provider يعيد الرسم لسبب تاني غير user، وإلا مش هتشوف فرق. زوّد في AuthProvider state زي [[tick]] بزرار. بالـ useMemo الـ consumer بيطبع مرة واحدة بس مهما دوست، ومن غيرها بيطبع مع كل ضغطة، لأن [[{ user, logout }]] بقى object جديد كل render، و React بتقارن قيمة الـ context بـ [[Object.is]]. (لو حطيت الـ state في App فوق الـ provider، الـ consumer هيعيد الرسم في الحالتين لأنه ابن App عادي، فمش هتشوف الفرق.)`,
+          solCode: R`export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null)
+  const [tick, setTick] = useState(0)
+  const value = { user, logout: () => setUser(null) } // من غير useMemo للتجربة
+  return (
+    <AuthContext value={value}>
+      <button onClick={() => setTick(t => t + 1)}>tick {tick}</button>
+      {children}
+    </AuthContext>
+  )
+}
+function Consumer() {
+  useAuth()
+  console.log('consumer render')
+  return null
+}`
         },
         {
           cmd: "useReducer",
@@ -1366,7 +1521,16 @@ function SearchPage() {
             "نفس القيمة بس بعد ما الكتابة تقف نص ثانية.",
             "الخانة بالقيمة اللحظية، والنتايج بالمتأخرة.",
             "قفلة."
-          ]
+          ],
+          sol: R`لو كتبت «react» بسرعة هتلاقي [[search react]] مرة واحدة بعد نص ثانية من آخر حرف. كل حرف بيغيّر [[value]]، فالـ cleanup بيلغي الـ timeout اللي فات قبل ما يخلص، ومفيش غير آخر واحد اللي بيكمّل.
+
+مع delay [[0]] هيطبع مع كل حرف ([[search r]]، [[search re]]...) لأن الـ timeout بيخلص قبل ما تلحق تكتب الحرف اللي بعده. ولو حطيت الـ log في جسم Results بدل الـ effect، هيطبع مع كل حرف بقيمة فاضية أو قديمة، ودا مش معناه إن الـ debounce بايظ: ده render عادي للابن مع أبوه، والـ query لسه متغيرتش.`,
+          solCode: R`function Results({ query }: { query: string }) {
+  useEffect(() => {
+    console.log('search', query)
+  }, [query])
+  return <p>Results for: {query}</p>
+}`
         },
         {
           cmd: "useLocalStorage",
@@ -1420,7 +1584,14 @@ function SearchPage() {
             "يشتغل لما المفتاح أو القيمة يتغيروا.",
             "رجّع نفس شكل useState. [[as const]] عشان TypeScript يفهمها tuple.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد refresh الرقم فاضل زي ما سبته، وفي Local Storage هتلاقي key [[count]] قيمته الرقم كنص JSON. بعد ما تغيرها لـ [[{bad json]] وتعمل refresh، [[JSON.parse]] بيرمي error، والـ catch بيرجّع القيمة الأولى ([[0]])، والـ effect بيكتب [[0]] فوق القيمة البايظة، فالتخزين اتصلّح لوحده.
+
+لو الصفحة وقعت بـ «SyntaxError: Unexpected token»، الـ try/catch مش حوالين الـ parse. ولو الرقم رجع صفر مع كل refresh من غير ما تبوّظ حاجة، غالبًا بتقرا في effect بعد الرسم بدل الـ lazy initializer، أو الـ key اتغير.`,
+          solCode: R`function ClickCounter() {
+  const [count, setCount] = useLocalStorage('count', 0)
+  return <button onClick={() => setCount(c => c + 1)}>{count}</button>
+}`
         }
       ]
     },
@@ -1480,7 +1651,10 @@ function SearchPage() {
             "قفلة الفورم.",
             "قفلة القوس.",
             "قفلة الـ component."
-          ]
+          ],
+          sol: R`بعد الـ await هتلاقي [[TypeError: Cannot read properties of null (reading 'reset')]]. [[currentTarget]] بيشاور على العنصر اللي الـ handler متسجّل عليه طول ما الـ event شغال بس، وبعد ما الجزء المتزامن يخلص بيبقى null. الـ await كده خرج من الـ event، عشان كده بتخزن [[e.currentTarget]] في متغير قبله.
+
+من غير [[name]] على الـ textarea البيانات هتبقى [[{ email: 'you@example.com' }]] بس: FormData بتجمع الخانات اللي ليها name بس، مش id ولا label. ولو [[required]] لسه عليها المتصفح هيمنع الإرسال لو فاضية، لكن القيمة مش هتوصلك برضه.`
         },
         {
           cmd: "react-hook-form + zod",
@@ -1806,7 +1980,12 @@ React Router ليه تلات أوضاع: declarative ([[<BrowserRouter>]] و [[<
             "قفلة الأولاد.",
             "قفلة الـ array.",
             "التطبيق كله: ارسم الـ router."
-          ]
+          ],
+          sol: R`[[/products/7]] بيعرض الـ nav وتحته «Product 7»، لأن الـ Layout بيترسم والـ [[Outlet]] مكانه الصفحة المطابقة، و [[useParams]] بيطلّع [[id: '7']] كنص. [[/xyz]] مفيش route مطابق غير [[*]] فبيظهر NotFound جوه الـ Layout.
+
+مع [[Link]]: تاب Network مفيهوش طلب document جديد، والـ URL بيتغير والصفحة بتتبدل فورًا. مع [[<a href>]]: طلب document كامل، و JS بيتحمّل من الأول، وأي state (زي عداد) بترجع صفر. ولو عملت refresh على [[/products/7]] في [[npm run preview]] واشتغل، ده لأن Vite بيرجع [[index.html]] لأي مسار. على سيرفر حقيقي لازم تعمل نفس الـ fallback، وإلا هتاخد 404.`,
+          solCode: R`const Home = () => <h1>Home</h1>
+const NotFound = () => <h1>Page not found</h1>`
         },
         {
           cmd: "protected route",
@@ -1856,7 +2035,18 @@ navigate(from, { replace: true })`,
             "قفلة.",
             "في صفحة الدخول: اقرا المسار اللي كان رايحه، أو الرئيسية.",
             "روح له، واستبدل صفحة الدخول في الـ history."
-          ]
+          ],
+          sol: R`بالسطر موجود: spinner ثانيتين وبعدين الـ dashboard. من غيره: أول render الـ user لسه null، فالـ Navigate يحوّلك لـ [[/login]] على طول، وبعد ثانيتين الـ user يوصل بس انت خلاص بقيت في صفحة الـ login، و RequireAuth مش مترسوم أصلًا عشان يرجّعك.
+
+«لسه مش عارف» غير «مش مسجّل». أي auth بيتقري من سيرفر أو من storage بشكل async محتاج حالة loading منفصلة. ولو لقيت إن الـ login بيرجّعك للـ dashboard بعد ما تسجّل، ده الـ [[state.from]] شغال صح.`,
+          solCode: R`function useAuth() {
+  const [state, setState] = useState<{ user: User | null; isLoading: boolean }>({ user: null, isLoading: true })
+  useEffect(() => {
+    const id = setTimeout(() => setState({ user: { id: 1, name: 'Sara', role: 'admin' }, isLoading: false }), 2000)
+    return () => clearTimeout(id)
+  }, [])
+  return state
+}`
         }
       ]
     },
@@ -1918,7 +2108,10 @@ export const App = () => <QueryClientProvider client={queryClient}><Products pag
             "هنا TypeScript عارف إن data موجودة.",
             "قفلة.",
             "الـ provider بيلف التطبيق عشان أي useQuery يلاقي الكاش."
-          ]
+          ],
+          sol: R`Products مرتين = طلب [[GET /api/products?page=1]] واحد بس، لأن الاتنين عندهم نفس الـ queryKey، و React Query بيشارك الطلب الشغال والنتيجة. في الـ Devtools هتلاقي query واحدة [[["products",1]]] وجنبها رقم 2 (عدد اللي بيراقبوها).
+
+لما ترجع من صفحة 2 لـ 1، القايمة بتظهر فورًا من الكاش من غير «Loading...». وممكن تلاقي GET جديد في الخلفية، لأن الـ staleTime الافتراضي صفر، فالبيانات بتتعرض وبتتحدّث بعدها (stale-while-revalidate). لو شفت طلبين في أول تحميل، غالبًا الـ key مختلف بين الاتنين (رقم في واحدة ونص في التانية) أو انت عامل [[new QueryClient()]] جوه component فبيتعمل من جديد كل render.`
         },
         {
           cmd: "staleTime و gcTime",
@@ -1969,7 +2162,10 @@ useQuery({ queryKey: ['user', id], queryFn: () => getUser(id!), enabled: !!id })
             "إعدادات بتتغير نادرًا: مبتبقاش stale أبدًا لحد ما تعمل invalidate.",
             "بيانات حية: اطلبها كل ١٠ ثواني.",
             "query معتمدة على id: متشتغلش غير لما id يبقى موجود."
-          ]
+          ],
+          sol: R`بـ [[staleTime: 0]]: كل ما ترجع للتاب هتلاقي GET جديد لكل query ظاهرة. بـ [[60_000]]: لو رجعت قبل دقيقة من آخر fetch مفيش طلبات، ولو بعدها طلب جديد. [[refetchOnWindowFocus]] بيشتغل بس لو البيانات stale.
+
+لاحظ إن React Query بيسمع لـ [[visibilitychange]]، فلازم تروح لتاب تاني فعلًا مش بس تدوس على DevTools. ولو مش شايف طلبات خالص حتى بصفر، اتأكد إن الـ query عليها component بيعرضها دلوقتي (الـ queries اللي ملهاش observer مبتتعملش refetch)، وإن [[refetchOnWindowFocus]] مش false.`
         },
         {
           cmd: "useMutation",
@@ -2020,7 +2216,10 @@ useQuery({ queryKey: ['user', id], queryFn: () => getUser(id!), enabled: !!id })
             "قفلة.",
             "الزرار مقفول ونصه بيتغير وهو بيبعت.",
             "قفلة."
-          ]
+          ],
+          sol: R`لما تمسح: [[DELETE /api/products/3]] وبعده على طول [[GET /api/products?page=1]] لوحده، والمنتج يختفي من القايمة. الـ invalidate بيعلّم كل query مفتاحها بيبدأ بـ [[['products']]] إنها stale، واللي معروض منهم بيتجاب من جديد.
+
+بـ [[['product']]] هتلاقي الـ DELETE بس، والمنتج يفضل ظاهر لحد ما تعمل refresh. المطابقة بالـ prefix عنصر عنصر، و [[product]] مش نفس [[products]]. عشان كده الفرق بيعمل query key factory، فالمفاتيح تيجي من مكان واحد بدل ما تتكتب بإيدك.`
         },
         {
           cmd: "optimistic update",
@@ -2075,7 +2274,18 @@ const toggleDone = useMutation({
             "فشل: رجّع النسخة المحفوظة.",
             "في الحالتين: هات النسخة الحقيقية من السيرفر.",
             "قفلة."
-          ]
+          ],
+          sol: R`أول ضغطتين: الـ checkbox بيتعلّم (أو يتشال) فورًا وبيفضل كده. التالتة: بيتغير فورًا برضه، ولما الطلب يفشل بعد ثانية [[onError]] بيرجّع [[previous]] فيرجع لحالته القديمة، وبعدين [[onSettled]] بيجيب القايمة من السيرفر عشان يتأكد.
+
+لو الـ checkbox رجع للقديمة وبعدين اتعلّم تاني لوحده، غالبًا نسيت [[cancelQueries]] فـ refetch قديم رجع فوق التعديل المتفائل. ولو مرجعش خالص بعد الفشل، يبقى onMutate مش بيرجّع [[{ previous }]] أو onError بيقرا اسم غلط.`,
+          solCode: R`let calls = 0
+const api = {
+  async patch(url: string, body: { done: boolean }) {
+    await new Promise(r => setTimeout(r, 1000))
+    if (++calls % 3 === 0) throw new Error('Server rejected ' + url)
+    return body
+  },
+}`
         },
         {
           cmd: "Zustand",
@@ -2130,7 +2340,16 @@ const add = useCartStore(s => s.add)`,
             "قفلة الـ store.",
             "selector بيرجّع رقم: الـ component بيعيد الرسم لما الرقم يتغير بس.",
             "والدالة نفسها ثابتة، فالقراية دي مبتعملش render أبدًا."
-          ]
+          ],
+          sol: R`بـ selectors منفصلة: الرقم بيزيد مع كل add. بالـ object هتلاقي الصفحة وقعت بـ «Maximum update depth exceeded»، وقبلها warning: «The result of getSnapshot should be cached to avoid an infinite loop». الـ selector بيرجّع object جديد كل مرة يتنادى، و Zustand بتقارن بـ [[Object.is]]، فكل مرة شايفة «حاجة جديدة» وتطلب render، والـ render يعمل object جديد، وهكذا.
+
+الحل: selector لكل قيمة زي المثال، أو لف الـ selector بـ [[useShallow]] اللي بيقارن الـ object حقل حقل.`,
+          solCode: R`import { useShallow } from 'zustand/react/shallow'
+
+function CartButton() {
+  const { count, add } = useCartStore(useShallow(s => ({ count: s.items.length, add: s.add })))
+  return <button onClick={() => add('mug')}>Cart ({count})</button>
+}`
         },
         {
           cmd: "persist",
@@ -2181,7 +2400,12 @@ export const useSettings = create<Settings>()(
             "الإعدادات: المفتاح في localStorage، ورقم نسخة الشكل، وأنهي حقول تتحفظ.",
             "قفلة persist.",
             "قفلة create."
-          ]
+          ],
+          sol: R`بعد refresh الثيم فاضل. في Local Storage، key [[myapp-settings]] قيمته:
+
+[[{"state":{"theme":"dark","lang":"ar"},"version":1}]]
+
+مفيش [[sidebarOpen]] لأن [[partialize]] اختار theme و lang بس، ومفيش [[toggleTheme]] لأن الدوال مبتتحفظش في JSON أصلًا. و [[version]] موجودة عشان لو غيّرت شكل الـ state بعدين تكتب [[migrate]]. لو لقيت sidebarOpen محفوظة، الـ partialize مش واصلة (اتكتبت برا الـ options object).`
         }
       ]
     },
@@ -2833,7 +3057,16 @@ function Header({ name, count }: { name: string; count: number }) {
             "t للنصوص، و i18n لتغيير اللغة.",
             "نص بمتغير، وجمع حسب count، وزرار بيقلب اللغة فكل حاجة تعيد الرسم.",
             "قفلة."
-          ]
+          ],
+          sol: R`بالعربي: [[0]] «مفيش حاجة»، [[1]] «حاجة واحدة»، [[2]] «حاجتين»، [[3]] «3 حاجات»، [[11]] «11 حاجة»، ولو جربت [[100]] «100 حاجة». i18next بيسأل [[Intl.PluralRules('ar')]] عن الفئة (zero و one و two و few من 3 لـ 10، و many من 11 لـ 99، و other للباقي) وبيضيف الـ suffix للـ key. ودوسة EN/AR بتقلب لـ «Hello Sara · 3 items».
+
+لو شفت كلمة [[items]] نفسها على الشاشة، يبقى الـ init متعملوش import في [[main.tsx]]، أو مبعتش [[count]] أصلًا. ولو شفت «3 حاجة»، يبقى [[items_few]] ناقصة ووقع على other.`,
+          solCode: R`// src/main.tsx
+import './i18n'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+
+createRoot(document.getElementById('root')!).render(<App />)`
         },
         {
           cmd: "RTL",
@@ -2887,7 +3120,10 @@ function PriceRow({ label, price }: { label: string; price: string }) {
             "صف فيه عنوان وسعر.",
             "ps و text-start بيتقلبوا لوحدهم، و bdi بيعزل اتجاه السعر.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تقلب لعربي، في Elements هتلاقي [[<html lang="ar" dir="rtl">]]، والـ flex اتقلب لوحده: الـ label بقى يمين والسعر شمال، و [[ps-4]] بقت padding من اليمين. ولما ترجع إنجليزي كل حاجة ترجع.
+
+الرقم من غير [[<bdi>]] في جملة عربي هيتعرض كده: [[0000 000 100 20+]]. العلامة بتروح لآخر الرقم من ناحية اليمين وترتيب المجموعات بيتقلب، لأن الـ + والمسافات بياخدوا اتجاه الكلام العربي اللي حواليهم. [[<bdi dir="ltr">]] بيعزل الرقم فيتعرض [[+20 100 000 0000]] صح.`
         },
         {
           cmd: "ErrorBoundary",
@@ -2941,7 +3177,20 @@ export function Page() {
             "قفلة الـ boundary.",
             "قفلة القوس.",
             "قفلة."
-          ]
+          ],
+          sol: R`لما الـ component يرمي وقت الرسم هتلاقي الرسالة وزرار Try again مكانه بس، وباقي الصفحة شغالة. Try again بيرسم الـ children تاني، فبنسبة 50% يرجع يشتغل وبنسبة 50% يوقع تاني. في التطوير هتلاقي الـ error برضه في الـ console مع إنه اتمسك، ودا طبيعي.
+
+الـ error اللي في onClick مش بيوصل للـ boundary: الـ fallback مش بيظهر، والـ error بيطلع في الـ console بس كـ uncaught. الـ boundaries بتمسك أخطاء الرسم والـ lifecycle بس، مش الـ event handlers ولا الكود الـ async. عشان توصله للـ boundary، امسكه بـ try/catch وابعته بـ [[showBoundary]].`,
+          solCode: R`import { useErrorBoundary } from 'react-error-boundary'
+
+function Flaky() {
+  if (Math.random() > 0.5) throw new Error('Render failed')
+  return <p>Loaded</p>
+}
+function SaveButton() {
+  const { showBoundary } = useErrorBoundary()
+  return <button onClick={() => { try { throw new Error('Click failed') } catch (e) { showBoundary(e) } }}>Save</button>
+}`
         },
         {
           cmd: "lazy و Suspense",
@@ -2996,7 +3245,10 @@ Suspense مش للـ lazy بس: [[use(promise)]]، و [[useSuspenseQuery]] في 
             "قفلة الـ Fragment.",
             "قفلة القوس.",
             "قفلة."
-          ]
+          ],
+          sol: R`قبل: ملف JS واحد كبير. لما جربنا صفحة فيها recharts بـ import عادي طلع [[index-*.js]] حوالي 520kB (158kB gzip) و Vite طلّع warning إن الـ chunk أكبر من 500kB. بعد [[lazy]]: [[index-*.js]] حوالي 222kB و [[Reports-*.js]] لوحده حوالي 300kB. الأرقام عندك هتختلف، بس الفكرة إن تحميل أول صفحة بقى أخف بحجم الصفحة التقيلة.
+
+في Network لما تروح للصفحة هتلاقي [[Reports-*.js]] بيتطلب ساعتها بس، والـ skeleton بيظهر لحظة. لو ملقيتش ملف منفصل، غالبًا الصفحة لسه معمولها import عادي في ملف تاني (import واحد static كفاية يرجّعها للـ bundle الأساسي)، أو الملف مفيهوش [[export default]].`
         },
         {
           cmd: "createPortal",
@@ -3052,7 +3304,10 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
             "المكان في الـ DOM.",
             "قفلة createPortal.",
             "قفلة."
-          ]
+          ],
+          sol: R`في Elements هتلاقي [[<dialog>]] آخر حاجة في [[body]] مش جوه الـ div، فالـ [[overflow: hidden]] والـ [[transform]] مش بيقصّوه. وبما إن [[showModal()]] بيحطه في الـ top layer، باقي الصفحة بتبقى inert: Tab بيلف على الزراير اللي جوه الـ dialog (وممكن يروح لشريط المتصفح) بس عمره ما يوصل لعنصر في الصفحة ورا.
+
+Escape بيقفل الـ dialog، والـ [[close]] event بينادي [[onClose]]، ففي React DevTools هتلاقي [[open]] عند الأب بقت [[false]]. لو قفل بـ Escape والـ state فضلت true، يبقى onClose مش متوصّل، والمرة الجاية [[open]] مش هتتغير فالـ effect مش هيشتغل والـ modal مش هيفتح. ولو Tab خرج للصفحة، يبقى استخدمت [[show()]] بدل [[showModal()]].`
         }
       ]
     },
