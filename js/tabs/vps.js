@@ -959,6 +959,120 @@ grep CRON /var/log/syslog | tail`,
             "كل ٥ دقايق: اطلب صفحة health، ولو فشلت اكتب down في ملف.",
             "كل يوم أحد الساعة ٤ الفجر: نضّف Docker. المسار كامل عشان cron يلاقيه."
           ]
+        },
+        {
+          cmd: "systemd timer",
+          title: "بديل cron بلوج وبيعوّض اللي فاته",
+          desc: R`timer في systemd بيشغّل service في مواعيد، زي سطر cron. بس الناتج بيروح لـ journalctl لوحده، و [[systemctl status]] بيقولك آخر مرة نجحت ولا فشلت، و [[Persistent=true]] بيشغّل المهمة اللي فاتت لو السيرفر كان مقفول وقتها.
+
+ملفين بنفس الاسم: [[backup.service]] فيه الأمر، و [[backup.timer]] فيه الميعاد.`,
+          example: R`# /etc/systemd/system/backup.service
+[Unit]
+Description=Nightly database backup
+
+[Service]
+Type=oneshot
+User=deploy
+ExecStart=/home/deploy/backup.sh
+
+# /etc/systemd/system/backup.timer
+[Unit]
+Description=Run backup.service every night
+
+[Timer]
+OnCalendar=*-*-* 03:00:00
+Persistent=true
+RandomizedDelaySec=10min
+
+[Install]
+WantedBy=timers.target`,
+          try: R`حوّل مهمة الباك أب اللي في crontab لـ timer: اكتب الملفين، واختبر الميعاد بـ [[systemd-analyze calendar]]، وشغّل الـ service مرة بإيدك قبل ما تفعّل الـ timer.`,
+          flag: "script",
+          deep: {
+            why: R`أشهر مشكلة في cron: المهمة مشتغلتش أو فشلت ومحدش عرف، لأن الناتج راح في حتة محدش بيبص فيها، والـ PATH مختلف (شوف «cron مشتغلش» في تاب التشخيص). الـ timer بيحل الاتنين: اللوج في journalctl مع باقي الخدمات، والحالة الأخيرة ظاهرة في status.`,
+            how: R`الـ service هنا [[Type=oneshot]]: بيشتغل، ويخلص، ويخرج، مش خدمة فاضلة شغالة. ومفيهاش [[Install]] لأن الـ timer هو اللي بيشغّلها. والـ timer بيشغّل الـ service اللي بنفس اسمه لوحده.
+
+[[OnCalendar]] صيغته: [[يوم-في-الأسبوع سنة-شهر-يوم ساعة:دقيقة:ثانية]]، و [[*]] أي قيمة. [[*-*-* 03:00:00]] كل يوم ٣ الفجر، و [[Sun 04:00]] الأحد ٤ الفجر، و [[*:0/5]] كل ٥ دقايق، وفيه اختصارات زي [[daily]] و [[weekly]]. و [[systemd-analyze calendar "..."]] بيقولك الصيغة صح ولا لأ، والمرة الجاية إمتى بالظبط، قبل ما تحفظ.
+
+[[Persistent=true]]: systemd بيحفظ آخر مرة المهمة اشتغلت. لو السيرفر كان مقفول الساعة ٣، أول ما يقوم بيشغّلها. cron مش بيعمل كده، المهمة بتضيع وخلاص.
+
+[[RandomizedDelaySec=10min]] بيأخر التشغيل وقت عشوائي لحد ١٠ دقايق، عشان لو كذا مهمة أو كذا سيرفر على نفس الساعة ميضربوش الديسك أو الـ API في نفس الثانية.
+
+والمهمة بتشتغل بالبيئة بتاعة systemd، فالمسارات كاملة برضه، و [[Environment]] أو [[EnvironmentFile]] للمتغيرات زي ملف الخدمة.`,
+            when: R`مهام مهمة لازم تعرف إنها نجحت: باك أب، وتجديد، وتنضيف. cron لسه كويس للحاجات البسيطة، وعلى استضافة مشتركة مفيش غيره.`,
+            mistakes: R`تعمل [[enable]] للـ service بدل الـ timer، فمفيش حاجة بتتجدول. تنسى [[daemon-reload]] بعد تعديل الملفات. تكتب [[OnCalendar=3:00]] وتفتكرها بتوقيتك وهي بتوقيت السيرفر ([[timedatectl]]). و [[Type=simple]] لسكربت: [[systemctl start]] بيرجع على طول قبل ما السكربت يخلص، فمتعرفش من الأمر نفسه نجح ولا لأ، وأي unit مستنية بعده بـ [[After]] بتبدأ بدري. [[oneshot]] بيستنى لحد ما يخلص.`
+          },
+          lines: [
+            "قسم الوصف.",
+            "اسم المهمة في status و journalctl.",
+            "قسم التشغيل.",
+            "بتشتغل وتخلص، مش خدمة فاضلة شغالة.",
+            "كيوزر deploy مش root.",
+            "السكربت نفسه بمسار كامل.",
+            "ملف الـ timer: قسم الوصف.",
+            "وصف الـ timer.",
+            "قسم المواعيد.",
+            "كل يوم الساعة ٣:٠٠ الفجر بتوقيت السيرفر.",
+            "لو السيرفر كان مقفول وقتها، شغّلها أول ما يقوم.",
+            "أخّرها وقت عشوائي لحد ١٠ دقايق.",
+            "قسم التفعيل.",
+            "خليه يقوم مع السيرفر (ده اللي enable بيستخدمه)."
+          ],
+          sol: R`[[systemd-analyze calendar "*-*-* 03:00:00"]] بيطبع [[Normalized form: *-*-* 03:00:00]] و [[Next elapse:]] بتاريخ بكرة الساعة ٣. ولو الصيغة غلط بيقول [[Failed to parse calendar specification]].
+
+وآخر سطر في الحل: [[crontab -e]] وشيل سطر الباك أب القديم، عشان المهمة متشتغلش مرتين.
+
+[[sudo systemctl start backup.service]] بيستنى لحد السكربت ما يخلص (لأنه oneshot)، و [[systemctl status backup.service]] بعدها بيقول [[inactive (dead)]] ومعاه [[status=0/SUCCESS]] وآخر سطور الناتج. ولو فشل: [[failed]] و [[status=1/FAILURE]].
+
+[[systemd-analyze verify /etc/systemd/system/backup.*]] بيطلّع أي غلطة في الملفين، زي [[Command ... is not executable]] لو السكربت مش موجود أو ناقصه [[chmod +x]].`,
+          solCode: R`sudo nano /etc/systemd/system/backup.service
+sudo nano /etc/systemd/system/backup.timer
+systemd-analyze calendar "*-*-* 03:00:00"
+systemd-analyze verify /etc/systemd/system/backup.service /etc/systemd/system/backup.timer
+sudo systemctl daemon-reload
+sudo systemctl start backup.service
+systemctl status backup.service
+sudo systemctl enable --now backup.timer
+crontab -e`
+        },
+        {
+          cmd: "list-timers",
+          title: "إمتى اشتغل وإمتى هيشتغل تاني",
+          desc: R`[[list-timers]] بيعرض كل timer: الجاية إمتى، وآخر مرة إمتى، وبيشغّل أنهي service. واللوج كله في [[journalctl -u backup.service]]، فمش محتاج [[>> file 2>&1]] زي cron.`,
+          example: R`sudo systemctl daemon-reload
+sudo systemctl enable --now backup.timer
+systemctl list-timers
+systemctl list-timers --all
+sudo systemctl start backup.service
+journalctl -u backup.service --since today
+systemctl status backup.service`,
+          try: "فعّل الـ timer، واعرض list-timers، وشغّل الـ service بإيدك مرة، وشوف ناتج السكربت في journalctl.",
+          deep: {
+            why: "الفرق الحقيقي عن cron مش في الملفات، في إنك تقدر تسأل السيرفر «الباك أب اشتغل امبارح؟ ونجح؟» وتلاقي إجابة في ثانية.",
+            how: R`[[enable --now backup.timer]]: [[enable]] عشان الـ timer يرجع بعد أي ريستارت، و [[--now]] يبدأ يعد من دلوقتي. الـ timer هو اللي بيتفعّل مش الـ service.
+
+[[list-timers]] بيعرض الـ timers الشغالة: [[NEXT]] الجاية، و [[LEFT]] فاضل قد إيه، و [[LAST]] آخر مرة، و [[UNIT]] و [[ACTIVATES]]. و [[--all]] حتى الواقفة. هتلاقي فيه timers للسيستم نفسه زي [[apt-daily]] و [[logrotate]]، وده نفس اللي أوبونتو بيستخدمه بدل cron.
+
+[[start backup.service]] بيشغّل المهمة دلوقتي من غير ما تستنى الميعاد، بنفس البيئة والـ user، وده أحسن اختبار. وأي حاجة السكربت طبعها (stdout و stderr) بتروح لـ journalctl تحت اسم الـ service.
+
+ولو عايز تنبيه لما يفشل: [[OnFailure=notify@%n.service]] في [[Unit]] بتاع الـ service، وده service تاني بيبعت رسالة (زي سكربت Telegram في قسم المراقبة).`,
+            when: "بعد ما تعمل أي timer، وكل ما تشك إن مهمة مجدولة مشتغلتش.",
+            mistakes: R`تشيل السطر من crontab وتنسى تعمل [[enable]] للـ timer، فالمهمة تبطّل خالص من غير ما حد ياخد باله. أو العكس: تسيب الاتنين فالباك أب يشتغل مرتين. وتدوّر في [[/var/log/syslog]] زي cron، واللوج في [[journalctl -u]].`
+          },
+          lines: [
+            "خلّي systemd يقرا الملفات الجديدة.",
+            "فعّل الـ timer (مش الـ service) وابدأه.",
+            "اعرض الـ timers: الجاية وآخر مرة.",
+            "حتى اللي واقفة.",
+            "شغّل المهمة دلوقتي بإيدك تختبرها.",
+            "ناتج السكربت النهارده.",
+            "نجحت ولا فشلت آخر مرة."
+          ],
+          sol: R`[[systemctl list-timers]] بيطلّع سطر فيه [[backup.timer]] و [[backup.service]]، و [[NEXT]] بكرة الساعة ٣ وشوية (بسبب RandomizedDelaySec)، و [[LAST]] فاضي أو [[-]] لو لسه مشتغلش من الـ timer.
+
+بعد [[start backup.service]]، [[journalctl -u backup.service --since today]] بيعرض [[Starting backup.service - Nightly database backup...]] وناتج السكربت، وفي الآخر [[Finished backup.service]] أو [[Failed with result 'exit-code']].
+
+لو الـ timer مش ظاهر في list-timers: نسيت enable، أو اسم الـ timer مش زي اسم الـ service.`
         }
       ]
     },
@@ -1282,6 +1396,286 @@ free -h`,
             "ضيف سطر في fstab عشان يشتغل بعد كل ريستارت.",
             "اتأكد إن الـ swap ظهر."
           ]
+        }
+      ]
+    },
+    {
+      t: "المراقبة والتنبيهات",
+      l: 3,
+      n: "تعرف إن الديسك قرّب يتملى قبل ما الموقع يقع، من سكربت Telegram صغير لحد Grafana",
+      items: [
+        {
+          cmd: "تنبيه Telegram",
+          title: "سكربت يبعتلك لما الديسك أو الرام يعدّوا حد",
+          desc: R`أبسط مراقبة تنفع لـ VPS واحد: سكربت كل ٥ دقايق من cron، بيقرا نسبة الديسك والرام، ولو عدّوا الحد يبعت رسالة على Telegram. وبيبعت مرة واحدة لما المشكلة تبدأ، ومرة لما ترجع طبيعية، مش كل ٥ دقايق.
+
+تعمل bot من [[@BotFather]] في Telegram وتاخد الـ token، وتبعتله أي رسالة، وبعدين [[curl https://api.telegram.org/botTOKEN/getUpdates]] يوريك [[chat.id]] بتاعك. الاتنين في ملف [[/etc/server-alert.env]] بصلاحية 600.`,
+          example: R`#!/usr/bin/env bash
+set -euo pipefail
+source /etc/server-alert.env
+HOST=$(hostname)
+DISK=$(df --output=pcent / | tail -1 | tr -dc '0-9')
+RAM=$(free | awk '/^Mem:/ {printf "%d", ($2 - $7) * 100 / $2}')
+send() {
+  curl -fsS -m 10 "https://api.telegram.org/bot$TG_TOKEN/sendMessage" \
+    -d chat_id="$TG_CHAT" --data-urlencode text="$1" > /dev/null
+}
+check() {
+  local name=$1 value=$2 limit=$3 state=/var/tmp/alert-$1
+  if (( value >= limit )); then
+    [[ -f $state ]] || { send "ALERT $HOST: $name $value% (limit $limit%)"; touch "$state"; }
+  elif [[ -f $state ]]; then
+    send "OK $HOST: $name back to $value%"; rm -f "$state"
+  fi
+}
+check disk "$DISK" 85
+check ram "$RAM" 90`,
+          try: R`احفظ السكربت في [[/usr/local/bin/server-alert.sh]] واعمله [[chmod +x]]، وحط الـ token والـ chat id في الملف. شغّله مرة بحد ديسك أقل من النسبة الحالية (مثلًا 10) وتأكد إن الرسالة وصلت، وشغّله تاني وتأكد إنها موصلتش تاني. وبعدين رجّع الحد 85 وحطه في crontab كل ٥ دقايق.`,
+          flag: "script",
+          deep: {
+            why: R`أشهر سببين لوقوع موقع على VPS: الديسك اتملى (لوجات، أو صور Docker، أو باك أب بيتراكم)، والرام خلصت والـ OOM killer قتل التطبيق. تاب التشخيص بيعلّمك تصلّحهم بعد ما يحصلوا («الديسك اتملى» و «الرام خلصت»). التنبيه على ٨٥٪ بيحوّلهم لصيانة عادية تعملها وانت مرتاح بدل ما العميل يكلّمك.`,
+            how: R`[[df --output=pcent /]] بيطبع نسبة استخدام الـ root بس، و [[tr -dc '0-9']] بيشيل أي حاجة مش رقم (المسافات وعلامة ٪) فيفضل رقم تقارنه.
+
+الرام: [[free]] سطر [[Mem:]] فيه total في العمود التاني و available في السابع. المهم available مش free: لينكس بيستخدم الرام الفاضية كـ cache، فـ free دايمًا قليل وده طبيعي. المستخدم فعلًا = total ناقص available.
+
+[[send]] بتكلّم Bot API بـ [[sendMessage]]. و [[--data-urlencode]] عشان الرسالة فيها مسافات و [[%]]. و [[-m 10]] حد أقصى ١٠ ثواني عشان السكربت ميعلقش لو Telegram مش بيرد. و [[-f]] مع [[set -e]] معناها لو الإرسال فشل، السكربت يقف قبل ما يعمل ملف الحالة، فيحاول تاني بعد ٥ دقايق.
+
+ملف الحالة في [[/var/tmp]] هو اللي بيمنع الإزعاج: أول مرة الرقم يعدّي الحد بيبعت ويعمل الملف. طول ما الملف موجود مش بيبعت تاني. ولما الرقم ينزل، يبعت OK ويمسح الملف. ده أهم جزء، من غيره هتوصلك رسالة كل ٥ دقايق لحد ما تعمل mute للبوت، وساعتها التنبيه مالوش لازمة.
+
+وفي crontab: [[*/5 * * * * /usr/local/bin/server-alert.sh >> /var/log/server-alert.log 2>&1]]، أو timer (في قسم cron).`,
+            when: "أول يوم على أي VPS فيه موقع حقيقي، حتى قبل أي حاجة أكبر. ولما السيرفرات تبقى أكتر من اتنين أو محتاج تاريخ ورسومات، انقل لـ Grafana أو Beszel.",
+            mistakes: R`تحسب الرام من عمود free فتلاقيها ٩٥٪ طول الوقت وتفتكر فيه مشكلة. وتبعت كل ٥ دقايق من غير ملف حالة، فتتجاهل البوت بعد يوم. والـ token جوه السكربت نفسه، والسكربت في repo على GitHub. وسكربت المراقبة محتاج السيرفر يبقى شغال عشان يبعت، فلو السيرفر وقع خالص مش هتعرف منه: ده محتاج فحص من بره (الدرس الأخير في القسم).`
+          },
+          lines: [
+            "اقف عند أي خطأ، أو متغير مش متعرّف، أو فشل في pipe.",
+            "اقرا TG_TOKEN و TG_CHAT من ملف بره السكربت.",
+            "اسم السيرفر عشان تعرف الرسالة جاية منين.",
+            "نسبة استخدام الـ root كرقم بس.",
+            "نسبة الرام المستخدمة فعلًا: (total - available) / total.",
+            "فانكشن الإرسال:",
+            "اطلب sendMessage من Telegram، بحد ١٠ ثواني.",
+            "ابعت الـ chat id والرسالة (متشفّرة للـ URL)، واسكت عن الرد.",
+            "آخر الفانكشن.",
+            "فانكشن الفحص: الاسم والقيمة والحد.",
+            "متغيرات محلية، وملف حالة لكل مقياس.",
+            "لو القيمة وصلت الحد أو عدّته:",
+            "لو مبعتناش قبل كده: ابعت واعمل ملف الحالة.",
+            "ولو نزلت تحت الحد وكنا باعتين تنبيه:",
+            "ابعت إنها رجعت، وامسح ملف الحالة.",
+            "آخر الـ if.",
+            "آخر الفانكشن.",
+            "افحص الديسك على ٨٥٪.",
+            "وافحص الرام على ٩٠٪."
+          ],
+          sol: R`بحد 10 للديسك: الرسالة بتوصل على Telegram زي [[ALERT vps1: disk 61% (limit 10%)]]، والملف [[/var/tmp/alert-disk]] اتعمل. التشغيل التاني مبيبعتش حاجة.
+
+لما ترجّع الحد 85 وتشغّله: بتوصلك [[OK vps1: disk back to 61%]] والملف بيتمسح. ده معناه إن التنبيه ورجوعه شغالين.
+
+لو مفيش رسالة ومفيش خطأ: [[chat_id]] غلط (لازم تكون بعت للبوت رسالة الأول). لو [[curl: (22) The requested URL returned error: 401]]: الـ token غلط. ولو [[TG_TOKEN: unbound variable]]: الملف مش بيتقري أو الاسم فيه غلطة.
+
+وفي crontab بعد كده، [[grep CRON /var/log/syslog]] بيأكد إنه بيشتغل كل ٥ دقايق، و [[/var/log/server-alert.log]] المفروض يفضل فاضي طول ما مفيش أخطاء.`,
+          solCode: R`sudo tee /etc/server-alert.env > /dev/null <<'EOF'
+TG_TOKEN=123456789:AA...your-bot-token
+TG_CHAT=123456789
+EOF
+sudo chmod 600 /etc/server-alert.env
+sudo nano /usr/local/bin/server-alert.sh
+sudo chmod +x /usr/local/bin/server-alert.sh
+sudo sed -i 's/check disk "$DISK" 85/check disk "$DISK" 10/' /usr/local/bin/server-alert.sh
+sudo /usr/local/bin/server-alert.sh
+sudo /usr/local/bin/server-alert.sh
+sudo sed -i 's/check disk "$DISK" 10/check disk "$DISK" 85/' /usr/local/bin/server-alert.sh
+sudo /usr/local/bin/server-alert.sh
+sudo crontab -e
+# */5 * * * * /usr/local/bin/server-alert.sh >> /var/log/server-alert.log 2>&1`
+        },
+        {
+          cmd: "node_exporter و Grafana",
+          title: "رسومات لكل حاجة على السيرفر",
+          desc: R`الستاك المعروف: [[node_exporter]] بيطلّع أرقام السيرفر (CPU ورام وديسك وشبكة)، و [[cAdvisor]] أرقام كل container، و [[Prometheus]] بيجمعهم كل ٣٠ ثانية ويخزّنهم، و [[Grafana]] بيرسمهم ويبعت التنبيهات.
+
+كلهم في compose واحد. و Grafana على [[127.0.0.1]] بس، وتفتحه من جهازك بنفق SSH: [[ssh -L 3000:localhost:3000 deploy@vps]] وبعدين [[http://localhost:3000]].`,
+          example: R`services:
+  prometheus:
+    image: prom/prometheus:v3.13.4
+    command: [--config.file=/etc/prometheus/prometheus.yml, --storage.tsdb.retention.time=15d]
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prom-data:/prometheus
+    restart: unless-stopped
+  node-exporter:
+    image: prom/node-exporter:v1.12.1
+    command: [--path.rootfs=/host]
+    pid: host
+    volumes: ["/:/host:ro,rslave"]
+    restart: unless-stopped
+  cadvisor:
+    image: ghcr.io/google/cadvisor:v0.60.6
+    privileged: true
+    devices: [/dev/kmsg]
+    volumes: ["/:/rootfs:ro", "/var/run:/var/run:ro", "/sys:/sys:ro", "/var/lib/docker:/var/lib/docker:ro"]
+    restart: unless-stopped
+  grafana:
+    image: grafana/grafana:13.2
+    ports: ["127.0.0.1:3000:3000"]
+    volumes: [grafana-data:/var/lib/grafana]
+    restart: unless-stopped
+volumes:
+  prom-data:
+  grafana-data:`,
+          try: R`شغّل الستاك على سيرفر التجربة ومعاه [[prometheus.yml]] اللي في الحل. افتح Grafana بالنفق، وضيف data source نوعه Prometheus على [[http://prometheus:9090]]، واعمل Import لـ dashboard رقم 1860 (Node Exporter Full).`,
+          flag: "script",
+          deep: {
+            why: R`السكربت بيقولك «الديسك ٨٦٪ دلوقتي». بس مش بيقولك الديسك بيزيد قد إيه في اليوم، ولا الرام بدأت تعلى من أنهي deploy، ولا أنهي container هو اللي واكلها. الرسومات والتاريخ بيجاوبوا على «من إمتى؟» و «مين؟»، ودول أول سؤالين في أي مشكلة.`,
+            how: R`Prometheus بيشتغل بالـ pull: كل ٣٠ ثانية بيروح لكل target في [[prometheus.yml]] ويطلب [[/metrics]]، ويخزن الأرقام بتاريخها. [[retention.time=15d]] يمسح الأقدم من ١٥ يوم عشان ميملاش الديسك اللي بيراقبه.
+
+node_exporter جوه container بيشوف ديسك الـ container مش السيرفر، عشان كده بنركّب [[/]] بتاع السيرفر على [[/host]] للقراية بس، و [[--path.rootfs=/host]] بيقوله اقرا من هناك. و [[pid: host]] عشان يشوف عمليات السيرفر. أرقام الشبكة هتبقى بتاعة الـ container، ولو محتاجها بجد: [[network_mode: host]] وتغيّر الـ target.
+
+cAdvisor بيقرا Docker و cgroups، فمحتاج الفولدرات دي و [[privileged]]. وهو اللي بيقولك الرام والـ CPU لكل container بالاسم.
+
+ولا خدمة فيهم فاتحة بورت للنت غير Grafana، وعلى localhost بس. Prometheus بيوصل للاتنين التانيين بالاسم على شبكة compose.
+
+الـ dashboard 1860 جاهز ومعروف لـ node_exporter، وفيه dashboards جاهزة لـ cAdvisor برضه. متبدأش ترسم من الصفر.`,
+            when: R`أكتر من سيرفر، أو عايز تاريخ وتقارن قبل وبعد deploy، أو شغال في فريق. ولو ده كتير على VPS صغير: Netdata سكربت تسطيب واحد وبيطلّع رسومات وتنبيهات جاهزة، و Beszel أخف بكتير (hub صغير و agent على كل سيرفر) وفيه تنبيهات ديسك ورام و containers. الستاك ده بياكل حوالي نص جيجا رام، فعلى VPS بجيجا واحد يبقى تقيل.`,
+            mistakes: R`تفتح Grafana على [[3000:3000]] من غير 127.0.0.1، و Docker بيعدّي من ufw (شوف تاب Docker)، فلوحة فيها كل تفاصيل السيرفر بقت على النت بباسورد admin/admin الافتراضي. وتسيب Prometheus من غير retention فيملا الديسك. وتعمل node_exporter من غير [[--path.rootfs]]، فتراقب ديسك الـ container وتلاقيه دايمًا فاضي. وتحط الستاك على نفس السيرفر وتعتمد عليه لوحده: لو السيرفر وقع، المراقبة وقعت معاه.`
+          },
+          lines: [
+            "الخدمات.",
+            "Prometheus: بيجمع الأرقام ويخزنها.",
+            "نسخة محددة.",
+            "ملف الإعداد، واحفظ آخر ١٥ يوم بس.",
+            "الفولدرات:",
+            "ملف الإعداد من السيرفر، قراية بس.",
+            "البيانات نفسها على volume.",
+            "يقوم لوحده مع السيرفر.",
+            "node_exporter: أرقام السيرفر نفسه.",
+            "نسخة محددة.",
+            "اقرا الديسك والـ proc من السيرفر المركّب على /host.",
+            "شوف عمليات السيرفر مش الـ container بس.",
+            "ركّب / بتاع السيرفر قراية بس.",
+            "يقوم لوحده.",
+            "cAdvisor: أرقام كل container.",
+            "الصورة من ghcr.",
+            "محتاج صلاحيات عشان يقرا cgroups.",
+            "ولوج الكيرنل.",
+            "الفولدرات اللي بيقرا منها Docker والـ containers.",
+            "يقوم لوحده.",
+            "Grafana: الرسومات والتنبيهات.",
+            "نسخة 13.2.",
+            "البورت على localhost بس، وتفتحه بنفق SSH.",
+            "الإعدادات والـ dashboards على volume.",
+            "يقوم لوحده.",
+            "الـ volumes:",
+            "بيانات Prometheus.",
+            "بيانات Grafana."
+          ],
+          sol: R`[[docker compose ps]] بيوري الأربع خدمات Up. وفي Prometheus، [[docker compose exec prometheus wget -qO- localhost:9090/api/v1/targets]] (أو صفحة Status ثم Targets) بيوري الـ targets الاتنين [[up]].
+
+في Grafana: أول دخول admin و admin، وبيطلب باسورد جديدة. بعد ما تضيف الـ data source، زرار «Save & test» بيقول إنه اتصل. وبعد Import لـ 1860 واختيار الـ data source: رسومات CPU و RAM و Disk بأرقام قريبة من [[free -h]] و [[df -h]] على السيرفر.
+
+لو target واقف: [[context deadline exceeded]] أو [[no such host]] يعني اسم الخدمة في prometheus.yml مش زي compose. ولو الديسك في Grafana صغير ومش زي df: node_exporter من غير [[--path.rootfs]].`,
+          solCode: R`# prometheus.yml جنب compose.yml
+global:
+  scrape_interval: 30s
+scrape_configs:
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["cadvisor:8080"]`
+        },
+        {
+          cmd: "Grafana alert rules",
+          title: "قاعدة تنبيه: query وحد ومدة",
+          desc: R`قاعدة التنبيه في Grafana: query بـ PromQL، وحد (Threshold)، ومدة (Pending period) لازم الحالة تفضل فيها قبل ما يبعت. وبتروح لـ contact point نوعه Telegram (نفس الـ bot token والـ chat id).
+
+المدة هي اللي بتفرق التنبيه المفيد من الإزعاج: CPU ١٠٠٪ لمدة ٣٠ ثانية طبيعي، ولمدة ١٠ دقايق مشكلة.`,
+          example: R`# الديسك: Threshold IS ABOVE 85، و Pending period 10m
+100 * (1 - node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"})
+# الديسك هيخلص خلال ٢٤ ساعة بالمعدل ده: IS BELOW 0، و 30m
+predict_linear(node_filesystem_avail_bytes{mountpoint="/"}[6h], 24 * 3600)
+# الرام: IS ABOVE 90، و 10m
+100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)
+# container اتعمله restart في آخر ١٥ دقيقة: IS ABOVE 0
+changes(container_start_time_seconds{name!=""}[15m])
+# Prometheus مش قادر يوصل لـ target: IS BELOW 1، و 5m
+up`,
+          try: R`في Grafana اعمل contact point نوعه Telegram واضغط Test. وبعدين اعمل قاعدة الديسك بحد أقل من النسبة الحالية ومدة 1m، واستنى الرسالة، ورجّع الحد 85 واستنى رسالة resolved.`,
+          deep: {
+            why: "Grafana فيه كل الأرقام، بس محدش بيقعد يبص على dashboard طول اليوم. القاعدة هي اللي بتحوّل الرقم لرسالة، والصعب مش إنك تعملها، الصعب إنك تختار الحد والمدة صح فالرسالة تيجي لما يبقى فيه حاجة تتعمل بس.",
+            how: R`من Alerting ثم Alert rules ثم New alert rule: بتكتب الـ query وتختار Prometheus، وبعدها Reduce (آخر قيمة) و Threshold (أكبر من 85 مثلًا). وبعدين folder و evaluation group بـ interval (كل قد إيه يتحسب، دقيقة كفاية)، و Pending period. وفي الآخر contact point أو notification policy.
+
+الديسك: [[avail / size]] نسبة الفاضي، و [[1 -]] يقلبها للمستخدم. و [[mountpoint="/"]] عشان متحسبش tmpfs والـ overlay بتاعة Docker.
+
+[[predict_linear]] أذكى من أي نسبة: بياخد آخر ٦ ساعات، ويرسم خط، ويقولك الفاضي هيبقى كام بعد ٢٤ ساعة. لو أقل من صفر يبقى الديسك هيتملى بكرة، حتى لو هو ٦٠٪ دلوقتي (لوج بيكبر بسرعة مثلًا). وسيرفر ثابت على ٨٨٪ من شهور مش هيصحّيك.
+
+الرام: available زي السكربت، مش free.
+
+[[changes(container_start_time_seconds)]] من cAdvisor: وقت بداية الـ container اتغير يعني اتعمله restart، والـ restart policy بتخبّي إن التطبيق بيقع كل شوية.
+
+[[up]] رقم Prometheus بيحطه لكل target: 1 لو رد و 0 لو لأ. [[up == 0]] يعني المراقبة نفسها عمياء.
+
+وفي notification policy: [[Group wait]] و [[Repeat interval]] (مثلًا ٤ ساعات) بيحددوا بيكرر التنبيه كل قد إيه لو لسه مصلحتوش، بدل كل دقيقة.`,
+            when: "بعد ما الستاك يشتغل على طول. ابدأ بالخمسة دول بس، وزوّد لما تحصل مشكلة معرفتهاش من التنبيهات.",
+            mistakes: R`Pending period صفر، فكل spike ثانيتين يبقى رسالة. و Repeat interval قصير، فنفس التنبيه كل ٥ دقايق طول الليل. وحد ٧٠٪ للديسك على سيرفر عادي بيبقى ٧٥٪، فيفضل firing طول الوقت ومحدش بيبص عليه. ونسيان [[mountpoint]]، فالقاعدة تعمل alert لكل tmpfs. وتنسى تختبر الـ contact point بـ Test، فأول مرة تعرف إنه مش شغال هي وقت المشكلة الحقيقية.`
+          },
+          lines: [
+            "نسبة الديسك المستخدمة على / (١ ناقص نسبة الفاضي).",
+            "الفاضي هيبقى كام بعد ٢٤ ساعة، حسب آخر ٦ ساعات.",
+            "نسبة الرام المستخدمة فعلًا (available مش free).",
+            "عدد مرات الـ restart لكل container ليه اسم في آخر ١٥ دقيقة.",
+            "كل target: 1 لو Prometheus وصله، 0 لو لأ."
+          ],
+          sol: R`Test في الـ contact point بيبعت رسالة تجربة على Telegram على طول. لو موصلتش: الـ chat id أو الـ token غلط، و Grafana بيطلّع الخطأ تحت الزرار.
+
+بعد ما تعمل القاعدة بحد واطي: حالتها في صفحة Alert rules بتبقى Normal، وبعدين Pending لمدة الـ pending period، وبعدين Firing، والرسالة بتوصل وفيها اسم القاعدة والقيمة.
+
+ولما ترجّع الحد 85: بعد التقييم الجاي بترجع Normal، وبتوصلك رسالة فيها [[RESOLVED]].
+
+لو فضلت Normal ومش بتتحرك: جرّب الـ query في Explore الأول، لو مفيش نتيجة يبقى الـ mountpoint عندك مختلف (شوف [[node_filesystem_size_bytes]] لوحده في Explore).`
+        },
+        {
+          cmd: "أعراض مش أسباب",
+          title: "نبّه على اللي اليوزر حاسس بيه",
+          desc: R`العَرَض: «الموقع مش بيفتح» أو «بطيء» أو «الباك أب مشتغلش امبارح». السبب: «CPU عالي» أو «container عمل restart». التنبيه اللي يصحّيك لازم يبقى على عَرَض، والأسباب تبص عليها في الرسومات لما تحقق.
+
+وأهم عَرَضين لـ VPS واحد محتاجين حد من بره السيرفر: فحص للموقع كل دقيقة، وإشارة «أنا خلصت» من كل مهمة مجدولة (dead man's switch)، لو موصلتش في ميعادها يجيلك تنبيه.`,
+          example: R`# فحص من بره: Uptime Kuma على سيرفر تاني، أو خدمة زي UptimeRobot أو Better Stack
+curl -fsS -m 10 -o /dev/null -w "%{http_code} %{time_total}s\n" https://example.com/health
+# الباك أب يبعت ping بس لو نجح، والخدمة تنبّهك لو معداش في ميعاده:
+0 3 * * * /home/deploy/backup.sh && curl -fsS -m 10 --retry 3 https://hc-ping.com/YOUR-UUID > /dev/null
+# لو فشل، ابعت fail صريح:
+0 3 * * * /home/deploy/backup.sh || curl -fsS -m 10 https://hc-ping.com/YOUR-UUID/fail > /dev/null`,
+          try: R`راجع كل تنبيه عندك واسأل: «لو الرسالة دي جت الساعة ٣ الفجر، هقوم أعمل حاجة؟» اللي إجابته لأ شيله أو حوّله لـ dashboard. وبعدين ضيف فحص من بره لـ [[/health]]، و ping بعد الباك أب على healthchecks.io (فيه خطة مجانية).`,
+          deep: {
+            why: R`الغلطة المعروفة: تعمل تنبيه لكل رقم، CPU و load و swap و كل container. أول أسبوع بتوصلك ٥٠ رسالة، ٤٨ منهم مالهمش لازمة، فتعمل mute. والأسبوع اللي بعده الموقع يقع فعلًا، والرسالة الصح موجودة وسط الـ ٥٠ ومحدش شافها. ده اسمه alert fatigue، وهو أخطر من إن مفيش تنبيهات، لأنك فاكر نفسك متغطي.`,
+            how: R`قاعدة Google SRE المشهورة: نبّه على الأعراض اللي اليوزر حاسس بيها، مش على الأسباب. CPU ٩٥٪ والموقع بيرد في ٢٠٠ms؟ مفيش مشكلة، السيرفر بيشتغل. CPU ٣٠٪ والموقع بيرجّع 502؟ دي مشكلة، ومفيش قاعدة CPU كانت هتمسكها.
+
+الاستثناء: أسباب هتبقى عَرَض قريب ومؤكد، زي الديسك هيتملى خلال ٢٤ ساعة. دي تستاهل تنبيه لأن فيه حاجة واضحة تتعمل قبل ما اليوزر يحس.
+
+الفحص من بره: لو السيرفر نفسه وقع، أي حاجة شغالة عليه (سكربت أو Grafana) وقعت معاه ومش هتبعت. فحص من مكان تاني بيمسك الحالة دي، وبيقيس اللي اليوزر شايفه فعلًا: DNS وشهادة و Nginx والتطبيق مع بعض. [[/health]] الكويس بيلمس قاعدة البيانات، مش بيرجّع 200 وخلاص.
+
+الـ dead man's switch: خدمة زي healthchecks.io بتديك رابط، ومهمتك بتطلبه لما تخلص بنجاح. انت بتقولها «المفروض يوصلك ping كل ٢٤ ساعة»، ولو موصلش (السكربت فشل، أو cron واقف، أو السيرفر مقفول) هي اللي تبعتلك. ده بيمسك كل أسباب «الباك أب مشتغلش» مرة واحدة، حتى اللي عمرك ما فكرت فيها. و [[&&]] معناها الـ ping مش هيتبعت لو السكربت رجع خطأ.
+
+وكل تنبيه لازم يبقى: حاجة بتأثر على اليوزر أو هتأثر قريب، وليها خطوة واضحة تعملها، ومش بتتكرر من غير سبب. واللي مش كده مكانه dashboard.`,
+            when: "أول ما تحط أي تنبيهات، وكل ما تلاقي نفسك بتتجاهل رسالة. وفي الانترفيو سؤال «إزاي بتراقب السيستم؟» الإجابة القوية بتبدأ من الأعراض (الـ uptime و الأخطاء و الوقت) مش من CPU.",
+            mistakes: R`كل المراقبة على نفس السيرفر اللي بتراقبه. وتنبيه على CPU و load اللي بيطلعوا ويرجعوا لوحدهم. وفحص [[/health]] بيرجّع 200 حتى والقاعدة واقعة. و ping الباك أب في الأول بدل الآخر، أو بـ [[;]] بدل [[&&]]، فبيتبعت حتى لو الباك أب فشل. وكل التنبيهات بنفس الأهمية: خلي الموقع واقع على قناة بصوت، والديسك ٨٥٪ على قناة تشوفها الصبح.`
+          },
+          lines: [
+            "قيس الموقع زي اليوزر: الـ status والوقت، وافشل لو مردش في ١٠ ثواني.",
+            "كل يوم ٣ الفجر: الباك أب، ولو نجح بس ابعت ping (بـ [[&&]]).",
+            "ولو فشل ابعت fail صريح عشان التنبيه ييجي على طول من غير ما يستنى الميعاد."
+          ],
+          sol: R`مثال لقايمة بعد المراجعة على VPS فيه موقع واحد:
+
+يصحّيك: الموقع مش بيرد أو بيرجّع 5xx لمدة دقيقتين (فحص من بره). الباك أب مبعتش ping في ميعاده. الديسك هيتملى خلال ٢٤ ساعة.
+
+تشوفه الصبح: الديسك فوق ٨٥٪. الرام فوق ٩٠٪ لمدة ١٠ دقايق. container بيعمل restart. الشهادة فاضلها أقل من ١٤ يوم.
+
+مكانه dashboard بس: CPU، و load، و swap، والشبكة.
+
+على healthchecks.io: الـ check بيبقى «new» لحد أول ping، وبعد ما السكربت يخلص بـ exit 0 بيبقى «up» وجنبه وقت آخر ping. ولو شغّلت [[false && curl ...]] مفيش ping بيتبعت، وبعد الـ period والـ grace بيبقى «down» ويبعتلك. ولو قلت «كل حاجة تصحّيني»، ارجع للسؤال: هقوم أعمل إيه الساعة ٣ الفجر عشان CPU ٩٠٪؟`
         }
       ]
     },
