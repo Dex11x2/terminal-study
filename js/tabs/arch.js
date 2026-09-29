@@ -2518,7 +2518,7 @@ if (count === 1) await grantAccess(t, order);`,
           cmd: "signed URLs + async",
           title: "هتتعامل مع رفع ملفات كتير وكبيرة إزاي؟ (Handle file uploads at scale)",
           desc: R`الملفات مبتعدّيش على سيرفر الـ API خالص. السيرفر بيتأكد من الصلاحية والنوع والحجم، ويدّي الـ client رابط موقّع عمره دقايق، والـ client بيرفع مباشرة على S3 أو R2. بعد الرفع، الـ client بيبلّغ السيرفر بالـ key، والسيرفر يتأكد إن الملف موجود ونوعه وحجمه مظبوط، ويحط job في queue للمعالجة: تصغير صور، أو تحويل فيديو لـ HLS. والملفات الكبيرة بترفع multipart أو resumable، والقراية من CDN، والملفات الخاصة بروابط موقّعة قصيرة.`,
-          example: R`const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket, Key: key, ContentType: type }), { expiresIn: 300 });`,
+          example: R`const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket, Key: key, ContentType: type }), { expiresIn: 300, signableHeaders: new Set(["content-type"]) });`,
           try: "ارسم الفلو ده على ورقة بالأسهم: المتصفح، والـ API، و S3، والـ queue، والـ worker، والـ CDN. واكتب على كل سهم إيه اللي بيتبعت فيه. لو فيه سهم فيه الملف نفسه رايح للـ API، ارجع للدرس.",
           flag: "script",
           deep: {
@@ -2528,7 +2528,7 @@ if (count === 1) await grantAccess(t, order);`,
             mistakes: "«بستقبله بـ multer وبحفظه على الديسك». أو إنك تصدّق الامتداد أو الـ Content-Type اللي جاي من الـ client. أو bucket public للملفات الخاصة. أو اسم الملف الأصلي كـ key."
           },
           lines: [
-            "رابط PUT موقّع للـ key ده والنوع ده بس، عمره ٥ دقايق."
+            "رابط PUT موقّع للـ key ده والنوع ده بس (signableHeaders بيدخّل الـ Content-Type في التوقيع)، عمره ٥ دقايق."
           ]
         },
         {

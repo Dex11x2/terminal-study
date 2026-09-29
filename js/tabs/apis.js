@@ -208,7 +208,7 @@ app.post("/reports", async (req, res) => {
           desc: R`كل كود بيقول للعميل يعمل إيه بعد كده: [[400]] الطلب نفسه بايظ (JSON مكسور). [[422]] الشكل سليم بس القيم غلط (إيميل مش إيميل). [[401]] «انت مين؟»: مفيش توكن أو بايظ، سجّل دخول. [[403]] «عارف انت مين، ومش مسموحلك». [[404]] مش موجود (أو مش هقولك إنه موجود). [[410]] كان موجود واتشال للأبد. [[409]] تعارض مع الحالة الحالية (الطلب اتشحن خلاص). [[429]] كتير، استنى.
 
 الفرق ده مش شكليات: العميل بيعمل retry على 429 و 503، وبيروح لصفحة login على 401، وبيعرض رسالة للمستخدم على 422.`,
-          example: R`app.post("/orders/:id/cancel", requireAuth, async (req, res) => {
+          example: R`app.post("/orders/:id/cancellation", requireAuth, async (req, res) => {
   if (!req.user.emailVerified) return res.status(403).json({ detail: "verify your email first" });
   const parsed = CancelInput.safeParse(req.body);
   if (!parsed.success) return res.status(422).json({ errors: parsed.error.issues });
@@ -262,15 +262,16 @@ app.post("/reports", async (req, res) => {
           desc: R`RFC 9457 (Problem Details) بيحدد شكل JSON للأخطاء: [[type]] و [[title]] و [[status]] و [[detail]] و [[instance]]، ومعاهم أي حقول زيادة زي [[errors]] للـ validation. والـ Content-Type بيبقى [[application/problem+json]].
 
 الفايدة إن العميل يكتب كود واحد يقرا بيه أي خطأ من أي endpoint، بدل ما كل route يرجّع شكل مختلف.`,
-          example: R`export const problem = (status: number, title: string, detail?: string, extra: object = {}) =>
+          example: R`import { STATUS_CODES } from "node:http";
+export const problem = (status: number, title: string, detail?: string, extra: object = {}) =>
   Object.assign(new Error(title), { status, title, detail, extra });
 app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-  if (err instanceof ZodError) err = problem(422, "Validation failed", undefined, { errors: err.issues });
+  if (err instanceof ZodError) err = problem(422, "Unprocessable Content", "Validation failed", { errors: err.issues });
   const status = Number.isInteger(err?.status) ? err.status : 500;
   if (status >= 500) console.error(err);
   const body = status >= 500
     ? { title: "Internal Server Error", status }
-    : { title: err.title ?? err.message, status, detail: err.detail, ...err.extra };
+    : { title: err.title ?? STATUS_CODES[status], status, detail: err.detail ?? err.message, ...err.extra };
   res.status(status).type("application/problem+json").json({ type: "about:blank", ...body, instance: req.originalUrl });
 });
 throw problem(409, "Conflict", "Order 9001 is already shipped", { orderId: "9001" });`,
@@ -291,6 +292,7 @@ RFC 9457 طلع سنة 2023 وحل محل RFC 7807، ونفس الشكل تقر�
             mistakes: R`ترجّع [[err.message]] و [[err.stack]] في أخطاء الـ 500: رسايل Prisma فيها أسماء الجداول والأعمدة. و [[title]] بيتغير مع كل حالة (ده مكانه [[detail]]). و status في الـ body مختلف عن status الـ HTTP. وتنسى الـ Content-Type، فالعملاء اللي بيفرّقوا بيه ميعرفوش إن ده problem.`
           },
           lines: [
+            "[[STATUS_CODES]] جاهز في Node: اسم كل status (404 = «Not Found»)، عشان الـ title يبقى ثابت.",
             "helper بيعمل Error عادي ومعاه status و title و detail وحقول زيادة...",
             "...بإنه يلزق الحقول دي على الـ Error.",
             "الـ error handler: Express بيعرفه من إن ليه ٤ parameters.",
@@ -299,7 +301,7 @@ RFC 9457 طلع سنة 2023 وحل محل RFC 7807، ونفس الشكل تقر�
             "الـ 500 بس بتتسجّل، لأنها غلط عندك مش عند العميل.",
             "الـ body:",
             "لو 500: عنوان عام بس، من غير رسالة ولا stack، عشان متسرّبش تفاصيل.",
-            "غير كده: الرسالة والتفاصيل والحقول الزيادة.",
+            "غير كده: title ثابت (اسم الـ status لو مفيش)، والرسالة في detail، والحقول الزيادة.",
             "الرد بالـ Content-Type الصح، و instance هو المسار اللي حصل فيه الخطأ.",
             "قفلة.",
             "الاستخدام من أي route: ارمي، والـ handler يتصرف."
@@ -355,11 +357,11 @@ app.get("/products", async (req, res) => {
         {
           cmd: "cursor pagination",
           title: "قسّم القايمة بمؤشر مش برقم صفحة",
-          desc: R`بدل «عدّي ٤٠»، العميل بيقول «هات اللي بعد العنصر ده»: [[?after=eyJ...&limit=20]]. الـ cursor نص مشفّر فيه مكان آخر عنصر شافه (الوقت والـ id). القاعدة بتروح للمكان ده على طول بالـ index، فالصفحة الألف بنفس سرعة الأولى، ومفيش تكرار لو اتضافت عناصر.
+          desc: R`بدل «عدّي ٤٠»، العميل بيقول «هات اللي بعد العنصر ده»: [[?after=eyJ...&limit=20]]. الـ cursor نص متحوّل بـ base64url (encoded، مش مشفّر: أي حد يقدر يفكّه) فيه مكان آخر عنصر شافه (الوقت والـ id). القاعدة بتروح للمكان ده على طول بالـ index، فالصفحة الألف بنفس سرعة الأولى، ومفيش تكرار لو اتضافت عناصر.
 
 العيب: مفيش «روح لصفحة ٧»، ومفيش عدد صفحات. مناسب للـ feeds والشات والـ infinite scroll والـ APIs العامة. والرد فيه [[links.next]] جاهز، ودي أبسط صورة من فكرة HATEOAS: الرد بيقولك تروح فين بعد كده.`,
           example: R`app.get("/messages", async (req, res) => {
-  const limit = Math.min(Number(req.query.limit) || 20, 100);
+  const limit = Math.min(Math.max(Math.trunc(Number(req.query.limit)) || 20, 1), 100);
   const after = typeof req.query.after === "string" ? decodeCursor(req.query.after) : null;
   const rows = await db.message.findMany({
     where: after ? { OR: [{ createdAt: { lt: after.createdAt } }, { createdAt: after.createdAt, id: { lt: after.id } }] } : {},
@@ -379,7 +381,7 @@ app.get("/products", async (req, res) => {
 
 الشرط في المثال ترجمة لـ [[(createdAt, id) < (lastCreatedAt, lastId)]]: يا أقدم، يا نفس الوقت و id أصغر. الـ id موجود عشان لو عنصرين ليهم نفس الوقت بالظبط ميضيعش واحد. وفي Postgres ينفع تكتبها row comparison مباشرة في SQL.
 
-الـ cursor opaque: العميل مش المفروض يفهمه أو يبنيه. بتشفّره base64url عشان يبقى آمن في الـ URL، وعشان تقدر تغيّر محتواه بعدين من غير ما تكسر حد. ولو عايز تمنع التلاعب بيه، وقّعه بـ HMAC.
+الـ cursor opaque: العميل مش المفروض يفهمه أو يبنيه. بتعمله encode بـ base64url عشان يبقى آمن في الـ URL، وعشان تقدر تغيّر محتواه بعدين من غير ما تكسر حد. ولو عايز تمنع التلاعب بيه، وقّعه بـ HMAC.
 
 Prisma عنده option جاهز [[cursor]] (مع [[skip: 1]])، بس بيشتغل على حقل فريد واحد. الشرط اليدوي أوضح لما الترتيب بحقلين.
 
@@ -389,7 +391,7 @@ HATEOAS (Hypermedia as the Engine of Application State) معناها إن الر
           },
           lines: [
             "الـ endpoint.",
-            "الحد الأقصى ١٠٠.",
+            "العدد بين ١ و ١٠٠: من غير الحد الأدنى، limit سالب كان هيعدّي لـ take.",
             "لو فيه cursor فكّه، ولو مفيش يبقى أول صفحة.",
             "هات الصفوف...",
             "...اللي بعد آخر عنصر شافه: وقت أقدم، أو نفس الوقت و id أصغر.",
@@ -599,7 +601,7 @@ strong ولا weak: [[W/]] معناها «نفس المعنى» مش «نفس ا
             why: "أي حاجة بيعدّلها أكتر من حد (مستندات، وإعدادات شركة، ومخزون، وجدول مواعيد) ممكن تحصل فيها الكتابة فوق بعض من غير ما حد يحس. البيانات بتضيع بهدوء، ومحدش يعرف إمتى ولا إزاي.",
             how: R`الفكرة compare-and-set: [[UPDATE ... WHERE id = ? AND version = ?]]. القاعدة بتعمل الفحص والكتابة في خطوة واحدة atomic، فمفيش لحظة بين «اتأكدت» و «كتبت» حد يدخل فيها. لو رجع 0 صفوف، يبقى حد سبقك.
 
-ليه [[updateMany]] مش [[update]]؟ لأن [[update]] في Prisma بيدوّر بالحقول الـ unique بس، وبيرمي error لو ملقاش. و [[updateMany]] بيقبل أي شرط وبيرجّع [[count]]. والـ schema فيها [[version Int @default(1)]].
+ليه [[updateMany]] مش [[update]]؟ من Prisma 5 [[update]] بيقبل شرط زي [[{ id, version }]]، بس لو ملقاش صف بيرمي error (P2025) وتضطر تمسكه. و [[updateMany]] بيقبل أي شرط وبيرجّع [[count]] من غير error، فتعرف إن حد سبقك بـ [[count === 0]] على طول. والـ schema فيها [[version Int @default(1)]].
 
 optimistic مقابل pessimistic: pessimistic بيقفل الصف ([[SELECT ... FOR UPDATE]]) طول التعديل، وده مناسب جوه transaction قصيرة على السيرفر، مش لمستخدم فاتح form ربع ساعة. optimistic مبيقفلش حاجة، وبيفترض إن التعارض نادر، ولما يحصل يرفض.
 
@@ -807,7 +809,7 @@ app.patch("/orders/:id", requireAuth, async (req, res) => {
   res.status(204).end();
 });
 app.get("/orders", requireAuth, async (req, res) => {
-  const take = Math.min(Number(req.query.limit) || 20, 100);
+  const take = Math.min(Math.max(Math.trunc(Number(req.query.limit)) || 20, 1), 100);
   res.json({ items: await db.order.findMany({ where: { userId: req.user.id }, take, select: { id: true, status: true, total: true, createdAt: true } }) });
 });`,
           try: R`سجّل دخول بمستخدمين. خد id طلب من الأول، واطلبه وعدّله بتوكن التاني: لازم 404. وابعت PATCH فيه [[{"status":"paid"}]]: لازم 422. ده أهم اختبار أمان في أي API، واعمله لكل endpoint فيه id.`,
@@ -849,7 +851,7 @@ API10 Unsafe Consumption of APIs: بتثق في رد API تالت (أو webhook)
             "204.",
             "قفلة.",
             "قايمة الطلبات.",
-            "حد أقصى ١٠٠ (Unrestricted Resource Consumption).",
+            "بين ١ و ١٠٠ بس، ورقم صحيح، عشان [[take]] السالب في Prisma بيجيب من آخر القايمة ويعدّي الحد (Unrestricted Resource Consumption).",
             "طلباته بس، وبالحقول اللي الواجهة محتاجاها بس (BOPLA: كشف بيانات زيادة).",
             "قفلة."
           ]
