@@ -34379,7 +34379,7 @@ npx tsx watch src/index.ts
 node src/index.ts
 npx tsc --noEmit
 npx tsc`,
-          try: R`اعمل فولدر، وسطّب زي أول سطر، واكتب [[src/index.ts]] فيه [[const n: number = "5"; console.log(n);]]. شغّله بـ [[npx tsx src/index.ts]]: هيشتغل ويطبع 5 عادي. وبعدين [[npx tsc --noEmit]]: هيمسك الخطأ.`,
+          try: R`اعمل فولدر، وسطّب واعمل tsconfig زي أول سطرين ([[npm i -D ...]] و [[npx tsc --init]])، واكتب [[src/index.ts]] فيه [[const n: number = "5"; console.log(n);]]. شغّله بـ [[npx tsx src/index.ts]]: هيشتغل ويطبع 5 عادي. وبعدين [[npx tsc --noEmit]]: هيمسك الخطأ.`,
           deep: {
             why: "محتاج حاجتين مختلفتين: تشغّل الكود بسرعة وانت بتجرّب، وتتأكد إن الأنواع سليمة قبل ما ترفع. أداة واحدة بتعمل الاتنين كل مرة هتبقى بطيئة، عشان كده الشغل اتقسم.",
             how: R`[[tsc]] بيقرا [[tsconfig.json]]، ويفحص كل الملفات اللي في [[include]]، ويطلّع JS. من TypeScript 7 (يوليو ٢٠٢٦) الـ compiler نفسه اتكتب من جديد بـ Go، فبقى أسرع حوالي ١٠ مرات، والأمر زي ما هو [[tsc]]. بعض الأدوات اللي بتستخدم TS من جوه (زي typescript-eslint) لسه محتاجة الواجهة البرمجية بتاعة TS 6، فممكن تلاقي مشاريع لسه على 6 مؤقتًا.
@@ -34399,7 +34399,7 @@ npx tsc`,
             "نفسه، وبيعيد التشغيل مع كل حفظ.",
             "Node 24 بيشغّل .ts مباشرة لو الكود أنواع بس (مفيش enum)، ومن غير فحص برضه.",
             "افحص أنواع المشروع كله من غير ما تطلّع ملفات.",
-            R`افحص وطلّع JS في [[outDir]] (غالبًا dist)، عشان تشغّله في الإنتاج بـ [[node dist/index.js]].`
+            R`افحص وطلّع JS. [[tsc --init]] بيسيب [[outDir]] متعلّق عليه، فشيل التعليق عن [["outDir": "./dist"]] (و [[rootDir]]) الأول، وبعدها الناتج يطلع في dist وتشغّله في الإنتاج بـ [[node dist/index.js]]. من غيره الـ .js بيتحط جنب الـ .ts.`
           ]
         }
       ]
@@ -35268,7 +35268,7 @@ pluck(users, "email"); // خطأ: "email" مش من مفاتيح العنصر`,
 
 [[keyof T]] بيطلّع union أسماء الخصايص ([["id" | "name"]])، و [[K extends keyof T]] بيخلي K واحدة منهم. و [[T[K]]] (indexed access) هو نوع الخاصية دي. الاتنين مع بعض بيدّوك دوال زي [[pluck]] و [[sortBy]] و [[groupBy]] آمنة ١٠٠٪.
 
-و [[as const]] جوه [[byId]] بيخلي [[[it.id, it]]] tuple مش array عادي، عشان [[Object.fromEntries]] يفهم إن كل زوج مفتاح وقيمة ويطلّع النوع الصح بدل any.`,
+و [[as const]] جوه [[byId]] بيخلي [[[it.id, it]]] tuple صريح. هنا مش إجباري: لأن الـ array مكتوبة جوه النداء نفسه، TS بياخد شكلها من باراميتر [[Object.fromEntries]] ويفهمها tuple لوحده ويطلّع [[{ [k: string]: T }]]. بس لو حطيت الأزواج في متغير لوحده الأول ([[const pairs = items.map((it) => [it.id, it])]])، كل زوج نوعه هيبقى [[(string | T)[]]] والناتج any، وساعتها [[as const]] هو اللي بيصلّحها.`,
             when: "أي generic محتاج يستخدم حاجة من T جوه الدالة: [[id]] أو [[length]] أو [[createdAt]]. و [[keyof]] لأي دالة بتاخد اسم خاصية كـ string.",
             mistakes: R`تكتب [[T extends any]] أو [[T extends object]] وتفتكر ده شرط مفيد. وتكتب الباراميتر [[key: string]] بدل [[K extends keyof T]]، فأي غلطة إملائية في اسم الخاصية تعدّي وترجع undefined.`
           },
@@ -35566,7 +35566,7 @@ type FormSetters = Setters<SignupForm>;
         {
           cmd: "conditional types",
           title: "نوع بيتغير حسب شرط، وأنواع جاهزة مبنية على الفكرة دي",
-          desc: R`[[T extends string ? "yes" : "no"]] زي ternary بس للأنواع. ولما T تبقى union، الشرط بيتطبق على كل عضو لوحده (distributive)، وده اللي عامل [[Exclude]] و [[Extract]] و [[NonNullable]].
+          desc: R`[[T extends string ? "yes" : "no"]] زي ternary بس للأنواع. ولما T تبقى union، الشرط بيتطبق على كل عضو لوحده (distributive)، وده اللي عامل [[Exclude]] و [[Extract]]. (و [[NonNullable]] بيوصل لنفس النتيجة، بس حاليًا معمول [[T & {}]].)
 
 و [[infer]] جوه الشرط بيطلّع نوع من جوه نوع تاني، زي نوع العنصر من array أو نوع الداتا من Promise.`,
           example: R`type IsString<T> = T extends string ? "yes" : "no";
@@ -35727,7 +35727,7 @@ console.log(forced.toFixed(2)); // TypeError برضه`,
           flag: "script",
           deep: {
             why: "TS مش دايمًا عارف كل حاجة: [[getElementById]] ممكن ترجع أي عنصر، و [[JSON.parse]] بترجع any. و [[as]] موجود عشان تقوله معلومة هو ناقصها. المشكلة إنه بيتستخدم كتير بمعنى «اسكت» بدل «أنا متأكد».",
-            how: R`[[as T]] مبيطلّعش أي كود: بيتمسح، والقيمة زي ما هي. و TS بيسمح بيه طالما النوعين «ممكن يتقابلوا» (واحد فيهم assignable للتاني)، فـ [[HTMLElement as HTMLInputElement]] مسموح لأن input نوع من HTMLElement، و [[string as number]] ممنوع.
+            how: R`[[as T]] مبيطلّعش أي كود: بيتمسح، والقيمة زي ما هي. و TS بيسمح بيه طالما النوعين «ممكن يتقابلوا» (comparable: شبه assignable في أي اتجاه بس أرخى، مثلًا لو خاصية نوعها union يكفي إن عضو واحد منه يطابق، عشان كده [[{ primary: "#0af" } as Theme]] في درس satisfies عدّى من غير خطأ)، فـ [[HTMLElement as HTMLInputElement]] مسموح لأن input نوع من HTMLElement، و [[string as number]] ممنوع.
 
 [[as unknown as T]] بيعدّي الحماية دي: أي حاجة تتحول لـ unknown، و unknown تتحول لأي حاجة. وفي مشروع حقيقي كان فيه [[(data ?? []) as unknown as DbRow[]]] على نتيجة query: لو شكل الجدول اتغير، TS مش هيقول، والصفحة تقع.
 
@@ -36049,7 +36049,7 @@ function validate(input: unknown) {
 }
 console.log(validate({ email: "x", password: "123" }));
 // { ok: false, errors: { email: ["إيميل مش صحيح"], password: ["٨ حروف على الأقل"] } }`,
-          try: R`بدّل [[z.flattenError]] بـ [[z.treeifyError]] وبعدين بـ [[z.prettifyError]] واطبع الناتج في كل مرة. الأولى للـ forms البسيطة، والتانية للـ objects المتداخلة، والتالتة للّوجات.`,
+          try: R`بدّل [[z.flattenError(result.error).fieldErrors]] بـ [[z.treeifyError(result.error)]] وبعدين بـ [[z.prettifyError(result.error)]] (من غير [[.fieldErrors]]) واطبع الناتج في كل مرة. الأولى للـ forms البسيطة، والتانية للـ objects المتداخلة، والتالتة للّوجات.`,
           flag: "script",
           deep: {
             why: "[[parse]] بترمي، وده مناسب لما الداتا الغلط «مستحيلة» (زي env). بس في request من مستخدم، الداتا الغلط حاجة عادية ومتوقعة، والـ try/catch حوالين كل validation بيبقى تقيل. [[safeParse]] بيخلي الفشل قيمة عادية تتعامل معاها بـ if.",
@@ -36215,9 +36215,9 @@ export function ProfileForm() {
 
 وللحالات المترابطة (loading و data و error)، discriminated union في state واحدة أنضف من ٣ states منفصلين: [[useState<FetchState>({ status: "idle" })]]، و react.dev نفسه بيقترح الشكل ده.
 
-الـ events في React synthetic: [[React.ChangeEvent<T>]] فيها [[currentTarget]] نوعه T بالظبط (HTMLInputElement)، أما [[target]] نوعه أعم لأن الـ event ممكن يكون جاي من عنصر جوه. عشان كده [[e.currentTarget.value]] أأمن.
+الـ events في React synthetic: [[currentTarget]] نوعه T بالظبط (العنصر اللي عليه الـ handler). و [[target]] في أغلب الـ events نوعه [[EventTarget]] بس، لأن الـ event ممكن يكون جاي من عنصر جوه. و [[ChangeEvent]] استثناء في @types/react: [[target]] فيه متعرّف [[EventTarget & T]] زي currentTarget بالظبط. عشان كده [[e.currentTarget.value]] هي العادة الأأمن في كل الـ events.
 
-وفي @types/react 19.2 وأحدث، [[FormEvent]] بقى deprecated (الاسم كان مضلل)، والبديل [[SubmitEvent]] للـ submit، و [[ChangeEvent]] أو [[InputEvent]] للتغيير. الكود القديم لسه شغال، بس المحرر هيشطب عليه.
+وفي @types/react 19.2.10 وأحدث، [[FormEvent]] بقى deprecated (الاسم كان مضلل)، والبديل [[SubmitEvent]] للـ submit، و [[ChangeEvent]] أو [[InputEvent]] للتغيير. الكود القديم لسه شغال، بس المحرر هيشطب عليه. ولو نسختك أقدم من 19.2.10، [[SubmitEvent]] مش هتلاقيه، فحدّث @types/react.
 
 وأسهل طريقة تعرف نوع أي event: اكتب الـ handler inline ([[onChange={(e) => ...}]]) وحط الماوس على [[e]].`,
             when: "[[useState<T>]] لما القيمة الأولية null أو [] أو union. وأنواع الـ events لما الـ handler دالة منفصلة. والتفاصيل الكاملة للـ hooks في تاب «React».",
@@ -36232,7 +36232,7 @@ export function ProfileForm() {
             R`[[""]] كفاية: TS استنتج string.`,
             "من غير النوع، TS هيستنتج string وأي كلمة هتعدّي.",
             R`نوع الـ event للـ input: [[currentTarget.value]] نوعها string.`,
-            R`submit الفورم. في @types/react 19.2+ اسمه [[SubmitEvent]]، و [[FormEvent]] القديم deprecated.`,
+            R`submit الفورم. في @types/react 19.2.10+ اسمه [[SubmitEvent]]، و [[FormEvent]] القديم deprecated.`,
             "امنع الـ reload.",
             "لازم قيمة من Status.",
             "لازم شكل User كامل.",
@@ -36416,7 +36416,7 @@ console.log(repo.full_name, repo.stargazers_count);`,
           flag: "script",
           deep: {
             why: R`في مشروع حقيقي كان فيه helper بالشكل ده: [[fetchTeam<T = any>(path): Promise<T | null>]] بيرجّع [[(await r.json()) as T]]. شكله typed، بس T بيختارها اللي بينادي، ومفيش أي فحص. لو السيرفر التاني رجّع شكل مختلف، TS هيفضل مقتنع إن كل حاجة تمام، والخطأ يطلع في الـ UI كـ undefined.`,
-            how: R`TS مبيعرفش حاجة عن الشبكة: [[Response.json()]] متعرّفة إنها [[Promise<any>]] في أنواع المتصفح و Node. وأي نوع تحطه بعدها ([[as]] أو annotation أو generic) كلام بس.
+            how: R`TS مبيعرفش حاجة عن الشبكة: [[Response.json()]] متعرّفة إنها [[Promise<any>]] في أنواع المتصفح (lib dom، ودي بتتحمل افتراضي لو مكتبتش [[lib]]، حتى في مشروع Node)، وفي أنواع Node لوحدها (من غير dom) بترجع [[Promise<unknown>]]. وفي الحالتين أي نوع تحطه بـ [[as]] أو generic كلام بس ومفيش فحص وقت التشغيل، ومع [[unknown]] حتى الـ annotation مش هتعدّي من غير [[as]].
 
 الحدود (boundaries) هي الأماكن اللي الداتا بتدخل فيها كودك من برّه: رد API، و request body، و localStorage، و env، ورسايل WebSocket، و JSON من AI. القاعدة: جوه كودك ثق في الأنواع، وعند الحدود افحص. و Zod بيعمل الفحص ويطلّع النوع في خطوة.
 
@@ -36755,7 +36755,7 @@ const c = {} as Cfg;`,
             "نوع عام.",
             R`[[a.port]] نوعها [[string | number]].`,
             R`[[b.port]] نوعها number.`,
-            "ولا فحص: object فاضي عدّى."
+            R`[[as]] مبيفحصش الشكل. هنا [[{}]] بالصدفة Cfg سليم (Record ممكن يبقى فاضي)، بس لو Cfg فيه خصايص إجبارية، [[as]] كانت هتعدّي الـ object الناقص، والـ annotation كانت هترفضه.`
           ]
         },
         {
@@ -37381,7 +37381,7 @@ Tailwind v4 كله rem: [[p-4]] = [[calc(var(--spacing) * 4)]] و [[--spacing]] 
 .container { width: min(100% - 2rem, 1200px); margin-inline: auto; }
 .sidebar { width: max(250px, 20%); }
 .cols { gap: calc(1rem + 1vw); }`,
-          try: R`حط الـ h1 ده في صفحة، وافتح DevTools وضع الموبايل واسحب العرض من 320 لـ 1600: الخط بيكبر بنعومة ويقف عند الحد. وبعدين غيّر [[1.2rem + 3vw]] لـ [[5vw]] بس واعمل zoom بـ Ctrl و +: الخط مش هيكبر.`,
+          try: R`حط الـ h1 ده في صفحة، وافتح DevTools وضع الموبايل واسحب العرض من 320 لـ 1600: الخط بيكبر بنعومة ويقف عند الحد. وبعدين غيّر [[1.2rem + 3vw]] لـ [[5vw]] بس، وخلّي عرض الشاشة حوالي 800px (عشان الخط ميبقاش واقف عند الـ MIN أو الـ MAX)، واعمل zoom بـ Ctrl و +: الخط مش هيكبر لحد ما يوصل للحد الأدنى، عكس [[1.2rem + 3vw]] اللي بيكبر مع كل zoom.`,
           flag: "script",
           deep: {
             why: "زمان كنت بتكتب خط العنوان 4 مرات في 4 media queries، والخط بيتنط عند كل breakpoint. clamp بتعمل ده في سطر واحد وبنعومة، ودا اسمه fluid typography.",
@@ -37543,7 +37543,7 @@ body { background: var(--bg); color: var(--fg); }
 
 والصورة اللي بقت بيضاوي: الافتراضي shrink = 1، فلما المكان يضيق بتصغر في العرض بس. الحل [[flex: none]] أو [[shrink-0]] في Tailwind.`,
             when: R`[[flex-1]] للجزء اللي ياخد الباقي (محتوى جنب sidebar، أو input جنب زرار). [[shrink-0]] للأيقونات والصور. [[min-w-0]] على أي ابن flex فيه كلام ممكن يطول.`,
-            mistakes: R`تنسى [[min-w-0]] فالـ [[truncate]] مش شغال. أيقونة من غير [[shrink-0]] بتتزنق جنب كلام طويل. و [[width: 50%]] على ابنين ومعاهم gap فيطلعوا أعرض من الأب: استخدم [[flex: 1]].`
+            mistakes: R`تنسى [[min-w-0]] فالـ [[truncate]] مش شغال. أيقونة من غير [[shrink-0]] بتتزنق جنب كلام طويل. و [[width: 50%]] على ابنين ومعاهم gap في flex عليه [[flex-wrap: wrap]]: مجموعهم (100% + الـ gap) أعرض من السطر، فالتاني بينزل سطر لوحده (من غير wrap الـ shrink الافتراضي بيصغّرهم شوية فبيدخلوا عادي): استخدم [[flex: 1]].`
           },
           lines: [
             "صف: صورة، وكلام، وزرار.",
@@ -37767,7 +37767,7 @@ Tailwind مفيهوش utility للـ areas، فبتكتبها arbitrary property
           example: R`.site-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 10;
   background: rgb(255 255 255 / 0.8);
   backdrop-filter: blur(12px);
 }
@@ -37931,7 +37931,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
           flag: "script",
           deep: {
             why: R`في CSS العادي بتقعد تخترع أسماء ([[.card-header-title-wrapper]])، وتتنقّل بين ملفين، والملف بيكبر للأبد لأن محدش بيجرؤ يمسح قاعدة مش عارف مين بيستخدمها. Tailwind بيحط التنسيق جنب العنصر، والـ CSS النهائي فيه اللي مستخدم بس، فبيفضل صغير مهما المشروع كبر.`,
-            how: R`محرّك v4 مكتوب بـ Rust عشان يبقى سريع. وقت الـ dev والـ build بيعمل كده:
+            how: R`محرّك v4 (Oxide) أسرع بكتير: الأجزاء التقيلة زي اللف على الملفات مكتوبة بـ Rust، والباقي TypeScript. وقت الـ dev والـ build بيعمل كده:
 
 1) بيلف على ملفات المشروع لوحده (automatic source detection)، وبيتجاهل اللي في [[.gitignore]] (زي node_modules) والملفات الـ binary. ولو فيه فولدر برا المشروع (باكدج UI في monorepo) بتضيفه بـ [[@source "../packages/ui";]].
 
@@ -37943,7 +37943,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
 
 في Vite الـ plugin بيشتغل جوه الـ bundler. وفي Next الـ plugin بتاع PostCSS، و [[@import "tailwindcss"]] في [[app/globals.css]] المستورد في الـ root layout.`,
             when: R`أي مشروع React أو Next جديد. ولو المشروع v3 فيه [[tailwind.config.js]] و [[@tailwind base]]، فيه أداة ترقية رسمية: [[npx @tailwindcss/upgrade]].`,
-            mistakes: R`تبني اسم الكلاس بـ string: [[bg-$__{color}-500]]، و Tailwind مش هيشوفه ومش هيطلّعه. اكتب الأسماء كاملة في object: [[{ red: "bg-red-500", green: "bg-green-500" }]]. وتستخدم أسماء v3 في v4: [[shadow-sm]] بقت أصغر (القديمة اسمها دلوقتي [[shadow-xs]])، و [[outline-none]] بقت [[outline-hidden]]، و [[ring]] بقى 1px، ولون الـ border الافتراضي بقى [[currentColor]] مش رمادي. وتكتب [[@tailwind base;]] بتاعة v3 في مشروع v4.`
+            mistakes: R`تبني اسم الكلاس بـ string: [[bg-$__{color}-500]]، و Tailwind مش هيشوفه ومش هيطلّعه. اكتب الأسماء كاملة في object: [[{ red: "bg-red-500", green: "bg-green-500" }]]. وتستخدم أسماء v3 في v4: [[shadow-sm]] بتاعة v3 اسمها دلوقتي [[shadow-xs]]، و [[shadow-sm]] في v4 بقت أكبر (هي [[shadow]] القديمة)، و [[outline-none]] بقت [[outline-hidden]]، و [[ring]] بقى 1px، ولون الـ border الافتراضي بقى [[currentColor]] مش رمادي. وتكتب [[@tailwind base;]] بتاعة v3 في مشروع v4.`
           },
           lines: [
             "سطّب Tailwind والـ plugin بتاع Vite (في مشروع الـ lab).",
@@ -37983,7 +37983,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
 
 الفرق بين [[@theme]] و [[:root]]: الاتنين متغيرات، بس اللي في [[@theme]] بس هو اللي بيعمل كلاسات. متغير من غير كلاسات حطه في [[:root]].
 
-ليه [[inline]]؟ من غيرها، [[bg-bg]] بتطلع [[background: var(--color-bg)]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]]. المتغير اللي قيمته [[var()]] بيتحسب في المكان اللي اتعرّف فيه، فـ [[--color-bg]] بيتحسب مرة واحدة على [[:root]]. لو غيّرت [[--bg]] على عنصر جوه الصفحة ([[<section class="dark">]])، الكلاس مش هيحس. مع [[inline]] الكلاس بيطلع [[background: var(--bg)]] مباشرة، فبيقرا القيمة في مكان العنصر نفسه.
+ليه [[inline]]؟ من غيرها، [[bg-bg]] بتطلع [[background-color: var(--color-bg)]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]]. المتغير اللي قيمته [[var()]] بيتحسب في المكان اللي اتعرّف فيه، فـ [[--color-bg]] بيتحسب مرة واحدة على [[:root]]. لو غيّرت [[--bg]] على عنصر جوه الصفحة ([[<section class="dark">]])، الكلاس مش هيحس. مع [[inline]] الكلاس بيطلع [[background-color: var(--bg)]] مباشرة، فبيقرا القيمة في مكان العنصر نفسه.
 
 ولو عايز تشيل ألوان Tailwind الافتراضية كلها وتفضل ألوانك بس: [[--color-*: initial;]] في أول الـ [[@theme]].`,
             when: R`أول ما تبدأ مشروع: ألوان البراند، والخط، والتدوير. وكل لون بيتغير مع الثيم يبقى متغير عادي في [[:root]] وتوكن في [[@theme inline]].`,
@@ -38105,7 +38105,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
 <label className="grid gap-1">
   <span>الإيميل</span>
   <input type="email" required className="peer rounded border px-3 py-2" />
-  <p className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</p>
+  <span className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</span>
 </label>`,
           try: R`اعمل الكارت ده وقف عليه بالماوس. وبعدين اكتب إيميل غلط واخرج من الحقل: الرسالة هتظهر. جرّب [[peer-invalid:]] بدل [[peer-user-invalid:]] وشوف الفرق: الرسالة هتظهر من أول ما الصفحة تفتح.`,
           flag: "script",
@@ -38348,7 +38348,7 @@ const { resolvedTheme, setTheme } = useTheme();
           flag: "script",
           deep: {
             why: "المستخدمين متوقعين dark mode، وأي موقع بيفتح أبيض ثانية وبعدين يغمق بيبان مكسور. المشكلة إن السيرفر مش عارف اختيار المستخدم (محفوظ في المتصفح)، فلازم حاجة تحط الكلاس قبل ما الصفحة تترسم.",
-            how: R`[[@custom-variant dark (&:where(.dark, .dark *))]] بيغيّر معنى [[dark:bg-x]] لـ «لو العنصر نفسه أو جد ليه عليه [[.dark]]». و [[:where]] عشان الـ specificity تفضل صفر زي أي utility. ولو بتستخدم attribute: [[&:where([data-theme=dark], [data-theme=dark] *)]].
+            how: R`[[@custom-variant dark (&:where(.dark, .dark *))]] بيغيّر معنى [[dark:bg-x]] لـ «لو العنصر نفسه أو جد ليه عليه [[.dark]]». و [[:where]] عشان الـ variant ميزودش specificity، فـ [[dark:bg-x]] يفضل بنفس وزن أي utility (كلاس واحد). ولو بتستخدم attribute: [[&:where([data-theme=dark], [data-theme=dark] *)]].
 
 next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنفذ قبل الرسم: بيقرا localStorage (أو [[prefers-color-scheme]] لو system) ويحط الكلاس على html، وكمان [[color-scheme]] عشان الـ scrollbars وحقول الفورم تغمق هي كمان. بس السيرفر رسم html من غير الكلاس، فـ React هيلاقي فرق وقت الـ hydration، و [[suppressHydrationWarning]] بيسكّت التحذير ده على العنصر ده بس.
 
@@ -38448,15 +38448,15 @@ const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", di
 
 مشكلة swap: الخط الاحتياطي (Arial مثلًا) عرض حروفه وارتفاع سطوره مختلف، فلما يتبدّل الفقرات بتطول أو تقصر والصفحة تتنط. next/font بيحل ده بـ [[adjustFontFallback]] (شغال افتراضيًا): بيعمل [[@font-face]] للخط الاحتياطي بـ [[size-adjust]] وقيم محسوبة، بحيث يبقى قد خطك تقريبًا.
 
-[[subsets]] بيحدد أنهي حروف تتحمّل ويتعملها preload. والـ variable fonts ملف واحد لكل الأوزان بدل ملف لكل وزن. و [[--font-sans]] في Tailwind هو الخط الافتراضي للصفحة كلها (الـ Preflight بيحطه على html)، فتغييره بيغيّر الموقع كله.
+[[subsets]] بيحدد أنهي subsets يتعملها preload. الباقي بيتخدم من موقعك برضه، والمتصفح بيحمّله بس لو الصفحة فيها حروف منه (unicode-range). والـ variable fonts ملف واحد لكل الأوزان بدل ملف لكل وزن. و [[--font-sans]] في Tailwind هو الخط الافتراضي للصفحة كلها (الـ Preflight بيحطه على html)، فتغييره بيغيّر الموقع كله.
 
 و [[@import url(...)]] لخط من سيرفر خارجي جوه ملف الـ CSS أسوأ حالة: المتصفح لازم يحمّل الـ CSS بتاعك، ويلاقي الـ import، ويحمّل CSS الخط، ويلاقي ملف الخط، ويحمّله. سلسلة requests واحد ورا التاني.`,
             when: R`في Next دايمًا next/font. في Vite أو PHP: [[@font-face]] بملفات woff2 عندك، و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للخط الأساسي بس.`,
-            mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فالعربي يطلع بخط النظام.`
+            mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فملف العربي ميتعملوش preload: الكلام يظهر بخط النظام الأول ويتبدّل متأخر (الملف بيتحمّل من موقعك برضه، بس بعد ما المتصفح يكتشف إنه محتاجه).`
           },
           lines: [
             R`أي خط من Google Fonts كـ function (المسافة في الاسم بتبقى [[_]]).`,
-            R`الحروف العربي واللاتيني بس (ملف أصغر)، ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
+            R`الـ subsets اللي هيتعملها preload (العربي واللاتيني)، والباقي بيتخدم من موقعك برضه بس مش بيتحمّل غير لو اتستخدم. ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
             "الكلاس بيعرّف المتغير على html.",
             R`Tailwind: [[font-sans]] يبقى Cairo.`,
             "Cairo الأول، ولو محمّلش خط النظام.",
@@ -38607,7 +38607,7 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
 .btn-primary { background: var(--color-indigo-600); color: white; }
 .on-image { background: rgb(0 0 0 / 0.55); color: white; }
 @media (prefers-contrast: more) {
-  :root { --fg-muted: var(--color-gray-700); }
+  .muted { color: var(--color-gray-700); }
 }`,
           try: R`في Chrome DevTools اختار أي كلام، وفي Styles دوس على مربع اللون: هيقولك Contrast ratio وعلامة صح أو غلط لـ AA و AAA. وكمان Lighthouse › Accessibility بيطلّع كل العناصر اللي ساقطة.`,
           flag: "script",
@@ -38617,7 +38617,7 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
 
 الحدود: AA للكلام العادي 4.5، وللكبير 3. وللعناصر اللي مش كلام (حدود حقل، أو أيقونة لوحدها بتعني حاجة، أو شكل الـ focus) 3. و AAA أعلى (7 و 4.5). الزراير الـ disabled مستثناة، بس الـ placeholder كلام ولازم يتقري.
 
-الألوان بـ oklch بتسهّل: الـ L فيها قريبة من اللي العين شايفاه، ففرق كبير في L = تباين كبير غالبًا. في Tailwind على خلفية بيضا: 600 و 700 للكلام بأمان، و 500 على الحافة، و 400 وأفتح للزينة بس.
+الألوان بـ oklch بتسهّل: الـ L فيها قريبة من اللي العين شايفاه، ففرق كبير في L = تباين كبير غالبًا. في الرماديات (gray و slate و zinc و neutral و stone) على خلفية بيضا: 600 و 700 للكلام بأمان، و 500 على الحافة، و 400 وأفتح للزينة بس. أما الألوان الفاتحة بطبيعتها (yellow و amber و lime و green و emerald و teal و cyan و sky و orange) فحتى 600 بيسقط (بين 3:1 و 4:1 تقريبًا)، ومحتاجة 700 أو أغمق، فاتأكد بالأداة.
 
 وفي الـ dark mode متقلبش الألوان بالظبط: أبيض صافي على أسود صافي بيتعب العين، الأحسن رمادي فاتح على رمادي غامق جدًا، ولسه فوق 4.5.`,
             when: "وقت اختيار الـ palette، ومع كل لون كلام جديد، وفي الوضعين الفاتح والغامق.",
@@ -38715,7 +38715,7 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
             why: R`CSS بيحرّك بين حالتين لعنصر موجود. بس في React العناصر بتظهر وتختفي من الـ DOM ([[{open && ...}]])، والعنصر اللي اتشال مفيش حاجة تحرّكه. وكمان حركة عنصر من مكان لمكان لما الـ layout يتغير مستحيلة تقريبًا بالـ CSS العادي. motion بيحل الاتنين.`,
             how: R`[[motion.div]] بيقرا [[animate]]، ولما القيم تتغير بيحرّكها (spring افتراضيًا للـ transform، و tween للباقي). الحركة شغالة بـ JavaScript، بس بتكتب [[transform]] و [[opacity]] مباشرة، وبتستخدم Web Animations API لما تقدر فتبقى على الـ GPU.
 
-AnimatePresence: لما ابن يختفي من الـ render، بيحتفظ بآخر نسخة منه، يشغّل [[exit]]، ويشيله لما تخلص. عشان كده الابن المباشر لازم يبقى motion component وليه [[key]] ثابت. [[mode="wait"]] يستنى القديم يخرج قبل ما الجديد يدخل، و [[mode="popLayout"]] يطلّع القديم من الـ layout فورًا فالباقي يتحرك مكانه (مع [[layout]]).
+AnimatePresence: لما ابن يختفي من الـ render، بيحتفظ بآخر نسخة منه، يشغّل [[exit]]، ويشيله لما تخلص. عشان كده الابن المباشر لازم يبقى ليه [[key]] ثابت، والـ [[exit]] يبقى على motion component (هو نفسه أو أي حاجة جواه). [[mode="wait"]] يستنى القديم يخرج قبل ما الجديد يدخل، و [[mode="popLayout"]] يطلّع القديم من الـ layout فورًا فالباقي يتحرك مكانه (مع [[layout]]).
 
 [[layout]] بيستخدم تقنية اسمها FLIP: بيقيس مكان العنصر قبل التغيير وبعده، ويحط [[transform]] يرجّعه لمكانه القديم، وبعدين يحرّك الـ transform لصفر. فالشكل بيتحرك بنعومة مع إن الـ layout الحقيقي اتغير مرة واحدة. و [[layoutId]] نفس الفكرة بين عنصرين مختلفين بنفس الاسم.
 
@@ -38868,7 +38868,7 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
             "قفلة.",
             "القراية كلها مرة واحدة: layout واحد.",
             "الكتابة كلها بعدها: المتصفح يحسب مرة واحدة في الـ frame الجاي.",
-            R`مع الـ scroll: حدّث في الـ frame الجاي بس، و [[passive]] بيقول للمتصفح إنك مش هتمنع الـ scroll فيفضل ناعم.`
+            R`مع الـ scroll: حدّث في الـ frame الجاي بس. و [[passive]] هنا مش فارق لأن الـ scroll event مبيتلغيش أصلًا، فايدته الحقيقية مع [[wheel]] و [[touchmove]].`
           ]
         }
       ]
@@ -38893,7 +38893,7 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
 // نفس الفكرة بـ CSS عادي
 .card-wrap { container-type: inline-size; container-name: card; }
 @container card (width > 28rem) {
-  .card { flex-direction: row; }
+  .card { display: flex; flex-direction: row; }
 }
 .card h3 { font-size: clamp(1rem, 4cqi, 1.5rem); }`,
           try: R`حط نفس الكارت مرتين: مرة في عمود عريض ومرة في sidebar عرضه 280px. على نفس الشاشة هتلاقي شكلين. غيّر [[@md:]] لـ [[md:]] وشوفهم بقوا نفس الشكل.`,
@@ -38919,7 +38919,7 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
             "قفلة.",
             "CSS: الأب container اسمه card.",
             "لما عرض الـ container ده (مش الشاشة) يعدّي 28rem...",
-            "...الكارت يبقى صف.",
+            "...الكارت يبقى flex في صف.",
             "قفلة.",
             R`[[cqi]] = 1% من عرض الـ container، فالخط بيكبر مع الكارت مش مع الشاشة.`
           ]
@@ -39400,7 +39400,7 @@ function Profile({ user }: { user: User }) {
     </>
   )
 }`,
-          try: R`غيّر [[className]] لـ [[class]] وشوف الـ warning في الـ console. وبعدين اكتب [[{user}]] بدل [[{user.name}]] واقرا الـ error: «Objects are not valid as a React child».`,
+          try: R`غيّر [[className]] لـ [[class]] وشوف الـ warning في الـ console. وبعدين اكتب [[{user}]] بدل [[{initials}]] جوه الـ [[<p>]] واقرا الـ error: «Objects are not valid as a React child».`,
           flag: "script",
           deep: {
             why: "بدل ما تكتب الـ HTML في ملف والمنطق في ملف تاني وتربطهم بـ ids، JSX بيخلي شكل الـ component ومنطقه في مكان واحد، و TypeScript بيفحص الاتنين مع بعض: prop غلط أو متغير مش موجود بيطلع error وانت بتكتب.",
@@ -39549,14 +39549,14 @@ export default function Counter() {
   console.log('render', count)
   return <button onClick={addFour}>{count}</button>
 }
-// أول ضغطة: 3 مش 4، والـ console بيطبع render مرة واحدة بس`,
+// أول ضغطة: 3 مش 4، والـ console بيطبع render مرة واحدة بس (في Strict Mode وقت التطوير هتشوفه مرتين بنفس الرقم: ده نفس الـ render بيتنادى مرتين، مش أربعة)`,
           try: R`خمّن الرقم قبل ما تضغط. بعدين حط [[alert(count)]] بعد الـ setCount وشوف إنه بيطبع القيمة القديمة.`,
           flag: "script",
           deep: {
             why: "الـ component دالة بتتنادي من الأول مع كل render، فأي متغير جواها بيتولد من جديد. محتاج مكان برا الدالة يفضل فيه الرقم بين الـ renders، وطريقة تقول بيها لـ React «حاجة اتغيرت، ارسم تاني». [[useState]] بيدّيك الاتنين.",
             how: R`الـ state مش محفوظة جوه الدالة. React بتحفظها في الـ component instance بتاعها (fiber)، في list بالترتيب. أول [[useState]] في الدالة ليه الخانة الأولى، والتاني التانية، وهكذا. عشان كده الـ hooks لازم تتنادى بنفس الترتيب كل مرة.
 
-[[setCount(x)]] مش بتغيّر [[count]] حالًا. بتحط التحديث في طابور وتطلب render. وكل الـ setState اللي حصلت في نفس الـ event بتتجمع في render واحد (batching). عشان كده الـ console طبع مرة واحدة.
+[[setCount(x)]] مش بتغيّر [[count]] حالًا. بتحط التحديث في طابور وتطلب render. وكل الـ setState اللي حصلت في نفس الـ event بتتجمع في render واحد (batching). عشان كده الـ console طبع render واحد بس (أو نفس السطر مرتين في Strict Mode وقت التطوير، مش أربعة).
 
 في المثال: [[count]] جوه الدالة دي صفر طول الوقت. أول سطرين بيقولوا «خليها 0 + 1» مرتين، يعني 1. والـ updater [[c => c + 1]] بياخد آخر قيمة في الطابور، فبتبقى 2 وبعدين 3.
 
@@ -39800,7 +39800,7 @@ export default function People() {
     </form>
   )
 }`,
-          try: R`غيّر الـ onChange لـ [[setEmail(e.target.value.trim())]] وحاول تكتب «a b»: مش هتعرف تكتب المسافة. ده ليه الـ trim مكانه وقت الإرسال.`,
+          try: R`غيّر الـ onChange لـ [[setEmail(e.target.value.trim())]] وخلّي الخانة مؤقتًا [[type="text"]] (الـ email input بيشيل المسافات اللي في الأطراف لوحده، فمش هيبان فيه)، وحاول تكتب «a b»: مش هتعرف تكتب المسافة. ده ليه الـ trim مكانه وقت الإرسال.`,
           flag: "script",
           deep: {
             why: "لما القيمة في state، أي حتة في الـ component تقدر تقراها وانت بتكتب: تعطّل زرار، أو تعرض عدد الحروف، أو تفلتر list، أو تفضّي الفورم بعد الإرسال. لو القيمة في الـ DOM بس، لازم تروح تقراها منه.",
@@ -40328,7 +40328,7 @@ function SearchPage() {
   const debouncedQ = useDebounce(q, 500)
   return <><input value={q} onChange={e => setQ(e.target.value)} /><Results query={debouncedQ} /></>
 }`,
-          try: R`خلي Results يطبع [[console.log('search', query)]]، واكتب كلمة طويلة بسرعة: هيطبع مرة واحدة بعد ما تقف. غيّر الـ delay لـ 0 وشوف الفرق.`,
+          try: R`خلي Results يطبع [[console.log('search', query)]] جوه [[useEffect]] معتمد على [[[query]]]، واكتب كلمة طويلة بسرعة: هيطبع مرة واحدة بعد ما تقف. (لو حطيته في جسم الـ component هيطبع مع كل حرف بالقيمة القديمة، لأن Results بيعيد الرسم مع كل render للأب.) غيّر الـ delay لـ 0 وشوف الفرق.`,
           flag: "script",
           deep: {
             why: "نفس الـ state ونفس الـ effect بيتكتبوا في عشر components: debounce، و localStorage، و media query، و online status. نسخهم معناه عشر أماكن للـ bugs. الـ custom hook بيحطهم في مكان واحد باسم واضح.",
@@ -40340,7 +40340,7 @@ function SearchPage() {
 
 والـ debounce بيقلل عدد الطلبات بس، مبيحلش race condition: الردود لسه ممكن ترجع بترتيب غلط. لو Results بيستخدم TanStack Query بـ key فيه الـ query، المشكلة دي محلولة لوحدها.`,
             when: "أي منطق فيه hooks اتكرر مرتين: [[useDebounce]]، و [[useLocalStorage]]، و [[useMediaQuery]]، و [[useAuth]]، و hooks بتلف TanStack Query لكل resource ([[useProducts]]).",
-            mistakes: R`دالة من غير hooks اسمها [[useFormatDate]]. و hook بيرجّع object أو دالة جديدة كل مرة، وحد يحطها في dependencies فيعمل loop. و debounce بـ lodash جوه الـ component من غير [[useMemo]] أو [[useRef]]: بيتعمل debounce جديد كل render فمبيأخرش حاجة.`
+            mistakes: R`دالة من غير hooks اسمها [[useFormatDate]]. و hook بيرجّع object أو دالة جديدة كل مرة، وحد يحطها في dependencies فيعمل loop. و debounce بـ lodash جوه الـ component من غير [[useMemo]] أو [[useRef]]: بيتعمل debounce جديد كل render، فكل حرف بيتأخر لوحده ومفيش حاجة بتتلغي، يعني طلب لكل حرف برضه.`
           },
           lines: [
             "hook عام لأي نوع، و delay افتراضي 400ms.",
@@ -40393,7 +40393,7 @@ function SearchPage() {
 
 ولو الـ state دي جوه store عام، [[persist]] بتاع Zustand بيعمل ده لوحده (درس جاي).`,
             when: "تفضيلات المستخدم، ومسودات، وآخر اختيار. مش للبيانات الحساسة.",
-            mistakes: R`توكن الدخول في localStorage: أي XSS يقراه، والأأمن httpOnly cookie (تاب الأمان). و [[JSON.parse]] من غير try فالصفحة تقع لو القيمة بايظة. وتخزين بيانات كبيرة (localStorage بيوقف الـ main thread وهو بيكتب). والـ updater bug اللي فوق.`
+            mistakes: R`توكن الدخول في localStorage: أي XSS يقراه، والأأمن httpOnly cookie (تاب أمان الموقع). و [[JSON.parse]] من غير try فالصفحة تقع لو القيمة بايظة. وتخزين بيانات كبيرة (localStorage بيوقف الـ main thread وهو بيكتب). والـ updater bug اللي فوق.`
           },
           lines: [
             "hook عام، بياخد المفتاح والقيمة الافتراضية.",
@@ -40565,7 +40565,7 @@ React Router ليه تلات أوضاع: declarative ([[<BrowserRouter>]] و [[<
 
 والسيرفر لازم يرجّع [[index.html]] لأي مسار مش ملف: في Nginx [[try_files $uri /index.html]] (تاب nginx). من غيرها refresh على [[/products/42]] يدّي 404.`,
             when: "أي SPA فيها أكتر من شاشة. وفي Next.js الراوتنج بالفولدرات ومش محتاج React Router (تاب Next.js).",
-            mistakes: R`[[<a href="/cart">]] جوه التطبيق: reload كامل والـ state كلها بتروح. ومفيش route لـ [[*]] فالمسار الغلط يطلع صفحة فاضية. وفي مشروع حقيقي كل route من ٢٥ كان مكتوب [[<MainLayout><Page /></MainLayout>]] بإيده بدل layout route واحد فيه Outlet. وخلط [[react-router-dom]] و [[react-router]] بنسخ مختلفة في نفس المشروع.`
+            mistakes: R`[[<a href="/cart">]] جوه التطبيق: reload كامل والـ state كلها بتروح. ومفيش route لـ [[*]] فالمسار الغلط يطلع صفحة فاضية (في الـ declarative mode) أو شاشة الخطأ الافتراضية «Unexpected Application Error! 404 Not Found» (في الـ data mode). وفي مشروع حقيقي كل route من ٢٥ كان مكتوب [[<MainLayout><Page /></MainLayout>]] بإيده بدل layout route واحد فيه Outlet. وخلط [[react-router-dom]] و [[react-router]] بنسخ مختلفة في نفس المشروع.`
           },
           lines: [
             "كل حاجة من react-router.",
@@ -40605,7 +40605,7 @@ export function RequireAuth({ role }: { role?: 'admin' }) {
 // وفي صفحة الدخول بعد النجاح (navigate من useNavigate):
 const from = (useLocation().state as { from?: string } | null)?.from ?? '/'
 navigate(from, { replace: true })`,
-          try: R`اعمل [[useAuth]] بيرجّع [[isLoading: true]] ثانيتين وبعدين user. امسح سطر الـ isLoading وشوف إن المستخدم الداخل بيتحوّل للـ login وبيرجع (flicker).`,
+          try: R`اعمل [[useAuth]] بيرجّع [[isLoading: true]] ثانيتين وبعدين user. امسح سطر الـ isLoading وشوف إن المستخدم الداخل بيتحوّل للـ login في أول ثانيتين ويفضل هناك رغم إن الـ user وصل بعدها.`,
           flag: "script",
           deep: {
             why: "صفحات زي الـ dashboard والـ checkout مالهاش معنى من غير مستخدم، والأحسن تحوّله للدخول بدل ما يشوف صفحة فاضية أو errors. ولما يدخل يرجع للمكان اللي كان عايزه، مش للصفحة الرئيسية.",
@@ -40619,7 +40619,7 @@ navigate(from, { replace: true })`,
 
 والصلاحيات في الفرونت شكل بس: إخفاء زرار «امسح» عن المستخدم العادي كويس للـ UX، بس الـ endpoint نفسه لازم يرفض. أي حد يقدر يبعت الـ request من curl.`,
             when: "Dashboard، و checkout، وإعدادات الحساب، ولوحة الأدمن (بـ role).",
-            mistakes: R`مفيش حالة loading فبيحصل flicker. ومن غير [[replace]] فالـ Back بيعمل loop. وتحمي في الفرونت بس والـ API مفتوح. وتخزين الـ JWT في localStorage: أي XSS يسرقه، والأأمن httpOnly cookie (تاب الأمان). وفي مشروع حقيقي كان الـ role بيتقارن بـ [['ADMIN']] و [['admin']] الاتنين، لأن الـ backend والفرونت مش متفقين على الشكل: وحّده في مكان واحد.`
+            mistakes: R`مفيش حالة loading فبيحصل flicker. ومن غير [[replace]] فالـ Back بيعمل loop. وتحمي في الفرونت بس والـ API مفتوح. وتخزين الـ JWT في localStorage: أي XSS يسرقه، والأأمن httpOnly cookie (تاب أمان الموقع). وفي مشروع حقيقي كان الـ role بيتقارن بـ [['ADMIN']] و [['admin']] الاتنين، لأن الـ backend والفرونت مش متفقين على الشكل: وحّده في مكان واحد.`
           },
           lines: [
             "أدوات التحويل والـ Outlet والمكان الحالي.",
@@ -40722,7 +40722,7 @@ useQuery({ queryKey: ['user', id], queryFn: () => getUser(id!), enabled: !!id })
             why: R`كل نوع بيانات بيتغير بسرعة مختلفة: إعدادات الموقع يمكن مرة في الشهر، وقايمة المنتجات كل يوم، والطلبات الحية كل ثواني. لو كله بيتعامل بنفس الطريقة، يا إما بتطلب كتير على الفاضي، يا إما المستخدم بيشوف بيانات قديمة.`,
             how: R`دورة حياة الـ query: fresh (جديدة) لحد ما staleTime يخلص، وبعدين stale. طول ما فيه component بيستخدمها اسمها active. لما آخر واحد يتشال بقت inactive، ولو فضلت كده مدة gcTime بتتمسح من الكاش.
 
-الـ stale query بيتعاد جلبها في الخلفية لما: component جديد يستخدمها (refetchOnMount)، أو المستخدم يرجع للتاب (refetchOnWindowFocus)، أو النت يرجع (refetchOnReconnect)، أو تعمل invalidate. والـ fresh مبيحصلهاش حاجة من دول. يعني staleTime هو اللي بيتحكم في عدد الطلبات.
+الـ stale query بيتعاد جلبها في الخلفية لما: component جديد يستخدمها (refetchOnMount)، أو المستخدم يرجع للتاب (refetchOnWindowFocus)، أو النت يرجع (refetchOnReconnect). والـ fresh مبيحصلهاش حاجة من دول. أما invalidate فبيخلي الـ query stale ويجيبها تاني حتى لو لسه fresh، ودي الطريقة اللي بتجبر بيها refetch. يعني staleTime هو اللي بيتحكم في عدد الطلبات.
 
 الاختيار: [[Infinity]] لحاجة مبتتغيرش غير بفعل منك (وانت بتعمل invalidate بعد التعديل). ودقيقة لخمسة لأغلب الـ lists. وصفر مع [[refetchInterval]] للحاجات الحية. و [[enabled: false]] بيوقف الـ query لحد ما شرط يتحقق، زي id لسه موجاش.
 
@@ -40826,7 +40826,7 @@ const toggleDone = useMutation({
 
 [[getQueryData]] بتاخد snapshot من اللي في الكاش، و [[setQueryData]] بتكتب النسخة الجديدة (بنفس قواعد الـ immutable updates)، وكل component بيستخدم ['todos'] بيتحدث على طول.
 
-اللي بترجّعه من onMutate بيوصل لـ onError و onSettled كـ argument تالت (في الـ docs الجديدة اسمه onMutateResult). وفي v5 الجديدة كل callback بياخد كمان argument أخير فيه [[client]]، فتقدر تستخدمه بدل useQueryClient.
+اللي بترجّعه من onMutate بيوصل لـ onSuccess و onError كـ argument تالت، ولـ onSettled كـ argument رابع (بعد data و error و variables)، وفي الـ docs الجديدة اسمه onMutateResult. وفي v5 الجديدة كل callback بياخد كمان argument أخير فيه [[client]]، فتقدر تستخدمه بدل useQueryClient.
 
 [[onSettled]] بيعمل invalidate في الحالتين: لو نجح، السيرفر ممكن حسب حاجات تانية (updatedAt مثلًا)، ولو فشل تتأكد إن الكاش رجع مظبوط.
 
@@ -41113,7 +41113,7 @@ export function Page() {
 
 والتوزيع: واحد فوق خالص كآخر خط دفاع، وواحد حوالين كل route، وواحد حوالين الحاجات الخطرة (widgets، و charts، ومكتبات برا). وفي React 19 تقدر تحط [[onCaughtError]] و [[onUncaughtError]] في [[createRoot]] عشان تبعت كل الأخطاء لـ logging من مكان واحد.
 
-في التطوير Vite بيعرض overlay بالخطأ حتى لو الـ boundary مسكه، ده طبيعي.`,
+في التطوير React بتطبع الخطأ في الـ console حتى لو الـ boundary مسكه، ده طبيعي. (والـ overlay بتاع Vite بيظهر لأخطاء الـ build بس، مش أخطاء الرسم.)`,
             when: "حوالي كل route، وأي جزء ممكن يقع لوحده: charts (recharts)، ومحررات، و iframes، وأي بيانات من API ممكن تيجي بشكل غير متوقع.",
             mistakes: R`تفتكر إنه بيمسك أخطاء onClick. و boundary واحد فوق بس، فأي خطأ بيشيل كل حاجة. ومفيش reset فالمستخدم عالق. وفي مشروع حقيقي كان فيه boundary متعمل بإيده فوق التطبيق كله، بيعرض رسالة الخطأ والـ component stack للمستخدمين في الإنتاج، وزراره الوحيد reload للصفحة: التفاصيل التقنية مكانها الـ logging، مش شاشة العميل.`
           },
@@ -44487,7 +44487,7 @@ server.listen(3000, () => console.log("http://localhost:3000"));`,
 
 و [[req.url]] بيبقى [[/api/tasks?done=true]] كله، فلو عايز الـ query لازم [[new URL(req.url, "http://x")]]. ومفيش routes: عايز [[/api/tasks/:id]]؟ اكتب regex بنفسك.
 
-وكل ده شغال على الـ event loop: الدالة بتتنادى لكل طلب على نفس الـ thread. طول ما انت مستني قاعدة بيانات بـ await، Node بيخدم طلبات تانية. بس لو عملت حسبة تقيلة sync، كل الطلبات بتقف (درس [[event loop blocking]]).`,
+وكل ده شغال على الـ event loop: الدالة بتتنادى لكل طلب على نفس الـ thread. طول ما انت مستني قاعدة بيانات بـ await، Node بيخدم طلبات تانية. بس لو عملت حسبة تقيلة sync، كل الطلبات بتقف (درس «blocking و الـ main thread» في تاب «JavaScript»).`,
             when: "سكربت صغير أو webhook واحد من غير dependencies، أو عشان تفهم Express من جوه. لأي API حقيقي استخدم Express أو Fastify أو Hono.",
             mistakes: R`تنسى [[res.end()]] فالطلب يفضل معلّق لحد الـ timeout. وتكتب [[res.writeHead]] بعد ما بعتّ جزء من الـ body، فيطلع خطأ [[ERR_HTTP_HEADERS_SENT]]. ده نفس الخطأ اللي هتشوفه في Express لو بعتّ رد مرتين.`
           },
@@ -44534,7 +44534,7 @@ app.listen(3000, (err) => {
 
 في Express 5، لو السيرفر مقدرش يفتح البورت (مثلًا [[EADDRINUSE]] لأن البورت مشغول)، الخطأ بيوصل كأول argument للـ callback بتاع [[listen]]. في Express 4 كان بيطلع كـ event منفصل، ولو محدش سمعه العملية تقع.
 
-و [[app.listen]] بيرجّع الـ server نفسه. احتفظ بيه في متغير لو هتحتاج تقفله بعدين (درس [[health و shutdown]]).`,
+و [[app.listen]] بيرجّع الـ server نفسه. احتفظ بيه في متغير لو هتحتاج تقفله بعدين (درس «الإغلاق النضيف» في تاب «Node و npm»).`,
             when: "أي REST API في Node. البدائل: Fastify (أسرع وفيه validation مدمج)، و Hono (خفيف وبيشتغل على edge)، و NestJS (معمارية كاملة فوق Express أو Fastify). المفاهيم هنا بتتنقل لأي واحد فيهم.",
             mistakes: R`تنسخ كود من tutorial قديم فيه [[app.get("*")]] أو [[app.options("*", cors())]]، والسيرفر يقع وهو بيقوم بـ [[Missing parameter name]]، لأن Express 5 غيّر شكل الـ paths (درس [[req.params]]). شوف النسخة في package.json قبل ما تنسخ. و [[npm init -y]] بقى بيكتب [[type: commonjs]] صراحة، فلو نسيت [[npm pkg set type=module]] هيطلعلك [[Cannot use import statement outside a module]].`
           },
@@ -44582,7 +44582,7 @@ app.route("/api/users/:id")
 [[app.all(path)]] بيطابق أي method. و [[app.route]] مجرد اختصار بيقلل تكرار العنوان وغلطات الكتابة.
 
 قواعد التسمية المتعارف عليها: أسماء جمع ([[/tasks]] مش [[/task]])، و kebab-case ([[/order-items]])، والعلاقات متداخلة مستوى واحد ([[/projects/7/tasks]]). ولو الفعل مش CRUD (زي «ابعت الفاتورة»)، يا إما PATCH على حقل ([[{ done: true }]])، يا إما sub-resource زي [[POST /invoices/9/send]]. تصميم الـ API بالتفصيل (versioning وشكل الأخطاء) في تاب «APIs متقدمة».`,
-            when: "أي API هيستخدمه frontend أو موبايل. ولو العملية «نفّذ أمر» مش «حاجة ليها بيانات»، ممكن شكل RPC يبقى أوضح (سؤال REST و RPC في الانترفيو تحت).",
+            when: "أي API هيستخدمه frontend أو موبايل. ولو العملية «نفّذ أمر» مش «حاجة ليها بيانات»، ممكن شكل RPC يبقى أوضح (والأفعال اللي مش CRUD بالتفصيل في درس «resources و URLs» في تاب «APIs متقدمة»).",
             mistakes: R`[[POST /api/tasks/delete]] بدل [[DELETE]]، أو GET بيغيّر حاجة. وتكتب [[/api/tasks/:id]] قبل [[/api/tasks/stats]]، فكلمة [[stats]] تتفهم كـ id ويتنادى getTask. الـ routes الثابتة قبل اللي فيها params.`
           },
           lines: [
@@ -44680,7 +44680,7 @@ Express 5 نقل لنسخة جديدة من path-to-regexp، وده غيّر ح�
           title: "اقرا الـ body اللي جاي JSON",
           desc: R`الـ body مش بيتقري لوحده: [[app.use(express.json())]] بيقرا أي طلب نوعه [[application/json]] ويحطه في [[req.body]] كـ object.
 
-ولو الطلب مش JSON أو مفيش parser، [[req.body]] في Express 5 بيبقى undefined (في Express 4 كان [[{}]]). والحد الافتراضي للحجم 100kb، وأي حاجة أكبر بترجع 413.`,
+ولو الطلب مش JSON، [[req.body]] في Express 5 بيفضل undefined (في Express 4 الـ parser كان بيحط [[{}]] حتى لو ملقاش حاجة يقراها)، ولو مفيش parser خالص يبقى undefined في الاتنين. والحد الافتراضي للحجم 100kb، وأي حاجة أكبر بترجع 413.`,
           example: R`app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ extended: false }));
 
@@ -44780,7 +44780,7 @@ res.status(429).json({ error: "Too many requests" });`,
 }
 
 function requireApiKey(req, res, next) {
-  if (req.get("x-api-key") !== process.env.API_KEY) return res.status(401).json({ error: "Bad key" });
+  if (!process.env.API_KEY || req.get("x-api-key") !== process.env.API_KEY) return res.status(401).json({ error: "Bad key" });
   next();
 }
 
@@ -44792,7 +44792,7 @@ app.get("/api/admin/stats", requireApiKey, (req, res) => res.json({ tasks: tasks
             why: "حاجات كتير لازم تحصل لكل الطلبات أو لمجموعة منها: قراية JSON، وتسجيل، وتحقق من التوكن، و rate limit. بدل ما تكررها في كل route، بتكتبها مرة كـ middleware وتركّبها.",
             how: R`Express جواه stack: array فيها كل [[app.use]] و [[app.get]] بالترتيب اللي اتكتبوا بيه. مع كل طلب بيبدأ من أول واحد: لو الـ path مطابق، بينادي الدالة ويدّيها [[next]]. لما تنادي [[next()]]، Express ينقل للي بعده. ولو رديت ([[res.json]]) من غير next، السلسلة تقف هنا.
 
-[[next(err)]] بأي argument (غير الكلمة [["route"]]) معناها «حصل خطأ»: Express بيتخطى كل الـ middleware العادية ويروح لأول error middleware (اللي ليها ٤ arguments). و [[next("route")]] بيتخطى باقي handlers الـ route الحالي بس.
+[[next(err)]] بأي argument (غير الكلمتين [["route"]] و [["router"]]) معناها «حصل خطأ»: Express بيتخطى كل الـ middleware العادية ويروح لأول error middleware (اللي ليها ٤ arguments). و [[next("route")]] بيتخطى باقي handlers الـ route الحالي بس، و [[next("router")]] بيخرج من الـ router كله.
 
 [[app.use(path, fn)]] بيطابق أي method وأي عنوان بيبدأ بالـ path. [[app.get(path, fn)]] GET بس والعنوان بالظبط. وتقدر تحط أكتر من middleware في route واحد: [[app.post("/x", auth, validate, handler)]]، وبيتنفذوا بالترتيب.
 
@@ -44809,7 +44809,7 @@ app.get("/api/admin/stats", requireApiKey, (req, res) => res.json({ tasks: tasks
             "كمّل للي بعدي. من غيرها الطلب يفضل معلّق.",
             "قفلة.",
             "middleware بيحمي route.",
-            "المفتاح غلط؟ رد وانهي، ومفيش next.",
+            "المفتاح غلط أو مش مبعوت، أو API_KEY مش متظبط في البيئة؟ رد وانهي، ومفيش next. (من غير الشرط الأول، لو المتغير ناقص والطلب من غير header، undefined هتساوي undefined والطلب يعدّي).",
             "المفتاح صح؟ كمّل.",
             "قفلة.",
             "[[app.use]]: شغّل logger على كل الطلبات.",
@@ -44891,7 +44891,7 @@ app.use("/api/tasks", tasksRouter);`,
 
 لو الـ router متركّب على path فيه param زي [[/api/projects/:projectId/tasks]]، الـ router مش هيشوف [[projectId]] إلا لو عملته بـ [[Router({ mergeParams: true })]].
 
-وفي Express 5 اتشال [[app.del]] (بقى [[delete]] بس)، و [[router.param]] بقى بياخد اسم واحد مش array.`,
+وفي Express 5 اتشال [[app.del]] (بقى [[delete]] بس)، واتشال الشكل القديم [[router.param(fn)]] اللي بياخد دالة من غير اسم، والاسم بقى من غير [[:]] في أوله: [[router.param("id", fn)]] مش [[":id"]].`,
             when: "من أول ما يبقى عندك أكتر من resource: router لكل resource أو لكل feature.",
             mistakes: R`تنسى [[mergeParams]] في nested router، فـ [[req.params.projectId]] يطلع undefined وانت متأكد إنه في العنوان. وتكتب [[router.get("/api/tasks/:id")]] جوه router متركّب أصلًا على [[/api/tasks]]، فالعنوان الحقيقي يبقى [[/api/tasks/api/tasks/:id]].`
           },
@@ -44936,7 +44936,7 @@ export async function create(userId, data) {
 
 الأخطاء بتطلع من الـ service كـ [[AppError]] فيها status، والـ controller مش بيمسكها أصلًا: في Express 5 أي خطأ من async handler بيروح لوحده لـ error middleware.
 
-وفيه شكلين للفولدرات: حسب الطبقة ([[controllers/]] و [[services/]]) أو حسب الـ feature ([[modules/tasks/]] وجواه [[tasks.routes.js]] و [[tasks.controller.js]] و [[tasks.service.js]]). في مشروع حقيقي فيه أكتر من ٢٥ feature كان كل واحد في فولدره، ودا أسهل لما المشروع يكبر لأن كل حاجة تخص الـ feature في مكان واحد. والمعمارية الأعمق (repositories و dependency injection) في درس [[clean architecture]].`,
+وفيه شكلين للفولدرات: حسب الطبقة ([[controllers/]] و [[services/]]) أو حسب الـ feature ([[modules/tasks/]] وجواه [[tasks.routes.js]] و [[tasks.controller.js]] و [[tasks.service.js]]). في مشروع حقيقي فيه أكتر من ٢٥ feature كان كل واحد في فولدره، ودا أسهل لما المشروع يكبر لأن كل حاجة تخص الـ feature في مكان واحد. وتنظيم الفولدرات حسب الـ feature بالتفصيل في درس «feature folders» في تاب «بناء مشروع كامل».`,
             when: R`من أول ما يبقى فيه منطق أكتر من «هات من الداتابيز ورجّع». مشروع صغير جدًا (٣ endpoints) ممكن يعيش في ملف واحد، وده مش عيب.`,
             mistakes: R`service بتاخد [[req]] كله أو بترجع [[res.json]]، فمتقدرش تناديها من cron. و controller فيه ١٠٠ سطر حسابات. وفي مشروع حقيقي كان فيه service واحدة للأدمن أكتر من ٣٨٠٠ سطر فيها كل حاجة الأدمن بيعملها: قسّم حسب الـ feature، مش حسب مين بيستخدمها.`
           },
@@ -45264,7 +45264,7 @@ export function verifyAccessToken(token) {
 
 // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3OTAwMDAwMDAsImV4cCI6MTc5MDAwMDkwMH0.<signature>
 //               header                  .                         payload                                        . التوقيع`,
-          try: R`اعمل توكن وخد الجزء التاني منه (بين النقطتين) وافكّه بـ [[node -e "console.log(Buffer.from(process.argv[1], 'base64url').toString())" PAYLOAD]]. هتقرا الـ id والدور من غير أي سر. غيّر حرف واحد في الـ payload وجرّب verify: [[invalid signature]]. واعمل توكن بـ [[expiresIn: "5s"]] واستنى: [[jwt expired]].`,
+          try: R`اعمل توكن وخد الجزء التاني منه (بين النقطتين) وافكّه بـ [[node -e "console.log(Buffer.from(process.argv[1], 'base64url').toString())" PAYLOAD]]. هتقرا الـ id والدور من غير أي سر. غيّر الدور لـ ADMIN ورجّع شفّره بـ [[node -e "const p = JSON.parse(Buffer.from(process.argv[1], 'base64url')); p.role = 'ADMIN'; console.log(Buffer.from(JSON.stringify(p)).toString('base64url'))" PAYLOAD]]، وحط الناتج مكان الجزء التاني وجرّب verify: [[invalid signature]] (لو غيّرت حرف في النص المشفّر نفسه، غالبًا الـ JSON هيبوظ وهتاخد SyntaxError مش invalid signature). واعمل توكن بـ [[expiresIn: "5s"]] واستنى: [[jwt expired]].`,
           flag: "script",
           deep: {
             why: "HTTP مبيفتكرش: كل طلب لوحده، فلازم كل طلب يثبت صاحبه. الـ JWT بيحط الإثبات ده جوه الطلب نفسه، والسيرفر يتحقق منه بحسبة سريعة من غير lookup، وأي نسخة من السيرفر معاها السر تقدر تتحقق، فتقدر تشغّل كذا نسخة من غير session مشتركة.",
@@ -45368,7 +45368,7 @@ sameSite ليها ٣ قيم: [[strict]] مبتتبعتش خالص مع أي طل
 
 «موقع تاني» معناها site مختلف مش origin مختلف: [[app.example.com]] و [[api.example.com]] نفس الـ site، فـ lax شغالة بينهم. بس [[myapp.vercel.app]] و [[api.myapp.com]] sites مختلفة، فمحتاج [[none]] و [[secure]]، والمتصفحات اللي بتقفل third-party cookies ممكن ترفضها. الحل الأنضف: الـ API تحت نفس الدومين ([[/api]] من ورا Nginx أو subdomain).
 
-الكوكي الموقّعة ([[signed: true]]): cookie-parser بيضيف توقيع بالسر، ولو حد عدّل القيمة بتتشال من [[req.signedCookies]]. ده بيمنع التعديل مش القراية.
+الكوكي الموقّعة ([[signed: true]]): cookie-parser بيضيف توقيع بالسر، ولو حد عدّل القيمة، قيمتها في [[req.signedCookies]] بتبقى [[false]]. ده بيمنع التعديل مش القراية.
 
 و [[clearCookie]] لازم ياخد نفس الـ path والـ domain اللي الكوكي اتعملت بيهم، وإلا المتصفح يعتبرها كوكي تانية. وفي Express 5 بيتجاهل [[maxAge]] و [[expires]] لو بعتّهم.`,
             when: "refresh tokens و session ids، وأي حاجة الـ JavaScript مش محتاج يقراها. وتفضيلات UI (اللغة والثيم) ممكن كوكي عادية أو localStorage.",
@@ -45462,7 +45462,7 @@ app.post("/api/auth/login", async (req, res) => {
             why: "JWT مش دايمًا الإجابة. لموقع واحد على دومين واحد، الـ session أبسط: مفيش refresh flow، و logout وحظر اليوزر بيحصلوا فورًا، والكوكي فيها رقم بس.",
             how: R`أول مرة تحط حاجة في [[req.session]]، الـ middleware بيولّد id عشوائي طويل، ويحفظ [[{ userId: 7 }]] في الـ store تحت الـ id ده، ويبعت الـ id في كوكي موقّعة بالـ secret. مع كل طلب: يقرا الكوكي، ويتحقق من التوقيع، ويجيب الـ session من الـ store ويحطها في [[req.session]]. وفي آخر الطلب لو اتغيرت يحفظها.
 
-الـ store الافتراضي [[MemoryStore]]: في ذاكرة العملية، بيضيع مع كل restart، ومبيتشاركش بين نسختين، وبيسرّب ذاكرة. للإنتاج Redis (درس [[rate-limit-redis و connect-redis]]) أو الداتابيز.
+الـ store الافتراضي [[MemoryStore]]: في ذاكرة العملية، بيضيع مع كل restart، ومبيتشاركش بين نسختين، وبيسرّب ذاكرة. للإنتاج Redis (باكدج [[connect-redis]]، والفكرة في درس [[stateless]] في تاب «Cloud و DevOps») أو الداتابيز.
 
 [[regenerate]] بعد الـ login مهم: لو مهاجم قدر يزرع session id معروف في متصفح الضحية قبل الـ login (session fixation)، من غير regenerate الضحية هتعمل login على الـ id بتاع المهاجم. وحوّلناها لـ promise عشان أي خطأ فيها يوصل للـ error handler بدل ما يضيع جوه callback.
 
@@ -45572,11 +45572,11 @@ if (count === 0) throw new AppError(404, "Task not found");`,
 
 والأدمن اللي مسموحله يشوف كله؟ route منفصل تحت [[/api/admin]] بـ [[requireRole]]، بدل if جوه نفس الـ endpoint.`,
             when: R`كل endpoint بياخد id من العنوان أو الـ body، من غير استثناء: القراية والتعديل والمسح والتحميل ([[/files/:id]]).`,
-            mistakes: R`تتحقق في القراية وتنسى في PATCH و DELETE. وتاخد [[userId]] من الـ body بدل [[req.user.id]]. وفي مشروع حقيقي كان socket.io بيقبل [[userId]] من العميل عشان يدخّله غرفة الرسايل بتاعته، فأي حد يقدر يسمع رسايل أي حد (التفاصيل في درس [[io.use]]). وتفتكر إن UUID كفاية.`
+            mistakes: R`تتحقق في القراية وتنسى في PATCH و DELETE. وتاخد [[userId]] من الـ body بدل [[req.user.id]]. وفي مشروع حقيقي كان socket.io بيقبل [[userId]] من العميل عشان يدخّله غرفة الرسايل بتاعته، فأي حد يقدر يسمع رسايل أي حد (التفاصيل في درس [[socket.io]] في تاب «بناء مشروع كامل»). وتفتكر إن UUID كفاية.`
           },
           lines: [
             "بيدوّر بالـ id بس، فأي id يرجّع أي مهمة.",
-            "الـ id ومعاه صاحبها. [[findFirst]] لأن الشرط مش على حقل unique لوحده.",
+            "الـ id ومعاه صاحبها في نفس الـ where. [[findFirst]] شغال، ومن Prisma 5 [[findUnique]] كمان بيقبل [[userId]] جنب الـ id.",
             "مش لاقيها (مش موجودة أو مش بتاعتك)؟ 404 في الحالتين، عشان متأكدش إن الرقم موجود.",
             "[[deleteMany]] بالشرطين: بيمسح لو بتاعتك بس، وبيرجّع عدد اللي اتمسح.",
             "صفر يعني مش بتاعتك أو مش موجودة."
@@ -45641,7 +45641,7 @@ fetch("https://api.example.com/api/tasks", { credentials: "include" });`,
           try: R`من Console على موقع تاني (زي example.com) اعمل [[fetch("http://localhost:3000/api/tasks")]]: هتشوف CORS error. زوّد الـ origin ده في [[CORS_ORIGINS]] وجرّب تاني. وافتح تاب Network وشوف طلب الـ OPTIONS اللي بيحصل قبل POST بـ JSON.`,
           flag: "script",
           deep: {
-            why: "من غير CORS، أي موقع تفتحه يقدر يعمل fetch لـ API البنك بتاعك بكوكيزك ويقرا الرد. المتصفح بيمنع القراية دي افتراضيًا (same-origin policy)، و CORS هو الطريقة المنظمة إنك تفتح استثناء لمواقعك انت بس.",
+            why: "من غير الـ same-origin policy، أي موقع تفتحه كان هيقدر يعمل fetch لـ API البنك بتاعك بكوكيزك ويقرا الرد. المتصفح بيمنع القراية دي افتراضيًا (same-origin policy)، و CORS هو الطريقة المنظمة إنك تفتح استثناء لمواقعك انت بس.",
             how: R`الـ origin هو protocol و domain و port مع بعض: [[http://localhost:5173]] و [[http://localhost:3000]] origins مختلفة.
 
 الطلبات «البسيطة» (GET، أو POST بفورم عادي) المتصفح بيبعتها على طول ومعاها [[Origin]]، ويبص على [[Access-Control-Allow-Origin]] في الرد: لو مش مطابق، الطلب اتنفذ على السيرفر فعلًا، بس الصفحة ممنوعة تقرا الرد. أي طلب تاني (JSON، أو header زي Authorization، أو PATCH و DELETE) المتصفح بيبعت قبله preflight: [[OPTIONS]] بيسأل «مسموح؟»، ولو الرد مش تمام الطلب الحقيقي مبيتبعتش خالص.
@@ -45658,7 +45658,7 @@ CORS مش حماية للسيرفر: curl و Postman والسيرفرات الت
             "باكدج cors.",
             "ركّبه قبل الـ routes.",
             "array من الـ origins المسموحة بالظبط (من config)، زي [[https://app.example.com]].",
-            "اسمح بالكوكيز و header الـ Authorization مع الطلب.",
+            "اسمح بالكوكيز مع الطلب ([[Access-Control-Allow-Credentials: true]]). أما header الـ Authorization فمش محتاج ده: بيتسمح بـ [[allowedHeaders]]، و cors بيعكس الـ headers المطلوبة افتراضيًا.",
             "الـ methods المسموحة في رد الـ preflight.",
             "المتصفح يكاش رد الـ preflight ١٠ دقايق بدل ما يسأل كل مرة.",
             "قفلة.",
@@ -45692,7 +45692,7 @@ app.use("/api/auth/login", loginLimiter);`,
             why: "من غير حد، أي حد يجرّب مليون باسورد على حساب واحد، أو يبعت ألف طلب OTP (وانت بتدفع تمن كل SMS)، أو يعمل scraping لكل البيانات، أو يضغط السيرفر لحد ما يقع. الـ rate limit مش حماية كاملة، بس بيحوّل الهجمات دي من دقايق لسنين.",
             how: R`الـ limiter بيعمل key لكل طلب (افتراضيًا الـ IP، ومع IPv6 بيجمع الـ subnet كله عشان حد عنده ملايين العناوين ميلفّش عليه)، ويزوّد عداد في الـ store. أول ما العداد يعدّي [[limit]] جوه [[windowMs]]، بيرد 429 من غير ما الطلب يوصل للـ route.
 
-الـ store الافتراضي في الذاكرة: كل نسخة من السيرفر ليها عداد لوحدها، ومع restart بيتصفّر. لو شغّال نسختين (PM2 cluster أو كذا container)، الحد الفعلي بيتضاعف. الحل store مشترك في Redis (درس [[rate-limit-redis و connect-redis]]).
+الـ store الافتراضي في الذاكرة: كل نسخة من السيرفر ليها عداد لوحدها، ومع restart بيتصفّر. لو شغّال نسختين (PM2 cluster أو كذا container)، الحد الفعلي بيتضاعف. الحل store مشترك في Redis (باكدج [[rate-limit-redis]] مع [[ioredis]]).
 
 [[trust proxy]]: [[req.ip]] بيتقري من الاتصال نفسه، وورا Nginx الاتصال جاي من Nginx، فالـ IP الحقيقي في [[X-Forwarded-For]]. الرقم [[1]] معناه «ثق في hop واحد قدامي». و [[true]] معناها ثق في أي حاجة، وده خطير: أي حد يبعت [[X-Forwarded-For]] مزيف ويبقى IP جديد مع كل طلب. و express-rate-limit بيحذّرك في اللوج لو شاف الإعداد ده.
 
@@ -45740,7 +45740,7 @@ const user = await User.findOne({ email });`,
 
 SQL injection: بيتقفل بالـ parameters. Prisma وأي query builder بيبعتوا القيم منفصلة عن الـ SQL. الخطر بس في [[$queryRawUnsafe]] أو تجميع strings بإيدك، و [[$queryRaw]] بالـ tagged template آمن لأنه بيحوّل القيم لـ parameters.
 
-NoSQL injection في Mongo: لو [[req.body.email]] وصل object زي [[{ $ne: null }]] بدل string، [[findOne({ email })]] بيرجّع أول يوزر. الحل validation إن القيمة string (zod)، و Mongoose عنده option اسمه [[sanitizeFilter]] بيشيل الـ operators اللي جاية من برّه. ومكتبة [[express-mongo-sanitize]] القديمة مبتشتغلش مع Express 5 لأنها بتكتب على [[req.query]].
+NoSQL injection في Mongo: لو [[req.body.email]] وصل object زي [[{ $ne: null }]] بدل string، [[findOne({ email })]] بيرجّع أول يوزر. الحل validation إن القيمة string (zod)، و Mongoose عنده option اسمه [[sanitizeFilter]] بيلف أي object فيه مفتاح بيبدأ بـ [[$]] في [[$eq]]، فالـ operator اللي جاي من برّه بيتعامل كقيمة عادية. ومكتبة [[express-mongo-sanitize]] القديمة مبتشتغلش مع Express 5 لأنها بتكتب على [[req.query]].
 
 XSS: بيتقفل وقت العرض. React بيهرّب أي نص تلقائي، والخطر في [[dangerouslySetInnerHTML]]. لو لازم تحفظ HTML من اليوزر، نضّفه بـ DOMPurify.
 
@@ -45748,7 +45748,7 @@ Path traversal: اسم ملف جاي من اليوزر زي [[../../.env]]. مت
 
 وأي مكتبة «بتنضّف كل حاجة» زي [[xss-clean]]: مهجورة، ومبتشتغلش على Express 5، وبتدّيك إحساس زايف بالأمان.`,
             when: "validation على كل حاجة داخلة، دايمًا. sanitize للـ HTML بس لما الحقل HTML فعلًا. والـ escape بيحصل تلقائي لو استخدمت الأدوات صح (React و Prisma)، وشغلك إنك متكسرش ده.",
-            mistakes: R`تنضّف الـ body كله بـ DOMPurify فتبوّظ الباسوردات والتوكنات (في المشروع الحقيقي كانوا عاملين قايمة استثناءات للحقول الحساسة عشان كده بالظبط). وتعتمد على [[xss-clean]] وهو مش شغال. وتهرّب HTML وقت الحفظ وكمان وقت العرض، فاليوزر يشوف [[&amp;lt;]] على الشاشة.`
+            mistakes: R`تنضّف الـ body كله بـ DOMPurify فتبوّظ الباسوردات والتوكنات (في المشروع الحقيقي كانوا عاملين قايمة استثناءات للحقول الحساسة عشان كده بالظبط). وتعتمد على [[xss-clean]] وهو مش شغال. وتهرّب HTML وقت الحفظ وكمان وقت العرض، فاليوزر يشوف [[&lt;]] على الشاشة بدل [[<]].`
           },
           lines: [
             "DOMPurify بيشتغل في Node والمتصفح.",
@@ -45996,7 +45996,7 @@ router.post("/avatar", requireAuth, upload.single("avatar"), users.uploadAvatar)
 
 وللملفات الكبيرة (فيديوهات)، الأحسن الواجهة ترفع مباشرة على S3 أو R2 بـ presigned URL، والـ API يدّيها اللينك بس، فالملف مبيعدّيش على السيرفر خالص.`,
             when: "أي رفع ملفات لـ Express. memoryStorage للصور الصغيرة اللي هتعالجها، و diskStorage للملفات الأكبر، و presigned URL للفيديوهات والملفات الضخمة.",
-            mistakes: R`في مشروع حقيقي كان فيه [[memoryStorage]] مع حد ١٠٠ ميجا للفيديو و ٥٠٠ ميجا للـ PDF. كل رفع بيتحط كله في الرام، فكام رفعة في نفس الوقت ممكن يوقّعوا السيرفر (out of memory). للملفات الكبيرة: disk أو رفع مباشر. وفي نفس المشروع رسالة الخطأ كانت بتقول «10MB» والحد الفعلي 100MB، فخلي الرسالة تتبني من نفس الرقم. وتحفظ بـ [[originalname]] مع diskStorage، فحد يرفع اسم زي [[../../app.js]] ويكتب على ملف موجود.`
+            mistakes: R`في مشروع حقيقي كان فيه [[memoryStorage]] مع حد ١٠٠ ميجا للفيديو و ٥٠٠ ميجا للـ PDF. كل رفع بيتحط كله في الرام، فكام رفعة في نفس الوقت ممكن يوقّعوا السيرفر (out of memory). للملفات الكبيرة: disk أو رفع مباشر. وفي نفس المشروع رسالة الخطأ كانت بتقول «10MB» والحد الفعلي 100MB، فخلي الرسالة تتبني من نفس الرقم. وتحفظ بـ [[originalname]] مع diskStorage، فحد يرفع ملف بنفس اسم ملف موجود في الفولدر (زي صورة يوزر تاني) ويكتب عليه، ولو [[preservePath: true]] متفعّل كمان اسم زي [[../../app.js]] يطلع بره الفولدر.`
           },
           lines: [
             "multer.",
@@ -46094,7 +46094,7 @@ export async function sendResetEmail(to, link) {
           },
           lines: [
             "nodemailer.",
-            "transporter واحد للتطبيق كله، وبيعيد استخدام الاتصال.",
+            "transporter واحد للتطبيق كله بإعدادات ثابتة. (من غير [[pool: true]] بيفتح اتصال جديد مع كل إيميل.)",
             "سيرفر الـ SMTP من config.",
             "587 مع STARTTLS: بيبدأ عادي وبعدين يتشفّر. (465 يعني [[secure: true]] من الأول.)",
             "اليوزر والباسورد (أو API key في خدمات زي Resend).",
@@ -46160,13 +46160,13 @@ Resend بيدعم كمان SMTP، فممكن تستخدمه من nodemailer با
         {
           cmd: "morgan",
           title: "سطر لوج لكل طلب",
-          desc: R`[[morgan]] middleware بيطبع سطر لكل طلب فيه الـ method والعنوان والـ status والمدة: [[dev]] ملوّن ومختصر للتطوير، و [[combined]] بصيغة لوجات Apache و Nginx المعروفة.
+          desc: R`[[morgan]] middleware بيطبع سطر لكل طلب فيه الـ method والعنوان والـ status: [[dev]] ملوّن ومختصر ومعاه المدة للتطوير، و [[combined]] بصيغة لوجات Apache و Nginx المعروفة (فيها الـ IP والتاريخ والـ user-agent، من غير المدة).
 
 بسيط ومفيد، بس نص عادي: صعب تدوّر فيه أو تربطه بباقي اللوجات. للإنتاج، اللوجات المنظمة (JSON) أحسن، الدرس الجاي.`,
           example: R`import morgan from "morgan";
 
-app.use(morgan(config.NODE_ENV === "production" ? "combined" : "dev"));
-app.use(morgan(":method :url :status :response-time ms", { skip: (req) => req.path === "/health" }));
+app.use(morgan(config.NODE_ENV === "production" ? "combined" : "dev", { skip: (req) => req.path === "/health" }));
+// أو صيغة مخصصة من tokens بدلها (مش جنبها): morgan(":method :url :status :response-time ms")
 
 // GET /api/tasks 200 4.123 ms - 512
 // ::ffff:10.0.0.5 - - [29/Sep/2026:10:00:00 +0000] "GET /api/tasks HTTP/1.1" 200 512 "-" "curl/8.5.0"`,
@@ -46184,8 +46184,7 @@ app.use(morgan(":method :url :status :response-time ms", { skip: (req) => req.pa
           },
           lines: [
             "morgan.",
-            "ملوّن في التطوير، والصيغة المعروفة في الإنتاج.",
-            "صيغة مخصصة من tokens، ومن غير طلبات الـ health check اللي بتملّى اللوج."
+            "ملوّن في التطوير، والصيغة المعروفة في الإنتاج، ومن غير طلبات الـ health check اللي بتملّى اللوج. لوجر واحد بس، عشان كل طلب ميتكتبش مرتين."
           ]
         },
         {
@@ -46227,7 +46226,7 @@ router.post("/", async (req, res) => {
             "middleware بيسجّل الطلبات.",
             "لوجر واحد للتطبيق كله.",
             "أقل مستوى يتطبع: info في الإنتاج، و debug في التطوير.",
-            "المسارات دي تتكتب [Redacted] بدل قيمتها، و [[*]] يعني الحقل ده في أي object.",
+            "المسارات دي تتكتب [Redacted] بدل قيمتها، و [[*.password]] يعني password جوه أي object في المستوى الأول (زي [[body.password]])، مش [[password]] لوحده ولا أعمق من كده.",
             "قفلة.",
             "سجّل كل طلب (method و url و status ومدة و id) من غير الـ health check.",
             "route عادي.",
@@ -46281,7 +46280,7 @@ docker exec -it pg psql -U postgres`,
 );
 INSERT INTO users (email, name) VALUES ('you@example.com', 'Ali');
 SELECT * FROM users;`,
-          try: R`شغّل المثال، وبعدين ضيف نفس الإيميل تاني: هتاخد [[duplicate key value violates unique constraint]]. وجرّب INSERT من غير name: هتاخد [[null value in column "name" violates not-null constraint]]. القاعدة رفضت، مش الكود.`,
+          try: R`شغّل المثال، وبعدين ضيف نفس الإيميل تاني: هتاخد [[duplicate key value violates unique constraint]]. وجرّب INSERT من غير name: هتاخد [[null value in column "name" of relation "users" violates not-null constraint]]. القاعدة رفضت، مش الكود.`,
           flag: "script",
           deep: {
             why: "لو الداتا في ملف JSON أو شيت، مفيش حاجة بتمنع إن الإيميل يتكرر، أو الاسم يبقى فاضي، أو التاريخ يتكتب «بكرة». الجدول بيحط القواعد دي جوه القاعدة نفسها، فأي حد بيكتب فيها (الـ API، أو سكربت، أو أدمن بإيده) لازم يلتزم.",
@@ -46823,7 +46822,7 @@ SELECT user_id FROM orders WHERE count(*) > 3 GROUP BY user_id;   -- error: aggr
 
 أي شرط مش على aggregate (زي status) حطه في WHERE: الصفوف بتتفلتر بدري، فالتجميع بيشتغل على داتا أقل.`,
             when: "لما الشرط على نتيجة count أو sum أو avg. وده سؤال انترفيو ثابت (الفرق بين WHERE و HAVING).",
-            mistakes: R`تحط [[HAVING status = 'paid']]: هتشتغل لو status في GROUP BY، بس أبطأ ومش واضحة. تستخدم اسم الـ AS في HAVING. وتحط aggregate في WHERE.`
+            mistakes: R`تحط [[HAVING status = 'paid']]: هتشتغل لو status في GROUP BY، و Postgres غالبًا بينقلها لـ WHERE لوحده، بس مش واضحة ومتعتمدش إن كل قاعدة هتعمل كده. تستخدم اسم الـ AS في HAVING. وتحط aggregate في WHERE.`
           },
           lines: [
             "لكل يوزر عدد أوردراته،",
@@ -47157,7 +47156,7 @@ FROM vip v
 JOIN users u ON u.id = v.user_id
 JOIN paid p ON p.user_id = v.user_id
 ORDER BY p.spent DESC;`,
-          try: R`اكتب نفس الاستعلام من غير WITH، بـ subqueries جوه بعض، وقارن أنهي أسهل في القراية. وبعدين حط [[EXPLAIN]] قدام الاتنين وشوف إن الخطة تقريبًا واحدة.`,
+          try: R`اكتب نفس الاستعلام من غير WITH، بـ subqueries جوه بعض، وقارن أنهي أسهل في القراية. وبعدين حط [[EXPLAIN]] قدام الاتنين: في نسخة WITH هتلاقي [[CTE paid]] و [[CTE Scan]]، لأن paid متستخدمة مرتين فـ Postgres بيحسبها مرة ويحفظها، ونسخة الـ subqueries بتحسبها مرتين. وبعدين اكتب [[paid AS NOT MATERIALIZED (...)]] وشوف الخطة بقت زي الـ subqueries.`,
           flag: "script",
           deep: {
             why: "التقارير الحقيقية فيها ٣ و ٤ خطوات: احسب كذا، وفلتر، واربط، ورتّب. متداخلة جوه بعض بتبقى صعبة تتقري أو تتصلح. الـ CTE بيدّي كل خطوة اسم تفهمه.",
@@ -47371,7 +47370,7 @@ GIN index الافتراضي على jsonb بيخدم [[@>]] و [[?]] و [[?|]] �
           title: "ليه نفس الاستعلام بياخد ثانية أو ملّي ثانية",
           desc: R`الـ index هيكل جنب الجدول بيحفظ قيم عمود مترتبة ومعاها مكان كل صف، زي فهرس آخر الكتاب. من غيره، [[WHERE created_at > ...]] بيقرا الجدول كله صف صف. معاه، بيوصل للصفوف في كام خطوة.
 
-النوع الافتراضي B-tree، وبيخدم [[=]] و [[<]] و [[>]] و [[BETWEEN]] و [[ORDER BY]] وبادئة LIKE. وقراية الخطة بـ EXPLAIN وإنشاء الـ index على الإنتاج في تاب PostgreSQL.`,
+النوع الافتراضي B-tree، وبيخدم [[=]] و [[<]] و [[>]] و [[BETWEEN]] و [[ORDER BY]]، وبادئة LIKE بس لو الـ collation هي C أو الـ index معمول بـ [[text_pattern_ops]] (درس LIKE و ILIKE). وقراية الخطة بـ EXPLAIN وإنشاء الـ index على الإنتاج في تاب PostgreSQL.`,
           example: R`INSERT INTO orders (user_id, status, total, created_at)
 SELECT (SELECT id FROM users LIMIT 1), 'paid', (random() * 1000)::numeric(10,2), now() - random() * interval '365 days'
 FROM generate_series(1, 200000);
@@ -47389,7 +47388,7 @@ SELECT count(*) FROM orders WHERE created_at > now() - interval '1 day';`,
 
 الـ index ليه تمن: كل INSERT و UPDATE و DELETE لازم يحدّث كل الـ indexes على الجدول، وبياخد مساحة. index زيادة = كتابة أبطأ.
 
-الـ index على [[created_at]] مش بيخدم [[date(created_at)]]: الشرط لازم يطابق اللي اتعمل عليه الـ index. الحل تكتب الشرط كمدى، أو تعمل index على التعبير نفسه.
+الـ index على [[created_at]] مش بيخدم [[date(created_at)]]: الشرط لازم يطابق اللي اتعمل عليه الـ index. الحل تكتب الشرط كمدى. و index على [[date(created_at)]] نفسه مش هينفع هنا لأن العمود timestamptz: [[functions in index expression must be marked IMMUTABLE]] (اليوم بيفرق حسب الـ timezone). لو لازم، ثبّت المنطقة: [[CREATE INDEX ON orders (((created_at AT TIME ZONE 'UTC')::date))]] واكتب الشرط بنفس التعبير.
 
 PRIMARY KEY و UNIQUE بيعملوا index لوحدهم، والـ FK لأ. وفيه أنواع تانية: GIN (لـ jsonb والـ arrays والبحث)، و BRIN (لجداول ضخمة بتتملي بالترتيب زي اللوجات).`,
             when: "أعمدة الـ FK، والأعمدة اللي في WHERE أو ORDER BY في استعلامات متكررة على جداول بتكبر. وبعد ما EXPLAIN يوريك Seq Scan على جدول كبير.",
@@ -47455,6 +47454,7 @@ try {
   await client.query("INSERT INTO order_items (order_id, product_id, quantity, unit_price) SELECT $1::bigint, id, $3::int, price FROM products WHERE id = $2", [rows[0].id, productId, qty]);
   const r = await client.query("UPDATE products SET stock = stock - $1 WHERE id = $2 AND stock >= $1", [qty, productId]);
   if (r.rowCount === 0) throw new Error("OUT_OF_STOCK");
+  await client.query("UPDATE orders SET total = (SELECT sum(quantity * unit_price) FROM order_items WHERE order_id = $1) WHERE id = $1", [rows[0].id]);
   await client.query("COMMIT");
 } catch (e) {
   await client.query("ROLLBACK");
@@ -47486,6 +47486,7 @@ try {
             "ضيف البند، والسعر من جدول المنتجات مش من الطلب.",
             "اخصم المخزون بشرط إنه يكفي.",
             "مفيش صف اتعدل؟ المخزون مش كفاية: ارمي error.",
+            "حدّث إجمالي الأوردر من بنوده في نفس الـ transaction (درس denormalization).",
             "كله تمام: ثبّت.",
             "أي error في أي خطوة:",
             "رجّع كل حاجة كأنها محصلتش.",
@@ -47520,7 +47521,7 @@ if (r.rowCount === 0) throw new Error("OUT_OF_STOCK");`,
 
 ليه الأمر الواحد آمن؟ الـ UPDATE بياخد lock على الصف. الطلب التاني بيستنى لحد ما الأول يعمل COMMIT. وبعدها، في READ COMMITTED (الافتراضي)، Postgres بيعيد تقييم الـ WHERE على النسخة الجديدة من الصف: stock بقى 0، فالشرط [[stock >= 1]] بقى false، والأمر بيرجع 0 صفوف. من غير أي lock صريح منك.
 
-في Prisma نفس النمط: [[updateMany({ where: { id, stock: { gte: qty } }, data: { stock: { decrement: qty } } })]] وتشيك إن [[count]] مش صفر. مش [[update]] العادي، لأنه بيشترط where بـ unique بس ومش هيرجّعلك عدد.
+في Prisma نفس النمط: [[updateMany({ where: { id, stock: { gte: qty } }, data: { stock: { decrement: qty } } })]] وتشيك إن [[count]] مش صفر. مش [[update]] العادي: من Prisma 5 بيقبل شرط زي [[stock: { gte: qty }]] جنب الـ id، بس لو الشرط متحققش بيرمي [[P2025]] بدل ما يرجّعلك عدد، فـ updateMany مع [[count]] أوضح.
 
 ونفس الحيلة لكل «عدّاد بحد»: كوبون [[uses < max_uses]]، رصيد [[balance >= amount]]، تغيير حالة [[status = 'pending']].`,
             when: "المخزون، والأرصدة، والأكواد اللي بتتستخدم مرة، والعدادات، وأي تغيير حالة.",
@@ -47554,7 +47555,7 @@ UPDATE products p SET stock = p.stock - oi.quantity
 FROM order_items oi WHERE oi.order_id = 5 AND p.id = oi.product_id;
 UPDATE orders SET status = 'paid' WHERE id = 5;
 COMMIT;`,
-          try: R`في نافذتين psql: الأولى [[BEGIN; SELECT * FROM orders WHERE id = 5 FOR UPDATE;]]. التانية نفس الأمر: هتقف. التانية كمان جرّب [[SELECT * FROM orders WHERE id = 5;]] من غير FOR UPDATE: هترجع على طول، لأن القراية العادية مش بتستنى.`,
+          try: R`في نافذتين psql: الأولى [[BEGIN; SELECT * FROM orders WHERE id = 5 FOR UPDATE;]]. التانية نفس الأمر: هتقف. وفي نافذة تالتة جرّب [[SELECT * FROM orders WHERE id = 5;]] من غير FOR UPDATE: هترجع على طول، لأن القراية العادية مش بتستنى.`,
           flag: "script",
           deep: {
             why: "في مشروع حقيقي كان فيه زرار «ادفع» في لوحة الأدمن لطلب سحب أرباح. لو اتضغط مرتين بسرعة، أو اتنين أدمن ضغطوا في نفس اللحظة، الطلب كان ممكن يتدفع مرتين. الحل كان: جوه transaction، اقفل صف الطلب بـ FOR UPDATE، واقرا حالته من جديد بعد القفل، ولو اتدفع خلاص ارفض.",
@@ -47704,7 +47705,7 @@ ORDER BY day;`,
 
 [[ROW_NUMBER]] بيدّي أرقام متتالية حتى لو فيه تعادل. [[RANK]] بيدّي المتعادلين نفس الرقم ويسيب فجوة (1، 1، 3). [[DENSE_RANK]] من غير فجوة (1، 1، 2).
 
-الـ frame: لما تكتب ORDER BY جوه OVER، الافتراضي «من أول المجموعة لحد الصف الحالي ومعاه أي صف متعادل معاه في الترتيب». يعني يومين بنفس القيمة بياخدوا نفس المجموع. لو عايز صف بصف بالظبط: [[ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW]].
+الـ frame: لما تكتب ORDER BY جوه OVER، الافتراضي «من أول المجموعة لحد الصف الحالي ومعاه أي صف متعادل معاه في الترتيب». يعني صفين بنفس قيمة الـ ORDER BY (زي أوردرين بنفس created_at بالظبط) بياخدوا نفس المجموع. لو عايز صف بصف بالظبط: [[ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW]].
 
 [[LAG]] و [[LEAD]] بيجيبوا قيمة الصف اللي قبل أو بعد. و [[sum(total) OVER (PARTITION BY user_id)]] بيحط إجمالي اليوزر جنب كل أوردر من أوردراته، فتحسب النسبة.
 
@@ -47753,13 +47754,13 @@ LIMIT 20;`,
 
 الـ id موجود كـ tiebreaker: created_at ممكن يتكرر، ومن غيره ممكن صف يتنط.
 
-الـ API بيرجّع مع كل صفحة [[nextCursor]] (الـ created_at والـ id بتوع آخر صف، متشفرين base64 عشان العميل ميلعبش فيهم)، والعميل يبعته في الطلب الجاي.
+الـ API بيرجّع مع كل صفحة [[nextCursor]] (الـ created_at والـ id بتوع آخر صف، متحولين لـ base64 كـ string مقفول عشان العميل ميعتمدش على شكلهم؛ ده encoding مش تشفير، فالسيرفر لازم يتحقق من القيم بعد ما يفكها، ولو عايز تمنع التلاعب اعمله sign بـ HMAC)، والعميل يبعته في الطلب الجاي.
 
 التمن: مفيش «روح للصفحة ٥٧» مباشرة، ومفيش عدد صفحات ببلاش. عشان كده الـ OFFSET لسه كويس للوحات أدمن صغيرة فيها أرقام صفحات. و [[count(*)]] لعدد الصفحات على جدول كبير غالي؛ اعرض «فيه أكتر» بدل الرقم، أو رقم تقريبي.
 
 في Prisma: [[cursor: { id: lastId }, skip: 1, take: 20]] مع orderBy فيه عمود unique. وفي supabase-js: [[.lt("created_at", cursor).order("created_at", { ascending: false }).limit(20)]] (ولو فيه تكرار في الوقت محتاج [[.or()]] للـ tiebreaker).`,
             when: "infinite scroll، و feeds، و APIs عامة، وأي جدول كبير بيكبر. والـ OFFSET للجداول الصغيرة اللي محتاجة أرقام صفحات.",
-            mistakes: R`keyset على عمود مش فريد من غير tiebreaker، فصفوف بتضيع. ترتيب الـ ORDER BY مختلف عن اتجاه الـ index. و OFFSET في infinite scroll على جدول بيتضاف فيه كل ثانية.`
+            mistakes: R`keyset على عمود مش فريد من غير tiebreaker، فصفوف بتضيع. ORDER BY مش مطابق للـ index ولا معكوسه بالكامل: اتجاهات مخلوطة (زي created_at DESC, id ASC على index (DESC, DESC)) أو أعمدة بترتيب غير ترتيب الـ index، فـ Postgres يعمل Sort بدل ما يقرا من الـ index (العكس الكامل ASC, ASC عادي، بيقرا الـ index بالعكس). وخلط الاتجاهات كمان بيخلّي الـ row comparison الواحدة غلط، لازم تتكتب a < x OR (a = x AND b > y). و OFFSET في infinite scroll على جدول بيتضاف فيه كل ثانية.`
           },
           lines: [
             "الطريقة البطيئة:",
@@ -51098,7 +51099,7 @@ $hour = (int) date('G');
   <?php endif; ?>
   <p>الساعة دلوقتي <?php echo date('H:i'); ?></p>
 </html>`,
-          try: R`احفظ المثال [[index.php]] وافتحه بـ [[php -S]]. بعدين اعمل View Source في المتصفح: مش هتلاقي ولا سطر PHP، هتلاقي HTML بس. غيّر الشرط لـ [[$hour < 25]] وشوف الرسالة اتغيرت.`,
+          try: R`احفظ المثال [[index.php]] وافتحه بـ [[php -S]]. بعدين اعمل View Source في المتصفح: مش هتلاقي ولا سطر PHP، هتلاقي HTML بس. اعكس الشرط لـ [[$hour >= 12]] وشوف الرسالة اتغيرت.`,
           flag: "script",
           deep: {
             why: "PHP اتعمل في الأول كلغة قوالب: صفحة HTML فيها حتت بتتغير. عشان كده الخلط طبيعي فيه ومش محتاج مكتبة templates زي غيره.",
@@ -51154,7 +51155,7 @@ var_dump(intdiv(7, 2), 7 / 2, 7 % 2);`,
             why: "PHP بيحوّل الأنواع لوحده في حاجات كتير، ومعظم الـ bugs الغريبة سببها قيمة نوعها غير اللي فاكره: [[\"0\"]] بدل [[0]]، أو [[false]] بدل [[null]]. [[var_dump]] بيوريك الحقيقة.",
             how: R`النتايج بالترتيب: [[int(30)]] و [[float(99.5)]] و [[string(3) "Ali"]] و [[bool(true)]] و [[NULL]].
 
-[['5' + 3]] بيطلع [[int(8)]]: العمليات الحسابية بتحوّل النص الرقمي لرقم. [['12abc' + 1]] بيطلع 13 ومعاه Warning. و [['abc' + 1]] في PHP 8 بيرمي [[TypeError: Unsupported operand types]]، وفي PHP 7 كان بيطلع 1 بصمت.
+[['5' + 3]] بيطلع [[int(8)]]: العمليات الحسابية بتحوّل النص الرقمي لرقم. [['12abc' + 1]] بيطلع 13 ومعاه Warning. و [['abc' + 1]] في PHP 8 بيرمي [[TypeError: Unsupported operand types]]، وفي PHP 7 كان بيطلع 1 والكود بيكمّل (من 7.1 ومعاه Warning بس، وفي 7.0 بصمت خالص).
 
 الـ casting الصريح [[(int)]] مبيطلعش warnings: [[(int) '12abc']] = 12. و [[(bool) '0']] = false، بس [[(bool) '0.0']] = true! النص [["0"]] والنص الفاضي هما النصين الوحيدين اللي falsy.
 
@@ -51258,7 +51259,7 @@ echo $sql;`,
 
 الـ nowdoc ([[<<<'SQL']] بين علامتين مفردتين) مبيبدّلش [[$]]، فمناسب لـ SQL فيه [[:email]] أو كود أو regex. وخلي بالك: SQL في heredoc عادي فيه [[$email]] جواه = SQL injection. القيم تروح في prepared statement (المستوى الثاني)، والـ nowdoc بيمنعك من الغلطة دي أصلًا.`,
             when: "قوالب إيميل صغيرة، و SQL طويل، و HTML جوه دالة. لو القالب كبير، خليه ملف view لوحده (المستوى الثالث).",
-            mistakes: R`الـ heredoc مش بيعمل escape. [[$name]] لو جاي من المستخدم وحطيته في HTML من غير [[htmlspecialchars]] يبقى XSS. واحسبها [[$__{name}]] بالشكل القديم. وتحط قيم المستخدم جوه SQL بالـ heredoc بدل placeholders.`
+            mistakes: R`الـ heredoc مش بيعمل escape. [[$name]] لو جاي من المستخدم وحطيته في HTML من غير [[htmlspecialchars]] يبقى XSS. وتكتبها [[$__{name}]] بالشكل القديم اللي بقى deprecated من 8.2. وتحط قيم المستخدم جوه SQL بالـ heredoc بدل placeholders.`
           },
           lines: [
             "بداية الملف.",
@@ -51559,7 +51560,7 @@ echo price('100');`,
           title: "قيمة ناقصة أو null من غير ما الصفحة تقع",
           desc: R`[[$a ?? 'default']]: لو [[$a]] مش موجود أو null خد الافتراضي، ومن غير Warning. ودي اللي هتستخدمها مع [[$_GET]] و [[$_POST]] كل شوية. و [[??=]] بيحط قيمة بس لو مفيش.
 
-[[?->]] (nullsafe): [[$user?->address?->city]] لو أي حلقة null، النتيجة null بدل Error. و [[?:]] حاجة تانية: بيبص على truthy، فـ [[0]] و [[""]] بيتعاملوا كأنهم مفيش.`,
+[[?->]] (nullsafe): [[$user?->address?->city]] لو أي حلقة null، النتيجة null بدل Warning (ولو بتنادي method على null يبقى Error). و [[?:]] حاجة تانية: بيبص على truthy، فـ [[0]] و [[""]] بيتعاملوا كأنهم مفيش.`,
           example: R`<?php
 $page = (int) ($_GET['page'] ?? 1);
 $sort = $_GET['sort'] ?? 'newest';
@@ -51573,7 +51574,7 @@ $u = new User();
 echo $u->address?->city ?? 'مدينة مش معروفة', "\n";
 $u2 = new User(new Address('Cairo'));
 echo $u2->address?->city;`,
-          try: R`بدّل [[??]] في أول سطر بـ [[?:]] وشغّل: هتاخد Warning إن الـ key مش موجود. وبدّل [[?->]] بـ [[->]] في سطر [[$u]] وشوف الـ Error.`,
+          try: R`بدّل [[??]] في أول سطر بـ [[?:]] وشغّل: هتاخد Warning إن الـ key مش موجود. وبدّل [[?->]] بـ [[->]] في سطر [[$u]] وشيل [[?? 'مدينة مش معروفة']] من آخره: هتاخد Warning «Attempt to read property "city" on null». ولاحظ إن [[??]] لوحده كان هيخفيها، لأنه بيشتغل زي [[isset]].`,
           flag: "script",
           deep: {
             why: "أي حاجة جاية من المستخدم ممكن تكون مش موجودة: رابط من غير [[?page=]]، أو فورم ناقص حقل. من غير [[??]] الكود بيتملي [[isset($x) ? $x : ...]]، أو warnings في اللوج.",
@@ -51635,7 +51636,7 @@ require __DIR__ . '/partials/header.php';
 
 [[return]] في آخر ملف متضمَّن بترجّع قيمة: [[config.php]] فيه [[return ['app_name' => 'MyApp', ...];]] و [[$config = require ...]] بياخدها. ده أنضف شكل للإعدادات (درس الإعدادات في المستوى الثاني).
 
-المسار النسبي زي [['includes/db.php']] بيتدوّر عليه في [[include_path]] وفي فولدر الملف اللي اتفتح أصلًا، مش الملف اللي فيه السطر. فصفحة في [[admin/]] بتعمل include لملف بيعمل include لملف تالت، والمسارات تتلخبط. [[__DIR__]] ثابت: فولدر الملف ده بالظبط. و [[dirname(__DIR__)]] الفولدر اللي فوقه.
+المسار النسبي زي [['includes/db.php']] بيتدوّر عليه الأول في [[include_path]]، وفيها [[.]] يعني فولدر الشغل الحالي (على السيرفر غالبًا فولدر الصفحة اللي اتفتحت أصلًا، ومن cron أو الترمنال أي فولدر انت واقف فيه)، ولو ملقاهوش بيجرب فولدر الملف اللي فيه السطر. والمسار اللي بيبدأ بـ [[./]] أو [[../]] بيتحسب من فولدر الشغل بس. فنفس السطر ممكن يجيب ملف غير اللي انت قاصده حسب اتشغّل منين، والمسارات تتلخبط. [[__DIR__]] ثابت: فولدر الملف ده بالظبط. و [[dirname(__DIR__)]] الفولدر اللي فوقه.
 
 الشكل المعتاد: [[public/]] (أو [[public_html]]) فيه الصفحات والـ partials، و [[src/]] فيه الدوال والكلاسات، و [[config.php]] فوق الفولدر العام خالص، فمحدش يقدر يفتحه من المتصفح.`,
             when: "من أول صفحة تانية في الموقع. [[require_once]] للي فيه تعريفات (دوال، كلاسات)، و [[require]] للقوالب اللي ممكن تتكرر.",
@@ -51768,8 +51769,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<form method="post"><input name="name" value="<?= e($old['name']) ?>"> <?= e($errors['name'] ?? '') ?></form>`,
-          try: R`ابعت الفورم بإيميل غلط: الاسم اللي كتبته لازم يفضل في الخانة. بعدين ضيف [[echo 'x';]] قبل [[header]] وابعت فورم صح، واقرا [[headers already sent]]. وجرّب تبعته بـ [[curl -d "name=&email=x" localhost:8000/form.php]] عشان تتأكد إن التحقق على السيرفر مش المتصفح بس.`,
+<form method="post"><input name="name" value="<?= e($old['name']) ?>"> <?= e($errors['name'] ?? '') ?> <input name="email" value="<?= e($old['email']) ?>"> <?= e($errors['email'] ?? '') ?> <button>ابعت</button></form>`,
+          try: R`حط دالة [[e()]] من درس htmlspecialchars في الملف (أو في الـ bootstrap) الأول. ابعت الفورم بإيميل غلط: الاسم اللي كتبته لازم يفضل في الخانة. بعدين ضيف [[echo 'x';]] قبل [[header]] وابعت فورم صح، واقرا [[headers already sent]]. وجرّب تبعته بـ [[curl -d "name=&email=x" localhost:8000/form.php]] عشان تتأكد إن التحقق على السيرفر مش المتصفح بس.`,
           flag: "script",
           deep: {
             why: "الفورم هو أكتر مكان بيدخل منه كلام من برّه. التحقق على السيرفر هو الحماية الوحيدة الحقيقية، لأن [[required]] في HTML وفحص JavaScript أي حد يعدّيهم بـ curl.",
@@ -51802,7 +51803,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "قفلة.",
             "قفلة.",
             "نهاية PHP.",
-            "الفورم بالقيمة القديمة ورسالة الغلط (الاتنين بـ e)."
+            "الفورم: الاسم والإيميل بالقيم القديمة ورسايل الغلط (كله بـ e)."
           ]
         }
       ]
@@ -52195,7 +52196,7 @@ session fixation: المهاجم ياخد id جلسة عادي من موقعك،
 
 «افتكرني»: كوكي تانية عمرها طويل فيها token عشوائي ([[bin2hex(random_bytes(32))]])، والقاعدة فيها hash بتاعه بس. لما الجلسة تموت والكوكي موجودة، دوّر بالـ hash، ولو لقيته اعمل login وغيّر التوكن. والكوكي دي [[httponly]] و [[secure]].
 
-ولو فيه [[?redirect=]] بعد الدخول، اقبل مسار داخلي بس (بيبدأ بـ [[/]] ومش [[//]])، وإلا بقى open redirect لموقع تاني.`,
+ولو فيه [[?redirect=]] بعد الدخول، اقبل مسار داخلي بس: بيبدأ بـ [[/]] والحرف التاني مش [[/]]، ومفيهوش [[\]] ولا tab ولا سطر جديد خالص (المتصفح بيقرا [[/\evil.com]] و [[?redirect=/%09/evil.com]] زي [[//evil.com]])، والأضمن allowlist لصفحات معروفة، وإلا بقى open redirect لموقع تاني.`,
             when: "صفحة الـ login، وأول سطر في كل صفحة أو endpoint محمي.",
             mistakes: R`تنسى [[exit]] في [[require_login]]: المتصفح بيتحوّل، بس محتوى الصفحة المحمية اتبعت في الرد. وتحط صف المستخدم كله (ومعاه الـ hash) في الجلسة. وفي مشروع حقيقي كوكي «افتكرني» كانت بتتعمل بـ secure = false، فممكن تتبعت على http وتتسرق من الشبكة.`
           },
@@ -52253,7 +52254,7 @@ function csrf_ok(): bool {
 
 في مشروع حقيقي فورم عام كان فيه CSRF token بالظبط كده مع honeypot وحد محاولات. بس endpoints الأدمن (JSON) كانت معتمدة على الجلسة لوحدها.`,
             when: "كل فورم أو طلب بيغيّر حاجة وانت معتمد على كوكي للدخول. Laravel بيعمله لوحده ([[@csrf]]).",
-            mistakes: R`مسح أو خروج بـ لينك GET: [[<img src=\"/logout.php\">]] في أي موقع بيخرّج زوّارك. ومقارنة بـ [[==]]. وتعمل token جديد مع كل صفحة فالمستخدم اللي فاتح تابين يترفض. وتفتكر إن HTTPS بيحمي من CSRF: ملوش علاقة.`
+            mistakes: R`مسح أو خروج بـ لينك GET: لينك [[<a href="https://example.com/logout.php">]] في أي موقع أو إيميل بيخرّج اللي يدوس عليه، لأن [[SameSite=Lax]] بيبعت الكوكي مع التنقّل بـ GET. ومقارنة بـ [[==]]. وتعمل token جديد مع كل صفحة فالمستخدم اللي فاتح تابين يترفض. وتفتكر إن HTTPS بيحمي من CSRF: ملوش علاقة.`
           },
           lines: [
             "بداية الملف.",
@@ -52280,7 +52281,8 @@ function csrf_ok(): bool {
 والخروج نفسه POST بـ CSRF token، مش لينك.`,
           example: R`<?php
 session_start();
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_ok()) { http_response_code(405); exit; }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
+if (!csrf_ok()) { http_response_code(403); exit; }
 $_SESSION = [];
 $p = session_get_cookie_params();
 setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
@@ -52295,14 +52297,15 @@ exit;`,
 
 لو فيه «افتكرني»: امسح التوكن من القاعدة وامسح الكوكي بتاعته كمان، وإلا أول صفحة بعد الخروج هتعمل login تاني لوحدها.
 
-والـ POST مهم: الخروج بـ GET معناه إن أي موقع يحط [[<img src="https://example.com/logout.php">]] يخرّج كل زوّاره من موقعك. مش كارثة، بس مزعج، وبيبيّن إن فيه طلبات بتغيّر حالة بـ GET.`,
+والـ POST مهم: الخروج بـ GET معناه إن أي موقع أو إيميل يحط لينك لـ [[https://example.com/logout.php]] (أو يعمل redirect ليه) يخرّج اللي يدوس عليه من موقعك، لأن [[SameSite=Lax]] بيبعت الكوكي مع التنقّل بـ GET (و [[<img>]] كمان لو الكوكي [[SameSite=None]]). مش كارثة، بس مزعج، وبيبيّن إن فيه طلبات بتغيّر حالة بـ GET.`,
             when: "زرار الخروج، وتغيير الباسورد (اخرج من كل الجلسات التانية)، وحذف الحساب.",
             mistakes: R`في مشروع حقيقي الخروج كان لينك GET عادي. و [[session_destroy]] لوحدها وتفتكر الكوكي راحت. ونسيان توكن «افتكرني» فالخروج مبيخرّجش.`
           },
           lines: [
             "بداية الملف.",
             "افتح الجلسة الحالية.",
-            "POST بـ token صحيح بس.",
+            "POST بس، وإلا 405.",
+            "token صحيح بس، وإلا 403 زي درس CSRF.",
             "فضّي البيانات.",
             "إعدادات الكوكي (path و domain...).",
             "امسح الكوكي من المتصفح بتاريخ قديم.",
@@ -52486,7 +52489,7 @@ if (!is_array($in)) json_out(['error' => 'JSON غلط'], 400);
 $title = trim((string) ($in['title'] ?? ''));
 if ($title === '') json_out(['error' => 'title مطلوب'], 422);
 json_out(['id' => 7, 'title' => $title], 201);`,
-          try: R`[[curl -i -X POST -H "Content-Type: application/json" -d '{"title":"أهلًا"}' localhost:8000/api.php]]: 201. ابعت [[-d 'x']]: 400. من غير [[-X POST]]: 405. وشيل [[JSON_UNESCAPED_UNICODE]] وشوف العربي بقى [[أ...]].`,
+          try: R`[[curl -i -X POST -H "Content-Type: application/json" -d '{"title":"أهلًا"}' localhost:8000/api.php]]: 201. ابعت [[-d 'x']]: 400. افتحه من غير [[-d]] (GET عادي: [[curl -i localhost:8000/api.php]]): 405. خلي بالك إن [[-d]] لوحده بيخلي curl يبعت POST حتى من غير [[-X POST]]. وشيل [[JSON_UNESCAPED_UNICODE]] وشوف العربي بقى [[\u0623\u0647...]].`,
           flag: "script",
           deep: {
             why: "أي frontend بـ JavaScript أو تطبيق موبايل بيكلم السيرفر بـ JSON. والـ status code هو اللي الـ frontend بيقرر بيه: [[fetch]] بيعتبر 200 نجاح، فلو رجّعت غلطة بـ 200، الكود التاني هيفتكرها نجحت.",
@@ -52494,7 +52497,7 @@ json_out(['id' => 7, 'title' => $title], 201);`,
 
 [[php://input]] هو الـ body الخام. [[json_decode(..., true)]] بيرجّع arrays بدل objects. لو الـ JSON بايظ بيرجّع null، ولو عايز السبب: [[JSON_THROW_ON_ERROR]] يرمي [[JsonException]]. و PHP 8.3 فيه [[json_validate()]] لو عايز تتأكد من غير ما تفك.
 
-[[JSON_UNESCAPED_UNICODE]]: العربي يطلع زي ما هو بدل [[س]] (الاتنين JSON صحيح، بس الأول أصغر وأوضح). و [[JSON_THROW_ON_ERROR]] على [[json_encode]] بيمسك نص UTF-8 بايظ بدل ما يرجّع false بصمت.
+[[JSON_UNESCAPED_UNICODE]]: العربي يطلع زي ما هو بدل [[\u0633]] (الاتنين JSON صحيح، بس الأول أصغر وأوضح). و [[JSON_THROW_ON_ERROR]] على [[json_encode]] بيمسك نص UTF-8 بايظ بدل ما يرجّع false بصمت.
 
 [[never]] نوع رجوع معناه الدالة عمرها ما بترجع (هنا بسبب [[exit]])، فأي كود بعد النداء واضح إنه مش هيتنفّذ.
 
@@ -52629,7 +52632,7 @@ set_exception_handler(function (Throwable $e): void {
     http_response_code(500);
     echo 'حصلت مشكلة عندنا. جرّب تاني بعد شوية.';
 });`,
-          try: R`حط الكود في أول [[bootstrap.php]] واعمل [[throw new Exception('test');]] في صفحة. في dev هتشوف الرسالة والـ stack trace؛ غيّر [[env]] لـ production: الزائر يشوف الرسالة العامة، والتفاصيل في [[logs/php-error.log]].`,
+          try: R`حط الكود في أول [[bootstrap.php]] واعمل [[throw new Exception('test');]] في صفحة. في الحالتين الزائر هيشوف الرسالة العامة (الـ handler هو اللي بيرد)، والتفاصيل والـ stack trace في [[logs/php-error.log]]. وعشان تشوف فرق [[display_errors]]: اعمل [[echo $undefined;]]، في dev الـ Warning هيظهر على الشاشة، وفي production هيتسجل في اللوج بس.`,
           flag: "script",
           deep: {
             why: "رسالة غلط على الشاشة في الإنتاج بتكشف مسارات الملفات، وأسماء الجداول، وأحيانًا جزء من الـ query أو الإعدادات. وفي نفس الوقت من غير لوج انت أعمى: المستخدم بيشوف صفحة بيضا، وانت متعرفش حصل إيه.",
@@ -52840,7 +52843,7 @@ var_dump($p->trashed());`,
           title: "لستة قيم ثابتة بدل نصوص متفرقة في الكود",
           desc: R`[[enum]] (PHP 8.1) نوع ليه قيم محددة بس. الـ backed enum كل حالة ليها قيمة ([[string]] أو [[int]]) بتتخزن في القاعدة. [[from()]] بيحوّل من القيمة للـ enum ويرمي لو غلط، و [[tryFrom()]] بيرجّع null. والـ enum ممكن يبقى فيه methods، زي [[label()]] للنص العربي.
 
-كده الـ status نوع: دالة بتاخد [[OrderStatus]] مستحيل يوصلها [[\'payed\']] بغلطة إملائية.`,
+كده الـ status نوع: دالة بتاخد [[OrderStatus]] مستحيل يوصلها [['payed']] بغلطة إملائية.`,
           example: R`<?php
 enum OrderStatus: string {
     case Pending = 'pending';
@@ -53021,15 +53024,15 @@ $controller = new App\Controllers\PostController();`,
           flag: "script",
           deep: {
             why: "مشروع فيه ٥٠ كلاس محتاج ٥٠ سطر require، وترتيبهم مهم، وأي نسيان = Class not found. الـ autoload بيخلي PHP يجيب الملف لوحده وقت الحاجة، فمفيش require غير سطر واحد.",
-            how: R`تحت الغطا: PHP فيه [[spl_autoload_register()]]. لما الكود يستخدم كلاس مش متعرّف، PHP بينادي الدوال المسجلة دي بالاسم الكامل. Composer بيسجّل دالة بتشيل [[App\\]] من أول الاسم، وتحوّل باقي [[\\]] لـ [[/]]، وتضيف [[src/]] و [[.php]]، وتعمل require. ده lazy: الكلاس اللي مستخدمتوش في الطلب ده مبيتحمّلش.
+            how: R`تحت الغطا: PHP فيه [[spl_autoload_register()]]. لما الكود يستخدم كلاس مش متعرّف، PHP بينادي الدوال المسجلة دي بالاسم الكامل. Composer بيسجّل دالة بتشيل [[App\]] من أول الاسم، وتحوّل باقي [[\]] لـ [[/]]، وتضيف [[src/]] و [[.php]]، وتعمل require. ده lazy: الكلاس اللي مستخدمتوش في الطلب ده مبيتحمّلش.
 
 [[use App\Models\PostRepository;]] مجرد اختصار للاسم وقت الـ compile، مبيحمّلش حاجة.
 
-جوه ملف فيه [[namespace]]، أي كلاس من غير [[\\]] في أوله بيتدوّر عليه في نفس الـ namespace: [[new DateTime()]] جوه [[App\Controllers]] يبقى [[App\Controllers\DateTime]] ويقع. اكتب [[\DateTime]] أو [[use DateTime;]]. الدوال مختلفة: لو مش لاقيها في الـ namespace بترجع للعامة، فـ [[strlen]] شغالة عادي.
+جوه ملف فيه [[namespace]]، أي كلاس من غير [[\]] في أوله بيتدوّر عليه في نفس الـ namespace: [[new DateTime()]] جوه [[App\Controllers]] يبقى [[App\Controllers\DateTime]] ويقع. اكتب [[\DateTime]] أو [[use DateTime;]]. الدوال مختلفة: لو مش لاقيها في الـ namespace بترجع للعامة، فـ [[strlen]] شغالة عادي.
 
-[[composer dump-autoload]] محتاجه لما تغيّر قسم [[autoload]] في composer.json. الكلاسات الجديدة في فولدرات PSR-4 بتتلاقي لوحدها، إلا لو عامل [[-o]] (classmap)، ساعتها لازم dump تاني.`,
+[[composer dump-autoload]] محتاجه لما تغيّر قسم [[autoload]] في composer.json. الكلاسات الجديدة في فولدرات PSR-4 بتتلاقي لوحدها، إلا لو عامل [[--classmap-authoritative]] ([[-a]])، ساعتها أي كلاس مش في الـ classmap مبيتلاقيش ولازم dump تاني. أما [[-o]] لوحده فلو الكلاس مش في الـ classmap بيرجع يدوّر بقواعد PSR-4 عادي.`,
             when: "أي مشروع فيه أكتر من كام كلاس. وده نفس اللي Laravel وأي مكتبة PHP حديثة بتعمله.",
-            mistakes: R`اسم الملف أو الفولدر مختلف في حالة الحروف عن الكلاس: ويندوز مش فارق معاه، والسيرفر Linux بيفرق، فبيشتغل عندك ويقع بعد الـ deploy. و [[new DateTime]] من غير [[\\]] جوه namespace. وتخلط require يدوي مع autoload لنفس الكلاس فيتعرّف مرتين.`
+            mistakes: R`اسم الملف أو الفولدر مختلف في حالة الحروف عن الكلاس: ويندوز مش فارق معاه، والسيرفر Linux بيفرق، فبيشتغل عندك ويقع بعد الـ deploy. و [[new DateTime]] من غير [[\]] جوه namespace. وتخلط require يدوي مع autoload لنفس الكلاس فيتعرّف مرتين.`
           },
           lines: [
             "composer.json.",
@@ -53190,11 +53193,11 @@ git ls-files | grep -E 'config\.php$|\.env$'`,
             why: "أغلب مواقع PHP اللي بتتخترق مش بسبب حاجة معقدة: query ملزوق، أو فولدر رفع بينفّذ PHP، أو باسورد في git. قايمة ثابتة بتراجعها قبل كل إطلاق بتقفل ٩٠٪ من ده.",
             how: R`file inclusion (LFI): [[include "pages/" . $_GET['p'] . ".php"]] ومستخدم يبعت [[?p=../../config]] فيتحمّل ملف إعداداتك، أو ملف log فيه كود حطه هو. الحل allowlist: [[$pages = ['home' => 'home.php', 'about' => 'about.php'];]] وتختار منها، ولو مش موجود 404. وتحميل ملفات من روابط ([[allow_url_include]]) مقفول افتراضيًا، سيبه مقفول.
 
-open redirect: [[header('Location: ' . $_GET['next'])]] بيخلي لينك موقعك يودّي لموقع تصيّد. اقبل مسار بيبدأ بـ [[/]] ومش بـ [[//]].
+open redirect: [[header('Location: ' . $_GET['next'])]] بيخلي لينك موقعك يودّي لموقع تصيّد. اقبل مسار بيبدأ بـ [[/]] والحرف التاني مش [[/]] ولا [[\]]، ومفيهوش tab ولا أي control character: المتصفح بيعامل [[/\evil.com]] زي [[//evil.com]]، وبيشيل الـ tab من الرابط فـ [[/%09/evil.com]] يبقى [[//evil.com]] برضه. والأحسن allowlist للمسارات المسموحة.
 
 عشوائية ضعيفة: [[rand]] و [[mt_rand]] و [[uniqid]] متتخمنش بسهولة للإنسان بس سهلة للمهاجم. أي token أو اسم ملف أو كود: [[random_bytes]] أو [[random_int]].
 
-المقارنات: [[==]] مع hashes أو tokens ممكن تعدّي حاجات غلط ([[\"0e1\" == \"0e2\"]])؛ [[hash_equals]] للأسرار و [[===]] لأي حاجة تانية.
+المقارنات: [[==]] مع hashes أو tokens ممكن تعدّي حاجات غلط ([["0e1" == "0e2"]])؛ [[hash_equals]] للأسرار و [[===]] لأي حاجة تانية.
 
 الصلاحيات: كل endpoint بيتحقق مين الطالب ومن حقه على العنصر ده ولا لأ (IDOR)، مش بس إن اللينك مستخبي.
 
@@ -53590,7 +53593,7 @@ $repo = new App\Models\PostRepository();`,
             why: "بيختبر إذا كنت فاهم الأداة اللي كل مشروع PHP حديث معتمد عليها، مش بس بتكتب [[require vendor/autoload.php]].",
             how: R`Composer عنده ٣ أنواع: [[psr-4]] (namespace → فولدر، بيدوّر وقت الحاجة)، و [[classmap]] (بيمسح الفولدرات مرة ويعمل array)، و [[files]] (ملفات بتتحمّل دايمًا، للدوال لأن الدوال مفيهاش autoload).
 
-[[use]] مبيحمّلش حاجة، مجرد alias وقت الـ compile. التحميل بيحصل أول ما الكلاس يتستخدم فعلًا ([[new]]، أو static call، أو [[instanceof]] مع [[class_exists]]).
+[[use]] مبيحمّلش حاجة، مجرد alias وقت الـ compile. التحميل بيحصل أول ما الكلاس يتستخدم فعلًا ([[new]]، أو static call، أو [[class_exists]]). أما [[instanceof]] فمبيحمّلش حاجة: لو الكلاس مش متحمّل بيرجّع false على طول.
 
 الـ autoloading case-sensitive على Linux لأن نظام الملفات كده، فاسم الملف لازم يطابق اسم الكلاس بالظبط.
 
@@ -53710,7 +53713,7 @@ echo $a->role->value, ' ', $a?->email, ' ', array_find([3, 8, 12], fn($n) => $n 
 
 الحاجات اللي اتشالت أو بقت deprecated مهمة كمان: dynamic properties (8.2)، و [[$__{var}]] جوه النصوص (8.2)، و implicitly nullable parameters (8.4).
 
-JIT: بيفرق في الحسابات التقيلة، ونادرًا في موقع ويب أغلب وقته مستني القاعدة. ومن 8.4 مقفول افتراضيًا.
+JIT: بيفرق في الحسابات التقيلة، ونادرًا في موقع ويب أغلب وقته مستني القاعدة. ومقفول افتراضيًا من الأول (قبل 8.4 لأن [[opcache.jit_buffer_size]] كان 0، ومن 8.4 لأن [[opcache.jit=disable]])، فلو عايزه لازم تفعّله بنفسك.
 
 والنسخة اللي على السيرفر هي اللي بتحكم: كود 8.4 على استضافة 8.2 بيقع. [[php -v]] على السيرفر قبل ما تستخدم ميزة جديدة، و [[platform.php]] في Composer.`,
             when: "أسئلة بعدها: «readonly ولا private(set)؟» «JIT بيفرق؟» «إيه اللي بقى deprecated؟» «بتشتغل على نسخة كام في الإنتاج وليه؟»",
@@ -54010,7 +54013,7 @@ flow analysis: لما تكتب [[if (name != null)]] الـ compiler بيعمل 
             "ali نوعه String عادي.",
             "[[late]]: المتغير هيتحط بعدين، والفحص بيتأجل لوقت التشغيل.",
             "أول وآخر مرة يتحط فيها (final).",
-            "لو قريته قبل ما يتحط كان هيضرب [[LateInitializationError]].",
+            "لو قريته قبل ما يتحط هنا الـ compiler هيمسكها (متغير محلي definitely unassigned)، إنما في field أو حالة مش مضمونة هيضرب [[LateInitializationError]] وقت التشغيل.",
             "قفلة."
           ]
         },
@@ -54049,7 +54052,7 @@ void main() {
 
 [[=>]] مش زي JS بالظبط: بعده expression واحدة بس، مش block. [[() => print('x')]] تمام، إنما [[() => { ... }]] معناها حاجة تانية خالص (دالة بترجّع Set أو Map literal)، ودا فخ.`,
             when: "named لأي دالة فيها أكتر من ٢ parameters أو فيها bool. و positional للحاجات الواضحة من غير اسم ([[add(a, b)]]).",
-            mistakes: R`تكتب [[() => { setState(...) }]] زي React فتتفاجئ بسلوك غريب أو warning: في Dart يا [[() => setState(...)]] يا [[() { setState(...); }]]. وتنسى إن named من غير required ومن غير default لازم تبقى [[?]]، فالـ compiler يزعّق. وتحط [[required]] على parameter ليه default، ملوش لازمة.`
+            mistakes: R`تكتب [[() => { setState(...) }]] زي React فتتفاجئ بسلوك غريب أو warning: في Dart يا [[() => setState(...)]] يا [[() { setState(...); }]]. وتنسى إن named من غير required ومن غير default لازم تبقى [[?]]، فالـ compiler يزعّق. وتحط [[required]] على parameter ليه default: دا compile error أصلًا (Required named parameters can't have a default value)، يا required يا default، مش الاتنين.`
           },
           lines: [
             "دالة عادية بـ parameters بالترتيب، و [[=>]] يعني «رجّع القيمة دي».",
@@ -54450,11 +54453,11 @@ void main() {
 
 Flutter مبيستخدمش أزرار أو نصوص النظام (مش زي React Native اللي بيحوّل لـ views native). هو بيرسم كل بكسل بنفسه بمحرك الرسم Impeller. عشان كده الشكل واحد بالظبط على Android و iOS، وعشان كده الـ layout كله widgets: [[Center]] و [[Padding]] و [[Row]]، مش properties على العنصر زي CSS.
 
-الـ widgets نوعين: فيه اللي بيرسم أو بيرتّب فعلًا (Text و Padding و Row، ليهم RenderObject)، وفيه اللي بيجمّع widgets تانية (Scaffold و MaterialApp وأي حاجة هتكتبها). والتطبيق كله بيبقى شجرة كبيرة، و Flutter بيحوّلها لشجرة elements ثم render objects (سؤال انترفيو في آخر التاب).
+الـ widgets نوعين: فيه اللي بيرسم أو بيرتّب فعلًا (RichText و Padding و Row، ليهم RenderObject)، وفيه اللي بيجمّع widgets تانية (Text و Scaffold و MaterialApp وأي حاجة هتكتبها؛ Text مثلًا جواه RichText). والتطبيق كله بيبقى شجرة كبيرة، و Flutter بيحوّلها لشجرة elements ثم render objects (سؤال انترفيو في آخر التاب).
 
 [[MaterialApp]] بيحط فوق الشجرة حاجات كتير: Theme و Navigator و Localizations و MediaQuery. أي widget تحته بيوصلها بـ [[Theme.of(context)]] وأخواتها. وفيه [[CupertinoApp]] لشكل iOS، بس معظم التطبيقات Material وبتظبط الشكل بالثيم.
 
-وخلي بالك من الـ trailing commas: الفاصلة بعد آخر argument بتخلي [[dart format]] يكسّر الشجرة سطور بالشكل ده، فتقراها بسهولة.`,
+وخلي بالك من الـ trailing commas: من Dart 3.7 الـ [[dart format]] هو اللي بيقرر يكسّر الشجرة سطور حسب طول السطر، وبيضيف أو يشيل الفاصلة الأخيرة بنفسه، فمتتعبش نفسك فيها. ولو عايز السلوك القديم (الفاصلة تجبره يكسّر)، حط [[trailing_commas: preserve]] تحت [[formatter:]] في [[analysis_options.yaml]].`,
             when: "كل تطبيق. MaterialApp مرة واحدة فوق خالص، و Scaffold لكل شاشة.",
             mistakes: R`تحط [[MaterialApp]] جوه كل شاشة: كده كل شاشة ليها Navigator وثيم منفصل، والتنقل والثيم يبوظوا. واحد بس فوق. وتنسى الـ Scaffold فالنص يطلع أحمر وتحته خطين أصفر: دا معناه مفيش Material فوقه يدّيله style.`
           },
@@ -54992,7 +54995,7 @@ const lost = await ai.interactions.create({ model, input: "اسمي إيه؟" })
 console.log(lost.output_text);
 const kept = await ai.interactions.create({ model, input: "اسمي إيه؟", previous_interaction_id: first.id });
 console.log(kept.output_text);`,
-          try: "بص على [[kept.usage.total_input_tokens]] وقارنه بـ [[lost.usage.total_input_tokens]]: التاني أكبر، لأن التاريخ اتحسب دخول حتى لو انت مبعتهوش بإيدك.",
+          try: "بص على [[kept.usage.total_input_tokens]] وقارنه بـ [[lost.usage.total_input_tokens]]: [[kept]] أكبر، لأن التاريخ اتحسب دخول حتى لو انت مبعتهوش بإيدك.",
           flag: "script",
           deep: {
             why: "أغلب مشاكل «البوت نسي» و «البوت بيخلط بين العملاء» و «الفاتورة بتكبر مع الوقت» سببها سوء فهم للنقطة دي.",
