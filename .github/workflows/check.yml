@@ -1,0 +1,17 @@
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Content check
+        run: node tools/check.js
+      - name: dist/terminal.html is up to date
+        run: |
+          node tools/build.js
+          git diff --exit-code dist/ || { echo "::error::شغّل npm run build واعمل commit للـ dist"; exit 1; }
