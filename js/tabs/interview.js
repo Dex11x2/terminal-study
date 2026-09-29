@@ -55,7 +55,12 @@ curl -s -o /dev/null -w "dns=%{time_namelookup} tcp=%{time_connect} tls=%{time_a
             "اسأل الـ DNS عن الـ IP بتاع الدومين.",
             "اطبع تفاصيل الاتصال كله: الـ TCP والـ TLS والـ headers، ورمي الـ body.",
             "قيس كل مرحلة بالثانية: الـ DNS، والـ TCP، والـ TLS، وأول byte من الرد (TTFB). الأرقام تراكمية."
-          ]
+          ],
+          sol: R`المهم تعرف إن الأرقام اللي [[curl -w]] بيطبعها تراكمية من أول الطلب، مش مدة كل مرحلة لوحدها. يعني لو طلع [[dns=0.004 tcp=0.030 tls=0.075 ttfb=0.160]]، الـ TCP أخد ٢٦ms (0.030 − 0.004)، والـ TLS أخد ٤٥ms، والسيرفر فكّر ورد في ٨٥ms. أغلب الناس بيقروها غلط ويفتكروا إن الـ TLS أخد ٧٥.
+
+اللي هتلاحظه غالبًا: الـ DNS صغير جدًا (ممكن قريب من الصفر لو متكاش)، والـ TCP والـ TLS بيكبروا كل ما السيرفر يبعد عنك جغرافيًا لأنهم round trips، والـ ttfb بيكبر لو الصفحة ديناميك والسيرفر بيكلم داتابيز. موقع ورا CDN هيبان فيه tcp صغير لأنك بتكلم أقرب نقطة ليك. ولو [[tls=0]] يبقى الموقع HTTP مش HTTPS.
+
+وفي تبويب Timing في المتصفح هتلاقي نفس الأسامي: DNS Lookup و Initial connection و SSL و Waiting for server response (ده الـ TTFB) و Content Download. ولو الطلب مفيهوش DNS ولا connection خالص، ده معناه إن المتصفح استخدم اتصال مفتوح قبل كده (keep-alive)، ودي نقطة حلوة تقولها في الانترفيو.`
         },
         {
           cmd: "reliable ولا fast",
@@ -89,7 +94,12 @@ QUIC (اللي HTTP/3 عليه) بيبني فوق UDP ترتيب وإعادة ل
             "اعمل socket UDP (IPv4).",
             "ابعت «ping» على بورت 9999. مفيش اتصال، فمفيش error حتى لو محدش بيسمع.",
             "حاول تفتح اتصال TCP على نفس البورت: الـ handshake بيفشل بـ ECONNREFUSED."
-          ]
+          ],
+          sol: R`أول تشغيل بيطبع بالظبط: [[UDP sent, err = null]] و [[TCP: ECONNREFUSED]]. الـ UDP «نجح» لأن كل اللي عمله إنه رمى الباكت على الشبكة ومش مستني رد، فمعندوش طريقة يعرف إن مفيش حد سامع. أما TCP فبيعمل handshake الأول، والنظام رد بـ RST فعرف على طول.
+
+ولما تشغّل [[nc -lu 9999]] في ترمنال تاني وتعيد السكربت، هتلاقي [[ping]] ظهرت عند nc (من غير سطر جديد، فالـ prompt ممكن يلزق فيها). بس الـ TCP هيفضل ECONNREFUSED، لأن nc بـ [[-u]] سامع على UDP بس، وبورت 9999 TCP وبورت 9999 UDP حاجتين منفصلين. ولو الـ nc عندك النسخة القديمة (traditional) ومش بيسمع، جرّب [[nc -lup 9999]].
+
+الإجابة اللي بتطلع من التجربة دي في الانترفيو: «UDP مبيضمنش إن الداتا وصلت ولا بترتيبها، والتطبيق هو اللي يقرر يعمل إيه لو ضاعت. عشان كده بيتستخدم في الحاجات اللي الباكت القديم فيها ملوش لازمة: مكالمات، ألعاب، DNS، و QUIC اللي بيبني الـ reliability بنفسه فوقه».`
         },
         {
           cmd: "certificate + key exchange",
@@ -113,7 +123,12 @@ openssl s_client -connect example.com:443 -servername example.com -brief </dev/n
           lines: [
             "اعمل طلب HEAD واطبع تفاصيل الـ TLS بس: النسخة، وصاحب الشهادة، ومين أصدرها، وبتخلص إمتى.",
             "اتصل بـ openssl مباشرة واطبع ملخص: نسخة الـ TLS، والـ cipher، وهل الشهادة اتحققت."
-          ]
+          ],
+          sol: R`الأمر الأول هيطلع سطور شبه دي: [[SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS]]، وبعدها [[subject: CN=example.com]] و [[issuer: ...]] و [[expire date: ...]]. والتاني بيطبع [[Protocol version: TLSv1.3]] و [[Ciphersuite]] و [[Verification: OK]] و [[Server Temp Key: X25519]]. أغلب المواقع النهارده TLS 1.3، و [[X25519]] ده الـ key exchange (ECDHE) اللي بيطلع منه مفتاح الجلسة، والشهادة بتثبت بس إن السيرفر هو صاحب الدومين.
+
+الـ issuer غالبًا Let's Encrypt (أسماء زي R10 أو E5) أو Google Trust Services أو Cloudflare، والشهادات دي عمرها قصير (حوالي ٩٠ يوم وبيقل مع الوقت)، فلو لقيت تاريخ الانتهاء قريب فده طبيعي طالما فيه تجديد أوتوماتيك. وفي المتصفح الـ chain بتبقى ٣ مستويات: شهادة الموقع، ثم intermediate، ثم root موجودة جوه نظامك.
+
+النتيجة اللي لازم تاخد بالك منها: لو الـ issuer اسم شركتك أو برنامج antivirus أو proxy، يبقى فيه حد في النص بيفك التشفير ويعيده (TLS interception) والـ root بتاعه متسطب على جهازك. ولو ظهر [[Verification error]] أو [[certificate has expired]]، يبقى الشهادة خلصت أو الـ intermediate مش متبعت من السيرفر.`
         },
         {
           cmd: "multiplexing و QUIC",
@@ -139,7 +154,12 @@ HTTP/3 على QUIC: كل stream مستقل، فالفقد بيأثر على stre
             "اطلب بـ HTTP/1.1 واطبع أول سطر من الرد (النسخة والـ status).",
             "نفس الطلب بـ HTTP/2.",
             "اطبع النسخة اللي curl واتفق عليها فعلًا مع السيرفر."
-          ]
+          ],
+          sol: R`أوامر curl هتطلع [[HTTP/1.1 200 OK]] ثم [[HTTP/2 200]] (في HTTP/2 مفيش كلمة OK، الـ reason phrase اتشالت)، والتالت هيطبع [[2]] مش 3. ده مش معناه إن جوجل مبيدعمش HTTP/3: curl مبيجربش h3 إلا لو قلتله [[--http3]] (ولو متبني بدعمه)، أما المتصفح فبيعرف إن الموقع بيدعم h3 من header اسمه [[alt-svc]] في أول رد، وبعدين بيحوّل.
+
+في عمود Protocol هتلاقي [[h3]] على جوجل ويوتيوب وأغلب اللي ورا Cloudflare، و [[h2]] على مواقع كتير، وساعات أول طلب h2 واللي بعده h3 (بسبب alt-svc اللي فوق). اللي لسه [[http/1.1]] غالبًا: الـ dev server بتاعك على localhost (المتصفحات مبتعملش h2 من غير TLS)، وسيرفرات قديمة، وبعض الـ APIs والـ analytics.
+
+النقطة اللي تقولها: HTTP/2 حل head-of-line blocking على مستوى HTTP بالـ multiplexing على اتصال واحد، بس لسه موجود على مستوى TCP (باكت ضايعة بتوقف كل الـ streams). HTTP/3 نقل على QUIC فوق UDP عشان كل stream يبقى مستقل، والـ handshake بقى أقصر.`
         }
       ]
     },
@@ -178,7 +198,12 @@ PUT مفروض يبعت الـ resource كله. لو بعت جزء بس، الب
             "عدّل الكمية بس. هنا idempotent لأنه بيحط قيمة ثابتة.",
             "امسح الـ order. التانية هترجّع 404 بس الحالة واحدة.",
             "دفع بـ POST ومعاه مفتاح: لو اتبعت تاني بنفس المفتاح السيرفر يرجّع نفس النتيجة من غير ما يدفع تاني."
-          ]
+          ],
+          sol: R`المتوقع: الـ POST مرتين يعمل صفين في الداتابيز بـ id مختلف، والرد [[201]] في المرتين. والـ PUT مرتين يسيب صف واحد بنفس الحالة بالظبط، والرد [[200]] (أو 204) في المرتين. ده تعريف idempotent: نتيجة المرة العاشرة على السيرفر زي نتيجة المرة الأولى، حتى لو الرد نفسه اختلف (DELETE مرتين: أول مرة 204 والتانية 404، بس الحالة واحدة: الأوردر مش موجود).
+
+لو الـ PUT عندك عمل صف جديد كل مرة، يبقى انت معمله زي POST، وده غلط في التصميم. ولو الـ POST التاني اترفض أو معملش صف، يبقى عندك unique constraint أو Idempotency-Key، وده كويس لو مقصود (زي الدفع)، ولو مش مقصود يبقى فيه validation بيمنع حاجة المفروض تتكرر.
+
+وفي الانترفيو اربطها بالحالة الحقيقية: «اليوزر داس Pay مرتين والنت فصل. الـ POST مش idempotent، فبنبعت Idempotency-Key من الكلاينت، والسيرفر يخزنه ولو شافه تاني يرجّع نفس الرد القديم من غير ما يدفع تاني».`
         },
         {
           cmd: "1xx لحد 5xx",
@@ -220,7 +245,12 @@ app.post("/orders", requireAuth, async (req, res) => {
             "اعمله بالحقول المسموحة بس، وصاحبه اليوزر الحالي.",
             "201 Created، ومعاه header [[Location]] بعنوان الحاجة الجديدة.",
             "قفلة."
-          ]
+          ],
+          sol: R`الـ API مكتوب صح لو الـ [[curl -i]] طلّع أول سطر: [[HTTP/1.1 401 Unauthorized]] من غير توكن، و [[HTTP/1.1 403 Forbidden]] بتوكن يوزر عادي على route الأدمن، و [[HTTP/1.1 404 Not Found]] للـ id اللي مش موجود. الفرق اللي تحفظه: 401 = «معرفش انت مين، سجّل دخول»، و 403 = «عارف انت مين، ومش مسموحلك».
+
+النتايج الغلط الشائعة: 403 من غير توكن (المفروض 401)، أو 200 وجوه الـ body [[{ error: ... }]] (الكلاينت والـ monitoring مش هيعرفوا إن فيه مشكلة)، أو 500 للـ id المش موجود. الأخيرة بتحصل كتير لما الـ id مش بالشكل الصح (مثلًا مش UUID) والـ ORM يرمي error محدش عمله catch: المفروض 400 أو 404.
+
+استثناء تقدر تقوله: بعض الـ APIs بترجّع 404 بدل 403 على موارد يوزر تاني عمدًا، عشان متأكدش للمهاجم إن الـ id ده موجود. ده مقبول طالما قرار مقصود.`
         },
         {
           cmd: "resources + verbs + stateless",
@@ -255,7 +285,22 @@ POST   /v1/orders/42/refunds`,
             "امسح الـ order.",
             "nesting خفيف: orders بتاعة يوزر معين.",
             "action اتحولت resource: refund جديد للـ order ده."
-          ]
+          ],
+          sol: R`التصميم الكويس كله أسماء (nouns) بالجمع، والأفعال هي الـ HTTP methods. الإرجاع أنضف حل ليه إنك تعامل «الاستعارة» نفسها كـ resource ليها حالة: الإرجاع [[PATCH /loans/:id]] بـ [[returnedAt]]، أو [[POST /loans/:id/return]] لو الإرجاع بيعمل حاجات جانبية (غرامة تأخير، أو تبليغ اللي في قايمة الانتظار). الاتنين مقبولين لو قلت السبب.
+
+الإجابات الغلط: [[POST /returnBook]] أو [[GET /borrow?bookId=5]] (فعل في الـ URL، و GET بيغيّر داتا)، أو [[DELETE /loans/:id]] للإرجاع لأنك كده بتمسح تاريخ الاستعارة. وخلي بالك من الحالة: استعارة كتاب مستعار أصلًا ترجع [[409 Conflict]]، والاستعارة الجديدة ترجع [[201]] ومعاها Location.`,
+          solCode: R`# الكتب والمؤلفين
+GET    /v1/books?q=clean+code&authorId=12&available=true&page=1&limit=20
+GET    /v1/books/42
+POST   /v1/books                      # أدمن
+GET    /v1/authors/12
+GET    /v1/authors/12/books
+# الاستعارة resource ليها حالة
+POST   /v1/loans            {"bookId": 42}          → 201 + Location: /v1/loans/900 | 409 لو مستعار
+GET    /v1/users/me/loans?status=active
+PATCH  /v1/loans/900        {"returnedAt": "2026-09-29T10:00:00Z"}   → 200
+# أو لو الإرجاع فيه منطق جانبي (غرامة، قايمة انتظار)
+POST   /v1/loans/900/return                           → 200`
         },
         {
           cmd: "Cache-Control و ETag",
@@ -283,7 +328,12 @@ curl -sI https://example.com/ -H 'If-None-Match: "abc123"' | head -1
             "بص على الـ Cache-Control بتاع ملف فيه hash في اسمه.",
             "بص على الـ Cache-Control والـ ETag بتوع صفحة HTML.",
             "اسأل «اتغيرت من ساعة الـ ETag ده؟»: لو لأ الرد 304 من غير body."
-          ]
+          ],
+          sol: R`أول مرة كل الملفات هتبقى Size بحجم حقيقي (اتنزلت). في الـ reload العادي: ملفات الـ JS والـ CSS اللي اسمها فيه hash (زي [[app.3f9a1c.js]]) هتلاقيها [[(memory cache)]] أو [[(disk cache)]] ومفيش طلب راح للسيرفر أصلًا، ودي اللي عليها [[max-age=31536000, immutable]]. أما الـ HTML نفسه فغالبًا Status [[304]] وحجمه صغير: المتصفح سأل بـ [[If-None-Match]] والسيرفر قال «زي ما هو»، ودي اللي عليها [[no-cache]] أو [[max-age=0]] ومعاها ETag.
+
+memory cache يعني الملف كان لسه في رام التاب (reload على طول)، و disk cache يعني من الهارد (قفلت التاب وفتحته). عشان تتأكد: دوس على الملف وبص على Response Headers وشوف [[cache-control]] و [[etag]].
+
+النتيجة الغلط الشائعة: كل حاجة 200 بحجمها الكامل. ده غالبًا لأن «Disable cache» متعلّم فوق في Network (بيشتغل طول ما الـ DevTools مفتوحة)، أو إنك عملت hard reload بـ Ctrl+Shift+R، أو إن السيرفر مش باعت أي cache headers خالص.`
         },
         {
           cmd: "same-origin policy",
@@ -312,7 +362,12 @@ curl -si https://api.example.com/orders -H "Origin: https://evil.example" | grep
           lines: [
             "مثّل preflight: «أنا app.example.com وعايز أعمل POST، مسموح؟» واطبع ردود الـ CORS بس.",
             "طلب من origin مش في القايمة: السيرفر مبيرجّعش headers الـ CORS."
-          ]
+          ],
+          sol: R`في Console هيطلع error شبه ده بالظبط: [[Access to fetch at 'https://api...' from origin 'https://site...' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.]] والـ fetch يرمي [[TypeError: Failed to fetch]]. وفي Network هتلاقي الطلب اتبعت فعلًا، والسيرفر رد (وممكن تشوف في لوج السيرفر إن الـ route اشتغل)، بس المتصفح مخلّاش الـ JS تقرا الرد. ده أهم حاجة تفهمها: CORS بيحمي قراية الرد في المتصفح، مش السيرفر.
+
+بعد ما تضيف الـ origin (مثلًا [[cors({ origin: "https://site..." })]] في Express)، نفس الـ fetch يرجّع الداتا عادي، وتلاقي في الرد [[access-control-allow-origin]] بنفس الـ origin. ولو الطلب POST بـ JSON هتلاقي قبله طلب [[OPTIONS]] (preflight) لازم هو كمان يرجّع الـ headers.
+
+النتايج الغلط: إنك «تصلّحها» في الـ frontend بـ [[mode: "no-cors"]] (الرد بيبقى opaque ومتقدرش تقرا منه حاجة)، أو extension بيقفل CORS في متصفحك بس. وخلي بالك إن [[*]] مينفعش مع [[credentials: "include"]]: لازم origin محدد و [[Access-Control-Allow-Credentials: true]].`
         }
       ]
     },
@@ -352,7 +407,12 @@ document.cookie;`,
             "اللغة في localStorage: بتفضل بعد قفل المتصفح.",
             "خطوة الـ checkout في sessionStorage: بتروح مع قفل التاب.",
             "اعرض الكوكيز اللي JavaScript يقدر يشوفها: sid مش هتظهر."
-          ]
+          ],
+          sol: R`لو التوكن متحفوظ صح، [[document.cookie]] هيطلع كوكيز زي [[theme=dark]] بس، واسم كوكي الـ session مش موجود فيها رغم إنه ظاهر في Application ← Cookies وعليه علامة HttpOnly. ولو شفت التوكن نفسه في الناتج (أو في localStorage)، يبقى أي XSS على الموقع يقدر يسرقه ويبعته لبرا، وده الجواب اللي الانترفيوير مستنيه.
+
+وفي التاب الجديد: [[sessionStorage.length]] هيطلع 0، لأن الـ sessionStorage لكل تاب لوحده، بس الـ localStorage والكوكيز مشتركين بين كل تابات نفس الـ origin. الاستثناء اللي بيلخبط الناس: لو عملت «Duplicate tab»، المتصفح بينسخ الـ sessionStorage للتاب الجديد.
+
+وتقدر تقول الخلاصة كده: «الـ session token في كوكي HttpOnly و Secure و SameSite، ومع كده لسه محتاج حماية CSRF للطلبات اللي بتغيّر داتا. localStorage للحاجات اللي مش سرية زي الـ theme واللغة».`
         },
         {
           cmd: "اتجاه واحد ولا اتنين",
@@ -388,7 +448,28 @@ Socket.IO مش WebSocket صافي: ليه بروتوكول خاص فوقه (room
             "كل ثانية ابعت رسالة: [[data:]] وبعدها سطر فاضي يقفل الرسالة.",
             "لما العميل يقفل، وقّف التايمر عشان متسيبش حاجة شغالة على الفاضي.",
             "اسمع على بورت 3000."
-          ]
+          ],
+          sol: R`[[curl -N]] هيطبع سطر [[data: 2026-...Z]] كل ثانية وبينهم سطر فاضي، وده شكل الـ SSE: نص عادي على HTTP، وكل رسالة بتخلص بسطرين جداد. من غير [[-N]] ممكن تشوف السطور بتيجي متجمعة لأن curl بيعمل buffering.
+
+في المتصفح: [[onmessage]] بيطبع الوقت كل ثانية. ولما تقفل السيرفر هيجيلك [[onerror]] و [[readyState]] بـ 0 (يعني CONNECTING مش CLOSED)، والمتصفح يفضل يحاول لوحده كل كام ثانية (حوالي ٣ ثواني في Chrome، أو القيمة اللي السيرفر يبعتها في [[retry:]]). أول ما السيرفر يرجع هيجيلك [[onopen]] والرسايل تكمل من غير ولا سطر كود منك. جربتها في Chromium بالسيرفر اللي تحت: الرسايل وقفت، وجه error مرتين، وبعد ما السيرفر رجع اتفتح الاتصال لوحده.
+
+النتيجة الغلط: [[readyState]] بـ 2 والمتصفح بطّل يحاول. ده بيحصل لو السيرفر رد بـ status غير 200 أو Content-Type مش [[text/event-stream]]، أو لو الصفحة على origin تاني والسيرفر مش باعت [[Access-Control-Allow-Origin]].`,
+          solCode: R`// sse.mjs: نفس السيرفر مع CORS و retry
+import http from "node:http";
+http.createServer((req, res) => {
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    "Access-Control-Allow-Origin": "*"
+  });
+  res.write("retry: 2000\n\n");
+  const t = setInterval(() => res.write($__btdata: $__{new Date().toISOString()}\n\n$__bt), 1000);
+  req.on("close", () => clearInterval(t));
+}).listen(3000);
+// في Console أي صفحة:
+// const es = new EventSource("http://localhost:3000");
+// es.onmessage = e => console.log(e.data);
+// es.onerror = () => console.log("error, readyState =", es.readyState);`
         },
         {
           cmd: "authentication و authorization",
@@ -427,7 +508,20 @@ app.delete("/users/:id", requireAuth, requireRole("admin"), deleteUser);`,
             "middleware بيتعمل بـ role: بيرجّع middleware.",
             "لو الـ role مطابق كمّل، غير كده 403: عارفينك بس مش مسموحلك.",
             "المسح: لازم يوزر مسجّل، ولازم أدمن، وبعدين الـ handler."
-          ]
+          ],
+          sol: R`لو الطلب رجّع order اليوزر التاني بـ 200، دي ثغرة IDOR (أو BOLA بلغة OWASP API)، وهي أشهر ثغرة في الـ APIs. الـ authentication اشتغل (السيرفر عرف انت مين)، بس الـ authorization ناقص: محدش سأل «الأوردر ده بتاعك؟».
+
+الحل إن شرط الملكية يبقى جوه الـ query نفسها، مش [[if]] بعد ما تجيب الداتا وتنسى تكتبه في route تاني. بعد التعديل نفس الطلب يرجع 404 (أو 403 لو عايز تبان إن الأوردر موجود)، وطلب اليوزر لأوردره هو يرجع 200. واختبرها: اكتب test بيعمل login بيوزر ويطلب أوردر يوزر تاني ويتوقع 404، عشان متتفتحش تاني مع أي refactor.`,
+          solCode: R`// Prisma: الشرط جوه الـ where
+app.get("/orders/:id", requireAuth, async (req, res) => {
+  const order = await db.order.findFirst({
+    where: { id: req.params.id, userId: req.user.id }
+  });
+  if (!order) return res.status(404).json({ error: "not found" });
+  res.json(order);
+});
+// نفس الفكرة بـ SQL:
+// SELECT * FROM orders WHERE id = $1 AND user_id = $2`
         },
         {
           cmd: "header.payload.signature",
@@ -464,7 +558,35 @@ console.log(JSON.parse(Buffer.from(payload, "base64url").toString()));
             "التوقيع: HMAC على «header.payload» بالسر.",
             "التوكن الكامل: تلات أجزاء بنقط.",
             "فك الـ payload من غير أي سر: أي حد يقدر يقراه."
-          ]
+          ],
+          sol: R`jwt.io هيعرض الـ header [[{"alg":"HS256","typ":"JWT"}]] والـ payload [[{"sub":"42","role":"user","exp":...}]] من غير أي سر، لأن الجزئين دول base64url بس مش مشفرين. وتحت هيقول Invalid Signature لحد ما تكتب [[YOUR_SECRET]] في خانة الـ secret، ساعتها يقول Signature Verified.
+
+ولما تغيّر حرف في الـ payload (أو تغيّر [[role]] لـ [[admin]] وتعمل encode تاني)، التوقيع مبقاش مطابق، والسيرفر المفروض يرفضه. السكربت اللي تحت بيعمل ده بالظبط وطلّع: [[{ sub: '42', role: 'user', exp: ... }]] للتوكن الأصلي، و [[invalid signature]] للمزوّر. يعني: أي حد يقدر يقرا، بس محدش يقدر يغيّر من غير السر. متحطش في الـ payload حاجة سرية.
+
+الغلط الشائع في الكود: إنك تعمل decode وتصدّق اللي فيه من غير verify، أو تقبل [[alg: "none"]]. وكمان متلزقش توكن production حقيقي في موقع خارجي.`,
+          solCode: R`// verify.mjs: التحقق بنفس السر، ومقارنة آمنة
+import { createHmac, timingSafeEqual } from "node:crypto";
+const SECRET = "YOUR_SECRET";
+const b64 = o => Buffer.from(JSON.stringify(o)).toString("base64url");
+const sign = data => createHmac("sha256", SECRET).update(data).digest("base64url");
+function verify(token) {
+  const [h, p, s] = token.split(".");
+  const expected = Buffer.from(sign($__bt$__{h}.$__{p}$__bt));
+  const got = Buffer.from(s);
+  if (got.length !== expected.length || !timingSafeEqual(got, expected)) return "invalid signature";
+  const payload = JSON.parse(Buffer.from(p, "base64url").toString());
+  if (payload.exp < Date.now() / 1000) return "expired";
+  return payload;
+}
+const header = b64({ alg: "HS256", typ: "JWT" });
+const payload = b64({ sub: "42", role: "user", exp: Math.floor(Date.now() / 1000) + 900 });
+const token = $__bt$__{header}.$__{payload}.$__{sign($__bt$__{header}.$__{payload}$__bt)}$__bt;
+console.log(verify(token));
+const forged = b64({ sub: "42", role: "admin", exp: Math.floor(Date.now() / 1000) + 900 });
+const [h, , s] = token.split(".");
+console.log(verify($__bt$__{h}.$__{forged}.$__{s}$__bt));
+// { sub: '42', role: 'user', exp: 1790720945 }
+// invalid signature`
         },
         {
           cmd: "authorization code + PKCE",
@@ -498,7 +620,12 @@ POST https://accounts.example.com/token  grant_type=authorization_code&code=SHOR
             "الرجوع للـ callback ومعاه code قصير العمر ونفس الـ state.",
             "السيرفر يبدّل الـ code بالتوكنز، ومعاه الـ code_verifier الأصلي.",
             "الرد: access token للـ API، و id token فيه اليوزر مين، و refresh token."
-          ]
+          ],
+          sol: R`في Network (فعّل Preserve log عشان الـ redirects متتمسحش) هتلاقي طلب لـ [[accounts.google.com/o/oauth2/v2/auth]] أو شبهه، وفي الـ query: [[response_type=code]] و [[client_id]] و [[redirect_uri]] و [[scope=openid email profile]] و [[state=...]]، وفي مواقع كتير [[code_challenge]] و [[code_challenge_method=S256]]. بعد ما توافق، هتلاقي redirect للموقع على الـ callback وفيه [[code=...]] ونفس الـ [[state]].
+
+اللي مش هتشوفه خالص: الطلب اللي بيبدّل الـ code بالتوكن، لأنه بيحصل من سيرفر الموقع لسيرفر جوجل، مش من المتصفح. ودي النقطة كلها: الـ code قصير العمر ومينفعش لوحده، والـ access token عمره ما عدّى على الـ URL. والـ state بيمنع CSRF على الـ callback، والـ PKCE بيضمن إن اللي بدّل الـ code هو نفس اللي بدأ الطلب.
+
+لو ملقتش [[code_challenge]] فده مش غلط أكيد: تطبيقات السيرفر (confidential clients) بتستخدم client secret، بس النصيحة الحالية إن PKCE يتعمل للكل. ولو لقيت [[#access_token=]] في الـ URL يبقى ده الـ implicit flow القديم اللي مبقاش مستحب. ولو الزرار «Sign in with Google» بيفتح popup ويبعت [[credential=eyJ...]]، ده ID token مباشر من مكتبة جوجل للـ login، مش authorization code.`
         }
       ]
     },
@@ -539,7 +666,38 @@ git log --oneline --graph -8`,
             "ارجع لـ main.",
             "ادمج الـ feature بـ merge commit حتى لو ينفع fast-forward.",
             "شوف شكل التاريخ كرسمة."
-          ]
+          ],
+          sol: R`بعد الـ merge الـ graph بيبان فيه فرعين بيتقابلوا في commit جديد اسمه [[Merge branch 'feature']]، والـ commits القديمة زي ما هي بنفس الـ hashes. بعد الـ rebase (وبعده fast-forward) الـ history خط واحد: [[init]] ثم [[main: hotfix]] ثم commits الـ feature فوقه، ومفيش merge commit. شغلت السكربت اللي تحت وطلّع ده بالظبط.
+
+الحاجة اللي لازم تلاحظها: الـ commits بتاعة الـ feature بعد الـ rebase ليها hashes جديدة (قارن [[git log --oneline]] قبل وبعد)، لأن الـ rebase بيعمل commits جديدة فوق أساس جديد. عشان كده الـ branch لو كان متعمله push لازم [[--force-with-lease]]، ومتعملش rebase لـ branch حد تاني شغال عليه. ولو الـ merge طلع خط واحد برضو، ده لأن main مكانش فيه commit جديد فـ git عمل fast-forward: استخدم [[--no-ff]] لو عايز merge commit دايمًا.`,
+          solCode: R`# merge-vs-rebase.sh
+set -e
+rm -rf demo && mkdir demo && cd demo && git init -q -b main
+git config user.name you && git config user.email you@example.com
+echo a > a.txt && git add . && git commit -qm "init"
+git switch -qc feature
+echo f1 > f1.txt && git add . && git commit -qm "feat: one"
+echo f2 > f2.txt && git add . && git commit -qm "feat: two"
+git switch -q main
+echo m > m.txt && git add . && git commit -qm "main: hotfix"
+cd .. && rm -rf merge-copy rebase-copy && cp -r demo merge-copy && cp -r demo rebase-copy
+echo "=== merge"
+cd merge-copy && git merge -q --no-edit feature && git log --oneline --graph --format="%s" && cd ..
+echo "=== rebase"
+cd rebase-copy && git switch -q feature && git rebase -q main && git switch -q main && git merge -q --ff-only feature && git log --oneline --graph --format="%s"
+# === merge
+# *   Merge branch 'feature'
+# |\
+# | * feat: two
+# | * feat: one
+# * | main: hotfix
+# |/
+# * init
+# === rebase
+# * feat: two
+# * feat: one
+# * main: hotfix
+# * init`
         },
         {
           cmd: "افهم الطرفين وبعدين اختار",
@@ -576,7 +734,26 @@ git merge --abort`,
             "علّم كل الملفات إنها اتحلت.",
             "كمّل الدمج واعمل الـ merge commit.",
             "زرار الطوارئ: ارجع لحالة ما قبل الدمج."
-          ]
+          ],
+          sol: R`الـ merge هيقول [[CONFLICT (content): Merge conflict in cart.js]]، والملف هيبقى فيه [[<<<<<<< HEAD]] ونسختك، ثم [[=======]]، ثم نسخة الـ branch و [[>>>>>>> feature/cart]]. مع [[zdiff3]] بيظهر قسم زيادة في النص بيبدأ بـ [[|||||||]] وفيه السطر الأصلي قبل ما الطرفين يغيّروه. ده بيفرق جدًا: من غيره انت شايف 90 و 120 ومش عارف مين غيّر إيه، ومعاه بتشوف إن الأصل كان 100، فواحد عمل خصم وواحد رفع السعر، وتسأل صاحبه.
+
+«Accept Both» في المثال ده هيحط السطرين تحت بعض: [[const price = 90;]] و [[const price = 120;]]، ودي SyntaxError لأن [[const]] اتعرّف مرتين. ده الدرس: Accept Both مناسب لحاجات بتتجمع (import جديد من كل ناحية، سطرين في لستة)، مش لنفس القيمة. بعد الحل: [[git add]] ثم [[git merge --continue]]، ولو اتلخبطت [[git merge --abort]] يرجعك لقبل الدمج.`,
+          solCode: R`# conflict.sh
+rm -rf c && mkdir c && cd c && git init -q -b main
+git config user.name you && git config user.email you@example.com
+echo 'const price = 100;' > cart.js && git add . && git commit -qm init
+git switch -qc feature/cart && echo 'const price = 120;' > cart.js && git commit -qam "raise price"
+git switch -q main && echo 'const price = 90;' > cart.js && git commit -qam "discount"
+git config merge.conflictStyle zdiff3
+git merge feature/cart; cat cart.js
+# CONFLICT (content): Merge conflict in cart.js
+# <<<<<<< HEAD
+# const price = 90;
+# ||||||| 1cbdbb6
+# const price = 100;
+# =======
+# const price = 120;
+# >>>>>>> feature/cart`
         },
         {
           cmd: "trunk-based",
@@ -606,7 +783,10 @@ gh pr merge --squash --delete-branch`,
             "ارفع الـ branch واربطه بالـ remote.",
             "افتح PR على main من الـ commits (بـ GitHub CLI).",
             "بعد الـ review والـ CI: ادمجه commit واحد وامسح الـ branch."
-          ]
+          ],
+          sol: R`الـ push المباشر لازم يترفض برسالة زي: [[remote: error: GH006: Protected branch update failed for refs/heads/main.]] مع [[Changes must be made through a pull request.]] (لو branch protection القديمة)، أو [[remote: error: GH013: Repository rule violations found for refs/heads/main.]] (لو rulesets الجديدة)، وفي الآخر [[! [remote rejected] main -> main]]. ساعتها الطريق الوحيد: branch، ثم PR، ثم CI أخضر، ثم merge.
+
+النتيجة الغلط الأشهر: الـ push عدّى عادي. غالبًا لأنك owner أو admin والقاعدة بتسمح للـ admins يعدّوها: فعّل «Do not allow bypassing the above settings» في الـ protection (أو شيل الـ bypass في الـ ruleset). وخلي بالك إن الحماية دي على الريبوهات الـ private محتاجة خطة مدفوعة غالبًا، وعلى الـ public مجانية.`
         },
         {
           cmd: "ps و kill و signals",
@@ -638,7 +818,21 @@ journalctl -u myapp -n 50 --no-pager`,
             "لو مردّش: SIGKILL، قتل فوري من غير فرصة يخلّص.",
             "حالة خدمة شغالة بـ systemd وآخر سطور اللوج.",
             "آخر ٥٠ سطر لوج لخدمة التطبيق."
-          ]
+          ],
+          sol: R`[[pgrep node]] بيطبع أرقام PIDs بس، وممكن يطلع أكتر من رقم لو فيه node تاني شغال (VS Code نفسه بيشغّل node). استخدم [[pgrep -a node]] عشان تشوف الأمر جنب كل رقم وتختار الصح. بعد [[kill PID]] الترمنال الأول هيقول [[Terminated]]، والـ exit code هيبقى 143 (يعني 128 + 15، و 15 رقم SIGTERM).
+
+مع السكربت اللي فيه handler، [[kill]] مش هيقفله فجأة: هيطبع [[got SIGTERM, cleaning up...]] ثم [[bye]] ويخرج بـ 0 لما يخلص تنضيف. وده اللي بيعمله systemd و Docker و Kubernetes: يبعتوا SIGTERM ويستنوا شوية. أما [[kill -9]] (SIGKILL) مبيوصلش للبرنامج أصلًا، فالـ handler مبيشتغلش خالص، والترمنال يقول [[Killed]] و exit code يبقى 137. عشان كده -9 آخر حل مش أول حل.`,
+          solCode: R`// graceful.js: شغّله بـ node graceful.js، ومن ترمنال تاني: kill PID
+const t = setInterval(() => {}, 1000);
+console.log("pid", process.pid);
+process.on("SIGTERM", () => {
+  console.log("got SIGTERM, cleaning up...");
+  clearInterval(t);
+  setTimeout(() => { console.log("bye"); process.exit(0); }, 200);
+});
+// pid 1211
+// got SIGTERM, cleaning up...
+// bye`
         },
         {
           cmd: "rwx للـ owner و group و others",
@@ -670,7 +864,12 @@ id`,
             "بالحروف: ضيف تنفيذ للـ owner، وشيل الكتابة من الـ group.",
             "خلي الملفات ملك يوزر الـ deploy، والـ group هو اليوزر اللي Nginx أو PHP بيشتغل بيه عشان يقرا بس.",
             "انت مين: الـ uid والـ groups بتاعتك."
-          ]
+          ],
+          sol: R`بعد [[chmod 644]] على الفولدر، [[ls -ld]] هيطلع [[drw-r--r--]]، و [[cd]] هيقول [[Permission denied]]، و [[cat folder/file]] كمان [[Permission denied]] رغم إن الملف نفسه [[rw-r--r--]] ومسموح يتقري. أما [[ls folder]] فهيعرض أسامي الملفات، لأن [[r]] على الفولدر معناها «تقرا لستة الأسامي» بس. و [[ls -l folder]] هيعرض علامات استفهام مكان التفاصيل.
+
+الخلاصة اللي تقولها: [[x]] على الفولدر معناها «تعدّي من جواه» (تدخله وتوصل لأي حاجة فيه بالاسم). عشان كده الفولدرات 755 والملفات 644، وأي فولدر في الطريق ناقصه x بيقفل كل اللي تحته، ودي أشهر سبب لـ 403 من Nginx على ملفات «الـ permissions بتاعتها سليمة».
+
+النتيجة الغلط: كل حاجة اشتغلت عادي. ده لأنك root (أو في WSL أو Docker بتشتغل root)، والـ root بيعدّي فحص الـ permissions. جرّب بيوزر عادي، أو [[sudo -u nobody cat folder/file]].`
         }
       ]
     },
@@ -703,7 +902,10 @@ console.table([10, 1000, 1_000_000].map(ops));
           lines: [
             "دالة بتحسب عدد العمليات لكل complexity على حجم n.",
             "اطبعهم في جدول لتلات أحجام: ١٠، وألف، ومليون."
-          ]
+          ],
+          sol: R`الجدول هيطلع 3 أعمدة للـ n: عند مليون [[log]] = 20، و [[nlogn]] = 19,931,569، و [[n2]] = 1,000,000,000,000. الإجابة بصوت عالي: مليون × مليون = 10^12 عملية، وكل عملية نانو ثانية (10^-9)، يعني 10^3 ثانية = 1000 ثانية ≈ ١٧ دقيقة. والـ n log n على نفس المليون ≈ ٢٠ مليون نانو ثانية = ٢٠ ميلي ثانية.
+
+ده الجواب اللي يفرق في الانترفيو: الفرق بين O(n²) و O(n log n) على مليون عنصر هو الفرق بين «اليوزر استنى ربع ساعة» و «محسش بحاجة». ولو قلت رقم زي «ثانية» أو «دقيقة»، راجع الحساب: 10^12 × 10^-9 = 10^3.`
         },
         {
           cmd: "عد اللوبات المخفية",
@@ -743,7 +945,10 @@ console.timeEnd("Set");
             "ابني Set مرة واحدة: O(n) وقت و O(n) ذاكرة.",
             "لكل id، [[has]] بـ O(1): الكل O(n).",
             "اطبع الوقت: فرق مئات المرات."
-          ]
+          ],
+          sol: R`الـ Set هيقرب من الضعف فعلًا (مثلًا ٤ms لـ ٨ms) لأنه O(n). أما الـ some فنظريًا ٤ أضعاف، بس لما جربت (Node 22) من ٢٠ لـ ٤٠ ألف طلع ما بين ٢.٥ و ٣ أضعاف بس (مثلًا ٦٥٠ms لـ ١٨٠٠ms)، ومن ٤٠ لـ ٨٠ ألف طلع حوالي ٤ (١.٤ ثانية لـ ٥.٢). السبب إن أول جزء من كل تشغيل بيبقى بطيء على ما الـ JIT يعمل optimize للكود، فالرقم الصغير متضخم شوية. لو شغلت الاتنين في نفس الـ process بعد تسخين هتشوف الـ ٤ أضعاف بوضوح.
+
+المهم الاتجاه: التاني بيتضاعف مرتين كل ما الـ n يتضاعف، والأول مرة. وجملة الانترفيو: «[[some]] و [[includes]] و [[find]] و [[indexOf]] كل واحدة لوب، فلو جوه [[filter]] أو [[map]] يبقى عندي n². الحل إني أبني Set أو Map مرة واحدة برا اللوب، وأدفع O(n) ذاكرة».`
         },
         {
           cmd: "العملية الأكتر تكرار",
@@ -779,7 +984,30 @@ const queue = [1, 2, 3]; console.log(queue.shift());
             "اطبع العدادات.",
             "stack: آخر حاجة دخلت (2) هي أول حاجة تطلع.",
             "queue: أول حاجة دخلت (1) تطلع الأول. بس [[shift]] على array O(n)، والـ queue الحقيقية بتتعمل بطريقة تانية."
-          ]
+          ],
+          sol: R`الحلين بيرجعوا نفس النتيجة: [[swiss]] ← [[w]]، و [[aabb]] ← [[null]]، و [[leetcode]] ← [[l]]، والـ string الفاضي ← [[null]]. الفرق في الـ complexity: نسخة [[indexOf]] و [[lastIndexOf]] O(n²) وقت و O(1) ذاكرة، لأن كل واحدة فيهم بتلف على الـ string كلها ولكل حرف. ونسخة الـ Map O(n) وقت (لفتين منفصلتين، مش لوب جوه لوب) و O(k) ذاكرة حيث k عدد الحروف المختلفة.
+
+الغلط الشائع: إنك تقول الـ indexOf نسخة O(n) لأن «فيه لوب واحد». الـ indexOf نفسه لوب مخفي. وحاجة زيادة تقولها: لو الحروف إنجليزي صغير بس، الـ k ثابت (26) فالذاكرة عمليًا O(1).`,
+          solCode: R`// first-unique.mjs
+function firstUniqueScan(s) {          // O(n²) time, O(1) space
+  for (const ch of s) {
+    if (s.indexOf(ch) === s.lastIndexOf(ch)) return ch;
+  }
+  return null;
+}
+function firstUniqueMap(s) {           // O(n) time, O(k) space
+  const count = new Map();
+  for (const ch of s) count.set(ch, (count.get(ch) ?? 0) + 1);
+  for (const ch of s) if (count.get(ch) === 1) return ch;
+  return null;
+}
+for (const s of ["swiss", "aabb", "", "leetcode"]) {
+  console.log(JSON.stringify(s), firstUniqueScan(s), firstUniqueMap(s));
+}
+// "swiss" w w
+// "aabb" null null
+// "" null null
+// "leetcode" l l`
         },
         {
           cmd: "base case + مشكلة أصغر",
@@ -817,7 +1045,30 @@ console.log(fib(70));
             "النتيجة 2.",
             "fibonacci مع memo: كل n بيتحسب مرة واحدة ويتحفظ في Map، فبقت O(n).",
             "fib(70) في لحظة. من غير memo كانت هتاخد وقت طويل جدًا."
-          ]
+          ],
+          sol: R`النسخة من غير recursion لازم تطبع [[2]] زي الأصلية. الفكرة: الـ call stack اللي كان اللغة شايلاه عنك بقى array انت ماسكه، والـ [[while]] بتسحب منه node وتحط ولادها. الـ recursion والـ stack نفس الشغل، والفرق إن الـ array مفيهاش حد زي الـ call stack، فمش هتاخد [[Maximum call stack size exceeded]] على شجرة عميقة جدًا.
+
+وفي fib من غير memo على 40: هتستنى حوالي ثانية (عندي ١.٢ ثانية) والناتج [[102334155]]، في حين إن نسخة الـ memo بتحسب fib(70) في أقل من ميلي. السبب إن كل نداء بيعمل نداءين، فالـ complexity حوالي O(2^n)، وكل ما تزود 5 على n الوقت بيتضرب في حوالي ١١. جرّب 45 لو عايز تتأكد، ومتجربش 50.`,
+          solCode: R`// count-iter.mjs
+const tree = { name: "src", children: [{ name: "app.js" }, { name: "lib", children: [{ name: "db.js" }] }] };
+function countFilesIter(root) {
+  const stack = [root];
+  let files = 0;
+  while (stack.length) {
+    const node = stack.pop();
+    if (!node.children) files++;
+    else stack.push(...node.children);
+  }
+  return files;
+}
+console.log(countFilesIter(tree));
+const slowFib = n => n < 2 ? n : slowFib(n - 1) + slowFib(n - 2);
+console.time("fib(40) no memo");
+console.log(slowFib(40));
+console.timeEnd("fib(40) no memo");
+// 2
+// 102334155
+// fib(40) no memo: 1.172s  (بيختلف حسب الجهاز)`
         },
         {
           cmd: "n log n و log n",
@@ -864,7 +1115,26 @@ merge sort: قسّم نصين، ورتّب كل نص، وادمج. دايمًا 
             "أرقام مش مترتبة.",
             "الفخ: sort من غير compare بيرتب كنصوص، فـ 100 قبل 25.",
             "compare صح يرتب أرقام، وبعدين binary search يلاقي 25 في مكان 3."
-          ]
+          ],
+          sol: R`على [[[10, 1, 5, 100, 25]]] من غير ترتيب: البحث عن 25 بيرجّع [[-1]] رغم إنه موجود، وعن 1 برضو [[-1]]، وعن 5 بيرجّع [[2]] بالصدفة لأنه قاعد في النص بالظبط. ده أخطر من إنه يفشل دايمًا: ساعات يشتغل، فالـ bug يعدّي من الاختبار. binary search بيرمي نص الـ array كل خطوة على افتراض إن اللي على الشمال أصغر، ولو الافتراض ده مش صح هو بيرمي النص اللي فيه الإجابة.
+
+ومع [[toSorted((a, b) => a - b)]]: الناتج [[[ 1, 5, 10, 25, 100 ]]] والأصلية لسه [[[ 10, 1, 5, 100, 25 ]]]، والبحث عن 25 في المترتبة يرجع [[3]]. [[sort]] بيعدّل الـ array نفسها وبيرجّعها، وده بيعمل bugs لو الـ array جاية props أو state في React. وافتكر إن [[toSorted()]] من غير comparator برضو بيرتب كنصوص.`,
+          solCode: R`// bs.mjs
+function binarySearch(arr, target) {
+  let lo = 0, hi = arr.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (arr[mid] === target) return mid;
+    if (arr[mid] < target) lo = mid + 1; else hi = mid - 1;
+  }
+  return -1;
+}
+const unsorted = [10, 1, 5, 100, 25];
+console.log(binarySearch(unsorted, 25), binarySearch(unsorted, 5), binarySearch(unsorted, 1));
+const sorted = unsorted.toSorted((a, b) => a - b);
+console.log(sorted, unsorted, binarySearch(sorted, 25));
+// -1 2 -1
+// [ 1, 5, 10, 25, 100 ] [ 10, 1, 5, 100, 25 ] 3`
         }
       ]
     },
@@ -910,7 +1180,23 @@ const t = Date.now(); while (Date.now() - t < 500) {}
             "الاتنين مع بعض: الوقت نص ثانية بس. concurrency من غير أي thread إضافي.",
             "اطبع الوقت.",
             "لوب CPU بيحجز الـ thread نص ثانية: في سيرفر، ولا طلب تاني هيتخدم في الوقت ده."
-          ]
+          ],
+          sol: R`لو فتحت [[/slow]] وبعدها على طول [[/fast]]، الـ fast مش هيرد في ميلي ثانية: هيستنى لحد ما الـ slow يخلص. جربتها بـ curl وطلع [[fast took 4.65s]]، ولما اتطلب لوحده [[0.002s]]. السبب إن اللوب ده sync فماسك الـ thread الوحيد اللي بيشغّل JavaScript، والـ event loop مش قادر ياخد أي طلب تاني ولا حتى يشغّل timer.
+
+وده الفرق اللي في العنوان: [[await sleep]] أو query على الداتابيز بيسيب الـ thread فاضي (concurrency)، لكن الحساب التقيل مبيسيبوش. الحل مش [[async]] على الدالة (مش هيفرق حاجة، والنتيجة الغلط الشائعة إن الناس تفتكر إنه هيحل)، الحل worker thread أو process تاني أو queue، زي الدرس اللي بعده.`,
+          solCode: R`// block.mjs: node block.mjs ثم في ترمنالين: curl localhost:3100/slow و curl localhost:3100/fast
+import express from "express";
+const app = express();
+app.get("/slow", (req, res) => {
+  const t = Date.now();
+  while (Date.now() - t < 5000) {}
+  res.send("slow done\n");
+});
+app.get("/fast", (req, res) => res.send("fast\n"));
+app.listen(3100, () => console.log("http://localhost:3100"));
+// curl -s -o /dev/null -w "fast took %{time_total}s\n" localhost:3100/fast
+// fast took 4.653611s   ← وهو /slow شغال
+// fast took 0.001997s   ← لوحده`
         },
         {
           cmd: "ذاكرة منفصلة ولا مشتركة",
@@ -952,7 +1238,19 @@ if (isMainThread) {
             "حساب تقيل: جمع مليار رقم.",
             "ابعت النتيجة للـ thread الأساسي برسالة.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع الـ Worker: [[main thread is free]] بتطبع فورًا، و [[from worker: 499999999067109000]] بعدها بأقل من ثانية. ولما تنقل اللوب للـ main thread الترتيب بيتعكس: الناتج بييجي الأول، و «main thread is free» بعد ما اللوب يخلص (عندي ٨١٣ms). وأي timer كان المفروض يشتغل بعد 10ms هيشتغل بعد ٨١٣ms برضو، لأن الـ event loop كان واقف.
+
+والنقطة اللي تربطها بالسؤال: الـ Worker thread جوه نفس الـ process بس ليه V8 isolate وheap لوحده، فمبيشاركش المتغيرات مع الـ main thread، والكلام بينهم بـ [[postMessage]] (نسخة من الداتا). ده أقرب لسلوك الـ processes، والاستثناء إن [[SharedArrayBuffer]] ممكن يتشارك فعلًا، ومعاه ترجع مشاكل الـ race conditions.`,
+          solCode: R`// main.mjs: نفس اللوب من غير Worker
+const start = Date.now();
+setTimeout(() => console.log("timer 10ms fired after", Date.now() - start, "ms"), 10);
+let s = 0; for (let i = 0; i < 1e9; i++) s += i;
+console.log("sum:", s);
+console.log("main thread is free after", Date.now() - start, "ms");
+// sum: 499999999067109000
+// main thread is free after 813 ms
+// timer 10ms fired after 813 ms`
         },
         {
           cmd: "check-then-act و circular wait",
@@ -993,7 +1291,28 @@ console.log(await Promise.all([buy(), buy()]), stock);
             "غير كده خلص.",
             "قفلة.",
             "طلبين في نفس الوقت: الاتنين قروا 1، والاتنين باعوا."
-          ]
+          ],
+          sol: R`التشغيل الأول بيطبع [[[ 'ok', 'ok' ] 0]]: الاتنين قروا 1 قبل ما أي واحد يكتب، لأن الـ [[await]] بين القراية والكتابة سمح للتاني يدخل في النص. بعد ما تخلي التشيك والخصم في نفس الخطوة من غير await بينهم، الناتج [[[ 'ok', 'sold out' ] 0]]. Node مبيقطعش كود sync في النص، فأي حتة من غير await هي atomic بالنسبة للـ JavaScript.
+
+بس في مشروع بداتابيز الحل ده مش كفاية، لأن القراية نفسها await والسيرفر ممكن يبقى كذا نسخة. جربتها على Postgres بـ [[Promise.all]]: نسخة SELECT ثم UPDATE طلعت [[[ 'ok', 'ok' ]]] في كل تشغيل، ونسخة [[UPDATE ... WHERE stock > 0]] مع [[rowCount]] طلعت ok واحدة و sold out واحدة دايمًا. لو النسخة الغلط طلعتلك صح أول مرة، غالبًا الـ pool كان لسه بيفتح connection التانية فالطلبين اتنفذوا ورا بعض: كرّر أو سخّن الـ pool.`,
+          solCode: R`// r-fixed.mjs: التشيك والخصم من غير await في النص
+let stock = 1;
+const read = async () => { await null; return stock; };
+async function buy() {
+  await read();
+  if (stock > 0) { stock -= 1; return "ok"; }
+  return "sold out";
+}
+console.log(await Promise.all([buy(), buy()]), stock);
+// [ 'ok', 'sold out' ] 0
+
+// مع Postgres (npm i pg): الخصم نفسه هو التشيك
+import pg from "pg";
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+async function buySafe(id) {
+  const r = await pool.query("UPDATE products SET stock = stock - 1 WHERE id = $1 AND stock > 0", [id]);
+  return r.rowCount === 1 ? "ok" : "sold out";
+}`
         },
         {
           cmd: "reachability",
@@ -1034,7 +1353,12 @@ console.log(Math.round(process.memoryUsage().heapUsed / 1e6), "MB");
             "شيل الـ references.",
             "اطلب GC دلوقتي (موجود بس مع [[--expose-gc]]).",
             "الذاكرة رجعت: مبقاش فيه طريق للـ arrays دي."
-          ]
+          ],
+          sol: R`بـ [[--expose-gc]] هتشوف حاجة زي [[164 MB]] ثم [[4 MB]]: بعد [[cache.clear()]] الـ arrays مبقاش حد شايلها، فالـ GC مسحها. ومن غير الفلاج: [[165 MB]] ثم [[165 MB]]. ده مش leak: [[global.gc]] مش موجود فالـ [[?.()]] معملتش حاجة، والـ GC لسه مجاش دوره، وهيمسحها لما يحتاج مساحة.
+
+ولما تشيل [[cache.clear()]] وتشغّل بـ [[--expose-gc]]: [[165 MB]] ثم [[164 MB]]. الـ GC اشتغل فعلًا ومقدرش يمسح حاجة، لأن الـ Map متغير global، والـ Map شايلة الـ objects، يعني لسه reachable. ده شكل الـ leak في السيرفرات: cache أو array أو listeners بتكبر مع كل request ومحدش بيمسح منها.
+
+الحل اللي تقوله: حد أقصى للحجم أو TTL (LRU cache)، أو [[WeakMap]] لو المفتاح object ينفع يموت، و [[removeListener]] للـ listeners. والغلط الشائع إنك تحكم بقراية واحدة: الـ leak بيتعرف من إن الذاكرة بتطلع ومبتنزلش بعد GC على مدار وقت.`
         }
       ]
     },
@@ -1083,7 +1407,26 @@ for (const n of [new EmailNotifier(), new SmsNotifier()]) console.log(n.send("pa
             "SMS نفس الواجهة بتنفيذ مختلف.",
             "استخدم الحساب: 100.",
             "نفس النداء بيطلّع نتيجة مختلفة حسب الـ object (polymorphism)."
-          ]
+          ],
+          sol: R`[[a.#balance = -5]] برا الـ class بيدي [[SyntaxError: Private field '#balance' must be declared in an enclosing class]]، وده قبل ما الكود يشتغل أصلًا (الملف كله مش هيتشغل). ده encapsulation حقيقي من اللغة، مش اتفاق زي [[_balance]]. وخلي بالك: لو جربتها في Console بتاع Chrome ممكن تعدّي، لأن الـ DevTools بتسمح بقراية الـ private fields عشان الـ debugging. جربها في ملف أو في [[node]].
+
+و [[PushNotifier]] بيتضاف كـ class جديد بس، واللوب يبقى زي ما هو، والناتج بقى [[100]] ثم [[email: paid]] و [[sms: paid]] و [[push: paid]]. ده الـ polymorphism: اللوب بيكلم [[send]] ومش فارق معاه النوع. ولو حد لقى نفسه بيكتب [[if (n instanceof PushNotifier)]] جوه اللوب، يبقى ضيّع الفكرة.`,
+          solCode: R`// oop.mjs
+class Account {
+  #balance = 0;
+  deposit(x) { if (x <= 0) throw new Error("invalid"); this.#balance += x; }
+  get balance() { return this.#balance; }
+}
+class Notifier { send(msg) { throw new Error("not implemented"); } }
+class EmailNotifier extends Notifier { send(msg) { return $__btemail: $__{msg}$__bt; } }
+class SmsNotifier extends Notifier { send(msg) { return $__btsms: $__{msg}$__bt; } }
+class PushNotifier extends Notifier { send(msg) { return $__btpush: $__{msg}$__bt; } }
+const a = new Account(); a.deposit(100); console.log(a.balance);
+for (const n of [new EmailNotifier(), new SmsNotifier(), new PushNotifier()]) console.log(n.send("paid"));
+// 100
+// email: paid
+// sms: paid
+// push: paid`
         },
         {
           cmd: "SOLID",
@@ -1135,7 +1478,26 @@ D: الـ Dependency Inversion مبدأ (المهم يعتمد على abstractio
             "mailer مزيف مبيبعتش حاجة.",
             "ركّب الـ service بالمزيفين.",
             "جرّبه من غير داتابيز ولا إيميل."
-          ]
+          ],
+          sol: R`الناتج بعد ما تبدّل الـ mailer: [[[mail] to=you@example.com subject="order confirmed"]] وبعدها [[{ id: 1, email: 'you@example.com', item: 'book' }]]، و [[makeOrderService]] متلمستش. ده الـ D (Dependency Inversion): الـ service بيعتمد على «حاجة فيها [[send]]» مش على مكتبة إيميل بعينها.
+
+والإجابة على سؤال التفكير: لو الـ service عامل [[import { sendEmail }]] بنفسه، كنت هتضطر تعمل mock للـ module كله ([[vi.mock("./email.js")]] في Vitest أو [[jest.mock]])، وده بيشتغل بس بيربط الاختبار بمسار الملف، ويتكسر لو نقلته، ويخلّي dependencies الـ service مخفية. مع الـ injection الاختبار بيدّي fake كـ argument عادي، وفي production بتدّي الحقيقي. ده نفس السبب اللي بيخلي الـ D أسهل حرف تشرحه بمثال.`,
+          solCode: R`// s.mjs: mailer بيطبع بدل ما يبعت
+function makeOrderService({ repo, mailer }) {
+  return {
+    async place(order) {
+      const saved = await repo.save(order);
+      await mailer.send(order.email, "order confirmed");
+      return saved;
+    }
+  };
+}
+const fakeRepo = { save: async o => ({ id: 1, ...o }) };
+const consoleMailer = { send: async (to, subject) => console.log($__bt[mail] to=$__{to} subject="$__{subject}"$__bt) };
+const svc = makeOrderService({ repo: fakeRepo, mailer: consoleMailer });
+console.log(await svc.place({ email: "you@example.com", item: "book" }));
+// [mail] to=you@example.com subject="order confirmed"
+// { id: 1, email: 'you@example.com', item: 'book' }`
         },
         {
           cmd: "Singleton و Factory",
@@ -1174,7 +1536,18 @@ export function createPaymentProvider(country) {
             "مصر: مزود محلي.",
             "غير كده: Stripe. الاتنين نفس الشكل، فالكود اللي بينادي مش فارق معاه.",
             "قفلة."
-          ]
+          ],
+          sol: R`المفروض تلاقي في [[lib/db.ts]] أو [[lib/prisma.ts]] حاجة شبه [[globalThis.prisma ?? new PrismaClient()]] وبعدها [[if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma]]. لو موجودة يبقى تمام: عدد الـ connections هيفضل ثابت مهما عدّلت ملفات.
+
+لو مش موجودة وبتعمل [[new PrismaClient()]] أو [[new Pool()]] على طول، كل hot reload بيعمل module جديد وبالتالي client جديد بـ pool جديد، والقديم مبيتقفلش. هتشوف رقم الـ query اللي تحت بيطلع كل ما تحفظ ملف، ولحد ما توصل لـ [[too many connections]] (أو في Prisma تحذير إن فيه نسخ كتير شغالة). وده بيحصل في الـ dev بس، فالناس بتفتكره bug في الداتابيز.
+
+والإجابة في الانترفيو: «ده Singleton عملي: نسخة واحدة من الـ pool للـ process، وبنخزنها على globalThis عشان تعيش بعد الـ hot reload. والـ Singleton الكلاسيكي فيه عيب إنه global state بيصعّب الاختبار، فبفضّل أحقنه لما أقدر».`,
+          solCode: R`-- في psql وانت بتعدّل ملفات في dev: الرقم لازم يفضل ثابت
+SELECT count(*) FROM pg_stat_activity WHERE datname = current_database();
+SELECT application_name, state, count(*)
+FROM pg_stat_activity
+WHERE datname = current_database()
+GROUP BY 1, 2;`
         },
         {
           cmd: "Observer و Strategy",
@@ -1220,7 +1593,29 @@ Strategy في JS غالبًا مجرد object من دوال أو map زي الم
             "order اليوزر اختار فيه express.",
             "اختار الـ strategy وقت التشغيل من غير أي if: 76.",
             "أعلن الحدث: الـ listeners الاتنين يشتغلوا بالترتيب."
-          ]
+          ],
+          sol: R`الـ listener اللي بيرمي error بيوقف كل حاجة بعده: الـ listeners بتشتغل sync بالترتيب، فالأول يطبع [[email to you@example.com]]، والتاني يرمي، والتالت مبيشتغلش خالص، و [[emit]] نفسه بيرمي الـ error للي نادى عليه. ولو مفيش [[try/catch]] حوالين الـ emit، الـ process كله بيقع. ده عيب مهم في الـ EventEmitter تقوله: الـ listeners مش معزولين عن بعض، فكل listener لازم يمسك أخطاؤه، والشغل المهم (زي الفواتير) يتحط في queue.
+
+و [[sameDay]] بسطر واحد: [[shipping.sameDay = w => 100 + w * 10]] (أو تضيفه جوه الـ object)، ومع [[method: "sameDay"]] ووزن 2 الناتج [[shipping: 120]]. مفيش أي if اتلمست، وده الـ Strategy: الخوارزمية بقت قيمة في object بتختارها بالاسم.`,
+          solCode: R`// obs.mjs
+import { EventEmitter } from "node:events";
+const bus = new EventEmitter();
+bus.on("order.paid", o => console.log("email to", o.email));
+bus.on("order.paid", o => { throw new Error("invoice service down"); });
+bus.on("order.paid", o => console.log("invoice for", o.id));
+const shipping = {
+  standard: w => 30 + w * 5,
+  express: w => 60 + w * 8,
+  pickup: () => 0
+};
+shipping.sameDay = w => 100 + w * 10;
+const order = { id: 7, email: "you@example.com", weight: 2, method: "sameDay" };
+console.log("shipping:", shipping[order.method](order.weight));
+try { bus.emit("order.paid", order); } catch (e) { console.log("emit threw:", e.message); }
+// shipping: 120
+// email to you@example.com
+// emit threw: invoice service down
+// ("invoice for 7" مطبعتش)`
         }
       ]
     },
@@ -1270,7 +1665,22 @@ describe("applyCoupon", () => {
             "النتيجة لازم تبقى صفر مش بالسالب.",
             "قفلة الحالة.",
             "قفلة المجموعة."
-          ]
+          ],
+          sol: R`مع الدالة السليمة: [[Test Files  1 passed (1)]] و [[Tests  2 passed (2)]]. ولما تشيل الـ [[Math.max]]، اختبار الخصم بالنسبة بيعدّي، و [[never goes below zero]] بيقع برسالة [[AssertionError: expected -30 to be +0 // Object.is equality]]، ومعاها Expected 0 و Received -30 وسهم على السطر بالظبط.
+
+لاحظ إن اسم الاختبار لوحده قالك المشكلة قبل ما تقرا الرسالة، وده سبب إن الاسم يوصف السلوك مش الدالة. والغلط الشائع: الاختبارين يعدّوا بعد ما بوّظت الدالة، ودي علامة إن الاختبار مش بيختبر الحالة دي أصلًا، أو إنك بتشغّل [[vitest]] في watch على ملف تاني. (جربته على Vitest 5.)`,
+          solCode: R`// pricing.js
+export function applyCoupon(total, coupon) {
+  const discount = coupon.type === "percent" ? total * coupon.value / 100 : coupon.value;
+  return Math.max(0, total - discount);
+}
+// npx vitest run
+// ✓ pricing.test.js (2 tests)
+// Test Files  1 passed (1)
+//      Tests  2 passed (2)
+// وبعد ما تشيل Math.max:
+// × never goes below zero
+// AssertionError: expected -30 to be +0 // Object.is equality`
         },
         {
           cmd: "readable قبل clever",
@@ -1317,7 +1727,12 @@ function priceForUser(user, price) {
             "الشرط المعقد بقى متغير اسمه بيشرحه.",
             "النتيجة في سطر واضح.",
             "قفلة."
-          ]
+          ],
+          sol: R`الـ refactor نجح لو الشخص فهم الدالة «بعد» من أول قراية وقال جملة زي «بتدي خصم ١٠٪ لليوزر الجديد النشط»، في حين إنه في «قبل» سأل أسئلة أو خمّن. وده الاختبار الحقيقي: مش إن الكود أقصر، إن حد تاني يفهمه من غير ما تشرحله.
+
+الـ checklist اللي تطبقها: كل متغير ودالة بقى اسمه بيقول هو إيه ([[u]] ← [[user]])، والـ ifs المتداخلة بقت early returns، وكل رقم سحري بقى constant باسم، ومفيش تعليق بيشرح «إيه» (الاسم بيقوله)، والتعليقات الباقية بتشرح «ليه». والأهم إن السلوك متغيرش: لو الدالة مكانش ليها tests، اكتب اختبارين قبل ما تبدأ وشغّلهم بعد.
+
+الغلط الشائع: إنك تغيّر السلوك وانت بتنضّف (تصلح bug في نفس الـ commit)، أو تبالغ وتقسّم دالة ٨ سطور لخمس دوال. وفي الانترفيو احكيها كده: «كانت دالة X، عملت فيها Y، والنتيجة Z» (مثلًا: الـ PR اللي بعده في نفس الملف خد نص الوقت).`
         },
         {
           cmd: "clarify → examples → brute → optimize → test",
@@ -1361,7 +1776,10 @@ function firstRepeat(nums) {
             "قفلة اللوب.",
             "مفيش تكرار.",
             "قفلة."
-          ]
+          ],
+          sol: R`التسجيل الكويس فيه الست خطوات بالترتيب ومسموعين: أسئلة توضيح في أول دقيقة أو اتنين، ومثالين على الأقل منهم edge case (فاضي أو عنصر واحد)، وجملة بالـ brute force وتمنه قبل ما تكتب، والـ complexity مقولة بصوت عالي في الآخر، وتتبّع بالإيد لمثال قبل «done». والمفروض مفيش سكوت أطول من ٢٠ أو ٣٠ ثانية.
+
+النتايج الغلط الشائعة: إنك بدأت تكتب كود في أول دقيقة من غير ولا سؤال، أو سكتّ ٣ دقايق وانت بتفكر (قول اللي في دماغك حتى لو ناقص: «I'm thinking a hash map could help here because...»)، أو خلصت وقلت «done» من غير ما تجرب حاجة. ولو التسجيل عدّى ٣٠ دقيقة، شوف ضاع الوقت فين: غالبًا في الـ optimize قبل ما يبقى عندك حل شغال. الـ brute force الشغال أحسن من optimal ناقص.`
         }
       ]
     },
