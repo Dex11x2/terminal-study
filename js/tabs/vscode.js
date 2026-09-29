@@ -386,7 +386,7 @@ Esc                    back to one cursor`,
           title: "حط مؤشر في أكتر من مكان بإيدك",
           desc: R`Alt+Click بيضيف مؤشر في أي مكان تدوس عليه. Ctrl+Alt+Up و Down بيضيفوا مؤشر في السطر اللي فوق أو تحت. و Shift+Alt+I بيحط مؤشر في آخر كل سطر متحدد.
 
-وعشان تحدد عمود (مستطيل) من نص سطور كتير: امسك Shift+Alt واسحب بالماوس، أو Ctrl+Shift+Alt والأسهم.`,
+وعشان تحدد عمود (مستطيل) من نص سطور كتير: امسك Shift+Alt واسحب بالماوس، أو Ctrl+Shift+Alt والأسهم على ويندوز (Shift+Option+Cmd والأسهم على الماك، وعلى لينكس ملوش اختصار افتراضي).`,
           example: R`Alt+Click              Win / Linux: add a cursor (Option+Click on Mac)
 Ctrl+Alt+Up / Down     cursor above / below (Windows)
 Shift+Alt+Up / Down    Linux
@@ -437,7 +437,7 @@ Ctrl+Shift+\           jump to the matching bracket (Shift+Cmd+\ on Mac)`,
 Cmd+Option+[ / ]       Mac
 Ctrl+K Ctrl+0          fold everything (Cmd+K Cmd+0)
 Ctrl+K Ctrl+J          unfold everything (Cmd+K Cmd+J)
-Ctrl+K Ctrl+1          fold level 1 only: see the functions inside classes`,
+Ctrl+K Ctrl+2          fold level 2 only: classes stay open, their methods fold`,
           try: "افتح أطول ملف عندك واضغط Ctrl+K Ctrl+0: اقرا أسامي الدوال بس، وافتح الدالة اللي تهمك بـ Ctrl+Shift+].",
           flag: "keys",
           deep: {
@@ -570,7 +570,7 @@ Ctrl+F12               go to implementation (Cmd+F12 on Mac)`,
             why: "«هغيّر الـ parameter ده، مين هيتكسر؟» البحث النصي بيجيب كومنتات وأسامي شبهها. الـ references بتجيب الاستخدام الحقيقي بس.",
             how: R`اللستة جاية من الـ language server، فبتلاقي الاستخدامات حتى لو الاسم اتغير في الـ import ([[import { getUser as fetchUser }]])، وفي كل الملفات اللي الـ tsconfig شاملها.
 
-السطر الصغير «3 references» فوق الدالة (CodeLens) نفس المعلومة، وبيتفعّل في TypeScript بـ [[typescript.referencesCodeLens.enabled]].`,
+السطر الصغير «3 references» فوق الدالة (CodeLens) نفس المعلومة، وبيتفعّل في TypeScript و JavaScript بـ [[js/ts.referencesCodeLens.enabled]] (الاسم القديم [[typescript.referencesCodeLens.enabled]] لسه شغال بس deprecated).`,
             when: "قبل أي تغيير في شكل دالة، أو قبل مسحها، أو عشان تفهم الكود بيتدفق إزاي.",
             mistakes: "تعتمد عليه في كود بيتنادي بالنص (اسم route في string، أو property بإسم جاي من متغير، أو template مش TS): الـ language server مش شايف ده. كمّل بـ Ctrl+Shift+F."
           }
@@ -590,7 +590,7 @@ Enter                  apply`,
             why: "Find و Replace بيغيّر النص في كل مكان، فبيبوّظ [[user]] في كومنت أو في property تانية. F2 فاهم الكود.",
             how: R`الـ language server عارف كل استخدام للاسم ده بالظبط (نفس اللي Shift+F12 بيجيبه)، فبيغيّرهم كلهم في عملية واحدة، و Ctrl+Z واحدة بترجّع الكل.
 
-نقل الملفات: [[typescript.updateImportsOnFileMove.enabled]] قيمتها prompt افتراضيًا فبيسألك، وتقدر تخليها always.`,
+نقل الملفات: [[js/ts.updateImportsOnFileMove.enabled]] (كان اسمه [[typescript.updateImportsOnFileMove.enabled]]) قيمتها prompt افتراضيًا فبيسألك، وتقدر تخليها always.`,
             when: "أي تغيير لاسم في الكود. Find و Replace للنصوص بس.",
             mistakes: "تعمل rename لحاجة اسمها بيتقري من برا: field في API، أو column في الداتابيز، أو key في JSON متخزّن. F2 بيغيّر الكود، بس الـ client أو الداتا القديمة لسه بالاسم القديم. وفي ملفات JS من غير types الـ rename أضعف، فبص على الـ preview."
           }
@@ -947,7 +947,7 @@ User settings على ويندوز في [[%APPDATA%\Code\User\settings.json]]، �
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }`,
           try: "ضيف الملف ده لمشروعك، وبوّظ مسافات ملف واحفظ: المفروض يتنسّق ويتصلّح. وبص تحت على اليمين: مكتوب LF.",
           flag: "script",
@@ -959,7 +959,7 @@ User settings على ويندوز في [[%APPDATA%\Code\User\settings.json]]، �
 
 [[files.eol]] بيأثر على الملفات الجديدة بس. ملف موجود بـ CRLF هيفضل كده لحد ما تغيّره (كليك على CRLF تحت في شريط الحالة).
 
-[[typescript.tsdk]] بيخلي VS Code يعرض عليك نسخة TypeScript اللي في المشروع، فالأخطاء في المحرر تبقى نفس أخطاء [[tsc]]. بيسألك مرة (Use Workspace Version) لأسباب أمان.`,
+[[js/ts.tsdk.path]] (اسمه القديم [[typescript.tsdk]]، لسه شغال بس deprecated) بيعرّف VS Code إن فيه TypeScript جوه المشروع، بس مش بيشغّلها لوحده لأسباب أمان: كل واحد يختارها مرة من TypeScript: Select TypeScript Version ثم Use Workspace Version، فالأخطاء في المحرر تبقى نفس أخطاء [[tsc]].`,
             when: "أول يوم في أي مشروع عليه أكتر من شخص، أو شغال عليه من أكتر من جهاز.",
             mistakes: R`Prettier مع الحفظ و ESLint فيه قواعد شكل (من غير [[eslint-config-prettier]]) بيتخانقوا: كل حفظ يغيّر ويرجّع. وتحط [[files.eol]] وتفتكر إن الملفات القديمة اتصلحت: الحل الكامل [[.gitattributes]] (تاب git). وفولدر [[.vscode]] كله في [[.gitignore]] فالملف عمره ما يوصل للفريق: استثني [[settings.json]] و [[extensions.json]] و [[launch.json]] من الـ ignore.`
           },
@@ -972,7 +972,7 @@ User settings على ويندوز في [[%APPDATA%\Code\User\settings.json]]، �
             "نهاية السطر LF للملفات الجديدة، حتى على ويندوز.",
             "سطر فاضي في آخر كل ملف.",
             "امسح المسافات الزيادة في آخر السطور.",
-            "استخدم TypeScript اللي في node_modules بتاع المشروع.",
+            "TypeScript بتاع المشروع في node_modules (كل واحد يختارها مرة بـ Use Workspace Version).",
             "نهاية الإعدادات."
           ]
         },
@@ -1582,7 +1582,7 @@ Mac: Shift+Cmd+U / Linux: Ctrl+K Ctrl+H`,
 
 لوحة Output (من القايمة اللي فيها تختار الـ extension) بتوريك رسايل كل extension، زي «Cannot find module» أو «config not found»، ودا أول مكان تبص فيه لو extension مش شغالة.`,
             when: "أخطاء مش منطقية بعد تسطيب أو توليد أو تبديل فرع، أو extension بطّلت ترد.",
-            mistakes: "تقفل VS Code كله وتفتحه، ودا أبطأ وبيقفل الترمنالات والـ dev server. أو تفضل تعمل Restart والمشكلة إن TypeScript بتاع VS Code غير بتاع المشروع: شوف [[typescript.tsdk]] في درس «.vscode/settings.json»."
+            mistakes: "تقفل VS Code كله وتفتحه، ودا أبطأ وبيقفل الترمنالات والـ dev server. أو تفضل تعمل Restart والمشكلة إن TypeScript بتاع VS Code غير بتاع المشروع: شوف [[js/ts.tsdk.path]] في درس «.vscode/settings.json»."
           }
         },
         {

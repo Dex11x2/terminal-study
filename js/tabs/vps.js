@@ -665,7 +665,7 @@ systemctl list-timers | grep certbot`,
 getent ahostsv4 example.com | awk '{print $1; exit}'
 mkdir -p certbot/www certbot/conf
 docker compose up -d nginx
-docker compose run --rm certbot certonly --webroot -w /var/www/certbot \
+docker compose run --rm --entrypoint certbot certbot certonly --webroot -w /var/www/certbot \
   --email you@example.com --agree-tos --no-eff-email --dry-run \
   -d example.com -d www.example.com
 ls certbot/conf/live/example.com/`,
@@ -676,7 +676,7 @@ ls certbot/conf/live/example.com/`,
 
 في [[docker-compose.yml]] service اسمها certbot من image [[certbot/certbot]]، راكب فيها [[./certbot/www:/var/www/certbot]] و [[./certbot/conf:/etc/letsencrypt]]، ونفس الفولدرين راكبين في Nginx. و Nginx لازم يكون شغال بإعداد HTTP فيه بلوك [[/.well-known/acme-challenge/]] (شرحه في تاب nginx).
 
-[[compose run --rm certbot certonly]]: شغّل container مؤقت من الـ service دي بالأمر ده، وامسحه بعد ما يخلص. [[--webroot -w]]: اكتب ملف التحدي هنا. [[--agree-tos --no-eff-email]]: من غير أسئلة.
+[[compose run --rm certbot certonly]]: شغّل container مؤقت من الـ service دي بالأمر ده، وامسحه بعد ما يخلص. و [[--entrypoint certbot]] عشان لو الـ service عاملة entrypoint لوب التجديد (تحت)، الأمر ده يتنفذ فعلًا بدل ما اللوب يشتغل ويتجاهله. [[--webroot -w]]: اكتب ملف التحدي هنا. [[--agree-tos --no-eff-email]]: من غير أسئلة.
 
 [[--dry-run]]: يجرّب كل حاجة على سيرفر الاختبار بتاع Let's Encrypt ومبيحفظش شهادة. لما ينجح، شيله وشغّل تاني.
 
@@ -684,14 +684,14 @@ ls certbot/conf/live/example.com/`,
 
 و Let's Encrypt وقفت إيميلات التحذير قبل الانتهاء في 2025، فمحدش هيقولك لو التجديد فشل. راقب تاريخ الانتهاء بنفسك (تاب التشخيص، شهادة SSL).`,
             when: "أول شهادة لأي موقع Nginx بتاعه جوه Docker.",
-            mistakes: "في مشروع حقيقي سكربت أول شهادة كان من غير [[set -e]]، وبيوقف Nginx بـ [[docker compose down nginx]] (ده بيوقف المشروع كله، الصح [[stop]])، ومفيش تجربة الأول فكل غلطة في الـ DNS بتتحسب من الحد. وسكربت تاني كان بيضيف www من غير ما يتأكد إن ليها DNS، فالطلب كله يفشل عشان دومين واحد."
+            mistakes: "في مشروع حقيقي سكربت أول شهادة كان من غير [[set -e]]، وبيوقف Nginx بـ [[docker compose down nginx]] (ده بيمسح الـ container مش بيوقفه بس، الصح [[stop]])، ومفيش تجربة الأول فكل غلطة في الـ DNS بتتحسب من الحد. وسكربت تاني كان بيضيف www من غير ما يتأكد إن ليها DNS، فالطلب كله يفشل عشان دومين واحد."
           },
           lines: [
             "IP السيرفر العام (IPv4).",
             "IP اللي الدومين بيشاور عليه. لازم يبقى نفسه.",
             "فولدر التحدي وفولدر الشهادات (راكبين في Nginx و certbot).",
             "Nginx شغال بإعداد HTTP فيه مسار التحدي.",
-            "certbot في container مؤقت، بطريقة webroot...",
+            "certbot في container مؤقت (والـ entrypoint هو certbot نفسه مش لوب التجديد)، بطريقة webroot...",
             "...من غير أسئلة، وتجربة بس (--dry-run).",
             "الدومين بالـ www ومن غيرها.",
             "الشهادة اتحفظت هنا."

@@ -1484,7 +1484,7 @@ PowerShell فيه نوعين errors: Terminating (بيوقف) وNon-Terminating 
           example: R`$ErrorActionPreference = "Stop"
 function Assert-Ok($what) { if ($LASTEXITCODE -ne 0) { throw "$what failed (exit $LASTEXITCODE)" } }
 
-docker info *> $null;            Assert-Ok "Docker Desktop"
+docker info > $null;             Assert-Ok "Docker Desktop"
 docker compose build --no-cache; Assert-Ok "compose build"
 npm run build;                   Assert-Ok "npm build"
 # PowerShell 7.4+ بس:
@@ -1499,7 +1499,7 @@ PowerShell بيحفظ الرقم ده في [[$LASTEXITCODE]] بعد كل برن�
 
 فالحل الآمن: بعد كل أمر خارجي مهم افحص الرقم. والفانكشن [[Assert-Ok]] بتختصر ده لسطر: لو الرقم مش صفر ترمي exception، ومع Stop السكربت يقف (أو يروح للـ catch لو فيه).
 
-و [[*> $null]] بيرمي كل الـ output (العادي والأخطاء)، فتفحص «Docker شغال؟» من غير ما يطبعلك صفحة معلومات.
+و [[> $null]] بيرمي الـ output العادي، فتفحص «Docker شغال؟» من غير ما يطبعلك صفحة معلومات. متكتبهاش [[*> $null]] أو [[2>$null]]: في 5.1 مع Stop، توجيه الـ stderr بتاع برنامج خارجي بيحوّل أي سطر فيه لـ NativeCommandError يوقف السكربت قبل ما توصل للفحص، حتى لو البرنامج نجح وكتب تحذير بس (نفس حكاية درس [[cmd /c]]).
 
 وفي PowerShell 7.4 وأحدث، المتغير [[$PSNativeCommandUseErrorActionPreference]] بيخلي أي برنامج خارجي يرجع غير صفر يتعامل كـ error، فـ Stop يوقف عليه لوحده. بس ده مش موجود في Windows PowerShell 5.1 اللي جاي مع ويندوز.`,
             when: "أي سكربت بيشغّل docker أو npm أو git أو dotnet وبيعتمد إن الخطوة اللي قبلها نجحت.",
@@ -1508,7 +1508,7 @@ PowerShell بيحفظ الرقم ده في [[$LASTEXITCODE]] بعد كل برن�
           lines: [
             "أي error من cmdlet يوقف السكربت.",
             "فانكشن: لو آخر برنامج خارجي رجع غير صفر، ارمي exception باسم الخطوة.",
-            "Docker شغال؟ [[*> $null]] يرمي كل الناتج، وبعدين افحص.",
+            "Docker شغال؟ [[> $null]] يرمي الناتج العادي (مش الـ stderr، عشان Stop ميوقفش عليه)، وبعدين افحص.",
             "ابني الصور وافحص.",
             "ابني الفرونت وافحص.",
             "في PowerShell 7.4+ بس: خلّي فشل أي برنامج خارجي يوقف السكربت لوحده."
@@ -1535,7 +1535,7 @@ if (-not (Test-Path $dist)) { npm run build }`,
 
 والمتغير ده فاضي لو كتبت الكود في الترمنال مباشرة، هو بيشتغل جوه ملف ps1 بس.`,
             when: "أول سطر في أي سكربت بيستخدم مسارات نسبية، خصوصًا اللي بيتشغّل بالدبل كليك أو من Task Scheduler أو من CI.",
-            mistakes: R`في مشروع حقيقي كان سكربت الفحص فيه مسار مطلق ثابت لفولدر على جهاز صاحبه (ولمشروع تاني كمان، لأنه اتنسخ بين مشروعين)، فبيبوظ على أي جهاز غيره. وكان فيه سطر مكتوب فيه المسار لوحده من غير [[Set-Location]]، فـ PowerShell حاول ينفّذه كأمر ووقع. وخلي بالك إن [[Set-Location]] بيغيّر فولدر الجلسة نفسها لو السكربت اتشغّل بـ dot-source ([[. .\script.ps1]])، فاستخدم [[Push-Location]] و [[Pop-Location]] لو فارق معاك.`
+            mistakes: R`في مشروع حقيقي كان سكربت الفحص فيه مسار مطلق ثابت لفولدر على جهاز صاحبه (ولمشروع تاني كمان، لأنه اتنسخ بين مشروعين)، فبيبوظ على أي جهاز غيره. وكان فيه سطر مكتوب فيه المسار لوحده من غير [[Set-Location]]، فـ PowerShell حاول ينفّذه كأمر ووقع. وخلي بالك إن [[Set-Location]] جوه السكربت بيغيّر فولدر الجلسة نفسها، والترمنال بيفضل واقف في فولدر السكربت بعد ما يخلص (عكس [[cd]] جوه سكربت bash)، فاستخدم [[Push-Location]] في الأول و [[Pop-Location]] في الآخر لو فارق معاك.`
           },
           lines: [
             "ادخل فولدر السكربت نفسه، فالمسارات النسبية بعد كده تتحسب منه.",
@@ -1693,7 +1693,7 @@ Write-Host "Saved $zip" -ForegroundColor Green`,
           example: R`$ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
-docker info *> $null
+docker info > $null
 if ($LASTEXITCODE -ne 0) { throw "Docker Desktop is not running" }
 
 foreach ($port in 3000, 8000, 5432) {
@@ -1714,7 +1714,7 @@ Write-Host "Ready: http://localhost:8000" -ForegroundColor Green`,
           flag: "script",
           deep: {
             why: "كل يوم نفس الخطوات: تفتكر تشغّل Docker Desktop، تكتشف إن بورت 5432 ماسكه Postgres متسطب على الجهاز، تعمل up وتستنى وتعمل refresh لحد ما الـ API يرد. سكربت واحد بيعمل الفحوصات دي ويقولك جاهز إمتى بالظبط.",
-            how: R`[[docker info]] بيكلّم الـ Docker daemon، فلو Docker Desktop مقفول بيفشل. [[*> $null]] يرمي كل الناتج، والفحص على [[$LASTEXITCODE]] لأن docker برنامج خارجي.
+            how: R`[[docker info]] بيكلّم الـ Docker daemon، فلو Docker Desktop مقفول بيفشل. [[> $null]] يرمي الناتج العادي بس، والفحص على [[$LASTEXITCODE]] لأن docker برنامج خارجي. ومش [[*> $null]]، لأن في 5.1 مع Stop أي سطر stderr متوجّه بيوقف السكربت بـ NativeCommandError قبل رسالتك الواضحة.
 
 [[Get-NetTCPConnection -State Listen]] بيجيب البورتات اللي فيه برنامج سامع عليها فعلًا. من غير [[-State Listen]] هتلاقي اتصالات قديمة (TIME_WAIT) على نفس الرقم وتاخد تحذير كاذب.
 

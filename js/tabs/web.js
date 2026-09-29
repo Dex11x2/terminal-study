@@ -720,7 +720,7 @@ Override headers بيخليك تعدّل response headers، مفيد تجرّب 
 npx playwright screenshot --viewport-size "1440,900" http://localhost:8791 desktop.png
 npx playwright screenshot --viewport-size "390,844" --full-page http://localhost:8791 mobile.png
 npx playwright screenshot --device "iPhone 13" --color-scheme dark --wait-for-timeout 1000 http://localhost:8791 iphone-dark.png`,
-          try: "صوّر صفحتك بالأربع أوامر قبل تعديل CSS وبعده، وافتح الصور جنب بعض.",
+          try: "صوّر صفحتك بأوامر الـ screenshot التلاتة قبل تعديل CSS وبعده، وافتح الصور جنب بعض.",
           flag: "term",
           deep: {
             why: "تعديل صغير في CSS ممكن يكسر الموبايل وانت شغال على الديسكتوب. الصور بتخليك تشوف كل المقاسات في نظرة، وتقدر تحطها في PR أو تبعتها للعميل.",

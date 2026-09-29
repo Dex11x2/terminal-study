@@ -34,7 +34,16 @@ const CMP = [
   ],
   ["الطريق للسيرفر", "traceroute host", "Test-NetConnection host -TraceRoute", "tracert host"],
   ["ملف hosts", "/etc/hosts", R`C:\Windows\System32\drivers\etc\hosts`, "نفس مسار PowerShell"],
-  ["الشرح", "man ls", "Get-Help ls -Examples", "dir /?"]
+  ["الشرح", "man ls", "Get-Help ls -Examples", "dir /?"],
+  ["افتح الفولدر في مدير الملفات", "xdg-open .", "Invoke-Item .", "start ."],
+  ["ناتج أمر على الكليب بورد", "pwd | xclip -selection clipboard", "Get-Location | Set-Clipboard", "cd | clip"],
+  ["متغير بيئة دايم", R`echo 'export API_URL=x' >> ~/.bashrc`, R`[Environment]::SetEnvironmentVariable("API_URL","x","User")`, "setx API_URL x"],
+  ["عدد سطور ملف", "wc -l app.log", "(Get-Content app.log).Count", R`find /c /v "" app.log`],
+  ["آخر 20 سطر", "tail -n 20 app.log", "Get-Content app.log -Tail 20", "لا يوجد، استخدم PowerShell"],
+  ["حجم فولدر", "du -sh logs", R`(Get-ChildItem logs -Recurse -File | Measure-Object Length -Sum).Sum / 1MB`, "dir /s logs"],
+  ["بصمة ملف (hash)", "sha256sum app.zip", "Get-FileHash app.zip", "certutil -hashfile app.zip SHA256"],
+  ["تنزيل ملف", "curl -LO https://example.com/f.zip", "Invoke-WebRequest https://example.com/f.zip -OutFile f.zip", "curl -LO https://example.com/f.zip"],
+  ["الأوامر اللي كتبتها", "history", "Get-History", "doskey /history"]
 ];
 
 // التحديات: t العنوان، d الوصف، s الحل لكل شيل
@@ -231,6 +240,135 @@ git reset --hard "HEAD~1"
 git reflog
 git branch rescue "HEAD@{1}"
 git log --oneline rescue`
+    }
+  },
+  {
+    t: "جهّز VS Code لمشروع الفريق",
+    d: "في مشروع عندك: اعمل .vscode/settings.json يخلّي Prettier ينسّق مع كل حفظ و ESLint يصلّح لوحده، و extensions.json يقترح الإضافتين على أي حد يفتح المشروع، وافتح المشروع من الترمنال. الشرح في تاب VS Code المستوى ٣.",
+    s: {
+      bash: R`mkdir -p .vscode
+cat > .vscode/settings.json <<'EOF'
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "files.eol": "\n"
+}
+EOF
+printf '{ "recommendations": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"] }\n' > .vscode/extensions.json
+code .`,
+      ps: R`New-Item -ItemType Directory .vscode -Force | Out-Null
+@'
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "files.eol": "\n"
+}
+'@ | Set-Content .vscode/settings.json -Encoding utf8
+'{ "recommendations": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"] }' | Set-Content .vscode/extensions.json -Encoding utf8
+code .`
+    }
+  },
+  {
+    t: "Postgres في Docker: شغّال ومقفول على جهازك",
+    d: "شغّل Postgres في container بباسورد، على بورت متاح لجهازك بس (127.0.0.1)، واستنى لحد ما يبقى جاهز فعلًا، وبعدين اتأكد إن البورت مش مفتوح لباقي الشبكة. الشرح في تاب Docker (healthchecks) و PostgreSQL.",
+    s: {
+      bash: R`docker run -d --name pg -e POSTGRES_PASSWORD=secret -p 127.0.0.1:5432:5432 postgres:17
+until docker exec pg pg_isready -U postgres; do sleep 1; done
+docker exec -it pg psql -U postgres -c "SELECT version();"
+ss -tlnp | grep 5432`,
+      ps: R`docker run -d --name pg -e POSTGRES_PASSWORD=secret -p 127.0.0.1:5432:5432 postgres:17
+do { Start-Sleep 1; docker exec pg pg_isready -U postgres } until ($LASTEXITCODE -eq 0)
+docker exec -it pg psql -U postgres -c "SELECT version();"
+Get-NetTCPConnection -LocalPort 5432 -State Listen | Select-Object LocalAddress, LocalPort`
+    }
+  },
+  {
+    t: "باك أب MongoDB وجرّب ترجّعه (bash بس)",
+    d: "الباك أب اللي عمره ما اترجع مش باك أب. خد dump من container اسمه mongo، ورجّعه في container تجربة تاني، واتأكد إن عدد الـ documents واحد، وامسح التجربة. الشرح في تاب MongoDB المستوى ٣.",
+    s: {
+      bash: R`set -euo pipefail
+docker exec mongo mongodump -u admin -p secret --authenticationDatabase admin --archive --gzip > app-$(date +%F).archive.gz
+docker run -d --name mongo-test mongo:8
+until docker exec mongo-test mongosh --quiet --eval "db.adminCommand('ping')" >/dev/null 2>&1; do sleep 1; done
+docker exec -i mongo-test mongorestore --archive --gzip < app-$(date +%F).archive.gz
+docker exec mongo-test mongosh --quiet app --eval "db.users.countDocuments()"
+docker exec mongo mongosh --quiet -u admin -p secret --authenticationDatabase admin app --eval "db.users.countDocuments()"
+docker rm -fv mongo-test`
+    }
+  },
+  {
+    t: "بعد الـ deploy: اتأكد إن الموقع سليم",
+    d: "اكتب smoke test بيطلب أهم ٣ صفحات ويتأكد إنها بترجع 200، وإن صفحة مش موجودة بترجع 404 فعلًا (مش 200 بصفحة الـ SPA). لو أي حاجة غلط يطلع بكود فشل عشان CI يوقف. حل PowerShell محتاج PowerShell 7 (pwsh). الشرح في تاب التشخيص (smoke test).",
+    s: {
+      bash: R`fail=0
+for p in / /api/health /login; do
+  code=$(curl -s -o /dev/null -w '%{http_code}' "https://example.com$p")
+  echo "$code $p"; [ "$code" = 200 ] || fail=1
+done
+[ "$(curl -s -o /dev/null -w '%{http_code}' https://example.com/no-such-page)" = 404 ] || { echo "404 page broken"; fail=1; }
+exit $fail`,
+      ps: R`$fail = 0
+foreach ($p in '/', '/api/health', '/login') {
+  $code = (Invoke-WebRequest "https://example.com$p" -SkipHttpErrorCheck -UseBasicParsing).StatusCode
+  "$code $p"; if ($code -ne 200) { $fail = 1 }
+}
+if ((Invoke-WebRequest https://example.com/no-such-page -SkipHttpErrorCheck -UseBasicParsing).StatusCode -ne 404) { "404 page broken"; $fail = 1 }
+exit $fail`
+    }
+  },
+  {
+    t: "ضيف فولدر للـ PATH واتأكد إنه اشتغل",
+    d: "عندك أداة في فولدر tools ومش عايز تكتب مسارها كل مرة. ضيف الفولدر للـ PATH بشكل دايم، وافتح ترمنال جديد، واتأكد إن الشيل بيلاقي الأداة. على ويندوز فيه كمان الطريقة من الواجهة (تاب اختصارات النظام).",
+    s: {
+      bash: R`echo 'export PATH="$HOME/tools:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+echo "$PATH" | tr ':' '\n' | head -3
+command -v mytool`,
+      zsh: R`echo 'export PATH="$HOME/tools:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+echo $PATH | tr ':' '\n' | head -3
+command -v mytool`,
+      ps: R`$new = "$HOME\tools;" + [Environment]::GetEnvironmentVariable("Path", "User")
+[Environment]::SetEnvironmentVariable("Path", $new, "User")
+# افتح ترمنال جديد، وبعدين:
+Get-Command mytool`,
+      cmd: R`rundll32 sysdm.cpl,EditEnvironmentVariables
+REM من النافذة: Path بتاع اليوزر → New → اكتب مسار الفولدر → OK
+REM افتح CMD جديد، وبعدين:
+where mytool`
+    }
+  },
+  {
+    t: "امنع أي commit فيه أخطاء lint",
+    d: "في مشروع Node عندك: سطّب husky و lint-staged، واعمل hook بيشغّل ESLint و Prettier على الملفات اللي عملتلها add بس، وجرّب تعمل commit لملف فيه غلطة واتأكد إنه اترفض. الشرح في تاب فحص الكود المستوى ٢.",
+    s: {
+      bash: R`npm i -D husky lint-staged
+npx husky init
+echo "npx lint-staged" > .husky/pre-commit
+printf '{ "*.{js,ts,tsx}": ["eslint --fix", "prettier --write"] }\n' > .lintstagedrc.json
+echo "const x = ;" > broken.js && git add broken.js
+git commit -m "test: hook" || echo "اترفض زي ما المفروض"
+git reset -q broken.js && rm broken.js`
+    }
+  },
+  {
+    t: "مشروع Python نضيف: venv واختبارات",
+    d: "اعمل venv للمشروع، وسطّب pytest جواه، واكتب اختبار صغير وشغّله، واحفظ النسخ في requirements.txt. الشرح في تاب Python.",
+    s: {
+      bash: R`python3 -m venv .venv
+source .venv/bin/activate
+pip install pytest
+printf 'def test_add():\n    assert 1 + 1 == 2\n' > test_math.py
+pytest -q
+pip freeze > requirements.txt`,
+      ps: R`py -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install pytest
+Set-Content test_math.py 'def test_add():', '    assert 1 + 1 == 2' -Encoding utf8
+pytest -q
+pip freeze > requirements.txt`
     }
   }
 ]);

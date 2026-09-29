@@ -349,7 +349,7 @@ Dockerfile
             why: "[[COPY . .]] بينسخ كل اللي في الفولدر. node_modules لوحده ممكن يبقى مئات الميجا وآلاف الملفات، وهيتسطب جوه الـ image تاني أصلًا. و .env فيه أسرار مينفعش تدخل image ممكن تترفع على registry.",
             how: R`قبل ما الـ build يبدأ، Docker بيبعت الفولدر كله (اسمه build context) للـ daemon. لو الفولدر فيه node_modules و .git، ده ممكن يبقى جيجابايت بيتنقل قبل أول تعليمة حتى.
 
-[[.dockerignore]] بيقول إيه اللي ميتبعتش. نفس صيغة .gitignore.
+[[.dockerignore]] بيقول إيه اللي ميتبعتش. صيغته شبه .gitignore، بس مش زيه بالظبط (الفرق تحت في الأخطاء).
 
 node_modules لازم يتستثنى لسببين: الحجم، وإن اللي على جهازك متبني لنظامك (ويندوز أو ماك)، ومكتبات فيها كود native مش هتشتغل على لينكس جوه الـ container. الصح إن npm ci جوه الـ container يسطّبها للينكس.
 
@@ -590,7 +590,7 @@ exec node server.js`,
 
 [[set -e]] مهم هنا: لو الـ migration فشل، السكربت يقف والـ container يخرج بـ error، بدل ما التطبيق يقوم على schema قديمة.
 
-وفي الـ Dockerfile: [[COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/]] وبعدين [[ENTRYPOINT ["docker-entrypoint.sh"]]]. ولو عايز السكربت يشغّل أي CMD، آخر سطر يبقى [[exec "$@"]].
+وفي الـ Dockerfile: [[COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/]] وبعدين [[ENTRYPOINT ["docker-entrypoint.sh"] ]]. ولو عايز السكربت يشغّل أي CMD، آخر سطر يبقى [[exec "$@"]].
 
 وبديل لو مش عايز تفكّر في ده: [[init: true]] في compose (أو [[--init]] في run) بيحط عملية صغيرة (tini) كـ PID 1 بتوصّل الإشارات وتلم العمليات الميتة.`,
             when: "أي خطوة لازم تحصل قبل التطبيق وجوه الـ container: migrate، أو توليد config من متغيرات، أو انتظار خدمة.",
@@ -998,7 +998,7 @@ networks:
             why: "سيرفر واحد عليه ٣ مواقع، وبورت 80 و 443 لواحد بس. الحل Nginx واحد قدامهم، بس هو في مشروع والتطبيقات في مشاريع تانية، وكل مشروع شبكته معزولة.",
             how: R`[[docker network create proxy]] مرة واحدة على السيرفر. في كل مشروع [[external: true]] معناها «الشبكة موجودة، انضم لها بس». ولو اسمها الحقيقي مختلف (اتعملت من مشروع compose تاني فبقت [[shared_proxy-network]] مثلًا) اكتب [[name:]] تحتها.
 
-[[networks: [default, proxy]]] بيخلي التطبيق على الشبكتين: default عشان يكلّم القاعدة بتاعته، و proxy عشان Nginx يوصله. القاعدة على default بس، فـ Nginx ولا أي مشروع تاني يقدر يوصلها.
+[[networks: [default, proxy] ]] بيخلي التطبيق على الشبكتين: default عشان يكلّم القاعدة بتاعته، و proxy عشان Nginx يوصله. القاعدة على default بس، فـ Nginx ولا أي مشروع تاني يقدر يوصلها.
 
 الـ DNS الداخلي بيسجّل اسم الخدمة واسم الـ container على كل شبكة الخدمة عليها. لو مشروعين عندهم خدمة اسمها [[app]] على نفس شبكة proxy، الاسم [[app]] بيرجع IPين، و Docker بيوزّع بينهم round-robin.
 
@@ -1120,7 +1120,7 @@ networks:
           try: "شغّل Postgres في compose على 5433، واتصل من جهازك بـ psql على 5433، وبعدين اعمل [[docker compose port db 5432]] وشوف هو فين.",
           flag: "script",
           deep: {
-            why: R`[[Bind for 0.0.0.0:5432 failed: port is already allocated]] على لينكس، أو [[ports are not available]] على ويندوز: فيه حاجة ماسكة البورت، غالبًا Postgres متسطّب على الجهاز، أو نسخة تانية من المشروع.`,
+            why: R`[[bind: address already in use]] (برنامج على الجهاز ماسك البورت، غالبًا Postgres متسطّب) أو [[Bind for 0.0.0.0:5432 failed: port is already allocated]] (container تاني ماسكه، زي نسخة تانية من المشروع) على لينكس، أو [[ports are not available]] على ويندوز: في الحالتين فيه حاجة ماسكة البورت.`,
             how: R`البورت اللي على الشمال بتاع جهازك، وده اللي بيتخانق. غيّره بس، والـ container جوه ميعرفش حاجة.
 
 والـ containers التانية على نفس الشبكة بتكلّم القاعدة على [[db:5432]]: بورت الـ container، مش بورت جهازك. البورت اللي على الشمال للي جاي من بره Docker بس.
@@ -1208,7 +1208,7 @@ docker compose -p myapp2 down`,
 docker compose images web
 docker compose exec web ls -la /usr/share/nginx/html/assets
 docker compose up -d --force-recreate web
-docker compose build --no-cache --progress=plain web`,
+docker compose --progress=plain build --no-cache web`,
           try: "غيّر نص في صفحة، وابني، وقبل ما تفتح المتصفح ادخل الـ container ودوّر على النص بـ [[grep -r]]. لو موجود والمتصفح مش شايفه، المشكلة كاش.",
           deep: {
             why: "«امسح وابني من الصفر» بياخد ربع ساعة، وبيوقع الموقع طول الوقت ده، وممكن يمسح حاجات مش تبع المشروع، وفي الآخر غالبًا المشكلة كانت كاش المتصفح.",
@@ -1701,7 +1701,7 @@ services:
 
 و [[docker compose config]] بيوريك النتيجة بعد الدمج، فتتأكد قبل ما تشغّل.`,
             when: "web و worker و scheduler من نفس الكود، أو أي خدمات بتتشارك متغيرات و restart و logging.",
-            mistakes: R`تكتب environment في خدمة فتمسح environment بتاع الـ anchor كله من غير ما تاخد بالك، والـ worker يقوم ناقصه إعدادات Redis. وتنسى إن [[x-]] لازم في أول المفتاح، فـ compose يفتكره خدمة ويطلّع error.`
+            mistakes: R`تكتب environment في خدمة فتمسح environment بتاع الـ anchor كله من غير ما تاخد بالك، والـ worker يقوم ناقصه إعدادات Redis. وتنسى إن [[x-]] لازم في أول المفتاح، فـ compose يرفضه كمفتاح مش معروف ويطلّع error.`
           },
           lines: [
             "بلوك مشترك compose بيتجاهله، واسمه app-common.",

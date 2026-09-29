@@ -6,6 +6,9 @@ const OUT = path.join(ROOT, 'dist', 'terminal.html');
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 
+// the single file has no manifest, icons or service worker next to it, so drop those links
+html = html.replace(/<link rel="(manifest|icon|apple-touch-icon)"[^>]*>\n?/g, '');
+
 html = html.replace(/<link rel="stylesheet" href="([^"]+)">/g, (_, f) => '<style>\n' + read(f) + '</style>');
 const srcs = [...html.matchAll(/<script src="([^"]+)"><\/script>/g)].map(m => m[1]);
 if (!srcs.length) throw new Error('مفيش <script src> في index.html');

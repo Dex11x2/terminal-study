@@ -466,13 +466,13 @@ xdg-open screenshot.png`,
 Cmd+Space → "code"      open VS Code
 Cmd+Space → "activity"  open Activity Monitor
 Cmd+Space → 1024*8      quick calculation
-Cmd+Space → file name → Cmd+Return   reveal it in Finder
+Cmd+Space → file name → Cmd+R        reveal it in Finder
 Cmd+,                   settings of the app in front`,
           try: "افتح Terminal و VS Code و System Settings بـ Spotlight ورا بعض من غير ماوس.",
           flag: "keys",
           deep: {
             why: "على الماك مفيش قايمة Start. Spotlight هو المدخل لكل حاجة.",
-            how: R`Spotlight بيدوّر في البرامج والملفات والإعدادات. Return يفتح النتيجة، و Cmd+Return يفتح الفولدر اللي هي فيه في Finder بدل ما يفتحها.
+            how: R`Spotlight بيدوّر في البرامج والملفات والإعدادات. Return يفتح النتيجة، و Cmd+R يفتح الفولدر اللي هي فيه في Finder بدل ما يفتحها، ولو مسكت Cmd بس هيوريك مسارها.
 
 Cmd+, (فاصلة) في أي برنامج بيفتح إعداداته، حتى VS Code والمتصفح والترمنال.
 
@@ -666,7 +666,7 @@ Cmd+Down و Cmd+Up بيخلوك تتنقل في Finder كله بالكيبورد
           title: "اتنقل بالكلمة وامسح بسرعة في أي خانة كتابة على الماك",
           desc: R`في أي مكان بتكتب فيه على الماك: Option+سهم شمال أو يمين يتنقل كلمة كلمة، و Cmd+سهم شمال أو يمين يروح أول أو آخر السطر. Option+Delete يمسح الكلمة اللي قبلك، و Cmd+Delete يمسح لأول السطر.
 
-في Terminal.app ده غالبًا شغال لوحده. في iTerm2 فعّله من Settings ← Profiles ← Keys ← Key Mappings ← Presets ← Natural Text Editing.`,
+في Terminal.app، Option+الأسهم بس اللي شغالة لوحدها، ولأول السطر وآخره ومسح كلمة استخدم اختصارات الشيل Ctrl+A و Ctrl+E و Ctrl+W. في iTerm2 فعّلهم كلهم من Settings ← Profiles ← Keys ← Key Mappings ← Presets ← Natural Text Editing.`,
           example: R`Option+Left / Right    jump one word
 Cmd+Left / Right       start / end of line
 Cmd+Up / Down          start / end of the document
@@ -674,7 +674,7 @@ Option+Delete          delete the previous word
 Cmd+Delete             delete to the start of the line
 Fn+Delete              delete forward
 iTerm2: Presets → Natural Text Editing   make these work in the terminal`,
-          try: "اكتب أمر طويل في الترمنال، ارجع لأوله بـ Cmd+Left أو Ctrl+A، وامسح كلمة من النص بـ Option+Delete.",
+          try: "اكتب أمر طويل في الترمنال، اتنقل فيه كلمة كلمة بـ Option+Left، وارجع لأوله بـ Ctrl+A، وامسح الكلمة اللي قبلك بـ Ctrl+W. وبعدين جرّب Cmd+Left و Option+Delete في خانة بحث المتصفح.",
           flag: "keys",
           deep: {
             why: "مسح أمر طويل حرف حرف، أو الرجوع لأوله بالسهم، بيضيّع وقت. الاختصارات دي نفسها في كل برامج الماك.",
@@ -1391,7 +1391,7 @@ defaults delete com.microsoft.VSCode ApplePressAndHoldEnabled`,
             why: "مستخدمين Vim ومحبي التنقل بالكيبورد بيحتاجوا التكرار. والتكرار الافتراضي على الماك بطيء على الكتير.",
             how: R`[[-g]] اختصار لـ NSGlobalDomain، يعني النظام كله. [[com.microsoft.VSCode]] يعني VS Code بس، وده أنضف لو مش عايز تفقد الحروف المشكّلة في باقي البرامج.
 
-KeyRepeat هو السرعة (رقم أصغر = أسرع)، و InitialKeyRepeat هو الانتظار قبل ما يبدأ يكرر. الأرقام دي أسرع من اللي تقدر توصله من System Settings. إعدادات الكيبورد العامة محتاجة log out وتدخل تاني عشان تسري.`,
+KeyRepeat هو السرعة (رقم أصغر = أسرع)، و InitialKeyRepeat هو الانتظار قبل ما يبدأ يكرر. 2 و 15 هما أسرع قيم في سلايدرات System Settings، وأي رقم أصغر (زي KeyRepeat 1) بيعدّي حدود السلايدر. إعدادات الكيبورد العامة محتاجة log out وتدخل تاني عشان تسري.`,
             when: "بتستخدم Vim أو إضافته، أو حاسس إن الكيبورد بطيء في التكرار.",
             mistakes: "تكتب [[-g]] مع ApplePressAndHoldEnabled وتنسى، وبعدين تحتاج تكتب حرف بتشكيل ومش عارف ليه القايمة مش بتظهر. واختيار أرقام صغيرة جدًا بيخلي الكتابة العادية تطلع حروف متكررة."
           },

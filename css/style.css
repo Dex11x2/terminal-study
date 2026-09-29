@@ -306,3 +306,25 @@ body[data-shell="os"]{--accent:var(--a-os);--t-bg:#111827;--t-fg:#f3f4f6;--t-pr:
 body[data-shell="vscode"]{--accent:var(--a-vscode);--t-bg:#1e1e1e;--t-fg:#d4d4d4;--t-pr:#4fc1ff;--t-cm:#6a9955;--t-bar:#2d2d2d}
 .sw[data-s="vscode"] .top{background:#1e1e1e;color:#d4d4d4}
 .sol .term[data-k="vscode"]{--t-bg:#1e1e1e;--t-fg:#d4d4d4;--t-pr:#4fc1ff;--t-cm:#6a9955;--t-bar:#2d2d2d}
+
+/* forgotten-cards review button + compact toolbar on phones */
+.quiz-btn[hidden]{display:none}
+#weakBtn{border-style:solid;border-color:var(--danger);color:var(--danger)}
+#weakBtn b{color:inherit}
+@media (max-width:600px){
+  .bar .wrap{padding-top:8px;padding-bottom:6px}
+  .row{gap:8px}
+  .search input{padding:8px 0}
+  .prog{font-size:13px}
+  .meter{margin-top:6px}
+  .lvls{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-top:8px;padding-bottom:2px}
+  .lvls::-webkit-scrollbar{display:none}
+  .lvls>*{flex:0 0 auto;white-space:nowrap}
+  #fcBtn{margin-inline-start:0}
+  .chips{padding-top:6px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .row{flex-wrap:nowrap}
+  .search{flex:1 1 0}
+  .search kbd{display:none}
+  html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 150px)}
+}

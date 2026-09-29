@@ -2,7 +2,8 @@
 /* ---------- helpers ---------- */
 const $ = s => document.querySelector(s);
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const fmt = s => esc(s).replace(/\[\[(.+?)\]\]/g, '<code>$1</code>');
+// [[code]] → <code>; the \]* keeps closing brackets that belong to the code, e.g. [[arr[0]]] → arr[0]
+const fmt = s => esc(s).replace(/\[\[(.+?\]*)\]\]/g, '<code>$1</code>');
 const store = {
   get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
@@ -144,6 +145,7 @@ function cardProgress(){
 }
 function updateProgress(){
   cardProgress();
+  updateWeak();
   let total = 0, done = 0;
   DATA[shell].filter(c => !level || c.l === level).forEach(c => c.items.forEach(it => { total++; if (store.get('done:'+shell+':'+it[0])==='1') done++; }));
   $('#doneN').textContent = AR(done);
@@ -189,31 +191,54 @@ function fcPick(){
   for (let i = 0; i < w.length; i++){ r -= w[i]; if (r <= 0 && w[i]) return fc.pool[i]; }
   return fc.pool.find(x => x.key!==fc.last) || fc.pool[0];
 }
+const tabName = k => $('.sw[data-s="'+k+'"] .top b') ? $('.sw[data-s="'+k+'"] .top b').textContent : SHELLS[k].label;
+// a card counts as "forgotten" while it was missed more often than recalled
+const isWeak = key => { const st = fcStats(key); return st.m > st.k; };
+function weakPool(){
+  const pool = [];
+  for (const k in DATA) DATA[k].forEach(cat => cat.items.forEach(([c,t,d,ex,tr,flag]) => { if (isWeak(k+':'+c)) pool.push({key:k+':'+c, tab:k, cat:cat.t, c, t, d, ex, flag}); }));
+  return pool;
+}
+function updateWeak(){
+  let n = 0;
+  store.keys().forEach(k => { if (k.startsWith('fc:') && isWeak(k.slice(3))) n++; });
+  $('#weakN').textContent = AR(n);
+  $('#weakBtn').hidden = !n;
+}
+function withTab(tab, fn){ const prev = shell; shell = tab; try{ return fn(); } finally { shell = prev; } }
 function fcNext(){
+  if (!fc.pool.length){ fcClose(); return; }
   const x = fc.cur = fcPick(); fc.last = x.key;
   const st = fcStats(x.key);
-  $('#fcMeta').textContent = x.cat + (st.m ? ' · نسيتها '+AR(st.m)+' مرة' : '');
+  $('#fcMeta').textContent = (fc.weak ? tabName(x.tab)+' › ' : '') + x.cat + (st.m ? ' · نسيتها '+AR(st.m)+' مرة' : '');
   $('#fcQ').textContent = x.t || x.c;
-  $('#fcHint').textContent = shell==='glossary' ? 'إيه المصطلح ده، وبيعمل إيه؟' : 'إيه الأمر اللي بيعمل كده؟ قوله بصوت عالي أو اكتبه في دماغك، وبعدين اكشف.';
+  $('#fcHint').textContent = x.tab==='glossary' ? 'إيه المصطلح ده، وبيعمل إيه؟' : 'إيه الأمر اللي بيعمل كده؟ قوله بصوت عالي أو اكتبه في دماغك، وبعدين اكشف.';
   $('#fcAns').hidden = true; $('#fcShow').hidden = false; $('#fcKnow').hidden = $('#fcMiss').hidden = true;
-  $('#fcStat').textContent = (fc.n ? 'الجلسة دي: عرفت '+AR(fc.ok)+' من '+AR(fc.n)+'. ' : 'البطاقات من '+$('#shellName').textContent+' ('+AR(fc.pool.length)+' بطاقة). ')+'مسافة تكشف، و 1 عرفتها، و 2 لسه.';
+  const from = fc.weak ? 'اللي نسيته من كل التابات ('+AR(fc.pool.length)+' بطاقة). ' : 'البطاقات من '+$('#shellName').textContent+' ('+AR(fc.pool.length)+' بطاقة). ';
+  $('#fcStat').textContent = (fc.n ? 'الجلسة دي: عرفت '+AR(fc.ok)+' من '+AR(fc.n)+'. ' : from)+'مسافة تكشف، و 1 عرفتها، و 2 لسه.';
   $('#fcShow').focus();
 }
 function fcReveal(){
   const x = fc.cur, sum = x.d ? x.d.split(/\n\s*\n/)[0] : '';
-  $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? termBlock(x.ex, x.c, x.flag) : '');
+  $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? withTab(x.tab, () => termBlock(x.ex, x.c, x.flag)) : '');
   $('#fcAns').hidden = false; $('#fcShow').hidden = true; $('#fcKnow').hidden = $('#fcMiss').hidden = false;
   $('#fcKnow').focus();
 }
 function fcMark(ok){
+  if (!fc.cur || (fc.weak && !fc.pool.length)) return;
   const st = fcStats(fc.cur.key); ok ? st.k++ : st.m++;
   store.set('fc:'+fc.cur.key, JSON.stringify(st));
   fc.n++; if (ok) fc.ok++;
+  // in the forgotten-cards review, a card leaves the pile once it's recalled more than missed
+  if (fc.weak && !isWeak(fc.cur.key)) fc.pool = fc.pool.filter(x => x.key !== fc.cur.key);
+  updateWeak();
+  if (fc.weak && !fc.pool.length){ $('#fcQ').textContent = 'خلصت كل اللي كنت ناسيه'; $('#fcHint').textContent = 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' في الجلسة دي. ارجع بعد يوم وجرّب «اختبرني» تاني.'; $('#fcAns').hidden = true; $('#fcKnow').hidden = $('#fcMiss').hidden = true; $('#fcShow').hidden = true; $('#fcStat').textContent = ''; $('#fcClose').focus(); return; }
   fcNext();
 }
-function fcOpen(){
-  fc.pool = []; fc.ok = fc.n = 0; fc.last = null;
-  DATA[shell].filter(c => !level || c.l === level).forEach(cat => cat.items.forEach(([c,t,d,ex,tr,flag]) => fc.pool.push({key:shell+':'+c, cat:cat.t, c, t, d, ex, flag})));
+function fcOpen(weak){
+  fc.pool = []; fc.ok = fc.n = 0; fc.last = null; fc.weak = !!weak;
+  if (weak) fc.pool = weakPool();
+  else DATA[shell].filter(c => !level || c.l === level).forEach(cat => cat.items.forEach(([c,t,d,ex,tr,flag]) => fc.pool.push({key:shell+':'+c, tab:shell, cat:cat.t, c, t, d, ex, flag})));
   if (!fc.pool.length) return;
   const dlg = $('#fc');
   if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
@@ -263,6 +288,7 @@ document.addEventListener('click', e => {
   const nb = e.target.closest('.note-btn');
   if (nb){ const ta = nb.nextElementSibling, on = !ta.classList.contains('open'); ta.classList.toggle('open', on); nb.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) ta.focus(); return; }
   if (e.target.closest('#fcBtn')){ fcOpen(); return; }
+  if (e.target.closest('#weakBtn')){ fcOpen(true); return; }
   if (e.target.closest('#fcClose')){ fcClose(); return; }
   if (e.target.closest('#fcShow')){ fcReveal(); return; }
   if (e.target.closest('#fcKnow')){ fcMark(true); return; }
@@ -349,3 +375,9 @@ if ([0,1,2,3].includes(savedL)){ level = savedL; markLevel(); }
 const fromHash = decodeURIComponent(location.hash.slice(1)), saved = store.get('shell');
 setShell(DATA[fromHash] ? fromHash : DATA[saved] ? saved : 'start');
 window.addEventListener('hashchange', () => { const h = decodeURIComponent(location.hash.slice(1)); if (DATA[h] && h !== shell) setShell(h); });
+
+/* ---------- offline (PWA) ---------- */
+// only on the hosted site: the single-file copy in dist/ has no manifest, and file:// can't run service workers
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol) && document.querySelector('link[rel="manifest"]')){
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}

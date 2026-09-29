@@ -230,15 +230,15 @@ npx vitest run --reporter=verbose`,
             why: "lint و tsc بيقولوا الكود «سليم شكلًا». بس [[calculateTotal]] بترجع الرقم الصح؟ الخصم بيتحسب قبل الضريبة ولا بعدها؟ ده محدش يعرفه غير لو شغّلت الكود فعلًا بمدخلات معروفة وقارنت الناتج.",
             how: R`vitest بيدوّر على ملفات [[*.test.ts]] و [[*.spec.ts]] (وأخواتهم js و tsx) ويشغّلها. جوه الملف: [[describe]] مجموعة، و [[it]] أو [[test]] اختبار واحد، و [[expect(x).toBe(y)]] الشرط.
 
-الفرق المهم: [[vitest]] من غير حاجة بيقعد شغال (watch) في ترمنال عادي، ويعيد الاختبارات المتأثرة بس لما تحفظ. بس لو لقى المتغير [[CI]] (موجود في GitHub Actions) بيشتغل مرة ويقفل. عشان كده في السكربتات اكتب [[vitest run]] صريحة ومتعتمدش على التخمين.
+الفرق المهم: [[vitest]] من غير حاجة بيقعد شغال (watch) في ترمنال عادي، ويعيد الاختبارات المتأثرة بس لما تحفظ. بس لو لقى المتغير [[CI]] (موجود في GitHub Actions)، أو الترمنال مش تفاعلي، بيشتغل مرة ويقفل. عشان كده في السكربتات اكتب [[vitest run]] صريحة ومتعتمدش على التخمين.
 
 وبيستخدم إعدادات Vite نفسها (aliases و plugins)، فبيفهم TypeScript و JSX من غير إعداد. ولو محتاج DOM (اختبارات React components) بتحط [[environment: 'jsdom']] في [[vitest.config.ts]].
 
-[[-t]] بيفلتر بجزء من اسم الاختبار، والمسار بيفلتر بالملفات اللي مسارها فيه الكلمة دي. و [[--reporter=verbose]] بيطبع كل اختبار باسمه بدل النقط.
+[[-t]] بيفلتر بجزء من اسم الاختبار، والمسار بيفلتر بالملفات اللي مسارها فيه الكلمة دي. و [[--reporter=verbose]] بيطبع كل اختبار باسمه بدل ملخص لكل ملف.
 
 ولمشروع Node صغير من غير Vite، Node نفسه فيه [[node --test]] (في تاب Node).`,
             when: "watch وانت بتكتب الكود. و [[run]] في [[scripts.test]] و CI و pre-push.",
-            mistakes: R`سكربت [["test": "vitest"]] من غير run، فـ hook أو سكربت محلي يعلّق مستني في watch للأبد. واختبارات بتعتمد على بعض أو على الترتيب (واحد بيسيب داتا والتاني بيعتمد عليها)، فتنجح لوحدها وتقع مع بعض. وتنسى [[await]] قبل [[expect(promise).rejects]]، فالاختبار يعدّي وهو فاشل.`
+            mistakes: R`سكربت [["test": "vitest"]] من غير run، فـ [[npm run check]] في ترمنال عادي يقعد في watch ومبيكمّلش للخطوة اللي بعده، وتفتكره علّق. واختبارات بتعتمد على بعض أو على الترتيب (واحد بيسيب داتا والتاني بيعتمد عليها)، فتنجح لوحدها وتقع مع بعض. وتنسى [[await]] قبل [[expect(promise).rejects]]، فالاختبار يعدّي وهو فاشل.`
           },
           lines: [
             "شغّل الاختبارات وسيبها تعيد مع كل حفظ (watch).",
@@ -343,7 +343,7 @@ git config core.hooksPath`,
 
 و [[prepare]] سكربت خاص: npm و pnpm بيشغّلوه لوحدهم بعد [[install]]. فأي حد يعمل clone و install، الـ hooks تتفعّل عنده من غير ما يعمل حاجة. و [[git config core.hooksPath]] بيقولك اتفعّلت فعلًا ولا لأ (المفروض يطبع [[.husky/_]]).`,
             when: "أي مشروع فيه lint أو اختبارات، خصوصًا لو عليه أكتر من شخص.",
-            mistakes: R`تسطّب husky ومتعملش install بعدها (أو عملته بـ [[--ignore-scripts]])، فـ prepare مشتغلش و [[core.hooksPath]] فاضي. وفي Docker بـ [[npm ci --omit=dev]]، الـ prepare بيحاول يشغّل husky وهو مش متسطّب فالـ install يقع: خلّي السكربت [[husky || true]] أو شغّل بـ [[HUSKY=0]]. والـ hooks تبقى تقيلة (اختبارات المشروع كله قبل كل commit) فالناس تتخطّاها: خلّي pre-commit سريع (lint-staged)، والتقيل في pre-push أو CI.`
+            mistakes: R`تسطّب husky ومتعملش install بعدها (أو عملته بـ [[--ignore-scripts]])، فـ prepare مشتغلش و [[core.hooksPath]] فاضي. وفي Docker بـ [[npm ci --omit=dev]]، الـ prepare بيحاول يشغّل husky وهو مش متسطّب فالـ install يقع: خلّي السكربت [[husky || true]]. ([[HUSKY=0]] بيقفل husky لو متسطّب، زي CI، بس مبيمنعش «husky: not found».) والـ hooks تبقى تقيلة (اختبارات المشروع كله قبل كل commit) فالناس تتخطّاها: خلّي pre-commit سريع (lint-staged)، والتقيل في pre-push أو CI.`
           },
           lines: [
             "سطّب husky كـ dev dependency.",
@@ -516,7 +516,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
           node-version: 24

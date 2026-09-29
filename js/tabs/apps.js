@@ -566,7 +566,7 @@ cd android && ./gradlew assembleRelease`,
 
 [[-list -v]] بيعرض اللي في الملف وبصمة الشهادة (SHA-256)، ودي اللي بتحتاجها لـ Google Sign-In أو Firebase.
 
-ربطه بـ Gradle: في [[android/app/build.gradle]] جوه [[signingConfigs { release { ... } }]] بتقرا القيم من متغيرات بيئة: [[storeFile file(System.getenv("RELEASE_KEYSTORE_FILE"))]] و [[storePassword System.getenv("RELEASE_STORE_PASSWORD")]] وكمان keyAlias و keyPassword، وبعدين في [[buildTypes { release { signingConfig signingConfigs.release } }]]. كده مفيش ولا باسورد في الكود، والـ CI بيدّي نفس المتغيرات.
+ربطه بـ Gradle: في [[android/app/build.gradle]] جوه [[signingConfigs { release { ... } }]] بتقرا القيم من متغيرات بيئة: [[storeFile file(System.getenv("RELEASE_KEYSTORE_FILE"))]] و [[storePassword System.getenv("RELEASE_STORE_PASSWORD")]] وكمان [[keyAlias System.getenv("RELEASE_KEY_ALIAS")]] و [[keyPassword System.getenv("RELEASE_KEY_PASSWORD")]] (في PKCS12 باسورد المفتاح هو نفس باسورد الـ keystore)، وبعدين في [[buildTypes { release { signingConfig signingConfigs.release } }]]. كده مفيش ولا باسورد في الكود، والـ CI بيدّي نفس المتغيرات.
 
 [[git check-ignore -v]] بيقولك الملف متجاهَل بسبب أنهي سطر. لو مطبعش حاجة يبقى مش متجاهَل.
 
@@ -631,6 +631,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RELEASE_STORE_PASSWORD: $__{{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      RELEASE_KEY_ALIAS: myapp
+      RELEASE_KEY_PASSWORD: $__{{ secrets.ANDROID_KEYSTORE_PASSWORD }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -658,7 +660,7 @@ jobs:
 
 [[setup-java]] بيسطّب JDK (temurin توزيعة مجانية). و Android SDK موجود جاهز على ubuntu-latest.
 
-الـ keystore: الـ secret فيه الملف كنص base64، والـ step بترجّعه ملف في [[$RUNNER_TEMP]] (بيتمسح مع نهاية الـ job) وتحط مساره في [[$GITHUB_ENV]]. و build.gradle بيقرا [[RELEASE_KEYSTORE_FILE]] و [[RELEASE_STORE_PASSWORD]] من البيئة (درس keytool). ولو الـ secret فاضي الـ job يفشل برسالة واضحة، مش يكمّل.
+الـ keystore: الـ secret فيه الملف كنص base64، والـ step بترجّعه ملف في [[$RUNNER_TEMP]] (بيتمسح مع نهاية الـ job) وتحط مساره في [[$GITHUB_ENV]]. و build.gradle بيقرا [[RELEASE_KEYSTORE_FILE]] و [[RELEASE_STORE_PASSWORD]] و [[RELEASE_KEY_ALIAS]] و [[RELEASE_KEY_PASSWORD]] من البيئة (درس keytool)؛ لو واحد منهم ناقص الـ build بيفشل. ولو الـ secret فاضي الـ job يفشل برسالة واضحة، مش يكمّل.
 
 [[sed]] بيحط رقم الـ run كـ versionCode، فكل build رقمه أكبر من اللي قبله.
 
@@ -680,6 +682,8 @@ jobs:
             "ماكينة أوبونتو (فيها Android SDK جاهز).",
             "متغيرات للـ job كله.",
             "باسورد الـ keystore (Gradle بيقراه).",
+            "اسم المفتاح جوه الـ keystore (الـ alias).",
+            "باسورد المفتاح: في PKCS12 هو نفس باسورد الـ keystore.",
             "الخطوات.",
             "الكود.",
             "Node.",

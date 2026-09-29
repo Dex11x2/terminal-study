@@ -30,7 +30,7 @@ bash -n deploy.sh && shellcheck deploy.sh`,
       items: [
         {
           cmd: "SETUP: أول يوم",
-          title: "أول يوم في مشروع جديد: ريبو وقاعدة بيانات",
+          title: "بداية أي مشروع جديد: ريبو وقاعدة بيانات",
           desc: R`السلسلة اللي بتعملها أول يوم في أي مشروع ويب فيه قاعدة بيانات: Git، وريبو private على GitHub، وربط المشروع بـ Supabase، وتطبيق الـ schema بـ migrations بدل النسخ واللصق في SQL Editor.
 
 الفكرة إن كل خطوة تتكرر على أي جهاز أو أي بيئة بنفس الأوامر، فزميلك (أو انت بعد شهرين) يقوم المشروع من غير ما يسألك.`,
@@ -583,10 +583,10 @@ chrome-sandbox على لينكس لازم يبقى ملك root وعليه setuid
           example: R`npm install
 npm run build
 npx cap sync android
+npx @capacitor/assets generate --android --iconBackgroundColor '#0f172a' --splashBackgroundColor '#0f172a'
 npx cap open android
 cd android && ./gradlew assembleDebug && cd ..
 # الناتج: android/app/build/outputs/apk/debug/app-debug.apk
-npx @capacitor/assets generate --android --iconBackgroundColor '#0f172a' --splashBackgroundColor '#0f172a'
 adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 # iOS: على Mac عليه Xcode بس
 npm install @capacitor/ios
@@ -616,9 +616,9 @@ npx cap open ios`,
             "سطّب المكتبات.",
             "ابني الموقع لـ dist.",
             "انسخ dist جوه مشروع الأندرويد.",
+            "ولّد الأيقونات وشاشة البداية من صورة واحدة (قبل البناء، عشان تدخل في الـ APK).",
             "افتح Android Studio (اختياري).",
             "ابني APK debug من الترمنال.",
-            "ولّد الأيقونات وشاشة البداية من صورة واحدة.",
             "سطّب على الموبايل الموصّل، فوق القديم.",
             "ضيف منصة iOS.",
             "اعمل مشروع Xcode.",
@@ -654,7 +654,7 @@ if ! command -v docker >/dev/null; then
   sh /tmp/get-docker.sh
   rm /tmp/get-docker.sh
 fi
-docker --version && docker compose version
+docker --version; docker compose version
 
 if ! id "$APP_USER" >/dev/null 2>&1; then
   adduser --disabled-password --gecos "" "$APP_USER"
@@ -701,7 +701,7 @@ echo "now, from a NEW terminal: ssh $APP_USER@203.0.113.10 docker ps"`,
             "...شغّله.",
             "...وامسحه.",
             "نهاية الـ if.",
-            "اتأكد إن Docker و compose شغالين (لو لأ، [[set -e]] هيوقف هنا).",
+            "اتأكد إن Docker و compose شغالين (لو لأ، [[set -e]] هيوقف هنا). مفصولين بـ [[;]] مش [[&&]]، لأن فشل أول أمر في [[&&]] مش بيوقف [[set -e]].",
             "لو اليوزر مش موجود...",
             R`...اعمله من غير باسورد ومن غير أسئلة ([[--gecos ""]]).`,
             "...اعمل فولدر .ssh بتاعه بصلاحيات 700 وملكه.",
@@ -1313,7 +1313,7 @@ EMAIL=you@example.com
 
 IP=$(curl -4 -s --max-time 10 https://api.ipify.org) || { echo "can't get server IP" >&2; exit 1; }
 for d in "$DOMAIN" "www.$DOMAIN"; do
-  got=$(getent ahostsv4 "$d" | awk '{print $1; exit}')
+  got=$(getent ahostsv4 "$d" | awk '{print $1; exit}' || true)
   [ "$got" = "$IP" ] || { echo "$d -> $__{got:-nothing}, server is $IP: fix DNS first" >&2; exit 1; }
 done
 
@@ -1365,7 +1365,7 @@ webroot: certbot بيكتب ملف تحدي في [[certbot/www]]، و Nginx بي
             "الإيميل لحساب Let's Encrypt.",
             "IP السيرفر العام، ولو فشل اقف برسالة.",
             "لف على الدومين و www...",
-            "...هات الـ IPv4 اللي بيشاور عليه.",
+            "...هات الـ IPv4 اللي بيشاور عليه ([[|| true]]: لو الدومين مش متسجّل getent بيفشل، ومع pipefail و [[set -e]] السكربت كان هيقع ساكت من غير رسالة).",
             "...لو مش IP السيرفر اقف قبل ما تكلّم Let's Encrypt.",
             "نهاية اللوب.",
             "الفولدرات اللي هتتركّب في Nginx و certbot.",
@@ -1404,7 +1404,8 @@ if docker compose run --rm --entrypoint sh certbot -c 'test -f /etc/letsencrypt/
   echo "renewed, nginx reloaded"
 fi
 
-END=$(echo | openssl s_client -connect "$DOMAIN:443" -servername "$DOMAIN" 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2)
+END=$(echo | openssl s_client -connect "$DOMAIN:443" -servername "$DOMAIN" 2>/dev/null | openssl x509 -noout -enddate | cut -d= -f2) || true
+[ -n "$END" ] || { echo "ALERT: $DOMAIN unreachable or no certificate served" >&2; exit 1; }
 DAYS=$(( ( $(date -d "$END" +%s) - $(date +%s) ) / 86400 ))
 echo "served certificate: $DAYS days left"
 [ "$DAYS" -ge 14 ] || { echo "ALERT: $DOMAIN expires in $DAYS days" >&2; exit 1; }`,
@@ -1440,7 +1441,8 @@ echo "served certificate: $DAYS days left"
             "...واعمل reload عشان يقرا الشهادة الجديدة.",
             "...وقول.",
             "نهاية الـ if.",
-            "تاريخ انتهاء الشهادة اللي الموقع بيقدّمها فعلًا.",
+            "تاريخ انتهاء الشهادة اللي الموقع بيقدّمها فعلًا. و || true عشان لو الموقع مش بيرد، set -e ميقفلش السكربت ساكت.",
+            "لو مفيش تاريخ (الموقع واقع أو مفيش شهادة)، ده في حد ذاته تنبيه: اطبعه واخرج بفشل.",
             "كام يوم فاضل.",
             "اطبعه في اللوج.",
             "لو أقل من ١٤ يوم، اطبع تنبيه واخرج بفشل."
@@ -1826,7 +1828,7 @@ screenshots/`,
 
 .dockerignore: node_modules و .next عشان ميتنسخوش من جهازك (ويتلخبطوا مع اللي اتبنى جوه)، و [[.env*]] عشان الأسرار متدخلش الـ image أبدًا. وخد بالك إن الـ patterns فيه مش زي .gitignore: [[*.png]] بتطابق صور الجذر بس، لكن [[**/*.png]] بتطابق كل الصور في كل الفولدرات.`,
             when: "أي مشروع Next.js هتنشره بـ Docker. والـ healthcheck حطه في compose (الدرس اللي قبله).",
-            mistakes: R`في مشروع حقيقي كان الـ .dockerignore فيه سطر بيستبعد صور png عشان يشيل الـ screenshots اللي في المشروع، فصور public (اللوجو والأيقونات) اختفت من الـ build. محليًا كل حاجة شغالة، وجوه الـ container الصور بـ 404. خلي الاستبعاد لفولدر محدد.
+            mistakes: R`في مشروع حقيقي كان الـ .dockerignore فيه [[**/*.png]] عشان يشيل الـ screenshots اللي في المشروع، فصور public (اللوجو والأيقونات) اختفت من الـ build. محليًا كل حاجة شغالة، وجوه الـ container الصور بـ 404. خلي الاستبعاد لفولدر محدد.
 
 وفي مشروع تاني كان مفتاح الإدارة لقاعدة البيانات و secret الدفع متبعتين كـ [[ARG]] و [[ENV]] في مرحلة البناء، فمحفوظين في طبقات الـ image وبيبانوا في [[docker history]]. الصح: العام بس وقت البناء، والأسرار وقت التشغيل (أو [[RUN --mount=type=secret]] لو البناء نفسه محتاجها). وكان [[npm install --legacy-peer-deps]] بيخبّي تعارضات النسخ، و [[chown -R]] بيعمل طبقة كبيرة زيادة، ومكتبات بناء تقيلة (vips-dev) في مرحلة التشغيل. وكان الـ entrypoint بيشغّل migration على قاعدة الإنتاج مع كل تشغيل container، بتوكن إدارة كامل، وكان فيه ملفين entrypoint واحد بيشاور على .js والتاني على .mjs.`
           },
@@ -2359,9 +2361,9 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with: { node-version: 22, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - name: Format
@@ -2378,7 +2380,7 @@ jobs:
           flag: "script",
           deep: {
             why: "من غير CI، «شغال عندي» هو الاختبار الوحيد. ومن غير ترتيب، أول غلطة تنسيق بتستنى build ٥ دقايق عشان تظهر.",
-            how: R`[[pnpm/action-setup@v4]] من غير [[version]] بيقرا نسخة pnpm من [[packageManager]] في package.json، فالنسخة في مكان واحد.
+            how: R`[[pnpm/action-setup@v6]] من غير [[version]] بيقرا نسخة pnpm من [[packageManager]] في package.json، فالنسخة في مكان واحد.
 
 [[cache: pnpm]] في setup-node بيحفظ الـ store بتاع pnpm بين الـ runs. و [[--frozen-lockfile]] بيفشل لو pnpm-lock.yaml مش متوافق مع package.json، بدل ما يعدّله في صمت.
 
@@ -2448,10 +2450,10 @@ jobs:
       DATABASE_URL: postgresql://ci:ci@localhost:5432/myapp
       AUTH_SECRET: ci-only-not-a-real-secret
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with: { package_json_file: web/package.json }
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with: { node-version: 22, cache: pnpm, cache-dependency-path: web/pnpm-lock.yaml }
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec prisma generate
@@ -2530,7 +2532,7 @@ jobs:
   types-drift:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: supabase/setup-cli@v1
       - run: supabase gen types typescript --project-id "$PROJECT_REF" > lib/supabase/database.types.ts
         env:
@@ -2773,7 +2775,7 @@ make بيفك [[$(VAR)]] الأول، فلو عايز [[$]] توصل للـ shel
 
 [[migrate]] بيعدّي على الملفات بترتيب الاسم، و [[-1]] بيطبّق كل ملف في transaction واحدة، و [[|| exit 1]] بيوقف عند أول فشل. وكل سطر بيتنفّذ في shell لوحده، فعشان كده [[cd app && ...]] في سطر واحد.`,
             when: "أي مشروع فيه أوامر بتتكرر، خصوصًا compose وقواعد بيانات. على ويندوز make مش موجود غير في WSL أو Git Bash (بعد تسطيبه). compose في تاب Docker، و psql في تاب PostgreSQL.",
-            mistakes: R`في مشروع حقيقي كان [[DBUSER = $$(grep ...)]] بـ [[=]] مش [[:=]]، فبيتحسب في كل مرة PSQL يتستخدم (جوه لوب الـ migrate يعني مع كل ملف).
+            mistakes: R`في مشروع حقيقي كان [[DBUSER = $$(grep ...)]]. الـ [[$$]] بتوصل للـ shell كـ [[$(grep ...)]] زي ما هي، فالـ grep بيتنفّذ في كل مرة PSQL يتستخدم (جوه لوب الـ migrate يعني مع كل ملف). الصح [[$(shell ...)]] مع [[:=]]، فـ make نفسه يحسبها مرة واحدة.
 
 ولو ملف migration فشل في النص، الهجرات اللي قبله اتطبقت خلاص، ومكانش فيه transaction لكل ملف، فالملف اللي فشل ساب نصه متطبق. [[-1]] بيحل الجزء ده.
 

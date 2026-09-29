@@ -926,10 +926,10 @@ jq -Rs '{query: .}' < db/ensure_schema.sql \
 psql "$SUPABASE_DB_URL" -c "\dt"
 pg_dump "$SUPABASE_DB_URL" -Fc --schema=public -f supabase.dump
 psql "$SUPABASE_DB_URL" -c "SELECT count(*) FROM pg_stat_activity;"`,
-          try: R`خد الـ connection string من Settings ثم Database في Supabase، واتصل بـ psql، واعمل [[\dt]] وشوف جداولك.`,
+          try: R`خد الـ connection string من زرار Connect فوق في لوحة Supabase، واتصل بـ psql، واعمل [[\dt]] وشوف جداولك.`,
           deep: {
             why: "لوحة Supabase فيها SQL editor، بس للباك أب والـ migrations وتحليل الأداء محتاج الأدوات الحقيقية. وقاعدتهم Postgres عادي.",
-            how: R`في Settings ثم Database فيه connection strings. اليوزر اسمه [[postgres.PROJECT_REF]] (مع الـ ref لأن الاتصال بيعدّي على pooler مشترك). والباسورد اللي حددته عند إنشاء المشروع.
+            how: R`زرار Connect فوق في لوحة التحكم فيه الـ connection strings. اليوزر اسمه [[postgres.PROJECT_REF]] (مع الـ ref لأن الاتصال بيعدّي على pooler مشترك). والباسورد اللي حددته عند إنشاء المشروع.
 
 بورت [[5432]] على الـ pooler هو session mode: كل الميزات، للـ migrations و pg_dump وأي حاجة إدارية لو جهازك مفيهوش IPv6 (المباشر [[db.REF.supabase.co]] IPv6 بس). بورت [[6543]] transaction mode عبر Supavisor: للتطبيق، بس مش بيدعم prepared statements ولا بعض الميزات، عشان كده [[?pgbouncer=true]] مع Prisma.
 

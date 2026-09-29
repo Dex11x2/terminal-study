@@ -134,6 +134,20 @@ TAB("glossary", {
           desc: "٣ أرقام في [[uptime]]: كام عملية بتشتغل أو مستنية المعالج في آخر ١ و ٥ و ١٥ دقيقة. قارنها بعدد الأنوية.",
           example: "uptime; nproc",
           try: "bash المستوى ٢: [[top / htop]]"
+        },
+        {
+          cmd: "PID 1",
+          title: "أول عملية",
+          desc: "أول عملية بتقوم في النظام أو في الـ container، وكل الباقي عيالها. جوه Docker هي اللي بتستلم SIGTERM من [[docker stop]]. لو كانت شيل مش بيوصّل الإشارة، التطبيق بيتقتل بعد ١٠ ثواني بدل ما يقفل بأدب، والحل [[exec]] في آخر الـ entrypoint أو [[init: true]].",
+          example: R`docker exec myapp cat /proc/1/cmdline | tr '\0' ' '`,
+          try: "Docker المستوى ٢: [[entrypoint.sh و exec]]"
+        },
+        {
+          cmd: "inode",
+          title: "هوية الملف الحقيقية",
+          desc: "رقم على الديسك فيه بيانات الملف: الحجم والصلاحيات ومكانه. الاسم في الفولدر مجرد لافتة بتشاور عليه. عشان كده محرر بيكتب ملف جديد بنفس الاسم بيغيّر الـ inode، والـ container اللي عامل bind mount للملف القديم مش بيشوف التعديل.",
+          example: "ls -i nginx.conf",
+          try: "bash المستوى ٣: [[cat > (نفس الـ inode)]]"
         }
       ]
     },
@@ -489,6 +503,185 @@ TAB("glossary", {
           desc: R`ويندوز بينهي السطر بحرفين [[\r\n]]، ولينكس بحرف واحد [[\n]]. سكربت bash اتكتب على ويندوز بيطلع «bad interpreter» أو [[$'\r']]. الحل [[.gitattributes]] أو [[dos2unix]].`,
           example: "file deploy.sh",
           try: "WSL المستوى ٢: [[Git و line endings]]"
+        },
+        {
+          cmd: "monorepo / workspace",
+          title: "كذا مشروع في ريبو واحد",
+          desc: "ريبو واحد فيه كذا باكدج: api و web وكود مشترك. الـ workspace (npm أو pnpm) بيسطّب الكل من الجذر مرة واحدة، ويربط الباكدج المشتركة لينك بدل ما يجيبها من npm. و [[workspace:*]] في package.json معناها «النسخة اللي هنا في الريبو».",
+          example: "cat pnpm-workspace.yaml",
+          try: "Node المستوى ٢: [[pnpm-workspace.yaml و workspace:*]]"
+        },
+        {
+          cmd: "venv",
+          title: "بيئة Python معزولة",
+          desc: "فولدر جوه المشروع ([[.venv]]) فيه Python ومكتبات المشروع ده بس، فكل مشروع ليه نسخه من غير ما يبوّظ التاني أو النظام. بعد [[activate]]، [[python]] و [[pip]] بيشاوروا عليه، وبيظهر [[(.venv)]] في الـ prompt.",
+          example: "python3 -m venv .venv && . .venv/bin/activate && which python",
+          try: "Python المستوى ١: [[python3 -m venv .venv]]"
+        },
+        {
+          cmd: "pip / requirements.txt",
+          title: "مكتبات Python",
+          desc: "pip مدير باكدجات Python، زي npm. [[requirements.txt]] لستة مكتبات المشروع، مكتبة في كل سطر وغالبًا بنسختها، زي dependencies في package.json. بتتسطّب كلها جوه الـ venv بأمر واحد.",
+          example: "pip install -r requirements.txt",
+          try: "Python المستوى ١: [[pip install -r requirements.txt]]"
+        },
+        {
+          cmd: "ON_ERROR_STOP",
+          title: "psql يقف عند أول غلطة",
+          desc: "psql افتراضيًا لو سطر في ملف SQL فشل، بيطبع error ويكمّل اللي بعده، وفي الآخر يرجع exit code 0، فالسكربت يفتكر كل حاجة نجحت. [[-v ON_ERROR_STOP=1]] بيخليه يقف ويرجع رقم فشل، وده لازم في أي migration أو سكربت.",
+          example: R`psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f migration.sql`,
+          try: "PostgreSQL المستوى ١: [[تشغيل SQL من ملف]]"
+        },
+        {
+          cmd: "RLS",
+          title: "صلاحيات على مستوى الصف",
+          desc: "Row Level Security: policies جوه Postgres بتحدد كل يوزر يقرا ويكتب أنهي صفوف. في Supabase الواجهة بتكلّم القاعدة مباشرة، فـ RLS هي الحماية الوحيدة. جدول من غيرها أي حد معاه الـ anon key يقراه كله.",
+          example: R`psql -c "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';"`,
+          try: "PostgreSQL المستوى ٣: [[Row Level Security]]"
+        },
+        {
+          cmd: "dump / restore",
+          title: "نسخة من القاعدة ورجوعها",
+          desc: "الـ dump ملف فيه القاعدة (الهيكل والبيانات) في لحظة معينة: [[pg_dump]] لـ Postgres و [[mongodump]] لـ Mongo. الـ restore بيرجّعه في قاعدة فاضية أو على سيرفر تاني. باك أب عمرك ما جرّبت ترجّعه متعتمدش عليه.",
+          example: "pg_dump -U postgres -d mydb -Fc -f mydb.dump",
+          try: "VPS المستوى ٣: [[pg_dump]]"
+        }
+      ]
+    },
+    {
+      t: "Docker والنشر",
+      l: 1,
+      items: [
+        {
+          cmd: "bind mount",
+          title: "فولدر من جهازك جوه الـ container",
+          desc: "بدل volume يديره Docker، بتربط فولدر أو ملف حقيقي من جهازك بمسار جوه الـ container. أي تعديل من ناحية بيظهر في التانية فورًا، وده أساس الـ hot reload في التطوير. [[:ro]] بيخليه قراية بس.",
+          example: "docker run --rm -v $(pwd):/app -w /app node:22-alpine ls",
+          try: "Docker المستوى ٢: [[bind mount]]"
+        },
+        {
+          cmd: "healthcheck",
+          title: "هل التطبيق بيرد فعلًا",
+          desc: "أمر Docker بيشغّله كل شوية جوه الـ container (curl على [[/health]] أو [[pg_isready]]). العملية ممكن تبقى موجودة والتطبيق مش بيرد، والـ healthcheck بيفرّق. وفي compose، [[condition: service_healthy]] بيخلي الباك إند يستنى القاعدة لحد ما تصحى.",
+          example: R`docker inspect --format '{{.State.Health.Status}}' myapp`,
+          try: "Docker المستوى ٢: [[USER و HEALTHCHECK]]"
+        },
+        {
+          cmd: "build arg / build secret",
+          title: "قيم وقت البناء",
+          desc: "[[--build-arg]] قيمة بتوصل للـ Dockerfile وقت الـ build، ومش سر: بتفضل مكتوبة في الـ image وتتقري بـ [[docker history]]. الـ build secret ([[RUN --mount=type=secret]]) بيتركّب كملف في خطوة واحدة ومبيتحفظش في أي طبقة. وأسرار التطبيق وهو شغال مكانها وقت التشغيل أصلًا.",
+          example: "docker history --no-trunc myapp | grep -i token",
+          try: "Docker المستوى ٢: [[أسرار وقت الـ build]]"
+        },
+        {
+          cmd: "multi-stage build",
+          title: "بناء على مرحلتين",
+          desc: "Dockerfile فيه أكتر من [[FROM]]: مرحلة فيها أدوات البناء كلها (TypeScript و devDependencies)، ومرحلة أخيرة نضيفة بتنسخ الناتج بس بـ [[COPY --from=build]]. الـ image النهائية أصغر بكتير ومفيهاش أدوات ملهاش لازمة.",
+          example: "grep -n '^FROM' Dockerfile",
+          try: "Docker المستوى ٢: [[multi-stage]]"
+        },
+        {
+          cmd: "smoke test",
+          title: "فحص سريع بعد الرفع",
+          desc: "مش اختبار كامل: لوب curl على أهم الصفحات بعد كل deploy يتأكد إنها بترد بالكود الصح. في ثواني تعرف لو حاجة بقت 500. وصفحة مش موجودة لازم ترجع 404 مش 200.",
+          example: R`curl -s -o /dev/null -w "%{http_code}\n" https://example.com/api/health`,
+          try: "التشخيص: [[smoke test]]"
+        },
+        {
+          cmd: "ACME / webroot challenge",
+          title: "إثبات إن الدومين بتاعك",
+          desc: "قبل ما Let's Encrypt تديك شهادة، بتتأكد إنك متحكم في الدومين. بطريقة webroot، certbot بيحط ملف في [[/.well-known/acme-challenge/]] وهي بتطلبه على بورت 80. لو Nginx حوّل المسار ده لـ https أو رجّع 404، الشهادة أو التجديد بيفشل.",
+          example: "curl -sI http://example.com/.well-known/acme-challenge/test | head -1",
+          try: "Nginx المستوى ٣: [[acme-challenge]]"
+        },
+        {
+          cmd: "shared hosting / .htaccess",
+          title: "استضافة مشتركة",
+          desc: "سيرفر عليه مواقع كتير لناس كتير، وانت ليك فولدر بس: مفيش sudo ولا Docker، وغالبًا Apache و PHP. [[.htaccess]] ملف في فولدرك هو المكان الوحيد اللي تتحكم منه في السيرفر: تحويلات، ومنع ملفات، وحماية فولدرات.",
+          example: "ssh shared 'head public_html/.htaccess'",
+          try: "VPS المستوى ٣: [[.htaccess]]"
+        }
+      ]
+    },
+    {
+      t: "الأدوات والمحرر",
+      l: 1,
+      items: [
+        {
+          cmd: "lint / linter",
+          title: "مدوّر الغلط",
+          desc: "أداة بتقرا الكود من غير ما تشغّله وتطلّع مشاكل: متغير مش مستخدم، أو [[await]] ناقصة، أو مقارنة غلط. ESLint لـ JS و TS، و ruff لـ Python. [[--fix]] بيصلّح اللي يتصلّح لوحده.",
+          example: "npx eslint . --max-warnings=0",
+          try: "فحص الكود المستوى ١: [[eslint]]"
+        },
+        {
+          cmd: "formatter",
+          title: "منسّق الشكل",
+          desc: "أداة بتعيد كتابة الكود بشكل واحد: مسافات، وعلامات تنصيص، وطول السطر. مبتدوّرش على bugs زي الـ linter، بتوحّد الشكل بس، فمحدش يتناقش عليه والـ diff يفضل نضيف. Prettier أشهرها.",
+          example: "npx prettier --check .",
+          try: "فحص الكود المستوى ١: [[prettier]]"
+        },
+        {
+          cmd: "typecheck",
+          title: "فحص الأنواع",
+          desc: "TypeScript بيتأكد إن كل قيمة رايحة للمكان الصح بالنوع الصح، من غير ما يشغّل حاجة. Vite و tsx بيشيلوا الأنواع ويشغّلوا على طول، فالمشروع ممكن يشتغل وهو مليان أخطاء. [[tsc --noEmit]] هو الفحص الحقيقي.",
+          example: "npx tsc --noEmit",
+          try: "فحص الكود المستوى ١: [[tsc --noEmit]]"
+        },
+        {
+          cmd: "Git hook / pre-commit",
+          title: "فحص قبل الـ commit",
+          desc: "سكربت Git بيشغّله لوحده عند حدث معين: [[pre-commit]] قبل الـ commit، و [[commit-msg]] على الرسالة، و [[pre-push]] قبل الرفع. لو السكربت فشل، العملية بتترفض. husky بيخلي الـ hooks دي تتسطّب مع المشروع لكل الفريق.",
+          example: "cat .husky/pre-commit",
+          try: "فحص الكود المستوى ٢: [[.husky/pre-commit و commit-msg]]"
+        },
+        {
+          cmd: "Conventional Commits",
+          title: "صيغة رسالة الـ commit",
+          desc: "اتفاق على شكل الرسالة: [[type(scope): subject]]، زي [[fix(api): handle empty cart]]. الـ type من لستة ثابتة ([[feat]] و [[fix]] و [[chore]] و [[docs]])، فالتاريخ يتقري بسهولة. commitlint بيرفض أي رسالة بره الصيغة.",
+          example: "git log --oneline -5",
+          try: "فحص الكود المستوى ٢: [[commitlint]]"
+        },
+        {
+          cmd: "Command Palette",
+          title: "كل أوامر المحرر في خانة",
+          desc: "في VS Code، Ctrl+Shift+P (أو F1) بيفتح خانة تكتب فيها جزء من اسم أي أمر وتختاره، حتى اللي ملوش زرار. وجنب كل أمر اختصاره لو ليه. لما شرح يقولك «شغّل Reload Window»، يقصد من هنا.",
+          example: "Ctrl+Shift+P → Developer: Reload Window",
+          try: "VS Code المستوى ١: [[Ctrl+Shift+P]]"
+        },
+        {
+          cmd: "Run (Win+R) / .msc / .cpl",
+          title: "أدوات ويندوز بالاسم",
+          desc: "Win+R بيفتح خانة Run: تكتب اسم أداة وتدوس Enter. الـ [[.msc]] أدوات الإدارة ([[services.msc]] للخدمات، و [[eventvwr.msc]] للوجات)، والـ [[.cpl]] صفحات لوحة التحكم القديمة ([[sysdm.cpl]] فيها متغيرات البيئة). Ctrl+Shift+Enter بدل Enter بيفتحها كأدمن.",
+          example: "Win+R → services.msc",
+          try: "اختصارات النظام المستوى ٢: [[Win+R]]"
+        }
+      ]
+    },
+    {
+      t: "الديسكتوب والموبايل",
+      l: 1,
+      items: [
+        {
+          cmd: "main / renderer",
+          title: "نصّين تطبيق Electron",
+          desc: "الـ main process ملف Node واحد بيفتح النوافذ ويكلّم النظام والملفات. الـ renderer كل نافذة، وهي صفحة ويب عادية ملهاش وصول لـ Node عشان الأمان. و [[preload.js]] الجسر بينهم: بيدّي الصفحة دوال معينة بس.",
+          example: "npm pkg get main",
+          try: "Desktop و Mobile المستوى ١: [[npx electron .]]"
+        },
+        {
+          cmd: "keystore",
+          title: "مفتاح توقيع التطبيق",
+          desc: "ملف فيه المفتاح اللي بيتوقّع بيه كل إصدار من تطبيق أندرويد. أندرويد مش بيقبل تحديث إلا بنفس المفتاح، فلو ضاع مش هتقدر تحدّث التطبيق تاني، ولو اتسرب أي حد يعمل تحديث باسمك. مكانه secret، وعمره ما يتعمله commit.",
+          example: "keytool -list -v -keystore release.p12",
+          try: "Desktop و Mobile المستوى ٣: [[keytool]]"
+        },
+        {
+          cmd: "APK / AAB",
+          title: "ملف تطبيق أندرويد",
+          desc: "الـ APK الملف اللي بيتسطّب على الموبايل مباشرة: تبعته لحد أو تسطّبه بـ adb. الـ AAB بترفعه على Play Store بس، وهي بتطلّع منه APK مناسب لكل جهاز. الاتنين لازم يبقوا موقّعين عشان يتقبلوا.",
+          example: "ls android/app/build/outputs/apk/debug/",
+          try: "Desktop و Mobile المستوى ٢: [[./gradlew assembleDebug]]"
         }
       ]
     }

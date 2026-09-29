@@ -716,7 +716,7 @@ location /api/reports {
             why: "الـ 502 هنا مش معناه إن التطبيق واقع. التطبيق رد عادي، بس Nginx رفض الرد لأن الـ headers أكبر من المكان اللي حاجزه ليها. فلو دوّرت في لوجات التطبيق مش هتلاقي أي غلطة.",
             how: R`[[proxy_buffer_size]]: الـ buffer اللي Nginx بيقرا فيه أول جزء من الرد، يعني الـ status والـ headers كلها. الافتراضي صفحة ذاكرة واحدة (٤ أو ٨ كيلو). رد فيه كذا [[Set-Cookie]] كل واحد فيه JWT ممكن يعدّي ١٠ كيلو بسهولة، فـ Nginx يقفل ويرجع 502.
 
-[[proxy_buffers 4 256k]]: عدد وحجم الـ buffers لجسم الرد. [[proxy_busy_buffers_size]]: الجزء اللي ممكن يكون بيتبعت للزائر وهو لسه بيتقري. وليه قاعدة: لازم يبقى أكبر من أو يساوي [[proxy_buffer_size]]، وأقل من مجموع [[proxy_buffers]] ناقص buffer واحد، وإلا [[nginx -t]] هيرفض.
+[[proxy_buffers 4 256k]]: عدد وحجم الـ buffers لجسم الرد. [[proxy_busy_buffers_size]]: الجزء اللي ممكن يكون بيتبعت للزائر وهو لسه بيتقري. وليه قاعدة: لازم يبقى أكبر من أو يساوي [[proxy_buffer_size]] وحجم buffer واحد من [[proxy_buffers]]، وأقل من مجموع [[proxy_buffers]] ناقص buffer واحد، وإلا [[nginx -t]] هيرفض.
 
 الاتجاه التاني: لما المتصفح نفسه يبعت كوكيز كبيرة، Nginx بيرجع [[400 Request Header Or Cookie Too Large]]. ده حله [[large_client_header_buffers 4 32k;]] في server block.
 
@@ -1222,7 +1222,7 @@ elif [ -n "$start$end" ]; then echo "one marker is missing, fix by hand"; exit 1
 last=$(grep -n '^}' "$TMP" | tail -1 | cut -d: -f1)
 { head -n $((last - 1)) "$TMP"; echo "$BEGIN"; cat "$SNIPPET"; echo "$END"; echo "}"; } > "$TMP.new"
 IMAGE="$(docker inspect nginx --format '{{.Config.Image}}')"
-docker run --rm --network proxy-net -v "$TMP.new:/etc/nginx/nginx.conf:ro" "$IMAGE" nginx -t \
+docker run --rm --network proxy-net -v "$TMP.new:/etc/nginx/nginx.conf:ro" -v /srv/certbot/conf:/etc/letsencrypt:ro "$IMAGE" nginx -t \
   || { echo "test failed, $CONF unchanged"; exit 1; }
 cat "$TMP.new" > "$CONF"
 rm -f "$TMP" "$TMP.new"
@@ -1237,7 +1237,7 @@ docker exec nginx nginx -s reload`,
 
 [[grep -n '^}' | tail -1]]: آخر قوس في أول السطر، وده بيفترض إنه قفلة [[http {}]]. [[head -n $((last - 1))]] كل اللي قبله، وبعدين العلامة والـ snippet والعلامة والقوس.
 
-الاختبار في container مؤقت بنفس الـ image والشبكة (الدرس اللي قبله). لو فشل، [[exit 1]] والملف زي ما هو.
+الاختبار في container مؤقت بنفس الـ image والشبكة والشهادات (الدرس اللي قبله). لو فشل، [[exit 1]] والملف زي ما هو.
 
 ليه [[cat "$TMP.new" > "$CONF"]] مش [[mv]]؟ الملف راكب في الـ container كـ bind mount لملف واحد، والـ mount مربوط بالـ inode (رقم الملف على الديسك). [[mv]] و [[sed -i]] بيعملوا ملف جديد بـ inode جديد، فالـ container يفضل شايف القديم، والـ reload يقرا الإعداد القديم وانت فاكر إنك طبّقت. [[cat >]] بيكتب جوه نفس الملف فالـ container يشوف التغيير.`,
             when: "أي config مشترك بين أكتر من مشروع، أو أي ملف بيعدّله سكربت deploy بدل إنسان.",
@@ -1257,7 +1257,7 @@ docker exec nginx nginx -s reload`,
             "آخر قوس في أول السطر (قفلة http).",
             "اللي قبله، والبلوك الجديد بين العلامتين، والقوس.",
             "الـ image الشغالة.",
-            "اختبر في container مؤقت...",
+            "اختبر في container مؤقت، ومعاه الشهادات عشان [[-t]] بيفتحها...",
             "...ولو فشل اقف والملف الحقيقي زي ما هو.",
             "اكتب جوه نفس الملف (نفس الـ inode) عشان الـ container يشوفه.",
             "امسح الملفات المؤقتة.",

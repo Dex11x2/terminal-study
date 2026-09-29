@@ -306,7 +306,7 @@ volumes:
     depends_on:
       mongo:
         condition: service_healthy`,
-          try: R`بعد [[docker compose up -d]] شوف الحالة بـ [[docker inspect --format '{{.State.Health.Status}}' mongo]]: starting وبعدين healthy.`,
+          try: R`بعد [[docker compose up -d]] شوف الحالة بـ [[docker compose ps mongo]]: عمود STATUS هيقول health: starting وبعدين healthy.`,
           flag: "script",
           deep: {
             why: "من غير healthcheck الباك إند بيقوم قبل Mongo، أول اتصال يفشل، والتطبيق يقع أو يفضل شغال من غير قاعدة لحد ما حد يعمله restart.",
@@ -488,7 +488,7 @@ docker run -d --name mongo-test -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INI
 until docker exec mongo-test mongosh --quiet --eval "db.adminCommand('ping')" >/dev/null 2>&1; do sleep 2; done
 docker exec -i mongo-test mongorestore -u admin -p test --authenticationDatabase admin --archive --gzip < myapp.archive.gz
 docker exec mongo-test mongosh myapp -u admin -p test --authenticationDatabase admin --quiet --eval "db.users.countDocuments()"
-docker rm -f mongo-test
+docker rm -fv mongo-test
 # على الإنتاج: بيمسح الـ collections الموجودة ويرجّع اللي في الملف
 docker exec -i mongo mongorestore -u admin -p secret --authenticationDatabase admin --archive --gzip --drop < myapp.archive.gz`,
           try: "خد باك أب من الـ lab، وامسح collection منها، ورجّعها في container مؤقت الأول، وبعدين في الـ lab بـ --drop، وعدّ المستندات.",
@@ -499,7 +499,7 @@ docker exec -i mongo mongorestore -u admin -p secret --authenticationDatabase ad
 
 [[--dryRun -v]] بيقرا الملف ويقولك هيرجّع إيه من غير ما يكتب حاجة: فحص سريع إن الملف مش بايظ.
 
-الـ container المؤقت: Mongo نضيف على volume مؤقت، [[until ... ping]] بيستنى لحد ما يصحى، والترجيع فيه، والعدّ. لو الأرقام قريبة من الإنتاج يبقى الباك أب سليم. [[rm -f]] بيشيل كل حاجة.
+الـ container المؤقت: Mongo نضيف على volume مؤقت، [[until ... ping]] بيستنى لحد ما يصحى، والترجيع فيه، والعدّ. لو الأرقام قريبة من الإنتاج يبقى الباك أب سليم. [[rm -fv]] بيشيل الـ container والـ volume المؤقت بتاعه (من غير [[-v]] الـ volume بيفضل على الديسك).
 
 من غير [[--drop]]، mongorestore بيضيف بس: المستندات اللي [[_id]] بتاعها موجود بتفشل بـ duplicate key وبيكمّل. مع [[--drop]] بيمسح كل collection في الملف الأول وبعدين يرجّعها، فأي بيانات اتكتبت بعد الباك أب بتروح.
 
@@ -513,7 +513,7 @@ docker exec -i mongo mongorestore -u admin -p secret --authenticationDatabase ad
             "استنى لحد ما يرد على ping.",
             "رجّع الباك أب فيه.",
             "عدّ المستندات وقارن بالإنتاج.",
-            "امسح الـ container المؤقت.",
+            "امسح الـ container المؤقت والـ volume بتاعه.",
             "الترجيع الحقيقي: امسح الموجود ورجّع اللي في الملف."
           ]
         },
