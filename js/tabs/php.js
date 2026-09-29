@@ -62,7 +62,12 @@ php -S 0.0.0.0:8000 -t public`,
             "سيرفر تجربة، والفولدر الحالي هو جذر الموقع.",
             "نفسه بس الجذر فولدر public، والباقي مستخبي.",
             "مفتوح لأي جهاز على نفس الشبكة (للتجربة بس)."
-          ]
+          ],
+          sol: R`الصفحة بتطلّع سطر زي [[أهلًا، الساعة 22:04:05]]، ومع كل refresh الثواني بتتغير. وفي الترمنال كل طلب بيتسجل بسطور زي [[127.0.0.1:52396 [200]: GET /hello.php]]، ومعاها غالبًا [[GET /favicon.ico]] لأن المتصفح بيطلبها لوحده.
+
+ده دليل إن مفيش حاجة محفوظة بين الطلبات: كل refresh = تشغيل جديد للملف من أوله. لو الساعة طالعة بفرق ساعتين أو تلاتة عن ساعتك، ده مش غلط في الكود: PHP شغال بـ [[date.timezone = UTC]]. حلها [[date_default_timezone_set('Africa/Cairo');]] أول الملف أو [[date.timezone]] في [[php.ini]].
+
+ولو المتصفح نزّل الملف أو عرض الكود نفسه بدل ما ينفّذه، يبقى انت فاتحه كـ [[file:///...]] أو السيرفر مش شغال في نفس الفولدر. لازم الرابط يبدأ بـ [[http://localhost:8000]].`
         },
         {
           cmd: "<?php ?>",
@@ -115,7 +120,12 @@ $hour = (int) date('G');
             "نهاية الشرط.",
             "[[echo]] بالشكل الكامل.",
             "HTML عادي."
-          ]
+          ],
+          sol: R`الصفحة بتعرض [[أهلًا يا سارة]] وتحتها [[صباح الخير]] أو [[مساء الخير]] حسب الساعة، والساعة. وفي View Source هتلاقي HTML صافي زي:
+
+[[<h1>أهلًا يا سارة</h1>]] و [[<p>مساء الخير</p>]] و [[<p>الساعة دلوقتي 22:04</p>]]، ومفيش ولا [[<?php]] ولا [[$hour]]. PHP اتنفّذ على السيرفر وبعت الناتج بس، والفرع اللي الشرط بتاعه false اختفى من الصفحة خالص.
+
+لما تعكس الشرط لـ [[$hour >= 12]] الرسالة بتتقلب. ولو شايف الرسالة غلط من الأول: [[date('G')]] بتاخد ساعة السيرفر بـ UTC مش ساعة مصر. ولو View Source فيه كود PHP، يبقى الملف مش بيعدّي على PHP (امتداده [[.html]] أو فاتحه من غير سيرفر).`
         },
         {
           cmd: "var_dump",
@@ -162,7 +172,13 @@ var_dump(intdiv(7, 2), 7 / 2, 7 % 2);`,
             "casting صريح: 12، و false، و true (مفاجأة).",
             "double (الاسم القديم) و float (الاسم الصح).",
             "3 و 3.5 و 1."
-          ]
+          ],
+          sol: R`[[php types.php]] بيطلّع:
+[[int(30)]] و [[float(99.5)]] و [[string(3) "Ali"]] و [[bool(true)]] و [[NULL]]، وبعدين [[int(8)]]، وبعدين [[int(12)]] و [[bool(false)]] و [[bool(true)]] (النص [['0']] بس اللي false، إنما [['0.0']] true)، وبعدين [[double float]]، وآخر حاجة [[int(3)]] و [[float(3.5)]] و [[int(1)]].
+
+[[var_dump('abc' + 1);]] بيوقف السكريبت: [[Fatal error: Uncaught TypeError: Unsupported operand types: string + int]]. أما [[var_dump('12abc' + 1);]] بيطبع [[Warning: A non-numeric value encountered]] وبعدها [[int(13)]] والكود بيكمّل. الفرق: النص اللي بيبدأ برقم PHP بياخد الرقم وينبّهك، والنص اللي مفيهوش رقم خالص بقى غلطة في PHP 8.
+
+ولاحظ [[gettype]] بتقول [[double]] (اسم قديم) و [[get_debug_type]] بتقول [[float]]. استخدم التانية في رسايل الأخطاء.`
         },
         {
           cmd: "interpolation",
@@ -211,7 +227,12 @@ echo ucfirst(trim('  php  ')), ' ', strtoupper('php'), "\n";`,
             "طباعة بقالب: «Ali دفع 99.50 جنيه».",
             "فيه النص ده جوه التاني؟",
             "شيل المسافات، وكبّر أول حرف، وكبّر الكل."
-          ]
+          ],
+          sol: R`[[echo substr('سارة', 0, 3);]] بيطبع [[س�]]: [[substr]] بيعدّ bytes، وكل حرف عربي 2 bytes في UTF-8، فالتلات bytes = حرف كامل ونص حرف مكسور. و [[mb_substr('سارة', 0, 3)]] بيطبع [[سار]] لأنه بيعدّ حروف.
+
+[[echo 'a' + 'b';]] بيقع بـ [[Fatal error: Uncaught TypeError: Unsupported operand types: string + string]]. الـ [[+]] في PHP للأرقام بس، ودمج النصوص بـ [[.]]: [['a' . 'b']] = [[ab]].
+
+الغلط الشائع: تستخدم [[strlen]] عشان تتحقق من طول اسم عربي (هيطلع ضعف العدد)، أو [[substr]] عشان تقص عنوان مقال فيطلع في آخره حرف مكسور. أي نص ممكن يبقى عربي: [[mb_]] دايمًا.`
         },
         {
           cmd: "heredoc",
@@ -262,7 +283,13 @@ echo $sql;`,
             "[[:email]] placeholder هيتملي بعدين بأمان.",
             "القفلة.",
             "اطبع."
-          ]
+          ],
+          sol: R`المثال بيطبع:
+[[<h2>أهلًا سارة</h2>]] ثم [[<p>طلبك فيه 3 منتجات، الإجمالي 1,250.50 جنيه.</p>]] ثم سطر علامات التنصيص، وكل سطر من غير المسافات الأربعة اللي على الشمال، لأن PHP بيشيل من كل سطر نفس مسافة سطر [[HTML;]] الأخير.
+
+هتلاحظ إن [[</p>SELECT id, name FROM users]] لازقين في بعض: الـ heredoc مبيخلصش بسطر جديد، فضيف [[echo "\n";]] بينهم لو عايز. وفي الـ nowdoc ([[<<<'SQL']]) الـ [[:email]] فضلت زي ما هي، ولو كتبت [[$name]] جواها هتفضل نص برضه.
+
+لما تزق [[HTML;]] مسافتين لليمين: [[Parse error: Invalid body indentation level (expecting an indentation level of at least 6)]]. سطر النهاية بقى على مسافة 6، وسطور الجسم على 4 بس، فـ PHP مش عارف يشيل 6 مسافات منها. القاعدة: سطر النهاية لازم يبقى أقل سطر مسافة أو زيه.`
         }
       ]
     },
@@ -322,7 +349,23 @@ print_r($user);`,
             "فك بالترتيب: PHP و JS.",
             "فك بالاسم.",
             "اطبع الـ array بشكل مقروء."
-          ]
+          ],
+          sol: R`أول [[print_r]] بيطبع الـ array زي ما هو ([[PHP]] و [[JS]] بس)، رغم إن الدالة أضافت فيه. التاني بعد ما خدت النتيجة فيه [[Go]] كمان. الـ arrays في PHP بتتبعت للدالة كنسخة (copy-on-write)، مش reference زي JavaScript.
+
+الغلط الشائع إنك تتوقع إن الأصل اتغير لأنك متعود على JS. لو فعلًا عايز الدالة تعدّل الأصل، اكتب [[array &$list]] في الـ parameter، بس الأوضح إنك ترجّع array جديد وتاخده.`,
+          solCode: R`<?php
+function addItem(array $list): void {
+    $list[] = 'Go';
+}
+function withItem(array $list): array {
+    $list[] = 'Go';
+    return $list;
+}
+$langs = ['PHP', 'JS'];
+addItem($langs);
+print_r($langs);           // PHP, JS بس
+$langs = withItem($langs);
+print_r($langs);           // PHP, JS, Go`
         },
         {
           cmd: "array_map / array_filter",
@@ -375,7 +418,12 @@ echo json_encode($names), ' ', json_encode(array_values($names));`,
             "أول منتج أقل من 1000 (PHP 8.4): Mouse.",
             "LAPTOP, SCREEN | total: 37000.",
             "object بسبب الـ keys، مقابل list بعد array_values."
-          ]
+          ],
+          sol: R`آخر سطر بيطبع [[{"0":"LAPTOP","2":"SCREEN"} ["LAPTOP","SCREEN"]]]. [[array_filter]] شال الـ Mouse بس ساب المفاتيح الأصلية (0 و 2)، ولأن فيه فجوة [[json_encode]] حوّلها object. [[array_values]] بيعيد الترقيم من 0 فتبقى list. وأول سطر [[LAPTOP, SCREEN | total: 37000]].
+
+للترتيب من الأغلى: [[usort($products, fn($a, $b) => $b['price'] <=> $a['price']);]] والترتيب يبقى [[Laptop > Screen > Mouse]]. ولاحظ إن [[usort]] بيعدّل الـ array نفسه وبيرجّع true، فمتكتبش [[$sorted = usort(...)]].
+
+الغلط الشائع: API بيرجّع [[{"0":...,"2":...}]] والـ frontend بيعمل [[.map]] عليه فيقع، لأن ده object مش array. أي [[array_filter]] قبل [[json_encode]] محتاج [[array_values]].`
         },
         {
           cmd: "foreach",
@@ -428,7 +476,10 @@ for ($i = 3; $i > 0; $i--) echo $i, ' ';`,
             "Ali: ناجح، وهكذا.",
             "قفلة الـ loop.",
             "عدّاد: 3 2 1."
-          ]
+          ],
+          sol: R`أول تشغيل بيطبع [[[0] => 10, [1] => 20, [2] => 20]]. بعد اللوب الأولى [[$v]] لسه reference على آخر عنصر، فاللوب التانية بتكتب في آخر عنصر كل قيمة بتعدّي عليها: 10، بعدين 20، وآخر لفة بتكتب فيه قيمته هو اللي بقت 20.
+
+بعد [[unset($v);]] النتيجة الصح: [[10, 20, 30]]. الـ [[unset]] بيقطع الربط من غير ما يمسح العنصر نفسه. والقاعدة: أي [[foreach (... as &$v)]] بعده [[unset($v)]] على طول، أو استخدم [[array_map]] بدلها.`
         },
         {
           cmd: "match",
@@ -483,7 +534,10 @@ echo $grade;`,
             "الباقي.",
             "قفلة.",
             "B."
-          ]
+          ],
+          sol: R`من غير [[default]] و [[$status = 'refunded']]: [[Fatal error: Uncaught UnhandledMatchError: Unhandled match case of type string]]. [[match]] رفض يعدّي بصمت، و [[switch]] في نفس الموقف كان هيسيب [[$label]] من غير قيمة.
+
+[[match ('1') { 1 => 'one' }]] بيطلّع نفس الـ UnhandledMatchError، لأن [[match]] بيقارن بـ [[===]]: النص [['1']] مش هو الرقم [[1]]. ده الفرق الأساسي عن [[switch]] اللي بيقارن بـ [[==]] وكان هيدخل الحالة. لو القيمة جاية من [[$_GET]] (دايمًا نص) حوّلها الأول: [[match ((int) $x)]].`
         },
         {
           cmd: "function",
@@ -538,7 +592,10 @@ echo price('100');`,
             "دالة سهم بأنواع.",
             "42.",
             "TypeError: نص بدل float."
-          ]
+          ],
+          sol: R`التشغيل بيطبع [[100]] و [[270]] و [[90]] و [[42]]، وبعدين: [[Fatal error: Uncaught TypeError: price(): Argument #1 ($amount) must be of type float, string given, called in .../fn.php on line 15]]. الرسالة بتقولك الدالة ورقم الـ argument واسمه ونوعه والسطر اللي ناداها.
+
+من غير [[declare(strict_types=1)]] آخر سطر بيطبع [[100]] عادي: PHP حوّل [['100']] لـ float بصمت. ولو بعت [['abc']] كان هيقع برضه، لأن التحويل بيحصل بس لو النص رقم. خلي بالك إن [[declare]] بيأثر على النداءات اللي في الملف ده بس، مش على الدالة في كل مكان.`
         },
         {
           cmd: "?? و ?->",
@@ -587,7 +644,12 @@ echo $u2->address?->city;`,
             "[[?->]] رجّع null، و [[??]] حط الافتراضي.",
             "مستخدم بعنوان.",
             "Cairo."
-          ]
+          ],
+          sol: R`مع [[?:]] في أول سطر: [[Warning: Undefined array key "page"]] والقيمة 1. [[?:]] بيقرا المفتاح الأول وبعدين يشوف هو truthy ولا لا، أما [[??]] بيسأل «موجود ومش null؟» من غير ما يقرا، فمفيش Warning.
+
+مع [[->]] بدل [[?->]] ومن غير [[??]]: [[Warning: Attempt to read property "city" on null]] وبيطبع سطر فاضي. ولو سبت [[??]] في الآخر مش هتشوف الـ Warning أصلًا، لأن [[??]] بيحمي السلسلة كلها زي [[isset]]، ودا ممكن يخبّي bug حقيقي.
+
+وسطر [[$qty]] بيطبع [[مفيش / 0]]: [[?:]] شاف 0 falsy فجاب البديل، و [[??]] شاف 0 مش null فسابه. للكميات والأسعار اللي ممكن تبقى صفر استخدم [[??]].`
         }
       ]
     },
@@ -639,7 +701,17 @@ require __DIR__ . '/partials/header.php';
             "قيمة من الإعدادات.",
             "HTML.",
             "الـ footer."
-          ]
+          ],
+          sol: R`الصفحة بتطلّع [[<title>الرئيسية</title>]] في الـ head، رغم إن [[$title]] متعرّف في [[index.php]] مش في الـ header. [[require]] بيحط الملف مكانه كأنه مكتوب جوه الصفحة، فبيشوف نفس المتغيرات.
+
+باسم ملف غلط في [[require]]: [[Warning: require(.../partials/headr.php): Failed to open stream: No such file or directory]] وبعدها [[Fatal error: Uncaught Error: Failed opening required '.../partials/headr.php']] والصفحة وقفت. مع [[include]]: Warning مرتين، والـ [[<main>]] والـ footer اتطبعوا عادي من غير header. عشان كده الملفات اللي الصفحة متقدرش تعيش من غيرها (الإعدادات والـ bootstrap) دايمًا [[require]].
+
+لو الـ header اشتغل من [[index.php]] ووقع لما فتحت صفحة في فولدر تاني، يبقى انت كاتب المسار نسبي ([[require 'partials/header.php']]) من غير [[__DIR__]].`,
+          solCode: R`<?php // public/partials/header.php
+?><!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><title><?= e($title) ?></title></head>
+<body>`
         },
         {
           cmd: "$_GET / $_POST / $_SERVER",
@@ -686,7 +758,13 @@ print_r($tags);`,
             "الرد نص عادي مش HTML، عشان نشوف الناتج زي ما هو.",
             "اطبع النتيجة.",
             "الـ tags."
-          ]
+          ],
+          sol: R`الرابط الأول بيطلّع:
+[[GET /req.php page=3 q=php ip=127.0.0.1]] وتحته [[Array ( [0] => a [1] => b )]]. الـ [[tags[]]] المتكررة اتجمعت array لوحدها.
+
+مع [[?q[]=x]]: [[q=]] فاضي والصفحة شغالة، لأن [[is_string]] رفض الـ array. لو السطر ده كان [[$q = trim($q);]] بس: [[500 Internal Server Error]] وفي الترمنال [[Uncaught TypeError: trim(): Argument #1 ($string) must be of type string, array given]]. ولو شلت السطر كله من غير بديل هيطبع [[q=Array]] ومعاه Warning. في الحالتين أي حد يقدر يوقع صفحتك بحرفين في الـ URL.
+
+جرّب كمان [[?page=-5]] و [[?page=abc]]: الاتنين بيطلّعوا [[page=1]] بسبب [[(int)]] و [[max(1, ...)]]. ملاحظة: في curl لازم [[-g]] عشان الأقواس [[[]]] متتفهمش غلط: [[curl -g 'localhost:8000/req.php?q[]=x']].`
         },
         {
           cmd: "htmlspecialchars",
@@ -731,7 +809,12 @@ $q = $_GET['q'] ?? '<script>alert(1)</script>';
             "جوه attribute: e، والعلامات المزدوجة مهمة.",
             "جوه رابط: urlencode للقيمة، و e للـ HTML.",
             "جوه JavaScript: json_encode بالـ flags."
-          ]
+          ],
+          sol: R`من غير [[e()]] في سطر [[<p>]]: الـ alert بيطلع، والـ View Source فيه [[<p>نتايج البحث عن: <script>alert(1)</script></p>]]. المتصفح شاف tag حقيقي ونفّذه.
+
+بعد [[e()]] الـ View Source: [[<p>نتايج البحث عن: &lt;script&gt;alert(1)&lt;/script&gt;</p>]] والكلام بيظهر نص عادي. وفي الـ script: [[const q = "<script>alert(1)<\/script>";]]، فـ [[</script>]] مش هيقفل الـ tag بدري.
+
+مع [[?q=" onfocus="alert(1)]] الـ input بقى [[value="&quot; onfocus=&quot;alert(1)"]]: التنصيص اتحوّل لـ [[&quot;]] فمقدرش يخرج من الـ attribute. لو كنت كاتب [[htmlspecialchars($q)]] من غير [[ENT_QUOTES]] في PHP قديم (قبل 8.1)، الـ [[']] مكانتش بتتحوّل، وأي attribute بين [[' ']] كان بيتكسر.`
         },
         {
           cmd: "POST → Redirect → GET",
@@ -755,7 +838,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <form method="post"><input name="name" value="<?= e($old['name']) ?>"> <?= e($errors['name'] ?? '') ?> <input name="email" value="<?= e($old['email']) ?>"> <?= e($errors['email'] ?? '') ?> <button>ابعت</button></form>`,
-          try: R`حط دالة [[e()]] من درس htmlspecialchars في الملف (أو في الـ bootstrap) الأول. ابعت الفورم بإيميل غلط: الاسم اللي كتبته لازم يفضل في الخانة. بعدين ضيف [[echo 'x';]] قبل [[header]] وابعت فورم صح، واقرا [[headers already sent]]. وجرّب تبعته بـ [[curl -d "name=&email=x" localhost:8000/form.php]] عشان تتأكد إن التحقق على السيرفر مش المتصفح بس.`,
+          try: R`حط دالة [[e()]] من درس htmlspecialchars في الملف (أو في الـ bootstrap) الأول. ابعت الفورم بإيميل غلط: الاسم اللي كتبته لازم يفضل في الخانة. بعدين ضيف [[echo 'x';]] قبل [[header]]، وشغّل السيرفر بـ [[php -d output_buffering=0 -S localhost:8000]] (السيرفر المدمج بيشغّل buffer بيخبّي الغلطة)، وابعت فورم صح، واقرا [[headers already sent]]. وجرّب تبعته بـ [[curl -d "name=&email=x" localhost:8000/form.php]] عشان تتأكد إن التحقق على السيرفر مش المتصفح بس.`,
           flag: "script",
           deep: {
             why: "الفورم هو أكتر مكان بيدخل منه كلام من برّه. التحقق على السيرفر هو الحماية الوحيدة الحقيقية، لأن [[required]] في HTML وفحص JavaScript أي حد يعدّيهم بـ curl.",
@@ -789,7 +872,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "قفلة.",
             "نهاية PHP.",
             "الفورم: الاسم والإيميل بالقيم القديمة ورسايل الغلط (كله بـ e)."
-          ]
+          ],
+          sol: R`بإيميل غلط: الصفحة بترجع 200 والخانة فيها [[value="سارة"]] وجنبها [[الإيميل مش صحيح]]. بفورم صح: [[303 See Other]] و [[Location: /thanks.php]] (المتصفح هيوديك لـ thanks.php، ولو مش عامله هتاخد 404 وده طبيعي). والـ refresh بعدها مبيبعتش الفورم تاني.
+
+[[echo 'x';]] قبل [[header]]: على [[php -S]] العادي غالبًا مش هتشوف الغلطة، لأن السيرفر المدمج شغال بـ [[output_buffering=4096]] فالـ x بتستنى في buffer. شغّل [[php -d output_buffering=0 -S localhost:8000]] وهتلاقي الصفحة طبعت x بس بـ 200 من غير تحويل، وفي الترمنال [[Warning: Cannot modify header information - headers already sent by (output started at .../form.php:10)]].
+
+[[curl -d "name=&email=x" localhost:8000/form.php]] بيرجّع الفورم وفيه الرسالتين: [[الاسم مطلوب (لحد ١٠٠ حرف)]] و [[الإيميل مش صحيح]]. ده اللي بيثبت إن التحقق على السيرفر، لأن curl مبيعرفش حاجة عن [[required]] في HTML.`
         }
       ]
     },
@@ -845,7 +933,12 @@ SHOW CREATE TABLE users;`,
             "...ولو الإيميل موجود، حدّث الاسم بدل ما يقع.",
             "آخر id اتولّد في الاتصال ده.",
             "اعرض تعريف الجدول كامل (engine و charset)."
-          ]
+          ],
+          sol: R`الجدول بيتعمل و [[SELECT LAST_INSERT_ID()]] بيطلّع 1. المستخدم بالإيموجي بيتخزن ويرجع زي ما هو، و [[CHAR_LENGTH(name)]] لـ [['سارة 😀']] = 6 و [[LENGTH]] = 13 byte. (اتجربت على MariaDB 10.11؛ MySQL 8.4 بيدي نفس النتايج.)
+
+جدول [[utf8mb3]]: [[ERROR 1366 (22007): Incorrect string value: '\xF0\x9F\x98\x80' for column ... name at row 1]] (اسم العمود مكتوب بشكل مختلف شوية بين MySQL و MariaDB). الإيموجي 4 bytes و utf8mb3 مبيشيلش غير 3. و [[WHERE email = 'ALI@EXAMPLE.COM']] بيلاقي [[ali@example.com]] لأن [[_ci]] = case-insensitive، وده برضه معناه إن UNIQUE هيرفض الاتنين مع بعض.
+
+لو الإيموجي أو العربي رجع كلام مكسور زي [[Ø³Ø§Ø±Ø©]] من غير أي error، يبقى الجدول سليم والمشكلة في charset الاتصال: الـ client بعت UTF-8 على إنه latin1. في الترمنال [[mysql --default-character-set=utf8mb4]]، وفي PHP [[charset=utf8mb4]] في الـ DSN. وملاحظة: [[ON DUPLICATE KEY UPDATE]] بيحرق رقم AUTO_INCREMENT حتى لو معملش insert، فمتستغربش لو الـ ids فيها فجوات.`
         },
         {
           cmd: "new PDO",
@@ -898,7 +991,15 @@ function db(): PDO {
             "قفلة الـ if.",
             "رجّع نفس الاتصال.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[db()->query('SELECT VERSION()')->fetchColumn()]] بيطبع نسخة القاعدة، زي [[8.4.x]] على MySQL أو [[10.11.14-MariaDB-...]] على MariaDB.
+
+بباسورد غلط: [[Fatal error: Uncaught PDOException: SQLSTATE[HY000] [1045] Access denied for user 'myapp_user'@'localhost' (using password: YES)]] ومعاها المسار ورقم السطر. الرسالة فيها اسم المستخدم والـ host ومسارات ملفاتك، ودي معلومات لأي حد بيحاول يخترق. عشان كده في الإنتاج [[display_errors=0]] والـ exception يتسجل في اللوج والزائر يشوف رسالة عامة.
+
+الباسورد نفسه مش في الـ stack trace لأن PHP من 8.2 بيعلّم الـ parameter ده بـ [[#[\SensitiveParameter]]]. لو شايف [[could not find driver]] يبقى [[pdo_mysql]] مش متسطّب ([[php -m | grep pdo]])، ولو [[Connection refused]] يبقى القاعدة مش شغالة أو الـ port غلط.`,
+          solCode: R`<?php
+require __DIR__ . '/src/db.php';
+echo db()->query('SELECT VERSION()')->fetchColumn(), "\n";`
         },
         {
           cmd: "prepare / execute",
@@ -949,7 +1050,20 @@ $stmt->execute();`,
             "LIMIT بـ placeholder.",
             "اربطه كرقم صريح.",
             "نفّذ من غير array لأن القيمة اتربطت."
-          ]
+          ],
+          sol: R`النسخة الغلط: [[SELECT id, email FROM users WHERE email = 'x' OR '1'='1']] بترجّع كل المستخدمين (3 من 3 في تجربتي). الـ [[']] اللي في الإيميل قفلت النص، والباقي بقى SQL: [['1'='1']] دايمًا true.
+
+نفس القيمة مع [[prepare]]: صفر نتايج. القاعدة دوّرت على إيميل حرفيًا [[x' OR '1'='1]]، ومفيش حد بالإيميل ده. الـ SQL اتبعت الأول لوحده والقيمة جات بعده كبيانات، فمستحيل تغيّر شكل الـ query.
+
+لو النسخة الغلط رجّعت صفر برضه، غالبًا انت كاتب [["...email = '" . $email . "'"]] بس الـ [[$email]] نفسه اتعمله escape في مكان تاني، أو الجدول فاضي. جرّب على جدول فيه صفوف.`,
+          solCode: R`<?php
+require __DIR__ . '/src/db.php';
+$email = "x' OR '1'='1";
+$rows = db()->query("SELECT id, email FROM users WHERE email = '$email'")->fetchAll();
+echo 'بالدمج: ', count($rows), "\n";      // كل المستخدمين
+$stmt = db()->prepare('SELECT id, email FROM users WHERE email = :email');
+$stmt->execute(['email' => $email]);
+echo 'بـ prepare: ', count($stmt->fetchAll()), "\n";  // 0`
         },
         {
           cmd: "fetch / fetchAll",
@@ -996,7 +1110,12 @@ $byCity = db()->query('SELECT city, name FROM users')->fetchAll(PDO::FETCH_GROUP
             "map: id لـ الاسم.",
             "لستة إيميلات.",
             "الأسماء متجمّعة حسب المدينة."
-          ]
+          ],
+          sol: R`الأشكال: [[$user]] صف واحد [[[id] => 1, [email] => ..., [name] => Ali ...]] (بمفاتيح أسماء الأعمدة بس بسبب [[FETCH_ASSOC]]). [[$all]] لستة صفوف [[[0] => [id => 1, name => Ali], [1] => ...]]. [[$total]] رقم واحد [[int(3)]]. [[$names]] قاموس [[[1] => Ali, [4] => سارة, ...]] (الـ id مفتاح). [[$emails]] لستة نصوص. و [[$byCity]] [[[Cairo] => [Ali, Omar], [Alex] => [سارة]]].
+
+[[fetch()]] على [[WHERE id = 999]] بيرجّع [[bool(false)]] مش null. عشان كده [[if ($user === null)]] مش هتشتغل أبدًا؛ اكتب [[if (!$user)]] أو [[$stmt->fetch() ?: null]].
+
+لو [[$total]] طلع [[string(1) "3"]] بدل int، ده PHP قديم (قبل 8.1) أو driver غير mysqlnd. ولو الصفوف فيها مفاتيح أرقام ونصوص مع بعض ([[[0] => 1, [id] => 1]]) يبقى نسيت [[ATTR_DEFAULT_FETCH_MODE]].`
         },
         {
           cmd: "beginTransaction",
@@ -1051,7 +1170,18 @@ try {
             "...ارجع في كل حاجة.",
             "وارمي الغلطة تاني عشان اللي فوق يعرف.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[throw]] قبل [[commit]]: السكريبت بيقع بـ [[Uncaught RuntimeException: test]]، و [[SELECT stock FROM products]] لسه 3، و [[SELECT COUNT(*) FROM orders]] = 0. الـ UPDATE والـ INSERT حصلوا فعلًا جوه الـ transaction، بس [[rollBack]] رجّعهم.
+
+بعد ما تشيل السطر: [[stock]] بقى 2 وفيه طلب واحد. هتلاقي الـ id بتاعه 2 مش 1: الـ INSERT اللي اترجع حرق رقم AUTO_INCREMENT، والأرقام دي مبترجعش. متعتمدش على إن الـ ids متتالية.
+
+لو المخزن نقص رغم الـ rollback، يبقى الجدول [[ENGINE=MyISAM]] (مبيدعمش transactions وبيتجاهل الـ rollback بصمت). اتأكد بـ [[SHOW CREATE TABLE products]] إنه InnoDB.`,
+          solCode: R`CREATE TABLE products (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), stock INT NOT NULL) ENGINE=InnoDB;
+CREATE TABLE orders (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id INT UNSIGNED, product_id INT UNSIGNED) ENGINE=InnoDB;
+INSERT INTO products (name, stock) VALUES ('Laptop', 3);
+-- شغّل السكريبت بالـ throw، وبعدين:
+SELECT stock FROM products;        -- 3
+SELECT COUNT(*) FROM orders;       -- 0`
         }
       ]
     },
@@ -1103,7 +1233,12 @@ echo 'session id: ', session_id();`,
             "عدّاد في الجلسة، بيزيد مع كل طلب.",
             "اطبعه.",
             "الـ id اللي في الكوكي."
-          ]
+          ],
+          sol: R`أول مرة [[زرت الصفحة 1 مرة]] ومع كل refresh 2 و 3... و [[session id: 64d3b1b0...]] (32 حرف hex) ثابت. الـ response الأول فيه [[Set-Cookie: PHPSESSID=...; path=/; secure; HttpOnly; SameSite=Lax]]، وفي DevTools › Application › Cookies هتلاقي HttpOnly و Secure متعلّم عليهم و SameSite = Lax.
+
+بعد ما تمسح الكوكي: رجعت [[1]] بـ id جديد. البيانات لسه في ملف على السيرفر ([[/var/lib/php/sessions/sess_...]] على Debian/Ubuntu)، بس المتصفح نسي مفتاحها فبقى زائر جديد، والملف القديم هيتمسح بعدين بالـ garbage collection.
+
+على [[localhost]] العدد بيزيد رغم [[cookie_secure]]، لأن المتصفحات بتعتبر localhost آمن. على [[http://192.168.x.x:8000]] المتصفح بيرفض يخزن الكوكي، فكل طلب جلسة جديدة والعدد ثابت 1.`
         },
         {
           cmd: "password_hash",
@@ -1144,7 +1279,18 @@ bcrypt بيقرا أول 72 byte بس ويتجاهل الباقي بصمت، و�
             "الـ hash قديم أو أضعف من الافتراضي الحالي؟",
             "اعمله تاني واحفظه (بعد login ناجح).",
             "قفلة."
-          ]
+          ],
+          sol: R`كل تشغيل بيطبع hash شكله [[$2y$12$kkp1V.8Fx4xQz6jIPEE0..1XWSEW3o5...]] (60 حرف) وبعده [[bool(true)]] و [[bool(false)]]. التشغيل التاني بيطلّع hash مختلف تمامًا لنفس الباسورد، لأن فيه salt عشوائي جديد. [[$2y$]] = bcrypt، و [[12]] = الـ cost (الافتراضي في PHP 8.4، وكان 10 قبلها)، وبعدها 22 حرف salt والباقي الـ hash. [[password_verify]] بيقرا الـ salt والـ cost من الـ hash نفسه، فالاتنين بيعدّوا.
+
+بالـ cost: عندي 10 أخد حوالي 0.06 ثانية، و 12 حوالي 0.3، و 14 حوالي 1.2 ثانية. كل +1 = الوقت × 2. ولو خزّنت بـ [[['cost' => 14]]] وناديت [[password_needs_rehash($hash, PASSWORD_DEFAULT)]] من غير نفس الـ options، هترجع true وهتعيد الـ hash مع كل login. ادّي الدالتين نفس الـ options.
+
+والعمود في القاعدة [[VARCHAR(255)]] مش [[CHAR(60)]]: لو PHP غيّر الـ default لـ argon2 مثلًا الطول هيزيد.`,
+          solCode: R`<?php
+foreach ([10, 12, 14] as $cost) {
+    $t = microtime(true);
+    $h = password_hash('secret123', PASSWORD_DEFAULT, ['cost' => $cost]);
+    printf("cost %d: %.3fs %s\n", $cost, microtime(true) - $t, substr($h, 0, 7));
+}`
         },
         {
           cmd: "session_regenerate_id",
@@ -1201,7 +1347,17 @@ session fixation: المهاجم ياخد id جلسة عادي من موقعك،
             "مش داخل: حوّل ووقّف فورًا.",
             "داخل: رجّع الـ id.",
             "قفلة."
-          ]
+          ],
+          sol: R`قبل الـ login الكوكي مثلًا [[PHPSESSID=b25539c3...]]، والـ response بتاع الـ login فيه [[303 See Other]] و [[Location: /dashboard.php]] و [[Set-Cookie: PHPSESSID=f710368c...]] جديدة. ده [[session_regenerate_id(true)]]: اللي كان عارف الـ id القديم (session fixation) مبقاش ليه لازمة، والملف القديم اتمسح بسبب [[true]].
+
+[[curl -i localhost:8000/dashboard.php]] من غير كوكي: [[HTTP/1.1 302 Found]] و [[Location: /login.php]] والـ body فاضي خالص. لو شفت محتوى الصفحة تحت الـ 302، يبقى نسيت [[exit]] بعد [[header]]: المتصفح هيحوّل، بس curl وأي bot هيقروا الصفحة كلها.
+
+وبإيميل أو باسورد غلط نفس الرسالة بالظبط [[الإيميل أو الباسورد غلط]] عشان محدش يعرف مين عنده حساب.`,
+          solCode: R`<?php // public/dashboard.php
+require dirname(__DIR__) . '/src/bootstrap.php'; // فيه session_start و db و require_login
+$userId = require_login();
+?>
+<h1>أهلًا، رقمك <?= $userId ?></h1>`
         },
         {
           cmd: "CSRF token",
@@ -1256,7 +1412,21 @@ function csrf_ok(): bool {
             "الـ id اللي هيتمسح.",
             "زرار.",
             "قفلة الفورم."
-          ]
+          ],
+          sol: R`الفورم العادي: [[200]] والعملية بتتم. [[curl -d "id=42" localhost:8000/posts/delete.php]] من غير token: [[403]] والنص [[الصفحة قديمة، ارجع وجرّب تاني]].
+
+من غير [[$token !== '']]: [[curl -d "csrf=&id=42"]] من جلسة جديدة (مفيش كوكي) بيعدّي بـ 200، لأن [[$_SESSION['csrf']]] مش موجود فبقى [['']]، و [[hash_equals('', '')]] = true. يعني أي حد مفتحش الفورم قبل كده يتعمله CSRF بـ token فاضي. رجّع الشرط وهترجع 403.
+
+لو كل طلباتك بقت 403 حتى الفورم الصح، اتأكد إن [[session_start()]] متنادي في [[delete.php]] قبل [[csrf_ok()]]، وإن الفورم والـ delete على نفس الـ domain (الكوكي بتاعة الجلسة لازم توصل).`,
+          solCode: R`<?php // public/posts/delete.php
+require dirname(__DIR__, 2) . '/src/bootstrap.php'; // session_start + csrf_ok
+if (!csrf_ok()) { http_response_code(403); exit('الصفحة قديمة، ارجع وجرّب تاني'); }
+$userId = require_login();
+$id = (int) ($_POST['id'] ?? 0);
+db()->prepare('DELETE FROM posts WHERE id = :id AND user_id = :uid')
+    ->execute(['id' => $id, 'uid' => $userId]);
+header('Location: /dashboard.php', true, 303);
+exit;`
         },
         {
           cmd: "session_destroy",
@@ -1297,7 +1467,10 @@ exit;`,
             "امسح ملف الجلسة من السيرفر.",
             "حوّل لصفحة الدخول.",
             "وقّف."
-          ]
+          ],
+          sol: R`الـ response بتاع الخروج: [[303 See Other]] و [[Location: /login.php]] و [[Set-Cookie: PHPSESSID=deleted; expires=Thu, 01 Jan 1970 00:00:01 GMT; Max-Age=0; path=/; HttpOnly]]. تاريخ قديم = المتصفح يمسحها، فمش هتلاقيها في DevTools. وملف [[sess_...]] اختفى من فولدر الجلسات ([[php -r 'echo session_save_path();']] بيقولك فين، على Ubuntu [[/var/lib/php/sessions]]).
+
+لو فتحت [[/logout.php]] كرابط عادي: [[405]]، لأن الخروج بـ GET معناه إن أي [[<img src="/logout.php">]] في أي موقع يخرّجك. ولو الكوكي فضلت موجودة بعد الخروج، غالبًا الـ path أو الـ domain في [[setcookie]] مش زي اللي اتعملت بيهم، وده سبب إننا بناخدهم من [[session_get_cookie_params()]].`
         }
       ]
     },
@@ -1353,7 +1526,12 @@ echo $name;`,
             "فولدر بره public.",
             "انقل الملف من المكان المؤقت.",
             "الاسم الجديد (خزّنه في القاعدة)."
-          ]
+          ],
+          sol: R`[[evil.jpg]]: الرد [[صور بس]]. [[finfo]] قرا أول bytes في الملف ولقاها [[<?php]] فقال [[text/x-php]]، والاسم والامتداد و [[$f['type']]] اللي المتصفح بعته ملهمش أي دور.
+
+الصورة الحقيقية: الرد اسم زي [[01326f29ce7157ab9af926b4190dbed2.png]] (32 حرف hex + الامتداد حسب النوع الحقيقي)، وتلاقيه في [[storage/uploads/]] بره [[public]].
+
+ملف 9MB: الرد [[الرفع فشل]]، و [[$_POST]] و [[$_FILES]] فاضيين، وفي لوج السيرفر [[PHP Warning: PHP Request Startup: POST Content-Length of 9000213 bytes exceeds the limit of 8388608 bytes]]. وملف بين 2 و 8 ميجا بيقف برضه عند [[الرفع فشل]] قبل شرط الـ 2MB بتاعك، لأن [[upload_max_filesize]] الافتراضي [[2M]] فالـ error بيبقى [[UPLOAD_ERR_INI_SIZE]]. لو عايز رسالة أوضح، افحص [[$f['error']]] واعرض رسالة لكل كود.`
         },
         {
           cmd: "readfile",
@@ -1398,7 +1576,10 @@ readfile($path);`,
             "الحجم.",
             "المتصفح ميخمّنش النوع.",
             "ابعت الملف."
-          ]
+          ],
+          sol: R`[[<img src="/file.php?f=01326f...png">]] بيعرض الصورة: [[200]] و [[Content-Type: image/png]] والحجم مظبوط. [[?f=../public/index.php]] و [[?f=../../config.php]]: الاتنين [[404]]. [[basename]] شال المسار فبقت [[index.php]] و [[config.php]]، والـ regex رفضهم لأنهم مش 32 hex + امتداد صورة.
+
+من متصفح مش عامل login: [[302]] لـ [[/login.php]] من قبل ما يوصل للملف. لو الصورة ظهرت مكسورة وانت داخل، افتح الرابط لوحده: غالبًا فيه Warning أو مسافة اتطبعت قبل الصورة (سطر فاضي بعد [[?>]] في ملف متعمله require) فالـ bytes بتاعة الصورة باظت.`
         },
         {
           cmd: "PHPMailer",
@@ -1453,7 +1634,21 @@ $mail->send();`,
             "المستلم.",
             "العنوان والمحتوى.",
             "ابعت (ولو فشل هيرمي exception)."
-          ]
+          ],
+          sol: R`بعد [[$mail->send()]] مفيش exception، وفي [[localhost:8025]] هتلاقي الإيميل: From [[MyApp <no-reply@example.com>]] و Subject [[أهلًا بيك]] بالعربي سليم (بسبب [[CharSet = 'UTF-8']]). Mailpit بيمسك أي إيميل ومبيبعتوش لحد، فتجرّب براحتك. (اتجرب بـ Mailpit و PHPMailer 7.1، وهي النسخة اللي [[composer require phpmailer/phpmailer]] بيجيبها دلوقتي.)
+
+لو سبت [[ENCRYPTION_SMTPS]] مع port 1025: [[SMTP Error: Could not connect to SMTP host. Failed to connect to server]] بعد timeout، لأن Mailpit مش بيتكلم TLS على البورت ده. ولو العنوان طلع حروف غريبة زي [[Ø£Ù‡Ù„Ù‹Ø§]] يبقى نسيت [[CharSet]].`,
+          solCode: R`$mail = new PHPMailer(true);
+$mail->isSMTP();
+$mail->Host       = 'localhost';
+$mail->Port       = 1025;
+$mail->SMTPAuth   = false;
+$mail->SMTPSecure = '';
+$mail->CharSet    = 'UTF-8';
+$mail->setFrom('no-reply@example.com', 'MyApp');
+$mail->addAddress('sara@example.com');
+$mail->Subject = 'أهلًا بيك'; $mail->Body = 'حسابك اتعمل.';
+$mail->send();`
         },
         {
           cmd: "json_encode",
@@ -1504,7 +1699,12 @@ json_out(['id' => 7, 'title' => $title], 201);`,
             "الحقل المطلوب.",
             "فاضي: 422.",
             "اتعمل: 201 وبيانات العنصر الجديد."
-          ]
+          ],
+          sol: R`[[curl -i -X POST -H "Content-Type: application/json" -d '{"title":"أهلًا"}' ...]]: [[HTTP/1.1 201 Created]] و [[Content-Type: application/json; charset=utf-8]] والـ body [[{"id":7,"title":"أهلًا"}]].
+
+[[-d 'x']]: [[400]] و [[{"error":"JSON غلط"}]]. من غير [[-d]]: [[405]] و [[{"error":"POST بس"}]]. وجرّب كمان [[-d '{"title":"  "}']]: [[422]] و [[{"error":"title مطلوب"}]]. كل حالة ليها status مختلف، والـ client يقدر يفرّق من غير ما يقرا الرسالة.
+
+من غير [[JSON_UNESCAPED_UNICODE]]: [[{"id":7,"title":"أهلًا"}]]. ده JSON صحيح والـ client هيقراه صح، بس صعب تقراه انت في اللوج. ولو [[-d 'x']] رجّع 201 أو 500، يبقى انت بتفحص [[$in === null]] بدل [[is_array]]، أو نسيت [[true]] في [[json_decode]] فرجعلك object.`
         },
         {
           cmd: "return config",
@@ -1551,7 +1751,20 @@ array راجع من [[require]] أحسن من [[define()]] أو متغيرات g
             "من متغير بيئة لو موجود.",
             "مفتاح طويل عشوائي.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[public/index.php]] بيقرا الإعدادات عادي ([[$config['app_name']]])، والمفتاح اللي [[bin2hex(random_bytes(32))]] ولّده 64 حرف hex زي [[c4f10a81ac615bcd...8040]]، وكل تشغيل مختلف. [[git status]] مش هيظهر فيه [[config.php]] لو في [[.gitignore]]، وهيظهر [[config.example.php]] اللي بترفعه بقيم وهمية عشان اللي بعدك يعرف المفاتيح المطلوبة.
+
+وافتح [[localhost:8000/config.php]] وانت مشغّل [[php -S localhost:8000 -t public]]: مش هيعرضه، لأنه بره الجذر (السيرفر المدمج بيرجّع [[index.php]] لأي ملف مش موجود). لو [[config.php]] ظهر في [[git status]] وكان اتعمله commit قبل كده، [[.gitignore]] مش هيشيله: [[git rm --cached config.php]]، وأي سر اترفع قبل كده اعتبره اتسرب وغيّره.`,
+          solCode: R`# .gitignore
+config.php
+
+# config.example.php (ده اللي بيترفع)
+<?php
+return [
+    'env'      => 'dev',
+    'db_pass'  => 'CHANGE_ME',
+    'cron_key' => 'CHANGE_ME',
+];`
         },
         {
           cmd: "try / catch",
@@ -1600,7 +1813,12 @@ PHP 8: [[throw]] بقت expression ([[?: throw new ...]] زي المثال)، و
             "404.",
             "رسالة ووقّف.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[catch (Exception $e)]]: مش بيمسك، والسكريبت بيقع بـ [[Fatal error: Uncaught DivisionByZeroError: Division by zero]]. [[DivisionByZeroError]] بيورث من [[Error]] (غلطات اللغة) مش من [[Exception]]، والاتنين أخوات تحت [[Throwable]].
+
+مع [[catch (Throwable $e)]]: بيطبع [[caught]]، و [[get_class($e)]] = [[DivisionByZeroError]] والرسالة [[Division by zero]]. ونفس الحكاية مع [[1 % 0]] ([[Modulo by zero]]) و [[TypeError]] و [[ValueError]].
+
+الخلاصة للانترفيو: [[catch (Exception)]] بيسيب غلطات اللغة تعدّي. امسك [[Throwable]] في مكان واحد بس (الـ handler العام اللي بيسجّل ويرد 500)، وجوه الكود امسك النوع اللي تقدر تعمل معاه حاجة فعلًا.`
         },
         {
           cmd: "display_errors",
@@ -1645,7 +1863,13 @@ set_exception_handler(function (Throwable $e): void {
             "500.",
             "رسالة عامة للزائر من غير تفاصيل.",
             "قفلة."
-          ]
+          ],
+          sol: R`في dev (و production برضه): [[throw new Exception('test')]] بيرجّع [[500]] والنص [[حصلت مشكلة عندنا. جرّب تاني بعد شوية.]]، وفي [[logs/php-error.log]]:
+[[[29-Sep-2026 22:07:48 UTC] Exception: test in .../public/boom.php:3]] وتحته [[Stack trace:]].
+
+[[echo $undefined;]] في dev: الصفحة فيها [[Warning: Undefined variable $undefined in ... on line 3]] وبعدها باقي الصفحة بـ 200، والـ Warning متسجل في اللوج كمان. في production: الصفحة نضيفة، والـ Warning في اللوج بس. الـ Warning مش exception، فالـ handler مبيشتغلش عليه والصفحة بتكمّل.
+
+لو اللوج فاضي: فولدر [[logs]] مش موجود أو PHP مش قادر يكتب فيه (على السيرفر اليوزر [[www-data]])، فالرسايل بتروح لـ stderr بتاع السيرفر. ولو على سيرفر حقيقي (PHP-FPM) التعديل في [[config.php]] مأثرش على طول، استنى ثانيتين: OPcache بيعيد فحص الملفات كل [[revalidate_freq=2]].`
         }
       ]
     },
@@ -1707,7 +1931,12 @@ echo $total->amount;`,
             "قفلة الكلاس.",
             "PHP 8.4: [[new]] وبعدها method على طول.",
             "15000 (يعني 150 جنيه)."
-          ]
+          ],
+          sol: R`المثال بيطبع [[15000]]. [[$total->amount = 1;]]: [[Error: Cannot modify readonly property Money::$amount]]. عشان تغيّر مبلغ لازم تعمل object جديد، زي ما [[add]] بتعمل.
+
+[[new Money(-5)]]: [[InvalidArgumentException: المبلغ سالب]]. الـ constructor هو الباب الوحيد، فمستحيل يبقى عندك Money سالب في أي حتة في الكود.
+
+[[var_dump(0.1 + 0.2 == 0.3)]] بيطلّع [[bool(false)]]، لأن [[0.1 + 0.2]] فعليًا [[0.30000000000000004441]]. عشان كده المبلغ [[int]] بالقروش (10000 = 100 جنيه)، وفي القاعدة [[DECIMAL(10,2)]] أو [[INT]] مش [[FLOAT]]. ولو [[new Money(10000)->add(...)]] من غير أقواس حوالين [[new]] طلّع Parse error، يبقى انت على PHP أقدم من 8.4.`
         },
         {
           cmd: "interface و abstract",
@@ -1762,7 +1991,18 @@ echo checkout(new FakeGateway('YOUR_KEY'));`,
             "قفلة.",
             "الدالة عايزة أي حاجة بتنفّذ العقد.",
             "ابعتلها الـ fake."
-          ]
+          ],
+          sol: R`من غير [[charge]] في [[FakeGateway]]: [[Fatal error: Class FakeGateway contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (PaymentGateway::charge)]]، ومفيش ولا سطر من الملف اتنفّذ (حتى [[echo]] اللي فوق خالص)، لأن PHP بيفحص الكلاس وهو بيترجم الملف.
+
+[[LoggingGateway]] بيعدّي لـ [[checkout]] عادي رغم إنه مش وارث من [[BaseGateway]]، لأن [[checkout]] طالب الـ interface بس. الناتج مثلًا [[txn_26a81e2e]] للأول و [[log_500]] للتاني، وسطر [[FakeGateway: charge 500]] من [[error_log]] بيظهر في الترمنال.`,
+          solCode: R`final class LoggingGateway implements PaymentGateway {
+    public function charge(int $amount): string {
+        echo "[LoggingGateway] charge $amount\n";
+        return 'log_' . $amount;
+    }
+}
+echo checkout(new FakeGateway('YOUR_KEY')), "\n";
+echo checkout(new LoggingGateway()), "\n";`
         },
         {
           cmd: "trait",
@@ -1821,7 +2061,29 @@ var_dump($p->trashed());`,
             "من الـ trait الأول.",
             "من التاني.",
             "true."
-          ]
+          ],
+          sol: R`[[Comment]] بياخد [[softDelete]] و [[trashed]] زي [[Post]] بالظبط: [[trashed()]] false في الأول و true بعد [[softDelete()]].
+
+trait تاني فيه [[touch]] ومن غير حل: [[Fatal error: Trait method Touchable::touch has not been applied as Post::touch, because of collision with HasTimestamps::touch]]. الحل بـ [[insteadof]] بتختار واحدة، و [[as]] بتدّي التانية اسم تاني لو محتاجها.
+
+لو كتبت [[as]] لوحدها من غير [[insteadof]] هيفضل التعارض، لأن [[as]] بتضيف اسم جديد بس ومبتحلّش الاسم الأصلي.`,
+          solCode: R`<?php
+trait Touchable {
+    public function touch(): void { echo "Touchable::touch\n"; }
+}
+class Post {
+    use HasTimestamps, SoftDeletes, Touchable {
+        HasTimestamps::touch insteadof Touchable;
+        Touchable::touch as touchLog;
+    }
+}
+class Comment { use SoftDeletes; }
+$p = new Post();
+$p->touch();     // بتاعة HasTimestamps
+$p->touchLog();  // Touchable::touch
+$c = new Comment();
+$c->softDelete();
+var_dump($c->trashed()); // bool(true)`
         },
         {
           cmd: "enum",
@@ -1878,7 +2140,12 @@ $filter = OrderStatus::tryFrom($_GET['status'] ?? '') ?? OrderStatus::Pending;`,
             "من القيمة اللي في القاعدة (بيرمي لو غلط).",
             "«اتدفع paid».",
             "من الرابط: null لو غلط، فخد الافتراضي."
-          ]
+          ],
+          sol: R`بعد ما تضيف [[Cancelled]] من غير ما تعدّل [[match]]: الكود شغال عادي لحد ما حد ينادي [[OrderStatus::Cancelled->label()]]، ساعتها [[Fatal error: Uncaught UnhandledMatchError: Unhandled match case of type OrderStatus]] والـ stack trace بيشاور على [[label()]]. أدوات زي PHPStan بتمسكها قبل ما تشغّل.
+
+[[OrderStatus::from('nope')]]: [[ValueError: "nope" is not a valid backing value for enum OrderStatus]]. و [[OrderStatus::tryFrom('nope')]] بيرجّع [[NULL]] من غير غلطة. [[from]] للقيم اللي جاية من قاعدتك (لو غلط يبقى bug)، و [[tryFrom]] + [[??]] للي جاي من المستخدم زي [[$_GET]].
+
+ملاحظة: [[$row]] في المثال جاي من القاعدة، فعشان تجرّبه لوحده عرّفه الأول: [[$row = ['status' => 'paid'];]] والناتج [[اتدفع paid]].`
         },
         {
           cmd: "property hooks",
@@ -1933,7 +2200,12 @@ echo $u->email, ' / ', $u->displayName;`,
             "قفلة الكلاس.",
             "إيميل بمسافات وحروف كبيرة.",
             "«sara@example.com / sara»."
-          ]
+          ],
+          sol: R`[[$u->id = 5;]]: [[Error: Cannot modify private(set) property User::$id from global scope]]. القراية مسموحة من برّه والكتابة من جوه الكلاس بس.
+
+[[$u->displayName = 'x';]]: [[Error: Property User::$displayName is read-only]]. الـ property دي ليها [[get]] بس ومش متخزنة أصلًا (virtual)، فمفيش مكان تتكتب فيه.
+
+[[$u->email = ' ALI@EXAMPLE.COM';]] وبعدين [[echo $u->email]]: [[ali@example.com]]، و [[displayName]] بقت [[ali]]. الـ [[set]] hook بيشتغل على أي تخصيص، من الـ constructor أو من برّه. والناتج الأول للمثال: [[sara@example.com / sara]].`
         }
       ]
     },
@@ -1982,7 +2254,12 @@ composer audit`,
             "حدّث مكتبة واحدة واكتب lock جديد.",
             "إيه اللي ليه نسخ أحدث (من اللي انت طلبته بس).",
             "دوّر على ثغرات معروفة في مكتباتك."
-          ]
+          ],
+          sol: R`[[composer.json]] فيه [["phpmailer/phpmailer": "^7.1"]] (قيد: أي 7.x من 7.1 وطالع)، و [[composer.lock]] فيه النسخة بالظبط [["version": "v7.1.1"]] ومعاها الـ commit hash. ده الفرق: json = المسموح، lock = اللي اتسطّب فعلًا.
+
+بعد [[rm -rf vendor]] و [[composer install]]: [[Installing phpmailer/phpmailer (v7.1.1)]] نفس النسخة من الـ lock، حتى لو نزلت 7.2 في الوقت ده. [[composer update]] هو اللي بيتجاهل الـ lock ويجيب أحدث نسخة مسموحة.
+
+الغلط الشائع: ترفع [[vendor/]] على git وتنسى [[composer.lock]]. العكس هو الصح: [[vendor/]] في [[.gitignore]] و [[composer.lock]] في git (للمشاريع والمواقع).`
         },
         {
           cmd: "PSR-4 autoload",
@@ -2033,7 +2310,12 @@ $controller = new App\Controllers\PostController();`,
             "ملف الدخول.",
             "السطر الوحيد اللي فيه require.",
             "الكلاس اتحمّل لوحده."
-          ]
+          ],
+          sol: R`بعد [[composer dump-autoload]] ([[Generated autoload files]]) الصفحة بتشتغل من غير ولا [[require]] للكلاسات: [[App\Controllers\PostController]] = [[src/]] + [[Controllers/PostController.php]].
+
+بعد تغيير الاسم لـ [[postController.php]]: على Linux [[Fatal error: Uncaught Error: Class "App\Controllers\PostController" not found]]. الـ autoloader بيدوّر على [[PostController.php]] بالحرف، ونظام ملفات Linux بيفرّق بين الكبير والصغير. على Windows و macOS (افتراضيًا) هيلاقيه، فالغلطة مبتظهرش غير لما ترفع.
+
+ولو [[composer dump-autoload -o]] شغّلته، هيطبعلك تحذير إن الملف [[does not comply with psr-4 autoloading standard]]، فحطه في CI عشان تمسكها بدري.`
         },
         {
           cmd: "front controller",
@@ -2094,7 +2376,16 @@ echo 'الصفحة مش موجودة';`,
             "قفلة.",
             "مفيش route: 404.",
             "رسالة."
-          ]
+          ],
+          sol: R`[[/]] بيرجّع ناتج [[index()]] بـ 200، و [[/posts/1]] ناتج [[show(1)]]، و [[/posts/abc]] [[404]] و [[الصفحة مش موجودة]] لأن [[\d+]] أرقام بس، و [[/style.css]] بيرجّع الملف نفسه لأن أول سطر رجّع [[false]] فالسيرفر المدمج خدمه كملف.
+
+[[/about]]: route جديد بـ regex [[#^/about$#]]. خلي بالك من [[^]] و [[$]]: من غيرهم [[/about-us]] و [[/x/about]] هيتطابقوا. ولو كل الطلبات رجّعت 404، غالبًا نسيت [[public/index.php]] في آخر أمر [[php -S]]، أو الـ controller مفيهوش [[index()]] و [[show()]] لسه.`,
+          solCode: R`$routes = [
+    ['GET',  '#^/$#',            fn() => (new PostController())->index()],
+    ['GET',  '#^/posts/(\d+)$#', fn($id) => (new PostController())->show((int) $id)],
+    ['POST', '#^/posts$#',       fn() => (new PostController())->store()],
+    ['GET',  '#^/about$#',       fn() => 'صفحة عن الموقع'],
+];`
         },
         {
           cmd: "MVC",
@@ -2151,7 +2442,41 @@ function view(string $name, array $data = []): string {
             "حمّل القالب (بيطبع في الـ buffer).",
             "رجّع اللي اتطبع كنص.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/posts/1]] بيطلّع [[<h1>أول بوست &lt;b&gt;عريض&lt;/b&gt;</h1>]]: العنوان من القاعدة ومتأمّن بـ [[e()]]. و [[/posts/999]] من غير ما تمسك [[NotFound]] بيطلع 500، فامسكه في الـ router ورجّع 404.
+
+الاختبار بيطبع [[OK: 2 اختبارات عدّوا]] من غير ما يلمس القاعدة، لأن الـ controller بياخد الـ repository من الـ constructor. عشان الـ fake يورث منه، [[PostRepository]] متبقاش [[final]]، أو الأحسن تعمل interface. ولو العربي طلع [[Ø£ÙˆÙ„]]، الصف اتخزن من client charset غلط، مش مشكلة في الكود.`,
+          solCode: R`<?php // src/Models/PostRepository.php
+namespace App\Models;
+class PostRepository {
+    public function find(int $id): ?array {
+        $stmt = db()->prepare('SELECT id, title FROM posts WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch() ?: null;
+    }
+}
+
+<?php // tests/PostControllerTest.php  (php -d zend.assertions=1 tests/PostControllerTest.php)
+require dirname(__DIR__) . '/vendor/autoload.php';
+use App\Controllers\PostController;
+use App\Models\PostRepository;
+final class FakePostRepository extends PostRepository {
+    public function __construct(private array $rows) {}
+    public function find(int $id): ?array { return $this->rows[$id] ?? null; }
+}
+$c = new PostController(new FakePostRepository([1 => ['id' => 1, 'title' => '<b>تجربة</b>']]));
+assert($c->show(1) === "<h1>&lt;b&gt;تجربة&lt;/b&gt;</h1>\n");
+try { $c->show(2); assert(false); } catch (App\NotFound) {}
+echo "OK: 2 اختبارات عدّوا\n";
+
+// public/index.php: جوه الـ foreach
+try {
+    echo $action(...array_slice($m, 1));
+} catch (App\NotFound) {
+    http_response_code(404);
+    echo 'مش موجود';
+}
+exit;`
         }
       ]
     },
@@ -2198,7 +2523,22 @@ open redirect: [[header('Location: ' . $_GET['next'])]] بيخلي لينك مو
             "عشوائية ضعيفة (للأسرار: random_bytes و random_int).",
             "ملفات الأدمن اللي مفيهاش كلمة csrf خالص.",
             "أسرار متتبعة في git."
-          ]
+          ],
+          sol: R`على مشروع قديم الأوامر بتطلّع سطور بالشكل ده، وكل سطر يبقى صف في الجدول:
+
+[[./login.php:2: mysqli_query($conn, "SELECT ... WHERE email = '$_POST[email]'")]]: SQL injection، التصليح prepared statement. [[./admin/delete.php:2: $db->query('DELETE ... id = ' . $_POST['id'])]]: نفس الحكاية. [[./login.php:4: echo $_GET['msg'];]]: XSS، التصليح [[e()]]. [[./login.php:5: include $_GET['page'] . '.php';]]: file inclusion، التصليح whitelist بأسماء الصفحات. [[md5(...)]] على باسورد: [[password_hash]]. [[uniqid()]] كـ token: [[bin2hex(random_bytes(32))]]. و [[grep -rL csrf admin/]] بيطلّع الملفات اللي مفيهاش كلمة csrf خالص، زي [[admin/delete.php]]. و [[git ls-files]] لو طلّع [[config.php]] يبقى السر في git، والتصليح [[git rm --cached]] وغيّر السر.
+
+الـ grep بيطلّع false positives (مثلًا [[->query]] على نص ثابت مفيهوش input، أو [[md5]] لـ cache key مش باسورد)، فكل سطر اقراه بعينك. وغيابه مش ضمان: [[$sql = "..." . $id; $db->query($sql);]] على سطرين مش هيظهر، فدوّر كمان على [[\$sql\s*=.*\$_]] وافتح كل ملف فيه [[query]].`,
+          solCode: R`| الملف:السطر        | المشكلة           | التصليح                                   |
+|--------------------|-------------------|-------------------------------------------|
+| login.php:2        | SQL injection     | prepare + execute(['email' => $email])    |
+| admin/delete.php:2 | SQL injection     | prepare + (int) id + شرط user_id          |
+| login.php:4        | XSS               | echo e($_GET['msg'] ?? '')                |
+| login.php:5        | file inclusion    | match ($page) { 'home' => ..., ... }      |
+| login.php:3        | md5 للباسورد      | password_hash / password_verify           |
+| login.php:3        | uniqid كـ token   | bin2hex(random_bytes(32))                 |
+| admin/delete.php   | مفيش CSRF         | csrf_ok() أول الملف                       |
+| config.php         | سر في git         | .gitignore + git rm --cached + غيّر السر |`
         },
         {
           cmd: "OPcache",
@@ -2215,7 +2555,7 @@ printf("scripts: %d\n", $st['num_cached_scripts']);
 printf("hit rate: %.1f%%\n", $st['opcache_hit_rate']);
 printf("memory used: %.1f MB\n", $s['memory_usage']['used_memory'] / 1048576);
 printf("validate_timestamps: %s\n", ini_get('opcache.validate_timestamps'));`,
-          try: R`شغّل [[php -d zend_extension=opcache -S localhost:8000]] (على لينكس غالبًا متحمّل لوحده فمش محتاج [[-d]]) وافتح الصفحة كذا مرة: الـ hit rate بيطلع. وبعدين ارفعها على السيرفر، شوف الأرقام، وامسحها.`,
+          try: R`شغّل [[php -d opcache.enable_cli=1 -S localhost:8000]] (السيرفر المدمج بيتبع [[opcache.enable_cli]] وهي مقفولة افتراضيًا، ولو الـ extension مش متحمّل عندك ضيف كمان [[-d zend_extension=opcache]]) وافتح الصفحة كذا مرة: الـ hit rate بيطلع. وبعدين ارفعها على السيرفر، شوف الأرقام، وامسحها.`,
           flag: "script",
           deep: {
             why: "مشروع بـ Composer أو framework بيحمّل مئات الملفات في كل طلب. من غير OPcache كل طلب بيترجمهم من الأول، وده أغلب وقت الطلب في مشاريع كتير.",
@@ -2243,7 +2583,10 @@ JIT: من PHP 8.4 الافتراضي [[opcache.jit=disable]]. بيفيد الح�
             "نسبة الطلبات اللي لقت الملف جاهز.",
             "الذاكرة المستخدمة بالميجا.",
             "بيفحص تاريخ الملفات ولا لأ."
-          ]
+          ],
+          sol: R`مع [[php -S]] العادي على Linux هتلاقي [[scripts: 0]] و [[hit rate: 0.0%]] مهما عملت refresh، لأن السيرفر المدمج بيتبع [[opcache.enable_cli]] وهي [[0]]. شغّل [[php -d opcache.enable_cli=1 -S localhost:8000]]: أول طلب [[scripts: 1]] و [[hit rate: 0.0%]] (لسه بيترجم)، وبعدين 50% ثم 66.7% ثم 75% ثم 80%... الملف بقى في الذاكرة وكل طلب بعد كده hit. و [[memory used]] حوالي 9 MB، و [[validate_timestamps: 1]].
+
+على السيرفر الحقيقي (PHP-FPM) الأرقام أكبر بكتير: مئات أو آلاف scripts لو فيه framework، و hit rate فوق 99%. لو أقل من كده بعد ما الموقع اشتغل شوية، غالبًا [[memory_consumption]] أو [[max_accelerated_files]] صغيرين. ولو طلّع [[OPcache مقفول]] من الترمنال ده طبيعي ([[enable_cli=0]])، افتحها من المتصفح. وامسح الصفحة بعدها لأنها بتكشف مسارات ملفاتك.`
         },
         {
           cmd: "php artisan",
@@ -2283,7 +2626,19 @@ Blade: [[{{ $post->title }}]] بيعمل escape لوحده (نفس [[e()]])، و
             "كل الـ routes والـ controllers بتاعتها.",
             "REPL فيه كل كلاسات المشروع.",
             "شغّل سيرفر التطوير و Vite مع بعض."
-          ]
+          ],
+          sol: R`[[make:model Post -mc]] بيعمل [[app/Models/Post.php]] و migration و [[PostController]]. بعد [[$table->string('title');]] و [[migrate]] بيطبع [[..._create_posts_table ...... DONE]].
+
+في tinker، [[App\Models\Post::create(['title' => 'أول بوست'])]]: [[Illuminate\Database\Eloquent\MassAssignmentException  Add [title] to fillable property to allow mass assignment on [App\Models\Post].]] Laravel بيرفض يملا أعمدة من array إلا اللي انت سامح بيها، عشان لو عملت [[Post::create($request->all())]] محدش يبعت [[is_admin=1]] أو [[user_id]] حد تاني.
+
+بعد [[protected $fillable = ['title'];]] في الموديل (واقفل tinker وافتحه تاني عشان يقرا التعديل): بيرجّع [[App\Models\Post]] فيه [[title: "أول بوست"]] و [[created_at]] و [[updated_at]] و [[id: 1]]. الغلط الشائع: تحل المشكلة بـ [[$guarded = []]] فتفتح كل الأعمدة.`,
+          solCode: R`<?php // app/Models/Post.php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model;
+class Post extends Model
+{
+    protected $fillable = ['title'];
+}`
         }
       ]
     },
@@ -3746,7 +4101,12 @@ var_dump(in_array('1e1', ['10']), in_array('1e1', ['10'], true));`,
             "true و true و true.",
             "true (الاتنين صفر علمي)، و false مع ===.",
             "true من غير strict، و false معاه."
-          ]
+          ],
+          sol: R`الناتج بالترتيب: [[false]]، و [[true true true]]، و [[true true true]]، و [[true false]]، و [[true false]].
+
+[[0 == 'abc']] false من PHP 8 (كانت true في 7، ودي أشهر سؤال). [['1' == '01']] و [['10' == '1e1']] و [[100 == '1e2']] true لأن النصين الرقميين بيتقارنوا كأرقام. [[null == false]] و [[[] == false]] و [['0' == false]] true لأنهم كلهم falsy. [['0e123' == '0e456']] true لأن الاتنين 0 × 10 أس حاجة = 0، ودي ثغرة حقيقية لما تقارن hashes بـ [[==]] (ده سبب [[hash_equals]]). و [[in_array]] من غير [[true]] بيستخدم [[==]] فلقى [['1e1']] في [[['10']]].
+
+لو خمّنت [[0 == 'abc']] true، انت فاكر PHP 7. الإجابة المختصرة في الانترفيو: [[===]] دايمًا، و [[in_array(..., true)]] و [[match]] بدل [[switch]].`
         },
         {
           cmd: "Warning مقابل Error",
@@ -3779,7 +4139,19 @@ echo "مش هيتطبع\n";`,
             "بيكمّل عادي.",
             "require لملف مش موجود: Error والصفحة وقفت.",
             "مبيتنفّذش."
-          ]
+          ],
+          sol: R`[[include]]: [[Warning: include(missing.php): Failed to open stream: No such file or directory]] و [[Warning: include(): Failed opening 'missing.php' for inclusion]]، وبعدين [[bool(false)]] (ده اللي [[include]] رجّعه) و [[كمّل]]. بعدين [[require]]: Warning نفس الأولى، وبعدها [[Fatal error: Uncaught Error: Failed opening required 'missing.php']] و [[مش هيتطبع]] مش هيظهر.
+
+في [[try { require 'missing.php'; } catch (Error $e) { }]]: بيطبع [[اتمسك: Error - Failed opening required 'missing.php' (include_path='.:/usr/share/php')]] والكود بيكمّل. من PHP 8 الـ [[require]] الفاشل بيرمي [[Error]]، مش fatal ميتمسكش زي زمان. الـ Warning الأول بيطلع برضه لأنه قبل الـ Error.
+
+الإجابة المختصرة: [[include]] للحاجات الاختيارية (Warning ويكمّل)، و [[require]] للي الصفحة متعيشش من غيره، و [[_once]] عشان الملف ميتحمّلش مرتين (دوال وكلاسات).`,
+          solCode: R`<?php
+try {
+    require 'missing.php';
+} catch (Error $e) {
+    echo 'اتمسك: ', get_class($e), ' - ', $e->getMessage(), "\n";
+}
+echo "كمّل\n";`
         },
         {
           cmd: "السيرفر مقابل المتصفح",
@@ -3814,7 +4186,12 @@ echo session_id();`,
             "ابدأ جلسة.",
             "البيانات على السيرفر.",
             "ده بس اللي في كوكي المتصفح."
-          ]
+          ],
+          sol: R`أول طلب: [[لسه (الكوكي بتوصل من الطلب الجاي)]] والـ response فيه [[Set-Cookie: lang=ar; expires=...; Max-Age=2592000; path=/; SameSite=Lax]] و [[Set-Cookie: PHPSESSID=...]]. تاني طلب: [[ar]]. [[setcookie]] بيطلب من المتصفح يخزنها، و [[$_COOKIE]] بيتقرا من الطلب اللي جاي، فمش هيشوفها في نفس الطلب.
+
+في DevTools هتلاقي كوكيتين بس: [[lang=ar]] و [[PHPSESSID=ac2c53cc...]]. غيّر [[lang]] لـ [[en]] واعمل refresh: الصفحة هتطبع [[en]]، يعني أي حاجة في كوكي المستخدم يقدر يغيّرها. [[user_id]] مش موجود في المتصفح، اللي موجود مفتاح عشوائي بس والـ 42 في ملف الجلسة على السيرفر.
+
+الإجابة المختصرة: الكوكي = بيانات عند المتصفح، بيتبعت مع كل طلب، والمستخدم يقدر يقراه ويغيّره. الجلسة = بيانات على السيرفر، والكوكي فيه الـ id بس. أي حاجة ليها علاقة بالصلاحيات (مين المستخدم، admin ولا لا) في الجلسة.`
         },
         {
           cmd: "SQL والقيم منفصلين",
@@ -3849,7 +4226,12 @@ second-order injection: قيمة اتخزنت بأمان، وبعدين اتقر
             "اطبعه وشوف الشرط اتغير إزاي.",
             "الصح: placeholder.",
             "القيمة لوحدها كبيانات."
-          ]
+          ],
+          sol: R`[[echo $bad]] بيطبع: [[SELECT * FROM users WHERE email = 'x' OR '1'='1']]. الـ [[']] اللي في الإيميل قفلت النص بدري، و [[OR '1'='1']] بقى شرط SQL حقيقي دايمًا true، فالـ query بيرجّع كل الصفوف (لو login، هيدخل بأول مستخدم وغالبًا ده الـ admin).
+
+النسخة الـ prepared بترجّع صفر صفوف: الـ SQL وصل القاعدة الأول فيه [[?]] مكان القيمة، والقاعدة جهّزت الخطة، وبعدين القيمة وصلت كبيانات، فبتدوّر على إيميل حرفيًا [[x' OR '1'='1]].
+
+في الانترفيو قول الجملة دي: «الـ prepared statement مش بيعمل escape، بيبعت الكود والبيانات منفصلين فالبيانات مستحيل تتنفّذ». وزوّد إن اسم العمود أو الجدول أو [[ASC/DESC]] مينفعش يبقى placeholder، ودول whitelist.`
         },
         {
           cmd: "bcrypt بطيء + salt",
@@ -3880,7 +4262,19 @@ Argon2id ([[PASSWORD_ARGON2ID]]) بديل حديث بيستهلك ذاكرة ك�
             "hash (bcrypt، cost 12، salt عشوائي).",
             "true.",
             "الخوارزمية والـ cost مقرية من الـ hash نفسه."
-          ]
+          ],
+          sol: R`عندي [[password_hash('x', PASSWORD_DEFAULT)]] مرة واحدة أخدت حوالي 0.26 ثانية، ومليون [[md5('x')]] أخدوا حوالي 0.14 ثانية. يعني hash واحد bcrypt أبطأ من md5 واحد بأكتر من مليون مرة (الأرقام بتختلف حسب الجهاز، بس الفرق دايمًا بالملايين).
+
+ده المقصود: المستخدم مش هيحس بربع ثانية وقت الـ login، بس اللي سرق القاعدة ومعاه GPU بيجرّب مليارات md5 في الثانية، وبـ bcrypt آلاف بس. والـ salt العشوائي بيخلي كل hash لازم يتكسر لوحده، فـ rainbow tables ملهاش لازمة.
+
+و [[password_get_info]] بيطلّع [[[algo] => 2y]] و [[[algoName] => bcrypt]] و [[[cost] => 12]]. لو الوقت طلع أقل من 0.05 ثانية، غالبًا انت على PHP أقدم من 8.4 (الـ cost كان 10).`,
+          solCode: R`<?php
+$t = microtime(true);
+password_hash('x', PASSWORD_DEFAULT);
+printf("bcrypt مرة: %.3fs\n", microtime(true) - $t);
+$t = microtime(true);
+for ($i = 0; $i < 1_000_000; $i++) md5('x');
+printf("md5 مليون مرة: %.3fs\n", microtime(true) - $t);`
         },
         {
           cmd: "escape حسب المكان",
@@ -3911,7 +4305,12 @@ echo '<script>const n = ' . json_encode($name, JSON_HEX_TAG | JSON_HEX_QUOT) . '
             "اسم خبيث.",
             "جوه HTML: بيطلع نص.",
             "جوه JavaScript: json_encode بالـ flags."
-          ]
+          ],
+          sol: R`من غير escape ([[echo '<p>' . $name . '</p>';]]) الـ alert بيطلع: المتصفح شاف [[<img>]] حقيقي، الصورة [[x]] فشلت، فـ [[onerror]] اشتغل.
+
+بالسطرين اللي في المثال View Source بيبقى: [[<p>&lt;img src=x onerror=alert(1)&gt;</p>]] وبيظهر كنص، و [[<script>const n = "<img src=x onerror=alert(1)>";</script>]] ومفيش alert. كل مكان ليه escape بتاعه: HTML بـ [[htmlspecialchars]]، وجوه [[<script>]] بـ [[json_encode]] مع [[JSON_HEX_TAG]] عشان [[</script>]] جوه النص ميقفلش الـ tag.
+
+للانترفيو: الـ escape وقت الطباعة مش وقت الحفظ، لأن نفس القيمة ممكن تتطبع في HTML أو JSON أو CSV. وزوّد Content-Security-Policy كطبقة تانية، و [[htmlspecialchars]] مش كفاية جوه [[href]] ([[javascript:alert(1)]] مفيهاش ولا حرف يتعمله escape)، فالروابط لازم تتأكد إنها بتبدأ بـ [[https://]].`
         },
         {
           cmd: "token + SameSite",
@@ -3946,7 +4345,17 @@ double submit cookie: token في كوكي وفي الطلب والسيرفر ي�
             "...قارن اللي جاي باللي في الجلسة بأمان.",
             "مش مطابق: 403 ووقّف.",
             "قفلة."
-          ]
+          ],
+          sol: R`الفورم من [[localhost:9000]] بيرجّع [[403]] وصفحة فاضية. ولو نفس الفورم على موقعك ومعاه الـ token: [[200]].
+
+خلي بالك إن [[localhost:9000]] و [[localhost:8000]] نفس الـ site في عين المتصفح (البورت مش بيفرق في SameSite)، فكوكي الجلسة وصلت عادي، والـ 403 هنا جاي من الـ token بس. عشان تشوف SameSite لوحدها لازم domain مختلف فعلًا (مثلًا [[127.0.0.1]] مقابل [[localhost]]). والمثال مفيهوش [[session_start()]]، فلازم تضيفها في أوله.
+
+للانترفيو: الـ token هو الحماية الأساسية لأن الموقع التاني ميقدرش يقراه، و [[SameSite=Lax]] طبقة تانية بتمنع الكوكي في الـ POST من site تاني. والـ GET عمره ما يغيّر حاجة.`,
+          solCode: R`<!-- attack.html: شغّله بـ php -S localhost:9000 -->
+<form method="post" action="http://localhost:8000/csrf.php">
+  <input type="hidden" name="id" value="42">
+  <button>اكسب جايزة</button>
+</form>`
         },
         {
           cmd: "shared-nothing",
@@ -3979,7 +4388,12 @@ mod_php القديم: PHP جوه عملية Apache نفسها. أبسط بس ب�
             "افتح الجلسة.",
             "الجلسة متخزنة بره الطلب، فبتزيد.",
             "اطبع الاتنين."
-          ]
+          ],
+          sol: R`خمس مرات: [[متغير عادي: 1 | جلسة: 1]] ثم [[1 | 2]] ثم [[1 | 3]] ثم [[1 | 4]] ثم [[1 | 5]]. [[$hits]] بيبدأ من الصفر مع كل طلب لأن PHP بيمسح كل حاجة في الآخر، والجلسة بتزيد لأنها متخزنة في ملف على السيرفر ومتربوطة بالكوكي.
+
+الإجابة النموذجية: الطلب بيوصل لـ Nginx، يحوّله لـ PHP-FPM، worker فاضي يشغّل [[index.php]] من أوله (OPcache بيوفّر الترجمة بس)، الكود بيقرا الطلب ويكلّم القاعدة ويطبع، الـ response يرجع، وكل المتغيرات والاتصالات بتتقفل. أي حاجة لازم تفضل بين الطلبات مكانها بره PHP: جلسة، قاعدة، Redis، ملف.
+
+لو [[$hits]] زاد عندك، انت شغّال على runtime زي FrankenPHP worker mode أو Swoole، ودول مش shared-nothing، وده بالظبط اللي بيعمل memory leaks وبيانات مستخدم بتتسرّب لمستخدم تاني لو مخدتش بالك.`
         },
         {
           cmd: "spl_autoload_register",
@@ -4018,7 +4432,21 @@ $repo = new App\Models\PostRepository();`,
             "لو الملف موجود حمّله.",
             "قفلة.",
             "الكلاس اتحمّل لوحده هنا."
-          ]
+          ],
+          sol: R`الصفحة بتشتغل زي ما كانت بـ Composer. لو ضفت [[echo]] جوه الدالة هتشوف إنها بتتنادى مرة لكل كلاس أول ما يتستخدم: [[App\Models\PostRepository → src/Models/PostRepository.php]] وبعدين [[App\Controllers\PostController → src/Controllers/PostController.php]]، ومبتتناداش تاني لنفس الكلاس.
+
+الـ autoloader بيحمّل الكلاسات بس، فملفات الدوال ([[helpers.php]] فيه [[view]] و [[e]]، و [[db.php]]) لازم [[require]] بإيدك، وده اللي [[files]] في [[composer.json]] بيعمله. لو نسيتها هتاخد [[Call to undefined function view()]]. ولو اسم الكلاس ملوش ملف ([[Class "App\..." not found]])، الدالة بترجع من غير ما تعمل حاجة و PHP بيجرب الـ autoloader اللي بعدها.`,
+          solCode: R`<?php
+spl_autoload_register(function (string $class): void {
+    $prefix = 'App\\';
+    if (!str_starts_with($class, $prefix)) return;
+    $file = __DIR__ . '/src/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
+    if (is_file($file)) require $file;
+});
+require __DIR__ . '/src/helpers.php'; // الدوال مش بتتعمل autoload
+require __DIR__ . '/src/db.php';
+$c = new App\Controllers\PostController(new App\Models\PostRepository());
+echo $c->show(1);`
         },
         {
           cmd: "عقد، أساس، نسخ",
@@ -4059,7 +4487,10 @@ trait: copy-paste وقت الـ compile، فيه properties و methods و abstra
             "قفلة.",
             "object.",
             "true و true و false."
-          ]
+          ],
+          sol: R`الناتج [[bool(true) bool(true) bool(false)]]: الـ object نوعه [[Notifier]] و [[BaseNotifier]]، إنما [[Logs]] مش نوع. الـ trait اتنسخ جوه الكلاس وخلاص، فمينفعش تكتب [[function x(Logs $l)]]. و [[new BaseNotifier()]]: [[Error: Cannot instantiate abstract class BaseNotifier]].
+
+الإجابة النموذجية: interface = عقد من غير كود ([[implements]] كذا واحد). abstract class = أساس فيه كود وحالة، وراث واحد بس، ومينفعش يتعمل منه object. trait = كود بيتنسخ في كذا كلاس ملهمش علاقة ببعض، من غير نوع. ولو عايز تعرف الـ traits: [[class_uses($n)]] بيرجّع array فاضي لأنها بتشوف الكلاس نفسه بس، و [[class_uses(BaseNotifier::class)]] فيها [[Logs]].`
         },
         {
           cmd: "PDO لأغلب المشاريع",
@@ -4096,7 +4527,22 @@ PDO بيسهّل تغيير القاعدة من ناحية الكود (نفس ا
             "PDO: placeholder بالاسم.",
             "القيمة في execute.",
             "هات الصف."
-          ]
+          ],
+          sol: R`الـ INSERT بـ mysqli: [[prepare]] بـ [[?]]، وبعدين [[bind_param('sss', $email, $name, $hash)]] (حرف لكل قيمة: s نص، i رقم)، وبعدين [[execute]]، و [[$mysqli->insert_id]]. بـ PDO: [[prepare]] بـ [[:email]]، و [[execute(['email' => ...])]]، و [[lastInsertId()]]. سطر أقل، ومفيش سلسلة أنواع تلخبطها.
+
+شكل PHP 8.1: [[$stmt->execute([$email])]] من غير [[bind_param]] شغال، و [[get_result()->fetch_assoc()]] بيرجّع [[[id] => 6, [name] => منى]]. ومن 8.2 فيه كمان [[$mysqli->execute_query($sql, [$email])]] في سطر واحد. يعني الفرق في الطول قلّ، والفرق الحقيقي: PDO بيشتغل مع MySQL و Postgres و SQLite بنفس الكود، وفيه named placeholders و fetch modes أكتر. mysqli لو محتاج حاجة خاصة بـ MySQL بس.`,
+          solCode: R`<?php
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$mysqli = new mysqli('127.0.0.1', 'myapp_user', 'YOUR_DB_PASSWORD', 'myapp');
+$mysqli->set_charset('utf8mb4');
+$stmt = $mysqli->prepare('INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)');
+$stmt->bind_param('sss', $email, $name, $hash);
+$stmt->execute();
+echo $mysqli->insert_id, "\n";
+
+$stmt = $pdo->prepare('INSERT INTO users (email, name, password_hash) VALUES (:email, :name, :hash)');
+$stmt->execute(['email' => $email, 'name' => $name, 'hash' => $hash]);
+echo $pdo->lastInsertId(), "\n";`
         },
         {
           cmd: "PHP 8 → 8.5",
@@ -4137,7 +4583,10 @@ JIT: بيفرق في الحسابات التقيلة، ونادرًا في مو�
             "named argument.",
             "ترقية.",
             "«admin ali@example.com 8»."
-          ]
+          ],
+          sol: R`الناتج [[admin ali@example.com 8]]. الميزات: enum بقيمة نصية [[enum Role: string]] (8.1)، constructor promotion (8.0)، [[readonly]] (8.1)، [[private(set)]] asymmetric visibility (8.4)، enum كقيمة افتراضية [[= Role::User]] (8.1)، named arguments [[email:]] (8.0)، nullsafe [[?->]] (8.0)، [[array_find]] (8.4). دول 8.
+
+الـ arrow function [[fn($n) => ...]] مش من 8، نزلت في 7.4، و [[: void]] من 7.1، و [[final]] قديمة خالص. لو حسبتهم يبقى عندك غلطة وهي بالظبط اللي الانترفيور بيدوّر عليها. ولو شغّلته على 8.3 هتاخد Parse error عند [[private(set)]]، لأن أول ميزة 8.4 بتوقف الملف كله.`
         }
       ]
     }
