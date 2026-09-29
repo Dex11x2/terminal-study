@@ -1299,7 +1299,9 @@ CORS مش حماية للسيرفر: curl و Postman والسيرفرات الت
           title: "حد لعدد الطلبات من نفس المصدر",
           desc: R`[[rateLimit]] بيعد طلبات كل IP في فترة، ولو عدّى الحد يرد 429.
 
-حد عام معقول للـ API كله، وحد أشد بكتير لـ login و «نسيت الباسورد» و OTP، لأن دول اللي بيتعمل عليهم تخمين. وورا Nginx أو Cloudflare لازم [[app.set("trust proxy", 1)]]، وإلا كل الطلبات هتبان جاية من IP واحد (الـ proxy) والكل يتحظر مع بعض.`,
+حد عام معقول للـ API كله، وحد أشد بكتير لـ login و «نسيت الباسورد» و OTP، لأن دول اللي بيتعمل عليهم تخمين. وورا Nginx أو Cloudflare لازم [[app.set("trust proxy", 1)]]، وإلا كل الطلبات هتبان جاية من IP واحد (الـ proxy) والكل يتحظر مع بعض.
+
+والعداد هنا في ذاكرة الـ process. أول ما يبقى عندك أكتر من نسخة، أو عايز حد لكل يوزر أو لكل API key حسب الباقة، العداد يروح Redis: درس [[rate-limit-redis]] في المستوى التالت.`,
           example: R`import { rateLimit } from "express-rate-limit";
 
 app.set("trust proxy", 1);
@@ -1321,11 +1323,13 @@ app.use("/api/auth/login", loginLimiter);`,
             why: "من غير حد، أي حد يجرّب مليون باسورد على حساب واحد، أو يبعت ألف طلب OTP (وانت بتدفع تمن كل SMS)، أو يعمل scraping لكل البيانات، أو يضغط السيرفر لحد ما يقع. الـ rate limit مش حماية كاملة، بس بيحوّل الهجمات دي من دقايق لسنين.",
             how: R`الـ limiter بيعمل key لكل طلب (افتراضيًا الـ IP، ومع IPv6 بيجمع الـ subnet كله عشان حد عنده ملايين العناوين ميلفّش عليه)، ويزوّد عداد في الـ store. أول ما العداد يعدّي [[limit]] جوه [[windowMs]]، بيرد 429 من غير ما الطلب يوصل للـ route.
 
-الـ store الافتراضي في الذاكرة: كل نسخة من السيرفر ليها عداد لوحدها، ومع restart بيتصفّر. لو شغّال نسختين (PM2 cluster أو كذا container)، الحد الفعلي بيتضاعف. الحل store مشترك في Redis (باكدج [[rate-limit-redis]] مع [[ioredis]]).
+الـ store الافتراضي في الذاكرة: كل نسخة من السيرفر ليها عداد لوحدها، ومع restart بيتصفّر. لو شغّال نسختين (PM2 cluster أو كذا container)، الحد الفعلي بيتضاعف. الحل store مشترك في Redis: [[store: new RedisStore({ prefix: "rl:api:", sendCommand: (c, ...a) => redis.call(c, ...a) })]]، و store لكل limiter (المكتبة بترمي ValidationError لو نفس الـ store اتدّى لاتنين). الإعداد الكامل وقرار [[passOnStoreError]] (لو Redis وقع تسمح ولا ترفض) في درس [[rate-limit-redis]].
+
+الـ headers: [[standardHeaders: "draft-8"]] بيبعت مع كل رد [[RateLimit-Policy: "300-in-15min"; q=300; w=900]] (الحصة والنافذة بالثواني) و [[RateLimit: "300-in-15min"; r=299; t=900]] (الباقي والثواني لحد التصفير)، ومع الـ 429 [[Retry-After]] بالثواني. العميل الكويس (والموبايل بتاعك) يقرا دول ويستنى بدل ما يخبط. و [[legacyHeaders: false]] بيشيل [[X-RateLimit-*]] القديمة.
 
 [[trust proxy]]: [[req.ip]] بيتقري من الاتصال نفسه، وورا Nginx الاتصال جاي من Nginx، فالـ IP الحقيقي في [[X-Forwarded-For]]. الرقم [[1]] معناه «ثق في hop واحد قدامي». و [[true]] معناها ثق في أي حاجة، وده خطير: أي حد يبعت [[X-Forwarded-For]] مزيف ويبقى IP جديد مع كل طلب. و express-rate-limit بيحذّرك في اللوج لو شاف الإعداد ده.
 
-و [[keyGenerator]] بيخليك تعد بحاجة غير الـ IP: id اليوزر للـ endpoints المحمية، أو الإيميل في login عشان تحمي الحساب نفسه حتى لو الهجوم من IPs كتير.`,
+و [[keyGenerator]] بيخليك تعد بحاجة غير الـ IP: id اليوزر للـ endpoints المحمية ([[(req) => req.user ? $__btuser:$__{req.user.id}$__bt : ipKeyGenerator(req.ip)]])، أو الـ API key لعملاء الـ API، أو الإيميل في login عشان تحمي الحساب نفسه حتى لو الهجوم من IPs كتير. ولو رجّعت الـ IP بنفسك لازم يعدّي على [[ipKeyGenerator]] (بيجمع عناوين IPv6 في subnet)، وإلا express-rate-limit بيرمي ValidationError وانت بتقوم. و [[limit]] ممكن يبقى دالة: [[(req) => (req.user?.plan === "pro" ? 1000 : 100)]].`,
             when: "كل API عام. والحد الأشد على: login، و register، و forgot password، و OTP، وأي endpoint بيبعت إيميل أو SMS أو بيكلّم AI (بتدفع عليه).",
             mistakes: R`في مشروع حقيقي كان [[ioredis]] و [[rate-limit-redis]] متسطبين، والـ limiter فعليًا بيعد في الذاكرة، ومع أكتر من نسخة كل واحدة بتعد لوحدها. وفي نفس المشروع limiter صفحات الـ CMS كان [[skip]] بتاعه بيعدّي كل GET، فبقى بيحمي الـ POST بس. و [[trust proxy: true]] بدل رقم. ونسيانه خالص ورا Nginx: أول مرة الموقع يتزحم، كل الزوار يتحظروا مع بعض لأنهم «IP واحد».`
           },
@@ -1506,8 +1510,10 @@ const taskSchema = new mongoose.Schema({
 
 export const Task = mongoose.model("Task", taskSchema);
 
-const tasks = await Task.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(20).lean();`,
-          try: R`شغّل Mongo في Docker (تاب «MongoDB»)، واعمل الـ model ده، وجرّب [[Task.create]] من غير title وشوف الـ ValidationError. وقارن سرعة [[find()]] بـ [[lean()]] ومن غيرها على ١٠٠٠٠ مستند.`,
+const tasks = await Task.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(20).lean();
+
+const recent = await Task.find().sort({ createdAt: -1 }).limit(50).populate({ path: "userId", select: "name email" }).lean();`,
+          try: R`شغّل Mongo في Docker (تاب «MongoDB»)، واعمل الـ model ده، وجرّب [[Task.create]] من غير title وشوف الـ ValidationError. وقارن سرعة [[find()]] بـ [[lean()]] ومن غيرها على ١٠٠٠٠ مستند. وبعدين فعّل [[mongoose.set("debug", true)]] وهات ٥٠ مهمة ومعاها اسم صاحبها بطريقتين: loop فيه [[User.findById]] لكل مهمة، و [[populate]]. عد الـ queries في اللوج.`,
           flag: "script",
           deep: {
             why: "مشاريع كتير (خصوصًا لوحات الإدارة والمشاريع القديمة) مبنية على Mongo و Mongoose، وأي انترفيو Node ممكن يسألك عنه. Mongo نفسها مفيهاش schema، و Mongoose بيرجّعلك الشكل والتحقق على مستوى التطبيق.",
@@ -1515,11 +1521,13 @@ const tasks = await Task.find({ userId: req.user.id }).sort({ createdAt: -1 }).l
 
 الـ schema بتعمل validation وقت [[save]] و [[create]]، بس مش افتراضيًا في [[updateOne]] و [[findOneAndUpdate]] إلا لو [[runValidators: true]]. والـ documents اللي بترجع من [[find]] objects تقيلة فيها دوال (save و populate)، و [[lean()]] بيرجّع objects عادية أسرع وأخف لو هتقرا بس.
 
-[[populate("userId")]] بيجيب المستند المرتبط بـ query تانية (Mongo مفيهاش joins زي SQL)، وده سهل يعمل N+1 لو اتعمل جوه loop.
+[[populate("userId")]] بيجيب المستندات المرتبطة بـ query تانية (Mongo مفيهاش joins زي SQL): بيجمع كل الـ userIds من النتيجة ويعمل [[User.find({ _id: { $in: [...] } })]] واحدة، ويحط كل يوزر مكان الـ id بتاعه. يعني ٥٠ مهمة بيوزرهم = ٢ queries. أما الـ loop اللي بيعمل [[await User.findById(t.userId)]] لكل مهمة فده N+1: ٥٠ مهمة = ٥١ query، وكل واحدة رحلة للقاعدة. و [[select]] جوه populate بيجيب الحقول اللي محتاجها بس (ومتنساش إن من غيره الـ hash بتاع الباسورد ممكن يطلع في الرد). والـ populate المتداخل ([[populate({ path: "userId", populate: { path: "company" } })]]) كل مستوى query زيادة، ولو محتاج joins وتجميع تقيل، [[aggregate]] مع [[$lookup]] بيعملها في query واحدة على السيرفر.
+
+الـ transactions: [[await mongoose.connection.transaction(async (session) => { await A.updateOne(..., { session }); await B.updateOne(..., { session }); })]]. لازم تعدّي [[session]] لكل عملية جواها، وأي عملية من غيره بتتنفّذ برّه الـ transaction ومش بترجع لو حصل rollback. والدالة دي بتعيد المحاولة لوحدها في أخطاء transient، فالكود جواها لازم يبقى آمن لو اتنفّذ مرتين (متبعتش إيميل جواها).
 
 والـ transactions في Mongo محتاجة replica set حتى لو node واحدة. و ObjectId مش صحيح (زي [[abc]]) بيعمل [[CastError]]، فاتحقق منه قبل الـ query.`,
             when: "بيانات شكلها بيتغير كتير، أو مستندات متداخلة بتتقري مع بعض، أو مشروع قايم عليه. للبيانات المترابطة (فلوس وأوردرات وصلاحيات)، Postgres غالبًا اختيار أأمن.",
-            mistakes: R`[[findOneAndUpdate]] من غير [[runValidators]] فبيانات غلط تتحفظ. و [[find()]] من غير [[limit]] على collection فيها مليون مستند. وفي مشروع حقيقي كان [[pre("save")]] بيعمل hash للباسورد (صح)، بس الـ model نفسه كان فيه حقل للباسورد نص صريح جنبه (درس [[bcrypt]]).`
+            mistakes: R`[[findOneAndUpdate]] من غير [[runValidators]] فبيانات غلط تتحفظ. و [[find()]] من غير [[limit]] على collection فيها مليون مستند. و [[findById]] جوه loop بدل populate أو [[$in]] (N+1). و transaction بتنسى [[session]] في عملية من عملياتها. وفي مشروع حقيقي كان [[pre("save")]] بيعمل hash للباسورد (صح)، بس الـ model نفسه كان فيه حقل للباسورد نص صريح جنبه (درس [[bcrypt]]).`
           },
           lines: [
             "Mongoose.",
@@ -1530,7 +1538,8 @@ const tasks = await Task.find({ userId: req.user.id }).sort({ createdAt: -1 }).l
             "مرجع ليوزر، ومعاه index عشان البحث بيه يبقى سريع.",
             "[[timestamps]] بيضيف createdAt و updatedAt لوحده.",
             "الـ model اللي هتستخدمه في الـ services.",
-            "مهام اليوزر، الأحدث، أول ٢٠. [[lean]] بيرجّع objects عادية أسرع."
+            "مهام اليوزر، الأحدث، أول ٢٠. [[lean]] بيرجّع objects عادية أسرع.",
+            "آخر ٥٠ مهمة ومعاها اسم وإيميل صاحبها: query للمهام وواحدة لكل اليوزرز مع بعض، مش واحدة لكل مهمة."
           ]
         },
         {
@@ -1863,6 +1872,2321 @@ router.post("/", async (req, res) => {
             "رد.",
             "قفلة."
           ]
+        }
+      ]
+    },
+    {
+      t: "الاختبارات",
+      l: 3,
+      n: "اختبارات للـ API كله: supertest على الـ app من غير بورت، وقاعدة اختبار حقيقية، و factories، ومصفوفة الصلاحيات، والخدمات الخارجية، والـ webhooks",
+      items: [
+        {
+          cmd: "app و server",
+          title: "افصل الـ app عن listen عشان تختبره",
+          desc: R`[[app.ts]] بيبني الـ app ويرجّعه: middleware و routes و error handler. و [[server.ts]] بس اللي بيعمل [[listen]] ويسمع للـ signals. الاختبارات بتستورد [[createApp()]] وتدّيه لـ supertest مباشرة، فمفيش بورت ثابت يتفتح، ومفيش «البورت مشغول» لما تشغّل ملفين اختبار مع بعض.
+
+القاعدة: مفيش أي side effect وقت الـ import. لا [[listen]]، ولا اتصال بـ Redis أو queue في أول الملف من غير ما حد يطلبه.`,
+          example: R`// src/app.ts
+import express from "express";
+export function createApp() {
+  const app = express();
+  app.use(express.json());
+  app.get("/health", (req, res) => res.json({ ok: true }));
+  app.use("/api/orders", ordersRouter);
+  app.use(errorHandler);
+  return app;
+}
+
+// src/server.ts
+import { createApp } from "./app.js";
+const server = createApp().listen(config.PORT, () => logger.info({ port: config.PORT }, "listening"));
+process.on("SIGTERM", () => server.close(() => process.exit(0)));`,
+          try: R`لو السيرفر بتاعك ملف واحد فيه [[app.listen]] في الآخر: قسّمه لملفين زي المثال، وخلي [[npm run dev]] يشغّل server.ts. وبعدين اكتب سكربت صغير يعمل [[import { createApp } from "./src/app.js"]] ويطبع [[typeof createApp()]]، واتأكد إن مفيش سطر «listening» اتطبع.`,
+          flag: "script",
+          deep: {
+            why: R`لو [[app.js]] بيعمل listen وهو بيتعمله import، كل ملف اختبار هيفتح البورت 3000. أول ملف يمسكه، والتاني يقع بـ [[EADDRINUSE]]، والـ process مبتقفلش في الآخر لأن فيه سيرفر لسه سامع. ونفس الفصل بيفيد برّه الاختبارات: سكربت أو worker عايز يستخدم نفس الـ routes أو الإعدادات من غير ما يفتح سيرفر.`,
+            how: R`supertest لما تدّيله app (مش URL) بيعمل [[http.createServer(app)]] ويـ listen على بورت 0، يعني النظام يختار بورت فاضي عشوائي، ويبعت الطلب، ويقفل السيرفر بعد الرد. فكل اختبار بيكلّم الـ app الحقيقي بكل الـ middleware بتاعه عبر HTTP حقيقي، بس على بورت مؤقت محدش شايفه.
+
+[[createApp()]] كدالة (مش object جاهز) بيدّيك ميزة تانية: تقدر تبني app جديد لكل ملف اختبار، أو تبعتله dependencies مختلفة ([[createApp({ mailer: fakeMailer })]]) لو عايز. وده نفس اللي «تاب بناء مشروع كامل» بيعمله في هيكل المشروع.
+
+و [[server.ts]] هو المكان الوحيد اللي فيه الحاجات اللي ليها علاقة بالـ process: البورت، و SIGTERM، والإغلاق النضيف (درس «الإغلاق النضيف» في تاب «Node و npm»).`,
+            when: "من أول يوم في أي API هتكتبله اختبارات. التكلفة سطرين، ولو أجّلتها هتلاقي imports بتفتح اتصالات في كل حتة.",
+            mistakes: R`[[export default app.listen(3000)]]: كده اللي بيتصدّر هو الـ server مش الـ app، والبورت بيتفتح مع أي import. وملف [[db.js]] بيعمل [[await prisma.$connect()]] أو [[redis.connect()]] في أول سطر، فأي اختبار حتى لو مش محتاج الداتابيز بيستنى اتصال. وفي الانترفيو: «إزاي بتختبر الـ API بتاعك؟» الإجابة الكويسة بتبدأ بالفصل ده، وبعدين supertest على الـ app، وبعدين قاعدة اختبار حقيقية.`
+          },
+          lines: [
+            "express.",
+            "دالة بتبني app جديد وترجّعه، من غير listen.",
+            "app جديد.",
+            "الـ middleware العادي.",
+            "route للـ health check.",
+            "الـ routers.",
+            "الـ error handler في الآخر.",
+            "رجّعه للي نادى: server.ts أو الاختبار.",
+            "قفلة.",
+            "server.ts بيستورد نفس الدالة.",
+            "هو بس اللي بيعمل listen ويطبع البورت.",
+            "ولما الـ process يتطلب منها تقفل، يقفل السيرفر الأول وبعدين يخرج."
+          ],
+          sol: R`الناتج الصح: [[typeof createApp()]] بيطبع [[function]] (الـ app في Express دالة [[(req, res, next)]])، ومفيش سطر «listening» ولا البورت اتفتح، والسكربت بيخلص ويقفل لوحده.
+
+لو السكربت فضل مفتوح ومقفلش، يبقى فيه حاجة بتتفتح وقت الـ import: listen، أو اتصال Redis، أو setInterval. دوّر عليها بـ [[node --trace-exit]] أو علّق الـ imports واحد واحد.
+
+ولو ظهر «listening»، يبقى [[listen]] لسه في app.ts أو في ملف بيتعمله import منه.`,
+          solCode: R`// check-app.mjs
+import { createApp } from "./src/app.js";
+const app = createApp();
+console.log(typeof app); // function
+// مفيش listen: السكربت يخلص ويقفل لوحده`
+        },
+        {
+          cmd: "supertest",
+          title: "اختبر كل endpoint: الـ status والـ body",
+          desc: R`[[request(app).post(url).set(header).send(body)]] بيبعت طلب حقيقي للـ app ويرجّعلك الرد، وانت بتتأكد من [[res.status]] و [[res.body]] بـ vitest.
+
+لكل endpoint اختبر الحالة الناجحة، وكل رفض ليه كود مختلف: 400 للـ body الغلط، و 401 من غير توكن، و 404 لحاجة مش موجودة، و 502 لو خدمة برّه وقعت. أساسيات vitest نفسها (describe و it و watch) في درس [[vitest]] في تاب «فحص الكود».`,
+          example: R`import request from "supertest";
+import { describe, it, expect } from "vitest";
+import { createApp } from "../src/app.js";
+import { createUser } from "./factories.js";
+
+const app = createApp();
+
+describe("POST /api/orders", () => {
+  it("creates an order", async () => {
+    const user = await createUser();
+    const res = await request(app).post("/api/orders").set("Authorization", $__btBearer $__{user.token}$__bt).send({ amountCents: 5000 });
+    expect(res.status).toBe(201);
+    expect(res.body).toMatchObject({ status: "PENDING", checkoutUrl: expect.stringContaining(res.body.id) });
+  });
+
+  it("rejects a bad amount with 400", async () => {
+    const user = await createUser();
+    const res = await request(app).post("/api/orders").set("Authorization", $__btBearer $__{user.token}$__bt).send({ amountCents: -1 });
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("INVALID_AMOUNT");
+  });
+});`,
+          try: R`[[npm i -D vitest supertest]]، واكتب ملف [[tests/health.test.ts]] يتأكد إن [[GET /health]] بيرجّع 200 و [[{ ok: true }]]، وإن [[GET /nope]] بيرجّع 404. شغّل [[npx vitest run]]. وبعدين غيّر الـ status في الـ route لـ 201 وشوف الاختبار بيقع بيقول إيه.`,
+          flag: "script",
+          deep: {
+            why: R`الـ API هو العقد بينك وبين الواجهة والموبايل. اختبار الـ service لوحده مش كفاية: الـ validation والـ auth والـ error handler وشكل الـ JSON كلها بتحصل في الطبقات اللي فوقه. اختبار supertest بيعدّي على كل ده مرة واحدة، فبيمسك الغلطات اللي بتبوّظ الواجهة فعلًا: 500 بدل 400، أو حقل اتشال من الرد، أو route اتنقل.`,
+            how: R`[[request(app)]] بيرجّع object تبني عليه الطلب بـ chaining، وأول ما تعمل [[await]] بيتبعت. [[.send(obj)]] بيعمل JSON ويحط [[Content-Type: application/json]] لوحده. و [[.set()]] للـ headers، و [[.query({ page: 2 })]] للـ query string.
+
+الرد فيه [[status]] و [[headers]] و [[body]] (متحوّل من JSON) و [[text]] (النص الخام). و [[toMatchObject]] بيتأكد من الحقول اللي كتبتها بس ويتجاهل الباقي، فالاختبار ميقعش لو ضفت حقل جديد. و [[expect.any(String)]] و [[expect.stringContaining]] للقيم اللي بتتغير كل مرة زي الـ id والتاريخ.
+
+supertest عنده [[.expect(201)]] كمان، بس [[expect(res.status).toBe(201)]] بيطلّع رسالة أوضح في vitest ويخليك تشوف الـ body لما يقع (حط [[console.log(res.body)]] مؤقتًا).
+
+ولو عايز كوكيز تفضل بين الطلبات (login وبعده [[/me]])، استخدم [[request.agent(app)]]: بيحفظ الكوكيز زي المتصفح.`,
+            when: "لكل endpoint: الحالة الناجحة، وكل كود خطأ ليه معنى مختلف. الحسابات المعقدة (سعر وخصم وضريبة) اختبرها كمان unit على الدالة نفسها، أسرع وأوضح.",
+            mistakes: R`إنك تختبر [[res.status]] بس ومتبصش على الـ body، فـ endpoint بيرجّع [[{}]] بـ 200 يعدّي. أو العكس: [[toEqual]] على الرد كله بالـ id والتاريخ، فالاختبار يقع كل مرة. ونسيان [[await]] قبل [[request(app)]]: الاختبار «ينجح» من غير ما الطلب يتبعت أصلًا. واختبارات بتعتمد على ترتيبها (الأول بيعمل يوزر والتاني بيستخدمه): كل اختبار لازم يجهّز الداتا بتاعته بنفسه (درس [[factories]]).`
+          },
+          lines: [
+            "supertest.",
+            "دوال vitest.",
+            "الـ app من غير listen.",
+            "factory بتعمل يوزر وتوكن (درس [[factories]]).",
+            "app واحد للملف كله.",
+            "مجموعة اختبارات لـ endpoint واحد.",
+            "الحالة الناجحة.",
+            "يوزر جديد للاختبار ده بس.",
+            "ابعت POST بالتوكن والـ body.",
+            "201 Created.",
+            "الحقول المهمة بس، والـ checkoutUrl فيه id الطلب.",
+            "قفلة.",
+            "حالة الرفض.",
+            "يوزر.",
+            "مبلغ سالب.",
+            "400 مش 500.",
+            "وكود الخطأ اللي الواجهة بتعتمد عليه.",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`الناتج: [[Test Files 1 passed]] و [[Tests 2 passed]]. ولما تغيّر الـ status لـ 201، vitest بيطبع [[expected 201 to be 200]] ومعاها السطر اللي وقع.
+
+ولو [[GET /nope]] رجع 200 بـ HTML، يبقى عندك route [[*]] بيرجّع الواجهة (SPA fallback) قبل الـ 404 بتاع الـ API: خلي الـ fallback ده بعد كل routes الـ API، أو ميشتغلش على [[/api]].
+
+ولو الأمر فضل شغال ومقفلش، يبقى فيه اتصال مفتوح (Redis أو الداتابيز): اقفله في [[afterAll]].`,
+          solCode: R`import request from "supertest";
+import { it, expect } from "vitest";
+import { createApp } from "../src/app.js";
+
+const app = createApp();
+
+it("GET /health", async () => {
+  const res = await request(app).get("/health");
+  expect(res.status).toBe(200);
+  expect(res.body).toEqual({ ok: true });
+});
+
+it("unknown route is 404", async () => {
+  const res = await request(app).get("/nope");
+  expect(res.status).toBe(404);
+});`
+        },
+        {
+          cmd: "قاعدة الاختبار",
+          title: "قاعدة بيانات للاختبار لوحدها، وتتنضف بين الاختبارات",
+          desc: R`الاختبارات بتكلّم Postgres حقيقي، بس قاعدة تانية خالص ([[myapp_test]]) عمرها ما تبقى قاعدة التطوير. قبل الاختبارات [[prisma migrate deploy]] عليها، وقبل كل اختبار بتفضّيها.
+
+طريقتين للتنضيف: [[TRUNCATE]] لكل الجداول قبل كل اختبار (بسيطة وشغالة مع أي حاجة)، أو كل اختبار جوه transaction وتعمل ROLLBACK في الآخر (أسرع، بس صعبة لما الطلب بيعدّي على HTTP والكود بيفتح transactions بنفسه).`,
+          example: R`// vitest.config.ts
+export default defineConfig({
+  test: {
+    env: { DATABASE_URL: "postgresql://app:app@localhost:5432/myapp_test", JWT_SECRET: "test-secret" },
+    setupFiles: ["./tests/setup.ts"],
+    fileParallelism: false,
+  },
+});
+
+// tests/setup.ts
+import { afterAll, beforeEach } from "vitest";
+import { db } from "../src/db.js";
+beforeEach(async () => {
+  await db.$executeRawUnsafe('TRUNCATE TABLE "Order", "User" RESTART IDENTITY CASCADE');
+});
+afterAll(() => db.$disconnect());
+
+# package.json: "test": "dotenv -e .env.test -- prisma migrate deploy && vitest run"`,
+          try: R`اعمل قاعدة [[myapp_test]] (بـ [[createdb]] أو [[CREATE DATABASE]] في psql)، وشغّل عليها [[DATABASE_URL=... npx prisma migrate deploy]]. اكتب اختبارين: الأول يعمل يوزر بإيميل ثابت، والتاني يعمل يوزر بنفس الإيميل. من غير الـ TRUNCATE التاني هيقع بـ unique constraint لو اتشغّلوا ورا بعض، ومعاه الاتنين ينجحوا.`,
+          flag: "script",
+          deep: {
+            why: R`الـ mock للداتابيز بيخبّي أهم الغلطات: unique constraint، و foreign key، و query غلط، و migration ناقصة، و transaction مش شغالة. الاختبار اللي بيكلّم Postgres حقيقي بيمسك ده كله. والقاعدة المنفصلة لأن الاختبارات بتمسح كل حاجة، وأول مرة حد يشغّلها على قاعدة التطوير هيخسر الداتا بتاعته.`,
+            how: R`[[migrate deploy]] مش [[migrate dev]]: الـ deploy بيطبّق الـ migrations الموجودة زي الإنتاج بالظبط، ومبيولّدش migration جديدة ولا بيسألك أسئلة. فلو فيه migration ناقصة من الـ repo، الاختبارات هتقع هنا قبل ما الإنتاج يقع.
+
+[[TRUNCATE ... RESTART IDENTITY CASCADE]] بيفضّي الجداول في أمر واحد، ويرجّع الـ sequences من الأول، و CASCADE بيعدّي على الجداول المرتبطة بـ foreign keys. أسرع بكتير من [[deleteMany]] على كل جدول بالترتيب. والأسماء بين [[""]] لأن Prisma بيعمل الجداول بحروف كبيرة. ومتفضّيش [[_prisma_migrations]]!
+
+الـ rollback: تفتح transaction، وتشغّل الاختبار جواها، وفي الآخر ROLLBACK فكأن مفيش حاجة حصلت. سريع جدًا، بس شرطه إن كل الكود يستخدم نفس الاتصال اللي فيه الـ transaction. مع Prisma والطلب اللي بيعدّي على HTTP ده صعب: الـ client عنده pool، والـ [[$transaction]] اللي جوه الكود بيفتح transaction تانية. عشان كده TRUNCATE هي الاختيار العملي مع Prisma و supertest، و rollback تنفع أكتر في اختبارات الـ repository اللي بتدّيها الـ client بإيدك.
+
+[[fileParallelism: false]] بيشغّل ملفات الاختبار ورا بعض، لأنهم بيشاركوا نفس القاعدة. لو عايز parallel، اعمل قاعدة أو schema لكل worker (مثلًا [[myapp_test_$__{process.env.VITEST_POOL_ID}]]).
+
+وفي CI نفس الفكرة بـ service container لـ Postgres: درس [[services]] في تاب «GitHub Actions»، ومثال كامل في درس «ci.yml: Postgres + Prisma» في تاب «من مشاريعي».`,
+            when: "أي اختبار بيعدّي على الداتابيز. والمنطق الصافي (حسابات وتحويلات) اختبره unit من غير قاعدة خالص.",
+            mistakes: R`[[DATABASE_URL]] في الاختبار بييجي من [[.env]] العادي لأن حد نسي يغيّره، فالـ TRUNCATE يمسح قاعدة التطوير. حط حارس في setup: [[if (!process.env.DATABASE_URL.includes("_test")) throw ...]]. واستخدام SQLite في الاختبار و Postgres في الإنتاج: أنواع وسلوك مختلف، وهتعدّي اختبارات على حاجات بتقع في الإنتاج. وتشغيل [[migrate dev]] في CI. وملفات اختبار parallel على قاعدة واحدة: اختبارات بتقع مرة وتنجح مرة (flaky) ومحدش فاهم ليه.`
+          },
+          lines: [
+            "إعداد vitest.",
+            "قسم الاختبارات.",
+            "متغيرات البيئة للاختبار: قاعدة الاختبار وسر JWT ثابت.",
+            "ملف بيتشغّل قبل كل ملف اختبار.",
+            "ملفات الاختبار ورا بعض عشان بيشاركوا نفس القاعدة.",
+            "قفلة.",
+            "قفلة.",
+            "hooks بتاعة vitest.",
+            "نفس الـ Prisma client بتاع التطبيق.",
+            "قبل كل اختبار...",
+            "...فضّي الجداول وصفّر العدادات، و CASCADE للجداول المرتبطة.",
+            "قفلة.",
+            "في الآخر اقفل الاتصال عشان الـ process تخلص."
+          ],
+          sol: R`المتوقع: من غير [[beforeEach]] اللي فيه TRUNCATE، الاختبار التاني بيقع بخطأ Prisma كوده [[P2002]] (Unique constraint failed on the fields: (email)). ومعاه الاتنين بينجحوا مهما شغّلتهم كام مرة.
+
+لو الاتنين نجحوا من غير TRUNCATE، يبقى غالبًا الـ email مش [[@unique]] في الـ schema، أو الاختبارات مش بتكلّم نفس القاعدة اللي انت فاكرها: اطبع [[process.env.DATABASE_URL]] في الـ setup.
+
+ولو ظهر [[relation "User" does not exist]]، يبقى نسيت [[migrate deploy]] على قاعدة الاختبار.`,
+          solCode: R`createdb -h localhost -U app myapp_test
+DATABASE_URL=postgresql://app:app@localhost:5432/myapp_test npx prisma migrate deploy
+npx vitest run tests/users.test.ts`
+        },
+        {
+          cmd: "factories",
+          title: "داتا الاختبار: factory صغيرة بدل ملف fixtures ضخم",
+          desc: R`factory دالة بتعمل صف واحد بقيم افتراضية معقولة وبترجّعه، وتقدر تغيّر أي حقل: [[createUser({ role: "ADMIN" })]]. كل اختبار بيعمل الداتا اللي محتاجها بس، فتقرا الاختبار وتفهم هو بيختبر إيه.
+
+و [[createUser]] بترجّع كمان التوكن بتاع اليوزر، عشان مفيش اختبار محتاج يعدّي على login.`,
+          example: R`// tests/factories.ts
+import jwt from "jsonwebtoken";
+import { db } from "../src/db.js";
+
+let n = 0;
+export async function createUser(overrides = {}) {
+  n++;
+  const user = await db.user.create({ data: { email: $__btuser$__{n}@test.local$__bt, ...overrides } });
+  const token = jwt.sign({ sub: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "5m" });
+  return { ...user, token };
+}
+
+export function createOrder(user, overrides = {}) {
+  return db.order.create({ data: { userId: user.id, amountCents: 5000, ...overrides } });
+}`,
+          try: R`اعمل [[createUser]] و [[createOrder]] زي المثال، واكتب اختبار «الأدمن يقدر يمسح طلب أي حد»: يوزر عادي عنده طلب، وأدمن بـ [[createUser({ role: "ADMIN" })]] بيعمل DELETE. لازم الاختبار كله يبقى ٦ سطور أو أقل.`,
+          flag: "script",
+          deep: {
+            why: R`ملف fixtures كبير (٢٠ يوزر و ١٠٠ طلب في JSON) بيبدأ صغير ويكبر لحد ما محدش يعرف أنهي اختبار معتمد على أنهي صف. تعدّل حقل عشان اختبار، يقع ٥ اختبارات تانيين. والاختبار نفسه بيبقى [[expect(orders).toHaveLength(7)]] ومحدش فاهم ليه ٧. الـ factory بتخلي السبب مكتوب قدامك: عملت طلبين ليوزر A وطلب ليوزر B، فـ A يشوف ٢.`,
+            how: R`القيم الافتراضية لازم تبقى صالحة وتعدّي كل الـ constraints: إيميل فريد (عشان كده العداد [[n]])، وأي حقل مطلوب ليه قيمة. و [[...overrides]] في الآخر عشان أي حاجة تكتبها تغلب الافتراضي.
+
+العلاقات: [[createOrder(user)]] بتاخد اليوزر بدل ما تعمل واحد من عندها. كده انت اللي بتقرر مين صاحب الطلب، ودا بالظبط اللي محتاجه في اختبارات الصلاحيات (الدرس الجاي). ولو عايز الاختصار، ممكن تخلي [[user]] اختياري وتعمل واحد لو مش موجود.
+
+التوكن: بنعمله بـ [[jwt.sign]] بنفس السر اللي الـ app شايفه في الاختبار ([[JWT_SECRET]] من vitest.config). ده أسرع من login حقيقي في كل اختبار، و login نفسه ليه اختبار لوحده. ولو الـ auth عندك session، الـ factory تعمل login بـ [[request.agent(app)]] وترجّع الـ agent.
+
+والـ seed بتاع التطوير (درس «prisma db seed و studio» في تاب «Node و npm») حاجة تانية: داتا شكلها حلو عشان تتفرج على التطبيق. متستخدمهوش في الاختبارات.`,
+            when: "من أول ما يبقى عندك أكتر من ٣ اختبارات بتعمل نفس النوع من الداتا. وفيه مكتبات (زي fishery أو @faker-js/faker للقيم العشوائية)، بس دالة صغيرة زي دي كفاية لأغلب المشاريع.",
+            mistakes: R`قيم عشوائية في كل حاجة (faker لكل حقل) فالاختبار يقع مرة كل ١٠٠ مرة لأن الاسم العشوائي طلع أطول من الحد: خلي القيم ثابتة إلا لو محتاجها فريدة. و factory بتعمل ١٠ حاجات مرتبطة لوحدها (يوزر وطلبات ومدفوعات) فكل اختبار بطيء ومحدش عارف إيه اللي اتعمل. وإنك تعدّل الـ object اللي راجع من factory في اختبار وتستخدمه في اختبار تاني.`
+          },
+          lines: [
+            "jsonwebtoken عشان نعمل توكن من غير login.",
+            "نفس الـ Prisma client.",
+            "عداد عشان كل إيميل يبقى فريد.",
+            "factory لليوزر، وأي حقل ممكن يتغيّر.",
+            "زوّد العداد.",
+            "اعمل اليوزر بإيميل فريد، و overrides تغلب الافتراضي.",
+            "توكن بنفس السر اللي الـ app شايفه في الاختبار، عمره قصير.",
+            "رجّع اليوزر ومعاه التوكن.",
+            "قفلة.",
+            "factory للطلب، بتاخد صاحبه صريح.",
+            "طلب بمبلغ افتراضي، وأي حقل ممكن يتغيّر.",
+            "قفلة."
+          ],
+          sol: R`الاختبار بيعمل صاحب الطلب، والطلب، والأدمن، والـ DELETE، ويتأكد إن الرد 204 وإن الطلب مبقاش موجود في القاعدة. مش كفاية تبص على الـ status: لازم تتأكد إن المسح حصل فعلًا.
+
+لو رجع 403، يبقى الـ role مش في التوكن: الـ factory لازم تعمل [[jwt.sign]] بعد ما تعمل اليوزر بالـ role اللي اتبعت، مش قبله. ولو رجع 404، يبقى الـ route بيدوّر على الطلب بـ [[userId]] الأدمن (ownership) حتى في مسار الأدمن.`,
+          solCode: R`it("admin can delete anyone's order", async () => {
+  const order = await createOrder(await createUser());
+  const admin = await createUser({ role: "ADMIN" });
+  const res = await request(app).delete($__bt/api/orders/$__{order.id}$__bt).set("Authorization", $__btBearer $__{admin.token}$__bt);
+  expect(res.status).toBe(204);
+  expect(await db.order.findUnique({ where: { id: order.id } })).toBeNull();
+});`
+        },
+        {
+          cmd: "401 و 403 و 404",
+          title: "مصفوفة الصلاحيات: كل route فيه :id يتختبر بيوزرين",
+          desc: R`أي route فيه [[:id]] ليه على الأقل ٤ اختبارات: من غير توكن 401، وصاحب الحاجة 200، ويوزر تاني 404 (مش 200 ولا 403)، ويوزر معندوش الـ role المطلوب 403.
+
+أخطر bug في أي API إن يوزر B يشوف أو يعدّل حاجة يوزر A بمجرد ما يغيّر الرقم في الـ URL (IDOR، درس [[ownership (IDOR)]]). الاختبار ده بيمسكه قبل ما حد تاني يمسكه.`,
+          example: R`describe("GET /api/orders/:id", () => {
+  it("401 without a token", async () => {
+    expect((await request(app).get("/api/orders/anything")).status).toBe(401);
+  });
+  it("200 for the owner", async () => {
+    const a = await createUser();
+    const order = await createOrder(a);
+    const res = await request(app).get($__bt/api/orders/$__{order.id}$__bt).set("Authorization", $__btBearer $__{a.token}$__bt);
+    expect(res.status).toBe(200);
+  });
+  it("404 for another user", async () => {
+    const [a, b] = [await createUser(), await createUser()];
+    const order = await createOrder(a);
+    const res = await request(app).get($__bt/api/orders/$__{order.id}$__bt).set("Authorization", $__btBearer $__{b.token}$__bt);
+    expect(res.status).toBe(404);
+  });
+  it("403 for a non-admin on DELETE", async () => {
+    const a = await createUser();
+    const order = await createOrder(a);
+    expect((await request(app).delete($__bt/api/orders/$__{order.id}$__bt).set("Authorization", $__btBearer $__{a.token}$__bt)).status).toBe(403);
+  });
+});`,
+          try: R`اختار route عندك فيه [[:id]] بيعدّل حاجة (PATCH أو DELETE)، واكتبله الأربع حالات. وبعدين «اكسر» الـ service: شيل [[userId]] من الـ where، وشغّل الاختبارات. لازم اختبار «يوزر تاني» يقع. لو ماوقعش، الاختبار نفسه غلط.`,
+          flag: "script",
+          deep: {
+            why: R`الـ auth middleware بيتأكد انت مين، بس مبيعرفش الحاجة دي بتاعة مين. كل route لازم يعمل الفحص ده بنفسه، وسهل جدًا واحد منهم ينسى. واختبار «يوزر تاني» هو الطريقة الوحيدة اللي تتأكد بيها إن كل route فاكر، ومش بتعتمد على مراجعة الكود بعينك.`,
+            how: R`[[401 Unauthorized]]: مش عارفين انت مين (مفيش توكن، أو غلط، أو خلص). [[403 Forbidden]]: عارفينك، بس الـ role بتاعك مش مسموحله بالعملية دي خالص (يوزر عادي على route أدمن). [[404 Not Found]]: الحاجة دي مش موجودة بالنسبة لك.
+
+ليه 404 مش 403 ليوزر تاني؟ لأن 403 معناها «موجود بس مش بتاعك»، وده بيسرّب معلومة: المهاجم يعرف إن الـ id ده موجود، ويقدر يعد الطلبات أو اليوزرز. لو الـ query نفسها فيها [[userId]] ([[findFirst({ where: { id, userId } })]])، الـ 404 بتطلع لوحدها من غير if زيادة.
+
+و GET مش كفاية: كرر نفس المصفوفة على PATCH و DELETE، لأن غلطة مشهورة إن الـ GET محمي والـ update بيعمل [[update({ where: { id } })]] من غير userId. ولو فيه routes كتير، اعمل الاختبارات بـ [[it.each]] على قايمة من [method, path] عشان متكتبش نفس الكود ٢٠ مرة.
+
+وفي Nest نفس الفكرة بالظبط، والاختبار نفسه بـ supertest (درس «Nest: الاختبارات»).`,
+            when: "كل route فيه :id أو بيرجّع داتا خاصة بيوزر. ده من أهم الاختبارات في المشروع كله، وأولى من اختبارات كتير تانية.",
+            mistakes: R`اختبار الصلاحيات بيوزر واحد بس (صاحب الحاجة)، فالاختبار ينجح والـ IDOR موجود. أو ترجّع 403 ليوزر تاني فتسرّب إن الحاجة موجودة. أو 403 للتوكن الغلط بدل 401، فالواجهة متعرفش إنها لازم تعمل refresh أو تودّي على login. وفي الانترفيو: «الفرق بين 401 و 403؟» قول الفرق، وقول ليه بترجّع 404 لحاجة يوزر تاني.`
+          },
+          lines: [
+            "مجموعة لـ route واحد.",
+            "من غير توكن.",
+            "لازم 401.",
+            "قفلة.",
+            "صاحب الطلب.",
+            "يوزر A.",
+            "طلب بتاع A.",
+            "A بيطلب طلبه.",
+            "200.",
+            "قفلة.",
+            "يوزر تاني.",
+            "يوزرين.",
+            "الطلب بتاع A.",
+            "B بيطلب طلب A بالـ id بتاعه.",
+            "404: بالنسبة لـ B الطلب مش موجود.",
+            "قفلة.",
+            "الـ role.",
+            "يوزر عادي.",
+            "طلبه هو.",
+            "حتى على طلبه، المسح للأدمن بس: 403.",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`لما تشيل [[userId]] من الـ where، اختبار «404 for another user» لازم يقع ويقول [[expected 200 to be 404]]: يعني B قدر يوصل لطلب A. ده بالظبط الـ bug اللي الاختبار معمول عشانه. رجّع الشرط والاختبار ينجح تاني.
+
+لو الاختبار فضل ناجح وانت شايل الشرط، يبقى الاختبار بيستخدم نفس اليوزر للاتنين، أو بيبعت توكن A في الطلبين. اطبع [[a.id]] و [[b.id]] واتأكد إنهم مختلفين.
+
+وممكن تجمع كل الـ routes اللي فيها ownership في اختبار واحد بـ [[it.each]]، زي الكود. الـ DELETE مش في القايمة لأنه للأدمن بس: يوزر B هيوقف عند [[requireRole]] ويرجع 403 قبل ما نوصل لسؤال «الطلب بتاع مين».`,
+          solCode: R`it.each([
+  ["get", (id) => $__bt/api/orders/$__{id}$__bt],
+  ["patch", (id) => $__bt/api/orders/$__{id}$__bt],
+])("%s by another user is 404", async (method, path) => {
+  const [a, b] = [await createUser(), await createUser()];
+  const order = await createOrder(a);
+  const res = await request(app)[method](path(order.id)).set("Authorization", $__btBearer $__{b.token}$__bt).send({});
+  expect(res.status).toBe(404);
+});`
+        },
+        {
+          cmd: "msw و nock",
+          title: "الاختبار ميكلّمش بوابة الدفع ولا خدمة الإيميل الحقيقية",
+          desc: R`أي خدمة برّه (الدفع، والإيميل، والـ SMS، و AI) بتعملها mock على مستوى الشبكة: الكود بتاعك بيعمل [[fetch]] عادي، و msw (أو nock) بيمسك الطلب قبل ما يخرج ويرجّع رد انت كاتبه. كده بتختبر الحالة الناجحة، والخدمة واقعة (503)، والرد البطيء، من غير نت ولا فلوس.
+
+وأي طلب لبرّه ملوش handler لازم يفشل الاختبار، عشان محدش يبعت إيميل حقيقي من CI بالغلط.`,
+          example: R`import { setupServer } from "msw/node";
+import { http, HttpResponse } from "msw";
+
+const pay = setupServer(
+  http.post("https://pay.example.com/intentions", async ({ request }) => {
+    const body = await request.json();
+    return HttpResponse.json({ checkoutUrl: $__bthttps://pay.example.com/c/$__{body.ref}$__bt });
+  }),
+);
+beforeAll(() => pay.listen({
+  onUnhandledRequest(req) {
+    if (new URL(req.url).hostname !== "127.0.0.1") throw new Error($__btunmocked: $__{req.method} $__{req.url}$__bt);
+  },
+}));
+afterEach(() => pay.resetHandlers());
+afterAll(() => pay.close());
+
+it("returns 502 when the payment provider is down", async () => {
+  pay.use(http.post("https://pay.example.com/intentions", () => new HttpResponse(null, { status: 503 })));
+  const user = await createUser();
+  const res = await request(app).post("/api/orders").set("Authorization", $__btBearer $__{user.token}$__bt).send({ amountCents: 5000 });
+  expect(res.status).toBe(502);
+});`,
+          try: R`[[npm i -D msw]]، واعمل handler لخدمة الإيميل اللي بتستخدمها (مثلًا [[POST https://api.resend.com/emails]]) بيحفظ الـ body في array. اختبر إن «نسيت الباسورد» بتبعت إيميل واحد للعنوان الصح وفيه لينك. وبعدين شيل الـ handler وشوف الاختبار بيقع بـ «unmocked».`,
+          flag: "script",
+          deep: {
+            why: R`اختبار بيكلّم Paymob أو Resend الحقيقيين بطيء، ومحتاج مفاتيح في CI، وبيفشل لما خدمتهم تهنّج، وممكن يبعت إيميلات لناس حقيقيين. والأهم: مش هتقدر تجرّب «البوابة رجّعت 503» أو «الرد اتأخر ١٠ ثواني»، ودي بالظبط الحالات اللي الكود بتاعك لازم يتعامل معاها صح.`,
+            how: R`msw بيركّب interceptor على [[fetch]] و [[http]] في Node. أي طلب بيطلع بيتقارن بالـ handlers: [[http.post(url, resolver)]]. لو فيه match، الـ resolver بيرجّع [[HttpResponse.json(...)]] والطلب عمره ما بيخرج. و [[pay.use(...)]] جوه اختبار واحد بيضيف handler مؤقت يغلب الأساسي (زي «البوابة واقعة»)، و [[resetHandlers()]] بعد كل اختبار بيشيله.
+
+تفصيلة مهمة جربناها: supertest نفسه بيبعت طلب HTTP للـ app على [[127.0.0.1]]، و msw بيشوف الطلب ده كمان. لو كتبت [[onUnhandledRequest: "error"]] كل اختبارات supertest هتقع. عشان كده الدالة: سيب الـ localhost يعدّي، وأي حاجة تانية [[throw]]. ولاحظ إن [[print.error()]] جوه الدالة في msw 2 بيطبع رسالة بس ومبيوقفش الطلب، فالـ throw هو اللي بيضمن إن الطلب ميخرجش (msw بيرجّعله 500 فيه الرسالة).
+
+nock بيعمل نفس الفكرة بأسلوب تاني: [[nock("https://api.resend.com").post("/emails").reply(200, { id: "em_1" })]]، و [[nock.disableNetConnect()]] مع [[nock.enableNetConnect("127.0.0.1")]] بيقفل أي طلب تاني. من nock 14 بقى بيمسك [[fetch]] كمان. و [[scope.isDone()]] بيقولك الطلب المتوقع اتبعت ولا لأ.
+
+والبديل التالت: الكود ياخد الـ client كـ dependency ([[createApp({ mailer })]]) وتدّيله fake في الاختبار. أبسط للحاجات اللي انت عاملها wrapper، بس مش بيختبر شكل الطلب الحقيقي اللي بيطلع.`,
+            when: "أي كود بيكلّم خدمة برّه. الـ msw نفسه بيتستخدم في الواجهة (React) لنفس الغرض، فلو فريقك بيستخدمه هناك خليه نفس الأداة.",
+            mistakes: R`[[vi.mock("node-fetch")]] أو mock لدالة داخلية بدل الشبكة: الاختبار بيختبر الـ mock مش الكود. ونسيان [[resetHandlers]] فالـ handler الـ «واقع» يعدّي على الاختبار اللي بعده. و [[onUnhandledRequest: "bypass"]] فطلب ملوش handler يخرج للنت الحقيقي من غير ما حد ياخد باله. وmock بيرجّع شكل رد مختلف عن الخدمة الحقيقية: خد شكل الرد من الـ docs أو من لوج طلب حقيقي، مش من خيالك.`
+          },
+          lines: [
+            "سيرفر msw للـ Node.",
+            "أدوات تعريف الـ handlers والردود.",
+            "سيرفر وهمي لبوابة الدفع.",
+            "أي POST للعنوان ده...",
+            "...اقرا الـ body اللي الكود بعته...",
+            "...ورجّع رد شكله زي رد البوابة، فيه رقم الطلب.",
+            "قفلة الـ handler.",
+            "قفلة.",
+            "قبل الاختبارات شغّل الـ interception...",
+            "...ولأي طلب ملوش handler:",
+            "لو مش طلب supertest للـ app على localhost، ارمي خطأ فالطلب ميخرجش.",
+            "قفلة.",
+            "قفلة.",
+            "بعد كل اختبار شيل أي handler مؤقت.",
+            "في الآخر اقفل.",
+            "اختبار «البوابة واقعة».",
+            "handler مؤقت للاختبار ده بس: 503.",
+            "يوزر.",
+            "اعمل طلب.",
+            "الـ API لازم يرد 502 واضح، مش 500 ولا يعلّق.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: الاختبار ينجح، والـ array فيها عنصر واحد، الـ [[to]] بتاعه إيميل اليوزر، والـ [[html]] فيه اللينك. ولما تشيل الـ handler، الاختبار بيقع لأن الطلب رجعله 500 فيه [[unmocked: POST https://api.resend.com/emails]]، والإيميل عمره ما خرج.
+
+لو الاختبار نجح والـ array فاضية، يبقى الإيميل بيتبعت بعد ما الرد يرجع (fire and forget) والاختبار خلص قبله: اعمل await للإرسال في الكود، أو استنى في الاختبار بـ [[vi.waitFor]].
+
+ولو شغلك بـ nock بدل msw، نفس الفكرة في الكود التاني.`,
+          solCode: R`const sent = [];
+const mail = setupServer(
+  http.post("https://api.resend.com/emails", async ({ request }) => {
+    sent.push(await request.json());
+    return HttpResponse.json({ id: "em_1" });
+  }),
+);
+beforeAll(() => mail.listen({ onUnhandledRequest(req) { if (new URL(req.url).hostname !== "127.0.0.1") throw new Error("unmocked: " + req.url); } }));
+afterAll(() => mail.close());
+
+it("forgot password sends one email", async () => {
+  const user = await createUser();
+  const res = await request(app).post("/api/auth/forgot").send({ email: user.email });
+  expect(res.status).toBe(200);
+  expect(sent).toHaveLength(1);
+  expect(sent[0].to).toContain(user.email);
+  expect(sent[0].html).toMatch(/reset\?token=/);
+});
+
+// نفس الفكرة بـ nock:
+// nock.disableNetConnect(); nock.enableNetConnect("127.0.0.1");
+// const scope = nock("https://api.resend.com").post("/emails").reply(200, { id: "em_1" });
+// ... expect(scope.isDone()).toBe(true);`
+        },
+        {
+          cmd: "اختبار الـ webhook",
+          title: "webhook: توقيع صح، وتوقيع غلط، ونفس الحدث مرتين",
+          desc: R`الـ webhook ليه ٣ اختبارات لازم تبقى موجودة: توقيع صح فالطلب يتفعّل، وتوقيع غلط فيرجع 401 ومفيش حاجة تتغير في القاعدة، ونفس الحدث يوصل مرتين فالرد 200 في المرتين والأثر يحصل مرة واحدة.
+
+الاختبار بيحسب التوقيع بنفس السر ونفس الطريقة اللي البوابة بتستخدمها، وبيبعت الـ body كنص خام بالظبط زي ما اتوقّع.`,
+          example: R`import crypto from "node:crypto";
+
+const sign = (raw) => crypto.createHmac("sha256", "test-whsec").update(raw).digest("hex");
+const send = (raw, sig) => request(app).post("/webhooks/pay").set("Content-Type", "application/json").set("X-Signature", sig).send(raw);
+
+it("rejects a bad signature and changes nothing", async () => {
+  const order = await createOrder(await createUser());
+  const raw = JSON.stringify({ orderId: order.id, txId: "tx_2" });
+  expect((await send(raw, sign(raw + "x"))).status).toBe(401);
+  expect((await db.order.findUnique({ where: { id: order.id } })).status).toBe("PENDING");
+});
+
+it("same event twice = one effect", async () => {
+  const order = await createOrder(await createUser());
+  const raw = JSON.stringify({ orderId: order.id, txId: "tx_3" });
+  expect((await send(raw, sign(raw))).status).toBe(200);
+  expect((await send(raw, sign(raw))).status).toBe(200);
+  expect(await db.order.count({ where: { gatewayTxId: "tx_3" } })).toBe(1);
+});`,
+          try: R`اكتب الاختبار التالت الناقص: توقيع صح فالطلب يبقى PAID. وبعدين جرّب تبعت نفس الـ JSON بس بمسافة زيادة ([[JSON.stringify(obj, null, 1)]]) مع التوقيع بتاع النسخة من غير مسافات. المفروض يرجع 401. فكّر ليه، وليه ده معناه إن الـ route لازم يقرا الـ raw body.`,
+          flag: "script",
+          deep: {
+            why: R`الـ webhook هو الـ endpoint اللي بيحوّل «طلب» لـ «مدفوع» (درس [[webhook الدفع]] في «تاب بناء مشروع كامل»). أي غلطة فيه معناها فلوس: يا طلبات بتتفعّل من غير دفع، يا ناس دفعت ومخدتش حاجة، يا اشتراك اتضاف مرتين. والبوابات بتعيد الإرسال لو ماردّتش بسرعة، فالتكرار مش احتمال نظري، ده بيحصل كل يوم.`,
+            how: R`التوقيع بيتحسب على البايتات بالظبط. لو الـ route بيعمل [[express.json()]] الأول وبعدين [[JSON.stringify(req.body)]] عشان يحسب، أي فرق في المسافات أو ترتيب المفاتيح هيبوّظ المقارنة. عشان كده الـ route ده بياخد [[express.raw({ type: "application/json" })]] قبل الـ [[express.json()]] العام، ويحسب HMAC على الـ Buffer، ويقارن بـ [[timingSafeEqual]] (بعد ما يتأكد إن الطولين زي بعض، وإلا بيرمي). وفي الاختبار [[.send(raw)]] بنص جاهز عشان supertest ميعيدش التنسيق. (بعض البوابات زي Paymob بتوقّع حقول معينة بترتيب معين مش الـ body كله: شوف درس «التحقق من التوقيع» في تاب «Node و npm».)
+
+التوقيع الغلط: مش كفاية الـ 401، لازم تقرا من القاعدة وتتأكد إن الطلب لسه PENDING. أوقات الكود بيحدّث الأول وبعدين يتحقق.
+
+التكرار: اختبرت الـ idempotency بإنك بعت نفس الحدث مرتين وعدّيت الأثر. الكود بيعملها بـ [[updateMany]] بشرط [[status: { not: "PAID" }]]، و [[gatewayTxId]] عليه [[@unique]] كحارس أخير. والرد 200 في المرة التانية كمان: لو رجّعت 409 أو 500، البوابة هتفتكر إنه فشل وتفضل تعيد.
+
+وحالات تانية تستاهل اختبار لو البوابة بتبعتها: دفعة فاشلة بعد نجاح (لازم يفضل PAID)، ومبلغ مختلف عن مبلغ الطلب (يتسجّل ومفيش تفعيل)، وطلب مش موجود (200 ومفيش crash).`,
+            when: "أي webhook: دفع، أو اشتراكات، أو GitHub، أو تيليجرام. ولو بتستقبل الحدث وتحطه في queue، اختبر الـ route (توقيع و 200 سريعة) والـ worker (idempotent) كل واحد لوحده.",
+            mistakes: R`اختبار التوقيع الصح بس، فمحدش اكتشف إن الكود بيقبل أي توقيع طوله صح. أو حساب التوقيع على [[JSON.stringify(req.body)]] بعد الـ parse. أو اختبار التكرار بإنك تبعت حدثين مختلفين. ونسيان إن الـ webhook route لازم يبقى قبل [[express.json()]] العام وإلا [[req.body]] يوصله object مش Buffer. وفي الانترفيو: «إزاي تتأكد إن الـ webhook مش بيتعالج مرتين؟» الإجابة: شرط على الحالة، و unique على id المعاملة، ورد 200 للتكرار.`
+          },
+          lines: [
+            "crypto من Node.",
+            "دالة بتحسب التوقيع بنفس سر الاختبار ونفس الخوارزمية اللي الـ route بيستخدمها.",
+            "دالة بتبعت نص خام بالتوقيع في header.",
+            "توقيع غلط.",
+            "طلب لسه PENDING.",
+            "الحدث كنص.",
+            "توقيع لنص تاني: لازم 401.",
+            "واقرا من القاعدة: الطلب متغيّرش.",
+            "قفلة.",
+            "نفس الحدث مرتين.",
+            "طلب.",
+            "حدث واحد.",
+            "المرة الأولى 200.",
+            "والتانية 200 برضه، عشان البوابة تبطّل تعيد.",
+            "والأثر حصل مرة واحدة بس.",
+            "قفلة."
+          ],
+          sol: R`الاختبار الناقص: توقيع صح، والرد 200، والطلب في القاعدة بقى [[PAID]] و [[gatewayTxId]] بتاعه [[tx_1]].
+
+ونسخة الـ JSON بالمسافات بترجع 401 لأن التوقيع اتحسب على نص تاني، والـ HMAC بيتغير لو اتغيّر بايت واحد. البوابة بتوقّع البايتات اللي بعتتها بالظبط، فانت لازم تحسب على نفس البايتات اللي وصلت (الـ raw body)، مش على object عملتله parse وبعدين stringify.
+
+لو النسخة بالمسافات عدّت، يبقى الـ route بيحسب على [[JSON.stringify(req.body)]]، وده هيقع مع أول بوابة بتبعت JSON بتنسيق مختلف عن بتاع Node.`,
+          solCode: R`it("marks the order PAID with a valid signature", async () => {
+  const order = await createOrder(await createUser());
+  const raw = JSON.stringify({ orderId: order.id, txId: "tx_1" });
+  expect((await send(raw, sign(raw))).status).toBe(200);
+  const saved = await db.order.findUnique({ where: { id: order.id } });
+  expect(saved).toMatchObject({ status: "PAID", gatewayTxId: "tx_1" });
+});
+
+it("pretty JSON with the compact signature is rejected", async () => {
+  const order = await createOrder(await createUser());
+  const obj = { orderId: order.id, txId: "tx_9" };
+  expect((await send(JSON.stringify(obj, null, 1), sign(JSON.stringify(obj)))).status).toBe(401);
+});`
+        }
+      ]
+    },
+    {
+      t: "Redis",
+      l: 3,
+      n: "Redis نفسه: الأوامر والأنواع، والكاش من Node والتطبيق شغال لو Redis وقع، والذاكرة، والـ sessions والـ locks، والـ rate limit، والـ pub/sub",
+      items: [
+        {
+          cmd: "redis-cli",
+          title: "Redis من الترمنال: مفاتيح وقيم ووقت انتهاء",
+          desc: R`Redis قاعدة بيانات في الرام: كل حاجة فيها key وقيمة، وأي key ممكن يبقى ليه TTL (يتمسح لوحده بعد مدة). [[redis-cli]] بيدّيك shell تكتب فيه الأوامر مباشرة، وده أسرع طريقة تفهم بيها التطبيق بيكتب إيه.
+
+اتفق على شكل للمفاتيح بـ [[:]] ([[user:7:name]] و [[otp:7]] و [[rl:login:1.2.3.4]]). وعلى سيرفر حقيقي عمرك ما تكتب [[KEYS *]]: استخدم [[SCAN]].`,
+          example: R`docker run -d --name redis -p 6379:6379 redis:8-alpine
+redis-cli ping
+redis-cli
+SET otp:7 482913 EX 300
+TTL otp:7
+# (integer) 300
+TTL user:7:name
+# (integer) -1   موجود ومن غير انتهاء
+TTL nope
+# (integer) -2   مش موجود
+INCR views:post:1
+SET lock:report 1 NX PX 10000
+SCAN 0 MATCH user:* COUNT 100
+UNLINK user:7:name
+redis-cli --scan --pattern 'sess:*' | head`,
+          try: R`شغّل Redis في Docker وادخل [[redis-cli]]. اعمل [[SET code 1234 EX 20]]، واطبع [[TTL code]] كل كام ثانية لحد ما يبقى [[-2]] و [[GET code]] يرجّع [[(nil)]]. وبعدين اعمل [[SET code 1234 EX 20]] تاني وبعده [[SET code 9999]] من غير EX، واطبع الـ TTL. إيه اللي حصل للـ ٢٠ ثانية؟`,
+          deep: {
+            why: R`Redis موجود جنب Postgres في أغلب مشاريع Node: كاش، و rate limit، و sessions، و BullMQ (درس [[background jobs]] في «تاب بناء مشروع كامل»)، و adapter بتاع socket.io. لو بتستخدمه من المكتبات بس من غير ما تبص جواه، أول مشكلة (ذاكرة مليانة، أو sessions بتختفي، أو كاش مبيتمسحش) هتبقى لغز.`,
+            how: R`Redis بيشتغل على thread واحد وبينفّذ أمر واحد في المرة، وكل أمر atomic. عشان كده [[INCR]] آمن من أي عدد من السيرفرات في نفس اللحظة، وده أساس الـ rate limit والعدادات.
+
+الـ TTL: [[EX]] بالثواني و [[PX]] بالملّي ثانية. [[TTL]] بيرجّع الثواني الباقية، و [[-1]] معناه موجود من غير انتهاء، و [[-2]] معناه مش موجود. و [[SET]] عادي من غير EX على key موجود بيشيل الـ TTL القديم، وده مصدر bugs كتير (key المفروض يتمسح بقى دايم). و [[PERSIST]] بيشيل الـ TTL صريح.
+
+[[KEYS pattern]] بيلف على كل المفاتيح مرة واحدة، ولأن Redis thread واحد، كل الطلبات التانية بتستنى. على قاعدة فيها ملايين المفاتيح ده ثواني من التوقف الكامل. [[SCAN cursor MATCH ... COUNT ...]] بيرجّع دفعة صغيرة و cursor تكمّل منه، لحد ما الـ cursor يرجع 0. و [[redis-cli --scan --pattern]] بيعمل اللفة دي لوحده.
+
+[[DEL]] بيمسح فورًا ولو القيمة ضخمة ممكن يوقّف السيرفر شوية، و [[UNLINK]] بيشيل الـ key فورًا ويحرر الذاكرة في الخلفية. وأوامر تانية مفيدة وانت بتدوّر: [[TYPE key]] و [[MEMORY USAGE key]] و [[INFO memory]] و [[MONITOR]] (بيطبع كل أمر بيوصل، للتطوير بس لأنه تقيل).
+
+والصورة [[redis:8-alpine]] هي Redis الرسمي، وفيه بدايل متوافقة معاه في نفس الأوامر زي Valkey.`,
+            when: "وانت بتبني أو بتصلّح أي حاجة بتكتب في Redis: تشوف المفاتيح شكلها إيه، والـ TTL متظبط ولا لأ، وفيه حاجة بتكبر من غير ما تتمسح ولا لأ.",
+            mistakes: R`[[KEYS *]] أو [[FLUSHALL]] على سيرفر الإنتاج، والتاني بيمسح كل حاجة بما فيها الـ queues والـ sessions. ومفاتيح من غير TTL لحاجات مؤقتة (OTP وكاش)، فالذاكرة تفضل تكبر لحد ما Redis يرفض الكتابة. وRedis مكشوف على النت من غير باسورد: فيه bots بتدوّر على البورت 6379 طول الوقت. خليه على شبكة داخلية أو [[127.0.0.1]]، وبـ [[requirepass]] أو ACL.`
+          },
+          lines: [
+            "شغّل Redis في Docker على البورت الافتراضي.",
+            "اتأكد إنه شغال: لازم يرد PONG.",
+            "افتح الـ shell التفاعلي.",
+            "خزّن كود OTP يتمسح بعد ٥ دقايق.",
+            "فاضله كام ثانية.",
+            "key من غير TTL.",
+            "key مش موجود.",
+            "عداد: بيزوّد واحد ويرجّع القيمة الجديدة، atomic.",
+            "اكتب بس لو مش موجود، ويتمسح بعد ١٠ ثواني (أساس الـ lock).",
+            "دوّر على المفاتيح على دفعات بدل KEYS.",
+            "امسح والذاكرة تتحرر في الخلفية.",
+            "من برّه الـ shell: لف على كل المفاتيح اللي بتبدأ بـ sess."
+          ],
+          sol: R`بعد ٢٠ ثانية [[TTL code]] بيرجّع [[-2]] و [[GET code]] بيرجّع [[(nil)]]: الـ key اتمسح لوحده.
+
+والجزء التاني: بعد [[SET code 9999]] من غير EX، [[TTL code]] بيرجّع [[-1]]. الـ SET العادي بيكتب قيمة جديدة ومعاها «مفيش انتهاء»، فالـ ٢٠ ثانية راحت والكود بقى دايم. لو عايز تغيّر القيمة وتسيب الـ TTL زي ما هو، استخدم [[SET code 9999 KEEPTTL]]. ولو عايز TTL جديد، حطه في نفس الأمر.`,
+          solCode: R`SET code 1234 EX 20
+TTL code
+# (integer) 20
+SET code 9999
+TTL code
+# (integer) -1
+SET code 1234 EX 20
+SET code 9999 KEEPTTL
+TTL code
+# (integer) 20   الـ TTL القديم فضل زي ما هو`
+        },
+        {
+          cmd: "أنواع Redis",
+          title: "string و hash و list و set و sorted set: كل واحد لإيه",
+          desc: R`القيمة في Redis مش لازم تبقى نص. فيه ٥ أنواع أساسية وكل واحد ليه أوامره:
+
+[[string]] لقيمة واحدة (كاش JSON أو عداد). و [[hash]] لـ object بحقول (بيانات يوزر أو session). و [[list]] لقايمة بترتيب الإضافة (آخر ١٠ حاجات). و [[set]] لمجموعة من غير تكرار (مين أونلاين). و [[sorted set]] لمجموعة مترتبة بـ score (لوحة الأوائل، أو نافذة زمنية).`,
+          example: R`SET product:1:v1 '{"id":1,"name":"Mug"}' EX 300
+HSET user:7 name Mona plan pro credits 10
+HINCRBY user:7 credits -3
+LPUSH recent:7 p3
+LTRIM recent:7 0 9
+LRANGE recent:7 0 -1
+SADD online:2026-09-29 u1 u2 u1
+SCARD online:2026-09-29
+ZADD leaderboard 120 mona 300 ali 90 sara
+ZINCRBY leaderboard 50 sara
+ZREVRANGE leaderboard 0 2 WITHSCORES`,
+          try: R`اعمل «آخر ٥ منتجات اتفرج عليها اليوزر ٧» بـ list: كل مشاهدة [[LPUSH]] وبعدها [[LTRIM]]. وبعدين فكّر: لو اتفرج على نفس المنتج مرتين هيتكرر. إزاي تمنع التكرار وتفضل محتفظ بالترتيب؟ (تلميح: sorted set والـ score هو الوقت).`,
+          deep: {
+            why: R`لو كل حاجة string فيها JSON، أي تعديل صغير (زوّد الرصيد ١) معناه: اقرا الـ JSON كله، وعدّل، واكتبه تاني. ولو سيرفرين عملوا كده في نفس اللحظة، تعديل واحد يضيع. الأنواع التانية بتخلي Redis يعمل التعديل بنفسه في أمر واحد atomic.`,
+            how: R`[[string]]: [[GET]] و [[SET]] و [[INCR]] و [[INCRBY]]. أقصى حجم كبير جدًا، بس خليها صغيرة (كيلوبايتات مش ميجات). الكاش العادي string فيه JSON.
+
+[[hash]]: [[HSET key field value ...]] و [[HGET]] و [[HGETALL]] و [[HINCRBY]]. تعدّل حقل من غير ما تلمس الباقي. الـ TTL على الـ hash كله (في Redis 7.4 وما بعده فيه كمان [[HEXPIRE]] لحقل لوحده).
+
+[[list]]: [[LPUSH]] و [[RPUSH]] من الطرفين، و [[LRANGE key 0 -1]] للكل، و [[LTRIM]] بيقص القايمة لطول ثابت. و [[BRPOP]] بيستنى لحد ما عنصر يوصل، وده كان أساس queues قديمة (BullMQ دلوقتي بيستخدم أنواع أعقد).
+
+[[set]]: [[SADD]] و [[SISMEMBER]] و [[SCARD]] (العدد) و [[SINTER]] (المشترك بين مجموعتين). التكرار بيتشال لوحده: [[SADD s u1 u2 u1]] بيضيف ٢.
+
+[[sorted set]]: كل عنصر ليه score رقم، والترتيب بيه دايمًا. [[ZADD]] و [[ZINCRBY]] و [[ZREVRANGE ... WITHSCORES]] (الأعلى الأول) و [[ZREVRANK]] (ترتيب عنصر). ولو الـ score هو الوقت بالملّي ثانية، [[ZREMRANGEBYSCORE]] بيشيل كل اللي أقدم من دقيقة، وده أساس sliding window للـ rate limit.
+
+وفيه أنواع تانية هتقابلها: streams ([[XADD]]، زي log بيتقري من أكتر من consumer)، و HyperLogLog ([[PFADD]]، عدد تقريبي للمميزين بذاكرة ثابتة)، و bitmaps.`,
+            when: "hash لأي object بتعدّل حقوله لوحده. و sorted set لأي حاجة فيها «أعلى» أو «آخر» أو «في آخر X دقيقة». و set لـ «موجود ولا لأ» والعد من غير تكرار. و string للكاش والعدادات.",
+            mistakes: R`JSON في string لحاجة بتتعدّل حقل حقل (رصيد أو عداد جوه object) فيضيع تعديل مع التزامن. و list من غير LTRIM فتكبر للأبد. و [[HGETALL]] أو [[SMEMBERS]] أو [[LRANGE 0 -1]] على key فيه مليون عنصر: نفس مشكلة KEYS، أمر واحد بيوقّف الكل. استخدم [[HSCAN]] و [[SSCAN]] أو صفحات.`
+          },
+          lines: [
+            "string: كاش لمنتج كـ JSON لمدة ٥ دقايق.",
+            "hash: بيانات يوزر في حقول.",
+            "قلّل حقل واحد بـ ٣ من غير ما تقرا الباقي.",
+            "list: ضيف مشاهدة في أول القايمة.",
+            "سيب أول ١٠ بس.",
+            "اقرا القايمة كلها.",
+            "set: الأونلاين النهارده، والتكرار بيتشال لوحده.",
+            "عددهم.",
+            "sorted set: كل لاعب ونقطه.",
+            "زوّد نقط سارة ٥٠.",
+            "أعلى ٣ ومعاهم النقط."
+          ],
+          sol: R`بالـ list: بعد ٦ مشاهدات القايمة فيها آخر ٥ بس، بس لو اتفرج على p2 مرتين هتلاقيها متكررة.
+
+الحل sorted set: العنصر هو id المنتج والـ score هو الوقت. [[ZADD]] لعنصر موجود بيحدّث الـ score بس، فمفيش تكرار والمنتج بيطلع لأول القايمة. وبعدين [[ZREMRANGEBYRANK]] بيشيل الأقدم لو الحجم عدّى ٥. والنتيجة الصح: [[ZREVRANGE recent:7 0 -1]] بيرجّع ٥ منتجات مختلفة، الأحدث الأول.`,
+          solCode: R`ZADD recent:7 1727600000001 p1
+ZADD recent:7 1727600000002 p2
+ZADD recent:7 1727600000003 p1
+ZREMRANGEBYRANK recent:7 0 -6
+ZREVRANGE recent:7 0 -1
+# 1) "p1"
+# 2) "p2"`
+        },
+        {
+          cmd: "ioredis",
+          title: "Redis من Node: كاش، والتطبيق يكمّل لو Redis وقع",
+          desc: R`[[ioredis]] عميل Redis لـ Node، وكل أمر بقى دالة بترجّع promise: [[redis.get(key)]] و [[redis.set(key, value, "EX", 300)]].
+
+الإعداد المهم للكاش: لو Redis وقع، كل أمر يفشل بسرعة بدل ما يستنى، والكود يكمّل من القاعدة. الكاش تحسين، مش حاجة التطبيق يقع لو مش موجودة. نمط cache-aside نفسه والمسح لما الداتا تتغير في درس [[طبقات الكاش]] في «تاب بناء مشروع كامل». هنا الـ client والـ wrapper.`,
+          example: R`// lib/redis.ts
+import { Redis } from "ioredis";
+
+export const redis = new Redis(config.REDIS_URL, {
+  enableOfflineQueue: false,
+  maxRetriesPerRequest: 1,
+  connectTimeout: 2000,
+  commandTimeout: 500,
+});
+redis.on("error", (err) => logger.warn({ err: err.message }, "redis error"));
+
+export async function cached(key, ttlSec, load) {
+  try {
+    const hit = await redis.get(key);
+    if (hit !== null) return JSON.parse(hit);
+  } catch (err) { logger.warn({ key, err: err.message }, "cache read skipped"); }
+  const value = await load();
+  try { await redis.set(key, JSON.stringify(value), "EX", ttlSec); }
+  catch (err) { logger.warn({ key, err: err.message }, "cache write skipped"); }
+  return value;
+}
+
+// const product = await cached($__btproduct:$__{id}:v1$__bt, 300, () => db.product.findUnique({ where: { id } }));`,
+          try: R`استخدم [[cached]] في endpoint بطيء، وقيس الزمن أول مرة وتاني مرة. وبعدين وقّف Redis ([[docker stop redis]]) وابعت نفس الطلب: لازم يرجع نفس الداتا (أبطأ)، واللوج فيه «cache read skipped». وبعدين شغّله تاني وتأكد إن الكاش رجع يشتغل لوحده من غير restart.`,
+          flag: "script",
+          deep: {
+            why: R`الإعدادات الافتراضية في ioredis معمولة إن «متضيّعش أي أمر»: لو الاتصال مقطوع بيحط الأوامر في طابور ويعيد المحاولة. ده مناسب لـ queue، بس للكاش معناه إن كل طلب HTTP بيستنى Redis لحد ما يرجع أو يوصل للحد، فوقعة Redis بتبقى وقعة للموقع كله. والكاش هدفه يخفف الحمل، مش يبقى نقطة فشل جديدة.`,
+            how: R`[[enableOfflineQueue: false]]: لو مفيش اتصال، الأمر يفشل فورًا بخطأ «Stream isn't writeable» بدل ما يستنى في الطابور. و [[maxRetriesPerRequest: 1]]: لو الاتصال اتقطع وأمر شغال، يعيده مرة واحدة بس. و [[commandTimeout: 500]]: أي أمر ياخد أكتر من نص ثانية (Redis مهنّج أو الشبكة بطيئة) يفشل. و [[connectTimeout]] لأول اتصال.
+
+ioredis بيفضل يحاول يتصل في الخلفية لوحده، فلما Redis يرجع، الكاش يرجع يشتغل من غير ما تعمل restart. و [[redis.on("error")]] لازم يبقى موجود: من غيره كل خطأ اتصال بيطبع «Unhandled error event» في اللوج.
+
+جربناها: Redis شغال، أول طلب ٥٠ms من القاعدة والباقي أقل من ms من الكاش. Redis واقف، كل طلب ٥٠ms من القاعدة، ولوج warning، ومفيش أي 500.
+
+الـ client ده للكاش. BullMQ محتاج client تاني بإعدادات عكس دي ([[maxRetriesPerRequest: null]]) لأنه لازم يستنى ميضيّعش jobs، وده في درس [[background jobs]]. وخلي client واحد لكل نوع استخدام للتطبيق كله، مش client لكل طلب.
+
+و [[JSON.parse]] للكاش: تواريخ Prisma بترجع strings مش Date. لو الكود بيعمل [[order.createdAt.getTime()]] هيقع على القيمة الجاية من الكاش بس. ودي ملاحظة: ioredis في وضع صيانة، و node-redis (باكدج [[redis]]) هو اللي Redis نفسهم بينصحوا بيه للمشاريع الجديدة. ioredis لسه منتشر جدًا، و BullMQ مبني عليه.`,
+            when: "أي كاش أو عداد مش أساسي. ولحاجات لازم تبقى صح (rate limit للـ login، أو lock على عملية دفع) قرر صريح: لو Redis وقع، تسمح ولا ترفض؟ (درس [[rate-limit-redis]]).",
+            mistakes: R`الإعدادات الافتراضية للكاش فوقعة Redis تعلّق كل الطلبات. ومفيش try/catch حوالين الكاش فخطأ Redis يبقى 500. و [[if (hit)]] بدل [[hit !== null]]: لو القيمة المتكاشة [[0]] أو [[""]] هتتعامل كأنها مش موجودة. وتكاش [[null]] (مش موجود) من غير ما تفكر: ده ممكن يبقى مفيد ضد طلبات كتير على id مش موجود، بس بـ TTL قصير. و [[new Redis()]] جوه الـ route فكل طلب اتصال جديد.`
+          },
+          lines: [
+            "ioredis بالـ named export، الشكل اللي المكتبة بتنصح بيه.",
+            "client واحد للكاش من الـ URL في config.",
+            "لو مفيش اتصال افشل فورًا، متستناش في طابور.",
+            "إعادة محاولة واحدة بس للأمر لو الاتصال اتقطع.",
+            "أول اتصال ميستناش أكتر من ثانيتين.",
+            "أي أمر ياخد أكتر من نص ثانية يفشل.",
+            "قفلة.",
+            "سجّل أخطاء الاتصال (ومن غيره Node بيطبع unhandled error).",
+            "wrapper: key ومدة ودالة بتجيب من القاعدة.",
+            "جرّب الكاش.",
+            "اقرا.",
+            "لقيته؟ رجّعه. ([[!== null]] عشان القيم زي 0 تتحسب.)",
+            "Redis فيه مشكلة؟ سجّل وكمّل.",
+            "هات من القاعدة.",
+            "اكتب في الكاش بالمدة، ولو فشل سجّل وكمّل.",
+            "قفلة.",
+            "رجّع القيمة.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: أول طلب بزمن القاعدة، وتاني طلب أسرع بكتير (أقل من ms في Redis المحلي). بعد [[docker stop redis]] الطلب بيرجع 200 بنفس الداتا بزمن القاعدة، واللوج فيه [[cache read skipped]] و [[cache write skipped]] ومعاهم [[ECONNREFUSED]]. وبعد [[docker start redis]] بثواني الطلب التالت يرجع يبقى سريع من غير restart.
+
+لو الطلب علّق بعد ما وقّفت Redis، يبقى [[enableOfflineQueue]] لسه true أو [[commandTimeout]] مش موجود. ولو رجع 500، يبقى فيه أمر Redis برّه الـ try.
+
+الكود ده نسخة صغيرة للتجربة من غير Express.`,
+          solCode: R`import { cached, redis } from "./lib/redis.js";
+
+let dbCalls = 0;
+const load = async () => { dbCalls++; await new Promise((r) => setTimeout(r, 50)); return { id: 1, name: "Mug" }; };
+for (let i = 0; i < 3; i++) {
+  const t = performance.now();
+  await cached("product:1:v1", 60, load);
+  console.log(i, (performance.now() - t).toFixed(1) + "ms", "dbCalls=" + dbCalls);
+}
+redis.disconnect();
+// Redis شغال:  0 51ms dbCalls=1 | 1 0.5ms dbCalls=1 | 2 0.4ms dbCalls=1
+// Redis واقف:  0 51ms dbCalls=1 | 1 51ms dbCalls=2 | 2 50ms dbCalls=3`
+        },
+        {
+          cmd: "maxmemory و persistence",
+          title: "Redis اتملى: يمسح إيه؟ ولو عمل restart يفتكر إيه؟",
+          desc: R`Redis في الرام، فلازم تقوله أقصى ذاكرة ([[maxmemory]]) وهيعمل إيه لما يوصلها ([[maxmemory-policy]]): يمسح مفاتيح قديمة، ولا يرفض أي كتابة جديدة.
+
+والـ persistence: هل البيانات تفضل بعد restart؟ RDB بياخد صورة كل فترة، و AOF بيكتب كل أمر في ملف. الكاش ممكن يستغنى عن الاتنين، بس الـ queues والـ sessions لأ.`,
+          example: R`redis-cli CONFIG GET maxmemory-policy
+redis-cli INFO memory | grep -E "used_memory_human|maxmemory_human"
+redis-cli INFO stats | grep evicted_keys
+
+# redis.conf لكاش بس:
+maxmemory 512mb
+maxmemory-policy allkeys-lru
+save ""
+appendonly no
+
+# redis.conf لـ BullMQ و sessions:
+maxmemory 1gb
+maxmemory-policy noeviction
+appendonly yes
+appendfsync everysec`,
+          try: R`في Redis تجربة: [[CONFIG SET maxmemory 2mb]] و [[CONFIG SET maxmemory-policy allkeys-lru]]، واكتب ٣٠٠٠ key كل واحد ٥٠٠ بايت (سكربت bash أو Node). اطبع [[DBSIZE]] و [[evicted_keys]]. وبعدين غيّر الـ policy لـ [[noeviction]] واكتب تاني. إيه اللي بيرجع؟`,
+          deep: {
+            why: R`من غير maxmemory، Redis بيكبر لحد ما السيرفر نفسه يخلص رام، والـ OOM killer في Linux يقتله (أو يقتل حاجة أهم). ومن غير ما تفكر في الـ policy والـ persistence، ممكن Redis يمسح jobs من الـ queue عشان يعمل مكان لكاش، أو يعمل restart ويخسر كل الـ sessions فكل اليوزرز يخرجوا مرة واحدة.`,
+            how: R`الـ policies المهمة: [[noeviction]] (الافتراضي): لما تتملى، أي أمر كتابة يرجع خطأ [[OOM command not allowed]]، والقراية شغالة. و [[allkeys-lru]]: يمسح أقل المفاتيح استخدامًا من الكل، مناسب لكاش بس. و [[volatile-lru]]: يمسح بس من المفاتيح اللي عليها TTL، ويسيب اللي من غير TTL. وفيه [[allkeys-lfu]] (الأقل تكرارًا) و [[volatile-ttl]].
+
+جربناها: ٢ ميجا و allkeys-lru، كتبنا ٣٠٠٠ key، فضل حوالي ١٠٠٠ و [[evicted_keys]] حوالي ٢٠٠٠، ومعاهم اتمسحت مفاتيح تانية كانت موجودة قبل كده (مش بتاعة الكاش). ومع noeviction، الكتابة رجعت [[OOM command not allowed when used memory > 'maxmemory']].
+
+BullMQ بيطلب [[noeviction]] صريح ويحذّرك لو غيره، لأن مسح key من queue معناه job ضاعت أو queue بايظة. فالقاعدة: Redis للكاش بـ allkeys-lru، و Redis تاني للـ queues والـ sessions بـ noeviction. instance تاني مش database تانية ([[SELECT 1]]) في نفس الـ instance، لأن الـ maxmemory والـ policy على مستوى الـ instance كله.
+
+الـ persistence: RDB ([[save 3600 1 300 100 60 10000]] هو الافتراضي في النسخ الحديثة) بياخد snapshot كل فترة حسب عدد التغييرات، فلو وقع ممكن تخسر آخر دقايق. و AOF ([[appendonly yes]]) بيكتب كل أمر، ومع [[appendfsync everysec]] أقصى خسارة حوالي ثانية. للكاش: ولا واحد (أو RDB بس عشان ميبدأش فاضي). للـ queues والـ sessions: AOF.
+
+وفي الخدمات المُدارة (Upstash و Redis Cloud و ElastiCache) الإعدادات دي في لوحة التحكم، بس نفس الأسئلة لازم تجاوب عليها.`,
+            when: "أول ما Redis يطلع من جهازك لسيرفر حقيقي. واسأل نفس السؤال مع كل استخدام جديد: لو المفتاح ده اتمسح أو ضاع بعد restart، يحصل إيه؟",
+            mistakes: R`كاش و BullMQ على نفس Redis بـ allkeys-lru: تحت الضغط Redis يمسح jobs. أو العكس: noeviction وكاش من غير TTL، فـ Redis يتملى وكل الكتابات تفشل بما فيها الـ queue والـ sessions. و Redis في Docker من غير volume مع AOF، فكل deploy يمسح الـ sessions. وفي الانترفيو: «Redis اتملى، إيه اللي بيحصل؟» الإجابة: حسب الـ policy، وافتراضيًا noeviction يعني الكتابة بتفشل.`
+          },
+          lines: [
+            "الـ policy الحالية.",
+            "الذاكرة المستخدمة والحد.",
+            "عدد المفاتيح اللي اتمسحت عشان الذاكرة.",
+            "أقصى ذاكرة للكاش.",
+            "لما تتملى امسح الأقل استخدامًا.",
+            "من غير snapshots.",
+            "ومن غير AOF: الكاش ممكن يبدأ فاضي.",
+            "أقصى ذاكرة للـ queues والـ sessions.",
+            "متمسحش أي حاجة أبدًا، ارفض الكتابة.",
+            "اكتب كل أمر في ملف.",
+            "و sync للديسك كل ثانية."
+          ],
+          sol: R`مع [[allkeys-lru]] و ٢ ميجا: الكتابة كلها بتنجح، بس [[DBSIZE]] في الآخر حوالي ١٠٠٠ مش ٣٠٠٠، و [[evicted_keys]] حوالي ٢٠٠٠. Redis مسح الأقدم عشان يعمل مكان، ومعاهم أي key تاني كان موجود (لو كان عندك أي حاجة تانية في نفس الـ instance، راحت).
+
+مع [[noeviction]]: أول كام كتابة بتنجح، وبعدين كل [[SET]] بيرجع [[OOM command not allowed when used memory > 'maxmemory']]. ولا key اتمسح، بس مفيش كتابة.
+
+ده بالظبط الفرق: كاش يستحمل يتمسح منه، و queue لازم يرفض بدل ما يخسر. وفي الآخر [[CONFIG SET maxmemory 0]] عشان ترجّع Redis التجربة من غير حد.`,
+          solCode: R`redis-cli CONFIG SET maxmemory 2mb
+redis-cli CONFIG SET maxmemory-policy allkeys-lru
+for i in $(seq 1 3000); do echo "SET junk:$i $(head -c 500 /dev/zero | tr '\0' x)"; done | redis-cli > /dev/null
+redis-cli DBSIZE
+redis-cli INFO stats | grep evicted_keys
+redis-cli CONFIG SET maxmemory-policy noeviction
+redis-cli SET one-more x
+# (error) OOM command not allowed when used memory > 'maxmemory'.
+redis-cli CONFIG SET maxmemory 0`
+        },
+        {
+          cmd: "connect-redis و lock",
+          title: "sessions في Redis، و SET NX PX كـ lock بسيط",
+          desc: R`الـ sessions (درس [[express-session]]) لازم تتخزن في مكان كل نسخ السيرفر شايفاه ويفضل بعد restart. [[connect-redis]] بيخزنها في Redis، وكل session key ليه TTL بعمر الكوكي.
+
+ونفس Redis بيدّيك lock بسيط: [[SET key token NX PX 10000]] بينجح لواحد بس في نفس الوقت. مفيد لـ «التقرير ده يتعمل مرة واحدة حتى لو ٣ نسخ حاولوا مع بعض».`,
+          example: R`import session from "express-session";
+import { RedisStore } from "connect-redis";
+import { createClient } from "redis";
+
+const sessionRedis = createClient({ url: config.REDIS_URL });
+sessionRedis.on("error", (err) => logger.error({ err }, "session redis"));
+await sessionRedis.connect();
+
+app.set("trust proxy", 1);
+app.use(session({
+  store: new RedisStore({ client: sessionRedis, prefix: "sess:" }),
+  name: "sid",
+  secret: config.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { httpOnly: true, secure: config.NODE_ENV === "production", sameSite: "lax", maxAge: 7 * 24 * 3600 * 1000 },
+}));
+
+const RELEASE = 'if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end';
+export async function withLock(key, ttlMs, fn) {
+  const token = crypto.randomUUID();
+  if ((await redis.set(key, token, "PX", ttlMs, "NX")) !== "OK") return { skipped: true };
+  try { return { value: await fn() }; }
+  finally { await redis.eval(RELEASE, 1, key, token); }
+}`,
+          try: R`ركّب الـ store، واعمل login، وافتح [[redis-cli --scan --pattern 'sess:*']] و [[TTL]] على الـ key. اعمل restart للسيرفر: لسه عامل login؟ وبعدين logout وتأكد إن الـ key اتمسح. وفي الآخر نادي [[withLock]] ٣ مرات مع بعض بـ [[Promise.all]] على دالة بتاخد ٢٠٠ms، وشوف كام واحدة اشتغلت.`,
+          flag: "script",
+          deep: {
+            why: R`MemoryStore بيضيع مع كل deploy ومبيتشاركش بين النسخ: اليوزر يعمل login على نسخة، والطلب الجاي يروح لنسخة تانية فيبقى «مش مسجّل». و Redis أسرع من Postgres للـ lookup اللي بيحصل مع كل طلب، وبيمسح الـ sessions المنتهية لوحده بالـ TTL.
+
+والـ lock: مع أكتر من نسخة، أي شغل «مرة واحدة» (تقرير يومي، أو مزامنة، أو إعادة حساب) هيتعمل مرة لكل نسخة. الـ lock بيخلي واحدة بس تعمله.`,
+            how: R`connect-redis في نسخه الحديثة معمول لـ node-redis (باكدج [[redis]] و [[createClient]])، مش ioredis، لأنه بيستخدم أوامر بالشكل بتاعه ([[scanIterator]] و [[mGet]]). فعادي يبقى عندك client من node-redis للـ sessions و ioredis للكاش و BullMQ. وجربناها: login بيعمل key [[sess:...]] بـ TTL أسبوع (بعمر الكوكي)، و logout بـ [[destroy]] بيمسحه، و [[/me]] بعدها 401.
+
+[[resave: false]] ضروري مع Redis عشان متكتبش الـ session مع كل طلب لو متغيرتش. والـ store بيعمل [[EXPIRE]] (touch) عشان الـ TTL يتجدد مع النشاط.
+
+الـ lock: [[NX]] يعني «اكتب بس لو مش موجود»، وده atomic فواحد بس ينجح. و [[PX]] مهم جدًا: لو الـ process وقع وهو ماسك الـ lock، الـ key يتمسح لوحده بعد المدة بدل ما يفضل مقفول للأبد. والـ token العشوائي عشان وقت الفك: متمسحش الـ lock غير لو لسه بتاعك. لو شغلك خد أكتر من الـ TTL، الـ lock خلص وحد تاني مسكه، و [[DEL]] عادي هيمسح lock بتاع حد تاني. عشان كده الفك بـ Lua script: يقارن ويمسح في خطوة واحدة atomic.
+
+حدود الـ lock ده: على Redis واحد، ومش مضمون ١٠٠٪ لو Redis نفسه عمل failover في النص. لحاجات فلوس، خلي الضمان الحقيقي في Postgres (unique constraint أو [[SELECT FOR UPDATE]]، تاب «SQL و Prisma»)، والـ lock بس يقلل الشغل المكرر. وللشغل الدوري، job scheduler في BullMQ بيحل المشكلة من غير lock خالص.`,
+            when: "sessions: أي تطبيق بيستخدم express-session وفيه أكتر من نسخة أو بيعمل deploy (يعني كلهم). والـ lock: شغل دوري أو تقيل لازم يتعمل مرة واحدة، ومش فيه فلوس.",
+            mistakes: R`lock من غير TTL فأول crash يقفل الشغل ده للأبد. أو فك بـ [[DEL]] من غير ما تتأكد من الـ token. أو [[GET]] وبعدين [[SET]] في أمرين بدل [[SET NX]]: اتنين يعملوا GET مع بعض ويلاقوه فاضي ويمسكوا الاتنين. وتدّي connect-redis client بتاع ioredis فيقع بأخطاء غريبة. و sessions و كاش على Redis واحد بـ allkeys-lru، فتحت الضغط اليوزرز يخرجوا لوحدهم (درس [[maxmemory و persistence]]).`
+          },
+          lines: [
+            "express-session.",
+            "الـ store بتاع Redis.",
+            "client من node-redis، لأن connect-redis معمول عليه.",
+            "client للـ sessions.",
+            "سجّل أخطاءه.",
+            "اتصل قبل ما السيرفر يبدأ.",
+            "ورا proxy عشان الكوكي الـ secure.",
+            "ركّب الـ session.",
+            "الـ store في Redis، والمفاتيح بتبدأ بـ sess.",
+            "اسم الكوكي بدل الافتراضي connect.sid.",
+            "سر التوقيع من config.",
+            "متكتبش لو متغيرتش.",
+            "متعملش session لأي زائر.",
+            "كوكي httpOnly، و secure في الإنتاج، وعمرها أسبوع (وده الـ TTL في Redis).",
+            "قفلة.",
+            "Lua: امسح بس لو القيمة لسه التوكن بتاعي.",
+            "دالة lock عامة.",
+            "توكن عشوائي للمحاولة دي.",
+            "امسك الـ lock لو فاضي وبمدة، ولو مش فاضي اتخطى.",
+            "اعمل الشغل.",
+            "وفي كل الأحوال فك الـ lock بتاعك انت بس.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: بعد login فيه key واحد [[sess:...]] والـ TTL حوالي [[604800]] (أسبوع). بعد restart لسه عامل login لأن الـ session في Redis مش في الـ process. وبعد logout الـ key مش موجود و [[/me]] بيرجع 401.
+
+والـ lock: من ٣ نداءات مع بعض، واحد بس رجّع [[{ value: ... }]] والتانيين [[{ skipped: true }]]، وبعدهم [[EXISTS lock:...]] بيرجع 0 لأن الـ lock اتفك.
+
+لو التلاتة اشتغلوا، يبقى بتعمل GET ثم SET بدل [[SET ... NX]]، أو كل نداء بمفتاح مختلف.`,
+          solCode: R`const job = (name) => withLock("lock:daily-report", 10_000, async () => {
+  await new Promise((r) => setTimeout(r, 200));
+  return name + " did it";
+});
+console.log(await Promise.all([job("A"), job("B"), job("C")]));
+// [ { value: 'A did it' }, { skipped: true }, { skipped: true } ]
+console.log(await redis.exists("lock:daily-report")); // 0`
+        },
+        {
+          cmd: "rate-limit-redis",
+          title: "rate limit مشترك بين كل النسخ: لكل IP ولكل يوزر ولكل API key",
+          desc: R`الـ limiter الافتراضي في express-rate-limit بيعد في ذاكرة الـ process، فمع ٣ نسخ الحد الفعلي بيتضرب في ٣. [[rate-limit-redis]] بيخلي العداد في Redis فكل النسخ بتعد في نفس المكان.
+
+ومعاه تعد بحاجة غير الـ IP: [[keyGenerator]] يرجّع id اليوزر أو الـ API key، و [[limit]] ممكن يبقى دالة (الباقة المدفوعة حدها أعلى). والأساسيات (الحد العام، وحد login، و trust proxy) في درس [[express-rate-limit]].`,
+          example: R`import { rateLimit, ipKeyGenerator } from "express-rate-limit";
+import { RedisStore } from "rate-limit-redis";
+
+const redisStore = (prefix) => new RedisStore({ prefix, sendCommand: (command, ...args) => redis.call(command, ...args) });
+
+export const publicApiLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: (req) => (req.apiKey?.plan === "pro" ? 600 : 60),
+  keyGenerator: (req) => (req.apiKey ? $__btkey:$__{req.apiKey.id}$__bt : $__btip:$__{ipKeyGenerator(req.ip)}$__bt),
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  identifier: "public",
+  store: redisStore("rl:public:"),
+  passOnStoreError: true,
+});
+
+export const loginLimiter = rateLimit({
+  windowMs: 15 * 60_000,
+  limit: 10,
+  skipSuccessfulRequests: true,
+  store: redisStore("rl:login:"),
+  passOnStoreError: false,
+});`,
+          try: R`ركّب [[publicApiLimiter]] على route تجربة بحد ٢ للـ anonymous و ٥ للـ pro. ابعت ٣ طلبات من غير key و ٣ بـ [[X-API-Key: pro_1]]، واطبع الـ status و headers [[RateLimit]] و [[RateLimit-Policy]] و [[Retry-After]]. وبعدين شغّل نسختين من السيرفر على بورتين وابعت الطلبات بالتبادل: الحد لسه ٢ للاتنين مع بعض؟`,
+          flag: "script",
+          deep: {
+            why: R`rate limit في الذاكرة مع أكتر من نسخة بيبقى أضعف مما انت فاكر، وبيتصفّر مع كل deploy. والحد بالـ IP بس مش عادل: شركة كاملة ورا IP واحد تتحظر، ومهاجم عنده ألف IP يعدّي. الـ API العام (للشركاء أو الموبايل) محتاج حد لكل API key حسب الباقة، و endpoints الـ AI أو الـ SMS محتاجة حد لكل يوزر لأنك بتدفع على كل طلب.`,
+            how: R`[[sendCommand]] هو الجسر: rate-limit-redis بيبعت أوامره (Lua scripts صغيرة بتزوّد العداد وترجّع الـ TTL) عن طريق الدالة دي. مع ioredis [[redis.call(command, ...args)]]، ومع node-redis [[client.sendCommand(args)]]. و [[prefix]] مختلف لكل limiter: كل limiter لازم يبقى ليه store instance لوحده (express-rate-limit بيرمي ValidationError لو نفس الـ store اتدّى لاتنين)، عشان كده دالة [[redisStore(prefix)]].
+
+[[keyGenerator]]: لو رجّعت الـ IP بنفسك لازم يعدّي على [[ipKeyGenerator]]، اللي بيجمع عناوين IPv6 في subnet واحد (افتراضيًا /56) عشان حد عنده ملايين العناوين ميلفّش. ولو كتبت [[req.ip]] مباشرة، النسخة الحالية بترمي ValidationError بيقولك كده (جربناها). ولو الطلب فيه يوزر مسجّل، [[user:$__{req.user.id}]] أعدل من الـ IP.
+
+[[limit]] كدالة بتاخد الطلب، فالباقة تحدد الحد. والـ middleware اللي بيقرا الـ API key ويحط [[req.apiKey]] لازم يبقى قبل الـ limiter.
+
+الـ headers: [[standardHeaders: "draft-8"]] بيبعت [[RateLimit-Policy: "public"; q=60; w=60]] (الحصة والنافذة بالثواني) و [[RateLimit: "public"; r=59; t=60]] (الباقي والثواني لحد التصفير)، و [[identifier]] هو الاسم اللي بيظهر فيهم. ومع 429 بيبعت [[Retry-After]]. العميل الكويس يقرا دول ويبطّأ لوحده بدل ما يخبط.
+
+[[passOnStoreError]]: لو Redis وقع، تسمح بالطلبات ولا ترفضها؟ للـ API العام [[true]] (متوقّفش الموقع عشان الـ limiter)، وللـ login ممكن [[false]] (ترفض أحسن من إنك تفتح باب التخمين). ده قرار لازم تاخده صريح.
+
+وفيه algorithms تانية (token bucket و sliding window) وحصص شهرية لكل key، ودي في تاب «APIs متقدمة».`,
+            when: "أول ما يبقى عندك أكتر من نسخة، أو API key لشركاء، أو endpoint بتدفع على كل طلب فيه.",
+            mistakes: R`[[rate-limit-redis]] متسطّب والـ limiter من غير [[store]]، فهو لسه في الذاكرة (حصلت في مشروع حقيقي، درس [[express-rate-limit]]). ونفس الـ store لـ limiterين. و [[keyGenerator: (req) => req.ip]] من غير ipKeyGenerator. والـ limiter قبل الـ middleware اللي بيقرا الـ API key، فكله بيتعد بالـ IP. و Redis الـ rate limit بـ allkeys-lru تحت ضغط، فالعدادات بتتمسح والحد بيتلغي من غير ما حد يعرف.`
+          },
+          lines: [
+            "express-rate-limit، ومعاه دالة تجميع IPv6.",
+            "الـ store بتاع Redis.",
+            "دالة بتعمل store جديد لكل limiter بـ prefix لوحده، وبتبعت الأوامر عن طريق ioredis.",
+            "limiter للـ API العام.",
+            "نافذة دقيقة.",
+            "الحد حسب الباقة: pro ٦٠٠، والباقي ٦٠.",
+            "العد بالـ API key لو موجود، وإلا بالـ IP بعد تجميع IPv6.",
+            "headers الـ RateLimit بالشكل الموحد.",
+            "من غير headers الـ X-RateLimit القديمة.",
+            "اسم السياسة اللي بيظهر في الـ headers.",
+            "العداد في Redis.",
+            "لو Redis وقع: اسمح، متوقّفش الـ API.",
+            "قفلة.",
+            "limiter للـ login.",
+            "ربع ساعة.",
+            "١٠ محاولات.",
+            "الناجحة متتحسبش.",
+            "store لوحده بـ prefix تاني.",
+            "لو Redis وقع هنا: ارفض.",
+            "قفلة."
+          ],
+          sol: R`المتوقع بحد ٢ و ٥: الطلبين الأولين من غير key بـ 200 والتالت 429 ومعاه [[Retry-After: 60]]. وطلبات [[pro_1]] التلاتة 200 والـ header [[RateLimit]] بينزل [[r=4]] ثم [[r=3]] ثم [[r=2]]. والـ [[RateLimit-Policy]] فيه [[q=2]] للـ anonymous و [[q=5]] للـ pro.
+
+وفي Redis هتلاقي مفتاحين: [[rl:public:ip:127.0.0.1]] و [[rl:public:key:pro_1]].
+
+مع نسختين: الحد لسه ٢ للاتنين مع بعض، لأن العداد في Redis. لو كل نسخة سمحت بـ ٢ (يعني ٤ طلبات عدّت)، يبقى الـ store مش متركّب والعد لسه في الذاكرة.`,
+          solCode: R`app.use((req, res, next) => {
+  const k = req.get("x-api-key");
+  req.apiKey = k ? { id: k, plan: k.startsWith("pro") ? "pro" : "free" } : null;
+  next();
+});
+app.get("/v1/data", publicApiLimiter, (req, res) => res.json({ ok: true }));
+// limit للتجربة: (req) => (req.apiKey?.plan === "pro" ? 5 : 2)
+// anon  200  RateLimit: "public"; r=1; t=60
+// anon  200  RateLimit: "public"; r=0; t=60
+// anon  429  Retry-After: 60
+// pro_1 200  RateLimit: "public"; r=4; t=60`
+        },
+        {
+          cmd: "pub/sub",
+          title: "رسالة لكل نسخ السيرفر مرة واحدة",
+          desc: R`[[PUBLISH channel message]] بيبعت رسالة لكل اللي عامل [[SUBSCRIBE]] على الـ channel ده في اللحظة دي. مفيش حفظ: اللي مش متصل ساعتها مش هيشوفها أبدًا.
+
+الاستخدام الأشهر: كل نسخ السيرفر بتسمع على channel، وأي نسخة تغيّر حاجة تبلّغ الباقي (امسحوا الكاش المحلي، أو ابعتوا الإشعار ده لليوزر لو متصل عندك).`,
+          example: R`import { Redis } from "ioredis";
+
+const pub = new Redis(config.REDIS_URL);
+const sub = pub.duplicate();
+
+await sub.subscribe("cache:invalidate");
+sub.on("message", (channel, raw) => {
+  const { key } = JSON.parse(raw);
+  localCache.delete(key);
+});
+
+export async function invalidate(key) {
+  await pub.del(key);
+  await pub.publish("cache:invalidate", JSON.stringify({ key }));
+}`,
+          try: R`افتح ترمنالين. في الأول [[redis-cli SUBSCRIBE news]]، وفي التاني [[redis-cli PUBLISH news hello]]: الرقم اللي راجع هو عدد اللي استلموا. وبعدين اقفل الأول وابعت تاني: الرقم بقى كام؟ وافتح الأول تاني: وصلته الرسالة اللي فاتت؟`,
+          flag: "script",
+          deep: {
+            why: R`لما التطبيق بقى ٣ نسخ، أي حاجة في ذاكرة process واحدة (كاش محلي، أو اتصالات WebSocket) مبقتش بتشوفها النسخ التانية. pub/sub أبسط طريقة تخلي النسخ تكلّم بعض من غير ما تعرف عناوين بعض.`,
+            how: R`الاتصال اللي عمل [[subscribe]] بيدخل وضع المشترك وبيستنى رسايل، فخليه اتصال لوحده ([[duplicate()]] بيعمل client جديد بنفس الإعدادات) ومتستخدموش للأوامر العادية. و [[publish]] بيرجّع عدد المشتركين اللي استلموا، وده مفيد في الـ debugging (0 يعني محدش سامع).
+
+fire-and-forget: Redis بيبعت للمتصلين دلوقتي بس ومبيحفظش. نسخة كانت بتعمل restart ساعة الرسالة مش هتعرف. فاستخدمه لحاجات لو ضاعت مش مشكلة كبيرة (كاش محلي عليه TTL قصير كمان، أو إشعار لحظي محفوظ في القاعدة أصلًا). لو لازم كل رسالة توصل وتتعالج، ده queue (BullMQ) أو Redis Streams، والفرق بين الـ queue و pub/sub و stream في تاب «APIs متقدمة».
+
+socket.io على أكتر من سيرفر بيستخدم pub/sub ده من جوه: اليوزر متصل بنسخة ١ والإشعار اتعمل على نسخة ٢، فالـ Redis adapter بيعمل publish وكل النسخ تبعت للي متصل عندها. الإعداد في درس [[socket.io]] و «scaling path» في «تاب بناء مشروع كامل».
+
+و [[PSUBSCRIBE user:*]] بيشترك بـ pattern. وفي Redis Cluster فيه [[SPUBLISH]] (sharded pub/sub) عشان الرسايل متتبعتش لكل node.`,
+            when: "تبليغ كل النسخ بحدث لحظي: مسح كاش محلي، أو إعدادات اتغيرت، أو إشعار realtime. مش للشغل اللي لازم يتعمل (ده queue).",
+            mistakes: R`تستخدم pub/sub كـ queue: الإيميل يتبعت لو فيه worker سامع ساعتها، وإلا يضيع من غير أي أثر. أو تعمل subscribe على نفس الـ client اللي بتستخدمه للكاش. أو تفتكر إن الرسالة بتروح لواحد بس: بتروح لكل المشتركين، فلو ٣ workers سامعين، الشغل هيتعمل ٣ مرات.`
+          },
+          lines: [
+            "ioredis.",
+            "client للنشر والأوامر العادية.",
+            "client تاني للاشتراك بس، بنفس الإعدادات.",
+            "اشترك في الـ channel.",
+            "مع كل رسالة...",
+            "...اقرا الـ key...",
+            "...وامسحه من الكاش اللي في ذاكرة النسخة دي.",
+            "قفلة.",
+            "دالة المسح.",
+            "امسح من Redis.",
+            "وبلّغ كل النسخ تمسح نسختها المحلية.",
+            "قفلة."
+          ],
+          sol: R`أول [[PUBLISH news hello]] بيرجّع [[(integer) 1]] والترمنال الأول بيطبع [[message]] و [[news]] و [[hello]]. بعد ما تقفل المشترك، نفس الأمر بيرجّع [[(integer) 0]]. ولما تفتح الأول تاني، الرسالة اللي اتبعتت وهو مقفول مش هتوصله أبدًا.
+
+ده معنى fire-and-forget: pub/sub مش بيخزن. لو محتاج الرسالة تستنى لحد ما حد ياخدها، استخدم queue أو stream.`,
+          solCode: R`# ترمنال ١
+redis-cli SUBSCRIBE news
+# ترمنال ٢
+redis-cli PUBLISH news hello
+# (integer) 1
+# اقفل ترمنال ١ بـ Ctrl+C
+redis-cli PUBLISH news again
+# (integer) 0`
+        }
+      ]
+    },
+    {
+      t: "ملفات كبيرة وشغل تقيل",
+      l: 3,
+      n: "ملفات أكبر من الرام بـ streams، وتصدير CSV و Excel، وفاتورة PDF عربي، وحسابات تقيلة من غير ما السيرفر يهنّج، و request id في كل لوج",
+      items: [
+        {
+          cmd: "streams و pipeline",
+          title: "ملف ٢ جيجا من غير ما الرام تتملى",
+          desc: R`[[fs.readFile]] بيحط الملف كله في الذاكرة مرة واحدة. الـ stream بيقراه حتة حتة (64KB افتراضيًا): تعالج الحتة وترميها وتاخد اللي بعدها، فالذاكرة ثابتة مهما كان حجم الملف.
+
+[[pipeline]] من [[node:stream/promises]] بيوصّل streams ورا بعض (اقرا ← حوّل ← اضغط ← اكتب)، وبيتعامل مع الـ backpressure والأخطاء، وبيقفل الكل لو واحد فشل. و [[readline]] مع [[for await]] بيدّيك الملف سطر سطر.`,
+          example: R`import { createReadStream, createWriteStream } from "node:fs";
+import { createInterface } from "node:readline";
+import { createGzip } from "node:zlib";
+import { pipeline } from "node:stream/promises";
+
+export async function importUsers(path) {
+  const lines = createInterface({ input: createReadStream(path), crlfDelay: Infinity });
+  let batch = [], total = 0, header = true;
+  for await (const line of lines) {
+    if (header) { header = false; continue; }
+    const [, email] = line.split(",");
+    batch.push({ email });
+    if (batch.length === 1000) {
+      total += (await db.user.createMany({ data: batch, skipDuplicates: true })).count;
+      batch = [];
+    }
+  }
+  if (batch.length) total += (await db.user.createMany({ data: batch, skipDuplicates: true })).count;
+  return total;
+}
+
+await pipeline(createReadStream("export.csv"), createGzip(), createWriteStream("export.csv.gz"));`,
+          try: R`اعمل ملف CSV فيه ٢ مليون سطر (سكربت بيكتب بـ [[write]] ويستنى [[drain]])، وبعدين احسب مجموع عمود بطريقتين: [[readFileSync(...).split("\n")]]، و readline. اطبع [[process.memoryUsage().rss]] في آخر كل واحدة. وبعدين اضغط الملف بـ pipeline وقارن الحجم.`,
+          flag: "script",
+          deep: {
+            why: R`استيراد عملاء من Excel، وتصدير طلبات السنة، ورفع فيديو، ولوجات: كلها ملفات ممكن تبقى أكبر من الرام المتاحة للـ container. [[readFile]] على ملف ٥٠٠ ميجا في container حده ٥١٢ ميجا معناه crash. وحتى لو الرام كفاية، ٣ يوزرز بيرفعوا مع بعض كفاية يوقّعوا السيرفر.`,
+            how: R`جربناها على CSV حجمه ٥٨ ميجا (٢ مليون سطر): [[readFileSync]] ثم [[split("\n")]] ثم [[split(",")]] وصل الـ RSS لـ ٥٧٩ ميجا (كل سطر بقى string و array). و readline عمل نفس الحساب بـ ٨٦ ميجا. ولو الملف ٢٠ ضعف، الأولى هتقع والتانية تقريبًا نفس الرقم.
+
+الـ backpressure: لو القراية أسرع من الكتابة (ديسك سريع وشبكة بطيئة)، الحتت اللي اتقرت ومتكتبتش بتتكوّم في الذاكرة. [[writable.write()]] بيرجّع [[false]] لما البافر يتملى، والمفروض تستنى event الـ [[drain]] قبل ما تكتب تاني. [[pipeline]] بيعمل ده لوحده، ومعاه [[for await]] على stream بيقرا الحتة الجاية بس لما انت تخلص من اللي قبلها، فلو الداتابيز بطيئة القراية بتبطّأ معاها.
+
+الاستيراد على دفعات: [[createMany]] كل ١٠٠٠ صف بدل insert لكل سطر (٢٠٠ ألف رحلة للقاعدة) أو [[createMany]] واحدة بالملف كله (كل الصفوف في الذاكرة تاني). و [[skipDuplicates]] بيتجاهل الإيميلات الموجودة بدل ما الدفعة كلها تفشل.
+
+و [[pipeline]] بدل [[.pipe()]]: الـ pipe مبيمررش الأخطاء، فلو القراية فشلت الـ write stream بيفضل مفتوح والطلب معلّق. pipeline بيقفل الكل ويرمي الخطأ عشان [[await]] يمسكه. ونفس الفكرة مع HTTP: [[res]] في Express writable stream، فتقدر تعمل [[pipeline(createReadStream(file), res)]] (الدرس الجاي).
+
+وملف CSV حقيقي فيه قيم بين [[""]] فيها فواصل وسطور جديدة: [[line.split(",")]] هنا للتوضيح بس. في الشغل استخدم parser بيدعم streams زي [[csv-parse]].`,
+            when: "أي ملف ممكن يكبر: استيراد، وتصدير، ورفع، ولوجات. ولو الملف أكيد صغير (config أو JSON بـ كيلوبايتات)، readFile أبسط.",
+            mistakes: R`[[multer.memoryStorage()]] للرفع الكبير، فكل ملف مرفوع في الرام (درس [[multer]]). و [[await]] لكل insert لوحده جوه الـ loop فالاستيراد ياخد ساعة. و [[.pipe()]] من غير error handling. وتقرا الـ upload كله في [[Buffer.concat]] عشان تحسب hash، والـ hash نفسه ينفع stream ([[crypto.createHash]] كـ Transform). وتعمل الاستيراد جوه الطلب نفسه فالـ request يعدّي timeout بتاع Nginx (٦٠ ثانية): الملفات الكبيرة بتروح job (درس [[background jobs]]) والـ API يرد 202.`
+          },
+          lines: [
+            "القراية والكتابة كـ streams.",
+            "readline: stream لسطور.",
+            "ضغط gzip كـ stream.",
+            "pipeline بـ promise.",
+            "دالة الاستيراد.",
+            "اقرا الملف سطر سطر، و crlfDelay عشان ملفات Windows.",
+            "دفعة، والعدد، وأول سطر عناوين.",
+            "كل سطر أول ما يتقري.",
+            "اتخطى سطر العناوين.",
+            "العمود التاني هو الإيميل (CSV بسيط، في الحقيقي استخدم parser).",
+            "ضيفه للدفعة.",
+            "الدفعة وصلت ١٠٠٠؟",
+            "اكتبهم في أمر واحد، واتجاهل المكرر.",
+            "ابدأ دفعة جديدة، والقديمة تتمسح من الذاكرة.",
+            "قفلة.",
+            "قفلة.",
+            "آخر دفعة ناقصة.",
+            "رجّع العدد.",
+            "قفلة.",
+            "اقرا ← اضغط ← اكتب، والـ backpressure والأخطاء على pipeline."
+          ],
+          sol: R`أرقام تقريبية من تجربة على ملف ٥٨ ميجا و ٢ مليون سطر: طريقة [[split]] وصلت لحوالي ٥٧٩ ميجا RSS، و readline لحوالي ٨٦ ميجا لنفس المجموع بالظبط ([[rows: 2000000]]). والنسخة المضغوطة حوالي ١١ ميجا.
+
+الأرقام عندك هتختلف، بس الفرق لازم يبقى كبير، ولو كبّرت الملف الأولى هتكبر معاه والتانية لأ.
+
+ولو سكربت الكتابة نفسه أكل رام كتير، يبقى بتعمل [[write]] من غير ما تستنى [[drain]]: الكتابة بتتكوّم في البافر، ودي الـ backpressure بعينها.`,
+          solCode: R`// gen.mjs
+import { createWriteStream } from "node:fs";
+import { once } from "node:events";
+const out = createWriteStream("big.csv");
+out.write("id,email,amount\n");
+for (let i = 1; i <= 2_000_000; i++) {
+  if (!out.write($__bt$__{i},user$__{i}@x.com,$__{(i % 900) + 100}\n$__bt)) await once(out, "drain");
+}
+out.end();
+await once(out, "finish");
+
+// sum.mjs
+import { createReadStream } from "node:fs";
+import { createInterface } from "node:readline";
+const rl = createInterface({ input: createReadStream("big.csv"), crlfDelay: Infinity });
+let total = 0, rows = 0, header = true;
+for await (const line of rl) {
+  if (header) { header = false; continue; }
+  total += Number(line.split(",")[2]); rows++;
+}
+console.log({ rows, total, rssMB: Math.round(process.memoryUsage().rss / 1e6) });`
+        },
+        {
+          cmd: "تصدير CSV و Excel",
+          title: "زرار «تصدير»: CSV و Excel بيتكتبوا وهما بيتبعتوا",
+          desc: R`التصدير بيقرا من القاعدة على دفعات (cursor)، ويحوّل كل صف لسطر، ويكتبه في الرد على طول. [[res.attachment("orders.csv")]] بيحط [[Content-Disposition: attachment]] فالمتصفح ينزّله كملف بدل ما يعرضه.
+
+و Excel بـ [[exceljs]] في وضع الـ streaming: [[WorkbookWriter]] بيكتب في [[res]] مباشرة، وكل صف بيتعمله [[commit]] ويتشال من الذاكرة.`,
+          example: R`import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import ExcelJS from "exceljs";
+
+async function* ordersInBatches(size = 1000) {
+  let cursor;
+  while (true) {
+    const batch = await db.order.findMany({ take: size, ...(cursor && { skip: 1, cursor: { id: cursor } }), orderBy: { id: "asc" }, include: { user: { select: { email: true } } } });
+    if (batch.length === 0) return;
+    yield* batch;
+    cursor = batch.at(-1).id;
+  }
+}
+const cell = (v) => {
+  let s = String(v ?? "");
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return /[",\n\r]/.test(s) ? $__bt"$__{s.replaceAll('"', '""')}"$__bt : s;
+};
+async function* toCsv(rows) {
+  yield "﻿id,email,amount_egp,status\n";
+  for await (const o of rows) yield [o.id, o.user.email, (o.amountCents / 100).toFixed(2), o.status].map(cell).join(",") + "\n";
+}
+
+router.get("/orders.csv", requireRole("ADMIN"), async (req, res) => {
+  res.attachment("طلبات-سبتمبر.csv");
+  await pipeline(Readable.from(toCsv(ordersInBatches())), res);
+});
+
+router.get("/orders.xlsx", requireRole("ADMIN"), async (req, res) => {
+  res.attachment("orders.xlsx");
+  const wb = new ExcelJS.stream.xlsx.WorkbookWriter({ stream: res, useStyles: true });
+  const ws = wb.addWorksheet("الطلبات", { views: [{ rightToLeft: true, state: "frozen", ySplit: 1 }] });
+  ws.columns = [{ header: "رقم الطلب", key: "id", width: 28 }, { header: "الإيميل", key: "email", width: 30 }, { header: "المبلغ", key: "amount", width: 12, style: { numFmt: "#,##0.00" } }];
+  for await (const o of ordersInBatches()) ws.addRow({ id: o.id, email: o.user.email, amount: o.amountCents / 100 }).commit();
+  await wb.commit();
+});`,
+          try: R`اعمل ٢٥٠٠ طلب بـ [[createMany]] (واحد منهم ليوزر إيميله [[=HYPERLINK("http://evil.com","click")]])، ونزّل الـ CSV من المتصفح وافتحه في Excel. العربي باين صح؟ والإيميل الغريب اتعرض كنص ولا كلينك؟ وبعدين نزّل الـ xlsx: الشيت من اليمين للشمال والصف الأول ثابت؟`,
+          flag: "script",
+          deep: {
+            why: R`«عايز أنزّل الطلبات Excel» من أول ٣ طلبات في أي لوحة أدمن أو نظام محاسبة. والطريقة الساذجة ([[findMany()]] من غير حد ثم [[join]] ثم [[res.send]]) شغالة على ١٠٠ صف، وبتوقّع السيرفر على ٥٠٠ ألف: كل الصفوف في الذاكرة، وبعدين النص كله، والطلب بيعدّي الـ timeout قبل ما أول بايت يوصل.`,
+            how: R`[[ordersInBatches]] async generator: بيجيب ١٠٠٠ ويسلّمهم واحد واحد، وبعدين يجيب الـ ١٠٠٠ اللي بعدهم من آخر id (cursor pagination، أسرع من [[skip]] الكبير). و [[Readable.from(generator)]] بيحوّل الـ generator لـ stream، و pipeline بيوصّله بـ [[res]] بالـ backpressure: لو الشبكة بطيئة، الـ generator ميجيبش الدفعة الجاية لحد ما الرد يلحق.
+
+[[﻿]] في الأول (BOM): من غيره Excel على Windows بيفتح الـ UTF-8 كأنه ترميز قديم والعربي يطلع رموز. و [[res.attachment(name)]] بيحط [[Content-Type]] من الامتداد، و [[Content-Disposition]] فيه [[filename]] للمتصفحات القديمة و [[filename*=UTF-8''...]] للاسم العربي (جربناها).
+
+دالة [[cell]] فيها حاجتين. الـ escaping: أي قيمة فيها فاصلة أو [[""]] أو سطر جديد بتتحط بين [[""]] والـ [[""]] اللي جواها بتتضاعف. و CSV injection: قيمة بتبدأ بـ [[=]] أو [[+]] أو [[-]] أو [[@]] Excel بيعتبرها formula ويشغّلها، فيوزر يسمّي نفسه [[=HYPERLINK(...)]] والأدمن يدوس. الحل تحط [[']] قبلها فتبقى نص.
+
+exceljs: [[WorkbookWriter({ stream: res })]] بيكتب الملف وهو بيتبني. و [[row.commit()]] بيكتب الصف ويشيله من الذاكرة، و [[wb.commit()]] في الآخر بيقفل الملف والـ stream. و [[rightToLeft: true]] للشيت العربي، و [[ySplit: 1]] يثبّت صف العناوين، و [[numFmt]] بيخلي المبلغ رقم حقيقي يتجمع في Excel مش نص.
+
+تصدير بمئات الآلاف من الصفوف أو تقرير بحسابات تقيلة: متخليش الطلب يستنى. اعمل job (درس [[background jobs]])، يكتب الملف في S3، ويبعت لينك (signed URL) بالإيميل أو إشعار.`,
+            when: "أي تصدير من لوحة أدمن. CSV لو هيتفتح في أي برنامج أو هيتعمله import في نظام تاني. xlsx لو اليوزر هيشتغل عليه في Excel ومحتاج أرقام وتنسيق وعربي من اليمين.",
+            mistakes: R`[[findMany()]] من غير حد ثم [[res.send(csv)]]. و CSV من غير BOM فالعربي بايظ في Excel. و [[join(",")]] من غير escaping فأول عنوان فيه فاصلة يكسر الأعمدة. و CSV injection. والتصدير من غير صلاحيات، أو بيصدّر كل الأعمدة بما فيها hash الباسورد. و [[new ExcelJS.Workbook()]] العادي لملف كبير: بيبني كل حاجة في الذاكرة الأول.`
+          },
+          lines: [
+            "يحوّل generator لـ stream.",
+            "pipeline.",
+            "exceljs.",
+            "generator بيجيب الطلبات دفعة دفعة.",
+            "آخر id اتقري.",
+            "لحد ما الداتا تخلص.",
+            "١٠٠٠ صف بعد آخر id، مترتبين، ومعاهم إيميل اليوزر بس.",
+            "مفيش تاني؟ خلصنا.",
+            "سلّم الصفوف واحد واحد.",
+            "افتكر آخر id للدفعة الجاية.",
+            "قفلة.",
+            "قفلة.",
+            "تجهيز خانة CSV.",
+            "حوّل لنص.",
+            "لو بتبدأ برمز formula، حط ' قبلها عشان Excel يعرضها كنص.",
+            "لو فيها فاصلة أو علامة تنصيص أو سطر جديد، حطها بين علامتين وضاعف اللي جواها.",
+            "قفلة.",
+            "generator بيطلّع سطور CSV.",
+            "BOM عشان Excel يفهم UTF-8، وبعده العناوين.",
+            "كل طلب سطر، والمبلغ بالجنيه.",
+            "قفلة.",
+            "endpoint الـ CSV للأدمن بس.",
+            "نزّله كملف باسم عربي، و Content-Type بيتحط من الامتداد.",
+            "الصفوف ← CSV ← الرد، مع الـ backpressure.",
+            "قفلة.",
+            "endpoint الـ Excel.",
+            "نزّله كملف xlsx.",
+            "workbook بيكتب في الرد وهو بيتبني.",
+            "شيت عربي من اليمين، والصف الأول ثابت.",
+            "الأعمدة، والمبلغ رقم بتنسيق.",
+            "كل صف يتكتب ويتشال من الذاكرة.",
+            "اقفل الملف والرد.",
+            "قفلة."
+          ],
+          sol: R`المتوقع في الـ CSV: العربي مقروء في Excel (بفضل الـ BOM)، و ٢٥٠٠ سطر بعد العناوين، والإيميل الغريب ظاهر كنص بيبدأ بـ [[']] ومش لينك. واسم الملف العربي ظاهر صح في التنزيلات.
+
+في الـ xlsx: اسم الشيت «الطلبات»، والاتجاه من اليمين للشمال، والصف الأول ثابت وانت بتنزل، وعمود المبلغ أرقام (جرّب [[SUM]] عليه).
+
+لو العربي طلع رموز، الـ BOM ناقص. ولو الإيميل اتعرض كلينك أو Excel حذّرك من «external content»، دالة [[cell]] مش متطبّقة على العمود ده. ولو الملف طلع بايظ ومش بيفتح، غالبًا حصل خطأ في النص بعد ما الـ headers اتبعتت: شوف اللوج، وخلي الأخطاء في النص تقفل الاتصال بدل ما تكتب JSON جوه الملف.`,
+          solCode: R`const u = await db.user.create({ data: { email: '=HYPERLINK("http://evil.com","click")' } });
+await db.order.createMany({ data: Array.from({ length: 2500 }, (_, i) => ({ userId: u.id, amountCents: 1000 + i })) });
+// curl -s -D - -o orders.csv http://localhost:3000/api/admin/orders.csv -H "Authorization: Bearer $TOKEN"
+// Content-Disposition: attachment; filename="?????-??????.csv"; filename*=UTF-8''%D8%B7%D9%84...
+// head -2 orders.csv
+// id,email,amount_egp,status
+// cm...,"'=HYPERLINK(""http://evil.com"",""click"")",10.00,PENDING`
+        },
+        {
+          cmd: "فاتورة PDF",
+          title: "فاتورة PDF عربي من HTML بـ Playwright",
+          desc: R`أسهل طريقة لـ PDF شكله حلو: تكتبه HTML و CSS (اللي انت عارفهم)، وتخلي Chromium يطبعه. Playwright بيفتح متصفح headless، و [[page.setContent(html)]] ثم [[page.pdf()]] بيرجّع Buffer.
+
+للعربي: [[dir="rtl"]] و [[lang="ar"]] في الـ HTML، وخط عربي محطوط جوه الصفحة بـ [[@font-face]] (مش معتمد على خطوط السيرفر)، و [[document.fonts.ready]] قبل الطباعة.`,
+          example: R`import { chromium } from "playwright";
+import { readFileSync } from "node:fs";
+
+const font = readFileSync("assets/fonts/NotoNaskhArabic-Regular.ttf").toString("base64");
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const money = new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" });
+
+const invoiceHtml = (o) => $__bt<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><style>
+@font-face { font-family: "Naskh"; src: url(data:font/ttf;base64,$__{font}) format("truetype"); }
+body { font-family: "Naskh", sans-serif; } td, th { border: 1px solid #ccc; padding: 6px; text-align: start; }
+</style></head><body><h1>فاتورة رقم $__{esc(o.number)}</h1><p>العميل: $__{esc(o.customer)}</p>
+<table>$__{o.items.map((it) => $__bt<tr><td>$__{esc(it.name)}</td><td>$__{it.qty}</td><td>$__{money.format(it.price)}</td></tr>$__bt).join("")}</table>
+<p>الإجمالي: $__{money.format(o.total)}</p></body></html>$__bt;
+
+const browser = await chromium.launch();
+export async function renderInvoice(order) {
+  const page = await browser.newPage();
+  try {
+    await page.setContent(invoiceHtml(order), { waitUntil: "load" });
+    await page.evaluate(() => document.fonts.ready);
+    return await page.pdf({ format: "A4", printBackground: true, margin: { top: "15mm", bottom: "15mm", left: "12mm", right: "12mm" } });
+  } finally { await page.close(); }
+}
+
+router.get("/orders/:id/invoice.pdf", requireAuth, async (req, res) => {
+  const order = await ordersService.getForInvoice(req.user.id, req.params.id);
+  res.type("pdf").attachment($__btinvoice-$__{order.number}.pdf$__bt).send(await renderInvoice(order));
+});`,
+          try: R`[[npm i playwright]] و [[npx playwright install chromium]]، ونزّل خط Noto Naskh Arabic أو Cairo حطه في [[assets/fonts]]. اعمل فاتورة فيها اسم عميل [[منى <script>]] وصنف إنجليزي وصنف عربي، واحفظ الـ PDF وافتحه. وبعدين شيل الـ [[@font-face]] وشوف الفرق على السيرفر (أو في Docker) مش على جهازك.`,
+          flag: "script",
+          deep: {
+            why: R`الفواتير والإيصالات والشهادات لازم تبقى PDF: بتتطبع وبتتبعت وبتتحفظ. ومكتبات الـ PDF اللي بترسم بالإحداثيات (زي pdfkit) صعبة جدًا مع العربي: الحروف لازم تتوصل وتتقلب، والجدول من اليمين. Chromium بيعمل كل ده صح لأنه نفس المحرك اللي بيعرض المواقع العربي، وانت بتصمم بـ HTML و CSS.`,
+            how: R`[[chromium.launch()]] تقيل (ثانية وأكتر ومئات الميجا)، فبتفتحه مرة وانت بتقوم وتعمل صفحة جديدة لكل فاتورة، و [[page.close()]] في [[finally]] عشان الصفحات متتراكمش. جربناها: الفاتورة كلها (صفحة جديدة و setContent و pdf) حوالي ٣٥٠ms بعد ما المتصفح مفتوح.
+
+الخط: السيرفر (خصوصًا Docker slim أو alpine) غالبًا معندوش خط عربي، فالحروف تطلع مربعات أو بخط fallback وحش. [[@font-face]] بـ data URL من ملف جوه المشروع بيضمن نفس الشكل في كل مكان، والـ PDF بيتضمّن فيه الخط (جربنا: الخط ظهر embedded جوه الملف). و [[document.fonts.ready]] بيستنى الخط يتحمّل قبل الطباعة.
+
+الـ RTL: [[dir="rtl"]] على [[html]] بيقلب الجدول والنصوص، و [[text-align: start]] بدل [[right]] عشان يمشي مع الاتجاه. والأرقام: [[ar-EG]] في [[Intl.NumberFormat]] بيطلّع أرقام عربية شرقية ([[١٥٠٫٠٠ ج.م.]])، ولو عايز 150.00 استخدم [[ar-EG-u-nu-latn]].
+
+الأمان: أي قيمة من اليوزر (الاسم والعنوان والملاحظات) بتدخل الـ HTML لازم تتهرّب ([[esc]])، وإلا حد يحط [[<img src=http://internal-service/...>]] والمتصفح اللي على السيرفر بتاعك يحمّله (SSRF). ولو هتعرض صور، حطها data URL أو من دومينك بس. و [[setContent]] مش [[goto]] على URL جاي من اليوزر.
+
+الحجم: Playwright محتاج Chromium ومكتباته. في Docker استخدم الصورة الرسمية [[mcr.microsoft.com/playwright]] أو [[npx playwright install --with-deps chromium]] في الـ Dockerfile. والفواتير الكتير (آخر الشهر لكل العملاء) تتعمل في worker من queue مش في الـ API، وتتحفظ في S3، والـ endpoint يرجّع اللينك.`,
+            when: "أي PDF فيه تصميم أو عربي: فواتير وإيصالات وشهادات وتقارير. لـ PDF بسيط جدًا إنجليزي بس (label شحن)، pdfkit أخف. ولو عندك Next.js، ممكن تعمل الفاتورة صفحة عادية وتطبعها بنفس الطريقة.",
+            mistakes: R`[[chromium.launch()]] جوه الـ route لكل طلب: بطء، وتحت الضغط الرام بتخلص. ونسيان [[page.close()]] فالصفحات تتراكم لحد ما المتصفح يقع. والخط من Google Fonts بلينك: السيرفر ممكن ميكونش عنده نت برّه، والطباعة تحصل قبل ما يتحمّل. وقيم اليوزر من غير escape. والعربي شكله صح على جهازك (عندك خطوط) وبايظ على السيرفر، فاختبر في Docker.`
+          },
+          lines: [
+            "Playwright.",
+            "قراية ملف الخط.",
+            "الخط العربي كـ base64 عشان يتحط جوه الصفحة.",
+            "escape لأي قيمة من اليوزر قبل ما تدخل الـ HTML.",
+            "تنسيق الفلوس بالعربي والجنيه.",
+            "دالة بتبني HTML الفاتورة: عربي ومن اليمين.",
+            "الخط العربي من data URL، مش من النت ولا من السيرفر.",
+            "الخط على الصفحة، والجدول بيمشي مع الاتجاه.",
+            "العنوان واسم العميل بعد الـ escape.",
+            "صف لكل صنف.",
+            "الإجمالي.",
+            "متصفح واحد للتطبيق كله.",
+            "دالة الفاتورة.",
+            "صفحة جديدة لكل فاتورة.",
+            "جرّب...",
+            "حط الـ HTML واستنى يتحمّل.",
+            "استنى الخطوط.",
+            "اطبع A4 بالخلفيات والهوامش، ورجّع Buffer.",
+            "وفي كل الأحوال اقفل الصفحة.",
+            "قفلة.",
+            "endpoint الفاتورة.",
+            "هات الطلب بتاع اليوزر ده بس (ownership).",
+            "نوع PDF واسم ملف، وابعت الـ Buffer.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: PDF صفحة واحدة، العنوان والجدول من اليمين للشمال، والحروف العربي متوصلة صح، واسم العميل ظاهر كنص [[منى <script>]] (مش اتشال ولا اتنفّذ)، والصنف الإنجليزي ظاهر عادي جوه الجدول، والمبالغ بأرقام عربية.
+
+ولو فتحت خصائص الـ PDF (Document Properties ← Fonts) هتلاقي Noto Naskh Arabic (أو الخط اللي اخترته) embedded.
+
+من غير الـ [[@font-face]]: على جهازك غالبًا هيبان كويس لأن عندك خطوط عربي. في Docker أو سيرفر من غير خطوط هيطلع مربعات أو خط fallback. ده بالظبط سبب إنك تحط الخط جوه الصفحة.
+
+الكود ده سكربت صغير يحفظ الملف للتجربة.`,
+          solCode: R`import { writeFileSync } from "node:fs";
+import { renderInvoice } from "./invoice.js";
+
+const pdf = await renderInvoice({
+  number: "INV-1042",
+  customer: "منى <script>",
+  items: [{ name: "مج سيراميك", qty: 2, price: 150 }, { name: "Mouse pad", qty: 1, price: 90.5 }],
+  total: 390.5,
+});
+writeFileSync("invoice.pdf", pdf);
+console.log("pdf bytes", pdf.length);
+process.exit(0);`
+        },
+        {
+          cmd: "worker_threads و cluster",
+          title: "حساب تقيل: worker_threads ولا cluster ولا نسخ ورا load balancer؟",
+          desc: R`Node بيشغّل الـ JavaScript بتاعك على thread واحد. لو route عمل حساب ٥٠٠ms (hash تقيل، أو معالجة صورة بـ JS، أو تقرير بحسابات)، كل الطلبات التانية بتستنى.
+
+الحلول ٣ ولكل واحد مكان: [[worker_threads]] ينقل الحساب لـ thread تاني فالـ event loop يفضل فاضي. و [[cluster]] (أو PM2 cluster) يشغّل نسخ من السيرفر كله على نفس الجهاز، واحدة لكل core. ونسخ كتير (containers) ورا load balancer هو الـ scaling الحقيقي.`,
+          example: R`import { Worker, isMainThread, parentPort, workerData } from "node:worker_threads";
+
+function fib(n) { return n < 2 ? n : fib(n - 1) + fib(n - 2); }
+
+if (!isMainThread) {
+  parentPort.postMessage(fib(workerData.n));
+} else {
+  const runInWorker = (n) => new Promise((resolve, reject) => {
+    const w = new Worker(new URL(import.meta.url), { workerData: { n } });
+    w.once("message", resolve);
+    w.once("error", reject);
+  });
+  app.get("/blocking", (req, res) => res.json({ v: fib(38) }));
+  app.get("/offloaded", async (req, res) => res.json({ v: await runInWorker(38) }));
+  app.get("/ping", (req, res) => res.json({ ok: true }));
+}`,
+          try: R`شغّل السيرفر ده، ومن سكربت تاني (process تاني!) ابعت [[/blocking]] وبعده بـ ٥٠ms [[/ping]] واطبع [[/ping]] أخد قد إيه. كرر مع [[/offloaded]]. وبعدين فكّر: لو ١٠٠ طلب [[/offloaded]] جم مع بعض، هيحصل إيه؟`,
+          flag: "script",
+          deep: {
+            why: R`الـ event loop هو اللي بيخلي Node يخدم آلاف الاتصالات بـ thread واحد، طول ما كل حاجة I/O (قاعدة وشبكة وملفات). أول ما كود JS ياخد وقت CPU، السيرفر كله بيقف: الـ health check يفشل، والـ load balancer يفتكره واقع، والطلبات السريعة تبقى بطيئة. وفي الانترفيو «Node single-threaded، إزاي بتعمل حاجة تقيلة؟» سؤال شبه أكيد.`,
+            how: R`جربناها بسيرفر و client في process منفصل: وهو بيحسب [[fib(38)]] في الـ route نفسه، [[/ping]] أخد ٤٢١ms (استنى الحساب يخلص). ومع worker، [[/ping]] أخد ٢ms. الحساب نفسه مبقاش أسرع (أبطأ شوية كمان، بسبب تشغيل الـ worker)، بس السيرفر فضل بيرد. (لو جربت الـ client والسيرفر في نفس الـ process، الـ client نفسه هيتعطّل والأرقام تضحك عليك.)
+
+[[worker_threads]]: thread حقيقي بـ V8 لوحده وذاكرة لوحده، وبيتكلموا بـ [[postMessage]] (الداتا بتتنسخ، أو [[SharedArrayBuffer]] / transfer للـ buffers الكبيرة). تشغيل worker ليه تكلفة (عشرات الـ ms وذاكرة)، فلو الشغل متكرر اعمل pool ثابت بعدد الـ cores (مكتبة زي [[piscina]]) بدل worker جديد لكل طلب. ولو ١٠٠ طلب جم مع بعض من غير pool، هتعمل ١٠٠ thread وتخلّص الرام.
+
+[[cluster]]: الـ process الرئيسية بتعمل fork لنسخ من السيرفر كله، وكلهم بيسمعوا على نفس البورت. كده بتستخدم كل الـ cores للطلبات العادية. PM2 بـ [[-i max]] بيعمل نفس الحاجة. بس كل نسخة ذاكرة منفصلة: الـ sessions في الذاكرة، والكاش المحلي، والـ rate limit، والـ cron، كلها بتتكرر أو بتبوظ. عشان كده الشرط الأول إن التطبيق stateless (Redis للـ state).
+
+في Docker و Kubernetes: container فيه process واحدة، وتكبّر بعدد الـ containers ورا load balancer، مش cluster جوه container. ده بيدّيك نفس الفايدة ومعاها إنك تكبّر على أكتر من جهاز وتعمل restart لنسخة من غير الباقي (درس «scaling path» في «تاب بناء مشروع كامل»).
+
+وأوقات الحل مش ولا واحد فيهم: الشغل التقيل اللي مش لازم يرجع في نفس الطلب (فيديو، تقارير، ألف صورة) مكانه queue و worker process لوحدها (درس [[background jobs]]). وفيه حاجات شكلها تقيلة وهي أصلًا بتتعمل برّه الـ event loop: [[bcrypt]] و [[sharp]] و [[crypto.pbkdf2]] بيشتغلوا في thread pool بتاع libuv لو استخدمت النسخة الـ async.`,
+            when: "worker_threads: حساب CPU لازم يرجع في نفس الطلب ومفيش مكتبة native بتعمله. cluster أو PM2: سيرفر VPS واحد عليه أكتر من core ومن غير Docker. نسخ ورا load balancer: الإنتاج الطبيعي. queue: أي حاجة تقيلة مش لازم الرد يستناها.",
+            mistakes: R`worker جديد لكل طلب من غير حد. واستخدام النسخ الـ Sync ([[bcrypt.hashSync]] و [[crypto.pbkdf2Sync]] و [[fs.readFileSync]]) جوه routes. و cluster والتطبيق فيه state في الذاكرة. و [[JSON.parse]] لـ body ضخم (١٠٠ ميجا) بيوقّف الـ loop برضه، فحط [[limit]] على [[express.json]]. وفي الانترفيو: «worker_threads زي cluster؟» لأ: threads جوه نفس الـ process للحساب، و cluster نسخ من السيرفر كله للطلبات.`
+          },
+          lines: [
+            "worker_threads.",
+            "حساب تقيل عمدًا (fibonacci بالـ recursion).",
+            "لو الكود ده شغال جوه worker...",
+            "...احسب وابعت النتيجة للـ thread الرئيسي.",
+            "وإلا احنا في السيرفر نفسه.",
+            "دالة بتشغّل نفس الملف كـ worker بالرقم وترجّع promise.",
+            "worker جديد من نفس الملف، والرقم في workerData.",
+            "أول رسالة هي النتيجة.",
+            "ولو الـ worker وقع، الـ promise تترفض.",
+            "قفلة.",
+            "route بيحسب في الـ event loop نفسه: السيرفر كله بيقف.",
+            "route بيحسب في worker: السيرفر فاضي يرد على غيره.",
+            "route خفيف نقيس بيه.",
+            "قفلة."
+          ],
+          sol: R`أرقام من تجربة (fib(38) حوالي نص ثانية): مع [[/blocking]]، [[/ping]] أخد حوالي ٤٢٠ms لأنه استنى الحساب. مع [[/offloaded]]، [[/ping]] أخد حوالي ٢ms، والطلب التقيل نفسه أخد وقت أطول شوية (تشغيل الـ worker).
+
+لو [[/ping]] طلع سريع في الحالتين، غالبًا بتقيس من نفس الـ process اللي فيها السيرفر، أو بعت الـ ping قبل ما الطلب التقيل يوصل.
+
+والـ ١٠٠ طلب: ١٠٠ worker مع بعض، كل واحد thread و V8 وذاكرة، على جهاز فيه ٤ cores. الرام تطير والكل يبطأ. الحل pool بعدد الـ cores (piscina)، والطلبات الزيادة تستنى في طابور، أو تتحول لـ queue.`,
+          solCode: R`// client.mjs (process منفصل عن السيرفر)
+const url = "http://localhost:3000";
+for (const path of ["/blocking", "/offloaded"]) {
+  const heavy = fetch(url + path);
+  await new Promise((r) => setTimeout(r, 50));
+  const t = performance.now();
+  await fetch(url + "/ping");
+  console.log(path, "ping took", Math.round(performance.now() - t), "ms");
+  await heavy;
+}
+// /blocking ping took 421 ms
+// /offloaded ping took 2 ms`
+        },
+        {
+          cmd: "AsyncLocalStorage",
+          title: "request id في كل سطر لوج من غير ما تعدّيه لكل دالة",
+          desc: R`[[AsyncLocalStorage]] بيخليك تحط object في أول الطلب ([[als.run(store, next)]])، وأي كود بيتنفّذ بعد كده في نفس الطلب (حتى بعد await ودوال تانية وملفات تانية) يقدر يقراه بـ [[als.getStore()]]، وكل طلب شايف الـ object بتاعه بس حتى لو ١٠٠ طلب شغالين مع بعض.
+
+الاستخدام الأشهر: logger بيحط الـ request id و id اليوزر في كل سطر لوحده، فتجمع قصة طلب واحد من وسط آلاف السطور.`,
+          example: R`import { AsyncLocalStorage } from "node:async_hooks";
+import { randomUUID } from "node:crypto";
+
+export const requestContext = new AsyncLocalStorage();
+
+app.use((req, res, next) => {
+  const reqId = req.get("x-request-id") ?? randomUUID();
+  res.setHeader("x-request-id", reqId);
+  requestContext.run({ reqId }, next);
+});
+app.use(requireAuthOptional, (req, res, next) => {
+  const ctx = requestContext.getStore();
+  if (ctx) ctx.userId = req.user?.id ?? null;
+  next();
+});
+
+export const logger = pino({
+  mixin: () => {
+    const ctx = requestContext.getStore();
+    return ctx ? { reqId: ctx.reqId, userId: ctx.userId } : {};
+  },
+});
+
+// payments.service.js: مفيش req هنا خالص
+export async function chargeCard(amount) {
+  logger.info({ amount }, "charging card");
+}`,
+          try: R`اعمل الـ middleware والـ logger، وابعت طلبين مع بعض ([[Promise.all]]) بـ [[x-request-id]] مختلف لكل واحد، والـ service بيعمل [[await]] بوقت عشوائي قبل اللوج. اتأكد إن كل سطر معاه الـ id الصح رغم إن السطور متلخبطة في الترتيب. وبعدين اكتب لوج برّه أي طلب (في [[setInterval]] مثلًا): إيه اللي بيطلع في reqId؟`,
+          flag: "script",
+          deep: {
+            why: R`في الإنتاج اللوجات بتاعة ٥٠ طلب بتتكتب متداخلة. من غير id مشترك، مفيش طريقة تعرف «الخطأ ده في الدفع حصل في أنهي طلب ولأنهي يوزر». والحل القديم إنك تعدّي [[req]] أو [[logger]] لكل دالة لحد آخر service، وده بيوسّخ كل الـ signatures ودايمًا حد بينسى.`,
+            how: R`[[als.run(store, fn)]] بيشغّل [[fn]] ويربط الـ store بكل الشغل الـ async اللي بيبدأ جواها: promises و timers و callbacks. Node بيتابع «مين بدأ مين» ويعدّي الـ store معاها. فـ [[next]] وكل الـ middleware والـ route والـ services اللي بعده شايفين نفس الـ object. جربناها: طلبين A و B مع بعض، السطور طلعت بالترتيب ده: A و B و B و B و A و A، وكل سطر معاه الـ reqId والـ userId الصح. واللوج اللي برّه أي طلب طلع من غير reqId.
+
+الـ store object عادي، فتقدر تضيف عليه بعد كده (زي [[ctx.userId]] بعد الـ auth). و [[mixin]] في pino بيتنادى مع كل سطر لوج ويدمج اللي بيرجّعه، فكل [[logger.info]] في أي ملف بيطلع ومعاه الـ context.
+
+[[x-request-id]]: لو Nginx أو الـ load balancer بيحط id، استخدمه عشان سطر Nginx وسطر التطبيق يتربطوا. ورجّعه في الرد عشان اليوزر أو الواجهة يبعته في شكوى، وانت تدوّر بيه. و pino-http بيعمل [[req.log]] بالـ id (درس [[pino]])، بس [[req.log]] محتاج [[req]]، والـ ALS بيوصّل الـ id لأماكن ملهاش [[req]].
+
+فيه أماكن الـ context ممكن يضيع فيها: مكتبات قديمة بتستخدم callbacks بتاعتها أو connection pools بتنفّذ الـ callback في context اتصال قديم. لو لقيت reqId فاضي في مكان المفروض يبقى فيه، ده السبب غالبًا. والـ jobs في BullMQ مبتورثش الـ context: ابعت الـ reqId في داتا الـ job وافتح [[run]] جديد في الـ worker.
+
+ونفس الفكرة بيستخدمها Sentry و OpenTelemetry من جوه عشان يربطوا الأخطاء والـ traces بالطلب.`,
+            when: "أي API هيتشغّل في الإنتاج وفيه أكتر من طبقة (routes و services). وكمان لحاجات زي tenant id في تطبيق multi-tenant، أو transaction تتشارك بين services.",
+            mistakes: R`تحط الـ context في متغير global عادي ([[let currentUser]]): مع طلبين مع بعض، الأول بيشوف يوزر التاني، ودي ثغرة مش bug بس. و [[als.enterWith()]] بدل [[run]] من غير ما تفهمه: بيغيّر الـ context لباقي الـ sync code اللي بعده وممكن يسرّب لطلبات تانية. وتخزن حاجات تقيلة (الـ body كله) في الـ store. وفي الانترفيو: «إزاي تعمل request id لكل لوج في Node؟» الإجابة: AsyncLocalStorage، ومش global ولا تعدية req لكل دالة.`
+          },
+          lines: [
+            "AsyncLocalStorage من Node.",
+            "مولّد id.",
+            "store واحد للتطبيق كله.",
+            "أول middleware.",
+            "خد الـ id من Nginx لو موجود، وإلا اعمل واحد.",
+            "رجّعه في الرد عشان يتربط بالشكاوى.",
+            "شغّل باقي الطلب كله جوه context فيه الـ id.",
+            "قفلة.",
+            "بعد الـ auth...",
+            "...هات الـ context بتاع الطلب ده...",
+            "...وضيف عليه id اليوزر.",
+            "كمّل.",
+            "قفلة.",
+            "الـ logger.",
+            "مع كل سطر لوج...",
+            "...هات الـ context...",
+            "...وحط الـ reqId والـ userId لو فيه طلب.",
+            "قفلة.",
+            "قفلة.",
+            "service مالهاش أي علاقة بـ Express.",
+            "لوج عادي، والـ reqId والـ userId بيتحطوا لوحدهم.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: السطور تطلع متداخلة، زي كده: A start، B start، B charging، B done، A charging، A done. وكل سطر معاه الـ reqId والـ userId الصح بتوعه، رغم إن الاتنين شغالين في نفس الوقت.
+
+اللوج اللي برّه أي طلب بيطلع من غير reqId، لأن [[getStore()]] بترجع [[undefined]] برّه [[run]]. عشان كده الـ mixin فيه [[ctx ?]].
+
+لو لقيت A بياخد id بتاع B، يبقى فيه متغير عادي مشترك بدل الـ ALS، أو فيه [[enterWith]] في مكان. ولو الـ reqId فاضي جوه الـ service، يبقى الـ middleware بتاع [[run]] مش أول واحد، أو فيه مكتبة بتقطع الـ context.`,
+          solCode: R`import { AsyncLocalStorage } from "node:async_hooks";
+import express from "express";
+import request from "supertest";
+
+const als = new AsyncLocalStorage();
+const log = (msg) => console.log(JSON.stringify({ reqId: als.getStore()?.reqId, userId: als.getStore()?.userId, msg }));
+const chargeCard = async () => { await new Promise((r) => setTimeout(r, Math.random() * 30)); log("charging"); };
+
+const app = express();
+app.use((req, res, next) => als.run({ reqId: req.get("x-request-id") }, next));
+app.use((req, res, next) => { als.getStore().userId = req.get("x-user"); next(); });
+app.post("/pay", async (req, res) => { log("start"); await chargeCard(); log("done"); res.json({ ok: true }); });
+
+await Promise.all([
+  request(app).post("/pay").set("x-request-id", "A").set("x-user", "u1"),
+  request(app).post("/pay").set("x-request-id", "B").set("x-user", "u2"),
+]);
+log("outside any request"); // {"msg":"outside any request"}`
+        }
+      ]
+    },
+    {
+      t: "NestJS",
+      l: 3,
+      n: "الـ framework اللي في إعلانات شغل كتير: نفس Express من تحت، بس بـ modules و DI و decorators، و validation و guards واختبارات جاهزة",
+      items: [
+        {
+          cmd: "Nest: modules و DI",
+          title: "module و controller و provider: مين بيعمل إيه",
+          desc: R`NestJS مبني على Express (افتراضيًا)، بس بيفرض هيكل: كل feature ليها module، جواه controller (الـ routes) و provider/service (المنطق). والـ service مبتعملش [[new]] لحاجة: بتطلب اللي محتاجاه في الـ constructor، و Nest بيعمله ويدّيهولها (dependency injection).
+
+ده نفس «routes / controllers / services» اللي عملناه بإيدنا في Express، بس الـ framework هو اللي بيوصّل القطع ببعض. والكود TypeScript بـ decorators (درس الأنواع في تاب «TypeScript»).`,
+          example: R`// orders/orders.service.ts
+@Injectable()
+export class OrdersService {
+  constructor(private readonly db: PrismaService) {}
+  async findMine(userId: string, id: string) {
+    const order = await this.db.order.findFirst({ where: { id, userId } });
+    if (!order) throw new NotFoundException("Order not found");
+    return order;
+  }
+}
+
+// orders/orders.controller.ts
+@Controller("orders")
+@UseGuards(AuthGuard)
+export class OrdersController {
+  constructor(private readonly orders: OrdersService) {}
+  @Get(":id")
+  findOne(@Req() req, @Param("id") id: string) {
+    return this.orders.findMine(req.user.sub, id);
+  }
+}
+
+// orders/orders.module.ts
+@Module({ controllers: [OrdersController], providers: [OrdersService], exports: [OrdersService] })
+export class OrdersModule {}
+
+// app.module.ts
+@Module({ imports: [PrismaModule, OrdersModule] })
+export class AppModule {}`,
+          try: R`اعمل مشروع بـ [[npx @nestjs/cli new shop]] وبعدين [[npx nest g resource tasks]] (اختار REST). افتح الملفات اللي اتولدت وارسم على ورقة: مين بيستورد مين، ومين بيطلب مين في الـ constructor. وبعدين شيل [[TasksService]] من [[providers]] في الـ module وشغّل: رسالة الخطأ بتقول إيه؟`,
+          flag: "script",
+          deep: {
+            why: R`Express بيسيبك تنظّم زي ما انت عايز، وفي مشروع فيه ١٠ مطورين كل واحد بينظّم بطريقة، وبعد سنة الكود بقى عجينة. Nest بيدّي الفريق كله نفس الشكل: أي مطور Nest يفتح أي مشروع Nest ويعرف الحاجة فين. وعشان كده بيتطلب كتير في الشركات والإعلانات، خصوصًا في الخليج ومصر.`,
+            how: R`[[@Module]] بيعرّف حدود الـ feature: [[controllers]] بتاعته، و [[providers]] اللي بيعملها، و [[exports]] اللي بيسمح لـ modules تانية تستخدمها، و [[imports]] للـ modules اللي محتاجها. والـ provider افتراضيًا singleton: instance واحد للتطبيق كله.
+
+DI: Nest بيقرا نوع الباراميتر في الـ constructor ([[PrismaService]]) من الـ metadata اللي TypeScript بيطلّعها ([[emitDecoratorMetadata]])، ويدوّر عليه في الـ providers المتاحة للـ module ده، ويعمله لو لسه متعملش. لو مش لاقيه، بيرمي خطأ واضح وقت التشغيل: «Nest can't resolve dependencies of the OrdersService (?)». ده بيحصل غالبًا لما تنسى تضيفه في [[providers]]، أو الـ module اللي فيه مش عامل [[exports]] ليه، أو انت مش عامل [[imports]] للـ module.
+
+[[@Global()]] على module (زي PrismaModule) بيخلي الـ exports بتاعته متاحة في كل حتة من غير import. استخدمه للحاجات المشتركة بجد بس.
+
+والـ exceptions: [[NotFoundException]] و [[ForbiddenException]] وأخواتهم بتتحول لرد JSON بالـ status المناسب لوحدها ([[{"statusCode":404,"message":"Order not found","error":"Not Found"}]]). و [[@Controller("orders")]] مع [[@Get(":id")]] بيعملوا [[GET /orders/:id]].
+
+النسخة الحالية (Nest 12) بقت ESM (زي [[import ... from "./orders.service.js"]] بالامتداد) ومحتاجة Node 20 أو أحدث. الـ CLI بيعمل الإعداد ده لوحده.`,
+            when: "فريق كبير، أو مشروع هيعيش سنين، أو الشركة شغالة Nest. لـ API صغير أو MVP لوحدك، Express (أو Fastify) أخف وأسرع في البداية.",
+            mistakes: R`[[new OrdersService(new PrismaService())]] بإيدك جوه controller: كده ضيّعت الـ DI والاختبار بقى صعب. و module واحد ضخم فيه كل حاجة. و circular dependency بين modules (A بيحتاج B و B بيحتاج A): الحل غالبًا module تالت أو إعادة تقسيم، مش [[forwardRef]] في كل حتة. وفي الانترفيو: «يعني إيه dependency injection وليه؟» قول: الكلاس بيطلب اللي محتاجه بدل ما يعمله، فتقدر تبدّله بـ fake في الاختبار (درس «Nest: الاختبارات»).`
+          },
+          lines: [
+            "الـ service بتتعلّم إنها provider ينفع يتحقن.",
+            "كلاس الـ service.",
+            "بتطلب PrismaService في الـ constructor، و Nest بيدّيهولها.",
+            "دالة: طلب اليوزر ده بالـ id ده.",
+            "دوّر بالـ id وصاحبه مع بعض (ownership).",
+            "مش موجود؟ exception بتتحول لـ 404 JSON لوحدها.",
+            "رجّعه.",
+            "قفلة.",
+            "قفلة.",
+            "controller على [[/orders]].",
+            "كل الـ routes هنا محتاجة الـ guard (درس «Nest: guards و interceptors»).",
+            "الكلاس.",
+            "بيطلب الـ service.",
+            "GET /orders/:id.",
+            "خد الـ request والـ param.",
+            "نادي الـ service بـ id اليوزر من التوكن. اللي بيرجع بيتبعت JSON.",
+            "قفلة.",
+            "قفلة.",
+            "الـ module: الـ controller والـ service، وبيصدّر الـ service لو module تاني احتاجه.",
+            "قفلة.",
+            "الـ module الرئيسي بيجمع الكل.",
+            "قفلة."
+          ],
+          sol: R`لما تشيل [[TasksService]] من [[providers]] وتشغّل، Nest بيقف وقت البداية (مش وقت أول طلب) برسالة زي: [[Nest can't resolve dependencies of the TasksController (?). Please make sure that the argument TasksService at index [0] is available in the TasksModule context.]]
+
+الـ [[?]] مكان الباراميتر اللي ملقاش ليه provider. والحل واحد من ٣: ضيفه في [[providers]]، أو لو هو في module تاني تأكد إن الـ module ده بيعمل [[exports]] ليه وإنك عامل [[imports]] للـ module.
+
+والرسم: [[AppModule]] بيستورد [[TasksModule]]، و [[TasksController]] بيطلب [[TasksService]]، والاتنين متسجّلين في [[TasksModule]].`,
+          solCode: R`npx @nestjs/cli new shop
+cd shop
+npx nest g resource tasks
+# ✔ What transport layer do you use? REST API
+npm run start:dev
+# شيل TasksService من providers في tasks.module.ts:
+# ERROR [ExceptionHandler] Nest can't resolve dependencies of the TasksController (?) ...`
+        },
+        {
+          cmd: "Nest: DTO و pipes",
+          title: "الـ body بيتفحص قبل ما يوصل للـ controller",
+          desc: R`الـ DTO بيوصف شكل الـ body اللي الـ endpoint بيقبله، والـ pipe بيفحصه قبل ما الـ controller يشتغل. لو غلط، الرد 400 برسالة واضحة والـ controller عمره ما يتنادى.
+
+طريقتين: class بـ decorators من [[class-validator]] مع [[ValidationPipe]] (الأشهر في المشاريع الموجودة)، أو schema بـ Zod مع [[StandardSchemaValidationPipe]] اللي بقى جوه Nest 12 نفسه.`,
+          example: R`// الطريقة الكلاسيكية: class-validator
+export class CreateTaskDto {
+  @IsString() @MaxLength(200) title!: string;
+  @IsOptional() @IsInt() @Min(1) priority?: number;
+}
+app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+
+@Post()
+create(@Body() dto: CreateTaskDto) { return this.tasks.create(dto); }
+
+@Get(":id")
+findOne(@Param("id", ParseIntPipe) id: number) { return this.tasks.findOne(id); }
+
+// Zod (Nest 12): schema على الباراميتر
+export const CreateOrderSchema = z.object({ amountCents: z.number().int().positive(), note: z.string().max(200).optional() });
+export type CreateOrderDto = z.infer<typeof CreateOrderSchema>;
+app.useGlobalPipes(new StandardSchemaValidationPipe());
+
+@Post()
+create(@Req() req, @Body({ schema: CreateOrderSchema }) dto: CreateOrderDto) { return this.orders.create(req.user.sub, dto); }`,
+          try: R`ركّب [[ValidationPipe]] بالإعدادات دي، وابعت بـ curl: body صح، و body فيه حقل زيادة [[isAdmin: true]]، و body من غير title، و [[GET /tasks/abc]]. اكتب الرد بتاع كل واحد. وبعدين شيل [[forbidNonWhitelisted]] وابعت الـ isAdmin تاني: اتقبل؟ وصل للـ controller؟`,
+          flag: "script",
+          deep: {
+            why: R`نفس سبب درس [[validate(schema)]]: متصدّقش أي حاجة جاية. الفرق إن في Nest الفحص جزء من الـ framework: pipe واحد global بيحمي كل الـ endpoints، والـ DTO نفسه توثيق (و [[@nestjs/swagger]] بيقراه ويطلّع OpenAPI).`,
+            how: R`[[ValidationPipe]] بياخد الـ body (object عادي)، ويحوّله لـ instance من الـ class بـ class-transformer، ويشغّل الـ decorators بـ class-validator. عشان كده محتاج الباكدجين دول متسطّبين، ومحتاج الـ type في الباراميتر يبقى class مش interface (الـ interface بيتمسح وقت التشغيل ومفيش حاجة يفحص بيها).
+
+الإعدادات: [[whitelist: true]] بيشيل أي حقل ملوش decorator. و [[forbidNonWhitelisted: true]] بدل ما يشيله بيرفض الطلب بـ 400 «property isAdmin should not exist». ودي حماية من mass assignment: حد يبعت [[role: "ADMIN"]] والـ service تعمل [[create(dto)]]. و [[transform: true]] بيخلي [[dto]] instance حقيقي من الـ class، وبيحوّل الأنواع البسيطة لو الـ type بيقول كده. و [[ParseIntPipe]] على الـ param بيحوّل [[42]] لرقم أو يرجّع 400 «numeric string is expected». جربناها كلها على Nest 12.
+
+Zod: في Nest 12 بتحط الـ schema في [[@Body({ schema })]]، و [[StandardSchemaValidationPipe]] بيشغّله. Standard Schema معناها أي مكتبة بتطبّق نفس الواجهة (Zod و Valibot وغيرهم). الرد لـ [[amountCents: "x"]] كان 400 برسالة [[amountCents: Invalid input: expected number, received string]]. وميزتها إنك بتعرّف الشكل مرة، والنوع [[z.infer]] بيطلع منه، وممكن تشارك نفس الـ schema مع الواجهة (درس «Express + Zod» في تاب «TypeScript»). وفي نسخ Nest الأقدم كنت بتكتب pipe بنفسك أو تستخدم مكتبة زي [[nestjs-zod]].
+
+والـ pipe على مستوى: global ([[useGlobalPipes]])، أو controller، أو route، أو باراميتر واحد ([[@Param("id", ParseIntPipe)]]).`,
+            when: "global pipe من أول يوم في أي مشروع Nest. class-validator لو المشروع قايم عليه أو بتستخدم swagger بالـ decorators. Zod لو مشروع جديد وعايز نفس الـ schema في الواجهة والباك.",
+            mistakes: R`DTO كـ [[interface]] أو [[type]] مع ValidationPipe: مفيش أي فحص خالص والطلب بيعدّي. و ValidationPipe من غير [[whitelist]] فأي حقل زيادة يوصل للـ service ولـ Prisma. ونسيان [[@IsOptional()]] على حقل اختياري فيرفض لما ميتبعتش. و [[@ValidateNested()]] من غير [[@Type(() => ItemDto)]] على array من objects، فالعناصر جوه متتفحصش.`
+          },
+          lines: [
+            "DTO كـ class بـ decorators.",
+            "title: نص وأقصاه ٢٠٠.",
+            "priority: اختياري، ولو موجود رقم صحيح من ١.",
+            "قفلة.",
+            "pipe global: شيل وارفض أي حقل مش في الـ DTO، وحوّل لـ instance.",
+            "route بيقبل الـ DTO.",
+            "الـ body بيوصل هنا بعد ما اتفحص.",
+            "param بيتحوّل لرقم، أو 400 لو مش رقم.",
+            "خد الـ id كرقم.",
+            "schema بـ Zod.",
+            "النوع من الـ schema.",
+            "pipe global بيشغّل أي schema متحطوط على باراميتر.",
+            "route.",
+            "الـ schema متحطوط على الـ Body نفسه."
+          ],
+          sol: R`النتايج (جربناها على Nest 12):
+
+body صح: 201 والـ dto instance من [[CreateTaskDto]].
+
+حقل زيادة: 400 و [[message: ["property isAdmin should not exist"]]].
+
+من غير title: 400 وفيه أكتر من رسالة، منهم [[title must be a string]].
+
+[[GET /tasks/abc]]: 400 و [[Validation failed (numeric string is expected)]]، و [[/tasks/42]] بيوصل الـ id رقم مش string.
+
+من غير [[forbidNonWhitelisted]] (و [[whitelist]] لسه true): الطلب بيتقبل بـ 201، بس [[isAdmin]] بيتشال قبل ما يوصل للـ controller. لو وصل، يبقى [[whitelist]] مش متفعّل.`,
+          solCode: R`curl -s -X POST localhost:3000/tasks -H "Content-Type: application/json" -d '{"title":"x","isAdmin":true}'
+# {"message":["property isAdmin should not exist"],"error":"Bad Request","statusCode":400}
+curl -s localhost:3000/tasks/abc
+# {"message":"Validation failed (numeric string is expected)","error":"Bad Request","statusCode":400}`
+        },
+        {
+          cmd: "Nest: guards و interceptors",
+          title: "guards للـ auth والأدوار، و interceptors، و exception filters",
+          desc: R`الـ request في Nest بيعدّي على طبقات بترتيب ثابت: middleware ← guards ← interceptors (قبل) ← pipes ← الـ controller ← interceptors (بعد) ← exception filters لو حصل خطأ.
+
+الـ guard بيقرر «يدخل ولا لأ» (توكن صح؟ الـ role مسموح؟). الـ interceptor بيلف حوالين الـ handler (وقت، أو تغيير شكل الرد، أو كاش). والـ exception filter بيحوّل نوع خطأ معين لرد (مثلًا خطأ Prisma unique ← 409).`,
+          example: R`export const Roles = Reflector.createDecorator<string[]>();
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+  canActivate(ctx: ExecutionContext): boolean {
+    const req = ctx.switchToHttp().getRequest();
+    try {
+      req.user = jwt.verify(req.headers.authorization?.replace(/^Bearer /, ""), process.env.JWT_SECRET);
+    } catch {
+      throw new UnauthorizedException();
+    }
+    const roles = this.reflector.getAllAndOverride(Roles, [ctx.getHandler(), ctx.getClass()]);
+    if (roles && !roles.includes(req.user.role)) throw new ForbiddenException();
+    return true;
+  }
+}
+
+@Delete(":id")
+@Roles(["ADMIN"])
+@HttpCode(204)
+remove(@Param("id") id: string) { return this.orders.remove(id); }
+
+@Catch(Prisma.PrismaClientKnownRequestError)
+export class PrismaErrorFilter implements ExceptionFilter {
+  catch(err: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
+    const res = host.switchToHttp().getResponse();
+    if (err.code === "P2002") return res.status(409).json({ statusCode: 409, error: "CONFLICT" });
+    res.status(500).json({ statusCode: 500, error: "INTERNAL" });
+  }
+}`,
+          try: R`اعمل الـ guard والـ decorator، وحطهم على controller فيه GET و DELETE. جرّب: من غير توكن، وبتوكن يوزر عادي على GET ثم DELETE، وبتوكن أدمن على DELETE. وبعدين اعمل interceptor بيطبع [[METHOD URL المدة]] وركّبه global.`,
+          flag: "script",
+          deep: {
+            why: R`في Express كل ده middleware بترتيب انت بتظبطه بإيدك، وسهل تنسى [[requireAuth]] على route. في Nest كل مسؤولية ليها نوع، والـ decorators على الـ controller بتقولك الحماية بتاعته في سطر وانت بتقرا. والـ interviewer في وظيفة Nest هيسأل عن الترتيب ده تقريبًا أكيد.`,
+            how: R`الـ guard: [[canActivate]] بيرجّع true أو false (false تبقى 403 افتراضيًا)، أو بيرمي exception بالكود اللي انت عايزه. عشان كده بنرمي [[UnauthorizedException]] للتوكن الغلط (401) و [[ForbiddenException]] للـ role (403)، والفرق مهم للواجهة (درس [[401 و 403 و 404]]). وجربنا المصفوفة دي كلها على Nest 12 بـ supertest.
+
+[[Reflector.createDecorator]] بيعمل decorator زي [[@Roles(["ADMIN"])]] بيحط metadata على الـ method، والـ guard بيقراها بـ [[getAllAndOverride]] من الـ handler الأول وبعدين الـ class. كده تقدر تحط [[@Roles]] على الـ controller كله وتغيّره لـ route واحد.
+
+[[@UseGuards(AuthGuard)]] على الـ controller أو الـ route. أو global بـ [[APP_GUARD]] provider وتعمل decorator [[@Public()]] للـ routes المفتوحة: كده الأصل إن كله محمي، واللي مفتوح لازم يتكتب صريح. ده أأمن. وفيه [[@nestjs/passport]] و [[@nestjs/jwt]] لو عايز strategies جاهزة، بس الـ guard اليدوي ده بيوضّح اللي بيحصل.
+
+الـ interceptor: [[intercept(ctx, next)]] بيرجّع [[next.handle()]] وده Observable (RxJS)، فتقدر تعمل [[pipe(tap(...))]] بعد الرد، أو [[map]] تغيّر شكله. استخدامات: logging بالمدة، أو [[{ data: ... }]] حوالين كل رد، أو [[ClassSerializerInterceptor]] اللي بيشيل الحقول المعلّمة [[@Exclude()]] (زي الباسورد).
+
+الـ filter: [[@Catch(Type)]] بيمسك النوع ده بس. خطأ Prisma [[P2002]] (unique) من غير filter بيبقى 500، ومعاه 409 بمعنى واضح. و [[P2025]] (record مش موجود في update/delete) ← 404. أي خطأ مش [[HttpException]] ومفيش filter ليه، Nest بيرجّع 500 [[Internal server error]] من غير تفاصيل، ويطبع الـ stack في اللوج.`,
+            when: "guard global للـ auth في أي مشروع Nest، و Roles للأدمن. interceptor للوج والشكل الموحد. filter لأخطاء المكتبات اللي ليها معنى HTTP (Prisma و Stripe وغيرهم).",
+            mistakes: R`التحقق من الـ role جوه كل method بـ if بدل guard. و guard بيرجّع false للتوكن الغلط فالواجهة تاخد 403 بدل 401. و [[@Roles]] من غير ما الـ guard يقراه أصلًا (الـ decorator لوحده مبيعملش حاجة). و filter بيمسك [[@Catch()]] كل حاجة ويرجّع رسالة الخطأ الأصلية للعميل، فبيسرّب تفاصيل القاعدة. وفي الانترفيو: «الفرق بين middleware و guard و interceptor؟» الـ guard عارف الـ handler اللي هيتنفّذ (ExecutionContext والـ metadata)، والـ middleware لأ.`
+          },
+          lines: [
+            "decorator للأدوار بـ Reflector.",
+            "الـ guard provider عادي.",
+            "كلاس بيطبّق CanActivate.",
+            "بيطلب الـ Reflector عشان يقرا الـ metadata.",
+            "بيتنادى قبل كل handler.",
+            "هات الـ request بتاع Express.",
+            "جرّب...",
+            "...تتحقق من التوكن وتحط اليوزر على الطلب.",
+            "لو غلط...",
+            "...401.",
+            "قفلة.",
+            "اقرا [[@Roles]] من الـ method الأول وبعدين الـ class.",
+            "فيه roles واليوزر مش منهم؟ 403.",
+            "عدّي.",
+            "قفلة.",
+            "قفلة.",
+            "route المسح.",
+            "للأدمن بس.",
+            "204 بدل 200.",
+            "الـ handler.",
+            "filter لأخطاء Prisma المعروفة بس.",
+            "كلاس الـ filter.",
+            "بيتنادى لما الخطأ ده يترمي.",
+            "رد Express.",
+            "unique اتكسر: 409.",
+            "غير كده 500 من غير تفاصيل.",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: من غير توكن 401 في الاتنين. يوزر عادي: GET لطلبه 200، و DELETE 403 (حتى على طلبه). أدمن: DELETE 204.
+
+ولو يوزر عادي عمل DELETE ورجع 204، يبقى الـ guard مش بيقرا [[Roles]]: اتأكد إنك بتقرا نفس الـ decorator اللي عملته بـ [[createDecorator]]، وإن [[@Roles]] على الـ method نفسها.
+
+والـ interceptor بيطبع سطر زي [[[HTTP] GET /orders/cm... 4ms]] بعد كل رد ناجح. (لو الـ handler رمى خطأ، الـ [[tap]] العادي مبيتناداش: استخدم [[tap({ next, error })]] أو [[finalize]] لو عايز تسجّل الأخطاء كمان.)`,
+          solCode: R`@Injectable()
+export class TimingInterceptor implements NestInterceptor {
+  private readonly logger = new Logger("HTTP");
+  intercept(ctx: ExecutionContext, next: CallHandler) {
+    const req = ctx.switchToHttp().getRequest();
+    const start = Date.now();
+    return next.handle().pipe(tap(() => this.logger.log($__bt$__{req.method} $__{req.url} $__{Date.now() - start}ms$__bt)));
+  }
+}
+// main.ts
+app.useGlobalInterceptors(new TimingInterceptor());`
+        },
+        {
+          cmd: "Nest: Prisma",
+          title: "Prisma جوه Nest: provider واحد للتطبيق كله",
+          desc: R`[[PrismaService]] كلاس بيورث من [[PrismaClient]] وعليه [[@Injectable()]]، فأي service تطلبه في الـ constructor. وبيتحط في [[PrismaModule]] عليه [[@Global()]] و [[exports]]، فمتحتاجش تعمل import ليه في كل module.
+
+ولأن الـ provider singleton، التطبيق كله بيستخدم client واحد و pool اتصالات واحد، زي [[db.js]] في Express.`,
+          example: R`// prisma.service.ts
+import { Injectable, OnModuleDestroy } from "@nestjs/common";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "./generated/prisma/client.js";
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleDestroy {
+  constructor() {
+    super({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }) });
+  }
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+}
+
+// prisma.module.ts
+@Global()
+@Module({ providers: [PrismaService], exports: [PrismaService] })
+export class PrismaModule {}
+
+// main.ts
+const app = await NestFactory.create(AppModule);
+app.enableShutdownHooks();
+await app.listen(process.env.PORT ?? 3000);`,
+          try: R`حط PrismaModule في [[AppModule]] واستخدم [[PrismaService]] في service. وبعدين اعمل endpoint بيعمل يوزر بإيميل، وابعته مرتين بنفس الإيميل: بيرجع إيه من غير الـ filter بتاع الدرس اللي فات، وبيرجع إيه معاه؟`,
+          flag: "script",
+          deep: {
+            why: R`لو كل service عملت [[new PrismaClient()]]، كل واحدة ليها pool، والقاعدة توصل للحد الأقصى من الاتصالات بسرعة. والـ DI بيخلي في الاختبار تبدّل PrismaService بـ fake من غير ما تلمس الـ service.`,
+            how: R`[[extends PrismaClient]] بيخلي كل الـ models ([[this.db.order.findMany]]) موجودة على الـ service مباشرة. و Prisma 7: الـ client بيتولّد في فولدر انت محدده ([[generated/prisma]]) وبيحتاج driver adapter ([[PrismaPg]])، والتفاصيل في تاب «SQL و Prisma».
+
+الاتصال: Prisma بيتصل لوحده مع أول query، فمش لازم [[$connect]] في [[onModuleInit]] (لو عملتها، الغلطة في الـ URL تظهر وقت البداية بدل أول طلب، ودي ميزة). و [[onModuleDestroy]] بيقفل الـ pool لما التطبيق يقفل. بس الـ hooks دي مبتتناديش على SIGTERM إلا لو [[app.enableShutdownHooks()]] في main.ts، وده اللي Docker بيبعته وقت الـ deploy.
+
+الـ transactions: [[this.db.$transaction(async (tx) => ...)]] زي Express بالظبط (درس [[$transaction]]). ولو عايز transaction تعدّي على أكتر من service، ابعت [[tx]] كباراميتر، أو استخدم مكتبة زي [[@nestjs-cls/transactional]] (مبنية على AsyncLocalStorage، درس [[AsyncLocalStorage]]).
+
+أخطاء Prisma ([[P2002]] وغيرها) مش HttpException، فمن غير filter بتبقى 500 (الدرس اللي فات).`,
+            when: "أي مشروع Nest بـ Prisma. ولو المشروع بـ TypeORM (منتشر في مشاريع Nest القديمة)، نفس الفكرة بـ [[@nestjs/typeorm]] و repositories.",
+            mistakes: R`[[new PrismaClient()]] في كل service. ونسيان [[enableShutdownHooks]] فالاتصالات متتقفلش نضيف. و PrismaModule من غير [[exports]] فالـ modules التانية مش شايفاه («can't resolve dependencies»). وإنك تحط منطق في PrismaService نفسه وتحوّله لـ service لكل حاجة.`
+          },
+          lines: [
+            "decorators و hook الإغلاق.",
+            "الـ driver adapter لـ Postgres.",
+            "الـ client المتولّد (Prisma 7).",
+            "provider ينفع يتحقن.",
+            "بيورث كل حاجة من PrismaClient.",
+            "الـ constructor.",
+            "ابني الـ client بالـ adapter ورابط القاعدة.",
+            "قفلة.",
+            "لما التطبيق يقفل...",
+            "...اقفل الـ pool.",
+            "قفلة.",
+            "قفلة.",
+            "الـ module متاح في كل حتة.",
+            "بيعمل PrismaService ويصدّره.",
+            "كلاس الـ module.",
+            "اعمل التطبيق.",
+            "خلي SIGTERM يشغّل الـ hooks (onModuleDestroy).",
+            "اسمع على البورت."
+          ],
+          sol: R`من غير filter: الطلب التاني بيرجع 500 و [[{"statusCode":500,"message":"Internal server error"}]]، واللوج فيه [[PrismaClientKnownRequestError]] كوده [[P2002]]. 500 غلط هنا، لأن ده خطأ من العميل (الإيميل مستخدم).
+
+مع [[PrismaErrorFilter]] مركّب global ([[app.useGlobalFilters(new PrismaErrorFilter())]]): 409 و [[{"statusCode":409,"error":"CONFLICT"}]].
+
+والأحسن كمان إن الـ service تتحقق وترمي [[ConflictException("Email already used")]] برسالة واضحة، والـ filter يفضل شبكة أمان لأي unique تاني نسيته.`,
+          solCode: R`@Post("users")
+create(@Body({ schema: z.object({ email: z.email() }) }) dto: { email: string }) {
+  return this.db.user.create({ data: dto });
+}
+// curl -X POST ... -d '{"email":"a@b.co"}'  → 201
+// نفس الطلب تاني بدون filter → 500
+// نفس الطلب تاني مع PrismaErrorFilter → 409 {"statusCode":409,"error":"CONFLICT"}`
+        },
+        {
+          cmd: "Nest: الاختبارات",
+          title: "testing module: unit بـ fake، و e2e بـ supertest",
+          desc: R`[[Test.createTestingModule]] بيبني نفس الـ DI بتاع التطبيق في الاختبار. للـ unit: بتدّيله الـ service وتبدّل الـ dependencies بـ [[overrideProvider(...).useValue(fake)]]. وللـ e2e: بتستورد [[AppModule]] كله، وتعمل [[createNestApplication()]]، وتبعت طلبات بـ supertest على [[app.getHttpServer()]].
+
+نفس أفكار قسم الاختبارات بالظبط: قاعدة اختبار، و TRUNCATE، ومصفوفة 401 و 403 و 404.`,
+          example: R`let app: INestApplication;
+let db: PrismaService;
+
+beforeAll(async () => {
+  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  app = setupApp(moduleRef.createNestApplication());
+  await app.init();
+  db = moduleRef.get(PrismaService);
+});
+beforeEach(() => db.$executeRawUnsafe('TRUNCATE TABLE "Order", "User" CASCADE'));
+afterAll(() => app.close());
+
+it("404 for another user's order", async () => {
+  const [a, b] = [await db.user.create({ data: { email: "a@t.l" } }), await db.user.create({ data: { email: "b@t.l" } })];
+  const order = await db.order.create({ data: { userId: a.id, amountCents: 100 } });
+  const res = await request(app.getHttpServer()).get($__bt/api/orders/$__{order.id}$__bt).set("Authorization", $__btBearer $__{tokenFor(b)}$__bt);
+  expect(res.status).toBe(404);
+});
+
+it("unit: NotFound when the order is not mine", async () => {
+  const moduleRef = await Test.createTestingModule({ providers: [OrdersService, PrismaService] })
+    .overrideProvider(PrismaService).useValue({ order: { findFirst: async () => null } })
+    .compile();
+  await expect(moduleRef.get(OrdersService).findMine("u1", "o1")).rejects.toMatchObject({ status: 404 });
+});`,
+          try: R`اكتب e2e لـ [[POST /api/orders]]: body صح 201، و [[amountCents: "x"]] 400. وخلي بالك: لازم تستخدم نفس إعداد الـ app اللي في main.ts (الـ pipes والـ prefix)، وإلا الـ 400 هيبقى 201. وبعدين اكتب unit للـ service بـ fake PrismaService.`,
+          flag: "script",
+          deep: {
+            why: R`اختبار Nest من غير الـ testing module معناه تعمل كل الـ services بإيدك بالترتيب، وتفوّت الـ guards والـ pipes. والـ e2e هو اللي بيثبت إن كل الطبقات (guard و pipe و filter) متركّبة صح، ودي أكتر حاجة بتبوظ لما حد يعدّل main.ts.`,
+            how: R`[[createNestApplication()]] بيعمل التطبيق بس مبيعملش listen، و supertest بياخد [[app.getHttpServer()]] (نفس فكرة [[app و server]]). و [[app.init()]] لازم قبل الطلبات، و [[app.close()]] في الآخر بيشغّل [[onModuleDestroy]] ويقفل Prisma.
+
+[[setupApp(app)]]: الـ pipes والـ filters والـ prefix اللي في main.ts مش جزء من AppModule، فلو الاختبار معملهمش، هتختبر تطبيق غير اللي بيشتغل. عشان كده دالة واحدة بتعملهم، و main.ts والاختبار الاتنين بينادوها. (البديل: تسجّلهم كـ providers بـ [[APP_PIPE]] و [[APP_FILTER]] جوه الـ module، فيبقوا جزء منه.)
+
+[[overrideProvider(X).useValue(fake)]] بيبدّل الـ provider في الـ DI، و [[moduleRef.get(OrdersService)]] بيجيب الـ instance بالـ fake جواه. في الـ unit مش محتاج [[createNestApplication]] خالص.
+
+الأداة: Nest 12 نفسه بيستخدم Vitest في اختباراته، و Jest لسه منتشر جدًا في المشاريع الموجودة. مع Vitest لازم SWC (باكدج [[unplugin-swc]] في vitest.config) لأن esbuild الافتراضي مبيطلّعش decorator metadata، فالـ DI بالـ types مبيشتغلش (جربناها: من غير إعداد الـ decorators في SWC الملف مبيعملش parse أصلًا). و [[fileParallelism: false]] زي قسم الاختبارات لأن القاعدة مشتركة.`,
+            when: "e2e لكل controller (الحالة الناجحة، والـ validation، ومصفوفة الصلاحيات). unit للـ services اللي فيها منطق حقيقي (حسابات أو قرارات). ومتعملش unit لـ service بتعمل findMany وخلاص.",
+            mistakes: R`e2e من غير نفس الـ pipes اللي في main.ts، فالـ validation متختبرش. و mock للـ PrismaService في الـ e2e فبتختبر الـ mock. ونسيان [[app.close()]] فـ vitest يفضل مستني. و Vitest من غير SWC فتلاقي «Nest can't resolve dependencies» في الاختبار بس، والتطبيق شغال.`
+          },
+          lines: [
+            "التطبيق للاختبارات.",
+            "الـ Prisma للتجهيز والتنضيف.",
+            "مرة قبل الكل...",
+            "...ابني AppModule كله بالـ DI.",
+            "اعمل التطبيق بنفس إعداد main.ts (pipes و prefix و filters).",
+            "جهّزه من غير listen.",
+            "هات PrismaService من الـ DI.",
+            "قفلة.",
+            "فضّي الجداول قبل كل اختبار.",
+            "في الآخر اقفل التطبيق (و Prisma معاه).",
+            "اختبار الـ ownership.",
+            "يوزرين.",
+            "طلب بتاع A.",
+            "B يطلب طلب A.",
+            "404.",
+            "قفلة.",
+            "unit test.",
+            "module فيه الـ service والـ dependency...",
+            "...والـ dependency اتبدّلت بـ fake بيرجّع null.",
+            "ابنيه.",
+            "الـ service لازم ترمي 404.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: الـ 201 و الـ 400 الاتنين بينجحوا، ورسالة الـ 400 من Zod زي [[amountCents: Invalid input: expected number, received string]]. والـ unit بينجح من غير قاعدة بيانات خالص.
+
+لو الـ 400 طلع 201، الاختبار مش بيستخدم [[setupApp]] (مفيش pipe). ولو ظهر 404 على كل الـ routes، الـ prefix [[api]] مش متظبط في الاختبار. ولو vitest قال «Expression expected» عند [[@Module]]، SWC مش متظبط للـ decorators.
+
+الإعداد اللي جربناه لـ Vitest في الكود.`,
+          solCode: R`// vitest.config.ts
+import swc from "unplugin-swc";
+import { defineConfig } from "vitest/config";
+export default defineConfig({
+  plugins: [swc.vite({ jsc: { parser: { syntax: "typescript", decorators: true }, transform: { legacyDecorator: true, decoratorMetadata: true }, target: "es2022" } })],
+  test: { env: { DATABASE_URL: "postgresql://app:app@localhost:5432/myapp_test", JWT_SECRET: "test-secret" }, fileParallelism: false },
+});
+
+// test/orders.e2e.test.ts
+it("201 then 400", async () => {
+  const u = await db.user.create({ data: { email: "a@t.l" } });
+  const auth = { Authorization: $__btBearer $__{tokenFor(u)}$__bt };
+  expect((await request(app.getHttpServer()).post("/api/orders").set(auth).send({ amountCents: 500 })).status).toBe(201);
+  expect((await request(app.getHttpServer()).post("/api/orders").set(auth).send({ amountCents: "x" })).status).toBe(400);
+});`
+        }
+      ]
+    },
+    {
+      t: "أسئلة انترفيو Backend بـ Node",
+      l: 3,
+      n: "الأسئلة اللي بتتكرر في انترفيوهات Node و Express، بإجابة تقولها بصوتك في دقيقة، والأسئلة اللي بتيجي بعدها",
+      items: [
+        {
+          cmd: "event loop و blocking",
+          title: "Node single-threaded، إزاي بيخدم آلاف الطلبات؟ (event loop)",
+          desc: R`الـ JavaScript بتاعي بيشتغل على thread واحد، بس الـ I/O (الشبكة والقاعدة والملفات) مش بيستناه: Node بيطلب العملية من نظام التشغيل أو من thread pool بتاع libuv، ويكمّل يخدم طلبات تانية، ولما النتيجة تيجي الـ callback بتاعها يدخل طابور والـ event loop ينفّذه. فطول ما كل طلب معظم وقته مستني I/O، thread واحد بيكفي آلاف الاتصالات.
+
+المشكلة الحقيقية الـ blocking: أي كود CPU طويل (loop على مليون عنصر، أو [[JSON.parse]] لملف ضخم، أو دالة Sync) بيوقّف الـ loop فكل الطلبات بتستنى. الحل: worker_threads، أو queue، أو تقسيم الشغل.`,
+          example: R`console.log("1 sync");
+setTimeout(() => console.log("timeout"), 0);
+setImmediate(() => console.log("immediate"));
+Promise.resolve().then(() => console.log("promise"));
+process.nextTick(() => console.log("nextTick"));
+console.log("2 sync");
+// CommonJS: 1 sync, 2 sync, nextTick, promise, timeout, immediate`,
+          try: R`شغّل الكود مرة كـ [[.cjs]] ومرة كـ [[.mjs]]، وقارن مكان [[nextTick]] و [[promise]]. وبعدين حط الـ setTimeout والـ setImmediate جوه callback بتاع [[fs.readFile]] وشوف مين الأول.`,
+          flag: "script",
+          deep: {
+            why: "أشهر سؤال Node على الإطلاق. بيختبر إنك فاهم ليه Node سريع في الـ I/O وضعيف في الـ CPU، وده بيأثر على كل قرار: إمتى تستخدم Sync، وإمتى worker، وإزاي تكتشف إن السيرفر «مهنّج».",
+            how: R`الترتيب: الكود الـ sync كله الأول. بعده microtasks: طابور [[process.nextTick]] وطابور الـ promises، وبيتفضّوا بالكامل بعد كل task. بعدها مراحل الـ loop: timers ([[setTimeout]] و [[setInterval]])، ثم poll (callbacks الـ I/O)، ثم check ([[setImmediate]])، ثم close callbacks.
+
+تفصيلة جربناها: في CommonJS الـ nextTick قبل الـ promise. في ESM ([[.mjs]] أو [[type: module]]) الـ promise طلع قبل الـ nextTick، لأن الموديول نفسه بيتنفّذ جوه microtask فطابور الـ promises بيتفضى الأول. والـ timeout والـ immediate في المستوى الأعلى ترتيبهم مش مضمون، بس جوه callback بتاع I/O الـ immediate دايمًا الأول.
+
+thread pool بتاع libuv (افتراضيًا ٤ threads، [[UV_THREADPOOL_SIZE]]) بيعمل fs و dns.lookup و crypto (pbkdf2 و scrypt) و zlib. الشبكة (TCP) مش بتستخدمه، بتعتمد على epoll/kqueue في النظام. عشان كده ٤ عمليات bcrypt تقيلة مع بعض ممكن تبطّأ قراية الملفات.
+
+وتكتشف الـ blocking إزاي؟ [[perf_hooks.monitorEventLoopDelay()]] بيقيس التأخير، ولو p99 فوق ١٠٠ms فيه حاجة بتوقّف. و [[node --cpu-prof]] أو clinic.js يوريك الدالة. والتفاصيل الأعمق للـ event loop في JavaScript نفسها في درس [[event loop]] في تاب «JavaScript».`,
+            when: R`أسئلة بعدها: «الفرق بين nextTick و setImmediate؟» (الأسماء معكوسة: nextTick أسرع). «إزاي تعمل حاجة تقيلة من غير ما تبلوك؟» (worker_threads أو queue، درس [[worker_threads و cluster]]). «Node multi-threaded ولا لأ؟» (الـ JS بتاعك thread واحد، و Node نفسه فيه threads للـ libuv والـ GC). «إمتى Node اختيار وحش؟»`,
+            mistakes: R`«Node multi-threaded» أو «Node single-threaded فمينفعش يعمل حاجتين مع بعض»: الاتنين غلط. و «async بيخلي الكود أسرع»: async بيخلي السيرفر فاضي لغيرك وانت مستني، مش بيسرّع الحساب نفسه. و «setTimeout(fn, 0) بيتنفّذ فورًا». و nextTick recursion بيجوّع الـ loop ومفيش I/O يتنفّذ.`
+          },
+          lines: [
+            "sync.",
+            "timer: مرحلة timers.",
+            "مرحلة check.",
+            "microtask.",
+            "طابور nextTick (microtask برضه، ليه أولوية في CommonJS).",
+            "sync."
+          ],
+          sol: R`CommonJS: [[1 sync]]، [[2 sync]]، [[nextTick]]، [[promise]]، [[timeout]]، [[immediate]].
+
+ESM: [[1 sync]]، [[2 sync]]، [[promise]]، [[nextTick]]، وبعدين الاتنين التانيين. السبب إن الـ ESM بيتنفّذ من جوه microtask، فالـ promises بتخلص الأول قبل ما Node يرجع لطابور الـ nextTick.
+
+وجوه [[readFile]]: [[immediate]] قبل [[timeout]] دايمًا، لأن بعد مرحلة الـ poll (اللي فيها callback الـ I/O) الـ loop بيروح على check (setImmediate) قبل ما يلف للـ timers تاني. وفي المستوى الأعلى ترتيب timeout و immediate ممكن يتغير من تشغيلة للتانية.`,
+          solCode: R`const { readFile } = require("node:fs");
+readFile(__filename, () => {
+  setTimeout(() => console.log("timeout in I/O"), 0);
+  setImmediate(() => console.log("immediate in I/O"));
+});
+// immediate in I/O
+// timeout in I/O`
+        },
+        {
+          cmd: "next() والترتيب",
+          title: "إزاي middleware بيشتغل في Express؟ وليه الترتيب مهم؟ (middleware order)",
+          desc: R`Express بيمشي على الـ middleware والـ routes بالترتيب اللي اتسجّلوا بيه. كل واحد يا إما يرد ويقفل الطلب، يا إما ينادي [[next()]] فالطلب يروح للي بعده، يا إما [[next(err)]] فيقفز على طول لأول error middleware (اللي ليه ٤ باراميترز).
+
+فالترتيب هو المنطق: parsing و security headers و CORS و rate limit الأول، وبعدين auth، وبعدين الـ routes، وبعدين 404، وفي الآخر الـ error handler. وأي route متسجّل قبل الـ auth مش محمي حتى لو شكله جنب routes محمية.`,
+          example: R`app.get("/a", (req, res) => res.json({ user: req.user ?? null }));
+app.use((req, res, next) => { req.user = "u1"; next(); });
+app.get("/b", (req, res) => res.json({ user: req.user }));
+app.get("/boom", async () => { throw new Error("db down"); });
+app.use((err, req, res, next) => res.status(500).json({ error: "INTERNAL" }));`,
+          try: R`شغّل المثال واطلب [[/a]] و [[/b]] و [[/boom]]. وبعدين انقل الـ error handler لأول الملف واطلب [[/boom]] تاني. إيه اللي اتغير، وليه؟`,
+          flag: "script",
+          deep: {
+            why: "بيختبر إنك فاهم Express من جوه مش حافظ أسماء. وغلطات الترتيب من أشهر أسباب الثغرات (route من غير auth) والـ bugs (req.body فاضي، CORS مش شغال).",
+            how: R`داخليًا Express عنده stack من الـ layers. كل layer ليها path و method (أو أي method في [[app.use]]). مع كل طلب بيلف عليهم بالترتيب ويشغّل اللي بيطابق. [[next()]] يعني «كمّل على الـ layer اللي بعدي». ولو ولا واحد رد، Express بيرجّع 404 الافتراضي.
+
+الـ error middleware بيتعرف بعدد الباراميترز (٤). لما حد ينادي [[next(err)]] أو يرمي خطأ، Express بيتخطى كل الـ middleware العادي ويروح لأول error middleware بعد المكان ده. وفي Express 5، لو async handler رمى أو الـ promise اترفضت، ده بيتحول لـ [[next(err)]] لوحده (درس [[async errors في Express 5]]). في Express 4 كان الطلب بيعلّق.
+
+أمثلة الترتيب اللي بتتسأل: [[express.json()]] قبل الـ routes وإلا [[req.body]] undefined. والـ webhook اللي محتاج raw body قبل [[express.json()]]. و CORS قبل الـ auth عشان الـ preflight (OPTIONS) ميترفضش بـ 401. و [[express.static]] قبل الـ auth لو الملفات عامة. والتفاصيل في درس [[ترتيب الـ middleware]].`,
+            when: R`أسئلة بعدها: «إزاي تعمل error handler مركزي؟». «إيه اللي يحصل لو middleware منسيش ينادي next ولا رد؟» (الطلب يعلّق لحد الـ timeout). «الفرق بين app.use و app.get؟». «middleware في Nest بيختلف عن guard إزاي؟» (درس «Nest: guards و interceptors»).`,
+            mistakes: R`«الترتيب مش مهم». و error handler بـ ٣ باراميترز فمش بيتنادى أبدًا. وإنك تنادي [[next()]] بعد [[res.json()]] فيحصل «Cannot set headers after they are sent». و [[res.json()]] من غير [[return]] جوه if، فالكود يكمّل ويرد مرتين.`
+          },
+          lines: [
+            "route قبل الـ middleware: مش هيشوف req.user.",
+            "middleware بيحط اليوزر ويكمّل.",
+            "route بعده: شايف req.user.",
+            "route بيرمي من async (Express 5 بيوديه للـ error handler).",
+            "error handler بـ ٤ باراميترز في الآخر."
+          ],
+          sol: R`النتيجة: [[/a]] بيرجّع [[{ user: null }]] لأنه اتسجّل قبل الـ middleware، و [[/b]] بيرجّع [[{ user: "u1" }]]، و [[/boom]] بيرجّع 500 و [[{ error: "INTERNAL" }]].
+
+لما الـ error handler يبقى أول الملف: [[/boom]] بيرجّع 500 بصفحة HTML الافتراضية بتاعة Express (فيها الـ stack في التطوير)، مش الـ JSON بتاعك. السبب إن [[next(err)]] بيدوّر على error middleware بعد مكان الخطأ، واللي فوق مش بيتشاف.`,
+          solCode: R`const r = await Promise.all(["/a", "/b", "/boom"].map((p) => request(app).get(p)));
+console.log(r[0].body, r[1].body, r[2].status, r[2].body);
+// { user: null } { user: 'u1' } 500 { error: 'INTERNAL' }`
+        },
+        {
+          cmd: "JWT ولا session",
+          title: "JWT ولا session؟ وفين تحط التوكن؟ (JWT vs sessions)",
+          desc: R`session: السيرفر بيحفظ البيانات في store (Redis)، والعميل معاه id عشوائي في كوكي httpOnly. logout والحظر فوري، بس كل طلب فيه lookup. JWT: البيانات موقّعة جوه التوكن، والسيرفر بيتحقق من التوقيع من غير ما يسأل حد. مفيش lookup، بس مفيش سحب للتوكن قبل ما يخلص.
+
+عشان كده الشكل الشائع مع JWT: access token قصير (١٠-١٥ دقيقة) و refresh token طويل في كوكي httpOnly بيتخزن ويتلغي من السيرفر. ولموقع واحد على دومين واحد، الـ session غالبًا أبسط وأأمن.`,
+          example: R`// session: الكوكي فيها id بس، والبيانات في Redis
+// Set-Cookie: sid=s%3ACzl9ycc...; Path=/; HttpOnly; Secure; SameSite=Lax
+// JWT: البيانات في التوكن نفسه، أي حد يقدر يقراها (مش مشفّرة، موقّعة بس)
+node -e 'console.log(JSON.parse(Buffer.from(process.argv[1].split(".")[1], "base64url")))' eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJleHAiOjE3OTA3MTQ3Nzd9.x`,
+          try: R`خد أي JWT من تطبيق عندك وفكّ الجزء التاني بالأمر ده. إيه البيانات اللي فيه؟ ينفع يبقى فيه إيميل أو رقم تليفون؟ وبعدين فكّر: يوزر عمل logout، والـ access token بتاعه لسه فاضله ١٠ دقايق. حد سرقه. يقدر يستخدمه؟`,
+          deep: {
+            why: "سؤال تصميم بيبان منه إنك بتفهم المقايضات مش بتردد «JWT أحدث». والإجابة الناضجة بتقول إمتى كل واحد، وإيه اللي بيضيع مع JWT، وفين تحط التوكن.",
+            how: R`النقط اللي تقولها: الـ session stateful (الحالة عند السيرفر) و JWT stateless (الحالة في التوكن). JWT مناسب لما خدمات كتير محتاجة تتحقق من غير قاعدة مشتركة، أو موبايل، أو API لطرف تالت. والـ session مناسبة لـ web app على دومين واحد.
+
+التخزين: localStorage أي script (XSS) يقدر يقراه ويبعته برّه. الكوكي الـ httpOnly محدش يقدر يقراها بـ JS، بس بتتبعت لوحدها فمحتاجة حماية CSRF ([[SameSite=Lax]] أو Strict، وتوكن CSRF للحالات الحساسة). فالشائع: refresh في كوكي httpOnly، و access في الذاكرة.
+
+سحب التوكن: مع JWT يا إما عمره قصير ومعاه refresh بيتلغي من القاعدة (rotation، درس «refresh rotation» في «تاب بناء مشروع كامل»)، يا إما blocklist بالـ [[jti]] في Redis، وده رجوع لـ lookup. و [[alg]]: حدد الخوارزمية في [[jwt.verify]] صريح عشان هجمات [[alg: none]] أو تبديل الخوارزمية.
+
+الكود في درسي [[express-session]] و [[access و refresh]].`,
+            when: R`أسئلة بعدها: «التوكن اتسرق، تعمل إيه؟». «فين تحط الـ JWT في الواجهة؟». «يعني إيه CSRF وليه SameSite بيساعد؟». «ليه الـ access قصير؟». «OAuth و JWT نفس الحاجة؟» (لأ: OAuth بروتوكول تفويض، و JWT شكل توكن).`,
+            mistakes: R`«JWT مشفّر»: هو موقّع بس، والـ payload base64 أي حد يقراه، فمتحطش فيه بيانات حساسة. و «JWT أأمن من session». و access token عمره أيام. و logout في الواجهة بس بمسح الـ localStorage والتوكن لسه شغال.`
+          },
+          lines: [
+            "فك الـ payload بتاع JWT من غير أي سر: base64url عادي. (في الـ session بقى، الكوكي فيها id موقّع بس زي السطر المتعلّق فوق.)"
+          ],
+          sol: R`الأمر بيطبع object زي [[{ sub: "7", role: "USER", exp: 1790714777 }]]. أي حد معاه التوكن يقرا ده من غير أي مفتاح، فمينفعش يبقى فيه باسورد أو بيانات حساسة. الإيميل أحيانًا بيتحط، بس الأحسن id بس.
+
+وسؤال الـ logout: أيوه، التوكن المسروق شغال لحد ما الـ [[exp]] يعدّي، لأن السيرفر مبيسألش حد وهو بيتحقق. عشان كده عمره قصير. ولو محتاج سحب فوري: blocklist للـ [[jti]] في Redis لحد الـ exp، أو [[tokenVersion]] على اليوزر بتزوده مع logout-all والتوكن بيحمله. أو session من الأول.`,
+          solCode: R`// blocklist بسيطة في Redis لحد ما التوكن يخلص
+await redis.set($__btjwt:revoked:$__{payload.jti}$__bt, "1", "EXAT", payload.exp);
+// وفي requireAuth بعد jwt.verify:
+if (await redis.exists($__btjwt:revoked:$__{payload.jti}$__bt)) return res.status(401).json({ error: "REVOKED" });`
+        },
+        {
+          cmd: "scale لـ API",
+          title: "الـ API بقى بطيء والمستخدمين زادوا ١٠ أضعاف، تعمل إيه؟ (How would you scale it?)",
+          desc: R`أبدأ بالقياس مش بالتخمين: أنهي endpoints بطيئة، والوقت رايح فين (القاعدة، ولا CPU، ولا خدمة برّه)، من اللوجات (المدة لكل طلب) و APM و [[EXPLAIN ANALYZE]].
+
+بعدين بالترتيب: صلّح الأرخص (index ناقص، و N+1، و pagination، ورد أصغر)، وبعدين كاش للي بيتقري كتير (Redis و HTTP cache)، وبعدين الشغل التقيل يطلع queue، وبعدين نسخ كتير ورا load balancer (والتطبيق لازم يبقى stateless)، وآخر حاجة القاعدة نفسها (pooler و read replicas).`,
+          example: R`EXPLAIN ANALYZE SELECT * FROM "Order" WHERE "userId" = 'u7' ORDER BY "createdAt" DESC LIMIT 20;
+-- Seq Scan on "Order" (actual time=0.02..412.30 rows=20)
+CREATE INDEX CONCURRENTLY order_user_created_idx ON "Order" ("userId", "createdAt" DESC);
+-- Index Scan using order_user_created_idx (actual time=0.03..0.09 rows=20)`,
+          try: R`اختار أبطأ endpoint عندك وارسم رحلة الطلب: كام query؟ كام ms لكل واحدة؟ فيه طلب لخدمة برّه؟ اكتب ٣ تحسينات بالترتيب من الأرخص للأغلى، ولكل واحد إزاي هتقيس إنه نفع.`,
+          deep: {
+            why: "سؤال system design مصغّر. الإجابة الضعيفة «Kubernetes و microservices». الإجابة القوية بتبدأ بالقياس، وبتمشي من الأرخص للأغلى، وبتعرف إن ١٠ سيرفرات على query من غير index هيضربوا القاعدة ١٠ أضعاف.",
+            how: R`النقط اللي تقولها بالترتيب:
+
+١. قيس: p50 و p95 و p99 لكل endpoint، و slow query log، و APM (Sentry أو OpenTelemetry). والـ event loop delay لو شاكك في CPU.
+
+٢. القاعدة أول مكان تبص فيه: index على أعمدة الـ WHERE والـ ORDER BY (مثال الـ EXPLAIN من ٤١٢ms لأقل من ms)، و N+1 (درس «indexes و N+1» في «تاب بناء مشروع كامل»)، و [[select]] للأعمدة المطلوبة بس، و pagination.
+
+٣. كاش: HTTP cache و CDN للعام، و Redis (cache-aside) للي بيتقري كتير وبيتغير قليل، مع خطة للمسح.
+
+٤. اطلع من الطلب: إيميلات وصور وتقارير في queue، والرد 202.
+
+٥. horizontal: نسخ ورا load balancer، والشرط stateless: sessions و rate limit و cache في Redis، والملفات في S3، والـ cron في queue scheduler، والـ sockets بـ Redis adapter.
+
+٦. القاعدة لما تبقى هي عنق الزجاجة: connection pooler (PgBouncer)، و read replicas للقراية، وبعدها partitioning. والـ sharding آخر حاجة خالص.
+
+والتفاصيل في درس «scaling path» و «scaling القاعدة» في «تاب بناء مشروع كامل».`,
+            when: R`أسئلة بعدها: «ليه الـ stateless مهم؟». «كاش invalidation إزاي؟». «read replica فيها مشكلة إيه؟» (replication lag: اليوزر يكتب وميلاقيش اللي كتبه). «vertical ولا horizontal؟». «إزاي تعرف إن التحسين نفع؟» (نفس المقاييس قبل وبعد).`,
+            mistakes: R`تبدأ بـ microservices أو Kubernetes. أو «هنكبّر السيرفر» من غير ما تعرف المشكلة. أو كاش على كل حاجة من غير خطة مسح. أو تنسى القاعدة وتكبّر الـ API بس، فالـ connections تخلص. أو ترد بكلام عام من غير أرقام: قول «p95 كان ٢ ثانية، الـ query دي كانت ١.٨ منهم».`
+          },
+          lines: [
+            "شوف الخطة والوقت الحقيقي.",
+            "بتقرا كل الجدول: ٤١٢ms.",
+            "index على الفلتر والترتيب، و CONCURRENTLY عشان ميقفلش الجدول.",
+            "بعد الـ index: أقل من ms."
+          ],
+          sol: R`مثال لإجابة كويسة على [[GET /api/orders]]:
+
+الرحلة: auth (Redis، ١ms)، و query الطلبات (٤٠٠ms، Seq Scan)، وبعدين loop بيجيب المنتج لكل طلب (٢٠ query، N+1، ٦٠ms)، وحساب الإجمالي في JS.
+
+التحسينات بالترتيب: (١) index مركّب على [[userId, createdAt]]: أقيس بـ EXPLAIN قبل وبعد. (٢) [[include]] أو [[in]] بدل الـ loop: أقيس عدد الـ queries في لوج Prisma من ٢١ لـ ٢. (٣) كاش للمنتجات لو لسه بطيء: أقيس hit rate و p95.
+
+المهم إن كل خطوة ليها رقم قبل ورقم بعد، وإنك متعدّيش للأغلى إلا لو الأرخص مكفّاش.`,
+          solCode: R`const prisma = new PrismaClient({ adapter, log: [{ emit: "event", level: "query" }] });
+let queries = 0;
+prisma.$on("query", () => queries++);
+// اطلب الـ endpoint مرة، واطبع queries قبل وبعد التحسين`
+        },
+        {
+          cmd: "idempotency",
+          title: "اليوزر داس «ادفع» مرتين، أو الشبكة عملت retry: إزاي متخصمش مرتين؟ (idempotency)",
+          desc: R`العملية idempotent لو تكرارها بيدّي نفس النتيجة زي مرة واحدة. GET و PUT و DELETE كده بطبيعتهم. POST لأ: مرتين يعني طلبين.
+
+الحل: العميل بيبعت [[Idempotency-Key]] (UUID لكل محاولة شراء)، والسيرفر بيحفظ المفتاح مع النتيجة. لو نفس المفتاح جه تاني، يرجّع نفس الرد من غير ما يعمل العملية تاني. ونفس الفكرة جوه السيرفر: unique constraint، وتحديث بشرط على الحالة، و webhooks وـ jobs بتتعالج مرة مهما اتكررت.`,
+          example: R`// الواجهة: مفتاح واحد لكل محاولة، ثابت مع أي retry
+// fetch("/api/orders", { method: "POST", headers: { "Idempotency-Key": attemptId }, body })
+model IdempotencyKey {
+  key        String   @id
+  userId     String
+  status     Int
+  response   Json
+  createdAt  DateTime @default(now())
+}
+// SQL تحت: INSERT ... ON CONFLICT (key) DO NOTHING، ولو مدخلش يبقى تكرار`,
+          try: R`اعمل [[POST /api/orders]] بيقرا [[Idempotency-Key]]: لو المفتاح موجود لنفس اليوزر رجّع الرد المحفوظ، ولو لأ اعمل الطلب واحفظ الرد. ابعت نفس الطلب ٣ مرات بنفس المفتاح بـ [[Promise.all]] (مع بعض!). كام طلب اتعمل في القاعدة؟`,
+          deep: {
+            why: "الشبكات بتقطع، والموبايل بيعيد، واليوزر بيدوس مرتين، والبوابة بتعيد الـ webhook، والـ queue بتعيد الـ job. في أي نظام فيه فلوس، التكرار مش حالة نادرة. والسؤال ده بيفرق بين حد بنى API لعب وحد بنى حاجة فيها دفع.",
+            how: R`النقط: [[Idempotency-Key]] من العميل (مش من السيرفر، عشان الـ retry يبعت نفس المفتاح). المفتاح مربوط باليوزر (مفتاح يوزر تاني ميرجّعش رد يوزرك). والحفظ لازم atomic: [[INSERT ... ON CONFLICT DO NOTHING]] أو unique على المفتاح، مش «دوّر وبعدين اعمل» (الاتنين هيدوّروا مع بعض ويلاقوه مش موجود). والطلب التاني اللي جه والأول لسه شغال يرجع 409 «in progress» أو يستنى. والمفاتيح ليها عمر (٢٤ ساعة مثلًا) وبتتمسح. ولو نفس المفتاح جه بـ body مختلف: 422.
+
+ده مفصّل في درس [[Idempotency-Key]] في تاب «APIs متقدمة». وجوه السيرفر: الـ webhook بشرط على الحالة و unique على id المعاملة (درس [[اختبار الـ webhook]])، والـ jobs idempotent (درس [[background jobs]])، ومع بوابات الدفع ابعت نفس المفتاح ليهم كمان (Stripe و Paymob بيدعموا حاجة زي كده).`,
+            when: R`أسئلة بعدها: «POST ولا PUT idempotent؟». «إزاي تمنع race condition في الحفظ؟». «at-least-once و exactly-once؟» (الـ queues بتضمن at-least-once، و exactly-once بتعمله انت بالـ idempotency). «تمسح المفاتيح إمتى؟».`,
+            mistakes: R`«بقفل الزرار في الواجهة» كحل وحيد: الـ retry بيحصل من الشبكة مش من اليوزر. و «دوّر لو موجود، وإلا اعمل» من غير unique فالتكرار المتزامن يعدّي. ومفتاح جديد مع كل retry فمفيش فايدة. ومفتاح عالمي من غير ربط باليوزر.`
+          },
+          lines: [
+            "جدول المفاتيح.",
+            "المفتاح نفسه primary key، فالتكرار مستحيل على مستوى القاعدة.",
+            "صاحب المفتاح.",
+            "الـ status اللي اترد.",
+            "الرد المحفوظ عشان يترجع زي ما هو.",
+            "وقت الإنشاء عشان المسح بعد مدة.",
+            "قفلة."
+          ],
+          sol: R`المتوقع لو التنفيذ صح: طلب واحد بس في القاعدة، والتلات ردود زي بعض (أو واحد 201 والباقيين نفس الرد المحفوظ، أو 409 «in progress» لو وصلوا والأول لسه بيتعمل).
+
+لو لقيت ٢ أو ٣ طلبات، يبقى بتعمل [[findUnique]] وبعدين [[create]]: التلاتة دوّروا مع بعض قبل ما أي واحد يكتب. الحل إنك تحجز المفتاح الأول بـ [[create]] وتسيب الـ primary key يرفض التكرار (Prisma بيرمي P2002)، وبعدين تعمل الطلب وتحدّث الصف بالرد.`,
+          solCode: R`router.post("/", requireAuth, async (req, res) => {
+  const key = req.get("Idempotency-Key");
+  if (!key) return res.status(400).json({ error: "IDEMPOTENCY_KEY_REQUIRED" });
+  try {
+    await db.idempotencyKey.create({ data: { key, userId: req.user.id, status: 0, response: {} } });
+  } catch (e) {
+    if (e.code !== "P2002") throw e;
+    const saved = await db.idempotencyKey.findUnique({ where: { key } });
+    if (saved.userId !== req.user.id) return res.status(422).json({ error: "KEY_REUSED" });
+    if (saved.status === 0) return res.status(409).json({ error: "IN_PROGRESS" });
+    return res.status(saved.status).json(saved.response);
+  }
+  const order = await ordersService.create(req.user.id, req.body);
+  await db.idempotencyKey.update({ where: { key }, data: { status: 201, response: order } });
+  res.status(201).json(order);
+});`
+        },
+        {
+          cmd: "استراتيجية الأخطاء",
+          title: "إزاي بتتعامل مع الأخطاء في API بـ Node؟ (error handling strategy)",
+          desc: R`عندي نوعين: أخطاء متوقعة (operational) زي validation أو مش موجود أو مش مسموح أو خدمة برّه واقعة، ودي بترميها كـ [[AppError]] فيها status وكود ثابت. وأخطاء bugs (undefined is not a function) ودي بتبقى 500 برسالة عامة وبتتسجّل بالـ stack وبتروح Sentry.
+
+كل ده بيتمسك في error middleware واحد في الآخر بيرجّع نفس شكل الـ JSON دايمًا. والـ process نفسها: [[unhandledRejection]] و [[uncaughtException]] بيتسجّلوا والـ process بتقفل نضيف وتتعاد (PM2 أو Docker)، مش بتكمّل في حالة مش معروفة.`,
+          example: R`export class AppError extends Error {
+  constructor(status, code, message) { super(message); this.status = status; this.code = code; }
+}
+
+app.use((err, req, res, next) => {
+  if (err instanceof AppError) return res.status(err.status).json({ error: err.code, message: err.message });
+  req.log.error({ err }, "unhandled error");
+  res.status(500).json({ error: "INTERNAL", requestId: req.id });
+});
+
+process.on("unhandledRejection", (reason) => { logger.fatal({ reason }, "unhandledRejection"); shutdown(1); });
+process.on("uncaughtException", (err) => { logger.fatal({ err }, "uncaughtException"); shutdown(1); });`,
+          try: R`في الـ API بتاعك: ارمي [[new AppError(404, "ORDER_NOT_FOUND", "...")]] من service، وارمي [[TypeError]] عادي من service تانية، وقارن الردين واللوج. وبعدين اعمل [[Promise.reject(new Error("x"))]] برّه أي route وشوف الـ process عملت إيه.`,
+          flag: "script",
+          deep: {
+            why: "API من غير استراتيجية بيرجّع أشكال أخطاء مختلفة في كل route، وأحيانًا بيسرّب stack traces ورسايل القاعدة للعميل، وأحيانًا بيبلع الخطأ فمحدش يعرف. والسؤال بيبين إنك شغّلت حاجة في الإنتاج.",
+            how: R`النقط اللي تقولها: شكل واحد للأخطاء ([[{ error: "CODE", message }]] أو [[application/problem+json]]، درس [[problem+json]] في تاب «APIs متقدمة» ودرس «شكل الأخطاء» في «تاب بناء مشروع كامل»)، والواجهة بتعتمد على الـ code مش النص.
+
+مكان الرمي: الـ validation في الـ middleware (400)، والـ service ترمي أخطاء الـ business (404 و 409 و 422)، ومحدش جوه الـ service يعمل [[res.status]]. والخطأ من مكتبة (Prisma P2002، أو 503 من البوابة) بيتحول لـ AppError في مكان واحد.
+
+Express 5 بيمسك rejections الـ async handlers لوحده (درس [[async errors في Express 5]]). والـ 500 عمره ما يرجّع [[err.message]] للعميل، بس [[requestId]] عشان تدوّر بيه في اللوج (درس [[AsyncLocalStorage]]).
+
+uncaughtException: الـ process بعدها في حالة مش معروفة (اتصال نص مفتوح، أو lock مش اتفك). الصح تسجّل، وتبطّل تقبل طلبات، وتقفل، والـ supervisor يشغّل نسخة جديدة. وفي Node الحديث الـ unhandledRejection بيقفل الـ process افتراضيًا أصلًا.
+
+والأخطاء اللي مش بتاعتك: timeouts على أي طلب لبرّه ([[AbortSignal.timeout(5000)]])، و retry بـ backoff للحاجات الـ idempotent بس، و circuit breaker لو الخدمة واقعة كتير.`,
+            when: R`أسئلة بعدها: «operational و programmer errors الفرق إيه؟». «ليه متكمّلش بعد uncaughtException؟». «إزاي تعرف إن فيه أخطاء في الإنتاج؟» (Sentry و alerts على نسبة الـ 5xx). «4xx ولا 5xx لو القاعدة وقعت؟» (503).`,
+            mistakes: R`[[try/catch]] في كل route بيرجّع [[res.status(500).json(err)]] فيسرّب كل حاجة. و [[catch (e) {}]] فاضي. و [[process.on("uncaughtException", log)]] والـ process تكمّل. ورسايل خطأ مختلفة للإيميل الغلط والباسورد الغلط في login (بتقول للمهاجم مين مسجّل).`
+          },
+          lines: [
+            "كلاس للأخطاء المتوقعة.",
+            "فيه status وكود ثابت ورسالة.",
+            "قفلة.",
+            "error handler واحد في الآخر.",
+            "خطأ متوقع: رد بالـ status والكود.",
+            "غير كده bug: سجّله بالـ stack.",
+            "ورد 500 عام ومعاه id الطلب بس.",
+            "قفلة.",
+            "promise اترفضت ومحدش مسكها: سجّل واقفل نضيف.",
+            "exception محدش مسكه: نفس الحاجة."
+          ],
+          sol: R`المتوقع: الـ AppError بيرجع 404 و [[{ error: "ORDER_NOT_FOUND", message: "..." }]] ومفيش سطر error في اللوج (أو سطر info، دي حاجة عادية). والـ TypeError بيرجع 500 و [[{ error: "INTERNAL", requestId: "..." }]] من غير أي تفاصيل، واللوج فيه سطر error بالـ stack والـ requestId نفسه.
+
+والـ rejection برّه الـ routes: سطر fatal في اللوج والـ process بتقفل بـ exit code 1، و Docker أو PM2 يشغّلها تاني. لو الـ process كمّلت عادي، يبقى الـ handler بيسجّل بس ومش بيقفل.
+
+ولو الـ 500 رجع فيه رسالة الـ TypeError أو stack، يبقى الـ handler بيبعت [[err.message]]. دي ثغرة تسريب معلومات.`,
+          solCode: R`function shutdown(code) {
+  server.close(() => process.exit(code));
+  setTimeout(() => process.exit(code), 10_000).unref();
+}`
+        },
+        {
+          cmd: "streams في الانترفيو",
+          title: "إزاي ترفع أو تنزّل ملف ٢ جيجا في Node؟ (streams & backpressure)",
+          desc: R`مستحيل أقرا الملف كله في الذاكرة. بستخدم streams: الملف بيتقري ويتبعت حتة حتة، والذاكرة ثابتة مهما كان الحجم. وبوصّلهم بـ [[pipeline]] عشان الأخطاء والـ backpressure: لو الطرف اللي بيكتب أبطأ، القراية بتستنى بدل ما الحتت تتكوّم في الرام.
+
+وللرفع الكبير جدًا، الأحسن إن الملف ميعدّيش على السيرفر خالص: signed upload URL والمتصفح يرفع لـ S3 مباشرة، والسيرفر ياخد إشعار لما يخلص.`,
+          example: R`router.get("/files/:id/download", requireAuth, async (req, res) => {
+  const file = await filesService.getMine(req.user.id, req.params.id);
+  res.attachment(file.name);
+  res.setHeader("Content-Length", file.size);
+  await pipeline(createReadStream(file.path), res);
+});`,
+          try: R`اعمل ملف ١ جيجا ([[fallocate -l 1G big.bin]] أو [[dd]])، ونزّله مرة بـ [[res.send(await readFile(path))]] ومرة بالـ pipeline، وراقب الـ RSS بتاع السيرفر في الحالتين. وبعدين نزّله بـ curl بسرعة محدودة ([[--limit-rate 1M]]) وشوف الذاكرة بتعمل إيه مع pipeline.`,
+          flag: "script",
+          deep: {
+            why: "بيختبر إنك فاهم إن الـ RAM محدودة وإن Node عنده أداة معمولة للمشكلة دي بالظبط. وبيفتح كلام عن backpressure، وده مفهوم كتير مبيعرفوهوش.",
+            how: R`النقط: ٤ أنواع streams (Readable و Writable و Duplex و Transform). الـ backpressure: [[write()]] بيرجّع false لما البافر ([[highWaterMark]]) يتملى، والمفروض تستنى [[drain]]، و pipeline بيعمل ده لوحده. و [[.pipe()]] مبيمررش الأخطاء، فـ pipeline أو [[stream.promises.pipeline]].
+
+في HTTP: [[req]] Readable و [[res]] Writable. فالرفع ممكن يتقري stream (busboy، أو multer بـ diskStorage) من غير ما يتجمّع في الرام. وفي الإنتاج: حد أقصى للحجم، و signed URL للملفات الكبيرة (درس [[signed upload URL]] في «تاب بناء مشروع كامل»)، ومعالجة بعد الرفع في queue.
+
+والتفاصيل والتجربة بالأرقام في درس [[streams و pipeline]].`,
+            when: R`أسئلة بعدها: «يعني إيه highWaterMark؟». «إزاي تعمل Transform بتحوّل CSV لـ JSON؟». «async iterators مع streams؟» ([[for await]]). «لو اليوزر قفل الاتصال في النص؟» (pipeline بيعمل destroy للكل، فالملف بيتقفل).`,
+            mistakes: R`«بقرا الملف بـ readFile وأبعته» أو «بزوّد الرام». و [[multer.memoryStorage()]] للملفات الكبيرة. و pipe من غير error handling فملف واحد بايظ بيسيب file descriptors مفتوحة.`
+          },
+          lines: [
+            "endpoint تنزيل ملف.",
+            "هات بيانات الملف بتاع اليوزر ده بس.",
+            "اسم الملف في Content-Disposition.",
+            "الحجم عشان المتصفح يعرض progress.",
+            "اقرا واكتب في الرد حتة حتة، والـ backpressure والإغلاق على pipeline.",
+            "قفلة."
+          ],
+          sol: R`المتوقع: مع [[readFile]] الـ RSS بيطلع فوق ١ جيجا وقت كل تنزيل (ولو اتنين نزّلوا مع بعض، اتنين جيجا). ومع pipeline بيفضل ثابت تقريبًا (عشرات الميجا) مهما كان حجم الملف.
+
+ومع [[--limit-rate 1M]]: الذاكرة لسه ثابتة، لأن الـ socket بطيء فبيرجّع false، و pipeline بيوقّف القراية لحد ما البافر يفضى. من غير backpressure، القراية كانت هتخلص في ثانية والجيجا كلها تتكوّم في الرام مستنية الشبكة.`,
+          solCode: R`fallocate -l 1G big.bin
+curl -s -o /dev/null --limit-rate 1M http://localhost:3000/files/1/download -H "Authorization: Bearer $TOKEN" &
+while sleep 1; do ps -o rss= -p $(pgrep -f "node server") ; done`
+        },
+        {
+          cmd: "graceful shutdown",
+          title: "إزاي تعمل deploy من غير ما طلبات تضيع؟ (graceful shutdown)",
+          desc: R`لما Docker أو Kubernetes أو PM2 عايزين يقفلوا النسخة القديمة، بيبعتوا SIGTERM، ولو مقفلتش في مدة (١٠ ثواني في Docker افتراضيًا) بيبعتوا SIGKILL.
+
+على SIGTERM: ابطّل تقبل اتصالات جديدة ([[server.close()]])، وخلّي الـ health check يرجع 503 عشان الـ load balancer يبطّل يبعتلك، وسيب الطلبات اللي شغالة تخلص، واقفل الـ workers والـ queues والقاعدة و Redis، وبعدين اخرج. ومعاه timeout: لو معلّق أكتر من كذا، اخرج بالعافية.`,
+          example: R`let shuttingDown = false;
+app.get("/health", (req, res) => res.status(shuttingDown ? 503 : 200).json({ ok: !shuttingDown }));
+
+process.on("SIGTERM", async () => {
+  shuttingDown = true;
+  logger.info("SIGTERM: draining");
+  setTimeout(() => process.exit(1), 25_000).unref();
+  server.close(async () => {
+    await Promise.allSettled([worker.close(), db.$disconnect(), redis.quit()]);
+    process.exit(0);
+  });
+});`,
+          try: R`اعمل route بياخد ٥ ثواني، وابعتله طلب، وفي النص ابعت [[kill -TERM <pid>]]. الطلب كمّل؟ وطلب جديد بعد الـ SIGTERM اتقبل؟ جرّب نفس الحاجة من غير الـ handler.`,
+          flag: "script",
+          deep: {
+            why: "كل deploy بيقفل نسخة. من غير إغلاق نضيف، كل deploy بيقطع طلبات شغالة (دفع في النص، أو رفع ملف)، ويسيب jobs نصها معمول، واتصالات قاعدة معلّقة. والسؤال بيبين إنك شغّلت تطبيق في الإنتاج مش على جهازك بس.",
+            how: R`النقط: SIGTERM مش SIGKILL (التاني مفيش handler ليه). و [[server.close()]] بيوقّف قبول اتصالات جديدة ويستنى الموجودة، بس الـ keep-alive connections ممكن تفضل مفتوحة: [[server.closeIdleConnections()]] أو خلي Node الحديث يعملها. والـ health بـ 503 قبل الإغلاق بشوية عشان الـ load balancer يلحق يشيلك.
+
+في Docker: [[CMD ["node", "server.js"]]] مش [[npm start]] (npm مبيوصّلش الـ signal دايمًا)، أو [[--init]]. والـ [[stop_grace_period]] أطول من الـ timeout بتاعك. وفي BullMQ [[worker.close()]] بيستنى الـ job الحالية. وفي Nest [[app.enableShutdownHooks()]].
+
+التفاصيل والكود في درس «الإغلاق النضيف» في تاب «Node و npm».`,
+            when: R`أسئلة بعدها: «الفرق بين SIGTERM و SIGKILL و SIGINT؟». «zero-downtime deploy إزاي؟» (rolling update + readiness + graceful shutdown). «websocket connections تعمل فيها إيه؟» (ابعت close للعميل عشان يعمل reconnect على نسخة تانية).`,
+            mistakes: R`[[process.exit()]] على طول في SIGTERM. أو handler من غير timeout فالـ process تعلّق لحد SIGKILL. أو [[npm start]] كـ PID 1 في Docker فالـ signal مبيوصلش. ونسيان الـ workers والـ intervals فالـ process مبتخرجش لوحدها.`
+          },
+          lines: [
+            "flag للحالة.",
+            "الـ health يرجع 503 وانت بتقفل، فالـ load balancer يشيلك.",
+            "لما SIGTERM يوصل...",
+            "...علّم إنك بتقفل.",
+            "سجّل.",
+            "حد أقصى: لو معلّق ٢٥ ثانية اخرج بالعافية (و unref عشان ميمنعش الخروج الطبيعي).",
+            "ابطّل تقبل اتصالات جديدة، ولما الموجودة تخلص...",
+            "...اقفل الـ worker والقاعدة و Redis، حتى لو واحد فشل.",
+            "اخرج بنجاح.",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`مع الـ handler: الطلب الشغال كمّل ورجع 200 بعد الـ ٥ ثواني، وأي طلب جديد بعد الـ SIGTERM اترفض بـ connection refused (السيرفر بطّل يسمع)، والـ process خرجت بـ 0 بعد ما الطلب خلص.
+
+من غير الـ handler: Node بيقفل فورًا على SIGTERM، والطلب الشغال بيقطع ([[curl: (52) Empty reply from server]]).
+
+لو الـ process مخرجتش خالص مع الـ handler، يبقى فيه حاجة لسه مفتوحة (interval، أو اتصال keep-alive، أو client Redis)، والـ timeout هو اللي هيطلّعها بعد ٢٥ ثانية.`,
+          solCode: R`app.get("/slow", async (req, res) => { await new Promise((r) => setTimeout(r, 5000)); res.json({ ok: true }); });
+// ترمنال ١: node server.js
+// ترمنال ٢: curl -s localhost:3000/slow & sleep 1; kill -TERM $(pgrep -f "node server.js"); wait
+// {"ok":true}   والسيرفر خرج بعدها`
         }
       ]
     }
