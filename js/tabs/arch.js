@@ -65,7 +65,10 @@ mkdir -p apps/web apps/api docs`,
             "شرط بزمن. معناه إن التفعيل هييجي من webhook، ومش لازم يبقى لحظي.",
             "الحالة الوحشة مكتوبة من الأول، عشان متبقاش مفاجأة.",
             "شرط التكرار. ده اللي هيخليك تعمل idempotency في الـ webhook."
-          ]
+          ],
+          sol: R`مفيش ناتج واحد صح هنا، بس فيه اختبار: كل شرط acceptance لازم يتقري كـ «لو عملت كذا، المفروض أشوف كذا». مثلًا لمشروع حجز ملاعب: «كلاعب، عايز أحجز ساعة في ملعب، عشان أضمن مكان»، وتحتها: الساعة المحجوزة تختفي من المتاح لأي حد تاني فورًا، ولو اتنين ضغطوا حجز في نفس اللحظة واحد بس ينجح والتاني يشوف «الساعة اتحجزت»، والإلغاء قبل الميعاد بـ ٢٤ ساعة بيرجّع الساعة للمتاح.
+
+أشهر غلطة إن الشرط يطلع صفة مش سلوك: «الحجز يبقى سريع» أو «الواجهة سهلة». دي مش بتتختبر، فحوّلها لرقم أو فعل: «صفحة المواعيد تفتح في أقل من ثانيتين على 4G». وغلطة تانية: story من غير «عشان»، فمتعرفش هي Must ولا لأ لما تيجي تقسّم في درس الـ MVP.`
         },
         {
           cmd: "MVP",
@@ -98,7 +101,10 @@ Won't:  تطبيق موبايل، شهادات، اشتراك شهري، أكت�
             "مهمة، بس ممكن الأدمن يغيّر الباسورد يدوي لحد ما تتعمل.",
             "حلوة، ومفيش حد هيرفض يشتري عشانها.",
             "مكتوبة صريح عشان محدش يبدأ فيها، ولا انت."
-          ]
+          ],
+          sol: R`النتيجة المتوقعة: عمود الـ Must يقصر لحد ما يبقى هو الـ core loop بس. في مثال myapp: تسجيل، وصفحة الكورسات، وشراء، ومشاهدة. لوحة الأدمن نفسها ممكن تنزل Should لو تقدر تضيف الكورسات الأولى بـ seed أو Prisma Studio. واسترجاع الباسورد تحس إنه Must، بس في أول أسبوعين ممكن يتعمل يدوي من الإيميل.
+
+علامة إنك قسّمت صح: لو شلت أي Must، المستخدم مبيقدرش يدفع أو ميقدرش ياخد اللي دفع عشانه. ولو لقيت الـ Must فيه أكتر من ٦ أو ٧ حاجات، غالبًا خلطت بين «لازم» و «حلو يبقى موجود». واستثناء مهم: الأمان والباك أب والمراقبة مبيتقسموش MoSCoW أصلًا، دول شروط لأي حاجة تتنشر.`
         },
         {
           cmd: "اختيار الـ stack",
@@ -138,7 +144,10 @@ Python (FastAPI) لو قلب المنتج AI أو معالجة داتا، لأن
             "البديل الأول واترفض ليه: شغل طويل ومحتاجين API لتطبيق موبايل.",
             "البديل التاني: microservices لفريق من واحد تمنها أكبر من فايدتها.",
             "التمن اللي هتدفعه. مفيش قرار ببلاش، واكتبه عشان محدش يتفاجئ."
-          ]
+          ],
+          sol: R`الـ ADR الصح فيه ٤ حاجات: السياق بأرقام حقيقية (كام واحد في الفريق، والميعاد، والقيود زي SEO أو بوابة دفع معينة)، والقرار، وبديلين على الأقل اترفضوا وجنب كل واحد سبب مرتبط بالسياق ده، والتمن اللي هتدفعه (Consequences). مثلًا «Why not Django: الفريق كله JavaScript، و types مشتركة بين الواجهة والـ API أهم لينا من الـ admin الجاهز».
+
+الغلطة الأشهر إن سبب الرفض يبقى عام: «Laravel قديم» أو «Go صعب». ده رأي مش قرار. السبب لازم يتربط بالسياق، ولو السياق اتغير (فريق أكبر، أو موبايل) القرار يتراجع بـ ADR جديد، مش بتعديل القديم. وغلطة تانية إن Consequences تبقى فاضية، كأن مفيش قرار ليه تمن.`
         }
       ]
     },
@@ -182,7 +191,21 @@ ORDER منفصل عن ENROLLMENT، ودي أهم نقطة في الرسمة. ا�
             "المستخدم ليه طلبات كتير، ومنها اللي فشل.",
             "كل طلب لكورس واحد، والكورس ليه طلبات كتير.",
             "نفس جدول المستخدمين فيه المدرّبين كمان، ولكل كورس مدرّب واحد."
-          ]
+          ],
+          sol: R`لو الرسمة صح، GitHub هيعرضها صورة جوه بلوك [[mermaid]]. ولو ظهرت كنص، يبقى فيه غلطة syntax: غالبًا علاقة من غير label بين علامتين تنصيص، أو اسم كيان فيه مسافة.
+
+المشي بالـ stories هو الجزء المهم. في myapp، «الطالب يشتري كورس» بتكتب في ORDER (PENDING)، وبعدين الـ webhook بيحدّثه لـ PAID ويكتب في ENROLLMENT. و «أشوف الكورسات» بتقرا COURSE و LESSON بس. أول story هتكشف نقص عادةً هي «الطالب يكمّل من آخر درس وقف عنده»: محتاجة جدول LESSON_PROGRESS (userId و lessonId و completedAt) مش موجود في الرسمة. ده بالظبط اللي التجربة عايزاك تلاقيه.
+
+غلطة شائعة إنك تحط [[courseIds]] كـ array جوه USER بدل جدول ENROLLMENT. ساعتها مفيش مكان لتاريخ الاشتراك ولا تقدر تمنع التكرار بـ unique.`,
+          solCode: R`erDiagram
+  USER ||--o{ ENROLLMENT : "يشترك"
+  COURSE ||--o{ ENROLLMENT : "فيه طلاب"
+  COURSE ||--|{ LESSON : "فيه دروس"
+  USER ||--o{ ORDER : "بيطلب"
+  ORDER }o--|| COURSE : "لكورس"
+  USER ||--o{ COURSE : "بيدرّس"
+  USER ||--o{ LESSON_PROGRESS : "بيخلّص"
+  LESSON ||--o{ LESSON_PROGRESS : "اتخلّص"`
         },
         {
           cmd: "schema.prisma",
@@ -244,7 +267,68 @@ model Order {
             "العلاقة بالكورس.",
             "index لصفحة «طلباتي»: بتفلتر بالمستخدم وترتّب بالتاريخ.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد [[npx prisma migrate dev --name init]] هتلاقي في [[migration.sql]] سطر زي [[CREATE UNIQUE INDEX "Enrollment_userId_courseId_key"]]. وفي Prisma 7 الـ migrate مبقاش بيعمل generate لوحده، فشغّل [[npx prisma generate]] بعدها، وإلا الكود هيشتغل على client قديم.
+
+أول enrollment بيعدّي. التاني بيرمي [[PrismaClientKnownRequestError]] والـ [[code]] بتاعه [[P2002]]. في Prisma 7 مع الـ driver adapter، اسم الـ constraint مش في [[meta.target]] زي زمان، هتلاقيه جوه [[meta.driverAdapterError.cause]] ومعاه [[originalCode: '23505']] (كود PostgreSQL للـ unique) و [[table: 'Enrollment']]. عشان كده الـ error handler بيعتمد على [[err.code]] بس.
+
+لو التاني عدّى من غير خطأ، يبقى نسيت [[@@unique([userId, courseId])]] أو معملتش migration بعد ما ضفته.`,
+          solCode: R`enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+model User {
+  id           String       @id @default(cuid())
+  name         String
+  email        String       @unique
+  passwordHash String
+  role         Role         @default(STUDENT)
+  createdAt    DateTime     @default(now())
+  teaching     Course[]
+  enrollments  Enrollment[]
+  orders       Order[]
+}
+
+model Course {
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  title        String
+  priceCents   Int
+  published    Boolean      @default(false)
+  instructorId String
+  instructor   User         @relation(fields: [instructorId], references: [id])
+  enrollments  Enrollment[]
+  orders       Order[]
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  courseId  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+// Order زي المثال بالظبط
+
+// src/dup.ts: شغّله بـ npx tsx src/dup.ts
+import { Prisma } from "./generated/prisma/client";
+import { prisma } from "./db";
+
+const s = await prisma.user.findFirstOrThrow({ where: { role: "STUDENT" } });
+const c = await prisma.course.findFirstOrThrow();
+await prisma.enrollment.create({ data: { userId: s.id, courseId: c.id } });
+try {
+  await prisma.enrollment.create({ data: { userId: s.id, courseId: c.id } });
+} catch (e) {
+  if (e instanceof Prisma.PrismaClientKnownRequestError) console.log(e.code); // P2002
+  else throw e;
+}`
         },
         {
           cmd: "قايمة الـ endpoints",
@@ -289,7 +373,10 @@ POST   /admin/courses                admin    كورس جديد`,
             "البوابة بتكلّمنا. الحماية توقيع HMAC، مش مستخدم داخل.",
             "كورساتي. الـ userId جاي من التوكن مش من الـ URL.",
             "إنشاء كورس للأدمن بس."
-          ]
+          ],
+          sol: R`الإجابة الصح لكل سطر بتبقى اسم حاجة في الكود، مش «هنتأكد». في قايمة myapp: [[public]] مفيش حاجة تمنع ودي مقصودة، بس [[GET /courses/:slug]] لازم يشيل رابط الفيديو لغير المشترك. و [[student]] بيمنعها [[requireAuth]]. و [[owner]] في [[GET /orders/:id]] مش بيمنعها الدور خالص: بيمنعها [[userId: req.user.id]] جوه الـ where (درس «ownership»). و [[hmac]] بيمنعها [[verifyPaymob]]. و [[admin]] بيمنعها [[requireRole("ADMIN")]].
+
+أشهر حاجة هتكتشفها إن فيه endpoint عمود «مين» بتاعه [[student]] وهو في الحقيقة [[owner]]: أي طالب مسجل دخول يقدر يقرا طلب طالب تاني لو غيّر الـ id. دي اسمها IDOR، وهي أشهر ثغرة في APIs الحقيقية. وحاجة تانية: [[POST /auth/login]] و [[/auth/signup]] مكتوب قدامهم public، بس محتاجين rate limit، فاكتبه في نفس العمود.`
         },
         {
           cmd: "شكل الأخطاء",
@@ -307,6 +394,7 @@ export function errorHandler(err, req, res, next) {
   }
   if (err.code === "P2002") return res.status(409).json({ error: { code: "CONFLICT", message: "موجود قبل كده" } });
   if (err.code === "P2025") return res.status(404).json({ error: { code: "NOT_FOUND", message: "مش موجود" } });
+  if (err.type === "entity.too.large" || err.type === "entity.parse.failed") return res.status(err.status).json({ error: { code: err.status === 413 ? "TOO_LARGE" : "BAD_JSON", message: "الطلب مش مظبوط" } });
   if (err instanceof AppError) return res.status(err.status).json({ error: { code: err.code, message: err.message } });
   (req.log ?? console).error(err);
   res.status(500).json({ error: { code: "INTERNAL", message: "حصلت مشكلة، جرّب تاني" } });
@@ -338,11 +426,30 @@ export function errorHandler(err, req, res, next) {
             "قفلة.",
             "Prisma P2002 معناها unique اتكسر، زي إيميل متسجّل قبل كده. نرد 409.",
             "Prisma P2025 معناها السجل مش موجود. نرد 404.",
+            "أخطاء express.json() نفسه: body أكبر من الـ limit (413) أو JSON بايظ (400). من غير السطر ده الاتنين بيطلعوا 500.",
             "أخطاؤنا المعروفة بتطلع بالـ status والـ code بتوعها.",
             "أي حاجة تانية تروح اللوج بالتفاصيل كاملة (لوجر الطلب لو فيه pino-http، وإلا console)...",
             "...والمستخدم ياخد 500 برسالة عامة من غير أي تفاصيل داخلية.",
             "قفلة."
-          ]
+          ],
+          sol: R`الأول يرجّع [[HTTP/1.1 403 Forbidden]] وجسمه [[{"error":{"code":"FORBIDDEN","message":"مش مسموحلك"}}]]. التاني يرجّع [[500]] وجسمه [[{"error":{"code":"INTERNAL","message":"حصلت مشكلة، جرّب تاني"}}]]، وفي ترمنال السيرفر هتلاقي [[Error: boom]] ومعاها الـ stack والملف والسطر. ولو عملت route [[async]] بيرمي، في Express 5 النتيجة نفس الـ 500 بالظبط من غير try/catch.
+
+لو شفت صفحة HTML فيها [[Error: boom]] بدل JSON، يبقى الـ errorHandler مش متسجّل، أو متسجّل قبل الـ routes، أو ناقصه الـ parameter الرابع [[next]]. ولو شفت [[{"error":{"code":"INTERNAL","message":"boom"}}]]، يبقى انت بترجّع [[err.message]] للمستخدم، ودي بالظبط اللي الدرس بيحذّر منها. وجرّب كمان [[curl -d "{bad" -H "Content-Type: application/json"]]: لازم يرجع 400 [[BAD_JSON]] مش 500.`,
+          solCode: R`import express from "express";
+import { AppError, errorHandler } from "./lib/errors.js";
+
+const app = express();
+app.use(express.json());
+app.get("/forbidden", () => { throw new AppError(403, "FORBIDDEN", "مش مسموحلك"); });
+app.get("/boom", () => { throw new Error("boom"); });
+app.get("/async-boom", async () => { throw new Error("async boom"); });
+app.use(errorHandler);
+app.listen(4000);
+
+// في ترمنال تاني:
+// curl -i localhost:4000/forbidden
+// curl -i localhost:4000/boom
+// curl -i localhost:4000/async-boom`
         }
       ]
     },
@@ -390,7 +497,48 @@ export function errorHandler(err, req, res, next) {
             "التوثيق جنب الكود، وبيتراجع في نفس الـ PR.",
             "ملف الـ workspace اللي بيخلي pnpm يعرف الـ packages.",
             "CI واحد بيعمل lint و test للكل، أو للي اتغير بس."
-          ]
+          ],
+          sol: R`بعد [[pnpm install]] الـ package المشتركة بتتربط بـ symlink جوه [[node_modules/@myapp/shared]] في كل app، فمفيش build ولا publish. و [[pnpm -r typecheck]] يعدّي على الاتنين.
+
+لما تغيّر [[courseId]] لـ [[courseSlug]] في الـ shared، شغّل [[pnpm -r --no-bail typecheck]] (من غير [[--no-bail]] pnpm بيقف عند أول واحد يقع). هتشوف غلطتين في نفس اللحظة: في الـ api [[Property 'courseId' does not exist on type '{ courseSlug: string; }']]، وفي الـ web [[Object literal may only specify known properties, and 'courseId' does not exist]]. ده الهدف كله: العقد بين الواجهة والـ API اتكسر، والـ CI مسكه قبل ما يوصل للمستخدم.
+
+لو محدش وقع، غالبًا الـ web مستورد القيم بـ any، أو الـ package مش متعرّفة كـ [[workspace:*]] ومتسطبة نسخة قديمة من npm.`,
+          solCode: R`// pnpm-workspace.yaml
+packages:
+  - "apps/*"
+  - "packages/*"
+
+// packages/shared/package.json
+{
+  "name": "@myapp/shared",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "zod": "^4" }
+}
+
+// packages/shared/src/index.ts
+import { z } from "zod";
+export const CreateOrder = z.object({ courseId: z.string() });
+export type CreateOrderInput = z.infer<typeof CreateOrder>;
+
+// apps/api/package.json و apps/web/package.json (الجزء المهم)
+"scripts": { "typecheck": "tsc --noEmit" },
+"dependencies": { "@myapp/shared": "workspace:*" }
+
+// apps/api/src/orders.ts
+import { CreateOrder } from "@myapp/shared";
+export function createOrder(body: unknown) {
+  const { courseId } = CreateOrder.parse(body);
+  return { courseId };
+}
+
+// apps/web/src/order-form.ts
+import type { CreateOrderInput } from "@myapp/shared";
+export const initial: CreateOrderInput = { courseId: "" };
+
+// من الـ root
+// pnpm install && pnpm -r --no-bail typecheck`
         },
         {
           cmd: "feature folders",
@@ -431,7 +579,60 @@ export function errorHandler(err, req, res, next) {
             "الـ middleware اللي بيتحط قدام الـ routes.",
             "بيبني الـ app ويرجّعه. الاختبارات بتستورده من هنا.",
             "بيشغّل السيرفر بس. ده الملف اللي بيتشغّل في الإنتاج."
-          ]
+          ],
+          sol: R`الاختبار لازم يعدّي من غير ما تعمل [[app.listen]] ولا supertest: [[coursesService.list()]] دالة عادية بترجّع array. وعشان تتأكد إن الـ service نضيف، [[grep -rn express src/modules/courses/courses.service.ts]] لازم يرجع فاضي. الناتج المتوقع من Vitest: [[Test Files 1 passed]] و [[Tests 2 passed]].
+
+الـ routes هي الوحيدة اللي تعرف HTTP: بتاخد [[req.query]]، وتعمله parse بالـ schema، وتنادي الـ service، وترجّع JSON. لو لقيت نفسك بتعدّي [[req]] أو [[res]] للـ service، أو بترمي [[res.status(404)]] من جواها، يبقى الحدود باظت. الـ service ترمي [[AppError]]، والـ handler هو اللي يحوّل.`,
+          solCode: R`// modules/courses/courses.schema.ts
+import { z } from "zod";
+export const ListCourses = z.object({
+  q: z.string().trim().max(100).optional(),
+  take: z.coerce.number().int().min(1).max(50).default(20),
+});
+export type ListCoursesInput = z.infer<typeof ListCourses>;
+
+// modules/courses/courses.service.ts
+import { db } from "../../lib/db";
+import type { ListCoursesInput } from "./courses.schema";
+
+export const coursesService = {
+  list({ q, take = 20 }: Partial<ListCoursesInput> = {}) {
+    return db.course.findMany({
+      where: { published: true, ...(q && { title: { contains: q, mode: "insensitive" } }) },
+      select: { id: true, slug: true, title: true, priceCents: true },
+      orderBy: { title: "asc" },
+      take,
+    });
+  },
+};
+
+// modules/courses/courses.routes.ts
+import { Router } from "express";
+import { ListCourses } from "./courses.schema";
+import { coursesService } from "./courses.service";
+
+export const coursesRouter = Router();
+coursesRouter.get("/courses", async (req, res) => {
+  res.json({ data: await coursesService.list(ListCourses.parse(req.query)) });
+});
+
+// modules/courses/courses.service.test.ts
+import { afterAll, expect, test } from "vitest";
+import { db } from "../../lib/db";
+import { coursesService } from "./courses.service";
+
+afterAll(() => db.$disconnect());
+
+test("بيرجّع الكورسات المنشورة بس، ومن غير أعمدة داخلية", async () => {
+  const list = await coursesService.list();
+  expect(list.length).toBeGreaterThan(0);
+  expect(list[0]).not.toHaveProperty("instructorId");
+});
+
+test("البحث مش حساس لحالة الحروف", async () => {
+  const list = await coursesService.list({ q: "sql" });
+  expect(list.every((c) => c.title.toLowerCase().includes("sql"))).toBe(true);
+});`
         },
         {
           cmd: ".env لكل بيئة",
@@ -480,7 +681,24 @@ export const config = Env.parse(process.env);`,
             "Redis اختياري في dev، بس في الإنتاج هتحتاجه للـ queues.",
             "قفلة الـ schema.",
             "افحص مرة واحدة وقت التشغيل، ولو فيه غلط السيرفر ميقومش خالص."
-          ]
+          ],
+          sol: R`السيرفر لازم يقع قبل ما يطبع «listening»، بـ [[ZodError]] فيها [[path: ["JWT_SECRET"]]] و [[message: "Invalid input: expected string, received undefined"]] (ده شكل رسايل Zod 4). ولو حطيت قيمة قصيرة زي [[JWT_SECRET=short]] هتشوف [[Too small: expected string to have >=32 characters]]. ولو [[APP_ENV=dev]] هتشوف [[Invalid option: expected one of "development"|"staging"|"production"]]. وكل المتغيرات الغلط بتظهر مع بعض في نفس الرسالة، مش واحد واحد.
+
+لو السيرفر اشتغل عادي، يبقى في الغالب الـ .env مش بيتقري أصلًا (ناقص [[import "dotenv/config"]] أو [[node --env-file=.env]])، والمتغير جاي من الـ shell. أو [[config]] بيتعمل import بعد ما السيرفر اشتغل. لازم يبقى أول حاجة في [[server.ts]].`,
+          solCode: R`# .env.example: الأسماء بس، ويترفع على git
+APP_ENV=development
+DATABASE_URL=
+JWT_SECRET=
+WEB_ORIGIN=http://localhost:3000
+PAYMOB_SECRET_KEY=
+PAYMOB_HMAC_SECRET=
+# اختياري
+REDIS_URL=
+
+# .gitignore
+.env
+.env.*
+!.env.example`
         },
         {
           cmd: "ترتيب البناء",
@@ -519,7 +737,24 @@ export const config = Env.parse(process.env);`,
             "أخطر ميزة. خلي قبلها وبعدها وقت.",
             "المحتوى المحمي: معتمد على الاشتراك اللي بيجي من الدفع.",
             "التشغيل: مراقبة وباك أب قبل ما الناس الحقيقية تدخل."
-          ]
+          ],
+          sol: R`الـ skeleton خلص لما تفتح الرابط الحقيقي (مش localhost) وتلاقي الصفحة بتعرض [[ok: true]] جاية من API على سيرفر، والـ API سأل القاعدة فعلًا. ولو وقّفت القاعدة، الصفحة المفروض تعرض خطأ مش [[ok: true]] ثابتة. كده انت اتأكدت من الـ DNS والـ HTTPS والـ CORS ومتغيرات البيئة والـ migrations على السيرفر، وكل دول حاجات بتاخد يوم لوحدها لو سيبتها للآخر.
+
+أشهر حاجة هتقابلك: الصفحة بتشتغل على جهازك ومش على السيرفر عشان [[NEXT_PUBLIC_API_URL]] لسه بـ localhost، أو الـ API بيرفض الطلب بـ CORS لأن [[WEB_ORIGIN]] مش متظبط على الدومين الحقيقي. ده بالظبط سبب إنك تعمله أول يوم.`,
+          solCode: R`// apps/api/src/app.ts
+app.get("/health", async (req, res) => {
+  await db.$queryRaw$__btSELECT 1$__bt;
+  res.json({ ok: true });
+});
+
+// apps/web/app/page.tsx (server component)
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const res = await fetch(process.env.API_URL + "/health", { cache: "no-store" });
+  const data = res.ok ? await res.json() : { ok: false };
+  return <main>API: {data.ok ? "ok" : "down"}</main>;
+}`
         },
         {
           cmd: "definition of done",
@@ -558,7 +793,10 @@ export const config = Env.parse(process.env);`,
             "اتجرّبت باللغتين وعلى شاشة صغيرة.",
             "لو وقعت في الإنتاج هتعرف، ومفيش باسورد أو توكن في اللوج.",
             "اللي جاي بعدك يلاقي الإعدادات والقرارات مكتوبة."
-          ]
+          ],
+          sol: R`GitHub بيقرا الملف ده من [[.github/pull_request_template.md]] على الـ default branch، فأول PR بعد ما يتعمل merge هيفتح والقايمة جواه لوحدها، والـ checkboxes بتتعلّم بالضغط عليها. ولو القايمة مظهرتش، غالبًا الملف لسه في branch تانية، أو اسمه أو مكانه غلط.
+
+النتيجة الطبيعية لأول مرة إنك متعلّمش على كله. أشهر ٣ بيفضلوا فاضيين: الحالات الوحشة (مفيش loading ولا رسالة لما النت يقطع)، واختبار الصلاحيات بيوزر تاني، والموبايل و RTL. ومتعلّمش على حاجة معملتهاش «عشان هي بسيطة»، القايمة دي قيمتها في إنها صادقة. واللي فاضل اعمله issues ليها أصحاب.`
         }
       ]
     },
@@ -616,7 +854,12 @@ router.post("/auth/signup", async (req, res) => {
             "إنشاء المستخدم. لو الإيميل موجود، القيد unique بيرفض والرد يبقى 409.",
             "رد 201 بالحقول الآمنة بس. الـ hash مبيطلعش أبدًا.",
             "قفلة."
-          ]
+          ],
+          sol: R`الأول يرجّع [[201]] وجسمه [[{"data":{"id":"...","name":"Ali","email":"ali@example.com"}}]]. لاحظ إن الإيميل رجع small letters، لأن الـ [[transform]] في Zod شغّال قبل ما يوصل للقاعدة. التاني يرجّع [[409]] و [[{"error":{"code":"CONFLICT","message":"موجود قبل كده"}}]]: الإيميلين بقوا نفس القيمة، والـ [[@unique]] رمى P2002، والـ error handler حوّله.
+
+في الجدول هتلاقي حاجة شكلها كده: [[$argon2id$v=19$m=65536,p=4,t=3$le7pL+uK...$39opv3ec...]]. [[v=19]] نسخة الخوارزمية، و [[m=65536]] يعني ٦٤ ميجا رام لكل hash، و [[t=3]] عدد اللفات، و [[p=4]] التوازي، وبعدها الـ salt وبعدها الناتج. عشان كل الإعدادات جوه النص، [[argon2.verify]] مش محتاج تديله أي حاجة غير الـ hash والباسورد.
+
+لو التانية رجعت 201، يبقى الـ transform مش شغال (مثلًا بتعمل [[req.body.email]] بدل [[input.email]])، وعندك دلوقتي حسابين لنفس الشخص. ولو رجعت 500، يبقى الـ error handler مش بيحوّل P2002.`
         },
         {
           cmd: "access + refresh",
@@ -670,7 +913,19 @@ router.post("/auth/login", loginLimiter, async (req, res) => {
             "حطه في cookie محدش يقراها غير المتصفح، ومبتتبعتش غير لمسارات الـ auth.",
             "رجّع التوكن القصير وبيانات المستخدم الأساسية.",
             "قفلة."
-          ]
+          ],
+          sol: R`في DevTools هتلاقي [[rt]] وقدامها علامة في HttpOnly و Secure، و SameSite بـ Lax، و Path بـ [[/auth]]. نفس الكلام ظاهر في الـ header: [[Set-Cookie: rt=...; Max-Age=2592000; Path=/auth; HttpOnly; Secure; SameSite=Lax]]. و [[document.cookie]] في الـ Console هترجع نص فاضي أو cookies تانية، بس [[rt]] مش فيها. ده اللي بيحميها من أي XSS.
+
+في jwt.io الـ header هيبقى [[{"alg":"HS256","typ":"JWT"}]]، والـ payload [[{"sub":"cmun8...","role":"STUDENT","iat":1790720120,"exp":1790721020}]]. الفرق بين exp و iat هو 900 ثانية، يعني الـ 15 دقيقة. وأي حد معاه التوكن يقرا الكلام ده من غير المفتاح، التوقيع بس بيمنع التعديل.
+
+لو [[rt]] مظهرتش خالص: على [[http://]] غير localhost المتصفح بيرفض أي cookie عليها Secure. ولو الواجهة على port تاني، لازم [[credentials: "include"]] في الـ fetch، وإلا المتصفح بيتجاهل الـ Set-Cookie.`,
+          solCode: R`# نفس الكلام من الترمنال
+curl -si -H "Content-Type: application/json" \
+  -d '{"email":"ali@example.com","password":"secret123"}' \
+  localhost:4000/auth/login | grep -i set-cookie
+
+# فك الـ payload من غير أي مفتاح
+node -e 'const t = process.argv[1]; console.log(JSON.parse(Buffer.from(t.split(".")[1], "base64url")))' "ACCESS_TOKEN_HERE"`
         },
         {
           cmd: "refresh rotation",
@@ -725,7 +980,17 @@ router.post("/auth/logout", async (req, res) => {
             "لو فيه cookie، علّم الـ session بتاعتها إنها ملغية.",
             "امسح الـ cookie بنفس الـ path بالظبط، ورد 204.",
             "قفلة."
-          ]
+          ],
+          sol: R`أول refresh من الواجهة بيرجع 200 و cookie [[rt]] جديدة. لما تبعت القديمة بـ curl ترجع [[401]] و [[{"error":{"code":"TOKEN_REUSED","message":"سجّل دخول تاني"}}]]. ولو جربت بعدها الـ cookie الجديدة (اللي في المتصفح)، هترجع هي كمان [[TOKEN_REUSED]]، لأن الكود لغى كل sessions المستخدم ده. يعني المتصفح نفسه اتعمله logout، وده المقصود: لو الـ token القديم اتسرق، الاتنين يخرجوا والمستخدم الحقيقي يدخل تاني.
+
+في جدول الـ sessions هتلاقي كل الصفوف بتاعة المستخدم فيها [[revokedAt]]. ولو بعت من غير cookie خالص، الرد [[401 NO_SESSION]]. و logout بيرجع [[204]] ومعاه [[Set-Cookie: rt=; Path=/auth; Expires=Thu, 01 Jan 1970]].
+
+لو القديمة رجعت 200، يبقى انت مش بتلغي الـ session القديمة في الـ refresh. ولو الواجهة بتعمل ٣ refresh في نفس اللحظة وبتطلع TOKEN_REUSED لوحدها، دي مش مشكلة في السيرفر، دي الواجهة محتاجة الـ [[refreshing]] المشترك اللي في درس «apiFetch».`,
+          solCode: R`OLD='rt=...'   # انسخها من DevTools قبل الـ refresh
+curl -si -X POST -b "$OLD" localhost:4000/auth/refresh | head -1
+# HTTP/1.1 401 Unauthorized  +  {"error":{"code":"TOKEN_REUSED",...}}
+
+psql "$DATABASE_URL" -c 'SELECT id, "revokedAt" FROM "Session" ORDER BY "expiresAt" DESC LIMIT 5;'`
         },
         {
           cmd: "apiFetch",
@@ -781,7 +1046,12 @@ export async function apiFetch(path, options = {}) {
             "قفلة.",
             "رجّع الرد. لو لسه 401، الواجهة هتوديه صفحة الدخول.",
             "قفلة."
-          ]
+          ],
+          sol: R`في Network بعد الـ 30 ثانية هتشوف الترتيب ده: ٣ طلبات راجعة 401، وبعدين طلب [[/auth/refresh]] واحد بـ 200، وبعدين نفس الـ ٣ طلبات تاني بـ 200. جربناها بـ access عمره ثانيتين و ٣ طلبات مع بعض، والطلبات اللي اتبعتت بالترتيب كانت: [[/me/data, /me/data, /admin/stats, /auth/refresh, /me/data, /me/data, /admin/stats]]. refresh واحد بس.
+
+السر في [[refreshing ??=]]: أول طلب يلاقيه null فيبدأ الـ refresh ويحط الـ promise فيه، والاتنين التانيين يلاقوه موجود فيستنوا نفس الـ promise. لو شلت السطر ده وخليت كل واحد يعمل refresh لوحده، هتشوف ٣ refresh، وأول واحد بس ينجح، والاتنين التانيين يبعتوا الـ cookie القديمة فيرجعوا [[TOKEN_REUSED]] ويعملوا logout للمستخدم كله.
+
+ولو طلب رجع 403 (مش مسموحله)، مفيش refresh ولا إعادة، والـ 403 بترجع زي ما هي. الـ refresh للـ 401 بس.`
         },
         {
           cmd: "password reset",
@@ -836,7 +1106,26 @@ router.post("/auth/reset", async (req, res) => {
             "في transaction: الباسورد الجديد، وعلّم التوكن إنه اتستخدم، والغي كل الـ sessions.",
             "رد 204. والواجهة توديه صفحة الدخول.",
             "قفلة."
-          ]
+          ],
+          sol: R`أول استخدام للينك يرجّع [[204]]، والباسورد الجديد يشتغل في الـ login. التاني بنفس اللينك يرجّع [[400]] و [[{"error":{"code":"BAD_TOKEN","message":"اللينك انتهى، اطلب واحد جديد"}}]]، لأن [[usedAt]] اتملى.
+
+الطلب لإيميل موجود ولإيميل مش موجود لازم يرجعوا نفس الـ status (200)، ونفس الجسم حرف بحرف، ونفس الـ Content-Length: [[{"data":{"message":"لو الإيميل مسجّل، هيوصلك لينك خلال دقايق"}}]]. قارنهم بـ [[curl -si]] مش بعينك. ولو الإيميل الموجود أبطأ بشكل واضح، يبقى انت بتبعت الإيميل جوه الـ request بدل الـ queue، والوقت نفسه بيكشف مين متسجل.
+
+والصح إن [[resetPassword]] يعمل ٣ حاجات في transaction: يعلّم على كل لينكات المستخدم إنها اتستخدمت، ويحدّث الـ hash، ويلغي كل الـ sessions، عشان لو حد كان داخل بالباسورد القديم يخرج.`,
+          solCode: R`const authService = {
+  async resetPassword(row, password) {
+    const passwordHash = await argon2.hash(password);
+    await db.$transaction([
+      db.passwordReset.updateMany({ where: { userId: row.userId, usedAt: null }, data: { usedAt: new Date() } }),
+      db.user.update({ where: { id: row.userId }, data: { passwordHash } }),
+      db.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } }),
+    ]);
+  },
+};
+
+// المقارنة
+// curl -si -H "Content-Type: application/json" -d '{"email":"ali@example.com"}' localhost:4000/auth/forgot
+// curl -si -H "Content-Type: application/json" -d '{"email":"nobody@example.com"}' localhost:4000/auth/forgot`
         },
         {
           cmd: "OAuth",
@@ -1682,7 +1971,19 @@ export const requireRole = (...roles) => (req, res, next) =>
             "قفلة.",
             "middleware بياخد الأدوار المسموحة ويرجّع middleware...",
             "...لو الدور في القايمة كمّل، ولو لأ 403."
-          ]
+          ],
+          sol: R`النتايج: من غير توكن [[401 UNAUTHENTICATED]]، وبتوكن طالب [[403 FORBIDDEN]]، وبتوكن أدمن [[200]]، وبتوكن متعدل [[401]]. لاحظ إن الكود بيرجّع [[TOKEN_EXPIRED]] لأي فشل في [[jwt.verify]]، سواء التوكن انتهى أو التوقيع غلط. ده كويس للواجهة (في الحالتين هتعمل refresh)، بس في اللوج فرّق بينهم: [[TokenExpiredError]] عادي، و [[JsonWebTokenError: invalid signature]] ممكن يبقى حد بيجرب.
+
+خلي بالك وانت بتعدّل: لو غيرت آخر حرف في التوكن، ممكن يعدّي! آخر حرف في base64url فيه bits زيادة مش مستخدمة، فساعات حرفين مختلفين بيطلّعوا نفس البايتات. غيّر حرف في نص الـ payload (الجزء اللي في النص) عشان تتأكد. وكمان [[bearer]] بحرف صغير هترجع 401 [[UNAUTHENTICATED]] لأن الكود بيدوّر على [[Bearer ]] بالظبط.
+
+لو الطالب رجع 200، يبقى [[requireRole]] مش متسجّل على الـ route، أو الدور بيتقري من الـ body بدل التوكن.`,
+          solCode: R`router.get("/admin/stats", requireAuth, requireRole("ADMIN"), async (req, res) => {
+  res.json({ data: { users: await db.user.count() } });
+});
+
+# curl -s -w ' %{http_code}\n' localhost:4000/admin/stats                                   # 401
+# curl -s -w ' %{http_code}\n' -H "Authorization: Bearer $STUDENT" localhost:4000/admin/stats   # 403
+# curl -s -w ' %{http_code}\n' -H "Authorization: Bearer $ADMIN" localhost:4000/admin/stats     # 200`
         },
         {
           cmd: "ownership",
@@ -1741,7 +2042,12 @@ router.get("/lessons/:id/video", requireAuth, async (req, res) => {
             "مش مشترك؟ 403 ومعاها سبب واضح.",
             "رابط موقّع عمره ساعة، مش رابط public.",
             "قفلة."
-          ]
+          ],
+          sol: R`بتوكن صاحب الطلب: [[200]] و [[{"data":{"id":"...","status":"PENDING","amountCents":50000,"course":{"slug":"...","title":"SQL"}}}]]. وبتوكن المستخدم التاني على نفس الـ id: [[404]] و [[{"error":{"code":"NOT_FOUND","message":"الطلب مش موجود"}}]]، مش 403. كده مبيعرفش إن الطلب ده موجود أصلًا. والأدمن بياخد 200 على أي طلب.
+
+الفيديو: درس [[isPreview: true]] بيرجع الرابط لأي حد مسجّل دخول. ودرس عادي في كورس مش مشترك فيه بيرجع [[403 NOT_ENROLLED]]. هنا 403 مقبولة، لأن الدرس نفسه ظاهر في صفحة الكورس ومفيش سر في وجوده.
+
+لو المستخدم التاني شاف الطلب، يبقى انت عامل [[findUnique({ where: { id } })]] وبعدين بتقارن [[userId]]، ونسيت المقارنة في route من الـ routes. الشرط جوه الـ where نفسه أضمن، لأنه ميتنسيش.`
         },
         {
           cmd: "POST /orders",
@@ -1786,7 +2092,17 @@ router.get("/lessons/:id/video", requireAuth, async (req, res) => {
             "اطلب من البوابة رابط دفع للطلب ده (الدرس الجاي).",
             "رجّع رقم الطلب والرابط، والواجهة تحوّل عليه.",
             "قفلة."
-          ]
+          ],
+          sol: R`الطلب بـ [[amountCents: 1]] بيرجع [[201]] و [[{"data":{"orderId":"...","checkoutUrl":"..."}}]]، وفي القاعدة [[amountCents]] بتاع الطلب هو [[priceCents]] بتاع الكورس (50000 مثلًا) والـ status [[PENDING]]. الحقل الزيادة اتشال لأن [[z.object]] في Zod بيشيل أي key مش متعرّف (strip)، والكود أصلًا بياخد السعر من القاعدة.
+
+بعد ما الكورس يبقى عندك (enrollment موجود)، نفس الطلب يرجّع [[409]] و [[{"error":{"code":"ALREADY_ENROLLED","message":"الكورس ده عندك أصلًا"}}]]. ولو بعت [[courseId]] لكورس مش منشور، [[404 NOT_FOUND]].
+
+لو الـ amountCents اللي في القاعدة طلع 1، يبقى انت عامل [[data: { ...req.body, userId }]] أو [[data: input]]. ده بالظبط الـ mass assignment، ومعناه إن أي حد يقدر يشتري أي كورس بقرش.`,
+          solCode: R`curl -s -w ' %{http_code}\n' -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"courseId":"COURSE_ID","amountCents":1}' localhost:4000/orders
+
+psql "$DATABASE_URL" -c 'SELECT "amountCents", status FROM "Order" ORDER BY "createdAt" DESC LIMIT 1;'`
         },
         {
           cmd: "Paymob intention",
@@ -1843,7 +2159,12 @@ router.get("/lessons/:id/video", requireAuth, async (req, res) => {
             "خد الـ client_secret.",
             "رابط صفحة الدفع الموحدة، بالـ public key والـ client_secret.",
             "قفلة."
-          ]
+          ],
+          sol: R`اللي المفروض تشوفه: [[createCheckout]] يرجّع رابط بالشكل [[https://accept.paymob.com/unifiedcheckout/?publicKey=egy_pk_test_...&clientSecret=egy_csk_test_...]]، ولما تفتحه تلاقي صفحة Paymob فيها اسم الكورس والمبلغ بالجنيه (المبلغ اللي انت بعته بالقروش مقسوم على 100). وبعد الدفع بكارت الاختبار، البوابة بترجّعك على [[redirection_url]] (صفحة الطلب عندك)، وبتبعت POST على [[notification_url]].
+
+في لوحة ngrok ([[http://127.0.0.1:4040]]) هتلاقي POST على [[/webhooks/paymob?hmac=...]]، وجسمه JSON فيه [["type": "TRANSACTION"]] و [[obj]] فيه [[success]] و [[pending]] و [[amount_cents]] و [[order.merchant_order_id]]. الأخير هو الـ id بتاع الطلب عندك (اللي بعته في [[special_reference]])، ومنه الـ webhook بيعرف أنهي طلب.
+
+أشهر مشاكل: 401 من [[/v1/intention/]] يبقى المفتاح السري غلط أو فيه مسافة، أو بتستخدم مفتاح live مع integration test. ولو الصفحة فتحت من غير الكارت، يبقى [[PAYMOB_CARD_INTEGRATION_ID]] مش رقم integration الكروت. ولو مفيش webhook خالص، يبقى [[API_ORIGIN]] لسه localhost بدل رابط ngrok. الأرقام وأسماء الحقول الدقيقة ممكن تتغير، فراجعها في وثائق Paymob الحالية.`
         },
         {
           cmd: "webhook الدفع",
@@ -1904,7 +2225,30 @@ export async function markPaid(orderId, tx) {
             "ادّي الاشتراك، وupsert عشان لو موجود ميقعش.",
             "قفلة الـ transaction.",
             "قفلة."
-          ]
+          ],
+          sol: R`الـ Replay التلاتة كلهم بيرجعوا [[200]]، وفي القاعدة الطلب [[PAID]] و [[gatewayTxId]] فيه رقم المعاملة، وعدد الـ enrollments للطالب ده والكورس ده [[1]]. أول مرة [[updateMany]] رجّعت [[count: 1]]، والمرتين اللي بعدها [[count: 0]] فرجعت قبل الـ upsert.
+
+الـ webhook الفاشل بعد النجاح برضه بيرجع 200، والطلب بيفضل [[PAID]]، لأن الـ route مبينادي [[markPaid]] غير لو [[success === true && pending === false]]. والـ hmac المتعدل بيرجع [[401]] من غير ما حاجة في القاعدة تتلمس.
+
+لو لقيت enrollment مكرر، يبقى نسيت الشرط [[status: { not: "PAID" }]] أو معندكش [[@@unique([userId, courseId])]]. ولو الـ Replay رجع 500 مرة من المرات، ابص على اللوج: غالبًا [[P2002]] على [[gatewayTxId]]، وده معناه إن نفس المعاملة اتسجلت على طلب تاني.`,
+          solCode: R`// تجربة من غير ngrok: ابعت webhook موقّع بإيدك
+import crypto from "node:crypto";
+
+const [orderId, success = "true"] = process.argv.slice(2);
+const obj = { id: 9001, amount_cents: 50000, created_at: "2026-09-29T20:00:00", currency: "EGP", error_occured: false,
+  has_parent_transaction: false, integration_id: 111, is_3d_secure: true, is_auth: false, is_capture: false,
+  is_refunded: false, is_standalone_payment: true, is_voided: false, order: { id: 555, merchant_order_id: orderId },
+  owner: 1, pending: false, source_data: { pan: "2346", sub_type: "MasterCard", type: "card" }, success: success === "true" };
+const fields = ["amount_cents","created_at","currency","error_occured","has_parent_transaction","id","integration_id","is_3d_secure","is_auth","is_capture","is_refunded","is_standalone_payment","is_voided","order.id","owner","pending","source_data.pan","source_data.sub_type","source_data.type","success"];
+const get = (o, p) => p.split(".").reduce((a, k) => (a == null ? a : a[k]), o);
+const hmac = crypto.createHmac("sha512", process.env.PAYMOB_HMAC_SECRET).update(fields.map((f) => String(get(obj, f))).join("")).digest("hex");
+const r = await fetch("http://localhost:4000/webhooks/paymob?hmac=" + hmac, {
+  method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "TRANSACTION", obj }),
+});
+console.log(r.status);
+
+// node hook.mjs ORDER_ID true   (٣ مرات)
+// node hook.mjs ORDER_ID false`
         },
         {
           cmd: "صفحة ما بعد الدفع",
@@ -1958,7 +2302,12 @@ export default function OrderResult({ orderId }) {
             "قفلة الـ effect.",
             "مدفوع؟ لينك للكورسات. غير كده رسالة انتظار.",
             "قفلة."
-          ]
+          ],
+          sol: R`وانت فاتح [[/orders/ID?success=true]] لطلب PENDING، الصفحة بتفضل «بنأكد الدفع مع البنك…»، وفي Network هتلاقي [[GET /orders/ID]] كل ثانيتين وكلهم راجعين [[{"data":{"status":"PENDING",...}}]]. الـ [[success=true]] في الـ URL ملهاش أي تأثير، وده المطلوب: أي حد يقدر يكتبها بإيده.
+
+أول ما تبعت الـ webhook، أول polling بعده يرجع [[PAID]]، والصفحة تتحول للينك «الدفع تم» في خلال ثانيتين، والطلبات تقف. ولو استنيت أكتر من دقيقة من غير webhook، الـ polling بيقف لوحده والصفحة بتفضل على الرسالة، وده المقصود (الإيميل هو اللي هيبلّغه).
+
+لو الصفحة قالت «تم» من غير webhook، يبقى انت بتقرا [[searchParams.success]] في مكان ما. ولو الطلبات مبتقفش بعد PAID، يبقى الـ [[clearInterval]] مش شغال. ولو رجعت 401 كل مرة، يبقى [[apiFetch]] مش بيبعت التوكن، والصفحة هتفضل PENDING للأبد.`
         },
         {
           cmd: "اشتراكات Stripe",
@@ -2108,7 +2457,28 @@ router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), a
             "رابط PUT موقّع للـ key ده وبالنوع ده بس، عمره ٥ دقايق.",
             "رجّع الرابط والـ key. الـ key هيتبعت تاني في خطوة التأكيد.",
             "قفلة."
-          ]
+          ],
+          sol: R`الرابط اللي بيرجع شكله كده: [[https://BUCKET.s3.REGION.amazonaws.com/covers/USER/UUID.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=...&X-Amz-Expires=300&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=...]]. [[X-Amz-Expires=300]] هي الـ ٥ دقايق، و [[SignedHeaders=content-type;host]] معناها إن الـ Content-Type داخل في التوقيع. الرفع الصح بيرجع [[200]] وجسم فاضي.
+
+بعد ٦ دقايق S3 بيرجع [[403]] و XML فيه [[AccessDenied]] و [[Request has expired]]. وبـ Content-Type مختلف (مثلًا image/png على رابط اتعمل لـ webp) بيرجع [[403 SignatureDoesNotMatch]]. ولو شفت في الـ Console [[blocked by CORS policy]] قبل ما الطلب يوصل أصلًا، يبقى CORS الـ bucket مش متظبط: لازم [[AllowedOrigins]] فيه origin الموقع، و [[AllowedMethods]] فيه PUT، و [[AllowedHeaders]] فيه content-type.
+
+لو الرفع الصح نفسه رجع [[SignatureDoesNotMatch]]، اتأكد إنك باعت نفس الـ type بالظبط اللي طلبت بيه الرابط، ومن غير headers زيادة. و [[requestChecksumCalculation: "WHEN_REQUIRED"]] موجودة عشان النسخ الجديدة من SDK متضيفش checksum الـ متصفح مش بيبعته.`,
+          solCode: R`// في الواجهة
+const file = input.files[0];
+const res = await apiFetch("/uploads/cover", { method: "POST", body: JSON.stringify({ type: file.type, size: file.size }) });
+const { data: { url, key } } = await res.json();
+const put = await fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+console.log(put.status, key); // 200
+
+// CORS على الـ bucket (S3 أو R2)
+[
+  {
+    "AllowedOrigins": ["http://localhost:3000", "https://myapp.com"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["content-type"],
+    "MaxAgeSeconds": 3000
+  }
+]`
         },
         {
           cmd: "معالجة الصور",
@@ -2156,7 +2526,30 @@ export async function processCover({ key }) {
             "قفلة الـ loop.",
             "علّم إن الغلاف جاهز، عشان الواجهة تعرضه بدل الـ placeholder.",
             "قفلة."
-          ]
+          ],
+          sol: R`صورة الموبايل بالطول غالبًا متخزنة بالعرض وجواها EXIF بيقول «لفّها 90 درجة» ([[orientation: 6]]). جربناها على صورة 4000×3000 عليها orientation 6: مع [[.rotate()]] نسخة الـ 400 طلعت [[400 x 533]] (بالطول، صح)، ومن غيرها طلعت [[400 x 300]] (نايمة على جنبها). ده لأن [[.rotate()]] من غير رقم بيلف حسب الـ EXIF، والـ webp الناتج مفيهوش EXIF أصلًا، فمفيش حد تاني هيلفها.
+
+الحجم: الأصل من موبايل حديث بيبقى من ٣ لـ ١٢ ميجا، ونسخة الـ 400 webp بـ quality 80 بتبقى عشرات الكيلو بس (الرقم بيختلف حسب الصورة). يعني تقريبًا ١٠٠ مرة أصغر، وده الفرق بين صفحة كورسات بتحمّل في ثانية وصفحة بتحمّل في ٣٠.
+
+لو النسختين طلعوا نفس الاتجاه، يبقى صورتك مفيهاش EXIF orientation (بعض التطبيقات بتلف البيكسلات نفسها قبل ما تحفظ). جرب صورة طالعة من الكاميرا مباشرة، أو اعمل واحدة بالسكربت اللي تحت.`,
+          solCode: R`import sharp from "sharp";
+
+// لو معندكش صورة فيها EXIF، اعمل واحدة: بيكسلات بالعرض و orientation 6
+const photo = await sharp({ create: { width: 4000, height: 3000, channels: 3, background: "#4a7" } })
+  .jpeg().withMetadata({ orientation: 6 }).toBuffer();
+
+const m = await sharp(photo).metadata();
+console.log("original", m.width, "x", m.height, "orientation", m.orientation, photo.length, "bytes");
+
+for (const rotate of [true, false]) {
+  let p = sharp(photo);
+  if (rotate) p = p.rotate();
+  const out = await p.resize({ width: 400, withoutEnlargement: true }).webp({ quality: 80 }).toBuffer();
+  const o = await sharp(out).metadata();
+  console.log(rotate ? "with rotate" : "no rotate", o.width, "x", o.height, out.length, "bytes");
+}
+// with rotate 400 x 533
+// no rotate 400 x 300`
         },
         {
           cmd: "socket.io",
@@ -2216,7 +2609,27 @@ export async function notify(userId, n) {
             "احفظ الإشعار الأول، عشان لو مش متصل يلاقيه بعدين.",
             "ابعته لكل أجهزة المستخدم المتصلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`التابين بتوع المستخدم الأول يوصلهم نفس الـ event في نفس اللحظة، بالشكل [[{"id":...,"userId":"u1","type":"order.paid","payload":{...}}]]، والتاب التالت مبيوصلوش حاجة. ده لأن كل socket بيدخل room اسمها [[user:ID]]، و [[io.to(room)]] بيبعت لكل الـ sockets اللي في الـ room، مهما كانوا كام تاب أو جهاز.
+
+الاتصال بتوكن غلط بيطلّع [[connect_error]] ورسالته [[UNAUTHENTICATED]]، ومفيش [[connect]] خالص. وخلي بالك إن socket.io client بيحاول يتصل تاني لوحده بعد الـ connect_error في حالات كتير، فلو التوكن انتهى، حدّث [[socket.auth.token]] قبل [[socket.connect()]].
+
+لو التالت وصله الإشعار، يبقى انت عامل [[io.emit]] بدل [[io.to(...)]]. ولو ولا تاب وصله، اتأكد إن الـ userId اللي بتبعته لـ notify هو نفس الـ [[sub]] اللي في التوكن (string مش number).`,
+          solCode: R`// في Console تاب مفتوح (أو ملف client.mjs مع socket.io-client)
+import { io } from "socket.io-client";
+
+const good = io("http://localhost:4000", { auth: { token: ACCESS_TOKEN } });
+good.on("connect", () => console.log("connected", good.id));
+good.on("notification", (n) => console.log("got", n));
+
+const bad = io("http://localhost:4000", { auth: { token: "abc.def.ghi" }, reconnection: false });
+bad.on("connect_error", (e) => console.log("rejected:", e.message)); // rejected: UNAUTHENTICATED
+
+// endpoint تجربة في السيرفر
+router.post("/dev/notify/:userId", async (req, res) => {
+  await notify(req.params.userId, { type: "test", payload: { at: Date.now() } });
+  res.status(204).end();
+});`
         },
         {
           cmd: "transactional email",
@@ -2265,7 +2678,12 @@ new Worker("emails", async (job) => {
             "قفلة الإرسال.",
             "فشل؟ ارمي error، و BullMQ هيعيد بعدين.",
             "اتصال Redis من lib/redis.ts."
-          ]
+          ],
+          sol: R`بالمفتاح الغلط، [[POST /auth/forgot]] بيرجع 200 في ملّي ثواني عادي (جربناها: الـ API رد في حوالي 20ms)، لأنه بيحط job بس. في اللوج هتلاقي الـ job فشل: [[failed attempt 1 of 5]]، وبعدين 2، وهكذا، والوقت بينهم بيزيد (10 ثواني، 20، 40...). رسالة الخطأ هي رسالة Resend عن المفتاح (حاجة زي [[API key is invalid]])، لأن [[resend.emails.send]] مبترميش، بترجّع [[{ data: null, error }]]، وسطر [[if (error) throw]] هو اللي بيحوّلها فشل.
+
+لو رجّعت المفتاح الصح قبل ما المحاولات تخلص، المحاولة الجاية تعدّي والإيميل يوصل مرة واحدة بس، لأن الـ [[idempotencyKey]] ثابت لنفس الـ job. ولو المحاولات خلصت، الـ job بيقعد في الـ failed، وتقدر تعيده من Bull Board.
+
+لو الـ job فشل مرة واحدة ومتعادش، يبقى مفيش [[attempts]] (الافتراضي في BullMQ محاولة واحدة). ولو الـ API نفسه رجع 500، يبقى بتبعت الإيميل جوه الـ request. وفي BullMQ الجديد مكتبة ioredis بقت optional، فلو ظهرلك [[could not load the optional 'ioredis' package]]، سطّبها ([[npm i ioredis]]) واعمل [[connection]] من [[new IORedis(url, { maxRetriesPerRequest: null })]].`
         },
         {
           cmd: "web push",
@@ -2315,7 +2733,36 @@ export async function pushTo(userId, payload) {
             "...ولو رجع 404 أو 410، الـ subscription ماتت، امسحها.",
             "قفلة الـ loop.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[npx web-push generate-vapid-keys]] بيطبع [[Public Key:]] (حوالي 87 حرف base64url بيبدأ غالبًا بـ B) و [[Private Key:]] (43 حرف). العام بيروح للواجهة، والخاص في .env السيرفر بس.
+
+بعد الإذن، الـ subscription اللي بتتبعت شكلها [[{"endpoint":"https://fcm.googleapis.com/fcm/send/...","expirationTime":null,"keys":{"p256dh":"...","auth":"..."}}]] (في Firefox الـ endpoint على mozilla.com). [[pushTo]] وانت قافل التاب لازم يطلّع إشعار من النظام، لأن الـ service worker بيصحى لوحده. ولو المتصفح نفسه مقفول خالص، الإشعار بيوصل أول ما يفتح (على الموبايل بيوصل عادي).
+
+بعد ما تلغي الإذن، خدمة الـ push بترجع [[410 Gone]] (أو 404) للـ endpoint ده، والـ catch بيمسح الصف. ممكن تاخد شوية وقت قبل ما الخدمة تعرف. ولو مفيش إشعار خالص: اتأكد إن الـ SW عنده [[push]] listener بيعمل [[showNotification]] جوه [[event.waitUntil]]، وإن الصفحة على HTTPS أو localhost، وإن إشعارات النظام نفسها مش مقفولة للمتصفح.`,
+          solCode: R`// public/sw.js
+self.addEventListener("push", (event) => {
+  const data = event.data ? event.data.json() : {};
+  event.waitUntil(self.registration.showNotification(data.title ?? "myapp", { body: data.body, data: { url: data.url ?? "/" } }));
+});
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow(event.notification.data.url));
+});
+
+// زرار «فعّل الإشعارات» في الواجهة
+async function enablePush() {
+  const reg = await navigator.serviceWorker.register("/sw.js");
+  if ((await Notification.requestPermission()) !== "granted") return;
+  const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: VAPID_PUBLIC_KEY });
+  await apiFetch("/me/push-subscriptions", { method: "POST", body: JSON.stringify(sub) });
+}
+
+// السيرفر
+const PushSub = z.object({
+  endpoint: z.url(),
+  keys: z.object({ p256dh: z.string(), auth: z.string() }),
+});
+// await pushTo(userId, { title: "كورس جديد", body: "SQL من الصفر", url: "/courses/sql" });`
         }
       ]
     },
@@ -2376,7 +2823,27 @@ export default async function LocaleLayout({ children, params }) {
             "قفلة html.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`بـ [[ml-4]] و [[text-left]] الكارت بالعربي بيبوظ: المسافة بتفضل على الشمال بتاع النص بدل ما تبقى بينه وبين الصورة، والنص لازق في الشمال مع إن الصفحة RTL، والسهم بيشاور للناحية الغلط. بـ [[ms-4]] (margin-inline-start) و [[text-start]] كل حاجة بتتقلب لوحدها مع [[dir]]، والسهم بيلف بـ [[rtl:rotate-180]]. والإنجليزي بيفضل زي ما هو في الحالتين.
+
+الـ reload بيفتح RTL من أول frame لأن [[dir="rtl"]] جوه الـ HTML اللي جاي من السيرفر، مش بيتحط بـ JavaScript بعد التحميل. اتأكد بـ [[curl -s localhost:3000/ar | head -c 300]]: هتلاقي [[<html lang="ar" dir="rtl">]] في أول الرد.
+
+لو شفت الصفحة بتتقلب من LTR لـ RTL بعد ثانية، يبقى انت بتحط الـ dir في [[useEffect]] أو في client component. ولو لغة مش مدعومة فتحت صفحة بدل 404، يبقى [[hasLocale]] مش متنادي في الـ layout.`,
+          solCode: R`import { useTranslations } from "next-intl";
+
+export function CourseCard({ course }) {
+  const t = useTranslations("courses");
+  return (
+    <a href={"/courses/" + course.slug} className="flex items-center rounded-lg border p-3">
+      <img src={course.coverUrl} alt="" className="h-16 w-16 rounded object-cover" />
+      <div className="ms-4 flex-1 text-start">
+        <h3 className="font-bold">{course.title}</h3>
+        <p className="text-sm text-gray-500">{t("lessons", { count: course.lessonsCount })}</p>
+      </div>
+      <span aria-hidden className="rtl:rotate-180">→</span>
+    </a>
+  );
+}`
         },
         {
           cmd: "لوحة الأدمن",
@@ -2431,7 +2898,28 @@ app.use("/admin", admin);`,
             "رد 204.",
             "قفلة.",
             "ركّب الـ router على /admin."
-          ]
+          ],
+          sol: R`الصفحة لازم تعرض آخر ٥٠ سطر الأحدث فوق، وبعد الاسترداد التجريبي يظهر في الأول سطر زي: «admin@myapp.com — order.refund — cmun8kedf… — من دقيقة»، والسبب ظاهر من [[meta.reason]]. ولو اتنين حاولوا يستردوا نفس الطلب، التاني هيرجع [[409 NOT_PAID]] لأن الـ status بقى REFUNDED.
+
+لما تشيل دور الأدمن من مستخدم وهو داخل، أول طلب بعدها يرجع [[403]] على طول، حتى لو الـ access token بتاعه لسه فاضله ١٤ دقيقة وجواه [[role: "ADMIN"]]. ده شغل [[requireFreshRole]]: بتقرا الدور من القاعدة مع كل طلب. لو استخدمت [[requireRole]] العادي، هيفضل أدمن لحد ما التوكن يخلص، وده بالظبط اللي التجربة بتكشفه.
+
+ومتنساش إن endpoint قراية الـ audit log نفسه تحت [[/admin]]، فهو محمي بنفس الـ guard. وخليه قراية بس: مفيش endpoint يعدّل أو يمسح سطر في الـ audit log.`,
+          solCode: R`export function requireFreshRole(role) {
+  return async (req, res, next) => {
+    const u = await db.user.findUnique({ where: { id: req.user.id }, select: { role: true } });
+    if (u?.role !== role) return next(new AppError(403, "FORBIDDEN", "مش مسموحلك"));
+    next();
+  };
+}
+
+admin.get("/audit-logs", async (req, res) => {
+  const rows = await db.auditLog.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 50,
+    select: { id: true, action: true, targetId: true, meta: true, createdAt: true, actor: { select: { email: true } } },
+  });
+  res.json({ data: rows });
+});`
         },
         {
           cmd: "بحث وفلترة",
@@ -2486,7 +2974,28 @@ router.get("/courses", async (req, res) => {
             "قفلة الشرط.",
             "رجّع ٢٠، بالترتيب المختار، و id في الآخر عشان الترتيب يبقى ثابت.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[?sort=passwordHash]] بيرجع [[400]] و [[{"error":{"code":"VALIDATION",...,"details":[{"code":"invalid_value","path":["sort"],...}]}}]]، ونفس الكلام لـ [[?level=HACKER]] بس الـ path [[level]]. الـ enum هو اللي منع إن أي حد يرتّب بعمود مش مسموح أو يبعت قيمة القاعدة متعرفهاش.
+
+الـ trigram: جربنا على ١٠٠ ألف كورس. من غير index الـ plan كان [[Seq Scan on courses]] والوقت حوالي [[158 ms]]. بعد الـ indexes على [[title]] و [[summary]] بقى [[BitmapOr]] فوقه [[Bitmap Index Scan]] على كل index، والوقت أقل من [[1 ms]]. الأرقام بتختلف حسب جهازك، بس الفرق لازم يبقى عشرات أو مئات المرات.
+
+لو الـ plan لسه Seq Scan بعد الـ index: اتأكد إنك عملت [[CREATE EXTENSION pg_trgm]]، وإن الـ index على العمودين مش واحد بس (الـ OR محتاج الاتنين)، وشغّل [[ANALYZE]]. وعلى جدول صغير أوي القاعدة ممكن تختار Seq Scan عن قصد لأنه أسرع فعلًا.`,
+          solCode: R`-- seed: ١٠٠ ألف كورس
+INSERT INTO "Course" (id, slug, title, summary, "priceCents", published, level, "instructorId", "createdAt")
+SELECT 'c' || g, 'course-' || g, 'Course ' || g || ' ' || (ARRAY['Python','Go','React','SQL'])[1 + g % 4],
+       'Learn ' || md5(g::text), 50000, true, 'BEGINNER', 'INSTRUCTOR_ID', now()
+FROM generate_series(1, 100000) g;
+ANALYZE "Course";
+
+EXPLAIN ANALYZE SELECT * FROM "Course"
+WHERE published AND (title ILIKE '%react%' OR summary ILIKE '%react%')
+ORDER BY "createdAt" DESC, id DESC LIMIT 20;
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE INDEX course_title_trgm ON "Course" USING gin (title gin_trgm_ops);
+CREATE INDEX course_summary_trgm ON "Course" USING gin (summary gin_trgm_ops);
+ANALYZE "Course";
+-- وشغّل نفس الـ EXPLAIN ANALYZE تاني`
         },
         {
           cmd: "pagination",
@@ -2533,7 +3042,28 @@ Prisma بتعمل ده بـ [[cursor]] و [[skip: 1]]. الـ skip هنا عشا
             "رجّع العدد المطلوب بس.",
             "الـ cursor الجاي هو آخر id، أو null لو خلصت.",
             "قفلة."
-          ]
+          ],
+          sol: R`بالـ cursor: جربناها بـ ١٠٠ طلب، وأخدنا الصفحة الأولى (٢٠)، وضفنا طلب جديد، وبعدين الصفحة التانية. أول عنصر في التانية كان اللي بعد آخر عنصر في الأولى على طول، وعدد العناصر المكررة [[0]]. الطلب الجديد مظهرش، لأنه أحدث من الصفحة الأولى، وهيظهر لما المستخدم يعمل refresh من الأول.
+
+بالـ offset ([[skip: 20]]): الطلب الجديد زق كل حاجة خطوة لتحت، فأول عنصر في الصفحة التانية طلع هو نفسه آخر عنصر في الأولى، والمكرر [[1]]. ولو كان اتمسح طلب بدل ما يتضاف، كان هيحصل العكس: عنصر يقع بين الصفحتين ومحدش يشوفه.
+
+لو لقيت تكرار بالـ cursor كمان، غالبًا نسيت [[skip: 1]] (فالـ cursor نفسه بيرجع أول عنصر)، أو الترتيب [[createdAt]] بس من غير [[id]]، فطلبين بنفس الوقت بالظبط ترتيبهم بيتغير من استعلام للتاني.`,
+          solCode: R`// src/page-test.ts: npx tsx src/page-test.ts
+const u = await db.user.findFirstOrThrow();
+const c = await db.course.findFirstOrThrow();
+const t0 = Date.now() - 1e6;
+await db.order.createMany({ data: Array.from({ length: 100 }, (_, i) => ({ userId: u.id, courseId: c.id, amountCents: 100 + i, createdAt: new Date(t0 + i * 1000) })) });
+
+const orderBy = [{ createdAt: "desc" }, { id: "desc" }];
+const page1 = (await db.order.findMany({ where: { userId: u.id }, orderBy, take: 21 })).slice(0, 20);
+await db.order.create({ data: { userId: u.id, courseId: c.id, amountCents: 999 } });
+
+const byCursor = (await db.order.findMany({ where: { userId: u.id }, orderBy, take: 21, cursor: { id: page1.at(-1).id }, skip: 1 })).slice(0, 20);
+const byOffset = await db.order.findMany({ where: { userId: u.id }, orderBy, take: 20, skip: 20 });
+
+const seen = new Set(page1.map((o) => o.id));
+console.log("cursor dupes:", byCursor.filter((o) => seen.has(o.id)).length); // 0
+console.log("offset dupes:", byOffset.filter((o) => seen.has(o.id)).length); // 1`
         },
         {
           cmd: "background jobs",
@@ -2581,7 +3111,30 @@ await maintenance.upsertJobScheduler("reconcile-payments", { every: 15 * 60_000 
             "...واحتفظ بآخر ١٠٠٠ ناجحة بس.",
             "قفلة.",
             "كل ربع ساعة: راجع الطلبات المعلقة مع البوابة. بيتعمل مرة واحدة مهما كان عدد الـ workers."
-          ]
+          ],
+          sol: R`الـ job اللي بتقع أول مرتين: هتشوف في اللوج المحاولة الأولى على طول، والتانية بعد حوالي ١٠ ثواني، والتالتة بعد حوالي ٢٠ ثانية من التانية وتنجح، وبعدها [[completed]]. المعادلة [[delay × 2^(attempt-1)]]. جربناها بـ delay نص ثانية عشان منستناش، والمحاولات جت على [[0s]] و [[0.6s]] و [[1.6s]].
+
+مع نسختين من الـ worker، كل ما الـ scheduler ييجي ميعاده بتتعمل job واحدة بس، وبتشتغل على worker واحد (مرة ده ومرة ده). حتى لو الكود اللي بينادي [[upsertJobScheduler]] اتشغّل مرتين، لأن الـ id ثابت ([[reconcile-payments]])، فالتانية بتحدّث نفس الـ scheduler مش بتعمل واحد جديد.
+
+لو شفت الـ job بتفشل مرة ومتتعادش، يبقى [[attempts]] مش واصل (حطيته في مكان غلط). ولو شفت الـ reconcile بيشتغل مرتين في نفس الميعاد، يبقى عندك [[setInterval]] أو node-cron في مكان تاني، مش الـ scheduler.`,
+          solCode: R`import { Queue, Worker } from "bullmq";
+import IORedis from "ioredis";
+
+const connection = new IORedis(process.env.REDIS_URL, { maxRetriesPerRequest: null });
+const q = new Queue("test", { connection, defaultJobOptions: { attempts: 5, backoff: { type: "exponential", delay: 10_000 } } });
+const t0 = Date.now();
+
+new Worker("test", async (job) => {
+  console.log(((Date.now() - t0) / 1000).toFixed(1) + "s", job.name, "attempt", job.attemptsMade + 1, "pid", process.pid);
+  if (job.name === "flaky" && job.attemptsMade < 2) throw new Error("boom");
+}, { connection });
+
+if (process.argv[2] === "seed") {
+  await q.add("flaky", {});
+  await q.upsertJobScheduler("reconcile-payments", { every: 15_000 }, { name: "reconcile" });
+}
+// ترمنال ١: node jobs.mjs seed
+// ترمنال ٢: node jobs.mjs`
         }
       ]
     },
@@ -3149,7 +3702,22 @@ app.use(errorHandler);`,
             "٢٠ طلب كل ربع ساعة لكل IP على مسارات الـ auth.",
             "كل الـ routes.",
             "الـ error handler في الآخر خالص."
-          ]
+          ],
+          sol: R`الـ login: أول ٢٠ طلب بيرجعوا الرد العادي (401 لو الباسورد غلط)، والـ ٢١ بيرجع [[429]] ومعاه headers زي [[RateLimit: "20-in-15min"; r=0; t=900]] و [[Retry-After: 900]] (ده شكل draft-8). لو كل الطلبات عدّت، اتأكد إن الـ rateLimit متسجّل قبل الـ routes، وإن [[trust proxy]] مظبوط لو ورا Nginx، وإلا كل الناس ليهم نفس الـ IP.
+
+الـ origin الغريب: الطلب بيرجع [[200]] عادي! بس مفيش [[Access-Control-Allow-Origin]] في الرد، فالمتصفح هو اللي بيمنع الصفحة الغريبة إنها تقرا الرد. يعني CORS مش حماية للسيرفر، ده قرار المتصفح. هتلاقي كمان headers الـ helmet زي [[Content-Security-Policy]] و [[Strict-Transport-Security]]، ومفيش [[X-Powered-By]]. ومن [[http://localhost:3000]] هتلاقي [[Access-Control-Allow-Origin: http://localhost:3000]] و [[Access-Control-Allow-Credentials: true]].
+
+الـ JSON الـ ١ ميجا بيرجع [[413]] و [[TOO_LARGE]]. لو رجع 500، يبقى الـ errorHandler بتاعك مش بيتعامل مع [[err.type === "entity.too.large"]] (السطر ده موجود في درس «شكل الأخطاء»)، والـ body parser رمى خطأ الـ handler مش فاهمه.`,
+          solCode: R`for i in $(seq 1 21); do
+  curl -s -o /dev/null -w '%{http_code} ' -H "Content-Type: application/json" -d '{"email":"a@b.c","password":"x"}' localhost:4000/auth/login
+done; echo
+# 401 401 ... 401 429
+
+curl -s -D - -o /dev/null -H "Origin: https://evil.example" localhost:4000/courses
+
+node -e 'process.stdout.write(JSON.stringify({ x: "a".repeat(1e6) }))' > big.json
+curl -s -w ' %{http_code}\n' -H "Content-Type: application/json" --data-binary @big.json localhost:4000/courses
+# {"error":{"code":"TOO_LARGE",...}} 413`
         },
         {
           cmd: "طبقات الكاش",
@@ -3200,7 +3768,25 @@ export async function updateCourse(id, data) {
             "امسح الكاش بتاعه، عشان الطلب الجاي يجيب الجديد.",
             "رجّعه.",
             "قفلة."
-          ]
+          ],
+          sol: R`من غير كاش كل طلب بيعمل استعلامين (الكورس ودروسه)، ومع كاش بيبقى [[GET]] واحد من Redis. جربناها ١٠٠ مرة على نفس الجهاز: حوالي [[1.6 ms]] للطلب من القاعدة، و [[0.12 ms]] من Redis. على جهازك القاعدة وRedis قريبين، فالفرق هنا صغير بالأرقام. في الإنتاج، والقاعدة عليها ضغط والاستعلام أتقل، الفرق بيكبر، والأهم إن القاعدة مبتشوفش الطلبات دي أصلًا.
+
+بعد التعديل مع [[redis.del]]: أول طلب بيجيب العنوان الجديد على طول. ولما تعلّق الـ del: الصفحة بتفضل تعرض القديم، و [[TTL course:SLUG:v1]] في redis-cli بيقولك فاضل كام ثانية (لحد 300). بعد ما يخلص، الجديد يظهر لوحده. ده بالظبط دور الـ TTL: شبكة أمان، مش طريقة التحديث.
+
+لو الجديد ظهر على طول حتى من غير del، يبقى الطلب مش بيعدّي على [[getCourse]] أصلًا (مثلًا Next.js بيجيب من القاعدة مباشرة)، أو الـ key بيتكتب بشكل مختلف في المكانين.`,
+          solCode: R`// قياس بسيط
+const slug = "sql-basics";
+await getCourse(slug); // سخّن الكاش
+let t = performance.now();
+for (let i = 0; i < 100; i++) await getCourse(slug);
+console.log("مع كاش", ((performance.now() - t) / 100).toFixed(2), "ms");
+
+await redis.del("course:" + slug + ":v1");
+t = performance.now();
+for (let i = 0; i < 100; i++) { await redis.del("course:" + slug + ":v1"); await getCourse(slug); }
+console.log("من غير كاش", ((performance.now() - t) / 100).toFixed(2), "ms");
+
+// redis-cli TTL course:sql-basics:v1`
         },
         {
           cmd: "indexes و N+1",
@@ -3235,7 +3821,28 @@ SELECT query, calls, round(mean_exec_time) AS ms FROM pg_stat_statements ORDER B
             "index مركّب على المستخدم والتاريخ، من غير ما يقفل الكتابة.",
             "نفس الاستعلام تاني. هتلاقي Index Scan ومفيش Sort، والوقت أقل بكتير.",
             "أتقل ١٠ استعلامات في القاعدة: عدد مرات التشغيل ومتوسط الوقت بالملّي ثانية."
-          ]
+          ],
+          sol: R`على مليون طلب ومستخدم عنده ١٠٠ طلب: قبل الـ index الـ plan كان [[Parallel Seq Scan on "Order"]] ومعاه [[Workers Launched: 2]]، والوقت حوالي [[34 ms]]. بعد الـ index بقى [[Index Scan using order_user_created_idx]]، والوقت حوالي [[0.07 ms]]، ومفيش [[Sort]] خالص، لأن الـ index متخزن بالترتيب اللي الاستعلام عايزه. الأرقام بتختلف حسب جهازك، بس الفرق بالمئات.
+
+آخر سطر (pg_stat_statements) هيرجع [[relation "pg_stat_statements" does not exist]] لو الـ extension مش شغال: محتاج [[shared_preload_libraries = 'pg_stat_statements']] في الإعدادات، و restart، و [[CREATE EXTENSION pg_stat_statements]]. في القواعد المُدارة غالبًا بيبقى شغال من الأول.
+
+الـ N+1: صفحة بتلف على ٣ كورسات وتجيب دروس كل واحد لوحده بتطلّع [[4]] استعلامات في الترمنال (١ + ٣)، ومع ١٠٠ كورس بتبقى ١٠١. بعد [[include: { lessons: true }]] بقوا [[2]] مهما كان العدد. ولو [[CREATE INDEX CONCURRENTLY]] وقع بـ [[cannot run inside a transaction block]]، يبقى انت شغّله جوه migration أو BEGIN، شغّله لوحده.`,
+          solCode: R`-- seed: مليون طلب على ١٠ آلاف مستخدم
+INSERT INTO "Order" (id, "userId", "courseId", "amountCents", currency, status, "createdAt")
+SELECT 'o' || g, 'u_' || (g % 10000), 'COURSE_ID', 50000, 'EGP', 'PAID', now() - (g || ' seconds')::interval
+FROM generate_series(1, 1000000) g;
+ANALYZE "Order";
+
+// N+1 وعدّ الاستعلامات
+const db = new PrismaClient({ adapter, log: [{ emit: "event", level: "query" }] });
+let n = 0;
+db.$on("query", () => n++);
+const courses = await db.course.findMany();
+for (const c of courses) await db.lesson.findMany({ where: { courseId: c.id } });
+console.log("loop:", n);            // 1 + عدد الكورسات
+n = 0;
+await db.course.findMany({ include: { lessons: true } });
+console.log("include:", n);         // 2`
         },
         {
           cmd: "CDN و Core Web Vitals",
@@ -3271,7 +3878,18 @@ Lighthouse قياس معمل. الحقيقة من زوار حقيقيين: مك�
             "مكتبة القياس من زوار حقيقيين.",
             "ابعت كل رقم للسيرفر بـ sendBeacon، وده بيوصل حتى لو الزائر قفل الصفحة.",
             "اسمع على التلات مقاييس."
-          ]
+          ],
+          sol: R`في Lighthouse (وضع Mobile، وهو بيعمل throttling لوحده) هتلاقي في قسم Diagnostics بند [[Largest Contentful Paint element]] بيقولك مين الـ LCP. في صفحة كورس غالبًا هو صورة الغلاف. قبل [[fetchPriority="high"]] هتلاقي الصورة بتبدأ تحمل متأخر في الـ waterfall بعد الـ CSS والـ JS. بعده بتبدأ بدري مع أول الطلبات، والـ LCP بيقل. الرقم نفسه بيختلف كل تشغيلة، فشغّل ٣ مرات وخد المتوسط. المقاييس الرسمية: LCP كويس تحت 2.5 ثانية، و INP تحت 200ms، و CLS تحت 0.1.
+
+الـ web-vitals من الزوار الحقيقيين هتلاقيها أوحش من Lighthouse على جهازك غالبًا، وده الطبيعي: أجهزة أضعف ونت أبطأ. بص على الـ p75 مش المتوسط، لأن ده اللي جوجل بيقيس بيه.
+
+لو الـ LCP طلع نص مش صورة، يبقى [[fetchPriority]] على الصورة مش هيفرق، ركّز على الفونت والـ CSS. ولو CLS عالي، دوّر على صورة من غير [[width]] و [[height]] أو banner بيظهر فوق المحتوى بعد التحميل.`,
+          solCode: R`// app/api/vitals/route.ts: استقبل الأرقام (وابعتها لـ PostHog أو خزّنها)
+export async function POST(req: Request) {
+  const m = await req.json(); // { name: "LCP", value: 2310.5, rating: "good", page: "/courses/sql" }
+  console.log(JSON.stringify({ msg: "web-vital", ...m }));
+  return new Response(null, { status: 204 });
+}`
         }
       ]
     },
@@ -3323,7 +3941,22 @@ worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: 
             "متبعتش IPs و cookies.",
             "قفلة.",
             "في ملف الـ worker: أي job فشلت، ابعتها لـ Sentry باسم الـ queue والـ job."
-          ]
+          ],
+          sol: R`بعد ما تفتح الـ route مرة، في Sentry تحت Issues هيظهر issue جديد عنوانه نص الخطأ (مثلًا [[Error: sentry test]])، وجواه الـ stack trace بأسماء ملفاتك، وفي الـ tags [[environment: staging]] و [[release]] بقيمة الـ GIT_SHA. ولو فتحت الـ route ١٠ مرات، هيفضل issue واحد والـ Events بقوا ١٠، لأن Sentry بيجمع الأخطاء اللي ليها نفس الـ stack.
+
+لو مفيش حاجة ظهرت: اتأكد إن [[SENTRY_DSN]] واصل (اطبع [[Boolean(process.env.SENTRY_DSN)]])، وإن [[Sentry.init]] بيتنادي قبل ما express يتعمل import (في ملف [[instrument.js]] بيتحمّل بـ [[node --import ./instrument.js]])، وإنك سجّلت [[Sentry.setupExpressErrorHandler(app)]] قبل الـ errorHandler بتاعك. من غيره، الـ errorHandler بيبلع الخطأ ويرد 500، و Sentry ميعرفش.
+
+الـ alert: في Alerts اعمل rule من نوع Issue alert، شرطها «A new issue is created» والفلتر [[environment = production]]، والـ action إيميل أو integration. وجرّبه بخطأ في staging بعد ما تشيل الفلتر مؤقتًا. ولو الـ stack فيه أسماء ملفات غريبة زي [[dist/index.js:1:23456]]، محتاج ترفع الـ source maps.`,
+          solCode: R`// instrument.js: node --import ./instrument.js dist/server.js
+import * as Sentry from "@sentry/node";
+Sentry.init({ dsn: process.env.SENTRY_DSN, environment: process.env.APP_ENV, release: process.env.GIT_SHA, tracesSampleRate: 0.1, sendDefaultPii: false });
+
+// app.ts
+import * as Sentry from "@sentry/node";
+app.get("/debug-sentry", () => { throw new Error("sentry test"); });
+// ... الـ routes
+Sentry.setupExpressErrorHandler(app);
+app.use(errorHandler);`
         },
         {
           cmd: "structured logs",
@@ -3370,7 +4003,19 @@ pino بيكتب على stdout بسرعة ومن غير ما يوقف الـ even
             "...وكل طلب ليه id: من الـ header لو جاي من Nginx، أو جديد. وبيرجع للـ client في الرد.",
             "قفلة.",
             "جوه أي route: سطر بحقول تقدر تدوّر بيها، والـ request id بيتحط لوحده."
-          ]
+          ],
+          sol: R`كل سطر في اللوج JSON واحد. الطلب اللي خدت الـ [[x-request-id]] بتاعه هتلاقيله سطرين على الأقل: [[{"msg":"order created","orderId":"o_1",...}]] و [[{"msg":"request completed","res":{"statusCode":201},...}]]، وفي الاتنين [[req.id]] هو نفس القيمة. ده اللي بيربط كل سطور الطلب الواحد ببعض.
+
+الـ login: الـ header بتاع [[authorization]] هيظهر [[[Redacted]]]، ولو بتعمل log لـ [[{ body: req.body }]] هتلاقي [["password":"[Redacted]"]]. و [[grep -c]] على الباسورد الحقيقي في ملف اللوج لازم يرجع 0. خلي بالك إن [[*.password]] بتمسك مستوى واحد بس: [[{ body: { password } }]] بتتمسك، بس [[{ data: { user: { password } } }]] لأ. عشان كده متعملش log للـ body كله أصلًا.
+
+pino-pretty بيحوّل كل سطر لشكل زي [[[22:21:11.085] INFO (20726): request completed]] وتحته الحقول. ده للتطوير بس، الإنتاج JSON خام عشان أدوات البحث تقراه.`,
+          solCode: R`RID=$(curl -s -D - -o /dev/null -X POST localhost:4000/orders -H "Authorization: Bearer $TOKEN" | grep -i x-request-id | cut -d' ' -f2 | tr -d '\r')
+grep "$RID" app.log | jq -c '{msg, id: .req.id, orderId, status: .res.statusCode}'
+
+curl -s -o /dev/null -H "Content-Type: application/json" -d '{"email":"a@b.c","password":"hunter22"}' localhost:4000/auth/login
+grep -c hunter22 app.log        # 0
+
+node dist/server.js | npx pino-pretty`
         },
         {
           cmd: "health و uptime",
@@ -3415,7 +4060,12 @@ app.get("/readyz", async (req, res) => {
             "...ورد 503 عام، من غير أي تفاصيل داخلية.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`وRedis شغال: الاتنين [[200]]، و [[/healthz]] بيرجع [[{"ok":true,"version":"abc123"}]]. بعد [[docker stop]] للـ Redis: [[/healthz]] لسه [[200]] بنفس الرد، و [[/readyz]] بيرجع [[503]] و [[{"ok":false}]] بس. تفاصيل الخطأ (connection refused والـ host والـ port) موجودة في اللوج تحت [["readiness failed"]]، مش في الرد.
+
+خلي بالك: مع إعدادات ioredis الافتراضية، [[redis.ping()]] وRedis واقع ممكن يفضل مستني لحد ما يعيد المحاولة كذا مرة، فالـ [[/readyz]] ياخد ثواني قبل ما يرد. الأفضل عميل للـ health بـ [[enableOfflineQueue: false]] و [[maxRetriesPerRequest: 1]]، أو [[Promise.race]] مع timeout ثانية.
+
+خدمة الـ uptime (UptimeRobot أو Better Stack مثلًا) بتفحص كل دقيقة أو خمسة حسب الخطة، ومعظمها بيستنى فحصين أو تلاتة فاشلين قبل ما تبعت، فالتنبيه بيوصل بعد من دقيقة لـ ١٠ تقريبًا. الرقم ده هو أقل وقت هتعرف فيه إن السيرفر وقع. سجّل [[/healthz]] مش [[/readyz]]، إلا لو عايز تتنبّه لما القاعدة تقع كمان.`
         },
         {
           cmd: "PostHog",
@@ -3459,7 +4109,21 @@ process.on("SIGTERM", async () => { await posthog.shutdown(); });`,
             "تفاصيل هتفلتر بيها بعدين.",
             "قفلة.",
             "لما السيرفر يقفل، ابعت الأحداث اللي لسه متبعتتش."
-          ]
+          ],
+          sol: R`بعد ما تبعت الأحداث، هتلاقيها في Activity (أو Events) بعد ثواني. الـ funnel بالترتيب [[course viewed]] ← [[checkout started]] ← [[course purchased]] ← [[lesson completed]]، وكل خطوة جنبها نسبة اللي كملوا. المهم إن [[distinctId]] يبقى نفسه في الأربعة للمستخدم الواحد، وإلا الـ funnel هيطلع صفر من خطوة لخطوة.
+
+القراية المتوقعة لمنتج جديد: أكبر وقعة غالبًا بين viewed و checkout started (السعر أو صفحة الكورس مش مقنعة)، والتانية بين checkout started و purchased (مشكلة في الدفع أو البوابة). لو الوقعة التانية كبيرة، روح لـ Sentry ولوجات الـ webhook قبل ما تغيّر التصميم.
+
+أشهر غلطة: أحداث الواجهة بـ anonymous id، وأحداث السيرفر بـ userId، فالمستخدم بيبان شخصين. نادي [[posthog.identify(user.id)]] في الواجهة بعد الدخول. وغلطة تانية: [[course purchased]] من صفحة الـ redirect بدل الـ webhook، فالأرقام بتتضرب في المرات اللي الناس بتعمل فيها refresh.`,
+          solCode: R`// الواجهة (posthog-js)
+posthog.capture("course viewed", { courseId });
+posthog.capture("checkout started", { courseId, amount: priceCents / 100 });
+
+// السيرفر: من markPaid بعد ما count === 1 بس
+posthog.capture({ distinctId: order.userId, event: "course purchased", properties: { courseId: order.courseId, amount: order.amountCents / 100, currency: "EGP" } });
+
+// السيرفر: لما الطالب يخلّص درس
+posthog.capture({ distinctId: req.user.id, event: "lesson completed", properties: { courseId, lessonId } });`
         },
         {
           cmd: "feature flags",
@@ -3555,7 +4219,23 @@ psql -d myapp_restore_test -c 'SELECT count(*) FROM "Order";'`,
             "اعمل قاعدة فاضية للتجربة.",
             "رجّع النسخة عليها، من غير ما يحاول يغيّر ownership.",
             "اتأكد إن الداتا رجعت فعلًا: عد الطلبات وقارنها بالأصل."
-          ]
+          ],
+          sol: R`على قاعدة تجربة صغيرة الخطوات كلها بتاخد أقل من ثانية (جربناها: [[real 0m0.381s]] والملف ١٩ كيلو). ده مش الـ RTO الحقيقي بتاعك: القاعدة الحقيقية بـ ١٠ جيجا ممكن تاخد نص ساعة أو أكتر في الـ restore لوحده. عشان كده قيسه على نسخة بحجم الإنتاج، وضيف عليه وقت إنك تعرف إن فيه مشكلة وتقرر ترجع.
+
+الـ count في النسخة لازم يساوي الأصل وقت الـ dump بالظبط. لو الأصل زاد بعدها، الفرق ده هو الداتا اللي هتضيع لو رجعت من النسخة دي، وده الـ RPO بتاعك (من آخر backup لحد الوقعة).
+
+مشاكل شائعة: [[pg_dump: error: aborting because of server version mismatch]] يعني الـ pg_dump عندك أقدم من السيرفر، استخدم نفس النسخة أو أحدث. و [[pg_restore]] بيطلّع warnings عن الـ owner لو نسيت [[--no-owner]]. ولو الـ rclone مش متظبط، [[rclone config]] الأول. والنسخة اللي منزلتهاش ورجّعتها بإيدك، اعتبرها مش موجودة.`,
+          solCode: R`time (
+  pg_dump "$DATABASE_URL" -Fc -f backup.dump &&
+  rclone copy backup.dump offsite:myapp-backups/db/ &&
+  rm backup.dump &&
+  rclone copy offsite:myapp-backups/db/backup.dump . &&
+  createdb myapp_restore_test &&
+  pg_restore -d myapp_restore_test --no-owner backup.dump &&
+  psql -d myapp_restore_test -c 'SELECT count(*) FROM "Order";'
+)
+psql "$DATABASE_URL" -c 'SELECT count(*) FROM "Order";'
+dropdb myapp_restore_test`
         }
       ]
     },
@@ -3619,7 +4299,32 @@ psql -d myapp_restore_test -c 'SELECT count(*) FROM "Order";'`,
             "...بس بيشغّل ملف الـ worker، وبيكبر لوحده.",
             "Redis: للـ queues، والكاش، والـ rate limit، والـ socket adapter.",
             "image صغيرة."
-          ]
+          ],
+          sol: R`الحاجات اللي هتبوظ لما الطلب يروح لنسخة تانية، بالترتيب اللي غالبًا هتقابله:
+
+١. الـ rate limit: [[express-rate-limit]] بيخزن في الذاكرة افتراضيًا، فمع ٣ نسخ الحد الحقيقي بقى ٦٠ مش ٢٠. الحل store في Redis. ٢. الـ socket.io: الإشعار بيوصل بس لو المستخدم متصل بنفس النسخة اللي عملت [[notify]]، والـ polling ممكن يرجع [[Session ID unknown]] من غير sticky sessions. الحل Redis adapter، و [[ip_hash]] في Nginx أو websocket بس. ٣. الملفات: لو فيه أي حاجة بتتحفظ على الديسك المحلي، النسخة التانية مش شايفاها. الحل S3 أو R2. ٤. الـ cron جوه الـ API بيشتغل ٣ مرات. الحل job scheduler في الـ worker.
+
+الـ login نفسه غالبًا مش هيبوظ: الـ JWT متوقّع بنفس السر في التلاتة، والـ refresh session في القاعدة. لو بيبوظ، يبقى السر مختلف بين النسخ، أو فيه كاش في متغير في الذاكرة. وأي state فضلت جوه الـ process بعد التجربة دي، هي اللي هتوقعك يوم الترافيك الحقيقي.`,
+          solCode: R`# nginx.conf
+upstream api {
+  server api:3000;   # Docker DNS بيوزّع على الـ 3 replicas
+}
+server {
+  listen 80;
+  location /socket.io/ {
+    proxy_pass http://api;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+  }
+  location / {
+    proxy_pass http://api;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}
+
+# docker compose up -d --scale api=3
+# docker compose logs -f api   # شوف الطلبات بتتوزع على api-1 و api-2 و api-3`
         },
         {
           cmd: "scaling القاعدة",
@@ -3658,7 +4363,19 @@ const fresh = await db.$primary().order.findUnique({ where: { id: orderId } });`
             "client واحد بيوزّع لوحده: القراية للـ replica، والكتابة للـ primary.",
             "قراية عادية، بتروح للـ replica.",
             "قراية بعد دفع على طول، لازم من الـ primary عشان الـ lag."
-          ]
+          ],
+          sol: R`الطريقة الأسهل عشان توقف الـ replication من غير ما تكسر حاجة: على الـ replica نفسها [[SELECT pg_wal_replay_pause();]]. الـ replica بتفضل تستقبل التغييرات بس مبتطبقهاش. تتأكد بـ [[SELECT pg_is_wal_replay_paused();]] (ترجع t)، وترجّعها بـ [[pg_wal_replay_resume()]].
+
+وهي واقفة، اعمل طلب وادفعه. [[db.order.findUnique]] (بيروح للـ replica) هيرجّع [[null]] للطلب الجديد، أو [[PENDING]] لطلب قديم اتدفع. و [[db.$primary().order.findUnique]] هيرجّع [[PAID]]. وعلى الـ replica [[SELECT now() - pg_last_xact_replay_timestamp();]] بتقولك الـ lag بالثواني، وهيفضل يزيد طول ما هي واقفة. أول ما تعمل resume، الاتنين يتطابقوا في أقل من ثانية.
+
+ده بالظبط سبب إن صفحة «بعد الدفع» و [[GET /orders/:id]] وأي قراية بعد كتابة لنفس المستخدم لازم تبقى [[$primary()]]. ولو الطلب اتعمل ورجع [[null]] من الـ replica في الوضع العادي من غير pause، يبقى الـ lag عندك كبير أصلًا، وده محتاج مراقبة.`,
+          solCode: R`-- على الـ replica
+SELECT pg_wal_replay_pause();
+SELECT pg_is_wal_replay_paused();                    -- t
+SELECT now() - pg_last_xact_replay_timestamp() AS lag;
+
+-- بعد التجربة
+SELECT pg_wal_replay_resume();`
         },
         {
           cmd: "التكلفة",
@@ -3695,7 +4412,12 @@ Sentry و PostHog والـ uptime              الخطط المجانية كف�
             "بيزيد مع عدد المستخدمين والإشعارات.",
             "أدوات المراقبة ليها خطط مجانية معقولة في البداية.",
             "العمولة بتتشال من كل عملية، فحطها في التسعير."
-          ]
+          ],
+          sol: R`الشكل المتوقع: التكلفة الكلية بتزيد، بس التكلفة لكل طالب بتقل كتير. مثال بأرقام تقريبية (حط أسعار مزودينك الحقيقية): عند ١٠٠ طالب، السيرفر والقاعدة ثابتين حوالي ٣٠ لـ ٦٠ دولار في الشهر، يعني نص دولار تقريبًا لكل طالب. عند ١٠٠٠ نفس السيرفر غالبًا كفاية، فالطالب بسنتات. عند ١٠٠٠٠ البند اللي بيكبر هو الفيديو (التخزين والـ bandwidth)، وده اللي هيحدد التكلفة.
+
+عمولة البوابة بند مختلف: نسبة من كل عملية (مع مبلغ ثابت ساعات)، فهي بتكبر مع المبيعات مش مع عدد الطلاب. اطرحها من سعر الكورس الأول. مثلًا كورس بـ ٥٠٠ جنيه وعمولة حوالي ٣٪ وجنيهات ثابتة، يفضلك حوالي ٤٨٠. قارن ده بتكلفة الطالب الشهرية مضروبة في عدد الشهور اللي بيتفرج فيها.
+
+الغلطة الأشهر إن الفيديو يتحسب ثابت. طالب واحد بيتفرج على ١٠ ساعات بجودة عالية ممكن يسحب أكتر من ١٠ جيجا. والتانية إن الخطط المجانية (Sentry و PostHog والإيميل) تتحسب مجانية للأبد. حط الحد اللي بعده بتدفع، واحسب إمتى هتوصله.`
         },
         {
           cmd: "التوثيق والتسليم",
@@ -3738,7 +4460,12 @@ docs/runbook.md: الدفع مش بيتفعّل، الديسك مليان، ال
             "النشر: staging لوحده، والإنتاج بـ tag وموافقة.",
             "المشاكل المشهورة وحلها في الـ runbook.",
             "الحسابات ملك مين، والمفاتيح فين. عمرها ما تتكتب هنا."
-          ]
+          ],
+          sol: R`النتيجة الطبيعية لأول مرة: ٥ لـ ١٠ أسئلة. أشهرها: «نسخة Node كام؟» (حط [[.nvmrc]] أو [[engines]])، و «pnpm مش موجود» (اكتب [[corepack enable]])، و «الـ migrations مش شغالة» (سطر [[pnpm db:migrate]] ناقص)، و «مفيش داتا» (سطر الـ seed ناقص)، و «متغير X مش موجود» يعني [[.env.example]] ناقص، و «أعمل login بإيه؟» (يوزر تجربة في الـ seed).
+
+كل سؤال من دول سطر في الـ README، والهدف إن حد جديد يشغّل المشروع في أقل من ١٥ دقيقة من غير ما يكلمك. ولو وقف في حاجة محتاجة حساب خارجي (Paymob، أو S3)، اكتب إزاي يشتغل من غيرها على جهازه: مثلًا وضع fake للبوابة، أو MinIO بدل S3.
+
+علامة إنك خلصت: تكرر التجربة مع حد تاني (أو في container فاضي بـ [[git clone]] جديد)، ويشغّل من غير ولا سؤال.`
         }
       ]
     },
@@ -4031,7 +4758,12 @@ L7 (HTTP): بيفك الـ TLS، وبيقدر يوجّه [[/api]] لخدمة و 
             "القراية بتتخدم من الذاكرة ومن أقرب مكان للزائر.",
             "الإحصائيات مش لازم تبقى لحظية، فبتروح queue.",
             "المشاكل والـ trade-off: الـ 301 أسرع بس بيضيّع الإحصائيات."
-          ]
+          ],
+          sol: R`الإجابة النموذجية بالترتيب ده، وكل حتة ليها وقت: (١) ٥ دقايق أسئلة: قراية قد إيه نسبة للكتابة؟ اللينك بينتهي؟ custom alias؟ إحصائيات قد إيه دقيقة؟ (٢) أرقام: ٤٠ كتابة و ٤٠٠٠ قراية في الثانية، والتخزين حوالي ١٠٠ مليون × ٥٠٠ بايت ≈ ٥٠ جيجا في الشهر، يعني حوالي ٦٠٠ جيجا في السنة. (٣) الـ API والداتا. (٤) الرسمة: client ← CDN ← API ← Redis ← PostgreSQL، والضغطات ← queue ← worker ← جدول إحصائيات. (٥) التعمق في جزء واحد: توليد الكود. (٦) المشاكل والـ trade-offs.
+
+الـ trade-offs اللي لازم تتقال بـ «بس»: الـ counter مفيهوش تصادم، بس الأكواد متتابعة وسهل حد يخمّن اللينكات، فممكن تخلطه أو تزود bits عشوائية. و 301 بيخلي المتصفح يكاش التحويل ويخفف الحمل، بس الضغطات اللي بعد كده مبتوصلكش، فلو الإحصائيات مهمة استخدم 302. و Redis بيخدم ٤٠٠٠ قراية بسهولة، بس محتاج تسخين ومساحة، فكاش الـ hot links بس.
+
+علامات إن إجابتك ضعيفة: رسمت قبل ما تسأل، أو مقلتش ولا رقم، أو قلت «microservices» و «Kafka» من غير ما الأرقام تطلبهم. ٤٠ كتابة في الثانية قاعدة واحدة بتشيلها وهي نايمة.`
         },
         {
           cmd: "chat app",
@@ -4068,7 +4800,12 @@ L7 (HTTP): بيفك الـ TLS، وبيقدر يوجّه [[/api]] لخدمة و 
             "جدول الرسايل، و index بيجيب المحادثة بالترتيب بسرعة.",
             "الأوفلاين بياخد push، ولما يرجع يسحب اللي فاته.",
             "المشاكل الصعبة، وحل كل واحدة في كلمتين."
-          ]
+          ],
+          sol: R`الرحلة الصح لرسالة من أحمد لمنى، ومنى على سيرفر تاني: (١) أحمد يبعت على الـ WebSocket بتاعه لسيرفر A رسالة فيها [[clientMessageId]]. (٢) سيرفر A يتأكد إن أحمد عضو في المحادثة، ويحفظ الرسالة في القاعدة ويدّيها [[id]] متزايد جوه المحادثة. (٣) يرد على أحمد بـ ack فيه الـ id (علامة ✓). (٤) يبعت الرسالة على Redis pub/sub (أو الـ adapter) لـ channel المحادثة أو channel منى. (٥) سيرفر B، اللي منى متصلة عنده، بياخدها ويبعتها على الـ socket بتاع منى. (٦) جهاز منى يرد بـ delivered، ولما تفتح المحادثة بـ read ومعاه آخر id قرته، والحالة دي بترجع لأحمد بنفس الطريق (✓✓).
+
+ومنى أوفلاين: الخطوات ١ لـ ٣ زي ما هي، وفي الخطوة ٤ السيستم بيشوف إنها مش متصلة (مفيش presence ليها في Redis)، فيبعت push notification بدل الـ socket. لما ترجع، التطبيق بيطلب [[GET /conversations/:id/messages?after=LAST_ID]] ويسحب كل اللي فاته.
+
+الفجوات اللي بتظهر عادة: الحفظ بعد الإرسال بدل قبله (فلو السيرفر وقع الرسالة تضيع)، ومفيش [[clientMessageId]] فإعادة الإرسال بعد انقطاع النت تعمل رسالتين، والترتيب بالوقت بتاع الجهاز بدل id السيرفر.`
         },
         {
           cmd: "booking system",
@@ -4105,7 +4842,45 @@ L7 (HTTP): بيفك الـ TLS، وبيقدر يوجّه [[/api]] لخدمة و 
             "للمواعيد بمدد مختلفة: القاعدة بترفض التداخل بنفسها.",
             "الحجز المدفوع بيتمسك لفترة محددة، وبعدين يتفك لوحده.",
             "المشاكل الحقيقية: التوقيت، والناس اللي مبتجيش، والانتظار، والزحمة."
-          ]
+          ],
+          sol: R`بـ «اقرا وبعدين اكتب» العدد مش ثابت، بس دايمًا أكبر من 1. جربناها مرتين: مرة [[31]] حجز ناجح، ومرة [[44]]، على كرسي واحد. والأغرب إن [[booked]] في جدول slots فضل [[1]]: كل الطلبات قرت 0 وكتبت 1 فوق بعض (lost update)، فالعداد نفسه بيكدب. يعني مش بس حجز مزدوج، ده كمان مفيش طريقة تعرف من الجدول إنه حصل.
+
+بالـ UPDATE المشروط: دايمًا [[1]] حجز ناجح و [[49]] رجعوا 0 صفوف، و [[booked = 1]]. القاعدة بتقفل الصف وقت التحديث، فالطلب التاني بيستنى الأول يخلص، وبعدين الشرط [[booked < capacity]] بيتقيّم على القيمة الجديدة.
+
+لو الطريقة الأولى طلعت 1 عندك، غالبًا الـ pool فيه connection واحدة أو الطلبات بتتبعت ورا بعض مش مع بعض. تأكد إنها [[Promise.all]] وإن الـ pool فيه ١٠ connections على الأقل. وخلي بالك إن [[unique(slotId, userId)]] بيمنع نفس اليوزر يحجز مرتين، بس مش بيمنع ٥٠ يوزر مختلفين على كرسي واحد. ده شغل الـ UPDATE المشروط.`,
+          solCode: R`import pg from "pg";
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL, max: 20 });
+await pool.query("DROP TABLE IF EXISTS bookings, slots");
+await pool.query("CREATE TABLE slots (id int PRIMARY KEY, capacity int NOT NULL, booked int NOT NULL DEFAULT 0)");
+await pool.query("CREATE TABLE bookings (slot_id int REFERENCES slots(id), user_id int, UNIQUE (slot_id, user_id))");
+
+async function naive(userId) {
+  const { rows: [s] } = await pool.query("SELECT booked, capacity FROM slots WHERE id = 1");
+  if (s.booked >= s.capacity) return false;
+  await pool.query("UPDATE slots SET booked = $1 WHERE id = 1", [s.booked + 1]);
+  await pool.query("INSERT INTO bookings VALUES (1, $1)", [userId]);
+  return true;
+}
+async function conditional(userId) {
+  const c = await pool.connect();
+  try {
+    await c.query("BEGIN");
+    const { rowCount } = await c.query("UPDATE slots SET booked = booked + 1 WHERE id = 1 AND booked < capacity");
+    if (rowCount === 0) { await c.query("ROLLBACK"); return false; }
+    await c.query("INSERT INTO bookings VALUES (1, $1)", [userId]);
+    await c.query("COMMIT");
+    return true;
+  } catch (e) { await c.query("ROLLBACK"); throw e; } finally { c.release(); }
+}
+for (const [name, fn] of [["naive", naive], ["conditional", conditional]]) {
+  await pool.query("TRUNCATE bookings; DELETE FROM slots; INSERT INTO slots VALUES (1, 1, 0)");
+  const ok = (await Promise.all(Array.from({ length: 50 }, (_, i) => fn(i + 1)))).filter(Boolean).length;
+  const { rows: [r] } = await pool.query("SELECT (SELECT count(*) FROM bookings) AS bookings, booked FROM slots");
+  console.log(name, "ok:", ok, "rows:", r.bookings, "booked:", r.booked);
+}
+await pool.end();
+// naive ok: 31 rows: 31 booked: 1
+// conditional ok: 1 rows: 1 booked: 1`
         },
         {
           cmd: "news feed",
@@ -4325,7 +5100,12 @@ export async function allow(key, capacity, perSec) {
 الإجابة دي هي التاب ده كله في دقيقتين. لو حد سألك تفاصيل أي جزء، ارجع للدرس بتاعه.`,
             when: R`«ليه مش microservices؟». «هتعمل الـ auth إزاي؟». «لو البوابة وقعت؟». «هتختبر إزاي؟». «هتعرف إن المنتج نجح إزاي؟».`,
             mistakes: "إنك تبدأ بأسماء أدوات («هستخدم Next و Prisma و Redis و Kafka») قبل ما تقول بتحل إيه. أو تعدّد ١٥ تقنية. أو تنسى الحاجات اللي مش ميزات: الأمان، والباك أب، والمراقبة. أو متقولش هتبدأ بإيه وهتأجّل إيه."
-          }
+          },
+          sol: R`إجابة نموذجية لمنصة حجز حصص جيم في ٣ دقايق، والنقط اللي لازم تتقال: (١) المتطلبات: عضو بيحجز حصة، ومدرب بيدير حصصه، وأدمن. الـ core loop: يشوف الجدول، ويحجز مكان، ويحضر. والأرقام: جيم واحد أو سلسلة؟ كام حصة وكام عضو؟ (٢) الداتا: members و classes (startsAt و capacity و booked) و bookings عليها unique (classId, memberId)، و subscriptions. (٣) أصعب حتة وبقولها بدري: الحجز وقت فتح الجدول، بـ UPDATE مشروط عشان مفيش over-booking. (٤) الـ stack: monolith بـ modules و PostgreSQL، وليه. (٥) الترتيب: skeleton على staging، وبعدين الجدول، وبعدين الحجز، وبعدين الاشتراك والدفع. (٦) الإنتاج: مراقبة، وباك أب متجرّب، و CI.
+
+في المرة التانية، القصة الحقيقية بتدخل في النقطة الأصعب. مثلًا: «في مشروع قبل كده، عملت الحجز بـ اقرا وبعدين اكتب، وأول يوم فيه ضغط لقينا حصة فيها ١٢ واحد وهي ١٠. غيرتها لـ UPDATE مشروط، وضفت اختبار بيبعت ٥٠ طلب مع بعض». قصة واحدة بأرقام أحسن من ٣ عامة.
+
+علامات إن الإجابة وحشة: بدأت بالتكنولوجيا ([[Next.js و Kafka]]) قبل المستخدمين، أو عدّت ميزات من غير ترتيب، أو خلصت الـ ٣ دقايق من غير ما تقول كلمة عن الإنتاج (مراقبة وباك أب).`
         },
         {
           cmd: "modular monolith أولًا",
@@ -4339,7 +5119,12 @@ export async function allow(key, capacity, perSec) {
 والعلامات اللي بتقول إن الوقت جه: فرق مختلفة بتتعطل على بعض في الـ deploy (قانون Conway). أو جزء حمله مختلف تمامًا عن الباقي. أو جزء محتاج لغة تانية، زي Python للـ ML. والطريقة: strangler fig، يعني تطلّع جزء جزء وتحوّل الترافيك له تدريجيًا.`,
             when: R`«إزاي تعمل transaction بين خدمتين؟» (saga و outbox). «الخدمات بتكلّم بعض إزاي؟» (HTTP أو gRPC متزامن، أو events في queue). «إزاي تعرف إن الـ monolith لازم يتقسم؟».`,
             mistakes: "«الـ microservices أحسن عشان بتعمل scale». الـ monolith بيعمل scale أفقي عادي بنسخ كتير. أو إنك تقول «monolith يعني spaghetti»، والترتيب مالوش علاقة بعدد الـ deploys. أو تقسّم بالطبقات (خدمة للـ auth، وخدمة للقاعدة) بدل الميزات."
-          }
+          },
+          sol: R`مثال لـ module الإيميلات. عشان يبقى service لوحده محتاج: API أو queue بعقد واضح (مين بيبعت إيه وبأنهي شكل)، ومصادقة بين الخدمتين، وقاعدة أو على الأقل جدول خاص بيه للـ deliveries، و repo أو pipeline و deploy لوحدهم، ولوج بـ request id بيعدّي بين الخدمتين، ومراقبة و alerts ليه، ونسخ متوافقة من العقد وقت ما واحدة تتنشر قبل التانية.
+
+ولو وقع: في الـ monolith، الإيميل بيفشل والـ job يتعاد. كخدمة لوحدها، لازم تقرر: الـ API يستنى؟ يرمي خطأ؟ يحط في queue؟ والتسجيل اللي كان transaction واحدة («اعمل user وحط job») بقى خطوتين ممكن واحدة تنجح والتانية لأ، فمحتاج outbox pattern.
+
+الخلاصة اللي بتتقال في الانترفيو: كل ده تمن حقيقي. يستاهل لو الإيميلات بقت بالملايين ومحتاجة scaling لوحدها، أو فيه فريق تاني بيملكها وعايز ينشر لوحده. غير كده، module جوه الـ monolith بـ interface واضحة بيدّيك ٩٠٪ من الفايدة، ويخلي التقسيم بعدين سهل.`
         },
         {
           cmd: "السيرفر هو المصدر",
@@ -4360,7 +5145,12 @@ if (count === 1) await grantAccess(t, order);`,
           lines: [
             "حوّل الطلب لـ PAID بشرط إنه لسه مش PAID. قراية وكتابة في خطوة واحدة.",
             "لو احنا اللي حوّلناه دلوقتي بس، ادّي الصلاحية، في نفس الـ transaction."
-          ]
+          ],
+          sol: R`الإجابة النموذجية، هجمة جنبها السطر اللي بيمنعها:
+
+١. تغيير السعر: [[amountCents: course.priceCents]] في [[POST /orders]]. السعر من القاعدة، والـ body فيه [[courseId]] بس. ٢. webhook مزيف: [[if (!verifyPaymob(tx, req.query.hmac, secret)) return res.status(401).end()]] بمقارنة [[timingSafeEqual]]، وقبل التفعيل [[tx.amount_cents !== order.amountCents]]. ٣. webhook مكرر: [[updateMany({ where: { id, status: { not: "PAID" } } })]] و [[if (count === 1)]]، ومعاهم [[@@unique([userId, courseId])]] و [[gatewayTxId @unique]]. ٤. فتح صفحة النجاح بإيدك: الصفحة بتقرا [[GET /orders/:id]] من السيرفر ومبتبصش على [[?success=true]]، والفيديو محمي بـ enrollment مش بالصفحة. ٥. كوبون مرتين: [[UPDATE coupons SET used = used + 1 WHERE code = $1 AND used < max_uses]] وتشوف عدد الصفوف، أو جدول [[coupon_redemptions]] عليه [[unique(couponId, userId)]].
+
+لو واحدة من الخمسة ملقتلهاش سطر، وقلت «الواجهة مش هتسمح»، يبقى دي الثغرة. أي حاجة في المتصفح المهاجم بيتحكم فيها.`
         },
         {
           cmd: "signed URLs + async",
@@ -4377,7 +5167,12 @@ if (count === 1) await grantAccess(t, order);`,
           },
           lines: [
             "رابط PUT موقّع للـ key ده والنوع ده بس (signableHeaders بيدخّل الـ Content-Type في التوقيع)، عمره ٥ دقايق."
-          ]
+          ],
+          sol: R`الأسهم الصح، وعلى كل سهم اللي بيتبعت فيه:
+
+١. المتصفح ← الـ API: [[{ type, size }]] بس (JSON صغير). ٢. الـ API ← المتصفح: [[{ url, key }]]. ٣. المتصفح ← S3: الملف نفسه بـ PUT على الرابط الموقّع. ده السهم الوحيد اللي فيه الملف. ٤. المتصفح ← الـ API: [[{ key }]] («خلصت»). ٥. الـ API ← S3: [[HeadObject]] يتأكد إن الملف موجود وحجمه ونوعه. ٦. الـ API ← الـ queue: job فيه [[key]]. ٧. الـ worker ← S3: يقرا الأصل، ويكتب النسخ المعالجة. ٨. الـ worker ← القاعدة: [[coverReady: true]]. ٩. المتصفح ← الـ CDN: يقرا النسخ المعالجة، والـ CDN بياخدها من S3 أول مرة ويكاشها.
+
+لو رسمت سهم من المتصفح للـ API عليه «الملف» أو [[multipart/form-data]]، ده بالظبط اللي الدرس بيحاول يشيله: كل ميجا بتعدّي على سيرفرك بتاكل bandwidth و RAM وبتحجز connection. وسهم ناقص بيتنسى كتير: الخطوة ٥. من غيرها، الـ client يقدر يقول «خلصت» بـ key لملف مرفعش، أو رفع حاجة غير اللي قال عليها.`
         },
         {
           cmd: "قيس ثم stateless",
@@ -4400,7 +5195,25 @@ export default () => http.get("https://staging.example.com/courses");`,
             "k6: أداة load test بتتكتب JavaScript.",
             "زوّد لحد ٥٠٠ مستخدم في دقيقتين، واثبت عليهم ٥ دقايق.",
             "كل مستخدم وهمي بيطلب صفحة الكورسات على staging."
-          ]
+          ],
+          sol: R`اللي هتشوفه في ملخص k6 في الآخر: [[http_req_duration]] ومعاه [[p(90)]] و [[p(95)]]، و [[http_req_failed]] ونسبته، و [[iterations]] في الثانية. مع زيادة الـ target، الـ p95 بيفضل ثابت تقريبًا لحد نقطة، وبعدها بيقفز فجأة، والـ failed بيبدأ يزيد. النقطة دي هي سعتك الحالية. وضيف [[thresholds: { http_req_duration: ["p(95)<1000"] }]] عشان k6 يقولك لوحده إمتى عدّيت الحد.
+
+قراية الـ CPU: لو السيرفر وصل ١٠٠٪ والقاعدة مرتاحة، التطبيق هو العنق: scale أفقي (نسخ أكتر) أو كاش. لو القاعدة وصلت الأول، أو ظهرت [[too many connections]] أو [[Timed out fetching a new connection from the connection pool]] في اللوج، القاعدة أو الـ pool هم العنق: indexes، و N+1، وكاش، وبعدين pooling و replicas. ولو الاتنين مرتاحين والـ p95 عالي، دوّر على API خارجية بطيئة أو lock.
+
+أهم قواعد التجربة: متعملهاش على الإنتاج، ومتشغّلش k6 من نفس السيرفر اللي بتختبره (هيتنافسوا على الـ CPU)، واختبر endpoint حقيقي بيكلم القاعدة، مش [[/health]].`,
+          solCode: R`import http from "k6/http";
+import { check } from "k6";
+
+export const options = {
+  stages: [{ duration: "2m", target: 500 }, { duration: "5m", target: 500 }, { duration: "1m", target: 0 }],
+  thresholds: { http_req_duration: ["p(95)<1000"], http_req_failed: ["rate<0.01"] },
+};
+export default () => {
+  const res = http.get("https://staging.example.com/courses");
+  check(res, { "status 200": (r) => r.status === 200 });
+};
+// k6 run load.js
+// وفي نفس الوقت: htop على سيرفر الـ API، و SELECT count(*) FROM pg_stat_activity; على القاعدة`
         },
         {
           cmd: "cache-aside + TTL",
@@ -4423,7 +5236,12 @@ const fresh = await loadFromDb(); await redis.set(key, JSON.stringify(fresh), "E
             "دوّر في الكاش.",
             "لقيته؟ رجّعه.",
             "ملقيتوش؟ هاته من القاعدة، واحفظه ٥ دقايق، ورجّعه."
-          ]
+          ],
+          sol: R`مثال لإجابة كاملة على ٣ endpoints في myapp:
+
+[[GET /courses]] (القايمة العامة): أيوه، في الـ CDN بـ [[Cache-Control: public, s-maxage=60, stale-while-revalidate=300]]، وفي Redis كمان. الـ TTL دقيقة. بيتمسح لما كورس يتنشر أو يتعدل. أسوأ حاجة لو اتقرا قديم: كورس جديد يتأخر دقيقة. مقبول. [[GET /courses/:slug]]: أيوه، Redis بـ TTL ٥ دقايق، والـ [[updateCourse]] بيمسح الـ key. أسوأ حاجة: عنوان أو وصف قديم لدقايق، أو سعر قديم في الصفحة. مقبول بشرط إن الدفع بياخد السعر من القاعدة مش من الكاش. [[GET /me/enrollments]]: لأ في الـ CDN خالص (داتا مستخدم). وفي Redis، الأحسن لأ: أسوأ حاجة إن طالب دفع ومش لاقي الكورس، وده تذكرة دعم فني وثقة ضايعة، والاستعلام أصلًا رخيص بـ index.
+
+القاعدة اللي بتطلع من السؤال الأخير: لو القديم معناه إزعاج بسيط، كاش بـ TTL. لو معناه فلوس أو صلاحيات أو المستخدم مش شايف حاجة لسه عاملها، متكاشش، أو امسح فورًا واقرا من الـ primary.`
         },
         {
           cmd: "core loop",
@@ -4437,7 +5255,12 @@ const fresh = await loadFromDb(); await redis.set(key, JSON.stringify(fresh), "E
 ومقياس النجاح مثلًا: ٥٠ عملية شراء في أول شهر، و ٤٠٪ يتفرجوا على أول درس في ٢٤ ساعة. من غيره مش هتعرف الـ MVP نجح ولا لأ.`,
             when: R`«العميل عايز كل حاجة في النسخة الأولى، هتعمل إيه؟». «هتعرف إن الـ MVP نجح إزاي؟». «مثال على ميزة شلتها وليه؟».`,
             mistakes: "«بعمل اللي العميل يقوله». أو «MVP يعني جودة أقل». أو من غير مقياس نجاح. أو إنك تأجّل الأمان عشان «ده MVP»."
-          }
+          },
+          sol: R`مثال لإجابة كاملة: مشروع متجر صغير، الـ core loop «الزبون يلاقي المنتج، ويدفع، ويستلم، ويعرف حالة طلبه». الميزات اللي اتعملت برّه الـ loop قبل الإطلاق، وكان ممكن تستنى: wishlist، وتقييمات، وكوبونات، ودخول بجوجل، ودارك مود، ولوحة إحصائيات للأدمن. ٦ ميزات، يعني أسابيع اتأخر فيها الإطلاق من غير ما حد يكون طلبها.
+
+الإجابة القوية في الانترفيو بتربط الرقم بدرس: «الـ ٦ دول أخّروا الإطلاق شهر، ولما اطلقنا لقينا إن المشكلة الحقيقية كانت في الشحن مش في أي واحدة منهم». وبتفرّق بين ميزة ليها بديل يدوي (الكوبونات ممكن تتعمل بخصم يدوي من الأدمن) وميزة ملهاش (الدفع).
+
+وخلي بالك: لو عديت الأمان أو الباك أب أو المراقبة ضمن «كان ممكن تستنى»، دي إجابة غلط. دول شروط لأي إطلاق، مش ميزات.`
         },
         {
           cmd: "mitigate ثم postmortem",
@@ -4459,7 +5282,12 @@ docker compose logs --since 30m api | grep '"level":50' | head`,
           lines: [
             "رجّع الـ API للنسخة اللي قبلها (الـ image متعملها tag بنسخة، مش latest).",
             "آخر نص ساعة من اللوج، الأخطاء بس (pino بيكتب error كـ 50)."
-          ]
+          ],
+          sol: R`نموذج قصير بالعناوين الخمسة:
+
+الملخص: يوم كذا، الطلاب اللي دفعوا من ٢:١٠ لـ ٣:٠٥ مالقوش الكورس في «كورساتي». التأثير: ٤٧ طالب، ٥٥ دقيقة، و ١٢ تذكرة دعم. التسلسل الزمني: ٢:٠٥ deploy نسخة 1.4.0، و ٢:١٠ أول webhook فاشل بـ 401، و ٢:٥٠ أول تذكرة، و ٢:٥٥ لقينا [[invalid hmac]] في اللوج، و ٣:٠٥ رجعنا 1.3.9 والتفعيل رجع، و ٣:٢٠ شغلنا الـ reconcile ففعّل الـ ٤٧ طلب. السبب الجذري: متغير [[PAYMOB_HMAC_SECRET]] اتغير اسمه في الكود ومتغيرش في إعدادات الإنتاج، والـ config validation كانت بتعدّيه لأنه optional. الإجراءات: خلي المتغير required في Zod (صاحبه فلان، الخميس)، و alert لو نسبة الـ webhooks الـ 401 عدّت ٥٪ في ٥ دقايق (صاحبه فلان، الأسبوع الجاي)، واختبار webhook على staging في الـ CI (صاحبه فلان، الشهر ده).
+
+لاحظ إن خانة السبب فيها نظام مش شخص: «الـ validation كانت بتسمح» مش «فلان نسي». والسؤال الأهم في أي postmortem: ليه عرفنا من العملاء بعد ٤٠ دقيقة مش من المراقبة بعد دقيقتين؟ ده غالبًا أهم إجراء.`
         },
         {
           cmd: "access قصير + refresh httpOnly",
@@ -4476,7 +5304,14 @@ docker compose logs --since 30m api | grep '"level":50' | head`,
           },
           lines: [
             "الـ refresh token في cookie: مش مقروءة من JS، و HTTPS بس، ومش بتتبعت مع POST أو fetch جاي من موقع تاني (lax بيبعتها بس لو المستخدم فتح لينك GET)، ولمسارات الـ auth بس، و ٣٠ يوم."
-          ]
+          ],
+          sol: R`شرح نموذجي في دقيقتين: «أي JavaScript شغال في صفحتك يقدر يقرا localStorage، بتاعك أو مش بتاعك: مكتبة من npm اتخترقت، أو سكربت إعلانات، أو تعليق فيه XSS نسيت تعمله escape. لو التوكن هناك، السكربت ده يبعته لسيرفر المهاجم في سطر واحد، والمهاجم يستخدمه من جهازه لحد ما يخلص، وانت مش هتعرف.
+
+الـ cookie اللي عليها httpOnly الـ JavaScript مبيشوفهاش خالص. المتصفح بيبعتها لوحده للسيرفر بتاعنا بس. فحتى لو فيه XSS، المهاجم مبياخدش التوكن ويمشي. أقصى حاجة يعملها طلبات من جوه صفحتك وهي مفتوحة. وده وحش، بس أصغر بكتير، ولما المستخدم يقفل الصفحة الموضوع بيخلص.
+
+والـ access token القصير في الذاكرة (متغير JavaScript)، فلو اتسرق بيخلص في ربع ساعة، والـ refresh اللي بيعمل توكنات جديدة في الـ cookie اللي مبتتقريش.»
+
+لو الشرح طلع من غير كلمة XSS، أو من غير الفرق بين «يقرا التوكن ويمشي» و «يستخدمه وانت فاتح الصفحة»، ارجع للدرس. ده جوهر الإجابة، مش «عشان الأمان».`
         },
         {
           cmd: "القاعدة تحكم",
@@ -4497,7 +5332,19 @@ docker compose logs --since 30m api | grep '"level":50' | head`,
           },
           lines: [
             "زوّد العداد بشرط إن فيه مكان، في خطوة واحدة. لو مرجعش صف، يبقى المكان اتملى."
-          ]
+          ],
+          sol: R`الرقم في المرة الأولى أكبر من 1، ومش ثابت من تشغيلة للتانية. جربناها على مكان واحد و ٥٠ طلب: مرة [[31]] حجز، ومرة [[44]]. وعداد [[booked]] نفسه فضل [[1]]، لأن كله قرا 0 وكتب 1. ده الـ lost update. بالـ UPDATE المشروط: [[1]] بالظبط كل مرة، و [[RETURNING booked]] بيرجع [[1]] للطلب الناجح، والـ ٤٩ التانيين بيرجعلهم صفر صفوف.
+
+ودي إجابة «ليه» في الانترفيو: الطلبين قروا في نفس اللحظة قبل ما أي واحد يكتب، فالاتنين شافوا مكان فاضي. الـ UPDATE المشروط الشرط والكتابة فيه عملية واحدة، والقاعدة بتقفل الصف، فالتاني بيستنى ويتقيّم على القيمة الجديدة.
+
+لو الأولى طلعت 1، الطلبات مش بتتبعت مع بعض فعلًا: اتأكد من [[Promise.all]] ومن إن الـ pool فيه connections كفاية. والكود كامل في درس «booking system» في قسم «تدريب system design».`,
+          solCode: R`const book = (userId) => pool.query(
+  "UPDATE slots SET booked = booked + 1 WHERE id = $1 AND booked < capacity RETURNING booked", [1]
+).then((r) => r.rowCount === 1);
+
+await pool.query("UPDATE slots SET booked = 0, capacity = 1 WHERE id = 1");
+const ok = (await Promise.all(Array.from({ length: 50 }, (_, i) => book(i)))).filter(Boolean).length;
+console.log(ok); // 1`
         },
         {
           cmd: "expand / contract",
@@ -4524,7 +5371,24 @@ docker compose logs --since 30m api | grep '"level":50' | head`,
             "انقل الداتا القديمة، على دفعات عشان متقفلش الجدول.",
             "دلوقتي الكود يقدر يعتمد على الجديد بس.",
             "contract: امسح القديم بعد ما تتأكد إن مفيش كود بيقراه."
-          ]
+          ],
+          sol: R`اللي هتلاحظه بين كل خطوة والتانية لو ماشي صح: بعد (١) الاتنين شغالين، لأن القديم مش شايف [[fullName]] أصلًا. بعد (٢) الجديد بيكتب في الاتنين، والقديم لسه بيكتب في [[name]] بس. بعد (٣) كل الصفوف فيها [[fullName]]، بس جربناها ولقينا صف [[fullName]] فيه NULL: النسخة القديمة كتبت بعد الـ backfill. عشان كده الـ backfill بيتعمل بعد ما (٢) يتنشر على كل النسخ، ومعاه [[WHERE "fullName" IS NULL]] يتعاد بأمان.
+
+الفخ الأكبر في (٤) و (٥): لو [[name]] عليه [[NOT NULL]]، والكود في (٤) بطّل يكتب فيه، كل insert هيقع. ولو الكود لسه بيكتب فيه ومسحت العمود في (٥)، كل insert هيقع برضه (جربناها: حتى النسخة اللي بتكتب في الاتنين وقعت). يعني (٤) لازم يبطّل يقرا ويكتب في [[name]] الاتنين، وقبلها [[ALTER COLUMN name DROP NOT NULL]]، وتستنى لحد ما مفيش أي نسخة قديمة شغالة، وبعدين (٥).
+
+لو نسخة وقعت في أي خطوة، ده معناه إن الخطوة دي مش متوافقة مع النسختين، وده بالظبط اللي بيحصل في deploy حقيقي بـ rolling update.`,
+          solCode: R`-- 1 expand
+ALTER TABLE "User" ADD COLUMN "fullName" text;
+-- 2 deploy: الكود بيكتب في name و fullName
+-- 3 backfill (بعد ما 2 يتنشر على كل النسخ)، على دفعات
+UPDATE "User" SET "fullName" = name
+WHERE id IN (SELECT id FROM "User" WHERE "fullName" IS NULL LIMIT 1000);
+-- كرر لحد ما يرجع UPDATE 0
+-- قبل 4
+ALTER TABLE "User" ALTER COLUMN name DROP NOT NULL;
+-- 4 deploy: الكود بيقرا ويكتب fullName بس
+-- 5 contract (release بعدها، ومفيش نسخة قديمة شغالة)
+ALTER TABLE "User" DROP COLUMN name;`
         },
         {
           cmd: "timeout + retry + reconcile",
@@ -4547,7 +5411,26 @@ docker compose logs --since 30m api | grep '"level":50' | head`,
           },
           lines: [
             "طلب خارجي بمفتاح idempotency (رقم الطلب)، ومهلة ١٠ ثواني بالظبط."
-          ]
+          ],
+          sol: R`من غير timeout، الزرار بيفضل يلف دقيقة كاملة، والطلب ماسك connection في السيرفر طول الوقت ده، ولو ١٠٠ واحد ضغطوا، سيرفرك نفسه بيقف. مع [[AbortSignal.timeout(10_000)]] الـ fetch بيرمي بعد ١٠ ثواني بالظبط خطأ اسمه [[TimeoutError]] ورسالته [[The operation was aborted due to timeout]] (جربناها بثانية وطلعت بعد 1010ms).
+
+بس خلي بالك: الخطأ ده بيترمي من [[fetch]] نفسه، فسطر [[if (!r.ok) throw new AppError(502, "GATEWAY_DOWN", ...)]] في درس «Paymob intention» مش بيتنفذ أصلًا. النتيجة إن المستخدم بياخد 500 [[INTERNAL]] «حصلت مشكلة» مش الرسالة المفهومة. الحل إنك تلف الـ fetch بـ try/catch وتحوّل [[TimeoutError]] لنفس الـ [[AppError(502/503)]].
+
+والطلب نفسه بيفضل PENDING في القاعدة، وده مقبول: الـ reconcile job هيراجعه مع البوابة بعدين. ولو ضغط «اشتري» تاني، الـ [[Idempotency-Key: order.id]] بيمنع البوابة تعمل عملية تانية لو الأولى وصلت فعلًا.`,
+          solCode: R`// سيرفر بطيء يمثّل البوابة: node slow.mjs
+import http from "node:http";
+http.createServer((req, res) => setTimeout(() => res.end("{}"), 60_000)).listen(4100);
+// في staging: PAYMOB_BASE_URL=http://localhost:4100
+
+// createCheckout بعد التعديل
+let r;
+try {
+  r = await fetch(config.PAYMOB_BASE_URL + "/v1/intention/", { method: "POST", body, headers, signal: AbortSignal.timeout(10_000) });
+} catch (e) {
+  if (e.name === "TimeoutError") throw new AppError(503, "GATEWAY_TIMEOUT", "بوابة الدفع مش بترد، جرّب كمان شوية");
+  throw new AppError(502, "GATEWAY_DOWN", "بوابة الدفع مش متاحة دلوقتي، جرّب كمان شوية");
+}
+if (!r.ok) throw new AppError(502, "GATEWAY_DOWN", "بوابة الدفع مش متاحة دلوقتي، جرّب كمان شوية");`
         }
       ]
     }
