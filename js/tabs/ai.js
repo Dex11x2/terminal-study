@@ -60,7 +60,12 @@ export GEMINI_API_KEY=YOUR_KEY`,
             "الـ body هيبقى JSON.",
             "اسم الموديل والنص اللي عايزه يكمّله.",
             "من الرد الكبير، طلّع نص آخر خطوة (رد الموديل) بس."
-          ]
+          ],
+          sol: R`المرتين هتاخد «القاهرة» تقريبًا، بس الجملة حواليها ممكن تختلف («القاهرة.» مرة و «القاهرة، وهي أكبر مدينة...» مرة). ده طبيعي: الموديل بيسحب token من احتمالات، مش بيرجّع إجابة محفوظة.
+
+من غير [[jq]] هتشوف JSON فيه: [[id]] (رقم الـ interaction)، و [[status: "completed"]]، و [[steps]]: غالبًا خطوة [[type: "thought"]] فيها [[signature]] (تفكير الموديل، مش مكتوب لك)، وبعدها [[type: "model_output"]] وجواها [[content]] فيه [[{ type: "text", text: "..." }]]. عشان كده الفلتر بياخد [[steps[-1]]] مش أول خطوة. و [[usage]] فيه [[total_input_tokens]] و [[total_output_tokens]] و [[total_thought_tokens]]، والأخير ممكن يطلع أكبر من الرد نفسه رغم إن السؤال تافه.
+
+لو [[jq]] طبع [[null]]: يا إما الرد كان خطأ (بص على الـ JSON من غير jq، هتلاقي [[error]] فيه مثلًا [[API key not valid]] أو اسم موديل مش موجود)، يا إما آخر خطوة مش نص. ولو [[curl]] مطلّعش حاجة خالص، غالبًا [[GEMINI_API_KEY]] مش متعرّف في الـ shell ده ([[echo $GEMINI_API_KEY]]).`
         },
         {
           cmd: "tokens",
@@ -99,7 +104,12 @@ console.log(it.usage.total_input_tokens, it.usage.total_output_tokens, it.usage.
             "اطبع العدد.",
             "ابعت الطلب فعلًا.",
             "من [[usage]]: tokens الدخول، والخروج، والتفكير (اللي بتتحاسب كخروج)."
-          ]
+          ],
+          sol: R`العربي هيطلع أكتر بشكل واضح. بالـ tokenizer المحلي اللي في [[@google/genai]] (بتاع جيل Gemini 2.5، والأجيال الأحدث ممكن تفرق شوية): «اشرح الـ closures في JavaScript في سطرين» = 11 token، و «Explain JavaScript closures in two lines» = 6. وجملة عربي بحت زي «اشرح الفرق بين الإلغاء والاسترداد في سطرين» = 15 قدام 10 لنفس المعنى بالإنجليزي. يعني حوالي مرة ونص لمرتين.
+
+في طلب «اكتب ٥ فقرات» هتلاقي [[total_output_tokens]] بالمئات بدل عشرات، و [[total_thought_tokens]] ممكن يبقى رقم محترم كمان حتى لو الطلب سهل، وده كله بيتحاسب بسعر الخروج. لاحظ كمان إن [[total_input_tokens]] في الرد ممكن يطلع أكبر شوية من [[countTokens]]، لأن الطلب الحقيقي فيه تغليف (دور الرسالة وإعدادات) مش النص بس.
+
+الغلط الشائع: تفتكر إن عدد الكلمات × ١.٣ تقدير كويس. في العربي ده بيطلع أقل من الحقيقة، وبتنسى التفكير خالص.`
         },
         {
           cmd: "context window",
@@ -138,7 +148,10 @@ console.log(kept.output_text);`,
             "هيقولك مش عارف (أو يخمّن).",
             "نفس السؤال، بس مربوط بالطلب الأول بالـ id، فالسيرفر بيضيف التاريخ قبله.",
             "دلوقتي عارف إن اسمك كريم."
-          ]
+          ],
+          sol: R`المتوقع: [[lost.output_text]] حاجة زي «معرفش اسمك، انت مقولتليش»، و [[kept.output_text]] فيه «كريم». وفي الأرقام: [[lost.usage.total_input_tokens]] رقم صغير (السؤال بس)، و [[kept.usage.total_input_tokens]] أكبر منه، لأن السيرفر حط قبله «اسمي كريم.» ورد الموديل عليها. الفرق ده هو «تمن الذاكرة» وبيكبر مع كل رسالة.
+
+لو [[kept]] مطلعش أكبر، اتأكد إنك بعت [[first.id]] فعلًا في [[previous_interaction_id]]، وإن أول طلب مكانش فيه [[store: false]] (من غير حفظ السيرفر ميلاقيش حاجة يضيفها، وغالبًا هيرجّع خطأ إن الـ interaction مش موجود). ولو [[lost]] عرف اسمك، يبقى انت بتبعت نفس الـ id بالغلط، أو الموديل خمّن اسم (نادر، بس ده بالظبط الـ hallucination).`
         },
         {
           cmd: "temperature",
@@ -182,7 +195,20 @@ console.log("t=2  ", probs(2));
             "temperature قليلة: الأولى بتاخد كل حاجة تقريبًا.",
             "temperature = 1: التوزيع الطبيعي للموديل.",
             "temperature عالية: حتى «باريس» بقى ليها فرصة."
-          ]
+          ],
+          sol: R`بعد ما تضيف [[الإسكندرية: 0.5]] الناتج: [[t=1 القاهرة 79.8% | الجيزة 17.8% | باريس 1.5% | الإسكندرية 0.9%]]، و [[t=5 القاهرة 38.5% | الجيزة 28.5% | باريس 17.3% | الإسكندرية 15.7%]]. يعني عند t=5 الإجابة الصح بقت أقل من النص، وتقريبًا مرة من كل ٣ هيقول «باريس» أو «الإسكندرية».
+
+لاحظ إن إضافة كلمة جديدة غيّرت نسبة القاهرة عند t=1 من 80.6% لـ 79.8%، لأن المجموع بقى فيه حد زيادة. ولو أرقامك مجموعها مش 100% (فرق 0.1 مثلًا) ده تقريب [[toFixed]] مش غلط. أما لو طلعلك [[NaN]] يبقى كتبت t=0: القسمة على صفر بتدّي Infinity، وده سبب إن الـ APIs بتعامل 0 كـ «خد الأعلى» بدل ما تحسبها.`,
+          solCode: R`const logits = { "القاهرة": 5, "الجيزة": 3.5, "باريس": 1, "الإسكندرية": 0.5 };
+function probs(t) {
+  const exps = Object.entries(logits).map(([w, l]) => [w, Math.exp(l / t)]);
+  const sum = exps.reduce((s, [, e]) => s + e, 0);
+  return exps.map(([w, e]) => $__bt$__{w} $__{((e / sum) * 100).toFixed(1)}%$__bt).join(" | ");
+}
+console.log("t=1", probs(1));
+console.log("t=5", probs(5));
+// t=1 القاهرة 79.8% | الجيزة 17.8% | باريس 1.5% | الإسكندرية 0.9%
+// t=5 القاهرة 38.5% | الجيزة 28.5% | باريس 17.3% | الإسكندرية 15.7%`
         }
       ]
     },
@@ -242,7 +268,12 @@ console.log(it.output_text);`,
             "المعلومة + سؤال المستخدم في الـ input.",
             "قفلة الطلب.",
             "المفروض يقول لأ، وإن الإلغاء المجاني لازم قبلها بيوم."
-          ]
+          ],
+          sol: R`مع القواعد كاملة، سؤال الركنة المفروض يرجّع الجملة اللي كتبتها بالظبط أو قريب جدًا منها: «مش متأكد، هحوّلك لحد من الفريق». ده معناه إن القاعدة الرابعة شغالة، وكودك يقدر يدوّر على الجملة دي ويحوّل المحادثة لموظف فعلًا.
+
+لما تشيل آخر قاعدة وتكرر، النتيجة المعتادة إن الموديل يجاوب من عنده: «أيوه فيه ركنة قدام الملعب» أو «غالبًا فيه ركنة، اتأكد من الإدارة». الجملة الأولى تأليف بثقة، والتانية تأليف مؤدب. الاتنين غلط لأن مفيش في الـ policy حاجة عن الركنة. وقاعدة «المعلومات اللي جوه <policy> بس» لوحدها مش كفاية، لأن الموديل محتاج يعرف يقول إيه بدل ما يسكت.
+
+لو لقيته التزم حتى من غير القاعدة، متستنتجش إنها ملهاش لازمة: جرّب ٥ أسئلة برا الـ policy، والنتيجة هتختلف من سؤال للتاني ومن مرة للتانية. القاعدة هي اللي بتخلي السلوك ثابت.`
         },
         {
           cmd: "few-shot",
@@ -292,7 +323,28 @@ console.log(it.output_text);
             "الرسالة الجديدة اللي عايز تصنيفها.",
             "قفلة الطلب.",
             "كلمة واحدة من القايمة."
-          ]
+          ],
+          sol: R`من غير مثال لـ [[refund]]، رسالة «بقالي أسبوع مستني الفلوس ترجع» ممكن تطلع [[refund]] وممكن تفضل [[complaint]]، لأن فيها زعل وتأخير زي مثال الشكوى بالظبط، والموديل بيقلّد الأمثلة أكتر من ما بيقرا اسم الفئة. وأحيانًا يرد بكلمة برا القايمة خالص زي [[Refund]] أو [[refund request]].
+
+بعد مثال واحد لـ refund فيه «فلوس» و «ترجع»، الرسالة دي غالبًا هتطلع [[refund]] بثبات. عشان تتأكد بجد، جرّب ٥ رسايل مختلفة لكل فئة مش رسالة واحدة. وخلي الكود دايمًا يفحص إن الرد من القايمة، وأي حاجة تانية تبقى [[unknown]] بدل ما تدخل الداتابيز.
+
+الغلط الشائع: تضيف الفئة في التعليمات وتنسى تضيفها في الكود اللي بيفحص الرد، فكل [[refund]] صح يترمي كـ «غلط».`,
+          solCode: R`import { GoogleGenAI } from "@google/genai";
+const ai = new GoogleGenAI({});
+const LABELS = ["complaint", "question", "praise", "refund"];
+const examples = [
+  ["الأوردر اتأخر يومين ومحدش بيرد", "complaint"],
+  ["عندكم مقاس XL؟", "question"],
+  ["شكرًا، الخدمة ممتازة", "praise"],
+  ["رجّعت الجزمة من أسبوع ولسه الفلوس مرجعتش", "refund"],
+].map(([m, c]) => $__bt<example>\n$__{m}\n=> $__{c}\n</example>$__bt).join("\n");
+const it = await ai.interactions.create({
+  model: "gemini-3.8-flash",
+  system_instruction: $__btصنّف رسالة العميل. رد بكلمة واحدة: $__{LABELS.join(" أو ")}.\n$__bt + examples,
+  input: "بقالي أسبوع مستني الفلوس ترجع",
+});
+const label = (it.output_text ?? "").trim().toLowerCase();
+console.log(LABELS.includes(label) ? label : "unknown");`
         },
         {
           cmd: "output format",
@@ -336,7 +388,28 @@ console.log(toPoints("- الـ JWT توكن موقّع.\n\n* بيتبعت في h
             "لو مفيش ولا سطر، النص كله نقطة واحدة. عمرها ما ترجع فاضية.",
             "قفلة الدالة.",
             "رد فيه سطر فاضي ونجمة بدل شرطة، وبرضه طلع صح."
-          ]
+          ],
+          sol: R`مع [[SYSTEM]] ده، الموديلات الحالية غالبًا بترجّع ٣-٥ سطور بشرطة، و [[toPoints]] يطلّع array نضيف. الإمتحان الحقيقي في الردود الغريبة، ودي النتايج بالظبط:
+
+نص من غير شرط ([[الـ JWT توكن موقّع بيتبعت في header ومش مشفّر.]]) بيرجع [[['الـ JWT توكن موقّع بيتبعت في header ومش مشفّر.']]]: نقطة واحدة، وده صح. أما markdown زي [[## الـ JWT\n**توكن موقّع**\n1. بيتبعت في header\n- مش مشفّر]] فبيرجع [[['## الـ JWT', '*توكن موقّع**', '1. بيتبعت في header', 'مش مشفّر']]]: العنوان دخل كنقطة، والـ bold اتشالت منه نجمة واحدة بس (لأن الـ regex شافها bullet)، والترقيم فضل. ومقدمة زي «أكيد! إليك الإجابة:» بتدخل كأول نقطة. ورد كله مسافات بيرجع [[['']]]: مش فاضي، بس فيه نقطة فاضية هتظهر كارت فاضي.
+
+الحل إنك توسّع الـ parser على الحاجات اللي شفتها بعينك: تشيل [[**]] الأول، وبعدين bullet أو رقم، وترمي العناوين والسطور اللي بتنتهي بـ «:». وبدل [[['']]] رجّع [[[]]] والـ UI يعرض رسالة بديلة. الغلط الشائع: تصلّح البرومبت بس («متستخدمش markdown») وتسيب الـ parser زي ما هو.`,
+          solCode: R`function toPoints(text) {
+  const points = String(text ?? "")
+    .split("\n")
+    .map((l) => l.replace(/\*\*|__/g, "").replace(/^\s*(?:[-*•]|\d+[.)])\s*/, "").trim())
+    .filter((l) => l && !l.startsWith("#") && !/:$/.test(l))
+    .slice(0, 5);
+  if (points.length) return points;
+  const all = String(text ?? "").trim();
+  return all ? [all] : [];
+}
+console.log(toPoints("## الـ JWT\n**توكن موقّع**\n1. بيتبعت في header\n- مش مشفّر"));
+console.log(toPoints("أكيد! إليك الإجابة:\n- الـ JWT توكن موقّع."));
+console.log(toPoints("   \n\n"));
+// [ 'توكن موقّع', 'بيتبعت في header', 'مش مشفّر' ]
+// [ 'الـ JWT توكن موقّع.' ]
+// []`
         }
       ]
     },
@@ -392,7 +465,21 @@ try {
             "لو فشل.",
             "اطبع السبب بدل ما البرنامج يقع.",
             "قفلة."
-          ]
+          ],
+          sol: R`لو كله تمام هتشوف جملتين بالعامية عن الفرق بين let و const، وتحتهم object الـ [[usage]] فيه [[total_input_tokens]] (رقم صغير، عشرات) و [[total_output_tokens]] و [[total_thought_tokens]]. مع [[high]] المفروض الطلب ياخد وقت أطول بشكل ملحوظ، و [[total_thought_tokens]] يكبر (ممكن أضعاف)، والإجابة نفسها لسؤال سهل زي ده مش هتبقى أحسن تقريبًا. ده الدرس: التفكير العالي بتدفع تمنه وقت وفلوس، ويستاهل في المسائل الصعبة بس. قيس الوقت بـ [[performance.now()]] قبل وبعد الطلب، والأرقام نفسها بتتغير من تشغيل للتاني.
+
+الأخطاء المتوقعة: [[الطلب فشل: ... API key not valid]] يعني [[.env]] مش متقري (نسيت [[--env-file]] أو اسم المتغير غلط). ولو الملف [[first.js]] مش [[.mjs]] هتاخد [[Cannot use import statement outside a module]]. ولو الرد اتقطع أو [[output_text]] طلع undefined مع [[high]]، يبقى [[max_output_tokens: 1000]] صغير على التفكير والرد مع بعض: علّيه.`,
+          solCode: R`import { GoogleGenAI } from "@google/genai";
+const ai = new GoogleGenAI({});
+for (const level of ["low", "high"]) {
+  const t0 = performance.now();
+  const it = await ai.interactions.create({
+    model: process.env.GEMINI_MODEL ?? "gemini-3.8-flash",
+    input: "اشرح الفرق بين let و const في جملتين",
+    generation_config: { thinking_level: level, max_output_tokens: 4000 },
+  });
+  console.log(level, Math.round(performance.now() - t0), "ms | thought:", it.usage.total_thought_tokens, "| out:", it.usage.total_output_tokens);
+}`
         },
         {
           cmd: "google-genai",
@@ -439,7 +526,12 @@ print(interaction.usage)`,
             "قفلة.",
             "النص.",
             "الاستهلاك."
-          ]
+          ],
+          sol: R`بعد [[python3 -m venv .venv]] و [[source .venv/bin/activate]] و [[pip install google-genai]]، تشغيل [[python first.py]] المفروض يطبع جملتين عن الـ venv، وتحتهم سطر طويل زي [[total_input_tokens=26 total_output_tokens=... total_thought_tokens=...]] وحقول تانية كتير قيمتها [[None]]. ده مش خطأ: [[usage]] object من pydantic، واللي مش متاح بيطلع None. لو عايز رقم واحد اكتب [[interaction.usage.total_input_tokens]].
+
+سؤال عن حاجة حصلت الأسبوع ده هيطلّع واحدة من تلاتة: يقولك صراحةً إن معلوماته لحد تاريخ معين ومش عارف (أحسن حالة)، أو يتكلم عن أحداث قديمة كأنها جديدة، أو يألّف تفاصيل مقنعة. التانية والتالتة هما الـ hallucination اللي في أول درس: الموديل مفيهوش أخبار، إلا لو اديته أداة بحث (زي Google Search grounding) أو حطيت الخبر في الطلب.
+
+الأخطاء المعتادة: [[ModuleNotFoundError: No module named 'google']] يعني سطّبت برا الـ venv أو شغّلت بـ python تاني. و [[AttributeError]] على [[interactions]] يعني نسخة قديمة من المكتبة ([[pip install -U google-genai]])، أو سطّبت [[google-generativeai]] القديمة بالغلط.`
         },
         {
           cmd: "@anthropic-ai/sdk",
@@ -484,7 +576,12 @@ console.log(msg.stop_reason, msg.usage.input_tokens, msg.usage.output_tokens);`,
             "اجمع كل الـ blocks النصية بس (ممكن يبقى فيه blocks تانية).",
             "اطبع الرد.",
             "وقف ليه، واستهلك كام."
-          ]
+          ],
+          sol: R`بـ [[max_tokens: 4096]]: جملتين عن REST، وبعدين سطر زي [[end_turn 30 60]] (الأرقام تقريبية). [[end_turn]] معناها إن الموديل خلص كلامه لوحده.
+
+بـ [[max_tokens: 20]]: السطر التاني هيبقى [[max_tokens]] ومعاه [[output_tokens]] قريب من 20. النص يا إما مقطوع في نص جملة، يا إما فاضي خالص (سطر فاضي)، لأن الموديلات الجديدة بتفكر الأول، والتفكير بيتحسب من نفس الـ 20 فممكن يخلّصهم قبل ما يكتب حرف. والمهم إن مفيش أي exception: الـ API اعتبر الطلب ناجح. عشان كده الكود الحقيقي لازم يفحص [[stop_reason]]، مش يفترض إن أي رد رجع يبقى كامل.
+
+لو طلعلك [[401 authentication_error]] يبقى [[ANTHROPIC_API_KEY]] مش في البيئة. ولو اتطبع [[undefined]] (أو [[TypeError]] مع [[max_tokens]] صغير و [[content]] فاضية) يبقى كتبت [[msg.content[0].text]] بدل الفلتر.`
         }
       ]
     },
@@ -525,7 +622,10 @@ git log -p --all -S "AIza" | head`,
             "اتأكد إنه متجاهل فعلًا وبأنهي قاعدة.",
             "Node بيحمّل .env لوحده بالـ flag ده، من غير مكتبة.",
             "دوّر في تاريخ git كله على commits فيها نص بيبدأ زي مفاتيح Google."
-          ]
+          ],
+          sol: R`[[git check-ignore -v .env]] المفروض يطبع [[.gitignore:1:.env	.env]]: يعني الملف متجاهل بسبب السطر الأول في [[.gitignore]]. و [[git status --short]] يطلّع [[?? .env.example]] و [[?? .gitignore]] بس، و [[.env]] مش موجود في القايمة خالص. لو [[.env]] ظهر، يا إما السطر اتكتب غلط (زي [[.evn]] أو [[env]] من غير النقطة)، يا إما الملف متتبّع من قبل كده، ووقتها [[git check-ignore]] مش هيطبع حاجة والحل [[git rm --cached .env]].
+
+في المشروع القديم: لو المفتاح اتعمله commit في أي وقت، [[git log -p --all -S "AIza"]] هيطلّعلك commit-ين على الأقل: اللي ضاف السطر (فيه [[+const k = "AIza...]]) واللي شاله (فيه [[-const k = "AIza...]]). وجود الـ commit التاني معناه إن المسح مخبّاش حاجة: المفتاح لسه مقروء لأي حد عنده الـ repo. الخطوة الصح: الغي المفتاح من Google AI Studio واعمل واحد جديد، وده أهم من إنك تنضّف التاريخ. ولو مطلعش أي حاجة، ده خبر حلو، بس اتأكد إنك دوّرت بالبداية الصح للمزوّد (Anthropic مثلًا [[sk-ant-]]).`
         },
         {
           cmd: "backend proxy",
@@ -576,7 +676,24 @@ Express 5 بيمسك الـ promise اللي اترفضت في async handler و�
             "رجّع الرد بس، مش الـ object كله.",
             "قفلة الـ route.",
             "شغّل على 3000."
-          ]
+          ],
+          sol: R`خلي بالك الأول: الـ route ده ورا [[requireUser]]، فلازم الـ fetch يبعت header اسمه [[Authorization]]، وإلا هتاخد [[401]] فاضي حتى للسؤال الصح. ولو الفرونت شغال على Vite (بورت تاني)، [[/api/ask]] محتاج proxy في [[vite.config]] أو URL كامل مع CORS.
+
+المتوقع: سؤال عادي يرجع [[200]] وجسمه [[{"answer":"..."}]]. سؤال مسافات بس ([["   "]]) يرجع [[400]] و [[{"error":"السؤال فاضي"}]]، ومن غير ما يتبعت أي طلب للموديل (مفيش فلوس اتصرفت). ومن غير [[Authorization]] يرجع [[401]]. في Network هتلاقي الطلب رايح لـ [[localhost]] بتاعك، وفي Request Headers مفيش غير [[Content-Type]] و [[Authorization]] بتوع المستخدم، ومفيش [[x-goog-api-key]] ولا [[AIza]] في أي مكان، ولا في Sources لو دوّرت بـ Ctrl+Shift+F.
+
+لو لقيت المفتاح في الـ bundle، غالبًا عندك متغير بـ [[VITE_]] أو [[NEXT_PUBLIC_]] في مكان تاني من المشروع.`,
+          solCode: R`const ask = async (question) => {
+  const res = await fetch("/api/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer demo" },
+    body: JSON.stringify({ question }),
+  });
+  console.log(res.status, await res.json().catch(() => null));
+};
+await ask("يعني إيه closure؟");
+await ask("   ");
+// 200 { answer: '...' }
+// 400 { error: 'السؤال فاضي' }`
         },
         {
           cmd: "تكلفة الطلب",
@@ -623,7 +740,22 @@ console.log(costUSD("MODEL_NAME", usage).toFixed(5));
             "قفلة الدالة.",
             "usage شبه اللي بيرجع من Gemini: ١٢ ألف دخول منهم ١٠ آلاف من الكاش.",
             "النتيجة بالدولار."
-          ]
+          ],
+          sol: R`الحساب نفسه (الأسعار هي اللي هتتغير): الطلبات في الشهر = 1000 × 20 × 30 = 600,000 طلب. الدخول = 600,000 × 3000 = 1.8 مليار token، والخروج = 600,000 × 400 = 240 مليون token. التكلفة = (1800 × سعر الدخول) + (240 × سعر الخروج)، لأن الأسعار لكل مليون.
+
+بأرقام المثال التوضيحية (0.5 دخول و 3 خروج) النتيجة 900 + 720 = 1620 دولار في الشهر. لاحظ إن الخروج حوالي ١٢٪ بس من الـ tokens بس قرّب لنص الفاتورة. ولو ٢٠٠٠ من الـ ٣٠٠٠ token دول system ثابت والكاش شغال (سعر 0.05)، الرقم ينزل لـ 1080. ولو الموديل بيفكر ٦٠٠ token في كل رد، ضيف 600,000 × 600 = 360 مليون token تانيين بسعر الخروج (1080 دولار بنفس الأرقام)، يعني التفكير لوحده ممكن يضاعف الفاتورة.
+
+الغلط الشائع: تنسى تضرب في ٣٠ فتطلع 54 دولار وتفرح، أو تقسم على ١٠٠٠ بدل مليون، أو تحسب الـ ٤٠٠ خروج وتنسى التفكير.`,
+          solCode: R`const P = { in: 0.5, cached: 0.05, out: 3 };
+const reqs = 1000 * 20 * 30;
+const monthly = ({ inTok, cachedTok = 0, outTok, thoughtTok = 0 }) =>
+  (reqs * ((inTok - cachedTok) * P.in + cachedTok * P.cached + (outTok + thoughtTok) * P.out)) / 1_000_000;
+console.log(monthly({ inTok: 3000, outTok: 400 }));
+console.log(monthly({ inTok: 3000, cachedTok: 2000, outTok: 400 }));
+console.log(monthly({ inTok: 3000, cachedTok: 2000, outTok: 400, thoughtTok: 600 }));
+// 1620
+// 1080
+// 2160`
         },
         {
           cmd: "429 و retry",
@@ -675,7 +807,27 @@ console.log(await withRetry(flaky), "بعد", calls, "محاولات");
             "عدّاد للتجربة.",
             "دالة وهمية بتفشل بـ 429 أول مرتين وتنجح التالتة.",
             "اطبع النتيجة وعدد المحاولات."
-          ]
+          ],
+          sol: R`مع [[status: 400]]: البرنامج يقع فورًا بـ [[Error: busy]] (أو اللي كتبته)، و [[calls]] = 1، ومفيش أي انتظار (0 ms تقريبًا). ده الصح: [[retryable]] رجّعت false، فالخطأ اترمى من أول مرة. ولو شفته استنى وأعاد، يبقى الـ status مش في المكان اللي [[retryable]] بتقرا منه، أو كتبت [[400]] كـ string.
+
+ولما تطبع وقت كل انتظار وتخلي الدالة تفشل على طول بـ 429، هتشوف حاجة زي: [[1222ms]] ثم [[2288ms]] ثم [[4151ms]]، وبعدها يقع بعد ٤ محاولات في حوالي ٧.٥ ثانية. الأساس بيتضاعف 1000 ثم 2000 ثم 4000، والكسور الزيادة (لحد 300ms) هي الـ jitter، فأرقامك هتختلف في الكسور بس. مفيش انتظار بعد آخر محاولة، لأن الشرط [[i >= tries]] بيرمي قبل الـ sleep.`,
+          solCode: R`const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const retryable = (e) => [429, 500, 503].includes(e.status) || e.name === "TimeoutError";
+async function withRetry(fn, tries = 4) {
+  for (let i = 1; ; i++) {
+    try { return await fn(); }
+    catch (e) {
+      if (i >= tries || !retryable(e)) throw e;
+      const wait = 2 ** i * 500 + Math.random() * 300;
+      console.log($__btمحاولة $__{i} فشلت ($__{e.status})، هستنى $__{Math.round(wait)}ms$__bt);
+      await sleep(wait);
+    }
+  }
+}
+let calls = 0;
+const bad = async () => { calls++; throw Object.assign(new Error("bad request"), { status: 400 }); };
+try { await withRetry(bad); } catch (e) { console.log("وقع:", e.status, "بعد", calls, "محاولة"); }
+// وقع: 400 بعد 1 محاولة`
         },
         {
           cmd: "اختيار الموديل",
@@ -720,7 +872,31 @@ console.log(chooseModel({ kind: "complaint" }));`,
             "الباقي: الأساسي.",
             "قفلة.",
             "شكوى هتروح للموديل القوي."
-          ]
+          ],
+          sol: R`الناتج جدول بـ ٢٠ صف (١٠ أسئلة × موديلين)، كل صف فيه: صح ولا لأ، والوقت، والـ tokens. شكل النتيجة المعتاد: الأسئلة اللي إجابتها مكتوبة صريحة في الـ context (مواعيد، أسعار، سياسة) الموديلين بيجيبوها صح، و [[fast]] أسرع وأرخص بوضوح. الفرق بيظهر في الأسئلة اللي محتاجة استنتاج أو حساب («لو حجزت ٣ ساعات والخصم ٢٠٪ هدفع كام؟») أو فيها فخ (سؤال مش في السياسة): هنا [[fast]] بيغلط أو يألّف أكتر.
+
+القرار بييجي من الجدول، مش من الإحساس: لو [[fast]] جاب ٩ من ١٠ والغلطة في نوع أسئلة واضح، ابعت النوع ده بس لـ [[main]]. ولو جاب ٦ من ١٠، الرخيص مش مناسب للمهمة دي أصلًا مهما كان أرخص. وسجّل أسماء الموديلات والتاريخ مع الجدول، لأنك هتعيد نفس الاختبار لما موديل جديد ينزل.
+
+الغلط الشائع: تحكم «صح ولا لأ» بعينك على كل رد، فتبقى متساهل مع موديل ومتشدد مع التاني. اكتب لكل سؤال شرط واضح (كلمة لازم تظهر، أو رقم) قبل ما تشغّل. وتشغّل كل سؤال مرة واحدة بس، مع إن الرد بيتغير: لو في وقت كفاية شغّل كل سؤال ٣ مرات.`,
+          solCode: R`import { GoogleGenAI } from "@google/genai";
+const ai = new GoogleGenAI({});
+const MODELS = { fast: process.env.MODEL_FAST ?? "gemini-3.5-flash-lite", main: process.env.MODEL_MAIN ?? "gemini-3.8-flash" };
+const SYSTEM = "انت مساعد حجز ملاعب. استخدم اللي جوه <policy> بس، ولو مش موجود قول «مش متأكد».\n<policy>الإلغاء مجاني قبل الميعاد بـ ٢٤ ساعة، وبعدها بيتخصم ٥٠٪.</policy>";
+const cases = [
+  { q: "ينفع ألغي قبل الميعاد بساعتين ببلاش؟", must: /لأ|٥٠|50|نص/ },
+  { q: "الملعب فيه ركنة عربيات؟", must: /مش متأكد/ },
+  // كمّل لحد ١٠ أسئلة حقيقية من مشروعك، ولكل واحد شرط الصح
+];
+const rows = [];
+for (const [tier, model] of Object.entries(MODELS)) {
+  for (const c of cases) {
+    const t0 = performance.now();
+    const it = await ai.interactions.create({ model, system_instruction: SYSTEM, input: c.q, store: false, generation_config: { thinking_level: "low" } });
+    const u = it.usage;
+    rows.push({ tier, q: c.q.slice(0, 20), ok: c.must.test(it.output_text ?? ""), ms: Math.round(performance.now() - t0), in: u.total_input_tokens, out: u.total_output_tokens + (u.total_thought_tokens ?? 0) });
+  }
+}
+console.table(rows);`
         }
       ]
     },
