@@ -58,7 +58,18 @@ Next 16 محتاج Node 20.9 على الأقل، و TypeScript 5.1 أو أحدث
             R`شغّل dev server على [[localhost:3000]]. من Next 16 بيشتغل بـ Turbopack افتراضيًا.`,
             R`هتلاقي [[layout.tsx]] و [[page.tsx]] و [[globals.css]] و [[favicon.ico]]، و public فيها صور SVG.`,
             "بيطبع نسخ Next و React و Node ونظامك. أول حاجة تبعتها لو بتسأل عن مشكلة أو بتفتح issue."
-          ]
+          ],
+          sol: R`بعد ما تحفظ [[page.tsx]] المتصفح بيتحدث لوحده (Fast Refresh) من غير reload، والصفحة كلها بقت «أهلًا» بس. و [[/about]] بتفتح على طول لأن فولدر [[about]] جواه [[page.tsx]] بيعمل [[export default]] لكومبوننت. ولو عملت [[npm run build]] هتلاقي في الجدول [[○ /]] و [[○ /about]]: الاتنين static.
+
+لو [[/about]] طلعت 404: اتأكد إن الملف اسمه [[page.tsx]] بالظبط (مش [[About.tsx]] ولا [[index.tsx]])، وإنه جوه [[src/app/about]] مش فولدر [[app]] تاني في الجذر. ولو طلع خطأ إن الصفحة مش React component، يبقى نسيت [[export default]].`,
+          solCode: R`// src/app/page.tsx
+export default function Home() {
+  return <h1>أهلًا</h1>;
+}
+// src/app/about/page.tsx
+export default function About() {
+  return <h1>مين إحنا</h1>;
+}`
         },
         {
           cmd: "App Router",
@@ -107,7 +118,19 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
             "بيجيب الداتا جوه الكومبوننت مباشرة.",
             "بيعرض. الكومبوننت ده مش بيتبعت للمتصفح أصلًا، الـ HTML الناتج بس.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/products/5]] بتعرض «كتاب 5»، وفي View Source الـ [[<h1>كتاب 5</h1>]] موجود في الـ HTML نفسه، يعني السيرفر هو اللي رسم. وفي جدول الـ build هتلاقي [[ƒ /products/[id]]]: dynamic، لأن الـ id مش معروف وقت الـ build. ودوّرت على [[getProduct]] في ملفات [[.next/static]] (اللي بتروح للمتصفح): مش موجودة خالص، موجودة في ملفات السيرفر بس.
+
+لو لقيت [[getProduct]] في Sources: غالبًا انت على [[npm run dev]] (source maps بتاعة السيرفر)، أو حاطط [[use client]] فوق الصفحة فبقت كلها بتتبعت للمتصفح. ولو TypeScript اعترض على [[params.id]]: نسيت [[await params]].`,
+          solCode: R`// src/app/products/[id]/page.tsx
+async function getProduct(id: string) {
+  return { name: "كتاب " + id };
+}
+export default async function ProductPage({ params }: PageProps<"/products/[id]">) {
+  const { id } = await params;
+  const product = await getProduct(id);
+  return <h1>{product.name}</h1>;
+}`
         }
       ]
     },
@@ -162,7 +185,10 @@ export default function AboutPage() {
             R`الصفحة لازم [[export default]] لكومبوننت.`,
             "بيرجّع JSX عادي.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/blog/post-card]] بترجع 404: الملف موجود بس اسمه مش [[page]]، فمش route. و [[/cart]] بتفتح عادي، و [[/(shop)/cart]] نفسها 404، لأن القوسين مبيدخلوش في الـ URL.
+
+ولما تضيف [[app/cart/page.tsx]] كمان، الـ build بيقع برسالة: [[You cannot have two parallel pages that resolve to the same path. Please check /(shop)/cart and /cart.]] يعني مسارين في الشجرة بيطلّعوا نفس الـ URL، و Next مش هيختار واحد لوحده. امسح واحد منهم، أو غيّر اسم الفولدر.`
         },
         {
           cmd: "[slug] و params",
@@ -213,7 +239,21 @@ export default async function Docs({ params }: PageProps<"/docs/[...path]">) {
             "خد الأجزاء.",
             "اعرضهم ورا بعض.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/products/red-shirt]] بترجع 200 وفيها «تيشيرت أحمر - 350 ج.م»، وأي slug تاني زي [[/products/blue]] بيرجع 404 ويعرض صفحة الـ not-found. والـ status ده حقيقي في Network، مش كلام على الشاشة بس.
+
+ولما تكتب [[const { slug } = params]] من غير await، TypeScript بيقول: [[Property 'slug' does not exist on type 'Promise<{ slug: string; }>']]. يعني [[params]] Promise ولازم تستناها. ولو الـ slug الغلط رجع 200: انت بترجّع [[<p>مش موجود</p>]] بدل ما تنادي [[notFound()]].`,
+          solCode: R`// app/products/[slug]/page.tsx
+import { notFound } from "next/navigation";
+async function getProduct(slug: string) {
+  return slug === "red-shirt" ? { name: "تيشيرت أحمر", price: 350 } : null;
+}
+export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
+  if (!product) notFound();
+  return <h1>{product.name} - {product.price} ج.م</h1>;
+}`
         },
         {
           cmd: "searchParams",
@@ -259,7 +299,22 @@ export default async function Products({ searchParams }: PageProps<"/products">)
             "ابعتها للـ query.",
             "اعرض.",
             "قفلة."
-          ]
+          ],
+          sol: R`في ترمنال [[npm run dev]] هتشوف القيم الخام وبعدها بعد الفحص: [[{ page: 'abc', sort: 'hack' }]] و [[{ page: 1, sort: 'new' }]]. الـ [[catch]] في Zod قلب القيم البايظة للافتراضي بدل ما يرمي، فالصفحة شغالة عادي وبتقول «صفحة 1، ترتيب new». وفي console المتصفح (dev بس) نفس السطر وجنبه badge مكتوب فيه Server.
+
+وجدول الـ build: [[ƒ /products]]، لأن الصفحة بتقرا [[searchParams]]. لو لقيتها ○: الصفحة مش بتعمل [[await searchParams]] فعلًا. ولو الـ log ظهر في المتصفح من غير Server ومش في الترمنال: الملف عليه [[use client]].`,
+          solCode: R`// app/products/page.tsx
+import * as z from "zod";
+const Query = z.object({
+  page: z.coerce.number().int().min(1).catch(1),
+  sort: z.enum(["new", "price"]).catch("new"),
+});
+export default async function Products({ searchParams }: PageProps<"/products">) {
+  const raw = await searchParams;
+  const { page, sort } = Query.parse(raw);
+  console.log(raw, { page, sort });
+  return <p>صفحة {page}، ترتيب {sort}</p>;
+}`
         },
         {
           cmd: "Link و useRouter",
@@ -322,7 +377,25 @@ export function ShopNav() {
             "قفلة الـ nav.",
             "قفلة الـ return.",
             "قفلة الكومبوننت."
-          ]
+          ],
+          sol: R`بعد [[npm start]] وفتح الصفحة، هتلاقي في Network طلبات زي [[/about?_rsc=...]] و [[/products?_rsc=...]] اتبعتت لوحدها أول ما اللينكات ظهرت، ومفيش طلب لـ [[/cart]] لأن عليه [[prefetch={false}]]. دي الـ RSC payload بتاعة الصفحات، فالضغطة بعدها بتفتح من غير ما تستنى. ولما تضغط [[<Link>]] مفيش طلب من نوع document، والـ nav نفسه مبيترسمش تاني.
+
+ومع [[<a>]] العادي هتلاقي طلب document كامل، والـ JS والـ CSS بيتطلبوا تاني، والصفحة بتومض. لو مشفتش أي prefetch: انت غالبًا على [[npm run dev]]. ولو الـ build وقع وقال إن [[useSearchParams()]] محتاج suspense boundary: الـ nav مش ملفوف في [[<Suspense>]].`,
+          solCode: R`// app/layout.tsx
+import { Suspense } from "react";
+import { ShopNav } from "@/components/shop-nav";
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html lang="ar" dir="rtl">
+      <body>
+        <Suspense fallback={null}>
+          <ShopNav />
+        </Suspense>
+        {children}
+      </body>
+    </html>
+  );
+}`
         }
       ]
     },
@@ -398,7 +471,25 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
             "قفلة div.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[layout.tsx]]: تكتب «hello» وتدوس لينك الصفحة التانية، الصفحة تتغير والكلام يفضل في الخانة، لأن الـ layout مبيترسمش تاني والـ DOM بتاعه زي ما هو. جربتها بـ build و start وقريت قيمة الـ input بعد التنقل: [["hello"]].
+
+ومع [[template.tsx]]: نفس الخطوات، والقيمة بعد التنقل [[""]]، لأن الـ template بياخد key جديد مع كل صفحة فبيتعمل من الأول. لو الكلام اتمسح مع الـ layout كمان: غالبًا اللينك [[<a>]] مش [[<Link>]] (reload كامل)، أو الصفحتين مش تحت نفس الـ layout.`,
+          solCode: R`// app/dashboard/layout.tsx (غيّر اسمه لـ template.tsx في التجربة التانية)
+import Link from "next/link";
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div>
+      <input placeholder="اكتب حاجة" />
+      <Link href="/dashboard/orders">الطلبات</Link> <Link href="/dashboard/settings">الإعدادات</Link>
+      <section>{children}</section>
+    </div>
+  );
+}
+// app/dashboard/orders/page.tsx
+export default function Orders() {
+  return <h2>الطلبات</h2>;
+}`
         },
         {
           cmd: "loading.tsx",
@@ -446,7 +537,10 @@ export default function Loading() {
             "قفلة الـ grid.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[loading.tsx]]: أول ما تدوس اللينك الـ header بيفضل ثابت، و ٨ كروت رمادي بتنبض بيظهروا مكان الصفحة على طول، وبعد ٣ ثواني المنتجات بتاخد مكانهم في نفس الـ grid من غير ما حاجة تتزق. ولو فتحت الصفحة بـ refresh، الـ HTML نفسه بيوصل على دفعتين في نفس الـ response: الـ skeleton الأول، والمنتجات بعد ٣ ثواني.
+
+من غير [[loading.tsx]]: الضغطة كأنها معملتش حاجة، الصفحة القديمة فاضلة ٣ ثواني، وبعدين الجديدة تظهر مرة واحدة. لو الـ skeleton مظهرش خالص: اتأكد إن الملف جنب [[page.tsx]] بتاعة المنتجات واسمه [[loading.tsx]] بالظبط، وإن الـ await جوه الصفحة مش جوه [[layout.tsx]] بتاع نفس الفولدر (الـ loading بيغطي اللي تحته بس).`
         },
         {
           cmd: "error.tsx و not-found.tsx",
@@ -507,7 +601,12 @@ export default function NotFound() {
             R`[[not-found]] مبياخدش props.`,
             "رسالة ولينك يرجّعه.",
             "قفلة."
-          ]
+          ],
+          sol: R`في dev: الـ overlay بتاع Next فيه «DB down» والسطر اللي رمى. اقفله هتلاقي [[error.tsx]] معروض مكان الصفحة، والـ layout والـ header زي ما هما.
+
+في الإنتاج: الـ status بقى 500، و [[error.message]] مبقاش «DB down». بقى الرسالة العامة بتاعة React، وعندي طلعت بشكلها المختصر [[Minified React error #441]]، ومعناها «حصل خطأ في الـ Server Components والرسالة الأصلية متشالة في الإنتاج». ومعاه [[digest]] رقم زي [[4031509841]]. وفي ترمنال [[npm start]] هتلاقي [[⨯ Error: DB down]] وتحته [[digest: '4031509841']]: نفس الرقم، وده اللي بيربط اللي المستخدم شافه باللوج.
+
+ولو حطيت الـ throw قبل [[await searchParams]]، الـ build بيقع بـ [[Error occurred prerendering page "/products"]]، لأن الصفحة لسه مش dynamic لحظة الـ throw فـ Next بيحاول يبنيها static. ولو شفت «DB down» نفسها في المتصفح: انت على dev مش start.`
         },
         {
           cmd: "@slot و (.)",
@@ -568,7 +667,10 @@ export default async function PhotoModal({ params }: { params: Promise<{ id: str
             "خد الـ id.",
             R`اعرض الصورة جوه modal فوق الصفحة الحالية. الـ Modal بيقفل بـ [[router.back()]].`,
             "قفلة."
-          ]
+          ],
+          sol: R`الضغطة على لينك الصورة بتفتح الـ modal فوق الرئيسية (محتوى الرئيسية لسه ظاهر تحته) والـ URL بقى [[/photos/2]]. والـ refresh على نفس الـ URL بيفتح [[app/photos/[id]/page.tsx]]: الصفحة الكاملة من غير modal، لأن الـ interception بيحصل في التنقل من جوه الموقع بس.
+
+من غير [[default.tsx]]: [[next build]] العادي (Turbopack) بيعدّي من غير أي تحذير، بس [[/]] وكل الصفحات التانية بترجع 404، لأن الـ slot [[@modal]] ملوش حاجة يرسمها لما تفتح الصفحة مباشرة. و [[next build --webpack]] بيقع: [[Missing required default.js file for parallel route at app/@modal]]. ولو الضغطة فتحت الصفحة الكاملة بدل الـ modal: اتأكد إن فولدر [[(.)photos]] جوه [[@modal]]، وإن اللينك [[<Link>]] مش [[<a>]].`
         }
       ]
     },
@@ -637,7 +739,12 @@ export default async function ProductsPage() {
             "قفلة الليستة.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`في dev: السطر بيطلع في ترمنال [[npm run dev]]، وفي console المتصفح بيظهر وجنبه badge رمادي مكتوب فيه Server: دي إعادة عرض من React، مش تنفيذ في المتصفح.
+
+في [[npm run build]] هتلاقي [[render ProductsPage]] وسط سطور [[Generating static pages]]، يعني الصفحة اترسمت وقت الـ build (وفي الجدول [[○]]). وبعد [[npm start]] الـ console فاضي، والترمنال كمان مش هيطبع حاجة مع الطلبات، لأن الصفحة static والكومبوننت مبيتنفذش تاني أصلًا.
+
+و [[useState]]: الـ build بيقع برسالة [[You're importing a module that depends on useState into a React Server Component module. This API is only available in Client Components.]] ومعاها اقتراح إنك تعلّم الملف بـ [[use client]]. الحل الصح مش تحطها فوق الصفحة: اعمل الحتة اللي محتاجة state كومبوننت client لوحده (الدرس الجاي).`
         },
         {
           cmd: "use client",
@@ -689,7 +796,10 @@ export function AddToCart({ productId }: { productId: string }) {
             "قفلة.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`في الإنتاج: البحث في Sources عن [[AddToCart]] بيلاقيه جوه ملف في [[_next/static/chunks]]، لأن اسم الـ export بيفضل موجود حتى بعد الـ minify، ومعاه النصوص «ضيف للسلة» و «اتضاف للسلة». و [[ProductsPage]] مش موجودة في أي ملف هناك، لأنها server component.
+
+ولما تمسح [[use client]]: نفس خطأ الدرس اللي فات، [[You're importing a module that depends on useState into a React Server Component module]]، والرسالة نفسها بتقولك علّم الملف بـ [[use client]]. لو لقيت [[ProductsPage]] في chunks الإنتاج: انت حاطط [[use client]] فوق [[page.tsx]] نفسها.`
         },
         {
           cmd: "children من السيرفر",
@@ -754,7 +864,33 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             "قفلة html.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`مرة الـ children: الـ Toggle بيعرض الداتا ويخبيها عادي، و [[Data]] اترسم على السيرفر ووصل للـ Toggle عنصر جاهز. الـ Toggle مبيعرفش إنه async أصلًا.
+
+مرة الـ import جوه ملف الـ Toggle: الـ build عدّى عندي والـ HTML اترسم، بس أول ما الصفحة تفتح في المتصفح بيطلع في الـ console: [[<Data> is an async Client Component. Only Server Components can be async at the moment. This error is often caused by accidentally adding 'use client' to a module that was originally written for the server.]] يعني [[Data]] دخل الـ bundle بتاع المتصفح وبقى client، والـ client components مينفعش تبقى async. ولو [[Data]] كان بيستخدم الداتابيز أو عليه [[server-only]]، الـ build نفسه كان هيقع.`,
+          solCode: R`// app/toggle.tsx
+"use client";
+import { useState, type ReactNode } from "react";
+export function Toggle({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div>
+      <button onClick={() => setOpen(!open)}>{open ? "خبّي" : "اعرض"}</button>
+      {open && children}
+    </div>
+  );
+}
+// app/data.tsx (server component)
+export async function Data() {
+  await new Promise((r) => setTimeout(r, 500));
+  return <p>داتا من السيرفر</p>;
+}
+// app/page.tsx
+import { Toggle } from "./toggle";
+import { Data } from "./data";
+export default function Page() {
+  return <Toggle><Data /></Toggle>;
+}`
         },
         {
           cmd: "server-only",
@@ -772,7 +908,7 @@ export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 "use client";
 import { siteUrl } from "@/lib/public-config";
 import { stripe } from "@/lib/payments"; // الـ build بيقع هنا، وده المطلوب`,
-          try: R`اعمل [[lib/secret.ts]] فيه [[export const key = process.env.MY_SECRET]] من غير [[server-only]]، واستخدمه في client component واطبعه: هتلاقيه undefined (Next مبيبعتش المتغير). بعدين ضيف [[import "server-only"]] وشوف الـ build بيقع بإيه. وجرّب [[NEXT_PUBLIC_MY_SECRET]] وافتح ملف الـ JS في DevTools ودوّر على القيمة.`,
+          try: R`اعمل [[lib/secret.ts]] فيه [[export const key = process.env.MY_SECRET]] من غير [[server-only]]، واستخدمه في client component واطبعه: في console المتصفح هتلاقيه undefined (Next مبيبعتش المتغير للـ JS)، بس اعمل View Source: هتلاقي القيمة الحقيقية مكتوبة في الـ HTML، لأن الـ client component اترسم على السيرفر الأول (ومعاها hydration error). بعدين ضيف [[import "server-only"]] وشوف الـ build بيقع بإيه. وجرّب [[NEXT_PUBLIC_MY_SECRET]] وافتح ملف الـ JS في DevTools ودوّر على القيمة.`,
           flag: "script",
           deep: {
             why: "الحد بين السيرفر والمتصفح في Next بقى مجرد import. سطر import واحد غلط في client component ممكن يسحب ملف فيه مفتاح أو اتصال داتابيز للمتصفح. والمتغيرات: مطوّر بيحط NEXT_PUBLIC_ على مفتاح API عشان «كان undefined في المتصفح»، فالمفتاح يتنشر لكل زائر.",
@@ -794,7 +930,12 @@ import { stripe } from "@/lib/payments"; // الـ build بيقع هنا، ود�
             "كومبوننت client.",
             "مسموح: حاجة عامة.",
             R`ممنوع: الملف عليه [[server-only]]، فالـ build بيقع قبل ما المفتاح يتسرّب.`
-          ]
+          ],
+          sol: R`من غير [[server-only]]: في console المتصفح [[key]] بـ undefined، بس View Source فيه القيمة الحقيقية، لأن الـ client component اترسم HTML على السيرفر الأول، وهناك [[process.env.MY_SECRET]] موجود. وبعدها المتصفح بيرسم undefined فيطلع hydration error (#418 في الإنتاج). يعني السر اتسرّب في الـ HTML، ودي بالظبط المشكلة اللي [[server-only]] بيقفلها.
+
+مع [[import "server-only"]]: الـ build بيقع قبل أي حاجة: [[You're importing a module that depends on "server-only"]]، ومعاه import trace بيوريك السلسلة: [[lib/secret.ts]] ثم [[show.tsx]] (Client Component) ثم [[page.tsx]]. (الرسالة بتقول «Pages Router» غلط، بس الـ trace هو المهم.)
+
+ومع [[NEXT_PUBLIC_MY_SECRET]]: القيمة بتظهر في المتصفح، ولو دوّرت عليها في ملفات [[_next/static/chunks]] هتلاقيها مكتوبة حرفيًا. أي حاجة [[NEXT_PUBLIC_]] عامة لأي زائر.`
         }
       ]
     },
@@ -855,7 +996,24 @@ export default async function Dashboard() {
             "قفلة.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`ورا بعض: ٣ ثواني تقريبًا، كل دالة بتستنى اللي قبلها. بـ [[Promise.all]]: ثانية واحدة تقريبًا، لأن التلاتة بدأوا في نفس اللحظة. جربتها باتنين: [[2002ms]] مقابل [[1001ms]].
+
+لو واحدة رمت: [[Promise.all]] بيرفض كله، فالصفحة كلها بتروح لـ [[error.tsx]] (أو الـ overlay في dev) حتى لو التانيين نجحوا. و [[Promise.allSettled]] مبيرميش خالص: بيرجّع لكل واحدة [[{ status: "fulfilled", value }]] أو [[{ status: "rejected", reason }]]، والوقت برضه ثانية، وانت تقرر تعرض إيه. لو [[Promise.all]] أخد ٣ ثواني: انت بتعمل await جوه الـ array نفسه، أو بتنادي الدوال في loop بـ await.`,
+          solCode: R`// app/wf/page.tsx
+import { connection } from "next/server";
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+async function getA() { await wait(1000); return "A"; }
+async function getB() { await wait(1000); return "B"; }
+async function getC() { await wait(1000); throw new Error("C وقعت"); }
+export default async function Page() {
+  await connection();
+  const t = Date.now();
+  const results = await Promise.allSettled([getA(), getB(), getC()]);
+  console.log(results.map((r) => r.status));
+  return <p>{results.map((r) => r.status).join(", ")} في {Date.now() - t}ms</p>;
+}
+// fulfilled, fulfilled, rejected في 1001ms`
         },
         {
           cmd: "Suspense و streaming",
@@ -923,7 +1081,15 @@ async function Reviews({ productId }: { productId: string }) {
             R`الـ [[await]] هنا بيوقف الكومبوننت ده بس.`,
             "يعرض.",
             "قفلة."
-          ]
+          ],
+          sol: R`المنتج بيظهر فورًا ومكان التقييمات والتوصيات الـ fallbacks، وبعد ٣ ثواني التقييمات تاخد مكان الـ skeleton، وبعد ٥ التوصيات. ولو شلت الـ Suspense من حوالين التقييمات، مفيش حاجة بتظهر خالص لمدة ٣ ثواني، وبعدها الصفحة والتقييمات مع بعض، والتوصيات لسه بعد ٥.
+
+وعشان تشوف الدفعات بالوقت بدل curl، الـ script اللي تحت بيطبع كل chunk وقت ما وصل. عندي: دفعة عند 0.1 ثانية فيها الـ h1 والـ fallbacks، ودفعة عند 3.1 فيها التقييمات، ودفعة عند 5.1 فيها التوصيات، وكلها response واحد. لو كل حاجة وصلت مرة واحدة: يا انت على dev وفيه compile أول مرة، يا فيه proxy زي Nginx بيعمل buffer، يا الـ await في الصفحة نفسها مش جوه الكومبوننتات.`,
+          solCode: R`node -e 'const t=Date.now();fetch("http://localhost:3000/products/x").then(async r=>{for await(const c of r.body)console.log(((Date.now()-t)/1000).toFixed(1)+"s",c.length+"B")})'
+# 0.1s 1446B
+# 0.1s 6553B
+# 3.1s 914B
+# 5.1s 83B`
         },
         {
           cmd: "use(promise)",
@@ -1000,7 +1166,12 @@ export function ReviewsPanel({ reviewsPromise }: { reviewsPromise: Promise<Revie
             "قفلة.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`الصفحة بتظهر فورًا ومكان التقييمات «بنحمّل التقييمات...»، وبعد ثانيتين التقييمات تظهر. وتغيير الـ select بيفلتر فورًا ومفيش أي طلب جديد في Network، لأن الفلترة على array موجود في المتصفح.
+
+ولما [[getReviews]] ترمي من غير أي error boundary: في الإنتاج الـ status لسه 200 (الـ streaming كان بدأ)، والـ console فيها [[Minified React error #441]]، والصفحة كلها اتبدلت بصفحة Next الافتراضية «This page couldn’t load»، والرسالة الأصلية ومعاها الـ digest في لوج السيرفر. يعني خطأ في جزء ثانوي وقّع الصفحة كلها.
+
+بعد [[error.tsx]] جنب الصفحة: الـ layout بيفضل والصفحة بس هي اللي تتبدل. ولو عايز المنتج نفسه يفضل ظاهر، حط ErrorBoundary (زي [[react-error-boundary]]) حوالين الـ Suspense بس.`
         }
       ]
     },
@@ -1044,7 +1215,16 @@ curl -sI localhost:3000/dashboard | grep -i cache-control`,
             R`شغّل الناتج (في ترمنال لوحده). تفاصيل الأوامر في تاب «Node و npm».`,
             R`صفحة static: الـ header فيه [[s-maxage]]، يعني CDN يقدر يكاشها.`,
             R`صفحة dynamic: [[private, no-cache, no-store]]، يعني كل طلب بيترسم من جديد ومحدش يكاشه.`
-          ]
+          ],
+          sol: R`الصفحة اللي فيها [[new Date()]] بس: الجدول بيقول [[○]]، والوقت نفس الرقم مع كل refresh، وهو وقت الـ build مش وقت الطلب. و [[curl -sI]] عليها بيرجّع [[Cache-Control: s-maxage=31536000]].
+
+بعد [[await cookies()]]: الجدول بيقول [[ƒ]]، والوقت بيتغير مع كل refresh، والـ header بقى [[Cache-Control: private, no-cache, no-store, max-age=0, must-revalidate]]. لو الوقت بيتغير من الأول من غير cookies: انت فاتح [[npm run dev]]، ودي بترسم كل حاجة مع كل طلب. ولو الصفحة لسه ○ بعد cookies: نسيت [[await]] أو الـ import مش من [[next/headers]].`,
+          solCode: R`// app/time/page.tsx
+import { cookies } from "next/headers";
+export default async function TimePage() {
+  await cookies();
+  return <p>{new Date().toISOString()}</p>;
+}`
         },
         {
           cmd: "generateStaticParams",
@@ -1070,7 +1250,7 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
   if (!post?.published) notFound();
   return <article><h1>{post.title}</h1><div>{post.body}</div></article>;
 }`,
-          try: R`اعمل الصفحة بـ ٣ slugs ثابتين من غير داتابيز: [[return [{ slug: "a" }, { slug: "b" }, { slug: "c" }]]]. اعمل build وبص على الجدول: [[/blog/[slug]]] جنبها ● وتحتها الـ slugs. وبعدين افتح [[/blog/d]] بعد [[npm start]]: هتترسم أول مرة وتتحفظ.`,
+          try: R`اعمل الصفحة بـ ٣ slugs ثابتين من غير داتابيز: [[return [{ slug: "a" }, { slug: "b" }, { slug: "c" }]]]. اعمل build وبص على الجدول: تحت [[/blog/[slug]]] هتلاقي الـ slugs التلاتة وجنب كل واحد ●. وبعدين افتح [[/blog/d]] بعد [[npm start]]: هتترسم أول مرة وتتحفظ.`,
           flag: "script",
           deep: {
             why: "المدونة فيها ٥٠٠ مقال ومبتتغيرش كل دقيقة. لو كل زيارة بتكلّم الداتابيز وترسم نفس المقال من الأول، ده شغل ملوش لازمة. البناء مقدمًا بيخلي كل مقال ملف جاهز على الـ CDN.",
@@ -1102,7 +1282,18 @@ export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
             R`مش موجود أو مش منشور: 404. بعد السطر ده TS عارف إن [[post]] مش null.`,
             "اعرضه.",
             "قفلة."
-          ]
+          ],
+          sol: R`الجدول: تحت [[/blog/[slug]]] هتلاقي [[● /blog/a]] و [[● /blog/b]] و [[● /blog/c]]، وفي [[.next/server/app/blog/[slug]]] ملفات زي [[a.html]] و [[a.rsc]]: اتبنوا وقت الـ build.
+
+بعد [[npm start]]: [[/blog/a]] بترجع header [[x-nextjs-cache: HIT]] من أول مرة. و [[/blog/d]] أول مرة [[MISS]] (اترسمت ساعتها)، والمرة التانية [[HIT]]: اتحفظت للي بعدك. ولو [[/blog/d]] رجعت 404: انت كاتب [[dynamicParams = false]]. ولو الجدول قال ƒ: الصفحة بتقرا حاجة dynamic زي [[cookies()]] أو [[searchParams]].`,
+          solCode: R`// app/blog/[slug]/page.tsx
+export async function generateStaticParams() {
+  return [{ slug: "a" }, { slug: "b" }, { slug: "c" }];
+}
+export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
+  const { slug } = await params;
+  return <h1>مقال {slug}</h1>;
+}`
         },
         {
           cmd: "revalidate و ISR",
@@ -1155,7 +1346,10 @@ export const getCategories = unstable_cache(
             "مفتاح للكاش. الـ arguments بتتضاف عليه لوحدها.",
             "يوم كامل، و tag للمسح.",
             "قفلة."
-          ]
+          ],
+          sol: R`الجدول بيقول [[○ /isr]] وجنبها عمودين: Revalidate [[10s]] و Expire [[1y]]. والوقت ثابت في الأول. بعد ما الـ ١٠ ثواني تعدي، أول refresh بيرجّع الوقت القديم ومعاه header [[x-nextjs-cache: STALE]]، وفي نفس اللحظة Next بيبني نسخة جديدة في الخلفية. والـ refresh اللي بعده بيجيب وقت جديد ومعاه [[HIT]].
+
+لو الوقت بيتغير مع كل refresh: انت على dev، أو الصفحة dynamic لسبب تاني (cookies مثلًا) فالـ revalidate ملوش معنى. ولو مبيتغيرش خالص: اتأكد إن [[revalidate]] رقم مكتوب مش حساب، وإنك عملت refresh بعد ما العمر خلص، لأن الطلب ده هو اللي بيشغّل التجديد.`
         }
       ]
     },
@@ -1206,7 +1400,10 @@ Next 16 مع [[cacheComponents]]: مفيش كاش ضمني خالص، وأي د�
             "tag عشان تمسحه بالاسم.",
             R`query عادي. مفيش [[unstable_cache]] ولا مفاتيح بإيدك.`,
             "قفلة."
-          ]
+          ],
+          sol: R`من غير خيارات: الـ uuid بيتغير مع كل refresh (Next 15 و 16 مبيكاشوش fetch لوحده). ومع [[cache: "force-cache"]]: نفس الـ uuid مع كل refresh، لأنه اتحفظ في الـ Data Cache. ولو httpbin مقفول أو بطيء عندك، أي API بيرجّع قيمة عشوائية ينفع، حتى سيرفر Node صغير على جهازك.
+
+بعد [[cacheComponents: true]] هتقابل ٣ أنواع أخطاء: [[Route segment config "revalidate" is not compatible with nextConfig.cacheComponents. Please remove it.]] على أي [[export const revalidate]]، و [[Next.js encountered uncached data during prerendering]] لأي fetch برّه [[<Suspense>]] ومن غير [[use cache]]، و [[Next.js encountered the unstable value new Date() while prerendering]] لـ [[new Date()]] و [[Math.random()]]. وكل رسالة بتقترح الحلول: [[<Suspense>]]، أو [[use cache]]، أو [[connection()]]، وفي النسخ الأحدث كمان [[export const instant = false]].`
         },
         {
           cmd: "use cache",
@@ -1268,14 +1465,32 @@ export async function Prices() {
             "ابعت العملة كـ argument.",
             "اعرض.",
             "قفلة."
-          ]
+          ],
+          sol: R`الجدول بيقول [[○ /cc]] وجنبها [[1h]] و [[1d]] (الـ profile [[hours]]: revalidate ساعة و expire يوم). وكل refresh نفس الأرقام، زي [[a=1790719450515 b=1790719450521]]: ثابتة لكل slug ومختلفة بينهم، لأن الـ argument جزء من مفتاح الكاش.
+
+ولما تحط [[await cookies()]] جوه الدالة، الـ build بيقع: [[Route /cc used cookies() inside "use cache". Accessing Dynamic data sources inside a cache scope is not supported.]] والرسالة نفسها بتقول الحل: اقرا الـ cookie برّه الدالة وابعت القيمة كـ argument، زي [[Prices]] في المثال. ولو الـ build قال إن [[use cache]] محتاج [[cacheComponents]]: الفلاج مش في [[next.config.ts]].`,
+          solCode: R`// lib/products.ts
+import { cacheLife, cacheTag } from "next/cache";
+export async function getProduct(slug: string) {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("products", "product-" + slug);
+  return { slug, at: Date.now() };
+}
+// app/cc/page.tsx
+import { getProduct } from "@/lib/products";
+export default async function Page() {
+  const a = await getProduct("a");
+  const b = await getProduct("b");
+  return <p>a={a.at} b={b.at}</p>;
+}`
         },
         {
           cmd: "static shell و Suspense",
           title: "صفحة واحدة: shell جاهز من الـ build وحتت بتتحسب مع الطلب",
           desc: R`مع [[cacheComponents]]، Next بيرسم كل صفحة وقت الـ build لحد ما يقابل حاجة مش متكاشة: [[cookies()]]، أو [[params]] مش معروفة، أو query من غير [[use cache]]. الجزء اللي اترسم بيبقى static shell بيتبعت فورًا، والحاجات الـ dynamic بتكمّل streaming مع الطلب. ده Partial Prerendering، ورمزه [[◐]] في جدول الـ build.
 
-الشرط: أي حاجة dynamic لازم تبقى جوه [[<Suspense>]] عشان Next يعرف يحط إيه مكانها في الـ shell. لو لأ، بيطلع خطأ «Uncached data was accessed outside of <Suspense>» في dev وفي الـ build. والحل يا تكاشها بـ [[use cache]]، يا تلفها في Suspense.`,
+الشرط: أي حاجة dynamic لازم تبقى جوه [[<Suspense>]] عشان Next يعرف يحط إيه مكانها في الـ shell. لو لأ، بيطلع خطأ في dev وفي الـ build (في 16.0 كان «Uncached data was accessed outside of <Suspense>»، وفي النسخ الأحدث «Next.js encountered uncached or runtime data during prerendering»). والحل يا تكاشها بـ [[use cache]]، يا تلفها في Suspense.`,
           example: R`// app/products/[slug]/page.tsx (cacheComponents: true)
 import { Suspense } from "react";
 import { cookies } from "next/headers";
@@ -1342,7 +1557,10 @@ async function CartBadge() {
             "لو فيه سلة هات العدد.",
             "اعرض.",
             "قفلة."
-          ]
+          ],
+          sol: R`الشكل الأصلي بيعدّي. ولما تنقل [[await cookies()]] لجسم الصفحة، الخطأ بيبدأ بـ [[Route "/products/[slug]": Next.js encountered uncached or runtime data during prerendering]]، وبيقول إن [[cookies()]] أو [[params]] أو غيرهم اتقروا برّه [[<Suspense>]] فالصفحة مش هتتبني، وبيقترح ٣ حلول: Suspense، أو [[use cache]]، أو [[export const instant = false]] اللي بيسمح للصفحة تستنى (وده عكس الفكرة، فمش ده الحل هنا).
+
+بعد ما ترجّعها وتضيف [[generateStaticParams]]: الجدول فيه [[◐ /products/[slug]]] و [[◐ /products/a]]، وجنب [[a]] [[1h]] و [[1d]] جايين من [[cacheLife]] بتاع [[getProduct]]، وتحت الجدول شرح الرمز: Partial Prerender، يعني HTML static وجواه حتت dynamic بتيجي streaming. الـ header والـ skeleton في الـ shell، والسلة مع الطلب.`
         },
         {
           cmd: "updateTag و revalidateTag",
@@ -1405,7 +1623,12 @@ export async function POST(request: Request) {
             R`[[updateTag]] مينفعش هنا (Server Actions بس)، فبنستخدم revalidateTag.`,
             "رد.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[updateTag]]: بعد الحفظ على طول السعر الجديد ظاهر، لأن الـ entry اتمسح والـ action رجّع الصفحة بالداتا الجديدة في نفس الرد.
+
+مع [[revalidateTag(tag, "max")]] بس: بعد الحفظ السعر القديم لسه ظاهر، وأول refresh ممكن كمان يجيب القديم (stale) وهو بيشغّل التجديد في الخلفية، والـ refresh اللي بعده فيه الجديد. في تجربتي: غيّرت السعر لـ 300 بـ revalidateTag، فبعد الحفظ 200، وأول refresh 200، والتاني 300.
+
+ولو السعر مبيتغيرش خالص حتى بعد كذا refresh: اسم الـ tag في [[cacheTag]] مش هو اللي بتمسحه (حرف مختلف ومفيش أي خطأ)، أو الـ action مبيحدّثش الداتا أصلًا.`
         }
       ]
     },
@@ -1475,7 +1698,10 @@ export default function NewPostPage() {
             "قفلة.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`من غير JS: الفورم بيتبعت POST عادي ([[multipart/form-data]]) والصفحة بتعمل reload وترجع بالداتا الجديدة. الـ action اشتغل، لأن [[<form action={fn}>]] بيطلّع فورم HTML حقيقي جواه hidden input فيه ID الـ action.
+
+ومع JS: مفيش reload، وفي Network طلب [[POST]] على نفس URL الصفحة (مش [[/api/...]])، وفي الـ request headers [[Next-Action]] قيمته ID طويل، والرد RSC payload فيه الصفحة بعد [[revalidatePath]]. لو مفيش [[Next-Action]]: الـ JS لسه متحمّلش أو مقفول. ولو الحفظ نجح والليستة قديمة: نسيت [[revalidatePath]].`
         },
         {
           cmd: "useActionState",
@@ -1564,7 +1790,10 @@ export function SignupForm() {
             "قفلة.",
             "قفلة الـ return.",
             "قفلة."
-          ]
+          ],
+          sol: R`فاضي: رسالتين تحت الخانتين، «إيميل مش صحيح» و «٨ حروف على الأقل». وخد بالك: الـ input نوعه [[email]]، فالمتصفح نفسه بيمنع الإرسال لـ [[sara]] أو [[sara@]] قبل ما يوصل للسيرفر. عشان تشوف رسالة Zod جرّب [[sara@example]]: المتصفح بيقبله و [[z.email()]] بيرفضه. والإيميل الصح مع باسورد ٨ حروف: «اتسجلت، شوف إيميلك» والخانات فضيت.
+
+من غير [[defaultValue={state.email}]]: مع أي غلط الإيميل بيتمسح، لأن React بيعمل reset للفورم بعد كل action. ومع الـ delay: الزرار مقفول ومكتوب «بنسجّل...» ثانيتين. لو الـ pending مش ظاهر: انت حاطط [[signup]] مباشرة في [[action]] بدل [[formAction]].`
         },
         {
           cmd: "redirect و useOptimistic",
@@ -1655,7 +1884,12 @@ export function TodoList({ todos }: { todos: Todo[] }) {
             "قفلة.",
             "اعرض النسخة المتفائلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع الـ delay: الـ checkbox بيتقلب لحظة الضغط، والطلب لسه شغال ثانية ونص في Network، ولما يرجع الحالة بتفضل زي ما هي لأن السيرفر رجّع نفس القيمة.
+
+من غير سطر الـ update: الـ checkbox بيتقلب، وبعد ثانية ونص بيرجع لوحده للحالة الأصلية من غير ما تكتب أي rollback. الـ transition خلص، و React رمى النسخة المتفائلة ورجع للـ props الحقيقية اللي لسه زي ما هي.
+
+و [[redirect]] جوه [[try]] مع [[catch { return; }]]: الـ todo بيتحفظ بس مفيش تحويل، لأن [[redirect]] بترمي [[NEXT_REDIRECT]] والـ catch بلعه. لو التحويل حصل رغم كده: الـ catch بتاعك بيرمي الخطأ تاني.`
         },
         {
           cmd: "action = endpoint عام",
@@ -1709,7 +1943,10 @@ export async function cancelOrder(input: unknown) {
             "حدّث الصفحة.",
             "نجاح.",
             "قفلة."
-          ]
+          ],
+          sol: R`الطلب المنسوخ هيبقى [[POST]] على URL الصفحة، وفيه header [[Next-Action]] (الـ ID) و [[Cookie]] بتاعتك و [[Origin]] بتاع الموقع (فحماية الـ Origin بتعدّيه عادي)، والـ body فيه الـ arguments. لما تغيّر الـ orderId لطلب مستخدم تاني وتبعته: الـ action بيتنفذ، بس [[updateMany]] مش بيلاقي صف فيه الـ id ده ومعاه [[userId]] بتاعك، فـ [[count]] بـ 0، والرد (RSC payload مش JSON نضيف) جواه [[ok:false]] ورسالة «الطلب مش موجود أو مينفعش يتلغي».
+
+بعد ما تشيل [[userId]] من الـ where: نفس الطلب بيلغي طلب المستخدم التاني ويرجّع [[ok:true]]. دي IDOR: الـ authentication سليم (انت داخل فعلًا)، والـ authorization هي اللي اختفت. والدرس: شرط الملكية جوه الـ query نفسه، مش في إن الزرار مش ظاهر.`
         }
       ]
     },
@@ -1787,7 +2024,10 @@ export async function DELETE(_request: Request, ctx: RouteContext<"/api/products
             "امسح.",
             "204 من غير body.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/api/products?q=كتاب]] بيرجع JSON بالمنتجات اللي اسمها فيه «كتاب»، والـ Content-Type [[application/json]]. والـ POST من غير صلاحية أدمن: [[{"error":"forbidden"}]] بـ 403، لأن الفحص قبل قراية الـ body. ولو أدمن: 400 ومعاه [[issues]] من Zod فيها [[too_small]] على [[name]]. ولو بعت body مش JSON: 500، لأن [[request.json()]] رمت (لفّها في try ورجّع 400).
+
+و [[page.tsx]] جنب [[route.ts]]: الـ build بيقع بـ [[Conflicting route and page at /api/products: route at /api/products/route and page at /api/products/page]].`
         },
         {
           cmd: "webhook",
@@ -1855,7 +2095,18 @@ export async function POST(request: Request) {
             "قفلة الـ if.",
             "رد سريع 200، عشان Stripe ميعيدش الإرسال.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[stripe listen]] بيطبع secret بيبدأ بـ [[whsec_]]: ده اللي يروح [[STRIPE_WEBHOOK_SECRET]] (مش الـ API key). بعد [[stripe trigger checkout.session.completed]] هتلاقي في ترمنال الـ listen سطر لكل حدث فيه [[[200] POST http://localhost:3000/api/webhooks/stripe]] (وممكن أحداث تانية معاه زي payment_intent)، وفي لوج Next الحدث وبعده شغل الـ [[after()]].
+
+والـ curl من غير توقيع: [[invalid signature]] بـ 400. وجربتها من غير Stripe CLI بالـ script اللي تحت: توقيع صح بـ [[generateTestHeaderString]] رجّع [[200 ok]] والـ [[after]] اشتغل بعد الرد، وحرف واحد متغير في الـ body بنفس التوقيع رجّع 400. لو كل الطلبات الحقيقية بترجع 400: غالبًا بتقرا [[request.json()]] الأول، أو الـ secret غلط (من listen قديم، أو حاطط الـ API key).`,
+          solCode: R`// test-webhook.mjs (شغّله بـ node والسيرفر شغال)
+import Stripe from "stripe";
+const stripe = new Stripe("sk_test_dummy");
+const payload = JSON.stringify({ id: "evt_1", object: "event", type: "checkout.session.completed", data: { object: { id: "cs_test_1", object: "checkout.session" } } });
+const header = stripe.webhooks.generateTestHeaderString({ payload, secret: process.env.STRIPE_WEBHOOK_SECRET });
+const res = await fetch("http://localhost:3000/api/webhooks/stripe", { method: "POST", body: payload, headers: { "stripe-signature": header } });
+console.log(res.status, await res.text());
+// 200 ok`
         },
         {
           cmd: "proxy.ts",
@@ -1915,7 +2166,14 @@ export const config = {
             R`[[config]] لازم يبقى ثابت مكتوب (Next بيقراه وقت الـ build).`,
             "اشتغل على كل حاجة ما عدا الـ API والملفات الثابتة والصور. من غيره الـ proxy بيشتغل على كل طلب CSS و JS.",
             "قفلة."
-          ]
+          ],
+          sol: R`من غير cookie: [[/dashboard]] بترجع [[307]] و [[location: /login?next=%2Fdashboard]]. بعد ما تضيف cookie اسمها [[session]] بأي قيمة: الـ proxy بيعدّيك والصفحة بتفتح 200. وكمان [[/login]] ومعاك الـ cookie بتحوّلك للـ dashboard.
+
+ده المقصود: الـ proxy بيشوف «فيه cookie» بس، مش بيتحقق إنها سليمة. الحماية الحقيقية في الـ DAL (درس [[DAL]])، وهناك نفس الـ cookie المزوّرة هترجّعك للـ login. لو التحويل محصلش خالص: الملف مش جنب فولدر [[app]] (يعني [[src/proxy.ts]] لو مشروعك فيه [[src]])، أو الدالة اسمها مش [[proxy]]، أو الـ matcher مش ماسك المسار. ولو الملف اتقرا، هتلاقي تحت جدول الـ build سطر [[ƒ Proxy (Middleware)]].`,
+          solCode: R`curl -s -o /dev/null -w "%{http_code} %{redirect_url}\n" localhost:3000/dashboard
+# 307 http://localhost:3000/login?next=%2Fdashboard
+curl -s -o /dev/null -w "%{http_code}\n" -b "session=anything" localhost:3000/dashboard
+# 200`
         }
       ]
     },
@@ -1990,7 +2248,10 @@ export async function logout() {
             "امسح الـ cookie.",
             "روح للـ login.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد الدخول: في Application > Cookies صف [[session]] عليه HttpOnly و Secure و SameSite Lax وعمره ٧ أيام. و [[document.cookie]] بيرجّع [[""]] (أو cookies تانية مش هي)، لأن HttpOnly بيخبيها من الـ JS خالص. و Secure بتشتغل على [[http://localhost]] لأن المتصفح بيعتبره آمن، بس على IP أو دومين تاني من غير HTTPS الـ cookie مش هتتحط.
+
+والتوكن في jwt.io (أو [[atob]] على الجزء التاني): الـ header [[{"alg":"HS256"}]] والـ payload [[{"userId":"u_1","role":"USER","exp":...}]] مقروء لأي حد. التوقيع بيمنع التعديل، مش القراية. ولو TypeScript اعترض على [[useActionState(login, {})]]: حدد نوع رجوع الـ action [[Promise<{ error?: string }>]]، لأن الـ redirect بترمي فـ TS فاكر إن الدالة بترجّع [[{ error: string }]] دايمًا.`
         },
         {
           cmd: "DAL",
@@ -2066,7 +2327,10 @@ export async function requireAdmin() {
             "مش أدمن؟ 404 كأن الصفحة مش موجودة أصلًا.",
             "رجّعه عشان تستخدم الـ id.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[cache]]: [[verify]] بتطبع مرة واحدة في الطلب، حتى لو الـ layout والصفحة وكومبوننت جواها التلاتة نادوها (جربتها وطلعت مرة). من غير [[cache]]: ٣ مرات، يعني ٣ مرات فك توكن، أو ٣ queries لو database sessions.
+
+والـ cookie المزوّرة ([[session=anything]]): المرة دي [[/dashboard]] بترجع [[307]] لـ [[/login]]، لأن [[jwtVerify]] رمت والـ catch عمل [[redirect]]. الـ proxy عدّاها زي ما هو، والـ DAL وقفها. لو الصفحة فتحت بالـ cookie المزوّرة: الصفحة مش بتنادي [[verifySession]]، أو فيه مكان بيقرا الـ cookie بنفسه من غير تحقق.`
         },
         {
           cmd: "BFF",
@@ -2126,7 +2390,10 @@ await api("/orders/" + id + "/cancel", { method: "POST" });`,
             "قفلة.",
             "server component بيجيب الداتا مباشرة.",
             "Server Action بيعمل تعديل: المتصفح بينادي الـ action، والـ action بيكلّم الـ API."
-          ]
+          ],
+          sol: R`في Network هتلاقي كل الطلبات رايحة لـ [[localhost:3000]] (الصفحة، وطلبات الـ RSC، و POST الـ actions)، ومفيش أي طلب لعنوان الـ API. الطلب للـ API بيحصل من سيرفر Next، فهتشوفه في لوج الـ API نفسه مش في المتصفح.
+
+والتوكن: في Application > Cookies هتلاقي [[access_token]] عليها HttpOnly، و [[document.cookie]] مش بيرجّعها، ومش موجودة في localStorage. ولو دوّرت في Sources على عنوان الـ API أو قيمة التوكن: مش هتلاقيهم. لو لقيت طلبات من المتصفح للـ API مباشرة: فيه client component بيعمل fetch بنفسه، حوّله لـ Server Action أو Route Handler.`
         }
       ]
     },
@@ -2638,7 +2905,10 @@ Next بيحط لوحده [[<meta charset>]] و [[<meta name="viewport">]]. ول�
             "اسمها بس، والـ template بيكمّل.",
             R`الرابط الأصلي للصفحة، عشان النسخ بـ [[?utm=]] متتحسبش صفحات مكررة.`,
             "قفلة."
-          ]
+          ],
+          sol: R`View Source على [[/about]]: [[<title>مين إحنا | متجر الكتب</title>]]، و [[<link rel="canonical" href="https://books.example.com/about"/>]]، و [[og:title]] بنفس الـ title، و [[og:description]] و [[og:site_name]] و [[og:locale]] بـ [[ar_EG]] جايين من الـ layout، و [[twitter:card]] بـ [[summary_large_image]].
+
+من غير [[metadataBase]]: الـ canonical بقى [[href="/about"]] نسبي، ومفيش تحذير لأن مفيش صور. ولو الصفحة فيها صورة OG (زي درس opengraph-image) هتلاقي في اللوج [[metadataBase property in metadata export is not set]] ومعاه إنه هيستخدم localhost. و [[metadata]] في ملف عليه [[use client]]: الـ build بيقع بـ [[You are attempting to export "metadata" from a component marked with "use client", which is disallowed.]]`
         },
         {
           cmd: "generateMetadata",
@@ -2704,7 +2974,10 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             "404.",
             "اعرض.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[cache]]: الـ log بيطلع مرة واحدة لكل فتحة صفحة، مع إن [[generateMetadata]] والصفحة الاتنين نادوا [[getProduct]]. من غير [[cache]]: مرتين. والـ title في View Source [[<title>اسم المنتج | متجر الكتب</title>]]، لأن الـ template بتاع الـ layout كمّل. والمنتج اللي مش موجود: 404 والـ title «المنتج مش موجود | متجر الكتب».
+
+وفي واتساب أو أي OG preview لازم يظهر الاسم والوصف والصورة. لو الصورة مش ظاهرة: غالبًا [[metadataBase]] مش متظبط فالـ URL طالع [[localhost]]، أو الصورة مش 1200×630، أو واتساب لسه مكاش شكل قديم للينك (جرّب اللينك وفي آخره [[?v=2]]).`
         },
         {
           cmd: "sitemap.ts و robots.ts",
@@ -2763,7 +3036,17 @@ export default function robots(): MetadataRoute.Robots {
             "ومكان الـ sitemap.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/sitemap.xml]] بيرجّع XML ([[Content-Type: application/xml]]) فيه [[<urlset>]] وجواه [[<url>]] لكل صفحة: [[<loc>]] دايمًا، و [[<changefreq>]] و [[<priority>]] للرئيسية بس، و [[<lastmod>]] بتاريخ ISO لصفحات المنتجات. و [[/robots.txt]] شكله زي اللي تحت.
+
+وفي جدول الـ build الاتنين [[○ /sitemap.xml]] و [[○ /robots.txt]]: static اتبنوا وقت الـ build، فمنتج جديد مش هيظهر في الـ sitemap غير بـ build أو revalidate. وفي Search Console بعد إضافة الـ sitemap هتلاقي حالته Success وعدد الـ URLs اللي اكتشفها. لو اللينكات جوه الـ XML فيها [[localhost]]: الـ base جاي من متغير بيئة مش متظبط في الإنتاج.`,
+          solCode: R`User-Agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /api
+Disallow: /checkout
+
+Sitemap: https://books.example.com/sitemap.xml`
         },
         {
           cmd: "opengraph-image",
@@ -2804,7 +3087,7 @@ Next بيعامل الملف كـ route: بيتبني وقت الـ build لو �
 
 وفيه [[twitter-image.tsx]] بنفس الشكل لو عايز صورة مختلفة لـ X، ولو مش موجود بيستخدم الـ OG.`,
             when: R`صفحات المنتجات والمقالات والبروفايلات العامة، وأي صفحة الناس بتشاركها. والصفحات الثابتة: ملف PNG واحد في [[app]] كفاية.`,
-            mistakes: R`تستخدم grid أو CSS مش مدعوم وتستغرب إن الصورة فاضية أو فيها خطأ. وتنسى الخط العربي فتطلع مربعات. وتحمّل الخط من URL خارجي مع كل طلب بدل ملف محلي. وتنسى إن [[params]] هنا Promise في Next 16 زي الصفحة.`
+            mistakes: R`تستخدم grid أو CSS مش مدعوم وتستغرب إن الصورة فاضية أو فيها خطأ. وتنسى الخط العربي فتطلع الحروف مقطّعة ومعكوسة، أو مربعات لو السيرفر مش واصل لـ Google Fonts. وتحمّل الخط من URL خارجي مع كل طلب بدل ملف محلي. وتنسى إن [[params]] هنا Promise في Next 16 زي الصفحة.`
           },
           lines: [
             R`[[ImageResponse]] بتحوّل JSX لصورة.`,
@@ -2816,7 +3099,7 @@ Next بيعامل الملف كـ route: بيتبني وقت الـ build لو �
             R`بتاخد [[params]] زي الصفحة (Promise).`,
             "الـ slug.",
             "المنتج.",
-            "خط عربي كـ bytes. الخط الافتراضي مفيهوش عربي، فالحروف هتطلع مربعات من غيره.",
+            "خط عربي كـ bytes. الخط الافتراضي مفيهوش عربي، فمن غيره Next بيجيب خط احتياطي من Google Fonts وقت الطلب والحروف بتطلع مقطّعة ومعكوسة (ولو السيرفر مش واصل للإنترنت، مربعات).",
             "رجّع صورة...",
             "قوس JSX.",
             R`حاوية بـ flexbox. [[display: "flex"]] إجباري على أي div فيه أكتر من ابن.`,
@@ -2827,7 +3110,12 @@ Next بيعامل الملف كـ route: بيتبني وقت الـ build لو �
             "المقاس والخط.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/products/x/opengraph-image]] بيرجّع PNG مقاسه 1200×630، والصفحة نفسها فيها [[og:image]] بـ URL الملف ده وفي آخره hash، ومعاه [[og:image:width]] و [[og:image:height]] و [[og:image:alt]] لوحدهم.
+
+من غير [[fonts]]: الصورة بتطلع برضه، بس العربي حروفه منفصلة ومعكوسة («كتاب» بتبان «باتك»)، لأن Next جاب خط احتياطي من Google Fonts وقت الطلب و Satori مبيوصّلش الحروف العربي. ولو السيرفر مش واصل للإنترنت هتطلع مربعات. ومع Cairo الحروف متوصلة صح.
+
+والجملة المخلوطة: كل كلمة عربي سليمة، بس ترتيب الكلمات ماشي شمال لليمين زي الإنجليزي، فـ «كتاب Next.js 16» بتتقري بالعكس، و «ج.م» طلعت «م.ج». الحل العملي: كل جزء (الاسم، والسعر، والعملة) في div لوحده وترتّبهم بـ flexbox، أو نص قصير من غير خلط. وخد بالك: [[fontFamily: undefined]] في الـ style وقّع الصورة كلها عندي (الرد اتقطع من غير status)، فمتكتبش المفتاح لو مش هتستخدمه.`
         },
         {
           cmd: "JSON-LD",
@@ -3008,7 +3296,15 @@ export default withNextIntl({});`,
             "الـ plugin.",
             R`بيدوّر على [[i18n/request.ts]] لوحده.`,
             R`لف الـ config بتاعك (اللي فيه [[images]] أو [[cacheComponents]]) بيه.`
-          ]
+          ],
+          sol: R`[[localhost:3000]] بيرجّع [[307]] لـ [[/ar]] ومعاه [[set-cookie: NEXT_LOCALE=ar]]، والصفحة بتعرض «أهلًا». ولو فتحت [[/en]] بتعرض الإنجليزي، والـ cookie بتتحدث لـ [[en]].
+
+بعد ما تغيّر لغة المتصفح للإنجليزي وتمسح الـ cookies: [[/]] بيروح [[/en]]، لأن الاختيار من [[Accept-Language]] لما مفيش cookie. ولو مامسحتش الـ cookies هيفضل يوديك آخر لغة زرتها. لو [[/ar]] طلعت 404: الصفحة لسه في [[app/page.tsx]] مش [[app/[locale]/page.tsx]]، أو فيه [[app/layout.tsx]] قديم لسه موجود.`,
+          solCode: R`curl -s -o /dev/null -D - localhost:3000/ | grep -i "location\|set-cookie"
+# location: /ar
+# set-cookie: NEXT_LOCALE=ar; Path=/; SameSite=lax
+curl -s -o /dev/null -D - -H "Accept-Language: en-US,en;q=0.9" localhost:3000/ | grep -i location
+# location: /en`
         },
         {
           cmd: "setRequestLocale",
@@ -3044,7 +3340,7 @@ export default async function About({ params }: PageProps<"/[locale]/about">) {
   const t = await getTranslations("About");
   return <h1>{t("title")}</h1>;
 }`,
-          try: R`اعمل build واقرا الجدول: [[/[locale]/about]] المفروض ● وتحتها [[/ar/about]] و [[/en/about]]. امسح [[setRequestLocale]] من صفحة About واعمل build تاني وشوف الرمز اتغير لـ ƒ.`,
+          try: R`اعمل build واقرا الجدول: [[/[locale]/about]] المفروض ● وتحتها [[/ar/about]] و [[/en/about]]. امسح [[setRequestLocale]] من صفحة About ومن الـ layout كمان، واعمل build تاني وشوف الرمز اتغير لـ ƒ.`,
           flag: "script",
           deep: {
             why: R`صفحة «مين إحنا» مش بتتغير مع كل زائر، بس لو next-intl مش عارف اللغة غير من الـ headers، Next مضطر يرسمها مع كل طلب. [[setRequestLocale]] بتقول اللغة صراحة من الـ params، فالصفحة تتبني مرة لكل لغة.`,
@@ -3087,7 +3383,10 @@ export default async function About({ params }: PageProps<"/[locale]/about">) {
             R`نصوص الـ namespace [[About]] من ملف الرسايل.`,
             "اعرض.",
             "قفلة."
-          ]
+          ],
+          sol: R`الجدول: [[/[locale]/about]] وتحتها [[● /ar/about]] و [[● /en/about]]، يعني نسخة static لكل لغة. ولما تمسحها من الصفحة والـ layout: [[ƒ /[locale]/about]] ومن غير نسخ تحتها، لأن next-intl رجع يعرف اللغة من الـ headers.
+
+ملحوظة من التجربة: لو مسحتها من صفحة About بس وسبتها في الـ layout، الجدول لسه ● (Next 16.3 و next-intl 4)، لأن الـ layout والصفحة اترسموا في نفس الـ render. بس متعتمدش على ده: الوثائق بتقول حطها في كل layout وكل page، لأن Next ممكن يرسمهم منفصلين. ولو الكل ƒ وهي موجودة: فيه حاجة تانية dynamic زي [[cookies()]] في الـ layout، أو [[generateStaticParams]] ناقصة.`
         },
         {
           cmd: "useTranslations",
@@ -3155,7 +3454,10 @@ export function CartTotal({ totalCents, name }: { totalCents: number; name: stri
             "أداة تنسيق الأرقام والتواريخ حسب اللغة الحالية.",
             "المتغير جوه الجملة، والفلوس بتتنسق بالأرقام والعملة حسب اللغة.",
             "قفلة."
-          ]
+          ],
+          sol: R`الناتج بالعربي: 0 «السلة فاضية»، و 1 «منتج واحد»، و 2 «منتجين»، و 5 «5 منتجات»، و 11 «11 منتج»، و 100 «100 منتج» (حالتها [[other]]). وكمان 103 بترجع «103 منتجات» (few تاني) و 111 «111 منتج».
+
+لما تمسح [[many]]: 11 بتروح لـ [[other]] من غير أي خطأ، بس النص هو هو «11 منتج»، لأن [[many]] و [[other]] في الرسالة نفس النص، فمش هتشوف فرق. عشان تتأكد، غيّر نص [[other]] مؤقتًا لحاجة مميزة: هتلاقي 11 و 100 و 111 طلعوا بيها. ولو طلعلك «11 منتجات» أو «2 منتج»: الرسالة ناقصة حالة، أو انت بتلزق الرقم بالكلمة بإيدك.`
         },
         {
           cmd: "createNavigation",
@@ -3209,7 +3511,10 @@ export const metadata = { alternates: { languages: { ar: "/ar/about", en: "/en/a
             R`نفس المسار باللغة التانية. [[replace]] عشان التبديل ميبقاش خطوة في الـ history. واسم اللغة مكتوب بلغتها هي.`,
             "قفلة.",
             R`hreflang: الصفحة بتقول لجوجل فين النسخة العربي وفين الإنجليزي. مع [[metadataBase]] بتبقى URLs كاملة.`
-          ]
+          ],
+          sol: R`من [[/ar/about]] الزرار (مكتوب عليه English) بيوديك [[/en/about]] بنفس الصفحة بالإنجليزي، والـ cookie [[NEXT_LOCALE]] بقت [[en]]. واللينك من [[@/i18n/navigation]] بـ [[href="/about"]] من صفحة عربي بيروح [[/ar/about]] على طول.
+
+ولينك [[next/link]] العادي بيطلب [[/about]] من غير لغة، فالـ proxy بيرد [[307]] ويحوّل، وده طلب زيادة مع كل ضغطة. والتحويل حسب cookie [[NEXT_LOCALE]] (آخر لغة فتحتها)، فغالبًا هتوصل للغة الصح. بس لو الـ cookie مش موجودة أو اتمسحت، الاختيار بيبقى من [[Accept-Language]]: تكون في [[/en]] ومتصفحك عربي فتروح [[/ar/about]]. لو الزرار وداك URL غلط: انت مستخدم [[usePathname]] من [[next/navigation]] (بيرجّع المسار باللغة) مش من [[@/i18n/navigation]].`
         }
       ]
     },
@@ -3261,7 +3566,10 @@ Next 16 غيّر defaults: [[qualities]] بقت [[[75]]] بس (أي quality تا
             R`حاوية ليها نسبة ثابتة و [[relative]].`,
             R`[[fill]]: الصورة تملا الحاوية، و [[object-cover]] تقص بدل ما تمط. و [[alt=""]] لأنها ديكور.`,
             "قفلة."
-          ]
+          ],
+          sol: R`في Network: الـ [[<img>]] العادي بينزّل الملف الأصلي زي ما هو (JPEG بالحجم الكامل)، و [[<Image>]] بينزّل [[/_next/image?url=...&w=384&q=75]] بصيغة [[image/webp]] (أو AVIF لو فعّلتها في [[formats]]) وحجم أصغر بكتير. وفي الـ HTML هتلاقي [[srcset]] بمقاسات من 256 لـ 3840 والمتصفح بيختار.
+
+من غير [[sizes]]: Next بيكتب srcset بـ [[1x]] و [[2x]] على حسب الـ [[width]]، فالموبايل اللي الـ DPR بتاعه 3 بياخد مقاس كبير. جربتها على شاشة عرضها 390: صورة [[width={1200}]] من غير sizes نزّلت [[w=3840]]، وصورة بـ [[sizes="(max-width: 768px) 50vw, 25vw"]] نزّلت [[w=640]]. وفي Lighthouse صورة الـ hero بـ [[fetchPriority="high"]] بتبدأ تحمّل قبل الباقي، والفرق في الـ LCP بيبان أكتر مع throttling. لو صورة من دومين تاني طلّعت خطأ إن الـ hostname مش configured: ضيفه في [[remotePatterns]].`
         },
         {
           cmd: "next/font",
@@ -3311,7 +3619,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             "قفلة.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`في Network > Font هتلاقي ملفات [[woff2]] جاية من [[/_next/static/media/...]] (عندي ملفين لـ Cairo: عربي ولاتيني)، ومفيش أي طلب لـ [[fonts.googleapis.com]] ولا [[fonts.gstatic.com]]. وفي View Source [[<link rel="preload" as="font" type="font/woff2">]] لنفس الملفات: الخط بيبدأ يتحمّل مع الـ HTML.
+
+بالطريقة القديمة ([[<link>]] لـ Google Fonts) ومع Slow 4G: الصفحة بتظهر بخط النظام الأول، وبعد ثواني الخط يتبدل والسطور تتحرك، وفي Performance panel هتلاقي Layout Shift. مع next/font الحركة أقل بكتير لأن الخط الاحتياطي متظبط بـ [[size-adjust]]. لو لقيت الخطوط جاية من gstatic: فيه [[<link>]] أو [[@import]] قديم لسه في الـ CSS.`
         },
         {
           cmd: "next/dynamic",
@@ -3367,7 +3678,10 @@ export function SalesPanel({ data }: { data: { day: string; total: number }[] })
             "قفلة.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[npx next experimental-analyze]] بيحلل الـ bundle ويفتح واجهة على [[localhost:4000]] (غيّر البورت بـ [[--port]] لو مشغول) بتوريك كل route وملفاتها وأحجامها، ومكتبة الـ charts هتبان من أكبر الحاجات.
+
+قستها بـ recharts: مع [[dynamic]] الصفحة حمّلت حوالي ٤٥٠ كيلو JS (من غير ضغط) وقت الفتح، ولما دوست الزرار اتحمّل ملف تاني حوالي ٣٠٠ كيلو والرسم ظهر. ومع [[import]] العادي: حوالي ٧٦٠ كيلو كلهم مع الفتح، وصفر بعد الضغط. يعني الـ ٣٠٠ كيلو اتنقلوا لبعد الضغط بدل ما كل زائر يدفعهم. لو ملف الـ chart اتحمّل مع الصفحة رغم [[dynamic]]: فيه ملف تاني بيعمل [[import]] عادي لنفس الكومبوننت أو للمكتبة.`
         }
       ]
     },
@@ -3716,6 +4030,8 @@ VPS (أو أي سيرفر Node): [[next start]] سيرفر كامل، كل ال�
 
 Docker: نفس الـ VPS بس في image، و [[standalone]] بيصغّرها جدًا. ومناسب لـ Kubernetes و ECS و Fly و Railway.
 
+وبين Vercel والـ VPS العريان فيه منصات بتشغّل Next كسيرفر Node كامل (كل الميزات شغالة) من غير ما تدير السيرفر بإيدك، وكلها في تاب «Cloud و DevOps»: Render بملف [[render.yaml]] (درس [[render.yaml]])، و Railway (درس [[railway]])، و Fly.io بالـ Dockerfile و [[fly.toml]] (درس [[fly launch]])، ولو عندك VPS وعايز تجربة زي Render عليه: Coolify أو Dokploy (درس [[Coolify / Dokploy]]).
+
 Static export: [[next build]] بيطلّع [[out/]] فيه HTML لكل صفحة، بيترفع على S3 أو GitHub Pages أو أي CDN (تاب «Cloud و DevOps»). مناسب لمواقع محتوى أو docs أو landing من غير login. و [[next/image]] محتاج [[unoptimized: true]] أو loader خارجي.
 
 وفيه adapters لمنصات تانية (Netlify و Cloudflare عن طريق OpenNext)، وفي Next 16 بدأ Build Adapters API (تجريبي) عشان المنصات تدعم Next رسميًا. بس دايمًا اختبر الميزات اللي بتستخدمها (ISR والـ proxy والصور) على المنصة دي بالذات.`,
@@ -3728,7 +4044,12 @@ Static export: [[next build]] بيطلّع [[out/]] فيه HTML لكل صفحة�
             R`خليه شغال بعد ما تقفل الـ SSH ويقوم لوحده لو وقع (PM2 في تاب «VPS»).`,
             "أو ارفع على Vercel من الترمنال (أو اربط الـ repo وكل push بيعمل deploy).",
             R`لو [[output: "export"]]: جرّب فولدر [[out]] محليًا بأي static server.`
-          ]
+          ],
+          sol: R`[[npm run build]] وبعده [[npm start]] بيشغّلوا نسخة الإنتاج على [[localhost:3000]]: أسرع من dev بكتير، ومفيش overlay.
+
+مع [[output: "export"]] الـ build بيقع على أول حاجة محتاجة سيرفر: صفحة بتقرا cookies بتطلّع [[Route /me with dynamic = "error" couldn't be rendered statically because it used cookies()]]، و Server Action بتطلّع [[Server Actions are not supported with static export.]] ولو مفيش حاجة من دول، هتلاقي فولدر [[out]] فيه [[index.html]] و HTML لكل صفحة، وملف [[.txt]] لكل صفحة (الـ RSC payload للتنقل)، و [[_next/static]]، و [[404.html]].
+
+وخد بالك من [[next/image]]: الـ build عدّى عندي عادي، بس الـ HTML فيه [[/_next/image?url=...]] ودي مش موجودة على أي static server، فالصور بترجع 404. الحل [[images: { unoptimized: true }]] أو loader خارجي.`
         },
         {
           cmd: "env في Next",
@@ -3771,7 +4092,10 @@ const bad = process.env["NEXT_PUBLIC_" + "SITE_URL"];`,
             "افحص المتغيرات مرة واحدة أول ما السيرفر يقوم: لو حاجة ناقصة يقع برسالة واضحة، مش بعد ساعة في نص طلب.",
             "في المتصفح: Next بدّل السطر ده بالقيمة الحرفية وقت الـ build.",
             R`مش هيشتغل: Next بيدوّر على [[process.env.NEXT_PUBLIC_X]] مكتوبة بالنص، فالاسم المركّب بيطلع undefined.`
-          ]
+          ],
+          sol: R`بعد تغيير [[NEXT_PUBLIC_SITE_URL]] في [[.env]] وتشغيل [[npm start]] من غير build: المتصفح لسه بيعرض القيمة القديمة، لأنها اتكتبت جوه الـ JS وقت الـ build.
+
+والصفحة الـ static اللي بتعرض [[process.env.GREETING]]: لسه بالقيمة القديمة بعد التغيير والـ restart، لأن الـ HTML اتبنى وقت الـ build وخلاص. وبعد [[await connection()]] الجدول بيقول [[ƒ]]، والصفحة بقت تعرض القيمة الجديدة من غير build، لأن الكود بيتنفذ مع كل طلب ويقرا [[process.env]] ساعتها. لو القيمة الجديدة مش ظاهرة حتى في الـ dynamic: نفس المتغير موجود في [[.env.local]] (وده بيكسب على [[.env]])، أو في متغيرات النظام.`
         },
         {
           cmd: "أكتر من نسخة",
@@ -3818,7 +4142,19 @@ NEXT_SERVER_ACTIONS_ENCRYPTION_KEY="$ACTIONS_KEY" GIT_SHA=$(git rev-parse --shor
             "تصدير.",
             "اعمل مفتاح مرة واحدة واحفظه في secrets الـ CI. متعملش واحد جديد مع كل build.",
             "البناء بنفس المفتاح في كل مرة، فكل النسخ وكل الـ builds يفهموا الـ actions بتاعة بعض."
-          ]
+          ],
+          sol: R`شغّلت نسختين [[standalone]] على 3001 و 3002، وصفحة فيها [[revalidate = 3600]] ووقت الرسم. الاتنين في الأول نفس الوقت (وقت الـ build). بعد [[revalidatePath("/isr")]] من route على 3001: الـ 3001 بقت بوقت جديد، والـ 3002 لسه بالقديم، مع إن الاتنين شغالين من نفس الفولدر، لأن كل نسخة معاها كاش في الذاكرة. وده اللي الزوار هيشوفوه ورا load balancer: جزء من الطلبات قديم.
+
+وتجربة Nginx: من غير [[X-Accel-Buffering: no]] (و [[proxy_buffering]] على الافتراضي on)، الصفحة اللي فيها Suspense بطيء بتوصل مرة واحدة بعد أبطأ جزء بدل ما الـ shell ييجي الأول، ومع الـ header الدفعات بترجع. لو النسختين بيعرضوا نفس الوقت الجديد: غالبًا بتضرب نفس البورت مرتين.`,
+          solCode: R`npm run build
+cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/
+cd .next/standalone
+# api/revalidate: route.ts بـ POST بينادي revalidatePath("/isr")
+PORT=3001 node server.js &
+PORT=3002 node server.js &
+curl -s -X POST localhost:3001/api/revalidate
+curl -s localhost:3001/isr | grep -o '<p id="t">[^<]*'
+curl -s localhost:3002/isr | grep -o '<p id="t">[^<]*'`
         },
         {
           cmd: "next upgrade",
@@ -3854,7 +4190,11 @@ npm audit --omit=dev`,
             R`ولّد أنواع [[PageProps]] و [[LayoutProps]] و [[RouteContext]] من غير ما تشغّل dev.`,
             R`ابني. أخطاء TS في [[params]] أو [[cookies()]] من غير await هتطلع هنا.`,
             R`دوّر على ثغرات معروفة في باكدجات الإنتاج (تفاصيل npm audit في تاب «Node و npm»).`
-          ]
+          ],
+          sol: R`الـ diff المتوقع لو جاي من 15: [[function Page({ params }: { params: { id: string } })]] بقت [[async function Page(props: { params: Promise<{ id: string }> })]] وتحتها [[const params = await props.params]]، و [[cookies().get(...)]] بقت [[(await cookies()).get(...)]]، و [[middleware.ts]] بقى [[proxy.ts]] والدالة اسمها [[proxy]]، و [[package.json]] فيه نسخ Next و React الجديدة.
+
+و [[@next-codemod-error]] بيظهر في الأماكن اللي الـ codemod مقدرش يخليها async لوحده، زي دالة helper عادية (مش كومبوننت) بتنادي [[cookies()]]. جربتها على [[getTheme()]] sync: الـ codemod لف النداء بـ [[cookies() as unknown as UnsafeUnwrappedCookies]] وحط فوقه تعليق [[@next-codemod-error Await this API and update its callers]]. الحل بإيدك: خلي [[getTheme]] async واعمل await في كل مكان بيناديها، وامسح الـ cast. ودوّر على [[UnsafeUnwrapped]] في المشروع كله قبل الـ merge.`,
+          solCode: R`grep -rn "@next-codemod-error\|UnsafeUnwrapped" src app lib --include=*.ts --include=*.tsx`
         }
       ]
     },
@@ -3884,7 +4224,10 @@ export function LikeButton() { const [n, setN] = useState(0); return <button onC
             "بيشتغل على السيرفر بس، والكود ده مش في الـ bundle بتاع المتصفح (بيتبني في bundle السيرفر بس).",
             "حد client.",
             "بيترسم على السيرفر (SSR) وبيشتغل في المتصفح كمان."
-          ]
+          ],
+          sol: R`View Source: الليستة ونص الزرار ([[0]]) الاتنين في الـ HTML، لأن الاتنين اترسموا على السيرفر: الـ server component عشان ده مكانه، والـ client component بالـ SSR. وفي Sources (بعد build و start) [[LikeButton]] موجود في ملف تحت [[_next/static/chunks]]، و [[Page]] ومكتبة الداتابيز مش موجودين.
+
+الإجابة لو اتسألت: «الاتنين بيطلعوا HTML. الفرق إن كود الـ client component بيتبعت للمتصفح ويعمل hydration فالزرار يشتغل، وكود الـ server component مبيتبعتش أصلًا، والمتصفح بياخد ناتجه بس جوه الـ RSC payload». لو لقيت [[Page]] في Sources: انت على dev (source maps للـ debugging)، أو الصفحة عليها [[use client]].`
         },
         {
           cmd: "SSG و SSR و ISR و CSR",
@@ -3905,7 +4248,10 @@ const session = (await cookies()).get("session");`,
             "ISR على الصفحة كلها (النموذج القديم).",
             "ISR على طلب واحد.",
             "قراية cookie بتخلي الصفحة SSR (dynamic)."
-          ]
+          ],
+          sol: R`الجدول: صفحة الـ SSG [[○]]، والـ ISR [[○]] برضه بس جنبها رقم في عمود Revalidate (زي [[1h]])، والـ SSR [[ƒ]]. ولو عملت صفحة CSR (client component بيجيب الداتا في useEffect) هتلاقيها ○ هي كمان، لأن الـ HTML الفاضي بتاعها static والداتا بتيجي بعدين في المتصفح.
+
+والـ TTFB على جهازك: ○ بتاخد ملّي ثواني قليلة (ملف جاهز)، و ƒ أكتر حسب شغلها، وممكن مئات الملّي ثواني لو فيها query بطيء. و CSR الـ TTFB بتاعها صغير زي SSG، بس الداتا بتظهر متأخر، والـ curl مش بيقيس ده. الإجابة: «SSG و ISR أسرع وأرخص، و SSR بيدفع مع كل طلب، و CSR الـ TTFB صغير بس المحتوى متأخر ومش في الـ HTML».`
         },
         {
           cmd: "action ولا route",
@@ -3928,7 +4274,10 @@ export async function GET() { return Response.json(await db.post.findMany({ take
             "ملف actions.",
             "mutation من الواجهة: session، وتعديل، وتحديث الصفحة.",
             "endpoint عام بـ URL ثابت لأي client."
-          ]
+          ],
+          sol: R`الـ like بالـ action: طلب [[POST]] على URL الصفحة نفسها، فيه header [[Next-Action]]، والرد [[text/x-component]] (RSC payload) فيه الصفحة بعد [[revalidatePath]]، فالعدد اتحدث من غير ما تكتب أي كود تحديث. والـ route: طلب لـ [[/api/posts]] ورده [[application/json]]، ولازم انت تعمل fetch وتحط النتيجة في state (أو [[router.refresh()]]).
+
+الإجابة: «الـ action أقل كود للواجهة بتاعتي والصفحة بتتحدث في نفس الرحلة، والـ route هو اللي ينفع لأي client تاني». لو الـ action رجع ومفيش تحديث: نسيت [[revalidatePath]].`
         },
         {
           cmd: "hydration mismatch",
@@ -3955,7 +4304,10 @@ export function Now() {
             "بعد الـ hydration بس، احسب الوقت الحقيقي بتوقيت الجهاز.",
             "placeholder لحد ما الوقت يتحسب.",
             "قفلة."
-          ]
+          ],
+          sol: R`الوقت: في dev الـ console فيها [[Hydration failed because the server rendered text didn't match the client]] ومعاها ليستة بالأسباب ([[typeof window]]، و [[Date.now()]]، والـ locale) و diff. بس ممكن متشوفوش خالص: لو السيرفر والمتصفح في نفس الـ timezone ورسموا في نفس الثانية، النص بيطابق بالصدفة. جربتها والمتصفح على [[Africa/Cairo]] والسيرفر UTC: الخطأ طلع على طول. وده بالظبط ليه الـ bug ده بيظهر عند المستخدمين ومش عندك.
+
+و [[<div>]] جوه [[<p>]]: [[In HTML, <div> cannot be a descendant of <p>. This will cause a hydration error.]] وبعدها [[Hydration failed because the server rendered HTML didn't match the client]]، لأن المتصفح بيقفل الـ [[<p>]] قبل الـ [[<div>]] وهو بيقرا الـ HTML، فالـ DOM بقى مختلف عن اللي React متوقعه. الحل: [[<div>]] بدل [[<p>]]، والوقت في [[useEffect]] زي المثال.`
         },
         {
           cmd: "proxy مش حماية",
@@ -3978,7 +4330,13 @@ export function Now() {
             "التحقق جنب الداتا.",
             "والملكية جوه الـ query نفسه.",
             "قفلة."
-          ]
+          ],
+          sol: R`الناتج المتوقع: ليستة بكل مكان فيه [[db.]] جوه ملف عليه [[use server]] أو في [[route.ts]]، وجنب كل واحد سؤالين: فيه [[verifySession()]] (أو [[requireAdmin()]]) قبله؟ والـ where فيه [[userId]] أو فحص ملكية؟ أي واحد ناقصه حاجة من دول وبيلمس داتا خاصة ده ثغرة، حتى لو «الصفحة محمية بالـ proxy».
+
+الأوامر اللي تحت بتبدأك: التالت بيطلّع ملفات الـ actions اللي مفيهاش [[verifySession]] ولا [[requireAdmin]] خالص. والإجابة في الانترفيو: «الـ proxy فحص متفائل للـ UX، والحماية في الـ DAL جنب الداتا، لأن الـ actions والـ route handlers endpoints عامة، والـ matcher ممكن يفوّت مسار، و CVE-2025-29927 وراني إن الطبقة دي نفسها ممكن تتخطى».`,
+          solCode: R`grep -rl '"use server"' src app | xargs grep -n "db\."
+find src app -name "route.ts" | xargs grep -n "db\."
+grep -rl '"use server"' src app | xargs grep -L "verifySession\|requireAdmin"`
         },
         {
           cmd: "صفحة بطيئة",
@@ -3998,7 +4356,10 @@ npx next experimental-analyze`,
             "اقرا الجدول: الصفحة ○ ولا ƒ؟",
             "قيس TTFB من الترمنال: لو عالي، المشكلة على السيرفر.",
             "شوف إيه اللي تقيل في الـ JS."
-          ]
+          ],
+          sol: R`مفيش ناتج واحد صح، بس الورقة اللي المفروض تطلع بيها شكلها كده: الرقم قبل (TTFB من curl، و LCP و INP من Lighthouse على موبايل)، وبعدين كل خطوة ورقمها. أمثلة لسلسلة منطقية: الجدول قال ƒ والصفحة عامة، لقيت [[cookies()]] في الـ layout عشان الثيم، نقلتها لـ client component، الصفحة بقت ○ والـ TTFB نزل. أو TTFB عالي، لقيت ٣ await ورا بعض، حوّلتهم [[Promise.all]]، الـ TTFB بقى قد أبطأ واحد بس. أو TTFB كويس و LCP وحش، صورة الـ hero [[<img>]] كبيرة، حوّلتها [[next/image]] بـ [[fetchPriority]].
+
+المهم تغيّر حاجة واحدة وتقيس، عشان تعرف أنهي تغيير عمل الفرق، وتقيس على [[build]] و [[start]] مش dev. ولو الأرقام بتتنطط بين القياسات: قيس ٣ مرات وخد الوسط، واقفل الـ extensions في المتصفح.`
         }
       ]
     }
