@@ -60,7 +60,12 @@ doctor بيعدّي على قايمة: Flutter نفسه (النسخة والـ c
             "نفس الفحص بالتفاصيل: المسارات والنسخ، ودا اللي تبعته لو بتسأل حد.",
             "وافق على رخص Android SDK (أشهر تحذير في الأول).",
             "حدّث Flutter لآخر نسخة stable."
-          ]
+          ],
+          sol: R`أول مرة غالبًا هتلاقي سطر [[Android toolchain]] عليه [[!]] أو [[✗]] ومعاه [[Some Android licenses not accepted]] وتحته الأمر اللي يصلّحها: [[flutter doctor --android-licenses]]. شغّله واكتب [[y]] لكل رخصة. ولو قال [[cmdline-tools component is missing]]، افتح Android Studio ثم SDK Manager ثم تاب SDK Tools وعلّم Android SDK Command-line Tools، وبعدين ارجع للرخص.
+
+النتيجة الصح: [[[✓] Flutter (Channel stable, ...)]] و [[[✓] Android toolchain]] و [[[✓] Connected device]]. والسطور التانية ممكن تفضل [[✗]] عادي: على ويندوز Visual Studio مطلوب لتطبيقات Windows desktop بس، و [[Cannot find Chrome]] يهمك لو هتبني ويب. آخر سطر زي [[Doctor found issues in 2 categories.]]، والمهم مش إن الرقم يبقى صفر، المهم الفئات اللي تخص المنصة بتاعتك.
+
+الغلط الشائع: تطارد كل سطر أحمر لحد الصفر وتسطّب Visual Studio (جيجات كتير) وانت مش هتبني Windows أصلًا. ولو الأمر نفسه قال [['flutter' is not recognized]] أو [[command not found]]، يبقى فولدر [[flutter/bin]] مش على الـ PATH، أو محتاج تفتح ترمنال جديد بعد ما ضفته.`
         },
         {
           cmd: "flutter create",
@@ -98,7 +103,12 @@ flutter pub get`,
             "ادخل المشروع.",
             "الكود، والاختبارات، ومشروع Android.",
             "نزّل الـ packages اللي في pubspec.yaml (زي [[npm install]])."
-          ]
+          ],
+          sol: R`[[lib/main.dart]] في مشروع [[--empty]] حوالي ١٦ سطر: [[main]] بتنادي [[runApp(const MainApp())]]، و [[MainApp]] بيرجّع [[MaterialApp]] جواه Scaffold ونص [[Hello World!]] في النص. في المشروع العادي الملف أكتر من ١٢٠ سطر: [[MyApp]] و [[MyHomePage]] (StatefulWidget) و [[_counter]] و [[setState]]، وتعليقات كتير بتشرح كل حاجة. والفرق التاني: مشروع --empty مفيهوش فولدر [[test/]]، والعادي فيه [[widget_test.dart]] بيختبر العدّاد.
+
+في [[pubspec.yaml]] (بعد ما تشيل التعليقات): [[name]] (اسم الـ package اللي بتستخدمه في import)، و [[description]]، و [[publish_to: 'none']] (عشان متنشرهوش على pub.dev بالغلط)، و [[version: 1.0.0+1]] (اسم النسخة + رقم الـ build)، و [[environment: sdk: ^3.x]] (نسخة Dart اللي عندك وقت الإنشاء)، و [[dependencies]] فيها flutter و [[cupertino_icons]]، و [[dev_dependencies]] فيها [[flutter_test]] و [[flutter_lints]]، وآخر حاجة [[uses-material-design: true]]. مشروع --empty مفيهوش cupertino_icons ونسخته [[0.1.0+1]].
+
+الغلط الشائع إنك تفتكر إن --empty «ناقص» ومش هيشتغل: هو نفس المشروع بالظبط بفولدرات android و ios و web، الفرق في main.dart والتعليقات بس.`
         },
         {
           cmd: "flutter run",
@@ -138,7 +148,12 @@ AOT يعني Dart بيتحوّل لكود ARM native قبل ما يوصل الم
             "شغّل على Chrome كموقع.",
             "اختار جهاز معين بالـ id.",
             "نسخة release: سريعة، ومن غير hot reload ولا debugging."
-          ]
+          ],
+          sol: R`في الترمنال الأول: [[flutter emulators --launch <id>]] واستنى لحد ما يفتح، وبعدين [[flutter run -d emulator-5554]] (الـ id من [[flutter devices]]). وفي التاني [[flutter run -d chrome]]. كل ترمنال هيقولك [[Flutter run key commands.]] ومعاها قايمة المفاتيح، والـ Chrome هيفتح tab لوحده.
+
+النتيجة: لو دوست ٣ مرات في الـ emulator ومرة في Chrome، الأول يقول 3 والتاني 1. لأن دول تطبيقين منفصلين تمامًا: كل واحد ليه نسخة من الكود متبنية للمنصة بتاعته (APK على الأندرويد، و JavaScript أو WebAssembly في المتصفح)، وكل واحد ليه ذاكرته. مفيش أي state متشاركة بينهم. (وتقدر تعمل ده من ترمنال واحد بـ [[flutter run -d all]]، و r ساعتها بيعمل reload للاتنين.)
+
+المشاكل الشائعة: [[No supported devices connected]] يعني الـ emulator لسه مفتحش أو الـ id غلط، فارجع لـ [[flutter devices]]. وأول build للأندرويد ممكن يقف كذا دقيقة على [[Running Gradle task 'assembleDebug'...]]: دا طبيعي أول مرة، مش معلّق.`
         },
         {
           cmd: "hot reload",
@@ -167,7 +182,14 @@ hot restart بيرمي الـ Dart state كله ويشغّل [[main()]] من ا�
 وفي release مفيش JIT، فمفيش hot reload خالص: الكود متترجم AOT وثابت.`,
             when: "طول الوقت وانت بتعدّل UI. و R لما تعدّل حاجة بتتنفذ مرة واحدة في الأول، أو لما التطبيق يبان في حالة غريبة بعد reload.",
             mistakes: R`تعدّل القيمة الأولية لمتغير وتضغط r وتفتكر إن الكود مش شغال، وهي بس محتاجة R. وتضيف package فيها كود native (كاميرا، إشعارات) وتعمل hot restart، فيطلعلك [[MissingPluginException]]: الـ plugins الجديدة محتاجة full restart. وتنسى إن الـ state باقية، فتختبر شاشة وهي في حالة مستحيل مستخدم جديد يوصلها.`
-          }
+          },
+          sol: R`التلات خطوات والنتيجة المتوقعة:
+
+١. تغيّر [[seedColor: Colors.deepPurple]] لـ [[Colors.green]] وتضغط r: الترمنال يكتب حاجة زي [[Reloaded 1 of 700 libraries in 400ms]]، والـ AppBar والزرار يبقوا أخضر، والعدّاد لسه 5. لأن اللون جوه [[build]] بتاع MyApp، و reload بيعيد build بالكود الجديد ويسيب الـ State زي ما هي.
+
+٢. تغيّر [[int _counter = 0;]] لـ [[int _counter = 10;]] وتضغط r: الرقم لسه 5. الـ reload نجح فعلًا، بس الـ field ده اتحط مرة واحدة لما الـ State اتعمل، والـ State object القديم لسه عايش بقيمته. مش bug ومش إن الملف متحفظش.
+
+٣. تضغط R: [[Restarted application in ...ms]]، والعدّاد يبدأ من 10 واللون أخضر. الـ State اتعملت من جديد فقرت القيمة الأولية الجديدة. القاعدة اللي تطلع بيها: لو التعديل في حاجة بتتنفذ «مرة واحدة» (قيمة أولية، initState، main)، r مش هتبيّنه ومحتاج R.`
         }
       ]
     },
@@ -224,7 +246,12 @@ hot restart بيرمي الـ Dart state كله ويشغّل [[main()]] من ا�
             "[[const]] بتجمّد الـ list كلها: أي add هيضرب وقت التشغيل.",
             "[[$name]] جوه النص بتحط القيمة، و [[$__{...}]] لأي expression.",
             "قفلة main."
-          ]
+          ],
+          sol: R`المثال زي ما هو بيطبع سطر واحد شبه [[Ali paid 19.98 at 2026-09-29 22:06:10.477578, max 50, 1]] (الوقت هيبقى وقتك انت).
+
+لما تشيل التعليق من [[days.add('mon')]] الكود بيترجم عادي، بس وقت التشغيل بيضرب: [[Unsupported operation: Cannot add to an unmodifiable list]]. يعني const مجمّدة الـ list نفسها، مش المتغير بس. وقارنها بـ [[tags.add('b')]] اللي عدّت عادي لأن final بتثبّت المرجع بس.
+
+و [[const now = DateTime.now();]] مش بيترجم أصلًا: الـ analyzer بيقول [[The constructor being called isn't a const constructor]] و [[Const variables must be initialized with a constant value]]. لأن الوقت مش معروف وقت الترجمة. لو لقيت نفسك بتكتب [[const]] وبيزعّق، غالبًا اللي محتاجه [[final]].`
         },
         {
           cmd: "null safety",
@@ -278,7 +305,12 @@ flow analysis: لما تكتب [[if (name != null)]] الـ compiler بيعمل 
             "أول وآخر مرة يتحط فيها (final).",
             "لو قريته قبل ما يتحط هنا الـ compiler هيمسكها (متغير محلي definitely unassigned)، إنما في field أو حالة مش مضمونة هيضرب [[LateInitializationError]] وقت التشغيل.",
             "قفلة."
-          ]
+          ],
+          sol: R`المثال الأصلي بيطبع: [[null]] ثم [[Guest]] ثم [[7]] (طول Unknown) ثم [[3]] ثم [[abc]]. ومفيش سطر للـ if لأن name كانت null.
+
+لما تمسح [[name ??= 'Unknown';]] الكود مش بيترجم: [[The property 'length' can't be unconditionally accessed because the receiver can be 'null']] (ولو بـ [[dart run]]: [[Property 'length' cannot be accessed on 'String?' because it is potentially null]]). الـ compiler شايف إن name لسه ممكن تبقى null، وبيقترح [[?.]] أو [[!]]. الصح هنا [[?.]] أو [[??]]، مش [[!]].
+
+ولما تغيّر لـ [[findUser(5)!]] الكود بيترجم عادي، بس وقت التشغيل: [[Null check operator used on a null value]] على السطر ده بالظبط. دا الفرق كله: من غير ! الـ compiler كان هيحميك، ومع ! انت اللي قلت «متأكد» وطلعت مش متأكد.`
         },
         {
           cmd: "named parameters",
@@ -332,7 +364,12 @@ void main() {
             "دالة من غير اسم متخزنة في متغير، زي arrow function في JS.",
             "الدوال بتتبعت لدوال تانية: [2, 4, 6].",
             "قفلة."
-          ]
+          ],
+          sol: R`المثال بيطبع: [[5]] ثم [[Hi, Ali]] ثم [[Hello, Sara (30)]] ثم [[HEYHEY]] ثم [[[2, 4, 6]]].
+
+[[greet()]] من غير name مش بيترجم: [[The named parameter 'name' is required, but there's no corresponding argument]]. الغلط اتمسك قبل التشغيل، ودا اللي بيحصل لما تنسى [[child]] أو [[onPressed]] في widget.
+
+ولما تشيل [[required]] من غير ما تغيّر حاجة تانية، الغلط بيتنقل لتعريف الدالة نفسها: [[The parameter 'name' can't have a value of 'null' because of its type, but the implicit default value is 'null']]. يعني الـ compiler بيقولك اختار واحدة من تلاتة: [[required]]، أو قيمة افتراضية ([[String name = 'Guest']])، أو تخلي النوع [[String?]]. ناس كتير بتتوقع إن شيل required هيعدّي عادي ويبقى name فاضي، ودا مش بيحصل مع null safety.`
         },
         {
           cmd: "List و Map و Set",
@@ -383,7 +420,10 @@ collection if و for: [[if (isAdmin) 'Admin']] جوه الـ list بيحط ال�
             "لف على الـ Map مفتاح وقيمة.",
             "[ALI, SARA, OMAR, MONA] و {dart, flutter} والـ menu.",
             "قفلة."
-          ]
+          ],
+          sol: R`الأصلي آخر سطر فيه: [[[ALI, SARA, OMAR, MONA] {dart, flutter} [Home, Admin, User Ali, User Sara, User Omar, User Mona, Sara, Omar, Mona]]]. ولما [[isAdmin]] تبقى false، [[Admin]] بتختفي من menu بس والباقي زي ما هو: [[[Home, User Ali, ...]]]. (والـ analyzer ممكن يقولك [[Dead code]] على [['Admin']] لأنه شايف إن الشرط دايمًا false، ودا طبيعي في التجربة دي.)
+
+ولما تشيل [[.toList()]] من سطر upper، نفس الأسماء بتطبع بين أقواس عادية بدل المربعة: [[(ALI, SARA, OMAR, MONA)]]. دا شكل طباعة الـ Iterable: لسه مش List، وكل مرة تلف عليه الـ map بتتنفذ من جديد. لو بعته لحاجة مستنية [[List<String>]] الـ compiler هيرفض.`
         }
       ]
     },
@@ -448,7 +488,33 @@ void main() {
             "عدّل الـ field اللي مش final.",
             "Mouse cheap=false views=2.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تضيف [[toString]] و [[print(p)]]، الناتج: [[Mouse cheap=false views=2]] ثم [[Product(Mouse, 120.0)]]. لاحظ [[120.0]] مش 120: price نوعه double، و [[dart run]] بيطبع الـ double بالعلامة العشرية. (في DartPad ممكن يطلع 120 لأنه بيشتغل على JavaScript ومفيهاش فرق بين int و double.) لو عايزها 120 بالظبط: [[price.toStringAsFixed(0)]].
+
+ومن غير toString كان هيطبع [[Instance of 'Product']]، ودا الشكل اللي هتشوفه في اللوج لأي class مش عامل override.
+
+و [[p.name = 'X']] مش بيترجم: [['name' can't be used as a setter because it's final]]. و [[@override]] مهم: لو كتبت [[tostring]] غلط من غيره هتعمل method جديدة ساكتة، ومعاه الـ analyzer بيقولك إن مفيش حاجة في الأب بالاسم ده.`,
+          solCode: R`class Product {
+  Product(this.name, this.price);
+
+  final String name;
+  double price;
+  int _views = 0;
+
+  bool get isCheap => price < 100;
+  int get views => _views;
+  void view() => _views++;
+
+  @override
+  String toString() => 'Product($name, $__{price.toStringAsFixed(0)})';
+}
+
+void main() {
+  final p = Product('Mouse', 80)..view()..view();
+  p.price = 120;
+  print(p); // Product(Mouse, 120)
+  // p.name = 'X'; // error: 'name' can't be used as a setter because it's final
+}`
         },
         {
           cmd: "named و factory",
@@ -507,7 +573,31 @@ void main() {
             "من Map (زي JSON بعد ما يتفك).",
             "Guest Ali 18.",
             "قفلة."
-          ]
+          ],
+          sol: R`لما تبعت [[{'name': 'Ali', 'age': '30'}]] الكود بيترجم عادي (لأن القيم dynamic)، ووقت التشغيل بيضرب جوه fromJson بالظبط: [[type 'String' is not a subtype of type 'int' in type cast]]، والـ stack بيشاور على سطر [[json['age'] as int]]. دا اللي [[as]] بيعمله: بيوقّف الغلط عند الباب بدل ما القيمة الغلط تدخل التطبيق وتضرب بعدين في حتة ملهاش علاقة. ولو الـ API فعلًا بيبعت السن نص، الحل [[int.parse(json['age'] as String)]]، مش إنك تشيل الـ as.
+
+و toJson بترجّع Map بنفس المفاتيح اللي fromJson بيقراها، فـ [[print(u.toJson())]] يطبع [[{name: Ali, age: 30}]]. الغلط الشائع إنك تكتب المفاتيح بشكل مختلف في الاتجاهين ([[userName]] هنا و [[name]] هناك) فالبيانات تروح وترجع ناقصة.`,
+          solCode: R`class User {
+  const User(this.name, this.age);
+  const User.guest() : this('Guest', 0);
+  User.adult(this.name) : age = 18;
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(json['name'] as String, json['age'] as int);
+  }
+
+  Map<String, dynamic> toJson() => {'name': name, 'age': age};
+
+  final String name;
+  final int age;
+}
+
+void main() {
+  final u = User.fromJson({'name': 'Ali', 'age': 30});
+  print(u.toJson()); // {name: Ali, age: 30}
+  User.fromJson({'name': 'Ali', 'age': '30'});
+  // Unhandled exception: type 'String' is not a subtype of type 'int' in type cast
+}`
         },
         {
           cmd: "records و patterns",
@@ -566,7 +656,24 @@ exhaustiveness: مع [[sealed class]] أو enum أو bool، الـ compiler بي
             "record بأسماء: [[stats.total]] بدل [[$1]].",
             "30.04 31.23 6 server error 503.",
             "قفلة."
-          ]
+          ],
+          sol: R`لما تمسح [[Failure() => 'failed']] الكود مش بيترجم: [[The type 'Result' isn't exhaustively matched by the switch cases since it doesn't match the pattern 'Failure(code: int())']]. الـ compiler لقى Failure بكود زي 400 مش داخل في 404 ولا في [[>= 500]]، وبيقولك بالظبط أنهي شكل ناقص. لاحظ إن [[when]] مش بيتحسب في الـ exhaustiveness، فالحالة اللي فيها when لوحدها مش بتغطي Failure.
+
+ولما تضيف [[class Loading extends Result {}]]: [[... doesn't match the pattern 'Loading()']]. تصلّحه بـ [[Loading() => 'loading...']]. وده بالظبط اللي بتستفيده من sealed: كل switch في التطبيق مش مغطي الحالة الجديدة هيقف لحد ما تصلّحه. الغلط الشائع إنك تسكّته بـ [[_ => '']]، وساعتها أي حالة جديدة بعد كده هتعدّي من غير ما حد ياخد باله.`,
+          solCode: R`sealed class Result {}
+class Ok extends Result { Ok(this.data); final String data; }
+class Failure extends Result { Failure(this.code); final int code; }
+class Loading extends Result {}
+
+String describe(Result r) => switch (r) {
+  Ok(:var data) => 'got $data',
+  Failure(code: 404) => 'not found',
+  Failure(:var code) when code >= 500 => 'server error $code',
+  Failure() => 'failed',
+  Loading() => 'loading...',
+};
+
+void main() => print(describe(Loading())); // loading...`
         },
         {
           cmd: "async و await",
@@ -622,7 +729,28 @@ async مش threads: لو عملت loop تقيلة (parse JSON ضخم، معال�
             "error: bad id (-1).",
             "قفلة try.",
             "قفلة main."
-          ]
+          ],
+          sol: R`مع [[Future.wait]] الاتنين بياخدوا حوالي [[1000ms]] (الـ Stopwatch طلّع 1007 عندي)، ولما تكتب await لكل واحد ورا التاني بياخدوا حوالي [[2000ms]]. لأن Future.wait بيبدأ الطلبين مع بعض ويستنى الأبطأ، إنما await ورا await بيبدأ التاني بعد ما الأول يخلص. والناتج نفسه واحد في الحالتين: [[[User 2, User 3]]].
+
+ولما تشيل await من [[fetchName(1)]] وتطبع name: [[Instance of 'Future<String>']]. الكود بيترجم عادي والـ analyzer مش بيعترض، لأن تخزين Future في متغير كلام صح. المشكلة إنك فاكر إنه String. لو حاولت تعمل [[name.length]] ساعتها بس الـ compiler هيقولك إن Future مفيهوش length.`,
+          solCode: R`Future<String> fetchName(int id) async {
+  await Future.delayed(const Duration(seconds: 1));
+  return 'User $id';
+}
+
+Future<void> main() async {
+  final sw = Stopwatch()..start();
+  final both = await Future.wait([fetchName(2), fetchName(3)]);
+  print('wait: $both $__{sw.elapsedMilliseconds}ms'); // ~1000ms
+
+  sw.reset();
+  final a = await fetchName(2);
+  final b = await fetchName(3);
+  print('sequential: $__{[a, b]} $__{sw.elapsedMilliseconds}ms'); // ~2000ms
+
+  final name = fetchName(1); // من غير await
+  print(name); // Instance of 'Future<String>'
+}`
         },
         {
           cmd: "Stream",
@@ -677,7 +805,23 @@ Future<void> main() async {
             "اقفل الـ stream (يبعت done).",
             "الغي الاشتراك. في Flutter دي مكانها dispose.",
             "قفلة."
-          ]
+          ],
+          sol: R`المثال الأصلي بيطبع [[3]] و [[2]] و [[1]] و [[0]] (كل واحد بعد ٣٠٠ms) وبعدين [[got hello]].
+
+لما تعمل listen تاني على نفس الـ controller العادي، البرنامج بيضرب على سطر الـ listen التاني نفسه: [[Bad state: Stream has already been listened to.]]. الـ stream العادي single-subscription: مستمع واحد بس طول عمره، حتى لو الأول عمل cancel.
+
+ولما تغيّره لـ [[StreamController<String>.broadcast()]] الاتنين بيشتغلوا: [[got hello]] ثم [[second hello]]. بس خد بالك من الفرق التاني: في broadcast لو عملت listen بعد [[add]]، القيمة دي ضاعت عليك، مفيش buffer. عشان كده لو محتاج آخر قيمة للي بيشترك متأخر (زي حالة تسجيل الدخول)، ده شغل ValueNotifier أو Riverpod مش broadcast stream.`,
+          solCode: R`import 'dart:async';
+
+Future<void> main() async {
+  final controller = StreamController<String>.broadcast();
+  final sub = controller.stream.listen((msg) => print('got $msg'));
+  final sub2 = controller.stream.listen((msg) => print('second $msg'));
+  controller.add('hello'); // got hello, second hello
+  await controller.close();
+  await sub.cancel();
+  await sub2.cancel();
+}`
         }
       ]
     },
@@ -1240,7 +1384,12 @@ Flutter مبيستخدمش أزرار أو نصوص النظام (مش زي Reac
             "قفلة الـ MaterialApp.",
             "قفلة runApp.",
             "قفلة main."
-          ]
+          ],
+          sol: R`المثال زي ما هو: شريط فوق مكتوب فيه [[My first app]]، و [[Hello Flutter]] في نص الشاشة بالظبط، وزرار + تحت في الركن. لما تدوس عليه الترمنال اللي فيه [[flutter run]] يطبع [[tapped]] (مش على الشاشة).
+
+لما تخلي [[home: const Text('Hello')]] بس: كلمة Hello بتظهر لازقة في الركن اللي فوق خالص (ممكن تحت الـ status bar بتاع الموبايل)، بلون أحمر وتحتها خطين أصفر. دا مش error بيوقّف التطبيق، دا الـ style الاحتياطي اللي Flutter بيحطه لأي نص مفيش فوقه Material (Scaffold أو Material widget) عشان يلفت نظرك. ومفيش خلفية بيضا كمان، لأن الـ Scaffold هو اللي كان بيرسمها.
+
+الغلط الشائع إنك تصلّح الشكل ده بإنك تحط [[TextStyle(color: ..., decoration: TextDecoration.none)]] على النص. الحل الصح إنك ترجّع الـ Scaffold (أو تلف المحتوى في [[Material]])، فالنص ياخد الخط والألوان من الثيم.`
         },
         {
           cmd: "StatelessWidget",
@@ -1298,7 +1447,12 @@ class ProductTile extends StatelessWidget {
             "قفلة ListTile.",
             "قفلة build.",
             "قفلة الـ class."
-          ]
+          ],
+          sol: R`هتشوف سطرين تحت بعض: [[Tea]] وتحته [[10.00 EGP]]، و [[Coffee]] وتحته [[25.00 EGP]] (السعر برقمين بعد العلامة حتى لو بعته 10 بس، بسبب [[toStringAsFixed(2)]]). لما تدوس على Tea الترمنال يطبع [[tea]] وفيه تأثير ضغط، و Coffee مش بيعمل حاجة ولا حتى تأثير ضغط، لأن onTap بتاعها null.
+
+ولو حاولت تكتب [[const]] قدام Tea: [[Invalid constant value]] على الـ [[() => debugPrint('tea')]]. الـ closure بيتعمل وقت التشغيل، فمستحيل الـ widget كله يبقى const. Coffee كل قيمه ثابتة (نص ورقم) فـ const تمام.
+
+وملحوظة: [[price: 10]] من غير [[.0]] بيترجم عادي مع إن النوع double، لأن Dart بيحوّل الرقم الصحيح المكتوب في الكود لـ double لوحده.`
         },
         {
           cmd: "setState",
@@ -1355,7 +1509,12 @@ class _CounterState extends State<Counter> {
             "النص بالقيمة الحالية.",
             "قفلة الزرار.",
             "قفلة الـ State."
-          ]
+          ],
+          sol: R`مع [[setState]]: كل ضغطة النص يزيد [[Tapped 1 times]] ثم [[Tapped 2 times]]. من غيرها: دوس ٣ مرات والشاشة لسه [[Tapped 0 times]]، ومفيش أي error ولا warning. واعمل hot reload (r): الشاشة تقول [[Tapped 3 times]] مرة واحدة. (جرّبت ده في widget test: قبل الـ reload الـ Text كان 0، وبعد reassemble بقى 3.)
+
+التفسير: [[_count++]] اشتغلت فعلًا ٣ مرات والـ field فيه 3، بس محدش علّم الـ element إنه dirty، فـ build متنادتش. الـ hot reload بيعمل rebuild للشجرة كلها، فـ build اتنادت وقرت القيمة الحالية. ودا بيثبت إن الـ State فاضلة بعد reload.
+
+الغلط الشائع في التفسير: «الضغط مش شغال» أو «المتغير مش بيتغير». الاتنين غلط: المتغير بيتغير، اللي ناقص هو طلب إعادة الرسم. ونفس العَرَض هتشوفه لما تعدّل list أو object جوه State من غير setState.`
         },
         {
           cmd: "initState و dispose",
@@ -1418,7 +1577,56 @@ initState مينفعش تبقى async (Flutter بيرمي error لو رجّعت 
             "بتعيد تعريف build.",
             "الساعة دلوقتي بالشكل HH:mm:ss.",
             "قفلة."
-          ]
+          ],
+          sol: R`وانت في شاشة الساعة الترمنال يطبع [[tick]] كل ثانية. لما ترجع، الـ tick بيقف (ممكن tick واحد زيادة أثناء animation الرجوع، لأن الشاشة لسه في الشجرة لحد ما الـ animation يخلص). دا dispose اشتغل و [[cancel]] وقّف الـ timer.
+
+من غير [[_timer.cancel()]]: بعد ما ترجع الـ tick مكمّل كل ثانية، ومع كل واحد error في الترمنال: [[setState() called after dispose(): _ClockState#... (lifecycle state: defunct, not mounted)]]، ومعاها شرح إن الحل تلغي الـ timer في dispose أو تسأل [[mounted]]، وإن دا ممكن يكون memory leak. الـ timer ماسك reference للـ State فمش هيتمسح من الذاكرة، ولو فتحت الشاشة ٥ مرات هيبقى عندك ٥ timers شغالين.
+
+الغلط الشائع إنك تحل الـ error بـ [[if (mounted) setState(...)]] جوه الـ timer وتسيب الـ cancel: الـ error اختفى بس الـ timer لسه شغال في الخلفية للأبد. mounted مكانها بعد await، إنما أي حاجة انت فتحتها (timer، subscription، controller) مكان قفلها dispose.`,
+          solCode: R`import 'dart:async';
+import 'package:flutter/material.dart';
+
+void main() => runApp(MaterialApp(home: Builder(
+      builder: (context) => Scaffold(
+        body: Center(
+          child: FilledButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => Scaffold(appBar: AppBar(), body: const Center(child: Clock()))),
+            ),
+            child: const Text('open clock'),
+          ),
+        ),
+      ),
+    )));
+
+class Clock extends StatefulWidget {
+  const Clock({super.key});
+  @override
+  State<Clock> createState() => _ClockState();
+}
+
+class _ClockState extends State<Clock> {
+  late final Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      debugPrint('tick');
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // امسح السطر ده عشان تشوف الـ error
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Text(DateTime.now().toString().substring(11, 19));
+}`
         }
       ]
     },
@@ -1477,7 +1685,12 @@ Column بيدّي كل ابن ارتفاع غير محدود (unbounded) على 
             "زرار أيقونة في آخر الصف.",
             "قفلة الـ children.",
             "قفلة الصف."
-          ]
+          ],
+          sol: R`[[crossAxisAlignment]] هنا بيحرّك النصين بالنسبة لبعض، مش بالنسبة للشاشة. [[Flutter developer]] أطول، فهو اللي بيحدد عرض الـ Column ومش بيتحرك خالص. اللي بيتحرك [[Ali Hassan]]: مع [[start]] بدايته على بداية التاني، ومع [[center]] بيبقى في نص عرض التاني، ومع [[end]] آخره على آخر التاني. (قست ده في widget test: [[Ali Hassan]] اتنقل مسافة متساوية مع كل خطوة، و [[Flutter developer]] فضل مكانه.) لو الاسم كان أطول من الوصف كان الوصف هو اللي هيتحرك.
+
+ولما تشيل الـ Spacer وتحط [[spaceBetween]]: الصورة في الأول والقلم في الآخر زي ما هم، بس الاسم والوصف راحوا في نص الصف بدل ما يفضلوا لازقين في الصورة. لأن spaceBetween بيوزّع المساحة الفاضية بالتساوي بين كل عنصرين، مش بيحطها كلها قبل آخر عنصر. دا الفرق بين Spacer (المساحة كلها في مكان واحد انت اخترته) و spaceBetween (مقسومة على كل الفواصل).
+
+ولو سبت الـ Spacer وحطيت spaceBetween كمان، مش هتلاقي أي فرق: Spacer أكل المساحة الفاضية كلها، فمفيش حاجة فاضلة يوزّعها spaceBetween.`
         },
         {
           cmd: "Expanded",
@@ -1526,7 +1739,12 @@ Column بيدّي كل ابن ارتفاع غير محدود (unbounded) على 
             "قفلة.",
             "قفلة الـ children.",
             "قفلة الصف."
-          ]
+          ],
+          sol: R`لما تشيل الـ Expanded من حوالين النص: شريط أصفر وأسود مخطط على الحافة اليمين (أو الشمال في RTL)، ومكتوب عليه الرقم، وفي الترمنال رسالة زي [[A RenderFlex overflowed by 254 pixels on the right.]] (الرقم ده من widget test، وعندك هيختلف حسب عرض الشاشة والخط). لاحظ إن [[TextOverflow.ellipsis]] مبقاش بيعمل حاجة: النص خد عرض غير محدود، فشايف إن فيه مكان لكل الحروف ومش محتاج يقص. والزرار اختفى: الـ Expanded بتاعه خد عرض صفر، لأن مفيش مساحة فاضلة أصلًا يتقسم عليها.
+
+ولما ترجّع الـ Expanded وتخلي flex بتاع النص 1: النص والزرار بياخدوا نفس العرض بالظبط (نص المساحة بعد الأيقونة لكل واحد؛ على شاشة عرضها 411 كانوا 193.7 و 193.7). ومع flex 3 كانوا 290.6 للنص و 96.9 للزرار، يعني ٣ لـ ١ بالظبط. الأيقونة مش داخلة في القسمة لأنها اتقاست الأول بحجمها الطبيعي.
+
+الغلط الشائع إنك تحل الـ overflow بإنك تحط [[width]] ثابت أو تصغّر الخط: هيشتغل على موبايلك ويبوظ على شاشة أصغر. Expanded (أو Flexible) هو الحل لأنه بيدّي النص «الباقي» مهما كان.`
         },
         {
           cmd: "Container و Padding",
@@ -1581,7 +1799,12 @@ Column بيدّي كل ابن ارتفاع غير محدود (unbounded) على 
             "عنوان، ومسافة ٨ فاضية، وتفاصيل.",
             "قفلة العمود.",
             "قفلة الصندوق."
-          ]
+          ],
+          sol: R`مع [[color: Colors.red]] جنب decoration الكود بيترجم عادي (مفيش compile error)، بس أول ما الشاشة تتبني في debug بتطلع الشاشة الحمرا ومعاها في الترمنال: [[Failed assertion: ... 'color == null || decoration == null': Cannot provide both a color and a decoration.]] وبعدها [[The color argument is just a shorthand for "decoration: BoxDecoration(color: color)".]]. يعني color نفسها بتتحول لـ BoxDecoration، فمينفعش اتنين. الحل: اللون جوه الـ BoxDecoration (وهو أصلًا هناك: [[Colors.white]]). وفي release الـ asserts مش بتشتغل، فمتعتمدش إن حد هيشوفها غيرك.
+
+و [[EdgeInsetsDirectional.only(start: 32)]]: في تطبيق إنجليزي الكارت بيبعد 32 من الشمال، وفي العربي بيبعد 32 من اليمين وبيلزق في الشمال (في widget test بـ [[TextDirection.rtl]] الكارت كان من 0 لـ 768 على شاشة عرضها 800، وفي ltr من 32 لـ 800). عشان تشوف ده في تطبيقك: [[locale: const Locale('ar')]] مع [[flutter_localizations]] في MaterialApp، أو للتجربة السريعة لف الـ Scaffold في [[Directionality(textDirection: TextDirection.rtl, child: ...)]].
+
+الغلط الشائع إنك تستخدم [[EdgeInsets.only(left: 32)]] وتجرّب بالإنجليزي بس، فالمسافة تطلع في الناحية الغلط عند المستخدم العربي.`
         },
         {
           cmd: "Stack",
@@ -1634,7 +1857,42 @@ Column بيدّي كل ابن ارتفاع غير محدود (unbounded) على 
             "قفلة الـ Positioned.",
             "قفلة الطبقات.",
             "قفلة الـ Stack."
-          ]
+          ],
+          sol: R`لما تشيل [[clipBehavior: Clip.none]]: الدايرة الحمرا بتتقص من فوق ومن الجنب، وتبان كأنها ربع أو نص دايرة لازقة في ركن الأيقونة. لأن الـ Stack حجمه على قد الأيقونة بس (32×32)، والـ badge بـ [[top: -4]] و [[end: -6]] طالع بره الحدود دي، والافتراضي [[Clip.hardEdge]] بيقص أي حاجة بره. مفيش error ولا warning، الشكل بس اللي بيبوظ، ودا اللي بيخلي الغلطة دي تعدّي كتير.
+
+الصورة بالشريط: الـ Stack فيه الصورة كأول طبقة (ودي اللي بتحدد حجمه)، وفوقها Positioned بـ [[left: 0, right: 0, bottom: 0]] من غير top. كده الشريط لازق تحت، وعرضه قد الصورة بالظبط، وارتفاعه على قد النص والـ padding. واللون [[Colors.black54]] أسود بشفافية حوالي ٥٤٪. (في widget test الصورة كانت 800×200 والشريط من y=164 لـ 200 بعرض 800.)
+
+الغلط الشائع: تنسى [[left: 0, right: 0]] وتكتب [[bottom: 0]] بس، فالشريط ياخد عرض النص بس ويلزق في الركن. أو تحط [[top: 0]] كمان فالشريط يتمط على الصورة كلها.`,
+          solCode: R`import 'package:flutter/material.dart';
+
+class CaptionedImage extends StatelessWidget {
+  const CaptionedImage({super.key, required this.image, required this.caption});
+
+  final ImageProvider image;
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Image(image: image, width: double.infinity, height: 200, fit: BoxFit.cover),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: Container(
+            color: Colors.black54,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Text(caption, style: const TextStyle(color: Colors.white)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// الاستخدام:
+// const CaptionedImage(image: NetworkImage('https://picsum.photos/600/400'), caption: 'Cairo, Egypt')`
         }
       ]
     },
