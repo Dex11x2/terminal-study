@@ -596,7 +596,7 @@ gh pr merge --squash --delete-branch`,
 
 الـ feature flag شرط في الكود ([[if (flags.newCheckout)]]) بيتحكم فيه من إعدادات، فتقدر تدمج كود لسه مش جاهز وهو مقفول، وتفتحه ليوزرز معينين الأول، وتقفله في ثانية لو فيه مشكلة من غير rollback.
 
-والـ commit messages بشكل Conventional Commits ([[feat:]] و [[fix:]] و [[chore:]]) بتخلي الـ changelog والـ versions تتعمل أوتوماتيك. التفاصيل في تاب «هندسة البرمجيات» وتاب GitHub Actions.`,
+والـ commit messages بشكل Conventional Commits ([[feat:]] و [[fix:]] و [[chore:]]) بتخلي الـ changelog والـ versions تتعمل أوتوماتيك. الأوامر في «تاب Git» ([[gh pr]] و [[git rebase]])، وفحص صيغة الرسالة أوتوماتيك في «تاب فحص الكود» ([[commitlint]])، والـ CI اللي بيشتغل على كل PR في «تاب GitHub Actions» ([[ci.yml]])، والـ feature flags جنب الـ canary في «تاب Cloud و DevOps» ([[blue-green vs canary]]).`,
             when: "Follow-ups: «بتعمل hotfix إزاي؟». «إيه هي feature flags؟». «بتكتب commit message إزاي؟». «بتبص على إيه في code review؟». «PR كبير قد إيه يبقى كبير؟».",
             mistakes: R`تقول «بنشتغل على main على طول من غير PRs» كأنها ميزة. أو تحفظ Git Flow وتقول إنه الصح لكل مشروع. أو branch عايش أسابيع وفي الآخر conflict ضخم. ورسايل commit زي «fix» و «update».`
           },
@@ -1253,7 +1253,9 @@ describe("applyCoupon", () => {
 
 الـ integration مع داتابيز: داتابيز اختبار منفصلة (غالبًا في Docker)، وكل اختبار في transaction بتترجع في الآخر أو بيبدأ بداتا نضيفة. وفيه رأي مشهور (testing trophy) إن الـ integration بيدّي أكبر ثقة مقابل التكلفة في تطبيقات الويب.
 
-الـ coverage بيقولك أنهي سطور اتنفذت، مش هل اتختبرت صح. و TDD: اكتب اختبار فاشل، وبعدين أقل كود يعدّيه، وبعدين حسّن (red، green، refactor). والـ flaky test (بينجح ويفشل من غير تغيير) أوحش من مفيش اختبار، لأنه بيعلّم الفريق يتجاهل الأحمر. التفاصيل في تاب «هندسة البرمجيات».`,
+الـ coverage بيقولك أنهي سطور اتنفذت، مش هل اتختبرت صح. و TDD: اكتب اختبار فاشل، وبعدين أقل كود يعدّيه، وبعدين حسّن (red، green، refactor). والـ flaky test (بينجح ويفشل من غير تغيير) أوحش من مفيش اختبار، لأنه بيعلّم الفريق يتجاهل الأحمر. ولما تلاقي واحد: شغّله لوحده كذا مرة، ودوّر على السبب المعتاد (وقت، أو ترتيب اختبارات، أو داتا مشتركة، أو انتظار ثابت بدل انتظار شرط)، وصلّحه أو اعزله بتذكرة، متسيبوش.
+
+والكود نفسه: «تاب فحص الكود» المستوى التاني ([[vitest]] و [[--coverage]] وكتابة الاختبارات) والمستوى التالت (e2e بـ Playwright)، و «تاب Backend بـ Node» المستوى التالت (integration tests على endpoints حقيقية وداتابيز اختبار)، و «تاب React» المستوى التالت (اختبار الـ components).`,
             when: "Follow-ups: «بتعمل mock لإيه ومتعملوش لإيه؟». «coverage كام يبقى كويس؟». «بتعمل TDD؟». «اختبار flaky تعمل فيه إيه؟». «تختبر webhook الدفع إزاي؟».",
             mistakes: R`«مبكتبش tests» من غير أي خطة، أو العكس «coverage 100%» كهدف. و mock لكل حاجة. و e2e لكل حاجة فالـ CI ياخد ساعة. ولو مشاريعك مفيهاش اختبارات قول ده بصراحة، وقول هتبدأ بإيه وليه: ده أحسن من إنك تدّعي.`
           },
@@ -1360,6 +1362,803 @@ function firstRepeat(nums) {
             "مفيش تكرار.",
             "قفلة."
           ]
+        }
+      ]
+    },
+    {
+      t: "الأسئلة السلوكية وإنك تحكي",
+      l: 3,
+      n: "الجولة اللي الـ juniors بيقعوا فيها أكتر: قصص حقيقية مترتبة بـ STAR، ومشروعك بأرقام، وأسئلتك انت في الآخر",
+      items: [
+        {
+          cmd: "tell me about yourself",
+          title: "«Tell me about yourself»: بتقول إيه في ٦٠ ثانية؟",
+          desc: R`بمشي على ترتيب present ← past ← future. الأول أنا مين دلوقتي: الدور والـ stack في جملة. بعدين حاجة واحدة عملتها تثبت الكلام ده، ومعاها نتيجة برقم. بعدين أنا بشتغل إزاي (حاجة بتميزني). وفي الآخر ليه أنا هنا: ليه الدور ده والشركة دي. ده حوالي ١٢٠ لـ ١٥٠ كلمة، يعني دقيقة.
+
+السؤال ده مش تعارف، ده الـ pitch بتاعك، وهو اللي بيحدد الأسئلة الجاية: أي حاجة تذكرها هيسألك عليها. فاذكر المشروع اللي انت عايز تتسأل عليه، ومتذكرش technology مش هتعرف تتكلم فيها خمس دقايق.`,
+          example: R`Present: "I'm a full-stack developer. I work mostly with TypeScript, React and Node, with PostgreSQL behind them."
+Proof: "This year I built and deployed an ordering system for a local business: Next.js, Prisma, online payments, on a VPS with Docker."
+Result: "It handles about 300 orders a week, and I cut the checkout page load from about 4 seconds to 1.5."
+How I work: "I like shipping small, tested changes. I set up the CI and the daily backups on that project myself."
+Future: "Now I want to join a team where I can learn from senior engineers and work on a product with real users."
+Why you: "Your team builds software for clinics in the region, and that's exactly the kind of product I want to work on."`,
+          try: "اكتب إجابتك انت في ٦ جمل بنفس الترتيب (بأرقامك الحقيقية)، وسجّلها بالموبايل بتايمر. لو عدّت ٧٥ ثانية شيل. اسمعها واسأل نفسك: لو أنا الإنترفيوير، هسأل على إيه بعدها؟ وهل ده السؤال اللي أنا عايزه؟",
+          flag: "script",
+          deep: {
+            why: "أول سؤال في أغلب الانترفيوهات، وأول دقيقة بتعمل الانطباع اللي الإنترفيوير بيدوّر بعده على اللي يأكده. الإجابة المرتبة بتقول إنك بتعرف تلخّص وتركّز، ودي مهارة شغل يومية (standup، وتحديث للعميل، ووصف PR).",
+            how: R`الـ present جملة واحدة فيها الدور والأدوات الأساسية بس، مش قايمة بكل حاجة لمستها. الـ proof هو قلب الإجابة: مشروع واحد حقيقي، أحسن لو فيه يوزرز أو فلوس أو فريق، ومعاه رقم واحد مقاس (وقت، أو عدد، أو نسبة). والـ how I work بتفرّقك عن باقي المتقدمين اللي بيقولوا نفس الـ stack: tests، أو deploy، أو إنك بتكتب توثيق، أو بتسأل اليوزر.
+
+الـ future لازم تتفصّل على الشركة: اقرا الإعلان وموقعهم، وقول حاجة حقيقية عن المنتج أو الـ stack بتاعهم. «I'm looking for a challenging opportunity» جملة كل الناس بتقولها ومش بتقول حاجة.
+
+واعمل نسختين: ٦٠ ثانية (الأساسية) و ٣٠ ثانية (لو الـ recruiter مستعجل). ونفس الهيكل بيشتغل بالعربي لو الانترفيو بالعربي.`,
+            when: "بيتسأل في الـ recruiter call وفي أول كل جولة تقريبًا، وأحيانًا بصيغة «Walk me through your CV» أو «عرّفنا بنفسك». Follow-ups متوقعة: «احكيلي أكتر عن المشروع ده»، «إيه أصعب حاجة فيه؟»، «ليه سايب شغلك الحالي؟»، «ليه الشركة دي؟».",
+            mistakes: R`تبدأ من الكلية أو الثانوية وتحكي بالترتيب الزمني. تقرا الـ CV بصوت عالي (هو قدامه أصلًا). قايمة ٢٠ technology من غير ولا مشروع. «I'm passionate and hardworking» من غير دليل. إجابة ٣ دقايق. وحفظ كلمة بكلمة فتبان بتسمّع، ولو اتقطعت تتوه: احفظ النقط مش الجمل. وأرقام مش حقيقية: هيسألك «قستها إزاي؟».`
+          },
+          lines: [
+            "الحاضر: الدور والأدوات الأساسية في جملة واحدة.",
+            "الدليل: مشروع واحد حقيقي، واللي اتعمل بيه، وفين شغال.",
+            "النتيجة بأرقام مقاسة: حجم الاستخدام، وتحسين قبل وبعد.",
+            "إزاي بتشتغل: حاجة بتفرّقك عن اللي بيقولوا نفس الـ stack.",
+            "المستقبل: انت عايز إيه في الخطوة الجاية.",
+            "ليه الشركة دي بالذات: حاجة حقيقية عن منتجهم، مش جملة عامة."
+          ],
+          sol: R`الإجابة المظبوطة بتطلع ما بين ٥٠ و ٧٠ ثانية في التسجيل، وحوالي ١٢٠ لـ ١٥٠ كلمة. فيها مشروع واحد بالاسم أو بالوصف، ورقم واحد على الأقل انت عارف قسته إزاي، وآخر جملة عن الشركة دي بالذات.
+
+الاختبار الحقيقي: لو اديت التسجيل لصاحبك وسألته «هتسألني على إيه؟»، المفروض يقول المشروع اللي انت اخترته. لو قال «مش عارف» يبقى الإجابة عامة.
+
+النتايج الغلط الشائعة: التسجيل ٢ أو ٣ دقايق لأنك بدأت من الكلية، أو مفيهوش ولا رقم، أو آخره «and that's it» من غير ما تقول ليه انت هنا. ولو لقيت نفسك بتقول «umm» كتير، فده عادي في أول تسجيل، وبيقل من التالت أو الرابع.`
+        },
+        {
+          cmd: "STAR",
+          title: "«احكيلي عن أصعب bug قابلك»: إزاي ترتب القصة بـ STAR؟",
+          desc: R`أي سؤال بيبدأ بـ «احكيلي عن مرة...» بجاوبه بـ STAR. الـ Situation: السياق في جملة أو اتنين. الـ Task: أنا كنت مسؤول عن إيه بالظبط. الـ Action: أنا عملت إيه خطوة خطوة، بـ «I» مش «we»، ودي حوالي ٦٠٪ من القصة. الـ Result: النتيجة بأرقام، وإيه اللي اتعلمته. القصة كلها حوالي دقيقتين.
+
+وبجهّز من قبلها ٥ أو ٦ قصص حقيقية بتغطي أغلب الأسئلة: bug صعب، وخلاف مع زميل، وغلطة عملتها، و deadline فات، وحاجة اتعلمتها بسرعة، وحاجة عملتها من غير ما حد يطلبها. والقصة الواحدة ممكن تجاوب أكتر من سؤال لو غيّرت الزاوية.`,
+          example: R`S: "On an ordering system I built, some customers paid but their orders stayed pending. About 1 in 50 orders."
+T: "I owned the payment integration, so it was mine to find and fix, and fast, because real money was involved."
+A1: "I couldn't reproduce it locally, so I added structured logs around the payment webhook, with the order id on every line."
+A2: "The logs showed the webhook sometimes arrived before the order was committed, so the lookup found nothing, and we still returned 200."
+A3: "I made the handler idempotent, returned an error when the order wasn't found so the provider would retry, and added a nightly job that reconciles payments with orders."
+R: "Stuck orders went from about 2% to zero the next month, and the reconcile job later caught two problems on the provider's side."
+Learned: "Now I never assume a webhook arrives once or in order, and I log the ids I'll need before I need them."`,
+          try: "اكتب قصة «أصعب bug» بتاعتك بنفس الـ ٧ سطور. عدّ كلمات الـ Action وكلمات الـ Situation: الـ Action لازم يبقى أطول بكتير. بعدين احكيها بصوت عالي بتايمر، وجرّب تقطعها لـ ٩٠ ثانية.",
+          flag: "script",
+          deep: {
+            why: "الأسئلة السلوكية بتتوقع إنك هتتصرف في المستقبل زي ما اتصرفت قبل كده، فبتطلب قصص حقيقية مش آراء. و «أصعب bug» بالذات بيوري طريقة تفكيرك في الـ debugging: فرضيات، وقياس، ومش تخمين.",
+            how: R`الـ Situation و Task مع بعض أقل من ٢٠ ثانية: الإنترفيوير مش محتاج تاريخ الشركة. الـ Action هو اللي بيتقيّم، فقسّمه لخطوات، وفي كل خطوة قول «ليه»: ليه ضفت logs بدل ما تخمّن، ليه رجّعت error بدل 200. ولو كان فريق، قول انت عملت إيه بالظبط: «We fixed it» مبتقولش هو انت ولا زميلك.
+
+الـ Result فيه جزئين: الرقم (من ٢٪ لصفر)، والدرس اللي بقى عادة عندك. الدرس ده هو اللي بيفرّق مبتدئ اتعلّم من مبتدئ حظه حلو.
+
+للـ bug بالذات: اختار واحد فيه تشخيص حقيقي (مش typo قعدت فيه ساعتين)، وفيه أسباب مش باينة: race condition، أو timezone، أو cache، أو encoding. ولو القصة جت من مشروع شخصي مفيش مشكلة، بس قول كده بوضوح. والتفاصيل التقنية في «تاب بناء مشروع كامل»: [[webhook الدفع]] و [[structured logs]].`,
+            when: "نفس الشكل لكل «احكيلي عن مرة...»: «Tell me about a time you had to learn something fast»، «...a time you went beyond your role»، «...a time you got hard feedback». Follow-ups على الـ bug: «كنت هتعرفه أسرع إزاي؟»، «إيه اللي كان ممكن يمنعه من الأول؟»، «ليه مظهرش في الاختبارات؟».",
+            mistakes: R`قصة متخيلة: أول follow-up عن التفاصيل بيكشفها. «we» طول القصة فمحدش عارف انت عملت إيه. Situation دقيقتين والـ Action جملة. من غير نتيجة («وبعدين اتحلت»). bug تافه أو bug كان سببه إهمال واضح من غير درس. وقصة بتلوم فيها زميل أو العميل.`
+          },
+          lines: [
+            "الـ Situation: المشكلة وحجمها في جملة واحدة.",
+            "الـ Task: انت كنت مسؤول عن إيه، وليه كان مستعجل.",
+            "الـ Action ١: ليه بدأت بالقياس (logs) بدل التخمين.",
+            "الـ Action ٢: السبب الحقيقي اللي الـ logs كشفته.",
+            "الـ Action ٣: الحل بتلات طبقات: idempotent، و retry، و reconcile.",
+            "الـ Result بأرقام، وفايدة ظهرت بعدين.",
+            "الدرس: العادة اللي اتغيرت عندك."
+          ],
+          sol: R`قصتك المكتوبة المفروض يطلع فيها الـ Action أكتر من نص الكلام. لو الـ Situation أطول من الـ Action، شيل من السياق. ولو الكلمة «we» ظهرت في الـ Action أكتر من مرة، حوّلها لـ «I» أو قول مين عمل إيه.
+
+وعلى التايمر الإجابة الكويسة بتطلع ما بين ٩٠ ثانية ودقيقتين. أطول من كده غالبًا فيه تفاصيل تقنية الإنترفيوير مطلبهاش: سيبها للـ follow-up.
+
+القصة كاملة لو فيها: رقم في الـ Result، وسبب حقيقي اتلاقى بقياس، ودرس بقى عادة. وأشهر نتيجة غلط: قصة مفيهاش تشخيص خالص («لقيت الغلطة وصلحتها»)، ودي مبتوريش أي حاجة عن طريقة تفكيرك.`
+        },
+        {
+          cmd: "disagree and commit",
+          title: "«احكيلي عن مرة اختلفت فيها مع زميل»: تقول إيه من غير ما تبان عنيد أو ضعيف؟",
+          desc: R`الإنترفيوير بيدوّر على تلات حاجات: إنك بتختلف بالداتا مش بالصوت، وإنك بتسمع وتفهم وجهة النظر التانية قبل ما ترد، وإنك بتلتزم بالقرار حتى لو مكانش رأيك (disagree and commit). فبختار خلاف تقني حقيقي، مش شخصي، وبحكيه بـ STAR.
+
+والنتيجة المهمة إن المشروع كسب، مش إني أنا كسبت. وأحسن قصة فيها إن الطرفين كانوا صح في حتة، أو إني غيّرت رأيي لما شفت داتا.`,
+          example: R`S: "A teammate wanted to add Redis caching to our product list endpoint, because it felt slow."
+T: "I was reviewing his PR, and I thought caching would hide the real problem and add invalidation bugs."
+A1: "Instead of a long thread in the PR comments, I asked for 15 minutes on a call, and first asked what slow meant to him. He'd seen 2-second responses."
+A2: "I suggested we measure before deciding. We ran EXPLAIN ANALYZE together and found an N+1 query and a missing index."
+A3: "We agreed to fix the query first and keep caching as plan B. I also told him his idea was right for the homepage, which really is hot."
+R: "The endpoint went from about 2 seconds to 120 ms without a cache. We added caching to the homepage later, with a clear TTL."
+Learned: "I try to turn opinions into a quick measurement, and I move a discussion to a call when the comments get long."`,
+          try: "افتكر خلاف تقني حقيقي (حتى لو مع نفسك في مشروع شخصي، أو مع عميل على feature). اكتبه بالشكل ده، وبعدين اكتب نسخة تانية انت فيها اللي «خسرت» والتزمت بقرار الـ lead: إيه اللي عملته عشان القرار ينجح؟",
+          flag: "script",
+          deep: {
+            why: "كل فريق فيه خلافات يومية في الـ code review والتصميم. الشركات خايفة من حاجتين: حد بيحارب على كل تعليق، وحد بيسكت ويوافق على أي حاجة وبعدين يشتكي. القصة بتوري انت أنهي نوع.",
+            how: R`ابدأ بإنك فهمت: «first asked what slow meant to him» بتقول إنك مبتفترضش إن التاني غلط. بعدين حوّل الرأي لتجربة صغيرة أو رقم: [[EXPLAIN ANALYZE]]، أو benchmark، أو prototype في ساعة. الداتا بتشيل الأنا من النقاش.
+
+لو الخلاف مخلصش بالداتا، فيه طريقين محترمين: حد صاحب قرار (الـ tech lead أو صاحب الـ feature) يقرر، أو تجربوا الأسهل في الرجوع عنه الأول. وبعد القرار التزم بجد: متقولش «مش قلتلكم» لو حصلت مشكلة.
+
+ولو جالك السؤال بصيغة «with your manager»، نفس الشكل، بس ركّز إنك قلت رأيك بوضوح مرة، بالداتا، وبعدين نفّذت. والتفاصيل التقنية للقصة في «تاب بناء مشروع كامل»: [[indexes و N+1]] و [[cache-aside + TTL]].`,
+            when: "الصيغ: «a conflict with a coworker»، «you disagreed with your manager»، «you received critical feedback in a code review»، «you had to convince someone». Follow-ups: «ولو كان رأيه اتنفّذ وطلع غلط؟»، «لو الـ lead قرر عكس رأيك تعمل إيه؟»، «فيه حد مكنتش بتعرف تشتغل معاه؟».",
+            mistakes: R`«I never had a conflict»: مش مصدّقة وبتقول إنك مبتقولش رأيك. قصة شخصية (حد متأخر أو كسلان) بدل خلاف تقني. قصة الزميل فيها غبي وانت البطل. إنك «صعّدت للمدير» كأول خطوة. ونهاية من غير قرار أو من غير ما تقول اتعلمت إيه.`
+          },
+          lines: [
+            "الـ Situation: الخلاف على إيه، وفكرة الزميل وسببها.",
+            "الـ Task: دورك، ورأيك المختلف وسببه.",
+            "الـ Action ١: نقل النقاش لمكالمة، وسمعت الأول.",
+            "الـ Action ٢: حوّلت الرأي لقياس بدل جدال.",
+            "الـ Action ٣: اتفاق، وخطة بديلة، واعتراف إنه كان صح في حتة.",
+            "الـ Result: رقم قبل وبعد، والفكرة التانية اتنفذت في مكانها الصح.",
+            "الدرس: طريقتك في الخلافات الجاية."
+          ],
+          sol: R`القصة الأولى صح لو فيها: خلاف على حاجة تقنية أو قرار شغل، وخطوة سمعت فيها الأول، وداتا أو تجربة حسمت، ونتيجة للمشروع. لو القصة آخرها «وطلعت أنا صح» وبس، زوّد الحتة اللي التاني كان صح فيها أو اللي اتعلمته منه.
+
+والنسخة التانية (انت خسرت) صح لو فيها إنك قلت رأيك مرة بوضوح وبسبب، وبعدين نفّذت القرار كويس فعلًا، وأحسن لو ضفت حاجة تقلل الخطر اللي كنت خايف منه (اختبار، أو monitoring، أو feature flag). دي بالظبط معنى disagree and commit.
+
+النتيجة الغلط: إنك متلاقيش ولا خلاف. غالبًا فيه، بس انت مش شايفه «خلاف»: أي code review اتناقشت فيه، أو عميل طلب حاجة وانت اقترحت أبسط، ينفع.`
+        },
+        {
+          cmd: "غلطة عملتها",
+          title: "«احكيلي عن غلطة عملتها»: إزاي تعترف من غير ما تحرق نفسك؟",
+          desc: R`بختار غلطة حقيقية ليها أثر حقيقي، وأنا اللي عملتها، مش «أنا perfectionist» ولا غلطة زميلي. وبحكي: عرفتها إزاي، وصلّحت الأثر إزاي وبسرعة قد إيه، وقلت لمين، وأهم حتة: غيّرت إيه في طريقة شغلي عشان متتكررش.
+
+الإنترفيوير عارف إن كل الناس بتغلط. هو بيقيس الـ ownership: بتخبي ولا بتبلّغ، وبتلوم ولا بتصلّح، وبتتعلم ولا بتكرر.`,
+          example: R`S: "On my first production deploy for a client, I ran a migration that renamed a column."
+T: "I was the only developer, so the deploy and the database were my responsibility."
+A1: "The old version of the app was still running during the deploy. It queried the old column name, and the site returned errors for about 10 minutes."
+A2: "I rolled back the app, renamed the column back with a quick migration, and told the client what happened the same day."
+A3: "Then I changed how I deploy: expand and contract migrations, a backup before every migration, and I test migrations on a copy of production data first."
+R: "I haven't had downtime from a migration since, and the client kept me to maintain the project."
+Learned: "A change can be safe before the deploy and after it, and still break things during it."`,
+          try: "اكتب ٣ غلطات عملتها فعلًا في شغل أو مشروع. شيل أي واحدة كانت إهمال بس من غير درس، أو فيها ضرر لحد بشكل مش مقبول. اختار واحدة من الباقي واكتبها بـ STAR، وخلي الـ «A3» (اللي غيّرته) أوضح سطر.",
+          flag: "script",
+          deep: {
+            why: "الشركات عايزة حد لما يكسر الإنتاج يقول بسرعة ويصلّح، مش حد يخبي لحد ما اليوزرز يشتكوا. والسؤال بيوري نضجك: هل بتشوف الغلطة كفرصة تحسّن العملية ولا كعيب شخصي تداريه.",
+            how: R`الحجم المناسب: غلطة ليها أثر حقيقي (downtime قصير، أو داتا اتحسبت غلط واتصلحت، أو feature اتسلّمت ناقصة) بس مش كارثة أخلاقية ولا إهمال متكرر. والأحسن تكون من زمان شوية، عشان تقدر تقول إيه اللي اتغير من ساعتها فعلًا.
+
+الترتيب اللي بيقنع: الاكتشاف (عرفتها بنفسك أحسن)، والاحتواء الأول (rollback، أوقف النزيف)، والتواصل (قلت للعميل أو الـ lead بنفس اليوم)، والتصليح الجذري، والتغيير في العملية (checklist، أو اختبار، أو خطوة في الـ CI، أو review). الجزء الأخير ده زي الـ postmortem من غير لوم: السؤال «إيه اللي في النظام سمح للغلطة تحصل؟».
+
+والتفاصيل التقنية للمثال في «تاب بناء مشروع كامل»: [[expand / contract]] و [[backups و DR]] و [[mitigate ثم postmortem]].`,
+            when: "الصيغ: «a mistake you made»، «a time you failed»، «something you'd do differently»، «a time you broke production». Follow-ups: «مين عرف الأول، انت ولا العميل؟»، «لو حصلت تاني بكرة هتعمل إيه في أول ٥ دقايق؟»، «إيه اللي منع الاختبارات تمسكها؟».",
+            mistakes: R`غلطة مش غلطة («I work too hard»). غلطة حد تاني. قصة مفيهاش تغيير في طريقة الشغل. غلطة بتقول إنك مش أمين أو مستهتر (خبيت حاجة، أو شغّلت أمر على الإنتاج وانت مش فاهمه ومتعلمتش). وإنك تقعد تبرر طول القصة بدل ما تقول «كانت غلطتي» في جملة وتكمّل.`
+          },
+          lines: [
+            "الـ Situation: إيه اللي حصل، في جملة.",
+            "الـ Task: مين كان مسؤول: انت.",
+            "الـ Action ١: الأثر بصراحة وبرقم (١٠ دقايق errors) وسببه.",
+            "الـ Action ٢: الاحتواء بسرعة، وبلّغت العميل نفس اليوم.",
+            "الـ Action ٣: التغيير في طريقة الشغل عشان متتكررش. أهم سطر.",
+            "الـ Result: الدليل إن التغيير نفع.",
+            "الدرس في جملة ممكن تتقال لأي فريق."
+          ],
+          sol: R`الغلطة المناسبة لو شلت منها الأسماء تنفع تتحكي في أي انترفيو من غير ما تخاف. فيها أثر حقيقي بس محدود، وانت اللي عملتها، وانت اللي صلحتها.
+
+القصة صح لو سطر «اللي غيّرته» فيه حاجة ملموسة تقدر تتسأل عليها: checklist، أو اختبار، أو خطوة في الـ CI، أو backup قبل migration. «بقيت أركّز أكتر» مش تغيير.
+
+النتايج الغلط الشائعة: إنك تختار غلطة صغيرة جدًا عشان تبان كويس (الإنترفيوير هيسأل «طب وحاجة أكبر؟»)، أو قصة آخرها لوم لحد تاني، أو إنك تحكي الأثر من غير رقم فمحدش عارف كانت كبيرة ولا لأ.`
+        },
+        {
+          cmd: "deadline فات",
+          title: "«احكيلي عن deadline مقدرتش تلحقه»: الإجابة الصح فيها إيه؟",
+          desc: R`الإنترفيوير عايز يعرف: عرفت إمتى إنك متأخر، وقلت لمين وإمتى (بدري، مش آخر يوم)، واتفاوضت على إيه، وإيه اللي اتعلمته في التقدير. القاعدة: الأخبار الوحشة بدري. والحل غالبًا إنك تقطّع الـ scope (تسلّم الأهم في معاده والباقي بعده)، مش إنك تسهر وتسلّم حاجة مكسورة.
+
+الأربع حاجات اللي ممكن تتحرك في أي مشروع: الـ scope، والوقت، والناس، والجودة. والجودة بالذات بلاش تكون هي اللي تتضحّى بيها من غير ما تقول.`,
+          example: R`S: "I estimated two weeks for an admin dashboard with reports, filters and Excel export."
+T: "I owned the feature end to end, and the client had a demo with investors on a fixed date."
+A1: "By the end of week one I was about 40% done, because the report queries were much harder than I expected."
+A2: "I told the client that same day, not on the deadline, and gave two options: everything one week late, or the core reports on time and the export a week later."
+A3: "They chose the second. I shipped the three reports they needed for the demo, and the export followed six days later."
+R: "The demo happened on time with real data, and the full feature was done one week after the original date."
+Learned: "Now I split estimates into small tasks, add a buffer for anything I haven't done before, and share progress every few days."`,
+          try: "افتكر آخر حاجة اتأخرت فيها (حتى لو مشروع كلية أو مشروع شخصي). اكتب: عرفت إنك متأخر في أنهي يوم؟ وقلت إمتى؟ لو الفرق بينهم أكتر من يوم، اكتب إزاي كنت هتعرف أبدر. وبعدين اكتب القصة بالشكل ده.",
+          flag: "script",
+          deep: {
+            why: "التقدير الغلط بيحصل لكل الناس، خصوصًا الـ juniors. اللي بيفرق في الشغل هو التواصل: مدير عرف بدري عنده خيارات، ومدير عرف آخر يوم معندوش غير الإحراج. والسؤال بيقيس ده بالظبط.",
+            how: R`الإشارة البدرية: قسّم الشغل لمهام صغيرة (يوم أو أقل)، ولو أول مهمة خدت ضعف التقدير، التقدير كله غالبًا غلط بنفس النسبة. ده وقت الكلام، مش بعدين.
+
+لما تبلّغ، متجيش بالمشكلة لوحدها: تعالى بخيارين أو تلاتة وتكلفة كل واحد، وسيب صاحب القرار يختار. ده اللي في A2. والتقطيع الشائع: الـ happy path الأول، والحالات النادرة بعدين، أو الشاشة بتقرا بس والتعديل بعدين، أو التصدير بعدين.
+
+والدرس لازم يكون عن التقدير نفسه: مهام صغيرة، و buffer للحاجات اللي أول مرة تعملها، وتحديث منتظم. ولو القصة إنك لحقت بالسهر كل يوم، فده مش درس يطمّن، قول ده من غير ما تفتخر بيه.`,
+            when: "الصيغ: «a time you missed a deadline»، «a time you had too much work»، «how do you estimate?»، «a project that didn't go as planned». Follow-ups: «بتقدّر إزاي دلوقتي؟»، «لو العميل رفض الخيارين؟»، «بتعمل إيه لو الـ lead ضغط على تاريخ مش واقعي؟».",
+            mistakes: R`«I never missed a deadline»: محدش هيصدّق، وحتى لو صح فالسؤال عن إزاي بتتصرف. تلوم العميل إنه غيّر المطلوب (حتى لو ده حصل، ركّز انت عملت إيه). تحكي إنك قلت آخر يوم. أو إن الحل كان سهر أسبوعين وتسليم من غير اختبارات.`
+          },
+          lines: [
+            "الـ Situation: التقدير اللي اديته والمطلوب.",
+            "الـ Task: انت مسؤول، وفيه تاريخ ثابت مش بيتحرك.",
+            "الـ Action ١: إمتى عرفت إنك متأخر وليه.",
+            "الـ Action ٢: بلّغت نفس اليوم ومعاك خيارين.",
+            "الـ Action ٣: العميل اختار، وانت سلّمت الأهم في معاده.",
+            "الـ Result: الحاجة المهمة اتعملت في وقتها، والباقي متأخر أسبوع بس.",
+            "الدرس: إزاي بتقدّر وبتبلّغ من ساعتها."
+          ],
+          sol: R`القصة صح لو فيها الفرق بين «عرفت» و «قلت» يوم أو أقل، وفيها خيارات عرضتها مش مشكلة بس، ونتيجة فيها حاجة اتسلمت في معادها حتى لو ناقصة.
+
+ولو لقيت إنك عرفت متأخر (مثلًا آخر يومين)، ده مش سبب تسيب القصة. خليه هو الدرس: «عرفت متأخر لأن المهام كانت كبيرة، فبقيت أقسّم لمهام يوم، وبعرف بدري». دي إجابة قوية لأنها صادقة وفيها تغيير.
+
+الغلط الشائع: الـ Result يطلع «وسلمت كله في الآخر بعد ما سهرت»، من غير أي تفاوض على الـ scope ولا تغيير في التقدير.`
+        },
+        {
+          cmd: "problem → decisions → results",
+          title: "«احكيلي عن مشروع عملته»: إزاي تحكيه بحيث يبان إنك مهندس مش منفّذ؟",
+          desc: R`بحكيه في أربع أجزاء. المشكلة: مين اليوزر وكان بيعاني من إيه. ودوري: عملت إيه أنا بالظبط وبأنهي أدوات. والقرارات والـ trade-offs: اخترت X بدل Y عشان كذا، والتمن كان كذا. والنتيجة بأرقام حقيقية: يوزرز، أو وقت، أو فلوس، أو أخطاء. وبقفل بـ «لو هعمله تاني هغيّر إيه».
+
+الفرق بين المنفّذ والمهندس في الجزء التالت: المنفّذ بيقول «عملته بـ React و Node»، والمهندس بيقول «اخترت كذا عشان كذا، وكان التمن كذا». والأرقام لازم تكون حقيقية وتكون عارف اتقاست إزاي.`,
+          example: R`Problem: "A small clinic booked appointments by phone and paper. Double bookings happened every week."
+Role: "I built it alone: Next.js, a Node API and PostgreSQL, deployed on a VPS with Docker and Nginx."
+Decision 1: "A modular monolith, not microservices. One developer means one deploy, with a clear folder per feature."
+Decision 2: "I prevent double booking with a unique constraint on doctor and slot in the database, not only a check in the code, because two requests can pass a check at the same moment."
+Trade-off: "Server-rendered pages instead of a heavy SPA, so it's fast on cheap phones. The cost was weaker offline support."
+Results: "About 1,200 bookings a month now, zero double bookings since launch, and reception gets about half the phone calls it used to."
+Next time: "I'd write end-to-end tests for the booking flow from day one. I added them after a regression, not before."`,
+          try: "اختار أقوى مشروع عندك واكتبه بالسبع سطور دول. لو معندكش رقم حقيقي للنتيجة، روح هاته: اليوزرز من الداتابيز، أو وقت التحميل من Lighthouse، أو الأخطاء من Sentry. بعدين خلي صاحبك يسألك «ليه؟» بعد كل قرار ٣ مرات ورا بعض.",
+          flag: "script",
+          deep: {
+            why: "ده أكتر سؤال بيتسأل للـ juniors بعد «عرّفنا بنفسك»، وهو فرصتك الوحيدة تتكلم في حاجة انت خبير فيها أكتر من اللي قدامك. الإنترفيوير بيحفر في القرارات عشان يعرف انت اللي فكّرت ولا نقلت tutorial.",
+            how: R`الـ trade-off جملة بالشكل ده: «اخترت X عشان Y، والتمن Z». لو مش لاقي تمن، يبقى انت مش فاهم الاختيار كويس، أو ده مكانش قرار أصلًا. الأمثلة في «تاب بناء مشروع كامل»: [[modular monolith أولًا]] و [[القاعدة تحكم]]، وتمرين [[booking system]] فيه نفس مشكلة الحجز المزدوج.
+
+الأرقام: اختار ٢ أو ٣ بس، وكل رقم اعرف مصدره. «About» كلمة كويسة لو الرقم تقريبي. ولو المشروع ملوش يوزرز (مشروع تعلم)، الأرقام ممكن تبقى تقنية: وقت الـ build، أو حجم الـ bundle قبل وبعد، أو coverage الـ business rules، أو زمن الـ API تحت load test.
+
+وجهّز نسختين: دقيقتين، وعشر دقايق فيها رسمة للـ architecture ممكن ترسمها على الشاشة. وخلي الريبو أو الـ demo مفتوح قبل الانترفيو لو هتشارك الشاشة.`,
+            when: "بيتسأل في كل الجولات تقريبًا: «walk me through a project you're proud of»، «what was the hardest part?»، «what would you change?». Follow-ups بتحفر: «ليه Postgres مش Mongo؟»، «لو اليوزرز بقوا ١٠٠ ضعف إيه اللي هيقع الأول؟»، «اختبرت إزاي؟»، «مين عمل الجزء ده؟».",
+            mistakes: R`تحكي الـ features («فيه login، وفيه صفحة، وفيه dashboard») بدل المشكلة والقرارات. قايمة technologies من غير «ليه». أرقام مخترعة أو مش عارف مصدرها. تاخد كريدت شغل الفريق كله. تقول إن كل حاجة كانت perfect: الإنترفيوير بيحب يسمع «لو هعمله تاني...». ومشروع tutorial منقول زي ما هو من غير ولا قرار انت أخدته.`
+          },
+          lines: [
+            "المشكلة: مين اليوزر ووجعه، في جملة.",
+            "دورك بالظبط والأدوات، وفين شغال.",
+            "قرار معماري وسببه.",
+            "قرار تقني دقيق وسببه: القيد في الداتابيز لأن الـ check في الكود ممكن يعدّي طلبين مع بعض.",
+            "trade-off صريح: الميزة والتمن.",
+            "النتايج بتلات أرقام من مصادر مختلفة.",
+            "لو هتعيده: غلطة حقيقية واتعلمت منها."
+          ],
+          sol: R`المشروع مكتوب صح لو كل قرار فيه كلمة «because» أو «so»، وسطر الـ trade-off فيه حاجة خسرتها فعلًا، والنتايج فيها ٢ أو ٣ أرقام انت تقدر تقول جبتها منين.
+
+وتمرين «ليه؟ ٣ مرات» صح لو وصلت في التالتة لسبب حقيقي عن اليوزر أو القيود (فريق صغير، سيرفر رخيص، مستخدمين على موبايلات ضعيفة). لو في التانية قلت «عشان هو الأشهر» أو «عشان الكورس كان بيه»، ده القرار اللي محتاج تذاكره قبل الانترفيو.
+
+الغلط الشائع: النتيجة تطلع features مش أرقام («والمشروع فيه ١٥ صفحة»)، أو مفيش «Next time» لأنك شايف المشروع كامل.`
+        },
+        {
+          cmd: "أسئلتك للإنترفيوير",
+          title: "«عندك أي أسئلة لينا؟»: تسأل إيه؟",
+          desc: R`الإجابة دايمًا «أيوه». بجهّز ٤ أو ٥ أسئلة، وبسأل ٢ أو ٣ حسب الوقت. أسئلة عن الشغل نفسه مش حاجة مكتوبة في موقعهم: أول ٣ شهور شكلهم إيه، والـ code review والـ deploy ماشيين إزاي، والـ onboarding، وأصعب مشكلة بيحلوها دلوقتي.
+
+والأسئلة دي بتقيّم الشركة انت كمان: الـ junior محتاج مكان فيه review و mentoring، مش مكان هيسيبه لوحده على الإنتاج من أول يوم. وأسئلة المرتب والإجازات مكانها مع الـ HR أو الـ recruiter، مش مع المهندس في الجولة التقنية.`,
+          example: R`"What would success look like for this role in the first three months?"
+"How does a change get from a pull request to production here, and how long does that usually take?"
+"How do new developers get code review and mentoring in their first months?"
+"What's the hardest technical problem the team is working on right now?"
+"What do you enjoy most about working here, and what would you change if you could?"
+"Is there anything in my background that makes you hesitant? I'd like the chance to answer it."`,
+          try: "اكتب ٥ أسئلة لشركة حقيقية نفسك تشتغل فيها، اتنين منهم لازم يكونوا عن حاجة لقيتها في موقعهم أو إعلان الوظيفة (منتج، أو stack، أو خبر). وجنب كل سؤال اكتب: الإجابة اللي تطمّنك إيه، واللي تقلقك إيه.",
+          flag: "script",
+          deep: {
+            why: "آخر ٥ دقايق بتسيب انطباع. «لا شكرًا» بتقول إنك مش مهتم أو مش محضّر. والسؤال الذكي بيوري إنك بتفكر في الشغل الحقيقي. وفي نفس الوقت دي فرصتك الوحيدة تعرف هل المكان ده هيعلّمك ولا لأ.",
+            how: R`فصّل الأسئلة على الشخص: المهندس اسأله عن الكود والـ deploy والـ on-call، والـ manager اسأله عن التوقعات والتقييم والنمو، والـ recruiter اسأله عن المراحل الجاية والمواعيد.
+
+إجابات تطمّن الـ junior: «كل PR بيتعمل له review»، و «فيه CI و staging»، و «بيبقى معاك buddy أول شهر». وإجابات تقلق: «مفيش اختبارات بس بنتحرك بسرعة»، و «هتبقى المطوّر الوحيد على المشروع»، و «بننشر من جهاز واحد فينا».
+
+السؤال الأخير في المثال (فيه حاجة مخلياك متردد؟) بيفتح فرصة ترد على اعتراض قبل ما يتقرر عليك، بس بعض الناس بتحسه تقيل. استخدمه لو الجو كان مريح، وقوله بهدوء، ورد على الإجابة من غير ما تدافع بعصبية.`,
+            when: "آخر كل جولة تقريبًا. ولو الوقت خلص قول «I have a couple of questions, can I send them by email?». وفي آخر مرحلة قبل العرض، اسأل الـ recruiter: «What are the next steps, and when can I expect to hear back?».",
+            mistakes: R`«No, I think you covered everything». أسئلة إجابتها في أول صفحة في موقعهم. تسأل عن المرتب والإجازات والشغل من البيت في الجولة التقنية. تسأل ٨ أسئلة والوقت خلصان. وتسأل سؤال عشان تسأل ومتسمعش الإجابة: الإجابة غالبًا بتفتح كلام أحسن من السؤال التاني.`
+          },
+          lines: [
+            "التوقعات: هيقيّموك على إيه في أول ٣ شهور.",
+            "العملية: من الـ PR للإنتاج، وسرعتها بتقول كتير عن الفريق.",
+            "التعلم: فيه review و mentoring ولا هتبقى لوحدك.",
+            "الشغل الحقيقي: أصعب مشكلة عندهم، وغالبًا بتفتح كلام تقني حلو.",
+            "الثقافة من جوه: اللي بيحبه واللي عايز يغيّره.",
+            "اختياري: فرصة ترد على أي تردد قبل ما يتقرر."
+          ],
+          sol: R`القايمة صح لو السؤالين المخصوصين مش ممكن يتسألوا لأي شركة تانية («شفت إنكم نقلتوا لـ Next.js السنة دي، إيه اللي دفعكم؟»)، والتلاتة التانيين عن العملية والتعلم والتوقعات.
+
+وعمود «الإجابة المطمئنة/المقلقة» هو أهم جزء: من غيره انت بتسأل وخلاص. مثال: سؤال الـ deploy، المطمئن «PR، و CI، و staging، و deploy تلقائي كام مرة في اليوم»، والمقلق «واحد بس اللي يعرف ينشر، وبيعمله بإيده».
+
+الغلط الشائع: كل الأسئلة عامة تنفع لأي شركة، أو فيها سؤال عن حاجة مكتوبة في الإعلان نفسه.`
+        }
+      ]
+    },
+    {
+      t: "الـ take-home والعملي",
+      l: 3,
+      n: "تاسك في البيت أو كود قدام حد: اللي بيتقيّم مش إنه اشتغل وخلاص، لكن اختياراتك وإزاي بتشرحها",
+      items: [
+        {
+          cmd: "time box",
+          title: "جالك take-home وقالولك «٤ ساعات تقريبًا»: تقسّم الوقت إزاي وتختار تعمل إيه؟",
+          desc: R`أول حاجة بقرا المطلوب مرتين وبكتب قايمتين: must (اللي من غيره التاسك مش متحل) و nice-to-have. لو فيه حاجة مش واضحة ببعت سؤال قصير في إيميل، ودي بتتحسب لي مش عليّا. ولو مردوش، بختار افتراض معقول وبكتبه في الـ README.
+
+والوقت المقترح بحترمه تقريبًا: الـ reviewers بيقارنوا بحلول اتعملت في نفس الوقت، و ١٢ ساعة على تاسك ٤ ساعات مش بتبهر، بتقول إنك مبتعرفش تقدّر. وحاجة صغيرة كاملة (شغالة، ومختبرة، ومشروحة) أحسن بكتير من حاجة كبيرة نصها شغال. واللي معملتوش بكتبه تحت «لو عندي وقت أكتر».`,
+          example: R`Task: "Build a REST API for a todo app with auth. Suggested time: about 4 hours."
+Must: register and login, CRUD for todos, users only see their own todos, validation, tests for the core rules
+Nice: pagination, rate limiting, Docker, a small front end
+Question by email: "Should todos be shareable between users?" If no reply: assume not, and say so in the README
+0:00-0:20  read twice, write this plan, set up the repo, the linter and the test runner
+0:20-2:50  auth, then todos, with a test for each rule (ownership first)
+2:50-3:30  errors, validation and edge cases: empty title, another user's id, expired token
+3:30-4:00  README, run everything from a fresh clone, read the whole diff once`,
+          try: "خد التاسك ده: «URL shortener API بـ Node، الوقت المقترح ٣ ساعات». اكتب الخطة بنفس الشكل قبل ما تكتب ولا سطر كود، وبعدين نفّذ بتايمر حقيقي، وسجّل كل ما تخلص بلوك الساعة كام. في الآخر قارن الخطة باللي حصل.",
+          flag: "script",
+          deep: {
+            why: "الـ take-home أقرب حاجة للشغل الحقيقي: مطلوب مش واضح ١٠٠٪، ووقت محدود، ولازم تختار. والـ reviewer بيشوف قراراتك أكتر من كودك: فهمت المهم؟ سألت؟ وقفت في الوقت؟ ده بالظبط اللي هيحصل في أول sprint ليك.",
+            how: R`ترتيب الـ must نفسه مهم: ابدأ بالحاجة اللي لو باظت التاسك كله يقع (هنا الـ auth والـ ownership)، مش بالحاجة الأسهل. وخلي الـ setup (lint و test runner) في أول ٢٠ دقيقة، عشان الاختبارات تتكتب مع الكود مش في الآخر لما الوقت يخلص.
+
+لو الوقت خلص والـ must مش كامل، وقّف واكتب في الـ README إيه الناقص وكنت هتعمله إزاي. ده أحسن من إنك تسلّم متأخر يومين أو تسلّم كود مكسور. ولو التاسك من غير وقت محدد، اسأل «How much time do you expect candidates to spend?»، أو حط لنفسك حد وقول عليه.
+
+ولاحظ: take-home أطول من يوم شغل من غير مقابل ده حقك ترفضه أو تسأل عنه بأدب. وقبل ما تبعت: اعمل clone في فولدر جديد وشغّل الخطوات اللي في الـ README بالحرف، لأن «شغال عندي» أشهر سبب رفض.`,
+            when: "شركات كتير بتستخدمه بدل الـ live coding أو قبله، خصوصًا مع الـ juniors. وبعده غالبًا جولة بيسألوك فيها على الحل: «ليه عملت كذا؟»، «لو عندك وقت أكتر؟»، «ضيف feature صغيرة دلوقتي قدامنا».",
+            mistakes: R`تبدأ تكتب كود أول دقيقة. تصرف الوقت كله على الـ nice-to-have (Docker و UI حلو) والـ must ناقص. مفيش ولا اختبار. تفترض حاجات من غير ما تكتبها. تبعت zip من غير Git history. تستخدم مكتبة تقيلة تحل التاسك كله فمفيش حاجة تتقيّم. أو تستخدم AI يكتب الحل كله ومتعرفش تشرحه في الجولة اللي بعدها.`
+          },
+          lines: [
+            "المطلوب والوقت المقترح زي ما جم.",
+            "الـ must: اللي من غيره التاسك مش متحل.",
+            "الـ nice-to-have: يتعمل لو فضل وقت بس.",
+            "سؤال في إيميل للحاجة المش واضحة، وافتراض مكتوب لو مردوش.",
+            "أول ٢٠ دقيقة: خطة و setup للأدوات قبل أي feature.",
+            "أكبر بلوك للـ must، والاختبارات معاه مش بعده، والأخطر الأول.",
+            "بلوك للأخطاء والحالات الحدّية.",
+            "آخر نص ساعة: README وتجربة من clone نضيف ومراجعة."
+          ],
+          sol: R`الخطة صح لو فيها: الـ must مكتوب قبل الـ nice، وأول بلوك فيه setup للـ tests، وآخر بلوك (٢٠ لـ ٣٠ دقيقة) للـ README والتجربة من clone نضيف. للـ URL shortener: الـ must غالبًا إنشاء لينك قصير، والتحويل بـ 301 أو 302، و 404 للكود المش موجود، و validation للـ URL، واختبارات للتلاتة دول. والـ nice: إحصائيات، ولينك مخصص، وانتهاء صلاحية.
+
+والمقارنة في الآخر هي الدرس: أغلب الناس أول مرة بيلاقوا إن الـ must خد أكتر من المتوقع بـ ٣٠ لـ ٥٠٪، وإن بلوك الـ README اتاكل. ده طبيعي، وده بالظبط ليه الـ nice بيتأجل.
+
+النتيجة الغلط: إنك تلاقي نفسك في الساعة التالتة لسه بتظبط Docker، والتحويل نفسه مش شغال.`
+        },
+        {
+          cmd: "README بالافتراضات",
+          title: "إيه اللي لازم يبقى في الـ take-home غير الكود؟ (tests و README و commits)",
+          desc: R`الـ reviewer غالبًا بيفتح الـ README الأول، وبعدين الـ git log، وبعدين الاختبارات، وبعدين الكود. فالـ README فيه: إزاي أشغّل بأمر أو اتنين، والافتراضات، والقرارات والـ trade-offs، واللي معملتوش وليه، وإزاي أشغّل الاختبارات.
+
+والاختبارات على الـ business rules المهمة (يوزر ميشوفش todos غيره، والـ validation)، مش coverage لكل getter. والـ commits صغيرة وبتحكي القصة: setup، وبعدين feature feature، وبعدين التصليحات، مش commit واحد اسمه «done» في الآخر.`,
+          example: R`## Run
+docker compose up -d && npm install && npm run dev
+npm test
+## Assumptions
+- Todos are private to their owner (not shareable). I asked by email and had no reply yet.
+- Emails are unique and case-insensitive.
+## Decisions
+- JWT in an httpOnly cookie, not localStorage, so scripts on the page can't read it.
+- PostgreSQL with Prisma for relations and migrations. Trade-off: heavier than SQLite for a demo.
+## Not done (with more time)
+- Pagination, and rate limiting on login.
+## Commits
+feat: set up Express, ESLint and Vitest
+feat(auth): register and login with hashed passwords
+feat(todos): CRUD scoped to the owner, with tests
+fix(todos): return 404, not 403, for another user's todo
+docs: README with assumptions and decisions`,
+          try: "افتح آخر مشروع عملته واكتبله README بالأقسام دي بالظبط. بعدين اعمل clone له في فولدر جديد، وامشي على قسم Run بالحرف: لو احتجت أي خطوة مش مكتوبة (متغير في .env، أو migration، أو seed)، ضيفها.",
+          flag: "script",
+          deep: {
+            why: "الـ reviewer معاه ١٠ حلول وساعة. الـ README بيوفّر عليه وقت وبيوجّه عينه للحاجات اللي انت فكرت فيها، والـ commits بتوريه إزاي بتقسّم الشغل. والاتنين عادات شغل يومي: PR من غير وصف أو commit واحد ضخم بيتعب أي فريق.",
+            how: R`قسم Run لازم يشتغل على جهاز حد تاني: [[.env.example]] فيه كل المتغيرات بقيم وهمية، وأمر الـ migrations، وأي seed. ولو فيه Docker compose للداتابيز يبقى أحسن، لأن الـ reviewer مش هيسطّب Postgres عشانك.
+
+الافتراضات: كل حاجة المطلوب مقالهاش وانت قررتها. والقرارات: كل مكان فيه اختيارين معقولين، بالشكل «اخترت X عشان Y، والتمن Z». وقسم «Not done» بيحوّل النقص لدليل إنك واعي بيه.
+
+الـ commits: Conventional Commits زي [[feat(auth): ...]] (في «تاب فحص الكود»: [[commitlint]]). وكل commit يسيب المشروع شغال. ولو اتلخبطت وانت شغال، تقدر تنضّف الـ history قبل ما تبعت بـ rebase (في «تاب Git»: [[git rebase]]). والـ fix commit في المثال مقصود: بيوري إنك لقيت مشكلة واختبرتها وصلحتها، وده مش عيب.`,
+            when: "كل take-home، وكمان ريبوهات الـ portfolio على GitHub: اللي بيفتح الـ CV بتاعك بيفتح الريبو، والـ README أول حاجة. وفي الجولة اللي بعد الـ take-home أغلب الأسئلة بتيجي من قسم Decisions.",
+            mistakes: R`README بتاع create-react-app الافتراضي زي ما هو. أوامر تشغيل ناقصة («شغال عندي»). commit واحد «initial commit» فيه كل حاجة. أسرار حقيقية في [[.env]] مرفوعة. اختبارات مكتوبة بس مش شغالة أو كلها skip. وقسم Decisions بيقول «استخدمت React عشان هو الأحسن» من غير أي تمن.`
+          },
+          lines: [
+            "التشغيل: داتابيز في Docker، وبعدين السطّيب والتشغيل، في سطر.",
+            "الاختبارات بأمر واحد.",
+            "افتراض بسبب سؤال مجاش رده، وبتقول إنك سألت.",
+            "افتراض تاني اتقرر عشان المطلوب مقالش.",
+            "قرار أمني بسببه.",
+            "قرار تقني بسببه وتمنه.",
+            "اللي معملتوش بصراحة.",
+            "commit الـ setup لوحده.",
+            "الـ auth في commit.",
+            "الـ todos مع اختباراتها في commit.",
+            "تصليح لقيته: 404 بدل 403 عشان متأكدش إن الـ todo موجود أصلًا.",
+            "التوثيق في الآخر."
+          ],
+          sol: R`الـ README صح لو حد تاني يقدر يشغّل المشروع من clone نضيف بالأوامر المكتوبة بس، من غير ما يسألك. أغلب الناس في التجربة دي بيكتشفوا خطوة ناقصة على الأقل: متغير في [[.env]] مش موجود في [[.env.example]]، أو أمر [[npx prisma migrate deploy]]، أو إن الداتابيز لازم تبقى شغالة الأول.
+
+وقسم Decisions صح لو كل سطر فيه «عشان» وفيه تمن. لو مش لاقي ولا قرار فيه تمن، ارجع لمشروعك واسأل: اخترت الداتابيز دي ليه؟ الـ auth بتاعي فين بيتخزن؟ دي أول أسئلة هتتسألها.
+
+النتيجة الغلط: README فيه وصف للمشروع وصور بس، ومفيهوش ولا أمر تشغيل.`
+        },
+        {
+          cmd: "think aloud",
+          title: "في الـ live coding: بتتكلم تقول إيه؟ وتعمل إيه لو اتزنقت؟",
+          desc: R`بتكلم قبل ما أكتب مش بعده: بقول هعمل إيه وليه، وبعدين أكتب. وبسأل عن البيئة في الأول: أقدر أشغّل الكود؟ ينفع أدور على syntax؟ أنهي لغة؟ (الخطوات نفسها في المستوى التاني: [[clarify → examples → brute → optimize → test]]، والدرس ده عن الطريقة.)
+
+ولو اتزنقت بقول كده بصوت عالي، وبرجع لمثال صغير بإيدي، وباقترح حل أبسط حتى لو بطيء، وبسأل «ينفع أفترض كذا؟». والـ hint لما ييجي باخده وأبني عليه، مش بجادل فيه. وقبل ما أقول «خلصت» بمشي على الكود بمثال وبـ edge cases: فاضي، وعنصر واحد، وتكرار، وسالب.`,
+          example: R`"Before I code, let me repeat the problem to make sure I got it right."
+"Can I assume the input fits in memory, and that it's not sorted?"
+"I'll start with a simple O(n squared) version so we have something working, then improve it."
+"I'm stuck on how to handle duplicates. Let me try a small example by hand."
+"I think a hash map fixes this, because I keep asking: have I seen this value before?"
+"Let me trace it with an empty array, one element and duplicates before I say it's done."
+"In real code I'd validate the input here. Should I add that now, or focus on the algorithm?"`,
+          try: "افتح مسألة سهلة من «تاب DSA» وشغّل تسجيل صوت، وحلها وانت بتقول كل جملة من دول في مكانها. اسمع التسجيل وعدّ: كام مرة سكتّ أكتر من ٢٠ ثانية؟ وقلت الـ complexity؟ ومشيت بمثال قبل ما تقول خلصت؟",
+          flag: "script",
+          deep: {
+            why: "الإنترفيوير مش شايف دماغك، شايف الشاشة بس. لو سكتّ ٥ دقايق، بالنسبة له انت تايه، حتى لو بتفكر صح. والكلام بيحوّل الانترفيو من امتحان لـ pair programming، وده بيخلي الـ hints تيجي بدري بدل ما تغرق.",
+            how: R`السكوت القصير عادي: «Let me think for a moment» وبعدين ١٥ أو ٢٠ ثانية تفكير ده طبيعي. المشكلة في السكوت الطويل من غير ما تقول انت بتفكر في إيه. قول الفرضية حتى لو مش متأكد: «I think sorting might help, let me check».
+
+لما تتزنق: ارجع لمثال صغير واحله بإيدك وخلي بالك انت عملت إيه، الخطوات دي غالبًا هي الخوارزمية. أو حل نسخة أسهل من المسألة (من غير تكرار، أو أرقام موجبة بس) وبعدين وسّع. والـ brute force الشغال أحسن من ولا حاجة: قوله واكتبه لو الوقت ضيق.
+
+والبيئة: بعض الانترفيوهات في editor مشترك من غير تشغيل ولا autocomplete، فجرّب تكتب كود من غير ما تشغّل. وبعض الشركات دلوقتي بتسمح باستخدام AI assistant في الانترفيو وبتقيّم إزاي بتستخدمه، وبعضها بتمنعه تمامًا: اسأل في الأول ومتفترضش.`,
+            when: "في كل جولة كود: algorithms، أو take-home بيتكمّل قدامهم، أو pair programming. ونفس الجمل بتنفع في الـ system design.",
+            mistakes: R`تكتب في صمت وبعدين تشرح في الآخر. تتكلم كلام من غير معنى عشان متسكتش («so... yeah... let me see...»). تقول «done» من غير ما تجرّب ولا مثال. تتجاهل الـ hint أو تقول «أنا كنت لسه هقول كده». ترفض تكتب brute force عشان مستني الحل الأمثل.`
+          },
+          lines: [
+            "إعادة المسألة بكلامك: بتمسك سوء الفهم بدري.",
+            "سؤال عن الافتراضات بدل ما تخمّن.",
+            "بتعلن إنك هتبدأ بسيط، وبتقول الـ complexity.",
+            "بتقول إنك اتزنقت، وبتقول هتعمل إيه.",
+            "الفكرة وسببها، مش الكود بس.",
+            "اختبار بحالات حدّية قبل ما تقول خلصت.",
+            "بتوري إنك عارف الكود الحقيقي، وبتسيبه يحدد الأولوية."
+          ],
+          sol: R`التسجيل الكويس فيه كلام تقريبًا كل ٢٠ أو ٣٠ ثانية، حتى لو جملة زي «OK, now I'm writing the loop». وفيه لحظة قلت فيها الـ complexity، وفيه تتبّع بإيدك لمثالين على الأقل قبل «done».
+
+أغلب الناس في أول تسجيل بيلاقوا فترة سكوت دقيقة أو أكتر، غالبًا وقت كتابة الكود نفسه. الحل إنك تقول الخطوة قبل ما تكتبها («now I'll add the value to the set»).
+
+الغلط الشائع: إنك تتكلم عن الكود بعد ما تكتبه بدل قبله، فالإنترفيوير ميلحقش يصحّحك لو رايح غلط.`
+        },
+        {
+          cmd: "pair programming round",
+          title: "الانترفيو طلع pair programming على كود موجود: بيقيّموا إيه وتتصرف إزاي؟",
+          desc: R`شركات كتير بدل مسائل الـ algorithms بتديك ريبو صغير وتطلب منك تضيف feature أو تصلّح bug، ومعاك مهندس منهم. بيقيّموا إزاي بتقرا كود مش بتاعك، وإزاي بتستخدم الأدوات (الاختبارات، والبحث، والـ debugger، والـ git)، وإزاي بتسأل وبتسمع وبتاخد اقتراحات.
+
+الخطوات: أقرا الـ README وأشغّل الاختبارات الأول، وألف على هيكل المشروع بصوت عالي، وألاقي المكان بالبحث، وأكتب اختبار يفشل للـ bug، وأصلّح تعديل صغير، وأشغّل الاختبارات تاني. والمهندس اللي معايا زميل مش ممتحن: لو اقترح حاجة بجربها، أو بقول بأدب ليه شايف غيرها.`,
+          example: R`cat README.md
+npm install && npm test
+git log --oneline -10
+grep -rn "calculateTotal" src/
+npx vitest run src/cart.test.js
+git diff`,
+          try: "خد ريبو open source صغير بـ JavaScript فيه اختبارات، واختار issue عليها «good first issue». اعمل الخطوات دي بالترتيب بتايمر ٦٠ دقيقة وانت بتتكلم بصوت عالي، حتى لو محدش معاك. هدفك: اختبار يفشل، وبعدين يعدّي.",
+          deep: {
+            why: "ده أقرب شكل انترفيو لليوم الحقيقي في الشغل: كود قديم، ومش بتاعك، ومعاك زميل. ناس كتير بتحل LeetCode كويس وبتتلخبط في ريبو حقيقي، والعكس. والشركات اللي بتعمله بتدوّر على حد ينفع يشتغل معاه من أول أسبوع.",
+            how: R`الدقايق الأولى للاستكشاف مش ضياع وقت: الـ README، والـ scripts في [[package.json]]، وهيكل الفولدرات، وآخر commits. قول اللي بتشوفه: «This looks like routes, services and repositories, so the business logic is probably in services».
+
+لاقي المكان بالبحث عن كلمة من الـ UI أو رسالة الخطأ أو اسم الـ endpoint، مش بفتح الملفات واحد واحد. وبعدين اكتب اختبار يثبت الـ bug قبل ما تصلحه: كده انت متأكد إنك فهمته، وعندك دليل إنه اتصلح. والتفاصيل في «تاب فحص الكود» ([[vitest]]) وفي «تاب Git» ([[git log -S / blame]]).
+
+والتعامل مع الزميل: اسأل أسئلة محددة («Is this function used anywhere else?») مش «مش فاهم حاجة». ولو اقترح طريقة، جرّبها أو قول «I'd prefer X because Y, but happy to try yours». وقبل ما تخلص اعرض الـ diff كله وقول لو فيه حاجة كنت هتعملها في PR حقيقي (اختبار زيادة، أو تنضيف).`,
+            when: "شائع في شركات المنتجات والـ startups، وأحيانًا بيبقى استكمال للـ take-home بتاعك (ضيف feature على الكود اللي انت كتبته). ونفس الطريقة بتنفع في أول أسبوع شغل على أي ريبو جديد.",
+            mistakes: R`تعيد كتابة الملف كله عشان «مش عاجبك الكود». تبدأ تعدّل قبل ما تشغّل الاختبارات فمتعرفش هي كانت شغالة أصلًا ولا لأ. تفتح الملفات واحد واحد بدل البحث. تتجاهل الزميل أو تستأذنه في كل سطر. وتقول خلصت من غير ما تشغّل الاختبارات كلها بعد التعديل.`
+          },
+          lines: [
+            "اقرا الـ README الأول: التشغيل والهيكل.",
+            "سطّب وشغّل الاختبارات قبل أي تعديل، عشان تعرف الحالة الأصلية.",
+            "آخر ١٠ commits: الفريق شغال على إيه وبيكتب إزاي.",
+            "لاقي كل مكان فيه الدالة اللي هتلمسها، مع رقم السطر.",
+            "شغّل ملف اختبار واحد بسرعة وانت بتصلّح.",
+            "اعرض كل اللي غيّرته قبل ما تقول خلصت."
+          ],
+          sol: R`النتيجة المتوقعة: في أول ١٠ دقايق الاختبارات الأصلية بتعدّي (أو بتعرف إن فيه اختبارات فاشلة من قبلك وتقول كده). بعدها اختبار جديد انت كاتبه بيفشل برسالة بتوصف الـ bug، وبعد التعديل بيعدّي هو وكل الاختبارات القديمة، والـ [[git diff]] فيه تعديل صغير في ملف أو اتنين.
+
+لو خلصت الساعة ومعرفتش تكتب اختبار يفشل، ده غالبًا معناه إنك لسه مش فاهم الـ bug بالظبط، مش إنك بطيء. ارجع لخطوة إنك تعيد إنتاجه بإيدك.
+
+الغلط الشائع: الـ diff طالع ٢٠٠ سطر لأنك عدّلت format الملف كله أو غيّرت أسماء كتير. في pair programming ده بيخلي الزميل مش قادر يتابع.`
+        }
+      ]
+    },
+    {
+      t: "الـ system design في الانترفيو",
+      l: 3,
+      n: "إطار ثابت لأي سؤال تصميم في ٤٥ دقيقة، والأرقام التقريبية، وإزاي تتكلم بالـ trade-offs. التمارين نفسها في «تاب بناء مشروع كامل»",
+      items: [
+        {
+          cmd: "إطار الـ system design",
+          title: "جالك سؤال system design: بتمشي بأنهي ترتيب في ٤٥ دقيقة؟",
+          desc: R`سبع خطوات بالترتيب ده، وانا اللي بسوق والإنترفيوير بيدخل بأسئلة: المتطلبات (الوظايف، وكمان السرعة والتوافر والاتساق)، وبعدين أرقام تقريبية، وبعدين الـ API، وبعدين الـ data model، وبعدين الشكل العام، وبعدين deep dive في أصعب جزء، وفي الآخر الـ trade-offs وإيه اللي هيقع لو الحمل زاد ١٠ مرات.
+
+وأهم قاعدة: متبدأش ترسم مربعات قبل ما تسأل. ٥ دقايق أسئلة في الأول بتحدد كل حاجة بعدها. والتمارين الكاملة بالإطار ده في «تاب بناء مشروع كامل» المستوى التالت، في «تدريب system design»: [[URL shortener]] و [[chat app]] و [[booking system]]، وأسئلة المتابعة في «أسئلة انترفيو» هناك، زي [[cache-aside + TTL]] و [[قيس ثم stateless]].`,
+          example: R`0-5    Requirements: "Who uses it? What are the 3 core features? What's out of scope? How fast, how available, how consistent?"
+5-10   Estimates: users per day, reads and writes per second, storage per year, and the peak (3x the average or more)
+10-15  API: 3 to 5 endpoints, with the request and response shapes
+15-20  Data model: tables, keys, and the index each main query needs
+20-30  High-level design: client, CDN, load balancer, app servers, database, plus a cache or a queue only where the numbers need it
+30-40  Deep dive: the hardest part, the one the interviewer picks or the bottleneck you found
+40-45  Wrap-up: the trade-offs you made, what breaks first at 10x, what you'd monitor, what you'd do with more time`,
+          try: "خد تمرين [[booking system]] من «تاب بناء مشروع كامل» من غير ما تقرا الإجابة. شغّل تايمر ٤٥ دقيقة، وامشي على السبع خطوات على ورقة، ووقّف كل خطوة في معادها حتى لو مخلصتش. بعدين قارن بالإجابة هناك: أنهي خطوة فاتتك أو خدت وقت أكتر من اللازم؟",
+          flag: "script",
+          deep: {
+            why: "سؤال الـ system design مفتوح عن قصد، ومفيهوش إجابة واحدة صح. اللي بيتقيّم إزاي بتتعامل مع الغموض: بتسأل، وبتحسب، وبتختار، وبتبرر. الإطار الثابت بيخليك متتوهش ومتنساش جزء، وبيخلي الإنترفيوير عارف انت فين.",
+            how: R`المتطلبات نوعين: functional (اليوزر يعمل إيه: يحجز، يلغي، يشوف المواعيد)، و non-functional (قد إيه سريع، ومتاح، ومتسق). اكتبهم على الشاشة، واتفق على ٣ features بس والباقي out of scope. والنوع التاني هو اللي بيحدد التصميم: «الحجز لازم يبقى متسق» معناها قاعدة بيانات واحدة بقيد، و «الـ feed ممكن يتأخر ثواني» معناها ينفع كاش و queue.
+
+الأرقام بتقرر: ٥٠ طلب في الثانية سيرفر واحد وداتابيز واحدة كفاية، و ٥٠ ألف في الثانية محتاج كاش وتوزيع. شوف الدرس الجاي [[back-of-envelope]].
+
+الشكل العام ابدأه بسيط: سيرفر وداتابيز. وبعدين ضيف كل مربع (كاش، queue، CDN، replica) لما رقم أو متطلب يطلبه، وقول الرقم ده بصوت عالي. والـ deep dive غالبًا الإنترفيوير هو اللي بيختاره، ولو سابك اختار انت أصعب حتة (توليد الـ ids، أو الحجز المزدوج، أو توصيل الرسايل).
+
+والنسخة الـ junior من السؤال غالبًا أصغر: «صمم الـ backend لتطبيق todo»، أو «صمم API لمتجر». نفس الإطار، بأرقام أصغر وتركيز أكتر على الـ API والداتا.`,
+            when: "بيتسأل غالبًا من mid-level وفوق، بس نسخة صغيرة منه بتيجي للـ juniors كتير، خصوصًا في full-stack. ونفس الترتيب بينفع في أي design doc في الشغل قبل feature كبيرة.",
+            mistakes: R`ترسم microservices و Kafka و Kubernetes في أول دقيقة. متسألش ولا سؤال. تقضي ٢٠ دقيقة في المتطلبات ومتوصلش للتصميم. تنسى الأرقام فكل قرار مالوش سبب. متقولش ولا trade-off. تسكت وانت بترسم. وتقاوم لما الإنترفيوير يغيّر متطلب في النص: ده مقصود، عشان يشوف هتعدّل إزاي.`
+          },
+          lines: [
+            "أول ٥ دقايق: أسئلة المتطلبات، والحاجات اللي بره الـ scope، والسرعة والتوافر والاتساق.",
+            "الأرقام التقريبية اللي هتبرر كل قرار بعد كده.",
+            "الـ API: العقد بين الـ client والسيرفر.",
+            "الـ data model: الجداول والـ indexes حسب الـ queries.",
+            "الشكل العام: ابدأ بسيط، وكل إضافة ليها رقم يبررها.",
+            "الـ deep dive: أصعب جزء بالتفصيل.",
+            "القفلة: الـ trade-offs، واللي هيقع الأول، والمراقبة."
+          ],
+          sol: R`التمرين نجح لو في أول ٥ دقايق كتبت أسئلة زي: «الحجز لدكتور واحد ولا كذا دكتور؟»، «ينفع overbooking؟»، «فيه دفع؟»، وقررت ٣ features بس. وفي خطوة الأرقام طلعت برقم للحجوزات في الثانية (غالبًا صغير جدًا، وده بحد ذاته قرار: داتابيز واحدة كفاية). وفي الـ deep dive اتكلمت عن منع الحجز المزدوج بقيد unique أو lock في الداتابيز.
+
+الأكتر شيوعًا في أول محاولة: الشكل العام بياخد ٢٠ دقيقة، فالـ deep dive والقفلة بيضيعوا. عشان كده التايمر لكل خطوة.
+
+والغلط الأكبر: إنك تلاقي نفسك رسمت Redis و queue من غير ما تقول ليه، والأرقام اللي حسبتها مبتطلبهمش.`
+        },
+        {
+          cmd: "back-of-envelope",
+          title: "إزاي تحسب أرقام تقريبية (QPS والتخزين) بسرعة، وبتستخدمها في إيه؟",
+          desc: R`بحسب بأرقام مدوّرة وبصوت عالي: اليوم فيه ٨٦٤٠٠ ثانية، يعني تقريبًا ١٠٠ ألف. فمليون حاجة في اليوم تقريبًا ١٢ في الثانية. والذروة غالبًا ٢ لـ ٣ مرات المتوسط أو أكتر. والتخزين: عدد السجلات في حجم السجل في المدة.
+
+والرقم مش هدف في نفسه، هو اللي بيقرر: ٦٠ كتابة في الثانية معناها داتابيز واحدة كفاية جدًا، و ٣٥٠٠ قراية في الثانية في الذروة معناها كاش قدام الداتابيز غالبًا يستاهل، و ٢ تيرا في السنة معناها تفكر في الأرشفة. والدقة مش مهمة: المهم الـ order of magnitude.`,
+          example: R`// احفظه estimate.mjs وشغّله: node estimate.mjs
+const DAU = 1_000_000;
+const writesPerUserPerDay = 5;
+const readsPerWrite = 20;
+const SECONDS_PER_DAY = 86_400;
+const writeQps = (DAU * writesPerUserPerDay) / SECONDS_PER_DAY;
+const readQps = writeQps * readsPerWrite;
+const PEAK_FACTOR = 3;
+const BYTES_PER_RECORD = 1_000;
+const storageGBPerYear = (DAU * writesPerUserPerDay * 365 * BYTES_PER_RECORD) / 1e9;
+console.log({
+  writeQps: Math.round(writeQps),
+  readQps: Math.round(readQps),
+  peakReadQps: Math.round(readQps * PEAK_FACTOR),
+  storageGBPerYear: Math.round(storageGBPerYear),
+});
+// { writeQps: 58, readQps: 1157, peakReadQps: 3472, storageGBPerYear: 1825 }`,
+          try: "عدّل الأرقام لتطبيق شات: ١٠ مليون يوزر يومي، و ٤٠ رسالة لليوزر في اليوم، وكل رسالة بتتقري مرتين (1:1)، وحجم الرسالة ٢٠٠ بايت. احسبها في دماغك الأول بأرقام مدوّرة، وبعدين شغّل السكربت وقارن.",
+          flag: "script",
+          deep: {
+            why: "من غير أرقام كل قرار تصميم رأي. الإنترفيوير عايز يشوف إنك بتحط كاش لأن فيه ٣٥٠٠ قراية في الثانية، مش لأن «الكاش كويس». والحساب السريع بيوريك كمان إمتى متعملش حاجة: أغلب المشاريع الحقيقية أرقامها صغيرة وسيرفر واحد كفاية.",
+            how: R`أرقام تحفظها تقريبًا: اليوم ≈ [[10^5]] ثانية، والشهر ≈ ٢.٥ مليون ثانية، والسنة ≈ ٣٠ مليون ثانية. والـ KB = [[10^3]] بايت، والـ MB = [[10^6]]، والـ GB = [[10^9]]، والـ TB = [[10^12]]. وخلي الحساب بالأسس: مليون × ٥ × ٣٦٥ × ١٠٠٠ ≈ [[5×10^6 × 4×10^2 × 10^3]] ≈ [[2×10^12]]، يعني حوالي ٢ تيرا.
+
+ترتيب الحساب: الكتابة في الثانية (من اليوزرز والنشاط)، وبعدين القراية (نسبة القراية للكتابة بتختلف جدًا: shortener ١٠٠، وشات ١ أو ٢)، وبعدين الذروة، وبعدين التخزين في السنة، وأحيانًا الـ bandwidth (القراية × حجم الرد).
+
+وقول الافتراضات بصوت عالي («I'll assume 5 writes per user per day, is that reasonable?»): الإنترفيوير ممكن يعدّلها، والمهم إنك ماشي بطريقة. وسعة سيرفر أو داتابيز واحدة بتختلف جدًا حسب الـ query والهاردوير، فمتقولش رقم مطلق بثقة: قول «I'd load test to know, but a few thousand simple indexed reads per second on one Postgres is usually fine». والتفاصيل في «تاب بناء مشروع كامل»: [[scaling path]] و [[scaling القاعدة]].`,
+            when: "في الخطوة التانية من أي سؤال system design، وكمان في الشغل لما حد يقترح تقنية تقيلة: «احنا عندنا كام طلب في الثانية فعلًا؟». Follow-ups: «ولو الحمل زاد ١٠ مرات؟»، «التخزين هيوصل كام بعد ٥ سنين؟»، «محتاج كام سيرفر؟».",
+            mistakes: R`تحسب بدقة لحد الكسور وتضيّع ٥ دقايق. تنسى الذروة وتصمم على المتوسط. تخلط بين bits و bytes، أو بين اليوم والشهر. تحسب أرقام ومتستخدمهاش في أي قرار بعد كده. أو تفترض أرقام ضخمة (مليار يوزر) لسؤال مقالش كده.`
+          },
+          lines: [
+            "عدد اليوزرز النشطين في اليوم.",
+            "كل يوزر بيكتب كام مرة في اليوم (افتراض تقوله بصوت عالي).",
+            "كل حاجة اتكتبت بتتقري كام مرة.",
+            "ثواني اليوم: تقريبًا ١٠٠ ألف.",
+            "الكتابة في الثانية = الكتابة في اليوم ÷ ثواني اليوم.",
+            "القراية في الثانية = الكتابة × النسبة.",
+            "الذروة: ٣ أضعاف المتوسط كافتراض.",
+            "حجم السجل الواحد بالبايت.",
+            "التخزين في السنة بالجيجا.",
+            "اطبع النتايج مدوّرة.",
+            "الكتابة في الثانية: ٥٨، يعني داتابيز واحدة مرتاحة.",
+            "القراية في الثانية: حوالي ١٢٠٠.",
+            "القراية في الذروة: حوالي ٣٥٠٠، هنا الكاش يستاهل.",
+            "التخزين: حوالي ١.٨ تيرا في السنة.",
+            "قفلة."
+          ],
+          sol: R`بالحساب في الدماغ: ١٠ مليون × ٤٠ = ٤٠٠ مليون رسالة في اليوم، على ١٠٠ ألف ثانية ≈ ٤٠٠٠ كتابة في الثانية. القراية مرتين يعني حوالي ٨٠٠٠، والذروة × ٣ حوالي ٢٤٠٠٠. والتخزين: ٤٠٠ مليون × ٢٠٠ بايت = ٨٠ جيجا في اليوم، يعني حوالي ٣٠ تيرا في السنة.
+
+والسكربت بيطلع: [[writeQps: 4630]] و [[readQps: 9259]] و [[peakReadQps: 27778]] و [[storageGBPerYear: 29200]]. الفرق بين حسابك والسكربت سببه إنك دوّرت ٨٦٤٠٠ لـ ١٠٠ ألف، وده عادي جدًا: نفس الـ order of magnitude، ونفس القرارات.
+
+والقرار اللي بيطلع من الأرقام: ٤٠٠٠ كتابة في الثانية وتلاتين تيرا في السنة كتير على داتابيز واحدة من غير تخطيط، فالرسايل هتحتاج partitioning (بالمحادثة مثلًا) وأرشفة للقديم. والغلط الشائع: إنك تنسى تحوّل البايت لجيجا فيطلع ٢٩ مليون جيجا، أو تنسى ×٣٦٥.`,
+          solCode: R`// chat.mjs: نفس السكربت بأرقام الشات
+const DAU = 10_000_000;
+const writesPerUserPerDay = 40;
+const readsPerWrite = 2;
+const SECONDS_PER_DAY = 86_400;
+const writeQps = (DAU * writesPerUserPerDay) / SECONDS_PER_DAY;
+const readQps = writeQps * readsPerWrite;
+const PEAK_FACTOR = 3;
+const BYTES_PER_RECORD = 200;
+const storageGBPerYear = (DAU * writesPerUserPerDay * 365 * BYTES_PER_RECORD) / 1e9;
+console.log({
+  writeQps: Math.round(writeQps),
+  readQps: Math.round(readQps),
+  peakReadQps: Math.round(readQps * PEAK_FACTOR),
+  storageGBPerYear: Math.round(storageGBPerYear),
+});
+// { writeQps: 4630, readQps: 9259, peakReadQps: 27778, storageGBPerYear: 29200 }`
+        },
+        {
+          cmd: "deep dive و trade-offs",
+          title: "في الـ deep dive: إزاي تتكلم بالـ trade-offs والـ bottlenecks بدل ما تحفظ مربعات؟",
+          desc: R`كل قرار بقوله في جملة بالشكل ده: «اخترت X عشان Y، والتمن Z، وكنت هختار W لو...». الجملة دي هي اللي بتتقيّم، مش المربع اللي رسمته. والـ trade-offs اللي بتتكرر: كاش (سرعة مقابل داتا قديمة شوية)، و queue (تحمّل وسرعة رد مقابل تعقيد وتأخير)، واتساق قوي مقابل eventual consistency، و fan-out وقت الكتابة مقابل وقت القراية، و monolith مقابل services.
+
+وعشان ألاقي الـ bottleneck بمشي بطلب واحد من اليوزر لحد الداتابيز وأرجع، وبسأل في كل خطوة: لو دي وقعت إيه اللي يحصل؟ (single point of failure)، ولو الحمل زاد ١٠ مرات مين يقع الأول؟`,
+          example: R`Cache: "I'll cache product pages in Redis for 60 seconds. Reads get fast; the price is up to a minute of stale data. Fine for a catalog, not for stock at checkout."
+Queue: "Emails go through a queue. The API answers fast and survives an email outage; the price is one more moving part, and emails arrive seconds later."
+Consistency: "Bookings must be strongly consistent, so they stay in one Postgres with a unique constraint. A likes counter can be eventually consistent."
+Fan-out: "For a feed, I'd push posts into followers' feeds on write for normal users, and pull on read for accounts with millions of followers."
+Single point of failure: "Right now the database is one machine. Next step: managed Postgres with a standby, and backups we've actually restored."
+10x: "At 10x traffic, the first thing to break is probably database reads, so I'd add a cache or a read replica, after measuring."`,
+          try: "خد التصميم اللي عملته في تمرين [[chat app]] في «تاب بناء مشروع كامل»، واكتب لكل مربع فيه جملة trade-off بنفس الشكل. أي مربع مش لاقي له تمن أو سبب برقم: شيله وشوف التصميم لسه شغال ولا لأ.",
+          flag: "script",
+          deep: {
+            why: "أي حد يقدر يحفظ رسمة فيها load balancer و Redis و Kafka. اللي بيفرّق المهندس إنه عارف كل حاجة منهم بتكلّف إيه، وإمتى متستخدمهاش. والإنترفيوير بيضغط في الـ deep dive بالظبط عشان يشوف الفرق ده.",
+            how: R`الكاش: السؤال مش «أحط كاش؟» لكن «الداتا دي ينفع تبقى قديمة قد إيه؟»، وبعدين invalidation: TTL، أو امسح المفتاح وقت الكتابة. (في «تاب بناء مشروع كامل»: [[طبقات الكاش]].)
+
+الـ queue: أي حاجة مش لازم اليوزر يستناها (إيميل، صورة، تقرير) تروح queue، والـ worker يعيد لو فشلت، فلازم الشغل يبقى idempotent. (هناك: [[background jobs]].)
+
+الاتساق: الفلوس والحجز والمخزون محتاجين اتساق قوي (transaction وقيد في داتابيز واحدة). العدادات والـ feeds والإحصائيات ينفع تتأخر. وقول ده كده صريح، لأنه بيحدد أنهي جزء ينفع يتوزّع أو يتكاش.
+
+الـ fan-out: وقت الكتابة (تكتب البوست في feed كل متابع) قراية سريعة بس كتابة غالية للحسابات الكبيرة. ووقت القراية (تجمّع وقت ما اليوزر يفتح) العكس. الحلول الحقيقية بتخلط الاتنين. والتوسع: [[scaling القاعدة]] و [[backups و DR]] هناك.`,
+            when: "في الـ deep dive والقفلة، ولما الإنترفيوير يسأل «ليه؟» أو «وإيه المشكلة في كده؟» أو «لو الحتة دي وقعت؟». ونفس الجمل بتنفع في design review في الشغل.",
+            mistakes: R`كل اختيار بتقوله كأنه الصح الوحيد. تضيف كاش من غير ما تقول هيتمسح إمتى. queue من غير ما تفكر في الـ retry والتكرار. «NoSQL عشان بيعمل scale» من غير ما تقول الـ queries شكلها إيه. تتجاهل الـ single point of failure. أو تستخدم كلمات (CAP، sharding) من غير ما تقدر تشرحها لو اتسألت.`
+          },
+          lines: [
+            "كاش: الميزة، والتمن (داتا قديمة)، وفين ينفع وفين لأ.",
+            "queue: الميزة، والتمن (تعقيد وتأخير).",
+            "الاتساق: أنهي داتا لازم تبقى دقيقة دايمًا، وأنهي ينفع تتأخر.",
+            "fan-out: حل مختلف حسب نوع الحساب، مش حل واحد للكل.",
+            "الـ single point of failure: بتقوله انت قبل ما يتسأل، ومعاه الخطوة الجاية.",
+            "الحمل ×١٠: مين يقع الأول، والحل بعد القياس مش قبله."
+          ],
+          sol: R`تصميم الشات فيه غالبًا: WebSocket servers، و Redis (للـ presence والـ pub/sub بين السيرفرات)، و Postgres للرسايل، و push notifications. التمرين نجح لو كل واحد منهم ليه جملة زي: «Redis pub/sub عشان المستقبل ممكن يكون على سيرفر تاني. التمن: لو Redis وقع الرسايل اللحظية تقف، بس محفوظة في Postgres واليوزر يسحبها لما يعمل reconnect».
+
+ولو شلت Redis وانت عندك سيرفر WebSocket واحد، التصميم بيشتغل عادي. ودي نتيجة مهمة: Redis هنا مطلوب عشان التوسع لأكتر من سيرفر، مش من أول يوم. قول ده في الانترفيو.
+
+الغلط الشائع: جمل من غير تمن («Redis عشان سريع»)، أو مربع مش عارف تقول ليه موجود غير «كل التصميمات فيها كده».`
+        }
+      ]
+    },
+    {
+      t: "الخطة والتوظيف",
+      l: 3,
+      n: "من أول ما تقدّم لحد العرض: المراحل، وخطة آخر أسبوعين بـ «اختبرني»، والإنجليزي لو مش قوي، واللي تعمله بعد الرفض",
+      items: [
+        {
+          cmd: "مراحل التوظيف",
+          title: "مراحل التوظيف عادةً إيه؟ وكل مرحلة بتختبر إيه؟",
+          desc: R`الشكل الشائع: فرز الـ CV، وبعدين مكالمة مع الـ recruiter أو الـ HR، وبعدين technical screen (اختبار online، أو take-home، أو مكالمة تقنية)، وبعدين جولة أو أكتر تقنية (كود، وأسئلة عن الـ stack، وأحيانًا system design أو pair programming)، وبعدين جولة سلوكية أو مع الـ hiring manager، وفي الآخر العرض.
+
+العدد والترتيب بيختلف جدًا: startup صغيرة ممكن تعمل مكالمتين وخلاص، وشركة كبيرة ممكن تعمل ٥ جولات، وأحيانًا في يوم واحد. والمدة من أسبوع لكذا أسبوع. وأول ما تتكلم مع الـ recruiter اسأل: «What does the process look like?». ده سؤال عادي جدًا، وبيخليك تذاكر للجولات اللي جاية فعلًا.`,
+          example: R`Recruiter call (15-30 min): motivation, experience, salary expectations, notice period. Prepare: tell me about yourself, a salary range
+Online test (60-90 min): 2 or 3 problems with automatic test cases. Prepare: «تاب DSA» with a timer
+Take-home (a few hours): a small real app. Prepare: time box, tests, README with assumptions
+Technical interview (45-60 min): live coding and questions about your stack, sometimes pair programming
+System design (45-60 min, more common from mid-level): design a service out loud
+Behavioral or hiring manager (30-60 min): STAR stories, your projects, your questions for them
+Offer: salary, start date, probation, benefits. Get it in writing before you resign from anywhere`,
+          try: "اختار ٣ إعلانات وظايف حقيقية تناسبك. لكل واحد اكتب: المراحل المتوقعة (ولو مش مكتوبة، ده أول سؤال للـ recruiter)، وأنهي مرحلة انت أضعف فيها، وأنهي قسم في التاب ده أو في «تاب DSA» هيغطيها.",
+          flag: "script",
+          deep: {
+            why: "لما تعرف المرحلة الجاية بتختبر إيه، بتذاكر الصح. ناس كتير بتذاكر algorithms أسبوعين والجولة الجاية كانت behavioral أو take-home. وكل مرحلة ليها معيار مختلف: الـ recruiter بيدوّر على التواصل والتوقعات، والتقني على المهارة، والـ manager على التوافق مع الفريق.",
+            how: R`الـ recruiter call: مش تقنية، بس فيها فرز حقيقي. جهّز «عرّفنا بنفسك» في ٦٠ ثانية، وسبب تقديمك، ورينج مرتب واقعي (اسأل ناس في نفس المستوى والمدينة، أو مواقع رواتب محلية)، وإمتى تقدر تبدأ. ولو اتسألت عن المرتب بدري، ممكن تقول رينج، أو تسأل «What's the budget for this role?».
+
+الاختبار الـ online (HackerRank، أو Codility، أو غيرهم): test cases أوتوماتيك، يعني الـ edge cases هي اللي بتوقعك. اقرا القيود على الـ input، وسلّم حل شغال للكل قبل ما تحسّن.
+
+والعرض: اطلبه مكتوب وفيه المرتب (gross ولا net)، وفترة الاختبار، والتأمين، ومكان الشغل وساعاته. ومتستقيلش من شغلك الحالي على وعد بالكلام. والتفاوض عادي ومتوقع لو بأدب وبسبب.`,
+            when: "من أول ما تقدّم. وبعد كل مرحلة اسأل: «What are the next steps and when can I expect to hear back?». ولو عدّى الميعاد ومحدش رد، رسالة متابعة واحدة مهذبة بعد كام يوم عادي جدًا.",
+            mistakes: R`تذاكر لمرحلة مش جاية. تقول رقم مرتب من غير ما تعرف السوق، أو ترفض تقول أي رقم خالص. تتعامل مع الـ recruiter call كأنها شكلية. توافق على عرض بالكلام وتستقيل. وتقدّم على ١٠٠ وظيفة بنفس الـ CV من غير ما تتابع ولا واحدة.`
+          },
+          lines: [
+            "مكالمة الـ recruiter: بتختبر إيه وتجهّز إيه.",
+            "الاختبار الـ online: مسائل بتتصحح لوحدها، والتحضير بتايمر.",
+            "الـ take-home: التحضير في قسم «الـ take-home والعملي» فوق.",
+            "الانترفيو التقني: كود وأسئلة عن اللي بتستخدمه.",
+            "الـ system design: غالبًا من mid-level، ونسخة أصغر للـ juniors أحيانًا.",
+            "السلوكي: قصص STAR ومشاريعك وأسئلتك.",
+            "العرض: اطلبه مكتوب قبل أي استقالة."
+          ],
+          sol: R`لكل إعلان المفروض يطلع معاك سطر زي: «المراحل: recruiter، ثم take-home، ثم تقني. الأضعف: take-home. المذاكرة: قسم الـ take-home في التاب ده، و README لمشروع قديم». ولو الإعلان مفيهوش المراحل (وده الغالب)، اكتب السؤال اللي هتسأله للـ recruiter.
+
+والنتيجة المفيدة من التلات إعلانات مع بعض: غالبًا هتلاقي مرحلة متكررة انت ضعيف فيها (عند ناس كتير السلوكي أو الـ take-home). دي أولويتك الأولى، قبل مسائل DSA زيادة.
+
+الغلط الشائع: إنك تكتب «هذاكر كل حاجة»، من غير ما تحدد مرحلة ولا قسم.`
+        },
+        {
+          cmd: "آخر أسبوعين",
+          title: "فاضل أسبوعين على الانترفيو: تذاكر إزاي بالظبط؟",
+          desc: R`كل يوم نفس الروتين القصير: ٢٠ دقيقة «اختبرني» في «تاب الانترفيو» على المستوى اللي محتاجه، وبعدين «راجع اللي نسيته» اللي فوق في الصفحة (بيجمع البطاقات اللي نسيتها من كل التابات)، ومسألة أو اتنين من «تاب DSA» بتايمر وبصوت عالي، وقصة STAR واحدة بصوت عالي.
+
+وفوق الروتين: ٣ mock interviews كاملة مع صاحب (٤٥ دقيقة، وبعدين تبدّلوا)، وتمرين system design كل كام يوم من «تاب بناء مشروع كامل»، وبحث عن الشركة نفسها. وآخر يومين مفيش حاجة جديدة: مراجعة، وتجربة الكاميرا والمايك والـ editor، ونوم.`,
+          example: R`Day 1: research the company and the job ad; list their stack and 3 things you like about the product
+Days 1-14, daily: 20 min of «اختبرني» in «تاب الانترفيو», then «راجع اللي نسيته»
+Days 1-14, daily: 1 or 2 problems from «تاب DSA», 30 min each, out loud with a timer
+Days 2-6: write 6 STAR stories; tell one out loud every day and record it
+Days 3, 7, 11: one system design exercise from «تاب بناء مشروع كامل», 35 min on paper
+Days 5, 9, 12: a full mock interview with a friend (45 min), then switch roles
+Day 13: review only; test your camera, mic, internet and the coding tool they use
+Day 14: rest, sleep early, and have water and your questions for them ready`,
+          try: "اكتب جدول الأسبوعين بتواريخ حقيقية في الكاليندر بتاعك، واعمل أول يوم النهارده: «اختبرني» ٢٠ دقيقة في المستوى الأول من التاب ده، وبعدين دوس «راجع اللي نسيته». اكتب رقم البطاقات اللي نسيتها، وقارنه بعد أسبوع.",
+          flag: "script",
+          deep: {
+            why: "المذاكرة العشوائية قبل الانترفيو بتدّي إحساس إنك شغال من غير نتيجة. الروتين القصير اليومي أحسن من ماراثون يوم، لأن التذكّر بيثبت بالتكرار على أيام متفرقة، وده بالظبط اللي «اختبرني» و «راجع اللي نسيته» معمولين عشانه. والـ mock بيدرّبك على الضغط والكلام، ودي حاجة المذاكرة لوحدها مبتعملهاش.",
+            how: R`«اختبرني» بيعرض بطاقات عشوائية من التاب والمستوى اللي انت فيهم، والبطاقات اللي بتقول إنك نسيتها بتتكرر أكتر. جاوب بصوت عالي قبل ما تكشف الإجابة، وكن صادق في «عرفتها» و «لسه، كرّرها». و «راجع اللي نسيته» بيجمع البطاقات اللي نسيتها أكتر ما افتكرتها من كل التابات، فهو قايمة نقط ضعفك جاهزة. وابدأ بتابات الـ stack اللي في الإعلان (مثلًا «تاب React» و «تاب Backend بـ Node») كمان، مش التاب ده بس.
+
+الـ mock: صاحبك ياخد سؤال من التاب ده ويسألك بجد، بتايمر، وانت ممنوع تبص على حاجة، وفي الآخر يقولك ٣ حاجات: حاجة عملتها كويس، وحاجة تتحسن، ولحظة كنت تايه فيها. ولو مفيش حد، سجّل نفسك فيديو وانت بتجاوب، والتسجيل بيكشف حاجات مش هتصدقها (السكوت، و «umm»، والإجابات الطويلة).
+
+والشركة: اقرا الإعلان سطر سطر وعلّم كل technology فيه، وجرّب منتجهم لو متاح، واقرا أي engineering blog ليهم. ده بيطلع منه إجابة «ليه احنا؟» وأسئلتك ليهم.`,
+            when: "من لحظة ما يتحدد ميعاد الانترفيو. ولو فاضل أقل من أسبوعين، قلّص: الروتين اليومي، و mock واحد، وقصص STAR. ولو أكتر من شهر، ابدأ بالمستوى الأول والتاني من التاب ده وتابات الـ stack قبل الروتين ده.",
+            mistakes: R`تذاكر حاجة جديدة خالص آخر يومين. تقرا الإجابات بعينك من غير ما تجاوب بصوت. تدوس «عرفتها» وانت عارفها نص نص. متعملش ولا mock عشان محرج. تسهر ليلة الانترفيو. وتكتشف إن الكاميرا أو الـ editor مش شغالين قبل الانترفيو بدقيقتين.`
+          },
+          lines: [
+            "اليوم الأول: البحث عن الشركة، وده بيحدد تذاكر إيه.",
+            "كل يوم: «اختبرني» ثم «راجع اللي نسيته» على نقط ضعفك.",
+            "كل يوم: مسائل بتايمر وبصوت عالي.",
+            "أول أسبوع: قصص STAR مكتوبة، وواحدة بصوت عالي كل يوم.",
+            "تلات تمارين system design على ورقة.",
+            "تلات mock interviews كاملة، وتبديل الأدوار بيعلمك كمان.",
+            "قبل الأخير: مراجعة بس، وتجربة كل الأدوات.",
+            "اليوم الأخير: راحة."
+          ],
+          sol: R`بعد أول جلسة «اختبرني»، لو دوست «لسه، كرّرها» ولو على بطاقة واحدة، هيظهر زرار «راجع اللي نسيته» فوق في الصفحة ومعاه رقم: عدد البطاقات اللي نسيتها أكتر ما افتكرتها. الرقم ده في الأول ممكن يبقى كبير، وده عادي، وهو بالظبط قايمة المذاكرة بتاعتك.
+
+بعد أسبوع من الروتين، الرقم المفروض يقل حتى لو زوّدت تابات جديدة، لأن البطاقات اللي بتفتكرها أكتر ما بتنساها بتطلع من القايمة. لو الرقم مبيقلش، غالبًا بتقرا الإجابة بدل ما تجاوب الأول بصوت عالي.
+
+الغلط الشائع: الجدول مكتوب بس مش في الكاليندر، فبيتنسي من تالت يوم. وإنك تسيب أيام الـ mock عشان محتاج حد تاني، والحل تسجيل الفيديو.`
+        },
+        {
+          cmd: "English وانجليزيتك مش قوية",
+          title: "الانترفيو بالإنجليزي وانجليزيتك مش قوية: تعمل إيه؟",
+          desc: R`الإنترفيوير بيقيّم إنك تفهم وتتفهم، مش الـ accent ولا الـ grammar المظبوط. فبجهّز الإجابات اللي أكيد جاية (عرّفنا بنفسك، وقصص STAR، ومشروعي) مكتوبة بالإنجليزي بجمل قصيرة، وبقولها بصوت عالي لحد ما تبقى طبيعية، من غير ما أحفظها كلمة بكلمة. والكلمات التقنية أصلًا إنجليزي وأنا عارفها.
+
+وجمل جاهزة للمواقف الصعبة: إني أطلب يعيد السؤال، أو يتكلم أبطأ، أو أتأكد إني فهمت، أو آخد وقت أفكر. ده كله عادي في أي انترفيو، حتى بين ناس لغتهم الأم إنجليزي. والسكوت ٥ ثواني وانت بتفكر مش مشكلة.`,
+          example: R`"Sorry, could you repeat the question, please?"
+"Could you say that a bit more slowly?"
+"Just to make sure I understood: you're asking how I would handle a failed payment, right?"
+"Let me think about that for a moment."
+"I'm not sure of the exact word, but it's the thing that keeps the user logged in, the refresh token."
+"Can I draw it or write it down? It will be clearer."
+"To sum up: first I validate the input, then I save it, and finally I send the email in the background."
+"I haven't used that tool, but I've used something similar, and this is how it worked."`,
+          try: "اكتب «Tell me about yourself» وقصة STAR واحدة بالإنجليزي بجمل ما تزيدش عن ١٥ كلمة. سجّل نفسك وانت بتقولهم ٣ مرات في ٣ أيام. في التسجيل التالت، خلي حد يسألك سؤال مفاجئ عن مشروعك، واستخدم جملة من الجمل دي على الأقل مرة.",
+          flag: "script",
+          deep: {
+            why: "ناس كتير قوية تقنيًا بتتقفل في الانترفيو عشان خايفة من غلطة لغة، فبتسكت أو بتجاوب إجابات قصيرة جدًا. والنتيجة إنها بتبان أضعف من حقيقتها. والشغل نفسه (docs، و Slack، و PRs) غالبًا إنجليزي مكتوب، وده أسهل بكتير من الكلام.",
+            how: R`جمل قصيرة: فاعل وفعل ومفعول. «I added a cache. It cut the load time.» أحسن من جملة طويلة فيها which و that وتتوه في نصها. والمضارع والماضي البسيط كفاية تقريبًا لكل الانترفيو.
+
+المفردات اللي هتحتاجها فعلًا: كلمات القرارات (I chose, because, the trade-off was, instead of)، وكلمات الأرقام (about, reduced from X to Y, per second)، وكلمات التسلسل (first, then, after that, finally). اكتبهم في ورقة جنبك في الانترفيو الـ online، ده مش غش.
+
+ولو الشركة محلية أو الفريق عربي، عادي تسأل الـ recruiter: «Will the interview be in English or Arabic?»، وأحيانًا بيسيبوا الاختيار. بس لو الشغل نفسه مع فريق أو عملاء برا، الإنجليزي هيبقى جزء من التقييم فعلًا، فتدرّب. واللي بيفيد على المدى الطويل: اتفرّج على talks تقنية بالإنجليزي، واكتب الـ README والـ commits بتاعتك بالإنجليزي.`,
+            when: "أي انترفيو في شركة برا أو شركة محلية بتشتغل مع عملاء برا، وغالبًا جولة واحدة على الأقل في الشركات الكبيرة. ونفس الجمل بتنفع في الـ standups والاجتماعات بعد ما تتعين.",
+            mistakes: R`تحفظ إجابات كاملة كلمة بكلمة، فتبان بتسمّع، ولو سؤال جه بصيغة مختلفة تتوه. تعتذر عن الإنجليزي كل شوية («sorry my English is bad»): مرة واحدة كفاية أو بلاش خالص. تجاوب «yes» على سؤال مفهمتوش بدل ما تطلب يتعاد. وتترجم من العربي في دماغك جملة طويلة كلمة كلمة.`
+          },
+          lines: [
+            "اطلب يعيد السؤال: عادي تمامًا.",
+            "اطلب يتكلم أبطأ.",
+            "أكّد إنك فهمت السؤال بكلامك قبل ما تجاوب.",
+            "خد وقت تفكر من غير ما تبان تايه.",
+            "نسيت الكلمة؟ اوصفها لحد ما توصل لها.",
+            "استخدم الرسم أو الكتابة لما الكلام يصعب.",
+            "لخّص إجابة طويلة بـ first و then و finally.",
+            "حاجة معرفتهاش: قول كده، واربطها بحاجة تعرفها."
+          ],
+          sol: R`الإجابات المكتوبة صح لو كل جملة فيها فكرة واحدة وأقل من ١٥ كلمة، وفيها كلمات القرارات (because، instead of، the trade-off). ولو لقيت جملة فيها «which» مرتين، قسّمها.
+
+وبين التسجيل الأول والتالت المفروض تلاحظ فرق واضح: سرعة أهدى، وسكوت أقل في نص الجملة، ونفس الأفكار بكلمات مختلفة شوية (ده معناه إنك فاهم مش حافظ). وفي السؤال المفاجئ، استخدامك لجملة زي «Let me think about that for a moment» بدل السكوت أو «umm» الطويلة هو النجاح المطلوب.
+
+الغلط الشائع: التسجيل التالت طالع زي الأول بالظبط كلمة بكلمة، يعني حفظت. جرّب تقول القصة من النقط بس من غير النص.`
+        },
+        {
+          cmd: "بعد الرفض",
+          title: "اترفضت: تعمل إيه عشان الانترفيو الجاي يبقى أحسن؟",
+          desc: R`نفس اليوم، وقبل ما أنسى، بكتب كل سؤال فاكره، وإجابتي، وقيّمت نفسي فيه قد إيه، وإيه اللي كان ناقص. ده الـ question log بتاعي، ومع الوقت بيطلع منه نمط (نفس النوع من الأسئلة بيوقعني). وبحوّل كل سؤال ضعيف لحاجة أذاكرها: الدرس اللي بيغطيه في الموقع، وأحطه في روتين «اختبرني».
+
+وببعت رسالة شكر قصيرة وأطلب feedback بأدب. شركات كتير مبتدّيش feedback مفصّل لأسباب سياسة داخلية، فمتاخدهاش بشكل شخصي. والرفض كتير مالوش علاقة بيك: حد تاني عنده خبرة أكتر في حاجة معينة، أو الميزانية اتغيرت، أو المكان اتملى من جوه. وشركات كتير بتسمحلك تقدّم تاني بعد فترة (غالبًا شهور).`,
+          example: R`Date: 2026-09-20 | Company: X | Round: technical, 60 min | Result: rejected
+Q: "What's the difference between a process and a thread?" | Me: 6/10 | Missing: shared memory, context switch cost
+Q: "Design a rate limiter" | Me: 3/10 | Missing: never heard of token bucket
+Q: "Tell me about a mistake you made" | Me: 8/10 | OK, but too long (4 min)
+Next: re-read «ذاكرة منفصلة ولا مشتركة», learn token bucket, cut the mistake story to 2 min
+Email: "Thank you for your time today. If possible, I'd appreciate any feedback that could help me improve."`,
+          try: "اعمل ملف question log (نوتس، أو ملف نصي، أو شيت). لو عملت انترفيو قبل كده اكتب كل الأسئلة اللي فاكرها بالشكل ده. لو لسه، اعمل mock مع صاحب واكتبه بعده على طول. وفي عمود «Next» لكل سؤال ضعيف، اكتب اسم التاب والدرس بالظبط.",
+          flag: "script",
+          deep: {
+            why: "الانترفيوهات مهارة بتتحسن بالتكرار، بس لو اتعلمت من كل واحد. من غير log، بتروح الانترفيو الجاي وبتقع في نفس الأسئلة. والرفض الأول والتاني والعاشر طبيعي جدًا للـ juniors، والفرق بين اللي بيتعين واللي لأ غالبًا هو اللي كمّل وحسّن.",
+            how: R`الـ log يتكتب في نفس اليوم، لأن بعد يومين نص الأسئلة بتتنسى. التقييم من ١٠ صادق مش مجامل، وعمود «Missing» محدد («مقلتش الـ context switch») مش عام («مكنتش كويس»).
+
+كل أسبوع أو اتنين بص على الـ log كله: لو ٣ أسئلة من نفس النوع (system design، أو SQL، أو behavioral) كانوا أقل من ٥، ده مجالك الجاي. وكل سؤال اتسأل مرة غالبًا هيتسأل تاني في مكان تاني، فالـ log بيبقى بنك أسئلة حقيقي من سوقك انت.
+
+رسالة الـ feedback: قصيرة، ومن غير جدال، ومن غير ما تطلب يغيّروا القرار. لو ردوا بحاجة، اشكرهم وخلاص. ولو قالوا «مش هنقدر نشارك تفاصيل»، دي إجابة عادية. وخلي الباب مفتوح: «I'd be happy to be considered for future roles». ناس كتير اتعينوا في نفس الشركة في مرة تانية.`,
+            when: "بعد كل انترفيو، سواء اترفضت أو اتقبلت أو لسه مستني. والـ log نفسه بيبقى أحسن مصدر مذاكرة قبل الانترفيو الجاي، أحسن من أي قايمة «top 100 questions».",
+            mistakes: R`تقفل اللابتوب وتحاول تنسى. ترد على الرفض بجدال أو بزعل. تعتبر الرفض حكم نهائي على مستواك. تذاكر كل حاجة من الأول بدل ما تركز على اللي الـ log بيقوله. وتقدّم على ٥٠ وظيفة في أسبوع بعد الرفض من غير ما تغيّر أي حاجة.`
+          },
+          lines: [
+            "رأس السجل: إمتى، وفين، وأنهي جولة، والنتيجة.",
+            "سؤال تقني: التقييم الصادق، والناقص بالتحديد.",
+            "سؤال مكنتش تعرفه خالص: ده أوضح حاجة تذاكرها.",
+            "سؤال سلوكي: الإجابة كانت كويسة بس فيها مشكلة شكل (الطول).",
+            "الخطوة الجاية: درس بالاسم، وحاجة تتعلمها، وتعديل على قصة.",
+            "رسالة الشكر وطلب الـ feedback، من غير جدال."
+          ],
+          sol: R`الـ log صح لو كل سطر فيه السؤال بالنص تقريبًا، ورقم، وعمود «Missing» محدد بحاجة واحدة أو اتنين، وعمود «Next» فيه اسم تاب ودرس ينفع تفتحه على طول (مثلًا «تاب الانترفيو»: [[ذاكرة منفصلة ولا مشتركة]]، أو «تاب Git»: [[git rebase]]).
+
+بعد ٣ أو ٤ انترفيوهات (أو mocks)، لو بصيت على الأرقام هتلاقي غالبًا نوع واحد من الأسئلة دايمًا تحت ٥. ده أهم اكتشاف في التمرين كله.
+
+الغلط الشائع: عمود «Next» مكتوب فيه «ذاكر أكتر» أو «system design» بس، ودي مش خطوة تقدر تبدأها النهارده.`
         }
       ]
     }
