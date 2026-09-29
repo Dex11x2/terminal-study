@@ -1,6 +1,6 @@
 // الأساس المشترك: كل ملف في tabs/ بينادي TAB() فيتسجّل في الأماكن اللي الصفحة بتقرا منها
 const R = String.raw;
-const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, BASH_OS = {};
+const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, SOL = {}, BASH_OS = {};
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -27,6 +27,7 @@ function TAB(key, def){
       const id = key+'|'+it.cmd;
       if (it.deep) DEEP[id] = it.deep;
       if (it.lines) BREAK[id] = it.lines;
+      if (it.sol) SOL[id] = {text: it.sol, code: it.solCode};
       if (it.mac) BASH_OS[it.cmd] = it.mac;
       const row = [it.cmd, it.title, it.desc, it.example, it.try];
       if (it.flag !== undefined) row.push(it.flag);

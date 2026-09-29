@@ -12,7 +12,7 @@ for (const f of files) {
   try { vm.runInContext(code, ctx, { filename: f }); }
   catch (e) { console.error('✗ ' + f + ': الملف فيه غلطة JavaScript ومش هيتقري:\n  ' + e.message); process.exit(1); }
 }
-const { DATA, DEEP, BREAK, CMP, MISSIONS } = vm.runInContext('({DATA, DEEP, BREAK, CMP, MISSIONS})', ctx);
+const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS})', ctx);
 
 const errors = [], warnings = [];
 const err = (where, msg) => errors.push(where + ': ' + msg);
@@ -45,6 +45,8 @@ for (const tab in DATA) {
       [title, desc, ex, tr].forEach(s => brackets(w, s));
       const d = DEEP[tab + '|' + cmd];
       if (d) ['why', 'how', 'when', 'mistakes'].forEach(k => { if (!d[k]) warn(w, `deep ناقصه ${k}`); brackets(w + ' (deep)', d[k]); });
+      const sol = SOL[tab + '|' + cmd];
+      if (sol) { if (typeof sol.text !== 'string' || !sol.text.trim()) err(w, 'sol لازم يبقى نص'); brackets(w + ' (sol)', sol.text); if (sol.code !== undefined && typeof sol.code !== 'string') err(w, 'solCode لازم يبقى نص'); }
       const b = BREAK[tab + '|' + cmd];
       if (b) {
         b.forEach(s => brackets(w + ' (lines)', s));

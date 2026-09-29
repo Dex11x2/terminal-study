@@ -44,6 +44,12 @@ function deepHTML(c){
   const part = (h, t) => t ? '<section><h4>'+h+'</h4>'+t.split(/\n\s*\n/).map(x => '<p>'+fmt(x.trim())+'</p>').join('')+'</section>' : '';
   return '<div class="deep">'+part('ليه موجود؟', d.why)+part('بيحصل إيه من جوه؟', d.how)+part('هتستخدمه إمتى؟', d.when)+part('غلطات شائعة', d.mistakes)+'</div>';
 }
+/* reference solution for the try task: hidden until the learner opens it */
+function solHTML(c){
+  const s = SOL[shell+'|'+c];
+  if (!s) return '';
+  return '<details class="trysol"><summary>الحل والناتج المتوقع (افتحه بعد ما تجرب)</summary>'+descHTML(s.text)+(s.code ? termBlock(s.code, c, 'script') : '')+'</details>';
+}
 function breakHTML(c, ex){
   const b = BREAK[shell+'|'+c];
   if (!b || !ex) return '';
@@ -111,7 +117,7 @@ function render(){
         (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
         '<button type="button" class="reveal">اكشف الإجابة</button>'+
         '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-        noteHTML(c)+
+        solHTML(c)+noteHTML(c)+
       '</article>';
     });
     html += '</section>';
