@@ -58129,7 +58129,7 @@ if (count === 1) await grantAccess(t, order);`,
           cmd: "signed URLs + async",
           title: "هتتعامل مع رفع ملفات كتير وكبيرة إزاي؟ (Handle file uploads at scale)",
           desc: R`الملفات مبتعدّيش على سيرفر الـ API خالص. السيرفر بيتأكد من الصلاحية والنوع والحجم، ويدّي الـ client رابط موقّع عمره دقايق، والـ client بيرفع مباشرة على S3 أو R2. بعد الرفع، الـ client بيبلّغ السيرفر بالـ key، والسيرفر يتأكد إن الملف موجود ونوعه وحجمه مظبوط، ويحط job في queue للمعالجة: تصغير صور، أو تحويل فيديو لـ HLS. والملفات الكبيرة بترفع multipart أو resumable، والقراية من CDN، والملفات الخاصة بروابط موقّعة قصيرة.`,
-          example: R`const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket, Key: key, ContentType: type }), { expiresIn: 300 });`,
+          example: R`const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket, Key: key, ContentType: type }), { expiresIn: 300, signableHeaders: new Set(["content-type"]) });`,
           try: "ارسم الفلو ده على ورقة بالأسهم: المتصفح، والـ API، و S3، والـ queue، والـ worker، والـ CDN. واكتب على كل سهم إيه اللي بيتبعت فيه. لو فيه سهم فيه الملف نفسه رايح للـ API، ارجع للدرس.",
           flag: "script",
           deep: {
@@ -58139,7 +58139,7 @@ if (count === 1) await grantAccess(t, order);`,
             mistakes: "«بستقبله بـ multer وبحفظه على الديسك». أو إنك تصدّق الامتداد أو الـ Content-Type اللي جاي من الـ client. أو bucket public للملفات الخاصة. أو اسم الملف الأصلي كـ key."
           },
           lines: [
-            "رابط PUT موقّع للـ key ده والنوع ده بس، عمره ٥ دقايق."
+            "رابط PUT موقّع للـ key ده والنوع ده بس (signableHeaders بيدخّل الـ Content-Type في التوقيع)، عمره ٥ دقايق."
           ]
         },
         {
@@ -62871,7 +62871,7 @@ app.post("/reports", async (req, res) => {
           desc: R`كل كود بيقول للعميل يعمل إيه بعد كده: [[400]] الطلب نفسه بايظ (JSON مكسور). [[422]] الشكل سليم بس القيم غلط (إيميل مش إيميل). [[401]] «انت مين؟»: مفيش توكن أو بايظ، سجّل دخول. [[403]] «عارف انت مين، ومش مسموحلك». [[404]] مش موجود (أو مش هقولك إنه موجود). [[410]] كان موجود واتشال للأبد. [[409]] تعارض مع الحالة الحالية (الطلب اتشحن خلاص). [[429]] كتير، استنى.
 
 الفرق ده مش شكليات: العميل بيعمل retry على 429 و 503، وبيروح لصفحة login على 401، وبيعرض رسالة للمستخدم على 422.`,
-          example: R`app.post("/orders/:id/cancel", requireAuth, async (req, res) => {
+          example: R`app.post("/orders/:id/cancellation", requireAuth, async (req, res) => {
   if (!req.user.emailVerified) return res.status(403).json({ detail: "verify your email first" });
   const parsed = CancelInput.safeParse(req.body);
   if (!parsed.success) return res.status(422).json({ errors: parsed.error.issues });
@@ -62925,15 +62925,16 @@ app.post("/reports", async (req, res) => {
           desc: R`RFC 9457 (Problem Details) بيحدد شكل JSON للأخطاء: [[type]] و [[title]] و [[status]] و [[detail]] و [[instance]]، ومعاهم أي حقول زيادة زي [[errors]] للـ validation. والـ Content-Type بيبقى [[application/problem+json]].
 
 الفايدة إن العميل يكتب كود واحد يقرا بيه أي خطأ من أي endpoint، بدل ما كل route يرجّع شكل مختلف.`,
-          example: R`export const problem = (status: number, title: string, detail?: string, extra: object = {}) =>
+          example: R`import { STATUS_CODES } from "node:http";
+export const problem = (status: number, title: string, detail?: string, extra: object = {}) =>
   Object.assign(new Error(title), { status, title, detail, extra });
 app.use((err: any, req: Request, res: Response, _next: NextFunction) => {
-  if (err instanceof ZodError) err = problem(422, "Validation failed", undefined, { errors: err.issues });
+  if (err instanceof ZodError) err = problem(422, "Unprocessable Content", "Validation failed", { errors: err.issues });
   const status = Number.isInteger(err?.status) ? err.status : 500;
   if (status >= 500) console.error(err);
   const body = status >= 500
     ? { title: "Internal Server Error", status }
-    : { title: err.title ?? err.message, status, detail: err.detail, ...err.extra };
+    : { title: err.title ?? STATUS_CODES[status], status, detail: err.detail ?? err.message, ...err.extra };
   res.status(status).type("application/problem+json").json({ type: "about:blank", ...body, instance: req.originalUrl });
 });
 throw problem(409, "Conflict", "Order 9001 is already shipped", { orderId: "9001" });`,
@@ -62954,6 +62955,7 @@ RFC 9457 طلع سنة 2023 وحل محل RFC 7807، ونفس الشكل تقر�
             mistakes: R`ترجّع [[err.message]] و [[err.stack]] في أخطاء الـ 500: رسايل Prisma فيها أسماء الجداول والأعمدة. و [[title]] بيتغير مع كل حالة (ده مكانه [[detail]]). و status في الـ body مختلف عن status الـ HTTP. وتنسى الـ Content-Type، فالعملاء اللي بيفرّقوا بيه ميعرفوش إن ده problem.`
           },
           lines: [
+            "[[STATUS_CODES]] جاهز في Node: اسم كل status (404 = «Not Found»)، عشان الـ title يبقى ثابت.",
             "helper بيعمل Error عادي ومعاه status و title و detail وحقول زيادة...",
             "...بإنه يلزق الحقول دي على الـ Error.",
             "الـ error handler: Express بيعرفه من إن ليه ٤ parameters.",
@@ -62962,7 +62964,7 @@ RFC 9457 طلع سنة 2023 وحل محل RFC 7807، ونفس الشكل تقر�
             "الـ 500 بس بتتسجّل، لأنها غلط عندك مش عند العميل.",
             "الـ body:",
             "لو 500: عنوان عام بس، من غير رسالة ولا stack، عشان متسرّبش تفاصيل.",
-            "غير كده: الرسالة والتفاصيل والحقول الزيادة.",
+            "غير كده: title ثابت (اسم الـ status لو مفيش)، والرسالة في detail، والحقول الزيادة.",
             "الرد بالـ Content-Type الصح، و instance هو المسار اللي حصل فيه الخطأ.",
             "قفلة.",
             "الاستخدام من أي route: ارمي، والـ handler يتصرف."
@@ -63018,11 +63020,11 @@ app.get("/products", async (req, res) => {
         {
           cmd: "cursor pagination",
           title: "قسّم القايمة بمؤشر مش برقم صفحة",
-          desc: R`بدل «عدّي ٤٠»، العميل بيقول «هات اللي بعد العنصر ده»: [[?after=eyJ...&limit=20]]. الـ cursor نص مشفّر فيه مكان آخر عنصر شافه (الوقت والـ id). القاعدة بتروح للمكان ده على طول بالـ index، فالصفحة الألف بنفس سرعة الأولى، ومفيش تكرار لو اتضافت عناصر.
+          desc: R`بدل «عدّي ٤٠»، العميل بيقول «هات اللي بعد العنصر ده»: [[?after=eyJ...&limit=20]]. الـ cursor نص متحوّل بـ base64url (encoded، مش مشفّر: أي حد يقدر يفكّه) فيه مكان آخر عنصر شافه (الوقت والـ id). القاعدة بتروح للمكان ده على طول بالـ index، فالصفحة الألف بنفس سرعة الأولى، ومفيش تكرار لو اتضافت عناصر.
 
 العيب: مفيش «روح لصفحة ٧»، ومفيش عدد صفحات. مناسب للـ feeds والشات والـ infinite scroll والـ APIs العامة. والرد فيه [[links.next]] جاهز، ودي أبسط صورة من فكرة HATEOAS: الرد بيقولك تروح فين بعد كده.`,
           example: R`app.get("/messages", async (req, res) => {
-  const limit = Math.min(Number(req.query.limit) || 20, 100);
+  const limit = Math.min(Math.max(Math.trunc(Number(req.query.limit)) || 20, 1), 100);
   const after = typeof req.query.after === "string" ? decodeCursor(req.query.after) : null;
   const rows = await db.message.findMany({
     where: after ? { OR: [{ createdAt: { lt: after.createdAt } }, { createdAt: after.createdAt, id: { lt: after.id } }] } : {},
@@ -63042,7 +63044,7 @@ app.get("/products", async (req, res) => {
 
 الشرط في المثال ترجمة لـ [[(createdAt, id) < (lastCreatedAt, lastId)]]: يا أقدم، يا نفس الوقت و id أصغر. الـ id موجود عشان لو عنصرين ليهم نفس الوقت بالظبط ميضيعش واحد. وفي Postgres ينفع تكتبها row comparison مباشرة في SQL.
 
-الـ cursor opaque: العميل مش المفروض يفهمه أو يبنيه. بتشفّره base64url عشان يبقى آمن في الـ URL، وعشان تقدر تغيّر محتواه بعدين من غير ما تكسر حد. ولو عايز تمنع التلاعب بيه، وقّعه بـ HMAC.
+الـ cursor opaque: العميل مش المفروض يفهمه أو يبنيه. بتعمله encode بـ base64url عشان يبقى آمن في الـ URL، وعشان تقدر تغيّر محتواه بعدين من غير ما تكسر حد. ولو عايز تمنع التلاعب بيه، وقّعه بـ HMAC.
 
 Prisma عنده option جاهز [[cursor]] (مع [[skip: 1]])، بس بيشتغل على حقل فريد واحد. الشرط اليدوي أوضح لما الترتيب بحقلين.
 
@@ -63052,7 +63054,7 @@ HATEOAS (Hypermedia as the Engine of Application State) معناها إن الر
           },
           lines: [
             "الـ endpoint.",
-            "الحد الأقصى ١٠٠.",
+            "العدد بين ١ و ١٠٠: من غير الحد الأدنى، limit سالب كان هيعدّي لـ take.",
             "لو فيه cursor فكّه، ولو مفيش يبقى أول صفحة.",
             "هات الصفوف...",
             "...اللي بعد آخر عنصر شافه: وقت أقدم، أو نفس الوقت و id أصغر.",
@@ -63262,7 +63264,7 @@ strong ولا weak: [[W/]] معناها «نفس المعنى» مش «نفس ا
             why: "أي حاجة بيعدّلها أكتر من حد (مستندات، وإعدادات شركة، ومخزون، وجدول مواعيد) ممكن تحصل فيها الكتابة فوق بعض من غير ما حد يحس. البيانات بتضيع بهدوء، ومحدش يعرف إمتى ولا إزاي.",
             how: R`الفكرة compare-and-set: [[UPDATE ... WHERE id = ? AND version = ?]]. القاعدة بتعمل الفحص والكتابة في خطوة واحدة atomic، فمفيش لحظة بين «اتأكدت» و «كتبت» حد يدخل فيها. لو رجع 0 صفوف، يبقى حد سبقك.
 
-ليه [[updateMany]] مش [[update]]؟ لأن [[update]] في Prisma بيدوّر بالحقول الـ unique بس، وبيرمي error لو ملقاش. و [[updateMany]] بيقبل أي شرط وبيرجّع [[count]]. والـ schema فيها [[version Int @default(1)]].
+ليه [[updateMany]] مش [[update]]؟ من Prisma 5 [[update]] بيقبل شرط زي [[{ id, version }]]، بس لو ملقاش صف بيرمي error (P2025) وتضطر تمسكه. و [[updateMany]] بيقبل أي شرط وبيرجّع [[count]] من غير error، فتعرف إن حد سبقك بـ [[count === 0]] على طول. والـ schema فيها [[version Int @default(1)]].
 
 optimistic مقابل pessimistic: pessimistic بيقفل الصف ([[SELECT ... FOR UPDATE]]) طول التعديل، وده مناسب جوه transaction قصيرة على السيرفر، مش لمستخدم فاتح form ربع ساعة. optimistic مبيقفلش حاجة، وبيفترض إن التعارض نادر، ولما يحصل يرفض.
 
@@ -63470,7 +63472,7 @@ app.patch("/orders/:id", requireAuth, async (req, res) => {
   res.status(204).end();
 });
 app.get("/orders", requireAuth, async (req, res) => {
-  const take = Math.min(Number(req.query.limit) || 20, 100);
+  const take = Math.min(Math.max(Math.trunc(Number(req.query.limit)) || 20, 1), 100);
   res.json({ items: await db.order.findMany({ where: { userId: req.user.id }, take, select: { id: true, status: true, total: true, createdAt: true } }) });
 });`,
           try: R`سجّل دخول بمستخدمين. خد id طلب من الأول، واطلبه وعدّله بتوكن التاني: لازم 404. وابعت PATCH فيه [[{"status":"paid"}]]: لازم 422. ده أهم اختبار أمان في أي API، واعمله لكل endpoint فيه id.`,
@@ -63512,7 +63514,7 @@ API10 Unsafe Consumption of APIs: بتثق في رد API تالت (أو webhook)
             "204.",
             "قفلة.",
             "قايمة الطلبات.",
-            "حد أقصى ١٠٠ (Unrestricted Resource Consumption).",
+            "بين ١ و ١٠٠ بس، ورقم صحيح، عشان [[take]] السالب في Prisma بيجيب من آخر القايمة ويعدّي الحد (Unrestricted Resource Consumption).",
             "طلباته بس، وبالحقول اللي الواجهة محتاجاها بس (BOPLA: كشف بيانات زيادة).",
             "قفلة."
           ]
@@ -63715,7 +63717,7 @@ aws configure list-profiles
 export AWS_PROFILE=work
 aws sts get-caller-identity
 aws logout --profile personal`,
-          try: "سطّب AWS CLI v2 واعمل [[aws login]]، وبعدها [[aws sts get-caller-identity]]. افتح [[~/.aws/config]] وشوف الـ profile اتكتب إزاي، ولاحظ إن مفيش مفاتيح مكتوبة في أي ملف.",
+          try: "سطّب AWS CLI v2 واعمل [[aws login]]، وبعدها [[aws sts get-caller-identity]]. افتح [[~/.aws/config]] وشوف الـ profile اتكتب إزاي، ولاحظ إن مفيش access key دايم مكتوب في [[~/.aws/credentials]]؛ اللي في [[~/.aws/login/cache]] مفاتيح مؤقتة بتموت لوحدها.",
           deep: {
             why: "الغلطة اللي بتتكرر: access key دايم في [[~/.aws/credentials]] أو في .env، واتسرب في commit أو في لابتوب اتسرق، وفضل شغال لحد ما حد افتكر يمسحه. الطرق المؤقتة بتقلل الخطر: المفتاح بيموت لوحده بعد ساعات.",
             how: R`الـ CLI بيدوّر على الصلاحيات بالترتيب: الـ flags في الأمر، بعدين متغيرات البيئة ([[AWS_ACCESS_KEY_ID]] و [[AWS_PROFILE]])، بعدين الـ profile في [[~/.aws/config]] و [[~/.aws/credentials]]، وآخر حاجة صلاحيات الجهاز نفسه لو هو EC2 أو container على AWS (role). أول واحد يلاقيه بيستخدمه. عشان كده متغير بيئة قديم ممكن يخليك شغال على حساب غير اللي فاكره.
@@ -63968,14 +63970,14 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
   if (!ALLOWED.includes(req.body.contentType)) return res.status(400).json({ error: "type" });
   const key = $__btuploads/$__{req.user.id}/$__{randomUUID()}$__bt;
   const cmd = new PutObjectCommand({ Bucket: "myapp-assets", Key: key, ContentType: req.body.contentType });
-  const url = await getSignedUrl(s3, cmd, { expiresIn: 300 });
+  const url = await getSignedUrl(s3, cmd, { expiresIn: 300, signableHeaders: new Set(["content-type"]) });
   res.json({ url, key });
 });`,
           try: R`شغّل الـ route، وخد الـ url وارفع بيه من الترمنال: [[curl -X PUT -H "Content-Type: image/png" --upload-file logo.png "URL"]]. جرّب نفس الـ URL بنوع [[image/gif]] وشوف SignatureDoesNotMatch. وبعدين جرّبه من المتصفح بـ fetch، وهتقابل CORS: ظبطه بـ [[aws s3api put-bucket-cors --bucket myapp-assets --cors-configuration file://cors.json]] واسمح بـ PUT من دومينك بس.`,
           flag: "script",
           deep: {
             why: "رفع الملفات عن طريق السيرفر بياكل رام وباندويدث ووقت: الطلب ماسك اتصال لحد ما الملف كله يوصل، وبعدين السيرفر يرفعه تاني. وفي Vercel جسم الطلب ليه حد ٤.٥ ميجا، وفي Lambda ٦ ميجا. الـ presigned URL بيخلّي كل واحد يعمل شغله: السيرفر يقرر، و S3 يستقبل.",
-            how: R`[[getSignedUrl]] مش بيكلّم S3 خالص. بيحسب توقيع (SigV4) بالمفاتيح اللي السيرفر شايلها (يفضل role) على: الـ method (PUT)، والـ bucket، والـ key، والـ Content-Type، ووقت الانتهاء. التوقيع ده بيتحط في الـ query string بتاع الـ URL.
+            how: R`[[getSignedUrl]] مش بيكلّم S3 خالص. بيحسب توقيع (SigV4) بالمفاتيح اللي السيرفر شايلها (يفضل role) على: الـ method (PUT)، والـ bucket، والـ key، ووقت الانتهاء. والـ Content-Type بيدخل في التوقيع بس لو طلبته: SDK v3 افتراضيًا بيشيله من التوقيع، عشان كده المثال بيبعت [[signableHeaders: new Set(["content-type"])]]؛ من غيرها أي نوع هيعدي. التوقيع ده بيتحط في الـ query string بتاع الـ URL.
 
 لما المتصفح يعمل PUT، S3 بيعيد نفس الحساب. لو أي حاجة اتغيرت (اسم تاني، نوع تاني، المدة خلصت) التوقيع مش هيطابق والطلب يترفض. عشان كده المتصفح لازم يبعت نفس [[Content-Type]] اللي اتوقّع.
 
@@ -63999,7 +64001,7 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
             "نوع مش مسموح؟ ارفض.",
             "السيرفر هو اللي يختار الاسم: فولدر لكل يوزر واسم عشوائي.",
             "وصف الرفع: الـ bucket والاسم والنوع (المتصفح لازم يبعت نفس النوع).",
-            "وقّع لمدة ٥ دقايق.",
+            "وقّع لمدة ٥ دقايق، وخلّي الـ Content-Type جزء من التوقيع (SDK v3 مش بيوقّعه لوحده).",
             "رجّع الـ URL والـ key للمتصفح.",
             "قفلة الـ route."
           ]
@@ -64459,7 +64461,7 @@ aws secretsmanager get-secret-value --secret-id myapp/prod/stripe --query Secret
 
 [[SecureString]] بيتشفّر بمفتاح KMS (الافتراضي [[aws/ssm]] ببلاش). و [[--with-decryption]] لازمة وإلا ترجع القيمة المشفّرة. ولو استخدمت مفتاح KMS انت عامله، الـ role محتاجة [[kms:Decrypt]] عليه.
 
-في ECS و Lambda مش محتاج تكتب كود: الـ task definition فيها [[secrets]] بتاخد ARN الـ parameter وتحطه متغير بيئة وقت التشغيل. وعلى EC2 أو VPS: سكربت الـ deploy يسحبهم ويكتب .env مؤقت، أو التطبيق يقراهم وقت ما يقوم.
+في ECS مش محتاج تكتب كود: الـ task definition فيها [[secrets]] بتاخد ARN الـ parameter وتحطه متغير بيئة وقت التشغيل. و Lambda مفيهاش حاجة زي كده: بتقرا السر بالـ SDK برا الـ handler (مرة واحدة وقت الـ cold start)، أو بالـ AWS Parameters and Secrets Lambda Extension. وعلى EC2 أو VPS: سكربت الـ deploy يسحبهم ويكتب .env مؤقت، أو التطبيق يقراهم وقت ما يقوم.
 
 [[file://]] بيقرا القيمة من ملف بدل ما تكتبها في الأمر، عشان متفضلش في history الترمنال ولا في [[ps]].
 
@@ -64527,7 +64529,7 @@ dig +short www.example.com`,
 curl -sI https://myapp.example.com | grep -i -E "^server|cf-ray|cf-cache-status"
 echo | openssl s_client -connect 203.0.113.10:443 -servername myapp.example.com 2>/dev/null | openssl x509 -noout -subject -issuer -enddate
 curl -sIL --max-redirs 5 http://myapp.example.com | grep -i -E "^HTTP|^location"
-for ip in $(curl -s https://www.cloudflare.com/ips-v4); do sudo ufw allow from $ip to any port 443 proto tcp; done`,
+for ip in $(curl -s https://www.cloudflare.com/ips-v4); do sudo ufw allow from $ip to any port 80,443 proto tcp; done`,
           try: "خلّي السجل برتقاني وشوف [[dig]] بيرجّع IPs بتاعة Cloudflare مش سيرفرك. اتأكد إن السيرفر عليه شهادة سليمة بأمر openssl، وبعدين غيّر SSL mode لـ Full (strict) وافتح الموقع.",
           deep: {
             why: "Flexible بيدّي قفل أخضر للزائر وهو كذب: من Cloudflare لسيرفرك الكلام رايح نص عادي. وأشهر مشكلة: Flexible + سيرفر بيحوّل HTTP لـ HTTPS = redirect loop (ERR_TOO_MANY_REDIRECTS) ومحدش فاهم ليه.",
@@ -64548,7 +64550,7 @@ IP سيرفرك ممكن يتسرّب برضه: سجل رمادي قديم عل�
             "الهيدرز: server: cloudflare و cf-ray معناها الطلب عدّى على Cloudflare.",
             "كلّم سيرفرك مباشرة واطبع الشهادة: مين أصدرها وبتخلص إمتى (لازم سليمة عشان strict).",
             "تابع الـ redirects: لو لفّت ٥ مرات، عندك loop.",
-            "اسمح لـ 443 من IPs بتاعة Cloudflare بس (واقفل الباقي بعدها)."
+            "اسمح لـ 80 و 443 من IPs بتاعة Cloudflare بس (واقفل الباقي بعدها)."
           ]
         },
         {
@@ -64776,7 +64778,7 @@ kubectl rollout undo deployment/api`,
 
 الـ Deployment بيدير مجموعة pods متشابهة ويعمل rolling update: يقوّم الجديد ويستنى الـ readiness وبعدين يقفل القديم. و [[rollout undo]] بيرجّع الـ revision اللي قبلها.
 
-[[describe]] أهم أمر في التشخيص: آخر الـ output فيه Events زي [[ImagePullBackOff]] (مش قادر يسحب الـ image) أو [[CrashLoopBackOff]] (بيقوم ويقع) أو [[OOMKilled]] (عدّى حد الرام) أو [[Pending]] (مفيش node فيها مكان).
+[[describe]] أهم أمر في التشخيص. فوق هتلاقي حالة كل container: [[State: Waiting]] بـ [[Reason: ImagePullBackOff]] (مش قادر يسحب الـ image) أو [[CrashLoopBackOff]] (بيقوم ويقع)، أو [[Last State: Terminated]] بـ [[Reason: OOMKilled]] (عدّى حد الرام). وفي آخر الـ output الـ Events بتقولك اللي حصل: [[FailedScheduling]] والـ pod فاضل [[Pending]] (مفيش node فيها مكان)، أو [[Failed]] و [[BackOff]] (فشل سحب الـ image، أو «Back-off restarting failed container»).
 
 محليًا: kind أو minikube أو k3d أو Kubernetes جوه Docker Desktop. وفي الـ cloud: EKS على AWS (بتدفع على الـ control plane بالساعة غير الـ nodes)، أو GKE، أو k3s على VPS لو عايز تتعلم.`,
             when: "فرق كبيرة، وخدمات كتير، ومحتاجين نفس المنصة على أكتر من cloud. متستخدموش لمشروع لوحدك عشان الـ CV: الوقت اللي هتصرفه على الـ cluster وقت مش في المنتج.",
@@ -64813,7 +64815,7 @@ spec:
           envFrom: [{ configMapRef: { name: api-config } }, { secretRef: { name: api-secrets } }]
           readinessProbe: { httpGet: { path: /health, port: 3000 } }
           resources: { requests: { cpu: 100m, memory: 128Mi }, limits: { memory: 256Mi } }`,
-          try: R`اعمل الـ ConfigMap والـ Secret الأول (الدرس الجاي) أو شيل سطر envFrom. احفظه في [[k8s/api.yaml]] (غيّر الـ image لـ [[nginx:alpine]] والبورت لـ 80 للتجربة) و [[kubectl apply -f k8s/]]. اعمل Service بـ [[kubectl expose deployment api --port 80 --target-port 80]] وجرّبه بـ [[kubectl port-forward svc/api 8080:80]] وافتح localhost:8080.`,
+          try: R`اعمل الـ ConfigMap والـ Secret الأول (الدرس الجاي) أو شيل سطر envFrom. احفظه في [[k8s/api.yaml]] (غيّر الـ image لـ [[nginx:alpine]]، والبورت لـ 80، ومسار الـ readinessProbe لـ [[/]] للتجربة، لأن nginx مفيهوش [[/health]]) و [[kubectl apply -f k8s/]]. اعمل Service بـ [[kubectl expose deployment api --port 80 --target-port 80]] وجرّبه بـ [[kubectl port-forward svc/api 8080:80]] وافتح localhost:8080.`,
           flag: "script",
           deep: {
             why: "بدل ما توصف «خطوات» (شغّل، استنى، شغّل التاني)، بتوصف «النتيجة». ده بيخلّي الـ deploy والـ rollback وإعادة بناء الـ cluster كله مجرد [[apply]] لنفس الملفات من Git.",
@@ -65206,7 +65208,7 @@ app.get("/metrics", async (req, res) => res.type(client.register.contentType).se
           try: R`شغّل Prometheus و Grafana بـ Docker Compose، و [[prometheus.yml]] فيه [[scrape_configs]] بـ target [[api:3000]]. وفي Grafana اعمل panel بالـ query [[histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, route))]] وشوف p95 لكل route.`,
           flag: "script",
           deep: {
-            why: "CloudWatch مربوط بـ AWS ومكلف مع الحجم. على VPS أو k8s، Prometheus و Grafana ببلاش ومعيار الصناعة. والمتوسط بيكدب: متوسط ١٠٠ مللي ممكن يخبّي إن ٥٪ من الطلبات بتاخد ٥ ثواني.",
+            why: "CloudWatch مربوط بـ AWS ومكلف مع الحجم. على VPS أو k8s، Prometheus و Grafana ببلاش ومعيار الصناعة. والمتوسط بيكدب: متوسط ١٠٠ مللي ممكن يخبّي إن ١٪ من الطلبات بتاخد ٥ ثواني.",
             how: R`Prometheus بيعمل scrape: كل [[scrape_interval]] بيطلب [[/metrics]] من كل target ويخزّن الأرقام بوقتها (time series). وكل مجموعة labels مختلفة = series لوحدها.
 
 الأنواع: Counter (بيزيد بس، زي عدد الطلبات، وبتقراه بـ [[rate()]])، و Gauge (بيطلع وينزل، زي الاتصالات المفتوحة)، و Histogram (بيعد القيم في buckets عشان تحسب percentiles).
@@ -65586,10 +65588,10 @@ Next.js على أكتر من نسخة: [[output: 'standalone']] في الـ Dock
         {
           cmd: "direct-to-S3 upload",
           title: "إزاي تخلّي اليوزر يرفع ملف كبير على S3 بأمان؟ (How do S3 presigned URLs work?)",
-          desc: R`بدل ما الملف يعدّي على السيرفر، العميل بيطلب من الـ API إذن رفع. الـ API بيتأكد إن اليوزر مسجّل ومسموح له، ويتحقق من نوع الملف، ويختار هو الـ key، ويعمل presigned URL لـ PutObject بمدة قصيرة (دقايق). الـ URL فيه توقيع SigV4 محسوب بصلاحيات الـ role بتاعة السيرفر على الـ method والـ bucket والـ key والـ headers ووقت الانتهاء، فلو أي حاجة اتغيرت S3 بيرفض.
+          desc: R`بدل ما الملف يعدّي على السيرفر، العميل بيطلب من الـ API إذن رفع. الـ API بيتأكد إن اليوزر مسجّل ومسموح له، ويتحقق من نوع الملف، ويختار هو الـ key، ويعمل presigned URL لـ PutObject بمدة قصيرة (دقايق). الـ URL فيه توقيع SigV4 محسوب بصلاحيات الـ role بتاعة السيرفر على الـ method والـ bucket والـ key ووقت الانتهاء، والـ Content-Type كمان لو طلبت ده بـ [[signableHeaders]] (SDK v3 افتراضيًا بيسيبه برّه التوقيع). فلو أي حاجة من دول اتغيرت S3 بيرفض.
 
 العميل بيعمل PUT مباشرة لـ S3، وبعدين يبلّغ الـ API بالـ key، والـ API يتأكد إن الملف موجود ويخصّ اليوزر ده ويحفظه. والـ bucket فاضل private، والقراية بعدين بـ presigned GET أو CloudFront signed URLs.`,
-          example: R`const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket, Key, ContentType }), { expiresIn: 300 });
+          example: R`const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket, Key, ContentType }), { expiresIn: 300, signableHeaders: new Set(["content-type"]) });
 await fetch(url, { method: "PUT", headers: { "Content-Type": file.type }, body: file });`,
           try: "اشرحها بصوت عالي في دقيقة، وبعدين ارسم الـ sequence diagram: المتصفح والـ API و S3، وعلّم على كل سهم مين بيتحقق من إيه.",
           flag: "script",
@@ -65602,7 +65604,7 @@ await fetch(url, { method: "PUT", headers: { "Content-Type": file.type }, body: 
             mistakes: "إن الـ presigned URL بيخلّي الـ bucket public. أو إن العميل يختار الـ key. أو مدة بالأيام. أو نسيان CORS."
           },
           lines: [
-            "السيرفر: وقّع إذن رفع لملف واحد لمدة ٥ دقايق.",
+            "السيرفر: وقّع إذن رفع لملف واحد لمدة ٥ دقايق، والـ Content-Type جوه التوقيع.",
             "المتصفح: ارفع مباشرة على S3 بنفس الـ Content-Type."
           ]
         },
