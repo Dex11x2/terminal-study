@@ -67,7 +67,23 @@ GET    /v1/orders?status=paid&sort=-createdAt`,
             "الطلب نفسه له عنوان مباشر، من غير ما تعدّي على المستخدم.",
             "عملية مش CRUD اتعملت resource: «إلغاء» للطلب ده.",
             "الفلترة والترتيب في query string، مش في الـ path."
-          ]
+          ],
+          sol: R`الملف في الآخر المفروض يبقى فيه أسماء جمع بس، والفعل راح للـ method. في الحل: [[GET /getProduct?id=7]] بقت [[GET /v1/products/7]]، و [[POST /updateProduct/7]] بقت [[PATCH]]، و [[GET /deleteProduct/7]] بقت [[DELETE]]. والأفعال اللي مش CRUD اتحولت لـ resource ([[/orders/9001/cancellation]] و [[/users/42/verification-emails]]) أو لتغيير حالة ([[PATCH]] ومعاه [[{"status":"paid"}]]). والبحث راح لـ query string.
+
+اختبار سريع: غطّي عمود الـ method واقرا المسارات لوحدها. لو لسه فيه كلمة زي get أو create أو update أو delete أو do، لسه فيه فعل. وأهم حاجة تدوّر عليها في الملف: أي GET بيغيّر بيانات ([[/deleteProduct]] بـ GET مثلًا). دي مش مسألة شكل، دي bug: الـ prefetch أو أي crawler ممكن يفتحها.
+
+الغلط الشائع إنك تعمل nesting لكل حاجة ([[/users/42/orders/9001/items/3]]) عشان «تبان REST». الطلب ليه id لوحده، فـ [[/orders/9001]] كفاية. ولو الـ API ده شغال ومستخدم، الأسماء الجديدة تبقى في [[/v1]] جديد أو aliases جنب القديمة، متغيّرش القديم مرة واحدة (درس versioning).`,
+          solCode: R`# قبل                                  →  بعد
+GET    /getAllProducts                 →  GET    /v1/products
+GET    /getProduct?id=7                →  GET    /v1/products/7
+POST   /createProduct                  →  POST   /v1/products
+POST   /updateProduct/7                →  PATCH  /v1/products/7
+GET    /deleteProduct/7                →  DELETE /v1/products/7
+GET    /getUserOrders?userId=42        →  GET    /v1/users/42/orders
+POST   /cancelOrder/9001               →  POST   /v1/orders/9001/cancellation
+POST   /resendVerificationEmail        →  POST   /v1/users/42/verification-emails
+GET    /searchOrders?s=paid            →  GET    /v1/orders?status=paid
+POST   /markOrderAsPaid/9001           →  PATCH  /v1/orders/9001   {"status":"paid"}`
         },
         {
           cmd: "safe و idempotent",
@@ -106,7 +122,32 @@ PUT idempotent لأنه بيقول «خلي الحاجة دي بالشكل ده 
             "idempotent: بعد أول مرة الـ session ممسوحة، والتكرار مبيغيّرش حاجة (حتى لو الرد 404).",
             "لا safe ولا idempotent: كل مرة دفعة جديدة.",
             "PATCH بعملية زي increment مش idempotent: كل تكرار بيزوّد واحد."
-          ]
+          ],
+          sol: R`قبل الـ redirect: بعد الـ submit الصفحة اللي قدامك هي رد الـ POST نفسه، فالـ refresh معناه «ابعت الـ POST تاني»، والمتصفح بيسألك (في Chrome: «Confirm Form Resubmission»). لو وافقت هيتعمل طلب تاني فعلًا.
+
+بعد PRG: السيرفر بيرد بـ [[303 See Other]] و [[Location: /orders/1]]، والمتصفح بيعمل GET للصفحة دي لوحده. الـ refresh دلوقتي بيعيد GET بس: من غير تحذير، والرد [[Order #1: book (1 orders total)]] مهما عملت refresh. جرّبه بـ [[curl -i -d item=book localhost:3000/order]] وهتشوف الـ 303 والـ Location.
+
+ليه 303 بالذات؟ لأنه بيقول صراحةً «روح بـ GET». [[res.redirect()]] من غير رقم بيرجّع 302، والمتصفحات عمليًا بتحوّله GET هي كمان، بس 303 هو المعنى الدقيق. أما 307 و 308 فبيعيدوا نفس الـ method والـ body، يعني POST تاني: ده الغلط اللي بيرجّع التحذير. وخد بالك إن PRG بيحل الـ refresh بس، مش الدبل كليك على الزرار: ده محتاج تعطيل الزرار أو Idempotency-Key.`,
+          solCode: R`const orders: { id: number; item: string }[] = [];
+
+app.get("/order", (_req, res) => {
+  res.type("html").send($__bt<form method="post" action="/order">
+    <input name="item" value="book"> <button>Order</button>
+  </form>$__bt);
+});
+
+app.post("/order", express.urlencoded({ extended: false }), (req, res) => {
+  const order = { id: orders.length + 1, item: String(req.body.item) };
+  orders.push(order);
+  // Post/Redirect/Get: متردش بصفحة، رد بـ redirect لصفحة GET
+  res.redirect(303, $__bt/orders/$__{order.id}$__bt);
+});
+
+app.get("/orders/:id", (req, res) => {
+  const order = orders.find((o) => o.id === Number(req.params.id));
+  if (!order) return res.status(404).send("not found");
+  res.type("html").send($__bt<p>Order #$__{order.id}: $__{order.item} ($__{orders.length} orders total)</p>$__bt);
+});`
         },
         {
           cmd: "PUT و PATCH",
@@ -155,7 +196,27 @@ PATCH (RFC 5789) بيبعت «وصف للتغيير»، وشكل الوصف ده
             "اللي مش مبعوت ميتلمسش (Prisma بيتجاهل الحقول الـ undefined).",
             "204.",
             "قفلة."
-          ]
+          ],
+          sol: R`الترتيب اللي هتشوفه: بعد أول PUT الـ GET بيرجّع [[{"city":"Giza","street":"Tahrir 5","zip":"12611"}]]. بعد PUT من غير zip: [[{"city":"Giza","street":"Tahrir 5","zip":null}]]، يعني الـ zip اتمسح لأن PUT استبدال كامل. وبعد PATCH فيه [[{"city":"Cairo"}]] بس: [[{"city":"Cairo","street":"Tahrir 5","zip":null}]]، المدينة اتغيرت والباقي زي ما هو. وكل الـ PUT و PATCH بيرجعوا 204 من غير body.
+
+لو الـ zip فضل موجود بعد الـ PUT، يبقى نسيت [[{ zip: null, ...address }]] وبعت [[address]] زي ما هو: Prisma بيتجاهل الحقل الـ undefined، فبقى PUT بيعمل merge. ولو بعت PUT فيه [[city]] بس هياخد 422 لأن [[street]] مطلوب، ودا صح: PUT لازم الشكل كامل.
+
+ولو عملت PATCH على مستخدم مالوش عنوان خالص، هتاخد 500 مش 404: [[update]] في Prisma بيرمي P2025 لما ميلاقيش الصف. في مشروع حقيقي امسك الـ P2025 وحوّله 404.`,
+          solCode: R`J='Content-Type: application/json'
+curl -X PUT localhost:3000/users/42/address -H "$J" -d '{"city":"Giza","street":"Tahrir 5","zip":"12611"}'   # 204
+curl localhost:3000/users/42/address        # {"city":"Giza","street":"Tahrir 5","zip":"12611"}
+
+# PUT من غير zip: استبدال كامل، فالـ zip اتمسح
+curl -X PUT localhost:3000/users/42/address -H "$J" -d '{"city":"Giza","street":"Tahrir 5"}'                   # 204
+curl localhost:3000/users/42/address        # {"city":"Giza","street":"Tahrir 5","zip":null}
+
+# PATCH فيه city بس: الباقي زي ما هو
+curl -X PATCH localhost:3000/users/42/address -H "$J" -d '{"city":"Cairo"}'                                    # 204
+curl localhost:3000/users/42/address        # {"city":"Cairo","street":"Tahrir 5","zip":null}
+
+# PUT ناقص street: 422 (الـ PUT لازم الشكل كامل)
+curl -X PUT localhost:3000/users/42/address -H "$J" -d '{"city":"Alex"}'
+# {"type":"about:blank","title":"Unprocessable Content","status":422,"detail":"Validation failed","errors":[{"expected":"string","code":"invalid_type","path":["street"],...}],...}`
         },
         {
           cmd: "201 و 204 و 202",
@@ -202,7 +263,28 @@ app.post("/reports", async (req, res) => {
             "حطه في queue (BullMQ، درس [[background jobs]] في تاب «بناء مشروع كامل») ومتستناش.",
             "202: استلمت، و Location بيشاور على مكان متابعة الشغل.",
             "قفلة."
-          ]
+          ],
+          sol: R`الـ POST على [[/users]] بيرجّع [[HTTP/1.1 201 Created]] و [[Location: /users/1]] والمستخدم في الـ body. الـ POST على [[/reports]] بيرجّع [[202 Accepted]] و [[Location: /jobs/17]] و [[{"jobId":"17","status":"queued"}]]. والـ DELETE بيرجّع [[204 No Content]] من غير Content-Type ولا Content-Length ولا body، حتى لو كتبت [[res.status(204).json({ deleted: true })]].
+
+حاجة غريبة هتلاحظها في الـ 204: فيه [[ETag: W/"10-..."]]. Express حسب الـ ETag من الـ JSON اللي انت حاولت تبعته قبل ما يشيله. مش مشكلة، بس دليل إن الـ body اتعمل واترمى، فالأنضف [[res.status(204).end()]].
+
+لو اعتمدت على الـ body ده في الفرونت، [[await res.json()]] هيرمي [[Unexpected end of JSON input]]. اقرا الـ JSON بس لما الـ status مش 204. ولو عملت DELETE لنفس المستخدم مرتين، التانية هتاخد 500 (Prisma بيرمي P2025)، وده مكانه 404 زي ما الشرح بيقول.`,
+          solCode: R`curl -i -X POST localhost:3000/users -H 'Content-Type: application/json' -d '{"email":"ali@example.com","name":"Ali"}'
+# HTTP/1.1 201 Created
+# Location: /users/1
+# Content-Type: application/json; charset=utf-8
+#
+# {"id":"1","email":"ali@example.com","name":"Ali",...}
+
+curl -i -X DELETE localhost:3000/users/1      # حتى لو الكود فيه res.status(204).json({ deleted: true })
+# HTTP/1.1 204 No Content
+# ETag: W/"10-..."          ← مفيش Content-Type ولا Content-Length ولا body
+
+curl -i -X POST localhost:3000/reports -H 'Authorization: Bearer YOUR_TOKEN' -H 'Content-Type: application/json' -d '{"month":"2026-08"}'
+# HTTP/1.1 202 Accepted
+# Location: /jobs/17
+#
+# {"jobId":"17","status":"queued"}`
         },
         {
           cmd: "4xx صح",
@@ -249,7 +331,22 @@ app.post("/reports", async (req, res) => {
             "كل حاجة تمام: نفّذ.",
             "204.",
             "قفلة."
-          ]
+          ],
+          sol: R`الجدول اللي المفروض يطلعلك: من غير توكن [[401]] ومعاه [[WWW-Authenticate: Bearer]]. مستخدم مأكّدش إيميله [[403]]. توكن مستخدم تاني [[404]]، ونفس الرد بالظبط لـ id مش موجود أصلًا. body فاضي [[{}]] بيرجّع [[422]] ومعاه [[path: ["reason"]]]. JSON مكسور [[400]] (من [[express.json()]] قبل ما يوصل للـ handler). طلب متشحن [[409]] و [[already shipped]]. وطلب سليم [[204]].
+
+المهم في حالة المستخدم التاني إن الرد ميفرقش عن id مش موجود: نفس الـ status ونفس الـ body الفاضي. لو رجّع 403 يبقى انت فصلت [[!order]] عن [[order.userId !== req.user.id]] في شرطين. والحل الأنضف إن الملكية تبقى جوه الاستعلام نفسه (درس OWASP).
+
+ولاحظ الترتيب: body فاضي من مستخدم مأكّدش إيميله بياخد 403 مش 422، لأن فحص الصلاحية قبل الـ validation. ولو بعت الطلب من غير body خالص هتاخد 422 برضه ([[expected object, received undefined]])، لأن [[req.body]] في Express 5 بيبقى undefined لما مفيش body.`,
+          solCode: R`URL=localhost:3000/orders/1/cancellation
+J='Content-Type: application/json'
+BODY='{"reason":"changed my mind"}'
+curl -s -o /dev/null -w "%{http_code}\n" -X POST $URL -H "$J" -d "$BODY"                                   # 401 (ومعاه WWW-Authenticate: Bearer)
+curl -s -o /dev/null -w "%{http_code}\n" -X POST $URL -H "Authorization: Bearer $UNVERIFIED" -H "$J" -d "$BODY"  # 403
+curl -s -o /dev/null -w "%{http_code}\n" -X POST $URL -H "Authorization: Bearer $OTHER_USER" -H "$J" -d "$BODY"  # 404 مش 403
+curl -s -w " %{http_code}\n" -X POST $URL -H "Authorization: Bearer $OWNER" -H "$J" -d '{}'                     # {"errors":[...path":["reason"]...]} 422
+curl -s -w " %{http_code}\n" -X POST $URL -H "Authorization: Bearer $OWNER" -H "$J" -d '{reason:'             # 400 (JSON مكسور، من express.json)
+curl -s -w " %{http_code}\n" -X POST localhost:3000/orders/2/cancellation -H "Authorization: Bearer $OWNER" -H "$J" -d "$BODY"  # {"detail":"already shipped"} 409
+curl -s -o /dev/null -w "%{http_code}\n" -X POST $URL -H "Authorization: Bearer $OWNER" -H "$J" -d "$BODY"   # 204`
         }
       ]
     },
@@ -307,7 +404,29 @@ RFC 9457 طلع سنة 2023 وحل محل RFC 7807، ونفس الشكل تقر�
             "الرد بالـ Content-Type الصح، و instance هو المسار اللي حصل فيه الخطأ.",
             "قفلة.",
             "الاستخدام من أي route: ارمي، والـ handler يتصرف."
-          ]
+          ],
+          sol: R`التلاتة بيرجعوا [[Content-Type: application/problem+json; charset=utf-8]] ونفس الشكل: [[type]] و [[title]] و [[status]] و [[detail]] و [[instance]]. الـ 409 فيه [[orderId]] زيادة، والـ JSON المكسور بيرجّع 400 و [[title: "Bad Request"]] والـ detail فيه رسالة الـ parser، والحقل الناقص بيرجّع 422 ومعاه [[errors]] من Zod فيها [[path: ["qty"]]].
+
+والـ [[new Error("db password is x")]] بيرجّع [[{"type":"about:blank","title":"Internal Server Error","status":500,"instance":"/boom"}]] بس. الرسالة الحقيقية بتظهر في console السيرفر، ومفيش [[detail]] ولا stack في الرد. لو شفت [[db password]] في الرد، يبقى الـ error اللي رميته عليه [[status]] رقم أقل من 500، أو الـ handler بيبعت [[err.message]] من غير ما يفرّق.
+
+حاجة هتلاحظها: سطر الـ status بيقول [[422 Unprocessable Entity]] والـ title بيقول [[Unprocessable Content]]. الأول الاسم القديم اللي Node لسه بيستخدمه، والتاني اسمه في RFC 9110، والعميل بيعتمد على الرقم مش الاسم. ولو الأخطاء لسه راجعة HTML فيها [[Cannot POST]]، يبقى الـ handler متسجّل قبل الـ routes، أو ليه ٣ parameters بس.`,
+          solCode: R`curl -i -X POST localhost:3000/orders/9001/cancellation      # الـ route بيعمل throw problem(409, ...)
+# HTTP/1.1 409 Conflict
+# Content-Type: application/problem+json; charset=utf-8
+# {"type":"about:blank","title":"Conflict","status":409,"detail":"Order 9001 is already shipped","orderId":"9001","instance":"/orders/9001/cancellation"}
+
+curl -i -X POST localhost:3000/orders -H 'Content-Type: application/json' -d '{"productId": "7",'
+# HTTP/1.1 400 Bad Request
+# {"type":"about:blank","title":"Bad Request","status":400,"detail":"Expected double-quoted property name in JSON at position 18 (line 1 column 19)","instance":"/orders"}
+
+curl -i -X POST localhost:3000/orders -H 'Content-Type: application/json' -d '{"productId":"7"}'
+# HTTP/1.1 422 Unprocessable Entity
+# {"type":"about:blank","title":"Unprocessable Content","status":422,"detail":"Validation failed","errors":[{"expected":"number","code":"invalid_type","path":["qty"],"message":"Invalid input: expected number, received undefined"}],"instance":"/orders"}
+
+curl -i localhost:3000/boom                                  # الـ route بيعمل throw new Error("db password is x")
+# HTTP/1.1 500 Internal Server Error
+# {"type":"about:blank","title":"Internal Server Error","status":500,"instance":"/boom"}
+# والرسالة الحقيقية في console السيرفر بس`
         },
         {
           cmd: "offset pagination",
@@ -354,7 +473,25 @@ app.get("/products", async (req, res) => {
             "قفلة.",
             "الرد: العناصر ومعاها معلومات الصفحات.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[?page=2&limit=10]] بيرجّع من [[Product 490]] لـ [[Product 481]] (الأحدث الأول)، ومعاهم [[page: 2]] و [[limit: 10]] و [[total: 500]] و [[totalPages: 50]]. و [[?limit=500]] بيرجّع 422 بـ [[too_big]] و [[maximum: 100]]، و [[?page=0]] بيرجّع 422 بـ [[too_small]]. لو [[?limit=500]] رجّعلك ٥٠٠ عنصر، يبقى الـ [[max(100)]] ناقص.
+
+وبعد ما تضيف منتج جديد، صفحة ٣ بتبدأ بـ [[Product 481]]، اللي كان آخر عنصر في صفحة ٢، و total بقى ٥٠١. المنتج الجديد دخل أول القايمة وزق كل حاجة خطوة، فالـ offset ٢٠ بقى بيشاور على عنصر شفته قبل كده. ولو اتمسح منتج بدل ما يتضاف، هيحصل العكس: عنصر يفوتك خالص ومتعرفش.
+
+ده مش bug في كودك، ده طبيعة الـ offset، وحلّه في الدرس الجاي (cursor). ولو ماشفتش العنصر المكرر، اتأكد إن المنتج الجديد [[createdAt]] بتاعه أحدث من الباقي، وإن الترتيب [[desc]].`,
+          solCode: R`# seed (مرة واحدة): 500 منتج، كل واحد بعد اللي قبله بدقيقة
+# await db.product.createMany({ data: Array.from({ length: 500 }, (_, i) => ({ name: $__btProduct $__{i + 1}$__bt, createdAt: new Date(Date.UTC(2026, 0, 1) + (i + 1) * 60_000) })) });
+
+curl -s "localhost:3000/products?page=2&limit=10"
+# items: Product 490 ... Product 481 | "page":2,"limit":10,"total":500,"totalPages":50
+
+curl -s "localhost:3000/products?limit=500"    # 422: "code":"too_big","maximum":100,"path":["limit"]
+curl -s "localhost:3000/products?page=0"       # 422: "code":"too_small","minimum":1,"path":["page"]
+
+# الزحلقة: وانت على صفحة 2، حد ضاف منتج جديد
+curl -s -X POST localhost:3000/products -H 'Content-Type: application/json' -d '{"name":"NEW"}'
+curl -s "localhost:3000/products?page=3&limit=10"
+# أول عنصر: Product 481، وده كان آخر عنصر في صفحة 2. و "total":501`
         },
         {
           cmd: "cursor pagination",
@@ -405,7 +542,49 @@ HATEOAS (Hypermedia as the Engine of Application State) معناها إن الر
             "الـ cursor الجاي من آخر عنصر، أو null لو مفيش صفحات تانية.",
             "الرد، ومعاه لينك الصفحة الجاية جاهز (HATEOAS على خفيف).",
             "قفلة."
-          ]
+          ],
+          sol: R`العدد النهائي ٢٠٠ بالظبط و ٢٠٠ id مختلف، حتى مع رسالتين جداد اتضافوا في النص (في الحل: ١٤ صفحة بـ [[limit=15]]). الرسايل الجديدة مبتظهرش في المشي ده لأنها أحدث من أول صفحة، والـ cursor بيكمّل من «بعد آخر عنصر شفته» مهما اتضاف قبله. ولو فكّيت أي cursor بـ [[Buffer.from(c, "base64url").toString()]] هتلاقي JSON فيه [[createdAt]] و [[id]].
+
+عشان تختبر الـ tie-breaker بجد، خلي كذا رسالة في الـ seed ليهم نفس [[createdAt]] بالظبط (الحل بيدّي كل ٤ رسايل نفس الثانية) واستخدم limit مش من مضاعفات ٤. لو شلت شرط [[id: { lt: after.id }]] وسبت [[createdAt: { lt }]] بس، العدد هيطلع أقل من ٢٠٠: الرسايل اللي ليها نفس وقت آخر عنصر في الصفحة بتضيع.
+
+وفي [[decodeCursor]] متسيبش [[JSON.parse]] يرمي لوحده: cursor بايظ ([[?after=garbage]]) لازم يرجّع 400 مش 500. أما رجوع [[createdAt]] لـ Date، فالأهم إنك تفحص إنه تاريخ صحيح. ولو المشي مبيخلصش أبدًا، يبقى [[links.next]] بيرجع حتى في آخر صفحة: اتأكد إنك طلبت [[limit + 1]] وبتقارن بـ [[rows.length > limit]].`,
+          solCode: R`// cursor.ts
+type Cursor = { createdAt: Date; id: string };
+
+function encodeCursor(c: Cursor): string {
+  return Buffer.from(JSON.stringify(c)).toString("base64url");
+}
+function decodeCursor(s: string): Cursor {
+  try {
+    const { createdAt, id } = JSON.parse(Buffer.from(s, "base64url").toString("utf8"));
+    const date = new Date(createdAt);
+    if (typeof id !== "string" || Number.isNaN(date.getTime())) throw new Error();
+    return { createdAt: date, id };
+  } catch {
+    throw problem(400, "Bad Request", "Invalid cursor");
+  }
+}
+
+// walk.ts: امشي على كل الصفحات بـ links.next وعدّ
+const BASE = process.env.BASE ?? "http://localhost:3000";
+const seen = new Set<string>();
+let url: string | null = "/messages?limit=15";
+let pages = 0;
+let count = 0;
+while (url) {
+  const body: any = await (await fetch(BASE + url)).json();
+  for (const m of body.items) seen.add(m.id);
+  count += body.items.length;
+  pages++;
+  if (pages === 3) {
+    // رسايل جديدة وصلت واحنا في النص
+    for (const text of ["new A", "new B"]) {
+      await fetch(BASE + "/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
+    }
+  }
+  url = body.links.next;
+}
+console.log({ pages, count, unique: seen.size }); // { pages: 14, count: 200, unique: 200 }`
         },
         {
           cmd: "filter و sort",
@@ -458,7 +637,23 @@ app.get("/orders", requireAuth, async (req, res) => {
             "قفلة.",
             "الرد.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[?sort=-total]] بيرجّع طلباتك من الأكبر للأصغر ([[900]] ثم [[120]] ثم [[40]]). و [[?sort=password]] بيرجّع 422 بـ [[invalid_value]] والقيم المسموحة، وكذلك [[?status=deleted]]. وجرّب كمان [[?userId=u2]]: هترجع طلباتك انت بس، لأن [[z.object]] بتشيل أي حقل مش متعرّف، وشرط الملكية ثابت من التوكن.
+
+إجابة سؤال التفكير: هيعرف الـ hash نفسه، حرف حرف. الترتيب بيكشف مقارنة: لو المهاجم عمل حسابات بباسوردات يعرفها (فيعرف الـ hash بتاعها)، وطلب [[?sort=passwordHash]]، مكان الضحية بين حساباته بيقوله الـ hash بتاعها أكبر ولا أصغر من كل واحد. ولو كرر بحسابات جديدة، بيضيّق المدى زي binary search لحد ما يطلّع الـ hash، وبعدها يعمل brute force عليه offline. ونفس الكلام على [[resetToken]] وأي حقل سري. ده اسمه sort oracle: ترتيب شكله «بريء» بيتحول لتسريب.
+
+والإجابة القوية في الانترفيو: الـ whitelist بتحمي من حاجتين، التسريب ده، والترتيب بعمود من غير index على جدول كبير (full scan). ومتعتمدش على «مش هنرجّع الحقل ده في الرد»: الترتيب بيكشفه من غير ما يظهر.`,
+          solCode: R`curl -s "localhost:3000/orders?sort=-total" -H "Authorization: Bearer $TOKEN"
+# {"items":[{"total":900,...},{"total":120,...},{"total":40,...}]}
+
+curl -s "localhost:3000/orders?sort=password" -H "Authorization: Bearer $TOKEN"
+# 422: "code":"invalid_value","values":["createdAt","-createdAt","total","-total"],"path":["sort"]
+
+curl -s "localhost:3000/orders?status=deleted" -H "Authorization: Bearer $TOKEN"
+# 422: "code":"invalid_value","values":["pending","paid","shipped"],"path":["status"]
+
+curl -s "localhost:3000/orders?userId=u2" -H "Authorization: Bearer $TOKEN"
+# 200 بطلباتك انت بس: z.object شالت userId، والشرط الثابت هو اللي اتطبق`
         }
       ]
     },
@@ -518,7 +713,25 @@ app.use("/v2", v2);`,
             "قفلة.",
             "ركّب v1 على المسار بتاعه.",
             "و v2."
-          ]
+          ],
+          sol: R`في [[curl -i localhost:3000/v1/users/1]] هتلاقي ٣ headers جداد: [[Deprecation: @1767225600]] (يعني deprecated من ١ يناير ٢٠٢٦، والـ [[@]] قبل unix timestamp هو شكل RFC 9745)، و [[Sunset: Wed, 30 Jun 2027 23:59:59 GMT]]، و [[Link: </v2/users>; rel="successor-version"]]. والـ body [[{"id":"1","name":"Ali Hassan"}]]. و v2 من غير الـ headers دي وبيرجّع [[firstName]] و [[lastName]].
+
+إجابة التفكير، قسّم التغييرات كده: بيكسر = حذف حقل أو تغيير اسمه، أو تغيير نوعه ([[price]] من رقم لـ string، أو [[id]] من رقم لـ UUID)، أو حقل بقى مطلوب في الطلب، أو status code اتغير (200 بقى 201)، أو قيمة enum جديدة والموبايل بيعمل switch عليها، أو تغيير في المعنى (السعر بقى بالقرش بدل الجنيه). مش بيكسر = حقل جديد في الرد، أو endpoint جديد، أو فلتر اختياري جديد.
+
+الغلط الشائع إنك تعتبر «حقل بقى null أحيانًا» أو «ترتيب القايمة اتغير» مش كسر: لو عميل كان بيعتمد عليه، اتكسر. والأسلم قبل أي تغيير تسأل «لو التطبيق القديم فضل زي ما هو، هيشتغل؟». وأغلب التغييرات البيكسر ينفع تتعمل من غير version: ضيف الحقل الجديد جنب القديم، واعلن إن القديم deprecated، وشيله بعد ما محدش يستخدمه.`,
+          solCode: R`curl -i localhost:3000/v1/users/1
+# HTTP/1.1 200 OK
+# Deprecation: @1767225600
+# Sunset: Wed, 30 Jun 2027 23:59:59 GMT
+# Link: </v2/users>; rel="successor-version"
+# Content-Type: application/json; charset=utf-8
+#
+# {"id":"1","name":"Ali Hassan"}
+
+curl -i localhost:3000/v2/users/1      # من غير Deprecation ولا Sunset
+# {"id":"1","firstName":"Ali","lastName":"Hassan"}
+
+date -u -d @1767225600                 # Thu Jan  1 00:00:00 UTC 2026 (على الماك: date -u -r 1767225600)`
         },
         {
           cmd: "ETag و Cache-Control",
@@ -575,7 +788,29 @@ strong ولا weak: [[W/]] معناها «نفس المعنى» مش «نفس ا
             "no-store: متتخزنش في أي مكان، ولا حتى على ديسك المتصفح.",
             "الرد.",
             "قفلة."
-          ]
+          ],
+          sol: R`أول طلب: [[200 OK]] و [[ETag: "1-1"]] و [[Cache-Control: public, max-age=60, stale-while-revalidate=300]] والمنتج في الـ body. الطلب التاني بـ [[If-None-Match: "1-1"]]: [[304 Not Modified]] بنفس الـ ETag ومن غير body. بعد التعديل الـ version بقى ٢، ونفس الطلب بالـ ETag القديم بيرجّع 200 تاني ومعاه [[ETag: "1-2"]] والبيانات الجديدة.
+
+أشهر سبب إنك متاخدش 304: علامات التنصيص. الـ ETag قيمته [["1-1"]] بالتنصيص، و [[-H 'If-None-Match: 1-2']] من غيرها بيرجّع 200. استخدم علامة تنصيص مفردة حوالين الـ header كله زي الـ try، عشان الـ shell ميشيلش الـ double quotes. أما [[W/"1-2"]] فبيرجّع 304، لأن مقارنة If-None-Match weak.
+
+وسبب تاني: لو بعت [[Cache-Control: no-cache]] مع الطلب (زي الـ hard reload في المتصفح)، [[req.fresh]] بيرجّع false وبتاخد 200 حتى لو الـ ETag صح. وفي المتصفح نفسه، الـ DevTools بيعرض الـ 304 ساعات كـ 200 «from cache»، فجرّب بـ curl الأول.`,
+          solCode: R`curl -i localhost:3000/products/1
+# HTTP/1.1 200 OK
+# ETag: "1-1"
+# Cache-Control: public, max-age=60, stale-while-revalidate=300
+# {"id":"1","name":"Mug","price":150,"version":1,...}
+
+curl -i localhost:3000/products/1 -H 'If-None-Match: "1-1"'
+# HTTP/1.1 304 Not Modified
+# ETag: "1-1"                           ← ومفيش body
+
+# عدّل المنتج (الـ version بقى 2)، وابعت الـ ETag القديم
+curl -i localhost:3000/products/1 -H 'If-None-Match: "1-1"'
+# HTTP/1.1 200 OK
+# ETag: "1-2"
+
+curl -i localhost:3000/products/1 -H 'If-None-Match: 1-2'       # من غير علامات تنصيص: 200 مش 304
+curl -i localhost:3000/products/1 -H 'If-None-Match: W/"1-2"'   # 304: المقارنة هنا weak`
         },
         {
           cmd: "If-Match و 412",
@@ -626,7 +861,42 @@ optimistic مقابل pessimistic: pessimistic بيقفل الصف ([[SELECT ...
             "قفلة.",
             "نجح: الـ ETag الجديد عشان العميل يكمّل عليه.",
             "قفلة."
-          ]
+          ],
+          sol: R`الطلبين بنفس [[If-Match: "3"]]: الأول [[204]] ومعاه [[ETag: "4"]]، والتاني [[412]]، لأن الـ version بقى ٤ وشرط [[version: 3]] ملقاش صف. ومن غير If-Match خالص [[428]]، وبتوكن مستخدم تاني [[404]] مش 412 (مش هنقوله إن المستند موجود).
+
+في الواجهة: أول ما يجي 412 متعيدش الطلب بالـ ETag الجديد أوتوماتيك، ده بيكتب فوق تعديل الشخص التاني، وهو بالظبط اللي بنمنعه. هات النسخة الجديدة، وسيب تعديلات المستخدم في الـ state، واعرضهم جنب بعض عشان هو يقرر. في الحل التابة الأولى بتحفظ وتاخد [[{ ok: true, etag: '"5"' }]]، والتانية بتاخد [[false]] والرسالة ومحتوى المستند الجديد ([[edit from A]]) والـ ETag الجديد.
+
+لو [[res.headers.get("ETag")]] رجّع null في المتصفح والـ API على origin تاني، ده CORS: لازم السيرفر يبعت [[Access-Control-Expose-Headers: ETag]]، وكمان [[If-Match]] لازم يبقى في [[Access-Control-Allow-Headers]]. ولو التاني رجّع 204 بدل 412، يبقى الـ version مش جوه شرط الـ [[where]]، أو مش بيزيد في نفس الـ update.`,
+          solCode: R`// الواجهة: احفظ بالنسخة اللي عدّلت عليها، ولو 412 هات الجديدة ووري المستخدم
+type Doc = { id: string; title: string; body: string };
+const BASE = process.env.BASE ?? "http://localhost:3000";
+const auth = { Authorization: "Bearer YOUR_TOKEN" };
+
+async function loadDoc(id: string) {
+  const res = await fetch($__bt$__{BASE}/documents/$__{id}$__bt, { headers: auth });
+  return { doc: (await res.json()) as Doc, etag: res.headers.get("ETag")! };
+}
+
+async function saveDoc(id: string, etag: string, changes: Partial<Doc>) {
+  const res = await fetch($__bt$__{BASE}/documents/$__{id}$__bt, {
+    method: "PATCH",
+    headers: { ...auth, "Content-Type": "application/json", "If-Match": etag },
+    body: JSON.stringify(changes),
+  });
+  if (res.status === 412) {
+    const latest = await loadDoc(id);
+    return { ok: false as const, message: "حد عدّل المستند، راجع التغييرات", latest, mine: changes };
+  }
+  if (!res.ok) throw new Error($__btsave failed: $__{res.status}$__bt);
+  return { ok: true as const, etag: res.headers.get("ETag")! };
+}
+
+// تابتين فاتحين نفس المستند بنفس النسخة
+const tabA = await loadDoc("1");
+const tabB = await loadDoc("1");
+console.log(await saveDoc("1", tabA.etag, { body: "edit from A" }));
+const r = await saveDoc("1", tabB.etag, { body: "edit from B" });
+console.log(r.ok, r.ok ? "" : r.message, r.ok ? "" : r.latest.doc.body, r.ok ? "" : r.latest.etag);`
         },
         {
           cmd: "Idempotency-Key",
@@ -681,7 +951,27 @@ optimistic مقابل pessimistic: pessimistic بيقفل الصف ([[SELECT ...
             "خزّن الرد ٢٤ ساعة.",
             "ورجّعه.",
             "قفلة."
-          ]
+          ],
+          sol: R`التلات طلبات بنفس المفتاح بيرجّعوا نفس الرد بالحرف ([[201]] ونفس الـ [[id]] ونفس [[createdAt]])، وعدد الدفعات في القاعدة ١. أول طلب بس نفّذ، والاتنين التانيين رجّعوا الرد المتسجّل من Redis. ونفس المفتاح بمبلغ ٧٠٠ بيرجّع [[422]] و [[Key reused with a different body]]. ولو بعت طلبين في نفس اللحظة بمفتاح جديد، واحد بياخد [[409]] و [[Original request still in progress]] والتاني 201، ولسه دفعة واحدة. ومن غير header خالص [[400]].
+
+أشهر غلط: تكتب [[-H "Idempotency-Key: $(uuidgen)"]] جوه الـ loop أو جوه الـ curl نفسه، فكل طلب بياخد مفتاح جديد وتلاقي ٣ دفعات. المفتاح يتولّد مرة واحدة ويتخزن في متغير، وده بالظبط اللي العميل الحقيقي بيعمله: مفتاح لكل «ضغطة دفع»، مش لكل محاولة. ولو [[uuidgen]] مش موجود عندك، [[node -e "console.log(crypto.randomUUID())"]] بيدّي نفس النتيجة.
+
+ولو لقيت دفعتين مع إن المفتاح ثابت: اتأكد إن الـ id في Redis مش فيه حاجة بتتغير كل طلب، وإن الحجز بـ [[NX]] مش GET وبعدين SET. وتقدر تشوف المفتاح بعينك بـ [[redis-cli --scan --pattern 'idem:*']] و [[redis-cli ttl]] (حوالي ٨٦٤٠٠).`,
+          solCode: R`KEY=$(uuidgen)        # مرة واحدة برا الـ loop (أو: KEY=$(node -e "console.log(crypto.randomUUID())"))
+pay() {
+  curl -s -w " %{http_code}\n" -X POST localhost:3000/payments \
+    -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+    -H "Idempotency-Key: $KEY" -d "{\"amount\":$1}"
+}
+for i in 1 2 3; do pay 500; done
+# {"id":"1","createdAt":"...","userId":"u1","amount":500} 201   ← التلاتة نفس الرد بالحرف، ودفعة واحدة في القاعدة
+pay 700
+# {"title":"Key reused with a different body"} 422
+
+KEY=$(uuidgen)
+pay 100 & sleep 0.05; pay 100; wait
+# {"title":"Original request still in progress"} 409   ← التاني وصل والأول لسه شغال
+# {"id":"2",...,"amount":100} 201`
         }
       ]
     },
@@ -745,7 +1035,49 @@ code-first: الملف بيتولّد من الكود. FastAPI بيعمله لو
             "الأشكال (JSON Schema).",
             "شكل الطلب: id و status مطلوبين، والحالة من ٣ قيم.",
             "شكل الخطأ."
-          ]
+          ],
+          sol: R`لو فحصت المثال زي ما هو بـ [[@redocly/cli]] (جربناها على 2.55)، هتاخد [[Validation failed with 2 errors and 2 warnings]] من الـ config الافتراضي (recommended): الـ errors هما [[operation-summary]] (العملية ناقصها [[summary]]) و [[security-defined]] (مفيش security على العملية ولا على مستوى الملف). والـ warnings: [[info-license]] و [[no-server-example.com]]. ده طبيعي: الـ lint بيفحص جودة، مش بس إن الملف صحيح.
+
+الحل: [[summary]] لكل operation، و [[securitySchemes]] بـ bearer و [[security]] على مستوى الملف، و [[license]] في [[info]]. في الحل endpointين ([[POST /orders]] و [[GET /orders/{id}]])، ومعاهم ردود 401 و 422 من نوع Problem، والنتيجة [[Your API description is valid]]. التحذير الوحيد اللي بيفضل هو example.com، وده بيختفي لما تحط الدومين الحقيقي بتاعك.
+
+وجرّب تغلط في [[$ref]] (اكتب [[NewOrdr]] مثلًا): هتاخد error اسمه [[no-unresolved-refs]] و [[Can't resolve $ref]]، ومعاه السطر والعمود بالظبط، وكمان warning إن [[NewOrder]] مش مستخدم ([[no-unused-components]]). ولو مش عايز قاعدة معينة، اعمل ملف [[redocly.yaml]] وقفّلها بوعي، متتجاهلش الـ output.`,
+          solCode: R`openapi: 3.1.1
+info:
+  title: Orders API
+  version: 1.4.0
+  license: { name: Proprietary, identifier: LicenseRef-Proprietary }
+servers: [{ url: "https://api.example.com/v1" }]
+security: [{ bearerAuth: [] }]
+paths:
+  /orders:
+    post:
+      operationId: createOrder
+      summary: Create an order
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/NewOrder" } } }
+      responses:
+        "201": { description: Created, content: { application/json: { schema: { $ref: "#/components/schemas/Order" } } } }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "422": { description: Validation failed, content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } } }
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      summary: Get one order
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Order" } } } }
+        "401": { $ref: "#/components/responses/Unauthorized" }
+        "404": { description: Not found, content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } } }
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer, bearerFormat: JWT }
+  responses:
+    Unauthorized: { description: Missing or invalid token, content: { application/problem+json: { schema: { $ref: "#/components/schemas/Problem" } } } }
+  schemas:
+    NewOrder: { type: object, required: [productId, qty], properties: { productId: { type: string }, qty: { type: integer, minimum: 1 } } }
+    Order: { type: object, required: [id, status], properties: { id: { type: string }, status: { type: string, enum: [pending, paid, shipped] } } }
+    Problem: { type: object, properties: { title: { type: string }, status: { type: integer }, detail: { type: string } } }`
         },
         {
           cmd: "Swagger UI و openapi-typescript",
@@ -795,7 +1127,27 @@ else console.log(data.status);`,
             "المسار لازم يبقى موجود في العقد، والـ id مطلوب ونص. أي غلط هنا = TypeScript error.",
             "error نوعه Problem (من رد 404 في العقد).",
             "data نوعه Order، فـ [[data.status]] معروف إنه pending أو paid أو shipped."
-          ]
+          ],
+          sol: R`[[/docs]] بيعمل redirect لـ [[/docs/]] وبيفتح صفحة Swagger UI فيها كل الـ endpoints. بس «Try it out» بيبعت الطلب للـ URL اللي في [[servers]] في العقد، يعني [[https://api.example.com/v1]] مش السيرفر بتاعك، فهتاخد [[Failed to fetch]]. الحل: ضيف [[http://localhost:3000/v1]] أول واحد في [[servers]] (أو اختاره من القايمة اللي فوق)، واتأكد إن الـ routes بتاعتك فعلًا تحت [[/v1]].
+
+بعد التوليد، غيّر المسار لـ [["/order/{id}"]] وشغّل [[tsc --noEmit]]: هتاخد خطأ زي [[Argument of type '"/order/{id}"' is not assignable to parameter of type '"/orders/{id}"']]، قبل ما تشغّل أي حاجة. رجّعه صح والخطأ يختفي، و [[data.status]] نوعه [[pending | paid | shipped]] و [[error.title]] من شكل Problem.
+
+لو [[openapi-typescript]] وقع بـ [[Cannot read properties of undefined (reading 'createKeywordTypeNode')]]: ده لأن المشروع فيه TypeScript 7 (الـ latest على npm دلوقتي)، والنسخة 7.13 من openapi-typescript محتاجة JS API بتاعة TypeScript 5. شغّله بـ [[npx]] من برا المشروع، أو ثبّت [[typescript@5]] له. ولو [[api.GET]] مش بيطلّع أي خطأ مع المسار الغلط، يبقى الـ import بتاع [[paths]] مش لاقي الملف، ونوعه بقى any.`,
+          solCode: R`# openapi.yaml: ضيف السيرفر المحلي أول واحد، عشان «Try it out» يبعت له مش لـ api.example.com
+servers:
+  - { url: "http://localhost:3000/v1", description: Local }
+  - { url: "https://api.example.com/v1", description: Production }
+
+# package.json
+"scripts": { "gen:api": "openapi-typescript http://localhost:3000/openapi.json -o src/api.d.ts" }
+
+$ npm run gen:api
+✨ openapi-typescript 7.13.0
+🚀 http://localhost:3000/openapi.json → src/api.d.ts
+
+# بعد ما تغيّر "/orders/{id}" لـ "/order/{id}":
+$ npx tsc --noEmit
+src/client.ts(4,39): error TS2345: Argument of type '"/order/{id}"' is not assignable to parameter of type '"/orders/{id}"'.`
         },
         {
           cmd: "OWASP API Top 10",
@@ -856,7 +1208,28 @@ API10 Unsafe Consumption of APIs: بتثق في رد API تالت (أو webhook)
             "بين ١ و ١٠٠ بس، ورقم صحيح، عشان [[take]] السالب في Prisma بيجيب من آخر القايمة ويعدّي الحد (Unrestricted Resource Consumption).",
             "طلباته بس، وبالحقول اللي الواجهة محتاجاها بس (BOPLA: كشف بيانات زيادة).",
             "قفلة."
-          ]
+          ],
+          sol: R`بتوكن المستخدم التاني: الـ GET بيرجّع [[404]]، والـ PATCH بيرجّع [[404]]، ونفس الـ 404 لـ id مش موجود أصلًا، فمفيش طريقة يعرف بيها إن الطلب موجود. و PATCH فيه [[{"status":"paid"}]] بتوكن صاحب الطلب نفسه بيرجّع [[422]] و [[unrecognized_keys]] و [[keys: ["status"]]]. و [[{"note":"leave at door"}]] بيرجّع 204 والـ GET يوريك التعديل، ومن غير أي حقل داخلي زي [[internalCost]] لأن الـ [[select]] محدد.
+
+لو المستخدم التاني أخد 200، يبقى الاستعلام بيدوّر بالـ id بس. ولو أخد 403، يبقى بتجيب الطلب الأول وبعدين تقارن [[userId]]: شغال، بس بيأكد وجود الطلب، وأسهل تنساه في endpoint تاني. ولو [[{"status":"paid"}]] رجّع 204، يبقى انت عامل [[z.object]] مش [[z.strictObject]]: الـ status بيتشال بهدوء ومبيتكتبش، فانت محمي، بس العميل مش هيعرف إن طلبه اتجاهل. ولو الطلب اتدفع فعلًا، يبقى بتبعت [[req.body]] للقاعدة بدل الناتج بتاع Zod.
+
+واعمل الاختبار ده اختبار integration ثابت (بمستخدمين واختبار لكل route فيه [[:id]])، عشان أي endpoint جديد ينسى شرط الملكية يقع في CI مش عند العميل.`,
+          solCode: R`// الـ GET اللي هتختبر بيه: نفس شرط الملكية جوه الاستعلام، و select بالحقول المسموحة
+app.get("/orders/:id", requireAuth, async (req, res) => {
+  const order = await db.order.findFirst({
+    where: { id: req.params.id, userId: req.user.id },
+    select: { id: true, status: true, total: true, note: true, giftWrap: true },
+  });
+  if (!order) return res.status(404).end();
+  res.json(order);
+});
+
+// الاختبار (ORDER_ID بتاع أحمد، و TOKEN_B توكن مستخدم تاني):
+// curl -s -o /dev/null -w "%{http_code}\n" localhost:3000/orders/$ORDER_ID -H "Authorization: Bearer $TOKEN_B"                  → 404
+// curl -s -o /dev/null -w "%{http_code}\n" -X PATCH localhost:3000/orders/$ORDER_ID -H "Authorization: Bearer $TOKEN_B" \
+//   -H 'Content-Type: application/json' -d '{"note":"hacked"}'                                                                → 404
+// curl -s -X PATCH localhost:3000/orders/$ORDER_ID -H "Authorization: Bearer $TOKEN_A" -H 'Content-Type: application/json' -d '{"status":"paid"}'
+//   → 422: {"code":"unrecognized_keys","keys":["status"],"path":[],"message":"Unrecognized key: \"status\""}`
         }
       ]
     },

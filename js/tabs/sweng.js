@@ -82,7 +82,30 @@ console.log(editors.length); // 1`,
             "قفلة الـ array.",
             "[[members.filter(canEditPost)]] بتتقري إنجليزي: هات اللي يقدروا يعدّلوا.",
             "بيطبع 1."
-          ]
+          ],
+          sol: R`مفيش ناتج واحد صح هنا، بس فيه اختبار سريع: اقرا اسم كل متغير لوحده من غير ما تبص على السطر اللي حواليه. لو عرفت هو إيه (user؟ فلوس؟ بالقرش ولا بالجنيه؟) يبقى الاسم نجح. مثال من كود حقيقي في الحل: [[handle2(data)]] بقت [[hasPlacedOrders(userId)]]، و [[temp]] بقت [[user]]، و [[flag]] اتشال خالص لأن الـ boolean بقى هو الـ return نفسه ([[user.orders.length > 0]]). والناتج [[true]].
+
+بعد الـ F2 هتلاقي تعليقات زي [[// check if user has orders]] بقت بتعيد الاسم بالحرف، فامسحها. ده المقياس اللي التمرين بيسأل عنه: كل اسم كويس بيوفّر تعليق.
+
+الغلط الشائع إنك تستخدم Find/Replace بدل F2: هيغيّر [[data]] جوه strings وفي ملفات ملهاش علاقة، و [[res.data]] بتاعة axios هتبوظ. و F2 نفسه مش بيغيّر خانات جاية من برا (body أو عمود في الداتابيز أو response من API): لو الاسم جزء من شكل الداتا، ده تغيير interface مش rename، وبيتعمل لوحده بعد ما تعرف مين بيبعت ومين بيستقبل.`,
+          solCode: R`// قبل:
+// async function handle2(data: any) {
+//   const res = await fetch($__bt/api/users/$__{data}$__bt);
+//   const temp = await res.json();
+//   let flag = false;
+//   if (temp.orders.length > 0) flag = true;
+//   return flag;
+// }
+
+type User = { id: string; orders: { id: string }[] };
+
+async function hasPlacedOrders(userId: string, loadUser: (id: string) => Promise<User>): Promise<boolean> {
+  const user = await loadUser(userId);
+  return user.orders.length > 0;
+}
+
+const fakeLoadUser = async (id: string): Promise<User> => ({ id, orders: [{ id: "o1" }] });
+hasPlacedOrders("42", fakeLoadUser).then((hasOrders) => console.log(hasOrders)); // true`
         },
         {
           cmd: "small functions",
@@ -137,7 +160,42 @@ console.log(placeOrder({ email: "you@example.com", items: [{ price: 50, qty: 2 }
             "رجّع الإجمالي.",
             "قفلة.",
             "بيطبع 100."
-          ]
+          ],
+          sol: R`الدالة الأصلية في الآخر المفروض تبقى ٤ لـ ٦ سطور، كل سطر نداء باسم الخطوة، زي [[registerUser]] في الحل: validate، وبعدين hash، وبعدين save، وبعدين welcome. لو قريتها بصوت عالي تبقى جملة، والتعليقات اللي كتبتها في الأول اختفت لأنها بقت أسامي دوال.
+
+شغّل قبل وبعد وقارن: الحل بيطبع [[Welcome you@example.com]] وبعدين [[email taken]] للتسجيل التاني. السلوك ماتغيرش، ودا أهم شرط في أي extract.
+
+علامة إنك قطّعت في المكان الغلط: دالة مستخرجة بتاخد ٥ أو ٦ parameters، أو VS Code طلّعلك دالة بترجع object فيه ٣ متغيرات عشان الأصلية تكمّل بيهم. معناه إن الحتة دي مش خطوة مستقلة، أو إنها بتعدّل متغيرات برا منها (side effect). جرّب تقطع في حدود تانية، أو افصل التعديل ده الأول.`,
+          solCode: R`// قبل: registerUser كانت ٤٠ سطر، وفيها تعليقات: "check input" و "hash password" و "save" و "welcome mail"
+type Input = { email: string; password: string };
+type User = { id: number; email: string; passwordHash: string };
+const users: User[] = [];
+
+function validateSignup({ email, password }: Input): void {
+  if (!email.includes("@")) throw new Error("invalid email");
+  if (password.length < 8) throw new Error("password too short");
+  if (users.some((u) => u.email === email)) throw new Error("email taken");
+}
+function hashPassword(password: string): string {
+  return $__bthashed:$__{password.length}$__bt; // في الحقيقي: bcrypt أو argon2
+}
+function saveUser(email: string, passwordHash: string): User {
+  const user = { id: users.length + 1, email, passwordHash };
+  users.push(user);
+  return user;
+}
+function welcomeMessage(user: User): string {
+  return $__btWelcome $__{user.email}$__bt;
+}
+
+function registerUser(input: Input): string {
+  validateSignup(input);
+  const user = saveUser(input.email, hashPassword(input.password));
+  return welcomeMessage(user);
+}
+
+console.log(registerUser({ email: "you@example.com", password: "12345678" })); // Welcome you@example.com
+try { registerUser({ email: "you@example.com", password: "12345678" }); } catch (e) { console.log((e as Error).message); } // email taken`
         },
         {
           cmd: "guard clauses",
@@ -187,7 +245,31 @@ console.log(withdraw({ isActive: true, balance: 100 }, 150)); // insufficient ba
             "رجّع النجاح.",
             "قفلة.",
             "بيطبع [[insufficient balance]]، والنسخة القديمة كانت هتقول failed وبس."
-          ]
+          ],
+          sol: R`الشكل النهائي: كل الحالات الغلط فوق، كل واحدة سطر [[if (...) return ...]] أو [[throw]]، والشغل الحقيقي في الآخر على أول مستوى indent. في الحل ٦ حالات غلط كل واحدة برسالتها، والناتج [[login required]] ثم [[comments are locked]] ثم [[ok]].
+
+وانت بتعكس الشرط خلي بالك من De Morgan: عكس [[if (user && user.isActive)]] هو [[if (!user || !user.isActive)]]، مش [[!user && !user.isActive]]. ده أشهر غلط في التمرين، وبيخلّي حالة غلط تعدّي من غير ما حد ياخد باله. عشان كده جرّب كل حالة قبل وبعد (اختبار أو [[console.log]] زي آخر ٣ سطور في الحل).
+
+والتمرين مخلّص لما الـ [[return "failed"]] العام اللي كان في آخر الكود القديم يختفي تمامًا: كل return بقى بيقول السبب، وسطر الشغل الحقيقي مابقاش جوه أي if.`,
+          solCode: R`type User = { isBanned: boolean; emailVerified: boolean } | null;
+type Post = { authorId: string; locked: boolean } | null;
+
+// قبل: if (user) { if (!user.isBanned) { if (post) { if (!post.locked) { ...save; return "ok" } } } } return "error";
+
+function addComment(user: User, post: Post, text: string): string {
+  if (!user) return "login required";
+  if (user.isBanned) return "user banned";
+  if (!user.emailVerified) return "verify your email first";
+  if (!post) return "post not found";
+  if (post.locked) return "comments are locked";
+  if (text.trim() === "") return "empty comment";
+  return "ok";
+}
+
+const user = { isBanned: false, emailVerified: true };
+console.log(addComment(null, null, "hi")); // login required
+console.log(addComment(user, { authorId: "1", locked: true }, "hi")); // comments are locked
+console.log(addComment(user, { authorId: "1", locked: false }, "hi")); // ok`
         },
         {
           cmd: "magic numbers",
@@ -239,7 +321,29 @@ console.log(withVat(10000), deliveryDate(OrderStatus.Pending)); // 11400 null`,
             "لو اتشحن: بعد ٣ أيام. غير كده null.",
             "قفلة.",
             "بيطبع [[11400 null]]."
-          ]
+          ],
+          sol: R`البحث هيطلّعلك حاجات زي [[* 0.14]] و [[role === 1]] و [[1000 * 60 * 30]] و [[attempts < 5]]. الحل: ملف [[constants.ts]] (أو جنب الـ feature نفسها) فيه [[VAT_RATE]] و [[SESSION_TTL_MS]] و [[MAX_LOGIN_ATTEMPTS]] و [[Role]]، وكل الأماكن تعمل import. ناتج الحل: [[false 1800000 28]].
+
+اختبار «مكان واحد بس»: ابحث تاني بـ Ctrl+Shift+F عن الرقم نفسه ([[0.14]]). المفروض يطلع مرة واحدة، في سطر التعريف. لو لسه طالع في ٣ ملفات، يبقى لسه فيه نسخ هتتنسي أول ما الضريبة تتغير.
+
+متسمّيش كل رقم: [[0]] في [[items.length === 0]] و [[1]] في [[i + 1]] واضحين لوحدهم، و [[const ONE = 1]] مش بيقول حاجة. والغلط التاني إن الاسم يوصف القيمة مش المعنى: [[FOURTEEN_PERCENT]] هتبقى كذبة أول ما النسبة تتغير، إنما [[VAT_RATE]] بيفضل صح. ولاحظ الوحدة في الاسم ([[_MS]])، عشان محدش يحط ثواني مكان ملي ثانية.`,
+          solCode: R`// constants.ts: كل رقم ليه معنى متعرّف هنا مرة واحدة، والباقي بيعمل import
+export const VAT_RATE = 0.14;
+export const SESSION_TTL_MS = 30 * 60 * 1000; // 30 دقيقة
+export const MAX_LOGIN_ATTEMPTS = 5;
+export const Role = { Admin: "admin", Member: "member" } as const;
+
+// قبل: if (user.role === 1 && attempts < 5) ... expiresAt = now + 1800000
+type User = { role: (typeof Role)[keyof typeof Role]; failedAttempts: number };
+
+function canTryLogin(user: User): boolean {
+  return user.failedAttempts < MAX_LOGIN_ATTEMPTS;
+}
+function sessionExpiry(now = Date.now()): number {
+  return now + SESSION_TTL_MS;
+}
+
+console.log(canTryLogin({ role: Role.Member, failedAttempts: 5 }), sessionExpiry(0), Math.round(200 * VAT_RATE)); // false 1800000 28`
         },
         {
           cmd: "why comments",
@@ -287,7 +391,12 @@ console.log(parseAmount("١٢٠"), parseAmount("45"), DELAY_BETWEEN_CALLS_MS); /
             "قفلة.",
             "الرقم ده عليه تحذير، لأن اللي جاي بعدك هيشوفه «بطيء» ويحاول يصغّره.",
             "بيطبع [[120 45 250]]."
-          ]
+          ],
+          sol: R`هتلاقي التعليقات بتتقسم ٣ أنواع: (١) بتعيد الكود ([[// increment i]] و [[// get the user]]): تتمسح على طول. (٢) بتشرح «إيه» لكود صعب ([[// check if the user can edit]] فوق شرط طويل): تتحول لاسم، [[const canEdit = ...]] أو دالة [[canEditPost(user)]]، والتعليق يتمسح. (٣) بتشرح «ليه»: تفضل، ودا النوع الوحيد اللي الكود مايقدرش يقوله.
+
+تعليق «ليه» الكويس بيجاوب على سؤال اللي جاي بعدك: «أشيل ده؟». بيقول سبب من برا الكود: bug في مكتبة (ومعاه رابط الـ issue)، أو طلب من العميل (ومعاه رقم الـ ticket)، أو قيد خارجي زي rate limit. مثال: [[// ليه: بوابة الدفع بترفض أكتر من رقمين عشريين، فبنقرّب هنا مش في الواجهة (#231)]].
+
+الغلط الشائع إن التعليق يبقى «ليه» مزيف: [[// ليه: عشان نحسب الضريبة]] ده «إيه» متنكر. ولو مش لاقي سبب تكتبه للحتة الغريبة، اعمل [[git blame]] على السطر واقرا الـ commit اللي دخّلها (تاب git). ولو ملقيتش سبب هناك كمان، غالبًا الحتة دي ممكن تتشال: شيلها في commit لوحده والاختبارات تحكم.`
         }
       ]
     },
@@ -339,7 +448,36 @@ console.log(couponDiscount({ type: "percent", percent: 150 }, 500)); // 500`,
             "١٠٪ من ٥٠٠: 50.",
             "كوبون ٨٠٠ على طلب ٥٠٠: الخصم 500 مش 800.",
             "كوبون غلط ١٥٠٪: برضه 500. النسخ القديمة كانت هتطلّع خصم أكبر من الطلب."
-          ]
+          ],
+          sol: R`الـ ٣ اختبارات خضرا، والنسخ القديمة كلها بقت [[formatPrice(...)]]. وأهم خطوة بعد الاستبدال: ابحث تاني عن شكل النسخ القديمة (مثلًا [[toFixed(2)]] أو [[ج.م]]) واتأكد إن مفيش ولا واحدة فاضلة، وإلا هتصلّح bug في مكان وينفضل في التاني.
+
+الفخ اللي هتقع فيه غالبًا في أول اختبار: [[expected 'EGP 1,250.50' to be 'EGP 1,250.50']]، والاتنين شكلهم واحد بالظبط! [[Intl.NumberFormat]] بيحط non-breaking space ([[ ]]) بعد العملة مش مسافة عادية. الحل إنك تكتبها في الـ expected زي الحل، أو تقارن بـ [[toMatch(/1,250\.50/)]].
+
+وحالة الغلط (سالب أو [[NaN]]) مهمة: من غيرها الفاتورة هتطبع [[EGPNaN]] وانت مش واخد بالك. ولو لقيت إن النسختين «شبه بعض» بس بيختلفوا في قاعدة بيزنس (سعر للعميل بالضريبة وسعر للمورد من غير)، متجمّعهمش بـ boolean parameter: دول حاجتين مختلفتين بالصدفة شبه بعض، والتكرار هنا أرخص من abstraction غلط.`,
+          solCode: R`// price.ts
+const egp = new Intl.NumberFormat("en-EG", { style: "currency", currency: "EGP" });
+
+export function formatPrice(cents: number): string {
+  if (!Number.isFinite(cents) || cents < 0) throw new RangeError($__btinvalid price: $__{cents}$__bt);
+  return egp.format(cents / 100);
+}
+
+// price.test.ts
+import { describe, it, expect } from "vitest";
+import { formatPrice } from "./price";
+
+describe("formatPrice", () => {
+  it("formats a normal price", () => {
+    expect(formatPrice(125050)).toBe("EGP\u00a01,250.50");
+  });
+  it("handles zero", () => {
+    expect(formatPrice(0)).toBe("EGP\u00a00.00");
+  });
+  it("rejects negative and NaN", () => {
+    expect(() => formatPrice(-1)).toThrow(RangeError);
+    expect(() => formatPrice(NaN)).toThrow("invalid price");
+  });
+});`
         },
         {
           cmd: "KISS و YAGNI",
@@ -382,7 +520,23 @@ console.log(isWeekendClever(friday), isWeekend(friday), formatPrice(1250.5)); //
             "دالة صغيرة للتطبيق كله. لو يوم ما اتضافت عملة، تبقى parameter ساعتها.",
             "يوم جمعة للتجربة (الشهور في Date بتبدأ من 0، فـ 8 يعني سبتمبر).",
             "بيطبع [[true true]] والسعر متنسّق بالعملة."
-          ]
+          ],
+          sol: R`اللي بيتلاقي كتير: [[interface PriceFormatter]] ليها class واحد بس، أو parameter [[currency]] كل الـ ٢٣ نداء بيبعتوا فيه [[EGP]]، أو [[options]] object محدش بيبعت فيه غير القيم الافتراضية. في الحل التلاتة بقوا دالة واحدة سطر واحد، و [[formatPrice(99.5)]] بترجع [[EGP 99.50]].
+
+بعد الحذف شغّل [[tsc --noEmit]] والاختبارات: لو كله أخضر يبقى الحاجة دي ماكانتش بتعمل حاجة. و [[git diff --stat]] هيوريك كام سطر راح، وعادةً بيبقى أكتر من المتوقع.
+
+متشيلش interface عليها اتنين implementations حقيقيين (in-memory للاختبارات و Prisma للإنتاج مثلًا): دي مستخدمة فعلًا ومش YAGNI. والسؤال اللي تسأله لنفسك (وتقوله في الانترفيو): «لو احتجتها بعدين، إضافتها هتبقى صعبة؟». لو الإجابة refactor ساعة، شيلها دلوقتي. الاستثناء: الحاجات الغالية تتغير بعدين، زي شكل الـ public API أو الـ database schema.`,
+          solCode: R`// قبل: interface ليها implementation واحد، و parameter كل الناس بتبعتله "EGP"
+// interface PriceFormatter { format(amount: number, currency: string): string }
+// class DefaultPriceFormatter implements PriceFormatter { format(a, c) { ... } }
+// const formatter: PriceFormatter = new DefaultPriceFormatter();
+// formatter.format(total, "EGP");  // 23 نداء، كلهم "EGP"
+
+// بعد: دالة واحدة، ولما عملة تانية تيجي فعلًا نضيف الـ parameter وقتها
+const egp = new Intl.NumberFormat("en-EG", { style: "currency", currency: "EGP" });
+export const formatPrice = (amount: number) => egp.format(amount);
+
+console.log(formatPrice(99.5)); // EGP 99.50`
         }
       ]
     },
@@ -446,7 +600,28 @@ console.log(parseTransfer({ from: "a", to: "b", amount: -5 })); // RangeError: a
             "للتجربة بس: حط قيمة في الـ env.",
             "بيطبع [[YOUR_KEY]].",
             "بيقع بـ [[RangeError]] قبل ما أي فلوس تتحرك."
-          ]
+          ],
+          sol: R`لما كل المتغيرات موجودة هتشوف [[listening on 3000]]. ولما تمسح [[JWT_SECRET]] من [[.env]]، التطبيق يقع وهو بيقوم، قبل ما يسمع على أي port، بـ [[Error: Missing env var JWT_SECRET]] و exit code 1. ده المطلوب: الـ deploy يفشل فورًا والرسالة فيها اسم المتغير.
+
+الشرط إن [[env.ts]] يتعمله import في أول الـ server، وإن باقي الكود يقرا [[env.JWT_SECRET]] مش [[process.env.JWT_SECRET]]. ابحث عن [[process.env]] في المشروع: أي مكان فاضل برا [[env.ts]] هو متغير مش متفحوص. ولو بتقرا [[.env]] بـ dotenv لازم [[import "dotenv/config"]] يبقى قبل [[env.ts]]، أو شغّل بـ [[node --env-file=.env]].
+
+الغلط الشائع: تنادي [[requireEnv]] جوه دالة بتشتغل وقت الـ request (جوه [[signToken()]] مثلًا)، فالتطبيق يقوم عادي ويقع في أول login. وكمان [[process.env.PORT]] دايمًا string، فلو محتاج رقم حوّله وافحص إنه مش [[NaN]]. ولو المشروع فيه Zod، [[z.object({...}).parse(process.env)]] بيعمل نفس الفكرة لكل المتغيرات مرة واحدة وبيطلّع كل الناقص في رسالة واحدة.`,
+          solCode: R`// env.ts
+function requireEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error($__btMissing env var $__{name}$__bt);
+  return value;
+}
+
+export const env = {
+  DATABASE_URL: requireEnv("DATABASE_URL"),
+  JWT_SECRET: requireEnv("JWT_SECRET"),
+  PORT: Number(process.env.PORT ?? 3000),
+};
+
+// server.ts
+import { env } from "./env"; // أول import: لو ناقص حاجة، التطبيق يقع هنا قبل ما يسمع على أي port
+console.log($__btlistening on $__{env.PORT}$__bt);`
         },
         {
           cmd: "custom errors",
@@ -498,7 +673,51 @@ console.log(toHttp(new TypeError("x is undefined")).status); // 500`,
             "قفلة.",
             "بيطبع 404 والرسالة.",
             "خطأ مش بتاعنا: 500، وتفاصيله في اللوج بس."
-          ]
+          ],
+          sol: R`بـ curl هتشوف: [[/orders/7]] بـ 200، و [[/orders/99]] بـ 404 و [[Order 99 not found]]، و [[/orders/abc]] بـ 422، و [[/boom]] بـ 500 ورسالة عامة [[Internal error]] (والتفاصيل الحقيقية في console السيرفر بس). والـ route نفسه سطر واحد ومفيهوش ولا [[res.status]].
+
+لو الـ middleware مش بيتنادى و Express بيرد بصفحة HTML فيها stack trace، يبقى واحد من ٣: الـ middleware متسجّل قبل الـ routes مش بعدها، أو ليه ٣ parameters بس (Express بيعرف الـ error middleware من إن ليه ٤، حتى لو [[_next]] مش مستخدم)، أو الخطأ اترمى من callback برا الـ handler (زي [[setTimeout]]) فمحدش مسكه.
+
+في Express 5 الـ async handler اللي بيرمي بيوصل للـ middleware لوحده. في Express 4 لازم [[next(err)]] أو try/catch، وإلا الطلب بيفضل معلّق. ومتنساش [[name]] في كل class: من غيره [[err.name]] بيبقى [[Error]] في الـ logs وفي الرد.`,
+          solCode: R`import express, { type Request, type Response, type NextFunction } from "express";
+
+class AppError extends Error {
+  status = 500;
+}
+class NotFoundError extends AppError {
+  override status = 404;
+  override name = "NotFoundError";
+}
+class ValidationError extends AppError {
+  override status = 422;
+  override name = "ValidationError";
+}
+
+// الـ service بترمي، ومتعرفش حاجة عن HTTP
+const orders = new Map([["7", { id: "7", total: 250 }]]);
+function getOrder(id: string) {
+  if (!/^\d+$/.test(id)) throw new ValidationError($__btInvalid order id: $__{id}$__bt);
+  const order = orders.get(id);
+  if (!order) throw new NotFoundError($__btOrder $__{id} not found$__bt);
+  return order;
+}
+
+const app = express();
+app.get("/orders/:id", (req, res) => {
+  res.json(getOrder(req.params.id)); // مفيش res.status(404) هنا خالص
+});
+app.get("/boom", () => {
+  throw new TypeError("x is undefined");
+});
+
+// آخر حاجة، و ٤ parameters عشان Express يعرف إنه error middleware
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  if (err instanceof AppError) return res.status(err.status).json({ error: err.name, message: err.message });
+  console.error(err);
+  res.status(500).json({ error: "InternalError", message: "Internal error" });
+});
+
+app.listen(3000, () => console.log("http://localhost:3000"));`
         },
         {
           cmd: "catch {}",
@@ -553,7 +772,41 @@ try {
             "[[err]] نوعها [[unknown]]، فبنقول إنها Error.",
             "الرسالة بتاعتنا، وبعدها السبب الأصلي من [[JSON.parse]].",
             "قفلة."
-          ]
+          ],
+          sol: R`كل catch فاضي هيطلع واحد من ٣ قرارات، وده شكلهم في الحل: (١) قيمة بديلة: cache أو localStorage بايظ، تسجّل [[console.warn]] وترجّع default، والناتج [[bad theme cache, using default: ...]] ثم [[light]]. (٢) تعالجه: خطأ متوقع ليه معنى (كوبون مش موجود يعني [[null]])، بس بتفحص نوعه وترمي أي حاجة تانية، فالناتج [[discount: null]] للـ 404 و [[rethrown: ECONNRESET]] لقطع الشبكة. (٣) تشيله: الـ catch كان بيخبّي فشل لازم يوقف العملية، زي فشل الدفع.
+
+المقياس: بعد التمرين مفيش catch في المشروع من غير قرار من التلاتة، وكل واحد فوقه سطر «ليه».
+
+الغلط الشائع: تحوّل [[catch {}]] لـ [[catch (e) { console.log(e) }]] وتعتبره خلص. ده لسه بلع: الكود بيكمّل كأن كل حاجة تمام، بس بقى فيه سطر في log محدش بيقراه. والغلط التاني إن الـ catch في (٢) يلقط كل حاجة من غير ما يفحص، فانقطاع النت يظهر للمستخدم «الكوبون غلط».`,
+          solCode: R`// ١) أسجّل وأكمّل بقيمة بديلة: الـ cache مش ضروري، لو باظ نجيب من المصدر
+function readCachedTheme(raw: string | null): string {
+  try {
+    return JSON.parse(raw ?? "null")?.theme ?? "light";
+  } catch (err) {
+    // ليه: localStorage ممكن يبقى فيه نسخة قديمة بايظة، والـ default كفاية
+    console.warn("bad theme cache, using default:", (err as Error).message);
+    return "light";
+  }
+}
+
+// ٢) أعالجه: خطأ متوقع ليه معنى في البيزنس
+async function findCoupon(code: string, load: (c: string) => Promise<number>): Promise<number | null> {
+  try {
+    return await load(code);
+  } catch (err) {
+    // ليه: الـ API بترجع 404 للكوبون الغلط، ودي مش مشكلة، ده «مفيش خصم»
+    if (err instanceof Error && err.message === "404") return null;
+    throw err; // أي حاجة تانية (شبكة، 500) مش شغلتي هنا
+  }
+}
+
+// ٣) أشيل الـ catch خالص: كان بيبلع خطأ لازم يوقف العملية
+// قبل: try { await chargeCard(order) } catch {}  ← الطلب بيتشحن من غير فلوس
+// بعد: await chargeCard(order);  والـ error middleware هو اللي يرد
+
+console.log(readCachedTheme("{broken"));
+findCoupon("NOPE", async () => { throw new Error("404"); }).then((d) => console.log("discount:", d));
+findCoupon("X", async () => { throw new Error("ECONNRESET"); }).catch((e) => console.log("rethrown:", e.message));`
         }
       ]
     },
@@ -606,7 +859,46 @@ const settings = Object.freeze({ theme: "dark" });
             "[[toSorted]] بترجع array جديدة مترتبة، عكس [[sort]] اللي بترتّب الأصل نفسه.",
             "الأصل لسه فيه book بس.",
             "[[Object.freeze]] بيقفل الـ object وقت التشغيل كمان، مش بس في TypeScript."
-          ]
+          ],
+          sol: R`شغّلت الحل في jsdom، وده اللي حصل بالظبط: البداية [[1 todos]]، وبعد زرار [[add (wrong)]] فضلت [[1 todos]]. الـ push عدّل الـ array، بس [[setTodos(todos)]] بعت نفس المرجع، و React بيقارن بـ [[Object.is]] فشاف إن مفيش تغيير ومرسمش. وبعد زرار [[add]] الصح الشاشة بقت [[3 todos]] مش ٢! لأن العنصر اللي اتعمله push كان موجود فعلًا في الـ array، وظهر مع أول render جه بعده.
+
+ده اللي بيخلي الـ bug ده مرعب في مشروع حقيقي: الداتا بتظهر «متأخرة» مع ضغطة زرار ملهاش علاقة، فتدوّر على المشكلة في المكان الغلط. والحل نسخة جديدة دايمًا: [[setTodos(prev => [...prev, item])]] للإضافة، و [[map]] مع [[{ ...t, done: !t.done }]] للتعديل، و [[filter]] للمسح، و [[toSorted]] بدل [[sort]].
+
+وخد بالك إن الـ spread بينسخ أول مستوى بس: لو عدّلت [[t.address.city]] مباشرة لسه بتعدّل الأصل. ولو عملت [[prev.push]] جوه [[setTodos(prev => ...)]]، الـ StrictMode في التطوير بيشغّل الـ updater مرتين فالعنصر يتضاف مرتين: دي علامة إنك بتعدّل مش بتنسخ.`,
+          solCode: R`import { useState } from "react";
+
+type Todo = { id: number; text: string; done: boolean };
+
+export function Todos() {
+  const [todos, setTodos] = useState<Todo[]>([{ id: 1, text: "buy milk", done: false }]);
+
+  // غلط: بيعدّل نفس الـ array، و React بيقارن بـ Object.is فبيلاقيه هو هو ومش بيرسم
+  function addWrong(text: string) {
+    todos.push({ id: Date.now(), text, done: false });
+    setTodos(todos);
+  }
+
+  // صح: array جديدة، ولو بتعدّل عنصر: object جديد للعنصر ده بس
+  function add(text: string) {
+    setTodos((prev) => [...prev, { id: Date.now(), text, done: false }]);
+  }
+  function toggle(id: number) {
+    setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, done: !t.done } : t)));
+  }
+  function remove(id: number) {
+    setTodos((prev) => prev.filter((t) => t.id !== id));
+  }
+
+  return (
+    <>
+      <p>{todos.length} todos</p>
+      <button id="wrong" onClick={() => addWrong("pen")}>add (wrong)</button>
+      <button id="right" onClick={() => add("pen")}>add</button>
+      <button id="toggle" onClick={() => toggle(1)}>toggle</button>
+      <button id="remove" onClick={() => remove(1)}>remove</button>
+    </>
+  );
+}`
         },
         {
           cmd: "pure functions",
@@ -660,7 +952,43 @@ dailyReport(fakeLoad, console.log); // Revenue today: 10`,
             "بيعة اترجعت.",
             "قفلة.",
             "شغّل التقرير، و [[console.log]] مكان الإيميل. بيطبع [[Revenue today: 10]]."
-          ]
+          ],
+          sol: R`الـ ٣ اختبارات خضرا، ومن غير [[vi.mock]] ولا داتابيز ولا [[await]]: بتبعت array و object وتقارن رقم. قارن ده باختبار الدالة الأصلية: كنت محتاج mock لـ [[prisma.order.findUnique]] يرجّع شكل الـ include بالظبط، ولو حد غيّر الـ query (زوّد [[select]] مثلًا) الاختبار يقع مع إن الحسبة سليمة.
+
+والـ shell اللي فضل ([[invoiceForOrder]]) سطرين: يجيب ويبعت للدالة. ده مش محتاج unit test، بيتغطى باختبار integration واحد على داتابيز حقيقية (درس «هرم الاختبارات»).
+
+علامة إن الفصل ناقص: الدالة الـ pure لسه بتنادي [[new Date()]] أو [[Math.random()]] أو بتعدّل الـ array اللي داخلالها. الوقت يدخل parameter ([[now: Date]]) وكذلك الـ random. والغلط التاني إنك تبعت الـ order كله زي ما Prisma رجّعه: ابعت اللي الدالة محتاجاه بس ([[lines]] و [[customer]])، فالأنواع تبقى صغيرة والاختبار يبني الداتا في سطر.`,
+          solCode: R`// invoice.ts
+export type Line = { price: number; qty: number };
+export type Customer = { isVip: boolean };
+
+// قبل: async function invoiceTotal(orderId) { const order = await prisma.order.findUnique(...); ...حسبة...; }
+// بعد: الحسبة pure، والـ I/O برا
+export function invoiceTotal(lines: readonly Line[], customer: Customer): number {
+  const subtotal = lines.reduce((sum, l) => sum + l.price * l.qty, 0);
+  const discount = customer.isVip && subtotal >= 1000 ? subtotal * 0.1 : 0;
+  return subtotal - discount;
+}
+
+// الـ shell: سطرين، ومفيهوش قرار
+// export async function invoiceForOrder(id: string) {
+//   const order = await prisma.order.findUniqueOrThrow({ where: { id }, include: { lines: true, customer: true } });
+//   return invoiceTotal(order.lines, order.customer);
+// }
+
+// invoice.test.ts
+import { it, expect } from "vitest";
+import { invoiceTotal } from "./invoice";
+
+it("no discount for normal customers", () => {
+  expect(invoiceTotal([{ price: 600, qty: 2 }], { isVip: false })).toBe(1200);
+});
+it("10% for VIP from 1000", () => {
+  expect(invoiceTotal([{ price: 500, qty: 2 }], { isVip: true })).toBe(900);
+});
+it("no VIP discount under 1000", () => {
+  expect(invoiceTotal([{ price: 999, qty: 1 }], { isVip: true })).toBe(999);
+});`
         }
       ]
     },
@@ -720,7 +1048,27 @@ dead code: دوال و exports محدش بيناديها: امسحها (Git فا
             "قفلة.",
             "النداء بالأسماء: الترتيب مبقاش يفرق، ومستحيل تبدّل الاسم بالإيميل.",
             "بيطبع [[Ali admin]]."
-          ]
+          ],
+          sol: R`بعد ما تغيّر التوقيع لـ object، شغّل [[tsc --noEmit]]: TypeScript هيطلّع خطأ في كل نداء قديم لسه بيبعت parameters ورا بعض، ودي بالظبط قايمة الأماكن اللي محتاجة تتغير. خلّصها لحد ما تبقى صفر. ولو فيه boolean زي [[isHtml]] بيقسم الدالة نصين، الحل دالتين ([[sendHtml]] و [[sendText]]) زي الحل. الناتج [[text/html undefined]] ثم [[support@example.com]]: الخانات الاختيارية ([[cc]] و [[replyTo]]) بقت بالاسم، ومفيش [[undefined, undefined]].
+
+الغلط الشائع إنك تعمل object parameter بـ type [[any]] أو [[Record<string, unknown>]]: كده خسرت الـ checklist، ونداء فيه [[{ emial: ... }]] بغلطة إملائية هيعدّي. استخدم type مسمّى زي [[Email]]، و TypeScript هيطلّع خطأ على الخانة الغلط.
+
+وفي الانترفيو: «ليه object parameter؟» الإجابة: النداء بيتقري من غير ما تفتح الدالة، والترتيب مبقاش مهم فمينفعش تبدّل الاسم والإيميل، وتقدر تضيف خانة اختيارية من غير ما تكسر ولا نداء قديم.`,
+          solCode: R`// قبل: sendEmail("you@example.com", "Welcome", "<h1>Hi</h1>", undefined, undefined, true);
+// آخر true دي «html»؟ ولا «urgent»؟ والـ undefined دي إيه؟
+
+type Email = { to: string; subject: string; body: string; cc?: string[]; replyTo?: string };
+
+function sendText(email: Email) {
+  return { ...email, contentType: "text/plain" };
+}
+function sendHtml(email: Email) {
+  return { ...email, contentType: "text/html" };
+}
+
+const sent = sendHtml({ to: "you@example.com", subject: "Welcome", body: "<h1>Hi</h1>" });
+console.log(sent.contentType, sent.cc); // text/html undefined
+console.log(sendText({ to: "you@example.com", subject: "Hi", body: "x", replyTo: "support@example.com" }).replyTo);`
         },
         {
           cmd: "god object",
@@ -772,7 +1120,40 @@ export function useCoupon(validate: (code: string) => Promise<number | null>) {
             "قفلة apply.",
             "الـ component ياخد الحالة والفعل بس، ومش شايف التفاصيل.",
             "قفلة."
-          ]
+          ],
+          sol: R`الـ component الكبير هتلاقي فيه عادةً ٣ أو ٤ مجموعات state بتتغير مع بعض: الكوبون (الكود، والتحميل، والخطأ، والخصم)، والشحن، والدفع. كل مجموعة تبقى custom hook زي [[useCoupon]] في الحل، والـ component يبقى [[const coupon = useCoupon(api.validateCoupon)]] ويعرض بس. جرّبت الـ hook لوحده: [[save50]] بمسافات بترجع [[valid 50]]، و [[nope]] بترجع [[invalid 0]].
+
+التقسيم صح لو الـ hook مش محتاج state من الأب غير اللي بيتبعتله، والـ component مابقاش فيه ولا [[useState]] ليه علاقة بالكوبون. ولو الـ hook محتاج [[setShipping]] من الأب عشان يشتغل، يبقى المجموعتين مش مستقلين فعلًا: يا تدمجهم، يا الـ hook ياخد callback.
+
+الغلط الشائع: hook واحد [[useCheckout]] فيه كل الـ state. ده نقل الـ god object لملف تاني من غير ما يقسمه. ولو الـ hook بيرجّع ١٥ حاجة، يبقى لسه شايل أكتر من مسؤولية.`,
+          solCode: R`import { useState } from "react";
+
+type CouponState = { status: "idle" | "loading" | "valid" | "invalid"; discount: number };
+
+// hooks/useCoupon.ts: كل حاجة الكوبون في مكان واحد
+export function useCoupon(validate: (code: string) => Promise<number | null>) {
+  const [code, setCode] = useState("");
+  const [state, setState] = useState<CouponState>({ status: "idle", discount: 0 });
+  async function apply() {
+    setState({ status: "loading", discount: 0 });
+    const discount = await validate(code.trim().toUpperCase());
+    setState(discount === null ? { status: "invalid", discount: 0 } : { status: "valid", discount });
+  }
+  return { code, setCode, ...state, apply };
+}
+
+// Checkout.tsx: بيجمّع بس، ومبقاش فيه ولا useState للكوبون
+export function Checkout({ subtotal, validateCoupon }: { subtotal: number; validateCoupon: (c: string) => Promise<number | null> }) {
+  const coupon = useCoupon(validateCoupon);
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); coupon.apply(); }}>
+      <input value={coupon.code} onChange={(e) => coupon.setCode(e.target.value)} />
+      <button disabled={coupon.status === "loading"}>Apply</button>
+      {coupon.status === "invalid" && <p role="alert">Invalid coupon</p>}
+      <output>Total: {subtotal - coupon.discount}</output>
+    </form>
+  );
+}`
         }
       ]
     },
