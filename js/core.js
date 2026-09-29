@@ -10,7 +10,8 @@ const LABDEF = "اعمل فولدر اسمه lab وجرب كل حاجة جواه
 const AR = n => String(n);
 
 /* a dollar-brace can't live inside String.raw templates, so the content writes $__{ and it is restored here */
-function fixDollar(o){ for (const k in o){ if (typeof o[k]==='string') o[k]=o[k].split('$__{').join('$'+'{'); else if (o[k] && typeof o[k]==='object') fixDollar(o[k]); } return o; }
+/* a backtick can't live there either (JS template literals in code examples), so the content writes $__bt */
+function fixDollar(o){ for (const k in o){ if (typeof o[k]==='string') o[k]=o[k].split('$__{').join('$'+'{').split('$__bt').join('\x60'); else if (o[k] && typeof o[k]==='object') fixDollar(o[k]); } return o; }
 
 function TAB(key, def){
   fixDollar(def);
