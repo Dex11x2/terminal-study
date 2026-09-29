@@ -76,7 +76,7 @@ npx tsx watch src/index.ts
 node src/index.ts
 npx tsc --noEmit
 npx tsc`,
-          try: R`اعمل فولدر، وسطّب زي أول سطر، واكتب [[src/index.ts]] فيه [[const n: number = "5"; console.log(n);]]. شغّله بـ [[npx tsx src/index.ts]]: هيشتغل ويطبع 5 عادي. وبعدين [[npx tsc --noEmit]]: هيمسك الخطأ.`,
+          try: R`اعمل فولدر، وسطّب واعمل tsconfig زي أول سطرين ([[npm i -D ...]] و [[npx tsc --init]])، واكتب [[src/index.ts]] فيه [[const n: number = "5"; console.log(n);]]. شغّله بـ [[npx tsx src/index.ts]]: هيشتغل ويطبع 5 عادي. وبعدين [[npx tsc --noEmit]]: هيمسك الخطأ.`,
           deep: {
             why: "محتاج حاجتين مختلفتين: تشغّل الكود بسرعة وانت بتجرّب، وتتأكد إن الأنواع سليمة قبل ما ترفع. أداة واحدة بتعمل الاتنين كل مرة هتبقى بطيئة، عشان كده الشغل اتقسم.",
             how: R`[[tsc]] بيقرا [[tsconfig.json]]، ويفحص كل الملفات اللي في [[include]]، ويطلّع JS. من TypeScript 7 (يوليو ٢٠٢٦) الـ compiler نفسه اتكتب من جديد بـ Go، فبقى أسرع حوالي ١٠ مرات، والأمر زي ما هو [[tsc]]. بعض الأدوات اللي بتستخدم TS من جوه (زي typescript-eslint) لسه محتاجة الواجهة البرمجية بتاعة TS 6، فممكن تلاقي مشاريع لسه على 6 مؤقتًا.
@@ -96,7 +96,7 @@ npx tsc`,
             "نفسه، وبيعيد التشغيل مع كل حفظ.",
             "Node 24 بيشغّل .ts مباشرة لو الكود أنواع بس (مفيش enum)، ومن غير فحص برضه.",
             "افحص أنواع المشروع كله من غير ما تطلّع ملفات.",
-            R`افحص وطلّع JS في [[outDir]] (غالبًا dist)، عشان تشغّله في الإنتاج بـ [[node dist/index.js]].`
+            R`افحص وطلّع JS. [[tsc --init]] بيسيب [[outDir]] متعلّق عليه، فشيل التعليق عن [["outDir": "./dist"]] (و [[rootDir]]) الأول، وبعدها الناتج يطلع في dist وتشغّله في الإنتاج بـ [[node dist/index.js]]. من غيره الـ .js بيتحط جنب الـ .ts.`
           ]
         }
       ]
@@ -965,7 +965,7 @@ pluck(users, "email"); // خطأ: "email" مش من مفاتيح العنصر`,
 
 [[keyof T]] بيطلّع union أسماء الخصايص ([["id" | "name"]])، و [[K extends keyof T]] بيخلي K واحدة منهم. و [[T[K]]] (indexed access) هو نوع الخاصية دي. الاتنين مع بعض بيدّوك دوال زي [[pluck]] و [[sortBy]] و [[groupBy]] آمنة ١٠٠٪.
 
-و [[as const]] جوه [[byId]] بيخلي [[[it.id, it]]] tuple مش array عادي، عشان [[Object.fromEntries]] يفهم إن كل زوج مفتاح وقيمة ويطلّع النوع الصح بدل any.`,
+و [[as const]] جوه [[byId]] بيخلي [[[it.id, it]]] tuple صريح. هنا مش إجباري: لأن الـ array مكتوبة جوه النداء نفسه، TS بياخد شكلها من باراميتر [[Object.fromEntries]] ويفهمها tuple لوحده ويطلّع [[{ [k: string]: T }]]. بس لو حطيت الأزواج في متغير لوحده الأول ([[const pairs = items.map((it) => [it.id, it])]])، كل زوج نوعه هيبقى [[(string | T)[]]] والناتج any، وساعتها [[as const]] هو اللي بيصلّحها.`,
             when: "أي generic محتاج يستخدم حاجة من T جوه الدالة: [[id]] أو [[length]] أو [[createdAt]]. و [[keyof]] لأي دالة بتاخد اسم خاصية كـ string.",
             mistakes: R`تكتب [[T extends any]] أو [[T extends object]] وتفتكر ده شرط مفيد. وتكتب الباراميتر [[key: string]] بدل [[K extends keyof T]]، فأي غلطة إملائية في اسم الخاصية تعدّي وترجع undefined.`
           },
@@ -1263,7 +1263,7 @@ type FormSetters = Setters<SignupForm>;
         {
           cmd: "conditional types",
           title: "نوع بيتغير حسب شرط، وأنواع جاهزة مبنية على الفكرة دي",
-          desc: R`[[T extends string ? "yes" : "no"]] زي ternary بس للأنواع. ولما T تبقى union، الشرط بيتطبق على كل عضو لوحده (distributive)، وده اللي عامل [[Exclude]] و [[Extract]] و [[NonNullable]].
+          desc: R`[[T extends string ? "yes" : "no"]] زي ternary بس للأنواع. ولما T تبقى union، الشرط بيتطبق على كل عضو لوحده (distributive)، وده اللي عامل [[Exclude]] و [[Extract]]. (و [[NonNullable]] بيوصل لنفس النتيجة، بس حاليًا معمول [[T & {}]].)
 
 و [[infer]] جوه الشرط بيطلّع نوع من جوه نوع تاني، زي نوع العنصر من array أو نوع الداتا من Promise.`,
           example: R`type IsString<T> = T extends string ? "yes" : "no";
@@ -1424,7 +1424,7 @@ console.log(forced.toFixed(2)); // TypeError برضه`,
           flag: "script",
           deep: {
             why: "TS مش دايمًا عارف كل حاجة: [[getElementById]] ممكن ترجع أي عنصر، و [[JSON.parse]] بترجع any. و [[as]] موجود عشان تقوله معلومة هو ناقصها. المشكلة إنه بيتستخدم كتير بمعنى «اسكت» بدل «أنا متأكد».",
-            how: R`[[as T]] مبيطلّعش أي كود: بيتمسح، والقيمة زي ما هي. و TS بيسمح بيه طالما النوعين «ممكن يتقابلوا» (واحد فيهم assignable للتاني)، فـ [[HTMLElement as HTMLInputElement]] مسموح لأن input نوع من HTMLElement، و [[string as number]] ممنوع.
+            how: R`[[as T]] مبيطلّعش أي كود: بيتمسح، والقيمة زي ما هي. و TS بيسمح بيه طالما النوعين «ممكن يتقابلوا» (comparable: شبه assignable في أي اتجاه بس أرخى، مثلًا لو خاصية نوعها union يكفي إن عضو واحد منه يطابق، عشان كده [[{ primary: "#0af" } as Theme]] في درس satisfies عدّى من غير خطأ)، فـ [[HTMLElement as HTMLInputElement]] مسموح لأن input نوع من HTMLElement، و [[string as number]] ممنوع.
 
 [[as unknown as T]] بيعدّي الحماية دي: أي حاجة تتحول لـ unknown، و unknown تتحول لأي حاجة. وفي مشروع حقيقي كان فيه [[(data ?? []) as unknown as DbRow[]]] على نتيجة query: لو شكل الجدول اتغير، TS مش هيقول، والصفحة تقع.
 
@@ -1746,7 +1746,7 @@ function validate(input: unknown) {
 }
 console.log(validate({ email: "x", password: "123" }));
 // { ok: false, errors: { email: ["إيميل مش صحيح"], password: ["٨ حروف على الأقل"] } }`,
-          try: R`بدّل [[z.flattenError]] بـ [[z.treeifyError]] وبعدين بـ [[z.prettifyError]] واطبع الناتج في كل مرة. الأولى للـ forms البسيطة، والتانية للـ objects المتداخلة، والتالتة للّوجات.`,
+          try: R`بدّل [[z.flattenError(result.error).fieldErrors]] بـ [[z.treeifyError(result.error)]] وبعدين بـ [[z.prettifyError(result.error)]] (من غير [[.fieldErrors]]) واطبع الناتج في كل مرة. الأولى للـ forms البسيطة، والتانية للـ objects المتداخلة، والتالتة للّوجات.`,
           flag: "script",
           deep: {
             why: "[[parse]] بترمي، وده مناسب لما الداتا الغلط «مستحيلة» (زي env). بس في request من مستخدم، الداتا الغلط حاجة عادية ومتوقعة، والـ try/catch حوالين كل validation بيبقى تقيل. [[safeParse]] بيخلي الفشل قيمة عادية تتعامل معاها بـ if.",
@@ -1912,9 +1912,9 @@ export function ProfileForm() {
 
 وللحالات المترابطة (loading و data و error)، discriminated union في state واحدة أنضف من ٣ states منفصلين: [[useState<FetchState>({ status: "idle" })]]، و react.dev نفسه بيقترح الشكل ده.
 
-الـ events في React synthetic: [[React.ChangeEvent<T>]] فيها [[currentTarget]] نوعه T بالظبط (HTMLInputElement)، أما [[target]] نوعه أعم لأن الـ event ممكن يكون جاي من عنصر جوه. عشان كده [[e.currentTarget.value]] أأمن.
+الـ events في React synthetic: [[currentTarget]] نوعه T بالظبط (العنصر اللي عليه الـ handler). و [[target]] في أغلب الـ events نوعه [[EventTarget]] بس، لأن الـ event ممكن يكون جاي من عنصر جوه. و [[ChangeEvent]] استثناء في @types/react: [[target]] فيه متعرّف [[EventTarget & T]] زي currentTarget بالظبط. عشان كده [[e.currentTarget.value]] هي العادة الأأمن في كل الـ events.
 
-وفي @types/react 19.2 وأحدث، [[FormEvent]] بقى deprecated (الاسم كان مضلل)، والبديل [[SubmitEvent]] للـ submit، و [[ChangeEvent]] أو [[InputEvent]] للتغيير. الكود القديم لسه شغال، بس المحرر هيشطب عليه.
+وفي @types/react 19.2.10 وأحدث، [[FormEvent]] بقى deprecated (الاسم كان مضلل)، والبديل [[SubmitEvent]] للـ submit، و [[ChangeEvent]] أو [[InputEvent]] للتغيير. الكود القديم لسه شغال، بس المحرر هيشطب عليه. ولو نسختك أقدم من 19.2.10، [[SubmitEvent]] مش هتلاقيه، فحدّث @types/react.
 
 وأسهل طريقة تعرف نوع أي event: اكتب الـ handler inline ([[onChange={(e) => ...}]]) وحط الماوس على [[e]].`,
             when: "[[useState<T>]] لما القيمة الأولية null أو [] أو union. وأنواع الـ events لما الـ handler دالة منفصلة. والتفاصيل الكاملة للـ hooks في تاب «React».",
@@ -1929,7 +1929,7 @@ export function ProfileForm() {
             R`[[""]] كفاية: TS استنتج string.`,
             "من غير النوع، TS هيستنتج string وأي كلمة هتعدّي.",
             R`نوع الـ event للـ input: [[currentTarget.value]] نوعها string.`,
-            R`submit الفورم. في @types/react 19.2+ اسمه [[SubmitEvent]]، و [[FormEvent]] القديم deprecated.`,
+            R`submit الفورم. في @types/react 19.2.10+ اسمه [[SubmitEvent]]، و [[FormEvent]] القديم deprecated.`,
             "امنع الـ reload.",
             "لازم قيمة من Status.",
             "لازم شكل User كامل.",
@@ -2113,7 +2113,7 @@ console.log(repo.full_name, repo.stargazers_count);`,
           flag: "script",
           deep: {
             why: R`في مشروع حقيقي كان فيه helper بالشكل ده: [[fetchTeam<T = any>(path): Promise<T | null>]] بيرجّع [[(await r.json()) as T]]. شكله typed، بس T بيختارها اللي بينادي، ومفيش أي فحص. لو السيرفر التاني رجّع شكل مختلف، TS هيفضل مقتنع إن كل حاجة تمام، والخطأ يطلع في الـ UI كـ undefined.`,
-            how: R`TS مبيعرفش حاجة عن الشبكة: [[Response.json()]] متعرّفة إنها [[Promise<any>]] في أنواع المتصفح و Node. وأي نوع تحطه بعدها ([[as]] أو annotation أو generic) كلام بس.
+            how: R`TS مبيعرفش حاجة عن الشبكة: [[Response.json()]] متعرّفة إنها [[Promise<any>]] في أنواع المتصفح (lib dom، ودي بتتحمل افتراضي لو مكتبتش [[lib]]، حتى في مشروع Node)، وفي أنواع Node لوحدها (من غير dom) بترجع [[Promise<unknown>]]. وفي الحالتين أي نوع تحطه بـ [[as]] أو generic كلام بس ومفيش فحص وقت التشغيل، ومع [[unknown]] حتى الـ annotation مش هتعدّي من غير [[as]].
 
 الحدود (boundaries) هي الأماكن اللي الداتا بتدخل فيها كودك من برّه: رد API، و request body، و localStorage، و env، ورسايل WebSocket، و JSON من AI. القاعدة: جوه كودك ثق في الأنواع، وعند الحدود افحص. و Zod بيعمل الفحص ويطلّع النوع في خطوة.
 
@@ -2452,7 +2452,7 @@ const c = {} as Cfg;`,
             "نوع عام.",
             R`[[a.port]] نوعها [[string | number]].`,
             R`[[b.port]] نوعها number.`,
-            "ولا فحص: object فاضي عدّى."
+            R`[[as]] مبيفحصش الشكل. هنا [[{}]] بالصدفة Cfg سليم (Record ممكن يبقى فاضي)، بس لو Cfg فيه خصايص إجبارية، [[as]] كانت هتعدّي الـ object الناقص، والـ annotation كانت هترفضه.`
           ]
         },
         {

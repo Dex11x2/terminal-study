@@ -274,7 +274,7 @@ flow analysis: لما تكتب [[if (name != null)]] الـ compiler بيعمل 
             "ali نوعه String عادي.",
             "[[late]]: المتغير هيتحط بعدين، والفحص بيتأجل لوقت التشغيل.",
             "أول وآخر مرة يتحط فيها (final).",
-            "لو قريته قبل ما يتحط كان هيضرب [[LateInitializationError]].",
+            "لو قريته قبل ما يتحط هنا الـ compiler هيمسكها (متغير محلي definitely unassigned)، إنما في field أو حالة مش مضمونة هيضرب [[LateInitializationError]] وقت التشغيل.",
             "قفلة."
           ]
         },
@@ -313,7 +313,7 @@ void main() {
 
 [[=>]] مش زي JS بالظبط: بعده expression واحدة بس، مش block. [[() => print('x')]] تمام، إنما [[() => { ... }]] معناها حاجة تانية خالص (دالة بترجّع Set أو Map literal)، ودا فخ.`,
             when: "named لأي دالة فيها أكتر من ٢ parameters أو فيها bool. و positional للحاجات الواضحة من غير اسم ([[add(a, b)]]).",
-            mistakes: R`تكتب [[() => { setState(...) }]] زي React فتتفاجئ بسلوك غريب أو warning: في Dart يا [[() => setState(...)]] يا [[() { setState(...); }]]. وتنسى إن named من غير required ومن غير default لازم تبقى [[?]]، فالـ compiler يزعّق. وتحط [[required]] على parameter ليه default، ملوش لازمة.`
+            mistakes: R`تكتب [[() => { setState(...) }]] زي React فتتفاجئ بسلوك غريب أو warning: في Dart يا [[() => setState(...)]] يا [[() { setState(...); }]]. وتنسى إن named من غير required ومن غير default لازم تبقى [[?]]، فالـ compiler يزعّق. وتحط [[required]] على parameter ليه default: دا compile error أصلًا (Required named parameters can't have a default value)، يا required يا default، مش الاتنين.`
           },
           lines: [
             "دالة عادية بـ parameters بالترتيب، و [[=>]] يعني «رجّع القيمة دي».",
@@ -714,11 +714,11 @@ void main() {
 
 Flutter مبيستخدمش أزرار أو نصوص النظام (مش زي React Native اللي بيحوّل لـ views native). هو بيرسم كل بكسل بنفسه بمحرك الرسم Impeller. عشان كده الشكل واحد بالظبط على Android و iOS، وعشان كده الـ layout كله widgets: [[Center]] و [[Padding]] و [[Row]]، مش properties على العنصر زي CSS.
 
-الـ widgets نوعين: فيه اللي بيرسم أو بيرتّب فعلًا (Text و Padding و Row، ليهم RenderObject)، وفيه اللي بيجمّع widgets تانية (Scaffold و MaterialApp وأي حاجة هتكتبها). والتطبيق كله بيبقى شجرة كبيرة، و Flutter بيحوّلها لشجرة elements ثم render objects (سؤال انترفيو في آخر التاب).
+الـ widgets نوعين: فيه اللي بيرسم أو بيرتّب فعلًا (RichText و Padding و Row، ليهم RenderObject)، وفيه اللي بيجمّع widgets تانية (Text و Scaffold و MaterialApp وأي حاجة هتكتبها؛ Text مثلًا جواه RichText). والتطبيق كله بيبقى شجرة كبيرة، و Flutter بيحوّلها لشجرة elements ثم render objects (سؤال انترفيو في آخر التاب).
 
 [[MaterialApp]] بيحط فوق الشجرة حاجات كتير: Theme و Navigator و Localizations و MediaQuery. أي widget تحته بيوصلها بـ [[Theme.of(context)]] وأخواتها. وفيه [[CupertinoApp]] لشكل iOS، بس معظم التطبيقات Material وبتظبط الشكل بالثيم.
 
-وخلي بالك من الـ trailing commas: الفاصلة بعد آخر argument بتخلي [[dart format]] يكسّر الشجرة سطور بالشكل ده، فتقراها بسهولة.`,
+وخلي بالك من الـ trailing commas: من Dart 3.7 الـ [[dart format]] هو اللي بيقرر يكسّر الشجرة سطور حسب طول السطر، وبيضيف أو يشيل الفاصلة الأخيرة بنفسه، فمتتعبش نفسك فيها. ولو عايز السلوك القديم (الفاصلة تجبره يكسّر)، حط [[trailing_commas: preserve]] تحت [[formatter:]] في [[analysis_options.yaml]].`,
             when: "كل تطبيق. MaterialApp مرة واحدة فوق خالص، و Scaffold لكل شاشة.",
             mistakes: R`تحط [[MaterialApp]] جوه كل شاشة: كده كل شاشة ليها Navigator وثيم منفصل، والتنقل والثيم يبوظوا. واحد بس فوق. وتنسى الـ Scaffold فالنص يطلع أحمر وتحته خطين أصفر: دا معناه مفيش Material فوقه يدّيله style.`
           },

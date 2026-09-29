@@ -598,7 +598,7 @@ Tailwind v4 كله rem: [[p-4]] = [[calc(var(--spacing) * 4)]] و [[--spacing]] 
 .container { width: min(100% - 2rem, 1200px); margin-inline: auto; }
 .sidebar { width: max(250px, 20%); }
 .cols { gap: calc(1rem + 1vw); }`,
-          try: R`حط الـ h1 ده في صفحة، وافتح DevTools وضع الموبايل واسحب العرض من 320 لـ 1600: الخط بيكبر بنعومة ويقف عند الحد. وبعدين غيّر [[1.2rem + 3vw]] لـ [[5vw]] بس واعمل zoom بـ Ctrl و +: الخط مش هيكبر.`,
+          try: R`حط الـ h1 ده في صفحة، وافتح DevTools وضع الموبايل واسحب العرض من 320 لـ 1600: الخط بيكبر بنعومة ويقف عند الحد. وبعدين غيّر [[1.2rem + 3vw]] لـ [[5vw]] بس، وخلّي عرض الشاشة حوالي 800px (عشان الخط ميبقاش واقف عند الـ MIN أو الـ MAX)، واعمل zoom بـ Ctrl و +: الخط مش هيكبر لحد ما يوصل للحد الأدنى، عكس [[1.2rem + 3vw]] اللي بيكبر مع كل zoom.`,
           flag: "script",
           deep: {
             why: "زمان كنت بتكتب خط العنوان 4 مرات في 4 media queries، والخط بيتنط عند كل breakpoint. clamp بتعمل ده في سطر واحد وبنعومة، ودا اسمه fluid typography.",
@@ -760,7 +760,7 @@ body { background: var(--bg); color: var(--fg); }
 
 والصورة اللي بقت بيضاوي: الافتراضي shrink = 1، فلما المكان يضيق بتصغر في العرض بس. الحل [[flex: none]] أو [[shrink-0]] في Tailwind.`,
             when: R`[[flex-1]] للجزء اللي ياخد الباقي (محتوى جنب sidebar، أو input جنب زرار). [[shrink-0]] للأيقونات والصور. [[min-w-0]] على أي ابن flex فيه كلام ممكن يطول.`,
-            mistakes: R`تنسى [[min-w-0]] فالـ [[truncate]] مش شغال. أيقونة من غير [[shrink-0]] بتتزنق جنب كلام طويل. و [[width: 50%]] على ابنين ومعاهم gap فيطلعوا أعرض من الأب: استخدم [[flex: 1]].`
+            mistakes: R`تنسى [[min-w-0]] فالـ [[truncate]] مش شغال. أيقونة من غير [[shrink-0]] بتتزنق جنب كلام طويل. و [[width: 50%]] على ابنين ومعاهم gap في flex عليه [[flex-wrap: wrap]]: مجموعهم (100% + الـ gap) أعرض من السطر، فالتاني بينزل سطر لوحده (من غير wrap الـ shrink الافتراضي بيصغّرهم شوية فبيدخلوا عادي): استخدم [[flex: 1]].`
           },
           lines: [
             "صف: صورة، وكلام، وزرار.",
@@ -984,7 +984,7 @@ Tailwind مفيهوش utility للـ areas، فبتكتبها arbitrary property
           example: R`.site-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 10;
   background: rgb(255 255 255 / 0.8);
   backdrop-filter: blur(12px);
 }
@@ -1148,7 +1148,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
           flag: "script",
           deep: {
             why: R`في CSS العادي بتقعد تخترع أسماء ([[.card-header-title-wrapper]])، وتتنقّل بين ملفين، والملف بيكبر للأبد لأن محدش بيجرؤ يمسح قاعدة مش عارف مين بيستخدمها. Tailwind بيحط التنسيق جنب العنصر، والـ CSS النهائي فيه اللي مستخدم بس، فبيفضل صغير مهما المشروع كبر.`,
-            how: R`محرّك v4 مكتوب بـ Rust عشان يبقى سريع. وقت الـ dev والـ build بيعمل كده:
+            how: R`محرّك v4 (Oxide) أسرع بكتير: الأجزاء التقيلة زي اللف على الملفات مكتوبة بـ Rust، والباقي TypeScript. وقت الـ dev والـ build بيعمل كده:
 
 1) بيلف على ملفات المشروع لوحده (automatic source detection)، وبيتجاهل اللي في [[.gitignore]] (زي node_modules) والملفات الـ binary. ولو فيه فولدر برا المشروع (باكدج UI في monorepo) بتضيفه بـ [[@source "../packages/ui";]].
 
@@ -1160,7 +1160,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
 
 في Vite الـ plugin بيشتغل جوه الـ bundler. وفي Next الـ plugin بتاع PostCSS، و [[@import "tailwindcss"]] في [[app/globals.css]] المستورد في الـ root layout.`,
             when: R`أي مشروع React أو Next جديد. ولو المشروع v3 فيه [[tailwind.config.js]] و [[@tailwind base]]، فيه أداة ترقية رسمية: [[npx @tailwindcss/upgrade]].`,
-            mistakes: R`تبني اسم الكلاس بـ string: [[bg-$__{color}-500]]، و Tailwind مش هيشوفه ومش هيطلّعه. اكتب الأسماء كاملة في object: [[{ red: "bg-red-500", green: "bg-green-500" }]]. وتستخدم أسماء v3 في v4: [[shadow-sm]] بقت أصغر (القديمة اسمها دلوقتي [[shadow-xs]])، و [[outline-none]] بقت [[outline-hidden]]، و [[ring]] بقى 1px، ولون الـ border الافتراضي بقى [[currentColor]] مش رمادي. وتكتب [[@tailwind base;]] بتاعة v3 في مشروع v4.`
+            mistakes: R`تبني اسم الكلاس بـ string: [[bg-$__{color}-500]]، و Tailwind مش هيشوفه ومش هيطلّعه. اكتب الأسماء كاملة في object: [[{ red: "bg-red-500", green: "bg-green-500" }]]. وتستخدم أسماء v3 في v4: [[shadow-sm]] بتاعة v3 اسمها دلوقتي [[shadow-xs]]، و [[shadow-sm]] في v4 بقت أكبر (هي [[shadow]] القديمة)، و [[outline-none]] بقت [[outline-hidden]]، و [[ring]] بقى 1px، ولون الـ border الافتراضي بقى [[currentColor]] مش رمادي. وتكتب [[@tailwind base;]] بتاعة v3 في مشروع v4.`
           },
           lines: [
             "سطّب Tailwind والـ plugin بتاع Vite (في مشروع الـ lab).",
@@ -1200,7 +1200,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
 
 الفرق بين [[@theme]] و [[:root]]: الاتنين متغيرات، بس اللي في [[@theme]] بس هو اللي بيعمل كلاسات. متغير من غير كلاسات حطه في [[:root]].
 
-ليه [[inline]]؟ من غيرها، [[bg-bg]] بتطلع [[background: var(--color-bg)]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]]. المتغير اللي قيمته [[var()]] بيتحسب في المكان اللي اتعرّف فيه، فـ [[--color-bg]] بيتحسب مرة واحدة على [[:root]]. لو غيّرت [[--bg]] على عنصر جوه الصفحة ([[<section class="dark">]])، الكلاس مش هيحس. مع [[inline]] الكلاس بيطلع [[background: var(--bg)]] مباشرة، فبيقرا القيمة في مكان العنصر نفسه.
+ليه [[inline]]؟ من غيرها، [[bg-bg]] بتطلع [[background-color: var(--color-bg)]]، و [[--color-bg]] متعرّف على [[:root]] بقيمة [[var(--bg)]]. المتغير اللي قيمته [[var()]] بيتحسب في المكان اللي اتعرّف فيه، فـ [[--color-bg]] بيتحسب مرة واحدة على [[:root]]. لو غيّرت [[--bg]] على عنصر جوه الصفحة ([[<section class="dark">]])، الكلاس مش هيحس. مع [[inline]] الكلاس بيطلع [[background-color: var(--bg)]] مباشرة، فبيقرا القيمة في مكان العنصر نفسه.
 
 ولو عايز تشيل ألوان Tailwind الافتراضية كلها وتفضل ألوانك بس: [[--color-*: initial;]] في أول الـ [[@theme]].`,
             when: R`أول ما تبدأ مشروع: ألوان البراند، والخط، والتدوير. وكل لون بيتغير مع الثيم يبقى متغير عادي في [[:root]] وتوكن في [[@theme inline]].`,
@@ -1322,7 +1322,7 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
 <label className="grid gap-1">
   <span>الإيميل</span>
   <input type="email" required className="peer rounded border px-3 py-2" />
-  <p className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</p>
+  <span className="invisible text-sm text-red-600 peer-user-invalid:visible">إيميل مش صحيح</span>
 </label>`,
           try: R`اعمل الكارت ده وقف عليه بالماوس. وبعدين اكتب إيميل غلط واخرج من الحقل: الرسالة هتظهر. جرّب [[peer-invalid:]] بدل [[peer-user-invalid:]] وشوف الفرق: الرسالة هتظهر من أول ما الصفحة تفتح.`,
           flag: "script",
@@ -1565,7 +1565,7 @@ const { resolvedTheme, setTheme } = useTheme();
           flag: "script",
           deep: {
             why: "المستخدمين متوقعين dark mode، وأي موقع بيفتح أبيض ثانية وبعدين يغمق بيبان مكسور. المشكلة إن السيرفر مش عارف اختيار المستخدم (محفوظ في المتصفح)، فلازم حاجة تحط الكلاس قبل ما الصفحة تترسم.",
-            how: R`[[@custom-variant dark (&:where(.dark, .dark *))]] بيغيّر معنى [[dark:bg-x]] لـ «لو العنصر نفسه أو جد ليه عليه [[.dark]]». و [[:where]] عشان الـ specificity تفضل صفر زي أي utility. ولو بتستخدم attribute: [[&:where([data-theme=dark], [data-theme=dark] *)]].
+            how: R`[[@custom-variant dark (&:where(.dark, .dark *))]] بيغيّر معنى [[dark:bg-x]] لـ «لو العنصر نفسه أو جد ليه عليه [[.dark]]». و [[:where]] عشان الـ variant ميزودش specificity، فـ [[dark:bg-x]] يفضل بنفس وزن أي utility (كلاس واحد). ولو بتستخدم attribute: [[&:where([data-theme=dark], [data-theme=dark] *)]].
 
 next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنفذ قبل الرسم: بيقرا localStorage (أو [[prefers-color-scheme]] لو system) ويحط الكلاس على html، وكمان [[color-scheme]] عشان الـ scrollbars وحقول الفورم تغمق هي كمان. بس السيرفر رسم html من غير الكلاس، فـ React هيلاقي فرق وقت الـ hydration، و [[suppressHydrationWarning]] بيسكّت التحذير ده على العنصر ده بس.
 
@@ -1665,15 +1665,15 @@ const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", di
 
 مشكلة swap: الخط الاحتياطي (Arial مثلًا) عرض حروفه وارتفاع سطوره مختلف، فلما يتبدّل الفقرات بتطول أو تقصر والصفحة تتنط. next/font بيحل ده بـ [[adjustFontFallback]] (شغال افتراضيًا): بيعمل [[@font-face]] للخط الاحتياطي بـ [[size-adjust]] وقيم محسوبة، بحيث يبقى قد خطك تقريبًا.
 
-[[subsets]] بيحدد أنهي حروف تتحمّل ويتعملها preload. والـ variable fonts ملف واحد لكل الأوزان بدل ملف لكل وزن. و [[--font-sans]] في Tailwind هو الخط الافتراضي للصفحة كلها (الـ Preflight بيحطه على html)، فتغييره بيغيّر الموقع كله.
+[[subsets]] بيحدد أنهي subsets يتعملها preload. الباقي بيتخدم من موقعك برضه، والمتصفح بيحمّله بس لو الصفحة فيها حروف منه (unicode-range). والـ variable fonts ملف واحد لكل الأوزان بدل ملف لكل وزن. و [[--font-sans]] في Tailwind هو الخط الافتراضي للصفحة كلها (الـ Preflight بيحطه على html)، فتغييره بيغيّر الموقع كله.
 
 و [[@import url(...)]] لخط من سيرفر خارجي جوه ملف الـ CSS أسوأ حالة: المتصفح لازم يحمّل الـ CSS بتاعك، ويلاقي الـ import، ويحمّل CSS الخط، ويلاقي ملف الخط، ويحمّله. سلسلة requests واحد ورا التاني.`,
             when: R`في Next دايمًا next/font. في Vite أو PHP: [[@font-face]] بملفات woff2 عندك، و [[<link rel="preload" as="font" type="font/woff2" crossorigin>]] للخط الأساسي بس.`,
-            mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فالعربي يطلع بخط النظام.`
+            mistakes: R`في مشروع حقيقي كان globals.css بيبدأ بـ [[@import url("https://fonts.example.com/...")]] لخط لاتيني جنب خطوط next/font: request خارجي بيوقف الرسم، وكان ممكن يتنقل لـ [[next/font/local]]. وتحمّل 6 أوزان وانت بتستخدم 2. وتنسى subset الـ [[arabic]] فملف العربي ميتعملوش preload: الكلام يظهر بخط النظام الأول ويتبدّل متأخر (الملف بيتحمّل من موقعك برضه، بس بعد ما المتصفح يكتشف إنه محتاجه).`
           },
           lines: [
             R`أي خط من Google Fonts كـ function (المسافة في الاسم بتبقى [[_]]).`,
-            R`الحروف العربي واللاتيني بس (ملف أصغر)، ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
+            R`الـ subsets اللي هيتعملها preload (العربي واللاتيني)، والباقي بيتخدم من موقعك برضه بس مش بيتحمّل غير لو اتستخدم. ومتغير CSS اسمه [[--font-cairo]]. Cairo خط variable فمش محتاج weights.`,
             "الكلاس بيعرّف المتغير على html.",
             R`Tailwind: [[font-sans]] يبقى Cairo.`,
             "Cairo الأول، ولو محمّلش خط النظام.",
@@ -1824,7 +1824,7 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
 .btn-primary { background: var(--color-indigo-600); color: white; }
 .on-image { background: rgb(0 0 0 / 0.55); color: white; }
 @media (prefers-contrast: more) {
-  :root { --fg-muted: var(--color-gray-700); }
+  .muted { color: var(--color-gray-700); }
 }`,
           try: R`في Chrome DevTools اختار أي كلام، وفي Styles دوس على مربع اللون: هيقولك Contrast ratio وعلامة صح أو غلط لـ AA و AAA. وكمان Lighthouse › Accessibility بيطلّع كل العناصر اللي ساقطة.`,
           flag: "script",
@@ -1834,7 +1834,7 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
 
 الحدود: AA للكلام العادي 4.5، وللكبير 3. وللعناصر اللي مش كلام (حدود حقل، أو أيقونة لوحدها بتعني حاجة، أو شكل الـ focus) 3. و AAA أعلى (7 و 4.5). الزراير الـ disabled مستثناة، بس الـ placeholder كلام ولازم يتقري.
 
-الألوان بـ oklch بتسهّل: الـ L فيها قريبة من اللي العين شايفاه، ففرق كبير في L = تباين كبير غالبًا. في Tailwind على خلفية بيضا: 600 و 700 للكلام بأمان، و 500 على الحافة، و 400 وأفتح للزينة بس.
+الألوان بـ oklch بتسهّل: الـ L فيها قريبة من اللي العين شايفاه، ففرق كبير في L = تباين كبير غالبًا. في الرماديات (gray و slate و zinc و neutral و stone) على خلفية بيضا: 600 و 700 للكلام بأمان، و 500 على الحافة، و 400 وأفتح للزينة بس. أما الألوان الفاتحة بطبيعتها (yellow و amber و lime و green و emerald و teal و cyan و sky و orange) فحتى 600 بيسقط (بين 3:1 و 4:1 تقريبًا)، ومحتاجة 700 أو أغمق، فاتأكد بالأداة.
 
 وفي الـ dark mode متقلبش الألوان بالظبط: أبيض صافي على أسود صافي بيتعب العين، الأحسن رمادي فاتح على رمادي غامق جدًا، ولسه فوق 4.5.`,
             when: "وقت اختيار الـ palette، ومع كل لون كلام جديد، وفي الوضعين الفاتح والغامق.",
@@ -1932,7 +1932,7 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
             why: R`CSS بيحرّك بين حالتين لعنصر موجود. بس في React العناصر بتظهر وتختفي من الـ DOM ([[{open && ...}]])، والعنصر اللي اتشال مفيش حاجة تحرّكه. وكمان حركة عنصر من مكان لمكان لما الـ layout يتغير مستحيلة تقريبًا بالـ CSS العادي. motion بيحل الاتنين.`,
             how: R`[[motion.div]] بيقرا [[animate]]، ولما القيم تتغير بيحرّكها (spring افتراضيًا للـ transform، و tween للباقي). الحركة شغالة بـ JavaScript، بس بتكتب [[transform]] و [[opacity]] مباشرة، وبتستخدم Web Animations API لما تقدر فتبقى على الـ GPU.
 
-AnimatePresence: لما ابن يختفي من الـ render، بيحتفظ بآخر نسخة منه، يشغّل [[exit]]، ويشيله لما تخلص. عشان كده الابن المباشر لازم يبقى motion component وليه [[key]] ثابت. [[mode="wait"]] يستنى القديم يخرج قبل ما الجديد يدخل، و [[mode="popLayout"]] يطلّع القديم من الـ layout فورًا فالباقي يتحرك مكانه (مع [[layout]]).
+AnimatePresence: لما ابن يختفي من الـ render، بيحتفظ بآخر نسخة منه، يشغّل [[exit]]، ويشيله لما تخلص. عشان كده الابن المباشر لازم يبقى ليه [[key]] ثابت، والـ [[exit]] يبقى على motion component (هو نفسه أو أي حاجة جواه). [[mode="wait"]] يستنى القديم يخرج قبل ما الجديد يدخل، و [[mode="popLayout"]] يطلّع القديم من الـ layout فورًا فالباقي يتحرك مكانه (مع [[layout]]).
 
 [[layout]] بيستخدم تقنية اسمها FLIP: بيقيس مكان العنصر قبل التغيير وبعده، ويحط [[transform]] يرجّعه لمكانه القديم، وبعدين يحرّك الـ transform لصفر. فالشكل بيتحرك بنعومة مع إن الـ layout الحقيقي اتغير مرة واحدة. و [[layoutId]] نفس الفكرة بين عنصرين مختلفين بنفس الاسم.
 
@@ -2085,7 +2085,7 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
             "قفلة.",
             "القراية كلها مرة واحدة: layout واحد.",
             "الكتابة كلها بعدها: المتصفح يحسب مرة واحدة في الـ frame الجاي.",
-            R`مع الـ scroll: حدّث في الـ frame الجاي بس، و [[passive]] بيقول للمتصفح إنك مش هتمنع الـ scroll فيفضل ناعم.`
+            R`مع الـ scroll: حدّث في الـ frame الجاي بس. و [[passive]] هنا مش فارق لأن الـ scroll event مبيتلغيش أصلًا، فايدته الحقيقية مع [[wheel]] و [[touchmove]].`
           ]
         }
       ]
@@ -2110,7 +2110,7 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
 // نفس الفكرة بـ CSS عادي
 .card-wrap { container-type: inline-size; container-name: card; }
 @container card (width > 28rem) {
-  .card { flex-direction: row; }
+  .card { display: flex; flex-direction: row; }
 }
 .card h3 { font-size: clamp(1rem, 4cqi, 1.5rem); }`,
           try: R`حط نفس الكارت مرتين: مرة في عمود عريض ومرة في sidebar عرضه 280px. على نفس الشاشة هتلاقي شكلين. غيّر [[@md:]] لـ [[md:]] وشوفهم بقوا نفس الشكل.`,
@@ -2136,7 +2136,7 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
             "قفلة.",
             "CSS: الأب container اسمه card.",
             "لما عرض الـ container ده (مش الشاشة) يعدّي 28rem...",
-            "...الكارت يبقى صف.",
+            "...الكارت يبقى flex في صف.",
             "قفلة.",
             R`[[cqi]] = 1% من عرض الـ container، فالخط بيكبر مع الكارت مش مع الشاشة.`
           ]

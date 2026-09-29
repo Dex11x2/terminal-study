@@ -113,7 +113,7 @@ const lost = await ai.interactions.create({ model, input: "اسمي إيه؟" })
 console.log(lost.output_text);
 const kept = await ai.interactions.create({ model, input: "اسمي إيه؟", previous_interaction_id: first.id });
 console.log(kept.output_text);`,
-          try: "بص على [[kept.usage.total_input_tokens]] وقارنه بـ [[lost.usage.total_input_tokens]]: التاني أكبر، لأن التاريخ اتحسب دخول حتى لو انت مبعتهوش بإيدك.",
+          try: "بص على [[kept.usage.total_input_tokens]] وقارنه بـ [[lost.usage.total_input_tokens]]: [[kept]] أكبر، لأن التاريخ اتحسب دخول حتى لو انت مبعتهوش بإيدك.",
           flag: "script",
           deep: {
             why: "أغلب مشاكل «البوت نسي» و «البوت بيخلط بين العملاء» و «الفاتورة بتكبر مع الوقت» سببها سوء فهم للنقطة دي.",

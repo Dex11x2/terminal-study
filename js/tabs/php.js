@@ -82,7 +82,7 @@ $hour = (int) date('G');
   <?php endif; ?>
   <p>الساعة دلوقتي <?php echo date('H:i'); ?></p>
 </html>`,
-          try: R`احفظ المثال [[index.php]] وافتحه بـ [[php -S]]. بعدين اعمل View Source في المتصفح: مش هتلاقي ولا سطر PHP، هتلاقي HTML بس. غيّر الشرط لـ [[$hour < 25]] وشوف الرسالة اتغيرت.`,
+          try: R`احفظ المثال [[index.php]] وافتحه بـ [[php -S]]. بعدين اعمل View Source في المتصفح: مش هتلاقي ولا سطر PHP، هتلاقي HTML بس. اعكس الشرط لـ [[$hour >= 12]] وشوف الرسالة اتغيرت.`,
           flag: "script",
           deep: {
             why: "PHP اتعمل في الأول كلغة قوالب: صفحة HTML فيها حتت بتتغير. عشان كده الخلط طبيعي فيه ومش محتاج مكتبة templates زي غيره.",
@@ -138,7 +138,7 @@ var_dump(intdiv(7, 2), 7 / 2, 7 % 2);`,
             why: "PHP بيحوّل الأنواع لوحده في حاجات كتير، ومعظم الـ bugs الغريبة سببها قيمة نوعها غير اللي فاكره: [[\"0\"]] بدل [[0]]، أو [[false]] بدل [[null]]. [[var_dump]] بيوريك الحقيقة.",
             how: R`النتايج بالترتيب: [[int(30)]] و [[float(99.5)]] و [[string(3) "Ali"]] و [[bool(true)]] و [[NULL]].
 
-[['5' + 3]] بيطلع [[int(8)]]: العمليات الحسابية بتحوّل النص الرقمي لرقم. [['12abc' + 1]] بيطلع 13 ومعاه Warning. و [['abc' + 1]] في PHP 8 بيرمي [[TypeError: Unsupported operand types]]، وفي PHP 7 كان بيطلع 1 بصمت.
+[['5' + 3]] بيطلع [[int(8)]]: العمليات الحسابية بتحوّل النص الرقمي لرقم. [['12abc' + 1]] بيطلع 13 ومعاه Warning. و [['abc' + 1]] في PHP 8 بيرمي [[TypeError: Unsupported operand types]]، وفي PHP 7 كان بيطلع 1 والكود بيكمّل (من 7.1 ومعاه Warning بس، وفي 7.0 بصمت خالص).
 
 الـ casting الصريح [[(int)]] مبيطلعش warnings: [[(int) '12abc']] = 12. و [[(bool) '0']] = false، بس [[(bool) '0.0']] = true! النص [["0"]] والنص الفاضي هما النصين الوحيدين اللي falsy.
 
@@ -242,7 +242,7 @@ echo $sql;`,
 
 الـ nowdoc ([[<<<'SQL']] بين علامتين مفردتين) مبيبدّلش [[$]]، فمناسب لـ SQL فيه [[:email]] أو كود أو regex. وخلي بالك: SQL في heredoc عادي فيه [[$email]] جواه = SQL injection. القيم تروح في prepared statement (المستوى الثاني)، والـ nowdoc بيمنعك من الغلطة دي أصلًا.`,
             when: "قوالب إيميل صغيرة، و SQL طويل، و HTML جوه دالة. لو القالب كبير، خليه ملف view لوحده (المستوى الثالث).",
-            mistakes: R`الـ heredoc مش بيعمل escape. [[$name]] لو جاي من المستخدم وحطيته في HTML من غير [[htmlspecialchars]] يبقى XSS. واحسبها [[$__{name}]] بالشكل القديم. وتحط قيم المستخدم جوه SQL بالـ heredoc بدل placeholders.`
+            mistakes: R`الـ heredoc مش بيعمل escape. [[$name]] لو جاي من المستخدم وحطيته في HTML من غير [[htmlspecialchars]] يبقى XSS. وتكتبها [[$__{name}]] بالشكل القديم اللي بقى deprecated من 8.2. وتحط قيم المستخدم جوه SQL بالـ heredoc بدل placeholders.`
           },
           lines: [
             "بداية الملف.",
@@ -543,7 +543,7 @@ echo price('100');`,
           title: "قيمة ناقصة أو null من غير ما الصفحة تقع",
           desc: R`[[$a ?? 'default']]: لو [[$a]] مش موجود أو null خد الافتراضي، ومن غير Warning. ودي اللي هتستخدمها مع [[$_GET]] و [[$_POST]] كل شوية. و [[??=]] بيحط قيمة بس لو مفيش.
 
-[[?->]] (nullsafe): [[$user?->address?->city]] لو أي حلقة null، النتيجة null بدل Error. و [[?:]] حاجة تانية: بيبص على truthy، فـ [[0]] و [[""]] بيتعاملوا كأنهم مفيش.`,
+[[?->]] (nullsafe): [[$user?->address?->city]] لو أي حلقة null، النتيجة null بدل Warning (ولو بتنادي method على null يبقى Error). و [[?:]] حاجة تانية: بيبص على truthy، فـ [[0]] و [[""]] بيتعاملوا كأنهم مفيش.`,
           example: R`<?php
 $page = (int) ($_GET['page'] ?? 1);
 $sort = $_GET['sort'] ?? 'newest';
@@ -557,7 +557,7 @@ $u = new User();
 echo $u->address?->city ?? 'مدينة مش معروفة', "\n";
 $u2 = new User(new Address('Cairo'));
 echo $u2->address?->city;`,
-          try: R`بدّل [[??]] في أول سطر بـ [[?:]] وشغّل: هتاخد Warning إن الـ key مش موجود. وبدّل [[?->]] بـ [[->]] في سطر [[$u]] وشوف الـ Error.`,
+          try: R`بدّل [[??]] في أول سطر بـ [[?:]] وشغّل: هتاخد Warning إن الـ key مش موجود. وبدّل [[?->]] بـ [[->]] في سطر [[$u]] وشيل [[?? 'مدينة مش معروفة']] من آخره: هتاخد Warning «Attempt to read property "city" on null». ولاحظ إن [[??]] لوحده كان هيخفيها، لأنه بيشتغل زي [[isset]].`,
           flag: "script",
           deep: {
             why: "أي حاجة جاية من المستخدم ممكن تكون مش موجودة: رابط من غير [[?page=]]، أو فورم ناقص حقل. من غير [[??]] الكود بيتملي [[isset($x) ? $x : ...]]، أو warnings في اللوج.",
@@ -619,7 +619,7 @@ require __DIR__ . '/partials/header.php';
 
 [[return]] في آخر ملف متضمَّن بترجّع قيمة: [[config.php]] فيه [[return ['app_name' => 'MyApp', ...];]] و [[$config = require ...]] بياخدها. ده أنضف شكل للإعدادات (درس الإعدادات في المستوى الثاني).
 
-المسار النسبي زي [['includes/db.php']] بيتدوّر عليه في [[include_path]] وفي فولدر الملف اللي اتفتح أصلًا، مش الملف اللي فيه السطر. فصفحة في [[admin/]] بتعمل include لملف بيعمل include لملف تالت، والمسارات تتلخبط. [[__DIR__]] ثابت: فولدر الملف ده بالظبط. و [[dirname(__DIR__)]] الفولدر اللي فوقه.
+المسار النسبي زي [['includes/db.php']] بيتدوّر عليه الأول في [[include_path]]، وفيها [[.]] يعني فولدر الشغل الحالي (على السيرفر غالبًا فولدر الصفحة اللي اتفتحت أصلًا، ومن cron أو الترمنال أي فولدر انت واقف فيه)، ولو ملقاهوش بيجرب فولدر الملف اللي فيه السطر. والمسار اللي بيبدأ بـ [[./]] أو [[../]] بيتحسب من فولدر الشغل بس. فنفس السطر ممكن يجيب ملف غير اللي انت قاصده حسب اتشغّل منين، والمسارات تتلخبط. [[__DIR__]] ثابت: فولدر الملف ده بالظبط. و [[dirname(__DIR__)]] الفولدر اللي فوقه.
 
 الشكل المعتاد: [[public/]] (أو [[public_html]]) فيه الصفحات والـ partials، و [[src/]] فيه الدوال والكلاسات، و [[config.php]] فوق الفولدر العام خالص، فمحدش يقدر يفتحه من المتصفح.`,
             when: "من أول صفحة تانية في الموقع. [[require_once]] للي فيه تعريفات (دوال، كلاسات)، و [[require]] للقوالب اللي ممكن تتكرر.",
@@ -752,8 +752,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-<form method="post"><input name="name" value="<?= e($old['name']) ?>"> <?= e($errors['name'] ?? '') ?></form>`,
-          try: R`ابعت الفورم بإيميل غلط: الاسم اللي كتبته لازم يفضل في الخانة. بعدين ضيف [[echo 'x';]] قبل [[header]] وابعت فورم صح، واقرا [[headers already sent]]. وجرّب تبعته بـ [[curl -d "name=&email=x" localhost:8000/form.php]] عشان تتأكد إن التحقق على السيرفر مش المتصفح بس.`,
+<form method="post"><input name="name" value="<?= e($old['name']) ?>"> <?= e($errors['name'] ?? '') ?> <input name="email" value="<?= e($old['email']) ?>"> <?= e($errors['email'] ?? '') ?> <button>ابعت</button></form>`,
+          try: R`حط دالة [[e()]] من درس htmlspecialchars في الملف (أو في الـ bootstrap) الأول. ابعت الفورم بإيميل غلط: الاسم اللي كتبته لازم يفضل في الخانة. بعدين ضيف [[echo 'x';]] قبل [[header]] وابعت فورم صح، واقرا [[headers already sent]]. وجرّب تبعته بـ [[curl -d "name=&email=x" localhost:8000/form.php]] عشان تتأكد إن التحقق على السيرفر مش المتصفح بس.`,
           flag: "script",
           deep: {
             why: "الفورم هو أكتر مكان بيدخل منه كلام من برّه. التحقق على السيرفر هو الحماية الوحيدة الحقيقية، لأن [[required]] في HTML وفحص JavaScript أي حد يعدّيهم بـ curl.",
@@ -786,7 +786,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "قفلة.",
             "قفلة.",
             "نهاية PHP.",
-            "الفورم بالقيمة القديمة ورسالة الغلط (الاتنين بـ e)."
+            "الفورم: الاسم والإيميل بالقيم القديمة ورسايل الغلط (كله بـ e)."
           ]
         }
       ]
@@ -1179,7 +1179,7 @@ session fixation: المهاجم ياخد id جلسة عادي من موقعك،
 
 «افتكرني»: كوكي تانية عمرها طويل فيها token عشوائي ([[bin2hex(random_bytes(32))]])، والقاعدة فيها hash بتاعه بس. لما الجلسة تموت والكوكي موجودة، دوّر بالـ hash، ولو لقيته اعمل login وغيّر التوكن. والكوكي دي [[httponly]] و [[secure]].
 
-ولو فيه [[?redirect=]] بعد الدخول، اقبل مسار داخلي بس (بيبدأ بـ [[/]] ومش [[//]])، وإلا بقى open redirect لموقع تاني.`,
+ولو فيه [[?redirect=]] بعد الدخول، اقبل مسار داخلي بس: بيبدأ بـ [[/]] والحرف التاني مش [[/]]، ومفيهوش [[\]] ولا tab ولا سطر جديد خالص (المتصفح بيقرا [[/\evil.com]] و [[?redirect=/%09/evil.com]] زي [[//evil.com]])، والأضمن allowlist لصفحات معروفة، وإلا بقى open redirect لموقع تاني.`,
             when: "صفحة الـ login، وأول سطر في كل صفحة أو endpoint محمي.",
             mistakes: R`تنسى [[exit]] في [[require_login]]: المتصفح بيتحوّل، بس محتوى الصفحة المحمية اتبعت في الرد. وتحط صف المستخدم كله (ومعاه الـ hash) في الجلسة. وفي مشروع حقيقي كوكي «افتكرني» كانت بتتعمل بـ secure = false، فممكن تتبعت على http وتتسرق من الشبكة.`
           },
@@ -1237,7 +1237,7 @@ function csrf_ok(): bool {
 
 في مشروع حقيقي فورم عام كان فيه CSRF token بالظبط كده مع honeypot وحد محاولات. بس endpoints الأدمن (JSON) كانت معتمدة على الجلسة لوحدها.`,
             when: "كل فورم أو طلب بيغيّر حاجة وانت معتمد على كوكي للدخول. Laravel بيعمله لوحده ([[@csrf]]).",
-            mistakes: R`مسح أو خروج بـ لينك GET: [[<img src=\"/logout.php\">]] في أي موقع بيخرّج زوّارك. ومقارنة بـ [[==]]. وتعمل token جديد مع كل صفحة فالمستخدم اللي فاتح تابين يترفض. وتفتكر إن HTTPS بيحمي من CSRF: ملوش علاقة.`
+            mistakes: R`مسح أو خروج بـ لينك GET: لينك [[<a href="https://example.com/logout.php">]] في أي موقع أو إيميل بيخرّج اللي يدوس عليه، لأن [[SameSite=Lax]] بيبعت الكوكي مع التنقّل بـ GET. ومقارنة بـ [[==]]. وتعمل token جديد مع كل صفحة فالمستخدم اللي فاتح تابين يترفض. وتفتكر إن HTTPS بيحمي من CSRF: ملوش علاقة.`
           },
           lines: [
             "بداية الملف.",
@@ -1264,7 +1264,8 @@ function csrf_ok(): bool {
 والخروج نفسه POST بـ CSRF token، مش لينك.`,
           example: R`<?php
 session_start();
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_ok()) { http_response_code(405); exit; }
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
+if (!csrf_ok()) { http_response_code(403); exit; }
 $_SESSION = [];
 $p = session_get_cookie_params();
 setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
@@ -1279,14 +1280,15 @@ exit;`,
 
 لو فيه «افتكرني»: امسح التوكن من القاعدة وامسح الكوكي بتاعته كمان، وإلا أول صفحة بعد الخروج هتعمل login تاني لوحدها.
 
-والـ POST مهم: الخروج بـ GET معناه إن أي موقع يحط [[<img src="https://example.com/logout.php">]] يخرّج كل زوّاره من موقعك. مش كارثة، بس مزعج، وبيبيّن إن فيه طلبات بتغيّر حالة بـ GET.`,
+والـ POST مهم: الخروج بـ GET معناه إن أي موقع أو إيميل يحط لينك لـ [[https://example.com/logout.php]] (أو يعمل redirect ليه) يخرّج اللي يدوس عليه من موقعك، لأن [[SameSite=Lax]] بيبعت الكوكي مع التنقّل بـ GET (و [[<img>]] كمان لو الكوكي [[SameSite=None]]). مش كارثة، بس مزعج، وبيبيّن إن فيه طلبات بتغيّر حالة بـ GET.`,
             when: "زرار الخروج، وتغيير الباسورد (اخرج من كل الجلسات التانية)، وحذف الحساب.",
             mistakes: R`في مشروع حقيقي الخروج كان لينك GET عادي. و [[session_destroy]] لوحدها وتفتكر الكوكي راحت. ونسيان توكن «افتكرني» فالخروج مبيخرّجش.`
           },
           lines: [
             "بداية الملف.",
             "افتح الجلسة الحالية.",
-            "POST بـ token صحيح بس.",
+            "POST بس، وإلا 405.",
+            "token صحيح بس، وإلا 403 زي درس CSRF.",
             "فضّي البيانات.",
             "إعدادات الكوكي (path و domain...).",
             "امسح الكوكي من المتصفح بتاريخ قديم.",
@@ -1470,7 +1472,7 @@ if (!is_array($in)) json_out(['error' => 'JSON غلط'], 400);
 $title = trim((string) ($in['title'] ?? ''));
 if ($title === '') json_out(['error' => 'title مطلوب'], 422);
 json_out(['id' => 7, 'title' => $title], 201);`,
-          try: R`[[curl -i -X POST -H "Content-Type: application/json" -d '{"title":"أهلًا"}' localhost:8000/api.php]]: 201. ابعت [[-d 'x']]: 400. من غير [[-X POST]]: 405. وشيل [[JSON_UNESCAPED_UNICODE]] وشوف العربي بقى [[أ...]].`,
+          try: R`[[curl -i -X POST -H "Content-Type: application/json" -d '{"title":"أهلًا"}' localhost:8000/api.php]]: 201. ابعت [[-d 'x']]: 400. افتحه من غير [[-d]] (GET عادي: [[curl -i localhost:8000/api.php]]): 405. خلي بالك إن [[-d]] لوحده بيخلي curl يبعت POST حتى من غير [[-X POST]]. وشيل [[JSON_UNESCAPED_UNICODE]] وشوف العربي بقى [[\u0623\u0647...]].`,
           flag: "script",
           deep: {
             why: "أي frontend بـ JavaScript أو تطبيق موبايل بيكلم السيرفر بـ JSON. والـ status code هو اللي الـ frontend بيقرر بيه: [[fetch]] بيعتبر 200 نجاح، فلو رجّعت غلطة بـ 200، الكود التاني هيفتكرها نجحت.",
@@ -1478,7 +1480,7 @@ json_out(['id' => 7, 'title' => $title], 201);`,
 
 [[php://input]] هو الـ body الخام. [[json_decode(..., true)]] بيرجّع arrays بدل objects. لو الـ JSON بايظ بيرجّع null، ولو عايز السبب: [[JSON_THROW_ON_ERROR]] يرمي [[JsonException]]. و PHP 8.3 فيه [[json_validate()]] لو عايز تتأكد من غير ما تفك.
 
-[[JSON_UNESCAPED_UNICODE]]: العربي يطلع زي ما هو بدل [[س]] (الاتنين JSON صحيح، بس الأول أصغر وأوضح). و [[JSON_THROW_ON_ERROR]] على [[json_encode]] بيمسك نص UTF-8 بايظ بدل ما يرجّع false بصمت.
+[[JSON_UNESCAPED_UNICODE]]: العربي يطلع زي ما هو بدل [[\u0633]] (الاتنين JSON صحيح، بس الأول أصغر وأوضح). و [[JSON_THROW_ON_ERROR]] على [[json_encode]] بيمسك نص UTF-8 بايظ بدل ما يرجّع false بصمت.
 
 [[never]] نوع رجوع معناه الدالة عمرها ما بترجع (هنا بسبب [[exit]])، فأي كود بعد النداء واضح إنه مش هيتنفّذ.
 
@@ -1613,7 +1615,7 @@ set_exception_handler(function (Throwable $e): void {
     http_response_code(500);
     echo 'حصلت مشكلة عندنا. جرّب تاني بعد شوية.';
 });`,
-          try: R`حط الكود في أول [[bootstrap.php]] واعمل [[throw new Exception('test');]] في صفحة. في dev هتشوف الرسالة والـ stack trace؛ غيّر [[env]] لـ production: الزائر يشوف الرسالة العامة، والتفاصيل في [[logs/php-error.log]].`,
+          try: R`حط الكود في أول [[bootstrap.php]] واعمل [[throw new Exception('test');]] في صفحة. في الحالتين الزائر هيشوف الرسالة العامة (الـ handler هو اللي بيرد)، والتفاصيل والـ stack trace في [[logs/php-error.log]]. وعشان تشوف فرق [[display_errors]]: اعمل [[echo $undefined;]]، في dev الـ Warning هيظهر على الشاشة، وفي production هيتسجل في اللوج بس.`,
           flag: "script",
           deep: {
             why: "رسالة غلط على الشاشة في الإنتاج بتكشف مسارات الملفات، وأسماء الجداول، وأحيانًا جزء من الـ query أو الإعدادات. وفي نفس الوقت من غير لوج انت أعمى: المستخدم بيشوف صفحة بيضا، وانت متعرفش حصل إيه.",
@@ -1824,7 +1826,7 @@ var_dump($p->trashed());`,
           title: "لستة قيم ثابتة بدل نصوص متفرقة في الكود",
           desc: R`[[enum]] (PHP 8.1) نوع ليه قيم محددة بس. الـ backed enum كل حالة ليها قيمة ([[string]] أو [[int]]) بتتخزن في القاعدة. [[from()]] بيحوّل من القيمة للـ enum ويرمي لو غلط، و [[tryFrom()]] بيرجّع null. والـ enum ممكن يبقى فيه methods، زي [[label()]] للنص العربي.
 
-كده الـ status نوع: دالة بتاخد [[OrderStatus]] مستحيل يوصلها [[\'payed\']] بغلطة إملائية.`,
+كده الـ status نوع: دالة بتاخد [[OrderStatus]] مستحيل يوصلها [['payed']] بغلطة إملائية.`,
           example: R`<?php
 enum OrderStatus: string {
     case Pending = 'pending';
@@ -2005,15 +2007,15 @@ $controller = new App\Controllers\PostController();`,
           flag: "script",
           deep: {
             why: "مشروع فيه ٥٠ كلاس محتاج ٥٠ سطر require، وترتيبهم مهم، وأي نسيان = Class not found. الـ autoload بيخلي PHP يجيب الملف لوحده وقت الحاجة، فمفيش require غير سطر واحد.",
-            how: R`تحت الغطا: PHP فيه [[spl_autoload_register()]]. لما الكود يستخدم كلاس مش متعرّف، PHP بينادي الدوال المسجلة دي بالاسم الكامل. Composer بيسجّل دالة بتشيل [[App\\]] من أول الاسم، وتحوّل باقي [[\\]] لـ [[/]]، وتضيف [[src/]] و [[.php]]، وتعمل require. ده lazy: الكلاس اللي مستخدمتوش في الطلب ده مبيتحمّلش.
+            how: R`تحت الغطا: PHP فيه [[spl_autoload_register()]]. لما الكود يستخدم كلاس مش متعرّف، PHP بينادي الدوال المسجلة دي بالاسم الكامل. Composer بيسجّل دالة بتشيل [[App\]] من أول الاسم، وتحوّل باقي [[\]] لـ [[/]]، وتضيف [[src/]] و [[.php]]، وتعمل require. ده lazy: الكلاس اللي مستخدمتوش في الطلب ده مبيتحمّلش.
 
 [[use App\Models\PostRepository;]] مجرد اختصار للاسم وقت الـ compile، مبيحمّلش حاجة.
 
-جوه ملف فيه [[namespace]]، أي كلاس من غير [[\\]] في أوله بيتدوّر عليه في نفس الـ namespace: [[new DateTime()]] جوه [[App\Controllers]] يبقى [[App\Controllers\DateTime]] ويقع. اكتب [[\DateTime]] أو [[use DateTime;]]. الدوال مختلفة: لو مش لاقيها في الـ namespace بترجع للعامة، فـ [[strlen]] شغالة عادي.
+جوه ملف فيه [[namespace]]، أي كلاس من غير [[\]] في أوله بيتدوّر عليه في نفس الـ namespace: [[new DateTime()]] جوه [[App\Controllers]] يبقى [[App\Controllers\DateTime]] ويقع. اكتب [[\DateTime]] أو [[use DateTime;]]. الدوال مختلفة: لو مش لاقيها في الـ namespace بترجع للعامة، فـ [[strlen]] شغالة عادي.
 
-[[composer dump-autoload]] محتاجه لما تغيّر قسم [[autoload]] في composer.json. الكلاسات الجديدة في فولدرات PSR-4 بتتلاقي لوحدها، إلا لو عامل [[-o]] (classmap)، ساعتها لازم dump تاني.`,
+[[composer dump-autoload]] محتاجه لما تغيّر قسم [[autoload]] في composer.json. الكلاسات الجديدة في فولدرات PSR-4 بتتلاقي لوحدها، إلا لو عامل [[--classmap-authoritative]] ([[-a]])، ساعتها أي كلاس مش في الـ classmap مبيتلاقيش ولازم dump تاني. أما [[-o]] لوحده فلو الكلاس مش في الـ classmap بيرجع يدوّر بقواعد PSR-4 عادي.`,
             when: "أي مشروع فيه أكتر من كام كلاس. وده نفس اللي Laravel وأي مكتبة PHP حديثة بتعمله.",
-            mistakes: R`اسم الملف أو الفولدر مختلف في حالة الحروف عن الكلاس: ويندوز مش فارق معاه، والسيرفر Linux بيفرق، فبيشتغل عندك ويقع بعد الـ deploy. و [[new DateTime]] من غير [[\\]] جوه namespace. وتخلط require يدوي مع autoload لنفس الكلاس فيتعرّف مرتين.`
+            mistakes: R`اسم الملف أو الفولدر مختلف في حالة الحروف عن الكلاس: ويندوز مش فارق معاه، والسيرفر Linux بيفرق، فبيشتغل عندك ويقع بعد الـ deploy. و [[new DateTime]] من غير [[\]] جوه namespace. وتخلط require يدوي مع autoload لنفس الكلاس فيتعرّف مرتين.`
           },
           lines: [
             "composer.json.",
@@ -2174,11 +2176,11 @@ git ls-files | grep -E 'config\.php$|\.env$'`,
             why: "أغلب مواقع PHP اللي بتتخترق مش بسبب حاجة معقدة: query ملزوق، أو فولدر رفع بينفّذ PHP، أو باسورد في git. قايمة ثابتة بتراجعها قبل كل إطلاق بتقفل ٩٠٪ من ده.",
             how: R`file inclusion (LFI): [[include "pages/" . $_GET['p'] . ".php"]] ومستخدم يبعت [[?p=../../config]] فيتحمّل ملف إعداداتك، أو ملف log فيه كود حطه هو. الحل allowlist: [[$pages = ['home' => 'home.php', 'about' => 'about.php'];]] وتختار منها، ولو مش موجود 404. وتحميل ملفات من روابط ([[allow_url_include]]) مقفول افتراضيًا، سيبه مقفول.
 
-open redirect: [[header('Location: ' . $_GET['next'])]] بيخلي لينك موقعك يودّي لموقع تصيّد. اقبل مسار بيبدأ بـ [[/]] ومش بـ [[//]].
+open redirect: [[header('Location: ' . $_GET['next'])]] بيخلي لينك موقعك يودّي لموقع تصيّد. اقبل مسار بيبدأ بـ [[/]] والحرف التاني مش [[/]] ولا [[\]]، ومفيهوش tab ولا أي control character: المتصفح بيعامل [[/\evil.com]] زي [[//evil.com]]، وبيشيل الـ tab من الرابط فـ [[/%09/evil.com]] يبقى [[//evil.com]] برضه. والأحسن allowlist للمسارات المسموحة.
 
 عشوائية ضعيفة: [[rand]] و [[mt_rand]] و [[uniqid]] متتخمنش بسهولة للإنسان بس سهلة للمهاجم. أي token أو اسم ملف أو كود: [[random_bytes]] أو [[random_int]].
 
-المقارنات: [[==]] مع hashes أو tokens ممكن تعدّي حاجات غلط ([[\"0e1\" == \"0e2\"]])؛ [[hash_equals]] للأسرار و [[===]] لأي حاجة تانية.
+المقارنات: [[==]] مع hashes أو tokens ممكن تعدّي حاجات غلط ([["0e1" == "0e2"]])؛ [[hash_equals]] للأسرار و [[===]] لأي حاجة تانية.
 
 الصلاحيات: كل endpoint بيتحقق مين الطالب ومن حقه على العنصر ده ولا لأ (IDOR)، مش بس إن اللينك مستخبي.
 
@@ -2574,7 +2576,7 @@ $repo = new App\Models\PostRepository();`,
             why: "بيختبر إذا كنت فاهم الأداة اللي كل مشروع PHP حديث معتمد عليها، مش بس بتكتب [[require vendor/autoload.php]].",
             how: R`Composer عنده ٣ أنواع: [[psr-4]] (namespace → فولدر، بيدوّر وقت الحاجة)، و [[classmap]] (بيمسح الفولدرات مرة ويعمل array)، و [[files]] (ملفات بتتحمّل دايمًا، للدوال لأن الدوال مفيهاش autoload).
 
-[[use]] مبيحمّلش حاجة، مجرد alias وقت الـ compile. التحميل بيحصل أول ما الكلاس يتستخدم فعلًا ([[new]]، أو static call، أو [[instanceof]] مع [[class_exists]]).
+[[use]] مبيحمّلش حاجة، مجرد alias وقت الـ compile. التحميل بيحصل أول ما الكلاس يتستخدم فعلًا ([[new]]، أو static call، أو [[class_exists]]). أما [[instanceof]] فمبيحمّلش حاجة: لو الكلاس مش متحمّل بيرجّع false على طول.
 
 الـ autoloading case-sensitive على Linux لأن نظام الملفات كده، فاسم الملف لازم يطابق اسم الكلاس بالظبط.
 
@@ -2694,7 +2696,7 @@ echo $a->role->value, ' ', $a?->email, ' ', array_find([3, 8, 12], fn($n) => $n 
 
 الحاجات اللي اتشالت أو بقت deprecated مهمة كمان: dynamic properties (8.2)، و [[$__{var}]] جوه النصوص (8.2)، و implicitly nullable parameters (8.4).
 
-JIT: بيفرق في الحسابات التقيلة، ونادرًا في موقع ويب أغلب وقته مستني القاعدة. ومن 8.4 مقفول افتراضيًا.
+JIT: بيفرق في الحسابات التقيلة، ونادرًا في موقع ويب أغلب وقته مستني القاعدة. ومقفول افتراضيًا من الأول (قبل 8.4 لأن [[opcache.jit_buffer_size]] كان 0، ومن 8.4 لأن [[opcache.jit=disable]])، فلو عايزه لازم تفعّله بنفسك.
 
 والنسخة اللي على السيرفر هي اللي بتحكم: كود 8.4 على استضافة 8.2 بيقع. [[php -v]] على السيرفر قبل ما تستخدم ميزة جديدة، و [[platform.php]] في Composer.`,
             when: "أسئلة بعدها: «readonly ولا private(set)؟» «JIT بيفرق؟» «إيه اللي بقى deprecated؟» «بتشتغل على نسخة كام في الإنتاج وليه؟»",
