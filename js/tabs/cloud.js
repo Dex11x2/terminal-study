@@ -19,7 +19,7 @@ TAB("cloud", {
 aws configure
 aws sts get-caller-identity`,
   labText: "افتح حساب AWS مجاني وفعّل MFA و budget alert من أول يوم (درس في المستوى ١). جرّب على منطقة واحدة وامسح كل حاجة بعد التجربة.",
-  levels: {"1":["الأساس","يعني إيه cloud، و IAM، و regions، والتكلفة، و AWS CLI"],"2":["الخدمات","EC2 و S3 و RDS و CloudFront و Lambda و Cloudflare و Vercel"],"3":["DevOps","containers في الـ cloud، و Kubernetes، و Terraform، والمراقبة، و SRE، وأسئلة الانترفيو"]},
+  levels: {"1":["الأساس","يعني إيه cloud، و IAM، و regions، والتكلفة، و AWS CLI"],"2":["الخدمات","EC2 و S3 و RDS و CloudFront و Lambda و Cloudflare (و R2 و Workers و Tunnel) و Vercel، ومنصات الباك إند: Render و Railway و Fly.io و Coolify"],"3":["DevOps","containers في الـ cloud، و Kubernetes، و Terraform، والمراقبة، و OpenTelemetry والـ tracing، و SRE، وأسئلة الانترفيو"]},
   categories: [
     {
       t: "يعني إيه cloud",
@@ -65,39 +65,53 @@ aws lambda invoke --function-name hello out.json`,
           title: "فريق صغير: يستضيف مشروعه فين؟",
           desc: R`مفيش اختيار صح دايمًا: VPS أرخص وفيه تحكم كامل بس الصيانة كلها عليك، و PaaS أسرع بداية وأغلى مع الكبر، و managed cloud مرن وقوي بس معقّد ومحتاج حد فاهم.
 
-الدالة دي مش قاعدة مقدّسة، هي طريقة تفكير: حجم الفريق، وشكل الترافيك، ومحتاج سيرفر خاص ولا لأ، والميزانية.`,
-          example: R`function pickHosting({ devs, traffic, needsServer, budgetUsd }) {
-  if (devs <= 2 && !needsServer) return "PaaS: Vercel + Neon أو Supabase";
-  if (budgetUsd < 20) return "VPS واحد + Docker Compose + باك أب برا السيرفر";
+وبين الـ frontend PaaS (Vercel) والـ VPS الخام فيه درجتين ناس كتير بتنساهم: container PaaS (Render و Railway و Fly.io) بيشغّل API و worker و Postgres من الريبو، و self-hosted PaaS (Coolify أو Dokploy على VPS بتاعك) بيدّيك نفس الراحة بسعر السيرفر.
+
+الدالة دي مش قاعدة مقدّسة، هي طريقة تفكير: حجم الفريق، وشكل الترافيك، ومحتاج سيرفر خاص ولا لأ، والميزانية، وفيه حد يعرف Linux ولا لأ.`,
+          example: R`function pickHosting({ devs, traffic, needsServer, budgetUsd, knowsLinux }) {
+  if (devs <= 2 && !needsServer) return "frontend PaaS: Vercel + Neon أو Supabase";
+  if (budgetUsd < 20 && !knowsLinux) return "container PaaS: Render أو Railway أو Fly.io";
+  if (budgetUsd < 20) return "VPS + Coolify أو Dokploy (أو Docker Compose بإيدك)";
   if (traffic === "spiky") return "serverless: Lambda أو Vercel Functions";
+  if (devs <= 5) return "container PaaS مدفوع + Postgres مُدار";
   return "managed: ECS Fargate + RDS + CloudFront";
 }
 console.log(pickHosting({ devs: 1, traffic: "steady", needsServer: false, budgetUsd: 0 }));
-console.log(pickHosting({ devs: 2, traffic: "steady", needsServer: true, budgetUsd: 10 }));
-console.log(pickHosting({ devs: 6, traffic: "steady", needsServer: true, budgetUsd: 400 }));`,
+console.log(pickHosting({ devs: 2, traffic: "steady", needsServer: true, budgetUsd: 10, knowsLinux: false }));
+console.log(pickHosting({ devs: 2, traffic: "steady", needsServer: true, budgetUsd: 10, knowsLinux: true }));
+console.log(pickHosting({ devs: 4, traffic: "steady", needsServer: true, budgetUsd: 150, knowsLinux: true }));
+console.log(pickHosting({ devs: 6, traffic: "steady", needsServer: true, budgetUsd: 400, knowsLinux: true }));`,
           try: "شغّل الدالة على ٣ مشاريع عملتها قبل كده. لو النتيجة مختلفة عن اللي عملته فعلًا، اكتب ليه، وهل اختيارك كان أحسن ولا لأ.",
           flag: "script",
           deep: {
             why: "أغلب المشاريع الصغيرة بتقع في غلطة من اتنين: Kubernetes لموقع فيه ١٠٠ زائر في اليوم، أو VPS محدش بيحدّثه ولا بيعمل له باك أب لحد ما الديسك يبوظ. الاختيار الصح بيوفر فلوس ووقت ووجع دماغ.",
             how: R`VPS (Hetzner أو DigitalOcean أو Hostinger): سعر ثابت وقليل، وبتعمل اللي انت عايزه: Docker و cron و WebSockets و workers. بس انت الـ sysadmin: تحديثات، وفايروول، وباك أب، ومراقبة. ولو السيرفر وقع الموقع كله وقع. التفاصيل في تاب VPS وتاب Docker.
 
-PaaS (Vercel و Netlify و Supabase و Neon): بتعمل push والموقع يطلع، و preview لكل branch، و SSL تلقائي. بس السعر بيقفز مع الترافيك، وفيه حدود (مدة الدالة، وحجم الطلب)، وحاجات زي WebSockets طويلة أو شغل خلفي بالساعات مش مكانها.
+frontend PaaS (Vercel و Netlify و Cloudflare Pages، ومعاهم Supabase و Neon للقاعدة): بتعمل push والموقع يطلع، و preview لكل branch، و SSL تلقائي. بس السعر بيقفز مع الترافيك، وفيه حدود (مدة الدالة، وحجم الطلب)، وحاجات زي WebSockets طويلة أو شغل خلفي بالساعات مش مكانها.
+
+container PaaS (Render و Railway و Fly.io): بتدّيله Dockerfile أو ريبو، وهو يشغّل process حقيقي شغال على طول: API و worker و cron، ومعاهم Postgres و Redis مُدارين، و SSL ولوجات. ده الاختيار الطبيعي لـ Express أو FastAPI مع worker لما محدش عايز يبقى sysadmin. العيب إن كل خدمة بتتحاسب لوحدها، فالفاتورة بتكبر مع عدد الخدمات. الدروس في فئة «منصات جاهزة للباك إند»: [[render.yaml]] و [[railway]] و [[fly launch]].
+
+self-hosted PaaS (Coolify أو Dokploy على VPS): نفس تجربة push-to-deploy و SSL والباك أب، بسعر السيرفر. بس نظام التشغيل والأمان والباك أب برا السيرفر لسه عليك. درس [[Coolify / Dokploy]]، وإمتى تنقل من ده لده في درس [[PaaS ولا VPS: الحساب]].
 
 managed cloud (ECS و RDS على AWS): تقدر تبني أي حاجة وتكبر لأي حجم، ومعاك Multi-AZ وباك أب تلقائي. بس فيه عشرات الإعدادات (VPC و IAM و security groups)، والفاتورة معقدة، ومحتاج حد يفهمها.
 
-طريق شائع ومعقول: تبدأ PaaS أو VPS، ولما الترافيك أو الفريق يكبر تنقل الأجزاء اللي محتاجة لـ AWS. وخلي التطبيق من الأول «سهل النقل»: Docker، ومتغيرات بيئة، والملفات في object storage مش على الديسك.`,
+طريق شائع ومعقول: تبدأ PaaS (frontend أو container) أو VPS بـ Coolify، ولما الترافيك أو الفريق يكبر تنقل الأجزاء اللي محتاجة لـ AWS. وخلي التطبيق من الأول «سهل النقل»: Docker، ومتغيرات بيئة، والملفات في object storage مش على الديسك.`,
             when: "في أول يوم من أي مشروع، وكل ما الفاتورة أو وقت الصيانة يزيد بشكل ملحوظ.",
-            mistakes: "تختار AWS عشان «الشركات الكبيرة بتستخدمه» وانت لوحدك، فتقضي أسبوع في VPC و IAM بدل ما تبني المنتج. وتحط موقع تجاري على خطة Hobby في Vercel وهي للاستخدام الشخصي غير التجاري بس. وتحفظ الملفات اللي المستخدمين بيرفعوها على ديسك الـ VPS، فلما تنقل أو تكبّر لازم تنقلها بإيدك."
+            mistakes: "تختار AWS عشان «الشركات الكبيرة بتستخدمه» وانت لوحدك، فتقضي أسبوع في VPC و IAM بدل ما تبني المنتج. وتحط موقع تجاري على خطة Hobby في Vercel وهي للاستخدام الشخصي غير التجاري بس. وتحفظ الملفات اللي المستخدمين بيرفعوها على ديسك الـ VPS، فلما تنقل أو تكبّر لازم تنقلها بإيدك. وتنط من Vercel لـ VPS خام لأول API عندك، وانت ممكن تشغّله على Render أو Railway في ساعة، أو على نفس الـ VPS بـ Coolify من غير ما تكتب Nginx config."
           },
           lines: [
-            "دالة بتاخد وصف المشروع.",
-            "فريق صغير ومش محتاج سيرفر خاص: منصة جاهزة.",
-            "ميزانية قليلة: سيرفر واحد وانت اللي بتديره.",
+            "دالة بتاخد وصف المشروع (وهل فيه حد يعرف Linux).",
+            "فريق صغير ومش محتاج سيرفر خاص: منصة frontend جاهزة.",
+            "ميزانية قليلة ومحدش يعرف Linux: container PaaS.",
+            "ميزانية قليلة وفيه حد يعرف Linux: VPS، والأسهل بـ Coolify أو Dokploy.",
             "ترافيك بيقفز وينزل: ادفع على الطلب.",
+            "فريق صغير لمتوسط بميزانية: container PaaS مدفوع وقاعدة مُدارة.",
             "غير كده: managed على AWS.",
             "قفلة الدالة.",
-            "مطوّر واحد ومش محتاج سيرفر: PaaS.",
-            "محتاج سيرفر وميزانيته ١٠ دولار: VPS.",
+            "مطوّر واحد ومش محتاج سيرفر: frontend PaaS.",
+            "محتاج سيرفر وميزانيته ١٠ دولار ومحدش يعرف Linux: container PaaS.",
+            "نفس المشروع بس فيه حد يعرف Linux: VPS + Coolify.",
+            "٤ مطورين وميزانية ١٥٠: container PaaS مدفوع.",
             "فريق أكبر وميزانية: managed."
           ]
         }
@@ -1064,6 +1078,269 @@ WAF: الخطة المجانية فيها Free Managed Ruleset للثغرات ا
       ]
     },
     {
+      t: "Cloudflare للمطوّر: Pages و R2 و Workers و Tunnel",
+      l: 2,
+      n: "موقع Vite على الـ edge، وتخزين زي S3 من غير رسوم خروج، وكود صغير قبل سيرفرك، ومدخل للإنتاج من غير ما تفتح بورت",
+      items: [
+        {
+          cmd: "Cloudflare Pages",
+          title: "موقع Vite على Cloudflare: من git ولا من الترمنال",
+          desc: R`موقع Vite أو React بعد [[npm run build]] مجرد فولدر [[dist]] فيه HTML و JS و CSS، و Cloudflare بيخدمه من الـ CDN بتاعه في كل مكان، والطلبات على الملفات الثابتة مجانية.
+
+فيه طريقتين: Cloudflare Pages (تربط الريبو، وكل push يعمل build، وكل branch ليه preview URL، أو ترفع [[dist]] بـ [[wrangler pages deploy]])، أو Workers static assets (ملف [[wrangler.jsonc]] فيه [[assets]] وبعدين [[wrangler deploy]]). Cloudflare بقى بيقول إن المشاريع الجديدة تبدأ على Workers، و Pages لسه شغال ومدعوم للمشاريع الموجودة، والاتنين بيدّوك نفس النتيجة لموقع static.
+
+ولو الموقع SPA فيه routing (React Router)، لازم تقول لـ Cloudflare «أي مسار مش ملف رجّع index.html»، وإلا [[/dashboard]] يطلع 404 لما حد يعمل refresh.`,
+          example: R`npm create vite@latest my-site -- --template react-ts
+cd my-site && npm i && npm run build
+npx wrangler login
+npx wrangler pages deploy dist --project-name my-site --branch main
+npx wrangler pages deploy dist --project-name my-site --branch feature-x
+# أو Workers static assets: wrangler.jsonc زي الـ sol، وبعدين
+npx wrangler deploy`,
+          try: R`اعمل موقع Vite فيه React Router بصفحتين ([[/]] و [[/about]]). انشره بطريقة من الاتنين، وافتح [[/about]] مباشرة (مش من لينك جوه الموقع) واعمل refresh. لو طلع 404 صلّحه. وبعدين اربط دومين فرعي من الداشبورد ([[www.example.com]]).`,
+          deep: {
+            why: "موقع static على VPS معناه Nginx وشهادة وسيرفر لازم يفضل شغال، عشان حاجة ممكن تتخدم من CDN ببلاش تقريبًا. Cloudflare (زي Vercel و Netlify) بيخدمه من أقرب مكان لليوزر، مع HTTPS و preview لكل branch، وده مناسب جدًا لـ landing page أو dashboard بيكلّم API منفصل.",
+            how: R`Pages من git: في الداشبورد Workers & Pages ثم Create، وتختار الريبو، و build command [[npm run build]]، و output directory [[dist]]. الـ branch الأساسي production، وأي branch تاني preview على [[BRANCH.my-site.pages.dev]].
+
+Pages من الترمنال (Direct Upload): [[wrangler pages deploy dist]] بيرفع الفولدر كما هو. [[--branch main]] (أو الـ production branch بتاع المشروع) = production، وأي اسم تاني = preview. مفيد لو الـ build بيحصل في GitHub Actions.
+
+Workers static assets: ملف [[wrangler.jsonc]] فيه [[name]] و [[compatibility_date]] و [[assets.directory = "./dist"]]. وتقدر تضيف [[main]] (Worker بكود) فيبقى عندك API و frontend في deploy واحد (درس [[Workers]]). وفي نسخ wrangler الجديدة، ممكن [[pages deploy]] لمشروع جديد يقترح عليك تروح Workers.
+
+الـ SPA fallback: في Workers بتكتب [[not_found_handling: "single-page-application"]]. في Pages، لو مفيش [[404.html]] في الـ output، Pages بيعامل المشروع كـ SPA ويرجّع [[index.html]] للمسارات المش موجودة. والـ redirects والـ headers في ملفات [[_redirects]] و [[_headers]] جوه [[public/]].
+
+متغيرات البيئة: Vite بيكتب [[import.meta.env.VITE_*]] جوه الـ JS وقت الـ build، فهي مش سر، وأي حاجة سرية تروح للـ API مش للـ frontend.`,
+            when: "أي frontend static أو SPA: portfolio، landing، dashboard بيكلّم API على دومين تاني. لو محتاج SSR لـ Next.js بكل مميزاته، Vercel أو سيرفر Node أسهل (تاب Next.js).",
+            mistakes: R`SPA من غير fallback فكل refresh على صفحة داخلية يطلع 404. وتحط مفتاح API سري في [[VITE_API_KEY]] فيطلع في الـ JS لأي حد. وتنسى إن الـ output directory لـ Vite هو [[dist]] مش [[build]] (ده CRA القديم). وتربط الدومين الرئيسي بـ CNAME وهو مش على Cloudflare DNS.`
+          },
+          lines: [
+            "مشروع Vite جديد بـ React و TypeScript.",
+            "سطّب وابني: الناتج في dist.",
+            "اربط wrangler بحسابك (بيفتح المتصفح).",
+            "ارفع dist كـ production على Pages (أول مرة بيعمل المشروع).",
+            "نفس الفولدر كـ preview لـ branch تانية (URL لوحده).",
+            "أو انشر كـ Worker بـ static assets حسب wrangler.jsonc."
+          ],
+          sol: R`بعد [[pages deploy]] هتاخد URL زي [[https://my-site.pages.dev]] (أو URL فيه hash لكل deploy)، وللـ preview [[https://feature-x.my-site.pages.dev]]. ولو استخدمت Workers هتاخد [[https://my-site.YOUR-SUBDOMAIN.workers.dev]].
+
+اختبار الـ refresh: [[curl -I https://my-site.pages.dev/about]] المفروض يرجّع 200 ومحتواه هو [[index.html]]. لو رجّع 404، يبقى فيه [[404.html]] في [[dist]] (فـ Pages مبقاش يعتبره SPA)، أو في Workers ناقصك [[not_found_handling]].
+
+الغلطة الشائعة التانية: الصفحة بيضا والـ console فيه 404 على [[/assets/index-abc.js]]، وده لأنك غيّرت [[base]] في [[vite.config.ts]] أو رفعت فولدر غير [[dist]].`,
+          solCode: R`// wrangler.jsonc لطريقة Workers static assets
+{
+  "name": "my-site",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}`
+        },
+        {
+          cmd: "R2",
+          title: "R2: تخزين زي S3 بنفس الكود ومن غير رسوم خروج",
+          desc: R`R2 تخزين ملفات (object storage) من Cloudflare بيتكلم نفس API بتاع S3، فبتستخدم [[@aws-sdk/client-s3]] زي ما هو، وبتغيّر 3 حاجات بس: الـ [[endpoint]] بقى [[https://ACCOUNT_ID.r2.cloudflarestorage.com]]، والـ [[region]] بقى [[auto]]، والمفاتيح من R2 API token.
+
+الفرق الكبير في الفلوس: مفيش رسوم على الداتا اللي بتخرج (egress). في S3 كل جيجا بتنزل لليوزر بتتحاسب، وده ممكن يبقى أكبر بند في الفاتورة لموقع صور أو فيديو. وقت كتابة الدرس فيه free tier شهري (حوالي ١٠ جيجا تخزين وملايين من العمليات)، وبعدها بتدفع على التخزين والعمليات بس. راجع صفحة الأسعار.`,
+          example: R`import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+const r2 = new S3Client({
+  region: "auto",
+  endpoint: "https://" + process.env.R2_ACCOUNT_ID + ".r2.cloudflarestorage.com",
+  credentials: { accessKeyId: process.env.R2_ACCESS_KEY_ID, secretAccessKey: process.env.R2_SECRET_ACCESS_KEY },
+});
+
+const put = new PutObjectCommand({ Bucket: "myapp-uploads", Key: "avatars/42.webp", ContentType: "image/webp" });
+const uploadUrl = await getSignedUrl(r2, put, { expiresIn: 300 });
+const get = new GetObjectCommand({ Bucket: "myapp-uploads", Key: "avatars/42.webp" });
+const downloadUrl = await getSignedUrl(r2, get, { expiresIn: 3600 });
+console.log(uploadUrl.split("?")[0]);
+console.log(new URL(downloadUrl).searchParams.get("X-Amz-Expires"));`,
+          try: R`من غير حساب حتى: سطّب [[@aws-sdk/client-s3]] و [[@aws-sdk/s3-request-presigner]] في فولدر تجربة، وشغّل الملف بمتغيرات وهمية ([[R2_ACCOUNT_ID=0123456789abcdef0123456789abcdef]] وأي مفاتيح). التوقيع بيتحسب على جهازك فمش محتاج نت. وبعدين لو عندك حساب: اعمل bucket و R2 API token بصلاحية Object Read & Write على الـ bucket ده بس، وارفع ملف فعلًا بـ [[curl -X PUT --upload-file]] على الـ uploadUrl.`,
+          flag: "script",
+          deep: {
+            why: "ملفات المستخدمين مكانها object storage مش ديسك السيرفر (عشان تقدر تكبّر وتنقل). و S3 هو المعيار، بس رسوم الخروج بتفاجئ الناس: موقع بيعرض صور كتير ممكن يدفع على الترافيك أكتر من التخزين. R2 بيشيل البند ده، ولأنه بيتكلم S3 API، النقل منه وإليه تغيير إعدادات مش إعادة كتابة.",
+            how: R`الكود هو هو اللي في درس [[presigned URL]]: السيرفر بيعمل رابط موقّع مؤقت، والمتصفح بيرفع عليه مباشرة بـ PUT، فالملف مبيعديش على سيرفرك. [[getSignedUrl]] بيحسب التوقيع محليًا بالمفتاح السري، ومبيكلّمش R2 خالص.
+
+المفاتيح: من R2 في الداشبورد، Manage API tokens، واعمل token بصلاحية على bucket معين. هيدّيك Access Key ID و Secret Access Key (دول اللي بيدخلوا الـ SDK). والـ Account ID موجود في الداشبورد.
+
+العرض للناس: الـ bucket خاص افتراضيًا. يا إما presigned GET زي المثال (لملفات خاصة)، يا إما تربط custom domain بالـ bucket ([[files.example.com]]) فيبقى public ومعاه كاش Cloudflare، ودي أحسن للصور العامة. وفيه [[r2.dev]] URL للتجربة بس (عليه rate limit ومفيش كاش).
+
+الـ CORS: المتصفح بيرفع على دومين R2 مش دومينك، فلازم CORS policy على الـ bucket تسمح بـ [[PUT]] من [[https://myapp.example.com]] وبالـ header [[Content-Type]].
+
+من جوه Worker مش محتاج SDK: بتعمل binding للـ bucket وتستخدم [[env.BUCKET.put()]] و [[env.BUCKET.get()]] (درس [[Workers]]).
+
+فرق عن S3: مفيش regions بالمعنى ده (فيه location hint)، وبعض مميزات S3 مش موجودة أو مختلفة (زي بعض إعدادات الـ ACL والـ events). ولو نسخة SDK جديدة طلّعت أخطاء checksum مع R2، شوف [[requestChecksumCalculation]] في إعدادات الـ client.`,
+            when: "صور ومرفقات المستخدمين، والباك أب (Coolify و Dokploy بيدعموه كـ S3)، وأي ملفات بتتنزل كتير. S3 يفضل أحسن لو كل حاجة تانية على AWS ومحتاج events لـ Lambda وصلاحيات IAM.",
+            mistakes: R`endpoint غلط (بتحط bucket في الـ host بإيدك أو تنسى الـ Account ID)، أو [[region: "us-east-1"]] بدل [[auto]]. و token بصلاحية على كل الـ buckets. ومفاتيح R2 في كود الـ frontend بدل presigned URL. وتستخدم [[r2.dev]] في الإنتاج. وتنسى الـ CORS فالرفع من المتصفح يفشل برسالة CORS مع إن الـ URL سليم.`
+          },
+          lines: [
+            "الـ client والأوامر من AWS SDK زي S3 بالظبط.",
+            "دالة الروابط الموقّعة.",
+            "client جديد لـ R2.",
+            "R2 مفيهوش regions، فـ auto.",
+            "الـ endpoint بتاع حسابك على R2.",
+            "مفاتيح R2 API token من متغيرات البيئة.",
+            "قفلة.",
+            "أمر رفع لمسار معين بنوع ملف معين.",
+            "رابط رفع صالح ٥ دقايق.",
+            "أمر تنزيل لنفس الملف.",
+            "رابط تنزيل صالح ساعة.",
+            "اطبع الرابط من غير التوقيع.",
+            "اطبع مدة صلاحية رابط التنزيل من الـ query."
+          ],
+          sol: R`بالمتغيرات الوهمية الناتج:
+
+[[https://myapp-uploads.0123456789abcdef0123456789abcdef.r2.cloudflarestorage.com/avatars/42.webp]]
+[[3600]]
+
+لاحظ إن الـ SDK حط اسم الـ bucket في أول الـ host لوحده (virtual-hosted style)، ومفيش أي طلب اتبعت لـ R2: التوقيع اتحسب على جهازك، فحتى مفاتيح غلط بتطلّع رابط، بس الرفع عليه هيرجّع 403 [[SignatureDoesNotMatch]] أو [[InvalidAccessKeyId]].
+
+مع حساب حقيقي: [[curl -X PUT -H "Content-Type: image/webp" --upload-file a.webp "UPLOAD_URL"]] يرجّع 200، والملف يظهر في الـ bucket. لو رجّع 403 [[SignatureDoesNotMatch]] مع مفاتيح صح، غالبًا الـ Content-Type اللي بعته مختلف عن اللي في [[PutObjectCommand]]، لأنه جزء من التوقيع.`,
+          solCode: R`npm init -y && npm i @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
+R2_ACCOUNT_ID=0123456789abcdef0123456789abcdef R2_ACCESS_KEY_ID=test R2_SECRET_ACCESS_KEY=test node r2.mjs
+curl -X PUT -H "Content-Type: image/webp" --upload-file avatar.webp "UPLOAD_URL_FROM_THE_SCRIPT"`
+        },
+        {
+          cmd: "Workers",
+          title: "Workers: كود صغير بيرد من أقرب مكان لليوزر",
+          desc: R`Worker دالة JavaScript بتاخد [[Request]] وترجّع [[Response]] (نفس Web APIs اللي في المتصفح و Node 18+)، وبتشتغل على سيرفرات Cloudflare في كل مكان، من غير cold start تقريبًا لأنها isolates مش containers.
+
+الـ [[env]] فيه المتغيرات والأسرار والـ bindings: bucket R2، أو KV، أو قاعدة D1، أو Durable Objects. والـ binding معناه إن الـ Worker بيكلّم الخدمة من غير مفاتيح ولا SDK.
+
+وقت كتابة الدرس الخطة المجانية فيها حد يومي للطلبات (حوالي ١٠٠ ألف) ووقت CPU قليل لكل طلب، والخطة المدفوعة بتبدأ بـ ٥ دولار في الشهر. راجع الأرقام قبل ما تعتمد عليها.`,
+          example: R`export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    if (url.pathname === "/api/hello") {
+      const country = request.cf?.country ?? "unknown";
+      return Response.json({ hello: env.GREETING, country });
+    }
+    if (url.pathname.startsWith("/files/")) {
+      const obj = await env.BUCKET.get(url.pathname.slice(7));
+      if (!obj) return new Response("not found", { status: 404 });
+      return new Response(obj.body, { headers: { "content-type": obj.httpMetadata?.contentType ?? "application/octet-stream" } });
+    }
+    return new Response("not found", { status: 404 });
+  },
+};`,
+          try: R`من غير حساب: احفظ الـ Worker في [[worker.mjs]]، واعمل [[test.mjs]] بيعمل import ليه وبينادي [[worker.fetch(new Request(...), env, {})]] بـ env وهمي فيه [[GREETING]] و [[BUCKET]] بدالة [[get]] بترجّع object لمفتاح واحد بس. جرّب ٤ مسارات. وبعدين بحساب: [[npm create cloudflare@latest]]، و [[npx wrangler dev]]، و [[npx wrangler deploy]].`,
+          flag: "script",
+          deep: {
+            why: "حاجات كتير صغيرة مش محتاجة سيرفر: redirect حسب البلد، أو API صغير بيقرا من R2 أو KV، أو webhook receiver، أو حماية endpoint بتوكن قبل ما يوصل سيرفرك. Worker بيعمل ده قريب من اليوزر، وتقريبًا ببلاش لحجم صغير، ومن غير سيرفر تحدّثه.",
+            how: R`الـ Worker ES module بيعمل [[export default]] لـ object فيه [[fetch]]. Cloudflare بيناديها مع كل طلب بـ ٣ حاجات: [[request]] (Request عادي ومعاه [[request.cf]] فيه البلد والمدينة وغيرهم)، و [[env]]، و [[ctx]] ([[ctx.waitUntil(promise)]] تكمّل شغل بعد ما الرد يتبعت، زي لوج أو analytics).
+
+الـ runtime مش Node: مفيش [[fs]] ولا process طويل، والكود بيشتغل لكل طلب لوحده وبحد CPU. وفيه [[nodejs_compat]] flag بيدّيك جزء كبير من Node APIs (زي [[Buffer]] و [[crypto]])، بس مش كل المكتبات بتشتغل.
+
+الإعداد في [[wrangler.jsonc]]: [[main]] (ملف الكود)، و [[vars]] (متغيرات عادية)، و [[r2_buckets]] بـ [[binding: "BUCKET"]] و [[bucket_name]]، والأسرار بـ [[wrangler secret put NAME]] مش في الملف.
+
+[[wrangler dev]] بيشغّل الـ Worker على جهازك بـ workerd (نفس الـ runtime) وبـ R2 و KV محليين. و [[wrangler deploy]] بينشره على [[NAME.SUBDOMAIN.workers.dev]] أو على route في دومينك. و [[wrangler tail]] لايف لوجات.
+
+ولأنه Request و Response عاديين، تقدر تختبر الـ handler في Node مباشرة زي التجربة، أو بـ Vitest ومعاه pool خاص بـ Workers.`,
+            when: "منطق خفيف قريب من اليوزر، و APIs صغيرة على R2 أو KV أو D1، وتحويلات على الطلب قبل سيرفرك، والـ webhooks. مش مكان شغل تقيل على CPU، ولا مكتبات Node بتعتمد على الديسك أو native modules.",
+            mistakes: R`تفتكر إن الـ Worker Node فتعمل [[import fs]] أو تحط connection pool لـ Postgres في متغير global وتتوقع إنه يعيش (للقواعد فيه Hyperdrive). وتحط أسرار في [[vars]] جوه [[wrangler.jsonc]] اللي على GitHub. وتنسى [[await]] لشغل مش مهم بدل [[ctx.waitUntil]] فالرد يستنى. وتقرا [[obj.body]] مرتين (stream بيتقري مرة واحدة).`
+          },
+          lines: [
+            "الـ Worker بيصدّر object فيه دوال الأحداث.",
+            "fetch: بتتنادى مع كل طلب HTTP.",
+            "اقرا المسار من الـ URL.",
+            "مسار API صغير.",
+            "البلد من بيانات Cloudflare (مش موجودة في الاختبار المحلي).",
+            "رد JSON فيه متغير من env.",
+            "قفلة.",
+            "مسار ملفات من R2.",
+            "هات الملف من الـ bucket عن طريق الـ binding بالمفتاح اللي بعد /files/.",
+            "مش موجود: 404.",
+            "رجّع الملف stream بنوعه المتخزن.",
+            "قفلة.",
+            "أي مسار تاني: 404.",
+            "قفلة fetch.",
+            "قفلة الـ object."
+          ],
+          sol: R`بـ env وهمي فيه [[GREETING: "ahlan"]] و bucket بيرجّع ملف لـ [[a.txt]] بس، الناتج:
+
+[[/api/hello 200 application/json {"hello":"ahlan","country":"unknown"}]]
+[[/files/a.txt 200 text/plain hi from r2]]
+[[/files/b.txt 404 text/plain;charset=UTF-8 not found]]
+[[/x 404 text/plain;charset=UTF-8 not found]]
+
+[[country]] بـ [[unknown]] لأن [[request.cf]] مش موجود برا Cloudflare. بعد [[wrangler deploy]] هتلاقي البلد الحقيقية (زي [[EG]]).
+
+الغلطة الشائعة: [[TypeError: Cannot read properties of undefined (reading 'get')]]، وده لأن [[env.BUCKET]] مش موجود: اسم الـ binding في [[wrangler.jsonc]] مختلف عن اللي في الكود، أو نسيت تعدّي env في الاختبار.`,
+          solCode: R`// test.mjs
+import worker from "./worker.mjs";
+const env = {
+  GREETING: "ahlan",
+  BUCKET: { get: async (k) => (k === "a.txt" ? { body: "hi from r2", httpMetadata: { contentType: "text/plain" } } : null) },
+};
+for (const p of ["/api/hello", "/files/a.txt", "/files/b.txt", "/x"]) {
+  const r = await worker.fetch(new Request("https://myapp.example.workers.dev" + p), env, {});
+  console.log(p, r.status, r.headers.get("content-type"), await r.text());
+}`
+        },
+        {
+          cmd: "Cloudflare Tunnel",
+          title: "السيرفر في الإنتاج من غير ولا بورت مفتوح",
+          desc: R`Cloudflare Tunnel بيقلب الاتجاه: بدل ما الناس توصل لسيرفرك على 80 و 443، برنامج [[cloudflared]] على السيرفر بيفتح اتصال طالع لـ Cloudflare، والطلبات بترجع عليه. فالفايروول يقفل كل البورتات الداخلة (إلا SSH، أو حتى SSH كمان)، و IP السيرفر مبيبقاش له لازمة للزائر.
+
+للتجربة على جهازك فيه درس [[cloudflared]] في «تاب Node». هنا نسخة الإنتاج: tunnel بيتدار من الداشبورد بـ token، و [[cloudflared]] شغال كـ service أو container، وكل hostname بيروح لخدمة داخلية.`,
+          example: R`# ~/.cloudflared/config.yml (لو بتدير الـ tunnel من ملف مش من الداشبورد)
+tunnel: 6ff42ae2-765d-4adf-8112-31c55c1551ef
+credentials-file: /etc/cloudflared/6ff42ae2-765d-4adf-8112-31c55c1551ef.json
+ingress:
+  - hostname: api.example.com
+    service: http://localhost:3000
+  - hostname: app.example.com
+    service: http://localhost:8080
+  - service: http_status:404`,
+          try: R`على VPS فيه API شغال على [[localhost:3000]]: من الداشبورد (Zero Trust ثم Networks ثم Tunnels) اعمل tunnel، وخد أمر التسطيب بالـ token وشغّله على السيرفر ([[sudo cloudflared service install TOKEN]]). ضيف Public hostname [[api.example.com]] على [[http://localhost:3000]]. بعدين اقفل 80 و 443 في ufw، واتأكد إن الموقع لسه شغال من برا، وإن [[curl http://SERVER_IP]] ما بيردش.`,
+          flag: "script",
+          deep: {
+            why: "كل بورت مفتوح باب بيتفحص طول اليوم. ولما السيرفر ورا Cloudflare proxy عادي، لسه ممكن حد يلاقي الـ IP ويضربه مباشرة ويعدّي WAF و rate limiting (درس [[Cloudflare proxy و SSL]]). مع Tunnel مفيش باب أصلًا. وكمان بيحل مشكلة سيرفر في البيت أو ورا NAT من غير IP ثابت.",
+            how: R`[[cloudflared]] بيفتح كذا اتصال طالع (outbound) لأقرب data centers بتوع Cloudflare. الزائر بيطلب [[api.example.com]]، الـ DNS بيشاور على [[TUNNEL_ID.cfargotunnel.com]] (CNAME برتقاني)، و Cloudflare بيبعت الطلب في الـ tunnel، و [[cloudflared]] بيوصّله لـ [[localhost:3000]].
+
+طريقتين للإدارة: remotely-managed (من الداشبورد، والسيرفر عليه token بس، وده الأسهل والمنصوح بيه) أو locally-managed (ملف [[config.yml]] زي المثال، وملف credentials JSON من [[cloudflared tunnel create]]).
+
+الـ [[ingress]] بيتقري من فوق لتحت، وأول قاعدة hostname بتطابق بتكسب، والقاعدة الأخيرة لازم تبقى catch-all من غير hostname (هنا 404)، وإلا [[cloudflared]] يرفض يشتغل. وتقدر تتحقق بـ [[cloudflared tunnel ingress validate]].
+
+التشغيل الدايم: [[cloudflared service install]] بيعمل systemd service. أو في Docker Compose: container [[cloudflare/cloudflared]] بأمر [[tunnel run]] ومتغير [[TUNNEL_TOKEN]]، وعلى نفس الشبكة فالـ service يبقى [[http://api:3000]] (اسم الـ container)، ومتعملش [[ports:]] للـ API خالص.
+
+ومع Cloudflare Access تحط تسجيل دخول (Google أو إيميل OTP) قبل hostname زي [[admin.example.com]] أو لوحة Coolify، فمحدش يوصل للصفحة أصلًا من غير ما يثبت هو مين.`,
+            when: "أي سيرفر إنتاج صغير ورا Cloudflare، ولوحات التحكم الداخلية (Grafana و Coolify و pgAdmin)، والسيرفرات اللي ورا NAT. مش مناسب لو الترافيك مش HTTP (زي UDP لألعاب) من غير إعدادات إضافية.",
+            mistakes: R`تعمل الـ tunnel وتسيب 80 و 443 مفتوحين، فالفايدة الأمنية راحت. وتنسى الـ catch-all في [[ingress]]. و [[ports: "3000:3000"]] في compose فالـ API مفتوح على الـ IP برضه. وتحط [[localhost]] في الـ service والـ cloudflared جوه container (الـ localhost بتاعه هو الـ container نفسه). وتحط الـ token في ملف على GitHub: الـ token ده يقدر يشغّل الـ tunnel من أي جهاز.`
+          },
+          lines: [
+            "رقم الـ tunnel (من cloudflared tunnel create).",
+            "ملف المفاتيح بتاعه.",
+            "قواعد التوجيه، بالترتيب.",
+            "الطلبات على api.example.com...",
+            "...تروح للـ API على البورت ٣٠٠٠ محليًا.",
+            "والـ frontend على دومين تاني...",
+            "...على ٨٠٨٠.",
+            "أي حاجة تانية: 404 (لازم تبقى آخر قاعدة)."
+          ],
+          sol: R`بعد التسطيب، [[systemctl status cloudflared]] يقول [[active (running)]]، والداشبورد يوري الـ tunnel بحالة [[HEALTHY]]. و [[dig +short api.example.com]] يرجّع IPs بتاعة Cloudflare، و [[curl -sI https://api.example.com/healthz]] يرجّع 200 ومعاه [[cf-ray]].
+
+بعد [[sudo ufw delete allow 80/tcp]] و [[sudo ufw delete allow 443/tcp]]: الموقع لسه شغال من برا (لأن الاتصال طالع من السيرفر)، و [[curl -m 5 http://SERVER_IP]] يعمل timeout.
+
+الغلطات الشائعة: [[502 Bad Gateway]] من Cloudflare، ولوج [[cloudflared]] فيه [[connection refused]]، وده لأن الـ API مش شغال أو بيسمع على بورت تاني أو cloudflared في container وانت كاتب localhost. أو [[1033]] (Argo Tunnel error)، وده معناه إن مفيش [[cloudflared]] متصل بالـ tunnel ده دلوقتي.`,
+          solCode: R`# docker-compose.yml: الـ API من غير أي ports، و cloudflared بيوصله بالاسم
+services:
+  api:
+    build: .
+    environment:
+      - PORT=3000
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=$__{TUNNEL_TOKEN}
+    restart: unless-stopped
+# وفي الداشبورد: Public hostname api.example.com على http://api:3000`
+        }
+      ]
+    },
+    {
       t: "منصات جاهزة للفرق الصغيرة",
       l: 2,
       n: "push والموقع يطلع، وقاعدة بيانات من غير سيرفر، بس افهم الحدود قبل ما تتفاجئ",
@@ -1138,6 +1415,379 @@ Supabase المجاني: المشروع بيتوقف (pause) لو مفيش نش�
             "Neon عن طريق الـ pooler: الهوست فيه -pooler.",
             "Neon مباشر: نفس الهوست من غير -pooler، للـ migrations."
           ]
+        }
+      ]
+    },
+    {
+      t: "منصات جاهزة للباك إند",
+      l: 2,
+      n: "API و Postgres و worker من GitHub من غير ما تدير سيرفر: Render و Railway و Fly.io، أو PaaS على الـ VPS بتاعك، وإمتى الحساب يقلب",
+      items: [
+        {
+          cmd: "render.yaml",
+          title: "Render: API و Postgres و worker في ملف واحد",
+          desc: R`Render بيشغّل الباك إند بتاعك من الريبو: web service (API ليه URL)، و background worker (من غير بورت، بيسحب jobs)، و cron job، و Postgres و Key Value (زي Redis) مُدارين، وكل ده ممكن يتوصف في ملف [[render.yaml]] (اسمه عندهم Blueprint) في جذر الريبو.
+
+الملف بيربط الخدمات ببعض: [[fromDatabase]] بيحط connection string القاعدة في متغير البيئة لوحده، و [[preDeployCommand]] بيشغّل الـ migrations قبل ما النسخة الجديدة تستقبل ترافيك. وكل push على الـ branch بيعمل deploy.
+
+الخطة المجانية للتجربة بس (الأرقام وقت كتابة الدرس وممكن تتغير، راجع صفحة الأسعار): الـ web service المجاني بينام بعد حوالي ربع ساعة من غير ترافيك وأول طلب بعدها بياخد ثواني، و Postgres المجاني بيتمسح بعد حوالي ٣٠ يوم. والـ worker و preDeployCommand محتاجين خطة مدفوعة.`,
+          example: R`# render.yaml في جذر الريبو
+services:
+  - type: web
+    name: shop-api
+    runtime: node
+    region: frankfurt
+    plan: starter
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npx prisma migrate deploy
+    startCommand: node dist/server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shop-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+  - type: worker
+    name: shop-worker
+    runtime: node
+    region: frankfurt
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/worker.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shop-db
+          property: connectionString
+databases:
+  - name: shop-db
+    region: frankfurt
+    plan: basic-256mb`,
+          try: R`خد مشروع Express فيه [[/healthz]] وملف worker بسيط (حلقة بتطبع كل ١٠ ثواني وبتقرا من القاعدة). حط [[render.yaml]] زي المثال، وفي الداشبورد اختار New ثم Blueprint ووصّله بالريبو. بعد أول deploy: افتح لوجات الـ worker وشوف إنه وصل للقاعدة، وغيّر حاجة في الكود واعمل push وتابع الـ deploy التاني.`,
+          flag: "script",
+          deep: {
+            why: "أغلب الناس بتعرف تنشر frontend على Vercel، بس أول ما يبقى عندها Express أو FastAPI ومعاه Postgres و worker بيبعت إيميلات، بتتنقل على طول لـ VPS وتقعد أسبوع في Nginx و systemd و SSL. منصة زي Render بتديك الـ ٣ حاجات دول في ملف واحد، و SSL ودومين ولوجات وباك أب للقاعدة جاهزين.",
+            how: R`كل خدمة في [[services]] ليها [[type]]: [[web]] بياخد بورت من متغير [[PORT]] اللي Render بيحطه (فلازم تطبيقك يسمع على [[process.env.PORT]] وعلى [[0.0.0.0]])، و [[worker]] نفس الكود بس من غير بورت ولا URL، و [[cron]] بياخد [[schedule]]، و [[keyvalue]] لـ Redis-compatible.
+
+[[runtime: node]] معناها Render هيبني بنفسه ([[buildCommand]]). ولو عندك Dockerfile اكتب [[runtime: docker]] وهو يبني الـ image (تاب Docker)، ودي أحسن عشان نفس الـ image تشتغل في أي حتة لما تنقل.
+
+[[preDeployCommand]] بيشتغل بعد الـ build وقبل التبديل. لو فشل، النسخة القديمة بتفضل شغالة. ده المكان الصح لـ [[prisma migrate deploy]] (تاب «SQL و Prisma»)، مش جوه [[startCommand]]: لو عندك نسختين من الـ API، الاتنين هيحاولوا يعملوا migrate في نفس الوقت.
+
+[[healthCheckPath]]: Render مش هيبعت ترافيك للنسخة الجديدة غير لما المسار ده يرد 200، وده اللي بيدّيك deploy من غير downtime.
+
+[[fromDatabase]] بـ [[connectionString]] بيحط الـ internal URL: الخدمات والقاعدة في نفس الـ region بيتكلموا على شبكة Render الخاصة. عشان كده حط كله في نفس الـ [[region]]. و [[generateValue: true]] بيعمل سر عشوائي مرة واحدة. والأسرار اللي انت عارف قيمتها (مفتاح Stripe) اكتبها [[sync: false]] وحط قيمتها من الداشبورد، متكتبهاش في الملف.
+
+الفلوس (تقريبي ومتغير): فيه اشتراك للـ workspace، وكل خدمة ليها instance بسعر شهري ثابت، والقاعدة بسعر حسب حجمها. يعني API + worker + قاعدة = ٣ بنود، وده اللي بيخلّي الفاتورة تكبر أسرع من VPS لما الخدمات تزيد (درس [[PaaS ولا VPS: الحساب]]).`,
+            when: "باك إند Node أو Python لفريق صغير أو فريلانسر، خصوصًا لو محتاج worker و cron، ومحدش عايز يبقى sysadmin. والخطة المجانية للديمو والبورتفوليو بس.",
+            mistakes: R`تحط مشروع عميل حقيقي على Postgres المجاني وتتفاجئ إنه اتمسح بعد شهر. والتطبيق يسمع على [[localhost]] أو بورت ثابت ٣٠٠٠ فالـ deploy يفشل في health check. و [[prisma migrate deploy]] جوه [[startCommand]]. والقاعدة في [[oregon]] (الافتراضي) والـ API في فرانكفورت. والملفات اللي اليوزر بيرفعها تتحفظ على ديسك الـ instance: بتتمسح مع كل deploy، فاستخدم S3 أو R2. وفي الانترفيو: «إيه الفرق بين web service و worker؟» الـ worker مفيش حد بيكلّمه من برا، هو اللي بيسحب الشغل من queue.`
+          },
+          lines: [
+            "كل الخدمات اللي مش قواعد بيانات.",
+            "خدمة web: ليها URL وبتستقبل HTTP.",
+            "اسمها، وبيبقى جزء من الـ URL.",
+            "Render هيبني بـ Node من غير Dockerfile.",
+            "قريب من مصر وأوروبا (الافتراضي أمريكا).",
+            "خطة مدفوعة صغيرة: مبتنامش.",
+            "أمر البناء.",
+            "الـ migrations قبل ما النسخة الجديدة تاخد ترافيك.",
+            "أمر التشغيل.",
+            "مسار بيرد 200 لما التطبيق يبقى جاهز.",
+            "متغيرات البيئة.",
+            "DATABASE_URL.",
+            "جاي من القاعدة اللي تحت.",
+            "اسمها.",
+            "الـ connection string الداخلي.",
+            "سر للتوكنات.",
+            "Render بيولّده عشوائي مرة واحدة.",
+            "خدمة worker: من غير بورت ولا URL.",
+            "اسمها.",
+            "نفس الـ runtime.",
+            "نفس الـ region عشان الشبكة الداخلية.",
+            "خطة مدفوعة (الـ worker مش مجاني).",
+            "نفس البناء.",
+            "بس بيشغّل ملف الـ worker.",
+            "متغيراتها.",
+            "نفس القاعدة.",
+            "من القاعدة.",
+            "اسمها.",
+            "الـ connection string.",
+            "قواعد البيانات المُدارة.",
+            "اسم القاعدة اللي الخدمات بتشاور عليه.",
+            "نفس الـ region.",
+            "أصغر خطة مدفوعة (باك أب ومبتتمسحش)."
+          ],
+          sol: R`بعد ما الـ Blueprint يخلص هتلاقي ٣ حاجات في المشروع: [[shop-api]] بـ URL على [[onrender.com]]، و [[shop-worker]] من غير URL، و [[shop-db]]. افتح [[https://shop-api-xxxx.onrender.com/healthz]] المفروض يرد 200، ولوجات الـ worker المفروض تطبع سطرها كل ١٠ ثواني ومعاه نتيجة من القاعدة (زي عدد الطلبات).
+
+ولما تعمل push هتلاقي deploy جديد للخدمتين، وفي لوج الـ API سطر [[prisma migrate deploy]] قبل التشغيل. والموقع مش هيقع وانت بتنشر، لأن النسخة القديمة بتفضل شغالة لحد ما [[/healthz]] في الجديدة يرد.
+
+الغلطات الشائعة: الـ deploy يفضل «In progress» وبعدين يفشل بـ timeout، وده غالبًا لأن التطبيق بيسمع على بورت ثابت بدل [[process.env.PORT]]. أو الـ worker يقع بـ [[ECONNREFUSED]]، وده لأنك كاتب DATABASE_URL بإيدك من جهازك بدل [[fromDatabase]]. ولو اخترت [[plan: free]] للـ worker هتلاقي الـ Blueprint بيرفض، لأن الـ workers مش مجانية.`,
+          solCode: R`// src/server.ts
+import express from "express";
+const app = express();
+app.get("/healthz", (_req, res) => res.send("ok"));
+app.listen(Number(process.env.PORT ?? 3000), "0.0.0.0");
+
+// src/worker.ts
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+setInterval(async () => {
+  const count = await prisma.order.count();
+  console.log(JSON.stringify({ msg: "worker tick", orders: count }));
+}, 10_000);`
+        },
+        {
+          cmd: "railway",
+          title: "Railway: خدمات ومتغيرات بتشاور على بعض",
+          desc: R`Railway بيشتغل بفكرة مشروع فيه خدمات جنب بعض على canvas: خدمة من ريبو GitHub أو Docker image، وقاعدة Postgres أو Redis بزرار واحد، وكلهم على شبكة خاصة جوه المشروع.
+
+المتغيرات بتشاور على بعض بـ reference variables: [[DATABASE_URL=$__{{Postgres.DATABASE_URL}}]] معناها «خد قيمة DATABASE_URL من خدمة اسمها Postgres»، فلو القاعدة اتغيرت، المتغير يتحدّث لوحده. والـ worker مجرد خدمة تانية من نفس الريبو بـ start command مختلف.
+
+الفلوس بالاستخدام الفعلي (CPU و RAM بالثانية + الديسك + الترافيك الخارج)، مش بسعر ثابت لكل خدمة. وقت كتابة الدرس: فيه trial بكريدت صغير، وخطة Hobby بـ ٥ دولار في الشهر وجواها ٥ دولار استخدام. الأرقام بتتغير، فراجع صفحة الأسعار.`,
+          example: R`npm i -g @railway/cli
+railway login
+railway init --name shop
+railway add --database postgres
+railway add --service api --variables 'DATABASE_URL=$__{{Postgres.DATABASE_URL}}'
+railway add --service worker --variables 'DATABASE_URL=$__{{Postgres.DATABASE_URL}}'
+railway up --service api
+railway variables --service api
+railway logs --service worker
+railway run npx prisma migrate dev`,
+          try: R`اعمل مشروع على Railway فيه Postgres وخدمتين (api و worker) من نفس الريبو. في إعدادات الـ worker غيّر الـ start command لـ [[node dist/worker.js]]، وفي الـ api حط pre-deploy command بـ [[npx prisma migrate deploy]]. بعدين من إعدادات الـ api اعمل Generate Domain وافتح [[/healthz]]، وشوف في الـ Metrics أد إيه كل خدمة بتاكل RAM.`,
+          deep: {
+            why: "Railway أسرع طريقة تشغّل بيها كذا خدمة بتكلم بعض (API و worker و Postgres و Redis) من غير YAML كتير. وطريقة الفلوس بالاستخدام بتبقى أرخص لمشروع صغير فاضي معظم الوقت، وأغلى لو خدمة بتاكل RAM على طول.",
+            how: R`المشروع فيه environments (زي production و staging)، وكل environment فيه نسخة من كل الخدمات بمتغيراتها. وممكن تفعّل PR environments: نسخة كاملة لكل PR.
+
+الخدمة بتتبني بـ Railpack (البنّاء بتاعهم اللي بيعرف Node و Python وغيرهم لوحده) أو بـ Dockerfile لو موجود في الريبو. وإعداداتها (start command و pre-deploy command و health check) من الداشبورد أو من ملف [[railway.json]] أو [[railway.toml]] في الريبو.
+
+الشبكة الخاصة: كل خدمة ليها اسم داخلي زي [[api.railway.internal]]، والـ worker يقدر يكلّم الـ API عليه من غير ما يطلع على النت. والقاعدة بتدّي متغيرين: [[DATABASE_URL]] (داخلي، ببلاش ترافيك) و [[DATABASE_PUBLIC_URL]] (للوصول من جهازك، وبيتحاسب كترافيك خارج).
+
+الـ CLI: [[railway init]] مشروع جديد، [[railway link]] يربط الفولدر بمشروع موجود، [[railway add]] يضيف قاعدة أو خدمة، [[railway up]] يرفع الفولدر الحالي ويبني (من غير GitHub)، و [[railway run CMD]] بيشغّل أمر على جهازك بمتغيرات الخدمة، مفيد لـ migration أو script سريع.
+
+الخدمة مش بتنام لوحدها. فيه خيار serverless (أو «App Sleeping») بيوقّفها لو مفيش ترافيك، بس مش مناسب لـ worker.`,
+            when: "MVP أو مشروع جانبي فيه كذا خدمة، أو فريق صغير عايز staging و PR previews للباك إند من غير شغل. ولو الـ RAM بتاع الخدمات ثابت وعالي على طول، احسبها مقابل VPS.",
+            mistakes: R`تكتب connection string القاعدة كنص ثابت بدل reference variable، فلما القاعدة تتغير الخدمة تقع. وتستخدم [[DATABASE_PUBLIC_URL]] من جوه الخدمات فتدفع ترافيك على كل query وتبقى أبطأ. وتفتكر إن الـ ٥ دولار حد أقصى: لو الاستخدام عدّاها بتدفع الزيادة، فحط usage limit من الإعدادات. وتنسى إن [[railway run]] بيشغّل على جهازك بمتغيرات الإنتاج، فـ [[prisma migrate reset]] كده بيمسح قاعدة الإنتاج.`
+          },
+          lines: [
+            "سطّب الـ CLI.",
+            "سجّل دخول (بيفتح المتصفح).",
+            "مشروع جديد اسمه shop، والفولدر اتربط بيه.",
+            "ضيف Postgres مُدار (اسم الخدمة Postgres).",
+            "خدمة api، و DATABASE_URL بتشاور على القاعدة (علامات ' عشان الشل ميفسّرش $).",
+            "خدمة worker بنفس المتغير.",
+            "ارفع الكود وابنيه على خدمة api.",
+            "اعرض متغيرات الـ api بقيمها النهائية.",
+            "لوجات الـ worker.",
+            "شغّل أمر على جهازك بمتغيرات الخدمة المربوطة."
+          ],
+          sol: R`في الـ canvas هتشوف ٣ مربعات: Postgres و api و worker، وخطوط بين القاعدة والخدمتين (بسبب الـ reference variables). [[railway variables --service api]] المفروض يطلّع [[DATABASE_URL]] بقيمة فيها [[postgres.railway.internal]]، يعني الشبكة الداخلية.
+
+بعد Generate Domain، [[/healthz]] يرد 200. وفي لوجات الـ api تلاقي خطوة pre-deploy فيها [[prisma migrate deploy]] وبعدها [[All migrations have been successfully applied]] أو [[No pending migrations to apply]]. والـ Metrics المفروض توريك استهلاك صغير (عشرات الميجات RAM للـ worker)، وده اللي بتدفعه فعلًا.
+
+الغلطات الشائعة: الـ worker بيشتغل كـ API تاني ويطبع [[listening on 3000]]، لأنك مغيّرتش الـ start command فخد [[npm start]]. أو قيمة المتغير طالعة [[$__{{Postgres.DATABASE_URL}}]] كنص حرفي، لأن اسم خدمة القاعدة مش [[Postgres]] بالظبط (الاسم حساس لحالة الحروف).`,
+          solCode: R`// railway.json في جذر الريبو (إعدادات الـ api)
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "deploy": {
+    "startCommand": "node dist/server.js",
+    "preDeployCommand": ["npx prisma migrate deploy"],
+    "healthcheckPath": "/healthz"
+  }
+}`
+        },
+        {
+          cmd: "fly launch",
+          title: "Fly.io: containers قريبة من اليوزر، و volumes، و regions",
+          desc: R`Fly.io بياخد الـ Docker image بتاعتك ويشغّلها كـ Machines (VMs صغيرة بتقوم في ثواني) في أي region تختارها. [[fly launch]] بيقرا المشروع، ويعمل [[fly.toml]] و Dockerfile لو مش موجود، ويعمل الـ app.
+
+الـ Machine ديسكها بيتمسح مع كل deploy. لو محتاج داتا تعيش (SQLite مثلًا) بتعمل volume: ديسك مربوط بـ Machine واحدة في region واحدة. وبتقدر تفصل الـ web عن الـ worker بـ [[processes]] في نفس الـ app.
+
+مفيش free tier للحسابات الجديدة وقت كتابة الدرس: بتدفع بالثانية على الـ Machines الشغالة، وبالجيجا على الـ volumes حتى لو الـ Machine واقفة. الـ Machine الصغيرة جدًا بدولارات قليلة في الشهر، بس راجع صفحة الأسعار.`,
+          example: R`# fly.toml (fly launch بيعمله، وده بعد التعديل)
+app = "shop-api"
+primary_region = "fra"
+
+[build]
+
+[deploy]
+  release_command = "npx prisma migrate deploy"
+
+[processes]
+  app = "node dist/server.js"
+  worker = "node dist/worker.js"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"`,
+          try: R`اعمل [[fly launch]] على مشروع Express، واقبل الـ Dockerfile اللي بيعمله، وخلّي [[primary_region]] أقرب region ليك. ضيف [[processes]] زي المثال، وشغّل [[fly secrets set DATABASE_URL=...]] وبعدين [[fly deploy]]. بعدين: [[fly status]] (كام Machine لكل process)، و [[fly scale count app=2]]، و [[fly logs]]. وجرّب تسيب الموقع ربع ساعة من غير طلبات وشوف [[fly status]].`,
+          flag: "script",
+          deep: {
+            why: "لو المستخدمين في أكتر من قارة، أو محتاج WebSockets أو process شغال على طول، Fly بيشغّل container حقيقي قريب منهم، مش function ليها حد أقصى للوقت. والـ Machines اللي بتقف لما مفيش ترافيك بتخلي مشروع صغير يتكلف قليل.",
+            how: R`[[fly launch]] بيسألك عن الاسم والـ region، ويقترح Postgres أو Redis، ويكتب [[fly.toml]]. وبعدها [[fly deploy]] بيبني الـ image (على builder عندهم أو جهازك) ويعمل rolling update.
+
+[[release_command]] بيشتغل مرة واحدة في Machine مؤقتة قبل تحديث الباقي، ولو فشل الـ deploy بيقف. ده مكان الـ migrations.
+
+[[processes]]: كل سطر بيعمل مجموعة Machines بأمر مختلف من نفس الـ image. و [[http_service.processes = ["app"]]] معناها بس مجموعة app بتستقبل HTTP. وتكبّر كل مجموعة لوحدها: [[fly scale count worker=2]].
+
+[[auto_stop_machines = "stop"]]: الـ proxy بتاع Fly بيوقّف الـ Machines لما مفيش طلبات، ويقوّمها مع أول طلب (حوالي ثانية أو أقل). و [[min_machines_running = 1]] بيسيب واحدة صاحية في الـ primary region. ده بيأثر على الـ web بس، والـ worker مبيستقبلش HTTP فمش بيتوقف بالطريقة دي.
+
+الـ volumes: [[fly volumes create data --size 1 --region fra]] وبعدين في [[fly.toml]] قسم [[[mounts]]] فيه [[source = "data"]] و [[destination = "/data"]]. الـ volume في region واحدة ومربوط بـ Machine واحدة، ومفيش مشاركة بين Machines ولا replication تلقائي. عشان كده Machine بـ volume = حاجة واحدة لو وقعت وقعت، و Fly بيعمل snapshots يومية (والتخزين بتاعها بقى بيتحاسب). لو محتاج قاعدة بجد استخدم Postgres مُدار (من Fly أو Neon أو Supabase) بدل ما تدير Postgres على volume بنفسك.
+
+الـ regions: [[fly platform regions]] بيعرضهم. [[fly scale count 2 --region fra,ams]] بيوزّع Machines. الطلب بيروح لأقرب Machine شغالة (Anycast)، بس لو القاعدة في fra والـ Machine في سنغافورة، كل query هتعدّي نص الكرة الأرضية. فابدأ region واحدة جنب القاعدة.`,
+            when: "API أو WebSockets أو app محتاج process طويل وقريب من اليوزر، وانت مرتاح مع Docker. ولو كل اللي عندك API بسيط وقاعدة، Render أو Railway أبسط.",
+            mistakes: R`تعمل volume وتفتكر إنه باك أب أو إنه بيتشارك بين Machines. وتعمل [[fly scale count 3]] لـ app عليه volume فيتعمل ٣ volumes فاضية مختلفة، وكل Machine بداتا مختلفة. و [[min_machines_running = 0]] لـ API محتاج يرد بسرعة. وتنسى إن الـ volumes والـ IPv4 المخصص بيتحاسبوا حتى لو الـ Machines واقفة. والتطبيق يسمع على بورت غير [[internal_port]] فالـ health check يفشل.`
+          },
+          lines: [
+            "اسم الـ app (والدومين هيبقى shop-api.fly.dev).",
+            "الـ region الأساسية: فرانكفورت.",
+            "البناء: فاضي يعني استخدم الـ Dockerfile اللي في الريبو.",
+            "إعدادات الـ deploy.",
+            "Machine مؤقتة بتشغّل الـ migrations قبل التحديث.",
+            "مجموعات processes من نفس الـ image.",
+            "مجموعة app: السيرفر.",
+            "مجموعة worker: شغل الخلفية.",
+            "الـ HTTP من برا.",
+            "البورت اللي التطبيق بيسمع عليه جوه الـ container.",
+            "حوّل HTTP لـ HTTPS.",
+            "وقّف الـ Machines لما مفيش ترافيك.",
+            "قوّمها مع أول طلب.",
+            "سيب واحدة صاحية دايمًا.",
+            "بس مجموعة app بتاخد HTTP.",
+            "مقاس الـ Machine.",
+            "CPU مشترك واحد.",
+            "نص جيجا رام."
+          ],
+          sol: R`بعد [[fly deploy]] المفروض [[fly status]] يوريك Machines في مجموعتين: [[app]] و [[worker]]، كلهم في [[fra]]. و [[https://shop-api.fly.dev/healthz]] يرد 200. وفي [[fly logs]] هتلاقي سطر الـ release_command ([[prisma migrate deploy]]) قبل ما الـ Machines تتحدّث.
+
+بعد [[fly scale count app=2]] هتلاقي ٢ app و ١ worker. ولو سبت الموقع من غير طلبات ربع ساعة، [[fly status]] هيوريك Machine من الاتنين حالتها [[stopped]] والتانية [[started]] (بسبب [[min_machines_running = 1]])، والـ worker لسه [[started]].
+
+الغلطات الشائعة: الـ deploy يطلع [[instance refused connection]] أو ما يعدّيش الـ health check، لأن التطبيق بيسمع على ٣٠٠٠ والـ [[internal_port]] ٨٠٨٠: خلي التطبيق يقرا [[PORT]] أو غيّر الرقم. أو الـ worker مش ظاهر خالص، لأنك نسيت [[processes = ["app"]]] في [[http_service]] فالاتنين بقوا web.`,
+          solCode: R`fly launch --no-deploy
+fly secrets set DATABASE_URL="postgresql://app:YOUR_PASSWORD@db.example.com:5432/shop?sslmode=require"
+fly deploy
+fly status
+fly scale count app=2
+fly logs`
+        },
+        {
+          cmd: "Coolify / Dokploy",
+          title: "PaaS على الـ VPS بتاعك: تجربة Render بسعر سيرفر",
+          desc: R`Coolify و Dokploy برامج open source بتسطّبها على VPS بتاعك، فيبقى عندك داشبورد زي Render: تربط ريبو GitHub، وكل push يعمل build و deploy، و SSL تلقائي بـ Let's Encrypt، وقواعد بيانات بزرار، وباك أب للقاعدة على S3 أو R2.
+
+من جوه بيستخدموا Docker (والـ Dockerfile أو Nixpacks أو Docker Compose بتاعك)، و Traefik كـ reverse proxy بياخد الدومين ويعمل الشهادة. يعني نفس اللي بتعمله بإيدك في تاب VPS وتاب Docker وتاب Nginx، بس بداشبورد.
+
+البرنامج نفسه ببلاش، وبتدفع تمن السيرفر بس. وكل واحد ليه نسخة cloud مدفوعة لو مش عايز تدير لوحة التحكم نفسها. الحد الأدنى المكتوب في الدوكس حوالي ٢ جيجا رام و ٣٠ جيجا ديسك، والـ build نفسه بياكل رام، فسيرفر ٤ جيجا أريح.`,
+          example: R`ssh root@203.0.113.10
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash
+curl -sSL https://dokploy.com/install.sh | sh
+docker ps --format "table {{.Names}}\t{{.Status}}"
+sudo ufw allow 22,80,443/tcp
+dig +short api.example.com`,
+          try: R`على VPS جديد فاضي (Ubuntu LTS، ٤ جيجا لو تقدر)، سطّب واحد بس من الاتنين. افتح اللوحة (Coolify على بورت 8000، و Dokploy على 3000)، واعمل حساب الأدمن فورًا. اربط GitHub، واعمل Postgres، وانشر API من ريبو فيه Dockerfile على [[api.example.com]] (سجل A بيشاور على السيرفر). وبعدين فعّل الباك أب المجدول للقاعدة على bucket في R2 أو S3.`,
+          flag: "danger",
+          deep: {
+            why: "الـ PaaS المدفوعة بتبقى غالية لما الخدمات تكتر: ٥ خدمات صغيرة = ٥ instances. على VPS بـ ١٥ دولار تقدر تشغّل الـ ٥ ومعاهم Postgres و Redis. Coolify و Dokploy بيدّوك راحة push-to-deploy و SSL والباك أب من غير ما تكتب Nginx config ولا systemd unit، وده طريق شائع جدًا للفريلانسرز والشركات الصغيرة.",
+            how: R`سكربت التسطيب بيسطّب Docker ويشغّل اللوحة نفسها كـ containers. بعد كده، أي app بتضيفه بيتبني image ويشتغل container، و Traefik بيقرا الـ labels بتاعته ويوجّه الدومين ليه ويطلب شهادة.
+
+Coolify: أقدم وأكبر، فيه كتالوج خدمات جاهزة كبير (Plausible و n8n و MinIO وغيرهم بزرار)، ويقدر يدير كذا سيرفر من لوحة واحدة عن طريق SSH. Dokploy: أخف وأحدث، ومبني على Docker Swarm فبيقدر يوزّع على كذا سيرفر، وتجربته قريبة من Vercel. الاتنين بيقروا Docker Compose بتاعك كما هو.
+
+الـ build على نفس السيرفر اللي بيخدم اليوزرز. build لـ Next.js ممكن ياخد ١.٥ جيجا رام، فعلى سيرفر ٢ جيجا الموقع يبطأ أو الـ OOM killer يقتل حاجة. الحل: سيرفر أكبر، أو swap، أو تبني الـ image في GitHub Actions وتخلي اللوحة تسحبها من registry (تاب GitHub Actions).
+
+اللي لسه عليك انت: تحديث نظام التشغيل (unattended-upgrades في تاب VPS)، والفايروول، وتحديث اللوحة نفسها، ومراقبة الديسك (الـ images القديمة بتتراكم)، وباك أب برا السيرفر. لو السيرفر الواحد وقع، كل حاجة وقعت.
+
+تحذير أمان: اللوحة فيها صلاحية root على السيرفر عمليًا. اعمل حساب الأدمن أول ما تفتحها (أول واحد يفتح الصفحة بيبقى الأدمن)، وحط لوحة التحكم على دومين بـ HTTPS، ولو تقدر اقفل بورت اللوحة إلا من IP بتاعك أو وراه Cloudflare Access.`,
+            when: "عندك كذا مشروع صغير أو عملاء، وعايز push-to-deploy بسعر VPS، وعندك حد يعرف أساسيات Linux لو حاجة باظت. مش أول اختيار لو محدش في الفريق عمره فتح ترمنال.",
+            mistakes: R`تسطّب وتسيب صفحة التسجيل مفتوحة على [[http://IP:8000]] فحد تاني يسجّل أدمن قبلك. والقاعدة على نفس السيرفر والباك أب على نفس الديسك. وسيرفر ١ جيجا وكل build يوقّع الموقع. وتنسى إن Docker بيفتح البورتات بعيد عن ufw (تاب Docker)، فقاعدة عملتلها public port تبقى مفتوحة للنت. وتفتكر إن «زي Render» معناها «مُدار»: التحديثات والأمان لسه عليك.`
+          },
+          lines: [
+            "ادخل السيرفر الجديد.",
+            "سكربت تسطيب Coolify الرسمي (Docker + اللوحة على بورت 8000).",
+            "أو سكربت Dokploy الرسمي (اللوحة على بورت 3000). اختار واحد بس.",
+            "اتأكد إن containers اللوحة شغالة.",
+            "SSH والويب بس (وافتكر إن Docker بيعدّي ufw في البورتات اللي بيفتحها).",
+            "اتأكد إن الدومين بيشاور على السيرفر قبل ما تطلب شهادة."
+          ],
+          sol: R`بعد التسطيب، [[docker ps]] المفروض يوريك containers اللوحة: في Coolify أسماء زي [[coolify]] و [[coolify-db]] و [[coolify-redis]] و [[coolify-proxy]] (ده Traefik)، وفي Dokploy أسماء زي [[dokploy]] و [[dokploy-postgres]] و [[dokploy-redis]] و [[dokploy-traefik]].
+
+بعد ما تنشر الـ API، [[curl -I https://api.example.com/healthz]] يرجّع [[HTTP/2 200]]، والشهادة من Let's Encrypt ([[openssl s_client]] زي درس [[Cloudflare proxy و SSL]]). وبعد أول باك أب مجدول هتلاقي ملف dump في الـ bucket.
+
+الغلطات الشائعة: الشهادة مش بتطلع والمتصفح بيقول [[TRAEFIK DEFAULT CERT]]، وده لأن الـ DNS لسه مش بيشاور على السيرفر، أو السجل برتقاني في Cloudflare والـ SSL mode مش Full (strict). أو الـ build بيقف في النص ولوج السيرفر فيه [[Out of memory: Killed process]]، والحل رام أكبر أو swap أو build برا السيرفر.`
+        },
+        {
+          cmd: "PaaS ولا VPS: الحساب",
+          title: "الفاتورة كبرت: تفضل على PaaS ولا تنقل؟",
+          desc: R`المقارنة الصح مش «٨٠ دولار مقابل ٢٠»، هي فلوس + وقت: الـ PaaS بتاخد فلوس أكتر ووقت أقل، والـ VPS فلوس أقل ووقت أكتر (تحديثات، وباك أب، ومشاكل الساعة ٢ بالليل). والوقت ده ليه سعر حتى لو انت اللي بتعمله.
+
+السكربت ده بيحسب التكلفة الكاملة بسعر ساعتك. الأرقام تقريبية للتوضيح بس: عدّلها بأسعار المنصات النهارده وبالوقت اللي بتصرفه فعلًا.`,
+          example: R`const HOURLY = Number(process.argv[2] ?? 15);
+const setups = {
+  "PaaS (Render/Railway)": { bill: { api: 25, worker: 25, postgres: 20, redis: 10 }, opsHours: 0.5 },
+  "VPS + Coolify": { bill: { vps: 16, backups: 3, offsite: 1 }, opsHours: 3 },
+  "VPS بإيدك": { bill: { vps: 16, backups: 3, offsite: 1 }, opsHours: 5 },
+};
+const sum = (o) => Object.values(o).reduce((a, b) => a + b, 0);
+for (const [name, s] of Object.entries(setups)) {
+  const cash = sum(s.bill);
+  const time = s.opsHours * HOURLY;
+  console.log(name.padEnd(22), "فلوس", cash, "+ وقت", time, "=", cash + time, "دولار");
+}`,
+          try: R`احفظه [[cost.mjs]] وشغّله بـ [[node cost.mjs 5]] و [[node cost.mjs 15]] و [[node cost.mjs 40]]. وبعدين حط أرقامك الحقيقية: فاتورة المنصة من آخر شهر، وسعر VPS يكفي نفس الخدمات، وكام ساعة في الشهر فعلًا بتصرفها على السيرفر. عند أنهي سعر ساعة الاختيار بيقلب؟`,
+          flag: "script",
+          deep: {
+            why: "أغلب قرارات النقل بتتاخد غلط في الاتجاهين: حد ينقل من PaaS لـ VPS عشان يوفر ٥٠ دولار ويصرف ١٠ ساعات في الشهر على الصيانة، أو شركة تفضل تدفع آلاف على منصة وكان ممكن سيرفرين يكفوا. الحساب البسيط ده بيخلّي القرار أرقام مش إحساس.",
+            how: R`ليه الـ PaaS بتغلى مع الكبر: كل خدمة instance بسعر، وكل قاعدة بسعر، والترافيك الخارج بيتحاسب. ٥ خدمات صغيرة على PaaS ممكن تكلف أضعاف سيرفر واحد يشيلهم. وعلى الناحية التانية، أول ٢-٣ خدمات على PaaS غالبًا أرخص من وقتك.
+
+إمتى الحساب بيقلب لـ VPS (أو VPS + Coolify): فاتورة المنصة بقت أكبر من سيرفرين كويسين + ساعتين شغل، والترافيك ثابت ومتوقع، وفيه حد في الفريق مرتاح مع Linux. وإمتى تفضل على PaaS: الفريق صغير ووقته أغلى من الفرق، أو محتاج previews و autoscaling و Postgres بـ PITR من غير ما تبنيهم.
+
+وفيه حل وسط كتير بيعمله الناس: الـ API والـ workers على VPS بـ Coolify، والقاعدة تفضل مُدارة (Neon أو Supabase أو RDS)، لأن القاعدة هي أصعب حاجة تديرها صح (باك أب واسترجاع مجرّب).
+
+إزاي تبقى جاهز للنقل من أول يوم: Dockerfile لكل خدمة (فتشتغل في أي حتة)، وكل الإعدادات متغيرات بيئة (مفيش حاجة في داشبورد بس)، والملفات في S3 أو R2 مش على ديسك، والـ migrations في الكود، والدومين عندك في Cloudflare مش عند المنصة.
+
+خطوات النقل نفسها: شغّل كل حاجة على الجديد جنب القديم، واعمل [[pg_dump]] من القاعدة القديمة و [[pg_restore]] على الجديدة وجرّب عليها، ونزّل الـ TTL قبلها بيوم (درس [[Route 53]])، وبعدين في وقت هادي: وقّف الكتابة (maintenance mode)، و dump أخير، و restore، وغيّر الـ DNS، وسيب القديم شغال أسبوع لو احتجت ترجع. تفاصيل الـ dump والـ restore في تاب PostgreSQL.`,
+            when: "كل ما فاتورة المنصة تزيد بشكل ملحوظ، أو تيجي تضيف خدمة جديدة، أو وقت الصيانة على VPS يبدأ ياكل من وقت المنتج.",
+            mistakes: R`تحسب الفلوس بس وتعتبر وقتك ببلاش. وتنقل القاعدة من غير ما تجرّب الـ restore قبلها. وتنقل وانت معتمد على حاجات خاصة بالمنصة (cron من الداشبورد، أو متغيرات مش مكتوبة في أي حتة، أو ملفات على ديسك الـ instance). وفي الانترفيو: «امتى تنقل من Heroku-like PaaS لـ infrastructure بتاعتك؟» الإجابة الكويسة فيها التكلفة الكاملة، ومين هيدير، وخطة نقل من غير downtime وخطة رجوع.`
+          },
+          lines: [
+            "سعر ساعتك من أول argument (الافتراضي ١٥ دولار).",
+            "٣ طرق لتشغيل نفس المشروع.",
+            "PaaS: ٤ بنود (API و worker وقاعدة و Redis)، ونص ساعة شغل في الشهر.",
+            "VPS + Coolify: سيرفر وباك أب وتخزين برا، و ٣ ساعات صيانة.",
+            "VPS بإيدك: نفس الفلوس، ووقت أكتر (Nginx و systemd بإيدك).",
+            "قفلة.",
+            "دالة بتجمع البنود.",
+            "لكل طريقة:",
+            "الفلوس اللي بتدفعها.",
+            "تمن وقتك.",
+            "اطبع الاتنين والمجموع.",
+            "قفلة الحلقة."
+          ],
+          sol: R`الناتج بسعر ساعة ٥ دولار: PaaS حوالي [[82.5]]، و VPS + Coolify [[35]]، و VPS بإيدك [[45]]. يعني السيرفر أرخص بفرق كبير.
+
+بسعر ١٥: PaaS [[87.5]]، و Coolify [[65]]، و VPS بإيدك [[95]]. هنا الـ VPS بإيدك بقى أغلى من الـ PaaS، و Coolify لسه أرخص.
+
+بسعر ٤٠: PaaS [[100]]، و Coolify [[140]]، و VPS بإيدك [[220]]. الـ PaaS بقت الأرخص فعلًا.
+
+والحل (الـ solCode) بياخد أرقامك من الـ argv: [[node break-even.mjs]] بالافتراضي بيطلّع [[PaaS: 87.5 | VPS: 80 | الـ VPS أرخص]] و [[الاختيار بيقلب عند سعر ساعة 17.1 دولار]]. ولو فاتورة الـ PaaS ١٢٠ والـ VPS ٢٠ بـ ٣ ساعات ([[node break-even.mjs 30 120 20 3]]) نقطة القلب بتبقى ٤٠ دولار.
+
+الفكرة: كل ما وقتك يغلى، الـ PaaS تكسب. وكل ما الخدمات تكتر (زوّد بنود في الـ PaaS بس وشوف)، الـ VPS يكسب. ولو لقيت إن الـ PaaS دايمًا أغلى مهما غيّرت سعر الساعة، راجع إنك حاسب ساعات صيانة الـ VPS بأمانة: تحديثات وباك أب واسترجاع مجرّب ومراقبة، مش «ولا حاجة، هو شغال لوحده».`,
+          solCode: R`// break-even.mjs: هات الفاتورة والساعات من argv بدل ما تكتبها في الكود
+const [, , hourly = "15", paasBill = "80", vpsBill = "20", vpsHours = "4"] = process.argv;
+const h = Number(hourly);
+const paas = Number(paasBill) + 0.5 * h;
+const vps = Number(vpsBill) + Number(vpsHours) * h;
+console.log("PaaS:", paas, "| VPS:", vps, "|", paas < vps ? "خليك على PaaS" : "الـ VPS أرخص");
+const breakEven = (Number(paasBill) - Number(vpsBill)) / (Number(vpsHours) - 0.5);
+console.log("الاختيار بيقلب عند سعر ساعة", breakEven.toFixed(1), "دولار");`
         }
       ]
     },
@@ -1643,7 +2293,7 @@ aws cloudwatch put-metric-alarm --alarm-name myapp-5xx --namespace AWS/Applicati
 
 الـ metrics: كل خدمة بتبعت metrics أساسية لوحدها (CPU الـ EC2، وأخطاء Lambda، و 5xx الـ ALB، واتصالات RDS). الـ alarm بيبص على metric كل [[period]] ثانية، ولو عدّى الحد لعدد [[evaluation-periods]] بيتحول ALARM ويبعت لـ SNS (إيميل أو Slack أو غيره).
 
-الـ traces: X-Ray أو OpenTelemetry. كل طلب ليه trace id بيتنقل في الهيدرز بين الخدمات، فتشوف «الطلب ده قعد ٢ ثانية منهم ١.٨ في query واحدة».
+الـ traces: X-Ray أو OpenTelemetry. كل طلب ليه trace id بيتنقل في الهيدرز بين الخدمات، فتشوف «الطلب ده قعد ٢ ثانية منهم ١.٨ في query واحدة». والتفاصيل وكود شغال في فئة «OpenTelemetry والـ tracing» تحت.
 
 وتقدر تطلّع metrics من اللوجات نفسها (metric filters)، وده مفيد لرقم زي «عدد الطلبات اللي فشلت في الدفع».`,
             when: "من أول يوم في الإنتاج: retention لكل log group، وإنذار على 5xx، وإنذار على الـ latency، وإنذار على الفاتورة.",
@@ -1879,6 +2529,525 @@ Action: اختبار الـ migrations على نسخة بحجم الإنتاج (
             "تصليح بصاحب وتاريخ.",
             "تصليح تاني يمنع النوع ده كله."
           ]
+        }
+      ]
+    },
+    {
+      t: "OpenTelemetry والـ tracing",
+      l: 3,
+      n: "الطلب ده بطيء ليه؟ trace بيوريك رحلة الطلب خطوة خطوة بين الـ API والقاعدة والخدمات التانية، و OpenTelemetry الطريقة المحايدة اللي كل الأدوات بتفهمها",
+      items: [
+        {
+          cmd: "trace و span",
+          title: "trace و span و context propagation: رحلة طلب واحد",
+          desc: R`الـ trace هو رحلة طلب واحد من أوله لآخره، ومكوّن من spans: كل span خطوة ليها اسم وبداية ومدة (استقبال الطلب، query على القاعدة، طلب لخدمة تانية)، وكل span ليه parent غير أول واحد. فبتشوف شجرة زي «الطلب ١٢٠٠ مللي، منهم ٩٥٠ في query واحدة».
+
+عشان الـ trace يكمل بين خدمتين، لازم الـ trace id يتنقل معاه. ده اسمه context propagation، والمعيار W3C Trace Context: header اسمه [[traceparent]] شكله [[00-TRACE_ID-PARENT_SPAN_ID-01]]. الخدمة الأولى بتحطه في الطلب الطالع، والتانية بتقراه وتكمّل نفس الـ trace.
+
+المثال ده خدمتين في ملف واحد (A بتكلّم B)، ولما يتشغّل بـ OpenTelemetry (الدرس الجاي) هتلاقي الاتنين بنفس الـ trace id، من غير ما تكتب سطر واحد يبعت الـ header.`,
+          example: R`import http from "node:http";
+import { trace } from "@opentelemetry/api";
+
+const b = http.createServer((req, res) => {
+  console.log("B got traceparent:", req.headers.traceparent);
+  console.log("B active traceId:  ", trace.getActiveSpan()?.spanContext().traceId);
+  res.end("ok");
+});
+b.listen(4000);
+
+const a = http.createServer(async (req, res) => {
+  console.log("A active traceId:  ", trace.getActiveSpan()?.spanContext().traceId);
+  const r = await fetch("http://localhost:4000/stock");
+  res.end(await r.text());
+});
+a.listen(3000, async () => {
+  await fetch("http://localhost:3000/checkout");
+  a.close(); b.close();
+});`,
+          try: R`احفظه [[two.mjs]] في فولدر فيه [[@opentelemetry/api]] وشغّله بـ [[node two.mjs]] عادي: هتشوف إيه؟ بعدين شغّله بملف [[instrumentation.mjs]] من الدرس الجاي: [[node --import ./instrumentation.mjs two.mjs]]، وقارن. وبعدين ابعت انت الـ header بإيدك: [[curl -H "traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01" localhost:3000]] (عدّل السكربت ميقفلش نفسه) وشوف الـ trace id اللي A طبعه.`,
+          flag: "script",
+          deep: {
+            why: "اللوجات بتقولك إيه اللي حصل، والـ metrics بتقولك إن p95 عالي، بس محدش منهم بيقولك «الطلب ده بالذات بطيء عشان إيه». مع API و worker وخدمة دفع خارجية وقاعدة، الـ trace هو اللي بيوريك الوقت راح فين بالظبط، وده سؤال بيتسأل في أي incident.",
+            how: R`الـ span فيه: [[traceId]] (١٦ byte، واحد لكل الرحلة)، و [[spanId]] (٨ bytes)، و [[parentSpanId]]، والاسم، والبداية والمدة، و [[kind]] (SERVER للطلب الداخل، CLIENT للطلب الطالع، INTERNAL لخطوة جوه الكود)، و attributes (زي [[http.route]] و [[db.system]])، و events (زي exception)، و status (OK أو ERROR).
+
+الـ context propagation جوه الخدمة: OpenTelemetry بيحفظ الـ span الحالي في AsyncLocalStorage (درس [[AsyncLocalStorage]] في «تاب Backend بـ Node»)، فأي span جديد في نفس الطلب، حتى بعد await، بيعرف الـ parent بتاعه لوحده. عشان كده [[trace.getActiveSpan()]] بيشتغل في أي حتة.
+
+وبين الخدمات: الـ instrumentation بتاع HTTP client (هنا [[fetch]]) بيعمل span من نوع CLIENT ويحط [[traceparent]] في الـ headers، والـ instrumentation بتاع HTTP server في B بيقراه ويعمل span جديد parent بتاعه هو الـ CLIENT span. نفس الفكرة بتتعمل يدويًا مع queues: تحط الـ context في الـ job data وتطلعه في الـ worker.
+
+الـ [[traceparent]]: [[00]] الإصدار، وبعدين الـ trace id، وبعدين id الـ span الأب، وآخر حاجة flags ([[01]] = sampled، يعني الـ trace ده بيتسجّل). وفيه [[tracestate]] اختياري لبيانات خاصة بالـ vendor.
+
+sampling: مش لازم تسجّل كل trace. الأشهر: head sampling (تقرر في أول الطلب، مثلًا ١٠٪)، والقرار بيتنقل مع الـ flags فكل الخدمات تسجّل نفس الـ traces. و tail sampling (في الـ collector، بعد ما الـ trace يخلص: خلي كل اللي فيه error أو أبطأ من ثانية).`,
+            when: "أول ما يبقى عندك أكتر من خدمة، أو API بيكلّم APIs خارجية وقاعدة و cache، أو سؤال «ليه ده بطيء» مبيتجاوبش من اللوجات.",
+            mistakes: R`تفتكر إن الـ trace id هو الـ request id: ممكن يبقوا نفس الحاجة، بس الـ trace بيعدّي على كل الخدمات والـ request id غالبًا محلي (الدرس الجاي بيربطهم). وتعمل propagation بـ header مخترع ([[x-trace]]) فمفيش أداة تفهمه. وتنسى الـ propagation في الـ queues فالـ worker يبدأ trace جديد مقطوع. وفي الانترفيو: «إيه الفرق بين logs و metrics و traces؟» اللوج حدث واحد بالتفصيل، والـ metric رقم متجمّع على وقت، والـ trace رحلة طلب واحد بين المكونات.`
+          },
+          lines: [
+            "سيرفر HTTP من Node.",
+            "الـ API بتاع OpenTelemetry (بيرجّع no-op لو مفيش SDK).",
+            "خدمة B.",
+            "اطبع الـ header اللي وصل من A.",
+            "اطبع الـ trace id اللي B شغالة فيه.",
+            "رد.",
+            "قفلة.",
+            "B على ٤٠٠٠.",
+            "خدمة A.",
+            "اطبع الـ trace id بتاع الطلب في A.",
+            "A بتكلّم B بـ fetch (هنا الـ header بيتحط لوحده).",
+            "رجّع رد B.",
+            "قفلة.",
+            "A على ٣٠٠٠، ولما تشتغل:",
+            "ابعت طلب واحد لـ A.",
+            "واقفل الاتنين عشان السكربت يخلص.",
+            "قفلة."
+          ],
+          sol: R`بـ [[node two.mjs]] من غير SDK: التلات سطور [[undefined]]، لأن [[@opentelemetry/api]] من غيره بيرجّع no-op، ومحدش بيحط [[traceparent]].
+
+بـ [[instrumentation.mjs]] (فيه الـ loader hook، الدرس الجاي) الناتج زي:
+
+[[A active traceId:   2fa1034af6bbe4fb4302073471963f88]]
+[[B got traceparent: 00-2fa1034af6bbe4fb4302073471963f88-3f5366a1e5111f2d-01]]
+[[B active traceId:   2fa1034af6bbe4fb4302073471963f88]]
+
+(ومعاهم الـ spans نفسها مطبوعة كـ objects من الـ console exporter.) نفس الـ trace id في A و B، والجزء الأوسط في الـ header هو الـ span الـ CLIENT اللي fetch عمله في A.
+
+ولو بعت الـ header بإيدك بالـ curl، A هيطبع [[4bf92f3577b34da6a3ce929d0e0e4736]]: كمّل الـ trace اللي جاي من برا بدل ما يبدأ واحد جديد، وده بالظبط اللي بيحصل لما gateway أو frontend بيبدأ الـ trace.
+
+الغلطة الشائعة: A بيطبع [[undefined]] و B بيطبع traceparent سليم. ده معناه إن fetch اتعمله instrument بس سيرفر [[node:http]] لأ، لأن الملف ESM وشغّلته من غير الـ loader hook (الدرس الجاي).`
+        },
+        {
+          cmd: "OpenTelemetry في Node",
+          title: "auto-instrumentation في Node من غير ما تلمس الكود",
+          desc: R`OpenTelemetry (OTel) معيار مفتوح ومحايد: بتعمل instrument للكود مرة واحدة، وتبعت الـ traces لأي backend (Jaeger أو Grafana Tempo أو Honeycomb أو Datadog أو Sentry) من غير ما تغيّر الكود.
+
+في Node: ملف [[instrumentation.mjs]] بيشغّل [[NodeSDK]] مع [[getNodeAutoInstrumentations()]]، وده بيعمل patch لـ http و express و pg و redis و fetch وغيرهم، فكل طلب وكل query يطلع span لوحده. والملف لازم يتحمّل قبل أي حاجة تانية: [[node --import ./instrumentation.mjs server.mjs]].
+
+هنا بنطبع الـ spans على الشاشة بـ [[ConsoleSpanExporter]] عشان تشوفها. وفي الإنتاج بتشيله وتبعت بـ OTLP (درس [[OTLP و backend]]).`,
+          example: R`import { register } from "node:module";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { ConsoleSpanExporter, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+
+register("@opentelemetry/instrumentation/hook.mjs", import.meta.url);
+
+const sdk = new NodeSDK({
+  resource: resourceFromAttributes({ [ATTR_SERVICE_NAME]: "orders-api" }),
+  spanProcessors: [new SimpleSpanProcessor(new ConsoleSpanExporter())],
+  instrumentations: [getNodeAutoInstrumentations({ "@opentelemetry/instrumentation-fs": { enabled: false } })],
+});
+sdk.start();
+process.on("SIGTERM", () => sdk.shutdown().finally(() => process.exit(0)));`,
+          try: R`في فولدر تجربة: [[npm i express @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node @opentelemetry/resources @opentelemetry/semantic-conventions]]. احفظ الملف ده [[instrumentation.mjs]]، واعمل [[app.mjs]] فيه Express بـ route [[/orders/:id]]. شغّل [[node --import ./instrumentation.mjs app.mjs]] وابعت [[curl localhost:3000/orders/7]]. كام span طلعوا؟ وإيه اسم الـ span اللي [[parentSpanContext]] بتاعه [[undefined]]؟`,
+          flag: "script",
+          deep: {
+            why: "إنك تكتب span بإيدك لكل route وكل query مستحيل ومحدش هيحافظ عليه. الـ auto-instrumentation بيدّيك ٨٠٪ من القيمة من أول يوم: كل طلب HTTP وكل query وكل طلب خارجي بمدته. ولأنه معيار، لو غيّرت الـ backend من Jaeger لـ Honeycomb بتغيّر متغير بيئة بس.",
+            how: R`[[NodeSDK]] بيجمع ٣ حاجات: resource (مين أنا: [[service.name]] وهو أهم attribute، ومن غيره الخدمة بتظهر [[unknown_service:node]])، و span processor + exporter (الـ spans تروح فين)، و instrumentations (إيه اللي يتعمله patch).
+
+الـ instrumentation بيشتغل عن طريق إنه يلف الموديول لما يتحمّل. عشان كده الملف لازم يتحمّل قبل [[express]] و [[pg]]: لو عملت import لـ express الأول، هو اتحمّل من غير patch. ده سبب [[--import]] بدل ما تعمل import من جوه [[server.mjs]].
+
+ESM: الـ patch القديم بيشتغل مع [[require]] بس. لو كودك [[import]] (ملفات [[.mjs]] أو [[type: module]])، لازم loader hook. السطر [[register("@opentelemetry/instrumentation/hook.mjs", ...)]] بيسجّله من جوه الملف، وده زي إنك تكتب [[--experimental-loader=@opentelemetry/instrumentation/hook.mjs]] في أمر التشغيل. من غيره هتلاقي حاجات اتعملها instrument (زي fetch وحاجات بتتحمّل بـ require من جوه مكتبات) وحاجات لأ (زي [[node:http]] اللي انت عامله import مباشرة).
+
+[[SimpleSpanProcessor]] بيبعت كل span أول ما يخلص، ده كويس للتجربة. في الإنتاج [[BatchSpanProcessor]] (الافتراضي لو استخدمت [[traceExporter]]) بيجمّع ويبعت دفعات، أخف بكتير.
+
+[[instrumentation-fs]] بيطلّع span لكل قراية ملف، ودي ضوضاء، فأغلب الناس بتقفله. وفيه طريقة من غير ملف خالص: [[node --import @opentelemetry/auto-instrumentations-node/register app.js]] والإعدادات كلها من متغيرات البيئة ([[OTEL_SERVICE_NAME]] وغيره).
+
+[[sdk.shutdown()]] مع SIGTERM بيبعت الـ spans اللي لسه في الـ buffer قبل ما الـ process يموت، وإلا آخر ثواني قبل كل deploy تضيع.`,
+            when: "أي API في الإنتاج بيكلّم قاعدة أو خدمات تانية. ابدأ بالـ auto-instrumentation، وضيف custom spans بس في الأماكن اللي محتاج تفهمها أكتر.",
+            mistakes: R`تعمل [[import "./instrumentation.mjs"]] في أول [[server.mjs]] بدل [[--import]]: في ESM الـ imports بتتحمّل قبل ما أي كود يشتغل، فممكن express يتحمّل قبل الـ patch. وتنسى الـ loader hook مع ESM وتستغرب إن نص الـ spans ناقصة. ومن غير [[service.name]]. و [[ConsoleSpanExporter]] في الإنتاج (اللوجات هتتملي). وتسيب [[instrumentation-fs]] شغال.`
+          },
+          lines: [
+            "register عشان نسجّل loader hook لموديولات ESM.",
+            "الـ SDK اللي بيربط كل حاجة.",
+            "exporter بيطبع على الشاشة، و processor بيبعت كل span أول ما يخلص.",
+            "كل الـ instrumentations الجاهزة (http و express و pg و redis و fetch...).",
+            "عشان نعرّف الخدمة.",
+            "اسم الـ attribute القياسي service.name.",
+            "من غير الـ hook ده، الموديولات اللي بتعملها import مش هتتعمل instrument.",
+            "الإعدادات.",
+            "اسم الخدمة (أهم attribute).",
+            "الـ spans تتطبع على الشاشة فورًا.",
+            "كل الـ instrumentations ماعدا fs (ضوضاء).",
+            "قفلة.",
+            "ابدأ (قبل ما أي كود تاني يتحمّل).",
+            "مع الإيقاف: ابعت اللي فاضل وبعدين اقفل."
+          ],
+          sol: R`مع [[curl localhost:3000/orders/7]] هتلاقي كذا object مطبوعين، كلهم بنفس الـ [[traceId]]:
+
+- span اسمه [[GET /orders/:id]] من [[@opentelemetry/instrumentation-http]]، و [[kind: 1]] (SERVER)، و [[parentSpanContext: undefined]]، يعني هو الـ root. وفيه attributes زي [[http.request.method]] و [[url.path]] و [[http.response.status_code: 200]].
+- spans من [[instrumentation-express]] و [[instrumentation-router]] زي [[request handler - /orders/:id]]، وكمان span للـ middleware اللي Express بيحطه من جوه، والـ parent بتاعهم هو الـ span اللي فوقه.
+
+وكلهم فيهم [[service.name: 'orders-api']] في الـ resource. والترتيب على الشاشة بيبقى من الأصغر للأكبر، لأن كل span بيتطبع لما يخلص، والـ root بيخلص آخر واحد.
+
+الغلطة الشائعة: الـ root span اسمه [[GET]] بس من غير الـ route، ومفيش spans لـ express خالص. ده معناه إن express مكنش عليه instrument، غالبًا عشان الـ hook مش متسجّل أو الملف اتحمّل بعد express. ولو مفيش ولا span، يبقى نسيت [[--import]] أصلًا.`,
+          solCode: R`// app.mjs
+import express from "express";
+const app = express();
+app.get("/orders/:id", (req, res) => res.json({ id: req.params.id, total: 250 }));
+app.listen(3000, () => console.log("listening on 3000"));
+
+// التشغيل:
+// node --import ./instrumentation.mjs app.mjs
+// curl localhost:3000/orders/7`
+        },
+        {
+          cmd: "custom span",
+          title: "span بإيدك حوالين query أو API خارجي",
+          desc: R`الـ auto-instrumentation بيشوف الـ HTTP والـ driver بتاع القاعدة، بس مش بيعرف إن «حساب الشحن» أو «تجهيز الفاتورة» خطوة ليها معنى. هنا بتعمل span بإيدك: [[tracer.startActiveSpan(name, fn)]] بيعمل span ويخليه الـ active جوه [[fn]]، فأي span يطلع جوه (query مثلًا) بيبقى ابنه.
+
+القاعدة: [[span.end()]] في [[finally]] دايمًا، ولو حصل خطأ [[span.recordException(err)]] و [[setStatus]] بـ ERROR، عشان الـ backend يلوّن الـ span بالأحمر وتقدر تفلتر عليه.`,
+          example: R`import express from "express";
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("orders-api");
+const app = express();
+
+async function findOrder(id) {
+  return tracer.startActiveSpan("db.findOrder", async (span) => {
+    span.setAttribute("order.id", id);
+    try {
+      await new Promise((r) => setTimeout(r, 40));
+      if (id === "0") throw new Error("order not found");
+      return { id, total: 250 };
+    } catch (err) {
+      span.recordException(err);
+      span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+      throw err;
+    } finally {
+      span.end();
+    }
+  });
+}
+
+app.get("/orders/:id", async (req, res) => {
+  const traceId = trace.getActiveSpan()?.spanContext().traceId;
+  try {
+    res.json(await findOrder(req.params.id));
+  } catch {
+    res.status(404).json({ error: "not found", traceId });
+  }
+});
+app.listen(3000);`,
+          try: R`شغّل ده بـ [[instrumentation.mjs]] من الدرس اللي فات، وابعت [[curl localhost:3000/orders/7]] و [[curl localhost:3000/orders/0]]. دوّر في الناتج على [[db.findOrder]] في الحالتين: قارن [[status]] و [[events]] و [[duration]] و [[parentSpanContext]]. وبعدين ضيف span تاني اسمه [[shipping.quote]] حوالين [[fetch]] لأي API خارجي (زي [[https://httpbin.org/delay/1]]) وشوف إن الـ fetch نفسه طلع span ابن ليه.`,
+          flag: "script",
+          deep: {
+            why: "الـ auto-instrumentation هيقولك إن الطلب أخد ٢ ثانية وإن فيه ٤٠ query. الـ custom span هو اللي بيقولك إن الـ ٤٠ دول كلهم جوه «حساب الخصومات»، وإن الخطوة دي بالذات هي اللي بطيئة للطلبات اللي فيها كوبون. وده الفرق بين trace بيوريك أرقام و trace بيوريك قصة.",
+            how: R`[[trace.getTracer("orders-api")]] بيجيب tracer باسم (بيظهر كـ [[instrumentationScope]]). ولو مفيش SDK شغال، الـ tracer بيبقى no-op والكود يشتغل عادي من غير أي تكلفة تقريبًا. فالمكتبات بتعتمد على [[@opentelemetry/api]] بس، والتطبيق هو اللي بيقرر يشغّل الـ SDK.
+
+[[startActiveSpan(name, fn)]] بيعمل span ابن للـ span الحالي، ويخليه active جوه [[fn]]، ويرجّع اللي [[fn]] رجّعته (هنا Promise). فيه كمان [[startSpan]] من غير ما يبقى active، وده بتستخدمه لو مش عايز spans تانية تتعلق تحته.
+
+attributes: خليها أسماء ثابتة وقيم مفيدة للبحث ([[order.id]] و [[coupon.code]] و [[items.count]]). ولأسماء معروفة استخدم semantic conventions ([[db.system]] و [[http.request.method]]) عشان الأدوات تفهمها.
+
+[[recordException]] بيضيف event اسمه [[exception]] فيه النوع والرسالة والـ stack. و [[setStatus(ERROR)]] حاجة تانية: هو اللي بيعلّم الـ span إنه فشل. محتاج الاتنين.
+
+[[span.end()]] لازم في [[finally]]: span مبيخلصش عمره ما بيتبعت، والـ trace يبان ناقص. ولو الـ span بيلف حاجة بترجع Promise، الـ end يبقى بعد الـ await، مش قبله.
+
+الـ trace id في رد الخطأ: اليوزر أو الـ support يبعتلك الرقم، وتلاقي الـ trace كله في ثانية.`,
+            when: "حوالي أي خطوة بيزنس مهمة (checkout، حساب، توليد PDF)، وأي API خارجي أو queue مالهوش instrumentation جاهز، وأي حاجة بتشك إنها بطيئة.",
+            mistakes: R`تنسى [[span.end()]] في مسار الخطأ فالـ span ميتبعتش. و [[recordException]] من غير [[setStatus]] فالـ span يبان ناجح. و span لكل iteration في loop فيها ١٠ آلاف عنصر. و attributes فيها إيميلات أو توكنات أو الـ body كله (الـ traces بتتخزن عند طرف تالت غالبًا). وأسماء spans ديناميكية ([[db.findOrder.8812]]) بدل اسم ثابت و attribute.`
+          },
+          lines: [
+            "Express.",
+            "الـ API: جيب tracer، و SpanStatusCode للأخطاء.",
+            "tracer باسم الخدمة.",
+            "التطبيق.",
+            "دالة القاعدة (هنا مجرد تأخير يمثّل query).",
+            "span جديد اسمه db.findOrder، و active جوه الدالة.",
+            "attribute عشان تقدر تدوّر بالـ id.",
+            "حاول:",
+            "مكان الـ query الحقيقية (٤٠ مللي).",
+            "id صفر = مش موجود.",
+            "رجّع الطلب.",
+            "لو فشل:",
+            "سجّل الـ exception كـ event جوه الـ span.",
+            "وعلّم الـ span إنه ERROR.",
+            "ورجّع الخطأ لفوق.",
+            "في كل الحالات:",
+            "اقفل الـ span (من غيرها مش هيتبعت).",
+            "قفلة.",
+            "قفلة startActiveSpan.",
+            "قفلة الدالة.",
+            "الـ route.",
+            "الـ trace id بتاع الطلب ده.",
+            "حاول:",
+            "رجّع الطلب.",
+            "لو فشل:",
+            "404 ومعاه الـ trace id عشان الـ support يدوّر بيه.",
+            "قفلة.",
+            "قفلة الـ route.",
+            "شغّل."
+          ],
+          sol: R`لـ [[/orders/7]]: span اسمه [[db.findOrder]]، فيه [[attributes: { 'order.id': '7' }]] و [[status: { code: 0 }]] و [[events: []]] و [[duration]] حوالي [[40000]] (بالمايكروثانية، يعني ٤٠ مللي). و [[parentSpanContext]] بتاعه بيشاور على span الـ express [[request handler - /orders/:id]]، يعني اتعلق تحت الطلب لوحده.
+
+لـ [[/orders/0]]: الرد [[{"error":"not found","traceId":"..."}]]، و [[db.findOrder]] فيه [[status: { code: 2, message: 'order not found' }]] (2 = ERROR)، و [[events]] فيه event اسمه [[exception]] ومعاه [[exception.type: 'Error']] و [[exception.message]] و [[exception.stacktrace]]. والـ [[traceId]] اللي في الرد هو نفسه اللي في الـ spans.
+
+ولما تضيف [[shipping.quote]] حوالين fetch، هتلاقي span [[GET]] من نوع CLIENT (kind 2) من [[instrumentation-undici]] والـ parent بتاعه [[shipping.quote]]، ومدته حوالي ثانية.
+
+الغلطة الشائعة: [[db.findOrder]] ظاهر كـ root لوحده ([[parentSpanContext: undefined]]) بـ trace id مختلف عن الطلب. ده معناه إن الـ context ضاع، غالبًا لأنك استخدمت [[startSpan]] بدل [[startActiveSpan]] في مكان، أو عملت الـ span برا الطلب.`,
+          solCode: R`async function shippingQuote(city) {
+  return tracer.startActiveSpan("shipping.quote", async (span) => {
+    span.setAttribute("shipping.city", city);
+    try {
+      const r = await fetch("https://httpbin.org/delay/1");
+      span.setAttribute("http.response.status_code", r.status);
+      return 50;
+    } catch (err) {
+      span.recordException(err);
+      span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+      throw err;
+    } finally {
+      span.end();
+    }
+  });
+}`
+        },
+        {
+          cmd: "trace id في اللوج",
+          title: "trace id جنب request id في كل سطر لوج",
+          desc: R`اللوج بيقولك إيه اللي حصل، والـ trace بيقولك الوقت راح فين. لما يبقى في كل سطر لوج [[trace_id]]، تقدر من سطر خطأ تفتح الـ trace بتاعه، ومن span بطيء تجيب اللوجات بتاعته.
+
+مع pino: الـ auto-instrumentation فيه [[instrumentation-pino]] بيحط [[trace_id]] و [[span_id]] و [[trace_flags]] في كل سطر لوحده. والـ request id بتاعك (من [[x-request-id]] أو UUID) بتحطه بـ [[logger.child]] زي ما هو، وترجّعه في الـ response header. الاتنين مع بعض: الـ request id اللي العميل شايفه، والـ trace id اللي أدوات الـ tracing بتفهمه.`,
+          example: R`import express from "express";
+import pino from "pino";
+import { randomUUID } from "node:crypto";
+
+const logger = pino();
+const app = express();
+
+app.use((req, res, next) => {
+  req.id = req.get("x-request-id") ?? randomUUID();
+  res.set("x-request-id", req.id);
+  req.log = logger.child({ requestId: req.id });
+  next();
+});
+
+app.get("/orders/:id", (req, res) => {
+  req.log.info({ orderId: req.params.id }, "loading order");
+  res.json({ ok: true });
+});
+
+const server = app.listen(3000, async () => {
+  await fetch("http://localhost:3000/orders/7", { headers: { "x-request-id": "req-abc-123" } });
+  server.close();
+});`,
+          try: R`سطّب [[pino]] جنب باقي الحاجات، وشغّل الملف مرتين: [[node logs.mjs]] من غير OpenTelemetry، و [[node --import ./instrumentation.mjs logs.mjs]] معاه (غيّر الـ exporter لواحد ساكت أو سيب الـ console). قارن سطر [[loading order]] في الحالتين. وبعدين ضيف middleware بيحط الـ trace id في header اسمه [[x-trace-id]] في الرد.`,
+          flag: "script",
+          deep: {
+            why: "في incident، اليوزر بيبعتلك screenshot فيها request id أو وقت. من غير ربط، بتدوّر في اللوجات بالوقت، وبعدين تحاول تلاقي الـ trace بالوقت برضه، وممكن تلاقي ١٠٠ طلب في نفس الثانية. مع [[trace_id]] في اللوج، Grafana (Loki مع Tempo) أو Datadog أو Honeycomb بيدّوك زرار من سطر اللوج للـ trace على طول.",
+            how: R`الـ request id: درس [[AsyncLocalStorage]] في «تاب Backend بـ Node» بيشرح إزاي يوصل لكل سطر لوج من غير ما تعدّيه لكل دالة، وهنا بنستخدم أبسط طريقة: [[req.log]] child logger. وخد الـ [[x-request-id]] لو جاي من برا (من Nginx أو load balancer أو frontend) عشان تربط لحد أول نقطة.
+
+الـ trace id: [[instrumentation-pino]] بيلف pino ويضيف الحقول دي من الـ span الـ active مع كل سطر. ولو مش بتستخدم pino أو عايز تتحكم بنفسك:
+[[pino({ mixin() { const s = trace.getActiveSpan(); return s ? { trace_id: s.spanContext().traceId } : {}; } })]].
+
+الأسماء: الـ instrumentation بيكتب [[trace_id]] و [[span_id]] (بـ underscore)، ودي الأسماء اللي أغلب الأدوات بتدوّر عليها.
+
+ممكن تخلي الـ request id هو الـ trace id نفسه (ترجّع الـ trace id في [[x-request-id]])، فيبقى رقم واحد. بس لو فيه gateway قبلك بيعمل request id بصيغته، سيب الاتنين جنب بعض.
+
+و OpenTelemetry عنده logs signal كمان: تبعت اللوجات نفسها بـ OTLP لنفس الـ backend، وهي مربوطة بالـ trace لوحدها. بس JSON على stdout مع trace_id لسه أبسط وشغال مع أي حاجة.`,
+            when: "من أول يوم تشغّل فيه tracing. التكلفة سطر، والفايدة إن كل لوج بقى لينك للـ trace.",
+            mistakes: R`تعمل request id جديد في كل خدمة فمش بتقدر تربط. وتثق في [[x-request-id]] من برا من غير حد لطوله أو شكله (ممكن حد يحط فيه نص طويل أو سطر جديد يلخبط اللوج). وتلوج برا الطلب ([[setInterval]] أو worker) وتتوقع trace_id: مفيش span active هناك، فلازم تعمل span للـ job. وفي الانترفيو: «إزاي تتبع طلب واحد بين ٣ خدمات؟» الإجابة: context propagation بـ traceparent، و trace_id في كل لوج، وأداة tracing.`
+          },
+          lines: [
+            "Express.",
+            "pino: logger بيطبع JSON.",
+            "لتوليد request id.",
+            "logger واحد للتطبيق.",
+            "التطبيق.",
+            "middleware على كل طلب.",
+            "خد الـ request id من برا لو موجود، أو اعمل واحد.",
+            "رجّعه في الرد عشان العميل يقدر يبعتهولك.",
+            "child logger فيه الـ request id في كل سطر.",
+            "كمّل.",
+            "قفلة.",
+            "route.",
+            "سطر لوج (هنا الـ instrumentation بيضيف trace_id).",
+            "رد.",
+            "قفلة.",
+            "شغّل، ولما يشتغل:",
+            "ابعت طلب واحد بـ request id معروف.",
+            "واقفل.",
+            "قفلة."
+          ],
+          sol: R`من غير OpenTelemetry:
+
+[[{"level":30,...,"requestId":"req-abc-123","orderId":"7","msg":"loading order"}]]
+
+ومعاه:
+
+[[{"level":30,...,"requestId":"req-abc-123","trace_id":"c0292ceda7cb1194ca407f5b679ae214","span_id":"e81daa6cf4e50c9f","trace_flags":"01","orderId":"7","msg":"loading order"}]]
+
+نفس السطر، بس زاد عليه [[trace_id]] و [[span_id]] و [[trace_flags]] من غير ما تغيّر ولا سطر في الكود. والـ [[trace_id]] ده نفسه اللي هتلاقيه في الـ spans.
+
+للـ header: middleware بعد الـ instrumentation يكتب [[res.set("x-trace-id", trace.getActiveSpan()?.spanContext().traceId)]]، و [[curl -i]] يوريك الاتنين: [[x-request-id: req-abc-123]] و [[x-trace-id: ...]].
+
+الغلطة الشائعة: مفيش [[trace_id]] في السطر حتى مع [[--import]]. ده غالبًا لأن pino اتحمّل قبل الـ instrumentation، أو [[instrumentation-pino]] مقفول، أو اللوج بيتكتب برا أي span.`,
+          solCode: R`import { trace } from "@opentelemetry/api";
+
+app.use((req, res, next) => {
+  const traceId = trace.getActiveSpan()?.spanContext().traceId;
+  if (traceId) res.set("x-trace-id", traceId);
+  next();
+});`
+        },
+        {
+          cmd: "OTLP و backend",
+          title: "ابعت الـ traces لـ Jaeger أو Tempo أو Honeycomb بـ OTLP",
+          desc: R`OTLP هو البروتوكول بتاع OpenTelemetry لبعت الـ traces والـ metrics واللوجات، على HTTP بورت 4318 ([[/v1/traces]]) أو gRPC بورت 4317. وأي backend حديث بيستقبله: Jaeger (open source للتجربة والإنتاج الصغير)، و Grafana Tempo (مع Grafana، و Grafana Cloud فيه خطة مجانية)، و Honeycomb، و Datadog، و Sentry.
+
+الحلو إن الإعدادات كلها متغيرات بيئة، فالكود هو هو والـ backend يتغير: [[OTEL_SERVICE_NAME]] و [[OTEL_EXPORTER_OTLP_ENDPOINT]] و [[OTEL_EXPORTER_OTLP_HEADERS]] (للمفاتيح). وفي الإنتاج غالبًا بتبعت لـ OpenTelemetry Collector جنب التطبيق، وهو يبعت للـ backend.`,
+          example: R`docker run -d --name jaeger -p 16686:16686 -p 4318:4318 jaegertracing/jaeger:latest
+export OTEL_SERVICE_NAME=orders-api
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+export OTEL_METRICS_EXPORTER=none
+export OTEL_TRACES_SAMPLER=parentbased_traceidratio OTEL_TRACES_SAMPLER_ARG=0.2
+node --import ./instrumentation.prod.mjs two.mjs
+curl -s localhost:16686/api/v3/services
+# Honeycomb بدل Jaeger: نفس الكود، متغيرين بس
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io
+export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=YOUR_API_KEY"`,
+          try: R`اعمل [[instrumentation.prod.mjs]]: نسخة من [[instrumentation.mjs]] من غير [[spanProcessors]] ولا الـ console exporter (فالـ SDK يقرا الـ exporter من البيئة ويستخدم OTLP)، وضيف سطر [[beforeExit]] (الملف كامل في الحل). شغّل Jaeger بـ Docker، ونفّذ [[two.mjs]] من أول درس بالمتغيرات دي من غير سطر الـ sampler. افتح [[http://localhost:16686]]، واختار [[orders-api]]، وافتح آخر trace: كام span؟ ومين جوه مين؟ بعدين رجّع الـ sampler بـ [[0.2]] وشغّل ١٠ مرات: كام trace ظهر؟`,
+          deep: {
+            why: "الـ console exporter للتعلم بس. القيمة الحقيقية في شاشة بتوريك الـ traces كـ waterfall، وتدوّر فيها بـ «كل الطلبات على /checkout اللي أبطأ من ثانية امبارح». ولأن OTLP معيار، مش مربوط بـ vendor: تبدأ بـ Jaeger ببلاش على جهازك أو VPS، وتنقل لـ Grafana Cloud أو Honeycomb بتغيير متغيرين.",
+            how: R`لما [[NodeSDK]] ميبقاش معاه [[traceExporter]] ولا [[spanProcessors]]، بيقرا [[OTEL_TRACES_EXPORTER]] (الافتراضي [[otlp]]) و [[OTEL_EXPORTER_OTLP_ENDPOINT]] ويبعت على [[ENDPOINT/v1/traces]] بـ [[BatchSpanProcessor]]. وفي النسخ الحالية بيبعت metrics كمان على [[/v1/metrics]] لو مقفلتهاش بـ [[OTEL_METRICS_EXPORTER=none]]، فلو الـ backend بتاعك traces بس، اقفلها عشان متبعتش ترافيك على الفاضي.
+
+الـ batch بيتبعت كل كام ثانية. سيرفر شغال على طول مش فارق معاه، بس script بيخلص في ثانية (زي [[two.mjs]]) هيقفل قبل ما يبعت، عشان كده [[beforeExit]] بيعمل [[shutdown()]] (وده بيبعت اللي في الـ buffer). والـ [[catch]] مهمة: من غيرها، لو الـ backend مش شغال، الـ shutdown بيرمي خطأ والـ process يقع بـ unhandled rejection.
+
+الـ protocol: [[OTEL_EXPORTER_OTLP_PROTOCOL]] ممكن [[http/protobuf]] (الافتراضي في Node) أو [[http/json]] أو [[grpc]] (على 4317 ومحتاج exporter تاني).
+
+الـ backends: Jaeger v2 image واحد فيه الاستقبال والتخزين في الرام والـ UI على 16686، ممتاز للتجربة وللـ dev (وللإنتاج بتوصله بـ storage). Grafana Tempo بيخزّن traces رخيص على object storage، وبيتعرض في Grafana جنب Prometheus و Loki، وفيه image اسمه [[grafana/otel-lgtm]] فيه الكل للتجربة. Honeycomb و Datadog خدمات مدفوعة (مع خطط مجانية محدودة) وبتاخد OTLP مباشرة بمفتاح في header.
+
+الـ Collector: برنامج منفصل (container) بيستقبل OTLP من كل خدماتك، ويعمل batch و retry، ويشيل بيانات حساسة، ويعمل tail sampling، ويبعت لـ backend واحد أو أكتر. التطبيق يبعت لـ [[http://otel-collector:4318]] بس، والمفاتيح في الـ collector مش في كل خدمة.
+
+الـ sampling: [[parentbased_traceidratio]] بـ [[0.2]] معناها: لو الطلب جاي بـ traceparent، اتبع قرار الأب (عشان الـ trace ميتقطعش)، ولو إنت الأول، سجّل ٢٠٪ بس. وده مهم لما الترافيك يكبر، لأن الـ backends بتحاسب بعدد الـ spans.`,
+            when: "Jaeger على جهازك أو في docker compose بتاع الـ dev من أول ما تضيف OTel. وفي الإنتاج: Grafana (Tempo) لو عندك Prometheus و Grafana أصلًا، أو SaaS لو مش عايز تدير storage.",
+            mistakes: R`[[OTEL_EXPORTER_OTLP_ENDPOINT]] فيه [[/v1/traces]] في الآخر، فالـ SDK يضيفها تاني ويبعت لـ [[/v1/traces/v1/traces]] (لو عايز مسار كامل استخدم [[OTEL_EXPORTER_OTLP_TRACES_ENDPOINT]]). وتبعت لبورت 4317 (gRPC) بـ exporter HTTP. ومفتاح Honeycomb في الكود أو في الـ frontend. و sampling ١٠٠٪ على ترافيك كبير والفاتورة تنفجر. وتنسى [[sdk.shutdown()]] فالـ batch الأخير يضيع مع كل restart.`
+          },
+          lines: [
+            "Jaeger v2: الـ UI على 16686، واستقبال OTLP HTTP على 4318.",
+            "اسم الخدمة.",
+            "ابعت الـ traces هنا (الـ SDK بيضيف /v1/traces).",
+            "متبعتش metrics (Jaeger بياخد traces بس).",
+            "سجّل ٢٠٪ من الـ traces الجديدة، واتبع قرار الأب لو جاي من خدمة تانية.",
+            "شغّل بملف الإنتاج (مفيهوش exporter في الكود، فبياخده من البيئة).",
+            "اتأكد إن Jaeger شاف الخدمة.",
+            "نفس الكلام لـ Honeycomb: الـ endpoint بتاعهم...",
+            "...والمفتاح في header."
+          ],
+          sol: R`بعد التشغيل، [[curl -s localhost:16686/api/v3/services]] يرجّع حاجة زي [[{"services":["orders-api","jaeger"]}]]. (لو رجّع فاضي على طول بعد التشغيل، استنى ثانيتين: الـ batch بيتبعت كل شوية.)
+
+في الـ UI، الـ trace بتاع [[two.mjs]] فيه ٤ spans بنفس الـ trace id، كلهم اسمهم [[GET]]: الـ fetch الأولاني (CLIENT، الـ root، مثلًا ٢٨ مللي)، وتحته A (SERVER)، وتحته الـ fetch من A لـ B (CLIENT)، وتحته B (SERVER، أقصر واحد). الـ waterfall بيوريك إن كل span جوه اللي فوقه.
+
+مع الـ sampler بـ 0.2 و ١٠ تشغيلات: هتلاقي حوالي ٢ traces (ممكن ١ أو ٤، هي احتمالات). وكل trace ظهر ظهر كامل بالـ ٤ spans، لأن الخدمات اللي بعد الأول بتتبع قراره.
+
+الغلطات الشائعة: الخدمة اسمها [[unknown_service:node]] (نسيت [[OTEL_SERVICE_NAME]] أو الـ resource). أو السكربت اشتغل ومفيش ولا trace في Jaeger، وده لأن الـ process قفل قبل ما الـ batch يتبعت (ناقصك [[beforeExit]]). أو السطر [[otel: connect ECONNREFUSED 127.0.0.1:4318]]، يعني Jaeger مش شغال أو البورت غلط.`,
+          solCode: R`// instrumentation.prod.mjs: مفيش exporter في الكود، كله من متغيرات البيئة
+import { register } from "node:module";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+
+register("@opentelemetry/instrumentation/hook.mjs", import.meta.url);
+const sdk = new NodeSDK({
+  instrumentations: [getNodeAutoInstrumentations({ "@opentelemetry/instrumentation-fs": { enabled: false } })],
+});
+sdk.start();
+process.on("SIGTERM", () => sdk.shutdown().finally(() => process.exit(0)));
+process.once("beforeExit", () => sdk.shutdown().catch((err) => console.error("otel:", err.message)));`
+        },
+        {
+          cmd: "instrumentation.ts",
+          title: "OpenTelemetry في Next.js: instrumentation.ts",
+          desc: R`Next.js عنده ملف خاص اسمه [[instrumentation.ts]] في جذر المشروع (أو جوه [[src/]] لو بتستخدمه)، فيه دالة [[register()]] بتتنادى مرة واحدة لما السيرفر يقوم قبل أي طلب. ده مكان OpenTelemetry (و Sentry وغيرهم).
+
+أسهل طريقة [[@vercel/otel]]: [[registerOTel("next-app")]] وخلاص، وبيشتغل على Node و Edge. ولو محتاج تحكم كامل، [[NodeSDK]] زي الدروس اللي فاتت، بس في ملف منفصل بيتحمّل لما [[NEXT_RUNTIME]] يبقى [[nodejs]] بس، لأن NodeSDK مش بيشتغل على Edge.
+
+Next.js نفسه بيطلّع spans جاهزة (الـ route، والـ render، و fetch في Server Components)، ولو عايز تفاصيل أكتر شغّل بـ [[NEXT_OTEL_VERBOSE=1]].`,
+          example: R`// instrumentation.ts (في جذر المشروع)
+import { registerOTel } from "@vercel/otel";
+export function register() {
+  registerOTel({ serviceName: "shop-web" });
+}
+// أو تحكم كامل: instrumentation.ts بيحمّل ملف Node بس
+export async function register() {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("./instrumentation.node");
+  }
+}
+// instrumentation.node.ts
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+const sdk = new NodeSDK({
+  resource: resourceFromAttributes({ [ATTR_SERVICE_NAME]: "shop-web" }),
+  traceExporter: new OTLPTraceExporter(),
+});
+sdk.start();`,
+          try: R`في مشروع Next.js: [[npm i @vercel/otel @opentelemetry/api]] واعمل [[instrumentation.ts]] بالطريقة الأولى. شغّل Jaeger (الدرس اللي فات)، وبعدين [[OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 npm run build && npm start]]. افتح صفحة Server Component بتعمل [[fetch]] لـ API خارجي، ودوّر على الـ trace في Jaeger. وبعدين ضيف custom span حوالين حاجة في Server Action.`,
+          flag: "script",
+          deep: {
+            why: "في Next.js الوقت ممكن يروح في حاجات مش باينة: fetch في Server Component، أو render تقيل، أو middleware، أو query في Route Handler. الـ traces بتوريك كل ده في waterfall واحد، ومع propagation لـ API الباك إند (لو Express عليه OTel) الـ trace بيكمل من Next لحد القاعدة.",
+            how: R`[[register]] بتتنادى مرة في كل runtime: مرة في Node، ومرة في Edge لو عندك حاجة على Edge (زي middleware في نسخ كتير). عشان كده [[process.env.NEXT_RUNTIME]] بيفرّق. والـ dynamic import جوه الشرط بيضمن إن كود NodeSDK مبيدخلش bundle بتاع Edge أصلًا.
+
+[[@vercel/otel]]: wrapper بيعمل الـ SDK والـ exporter (بيقرا [[OTEL_EXPORTER_OTLP_ENDPOINT]] زي أي SDK)، وبيدعم Edge، وعلى Vercel بيبعت للـ integrations بتاعة Vercel. مناسب لأغلب الحالات.
+
+الـ spans اللي Next بيطلّعها لوحده: span للطلب ([[GET /products/[id]]])، وللـ render، ولكل [[fetch]] في السيرفر، و [[generateMetadata]]. و [[NEXT_OTEL_VERBOSE=1]] بيطلّع أكتر. والـ custom spans بنفس [[trace.getTracer("shop-web").startActiveSpan]] من الدرس اللي فات، في أي Server Component أو Server Action أو Route Handler.
+
+الـ propagation: الـ fetch من السيرفر بيحط [[traceparent]] لوحده، فلو الـ API بتاعك عليه OTel، الـ trace بيكمل. ومن المتصفح للسيرفر ده موضوع تاني (browser instrumentation) ومش بيحصل لوحده.
+
+الملف مكانه جذر المشروع جنب [[app/]]، أو جوه [[src/]] لو المشروع بيستخدم [[src/]]. في نسخ Next القديمة (١٣ و ١٤) كان محتاج [[experimental.instrumentationHook]] في [[next.config]]، وفي النسخ الحالية مش محتاج.
+
+الاختبار الصح يبقى بـ [[next build]] و [[next start]]، لأن [[next dev]] بيطلّع spans زيادة للـ compile وأرقام مش شبه الإنتاج.`,
+            when: "أي Next.js فيه Server Components بتجيب داتا، أو Route Handlers، أو بيكلّم API باك إند منفصل وعايز trace واحد من أول الطلب لحد القاعدة.",
+            mistakes: R`تعمل import لـ NodeSDK في أول [[instrumentation.ts]] من غير شرط [[NEXT_RUNTIME]] فالـ build يقع بأخطاء modules مش موجودة في Edge. وتحط الملف جوه [[app/]] فمبيتقراش. وتفتكر إن الـ spans هتيجي من المتصفح لوحدها. وتقيس بـ [[next dev]]. وتحط مفتاح الـ backend في متغير [[NEXT_PUBLIC_]].`
+          },
+          lines: [
+            "wrapper جاهز من Vercel.",
+            "دالة بتتنادى مرة لما السيرفر يقوم.",
+            "سجّل OTel باسم الخدمة (بيشتغل على Node و Edge).",
+            "قفلة.",
+            "البديل: نفس الدالة بس بتحمّل ملف Node...",
+            "...لو الـ runtime هو Node بس.",
+            "dynamic import عشان الكود ميدخلش bundle الـ Edge.",
+            "قفلة الشرط.",
+            "قفلة.",
+            "الـ SDK.",
+            "exporter بـ OTLP HTTP (بيقرا الـ endpoint من البيئة).",
+            "الـ resource.",
+            "اسم الـ attribute القياسي.",
+            "SDK جديد.",
+            "اسم الخدمة.",
+            "ابعت بـ OTLP (مع batch).",
+            "قفلة.",
+            "ابدأ."
+          ],
+          sol: R`بعد [[npm start]] وفتح الصفحة، في Jaeger هتلاقي خدمة [[shop-web]]، و trace root اسمه زي [[GET /products/[id]]] (بالـ route مش الـ URL الحقيقي)، وتحته spans زي [[render route (app) /products/[id]]] و [[fetch GET https://api.example.com/...]] بمدة الـ fetch. الأسماء بالظبط ممكن تختلف شوية حسب نسخة Next.
+
+ولو الـ API اللي بتعمله fetch عليه OTel وبيبعت لنفس Jaeger، هتلاقي spans بتاعته في نفس الـ trace تحت الـ fetch span.
+
+الـ custom span في Server Action يظهر باسمه (مثلًا [[checkout.createOrder]]) تحت span الطلب اللي فيه الـ action.
+
+الغلطات الشائعة: مفيش خدمة في Jaeger خالص، وده غالبًا عشان الملف مش في المكان الصح (جوه [[app/]] بدل جذر المشروع أو [[src/]])، أو المتغير [[OTEL_EXPORTER_OTLP_ENDPOINT]] مش واصل لـ [[npm start]]. أو الـ build بيقع بـ [[Module not found: Can't resolve 'fs']]، ودي NodeSDK اتعملها import من غير شرط [[NEXT_RUNTIME]].`,
+          solCode: R`// app/checkout/actions.ts
+"use server";
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("shop-web");
+
+export async function createOrder(formData: FormData) {
+  return tracer.startActiveSpan("checkout.createOrder", async (span) => {
+    try {
+      span.setAttribute("cart.items", Number(formData.get("items") ?? 0));
+      const res = await fetch(process.env.API_URL + "/orders", { method: "POST", body: formData });
+      span.setAttribute("http.response.status_code", res.status);
+      return await res.json();
+    } catch (err) {
+      span.recordException(err as Error);
+      span.setStatus({ code: SpanStatusCode.ERROR });
+      throw err;
+    } finally {
+      span.end();
+    }
+  });
+}`
         }
       ]
     },
