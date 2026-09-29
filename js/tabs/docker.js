@@ -182,7 +182,7 @@ docker image prune`,
           try: "اعمل tag تاني لأي image عندك، وشوف في [[docker images]] إن الاتنين ليهم نفس IMAGE ID (نفس الملف باسمين).",
           deep: {
             why: "الـ image اللي بتبني عليها بتتحدّث باستمرار. لو مش محدد نسخة، الـ build بتاعك النهارده مختلف عن بكرة من غير ما تغيّر حرف، وممكن يبوظ.",
-            how: R`اسم الـ image بيتكون من: [registry/]المستودع:tag. مثلًا [[ghcr.io/dex11x2/myapi:1.2.0]]. من غير registry معناه Docker Hub. من غير tag معناه [[latest]].
+            how: R`اسم الـ image بيتكون من: [registry/]المستودع:tag. مثلًا [[ghcr.io/user/myapi:1.2.0]]. من غير registry معناه Docker Hub. من غير tag معناه [[latest]].
 
 [[latest]] مجرد اسم tag زي أي اسم، مش معناه الأحدث فعلًا. لو عملت push بـ tag 1.2.0، الـ latest متغيرتش. عشان كده الاعتماد على latest في الإنتاج غلط: مش عارف بتشغّل إيه بالظبط.
 
@@ -222,6 +222,38 @@ docker stats --no-stream`,
             mistakes: "تقرا JSON الـ inspect كله. استخدم [[--format]] أو jq على الجزء اللي محتاجه."
           },
           lines: ["كل تفاصيل الـ container كـ JSON.", "الحالة بس.", "الـ IP بس.", "استهلاك كل container، لقطة واحدة."]
+        },
+        {
+          cmd: "run --rm كأداة",
+          title: "تستخدم برنامج مرة من غير ما تسطّبه",
+          desc: R`أي image فيها برنامج تقدر تشغّله مرة واحدة وترميه: تولّد hash لباسورد، أو تجرّب كود على نسخة Node قديمة، أو تعدّ سطور ملف. [[--rm]] بيمسح الـ container أول ما يخلص، فالسيرفر بيفضل نضيف ومفيش حاجة اتسطّبت عليه.
+
+ولو الأداة محتاجة ملفات من عندك، اربط الفولدر الحالي بـ [[-v]]، أو ابعت الملف على الـ stdin بـ [[-i]].`,
+          example: R`docker run --rm caddy:2.8 caddy hash-password --plaintext 'secret'
+docker run --rm node:20-alpine node -e "console.log(process.versions.node)"
+docker run --rm -v "$(pwd)":/work -w /work alpine sh -c "du -sh *"
+docker run --rm -i alpine wc -l < notes.txt`,
+          try: "ولّد hash لباسورد بـ caddy من غير ما تسطّب Caddy، وبعدين اعمل [[docker ps -a]] واتأكد إن مفيش container فاضل.",
+          deep: {
+            why: "محتاج أداة لمرة واحدة: hash لباسورد basic auth، أو نسخة Python معينة، أو عميل psql. تسطيبها على السيرفر معناه باكدج هتفضل هناك للأبد ومحدش فاكر ليه اتسطّبت.",
+            how: R`الـ image بتنزل أول مرة وتفضل في الكاش، فالمرة الجاية فورية.
+
+أي حاجة بعد اسم الـ image بتحل مكان CMD، فانت بتقول للـ container «نفّذ الأمر ده بدل الافتراضي». لما الأمر يخلص الـ container بيخرج، و [[--rm]] بيمسحه.
+
+[[-v "$(pwd)":/work -w /work]] بيحط الفولدر اللي انت فيه جوه الـ container ويشتغل منه، فالأداة تشوف ملفاتك وتكتب ناتجها عندك.
+
+[[-i]] بيسيب الـ stdin مفتوح، فتقدر تعمل [[< ملف]] أو pipe للأداة. من غير [[-t]] عشان مفيش ترمنال تفاعلي.
+
+واكتب الـ tag دايمًا ([[caddy:2.8]] مش caddy بس)، عشان نفس الأمر يدّي نفس النتيجة بعد سنة.`,
+            when: "hashes وباسوردات، وأدوات بنسخة محددة، وعميل قاعدة بيانات، وتجربة سريعة لنسخة لغة.",
+            mistakes: "نسيان [[--rm]] فالـ containers الواقفة تتراكم في [[ps -a]]. وباسورد حقيقي في سطر الأمر: بيتحفظ في history وبيبان في [[ps]] لحظة التشغيل، فاكتب الأمر بمسافة في الأول (لو HISTCONTROL=ignorespace) أو خلّي الأداة تسألك عليه."
+          },
+          lines: [
+            "استخدم Caddy يولّد hash للباسورد، والـ container يتمسح بعدها.",
+            "نفّذ سطر JavaScript على Node 20 من غير ما تسطّبها.",
+            "الفولدر الحالي جوه الـ container على /work، واعرض حجم كل حاجة فيه.",
+            "ابعت ملف من جهازك على الـ stdin لأداة جوه الـ container."
+          ]
         }
       ]
     },
@@ -323,7 +355,9 @@ node_modules لازم يتستثنى لسببين: الحجم، وإن اللي 
 
 .git بيكبّر الـ context من غير فايدة. .env أسرار. و dist أو .next ناتج build قديم ممكن يلخبط.`,
             when: "في كل مشروع فيه Dockerfile، من أول يوم.",
-            mistakes: "نسيانه، وبعدين تستغرب إن الـ build بطيء أو إن مكتبة native زي bcrypt بتطلع error جوه الـ container."
+            mistakes: R`نسيانه، وبعدين تستغرب إن الـ build بطيء أو إن مكتبة native زي bcrypt بتطلع error جوه الـ container.
+
+وخد بالك إن الصيغة مش زي .gitignore بالظبط: في .dockerignore، [[*.png]] بتمسك الصور اللي في جذر المشروع بس، ومش بتدخل الفولدرات. عشان تمسك كل مكان لازم [[**/*.png]]. في مشروع حقيقي الملف كان فيه [[*.png]] عشان يشيل screenshots مرمية في الجذر، ودي صح. لكن لو حد «صلّحها» لـ [[**/*.png]] هتشيل صور [[public/]] واللوجو، ومحليًا كله يشتغل وجوه الـ container الصور تطلع 404. ونفس الفكرة: [[node_modules]] لوحدها بتمسك اللي في الجذر بس، وفي monorepo محتاج [[**/node_modules]]. ولو شاكك، ابني واعمل [[docker run --rm myapi ls public]] وشوف الملفات وصلت ولا لأ.`
           },
           lines: [
             "المكتبات: هتتسطب جوه الصورة.",
@@ -466,16 +500,16 @@ CMD ["node", "server.js"]`,
           cmd: "build / tag / push",
           title: "ارفع الـ image على registry",
           desc: "الـ registry مخزن للـ images (Docker Hub، أو GitHub Container Registry ghcr.io). بتبني على جهازك أو في CI، وترفع، والسيرفر ينزّل. الاسم لازم يبقى فيه اسم الـ registry والحساب.",
-          example: R`docker build -t ghcr.io/dex11x2/myapi:1.2.0 .
+          example: R`docker build -t ghcr.io/user/myapi:1.2.0 .
 docker login ghcr.io
-docker push ghcr.io/dex11x2/myapi:1.2.0
-docker pull ghcr.io/dex11x2/myapi:1.2.0`,
+docker push ghcr.io/user/myapi:1.2.0
+docker pull ghcr.io/user/myapi:1.2.0`,
           try: "اعمل token من GitHub بصلاحية write:packages، واعمل login بيه، وارفع image تجربة.",
           deep: {
             why: "عشان السيرفر يشغّل image بتاعتك، لازم توصله. إما يبنيها هو، أو تبنيها انت وترفعها على registry وهو ينزّلها.",
             how: R`الـ registry سيرفر بيخزّن images. Docker Hub الأشهر، و GitHub Container Registry (ghcr.io) مجاني مع الـ repos بتاعتك، ومريح لأن نفس حساب GitHub.
 
-الاسم لازم يبدأ باسم الـ registry والحساب: [[ghcr.io/dex11x2/myapi:1.2.0]]. من غير ده Docker هيحاول يرفع على Docker Hub.
+الاسم لازم يبدأ باسم الـ registry والحساب: [[ghcr.io/user/myapi:1.2.0]]. من غير ده Docker هيحاول يرفع على Docker Hub.
 
 [[login]] مرة واحدة. مع ghcr بتستخدم Personal Access Token فيه صلاحية write:packages، مش باسورد GitHub.
 
@@ -537,6 +571,233 @@ docker run --rm --entrypoint sh myapi -c "ls /app"`,
             mistakes: "shell form في CMD. و [[CMD npm start]]: npm نفسه بيبقى وسيط بيبلع الإشارة. شغّل node مباشرة."
           },
           lines: ["الأمر الافتراضي (CMD).", "استبدل CMD بأمر تاني.", "استبدل ENTRYPOINT نفسه بـ sh ونفّذ أمر."]
+        },
+        {
+          cmd: "entrypoint.sh و exec",
+          title: "خطوة قبل التطبيق من غير ما تبوّظ الإغلاق",
+          desc: R`لو محتاج تعمل حاجة قبل ما السيرفر يقوم (migration، أو تجهيز ملف)، اعمل سكربت صغير يعملها، وآخر سطر فيه [[exec node server.js]]. الـ [[exec]] بتخلي node ياخد مكان الشيل نفسه، فيبقى هو العملية رقم 1 ويستلم SIGTERM، و [[docker stop]] يقفله نضيف بدل ما يستنى ١٠ ثواني ويقتله.`,
+          example: R`#!/bin/sh
+set -e
+node /app/scripts/migrate.mjs
+exec node server.js`,
+          try: "اعمل السكربت ده بسطر [[node server.js]] من غير exec، وقيس [[time docker stop api]]: هياخد ١٠ ثواني. ضيف exec وقيس تاني.",
+          flag: "script",
+          deep: {
+            why: "الـ CMD بالأقواس المربعة بيحل مشكلة الإشارات، بس أول ما تحتاج خطوتين (migrate وبعدين start) بتكتب سكربت، والسكربت بيرجّع المشكلة: الشيل بقى هو العملية 1.",
+            how: R`من غير exec: sh هو العملية رقم 1، و node ابنه. [[docker stop]] بيبعت SIGTERM للعملية 1 بس، والشيل مش بيوصّلها لـ node. بعد ١٠ ثواني Docker بيبعت SIGKILL، فالطلبات اللي شغالة بتتقطع واتصالات القاعدة مبتتقفلش نضيف.
+
+[[exec]] بتستبدل عملية الشيل بـ node في نفس المكان وبنفس رقم العملية. مفيش شيل تاني، و node هو اللي بيستلم الإشارة.
+
+[[set -e]] مهم هنا: لو الـ migration فشل، السكربت يقف والـ container يخرج بـ error، بدل ما التطبيق يقوم على schema قديمة.
+
+وفي الـ Dockerfile: [[COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/]] وبعدين [[ENTRYPOINT ["docker-entrypoint.sh"]]]. ولو عايز السكربت يشغّل أي CMD، آخر سطر يبقى [[exec "$@"]].
+
+وبديل لو مش عايز تفكّر في ده: [[init: true]] في compose (أو [[--init]] في run) بيحط عملية صغيرة (tini) كـ PID 1 بتوصّل الإشارات وتلم العمليات الميتة.`,
+            when: "أي خطوة لازم تحصل قبل التطبيق وجوه الـ container: migrate، أو توليد config من متغيرات، أو انتظار خدمة.",
+            mistakes: R`في مشروع حقيقي الـ migration كان بيتشغّل أوتوماتيك مع كل تشغيل container على الإنتاج، وبتوكن إدارة كامل، وبعده [[|| echo "skipped"]] بيبلع أي فشل، فالتطبيق يقوم عادي على schema ناقصة. وكان فيه ملفين entrypoint مختلفين، واحد بيشاور على .js والتاني على .mjs.
+
+وغلطتين كلاسيك: السكربت من غير صلاحية تنفيذ فيطلع permission denied، أو اتكتب على ويندوز بنهايات سطور CRLF فيطلع «no such file or directory» مع إن الملف موجود (الـ \r لازقة في سطر الـ shebang).`
+          },
+          lines: [
+            "وقّف السكربت عند أول أمر يفشل.",
+            "الخطوة القبلية: مزامنة الـ schema.",
+            "node ياخد مكان الشيل ويبقى العملية رقم 1."
+          ]
+        },
+        {
+          cmd: "alpine ولا slim",
+          title: "مكتبات native بتفشل في الـ build",
+          desc: R`Alpine صغيرة جدًا، بس بتستخدم musl بدل glibc ومفيهاش أدوات compile. مكتبات زي bcrypt محتاجة تتبني، فإما تسطّب أدوات البناء بـ [[apk add python3 make g++]]، أو تستخدم [[node:22-bookworm-slim]] اللي فيها glibc، والـ binaries الجاهزة (زي SWC بتاع Next و sharp) بتشتغل عليها على طول.
+
+القاعدة: ابدأ بـ alpine، ولو لقيت نفسك بتحارب مكتبات native روح لـ slim. وأدوات البناء تفضل في مرحلة الـ build بس.`,
+          example: R`FROM node:22-alpine AS deps
+RUN apk add --no-cache python3 make g++
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+FROM node:22-alpine
+RUN apk add --no-cache vips
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+USER node
+CMD ["node", "server.js"]`,
+          try: "في مشروع فيه bcrypt، ابني على alpine من غير سطر apk add واقرا الـ error، وبعدين ضيفه، وبعدين جرّب bookworm-slim من غيره وقارن الحجم في [[docker images]].",
+          flag: "script",
+          deep: {
+            why: R`أشهر error أول ما تنقل مشروع لـ alpine: [[gyp ERR! find Python]] أو [[Error loading shared library]]. المكتبة مش لاقية binary جاهز لـ musl، فبتحاول تتبني من الكود ومش لاقية أدوات.`,
+            how: R`مكتبات native (فيها C أو C++) بتنزل binary جاهز لو فيه واحد مناسب لنظامك. أغلب الـ binaries الجاهزة معمولة لـ glibc (Debian و Ubuntu). على alpine ممكن متلاقيش، فـ node-gyp يحاول يبني، ومحتاج [[python3 make g++]].
+
+[[--no-cache]] في apk معناها متحفظش فهرس الباكدجات جوه الـ image، فالطبقة تفضل صغيرة.
+
+الـ multi-stage هنا بيحل مشكلة الحجم: أدوات البناء (مئات الميجا) في مرحلة deps بس، والمرحلة النهائية بتاخد node_modules المبنية جاهزة. لو مكتبة محتاجة حاجة من النظام وقت التشغيل (زي vips لـ sharp لو متبنية عليه)، سطّب نسخة التشغيل بس، من غير [[-dev]].
+
+[[bookworm-slim]] أكبر بحوالي ٥٠ لـ ٨٠ ميجا، بس بتوفّر عليك كل ده. ولازم المرحلتين من نفس العيلة: node_modules المبنية على alpine مش هتشتغل على slim والعكس.`,
+            when: "bcrypt و sharp و canvas و sqlite3 وأي مكتبة فيها كود native. و Next.js لو شفت مشاكل SWC على alpine.",
+            mistakes: R`في مشروع حقيقي [[vips-dev]] (بأدوات التطوير والـ headers) كانت متسطّبة في مرحلة التشغيل، فكبّرت الـ image من غير لازمة. ومرحلة build على alpine ومرحلة تشغيل على slim، فالمكتبات تقع بـ error غريب وقت التشغيل. ونسخ node_modules من جهاز ويندوز بدل npm ci جوه الـ container.`
+          },
+          lines: [
+            "مرحلة deps على alpine.",
+            "أدوات البناء (للمكتبات native) في المرحلة دي بس، ومن غير كاش apk.",
+            "فولدر الشغل.",
+            "ملفات الباكدجات.",
+            "سطّب وابني المكتبات.",
+            "المرحلة النهائية نضيفة.",
+            "مكتبة تشغيل بس لو محتاجها (مش النسخة -dev).",
+            "فولدر الشغل.",
+            "خد node_modules المبنية جاهزة.",
+            "الكود.",
+            "يوزر عادي.",
+            "شغّل."
+          ]
+        },
+        {
+          cmd: "أسرار وقت الـ build",
+          title: "سر اتبعت وقت البناء وفضل جوه الـ image",
+          desc: R`أي قيمة بتبعتها بـ [[--build-arg]] وتستخدمها في ENV أو RUN بتفضل في الـ image، وأي حد معاه الـ image يقدر يقراها بـ [[docker history]] أو [[inspect]]. لو الـ build محتاج سر فعلًا (توكن npm لباكدج خاص مثلًا)، استخدم [[RUN --mount=type=secret]]: السر بيتركّب كملف في الخطوة دي بس ومبيتكتبش في أي طبقة.
+
+والأسرار اللي التطبيق محتاجها وهو شغال مكانها وقت التشغيل ([[env_file]])، مش وقت البناء أصلًا.`,
+          example: R`# syntax=docker/dockerfile:1.7
+FROM node:22-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
+COPY . .
+ARG NEXT_PUBLIC_API_URL
+RUN npm run build`,
+          try: "ابني بـ [[docker build --secret id=npmrc,src=.npmrc -t myapp .]]، وبعدين [[docker history --no-trunc myapp]] ودوّر على التوكن: مش موجود. جرّب نفس التوكن كـ ARG واتفرّج عليه ظاهر.",
+          flag: "script",
+          deep: {
+            why: R`في Next.js و Vite متغيرات [[NEXT_PUBLIC_]] و [[VITE_]] لازم تكون موجودة وقت الـ build، فالناس بتتعود تبعت كل حاجة كـ build arg، ومعاها مفاتيح السيرفر. والـ image بتترفع على registry أو تتنقل، والمفاتيح معاها.`,
+            how: R`كل RUN بيستخدم ARG بيتسجّل في تاريخ الـ image بالقيمة. و [[ENV X=$X]] بيحفظ القيمة في إعدادات الـ image نفسها. الاتنين بيبانوا لأي حد يعمل pull.
+
+[[--mount=type=secret,id=npmrc,target=/root/.npmrc]] بيحط الملف في المسار ده وقت الأمر ده بس، وبعده بيختفي، ومش جزء من أي طبقة ولا بيأثر على الكاش. بتبعته من بره بـ [[docker build --secret id=npmrc,src=.npmrc]]، وفي compose تحت [[build: secrets:]].
+
+سطر [[# syntax=docker/dockerfile:1.7]] في أول الملف بيقول لـ BuildKit يستخدم نسخة parser محددة، فمميزات زي secret و cache mounts تشتغل حتى لو Docker على السيرفر قديم شوية.
+
+و [[NEXT_PUBLIC_API_URL]] مش سر أصلًا: قيمته بتتحط في JavaScript اللي بيروح للمتصفح. عشان كده عادي يبقى ARG. أي حاجة من غير NEXT_PUBLIC (مفتاح service role، أو HMAC بتاع الدفع، أو DATABASE_URL) مكانها env_file وقت التشغيل.`,
+            when: "توكن npm أو pip لباكدجات خاصة، أو SSH key لـ git clone خاص وقت البناء.",
+            mistakes: R`في مشروع حقيقي مفتاح service role بتاع قاعدة البيانات و HMAC secret بتاع بوابة الدفع كانوا بيتبعتوا كـ ARG و ENV في مرحلة الـ build، فبقوا محفوظين في طبقات الـ image وفي docker history. وفي مشروع تاني DATABASE_URL بالباسورد اتمرّر build arg. الحل: NEXT_PUBLIC بس وقت البناء، والباقي env_file. ولو سر اتسرّب في image اترفعت: غيّر السر نفسه، مسح الـ image مش كفاية.`
+          },
+          lines: [
+            "ابدأ من Node.",
+            "فولدر الشغل.",
+            "ملفات الباكدجات.",
+            "سطّب، وملف .npmrc (فيه التوكن) متركّب للخطوة دي بس ومش هيتحفظ.",
+            "الكود.",
+            "متغير عام مش سر، عادي يبقى ARG لأنه رايح للمتصفح أصلًا.",
+            "ابني."
+          ]
+        },
+        {
+          cmd: "Next.js standalone",
+          title: "image صغيرة لتطبيق Next.js",
+          desc: R`[[output: "standalone"]] في next.config بيخلي [[next build]] يطلّع فولدر فيه [[server.js]] ومعاه بس المكتبات اللي التطبيق بيستخدمها فعلًا، بدل node_modules كله. في آخر مرحلة بتنسخ standalone و static و public، وتشغّل [[node server.js]].
+
+ولازم [[HOSTNAME=0.0.0.0]]، وإلا السيرفر ممكن يسمع على عنوان مش هو اللي البورت متوجّه له، ومحدش يوصله.`,
+          example: R`# next.config.ts:  output: "standalone"
+FROM node:22-bookworm-slim AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build && test -d .next/standalone
+
+FROM node:22-bookworm-slim
+WORKDIR /app
+ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0
+COPY --from=builder --chown=node:node /app/public ./public
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+USER node
+EXPOSE 3000
+CMD ["node", "server.js"]`,
+          try: "ابني مشروع Next بالطريقة دي ومرة بـ node_modules كامل و next start، وقارن الحجم في [[docker images]].",
+          flag: "script",
+          deep: {
+            why: "مشروع Next عادي node_modules بتاعه ممكن يبقى نص جيجا. في الإنتاج التطبيق بيستخدم جزء صغير منه بس. standalone بيحسب الجزء ده وياخده لوحده.",
+            how: R`[[output: "standalone"]] بيخلي Next يتتبّع كل ملف التطبيق بيعمله import، وينسخ المكتبات دي بس في [[.next/standalone]]، ومعاها [[server.js]] صغير بيشغّل التطبيق من غير [[next start]].
+
+standalone مش بينسخ [[public]] ولا [[.next/static]] (Next بيفترض إن ممكن يروحوا CDN)، فبتنسخهم انت. نسيانهم معناه موقع من غير CSS ولا صور.
+
+server.js بيقرا [[PORT]] و [[HOSTNAME]]. Docker نفسه بيحط متغير HOSTNAME = id الـ container، فلو سبته، Next بيسمع على العنوان ده. [[HOSTNAME=0.0.0.0]] بيخليه يسمع على كل الواجهات.
+
+[[test -d .next/standalone]] بيوقّف الـ build بـ error واضح لو حد شال الإعداد من next.config، بدل ما الـ image تتبني ناقصة وتقع وقت التشغيل.
+
+[[NEXT_TELEMETRY_DISABLED=1]] بيقفل إرسال بيانات الاستخدام لـ Vercel وقت البناء. ولو الموقع شغال تحت مسار فرعي، [[basePath: "/myapp"]] في نفس الملف، ولازم يبقى موجود وقت الـ build.
+
+وأي متغير [[NEXT_PUBLIC_]] لازم يبقى موجود وقت الـ build (ARG)، لأنه بيتحط في JavaScript وقتها. env_file وقت التشغيل مش هيغيّره.`,
+            when: "أي تطبيق Next.js رايح Docker. standalone هو الطريقة الرسمية لكده.",
+            mistakes: R`في مشروع حقيقي سكربت الديبلوي كان بيعدّل next.config بـ sed على السيرفر عشان يضيف standalone، يعني الإعداد مش في git وأول clone جديد يبوّظه. ومتغيرات NEXT_PUBLIC في env_file وقت التشغيل، وتستغرب إنها undefined في المتصفح. ونسيان نسخ public أو static.`
+          },
+          lines: [
+            "مرحلة البناء. slim عشان SWC و sharp يشتغلوا من غير مشاكل musl.",
+            "فولدر الشغل.",
+            "ملفات الباكدجات.",
+            "سطّب كل حاجة (البناء محتاج devDependencies).",
+            "الكود.",
+            "اقفل telemetry بتاعة Next.",
+            "ابني، ووقّف بـ error لو فولدر standalone مطلعش.",
+            "المرحلة النهائية نضيفة.",
+            "فولدر الشغل.",
+            "وضع الإنتاج، والبورت، واسمع على كل الواجهات.",
+            "الملفات العامة (standalone مش بينسخها).",
+            "السيرفر والمكتبات اللي بيستخدمها بس.",
+            "ملفات CSS و JS الثابتة (برضه مش بتتنسخ لوحدها).",
+            "يوزر node مش root.",
+            "توثيق البورت.",
+            "شغّل server.js مباشرة."
+          ]
+        },
+        {
+          cmd: "SPA جوه nginx",
+          title: "موقع Vite أو React في image فيها nginx بس",
+          desc: R`مرحلة Node بتعمل [[npm run build]]، ومرحلة [[nginx:alpine]] بتاخد فولدر dist بس ومعاه ملف الإعدادات. الـ image النهائية فيها nginx وملفات ثابتة، من غير Node خالص.
+
+و [[daemon off;]] عشان nginx يفضل في الـ foreground. أي برنامج بيروح الخلفية لوحده، الـ container بيقفل أول ما يقوم، لأن العملية رقم 1 خرجت.`,
+          example: R`FROM node:22-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+ENV VITE_API_BASE_URL=""
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]`,
+          try: "ابني الـ image وشغّلها بـ [[-p 8080:80]]، وافتح صفحة فرعية مباشرة (مش من الرئيسية) واتأكد إنها مش 404: ده شغل try_files في nginx.conf.",
+          flag: "script",
+          deep: {
+            why: "موقع SPA بعد الـ build مجرد HTML و JS و CSS. مش محتاج Node عشان يتقدّم، و nginx أسرع وأخف بكتير. وكمان nginx نفسه يقدر يوجّه /api للباك إند، فالفرونت والـ API على نفس الدومين ومفيش CORS.",
+            how: R`المرحلة الأولى بتبني وتطلّع dist. المرحلة التانية بتبدأ من nginx:alpine (حوالي ٢٠ ميجا) وبتاخد dist بس.
+
+[[VITE_API_BASE_URL=""]]: متغيرات VITE بتتحط في الكود وقت البناء. فاضية يعني الطلبات تروح [[/api/...]] على نفس الدومين، و nginx.conf فيه [[location /api/]] بيعمل proxy_pass لـ [[http://backend:3000]] على شبكة compose.
+
+nginx.conf لازم فيه [[try_files $uri $uri/ /index.html]] عشان روابط الـ SPA تشتغل لما حد يفتحها مباشرة، و index.html من غير كاش، و /assets بكاش طويل. التفاصيل في تاب Nginx درس SPA.
+
+[[daemon off;]]: صورة nginx الرسمية فيها السطر ده أصلًا في CMD، فكتابته توضيح. بس الفكرة مهمة: الـ container عايش طول ما العملية رقم 1 عايشة. لو شغّلت nginx أو أي خدمة بالطريقة اللي بتفصل نفسها وتروح الخلفية، العملية الأصلية بتخرج فورًا والـ container يقفل بـ exit 0.`,
+            when: "أي فرونت SPA (Vite، و React، و Vue) رايح الإنتاج.",
+            mistakes: R`في مشروع حقيقي إعدادات nginx كانت مكتوبة بـ [[RUN echo '...']] جوه الـ Dockerfile (هروب علامات صعب ومش مقروء)، وفي نفس الوقت compose بيركّب nginx.conf من ملف، والاتنين بيسمعوا على بورتات مختلفة (8000 و 80)، فنسخة staging كانت شغالة بإعدادات غير الإنتاج. خلّي ملف واحد في git وانسخه بـ COPY. وغلطة تانية: تشغيل [[npm run dev]] في image الإنتاج.`
+          },
+          lines: [
+            "مرحلة البناء على Node.",
+            "فولدر الشغل.",
+            "ملفات الباكدجات.",
+            "سطّب.",
+            "الكود.",
+            "رابط الـ API فاضي: الطلبات تروح /api على نفس الدومين.",
+            "ابني: يطلع dist.",
+            "المرحلة النهائية: nginx بس.",
+            "الملفات المبنية في فولدر nginx.",
+            "إعدادات الموقع (SPA و proxy لـ /api).",
+            "توثيق البورت.",
+            "nginx في الـ foreground عشان الـ container يفضل عايش."
+          ]
         }
       ]
     },
@@ -650,6 +911,326 @@ docker exec api env | sort`,
             mistakes: ".env جوه الـ image (نسيان .dockerignore)، أو ملف .env على السيرفر مقروء لكل اليوزرز."
           },
           lines: ["كل المتغيرات من الملف.", "الملف، و -e بتغطي على متغير واحد منه.", "اتأكد إن المتغيرات وصلت."]
+        },
+        {
+          cmd: "bind mount لملف واحد",
+          title: "عدّلت الملف والـ container لسه شايف القديم",
+          desc: R`لما تربط ملف واحد (مش فولدر) جوه container، الربط بيمسك الملف نفسه (الـ inode بتاعه) مش اسمه. [[sed -i]] و [[mv]] ومحررات كتير بيكتبوا ملف جديد ويحطوه مكان القديم، فالاسم بقى بيشاور على inode تاني والـ container لسه شايف القديم. [[cat new > file]] بيكتب جوه نفس الملف، فالتعديل يوصل.
+
+أو اربط الفولدر كله بدل الملف، والمشكلة دي مش هتحصل أصلًا.`,
+          example: R`cat new.conf > ./nginx/nginx.conf
+stat -c %i ./nginx/nginx.conf
+docker exec web stat -c %i /etc/nginx/nginx.conf
+docker exec web nginx -t && docker exec web nginx -s reload
+# لو الرقمين مختلفين: docker restart web`,
+          try: "اربط ملف واحد في container، وعدّله بـ [[sed -i]]، وقارن رقم الـ inode بره وجوه. بعدين اكتب بـ [[cat >]] وقارن تاني.",
+          deep: {
+            why: "بتعدّل nginx.conf على السيرفر، وتعمل reload، ومفيش أي error، والإعدادات القديمة لسه شغالة. من أغرب المشاكل لأن كل حاجة شكلها صح.",
+            how: R`كل ملف على لينكس ليه رقم اسمه inode، والاسم مجرد مؤشر عليه. الـ bind mount لملف بيمسك الـ inode وقت ما الـ container قام.
+
+[[sed -i]] بيكتب النتيجة في ملف مؤقت ويعمله rename مكان الأصلي. الاسم دلوقتي بيشاور على inode جديد، بس الـ container لسه ماسك القديم، وده فضل موجود لأن فيه حد ماسكه. [[mv]] نفس الحكاية، و vim وأغلب المحررات كمان.
+
+[[cat new.conf > file]] بيفضّي الملف الموجود ويكتب فيه، فنفس الـ inode ونفس الملف اللي الـ container شايفه.
+
+[[stat -c %i]] بيطبع رقم الـ inode. لو الرقم بره هو هو جوه، التعديل واصل. لو مختلف، [[docker restart]] بيعيد الربط.
+
+وقبل ما تكتب على ملف مستخدم، اختبره في container مؤقت: [[docker run --rm -v "$PWD/new.conf:/etc/nginx/nginx.conf:ro" nginx:alpine nginx -t]]. كده لو فيه غلطة الملف الأصلي متلمسش.
+
+ولو تقدر، اربط الفولدر ([[./nginx:/etc/nginx/conf.d]]) بدل الملف: الـ container بيشوف محتويات الفولدر لايف، فأي rename بيبان.`,
+            when: "أي ملف إعدادات مربوط لوحده: nginx.conf، و prometheus.yml، وملفات config لخدمات مشتركة.",
+            mistakes: R`في مشروع حقيقي سكربت كان بيعدّل nginx.conf المشترك بـ [[sed -i]] ويعمل reload، و nginx يفضل شغّال بالإعدادات القديمة من غير أي error. الحل كان [[cat >]] ومقارنة الـ inode بره وجوه، ولو مختلفين restart. والغلطة التانية: تكتب بـ cat على الملف الحقيقي قبل ما تختبره، فأول restart بعدها nginx ميقومش.`
+          },
+          lines: [
+            "اكتب المحتوى الجديد جوه نفس الملف (نفس الـ inode).",
+            "رقم الـ inode على السيرفر.",
+            "رقمه جوه الـ container: لازم يبقى هو هو.",
+            "اختبر الإعدادات، ولو سليمة اعمل reload."
+          ]
+        },
+        {
+          cmd: "volume external",
+          title: "volume قاعدة البيانات محمي من الحذف بالغلط",
+          desc: R`الـ volume العادي في compose اسمه بيبقى [[اسم_المشروع_pgdata]]، وبيتمسح مع [[down -v]]. ولو غيّرت اسم الفولدر، compose بيعمل volume جديد فاضي ويبان إن الداتا راحت. [[external: true]] معناها إنك انت اللي عامل الـ volume بإيدك، و compose بيستخدمه بس: مش بيعمله ومش بيمسحه.`,
+          example: R`docker volume create pgdata
+# وفي compose.yml:
+volumes:
+  pgdata:
+    name: pgdata
+    external: true`,
+          try: "في مشروع تجربة، خلّي الـ volume external، واعمل [[docker compose down -v]]، وبعدين [[docker volume ls]]: هتلاقيه لسه موجود.",
+          flag: "script",
+          deep: {
+            why: "بيانات الإنتاج في volume، و compose شايفه بتاعه: بيعمله وممكن يمسحه. حرف v زيادة في down، أو نقل المشروع لفولدر باسم تاني، وفجأة القاعدة فاضية.",
+            how: R`compose بيسمّي كل حاجة باسم المشروع، واسم المشروع افتراضيًا اسم الفولدر. [[/opt/myapp]] يطلّع [[myapp_pgdata]]. لو نقلت المشروع لـ [[/opt/myapp-v2]] بقى [[myapp-v2_pgdata]]، volume جديد فاضي، والقديم لسه موجود بس محدش بيستخدمه.
+
+[[external: true]] بيقول لـ compose: الـ volume ده موجود بره، استخدمه بالاسم ده بالظبط. لو مش موجود، compose يرفض يقوم بـ error واضح، وده أحسن من إنه يعمل واحد فاضي في صمت. و [[down -v]] مش بيقرّب منه.
+
+[[name:]] بيثبّت الاسم الحقيقي من غير بادئة المشروع. وينفع تستخدمه لوحده من غير external، فالاسم يثبت بس compose يفضل يديره.`,
+            when: "volumes الإنتاج اللي فيها قاعدة بيانات أو ملفات مرفوعة، أو volume مشترك بين مشروعين.",
+            mistakes: R`تنسى [[docker volume create]] على سيرفر جديد، فـ compose يرفض يقوم (وده المقصود). وتفتكر إن external يعني باك أب: [[docker volume rm pgdata]] لسه بيمسحه عادي. في مشروع حقيقي volume الـ Mongo كان external بالظبط عشان كده، بس الباك أب اليومي كان على نفس السيرفر، فلو السيرفر راح، الاتنين راحوا.`
+          },
+          lines: [
+            "اعمل الـ volume بإيدك مرة واحدة.",
+            "تعريف الـ volumes في آخر الملف.",
+            "المفتاح اللي الخدمات بتستخدمه.",
+            "الاسم الحقيقي من غير بادئة المشروع.",
+            "موجود بره: compose ميعملوش وميمسحوش."
+          ]
+        },
+        {
+          cmd: "شبكة مشتركة",
+          title: "كذا مشروع على سيرفر واحد ورا نفس Nginx",
+          desc: R`كل مشروع compose ليه شبكته لوحده. لو عندك Nginx واحد (في مشروع لوحده) قدام كذا تطبيق، اعمل شبكة مرة بإيدك، وكل مشروع ينضم لها بـ [[external: true]]. كده Nginx يوصل للتطبيق باسمه ([[proxy_pass http://myapp:3000]]) من غير ما تفتح أي بورت على السيرفر.
+
+وعلى الشبكة المشتركة اسم الخدمة بيبقى اسم DNS، فلازم يبقى فريد بين كل المشاريع.`,
+          example: R`docker network create proxy
+# compose.yml بتاع التطبيق:
+services:
+  myapp:
+    build: .
+    networks: [default, proxy]
+networks:
+  proxy:
+    external: true`,
+          try: "اعمل شبكة proxy، وشغّل مشروعين عليها، ومن container الـ nginx جرّب [[wget -qO- http://myapp:3000]].",
+          flag: "script",
+          deep: {
+            why: "سيرفر واحد عليه ٣ مواقع، وبورت 80 و 443 لواحد بس. الحل Nginx واحد قدامهم، بس هو في مشروع والتطبيقات في مشاريع تانية، وكل مشروع شبكته معزولة.",
+            how: R`[[docker network create proxy]] مرة واحدة على السيرفر. في كل مشروع [[external: true]] معناها «الشبكة موجودة، انضم لها بس». ولو اسمها الحقيقي مختلف (اتعملت من مشروع compose تاني فبقت [[shared_proxy-network]] مثلًا) اكتب [[name:]] تحتها.
+
+[[networks: [default, proxy]]] بيخلي التطبيق على الشبكتين: default عشان يكلّم القاعدة بتاعته، و proxy عشان Nginx يوصله. القاعدة على default بس، فـ Nginx ولا أي مشروع تاني يقدر يوصلها.
+
+الـ DNS الداخلي بيسجّل اسم الخدمة واسم الـ container على كل شبكة الخدمة عليها. لو مشروعين عندهم خدمة اسمها [[app]] على نفس شبكة proxy، الاسم [[app]] بيرجع IPين، و Docker بيوزّع بينهم round-robin.
+
+ونقطة تانية: Nginx بيحوّل الاسم لـ IP مرة وقت ما بيقوم. لو التطبيق اتعمله recreate وأخد IP جديد، Nginx يفضل يبعت للقديم ويطلّع 502 لحد ما تعمل reload. اعمل [[nginx -s reload]] في آخر الديبلوي، أو استخدم [[resolver 127.0.0.11 valid=10s;]] مع متغير في proxy_pass عشان يسأل DNS بتاع Docker كل شوية.`,
+            when: "أكتر من مشروع على نفس السيرفر ورا reverse proxy واحد (Nginx، أو Caddy، أو nginx-proxy).",
+            mistakes: R`في مشروع حقيقي خدمتين من مشروعين مختلفين كان اسمهم [[app]] على نفس الشبكة المشتركة، فـ nginx كان بيوزّع الطلبات بينهم، ونص الزوار بيروحوا للموقع التاني. الحل اسم خدمة فريد ([[myapp]]) أو proxy_pass على container_name فريد. وغلطة تانية: تحط القاعدة على شبكة proxy من غير لازمة.`
+          },
+          lines: [
+            "اعمل الشبكة المشتركة مرة واحدة على السيرفر.",
+            "الخدمات.",
+            "خدمة باسم فريد على مستوى السيرفر كله.",
+            "بتتبني من الفولدر ده.",
+            "على شبكة المشروع وعلى الشبكة المشتركة.",
+            "تعريف الشبكات.",
+            "الشبكة المشتركة...",
+            "...موجودة بره: انضم لها بس."
+          ]
+        },
+        {
+          cmd: "0.0.0.0 جوه الـ container",
+          title: "البورت مفتوح بس الصفحة مش بتفتح",
+          desc: R`سيرفرات التطوير (Vite، و next dev، وغيرهم) بتسمع على localhost افتراضيًا. وجوه الـ container، localhost ده الـ container نفسه، فطلبك الجاي من [[-p]] مش بيوصله. الحل إن السيرفر يسمع على [[0.0.0.0]]: [[--host 0.0.0.0]] في Vite، و [[-H 0.0.0.0]] في next dev، و [[HOSTNAME=0.0.0.0]] في Next standalone.
+
+والعكس: من جوه الـ container عشان توصل لحاجة شغالة على جهازك، استخدم [[host.docker.internal]] مش localhost.`,
+          example: R`services:
+  web:
+    build: .
+    command: npm run dev -- --host 0.0.0.0
+    ports: ["5173:5173"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"`,
+          try: "شغّل Vite جوه container من غير [[--host]] وجرّب [[docker exec web wget -qO- localhost:5173]]: هيشتغل من جوه ومن جهازك لأ. ضيف --host وجرّب تاني.",
+          flag: "script",
+          deep: {
+            why: R`أشهر «الـ container شغال والصفحة مش بتفتح»: اللوج بيقول [[Local: http://localhost:5173]] كأن كل حاجة تمام، والمتصفح بيقول connection reset.`,
+            how: R`كل container ليه شبكته، وفيها localhost خاص بيه. [[-p 5173:5173]] بيوجّه الطلبات من جهازك لكارت الشبكة بتاع الـ container (eth0)، مش لـ localhost بتاعه. سيرفر سامع على 127.0.0.1 بس مش هيشوفها.
+
+[[0.0.0.0]] معناها «اسمع على كل الواجهات»، فبيستقبل من eth0. ده مش خطر جوه الـ container: مين يوصل من بره بيتحدد بـ [[ports]] (و 127.0.0.1 على الشمال لو عايز جهازك بس).
+
+تشخيص سريع: [[docker exec web netstat -tln]] لو ظاهر [[127.0.0.1:5173]] يبقى هي دي المشكلة، لو [[0.0.0.0:5173]] أو [[:::5173]] يبقى تمام.
+
+[[host.docker.internal]] اسم بيشاور على جهازك من جوه الـ container. Docker Desktop بيعمله لوحده. على لينكس (Docker Engine) لازم السطر [[host.docker.internal:host-gateway]] في extra_hosts.
+
+و [[extra_hosts]] عمومًا بيضيف سطر في [[/etc/hosts]] جوه الـ container، فممكن يثبّت أي اسم على IP. و [[dns:]] بيحدد سيرفر DNS للـ container.`,
+            when: "أي سيرفر تطوير جوه Docker، و Next standalone، والـ container محتاج يكلّم قاعدة أو API شغالة على جهازك.",
+            mistakes: R`في مشروع حقيقي الفرونت كان شغال عادي بره Docker، وجوه Docker الصفحة مش بتفتح خالص، والسبب vite من غير [[--host]]. وفي مشروع تاني [[extra_hosts]] اتستخدم يثبّت IP لهوست قاعدة البيانات لما DNS كان بيفشل جوه الـ container. شغال لحد ما المزوّد يغيّر الـ IP، وبعدها يقع من غير سبب واضح. دوّر على سبب فشل DNS بدل ما تثبّت IP.`
+          },
+          lines: [
+            "الخدمات.",
+            "خدمة الفرونت.",
+            "ابنيها من الفولدر ده.",
+            "شغّل Vite وخليه يسمع على كل الواجهات (الـ -- بتعدّي الـ flag لـ vite).",
+            "البورت من جهازك للـ container.",
+            "أسماء إضافية في /etc/hosts جوه الـ container:",
+            "host.docker.internal يشاور على جهازك (لازم على لينكس، Docker Desktop بيعملها لوحده)."
+          ]
+        }
+      ]
+    },
+    {
+      t: "Docker على ويندوز والتطوير",
+      l: 2,
+      n: "hot reload، وبورتات متاخدة، ونسختين من نفس المشروع، ولما التعديل ميظهرش",
+      items: [
+        {
+          cmd: "hot reload على ويندوز",
+          title: "بتعدّل الكود والـ container مش حاسس",
+          desc: R`على Docker Desktop ويندوز، لو المشروع على درايف ويندوز ومربوط bind mount، إشعارات تغيير الملفات مش بتعدّي لينكس جوه الـ container، فـ Next و Vite مش بيعيدوا التحميل. الحل polling: [[WATCHPACK_POLLING=true]] لـ Next، و [[CHOKIDAR_USEPOLLING=true]] لأدوات تانية. و volume مجهول على [[/app/node_modules]] عشان node_modules بتاعة لينكس متتغطاش بتاعة ويندوز.
+
+وبعد ما تضيف مكتبة: [[docker compose up -d --build -V]].`,
+          example: R`services:
+  web:
+    build: { context: ., dockerfile: Dockerfile.dev }
+    ports: ["3002:3000"]
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true`,
+          try: "شغّل مشروع Next بالملف ده من غير سطور POLLING وعدّل صفحة: مش هيحصل حاجة. ضيفهم واعمل [[docker compose up -d]] وعدّل تاني.",
+          flag: "script",
+          deep: {
+            why: "التطوير جوه Docker على ويندوز بيقابل ٣ مشاكل مع بعض: الـ hot reload مش شغال، و node_modules بتاعة ويندوز بتبوّظ الـ container، والمكتبة الجديدة مش باينة بعد الـ build.",
+            how: R`لينكس بيعرف إن ملف اتغير عن طريق inotify. الملفات اللي جاية من درايف ويندوز عبر Docker Desktop مش بتبعت الإشعارات دي. polling معناها الأداة تبص على الملفات بنفسها كل شوية. بيشتغل، بس بياكل معالج على المشروع الكبير. [[WATCHPACK_POLLING]] بيقرأه Next (webpack)، و [[CHOKIDAR_USEPOLLING]] بيقرأه أدوات مبنية على chokidar. Vite الأضمن فيه [[server.watch.usePolling: true]] في vite.config.
+
+الحل الأحسن من polling: حط المشروع جوه نظام ملفات WSL مش على C:، فالإشعارات تشتغل والسرعة أعلى بكتير (تاب WSL، درس «فين تحط المشروع»).
+
+[[.:/app]] بيغطّي /app كله بفولدرك. [[/app/node_modules]] volume مجهول على المسار ده بس، فبيفضل فيه node_modules اللي اتسطّبت للينكس في الـ image. نفس الفكرة لـ [[/app/.next]] عشان كاش ويندوز ولينكس ميتلخبطوش.
+
+الفخ: compose بيعيد استخدام الـ volumes المجهولة من الـ container القديم. تضيف مكتبة وتعمل build، الـ image فيها المكتبة، بس الـ volume لسه بـ node_modules القديمة. [[-V]] (اختصار [[--renew-anon-volumes]]) بيعمل volumes مجهولة جديدة، فتتملي من الـ image الجديدة.`,
+            when: "Next أو Vite أو nodemon جوه Docker Desktop على ويندوز، والمشروع على درايف ويندوز.",
+            mistakes: R`في مشروع حقيقي ضفنا مكتبة وعملنا [[up --build]]، والتطبيق فضل يقول Module not found، لأن الـ volume المجهول كان شايل node_modules القديمة. [[-V]] حلّها. وكمان [[COPY . .]] في Dockerfile.dev ملوش لازمة مع الـ bind mount لأنه بيتغطّى عليه. و [[container_name]] ثابت في compose التطوير بيمنعك تشغّل نسختين.`
+          },
+          lines: [
+            "الخدمات.",
+            "خدمة الويب.",
+            "ابنيها من Dockerfile التطوير.",
+            "بورت 3002 على جهازك لـ 3000 جوه.",
+            "الـ volumes.",
+            "الكود من جهازك لايف.",
+            "volume مجهول يحمي node_modules بتاعة لينكس من التغطية.",
+            "ونفس الحكاية لكاش Next.",
+            "المتغيرات.",
+            "Next يعمل polling بدل ما يستنى إشعارات مش جاية.",
+            "ونفس الحكاية للأدوات المبنية على chokidar."
+          ]
+        },
+        {
+          cmd: "البورت متاخد",
+          title: "Postgres في Docker و Postgres على جهازك مع بعض",
+          desc: R`[[ports]] شكلها [[IP:بورت_الجهاز:بورت_الـcontainer]]. اللي على اليمين ثابت (اللي البرنامج بيسمع عليه جوه)، واللي على الشمال انت تختاره. لو 5432 متاخد على جهازك، خليها [[5433:5432]] واتصل على [[localhost:5433]]. والـ IP في الأول بيحدد مين يوصل: [[127.0.0.1]] يعني جهازك أو السيرفر نفسه بس.`,
+          example: R`ports:
+  - "127.0.0.1:5433:5432"
+  - "127.0.0.1:3010:3000"
+# من جهازك:          postgresql://myapp:secret@localhost:5433/myapp
+# من container تاني:  postgresql://myapp:secret@db:5432/myapp`,
+          try: "شغّل Postgres في compose على 5433، واتصل من جهازك بـ psql على 5433، وبعدين اعمل [[docker compose port db 5432]] وشوف هو فين.",
+          flag: "script",
+          deep: {
+            why: R`[[Bind for 0.0.0.0:5432 failed: port is already allocated]] على لينكس، أو [[ports are not available]] على ويندوز: فيه حاجة ماسكة البورت، غالبًا Postgres متسطّب على الجهاز، أو نسخة تانية من المشروع.`,
+            how: R`البورت اللي على الشمال بتاع جهازك، وده اللي بيتخانق. غيّره بس، والـ container جوه ميعرفش حاجة.
+
+والـ containers التانية على نفس الشبكة بتكلّم القاعدة على [[db:5432]]: بورت الـ container، مش بورت جهازك. البورت اللي على الشمال للي جاي من بره Docker بس.
+
+[[127.0.0.1:]] في الأول: من غيرها البورت بيتفتح على كل كروت الشبكة. على لابتوبك ده معناه أي حد على نفس الواي فاي. وعلى السيرفر معناه النت كله، و Docker بيعدّي من ufw. [[127.0.0.1:3010:3000]] هو الشكل الصح لتطبيق ورا Nginx على نفس السيرفر.
+
+مين ماسك البورت: [[docker ps --format "{{.Names}} {{.Ports}}"]] للـ containers، و [[ss -ltnp]] على لينكس. وعلى ويندوز فيه نطاقات بورتات بيحجزها Hyper-V لنفسه: [[netsh interface ipv4 show excludedportrange protocol=tcp]] بيوريك لو بورتك جوه واحد منهم.`,
+            when: "قاعدة بيانات للتطوير جنب واحدة متسطّبة، ونسختين من نفس المشروع، وأي تطبيق ورا Nginx على السيرفر.",
+            mistakes: R`في مشروع حقيقي Postgres كان [[5432:5432]] فبيتخانق مع Postgres متسطّب على ويندوز، وأحيانًا التطبيق يتصل بالقاعدة الغلط من غير ما يقول. وفي مشروع تاني على السيرفر، الباك إند كان [[5000:5000]]، و Postgres و Redis مفتوحين على 5433 و 6379، و Docker بيعدّي من ufw، فكانوا مكشوفين للنت و Redis من غير باسورد. وغلطة شائعة: [[localhost:5433]] في DATABASE_URL بتاع container، والصح [[db:5432]].`
+          },
+          lines: [
+            "البورتات.",
+            "Postgres: 5433 على جهازك بس، لـ 5432 جوه.",
+            "التطبيق: 3010 على السيرفر بس (Nginx يوصله)، لـ 3000 جوه."
+          ]
+        },
+        {
+          cmd: "docker compose ولا docker-compose",
+          title: "الأمر بالشرطة ولا بالمسافة",
+          desc: R`[[docker-compose]] بالشرطة النسخة القديمة (v1) واتوقفت. [[docker compose]] بمسافة هي الجديدة (v2): plugin جوه docker نفسه، بتيجي مع Docker Desktop ومع سكربت التسطيب الرسمي، وفيها حاجات مش في القديمة زي [[--wait]] و [[watch]]. استخدم المسافة دايمًا. ولو سكربت لازم يشتغل على سيرفرات قديمة، خليه يكتشف الموجود.`,
+          example: R`docker compose version
+if docker compose version >/dev/null 2>&1; then DC="docker compose"
+elif command -v docker-compose >/dev/null; then DC="docker-compose"
+else echo "Compose مش متسطّب"; exit 1; fi
+$DC up -d --build`,
+          try: "على السيرفر اكتب الأمرين [[docker-compose version]] و [[docker compose version]] وشوف أنهي موجود. لو القديم بس، سطّب [[docker-compose-plugin]].",
+          flag: "script",
+          deep: {
+            why: "شروحات ومشاريع قديمة كتير لسه بالشرطة. على سيرفر جديد مش هتلاقيها، وعلى سيرفر قديم ممكن تلاقي الاتنين بسلوك مختلف.",
+            how: R`v1 كان برنامج منفصل مكتوب بـ Python. v2 اتكتب من جديد بـ Go وبقى جزء من أمر docker. الملف نفسه (compose.yml) بيشتغل مع الاتنين في الغالب.
+
+فرق بيكسر سكربتات: أسماء الـ containers. v1 بيعمل [[myapp_web_1]] و v2 بيعمل [[myapp-web-1]]. أي سكربت فيه اسم container مكتوب بإيده هيتكسر لما تنقل.
+
+السكربت بيجرّب الجديد الأول، ولو مش موجود يدوّر على القديم، ويحط الأمر في متغير [[DC]]، وباقي السكربت يستخدم [[$DC]]. من غير علامات تنصيص عشان الشيل يقسمه لكلمتين.
+
+التسطيب: [[docker-compose-plugin]] من repo بتاع Docker (بيجي مع سكربت get.docker.com)، أو [[docker-compose-v2]] من repo أوبونتو.`,
+            when: "أي سكربت ديبلوي أو README. واكتب [[docker compose]] في كل حاجة جديدة.",
+            mistakes: R`في مشروع حقيقي سكربت الديبلوي كان بيستخدم docker-compose القديم، وسكربت تاني بيعمل [[docker rmi]] لأسماء صور مكتوبة بإيدك مش مطابقة للأسماء اللي compose بيعملها، فالمسح عمره ما حصل فعلًا والسكربت بيقول تمام. وسكربت PowerShell على ويندوز كان بيستخدم الشرطة وبيفشل على جهاز جديد.`
+          },
+          lines: [
+            "النسخة الجديدة موجودة؟",
+            "لو الجديدة شغالة استخدمها...",
+            "...ولو لأ، دوّر على القديمة...",
+            "...ولو ولا واحدة، وقّف برسالة.",
+            "باقي السكربت يستخدم المتغير."
+          ]
+        },
+        {
+          cmd: "-f و -p",
+          title: "نسختين من نفس المشروع على جهاز واحد",
+          desc: R`[[-p]] بيدّي المشروع اسم تاني، فالـ containers والشبكة والـ volumes كلها تتعمل باسم جديد ومتلمسش النسخة الأولى. و [[-f]] أكتر من مرة بيدمج الملفات بالترتيب: الأساسي، وفوقه ملف صغير فيه الاختلافات بس (البورتات مثلًا). كده مش محتاج تنسخ الـ compose كله.`,
+          example: R`docker compose -p myapp2 -f compose.yml -f compose.second.yml up -d
+docker compose -p myapp2 ps
+docker compose -p myapp2 -f compose.yml -f compose.second.yml config
+docker compose -p myapp2 down`,
+          try: "شغّل مشروعك مرتين، مرة عادي ومرة بـ [[-p myapp2]] وملف بورتات مختلفة، وافتح الاتنين في المتصفح.",
+          deep: {
+            why: "عايز تشغّل نسخة تانية (فرع تاني، أو عميل تاني) من غير ما توقف الأولى. من غير -p، compose يفتكرها نفس المشروع ويبدّل الـ containers.",
+            how: R`اسم المشروع بيتحط قدام كل حاجة: [[myapp2-web-1]]، و [[myapp2_default]]، و [[myapp2_pgdata]]. فالنسختين معزولين حتى في البيانات.
+
+[[compose.second.yml]] فيه البورتات الجديدة بس، مثلًا [[3001:3000]] و [[5174:5173]]. خد بالك: في الدمج، الـ ports بتتضاف مش بتتستبدل، فلو الأساسي فيه [[3000:3000]] هتلاقي الاتنين والنسخة التانية تتخانق. الحل تكتب [[ports: !override]] في الملف التاني (compose 2.24 وأحدث)، أو تشيل البورتات من الأساسي خالص.
+
+[[config]] بعد الدمج بيوريك النتيجة الحقيقية قبل ما تشغّل.
+
+وعشان متكتبش ده كل مرة: [[COMPOSE_PROJECT_NAME=myapp2]] و [[COMPOSE_FILE=compose.yml:compose.second.yml]] في .env جنب الملف (الفاصل ; على ويندوز).
+
+[[container_name]] ثابت في الملف بيبوّظ ده كله: الاسم مش بياخد بادئة المشروع، فالنسخة التانية تتخانق مع الأولى.`,
+            when: "نسختين لعميلين، أو staging جنب production على نفس السيرفر، أو تجربة فرع من غير ما توقف الشغال.",
+            mistakes: R`في مشروع حقيقي النسخة التانية كانت ملف compose كامل منسوخ، بأسماء containers وبورتات وشبكة مختلفة، ومع الوقت الملفين بعدوا عن بعض. وكان فيه [[image: myapp2-frontend:dev]] من غير build، فعلى جهاز جديد بيفشل لحد ما حد يبني الصورة بإيده. والأسوأ: تنسى [[-p]] في أمر down فتقفل النسخة الأولى.`
+          },
+          lines: [
+            "شغّل نسخة باسم myapp2، من الملف الأساسي ودمج ملف الاختلافات فوقه.",
+            "حالة النسخة التانية بس.",
+            "شوف الملف النهائي بعد الدمج.",
+            "اقفل النسخة التانية بس (الـ -p مهمة هنا)."
+          ]
+        },
+        {
+          cmd: "التعديل مش ظاهر",
+          title: "قبل ما تمسح كل حاجة وتبني من الصفر",
+          desc: R`لما التعديل مش ظاهر، الإغراء إنك توقف كل حاجة وتمسح الصور وتعمل [[system prune]] وتبني [[--no-cache]]. ده بطيء وخطر، ونادرًا ما يكون هو الحل. اسأل الأول: الـ container اتعمل من image جديدة؟ التعديل موجود جواه؟ ولا المتصفح أو Nginx شايل نسخة قديمة؟
+
+[[restart]] مش بيقرا أي تعديل. [[up -d]] بيقرا تعديلات compose.yml. [[up -d --build]] بيبني من الكود الجديد.`,
+          example: R`docker compose up -d --build web
+docker compose images web
+docker compose exec web ls -la /usr/share/nginx/html/assets
+docker compose up -d --force-recreate web
+docker compose build --no-cache --progress=plain web`,
+          try: "غيّر نص في صفحة، وابني، وقبل ما تفتح المتصفح ادخل الـ container ودوّر على النص بـ [[grep -r]]. لو موجود والمتصفح مش شايفه، المشكلة كاش.",
+          deep: {
+            why: "«امسح وابني من الصفر» بياخد ربع ساعة، وبيوقع الموقع طول الوقت ده، وممكن يمسح حاجات مش تبع المشروع، وفي الآخر غالبًا المشكلة كانت كاش المتصفح.",
+            how: R`اقسم المشكلة نصين:
+
+هل التعديل وصل للـ container؟ [[images]] بيوريك الـ image اتعملت إمتى. و [[exec]] تدخل وتدوّر على التعديل في الملفات. لو موجود، Docker عمل شغله، والمشكلة بعده: كاش المتصفح ([[Ctrl+F5]])، أو index.html بيتكيّش في Nginx، أو CDN، أو service worker قديم.
+
+لو مش موجود: الـ build مخدش التعديل. [[--progress=plain]] بيطبع كل خطوة بكل الـ output، ومكتوب قدام كل واحدة CACHED ولا لأ، فتعرف أنهي خطوة المفروض تتعاد ومتعادتش. أسباب شائعة: الفولدر متشال في .dockerignore، أو COPY لمسار غلط، أو الكود بيتجاب بـ git clone جوه RUN فالكاش مش شايف إنه اتغير.
+
+[[--force-recreate]] بيعيد إنشاء الـ container حتى لو الإعدادات متغيرتش، مفيد لو فولدر مربوط اتعمل بعد ما الـ container قام، أو env file اتعدّل.
+
+و [[--no-cache]] آخر حل، ولخدمة واحدة بس.`,
+            when: "«عملت deploy ومفيش حاجة اتغيرت». قبل أي سكربت «إصلاح» بيمسح.",
+            mistakes: R`في مشروع حقيقي كان فيه سكربت «إصلاح» بيعمل down، ويمسح صور بأسماء مكتوبة بإيدك (اتغيرت مع الوقت فبقى مش بيمسح حاجة)، و [[docker system prune -f]] (بيمسح أي container واقف على السيرفر حتى لو مش تبع المشروع)، و [[build --no-cache]] من غير [[set -e]]، فلو البناء فشل بيكمل ويشغّل اللي موجود. والسبب الحقيقي غالبًا كان كاش المتصفح أو Nginx. البديل الأنضف لو محتاج فعلًا تمسح صور المشروع: [[docker compose down --rmi local]].`
+          },
+          lines: [
+            "ابني من الكود الجديد وشغّل.",
+            "الـ image اللي شغالة اتعملت إمتى.",
+            "التعديل موجود جوه الـ container فعلًا؟",
+            "أعد إنشاء الـ container حتى لو مفيش تغيير في الإعدادات.",
+            "آخر حل: ابني من غير كاش، والـ output كامل عشان تشوف أنهي خطوة."
+          ]
         }
       ]
     },
@@ -911,6 +1492,233 @@ docker compose down -v --remove-orphans`,
             "لوجات كل الخدمات في آخر ٥ دقايق.",
             "امسح كل حاجة بما فيها volumes وخدمات اتشالت من الملف. للتطوير بس."
           ]
+        },
+        {
+          cmd: "متغيرات في compose.yml",
+          title: "قيمة من .env أو قيمة افتراضية",
+          desc: R`[[$__{PORT:-3000}]] جوه compose.yml معناها: خد PORT من الشيل أو من ملف .env اللي جنب compose.yml، ولو مش موجود استخدم 3000. و [[$__{VAR:?رسالة}]] بتوقّف compose بالرسالة دي لو المتغير ناقص، ودي الأنسب للأسرار.
+
+ده غير [[env_file:]]. الأول بيملى الملف نفسه قبل ما compose يقراه. التاني بيبعت المتغيرات جوه الـ container.`,
+          example: R`services:
+  api:
+    image: ghcr.io/USER/myapi:$__{IMAGE_TAG:-latest}
+    ports:
+      - "127.0.0.1:$__{PORT:-3000}:3000"
+    environment:
+      REDIS_URL: $__{REDIS_URL:-redis://redis:6379}
+      SENTRY_DSN: $__{SENTRY_DSN:-}
+      DB_PASSWORD: $__{DB_PASSWORD:?DB_PASSWORD missing in .env}`,
+          try: "امسح DB_PASSWORD من .env واعمل [[docker compose config]]: هيوقف برسالتك. رجّعه وشوف القيم النهائية في نفس الأمر.",
+          flag: "script",
+          deep: {
+            why: "نفس compose.yml بيشتغل على جهازك وعلى السيرفر وفي CI، والقيم مختلفة. محتاج الملف يقرا القيم من بره، ويبقى ليه افتراضيات معقولة، ويرفض يشتغل لو حاجة مهمة ناقصة.",
+            how: R`compose بيدوّر على قيمة المتغير في الشيل الأول، وبعدين في ملف [[.env]] اللي في فولدر المشروع (أو اللي بتحدده بـ [[--env-file]]).
+
+[[$__{X:-def}]]: لو X مش موجود أو فاضي، استخدم def. و [[$__{X-def}]] (من غير النقطتين): لو مش موجود بس، أما الفاضي فبيتاخد فاضي. [[$__{X:-}]] معناها «عادي لو مش موجود، خليه فاضي» ومن غير تحذير.
+
+[[$__{X:?msg}]]: لو ناقص، compose يقف ويطبع msg. أحسن بكتير من إن التطبيق يقوم من غير المفتاح ويفشل بعد ساعة في نص طلب.
+
+[[$$]] معناها علامة دولار عادية مش متغير compose. بتحتاجها لما تكتب أمر شيل جوه الملف وعايز الشيل جوه الـ container هو اللي يقرا المتغير ([[$$HOME]]).
+
+و [[docker compose config]] بيطبع الملف بعد التبديل، فتشوف كل قيمة وصلت كام.`,
+            when: "tag الـ image، والبورتات، والدومينات، وأي حاجة بتختلف بين البيئات. والأسرار دايمًا بـ :? عشان متقومش من غيرها.",
+            mistakes: R`في مشروع حقيقي بلوك environment ضخم كان متكرر بين ملف التطوير وملف الإنتاج، وكل الأسرار بـ [[:-]] فاضية، فالتطبيق يقوم من غير مفتاح ويفشل في النص. وفي مشروع تاني [[$__{JWT_EXPIRE:-3650d}]]: القيمة الافتراضية بتخلي التوكن عايش ١٠ سنين لو حد نسي يحطها. الافتراضي لازم يبقى آمن. وكمان: .env نفسه كان متمرر بـ env_file، ومربوط bind mount جوه /app، ومتكرر في environment. مكان واحد يكفي.`
+          },
+          lines: [
+            "الخدمات.",
+            "خدمة api.",
+            "نسخة الـ image من IMAGE_TAG، ولو مش موجود latest.",
+            "البورتات.",
+            "بورت السيرفر من PORT، وافتراضيًا 3000.",
+            "متغيرات الـ container.",
+            "رابط Redis، وافتراضيًا الخدمة اللي في نفس المشروع.",
+            "اختياري: لو مش موجود يتبعت فاضي من غير تحذير.",
+            "إجباري: لو ناقص، compose يوقف بالرسالة دي."
+          ]
+        },
+        {
+          cmd: "healthchecks جاهزة",
+          title: "فحوصات صحة لـ Postgres و Redis والـ API",
+          desc: R`كل خدمة ليها أمر بيقول «أنا جاهزة فعلًا»: [[pg_isready]] لـ Postgres، و [[redis-cli ping]] لـ Redis، ولـ API بتاعتك طلب على /health. مع [[condition: service_healthy]] الـ API مش بيبدأ غير لما القاعدة جاهزة. و [[docker compose up -d --wait]] بيستنى لحد ما كله يبقى healthy بدل [[sleep]] بالتخمين.`,
+          example: R`services:
+  db:
+    image: postgres:16-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy noeviction
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+  api:
+    build: .
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health | grep -q ok || exit 1"]
+      start_period: 30s`,
+          try: "شغّل [[docker compose up -d --wait]] وشوف إنه مرجعش غير لما كله healthy. بعدين بوّظ رابط /health وشوفه بيفشل بـ exit code مش صفر.",
+          flag: "script",
+          deep: {
+            why: "«الـ container قام» مش معناه «الخدمة جاهزة». Postgres بياخد ثواني يقبل اتصالات، والتطبيق لو قام قبله يقع. وسكربتات الديبلوي بتعمل sleep 5 وتقول نجح، والتطبيق لسه بيقع.",
+            how: R`[[CMD]] بينفّذ البرنامج مباشرة من غير شيل: مفيش pipes ولا [[||]]. [[CMD-SHELL]] بيشغّله جوه [[sh -c]]، فتقدر تستخدم pipe ومتغيرات.
+
+[[$$POSTGRES_USER]]: الدولارين عشان compose ميبدّلش، والشيل جوه الـ container هو اللي يقرا المتغير.
+
+الـ API: صور alpine مفيهاش curl، فـ [[wget -qO-]]. و [[grep -q ok]] بيتأكد إن الرد نفسه سليم، مش بس إن السيرفر رد. [[start_period]] مهلة في الأول الفشل فيها مش بيتحسب.
+
+[[depends_on]] مع [[service_healthy]] بيأثر على ترتيب التشغيل بس. بعد ما الكل قام، لو القاعدة وقعت، الـ API مش هيتوقف ولا هيتعاد.
+
+[[up -d --wait]] بيرجع لما كل الخدمات تبقى running و healthy، ولو واحدة فشلت بيرجع بـ error. ومعاه [[--wait-timeout 120]]. مثالي في سكربت الديبلوي.
+
+Redis: [[--appendonly yes]] بيحفظ كل عملية على الديسك فالبيانات تعيش بعد restart. [[--maxmemory 256mb]] حد للرام. و [[noeviction]] معناها لما الرام يخلص Redis يرفض الكتابة بـ error، بدل ما يمسح مفاتيح قديمة في صمت. ده مهم لو Redis شايل queue شغل (زي BullMQ): المسح في صمت معناه شغل بيضيع.`,
+            when: "كل خدمة في compose الإنتاج. و --wait في كل سكربت ديبلوي أو CI بيشغّل stack.",
+            mistakes: R`في مشروع حقيقي healthcheck الـ Mongo كان فيه [[$__{MONGO_ROOT_PASSWORD}]] بدولار واحد، فـ compose بيحط الباسورد نصًا في إعدادات الفحص، وبيبان في [[docker inspect]] وفي أي أداة بتعرض الإعدادات. وفي سكربتات ديبلوي كتير [[sleep 5]] بعد up بدل --wait. و healthcheck بـ curl في image alpine: الفحص بيفشل دايمًا والـ container unhealthy على طول.`
+          },
+          lines: [
+            "الخدمات.",
+            "خدمة القاعدة.",
+            "Postgres 16 على alpine.",
+            "فحص الصحة:",
+            "pg_isready بيرجع 0 لما القاعدة تقبل اتصالات. الـ $$ عشان الشيل جوه هو اللي يقرا المتغيرات.",
+            "كل ٥ ثواني.",
+            "لحد ١٠ محاولات.",
+            "خدمة Redis.",
+            "Redis 7 على alpine.",
+            "احفظ على الديسك، وحد رام ٢٥٦ ميجا، ولما يخلص ارفض الكتابة بدل ما تمسح مفاتيح.",
+            "فحص الصحة:",
+            "redis-cli ping لازم يرد PONG. من غير شيل.",
+            "خدمة الـ API.",
+            "بتتبني من الفولدر ده.",
+            "بتستنى...",
+            "...القاعدة تبقى healthy...",
+            "...و Redis كمان.",
+            "وليها فحص صحة هي كمان:",
+            "اطلب /health بـ wget (مفيش curl في alpine) واتأكد إن الرد فيه ok.",
+            "أول ٣٠ ثانية الفشل مش بيتحسب."
+          ]
+        },
+        {
+          cmd: "exec -T",
+          title: "تبعت ملف أو pipe لأمر جوه الـ container",
+          desc: R`[[docker compose exec]] بيفتح TTY افتراضيًا، وده بيبوّظ أي input جاي من ملف أو pipe، وبيفشل خالص في cron ([[the input device is not a TTY]]). [[-T]] بيقفل الـ TTY، فتقدر تعمل [[< file.sql]] أو [[gunzip | ...]] لأمر جوه الـ container. أي exec في سكربت لازم يبقى معاه [[-T]].`,
+          example: R`docker compose exec -T db psql -v ON_ERROR_STOP=1 -U app -d appdb < db/migrations/10-schema.sql
+gunzip -c backups/appdb-2026-09-01.sql.gz | docker compose exec -T db psql -U app -d appdb
+docker compose exec -T db pg_dump -U app -Fc appdb > appdb.dump
+docker compose cp ./creds.json n8n:/tmp/creds.json
+docker compose exec -T n8n n8n import:credentials --input=/tmp/creds.json
+docker compose exec -T n8n rm -f /tmp/creds.json`,
+          try: "على قاعدة تجربة، طبّق ملف SQL صغير بـ exec -T و [[<]]. بعدين جرّب نفس الأمر من غير -T من جوه سكربت واقرا الـ error.",
+          deep: {
+            why: "السكربتات بتحتاج تبعت ملفات لأوامر جوه الـ containers: migrations، واسترجاع باك أب، واستيراد إعدادات. exec العادي معمول لإنسان قدام ترمنال، مش لسكربت.",
+            how: R`الـ TTY ترمنال وهمي بيعدّل البيانات اللي معدّية: بيحوّل نهايات السطور، وبيفترض إن فيه كيبورد. ده كويس لـ psql تفاعلي، ومصيبة لـ dump ثنائي أو ملف SQL جاي من [[<]].
+
+[[-T]] بيلغي الـ TTY، و compose exec بيسيب الـ stdin مفتوح لوحده، فالملف أو الـ pipe بيعدّي زي ما هو. (في [[docker exec]] العادي بتكتب [[-i]] بس من غير [[-t]].)
+
+[[-v ON_ERROR_STOP=1]]: من غيرها psql بيكمل بعد أي error ويخرج بـ 0، فالسكربت يفتكر كله تمام. ضيف [[--single-transaction]] (أو [[-1]]) لو عايز الملف يتطبق كله أو ولا حاجة.
+
+[[pg_dump -Fc]] بيطلّع ملف ثنائي مضغوط. مع TTY كان هيتبوّظ من غير ما تاخد بالك، ومش هتعرف غير يوم الاسترجاع.
+
+[[compose cp]] بينقل ملف لخدمة باسمها في compose. لو الملف فيه أسرار، امسحه أول ما تخلص.`,
+            when: "migrations من سكربت أو Makefile، واسترجاع باك أب، و pg_dump في cron، واستيراد ملفات لخدمة.",
+            mistakes: R`في مشروع حقيقي سكربت كان بيحقن ملف credentials جوه container بـ compose cp ويمسحه بعد الـ import. بس لو السكربت وقع بين الـ cp والـ rm، الملف بالتوكن بيفضل في /tmp جوه الـ container، لأن الـ trap كان بينضّف الجهاز بس. حط الـ rm جوه الـ trap كمان. وفي نفس المشروع migrations بتتطبق في loop من غير transaction، فلو ملف فشل في النص، الملفات اللي قبله اتطبقت والقاعدة في حالة بين بين.`
+          },
+          lines: [
+            "طبّق ملف SQL من جهازك على القاعدة، ووقّف عند أول error.",
+            "فك ضغط باك أب وابعته على طول لـ psql جوه الـ container.",
+            "اعمل dump ثنائي واكتبه على جهازك (من غير TTY عشان ميتبوّظش).",
+            "انقل ملف لخدمة n8n باسمها.",
+            "استورده من جوه.",
+            "وامسحه على طول لأن فيه أسرار."
+          ]
+        },
+        {
+          cmd: "compose run",
+          title: "container مؤقت من خدمة للتيستات أو أمر لمرة",
+          desc: R`[[docker compose run]] بيعمل container جديد بنفس إعدادات الخدمة (الـ image والشبكة والمتغيرات)، ينفّذ أمر ويخرج، والخدمة الشغالة متتلمسش. [[--rm]] يمسحه بعدها، و [[--no-deps]] ميشغّلش الخدمات اللي بتعتمد عليها، و [[-e]] و [[-v]] بيغيّروا إعدادات المرة دي بس، زي إنك توجّهه لقاعدة تيست.`,
+          example: R`docker compose run --rm --no-deps \
+  -v ./app/tests:/app/tests:ro \
+  -e DATABASE_URL="postgresql://app:secret@db:5432/app_test" \
+  -e REDIS_URL=redis://redis:6379/15 \
+  app sh -c 'python -m pytest -q -p no:cacheprovider'
+docker compose run --rm app npx prisma migrate deploy`,
+          try: "شغّل أمر [[env]] بـ compose run ومعاه [[-e]] مختلف، وقارن بـ [[docker compose exec app env]]: الخدمة الشغالة متأثرتش.",
+          deep: {
+            why: "عايز تشغّل التيستات بنفس بيئة التطبيق بالظبط، بس على قاعدة تانية، ومن غير ما توقف أو تلمس الخدمة الشغالة.",
+            how: R`[[exec]] بيدخل container شغال. [[run]] بيعمل واحد جديد من نفس تعريف الخدمة، باسم زي [[myapp-app-run-a1b2]].
+
+[[run]] مش بيفتح [[ports]] بتاعة الخدمة (عشان ميتخانقش مع الشغالة)، إلا لو كتبت [[--service-ports]].
+
+[[--no-deps]]: من غيره، compose يشغّل db و redis لو مش شغالين. هنا هما شغالين أصلًا، فمش محتاجين.
+
+[[-v ./app/tests:/app/tests:ro]] بيحط التيستات من جهازك من غير build جديد. و [[:ro]] عشان كده [[-p no:cacheprovider]]: pytest ميحاولش يكتب فولدر الكاش في مكان للقراءة بس.
+
+[[redis:6379/15]]: قاعدة رقم ١٥ في Redis، فمفاتيح التيست متتخلطش ببيانات التطبيق على قاعدة 0.
+
+والسطر الأخير استخدام تاني شائع: migration لمرة قبل ما تشغّل النسخة الجديدة.`,
+            when: "التيستات في CI أو على السيرفر، و migrations، وسكربتات الصيانة لمرة (seed، أو تنضيف بيانات).",
+            mistakes: R`نسيان [[--rm]] فتتراكم containers باسم run في [[ps -a]]. والأخطر: تنسى تغيّر DATABASE_URL، فالتيست يشتغل على قاعدة الإنتاج، وتيستات كتير بتمسح الجداول في الأول.`
+          },
+          lines: [
+            "container مؤقت من خدمة app، يتمسح بعدها، ومن غير ما يشغّل حاجة معاه...",
+            "...التيستات من جهازك للقراءة بس...",
+            "...وقاعدة تيست بدل قاعدة التطبيق...",
+            "...و Redis على قاعدة ١٥ منفصلة...",
+            "...وشغّل pytest من غير ما يكتب ملفات كاش.",
+            "استخدام تاني: migration لمرة في container بيتمسح."
+          ]
+        },
+        {
+          cmd: "x- و anchors",
+          title: "إعدادات مشتركة بين كذا خدمة من غير تكرار",
+          desc: R`لو عندك خدمتين من نفس الـ image بنفس المتغيرات (السيرفر والـ worker مثلًا)، اكتب الإعدادات المشتركة مرة واحدة في مفتاح بيبدأ بـ [[x-]]، وعلّم عليها بـ [[&اسم]]، وفي كل خدمة [[<<: *اسم]] تدمجها. compose بيتجاهل أي مفتاح بيبدأ بـ [[x-]]، فده مكانها الطبيعي.`,
+          example: R`x-app-common: &app-common
+  image: ghcr.io/USER/myapp:1.4.0
+  env_file: .env
+  restart: unless-stopped
+  depends_on:
+    redis: { condition: service_healthy }
+services:
+  web:
+    <<: *app-common
+    command: node server.js
+    ports: ["127.0.0.1:3000:3000"]
+  worker:
+    <<: *app-common
+    command: node worker.js`,
+          try: "اكتب خدمتين بـ anchor مشترك، واعمل [[docker compose config]]، وشوف الإعدادات اتنسخت في الاتنين.",
+          flag: "script",
+          deep: {
+            why: "الـ web والـ worker نفس الكود ونفس المتغيرات، والفرق في الأمر بس. نسخ ١٥ سطر في الاتنين معناه إنك يوم تعدّل واحد وتنسى التاني.",
+            how: R`دي مميزات في YAML نفسه، مش في compose. [[&app-common]] بيحط اسم على البلوك. [[*app-common]] بيشاور عليه. و [[<<:]] (merge key) بيدمج مفاتيحه في المكان ده.
+
+[[x-]] في أول المفتاح بيقول لـ compose «ده امتداد، متعتبروش خدمة ولا تديني error عليه».
+
+الدمج سطحي: أي مفتاح تكتبه في الخدمة بيستبدل المفتاح اللي في الـ anchor بالكامل، مش بيندمج جواه. لو الـ anchor فيه environment وكتبت environment في الخدمة، environment بتاع الـ anchor كله بيختفي. لو محتاج تزوّد متغيرات، اعمل anchor للـ environment لوحده كـ map، وفي الخدمة [[environment: { <<: *common-env, EXTRA: "1" }]]. ده بيشتغل مع الـ map بس، مش مع القايمة اللي بالشرطة.
+
+و [[docker compose config]] بيوريك النتيجة بعد الدمج، فتتأكد قبل ما تشغّل.`,
+            when: "web و worker و scheduler من نفس الكود، أو أي خدمات بتتشارك متغيرات و restart و logging.",
+            mistakes: R`تكتب environment في خدمة فتمسح environment بتاع الـ anchor كله من غير ما تاخد بالك، والـ worker يقوم ناقصه إعدادات Redis. وتنسى إن [[x-]] لازم في أول المفتاح، فـ compose يفتكره خدمة ويطلّع error.`
+          },
+          lines: [
+            "بلوك مشترك compose بيتجاهله، واسمه app-common.",
+            "نفس الـ image لكل الخدمات.",
+            "نفس المتغيرات.",
+            "نفس سياسة الإعادة.",
+            "نفس الاعتماد...",
+            "...على Redis healthy.",
+            "الخدمات.",
+            "خدمة الويب:",
+            "خد كل اللي في app-common.",
+            "وأمرها الخاص.",
+            "وبورتها.",
+            "خدمة الـ worker:",
+            "نفس الإعدادات...",
+            "...بأمر مختلف."
+          ]
         }
       ]
     },
@@ -940,7 +1748,9 @@ docker image prune -f`,
 
 والـ downtime: [[up]] بيوقف القديم ويشغّل الجديد، فيه ثواني الموقع واقع. لو ده مشكلة، الحل blue-green: نسختين ورا Nginx وتبدّل بينهم.`,
             when: "ابدأ بالطريقة الأولى. انقل للتانية لما الـ build يبقى تقيل أو يبقى عندك أكتر من سيرفر.",
-            mistakes: "deploy من غير ما تعمل باك أب للقاعدة الأول لو فيه migration. وتنسى prune فالديسك يتملى."
+            mistakes: R`deploy من غير ما تعمل باك أب للقاعدة الأول لو فيه migration. وتنسى prune فالديسك يتملى.
+
+في مشروع حقيقي سكربت الديبلوي كان بيعمل [[down]] قبل [[build]]، فالموقع واقع طول مدة البناء. الصح تبني الأول ([[docker compose build]]) والموقع شغال، وبعدين [[up -d]] يبدّل في ثواني. ولو [[git pull]] فشل، السكربت كان بيكمل وينشر الكود القديم ويقول تمام، و [[sleep 5]] مكان ما يستنى الـ healthcheck بـ [[up -d --wait]].`
           },
           lines: [
             "الطريقة الأولى: هات الكود وابني وشغّل.",
@@ -1144,6 +1954,93 @@ docker builder prune -f`,
             "امسح كل صورة مش مستخدمة.",
             "الـ volumes اللي محدش بيستخدمها (راجعها بإيدك).",
             "امسح build cache بس."
+          ]
+        },
+        {
+          cmd: "nginx-proxy",
+          title: "دومين و SSL لكل مشروع من غير ما تكتب إعدادات Nginx",
+          desc: R`[[nginx-proxy]] container بيراقب Docker، وأي container عليه [[VIRTUAL_HOST]] بيعمله reverse proxy لوحده. ومعاه [[acme-companion]] بيقرا [[LETSENCRYPT_HOST]] ويطلّع شهادة Let's Encrypt ويجددها. بتشغّلهم مرة على السيرفر، وبعدها كل مشروع جديد مجرد ٣ متغيرات وشبكة.`,
+          example: R`docker network create nginx-proxy-network
+# compose.yml بتاع المشروع:
+services:
+  frontend:
+    build: ./frontend
+    environment:
+      VIRTUAL_HOST: example.com,www.example.com
+      VIRTUAL_PORT: "80"
+      LETSENCRYPT_HOST: example.com,www.example.com
+    networks: [default, nginx-proxy-network]
+networks:
+  nginx-proxy-network: { external: true }`,
+          try: "على سيرفر التجربة شغّل nginx-proxy و acme-companion على الشبكة، وبعدين شغّل [[nginx:alpine]] بـ VIRTUAL_HOST على دومين تجربة بيشاور على السيرفر، وافتحه.",
+          flag: "script",
+          deep: {
+            why: "سيرفر واحد وعليه ٤ مشاريع صغيرة، وكل واحد عايز 80 و 443 ودومين وشهادة. كتابة server block وشهادة لكل واحد بإيدك شغل متكرر وسهل تغلط فيه.",
+            how: R`الإعداد مرة واحدة على السيرفر: compose لوحده فيه خدمتين. [[nginxproxy/nginx-proxy]] ماسك [[80:80]] و [[443:443]] وراكب [[/var/run/docker.sock:/tmp/docker.sock:ro]] عشان يشوف الـ containers. و [[nginxproxy/acme-companion]] بيشاركه فولدرات الشهادات، ومعاه [[DEFAULT_EMAIL]] عشان تحذيرات الانتهاء توصلك. الاتنين على شبكة [[nginx-proxy-network]].
+
+nginx-proxy بيقرا متغيرات كل container شغال، ويولّد إعدادات Nginx منها، ويعمل reload لوحده لما container يقوم أو يقع.
+
+[[VIRTUAL_HOST]] الدومينات مفصولة بفاصلة. [[VIRTUAL_PORT]] البورت جوه الـ container لو بيفتح أكتر من بورت. [[LETSENCRYPT_HOST]] الدومينات اللي عايز لها شهادة، وacme-companion بيطلّعها ويجددها لوحده.
+
+المشروع على شبكتين: default عشان يكلّم الباك إند والقاعدة بتاعته، و nginx-proxy-network عشان البروكسي يوصله. الباك إند مش محتاج VIRTUAL_HOST لو الفرونت هو اللي بيوجّه /api جواه.
+
+والتمن: ربط docker.sock معناه إن الـ container ده يقدر يتحكم في Docker كله، يعني root على السيرفر عمليًا. استخدم الصور الرسمية بنسخة محددة، و [[:ro]].`,
+            when: "مشاريع كتير صغيرة على VPS واحد، وإعداداتها العادية بتكفي. لو محتاج إعدادات Nginx خاصة كتير، Nginx عادي بملفات بإيدك أوضح.",
+            mistakes: R`الدومين لسه مش بيشاور على السيرفر وانت حاطط LETSENCRYPT_HOST: الطلب بيفشل، ولو كررته كتير تخبط في حد Let's Encrypt. ونسيان الشبكة، فـ nginx-proxy يرجّع 503. وفي مشروع حقيقي على نفس الإعداد ده، الإنتاج كان كمان فاتح Postgres على 5433 و Redis على 6379 للهوست، و Docker بيعدّي من ufw، فكانوا مكشوفين للنت. مع nginx-proxy مفيش خدمة محتاجة [[ports]] غيره.`
+          },
+          lines: [
+            "اعمل شبكة البروكسي مرة واحدة على السيرفر.",
+            "الخدمات.",
+            "خدمة الفرونت.",
+            "بتتبني من فولدر frontend.",
+            "المتغيرات اللي nginx-proxy بيقراها:",
+            "الدومينات اللي توصل للخدمة دي.",
+            "البورت جوه الـ container.",
+            "الدومينات اللي acme-companion يطلّع لها شهادة.",
+            "على شبكة المشروع وشبكة البروكسي.",
+            "تعريف الشبكات:",
+            "شبكة البروكسي موجودة بره."
+          ]
+        },
+        {
+          cmd: "certbot في compose",
+          title: "شهادة SSL بتتجدد لوحدها جنب Nginx",
+          desc: R`خدمة certbot في compose بتفضل صاحية وتجرّب [[certbot renew]] كل ١٢ ساعة، وبتشارك فولدرين مع Nginx: واحد لملفات التحدي ([[/var/www/certbot]]) وواحد للشهادات. بس التجديد لوحده مش كفاية: Nginx لازم يعمل reload عشان يقرا الشهادة الجديدة، وإلا يفضل شغال بالقديمة لحد ما تنتهي.`,
+          example: R`  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $$__{!}; done;'"
+  nginx:
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $$__{!}; nginx -s reload; done & nginx -g \"daemon off;\"'"`,
+          try: "بعد ما تركّبه، اعمل [[docker compose exec certbot certbot renew --dry-run]] واتأكد إن التجديد التجريبي نجح.",
+          flag: "script",
+          deep: {
+            why: "شهادات Let's Encrypt بتعيش ٩٠ يوم. لو Nginx جوه container، [[certbot --nginx]] على السيرفر مش هيعرف يعدّل إعداداته، فمحتاج certbot يشتغل جنبه ويتشاركوا الملفات.",
+            how: R`الفولدرين المشتركين: Nginx بيقدّم [[/.well-known/acme-challenge/]] من [[/var/www/certbot]]، و certbot بيحط ملف التحدي هناك. والشهادات في [[./certbot/conf]]، certbot بيكتب و Nginx بيقرا ([[:ro]] عنده).
+
+[[certbot renew]] مش بيجدد غير الشهادات اللي فاضلها أقل من ٣٠ يوم، فتشغيله مرتين في اليوم مش بيكلّف حاجة.
+
+[[trap exit TERM]]: الشيل كعملية رقم 1 مش بيستجيب لـ SIGTERM لوحده، فـ [[compose down]] كان هيستنى ١٠ ثواني. [[sleep 12h & wait]]: الـ sleep في الخلفية والشيل مستنيه بـ wait، لأن wait بتتقطع بالإشارة على طول، أما sleep في المقدمة فمش بتتقطع.
+
+[[$$__{!}]]: الدولارين عشان compose ميعتبرهاش متغير بتاعه. الشيل بيشوف [[$__{!}]]، يعني رقم آخر عملية في الخلفية.
+
+سطر nginx بيشغّل loop في الخلفية يعمل reload كل ٦ ساعات، و nginx نفسه في المقدمة. بديل: cron على السيرفر [[docker compose exec -T nginx nginx -s reload]].
+
+أول شهادة مشكلة بيضة وفرخة: nginx مش هيقوم بإعدادات بتشاور على شهادة مش موجودة. شغّله الأول بإعداد HTTP بس فيه مسار التحدي، وخد الشهادة بـ [[docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d example.com --staging]]، ولما تنجح شيل [[--staging]] وخد الحقيقية، وبعدين رجّع إعداد HTTPS. واتأكد قبلها إن الدومين بيشاور على السيرفر.`,
+            when: "Nginx جوه Docker، ومش عايز nginx-proxy. أي موقع بدومين واحد أو اتنين على compose.",
+            mistakes: R`في مشروع حقيقي certbot كان بيجدد كويس، بس Nginx عمره ما عمل reload، فكان هيفضل شغال بالشهادة القديمة لحد ما تنتهي فعلًا، والشهادة الجديدة موجودة على الديسك. وفي مشروع تاني التجديد كان [[certbot renew]] (standalone) من cron، و container الـ Nginx ماسك بورت 80، فالتجديد بيفشل في صمت بسبب [[--quiet]]. الحل webroot، أو [[--pre-hook]] و [[--post-hook]] يوقفوا ويشغّلوا الـ container. وفي تالت certbot اتشغّل بـ [[--register-unsafely-without-email]]، فمفيش تحذير يوصل لو التجديد فشل. و [[--force-renewal]] في سكربت بيتكرر بيخبط في حد Let's Encrypt.`
+          },
+          lines: [
+            "خدمة certbot.",
+            "الصورة الرسمية.",
+            "فولدرات مشتركة مع Nginx:",
+            "ملفات التحدي (Nginx بيقدّمها على port 80).",
+            "الشهادات نفسها.",
+            "loop: جرّب renew، ونام ١٢ ساعة بطريقة تتقطع بالإشارة، و trap عشان يقفل على طول مع down.",
+            "خدمة nginx (باقي إعداداتها زي ما هي):",
+            "loop في الخلفية يعمل reload كل ٦ ساعات عشان يقرا أي شهادة اتجددت، و nginx نفسه في المقدمة."
           ]
         }
       ]

@@ -23,12 +23,17 @@
     <button class="sw" role="tab" data-s="vps" aria-selected="false"><div class="top"><b>VPS أوبونتو</b><span>$ sudo ufw status</span></div><div class="bot">إدارة سيرفر: تأمين ونشر وصيانة. مبني على تاب bash</div></button>
     <button class="sw" role="tab" data-s="web" aria-selected="false"><div class="top"><b>المتصفح DevTools</b><span>&gt; fetch("/api/me")</span></div><div class="bot">Inspect و Network والـ status codes، وتبعت طلبات وتفهم الرد، وتفحص أي موقع</div></button>
     <button class="sw" role="tab" data-s="node" aria-selected="false"><div class="top"><b>Node و npm</b><span>$ npm ci</span></div><div class="bot">نسخ Node والباكدجات والسكربتات، والإنتاج والتشخيص، و webhooks بوابات الدفع على جهازك</div></button>
+    <button class="sw" role="tab" data-s="quality" aria-selected="false"><div class="top"><b>فحص الكود</b><span>$ pnpm lint &amp;&amp; pnpm test</span></div><div class="bot">lint و typecheck والاختبارات، و husky يمنع الـ commit البايظ، و CI يفحص كل push</div></button>
     <button class="sw" role="tab" data-s="pg" aria-selected="false"><div class="top"><b>PostgreSQL</b><span>app=# \d users</span></div><div class="bot">psql والصلاحيات والـ indexes و EXPLAIN، والباك أب اللي بيتجرّب، و migrations و Supabase</div></button>
+    <button class="sw" role="tab" data-s="mongo" aria-selected="false"><div class="top"><b>MongoDB</b><span>&gt; db.users.find()</span></div><div class="bot">mongosh، والتشغيل بباسورد في Docker، والباك أب اللي بيتجرّب، والترجيع</div></button>
     <button class="sw" role="tab" data-s="docker" aria-selected="false"><div class="top"><b>Docker</b><span>$ docker compose up -d</span></div><div class="bot">images و containers، و Dockerfile صح، و Compose لمشروع كامل، والمشاكل على السيرفر</div></button>
+    <button class="sw" role="tab" data-s="python" aria-selected="false"><div class="top"><b>Python</b><span>(venv) $ pytest -q</span></div><div class="bot">venv و pip، و pytest، و uvicorn، و Dockerfile لخدمة Python</div></button>
+    <button class="sw" role="tab" data-s="apps" aria-selected="false"><div class="top"><b>Desktop و Mobile</b><span>$ npx cap sync android</span></div><div class="bot">Electron لبرنامج ويندوز .exe، و Capacitor و Gradle لتطبيق Android موقّع</div></button>
     <button class="sw" role="tab" data-s="gha" aria-selected="false"><div class="top"><b>GitHub Actions</b><span>$ gh run view --log-failed</span></div><div class="bot">CI مع كل push، و deploy على السيرفر بـ SSH، وموافقات، وإصدارات، و rollback من الموبايل</div></button>
     <button class="sw" role="tab" data-s="nginx" aria-selected="false"><div class="top"><b>Nginx بعمق</b><span>$ nginx -t &amp;&amp; systemctl reload nginx</span></div><div class="bot">static و SPA و proxy كامل، وضغط وكاش وتحويلات وكذا موقع و rate limiting و WebSockets و blue-green</div></button>
-    <button class="sw" role="tab" data-s="diag" aria-selected="false"><div class="top"><b>التشخيص</b><span>$ curl -sI https://... | head -1</span></div><div class="bot">الموقع واقع: ٢٥ سيناريو بخطوات مرتبة، من 502 والديسك المليان لحد الاختراق والـ rollback</div></button>
+    <button class="sw" role="tab" data-s="diag" aria-selected="false"><div class="top"><b>التشخيص</b><span>$ curl -sI https://... | head -1</span></div><div class="bot">الموقع واقع: ٢٨ سيناريو بخطوات مرتبة، من 502 والديسك المليان لحد الاختراق والـ rollback</div></button>
     <button class="sw" role="tab" data-s="sec" aria-selected="false"><div class="top"><b>أمان الموقع</b><span># تأمين مشاريعك</span></div><div class="bot">OWASP Top 10 بالكود الصح، وأدوات الفحص، وتشيك ليست قبل الرفع</div></button>
+    <button class="sw" role="tab" data-s="real" aria-selected="false"><div class="top"><b>من مشاريعي</b><span>$ ./deploy.sh</span></div><div class="bot">سكربتات حقيقية من مشاريعك متشرحة سطر سطر: تجهيز سيرفر ونشر و SSL وباك أب، وغلطاتها</div></button>
     <button class="sw" role="tab" data-s="sshc" aria-selected="false"><div class="top"><b>ssh config</b><span>$ ssh prod</span></div><div class="bot">اسم لكل سيرفر، وأنماط، و jump hosts، ومفاتيح متعددة لـ GitHub، و tunnels في الملف</div></button>
     <button class="sw" role="tab" data-s="ps" aria-selected="false"><div class="top"><b>PowerShell</b><span>PS&gt; Get-ChildItem</span></div><div class="bot">الشيل الحديث بتاع ويندوز، بيتعامل مع objects مش نص</div></button>
     <button class="sw" role="tab" data-s="zsh" aria-selected="false"><div class="top"><b>zsh على الماك</b><span>% brew install tree</span></div><div class="bot">الشيل الافتراضي في الماك. هنا اللي بيختلف عن bash والحاجات الخاصة بالماك</div></button>
@@ -69,10 +74,15 @@
       <li><button type="button" data-go="vps" data-lv="3">VPS المستوى ٣</button>: cron والباك أب و systemd، وبعدين التحدي الكبير.</li>
       <li><button type="button" data-go="web" data-lv="1">المتصفح المستوى ١</button> و <button type="button" data-go="web" data-lv="2">٢</button> مع أي مشروع ويب شغال عليه، و <button type="button" data-go="web" data-lv="3">٣</button> بعد bash المستوى ٣.</li>
       <li><button type="button" data-go="node" data-lv="1">Node و npm المستوى ١</button> مع أول مشروع Node، و <button type="button" data-go="node" data-lv="3">٣</button> لما تبدأ تكامل دفع.</li>
+      <li><button type="button" data-go="quality" data-lv="1">فحص الكود المستوى ١</button> مع أول مشروع جد، و <button type="button" data-go="quality" data-lv="3">٣</button> مع GitHub Actions.</li>
       <li><button type="button" data-go="pg" data-lv="1">PostgreSQL المستوى ١</button> مع أول قاعدة بيانات، و <button type="button" data-go="pg" data-lv="3">٣</button> قبل أول إنتاج حقيقي.</li>
+      <li><button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو مشروعك عليه بدل PostgreSQL، و <button type="button" data-go="mongo" data-lv="3">٣</button> قبل الإنتاج.</li>
       <li><button type="button" data-go="docker" data-lv="1">Docker المستوى ١</button> بعد VPS المستوى ٢، و <button type="button" data-go="docker" data-lv="3">٣</button> قبل ما تعمل deploy حقيقي.</li>
+      <li><button type="button" data-go="python" data-lv="1">Python</button> مع أول سكربت أو خدمة Python.</li>
       <li><button type="button" data-go="gha" data-lv="1">GitHub Actions المستوى ١</button> بعد Git المستوى ٢، و <button type="button" data-go="gha" data-lv="3">٣</button> لما تبقى عايز deploy أوتوماتيك.</li>
+      <li><button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button> لما تحوّل موقعك لبرنامج ويندوز أو تطبيق Android.</li>
       <li><button type="button" data-go="diag" data-lv="1">التشخيص</button> بعد أول سيرفر حقيقي: اقراه مرة وهو شغال، وارجعله وقت العطل.</li>
+      <li><button type="button" data-go="real" data-lv="1">من مشاريعي</button> بعد VPS المستوى ٢: اقرا كل سكربت وافهمه سطر سطر قبل ما تشغّله.</li>
       <li><button type="button" data-go="sec" data-lv="1">أمان الموقع المستوى ١</button> بعد ما تبقى مرتاح في bash و Git و VPS و DevTools.</li>
       <li><button type="button" data-go="sshc" data-lv="1">ssh config</button> مع تاني سيرفر. و <button type="button" data-go="glossary" data-lv="1">القاموس</button> مرجع لأي كلمة مش فاهمها.</li>
       <li><button type="button" data-go="nginx" data-lv="1">Nginx بعمق</button> بعد VPS المستوى ٢، ولما تبقى عايز أكتر من موقع على السيرفر.</li>
@@ -153,9 +163,14 @@
 <script src="js/tabs/git.js"></script>
 <script src="js/tabs/web.js"></script>
 <script src="js/tabs/sec.js"></script>
+<script src="js/tabs/real.js"></script>
 <script src="js/tabs/docker.js"></script>
+<script src="js/tabs/python.js"></script>
+<script src="js/tabs/apps.js"></script>
 <script src="js/tabs/node.js"></script>
+<script src="js/tabs/quality.js"></script>
 <script src="js/tabs/pg.js"></script>
+<script src="js/tabs/mongo.js"></script>
 <script src="js/tabs/diag.js"></script>
 <script src="js/tabs/gha.js"></script>
 <script src="js/tabs/wsl.js"></script>

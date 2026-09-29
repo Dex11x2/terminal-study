@@ -309,7 +309,7 @@ ssh-add -l
 Host prod
     ForwardAgent yes
 ssh prod 'ssh -T git@github.com'`,
-          try: "على السيرفر بعد الدخول بـ ForwardAgent: [[git clone git@github.com:Dex11x2/private.git]] من غير أي مفتاح على السيرفر.",
+          try: "على السيرفر بعد الدخول بـ ForwardAgent: [[git clone git@github.com:USER/private.git]] من غير أي مفتاح على السيرفر.",
           flag: "script",
           deep: {
             why: "مفتاح بـ passphrase آمن بس مزعج: كل ssh بيسألك. والسيرفر محتاج يعمل git pull من repo خاص: تحط مفتاحك عليه؟ لأ.",

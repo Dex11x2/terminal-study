@@ -275,3 +275,23 @@ body.quiz article.cmd:not(.shown) .notes{display:none}
   details:not([open])>.sol{display:grid}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* tabs added from the projects */
+:root{--a-quality:#0369a1;--a-mongo:#00684a;--a-python:#a16207;--a-apps:#4d7c0f;--a-real:#be185d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a-quality:#7dd3fc;--a-mongo:#4ade80;--a-python:#fde047;--a-apps:#bef264;--a-real:#f9a8d4}}
+:root[data-theme="dark"]{--a-quality:#7dd3fc;--a-mongo:#4ade80;--a-python:#fde047;--a-apps:#bef264;--a-real:#f9a8d4}
+body[data-shell="quality"]{--accent:var(--a-quality);--t-bg:#0b2233;--t-fg:#e0f2fe;--t-pr:#7dd3fc;--t-cm:#7ea3b8;--t-bar:#10314a}
+.sw[data-s="quality"] .top{background:#0b2233;color:#e0f2fe}
+.sol .term[data-k="quality"]{--t-bg:#0b2233;--t-fg:#e0f2fe;--t-pr:#7dd3fc;--t-cm:#7ea3b8;--t-bar:#10314a}
+body[data-shell="mongo"]{--accent:var(--a-mongo);--t-bg:#062a1f;--t-fg:#e3f7ee;--t-pr:#4ade80;--t-cm:#7fae98;--t-bar:#0b3a2b}
+.sw[data-s="mongo"] .top{background:#062a1f;color:#e3f7ee}
+.sol .term[data-k="mongo"]{--t-bg:#062a1f;--t-fg:#e3f7ee;--t-pr:#4ade80;--t-cm:#7fae98;--t-bar:#0b3a2b}
+body[data-shell="python"]{--accent:var(--a-python);--t-bg:#2a2408;--t-fg:#fdf6d8;--t-pr:#fde047;--t-cm:#b0a375;--t-bar:#3a320c}
+.sw[data-s="python"] .top{background:#2a2408;color:#fdf6d8}
+.sol .term[data-k="python"]{--t-bg:#2a2408;--t-fg:#fdf6d8;--t-pr:#fde047;--t-cm:#b0a375;--t-bar:#3a320c}
+body[data-shell="apps"]{--accent:var(--a-apps);--t-bg:#1c2408;--t-fg:#f0f7dc;--t-pr:#bef264;--t-cm:#9aa67a;--t-bar:#28330c}
+.sw[data-s="apps"] .top{background:#1c2408;color:#f0f7dc}
+.sol .term[data-k="apps"]{--t-bg:#1c2408;--t-fg:#f0f7dc;--t-pr:#bef264;--t-cm:#9aa67a;--t-bar:#28330c}
+body[data-shell="real"]{--accent:var(--a-real);--t-bg:#2a0f1d;--t-fg:#fbe7f1;--t-pr:#f9a8d4;--t-cm:#b58aa0;--t-bar:#3b1629}
+.sw[data-s="real"] .top{background:#2a0f1d;color:#fbe7f1}
+.sol .term[data-k="real"]{--t-bg:#2a0f1d;--t-fg:#fbe7f1;--t-pr:#f9a8d4;--t-cm:#b58aa0;--t-bar:#3b1629}

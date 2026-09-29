@@ -56,7 +56,7 @@ for (const tab in DATA) {
 }
 
 // روابط القاموس: «bash المستوى ٢: [[grep]]» لازم تشاور على درس موجود
-const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc' };
+const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real' };
 if (DATA.glossary) DATA.glossary.forEach(cat => cat.items.forEach(it => {
   const ref = it[4] || '', m = ref.match(/^(.*?)(?: المستوى [١٢٣123])?(?:: \[\[(.+)\]\])?$/);
   const tab = m && TAB_NAMES[m[1]];

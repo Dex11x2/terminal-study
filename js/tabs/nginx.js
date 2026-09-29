@@ -22,7 +22,7 @@ sudo systemctl reload nginx`,
     "2": ["المتوسط", "ضغط وكاش وتحويلات وكذا موقع و location matching و rate limiting و headers وحدود"],
     "3": [
       "المتقدم",
-      "WebSockets، والتبديل بدون downtime، وحماية staging، ولوجات JSON، و HTTP/3، والتشخيص"
+      "WebSockets، والتبديل بدون downtime، وحماية staging، ولوجات JSON، و HTTP/3، والتشخيص، و Nginx جوه Docker والشهادات"
     ]
   },
   categories: [
@@ -520,6 +520,43 @@ location / {
           ]
         },
         {
+          cmd: "location ^~ /downloads/",
+          title: "ملفات للتحميل جنب SPA من غير ما ترجع index.html",
+          desc: "عندك SPA وجنبها فولدر فيه ملفات للتحميل (APK، zip، json). لو ملف مش موجود، [[try_files]] بتاع الـ SPA بيرجّع index.html بـ 200، فالموبايل ينزّل صفحة HTML باسم app.apk. بلوك [[^~]] للفولدر ده بـ [[try_files $uri =404]] بيرجّع 404 حقيقي، و [[types]] بيدّي كل ملف الـ MIME الصح.",
+          example: R`location ^~ /downloads/ {
+    types { application/vnd.android.package-archive apk; application/zip zip; application/json json; }
+    default_type application/octet-stream;
+    add_header Cache-Control "no-cache, must-revalidate";
+    try_files $uri =404;
+}
+location / { try_files $uri $uri/ /index.html; }`,
+          try: "اطلب ملف مش موجود: [[curl -sI https://example.com/downloads/nope.apk | head -3]]. قبل البلوك هتشوف 200 و text/html، وبعده 404.",
+          flag: "script",
+          deep: {
+            why: "الـ fallback بتاع الـ SPA ممتاز للصفحات، بس كارثة للملفات: أي ملف ناقص بيرجع «نجاح» ومحتواه HTML. المستخدم ينزّل ملف بايظ، وتطبيق الموبايل اللي بيشيك على نسخة جديدة من json يقرا HTML ويقع، وانت مش شايف أي 404 في اللوج.",
+            how: R`[[^~]] معناها: لو البادئة دي هي الأطول، خلاص اختارها ومتجرّبش أي location بـ regex. ده مهم لأن غالبًا عندك بلوك زي [[location ~* \.(js|css|json)$]] للكاش، ومن غير [[^~]] ملف [[/downloads/version.json]] هيروح للبلوك ده بدل بلوك التحميل.
+
+[[try_files $uri =404]]: الملف لو موجود يتقدّم، وإلا 404 على طول. مفيش رجوع لـ index.html.
+
+[[types { ... }]] جوه location بيستبدل جدول الـ MIME كله للمسار ده (مش بيضيف عليه). فأي امتداد مش مكتوب بياخد [[default_type]]، و [[application/octet-stream]] معناها «ملف للتحميل». عشان كده اكتب كل الامتدادات اللي بتقدمها هنا. نوع الـ APK الصح [[application/vnd.android.package-archive]]، ومن غيره أندرويد ممكن يحفظه كملف مجهول ميتفتحش.
+
+[[Cache-Control: no-cache]]: المتصفح يسأل السيرفر كل مرة (بـ ETag) قبل ما يستخدم النسخة المحفوظة، فلما ترفع APK جديد بنفس الاسم الكل ياخده.
+
+ولو الفولدر راكب من الهوست في container ([[./downloads:/usr/share/nginx/html/downloads:ro]]) بترفع الملف الجديد من غير rebuild.`,
+            when: "أي فولدر ملفات حقيقية جوه موقع SPA: تحميلات، وملفات نسخ للتطبيق، وصور مرفوعة.",
+            mistakes: "في مشروع حقيقي فولدر تحميل الـ APK كان تحت نفس [[location /]] بتاع الـ SPA، فالملف الناقص بيرجع index.html بـ 200 بدل 404. ونسيان [[json]] في [[types]] فملف النسخة يتقدّم octet-stream والتطبيق يرفض يقراه. ونسيان [[^~]] فبلوك regex للكاش يخطف الملفات."
+          },
+          lines: [
+            "كل اللي تحت /downloads/، و ^~ تمنع أي location بـ regex تخطفه.",
+            "الأنواع هنا: apk بنوع أندرويد، و zip، و json.",
+            "أي امتداد تاني: ملف للتحميل.",
+            "المتصفح يسأل كل مرة لو فيه نسخة أحدث.",
+            "الملف لو موجود، وإلا 404 حقيقي.",
+            "قفلة.",
+            "باقي الموقع SPA عادي."
+          ]
+        },
+        {
           cmd: "rate limiting",
           title: "حد للطلبات من IP",
           desc: "[[limit_req_zone]] بيعرّف منطقة في الذاكرة بتعد الطلبات لكل IP بمعدل معين. [[limit_req]] بيطبّقها على location، و [[burst]] بيسمح بدفعة قصيرة فوق المعدل، و [[nodelay]] يعالجها فورًا بدل ما يأخّرها. على login وعلى الـ API عمومًا.",
@@ -660,6 +697,39 @@ location /api/reports {
             "مسار بطيء بطبيعته.",
             "استنى ٥ دقايق قبل 504.",
             "للتطبيق.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "proxy_buffer_size",
+          title: "502 بعد تسجيل الدخول بس",
+          desc: "الموقع شغال، وأول ما تعمل login يطلع 502. التطبيق بيبعت كوكيز دخول كبيرة (JWT مقسوم على كذا كوكي زي Supabase)، و Nginx بيقرا headers الرد في buffer صغير (٤ أو ٨ كيلو). في error.log هتلاقي [[upstream sent too big header]]. تكبير الـ buffers بيحلها.",
+          example: R`location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_buffer_size 128k;
+    proxy_buffers 4 256k;
+    proxy_busy_buffers_size 256k;
+}`,
+          try: "[[sudo grep -c 'too big header' /var/log/nginx/error.log]] قبل التعديل وبعده، وجرّب login من نافذة incognito.",
+          flag: "script",
+          deep: {
+            why: "الـ 502 هنا مش معناه إن التطبيق واقع. التطبيق رد عادي، بس Nginx رفض الرد لأن الـ headers أكبر من المكان اللي حاجزه ليها. فلو دوّرت في لوجات التطبيق مش هتلاقي أي غلطة.",
+            how: R`[[proxy_buffer_size]]: الـ buffer اللي Nginx بيقرا فيه أول جزء من الرد، يعني الـ status والـ headers كلها. الافتراضي صفحة ذاكرة واحدة (٤ أو ٨ كيلو). رد فيه كذا [[Set-Cookie]] كل واحد فيه JWT ممكن يعدّي ١٠ كيلو بسهولة، فـ Nginx يقفل ويرجع 502.
+
+[[proxy_buffers 4 256k]]: عدد وحجم الـ buffers لجسم الرد. [[proxy_busy_buffers_size]]: الجزء اللي ممكن يكون بيتبعت للزائر وهو لسه بيتقري. وليه قاعدة: لازم يبقى أكبر من أو يساوي [[proxy_buffer_size]]، وأقل من مجموع [[proxy_buffers]] ناقص buffer واحد، وإلا [[nginx -t]] هيرفض.
+
+الاتجاه التاني: لما المتصفح نفسه يبعت كوكيز كبيرة، Nginx بيرجع [[400 Request Header Or Cookie Too Large]]. ده حله [[large_client_header_buffers 4 32k;]] في server block.
+
+الأرقام دي لكل اتصال، فمتحطهاش ضخمة في http كله من غير سبب. حطها في location التطبيق اللي عليه الـ auth.`,
+            when: "تطبيقات فيها Supabase auth أو NextAuth أو أي كوكيز JWT كبيرة ورا Nginx. وأي 502 التطبيق مش شايفه في لوجاته.",
+            mistakes: "في مشروع حقيقي (Next.js و Supabase ورا Nginx) كوكيز وتوكنات الـ auth الكبيرة كانت بتعمل 502 بعد الدخول، والحل كان السطور دي بالظبط. والغلطة الشائعة إنك تدوّر في التطبيق وتعيد تشغيله، والرسالة الحقيقية قاعدة في error.log بتاع Nginx."
+          },
+          lines: [
+            "location التطبيق.",
+            "للتطبيق.",
+            "مكان headers الرد: ١٢٨ كيلو بدل ٤ أو ٨.",
+            "٤ buffers لجسم الرد، كل واحد ٢٥٦ كيلو.",
+            "الجزء اللي بيتبعت للزائر وهو لسه بيتقري.",
             "قفلة."
           ]
         }
@@ -813,6 +883,49 @@ server {
             "للتطبيق.",
             "قفلة.",
             "الباقي محمي.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "htpasswd -B و $remote_user",
+          title: "يوزر لكل واحد في الفريق، والتطبيق يعرف مين دخل",
+          desc: "بدل باسورد واحد للفريق كله، كل واحد ليه يوزر في نفس الملف، فتقدر تشيل واحد لوحده. [[-B]] بيخزن الباسورد bcrypt، و [[-i]] بياخده من stdin بدل سطر الأوامر. و [[$remote_user]] اسم اليوزر اللي دخل، تبعته للتطبيق في header عشان يفلتر البيانات عليه.",
+          example: R`sudo htpasswd -B /etc/nginx/.htpasswd-dashboard sara
+PASS="$(openssl rand -base64 12 | tr -d '/+=')"
+printf '%s\n' "$PASS" | sudo htpasswd -iB /etc/nginx/.htpasswd-dashboard omar
+echo "omar: $PASS"
+location /dashboard/ {
+    auth_basic "team";
+    auth_basic_user_file /etc/nginx/.htpasswd-dashboard;
+    proxy_pass http://127.0.0.1:8080;
+    proxy_set_header X-Dash-User $remote_user;
+}`,
+          try: "ضيف يوزرين، وبعدين [[sudo htpasswd -D /etc/nginx/.htpasswd-dashboard omar]] وجرّب تدخل بيه: مرفوض فورًا من غير reload.",
+          flag: "script",
+          deep: {
+            why: "باسورد مشترك معناه إن أول ما حد يسيب الشغل لازم تغيّره للكل. ولوحة داخلية غالبًا محتاجة تعرف مين اللي فاتح عشان تعرضله بياناته هو بس. يوزر لكل واحد بيحل الاتنين من غير ما تبني نظام login.",
+            how: R`[[htpasswd -B file user]]: يسألك الباسورد مرتين ويضيف (أو يغيّر) اليوزر ده بس. [[-B]] يعني bcrypt، أقوى من الافتراضي (apr1 MD5). و [[-c]] بيعمل الملف من الأول، يعني لو استخدمتها تاني بتمسح كل اليوزرز التانيين.
+
+ليه [[-i]] مش [[-b]]؟ [[htpasswd -bB file omar Secret123]] بيحط الباسورد في سطر الأوامر، وأي يوزر على السيرفر يشوفه في [[ps aux]] وقت التشغيل، وبيتسجل في [[~/.bash_history]]. [[-i]] بيقرا الباسورد من stdin، فمبيظهرش في أي حتة من دول.
+
+[[openssl rand -base64 12]] بيولّد باسورد عشوائي، و [[tr -d]] بيشيل الرموز اللي بتلخبط لما حد يكتبها.
+
+Nginx بيقرا ملف اليوزرز مع كل طلب، فإضافة أو مسح يوزر بيسري فورًا من غير reload.
+
+[[$remote_user]]: بعد ما الدخول ينجح، فيه اسم اليوزر. [[proxy_set_header X-Dash-User $remote_user]] بيبعته للتطبيق، وبيكتب فوق أي header بنفس الاسم الزائر بعته بنفسه. بس ده آمن بشرط إن التطبيق بيسمع على 127.0.0.1 بس. لو بورت 8080 مفتوح للنت، أي حد يكلّمه مباشرة ويبعت [[X-Dash-User: admin]].`,
+            when: "لوحات داخلية لفريق صغير (٥ لـ ٣٠ واحد) من غير نظام حسابات. لو أكتر أو محتاج صلاحيات، اعمل login حقيقي في التطبيق.",
+            mistakes: R`في مشروع حقيقي سكربت توليد الباسوردات كان بيستخدم [[htpasswd -bB]] جوه لوب، فكل باسورد بيبان في [[ps]] لأي يوزر على السيرفر. وكان بيحط كود الموظف جوه استعلام SQL مباشرة من غير فحص (لو اتبعت كباراميتر فيه علامة ' يبقى SQL injection)، والحل فحص regex زي [[^[a-z0-9]+$]] قبل أي استخدام. وكان بيعمل [[nginx -t && reload]] من غير ما يطبع حاجة لو الاختبار فشل. وكمان: الباسوردات المطبوعة على الشاشة بتفضل في scrollback الترمنال، فابعتها لأصحابها وامسح الشاشة.`
+          },
+          lines: [
+            "ضيف sara (هيسألك الباسورد مرتين)، bcrypt.",
+            "ولّد باسورد عشوائي من غير رموز ملخبطة.",
+            "ضيف omar والباسورد جاي من stdin (مش ظاهر في ps).",
+            "اطبعه مرة واحدة عشان تبعته له.",
+            "اللوحة.",
+            "اطلب دخول.",
+            "ملف اليوزرز.",
+            "للتطبيق (على 127.0.0.1 بس).",
+            "ابعت اسم اللي دخل للتطبيق.",
             "قفلة."
           ]
         },
@@ -976,6 +1089,230 @@ sudo sed -i 's/error_log .*/error_log \/var\/log\/nginx\/error.log debug;/' /etc
             "جرّب القراية كيوزر Nginx: Permission denied = 403.",
             "الإعدادات الفعلية للبلوك ده.",
             "شغّل debug مؤقتًا (رجّعه warn بعدين)."
+          ]
+        }
+      ]
+    },
+    {
+      t: "Nginx جوه Docker والشهادات",
+      l: 3,
+      n: "شهادات بـ webroot، و DNS بتاع Docker، وتعديل config مشترك بين كذا مشروع من غير ما توقّع حد",
+      items: [
+        {
+          cmd: "acme-challenge",
+          title: "مسار تحقق Let's Encrypt يفضل شغال على بورت 80",
+          desc: "لما certbot يشتغل بطريقة webroot، Let's Encrypt بتطلب ملف من [[/.well-known/acme-challenge/]] على بورت 80. البلوك ده بيقدّم المسار ده من فولدر ثابت، وكل الباقي يتحوّل لـ https. ولازم يفضل موجود بعد SSL كمان، لأن التجديد كل شهرين بيعدّي من نفس الطريق.",
+          example: R`server {
+    listen 80;
+    server_name example.com www.example.com;
+    location /.well-known/acme-challenge/ { root /var/www/certbot; }
+    location / { return 301 https://example.com$request_uri; }
+}`,
+          try: "حط ملف تجربة: [[echo ok | sudo tee /var/www/certbot/.well-known/acme-challenge/test]] واطلب [[curl http://example.com/.well-known/acme-challenge/test]]: لازم يرد ok مش 301.",
+          flag: "script",
+          deep: {
+            why: "Nginx جوه Docker معناه إن [[certbot --nginx]] مينفعش (certbot مش شايف ملفات Nginx ولا يقدر يعمله reload). webroot بيحل ده: certbot يكتب ملف التحدي في فولدر، و Nginx يقدمه، من غير ما حد يوقف الموقع.",
+            how: R`certbot بيكتب ملف باسم عشوائي في [[/var/www/certbot/.well-known/acme-challenge/]]، و Let's Encrypt بتطلب [[http://example.com/.well-known/acme-challenge/NAME]]. لو رجع المحتوى الصح، يبقى انت مسيطر على الدومين.
+
+في compose نفس الفولدر راكب في الاتنين: [[./certbot/www:/var/www/certbot]] في container الـ Nginx وفي container الـ certbot، و [[./certbot/conf:/etc/letsencrypt]] للشهادات (في Nginx بـ [[:ro]]).
+
+مشكلة البيضة والفرخة: الإعداد الكامل فيه [[ssl_certificate]] بيشاور على ملف لسه مش موجود، فـ Nginx يرفض يقوم خالص ([[cannot load certificate]]). ولو Nginx مش قايم مفيش حد يرد على التحدي. الحل على مرحلتين: شغّل Nginx بإعداد HTTP بس (البلوك ده)، خد الشهادة، وبعدين حط الإعداد الكامل بالـ 443. الأمر نفسه في تاب VPS (certbot --webroot).
+
+الترتيب جوه البلوك مش مهم: [[/.well-known/acme-challenge/]] بادئة أطول من [[/]] فبتكسب لوحدها.`,
+            when: "أي Nginx جوه Docker، أو أي سيرفر عايز تجدد فيه الشهادة من غير ما توقف الموقع.",
+            mistakes: "في مشروع حقيقي سكربت أول شهادة كان بيشغّل Nginx بالإعداد الكامل اللي بيشاور على شهادة لسه مش موجودة، فـ Nginx يقع ومحدش يرد على التحدي. ومسح بلوك الـ acme بعد ما SSL اشتغل «لأنه خلص»، فالتجديد يفشل بعد شهرين. وفولدر مختلف في الاتنين (certbot بيكتب في مكان و Nginx بيقرا من مكان تاني) فالتحدي يرجع 404."
+          },
+          lines: [
+            "بلوك بورت 80.",
+            "http.",
+            "الدومين بالـ www ومن غيرها.",
+            "ملفات التحدي من الفولدر المشترك مع certbot.",
+            "أي حاجة تانية تروح https على دومين واحد.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "resolver 127.0.0.11",
+          title: "اسم الـ container يتسأل عنه مع كل طلب",
+          desc: "[[proxy_pass http://myapp-app:3000]] بيحوّل الاسم لـ IP مرة واحدة وقت ما Nginx يقوم. لو الـ container اتبنى من جديد وخد IP تاني، Nginx يفضل يكلم القديم ويرجع 502 لحد reload. [[resolver 127.0.0.11]] (الـ DNS بتاع Docker) مع العنوان في متغير بيخلي Nginx يسأل من جديد كل شوية.",
+          example: R`resolver 127.0.0.11 valid=10s ipv6=off;
+server {
+    listen 80;
+    server_name example.com;
+    location / {
+        set $app_upstream http://myapp-app:3000;
+        proxy_pass $app_upstream;
+    }
+}`,
+          try: "اعمل [[docker compose up -d --force-recreate app]] وانت عامل [[curl]] في لوب على الموقع: من غير الـ resolver هتشوف 502 لحد ما تعمل reload، ومعاه بيرجع لوحده في ثواني.",
+          flag: "script",
+          deep: {
+            why: "على سيرفر فيه Nginx واحد مشترك قدام كذا مشروع، كل deploy لأي مشروع بيعيد إنشاء الـ container بتاعه. من غير الإعداد ده لازم تفتكر تعمل reload للـ Nginx المشترك بعد كل deploy، ولو container مشروع واحد واقع Nginx كله ميقومش.",
+            how: R`اسم ثابت في [[proxy_pass]] بيتحل مرة واحدة وقت القراية. ده بيعمل مشكلتين: IP قديم بعد إعادة الإنشاء (502)، ولو الـ container مش شغال وقت ما Nginx يقوم أو يعمل reload، بيرفض الإعداد كله بـ [[host not found in upstream]]، فكل المواقع اللي على نفس الـ Nginx تقع.
+
+لما العنوان يبقى متغير ([[set $app_upstream]])، Nginx مش بيحلّه وقت القراية. بيحلّه وقت الطلب عن طريق [[resolver]]. و [[127.0.0.11]] عنوان ثابت للـ DNS الداخلي بتاع Docker، موجود في أي network انت عاملها (زي network الـ compose)، مش في الـ bridge الافتراضي.
+
+[[valid=10s]]: خزّن الإجابة ١٠ ثواني بس. [[ipv6=off]]: متسألش عن AAAA (الشبكة غالبًا IPv4 بس).
+
+فرق مهم: مع المتغير، الـ URI بيتبعت زي ما هو ومفيش استبدال للبادئة، فلو كنت بتعتمد على [[proxy_pass http://app:3000/;]] (بشرطة في الآخر) عشان تشيل جزء من المسار، هتحتاج [[rewrite]] بدلها.
+
+و [[upstream {}]] مبيعملش ده في النسخ القديمة. من Nginx 1.27.3 فيه [[server app:3000 resolve;]] جوه upstream، بس طريقة المتغير شغالة في أي نسخة.`,
+            when: "Nginx جوه Docker بيعمل proxy لـ containers تانية بالاسم، خصوصًا لو مشترك بين كذا مشروع.",
+            mistakes: "متغير في proxy_pass من غير سطر [[resolver]]: كل طلب يرجع 502 وفي اللوج [[no resolver defined]]. واستخدام [[resolver 8.8.8.8]]: ده DNS عام ميعرفش أسامي الـ containers. وتفتكر إن [[docker compose restart]] بيحافظ على الـ IP، هو غالبًا بيحافظ عليه، بس [[up -d]] بعد build بيعمل container جديد بـ IP جديد."
+          },
+          lines: [
+            "اسأل DNS بتاع Docker، وخزّن الإجابة ١٠ ثواني.",
+            "الموقع.",
+            "http.",
+            "الدومين.",
+            "كل الطلبات.",
+            "العنوان في متغير، فمبيتحلّش وقت القراية.",
+            "Nginx يسأل عن الاسم وقت الطلب.",
+            "قفلة.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "nginx -t في container مؤقت",
+          title: "جرّب الإعداد الجديد بنفس النسخة قبل ما تلمس الحقيقي",
+          desc: "على Nginx شغال جوه Docker، غلطة في الملف معناها إن الـ container يقع مع أول restart. قبل ما تكتب فوق الملف الحقيقي، شغّل container مؤقت من نفس الـ image وعلى نفس الشبكة، راكب فيه الملف الجديد، واعمل [[nginx -t]]. لو فشل، الملف الحقيقي متلمسش.",
+          example: R`IMAGE="$(docker inspect nginx --format '{{.Config.Image}}')"
+docker run --rm --network proxy-net \
+  -v "$PWD/nginx.conf.new:/etc/nginx/nginx.conf:ro" \
+  -v /srv/certbot/conf:/etc/letsencrypt:ro \
+  "$IMAGE" nginx -t`,
+          try: "اعمل نسخة من الإعداد، ضيف فيها غلطة (امسح ; من سطر)، وجرّبها بالأمر ده. الخطأ يطلع بالسطر، والموقع الحقيقي شغال عادي.",
+          deep: {
+            why: "[[docker exec nginx nginx -t]] بيختبر الملف اللي الـ container شايفه دلوقتي، يعني لازم تكون كتبت فوق الحقيقي الأول. لو فيه غلطة ونسيت ترجّع، أول restart للسيرفر ياخد كل المواقع معاه. الاختبار في container مؤقت بيفصل التجربة عن الإنتاج.",
+            how: R`[[docker inspect ... '{{.Config.Image}}']]: اسم الـ image اللي الـ Nginx الحقيقي شغال بيها بالظبط. نفس النسخة مهم: [[http2 on]] مثلًا بيعدّي على 1.25 ويرفضه 1.24.
+
+[[--network proxy-net]]: نفس الشبكة، لأن [[nginx -t]] بيحاول يحل أسامي الـ upstreams الثابتة. من غير الشبكة هيفشل بـ [[host not found]] والإعداد سليم.
+
+[[-v .../letsencrypt:ro]]: [[nginx -t]] بيفتح ملفات الشهادات فعلًا، فلازم تبقى موجودة وإلا يفشل بـ [[cannot load certificate]].
+
+[[--rm]]: الـ container بيتمسح لوحده بعد الاختبار.
+
+لو عدّى، تكتب الملف الجديد مكان القديم وتعمل [[docker exec nginx nginx -s reload]]. الدرس اللي بعده بيجمع ده كله في سكربت.`,
+            when: "قبل أي تعديل على Nginx مشترك جوه Docker، خصوصًا من سكربت deploy.",
+            mistakes: "تختبر بـ [[nginx:latest]] بدل الـ image الشغالة فيعدّي عندك ويفشل في الحقيقي. وتنسى الشبكة أو الشهادات فتاخد فشل كاذب وتفتكر الإعداد بايظ."
+          },
+          lines: [
+            "اسم الـ image اللي Nginx الحقيقي شغال بيها.",
+            "container مؤقت على نفس الشبكة (بيتمسح بعد ما يخلص).",
+            "راكب فيه الملف الجديد مكان nginx.conf.",
+            "والشهادات عشان -t بيفتحها فعلًا.",
+            "اختبر بس، من غير ما تشغّل حاجة."
+          ]
+        },
+        {
+          cmd: "بلوك managed",
+          title: "تحط جزء مشروعك في config مشترك وتغيّره بأمان",
+          desc: "سيرفر عليه Nginx واحد لكذا مشروع، وكل مشروع ليه جزء في نفس الملف. السكربت ده بيحط جزء مشروعك بين علامتين ([[# >>> myapp]] و [[# <<< myapp]])، فكل deploy يشيل القديم ويحط الجديد من غير ما يلمس الباقي. قبلها باك أب، واختبار في container مؤقت، وبعدها reload.",
+          example: R`#!/bin/bash
+set -euo pipefail
+SNIPPET="$__{1:?usage: nginx-apply.sh snippet.conf}"
+CONF=/srv/shared/nginx/nginx.conf
+BEGIN="# >>> myapp (managed)"; END="# <<< myapp"
+cp "$CONF" "$CONF.bak.$(date +%Y%m%d%H%M%S)"
+TMP="$(mktemp)"; cp "$CONF" "$TMP"
+start=$(grep -n -F "$BEGIN" "$TMP" | head -1 | cut -d: -f1 || true)
+end=$(grep -n -F "$END" "$TMP" | tail -1 | cut -d: -f1 || true)
+if [ -n "$start" ] && [ -n "$end" ]; then sed -i "$__{start},$__{end}d" "$TMP"
+elif [ -n "$start$end" ]; then echo "one marker is missing, fix by hand"; exit 1; fi
+last=$(grep -n '^}' "$TMP" | tail -1 | cut -d: -f1)
+{ head -n $((last - 1)) "$TMP"; echo "$BEGIN"; cat "$SNIPPET"; echo "$END"; echo "}"; } > "$TMP.new"
+IMAGE="$(docker inspect nginx --format '{{.Config.Image}}')"
+docker run --rm --network proxy-net -v "$TMP.new:/etc/nginx/nginx.conf:ro" "$IMAGE" nginx -t \
+  || { echo "test failed, $CONF unchanged"; exit 1; }
+cat "$TMP.new" > "$CONF"
+rm -f "$TMP" "$TMP.new"
+docker exec nginx nginx -s reload`,
+          try: "على سيرفر التجربة: شغّل السكربت مرتين ورا بعض بنفس الـ snippet، و [[grep -c '>>> myapp' nginx.conf]] لازم يفضل 1 مش 2.",
+          flag: "script",
+          deep: {
+            why: "لما مشروعين بيشاركوا Nginx واحد، أي تعديل يدوي على الملف ممكن يبوّظ المشروع التاني. العلامات بتخلي كل مشروع يعرف حدوده بالظبط، والسكربت بيعمل التعديل بنفس الطريقة كل مرة.",
+            how: R`الباك أب بتاريخ في الاسم، وكل الشغل على نسخة مؤقتة ([[mktemp]])، فالملف الحقيقي مبيتلمسش غير في آخر سطرين.
+
+[[grep -n -F]]: رقم السطر اللي فيه العلامة ([[-F]] نص حرفي مش regex). لو العلامتين موجودين، [[sed -i "start,endd"]] بيمسح من الأولى للتانية. لو واحدة بس موجودة، حد عدّل بإيده، فالسكربت يقف بدل ما يضيف بلوك مكرر.
+
+[[grep -n '^}' | tail -1]]: آخر قوس في أول السطر، وده بيفترض إنه قفلة [[http {}]]. [[head -n $((last - 1))]] كل اللي قبله، وبعدين العلامة والـ snippet والعلامة والقوس.
+
+الاختبار في container مؤقت بنفس الـ image والشبكة (الدرس اللي قبله). لو فشل، [[exit 1]] والملف زي ما هو.
+
+ليه [[cat "$TMP.new" > "$CONF"]] مش [[mv]]؟ الملف راكب في الـ container كـ bind mount لملف واحد، والـ mount مربوط بالـ inode (رقم الملف على الديسك). [[mv]] و [[sed -i]] بيعملوا ملف جديد بـ inode جديد، فالـ container يفضل شايف القديم، والـ reload يقرا الإعداد القديم وانت فاكر إنك طبّقت. [[cat >]] بيكتب جوه نفس الملف فالـ container يشوف التغيير.`,
+            when: "أي config مشترك بين أكتر من مشروع، أو أي ملف بيعدّله سكربت deploy بدل إنسان.",
+            mistakes: "في مشروع حقيقي السكربت كان بيفترض إن آخر [[}]] في الملف قفلة [[http {}]]، فلو فيه [[stream {}]] بعده البلوك يتحط في المكان الغلط. وكان لو علامة النهاية اتمسحت يدوي بيضيف بلوك مكرر (النسخة دي بتقف). وملفات [[.bak]] بتتراكم من غير تنضيف ([[find -name '*.bak.*' -mtime +30 -delete]]). والأهم: مشروع بيعدّل ملف يملكه مشروع تاني بيربطهم ببعض، فالأنضف [[include /etc/nginx/conf.d/*.conf]] وكل مشروع ملف لوحده."
+          },
+          lines: [
+            "وقّف عند أي غلطة أو متغير مش معرّف.",
+            "ملف الـ snippet من أول باراميتر، وإلا اطبع طريقة الاستخدام.",
+            "الملف المشترك.",
+            "علامتين البداية والنهاية.",
+            "باك أب بالتاريخ.",
+            "اشتغل على نسخة مؤقتة.",
+            "رقم سطر علامة البداية (أو فاضي).",
+            "رقم سطر علامة النهاية.",
+            "لو الاتنين موجودين: امسح البلوك القديم.",
+            "لو واحدة بس: حد عدّل بإيده، اقف.",
+            "آخر قوس في أول السطر (قفلة http).",
+            "اللي قبله، والبلوك الجديد بين العلامتين، والقوس.",
+            "الـ image الشغالة.",
+            "اختبر في container مؤقت...",
+            "...ولو فشل اقف والملف الحقيقي زي ما هو.",
+            "اكتب جوه نفس الملف (نفس الـ inode) عشان الـ container يشوفه.",
+            "امسح الملفات المؤقتة.",
+            "طبّق من غير قطع."
+          ]
+        },
+        {
+          cmd: "Caddy",
+          title: "بديل بيطلع SSL ويجدده لوحده",
+          desc: "Caddy سيرفر زي Nginx، بس بيطلع شهادة Let's Encrypt ويجددها لوحده لأي دومين تكتبه، من غير certbot ولا cron ولا مرحلتين. الإعداد أقصر بكتير. مناسب لمشروع جديد صغير، و Nginx أحسن لو عندك إعدادات معقدة أو شغال عليه أصلًا.",
+          example: R`bot.example.com {
+    handle /webhook/* {
+        reverse_proxy app:8080
+    }
+    handle {
+        respond "not found" 404
+    }
+}
+admin.example.com {
+    basic_auth {
+        admin PASTE_HASH_HERE
+    }
+    reverse_proxy n8n:5678
+}`,
+          try: "على سيرفر التجربة بدومين فرعي: [[docker run -d -p 80:80 -p 443:443 -v caddy_data:/data -v $PWD/Caddyfile:/etc/caddy/Caddyfile caddy]] وافتح الدومين بـ https على طول.",
+          flag: "script",
+          deep: {
+            why: "نص إعداد Nginx في مشروع صغير بيروح على SSL: بلوك acme، وشهادة على مرحلتين، وcontainer لـ certbot، وتجديد، وreload. Caddy بيعمل ده كله من اسم الدومين بس.",
+            how: R`أي بلوك يبدأ باسم دومين، Caddy بيفهم إنه محتاج HTTPS: يطلب الشهادة، ويحوّل http لـ https، ويجدد قبل الانتهاء. الشرط زي certbot: الدومين بيشاور على السيرفر، وبورت 80 و 443 مفتوحين.
+
+[[handle /webhook/*]]: المسار ده بس يروح للتطبيق. [[handle]] من غير مسار: أي حاجة تانية ترجع 404. كده البوت مكشوف منه الـ webhook بس، مش التطبيق كله.
+
+[[basic_auth]]: زي auth_basic في Nginx. الـ hash بتطلعه بـ [[caddy hash-password]] (bcrypt). في النسخ القديمة اسمها [[basicauth]].
+
+[[reverse_proxy n8n:5678]]: بالاسم جوه شبكة Docker، والـ headers زي X-Forwarded-For بتتبعت لوحدها.
+
+وتقدر تكتب [[{$BOT_HOST}]] بدل الدومين، و Caddy ياخده من متغيرات البيئة.`,
+            when: "مشروع جديد على سيرفر فاضي، أو أدوات داخلية (n8n، لوحات) محتاجة HTTPS بسرعة.",
+            mistakes: "تنسى volume لـ [[/data]]: الشهادات بتضيع مع كل إعادة إنشاء، و Caddy يطلب جديدة كل مرة لحد ما يخبط في حد Let's Encrypt (٥ شهادات لنفس الدومينات في الأسبوع). وتشغّل Caddy و Nginx مع بعض على نفس السيرفر، والاتنين عايزين بورت 80 و 443."
+          },
+          lines: [
+            "دومين البوت (Caddy يطلع شهادته لوحده).",
+            "مسار الـ webhook بس...",
+            "...يروح للتطبيق.",
+            "قفلة.",
+            "أي حاجة تانية...",
+            "...404.",
+            "قفلة.",
+            "قفلة.",
+            "دومين اللوحة.",
+            "باسورد.",
+            "يوزر admin والـ hash من caddy hash-password.",
+            "قفلة.",
+            "للوحة.",
+            "قفلة."
           ]
         }
       ]

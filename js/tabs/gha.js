@@ -62,7 +62,9 @@ jobs:
 
 أي step ترجع exit code مش صفر، الـ job يفشل ويقف، والـ commit يتعلّم أحمر.
 
-الملف لازم يبقى في [[.github/workflows/]] بامتداد .yml، و GitHub بيقراه أوتوماتيك. والمسافات في YAML مهمة: مسافتين لكل مستوى.`,
+الملف لازم يبقى في [[.github/workflows/]] بامتداد .yml، و GitHub بيقراه أوتوماتيك. والمسافات في YAML مهمة: مسافتين لكل مستوى.
+
+وحاجة صغيرة لطيفة: كل workflow ليه شارة (badge) بتبيّن حالة آخر run. حطها في أول README: [[![CI](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)]]، فأي حد يفتح الـ repo يعرف إن main أخضر ولا لأ.`,
             when: "أول workflow في أي مشروع. حتى لو الاختبارات قليلة، lint و build كفاية كبداية.",
             mistakes: "اختبار بيعتمد على حاجة على جهازك (ملف .env، أو قاعدة بيانات محلية) فيفشل في CI. و tab بدل مسافات في YAML."
           },
@@ -115,9 +117,11 @@ jobs:
 
 الأحداث: [[push]] مع فلتر branches و [[paths-ignore]] (متشغّلش لو التعديل في ملفات md بس). [[pull_request]] مع types. [[schedule]] بصيغة cron بتوقيت UTC (وبيتأخر دقايق أحيانًا). [[workflow_dispatch]] زرار Run workflow في الواجهة، وممكن ياخد inputs (اختيار من قايمة، أو نص).
 
+والعكس بتاع paths-ignore هو [[paths]]: اشتغل بس لو اتغيّر ملف في المسارات دي، زي [[paths: ['database/migrations/**', 'android/**'] ]] لـ workflow تقيل مالوش لازمة مع كل تعديل. ولو حطيت paths، ضيف معاها [[workflow_dispatch]] عشان تقدر تشغّله بإيدك لما تحتاج.
+
 وفيه أحداث تانية: [[release]] لما تعمل release، و [[workflow_run]] لما workflow تاني يخلص، و [[issues]] و [[issue_comment]].`,
             when: "push و pull_request لكل مشروع. workflow_dispatch لأي حاجة عايز تشغّلها بإيدك. schedule للفحوصات.",
-            mistakes: "schedule بتوقيت مصر. هو UTC، فـ 3 الفجر مصر هي [[0 1 * * *]] (أو 0 0 حسب التوقيت الصيفي)."
+            mistakes: "schedule بتوقيت مصر. هو UTC، فـ 3 الفجر مصر هي [[0 1 * * *]] (أو 0 0 حسب التوقيت الصيفي). وفي مشروع حقيقي كان workflow بيبني APK كامل وفي paths بتاعه [[src/**]]، فأي تعديل صغير في الويب كان بيبني تطبيق أندرويد (دقايق كتير من الرصيد). خلّي paths على الملفات اللي فعلًا بتأثر على الناتج."
           },
           lines: [
             "الأحداث.",
@@ -161,6 +165,8 @@ jobs:
 [[actions/checkout]]: أهم واحدة، بتعمل git clone للـ commit اللي شغّل الـ workflow. [[actions/setup-node]]: بتسطّب Node بالنسخة اللي تحددها أو من [[.nvmrc]]، و [[cache: npm]] بتحفظ [[~/.npm]] بين الـ runs بمفتاح من package-lock.
 
 [[name]] اختياري بيدّي الـ step اسم واضح في اللوج.
+
+ولو التطبيق مش في جذر الـ repo (فولدر [[web/]] أو [[backend/]])، بدل [[cd web &&]] في كل step، حط [[defaults: run: working-directory: web]] على الـ job، فكل [[run]] بيشتغل جوه الفولدر ده. دي بتأثر على run بس، مش على uses، فـ setup-node محتاج [[cache-dependency-path: web/package-lock.json]] عشان يلاقي الـ lock.
 
 [[$GITHUB_STEP_SUMMARY]] ملف: أي Markdown تكتبه فيه بيظهر في صفحة الـ run كملخص، مفيد للتقارير.
 
@@ -237,7 +243,7 @@ gh run download 1234567890`,
 
 [[run download]] بينزّل الـ artifacts (screenshots من Playwright مثلًا).
 
-في اللوج، السطور بتبدأ بـ [[##[group]]] و [[##[error]]]: دوّر على error.
+في اللوج، السطور بتبدأ بـ [[##[group] ]] و [[##[error] ]]: دوّر على error.
 
 ولو الـ workflow نفسه مش بيشتغل أصلًا (مش بيظهر في Actions): YAML غلط. GitHub بيعرض الـ error في تاب Actions في الأعلى.`,
             when: "كل run أحمر. ومتعملش rerun قبل ما تقرا.",
@@ -310,6 +316,49 @@ jobs:
             "استخدم GitHub API.",
             "متغير للـ step.",
             "التوكن الجاهز بتاع الـ run."
+          ]
+        },
+        {
+          cmd: "base64 -d",
+          title: "ملف كامل جوه secret",
+          desc: "الـ secrets نص بس، بس أحيانًا محتاج ملف: مفتاح توقيع أندرويد (keystore)، أو شهادة .p12. الحل: تحوّل الملف لنص base64 على جهازك، تحطه في secret، وفي الـ workflow ترجّعه ملف بـ [[base64 -d]] في فولدر مؤقت.",
+          example: R`# على جهازك مرة واحدة (لينكس أو WSL أو Git Bash):
+base64 -w0 release.p12 > keystore.b64
+gh secret set ANDROID_KEYSTORE_BASE64 < keystore.b64
+rm keystore.b64
+# في الـ workflow:
+- name: Restore keystore
+  env:
+    KEYSTORE_BASE64: $__{{ secrets.ANDROID_KEYSTORE_BASE64 }}
+  run: |
+    echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.p12"
+    echo "RELEASE_KEYSTORE_FILE=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"`,
+          try: "اعمل ملف صغير فيه أي كلام، حوّله base64 وحطه في secret بـ [[gh secret set]]، وفي workflow رجّعه واطبع [[sha256sum]] بتاعه وقارنه بالأصل.",
+          flag: "script",
+          deep: {
+            why: "مفتاح التوقيع لازم يبقى في الـ CI عشان يطلع APK موقّع، ومينفعش يبقى في الـ repo. والـ secret مش بيقبل ملفات، فبنحوّل الملف لنص ونرجّعه.",
+            how: R`[[base64 -w0]] بيحوّل أي ملف (حتى binary) لسطر نص واحد من حروف وأرقام. [[-w0]] يعني متكسّرش السطر. على الماك: [[base64 -i release.p12]]. وعلى PowerShell: [[[Convert]::ToBase64String([IO.File]::ReadAllBytes("release.p12"))]].
+
+[[gh secret set NAME < file]] بيرفع المحتوى كـ secret من غير ما تلزقه بإيدك في المتصفح (اللزق بإيدك ساعات بيزوّد مسافة أو سطر).
+
+في الـ workflow: الـ secret بيدخل كمتغير بيئة، و [[base64 -d]] بيرجّعه ملف. [[$RUNNER_TEMP]] فولدر مؤقت بيتمسح مع نهاية الـ job، فالمفتاح مش بيفضل في أي مكان.
+
+والسطر الأخير بيحط مسار الملف في [[$GITHUB_ENV]]، فالـ steps اللي بعدها (Gradle مثلًا) تلاقيه في متغير [[RELEASE_KEYSTORE_FILE]].
+
+حد الـ secret الواحد ٤٨ كيلو، والـ keystore عادة ٢ أو ٣ كيلو فمفيش مشكلة. والباسورد بتاعه في secret تاني منفصل.`,
+            when: "أي ملف سري محتاجه الـ build: keystore أندرويد، شهادة توقيع ويندوز، ملف service account.",
+            mistakes: R`[[certutil -encode]] على ويندوز بيضيف سطور BEGIN و END فالـ decode يطلع ملف بايظ. وفي مشروع حقيقي كان الـ workflow بيقول «لو الـ secret فاضي ابني debug»: الـ secret اتمسح مرة، والـ build نجح أخضر بس طلّع APK مش موقّع بالمفتاح الأصلي، فمكانش بيتسطّب كتحديث فوق النسخة اللي عند الناس. لو الإصدار لازم يبقى موقّع، افشل بـ [[::error::]] بدل ما تكمّل بهدوء.`
+          },
+          lines: [
+            "حوّل الملف لسطر base64 واحد.",
+            "ارفعه secret من الترمنال.",
+            "امسح النسخة النصية.",
+            "step باسم واضح.",
+            "متغيراتها.",
+            "الـ secret كمتغير بيئة.",
+            "أوامر.",
+            "رجّعه ملف في الفولدر المؤقت.",
+            "وخلّي مساره متاح للـ steps الجاية."
           ]
         },
         {
@@ -486,6 +535,141 @@ jobs:
           ]
         },
         {
+          cmd: "GITHUB_ENV و GITHUB_OUTPUT",
+          title: "قيمة من step للي بعدها",
+          desc: "كل step بتشتغل في شيل جديد، فـ [[export]] مش بيعدّي. عشان تحسب قيمة في step وتستخدمها بعدها، اكتب [[NAME=value]] في الملف [[$GITHUB_ENV]] فتبقى متغير بيئة في كل الـ steps الجاية. أو في [[$GITHUB_OUTPUT]] وتقراها بـ [[steps.ID.outputs.NAME]].",
+          example: R`- name: Stamp build
+  run: |
+    echo "BUILD_TIME=$(date +%s)000" >> "$GITHUB_ENV"
+    echo "VERSION=$__{{ github.run_number }}-$__{GITHUB_SHA::7}" >> "$GITHUB_ENV"
+- run: echo "build $VERSION at $BUILD_TIME"
+- id: meta
+  run: echo "size=$(du -sh dist | cut -f1)" >> "$GITHUB_OUTPUT"
+- run: echo "dist is $__{{ steps.meta.outputs.size }}"`,
+          try: "اعمل step بتكتب [[VERSION]] في GITHUB_ENV، وجرّب تطبعه في نفس الـ step (هيطلع فاضي) وفي اللي بعدها (هيطلع).",
+          flag: "script",
+          deep: {
+            why: "محتاج رقم نسخة أو وقت build أو مسار ملف تحسبه مرة وتستخدمه في كذا step. ومتغيرات الشيل بتموت مع نهاية الـ step.",
+            how: R`[[$GITHUB_ENV]] مسار ملف. GitHub بيقراه بعد كل step، وأي سطر [[NAME=value]] فيه بيبقى متغير بيئة للـ steps اللي بعدها في نفس الـ job. مش في نفس الـ step: هناك استخدم متغير شيل عادي.
+
+[[github.run_number]] رقم بيزيد ١ مع كل run للـ workflow ده (1، 2، 3)، و [[$__{GITHUB_SHA::7}]] أول ٧ حروف من الـ commit (قص نص في bash). مع بعض بيعملوا نسخة مقروءة زي [[42-a1b2c3d]] تعرف منها الـ run والـ commit. وفي أندرويد الـ run_number بيتحط كـ versionCode لأنه بيزيد دايمًا.
+
+[[$GITHUB_OUTPUT]] نفس الفكرة بس للـ outputs: الـ step لازم يبقى ليها [[id]]، والقيمة بتتقري بـ [[steps.meta.outputs.size]]. الفرق: الـ output ليه اسم مربوط بالـ step، ويقدر يعدّي لـ job تاني: [[outputs: { size: $__{{ steps.meta.outputs.size }} }]] على مستوى الـ job، والـ job التاني يقراه بـ [[needs.build.outputs.size]].
+
+قيمة فيها أكتر من سطر محتاجة شكل خاص: [[NAME<<EOF]] وبعدين السطور وبعدين [[EOF]].
+
+الشكلين القديمين [[::set-env]] و [[::set-output]] اتلغوا، ولو شفتهم في workflow قديم استبدلهم بدول.`,
+            when: "رقم نسخة، ووقت build، ومسار ملف اتعمل، وأي حاجة step بتحسبها والباقي محتاجها.",
+            mistakes: "تستخدم المتغير في نفس الـ step اللي كتبته فيها فيطلع فاضي. و [[export VERSION=...]] وتستغرب إنه اختفى في الـ step الجاية. وقيمة فيها سطر جديد من غير شكل EOF فالملف يتلخبط."
+          },
+          lines: [
+            "step باسم واضح.",
+            "أوامر.",
+            "وقت الـ build بالمللي ثانية، متاح من الـ step الجاية.",
+            "نسخة مقروءة: رقم الـ run وأول ٧ حروف من الـ commit.",
+            "step بعدها: المتغيرات موجودة.",
+            "step ليها id...",
+            "...بتكتب output اسمه size.",
+            "اقرا الـ output بالـ id."
+          ]
+        },
+        {
+          cmd: "::error::",
+          title: "رسالة واضحة بدل فشل غامض",
+          desc: "سطر بيبدأ بـ [[::error::]] في اللوج، GitHub بيحوّله لرسالة حمرا فوق في صفحة الـ run. فبدل ما الـ deploy يفشل بـ error مش مفهوم لأن secret ناقص، افحص في أول الـ job واطبع الإصلاح بالظبط، وبعدين [[exit 1]].",
+          example: R`- name: Check secrets
+  env:
+    SSH_KEY: $__{{ secrets.DEPLOY_SSH_KEY }}
+    SSH_HOST: $__{{ secrets.DEPLOY_HOST }}
+  run: |
+    if [ -z "$SSH_KEY" ] || [ -z "$SSH_HOST" ]; then
+      echo "::error::DEPLOY_SSH_KEY or DEPLOY_HOST is missing in Settings > Secrets"
+      exit 1
+    fi
+    echo "::notice::secrets OK"
+- run: |
+    echo "::group::installed packages"
+    npm ls --depth=0
+    echo "::endgroup::"`,
+          try: "شغّل الـ step دي على repo مفيهوش الـ secrets، وشوف الرسالة في Annotations فوق في صفحة الـ run.",
+          flag: "script",
+          deep: {
+            why: "secret ناقص مش بيطلع error: بيبقى نص فاضي، والفشل بيحصل بعدها بخطوات بـ رسالة زي Load key: invalid format. رسالة واحدة واضحة في الأول بتوفّر نص ساعة.",
+            how: R`دي اسمها workflow commands: سطور بتطبعها بشكل معين و GitHub بيفهمها.
+
+[[::error::رسالة]] بتظهر حمرا في Annotations في صفحة الـ run، و [[::warning::]] صفرا، و [[::notice::]] زرقا. ممكن تربطها بملف وسطر: [[::warning file=src/app.js,line=10::رسالة]] فتظهر على الكود نفسه في الـ PR.
+
+[[::error::]] لوحدها مش بتفشّل الـ step، هي بس بتعرض. الـ [[exit 1]] هو اللي بيوقف.
+
+[[-z "$VAR"]] صح لو المتغير فاضي، وده اللي بيحصل لو الـ secret مش موجود.
+
+[[::group::]] و [[::endgroup::]] بيطوّوا اللوج اللي بينهم تحت عنوان، فاللوج الطويل يبقى مقروء.
+
+و [[::add-mask::$VALUE]] بتخلي أي قيمة (مش secret) تتخبى بـ *** في باقي اللوج، زي توكن جبته من API.`,
+            when: "أول step في أي job بيعتمد على secrets. وأي سكربت فحص عايز رسالته تبان.",
+            mistakes: "تكتب [[::error::]] وتنسى [[exit 1]] فالـ job يكمّل. وفي مشروع حقيقي كان الـ deploy بيفشل بـ scp error غريب لحد ما اتضاف الفحص ده واتضح إن DEPLOY_HOST مش متسجّل في الـ repo الجديد."
+          },
+          lines: [
+            "step الفحص.",
+            "متغيراتها.",
+            "المفتاح من secret (فاضي لو مش موجود).",
+            "السيرفر من secret.",
+            "أوامر.",
+            "لو أي واحد فاضي...",
+            "...اطبع رسالة حمرا فوق في صفحة الـ run بالإصلاح...",
+            "...ووقّف الـ job.",
+            "نهاية الشرط.",
+            "رسالة زرقا إن كله تمام.",
+            "step تانية.",
+            "ابدأ مجموعة مطوية في اللوج.",
+            "لوج طويل جواها.",
+            "اقفل المجموعة."
+          ]
+        },
+        {
+          cmd: "git diff --quiet",
+          title: "الملف المولَّد لسه متزامن؟",
+          desc: "فيه ملفات بتتولّد من حاجة تانية: أنواع TypeScript من schema القاعدة، أو client من OpenAPI. لو حد غيّر المصدر ونسي يولّد، الكود يبقى كداب. في CI: ولّد تاني، و [[git diff --quiet]] يقولك الملف اتغير ولا لأ. لو اتغير، يبقى اللي في الـ repo قديم، فافشل.",
+          example: R`- run: npm run types:generate
+- name: Types in sync?
+  run: |
+    if git diff --quiet lib/database.types.ts; then
+      echo "types in sync"
+    else
+      git diff lib/database.types.ts
+      echo "::error::run npm run types:generate and commit the result"
+      exit 1
+    fi`,
+          try: "في repo تجربة: غيّر ملف متولّد بإيدك واعمل push، وشوف الـ step بتفشل وبتطبع الفرق.",
+          flag: "script",
+          deep: {
+            why: "الـ schema اتغيرت بـ migration، والأنواع فضلت قديمة، و TypeScript مبسوط لأنه مصدّق الأنواع. النتيجة: خطأ في الإنتاج في عمود اسمه اتغير. الفحص ده بيمسكها في الـ PR.",
+            how: R`[[git diff --quiet FILE]] بيقارن الملف بآخر commit ومش بيطبع حاجة. بيرجع 0 لو زي ما هو، و 1 لو اتغير. فـ if بتفرّق بين الحالتين. ([[--exit-code]] نفس الفكرة بس بيطبع الفرق.)
+
+لو اتغير: [[git diff]] من غير quiet بيطبع الفرق في اللوج عشان تشوف إيه اللي ناقص، و [[::error::]] بتقول الإصلاح، و [[exit 1]].
+
+توليد الأنواع من القاعدة محتاج قاعدة: [[services: postgres]] وتطبّق الـ migrations عليها الأول، وبعدين تولّد. فالفحص ده بيختبر حاجتين: إن الـ migrations بتشتغل من الصفر، وإن الأنواع متزامنة معاها.
+
+وحط الـ workflow ده على [[paths]] بتاعة الـ migrations والـ API بس، عشان مايشتغلش مع كل تعديل CSS.
+
+نفس الفكرة لأي ملف متولد: [[npx prettier --check .]]، أو lock file (npm ci بيعمل ده لوحده).`,
+            when: "أي مشروع فيه ملف بيتولّد من مصدر تاني وبيتعمله commit.",
+            mistakes: "[[git diff]] مش بيشوف الملفات الجديدة اللي مش في Git، فلو التوليد عمل ملف جديد الفحص يعدّي. [[git status --porcelain]] بيشوفها. وملف اتولّد على ويندوز بـ CRLF فبيبان متغير دايمًا: [[.gitattributes]] فيه [[* text=auto eol=lf]]."
+          },
+          lines: [
+            "ولّد الأنواع من جديد.",
+            "step الفحص.",
+            "أوامر.",
+            "لو الملف زي اللي في الـ commit...",
+            "...تمام.",
+            "لو اتغير...",
+            "...اطبع الفرق...",
+            "...وقول الإصلاح...",
+            "...وافشل.",
+            "نهاية الشرط."
+          ]
+        },
+        {
           cmd: "needs و if و concurrency",
           title: "الترتيب والشروط",
           desc: "الـ jobs بتشتغل بالتوازي إلا لو [[needs]] قال واحد يستنى التاني. [[if]] بيشغّل step أو job بشرط (على main بس، أو لو اللي قبله فشل). [[concurrency]] بيلغي run قديم لو جه push جديد على نفس الـ branch. و [[timeout-minutes]] عشان job معلّق ميفضلش ساعات.",
@@ -509,7 +693,7 @@ jobs:
           flag: "script",
           deep: {
             why: "الـ deploy مينفعش يشتغل قبل الاختبارات، ولا على أي branch، ولا مرتين في نفس الوقت. التلات كلمات دول بيظبطوا ده.",
-            how: R`[[needs: test]]: الـ job ده يستنى test يخلص بنجاح. لو test فشل، deploy بيتخطى. [[needs: [a, b]]] لأكتر من واحد.
+            how: R`[[needs: test]]: الـ job ده يستنى test يخلص بنجاح. لو test فشل، deploy بيتخطى. [[needs: [a, b] ]] لأكتر من واحد.
 
 [[if]] على job أو step: تعبير بيتقيّم قبل التشغيل. [[github.ref == 'refs/heads/main']] على main بس. [[github.event_name == 'push']] مش من PR. وفيه دوال: [[success()]] الافتراضي، و [[failure()]] لو step قبلها فشلت (للتنبيهات)، و [[always()]] مهما حصل (للتنضيف)، و [[cancelled()]].
 
@@ -806,6 +990,59 @@ jobs:
           ]
         },
         {
+          cmd: "نشر ملفات بـ scp",
+          title: "ملفات للتحميل على السيرفر، بالترتيب الصح",
+          desc: "مش كل deploy image. أحيانًا الناتج ملف: APK، أو zip تحديث، ومعاه [[latest.json]] بيقول للتطبيق إن فيه نسخة جديدة. الـ runner يرفعهم بـ scp، والترتيب مهم: الملفات الأول، و latest.json آخر حاجة. وفي الآخر curl يتأكد إن رابط التحميل بيرجّع 200.",
+          example: R`- name: Upload to server
+  env:
+    SSH_KEY: $__{{ secrets.DEPLOY_SSH_KEY }}
+    KNOWN_HOSTS: $__{{ secrets.DEPLOY_KNOWN_HOSTS }}
+  run: |
+    install -m 700 -d ~/.ssh
+    printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
+    printf '%s\n' "$KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    D=/opt/myapp/downloads
+    scp -i ~/.ssh/deploy_key myapp.apk bundle.zip "deploy@203.0.113.10:$D/tmp/"
+    ssh -i ~/.ssh/deploy_key deploy@203.0.113.10 "mv $D/tmp/myapp.apk $D/tmp/bundle.zip $D/"
+    scp -i ~/.ssh/deploy_key latest.json "deploy@203.0.113.10:$D/"
+- name: Check download link
+  run: |
+    CODE=$(curl -sSL -o /dev/null -w '%{http_code}' https://example.com/downloads/myapp.apk)
+    [ "$CODE" = "200" ] || { echo "::error::download returned HTTP $CODE"; exit 1; }`,
+          try: "على سيرفر التجربة اعمل فولدر downloads/tmp، وارفع ملف بالطريقة دي، وافتح الرابط من الموبايل وانت بتعمل الرفع التاني وشوف إنه مش بيقطع.",
+          flag: "script",
+          deep: {
+            why: "التطبيق بيسأل latest.json كل شوية: «فيه نسخة جديدة؟». لو latest.json اترفع قبل الـ APK، أي حد يسأل في الثواني دي هيتقاله «نزّل» وينزّل ملف قديم أو نص ملف. والـ build الأخضر مش معناه إن الرابط شغال فعلًا.",
+            how: R`المفتاح من secret لملف بصلاحية 600 (ssh بيرفض مفتاح مقروء لغيرك). و known_hosts من secret فيه بصمة السيرفر اللي اتأكدت منها بإيدك مرة.
+
+الرفع على خطوتين: [[scp]] لفولدر [[tmp/]] جنب الفولدر الحقيقي، وبعدين [[mv]] على السيرفر. الـ mv جوه نفس الـ filesystem لحظي (atomic): اللي بينزّل دلوقتي بياخد القديم كامل، واللي بعده بياخد الجديد كامل. أما scp على نفس الاسم مباشرة بيكتب فوق الملف وهو بيتنزّل.
+
+latest.json آخر حاجة: لحد ما يترفع، التطبيق شايف النسخة القديمة وملفاتها لسه موجودة. أول ما يترفع، الملفات الجديدة موجودة بالفعل.
+
+الفحص في الآخر: [[curl -sSL -o /dev/null -w '%{http_code}']] بيطبع الـ status بس بعد ما يتبع أي redirect. لو nginx مش شايف الفولدر (volume مش متركّب مثلًا)، هترجع 404 والـ run يتعلّم أحمر بدل ما تعرف من المستخدمين.`,
+            when: "توزيع APK أو برنامج exe من سيرفرك، وتحديثات OTA، وأي ملفات static بيتعملها deploy من CI.",
+            mistakes: R`في مشروع حقيقي كان الـ workflow بيعمل [[ssh-keyscan]] وقت التشغيل ويصدّق أي بصمة ترد (لو حد في النص، الـ runner هيبعتله الملفات). خزّن known_hosts في secret. وكان بيختار الـ APK بـ [[find ... | head -1]]، ولو فيه debug و release الاتنين ممكن ياخد الغلط: حدد المسار بالظبط. وكان بيرفع الـ APK على نفس الاسم مباشرة، فحد بينزّل وقت الرفع خد ملف بايظ. ولما فولدر downloads اتضاف لـ compose بعد ما الـ container شغال، nginx مشافهوش لحد [[docker compose up -d --force-recreate]]، والفحص بالـ 200 هو اللي بيمسك ده.`
+          },
+          lines: [
+            "step الرفع.",
+            "متغيراتها.",
+            "مفتاح الـ deploy من secret.",
+            "بصمة السيرفر من secret.",
+            "أوامر.",
+            "فولدر ssh بالصلاحية الصح.",
+            "اكتب المفتاح لملف واقفله عليك.",
+            "ضيف بصمة السيرفر.",
+            "مسار التحميلات على السيرفر.",
+            "ارفع الملفات لفولدر مؤقت الأول.",
+            "انقلهم لمكانهم مرة واحدة (لحظي).",
+            "وآخر حاجة latest.json.",
+            "step الفحص.",
+            "أوامر.",
+            "اطلب رابط التحميل واطبع الـ status بس.",
+            "لو مش 200، رسالة حمرا وافشل."
+          ]
+        },
+        {
           cmd: "environments و approval",
           title: "الإنتاج محتاج موافقة",
           desc: "Environment في GitHub (Settings ثم Environments) ليه secrets خاصة به، وممكن يطلب موافقة شخص قبل ما الـ job يشتغل، ويحدد branches معينة. فالـ deploy لـ staging أوتوماتيك، وللإنتاج بيستنى ضغطة Approve.",
@@ -882,7 +1119,7 @@ jobs:
           flag: "script",
           deep: {
             why: "deploy مع كل push على main معناه كل commit إنتاج. بالـ tags، بتقرر انت إمتى، والنسخة ليها رقم تقوله للعميل وترجعله.",
-            how: R`[[on: push: tags: ['v*']]]: الـ workflow بيشتغل بس لما tag يبدأ بـ v يتعمله push. [[git tag v1.2.0 && git push --tags]].
+            how: R`[[on: push: tags: ['v*'] ]]: الـ workflow بيشتغل بس لما tag يبدأ بـ v يتعمله push. [[git tag v1.2.0 && git push --tags]].
 
 [[GITHUB_REF_NAME]] فيه اسم الـ tag. الـ [[>> $GITHUB_ENV]] بيعمل متغير بيئة متاح لكل الـ steps اللي بعدها (الشكل الحديث بدل [[::set-env]] القديم، والـ outputs بقت [[$GITHUB_OUTPUT]] بدل set-output).
 
@@ -896,7 +1133,7 @@ jobs:
 
 وممكن تجمع الاتنين: CI على كل push، و deploy لـ staging على main، وللإنتاج على tags.`,
             when: "لما المشروع يبقى له عملاء ونسخ.",
-            mistakes: "tag على commit مش على main. و tags مش بتترفع مع push العادي، لازم [[--tags]] أو [[push origin v1.2.0]]."
+            mistakes: "tag على commit مش على main. و tags مش بتترفع مع push العادي، لازم [[--tags]] أو [[push origin v1.2.0]]. وفي مشروع حقيقي كان الـ Release بيتنشر على tag ثابت اسمه [[app-latest]] بيتحرّك مع كل build، فكل نسخة بتمسح اللي قبلها ومفيش تاريخ ترجعله. الـ tag الثابت ينفع كلينك «آخر نسخة»، بس انشر كمان كل نسخة على tag برقمها."
           },
           lines: [
             "الأحداث.",
@@ -1050,7 +1287,7 @@ gh run view 1234567890 --log | grep -i "##\[debug\]" | head`,
 
 [[act]] (nektos/act): بيشغّل الـ workflow على جهازك في Docker بيحاكي الـ runner. [[act push --job test]] بيشغّل job test كأنه push. [[-l]] يعرض الـ jobs. مش مطابق ١٠٠٪ (بعض الـ actions والـ services بتختلف)، بس بيمسك معظم المشاكل في ثواني.
 
-[[ACTIONS_STEP_DEBUG=true]] كـ secret أو variable بيخلي كل الـ actions تطبع لوج تفصيلي (السطور بـ [[##[debug]]]). و [[ACTIONS_RUNNER_DEBUG]] للـ runner نفسه.
+[[ACTIONS_STEP_DEBUG=true]] كـ secret أو variable بيخلي كل الـ actions تطبع لوج تفصيلي (السطور بـ [[##[debug] ]]). و [[ACTIONS_RUNNER_DEBUG]] للـ runner نفسه.
 
 tmate: step [[mxschmitt/action-tmate]] بتوقف الـ run وتطبع أمر ssh في اللوج، تدخل بيه الـ runner نفسه وتشوف الملفات وتجرّب الأوامر بإيدك. أقوى أداة لما الفرق بين جهازك والـ runner مش واضح. شيلها بعد ما تخلص.
 

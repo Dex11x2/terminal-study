@@ -19,8 +19,8 @@ node -v`,
   labText: "اعمل مشروع تجربة بـ npm init -y وجرّب فيه. للـ webhooks محتاج حساب ngrok مجاني أو دومين على Cloudflare.",
   levels: {
     "1": ["البداية", "نسخ Node، و package.json، والفرق بين install و ci، والسكربتات"],
-    "2": ["المتوسط", "البيئة والبورتات وتحديث المكتبات وإصلاح node_modules"],
-    "3": ["المتقدم", "الإنتاج والتشخيص، و webhooks بوابات الدفع على جهازك"]
+    "2": ["المتوسط", "البيئة والبورتات وتحديث المكتبات، وسكربتات التطوير، و monorepo بـ pnpm"],
+    "3": ["المتقدم", "الإنتاج والتشخيص، و Prisma في الإنتاج، و webhooks بوابات الدفع على جهازك"]
   },
   categories: [
     {
@@ -293,6 +293,39 @@ npx cowsay "hi"`,
             "أداة صغيرة تقفل اللي ماسك بورت، و -y توافق على التنزيل.",
             "أي باكدج من npm تتنفذ مباشرة."
           ]
+        },
+        {
+          cmd: "npm start ولا npm run dev",
+          title: "وضع التطوير ووضع الإنتاج",
+          desc: R`[[npm run dev]] بيشغّل سيرفر تطوير: بيراقب الملفات ويعيد البناء لوحده، وتقيل ومليان رسايل debug. [[npm start]] بيشغّل النسخة اللي اتبنت بـ [[npm run build]]. الاتنين مجرد أسامي في scripts، فافتح package.json وشوف كل واحد بيعمل إيه فعلًا.
+
+القاعدة: dev على جهازك، و build وبعده start على السيرفر. ولو start وقع وقال مفيش build، يبقى نسيت الخطوة اللي في النص.`,
+          example: R`jq .scripts package.json
+npm run dev
+npm run build
+npm start
+# Vite مفيهوش start، عنده معاينة للـ build
+npm run build && npx vite preview --port 4173`,
+          try: "في مشروع Next أو Vite: شغّل dev وافتح الصفحة وشوف وقت التحميل، وبعدين build و start (أو preview) وقارن.",
+          deep: {
+            why: "أشهر غلطة لما حد يرفع أول مشروع: السيرفر شغال بـ npm run dev. الموقع بيفتح، بس بطيء، وبياكل رامات، وبيطلّع تفاصيل الأخطاء للزوار، ومع أي تعديل في الملفات بيعيد البناء.",
+            how: R`في Next: [[dev]] هو [[next dev]]، و [[build]] هو [[next build]]، و [[start]] هو [[next start]] اللي بيشغّل ناتج الـ build. من غير build قبله، start بيقول إنه ملقاش فولدر [[.next]] جاهز.
+
+في Vite: [[vite]] سيرفر تطوير على 5173، و [[vite build]] بيطلّع فولدر [[dist]] فيه HTML و JS و CSS عادية. مفيش start لأن الناتج ملفات ثابتة، Nginx أو أي استضافة static بتقدّمها. و [[vite preview]] بيقدّم dist على جهازك عشان تتأكد إن الـ build سليم، مش سيرفر إنتاج.
+
+في باك إند Express: غالبًا [[start]] هو [[node server.js]] و [[dev]] هو نفس الأمر مع [[--watch]].
+
+[[start]] و [[test]] بيشتغلوا من غير كلمة run، الباقي لازم [[npm run]].`,
+            when: "أول ما تفتح مشروع حد تاني: اقرا scripts قبل ما تشغّل أي حاجة. وقبل أي deploy: السيرفر لازم يشغّل start.",
+            mistakes: "في مشروع حقيقي كان ملف compose بتاع الإنتاج فيه NODE_ENV=development، فالتطبيق كان شغال بإعدادات التطوير على السيرفر من غير ما حد ياخد باله. وغلطة تانية: vite preview كسيرفر إنتاج، هو معمول للمعاينة بس."
+          },
+          lines: [
+            "اعرض السكربتات اللي في المشروع قبل ما تشغّل حاجة.",
+            "سيرفر التطوير: بيراقب الملفات ويعيد البناء.",
+            "ابني نسخة الإنتاج.",
+            "شغّل النسخة المبنية (من غير run).",
+            "في Vite: ابني وعاين الناتج على بورت 4173."
+          ]
         }
       ]
     },
@@ -512,6 +545,40 @@ npm cache verify`,
           ]
         },
         {
+          cmd: "ERESOLVE و legacy-peer-deps",
+          title: "تعارض الـ peer dependencies",
+          desc: R`[[npm ERR! ERESOLVE unable to resolve dependency tree]] معناها مكتبة بتقول «أنا شغالة مع react 18» وانت عندك 19. [[--legacy-peer-deps]] بيخلي npm يتجاهل الكلام ده ويسطّب، وده بيخبي المشكلة مش بيحلها.
+
+الصح إنك تعرف مين المتعارض، وتحدّث المكتبة لنسخة بتدعم اللي عندك. ولو مفيش، [[overrides]] وانت عارف انت بتعمل إيه.`,
+          example: R`npm install
+npm explain react
+npm view react-day-picker peerDependencies
+npm install react-day-picker@latest
+npm install --legacy-peer-deps
+echo "legacy-peer-deps=true" >> .npmrc`,
+          try: "في مشروع تجربة سطّب react@19 وبعدين مكتبة قديمة معمولة لـ react 17، واقرا رسالة ERESOLVE لحد ما تفهم مين طالب إيه.",
+          deep: {
+            why: "الرسالة طويلة ومخيفة، فالناس بتنسخ أول حل على النت: legacy-peer-deps. التسطيب بيعدّي، والمشكلة بتظهر بعدين وقت التشغيل في شكل error ملهوش علاقة.",
+            how: R`الـ [[peerDependencies]] مش مكتبة المكتبة محتاجاها جواها، دي مكتبة لازم «انت» تكون مسطّبها، زي plugin لـ React محتاج React نفسه. المكتبة بتقول النسخ اللي اتجرّبت معاها.
+
+من npm 7، npm بيسطّب الـ peers لوحده وبيرفض لو فيه تعارض. رسالة ERESOLVE فيها سطرين مهمين: [[Found:]] اللي عندك، و [[Could not resolve dependency: peer ...]] اللي المكتبة عايزاه ومين طالبه.
+
+[[npm explain]] (هو نفسه npm why) بيوريك مين جايب الباكدج. و [[npm view ... peerDependencies]] بيوريك آخر نسخة من المكتبة بتدعم إيه، وغالبًا الحل تحديثها.
+
+[[--legacy-peer-deps]] بيرجّع سلوك npm 6: يتجاهل الـ peers خالص. و [[--force]] أسوأ: بيسطّب نسخ متعارضة. لو مضطر، حط [[legacy-peer-deps=true]] في .npmrc بتاع المشروع بدل الفلاج، عشان جهازك والـ CI والـ Dockerfile يمشوا بنفس الطريقة ويطلعوا نفس الـ lock.`,
+            when: "أول ما تشوف ERESOLVE. اقرا الرسالة الأول، ودوّر على نسخة أحدث من المكتبة قبل أي فلاج.",
+            mistakes: "في مشروع حقيقي كان الـ Dockerfile فيه npm ci --legacy-peer-deps، فالـ build بيعدّي وتعارض النسخ متخبّي لحد ما يوقع وقت التشغيل. وغلطة تانية: الفلاج على جهازك بس، فالـ lock يطلع مختلف و npm ci في الـ CI يفشل."
+          },
+          lines: [
+            "التسطيب اللي بيطلّع ERESOLVE: اقرا Found و Could not resolve.",
+            "مين جايب react وبأنهي نسخة.",
+            "المكتبة دي بتدعم أنهي نسخ من react.",
+            "الحل الصح غالبًا: نسخة أحدث بتدعم اللي عندك.",
+            "تجاهل الـ peers (بيخبي المشكلة).",
+            "لو مضطر: خليه إعداد للمشروع كله عشان الـ CI يمشي زي جهازك."
+          ]
+        },
+        {
           cmd: "pnpm و yarn",
           title: "بدائل npm و corepack",
           desc: "نفس الفكرة بأوامر شبه متطابقة. pnpm أسرع وبيوفر مساحة (بيشارك المكتبات بين المشاريع). [[corepack]] بيدير نسخهم، وبييجي مع Node لحد 24 بس، ومن Node 25 بتسطّبه بـ [[npm i -g corepack]]. والمشروع بيحدد مديره في حقل [[packageManager]].",
@@ -531,7 +598,9 @@ pnpm بيحفظ كل نسخة من كل مكتبة مرة واحدة على ال
 
 الأوامر شبه بعض: [[pnpm add]] بدل install باسم، و [[pnpm dlx]] بدل npx، والباقي نفسه.`,
             when: "pnpm لمشاريعك الجديدة لو عايز سرعة. والمشاريع الموجودة: اللي فيها.",
-            mistakes: "npm install في مشروع pnpm: بيعمل package-lock جنب pnpm-lock وبيبوّظ node_modules. شوف الـ lock الأول."
+            mistakes: R`npm install في مشروع pnpm: بيعمل package-lock جنب pnpm-lock وبيبوّظ node_modules. شوف الـ lock الأول.
+
+في مشروع حقيقي كان الـ CI فيه [[pnpm/action-setup]] بـ [[version: 10]]، وفي نفس الوقت [[packageManager]] في package.json بنسخة تانية، والاتنين لما يختلفوا الـ action بيفشل. سيب النسخة في packageManager بس، والـ action بيقراها لوحده. وفي مشروع تاني كان [[corepack enable]] في الـ CI من غير packageManager أصلًا، فكل run بياخد أي نسخة pnpm متاحة.`
           },
           lines: [
             "فعّل corepack اللي بيدير pnpm و yarn.",
@@ -550,10 +619,10 @@ npm install -w apps/api express
 npm run build --workspaces
 npm run dev -w apps/web
 npm link ../my-lib`,
-          try: R`اعمل مشروع فيه [[workspaces: ["apps/*", "packages/*"]]] وشوف إن node_modules واحد في الجذر.`,
+          try: R`اعمل مشروع فيه [[workspaces: ["apps/*", "packages/*"] ]] وشوف إن node_modules واحد في الجذر.`,
           deep: {
             why: "عندك API و web و كود مشترك بينهم (types، وvalidation). تنسخ المشترك في الاتنين؟ يتفرق. تنشره كباكدج؟ تقيل. الـ workspaces بيخليهم مشروع واحد.",
-            how: R`في package.json الجذر: [[workspaces: ["apps/*", "packages/*"]]]. كل فولدر جواهم مشروع بـ package.json بتاعه. [[npm install]] في الجذر بيسطّب الكل في node_modules واحد، وبيعمل لينك لكل workspace باسمه، فـ [[apps/api]] بيستورد [[@myapp/shared]] كأنها مكتبة، وأي تعديل فيها بيظهر فورًا.
+            how: R`في package.json الجذر: [[workspaces: ["apps/*", "packages/*"] ]]. كل فولدر جواهم مشروع بـ package.json بتاعه. [[npm install]] في الجذر بيسطّب الكل في node_modules واحد، وبيعمل لينك لكل workspace باسمه، فـ [[apps/api]] بيستورد [[@myapp/shared]] كأنها مكتبة، وأي تعديل فيها بيظهر فورًا.
 
 [[-w]] (workspace) بيوجّه الأمر لمشروع فرعي: [[npm install -w apps/api express]] بيضيف express لـ api بس. [[--workspaces]] على الكل.
 
@@ -599,6 +668,298 @@ echo "@myorg:registry=https://npm.pkg.github.com" >> .npmrc`,
             "الـ registry الحالي.",
             "توكن GitHub Packages في ملفك الشخصي (مش المشروع).",
             "باكدجات @myorg تيجي من GitHub، ده في المشروع."
+          ]
+        }
+      ]
+    },
+    {
+      t: "سكربتات التطوير",
+      l: 2,
+      n: "سيرفر بيعيد نفسه، و TypeScript من غير build، وكذا سيرفر في ترمنال واحد، وموقعك على الموبايل",
+      items: [
+        {
+          cmd: "node --watch --env-file",
+          title: "سيرفر تطوير بيعيد نفسه من غير مكتبات",
+          desc: R`زمان سكربت dev كان محتاج nodemon عشان يعيد التشغيل و dotenv عشان يقرا .env. من Node 20 وأحدث الاتنين جوه Node: [[--watch]] و [[--env-file]]. ولمشروع TypeScript، [[tsx watch]] بيعمل نفس الحاجة لملفات .ts.
+
+وفي الإنتاج مفيش watch: بتعمل build بـ tsc وتشغّل الـ JS، والمتغيرات جاية من البيئة مش من ملف.`,
+          example: R`"scripts": {
+  "dev": "node --watch --env-file=.env src/server.js",
+  "dev:ts": "tsx watch src/index.ts",
+  "build": "tsc",
+  "start": "node dist/index.js",
+  "db:seed": "node --env-file=.env prisma/seed.js"
+}
+# جوه container على ويندوز (أحداث الملفات مش بتوصل)
+# nodemon --legacy-watch --watch src --ext js,json src/server.js`,
+          try: "حوّل سكربت dev في مشروع بيستخدم nodemon و dotenv لـ [[node --watch --env-file=.env]]، وشيل المكتبتين من package.json، واتأكد إن التعديل بيعيد التشغيل.",
+          flag: "script",
+          deep: {
+            why: "كل مكتبة زيادة في devDependencies نسخة تتحدّث وثغرة محتملة. الحاجتين دول بقوا في Node نفسه، فالسكربت أبسط والمشروع أخف.",
+            how: R`[[--watch]] بيراقب الملف اللي شغّلته وكل ملف بيستورده، وأول ما واحد يتغير بيقفل العملية ويشغّلها تاني. و [[--watch-path=src]] لو عايز تراقب فولدر بعينه.
+
+[[--env-file=.env]] بيقرا الملف قبل ما الكود يبدأ ويحط القيم في process.env. لو المتغير موجود في البيئة أصلًا، اللي في البيئة بيكسب. ولو الملف مش موجود، Node بيقف بخطأ، وده سبب إنك متحطوش في start بتاع الإنتاج.
+
+[[tsx]] بيشغّل TypeScript مباشرة: بيشيل الأنواع بـ esbuild وبيشغّل الـ JS، من غير ما يفحص الأنواع خالص (الفحص خطوة لوحدها في الـ CI). و [[tsx watch]] زي node --watch. في الإنتاج: [[tsc]] بيطلّع dist، و [[node dist/index.js]] بيشغّله، أسرع في البداية ومن غير devDependencies.
+
+nodemon لسه ليه مكان: جوه Docker على ويندوز أو WSL مع bind mount، أحداث تغيير الملفات مش بتوصل للـ container، فـ [[--legacy-watch]] (أو [[-L]]) بيخليه يفحص الملفات كل شوية (polling). و [[--ext]] بيحدد الامتدادات.`,
+            when: "أي مشروع Node جديد: node --watch للـ JS، و tsx watch للـ TypeScript. و nodemon -L لو الـ watch مش بيحس بالتعديل جوه container.",
+            mistakes: "‏--env-file في سكربت start على السيرفر، فالتطبيق بيقع لو .env مش موجود أو بياخد قيم قديمة منه. و tsx في الإنتاج بدل build، فالتشغيل أبطأ ومحتاج devDependencies على السيرفر."
+          },
+          lines: [
+            "بداية السكربتات في package.json.",
+            "JS: أعد التشغيل مع كل تعديل واقرا .env، من غير nodemon ولا dotenv.",
+            "TypeScript: نفس الفكرة بـ tsx.",
+            "الإنتاج: حوّل TS لـ JS في dist.",
+            "وشغّل الناتج، والمتغيرات من بيئة السيرفر.",
+            "سكربت لمرة واحدة بيقرا .env برضه.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "npx tsx",
+          title: "شغّل ملف TypeScript على طول",
+          desc: R`سكربت إداري بـ TypeScript (فحص القاعدة، عمل أدمن، تنضيف داتا) مش محتاج build. [[npx tsx scripts/x.ts]] بيشغّله مباشرة وبيستخدم نفس الأنواع و Prisma client اللي في المشروع.
+
+ولو هتشغّله على السيرفر جوه container، اتأكد إن tsx والسكربت نفسه موجودين في الـ image أصلًا.`,
+          example: R`npx tsx scripts/check-db.ts
+npx tsx scripts/create-admin.ts --email you@example.com
+# في package.json: "db:validate": "tsx scripts/validate-schema.ts"
+npm run db:validate
+docker compose exec app ls scripts node_modules/.bin/tsx
+docker compose exec app npx tsx scripts/run-fix.ts`,
+          try: "اكتب scripts/hello.ts فيه type وسطر console.log، وشغّله بـ [[npx tsx]]، وبعدين حط فيه خطأ أنواع واضح ولاحظ إنه برضه بيشتغل.",
+          deep: {
+            why: "مشروعك TypeScript، والسكربتات الصغيرة عايزة تستورد من الكود نفسه. تكتبها JS تخسر الأنواع، وتعمل لها build كل مرة تعب. tsx بيشغّلها زي ما هي.",
+            how: R`tsx بيحوّل الـ TS لـ JS في الذاكرة بـ esbuild ويشغّله بـ Node، وبيفهم ESM و CommonJS والـ paths. مش بيفحص الأنواع، فالسكربت ممكن يشتغل وفيه خطأ أنواع، والفحص شغل tsc.
+
+[[npx tsx]] بيستخدم النسخة اللي في devDependencies. لو مش متسطّبة، npx هيسألك ينزّلها، وجوه container من غير ترمنال تفاعلي السؤال ده بيعلّق أو بيفشل. عشان كده حطها في devDependencies، والأحسن سكربت في package.json زي [[db:validate]] عشان الفريق كله يشغّله بنفس الشكل.
+
+جوه container الإنتاج: الـ image غالبًا متبنية من غير devDependencies، أو standalone في Next، فلا tsx موجود ولا فولدر scripts. أول أمر docker في المثال بيتأكد قبل ما تعتمد عليه. الحلول: stage منفصلة للأدوات، أو تكتب السكربتات الحرجة .mjs عادية.
+
+[[ts-node]] البديل القديم: أبطأ لأنه بيفحص الأنواع، ومشاكله مع ESM كتير.`,
+            when: "سكربتات seed وفحص القاعدة والصيانة في مشروع TypeScript. مش لتشغيل السيرفر في الإنتاج.",
+            mistakes: "تفترض إن السكربت شغال عشان tsx مطلعش خطأ، وهو فيه خطأ أنواع. وتكتب في دليل التشغيل «docker compose exec app npx tsx ...» والـ image مفيهاش tsx ولا السكربت، فالأمر بيفشل يوم ما تحتاجه."
+          },
+          lines: [
+            "شغّل سكربت TS مباشرة.",
+            "ومرّر له arguments عادي.",
+            "نفس الحاجة من سكربت متسجّل في package.json.",
+            "قبل ما تعتمد عليه في الـ container: tsx والسكربت موجودين؟",
+            "شغّل السكربت جوه container التطبيق."
+          ]
+        },
+        {
+          cmd: "concurrently و wait-on",
+          title: "كذا سيرفر في ترمنال واحد وبالترتيب",
+          desc: R`الباك إند والفرونت في مشروع واحد، ومش عايز تفتح ترمنالين. [[concurrently]] بيشغّل كذا أمر مع بعض بألوان وأسامي، و [[-k]] بيقفلهم كلهم لو واحد وقف. و [[wait-on]] بيستنى بورت أو URL يفتح قبل ما يشغّل الأمر اللي بعده.
+
+و [[cross-env]] بيحط متغير بيئة بطريقة شغالة على ويندوز ولينكس.`,
+          example: R`"scripts": {
+  "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
+  "dev:api": "node --watch --env-file=.env api/server.js",
+  "dev:web": "wait-on tcp:127.0.0.1:4000 && cross-env VITE_API_URL=http://localhost:4000 vite --strictPort"
+}`,
+          try: "سطّب [[npm i -D concurrently wait-on cross-env]]، وحط السكربتات دي، وشغّل [[npm run dev]]، وبعدين Ctrl+C مرة واحدة واتأكد إن البورتين اتقفلوا.",
+          flag: "script",
+          deep: {
+            why: "من غير الأدوات دي: ترمنال للـ API وترمنال للفرونت، والفرونت بيقوم قبل الـ API فأول طلبات بتفشل، ولما تقفل واحد التاني بيفضل ماسك البورت.",
+            how: R`[[concurrently]] بيشغّل كل أمر في عملية لوحده وبيجمع الخرج في ترمنال واحد، وقبل كل سطر اسم العملية ([[-n]]) بلون ([[-c]]). و [[npm:dev:api]] اختصار لـ [[npm run dev:api]]، و [[npm:dev:*]] بيشغّل كل السكربتات اللي بتبدأ بـ dev:.
+
+[[-k]] (kill-others): أول ما عملية تخرج، الباقي يتقفل. من غيره لو الـ API وقع بخطأ، الفرونت يفضل شغال وانت فاكر كل حاجة تمام.
+
+[[wait-on]] بيفضل يحاول لحد ما المورد يبقى جاهز: [[tcp:127.0.0.1:4000]] بورت مفتوح، [[http://localhost:4000/health]] رد 2xx، أو ملف اتعمل. وبعدين [[&&]] بتشغّل اللي بعده.
+
+في مشروع حقيقي لتطبيق Electron كان نفس النمط: vite و [[wait-on tcp:5199 && electron .]]، عشان نافذة Electron متفتحش على صفحة فاضية قبل ما Vite يقوم.
+
+[[cross-env]]: سطر [[VITE_API_URL=... vite]] شغال في bash بس، وسكربتات npm على ويندوز بتشتغل بـ cmd. cross-env بيخليها تشتغل في الاتنين.`,
+            when: "مشروع فيه أكتر من عملية وقت التطوير: API وفرونت، أو Vite و Electron، أو سيرفر و worker.",
+            mistakes: R`[[wait-on tcp:localhost:4000]] وسيرفرك سامع على 127.0.0.1: من Node 17 localhost ممكن يتحل لـ ::1 (IPv6)، فـ wait-on يستنى للأبد. اكتب 127.0.0.1 صريح. وغلطة تانية: Vite لقى البورت مشغول فقام على بورت تاني، والـ wait-on لسه مستني البورت القديم، عشان كده [[--strictPort]] بيخليه يفشل بدل ما يغيّر.`
+          },
+          lines: [
+            "بداية السكربتات.",
+            "شغّل الاتنين مع بعض بأسامي وألوان، و -k يقفلهم سوا.",
+            "الـ API بيعيد نفسه مع كل تعديل.",
+            "استنى الـ API يفتح، وبعدين شغّل Vite بمتغير شغال على أي نظام، ومن غير ما يغيّر البورت.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "--host و Network URL",
+          title: "افتح موقعك من الموبايل وهو لسه على جهازك",
+          desc: R`سيرفر التطوير غالبًا بيسمع على localhost بس، فالموبايل مش شايفه. [[--host]] في Vite (أو [[-H 0.0.0.0]] في Next) بيخليه يسمع على كل الكروت، ويطبع سطر [[Network: http://192.168.1.x:5173]]. افتحه من موبايل على نفس الواي فاي.
+
+ولو الصفحة مش بتفتح: الفايروول على جهازك غالبًا هو اللي مانع.`,
+          example: R`npm run dev -- --host
+npm run dev -- -H 0.0.0.0
+ipconfig
+hostname -I
+# ويندوز (PowerShell أدمن): افتح البورت للشبكة الخاصة بس
+New-NetFirewallRule -DisplayName "dev 5173" -Direction Inbound -Protocol TCP -LocalPort 5173 -Profile Private -Action Allow`,
+          try: "شغّل مشروع Vite بـ [[--host]]، وافتح رابط Network من موبايلك، وعدّل كلمة في الصفحة وشوف الموبايل بيتحدّث لوحده.",
+          deep: {
+            why: "الموقع شكله تمام في DevTools بمقاس موبايل، وعلى الموبايل الحقيقي الكيبورد بيغطي الفورم، واللمس مختلف، والخط أصغر. التجربة على جهاز حقيقي قبل الرفع بتوفّر كتير.",
+            how: R`الـ [[--]] بتعدّي الفلاج للأداة نفسها مش لـ npm. Vite افتراضيًا على 127.0.0.1، و [[--host]] بيخليه 0.0.0.0 (تقدر تحطها في vite.config: [[server.host: true]]). Next dev بيطبع Network لوحده غالبًا، و [[-H 0.0.0.0]] بيضمنها. ونفس الفلاج ده لازم جوه Docker، وإلا البورت المنشور مش هيوصل للسيرفر (شوف درس 127.0.0.1 و 0.0.0.0 في bash).
+
+عنوان جهازك على الشبكة: [[ipconfig]] على ويندوز (IPv4 Address)، و [[hostname -I]] على لينكس. الاتنين لازم على نفس الشبكة.
+
+ويندوز بيمنع الاتصالات الداخلة افتراضيًا، خصوصًا لو الشبكة متسجّلة Public. القاعدة في المثال بتفتح البورت على الشبكات الخاصة بس، فمش هيتفتح وانت على واي فاي كافيه.
+
+Next الجديد ممكن يحذّر أو يمنع طلبات التطوير الجاية من origin تاني (زي IP جهازك من الموبايل)، والحل تضيفه في [[allowedDevOrigins]] في next.config.`,
+            when: "قبل ما تسلّم أي صفحة للموبايل. ولما تورّي شغلك لحد جنبك من غير deploy.",
+            mistakes: R`الفرونت بيكلّم [[http://localhost:4000]] للـ API: على الموبايل localhost هو الموبايل نفسه، فالصفحة تفتح والداتا لأ. استخدم proxy في Vite أو مسار نسبي. وميزات زي الكاميرا والموقع محتاجة secure context: localhost بيتحسب آمن، إنما http على IP لأ، فمحتاج tunnel بـ HTTPS. وواي فاي الضيوف بيعزل الأجهزة عن بعض، فمفيش حاجة هتوصل مهما عملت.`
+          },
+          lines: [
+            "Vite: اسمع على كل الكروت واطبع رابط Network.",
+            "Next: نفس الحاجة.",
+            "عنوان جهازك على الشبكة (ويندوز).",
+            "عنوان جهازك على الشبكة (لينكس).",
+            "اسمح بالبورت في فايروول ويندوز على الشبكة الخاصة بس."
+          ]
+        }
+      ]
+    },
+    {
+      t: "monorepo بـ pnpm",
+      l: 2,
+      n: "كذا تطبيق وباكدج مشتركة في ريبو واحد: الربط، والفلترة، والتشغيل مع بعض، والـ builds المقفولة",
+      items: [
+        {
+          cmd: "pnpm-workspace.yaml و workspace:*",
+          title: "باكدج مشتركة جوه نفس الريبو",
+          desc: R`[[pnpm-workspace.yaml]] بيقول أنهي فولدرات باكدجات. وأي تطبيق عايز الكود المشترك بيكتب [[workspace:*]] بدل رقم نسخة، فـ pnpm بيربطه لينك للفولدر المحلي بدل ما يدوّر على npm.
+
+والباكدج الداخلية ممكن تصدّر ملفات .ts مباشرة من غير build، والتطبيق اللي بيستوردها (Vite أو Next أو tsx) هو اللي بيترجمها.`,
+          example: R`# pnpm-workspace.yaml
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# apps/web/package.json
+"dependencies": {
+  "@myapp/shared": "workspace:*"
+}
+
+# packages/shared/package.json (من غير build)
+"name": "@myapp/shared",
+"exports": { ".": "./src/index.ts", "./types": "./src/types.ts" }`,
+          try: "اعمل ريبو فيه apps/web و packages/shared، واربطهم بـ workspace:*، وشغّل [[pnpm install]]، وبعدين [[ls -l apps/web/node_modules/@myapp]] وشوف اللينك.",
+          flag: "script",
+          deep: {
+            why: "عندك لعبة وسيرفر ولوحة أدمن، والتلاتة بيستخدموا نفس الأنواع ونفس الأسئلة. نسخ الكود بيخليه يتفرق، ونشره على npm تقيل. الـ workspace بيخليه مكان واحد وأي تعديل يبان في الكل فورًا.",
+            how: R`[[pnpm install]] في الجذر بيقرا pnpm-workspace.yaml، ويسطّب لكل باكدج، ويربط اللي مكتوب لها [[workspace:*]] بلينك لفولدرها. [[*]] معناها «أي نسخة موجودة هنا». ولو الاسم مش موجود في الـ workspace، pnpm بيرفض بدل ما ينزّل باكدج بنفس الاسم من npm، وده حماية.
+
+ولو نشرت باكدج على npm، pnpm بيبدّل [[workspace:*]] برقم النسخة الحقيقي وقت النشر.
+
+[[exports]] بيحدد إيه اللي مسموح يتستورد من الباكدج. هنا بيشاور على src/*.ts مباشرة: مفيش dist ولا build step. ده شغال لأن Vite و Next و tsx بيترجموا TS، إنما تطبيق Node عادي بيشغّل JS بس هيحتاج build للباكدج (أو tsx). وفي Next القديم ممكن تحتاج [[transpilePackages]].`,
+            when: "أول ما يبقى عندك تطبيقين أو أكتر بيشاركوا كود في نفس الريبو.",
+            mistakes: R`تستورد [[@myapp/shared/src/utils]] مباشرة وهو مش في exports، فيطلع [[ERR_PACKAGE_PATH_NOT_EXPORTED]]. وتضيف [[workspace:*]] في package.json وتنسى pnpm install فالتطبيق مش لاقي الباكدج.`
+          },
+          lines: [
+            "قايمة الفولدرات اللي فيها باكدجات.",
+            "كل فولدر جوه apps باكدج.",
+            "وكل فولدر جوه packages.",
+            "في التطبيق: المكتبات.",
+            "الكود المشترك من الـ workspace مش من npm.",
+            "قفلة.",
+            "اسم الباكدج المشتركة، وده اللي بيتستورد بيه.",
+            "المسموح يتستورد، ملفات TS مباشرة من غير build."
+          ]
+        },
+        {
+          cmd: "pnpm --filter",
+          title: "شغّل أمر في باكدج واحدة من الجذر",
+          desc: R`[[--filter]] بيوجّه الأمر لباكدج معينة بالاسم أو بمسار أو بـ glob، من غير ما تعمل cd. وبيقبل إضافات: [[...]] بعد الاسم معناها «ومعاها اللي بتعتمد عليه»، و [["[origin/main]"]] معناها «اللي اتغير من main».`,
+          example: R`pnpm --filter @myapp/server dev
+pnpm --filter "./apps/*" build
+pnpm --filter @myapp/web add zod
+pnpm --filter "@myapp/web..." build
+pnpm --filter "...[origin/main]" test`,
+          try: "في ريبو فيه أكتر من باكدج، ضيف مكتبة لتطبيق واحد بـ [[--filter]] واتأكد إنها اتكتبت في package.json بتاعه بس.",
+          deep: {
+            why: "في monorepo فيه ٥ باكدجات، مش عايز تبني الكل عشان تجرّب واحد، ولا تفضل تعمل cd رايح جاي. والـ CI مش لازم يختبر كل حاجة لو التغيير في باكدج واحدة.",
+            how: R`الفلتر بيختار باكدجات، والأمر اللي بعده بيتنفذ في كل واحدة منهم.
+
+بالاسم: [[@myapp/server]] من حقل name. بالمسار: [[./apps/*]] كل الفولدرات جوه apps (حطه بين علامات تنصيص عشان الشيل ميفكّوش).
+
+[[pnpm --filter X add zod]] بيضيف المكتبة لـ X بس. من غير الفلتر في الجذر، pnpm بيعترض لأن الجذر مش المكان الطبيعي للمكتبات.
+
+[[web...]]: web وكل الباكدجات اللي هي معتمدة عليها، فالـ build يطلع بالترتيب الصح (shared الأول). و [[...web]] العكس: web وكل اللي معتمد عليها.
+
+[["[origin/main]"]]: الباكدجات اللي ملفاتها اتغيرت من الـ commit ده. و [["...[origin/main]"]] بيضيف لهم كل اللي بيعتمد عليهم، ودي اللي تستخدمها في CI عشان تختبر اللي ممكن يتأثر بس.`,
+            when: "كل يوم في monorepo: dev لتطبيق واحد، وإضافة مكتبة لتطبيق واحد، وCI أسرع.",
+            mistakes: "تكتب الاسم غلط أو باسم الفولدر بدل name، فالفلتر مبيلاقيش حاجة ومبيعملش حاجة. اقرا الخرج: لو قال No projects matched، الفلتر غلط."
+          },
+          lines: [
+            "شغّل dev في السيرفر بس، بالاسم.",
+            "ابني كل التطبيقات اللي في apps، بالمسار.",
+            "ضيف مكتبة لتطبيق web بس.",
+            "ابني web ومعاها كل اللي هي معتمدة عليه.",
+            "اختبر اللي اتغير من main واللي بيعتمد عليه."
+          ]
+        },
+        {
+          cmd: "pnpm -r و --parallel",
+          title: "نفس السكربت في كل الباكدجات",
+          desc: R`[[pnpm -r build]] بيشغّل build في كل باكدج عندها السكربت ده، بالترتيب الصح حسب مين معتمد على مين، واللي معندهاش بتتخطّى. و [[--parallel]] بيشغّلهم كلهم في نفس اللحظة من غير ترتيب، ودي اللي لازم مع سكربتات dev اللي مبتخلصش.
+
+و [[pnpm -r exec]] بينفّذ أمر عادي (مش سكربت) جوه فولدر كل باكدج.`,
+          example: R`pnpm -r build
+pnpm -r --stream test
+pnpm --parallel --filter "./apps/*" dev
+pnpm -r exec rm -rf dist .next
+pnpm -r --workspace-concurrency=1 build`,
+          try: "في الجذر اعمل سكربتات [[build: pnpm -r build]] و [[dev: pnpm --parallel --filter \"./apps/*\" dev]]، وشغّل الاتنين وقارن الخرج.",
+          deep: {
+            why: "سكربتات الجذر لازم متعرفش أسامي الباكدجات: [[pnpm build]] في الجذر ينادي [[pnpm -r build]]، والـ CI يشغّل pnpm build وخلاص. تضيف باكدج جديدة، تدخل لوحدها.",
+            how: R`[[-r]] (recursive) بيرتّب الباكدجات topologically: لو web معتمدة على shared، shared تتبني الأول. وبيشغّل كذا واحدة مع بعض لو مش معتمدين على بعض (الحد الافتراضي 4، و [[--workspace-concurrency=1]] واحدة واحدة لو الجهاز ضعيف أو اللوج متلخبط).
+
+[[--stream]] بيطبع الخرج أول بأول وقبله اسم الباكدج، بدل ما يجمّع خرج كل واحدة لما تخلص.
+
+ليه [[--parallel]] مع dev؟ الترتيب معناه «استنى shared تخلص وبعدين ابدأ web». سكربت dev بتاع shared (watch) عمره ما بيخلص، فـ web مش هتبدأ أبدًا. [[--parallel]] بيتجاهل الترتيب والحد ويشغّل الكل فورًا.
+
+[[exec]] بيشغّل أمر في فولدر كل باكدج. في مشروع حقيقي كان فيه سكربت clean: [[pnpm -r exec rm -rf node_modules dist .next && rm -rf node_modules]]، الجزء الأخير عشان الجذر نفسه، لأن [[-r]] مش بيشمل الجذر.`,
+            when: "build و test و typecheck في الجذر بـ -r. و dev بـ --parallel. و exec للتنضيف.",
+            mistakes: R`[[pnpm -r dev]] من غير --parallel، فأول باكدج فيها watch بتقفل الباقي. و [[rm -rf]] في سكربت بيتشغّل على ويندوز: سكربتات pnpm هناك بتشتغل بـ cmd اللي معندهوش rm، فاستخدم [[rimraf]] أو خليه في bash.`
+          },
+          lines: [
+            "ابني الكل بترتيب الاعتماديات.",
+            "اختبر الكل واطبع الخرج أول بأول باسم كل باكدج.",
+            "شغّل dev لكل التطبيقات في نفس اللحظة (لازم مع watch).",
+            "امسح ملفات الـ build جوه كل باكدج.",
+            "ابني واحدة واحدة (جهاز ضعيف أو لوج أوضح)."
+          ]
+        },
+        {
+          cmd: "pnpm approve-builds",
+          title: "ليه prisma أو sharp ناقصين بعد التسطيب",
+          desc: R`من pnpm 10، سكربتات [[postinstall]] بتاعة المكتبات مش بتتشغّل افتراضيًا، عشان مكتبة مخترقة متشغّلش كود على جهازك وقت التسطيب. المكتبات اللي فعلًا محتاجة build (prisma و sharp و esbuild و bcrypt) لازم توافق عليها صراحة، وإلا الـ binary بتاعها بيبقى ناقص.
+
+[[pnpm approve-builds]] بيسألك عليهم ويكتب الموافقة في [[pnpm-workspace.yaml]]، والملف ده بيدخل Git فالفريق والـ CI ياخدوا نفس القرار.`,
+          example: R`pnpm install
+pnpm ignored-builds
+pnpm approve-builds
+git diff pnpm-workspace.yaml
+pnpm rebuild sharp`,
+          try: "في مشروع pnpm جديد سطّب sharp، واقرا التحذير اللي بيطلع، وشغّل [[pnpm approve-builds]]، واقرا اللي اتكتب في pnpm-workspace.yaml.",
+          deep: {
+            why: "هجمات supply chain كتير بتشتغل من postinstall: مكتبة اتخترقت، وأول ما حد يسطّبها بتسرق التوكنات من جهازه. pnpm قفل الباب ده افتراضيًا، والتمن إنك تفتحه بإيدك للمكتبات اللي تثق فيها.",
+            how: R`في التسطيب pnpm بيطبع تحذير فيه أسامي المكتبات اللي سكربتاتها اتمنعت. [[pnpm ignored-builds]] بيعرضهم تاني.
+
+[[approve-builds]] بيعرض القايمة تختار منها، وبيكتب في pnpm-workspace.yaml حاجة زي: [[allowBuilds: { prisma: true, sharp: true }]] (من pnpm 10.26، وقبلها كان اسمها [[onlyBuiltDependencies]]). و [[false]] بتقول «متسألنيش تاني عنها، ومتشغّلهاش».
+
+بعد الموافقة [[pnpm rebuild]] بيشغّل السكربتات اللي اتمنعت من غير ما يعيد التسطيب.
+
+المكتبات دي بتحتاج build لأن فيها كود native أو بتنزّل binary للنظام بتاعك: sharp بينزّل libvips، و esbuild بيجيب الـ binary الصح، وبعض نسخ Prisma بتنزّل engines.`,
+            when: "بعد أول pnpm install في مشروع جديد، أو لما مكتبة native تقع بخطأ إن ملف ناقص.",
+            mistakes: "تتجاهل التحذير، والتطبيق يقع وقت التشغيل بخطأ إن sharp مش لاقي ملف، فتقعد تدوّر في الكود. وتوافق على كل حاجة في القايمة من غير ما تقرا الأسامي، فترجع لنفس الخطر اللي pnpm كان بيحميك منه."
+          },
+          lines: [
+            "التسطيب بيطبع تحذير بأسامي المكتبات اللي سكربتاتها اتمنعت.",
+            "اعرضهم تاني.",
+            "اختار اللي توافق عليه، ويتكتب في pnpm-workspace.yaml.",
+            "شوف اللي اتكتب قبل ما تعمله commit.",
+            "شغّل السكربت اللي كان اتمنع من غير إعادة تسطيب."
           ]
         }
       ]
@@ -823,6 +1184,43 @@ node .next/standalone/server.js`,
           ]
         },
         {
+          cmd: "Next.js standalone",
+          title: "تشغيل Next من غير node_modules كاملة",
+          desc: R`[[output: "standalone"]] في next.config بيخلي الـ build يطلّع [[.next/standalone]]: فيه [[server.js]] ونسخة صغيرة من node_modules فيها اللي الكود بيستخدمه فعلًا. تنسخ الفولدر ده للسيرفر أو للـ image وتشغّل [[node server.js]].
+
+بس فيه حاجتين مش بيتنسخوا لوحدهم: [[.next/static]] و [[public]]. من غيرهم الصفحة بتفتح من غير CSS ولا صور.`,
+          example: R`# next.config.ts فيه:  output: "standalone"
+npm run build
+test -d .next/standalone || echo "standalone مطلعش"
+cp -r public .next/standalone/
+cp -r .next/static .next/standalone/.next/
+du -sh node_modules .next/standalone
+cd .next/standalone && HOSTNAME=0.0.0.0 PORT=3000 node server.js`,
+          try: "فعّل standalone في مشروع Next، وابنيه، وشغّل server.js مرة من غير نسخ static وشوف الصفحة، وبعدين انسخه وقارن. وقارن حجم الفولدر بـ node_modules.",
+          deep: {
+            why: "الـ image اللي فيها node_modules كاملة بتبقى مئات الميجا، وفيها مكتبات التطوير والـ build. standalone بياخد اللي بيتشغّل بس، فالـ image بتصغر لعشرات الميجا، وبتنزل على السيرفر أسرع، وفيها كود أقل ممكن يبقى فيه ثغرة.",
+            how: R`وقت الـ build Next بيتتبّع كل ملف الكود بيعمله import أو require (file tracing)، وبينسخ بس الملفات دي من node_modules لـ [[.next/standalone/node_modules]]، ويكتب [[server.js]] صغير بيشغّل التطبيق من غير [[next start]].
+
+[[static]] و [[public]] متسابين بره عن قصد، على أساس إنك ممكن تحطهم على CDN. لو مش هتعمل كده، انسخهم جنبه زي المثال، وفي Dockerfile ده سطرين [[COPY --from=builder]].
+
+[[server.js]] بيسمع على [[HOSTNAME]] و [[PORT]] من البيئة. جوه Docker، Docker نفسه بيحط HOSTNAME باسم الـ container، فلو منسيتش [[HOSTNAME=0.0.0.0]] السيرفر ممكن يسمع على عنوان واحد بس ومش هيرد على الـ healthcheck أو Nginx.
+
+متغيرات [[NEXT_PUBLIC_*]] بتتحط جوه JS وقت الـ build، فلازم تبقى موجودة ساعتها. الباقي (أسرار السيرفر) وقت التشغيل من env_file، مش build args.
+
+و [[basePath: "/myapp"]] جنب standalone لو الموقع هيشتغل تحت مسار فرعي على دومين مشترك.`,
+            when: "أي Next.js بيتنشر في Docker أو على VPS من غير Vercel.",
+            mistakes: R`في مشروع حقيقي كان .dockerignore فيه [[*.png]] عشان يشيل screenshots من الجذر، فشال معاها صور public ولوجو الموقع، والصور طلعت 404 جوه الـ container بس وعلى الجهاز شغالة. الصح [[/*.png]] للجذر بس. وفي مشروع تاني أسرار زي مفتاح service role و HMAC اتبعتت build args، فاتحفظت في طبقات الـ image وبتبان في docker history. وسطر [[test -d .next/standalone]] جوه RUN بيوقف الـ build بخطأ واضح لو حد شال output من الـ config بالغلط.`
+          },
+          lines: [
+            "ابني، ومع output standalone بيطلع الفولدر.",
+            "اتأكد إن الفولدر طلع فعلًا (في Dockerfile خليها تفشل الـ build).",
+            "انسخ public جنب server.js.",
+            "وانسخ ملفات static (CSS و JS المبنية).",
+            "قارن الحجمين: node_modules كاملة ضد الفولدر اللي هيتنشر.",
+            "ادخل الفولدر وشغّل السيرفر يسمع على كل الكروت."
+          ]
+        },
+        {
           cmd: "npm publish",
           title: "انشر مكتبة",
           desc: "لو عملت حاجة بتتكرر بين مشاريعك، انشرها كباكدج. [[@scope/name]] باسم حسابك. [[--dry-run]] يوريك إيه اللي هيترفع من غير ما يرفع، ودي مهمة عشان متعملش publish لـ .env.",
@@ -852,6 +1250,140 @@ npm version patch && npm publish`,
             "اعرض إيه اللي هيترفع.",
             "انشر، و public لازمة للـ scoped أول مرة.",
             "ارفع رقم patch (مع commit و tag) وانشر."
+          ]
+        }
+      ]
+    },
+    {
+      t: "Prisma في مشروع Node",
+      l: 3,
+      n: "الكلاينت المتولّد، والـ migrations وقت التشغيل، وليه db push مكانه جهازك بس (تفاصيل migrate في تاب PostgreSQL)",
+      items: [
+        {
+          cmd: "prisma generate",
+          title: "الكلاينت اللي بيتولّد من الـ schema",
+          desc: R`الكود اللي بتكتب بيه [[prisma.user.findMany()]] مش مكتوب في المكتبة، ده بيتولّد من [[schema.prisma]] بأمر [[prisma generate]]. عدّلت الـ schema أو سطّبت من الأول؟ generate تاني، وإلا الكود بيشتغل بأنواع قديمة أو بيقع بـ [[did not initialize yet]].
+
+وgenerate مش محتاج يتصل بالقاعدة، فمفيش داعي تدّي الـ build أي سر.`,
+          example: R`npx prisma validate
+npx prisma format
+npx prisma generate
+pnpm exec prisma generate
+npm pkg set scripts.postinstall="prisma generate"`,
+          try: "ضيف حقل جديد في model في schema.prisma، وجرّب تستخدمه في الكود قبل generate وشوف خطأ الأنواع، وبعدين generate وشوفه اختفى.",
+          deep: {
+            why: "Prisma بيديك أنواع مظبوطة لكل جدول وعمود، والتمن إن الكود ده لازم يتولّد. أغلب أخطاء Prisma الغريبة بعد pull أو في Docker سببها generate متعملش، أو اتعمل على schema قديمة.",
+            how: R`[[validate]] بيتأكد إن الـ schema سليمة، و [[format]] بينسّقها. [[generate]] بيقرا الـ schema ويكتب كود الكلاينت: في Prisma 7 بالـ generator الجديد [[prisma-client]] بيتكتب في فولدر انت محدده بـ [[output]] (زي src/generated/prisma) وبتستورد منه، وفي النسخ القديمة كان بيتكتب جوه [[node_modules/.prisma/client]].
+
+إمتى تشغّله: بعد أي تعديل في الـ schema، وبعد تسطيب من الصفر (CI و Docker)، وقبل [[next build]] أو [[tsc]]. ومن Prisma 7 [[migrate dev]] مبقاش بيعمله لوحده.
+
+[[postinstall]] بيخليه يتعمل بعد كل install لوحده، ودي أسهل طريقة تضمن إن محدش ينساه. في Dockerfile: [[RUN npx prisma generate && npm run build]] في مرحلة الـ build.
+
+مع pnpm 10: لو Prisma محتاج سكربت تسطيب ومش متوافق عليه في approve-builds، الـ generate أو الـ engines ممكن يبقوا ناقصين.`,
+            when: "بعد كل تعديل في schema.prisma، وفي كل build نضيف.",
+            mistakes: R`في مشروع حقيقي كان الـ Dockerfile فيه [[ARG DATABASE_URL]] و [[ENV DATABASE_URL]] عشان generate يشتغل، والسر اتحفظ في طبقات الـ image. generate مش محتاج اتصال: شيلهم، ولو prisma.config.ts بيطلب المتغير حط قيمة وهمية في الـ build بس، والحقيقي وقت التشغيل. وغلطة تانية: الفولدر المتولّد داخل Git، فكل واحد في الفريق عنده نسخة مختلفة شوية.`
+          },
+          lines: [
+            "اتأكد إن الـ schema سليمة.",
+            "نسّقها.",
+            "ولّد الكلاينت من الـ schema.",
+            "نفس الحاجة في مشروع pnpm.",
+            "خليه يتولّد لوحده بعد كل install."
+          ]
+        },
+        {
+          cmd: "prisma db push",
+          title: "مزامنة الـ schema من غير migrations، وليه خطر",
+          desc: R`[[db push]] بيقارن الـ schema بالقاعدة ويعدّلها على طول: من غير ملف migration ولا تاريخ. ممتاز وانت بتجرّب شكل الجداول على جهازك. و [[--accept-data-loss]] بيوافق مقدمًا على أي تغيير بيمسح داتا، من غير ما يسألك.
+
+الاتنين مكانهم جهاز التطوير. الإنتاج بياخد [[migrate deploy]] بس.`,
+          example: R`npx prisma db push
+npx prisma db push --accept-data-loss
+# الغلطة: أمر تشغيل الـ container في الإنتاج
+# command: sh -c "npx prisma db push --accept-data-loss && node src/server.js"
+# الصح:
+# command: sh -c "npx prisma migrate deploy && node src/server.js"`,
+          try: "على قاعدة تجربة: اعمل model فيه عمود name وضيف كام صف، وغيّر اسمه لـ fullName، وشغّل db push واقرا التحذير. بعدها جرّب بـ --accept-data-loss وشوف الداتا راحت فين.",
+          flag: "danger",
+          deep: {
+            why: "db push مريح جدًا: تعدّل الـ schema، أمر واحد، والقاعدة زيها. عشان كده بيتسرّب لسكربتات التشغيل. وهناك بيبقى قنبلة: أول تعديل بيمسح عمود، بيمسح داتا العملاء مع أول deploy.",
+            how: R`db push مبيعرفش نيتك. لو غيّرت اسم عمود من [[name]] لـ [[fullName]]، هو شايف عمود اتشال وعمود جديد اتضاف، فبيعمل DROP للقديم و ADD للجديد، والداتا بتروح. نفس الحاجة لو غيّرت نوع عمود بطريقة مش متوافقة.
+
+من غير الفلاج: لو فيه خسارة داتا، بيوقف ويسأل. وفي container مفيش حد يجاوب، فبيفشل والـ deploy يقف، ودي بالظبط الحماية. الفلاج بيشيلها.
+
+[[migrate deploy]] مختلف: بيطبّق ملفات SQL اتكتبت واتراجعت واتعملها commit، بالترتيب، وبيسجّل اللي اتطبق. محدش بيولّد حاجة وقت الـ deploy.
+
+لو القاعدة اتعملت بـ db push وعايز تنقل لـ migrations: ولّد migration أولى من الـ schema بـ [[prisma migrate diff --from-empty --to-schema prisma/schema.prisma --script]] في [[prisma/migrations/0_init/migration.sql]]، وعلّمها متطبقة بـ [[prisma migrate resolve --applied 0_init]]. التفاصيل في تاب PostgreSQL.`,
+            when: "db push على جهازك وانت لسه بتصمم الجداول، أو قاعدة تجربة بتترمي. مش على أي قاعدة فيها داتا حد محتاجها.",
+            mistakes: R`في مشروع حقيقي كان أمر تشغيل الـ backend في docker-compose: [[npx prisma db push --accept-data-loss && node src/server.js]]. يعني مع كل restart أو deploy، أي تغيير في الـ schema بيتطبق فورًا ومن غير سؤال، ولو فيه rename لعمود الداتا بتتمسح. والصح migrate deploy في نفس المكان. وقريب منه [[prisma migrate reset]]: بيمسح القاعدة كلها ويعيد بناها، فاتأكد إن DATABASE_URL مش بيشاور على الإنتاج قبل ما تشغّله.`
+          },
+          lines: [
+            "طابق القاعدة مع الـ schema، ويسأل لو فيه مسح.",
+            "نفسه، ويوافق على المسح من غير سؤال (تجربة بس)."
+          ]
+        },
+        {
+          cmd: "migrate deploy قبل السيرفر",
+          title: "فين تشغّل الـ migrations في الإنتاج",
+          desc: R`[[prisma migrate deploy]] لازم يتشغّل قبل الكود الجديد ما يقوم، وإلا الكود يطلب عمود لسه مش موجود. يا إما خطوة في الـ deploy قبل ما تشغّل التطبيق، يا إما أول سطر في الـ entrypoint.
+
+والمهم في الحالتين: لو الـ migration فشلت، السيرفر ميقومش.`,
+          example: R`npx prisma migrate status
+docker compose run --rm app npx prisma migrate deploy
+docker compose up -d app
+docker compose logs --tail 50 app
+# أو في entrypoint.sh:
+# npx prisma migrate deploy && exec node server.js`,
+          try: "في مشروع تجربة بـ compose: اعمل migration جديدة، وارفعها، وطبّقها بـ [[docker compose run --rm]] قبل [[up -d]]، وبعدين [[migrate status]] يقول كله متطبق.",
+          deep: {
+            why: "الكود والقاعدة لازم يتحركوا مع بعض. deploy الكود من غير migration = أخطاء في كل request. و migration بتفشل في صمت = نفس النتيجة، بس انت فاكر كله تمام.",
+            how: R`[[migrate status]] بيقولك إيه اللي لسه متطبقش، اقراه قبل أي deploy.
+
+الطريقة الأولى، خطوة منفصلة: [[docker compose run --rm app npx prisma migrate deploy]] بيشغّل container مؤقت من نفس الـ image، يطبّق ويخرج. لو فشل، الـ && في سكربت الـ deploy بتوقف قبل [[up -d]]، والنسخة القديمة لسه شغالة.
+
+الطريقة التانية، في الـ entrypoint: [[migrate deploy && exec node server.js]]. بسيطة، بس بتتشغّل مع كل restart، ومحتاجة Prisma CLI جوه image الإنتاج (وده مش موجود في standalone ولا مع omit=dev)، ولو عندك أكتر من نسخة من التطبيق الكل بيحاول مع بعض (Prisma بيقفل بـ lock فواحدة بس بتطبّق، بس الباقي بيستنى).
+
+[[exec]] بيخلي node ياخد مكان الشيل كـ PID 1، فيستلم SIGTERM من Docker ويقفل نضيف.`,
+            when: "كل deploy فيه migration جديدة. والخطوة المنفصلة أحسن أول ما يبقى عندك CI أو أكتر من نسخة.",
+            mistakes: R`في مشروع حقيقي كان الـ entrypoint: [[node scripts/auto-migrate.mjs || echo "schema sync skipped"]]. الـ [[|| echo]] بتبلع الفشل، فالسيرفر يقوم على schema قديمة وكل request يضرب error. ده غير إن السكربت كان بيشتغل مع كل تشغيل container بتوكن إدارة كامل للقاعدة، وكان فيه ملفين entrypoint واحد بيشاور على .js والتاني على .mjs. خليها [[&&]] من غير أي fallback.`
+          },
+          lines: [
+            "إيه اللي لسه متطبقش.",
+            "طبّق في container مؤقت من نفس الـ image، ويتمسح بعدها.",
+            "وبعد ما نجح بس، شغّل النسخة الجديدة.",
+            "اتأكد إنه قام من غير أخطاء قاعدة."
+          ]
+        },
+        {
+          cmd: "prisma db seed و studio",
+          title: "بيانات أولية وواجهة تتصفّح بيها القاعدة",
+          desc: R`[[db seed]] بيشغّل سكربت بيحط بيانات البداية: أدمن، وتصنيفات، وإعدادات. أمره بيتكتب مرة في الإعدادات وأي حد في الفريق يشغّله بنفس الشكل. و [[studio]] بيفتح واجهة ويب على [[localhost:5555]] تشوف وتعدّل فيها الداتا.
+
+الاتنين للتطوير. على السيرفر بحذر شديد، و studio عمره ما يتفتح للنت.`,
+          example: R`npx prisma db seed
+node --env-file=.env prisma/seed.js
+npx prisma studio
+npx prisma studio --port 5556 --browser none
+ssh -L 5555:localhost:5555 deploy@203.0.113.10`,
+          try: "اكتب seed بيعمل أدمن بـ upsert، وشغّله مرتين، واتأكد إن مفيش أدمن مكرر. وبعدين افتح studio وشوفه.",
+          deep: {
+            why: "كل واحد جديد في الفريق، وكل قاعدة تجربة بعد reset، محتاجة نفس البيانات الأولية. من غير seed كل واحد بيعملها بإيده وبشكل مختلف.",
+            how: R`أمر الـ seed بيتعرّف مرة: في Prisma 7 جوه [[prisma.config.ts]] تحت [[migrations.seed]] (زي [[node --env-file=.env prisma/seed.js]] أو [[tsx prisma/seed.ts]])، وفي النسخ القديمة في package.json تحت [[prisma.seed]]. و [[npx prisma db seed]] بينفّذه. ومتعتمدش إنه يتشغّل لوحده بعد migrate، شغّله صريح.
+
+وفي Prisma 7 مع prisma.config.ts ملف .env مش بيتقري لوحده، فيا [[import "dotenv/config"]] في أول الـ config، يا [[--env-file]] في أمر node.
+
+الـ seed لازم يبقى ينفع يتشغّل كذا مرة: [[upsert]] بدل [[create]]، عشان تشغيله تاني ميكررش ولا يقع على unique.
+
+[[studio]] سيرفر ويب صغير بيتصل بالقاعدة اللي في DATABASE_URL. [[--browser none]] ميفتحش متصفح (على سيرفر مثلًا). ولو محتاجه على سيرفر، شغّله هناك واوصله من جهازك بـ SSH tunnel زي آخر سطر، ومتفتحش البورت في الفايروول.`,
+            when: "seed بعد أي reset وفي أول تشغيل للمشروع. studio لما تحب تبص على الداتا بسرعة من غير SQL.",
+            mistakes: "seed بـ create فالتشغيل التاني يقع أو يكرر. و studio شغال و .env فيه DATABASE_URL بتاع الإنتاج، فتعديل «تجربة» بيتكتب في داتا حقيقية."
+          },
+          lines: [
+            "شغّل أمر الـ seed المتعرّف في الإعدادات.",
+            "أو شغّل السكربت مباشرة وهو بيقرا .env.",
+            "افتح الواجهة على localhost:5555.",
+            "على بورت تاني ومن غير ما يفتح متصفح.",
+            "من جهازك: وصّل 5555 على السيرفر لجهازك عبر SSH بدل ما تفتحه للنت."
           ]
         }
       ]
@@ -1054,6 +1586,36 @@ curl -s localhost:4040/api/requests/http | jq '.requests[] | {uri, status: .resp
             "تابع اللوج لايف منسّق.",
             "لاقي دفعة بالـ id.",
             "من لوحة ngrok: كل الطلبات ومساراتها والرد اللي رجّعته."
+          ]
+        },
+        {
+          cmd: "webhook تيليجرام",
+          title: "سجّل عنوان البوت عند تيليجرام وتابعه",
+          desc: R`بوت تيليجرام يا بيسأل كل شوية عن رسايل جديدة (polling)، يا تيليجرام بيبعتله كل رسالة على URL (webhook). [[setWebhook]] بيسجّل الـ URL ومعاه [[secret_token]] بيرجع في header مع كل طلب، و [[getWebhookInfo]] بيقولك في رسايل متراكمة ولا لأ، وآخر خطأ حصل.`,
+          example: R`source .env
+curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" -d "url=https://example.com/telegram/webhook" -d "secret_token=$WEBHOOK_SECRET"
+curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getWebhookInfo" | jq .result
+curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/deleteWebhook?drop_pending_updates=true"`,
+          try: "اعمل بوت تجربة من BotFather، وسجّل له webhook على URL من ngrok، وابعت له رسالة، وبعدين [[getWebhookInfo]] وشوف pending_update_count.",
+          deep: {
+            why: "البوت مبيردش، ومش عارف المشكلة فين: الـ URL متسجّلش؟ تيليجرام بيبعت وسيرفرك بيرد بخطأ؟ الشهادة؟ getWebhookInfo بيجاوب في سطر.",
+            how: R`[[setWebhook]] بيقول لتيليجرام «ابعت كل update على الـ URL ده». الـ URL لازم HTTPS بشهادة سليمة، وعلى بورت من 443 أو 80 أو 88 أو 8443 بس. في التطوير URL الـ tunnel بيمشي.
+
+[[secret_token]] قيمة انت بتختارها، وتيليجرام بيبعتها في header اسمه [[X-Telegram-Bot-Api-Secret-Token]] مع كل طلب. سيرفرك يقارنها ويرفض أي طلب من غيرها، نفس فكرة توقيع Paymob.
+
+[[getWebhookInfo]] فيه: [[url]] المتسجّل، و [[pending_update_count]] عدد الرسايل اللي مستنية (لو بيزيد، سيرفرك مش بيرد 200)، و [[last_error_message]] و [[last_error_date]] آخر مرة فشل وليه.
+
+الـ webhook والـ polling ميشتغلوش مع بعض: طول ما فيه webhook، [[getUpdates]] بيرجع خطأ 409. [[deleteWebhook]] بيرجّعك للـ polling، و [[drop_pending_updates]] بيرمي الرسايل المتراكمة عشان البوت ميردش على رسايل من إمبارح.
+
+[[source .env]] عشان التوكن ميتكتبش في الأمر نفسه ويفضل في الـ history.`,
+            when: "بعد كل deploy بيغيّر الدومين أو المسار. وأول حاجة لما البوت يسكت.",
+            mistakes: "تسجّل URL الـ tunnel وتقفل الترمنال، فتيليجرام يفضل يبعت لعنوان ميت والرسايل تتراكم. وتشغّل نسخة polling على جهازك والـ webhook متسجّل للسيرفر، فتاخد 409. وسيرفرك بيرد 500 على update معين، فتيليجرام يفضل يعيده ويوقف اللي وراه."
+          },
+          lines: [
+            "حمّل التوكن والسر من .env من غير ما تكتبهم في الأمر.",
+            "سجّل الـ URL والسر اللي هيرجع في header مع كل طلب.",
+            "الحالة: الـ URL، والرسايل المتراكمة، وآخر خطأ.",
+            "شيل الـ webhook (ارجع لـ polling) وارمي الرسايل القديمة."
           ]
         }
       ]

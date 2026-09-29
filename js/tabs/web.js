@@ -451,6 +451,33 @@ Service Workers مشكلة شائعة: ممكن يعرض نسخة قديمة ح�
             when: "لما الـ caching بيسبب مشاكل في التطوير. لما تختبر first-time user experience.",
             mistakes: "تعمل Hard Reload وتفتكر إنه بيمسح localStorage والـ cookies. هو بس بيتخطى الـ HTTP cache للتحميل ده، ومش بيلمس الكوكيز ولا التخزين."
           }
+        },
+        {
+          cmd: "سيرفر محلي بدل file://",
+          title: "الصفحة بتفتح بالدبل كليك بس الـ service worker والـ fetch لأ",
+          desc: R`لما تفتح index.html بدبل كليك، العنوان بيبدأ بـ [[file://]]، والمتصفح بيمنع حاجات كتير هناك: service worker، و [[fetch]] لملف JSON جنبها، و [[<script type="module">]]. شغّل سيرفر static صغير في الفولدر وافتح [[http://localhost]]: [[localhost]] المتصفح بيعامله كأنه آمن زي https.`,
+          example: R`cd files
+python -m http.server 8791 --bind 127.0.0.1
+npx serve . -l 8791`,
+          try: "افتح مشروع PWA بدبل كليك وشوف الأخطاء في Console، وبعدين من [[http://localhost:8791]] وادخل Application ثم Service workers: هتلاقيه activated.",
+          flag: "term",
+          deep: {
+            why: "الكود سليم بس «مش شغال»، والأخطاء في Console شكلها CORS أو «Failed to register a ServiceWorker». بتضيع وقت في الكود والمشكلة إن الصفحة مش جاية من سيرفر.",
+            how: R`[[file://]] ملوش origin حقيقي (المتصفح بيعتبره [[null]])، فـ [[fetch('data.json')]] بيتمنع بـ CORS، والـ modules مبتتحمّلش. والـ service worker محتاج «secure context»: https، أو [[localhost]] و [[127.0.0.1]] بالاستثناء.
+
+[[python -m http.server 8791]]: سيرفر static للفولدر الحالي على بورت 8791، جاي مع Python من غير تسطيب. [[--bind 127.0.0.1]] مهمة: من غيرها بيسمع على كل الشبكات، وأي حد على نفس الواي فاي يقدر يفتح ملفاتك. على ويندوز لو [[python]] مش شغال جرّب [[py]].
+
+[[npx serve . -l 8791]]: نفس الفكرة من Node. بيضيف ميزات زي إن [[/about]] يفتح [[about.html]].
+
+بعد ما تعدّل في [[sw.js]]، المتصفح ممكن يفضل على الـ worker القديم. في Application ثم Service workers فعّل Update on reload وانت بتطوّر. وخلي بالك: لو الـ worker بيستخدم cache-first لكل حاجة، أي تعديل مش هيوصل للزوار غير لما تغيّر اسم الكاش.`,
+            when: "أي صفحة فيها service worker أو PWA أو fetch لملفات محلية أو ES modules.",
+            mistakes: "في مشروع حقيقي sw.js كان cache-first لكل الملفات، فتعديلات index.html مبتوصلش للزوار غير بتغيير اسم الكاش، والأيقونات اللي في الـ manifest مكنتش موجودة فالـ Console مليان 404. وسيرفر التجربة من غير [[--bind 127.0.0.1]] على شبكة عامة."
+          },
+          lines: [
+            "ادخل فولدر الموقع.",
+            "سيرفر static على بورت 8791، لجهازك بس.",
+            "أو نفس الحاجة بـ Node من غير Python."
+          ]
         }
       ]
     },
@@ -684,6 +711,37 @@ Override headers بيخليك تعدّل response headers، مفيد تجرّب 
             when: "تجرّب bug fix على الموقع قبل PR. تتحقق من إن تصليح معين بيحل المشكلة.",
             mistakes: "تنسى Overrides شغال وتتساءل ليه التعديلات اللي بترفعها مش بتظهر."
           }
+        },
+        {
+          cmd: "playwright screenshot",
+          title: "صور الصفحة بكل المقاسات من الترمنال",
+          desc: "بدل ما تغيّر حجم المتصفح بإيدك بعد كل تعديل، أمر واحد بياخد screenshot للصفحة بمقاس ديسكتوب وموبايل، وبالوضع الداكن، والصفحة كاملة لآخرها. تحطهم جنب بعض وتقارن قبل وبعد.",
+          example: R`npx playwright install chromium
+npx playwright screenshot --viewport-size "1440,900" http://localhost:8791 desktop.png
+npx playwright screenshot --viewport-size "390,844" --full-page http://localhost:8791 mobile.png
+npx playwright screenshot --device "iPhone 13" --color-scheme dark --wait-for-timeout 1000 http://localhost:8791 iphone-dark.png`,
+          try: "صوّر صفحتك بالأربع أوامر قبل تعديل CSS وبعده، وافتح الصور جنب بعض.",
+          flag: "term",
+          deep: {
+            why: "تعديل صغير في CSS ممكن يكسر الموبايل وانت شغال على الديسكتوب. الصور بتخليك تشوف كل المقاسات في نظرة، وتقدر تحطها في PR أو تبعتها للعميل.",
+            how: R`[[playwright install chromium]]: ينزّل المتصفح اللي Playwright بيستخدمه (مرة واحدة).
+
+[[screenshot URL file.png]]: يفتح الصفحة ويصوّرها. [[--viewport-size "390,844"]]: عرض وطول الشاشة (390 عرض موبايل شائع). [[--full-page]]: الصفحة كلها لآخرها مش الجزء الظاهر بس.
+
+[[--device "iPhone 13"]]: مقاس الجهاز وكثافة البكسل والـ user agent واللمس، زي Device Toolbar في DevTools. [[--color-scheme dark]]: يختبر [[prefers-color-scheme: dark]]. [[--wait-for-timeout 1000]]: استنى ثانية بعد التحميل عشان الخطوط والأنيميشن يخلصوا.
+
+من غير Playwright، Chrome نفسه بيعمل ده: [[chrome --headless --screenshot=out.png --window-size=390,844 URL]] (على ويندوز المسار الكامل لـ chrome.exe).
+
+والخطوة الجاية: اختبار visual regression في Playwright Test ([[toHaveScreenshot]]) بيقارن الصور لوحده ويفشل لو حاجة اتغيرت.`,
+            when: "بعد أي تعديل في التصميم، وقبل ما تبعت PR فيه CSS.",
+            mistakes: "تصوّر قبل ما الخطوط تحمّل فالصورة بخط مختلف. وتسيب عشرات الصور في فولدر المشروع وتترفع على Git، حطهم في فولدر لوحده في [[.gitignore]]."
+          },
+          lines: [
+            "نزّل Chromium بتاع Playwright (مرة واحدة).",
+            "ديسكتوب ١٤٤٠ في ٩٠٠.",
+            "موبايل ٣٩٠ عرض، والصفحة كاملة.",
+            "آيفون بالوضع الداكن، بعد ثانية من التحميل."
+          ]
         },
         {
           cmd: "Command Menu",

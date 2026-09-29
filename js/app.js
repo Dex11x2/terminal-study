@@ -26,7 +26,7 @@ function termHTML(code, shell, script, label, prOverride){
 
 let shell = 'bash';
 const lvInfo = l => (LEVEL_TAB[shell] && LEVEL_TAB[shell][l]) || LEVEL_INFO[l];
-const LESSON_TABS = ['start','web','sec','glossary'];
+const LESSON_TABS = ['start','web','sec','glossary','real'];
 function countLabel(n){
   const lesson = LESSON_TABS.includes(shell);
   if (shell==='glossary') return n + ' مصطلح';

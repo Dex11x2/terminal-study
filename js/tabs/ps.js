@@ -718,6 +718,105 @@ ii .`,
           ]
         },
         {
+          cmd: "& (call operator)",
+          title: "شغّل برنامج مساره في متغير أو فيه مسافات",
+          desc: R`مسار بين علامات تنصيص في أول السطر PowerShell بيعتبره نص مش أمر، فبيطبعه أو يطلع error. [[&]] قبله بيقول «شغّل ده»: [[& "C:\Program Files\nodejs\node.exe" --version]]. ونفس الحكاية لو المسار في متغير: [[& $chrome ...]]. والـ arguments ممكن تبقى array تتبني في السكربت وتتبعت مرة واحدة.`,
+          example: R`$node = "C:\Program Files\nodejs\node.exe"
+"C:\Program Files\nodejs\node.exe" --version
+& "C:\Program Files\nodejs\node.exe" --version
+& $node --version
+$chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+$chromeArgs = @("--headless=new", "--screenshot=$env:TEMP\page.png", "http://localhost:3000")
+& $chrome $chromeArgs`,
+          try: R`اكتب [["C:\Program Files\nodejs\node.exe" --version]] وشوف الـ error، وبعدين حط [[&]] قبلها.`,
+          deep: {
+            why: "أي برنامج في [[C:\\Program Files]] مساره فيه مسافة، فلازم يتحط بين علامات تنصيص. بس في PowerShell أي حاجة بين علامات تنصيص في أول السطر بتبقى نص مش أمر، فبيطلعلك error غريب أو المسار يتطبع وخلاص.",
+            how: R`PowerShell بيبص على أول حاجة في السطر: لو كلمة عادية ([[node]]، [[git]]) بيدوّر عليها كأمر. لو string أو متغير، بيعتبره قيمة ويطبعها. فالمسار بين علامات تنصيص لوحده بيطبع المسار، ولو بعده arguments بيطلع [[Unexpected token]].
+
+[[&]] (اسمه call operator) بيقول «القيمة اللي بعدي دي اسم أمر أو مسار برنامج، شغّله»، وأي حاجة بعده بتتبعت له كـ arguments.
+
+ولما تحط array بعده، كل عنصر بيتبعت argument لوحده، والعنصر اللي فيه مسافات بيتحط بين علامات تنصيص أوتوماتيك. فتقدر تبني الـ arguments خطوة خطوة (تزوّد فلاج بشرط مثلًا) وتبعتهم مرة واحدة.
+
+والفرق بينه وبين [[Start-Process]]: [[&]] بيشغّل البرنامج في نفس النافذة، والناتج بيطلع قدامك، و [[$LASTEXITCODE]] بيتملى. [[Start-Process]] بيشغّله كبروسس منفصل، ومحتاج [[-Wait]] عشان تستناه.
+
+وخلي بالك: برامج GUI زي Chrome، [[&]] ممكن ميستناهاش تخلص، فالسكربت يكمّل قبل ما الصورة تتعمل. في الحالة دي [[Start-Process -Wait]] أضمن (الدرس اللي بعده).`,
+            when: "أي برنامج مش في الـ PATH ومساره فيه مسافات، أو مساره بيتحدد في السكربت (تدوّر عليه في أكتر من مكان).",
+            mistakes: R`في مشروع حقيقي كان سكربت التصوير بيشغّل Chrome بـ [[&]] وبعدين [[Start-Sleep -Seconds 2]] ويتمنى الصورة تكون خلصت. وكان مسمّي الـ array [[$args]]، ودي متغير محجوز في PowerShell (فيه الـ arguments اللي اتبعتت للسكربت)، فاستخدم اسم زي [[$chromeArgs]]. وكتابة الـ arguments كلها string واحد ([[& $chrome "--headless --screenshot=x"]]) بتوصل للبرنامج argument واحد طويل.`
+          },
+          lines: [
+            "مسار node في متغير.",
+            "من غير [[&]]: PowerShell شايف نص وبعده كلام مش مفهوم، فيطلع error.",
+            "بـ [[&]]: شغّل البرنامج اللي في المسار ده.",
+            "نفس الحاجة من متغير.",
+            "مسار Chrome.",
+            "array فيها الـ arguments، كل واحد عنصر لوحده.",
+            "شغّل Chrome وابعتله كل عناصر الـ array كـ arguments منفصلة."
+          ]
+        },
+        {
+          cmd: "screenshots.ps1",
+          title: "صوّر صفحات موقعك بـ Chrome من غير أي مكتبة",
+          desc: R`Chrome نفسه يقدر يصوّر صفحة من غير ما يفتح نافذة: [[--headless=new --screenshot=file.png --window-size=1440,900]]. لوب على لستة صفحات بمقاسات مختلفة، و [[Start-Process -Wait]] يستنى كل صورة تخلص، و [[--virtual-time-budget]] يدّي الصفحة وقت تحمّل الـ JavaScript والخطوط.`,
+          example: R`$outDir = Join-Path $env:TEMP "shots"
+New-Item -ItemType Directory -Force $outDir | Out-Null
+$chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+if (-not (Test-Path $chrome)) { $chrome = "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" }
+
+$pages = @(
+  @{ file = "home.png";    url = "http://localhost:3000/";        w = 1440; h = 900 },
+  @{ file = "home-m.png";  url = "http://localhost:3000/";        w = 390;  h = 844 },
+  @{ file = "contact.png"; url = "http://localhost:3000/contact"; w = 1440; h = 1000 }
+)
+
+foreach ($p in $pages) {
+  $out = Join-Path $outDir $p.file
+  Remove-Item $out -ErrorAction SilentlyContinue
+  $chromeArgs = @("--headless=new", "--disable-gpu", "--hide-scrollbars",
+    "--user-data-dir=$env:TEMP\shot-profile", "--window-size=$($p.w),$($p.h)",
+    "--virtual-time-budget=4000", "--screenshot=$out", $p.url)
+  Start-Process $chrome -ArgumentList $chromeArgs -Wait
+  if (Test-Path $out) { Write-Host "OK   $($p.file)" } else { Write-Host "FAIL $($p.file)" -ForegroundColor Red }
+}
+ii $outDir`,
+          try: "شغّل موقعك محليًا، وغيّر اللستة لصفحاتك، وقارن صورة اللابتوب بصورة الموبايل.",
+          flag: "script",
+          deep: {
+            why: "عايز صور لصفحات موقعك: للـ README، أو تبعتها لعميل، أو تتأكد إن شكل الموبايل مش بايظ قبل الرفع. Playwright و Puppeteer بيسطّبوا متصفح كامل ومكتبات، و Chrome اللي على جهازك أصلًا بيعمل ده بفلاجات.",
+            how: R`[[--headless=new]] بيشغّل Chrome من غير نافذة (و [[new]] هي النسخة اللي بترسم الصفحة زي Chrome العادي بالظبط). و [[--screenshot=path]] بيصوّر ويقفل. و [[--window-size]] مقاس الشاشة، فـ 390 في 844 تقريبًا مقاس موبايل.
+
+[[--virtual-time-budget=4000]] بيدّي الصفحة ٤ ثواني «افتراضية» تحمّل فيها الـ JavaScript والصور والخطوط قبل التصوير، ومن غيره ممكن تتصوّر فاضية أو نصها. و [[--user-data-dir]] بروفايل منفصل، عشان لو Chrome بتاعك مفتوح ميحصلش تعارض ومتتأثرش إعداداتك.
+
+اللستة array من hashtables: كل [[@{ }]] فيه اسم الملف واللينك والمقاس، والـ [[foreach]] بيلف عليهم. فإضافة صفحة سطر واحد.
+
+[[Remove-Item]] للصورة القديمة قبل التصوير مهم: من غيره، لو التصوير فشل، [[Test-Path]] هيلاقي الصورة القديمة ويقولك OK.
+
+[[Start-Process -Wait]] بيستنى Chrome يقفل قبل ما يكمّل، فالفحص بعده دقيق. وفي الآخر [[ii]] بيفتح فولدر الصور.`,
+            when: "قبل ما ترفع تعديل في التصميم، أو تعمل صور للـ README أو لعرض، أو تقارن شكل صفحة قبل وبعد تعديل.",
+            mistakes: R`في مشروع حقيقي السكربت كان فيه مسارات كاملة فيها اسم اليوزر على الجهاز، فمش هيشتغل عند حد تاني، و [[$env:TEMP]] بتحل ده. وكان بيسمّي الـ array [[$args]] وده متغير محجوز. ومكانش بيمسح الصورة القديمة، فالـ OK كان ممكن يكذب. وخلي بالك إن [[-ArgumentList]] في PowerShell 5.1 بيلزق العناصر بمسافات من غير علامات تنصيص، فأي مسار فيه مسافة (زي اسم يوزر فيه مسافة) لازم تحطله علامات تنصيص بنفسك جوه العنصر.`
+          },
+          lines: [
+            "فولدر الصور في الـ TEMP بدل مسار ثابت من جهازك.",
+            "اعمله لو مش موجود، و [[Out-Null]] يخفي الناتج.",
+            "مكان Chrome المعتاد.",
+            "لو مش هناك، جرّب مكان نسخة الـ 32 بت.",
+            "لستة الصفحات، كل واحدة hashtable.",
+            "الرئيسية بمقاس لابتوب.",
+            "نفس الصفحة بمقاس موبايل.",
+            "صفحة التواصل.",
+            "قفلة اللستة.",
+            "لكل صفحة...",
+            "مسار الصورة.",
+            "امسح الصورة القديمة لو موجودة، عشان الفحص بعدين ميتخدعش.",
+            "arguments الـ Chrome: من غير نافذة، ومن غير GPU، ومن غير scrollbar...",
+            "...وبروفايل منفصل، والمقاس من الـ hashtable...",
+            "...و ٤ ثواني تحميل، ومكان الصورة، واللينك.",
+            "شغّل Chrome واستنى لحد ما يخلص.",
+            "الصورة اتعملت؟ اطبع OK، أو FAIL بالأحمر.",
+            "آخر اللوب.",
+            "افتح فولدر الصور في Explorer."
+          ]
+        },
+        {
           cmd: "Get-Service",
           title: "خدمات ويندوز",
           desc: "Start/Stop/Restart-Service محتاجين أدمن.",
@@ -1379,6 +1478,108 @@ PowerShell فيه نوعين errors: Terminating (بيوقف) وNon-Terminating 
           ]
         },
         {
+          cmd: "$LASTEXITCODE",
+          title: "اعرف إن docker أو npm فشل جوه PowerShell",
+          desc: R`[[$ErrorActionPreference = "Stop"]] و try/catch مبيمسكوش فشل البرامج الخارجية (docker، npm، git) في Windows PowerShell 5.1، لأنها مش بترمي exception، بترجع exit code بس. فبعد كل أمر خارجي مهم افحص [[$LASTEXITCODE]]. وفي PowerShell 7.4+ [[$PSNativeCommandUseErrorActionPreference = $true]] بيخلي الفشل ده يوقف السكربت لوحده.`,
+          example: R`$ErrorActionPreference = "Stop"
+function Assert-Ok($what) { if ($LASTEXITCODE -ne 0) { throw "$what failed (exit $LASTEXITCODE)" } }
+
+docker info *> $null;            Assert-Ok "Docker Desktop"
+docker compose build --no-cache; Assert-Ok "compose build"
+npm run build;                   Assert-Ok "npm build"
+# PowerShell 7.4+ بس:
+$PSNativeCommandUseErrorActionPreference = $true`,
+          try: R`في فولدر مفيهوش package.json شغّل [[try { npm run build } catch { "caught" }]]، ولاحظ إن caught متطبعتش، وبعدين اطبع [[$LASTEXITCODE]].`,
+          flag: "script",
+          deep: {
+            why: R`كتبت سكربت ديبلوي بـ PowerShell، وحطيت [[$ErrorActionPreference = "Stop"]] وكل حاجة جوه try/catch، وفاكر إنه هيقف لو حاجة فشلت. الـ build بتاع docker يفشل، والسكربت يكمّل عادي ويعمل up بالصورة القديمة ويطبع «Done».`,
+            how: R`PowerShell فيه نوعين أوامر: cmdlets (زي [[Copy-Item]]) بترمي errors كـ objects، ودي اللي [[$ErrorActionPreference]] و try/catch بيتعاملوا معاها. والبرامج الخارجية (أي exe: docker، git، npm، node) مبيعرفوش حاجة عن PowerShell، كل اللي بيرجعوه رقم exit code زي في bash.
+
+PowerShell بيحفظ الرقم ده في [[$LASTEXITCODE]] بعد كل برنامج خارجي: 0 نجح، وأي حاجة تانية فشل. و [[$?]] في PowerShell مش زي bash: ده true أو false، وفي 5.1 ممكن يبقى false لمجرد إن البرنامج كتب على stderr.
+
+فالحل الآمن: بعد كل أمر خارجي مهم افحص الرقم. والفانكشن [[Assert-Ok]] بتختصر ده لسطر: لو الرقم مش صفر ترمي exception، ومع Stop السكربت يقف (أو يروح للـ catch لو فيه).
+
+و [[*> $null]] بيرمي كل الـ output (العادي والأخطاء)، فتفحص «Docker شغال؟» من غير ما يطبعلك صفحة معلومات.
+
+وفي PowerShell 7.4 وأحدث، المتغير [[$PSNativeCommandUseErrorActionPreference]] بيخلي أي برنامج خارجي يرجع غير صفر يتعامل كـ error، فـ Stop يوقف عليه لوحده. بس ده مش موجود في Windows PowerShell 5.1 اللي جاي مع ويندوز.`,
+            when: "أي سكربت بيشغّل docker أو npm أو git أو dotnet وبيعتمد إن الخطوة اللي قبلها نجحت.",
+            mistakes: R`في مشروع حقيقي كان سكربت deploy.ps1 معتمد على try/catch يمسك فشل docker، ومفيش ولا فحص لـ [[$LASTEXITCODE]]، فالـ build يفشل والسكربت يكمّل. وفي مشروع تاني [[$ErrorActionPreference = "Stop"]] كان موجود، والسكربت برضه مكانش بيقف لو npm فشل. وخلي بالك: [[$LASTEXITCODE]] بيتغيّر مع كل برنامج خارجي، فافحصه على طول بعد الأمر، مش بعد ما تشغّل حاجة تانية.`
+          },
+          lines: [
+            "أي error من cmdlet يوقف السكربت.",
+            "فانكشن: لو آخر برنامج خارجي رجع غير صفر، ارمي exception باسم الخطوة.",
+            "Docker شغال؟ [[*> $null]] يرمي كل الناتج، وبعدين افحص.",
+            "ابني الصور وافحص.",
+            "ابني الفرونت وافحص.",
+            "في PowerShell 7.4+ بس: خلّي فشل أي برنامج خارجي يوقف السكربت لوحده."
+          ]
+        },
+        {
+          cmd: "$PSScriptRoot",
+          title: "شغّل السكربت من فولدره مهما اتفتح منين",
+          desc: R`[[$PSScriptRoot]] مسار الفولدر اللي فيه السكربت نفسه. [[Set-Location $PSScriptRoot]] في أول السكربت بيخلي المسارات النسبية تشتغل مهما كان الترمنال واقف فين، و [[Join-Path $PSScriptRoot ...]] أحسن من مسار ثابت من جهازك. زي [[%~dp0]] في bat و [[dirname "$0"]] في bash.`,
+          example: R`Set-Location $PSScriptRoot
+$dist = Join-Path $PSScriptRoot "frontend\dist"
+Write-Host "Script file: $PSCommandPath"
+Write-Host "Working in:  $(Get-Location)"
+if (-not (Test-Path $dist)) { npm run build }`,
+          try: R`اعمل where.ps1 فيه [[Write-Host $PSScriptRoot (Get-Location)]]، وشغّله مرة من فولدره ومرة من [[C:\]] بالمسار الكامل، وقارن.`,
+          flag: "script",
+          deep: {
+            why: "السكربت شغال تمام لما تشغّله من فولدر المشروع. تدوس عليه كليك يمين «Run with PowerShell»، أو زميلك يشغّله من فولدر تاني، يطلع [[Cannot find path]] لأن المسار النسبي بقى بيدوّر في مكان تاني.",
+            how: R`المسار النسبي زي [[.\dist]] بيتحسب من «الفولدر الحالي» بتاع الجلسة، مش من مكان السكربت. والفولدر الحالي ده ممكن يبقى أي حاجة: فولدرك الشخصي لو شغّلته بكليك يمين، أو المكان اللي الترمنال كان فيه.
+
+[[$PSScriptRoot]] متغير أوتوماتيك بيتملى جوه أي ملف ps1 بمسار الفولدر اللي الملف فيه. و [[$PSCommandPath]] المسار الكامل للملف نفسه.
+
+فعندك طريقتين: [[Set-Location $PSScriptRoot]] في أول سطر، فكل المسارات النسبية بعد كده تتحسب من فولدر السكربت. أو تبني كل مسار بـ [[Join-Path $PSScriptRoot "..."]] من غير ما تغيّر الفولدر الحالي، ودي أنضف لو السكربت هيتنادى من سكربت تاني.
+
+والمتغير ده فاضي لو كتبت الكود في الترمنال مباشرة، هو بيشتغل جوه ملف ps1 بس.`,
+            when: "أول سطر في أي سكربت بيستخدم مسارات نسبية، خصوصًا اللي بيتشغّل بالدبل كليك أو من Task Scheduler أو من CI.",
+            mistakes: R`في مشروع حقيقي كان سكربت الفحص فيه مسار مطلق ثابت لفولدر على جهاز صاحبه (ولمشروع تاني كمان، لأنه اتنسخ بين مشروعين)، فبيبوظ على أي جهاز غيره. وكان فيه سطر مكتوب فيه المسار لوحده من غير [[Set-Location]]، فـ PowerShell حاول ينفّذه كأمر ووقع. وخلي بالك إن [[Set-Location]] بيغيّر فولدر الجلسة نفسها لو السكربت اتشغّل بـ dot-source ([[. .\script.ps1]])، فاستخدم [[Push-Location]] و [[Pop-Location]] لو فارق معاك.`
+          },
+          lines: [
+            "ادخل فولدر السكربت نفسه، فالمسارات النسبية بعد كده تتحسب منه.",
+            "أو ابني مسار كامل من فولدر السكربت من غير ما تعتمد على الفولدر الحالي.",
+            "المسار الكامل لملف السكربت نفسه.",
+            "الفولدر الحالي، وهيبقى فولدر السكربت.",
+            "المسار النسبي بقى آمن: لو مفيش dist ابنيها."
+          ]
+        },
+        {
+          cmd: "cmd /c ... > log 2>&1",
+          title: "احفظ لوج برنامج خارجي في ملف مقروء",
+          desc: R`في Windows PowerShell 5.1، [[npm run dev *> log.txt]] بيطلع ملف UTF-16 (أدوات كتير تشوفه مسافات بين الحروف)، وكل سطر stderr بيتحوّل لـ NativeCommandError أحمر. الأنضف تسيب cmd يعمل التوجيه: [[cmd /c "npm run dev > log.txt 2>&1"]]. وفي PowerShell 7 [[2>&1 | Tee-Object]] شغال صح وبيكتب UTF-8.`,
+          example: R`# Windows PowerShell 5.1: ملف UTF-16 وسطور حمرا
+npm run dev *> dev-log.txt
+cmd /c "npm run dev > dev-log.txt 2>&1"
+npm run build 2>&1 | ForEach-Object { "$_" } | Out-File build-log.txt -Encoding utf8
+# PowerShell 7:
+npm run dev 2>&1 | Tee-Object -FilePath dev-log.txt
+Get-Content dev-log.txt -Wait -Tail 20`,
+          try: R`في PowerShell 5.1 شغّل [[npm run build *> a.txt]] و [[cmd /c "npm run build > b.txt 2>&1"]]، وافتح الملفين في Notepad وقارن، وبص على الترميز تحت على اليمين.`,
+          deep: {
+            why: "السيرفر المحلي بيطلع error وعايز تبعت اللوج لحد أو تدوّر فيه. تعمل [[> log.txt]] زي bash، تفتح الملف في أداة تانية تلاقيه مسافات بين كل حرف، أو مليان سطور [[NativeCommandError]] حمرا مش من البرنامج أصلًا.",
+            how: R`في Windows PowerShell 5.1، [[>]] و [[*>]] هم في الحقيقة [[Out-File]]، وده بيكتب UTF-16 افتراضيًا. VS Code بيفهمه، بس grep وأدوات كتير بتشوف بايت صفر بعد كل حرف.
+
+والمشكلة التانية: البرامج الخارجية بتكتب التحذيرات والـ progress على stderr (npm و git بيعملوا كده حتى لو مفيش أي خطأ). ولما تعمل [[2>&1]] في 5.1، PowerShell بيغلّف كل سطر stderr في ErrorRecord، فيطلع في الملف بـ [[NativeCommandError]] وأرقام سطور. والأسوأ: لو [[$ErrorActionPreference = "Stop"]]، أول سطر stderr يوقف السكربت كأنه error.
+
+[[cmd /c "..."]] بيسلّم السطر كله لـ cmd، و cmd بيوجّه البايتات للملف زي ما هي، من غير ما PowerShell يلمسها.
+
+ولو عايز تفضل في PowerShell، [[ForEach-Object { "$_" }]] بيحوّل كل سطر (عادي أو ErrorRecord) لنص عادي، و [[Out-File -Encoding utf8]] يكتبه UTF-8 (في 5.1 بـ BOM).
+
+وفي PowerShell 7 الحكاية اتصلحت: الافتراضي UTF-8 من غير BOM، و stderr بيتكتب نص عادي. فـ [[Tee-Object]] بيطبع قدامك ويكتب في الملف في نفس الوقت. و [[Get-Content -Wait]] من نافذة تانية بيتابع الملف وهو بيتكتب زي [[tail -f]].`,
+            when: "لوج dev server أو build عايز تبعته أو تحلله، أو سكربت CI على ويندوز بيحفظ الناتج.",
+            mistakes: R`في مشروع حقيقي كان فيه [[dev-log.txt]] متحفظ بالطريقة الأولى، وطالع UTF-16 ومليان رسايل حمرا من PowerShell نفسه مش من السيرفر. وغلطة تانية: [[2>&1]] مع [[$ErrorActionPreference = "Stop"]] في 5.1 بيوقف السكربت عند أول تحذير من npm. و [[Set-Content]] من غير [[-Encoding]] في 5.1 بيكتب ANSI، فالعربي يضيع.`
+          },
+          lines: [
+            "الطريقة اللي بتبوظ في 5.1: كل الـ streams لملف، بس الملف بيطلع UTF-16 والـ stderr متغلّف كأخطاء.",
+            "الأنضف: سيب cmd يعمل التوجيه، فالبايتات تتكتب زي ما البرنامج طلّعها.",
+            "لو عايز تفضل في PowerShell: حوّل كل سطر لنص عادي واكتبه UTF-8.",
+            "في PowerShell 7: اطبع على الشاشة واكتب في الملف في نفس الوقت، و UTF-8 من غير BOM.",
+            "من نافذة تانية: تابع آخر ٢٠ سطر والملف بيتكتب (زي [[tail -f]])."
+          ]
+        },
+        {
           cmd: "Write-Host والـ output",
           title: "الفرق اللي بيلخبط الناس",
           desc: "Write-Host بيعرض على الشاشة بس ومش بيدخل الـ pipe. أي قيمة لوحدها في سطر (أو Write-Output) هي الـ output الحقيقي اللي بيتبعت للأمر اللي بعده.",
@@ -1483,6 +1684,64 @@ Write-Host "Saved $zip" -ForegroundColor Green`,
             "المسار الكامل لملف الـ zip، و [[Join-Path]] بيحط الفاصل الصح.",
             "اضغط محتوى المصدر.",
             "اطبع النتيجة بالأخضر."
+          ]
+        },
+        {
+          cmd: "verify-stack.ps1",
+          title: "شغّل الـ stack واستنى لحد ما يبقى جاهز فعلًا",
+          desc: R`سكربت قبل ما تبدأ شغل: يتأكد إن Docker Desktop شغال وإن البورتات فاضية، وبعدين [[docker compose up -d --build --wait]] بيستنى لحد ما الخدمات تبقى healthy بدل [[Start-Sleep]]، ولو فشل يطبع حالة الخدمات وآخر اللوجات.`,
+          example: R`$ErrorActionPreference = "Stop"
+Set-Location $PSScriptRoot
+
+docker info *> $null
+if ($LASTEXITCODE -ne 0) { throw "Docker Desktop is not running" }
+
+foreach ($port in 3000, 8000, 5432) {
+    if (Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue) {
+        Write-Warning "Port $port is already in use"
+    }
+}
+
+docker compose up -d --build --wait --wait-timeout 120
+if ($LASTEXITCODE -ne 0) {
+    docker compose ps
+    docker compose logs --tail 50
+    throw "Stack did not become healthy"
+}
+docker compose ps
+Write-Host "Ready: http://localhost:8000" -ForegroundColor Green`,
+          try: "حطه جنب docker-compose.yml في مشروع عندك، وشغّله مرة و Docker Desktop مقفول ومرة وهو شغال.",
+          flag: "script",
+          deep: {
+            why: "كل يوم نفس الخطوات: تفتكر تشغّل Docker Desktop، تكتشف إن بورت 5432 ماسكه Postgres متسطب على الجهاز، تعمل up وتستنى وتعمل refresh لحد ما الـ API يرد. سكربت واحد بيعمل الفحوصات دي ويقولك جاهز إمتى بالظبط.",
+            how: R`[[docker info]] بيكلّم الـ Docker daemon، فلو Docker Desktop مقفول بيفشل. [[*> $null]] يرمي كل الناتج، والفحص على [[$LASTEXITCODE]] لأن docker برنامج خارجي.
+
+[[Get-NetTCPConnection -State Listen]] بيجيب البورتات اللي فيه برنامج سامع عليها فعلًا. من غير [[-State Listen]] هتلاقي اتصالات قديمة (TIME_WAIT) على نفس الرقم وتاخد تحذير كاذب.
+
+[[--wait]] بيخلي compose بعد ما يشغّل الخدمات يستنى لحد ما كلها تبقى running، واللي ليها [[healthcheck]] تبقى healthy. و [[--wait-timeout 120]] حد أقصى دقيقتين. لو خدمة وقعت أو فضلت unhealthy، compose يرجع exit code مش صفر. فبدل ما تخمّن بـ [[Start-Sleep 10]]، السكربت بيكمّل في اللحظة اللي الـ stack بقى جاهز فيها.
+
+ولو فشل، [[docker compose ps]] يوريك أنهي خدمة فيها المشكلة، و [[logs --tail 50]] آخر ٥٠ سطر من كل خدمة، فتعرف السبب من غير ما تدوّر.`,
+            when: "أول ما تفتح الجهاز تبدأ شغل على مشروع Docker، أو قبل ما تشغّل تيستات محتاجة الـ stack. و [[--wait]] نفسها مفيدة في أي سكربت ديبلوي أو CI.",
+            mistakes: R`في مشروع حقيقي السكربت الأصلي كان بيستخدم [[docker-compose]] القديم و [[Start-Sleep 10]] بدل [[--wait]]، وبيدوّر على فولدر dist مع إن الـ Dockerfile بيبنيه بنفسه، وكان بيستخدم [[Get-NetTCPConnection]] من غير [[-State Listen]] فيطلع تحذيرات كاذبة. و [[--wait]] من غير [[healthcheck]] في الخدمات بيستنى إنها تبقى running بس، مش إنها جاهزة ترد، فحط healthcheck للـ API وقاعدة البيانات. والإيموجي أو العربي في [[Write-Host]] بيطلع رموز غريبة في PowerShell 5.1 لو ملف الـ ps1 مش محفوظ «UTF-8 with BOM» (عكس ملفات bat اللي لازم تبقى من غير BOM).`
+          },
+          lines: [
+            "أي error من cmdlet يوقف السكربت.",
+            "اشتغل من فولدر السكربت، جنب docker-compose.yml.",
+            "Docker شغال؟ ارمي الناتج وافحص الـ exit code.",
+            "لو لأ، وقّف برسالة واضحة.",
+            "لكل بورت الـ stack محتاجه...",
+            "...لو فيه برنامج سامع عليه دلوقتي...",
+            "...حذّر (compose هيفشل يربط عليه).",
+            "قفلة.",
+            "قفلة.",
+            "ابني وشغّل، واستنى لحد ما كل حاجة تبقى healthy، بحد أقصى دقيقتين.",
+            "لو فشل...",
+            "...وريني حالة كل خدمة...",
+            "...وآخر ٥٠ سطر لوج من كل واحدة...",
+            "...ووقّف السكربت.",
+            "قفلة.",
+            "الحالة النهائية.",
+            "جاهز."
           ]
         }
       ]

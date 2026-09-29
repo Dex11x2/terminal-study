@@ -12,7 +12,7 @@
 
 TAB("wsl", {
   label: "WSL",
-  prompt: "hossam@PC:~$ ",
+  prompt: "you@PC:~$ ",
   lab: R`wsl --install
 wsl -l -v
 wsl`,
@@ -128,16 +128,16 @@ exit`,
           title: "/mnt/c والعكس",
           desc: R`ديسك C ظاهر جوه لينكس على [[/mnt/c]]، ولينكس ظاهر في ويندوز على [[\\wsl$\Ubuntu]] (أو [[\\wsl.localhost]]). و [[explorer.exe .]] بيفتح الفولدر الحالي في Explorer. الاتنين بيشوفوا بعض، بس السرعة بتفرق.`,
           example: R`ls /mnt/c/Users
-cd /mnt/c/Users/Hossam/Downloads
+cd /mnt/c/Users/you/Downloads
 explorer.exe .
-wslpath -u 'C:\Users\Hossam\Desktop'
+wslpath -u 'C:\Users\you\Desktop'
 wslpath -w ~/projects`,
           try: R`افتح Explorer واكتب في شريط العنوان [[\\wsl$]]: هتلاقي توزيعتك كفولدر.`,
           deep: {
             why: "مشروع قديم في Documents، وملف نزل في Downloads، وعايز تفتح فولدر لينكس في Explorer. الاتنين محتاجين يشوفوا بعض.",
-            how: R`WSL بيعمل mount لكل درايف ويندوز تحت [[/mnt]]: [[/mnt/c]] و [[/mnt/d]]. من هناك أي مسار ويندوز بمسار لينكس: [[C:\Users\Hossam]] هو [[/mnt/c/Users/Hossam]]. الحروف بحالتها (Users مش users).
+            how: R`WSL بيعمل mount لكل درايف ويندوز تحت [[/mnt]]: [[/mnt/c]] و [[/mnt/d]]. من هناك أي مسار ويندوز بمسار لينكس: [[C:\Users\you]] هو [[/mnt/c/Users/you]]. الحروف بحالتها (Users مش users).
 
-من ناحية ويندوز، نظام ملفات لينكس متاح كـ network share: [[\\wsl$\Ubuntu-24.04\home\hossam]] أو [[\\wsl.localhost\...]]. تقدر تفتحه في Explorer وتسحب ملفات، وبيظهر في شريط Explorer الجانبي كـ «Linux».
+من ناحية ويندوز، نظام ملفات لينكس متاح كـ network share: [[\\wsl$\Ubuntu-24.04\home\you]] أو [[\\wsl.localhost\...]]. تقدر تفتحه في Explorer وتسحب ملفات، وبيظهر في شريط Explorer الجانبي كـ «Linux».
 
 [[explorer.exe .]] بيفتح الفولدر الحالي (حتى لو جوه لينكس) في Explorer. وأي [[.exe]] بيشتغل من bash.
 
@@ -160,9 +160,9 @@ wslpath -w ~/projects`,
           title: "الأداء بيفرق ١٠ مرات",
           desc: "المشروع على [[/mnt/c]] بيشتغل، بس npm install و git status و hot reload أبطأ بكتير لأن كل ملف بيعدّي بين نظامين. المشروع جوه لينكس ([[~/projects]]) سريع زي الماك. الفرق مش تفصيلة.",
           example: R`mkdir -p ~/projects && cd ~/projects
-git clone git@github.com:Dex11x2/myapp.git
+git clone git@github.com:USER/myapp.git
 cd myapp && time npm ci
-cp -r /mnt/c/Users/Hossam/old-project ~/projects/
+cp -r /mnt/c/Users/you/old-project ~/projects/
 df -h ~ /mnt/c`,
           try: "انسخ مشروع فيه node_modules من /mnt/c لـ ~/projects وقيس [[time npm run build]] في الاتنين.",
           deep: {
@@ -306,7 +306,7 @@ networkingMode=mirrored
 [boot]
 systemd=true
 [user]
-default=hossam
+default=you
 [automount]
 options="metadata,umask=22,fmask=11"`,
           try: "حط .wslconfig بنص رام جهازك، و [[wsl --shutdown]]، وافتح واعمل [[free -h]].",

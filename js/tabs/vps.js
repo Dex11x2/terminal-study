@@ -19,7 +19,7 @@ multipass shell lab`,
   levels: {
     "1": ["البداية", "تدخل السيرفر، وتعرف مواصفاته، وتسطّب وتحدّث عليه"],
     "2": ["المتوسط", "تأمّنه، وتنشر عليه موقع بدومين و HTTPS"],
-    "3": ["المتقدم", "أتمتة وباك أب وصيانة، وفي الآخر التحدي الكبير"]
+    "3": ["المتقدم", "أتمتة وباك أب وصيانة، والاستضافة المشتركة، وفي الآخر التحدي الكبير"]
   },
   categories: [
     {
@@ -163,6 +163,36 @@ sudo apt autoremove`,
             "معلومات عن برنامج قبل ما تسطّبه.",
             "شيل برنامج.",
             "شيل الحاجات اللي اتسطبت معاه ومبقاش ليها لازمة."
+          ]
+        },
+        {
+          cmd: "NodeSource",
+          title: "نسخة Node حديثة بدل القديمة اللي في أوبونتو",
+          desc: "[[apt install nodejs]] من أوبونتو بيجيب نسخة قديمة غالبًا. NodeSource بيضيف مستودع فيه نسخ Node الرسمية، فتسطّب وتحدّث بـ apt عادي. نزّل السكربت في ملف واقراه قبل ما تشغّله بـ sudo، بدل ما تعمل [[curl | bash]] على عماها.",
+          example: R`curl -fsSL https://deb.nodesource.com/setup_24.x -o nodesource_setup.sh
+less nodesource_setup.sh
+sudo bash nodesource_setup.sh
+sudo apt install -y nodejs
+node -v && npm -v`,
+          try: "على سيرفر التجربة: [[apt-cache policy nodejs]] قبل وبعد الإضافة، وشوف النسخة المتاحة اتغيرت ومن أنهي مستودع.",
+          deep: {
+            why: "مكتبات كتير بتطلب Node حديث، والنسخة اللي جاية مع التوزيعة ممكن تكون متأخرة سنين. والنسخ القديمة بتخرج من الدعم وبطّلت تاخد تحديثات أمان.",
+            how: R`السكربت بيعمل ٣ حاجات: يضيف مفتاح توقيع NodeSource، ويضيف ملف مستودع في [[/etc/apt/sources.list.d/]] لنسخة معينة (هنا 24)، ويعمل [[apt update]]. بعدها [[apt install nodejs]] بيجيب من المستودع ده، و npm جاي معاه.
+
+وتحديثات النسخة نفسها (24.x) بتيجي مع [[apt upgrade]] العادي. للانتقال لنسخة كبيرة تانية، شغّل سكربت [[setup_26.x]] مثلًا.
+
+ليه [[less]] الأول؟ [[curl URL | sudo bash]] بيشغّل أي حاجة السيرفر يبعتها بصلاحيات root، من غير ما تشوفها. لو الموقع اتخترق أو الاتصال اتقطع في النص، بتشغّل سكربت ناقص أو خبيث. الملف بيخليك تشوف وبيخلي اللي اتشغّل هو نفسه اللي قريته.
+
+البدائل: Docker بـ image [[node:24-alpine]] (مفيش Node على السيرفر خالص)، أو nvm لو يوزر واحد بس هو اللي محتاجه.`,
+            when: "سيرفر هيشغّل تطبيق Node من غير Docker (بـ pm2 أو systemd).",
+            mistakes: "في مشروع حقيقي التوثيق كان [[curl ... | sudo -E bash -]] مباشرة وعلى نسخة 20 اللي خرجت من الدعم. وتخلط nvm مع Node بتاع apt فيبقى فيه نسختين و [[which node]] في cron غير اللي في الترمنال."
+          },
+          lines: [
+            "نزّل سكربت الإعداد لنسخة 24 في ملف.",
+            "اقراه قبل ما تشغّله.",
+            "شغّله: بيضيف المستودع والمفتاح.",
+            "سطّب Node (و npm معاه) من المستودع الجديد.",
+            "اتأكد من النسخ."
           ]
         },
         {
@@ -625,6 +655,80 @@ systemctl list-timers | grep certbot`,
             "اعرض الشهادات اللي عندك وبتخلص إمتى.",
             "جرّب التجديد من غير ما تجدد فعلًا.",
             "اتأكد إن مهمة التجديد الأوتوماتيك موجودة."
+          ]
+        },
+        {
+          cmd: "certbot --webroot",
+          title: "شهادة من container والموقع شغال",
+          desc: "لما Nginx جوه Docker، [[certbot --nginx]] مينفعش. [[certonly --webroot]] بيكتب ملف التحدي في فولدر مشترك مع Nginx، فالموقع ميقفش ولا ثانية. قبلها اتأكد إن الدومين بيشاور على السيرفر ده، وجرّب بـ [[--dry-run]] الأول عشان المحاولات الفاشلة متتحسبش من حد Let's Encrypt.",
+          example: R`curl -4 -s https://api.ipify.org; echo
+getent ahostsv4 example.com | awk '{print $1; exit}'
+mkdir -p certbot/www certbot/conf
+docker compose up -d nginx
+docker compose run --rm certbot certonly --webroot -w /var/www/certbot \
+  --email you@example.com --agree-tos --no-eff-email --dry-run \
+  -d example.com -d www.example.com
+ls certbot/conf/live/example.com/`,
+          try: "على سيرفر التجربة بدومين فرعي: شغّل الأمر بـ [[--dry-run]]، ولما يقول successful شيلها وشغّله تاني، وبعدين [[ls]] يوريك fullchain.pem و privkey.pem.",
+          deep: {
+            why: "certbot العادي بيعدّل ملفات Nginx على الهوست ويعمله reload. لو Nginx جوه container، certbot مش شايفه. webroot بيفصل الاتنين: certbot يكتب ملف، و Nginx يقدمه، وكل واحد في container لوحده.",
+            how: R`أول سطرين: IP السيرفر العام، و IP اللي الدومين بيشاور عليه. لازم يبقوا زي بعض. لو مختلفين، certbot هيفشل، وكل فشل بيتحسب (حد Let's Encrypt ٥ محاولات فاشلة في الساعة لنفس الدومين).
+
+في [[docker-compose.yml]] service اسمها certbot من image [[certbot/certbot]]، راكب فيها [[./certbot/www:/var/www/certbot]] و [[./certbot/conf:/etc/letsencrypt]]، ونفس الفولدرين راكبين في Nginx. و Nginx لازم يكون شغال بإعداد HTTP فيه بلوك [[/.well-known/acme-challenge/]] (شرحه في تاب nginx).
+
+[[compose run --rm certbot certonly]]: شغّل container مؤقت من الـ service دي بالأمر ده، وامسحه بعد ما يخلص. [[--webroot -w]]: اكتب ملف التحدي هنا. [[--agree-tos --no-eff-email]]: من غير أسئلة.
+
+[[--dry-run]]: يجرّب كل حاجة على سيرفر الاختبار بتاع Let's Encrypt ومبيحفظش شهادة. لما ينجح، شيله وشغّل تاني.
+
+بعد الشهادة: حط إعداد Nginx الكامل بالـ 443 و [[docker compose up -d]]. والتجديد: service الـ certbot تشتغل بـ [[entrypoint]] لوب فيه [[certbot renew]] كل ١٢ ساعة، و Nginx يعمل reload كل كام ساعة عشان يقرا الشهادة الجديدة.
+
+و Let's Encrypt وقفت إيميلات التحذير قبل الانتهاء في 2025، فمحدش هيقولك لو التجديد فشل. راقب تاريخ الانتهاء بنفسك (تاب التشخيص، شهادة SSL).`,
+            when: "أول شهادة لأي موقع Nginx بتاعه جوه Docker.",
+            mistakes: "في مشروع حقيقي سكربت أول شهادة كان من غير [[set -e]]، وبيوقف Nginx بـ [[docker compose down nginx]] (ده بيوقف المشروع كله، الصح [[stop]])، ومفيش تجربة الأول فكل غلطة في الـ DNS بتتحسب من الحد. وسكربت تاني كان بيضيف www من غير ما يتأكد إن ليها DNS، فالطلب كله يفشل عشان دومين واحد."
+          },
+          lines: [
+            "IP السيرفر العام (IPv4).",
+            "IP اللي الدومين بيشاور عليه. لازم يبقى نفسه.",
+            "فولدر التحدي وفولدر الشهادات (راكبين في Nginx و certbot).",
+            "Nginx شغال بإعداد HTTP فيه مسار التحدي.",
+            "certbot في container مؤقت، بطريقة webroot...",
+            "...من غير أسئلة، وتجربة بس (--dry-run).",
+            "الدومين بالـ www ومن غيرها.",
+            "الشهادة اتحفظت هنا."
+          ]
+        },
+        {
+          cmd: "certbot --standalone",
+          title: "شهادة لما Nginx جوه Docker ماسك بورت 80",
+          desc: "[[--standalone]] بيشغّل سيرفر صغير بتاعه على بورت 80 للتحدي، فلازم Nginx يقف ثواني. الصح إنك تدّي certbot أوامر الإيقاف والتشغيل كـ [[--pre-hook]] و [[--post-hook]]، فيتحفظوا مع الشهادة ويتنفذوا لوحدهم في كل تجديد.",
+          example: R`sudo certbot certonly --standalone --non-interactive --agree-tos \
+  --email you@example.com -d example.com -d www.example.com \
+  --pre-hook "cd /srv/myapp && docker compose stop frontend" \
+  --post-hook "cd /srv/myapp && docker compose start frontend"
+sudo grep -E "authenticator|hook" /etc/letsencrypt/renewal/example.com.conf
+systemctl list-timers | grep certbot
+sudo certbot renew --dry-run`,
+          try: "بعد ما تاخد الشهادة، [[renew --dry-run]] لازم يقول success، وتلاحظ إن الموقع وقف ثواني ورجع (الـ hooks اشتغلت).",
+          deep: {
+            why: "أسهل من webroot لو مش عايز تلمس إعداد Nginx، بس فيه فخ: التجديد بعد شهرين هيحتاج بورت 80 فاضي تاني. لو محدش بيوقف Nginx وقتها، التجديد يفشل بصمت والموقع يقع يوم الانتهاء.",
+            how: R`[[certonly]]: خد الشهادة بس ومتعدّلش أي إعداد. [[--standalone]]: certbot يرد على التحدي بنفسه على بورت 80. [[--non-interactive]]: من غير أسئلة، عشان يشتغل في سكربت.
+
+[[--pre-hook]] بيتنفذ قبل ما يطلب الشهادة (يوقف container الـ Nginx)، و [[--post-hook]] بعدها (يشغّله تاني). ومش بيتنفذوا غير لو فيه شهادة فعلًا هتتطلب. الأهم: certbot بيحفظهم في [[/etc/letsencrypt/renewal/example.com.conf]]، فالـ timer اللي بيجدد مرتين في اليوم بيستخدمهم لوحده. الأمر التاني بيتأكد إنهم اتحفظوا.
+
+container الـ Nginx يركّب [[/etc/letsencrypt:/etc/letsencrypt:ro]] ويقرا الشهادة من [[live/]] مباشرة، بدل ما تنسخ الملفات. ولما يقوم بعد الـ post-hook بيقرا الجديدة.
+
+ولو عملت التجديد بـ cron بنفسك: ملف في [[/etc/cron.d/]] فيه عمود زيادة لاسم اليوزر، زي [[0 3 * * * root certbot renew -q]]، والملف لازم ملك root وصلاحياته 644 واسمه من غير نقط. و [[--deploy-hook]] (بيتنفذ بس لو الشهادة اتجددت فعلًا) هو المكان الصح لأي نسخ أو reload.`,
+            when: "Nginx جوه Docker وعايز شهادة من غير ما تغيّر إعداده. لو ثواني توقف مش مقبولة، استخدم webroot.",
+            mistakes: "في مشروع حقيقي cron التجديد كان بيشغّل [[certbot renew --quiet]] بطريقة standalone و Nginx لسه ماسك بورت 80، فالتجديد بيفشل بصمت (بسبب [[--quiet]]) والشهادة كانت هتخلص بعد ٩٠ يوم. وكان بينسخ الشهادات ويعمل restart لـ Nginx كل يوم حتى من غير تجديد، بدل [[--deploy-hook]]. وسكربت الإصلاح كان بيستخدم [[--force-renewal]] كل مرة، ده بيقرّبك من حد Let's Encrypt (٥ شهادات لنفس الدومينات في الأسبوع)."
+          },
+          lines: [
+            "خد شهادة بسيرفر certbot نفسه، من غير أسئلة...",
+            "...للدومين بالـ www ومن غيرها.",
+            "قبل الطلب: وقّف container الـ Nginx عشان بورت 80 يفضى.",
+            "بعده: شغّله تاني.",
+            "اتأكد إن الطريقة والـ hooks اتحفظوا للتجديد.",
+            "timer التجديد موجود؟",
+            "جرّب التجديد كامل بالـ hooks."
           ]
         }
       ]
@@ -1175,6 +1279,276 @@ free -h`,
             "شغّله دلوقتي.",
             "ضيف سطر في fstab عشان يشتغل بعد كل ريستارت.",
             "اتأكد إن الـ swap ظهر."
+          ]
+        }
+      ]
+    },
+    {
+      t: "استضافة مشتركة (cPanel / Hostinger)",
+      l: 3,
+      n: "مفيش root ولا Docker: SSH و git و PHP و .htaccess، ولوحة التحكم للباقي",
+      items: [
+        {
+          cmd: "ssh 'git pull'",
+          title: "deploy بسطر واحد على استضافة مشتركة",
+          desc: "على الاستضافة المشتركة مفيش Docker ولا CI، بس غالبًا فيه SSH و git. السيرفر نفسه عامل clone للريبو جوه فولدر الموقع، فالـ deploy كله [[git pull]] من جهازك عن طريق ssh، وبعدها تقارن آخر commit هناك باللي عندك. و [[~/.ssh/config]] بيحفظ البورت واليوزر والمفتاح في اسم قصير.",
+          example: R`# ~/.ssh/config على جهازك
+Host shared
+    HostName 203.0.113.10
+    Port 65002
+    User deploy
+    IdentityFile ~/.ssh/id_ed25519
+ssh shared 'cd ~/domains/example.com/public_html && git pull -q origin main && git log --oneline -1'
+git log --oneline -1`,
+          try: "اعمل commit صغير (تعديل نص في الصفحة)، ادفعه، وشغّل سطر الـ ssh. الـ hash اللي راجع لازم يطابق [[git log --oneline -1]] عندك.",
+          deep: {
+            why: "رفع الملفات بالـ File Manager أو FTP بطيء، وسهل تنسى ملف، ومفيش رجوع. git على السيرفر بيخلي الـ deploy أمر واحد، وتعرف بالظبط أنهي نسخة شغالة، والرجوع [[git checkout]] لـ commit قديم.",
+            how: R`أول مرة بس: فعّل SSH من لوحة الاستضافة (غالبًا على بورت غير 22 زي 65002)، وضيف المفتاح العام بتاعك فيها. على السيرفر اعمل مفتاح ([[ssh-keygen -t ed25519]]) وحطه في GitHub كـ Deploy Key للقراية بس، وبعدين [[git clone]] جوه [[public_html]] (لازم يكون فاضي).
+
+[[Host shared]] في [[~/.ssh/config]]: بعدها [[ssh shared]] بدل [[ssh -p 65002 deploy@203.0.113.10]].
+
+السطر نفسه: [[cd]] للفولدر، و [[git pull -q]] بهدوء، و [[git log --oneline -1]] يطبع آخر commit هناك. [[&&]] بيضمن إن لو الـ pull فشل مفيش حاجة بعده تتنفذ. والعلامات المفردة حوالين الأمر عشان يتنفذ كله على السيرفر مش عندك.
+
+الملفات اللي مش في git (ملف الإعدادات، والصور اللي العملاء رفعوها، والفيديوهات) بتتظبط على السيرفر بإيدك مرة واحدة ومبتتلمسش من الـ pull. وقاعدة البيانات ليها باك أب منفصل من اللوحة.
+
+بعد الـ pull: [[php -l]] على الملفات المهمة، و smoke test بـ curl (الدروس اللي بعده، وتاب التشخيص).`,
+            when: "أي موقع PHP أو static على استضافة مشتركة فيها SSH.",
+            mistakes: "في مشروع حقيقي الاتصال كان عن طريق سكربت Python وسيط شايل الباسورد بدل مفتاح SSH مباشر. وحد يعدّل ملف من File Manager على السيرفر فالـ pull يفشل بـ [[Your local changes would be overwritten]]؛ اعمل [[git status]] هناك، واعمل التعديل في الريبو مش على السيرفر. والأخطر: فولدر [[.git]] جوه [[public_html]] مكشوف للنت لو مش مقفول (درس .htaccess)."
+          },
+          lines: [
+            "اسم مختصر للسيرفر.",
+            "العنوان.",
+            "بورت SSH بتاع الاستضافة.",
+            "اليوزر.",
+            "المفتاح.",
+            "على السيرفر: ادخل الفولدر، اسحب آخر نسخة، واطبع آخر commit.",
+            "آخر commit عندك: لازم يطابق."
+          ]
+        },
+        {
+          cmd: "php -l",
+          title: "فحص أخطاء syntax في PHP من غير تشغيل",
+          desc: "[[php -l]] بيقرا الملف ويتأكد إن مفيهوش غلطة syntax من غير ما ينفذه. على الاستضافة المشتركة غلطة واحدة في ملف متضمّن في كل الصفحات معناها الموقع كله صفحة بيضا أو 500. شغّله قبل الـ push، وبعد الـ pull على السيرفر نفسه عشان نسخة PHP هناك.",
+          example: R`php -l index.php
+for f in index.php login.php contact.php; do php -l "$f" | tail -1; done
+find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors"
+ssh shared 'cd ~/domains/example.com/public_html && php -v | head -1 && php -l index.php'`,
+          try: "امسح [[;]] من سطر في ملف PHP وشغّل [[php -l]] عليه: هيقولك رقم السطر. وبعدين قارن [[php -v]] عندك وعلى السيرفر.",
+          deep: {
+            why: "على الاستضافة المشتركة مفيش لوج قدامك وقت الـ deploy، وغالبًا [[display_errors]] مقفول. فالغلطة بتبان للزوار قبلك. [[php -l]] بيمسكها في ثانية.",
+            how: R`[[-l]] يعني lint: PHP بيعمل parse للملف بس. لو سليم يطبع [[No syntax errors detected]]، ولو لأ يطبع الغلطة ورقم السطر ويرجّع exit code غير صفر.
+
+اللوب بيفحص الملفات المهمة ويطبع السطر الأخير بس من كل نتيجة. و [[find ... -exec php -l {} \;]] بيفحص كل ملفات المشروع ما عدا [[vendor]]، و [[grep -v]] بيخفي السليم فمبيفضلش غير المشاكل.
+
+حدوده: syntax بس. دالة مش موجودة، أو [[require]] لملف مش موجود، أو متغير غلط، مش هيشوفهم. دول بيبانوا وقت التشغيل (smoke test).
+
+النسخة مهمة: كود بيستخدم ميزة من PHP 8.3 يعدّي عندك ويفشل على سيرفر 8.1. وعلى cPanel نسخة [[php]] في SSH ممكن تبقى غير النسخة اللي الموقع شغال بيها (MultiPHP)، فشوف نسخة الموقع من اللوحة، وشغّل النسخة دي بالمسار الكامل لو لازم.`,
+            when: "قبل كل push، وبعد كل pull على السيرفر، وفي CI لو عندك.",
+            mistakes: "تفتكر إن [[No syntax errors]] معناها إن الصفحة شغالة. وتفحص بنسخة PHP على جهازك وتنسى إن السيرفر أقدم."
+          },
+          lines: [
+            "افحص ملف واحد.",
+            "افحص الملفات المهمة واطبع النتيجة بس.",
+            "كل ملفات المشروع ما عدا vendor، واعرض المشاكل بس.",
+            "على السيرفر: نسخة PHP هناك، وافحص بيها."
+          ]
+        },
+        {
+          cmd: "config.sample.php",
+          title: "ملف الإعدادات الحقيقي بره Git",
+          desc: "الريبو فيه نسخة نموذج من ملف الإعدادات بقيم وهمية، والملف الحقيقي (باسورد قاعدة البيانات والمفاتيح) في [[.gitignore]]. على أي سيرفر جديد: [[cp]] من النموذج وتملى القيم هناك. كده الأسرار عمرها ما بتوصل GitHub.",
+          example: R`grep -n "config.php" .gitignore
+git ls-files | grep -E "config\.php$|\.env$"
+cp config.sample.php config.php
+nano config.php
+chmod 600 config.php`,
+          try: "في مشروع PHP عندك: اعمل config.sample.php بقيم زي YOUR_DB_PASSWORD، وحط config.php في .gitignore، واتأكد إن [[git ls-files]] مش بيطلّعه.",
+          deep: {
+            why: "مشاريع PHP القديمة بتكتب باسورد قاعدة البيانات في ملف [[config.php]] جوه الريبو. أول ما الريبو يبقى public، أو حد ياخد نسخة منه، الباسورد راح.",
+            how: R`[[config.sample.php]]: نفس شكل الملف الحقيقي بالظبط، بس بقيم زي [[YOUR_DB_PASSWORD]]، ومتعمله commit. أي حد ياخد المشروع يعرف محتاج إيه.
+
+[[.gitignore]] فيه [[config.php]]، فـ [[git add .]] مبيشوفهوش. و [[git ls-files | grep]] بيتأكد إنه مش متتبع أصلًا (لو ظهر، اتعمله commit قبل كده: [[git rm --cached]] وغيّر كل اللي فيه، تاب الأمن).
+
+[[chmod 600]]: القراية لصاحب الملف بس. على أغلب الاستضافات PHP بيشتغل بيوزرك فده كفاية. لو الموقع طلع 500 بعدها، PHP شغال بيوزر تاني، جرّب 640.
+
+الأحسن كمان: حط الملف فولدر فوق [[public_html]] واعمله [[require __DIR__ . '/../config.php']]. لو إعداد PHP باظ في يوم والسيرفر بعت ملفات [[.php]] كنص، الأسرار مش هتبان لأن الملف مش جوه فولدر الموقع أصلًا. ولو لازم يفضل جوه، اقفل الوصول ليه بـ .htaccess.`,
+            when: "من أول يوم في أي مشروع فيه باسورد أو مفتاح، PHP أو غيره (نفس فكرة .env.example).",
+            mistakes: "النموذج نفسه فيه القيم الحقيقية لأنه اتنسخ من الحقيقي. وإضافة [[config.php]] لـ [[.gitignore]] بعد ما اتعمله commit وتفتكر إن ده كفاية."
+          },
+          lines: [
+            "الملف الحقيقي في .gitignore؟",
+            "اتأكد إن Git مش متتبعه ولا .env.",
+            "على السيرفر: انسخ النموذج.",
+            "املى القيم الحقيقية.",
+            "القراية لصاحبه بس."
+          ]
+        },
+        {
+          cmd: ".htaccess",
+          title: "تأمين موقع PHP على Apache من غير صلاحيات سيرفر",
+          desc: "أغلب الاستضافات المشتركة Apache، و [[.htaccess]] هو المكان الوحيد اللي تتحكم فيه. الملف ده بيمنع تنفيذ PHP في فولدر الرفع، ويقفل ملفات الإعدادات و [[.git]] و [[.env]]، ويمنع عرض محتوى الفولدرات، ويوحّد الدومين، ويعمل روابط من غير .php بشرط إن الملف موجود.",
+          example: R`RewriteEngine On
+RewriteRule ^uploads/.*\.(php|phtml|phar|php[0-9])$ - [NC,F,L]
+RewriteRule ^includes/.*\.php$ - [NC,F,L]
+RewriteCond %{HTTP_HOST} ^www\.example\.com$ [NC]
+RewriteRule ^(.*)$ https://example.com/$1 [R=301,L]
+RedirectMatch 404 /\.(git|env)
+<FilesMatch "^(\.env|composer\.(json|lock)|README\.md)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+ErrorDocument 404 /404.php
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>`,
+          try: "بعد أي تعديل: [[curl -sI https://example.com/nope | head -1]] لازم 404، و [[curl -sI https://example.com/login | head -1]] لازم 200. غلطة في الملف بتوقّع الموقع كله بـ 500.",
+          flag: "script",
+          deep: {
+            why: "أشهر اختراق لمواقع PHP: حد يرفع ملف [[shell.php]] على إنه صورة ويفتحه من المتصفح فينفذ أوامر على السيرفر. وتاني أشهر واحد: [[.git]] مكشوف فأي حد ينزّل الكود كله بتاريخه. الملف ده بيقفل الاتنين من غير ما تحتاج root.",
+            how: R`في أول قاعدتين: [[-]] يعني متغيّرش الرابط، [[F]] يرجع 403، [[NC]] من غير فرق بين الحروف الكبيرة والصغيرة، [[L]] آخر قاعدة. السطر الأول بيمنع أي ملف PHP بأي امتداد جوه [[uploads/]]، والتاني بيمنع فتح ملفات [[includes/]] (اللي فيها الإعدادات) مباشرة.
+
+الـ www: [[RewriteCond]] شرط على الدومين، ولو تحقق [[R=301]] بيحوّل لنسخة واحدة (محركات البحث تشوف موقع واحد مش اتنين).
+
+[[RedirectMatch 404]]: أي مسار فيه [[/.git]] أو [[/.env]] يرجع 404 كأنه مش موجود. و [[FilesMatch]] مع [[Require all denied]] بيقفل ملفات بالاسم.
+
+[[Options -Indexes]]: فولدر من غير index ميعرضش قايمة ملفاته.
+
+الروابط النضيفة: [[/login]] يفتح [[login.php]]. الشرطين قبلها أساسيين: الطلب مش فولدر ([[!-d]])، وفيه فعلًا ملف بالاسم ده + [[.php]] ([[-f]]). [[$1]] هو اللي اتطابق بين القوسين.
+
+[[ErrorDocument 404]]: صفحة 404 بتاعتك، وبترجع كود 404 حقيقي.
+
+[[Header always set]] جوه [[IfModule]]: headers الأمان، ولو [[mod_headers]] مش موجود الملف ميبوظش.`,
+            when: "أي موقع PHP على Apache. وخصوصًا لو فيه رفع ملفات من المستخدمين.",
+            mistakes: R`في مشروع حقيقي كان فيه [[RewriteRule ^([^\.]+)$ $1.php]] من غير شرط إن ملف [[.php]] موجود، فأي رابط غلط زي [[/nope]] بيتحول لـ [[nope.php]] اللي مش موجود، وممكن يلف في loop ويطلع 500 بدل 404. وكان فيه قاعدة بتحوّل أي فولدر لصفحة تانية بـ 302 والدومين مكتوب فيها ثابت. واختبر بـ curl بعد كل تعديل، وشوف [[error_log]] من لوحة الاستضافة لو طلع 500.`
+          },
+          lines: [
+            "شغّل محرك الـ rewrite.",
+            "أي ملف PHP جوه uploads: ممنوع (403).",
+            "ملفات includes (الإعدادات) متتفتحش مباشرة.",
+            "لو الدومين بالـ www...",
+            "...حوّله لنسخة واحدة من غير www (301).",
+            "أي مسار فيه .git أو .env يرجع 404.",
+            "الملفات دي بالاسم...",
+            "...ممنوعة.",
+            "قفلة.",
+            "الفولدر من غير index ميعرضش ملفاته.",
+            "لو الطلب مش فولدر...",
+            "...وفيه ملف بنفس الاسم + .php...",
+            "...افتحه: /login يفتح login.php.",
+            "صفحة 404 بكود 404 حقيقي.",
+            "لو mod_headers موجود:",
+            "المتصفح يستخدم https بس لمدة سنة.",
+            "متخمّنش نوع الملف.",
+            "ابعت الدومين بس للمواقع التانية مش الرابط كامل.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "curl -I .git/config",
+          title: "اتأكد من بره إن الملفات الحساسة مقفولة",
+          desc: "مش كفاية تكتب قواعد المنع، لازم تجرّبها من بره زي أي زائر. [[.git/config]] و [[.env]] وملف الإعدادات لازم يرجعوا 403 أو 404. لو واحد فيهم رجع 200، دي حالة طوارئ: الكود أو الأسرار متاحين لأي حد.",
+          example: R`curl -sI https://example.com/.git/config | head -1
+curl -sI https://example.com/.env | head -1
+curl -sI https://example.com/includes/config.php | head -1
+curl -sI https://example.com/uploads/ | head -1
+curl -sI https://example.com | grep -iE "strict-transport|x-content-type"`,
+          try: "شغّلهم على موقعك دلوقتي. وبعدين جرّب [[curl -s https://example.com/.git/HEAD]]: لو رجع [[ref: refs/heads/main]] يبقى .git مكشوف فعلًا.",
+          deep: {
+            why: "[[.git]] مكشوف معناه إن أدوات جاهزة تقدر تنزّل الريبو كله ملف ملف وتعيد بناءه، بكل التاريخ، بما فيه أي باسورد اتعمله commit في يوم. والبوتات بتدوّر على [[/.git/config]] و [[/.env]] على كل موقع في النت كل يوم.",
+            how: R`[[-sI]]: هادي، و headers بس. [[head -1]]: سطر الـ status بس ([[HTTP/2 404]] مثلًا).
+
+المتوقع: [[.git/config]] و [[.env]]: 403 أو 404. [[includes/config.php]]: 403 (لو مش مقفول ممكن يرجع 200 بصفحة فاضية، لأن PHP بينفذه ومبيطبعش حاجة. مش مكشوف بس الأحسن يبقى مقفول). [[uploads/]]: 403 (مفيش عرض ملفات).
+
+السطر الأخير: headers الأمان موجودة فعلًا في الرد.
+
+ولو لقيت حاجة مكشوفة: اقفلها الأول، وبعدين اعتبر كل الأسرار اللي كانت في الريبو أو [[.env]] اتسربت وغيّرها، لأنك مش عارف مين نزّلها قبل ما تاخد بالك.`,
+            when: "بعد أول deploy، وبعد أي تعديل في .htaccess أو إعداد السيرفر، وضيفه في smoke test الـ deploy.",
+            mistakes: "تجرّب من المتصفح وهو فاكر نسخة قديمة. وتجرّب على http بس وتنسى https (ممكن يبقوا virtual hosts مختلفين). وتقفل .git وتفتكر إن الموضوع خلص من غير ما تغيّر الأسرار."
+          },
+          lines: [
+            "فولدر Git: لازم 403 أو 404.",
+            "ملف الأسرار: نفس الكلام.",
+            "ملف الإعدادات: 403.",
+            "فولدر الرفع: مفيش قايمة ملفات.",
+            "headers الأمان موجودة في الرد؟"
+          ]
+        },
+        {
+          cmd: "cron PHP",
+          title: "مهمة مجدولة PHP على الاستضافة",
+          desc: "من لوحة الاستضافة (Cron Jobs) شغّل السكربت بـ PHP CLI بالمسار الكامل، مش عن طريق رابط. وجوه السكربت شرط [[php_sapi_name()]] بيمنع حد يشغّله من المتصفح. ولو الاستضافة مش بتدي غير cron بـ URL، المفتاح يبقى طويل وعشوائي وفي ملف الإعدادات بره git، مش مكتوب في السكربت.",
+          example: R`0 8 * * * /usr/bin/php /home/deploy/domains/example.com/public_html/cron/reminders.php >> /home/deploy/cron.log 2>&1
+<?php
+// cron/reminders.php
+require __DIR__ . '/../../config.php';
+if (php_sapi_name() !== 'cli') {
+    $key = (string)($_GET['key'] ?? '');
+    if (CRON_KEY === '' || !hash_equals(CRON_KEY, $key)) { http_response_code(403); exit('forbidden'); }
+}
+date_default_timezone_set('Africa/Cairo');
+echo "done " . date('Y-m-d H:i') . "\n";`,
+          try: "افتح رابط السكربت من المتصفح من غير key: لازم forbidden. وشغّله من SSH بـ [[php cron/reminders.php]]: لازم يشتغل.",
+          flag: "script",
+          deep: {
+            why: "مهام زي التذكيرات والتقارير لازم تشتغل لوحدها. لو السكربت جوه [[public_html]] ومن غير حماية، أي حد يعرف الرابط يشغّله ١٠٠ مرة ويبعت ١٠٠ إيميل لكل عميل.",
+            how: R`سطر الـ cron: نفس صيغة crontab. المسار الكامل لـ PHP (اللوحة بتقولك هو إيه، وعلى cPanel ممكن يبقى زي [[/opt/alt/php82/usr/bin/php]] لنسخة معينة)، والمسار الكامل للسكربت، والناتج لملف لوج.
+
+[[php_sapi_name()]]: بترجع [[cli]] لما السكربت شغال من الترمنال أو cron. من المتصفح بترجع حاجة تانية، فهنا بنطلب المفتاح.
+
+[[hash_equals]]: مقارنة بتاخد نفس الوقت مهما كان الفرق، فمحدش يقدر يخمّن المفتاح حرف حرف من سرعة الرد. و [[CRON_KEY === '']] عشان لو المفتاح فاضي في الإعدادات ميبقاش الباب مفتوح.
+
+[[config.php]] فوق [[public_html]] (مش جوه الموقع) وفيه [[CRON_KEY]]، تولّده بـ [[openssl rand -hex 32]].
+
+لو مفيش غير cron بـ URL: [[curl -fsS "https://example.com/cron/reminders.php?key=..." > /dev/null]]. بس المفتاح في الرابط بيتسجل في access log، فالـ CLI أحسن دايمًا.
+
+والمهمة لازم تتحمل إنها تشتغل مرتين: سجّل كل تذكير اتبعت في جدول، ومتبعتش اللي اتسجل.`,
+            when: "أي مهمة متكررة على استضافة مشتركة: تذكيرات، وتقارير، وتنضيف جلسات قديمة.",
+            mistakes: "في مشروع حقيقي المفتاح السري كان مكتوب جوه ملف الـ cron نفسه ومترفوع على git، يعني أي حد شاف الريبو يقدر يشغّل المهمة؛ الحل تنقله لملف الإعدادات بره git وتغيّره. و [[php]] من غير مسار كامل في cron ياخد نسخة PHP غير نسخة الموقع."
+          },
+          lines: [
+            "كل يوم ٨ الصبح: شغّل السكربت بـ PHP CLI، والناتج للوج.",
+            "بداية ملف PHP.",
+            "الإعدادات من فولدر فوق الموقع (فيها CRON_KEY).",
+            "لو مش شغال من cron أو الترمنال...",
+            "...خد المفتاح من الرابط.",
+            "مفتاح فاضي أو غلط: 403 واقف.",
+            "قفلة.",
+            "التوقيت.",
+            "اطبع إنه خلص (بيتكتب في اللوج)."
+          ]
+        },
+        {
+          cmd: ".user.ini",
+          title: "إعدادات PHP للجلسات من غير php.ini",
+          desc: "على الاستضافة المشتركة مش بتعدّل [[php.ini]]، بس تقدر تحط [[.user.ini]] في فولدر الموقع. السطور دي بتأمّن كوكي الجلسة: JavaScript مش بيقراها، ومبتتبعتش غير على https، و SameSite ضد CSRF، والجلسات في فولدر بتاعك انت.",
+          example: R`session.use_strict_mode = 1
+session.cookie_httponly = 1
+session.cookie_secure = 1
+session.cookie_samesite = "Lax"
+session.save_path = "/home/deploy/tmp/sessions"`,
+          try: "اعمل الفولدر الأول ([[mkdir -p ~/tmp/sessions && chmod 700 ~/tmp/sessions]])، وبعد ٥ دقايق افتح DevTools وشوف كوكي PHPSESSID: HttpOnly و Secure عليهم علامة.",
+          flag: "script",
+          deep: {
+            why: "كوكي الجلسة هو الدخول نفسه. لو JavaScript يقدر يقراها، أي ثغرة XSS بتسرقها. ولو بتتبعت على http، أي حد على نفس الواي فاي ياخدها. والإعدادات الافتراضية على كتير من الاستضافات مش مقفولة.",
+            how: R`[[use_strict_mode]]: PHP ميقبلش session id هو اللي معملهوش (ضد session fixation). [[cookie_httponly]]: [[document.cookie]] مش شايفها. [[cookie_secure]]: https بس. [[cookie_samesite = "Lax"]]: الكوكي مبتتبعتش مع طلبات POST جاية من مواقع تانية.
+
+[[save_path]]: الافتراضي فولدر [[/tmp]] مشترك، وتنضيف الجلسات فيه ماشي بإعدادات حد تاني. فولدر بتاعك بصلاحيات 700، ولازم يكون موجود وإلا الجلسات تفشل. ولو الفولدر ده مش بيتنضف لوحده، ضيف cron يمسح القديم.
+
+[[.user.ini]] بيشتغل مع PHP-FPM و CGI (أغلب الاستضافات النهاردة). مع mod_php القديم مش بيتقري، وهناك بتكتب [[php_value]] في .htaccess. و PHP بيقراه كل ٥ دقايق ([[user_ini.cache_ttl]])، فالتغيير مش فوري. تتأكد بـ [[ini_get('session.cookie_secure')]] في صفحة تجربة، وامسحها بعدها.`,
+            when: "أي موقع PHP فيه login على استضافة مشتركة.",
+            mistakes: "في مشروع حقيقي مسار الجلسات كان مكتوب بـ [[session_save_path()]] وفيه اسم حساب الاستضافة، ومتكرر في عشرات الملفات؛ مكانه سطر واحد هنا. و [[cookie_secure]] وانت لسه بتجرّب على http فالدخول ميشتغلش. وتعدّل وتختبر فورًا وتفتكر إنه مشتغلش (استنى الـ cache)."
+          },
+          lines: [
+            "متقبلش session id مش انت اللي عامله.",
+            "JavaScript مش شايف الكوكي.",
+            "https بس.",
+            "متتبعتش مع POST من مواقع تانية.",
+            "الجلسات في فولدر بتاعك (لازم يكون موجود)."
           ]
         }
       ]
