@@ -62,7 +62,17 @@ SELECT * FROM users;`,
             "قفلة التعريف.",
             "ضيف صف: بتبعت الإيميل والاسم بس، والباقي بياخد الـ DEFAULT.",
             "اعرض كل الصفوف بكل الأعمدة."
-          ]
+          ],
+          sol: R`أول INSERT بنفس الإيميل هيترفض بـ [[ERROR:  duplicate key value violates unique constraint "users_email_key"]] وتحته [[DETAIL:  Key (email)=(you@example.com) already exists.]]. الاسم [[users_email_key]] هو اسم الـ constraint اللي Postgres عمله لوحده من كلمة [[UNIQUE]]، وده اللي بتدوّر عليه في الـ error عشان ترجّع للمستخدم «الإيميل ده متسجل قبل كده».
+
+الـ INSERT من غير name هيترفض بـ [[null value in column "name" of relation "users" violates not-null constraint]]، والـ DETAIL بيوريك الصف اللي كان هيتضاف وفيه [[null]] مكان الاسم. لاحظ إن الـ id والـ created_at اتملوا لوحدهم من الـ DEFAULT. ولو [[SELECT * FROM users;]] بعدها، هتلاقي صف واحد بس: ولا محاولة غلط اتحفظت.
+
+لو الـ INSERT التاني عدّى، يبقى انت نسيت [[UNIQUE]] أو [[NOT NULL]] في تعريف الجدول. امسحه بـ [[DROP TABLE users;]] وشغّل المثال تاني.`,
+          solCode: R`INSERT INTO users (email, name) VALUES ('you@example.com', 'Ali');
+-- ERROR:  duplicate key value violates unique constraint "users_email_key"
+INSERT INTO users (email) VALUES ('x@example.com');
+-- ERROR:  null value in column "name" of relation "users" violates not-null constraint
+SELECT count(*) FROM users;   -- 1`
         },
         {
           cmd: "أنواع الأعمدة",
@@ -113,7 +123,17 @@ VALUES ('T-shirt', 250.00, 40, '{"color": "black", "sizes": ["M", "L"]}');`,
             "قفلة التعريف.",
             "ضيف منتج بالأعمدة اللي محتاجها.",
             "القيم: الـ JSON بيتكتب نص وPostgres بيتأكد إنه JSON سليم."
-          ]
+          ],
+          sol: R`[['abc']] في stock هيترفض: [[invalid input syntax for type integer: "abc"]]. و [['{bad json']] في attrs هيترفض: [[invalid input syntax for type json]] ومعاه [[Token "bad" is invalid]]. أما [['yes']] في is_active فهيتقبل ويتخزن [[t]]، لأن Postgres بيفهم [['yes']] و [['on']] و [['1']] و [['true']] كـ true (ومقابلهم no و off و 0 و false). جرّب [[RETURNING is_active]] وهتشوف [[t]].
+
+الفكرة: النوع بيرفض الداتا اللي مش منطقية للعمود، بس بيحوّل الصيغ المعروفة. ولو المنتج التجريبي اتضاف امسحه عشان ميلخبطش باقي الدروس.`,
+          solCode: R`INSERT INTO products (name, price, stock) VALUES ('X', 1, 'abc');
+-- ERROR:  invalid input syntax for type integer: "abc"
+INSERT INTO products (name, price, is_active) VALUES ('Yes-test', 1, 'yes') RETURNING is_active;
+--  is_active = t
+INSERT INTO products (name, price, attrs) VALUES ('X', 1, '{bad json');
+-- ERROR:  invalid input syntax for type json
+DELETE FROM products WHERE name = 'Yes-test';`
         },
         {
           cmd: "numeric للفلوس",
@@ -142,7 +162,17 @@ SELECT round(100 / 3.0, 2);             -- 33.33`,
             "numeric: النتيجة مظبوطة.",
             "بيقرّب لخانتين من غير ما يقولك.",
             "قسمة فيها كسر بيتكرر: قرّب بنفسك لخانتين."
-          ]
+          ],
+          sol: R`[[0.1 + 0.2]] في الـ console هتطلع [[0.30000000000000004]]، بالظبط زي [[float8]] في Postgres. والـ loop هتطلع [[0.9999999999999999]] مش [[1]]، فـ [[sum === 1]] هتبقى [[false]]. كل جمعة بتزوّد غلطة صغيرة، ومع آلاف العمليات القرش بيبان.
+
+الحل في الكود: خزّن الفلوس بالقروش كـ integer ([[1050]] بدل [[10.50]])، أو استخدم مكتبة decimal. ولاحظ إن [[pg]] في Node بيرجّعلك عمود [[numeric]] كـ string ([['250.00']]) عشان ميضيعش الدقة؛ لو عملت [[Number()]] وبعدين جمعت، رجعت لنفس المشكلة. الغلط الشائع: [[toFixed(2)]] على النتيجة وتفتكر المشكلة اتحلت، هي بس اتخبت في العرض.`,
+          solCode: R`console.log(0.1 + 0.2);            // 0.30000000000000004
+let sum = 0;
+for (let i = 0; i < 10; i++) sum += 0.1;
+console.log(sum, sum === 1);       // 0.9999999999999999 false
+let cents = 0;
+for (let i = 0; i < 10; i++) cents += 10;
+console.log(cents / 100);          // 1`
         },
         {
           cmd: "PRIMARY KEY",
@@ -183,7 +213,14 @@ INSERT INTO orders (id, user_id) SELECT 999, id FROM users LIMIT 1;   -- error: 
             "قفلة التعريف.",
             "اعمل أوردر لأول يوزر، ورجّع الـ id اللي اتولّد.",
             "حاول تحط id بإيدك: مرفوض لأنه ALWAYS."
-          ]
+          ],
+          sol: R`الـ INSERT جوه الـ transaction هيرجّع id (مثلًا [[2]])، وبعد [[ROLLBACK]] الصف مش موجود. الـ INSERT العادي بعدها هيرجّع [[3]] مش [[2]]: الرقم اتحجز واتصرف ومش هيرجع تاني. ونفس الحكاية مع أي INSERT فشل بسبب constraint.
+
+ده مقصود: الـ sequence مش جزء من الـ transaction، عشان لو اتنين بيضيفوا في نفس اللحظة ميستنوش بعض. متعتمدش أبدًا إن الـ ids متتالية من غير فجوات، ومتستخدمهاش كـ «رقم فاتورة» لازم يبقى متسلسل قانونيًا؛ ده محتاج جدول عدّاد لوحده. ولو شفت الـ id بقى [[1]] تاني فانت غالبًا عملت [[DROP TABLE]] وأنشأته من الأول.`,
+          solCode: R`BEGIN;
+INSERT INTO orders (user_id) SELECT id FROM users LIMIT 1 RETURNING id;   -- 2
+ROLLBACK;
+INSERT INTO orders (user_id) SELECT id FROM users LIMIT 1 RETURNING id;   -- 3`
         }
       ]
     },
@@ -223,7 +260,15 @@ SELECT now(), 2 + 2 AS four;`,
             "الحالات الموجودة من غير تكرار.",
             "عدد اليوزرز المختلفين اللي عملوا أوردرات.",
             "SELECT من غير جدول: ينفع تحسب أي تعبير."
-          ]
+          ],
+          sol: R`بعد درس INSERT هتلاقي كل المنتجات ظاهرة، وعمود [[price_with_vat]] فيه ٤ أرقام عشرية (مثلًا [[285.0000]] للـ T-shirt)، لأن ضرب [[numeric(10,2)]] في [[1.14]] بيجمع عدد الخانات العشرية. لو عايزها خانتين: [[round(price * 1.14, 2)]].
+
+الـ WHERE على الاسم المستعار هيطلّع [[ERROR:  column "price_with_vat" does not exist]]. السبب إن WHERE بيتنفذ قبل SELECT، فالاسم لسه متعملش. الحل إنك تكرر الحسبة: [[WHERE price * 1.14 > 200]]، أو تحط الاستعلام في subquery أو CTE وتفلتر برّه.`,
+          solCode: R`SELECT name, price * 1.14 AS price_with_vat FROM products WHERE price_with_vat > 200;
+-- ERROR:  column "price_with_vat" does not exist
+SELECT name, round(price * 1.14, 2) AS price_with_vat
+FROM products
+WHERE price * 1.14 > 200;`
         },
         {
           cmd: "WHERE",
@@ -258,7 +303,15 @@ SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);`,
             "أوردرات آخر ٧ أيام.",
             "سعر بين 100 و 500، والطرفين داخلين.",
             "الأقواس بتحدد الأولوية: ظاهر، و (ليه مخزون أو مجاني)."
-          ]
+          ],
+          sol: R`من غير أقواس، [[AND]] بيتحسب قبل [[OR]]، فالشرط بيبقى [[(is_active AND stock > 0) OR price = 0]]: أي منتج سعره صفر هيظهر حتى لو [[is_active = false]]. على الداتا الحالية (منتج واحد نشط) النتيجة غالبًا هي هي؛ عشان تشوف الفرق ضيف جوه [[BEGIN;]] منتج سعره 0 و is_active = false، وقارن: بالأقواس مش هيظهر، ومن غيرها هيظهر. وبعدين [[ROLLBACK;]].
+
+[[WHERE status = "paid"]] هيطلّع [[ERROR:  column "paid" does not exist]]. في SQL التنصيص المزدوج لأسماء الأعمدة والجداول، والنصوص بتنصيص مفرد بس: [[WHERE status = 'paid']].`,
+          solCode: R`BEGIN;
+INSERT INTO products (name, price, stock, is_active) VALUES ('Gift', 0, 0, false);
+SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);   -- مفيش Gift
+SELECT name FROM products WHERE is_active AND stock > 0 OR price = 0;     -- Gift ظهر
+ROLLBACK;`
         },
         {
           cmd: "ORDER BY و LIMIT",
@@ -289,7 +342,16 @@ NULL في Postgres بيعتبر أكبر من أي قيمة: بييجي في ا�
             "الأغلى الأول، ولو السعر متساوي بالاسم أبجدي.",
             "آخر ٥ أوردرات.",
             "الصفحة التالتة لو كل صفحة ١٠: عدّي ٢٠ وخد ١٠."
-          ]
+          ],
+          sol: R`مع منتجين بنفس السعر، [[ORDER BY price LIMIT 1]] ممكن يرجّع واحد مرة والتاني مرة بعد كل UPDATE. في تجربة حقيقية على Postgres: Pen، وبعد UPDATE على Pen بقى Pin، وبعد UPDATE على Pin رجع Pen. السبب إن UPDATE في Postgres بيكتب نسخة جديدة من الصف في مكان تاني في الجدول، والترتيب بين الصفوف المتساوية مش محدد، فبيطلع على حسب مكانها على الديسك.
+
+بعد [[ORDER BY price, id]] النتيجة ثابتة دايمًا (صاحب الـ id الأصغر). ده مهم جدًا في الـ pagination: من غير عمود فريد في آخر الترتيب، نفس المنتج ممكن يظهر في صفحتين أو ميظهرش خالص. ولو لقيت النتيجة ثابتة من غير id، ده حظ مش ضمان.`,
+          solCode: R`INSERT INTO products (name, price, stock) VALUES ('Pen', 50, 10), ('Pin', 50, 10);
+SELECT id, name FROM products ORDER BY price LIMIT 1;       -- Pen
+UPDATE products SET stock = 9 WHERE name = 'Pen';
+SELECT id, name FROM products ORDER BY price LIMIT 1;       -- ممكن يبقى Pin
+SELECT id, name FROM products ORDER BY price, id LIMIT 1;   -- دايمًا Pen
+DELETE FROM products WHERE name IN ('Pen', 'Pin');`
         },
         {
           cmd: "LIKE و ILIKE",
@@ -320,7 +382,18 @@ SELECT name FROM products WHERE name NOT ILIKE '%test%';`,
             "أي اسم فيه shirt في أي مكان.",
             "حرف واحد أي حاجة وبعده ug، زي Mug.",
             "استبعد اللي فيها test."
-          ]
+          ],
+          sol: R`[[LIKE '%Shirt%']] هيرجّع [[0 rows]] لأن الاسم [[T-shirt]] بـ s صغيرة و LIKE حساس لحالة الحروف. [[ILIKE '%Shirt%']] هيلاقي T-shirt.
+
+للبحث عن [[%]] حقيقية: [[LIKE '%%%']] هيرجّع كل المنتجات، لأن الـ % بقت wildcard. الصح [[LIKE '%\%%']] (الـ backslash هو الـ escape الافتراضي في Postgres)، أو تختار حرف escape بنفسك: [[LIKE '%!%%' ESCAPE '!']]. نفس الكلام على [[_]]. ولو بتبني النمط من input المستخدم في الكود، لازم تعمل escape لـ [[%]] و [[_]] و [[\]] قبل ما تحطها بين علامتين %.`,
+          solCode: R`SELECT name FROM products WHERE name LIKE '%Shirt%';    -- 0 rows
+SELECT name FROM products WHERE name ILIKE '%Shirt%';   -- T-shirt
+BEGIN;
+INSERT INTO products (name, price) VALUES ('50% off bag', 100), ('Big bag', 100);
+SELECT name FROM products WHERE name LIKE '%%%';                 -- الكل
+SELECT name FROM products WHERE name LIKE '%\%%';                -- 50% off bag بس
+SELECT name FROM products WHERE name LIKE '%!%%' ESCAPE '!';     -- 50% off bag بس
+ROLLBACK;`
         },
         {
           cmd: "NULL",
@@ -355,7 +428,16 @@ SELECT NULL = NULL, NULL IS NULL, 5 + NULL;          -- NULL, true, NULL`,
             "اعرض قيمة بديلة مكان الـ NULL.",
             "count(*) بيعد كل الصفوف، و count(phone) بيعد اللي ليهم تليفون بس.",
             "NULL مش بتساوي نفسها، و IS NULL بترجّع true، وأي حساب مع NULL بيبقى NULL."
-          ]
+          ],
+          sol: R`عشان تشوف المشكلة لازم يبقى عندك يوزر تاني من غير تليفون. ضيف واحد، وحط [[0123]] لليوزر الأول. [[WHERE phone <> '0100']] هيرجّع اليوزر الأول بس، والتاني اختفى، لأن [[NULL <> '0100']] نتيجتها NULL مش true، و WHERE بيعدّي الـ true بس.
+
+عشان تجيبهم الاتنين: [[WHERE phone IS DISTINCT FROM '0100']]، أو [[WHERE phone <> '0100' OR phone IS NULL]]. و IS DISTINCT FROM بيعامل NULL كقيمة عادية في المقارنة. نفس المشكلة بتحصل مع [[NOT IN]] ومع أي فلتر «مش بيساوي» في لوحة الأدمن.`,
+          solCode: R`BEGIN;
+INSERT INTO users (email, name) VALUES ('sara@example.com', 'Sara');
+UPDATE users SET phone = '0123' WHERE email = 'you@example.com';
+SELECT email FROM users WHERE phone <> '0100';                  -- you@example.com بس
+SELECT email FROM users WHERE phone IS DISTINCT FROM '0100';    -- الاتنين
+ROLLBACK;`
         }
       ]
     },
@@ -403,7 +485,14 @@ RETURNING id, status, created_at;`,
             "ضيف أوردر، والقيم جاية من استعلام مش مكتوبة بإيدك:",
             "الـ user_id من جدول users بالإيميل.",
             "رجّع الـ id والحالة الافتراضية ووقت الإنشاء."
-          ]
+          ],
+          sol: R`الأمر هيفشل بـ [[null value in column "price" of relation "products" violates not-null constraint]]، و [[SELECT count(*) FROM products]] قبله وبعده هيطلع نفس الرقم: ولا A ولا C اتضافوا. الـ INSERT الواحد (حتى لو فيه ١٠٠٠ صف) هو statement واحد، والـ statement في Postgres atomic.
+
+حاجة هتلاحظها: لو عملت INSERT سليم بعدها، الـ id هيبقى نط رقمين أو تلاتة، لأن الصفوف اللي اتحسبت قبل الغلطة حجزت أرقام من الـ sequence. ولو شفت A و C اتضافوا، يبقى انت بعت ٣ أوامر INSERT منفصلة مش أمر واحد فيه ٣ صفوف.`,
+          solCode: R`SELECT count(*) FROM products;
+INSERT INTO products (name, price, stock) VALUES ('A', 10, 1), ('B', NULL, 1), ('C', 30, 1);
+-- ERROR:  null value in column "price" of relation "products" violates not-null constraint
+SELECT count(*) FROM products;   -- نفس الرقم`
         },
         {
           cmd: "UPDATE",
@@ -436,7 +525,17 @@ UPDATE products SET price = 0;                -- من غير WHERE: كل الم�
             "غيّر عمودين مرة واحدة: الفاصل كومة مش AND.",
             "غيّر الحالة بس لو لسه pending: مينفعش يتدفع مرتين.",
             "الكارثة: من غير WHERE كل الصفوف اتعدلت."
-          ]
+          ],
+          sol: R`أول مرة: [[UPDATE 1]] والأوردر بقى paid. تاني مرة: [[UPDATE 0]]، لأن الصف مبقاش pending فمحدش طابق الشرط. في الكود بتقرا [[rowCount]]: لو 0 يبقى الأوردر اتدفع قبل كده (أو مش موجود)، فمتخصمش فلوس تاني. ده أبسط شكل من الـ idempotency.
+
+السطر الأخير جوه [[BEGIN;]] هيقول [[UPDATE 5]] (أو عدد كل المنتجات)، و [[SELECT name, price FROM products;]] هيوريك كله [[0.00]]. بعد [[ROLLBACK;]] الأسعار رجعت. لو نسيت الـ BEGIN ونفّذته، الأسعار اتصفرت فعلًا، ومفيش undo غير backup أو إنك ترجّعها بإيدك.`,
+          solCode: R`UPDATE orders SET status = 'paid' WHERE id = 1 AND status = 'pending';   -- UPDATE 1
+UPDATE orders SET status = 'paid' WHERE id = 1 AND status = 'pending';   -- UPDATE 0
+BEGIN;
+UPDATE products SET price = 0;
+SELECT name, price FROM products;   -- كله 0.00
+ROLLBACK;
+SELECT name, price FROM products;   -- الأسعار رجعت`
         },
         {
           cmd: "DELETE",
@@ -469,7 +568,13 @@ SELECT name FROM products WHERE deleted_at IS NULL;`,
             "ضيف عمود للـ soft delete.",
             "بدل المسح: علّم إنه اتمسح إمتى.",
             "وكل قراية لازم تستبعد الممسوح."
-          ]
+          ],
+          sol: R`بعد [[UPDATE products SET deleted_at = now() WHERE name = 'Cap']]، الاستعلام اللي فيه [[WHERE deleted_at IS NULL]] مش هيجيب Cap، لكن [[SELECT name FROM products]] من غير شرط هيجيبه عادي جنب الباقيين. يعني أي صفحة أو تقرير أو join نسي الشرط هيعرض منتج «ممسوح».
+
+الحلول المعتادة: [[VIEW]] اسمها مثلًا active_products فيها الشرط والكود يقرا منها، أو global filter في الـ ORM، أو partial index [[WHERE deleted_at IS NULL]] عشان الاستعلامات اليومية تفضل سريعة. وافتكر إن الـ UNIQUE constraints لسه شايفة الصف الممسوح: لو عايز تضيف Cap جديد باسم unique هيترفض.`,
+          solCode: R`UPDATE products SET deleted_at = now() WHERE name = 'Cap';
+SELECT name FROM products WHERE deleted_at IS NULL;   -- من غير Cap
+SELECT name FROM products;                            -- Cap لسه ظاهر`
         }
       ]
     },
@@ -511,7 +616,14 @@ SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';
             "إجمالي الإيرادات من المدفوع.",
             "متوسط السعر لخانتين، وأرخص وأغلى منتج.",
             "لو مفيش صفوف sum بترجّع NULL، فـ COALESCE تخليها صفر."
-          ]
+          ],
+          sol: R`هيرجّع صف واحد وعمود sum فاضي: ده NULL (psql بيعرض NULL كخانة فاضية؛ اكتب [[\pset null '(null)']] عشان تشوفها). [[sum]] على صفر صفوف مش بيرجّع 0، بيرجّع NULL، لأن مفيش قيم يجمعها. نفس الكلام على avg و min و max. أما [[count]] فبيرجّع 0.
+
+من Node بـ [[pg]] هتوصلك [[null]]، والواجهة تكتب «null جنيه» أو [[NaN]] لو جمعت عليها. الحل [[COALESCE(sum(total), 0)]] في الاستعلام نفسه. ولاحظ إن COALESCE بيرجّع [[0]] من غير [[.00]]، لأن الـ 0 integer؛ لو عايز الشكل ثابت اكتب [[COALESCE(sum(total), 0.00)]] أو [[0::numeric(10,2)]].`,
+          solCode: R`\pset null '(null)'
+SELECT sum(total) FROM orders WHERE status = 'refunded';                  -- (null)
+SELECT count(*) FROM orders WHERE status = 'refunded';                    -- 0
+SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';   -- 0`
         },
         {
           cmd: "GROUP BY",
@@ -550,7 +662,18 @@ Postgres بيسمح تكتب اسم عمود الناتج أو رقمه في GRO
             "من المدفوع بس،",
             "مجمّعة باليوم ومترتبة.",
             "غلط: user_id مش في GROUP BY ومش جوه aggregate."
-          ]
+          ],
+          sol: R`بـ [[date_trunc('month', ...)]] هتاخد صف لكل شهر، والقيمة بتبان كأول لحظة في الشهر: [[2026-09-01 00:00:00+00]]. عشان تشوف أكتر من صف ضيف أوردرين paid بتاريخ في أغسطس (INSERT بـ created_at صريح).
+
+GROUP BY على [[created_at]] نفسه هيرجّع صف لكل أوردر تقريبًا، لأن الوقت فيه ميكروثواني ومفيش أوردرين في نفس اللحظة بالظبط، فكل مجموعة فيها صف واحد والـ sum هو نفس total. المجموعة بتتكوّن من القيم المتساوية بالظبط، فلازم تقرّب الوقت لليوم أو الشهر الأول. ولو التقرير طلع صف لكل أوردر، أول حاجة تبص عليها هي العمود اللي في GROUP BY.`,
+          solCode: R`INSERT INTO orders (user_id, status, total, created_at)
+SELECT id, 'paid', 300, '2026-08-15 10:00+00' FROM users LIMIT 1;
+SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue
+FROM orders WHERE status = 'paid'
+GROUP BY month ORDER BY month;
+SELECT created_at, sum(total) AS revenue
+FROM orders WHERE status = 'paid'
+GROUP BY created_at ORDER BY created_at;   -- صف لكل أوردر`
         },
         {
           cmd: "HAVING",
@@ -595,7 +718,18 @@ SELECT user_id FROM orders WHERE count(*) > 3 GROUP BY user_id;   -- error: aggr
             "HAVING: المجموعات اللي صرفت ١٠٠٠ أو أكتر، بعد التجميع،",
             "والأكتر الأول (ORDER BY يعرف اسم spent).",
             "غلط: WHERE ميعرفش count لسه."
-          ]
+          ],
+          sol: R`[[HAVING spent >= 1000]] هيطلّع [[ERROR:  column "spent" does not exist]]. و [[ORDER BY spent DESC]] هيشتغل عادي.
+
+السبب ترتيب التنفيذ المنطقي: FROM ثم WHERE ثم GROUP BY ثم HAVING ثم SELECT ثم ORDER BY ثم LIMIT. الاسم [[spent]] بيتعمل في SELECT، فـ HAVING (اللي قبلها) مش شايفاه، و ORDER BY (اللي بعدها) شايفاه. عشان كده في HAVING بتكرر [[sum(total)]]، وده مش بيحسبها مرتين، Postgres بيعرف إنها نفس الـ aggregate. (بعض القواعد زي MySQL بتسمح بالاسم في HAVING، بس دي إضافة منها مش SQL قياسي.)
+
+ده سؤال انترفيو مشهور: «اكتب ترتيب تنفيذ SELECT»، و «ليه مينفعش aggregate في WHERE».`,
+          solCode: R`SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid'
+GROUP BY user_id HAVING spent >= 1000;
+-- ERROR:  column "spent" does not exist
+SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid'
+GROUP BY user_id HAVING sum(total) >= 1000
+ORDER BY spent DESC;`
         }
       ]
     },
@@ -848,7 +982,12 @@ WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com');`,
             "أوردر ليوزر مش موجود: مرفوض.",
             "أوردرات يوزر معين،",
             "والـ id جاي من استعلام بالإيميل."
-          ]
+          ],
+          sol: R`هتاخد [[ERROR:  update or delete on table "users" violates foreign key constraint "orders_user_fk" on table "orders"]] ومعاه [[DETAIL:  Key (id)=(...) is still referenced from table "orders".]]. اليوزر متمسحش، لأن الافتراضي في أي FK هو [[NO ACTION]]: مينفعش تمسح أب ليه ولاد.
+
+ده بالظبط اللي انت عايزه في الأوردرات: مسح يوزر مينفعش يمسح تاريخ مبيعات بالغلط. الاختيارات التانية (CASCADE أو SET NULL أو soft delete) في درس ON DELETE. لو المسح نجح، يبقى الـ ALTER TABLE اللي بيضيف الـ FK مكملش (غالبًا فيه أوردر قديم بـ user_id مش موجود في users، فالـ constraint اترفض)؛ اقرا الـ error بتاعه.`,
+          solCode: R`DELETE FROM users WHERE email = 'you@example.com';
+-- ERROR:  update or delete on table "users" violates foreign key constraint "orders_user_fk" on table "orders"`
         },
         {
           cmd: "many-to-many",
@@ -889,7 +1028,14 @@ SELECT 1, id, 2, price FROM products WHERE name = 'Mug';`,
             "index للناحية التانية: الأوردرات اللي فيها منتج معين.",
             "ضيف بند:",
             "لأوردر 1، منتج Mug، كمية ٢، والسعر من جدول المنتجات نفسه."
-          ]
+          ],
+          sol: R`التكرار هيترفض: [[duplicate key value violates unique constraint "order_items_pkey"]] مع [[Key (order_id, product_id)=(1, 2) already exists.]]. الـ PRIMARY KEY المركب معناه إن المنتج يظهر مرة واحدة في الأوردر؛ لو العميل عايز تاني بتزوّد [[quantity]] مش بتضيف صف.
+
+بعد [[UPDATE products SET price = 140 WHERE name = 'Mug']]، الـ join هيوريك [[unit_price]] في البند لسه بالسعر القديم و [[price]] في products بالجديد. ده مقصود: البند بيحفظ السعر وقت الشراء، والفاتورة القديمة متتغيرش لما المنتج يغلى. الغلطة الشائعة إنك تحسب total الأوردر من [[products.price]] بدل [[order_items.unit_price]].`,
+          solCode: R`UPDATE products SET price = 140 WHERE name = 'Mug';
+SELECT oi.unit_price, p.price
+FROM order_items oi JOIN products p ON p.id = oi.product_id
+WHERE p.name = 'Mug';   -- unit_price القديم، price الجديد`
         },
         {
           cmd: "one-to-one",
@@ -932,7 +1078,19 @@ CREATE TABLE shipments (
             "FK للأوردر وعليه UNIQUE: شحنة واحدة لكل أوردر.",
             "رقم التتبع.",
             "قفلة."
-          ]
+          ],
+          sol: R`البروفايل التاني لنفس اليوزر هيترفض بـ [[duplicate key value violates unique constraint "profiles_pkey"]]، لأن user_id هو الـ PRIMARY KEY نفسه، فمينفعش يتكرر: يوزر واحد، بروفايل واحد.
+
+في shipments: الشحنة التانية لنفس الأوردر هتترفض بـ [[shipments_order_id_key]]. بعد ما تشيل الـ UNIQUE ([[ALTER TABLE shipments DROP CONSTRAINT shipments_order_id_key;]]) هتتقبل، و [[SELECT order_id, count(*) FROM shipments GROUP BY 1]] هيطلّع 2. محدش هيحذرك: العلاقة بقت one-to-many، والكود اللي بيقرا «الشحنة» بـ [[LIMIT 1]] هيجيب واحدة عشوائي.
+
+بعد التجربة امسح الشحنات ([[DELETE FROM shipments;]]) ورجّع الـ UNIQUE، لأن FK الشحنات مفيهوش ON DELETE، فدرس ON DELETE هيفشل وهو بيمسح الأوردر لو سبت شحنة عليه.`,
+          solCode: R`INSERT INTO profiles (user_id, bio) SELECT id, 'hi' FROM users WHERE email = 'you@example.com';
+INSERT INTO profiles (user_id, bio) SELECT id, 'again' FROM users WHERE email = 'you@example.com';
+-- ERROR:  duplicate key value violates unique constraint "profiles_pkey"
+ALTER TABLE shipments DROP CONSTRAINT shipments_order_id_key;
+INSERT INTO shipments (order_id, tracking) VALUES (1, 'TRK1'), (1, 'TRK2');   -- اتقبلت
+DELETE FROM shipments;
+ALTER TABLE shipments ADD CONSTRAINT shipments_order_id_key UNIQUE (order_id);`
         },
         {
           cmd: "ON DELETE",
@@ -967,7 +1125,22 @@ ALTER TABLE orders ADD CONSTRAINT orders_user_fk
             "عشان تغيّر السلوك: شيل الـ FK القديم،",
             "وارجع ضيفه بالسلوك اللي عايزه:",
             "مسح يوزر ليه أوردرات ممنوع صراحةً."
-          ]
+          ],
+          sol: R`الـ CREATE TABLE هيعدّي عادي (Postgres مش بيعترض على التركيبة وقت التعريف)، والمشكلة تظهر وقت المسح: [[ERROR:  null value in column "parent_id" of relation "t_child" violates not-null constraint]]، و الـ CONTEXT بيوريك إن Postgres كان بينفذ [[UPDATE ONLY "public"."t_child" SET "parent_id" = NULL ...]] من وراك. المسح كله اترفض، والأب لسه موجود.
+
+الحل يا تشيل [[NOT NULL]] من العمود لو فعلًا الابن ينفع يعيش من غير أب، يا تختار [[CASCADE]] أو [[RESTRICT]]. الخلاصة: SET NULL وعده إنه هيكتب NULL، فالعمود لازم يقبلها.`,
+          solCode: R`CREATE TABLE t_parent (id int PRIMARY KEY);
+CREATE TABLE t_child (
+  id int PRIMARY KEY,
+  parent_id int NOT NULL REFERENCES t_parent (id) ON DELETE SET NULL
+);
+INSERT INTO t_parent VALUES (1);
+INSERT INTO t_child VALUES (10, 1);
+DELETE FROM t_parent WHERE id = 1;
+-- ERROR:  null value in column "parent_id" of relation "t_child" violates not-null constraint
+ALTER TABLE t_child ALTER COLUMN parent_id DROP NOT NULL;
+DELETE FROM t_parent WHERE id = 1;   -- DELETE 1، و parent_id بقى NULL
+DROP TABLE t_child, t_parent;`
         }
       ]
     },
@@ -1019,7 +1192,17 @@ WHERE o.id = 2;`,
             "مع بنود كل أوردر،",
             "ومع المنتج بتاع كل بند،",
             "لأوردر واحد."
-          ]
+          ],
+          sol: R`اعمل الأوردر بـ [[RETURNING id]] عشان تعرف رقمه (مش هيبقى ٢ ولا ٣ غالبًا، لأن محاولات فاشلة قبل كده حجزت أرقام)، وحط الرقم ده بدل [[o.id = 2]]. هتاخد صفين: اسم كل منتج وكميته وسعره و line_total. لو الاستعلام رجّع [[0 rows]]، يبقى الـ id غلط أو البنود اتضافت لأوردر تاني.
+
+الـ [[CROSS JOIN users u]] من غير ON بيربط كل أوردر بكل يوزر: عدد الصفوف = عدد الأوردرات × عدد اليوزرز. لو عندك يوزر واحد مش هتلاحظ فرق، فضيف يوزر تاني: أوردرين × يوزرين = ٤ صفوف، ونص الإيميلات غلط. ده نفس اللي بيحصل لما تنسى شرط الـ join، والرقم بيتضاعف في التقارير من غير error.`,
+          solCode: R`WITH o AS (
+  INSERT INTO orders (user_id) SELECT id FROM users WHERE email = 'you@example.com' RETURNING id
+)
+INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+SELECT o.id, p.id, 1, p.price FROM o, products p WHERE p.name IN ('Mug', 'Hoodie')
+RETURNING order_id;
+SELECT count(*) FROM orders o CROSS JOIN users u;   -- orders × users`
         },
         {
           cmd: "LEFT JOIN",
@@ -1064,7 +1247,17 @@ LEFT JOIN orders o ON o.user_id = u.id AND o.status = 'paid';`,
             "واللي ملهاش بنود خالص: عمره ما اتباع.",
             "كل اليوزرز، ومعاهم أوردراتهم المدفوعة بس:",
             "شرط اليمين في ON عشان اليوزرز التانيين ميختفوش."
-          ]
+          ],
+          sol: R`مع [[count(o.id)]] اليوزر الجديد عنده [[0]]. مع [[count(*)]] بقى عنده [[1]]، لأن LEFT JOIN رجّع له صف واحد فيه أعمدة الأوردر كلها NULL، و [[count(*)]] بيعدّ الصفوف، أما [[count(o.id)]] بيعدّ القيم اللي مش NULL.
+
+في آخر استعلام، والشرط في ON: اليوزر الجديد ظاهر وجنبه id فاضي. لما تنقل [[o.status = 'paid']] لـ WHERE هيختفي، لأن WHERE بيتنفذ بعد الـ join، و [[NULL = 'paid']] مش true، فالـ LEFT JOIN اتحول فعليًا لـ INNER JOIN. (ولو مفيش ولا أوردر paid خالص، الاستعلام هيرجّع صفر صفوف.) القاعدة: الشروط على الجدول اليمين في LEFT JOIN مكانها ON.`,
+          solCode: R`INSERT INTO users (email, name) VALUES ('new@example.com', 'New');
+SELECT u.email, count(*) AS orders
+FROM users u LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.id;                                            -- new@example.com = 1 (غلط)
+SELECT u.email, o.id FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+WHERE o.status = 'paid';                                  -- new@example.com اختفى`
         },
         {
           cmd: "EXISTS",
@@ -1107,7 +1300,13 @@ WHERE price > (SELECT avg(price) FROM products);`,
             "اللي ملهمش ولا أوردر (anti-join).",
             "المنتجات،",
             "اللي سعرها أعلى من متوسط الأسعار (subquery بترجّع رقم واحد)."
-          ]
+          ],
+          sol: R`الأول هيرجّع [[(0 rows)]] والتاني هيرجّع [[1]]. [[3 NOT IN (1, 2, NULL)]] معناها [[3 <> 1 AND 3 <> 2 AND 3 <> NULL]]، والأخيرة NULL، و [[true AND NULL]] = NULL، فالشرط مش true. جرّب [[SELECT 3 NOT IN (1, 2, NULL);]] وهتلاقي خانة فاضية (NULL) مش false.
+
+في الحقيقة ده بيحصل لما تكتب [[WHERE id NOT IN (SELECT user_id FROM ...)]] والـ subquery فيها صف واحد user_id بتاعه NULL: الاستعلام يرجّع فاضي فجأة من غير أي error. عشان كده استخدم [[NOT EXISTS]] دايمًا بدل [[NOT IN]] مع subquery، وده سؤال انترفيو مشهور.`,
+          solCode: R`SELECT 1 WHERE 3 NOT IN (1, 2, NULL);   -- 0 rows
+SELECT 1 WHERE 3 NOT IN (1, 2);         -- 1
+SELECT 3 NOT IN (1, 2, NULL);           -- NULL`
         },
         {
           cmd: "WITH (CTE)",
@@ -1156,7 +1355,18 @@ ORDER BY p.spent DESC;`,
             "مع جدول اليوزرز عشان الإيميل،",
             "ومع paid عشان المبلغ،",
             "والأكتر صرفًا الأول."
-          ]
+          ],
+          sol: R`النسخة من غير WITH لازم تكرر حسبة paid مرتين (مرة للفلترة ومرة للـ spent)، وده بيخليها أطول وأصعب في التعديل. في EXPLAIN بتاع نسخة WITH هتلاقي [[CTE paid]] فيها [[Seq Scan on orders]] مرة واحدة، وتحتها سطرين [[CTE Scan on paid]]. في نسخة الـ subqueries هتلاقي [[Seq Scan on orders]] و [[Seq Scan on orders orders_1]]: الجدول اتقري مرتين.
+
+مع [[NOT MATERIALIZED]] الخطة بقت نفس خطة الـ subqueries بالظبط (سطرين Seq Scan ومفيش CTE Scan). ومن Postgres 12 الـ CTE اللي بتتستخدم مرة واحدة بس بتتدمج تلقائي، فـ MATERIALIZED بيفرق بس لما الـ CTE بتتقري أكتر من مرة. الاستعلام نفسه هيرجّع صفر صفوف غالبًا، لأن مفيش حد صرف ١٠٠٠؛ ده طبيعي.`,
+          solCode: R`EXPLAIN SELECT u.email, p.spent
+FROM (SELECT user_id
+      FROM (SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid' GROUP BY user_id) x
+      WHERE spent >= 1000) v
+JOIN users u ON u.id = v.user_id
+JOIN (SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid' GROUP BY user_id) p
+  ON p.user_id = v.user_id
+ORDER BY p.spent DESC;`
         }
       ]
     },
@@ -1202,7 +1412,14 @@ UNIQUE بيسمح بكذا NULL، إلا لو كتبت [[NULLS NOT DISTINCT]] (�
             "القيم المسموحة.",
             "إيميل فريد من غير ما يفرق حروف كبيرة وصغيرة.",
             "خصم أكتر من المخزون: القاعدة رفضت."
-          ]
+          ],
+          sol: R`[[YOU@example.com]] هيترفض: [[duplicate key value violates unique constraint "users_email_lower_uq"]] و [[Key (lower(email))=(you@example.com) already exists.]]. الـ UNIQUE العادي على email كان هيقبله، لأنه نص مختلف حرفيًا. وخلي بالك إن الـ index ده بيخدم بس الاستعلامات اللي فيها [[lower(email)]] بالظبط، فالـ login لازم يدوّر بـ [[WHERE lower(email) = lower($1)]].
+
+[[status = 'shiped']] (سواء UPDATE أو INSERT) هيترفض: [[new row for relation "orders" violates check constraint "status_valid"]]. من غير الـ CHECK كانت الكلمة الغلط هتتحفظ، والأوردر يختفي من أي تقرير بيدوّر على 'shipped'. لو الـ ALTER TABLE نفسه فشل، ده معناه إن فيه داتا قديمة بتكسر الشرط؛ صلّحها الأول.`,
+          solCode: R`INSERT INTO users (email, name) VALUES ('YOU@example.com', 'Ali 2');
+-- ERROR:  duplicate key value violates unique constraint "users_email_lower_uq"
+UPDATE orders SET status = 'shiped' WHERE id = 2;
+-- ERROR:  new row for relation "orders" violates check constraint "status_valid"`
         },
         {
           cmd: "normalization",
@@ -1252,7 +1469,38 @@ CREATE TABLE product_prices (
             "السعر بالعملة دي.",
             "المفتاح المركب: سعر واحد لكل منتج في كل عملة.",
             "قفلة."
-          ]
+          ],
+          sol: R`إجابة نموذجية على شيت مبيعات أعمدته: التاريخ، اسم العميل، تليفونه، عنوانه، المنتج، سعره، الكمية، المندوب. اسم العميل وتليفونه وعنوانه بيتكرروا في كل صف اشترى فيه، فدول جدول [[customers]]. المنتج وسعره بيتكرروا، فدول جدول منتجات. المندوب جدول لوحده. والعملية نفسها (مين اشترى امتى ومن أنهي مندوب) جدول، وبنودها (منتج وكمية وسعر وقت البيع) جدول تاني بـ PRIMARY KEY مركب.
+
+علامات لازم تلاحظها: عمود فيه أكتر من قيمة ([[«تيشيرت، كاب»]]) يبقى محتاج جدول بنود؛ أعمدة مترقمة ([[تليفون1، تليفون2]]) نفس الحكاية؛ وقيمة لو اتغيرت لازم تعدلها في صفوف كتير (عنوان العميل) يبقى مكانها جدول تاني. والاستثناء: السعر يتنسخ في البند عن قصد، لأنه سعر لحظة البيع مش السعر الحالي. الكود ده اتجرّب على Postgres.`,
+          solCode: R`CREATE TABLE customers (
+  id      bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name    text NOT NULL,
+  phone   text NOT NULL UNIQUE,
+  address text
+);
+CREATE TABLE sales_reps (
+  id   bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name text NOT NULL
+);
+CREATE TABLE items (
+  id    bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name  text NOT NULL UNIQUE,
+  price numeric(10,2) NOT NULL
+);
+CREATE TABLE sales (
+  id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  customer_id bigint NOT NULL REFERENCES customers (id),
+  rep_id      bigint REFERENCES sales_reps (id),
+  sold_at     date NOT NULL
+);
+CREATE TABLE sale_items (
+  sale_id    bigint REFERENCES sales (id) ON DELETE CASCADE,
+  item_id    bigint REFERENCES items (id),
+  quantity   integer NOT NULL CHECK (quantity > 0),
+  unit_price numeric(10,2) NOT NULL,
+  PRIMARY KEY (sale_id, item_id)
+);`
         },
         {
           cmd: "denormalization",
@@ -1293,7 +1541,16 @@ HAVING o.total <> sum(oi.quantity * oi.unit_price);`,
             "من الأوردرات مع بنودها،",
             "لكل أوردر،",
             "واعرض اللي الرقمين فيه مختلفين بس."
-          ]
+          ],
+          sol: R`بعد ما تضيف بند لأوردر من غير ما تحدّث total، استعلام المراجعة هيطلّع صف زي [[2 | 0.00 | 170.00]]: الأوردر رقم كذا، الـ total المتخزن، والمجموع الحقيقي من البنود. قبل الإضافة كان بيرجّع [[0 rows]]، ودي الحالة السليمة.
+
+الـ UPDATE الأول بيصلّح الفرق. خلي بالك إن الاستعلام ده بـ JOIN، فأوردر total بتاعه مش صفر ومفيش ولا بند مش هيظهر فيه؛ لو عايز تمسكه كمان استخدم LEFT JOIN و [[COALESCE(sum(...), 0)]]. والحل الدائم إن أي كود بيضيف بند يحدّث total في نفس الـ transaction (زي درس transaction)، أو trigger، أو إنك تبطل تخزّن total وتحسبه وقت القراية لو الأداء مسموح.`,
+          solCode: R`INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+SELECT 2, id, 1, price FROM products WHERE name = 'Cap';
+SELECT o.id, o.total, sum(oi.quantity * oi.unit_price) AS real_total
+FROM orders o JOIN order_items oi ON oi.order_id = o.id
+GROUP BY o.id
+HAVING o.total <> sum(oi.quantity * oi.unit_price);   -- الأوردر ده ظهر`
         },
         {
           cmd: "jsonb",
@@ -1328,7 +1585,16 @@ GIN index الافتراضي على jsonb بيخدم [[@>]] و [[?]] و [[?|]] �
             "المنتجات اللي لستة المقاسات فيها L.",
             "ضيف key جديد من غير ما تمسح الباقي.",
             "GIN index للاستعلام جوه الـ JSON."
-          ]
+          ],
+          sol: R`[[attrs->'color']] بيرجّع [["black"]] بعلامات تنصيص ونوعه [[jsonb]]، و [[attrs->>'color']] بيرجّع [[black]] ونوعه [[text]] (اتأكد بـ [[pg_typeof]]). عشان كده المقارنة بنص عادي لازم تبقى بـ [[->>]].
+
+في EXPLAIN على جدول صغير الاتنين هيقولوا [[Seq Scan on products]]، لأن قراية ٥ صفوف أرخص من فتح أي index. عشان تشوف الفرق اكتب [[SET enable_seqscan = off;]] قبلهم: [[@>]] هيبقى [[Bitmap Index Scan on products_attrs_gin]]، و [[->>'color' = 'black']] هيفضل Seq Scan (وتكلفته بقت رقم ضخم لأنه مجبور). الـ GIN الافتراضي بيخدم [[@>]] و [[?]] و [[?|]] و [[?&]]، مش [[->>]] مع [[=]]؛ ده محتاج expression index على [[(attrs->>'color')]].`,
+          solCode: R`SELECT attrs->'color', attrs->>'color', pg_typeof(attrs->'color'), pg_typeof(attrs->>'color')
+FROM products WHERE name = 'T-shirt';   -- "black" | black | jsonb | text
+SET enable_seqscan = off;
+EXPLAIN SELECT name FROM products WHERE attrs->>'color' = 'black';        -- Seq Scan
+EXPLAIN SELECT name FROM products WHERE attrs @> '{"color": "black"}';   -- Bitmap Index Scan on products_attrs_gin
+RESET enable_seqscan;`
         }
       ]
     },
@@ -1374,7 +1640,16 @@ PRIMARY KEY و UNIQUE بيعملوا index لوحدهم، والـ FK لأ. وف
             "من غير index: بيقرا الـ ٢٠٠ ألف صف.",
             "اعمل index على التاريخ.",
             "نفس الاستعلام: بيروح للصفوف على طول. قارن الوقت."
-          ]
+          ],
+          sol: R`في تجربة على ٢٠٠ ألف صف: قبل الـ index العدّ أخد حوالي ٢٠ms، وبعده حوالي ١.٥ms. [[date(created_at) = current_date]] رجع ~١٩ms تاني، و EXPLAIN بيقول [[Parallel Seq Scan on orders]] ومعاه [[Rows Removed by Filter]] بعشرات الآلاف. المدى [[created_at >= current_date AND created_at < current_date + 1]] رجع أقل من ١ms بـ [[Bitmap Index Scan on orders_created_at_idx]]. الأرقام عندك هتختلف، بس الفرق بالأضعاف هيفضل.
+
+السبب إن الـ index مترتب بقيم [[created_at]] نفسها، مش بـ [[date(created_at)]]، فالدالة بتجبر Postgres يحسبها لكل صف. الحل يا تكتب الشرط كمدى على العمود زي ما عملت، يا تعمل expression index على نفس الدالة بالظبط. والعددين لازم يطلعوا متساويين؛ لو مختلفين يبقى المدى بتاعك فيه [[<=]] بدل [[<]] أو ناقص يوم.`,
+          solCode: R`\timing on
+EXPLAIN ANALYZE SELECT count(*) FROM orders WHERE date(created_at) = current_date;
+-- Parallel Seq Scan on orders
+EXPLAIN ANALYZE SELECT count(*) FROM orders
+WHERE created_at >= current_date AND created_at < current_date + 1;
+-- Bitmap Index Scan on orders_created_at_idx`
         },
         {
           cmd: "composite index",
@@ -1411,7 +1686,20 @@ DROP INDEX orders_user_id_idx;`,
             "شرط على أول عمود بس: بيستخدمه برضه.",
             "شرط على التاني بس: المركب مش مناسب (بيستخدم index التاريخ اللي عملناه قبل كده).",
             "index الـ user_id لوحده بقى زيادة: المركب بيغطيه."
-          ]
+          ],
+          sol: R`الاستعلام الأول هيقول [[Index Scan using orders_user_created_idx]] ومفيش [[Sort]] في الخطة، لأن الـ index جايب الصفوف مترتبة. التالت هيستخدم [[orders_created_at_idx]] (index التاريخ من الدرس اللي فات) مش المركب. أما التاني فغالبًا هيطلع [[Seq Scan]]، وده مش غلط: في الـ lab كل الـ ٢٠٠ ألف أوردر بتوع نفس اليوزر، والـ planner عارف إن الشرط هيجيب الجدول كله، فقراية الجدول على طول أرخص. لو عملت يوزر تاني ليه أوردر واحد وحطيت الـ uuid بتاعه نص صريح في الشرط، هتلاقي [[Index Only Scan using orders_user_created_idx]].
+
+بالترتيب العكسي [[(created_at, user_id)]] (امسح المركب الأول عشان تقارن): الاستعلام الأول بقى [[Index Scan Backward using orders_created_at_idx]] ومعاه سطر [[Filter]] على user_id، يعني بيمشي على الأوردرات بالأحدث ويرمي اللي مش بتوع اليوزر. مع يوزر ليه أوردرات قليلة ده ممكن يلف على الجدول كله. المساواة الأول، والترتيب أو المدى بعدها.`,
+          solCode: R`EXPLAIN SELECT id, total FROM orders
+WHERE user_id = (SELECT id FROM users LIMIT 1) ORDER BY created_at DESC LIMIT 20;
+-- Index Scan using orders_user_created_idx
+BEGIN;
+DROP INDEX orders_user_created_idx;
+CREATE INDEX orders_created_user_idx ON orders (created_at, user_id);
+EXPLAIN SELECT id, total FROM orders
+WHERE user_id = (SELECT id FROM users LIMIT 1) ORDER BY created_at DESC LIMIT 20;
+-- Index Scan Backward using orders_created_at_idx + Filter
+ROLLBACK;`
         },
         {
           cmd: "transaction",
@@ -1466,7 +1754,35 @@ try {
             "في كل الأحوال:",
             "رجّع الـ connection للـ pool.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[throw new Error("test")]] بعد الـ INSERT التاني، الـ catch بيعمل ROLLBACK ويرمي الـ error تاني. [[SELECT count(*) FROM orders]] و [[order_items]] قبل وبعد هيطلعوا نفس الأرقام: الأوردر والبند اتلغوا مع بعض. (الـ id بتاع الأوردر اتحجز واتحرق، فالأوردر الجاي هيبقى رقمه نط.)
+
+[[pool.query("BEGIN")]] مش بتشتغل لأن كل [[pool.query]] ممكن تروح لـ connection مختلفة، والـ transaction ملك connection واحدة. الخطير إنها غالبًا هتبان شغالة وانت بتجرب لوحدك، لأن الـ pool بيرجّعلك نفس الـ connection الفاضية. في تجربة فيها ٢٠ request في نفس الوقت بالكود الغلط، ٦ أوردرات و ٦ بنود اتحفظوا رغم إن كل request عمل ROLLBACK، لأن الـ INSERT راح لـ connection مفيهاش BEGIN فاتحفظ لوحده. عشان كده دايمًا [[pool.connect()]] وكل الأوامر على نفس الـ client، و [[release()]] في finally.`,
+          solCode: R`import pg from "pg";
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+
+async function createOrder(userId, productId, qty) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const { rows } = await client.query("INSERT INTO orders (user_id) VALUES ($1) RETURNING id", [userId]);
+    await client.query("INSERT INTO order_items (order_id, product_id, quantity, unit_price) SELECT $1::bigint, id, $3::int, price FROM products WHERE id = $2", [rows[0].id, productId, qty]);
+    throw new Error("test");
+  } catch (e) {
+    await client.query("ROLLBACK");
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+const count = async () => (await pool.query("SELECT (SELECT count(*) FROM orders) AS orders, (SELECT count(*) FROM order_items) AS items")).rows[0];
+const userId = (await pool.query("SELECT id FROM users LIMIT 1")).rows[0].id;
+const productId = (await pool.query("SELECT id FROM products WHERE name = 'Hoodie'")).rows[0].id;
+console.log("before:", await count());
+try { await createOrder(userId, productId, 1); } catch (e) { console.log("error:", e.message); }
+console.log("after:", await count());   // نفس الأرقام
+await pool.end();`
         },
         {
           cmd: "atomic UPDATE",
@@ -1508,7 +1824,10 @@ if (r.rowCount === 0) throw new Error("OUT_OF_STOCK");`,
             "القيم كـ parameters.",
             "قفلة.",
             "ولا صف اتعدل؟ يبقى المخزون خلص."
-          ]
+          ],
+          sol: R`التانية هتقف ومش هترجع لحد ما تعمل COMMIT في الأولى، لأن الأولى ماسكة lock على صف الـ Hoodie. بعد الـ COMMIT التانية هتكمّل على طول وتقول [[UPDATE 1]]، والمخزون نزل ٢ (من 8 لـ 6 مثلًا). المهم إن التانية مقرتش القيمة القديمة: Postgres في READ COMMITTED بيعيد تقييم [[stock >= 1]] على النسخة الجديدة من الصف بعد ما القفل يتفك.
+
+عشان تشوف الحماية بجد، خلي المخزون [[1]] ([[UPDATE products SET stock = 1 WHERE name = 'Hoodie';]]) وكرر: الأولى [[UPDATE 1]]، والتانية بعد الـ COMMIT هتقول [[UPDATE 0]]، والمخزون [[0]] مش [[-1]]. الـ 0 ده هو [[rowCount === 0]] اللي بيرمي OUT_OF_STOCK في الكود. أما بالطريقة الغلطة (SELECT في الكود وبعدين SET بالرقم) الاتنين كانوا هيقروا 1 ويكتبوا 0، وتبيع قطعتين وعندك واحدة.`
         },
         {
           cmd: "SELECT FOR UPDATE",
@@ -1557,7 +1876,20 @@ COMMIT;`,
             "في أمر واحد بـ UPDATE ... FROM.",
             "علّم الأوردر مدفوع.",
             "ثبّت، والأقفال اتفكت."
-          ]
+          ],
+          sol: R`النافذة التانية هتقف ومش هترجع لحد ما الأولى تعمل COMMIT أو ROLLBACK. في تجربة الأولى مسكت الصف ثانيتين، والتانية أخدت [[Time: 1713 ms]] وهي مستنية. التالتة (SELECT عادي) رجعت في أقل من ١ms وشافت الصف بقيمته الحالية، لأن القراية العادية في Postgres مش بتاخد locks ومش بتستنى الكتابة (MVCC).
+
+لو عايز التانية متستناش خالص: [[FOR UPDATE NOWAIT]] بترجع فورًا بـ [[ERROR:  could not obtain lock on row in relation "orders"]]، و [[FOR UPDATE SKIP LOCKED]] بتتخطى الصف المقفول (ودي اللي بتتعمل بيها job queues). ولو التانية فضلت واقفة ومش بتكمل حتى بعد الـ COMMIT، اتأكد إن الأولى فعلًا عملت COMMIT ومش لسه جوه transaction بعد error ([[current transaction is aborted]]).`,
+          solCode: R`-- نافذة 1
+BEGIN;
+SELECT * FROM orders WHERE id = 5 FOR UPDATE;
+-- نافذة 2: هتقف
+BEGIN;
+SELECT * FROM orders WHERE id = 5 FOR UPDATE;
+-- نافذة 3: بترجع على طول
+SELECT * FROM orders WHERE id = 5;
+SELECT * FROM orders WHERE id = 5 FOR UPDATE NOWAIT;
+-- ERROR:  could not obtain lock on row in relation "orders"`
         },
         {
           cmd: "isolation levels",
@@ -1600,7 +1932,20 @@ SERIALIZABLE في Postgres (SSI) مش بيقفل كل حاجة؛ بيراقب م
             "اتأكد إن اليوزر معندوش أوردر pending.",
             "مفيش؟ ضيف واحد.",
             "لو transaction تانية عملت نفس الحكاية في نفس الوقت، واحدة منهم هتفشل هنا."
-          ]
+          ],
+          sol: R`بـ REPEATABLE READ: السطرين هيرجّعوا نفس الرقم (8 و 8) حتى لو النافذة التانية زوّدت المخزون وعملت COMMIT بينهم، لأن الـ transaction بتشوف snapshot اتاخدت عند أول استعلام فيها. بـ [[BEGIN;]] العادي (READ COMMITTED): السطر التاني هيشوف الرقم الجديد (مثلًا 13 ثم 18 بعد +5)، لأن كل statement بياخد snapshot جديدة.
+
+وفيه حاجة زيادة تستاهل تجربها: جوه REPEATABLE READ، بعد ما التانية عدّلت الصف وعملت COMMIT، اعمل UPDATE على نفس الصف في الأولى: هتاخد [[ERROR:  could not serialize access due to concurrent update]]. Postgres رفض يكتب فوق تعديل انت مشفتوش، والكود لازم يعمل retry للـ transaction كلها. ولو السطرين في REPEATABLE READ طلعوا مختلفين، يبقى التعديل حصل قبل أول SELECT مش بينهم.`,
+          solCode: R`-- نافذة 1
+BEGIN ISOLATION LEVEL REPEATABLE READ;
+SELECT stock FROM products WHERE name = 'Hoodie';   -- 8
+-- نافذة 2
+UPDATE products SET stock = stock + 5 WHERE name = 'Hoodie';
+-- نافذة 1
+SELECT stock FROM products WHERE name = 'Hoodie';   -- لسه 8
+UPDATE products SET stock = stock - 1 WHERE name = 'Hoodie';
+-- ERROR:  could not serialize access due to concurrent update
+ROLLBACK;`
         },
         {
           cmd: "ON CONFLICT",
@@ -1641,7 +1986,18 @@ ON CONFLICT (sku) DO NOTHING;`,
             "ورجّع الصف في الحالتين.",
             "نفس المحاولة،",
             "بس لو موجود متعملش حاجة خالص."
-          ]
+          ],
+          sol: R`التلات مرات هيرجّعوا نفس الـ id، والمخزون [[10]] ثم [[20]] ثم [[30]]: أول مرة INSERT، وبعدها كل مرة UPDATE بيجمع [[EXCLUDED.stock]] (القيمة اللي كنت عايز تدخلها) على [[products.stock]] (القيمة الموجودة). لو شغّلت الدرس قبل كده بالـ ALTER، هيقولك [[column "sku" of relation "products" already exists]]، عادي، والأرقام هتكمل من اللي موجود.
+
+نفس الـ sku مرتين في نفس الـ VALUES مع DO UPDATE: [[ERROR:  ON CONFLICT DO UPDATE command cannot affect row a second time]]، لأن الأمر الواحد مينفعش يعدّل نفس الصف مرتين. الحل تجمّع الصفوف في الكود (أو بـ GROUP BY) قبل الإرسال. ومع DO NOTHING مش هيطلع error، هيتضاف صف واحد بس. وخلي بالك: كل محاولة upsert بتحرق رقم من الـ sequence حتى لو عملت UPDATE، فالـ id الجاي للمنتجات الجديدة هيبقى نط.`,
+          solCode: R`INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
+ON CONFLICT (sku) DO UPDATE
+SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock
+RETURNING id, price, stock;   -- نفس الـ id، والمخزون +10 كل مرة
+INSERT INTO products (sku, name, price, stock)
+VALUES ('TS-BLK-L', 'T-shirt black L', 250, 5), ('TS-BLK-L', 'T-shirt black L', 250, 5)
+ON CONFLICT (sku) DO UPDATE SET stock = products.stock + EXCLUDED.stock;
+-- ERROR:  ON CONFLICT DO UPDATE command cannot affect row a second time`
         }
       ]
     },
@@ -1699,7 +2055,26 @@ ORDER BY day;`,
             "من المدفوع، مجمّع باليوم.",
             "قفلة.",
             "بالترتيب."
-          ]
+          ],
+          sol: R`بـ [[rn <= 3]] هتاخد لحد ٣ صفوف لكل يوزر، مرتبين من الأحدث، وعمود rn فيه 1 و 2 و 3. اليوزر اللي عنده أوردرين بس هيظهر بصفين. ضيف [[rn]] للـ SELECT و [[ORDER BY user_id, rn]] عشان تشوفها واضحة.
+
+عمود [[LAG(revenue) OVER (ORDER BY day)]] بيجيب إيراد اليوم اللي قبله في نفس الصف. أول يوم هيبقى NULL لأن مفيش قبله، وده صح. و [[revenue - LAG(revenue) OVER (ORDER BY day)]] بيديك الفرق (موجب أو سالب). الغلطة الشائعة إنك تفتكر LAG بيجيب «امبارح» بالتاريخ: هو بيجيب الصف اللي قبله في الترتيب، فلو يوم مفيهوش أوردرات هيقارن بآخر يوم فيه. لو عايز كل الأيام، اعمل join مع [[generate_series]] للتواريخ الأول.`,
+          solCode: R`SELECT id, user_id, total, rn FROM (
+  SELECT id, user_id, total,
+         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC) AS rn
+  FROM orders
+) t
+WHERE rn <= 3
+ORDER BY user_id, rn;
+SELECT day, revenue,
+       SUM(revenue) OVER (ORDER BY day) AS running_total,
+       LAG(revenue) OVER (ORDER BY day) AS prev_day,
+       revenue - LAG(revenue) OVER (ORDER BY day) AS diff
+FROM (
+  SELECT date_trunc('day', created_at) AS day, sum(total) AS revenue
+  FROM orders WHERE status = 'paid' GROUP BY 1
+) d
+ORDER BY day;`
         },
         {
           cmd: "keyset pagination",
@@ -1746,7 +2121,18 @@ LIMIT 20;`,
             "اللي أقدم من آخر صف شفته (الوقت والـ id بتوعه).",
             "نفس الترتيب،",
             "٢٠ صف، ومن غير ما يعدّي حاجة."
-          ]
+          ],
+          sol: R`في تجربة على ٢٠٠ ألف أوردر: OFFSET 0 أخد حوالي ١ms، و OFFSET 100000 أخد حوالي ٩٠ms من غير الـ index الجديد و ٤٤ms بيه. حتى مع الـ index لازم يعدّي على ١٠٠ ألف صف ويرميهم، فالوقت بيكبر مع رقم الصفحة. الـ keyset من نفس المكان أخد أقل من ١ms، و EXPLAIN بيقول [[Index Only Scan using orders_created_id_idx]] ومعاه [[Index Cond: (ROW(created_at, id) < ROW(...))]]: بيروح للمكان على طول ويقرا ٢٠ صف بس.
+
+لما تنسخ الـ created_at من الناتج خده بالميكروثواني والتوقيت زي ما هو ([['2026-03-30 18:06:41.224496+00']])؛ لو قصّيته للثانية الصفحة الجاية هتكرر أو تنط صفوف. ونفس الكلام لو نسيت الـ id وقارنت بـ created_at لوحده: صفين بنفس الوقت ممكن واحد فيهم يضيع بين صفحتين. والعيب الوحيد: مفيش «روح لصفحة 57» مباشرة، فيه «اللي بعده» بس.`,
+          solCode: R`\timing on
+SELECT id FROM orders ORDER BY created_at DESC, id DESC LIMIT 20 OFFSET 0;
+SELECT id FROM orders ORDER BY created_at DESC, id DESC LIMIT 20 OFFSET 100000;
+-- خد created_at و id من آخر صف في الصفحة، وحطهم هنا:
+SELECT id, total, created_at FROM orders
+WHERE (created_at, id) < ('2026-03-30 18:06:41.224496+00', 32378)
+ORDER BY created_at DESC, id DESC
+LIMIT 20;`
         }
       ]
     },
