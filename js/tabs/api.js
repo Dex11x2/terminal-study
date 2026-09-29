@@ -52,7 +52,12 @@ curl -X POST http://localhost:3000/api/tasks -H "Content-Type: application/json"
           lines: [
             "هات كل المهام. الرد JSON: array من objects.",
             "اعمل مهمة جديدة: الـ method POST، ونوع الـ body في header، والـ body نفسه بعد [[-d]]."
-          ]
+          ],
+          sol: R`اللي المفروض تشوفه: كل طلب في القايمة ليه [[Request URL]] (غالبًا فيه [[/api/]] أو [[/graphql]]) و method و status، وفي تاب Response هتلاقي JSON مش HTML. يعني الصفحة اتحمّلت مرة، وبعدها كل حاجة بتتغير (بوستات جديدة، إشعارات، سلة) بتيجي كبيانات من الـ API والواجهة هي اللي بترسمها.
+
+جرّب تفتح طلب من دول وتبص على تاب Headers: هتلاقي [[Content-Type: application/json]] في الرد، وغالبًا [[Authorization]] أو cookie في الطلب. ده اللي هتعمله انت بالظبط في التاب ده: السيرفر يعرف انت مين من الطلب، ويرجّع بياناتك انت بس.
+
+لو الفلتر Fetch/XHR طلع فاضي: اعمل refresh والـ Network مفتوح، أو اعمل أي حركة في الصفحة (scroll أو دوسة لايك). ولو كل اللي ظاهر HTML، يبقى الموقع ده بيعمل render على السيرفر (SSR)، والـ API موجود بس مش باين كطلبات منفصلة.`
         },
         {
           cmd: "method و status و headers",
@@ -84,7 +89,12 @@ curl -i http://localhost:3000/api/tasks/999
           lines: [
             "[[-v]] بيطبع الطلب والرد بالتفصيل. السطور اللي بتبدأ بـ > اللي اتبعت، واللي بتبدأ بـ < اللي رجع: 201 وعنوان المهمة الجديدة.",
             "[[-i]] بيعرض الـ status والـ headers مع الـ body. مهمة مش موجودة: 404."
-          ]
+          ],
+          sol: R`هتلاقي سطور [[>]] زي [[> GET / HTTP/2]] و [[> Host: api.github.com]] و [[> User-Agent: curl/...]] و [[> Accept: */*]]: ده الطلب اللي curl بعته، ومن غير [[-X]] الـ method بيبقى GET. وسطور [[<]] أولها [[< HTTP/2 200]] (الـ status)، وبعدها [[< content-type: application/json; charset=utf-8]]، وكمية headers تانية زي [[x-ratelimit-limit]] و [[x-ratelimit-remaining]] (فاضلك كام طلب في الساعة) وبعدها الـ body JSON.
+
+لو شفت [[HTTP/1.1 200 OK]] بدل [[HTTP/2 200]] مفيش مشكلة: ده بس إصدار البروتوكول اللي اتفقوا عليه (بروكسي في النص مثلًا). ولو شفت سطور بتبدأ بـ [[*]]، دي معلومات من curl نفسه (DNS و TLS)، مش جزء من الطلب ولا الرد.
+
+الغلطة الشائعة: تقرا الـ body وتقول «نجح» من غير ما تبص على الـ status. جرّب [[curl -v https://api.github.com/users/this-user-does-not-exist-xyz]]: الـ body JSON عادي فيه [[message]]، بس الـ status [[404]].`
         },
         {
           cmd: "node:http",
@@ -132,7 +142,26 @@ server.listen(3000, () => console.log("http://localhost:3000"));`,
             "والـ body رسالة خطأ JSON.",
             "قفلة الدالة.",
             "ابدأ استقبل على بورت 3000."
-          ]
+          ],
+          sol: R`الأول بيرجّع [[HTTP/1.1 200 OK]] و [[Content-Type: application/json]] والـ body array فيها [[{"id":1,"title":"buy milk","done":false}]]. والتاني ([[/api/tasks?x=1]]) بيرجّع [[HTTP/1.1 404 Not Found]] و [[{"error":"Not found"}]]، لأن [[req.url]] قيمته [[/api/tasks?x=1]] كلها، والمقارنة بـ [[===]] بتفشل.
+
+الحل: افصل المسار عن الـ query بـ [[new URL(req.url, "http://localhost")]]، وقارن [[pathname]] بس، والـ query تقراه من [[searchParams]]. ولـ [[/api/tasks/1]] استخدم regex على الـ pathname وطلّع الرقم منه. ده بالظبط الشغل اللي Express بيعمله عنك في [[req.params]] و [[req.query]].
+
+لو السيرفر مقامش وطلع [[SyntaxError: Cannot use import statement outside a module]]، يبقى [[type=module]] مش في package.json.`,
+          solCode: R`const server = createServer((req, res) => {
+  const { pathname, searchParams } = new URL(req.url, "http://localhost");
+  const send = (status, data) => {
+    res.writeHead(status, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(data));
+  };
+  if (req.method === "GET" && pathname === "/api/tasks") return send(200, tasks);
+  const m = pathname.match(/^\/api\/tasks\/(\d+)$/);
+  if (req.method === "GET" && m) {
+    const task = tasks.find((t) => t.id === Number(m[1]));
+    return task ? send(200, task) : send(404, { error: "Task not found" });
+  }
+  send(404, { error: "Not found", query: Object.fromEntries(searchParams) });
+});`
         },
         {
           cmd: "express()",
@@ -178,7 +207,12 @@ app.listen(3000, (err) => {
             "لو البورت مشغول مثلًا، اوقع بخطأ واضح.",
             "اطبع العنوان.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[/api/tasks?x=1]] بترجع [[200]] ونفس الـ array، لأن Express بيطابق الـ route على المسار بس ويحط الـ query لوحده في [[req.query]]. وهتلاحظ headers زيادة جت ببلاش: [[Content-Type: application/json; charset=utf-8]] و [[Content-Length]] و [[ETag]] (و [[X-Powered-By: Express]]، ودي helmet بيشيلها بعدين).
+
+النسخة التانية على نفس البورت بتقع برسالة [[Error: listen EADDRINUSE: address already in use :::3000]] (أو [[0.0.0.0:3000]] حسب الجهاز)، لأن Express 5 بيبعت الخطأ للـ callback في [[err]]، والكود بيعمل [[throw err]]، والـ process بتخرج بكود 1.
+
+لو النسخة التانية طبعت «API on ...» عادي، يبقى انت على Express 4: هناك الـ callback مبيوصلوش خطأ خالص، والسيرفر بيقع بـ unhandled error event. شوف النسخة بـ [[npm ls express]].`
         }
       ]
     },
@@ -223,7 +257,17 @@ app.route("/api/users/:id")
             "نفس العنوان لأكتر من method في مكان واحد.",
             "GET على العنوان ده.",
             "و PATCH عليه، والفاصلة المنقوطة بتقفل السلسلة."
-          ]
+          ],
+          sol: R`الخمسة بيرجّعوا [[{"ok":true}]] بـ [[200]]، بشرط كل طلب يطابق الـ method والمسار الاتنين: [[curl localhost:3000/api/tasks/1]] بيروح لـ getTask، و [[curl -X PATCH localhost:3000/api/tasks/1]] بيروح لـ updateTask، و [[curl -X DELETE ...]] لـ deleteTask، و [[curl -X POST localhost:3000/api/tasks]] لـ createTask.
+
+[[curl -i -X PUT localhost:3000/api/tasks/1]] بيرجّع [[404 Not Found]] وصفحة HTML فيها [[Cannot PUT /api/tasks/1]]. ده الـ 404 الافتراضي بتاع Express لما مفيش route مطابق (method + مسار)، حتى لو المسار نفسه متسجّل بـ methods تانية. (فيه APIs بترجع 405 Method Not Allowed في الحالة دي، بس Express مبيعملهاش لوحده.) ولما تعمل [[notFound]] بتاعك بعدين هيبقى JSON بدل HTML.
+
+لو [[-X POST]] على [[/api/tasks/1]] رجّع 404، ده صح: POST متسجّل على [[/api/tasks]] من غير id.`,
+          solCode: R`const ok = (name) => (req, res) => res.json({ ok: true, handler: name, params: req.params });
+const listTasks = ok("list"), getTask = ok("get"), createTask = ok("create");
+const updateTask = ok("update"), deleteTask = ok("delete");
+// curl -X PATCH localhost:3000/api/tasks/1   => {"ok":true,"handler":"update","params":{"id":"1"}}
+// curl -i -X PUT localhost:3000/api/tasks/1  => 404  Cannot PUT /api/tasks/1`
         },
         {
           cmd: "req.params",
@@ -265,7 +309,12 @@ Express 5 نقل لنسخة جديدة من path-to-regexp، وده غيّر ح�
             R`أكتر من param: [[/api/projects/3/tasks/9]] بيدّيك [[{ projectId: "3", taskId: "9" }]].`,
             "wildcard باسم (Express 5): [[/files/a/b.png]] بيدّيك array فيها a و b.png.",
             "جزء اختياري بين أقواس: بيطابق [[/api/reports]] و [[/api/reports/2025]]."
-          ]
+          ],
+          sol: R`[[/api/tasks/abc]] بيرجّع [[400]] و [[{"error":"Invalid id"}]] (لأن [[Number("abc")]] بـ NaN)، و [[/api/tasks/999]] بيرجّع [[404]] و [[{"error":"Task not found"}]]، و [[/api/tasks/1]] بيرجّع [[200]] والمهمة. تلات حالات، تلات status مختلفة، والواجهة تقدر تتصرف في كل واحدة لوحدها.
+
+و [[app.get("/files/*", ...)]] السيرفر بيقع وهو بيقوم، قبل أي طلب، بـ [[PathError [TypeError]: Missing parameter name at index 8: /files/*]]. في Express 5 (path-to-regexp 8) الـ wildcard لازم يبقى ليه اسم: [[/files/*path]]، وقيمته بتيجي array: [[/files/a/b/c.txt]] بيرجّع array فيها [[a]] و [[b]] و [[c.txt]].
+
+لو [[/api/tasks/1]] رجع 404، غالبًا بتقارن [[req.params.id]] (string) بـ [[t.id]] (number) بـ [[===]] من غير [[Number]].`
         },
         {
           cmd: "req.query",
@@ -302,7 +351,12 @@ Express 5 نقل لنسخة جديدة من path-to-regexp، وده غيّر ح�
             "بحث في العنوان. [[String()]] عشان تضمن إنها نص حتى لو اتبعتت مرتين وبقت array.",
             "رجّع النتيجة ومعاها العدد.",
             "قفلة."
-          ]
+          ],
+          sol: R`اللي هيتطبع: [[?done=false]] بيدّي [[{ done: "false" }]] (string مش boolean)، و [[?done=true&q=milk]] بيدّي [[{ done: "true", q: "milk" }]]، و [[?q=a&q=b]] بيدّي [[{ q: ["a", "b"] }]]: نفس المفتاح مرتين بقى array. وده خطر لو الكود بيعمل [[q.toLowerCase()]] مثلًا: TypeError و 500. عشان كده الكود بيعمل [[String(q)]]، وأحسن منه تعمل validation بـ zod (درس [[validate(schema)]]).
+
+و [[req.query.page = 2]] وبعدها [[console.log(req.query.page)]] بيطبع [[undefined]]: في Express 5 [[req.query]] getter بيحلّل الـ URL من جديد كل مرة تقراه، فأي حاجة تكتبها عليه بتضيع. لو عايز تشيل القيم بعد التحويل، حطها في متغير أو في [[res.locals]].
+
+الغلطة الشائعة: [[if (done)]] بدل [[done !== undefined]]، فـ [[?done=false]] يتعامل كأنه true لأن [["false"]] string مش فاضي.`
         },
         {
           cmd: "express.json()",
@@ -346,7 +400,12 @@ app.post("/api/tasks", (req, res) => {
             "احفظها.",
             "201 Created والمهمة الجديدة.",
             "قفلة."
-          ]
+          ],
+          sol: R`الطلب الصح بيرجّع [[201 Created]] والمهمة الجديدة.
+
+من غير [[-H "Content-Type: application/json"]]، curl بيبعت [[-d]] كـ [[application/x-www-form-urlencoded]]، فـ [[express.json()]] بيتجاهله و [[express.urlencoded]] هو اللي بيقراه: [[req.body]] بيبقى [[{ '{"title":"learn"}': '' }]] (الـ JSON كله بقى اسم حقل!)، فـ [[title]] بـ undefined والرد [[400]] و [[{"error":"title is required"}]] من الـ route بتاعك. (ولو مفيش urlencoded خالص، [[req.body]] بيبقى undefined، وعشان كده فيه [[?.]].)
+
+والـ JSON البايظ [[-d "{bad"]] بيرجّع [[400 Bad Request]] بس مش من الـ route: [[express.json()]] نفسه بيرمي [[SyntaxError: Expected property name or '}' in JSON at position 1]] قبل ما الـ handler يشتغل، ولأن مفيش error handler لسه، Express بيرجّع صفحة HTML فيها الـ stack كله. بعد درس [[error middleware]] الخطأ ده هيوصل للـ handler بتاعك وفيه [[err.status]] بـ 400 و [[err.type]] بـ [[entity.parse.failed]]، فترجّع JSON نضيف.`
         },
         {
           cmd: "status codes",
@@ -385,7 +444,25 @@ res.status(429).json({ error: "Too many requests" });`,
             "مش موجود.",
             "بيتعارض مع حاجة موجودة، زي إيميل متسجّل قبل كده.",
             "عدّيت الحد المسموح من الطلبات، استنى."
-          ]
+          ],
+          sol: R`في الـ Console، [[response.ok]] بيبقى [[true]] لأي status من 200 لـ 299 بس: الإضافة (201) و المسح (204) [[true]]، و 400 و 404 [[false]]. ومهم: [[fetch]] مبيرميش خطأ على 404 ولا 500، بيرمي بس لو الشبكة وقعت. فالواجهة لازم تبص على [[response.ok]] بنفسها.
+
+وخلي بالك من 204: مفيش body، فـ [[await response.json()]] عليه بيرمي [[SyntaxError: Unexpected end of JSON input]]. اقرا الـ JSON بس لو الـ status مش 204.
+
+لو لقيت route بيرجّع 200 على الإضافة، أو 500 على id مش موجود، أو 200 و [[{ error: ... }]] في الـ body: دي بالظبط الحاجات اللي الـ try بيدوّر عليها، صلّحها.`,
+          solCode: R`for (const [method, url, body] of [
+  ["POST", "/api/tasks", { title: "x" }],
+  ["POST", "/api/tasks", {}],
+  ["GET", "/api/tasks/999"],
+  ["DELETE", "/api/tasks/1"],
+]) {
+  const r = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: body && JSON.stringify(body) });
+  console.log(method, url, r.status, r.ok, r.status === 204 ? "(no body)" : await r.json());
+}
+// POST /api/tasks 201 true {...}
+// POST /api/tasks 400 false {error: 'title is required'}
+// GET /api/tasks/999 404 false {error: 'Task not found'}
+// DELETE /api/tasks/1 204 true (no body)`
         }
       ]
     },
@@ -443,7 +520,12 @@ app.get("/api/admin/stats", requireApiKey, (req, res) => res.json({ tasks: tasks
             "قفلة.",
             "[[app.use]]: شغّل logger على كل الطلبات.",
             "middleware على route واحد بس: بيتحط قبل الـ handler."
-          ]
+          ],
+          sol: R`من غير [[next()]]: [[curl localhost:3000/api/admin/stats]] بيفضل مستني ومبيرجعش حاجة، ولو حطيت [[-m 3]] curl بيقطع بـ [[curl: (28) Operation timed out]]. ومفيش سطر لوج كمان، لأن [[finish]] مبيحصلش إلا لما رد يتبعت. الـ middleware لازم يا يرد يا ينادي [[next()]]، غير كده الطلب بيتعلّق للأبد.
+
+بعد ما ترجّعها وتشغّل السيرفر بـ [[API_KEY=s3cret node --watch server.js]]: بالمفتاح الصح [[{"tasks":1}]]، وبالغلط أو من غيره [[401]] و [[{"error":"Bad key"}]]. واللوج بيطبع سطر لكل طلب زي [[GET /api/admin/stats 401 1ms]].
+
+لو المفتاح الصح نفسه رجّع 401: اتأكد إن [[API_KEY]] متعرّف في نفس الترمنال اللي فيه السيرفر (أو في .env ومتحمّل)، لأن الشرط [[!process.env.API_KEY]] بيرفض كل حاجة لو مش موجود، وده مقصود.`
         },
         {
           cmd: "ترتيب الـ middleware",
@@ -488,7 +570,12 @@ helmet و cors فوق عشان حتى رد 401 أو 429 ياخد الـ headers.
             "كل routes المهام محمية: auth الأول وبعدين الـ router.",
             "أي طلب وصل هنا ملقاش route: 404 بـ JSON.",
             "error handler آخر واحد، بـ ٤ arguments."
-          ]
+          ],
+          sol: R`لما [[express.json()]] ييجي بعد الـ routes: الـ route بيشتغل الأول و [[req.body]] بـ [[undefined]]، فأي [[req.body.title]] بيرمي TypeError، والـ route اللي بيستخدم [[req.body?.title]] بيرجّع 400. الـ body اتقري فعلًا بس بعد ما الرد اتبعت.
+
+ولما [[notFound]] ييجي فوق الـ routes: كل طلب، حتى [[/health]]، بيرجّع [[404]] و [[{"error":"Route not found"}]]، لأن notFound بيرد على أي حاجة ومبينادي [[next()]]، فمحدش تحته بيشتغل.
+
+القاعدة: Express بيعدّي على الـ middleware بالترتيب اللي اتكتب بيه. اللي بيجهّز الطلب (helmet و cors و json) فوق، والـ routes في النص، و notFound و errorHandler آخر حاجة.`
         },
         {
           cmd: "express.Router",
@@ -535,7 +622,23 @@ app.use("/api/tasks", tasksRouter);`,
             "مسح.",
             "صدّره عشان app يركّبه.",
             "في app.js: ركّب الـ router على [[/api/tasks]]."
-          ]
+          ],
+          sol: R`بعد النقل كل الـ curl بيرجّع نفس الردود بالظبط: [[GET /api/tasks]] و [[GET /api/tasks/1]] و [[POST /api/tasks]] إلخ. جوه الـ router المسارات بتتكتب نسبية ([[/]] و [[/:id]])، و [[app.use("/api/tasks", tasksRouter)]] هو اللي بيحط البادئة.
+
+أشهر غلطتين: تكتب [[router.get("/api/tasks/:id", ...)]] جوه الـ router، فالمسار الحقيقي يبقى [[/api/tasks/api/tasks/:id]] وكله يطلع 404. أو تنسى [[export default router]]، فالـ import يدّي undefined و Express يقع بـ [[TypeError: argument handler must be a function]].
+
+لـ users نفس الشكل: ملف [[routes/users.routes.js]]، و [[app.use("/api/users", usersRouter)]]، و [[curl localhost:3000/api/users/3]] يرجّع [[{"id":3}]].`,
+          solCode: R`// routes/users.routes.js
+import { Router } from "express";
+
+const router = Router();
+router.get("/", (req, res) => res.json([{ id: 1, name: "Mona" }]));
+router.get("/:id", (req, res) => res.json({ id: Number(req.params.id) }));
+export default router;
+
+// app.js
+import usersRouter from "./routes/users.routes.js";
+app.use("/api/users", usersRouter);`
         },
         {
           cmd: "routes / controllers / services",
@@ -579,7 +682,18 @@ export async function create(userId, data) {
             "لو عدّاه، ارمي خطأ بـ status، والـ error middleware يرد.",
             "اعمل المهمة في الداتابيز ورجّعها.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[node scripts/count.js]] بيطبع حاجة زي [[tasks: 1]] ويقفل لوحده، من غير ما يفتح بورت ولا يستورد express. ده الاختبار: الـ service بتاخد بيانات عادية (userId و data) وبترجّع بيانات أو ترمي [[AppError]]، ومتعرفش حاجة عن [[req]] و [[res]].
+
+لو لقيت نفسك محتاج تعمل [[req]] وهمي أو تستورد express في السكربت، يبقى فيه منطق HTTP دخل الـ service: زي [[res.status(404)]] جوه الـ service بدل [[throw new AppError(404, ...)]]، أو إنها بتقرا [[req.user.id]] بنفسها بدل ما الـ controller يبعته. رجّع ده للـ controller.
+
+ولو السكربت فضل مفتوح ومقفلش، يبقى فيه اتصال (Prisma مثلًا) لسه مفتوح: اعمل [[await prisma.$disconnect()]] في آخره.`,
+          solCode: R`// scripts/count.js
+import * as tasksService from "../services/tasks.service.js";
+import { prisma } from "../db.js";
+
+console.log("tasks:", await tasksService.count());
+await prisma.$disconnect();`
         }
       ]
     },
@@ -637,7 +751,12 @@ export function errorHandler(err, req, res, next) {
             "أخطاء السيرفر بس تتسجل بالتفاصيل.",
             "رسالة المستخدم للأخطاء المتوقعة، ورسالة عامة لأي 500 عشان منسرّبش تفاصيل.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[GET /api/tasks/999]] بيرجّع [[404]] و [[{"error":"Task not found"}]]: الـ [[throw]] وصل للـ errorHandler، وهو قرا [[err.status]] ورجّع الرسالة زي ما هي لأنها أقل من 500.
+
+والـ route اللي بيرمي [[new Error("db password is 123")]] بيرجّع [[500]] و [[{"error":"Internal server error"}]] بس، والرسالة الحقيقية والـ stack بيطلعوا في ترمنال السيرفر من [[console.error(err)]]. ده المطلوب: اليوزر ميشوفش أي تفاصيل داخلية، وانت تشوفها كلها.
+
+لو الرد طلع صفحة HTML فيها الـ stack، يبقى الـ errorHandler مش متسجّل، أو متسجّل قبل الـ routes، أو دالته فيها ٣ parameters بس (Express بيعرف الـ error handler من إن ليه ٤: [[err, req, res, next]]).`
         },
         {
           cmd: "async errors في Express 5",
@@ -677,7 +796,17 @@ router.get("/later", (req, res) => { setTimeout(() => { throw new Error("boom");
             "قفلة.",
             "الحل القديم في Express 4: غلاف بيمسك الـ promise ويبعته لـ next.",
             "خطأ جوه callback بعدين: Express مش شايفه، والعملية كلها ممكن تقع."
-          ]
+          ],
+          sol: R`على Express 5: الـ route الـ async اللي بيرمي بيرجّع رد الـ error handler عادي (مثلًا [[{"error":"Task not found"}]] بـ 404) والسيرفر فاضل شغال. Express 5 بيمسك الـ promise المرفوضة ويبعتها لـ [[next(err)]] لوحده.
+
+على Express 4 بنفس الكود: [[curl]] بيطلع [[curl: (52) Empty reply from server]]، والسيرفر بيقع ويطبع الـ stack و [[Node.js v22...]] ويخرج بكود 1، لأن الـ rejection محدش مسكها و Node من 15 بيقفل العملية عليها. لفّ الـ handler بـ [[asyncHandler]] والمشكلة تتحل.
+
+و [[/later]] بيوقّع السيرفر في النسختين: الـ throw جوه [[setTimeout]] بيحصل بعد ما الـ handler خلص، فمحدش ماسكه (uncaught exception). الحل تحوّله لـ promise وتعمله await، أو تنادي [[next(err)]] جوه الـ callback.`,
+          solCode: R`// Express 5 أو Express 4 مع الغلاف
+router.get("/later", async (req, res) => {
+  await new Promise((r) => setTimeout(r, 10));
+  throw new Error("boom"); // دلوقتي بيوصل للـ error handler
+});`
         },
         {
           cmd: "config.js بـ zod",
@@ -721,7 +850,12 @@ zod بيعدّي على [[process.env]] ويطلّع object جديد بالأن�
             "قايمة origins مفصولة بفاصلة تتحول لـ array.",
             "قفلة.",
             "اتحقق دلوقتي، ولو فيه غلط ارمي خطأ فيه كل الحقول الناقصة. وصدّر النتيجة متحولة ونضيفة."
-          ]
+          ],
+          sol: R`من غير [[JWT_SECRET]] السيرفر بيقع فورًا قبل ما يسمع على أي بورت، و الرسالة فيها [[ZodError]] وجواها الـ path بتاعه [[JWT_SECRET]] و [[Invalid input: expected string, received undefined]]. ولو حطيته قصير ([[JWT_SECRET=abc]]) الرسالة بتبقى [[Too small: expected string to have >=32 characters]]. ده الهدف: تعرف المشكلة وانت بتقوم، مش أول ما يوزر يحاول يعمل login.
+
+بعد التبديل، [[grep -rn "process.env" src]] المفروض يطلّع سطر واحد بس: [[Env.parse(process.env)]] في config.js. وكمان هتلاحظ إن [[config.PORT]] بقى number مش string، و [[config.CORS_ORIGINS]] array جاهزة.
+
+لو السيرفر قام عادي والمتغير ممسوح، يبقى فيه نسخة تانية منه في الترمنال نفسه ([[echo $JWT_SECRET]]) أو [[.env]] تاني بيتقري. ولو وقع بسبب [[DATABASE_URL]] كمان، ده طبيعي: حطه في .env.`
         }
       ]
     },
@@ -780,7 +914,21 @@ router.post("/", validate(createTaskSchema), tasks.create);`,
             "كمّل.",
             "قفلة.",
             "ركّبه قبل الـ controller، فالـ controller بيستلم بيانات مضمونة."
-          ]
+          ],
+          sol: R`الـ body الغلط بيرجّع [[400]] وفيه خطأين بس: [[title]] ([[Too small: expected string to have >=1 characters]]، لأن [[trim()]] بيشتغل قبل [[min(1)]] فالمسافات بقت string فاضي) و [[priority]] ([[Invalid option: expected one of "low"|"normal"|"high"]]). و [[role]] مش في الأخطاء خالص: zod مبيعترضش على حقول زيادة، بيشيلها بس.
+
+والـ body الصح [[{"title":" hi ","role":"ADMIN"}]] بيوصل للـ controller كده: [[{ title: "hi", priority: "normal" }]]. اتعمله trim، واتحط الـ default، و [[role]] اتشال لأن [[z.object]] بيرجّع الحقول اللي في الـ schema بس. ده اللي بيحميك من mass assignment.
+
+لو لقيت [[role]] لسه موجود، يبقى نسيت [[req.body = result.data]] وبتستخدم الـ body الأصلي. ونسخة الـ params تحت: [[/api/tasks/abc]] بيرجّع 400 و [[Invalid input: expected number, received NaN]]، و [[/api/tasks/5]] بيوصل فيه [[req.params.id]] رقم مش string.`,
+          solCode: R`export const validateParams = (schema) => (req, res, next) => {
+  const result = schema.safeParse(req.params);
+  if (!result.success) return res.status(400).json({ error: "Invalid params", issues: z.flattenError(result.error).fieldErrors });
+  req.params = result.data;
+  next();
+};
+
+const IdParams = z.object({ id: z.coerce.number().int().positive() });
+router.get("/:id", validateParams(IdParams), tasks.getOne); // req.params.id رقم`
         },
         {
           cmd: "express-validator",
@@ -827,7 +975,24 @@ router.patch("/:id", rules, (req, res) => {
             "[[matchedData]] بيرجّع الحقول اللي عليها قواعد بس، فحقل زيادة زي role بيتشال.",
             "رجّعها للتجربة.",
             "قفلة."
-          ]
+          ],
+          sol: R`نفس القواعد بـ express-validator: [[body("title").isString().trim().isLength({ min: 1, max: 200 })]] و [[body("dueDate").optional().isISO8601().toDate()]] و [[body("priority").optional().isIn(["low", "normal", "high"])]]. نفس الـ body الغلط بيرجّع 400 و [[errors]] فيها عنصرين، كل واحد شكله [[{"type":"field","value":"urgent","msg":"Invalid value","path":"priority","location":"body"}]]. الرسالة الافتراضية [[Invalid value]] لكل حاجة، فلو عايز رسايل واضحة لازم [[.withMessage()]] على كل قاعدة. والـ default بتاع priority مش موجود لوحده: محتاج [[.default("normal")]].
+
+من غير [[validationResult]]: الطلب الغلط بيعدّي بـ 200 والـ handler بيشوف [[{"title":"","priority":"urgent","role":"ADMIN"}]]. القواعد بتسجّل الأخطاء بس ومبتوقفش حاجة، ودي أشهر غلطة مع المكتبة دي. و [[matchedData(req)]] هو اللي بيشيل [[role]]؛ [[req.body]] نفسه لسه فيه.
+
+المقارنة: zod schema واحد بيدّيك التحقق والتحويل والـ type، وتقدر تستخدمه في الواجهة كمان. express-validator أطول، بس مبني على validator.js وكويس لو المشروع قديم ومستخدمه.`,
+          solCode: R`const createRules = [
+  body("title").isString().trim().isLength({ min: 1, max: 200 }).withMessage("title is required"),
+  body("dueDate").optional().isISO8601().toDate(),
+  body("priority").optional().isIn(["low", "normal", "high"]).withMessage("bad priority"),
+];
+
+router.post("/", createRules, (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+  const data = { priority: "normal", ...matchedData(req) };
+  res.status(201).json(data);
+});`
         }
       ]
     },
@@ -872,7 +1037,23 @@ console.log(await bcrypt.compare("wrong", hash));
             "اطبعه: كل مرة هيطلع مختلف حتى لنفس الباسورد، بسبب الـ salt.",
             "قارن باسورد صح بالـ hash: true.",
             "باسورد غلط: false."
-          ]
+          ],
+          sol: R`الـ hash بيطلع مختلف كل مرة، مثلًا [[$2b$12$FFrStIpK3ozn...]] و [[$2b$12$wsmQ3tQJrJyC...]]، و [[a === b]] بـ [[false]]، و [[compare]] بيرجّع [[true]] للاتنين. السبب: bcrypt بيولّد salt عشوائي جديد مع كل hash ويحطه جوه الـ hash نفسه (الـ 22 حرف اللي بعد [[$12$]])، فـ compare بيقراه من هناك. فمتقارنش hashes ببعض، ومتعملش [[WHERE password_hash = ?]] أبدًا.
+
+والوقت: كل زيادة ١ في الـ cost بتضاعف الوقت تقريبًا. على جهاز عادي حاجة زي [[cost 10: 67ms]] و [[cost 12: 281ms]] و [[cost 14: 1.087s]] (الأرقام عندك هتختلف، النسبة ×٤ كل خطوتين هي المهمة). 12 بيدّي حوالي ربع ثانية: مش ملحوظ في login، ومكلّف جدًا لحد بيجرّب ملايين الباسوردات.
+
+لو القيمتين طلعوا زي بعض، يبقى بتعمل hash مرة وبتطبعه مرتين. ولو compare رجّع [[Promise { <pending> }]]، نسيت [[await]].`,
+          solCode: R`import bcrypt from "bcrypt";
+
+const a = await bcrypt.hash("MyS3cret!", 12);
+const b = await bcrypt.hash("MyS3cret!", 12);
+console.log(a === b, await bcrypt.compare("MyS3cret!", a), await bcrypt.compare("MyS3cret!", b)); // false true true
+
+for (const cost of [10, 12, 14]) {
+  console.time($__btcost $__{cost}$__bt);
+  await bcrypt.hash("MyS3cret!", cost);
+  console.timeEnd($__btcost $__{cost}$__bt);
+}`
         },
         {
           cmd: "jwt.sign و jwt.verify",
@@ -916,7 +1097,12 @@ export function verifyAccessToken(token) {
             "اتحقق من توكن جاي.",
             "بيتأكد من التوقيع وإنه مش منتهي، ومبيقبلش غير الـ algorithm ده. لو أي حاجة غلط بيرمي خطأ.",
             "قفلة."
-          ]
+          ],
+          sol: R`فك الـ payload بيطبع حاجة زي [[{"sub":"7","role":"USER","iat":1790718907,"exp":1790719807]] من غير أي سر: الـ JWT مش مشفّر، ده base64url بس. فمتحطش فيه حاجة سرية (باسورد، رقم بطاقة).
+
+بعد ما تغيّر الدور لـ ADMIN وتحط الـ payload الجديد مكان القديم، [[jwt.verify]] بيرمي [[JsonWebTokenError: invalid signature]]، لأن التوقيع اتحسب على الـ header والـ payload القديمين بالسر، ومحدش يقدر يعمل توقيع جديد من غير السر. ده كل الأمان في JWT.
+
+والتوكن اللي [[expiresIn: "5s"]] بعد ما تستنى بيرمي [[TokenExpiredError: jwt expired]]. في requireAuth الاتنين بيتحولوا لـ 401. لو verify نجح على التوكن المعدّل، يبقى انت بتعمل [[jwt.decode]] بدل [[jwt.verify]]: decode بيقرا بس ومبيتحققش من حاجة.`
         },
         {
           cmd: "requireAuth",
@@ -965,7 +1151,22 @@ export function verifyAccessToken(token) {
             "حط اليوزر على الطلب. [[sub]] كان string فرجّعه رقم.",
             "كمّل.",
             "قفلة."
-          ]
+          ],
+          sol: R`من غير header: [[401]] و [[{"error":"Login required"}]]. بتوكن بايظ ([[Authorization: Bearer abc]]) أو منتهي: [[401]] و [[{"error":"Invalid or expired token"}]]. بتوكن صح: الـ route بيشتغل عادي و [[req.user]] فيه [[{ id: 7, role: "USER" }]].
+
+في الـ controller: [[tasksService.create(req.user.id, req.body)]]، مش [[req.body.userId]]. الـ id اللي في التوكن موقّع من السيرفر فمحدش يقدر يغيّره، إنما أي حاجة في الـ body اليوزر بيكتبها بإيده.
+
+لو التوكن الصح رجّع 401: اتأكد إنك باعت [[Bearer ]] بالمسافة (مش [[Bearer:]])، وإن نفس [[JWT_SECRET]] اللي عمل sign هو اللي بيعمل verify (مثلًا سيرفر اتعمله restart بـ secret عشوائي). ولو الطلب اتعلّق أو وقع السيرفر على Express 4، يبقى الـ throw جوه middleware async محتاج [[asyncHandler]].`,
+          solCode: R`import tasksRouter from "./routes/tasks.routes.js";
+app.use("/api/tasks", requireAuth, tasksRouter);
+
+// controllers/tasks.controller.js
+export async function create(req, res) {
+  res.status(201).json(await tasksService.create(req.user.id, req.body));
+}
+
+// curl -i localhost:3000/api/tasks                                => 401 Login required
+// curl -i -H "Authorization: Bearer abc" localhost:3000/api/tasks => 401 Invalid or expired token`
         },
         {
           cmd: "res.cookie",
@@ -1015,7 +1216,12 @@ sameSite ليها ٣ قيم: [[strict]] مبتتبعتش خالص مع أي طل
             "قفلة.",
             "ابعتها.",
             "امسحها، بنفس الـ path وإلا المتصفح مش هيمسحها."
-          ]
+          ],
+          sol: R`في Application > Cookies هتلاقي [[refresh]] وعمود HttpOnly عليه علامة، و SameSite [[Lax]]، و Path [[/api/auth]]، و Secure فاضي على localhost (لأن [[secure]] بـ true في production بس). والـ header اللي رجع كان شكله [[Set-Cookie: refresh=...; Max-Age=2592000; Path=/api/auth; Expires=...; HttpOnly; SameSite=Lax]].
+
+[[document.cookie]] في الـ Console مش هيظهر فيه [[refresh]] خالص، لأن HttpOnly معناه إن JavaScript مايقدرش يقراها. فلو حصل XSS، الكود الخبيث مش هيقدر يسرقها.
+
+[[res.clearCookie("refresh")]] من غير path بيبعت [[Set-Cookie: refresh=; Path=/; Expires=Thu, 01 Jan 1970 ...]]. المتصفح بيعتبر [[refresh]] على [[/]] كوكي مختلفة عن [[refresh]] على [[/api/auth]]، فبيمسح حاجة مش موجودة والأصلية بتفضل. لازم نفس الـ path (والـ domain لو حاطه).`
         },
         {
           cmd: "access و refresh",
@@ -1062,7 +1268,21 @@ sameSite ليها ٣ قيم: [[strict]] مبتتبعتش خالص مع أي طل
             "ابعته في الكوكي بنفس الإعدادات.",
             "ورجّع access جديد في الـ body.",
             "قفلة."
-          ]
+          ],
+          sol: R`أول [[/refresh]] بالكوكي القديمة بيرجّع [[200]] و [[accessToken]] جديد و [[Set-Cookie: refresh=...]] جديدة. التاني بنفس الكوكي القديمة بيرجّع [[401]] و [[{"error":"Invalid refresh token"}]]، لأن التوكن القديم اتعلّم عليه [[revokedAt]] في أول مرة. ده الـ rotation: كل refresh token بيتستخدم مرة واحدة، فلو اتسرق واستخدمه الحرامي، اليوزر الحقيقي هياخد 401 (أو العكس) وتعرف إن فيه مشكلة.
+
+عشان تجرّب بـ curl: خد القيمة من [[curl -c jar.txt]] بعد login، وابعتها بـ [[curl -X POST -b "refresh=VALUE" localhost:3000/api/auth/refresh]]. لو أول طلب نفسه رجع 401، اتأكد إن [[cookieParser()]] متسجّل، وإن الـ path بتاع الكوكي [[/api/auth]] بيطابق الـ route.
+
+و [[/logout-all]] بيعمل [[updateMany]] على كل توكنات اليوزر اللي لسه مش ملغية، ويمسح الكوكي. بعده أي refresh من أي جهاز بيرجع 401. الـ access tokens الموجودة هتفضل شغالة لحد ما تنتهي (15 دقيقة)، ودي التمنّ بتاع JWT.`,
+          solCode: R`router.post("/logout-all", requireAuth, async (req, res) => {
+  const { count } = await prisma.refreshToken.updateMany({
+    where: { userId: req.user.id, revokedAt: null },
+    data: { revokedAt: new Date() },
+  });
+  res.clearCookie("refresh", { path: "/api/auth" });
+  res.json({ revoked: count });
+});
+// {"revoked":3}   وبعدها أي /refresh => 401`
         },
         {
           cmd: "express-session",
@@ -1113,7 +1333,24 @@ app.post("/api/auth/login", async (req, res) => {
             "احفظ id اليوزر في الـ session. بيتخزن في الـ store، مش في الكوكي.",
             "رد.",
             "قفلة."
-          ]
+          ],
+          sol: R`الكوكي [[connect.sid]] قيمتها حاجة زي [[s%3AuFsOrqRl9dKM...FrmadjhjIE...]]: الـ session id وبعده توقيع بالـ secret. مفيش فيها userId ولا أي بيانات؛ البيانات نفسها على السيرفر في الـ store.
+
+[[/me]] بعد login بيرجّع [[{"userId":7}]]. بعد [[/logout]] ([[req.session.destroy]]) نفس الكوكي بترجّع 401، لأن الـ session اتمسحت من الـ store حتى لو المتصفح لسه باعت الـ id. ده الفرق الكبير عن JWT: الإلغاء فوري.
+
+وبعد restart السيرفر [[/me]] بيرجع 401 برضه، لأن الـ MemoryStore في ذاكرة الـ process وراح معاها. في production لازم store زي Redis ([[connect-redis]]). ولو من الأول [[/me]] رجع 401 على localhost، غالبًا [[secure: true]] على http فالمتصفح رفض يحفظ الكوكي.`,
+          solCode: R`app.get("/api/auth/me", (req, res) => {
+  if (!req.session.userId) return res.status(401).json({ error: "Login required" });
+  res.json({ userId: req.session.userId });
+});
+
+app.post("/api/auth/logout", (req, res, next) => {
+  req.session.destroy((err) => {
+    if (err) return next(err);
+    res.clearCookie("connect.sid");
+    res.sendStatus(204);
+  });
+});`
         }
       ]
     },
@@ -1171,7 +1408,12 @@ router.delete("/users/:id", requireAuth, requireRole("ADMIN"), users.remove);`,
             "كمّل.",
             "قفلة.",
             "الترتيب: auth الأول (مين)، وبعدين الدور (مسموح؟)، وبعدين الـ handler."
-          ]
+          ],
+          sol: R`بتوكن الأدمن: [[200]]. بتوكن اليوزر العادي: [[403]] و [[{"error":"Forbidden"}]]. من غير توكن: [[401]] و [[{"error":"Login required"}]] (من requireAuth، قبل ما requireRole يشتغل). الفرق مهم: 401 يعني «مش عارف انت مين، اعمل login»، و 403 يعني «عارفك، بس مش مسموحلك».
+
+بعد التبديل لـ [[can("users:manage")]] النتيجة نفسها بالظبط، لأن [[users:manage]] موجودة في ADMIN بس. الفرق إن لو بعدين عملت دور MODERATOR وعايزه يدير اليوزرين، هتزوّد الصلاحية في جدول [[PERMISSIONS]] بس، من غير ما تلف على كل route.
+
+لو الأدمن نفسه أخد 403، اتأكد إن الدور مكتوب في التوكن ([[role]] في الـ payload) وبنفس الحروف: [[ADMIN]] مش [[admin]]. ولو اتغيّر دوره في القاعدة، التوكن القديم لسه فيه الدور القديم لحد ما يعمل login أو refresh.`
         },
         {
           cmd: "ownership (IDOR)",
@@ -1209,7 +1451,12 @@ if (count === 0) throw new AppError(404, "Task not found");`,
             "مش لاقيها (مش موجودة أو مش بتاعتك)؟ 404 في الحالتين، عشان متأكدش إن الرقم موجود.",
             "[[deleteMany]] بالشرطين: بيمسح لو بتاعتك بس، وبيرجّع عدد اللي اتمسح.",
             "صفر يعني مش بتاعتك أو مش موجودة."
-          ]
+          ],
+          sol: R`بتوكن اليوزر الأول على مهمة التاني: [[GET]] و [[PATCH]] و [[DELETE]] التلاتة بيرجّعوا [[404]] و [[{"error":"Task not found"}]]، وصاحب المهمة لسه بيقراها عادي بـ 200 ومتغيرتش. ليه 404 مش 403؟ عشان متأكدش للمهاجم إن الـ id ده موجود أصلًا.
+
+لو واحد منهم رجّع 200 أو 204، ده IDOR حقيقي: غالبًا [[findUnique({ where: { id } })]] أو [[update({ where: { id } })]] من غير [[userId]]. وخلي بالك إن [[update]] و [[delete]] العاديين في Prisma محتاجين unique، فبتستخدم [[updateMany]] و [[deleteMany]] بالشرطين وتبص على [[count]].
+
+للتدوير: [[grep -rnE "findUnique|update\(|delete\(" src/services]]، وكل سطر بياخد id جاي من [[req.params]] لازم يبقى معاه [[userId: req.user.id]] (أو فحص دور الأدمن صريح).`
         },
         {
           cmd: "helmet",
@@ -1248,7 +1495,12 @@ app.use(helmet({
             "ركّبه أول middleware.",
             "الافتراضي [[same-origin]] بيمنع مواقع تانية تعرض صور أو ملفات من الـ API. لو الواجهة على دومين تاني وبتعرض صور مرفوعة، خليه cross-origin.",
             "قفلة."
-          ]
+          ],
+          sol: R`قبل helmet: headers قليلة و [[X-Powered-By: Express]]. بعده: [[X-Powered-By]] اختفى، وظهر [[Content-Security-Policy: default-src 'self';...]] و [[Strict-Transport-Security: max-age=31536000; includeSubDomains]] و [[X-Content-Type-Options: nosniff]] و [[X-Frame-Options: SAMEORIGIN]] و [[Referrer-Policy: no-referrer]] و [[Cross-Origin-Opener-Policy: same-origin]] و [[Cross-Origin-Resource-Policy: same-origin]] وغيرهم (حوالي ١٢ header).
+
+الصورة: مع الافتراضي [[Cross-Origin-Resource-Policy: same-origin]]، صفحة على [[localhost:5173]] بتطلب صورة من [[localhost:3000]] (بورت مختلف = origin مختلف) والمتصفح بيرفض يعرضها، وفي Network بتشوف [[blocked:NotSameOrigin]] (أو ERR_BLOCKED_BY_RESPONSE في Chrome). مع [[{ policy: "cross-origin" }]] الـ header بيبقى [[cross-origin]] والصورة بتظهر.
+
+لو الصورة ظهرت مع الإعداد الافتراضي، يبقى الصفحة والسيرفر على نفس الـ origin، أو المتصفح عنده الصورة في الكاش: اعمل hard reload.`
         },
         {
           cmd: "cors",
@@ -1292,7 +1544,19 @@ CORS مش حماية للسيرفر: curl و Postman والسيرفرات الت
             "المتصفح يكاش رد الـ preflight ١٠ دقايق بدل ما يسأل كل مرة.",
             "قفلة.",
             R`في الواجهة: من غير [[credentials: "include"]] الكوكيز مبتتبعتش لـ origin تاني.`
-          ]
+          ],
+          sol: R`من Console على example.com: [[fetch("http://localhost:3000/api/tasks")]] بيفشل بـ [[TypeError: Failed to fetch]]، وفي الـ Console رسالة حمرا زي [[has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present]]. والمهم: الطلب وصل السيرفر فعلًا واتنفّذ (هتشوفه في اللوج)؛ المتصفح هو اللي منع الصفحة تقرا الرد. (المتصفحات الجديدة ممكن تسألك الأول تسمح للموقع يوصل للـ local network، ودي حاجة منفصلة عن CORS.)
+
+بعد ما تزوّد [[https://example.com]] في [[CORS_ORIGINS]] (من غير / في الآخر) وتعيد التشغيل، الرد بيرجع وفيه [[Access-Control-Allow-Origin: https://example.com]] و [[Access-Control-Allow-Credentials: true]].
+
+والـ POST بـ JSON: في Network هتلاقي طلب [[OPTIONS]] قبله (preflight) رجع [[204]] وفيه [[Access-Control-Allow-Methods: GET,POST,PATCH,DELETE]] و [[Access-Control-Allow-Headers: content-type]] و [[Access-Control-Max-Age: 600]]، وبعدها الـ POST الحقيقي. الـ preflight بيحصل لأن [[Content-Type: application/json]] مش من الأنواع «البسيطة»، وبعد أول مرة المتصفح بيخزّنه ١٠ دقايق.`,
+          solCode: R`// Console على https://example.com
+await fetch("http://localhost:3000/api/tasks", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ title: "from example.com" }),
+});
+// Network: OPTIONS /api/tasks 204  ثم  POST /api/tasks`
         },
         {
           cmd: "express-rate-limit",
@@ -1345,7 +1609,12 @@ app.use("/api/auth/login", loginLimiter);`,
             "قفلة.",
             "ركّب العام على كل [[/api]].",
             "والأشد على login بس. الاتنين قبل الـ routes."
-          ]
+          ],
+          sol: R`أول ٣ محاولات غلط بيرجّعوا 401 عادي، والرابعة [[429 Too Many Requests]] و [[{"error":"Too many login attempts, try again later"}]]. والـ headers مع [[draft-8]] شكلها: [[RateLimit: "3-in-15min"; r=0; t=900]] (فاضل 0، والعداد يتصفّر بعد 900 ثانية) و [[RateLimit-Policy: "3-in-15min"; q=3; w=900]] و [[Retry-After: 900]]. ولأن [[skipSuccessfulRequests]] شغال، الـ login الصح مبيتعدّش.
+
+[[X-Forwarded-For: 1.2.3.4]] من غير trust proxy: [[req.ip]] فاضل [[127.0.0.1]]، والمكتبة بتطبع تحذير [[ERR_ERL_UNEXPECTED_X_FORWARDED_FOR]]. ومع [[trust proxy]] بـ 1 ومن غير proxy حقيقي: [[req.ip]] بقى [[1.2.3.4]]، يعني أي حد يقدر يغيّر الـ IP بتاعه بـ header، ولو بعت IP مختلف كل مرة عمره ما هياخد 429.
+
+الخلاصة: [[trust proxy]] لازم يطابق الحقيقة: 1 لو ورا nginx واحد أو load balancer واحد، و false لو السيرفر مكشوف مباشرة. غير كده الـ rate limit كله ملوش لازمة.`
         },
         {
           cmd: "sanitization",
@@ -1393,7 +1662,12 @@ Path traversal: اسم ملف جاي من اليوزر زي [[../../.env]]. مت
             "و Prisma بيبعته كـ parameter، فمفيش SQL injection مهما اتكتب. ومعاه شرط الملكية.",
             "في Mongo: اتأكد إنه إيميل، يعني string...",
             "فلو حد بعت object فيه [[$ne]] بدل إيميل، zod رفضه قبل ما يوصل للـ query."
-          ]
+          ],
+          sol: R`اللي بيتحفظ من [[<p>Hi <b>there</b></p><img src=x onerror=alert(1)><script>alert(2)</script>]] هو [[<p>Hi <b>there</b></p><img src="x">]]: الـ [[onerror]] اتشال، و [[<script>]] اتشال كله، والتنسيق العادي فضل. ولو فيه [[<a href="javascript:alert(3)">]] بيبقى [[<a>]] من غير href. لو لقيت [[onerror]] لسه موجود، يبقى بتحفظ [[req.body.bioHtml]] الأصلي مش الناتج من الـ schema.
+
+وفي Mongoose من غير zod: [[{"email": {"$ne": null}}]] بيتحول لـ [[User.findOne({ email: { $ne: null } })]]، يعني «أول يوزر الإيميل بتاعه مش null»، فبيرجّع أول يوزر في الـ collection (غالبًا الأدمن اللي اتعمل الأول) من غير ما تعرف إيميله. في login ده ممكن يبقى دخول بدون باسورد لو الكود بيقارن بطريقة غلط.
+
+مع [[z.email().parse(req.body.email)]] نفس الطلب بيرمي [[ZodError]] و [[Invalid input: expected string, received object]] وبيبقى 400. (وحل تاني على مستوى Mongoose: [[mongoose.set("sanitizeFilter", true)]].)`
         }
       ]
     },
@@ -1445,7 +1719,20 @@ export const update = async (userId, id, data) => {
             "متعدلش حاجة: 404.",
             "رجّع النسخة الجديدة.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تعمل مهام وتقفل السيرفر وتشغّله تاني، [[GET /api/tasks]] بيرجّع نفس المهام، لأنها في Postgres مش في array في الذاكرة. والـ ids بتكمّل من آخر رقم ومبترجعش لـ 1.
+
+ومع تفعيل [[log]] على query، كل استدعاء بيطبع SQL حقيقي، مثلًا [[findMany]] بـ [[select]] و [[orderBy]]: [[prisma:query SELECT "public"."Task"."id", "public"."Task"."title", "public"."Task"."done" FROM "public"."Task" WHERE "public"."Task"."userId" = $1 ORDER BY "public"."Task"."createdAt" DESC OFFSET $2]]. لاحظ [[$1]]: القيم بتتبعت كـ parameters، ده اللي بيمنع SQL injection. و [[create]] بيطلع [[INSERT INTO ... RETURNING ...]].
+
+لو البيانات اختفت بعد restart، يبقى لسه فيه service بتستخدم الـ array القديمة. ولو شفت [[too many connections]] أو السيرفر بطيء في البداية، دوّر على [[new PrismaClient]] في أكتر من ملف.`,
+          solCode: R`// db.js
+import { PrismaClient } from "./generated/prisma/client.js";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+export const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+  log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"],
+});`
         },
         {
           cmd: "$transaction",
@@ -1490,7 +1777,15 @@ export const update = async (userId, id, data) => {
             "سجّل الاستخدام. لو ده فشل، الزيادة اللي فوق بترجع.",
             "قفلة الـ transaction.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع الكود ده، واحد من الطلبين بينجح (رد الـ redemption) والتاني بياخد [[409]] و [[{"error":"Coupon fully used"}]]، وفي القاعدة redemption واحد بس و [[usedCount]] بـ 1. السبب: [[updateMany]] بالشرط [[usedCount < maxUses]] بيتنفّذ كـ UPDATE واحد، وPostgres بيقفل الصف، فالطلب التاني لما يوصل يلاقي الشرط مبقاش متحقق و [[count]] بـ 0.
+
+النسخة الغلط (تعد الـ redemptions، ولو أقل من maxUses تعمل create) الاتنين بينجحوا وتلاقي redemptions 2 لكوبون مسموح مرة واحدة: الطلبين قروا العدد 0 في نفس الوقت قبل ما أي واحد يكتب. ولأن ده race، ممكن تحتاج تجرّب كذا مرة، أو تحط [[await new Promise((r) => setTimeout(r, 50))]] بين الـ count والـ create عشان تشوفه كل مرة.
+
+ولو النسخة الصح نفسها نجح فيها الاتنين، اتأكد إن الشرط [[usedCount: { lt: coupon.maxUses } ]] جوه الـ [[where]] بتاع الـ update نفسه، مش [[if]] في JavaScript قبله.`,
+          solCode: R`# كوبون maxUses: 1 وطلبين في نفس اللحظة
+curl -s -X POST localhost:3000/api/coupons/SAVE10/redeem -H "Authorization: Bearer $TOKEN" & curl -s -X POST localhost:3000/api/coupons/SAVE10/redeem -H "Authorization: Bearer $TOKEN"; wait
+# {"id":1,"userId":7,"couponId":1}{"error":"Coupon fully used"}`
         },
         {
           cmd: "mongoose",
@@ -1540,7 +1835,12 @@ const recent = await Task.find().sort({ createdAt: -1 }).limit(50).populate({ pa
             "الـ model اللي هتستخدمه في الـ services.",
             "مهام اليوزر، الأحدث، أول ٢٠. [[lean]] بيرجّع objects عادية أسرع.",
             "آخر ٥٠ مهمة ومعاها اسم وإيميل صاحبها: query للمهام وواحدة لكل اليوزرز مع بعض، مش واحدة لكل مهمة."
-          ]
+          ],
+          sol: R`[[Task.create({ userId })]] من غير title بيرمي [[ValidationError]] ورسالته [[Task validation failed: title: Path $__bttitle$__bt is required.]]، وفي [[err.errors.title.kind]] هتلاقي [[required]]. حوّله في الـ error handler لـ 400.
+
+[[find()]] من غير [[lean()]] بيرجّع Mongoose documents (فيها getters و [[save()]] و change tracking)، و [[lean()]] بيرجّع objects عادية. على ١٠٠٠٠ مستند lean بيبقى أسرع بشكل واضح وبيستهلك ذاكرة أقل (غالبًا مرتين لـ ٣ مرات، حسب الجهاز والحجم). للقراءة وإرجاع JSON استخدم lean دايمًا.
+
+وفي اللوج بـ [[debug]]: الـ loop بيعمل 51 query ([[tasks.find]] مرة، و [[users.findOne]] ٥٠ مرة، واحدة لكل مهمة): ده N+1. و [[populate]] بيعمل 2 بس: find للمهام، وبعدين [[users.find({ _id: { $in: [...] } })]] واحدة لكل الـ ids. لو populate رجّع [[userId]] بـ null، يبقى الـ ref اسمه غلط أو اليوزر اتمسح.`
         },
         {
           cmd: "pagination",
@@ -1594,7 +1894,22 @@ cursor pagination: بدل «اقفز ٤٠»، «هات ٢٠ بعد العنصر 
             "قفلة.",
             "البيانات ومعلومات الصفحات عشان الواجهة تعمل الأزرار.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[?page=3&limit=10]] بيرجّع ١٠ مهام (من الـ 21 للـ 30 في الترتيب) ومعاهم [[{"page":3,"limit":10,"total":1000,"pages":100}]].
+
+[[?limit=5000]] و [[?sort=password]] من غير تعديل بيرجّعوا 500، لأن [[ListQuery.parse]] بيرمي [[ZodError]] مالوش status. بعد التعديل في الـ error handler: [[400]] مع [[{"limit":["Too big: expected number to be <=100"]}]] و [[{"sort":["Invalid option: expected one of "createdAt"|"title""]}]]. و [[sort=password]] مهم: من غير enum حد يقدر يرتّب على أي عمود ويستنتج بيانات منه.
+
+و [[?page=90]]: مع ١٠٠٠ صف الفرق صغير، بس الـ SQL فيه [[OFFSET 890]]، والقاعدة لازم تقرا الـ 890 صف وترميهم قبل ما ترجّع الـ 10. كل ما الصفحة تبعد كل ما الشغل يزيد، ومع ملايين الصفوف بيبان جدًا. الحل للقوايم الطويلة cursor pagination ([[where: { id: { lt: lastId } }]] مع index).`,
+          solCode: R`import { z, ZodError } from "zod";
+
+export function errorHandler(err, req, res, next) {
+  if (err instanceof ZodError) {
+    return res.status(400).json({ error: "Invalid input", issues: z.flattenError(err).fieldErrors });
+  }
+  const status = err.status ?? err.statusCode ?? 500;
+  if (status >= 500) console.error(err);
+  res.status(status).json({ error: status >= 500 ? "Internal server error" : err.message });
+}`
         }
       ]
     },
@@ -1647,7 +1962,23 @@ router.post("/avatar", requireAuth, upload.single("avatar"), users.uploadAvatar)
             "قفلة الفلتر.",
             "قفلة.",
             R`[[single("avatar")]]: ملف واحد في الحقل ده، وبعد requireAuth عشان محدش يرفع من غير login.`
-          ]
+          ],
+          sol: R`الصورة العادية بتعدّي و [[req.file]] فيه [[buffer]] و [[mimetype: "image/jpeg"]] و [[size]]. الملف الـ ٦ ميجا من غير تعديل بيرجّع 500، لأن multer بيرمي [[MulterError]] كوده [[LIMIT_FILE_SIZE]] ورسالته [[File too large]] ومالوش status. بعد التعديل: [[413]] و [[{"error":"File too large"}]].
+
+والـ PDF اللي اسمه [[x.jpg]]: بيعدّي من الـ [[fileFilter]]! لأن [[file.mimetype]] جاي من الكلاينت، و curl بيخمّنه من الامتداد فبيبعت [[image/jpeg]]. فالفلتر ده بيحمي من الغلط العادي بس (PDF بامتداده الحقيقي بيرجع 400 و [[Only JPEG, PNG or WebP]])، والتحقق الحقيقي لازم يبقى على محتوى الملف نفسه، وده اللي sharp بيعمله في الدرس الجاي ([[Not a valid image]]).
+
+لو الصورة الصح رجعت [[Unexpected field]]، يبقى اسم الحقل في [[-F "avatar=@..."]] مش زي [[upload.single("avatar")]].`,
+          solCode: R`import multer from "multer";
+
+export function errorHandler(err, req, res, next) {
+  if (err instanceof multer.MulterError) {
+    const status = err.code === "LIMIT_FILE_SIZE" ? 413 : 400;
+    return res.status(status).json({ error: err.message, code: err.code });
+  }
+  const status = err.status ?? 500;
+  if (status >= 500) console.error(err);
+  res.status(status).json({ error: status >= 500 ? "Internal server error" : err.message });
+}`
         },
         {
           cmd: "sharp",
@@ -1691,7 +2022,12 @@ export async function saveAvatar(buffer) {
             "لف الصورة حسب EXIF، وقص ٥١٢ في ٥١٢، وحوّل لـ WebP بجودة ٨٠، واكتبها. الـ metadata بتتشال.",
             "رجّع المسار عشان يتحفظ في الداتابيز.",
             "قفلة."
-          ]
+          ],
+          sol: R`الصورة الناتجة [[.webp]] مقاسها [[512x512]] وحجمها أصغر بكتير من الأصل (صورة موبايل ٣-٤ ميجا بتبقى عشرات الكيلوبايت). وفي الـ EXIF viewer الأصل فيه GPS وموديل الموبايل والتاريخ، والناتج مفيهوش أي EXIF: sharp مبينقلش الـ metadata إلا لو طلبت [[withMetadata()]]. و [[rotate()]] من غير أرقام بيلف الصورة حسب الـ Orientation اللي في الـ EXIF قبل ما يشيله، فالصورة متطلعش نايمة.
+
+والملف النصي اللي اسمه [[.jpg]]: multer بيعدّيه (الـ mimetype من الامتداد)، بس [[sharp(buffer).metadata()]] بيرمي، فالـ [[catch]] بيرجّع null والرد [[400]] و [[{"error":"Not a valid image"}]].
+
+لو طلع [[ENOENT: no such file or directory]]، يبقى فولدر [[uploads/avatars]] مش موجود أو السيرفر شغال من فولدر تاني (المسار نسبي للـ cwd). ولو الصورة طلعت مقلوبة، اتأكد إن [[rotate()]] قبل [[resize]].`
         },
         {
           cmd: "nodemailer",
@@ -1746,7 +2082,23 @@ export async function sendResetEmail(to, link) {
             "نسخة HTML.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[createTestAccount()]] بيرجّع [[user]] و [[pass]] و [[smtp.host]] ([[smtp.ethereal.email]])، حطهم في .env. بعد [[sendMail]] الـ [[info.messageId]] فيه id، و [[getTestMessageUrl(info)]] بيرجّع لينك [[https://ethereal.email/message/...]] تفتحه تشوف الإيميل زي ما هيوصل: الـ subject والـ html واللينك. الإيميل مبيوصلش لحد فعلًا، وده المطلوب في التطوير.
+
+[[transporter.verify()]] بيرجّع [[true]] لو الإعدادات صح. ولو غلط بيرمي، والكود بيقولك السبب: [[EDNS]] و [[getaddrinfo ENOTFOUND]] للـ host الغلط، و [[ESOCKET]] و [[ECONNREFUSED]] للبورت الغلط، و [[EAUTH]] (Invalid login) لليوزر أو الباسورد الغلط. عشان كده بتناديه وانت بتقوم: تعرف المشكلة من اللوج بدل ما تعرفها من يوزر بيقول «مجاليش إيميل».
+
+لو [[getTestMessageUrl]] رجّع [[false]]، يبقى انت مش باعت على Ethereal (الـ host أو الحساب غلط).`,
+          solCode: R`import nodemailer from "nodemailer";
+
+const account = await nodemailer.createTestAccount();
+const transporter = nodemailer.createTransport({
+  host: account.smtp.host, port: 587, secure: false,
+  auth: { user: account.user, pass: account.pass },
+});
+
+await transporter.verify(); // بيرمي لو الإعدادات غلط
+const info = await transporter.sendMail({ from: '"MyApp" <no-reply@example.com>', to: "me@example.com", subject: "Test", text: "Hello" });
+console.log(nodemailer.getTestMessageUrl(info)); // https://ethereal.email/message/...`
         },
         {
           cmd: "Resend",
@@ -1793,7 +2145,12 @@ Resend بيدعم كمان SMTP، فممكن تستخدمه من nodemailer با
             "لو فشل سجّله، ومتوقفش التسجيل كله عشان إيميل ترحيب.",
             "رجّع الـ id لو محتاجه.",
             "قفلة."
-          ]
+          ],
+          sol: R`بالمفتاح الصح و [[from: "MyApp <onboarding@resend.dev>"]] و [[to]] إيميل حسابك: [[data]] فيه [[{ id: "..." }]] و [[error]] بـ null، والإيميل بيوصل خلال ثواني (بص في spam لو مش لاقيه). ولو بعت لإيميل غير إيميل حسابك من الدومين التجريبي، هتاخد error بيقولك إنك تقدر تبعت لنفسك بس لحد ما توثّق دومين.
+
+بمفتاح غلط: الـ SDK مبيرميش exception؛ بيرجّع [[data]] بـ null و [[error]] object فيه [[statusCode]] (4xx) و [[name]] و [[message]] بيقول إن المفتاح مش صالح. عشان كده الكود بيبص على [[error]] بنفسه، ولو كتبت [[await resend.emails.send(...)]] واستخدمت [[data.id]] على طول هتاخد TypeError.
+
+الفكرة للانترفيو: فشل إيميل الترحيب مايوقّعش التسجيل، بيتسجّل في اللوج بس (ويتعاد بـ background job في الإنتاج).`
         },
         {
           cmd: "morgan",
@@ -1823,7 +2180,17 @@ app.use(morgan(config.NODE_ENV === "production" ? "combined" : "dev", { skip: (r
           lines: [
             "morgan.",
             "ملوّن في التطوير، والصيغة المعروفة في الإنتاج، ومن غير طلبات الـ health check اللي بتملّى اللوج. لوجر واحد بس، عشان كل طلب ميتكتبش مرتين."
-          ]
+          ],
+          sol: R`[[dev]] بيطبع سطر قصير ملوّن زي [[POST /api/tasks 201 0.408 ms - 8]] (الـ status أخضر للنجاح وأحمر للـ 500). و [[combined]] بيطبع صيغة Apache: [[127.0.0.1 - - [29/Sep/2026:22:00:07 +0000] "GET /fail HTTP/1.1" 500 33 "-" "curl/8.5.0"]]. وفي الاتنين [[/health]] مش ظاهر بسبب [[skip]].
+
+مع [[stream]]، السطور بتتكتب في [[access.log]] وبتتزوّد عليه مع كل تشغيل (بسبب [[flags: "a"]]) بدل ما تطلع في الترمنال.
+
+عشان تلاقي كل الـ 500 امبارح: في combined الـ status هو العمود التاسع، فـ [[grep "29/Sep/2026" access.log | awk '$9 == 500']]. شغال، بس هش: أي تغيير في الصيغة يبوّظه، ومفيش user id ولا request id. وده السبب اللي بيخلي الإنتاج يستخدم لوجات JSON (درس [[pino]]) تتفلتر بالحقول.`,
+          solCode: R`import fs from "node:fs";
+app.use(morgan("combined", { stream: fs.createWriteStream("access.log", { flags: "a" }) }));
+
+// كل الـ 500 في يوم معيّن
+// grep "29/Sep/2026" access.log | awk '$9 == 500'`
         },
         {
           cmd: "pino",
@@ -1871,7 +2238,12 @@ router.post("/", async (req, res) => {
             "[[req.log]] لوجر معاه id الطلب تلقائي. البيانات object الأول، والرسالة بعدها.",
             "رد.",
             "قفلة."
-          ]
+          ],
+          sol: R`كل سطر JSON واحد. طلب فيه Authorization بيطلع فيه [[req.headers.authorization]] قيمته النص [Redacted] بدل التوكن، ومعاه سطر [[creating task]] فيه [[req.id]] نفس رقم سطر [[request completed]]، فتقدر تجمع كل لوجات الطلب الواحد. ومعاه [[res.statusCode]] و [[responseTime]]. و [[/health]] مالوش سطر بسبب [[ignore]].
+
+[[node server.js | npx pino-pretty]] بيحوّل نفس السطور لشكل مقروء: الوقت وبعده [[INFO (4796): creating task]] وتحته الحقول متنسّقة. في الإنتاج متستخدمهوش: سيب الـ JSON لأداة اللوجات.
+
+و [[req.log.error({ err }, "failed")]] بيطلع سطر [[level: 50]] وفيه [[err]] object فيه [[type]] و [[message]] و [[stack]] كـ string واحد، لأن pino عنده serializer مخصوص للمفتاح [[err]]. لو كتبت [[req.log.error(err)]] أو حطيته تحت اسم تاني زي [[{ error: err }]]، ممكن تاخد [[{}]] فاضي من غير message ولا stack.`
         }
       ]
     },
