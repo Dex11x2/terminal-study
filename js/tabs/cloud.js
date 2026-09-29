@@ -1420,6 +1420,7 @@ const r2 = new S3Client({
   region: "auto",
   endpoint: "https://" + process.env.R2_ACCOUNT_ID + ".r2.cloudflarestorage.com",
   credentials: { accessKeyId: process.env.R2_ACCESS_KEY_ID, secretAccessKey: process.env.R2_SECRET_ACCESS_KEY },
+  requestChecksumCalculation: "WHEN_REQUIRED",
 });
 
 const put = new PutObjectCommand({ Bucket: "myapp-uploads", Key: "avatars/42.webp", ContentType: "image/webp" });
@@ -1442,7 +1443,7 @@ console.log(new URL(downloadUrl).searchParams.get("X-Amz-Expires"));`,
 
 من جوه Worker مش محتاج SDK: بتعمل binding للـ bucket وتستخدم [[env.BUCKET.put()]] و [[env.BUCKET.get()]] (درس [[Workers]]).
 
-فرق عن S3: مفيش regions بالمعنى ده (فيه location hint)، وبعض مميزات S3 مش موجودة أو مختلفة (زي بعض إعدادات الـ ACL والـ events). ولو نسخة SDK جديدة طلّعت أخطاء checksum مع R2، شوف [[requestChecksumCalculation]] في إعدادات الـ client.`,
+فرق عن S3: مفيش regions بالمعنى ده (فيه location hint)، وبعض مميزات S3 مش موجودة أو مختلفة (زي بعض إعدادات الـ ACL والـ events). و [[requestChecksumCalculation: "WHEN_REQUIRED"]] في المثال مهمة: نسخ SDK v3 الجديدة بتحسب checksum افتراضيًا، وفي الـ presigned PUT بتحط في الرابط [[x-amz-checksum-crc32]] محسوب على body فاضي (قيمته [[AAAAAA==]])، فأي ملف حقيقي يترفع عليه يترفض لأن الـ checksum مش مطابق.`,
             when: "صور ومرفقات المستخدمين، والباك أب (Coolify و Dokploy بيدعموه كـ S3)، وأي ملفات بتتنزل كتير. S3 يفضل أحسن لو كل حاجة تانية على AWS ومحتاج events لـ Lambda وصلاحيات IAM.",
             mistakes: R`endpoint غلط (بتحط bucket في الـ host بإيدك أو تنسى الـ Account ID)، أو [[region: "us-east-1"]] بدل [[auto]]. و token بصلاحية على كل الـ buckets. ومفاتيح R2 في كود الـ frontend بدل presigned URL. وتستخدم [[r2.dev]] في الإنتاج. وتنسى الـ CORS فالرفع من المتصفح يفشل برسالة CORS مع إن الـ URL سليم.`
           },
@@ -1453,6 +1454,7 @@ console.log(new URL(downloadUrl).searchParams.get("X-Amz-Expires"));`,
             "R2 مفيهوش regions، فـ auto.",
             "الـ endpoint بتاع حسابك على R2.",
             "مفاتيح R2 API token من متغيرات البيئة.",
+            "من غيرها SDK v3 بيحط [[x-amz-checksum-crc32]] لجسم فاضي في رابط الـ PUT، فالرفع بملف حقيقي يفشل. كده الـ checksum بيتحسب بس لما العملية تطلبه.",
             "قفلة.",
             "أمر رفع لمسار معين بنوع ملف معين.",
             "رابط رفع صالح ٥ دقايق.",

@@ -2111,18 +2111,23 @@ psql "$DATABASE_URL" -c 'SELECT "amountCents", status FROM "Order" ORDER BY "cre
 
 الكارت بيتكتب في صفحة Paymob، ومبيعدّيش على سيرفرك أبدًا. وتفاصيل الـ webhook والـ tunnel على جهازك في تاب «Node و npm».`,
           example: R`export async function createCheckout({ order, course, user }) {
-  const r = await fetch("https://accept.paymob.com/v1/intention/", {
-    method: "POST", signal: AbortSignal.timeout(10_000),
-    headers: { Authorization: $__btToken $__{config.PAYMOB_SECRET_KEY}$__bt, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      amount: order.amountCents, currency: "EGP", payment_methods: [config.PAYMOB_CARD_INTEGRATION_ID],
-      items: [{ name: course.title, amount: order.amountCents, quantity: 1 }],
-      billing_data: { first_name: user.name, last_name: "-", email: user.email, phone_number: user.phone ?? "NA" },
-      special_reference: order.id, notification_url: $__bt$__{config.API_ORIGIN}/webhooks/paymob$__bt,
-      redirection_url: $__bt$__{config.WEB_ORIGIN}/orders/$__{order.id}$__bt,
-    }),
-  });
-  if (!r.ok) throw new AppError(502, "GATEWAY_DOWN", "بوابة الدفع مش متاحة دلوقتي، جرّب كمان شوية");
+  let r;
+  try {
+    r = await fetch("https://accept.paymob.com/v1/intention/", {
+      method: "POST", signal: AbortSignal.timeout(10_000),
+      headers: { Authorization: $__btToken $__{config.PAYMOB_SECRET_KEY}$__bt, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: order.amountCents, currency: "EGP", payment_methods: [config.PAYMOB_CARD_INTEGRATION_ID],
+        items: [{ name: course.title, amount: order.amountCents, quantity: 1 }],
+        billing_data: { first_name: user.name, last_name: "-", email: user.email, phone_number: user.phone ?? "NA" },
+        special_reference: order.id, notification_url: $__bt$__{config.API_ORIGIN}/webhooks/paymob$__bt,
+        redirection_url: $__bt$__{config.WEB_ORIGIN}/orders/$__{order.id}$__bt,
+      }),
+    });
+  } catch (err) {
+    logger.warn({ err, orderId: order.id }, "paymob unreachable");
+  }
+  if (!r?.ok) throw new AppError(502, "GATEWAY_DOWN", "بوابة الدفع مش متاحة دلوقتي، جرّب كمان شوية");
   const { client_secret } = await r.json();
   return $__bthttps://accept.paymob.com/unifiedcheckout/?publicKey=$__{config.PAYMOB_PUBLIC_KEY}&clientSecret=$__{client_secret}$__bt;
 }`,
@@ -2140,10 +2145,12 @@ psql "$DATABASE_URL" -c 'SELECT "amountCents", status FROM "Order" ORDER BY "cre
 
 وفي staging استخدم integration بوضع test ومفاتيح test. وفي Stripe نفس الفكرة بالظبط: Checkout Session بـ [[metadata.orderId]]، والتأكيد من event اسمه [[checkout.session.completed]] في الـ webhook. وفلو Paymob القديم (auth token، وبعدين order، وبعدين payment key، وبعدين iframe) لسه موجود في مشاريع قديمة، بس الـ intention هو الطريقة الحالية.`,
             when: "مرة لكل محاولة دفع. ولو المستخدم رجع من غير ما يدفع وضغط «ادفع» تاني، ممكن تعمل intention جديد لنفس الطلب.",
-            mistakes: "إنك تعمل الـ intention من الواجهة، فالمفتاح السري يبقى في الـ JavaScript. أو تبعت المبلغ من الـ request body. أو fetch من غير timeout، فطلب المستخدم يعلق دقايق. أو مفاتيح الإنتاج في staging. أو تعتمد على رابط الرجوع كتأكيد للدفع، ودي الدرس الجاي والتاني بعده."
+            mistakes: "إنك تعمل الـ intention من الواجهة، فالمفتاح السري يبقى في الـ JavaScript. أو تبعت المبلغ من الـ request body. أو fetch من غير timeout، فطلب المستخدم يعلق دقايق. أو timeout من غير try/catch: الـ fetch بيرمي قبل سطر [[!r.ok]]، فالمستخدم ياخد 500 عام بدل «بوابة الدفع مش متاحة». أو مفاتيح الإنتاج في staging. أو تعتمد على رابط الرجوع كتأكيد للدفع، ودي الدرس الجاي والتاني بعده."
           },
           lines: [
             "دالة في [[paymob.ts]] بتاخد الطلب والكورس والمستخدم وبترجّع رابط دفع.",
+            "الرد هيتحط هنا. معرّف برا الـ try عشان نقراه بعده.",
+            "try: لأن الـ fetch نفسه بيرمي لو المهلة خلصت أو النت/الـ DNS وقع، قبل ما يبقى فيه response أصلًا.",
             "POST لـ Intention API بتاعة Paymob...",
             "...ومهلة ١٠ ثواني. لو البوابة بطيئة، منعلقش المستخدم.",
             "المفتاح السري بكلمة Token قبله. ده مكانه السيرفر بس.",
@@ -2155,7 +2162,10 @@ psql "$DATABASE_URL" -c 'SELECT "amountCents", status FROM "Order" ORDER BY "cre
             "المكان اللي المتصفح هيرجع له بعد الدفع. للعرض بس.",
             "قفلة الـ body.",
             "قفلة الـ fetch.",
-            "البوابة رفضت أو وقعت؟ 502 برسالة مفهومة.",
+            "timeout ([[TimeoutError]]) أو خطأ شبكة: منرميش الخطأ الخام (كان هيطلع 500 عام)...",
+            "...بنسجّله في اللوج عشان نعرف البوابة بتقع إمتى، و [[r]] بيفضل undefined.",
+            "قفلة الـ catch.",
+            "مفيش رد خالص ([[?.]]) أو البوابة رجّعت error؟ الحالتين نفس الـ 502 برسالة مفهومة.",
             "خد الـ client_secret.",
             "رابط صفحة الدفع الموحدة، بالـ public key والـ client_secret.",
             "قفلة."
@@ -5414,7 +5424,7 @@ ALTER TABLE "User" DROP COLUMN name;`
           ],
           sol: R`من غير timeout، الزرار بيفضل يلف دقيقة كاملة، والطلب ماسك connection في السيرفر طول الوقت ده، ولو ١٠٠ واحد ضغطوا، سيرفرك نفسه بيقف. مع [[AbortSignal.timeout(10_000)]] الـ fetch بيرمي بعد ١٠ ثواني بالظبط خطأ اسمه [[TimeoutError]] ورسالته [[The operation was aborted due to timeout]] (جربناها بثانية وطلعت بعد 1010ms).
 
-بس خلي بالك: الخطأ ده بيترمي من [[fetch]] نفسه، فسطر [[if (!r.ok) throw new AppError(502, "GATEWAY_DOWN", ...)]] في درس «Paymob intention» مش بيتنفذ أصلًا. النتيجة إن المستخدم بياخد 500 [[INTERNAL]] «حصلت مشكلة» مش الرسالة المفهومة. الحل إنك تلف الـ fetch بـ try/catch وتحوّل [[TimeoutError]] لنفس الـ [[AppError(502/503)]].
+بس خلي بالك: الخطأ ده بيترمي من [[fetch]] نفسه، فلو الـ fetch مش ملفوف بـ try/catch، سطر [[if (!r.ok) throw new AppError(502, "GATEWAY_DOWN", ...)]] مش بيتنفذ أصلًا، والمستخدم بياخد 500 [[INTERNAL]] «حصلت مشكلة» مش الرسالة المفهومة. عشان كده درس «Paymob intention» لافف الـ fetch بـ try/catch، وأي خطأ منه بيوصل لنفس الـ [[GATEWAY_DOWN]]. وتقدر تفرّق زي الكود تحت: [[TimeoutError]] يبقى 503 [[GATEWAY_TIMEOUT]].
 
 والطلب نفسه بيفضل PENDING في القاعدة، وده مقبول: الـ reconcile job هيراجعه مع البوابة بعدين. ولو ضغط «اشتري» تاني، الـ [[Idempotency-Key: order.id]] بيمنع البوابة تعمل عملية تانية لو الأولى وصلت فعلًا.`,
           solCode: R`// سيرفر بطيء يمثّل البوابة: node slow.mjs
