@@ -923,7 +923,12 @@ console.log(s.toUpperCase(), s);`,
             "string عادي.",
             "محاولة تعدّل حرف: بتتجاهل بهدوء، وفي strict mode بترمي TypeError.",
             R`[[toUpperCase]] رجّعت string جديد "HI"، و [[s]] نفسه لسه "hi".`
-          ]
+          ],
+          sol: R`[[typeof]] بيطلع بالترتيب: [["string"]] و [["number"]] و [["bigint"]] و [["boolean"]] و [["undefined"]] و [["object"]] (لـ null، ودي غلطة تاريخية) و [["symbol"]] و [["object"]]. وسطر [[s[0] = "H"]] مبيعملش حاجة ومبيطلعش error (في strict mode بيطلع TypeError)، فالناتج [[HI hi]]: [[toUpperCase]] رجّعت string جديد والأصل زي ما هو، لأن الـ primitives immutable.
+
+[["hi".length]] بترجع 2. الـ primitive معندوش خصايص فعلًا، بس لما تكتب نقطة بعده JS بيلفّه مؤقتًا في object من نوع [[String]] (اسمها autoboxing)، ياخد منه الخاصية ويرميه. عشان كده [[s.foo = 1]] بتتنسي فورًا و [[s.foo]] بترجع undefined.
+
+الغلطة الشائعة إنك تفتكر [[typeof null]] بـ [["null"]]: هي [["object"]]، وعشان تفحص null اكتب [[v === null]].`
         },
         {
           cmd: "typeof",
@@ -968,7 +973,16 @@ new Date() instanceof Date  // true`,
             "المتغير مش متعرّف أصلًا، ومع كده typeof مبيرميش error.",
             "الطريقة الصح تفحص array.",
             R`[[instanceof]] بيفحص الكلاس اللي القيمة اتعملت منه.`
-          ]
+          ],
+          sol: R`كل سطر بيطلع زي التعليق اللي جنبه بالظبط، وأهمهم [[typeof null]] بـ [["object"]] و [[typeof []]] بـ [["object"]] و [[typeof notDeclared]] بـ [["undefined"]] من غير ReferenceError.
+
+الدالة لازم تفحص null و array الأول قبل typeof، لأن typeof مش هيفرّق بينهم وبين الـ object. الناتج لـ [[null, [], {}, "x", 1, undefined, () => 1, new Date()]]: [["null", "array", "object", "string", "number", "undefined", "function", "object"]]. لو حطيت سطر typeof الأول، null و array هيطلعوا [["object"]] وده بالظبط الغلط اللي الدرس بيحذّر منه. والـ Date طالعة [["object"]] وده طبيعي، ولو محتاج تميّزها استخدم [[instanceof Date]].`,
+          solCode: R`function getType(v) {
+  if (v === null) return "null";
+  if (Array.isArray(v)) return "array";
+  return typeof v;
+}
+console.log([null, [], {}, "x", 1, undefined, () => 1, new Date()].map(getType));`
         },
         {
           cmd: "== و ===",
@@ -1015,7 +1029,10 @@ const a = []; a === a // true: نفس الـ reference`,
             R`[[Object.is]] بيعتبر NaN زي نفسها.`,
             "كل [] بيعمل array جديدة في مكان تاني في الذاكرة.",
             "نفس الـ reference: true."
-          ]
+          ],
+          sol: R`الإجابات هي نفس التعليقات، والسطور اللي الناس بتغلط فيها عادة: [[0 == ""]] بـ true، و [["0" == false]] بـ true (الاتنين بيتحولوا لـ 0)، و [[null == 0]] بـ false (null بيساوي undefined بس مع ==)، و [[NaN === NaN]] بـ false. لو غلطت في ٣ أو أكتر فده طبيعي، وده بالظبط السبب إن الناس بتستخدم [[===]] دايمًا.
+
+[[[1, 2] == "1,2"]] بـ true: لما تقارن object بـ string بـ ==، الـ array بتتحول لـ primitive بـ [[toString()]] اللي بترجّع [["1,2"]]، فالمقارنة بقت [["1,2" == "1,2"]]. نفس السبب اللي بيخلي [[[] == ""]] true. ومع [[===]] النتيجة false لأن النوعين مختلفين.`
         },
         {
           cmd: "truthy و falsy",
@@ -1062,7 +1079,16 @@ const isLoggedIn = !!"token";    // true`,
             "بتدخل: أي array حتى الفاضية truthy.",
             R`مبتدخلش: [[length]] بـ 0 falsy.`,
             R`[[!!]] بتحوّل أي قيمة لـ boolean.`
-          ]
+          ],
+          sol: R`مع [[||]]: [[pageSize(0)]] بترجّع 20 وده غلط، لأن 0 falsy فـ [[||]] بتعدّيه للقيمة التانية. مع [[??]]: [[pageSize(0)]] بترجّع 0، و [[pageSize()]] و [[pageSize(null)]] بيرجعوا 20، لأن [[??]] بتبص على null و undefined بس.
+
+وفيه حل تالت: default parameter [[function pageSize(n = 20)]]، وده بيشتغل مع undefined بس، فـ [[pageSize(null)]] هترجع null. عشان كده لو القيمة جاية من API ممكن ترجّع null، [[??]] أأمن.`,
+          solCode: R`const pageSizeOr = (n) => n || 20;
+const pageSize = (n) => n ?? 20;
+console.log(pageSizeOr(0));   // 20: غلط
+console.log(pageSize(0));     // 0
+console.log(pageSize());      // 20
+console.log(pageSize(null));  // 20`
         },
         {
           cmd: "number و NaN",
@@ -1109,7 +1135,16 @@ new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(19
             R`[[bigint]] دقيق بأي حجم.`,
             R`[[19.99 * 100]] لوحدها بتطلع 1998.9999999999998، فـ round وخزّن بالقروش.`,
             "اعرض الفلوس بتنسيق البلد والعملة بدل ما تركّبها بإيدك."
-          ]
+          ],
+          sol: R`الـ loop بتطلع [[0.9999999999999999]] مش 1، و [[19.99 * 100]] بتطلع [[1998.9999999999998]]. السبب إن 0.1 و 19.99 مالهمش تمثيل دقيق في binary، والخطأ الصغير بيتجمّع. عشان كده الفلوس بتتحسب بالقروش كـ integer ([[Math.round(19.99 * 100)]] بـ 1999) أو بتتقرّب في الآخر بس للعرض.
+
+[[[1, 10, 2].map(parseInt)]] بتطلع [[[1, NaN, NaN]]] لأن map بتنادي [[parseInt("1", 0)]] (radix 0 يعني «خمّن» فبيطلع 1)، و [[parseInt("10", 1)]] (مفيش أساس 1 فـ NaN)، و [[parseInt("2", 2)]] (الرقم 2 مش موجود في binary فـ NaN). الحل [[.map(Number)]] أو [[.map((s) => parseInt(s, 10))]]. ده سؤال انترفيو مشهور.`,
+          solCode: R`let sum = 0;
+for (let i = 0; i < 10; i++) sum += 0.1;
+console.log(sum);                         // 0.9999999999999999
+console.log(19.99 * 100);                 // 1998.9999999999998
+console.log([1, 10, 2].map(parseInt));    // [1, NaN, NaN]
+console.log(["1", "10", "2"].map(Number)); // [1, 10, 2]`
         }
       ]
     },
@@ -1165,7 +1200,10 @@ PI = 3;                      // TypeError: Assignment to constant variable.`,
             R`[[leaky]] موجود برا الـ block.`,
             R`[[inside]] مش موجود هنا، و [[typeof]] مبيرميش error.`,
             R`إعادة تعيين [[const]]: TypeError والبرنامج يقف.`
-          ]
+          ],
+          sol: R`[[node vars.js]] بيطبع [[2]] وبعدين [[undefined]]، وبعدين بيقع عند آخر سطر بـ [[TypeError: Assignment to constant variable.]] ومعاه اسم الملف ورقم السطر والعمود ([[vars.js:12]]). لاحظ إن اللي قبل السطر ده اتنفّذ عادي: دا runtime error مش syntax error.
+
+لما تغيّر [[let inside]] لـ [[var inside]]، السطر اللي قبل الأخير بيطبع [["number"]] بدل [["undefined"]]: الـ var بيطلع من الـ block لأن مجاله الدالة كلها (أو الملف)، مش الـ block. ده سبب إن var مبقتش تستخدم. ولو فاكر إن [[user.name = "Omar"]] المفروض يطلع error برضه: لأ، const بتمنع إعادة التعيين للمتغير، مش التعديل جوه الـ object.`
         },
         {
           cmd: "template literals",
@@ -1204,7 +1242,17 @@ console.log(status);`,
             "قفلة النص.",
             "اطبع الرسالة.",
             "اطبع الحالة."
-          ]
+          ],
+          sol: R`الناتج لازم يبقى string واحد من غير فواصل: [[<ul><li>Mug: 120 جنيه</li><li>Shirt: 300 جنيه</li><li>Cap: 90 جنيه</li></ul>]].
+
+الغلطة الأشهر إنك تنسى [[join("")]]: الـ array جوه [[$__{}]] بتتحوّل لـ string بـ [[toString()]] اللي بتحط فواصل، فيطلعلك [[<li>Mug</li>,<li>Shirt</li>,<li>Cap</li>]] والفواصل دي بتظهر على الصفحة. وخلي بالك إن ده ينفع مع داتا انت كاتبها، لكن لو الأسامي جاية من يوزر وهتحطها في [[innerHTML]] يبقى XSS (درس textContent تحت).`,
+          solCode: R`const products = [
+  { name: "Mug", price: 120 },
+  { name: "Shirt", price: 300 },
+  { name: "Cap", price: 90 },
+];
+const html = $__bt<ul>$__{products.map((p) => $__bt<li>$__{p.name}: $__{p.price} جنيه</li>$__bt).join("")}</ul>$__bt;
+console.log(html);`
         },
         {
           cmd: "string methods",
@@ -1251,7 +1299,14 @@ clean.at(-1)                                // "m"
             R`آخر حرف. [[at]] بتقبل سالب عكس [[clean[-1]]].`,
             R`قطّع وشيل الفاضي: [[filter(Boolean)]] بيشيل الـ falsy.`,
             R`[[...]] بيقطّع على الحروف الحقيقية، والـ reverse والـ join بيقلبوه.`
-          ]
+          ],
+          sol: R`[[slugify("  Hello World JS  ")]] بترجّع [["hello-world-js"]]، و [[slugify("كورس جافاسكريبت")]] بترجّع [["كورس-جافاسكريبت"]]: toLowerCase مبتعملش حاجة للعربي، والمسافة بقت شرطة.
+
+لو عملت [[split(" ")]] والنص فيه مسافتين ورا بعض ([["Hello  World"]]) هيطلعلك [["hello--world"]] بشرطتين، لأن split عملت عنصر فاضي بين المسافتين. الحل [[split(/\s+/)]] (أي عدد مسافات) أو [[split(" ").filter(Boolean)]]. ولو نسيت [[trim]] الأول هيطلع شرطة في الأول والآخر.`,
+          solCode: R`const slugify = (title) => title.trim().toLowerCase().split(/\s+/).join("-");
+console.log(slugify("  Hello World JS  ")); // "hello-world-js"
+console.log(slugify("كورس جافاسكريبت"));    // "كورس-جافاسكريبت"
+console.log(slugify("Hello  World"));       // "hello-world"`
         }
       ]
     },
@@ -1311,7 +1366,10 @@ toUser("Sara");   // { name: "Sara", active: true }`,
             "نداء عادي.",
             "نفس الشكل مع الـ arrow.",
             "رجّعت object جديد."
-          ]
+          ],
+          sol: R`[[const add = (a, b) => a + b;]] وبترجّع 5 لـ [[add(2, 3)]]: من غير أقواس معقوفة الـ arrow بترجّع قيمة التعبير لوحدها من غير [[return]].
+
+من غير القوسين حوالين الـ object، JS بيشوف [[{]] بداية جسم دالة، فـ [[name, active: true]] جوه جسم دالة مالهاش معنى، والـ [[:]] هي اللي بتطلع SyntaxError (Unexpected token ':'). ولو سبت [[{ name }]] بس فده جسم دالة فيه سطر واحد هو التعبير [[name]]، ومفيش [[return]]، فالدالة بترجّع undefined من غير أي error. ده أخطر من الـ SyntaxError لأنه بيعدّي بهدوء. الحل: [[(name) => ({ name, active: true })]].`
         },
         {
           cmd: "default و rest و spread",
@@ -1366,7 +1424,12 @@ createUser({ name: "Sara", active: false });`,
             "رجّع object بالـ shorthand.",
             "قفلة.",
             R`نداء بيتقري لوحده: [[role]] خدت "user".`
-          ]
+          ],
+          sol: R`[[createUser()]] بترجّع [[{ name: undefined, role: "user", active: true }]]: الـ [[= {}]] خلّت الباراميتر object فاضي بدل undefined، والـ defaults اشتغلت.
+
+من غير [[= {}]] بيطلع [[TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.]] لأنك بتحاول تفك undefined. عشان كده أي دالة بتاخد options object خليها دايمًا [[= {}]].
+
+[[Math.max(...[])]] بترجّع [[-Infinity]] مش 0 ومش error: دي «القيمة المحايدة» للـ max (أي رقم أكبر منها). ولو عندك array ممكن تبقى فاضية افحص الطول الأول، وإلا هتعرض [[-Infinity]] لليوزر.`
         },
         {
           cmd: "higher-order functions",
@@ -1415,7 +1478,21 @@ pipe(double, triple)(1);   // 6`,
             R`بعت [[double]] نفسها لـ map، من غير [[()]].`,
             "دالة بتركّب دوال: ناتج كل واحدة يدخل اللي بعدها.",
             "1 × 2 × 3 = 6."
-          ]
+          ],
+          sol: R`[[withLog(add)(2, 3)]] المفروض تطبع [[args: [2, 3]]] وبعدها [[result: 5]] وترجّع 5. الفكرة إن withLog بتاخد دالة وبترجّع دالة: rest [[...args]] بتلم أي عدد arguments، و [[fn.apply(this, args)]] بتبعتهم زي ما هما.
+
+الغلطة الشائعة إنك تنسى [[return r]] في الآخر: الـ log هيظهر صح، بس الدالة الجديدة هترجّع undefined وأي كود بيستخدم الناتج هيبوظ. والغلطة التانية إنك تنادي [[fn()]] وانت بتعرّف withLog (بدل ما ترجّع دالة) فتتنفّذ مرة واحدة بدري.`,
+          solCode: R`function withLog(fn) {
+  return function (...args) {
+    console.log("args:", args);
+    const result = fn.apply(this, args);
+    console.log("result:", result);
+    return result;
+  };
+}
+const add = (a, b) => a + b;
+const loggedAdd = withLog(add);
+loggedAdd(2, 3); // args: [ 2, 3 ] ثم result: 5`
         }
       ]
     },
@@ -1473,7 +1550,23 @@ const byStatus = Object.groupBy(orders, (o) => o.status);`,
             "فلتر.",
             "واجمع على طول من غير map.",
             R`object فيه [[paid]] و [[pending]]، وكل واحد array طلباته.`
-          ]
+          ],
+          sol: R`عدد الـ pending [[1]]، وأكبر total [[900]]، والـ object [[{ 1: 250, 2: 900, 3: 400 }]] (Node بيطبع المفاتيح بين quotes لأنها strings). و [[byStatus]] بيطبع [[[Object: null prototype] { paid: [ ...اتنين... ], pending: [ ...واحد... ] }]]: [[Object.groupBy]] بيرجّع object من غير prototype عشان مفتاح زي [["constructor"]] ميضربش.
+
+أشهر غلطة في الـ reduce إنك تنسى [[return acc]] جوه الـ callback، فتاني لفة الـ acc بيبقى undefined وتطلعلك [[TypeError: Cannot set properties of undefined]]. والتانية إنك تنسى القيمة الأولية [[{}]]، فأول acc يبقى أول order نفسه.`,
+          solCode: R`const orders = [
+  { id: 1, total: 250, status: "paid" },
+  { id: 2, total: 900, status: "pending" },
+  { id: 3, total: 400, status: "paid" },
+];
+const pendingCount = orders.filter((o) => o.status === "pending").length; // 1
+const maxTotal = Math.max(...orders.map((o) => o.total));                 // 900
+const totalsById = orders.reduce((acc, o) => {
+  acc[o.id] = o.total;
+  return acc;
+}, {});                                                                    // { 1: 250, 2: 900, 3: 400 }
+console.log(pendingCount, maxTotal, totalsById);
+console.log(Object.groupBy(orders, (o) => o.status));`
         },
         {
           cmd: "find و some و includes",
@@ -1524,7 +1617,10 @@ users.every((u) => u.admin);         // false: مش كلهم
             "القيمة موجودة؟",
             R`[[includes]] بتلاقي NaN.`,
             R`[[indexOf]] مبتلاقيهاش لأنها بتستخدم ===.`
-          ]
+          ],
+          sol: R`[[user.name]] على id مش موجود بتطلع [[TypeError: Cannot read properties of undefined (reading 'name')]]: find رجّعت undefined، ومفيش حاجة اسمها name جوه undefined. مع [[user?.name]] الناتج undefined من غير error. ولو عايز رسالة للمستخدم: [[user?.name ?? "مش موجود"]].
+
+[[users.includes({ id: 1, ... })]] بترجّع false حتى لو الخصايص نفسها: includes بتقارن بالـ reference (زي ===)، والـ object اللي كتبته في القوسين object جديد مختلف عن اللي في الـ array. لو عايز تدوّر بالمحتوى استخدم [[users.some((u) => u.id === 1)]].`
         },
         {
           cmd: "sort و toSorted",
@@ -1569,7 +1665,10 @@ prices.with(0, 999);                     // [999, 100, 200]`,
             "منتجين بنفس السعر.",
             R`بالسعر، ولو زي بعض (0) [[||]] بتكمّل بالاسم.`,
             "نسخة فيها أول عنصر متغير."
-          ]
+          ],
+          sol: R`[[products.toSorted((a, b) => b.price - a.price)]]: الأغلى الأول (خد بالك إن [[b - a]] تنازلي و [[a - b]] تصاعدي). ولو في المثال السعرين متساويين (50 و 50) الترتيب هيفضل زي ما هو، لأن sort في JS مضمون stable من ES2019.
+
+[[const x = prices.sort()]] وبعدها [[prices]] بتطبع [[[100, 200, 300]]] و [[x === prices]] بـ true: sort رتّبت الأصل مكانه ورجّعت نفس الـ array، مش نسخة. ولاحظ إن الأرقام هنا طلعت صح صدفة لأنهم نفس عدد الخانات، بس [[[300, 100, 1000].sort()]] هتطلع [[[100, 1000, 300]]] لأن من غير compare function الترتيب كنصوص.`
         },
         {
           cmd: "array destructuring و spread",
@@ -1616,7 +1715,15 @@ rows.flat();                               // [1, 2, 3, 4]`,
             R`array جديدة فيها عنصر زيادة، والأصل متلمسش (عكس [[push]]).`,
             "array جواها arrays.",
             R`[[flat]] بتفردها مستوى واحد.`
-          ]
+          ],
+          sol: R`[[removeAt(["a", "b", "c", "d"], 1)]] بترجّع [[["a", "c", "d"]]] والأصل زي ما هو. و [[arr.toSpliced(1, 1)]] بترجّع نفس الناتج في سطر واحد: هي splice بس من غير ما تعدّل الأصل.
+
+خلي بالك من index سالب: [[toSpliced(-1, 1)]] بتشيل آخر عنصر صح، لكن نسخة slice بتاعتك مع [[-1]] هتطلع array أطول من الأصل (لأن [[slice(0)]] بيرجّع كله). لو هتستخدم نسختك، افحص إن i بين 0 والطول.`,
+          solCode: R`const removeAt = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)];
+const letters = ["a", "b", "c", "d"];
+console.log(removeAt(letters, 1));     // ["a", "c", "d"]
+console.log(letters.toSpliced(1, 1));  // ["a", "c", "d"]
+console.log(letters);                  // ["a", "b", "c", "d"]: الأصل زي ما هو`
         }
       ]
     },
@@ -1686,7 +1793,10 @@ product.discount?.value;  // undefined من غير error`,
             "مسح الخاصية.",
             R`المفتاح موجود؟`,
             R`[[discount]] مش موجودة، فـ [[?.]] وقفت ورجّعت undefined.`
-          ]
+          ],
+          sol: R`[[product.describe()]] بتطبع [["Mug بـ 120"]]. و [[product.discount.value]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'value')]] لأن discount مش موجودة، فانت بتقرا value من undefined.
+
+[[const f = product.describe; f()]] في ملف Node بترجّع [["undefined بـ undefined"]]: الدالة اتنادت من غير نقطة قبلها، فـ this مبقاش product. في ملف عادي (مش strict) this بيبقى globalThis ومفيهوش name ولا price. في Console المتصفح ممكن تشوف [[" بـ undefined"]] لأن [[window.name]] موجود وقيمته فاضية. ولو الكود strict (module أو class) هيطلع TypeError. التفاصيل في درس this.`
         },
         {
           cmd: "object destructuring و spread",
@@ -1729,7 +1839,10 @@ show(user);   // "Sara من مكان مش معروف"`,
             R`[[city]] undefined فـ [[??]] حطت البديل.`,
             "قفلة.",
             R`user مفيهوش address فالـ default اشتغل.`
-          ]
+          ],
+          sol: R`[[safeUser]] بيطبع [[{ id: 1, name: "Sara", email: "s@example.com" }]] من غير password: الـ rest بياخد كل اللي فضل بعد اللي فكّيته. ودي الطريقة المعتادة تشيل حقل حساس قبل ما ترجّع اليوزر في API.
+
+لما [[...userSettings]] يبقى في الأول، [[lang]] بتبقى [["ar"]] بدل [["en"]]: في الـ object literal آخر قيمة لنفس المفتاح هي اللي بتكسب. فالقاعدة: الـ defaults الأول، وإعدادات اليوزر في الآخر عشان تغطّي عليها. لو عكست الترتيب اختيار اليوزر هيتجاهل وده bug صعب تلاحظه.`
         },
         {
           cmd: "reference و copy",
@@ -1780,7 +1893,10 @@ console.log(a.name);            // "X": الدالة عدّلت الأصل`,
             "دالة بتعدّل الـ object اللي اتبعتلها.",
             "ابعت a.",
             "الأصل اتعدّل."
-          ]
+          ],
+          sol: R`[[structuredClone({ date: new Date(), fn() {} })]] بتطلع [[DataCloneError]] ورسالتها [[fn() {} could not be cloned.]] (في Chrome قبلها [[Failed to execute 'structuredClone' on 'Window']]). من غير fn بيشتغل، و [[copy.date instanceof Date]] بـ true.
+
+مع [[JSON.parse(JSON.stringify(...))]] مفيش error، بس الـ fn بتختفي بهدوء، والـ Date بترجع string زي [["2026-01-01T00:00:00.000Z"]] (typeof بـ [["string"]])، وأي undefined بيضيع. يعني JSON «بينجح» وهو بيبوّظ الداتا، و structuredClone بيقولك صراحة. وده جواب سؤال «ليه structuredClone أحسن من JSON trick؟».`
         },
         {
           cmd: "Object.keys و entries",
@@ -1827,7 +1943,19 @@ Object.hasOwn(prices, "mug"); // true`,
             "قفلة.",
             R`فلترة: [[[, v]]] بيتخطى المفتاح وياخد القيمة بس.`,
             R`المفتاح ده موجود في الـ object نفسه؟`
-          ]
+          ],
+          sol: R`[[Object.entries(prices).map(([name, price]) => ({ name, price }))]] بترجّع [[[{ name: "mug", price: 120 }, ...]]]، والعكس [[Object.fromEntries(list.map(({ name, price }) => [name, price]))]] بيرجّع [[{ mug: 120, shirt: 300, cap: 90 }]].
+
+على object عادي [[for...in]] و [[Object.keys]] بيطلعوا نفس المفاتيح. الفرق بيظهر لما الـ object ليه prototype فيه خصايص: [[for...in]] بتلف كمان على الخصايص الموروثة (القابلة للعد)، و [[Object.keys]] بتجيب اللي على الـ object نفسه بس. عشان كده [[Object.keys]] أو [[Object.entries]] هي الاختيار الآمن.`,
+          solCode: R`const prices = { mug: 120, shirt: 300, cap: 90 };
+const list = Object.entries(prices).map(([name, price]) => ({ name, price }));
+console.log(list);
+const back = Object.fromEntries(list.map(({ name, price }) => [name, price]));
+console.log(back); // { mug: 120, shirt: 300, cap: 90 }
+const child = Object.create({ inherited: 1 });
+Object.assign(child, prices);
+for (const k in child) console.log("for...in:", k); // mug shirt cap inherited
+console.log(Object.keys(child));                     // ["mug", "shirt", "cap"]`
         },
         {
           cmd: "Map و Set",
@@ -1880,7 +2008,20 @@ Map أحسن من object كـ dictionary لما: المفاتيح مش strings،
             "المشترك.",
             "الكل من غير تكرار.",
             "اللي في a ومش في b."
-          ]
+          ],
+          sol: R`لـ [["js is fun and JS is fast"]] الـ Map بتطلع [[Map(5) { 'js' => 2, 'is' => 2, 'fun' => 1, 'and' => 1, 'fast' => 1 }]]، و [[Object.fromEntries]] بتحوّلها لـ [[{ js: 2, is: 2, fun: 1, and: 1, fast: 1 }]] (fromEntries بتقبل أي حاجة بتتلف عليها وبتطلع أزواج، والـ Map كده).
+
+السطر المهم [[m.set(w, (m.get(w) ?? 0) + 1)]]: أول مرة [[get]] بترجّع undefined فبنبدأ من 0. لو كتبت [[m.get(w) + 1]] من غير [[??]] هتطلع NaN لكل كلمة. ولو مش عامل [[toLowerCase]] هتلاقي [["JS"]] و [["js"]] كلمتين مختلفتين.`,
+          solCode: R`function countWords(text) {
+  const counts = new Map();
+  for (const word of text.toLowerCase().split(/\s+/).filter(Boolean)) {
+    counts.set(word, (counts.get(word) ?? 0) + 1);
+  }
+  return counts;
+}
+const counts = countWords("js is fun and JS is fast");
+console.log(counts);
+console.log(Object.fromEntries(counts)); // { js: 2, is: 2, fun: 1, and: 1, fast: 1 }`
         },
         {
           cmd: "JSON",
@@ -1926,7 +2067,15 @@ try {
             "امسك الـ error.",
             "رسالة واضحة بدل ما البرنامج يقع.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد ما تقفل الصفحة وتفتحها، [[JSON.parse(localStorage.getItem("cart"))]] بيرجّعلك نفس الـ object. لو نسيت [[JSON.stringify]] في الـ setItem، localStorage هيخزن [["[object Object]"]] (لأنه بيخزن strings بس)، والـ parse بعدها هيطلع SyntaxError. ولو المفتاح مش موجود [[getItem]] بترجع null و [[JSON.parse(null)]] بترجع null، فاكتب [[?? []]] بعدها.
+
+[[JSON.stringify({ a: 1n })]] بتطلع [[TypeError: Do not know how to serialize a BigInt]]: JSON معندوش نوع BigInt. الحل تحوّله لـ string بإيدك ([[String(v)]]) أو تستخدم replacer.`,
+          solCode: R`// في Console المتصفح
+localStorage.setItem("cart", JSON.stringify({ items: ["mug"], total: 120 }));
+// بعد reload
+const cart = JSON.parse(localStorage.getItem("cart")) ?? { items: [], total: 0 };
+cart.items; // ["mug"]`
         }
       ]
     },
@@ -1976,7 +2125,10 @@ $0`,
             "الطريقة القديمة بالـ id.",
             R`دوّر جوه عنصر معيّن، و [[?.]] لو الفورم مش موجود.`,
             R`في DevTools: [[$0]] هو العنصر اللي مختاره في Elements.`
-          ]
+          ],
+          sol: R`[[$0]] بيطبع نفس العنصر اللي اخترته في Elements (ولما تعدّي عليه بالماوس بيتلوّن في الصفحة). و [[$1]] العنصر اللي قبله، وهكذا. ده موجود في DevTools بس، مش في كودك.
+
+السطر التاني بيرجّع array فيها كل الـ URLs كاملة (absolute)، حتى لو في الـ HTML مكتوبة [[/about]]: [[a.href]] الخاصية بتطلع الـ URL المحسوب، و [[a.getAttribute("href")]] بتطلع المكتوب زي ما هو. والـ [[[...]]] لازمة لأن querySelectorAll بترجّع NodeList، وفيها forEach بس معندهاش map، فلو كتبت [[document.querySelectorAll("a").map]] هيطلعلك [[is not a function]].`
         },
         {
           cmd: "textContent و classList",
@@ -2027,7 +2179,15 @@ list.querySelector("li").remove();`,
             "input خبيث من اليوزر.",
             R`[[innerHTML]] نفّذ الـ onerror: ده XSS. متعملش كده.`,
             R`شيل أول عنصر من الصفحة. ([[li]] القديم مبقاش في الصفحة أصلًا: [[innerHTML +=]] اللي فوق عمل العناصر من جديد.)`
-          ]
+          ],
+          sol: R`لما تفتح الصفحة: العنوان بيبقى «مهامي» باللون الأحمر، وفيه [[<li>]] من createElement، وبعدين الـ alert بيطلع (رقم 1) لأن الـ [[<img>]] اتحط كـ HTML حقيقي، والـ [[src=x]] فشل فاشتغل [[onerror]]. ده XSS: أي نص من يوزر في innerHTML ممكن يشغّل كود. وآخر سطر بيشيل أول li (بتاعة createElement) مش التانية.
+
+لما تغيّر السطر الخطر لـ [[const li2 = document.createElement("li"); li2.textContent = userInput; list.append(li2);]] مفيش alert، وهتشوف النص [[<img src=x onerror=alert(1)>]] مكتوب في الصفحة زي ما هو: textContent بيعامل أي حاجة كنص. ولو الصفحة فاضية خالص افتح Console: غالبًا انت فاتحها كـ file:// أو نسيت [[defer]] فالسكريبت اشتغل قبل ما [[#todos]] يتعمل، و querySelector رجّع null.`,
+          solCode: R`const list = document.querySelector("#todos");
+const userInput = "<img src=x onerror=alert(1)>";
+const safe = document.createElement("li");
+safe.textContent = userInput; // بيظهر كنص، مفيش alert
+list.append(safe);`
         },
         {
           cmd: "addEventListener",
@@ -2082,7 +2242,21 @@ form.querySelector("input").addEventListener("input", (e) => {
             R`[[input]] بيشتغل مع كل حرف.`,
             "القيمة دايمًا string.",
             "قفلة."
-          ]
+          ],
+          sol: R`من غير [[e.preventDefault()]]: لما تضغط submit الصفحة بتعمل reload، والـ console.log بيظهر ويختفي بسرعة، والـ URL بيبقى فيه [[?email=...]] لأن الفورم default method بتاعه GET وبيبعت الحقول في الـ URL. مع preventDefault الصفحة ثابتة والـ console بيطبع [[{ email: "..." }]].
+
+مع [[{ once: true }]]: أول ضغطة تطبع «مرة واحدة»، والتانية ولا حاجة، لأن الـ listener اتشال لوحده بعد أول تنفيذ. لو شايف الرسالة مرتين فغالبًا الكود نفسه اتنفّذ مرتين (سكريبت متحمّل مرتين)، ولو [[querySelector("input")]] رجّعت null يبقى الفورم ملوش input وقت تشغيل السكريبت.`,
+          solCode: R`<form>
+  <input name="email" type="email" />
+  <button>Send</button>
+</form>
+<script>
+  const form = document.querySelector("form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log(Object.fromEntries(new FormData(form))); // { email: "..." }
+  });
+</script>`
         },
         {
           cmd: "event delegation",
@@ -2127,7 +2301,10 @@ React بيعمل ده على مستوى التطبيق كله: listener واحد
             "نفس الكلام.",
             "قفلة.",
             "عنصر جديد اتضاف بعد الـ listener، وزراره شغال لوحده."
-          ]
+          ],
+          sol: R`الضغط على delete في العنصر الأخير بيشيله فورًا، مع إن الـ listener اتحط على الـ [[<ul>]] قبل ما العنصر يتعمل: الـ click بيطلع (bubbling) من الزرار للـ ul، والـ listener هناك بيعرف مين اتضغط من [[e.target]].
+
+لما تحط [[<span>x</span>]] جوه الزرار وتضغط على الـ x: [[e.target]] بيبقى الـ SPAN مش الـ BUTTON، و [[e.target.dataset.action]] بـ undefined، فمفيش حاجة بتحصل. [[closest("button[data-action]")]] بتطلع من الـ span لأقرب زرار فوقيه، فبتشتغل مهما ضغطت على أي حاجة جوه. ده بالظبط سبب إنها موجودة، وسؤال انترفيو مشهور: «ليه e.target مش دايمًا العنصر اللي حاطط عليه البيانات؟».`
         },
         {
           cmd: "اعرض داتا من fetch",
@@ -2432,7 +2609,10 @@ outer(); // "x"`,
             "قفلة.",
             "شغّل.",
             "شغّل."
-          ]
+          ],
+          sol: R`بعد ما تضيف [[const app = "admin"]] جوه checkout، الـ console.log بيطبع [[admin 100 10]]: JS بيدوّر على الاسم من الـ scope الأقرب ويطلع لبرّه، فلقى app بتاعة checkout قبل ما يوصل للـ global. الـ global نفسها متغيرتش، ولو طبعت app برّه الدالة هتلاقيها [["shop"]].
+
+[[inner()]] من برّه outer بتطلع [[ReferenceError: inner is not defined]]: inner متعرّفة جوه outer، فمش موجودة في الـ global scope. الـ scope بيتحدد بمكان كتابة الكود (lexical)، مش بمكان النداء. ولو حطيت [[const app]] بعد الـ if بدل قبلها، هيطلع ReferenceError (TDZ) مش «shop»، لأن الاسم محجوز في الـ scope من أوله (الدرس الجاي).`
         },
         {
           cmd: "hoisting و TDZ",
@@ -2471,7 +2651,12 @@ let b = 2;`,
             "الدالة اتحطت هنا بس.",
             R`[[b]] في TDZ: ReferenceError.`,
             "التعريف."
-          ]
+          ],
+          sol: R`أول تشغيل بيطبع [[hi]] وبعدين [[undefined]]، وبيقف عند [[TypeError: greet is not a function]]: [[var greet]] اتعمله hoisting بقيمة undefined، والنداء على undefined كـ function بيطلع TypeError مش ReferenceError.
+
+بعد ما تعلّق سطر [[greet()]]: بيطبع hi و undefined وبعدين [[ReferenceError: Cannot access 'b' before initialization]]. الـ let اتعمله hoisting برضه، بس في الـ TDZ لحد سطر التعريف.
+
+ولو خليت [[const greet]] (ورجّعت سطر النداء): الرسالة بتبقى [[ReferenceError: Cannot access 'greet' before initialization]]. يعني نفس الغلطة بقت error أوضح بيقولك المشكلة فين بالظبط، وده سبب إن const أحسن من var حتى في الدوال.`
         },
         {
           cmd: "closure",
@@ -2522,7 +2707,24 @@ console.log(c1.get());   // 2`,
             "التاني ليه count بتاعه.",
             R`[[count]] مش خاصية على الـ object، فمحدش يقدر يعدّله من برّه.`,
             "القراية بس عن طريق الدالة."
-          ]
+          ],
+          sol: R`[[once]] بتحتفظ بـ [[called]] و [[result]] في الـ closure. لو [[init = once((x) => x * 2)]]، يبقى [[init(5)]] بـ 10، و [[init(100)]] بـ 10 برضه، والدالة الأصلية اتنادت مرة واحدة بس.
+
+الغلطة الشائعة إنك تحط [[let called = false]] جوه الدالة اللي بترجّعها بدل ما تحطه برّاها: ساعتها كل نداء بيعمل متغير جديد بـ false وكأن مفيش once. والغلطة التانية إنك تفحص [[if (!result)]] بدل called، فلو fn رجّعت 0 أو undefined هتتنادي تاني. ده pattern حقيقي بيستخدم في init لمرة واحدة، وبيتسأل في الانترفيو.`,
+          solCode: R`function once(fn) {
+  let called = false;
+  let result;
+  return function (...args) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
+    }
+    return result;
+  };
+}
+let runs = 0;
+const init = once((x) => { runs++; return x * 2; });
+console.log(init(5), init(100), runs); // 10 10 1`
         },
         {
           cmd: "closures في loop",
@@ -2563,7 +2765,10 @@ for (var k = 0; k < 3; k++) {
             "var تاني.",
             R`IIFE بتاخد نسخة من k في [[n]] كل لفة: 0 1 2.`,
             "قفلة."
-          ]
+          ],
+          sol: R`الناتج بـ 0 في كل حتة: [[var 3]] ٣ مرات، و [[let 0]] و [[let 1]] و [[let 2]]، و [[iife 0]] و [[iife 1]] و [[iife 2]]. var فيها متغير i واحد للـ loop كلها، ولما الـ callbacks اشتغلت كانت الـ loop خلصت و i بقى 3. let بتعمل j جديد لكل لفة، والـ IIFE بتعمل n جديد بنسخة من k.
+
+بعد ما تخلي أول timeout بـ 1000: الناتج [[let 0 let 1 let 2 iife 0 iife 1 iife 2]] وبعد ثانية [[var 3 var 3 var 3]]. التأخير غيّر الترتيب بس مش القيمة، لأن القيمة مش بتتاخد وقت ما الـ setTimeout اتكتب، بتتقري وقت ما الـ callback يشتغل، و i ساعتها 3 سواء استنيت 0 ولا 1000. لو كنت متوقع 0 1 2 مع var فده بالظبط الغلط اللي السؤال بيختبره.`
         }
       ]
     },
@@ -2626,7 +2831,10 @@ setTimeout(btn.click, 0);        // undefined: اتبعتت من غير btn`,
             R`قاعدة ١: [[new]] بيعمل object جديد ويبقى هو this.`,
             "object تاني فيه method.",
             "الـ method اتبعتت لوحدها، فـ this ضاعت."
-          ]
+          ],
+          sol: R`من غير [[?.]]، سطر [[fn()]] بيطلع [[TypeError: Cannot read properties of undefined (reading 'name')]]: في strict mode الدالة لما تتنادي من غير نقطة قبلها this بتبقى undefined، ومفيش name جوه undefined.
+
+سطر setTimeout بعد التصليح بيطبع [["Save"]] في الطريقتين. [[() => btn.click()]] بتنادي click والنقطة موجودة، فـ this بقت btn. و [[btn.click.bind(btn)]] بتعمل دالة جديدة this فيها متثبتة على btn. الغلطة الشائعة إنك تكتب [[setTimeout(btn.click(), 0)]]: كده انت بتنادي الدالة فورًا وبتبعت ناتجها (undefined) لـ setTimeout.`
         },
         {
           cmd: "arrow و this",
@@ -2683,7 +2891,28 @@ timer.start();`,
             "قفلة الـ object.",
             "شغّل الغلط.",
             "شغّل الصح."
-          ]
+          ],
+          sol: R`بـ self: جوه الـ function العادية اكتب [[self.seconds++]] بدل this. وبـ bind: [[setTimeout(function () { ... }.bind(this), 0)]]. في الاتنين الـ callback بقى شايف timer، ولو ناديت الطريقتين ورا بعض هتلاقي seconds بتزيد (1 وبعدين 2).
+
+[[timer.bad()]] في ملف Node بترجّع [["object"]] (this بتاع الملف CommonJS هو module.exports)، وفي ES module بترجّع [["undefined"]]، وفي Console المتصفح [["object"]] (window). المهم إنها أبدًا مش timer. والغلطة إنك تكتب [[const self = this]] جوه الـ callback نفسه: ساعتها بتاخد this الغلط. لازم تتكتب في startBroken قبل setTimeout.`,
+          solCode: R`const timer = {
+  seconds: 0,
+  withSelf() {
+    const self = this;
+    setTimeout(function () {
+      self.seconds++;
+      console.log("self", self.seconds);
+    }, 0);
+  },
+  withBind() {
+    setTimeout(function () {
+      this.seconds++;
+      console.log("bind", this.seconds);
+    }.bind(this), 0);
+  },
+};
+timer.withSelf(); // self 1
+timer.withBind(); // bind 2`
         },
         {
           cmd: "call و apply و bind",
@@ -2730,7 +2959,21 @@ setTimeout(btn.click.bind(btn), 0);   // "Save"`,
             "call مش قادرة تغيّر this بتاعة bound function.",
             "object فيه method بتستخدم this.",
             "bind قبل ما تبعتها، فـ this فضلت btn."
-          ]
+          ],
+          sol: R`[[myBind(intro, sara, "Hi")("!")]] لازم ترجّع [["Hi, I'm Sara!"]]، زي bind المدمجة. والـ args اللي اتحددت وقت الـ bind بتيجي الأول، وبعدها اللي بتتبعت وقت النداء.
+
+ولو ناديت الناتج بـ [[.call({ name: "Ali" }, "!")]] هيفضل Sara، لأن جوه الدالة اللي رجّعتها انت بتنادي [[fn.apply(ctx, ...)]] بالـ ctx المحفوظ في الـ closure وبتتجاهل this الجديدة. الغلطة الشائعة إنك ترجّع [[fn.apply(ctx, args)]] على طول بدل ما ترجّع دالة، فالدالة تتنفّذ وقت الـ bind نفسه. والنسخة دي مبتدعمش [[new]]، والمستوى ٣ بيكمّلها.`,
+          solCode: R`function myBind(fn, ctx, ...args) {
+  return function (...newArgs) {
+    return fn.apply(ctx, [...args, ...newArgs]);
+  };
+}
+function intro(greeting, punct) {
+  return $__bt$__{greeting}, I'm $__{this.name}$__{punct}$__bt;
+}
+const saraIntro = myBind(intro, { name: "Sara" }, "Hi");
+console.log(saraIntro("!"));                    // "Hi, I'm Sara!"
+console.log(saraIntro.call({ name: "Ali" }, "?")); // "Hi, I'm Sara?"`
         }
       ]
     },
@@ -2788,7 +3031,10 @@ animal.speak.call(cat);        // لسه موجودة على الـ prototype`,
             "اتأكد من اللينك.",
             "الكتابة بتعمل خاصية على cat وتخبّي اللي فوق.",
             "النسخة الأصلية لسه على animal."
-          ]
+          ],
+          sol: R`[[console.dir([1, 2])]] بيوريك الـ array، وجواها خانة Prototype مكتوب جنبها [[Array(0)]] وفيه map و filter وكل الـ methods، وجواه خانة Prototype تانية مكتوب جنبها [[Object]] وفيه toString و hasOwnProperty، وده آخرها: الـ prototype بتاعه null (مش هيظهرلك سطر تالت). يعني السلسلة [[arr → Array.prototype → Object.prototype → null]].
+
+[[const o = Object.create(null)]] بيعمل object مفيش فوقيه أي حاجة: [[o.toString]] بـ undefined، و [["toString" in o]] بـ false، و [[String(o)]] أو [[$__bt$__{o}$__bt]] بتطلع [[TypeError: Cannot convert object to primitive value]]. بيستخدم كـ dictionary نضيف مفيهوش مفاتيح موروثة (عشان مفتاح زي [["constructor"]] ميضربش)، ودي نفس فكرة الـ null prototype اللي [[Object.groupBy]] بترجّعها.`
         },
         {
           cmd: "class",
@@ -2859,7 +3105,32 @@ typeof BankAccount;   // "function"`,
             "مفيش setter فمحدش يقدر يغيّر الرصيد كده.",
             "static بيتقرا من الكلاس.",
             "الكلاس في الآخر function."
-          ]
+          ],
+          sol: R`[[withdraw]] بتفحص إن المبلغ موجب وإنه مش أكبر من الرصيد، وترمي error لو لأ. بعد [[deposit(100).deposit(50).withdraw(30)]] الـ balance بـ 120، و [[withdraw(500)]] بترمي error برسالة فيها الرصيد والمطلوب.
+
+[[acc.#balance]] برّه الكلاس بيطلع [[SyntaxError: Private field '#balance' must be declared in an enclosing class]] والملف كله مبيشتغلش، حتى أول console.log فيه، لأن الغلطة بتتمسك وقت الـ parsing. ده الفرق بين [[#balance]] و [[_balance]] (convention بس وأي حد يقدر يقراه). ولو نسيت [[return this]] في withdraw، الـ chaining اللي بعدها هيقع بـ [[Cannot read properties of undefined]].`,
+          solCode: R`class BankAccount {
+  #balance = 0;
+  constructor(owner) { this.owner = owner; }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+  withdraw(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    if (amount > this.#balance) {
+      throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
+    }
+    this.#balance -= amount;
+    return this;
+  }
+  get balance() { return this.#balance; }
+}
+const acc = new BankAccount("Sara");
+acc.deposit(100).deposit(50).withdraw(30);
+console.log(acc.balance); // 120
+try { acc.withdraw(500); } catch (e) { console.log(e.message); }`
         },
         {
           cmd: "extends و super",
@@ -2926,7 +3197,10 @@ a instanceof User;     // true`,
             "النسخة الجديدة من describe.",
             "instanceof للكلاس نفسه.",
             "وللأب كمان، لأنه في السلسلة."
-          ]
+          ],
+          sol: R`من غير [[super(name)]] بيطلع [[ReferenceError: Must call super constructor in derived class before accessing 'this' or returning from derived constructor]]: في الكلاس الابن this مبتتعملش غير لما الأب يعملها بـ super، فأي [[this.x]] قبلها ممنوع. ولو حطيت super بعد [[this.permissions = ...]] نفس الـ error.
+
+[[class Guest extends User {}]] من غير constructor و [[new Guest("x").describe()]] بترجّع [["User: x"]]: لو مكتبتش constructor، JS بيعملك واحد لوحده [[constructor(...args) { super(...args); }]] بيبعت كل حاجة للأب. فمتكتبش constructor غير لو عندك حاجة زيادة تعملها.`
         }
       ]
     },
@@ -2974,7 +3248,10 @@ export { area as circleArea } from "./math.js";`,
             R`كل الـ exports في object واحد اسمه math.`,
             "استخدمهم.",
             "re-export: الملف ده بيعدّي area من math باسم تاني."
-          ]
+          ],
+          sol: R`[[node main.js]] بيطبع [[12.57 3.14159 3.14159]]: [[area(2)]] بـ 12.566 و round2 قرّبتها، و [[pi]] هو PI بعد إعادة التسمية، و [[math.PI]] من الـ namespace.
+
+لما تمسح [[.js]] بيطلع [[Error [ERR_MODULE_NOT_FOUND]: Cannot find module '.../math' imported from .../main.js]] ومعاه [[Did you mean to import "./math.js"?]]. في ESM الامتداد إجباري لأن Node مبيخمّنش زي CommonJS (بعض الـ bundlers زي Vite بيخمّن، فالكود يشتغل هناك ويقع في Node). ولو فيه [[package.json]] من غير [["type": "module"]]، Node 22 بيكتشف إن الملف ESM ويشغّله، بس بتحذير [[MODULE_TYPELESS_PACKAGE_JSON]] وبيحلّل الملف مرتين، فحط الـ type دايمًا.`
         },
         {
           cmd: "CommonJS و ESM",
@@ -3015,7 +3292,10 @@ ESM يقدر يعمل import لـ CommonJS، والـ [[module.exports]] بتب�
             R`fs بالـ Promises من ESM.`,
             R`top-level await شغال في ESM بس، و [[import.meta.url]] مكان الملف الحالي.`,
             R`[[import.meta.dirname]] بدل [[__dirname]].`
-          ]
+          ],
+          sol: R`[[node app.mjs]] بيطبع [[hello-world]] ومسار الفولدر بتاعك (من [[import.meta.dirname]]). الـ ESM قدر يعمل import للـ CommonJS عادي، و [[await]] في أول الملف اشتغلت من غير async (top-level await، في ESM بس).
+
+[[import]] في ملف [[.cjs]] بيطلع [[SyntaxError: Cannot use import statement outside a module]]. و [[console.log(__dirname)]] في [[.mjs]] بيطلع [[ReferenceError: __dirname is not defined in ES module scope]]، والبديل [[import.meta.dirname]] و [[import.meta.filename]]. ولو package.json مش موجود جنب app.mjs السطر التالت هيقع بـ [[ENOENT]]، ودي الغلطة الأشهر في التجربة دي.`
         },
         {
           cmd: "dynamic import()",
@@ -3060,7 +3340,10 @@ if (import.meta.env?.DEV) {
             "كود التطوير بس.",
             "شغّله.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد [[npm run build]] هتلاقي في الـ output ملفين JS مش واحد، حاجة زي [[dist/assets/index-xxxx.js]] (صغير) و [[dist/assets/pdf-export-xxxx.js]] (الملف الكبير لوحده). الاسم فيه hash بيتغير لما المحتوى يتغير. في Network (مع [[npm run preview]]) أول ما الصفحة تفتح هتشوف index بس، ولما تضغط الزرار هتلاقي طلب جديد لـ pdf-export، ومش هيتكرر لو ضغطت تاني لأن الـ module اتعمله cache.
+
+لو ملقتش chunk منفصل، يبقى نفس الملف متعمله import عادي (static) في حتة تانية، فـ Vite حطه في الـ bundle الأساسي. الـ dynamic import بيفصل الملف بس لو ده الطريق الوحيد ليه.`
         }
       ]
     },
@@ -3122,7 +3405,20 @@ try/catch بتمسك الـ errors المتزامنة بس. لو الـ error ح
             "تنضيف.",
             "قفلة.",
             R`[[catch]] من غير متغير لو مش محتاجه.`
-          ]
+          ],
+          sol: R`[[err.stack]] بيطبع [[TypeError: مش رقم: abc]] وتحته سطور [[at parseAge (file.js:3:...)]] وبعدها السطر اللي ناداها. اقراه من فوق لتحت: أول سطر هو المكان اللي الـ error اترمى فيه، واللي تحته مين نادى مين.
+
+الدالة اللي فيها [[try { return "a"; } finally { return "b"; }]] بترجّع [["b"]]: الـ finally بيشتغل دايمًا قبل ما الدالة تخرج، والـ return بتاعته بيغطّي على اللي في الـ try (وكمان بيبلع أي error اترمى). عشان كده متكتبش return جوه finally أبدًا، استخدمه للتنضيف بس. ولو finally من غير return، الدالة بترجّع [["a"]] بعد ما الـ finally يشتغل.`,
+          solCode: R`function parseAge(input) {
+  const age = Number(input);
+  if (Number.isNaN(age)) throw new TypeError($__btمش رقم: $__{input}$__bt);
+  return age;
+}
+try { parseAge("abc"); } catch (err) { console.log(err.stack); }
+function who() {
+  try { return "a"; } finally { return "b"; }
+}
+console.log(who()); // "b"`
         },
         {
           cmd: "custom errors و cause",
@@ -3187,7 +3483,19 @@ loadUser(1).catch((e) => console.log(e.name, e.status, e.message, e.cause?.messa
             "قفلة.",
             "قفلة.",
             "اطبع السلسلة كلها."
-          ]
+          ],
+          sol: R`من غير نت أو بدومين غلط، [[fetch]] نفسها بترمي [[TypeError: fetch failed]] (في المتصفح [[Failed to fetch]])، فالـ catch بيلفّها في AppError. الناتج: [[AppError 500 فشل تحميل اليوزر]] و [[e.cause]] هو الـ TypeError الأصلي، وفي Node جواه كمان [[cause]] فيه كود زي [[ENOTFOUND]]. يعني الرسالة العامة لليوزر، والسبب الحقيقي محفوظ للـ logs.
+
+[[ValidationError]] بتورث من AppError وبتضيف [[fields]]، و [[this.name]] بيطلع [["ValidationError"]] لوحده بفضل [[this.constructor.name]]. الغلطة الشائعة إنك تعمل [[this.fields = fields]] قبل [[super(...)]] فيطلع ReferenceError.`,
+          solCode: R`class ValidationError extends AppError {
+  constructor(fields) {
+    super("البيانات مش صحيحة", { status: 400 });
+    this.fields = fields;
+  }
+}
+const err = new ValidationError({ email: "لازم يبقى إيميل صحيح" });
+console.log(err.name, err.status, err.fields, err instanceof AppError);
+// ValidationError 400 { email: 'لازم يبقى إيميل صحيح' } true`
         }
       ]
     },
@@ -3255,7 +3563,10 @@ Promise اترفض ومحدش عمله catch: المتصفح بيطبع «Uncaug
             "في الحالتين.",
             "استخدام wait.",
             R`[[withResolvers]]: الـ Promise و resolve بتاعه في متغيرات.`
-          ]
+          ],
+          sol: R`[[getUser(0)]] بتطبع [[فشل: id غلط]] وبعدين [[خلص]]: الـ promise اترفضت، فالاتنين then اتخطوا ونطّت على طول للـ catch، والـ finally اشتغلت في الآخر.
+
+لما ترمي [[throw new Error("x")]] جوه أول then (مع [[getUser(1)]])، التانية اتخطت والـ catch طبعت [[فشل: x]]: أي error جوه then بيحوّل الـ promise اللي بعدها لـ rejected. فـ catch واحدة في آخر السلسلة بتمسك الاتنين: الرفض الأصلي وأي throw بعده. لو ملقتش الرسالة خالص، غالبًا حطيت الـ catch قبل الـ then اللي فيها الـ throw.`
         },
         {
           cmd: "async و await",
@@ -3310,7 +3621,10 @@ console.log(p instanceof Promise); // true`,
             "top-level await: شغال في ES modules.",
             "من غير await بتاخد Promise.",
             "أي async function بترجّع Promise."
-          ]
+          ],
+          sol: R`من غير [[await]] قدام [[res.json()]]، [[user]] بيطبع [[Promise { <pending> }]]، و [[user.id]] بـ undefined، فالـ URL التاني بيبقى [[orders?user=undefined]]. ده أشهر bug في async: الكود مبيقعش، بس بيبعت داتا غلط.
+
+من غير await قدام loadDashboard، السطر اللي بعدها بيتطبع الأول ([[true]] من [[instanceof Promise]])، وبعدين النتيجة أو رسالة «فشل التحميل». الدالة الـ async بتشتغل لحد أول await وترجع promise فورًا، والباقي بيكمّل بعدين. ولو [[api.example.com]] مش شغال عندك، هتشوف «فشل التحميل» و [[null]]، وده برضه صح: الـ catch شغالة.`
         },
         {
           cmd: "Promise.all و allSettled",
@@ -3357,7 +3671,18 @@ const first = await Promise.any([api("/mirror1"), api("/mirror2")]);`,
             "Promise بيترفض بعد ms.",
             "أول واحد يخلص: الطلب أو الـ timeout.",
             "أول واحد ينجح من الاتنين."
-          ]
+          ],
+          sol: R`الناتج حاجة زي [[ورا بعض: 3.004s]] و [[Promise.all: 1.500s]]. ورا بعض كل await بتستنى اللي قبلها (500 + 1000 + 1500)، و Promise.all بتبدأهم مع بعض فالوقت بيبقى وقت أطولهم بس.
+
+خلي بالك إن الـ promises بتبدأ لحظة ما تنادي الدالة، مش لحظة الـ await. لو كتبت [[const pa = a(), pb = b(), pc = c();]] وبعدين [[await pa; await pb; await pc;]] هتاخد 1.5 ثانية برضه. والغلطة الشائعة العكس: تكتب [[Promise.all([await a(), await b()])]] فتستنى كل واحدة قبل ما Promise.all تشوفها وترجع لـ 3 ثواني.`,
+          solCode: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const a = () => wait(500), b = () => wait(1000), c = () => wait(1500);
+console.time("ورا بعض");
+await a(); await b(); await c();
+console.timeEnd("ورا بعض");      // ~3s
+console.time("Promise.all");
+await Promise.all([a(), b(), c()]);
+console.timeEnd("Promise.all");  // ~1.5s`
         },
         {
           cmd: "fetch و AbortController",
@@ -3426,7 +3751,10 @@ async function search(q) {
             "أي حاجة تانية ارميها.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[const res = await fetch("/not-found")]] بعدها [[res.ok]] بـ false و [[res.status]] بـ 404، ومفيش error اترمى: fetch بترفض بس لو الطلب نفسه موصلش (نت واقع، DNS، CORS). أي رد من السيرفر، حتى 404 أو 500، يعتبر نجاح. عشان كده الـ [[if (!res.ok) throw]] في الدالة ضروري.
+
+[[AbortSignal.timeout(1)]] بتطلع error اسمه [[TimeoutError]] (في Node الرسالة [[The operation was aborted due to timeout]]، وفي Chrome [[signal timed out]]). لاحظ إنه مش [[AbortError]]: الـ catch في search بيتجاهل AbortError بس، فالـ timeout هيوصل لليوزر كـ error، وده المطلوب (إلغاء مقصود ≠ timeout).`
         },
         {
           cmd: "async في loops",
@@ -3477,7 +3805,23 @@ const all = await Array.fromAsync(ids, async (id) => save(id));`,
             "استنى الدفعة قبل اللي بعدها.",
             "قفلة.",
             R`[[Array.fromAsync]]: ورا بعض وترجّع array.`
-          ]
+          ],
+          sol: R`مع [[console.time]]: forEach بتقول حوالي 0ms لأنها مبتستناش أي حاجة (الحفظ بيحصل بعدين)، و for...of حوالي 300ms، و Promise.all حوالي 100ms.
+
+لما save ترمي لـ id 2: مع forEach الـ error مش بيتمسك بأي try/catch حواليها، وبيطلع unhandled rejection بيوقّع Node (وفي المتصفح error أحمر في Console)، و id 3 بيتحفظ عادي. مع for...of الـ try/catch بيمسكه، و id 3 مبيتحفظش لأن الـ loop وقفت. مع Promise.all الـ catch بيمسكه بعد 100ms، بس id 3 بيتحفظ برضه لأن الـ promises كانت بدأت كلها، و Promise.all بترفض عند أول فشل من غير ما تلغي الباقي. لو عايز كل النتايج استخدم allSettled.`,
+          solCode: R`const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+const save = async (id) => {
+  await wait(100);
+  if (id === 2) throw new Error("فشل حفظ " + id);
+  console.log("saved", id);
+};
+const ids = [1, 2, 3];
+try {
+  for (const id of ids) await save(id); // saved 1 ثم يقف
+} catch (e) { console.log("for...of:", e.message); }
+try {
+  await Promise.all(ids.map(save));     // saved 1 و saved 3، والـ catch بيمسك 2
+} catch (e) { console.log("Promise.all:", e.message); }`
         }
       ]
     },
@@ -4011,7 +4355,10 @@ console.log("2: لسه sync");`,
             "الطلب بيتبعت، والـ then هتشتغل لما الرد ييجي، أكيد بعد الكود المتزامن.",
             "بيتطبع قبل الـ timeout والـ fetch.",
             "ولسه قبلهم: الكود المتزامن كله بيخلص الأول."
-          ]
+          ],
+          sol: R`في loupe هتشوف [[console.log]] تدخل الـ Call Stack وتخرج على طول، والـ [[setTimeout]] تدخل وتسيب الـ callback عند الـ Web APIs، وبعد الوقت يروح الـ Callback Queue، ومبيدخلش الـ stack غير لما يفضى. حتى لو الوقت 0.
+
+في DevTools لما الكود يقف عند الـ breakpoint جوه b، الـ Call Stack هيبقى [[b]] فوق، وتحتها [[a]]، وتحتها [[(anonymous)]] وده الكود الـ global. ونفس الترتيب بيطبعه [[console.trace]] في Node ([[at b]] ثم [[at a]]). والناتج كله: الـ trace، و [[1: آخر سطر sync]]، و [[2: لسه sync]]، وبعدين [[3: timeout]] (أو fetch قبلها لو خلصت أسرع، لأنهم الاتنين async). اللي بيتوقع [[3]] قبل [[1]] ده اللي محتاج الدرس ده.`
         },
         {
           cmd: "microtasks و macrotasks",
@@ -4063,7 +4410,10 @@ console.log("H");
             "G بعد C و E.",
             "نداء الدالة.",
             "sync: آخر حاجة متزامنة."
-          ]
+          ],
+          sol: R`الناتج [[A F H C E G D B]]. الـ sync الأول (A و F و H، و F لأن الـ async function بتشتغل sync لحد أول await). بعدين كل الـ microtasks بالترتيب اللي اتسجلت بيه: C و E و G، وبعدها D لأنها اتسجلت لما C خلصت. وفي الآخر الـ macrotask: B.
+
+لما تضيف [[setTimeout(() => console.log("I"), 0)]] جوه أول then، I بتطلع بعد B: [[A F H C E G D B I]]. الـ timeout ده اتسجّل وقت ما C اتنفّذت، يعني بعد ما B كان في الطابور أصلًا، والـ timers بتطلع بترتيب تسجيلها. اللي بيحط I قبل D فاكر إن setTimeout بيقاطع الـ microtasks، وده الغلط.`
         },
         {
           cmd: "blocking و الـ main thread",
@@ -4113,7 +4463,10 @@ Web Worker: ملف JS بيشتغل على thread تاني، مالوش DOM ول�
             "ابعتله الشغل.",
             "استقبل النتيجة من غير ما الصفحة تقف.",
             "التعديل البصري قبل الرسم الجاي بالظبط."
-          ]
+          ],
+          sol: R`وانت مستني الـ ٢ ثانية: الـ scroll مبيتحركش، والضغط على أي زرار مبيعملش حاجة، وحتى الـ hover. أول ما الـ loop تخلص كل اللي ضغطته بيتنفذ مرة واحدة، لأن الأحداث كانت واقفة في الطابور. الـ main thread مشغول، ومفيش حد يرسم أو يرد.
+
+في تاب Performance هتلاقي مستطيل طويل في الـ Main track عليه مثلث أحمر في الركن مكتوب [[Task]] بطول حوالي 2000ms، ولو عدّيت عليه هيقولك إنه long task (أي task أطول من 50ms). ده اللي بيبوّظ INP. لو ملقتهوش، اتأكد إنك دوست Record قبل ما تشغّل الكود ووقفت بعده.`
         }
       ]
     },
@@ -4187,7 +4540,29 @@ throttle بيحفظ وقت آخر تنفيذ، ويتجاهل أي نداء قب
             "نسخة debounced من البحث، اتعملت مرة واحدة برا الـ handler.",
             "كل حرف بينادي search، والبحث الحقيقي بعد 300ms من آخر حرف.",
             R`مرة كل 200ms بالكتير. و [[passive]] هنا ملوش تأثير فعلي لأن الـ scroll event مش cancelable أصلًا، فايدته الحقيقية مع [[wheel]] و [[touchstart]] و [[touchmove]].`
-          ]
+          ],
+          sol: R`مع ١٠ حروف بسرعة: الـ counter بتاع الـ callback الأصلي بيعد 10، ونسخة debounce بتعد 1 بآخر قيمة ([["javascript"]] كاملة) بعد 300ms من آخر حرف. لو بتكتب ببطء (أكتر من 300ms بين الحروف) هتلاقيها اشتغلت أكتر من مرة، وده صح.
+
+[[cancel]] بتعمل [[clearTimeout(timer)]]، فلو ناديت [[search("x")]] وبعدين [[search.cancel()]] على طول، الـ callback مش هيشتغل خالص. مفيدة لما الـ component يتشال أو اليوزر يمسح الـ input. الغلطة الشائعة إنك تعمل debounce جوه الـ listener نفسه ([[input.addEventListener("input", (e) => debounce(fn, 300)(e.target.value))]]): كده بتعمل timer جديد في كل حرف، فمفيش debounce خالص.`,
+          solCode: R`function debounce(fn, ms) {
+  let timer;
+  function debounced(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), ms);
+  }
+  debounced.cancel = () => clearTimeout(timer);
+  return debounced;
+}
+let raw = 0, calls = 0;
+const search = debounce((q) => { calls++; console.log("ابحث عن", q); }, 300);
+const word = "javascript";
+for (let i = 1; i <= word.length; i++) {
+  raw++;
+  search(word.slice(0, i));
+  await new Promise((r) => setTimeout(r, 50));
+}
+await new Promise((r) => setTimeout(r, 400));
+console.log({ raw, calls }); // { raw: 10, calls: 1 }`
         },
         {
           cmd: "memory leaks",
@@ -4242,7 +4617,10 @@ controller.abort();`,
             R`listener مربوط بالـ [[signal]].`,
             "وكمان واحد.",
             "سطر واحد بيشيلهم كلهم."
-          ]
+          ],
+          sol: R`صفحة سليمة: في الـ Comparison الـ [[# Delta]] حوالي صفر، أو بيزيد مرة وبعدين يثبت. صفحة فيها leak: رقم بيزيد بنفس النسبة مع كل مرة (فتحت 10 مرات فزاد 10 أو مضاعفاتها)، زي [[HTMLDivElement]] أو [[Detached HTMLDivElement]] أو closures بتاعة listeners.
+
+لو كتبت «Detached» في خانة الفلتر ولقيت عناصر، دي عناصر اتشالت من الصفحة بس لسه فيه حاجة ماسكاها: listener على window مش اتشال، أو متغير أو Map شايلها، أو setInterval لسه شغال. افتح العنصر وبص في «Retainers» تحت، هتلاقي السلسلة لحد اللي ماسكه. وقبل الـ snapshot التاني دوس زرار الزبالة (Collect garbage) عشان متتلخبطش بحاجات لسه متمسحتش.`
         }
       ]
     },
@@ -4301,7 +4679,22 @@ export const getAll = () => items;`,
             "متغير في الـ module من غير export: خاص بالملف.",
             "دالة عامة بتعدّله.",
             "ودالة بتقراه."
-          ]
+          ],
+          sol: R`بـ module: [[let count = 0]] في أول الملف من غير export، والدوال بـ export. لو ملفين a و b عملوا import لـ inc وناديتها ٣ مرات من الاتنين، [[get()]] هترجّع 3، يعني الاتنين بيعدّوا على نفس العداد. ولو حطيت [[console.log]] في أول الملف هيطبع مرة واحدة بس مهما عملت import من كام ملف.
+
+و [[import * as c from "./counter.js"]] وبعدين [[c.count]] بـ undefined: المتغير مش متصدّر فمش موجود برّه، زي [[counter.count]] في نسخة الـ IIFE. الغلطة الشائعة إنك تعمل [[export let count]] وتحاول تعمل [[count++]] من ملف تاني: هيطلع TypeError لأن الـ imports read-only، والتعديل لازم يبقى من جوه الـ module.`,
+          solCode: R`// counter.js
+let count = 0;
+export function inc() { return ++count; }
+export const get = () => count;
+// a.js
+import { inc } from "./counter.js";
+export const fromA = () => inc();
+// main.js
+import { fromA } from "./a.js";
+import { inc, get } from "./counter.js";
+fromA(); fromA(); inc();
+console.log(get()); // 3: نفس النسخة`
         },
         {
           cmd: "EventEmitter",
@@ -4374,7 +4767,27 @@ cart.emit("add", "cap");`,
             "الاتنين بيشتغلوا.",
             "الغي الأول.",
             "محدش بيسمع دلوقتي: مفيش حاجة بتتطبع."
-          ]
+          ],
+          sol: R`[[listenerCount]] بترجّع [[this.#handlers.get(event)?.size ?? 0]]. في المثال قبل الـ emit بترجّع 2، وبعده 1 (الـ once شالت نفسها)، وبعد unsubscribe بترجّع 0، وآخر [[emit("add", "cap")]] مبيطبعش حاجة.
+
+لو أول handler رمى error من غير try/catch: الـ loop بتقف، الـ handlers اللي بعده مبتشتغلش، والـ error بيطلع لحد اللي نادى emit. بعد ما تلف كل نداء بـ try/catch جوه emit، الباقي بيشتغل عادي والـ error بيتسجل بس. و [[EventTarget]] المدمج بيعمل كده لوحده: [[dispatchEvent]] بيكمّل على باقي الـ listeners وبيبلّغ الـ error كـ uncaught (في Console أحمر) من غير ما يوقف اللي بعده، والـ detail بيوصل في [[e.detail]].`,
+          solCode: R`emit(event, ...args) {
+  for (const fn of this.#handlers.get(event) ?? []) {
+    try {
+      fn(...args);
+    } catch (err) {
+      console.error($__bthandler لـ "$__{event}" وقع:$__bt, err);
+    }
+  }
+}
+listenerCount(event) {
+  return this.#handlers.get(event)?.size ?? 0;
+}
+// والبديل المدمج
+class Cart extends EventTarget {}
+const cart = new Cart();
+cart.addEventListener("add", (e) => console.log("اتضاف", e.detail));
+cart.dispatchEvent(new CustomEvent("add", { detail: "mug" }));`
         },
         {
           cmd: "immutability",
@@ -4423,7 +4836,27 @@ frozen.nested.b = 99;            // اتغير: freeze سطحي`,
             "object متجمّد.",
             "التعديل مبيحصلش.",
             "بس اللي جوه مش متجمّد."
-          ]
+          ],
+          sol: R`[[updateQty(state, 1, 5)]]: [[state.items[0].qty]] لسه 1 و [[next.items[0].qty]] بـ 5. و [[next.user === state.user]] بـ true، و [[next.items === state.items]] بـ false، و [[next.items[1] === state.items[1]]] بـ true (اللي متغيرش متشارك)، و [[next.items[0] === state.items[0]]] بـ false (اتعمل object جديد).
+
+في [[deepFreeze]] جمّد الـ object الأول وبعدين ادخل جوه: كده لو فيه object بيشاور على نفسه، الـ [[Object.isFrozen]] هتوقف الـ recursion. لو جمّدت في الآخر بعد الـ recursion، object زي [[a.self = a]] هيعمل [[Maximum call stack size exceeded]]. وبعد deepFreeze [[f.nested.b = 99]] بتتجاهل بهدوء، وفي strict بتطلع [[TypeError: Cannot assign to read only property 'b']].`,
+          solCode: R`function updateQty(state, id, qty) {
+  return {
+    ...state,
+    items: state.items.map((it) => (it.id === id ? { ...it, qty } : it)),
+  };
+}
+function deepFreeze(obj) {
+  Object.freeze(obj);
+  for (const value of Object.values(obj)) {
+    if (typeof value === "object" && value !== null && !Object.isFrozen(value)) deepFreeze(value);
+  }
+  return obj;
+}
+const state = { user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] };
+const next = updateQty(state, 1, 5);
+console.log(state.items[0].qty, next.items[0].qty, next.user === state.user, next.items[1] === state.items[1]);
+// 1 5 true true`
         },
         {
           cmd: "iterators و generators",
@@ -4490,7 +4923,28 @@ async function* pages(url) {
             "اللينك بتاع الصفحة الجاية.",
             "قفلة.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[fibonacci().take(10).toArray()]] بترجّع [[[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]]]. الـ generator فيه [[while (true)]] بس مش بيعلّق، لأن كل [[yield]] بيوقف لحد ما حد يطلب القيمة الجاية، و take(10) بتطلب 10 بس. لو كتبت [[[...fibonacci()]]] البرنامج هيعلّق للأبد (أو يقع بـ out of memory) لأن spread بتطلب لحد done.
+
+مع [[for await (const items of pages(url))]]: كل لفة بتجيب صفحة، وبتقف لما [[nextUrl]] يبقى null. [[for await]] لازم تبقى جوه async function أو ESM (top-level). و [[take]] و [[toArray]] (iterator helpers) موجودين في Node 22 والمتصفحات الحديثة، فلو طلعلك [[take is not a function]] يبقى الـ runtime قديم.`,
+          solCode: R`function* fibonacci() {
+  let [a, b] = [0, 1];
+  while (true) {
+    yield a;
+    [a, b] = [b, a + b];
+  }
+}
+console.log(fibonacci().take(10).toArray()); // [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+async function* pages(url) {
+  for (let next = url; next; ) {
+    const data = await fetch(next).then((r) => r.json());
+    yield data.items;
+    next = data.nextUrl;
+  }
+}
+for await (const items of pages("https://api.example.com/items?page=1")) {
+  console.log(items.length);
+}`
         }
       ]
     },
@@ -5458,7 +5912,16 @@ JSON.stringify({ a: undefined, b: null }); // '{"b":null}'`,
             R`[[==]] بيساويهم.`,
             R`[[===]] لأ.`,
             "JSON بيشيل undefined ويسيب null."
-          ]
+          ],
+          sol: R`الطريقتين بيرجّعوا true لـ null و undefined بس، و false لـ [[0]] و [[""]] و [[false]] و [[NaN]] و [[[]]]. ده الاستثناء الوحيد اللي [[==]] فيه مقبولة في الكود المحترف: [[v == null]] بتساوي null و undefined بس، ومش بتحوّل أي حاجة تانية. ESLint بيسمح بيها بإعداد [[eqeqeq: ["error", "always", { null: "ignore" }]]].
+
+الغلطة الشائعة إنك تكتب [[!v]] بدالها: دي بترجّع true لـ 0 و "" كمان، فحقل قيمته 0 هيتعامل كأنه مش موجود. وفي الانترفيو قول الفرق في جملة: undefined يعني «لسه مفيش قيمة» (اللغة اللي حطّاها)، و null يعني «مفيش قيمة بقصد» (انت اللي حاططها).`,
+          solCode: R`const isNil = (v) => v == null;
+const isNilStrict = (v) => v === null || v === undefined;
+for (const v of [null, undefined, 0, "", false, NaN, []]) {
+  console.log(v, isNil(v), isNilStrict(v));
+}
+// null true true / undefined true true / والباقي false false`
         },
         {
           cmd: "Promise.all بإيدك",
@@ -5507,7 +5970,35 @@ promiseAll([slow, 2, Promise.resolve(3)]).then(console.log); // ["slow", 2, 3]`,
             "قفلة.",
             "Promise بطيء.",
             R`الترتيب زي المدخلات مع إن [[slow]] خلص الأخير.`
-          ]
+          ],
+          sol: R`[[promiseAllSettled([slow, 2, Promise.reject(new Error("x"))])]] لازم ترجّع بعد 100ms: [[{ status: "fulfilled", value: "slow" }]] و [[{ status: "fulfilled", value: 2 }]] و [[{ status: "rejected", reason: Error: x }]] بنفس الترتيب، ومبتترفضش أبدًا. الفرق عن promiseAll إن الـ reject handler بيسجّل النتيجة بدل ما يرفض.
+
+[[promiseRace]] بتلف على كل واحد وتعمل [[Promise.resolve(item).then(resolve, reject)]]: أول واحد يخلص بيحدد النتيجة، والباقي نداءاتهم على resolve أو reject بتتجاهل لأن الـ promise متحسمة. والحالة اللي بتتسأل: [[promiseRace([])]] بتفضل pending للأبد، زي [[Promise.race([])]] الحقيقية. والغلطة الشائعة إنك تنسى [[Promise.resolve(item)]] فالقيم العادية زي 2 تطلع [[item.then is not a function]].`,
+          solCode: R`function promiseAllSettled(items) {
+  return new Promise((resolve) => {
+    const list = Array.from(items);
+    const results = new Array(list.length);
+    let done = 0;
+    if (list.length === 0) return resolve(results);
+    list.forEach((item, i) => {
+      Promise.resolve(item)
+        .then(
+          (value) => { results[i] = { status: "fulfilled", value }; },
+          (reason) => { results[i] = { status: "rejected", reason }; }
+        )
+        .then(() => { if (++done === list.length) resolve(results); });
+    });
+  });
+}
+function promiseRace(items) {
+  return new Promise((resolve, reject) => {
+    for (const item of items) Promise.resolve(item).then(resolve, reject);
+  });
+}
+const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
+const fast = new Promise((r) => setTimeout(() => r("fast"), 10));
+promiseAllSettled([slow, 2, Promise.reject(new Error("x"))]).then(console.log);
+promiseRace([slow, fast]).then((v) => console.log("race:", v)); // race: fast`
         },
         {
           cmd: "polyfills: map و bind",
@@ -5556,7 +6047,44 @@ hi.myBind({ name: "Sara" }, "Hi")();              // "Hi Sara"`,
             "جرّب map.",
             R`دالة بتستخدم [[this]].`,
             "جرّب bind."
-          ]
+          ],
+          sol: R`[[[1, 2, 3, 4].myFilter((x) => x % 2 === 0)]] بترجّع [[[2, 4]]]، و [[[1, 2, 3].myReduce((a, b) => a + b)]] بـ 6، و [[[].myReduce((a, b) => a + b)]] بترمي [[TypeError: Reduce of empty array with no initial value]] زي الأصلية بالظبط. عشان تفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined» استخدم rest [[...init]] وافحص [[init.length]]، مش [[init === undefined]].
+
+myBind مع new: جوه الدالة اللي بترجّعها افحص [[new.target]]، ولو موجود اعمل [[new fn(...preset, ...args)]] وتجاهل الـ ctx. النتيجة: [[new (Point.myBind(null, 1))(2)]] بترجّع [[Point { x: 1, y: 2 }]] و [[instanceof Point]] بـ true. من غير الفحص ده النسخة البسيطة بترجّع [[{}]] فاضي و instanceof بـ false، لأن this راحت للـ ctx مش للـ object الجديد.`,
+          solCode: R`Array.prototype.myFilter = function (callback, thisArg) {
+  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
+  const result = [];
+  for (let i = 0; i < this.length; i++) {
+    if (i in this && callback.call(thisArg, this[i], i, this)) result.push(this[i]);
+  }
+  return result;
+};
+Array.prototype.myReduce = function (callback, ...init) {
+  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
+  let i = 0;
+  let acc;
+  if (init.length > 0) {
+    acc = init[0];
+  } else {
+    while (i < this.length && !(i in this)) i++;
+    if (i >= this.length) throw new TypeError("Reduce of empty array with no initial value");
+    acc = this[i++];
+  }
+  for (; i < this.length; i++) if (i in this) acc = callback(acc, this[i], i, this);
+  return acc;
+};
+Function.prototype.myBind = function (ctx, ...preset) {
+  const fn = this;
+  function bound(...args) {
+    if (new.target) return new fn(...preset, ...args);
+    return fn.apply(ctx, [...preset, ...args]);
+  }
+  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
+  return bound;
+};
+function Point(x, y) { this.x = x; this.y = y; }
+const P = Point.myBind(null, 1);
+console.log(new P(2), new P(2) instanceof Point); // Point { x: 1, y: 2 } true`
         },
         {
           cmd: "curry",
@@ -5599,7 +6127,19 @@ addVat(100);     // 114`,
             "دالة ضريبة عامة.",
             "نسخة متظبطة على ١٤٪.",
             "100 × 114 ÷ 100."
-          ]
+          ],
+          sol: R`[[sum(1)(2)(3)()]] بترجّع 6، و [[sum(5)()]] بترجّع 5، و [[sum(1)(2)(3)(4)(10)()]] بترجّع 20. الفكرة إن كل نداء فيه رقم بيرجّع دالة جديدة شايلة المجموع لحد دلوقتي في الـ closure، والنداء الفاضي هو اللي بيرجّع الرقم.
+
+الفرق عن curry اللي فوق إن هنا مفيش عدد arguments معروف ([[fn.length]])، فلازم إشارة للنهاية، وهي النداء الفاضي. الغلطة الشائعة إنك تخزّن المجموع في متغير برّه الدالة (global)، فنداء [[sum(1)(2)()]] التاني يبدأ من المجموع القديم. ولو نسيت [[()]] في الآخر هتطبع [[[Function: next]]] بدل الرقم.`,
+          solCode: R`function sum(a) {
+  return function next(b) {
+    if (b === undefined) return a;
+    return sum(a + b);
+  };
+}
+console.log(sum(1)(2)(3)());        // 6
+console.log(sum(5)());              // 5
+console.log(sum(1)(2)(3)(4)(10)()); // 20`
         },
         {
           cmd: "deep equal",
@@ -5640,7 +6180,37 @@ deepEqual(NaN, NaN);                                   // true`,
             "رقم مقابل string.",
             "array مقابل object بنفس المفاتيح.",
             "NaN بتساوي نفسها هنا."
-          ]
+          ],
+          sol: R`بعد الإضافات: [[deepEqual(new Date(1), new Date(2))]] بترجّع false (النسخة الأصلية كانت بترجّع true غلط، لأن الـ Date معندهاش keys فبتبان متساوية)، ونفس المشكلة مع Map و Set: الأصلية بتقول [[new Map([ [1, 1] ])]] بتساوي [[new Map([ [2, 2] ])]]. الحل إنك تفحص النوع بـ instanceof وتقارن [[getTime()]] للـ Date، و size وكل مفتاح للـ Map، و has للـ Set.
+
+الـ object اللي بيشاور على نفسه بيوقّع النسخة الأصلية بـ [[RangeError: Maximum call stack size exceeded]]. الحل [[WeakMap]] بتسجّل كل زوج [[a → b]] دخلت تقارنه، ولو قابلته تاني ترجّع true (افترضنا إنهم متساويين لحد ما يثبت العكس). مع الحل، اتنين objects كل واحد بيشاور على نفسه بيطلعوا متساويين. ولـ Set جوه objects المقارنة بـ has بتقارن بالـ reference، ودي حدود مقبولة في الانترفيو لو قلتها.`,
+          solCode: R`function deepEqual(a, b, seen = new WeakMap()) {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;
+  if (seen.get(a) === b) return true;
+  seen.set(a, b);
+  if (a instanceof Date) return a.getTime() === b.getTime();
+  if (a instanceof Map) {
+    if (a.size !== b.size) return false;
+    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
+    return true;
+  }
+  if (a instanceof Set) {
+    if (a.size !== b.size) return false;
+    for (const v of a) if (!b.has(v)) return false;
+    return true;
+  }
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
+}
+const x = { v: 1 }; x.self = x;
+const y = { v: 1 }; y.self = y;
+console.log(deepEqual(x, y));                                  // true
+console.log(deepEqual(new Date(1), new Date(2)));              // false
+console.log(deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))); // true`
         },
         {
           cmd: "اتوقع الناتج",
@@ -5677,7 +6247,17 @@ console.log(obj.get()());          // "A"`,
             "string مش فاضي: truthy.",
             R`arrow جوه method: [[this]] جاية من [[get]].`,
             R`[[get]] اتنادت بـ obj.get() فـ this = obj.`
-          ]
+          ],
+          sol: R`الناتج الحقيقي في Node: سطر فاضي (string فاضي)، [[[object Object]]]، [[11]]، [[10]]، [[string]]، [[1,2,3]]، [[false]]، [[[ 100, 20, 3 ]]]، [[true]]، [[A]]. (Node بيطبع الـ strings من غير quotes.) الأسباب في سطر: [[+]] مع object بيحوّله string، و [[-]] و [[*]] بيحوّلوا لأرقام، و typeof بترجّع string دايمًا، و sort من غير compare بترتّب كنصوص، و [["false"]] string مش فاضي فـ truthy، والـ arrow أخدت this من get.
+
+أمثلة للأسئلة اللي تضيفها: [[console.log(typeof x); var x = 1;]] بتطبع [[undefined]]، و [[for (var i = 0; i < 3; i++) setTimeout(() => console.log(i))]] بتطبع [[3 3 3]]، و [[setTimeout(() => console.log("T")); Promise.resolve().then(() => console.log("P")); console.log("S");]] بتطبع [[S P T]]. لو غلطت في أكتر من ٣ من العشرة الأصليين، ارجع لدروس «القيم والأنواع» قبل الانترفيو.`,
+          solCode: R`console.log(typeof hoisted); // undefined
+var hoisted = 1;
+for (var i = 0; i < 3; i++) setTimeout(() => console.log("loop", i), 0); // 3 3 3
+setTimeout(() => console.log("T"), 0);
+Promise.resolve().then(() => console.log("P"));
+console.log("S");
+// S ثم P ثم loop 3 ×3 ثم T`
         }
       ]
     }
