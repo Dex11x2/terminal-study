@@ -73,7 +73,7 @@ net.connect(9999, "127.0.0.1").on("error", e => console.log("TCP:", e.code));
           flag: "script",
           deep: {
             why: "بيختبر إنك فاهم إن كل بروتوكول فيه trade-off: الضمانات ليها تمن في السرعة. وبيفتح كلام عن الـ realtime و HTTP/3.",
-            how: R`TCP بيدّي كل byte رقم تسلسلي. المستقبل بيرد بـ ACK، ولو الـ ACK متأخرش المرسل بيعيد. وفيه flow control (المستقبل بيقول يقدر ياخد قد إيه) و congestion control (المرسل بيبطّأ لو الشبكة زحمة). والنتيجة stream مرتب من غير فقد، بس لو packet واحدة ضاعت كل اللي بعدها بيستنى (head-of-line blocking).
+            how: R`TCP بيدّي كل byte رقم تسلسلي. المستقبل بيرد بـ ACK، ولو الـ ACK مجاش في وقته المرسل بيعيد. وفيه flow control (المستقبل بيقول يقدر ياخد قد إيه) و congestion control (المرسل بيبطّأ لو الشبكة زحمة). والنتيجة stream مرتب من غير فقد، بس لو packet واحدة ضاعت كل اللي بعدها بيستنى (head-of-line blocking).
 
 UDP مجرد رسالة عليها عنوان وبورت. مفيش handshake ولا ترتيب ولا إعادة. التطبيق هو اللي يقرر يعمل إيه لو حاجة ضاعت. عشان كده الـ DNS (سؤال وجواب صغيرين) والمكالمات بيستخدموه.
 
@@ -157,7 +157,7 @@ curl -X POST   https://api.example.com/orders -H "Content-Type: application/json
 curl -X PUT    https://api.example.com/orders/42 -H "Content-Type: application/json" -d '{"item":"pen","qty":2}'
 curl -X PATCH  https://api.example.com/orders/42 -H "Content-Type: application/json" -d '{"qty":3}'
 curl -X DELETE https://api.example.com/orders/42
-curl -X POST   https://api.example.com/payments -H "Idempotency-Key: 7f3c9a1e" -d '{"amount":100}'`,
+curl -X POST   https://api.example.com/payments -H "Content-Type: application/json" -H "Idempotency-Key: 7f3c9a1e" -d '{"amount":100}'`,
           try: "على API عندك: ابعت نفس الـ POST مرتين وشوف اتعمل كام صف في الداتابيز. بعدين ابعت نفس الـ PUT مرتين وقارن.",
           deep: {
             why: "بيختبر إنك بتصمم API مش بس بتستخدمه. والـ idempotency بالذات بتفرق في الدفع والـ webhooks والـ retries، ودي حاجات بتحصل في الإنتاج كل يوم.",
@@ -630,7 +630,7 @@ journalctl -u myapp -n 50 --no-pager`,
             mistakes: R`[[kill -9]] أول حاجة: البرنامج ميلحقش يقفل الاتصالات ويكمّل الكتابة. وتخلط الـ process بالـ thread. و [[killall node]] على سيرفر عليه كذا تطبيق. وتوقف خدمة شغالة بـ systemd بـ kill فترجع تقوم لوحدها وانت مش فاهم ليه.`
           },
           lines: [
-            "أكتر ٥ processes بتاكل رام (مع سطر العناوين).",
+            "أكتر ٤ processes بتاكل رام (الـ ٥ سطور منهم سطر العناوين).",
             "مين ماسك بورت 3000، ورقمه إيه.",
             "ابعت SIGTERM: اقفل بهدوء.",
             "لو مردّش: SIGKILL، قتل فوري من غير فرصة يخلّص.",
@@ -648,7 +648,7 @@ journalctl -u myapp -n 50 --no-pager`,
 chmod 755 deploy.sh
 chmod 600 .env
 chmod u+x,g-w script.sh
-sudo chown -R www-data:www-data /var/www/myapp
+sudo chown -R deploy:www-data /var/www/myapp
 id`,
           try: "اعمل فولدر فيه ملف، واعمل للفولدر [[chmod 644]] (من غير x) وجرّب [[cd]] جواه و [[cat]] للملف. بعدين رجّعه 755. هتفهم معنى x على الفولدر.",
           deep: {
@@ -657,7 +657,7 @@ id`,
 
 الـ umask بيحدد الصلاحيات الافتراضية: غالبًا 022، فالملفات الجديدة بتطلع 644 والفولدرات 755. و root بيعدّي كل الصلاحيات دي. وفيه بتات خاصة: الـ sticky bit على [[/tmp]] (بتظهر [[t]]) بيمنع حد يمسح ملف مش بتاعه حتى لو الفولدر مفتوح للكل.
 
-والقاعدة: least privilege. التطبيق يشتغل بيوزر عادي مش root، وملفات الموقع ملك اليوزر اللي بيشغّل السيرفر ([[www-data]] مثلًا)، والأسرار 600. التفاصيل في تاب bash.`,
+والقاعدة: least privilege. التطبيق يشتغل بيوزر عادي مش root، وملفات الموقع ملك يوزر الـ deploy، و [[www-data]] في الـ group بيقرا بس (فولدرات 750 وملفات 640)، وبيكتب في فولدر الرفع بس. والأسرار 600. التفاصيل في تاب bash.`,
             when: "Follow-ups: «ليه 777 غلط؟». «الفرق بين r و x على فولدر؟». «إيه هو umask؟». «sudo بيعمل إيه بالظبط؟». «Nginx بيطلّع 403 على ملفات الموقع، تشخّص إزاي؟».",
             mistakes: R`[[chmod -R 777]] عشان «يشتغل»: أي process مخترق يقدر يعدّل كودك. وتشغّل التطبيق بـ root. وتنسى إن الفولدر محتاج x عشان توصل للملفات جواه. و [[chmod -R 755]] على كل حاجة فالملفات العادية كلها بقت executable.`
           },
@@ -666,7 +666,7 @@ id`,
             "السكربت: الـ owner يعمل كل حاجة، والباقي يقرا وينفّذ.",
             "ملف الأسرار: الـ owner بس يقرا ويكتب.",
             "بالحروف: ضيف تنفيذ للـ owner، وشيل الكتابة من الـ group.",
-            "خلي ملفات الموقع كلها ملك اليوزر اللي Nginx أو PHP بيشتغل بيه.",
+            "خلي الملفات ملك يوزر الـ deploy، والـ group هو اليوزر اللي Nginx أو PHP بيشتغل بيه عشان يقرا بس.",
             "انت مين: الـ uid والـ groups بتاعتك."
           ]
         }
@@ -798,7 +798,7 @@ console.log(fib(70));
           flag: "script",
           deep: {
             why: "أي داتا متداخلة (تعليقات، وقوايم، وفولدرات، وصلاحيات بتورث) حلها الطبيعي recursion. والإنترفيوير عايز يتأكد إنك عارف حدودها مش بس بتكتبها.",
-            how: R`كل نداء بيتحط على الـ call stack كـ frame فيه الـ arguments والمتغيرات المحلية ومكان الرجوع. لما الدالة ترجع، الـ frame بيتشال. الـ stack حجمه محدود (في V8 عشرات الآلاف من المستويات حسب حجم الـ frame)، فشجرة عمقها ١٠ مستويات مفيش مشكلة، بس لستة متوصلة مليون عنصر هتوقع.
+            how: R`كل نداء بيتحط على الـ call stack كـ frame فيه الـ arguments والمتغيرات المحلية ومكان الرجوع. لما الدالة ترجع، الـ frame بيتشال. الـ stack حجمه محدود (في V8 حوالي ١٠ لـ ١٥ ألف مستوى بالإعدادات الافتراضية، وأقل كل ما الـ frame يكبر)، فشجرة عمقها ١٠ مستويات مفيش مشكلة، بس لستة متوصلة مليون عنصر هتوقع.
 
 الـ tail call optimization (النداء الأخير ميحجزش frame جديد) مكتوبة في مواصفة JS بس Safari بس اللي طبّقها، فمتعتمدش عليها في Node أو Chrome.
 
@@ -1066,7 +1066,7 @@ for (const n of [new EmailNotifier(), new SmsNotifier()]) console.log(n.send("pa
 
 الـ polymorphism في JS مش محتاج inheritance أصلًا (duck typing): أي object عنده [[send]] ينفع. و TypeScript بيخلي ده صريح بـ [[interface Notifier { send(msg: string): string }]]، وأي class بتطبّقها تنفع مكانها.
 
-والـ composition: بدل [[class AdminUser extends User extends Person]]، اليوزر عنده [[permissions]] و [[notifier]] كـ objects بتتحقن فيه. تغيير سلوك يبقى تبديل جزء، مش إعادة ترتيب شجرة. والـ React نفسها بتقول نفس الكلام: components بتتركب مش بتورث.`,
+والـ composition: بدل شجرة وراثة زي [[AdminUser extends User]] و [[User extends Person]]، اليوزر عنده [[permissions]] و [[notifier]] كـ objects بتتحقن فيه. تغيير سلوك يبقى تبديل جزء، مش إعادة ترتيب شجرة. والـ React نفسها بتقول نفس الكلام: components بتتركب مش بتورث.`,
             when: "Follow-ups: «composition ولا inheritance؟». «JS فيها classes بجد؟». «abstract class ولا interface؟». «overloading ولا overriding؟». «encapsulation بتفرق إيه عن abstraction؟».",
             mistakes: R`تعرّف الـ encapsulation إنها «private variables» وبس. وتقول الـ inheritance هي طريقة إعادة الاستخدام الأساسية. وتخلط abstraction و encapsulation. وتحفظ تعريفات من غير مثال.`
           },
@@ -1253,7 +1253,7 @@ describe("applyCoupon", () => {
 
 الـ coverage بيقولك أنهي سطور اتنفذت، مش هل اتختبرت صح. و TDD: اكتب اختبار فاشل، وبعدين أقل كود يعدّيه، وبعدين حسّن (red، green، refactor). والـ flaky test (بينجح ويفشل من غير تغيير) أوحش من مفيش اختبار، لأنه بيعلّم الفريق يتجاهل الأحمر. التفاصيل في تاب «هندسة البرمجيات».`,
             when: "Follow-ups: «بتعمل mock لإيه ومتعملوش لإيه؟». «coverage كام يبقى كويس؟». «بتعمل TDD؟». «اختبار flaky تعمل فيه إيه؟». «تختبر webhook الدفع إزاي؟».",
-            mistakes: R`«مبكتبش tests» من غير أي خطة، أو العكس «coverage 100%» كهدف. و mock لكل حاجة. و e2e لكل حاجة فالـ CI ياخد ساعة. ولو مشاريعك مفيهاش اختبارات قول ده بصراحة، وقول هتبدأ بإيه ولبه: ده أحسن من إنك تدّعي.`
+            mistakes: R`«مبكتبش tests» من غير أي خطة، أو العكس «coverage 100%» كهدف. و mock لكل حاجة. و e2e لكل حاجة فالـ CI ياخد ساعة. ولو مشاريعك مفيهاش اختبارات قول ده بصراحة، وقول هتبدأ بإيه وليه: ده أحسن من إنك تدّعي.`
           },
           lines: [
             "أدوات الاختبار من Vitest.",
