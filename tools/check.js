@@ -18,13 +18,14 @@ const errors = [], warnings = [];
 const err = (where, msg) => errors.push(where + ': ' + msg);
 const warn = (where, msg) => warnings.push(where + ': ' + msg);
 const FLAGS = [undefined, 'danger', 'script', 'keys', 'term', 'console'];
-const exampleLines = ex => ex.split('\n').filter(l => l.trim() && !/^\s*(#|\/\/|REM\b)/.test(l));
+const exampleLines = ex => ex.split('\n').filter(l => l.trim() && !/^\s*(#(?![A-Za-z_$][\w$]*\s*[=;(])|\/\/|REM\b)/.test(l)); // #name = ... is a JS private field, not a comment
 const brackets = (where, s) => {
   if (typeof s !== 'string') return;
   const o = (s.match(/\[\[/g) || []).length, c = (s.match(/\]\]/g) || []).length;
   if (o !== c) err(where, `عدد [[ (${o}) مش زي عدد ]] (${c})`);
   if (/\[\[[^\]]*\n[^\]]*\]\]/.test(s)) err(where, '[[...]] مينفعش يعدّي على أكتر من سطر');
   if (s.includes('$__{')) err(where, '$__{ فضلت زي ما هي');
+  if (s.includes("$__bt")) err(where, "$__bt فضلت زي ما هي");
 };
 
 let total = 0;
@@ -56,7 +57,7 @@ for (const tab in DATA) {
 }
 
 // روابط القاموس: «bash المستوى ٢: [[grep]]» لازم تشاور على درس موجود
-const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real', 'اختصارات النظام': 'os', 'VS Code': 'vscode' };
+const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real', 'اختصارات النظام': 'os', 'VS Code': 'vscode', 'JavaScript': 'js', 'TypeScript': 'ts', 'HTML و CSS': 'css', 'React': 'react', 'Next.js': 'next', 'Backend بـ Node': 'api', 'SQL و Prisma': 'data', 'Python و FastAPI': 'pyapi', 'PHP و MySQL': 'php', 'Flutter و Dart': 'flutter', 'الذكاء الاصطناعي': 'ai', 'بناء مشروع كامل': 'arch', 'الانترفيو': 'interview', 'DSA': 'dsa', 'هندسة البرمجيات': 'sweng', 'APIs متقدمة': 'apis', 'Cloud و DevOps': 'cloud' };
 if (DATA.glossary) DATA.glossary.forEach(cat => cat.items.forEach(it => {
   const ref = it[4] || '', m = ref.match(/^(.*?)(?: المستوى [١٢٣123])?(?:: \[\[(.+)\]\])?$/);
   const tab = m && TAB_NAMES[m[1]];

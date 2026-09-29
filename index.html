@@ -20,33 +20,88 @@
   <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
   <h1>الترمنال بإيدك</h1>
   <p class="lead">كل أمر هنا معاه شرح، ومثال تنسخه، وتجربة تعملها بنفسك. الأوامر متقسمة على ٣ مستويات: ابدأ بالمستوى ١، ومتنقلش للي بعده غير لما تكون علّمت على «جربتها» في أغلبه. الصفحة بتفتكر تقدمك.</p>
-  <div class="switch" role="tablist" aria-label="اختار الشيل">
-    <button class="sw" role="tab" data-s="start" aria-selected="false"><div class="top"><b>ابدأ من هنا</b><span>$ pwd</span></div><div class="bot">لو لسه بتبتدي: يعني إيه ترمنال، وإزاي تقرا أمر، والسيرفر والبورت و HTTP ببساطة</div></button>
-    <button class="sw" role="tab" data-s="os" aria-selected="false"><div class="top"><b>اختصارات النظام</b><span>Win+R › services.msc</span></div><div class="bot">قائمة Run في ويندوز وأهم أوامرها، واختصارات ويندوز وأوبونتو والماك اللي بتوفر وقت كل يوم</div></button>
-    <button class="sw" role="tab" data-s="vscode" aria-selected="false"><div class="top"><b>VS Code</b><span>Ctrl+Shift+P</span></div><div class="bot">الاختصارات اللي بتفرق، والترمنال و Git و Debugger جواه، وإعدادات المشروع اللي بتوفر ساعات</div></button>
-    <button class="sw" role="tab" data-s="wsl" aria-selected="false"><div class="top"><b>WSL على ويندوز</b><span>PS&gt; wsl --install</span></div><div class="bot">لينكس حقيقي جوه ويندوز: التسطيب، وفين تحط المشروع، و VS Code و Docker والشبكة والمشاكل المتكررة</div></button>
-    <button class="sw" role="tab" data-s="bash" aria-selected="true"><div class="top"><b>bash</b><span>$ ls -la</span></div><div class="bot">لينكس وماك وسيرفرات الـ VPS، وعلى ويندوز عن طريق WSL أو Git Bash</div></button>
-    <button class="sw" role="tab" data-s="git" aria-selected="false"><div class="top"><b>Git</b><span>(main)$ git status</span></div><div class="bot">نفس الأوامر في كل الشيلات. من أول commit لحد تصليح الغلطات</div></button>
-    <button class="sw" role="tab" data-s="vps" aria-selected="false"><div class="top"><b>VPS أوبونتو</b><span>$ sudo ufw status</span></div><div class="bot">إدارة سيرفر: تأمين ونشر وصيانة. مبني على تاب bash</div></button>
-    <button class="sw" role="tab" data-s="web" aria-selected="false"><div class="top"><b>المتصفح DevTools</b><span>&gt; fetch("/api/me")</span></div><div class="bot">Inspect و Network والـ status codes، وتبعت طلبات وتفهم الرد، وتفحص أي موقع</div></button>
-    <button class="sw" role="tab" data-s="node" aria-selected="false"><div class="top"><b>Node و npm</b><span>$ npm ci</span></div><div class="bot">نسخ Node والباكدجات والسكربتات، والإنتاج والتشخيص، و webhooks بوابات الدفع على جهازك</div></button>
-    <button class="sw" role="tab" data-s="quality" aria-selected="false"><div class="top"><b>فحص الكود</b><span>$ pnpm lint &amp;&amp; pnpm test</span></div><div class="bot">lint و typecheck والاختبارات، و husky يمنع الـ commit البايظ، و CI يفحص كل push</div></button>
-    <button class="sw" role="tab" data-s="pg" aria-selected="false"><div class="top"><b>PostgreSQL</b><span>app=# \d users</span></div><div class="bot">psql والصلاحيات والـ indexes و EXPLAIN، والباك أب اللي بيتجرّب، و migrations و Supabase</div></button>
-    <button class="sw" role="tab" data-s="mongo" aria-selected="false"><div class="top"><b>MongoDB</b><span>&gt; db.users.find()</span></div><div class="bot">mongosh، والتشغيل بباسورد في Docker، والباك أب اللي بيتجرّب، والترجيع</div></button>
-    <button class="sw" role="tab" data-s="docker" aria-selected="false"><div class="top"><b>Docker</b><span>$ docker compose up -d</span></div><div class="bot">images و containers، و Dockerfile صح، و Compose لمشروع كامل، والمشاكل على السيرفر</div></button>
-    <button class="sw" role="tab" data-s="python" aria-selected="false"><div class="top"><b>Python</b><span>(venv) $ pytest -q</span></div><div class="bot">venv و pip، و pytest، و uvicorn، و Dockerfile لخدمة Python</div></button>
-    <button class="sw" role="tab" data-s="apps" aria-selected="false"><div class="top"><b>Desktop و Mobile</b><span>$ npx cap sync android</span></div><div class="bot">Electron لبرنامج ويندوز .exe، و Capacitor و Gradle لتطبيق Android موقّع</div></button>
-    <button class="sw" role="tab" data-s="gha" aria-selected="false"><div class="top"><b>GitHub Actions</b><span>$ gh run view --log-failed</span></div><div class="bot">CI مع كل push، و deploy على السيرفر بـ SSH، وموافقات، وإصدارات، و rollback من الموبايل</div></button>
-    <button class="sw" role="tab" data-s="nginx" aria-selected="false"><div class="top"><b>Nginx بعمق</b><span>$ nginx -t &amp;&amp; systemctl reload nginx</span></div><div class="bot">static و SPA و proxy كامل، وضغط وكاش وتحويلات وكذا موقع و rate limiting و WebSockets و blue-green</div></button>
-    <button class="sw" role="tab" data-s="diag" aria-selected="false"><div class="top"><b>التشخيص</b><span>$ curl -sI https://... | head -1</span></div><div class="bot">الموقع واقع: ٢٨ سيناريو بخطوات مرتبة، من 502 والديسك المليان لحد الاختراق والـ rollback</div></button>
-    <button class="sw" role="tab" data-s="sec" aria-selected="false"><div class="top"><b>أمان الموقع</b><span># تأمين مشاريعك</span></div><div class="bot">OWASP Top 10 بالكود الصح، وأدوات الفحص، وتشيك ليست قبل الرفع</div></button>
-    <button class="sw" role="tab" data-s="real" aria-selected="false"><div class="top"><b>من مشاريعي</b><span>$ ./deploy.sh</span></div><div class="bot">سكربتات حقيقية من مشاريعك متشرحة سطر سطر: تجهيز سيرفر ونشر و SSL وباك أب، وغلطاتها</div></button>
-    <button class="sw" role="tab" data-s="sshc" aria-selected="false"><div class="top"><b>ssh config</b><span>$ ssh prod</span></div><div class="bot">اسم لكل سيرفر، وأنماط، و jump hosts، ومفاتيح متعددة لـ GitHub، و tunnels في الملف</div></button>
-    <button class="sw" role="tab" data-s="ps" aria-selected="false"><div class="top"><b>PowerShell</b><span>PS&gt; Get-ChildItem</span></div><div class="bot">الشيل الحديث بتاع ويندوز، بيتعامل مع objects مش نص</div></button>
-    <button class="sw" role="tab" data-s="zsh" aria-selected="false"><div class="top"><b>zsh على الماك</b><span>% brew install tree</span></div><div class="bot">الشيل الافتراضي في الماك. هنا اللي بيختلف عن bash والحاجات الخاصة بالماك</div></button>
-    <button class="sw" role="tab" data-s="cmd" aria-selected="false"><div class="top"><b>CMD</b><span>C:\&gt; dir</span></div><div class="bot">الشيل القديم بتاع ويندوز، هتقابله في ملفات .bat وسكربتات قديمة</div></button>
-    <button class="sw" role="tab" data-s="glossary" aria-selected="false"><div class="top"><b>القاموس</b><span>$ man terms</span></div><div class="bot">كل مصطلح في سطرين: PID و daemon و socket و TTL و HMAC وغيرهم، مع أمر بيوريه ومكان شرحه</div></button>
-  </div>
+  <section class="sw-sec">
+    <h2 class="sw-h">البداية</h2>
+    <div class="switch" role="tablist" aria-label="البداية">
+      <button class="sw" role="tab" data-s="start" aria-selected="false"><div class="top"><b>ابدأ من هنا</b><span>$ pwd</span></div><div class="bot">لو لسه بتبتدي: يعني إيه ترمنال، وإزاي تقرا أمر، والسيرفر والبورت و HTTP ببساطة</div></button>
+      <button class="sw" role="tab" data-s="os" aria-selected="false"><div class="top"><b>اختصارات النظام</b><span>Win+R › services.msc</span></div><div class="bot">قائمة Run في ويندوز وأهم أوامرها، واختصارات ويندوز وأوبونتو والماك اللي بتوفر وقت كل يوم</div></button>
+      <button class="sw" role="tab" data-s="vscode" aria-selected="false"><div class="top"><b>VS Code</b><span>Ctrl+Shift+P</span></div><div class="bot">الاختصارات اللي بتفرق، والترمنال و Git و Debugger جواه، وإعدادات المشروع اللي بتوفر ساعات</div></button>
+      <button class="sw" role="tab" data-s="wsl" aria-selected="false"><div class="top"><b>WSL على ويندوز</b><span>PS&gt; wsl --install</span></div><div class="bot">لينكس حقيقي جوه ويندوز: التسطيب، وفين تحط المشروع، و VS Code و Docker والشبكة والمشاكل المتكررة</div></button>
+      <button class="sw" role="tab" data-s="glossary" aria-selected="false"><div class="top"><b>القاموس</b><span>$ man terms</span></div><div class="bot">كل مصطلح في سطرين: PID و daemon و socket و TTL و HMAC وغيرهم، مع أمر بيوريه ومكان شرحه</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">الترمنال و Git</h2>
+    <div class="switch" role="tablist" aria-label="الترمنال و Git">
+      <button class="sw" role="tab" data-s="bash" aria-selected="true"><div class="top"><b>bash</b><span>$ ls -la</span></div><div class="bot">لينكس وماك وسيرفرات الـ VPS، وعلى ويندوز عن طريق WSL أو Git Bash</div></button>
+      <button class="sw" role="tab" data-s="ps" aria-selected="false"><div class="top"><b>PowerShell</b><span>PS&gt; Get-ChildItem</span></div><div class="bot">الشيل الحديث بتاع ويندوز، بيتعامل مع objects مش نص</div></button>
+      <button class="sw" role="tab" data-s="cmd" aria-selected="false"><div class="top"><b>CMD</b><span>C:\&gt; dir</span></div><div class="bot">الشيل القديم بتاع ويندوز، هتقابله في ملفات .bat وسكربتات قديمة</div></button>
+      <button class="sw" role="tab" data-s="zsh" aria-selected="false"><div class="top"><b>zsh على الماك</b><span>% brew install tree</span></div><div class="bot">الشيل الافتراضي في الماك. هنا اللي بيختلف عن bash والحاجات الخاصة بالماك</div></button>
+      <button class="sw" role="tab" data-s="git" aria-selected="false"><div class="top"><b>Git</b><span>(main)$ git status</span></div><div class="bot">نفس الأوامر في كل الشيلات. من أول commit لحد تصليح الغلطات</div></button>
+      <button class="sw" role="tab" data-s="sshc" aria-selected="false"><div class="top"><b>ssh config</b><span>$ ssh prod</span></div><div class="bot">اسم لكل سيرفر، وأنماط، و jump hosts، ومفاتيح متعددة لـ GitHub، و tunnels في الملف</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">البرمجة</h2>
+    <div class="switch" role="tablist" aria-label="البرمجة">
+      <button class="sw" role="tab" data-s="js" aria-selected="false"><div class="top"><b>JavaScript</b><span>const x = await fetch(url)</span></div><div class="bot">اللغة من الصفر: الأنواع والدوال و closures و this و async و event loop والـ DOM، وأسئلة انترفيو</div></button>
+      <button class="sw" role="tab" data-s="ts" aria-selected="false"><div class="top"><b>TypeScript</b><span>type User = { id: string }</span></div><div class="bot">الأنواع و interfaces و generics و narrowing و utility types، و Zod للتحقق وقت التشغيل</div></button>
+      <button class="sw" role="tab" data-s="css" aria-selected="false"><div class="top"><b>HTML و CSS و Tailwind</b><span>&lt;main class="grid gap-4"&gt;</span></div><div class="bot">HTML صح، و flex و grid، و responsive و RTL، و Tailwind و shadcn و Radix، والحركة</div></button>
+      <button class="sw" role="tab" data-s="react" aria-selected="false"><div class="top"><b>React</b><span>const [x, setX] = useState()</span></div><div class="bot">components و hooks و state و effects، و React Query و Zustand و router، والفورمز والاختبارات</div></button>
+      <button class="sw" role="tab" data-s="next" aria-selected="false"><div class="top"><b>Next.js</b><span>export default async function Page()</span></div><div class="bot">App Router و server و client components، والداتا والكاش، و server actions و middleware و SEO و next-intl</div></button>
+      <button class="sw" role="tab" data-s="api" aria-selected="false"><div class="top"><b>Backend بـ Node و Express</b><span>app.post("/api/login", ...)</span></div><div class="bot">REST API كامل: routes و middleware و validation و auth و أمان ورفع ملفات وإيميلات و socket.io و Redis واختبارات</div></button>
+      <button class="sw" role="tab" data-s="pyapi" aria-selected="false"><div class="top"><b>Python و FastAPI</b><span>async def read(id: int):</span></div><div class="bot">اللغة نفسها، و async، و pydantic، و FastAPI، و httpx و asyncpg و Redis، وأسئلة الانترفيو</div></button>
+      <button class="sw" role="tab" data-s="php" aria-selected="false"><div class="top"><b>PHP و MySQL</b><span>$stmt = $pdo-&gt;prepare(...)</span></div><div class="bot">PHP من الصفر، و PDO و prepared statements، و sessions و forms، والأمان، والاستضافة المشتركة</div></button>
+      <button class="sw" role="tab" data-s="flutter" aria-selected="false"><div class="top"><b>Flutter و Dart</b><span>flutter run</span></div><div class="bot">تطبيق موبايل native من كود واحد: Dart، و widgets، و state، و http، والبناء والنشر. جديد عليك</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">البيانات</h2>
+    <div class="switch" role="tablist" aria-label="البيانات">
+      <button class="sw" role="tab" data-s="data" aria-selected="false"><div class="top"><b>SQL و Prisma و Supabase</b><span>SELECT * FROM orders JOIN users</span></div><div class="bot">تصميم الداتا، و SQL من الصفر لـ joins و transactions، و Prisma، و Supabase auth و storage و realtime، و Mongoose</div></button>
+      <button class="sw" role="tab" data-s="pg" aria-selected="false"><div class="top"><b>PostgreSQL</b><span>app=# \d users</span></div><div class="bot">psql والصلاحيات والـ indexes و EXPLAIN، والباك أب اللي بيتجرّب، و migrations و Supabase</div></button>
+      <button class="sw" role="tab" data-s="mongo" aria-selected="false"><div class="top"><b>MongoDB</b><span>&gt; db.users.find()</span></div><div class="bot">mongosh، والتشغيل بباسورد في Docker، والباك أب اللي بيتجرّب، والترجيع</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">الهندسة والمعمارية</h2>
+    <div class="switch" role="tablist" aria-label="الهندسة والمعمارية">
+      <button class="sw" role="tab" data-s="sweng" aria-selected="false"><div class="top"><b>هندسة البرمجيات</b><span>class OrderService { … }</span></div><div class="bot">OOP و SOLID و design patterns و clean code و refactoring و الاختبارات و code review و Agile</div></button>
+      <button class="sw" role="tab" data-s="apis" aria-selected="false"><div class="top"><b>APIs متقدمة</b><span>POST /v1/orders  →  202 Accepted</span></div><div class="bot">تصميم REST بعمق، و GraphQL، و WebSockets، و OAuth2 و OIDC، و queues، والكاش بـ Redis، و OpenAPI</div></button>
+      <button class="sw" role="tab" data-s="arch" aria-selected="false"><div class="top"><b>بناء مشروع كامل</b><span>idea → schema → API → UI → deploy</span></div><div class="bot">من الفكرة للنشر: المعمارية و auth من الأول للآخر والدفع و realtime والملفات والأداء والمراقبة و system design</div></button>
+      <button class="sw" role="tab" data-s="ai" aria-selected="false"><div class="top"><b>الذكاء الاصطناعي في تطبيقاتك</b><span>await model.generateContent(prompt)</span></div><div class="bot">LLM APIs و prompts و streaming و embeddings و RAG و speech-to-text و بوتات، ومعمارية مساعد الميتنج</div></button>
+      <button class="sw" role="tab" data-s="cloud" aria-selected="false"><div class="top"><b>Cloud و DevOps</b><span>aws s3 cp dist/ s3://myapp --recursive</span></div><div class="bot">AWS الأساسي، و Cloudflare و Vercel، و serverless، و Kubernetes و Terraform باختصار، والمراقبة والتكلفة</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">الأدوات والجودة</h2>
+    <div class="switch" role="tablist" aria-label="الأدوات والجودة">
+      <button class="sw" role="tab" data-s="node" aria-selected="false"><div class="top"><b>Node و npm</b><span>$ npm ci</span></div><div class="bot">نسخ Node والباكدجات والسكربتات، والإنتاج والتشخيص، و webhooks بوابات الدفع على جهازك</div></button>
+      <button class="sw" role="tab" data-s="python" aria-selected="false"><div class="top"><b>Python</b><span>(venv) $ pytest -q</span></div><div class="bot">venv و pip، و pytest، و uvicorn، و Dockerfile لخدمة Python</div></button>
+      <button class="sw" role="tab" data-s="quality" aria-selected="false"><div class="top"><b>فحص الكود</b><span>$ pnpm lint &amp;&amp; pnpm test</span></div><div class="bot">lint و typecheck والاختبارات، و husky يمنع الـ commit البايظ، و CI يفحص كل push</div></button>
+      <button class="sw" role="tab" data-s="web" aria-selected="false"><div class="top"><b>المتصفح DevTools</b><span>&gt; fetch("/api/me")</span></div><div class="bot">Inspect و Network والـ status codes، وتبعت طلبات وتفهم الرد، وتفحص أي موقع</div></button>
+      <button class="sw" role="tab" data-s="apps" aria-selected="false"><div class="top"><b>Desktop و Mobile</b><span>$ npx cap sync android</span></div><div class="bot">Electron لبرنامج ويندوز .exe، و Capacitor و Gradle لتطبيق Android موقّع</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">السيرفر والنشر</h2>
+    <div class="switch" role="tablist" aria-label="السيرفر والنشر">
+      <button class="sw" role="tab" data-s="vps" aria-selected="false"><div class="top"><b>VPS أوبونتو</b><span>$ sudo ufw status</span></div><div class="bot">إدارة سيرفر: تأمين ونشر وصيانة. مبني على تاب bash</div></button>
+      <button class="sw" role="tab" data-s="nginx" aria-selected="false"><div class="top"><b>Nginx بعمق</b><span>$ nginx -t &amp;&amp; systemctl reload nginx</span></div><div class="bot">static و SPA و proxy كامل، وضغط وكاش وتحويلات وكذا موقع و rate limiting و WebSockets و blue-green</div></button>
+      <button class="sw" role="tab" data-s="docker" aria-selected="false"><div class="top"><b>Docker</b><span>$ docker compose up -d</span></div><div class="bot">images و containers، و Dockerfile صح، و Compose لمشروع كامل، والمشاكل على السيرفر</div></button>
+      <button class="sw" role="tab" data-s="gha" aria-selected="false"><div class="top"><b>GitHub Actions</b><span>$ gh run view --log-failed</span></div><div class="bot">CI مع كل push، و deploy على السيرفر بـ SSH، وموافقات، وإصدارات، و rollback من الموبايل</div></button>
+      <button class="sw" role="tab" data-s="diag" aria-selected="false"><div class="top"><b>التشخيص</b><span>$ curl -sI https://... | head -1</span></div><div class="bot">الموقع واقع: ٢٨ سيناريو بخطوات مرتبة، من 502 والديسك المليان لحد الاختراق والـ rollback</div></button>
+      <button class="sw" role="tab" data-s="sec" aria-selected="false"><div class="top"><b>أمان الموقع</b><span># تأمين مشاريعك</span></div><div class="bot">OWASP Top 10 بالكود الصح، وأدوات الفحص، وتشيك ليست قبل الرفع</div></button>
+      <button class="sw" role="tab" data-s="real" aria-selected="false"><div class="top"><b>من مشاريعي</b><span>$ ./deploy.sh</span></div><div class="bot">سكربتات حقيقية من مشاريعك متشرحة سطر سطر: تجهيز سيرفر ونشر و SSL وباك أب، وغلطاتها</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">الانترفيو</h2>
+    <div class="switch" role="tablist" aria-label="الانترفيو">
+      <button class="sw" role="tab" data-s="dsa" aria-selected="false"><div class="top"><b>Data Structures و Algorithms</b><span>O(n) → O(log n)</span></div><div class="bot">Big-O، و arrays و hash maps و stacks و trees و graphs، والأنماط اللي بتحل مسائل الانترفيو، بالـ JavaScript</div></button>
+      <button class="sw" role="tab" data-s="interview" aria-selected="false"><div class="top"><b>الانترفيو</b><span>Tell me about a project…</span></div><div class="bot">أساسيات CS و HTTP و REST و big-O و data structures، والأسئلة السلوكية، وإزاي تحكي عن مشاريعك</div></button>
+    </div>
+  </section>
 </header>
 
 <div class="wrap">
@@ -95,6 +150,10 @@
       <li><button type="button" data-go="sshc" data-lv="1">ssh config</button> مع تاني سيرفر. و <button type="button" data-go="glossary" data-lv="1">القاموس</button> مرجع لأي كلمة مش فاهمها.</li>
       <li><button type="button" data-go="nginx" data-lv="1">Nginx بعمق</button> بعد VPS المستوى ٢، ولما تبقى عايز أكتر من موقع على السيرفر.</li>
       <li><button type="button" data-go="ps" data-lv="0">PowerShell</button> أو <button type="button" data-go="zsh" data-lv="0">zsh</button> حسب جهازك، و <button type="button" data-go="cmd" data-lv="0">CMD</button> في الآخر.</li>
+      <li><b>البرمجة:</b> <button type="button" data-go="js" data-lv="1">JavaScript</button> ثم <button type="button" data-go="css" data-lv="1">HTML و CSS</button> ثم <button type="button" data-go="ts" data-lv="1">TypeScript</button> ثم <button type="button" data-go="react" data-lv="1">React</button> ثم <button type="button" data-go="next" data-lv="1">Next.js</button>، وجنبهم <button type="button" data-go="api" data-lv="1">Backend بـ Node</button> و <button type="button" data-go="data" data-lv="1">SQL و Prisma</button>.</li>
+      <li><button type="button" data-go="arch" data-lv="1">بناء مشروع كامل</button> وانت بتبني أول مشروع حقيقي، و <button type="button" data-go="ai" data-lv="1">الذكاء الاصطناعي</button> لما تحتاجه. <button type="button" data-go="pyapi" data-lv="1">Python و FastAPI</button> و <button type="button" data-go="php" data-lv="1">PHP</button> و <button type="button" data-go="flutter" data-lv="1">Flutter</button> حسب المشروع.</li>
+      <li><b>الهندسة:</b> <button type="button" data-go="sweng" data-lv="1">هندسة البرمجيات</button> مع أول مشروع كبير، و <button type="button" data-go="apis" data-lv="1">APIs متقدمة</button> بعد Backend المستوى ٢، و <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button> بعد VPS و Docker.</li>
+      <li><button type="button" data-go="dsa" data-lv="1">DSA</button> مسألة أو اتنين كل يوم، و <button type="button" data-go="interview" data-lv="1">الانترفيو</button> قبل أي انترفيو بأسبوعين: كل يوم «اختبرني» و «راجع اللي نسيته».</li>
     </ol>
   </div>
 </div>
@@ -187,6 +246,23 @@
 <script src="js/tabs/nginx.js"></script>
 <script src="js/tabs/sshc.js"></script>
 <script src="js/tabs/glossary.js"></script>
+<script src="js/tabs/js.js"></script>
+<script src="js/tabs/ts.js"></script>
+<script src="js/tabs/css.js"></script>
+<script src="js/tabs/react.js"></script>
+<script src="js/tabs/next.js"></script>
+<script src="js/tabs/api.js"></script>
+<script src="js/tabs/data.js"></script>
+<script src="js/tabs/pyapi.js"></script>
+<script src="js/tabs/php.js"></script>
+<script src="js/tabs/flutter.js"></script>
+<script src="js/tabs/ai.js"></script>
+<script src="js/tabs/arch.js"></script>
+<script src="js/tabs/interview.js"></script>
+<script src="js/tabs/dsa.js"></script>
+<script src="js/tabs/sweng.js"></script>
+<script src="js/tabs/apis.js"></script>
+<script src="js/tabs/cloud.js"></script>
 <script src="js/extras.js"></script>
 <script src="js/app.js"></script>
 </body>

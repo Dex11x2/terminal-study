@@ -10,13 +10,13 @@ const store = {
   del(k){ try{ localStorage.removeItem(k); }catch(e){} },
   keys(){ try{ return Object.keys(localStorage); }catch(e){ return []; } }
 };
-const isComment = l => /^\s*(#|REM\b|\/\/)/.test(l);
+const isComment = l => /^\s*(#(?![A-Za-z_$][\w$]*\s*[=;(])|REM\b|\/\/)/.test(l);
 
 function termHTML(code, shell, script, label, prOverride){
   const pr = prOverride || SHELLS[shell].prompt;
   const lines = code.split('\n').map(l => {
     if (l.trim()==='') return '';
-    if (script) return /^\s*(#(?!!)|REM\b|\/\/)/.test(l) ? '<span class="cm">'+esc(l)+'</span>' : esc(l);
+    if (script) return /^\s*(#(?!!|[A-Za-z_$][\w$]*\s*[=;(])|REM\b|\/\/)/.test(l) ? '<span class="cm">'+esc(l)+'</span>' : esc(l);
     if (isComment(l)) return '<span class="cm">'+esc(l)+'</span>';
     // psql tab mixes SQL (app=#) with shell commands (psql, pg_dump, docker...), which start lowercase
     const p = shell==='pg' && !prOverride && /^\s*[a-z]/.test(l) ? '$ ' : pr;
@@ -27,7 +27,7 @@ function termHTML(code, shell, script, label, prOverride){
 
 let shell = 'bash';
 const lvInfo = l => (LEVEL_TAB[shell] && LEVEL_TAB[shell][l]) || LEVEL_INFO[l];
-const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode'];
+const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud'];
 function countLabel(n){
   const lesson = LESSON_TABS.includes(shell);
   if (shell==='glossary') return n + ' مصطلح';
@@ -47,7 +47,7 @@ function deepHTML(c){
 function breakHTML(c, ex){
   const b = BREAK[shell+'|'+c];
   if (!b || !ex) return '';
-  const lines = ex.split('\n').filter(l => l.trim() && !/^\s*(#|\/\/|REM\b)/.test(l));
+  const lines = ex.split('\n').filter(l => l.trim() && !/^\s*(#(?![A-Za-z_$][\w$]*\s*[=;(])|\/\/|REM\b)/.test(l));
   const n = Math.min(lines.length, b.length);
   let h = '<div class="bd"><h4>فكّ الأمر سطر سطر</h4><ol>';
   for (let i = 0; i < n; i++) h += '<li><code dir="ltr">'+esc(lines[i].trim())+'</code><span>'+fmt(b[i])+'</span></li>';

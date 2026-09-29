@@ -1,6 +1,6 @@
 // بيخلّي الصفحة تفتح من غير نت: أول زيارة بتحفظ كل الملفات، وبعد كده لو فيه نت بيجيب الجديد ويحدّث المحفوظ،
 // ولو مفيش نت بيعرض آخر نسخة محفوظة.
-const CACHE = 'terminal-v2';
+const CACHE = 'terminal-v3';
 
 self.addEventListener('install', e => {
   e.waitUntil((async () => {
