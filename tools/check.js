@@ -40,7 +40,7 @@ for (const tab in DATA) {
       seen.add(cmd);
       if (!title) warn(w, 'مفيش title (هيظهر فاضي في «اختبرني»)');
       if (!tr) warn(w, 'مفيش try');
-      if (!FLAGS.includes(flag)) err(w, `flag غير معروف: ${flag}`);
+      if (flag !== undefined && !String(flag).split(' ').every(f => FLAGS.includes(f))) err(w, `flag غير معروف: ${flag}`);
       [title, desc, ex, tr].forEach(s => brackets(w, s));
       const d = DEEP[tab + '|' + cmd];
       if (d) ['why', 'how', 'when', 'mistakes'].forEach(k => { if (!d[k]) warn(w, `deep ناقصه ${k}`); brackets(w + ' (deep)', d[k]); });
@@ -48,7 +48,7 @@ for (const tab in DATA) {
       if (b) {
         b.forEach(s => brackets(w + ' (lines)', s));
         if (!ex) err(w, 'فيه lines بس مفيش example');
-        else if (flag !== 'keys' && exampleLines(ex).length !== b.length)
+        else if (!/\bkeys\b/.test(flag || '') && exampleLines(ex).length !== b.length)
           err(w, `المثال فيه ${exampleLines(ex).length} سطر، و lines فيها ${b.length} شرح`);
       }
     });
@@ -56,7 +56,7 @@ for (const tab in DATA) {
 }
 
 // روابط القاموس: «bash المستوى ٢: [[grep]]» لازم تشاور على درس موجود
-const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real' };
+const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real', 'اختصارات النظام': 'os', 'VS Code': 'vscode' };
 if (DATA.glossary) DATA.glossary.forEach(cat => cat.items.forEach(it => {
   const ref = it[4] || '', m = ref.match(/^(.*?)(?: المستوى [١٢٣123])?(?:: \[\[(.+)\]\])?$/);
   const tab = m && TAB_NAMES[m[1]];

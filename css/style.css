@@ -295,3 +295,14 @@ body[data-shell="apps"]{--accent:var(--a-apps);--t-bg:#1c2408;--t-fg:#f0f7dc;--t
 body[data-shell="real"]{--accent:var(--a-real);--t-bg:#2a0f1d;--t-fg:#fbe7f1;--t-pr:#f9a8d4;--t-cm:#b58aa0;--t-bar:#3b1629}
 .sw[data-s="real"] .top{background:#2a0f1d;color:#fbe7f1}
 .sol .term[data-k="real"]{--t-bg:#2a0f1d;--t-fg:#fbe7f1;--t-pr:#f9a8d4;--t-cm:#b58aa0;--t-bar:#3b1629}
+
+/* OS shortcuts and VS Code tabs */
+:root{--a-os:#374151;--a-vscode:#0065a9}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a-os:#e5e7eb;--a-vscode:#4fc1ff}}
+:root[data-theme="dark"]{--a-os:#e5e7eb;--a-vscode:#4fc1ff}
+body[data-shell="os"]{--accent:var(--a-os);--t-bg:#111827;--t-fg:#f3f4f6;--t-pr:#fbbf24;--t-cm:#9ca3af;--t-bar:#1f2937}
+.sw[data-s="os"] .top{background:#111827;color:#f3f4f6}
+.sol .term[data-k="os"]{--t-bg:#111827;--t-fg:#f3f4f6;--t-pr:#fbbf24;--t-cm:#9ca3af;--t-bar:#1f2937}
+body[data-shell="vscode"]{--accent:var(--a-vscode);--t-bg:#1e1e1e;--t-fg:#d4d4d4;--t-pr:#4fc1ff;--t-cm:#6a9955;--t-bar:#2d2d2d}
+.sw[data-s="vscode"] .top{background:#1e1e1e;color:#d4d4d4}
+.sol .term[data-k="vscode"]{--t-bg:#1e1e1e;--t-fg:#d4d4d4;--t-pr:#4fc1ff;--t-cm:#6a9955;--t-bar:#2d2d2d}

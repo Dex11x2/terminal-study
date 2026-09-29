@@ -17,6 +17,8 @@
   <p class="lead">كل أمر هنا معاه شرح، ومثال تنسخه، وتجربة تعملها بنفسك. الأوامر متقسمة على ٣ مستويات: ابدأ بالمستوى ١، ومتنقلش للي بعده غير لما تكون علّمت على «جربتها» في أغلبه. الصفحة بتفتكر تقدمك.</p>
   <div class="switch" role="tablist" aria-label="اختار الشيل">
     <button class="sw" role="tab" data-s="start" aria-selected="false"><div class="top"><b>ابدأ من هنا</b><span>$ pwd</span></div><div class="bot">لو لسه بتبتدي: يعني إيه ترمنال، وإزاي تقرا أمر، والسيرفر والبورت و HTTP ببساطة</div></button>
+    <button class="sw" role="tab" data-s="os" aria-selected="false"><div class="top"><b>اختصارات النظام</b><span>Win+R › services.msc</span></div><div class="bot">قائمة Run في ويندوز وأهم أوامرها، واختصارات ويندوز وأوبونتو والماك اللي بتوفر وقت كل يوم</div></button>
+    <button class="sw" role="tab" data-s="vscode" aria-selected="false"><div class="top"><b>VS Code</b><span>Ctrl+Shift+P</span></div><div class="bot">الاختصارات اللي بتفرق، والترمنال و Git و Debugger جواه، وإعدادات المشروع اللي بتوفر ساعات</div></button>
     <button class="sw" role="tab" data-s="wsl" aria-selected="false"><div class="top"><b>WSL على ويندوز</b><span>PS&gt; wsl --install</span></div><div class="bot">لينكس حقيقي جوه ويندوز: التسطيب، وفين تحط المشروع، و VS Code و Docker والشبكة والمشاكل المتكررة</div></button>
     <button class="sw" role="tab" data-s="bash" aria-selected="true"><div class="top"><b>bash</b><span>$ ls -la</span></div><div class="bot">لينكس وماك وسيرفرات الـ VPS، وعلى ويندوز عن طريق WSL أو Git Bash</div></button>
     <button class="sw" role="tab" data-s="git" aria-selected="false"><div class="top"><b>Git</b><span>(main)$ git status</span></div><div class="bot">نفس الأوامر في كل الشيلات. من أول commit لحد تصليح الغلطات</div></button>
@@ -62,6 +64,7 @@
     <h2>ترتيب المذاكرة</h2>
     <ol>
       <li><button type="button" data-go="start" data-lv="0">ابدأ من هنا</button>: المفاهيم الأساسية بالراحة. متتخطاهاش حتى لو حاسس إنك فاهم.</li>
+      <li><button type="button" data-go="os" data-lv="1">اختصارات النظام</button> و <button type="button" data-go="vscode" data-lv="1">VS Code المستوى ١</button> من أول يوم: كل اختصار بيوفّر ثواني، وبتتجمع ساعات. و <button type="button" data-go="vscode" data-lv="3">VS Code ٣</button> مع أول مشروع جد.</li>
       <li><button type="button" data-go="wsl" data-lv="1">WSL</button> لو على ويندوز: بعد «ابدأ من هنا» على طول، عشان تاب bash يشتغل عندك.</li>
       <li><button type="button" data-go="bash" data-lv="1">bash المستوى ١</button>: التنقل والملفات والقراءة.</li>
       <li><button type="button" data-go="git" data-lv="1">Git المستوى ١</button>: commit و log و diff و .gitignore. هتستخدمهم كل يوم.</li>
@@ -155,6 +158,8 @@
 
 <script src="js/core.js"></script>
 <script src="js/tabs/start.js"></script>
+<script src="js/tabs/os.js"></script>
+<script src="js/tabs/vscode.js"></script>
 <script src="js/tabs/bash.js"></script>
 <script src="js/tabs/ps.js"></script>
 <script src="js/tabs/cmd.js"></script>

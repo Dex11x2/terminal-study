@@ -26,7 +26,7 @@ function termHTML(code, shell, script, label, prOverride){
 
 let shell = 'bash';
 const lvInfo = l => (LEVEL_TAB[shell] && LEVEL_TAB[shell][l]) || LEVEL_INFO[l];
-const LESSON_TABS = ['start','web','sec','glossary','real'];
+const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode'];
 function countLabel(n){
   const lesson = LESSON_TABS.includes(shell);
   if (shell==='glossary') return n + ' مصطلح';
@@ -53,6 +53,7 @@ function breakHTML(c, ex){
   return h + '</ol></div>';
 }
 function termBlock(ex, c, flag){
+  flag = (flag||'').split(' ').filter(f => f && f!=='danger')[0];
   if (flag==='script') return termHTML(ex, shell, true, c);
   if (flag==='keys') return termHTML(ex, shell, true, 'اختصارات');
   if (flag==='console') return termHTML(ex, shell, true, 'Console');
@@ -104,7 +105,7 @@ function render(){
       const key = 'done:'+shell+':'+c;
       const done = store.get(key)==='1';
       html += '<article class="cmd'+(done?' is-done':'')+'">'+
-        '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(flag==='danger'?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
+        '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
         (DEEP[shell+'|'+c] ? deepHTML(c)+(d?'<p class="sum"><b>الخلاصة:</b> '+fmt(d.split(/\n\s*\n/)[0])+'</p>':'') : (d?descHTML(d):''))+osNote(c)+
         (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
         '<button type="button" class="reveal">اكشف الإجابة</button>'+
@@ -121,7 +122,7 @@ function render(){
   }
   $('#list').innerHTML = html;
   $('#chips').innerHTML = chips;
-  $('#labBox').innerHTML = termHTML(LAB[shell], shell, shell==='vps' || shell==='web', shell==='vps' ? 'على جهازك' : shell==='web' ? 'اختصارات' : '');
+  $('#labBox').innerHTML = termHTML(LAB[shell], shell, shell==='vps' || shell==='web' || shell==='os', shell==='vps' ? 'على جهازك' : shell==='web' || shell==='os' ? 'اختصارات' : '');
   $('#labTxt').textContent = LABTXT[shell] || LABDEF;
   updateProgress();
 }
