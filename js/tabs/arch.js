@@ -123,7 +123,7 @@ Consequences: تطبيقين يتعملهم deploy، و CORS بينهم، و typ
 
 التالت Next.js للواجهة + API منفصل. ده اختيارنا: SEO من Next، و API مستقلة للـ webhooks والـ jobs والموبايل.
 
-Python (FastAPI) لو قلب المنتج AI أو معالجة داتا، لأن المكتبات هناك. التفاصيل في تاب «Python و FastAPI». و PHP لو العميل على استضافة مشتركة رخيصة، أو عنده WordPress أو Laravel أصلًا (تاب «PHP و MySQL»). و Supabase أو Firebase لو السرعة أهم حاجة والفريق صغير، بس الأمان ساعتها بيبقى في RLS، ودي لازم تفهمها كويس.
+Python (FastAPI) لو قلب المنتج AI أو معالجة داتا، لأن المكتبات هناك. التفاصيل في تاب «Python و FastAPI». و PHP لو العميل على استضافة مشتركة رخيصة، أو عنده WordPress أو Laravel أصلًا (تاب «PHP و MySQL»). و Supabase أو Firebase لو السرعة أهم حاجة والفريق صغير، بس الأمان ساعتها بيبقى في RLS في Supabase، أو Security Rules في Firebase، ودي لازم تفهمها كويس.
 
 وليه monolith في الأول؟ لأن الموديولات بتكلّم بعض بـ function call مش طلب شبكة. والـ transaction بتقدر تلم أكتر من جدول بسهولة. وعندك deploy واحد ولوج واحد. microservices بتحل مشكلة تنظيمية أكتر ما هي تقنية: فرق كتير لازم تعمل deploy من غير ما تستنى بعض. لو انت لوحدك، انت بتدفع التمن ومبتاخدش الفايدة. الـ monolith المرتّب (modular) بيتقسم بعدين بسهولة لو احتجت.`,
             when: "مرة في أول المشروع. وتراجع القرار لو حصل تغيير كبير: الفريق اتضاعف، أو ظهر نوع شغل جديد زي معالجة فيديو تقيلة.",
@@ -150,7 +150,7 @@ Python (FastAPI) لو قلب المنتج AI أو معالجة داتا، لأن
           title: "ارسم الجداول والعلاقات قبل أي كود",
           desc: R`الـ ERD (Entity Relationship Diagram) رسمة للكيانات والعلاقات بينها: واحد لواحد، أو واحد لكتير، أو كتير لكتير. ارجع للـ stories: كل اسم فيها (طالب، كورس، درس، طلب) غالبًا جدول. وكل فعل (يشتري، يتفرج) غالبًا علاقة، أو جدول وسيط.
 
-اكتبها بـ Mermaid في [[docs/erd.md]]. GitHub و VS Code بيرسموها لوحدهم، وبتتراجع في الـ PR زي الكود.`,
+اكتبها بـ Mermaid في [[docs/erd.md]]. GitHub بيرسمها لوحده، و VS Code بإضافة Mermaid، وبتتراجع في الـ PR زي الكود.`,
           example: R`erDiagram
   USER ||--o{ ENROLLMENT : "يشترك"
   COURSE ||--o{ ENROLLMENT : "فيه طلاب"
@@ -188,7 +188,12 @@ ORDER منفصل عن ENROLLMENT، ودي أهم نقطة في الرسمة. ا�
           desc: R`كل كيان في الـ ERD بيبقى model، وكل علاقة بتبقى foreign key. والقيود اللي بتحمي الداتا مكانها في الـ schema نفسها، مش في الكود بس. [[@unique]] بيمنع التكرار، و enum بيمنع أي قيمة مش متوقعة، و [[@@unique([userId, courseId])]] في Enrollment بيمنع إن الطالب يشترك في نفس الكورس مرتين.
 
 تفاصيل Prisma والـ migrations في تاب «SQL و Prisma». هنا بنركّز على القرارات.`,
-          example: R`enum OrderStatus { PENDING PAID FAILED REFUNDED }
+          example: R`enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
 
 model Order {
   id          String      @id @default(cuid())
@@ -219,6 +224,11 @@ model Order {
           },
           lines: [
             "حالات الطلب محددة، والقاعدة بترفض أي قيمة تانية.",
+            "مستني الدفع.",
+            "الدفع اتأكد من الـ webhook.",
+            "الدفع فشل.",
+            "الفلوس رجعت للطالب.",
+            "قفلة.",
             "model الطلب. كل محاولة شراء بتتسجّل هنا، حتى اللي فشلت.",
             "id نصي عشوائي (cuid)، فمحدش يقدر يخمّن رقم الطلب اللي بعده.",
             "صاحب الطلب.",
@@ -296,7 +306,7 @@ export function errorHandler(err, req, res, next) {
   if (err.code === "P2002") return res.status(409).json({ error: { code: "CONFLICT", message: "موجود قبل كده" } });
   if (err.code === "P2025") return res.status(404).json({ error: { code: "NOT_FOUND", message: "مش موجود" } });
   if (err instanceof AppError) return res.status(err.status).json({ error: { code: err.code, message: err.message } });
-  req.log?.error(err);
+  (req.log ?? console).error(err);
   res.status(500).json({ error: { code: "INTERNAL", message: "حصلت مشكلة، جرّب تاني" } });
 }`,
           try: R`اعمل route بيعمل [[throw new AppError(403, "FORBIDDEN", "مش مسموحلك")]]، وroute تاني بيعمل [[throw new Error("boom")]]. اطلبهم بـ curl، ولاحظ إن التاني بيرجّع 500 برسالة عامة، و "boom" بتظهر في اللوج بس.`,
@@ -327,7 +337,7 @@ export function errorHandler(err, req, res, next) {
             "Prisma P2002 معناها unique اتكسر، زي إيميل متسجّل قبل كده. نرد 409.",
             "Prisma P2025 معناها السجل مش موجود. نرد 404.",
             "أخطاؤنا المعروفة بتطلع بالـ status والـ code بتوعها.",
-            "أي حاجة تانية تروح اللوج بالتفاصيل كاملة...",
+            "أي حاجة تانية تروح اللوج بالتفاصيل كاملة (لوجر الطلب لو فيه pino-http، وإلا console)...",
             "...والمستخدم ياخد 500 برسالة عامة من غير أي تفاصيل داخلية.",
             "قفلة."
           ]
@@ -560,7 +570,7 @@ export const config = Env.parse(process.env);`,
           title: "حساب جديد: validation و hash ورد نضيف",
           desc: R`التسجيل ٣ خطوات: validation للإيميل والباسورد بـ Zod، وبعدين hash للباسورد بـ argon2، وبعدين إنشاء المستخدم. والرد عمره ما يرجّع الـ hash.
 
-ولو الإيميل متسجّل قبل كده، القيد [[@unique]] في القاعدة هو اللي بيمسكها، والـ error handler بيحوّلها 409. أساسيات الباسوردات والـ hashing في تاب «الأمان».`,
+ولو الإيميل متسجّل قبل كده، القيد [[@unique]] في القاعدة هو اللي بيمسكها، والـ error handler بيحوّلها 409. أساسيات الباسوردات والـ hashing في تاب «أمان الموقع».`,
           example: R`import argon2 from "argon2";
 import { z } from "zod";
 
@@ -801,7 +811,7 @@ router.post("/auth/reset", async (req, res) => {
 
 الرد الموحد بيمنع المهاجم يعرف الإيميلات المتسجّلة. وخلي بالك إن الوقت نفسه ممكن يفضح: لو الإيميل موجود السيرفر بيكتب في القاعدة ويبعت إيميل، فبياخد وقت أطول. عشان كده الإيميل بيروح queue، والفرق بيبقى صغير.
 
-[[resetPassword]] بتعمل ٣ حاجات جوه transaction واحدة: الـ hash الجديد للمستخدم، و [[usedAt]] للتوكن، و [[revokedAt]] لكل الـ sessions. لو حد كان داخل على الحساب بباسورد مسروق، بيطلع فورًا. وبعدها ابعت إيميل «الباسورد اتغير، لو مش انت كلّمنا».
+[[resetPassword]] بتعمل ٣ حاجات جوه transaction واحدة: الـ hash الجديد للمستخدم، و [[usedAt]] للتوكن بـ [[updateMany]] بشرط [[usedAt: null]] (ولو رجع count بـ 0 ترمي BAD_TOKEN، نفس فكرة الـ refresh)، و [[revokedAt]] لكل الـ sessions. لو حد كان داخل على الحساب بباسورد مسروق، بيطلع فورًا. وبعدها ابعت إيميل «الباسورد اتغير، لو مش انت كلّمنا».
 
 التوكن في الـ URL ممكن يتسرب عن طريق الـ Referer، لو الصفحة بتحمّل سكربتات من برّه، أو في لوجات أدوات الـ analytics. فصفحة [[/reset]] تبقى نضيفة من أي سكربت خارجي، وحط عليها [[Referrer-Policy: no-referrer]].`,
             when: "في أي نظام فيه باسوردات. وبنفس الشكل تأكيد الإيميل وتغيير الإيميل: token مرة واحدة، ومتخزن hash، وليه مدة.",
@@ -864,7 +874,7 @@ router.post("/auth/reset", async (req, res) => {
           lines: [
             "المسار اللي زرار «ادخل بجوجل» بيودّي عليه.",
             "state عشوائي ضد CSRF.",
-            "verifier سري، مبيطلعش من السيرفر غير وقت التبديل.",
+            "verifier سري، مبيروحش لجوجل غير وقت التبديل. ولحد وقتها بيستنى في cookie httpOnly (بعد سطرين)، مش في الـ URL.",
             "الـ challenge هو sha256 للـ verifier. ده اللي بيروح لجوجل.",
             "خزّن الاتنين في cookie عمرها ١٠ دقايق، عشان نقارنهم في الـ callback.",
             "عنوان صفحة الموافقة بتاعة جوجل.",
@@ -967,13 +977,13 @@ router.get("/lessons/:id/video", requireAuth, async (req, res) => {
 
 وفي Supabase، الواجهة بتكلّم القاعدة مباشرة، فالـ RLS هو الـ backend بتاعك. سياسة القراية بتبقى كده: [[create policy "own orders" on orders for select using (user_id = auth.uid());]]. وفيه ٣ حاجات لازم تاخد بالك منها:
 
-١. سياسة UPDATE بتسمح بتعديل الصف كله، بكل أعمدته. [[using (auth.uid() = id)]] على profiles معناها إن المستخدم يقدر يغيّر أي عمود في صفّه، ومنهم role. الحل إنك تمنع الأعمدة الحساسة: [[revoke update (role) on profiles from authenticated]]، أو تخلي التعديل عن طريق function.
+١. سياسة UPDATE بتسمح بتعديل الصف كله، بكل أعمدته. [[using (auth.uid() = id)]] على profiles معناها إن المستخدم يقدر يغيّر أي عمود في صفّه، ومنهم role. الحل إنك تمنع الأعمدة الحساسة: [[revoke update on profiles from authenticated]] وبعدين [[grant update (name, avatar_url) on profiles to authenticated]] للأعمدة المسموحة بس. الـ revoke على عمود واحد ملوش أي تأثير طول ما فيه grant على الجدول كله، وده الافتراضي في Supabase. أو تخلي التعديل عن طريق function.
 
 ٢. الـ RLS بيحمي الصفوف مش الأعمدة. [[using (true)]] على جدول الأسئلة معناها إن الإجابات الصح بتطلع مع الأسئلة. الحل إنك تحط الإجابات في جدول تاني محدش يقراه غير السيرفر.
 
 ٣. سياسة الأدمن اللي بتقرا من نفس الجدول ([[exists (select 1 from profiles where ...)]] على جدول profiles نفسه) بتعمل دايرة. الحل function بـ [[security definer]] زي [[is_admin()]].
 
-التفاصيل في تاب «SQL و Prisma»، و OWASP في تاب «الأمان».`,
+التفاصيل في تاب «SQL و Prisma»، و OWASP في تاب «أمان الموقع».`,
             when: "كل endpoint بياخد id من برّه. من غير استثناء، حتى لو «محدش هيعرف الـ id».",
             mistakes: R`في مشاريع حقيقية لقينا كل واحدة من دول. سياسة تعديل الـ profile من غير تحديد أعمدة، فأي مستخدم يقدر يخلّي نفسه admin. وطالب يقدر يعدّل نتيجة امتحانه ([[score]] و [[is_passed]]) في صفّه. ولاعب يعدّل الـ xp والـ level بتوعه. وأسئلة الامتحان بإجاباتها الصح مقروءة لأي حد عن طريق [[using (true)]]. وكتب مدفوعة PDF متخزنة بروابط public دايمة، فأي حد معاه اللينك ينزّلها على طول. والصح هنا رابط موقّع عمره ساعة. وكمان في مشروع منهم، ملف «تصليح» الـ RLS كان بيعمل نفس السياسات الغلط تاني.`
           },
@@ -1104,6 +1114,7 @@ router.get("/lessons/:id/video", requireAuth, async (req, res) => {
 
 كود [[verifyPaymob]] وتجربته على جهازك في تاب «Node و npm» في قسم الـ Webhooks.`,
           example: R`router.post("/webhooks/paymob", async (req, res) => {
+  if (req.body.type !== "TRANSACTION") return res.status(200).end();
   const tx = req.body.obj;
   if (!verifyPaymob(tx, req.query.hmac, config.PAYMOB_HMAC_SECRET)) return res.status(401).end();
   if (tx.success === true && tx.pending === false) await orders.markPaid(tx.order.merchant_order_id, tx);
@@ -1140,6 +1151,7 @@ export async function markPaid(orderId, tx) {
           },
           lines: [
             "مسار الـ webhook. مفيش requireAuth، الحماية هي التوقيع.",
+            "مش معاملة (زي TOKEN للكروت المحفوظة)؟ رد 200 ومتعملش حاجة.",
             "بيانات المعاملة.",
             "التوقيع غلط أو مش موجود؟ 401 ومفيش أي شغل.",
             "نجحت ومش معلّقة بس؟ فعّل الطلب اللي رقمه رجع في merchant_order_id.",
@@ -1226,20 +1238,20 @@ export default function OrderResult({ orderId }) {
           example: R`import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-const s3 = new S3Client({ region: config.S3_REGION });
+const s3 = new S3Client({ region: config.S3_REGION, requestChecksumCalculation: "WHEN_REQUIRED" });
 const Upload = z.object({ type: z.enum(["image/jpeg", "image/png", "image/webp"]), size: z.number().int().max(5_000_000) });
 
 router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), async (req, res) => {
   const { type } = Upload.parse(req.body);
   const key = $__btcovers/$__{req.user.id}/$__{crypto.randomUUID()}.$__{type.split("/")[1]}$__bt;
-  const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket: config.S3_BUCKET, Key: key, ContentType: type }), { expiresIn: 300 });
+  const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket: config.S3_BUCKET, Key: key, ContentType: type }), { expiresIn: 300, signableHeaders: new Set(["content-type"]) });
   res.json({ data: { url, key } });
 });`,
           try: R`اطلب رابط، وارفع عليه صورة من المتصفح: [[fetch(url, { method: "PUT", body: file, headers: { "Content-Type": file.type } })]]. بعدين جرّب ترفع بنفس الرابط بعد ٦ دقايق (هيرفض)، وبـ Content-Type مختلف عن اللي اتوقّع (هيرفض برضه). وقبل كل ده لازم تظبط CORS على الـ bucket.`,
           flag: "script",
           deep: {
             why: "لو الملف بيعدّي على Express، كل رفع بياكل رام وCPU وباندويث من السيرفر اللي بيرد على كل الناس. فيديو ٥٠٠ ميجا ممكن يخلي السيرفر يقع، أو يوصل لحد Nginx ([[client_max_body_size]]) أو الـ timeout.",
-            how: R`الرابط الموقّع جواه توقيع بمفاتيحك على حاجات محددة: الـ bucket، والـ key، والـ method، والـ Content-Type، ومدة الصلاحية. أي تغيير في أي واحدة منهم، التوقيع بيبقى غلط وS3 بترفض. يعني انت بتدّي إذن لملف واحد، في مكان واحد، لمدة ٥ دقايق.
+            how: R`الرابط الموقّع جواه توقيع بمفاتيحك على حاجات محددة: الـ bucket، والـ key، والـ method، والـ Content-Type، ومدة الصلاحية. أي تغيير في أي واحدة منهم، التوقيع بيبقى غلط وS3 بترفض. يعني انت بتدّي إذن لملف واحد، في مكان واحد، لمدة ٥ دقايق. بس الـ SDK مبيوقّعش الـ Content-Type افتراضيًا، عشان كده بنضيف [[signableHeaders]] في المثال.
 
 الـ key بيتعمل على السيرفر: فولدر المستخدم، واسم عشوائي، والامتداد من النوع المسموح. متستخدمش اسم الملف الأصلي، عشان متتعرضش لـ path traversal أو لملف يكتب فوق ملف تاني.
 
@@ -1254,7 +1266,7 @@ router.post("/uploads/cover", requireAuth, requireRole("INSTRUCTOR", "ADMIN"), a
           lines: [
             "عميل S3 وأمر رفع ملف.",
             "دالة بتعمل رابط موقّع لأي أمر.",
-            "العميل بيقرا المفاتيح من البيئة (أو IAM role على السيرفر).",
+            "العميل بيقرا المفاتيح من البيئة (أو IAM role على السيرفر)، و WHEN_REQUIRED عشان الـ SDK ميحطش checksum لملف فاضي جوه الرابط الموقّع.",
             "مسموح ٣ أنواع صور بس، ولحد ٥ ميجا.",
             "مسار طلب الرابط، للمدرّب والأدمن بس.",
             "اتأكد من النوع والحجم.",
@@ -1290,7 +1302,7 @@ export async function processCover({ key }) {
 
 ومقاسين كفاية لأغلب الحالات: 400 للكروت، و 1200 لصفحة الكورس. والواجهة بتختار بـ [[srcset]] أو [[sizes]]، أو بتسيب next/image يعمل ده.
 
-ده job مش جوه الـ request. المعالجة بتاخد ثانية أو اتنين وبتاكل CPU، والـ worker ممكن يشتغل على سيرفر لوحده. ولو فشل بيتعاد (الدرس الجاي عن الـ jobs). ولحد ما يخلص، الواجهة بتعرض placeholder بسبب [[coverReady: false]].
+ده job مش جوه الـ request. المعالجة بتاخد ثانية أو اتنين وبتاكل CPU، والـ worker ممكن يشتغل على سيرفر لوحده. ولو فشل بيتعاد (درس «background jobs» في القسم الجاي). ولحد ما يخلص، الواجهة بتعرض placeholder بسبب [[coverReady: false]].
 
 وsharp عنده حد افتراضي لعدد البكسلات ([[limitInputPixels]])، بيحميك من صورة صغيرة في الحجم لكنها لما تتفك تبقى مليارات البكسلات (decompression bomb).
 
@@ -1375,7 +1387,7 @@ export async function notify(userId, n) {
         {
           cmd: "transactional email",
           title: "إيميلات النظام: تأكيد، واستعادة باسورد، وإيصال",
-          desc: R`الإيميلات اللي النظام بيبعتها لوحده (استعادة باسورد، وإيصال دفع، وترحيب) بتتبعت من worker مش من الـ request. الـ route بيحط job في queue ويرد، والـ worker بيبعت عن طريق مزوّد زي Resend. ولو فشل، الـ queue بتعيد لوحدها.`,
+          desc: R`الإيميلات اللي النظام بيبعتها لوحده (استعادة باسورد، وإيصال دفع، وترحيب) بتتبعت من worker مش من الـ request. الـ route بيحط job في queue ويرد، والـ worker بيبعت عن طريق مزوّد زي Resend. ولو فشل، الـ queue بتعيده، بشرط تحدد [[attempts]] (ومعاه [[backoff]] عشان الإعادة تستنى شوية)، لأن الافتراضي في BullMQ محاولة واحدة من غير إعادة. حطهم مرة واحدة في [[defaultJobOptions]] على الـ Queue: [[new Queue("emails", { connection, defaultJobOptions: { attempts: 5, backoff: { type: "exponential", delay: 10_000 } } })]]، عشان كل الإيميلات (زي reset) تتعاد.`,
           example: R`import { Resend } from "resend";
 import { Worker } from "bullmq";
 
@@ -1614,7 +1626,7 @@ router.get("/courses", async (req, res) => {
             why: "البحث والفلترة أكتر حاجة بتاخد input حر من المستخدم وبتحطه في query. لو اتعمل غلط، يا إما ثغرة (injection أو ترتيب بعمود سري)، يا إما صفحة بطيئة أول ما الداتا تكبر.",
             how: R`[[z.enum]] للمستوى والترتيب معناها إن أي قيمة مش في القايمة بترجع 400. وفي الترتيب، الـ client بيختار اسم («newest»)، والسيرفر بيحوّله لـ orderBy من القايمة. عمره ما اسم العمود نفسه بييجي من برّه. و [[{ id: "desc" }]] في الآخر بيخلي الترتيب ثابت لما قيمتين يتساووا، ودي مهمة جدًا للـ pagination.
 
-[[contains]] مع [[mode: "insensitive"]] بتتحوّل [[ILIKE '%react%']]، والـ index العادي (btree) مش بيقدر يساعد فيها لأن فيه % في الأول. أول ما الجدول يكبر، في PostgreSQL فيه extension اسمه pg_trgm: [[CREATE INDEX ... USING gin (title gin_trgm_ops)]]، وبعدها ILIKE بيستخدم الـ index.
+[[contains]] مع [[mode: "insensitive"]] بتتحوّل [[ILIKE '%react%']]، والـ index العادي (btree) مش بيقدر يساعد فيها لأن فيه % في الأول. أول ما الجدول يكبر، في PostgreSQL فيه extension اسمه pg_trgm: [[CREATE INDEX ... USING gin (title gin_trgm_ops)]]، ونفسه على [[summary]]، لأن الـ OR محتاج index على العمودين عشان القاعدة تستخدمهم مع بعض (BitmapOr). وبعدها ILIKE بيستخدم الـ indexes.
 
 ولو محتاج بحث حقيقي، بترتيب حسب الأهمية ومرادفات، فيه full-text search في Postgres ([[tsvector]] و GIN). والعربي هنا محتاج تطبيع الهمزات والتاء المربوطة قبل الحفظ. وخطوة أكبر من كده: Meilisearch أو Typesense، بيستحملوا الأخطاء الإملائية وبيدعموا العربي كويس، وبيتحدّثوا من القاعدة عن طريق job.
 
@@ -1692,13 +1704,13 @@ Prisma بتعمل ده بـ [[cursor]] و [[skip: 1]]. الـ skip هنا عشا
         {
           cmd: "background jobs",
           title: "الشغل التقيل يتعمل بعد ما ترد على المستخدم",
-          desc: R`أي حاجة بطيئة، أو ممكن تفشل وتتعاد، أو مش لازم تحصل قبل الرد، بتروح queue: إيميلات، ومعالجة صور، وتقارير. الـ API بيضيف job ويرد على طول، والـ worker (process لوحده) بياخدها ويشتغل. BullMQ بيخزن الـ queue في Redis، وبيعيد لوحده لو الـ job فشلت.
+          desc: R`أي حاجة بطيئة، أو ممكن تفشل وتتعاد، أو مش لازم تحصل قبل الرد، بتروح queue: إيميلات، ومعالجة صور، وتقارير. الـ API بيضيف job ويرد على طول، والـ worker (process لوحده) بياخدها ويشتغل. BullMQ بيخزن الـ queue في Redis، وبيعيدها لو فشلت، بس لو حددت [[attempts]] (على الـ job أو في [[defaultJobOptions]] بتاعة الـ Queue). من غيرها محاولة واحدة بس.
 
 والشغل اللي بيتكرر كل فترة بيتعمل job scheduler في نفس الـ queue، مش setInterval ولا node-cron جوه السيرفر.`,
           example: R`import { Queue } from "bullmq";
 import { connection } from "../lib/redis.js";
 
-export const emailQueue = new Queue("emails", { connection });
+export const emailQueue = new Queue("emails", { connection, defaultJobOptions: { attempts: 5, backoff: { type: "exponential", delay: 10_000 } } });
 export const maintenance = new Queue("maintenance", { connection });
 await emailQueue.add("receipt", { to: user.email, orderId: order.id }, {
   attempts: 5,
@@ -1727,7 +1739,7 @@ await maintenance.upsertJobScheduler("reconcile-payments", { every: 15 * 60_000 
           lines: [
             "الـ Queue بتاعة BullMQ.",
             "اتصال Redis مشترك من lib/redis.ts.",
-            "queue للإيميلات.",
+            "queue للإيميلات. أي job فيها (زي reset) بتتعاد لحد ٥ مرات افتراضيًا، حتى لو اتضافت من غير options.",
             "queue للشغل الدوري والصيانة.",
             "ضيف job إيصال، بالـ ids مش بالداتا كلها...",
             "...لو فشلت تتعاد لحد ٥ مرات...",
@@ -1828,7 +1840,7 @@ export async function updateCourse(id, data) {
 
 ٢. Next.js عنده الكاش بتاعه لنتايج الـ fetch والصفحات. التفاصيل في تاب «Next.js».
 
-٣. Redis في التطبيق: المثال. الـ TTL شبكة أمان لو نسيت تمسح في مكان. و [[:v1]] في الـ key بيخليك تلغي كل الكاش القديم مرة واحدة لو شكل الداتا اتغير. و [[redis]] هنا نفس عميل ioredis اللي في [[lib/redis.ts]].
+٣. Redis في التطبيق: المثال. الـ TTL شبكة أمان لو نسيت تمسح في مكان. و [[:v1]] في الـ key بيخليك تلغي كل الكاش القديم مرة واحدة لو شكل الداتا اتغير. و [[redis]] هنا عميل ioredis تاني في [[lib/redis.ts]] بالإعدادات العادية، مش اتصال BullMQ اللي فيه [[maxRetriesPerRequest: null]] (ده بيخلي أي أمر يستنى للأبد لو Redis وقع). وخلي [[enableOfflineQueue: false]] ولفّ الـ get والـ set في try/catch، عشان لو Redis وقع تكمّل من القاعدة.
 
 ٤. القاعدة: الـ indexes وكاش الصفحات بتاعها في الرام. ده الدرس الجاي.
 
@@ -2025,7 +2037,7 @@ pino بيكتب على stdout بسرعة ومن غير ما يوقف الـ even
         {
           cmd: "health و uptime",
           title: "السيرفر عايش؟ والقاعدة عايشة؟",
-          desc: R`endpoint اسمه [[/healthz]] بيقول «الـ process شغال» من غير ما يلمس أي حاجة تانية. و [[/readyz]] بيتأكد إن القاعدة و Redis بيردوا. الأول بيستخدمه Docker عشان يعمل restart لو السيرفر هنج. والتاني بيستخدمه الـ load balancer عشان ميبعتش طلبات لنسخة مش جاهزة.
+          desc: R`endpoint اسمه [[/healthz]] بيقول «الـ process شغال» من غير ما يلمس أي حاجة تانية. و [[/readyz]] بيتأكد إن القاعدة و Redis بيردوا. الأول بيستخدمه الـ orchestrator (Kubernetes، أو Docker Swarm، أو Docker مع أداة زي autoheal) عشان يعمل restart لو السيرفر هنج. Docker لوحده بيعلّم الـ container إنه unhealthy بس. والتاني بيستخدمه الـ load balancer عشان ميبعتش طلبات لنسخة مش جاهزة.
 
 وبرّه السيرفر خالص، خدمة uptime بتضرب رابطك كل دقيقة من كذا مكان، وتبعتلك لو وقع.`,
           example: R`app.get("/healthz", (req, res) => res.json({ ok: true, version: process.env.GIT_SHA }));
@@ -2043,7 +2055,7 @@ app.get("/readyz", async (req, res) => {
           flag: "script",
           deep: {
             why: "السيرفر ممكن يكون «شغال» والقاعدة واقعة، فكل طلب بيرجع 500. وممكن السيرفر كله يقع الساعة ٢ بالليل، ومحدش يعرف لحد الصبح. الـ health checks بتخلي الأدوات تعالج لوحدها، والـ uptime monitor بيصحّيك.",
-            how: R`فيه فرق بين liveness و readiness، وده مهم. الـ liveness ([[/healthz]]) لازم يبقى بسيط جدًا. لو خليته يسأل القاعدة، والقاعدة هنجت ثانيتين، Docker هيعمل restart لكل نسخ التطبيق مع بعض، وتبقى المشكلة أكبر. والـ readiness ([[/readyz]]) هو اللي بيسأل التوابع، ولو فشل، النسخة بتخرج من الـ load balancer مؤقتًا بس، من غير restart.
+            how: R`فيه فرق بين liveness و readiness، وده مهم. الـ liveness ([[/healthz]]) لازم يبقى بسيط جدًا. لو خليته يسأل القاعدة، والقاعدة هنجت ثانيتين، الـ orchestrator (Kubernetes أو Swarm أو autoheal) هيعمل restart لكل نسخ التطبيق مع بعض، وتبقى المشكلة أكبر. والـ readiness ([[/readyz]]) هو اللي بيسأل التوابع، ولو فشل، النسخة بتخرج من الـ load balancer مؤقتًا بس، من غير restart.
 
 في compose بتعمل [[healthcheck]] بيضرب [[/healthz]]، وتقدر تستخدم [[depends_on]] بشرط [[service_healthy]]. التفاصيل في تاب «Docker».
 
@@ -2615,7 +2627,7 @@ docker compose logs --since 30m api | grep '"level":50' | head`,
             mistakes: "«JWT أأمن من sessions». أو JWT في localStorage عمره ٧ أيام. أو بيانات حساسة في الـ payload. أو [[jwt.decode]] بدل verify. أو «httpOnly بتمنع CSRF»، وهي بتمنع XSS من إنه يقرا الـ cookie، مش CSRF."
           },
           lines: [
-            "الـ refresh token في cookie: مش مقروءة من JS، و HTTPS بس، ومش مع طلبات من مواقع تانية، ولمسارات الـ auth بس، و ٣٠ يوم."
+            "الـ refresh token في cookie: مش مقروءة من JS، و HTTPS بس، ومش بتتبعت مع POST أو fetch جاي من موقع تاني (lax بيبعتها بس لو المستخدم فتح لينك GET)، ولمسارات الـ auth بس، و ٣٠ يوم."
           ]
         },
         {
