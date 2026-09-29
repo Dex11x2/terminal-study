@@ -127,12 +127,12 @@ gitleaks بتفحص الـ repo كله بتاريخه ودوّر على patterns
     {
       t: "OWASP Top 10: افهمها في كودك",
       l: 2,
-      n: "قايمة OWASP لأشهر الثغرات، آخر نسخة 2025. لكل واحدة: بتحصل إزاي، والكود الغلط، والصح. الأرقام هنا ترتيب الشرح مش ترتيب OWASP: Injection (فيها SQL و XSS) رقمها A05، و Security Misconfiguration A02، و Supply Chain A03، و Authentication Failures A07، و Rate limiting و CSRF مش بنود لوحدهم",
+      n: "قايمة OWASP لأشهر الثغرات، آخر نسخة 2025. لكل واحدة: بتحصل إزاي، والكود الغلط، والصح. الرقم اللي في اسم الدرس ترتيب الشرح بس، ورقم OWASP الحقيقي (A01 لـ A10) مكتوب في عنوان كل درس: SQL و XSS الاتنين تحت A05 Injection، و CSRF و SSRF تحت A01، و Rate limiting مش بند لوحده، ده دفاع تحت A07 و A06",
       items: [
         {
           cmd: "1. Broken Access Control",
-          title: "أخطر واحدة: توصل لحاجة مش من حقك",
-          desc: "اسمها IDOR لما تغيّر id في الـ URL فتشوف داتا حد تاني. الـ API لازم يتأكد إن الحاجة دي بتاعتك، مش بس إنك مسجّل دخول. الغلط الشائع: بتتأكد إن فيه توكن، بس مش بتتأكد إن المورد ده بتاع صاحب التوكن.",
+          title: "A01 أخطر واحدة: توصل لحاجة مش من حقك",
+          desc: "A01:2025 Broken Access Control، رقم 1 في القايمة. أشهر صورها اسمها IDOR: لما تغيّر id في الـ URL فتشوف داتا حد تاني. الـ API لازم يتأكد إن الحاجة دي بتاعتك، مش بس إنك مسجّل دخول. الغلط الشائع: بتتأكد إن فيه توكن، بس مش بتتأكد إن المورد ده بتاع صاحب التوكن.",
           example: R`// غلط: أي مستخدم مسجّل يشوف أي طلب
 app.get("/api/orders/:id", auth, async (req, res) => {
   const order = await Order.findById(req.params.id);
@@ -179,8 +179,8 @@ app.get("/api/orders/:id", auth, async (req, res) => {
         },
         {
           cmd: "2. SQL Injection",
-          title: "لما مدخل المستخدم يتحط في استعلام",
-          desc: "لو حطيت اللي المستخدم كتبه جوه نص الاستعلام مباشرة، هو يقدر يغيّر معنى الاستعلام. الحل الوحيد الكامل: parameterized queries، اللي بتبعت الاستعلام والقيم منفصلين، فالقيمة تفضل قيمة مهما كانت. متحاولش تنضّف المدخل بنفسك.",
+          title: "A05 Injection: لما مدخل المستخدم يتحط في استعلام",
+          desc: "SQL Injection نوع من A05:2025 Injection. لو حطيت اللي المستخدم كتبه جوه نص الاستعلام مباشرة، هو يقدر يغيّر معنى الاستعلام. الحل الوحيد الكامل: parameterized queries، اللي بتبعت الاستعلام والقيم منفصلين، فالقيمة تفضل قيمة مهما كانت. متحاولش تنضّف المدخل بنفسك.",
           example: R`// خطر: القيمة بتتلزق في الاستعلام
 const q = "SELECT * FROM users WHERE email = '" + email + "'";
 db.query(q);
@@ -211,8 +211,8 @@ ORMs زي Prisma بيعملوا parameterized queries تلقائيًا. الخط
         },
         {
           cmd: "3. XSS",
-          title: "لما تعرض مدخل المستخدم كـ HTML",
-          desc: "لو عرضت كلام المستخدم في الصفحة كـ HTML، ممكن يحط فيه سكربت يشتغل عند أي زائر. React بيهرب النصوص لوحده، فأنت آمن طول ما مش بتستخدم [[dangerouslySetInnerHTML]]. لو محتاج تعرض HTML من المستخدم (محرر نصوص مثلًا)، نضّفه بـ [[DOMPurify]]. وكوكي الـ session HttpOnly عشان لو حصل XSS التوكن ميتسرقش.",
+          title: "A05 Injection: لما تعرض مدخل المستخدم كـ HTML",
+          desc: "XSS في نسخة 2025 جوه A05 Injection، زي SQL Injection بالظبط: مدخل المستخدم بيتفسّر ككود. لو عرضت كلام المستخدم في الصفحة كـ HTML، ممكن يحط فيه سكربت يشتغل عند أي زائر. React بيهرب النصوص لوحده، فأنت آمن طول ما مش بتستخدم [[dangerouslySetInnerHTML]]. لو محتاج تعرض HTML من المستخدم (محرر نصوص مثلًا)، نضّفه بـ [[DOMPurify]]. وكوكي الـ session HttpOnly عشان لو حصل XSS التوكن ميتسرقش.",
           example: R`// خطر: HTML من المستخدم زي ما هو
 element.innerHTML = comment.text;
 <div dangerouslySetInnerHTML={{ __html: comment.text }} />
@@ -249,8 +249,8 @@ React آمن افتراضيًا. الخطر الوحيد [[dangerouslySetInnerHT
         },
         {
           cmd: "CSRF",
-          title: "لما موقع تاني يبعت طلب باسمك",
-          desc: "لو اليوزر عامل login عندك وفتح موقع مهاجم، الموقع ده ممكن يعمل form بيبعت POST لموقعك، والمتصفح بيبعت الكوكي بتاعتك معاه لوحده. الحماية: كوكي الـ session بـ [[SameSite=Lax]] أو [[Strict]]، وأي حاجة بتغيّر داتا تبقى POST/PUT/DELETE مش GET، وتتأكد من [[Origin]] على الطلبات دي. لو الـ auth بـ Authorization header مش كوكي، CSRF مش بتأثر عليك.",
+          title: "A01: لما موقع تاني يبعت طلب باسمك",
+          desc: "CSRF مش بند لوحده في نسخة 2025، هو جوه A01 Broken Access Control. لو اليوزر عامل login عندك وفتح موقع مهاجم، الموقع ده ممكن يعمل form بيبعت POST لموقعك، والمتصفح بيبعت الكوكي بتاعتك معاه لوحده. الحماية: كوكي الـ session بـ [[SameSite=Lax]] أو [[Strict]]، وأي حاجة بتغيّر داتا تبقى POST/PUT/DELETE مش GET، وتتأكد من [[Origin]] على الطلبات دي. لو الـ auth بـ Authorization header مش كوكي، CSRF مش بتأثر عليك.",
           example: R`// الكوكي: SameSite=Lax أقل حاجة
 res.cookie("session", token, { httpOnly: true, secure: true, sameSite: "lax" });
 // أي تغيير بـ POST، مش GET
@@ -278,8 +278,8 @@ function checkOrigin(req, res, next) {
         },
         {
           cmd: "4. مصادقة سليمة",
-          title: "الباسوردات والتوكنات",
-          desc: "الباسورد لازم يتخزّن hashed بـ bcrypt أو argon2، أبدًا كنص. لو قاعدة بياناتك اتسربت، الـ hash ميرجّعش الباسورد. الـ JWT secret لازم يكون طويل وعشوائي وفي متغير بيئة. وحط rate limiting على login عشان تمنع تجربة باسوردات كتير.",
+          title: "A07 الباسوردات والتوكنات",
+          desc: "ده A07:2025 Authentication Failures. الباسورد لازم يتخزّن hashed بـ bcrypt أو argon2، أبدًا كنص. لو قاعدة بياناتك اتسربت، الـ hash ميرجّعش الباسورد. الـ JWT secret لازم يكون طويل وعشوائي وفي متغير بيئة. وحط rate limiting على login عشان تمنع تجربة باسوردات كتير.",
           example: R`import bcrypt from "bcrypt";
 
 // عند التسجيل
@@ -312,8 +312,8 @@ if (!ok) return res.status(401).json({ error: "Invalid credentials" });
         },
         {
           cmd: "5. إعدادات غلط",
-          title: "الافتراضيات الخطيرة",
-          desc: "صفحات الـ error اللي بتطبع تفاصيل السيرفر، وصلاحيات مفتوحة، ولوحات تحكم بباسورد افتراضي. في Express: شيل [[X-Powered-By]] عشان متعلنش إنك Express، فعّل [[helmet]] للـ security headers، ومتبعتش تفاصيل الأخطاء للمستخدم في الإنتاج.",
+          title: "A02 الافتراضيات الخطيرة",
+          desc: "ده A02:2025 Security Misconfiguration، وطلع لرقم 2 في نسخة 2025. صفحات الـ error اللي بتطبع تفاصيل السيرفر، وصلاحيات مفتوحة، ولوحات تحكم بباسورد افتراضي. في Express: شيل [[X-Powered-By]] عشان متعلنش إنك Express، فعّل [[helmet]] للـ security headers، ومتبعتش تفاصيل الأخطاء للمستخدم في الإنتاج.",
           example: R`import helmet from "helmet";
 app.use(helmet());
 app.disable("x-powered-by");
@@ -347,8 +347,8 @@ Stack traces في الإنتاج: لو error handler بيرجع التفاصيل
         },
         {
           cmd: "6. مكتبات فيها ثغرات",
-          title: "الكود اللي مكتبتوش انت",
-          desc: "معظم كودك مكتبات، وأي ثغرة فيها بتبقى ثغرة فيك. [[npm audit]] بيقولك أنهي مكتبة فيها ثغرة معروفة ودرجة خطورتها. راجع اللي بيقترح تحديثه قبل [[--force]] لأنه ممكن يكسر حاجة. و Dependabot على GitHub بيعملك pull request أوتوماتيك بالتحديثات الأمنية.",
+          title: "A03 الكود اللي مكتبتوش انت",
+          desc: "في نسخة 2025 المكتبات القديمة أو اللي فيها ثغرات معروفة بقت جزء من A03 Software Supply Chain Failures. معظم كودك مكتبات، وأي ثغرة فيها بتبقى ثغرة فيك. [[npm audit]] بيقولك أنهي مكتبة فيها ثغرة معروفة ودرجة خطورتها. راجع اللي بيقترح تحديثه قبل [[--force]] لأنه ممكن يكسر حاجة. و Dependabot على GitHub بيعملك pull request أوتوماتيك بالتحديثات الأمنية.",
           example: R`npm audit
 npm audit --omit=dev
 npm audit fix
@@ -374,8 +374,8 @@ npm outdated`,
         },
         {
           cmd: "7. SSRF (بقت جزء من رقم 1)",
-          title: "لما السيرفر يجيب URL من المستخدم",
-          desc: "في نسخة 2025 دمجوا SSRF جوه Broken Access Control، لأنها في الآخر وصول لحاجة مش من حقك. بتحصل لو عندك ميزة بتجيب صورة أو داتا من URL بيبعته المستخدم، فيحط عنوان داخلي زي [[169.254.169.254]] (اللي بيرجّع أسرار السيرفر على بعض المنصات) أو [[localhost]] فيوصل لخدمات جواك. الحل: اسمح بدومينات محددة بس، وامنع العناوين الداخلية.",
+          title: "A01 SSRF: لما السيرفر يجيب URL من المستخدم",
+          desc: "في نسخة 2025 دمجوا SSRF جوه A01 Broken Access Control، لأنها في الآخر وصول لحاجة مش من حقك. بتحصل لو عندك ميزة بتجيب صورة أو داتا من URL بيبعته المستخدم، فيحط عنوان داخلي زي [[169.254.169.254]] (اللي بيرجّع أسرار السيرفر على بعض المنصات) أو [[localhost]] فيوصل لخدمات جواك. الحل: اسمح بدومينات محددة بس، وامنع العناوين الداخلية.",
           example: R`// خطر: بيجيب أي URL
 const data = await fetch(req.body.url);
 
@@ -410,8 +410,8 @@ const safe = await fetch(req.body.url, { redirect: "error" });`,
         },
         {
           cmd: "8. Rate limiting",
-          title: "امنع الإغراق والتخمين",
-          desc: "من غيره حد يقدر يجرّب آلاف الباسوردات، أو يغرق الـ API. حط حد على المحاولات، أشد على login و forgot-password. في الإنتاج ورا Nginx أو Cloudflare حط الـ limiting هناك كمان.",
+          title: "دفاع لـ A07 و A06: امنع الإغراق والتخمين",
+          desc: "Rate limiting مش بند في OWASP Top 10، ده دفاع: A07 Authentication Failures بتعدّ brute force و credential stuffing اللي مبيتقفلوش بسرعة ثغرة، و A06 Insecure Design فيها «مفيش حد لعدد مرات التفاعل» (CWE-799). من غيره حد يقدر يجرّب آلاف الباسوردات، أو يغرق الـ API. حط حد على المحاولات، أشد على login و forgot-password. في الإنتاج ورا Nginx أو Cloudflare حط الـ limiting هناك كمان.",
           example: R`import rateLimit from "express-rate-limit";
 
 const loginLimiter = rateLimit({
@@ -446,7 +446,7 @@ app.post("/api/login", loginLimiter, loginHandler);`,
         },
         {
           cmd: "npm و Supply Chain",
-          title: "متسيبش مكتبة تشغّل كود وقت التسطيب",
+          title: "A03 متسيبش مكتبة تشغّل كود وقت التسطيب",
           desc: "هجمات 2025 على npm (مكتبات مشهورة اتسرق حساب صاحبها ونزلت نسخة ملغومة) كانت بتشتغل من [[postinstall]]: مجرد [[npm install]] بيشغّل الكود. [[--ignore-scripts]] بيمنع ده، و [[npm audit signatures]] بيتأكد إن المكتبات متوقّعة من الـ registry فعلًا. وقبل ما تسطّب مكتبة، بص نزلت إمتى: نسخة عمرها ساعات خليك بعيد عنها.",
           example: R`npm ci --ignore-scripts
 npm audit signatures
@@ -455,7 +455,7 @@ npm view express time.modified`,
           try: "شغّل [[npm audit signatures]] على مشروعك، وجرّب [[npm ci --ignore-scripts]] وشوف أنهي مكتبة كانت محتاجة scripts.",
           flag: "term",
           deep: {
-            why: "المكتبة اللي بتثق فيها ممكن تتخترق هي نفسها، وده اللي OWASP 2025 حطته رقم 3.",
+            why: "المكتبة اللي بتثق فيها ممكن تتخترق هي نفسها، وده اللي OWASP 2025 حطته A03.",
             how: "install scripts بتشتغل بصلاحياتك وتقدر تقرا .env و ~/.npmrc وتسرق التوكنات. ignore-scripts بيقفلها. المكتبات اللي محتاجة build (bcrypt، sharp) هتحتاج تشغّل scripts بتاعتها بإيدك ([[npm rebuild bcrypt]]). والـ lock و npm ci بيضمنوا إن محدش يغيّر النسخ من تحتك.",
             when: "في CI وعلى السيرفر دايمًا، وعلى جهازك لو بتجرّب مكتبات جديدة.",
             mistakes: "تسطيب مكتبة من اسم شبه المشهورة (typosquatting). وتحديث كل حاجة لـ latest أول ما تنزل."
@@ -493,7 +493,7 @@ A09 Logging & Alerting Failures  Log logins, failed auth, admin actions; alert o
         {
           cmd: "الجديد في 2025",
           title: "تحديثان مهمان في القايمة",
-          desc: "نسخة 2025 (اتثبتت رسميًا يناير 2026) ضافت تصنيفين جداد كانوا بيسببوا اختراقات كتير: [[Software Supply Chain Failures]] (رقم 3)، يعني تعتمد على مكتبة أو أداة اتخترقت هي نفسها، وده أخطر من ثغرة في كودك لأنك مش شايفها، وعلاجه إنك تثبّت نسخ المكتبات وتفحصها. و [[Mishandling of Exceptional Conditions]] (رقم 10)، يعني كودك مبيتعاملش صح مع الحالات الغريبة فيقع أو يتصرف غلط. كمان Security Misconfiguration طلعت لرقم 2. المرجع الرسمي على owasp.org/Top10.",
+          desc: "نسخة 2025 (اتثبتت رسميًا يناير 2026) ضافت تصنيفين جداد كانوا بيسببوا اختراقات كتير: [[Software Supply Chain Failures]] (A03)، يعني تعتمد على مكتبة أو أداة اتخترقت هي نفسها، وده أخطر من ثغرة في كودك لأنك مش شايفها، وعلاجه إنك تثبّت نسخ المكتبات وتفحصها. و [[Mishandling of Exceptional Conditions]] (A10)، يعني كودك مبيتعاملش صح مع الحالات الغريبة فيقع أو يتصرف غلط. كمان Security Misconfiguration طلعت لـ A02، و Injection (فيها SQL و XSS) نزلت لـ A05، و SSRF و CSRF بقوا جوه A01. المرجع الرسمي على owasp.org/Top10.",
           example: R`# ثبّت نسخ المكتبات عشان متتغيرش تحتك
 npm ci        # بيستخدم package-lock.json بالظبط، مش بيحدّث
 # افحص إن مفيش مكتبة متعرفش مصدرها
