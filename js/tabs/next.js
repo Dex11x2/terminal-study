@@ -78,7 +78,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
   const product = await getProduct(id);
   return <h1>{product.name}</h1>;
 }`,
-          try: R`في مشروع الـ lab اعمل [[src/app/products/[id]/page.tsx]] زي النص التاني (خلي [[getProduct]] ترجع [[{ name: "كتاب " + id }]]). افتح [[/products/5]]، واعمل View Source: هتلاقي الـ h1 في الـ HTML نفسه. وبعدين افتح DevTools > Sources ودوّر على كلمة getProduct: مش هتلاقيها.`,
+          try: R`في مشروع الـ lab اعمل [[src/app/products/[id]/page.tsx]] زي النص التاني (خلي [[getProduct]] ترجع [[{ name: "كتاب " + id }]]). افتح [[/products/5]]، واعمل View Source: هتلاقي الـ h1 في الـ HTML نفسه. وبعدين اعمل [[npm run build && npm start]] وافتح DevTools > Sources ودوّر على كلمة getProduct: مش هتلاقيها. (في dev ممكن تلاقيها، لأن Next بيبعت source maps بتاعة السيرفر عشان رسايل الأخطاء.)`,
           flag: "script",
           deep: {
             why: "لو هتشتغل على مشاريع موجودة هتقابل الاتنين، ولازم تعرف تقرا كل واحد. والفرق مش شكل الفولدرات بس: هو فرق في مكان تشغيل الكود وكمية الـ JS اللي بتروح للمتصفح.",
@@ -231,7 +231,7 @@ export default async function Products({ searchParams }: PageProps<"/products">)
   const products = await getProducts({ page, sort, q, pageSize: 24 });
   return <ProductGrid products={products} page={page} sort={sort} />;
 }`,
-          try: R`افتح [[/products?page=abc&sort=hack]] واطبع القيم بـ console.log: هتلاقيها في ترمنال [[npm run dev]] مش في console المتصفح (ده server component)، وقيمتها 1 و new. وبعدين اعمل [[npm run build]] وبص على الجدول: [[/products]] جنبها ƒ يعني dynamic.`,
+          try: R`افتح [[/products?page=abc&sort=hack]] واطبع القيم بـ console.log: هتلاقيها في ترمنال [[npm run dev]] لأن ده server component بيشتغل على السيرفر. وفي dev بس، Next بيعيد عرض نفس السطر في console المتصفح وجنبه علامة Server، بس كود الكومبوننت نفسه مبيوصلش للمتصفح. وقيمتها 1 و new. وبعدين اعمل [[npm run build]] وبص على الجدول: [[/products]] جنبها ƒ يعني dynamic.`,
           flag: "script",
           deep: {
             why: R`الفلتر اللي في state بيضيع مع أول refresh، ومينفعش تبعته لحد. والـ query string جاي من المستخدم، يعني ممكن يبقى أي حاجة: [[?page=-1]] أو [[?page=99999999]] أو [[?sort=DROP]]. لو بعته للداتابيز من غير فحص يا يقع يا يرجّع حاجات غلط.`,
@@ -285,7 +285,7 @@ export function ShopNav() {
     </nav>
   );
 }`,
-          try: R`حط الـ nav في الـ layout، واعمل [[npm run build]] وبعدين [[npm start]] (الـ prefetch مبيشتغلش في dev). افتح DevTools > Network وانزل لحد ما لينك يظهر: هتلاقي طلب اتبعت قبل ما تضغط. وبعدين بدّل [[<Link>]] بـ [[<a>]] عادي واضغط: الصفحة هتعمل reload كامل.`,
+          try: R`حط الـ nav في الـ layout جوه [[<Suspense>]] (لأنه بيستخدم [[useSearchParams]]، ومن غيرها الـ build بيقع على الصفحات الـ static زي ما شفنا في درس searchParams)، واعمل [[npm run build]] وبعدين [[npm start]] (الـ prefetch مبيشتغلش في dev). افتح DevTools > Network وانزل لحد ما لينك يظهر: هتلاقي طلب اتبعت قبل ما تضغط. وبعدين بدّل [[<Link>]] بـ [[<a>]] عادي واضغط: الصفحة هتعمل reload كامل.`,
           flag: "script",
           deep: {
             why: "الـ [[<a>]] العادي بيحمّل الصفحة من الأول: HTML و CSS و JS تاني، والـ state كلها بتروح. في تطبيق حقيقي ده بطيء وبيبان كأن الموقع اتقفل واتفتح.",
@@ -471,7 +471,7 @@ import Link from "next/link";
 export default function NotFound() {
   return <div><h1>الصفحة دي مش موجودة</h1><Link href="/">ارجع للرئيسية</Link></div>;
 }`,
-          try: R`في [[app/products/page.tsx]] حط [[throw new Error("DB down")]] وافتح الصفحة في dev: هتلاقي الـ overlay بتاع Next. اقفله وشوف [[error.tsx]]. وبعدين اعمل [[npm run build && npm start]] وافتحها: هتلاقي [[error.message]] بقى رسالة عامة ومعاه [[digest]] رقم، ودوّر على نفس الرقم في لوج الترمنال.`,
+          try: R`في [[app/products/page.tsx]] حط [[throw new Error("DB down")]] بعد سطر [[await searchParams]] (لو حطيته قبله، الـ build هيحاول يرسم الصفحة static ويقع بالخطأ نفسه)، وافتح الصفحة في dev: هتلاقي الـ overlay بتاع Next. اقفله وشوف [[error.tsx]]. وبعدين اعمل [[npm run build && npm start]] وافتحها: هتلاقي [[error.message]] بقى رسالة عامة ومعاه [[digest]] رقم، ودوّر على نفس الرقم في لوج الترمنال.`,
           flag: "script",
           deep: {
             why: "من غير error boundary، خطأ واحد في جزء صغير (ويدجت التقييمات) بيوقّع الصفحة كلها وتظهر شاشة بيضا. و 404 من غير status صح بتخلي جوجل يأرشف صفحات «مش موجود» كأنها محتوى.",
@@ -479,7 +479,7 @@ export default function NotFound() {
 
 في الإنتاج، الأخطاء اللي بتحصل في server components بتوصل للمتصفح من غير الرسالة الأصلية (عشان متسرّبش تفاصيل زي أسماء جداول)، وبيبقى معاها [[digest]] بس، والرسالة الكاملة في لوج السيرفر.
 
-[[reset()]] بيمسح الخطأ ويرسم الجزء ده تاني من غير ما يطلب داتا جديدة من السيرفر. ومن Next 16.2 فيه كمان [[unstable_retry()]] (ولسه اسمه ممكن يتغير لـ [[retry]] في نسخة أحدث) بيعمل refresh للداتا مع الـ reset، وده الأنسب لو الخطأ جه من server component (زي الداتابيز اللي كانت واقعة).
+[[reset()]] بيمسح الخطأ ويرسم الجزء ده تاني من غير ما يطلب داتا جديدة من السيرفر. ومن Next 16.3 فيه كمان [[retry()]] (كان اسمه [[unstable_retry()]] في 16.2) بيعمل refresh للداتا مع الـ reset، وده الأنسب لو الخطأ جه من server component (زي الداتابيز اللي كانت واقعة).
 
 [[notFound()]] بتدوّر على أقرب [[not-found.tsx]] فوقها. ولو اتنادت قبل ما الـ streaming يبدأ بترجع status 404، ولو بعده (جوه Suspense) الـ status بيبقى 200 بس Next بيحط [[<meta name="robots" content="noindex">]] عشان جوجل ميأرشفهاش.
 
@@ -534,19 +534,19 @@ export default async function PhotoModal({ params }: { params: Promise<{ id: str
   return <Modal><PhotoView id={id} /></Modal>;
 }
 // app/photos/[id]/page.tsx: نفس الصورة كصفحة كاملة لو الـ URL اتفتح مباشرة`,
-          try: R`اعمل الملفات دي، وصفحة [[app/page.tsx]] فيها ٣ لينكات لـ [[/photos/1]] و [[/photos/2]] و [[/photos/3]]. اضغط لينك: الصورة تفتح modal والـ URL يتغير. اعمل refresh: تفتح الصفحة الكاملة. وبعدين امسح [[default.tsx]] واعمل build وشوف الخطأ.`,
+          try: R`اعمل الملفات دي، وصفحة [[app/page.tsx]] فيها ٣ لينكات لـ [[/photos/1]] و [[/photos/2]] و [[/photos/3]]. اضغط لينك: الصورة تفتح modal والـ URL يتغير. اعمل refresh: تفتح الصفحة الكاملة. وبعدين امسح [[default.tsx]] واعمل [[npm run build && npm start]] وافتح [[/]]: هتلاقي 404، لأن الـ slot ملوش حاجة يرسمها (الـ build العادي بـ Turbopack مش هيقع). ولو عملت [[next build --webpack]] هيقع بخطأ Missing required default.js.`,
           flag: "script",
           deep: {
             why: "الـ modal العادي ملوش URL: متقدرش تبعته لحد، والـ refresh بيقفله، وزرار الرجوع بيخرّجك من الصفحة كلها بدل ما يقفله. ولوحات التحكم فيها أجزاء مستقلة (إحصائيات، وتنبيهات) كل واحد بيحمّل لوحده ولو واحد وقع الباقي يفضل.",
             how: R`كل slot ليه شجرة routes لوحده جوه نفس الـ URL. في التنقل من جوه الموقع (soft navigation)، Next بيحدّث الـ slot اللي فيه تطابق ويسيب الباقي على آخر حالة. في الـ refresh أو فتح اللينك مباشرة (hard navigation)، Next مبيعرفش الحالة القديمة، فأي slot ملوش تطابق بيرسم [[default.tsx]].
 
-من Next 16 [[default.tsx]] إجباري لكل slot: لو مش موجود الـ build بيقع. قبل كده كان بيطلّع 404 وقت التشغيل. و [[children]] نفسه slot ضمني، فممكن تحتاج [[app/default.tsx]] كمان.
+من Next 16 [[default.tsx]] إجباري لكل slot: الـ docs بتقول الـ build بيقع من غيره (وده بيحصل مع webpack)، ومع Turbopack الـ build بيعدّي والصفحات بترجع 404، فاعمله دايمًا. و [[children]] نفسه slot ضمني، فممكن تحتاج [[app/default.tsx]] كمان.
 
 الـ intercepting بيتكتب بالنسبة لمستوى الـ route segments مش الفولدرات: [[(.)]] نفس المستوى، و [[(..)]] مستوى فوق، و [[(...)]] من الـ root. والـ [[@modal]] مش segment، فـ [[app/@modal/(.)photos]] بيمسك [[app/photos]].
 
 الـ interception بيحصل في soft navigation بس. الـ refresh أو فتح اللينك في تاب جديد بيروح للصفحة الأصلية [[app/photos/[id]/page.tsx]]، فلازم تبقى موجودة.`,
             when: "صورة أو منتج في modal من ليستة (زي انستجرام)، و login في modal، وسلة جانبية ليها URL. و parallel routes لوحدها للوحات فيها أجزاء مستقلة، أو لعرض حاجة مختلفة حسب الدور (slot للأدمن و slot للمستخدم).",
-            mistakes: R`تنسى [[default.tsx]] فالـ build يقع في Next 16. وتنسى الصفحة الأصلية فالـ refresh يطلّع 404. وتقفل الـ modal بـ [[router.push("/")]] بدل [[router.back()]]، فالـ history يتلخبط. وتعمل modal بالطريقة دي لحاجة ملهاش لازمة يبقى ليها URL (تأكيد مسح مثلًا): state عادية أبسط.`
+            mistakes: R`تنسى [[default.tsx]]: مع webpack الـ build يقع، ومع Turbopack الـ build يعدّي والصفحات ترجع 404. وتنسى الصفحة الأصلية فالـ refresh يطلّع 404. وتقفل الـ modal بـ [[router.push("/")]] بدل [[router.back()]]، فالـ history يتلخبط. وتعمل modal بالطريقة دي لحاجة ملهاش لازمة يبقى ليها URL (تأكيد مسح مثلًا): state عادية أبسط.`
           },
           lines: [
             R`الـ root layout بياخد [[modal]] من فولدر [[@modal]] جنب [[children]]. الـ [[@]] مبيدخلش في الـ URL.`,
@@ -601,7 +601,7 @@ export default async function ProductsPage() {
     </ul>
   );
 }`,
-          try: R`حط [[console.log("render ProductsPage")]] في أول الكومبوننت وافتح الصفحة: هتلاقي الرسالة في ترمنال [[npm run dev]] مش في console المتصفح. وبعدين جرّب تضيف [[useState]] جواه واقرا الخطأ اللي Next بيطلّعه.`,
+          try: R`حط [[console.log("render ProductsPage")]] في أول الكومبوننت وافتح الصفحة: هتلاقي الرسالة في ترمنال [[npm run dev]]. وهتلاقيها برضه في console المتصفح بس جنبها علامة «Server»: دي React بتعيد عرضها هناك في dev بس عشان الـ debugging، والكود نفسه اتنفذ على السيرفر. اعمل [[npm run build]]: هتلاقي الرسالة اتطبعت في ترمنال الـ build (الصفحة static فبتترسم وقت الـ build)، وبعد [[npm start]] افتح الصفحة: مش هتظهر في console المتصفح خالص. وبعدين جرّب تضيف [[useState]] جواه واقرا الخطأ اللي Next بيطلّعه.`,
           flag: "script",
           deep: {
             why: R`في SPA عادي، عشان تعرض ليستة منتجات: المتصفح بينزّل JS الصفحة كلها، وبعدين يبعت طلب لـ API، والـ API يكلّم الداتابيز، وبعدين يرسم. يعني loading spinner، و API لازم تكتبه وتحميه، و bundle فيه مكتبات التنسيق. الـ Server Component بيشيل الخطوات دي: الداتا بتتجاب جنب الداتابيز، والنتيجة HTML جاهز.`,
@@ -613,7 +613,7 @@ export default async function ProductsPage() {
 
 وفيه خلط شائع: «server component» مش معناها SSR. الـ client components كمان بتترسم HTML على السيرفر في أول تحميل. الفرق إن الـ server component بيشتغل على السيرفر بس ومبيتبعتش (سؤال في الانترفيو في آخر التاب).`,
             when: "الافتراضي لكل حاجة: الصفحات، و layouts، والحتت اللي بتعرض داتا. انقل لـ client بس الجزء اللي محتاج تفاعل أو APIs المتصفح.",
-            mistakes: R`تحط [[use client]] فوق الصفحة كلها عشان زرار واحد، فكل الكود والمكتبات تروح للمتصفح. وتفتكر إن [[console.log]] في server component هيظهر في المتصفح. وترجّع object فيه [[passwordHash]] من الداتابيز وتعدّيه لـ client component: الـ props بتتكتب في الصفحة وأي حد يقدر يقراها في View Source. استخدم [[select]].`
+            mistakes: R`تحط [[use client]] فوق الصفحة كلها عشان زرار واحد، فكل الكود والمكتبات تروح للمتصفح. وتفتكر إن [[console.log]] في server component اتنفذ في المتصفح عشان شفته في الـ console: في dev بيتعاد عرضه هناك بعلامة «Server» بس، وهو اتنفذ على السيرفر، وفي الإنتاج بيظهر في لوجات السيرفر بس. وترجّع object فيه [[passwordHash]] من الداتابيز وتعدّيه لـ client component: الـ props بتتكتب في الصفحة وأي حد يقدر يقراها في View Source. استخدم [[select]].`
           },
           lines: [
             R`الداتابيز مباشرة (Prisma مثلًا، تفاصيله في تاب «SQL و Prisma»). مفيش API في النص.`,
@@ -658,7 +658,7 @@ export function AddToCart({ productId }: { productId: string }) {
     </div>
   );
 }`,
-          try: R`افتح الصفحة، وفي DevTools > Sources دوّر على [[add-to-cart]]: هتلاقيه. ودوّر على [[ProductsPage]]: مش هتلاقيها. وبعدين امسح [[use client]] واقرا الخطأ اللي Next بيطلّعه (إنك بتستخدم [[useState]] في كومبوننت مش client).`,
+          try: R`اعمل [[npm run build]] و [[npm start]] وافتح الصفحة، وفي DevTools > Sources دوّر على [[AddToCart]]: هتلاقيه في ملف JS جوه [[_next/static/chunks]]. ودوّر على [[ProductsPage]]: مش هتلاقيها. (في [[npm run dev]] هتلاقي ملف [[add-to-cart]] باسمه، وممكن تلاقي [[ProductsPage]] كمان تحت [[about://React/Server]]: دي معلومات debugging و source maps بيبعتها React و Next في dev بس.) وبعدين امسح [[use client]] واقرا الخطأ اللي Next بيطلّعه (إنك بتستخدم [[useState]] في كومبوننت مش client).`,
           flag: "script",
           deep: {
             why: "لازم يبقى فيه حد واضح بين الكود اللي بيشتغل على السيرفر والكود اللي بيتبعت للمتصفح، لأن الغلط في الاتجاهين وحش: كود سيرفر في المتصفح معناه أسرار مكشوفة ومكتبات تقيلة، و hooks على السيرفر معناها crash.",
@@ -675,7 +675,7 @@ export function AddToCart({ productId }: { productId: string }) {
           lines: [
             "أول سطر في الملف، قبل أي import. من هنا وتحت كله client.",
             "hooks مسموحة هنا.",
-            "الـ props لازم حاجات تتحوّل JSON: string ورقم و object و array. مينفعش دالة عادية من server component.",
+            "الـ props لازم تبقى serializable: string ورقم و boolean و object و array و Date و Promise و JSX. مينفعش دالة عادية من server component.",
             "state للكمية.",
             "state للحالة.",
             "بداية الـ JSX.",
@@ -1300,7 +1300,7 @@ async function CartBadge() {
   const count = cartId ? await countCartItems(cartId) : 0;
   return <span>{count}</span>;
 }`,
-          try: R`فعّل [[cacheComponents]] واعمل الصفحة دي. بعدين انقل [[await cookies()]] لجسم [[ProductPage]] نفسها (واعملها async) واقرا الخطأ في dev. رجّعها، وضيف [[generateStaticParams]] بترجّع [[{ slug: "a" }]]، واعمل build وبص على الرمز جنب الـ route.`,
+          try: R`فعّل [[cacheComponents]] واعمل الصفحة دي. بعدين انقل [[await cookies()]] لجسم [[ProductPage]] نفسها (واعملها async) واقرا الخطأ في dev. رجّعها، وضيف [[generateStaticParams]] بترجّع [[[{ slug: "a" }]]]، واعمل build وبص على الرمز جنب الـ route.`,
           flag: "script",
           deep: {
             why: R`في النموذج القديم، cookie واحدة للسلة في الـ header بتخلي الصفحة كلها dynamic، فصفحة المنتج اللي ٩٥٪ منها زي ما هو لكل الناس بتترسم من الأول مع كل زائر. Partial Prerendering بيخلي الـ ٩٥٪ ملف جاهز، والـ ٥٪ بس هي اللي بتتحسب.`,
@@ -1752,7 +1752,7 @@ export async function DELETE(_request: Request, ctx: RouteContext<"/api/products
             why: "Server Actions للواجهة بتاعتك بس. أي حد تاني محتاج يكلّم السيرفر: تطبيق موبايل، أو خدمة خارجية بتبعت webhook، أو ملف RSS، أو حد عايز JSON. ده محتاج URL ثابت و HTTP عادي، وده Route Handler.",
             how: R`Route Handlers مبنية على Web APIs: [[Request]] و [[Response]] و [[Headers]] و [[URL]]، نفس اللي في المتصفح و Cloudflare Workers و Deno. و [[NextResponse]] من [[next/server]] بيضيف حاجات زي [[NextResponse.redirect]] و [[cookies.set]] على الرد، بس [[Response]] العادي كفاية غالبًا.
 
-الكاش: في Next 14 الـ GET اللي مبيقراش الطلب كان بيتكاش static. من 15 مبقاش. ولو عايزه يتكاش في النموذج القديم: [[export const dynamic = "force-static"]]. ومع Cache Components، الـ handler dynamic، والجزء اللي عايز تكاشه تحطه في دالة عليها [[use cache]].
+الكاش: في Next 14 الـ GET اللي مبيقراش الطلب كان بيتكاش static. من 15 مبقاش. ولو عايزه يتكاش في النموذج القديم: [[export const dynamic = "force-static"]]. ومع Cache Components، الـ GET بيمشي زي الصفحات: بيتعمله prerender لو مبيقراش الطلب ولا داتا مش متكاشة، ولو بيقرا يبقى dynamic. والجزء اللي عايز تكاشه (query الداتابيز مثلًا) تحطه في دالة عليها [[use cache]].
 
 جوه الـ handler تقدر تقرا [[cookies()]] و [[headers()]] من [[next/headers]] وتكتب cookies، وتنادي [[revalidateTag]]. وأي throw بيطلّع 500 (مفيش error.tsx هنا)، فرجّع الـ status الصح بإيدك.
 
@@ -2022,7 +2022,7 @@ export async function requireAdmin() {
   if (session.role !== "ADMIN") notFound();
   return session;
 }`,
-          try: R`حط [[console.log("verify")]] جوه [[verifySession]]، ونادها من الصفحة ومن الـ layout ومن كومبوننت: هتطبع مرة واحدة في الطلب. وبعدين شيل [[cache]] وعدّ. وجرّب تفتح صفحة الـ dashboard بـ cookie مزوّرة (اللي عدّت من الـ proxy في الدرس اللي فات): المرة دي هتتحول للـ login.`,
+          try: R`حط [[console.log("verify")]] جوه [[verifySession]]، ونادها من الصفحة ومن الـ layout ومن كومبوننت: هتطبع مرة واحدة في الطلب. وبعدين شيل [[cache]] وعدّ. وجرّب تفتح صفحة الـ dashboard بـ cookie مزوّرة (اللي عدّت من الـ proxy في درس [[proxy.ts]]): المرة دي هتتحول للـ login.`,
           flag: "script",
           deep: {
             why: "لو الحماية في مكان واحد بعيد عن الداتا (الـ proxy أو الـ layout)، أي مسار تاني للداتا بيعدّي من غيرها: Server Action، أو Route Handler، أو صفحة جديدة حد نسي يحطها تحت الـ layout. لما كل query خاص بيسأل «مين؟» بنفسه، مستحيل تنسى.",
@@ -2154,7 +2154,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 // الناتج: <title>مين إحنا | متجر الكتب</title> و <link rel="canonical" href="https://books.example.com/about">`,
-          try: R`حط الـ metadata دي، وافتح [[/about]] واعمل View Source ودوّر على [[<title>]] و [[og:]]. وبعدين امسح [[metadataBase]] واعمل build وشوف التحذير. وجرّب تحط [[export const metadata]] في ملف عليه [[use client]] واقرا الخطأ.`,
+          try: R`حط الـ metadata دي، وافتح [[/about]] واعمل View Source ودوّر على [[<title>]] و [[og:]]. وبعدين امسح [[metadataBase]] واعمل build وافتح View Source: هتلاقي الـ canonical بقى [[/about]] نسبي مش URL كامل. (التحذير بيطلع بس لما يكون فيه صورة OG أو twitter بمسار نسبي أو ملف opengraph-image.) وجرّب تحط [[export const metadata]] في ملف عليه [[use client]] واقرا الخطأ.`,
           flag: "script",
           deep: {
             why: "جوجل بيعرض الـ title والـ description في النتايج، وواتساب وفيسبوك بيعرضوا صورة وعنوان من الـ og tags. صفحة من غيرهم بتظهر «Create Next App» أو لينك أزرق عريان، والناس مبتضغطش.",
@@ -2164,14 +2164,14 @@ export const metadata: Metadata = {
 
 Next بيحط لوحده [[<meta charset>]] و [[<meta name="viewport">]]. ولو عايز تغيّر الـ viewport أو [[themeColor]]، ده في [[export const viewport]] منفصل.
 
-وفيه ملفات بأسماء خاصة بتتحول metadata لوحدها: [[favicon.ico]] و [[icon.png]] و [[apple-icon.png]] و [[opengraph-image.png]] جوه [[app]] أو أي فولدر، و Next بيحط الـ tags الصح.`,
+وفيه ملفات بأسماء خاصة بتتحول metadata لوحدها: [[favicon.ico]] (في [[app]] بس)، و [[icon.png]] و [[apple-icon.png]] و [[opengraph-image.png]] جوه [[app]] أو أي فولدر تحته، و Next بيحط الـ tags الصح.`,
             when: "الـ layout: الافتراضي والـ template و metadataBase. كل صفحة ثابتة: title و description على الأقل. والصفحات الـ dynamic: الدرس الجاي.",
             mistakes: R`تكتب [[<head>]] و [[<title>]] بإيدك في layout.tsx فيطلع مكرر أو يتجاهل. وتنسى [[metadataBase]] فصور المشاركة تطلع بـ localhost. وتحط [[metadata]] في client component (مش مسموح). ونفس الـ description لكل الصفحات: جوجل بيتجاهله ويكتب من عنده.`
           },
           lines: [
             "النوع بيكمّلك الحقول ويمسك الغلط.",
             "الافتراضي لكل الموقع.",
-            "الدومين. من غيره صور الـ OG والـ canonical النسبية مش هتبقى URLs كاملة (وبيطلع تحذير).",
+            "الدومين. من غيره الـ canonical النسبي بيفضل نسبي، وصور الـ OG النسبية بتطلع بـ localhost (وده اللي بيطلّع تحذير في الـ build).",
             R`[[default]] للصفحات اللي ملهاش title، و [[template]] للي ليها: [[%s]] مكان اسم الصفحة.`,
             "وصف بيظهر تحت اللينك في جوجل.",
             "شكل المشاركة. الصورة ممكن تيجي من ملف (درس opengraph-image).",
@@ -2215,7 +2215,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           flag: "script",
           deep: {
             why: "صفحات المنتجات والمقالات هي اللي بتجيب زوار من جوجل ومن المشاركات. لو كلها title واحد («متجر الكتب»)، جوجل مش هيعرف يفرّق بينها، والمشاركة هتبان نفس الشكل لكل منتج.",
-            how: R`Next بينادي [[generateMetadata]] قبل ما يرسم الصفحة أو معاها. ومن Next 15.2 الـ metadata بقت بتتبعت streaming: للمتصفحات العادية، الصفحة مبتستناش [[generateMetadata]] وتبدأ تترسم، والـ tags بتتحط لما تجهز. وللـ bots اللي مبتنفذش JS (جوجل وواتساب وفيسبوك، بتتعرف من الـ User-Agent)، Next بيستنى الـ metadata الأول عشان تبقى في [[<head>]].
+            how: R`Next بينادي [[generateMetadata]] قبل ما يرسم الصفحة أو معاها. ومن Next 15.2 الـ metadata بقت بتتبعت streaming: للمتصفحات العادية، الصفحة مبتستناش [[generateMetadata]] وتبدأ تترسم، والـ tags بتتحط لما تجهز. وللـ bots اللي مبتنفذش JS (واتساب وفيسبوك و X و Bing، بتتعرف من الـ User-Agent)، Next بيستنى الـ metadata الأول عشان تبقى في [[<head>]]. أما Googlebot فبينفذ JS، فبياخد الـ metadata streaming عادي وبيقراها.
 
 [[cache()]] من React بيحفظ النتيجة لنفس الـ arguments طول الطلب الواحد. ولو الدالة عليها [[use cache]] (Cache Components)، ده كاش أقوى بين الطلبات، و [[cache()]] مش ضروري.
 
@@ -2552,7 +2552,7 @@ export function CartTotal({ totalCents, name }: { totalCents: number; name: stri
           flag: "script",
           deep: {
             why: R`[[count + " منتجات"]] بتطلع «1 منتجات» و «11 منتجات»، والعربي فيه قواعد جمع مختلفة حسب الرقم. وكل نص مكتوب في الكومبوننت نفسه لازم يتلف عليه واحد واحد لو قررت تضيف لغة. ملفات الرسايل بـ ICU بتحل الاتنين.`,
-            how: R`next-intl بيستخدم [[Intl.PluralRules]] المبني في JavaScript عشان يختار الحالة. في العربي: صفر zero، وواحد one، واتنين two، ومن ٣ لـ ١٠ few، ومن ١١ لـ ٩٩ many، و ١٠٠ وفوق other (ومعاهم ١٠١ و ١٠٢). و [[=0]] بيطابق الرقم بالظبط قبل القواعد.
+            how: R`next-intl بيستخدم [[Intl.PluralRules]] المبني في JavaScript عشان يختار الحالة. في العربي: صفر zero، وواحد one، واتنين two، ومن ٣ لـ ١٠ few، ومن ١١ لـ ٩٩ many، و ١٠٠ و ١٠١ و ١٠٢ (وأي مية كاملة) other. والقاعدة بتتحسب على آخر رقمين، فـ ١٠٣ ترجع few و ١١١ ترجع many تاني. و [[=0]] بيطابق الرقم بالظبط قبل القواعد.
 
 الـ namespaces بتقسّم الملف حسب الشاشة ([[Cart]] و [[Checkout]])، وتقدر تستخدم [[t.rich]] لنص فيه لينك أو bold: [[t.rich("terms", { link: (chunks) => <Link href="/terms">{chunks}</Link> })]].
 
@@ -2993,7 +2993,7 @@ export function LikeButton() { const [n, setN] = useState(0); return <button onC
             mistakes: R`«Server Components هي SSR باسم جديد». و «use client يعني مبيترسمش على السيرفر». و «server components أسرع دايمًا» من غير ما تقول ليه (JS أقل، وداتا جنب الداتابيز).`
           },
           lines: [
-            "بيشتغل على السيرفر بس، والكود ده مش في أي bundle.",
+            "بيشتغل على السيرفر بس، والكود ده مش في الـ bundle بتاع المتصفح (بيتبني في bundle السيرفر بس).",
             "حد client.",
             "بيترسم على السيرفر (SSR) وبيشتغل في المتصفح كمان."
           ]

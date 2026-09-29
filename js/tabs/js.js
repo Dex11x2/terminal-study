@@ -235,7 +235,7 @@ new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(19
             why: "حسابات الفلوس والنسب وتحويل الـ inputs بتحصل في كل مشروع. سلة مشتريات بتجمع أسعار عشرية ممكن تطلع إجمالي فيه ...0000004، وفورم بيبعت [[\"\"]] يتحوّل 0 من غير ما تاخد بالك.",
             how: R`JS بيستخدم IEEE 754 double precision: ٦٤ بت، منهم ٥٢ للكسر. أي كسر مقامه مش من قوى 2 بيتقرّب. عشان كده المقارنة بين أعداد عشرية تتعمل بفرق صغير ([[Number.EPSILON]])، مش بـ ===.
 
-[[Number(x)]] بتحوّل القيمة كلها أو ترجّع NaN، والـ string الفاضي بيبقى 0 (فخ!). [[parseInt]] بتقرا من الأول لحد ما تلاقي حرف مش رقم، ولازم تبعتلها الـ radix (10) عشان متتلخبطش مع "0x". و [[parseFloat]] للكسور. و [[+x]] زي [[Number(x)]] بالظبط.
+[[Number(x)]] بتحوّل القيمة كلها أو ترجّع NaN، والـ string الفاضي بيبقى 0 (فخ!). [[parseInt]] بتقرا من الأول لحد ما تلاقي حرف مش رقم، ولازم تبعتلها الـ radix (10) عشان متتلخبطش مع "0x". و [[parseFloat]] للكسور. و [[+x]] زي [[Number(x)]] مع الـ strings وأغلب القيم، بس مع bigint بيرمي TypeError ([[+1n]])، و [[Number(1n)]] بترجّع 1.
 
 أي عملية حسابية فيها NaN بتطلع NaN، فالـ NaN «بتعدي» لحد آخر الحساب. و [[1 / 0]] بتطلع [[Infinity]] مش error.
 
@@ -390,7 +390,7 @@ clean.at(-1)                                // "m"
             "فيه @؟",
             "بيبدأ بـ sara؟",
             "قطّعه عند @ لـ array.",
-            "من أول حرف لحد قبل الرابع.",
+            "أول ٤ حروف: من index 0 لحد قبل index 4.",
             "آخر ٣ حروف: السالب بيتعد من الآخر.",
             R`استبدل كل النقط. [[replace]] كانت هتغيّر أول واحدة بس.`,
             "كمّل بأصفار من الشمال لحد ٣ حروف: مفيدة لأرقام الفواتير.",
@@ -428,7 +428,7 @@ const logAll = (...items) => {
 add(2, 3);        // 5
 square(4);        // 16
 toUser("Sara");   // { name: "Sara", active: true }`,
-          try: R`حوّل [[add]] لـ arrow في سطر واحد. وبعدين امسح القوسين اللي حوالين الـ object في [[toUser]] وشوف بترجّع إيه (undefined) وفكّر ليه.`,
+          try: R`حوّل [[add]] لـ arrow في سطر واحد. وبعدين امسح القوسين اللي حوالين الـ object في [[toUser]] وشغّل: هيطلع SyntaxError (Unexpected token ':')، لأن JS فهم الـ [[{]] بداية جسم دالة. ولو سبت جوه [[{ name }]] بس، مش هيطلع error، بس الدالة هترجّع undefined. فكّر ليه.`,
           flag: "script",
           deep: {
             why: "هتشوف الأشكال التلاتة في كل كود، ولازم تعرف تقراهم. والاختيار بينهم مش ذوق بس: فرق الـ this بيكسر كود حقيقي، والـ hoisting بيفرق في ترتيب الكود.",
@@ -695,7 +695,7 @@ prices.with(0, 999);                     // [999, 100, 200]`,
             why: "الترتيب في كل جدول وليستة. و sort اللي بتعدّل الأصل سبب bugs كتير في React: الـ state اتعدّلت في مكانها، فـ React مش شايف تغيير ومبيعملش render، أو الترتيب بيتغير في مكان تاني بيستخدم نفس الـ array.",
             how: R`دالة المقارنة بترجّع رقم: سالب يعني a قبل b، وموجب يعني b قبل a، وصفر يعني زي بعض. [[a - b]] بتطلع كده بالظبط للأرقام. وللنصوص [[localeCompare]]، اللي بتفهم الحروف العربي والـ accents.
 
-من ES2019 الـ sort مضمون stable: العناصر المتساوية بتفضل بترتيبها الأصلي. ده بيخليك ترتّب بأكتر من مفتاح بـ [[||]]: لو السعر زي بعض (الفرق 0 falsy)، قارن بالاسم.
+من ES2019 الـ sort مضمون stable: العناصر المتساوية بتفضل بترتيبها الأصلي، فلو رتّبت بالاسم الأول وبعدين بالسعر، اللي بنفس السعر هيفضلوا مترتبين بالاسم. والأسهل تعمل الاتنين في دالة واحدة بـ [[||]]: لو السعر زي بعض (الفرق 0 falsy)، قارن بالاسم.
 
 الـ mutating methods: [[push]] و [[pop]] و [[shift]] و [[unshift]] و [[splice]] و [[sort]] و [[reverse]] و [[fill]]. والباقي (map و filter و slice و concat و toSorted...) بيرجّعوا جديد. و [[with(i, v)]] نسخة فيها عنصر واحد متغير.
 
@@ -1142,7 +1142,7 @@ li.textContent = "اكتب درس JS";
 list.append(li);
 const userInput = "<img src=x onerror=alert(1)>";
 list.innerHTML += $__bt<li>$__{userInput}</li>$__bt;
-li.remove();`,
+list.querySelector("li").remove();`,
           try: R`اعمل ملف [[index.html]] فيه [[<h1>]] و [[<ul id="todos">]] و [[<script src="app.js" defer>]]، وحط الكود في [[app.js]]، وافتحه بسيرفر محلي (تاب المتصفح). شوف الـ alert بيطلع من السطر الخطر، وبعدين غيّره لـ createElement و textContent وشوفه بيظهر كنص.`,
           flag: "script",
           deep: {
@@ -1172,7 +1172,7 @@ li.remove();`,
             "دخّله في آخر الليستة.",
             "input خبيث من اليوزر.",
             R`[[innerHTML]] نفّذ الـ onerror: ده XSS. متعملش كده.`,
-            "شيل العنصر من الصفحة."
+            R`شيل أول عنصر من الصفحة. ([[li]] القديم مبقاش في الصفحة أصلًا: [[innerHTML +=]] اللي فوق عمل العناصر من جديد.)`
           ]
         },
         {
@@ -1444,7 +1444,7 @@ for (let j = 0; j < 3; j++) {
 for (var k = 0; k < 3; k++) {
   ((n) => setTimeout(() => console.log("iife", n), 0))(k);
 }`,
-          try: R`قبل ما تشغّل، اكتب الناتج اللي متوقعه على ورقة (٩ سطور). شغّل وقارن. وبعدين غيّر الـ [[0]] في أول setTimeout لـ [[1000]]: الناتج اتغير؟ ليه لأ؟`,
+          try: R`قبل ما تشغّل، اكتب الناتج اللي متوقعه على ورقة (٩ سطور). شغّل وقارن. وبعدين غيّر الـ [[0]] في أول setTimeout لـ [[1000]]: سطور var اتأخرت للآخر، بس قيمتها لسه 3 3 3؟ ليه؟`,
           flag: "script",
           deep: {
             why: "السؤال ده بيختبر ٣ حاجات مع بعض: الـ scope بتاع var و let، والـ closures، وإن setTimeout بيشتغل بعد الكود المتزامن (event loop، المستوى ٣). ونفس المشكلة بتحصل في الحقيقة مع event listeners جوه loops.",
@@ -1859,7 +1859,7 @@ export { area as circleArea } from "./math.js";`,
           flag: "script",
           deep: {
             why: "أي مشروع حقيقي عشرات الملفات. الـ modules بتخلي كل ملف مسؤول عن حاجة واحدة، ومتغيراته مش بتتلخبط مع غيره، والـ bundlers (Vite) بيشيلوا الكود اللي محدش عمله import (tree shaking).",
-            how: R`الـ imports بتتقري قبل ما الكود يشتغل (static): لازم تبقى في أول الملف، والـ path لازم string ثابت. ده اللي بيخلي الأدوات تعرف شجرة الملفات كلها وتعمل tree shaking.
+            how: R`الـ imports بتتقري قبل ما الكود يشتغل (static): لازم تبقى في الـ top level (مش جوه if أو function)، وبتتعمل hoisting فبتتحمّل قبل أي سطر حتى لو اتكتبت تحت، والعادة تحطها في أول الملف. والـ path لازم string ثابت. ده اللي بيخلي الأدوات تعرف شجرة الملفات كلها وتعمل tree shaking.
 
 الـ import بيجيب live binding مش نسخة: لو الملف الأصلي غيّر قيمة [[export let count]]، اللي عامل import هيشوف الجديد. ومينفعش تعيّن قيمة للـ import نفسه.
 
@@ -1896,13 +1896,13 @@ import { slug } from "./utils.cjs";
 import { readFile } from "node:fs/promises";
 const pkg = JSON.parse(await readFile(new URL("./package.json", import.meta.url), "utf8"));
 console.log(slug("Hello World"), import.meta.dirname);`,
-          try: R`اعمل الملفين، وشغّل [[node app.mjs]]. وبعدين جرّب في ملف [[.cjs]] تكتب [[import]] واقرا الـ error. وجرّب [[__dirname]] في [[.mjs]] وشوف إنها مش موجودة.`,
+          try: R`اعمل الملفين وجنبهم [[package.json]] (ولو فيه [[{}]] بس، لأن السطر التالت بيقراه)، وشغّل [[node app.mjs]]. وبعدين جرّب في ملف [[.cjs]] تكتب [[import]] واقرا الـ error. وجرّب [[__dirname]] في [[.mjs]] وشوف إنها مش موجودة.`,
           flag: "script",
           deep: {
             why: R`أشهر errors في Node: «Cannot use import statement outside a module» و «require is not defined in ES module scope» و «ERR_REQUIRE_ESM». كلهم من خلط النظامين. لازم تعرف الملف ده بيتعامل كأنهي نوع وليه.`,
             how: R`Node بيقرر نوع الملف كده: [[.mjs]] دايمًا ESM، و [[.cjs]] دايمًا CommonJS، و [[.js]] حسب [["type"]] في أقرب package.json (الافتراضي commonjs). والأحدث من كده إن Node بيحاول يكتشف ESM syntax لوحده في ملفات .js لو مفيش type، بس متعتمدش على ده، اكتب الـ type.
 
-CommonJS: [[require]] دالة عادية بتشتغل وقت التنفيذ (sync)، وممكن تتنادي جوه if، وبترجّع نسخة من [[module.exports]]. وفيه [[__dirname]] و [[__filename]].
+CommonJS: [[require]] دالة عادية بتشتغل وقت التنفيذ (sync)، وممكن تتنادي جوه if، وبترجّع الـ object بتاع [[module.exports]] نفسه (ونفس الـ object من الكاش في كل require)، ولو فكّيته بـ destructuring بتاخد القيم اللي كانت وقتها بس، مش live binding زي ESM. وفيه [[__dirname]] و [[__filename]].
 
 ESM: الـ imports static وبتتحمّل async، وفيه top-level await (زي السطر اللي بيقرا package.json). ومفيش __dirname، بدالها [[import.meta.dirname]] و [[import.meta.filename]] (Node 20.11+) أو [[import.meta.url]].
 
@@ -2239,7 +2239,7 @@ const first = await Promise.any([api("/mirror1"), api("/mirror2")]);`,
           flag: "script",
           deep: {
             why: R`صفحة dashboard بتجيب ٥ حاجات مستقلة: لو عملتهم await ورا بعض، كل طلب 300ms، يبقى 1.5 ثانية. مع Promise.all يبقوا 300ms. ده من أسهل تحسينات الأداء وأكترها تأثير، وسؤال انترفيو مشهور: «اكتب Promise.all بإيدك» (المستوى ٣).`,
-            how: R`الطلبات بتبدأ لحظة ما تنادي الدوال (وانت بتبني الـ array)، مش لما تعمل await. Promise.all بس بتستنى. عشان كده [[const a = api("/a"); const b = api("/b"); await a; await b;]] برضه بيشغّلهم مع بعض.
+            how: R`الطلبات بتبدأ لحظة ما تنادي الدوال (وانت بتبني الـ array)، مش لما تعمل await. Promise.all بس بتستنى. عشان كده [[const a = api("/a"); const b = api("/b"); await a; await b;]] برضه بيشغّلهم مع بعض، بس خطر: لو b اترفض وانت لسه مستني a، الرفض بيبقى unhandled و Node بيقفل البرنامج حتى لو جوه try/catch. فاستخدم Promise.all.
 
 [[all]] بتفشل مع أول rejection (fail-fast)، بس الطلبات التانية مبتتلغيش، بتكمّل ونتايجها بتترمي. لو محتاج تلغيها فعلًا استخدم AbortController (الدرس الجاي).
 
@@ -2362,7 +2362,7 @@ const all = await Array.fromAsync(ids, async (id) => save(id));`,
 
 [[Promise.all(arr.map(...))]] بيبدأ الكل مرة واحدة ويستناهم. أسرع، بس ممكن يضرب rate limit أو connection pool في قاعدة البيانات.
 
-الـ batches حل وسط: كل مرة n بس. و [[Array.fromAsync]] (ES2024) بتعمل array من async iterable أو بتستنى كل عنصر بالترتيب.
+الـ batches حل وسط: كل مرة n بس. و [[Array.fromAsync]] (ES2026، بس موجودة في Node 22 والمتصفحات الحديثة من بدري) بتعمل array من async iterable أو بتستنى كل عنصر بالترتيب.
 
 و [[for await (const x of stream)]] للـ async iterables زي streams وقراية ملف سطر سطر.`,
             when: R`for...of للترتيب أو الاعتمادية. Promise.all للعمليات المستقلة القليلة. batches للكتير. ومتستخدمش forEach مع async أبدًا.`,
@@ -2601,7 +2601,7 @@ throttle بيحفظ وقت آخر تنفيذ، ويتجاهل أي نداء قب
             "خانة البحث.",
             "نسخة debounced من البحث، اتعملت مرة واحدة برا الـ handler.",
             "كل حرف بينادي search، والبحث الحقيقي بعد 300ms من آخر حرف.",
-            R`مرة كل 200ms بالكتير، و [[passive]] عشان الـ scroll يفضل ناعم.`
+            R`مرة كل 200ms بالكتير. و [[passive]] هنا ملوش تأثير فعلي لأن الـ scroll event مش cancelable أصلًا، فايدته الحقيقية مع [[wheel]] و [[touchstart]] و [[touchmove]].`
           ]
         },
         {
@@ -2762,7 +2762,7 @@ cart.emit("add", "cap");`,
 
 في المتصفح [[EventTarget]] جاهز، وأي class يقدر يورث منه ويستخدم [[addEventListener]] و [[dispatchEvent]].`,
             when: "مكونات مستقلة محتاجة تعرف إن حاجة حصلت: إشعارات، و plugins، و WebSocket messages، و state بسيط مشترك. ولو التدفق بقى معقد وصعب تتبّعه، state management واضح أحسن.",
-            mistakes: R`تنسى تلغي الاشتراك فيبقى memory leak (الدرس اللي فات). و handlers كتير بتعدّل نفس الـ state فالترتيب يفرق ومحدش فاهم. وتسمّي الأحداث strings عشوائية: خليها ثوابت. وفي الانترفيو افتكر: on و off و emit و once، وإن on بترجّع unsubscribe.`
+            mistakes: R`تنسى تلغي الاشتراك فيبقى memory leak (درس «memory leaks»). و handlers كتير بتعدّل نفس الـ state فالترتيب يفرق ومحدش فاهم. وتسمّي الأحداث strings عشوائية: خليها ثوابت. وفي الانترفيو افتكر: on و off و emit و once، وإن on بترجّع unsubscribe.`
           },
           lines: [
             "الكلاس.",
@@ -2820,7 +2820,7 @@ frozen.nested.b = 99;            // اتغير: freeze سطحي`,
 
 [[Object.freeze]] بيخلي الخصايص read-only ويمنع الإضافة والمسح، في المستوى الأول بس. في strict mode أي محاولة تعديل بترمي TypeError، وده مفيد في التطوير عشان تمسك التعديلات الغلط.
 
-لما الـ state بتبقى متداخلة جدًا والـ spreads بتكتر، مكتبة Immer بتخليك تكتب كأنك بتعدّل ([[draft.items[0].qty++]]) وهي بتعمل النسخ الـ immutable. و Redux Toolkit و Zustand بيستخدموها.`,
+لما الـ state بتبقى متداخلة جدًا والـ spreads بتكتر، مكتبة Immer بتخليك تكتب كأنك بتعدّل ([[draft.items[0].qty++]]) وهي بتعمل النسخ الـ immutable. و Redux Toolkit بيستخدمها جوّاه (createSlice)، و Zustand عنده middleware اختياري ليها ([[zustand/middleware/immer]]) لازم تسطّب immer وتلف بيه الـ store، ومن غيره لازم تعمل النسخ الـ immutable بنفسك.`,
             when: "أي state في React أو store، وأي داتا مشتركة بين أجزاء كتير من الكود، ودوال utility (خليها pure: متعدّلش مدخلاتها).",
             mistakes: R`[[state.items.push(x); setItems(state.items)]]: نفس الـ reference فمفيش render. وتنسخ المستوى الأول بس وتعدّل جوه: [[{ ...state }.user.name = "x"]] عدّل الأصل. وتعمل deep clone للـ state كلها مع كل تعديل: بطيء وبيكسر المقارنات. وتفتكر إن freeze عميق.`
           },
@@ -3148,7 +3148,7 @@ console.log([3, 20, 100].sort());  // [100, 20, 3]
 console.log(!!"false");            // true
 const obj = { name: "A", get() { return () => this.name; } };
 console.log(obj.get()());          // "A"`,
-          try: R`غطّي التعليقات، واكتب إجابتك لكل سطر، وبعدين شغّل. وضيف ٣ أسئلة من عندك من دروس المستوى ٢ (hoisting و closures في loop و microtasks).`,
+          try: R`غطّي التعليقات، واكتب إجابتك لكل سطر، وبعدين شغّل. وضيف ٣ أسئلة من عندك من الدروس اللي فاتت (hoisting و closures في loop من المستوى ٢، و microtasks من المستوى ٣).`,
           flag: "script",
           deep: {
             why: "الأسئلة دي بتتسأل كـ warm-up، والمقصود مش إنك تكون حافظ، المقصود تشرح القاعدة. الإجابة الصح من غير سبب بتتحسب نص درجة.",
