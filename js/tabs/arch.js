@@ -19,7 +19,7 @@ TAB("arch", {
 git init
 mkdir -p apps/web apps/api docs`,
   labText: "التاب ده بيربط كل التابات التانية: كل درس بيقولك تعمل إيه ومنين تتعلم الأدوات. ابنِ مشروع واحد صغير من أوله لآخره وانت ماشي.",
-  levels: {"1":["التخطيط","الفكرة والمتطلبات، وتصميم الداتا والـ API، وهيكل المشروع"],"2":["الميزات المشهورة","auth، والدفع، ورفع الملفات، و realtime، و i18n، والإشعارات"],"3":["الإنتاج و system design","الأداء، والمراقبة، و scaling، والتكلفة، وأسئلة system design"]},
+  levels: {"1":["التخطيط","الفكرة والمتطلبات، وتصميم الداتا والـ API، وهيكل المشروع"],"2":["الميزات المشهورة","auth وأمان الحساب، والدفع والاشتراكات، ورفع الملفات، و realtime، و i18n، والإشعارات، و multi-tenant SaaS"],"3":["الإنتاج و system design","الأداء، والمراقبة، و scaling، والتكلفة، ومفاهيم الأنظمة الموزعة، وأسئلة system design"]},
   categories: [
     {
       t: "من الفكرة للمتطلبات",
@@ -840,54 +840,790 @@ router.post("/auth/reset", async (req, res) => {
         },
         {
           cmd: "OAuth",
-          title: "الدخول بجوجل باختصار",
-          desc: R`OAuth بيخلي جوجل هي اللي تتأكد من الشخص، وترجّعلك بـ code تبدّله بمعلوماته. اسم الفلو Authorization Code مع PKCE. بتودي المستخدم لجوجل ومعاه [[state]] عشوائي، ويرجع على callback عندك بـ code، والسيرفر يبدّله بـ tokens ويقرا الإيميل. بعد كده بتطلّع التوكنات بتاعتك عادي زي الـ login.
+          title: "الدخول بجوجل: أول خطوة (التحويل لجوجل)",
+          desc: R`OAuth بيخلي جوجل هي اللي تتأكد من الشخص، وترجّعلك بـ code تبدّله بمعلوماته. اسم الفلو Authorization Code مع PKCE، ومعاه OpenID Connect (OIDC) اللي بيضيف [[id_token]]: توكن موقّع من جوجل فيه مين الشخص وإيميله.
 
-في الإنتاج استخدم مكتبة (Auth.js، أو Better Auth، أو Supabase Auth، أو Arctic)، لأن التفاصيل الأمنية كتير. المثال بيوريك أول خطوة عشان تفهم إيه اللي بيحصل ورا المكتبة.`,
+الفلو كله خطوتين. الأولى هنا: بتودي المستخدم لجوجل ومعاه ٣ قيم عشوائية ([[state]] و [[nonce]] و PKCE verifier) محفوظين عندك في cookie. والتانية في الدرس اللي بعده (OAuth callback): جوجل بترجّعه لك بـ code، والسيرفر يبدّله بـ tokens، ويتحقق من الـ id_token، ويدخّله.
+
+في الإنتاج ممكن تستخدم مكتبة (Auth.js، أو Better Auth، أو Supabase Auth، أو Arctic). بس الدرسين دول بيوروك الفلو كامل بالكود، فتقدر تشحن «ادخل بجوجل» شغال، وتفهم إيه اللي بيحصل ورا أي مكتبة.`,
           example: R`router.get("/auth/google", (req, res) => {
   const state = crypto.randomBytes(16).toString("base64url");
+  const nonce = crypto.randomBytes(16).toString("base64url");
   const verifier = crypto.randomBytes(32).toString("base64url");
   const challenge = crypto.createHash("sha256").update(verifier).digest("base64url");
-  res.cookie("oauth", JSON.stringify({ state, verifier }), { httpOnly: true, secure: true, sameSite: "lax", maxAge: 600e3 });
+  res.cookie("oauth", JSON.stringify({ state, nonce, verifier }), { httpOnly: true, secure: true, sameSite: "lax", path: "/auth/google", maxAge: 600e3 });
   const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
   url.search = new URLSearchParams({
     client_id: config.GOOGLE_CLIENT_ID, redirect_uri: $__bt$__{config.API_ORIGIN}/auth/google/callback$__bt,
-    response_type: "code", scope: "openid email profile", state,
+    response_type: "code", scope: "openid email profile", state, nonce,
     code_challenge: challenge, code_challenge_method: "S256",
   }).toString();
   res.redirect(url.toString());
 });`,
-          try: R`اعمل OAuth client في Google Cloud Console بنوع Web، وحط الـ redirect URI بتاع جهازك. افتح [[/auth/google]] ووافق، وشوف الـ URL اللي رجعت عليه: هتلاقي فيه [[code]] و [[state]]. قارن الـ state باللي في الـ cookie.`,
+          try: R`اعمل OAuth client في Google Cloud Console بنوع Web، وحط الـ redirect URI بتاع جهازك ([[http://localhost:4000/auth/google/callback]]). افتح [[/auth/google]] ووافق، وشوف الـ URL اللي رجعت عليه: هتلاقي فيه [[code]] و [[state]]. قارن الـ state باللي في الـ cookie [[oauth]] في DevTools. وبعدين افتح [[/auth/google]] مرتين في تابين، ووافق في التاب الأول بس: إيه اللي بيحصل للـ state؟`,
           flag: "script",
           deep: {
             why: "الدخول بجوجل بيشيل من المستخدم باسورد جديد، وبيشيل منك مسؤولية تخزينه. بس لو اتعمل غلط، أي حد يقدر يدخل على حساب حد تاني. ومعظم الثغرات بتبقى في الـ callback والربط بين الحسابات، مش في جوجل.",
-            how: R`الـ [[state]] بيحمي من CSRF على الـ callback. من غيره، مهاجم يقدر يخلّيك تفتح callback بـ code بتاعه، فتلاقي نفسك داخل على حسابه، وأي حاجة تعملها تروح عنده. عشان كده بيتحط في cookie، ولما المستخدم يرجع لازم يبقى هو هو.
+            how: R`الـ [[state]] بيحمي من CSRF على الـ callback. من غيره، مهاجم يقدر يخلّيك تفتح callback بـ code بتاعه، فتلاقي نفسك داخل على حسابه، وأي حاجة تعملها (تحط كارت، ترفع ملف) تروح عنده. عشان كده بيتحط في cookie، ولما المستخدم يرجع لازم يبقى هو هو.
 
-الـ PKCE: السيرفر بيعمل [[verifier]] سري، ويبعت لجوجل الـ hash بتاعه بس (challenge). لما ييجي يبدّل الـ code بيبعت الـ verifier، وجوجل تتأكد إن الـ hash بتاعه هو هو. كده لو الـ code اتسرب في النص، ميتستخدمش من غير الـ verifier.
+الـ [[nonce]] بيتحط جوه الـ id_token نفسه. جوجل بتاخده منك وترجّعه في الـ claims. في الـ callback بتقارنه باللي في الـ cookie، فلو حد حاول يعيد استخدام id_token قديم (replay) أو يحقن واحد من جلسة تانية، الـ nonce مش هيطابق.
 
-الـ callback بيعمل ٥ خطوات. أولًا يقارن الـ state. تانيًا يعمل POST لـ [[https://oauth2.googleapis.com/token]] بالـ code والـ client secret والـ verifier. تالتًا يتحقق من الـ id_token اللي رجع (التوقيع، و aud، و iss، و exp)، ودي حاجة المكتبة بتعملها. رابعًا يتأكد إن [[email_verified]] بـ true. وخامسًا يدوّر في جدول accounts على [[(provider, providerAccountId)]]: لو موجود يبقى نفس المستخدم، ولو مش موجود يعمل مستخدم جديد أو يربط بحساب موجود.
+الـ PKCE: السيرفر بيعمل [[verifier]] سري، ويبعت لجوجل الـ hash بتاعه بس (challenge). لما ييجي يبدّل الـ code بيبعت الـ verifier، وجوجل تتأكد إن الـ hash بتاعه هو هو. كده لو الـ code اتسرب في النص (لوج، أو extension، أو Referer)، ميتستخدمش من غير الـ verifier.
 
-والربط بالإيميل فيه فخ. تخيل مهاجم عمل حساب بباسورد بإيميلك قبل ما انت تسجل، ومأكدش الإيميل. لو ربطت دخول جوجل بالحساب ده أوتوماتيك، المهاجم بقى عنده باسورد لحسابك. فالربط بيحصل بس لو إيميل الحساب الموجود متأكد.
+الـ cookie عليها [[path: "/auth/google"]] فمبتتبعتش غير للمسارين دول، وعمرها ١٠ دقايق بس. و [[sameSite: "lax"]] مهمة هنا: الرجوع من جوجل هو GET top-level navigation، و lax بتسمح للـ cookie تتبعت فيه. لو خليتها [[strict]] الـ cookie مش هتوصل للـ callback.
 
-وفي تطبيق الموبايل (Capacitor مثلًا)، الـ SDK بيرجّع id_token، والتطبيق بيبعته لـ endpoint زي [[/auth/google/token]]، والسيرفر بيتحقق منه بنفس الطريقة. التفاصيل في تاب «Desktop و Mobile».`,
-            when: "لما يبقى الدخول السهل فارق في التسجيل. وغالبًا بيبقى Could في الـ MVP، مش Must.",
-            mistakes: "إنك تتجاهل الـ state. أو تاخد الإيميل من الـ client وتصدّقه، بدل ما تتحقق من الـ id_token على السيرفر. أو تربط بحساب موجود من غير ما تتأكد إن الإيميل متأكد. أو تحط الـ client secret في تطبيق موبايل أو في الواجهة. أو redirect_uri مفتوح بياخد أي URL."
+الـ [[scope]]: [[openid]] هو اللي بيخلي جوجل ترجّع id_token، و [[email profile]] بيضيفوا الإيميل والاسم والصورة. متطلبش صلاحيات زيادة (Drive، أو Calendar) غير لو الميزة محتاجاها فعلًا، لأن كل scope حساس بيحتاج مراجعة من جوجل وبيخوّف المستخدم في شاشة الموافقة.`,
+            when: "لما يبقى الدخول السهل فارق في التسجيل. وغالبًا بيبقى Could في الـ MVP، مش Must. ولو بتضيفه، اضيف معاه الـ callback والربط كاملين من أول يوم.",
+            mistakes: "إنك تتجاهل الـ state أو تقارنه بقيمة ثابتة. أو تحط الـ verifier في الـ URL بدل cookie. أو تنسى الـ nonce وتقبل أي id_token سليم التوقيع. أو تاخد الإيميل من الـ client وتصدّقه. أو تحط الـ client secret في تطبيق موبايل أو في الواجهة. أو redirect_uri مفتوح بياخد أي URL. وسؤال انترفيو مشهور: «state و nonce و PKCE كلهم عشوائي، ليه التلاتة؟» الإجابة: state ضد CSRF على الـ callback، و nonce بيربط الـ id_token بالجلسة دي، و PKCE بيحمي الـ code لو اتسرب."
           },
           lines: [
             "المسار اللي زرار «ادخل بجوجل» بيودّي عليه.",
             "state عشوائي ضد CSRF.",
-            "verifier سري، مبيروحش لجوجل غير وقت التبديل. ولحد وقتها بيستنى في cookie httpOnly (بعد سطرين)، مش في الـ URL.",
+            "nonce عشوائي، جوجل هترجّعه جوه الـ id_token.",
+            "verifier سري، مبيروحش لجوجل غير وقت التبديل. ولحد وقتها بيستنى في cookie httpOnly، مش في الـ URL.",
             "الـ challenge هو sha256 للـ verifier. ده اللي بيروح لجوجل.",
-            "خزّن الاتنين في cookie عمرها ١٠ دقايق، عشان نقارنهم في الـ callback.",
+            "خزّن التلاتة في cookie عمرها ١٠ دقايق، ومبتتبعتش غير لمسارات جوجل.",
             "عنوان صفحة الموافقة بتاعة جوجل.",
             "الـ parameters:",
             "رقم التطبيق عند جوجل، والمكان اللي هيرجع عليه (لازم يبقى متسجّل عندهم بالظبط).",
-            "عايزين code، وصلاحيات الهوية والإيميل والاسم بس، والـ state.",
+            "عايزين code، وصلاحيات الهوية والإيميل والاسم بس، والـ state والـ nonce.",
             "الـ challenge ونوعه.",
             "قفلة الـ parameters.",
             "ودّي المستخدم لجوجل.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد الموافقة هترجع على [[/auth/google/callback?state=...&code=4/0A...&scope=email+profile+openid...]]. الـ [[state]] في الـ URL لازم يطابق حرف بحرف اللي جوه الـ cookie [[oauth]]. لو الـ callback لسه مش معمول هتشوف 404، وده طبيعي، المهم الـ URL.
+
+لو فتحت [[/auth/google]] في تابين: التاب التاني بيكتب cookie جديدة فوق الأولى. فلو وافقت في التاب الأول، الـ state اللي راجع مش هيطابق الـ cookie، والـ callback الصح لازم يرفض (OAUTH_STATE). ده سلوك مقبول: المستخدم يضغط «ادخل بجوجل» تاني.
+
+لو جوجل رجّعت [[redirect_uri_mismatch]] يبقى الـ URI في الكود مش مطابق حرف بحرف للي متسجل في الـ Console (http مقابل https، أو slash في الآخر، أو port مختلف).`
+        },
+        {
+          cmd: "OAuth callback",
+          title: "الدخول بجوجل: الـ callback والتحقق من الـ id_token",
+          desc: R`الـ callback هو أهم جزء في «ادخل بجوجل». بيعمل ٥ حاجات بالترتيب: يقارن الـ state بالـ cookie، ويبدّل الـ code بـ tokens من [[https://oauth2.googleapis.com/token]]، ويتحقق من الـ [[id_token]] (توقيعه بمفاتيح جوجل العامة JWKS، و [[iss]] و [[aud]] و [[exp]])، ويقارن الـ [[nonce]]، ويتأكد إن [[email_verified]] بـ true. وبعدين بيدوّر على المستخدم أو يعمله، ويفتح session عادية زي الـ login.
+
+التحقق بمكتبة [[jose]]: [[createRemoteJWKSet]] بتجيب مفاتيح جوجل وتكاشها، و [[jwtVerify]] بتتحقق من التوقيع والـ claims في سطر واحد.`,
+          example: R`import { createRemoteJWKSet, jwtVerify } from "jose";
+
+const GOOGLE_JWKS = createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"));
+
+router.get("/auth/google/callback", async (req, res) => {
+  const saved = JSON.parse(req.cookies.oauth ?? "{}");
+  res.clearCookie("oauth", { path: "/auth/google" });
+  if (!req.query.code || !saved.state || req.query.state !== saved.state) throw new AppError(400, "OAUTH_STATE", "ابدأ الدخول بجوجل من الأول");
+  const r = await fetch("https://oauth2.googleapis.com/token", { method: "POST", body: new URLSearchParams({
+    grant_type: "authorization_code", code: String(req.query.code), code_verifier: saved.verifier,
+    client_id: config.GOOGLE_CLIENT_ID, client_secret: config.GOOGLE_CLIENT_SECRET, redirect_uri: $__bt$__{config.API_ORIGIN}/auth/google/callback$__bt,
+  }) });
+  if (!r.ok) throw new AppError(401, "OAUTH_EXCHANGE", "جوجل رفضت الكود، جرّب تاني");
+  const { id_token } = await r.json();
+  const { payload } = await jwtVerify(id_token, GOOGLE_JWKS, { issuer: ["https://accounts.google.com", "accounts.google.com"], audience: config.GOOGLE_CLIENT_ID })
+    .catch(() => { throw new AppError(401, "OAUTH_TOKEN", "مش قادرين نتأكد من جوجل"); });
+  if (payload.nonce !== saved.nonce) throw new AppError(401, "OAUTH_NONCE", "ابدأ الدخول بجوجل من الأول");
+  if (payload.email_verified !== true) throw new AppError(403, "EMAIL_NOT_VERIFIED", "أكّد إيميلك عند جوجل الأول");
+  const user = await linkOrCreate("google", payload);
+  await createSession(res, user);
+  res.redirect($__bt$__{config.WEB_ORIGIN}/courses$__bt);
+});`,
+          try: R`كمّل الدرس اللي فات: ادخل بجوجل لحد ما توصل لـ [[/courses]] وتلاقي cookie [[rt]]. بعدين اختبر الرفض من غير جوجل: اعمل مفتاح RSA بـ [[generateKeyPair("RS256")]] من jose، وسيرفر صغير بيقدّم JWKS، ووقّع id_tokens بـ [[SignJWT]]: واحد aud بتاعه غلط، وواحد منتهي، وواحد متوقّع بمفتاح تاني، وواحد nonce بتاعه غلط، وواحد [[email_verified: false]]. لكل واحد اكتب الكود اللي المفروض يرجع.`,
+          flag: "script",
+          deep: {
+            why: "الـ id_token هو الدليل الوحيد إن جوجل هي اللي قالت «ده فلان». لو قريته من غير ما تتحقق (jwt.decode)، أي حد يقدر يكتب JSON فيه إيميلك ويدخل على حسابك. ولو اتحققت من التوقيع بس من غير aud، أي id_token طالع لتطبيق تاني خالص (موقع مهاجم عامل «ادخل بجوجل») يدخل عندك.",
+            how: R`[[createRemoteJWKSet]] بتعمل resolver: أول مرة بتجيب مفاتيح جوجل العامة من الـ URL، وبتكاشها (١٠ دقايق افتراضيًا). كل id_token فيه [[kid]] في الـ header بيقول اتوقّع بأنهي مفتاح. جوجل بتغيّر مفاتيحها كل فترة (key rotation)، فلو جه kid مش في الكاش، المكتبة بتجيب المفاتيح تاني لوحدها، مع cooldown ٣٠ ثانية عشان محدش يغرقك بطلبات. عشان كده الـ resolver بيتعمل مرة واحدة برّه الـ route، مش مع كل طلب.
+
+[[jwtVerify]] بتعمل ٤ فحوصات: التوقيع (RS256) بالمفتاح الصح، و [[iss]] (جوجل بتستخدم الشكلين، بـ https ومن غيرها، فبنقبل الاتنين)، و [[aud]] لازم يبقى الـ client id بتاعك بالظبط، و [[exp]] مخلصش. أي فحص يفشل بيرمي error، واحنا بنحوّله 401 من غير ما نفضح السبب للمستخدم.
+
+الـ nonce: قيمته في الـ id_token لازم تساوي اللي في الـ cookie. كده الـ id_token ده اتعمل للجلسة دي بالذات.
+
+[[email_verified]]: جوجل بترجّعه true لحسابات Gmail، ولحسابات Workspace. بس لو حد عمل حساب جوجل بإيميل Yahoo مثلًا ومأكدوش، هيبقى false. لو قبلته، حد يقدر يعمل حساب جوجل بإيميلك انت ويدخل على حسابك عندك.
+
+الـ [[sub]] هو رقم الشخص عند جوجل، وده اللي بتربط بيه، مش الإيميل. الإيميل ممكن يتغيّر، والـ sub ثابت للأبد.
+
+[[createSession]] هي نفس جزء الـ session والـ cookie من الـ login، من غير الـ JSON. بعد الـ redirect، الواجهة بتعمل أول طلب، ترجع 401، و [[apiFetch]] بتعمل refresh من الـ cookie وتاخد access token. يعني مفيش أي توكن بيعدّي في الـ URL.
+
+والـ refresh_token بتاع جوجل: مش محتاجه طالما انت بتستخدم جوجل للدخول بس. محتاجه لو هتكلّم Google APIs نيابة عن المستخدم، وساعتها بيتطلب بـ [[access_type=offline]] ويتخزن مشفّر.`,
+            when: "مع أي «ادخل بـ ...» (جوجل، أو Apple، أو Microsoft، أو GitHub). الخطوات هي هي في كل مزوّد OIDC، اللي بيتغير الـ URLs والـ issuer. GitHub مش OIDC للدخول العادي، فمفيش id_token، وبتجيب الإيميل من [[/user/emails]] وتبص على [[verified]].",
+            mistakes: R`[[jwt.decode]] بدل verify. أو verify من غير [[audience]]. أو تثق في [[email]] من غير [[email_verified]]. أو تربط بالإيميل بدل الـ sub. أو تعمل [[createRemoteJWKSet]] جوه الـ route فتجيب المفاتيح مع كل دخول. أو تحط الـ access token بتاعك في الـ redirect URL ([[/courses?token=...]])، فيتسجل في التاريخ واللوجات. أو تنسى [[clearCookie]] بنفس الـ path فالـ cookie القديمة تفضل. وفي الانترفيو: «إيه الفرق بين access_token و id_token بتوع جوجل؟» الـ id_token ليك انت (مين الشخص)، والـ access_token لـ Google APIs (يعمل إيه)، ومتستخدمش الـ access_token كإثبات هوية.`
+          },
+          lines: [
+            "مكتبة jose للتحقق من الـ JWT.",
+            "مفاتيح جوجل العامة. الـ resolver بيكاشها ويجيبها تاني لو جوجل غيّرتها.",
+            "الـ callback اللي جوجل بترجّع عليه.",
+            "اقرا الـ state والـ nonce والـ verifier من الـ cookie.",
+            "امسحها على طول بنفس الـ path. هي تنفع مرة واحدة.",
+            "مفيش code، أو الـ state مش هو؟ ارفض. ده الـ CSRF.",
+            "بدّل الـ code بـ tokens من سيرفر لسيرفر:",
+            "الـ code، والـ verifier بتاع PKCE...",
+            "...والـ client secret (على السيرفر بس)، ونفس الـ redirect_uri بالظبط.",
+            "قفلة الطلب.",
+            "جوجل رفضت (الـ code مستخدم قبل كده أو خلص)؟ ارفض.",
+            "خد الـ id_token من الرد.",
+            "اتحقق من التوقيع والـ issuer والـ audience والانتهاء مرة واحدة...",
+            "...وأي فشل يبقى 401 بكود ثابت.",
+            "الـ nonce لازم يطابق اللي بعتناه.",
+            "الإيميل لازم يكون متأكد عند جوجل.",
+            "دوّر على المستخدم بالـ sub أو اعمله (الدرس الجاي).",
+            "افتح session: refresh token في cookie، زي الـ login.",
+            "رجّعه للواجهة. أول طلب هناك هيعمل refresh وياخد access token.",
+            "قفلة."
+          ],
+          sol: R`النتايج المتوقعة لكل id_token مزيف: aud غلط، أو منتهي، أو متوقّع بمفتاح تاني، التلاتة بيرجعوا [[401 OAUTH_TOKEN]]. الـ nonce الغلط بيرجع [[401 OAUTH_NONCE]]. و [[email_verified: false]] بيرجع [[403 EMAIL_NOT_VERIFIED]]. والسليم بيرجع 302 على [[/courses]] ومعاه [[Set-Cookie: rt=...]].
+
+عشان تختبر من غير جوجل، خلي عنوان الـ token والـ JWKS في config، وفي الاختبار شاورهم على سيرفر محلي. الـ solCode تحت هو السيرفر المزيف وتوقيع التوكن.
+
+الغلطة الشائعة: تلاقي المزيف بمفتاح تاني بيعدّي. ده معناه إنك بتستخدم [[decodeJwt]] أو [[jwt.decode]] مش [[jwtVerify]]. ولو الـ aud الغلط عدّى، يبقى نسيت [[audience]] في الـ options.`,
+          solCode: R`import http from "node:http";
+import { generateKeyPair, exportJWK, SignJWT } from "jose";
+
+const { publicKey, privateKey } = await generateKeyPair("RS256");
+const jwk = { ...(await exportJWK(publicKey)), kid: "k1", alg: "RS256", use: "sig" };
+let nextIdToken = "";
+http.createServer((req, res) => {
+  res.setHeader("content-type", "application/json");
+  if (req.url === "/certs") return res.end(JSON.stringify({ keys: [jwk] }));
+  if (req.url === "/token") return res.end(JSON.stringify({ id_token: nextIdToken }));
+  res.statusCode = 404; res.end();
+}).listen(9999);
+
+export async function fakeIdToken(claims = {}, key = privateKey) {
+  nextIdToken = await new SignJWT({ email: "mona@gmail.com", email_verified: true, nonce: claims.nonce, ...claims })
+    .setProtectedHeader({ alg: "RS256", kid: "k1" })
+    .setIssuer("https://accounts.google.com")
+    .setAudience(claims.aud ?? config.GOOGLE_CLIENT_ID)
+    .setSubject(claims.sub ?? "g-111")
+    .setIssuedAt()
+    .setExpirationTime(claims.exp ?? "1h")
+    .sign(key);
+}`
+        },
+        {
+          cmd: "ربط الحسابات",
+          title: "جدول accounts: نفس الشخص بباسورد وبجوجل",
+          desc: R`المستخدم ممكن يدخل بأكتر من طريقة: باسورد، وجوجل، و Apple. عشان كده طرق الدخول بتتخزن في جدول [[accounts]] لوحده، مش في جدول users. كل صف فيه [[(provider, providerAccountId)]] و [[userId]]، والمفتاح الأساسي هو الاتنين الأولانيين مع بعض.
+
+[[linkOrCreate]] بتدوّر بالـ [[sub]] الأول. لو لقته، يبقى نفس المستخدم. لو ملقتهوش، بتدوّر بالإيميل: لو فيه مستخدم بالإيميل ده وإيميله متأكد، بتربط جوجل بيه. ولو مش متأكد، بترفض وتطلب منه يدخل بالباسورد ويربط من الإعدادات. ولو مفيش، بتعمل مستخدم جديد إيميله متأكد، ومن غير باسورد.`,
+          example: R`model Account {
+  provider          String
+  providerAccountId String
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+export async function linkOrCreate(provider, p) {
+  return db.$transaction(async (t) => {
+    const acc = await t.account.findUnique({ where: { provider_providerAccountId: { provider, providerAccountId: p.sub } }, include: { user: true } });
+    if (acc) return acc.user;
+    const email = p.email.toLowerCase();
+    const existing = await t.user.findUnique({ where: { email } });
+    if (existing && !existing.emailVerifiedAt) throw new AppError(409, "LINK_NEEDS_LOGIN", "فيه حساب بالإيميل ده. ادخل بالباسورد واربط جوجل من الإعدادات");
+    const user = existing ?? (await t.user.create({ data: { email, name: p.name ?? email, emailVerifiedAt: new Date() } }));
+    await t.account.create({ data: { provider, providerAccountId: p.sub, userId: user.id } });
+    return user;
+  });
+}`,
+          try: R`جرّب ٤ سيناريوهات: (١) أول دخول بجوجل بإيميل جديد، (٢) نفس الشخص تاني، (٣) مستخدم عمل حساب بباسورد بنفس إيميل جوجل ومأكدش إيميله، (٤) نفس الحالة بعد ما أكّد. بعد كل واحد عد الصفوف في users و accounts. وبعدين اكتب endpoint [[POST /me/accounts/google]] للربط من الإعدادات: المستخدم داخل بالفعل، ويعدّي على نفس فلو جوجل.`,
+          flag: "script",
+          deep: {
+            why: "من غير جدول accounts، الناس بتعمل حسابين لنفس الشخص (واحد بالباسورد وواحد بجوجل)، وكورساته تتقسم بينهم. ومن غير قواعد ربط صح، الربط نفسه بيبقى ثغرة استيلاء على حسابات (account takeover).",
+            how: R`الفخ اللي الكود ده بيقفله اسمه pre-account takeover. مهاجم بيعمل حساب بباسورد بإيميلك قبل ما انت تسجّل، ومبيأكدوش (معندوش إيميلك). بعدين انت بتيجي تدخل بجوجل بنفس الإيميل. لو السيستم ربط جوجل بالحساب الموجود أوتوماتيك، انت بقيت بتستخدم حساب المهاجم عارف الباسورد بتاعه، وكل حاجة تشتريها أو ترفعها هو شايفها. عشان كده الربط بالإيميل بيحصل بس لو الحساب الموجود إيميله متأكد، وإلا الرد 409 ويدخل بالباسورد الأول.
+
+والعكس: مستخدم دخل بجوجل ومعندوش باسورد ([[passwordHash]] بـ null)، وبعدين عايز يدخل بالإيميل والباسورد. هنا «نسيت الباسورد» هي اللي بتعمله باسورد، لأنها بتثبت إنه صاحب الإيميل. والـ login لازم يتعامل مع [[passwordHash]] بـ null (الـ DUMMY_HASH بيغطيها).
+
+الـ transaction بتمنع سباق: لو طلبين callback لنفس الشخص وصلوا مع بعض، التاني هيخبط في الـ primary key ([[P2002]]) بدل ما يعمل مستخدمين. وال error handler بيحوّلها 409، والمستخدم يعيد.
+
+فك الربط ([[DELETE /me/accounts/google]]): ممنوع لو دي آخر طريقة دخول عنده (مفيش باسورد ولا provider تاني)، وإلا الحساب يتقفل عليه. واعمله بـ step-up auth، واتبعت إيميل.
+
+الإيميل في users هو إيميل التواصل، والـ sub في accounts هو الهوية. لو المستخدم غيّر إيميله عند جوجل، الدخول لسه شغال بالـ sub، ومش لازم تغيّر إيميله عندك.`,
+            when: "أول ما يبقى عندك أكتر من طريقة دخول. حتى لو جوجل بس دلوقتي، اعمل الجدول من الأول، عشان Apple مطلوبة في iOS لو فيه دخول بطرف تالت.",
+            mistakes: R`عمود [[googleId]] في جدول users، وبعدين [[appleId]] و [[githubId]]. أو ربط أوتوماتيك بالإيميل من غير ما تتأكد إنه متأكد في الناحيتين. أو [[provider]] بحروف مختلفة ([[Google]] و [[google]]) فيتعمل حسابين. أو تسمح بفك آخر طريقة دخول. وفي الانترفيو: «إيه هو pre-account takeover وإزاي تمنعه؟» بالظبط الحالة اللي فوق.`
+          },
+          lines: [
+            "جدول طرق الدخول.",
+            "اسم المزوّد: google أو apple...",
+            "رقم الشخص عند المزوّد (الـ sub). ثابت حتى لو إيميله اتغيّر.",
+            "صاحب الحساب عندنا.",
+            "العلاقة، ولو المستخدم اتمسح طرق دخوله تتمسح.",
+            "إمتى اتربط.",
+            "المفتاح الأساسي: نفس الـ sub عند نفس المزوّد مرة واحدة بس.",
+            "index عشان تجيب طرق دخول مستخدم بسرعة.",
+            "قفلة.",
+            "الدالة اللي الـ callback بيناديها بعد التحقق.",
+            "كله في transaction واحدة.",
+            "دوّر بالـ sub الأول.",
+            "لقيته؟ ده هو.",
+            "مفيش؟ خد الإيميل small.",
+            "فيه حساب بالإيميل ده؟",
+            "لو إيميله مش متأكد، متربطش. ده بيمنع الاستيلاء على الحساب.",
+            "استخدم الموجود (متأكد)، أو اعمل جديد إيميله متأكد (جوجل أكدته) ومن غير باسورد.",
+            "سجّل طريقة الدخول دي.",
+            "رجّع المستخدم.",
+            "قفلة الـ transaction.",
+            "قفلة."
+          ],
+          sol: R`العدد المتوقع بعد كل سيناريو: (١) user واحد جديد و account واحد، و [[emailVerifiedAt]] متعبي و [[passwordHash]] بـ null. (٢) مفيش أي صف جديد، ونفس الـ user. (٣) الرد [[409 LINK_NEEDS_LOGIN]] ومفيش account جديد. (٤) account جديد مربوط بالـ user القديم، ومفيش user جديد.
+
+endpoint الربط من الإعدادات: بيحط [[linkUserId]] في الـ cookie بتاعة OAuth مع الـ state، والـ callback لو لقى [[linkUserId]] بيعمل [[account.create]] للمستخدم ده مباشرة بدل [[linkOrCreate]]. ولو الـ sub مربوط بمستخدم تاني، يرجع 409 ومينقلوش. وده لازم يعدّي على step-up auth.
+
+الغلطة الشائعة في (٣): الكود يربط ويكمّل، فالمهاجم اللي عمل الحساب الأول يفضل عارف الباسورد.`
+        }
+      ]
+    },
+    {
+      t: "أمان الحساب",
+      l: 2,
+      n: "تأكيد الإيميل، و 2FA بـ TOTP و recovery codes، و step-up auth، وتغيير الإيميل والباسورد، و CAPTCHA و lockout، و passkeys",
+      items: [
+        {
+          cmd: "تأكيد الإيميل",
+          title: "لينك تأكيد الإيميل: بينتهي، ويتبعت تاني بحد",
+          desc: R`تأكيد الإيميل نفس فكرة «نسيت الباسورد»: token عشوائي، ومتخزن الـ hash بتاعه بس، وليه مدة (٢٤ ساعة هنا). الفرق في ٣ حاجات: الصف بيحفظ الإيميل اللي اتبعت له اللينك، وإعادة الإرسال ليها حد (٣ في الساعة)، والتأكيد بيحصل بـ POST مش بمجرد فتح اللينك.
+
+جدول واحد [[EmailToken]] بعمود [[purpose]] بيخدم التأكيد وتغيير الإيميل. والمستخدم يقدر يدخل قبل ما يأكد، بس الحاجات المهمة (الشراء، أو دعوة ناس، أو ربط حساب) بتستنى [[emailVerifiedAt]].`,
+          example: R`router.post("/auth/verify-email/send", requireAuth, async (req, res) => {
+  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
+  if (user.emailVerifiedAt) return res.status(204).end();
+  const recent = await db.emailToken.count({ where: { userId: user.id, purpose: "VERIFY", createdAt: { gt: new Date(Date.now() - 3600e3) } } });
+  if (recent >= 3) throw new AppError(429, "TOO_MANY_EMAILS", "بعتنالك كذا إيميل. استنى ساعة وجرّب تاني");
+  const token = crypto.randomBytes(32).toString("base64url");
+  await db.emailToken.create({ data: { userId: user.id, purpose: "VERIFY", email: user.email, tokenHash: sha256(token), expiresAt: new Date(Date.now() + 24 * 3600e3) } });
+  await emailQueue.add("verify-email", { to: user.email, link: $__bt$__{config.WEB_ORIGIN}/verify-email?token=$__{token}$__bt });
+  res.status(202).end();
+});
+router.post("/auth/verify-email", async (req, res) => {
+  const row = await db.emailToken.findUnique({ where: { tokenHash: sha256(String(req.body.token)) } });
+  if (!row || row.purpose !== "VERIFY" || row.usedAt || row.expiresAt < new Date()) throw new AppError(400, "BAD_TOKEN", "اللينك انتهى، اطلب واحد جديد");
+  const [, { count }] = await db.$transaction([
+    db.emailToken.updateMany({ where: { userId: row.userId, purpose: "VERIFY", usedAt: null }, data: { usedAt: new Date() } }),
+    db.user.updateMany({ where: { id: row.userId, email: row.email }, data: { emailVerifiedAt: new Date() } }),
+  ]);
+  if (count === 0) throw new AppError(400, "EMAIL_CHANGED", "الإيميل اتغير بعد اللينك ده");
+  res.status(204).end();
+});`,
+          try: R`اطلب لينك التأكيد ٤ مرات ورا بعض: الرابع لازم يرجع 429. بعدين أكّد بأول لينك، وجرّب تاني لينك بعده. وآخر تجربة: اطلب لينك، وغيّر إيميل المستخدم في القاعدة بإيدك، وافتح اللينك القديم.`,
+          flag: "script",
+          deep: {
+            why: "من غير تأكيد، أي حد يسجّل بإيميل مش بتاعه: يبعت منه دعوات، أو يربطه بحساب جوجل (الدرس «ربط الحسابات»)، أو إيميلاتك تروح لحد تاني وتبوظ سمعة الدومين عند مزوّد الإيميل. ومن غير حد لإعادة الإرسال، زرار «ابعت تاني» بيبقى أداة spam مجانية بإسمك.",
+            how: R`عمود [[email]] في صف التوكن هو أهم تفصيلة. تخيل: المستخدم سجّل بإيميل غلط، وطلب لينك، وبعدين غيّر إيميله. لو اللينك القديم اتفتح، مش المفروض يأكد الإيميل الجديد. عشان كده التأكيد بيحصل بـ [[updateMany]] بشرط [[email: row.email]]، ولو count بـ 0 يبقى الإيميل اتغيّر.
+
+الـ [[updateMany]] على كل توكنات VERIFY المفتوحة بيقفل كل اللينكات القديمة مرة واحدة، فمفيش لينك تاني يشتغل بعد التأكيد.
+
+ليه POST مش GET؟ برامج فحص الإيميل في الشركات (Outlook Safe Links مثلًا) بتفتح كل لينك في الرسالة أوتوماتيك. لو الـ GET بيأكد، الإيميل بيتأكد من غير ما البني آدم يشوفه، وأسوأ من كده في لينكات الدخول: التوكن بيتحرق قبل ما المستخدم يضغط. فاللينك بيفتح صفحة في الواجهة، والصفحة بتبعت التوكن بـ POST (أوتوماتيك أو بزرار «أكّد»).
+
+الحد: ٣ في الساعة لكل مستخدم، محسوبين من الجدول نفسه، من غير Redis. وفوقه rate limit بالـ IP على المسار. والـ 202 معناها «استلمنا وهيتبعت»، لأن الإيميل بيروح queue.
+
+المدة: ٢٤ ساعة معقولة للتأكيد، لأن الناس بتسجّل وتفتح الإيميل بعدين. أما لينكات الدخول أو الاستعادة فأقصر بكتير.`,
+            when: "في أي منتج فيه تسجيل بإيميل. وفي الـ MVP ممكن تسيبه يدخل ويتفرج، وتقفل الشراء والدعوات لحد ما يأكد.",
+            mistakes: R`التأكيد بـ GET. أو لينك من غير انتهاء. أو التوكن متخزن زي ما هو. أو «ابعت تاني» من غير حد. أو تأكيد الإيميل الجديد بلينك اتبعت للقديم. أو إنك تمنع الدخول خالص قبل التأكيد، والإيميل واقع في spam، فالمستخدم مش قادر يعمل حاجة ولا يغيّر إيميله الغلط.`
+          },
+          lines: [
+            "ابعت لينك تأكيد. لازم يكون داخل.",
+            "هات المستخدم.",
+            "متأكد بالفعل؟ مفيش حاجة تتعمل.",
+            "عد الإيميلات اللي اتبعتت له في آخر ساعة، من نفس الجدول.",
+            "٣ أو أكتر؟ ارفض بـ 429.",
+            "توكن عشوائي ٣٢ بايت.",
+            "خزّن الـ hash، والإيميل اللي بنأكده، ومدة ٢٤ ساعة.",
+            "حط الإيميل في الـ queue. اللينك بيفتح صفحة في الواجهة، مش الـ API.",
+            "202: اتقبل وهيتبعت.",
+            "قفلة.",
+            "التأكيد نفسه، بـ POST من صفحة الواجهة.",
+            "دوّر على التوكن بالـ hash.",
+            "مش موجود، أو نوعه غلط، أو اتستخدم، أو خلص؟ ارفض.",
+            "في transaction واحدة:",
+            "اقفل كل لينكات التأكيد المفتوحة للمستخدم ده...",
+            "...وأكّد، بشرط إن الإيميل لسه هو نفس اللي في اللينك.",
+            "قفلة الـ transaction.",
+            "لو محدش اتأكد، يبقى الإيميل اتغيّر.",
+            "تمام.",
+            "قفلة."
+          ],
+          sol: R`الطلبات الـ ٣ الأولى ترجع 202، والرابع يرجع [[429 TOO_MANY_EMAILS]]. أول لينك يرجع 204، و [[emailVerifiedAt]] يتملى. أي لينك تاني بعده يرجع [[400 BAD_TOKEN]]، لأن [[updateMany]] علّمت عليهم كلهم [[usedAt]].
+
+لو غيّرت الإيميل في القاعدة وفتحت لينك قديم: الرد [[400 EMAIL_CHANGED]]، وفي نفس الوقت التوكن اتعلّم إنه مستخدم (لأن الـ transaction خلصت). ده مقبول: المستخدم يطلب لينك للإيميل الجديد.
+
+لو التأكيد عدّى في الحالة دي، يبقى بتحدّث بـ [[update({ where: { id } })]] من غير شرط الإيميل.`
+        },
+        {
+          cmd: "2FA: التفعيل",
+          title: "2FA بـ TOTP: السر والـ QR والتفعيل",
+          desc: R`الـ TOTP هو الأرقام الـ ٦ اللي بتتغيّر كل ٣٠ ثانية في Google Authenticator أو 1Password أو Authy. السيرفر والموبايل عندهم نفس السر، وكل واحد بيحسب الكود من السر والوقت الحالي، فمش محتاجين يكلموا بعض.
+
+التفعيل خطوتين. الأولى: السيرفر بيعمل سر عشوائي، ويخزنه مشفّر، ويرجّع QR فيه [[otpauth://]] URI. والتانية: المستخدم بيمسح الـ QR ويكتب الكود، والسيرفر بيتأكد إنه صح قبل ما يشغّل الـ 2FA، ويرجّع recovery codes مرة واحدة. المكتبة [[otplib]] (نسخة 13 وما بعدها، الـ API فيها functions و async).`,
+          example: R`import { generateSecret, generateURI, verify } from "otplib";
+import QRCode from "qrcode";
+
+router.post("/me/2fa/setup", requireAuth, requireRecentAuth(), async (req, res) => {
+  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
+  if (user.totpEnabledAt) throw new AppError(409, "MFA_ALREADY_ON", "الـ 2FA شغالة بالفعل");
+  const secret = generateSecret();
+  await db.user.update({ where: { id: user.id }, data: { totpSecretEnc: encrypt(secret) } });
+  const uri = generateURI({ issuer: "myapp", label: user.email, secret });
+  res.json({ data: { qr: await QRCode.toDataURL(uri), secret } });
+});
+router.post("/me/2fa/enable", requireAuth, async (req, res) => {
+  const { code } = z.object({ code: z.string().regex(/^\d{6}$/) }).parse(req.body);
+  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
+  if (!user.totpSecretEnc || user.totpEnabledAt) throw new AppError(409, "NO_PENDING_SETUP", "ابدأ التفعيل من الأول");
+  const r = await verify({ secret: decrypt(user.totpSecretEnc), token: code, epochTolerance: 30 });
+  if (!r.valid) throw new AppError(400, "BAD_CODE", "الكود غلط. اتأكد إن ساعة الموبايل مظبوطة");
+  const codes = Array.from({ length: 10 }, () => crypto.randomBytes(5).toString("hex"));
+  await db.$transaction([
+    db.user.update({ where: { id: user.id }, data: { totpEnabledAt: new Date(), totpLastStep: r.timeStep } }),
+    db.recoveryCode.deleteMany({ where: { userId: user.id } }),
+    db.recoveryCode.createMany({ data: codes.map((c) => ({ userId: user.id, codeHash: sha256(c) })) }),
+  ]);
+  res.json({ data: { recoveryCodes: codes } });
+});`,
+          try: R`اكتب [[lib/crypto.js]] فيه [[encrypt(text)]] و [[decrypt(box)]] بـ AES-256-GCM ومفتاح ٣٢ بايت من [[config.TOTP_ENC_KEY]] (base64). اتأكد إن نفس النص بيتشفّر لنتيجتين مختلفتين، وإن تغيير حرف واحد في الناتج بيخلي decrypt ترمي error. بعدين فعّل الـ 2FA لحسابك وامسح الـ QR بتطبيق حقيقي.`,
+          flag: "script",
+          deep: {
+            why: "الباسوردات بتتسرق كل يوم: تسريبات مواقع تانية، و phishing، وناس بتكرر نفس الباسورد. الـ 2FA بيخلي الباسورد لوحده مش كفاية. ولوحة الأدمن بالذات لازم يبقى عليها 2FA إجباري، لأن حساب أدمن واحد مسروق يكشف كل حاجة.",
+            how: R`الـ TOTP (RFC 6238): الكود = HMAC للسر مع رقم الفترة الحالية ([[floor(unixTime / 30)]])، ومنه ٦ أرقام. عشان كده ساعة الموبايل لازم تبقى مظبوطة.
+
+الـ [[epochTolerance: 30]] هي الـ drift window: بتقبل كود الفترة اللي فاتت واللي جاية (٣٠ ثانية في كل ناحية). ليه؟ المستخدم كتب الكود في آخر ثانية وقبل ما يوصل خلص، أو ساعة الموبايل متأخرة شوية. أكبر من كده بيوسّع فرصة التخمين من غير فايدة كبيرة.
+
+[[verify]] في otplib 13 بترجّع object مش boolean: [[valid]]، و [[delta]] (بعيد كام فترة)، و [[timeStep]] (رقم الفترة اللي الكود طابقها). الـ timeStep بنخزنه في [[totpLastStep]] عشان الدرس الجاي يمنع إعادة استخدام نفس الكود.
+
+السر متخزن مشفّر (encryption at rest)، مش hash، لأن السيرفر محتاج السر نفسه عشان يحسب الكود. لو القاعدة اتسربت والسر نص عادي، المهاجم يقدر يطلّع أكواد لكل الحسابات. AES-256-GCM بيشفّر وبيضيف tag بيكشف أي تعديل. والمفتاح في متغير بيئة أو secret manager، مش في القاعدة. وكده تسريب القاعدة لوحدها مش كفاية.
+
+الـ QR: [[generateURI]] بتطلّع [[otpauth://totp/myapp:ali%40x.com?secret=...&issuer=myapp]]. و [[QRCode.toDataURL]] بتحوّله صورة base64 الواجهة تعرضها في [[<img>]]. وبنرجّع السر كنص كمان للي مش قادر يمسح (بيكتبه بإيده).
+
+التفعيل مش بيحصل غير بعد كود صح. لو شغّلته بعد الـ setup على طول والمستخدم ممسحش الـ QR صح، الحساب يتقفل عليه.
+
+الـ recovery codes: ١٠ أكواد عشوائية، بتتعرض مرة واحدة بس ([[5 bytes hex]] يعني ١٠ حروف)، ومتخزنين sha256. كفاية لأنهم عشوائيين وطوال، زي توكنات الاستعادة. والتفعيل بيعدّي على [[requireRecentAuth]] (درس step-up auth)، عشان حد لقى لابتوبك مفتوح ميقدرش يشغّل 2FA بموبايله ويقفل عليك.`,
+            when: "للأدمن والمدرّبين إجباري. وللطلاب اختياري في الإعدادات. ولو المنتج فيه فلوس (رصيد، أو محفظة، أو payouts للمدرّبين)، اطلبه قبل أي سحب.",
+            mistakes: R`السر نص عادي في القاعدة. أو تفعيل من غير كود تأكيد. أو [[epochTolerance]] كبيرة جدًا (دقايق). أو تنسى إن [[verify]] بترجّع object فتكتب [[if (await verify(...))]]، وده دايمًا true لأن الـ object مش falsy. أو تعرض الـ recovery codes تاني من الإعدادات، يعني متخزنين بشكل يترجع. أو تبعت الأكواد بـ SMS كبديل وحيد، والـ SIM swap بيسرقها.`
+          },
+          lines: [
+            "otplib للـ TOTP: سر، و URI للـ QR، وتحقق.",
+            "مكتبة بتحوّل الـ URI لصورة QR.",
+            "الخطوة الأولى. لازم يكون داخل، ومن قريب.",
+            "هات المستخدم.",
+            "شغالة بالفعل؟ ارفض.",
+            "سر عشوائي بصيغة base32 اللي التطبيقات بتفهمها.",
+            "خزّنه مشفّر، ولسه الـ 2FA مش شغالة.",
+            "الـ otpauth URI: اسم التطبيق والإيميل والسر.",
+            "رجّع صورة QR، والسر كنص للي هيكتبه بإيده.",
+            "قفلة.",
+            "الخطوة التانية: التأكيد بكود.",
+            "٦ أرقام بالظبط.",
+            "هات المستخدم.",
+            "مفيش setup أو شغالة بالفعل؟ ارفض.",
+            "فك تشفير السر، واتحقق من الكود، مع سماحية فترة قبل وبعد.",
+            "غلط؟ غالبًا ساعة الموبايل أو QR اتمسح غلط.",
+            "١٠ recovery codes عشوائية.",
+            "في transaction واحدة:",
+            "شغّل الـ 2FA، وخزّن الفترة اللي اتستخدمت عشان متتعادش.",
+            "امسح أي recovery codes قديمة...",
+            "...وخزّن الجديدة hash بس.",
+            "قفلة الـ transaction.",
+            "رجّع الأكواد مرة واحدة. الواجهة تقوله يحفظهم.",
+            "قفلة."
+          ],
+          sol: R`[[encrypt("JBSWY3DP")]] مرتين لازم يطلّع نصين مختلفين، لأن الـ IV عشوائي كل مرة. والشكل [[iv.tag.data]] بـ base64url. و [[decrypt]] بترجّع النص الأصلي. ولو غيّرت أي حرف في أي جزء، [[decipher.final()]] بترمي [[Unsupported state or unable to authenticate data]]، وده الـ tag بيكشف التعديل.
+
+بعد مسح الـ QR، التطبيق هيعرض [[myapp (ali@x.com)]]، والكود اللي فيه لازم يعدّي في [[/me/2fa/enable]] ويرجّع ١٠ أكواد. لو رجع BAD_CODE، اتأكد من ساعة الموبايل (خليها أوتوماتيك).
+
+الغلطة الشائعة: IV ثابت أو مشتق من السر. مع GCM ده كارثي، لأن تكرار الـ IV بنفس المفتاح بيكشف الداتا.`,
+          solCode: R`import crypto from "node:crypto";
+
+const KEY = Buffer.from(config.TOTP_ENC_KEY, "base64");
+
+export function encrypt(plain) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv("aes-256-gcm", KEY, iv);
+  const data = Buffer.concat([cipher.update(plain, "utf8"), cipher.final()]);
+  return [iv, cipher.getAuthTag(), data].map((b) => b.toString("base64url")).join(".");
+}
+
+export function decrypt(box) {
+  const [iv, tag, data] = box.split(".").map((s) => Buffer.from(s, "base64url"));
+  const decipher = crypto.createDecipheriv("aes-256-gcm", KEY, iv);
+  decipher.setAuthTag(tag);
+  return Buffer.concat([decipher.update(data), decipher.final()]).toString("utf8");
+}`
+        },
+        {
+          cmd: "2FA: الدخول",
+          title: "الدخول بـ 2FA: خطوة تانية بعد الباسورد، و recovery codes",
+          desc: R`لما الـ 2FA شغالة، الـ login مبيطلّعش توكنات بعد الباسورد. بيطلّع [[mfaToken]] قصير (٥ دقايق) موقّع بسر مختلف، معناه «الباسورد صح، ناقص الكود». والواجهة بتعرض خانة الكود وتبعته مع الـ mfaToken على [[/auth/2fa]].
+
+الكود ممكن يكون TOTP (٦ أرقام) أو recovery code. الـ TOTP بيتقبل مرة واحدة بس في نفس الفترة (replay protection بـ [[afterTimeStep]])، والـ recovery code بيتحرق بعد استخدامه ويتبعت إيميل.`,
+          example: R`// في آخر /auth/login، بعد ما الباسورد يطلع صح:
+if (user.totpEnabledAt) {
+  const mfaToken = jwt.sign({ sub: user.id }, config.MFA_JWT_SECRET, { expiresIn: "5m" });
+  return res.json({ data: { mfaRequired: true, mfaToken } });
+}
+
+async function checkTotp(user, code) {
+  const r = await verify({ secret: decrypt(user.totpSecretEnc), token: code, epochTolerance: 30, afterTimeStep: user.totpLastStep ?? undefined });
+  if (!r.valid) return false;
+  const { count } = await db.user.updateMany({ where: { id: user.id, OR: [{ totpLastStep: null }, { totpLastStep: { lt: r.timeStep } }] }, data: { totpLastStep: r.timeStep } });
+  return count === 1;
+}
+router.post("/auth/2fa", mfaLimiter, async (req, res) => {
+  const { mfaToken, code } = z.object({ mfaToken: z.string(), code: z.string().trim().max(20) }).parse(req.body);
+  let sub;
+  try { sub = jwt.verify(mfaToken, config.MFA_JWT_SECRET).sub; } catch { throw new AppError(401, "MFA_EXPIRED", "ابدأ الدخول من الأول"); }
+  const user = await db.user.findUniqueOrThrow({ where: { id: sub } });
+  let ok;
+  if (/^\d{6}$/.test(code)) ok = await checkTotp(user, code);
+  else {
+    const { count } = await db.recoveryCode.updateMany({ where: { userId: user.id, codeHash: sha256(code.toLowerCase().replace(/[^0-9a-f]/g, "")), usedAt: null }, data: { usedAt: new Date() } });
+    ok = count === 1;
+    if (ok) await emailQueue.add("recovery-code-used", { to: user.email });
+  }
+  if (!ok) throw new AppError(401, "BAD_CODE", "الكود غلط");
+  return issueTokens(res, user);
+});`,
+          try: R`ادخل بحساب عليه 2FA، وابعت نفس الكود الصح مرتين ورا بعض في نفس الـ ٣٠ ثانية. بعدين جرّب recovery code بحروف كبيرة وبشَرطة في النص ([[ABCDE-12345]])، وبعدين نفس الكود تاني. وآخر حاجة: خد الـ mfaToken وابعته كـ [[Authorization: Bearer]] لأي endpoint عليه requireAuth.`,
+          flag: "script",
+          deep: {
+            why: "الخطوة التانية لو اتعملت غلط بتلغي فايدة الـ 2FA كلها. لو الـ mfaToken ينفع كـ access token، الباسورد لوحده بقى كفاية. ولو الكود ينفع أكتر من مرة، اللي شاف شاشتك أو عمل phishing proxy يستخدمه بعدك. ولو مفيش recovery، أول موبايل يضيع يبقى تذكرة دعم ومستخدم زعلان.",
+            how: R`السر المختلف ([[MFA_JWT_SECRET]]) هو اللي بيفصل النوعين. [[requireAuth]] بيتحقق بـ [[JWT_SECRET]]، فالـ mfaToken مش هيعدّي عليه أبدًا، والعكس. ممكن بدل كده [[audience]] مختلف، بس ساعتها لازم requireAuth يتحقق من الـ audience بتاعه هو كمان، وده بيتنسي.
+
+الـ replay protection: كل كود صح ليه [[timeStep]]. بنخزن آخر واحد اتقبل في [[totpLastStep]]، و [[afterTimeStep]] بيرفض أي كود فترته أقدم أو زي آخر واحد. والـ [[updateMany]] المشروط بيقفل السباق: لو طلبين بنفس الكود وصلوا مع بعض، واحد بس ياخد count بـ 1. نفس فكرة الـ refresh rotation.
+
+الـ recovery code: بنطبّعه الأول (small، ومن غير شَرط ولا مسافات)، لأن الناس بتكتبه بأي شكل. و [[updateMany]] بشرط [[usedAt: null]] بيحرقه في خطوة واحدة. وإيميل «استخدمت recovery code» بينبّه صاحب الحساب لو مش هو. ولما يفضل له ٢ أو أقل، الواجهة تقوله يولّد جداد.
+
+[[mfaLimiter]]: الكود ٦ أرقام يعني مليون احتمال، ومع سماحية ٣ فترات تبقى ٣ في المليون لكل محاولة. من غير حد، سكربت يخمّن في ساعات. حد زي ٥ محاولات لكل mfaToken و ٢٠ في الساعة للحساب كفاية.
+
+«افتكر الجهاز ده ٣٠ يوم»: cookie موقّعة فيها userId وتاريخ، ولو موجودة وسليمة الـ login يعدّي الخطوة التانية. وأي تغيير باسورد يلغيها.`,
+            when: "مع أي 2FA. والـ recovery codes جزء من الـ 2FA نفسه، مش ميزة إضافية.",
+            mistakes: R`نفس السر للـ mfaToken والـ access token. أو مفيش rate limit على الكود. أو الكود يتقبل أكتر من مرة. أو recovery codes متخزنة نص، أو بتتقارن بـ [[findFirst]] وبعدين [[update]] في خطوتين. أو «ابعتلي الكود بالإيميل» كبديل من غير أي حد، فبقى الإيميل هو الـ factor التاني بس. وفي الانترفيو: «TOTP بيحمي من phishing؟» لأ مش تمامًا: موقع مزيف ممكن ياخد الكود ويستخدمه في نفس الثانية. اللي بيحمي فعلًا الـ passkeys، لأنها مربوطة بالدومين.`
+          },
+          lines: [
+            "الباسورد صح، والـ 2FA شغالة؟",
+            "توكن ٥ دقايق بسر مختلف، معناه «ناقص الكود» بس.",
+            "رجّعه للواجهة من غير أي توكنات دخول.",
+            "قفلة.",
+            "دالة التحقق من TOTP، هنستخدمها هنا وفي الـ step-up.",
+            "اتحقق، وارفض أي فترة اتستخدمت قبل كده.",
+            "غلط؟ ارجع.",
+            "خزّن الفترة دي بشرط إنها أحدث من آخر واحدة. خطوة ذرية ضد الطلبات المتزامنة.",
+            "صح لو احنا اللي حدّثنا.",
+            "قفلة.",
+            "الخطوة التانية، وعليها rate limit.",
+            "الـ mfaToken والكود.",
+            "المتغير اللي هيشيل id المستخدم.",
+            "فك الـ mfaToken بسره هو. منتهي أو مزيف؟ ابدأ من الأول.",
+            "هات المستخدم.",
+            "النتيجة.",
+            "٦ أرقام؟ يبقى TOTP.",
+            "غير كده؟ recovery code:",
+            "طبّعه، واحرقه لو موجود ومش مستخدم، في خطوة واحدة.",
+            "صح لو صف واحد اتحدّث.",
+            "ونبّه صاحب الحساب.",
+            "قفلة.",
+            "غلط؟ 401.",
+            "طلّع التوكنات العادية زي أي login.",
+            "قفلة."
+          ],
+          sol: R`نفس الكود مرتين: الأولى ترجع 200 بتوكنات، والتانية [[401 BAD_CODE]]، لأن [[totpLastStep]] بقى نفس فترة الكود و [[afterTimeStep]] بيرفضه. استنى الـ ٣٠ ثانية الجاية والكود الجديد يعدّي.
+
+الـ recovery code بـ [[ABCDE-12345]] (small أو كبير، بشَرطة أو من غيرها) يعدّي أول مرة، ويوصل إيميل [[recovery-code-used]]. والمرة التانية [[401]].
+
+الـ mfaToken على endpoint عليه requireAuth: لازم 401. لو عدّى، يبقى الاتنين موقّعين بنفس السر، والـ 2FA ملهاش لازمة.
+
+لو الكود الصح اترفض أول مرة: غالبًا نفس الكود اللي فعّلت بيه في نفس الفترة، لأن التفعيل خزّن الـ timeStep بتاعه. ده سلوك صح.`
+        },
+        {
+          cmd: "step-up auth",
+          title: "العمليات الحساسة: اكتب الباسورد تاني",
+          desc: R`الـ session بتعيش ٣٠ يوم، بس مش كل حاجة تتعمل بـ session عمرها أسبوعين. تغيير الإيميل أو الباسورد، وتشغيل أو قفل الـ 2FA، ومسح الحساب، وتغيير بيانات السحب: دي محتاجة إثبات جديد إن صاحب الحساب هو اللي قاعد دلوقتي. ده اسمه step-up auth (أو re-authentication).
+
+الفكرة: الـ session فيها [[authAt]] (إمتى آخر مرة كتب الباسورد أو الكود). الـ access token بيشيله، و [[requireRecentAuth]] بترفض لو عدى أكتر من ١٠ دقايق. والواجهة لما تشوف [[REAUTH_REQUIRED]] بتفتح نافذة «اكتب الباسورد»، وتبعته لـ [[/auth/reauth]]، وتعيد الطلب.`,
+          example: R`export function requireRecentAuth(maxAgeSec = 600) {
+  return (req, res, next) => {
+    if (Date.now() / 1000 - (req.user.authAt ?? 0) > maxAgeSec) throw new AppError(401, "REAUTH_REQUIRED", "اكتب الباسورد تاني عشان تكمّل");
+    next();
+  };
+}
+router.post("/auth/reauth", requireAuth, reauthLimiter, async (req, res) => {
+  const { password, code } = z.object({ password: z.string().max(128), code: z.string().optional() }).parse(req.body);
+  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
+  if (!user.passwordHash || !(await argon2.verify(user.passwordHash, password))) throw new AppError(401, "BAD_PASSWORD", "الباسورد غلط");
+  if (user.totpEnabledAt && !(code && (await checkTotp(user, code)))) throw new AppError(401, "BAD_CODE", "كود الـ 2FA غلط");
+  const session = await db.session.update({ where: { id: req.user.sid }, data: { authAt: new Date() } });
+  res.json({ data: { accessToken: signAccess(user, session.id, session.authAt) } });
+});
+router.delete("/me", requireAuth, requireRecentAuth(), deleteAccount);`,
+          try: R`ضيف [[sid]] و [[authAt]] للـ access token ([[signAccess]])، وعمود [[authAt]] لجدول sessions. بعدين اعمل access token بإيدك [[authAt]] بتاعه من ساعة، وجرّب [[DELETE /me]]. وبعدين اعمل reauth وجرّب تاني. وفكّر: الـ refresh بعد ٢٠ دقيقة المفروض يحط [[authAt]] إيه في التوكن الجديد؟`,
+          flag: "script",
+          deep: {
+            why: "أغلب الاستيلاء على الحسابات مش بيحصل بالباسورد. بيحصل بـ session مسروقة: cookie من جهاز مشترك، أو لابتوب مفتوح في كافيه، أو XSS. لو الـ session لوحدها تقدر تغيّر الإيميل، المهاجم بيغيّره، ويعمل «نسيت الباسورد» على إيميله هو، والحساب راح للأبد. الـ step-up بيخلي السرقة دي تعمل أضرار محدودة.",
+            how: R`[[authAt]] بيتخزن في صف الـ session، مش في الـ JWT بس. الـ login بيحطه [[now()]] (الـ default في الجدول)، والـ reauth بيحدّثه. والـ refresh بيطلّع access token جديد بنفس [[authAt]] اللي في الـ session، مش الوقت الحالي. لو الـ refresh حطّ الوقت الحالي، يبقى أي session شغالة بتعمل step-up لوحدها كل ربع ساعة، والفكرة كلها راحت.
+
+الـ access token بقى فيه [[sid]] (رقم الـ session) كمان، عشان الـ reauth يحدّث الـ session دي بالذات، وعشان «اخرج من الأجهزة التانية» يعرف أنهي session هي الحالية.
+
+الـ 2FA جزء من الـ reauth: لو شغالة، الباسورد لوحده مش كفاية. وإلا اللي سرق الباسورد والـ session يقدر يقفل الـ 2FA.
+
+المستخدم اللي داخل بجوجل ومعندوش باسورد: الـ reauth بتاعه إنه يعدّي على جوجل تاني مع [[prompt=login]] (جوجل تطلب الباسورد عندها)، وتتأكد من [[auth_time]] في الـ id_token إنه قريب. أو passkey لو عنده.
+
+الـ throw جوه middleware عادي (مش async) بيوصل للـ error handler في Express 4 و 5. و ١٠ دقايق رقم شائع: كفاية يعمل كذا تغيير ورا بعض من غير ما يكتب الباسورد كل شوية.
+
+GitHub بيعمل كده بالظبط («sudo mode»)، وجوجل بتطلب الباسورد قبل صفحة الأمان.`,
+            when: "على كل endpoint بيغيّر طريقة الدخول أو التواصل (إيميل، باسورد، 2FA، ربط أو فك provider، passkeys)، أو بيطلّع فلوس، أو بيمسح حاجة مبترجعش.",
+            mistakes: R`الـ refresh بيحدّث [[authAt]]. أو الـ step-up بالباسورد بس والـ 2FA شغالة. أو [[/auth/reauth]] من غير rate limit، فبقى endpoint تخمين باسورد تاني. أو إنك تعتمد على «الواجهة بتطلب الباسورد» والسيرفر مبيتحققش، يعني أي طلب مباشر يعدّي. أو إنك تطلب الباسورد القديم في فورم تغيير الباسورد بس، وتنسى الإيميل والـ 2FA.`
+          },
+          lines: [
+            "middleware بيتأكد إن آخر إثبات هوية حصل من قريب (١٠ دقايق افتراضي).",
+            "دالة الـ middleware.",
+            "عدى وقت أكتر من المسموح من [[authAt]] اللي في التوكن؟ اطلب reauth.",
+            "غير كده كمّل.",
+            "قفلة الدالة.",
+            "قفلة.",
+            "إثبات الهوية من جديد. داخل بالفعل، وعليه rate limit.",
+            "الباسورد، والكود لو فيه 2FA.",
+            "هات المستخدم.",
+            "مفيش باسورد أو غلط؟ ارفض.",
+            "الـ 2FA شغالة؟ الكود لازم يكون صح كمان.",
+            "حدّث [[authAt]] في الـ session الحالية بس.",
+            "رجّع access token جديد فيه [[authAt]] الجديد.",
+            "قفلة.",
+            "مثال: مسح الحساب محتاج دخول ومن قريب."
+          ],
+          sol: R`بالتوكن القديم: [[DELETE /me]] يرجع [[401 REAUTH_REQUIRED]]. بعد [[/auth/reauth]] بالباسورد (والكود لو فيه 2FA) بتاخد access token جديد، و [[DELETE /me]] بيه يعدّي.
+
+إجابة السؤال: الـ refresh بعد ٢٠ دقيقة لازم يحط [[authAt]] بتاع الـ session نفسها (وقت الـ login أو آخر reauth)، يعني قديم، فالـ step-up يتطلب تاني. في كود الـ refresh: [[signAccess(user, session.id, session.authAt)]].
+
+لو جرّبت الـ reauth بالباسورد بس والـ 2FA شغالة، المفروض [[401 BAD_CODE]]. ولو عدّى، يبقى نسيت الشرط التاني.`
+        },
+        {
+          cmd: "تغيير الإيميل والباسورد",
+          title: "تغيير الإيميل والباسورد من غير ما تفتح باب للسرقة",
+          desc: R`تغيير الباسورد: step-up الأول، وبعدين الـ hash الجديد، وإلغاء كل الـ sessions التانية (الجهاز الحالي يفضل داخل)، وإيميل «الباسورد اتغيّر، لو مش انت كلّمنا».
+
+تغيير الإيميل ٣ خطوات: step-up، وبعدين لينك تأكيد للإيميل الجديد (الإيميل مبيتغيّرش غير لما يتأكد)، وفي نفس الوقت إيميل للعنوان القديم «فيه طلب تغيير». ولما التغيير يتم، إيميل تاني للقديم، وكل الـ sessions تتلغي.`,
+          example: R`router.post("/me/password", requireAuth, requireRecentAuth(), async (req, res) => {
+  const { newPassword } = z.object({ newPassword: z.string().min(8).max(128) }).parse(req.body);
+  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
+  await db.$transaction([
+    db.user.update({ where: { id: user.id }, data: { passwordHash: await argon2.hash(newPassword) } }),
+    db.session.updateMany({ where: { userId: user.id, revokedAt: null, id: { not: req.user.sid } }, data: { revokedAt: new Date() } }),
+  ]);
+  await emailQueue.add("password-changed", { to: user.email });
+  res.status(204).end();
+});
+router.post("/me/email", requireAuth, requireRecentAuth(), async (req, res) => {
+  const { email } = z.object({ email: z.email().transform((e) => e.toLowerCase()) }).parse(req.body);
+  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id } });
+  const token = crypto.randomBytes(32).toString("base64url");
+  await db.emailToken.create({ data: { userId: user.id, purpose: "CHANGE_EMAIL", email, tokenHash: sha256(token), expiresAt: new Date(Date.now() + 3600e3) } });
+  await emailQueue.add("confirm-new-email", { to: email, link: $__bt$__{config.WEB_ORIGIN}/confirm-email?token=$__{token}$__bt });
+  await emailQueue.add("email-change-requested", { to: user.email, newEmail: email });
+  res.status(202).end();
+});`,
+          try: R`اكتب [[POST /auth/confirm-email-change]] اللي اللينك بيوصله: يتحقق من التوكن (النوع [[CHANGE_EMAIL]]، مش مستخدم، مخلصش)، ويغيّر الإيميل ويأكده، ويلغي كل الـ sessions، ويبعت إيميل للعنوان القديم. بعدين جرّب: سجّل دخول من متصفحين، وغيّر الباسورد من واحد، وشوف التاني بيحصله إيه.`,
+          flag: "script",
+          deep: {
+            why: "الإيميل هو مفتاح الحساب، لأن «نسيت الباسورد» بتروح عليه. اللي يغيّر الإيميل يملك الحساب. عشان كده ده أول حاجة المهاجم بيعملها بعد ما يدخل، وعشان كده التغيير لازم يعدّي على step-up، ويتأكد من الإيميل الجديد، وصاحب الإيميل القديم يعرف.",
+            how: R`الإيميل الجديد مش بيتحفظ في جدول users غير بعد التأكيد. لو حفظته على طول، أي غلطة كتابة تقفل الحساب، ومهاجم معاه session يحط إيميله ويعمل استعادة في نفس الدقيقة. فالإيميل الجديد بيستنى في صف التوكن ([[email]])، والمدة ساعة بس.
+
+إيميل العنوان القديم هو إنذار مبكر: «فيه طلب تغيير إيميلك لـ n***@x.com. لو مش انت، غيّر الباسورد». بعض المنتجات بتحط فيه لينك «مش أنا» بيلغي الطلب ويقفل الـ sessions.
+
+التأكيد (الـ solCode) بيعمل transaction: التوكن مستخدم، والإيميل الجديد و [[emailVerifiedAt]]، وإلغاء كل الـ sessions (حتى الحالية، لأن التأكيد ممكن يتفتح من جهاز تاني). ولو الإيميل الجديد اتسجّل بيه حد تاني في النص، القيد unique بيرفض والـ handler بيرجّع 409.
+
+تغيير الباسورد: الـ sessions التانية بتتلغي لأن سبب التغيير غالبًا «حاسس إن حد عرف الباسورد». والحالية بتفضل عشان المستخدم ميطلعش. والـ access tokens بتاعة الأجهزة التانية بتفضل شغالة لحد ما تخلص (١٥ دقيقة)، ودي الحدود المعروفة للـ JWT. لو محتاج قفل فوري، خلي requireAuth يتأكد إن الـ [[sid]] مش ملغي (من Redis مثلًا).
+
+الـ step-up هنا بيغني عن «اكتب الباسورد القديم» في الفورم. وفي الحالتين، الإيميلات بتروح queue.`,
+            when: "في صفحة الإعدادات لأي منتج فيه حسابات. ولو المنتج فيه فلوس، ممكن تضيف فترة انتظار (٢٤ ساعة مثلًا) قبل ما الإيميل الجديد يقدر يعمل سحب.",
+            mistakes: R`تغيير الإيميل فورًا من غير تأكيد. أو لينك التأكيد يروح للإيميل القديم. أو متبعتش أي حاجة للقديم. أو تغيير الباسورد من غير إلغاء الـ sessions. أو إلغاء الـ session الحالية كمان فالمستخدم يطلع ويستغرب. أو إنك تنسى تحدّث إيميل Stripe أو مزوّد الإيميلات بعد التغيير.`
+          },
+          lines: [
+            "تغيير الباسورد: داخل، ومن قريب.",
+            "الباسورد الجديد بنفس قواعد التسجيل.",
+            "هات المستخدم.",
+            "في transaction واحدة:",
+            "الـ hash الجديد...",
+            "...والغي كل الـ sessions ما عدا الحالية.",
+            "قفلة الـ transaction.",
+            "إيميل تنبيه لصاحب الحساب.",
+            "تمام.",
+            "قفلة.",
+            "تغيير الإيميل: داخل، ومن قريب.",
+            "الإيميل الجديد small.",
+            "هات المستخدم.",
+            "توكن عشوائي.",
+            "خزّنه ومعاه الإيميل الجديد، وعمره ساعة. الإيميل في users لسه زي ما هو.",
+            "لينك التأكيد يروح للإيميل الجديد.",
+            "وتنبيه للإيميل القديم.",
+            "202: مستنيين التأكيد.",
+            "قفلة."
+          ],
+          sol: R`بعد ما تفتح لينك التأكيد: الرد 204، والإيميل في users بقى الجديد و [[emailVerifiedAt]] اتملى، وعدد الـ sessions المفتوحة بقى صفر، وفي الـ queue إيميل [[email-changed]] للعنوان القديم. لو فتحت نفس اللينك تاني: [[400 BAD_TOKEN]].
+
+تغيير الباسورد من متصفح: التاني بيفضل شغال لحد ما الـ access token بتاعه يخلص (لحد ١٥ دقيقة)، وبعدين الـ refresh بيرجع 401 وبيطلع لصفحة الدخول. المتصفح اللي غيّرت منه بيفضل داخل.
+
+الغلطة الشائعة: تستخدم [[update]] بدل التحقق من [[purpose]]، فلينك تأكيد إيميل عادي (VERIFY) يتقبل كتغيير إيميل.`,
+          solCode: R`router.post("/auth/confirm-email-change", async (req, res) => {
+  const row = await db.emailToken.findUnique({ where: { tokenHash: sha256(String(req.body.token)) } });
+  if (!row || row.purpose !== "CHANGE_EMAIL" || row.usedAt || row.expiresAt < new Date()) throw new AppError(400, "BAD_TOKEN", "اللينك انتهى");
+  const old = await db.user.findUniqueOrThrow({ where: { id: row.userId } });
+  await db.$transaction([
+    db.emailToken.update({ where: { id: row.id }, data: { usedAt: new Date() } }),
+    db.user.update({ where: { id: row.userId }, data: { email: row.email, emailVerifiedAt: new Date() } }),
+    db.session.updateMany({ where: { userId: row.userId, revokedAt: null }, data: { revokedAt: new Date() } }),
+  ]);
+  await emailQueue.add("email-changed", { to: old.email, newEmail: row.email });
+  res.status(204).end();
+});`
+        },
+        {
+          cmd: "CAPTCHA و lockout",
+          title: "Turnstile و lockout: وقف تخمين الباسوردات من غير ما تقفل على الناس",
+          desc: R`الـ rate limit بالـ IP (اللي في درس الـ login) مش كفاية: المهاجم عنده آلاف الـ IPs (botnet أو proxies). فبنضيف عداد لكل إيميل في Redis: بعد ٥ محاولات غلط، الـ login بيطلب CAPTCHA. وبعد ٢٠، الإيميل ده بيتقفل ربع ساعة، وصاحبه بياخد إيميل.
+
+الـ CAPTCHA هنا Cloudflare Turnstile: widget في الواجهة بيطلّع token، والسيرفر بيتحقق منه بـ POST لـ [[siteverify]]. والتوكن بيعيش ٥ دقايق وينفع مرة واحدة.`,
+          example: R`export async function turnstileOk(token, ip) {
+  if (!token) return false;
+  const r = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST", body: new URLSearchParams({ secret: config.TURNSTILE_SECRET, response: token, remoteip: ip }),
+  });
+  const out = await r.json();
+  return out.success === true && out.action === "login";
+}
+router.post("/auth/login", loginLimiter, async (req, res) => {
+  const { email, password, captcha } = Login.parse(req.body);
+  const failKey = $__btlogin:fail:$__{sha256(email)}$__bt;
+  const fails = Number(await redis.get(failKey)) || 0;
+  if (fails >= 20) throw new AppError(429, "LOCKED", "محاولات كتير. جرّب بعد ربع ساعة أو غيّر الباسورد");
+  if (fails >= 5 && !(await turnstileOk(captcha, req.ip))) throw new AppError(400, "CAPTCHA_REQUIRED", "أكّد إنك مش روبوت");
+  const user = await db.user.findUnique({ where: { email } });
+  const ok = await argon2.verify(user?.passwordHash ?? DUMMY_HASH, password);
+  if (!user || !ok) {
+    const n = await redis.incr(failKey);
+    if (n === 1) await redis.expire(failKey, 15 * 60);
+    if (n === 20 && user) await emailQueue.add("login-locked", { to: user.email });
+    throw new AppError(401, "BAD_CREDENTIALS", "الإيميل أو الباسورد غلط");
+  }
+  await redis.del(failKey);
+  // ... بعد كده الـ 2FA أو issueTokens زي ما هو
+});`,
+          try: R`استخدم مفاتيح Turnstile التجريبية: الـ site key [[1x00000000000000000000AA]] في الواجهة بيعدّي دايمًا، والـ secret [[1x0000000000000000000000000000000AA]] بيقبل، و [[2x0000000000000000000000000000000AA]] بيرفض. اكتب باسورد غلط ٥ مرات، وشوف الواجهة بتعرض الـ widget. بعدين كرر نفس الكلام بإيميل مش متسجّل خالص، وقارن الردود.`,
+          flag: "script",
+          deep: {
+            why: "هجمات credential stuffing بتجرّب ملايين (إيميل، باسورد) من تسريبات مواقع تانية، من IPs كتير، ومحاولة أو اتنين لكل حساب. الـ rate limit بالـ IP مش بيشوفها. والعداد لكل حساب بيشوف التخمين المركّز على حساب واحد. والاتنين مع بعض بيغطوا أغلب الهجمات.",
+            how: R`العداد بالإيميل مش بالمستخدم. الـ key هو [[sha256(email)]] سواء الإيميل متسجّل أو لأ. ليه؟ لو الـ CAPTCHA بيظهر للإيميلات المتسجّلة بس، المهاجم يعرف مين عنده حساب من مجرد ظهور الـ CAPTCHA. كده الاتنين بيتعاملوا نفس المعاملة. والـ hash عشان الإيميلات متتخزنش في Redis نص.
+
+[[INCR]] ذري، و [[EXPIRE]] أول مرة بس، فالنافذة ١٥ دقيقة من أول غلطة. ولما الدخول ينجح العداد بيتمسح.
+
+ليه CAPTCHA قبل الـ lockout؟ الـ lockout الصريح ليه عيب كبير: أي حد يعرف إيميلك يقدر يقفل حسابك بـ ٥ محاولات غلط، وده DoS على مستخدم بعينه. الـ CAPTCHA بتوقف السكربتات، والبني آدم يعدّي عادي. والقفل بعد ٢٠ بس، ومؤقت، ومعاه إيميل لصاحب الحساب (وفيه لينك استعادة الباسورد).
+
+Turnstile: الواجهة بتحط [[<div class="cf-turnstile" data-sitekey="..." data-action="login">]]، والـ widget بيحط التوكن في حقل مخفي اسمه [[cf-turnstile-response]]. والسيرفر لازم يتحقق، لأن التوكن من الواجهة لوحده ممكن يتزوّر. و [[action]] بيتأكد إن التوكن اتعمل لفورم الـ login مش لفورم تاني. وخلي بالك: [[siteverify]] ممكن يفشل (شبكة)، فقرر هتعمل إيه: الأمان إنك ترفض.
+
+و [[req.ip]] صح بس لو [[trust proxy]] متظبط ورا Nginx أو Cloudflare، وإلا كل الناس ليهم IP الـ proxy (الدرس «security baseline»).
+
+ومفيش CAPTCHA يوقف بني آدم مدفوعله يحلها. ده خط دفاع مش حل كامل. الأقوى: باسوردات مش في تسريبات (API زي Have I Been Pwned بـ k-anonymity وقت التسجيل)، و 2FA، و passkeys.`,
+            when: "على الـ login، والتسجيل، و «نسيت الباسورد»، وأي فورم عام بيبعت إيميلات. وابدأ بالـ CAPTCHA بعد عدد محاولات، مش من أول مرة، عشان متضايقش كل الناس.",
+            mistakes: R`CAPTCHA من غير تحقق على السيرفر. أو lockout دايم بعد ٥ محاولات (DoS على أي حد). أو عداد بالـ user id فقط، فالإيميلات المش متسجّلة بتتعامل مختلف. أو رسالة «الحساب اتقفل» للإيميلات المتسجّلة بس. أو تنسى تمسح العداد بعد الدخول الصح. أو [[trust proxy]] مش متظبط، فالـ rate limit بالـ IP بيقفل كل الناس مرة واحدة.`
+          },
+          lines: [
+            "دالة التحقق من توكن Turnstile.",
+            "مفيش توكن؟ فشل.",
+            "ابعته لـ Cloudflare...",
+            "...مع الـ secret والتوكن والـ IP.",
+            "قفلة الطلب.",
+            "اقرا الرد.",
+            "لازم ينجح، ويكون معمول لفورم الـ login.",
+            "قفلة.",
+            "الـ login، وعليه rate limit بالـ IP زي الأول.",
+            "الإيميل والباسورد، وتوكن الـ CAPTCHA لو موجود.",
+            "مفتاح العداد: hash للإيميل، متسجّل أو لأ.",
+            "عدد المحاولات الغلط في آخر ربع ساعة.",
+            "٢٠ أو أكتر؟ مقفول مؤقتًا.",
+            "٥ أو أكتر؟ لازم CAPTCHA سليم.",
+            "كمّل الـ login العادي.",
+            "نفس التحقق بوقت ثابت.",
+            "غلط؟",
+            "زوّد العداد.",
+            "أول غلطة؟ النافذة ١٥ دقيقة.",
+            "وصل ٢٠ والحساب موجود؟ نبّه صاحبه.",
+            "نفس الرسالة الموحدة.",
+            "قفلة.",
+            "دخل صح؟ صفّر العداد.",
+            "قفلة."
+          ],
+          sol: R`الـ ٥ محاولات الأولى ترجع [[401 BAD_CREDENTIALS]]. السادسة بالباسورد الصح ومن غير captcha ترجع [[400 CAPTCHA_REQUIRED]]، ومع توكن الـ widget التجريبي تعدّي. والإيميل المش متسجّل بيمشي نفس الطريق بالظبط: ٥ مرات 401، وبعدين CAPTCHA_REQUIRED، وبعد ٢٠ [[429 LOCKED]]. ده المقصود، عشان محدش يعرف مين متسجّل.
+
+مع الـ secret [[2x...]] أي توكن بيترفض وبيرجع [[success: false]] و [[error-codes]]، فالـ login بيفضل CAPTCHA_REQUIRED.
+
+لو حاسس إن CAPTCHA_REQUIRED بيظهر من غير سبب، اتأكد إن الـ TTL اتحط ([[redis-cli TTL login:fail:...]])، ولو رجع [[-1]] يبقى العداد عايش للأبد.`
+        },
+        {
+          cmd: "passkeys",
+          title: "passkeys باختصار: دخول من غير باسورد ومن غير phishing",
+          desc: R`الـ passkey (معيار WebAuthn) مفتاح خاص بيتعمل على جهاز المستخدم (بصمة، أو Face ID، أو PIN الجهاز)، ومتزامن غالبًا في iCloud Keychain أو Google Password Manager. السيرفر بيخزن المفتاح العام بس. وفي الدخول، السيرفر بيبعت challenge عشوائي، والجهاز بيوقّعه، والسيرفر بيتحقق بالمفتاح العام.
+
+المكتبة المشهورة في Node هي SimpleWebAuthn: [[@simplewebauthn/server]] على السيرفر و [[@simplewebauthn/browser]] في الواجهة. الفلو: options من السيرفر، و [[startRegistration]] في المتصفح، و verify على السيرفر.`,
+          example: R`import { generateRegistrationOptions, verifyRegistrationResponse } from "@simplewebauthn/server";
+
+router.post("/me/passkeys/options", requireAuth, requireRecentAuth(), async (req, res) => {
+  const user = await db.user.findUniqueOrThrow({ where: { id: req.user.id }, include: { passkeys: true } });
+  const options = await generateRegistrationOptions({
+    rpName: "myapp", rpID: config.RP_ID, userName: user.email, attestationType: "none",
+    excludeCredentials: user.passkeys.map((p) => ({ id: p.credentialId })),
+    authenticatorSelection: { residentKey: "preferred", userVerification: "preferred" },
+  });
+  await redis.set($__btwebauthn:$__{user.id}$__bt, options.challenge, "EX", 300);
+  res.json({ data: options });
+});
+router.post("/me/passkeys", requireAuth, async (req, res) => {
+  const expectedChallenge = await redis.getdel($__btwebauthn:$__{req.user.id}$__bt);
+  const { verified, registrationInfo } = await verifyRegistrationResponse({ response: req.body, expectedChallenge, expectedOrigin: config.WEB_ORIGIN, expectedRPID: config.RP_ID });
+  if (!verified) throw new AppError(400, "PASSKEY_FAILED", "مقدرناش نسجّل المفتاح");
+  const { credential } = registrationInfo;
+  await db.passkey.create({ data: { userId: req.user.id, credentialId: credential.id, publicKey: Buffer.from(credential.publicKey), counter: credential.counter, transports: credential.transports ?? [] } });
+  res.status(201).end();
+});`,
+          try: R`اعمل جدول [[Passkey]] (credentialId unique، و publicKey Bytes، و counter، و transports، و createdAt، و lastUsedAt). سجّل passkey من Chrome على localhost ([[rpID: "localhost"]] و [[expectedOrigin: "http://localhost:5173"]])، وجرّب في DevTools من More tools ثم WebAuthn تعمل virtual authenticator. بعدين اكتب نص الدخول: [[generateAuthenticationOptions]] و [[verifyAuthenticationResponse]].`,
+          flag: "script",
+          deep: {
+            why: "الـ passkey هو الحاجة الوحيدة اللي بتقفل phishing فعلًا: المتصفح بيربط المفتاح بالدومين ([[rpID]])، فموقع مزيف على [[myapp-login.com]] مش هيقدر يطلب توقيع لـ [[myapp.com]] أصلًا. ومفيش سر على السيرفر يتسرب، لأن المفتاح العام ملوش قيمة لوحده. والمستخدم مش محتاج يفتكر حاجة.",
+            how: R`الـ challenge: عشوائي من السيرفر، بيتخزن ٥ دقايق ([[getdel]] بيقراه ويمسحه في خطوة واحدة، فمينفعش يتستخدم مرتين). الجهاز بيوقّعه مع الـ origin، و [[verifyRegistrationResponse]] بتتأكد من الـ challenge والـ origin والـ rpID والتوقيع.
+
+[[rpID]] هو الدومين ([[myapp.com]])، ولازم الصفحة تبقى عليه أو على subdomain منه. و [[attestationType: "none"]] معناها مش مهتمين نعرف نوع الجهاز، وده المناسب لأغلب المنتجات. و [[excludeCredentials]] بيمنع نفس الجهاز يتسجّل مرتين.
+
+[[userName]] هو اللي بيظهر في قايمة الـ passkeys عند المستخدم. و [[userID]] لو مبعتتوش، المكتبة بتعمل واحد عشوائي. ولو هتستخدم discoverable login (المستخدم يضغط «ادخل بـ passkey» من غير ما يكتب إيميل)، خزّن [[options.user.id]] عشان تعرف صاحب المفتاح وقت الدخول.
+
+الـ [[counter]] بيتخزن ويتحدث مع كل دخول. الـ passkeys المتزامنة غالبًا بترجّعه صفر دايمًا، وده طبيعي.
+
+الدخول: [[generateAuthenticationOptions({ rpID })]]، والواجهة [[startAuthentication]]، والسيرفر [[verifyAuthenticationResponse]] مع [[credential]] المتخزن. والنتيجة session عادية، زي الـ login بالظبط.
+
+إمتى تضيفه؟ بعد ما الـ auth الأساسي والـ 2FA يبقوا ثابتين. ابدأ بيه كطريقة إضافية في الإعدادات («ضيف passkey»)، مش بديل للباسورد. وبعدين زرار «ادخل بـ passkey» في صفحة الدخول. والمكتبة بتتحدث كتير (نسخة 13 و 14 غيّروا أسماء حقول)، فارجع لتوثيقها وقت التنفيذ.`,
+            when: "منتج فيه حسابات قيّمة (فلوس، أو داتا شركات)، أو جمهور بيستخدم موبايلات حديثة. وللأدمن أحسن من TOTP. ولو المستخدمين عندهم passkey، ممكن يعتبر عامل واحد كفاية بدل باسورد + 2FA.",
+            mistakes: R`challenge ثابت أو متخزن في الواجهة. أو rpID مختلف بين التسجيل والدخول (www وبدونها). أو إنك تجرب على IP بدل دومين (WebAuthn محتاج HTTPS أو localhost). أو [[publicKey]] يتخزن كنص من غير encoding صح. أو إنك تشيل الباسورد والإيميل خالص من أول يوم، والمستخدم غيّر موبايله ومعهوش مزامنة.`
+          },
+          lines: [
+            "المكتبة: options و verify للتسجيل.",
+            "طلب options لتسجيل passkey. داخل ومن قريب.",
+            "هات المستخدم ومفاتيحه الموجودة.",
+            "اعمل options:",
+            "اسم التطبيق، والدومين، والاسم اللي هيظهر، ومش محتاجين attestation.",
+            "متسجلش نفس الجهاز مرتين.",
+            "مفتاح discoverable لو ينفع، والبصمة أو الـ PIN لو ينفع.",
+            "قفلة.",
+            "خزّن الـ challenge ٥ دقايق.",
+            "رجّع الـ options للواجهة، وهي تنادي [[startRegistration]].",
+            "قفلة.",
+            "استلام رد الجهاز.",
+            "هات الـ challenge وامسحه في خطوة واحدة.",
+            "اتحقق من الـ challenge والـ origin والـ rpID والتوقيع.",
+            "فشل؟ ارفض.",
+            "المفتاح اللي اتعمل.",
+            "خزّن الـ id والمفتاح العام والعداد والـ transports.",
+            "تمام.",
+            "قفلة."
+          ],
+          sol: R`مع الـ virtual authenticator في DevTools، [[startRegistration]] بيرجع JSON فيه [[id]] و [[response.attestationObject]]، و [[/me/passkeys]] ترجع 201، وجدول Passkey فيه صف. وفي تاب WebAuthn هتشوف الـ credential اتضاف.
+
+الدخول: [[generateAuthenticationOptions({ rpID, allowCredentials: [] })]] (فاضية عشان discoverable)، والواجهة [[startAuthentication({ optionsJSON })]]، والسيرفر يدوّر على الـ passkey بـ [[response.id]] وينادي [[verifyAuthenticationResponse({ response, expectedChallenge, expectedOrigin, expectedRPID, credential: { id, publicKey, counter, transports } })]]، ولو [[verified]] يحدّث الـ counter و lastUsedAt ويعمل session.
+
+لو ظهر [[Unexpected authentication response origin]]: الـ origin فيه port مختلف أو http بدل https. ولو [[The operation is insecure]] في المتصفح: الصفحة مش على HTTPS أو localhost.`
         }
       ]
     },
@@ -1223,6 +1959,102 @@ export default function OrderResult({ orderId }) {
             "مدفوع؟ لينك للكورسات. غير كده رسالة انتظار.",
             "قفلة."
           ]
+        },
+        {
+          cmd: "اشتراكات Stripe",
+          title: "اشتراك شهري بـ Stripe Billing: الخطط والتجربة والتجديد والفشل",
+          desc: R`دفع الكورس مرة واحدة اتعمل بـ Paymob في الدروس اللي فاتت. الاشتراك الشهري (خطة Pro للأكاديمية مثلًا) مختلف: التجديد كل شهر، والكارت ممكن يفشل في شهر، والعميل يرقّي أو ينزّل الخطة في النص. Stripe Billing بيدير ده كله: Product و Price شهري في الـ dashboard، و Checkout بـ [[mode: "subscription"]] للاشتراك، و Customer Portal لتغيير الكارت والخطة والإلغاء.
+
+الـ webhook هو مصدر الحقيقة زي Paymob: جدول [[subscriptions]] عندك بيتحدث من الأحداث، والصلاحيات بتتقري منه. Stripe مش متاح كحساب تاجر لكل الدول (راجع قايمة الدول المدعومة)، فلو شغلك في مصر غالبًا هتستخدم Paymob أو شركة ليها كيان برّه.`,
+          example: R`router.post("/billing/checkout", tenantScope, requireTenantRole("OWNER"), async (req, res) => {
+  const { plan } = z.object({ plan: z.enum(["pro_monthly", "pro_yearly"]) }).parse(req.body);
+  const session = await stripe.checkout.sessions.create({
+    mode: "subscription",
+    customer: req.tenant.stripeCustomerId,
+    line_items: [{ price: config.PRICES[plan], quantity: 1 }],
+    subscription_data: { trial_period_days: 14, metadata: { tenantId: req.tenant.id } },
+    success_url: $__bt$__{config.WEB_ORIGIN}/billing?done=1$__bt,
+    cancel_url: $__bt$__{config.WEB_ORIGIN}/billing$__bt,
+  });
+  res.json({ data: { url: session.url } });
+});
+router.post("/billing/portal", tenantScope, requireTenantRole("OWNER"), async (req, res) => {
+  const portal = await stripe.billingPortal.sessions.create({ customer: req.tenant.stripeCustomerId, return_url: $__bt$__{config.WEB_ORIGIN}/billing$__bt });
+  res.json({ data: { url: portal.url } });
+});
+app.post("/webhooks/stripe", express.raw({ type: "application/json" }), async (req, res) => {
+  let event;
+  try { event = stripe.webhooks.constructEvent(req.body, req.get("stripe-signature"), config.STRIPE_WEBHOOK_SECRET); } catch { return res.status(400).send("bad signature"); }
+  if (event.type.startsWith("customer.subscription.")) {
+    const sub = event.data.object;
+    const item = sub.items.data[0];
+    await db.subscription.upsert({
+      where: { stripeSubscriptionId: sub.id },
+      create: { tenantId: sub.metadata.tenantId, stripeSubscriptionId: sub.id, status: sub.status, priceId: item.price.id, currentPeriodEnd: new Date(item.current_period_end * 1000), cancelAtPeriodEnd: sub.cancel_at_period_end },
+      update: { status: sub.status, priceId: item.price.id, currentPeriodEnd: new Date(item.current_period_end * 1000), cancelAtPeriodEnd: sub.cancel_at_period_end },
+    });
+  }
+  if (event.type === "invoice.payment_failed") await emailQueue.add("payment-failed", { invoiceId: event.data.object.id });
+  res.json({ received: true });
+});`,
+          try: R`اعمل حساب Stripe في test mode، و Product بـ Price شهري وسنوي. ثبّت Stripe CLI واعمل [[stripe listen --forward-to localhost:4000/webhooks/stripe]]، واشترك بالكارت [[4242 4242 4242 4242]]. بعدين من الـ Portal غيّر الخطة من شهري لسنوي، وبعدين الغي. وبعدين جرّب [[stripe trigger invoice.payment_failed]]. بعد كل خطوة بص على جدول subscriptions.`,
+          flag: "script",
+          deep: {
+            why: "الاشتراكات فيها حالات أكتر بكتير من الدفع مرة واحدة: تجربة بتخلص، وتجديد بيفشل، وإعادة محاولات، وترقية في نص الشهر، وإلغاء في آخر الفترة. لو بنيت ده بنفسك فوق دفع عادي، هتقضي شهور في حالات حدية. Stripe Billing بيعمله، ودورك إنك تعكس الحالة عندك صح وتفتح وتقفل الميزات على أساسها.",
+            how: R`[[status]] بتاع الاشتراك هو اللي بيقرر: [[trialing]] و [[active]] يعني الميزات مفتوحة. و [[past_due]] يعني التجديد فشل و Stripe بيحاول تاني (سيب الميزات مفتوحة فترة سماح وبان banner «حدّث الكارت»). و [[canceled]] و [[unpaid]] يعني اقفل. و [[incomplete]] أول دفعة لسه مكملتش. و [[cancelAtPeriodEnd]] معناها المستخدم لغى بس الفترة المدفوعة لسه شغالة.
+
+التجربة: [[trial_period_days: 14]]، والكارت بيتطلب في الـ Checkout افتراضيًا، فبعد ١٤ يوم بيتحاسب لوحده. وحدث [[customer.subscription.trial_will_end]] بييجي قبلها بـ ٣ أيام، وده وقت إيميل «تجربتك هتخلص».
+
+الـ proration: لما العميل يرقّي من شهري لسنوي أو من Basic لـ Pro في نص الفترة، Stripe بيحسب الفرق للأيام الباقية ويحطه في الفاتورة الجاية (أو يحاسب فورًا حسب الإعداد). من الـ Portal ده بيحصل لوحده. ومن الكود: [[stripe.subscriptions.update(id, { items: [{ id: itemId, price: newPrice }], proration_behavior: "create_prorations" })]].
+
+الـ dunning: لما التجديد يفشل، Stripe بيعمل Smart Retries على كذا يوم، وبيبعت إيميلات للعميل لو فعّلتها من الـ dashboard، وفي الآخر بيلغي أو بيسيبه unpaid حسب إعداداتك. وانت بتاخد [[invoice.payment_failed]] مع كل محاولة، وتبعت إيميلك أو تحط banner.
+
+الـ webhook: [[express.raw]] لازم لأن التوقيع محسوب على الـ body زي ما وصل حرف بحرف، ولازم يتسجّل قبل [[express.json()]] العام أو يبقى route لوحده. و [[constructEvent]] بترمي لو التوقيع غلط أو قديم (أكتر من ٥ دقايق افتراضيًا)، فبنرجّع 400. وبنستخدم أحداث [[customer.subscription.*]] (created و updated و deleted) عشان نعكس الحالة كلها بـ upsert، فالترتيب والتكرار ميبوظوش حاجة. وللدقة الأعلى، ممكن تتجاهل الـ object اللي في الحدث وتجيب الاشتراك من Stripe بـ [[subscriptions.retrieve]]، فتاخد آخر حالة دايمًا.
+
+[[current_period_end]] بقى على مستوى الـ subscription item (أول عنصر في [[items.data]]) من API سنة 2025، مش على الاشتراك نفسه. لو بتقرا كود قديم أو tutorial قديم، دي أول حاجة هتلاقيها مختلفة.
+
+الـ customer: اعمل Stripe customer لكل tenant مرة واحدة ([[stripe.customers.create]]) وخزن الـ id. ولو الاشتراك للشخص مش للـ workspace، يبقى لكل user.`,
+            when: "منتج بخطط شهرية أو سنوية لعملاء برّه مصر أو شركة ليها كيان في دولة مدعومة. ولو السوق مصر بس، الاشتراكات بتتعمل بـ Paymob (فيه subscriptions) أو بفواتير شهرية بتتدفع كل مرة.",
+            mistakes: R`تفتح الميزات من صفحة [[success_url]] بدل الـ webhook. أو [[express.json]] قبل الـ webhook فالتوقيع يفشل دايمًا. أو تقفل الميزات أول ما [[past_due]] تيجي والعميل لسه Stripe بيحاول. أو تنسى [[cancel_at_period_end]] فتقفل على واحد لسه دافع للشهر. أو تحط السعر من الواجهة بدل price id من config. أو تسيب الـ webhook من غير تسجيل الـ event id، فتتلخبط لو حصل مشكلة. وفي الانترفيو: «الـ webhook وصل قبل ما الـ redirect يرجع، أو العكس؟» الواجهة تعرض «جاري التفعيل» وتسأل السيرفر، نفس «صفحة ما بعد الدفع».`
+          },
+          lines: [
+            "بدء الاشتراك: الـ OWNER بس، جوه الـ workspace.",
+            "الخطة من قايمة ثابتة، مش سعر من الواجهة.",
+            "Checkout من Stripe:",
+            "وضع الاشتراك.",
+            "عميل Stripe بتاع الـ workspace.",
+            "الـ price id من الإعدادات.",
+            "تجربة ١٤ يوم، والـ tenant في الـ metadata عشان الـ webhook يعرف ده لمين.",
+            "يرجع هنا بعد الدفع...",
+            "...أو لو لغى.",
+            "قفلة.",
+            "الواجهة تعمل redirect للـ URL ده.",
+            "قفلة.",
+            "Customer Portal: تغيير الكارت والخطة والإلغاء والفواتير.",
+            "session قصيرة للبوابة بتاعة العميل ده.",
+            "رجّع الـ URL.",
+            "قفلة.",
+            "الـ webhook: الـ body خام عشان التوقيع.",
+            "الحدث.",
+            "اتحقق من التوقيع. لو غلط أو قديم، 400 ومتكملش.",
+            "أي تغيير في الاشتراك (إنشاء، أو تحديث، أو إلغاء):",
+            "الاشتراك من الحدث.",
+            "أول item (الخطة).",
+            "اعكس الحالة عندك:",
+            "بالـ id بتاع Stripe.",
+            "لو جديد: الـ tenant، والحالة، والخطة، ونهاية الفترة، والإلغاء في الآخر.",
+            "لو موجود: حدّث نفس الحقول.",
+            "قفلة.",
+            "قفلة.",
+            "تجديد فشل؟ ابعت إيميل «حدّث الكارت».",
+            "رد سريع إن الحدث اتستلم.",
+            "قفلة."
+          ],
+          sol: R`بعد الاشتراك: صف في subscriptions بـ [[status: "trialing"]] و [[currentPeriodEnd]] بعد ١٤ يوم. بعد التغيير لسنوي من الـ Portal: نفس الصف بـ [[priceId]] الجديد، و Stripe عامل proration في الفاتورة الجاية. بعد الإلغاء من الـ Portal (الافتراضي في آخر الفترة): [[cancelAtPeriodEnd: true]] والحالة لسه trialing أو active، وبعد ما الفترة تخلص بييجي [[customer.subscription.deleted]] والحالة [[canceled]].
+
+[[stripe trigger invoice.payment_failed]] بيعمل عميل واشتراك تجريبيين من عنده، فهتلاقي إيميل payment-failed في الـ queue. وممكن الـ upsert يرمي لأن [[metadata.tenantId]] فاضي في الاشتراك التجريبي: ده متوقع، واتعامل معاه (تجاهل الاشتراكات من غير tenant، وسجّلها في اللوج).
+
+لو كل الـ webhooks بترجع 400: غالبًا [[express.json()]] اشتغل قبل [[express.raw]]، أو بتستخدم secret الـ dashboard بدل اللي [[stripe listen]] طبعه ([[whsec_...]]).`
         }
       ]
     },
@@ -1754,6 +2586,510 @@ await maintenance.upsertJobScheduler("reconcile-payments", { every: 15 * 60_000 
       ]
     },
     {
+      t: "multi-tenant SaaS",
+      l: 2,
+      n: "منتج واحد لشركات كتير: فين الـ tenant في الداتا، وإزاي كل query يتقفل عليه، والأعضاء والدعوات، والدومينات، واختبار التسريب",
+      items: [
+        {
+          cmd: "tenant_id ولا schema",
+          title: "tenant_id في كل جدول، ولا schema لكل عميل، ولا قاعدة لكل عميل؟",
+          desc: R`الـ multi-tenant SaaS منتج واحد بيخدم شركات كتير (عيادات، أو مدارس، أو فرق شغل)، وكل شركة اسمها tenant أو workspace. وداتا كل واحدة لازم متظهرش للتانية أبدًا.
+
+فيه ٣ طرق تفصل بيها الداتا. الأولى: جداول مشتركة وعمود [[tenantId]] في كل جدول. التانية: schema لكل tenant في نفس القاعدة. والتالتة: قاعدة لكل tenant. لأغلب المنتجات الجديدة ابدأ بالأولى، وهي اللي هنكمل بيها.`,
+          example: R`model Workspace {
+  id        String    @id @default(uuid())
+  name      String
+  slug      String    @unique
+  domain    String?   @unique
+  members   Member[]
+  projects  Project[]
+}
+model Member {
+  tenantId String
+  userId   String
+  role     Role      @default(MEMBER)
+  tenant   Workspace @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@id([tenantId, userId])
+  @@index([userId])
+}
+model Project {
+  id       String    @id @default(uuid())
+  tenantId String
+  name     String
+  tenant   Workspace @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  @@index([tenantId, id])
+}
+enum Role { OWNER ADMIN MEMBER }`,
+          try: "خد منصة الكورسات وحوّلها لـ SaaS: كل أكاديمية ليها workspace، ومدرّبينها، وطلابها، وكورساتها. اكتب قايمة بكل جدول وقرر: فيه tenantId ولا لأ؟ (users؟ الكورسات؟ الطلبات؟ جدول الخطط والأسعار؟). وبعدين قرر: طالب واحد ينفع يبقى في أكاديميتين؟",
+          flag: "script",
+          deep: {
+            why: "القرار ده بيتاخد مرة واحدة وبيبقى صعب جدًا يتغير بعدين، لأنه بيلمس كل جدول وكل query. وغلطة واحدة فيه (query ناقصه الفلتر) معناها إن عميل بيشوف داتا عميل تاني، ودي أسوأ حاجة تحصل لـ B2B SaaS: بتخسر ثقة كل العملاء، مش العميل ده بس.",
+            how: R`الطريقة الأولى (tenantId في كل جدول، shared schema): أرخص وأبسط. migration واحدة لكل العملاء، و connection pool واحد، وتقارير على كل العملاء بـ query واحدة. العيب إن العزل كله معتمد على إن كل query فيه [[WHERE tenantId = ...]]. والحل في الدرسين الجايين: Prisma extension بيحطه أوتوماتيك، و RLS في القاعدة كشبكة أمان.
+
+الطريقة التانية (schema لكل tenant): جداول منفصلة فعلًا، والـ query بيختار الـ schema بـ [[search_path]]. العزل أقوى، بس كل migration لازم تتعمل على مئات أو آلاف الـ schemas، والـ connection pooling بيتعقد، و Prisma مش مصمم لده (محتاج client لكل schema أو [[SET search_path]] جوه transaction).
+
+الطريقة التالتة (قاعدة لكل tenant): أقوى عزل، وكل عميل ممكن يبقى في region مختلف، وتقدر تعمل restore لعميل واحد. بس تكلفة وتشغيل كل قاعدة لوحدها. بتتعمل للعملاء الكبار (enterprise) اللي بيطلبوها في العقد، أو ليها أدوات زي Turso اللي مبنية على قاعدة لكل عميل.
+
+والمنتجات الكبيرة بتخلط: كل الناس في shared، والعميل الكبير في قاعدة لوحده (نفس الكود، connection string مختلف).
+
+تفاصيل في الـ schema: users مش فيها tenantId، لأن نفس الشخص ممكن يبقى في أكتر من workspace (زي Slack). والعلاقة في جدول Member بالدور. والـ index على [[(tenantId, id)]] أو [[(tenantId, createdAt)]] لأن كل query هيبدأ بـ tenantId. وجداول النظام زي الخطط والعملات مشتركة ومن غير tenantId.
+
+والـ tenantId يتنسخ لكل جدول، حتى لو ممكن يتعرف من الأب (task جوه project جوه workspace). ليه؟ عشان الفلتر والـ RLS يبقوا بسطاء، من غير joins.`,
+            when: "من أول يوم في أي منتج بيتباع لشركات. حتى لو أول عميل واحد، ضيف tenantId من البداية. إضافته بعدين لجداول فيها داتا أصعب بكتير.",
+            mistakes: R`tenantId في الجداول الرئيسية بس، وجداول الأولاد (comments، و attachments) من غيره. أو user فيه tenantId واحد، وبعدين العملاء يطلبوا حد في أكتر من workspace. أو schema لكل عميل من أول يوم عشان «أأمن»، والـ migrations تبقى كابوس بعد ٢٠٠ عميل. وفي الانترفيو: «صمم SaaS متعدد العملاء» — قول الـ ٣ طرق، واختار واحدة بسبب، واذكر إزاي تضمن العزل.`
+          },
+          lines: [
+            "الـ tenant نفسه: شركة أو أكاديمية.",
+            "رقمه.",
+            "اسمه.",
+            "اسم قصير للـ subdomain ([[acme.myapp.com]]).",
+            "دومين خاص اختياري ([[learn.acme.com]]).",
+            "أعضاؤه.",
+            "مشاريعه.",
+            "قفلة.",
+            "العضوية: مين في أنهي workspace وبأنهي دور.",
+            "الـ workspace.",
+            "المستخدم.",
+            "دوره جوه الـ workspace ده بالذات.",
+            "العلاقة، ولو الـ workspace اتمسح الأعضاء يتمسحوا.",
+            "العلاقة بالمستخدم.",
+            "الشخص مرة واحدة في كل workspace.",
+            "index عشان «الـ workspaces بتاعتي».",
+            "قفلة.",
+            "مثال لجدول بيانات عادي.",
+            "رقمه.",
+            "tenantId في كل صف، حتى لو ممكن يتعرف من علاقة.",
+            "الاسم.",
+            "العلاقة.",
+            "كل query بيبدأ بالـ tenant، فالـ index بيبدأ بيه.",
+            "قفلة.",
+            "الأدوار جوه الـ workspace."
+          ],
+          sol: R`الإجابة المتوقعة: users من غير tenantId (الشخص بيتنقل بين أكاديميات)، والعضوية في Member بدور (OWNER أو ADMIN للأكاديمية، و INSTRUCTOR، و STUDENT). الكورسات، والدروس، والطلبات، والـ enrollments، والكوبونات: كلهم فيهم tenantId، حتى الدروس رغم إنها تحت الكورس. جدول الخطط (plans) بتاع اشتراك الأكاديمية فيك مشترك ومن غير tenantId، أما اشتراك الأكاديمية نفسه (subscription) فيه tenantId.
+
+طالب في أكاديميتين: أيوه، صفين في Member بنفس userId. وفي الواجهة بيختار الأكاديمية (أو يدخل من الـ subdomain بتاعها).
+
+الغلطة الشائعة: تحط tenantId في users، فالطالب يعمل حسابين بنفس الإيميل، والقيد unique على الإيميل يمنعه.`
+        },
+        {
+          cmd: "Prisma tenant extension",
+          title: "Prisma extension: الـ tenant بيتحط في كل query لوحده",
+          desc: R`بدل ما تكتب [[where: { tenantId }]] في كل query وتتمنى محدش ينساها، بتعمل client خاص بالـ tenant بـ Prisma client extension. أي query عليه بيتحط فيه الـ tenantId أوتوماتيك: في الـ where للقراية والتعديل والمسح، وفي الـ data للإنشاء.
+
+الـ middleware بيطلّع الـ tenant من الطلب (من الـ subdomain أو header)، ويتأكد إن المستخدم عضو فيه، ويحط [[req.db = forTenant(tenantId)]]. والـ routes بتستخدم [[req.db]] بس.`,
+          example: R`const SCOPED = new Set(["Project", "Member", "Invite"]);
+
+export function forTenant(tenantId) {
+  return prisma.$extends({
+    query: {
+      $allModels: {
+        async $allOperations({ model, operation, args, query }) {
+          if (!SCOPED.has(model)) return query(args);
+          if (operation === "create") args.data = { ...args.data, tenantId };
+          else if (operation.startsWith("createMany")) args.data = [args.data].flat().map((d) => ({ ...d, tenantId }));
+          else if (operation === "upsert") { args.where = { ...args.where, tenantId }; args.create = { ...args.create, tenantId }; }
+          else args.where = { ...args.where, tenantId };
+          return query(args);
+        },
+      },
+    },
+  });
+}
+
+export async function tenantScope(req, res, next) {
+  const member = await prisma.member.findUnique({ where: { tenantId_userId: { tenantId: req.tenant.id, userId: req.user.id } } });
+  if (!member) throw new AppError(404, "NOT_FOUND", "مش موجود");
+  req.member = member;
+  req.db = forTenant(req.tenant.id);
+  next();
+}`,
+          try: R`اعمل workspaces اتنين A و B، وأنشئ مشروع في A بـ [[forTenant(a.id)]]. بعدين من [[forTenant(b.id)]] جرّب: [[findMany]]، و [[findUnique]] بـ id مشروع A، و [[update]] عليه، و [[deleteMany({})]]. وآخر حاجة: [[create]] من B وفي الـ data [[tenantId: a.id]] صريحة. المشروع اتعمل في أنهي workspace؟`,
+          flag: "script",
+          deep: {
+            why: "مع ١٠٠ endpoint، الفلتر اليدوي هيتنسي في واحد. مش احتمال، مؤكد. والـ extension بيحوّل العزل من «كل مطوّر لازم يفتكر» لـ «الافتراضي آمن، واللي عايز يعدّي لازم يكتب ده صراحة».",
+            how: R`[[$extends]] بـ [[query.$allModels.$allOperations]] بيلف كل عملية على كل model. بياخد اسم الـ model والعملية والـ args، وبينادي [[query(args)]] بعد التعديل. والـ extension ده بديل الـ middleware القديم ([[$use]]) اللي اتشال من Prisma.
+
+ترتيب الـ spread مهم: [[{ ...args.data, tenantId }]] يعني الـ tenantId بتاعنا بيكسب على أي حاجة جاية من الكود. فلو حد بعت [[tenantId]] في الـ body وعدّاه الـ validation، مش هيقدر يكتب في tenant تاني.
+
+[[findUnique]] و [[update]] و [[delete]] بيقبلوا فلاتر زيادة جنب الـ unique field (من Prisma 5)، فـ [[where: { id, tenantId }]] شغالة. ولو المشروع في tenant تاني: findUnique بترجّع null، و update و delete بيرموا [[P2025]] (مش موجود)، والـ handler يحوّلها 404. والـ 404 أحسن من 403، لأن 403 بتأكد إن الـ id موجود عند حد.
+
+[[SCOPED]] قايمة صريحة بالـ models اللي فيها tenantId. أي model جديد فيه tenantId لازم يتضاف هنا، والاختبار في درس «اختبار تسريب tenants» بيمسك لو اتنسى.
+
+حدود الـ extension اللي لازم تعرفها: الـ nested writes ([[create]] جوه [[project.create({ data: { tasks: { create: [...] } } })]]) مش بتعدّي على الـ extension للـ model الابن، فلازم تحط tenantId بإيدك أو تتجنبها. و [[include]] للعلاقات مش بيتفلتر (بس لو الأب متفلتر والأولاد تبعه، مفيش مشكلة عادة). و [[$queryRaw]] مش بيتلمس خالص. عشان كده RLS في الدرس الجاي كشبكة أمان.
+
+و [[forTenant]] بترجّع client جديد خفيف (مش connection جديد)، فعادي تعمله مع كل طلب.`,
+            when: "من أول endpoint في منتج multi-tenant. وخلي الـ lint أو الـ code review يمنع استخدام [[prisma]] العادي في routes الـ tenant، واسمح بيه بس في مكان واضح (زي الأدمن العام والـ jobs).",
+            mistakes: R`نسيان model جديد في SCOPED. أو [[{ tenantId, ...args.data }]] بالعكس، فالـ body يكسب. أو استخدام [[prisma]] العادي «مرة واحدة بس» في route. أو الاعتماد على الـ extension مع nested writes. أو إنك تاخد الـ tenantId من الـ body أو الـ query بدل من العضوية المتحقق منها. أو 403 بدل 404 للي مش عضو.`
+          },
+          lines: [
+            "الـ models اللي فيها tenantId وبتتقفل على الـ tenant.",
+            "دالة بتعمل client خاص بـ tenant واحد.",
+            "extension على الـ client الأساسي...",
+            "...بيلف الـ queries...",
+            "...على كل الـ models...",
+            "...وكل العمليات.",
+            "model مش tenant؟ عدّيه زي ما هو.",
+            "إنشاء: الـ tenantId بتاعنا فوق أي حاجة في الـ data.",
+            "إنشاء كتير: نفس الكلام لكل صف.",
+            "upsert: في الـ where وفي الـ create.",
+            "أي حاجة تانية (find و update و delete و count...): في الـ where.",
+            "نفّذ الـ query بعد التعديل.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة.",
+            "middleware بعد ما [[req.tenant]] اتحدد من الـ subdomain.",
+            "المستخدم عضو في الـ workspace ده؟",
+            "لأ؟ 404 كأنه مش موجود.",
+            "احفظ العضوية (فيها الدور).",
+            "والـ client المقفول على الـ tenant.",
+            "كمّل.",
+            "قفلة."
+          ],
+          sol: R`النتايج المتوقعة من B: [[findMany]] يرجّع مشاريع B بس، و [[findUnique]] بـ id مشروع A يرجّع null، و [[update]] يرمي [[P2025]]، و [[deleteMany({})]] يمسح مشاريع B بس ([[count]] بعددهم)، ومشروع A لسه موجود. و [[create]] بـ [[tenantId: a.id]] صريحة بيتعمل في B، لأن الـ spread بيحط tenantId بتاعنا في الآخر.
+
+لو المشروع اتعمل في A، يبقى كاتب [[{ tenantId, ...args.data }]]. ولو [[findUnique]] رمى validation error، يبقى نسخة Prisma قديمة جدًا (قبل 5) مبتقبلش فلاتر زيادة في الـ unique where.`
+        },
+        {
+          cmd: "RLS و app.tenant_id",
+          title: "Row Level Security: القاعدة نفسها بترفض صفوف الـ tenant التاني",
+          desc: R`الـ extension بيحمي الكود اللي بيعدّي عليه. أما RLS (Row Level Security) في PostgreSQL فبيحمي القاعدة نفسها: policy على كل جدول بتقول «الصف ده يظهر بس لو [[tenantId]] بتاعه زي [[app.tenant_id]] في الـ session». أي query، حتى [[$queryRaw]] أو query ناقص الفلتر، مش هيشوف غير صفوف الـ tenant ده.
+
+في Prisma: extension بيعمل transaction فيها [[set_config('app.tenant_id', ..., true)]] وبعدها الـ query. والتطبيق لازم يتصل بـ role عادي، مش owner الجداول ومش superuser، لأن الاتنين بيعدّوا RLS.`,
+          example: R`CREATE ROLE app_user LOGIN PASSWORD 'change-me';
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
+ALTER TABLE "Project" ENABLE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation ON "Project"
+  USING ("tenantId" = current_setting('app.tenant_id', true))
+  WITH CHECK ("tenantId" = current_setting('app.tenant_id', true));
+
+export function withTenant(tenantId) {
+  return prisma.$extends({
+    query: {
+      $allModels: {
+        async $allOperations({ args, query }) {
+          const [, result] = await prisma.$transaction([
+            prisma.$executeRaw$__btSELECT set_config('app.tenant_id', $__{tenantId}, true)$__bt,
+            query(args),
+          ]);
+          return result;
+        },
+      },
+    },
+  });
+}`,
+          try: R`نفّذ الـ SQL على قاعدة تجربة، واتصل بـ [[app_user]]. جرّب [[SELECT * FROM "Project"]] من غير أي setting، وبعدين [[SELECT set_config('app.tenant_id', '<id>', false)]] وكرر. وجرّب [[INSERT]] بـ tenantId مختلف عن الـ setting. وبعدين اتصل بالـ owner وكرر أول query.`,
+          flag: "script",
+          deep: {
+            why: "الـ extension بيغطي ٩٥٪، والـ ٥٪ الباقيين هما اللي بيعملوا التسريب: تقرير بـ SQL خام، أو script في job، أو مطوّر جديد استخدم الـ client العادي. الـ RLS بيخلي الغلطة دي ترجّع صفر صفوف بدل داتا عميل تاني. يعني بتتحول من تسريب لـ bug.",
+            how: R`[[USING]] بيفلتر اللي يتقري (SELECT) واللي يتعدّل ويتمسح (UPDATE و DELETE). و [[WITH CHECK]] بيمنع كتابة صف tenantId بتاعه غلط (INSERT و UPDATE). والاتنين بيقارنوا بـ [[current_setting('app.tenant_id', true)]]. الـ [[true]] التانية معناها «لو مش متحدد رجّع NULL بدل error»، و NULL مبيساويش أي حاجة، فمن غير setting مفيش صفوف خالص. الافتراضي آمن.
+
+[[set_config(..., true)]]: الـ true الأخيرة معناها local، يعني الـ setting بيعيش لحد آخر الـ transaction بس. ده مهم جدًا مع الـ connection pool: الاتصال ده هيروح لطلب تاني بعد شوية، ولو الـ setting فضل عليه، الطلب الجاي هيشوف داتا الـ tenant اللي قبله. عشان كده الـ extension بيحط الـ set_config والـ query في نفس الـ [[$transaction]].
+
+و [[$executeRaw]] بالـ tagged template بيعمل parameter مش string concatenation، فمفيش SQL injection من الـ tenantId.
+
+الـ role: صاحب الجدول (اللي عمل الـ migration) بيعدّي RLS إلا لو [[FORCE ROW LEVEL SECURITY]]، والـ superuser بيعدّيها دايمًا. فالتطبيق بيتصل بـ [[app_user]]، والـ migrations بتشتغل بـ role تاني. وده معناه متغيرين بيئة: [[DATABASE_URL]] للتطبيق و [[MIGRATE_DATABASE_URL]] للـ migrations.
+
+التمن: كل query بقى transaction فيها ٢ statements، يعني round trip زيادة. في أغلب المنتجات مش ملحوظ. ولو بقى مشكلة، تقدر تعمل الـ set_config مرة واحدة في [[$transaction(async (tx) => ...)]] جوه الطلب وتعمل كل الـ queries فيه. والـ index على tenantId لازم يبقى موجود، لأن الـ policy بتتحط كـ WHERE.
+
+والأدمن العام والـ jobs اللي بتلف على كل العملاء: role تالت عليه [[BYPASSRLS]]، أو policy زيادة بـ setting زي [[app.bypass_rls]]، ويبقى استخدامه صريح ومتسجّل.
+
+Supabase مبني على نفس الفكرة: الـ policies بتستخدم [[auth.uid()]] من الـ JWT. تفاصيل RLS في تاب «PostgreSQL».`,
+            when: "بعد الـ extension، كطبقة تانية، لأي SaaS فيه داتا حساسة (طبية، أو مالية، أو داتا عملاء شركات). وأي عميل enterprise هيسألك عليها في استبيان الأمان.",
+            mistakes: R`الاتصال بالـ superuser أو owner الجدول، فالـ policies متشتغلش والاختبارات تعدّي. أو [[set_config(..., false)]] فالـ setting يفضل على الاتصال ويتسرب لطلب تاني. أو set_config والـ query في statements منفصلين برّه transaction، فكل واحد ممكن يروح على اتصال مختلف. أو PgBouncer بوضع transaction مع [[SET]] العادي (session level). أو إنك تنسى [[WITH CHECK]] فالقراية مقفولة والكتابة لأي tenant مفتوحة.`
+          },
+          lines: [
+            "role التطبيق: عادي، مش superuser ولا صاحب الجداول.",
+            "صلاحيات القراية والكتابة بس.",
+            "شغّل RLS على الجدول.",
+            "الـ policy:",
+            "الصفوف اللي تتقري أو تتعدل: الـ tenant بتاع الـ session بس...",
+            "...والصفوف اللي تتكتب: نفس الشرط.",
+            "الـ extension اللي بيحط الـ tenant في الـ session.",
+            "extension على الـ client...",
+            "...بيلف الـ queries...",
+            "...على كل الـ models...",
+            "...وكل العمليات.",
+            "transaction فيها خطوتين على نفس الاتصال:",
+            "حط [[app.tenant_id]] لحد آخر الـ transaction بس...",
+            "...ونفّذ الـ query.",
+            "قفلة.",
+            "رجّع نتيجة الـ query.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`بـ [[app_user]] ومن غير setting: [[SELECT]] يرجّع صفر صفوف (مش error). بعد [[set_config]] بـ id الـ tenant: صفوفه هو بس. الـ [[INSERT]] بـ tenantId مختلف يرمي [[new row violates row-level security policy for table "Project"]] (كود 42501). ومن الـ owner: كل الصفوف ترجع، وده السبب إن التطبيق لازم ميتصلش بيه.
+
+من Prisma: [[withTenant(a.id).project.findMany()]] يرجع مشاريع A بس، و [[prisma.project.findMany()]] العادي بـ app_user يرجّع مصفوفة فاضية.
+
+لو الـ SELECT من غير setting رجّع كل الصفوف، اتأكد إنك متصل بـ app_user فعلًا ([[SELECT current_user]]).`
+        },
+        {
+          cmd: "أعضاء ودعوات",
+          title: "أعضاء workspace وأدوارهم، والدعوة بالإيميل",
+          desc: R`كل workspace ليه أعضاء بأدوار: OWNER (واحد أو أكتر، يقدر يمسح الـ workspace ويدير الفلوس)، و ADMIN (يدير الأعضاء)، و MEMBER (شغل عادي). الدور جوه جدول Member، فنفس الشخص ممكن يبقى OWNER في workspace و MEMBER في تاني.
+
+الدعوة: الأدمن بيكتب إيميل ودور، والسيرفر بيعمل صف Invite فيه token hash ومدة (٧ أيام)، ويبعت لينك. اللي بيفتح اللينك بيسجّل دخول أو حساب جديد بنفس الإيميل، ويقبل، فيتعمل Member.`,
+          example: R`export const requireTenantRole = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.member.role)) throw new AppError(403, "FORBIDDEN", "مش مسموح لدورك");
+  next();
+};
+router.post("/invites", tenantScope, requireTenantRole("OWNER", "ADMIN"), async (req, res) => {
+  const { email, role } = z.object({ email: z.email().transform((e) => e.toLowerCase()), role: z.enum(["ADMIN", "MEMBER"]) }).parse(req.body);
+  if (role === "ADMIN" && req.member.role !== "OWNER") throw new AppError(403, "FORBIDDEN", "الـ owner بس يعيّن admin");
+  const token = crypto.randomBytes(32).toString("base64url");
+  await req.db.invite.upsert({ where: { tenantId_email: { tenantId: req.tenant.id, email } }, create: { email, role, tokenHash: sha256(token), invitedById: req.user.id, expiresAt: new Date(Date.now() + 7 * 864e5) }, update: { role, tokenHash: sha256(token), expiresAt: new Date(Date.now() + 7 * 864e5) } });
+  await emailQueue.add("invite", { to: email, workspace: req.tenant.name, link: $__bt$__{config.WEB_ORIGIN}/invite?token=$__{token}$__bt });
+  res.status(202).end();
+});
+router.post("/invites/accept", requireAuth, async (req, res) => {
+  const invite = await prisma.invite.findUnique({ where: { tokenHash: sha256(String(req.body.token)) } });
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: req.user.id } });
+  if (!invite || invite.acceptedAt || invite.expiresAt < new Date()) throw new AppError(400, "BAD_INVITE", "الدعوة انتهت، اطلب واحدة جديدة");
+  if (invite.email !== user.email || !user.emailVerifiedAt) throw new AppError(403, "INVITE_EMAIL_MISMATCH", "الدعوة دي لإيميل تاني");
+  await prisma.$transaction([
+    prisma.member.upsert({ where: { tenantId_userId: { tenantId: invite.tenantId, userId: user.id } }, create: { tenantId: invite.tenantId, userId: user.id, role: invite.role }, update: {} }),
+    prisma.invite.update({ where: { id: invite.id }, data: { acceptedAt: new Date() } }),
+  ]);
+  res.json({ data: { tenantId: invite.tenantId } });
+});`,
+          try: R`اكتب الـ model بتاع [[Invite]] (id، و tenantId، و email، و role، و tokenHash unique، و invitedById، و expiresAt، و acceptedAt، و [[@@unique([tenantId, email])]]) وضيفه لـ SCOPED. بعدين اكتب [[DELETE /members/:userId]] بقاعدتين: MEMBER ميقدرش يشيل حد، وآخر OWNER ميتشالش ولا يشيل نفسه.`,
+          flag: "script",
+          deep: {
+            why: "الأدوار جوه الـ workspace هي الفرق بين «أداة شخصية» و «منتج الشركات تشتريه». وأغلب ثغرات الـ SaaS الحقيقية مش في الـ login، بتبقى في الدعوات: دعوة اتقبلت بإيميل تاني، أو MEMBER رقّى نفسه ADMIN، أو آخر OWNER شال نفسه والـ workspace بقى من غير صاحب.",
+            how: R`[[requireTenantRole]] بيشتغل بعد [[tenantScope]]، لأنه بيقرا [[req.member.role]] اللي اتجاب من القاعدة، مش من الـ JWT. ليه مش JWT؟ الدور بيتغير (الأدمن شال حد)، والـ JWT بيعيش ربع ساعة، وكمان الشخص عنده دور مختلف في كل workspace.
+
+الـ ADMIN مينفعش يعيّن ADMIN (الـ OWNER بس). من غير القاعدة دي، أي ADMIN يقدر يعمل حساب تاني ليه ويرقّيه، وتبقى صعب تشيله. وبنفس المنطق، محدش يقدر يدّي دور أعلى من دوره.
+
+الـ [[upsert]] على [[(tenantId, email)]]: دعوة تانية لنفس الإيميل بتحدّث القديمة (توكن جديد ومدة جديدة) بدل ما تعمل اتنين. والـ extension بيحط tenantId في الـ create والـ where لوحده.
+
+القبول بيتم بـ [[prisma]] العادي مش [[req.db]]، لأن المستخدم لسه مش عضو، والـ workspace بيتعرف من الدعوة نفسها. وده مكان مقصود وواضح.
+
+التحقق من الإيميل: الدعوة لـ [[mona@acme.com]] لازم تتقبل من حساب إيميله [[mona@acme.com]] ومتأكد. من غير الشرط ده، أي حد وصله اللينك (اتعمل له forward، أو اتسرب في تذكرة دعم) يدخل الـ workspace. وبعض المنتجات بتسمح بقبول الدعوة بأي إيميل، وده قرار منتج، بس لازم يبقى مقصود.
+
+المستخدم الجديد: صفحة [[/invite?token=]] بتقوله يسجّل. والإيميل بتاعه اتأكد فعليًا لأنه فتح اللينك من إيميله، فتقدر تأكده في نفس الخطوة. أو تبعته لتأكيد عادي.
+
+الدومين: «أي حد إيميله [[@acme.com]] يدخل لوحده» ميزة شائعة (domain capture). بس لازم تتأكد إن acme فعلًا صاحبة الدومين (سجل TXT في الـ DNS)، وإلا أي حد يسجّل workspace ويقول الدومين ده بتاعي.`,
+            when: "أول ما الـ workspace يبقى فيه أكتر من شخص. والدعوات بالإيميل قبل أي SSO أو SCIM. دول بييجوا لما العملاء الكبار يطلبوهم.",
+            mistakes: R`الدور في الـ JWT. أو ADMIN يعيّن OWNER أو ADMIN. أو قبول الدعوة بأي حساب. أو الدعوة من غير انتهاء. أو شيل آخر OWNER. أو إن العضو المشال يفضل شايف الداتا لحد ما التوكن يخلص، لأن الصلاحية مش بتتقري من القاعدة. أو إرسال الدعوات من غير حد، فالـ workspace بقى أداة spam.`
+          },
+          lines: [
+            "middleware للأدوار جوه الـ workspace.",
+            "الدور من العضوية اللي اتجابت من القاعدة، مش من الـ JWT.",
+            "مسموح؟ كمّل.",
+            "قفلة.",
+            "إنشاء دعوة: عضو، و OWNER أو ADMIN.",
+            "الإيميل والدور. مينفعش تدعي حد OWNER.",
+            "الـ ADMIN مبيعيّنش ADMIN.",
+            "توكن عشوائي.",
+            "دعوة واحدة لكل إيميل في الـ workspace: جديدة أو تحديث للقديمة. والـ tenantId من الـ extension.",
+            "ابعت اللينك.",
+            "تمام.",
+            "قفلة.",
+            "قبول الدعوة: لازم يكون داخل.",
+            "دوّر على الدعوة بالـ hash، بالـ client العادي لأنه لسه مش عضو.",
+            "والمستخدم.",
+            "مش موجودة، أو اتقبلت، أو خلصت؟ ارفض.",
+            "إيميل الحساب لازم يطابق الدعوة ويكون متأكد.",
+            "في transaction:",
+            "اعمله عضو بالدور اللي في الدعوة، ولو عضو بالفعل سيبه.",
+            "وعلّم الدعوة إنها اتقبلت.",
+            "قفلة الـ transaction.",
+            "رجّع الـ workspace عشان الواجهة تفتحه.",
+            "قفلة."
+          ],
+          sol: R`الـ model: [[model Invite { id String @id @default(uuid()) tenantId String email String role Role tokenHash String @unique invitedById String expiresAt DateTime acceptedAt DateTime? @@unique([tenantId, email]) }]]، و [[SCOPED]] فيها [[Invite]].
+
+الحذف (الـ solCode): MEMBER يحاول يشيل حد → [[403]]. شيل OWNER لما هو الوحيد → [[409 LAST_OWNER]]. شيل عضو من workspace تاني → [[404]] لأن [[req.db]] مش هيلاقيه. والـ ADMIN ميقدرش يشيل OWNER.
+
+الغلطة الشائعة: [[prisma.member.delete]] العادي بدل [[req.db]]، فأدمن workspace يقدر يشيل عضو من workspace تاني لو عرف الـ userId.`,
+          solCode: R`router.delete("/members/:userId", tenantScope, requireTenantRole("OWNER", "ADMIN"), async (req, res) => {
+  const target = await req.db.member.findFirst({ where: { userId: req.params.userId } });
+  if (!target) throw new AppError(404, "NOT_FOUND", "مش موجود");
+  if (target.role === "OWNER" && req.member.role !== "OWNER") throw new AppError(403, "FORBIDDEN", "مش مسموح لدورك");
+  if (target.role === "OWNER") {
+    const owners = await req.db.member.count({ where: { role: "OWNER" } });
+    if (owners <= 1) throw new AppError(409, "LAST_OWNER", "لازم يفضل owner واحد على الأقل");
+  }
+  await req.db.member.deleteMany({ where: { userId: target.userId } });
+  res.status(204).end();
+});`
+        },
+        {
+          cmd: "subdomain و custom domain",
+          title: "acme.myapp.com و learn.acme.com: الـ tenant من الدومين",
+          desc: R`كل عميل بياخد subdomain ([[acme.myapp.com]]) أوتوماتيك، والعملاء اللي عايزين يقدروا يربطوا دومين خاص بيهم ([[learn.acme.com]]). الـ API بيعرف الـ tenant من الـ [[Host]] header.
+
+الـ subdomains سهلة: سجل DNS واحد wildcard ([[*.myapp.com]]) بيشاور على السيرفر، وشهادة TLS wildcard (محتاجة DNS challenge). أما الدومينات الخاصة فكل واحد محتاج شهادة لوحده، وده اللي on-demand TLS في Caddy بيعمله: أول ما طلب يوصل لدومين جديد، Caddy بيسأل التطبيق «الدومين ده مسموح؟»، ولو أيوه يطلّع شهادة من Let's Encrypt.`,
+          example: R`{
+	on_demand_tls {
+		ask http://localhost:4000/internal/domain-check
+	}
+}
+https:// {
+	tls {
+		on_demand
+	}
+	reverse_proxy localhost:3000
+}
+
+app.get("/internal/domain-check", async (req, res) => {
+  const ok = await prisma.workspace.findFirst({ where: { domain: String(req.query.domain), domainVerifiedAt: { not: null } }, select: { id: true } });
+  res.status(ok ? 200 : 404).end();
+});
+export async function resolveTenant(req, res, next) {
+  const host = req.hostname.toLowerCase();
+  const slug = host.endsWith("." + config.ROOT_DOMAIN) ? host.slice(0, -(config.ROOT_DOMAIN.length + 1)) : null;
+  req.tenant = slug ? await tenantCache.bySlug(slug) : await tenantCache.byDomain(host);
+  if (!req.tenant) throw new AppError(404, "UNKNOWN_TENANT", "الموقع ده مش موجود");
+  next();
+}`,
+          try: R`من غير DNS حقيقي: ضيف في [[/etc/hosts]] سطرين [[127.0.0.1 acme.myapp.test]] و [[127.0.0.1 learn.acme.test]]، وخلي [[ROOT_DOMAIN=myapp.test]]، وافتح الاتنين. اتأكد إن كل واحد بيطلّع الـ workspace الصح. وبعدين صمّم خطوات «اربط دومينك» اللي هتظهر للعميل: هيحط أنهي سجلات DNS، وإزاي هتتأكد إنه صاحب الدومين؟`,
+          flag: "script",
+          deep: {
+            why: "الدومين الخاص بيخلي المنتج بتاعك يبان كأنه بتاع العميل (white-label)، وده بيتباع بفلوس زيادة في الخطط الأعلى. والـ subdomain بيدّي كل عميل عنوان واضح، وبيخلي الـ cookies والـ tenant منفصلين من غير ما المستخدم يختار.",
+            how: R`الـ subdomains: سجل [[A]] أو [[CNAME]] لـ [[*.myapp.com]]. والشهادة wildcard لازم تتطلع بـ DNS-01 challenge (Let's Encrypt بتطلب إثبات إنك تملك الـ DNS). في Caddy محتاج plugin لمزوّد الـ DNS بتاعك، أو خلي Cloudflare يعمل الـ TLS قدام السيرفر.
+
+الدومين الخاص: العميل بيحط [[CNAME learn.acme.com → custom.myapp.com]]. قبل ما تفعّله، اتأكد إنه صاحب الدومين: اطلب منه سجل [[TXT _myapp.learn.acme.com]] فيه token عشوائي، والسيرفر يتأكد منه ([[dns.promises.resolveTxt]]) ويحط [[domainVerifiedAt]]. من غير التحقق ده، أي حد يربط دومين حد تاني بـ workspace بتاعه.
+
+Caddy on-demand TLS: [[https://]] من غير اسم معناها «أي دومين يوصلني». وأول TLS handshake لدومين جديد، Caddy بيعمل GET على [[ask]] ومعاه [[?domain=learn.acme.com]]. لو التطبيق رجّع 2xx، Caddy بيطلّع شهادة ويخزنها ويجددها لوحده. والـ ask لازم يكون سريع (lookup بـ index)، وإلا أول زيارة هتستنى. ومن غير ask، أي حد يشاور دومينات عشوائية على السيرفر بتاعك، و Caddy يطلب شهادات لحد ما Let's Encrypt يعملك rate limit. عشان كده Caddy بيشترط ask أو permission module في الإنتاج.
+
+[[/internal/domain-check]] لازم ميبقاش مكشوف للإنترنت: على port داخلي أو localhost بس.
+
+[[resolveTenant]]: [[req.hostname]] بيحترم [[trust proxy]] (بياخد [[X-Forwarded-Host]] لو السيرفر ورا proxy موثوق). والـ tenant بيتكاش (Redis أو ذاكرة لدقيقة)، لأنه بيتسأل عليه مع كل طلب.
+
+الـ cookies: cookie اتعملت على [[acme.myapp.com]] مش بتتبعت لـ [[globex.myapp.com]]، وده كويس. متحطش [[Domain=.myapp.com]] على cookie الـ session، وإلا كل الـ subdomains يشوفوها. والدخول على دومين خاص محتاج session لوحده على الدومين ده (الـ cookies مش بتعدّي بين دومينات مختلفة)، فالدخول بيحصل على الدومين نفسه، أو بلينك مرة واحدة من الدومين الرئيسي.
+
+البدائل المُدارة: Vercel و Cloudflare for SaaS بيعملوا نفس الفكرة كخدمة (API تضيف بيه دومين العميل والشهادة بتطلع لوحدها).`,
+            when: "الـ subdomain من أول نسخة لو الـ tenants عندهم زوار من برّه (صفحات أكاديمية، أو متجر). والدومين الخاص لما عميل يطلبه، وغالبًا في خطة مدفوعة أعلى.",
+            mistakes: R`ask endpoint بيرد 200 لأي دومين. أو ربط الدومين من غير TXT verification. أو cookie الـ session على [[.myapp.com]]. أو الاعتماد على [[Host]] من غير trust proxy صح (أو العكس: trust proxy مفتوح فأي حد يبعت X-Forwarded-Host). أو تسيب [[/internal/domain-check]] مكشوف. أو subdomains محجوزة زي [[www]] و [[api]] و [[admin]] متاحة كـ slug لعميل.`
+          },
+          lines: [
+            "الإعدادات العامة لـ Caddy:",
+            "on-demand TLS...",
+            "...يسأل التطبيق قبل ما يطلّع أي شهادة.",
+            "قفلة.",
+            "قفلة.",
+            "أي دومين يوصل على HTTPS:",
+            "إعدادات TLS:",
+            "شهادة وقت الطلب.",
+            "قفلة.",
+            "ابعت للتطبيق.",
+            "قفلة.",
+            "الـ endpoint اللي Caddy بيسأله (داخلي بس).",
+            "الدومين مربوط بـ workspace ومتأكد؟",
+            "200 يطلّع شهادة، و 404 يرفض.",
+            "قفلة.",
+            "middleware بيحدد الـ tenant من الدومين.",
+            "الدومين من الطلب، small.",
+            "لو تحت الدومين الرئيسي، خد الجزء اللي قبله (الـ slug).",
+            "بالـ slug أو بالدومين الخاص، من كاش.",
+            "مش موجود؟ 404.",
+            "كمّل.",
+            "قفلة."
+          ],
+          sol: R`مع [[/etc/hosts]]: [[http://acme.myapp.test:4000]] بيطلّع [[slug = "acme"]] ويجيب الـ workspace بالـ slug، و [[http://learn.acme.test:4000]] مش تحت [[myapp.test]] فبيتدوّر عليه كدومين خاص. أي دومين تالت يرجع [[404 UNKNOWN_TENANT]].
+
+خطوات «اربط دومينك» المتوقعة: (١) العميل يكتب [[learn.acme.com]]، وانت تحفظه من غير verified وتدّيه token. (٢) يحط سجلين: [[CNAME learn → custom.myapp.com]] و [[TXT _myapp.learn → myapp-verify=<token>]]. (٣) زرار «تحقق» (أو job كل ساعة) يعمل [[resolveTxt]] ويقارن، ولو صح يحط [[domainVerifiedAt]]. (٤) من دلوقتي الـ ask يرد 200، وأول زيارة بتطلّع الشهادة. (٥) لو الـ TXT اتشال بعدين، الـ job يلغي التفعيل.
+
+الغلطة الشائعة: الاعتماد على الـ CNAME بس كإثبات ملكية.`
+        },
+        {
+          cmd: "اختبار تسريب tenants",
+          title: "اختبار يثبت إن tenant مش شايف التاني",
+          desc: R`الاختبار ده بيعمل tenantين A و B، ويحط داتا في A، ويحاول من B بكل طريقة: list، و get بالـ id، و count، و update، و delete، و create بـ tenantId بتاع A. كل محاولة لازم تفشل أو ترجع فاضي، وداتا A لازم تفضل زي ما هي.
+
+اكتبه مرة للـ data layer (الـ extension)، ومرة على مستوى الـ HTTP لكل route فيه [[:id]]. وخليه في الـ CI، عشان أي model أو route جديد يتختبر أوتوماتيك. أساسيات Vitest في تاب «فحص الكود».`,
+          example: R`import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { prisma, forTenant } from "../src/db.js";
+
+let a, b, secret;
+beforeAll(async () => {
+  a = await prisma.workspace.create({ data: { name: "A", slug: "a-" + Date.now() } });
+  b = await prisma.workspace.create({ data: { name: "B", slug: "b-" + Date.now() } });
+  secret = await forTenant(a.id).project.create({ data: { name: "سر A" } });
+});
+afterAll(() => prisma.$disconnect());
+
+describe("tenant B can't touch tenant A", () => {
+  const asB = () => forTenant(b.id).project;
+  it("list", async () => expect((await asB().findMany()).map((p) => p.id)).not.toContain(secret.id));
+  it("get by id", async () => expect(await asB().findUnique({ where: { id: secret.id } })).toBeNull());
+  it("count", async () => expect(await asB().count({ where: { id: secret.id } })).toBe(0));
+  it("update", async () => expect(asB().update({ where: { id: secret.id }, data: { name: "x" } })).rejects.toThrow());
+  it("updateMany", async () => expect((await asB().updateMany({ where: { id: secret.id }, data: { name: "x" } })).count).toBe(0));
+  it("delete", async () => expect(asB().delete({ where: { id: secret.id } })).rejects.toThrow());
+  it("create can't pick another tenant", async () => {
+    const p = await asB().create({ data: { name: "y", tenantId: a.id } });
+    expect(p.tenantId).toBe(b.id);
+  });
+  it("A's row is untouched", async () => expect((await prisma.project.findUnique({ where: { id: secret.id } }))?.name).toBe("سر A"));
+});`,
+          try: R`شغّل الاختبار، وبعدين اكسر الـ extension عمدًا: شيل [[Project]] من [[SCOPED]]، وشغّله تاني. لازم يفشل في أكتر من test. بعدين اكتب نسخة HTTP بـ supertest: يوزر في A ويوزر في B، وكل واحد يحاول [[GET]] و [[PATCH]] و [[DELETE]] على [[/projects/:id]] بتاع التاني، والمتوقع 404 في كل حالة.`,
+          flag: "script",
+          deep: {
+            why: "التسريب بين الـ tenants مش بيبان في الاستخدام العادي: كل عميل بيشوف داتاه وبس، لحد ما حد يغيّر رقم في الـ URL. والاختبار ده بيعمل الحاجة دي قبل ما عميل يعملها. ولأنه في الـ CI، أي تعديل بيكسر العزل بيتوقف قبل الـ merge، مش بعد ما يوصل للإنتاج.",
+            how: R`الاختبار بيضرب القاعدة الحقيقية (قاعدة اختبار منفصلة)، مش mock، لأن اللي بنختبره هو السلوك الحقيقي لـ Prisma والـ extension. والـ slugs فيها [[Date.now()]] عشان الاختبارات متتخبطش في بعض لو اتشغلت كذا مرة من غير تنضيف.
+
+كل عملية ليها توقع مختلف. القراية: null أو قايمة من غيره. التعديل والمسح بالـ unique: error (P2025)، والـ route بيحوّله 404. والـ many: count بـ 0. والإنشاء: الـ tenantId بتاعنا بيكسب. وآخر test بيتأكد إن محدش عدّل حاجة في A فعلًا، لأن ممكن العملية ترمي error بعد ما تكتب.
+
+عشان الاختبار يغطي كل model لوحده، ممكن تلف على [[SCOPED]] وتعمل نفس الـ tests لكل واحد بـ [[describe.each]]. وفيه test يقارن SCOPED بكل الـ models اللي فيها عمود [[tenantId]] (من [[Prisma.dmmf]] أو من information_schema)، فلو حد ضاف model ونسي يضيفه، الاختبار يفشل.
+
+نسخة الـ HTTP بتمسك نوع تاني من الغلط: route بيستخدم [[prisma]] العادي بدل [[req.db]]، أو الـ tenant جاي من الـ body. المصفوفة: لكل route فيه [[:id]]، اعمل الطلب بيوزر من الـ tenant التاني، وتوقع 404. نفس فكرة اختبارات الـ ownership في درس «ownership» بس على مستوى الـ workspace.
+
+ومع RLS: شغّل نفس الاختبار باتصال [[app_user]] وبـ [[prisma]] العادي، والمتوقع صفر صفوف في كل حاجة.`,
+            when: "من أول ما تعمل الـ extension، وقبل أول عميل حقيقي. ومع كل model أو route جديد، الاختبار ده بيبقى جزء من definition of done.",
+            mistakes: R`اختبار بـ tenant واحد بس (كل حاجة تعدّي). أو mock لـ Prisma فالاختبار بيختبر الـ mock. أو اختبار الـ list بس ونسيان get و update و delete. أو إن الاختبار يتحقق إن العملية فشلت ومش بيتحقق إن الداتا متغيرتش. أو الاختبار يشتغل بالـ superuser فالـ RLS متتختبرش. وفي الانترفيو: «إزاي تتأكد إن مفيش tenant بيشوف داتا التاني؟» — طبقتين (extension و RLS)، واختبار تسريب في الـ CI، و 404 مش 403.`
+          },
+          lines: [
+            "أدوات Vitest.",
+            "الـ client العادي، والـ client المقفول على tenant.",
+            "workspaceين ومشروع سري.",
+            "قبل كل الاختبارات:",
+            "workspace A.",
+            "workspace B.",
+            "مشروع في A.",
+            "قفلة.",
+            "في الآخر اقفل الاتصال.",
+            "مجموعة الاختبارات:",
+            "client مقفول على B.",
+            "قايمة B مفيهاش مشروع A.",
+            "get بالـ id من B يرجع null.",
+            "count يرجع صفر.",
+            "update بالـ id يرمي (P2025).",
+            "updateMany ميعدّلش حاجة.",
+            "delete بالـ id يرمي.",
+            "create من B...",
+            "...وفي الـ data الـ tenantId بتاع A صريح...",
+            "...يتعمل في B برضه.",
+            "قفلة.",
+            "ومشروع A زي ما هو، بالـ client العادي.",
+            "قفلة."
+          ],
+          sol: R`النتيجة المتوقعة مع الـ extension سليم: [[8 passed]]. لما تشيل Project من SCOPED: [[list]] و [[get by id]] و [[count]] و [[update]] و [[updateMany]] و [[delete]] يفشلوا، وكمان [[A's row is untouched]] يفشل (لأن update عدّل الاسم أو delete مسحه، حسب الترتيب). ده بالظبط اللي عايزه: الاختبار بيمسك الغلطة.
+
+نسخة الـ HTTP (الـ solCode): كل الطلبات ترجع 404. لو واحد رجع 200 أو 204، يبقى الـ route ده بيستخدم [[prisma]] العادي. ولو رجع 403، يبقى بيقول للمهاجم إن الـ id موجود.`,
+          solCode: R`import request from "supertest";
+import { app } from "../src/app.js";
+
+describe.each(["get", "patch", "delete"])("%s /projects/:id across tenants", (method) => {
+  it("returns 404 for a project in another workspace", async () => {
+    const res = await request(app)[method]($__bt/projects/$__{secret.id}$__bt)
+      .set("Host", $__bt$__{b.slug}.myapp.test$__bt)
+      .set("Authorization", $__btBearer $__{tokenOfUserInB}$__bt)
+      .send({ name: "x" });
+    expect(res.status).toBe(404);
+  });
+});`
+        }
+      ]
+    },
+    {
       t: "الأمان والأداء",
       l: 3,
       n: "قبل الإطلاق: الحماية على مستوى التطبيق كله، والكاش، والاستعلامات البطيئة، وسرعة الصفحة عند الزائر",
@@ -2126,6 +3462,68 @@ process.on("SIGTERM", async () => { await posthog.shutdown(); });`,
           ]
         },
         {
+          cmd: "feature flags",
+          title: "feature flags عمليًا: ميزة مقفولة في الإنتاج، وتفتحها لنسبة من الناس",
+          desc: R`الـ feature flag شرط في الكود بيقرر الميزة تظهر ولا لأ، من غير deploy جديد. بيفصل «الكود نزل» عن «الناس شافت الميزة»: الكود بيتدمج في main ويتنشر مقفول، وبعدين تفتحه للفريق، وبعدين لـ ١٠٪ من المستخدمين، وبعدين للكل. ولو حصلت مشكلة تقفله في ثانية.
+
+فيه ٣ مستويات. الأبسط متغير بيئة (مقفول أو مفتوح لكل الناس، ومحتاج restart). وبعده جدول flags في القاعدة (أو Redis) فيه نسبة وقايمة tenants. وبعده أداة زي PostHog (نفس اللي في درس «PostHog») أو Unleash أو GrowthBook، بتديك لوحة ونسب و A/B tests.`,
+          example: R`export async function isEnabled(key, { userId, tenantId } = {}) {
+  const flag = await flagCache.get(key);
+  if (!flag || !flag.enabled) return false;
+  if (tenantId && flag.tenantIds.includes(tenantId)) return true;
+  if (!userId) return flag.percent >= 100;
+  const h = crypto.createHash("sha256").update($__bt$__{key}:$__{userId}$__bt).digest();
+  return h.readUInt32BE(0) % 100 < flag.percent;
+}
+
+router.get("/checkout/config", requireAuth, async (req, res) => {
+  const newCheckout = await isEnabled("new-checkout", { userId: req.user.id, tenantId: req.tenant?.id });
+  res.json({ data: { newCheckout } });
+});
+
+export const isEnabledPH = (key, userId) => posthog.isFeatureEnabled(key, userId);`,
+          try: R`اعمل جدول [[FeatureFlag]] (key unique، و enabled، و percent، و tenantIds، و updatedAt، و owner، و removeBy). وابعت ١٠٠٠٠ userId مختلف لـ [[isEnabled]] بـ percent 10، وعد كام واحد اتفتح له. بعدين ارفع النسبة لـ 30: هل كل اللي كانوا جوه الـ 10 لسه جوه؟ وجرّب نفس الـ userId على flagين مختلفين بنفس النسبة.`,
+          flag: "script",
+          deep: {
+            why: "من غير flags، الميزة الكبيرة بتفضل في branch أسابيع، وبتبعد عن main كل يوم، والـ merge في الآخر بيبقى وجع. والنشر بيبقى لحظة مخيفة: الكل بيشوف الميزة مرة واحدة، ولو فيها مشكلة الحل rollback للنسخة كلها. الـ flag بيخليك تنشر كل يوم وتفتح بالتدريج وتقفل من غير deploy.",
+            how: R`النسبة لازم تبقى ثابتة لنفس الشخص: لو اتحسبت بـ [[Math.random()]]، المستخدم هيشوف الميزة في طلب وميشوفهاش في اللي بعده. عشان كده بنعمل hash لـ [[key:userId]] وناخد باقي القسمة على ١٠٠. نفس الشخص بياخد نفس الرقم دايمًا، وبما إن الـ key جزء من الـ hash، الـ ١٠٪ بتوع flag مش هما نفس الـ ١٠٪ بتوع flag تاني. ولما النسبة تزيد من ١٠ لـ ٣٠، اللي كانوا جوه بيفضلوا جوه (رقمهم أقل من ١٠ فأكيد أقل من ٣٠).
+
+[[tenantIds]]: في SaaS بتفتح الميزة لعملاء معينين الأول (beta customers)، أو لـ workspace الفريق بتاعك. وده أهم من النسبة في B2B، لأن نص الشركة شايف الميزة ونصها لأ بيعمل لخبطة.
+
+الكاش: الـ flags بتتسأل مع كل طلب، فبتتقري من ذاكرة بتتحدث كل ٣٠ ثانية (أو Redis pub/sub لما تتغير). وأدوات زي PostHog بتعمل local evaluation: بتنزّل تعريفات الـ flags وتحسب في السيرفر بتاعك من غير طلب شبكة لكل سؤال (محتاج personal API key أو feature flags secure key حسب نسخة الـ SDK، فارجع للتوثيق).
+
+الواجهة بتسأل السيرفر (زي [[/checkout/config]])، أو تاخد الـ flags مع بيانات المستخدم أول ما الصفحة تفتح. ومتحطش القرار في الواجهة لوحدها لو الميزة فيها صلاحيات أو فلوس: السيرفر برضه لازم يتأكد.
+
+تنضيف الـ flags: كل flag هو [[if]] زيادة وطريقين لازم يتختبروا. بعد ما الميزة توصل ١٠٠٪ وتستقر أسبوعين، امسح الـ flag والكود القديم. عشان كده الجدول فيه [[owner]] و [[removeBy]]، ومراجعة شهرية للـ flags اللي فات معادها.
+
+أنواعها: release flag (مؤقت، لميزة جديدة)، و kill switch (دايم، يقفل حاجة تقيلة وقت الأزمات زي البحث أو التوصيات)، و experiment (A/B بقياس في PostHog)، و permission flag (ميزة لخطة معينة، ودي أحسن تبقى في جدول الخطط مش flags).`,
+            when: "ميزة كبيرة هتاخد أكتر من كام يوم، أو ميزة خطيرة (الدفع، أو الـ auth)، أو تجربة محتاج تقيس أثرها. ومش لكل تغيير صغير.",
+            mistakes: R`[[Math.random()]] بدل hash ثابت. أو flags ملهاش صاحب ولا ميعاد تتشال، فبعد سنة عندك ٢٠٠ flag محدش عارف أنهي فيهم شغال. أو flag بيتسأل من القاعدة مع كل طلب من غير كاش. أو القرار في الواجهة بس. أو flags متداخلة (flag جوه flag) فبقى فيه ٨ تركيبات محدش اختبرها. وفي الانترفيو: «الفرق بين feature flag و canary deploy؟» الـ canary بيوجّه نسبة من الترافيك لنسخة جديدة من الكود كله، والـ flag بيفتح ميزة واحدة جوه نفس النسخة لمستخدمين بعينهم.`
+          },
+          lines: [
+            "الدالة الوحيدة اللي الكود بيسأل بيها.",
+            "تعريف الـ flag من كاش في الذاكرة بيتحدث كل شوية.",
+            "مش موجود أو مقفول؟ لأ.",
+            "الـ workspace في قايمة المسموحين؟ أيوه.",
+            "مفيش مستخدم (طلب مجهول)؟ مفتوح بس لو ١٠٠٪.",
+            "hash لاسم الـ flag مع رقم المستخدم...",
+            "...ورقم من 0 لـ 99 ثابت للشخص ده. أقل من النسبة؟ مفتوح.",
+            "قفلة.",
+            "الواجهة بتسأل السيرفر إيه الميزات المفتوحة.",
+            "اسأل عن الـ flag للمستخدم والـ workspace.",
+            "رجّع النتيجة، والواجهة تعرض الـ checkout الجديد أو القديم.",
+            "قفلة.",
+            "نفس الفكرة بـ PostHog (الـ client من درس «PostHog»): النسب والقوايم بتتظبط من اللوحة."
+          ],
+          sol: R`مع percent 10 على ١٠٠٠٠ مستخدم: حوالي ١٠٠٠ (في تجربة فعلية طلع ١٠٥٩، يعني ١٠.٦٪). الفرق الصغير طبيعي لأنه توزيع hash مش عد مظبوط.
+
+لما ترفعها لـ 30: كل اللي كانوا جوه الـ 10 لسه جوه (صفر خرجوا)، لأن رقمهم أقل من 10 فأكيد أقل من 30. وده اللي بيخلي الـ rollout التدريجي مريح: محدش بيشوف الميزة وبعدين تختفي منه.
+
+نفس الـ userId على flagين: ممكن يبقى جوه واحد وبرّه التاني، لأن الـ key جزء من الـ hash. لو شلت الـ key من الـ hash، نفس الـ ١٠٪ من الناس هيبقوا حقل تجارب لكل الميزات.
+
+الغلطة الشائعة: [[h.readUInt32BE(0) % 100 <= percent]] (بـ =)، فـ percent 0 بيفتح لـ ١٪ من الناس.`
+        },
+        {
           cmd: "backups و DR",
           title: "لو القاعدة راحت النهارده، ترجع في قد إيه؟",
           desc: R`الباك أب اللي عمرك ما رجّعته مش باك أب، ده أمل. كل يوم نسخة من القاعدة بـ [[pg_dump]]، متشفّرة، على مكان برّه السيرفر. وكل شهر رجّع نسخة على قاعدة فاضية وتأكد إنها سليمة.
@@ -2345,9 +3743,258 @@ docs/runbook.md: الدفع مش بيتفعّل، الديسك مليان، ال
       ]
     },
     {
+      t: "مفاهيم الأنظمة الموزعة",
+      l: 3,
+      n: "الكلمات اللي بتتقال في أي system design: consistency و read-your-writes، و CAP و PACELC، و sharding و consistent hashing، و load balancers",
+      items: [
+        {
+          cmd: "consistency و read-your-writes",
+          title: "strong ولا eventual consistency، و «المستخدم لازم يشوف اللي كتبه»",
+          desc: R`strong consistency معناها إن أي قراية بعد كتابة بتشوف الكتابة دي، من أي مكان. و eventual consistency معناها إن النسخ هتتفق «في الآخر»، بس ممكن قراية تشوف قيمة قديمة لفترة قصيرة. قاعدة PostgreSQL واحدة strong. وأول ما تضيف replica، أو كاش، أو search index، أو CDN، بقى عندك نسخ، والنسخ دي eventual.
+
+المشكلة اللي بتبان للمستخدم: كتب تعليق وعمل refresh ومش لاقيه، لأن القراية راحت لـ replica متأخرة. الحل اسمه read-your-writes: المستخدم ده بالذات يقرا من الـ primary لفترة قصيرة بعد ما يكتب، والباقي يقرا من الـ replicas عادي.`,
+          example: R`const STICKY_MS = 5000;
+
+export function readYourWrites(req, res, next) {
+  const lastWrite = Number(req.cookies.lw) || 0;
+  req.read = Date.now() - lastWrite < STICKY_MS ? db.$primary() : db;
+  if (!["GET", "HEAD"].includes(req.method)) {
+    res.cookie("lw", String(Date.now()), { httpOnly: true, secure: true, sameSite: "lax", maxAge: STICKY_MS });
+  }
+  next();
+}
+
+router.get("/courses/:id/comments", readYourWrites, async (req, res) => {
+  res.json({ data: await req.read.comment.findMany({ where: { courseId: req.params.id }, orderBy: { id: "desc" }, take: 20 }) });
+});`,
+          try: R`ارجع لدرس «scaling القاعدة» (فيه [[readReplicas]] و [[$primary()]]). ضيف الـ middleware ده، وتخيل replica متأخرة ٣ ثواني: اكتب جدول بـ ٤ أعمدة (الطلب، ومن مين، ويروح فين، ويشوف الجديد؟) لـ: الشخص اللي كتب بعد ثانية، وشخص تاني بعد ثانية، ونفس الشخص من موبايله بعد ثانية، ونفس الشخص بعد ١٠ ثواني.`,
+          flag: "script",
+          deep: {
+            why: "أغلب الأنظمة الكبيرة eventual في أجزاء منها، ده مش عيب، ده تمن الـ scale. بس المستخدم مش مهتم بالمصطلح، مهتم إن «الحاجة اللي عملتها اختفت». والانترفيوز بتسأل: «أنهي أجزاء في تصميمك محتاجة strong وأنهي ينفع eventual؟» وده السؤال اللي بيفرّق.",
+            how: R`strong بتيجي بتمن: كل كتابة لازم تستنى إن كل النسخ (أو أغلبها) تأكد، أو كل قراية تروح لمكان واحد. ده latency أعلى وأضعف لو جزء من الشبكة وقع. eventual أسرع وأرخص، بس لازم الكود والمنتج يستحملوا قراية قديمة.
+
+قرر لكل داتا لوحدها. الرصيد، والمخزون، وحالة الدفع، والصلاحيات: strong (من الـ primary، وغالبًا جوه transaction). عدد المشاهدات، واللايكات، والتوصيات، ونتايج البحث: eventual عادي، وتأخير ثانية أو دقيقة محدش هيلاحظه.
+
+ضمانات بين الاتنين ليها أسامي: read-your-writes (انت تشوف اللي كتبته)، و monotonic reads (متشوفش حاجة وبعدين تختفي لما تعمل refresh، يعني متتنقلش لـ replica أقدم)، و causal consistency (الرد ميظهرش قبل التعليق اللي بيرد عليه).
+
+الـ middleware: cookie [[lw]] بوقت آخر كتابة، وأي قراية في الـ ٥ ثواني اللي بعدها تروح للـ primary. الرقم أكبر من الـ lag المعتاد بتاع الـ replica (قيسه بـ [[pg_stat_replication]] أو مقياس المزوّد). العيب إن الـ cookie مربوطة بالمتصفح: نفس الشخص من موبايله مش هيشوفها. البديل تخزين وقت آخر كتابة لكل مستخدم في Redis. وفيه طريقة أدق: تخزن الـ LSN (موقع الكتابة في الـ WAL) وتتأكد إن الـ replica عدّته.
+
+والكاش نفس الموضوع: بعد التعديل امسح الكاش (درس «طبقات الكاش»)، أو ارجع النتيجة الجديدة للمستخدم من الـ response نفسه، والواجهة تحدّث الـ state (optimistic update) بدل ما تعمل refetch.`,
+            when: "أول ما يبقى عندك replica، أو كاش بـ TTL، أو search index منفصل، أو أكتر من region. وفي الانترفيو كل ما ترسم نسختين من أي داتا.",
+            mistakes: R`تقرا الرصيد أو حالة الطلب من replica قبل ما تقرر حاجة. أو تفتكر إن eventual يعني «ممكن تضيع». لأ، معناها «هتوصل متأخر». أو تحط كل حاجة على الـ primary عشان تريّح دماغك، فالـ replicas مالهاش لازمة. وفي الانترفيو: متقولش «هستخدم strong consistency في كل حاجة» من غير ما تقول التمن.`
+          },
+          lines: [
+            "المدة اللي المستخدم يقرا فيها من الـ primary بعد ما يكتب.",
+            "middleware بيختار مصدر القراية لكل طلب.",
+            "إمتى آخر مرة الشخص ده كتب (من cookie).",
+            "كتب من قريب؟ اقرا من الـ primary. غير كده من الـ replicas.",
+            "الطلب ده كتابة (POST و PATCH و DELETE)؟",
+            "سجّل وقتها في cookie بتعيش نفس المدة.",
+            "قفلة.",
+            "كمّل.",
+            "قفلة.",
+            "route قراية بيستخدم المصدر اللي اتختار.",
+            "التعليقات. اللي لسه كاتب هيشوف تعليقه.",
+            "قفلة."
+          ],
+          sol: R`الجدول المتوقع: (١) نفس الشخص بعد ثانية، من نفس المتصفح → الـ cookie موجودة → primary → يشوف تعليقه. (٢) شخص تاني بعد ثانية → مفيش cookie → replica → ممكن ميشوفوش، وده مقبول. (٣) نفس الشخص من موبايله بعد ثانية → الـ cookie على المتصفح التاني → replica → ممكن ميشوفوش، ودي الحالة اللي الـ cookie مبتغطيهاش (الحل Redis بالـ userId). (٤) نفس الشخص بعد ١٠ ثواني → الـ cookie خلصت → replica → يشوفه، لأن الـ lag (٣ ثواني) عدّى.
+
+لو الـ lag وصل ١٠ ثواني في الزحمة، الحالة (٤) هتفشل. عشان كده الـ STICKY_MS بيتظبط على الـ lag الحقيقي، مع مراقبة وتنبيه لو الـ lag عدّى رقم معين.`
+        },
+        {
+          cmd: "CAP و PACELC",
+          title: "CAP و PACELC بكلام بسيط",
+          desc: R`CAP بتقول: لما الشبكة تتقطع بين نسختين من الداتا (Partition)، لازم تختار: يا ترفض الطلبات عشان متقولش حاجة غلط (Consistency)، يا ترد بالداتا اللي عندك حتى لو قديمة (Availability). مينفعش الاتنين في نفس اللحظة. والتقطيع ده هيحصل، فالسؤال الحقيقي: لما يحصل، هتختار إيه؟
+
+PACELC بتكمّل: وحتى لو الشبكة سليمة (Else)، فيه اختيار تاني كل يوم: Latency ولا Consistency. تستنى النسخ كلها تأكد (أبطأ وأدق)، ولا ترد بسرعة وتزامن بعدين.`,
+          example: R`الموقف: قاعدتين في القاهرة وفرانكفورت، والشبكة بينهم وقعت دقيقتين
+CP (اختيار الـ consistency): فرانكفورت ترفض الكتابة لحد ما الاتصال يرجع. الحجز والدفع والرصيد لازم كده
+AP (اختيار الـ availability): الاتنين يكتبوا، ولما الشبكة ترجع تحل التعارض. سلة المشتريات واللايكات ينفع كده
+PACELC في الأيام العادية: PostgreSQL بـ synchronous replica يستنى النسخة (EC)، والـ async replica بترد على طول (EL)
+أمثلة: PostgreSQL قاعدة واحدة = CP عمليًا. DynamoDB و Cassandra = AP/EL افتراضيًا، وفيها خيار قراية strong
+حل التعارض في AP: آخر كتابة تكسب (last-write-wins)، أو دمج (CRDT)، أو تسأل المستخدم
+في الانترفيو: متقولش «هختار CA». الـ partition مش اختيار، هي بتحصل`,
+          try: "خد منصة الكورسات، واكتب لكل جزء اختيارك لو الشبكة اتقطعت بين region مصر و region أوروبا: الدفع وتفعيل الكورس، وتقدم الطالب في الدروس، والتعليقات، وعدد المشاهدات، وتغيير الباسورد. واكتب جنب كل واحد: المستخدم هيشوف إيه وقت التقطيع؟",
+          flag: "script",
+          deep: {
+            why: "CAP أشهر كلمة في أسئلة system design، وأكتر كلمة بتتقال غلط. المحاور مش عايز التعريف، عايز يشوفك بتربطها بقرار: «في الجزء ده هختار أرفض، وفي الجزء ده هختار أرد بقديم، وده السبب».",
+            how: R`الـ C في CAP معناها linearizability: كل الناس بيشوفوا نفس آخر قيمة، كأن فيه نسخة واحدة. مش الـ C بتاعة ACID (القيود والقواعد جوه القاعدة). دي فرقة بتتسأل.
+
+والـ A معناها إن كل نسخة شغالة لازم ترد (بنجاح) على أي طلب. مش «uptime ٩٩.٩٩٪».
+
+ليه «CA» مش اختيار؟ لأن أي نظام على أكتر من جهاز ممكن الشبكة بينهم تقع. نظام على جهاز واحد مفيهوش partition أصلًا، بس ده مش موزّع. فالاختيار الفعلي CP ولا AP، ووقت التقطيع بس.
+
+PACELC أهم في الشغل اليومي، لأن التقطيع نادر، بس الـ latency كل طلب. مثال: replica في region تاني. لو كل كتابة بتستنى تأكيده (synchronous)، كل كتابة زادت ٥٠ ملّي ثانية أو أكتر. لو مش بتستنى (async)، سريعة، بس لو الـ primary وقع ممكن آخر كام كتابة تضيع. وده بالظبط اختيار EC ولا EL.
+
+القاعدة العملية: الحاجات اللي غلطها بيتحوّل فلوس أو صلاحيات → CP و EC. والحاجات اللي غلطها بيتحوّل رقم قديم شوية → AP و EL. ونفس المنتج فيه الاتنين.
+
+وحل التعارضات في AP: last-write-wins أبسط حاجة، بس بتضيّع كتابات (لو اتنين عدّلوا في نفس الوقت، واحد بيروح). الـ CRDTs (زي عداد بيتجمع، أو set بيتدمج) بتدمج من غير ما تضيّع، وده اللي بيخلي Google Docs و Figma شغالين أوفلاين وبعدين يتدمجوا.`,
+            when: "أول ما تصمم حاجة على أكتر من region، أو تختار قاعدة NoSQL موزّعة، أو تتسأل في انترفيو «لو الشبكة وقعت بين الـ data centers، إيه اللي بيحصل؟».",
+            mistakes: R`«اخترت CA». أو إنك تقول CAP وتعرّف C كـ ACID consistency. أو إنك تقول «النظام بتاعي AP» على النظام كله، مع إن الدفع جواه لازم CP. أو تفتكر إن eventual consistency معناها داتا بتضيع. أو تنسى الـ PACELC خالص، مع إن الـ latency هي اللي بتفرق كل يوم.`
+          },
+          lines: [
+            "الموقف: نسختين، والشبكة بينهم وقعت.",
+            "CP: ترفض بدل ما تقول حاجة غلط. للفلوس والحجز.",
+            "AP: ترد وتكتب، وتصلّح بعدين. للحاجات اللي تستحمل.",
+            "PACELC: حتى من غير تقطيع، تستنى النسخ (أدق) ولا ترد على طول (أسرع).",
+            "أمثلة مشهورة لكل ناحية.",
+            "لو اخترت AP، لازم تقول هتحل التعارض إزاي.",
+            "الغلطة اللي بتتسأل: CA مش اختيار في نظام موزّع."
+          ],
+          sol: R`إجابة معقولة: الدفع وتفعيل الكورس → CP: region أوروبا يرفض أو يحوّل للـ region الأساسي، والمستخدم يشوف «الدفع مش متاح دلوقتي، جرّب بعد دقايق» بدل ما يدفع مرتين. تقدم الطالب → AP: يتسجّل محليًا ويتدمج بعدين بأكبر قيمة (التقدم مبيرجعش لورا، ده CRDT بسيط اسمه max). التعليقات → AP: تظهر لأهل الـ region ده الأول وبعدين للكل. عدد المشاهدات → AP: عدّادات في كل region وبتتجمع. تغيير الباسورد → CP: لازم يوصل للكل، وإلا الباسورد القديم يفضل شغال في region تاني.
+
+المستخدم في CP بيشوف رسالة خطأ واضحة. وفي AP بيشوف داتا ناقصة شوية. لو كتبت «كله CP» أو «كله AP»، ارجع لكل سطر واسأل: الغلط هنا تمنه إيه؟`
+        },
+        {
+          cmd: "sharding و consistent hashing",
+          title: "sharding: تقسيم الداتا على قواعد، و consistent hashing",
+          desc: R`الـ sharding معناه إن الداتا بتتقسم على كذا قاعدة، وكل قاعدة (shard) عليها جزء. بيتعمل لما قاعدة واحدة (حتى أكبر واحدة) مبقتش مستحملة الكتابة أو الحجم. ده آخر خطوة في درس «scaling القاعدة»، مش أولها.
+
+التقسيم بيحتاج مفتاح (shard key). ٣ طرق مشهورة: hash للمفتاح، أو ranges (من كذا لكذا)، أو tenant (كل عميل أو مجموعة عملاء على shard). و consistent hashing طريقة بتوزّع المفاتيح على الـ shards، ولما تضيف shard جديد جزء صغير بس من الداتا يتنقل.`,
+          example: R`class HashRing {
+  constructor(nodes, vnodes = 100) { this.points = []; nodes.forEach((n) => this.add(n, vnodes)); }
+  hash(s) { return crypto.createHash("md5").update(s).digest().readUInt32BE(0); }
+  add(node, vnodes = 100) {
+    for (let i = 0; i < vnodes; i++) this.points.push({ h: this.hash($__bt$__{node}#$__{i}$__bt), node });
+    this.points.sort((a, b) => a.h - b.h);
+  }
+  get(key) {
+    const h = this.hash(key);
+    let lo = 0, hi = this.points.length;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (this.points[mid].h < h) lo = mid + 1; else hi = mid; }
+    return this.points[lo % this.points.length].node;
+  }
+}
+const ring = new HashRing(["db-a", "db-b", "db-c"]);
+const shard = ring.get(tenantId);`,
+          try: R`حط ١٠٠٠٠ مفتاح ([[tenant-0]] لـ [[tenant-9999]]) على [[HashRing]] بـ ٣ shards، واحفظ كل مفتاح راح فين. ضيف shard رابع وعد كام مفتاح اتنقل. وبعدين كرر نفس الكلام بـ [[hash(key) % 3]] وبعدين [[% 4]]. قارن النسبتين.`,
+          flag: "script",
+          deep: {
+            why: "الـ sharding هو الطريقة الوحيدة للكتابة إنها تكبر أفقيًا بعد حدود جهاز واحد. بس بيعقّد كل حاجة: joins بين shards، و transactions بين shards، والتقارير، والـ migrations. عشان كده بيتسأل في الانترفيو: عايزين يعرفوا إنك عارف إزاي، وإمتى متعملوش.",
+            how: R`hash sharding: [[shard = hash(key) % N]]. توزيع متساوي، بس لو N اتغيرت (زودت shard) أغلب المفاتيح بتتنقل (في التجربة حوالي ٧٥٪ من ٣ لـ ٤). ده معناه نقل تقريبًا كل الداتا.
+
+consistent hashing بيحل ده: المفاتيح والـ shards كلهم نقط على دايرة (أرقام الـ hash)، وكل مفتاح بيروح لأول shard بعده على الدايرة. لما تضيف shard، بياخد المفاتيح اللي قبله بس، يعني حوالي 1/N (في التجربة ٢٥٪ من ٣ لـ ٤). والـ virtual nodes (كل shard ليه ١٠٠ نقطة مش واحدة) بتخلي التوزيع متساوي، وبتخلي الـ shard الجديد ياخد حتة صغيرة من كل واحد بدل ما ياخد كتير من جار واحد. Cassandra و DynamoDB والـ caches الموزعة بتستخدم الفكرة دي.
+
+range sharding: [[users A-M]] على shard و [[N-Z]] على تاني، أو بالتاريخ. الـ range queries سهلة ([[WHERE createdAt BETWEEN]] بتروح shard واحد). بس فيه hot spots: كل الكتابة الجديدة بتروح لآخر range.
+
+tenant sharding: كل tenant (أو مجموعة tenants صغيرة) على shard. ده الأنسب لـ SaaS: كل queries العميل على shard واحد، فالـ joins والـ transactions شغالة عادي، والعميل الكبير ممكن ياخد shard لوحده. محتاج جدول صغير (directory) بيقول كل tenant فين، بدل hash، عشان تقدر تنقل عميل معين.
+
+اختيار المفتاح أهم قرار: لازم يكون موجود في أغلب الـ queries (وإلا كل query بيسأل كل الـ shards، scatter-gather)، وتوزيعه متساوي (مش كله عند عميل واحد). والـ ids لازم تبقى فريدة على كل الـ shards (UUID أو Snowflake، مش auto-increment).
+
+قبل الـ sharding اعمل: indexes، و replicas للقراية، وكاش، وقاعدة أكبر، و partitioning جوه نفس القاعدة (PostgreSQL declarative partitioning)، وأرشفة. ولو لازم، أدوات زي Citus لـ PostgreSQL بتعمل sharding من غير ما تعيد كتابة التطبيق.`,
+            when: "لما قاعدة واحدة (بعد كل التحسينات والـ replicas) مش مستحملة الكتابة أو الحجم، أو العملاء محتاجين عزل أو داتا في بلد معين. في منتج جديد: تقريبًا أبدًا في أول سنة.",
+            mistakes: R`sharding بدري «عشان نبقى جاهزين». أو shard key مش موجود في أغلب الـ queries. أو [[hash % N]] من غير خطة لما N يتغير. أو auto-increment ids على كل shard فتتكرر. أو تنسى إن الـ unique constraint على مستوى shard واحد بس (الإيميل unique في shard، مش في النظام كله). وفي الانترفيو: «إزاي تعمل resharding من غير توقف؟» (كتابة مزدوجة، ونسخ الداتا القديمة، وبعدين تحويل القراية، زي expand/contract).`
+          },
+          lines: [
+            "دايرة الـ hash.",
+            "بتبدأ بالـ nodes، وكل واحد ليه ١٠٠ نقطة.",
+            "hash رقمي من 0 لـ 4 مليار.",
+            "إضافة node:",
+            "١٠٠ نقطة بأسماء مختلفة لنفس الـ node على الدايرة.",
+            "رتّب النقط.",
+            "قفلة.",
+            "المفتاح ده يروح فين؟",
+            "الـ hash بتاعه.",
+            "بحث ثنائي...",
+            "...على أول نقطة بعده على الدايرة.",
+            "ولو عدّى آخر نقطة، يلف لأول واحدة.",
+            "قفلة.",
+            "قفلة.",
+            "دايرة بـ ٣ قواعد.",
+            "الـ tenant ده على أنهي قاعدة."
+          ],
+          sol: R`النتيجة الفعلية على ١٠٠٠٠ مفتاح: consistent hashing من ٣ لـ ٤ shards نقل حوالي ٢٥٪ من المفاتيح (قريب من 1/4، وده المتوقع لأن الـ shard الجديد بياخد ربع الدايرة). و [[% 3]] ثم [[% 4]] نقل حوالي ٧٥٪.
+
+يعني مع modulo، إضافة shard معناها نقل تلات أرباع الداتا، ومع الدايرة ربعها بس، ومن كل الـ shards بالتساوي (بسبب الـ virtual nodes).
+
+لو قلّلت [[vnodes]] لـ 1، هتلاقي التوزيع مش متساوي خالص (shard ممكن ياخد ٥٠٪)، وده ليه الـ virtual nodes موجودة.`
+        },
+        {
+          cmd: "load balancer",
+          title: "الـ load balancer: round-robin و least-connections، و L4 ولا L7",
+          desc: R`الـ load balancer بيوزّع الطلبات على كذا نسخة من التطبيق، وبيشيل النسخة اللي وقعت من التوزيع (health checks). ده اللي بيخلي الـ scaling الأفقي ممكن.
+
+خوارزميات التوزيع: round-robin (بالدور، الافتراضي)، و least-connections (للنسخة اللي عندها أقل طلبات شغالة دلوقتي)، و hash (نفس العميل لنفس النسخة). ونوعين حسب هو فاهم إيه: L4 بيشوف TCP بس (IP و port)، و L7 بيفهم HTTP (الـ path، والـ headers، والـ cookies).`,
+          example: R`upstream api {
+    least_conn;
+    server 10.0.0.11:3000 max_fails=3 fail_timeout=10s;
+    server 10.0.0.12:3000 max_fails=3 fail_timeout=10s;
+    server 10.0.0.13:3000 backup;
+    keepalive 32;
+}
+server {
+    listen 443 ssl;
+    server_name api.myapp.com;
+    location /socket.io/ {
+        proxy_pass http://api;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+    location / {
+        proxy_pass http://api;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_next_upstream error timeout http_502 http_503;
+    }
+}`,
+          try: R`شغّل ٣ نسخ من API صغير على ports مختلفة، كل واحدة بترد باسمها بعد ٥٠ ملّي ثانية، ما عدا واحدة «عيانة» بترد بعد ٢ ثانية. حطهم ورا Nginx مرة بالافتراضي (round-robin) ومرة بـ [[least_conn]]. ابعت ٣٠ طلب، طلب كل ٣٠ ملّي ثانية من غير ما تستنى الرد، وعد كل نسخة خدت كام، واحسب متوسط وقت الرد. وبعدين وقّف نسخة وشوف إيه اللي بيحصل للطلبات.`,
+          flag: "script",
+          deep: {
+            why: "من غير load balancer، التطبيق نسخة واحدة: لو وقعت أو اتعملها deploy، الموقع وقع. ومعاه، تقدر تزوّد نسخ، وتعمل deploy نسخة نسخة من غير توقف، وتشيل النسخة العيانة لوحدها. وفي الانترفيو، هو أول مربع بيترسم بعد الـ client.",
+            how: R`round-robin ممتاز لو كل الطلبات شبه بعض في الوقت. بس لو فيه طلبات تقيلة (تقرير، أو رفع ملف)، نسخة ممكن يتجمع عليها تقيل وهي بتاخد نفس الدور. least-connections بيبص على الشغل الفعلي دلوقتي، فبيوزّع أحسن مع طلبات مختلفة المدة. والـ hash ([[ip_hash]] أو hash على cookie) بيخلي نفس العميل يروح لنفس النسخة (sticky sessions)، ودي محتاجها مع WebSocket أحيانًا، بس بتبوّظ التوزيع. الأحسن إن التطبيق يبقى stateless (الجلسات في القاعدة أو Redis، و socket.io بـ Redis adapter) ومتحتاجش sticky.
+
+L4 (TCP): أسرع وأرخص، بيعدّي أي بروتوكول (قواعد بيانات، أو gRPC، أو TLS زي ما هو). مبيعرفش الـ path ولا الـ headers. أمثلة: AWS NLB، و HAProxy في mode tcp، و Nginx stream.
+
+L7 (HTTP): بيفك الـ TLS، وبيقدر يوجّه [[/api]] لخدمة و [[/]] لخدمة، ويضيف headers ([[X-Forwarded-For]])، ويعيد الطلب على نسخة تانية لو الأولى رجعت 502، ويعمل rate limit وكاش. أمثلة: Nginx، و AWS ALB، و Cloudflare، و Caddy، و Traefik.
+
+الـ health checks: Nginx المفتوح بيعمل passive (لو [[max_fails]] طلبات فشلت، يشيل النسخة [[fail_timeout]]). والـ active checks (يسأل [[/health]] كل شوية) في Nginx Plus أو HAProxy أو الـ load balancers المُدارة. ولازم [[/health]] يبقى خفيف (درس «health و uptime»).
+
+[[proxy_next_upstream]]: لو النسخة وقعت أثناء الطلب، Nginx يجرب التانية. خلي بالك: ده آمن للـ GET. و Nginx افتراضيًا مش بيعيد POST إلا لو ضفت [[non_idempotent]]، وده مقصود، لأن الدفع ممكن يتعمل مرتين.
+
+[[keepalive]] مع [[Connection ""]] بيخلي Nginx يعيد استخدام الاتصالات للـ upstream بدل ما يفتح TCP جديد مع كل طلب. و WebSocket محتاج [[Upgrade]] و [[Connection "upgrade"]] في location لوحده. وحتى الـ load balancer نفسه ممكن يقع، فالمُدار (ALB) بيبقى أكتر من جهاز ورا DNS واحد، أو اتنين Nginx بـ IP عائم.`,
+            when: "أول ما يبقى عندك أكتر من نسخة من التطبيق، أو محتاج deploy من غير توقف. وعلى PaaS زي Render و Railway و Fly فيه load balancer جاهز، بس لازم تعرف هو بيعمل إيه.",
+            mistakes: R`sticky sessions عشان الجلسة في ذاكرة النسخة. أو [[/health]] تقيل بيسأل كل حاجة فالنسخ تطلع وتدخل. أو إعادة POST على نسخة تانية بعد timeout. أو تنسى [[X-Forwarded-For]] و [[trust proxy]] فكل الطلبات جاية من IP الـ load balancer. أو WebSocket من غير Upgrade headers فيفضل يعمل polling. وفي الانترفيو: «L4 ولا L7 لـ API عادي؟» L7، لأنك محتاج routing بالـ path و retries و headers، وL4 لما البروتوكول مش HTTP أو محتاج أقل latency.`
+          },
+          lines: [
+            "مجموعة نسخ التطبيق.",
+            "وزّع على النسخة اللي عندها أقل طلبات شغالة.",
+            "نسخة، ولو فشلت ٣ مرات تتشال ١٠ ثواني.",
+            "نسخة تانية بنفس الإعداد.",
+            "نسخة احتياطي، مبتاخدش طلبات غير لو الباقي وقع.",
+            "خلي ٣٢ اتصال مفتوحين للنسخ بدل اتصال جديد كل طلب.",
+            "قفلة.",
+            "الـ server اللي بيستقبل من الإنترنت.",
+            "HTTPS.",
+            "الدومين.",
+            "مسار الـ WebSocket:",
+            "ابعت للمجموعة.",
+            "HTTP 1.1 لازم للـ upgrade.",
+            "مرّر طلب الـ upgrade...",
+            "...وخلي الاتصال يتحول WebSocket.",
+            "قفلة.",
+            "باقي الطلبات:",
+            "ابعت للمجموعة.",
+            "HTTP 1.1 عشان الـ keepalive.",
+            "امسح Connection عشان الاتصال يفضل مفتوح.",
+            "IP العميل الحقيقي للتطبيق.",
+            "لو النسخة وقعت أو رجعت 502 أو 503، جرّب التانية (مش للـ POST افتراضيًا).",
+            "قفلة.",
+            "قفلة."
+          ],
+          sol: R`النتيجة في تجربة فعلية: round-robin وزّع ١٠ و ١٠ و ١٠ بالظبط، ومتوسط الرد حوالي ٧٠٠ ملّي ثانية، لأن تلت الطلبات راحت للنسخة العيانة واستنت ٢ ثانية. و [[least_conn]] بعت للنسخة العيانة طلب واحد بس و ١٥ و ١٤ للباقيين، ومتوسط الرد نزل لحوالي ١٢٠. السبب: النسخة العيانة فضل عليها اتصالات مفتوحة، فـ least_conn شافها «مشغولة» وبعت لغيرها.
+
+خلي بالك: لو بعت الـ ٣٠ طلب في نفس اللحظة بـ [[Promise.all]]، الاتنين هيوزّعوا ١٠ و ١٠ و ١٠، لأن لحظة التوزيع كل النسخ عندها صفر اتصالات. الفرق بيبان بس لما الطلبات بتوصل على فترات، وده الواقع.
+
+لما توقف نسخة: الطلبات اللي كانت رايحة لها بتفشل بـ [[connect() failed (111: Connection refused)]] في لوج Nginx، و [[proxy_next_upstream]] بيعيدها على نسخة تانية، فالـ GET بيعدّي (في التجربة الـ ٣٠ اتوزعوا ١٥ و ١٥ من غير ولا error). والنسخة بتتشال فترة وبعدين Nginx يجرّبها تاني. والـ POST اللي كان رايح ليها بيرجع 502، وده مقصود.`
+        }
+      ]
+    },
+    {
       t: "تدريب system design",
       l: 3,
-      n: "٣ أسئلة مشهورة بإجابة مترتبة: المتطلبات والأرقام، والـ API، والداتا، وبعدين scaling والمشاكل",
+      n: "٧ أسئلة مشهورة بإجابة مترتبة: المتطلبات والأرقام، والـ API، والداتا، وبعدين scaling والمشاكل",
       items: [
         {
           cmd: "URL shortener",
@@ -2459,6 +4106,205 @@ docs/runbook.md: الدفع مش بيتفعّل، الديسك مليان، ال
             "الحجز المدفوع بيتمسك لفترة محددة، وبعدين يتفك لوحده.",
             "المشاكل الحقيقية: التوقيت، والناس اللي مبتجيش، والانتظار، والزحمة."
           ]
+        },
+        {
+          cmd: "news feed",
+          title: "صمّم news feed (زي فيسبوك أو تويتر)",
+          desc: R`الـ feed هو «آخر البوستات من الناس اللي بتتابعهم». المشكلة الأساسية: القراية أكتر من الكتابة بكتير، وكل بوست لازم يوصل لآلاف أو ملايين. فيه طريقتين: fan-out on write (أول ما حد ينشر، البوست يتحط في feed كل متابع جاهز)، و fan-out on read (لما حد يفتح، تجمع بوستات اللي بيتابعهم وقتها). والإجابة الصح غالبًا الاتنين مع بعض.`,
+          example: R`المتطلبات: نشر بوست، و feed مترتب بالوقت (وبعدين بالأهمية)، و follow. 100 مليون مستخدم يومي، كل واحد يفتح الـ feed 10 مرات، وبينشر 0.5 بوست ≈ 12 ألف قراية و 600 كتابة في الثانية
+الـ API: POST /posts و GET /feed?cursor= (cursor pagination) و POST /follows/:userId
+الداتا: posts(id, authorId, body, createdAt) و follows(followerId, followeeId) و feed جاهز لكل مستخدم في Redis (sorted set بالوقت، آخر 800 id)
+الكتابة (fan-out on write): البوست يتحفظ، وبعدين job يحط الـ id في feed كل متابع
+المشاهير: حساب عنده 10 مليون متابع مبيتعملوش fan-out. بيتجاب وقت القراية ويتدمج (hybrid)
+القراية: ids من Redis، وبعدين البوستات نفسها من كاش (بالـ id) مع اسم الكاتب وعدد اللايكات
+المشاكل: الـ ranking، والبوست المتمسح (يتفلتر وقت القراية)، والمستخدم اللي مفتحش من شهور (متعملوش fan-out)`,
+          try: "ارسم الشكل على ورقة، وامشي على «منى نشرت بوست» لحد ما يظهر في feed أحمد. كرر لما منى حسابها فيه ٥ مليون متابع. وبعدين جاوب: أحمد عمل unfollow لمنى، إمتى بوستاتها تختفي من الـ feed بتاعه؟",
+          flag: "script",
+          deep: {
+            why: "الـ feed بيجمع أهم أفكار الـ scale في سؤال واحد: قراية أكتر بكتير من الكتابة، و precomputation ضد on-demand، و hot keys (المشاهير)، وكاش على كذا طبقة، و pagination مظبوطة. وبيتسأل كتير بصيغ تانية: timeline، أو activity feed، أو «آخر النشاطات» في أي SaaS.",
+            how: R`fan-out on write: القراية سريعة جدًا (feed جاهز، مجرد قراية من Redis)، بس الكتابة تقيلة: بوست من حساب عنده ١٠٠٠ متابع = ١٠٠٠ كتابة. ولحساب عنده ١٠ مليون، ده مستحيل يخلص في وقت معقول، وأغلبهم مش هيفتحوا أصلًا.
+
+fan-out on read: الكتابة رخيصة (سطر واحد)، بس القراية تقيلة: هات كل اللي بتتابعهم، وهات آخر بوستات كل واحد، ورتّب. مع ٥٠٠ متابَع ده بطيء.
+
+الـ hybrid: الناس العاديين fan-out on write. والمشاهير (أكتر من عدد معين من المتابعين) بيتعلّموا، ومبيتعملهمش fan-out. لما أحمد يفتح الـ feed: خد الـ feed الجاهز، وضيف عليه آخر بوستات المشاهير اللي بيتابعهم (دول قليلين ومتكاشين)، ورتّب. ده اللي تويتر وصفه زمان.
+
+الـ feed في Redis بيشيل ids بس، مش البوست. البوست نفسه في كاش لوحده بالـ id. كده التعديل أو المسح بيتعمل في مكان واحد، والـ feed بيتفلتر وقت القراية (لو البوست ممسوح، اتخطاه).
+
+الـ pagination: cursor (آخر id أو وقت شفته)، مش offset، لأن الـ feed بيتغير وانت بتقلّب (درس «pagination»). والـ ranking: البداية بالوقت، وبعدين score (تفاعل، وقرب، ونوع المحتوى)، وده بيتحسب offline ويتخزن مع الـ id.
+
+والمستخدمين اللي مش نشطين: متعملهمش fan-out. لما يرجعوا، ابنِ الـ feed بتاعهم بـ fan-out on read مرة واحدة.`,
+            when: R`أسئلة المتابعة: «اللايكات والتعليقات بتتحدث إزاي؟» (عدادات في Redis وبتتكتب للقاعدة على دفعات). «feed مرتب بالأهمية مش بالوقت؟» (ranking service و features). «realtime؟» (event صغير «فيه جديد» بـ WebSocket والـ client يسحب). «إعلانات في الـ feed؟» (بتتدمج وقت القراية).`,
+            mistakes: "fan-out on write للكل بما فيهم المشاهير. أو fan-out on read للكل. أو تخزين البوست كامل في كل feed. أو offset pagination. أو إنك متسألش على نسبة القراية للكتابة، مع إنها اللي بتحدد التصميم كله. أو تنسى إن الـ unfollow والـ block والبوست الممسوح لازم يتفلتروا."
+          },
+          lines: [
+            "المتطلبات والأرقام: القراية ٢٠ ضعف الكتابة. ده اللي بيبرر الـ precomputation.",
+            "API صغيرة، والـ feed بـ cursor.",
+            "البوستات والمتابعات في القاعدة، والـ feed الجاهز ids بس في Redis.",
+            "النشر: احفظ، وبعدين وزّع في الخلفية.",
+            "الحسابات الكبيرة مبتتوزعش، بتتجاب وقت القراية.",
+            "القراية: ids جاهزة، وبعدين تفاصيل كل بوست من الكاش.",
+            "المشاكل: الترتيب، والممسوح، والمستخدمين النايمين."
+          ],
+          sol: R`«منى نشرت» (حساب عادي): الـ API يحفظ في posts ويرجّع 201 على طول. job في الـ queue يجيب متابعين منى على دفعات، ولكل واحد [[ZADD feed:<userId> <createdAt> <postId>]] و [[ZREMRANGEBYRANK]] عشان يفضل آخر ٨٠٠. أحمد يفتح: [[ZREVRANGE]] يجيب ids، والبوستات من الكاش، والصفحة تظهر.
+
+منى عندها ٥ مليون: مفيش fan-out. أحمد يفتح: الـ feed الجاهز + آخر بوستات الحسابات الكبيرة اللي بيتابعهم (متكاشة، كل حساب قايمة واحدة للكل) ← merge بالوقت ← أول ٢٠.
+
+الـ unfollow: الأبسط إن الـ feed يتفلتر وقت القراية بقايمة المتابعات الحالية (متكاشة)، فالبوستات تختفي فورًا. وفي الخلفية job ينضّف ids منى من feed أحمد. لو قلت «بعد ما الـ feed يتبني من جديد» من غير فلترة، المحاور هيسأل: «والمستخدم شايفها لحد إمتى؟».`
+        },
+        {
+          cmd: "notification system",
+          title: "صمّم نظام إشعارات (push و email و SMS و in-app)",
+          desc: R`نظام الإشعارات بيستقبل «حصل حدث» من أي خدمة (طلب اتدفع، أو تعليق جديد، أو كورس بيبدأ بكرة)، ويقرر مين يوصله إيه وعلى أنهي قناة، ويبعت من غير ما يزعج ولا يكرر ولا يضيع. القلب هو queue بين «الحدث» و «الإرسال»، وتفضيلات المستخدم، و idempotency.`,
+          example: R`المتطلبات: in-app و push و email و SMS، وتفضيلات لكل نوع وقناة، ومواعيد هدوء، ومحدش ياخد نفس الإشعار مرتين. 10 مليون إشعار في اليوم، والذروة 5 أضعاف (حملة أو حدث كبير)
+الـ API الداخلي: notify({ userId, type, data, idempotencyKey }) من أي خدمة، و GET /notifications?cursor= و POST /notifications/read
+الداتا: notifications(id, userId, type, data, readAt, createdAt) و preferences(userId, type, channel, enabled) و devices(userId, pushToken) و deliveries(notificationId, channel, status, attempts)
+التدفق: الحدث ← queue ← worker يقرا التفضيلات والقوالب ← queue لكل قناة ← worker لكل مزوّد (FCM و SES و SMS)
+الموثوقية: retry بـ backoff، و dead letter queue، و idempotencyKey unique، ومزوّد احتياطي للـ SMS
+الإزعاج: تجميع (digest: «٥ تعليقات جديدة»)، و rate limit لكل مستخدم، و quiet hours بتوقيت المستخدم
+المشاكل: push tokens بتنتهي (امسحها لما المزوّد يقول invalid)، والـ unsubscribe في كل إيميل، والإشعار العاجل (OTP) يعدّي الطابور`,
+          try: "امشي على «طالب دفع تمن كورس» من الـ webhook لحد ما يوصله إيميل وإشعار in-app، والمدرّب يوصله push. بعدين افترض إن مزوّد الإيميل واقع ساعة: إيه اللي بيحصل للإيميلات؟ والطالب هيشوف إيه؟",
+          flag: "script",
+          deep: {
+            why: "كل منتج فيه إشعارات، وأغلبها بيتبني عشوائي: كل feature بتبعت إيميل بنفسها. والنتيجة إيميلات مكررة، ومحدش عارف يقفل نوع معين، والمزوّد لما يقع الإيميلات تضيع. السؤال بيختبر queues، و retries، و idempotency، والتفكير في المستخدم.",
+            how: R`الفصل: الخدمة اللي حصل فيها الحدث بتنادي [[notify]] وخلاص، ومتعرفش أي حاجة عن القنوات. ده بيحط job في queue ويرجع فورًا. كده الـ checkout ميبطأش عشان SES بطيء.
+
+الـ router worker: بيقرا تفضيلات المستخدم (عايز الإيميل ده؟ على أنهي قناة؟)، وبيعمل صف في notifications (ده الـ in-app، بيظهر في الجرس)، وبيحط job لكل قناة مفعّلة في queue لوحدها. كل قناة queue منفصلة، فلو الـ SMS واقع، الإيميل والـ push شغالين.
+
+الـ idempotency: [[idempotencyKey]] (مثلًا [[order-paid:<orderId>]]) عليه unique. الـ webhook ممكن يوصل مرتين، والـ job ممكن يتعاد، والإشعار لازم يتبعت مرة. نفس فكرة «webhook الدفع».
+
+الـ retries: كل مزوّد بيفشل أحيانًا. retry بـ exponential backoff (١٠ ثواني، دقيقة، ٥ دقايق...)، وبعد عدد معين الـ job يروح DLQ ويتسجّل في deliveries بـ failed، وحد يشوفه. لو المزوّد واقع ساعة، الإيميلات بتستنى في الـ queue وتتبعت لما يرجع، و BullMQ بيعمل ده (درس «background jobs»).
+
+الأولوية: OTP أو استعادة باسورد مينفعش يستنى ورا حملة تسويق فيها مليون إيميل. queue منفصلة (أو priority) للعاجل.
+
+الإزعاج: لو حصل ٢٠ تعليق في دقيقة، ابعت «٢٠ تعليق جديد» مش ٢٠ إشعار. ده delay صغير وتجميع بالـ userId والنوع. و quiet hours: الـ push مش العاجل يستنى الصبح بتوقيت المستخدم.
+
+الـ push: كل جهاز ليه token، والـ tokens بتموت (التطبيق اتمسح). لما FCM يرجّع [[UNREGISTERED]] امسح الـ token، وإلا هتفضل تبعت لأجهزة مش موجودة. تفاصيل الـ web push في درس «web push».`,
+            when: R`أسئلة المتابعة: «إزاي تضمن الترتيب؟» (غالبًا مش مهم، ولو مهم partition بالـ userId). «تتبع الفتح والضغط؟» (pixel و redirect links، مع الخصوصية). «١٠٠ مليون إشعار في حملة؟» (batch APIs للمزوّد، وتوزيع على ساعات). «realtime في الجرس؟» (WebSocket أو SSE بيبعت event وقت ما صف in-app يتعمل).`,
+            mistakes: "إرسال الإيميل جوه الـ request. أو queue واحدة لكل القنوات فقناة واقعة بتوقف الكل. أو من غير idempotency فالطالب ياخد «تم الدفع» ٣ مرات. أو OTP ورا حملة تسويق. أو إيميلات من غير unsubscribe (ضد قوانين كتير، والمزوّد ممكن يقفل حسابك). أو تفضل تبعت لـ push tokens ميتة."
+          },
+          lines: [
+            "المتطلبات: القنوات، والتفضيلات، ومن غير تكرار. والأرقام بالذروة.",
+            "دالة داخلية واحدة لأي خدمة، و API للجرس في الواجهة.",
+            "الجداول: الإشعار نفسه، والتفضيلات، والأجهزة، وحالة كل إرسال.",
+            "الحدث بيعدّي على queues، و worker لكل قناة.",
+            "الموثوقية: إعادة، ومكان للفاشل، ومفتاح ضد التكرار، ومزوّد بديل.",
+            "احترام المستخدم: تجميع، وحد، ومواعيد هدوء.",
+            "المشاكل العملية: tokens ميتة، وإلغاء الاشتراك، والعاجل."
+          ],
+          sol: R`المسار: webhook الدفع بيحدّث الطلب في transaction، وبعدها [[notify({ userId: student, type: "order.paid", idempotencyKey: "order-paid:" + orderId })]] و [[notify({ userId: instructor, type: "course.sold", ... })]]. الـ router يلاقي تفضيلات الطالب: email + in-app، فيعمل صف notifications (يظهر في الجرس فورًا) و job في queue الإيميل. والمدرّب: push، فـ job في queue الـ push، والـ worker يجيب tokens أجهزته ويبعت لـ FCM.
+
+المزوّد واقع ساعة: jobs الإيميل تفشل وتتعاد بـ backoff، وتفضل في الـ queue. الطالب شايف الإشعار في الجرس (in-app مش معتمد على المزوّد)، والكورس مفتوح (التفعيل مش مستني الإيميل). ولما المزوّد يرجع، الإيميلات تتبعت. ولو المحاولات خلصت قبل ما يرجع، الـ jobs في DLQ وتعيدها بإيدك أو تحوّل لمزوّد تاني.
+
+لو قلت «الإيميل هيضيع» أو «الدفع هيفشل»، يبقى الإيميل لسه جوه الـ request.`
+        },
+        {
+          cmd: "file storage",
+          title: "صمّم خدمة تخزين ملفات (زي Google Drive أو Dropbox)",
+          desc: R`خدمة تخزين الملفات فيها حاجتين منفصلين تمامًا: الـ metadata (اسم الملف، وفولدره، وصاحبه، والصلاحيات، والنسخ) في قاعدة عادية، والـ bytes نفسها في object storage (S3 أو R2). والملفات الكبيرة بتترفع أجزاء (chunks) مباشرة من المتصفح لـ S3 بـ signed URLs، والسيرفر مبيشيلش أي bytes.`,
+          example: R`المتطلبات: رفع وتنزيل ملفات لحد 10 جيجا، وفولدرات، ومشاركة بصلاحيات، ونسخ قديمة، ومزامنة بين الأجهزة. 50 مليون مستخدم، و 10 جيجا في المتوسط ≈ 500 بيتابايت
+الـ API: POST /files/uploads (يرجّع uploadId و URLs للأجزاء) و POST /files/uploads/:id/complete و GET /files/:id/download (يرجّع signed URL) و GET /changes?cursor=
+الداتا: files(id, ownerId, parentId, name, currentVersionId) و versions(id, fileId, size, sha256, storageKey, createdAt) و shares(fileId, userId, role)
+الرفع: S3 multipart upload، كل جزء 8 ميجا بـ presigned URL، والمتصفح بيرفع الأجزاء بالتوازي ويعيد الفاشل بس
+الـ dedup: نفس الـ sha256 = نفس الـ object في S3، والـ version بتشاور عليه (ويتحذف بعد آخر مرجع)
+التنزيل: signed URL قصير، أو CDN مع signed cookies للملفات المشهورة، و Range requests للاستكمال
+المشاكل: الصلاحيات الموروثة من الفولدر، والمزامنة والتعارض (نسختين اتعدلوا أوفلاين)، وفحص الفيروسات، و multipart uploads متعلّقة تتمسح`,
+          try: R`ارجع لدرس «signed upload URL» في التاب ده. كبّره لـ multipart: اكتب الـ endpoints التلاتة (create و sign part و complete) بـ [[@aws-sdk/client-s3]] ([[CreateMultipartUploadCommand]] و [[UploadPartCommand]] مع [[getSignedUrl]] و [[CompleteMultipartUploadCommand]]). بعدين جاوب: المتصفح رفع ٧ أجزاء من ١٠ والنت قطع، إزاي يكمّل من غير ما يبدأ من الأول؟`,
+          flag: "script",
+          deep: {
+            why: "السؤال بيختبر إنك فاصل بين الـ metadata والـ blobs، وإنك مش بتعدّي ملفات ضخمة على سيرفرات التطبيق، وإنك فاهم الرفع المتقطع والمزامنة. ونفس الأفكار في أي منتج فيه رفع (فيديوهات الكورسات، ومستندات العملاء).",
+            how: R`الـ metadata والـ bytes: القاعدة فيها جدول files بشجرة ([[parentId]])، وكل تعديل بيعمل version جديدة. الـ bytes في S3 بمفتاح ملوش معنى (hash أو uuid)، مش اسم الملف، عشان إعادة التسمية والنقل يبقوا تعديل صف في القاعدة بس، من غير ما تنقل bytes.
+
+multipart upload: S3 بيسمح بلحد ١٠٠٠٠ جزء، وكل جزء (ما عدا الأخير) ٥ ميجا على الأقل. السيرفر بيبدأ الـ upload ويدّي المتصفح presigned URL لكل جزء. المتصفح بيرفع ٤ أجزاء مع بعض، وبيحفظ الـ ETag بتاع كل جزء. ولو النت قطع، [[ListParts]] بيقول إيه اللي وصل، فيكمّل الباقي بس. وفي الآخر complete بالـ ETags، و S3 بيجمّعهم ملف واحد. وlifecycle rule بتمسح الـ uploads اللي متكملتش بعد يوم أو أسبوع، وإلا هتدفع تمن أجزاء محدش شايفها.
+
+الـ dedup: sha256 للملف (أو لكل chunk في الأنظمة الأكبر). لو الـ hash موجود، مفيش رفع أصلًا (Dropbox بيعمل كده على مستوى الـ blocks). بيوفّر تخزين كتير. بس خلي بالك من الخصوصية: dedup بين مستخدمين مختلفين ممكن يكشف إن «الملف ده موجود عند حد».
+
+المزامنة: كل تغيير بيتسجّل في journal بـ رقم متزايد. الجهاز بيسأل [[GET /changes?cursor=]] («إيه اللي اتغير من آخر مرة؟») أو بياخد push إن فيه جديد. التعارض: لو نسختين اتعدلوا أوفلاين من نفس الـ version، متعملش overwrite: احفظ الاتنين («file (conflicted copy)»)، وده اللي Dropbox بيعمله.
+
+الصلاحيات: موروثة من الفولدر. فحص الصلاحية بيطلع لفوق في الشجرة (مع كاش)، أو بتتخزن منسوخة على كل ملف وتتحدث لما الفولدر يتغير. والتنزيل دايمًا signed URL قصير بعد فحص الصلاحية، مش bucket public.
+
+الأرقام: ٥٠٠ بيتابايت يعني التكلفة هي كل حاجة. نقل الملفات القديمة لـ storage class أرخص (S3 Glacier أو Infrequent Access)، وتكلفة الـ egress (التنزيل) كبيرة، ودي ليه R2 (من غير egress) بيتذكر.`,
+            when: R`أسئلة المتابعة: «مشاركة بلينك عام؟» (token في الـ URL، وصلاحية قراية، وانتهاء). «معاينة PDF والصور؟» (job بيعمل thumbnails بعد الرفع). «حد أقصى للمساحة؟» (مجموع الـ sizes لكل مستخدم، بيتحدث في نفس transaction الـ version). «البحث جوه الملفات؟» (استخراج النص وindex منفصل).`,
+            mistakes: "الملفات بتعدّي على سيرفر التطبيق. أو اسم الملف هو مفتاح S3، فإعادة التسمية بقت نسخ. أو رفع الملف الكبير كطلب واحد، فلو قطع عند ٩٥٪ يبدأ من الأول. أو bucket public. أو overwrite وقت التعارض. أو multipart uploads متعلّقة من غير lifecycle rule."
+          },
+          lines: [
+            "المتطلبات والحجم. نص مليار جيجا يعني التكلفة والتخزين هما القرار.",
+            "API: بداية رفع، وإنهاء، وتنزيل، وتغييرات للمزامنة.",
+            "الشجرة والنسخ والمشاركة في القاعدة، والـ bytes مجرد مفتاح.",
+            "الرفع أجزاء مباشرة لـ S3 بالتوازي، والفاشل بس بيتعاد.",
+            "نفس المحتوى يتخزن مرة واحدة.",
+            "التنزيل من S3 أو CDN مباشرة، ويقدر يكمّل من نص الملف.",
+            "المشاكل: الصلاحيات، والتعارض، والأمان، والتنضيف."
+          ],
+          sol: R`الـ endpoints: (١) [[POST /files/uploads]] يعمل [[CreateMultipartUploadCommand]] ويخزن [[uploadId]] و key في جدول uploads بحالة pending، ويرجّع uploadId وعدد الأجزاء. (٢) [[GET /files/uploads/:id/parts/:n]] يعمل [[getSignedUrl(s3, new UploadPartCommand({ Bucket, Key, UploadId, PartNumber: n }), { expiresIn: 3600 })]] بعد ما يتأكد إن الـ upload بتاع المستخدم ده. (٣) [[POST /files/uploads/:id/complete]] بياخد قايمة فيها [[{ PartNumber, ETag }]] لكل جزء ويعمل [[CompleteMultipartUploadCommand]]، وبعدها يعمل version و file في transaction.
+
+الـ ETag بيرجع في header الرد بتاع كل PUT، والمتصفح محتاج الـ bucket CORS يحط [[ETag]] في [[ExposeHeaders]]، وإلا مش هيقدر يقراه. دي أشهر مشكلة.
+
+الاستكمال: المتصفح بيحفظ uploadId والـ ETags في IndexedDB. لما يرجع، يسأل السيرفر، والسيرفر يعمل [[ListPartsCommand]] ويرجّع أرقام الأجزاء اللي وصلت، فيرفع ٨ و ٩ و ١٠ بس.`
+        },
+        {
+          cmd: "rate limiter service",
+          title: "صمّم rate limiter كخدمة لكل الـ APIs",
+          desc: R`الـ rate limiter بيحدد كل عميل (IP، أو user، أو API key) يقدر يعمل كام طلب في وقت معين، ويرد 429 لو عدّى. لما يبقى عندك سيرفرات كتير، العداد لازم يبقى في مكان مشترك (Redis)، والفحص لازم يبقى ذري وسريع جدًا لأنه قدام كل طلب.
+
+الخوارزميات المشهورة: fixed window (عداد لكل دقيقة)، و sliding window، و token bucket (سطل بيتملى بمعدل ثابت وكل طلب بياخد token). الـ token bucket بيسمح بـ burst قصير ومتوسط ثابت، وده اللي أغلب الـ APIs الكبيرة بتستخدمه.`,
+          example: R`المتطلبات: حدود لكل API key حسب الخطة (free 10/ث، pro 100/ث)، وحدود لكل IP على الـ login، وكل السيرفرات بتشوف نفس العداد، وإضافة أقل من 1ms للطلب
+المكان: middleware في الـ gateway أو في كل نسخة، والعدادات في Redis (cluster لو الحجم كبير)
+الخوارزمية: token bucket لكل key: tokens و lastRefill في hash، وسكربت Lua واحد يحسب ويخصم في خطوة ذرية
+الرد: 429 مع Retry-After، و headers زي RateLimit-Limit و RateLimit-Remaining و RateLimit-Reset
+القواعد: جدول rules(plan, route, capacity, refillPerSec) متكاش في الذاكرة، وبيتحدث من غير deploy
+لو Redis وقع: fail open للـ API العادي (عدّي الطلبات، وسجّل)، و fail closed للـ login والـ OTP
+المشاكل: hot keys (عميل واحد بيضرب جامد)، ودقة الساعات بين السيرفرات (استخدم وقت Redis)، والـ multi-region (حد لكل region أو sync متأخر)`,
+          try: R`اكتب token bucket في Redis بسكربت Lua ([[redis.defineCommand]] في ioredis): capacity 10 و refill 5 في الثانية. ابعت ١٢ طلب ورا بعض واطبع النتيجة، واستنى ثانية وابعت طلب كمان. بعدين جاوب: ليه Lua ومش [[GET]] وبعدين [[SET]] من Node؟`,
+          flag: "script",
+          deep: {
+            why: "الـ rate limiting بيحمي من الـ abuse، والتخمين، والـ scraping، وعميل واحد بكود فيه loop يوقّع الكل. وبيدّيك طريقة تبيع بيها خطط (الـ pro بياخد حدود أعلى). والسؤال بيختبر الخوارزميات، والذرية في نظام موزّع، والـ trade-off بين الدقة والسرعة والتوافر.",
+            how: R`fixed window: [[INCR key:minute]] مع TTL. أبسط حاجة، بس عنده مشكلة الحافة: ١٠٠ طلب في آخر ثانية من دقيقة و ١٠٠ في أول ثانية من اللي بعدها = ٢٠٠ في ثانيتين والحد ١٠٠ في الدقيقة.
+
+sliding window log: timestamp لكل طلب في sorted set، وتعد اللي في آخر ٦٠ ثانية. دقيق، بس بياكل ذاكرة (صف لكل طلب). و sliding window counter: عداد الدقيقة الحالية + عداد اللي قبلها مضروب في النسبة الباقية. تقريب ممتاز ورخيص (Cloudflare بتستخدمه).
+
+token bucket: السطل فيه لحد capacity، وبيتملى بـ refill في الثانية. كل طلب بياخد واحد. مفيش؟ 429. بيسمح بـ burst لحد الـ capacity، وبعدين بمتوسط الـ refill. ومش محتاج timer: وقت الطلب بتحسب اتملى قد إيه من آخر مرة ([[(now - ts) * rate]]).
+
+الذرية: لو كل سيرفر عمل GET وبعدين حسب وبعدين SET، طلبين في نفس اللحظة من سيرفرين هيقروا نفس القيمة والاتنين يعدّوا. سكربت Lua بيتنفذ في Redis كخطوة واحدة، محدش يتدخل في النص. وكمان بيوفّر round trips (واحدة بدل ٣).
+
+الوقت: لو كل سيرفر بيبعت وقته، والساعات مختلفة شوية، الحسابات تتلخبط. الأدق [[redis.call("TIME")]] جوه السكربت.
+
+لو Redis وقع: قرار منتج. الـ API العادي: fail open (عدّي من غير حد، وتنبيه)، لأن وقوع الـ API كله أسوأ من إن الحد يتعدّى دقايق. الـ login والـ OTP: fail closed، أو حد في الذاكرة لكل نسخة كاحتياطي.
+
+الـ headers: [[Retry-After]] بالثواني بيقول للعميل يستنى قد إيه. و [[RateLimit-*]] (draft في IETF، ومكتبات زي express-rate-limit بتدعمه) بيخلي العملاء المحترمين يبطّأوا قبل ما يخبطوا الحد.
+
+الحجم: ١٠٠ ألف طلب في الثانية = ١٠٠ ألف سكربت Lua في الثانية. Redis واحد بيستحمل ده غالبًا، وأكتر من كده Redis Cluster بالـ key (كل عميل على shard). وبديل للحجم الضخم: عداد محلي في كل نسخة بيتزامن مع Redis كل ثانية، وده أقل دقة وأسرع بكتير.`,
+            when: R`أسئلة المتابعة: «حد لكل endpoint مختلف؟» (القواعد بـ route). «عميل عنده ١٠٠ سيرفر وكلهم بنفس الـ key؟» (نفس الـ bucket، ده المطلوب). «حد يومي مع حد في الثانية؟» (bucketين، والطلب لازم يعدّي الاتنين). «multi-region؟» (حد لكل region = الحد الكلي / عدد الـ regions، أو تزامن متأخر ومقبول).`,
+            mistakes: "عداد في ذاكرة كل نسخة (الحد الحقيقي بقى الحد × عدد النسخ). أو GET ثم SET من غير ذرية. أو fixed window ونسيان مشكلة الحافة. أو 429 من غير Retry-After فالعملاء يعيدوا فورًا ويزودوا الضغط. أو الحد بالـ IP بس لـ API بمفاتيح (شركة كاملة ورا IP واحد). أو fail closed على الـ API كله فوقوع Redis وقّع كل حاجة."
+          },
+          lines: [
+            "المتطلبات: حدود بالخطة، ومشتركة بين السيرفرات، وسريعة جدًا.",
+            "الفحص قدام الطلب، والعدادات في مكان واحد مشترك.",
+            "token bucket في Redis، والحساب والخصم خطوة واحدة.",
+            "الرد اللي بيقول للعميل يستنى قد إيه.",
+            "القواعد في جدول، فتتغير من غير deploy.",
+            "قرار واضح لو Redis وقع، ومختلف حسب خطورة الـ endpoint.",
+            "المشاكل في الأحجام الكبيرة."
+          ],
+          sol: R`النتيجة في تجربة فعلية: الـ ١٢ طلب ورا بعض طلّعوا [[111111111100]]، يعني أول ١٠ عدّوا (الـ capacity) وآخر ٢ اترفضوا. وبعد ثانية: الطلب عدّى، وفاضل ٤ tokens (السطل اتملى ٥ في الثانية، وخدنا واحد).
+
+ليه Lua: الـ GET والـ SET من Node خطوتين، وبينهم طلب تاني من سيرفر تاني ممكن يقرا نفس القيمة، فالاتنين يعدّوا على نفس الـ token. السكربت بيتنفذ في Redis كوحدة واحدة، ومحدش يقدر يدخل في النص. وكمان رحلة واحدة للشبكة بدل اتنين.
+
+الغلطة الشائعة: تنسى [[PEXPIRE]] فكل key اتعمل مرة بيعيش للأبد في Redis.`,
+          solCode: R`redis.defineCommand("takeToken", { numberOfKeys: 1, lua: $__bt
+local cap = tonumber(ARGV[1]); local rate = tonumber(ARGV[2]); local now = tonumber(ARGV[3])
+local b = redis.call("HMGET", KEYS[1], "tokens", "ts")
+local tokens = tonumber(b[1]) or cap; local ts = tonumber(b[2]) or now
+tokens = math.min(cap, tokens + (now - ts) / 1000 * rate)
+local ok = 0
+if tokens >= 1 then tokens = tokens - 1; ok = 1 end
+redis.call("HSET", KEYS[1], "tokens", tokens, "ts", now)
+redis.call("PEXPIRE", KEYS[1], math.ceil(cap / rate * 1000))
+return { ok, math.floor(tokens) }$__bt });
+
+export async function allow(key, capacity, perSec) {
+  const [ok, left] = await redis.takeToken($__btrl:$__{key}$__bt, capacity, perSec, Date.now());
+  return { ok: ok === 1, left };
+}`
         }
       ]
     },
