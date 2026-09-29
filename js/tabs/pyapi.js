@@ -77,7 +77,10 @@ Python dynamic: النوع بيتحدد وقت التشغيل ومرتبط با�
             R`[[n]] بيشاور على int.`,
             "نفس الاسم بقى يشاور على str: مسموح (dynamic).",
             "بس مفيش تحويل ضمني: TypeError (strong)."
-          ]
+          ],
+          sol: R`هتلاقي [[id(a)]] و [[id(b)]] نفس الرقم بالظبط، و [[id(c)]] رقم تاني. يعني [[a]] و [[b]] اسمين لنفس الـ list، و [[c]] object جديد. والأرقام نفسها هتختلف كل مرة تشغّل فيها Python (هي عنوان في الذاكرة في CPython)، المهم مين زي مين. واختصارها: [[id(a) == id(b)]] هي هي [[a is b]] وبتطلع [[True]]، و [[id(a) == id(c)]] بتطلع [[False]].
+
+ولما توصل لآخر سطر هتشوف [[TypeError: can only concatenate str (not "int") to str]]. لو اتلخبطت وتوقعت إن [[print(a)]] بعد [[c.append(5)]] هيطلع فيه 5، فده بالظبط الفرق: [[copy()]] عملت object جديد، فالتعديل عليه ميوصلش للأصل.`
         },
         {
           cmd: "mutable و immutable",
@@ -122,7 +125,21 @@ cache[[30.0, 31.2]] = "x"  # TypeError: unhashable type: 'list'`,
             "ممنوع تتعدّل.",
             "الـ tuple ينفع مفتاح في dict لأنها hashable.",
             "الـ list لأ: ممكن تتغير فمكانها في الـ hash table يبوظ."
-          ]
+          ],
+          sol: R`النسخة الأولى ([[tags.append(t)]]) بتعدّل الـ list الأصلية: لو ناديتها على [[my = ["python"]]] هتلاقي [[my]] بقت [[['python', 'api']]]، لأن الباراميتر اسم تاني لنفس الـ object و [[append]] بتعدّله مكانه.
+
+النسخة التانية ([[tags = tags + [t]]]) مش هتغيّر حاجة برّه: [[my]] هتفضل [[['python']]]. الـ [[+]] بيعمل list جديدة، والتعيين بيربط الاسم المحلي [[tags]] بيها بس. فلو عايزها تفيد لازم [[return tags]] واللي نادى ياخد الناتج. وخد بالك: [[tags += [t]]] مش زي [[tags = tags + [t]]]؛ الـ [[+=]] على list بيعدّل مكانه، فهيغيّر الأصل زي [[append]].`,
+          solCode: R`def add_tag(tags, t):
+    tags.append(t)
+my = ["python"]
+add_tag(my, "api")
+print(my)         # ['python', 'api']
+def add_tag2(tags, t):
+    tags = tags + [t]
+    return tags
+my = ["python"]
+r = add_tag2(my, "api")
+print(my, r)      # ['python'] ['python', 'api']`
         },
         {
           cmd: "type hints",
@@ -167,7 +184,10 @@ get_user("5")  # بيشتغل عادي! Python مبيفحصش، بس mypy و Pyl
             "dict مفاتيحه str وقيمه float.",
             "لازم تبقى واحدة من القيمتين (الفحص في mypy بس).",
             "Python بيشغّله عادي، والأدوات بس اللي بتعترض."
-          ]
+          ],
+          sol: R`[[mypy file.py]] هيطلّع حاجة زي: [[file.py:11: error: Argument 1 to "get_user" has incompatible type "str"; expected "int"  [arg-type]]] وبعدها [[Found 1 error in 1 file]] وكود خروج 1. لاحظ إنه كتب [[int]] مش [[UserId]]، لأن [[type UserId = int]] اسم تاني لنفس النوع (alias) مش نوع جديد.
+
+وبعدين [[python file.py]] هيشتغل ويخلص من غير أي رسالة وكود خروج 0. ودي الفكرة كلها: الـ hints للأدوات (mypy و Pylance) وPython نفسه بيتجاهلها وقت التشغيل. لو mypy مطلعش خطأ، اتأكد إنك شغّلته على الملف الصح وإن السطر [[get_user("5")]] موجود؛ ولو [[python]] رمى [[SyntaxError]] عند [[type]] أو [[first[T]]]، فإنت على Python أقدم من 3.12.`
         },
         {
           cmd: "f-strings",
@@ -210,7 +230,10 @@ path = r"C:\new\folder"`,
             R`[[join]] على الفاصل، والعناصر strings.`,
             R`[[in]] للبحث، و [[endswith]] للنهاية.`,
             "raw string: الـ backslash مش escape."
-          ]
+          ],
+          sol: R`الناتج: [[3.142]] و [[25.6%]] و [[00042]].
+
+[[.3f]] يعني ٣ أرقام بعد العلامة مع تقريب (فـ 3.14159 بقت 3.142 مش 3.141). و [[.1%]] بيضرب في 100 ويحط علامة % برقم واحد بعد العلامة. و [[05d]] يعني عدد صحيح عرضه ٥ ويتملى أصفار من الشمال. الغلطة المشهورة إنك تتوقع [[0.3%]] من [[.1%]]، ناسي إنه بيضرب في 100 لوحده، فمتضربش إنت كمان.`
         }
       ]
     },
@@ -762,7 +785,14 @@ chunk = users[(page - 1) * size : page * size]`,
             "جوه الـ loop.",
             "رقم الصفحة وحجمها.",
             "pagination بالـ slicing: العناصر من 20 لـ 39."
-          ]
+          ],
+          sol: R`بالاسم تنازلي: [[['Sara', 'Omar', 'Ali']]]. واللي سنهم فوق ٢٥: [[['Sara', 'Omar']]] (Ali عنده 22).
+
+[[sorted(users, key=lambda u: u["name"], reverse=True)]] بترجع list جديدة والأصل زي ما هو. لو استخدمت [[users.sort(...)]] بدلها هي بتعدّل مكانها وبترجع [[None]]، فلو كتبت [[x = users.sort(...)]] هتلاقي [[x]] فاضية، ودي أشهر غلطة. ولو نسيت [[key]] هترمي [[TypeError: '<' not supported between instances of 'dict' and 'dict']] لأن Python ميعرفش يقارن dicts ببعض.`,
+          solCode: R`users = [{"name": "Sara", "age": 27}, {"name": "Omar", "age": 31}, {"name": "Ali", "age": 22}]
+by_name_desc = sorted(users, key=lambda u: u["name"], reverse=True)
+print([u["name"] for u in by_name_desc])            # ['Sara', 'Omar', 'Ali']
+print([u["name"] for u in users if u["age"] > 25])  # ['Sara', 'Omar']`
         },
         {
           cmd: "dict",
@@ -811,7 +841,18 @@ print(Counter(item for _, item in orders).most_common(1))`,
             "لف على الطلبات.",
             R`مفيش [[if]]: الـ list بتتعمل لوحدها.`,
             "عدّ الأصناف، وهات الأكتر تكرارًا (tea مرتين)."
-          ]
+          ],
+          sol: R`على جملة زي [[the cat and the dog and the bird]]، الـ loop بيطلّع [[{'the': 3, 'cat': 1, 'and': 2, 'dog': 1, 'bird': 1}]]، و [[Counter]] بيطلّع نفس العدد: [[Counter({'the': 3, 'and': 2, 'cat': 1, 'dog': 1, 'bird': 1})]] (مترتب من الأكتر) و [[counts == c]] بتطلع [[True]]، لأن [[Counter]] أصلًا dict. وميزته إنه سطر واحد وعنده [[most_common]].
+
+و [[user["phone"]]] بيرمي [[KeyError: 'phone']]: المفتاح مش موجود. لو المفتاح ممكن ميبقاش موجود استخدم [[user.get("phone")]] (بترجع [[None]]) أو [[get("phone", "مفيش")]]. ولو كتبت [[counts[w] += 1]] من غير [[get]] هتاخد نفس الـ KeyError على أول كلمة.`,
+          solCode: R`from collections import Counter
+text = "the cat and the dog and the bird"
+counts = {}
+for w in text.split():
+    counts[w] = counts.get(w, 0) + 1
+print(counts)
+c = Counter(text.split())
+print(c, counts == c)`
         },
         {
           cmd: "set و tuple",
@@ -860,7 +901,15 @@ empty = set()`,
             "unpacking: كل قيمة في متغير.",
             R`[[*rest]] بيلم الباقي في list: 2 و 3 و 4.`,
             R`set فاضية. [[{}]] لوحدها dict.`
-          ]
+          ],
+          sol: R`لو القاعدة فيها [[[1, 2, 3, 4]]] والـ request فيه [[[3, 4, 5, 6]]]: الجديد [[{5, 6}]] واللي اتمسح [[{1, 2}]]. الفرق بين الـ sets ([[-]]) بيرجع اللي في الأولى ومش في التانية، فالترتيب مهم: [[req - db]] للجديد و [[db - req]] للممسوح.
+
+والـ set ملهاش ترتيب، فلو محتاج ترتيب ثابت (في test مثلًا) اعمل [[sorted(new)]]. ولو جربت تعملها بـ loop و [[not in]] على lists، هتشتغل بس أبطأ بكتير على ليستات كبيرة (O(n×m) بدل O(n+m)).`,
+          solCode: R`in_db = [1, 2, 3, 4]
+in_request = [3, 4, 5, 6]
+new = set(in_request) - set(in_db)
+removed = set(in_db) - set(in_request)
+print(new, removed)  # {5, 6} {1, 2}`
         },
         {
           cmd: "comprehensions",
@@ -897,7 +946,10 @@ labels = ["adult" if u["age"] >= 18 else "minor" for u in users]`,
             R`[[any]] بيقف أول ما يلاقي True.`,
             "loopين متداخلين: ٦ أزواج.",
             R`[[if/else]] في الأول بيختار قيمة لكل عنصر، مش فلتر.`
-          ]
+          ],
+          sol: R`الـ comprehension: [[result = [n * n for n in range(20) if n % 3 == 0]]] وناتجه [[[0, 9, 36, 81, 144, 225, 324]]].
+
+ولما تبدّل الأقواس المربعة بأقواس عادية مش هتاخد tuple، هتاخد generator: الطباعة هتطلع حاجة زي [[<generator object <genexpr> at 0x7f...>]]. الـ generator مبيحسبش حاجة لحد ما تلف عليه، فعشان تشوف القيم [[list(g)]]. وخد بالك إنه بيتلف عليه مرة واحدة بس: [[list(g)]] التانية بترجع [[[]]]. ولو عايز tuple فعلًا: [[tuple(n * n for n in ...)]].`
         }
       ]
     },
@@ -953,7 +1005,18 @@ print(*nums)                          # 3 1 2`,
             R`[[**]] وقت النداء بيفك الـ dict لباراميترات بالاسم.`,
             "list.",
             R`[[*]] وقت النداء بيفك الـ list لباراميترات بالمكان.`
-          ]
+          ],
+          sol: R`[[*args]] بتجمع الباراميترات بالترتيب و [[**kwargs]] بتجمع اللي بالاسم، وبعدين [[fn(*args, **kwargs)]] بتفكهم تاني زي ما جم بالظبط. فـ [[timed(sorted, words, key=len, reverse=True)]] بتنادي [[sorted(words, key=len, reverse=True)]].
+
+على [[["banana", "kiwi", "apple", "fig"]]] هتشوف سطر زي [[sorted took 0.000004s]] (الرقم هيختلف عندك) وبعده [[['banana', 'apple', 'kiwi', 'fig']]]. لو نسيت الـ [[**]] وكتبت [[fn(*args, kwargs)]] هيوصل الـ dict كـ باراميتر تاني عادي و [[sorted]] ترمي [[TypeError: sorted expected 1 argument, got 2]]. ولازم ترجّع الناتج ([[return result]]) وإلا الدالة هتبلع النتيجة وترجع [[None]].`,
+          solCode: R`import time
+def timed(fn, *args, **kwargs):
+    start = time.perf_counter()
+    result = fn(*args, **kwargs)
+    print(f"{fn.__name__} took {time.perf_counter() - start:.6f}s")
+    return result
+words = ["banana", "kiwi", "apple", "fig"]
+print(timed(sorted, words, key=len, reverse=True))`
         },
         {
           cmd: "decorators",
@@ -1014,7 +1077,31 @@ decorator بباراميترات ([[@retry(3)]]) هو دالة بترجع decora
             "cache جاهز: كل n بيتحسب مرة واحدة.",
             "دالة recursive.",
             "من غير cache كانت هتعيد الحسبة ملايين المرات."
-          ]
+          ],
+          sol: R`الـ ٣ طبقات: [[retry(times)]] بترجع الـ decorator، والـ decorator بياخد الدالة ويرجع [[wrapper]]، والـ [[wrapper]] هو اللي بيتنادي فعلًا. لما تشغّله أكتر من مرة هتشوف نتايج مختلفة: ساعات [[ok]] على طول، وساعات [[attempt 1 failed: network down]] وبعدين [[ok]]، ونادرًا (احتمال 1 من 8) التلات محاولات يفشلوا والـ [[ConnectionError]] الأصلي يطلع لبرّه. ولو عايز نتيجة ثابتة وإنت بتجرب: [[random.seed(3)]].
+
+أهم نقطتين: في آخر محاولة اعمل [[raise]] عشان الخطأ ميتبلعش والدالة ترجع [[None]] في صمت. ولو كتبت [[@retry]] من غير أقواس الدالة نفسها هتتبعت مكان [[times]]، و [[flaky()]] هترمي [[TypeError: retry.<locals>.decorator() missing 1 required positional argument: 'fn']]. و [[functools.wraps]] بيخلي [[flaky.__name__]] يفضل [[flaky]] مش [[wrapper]].`,
+          solCode: R`import functools
+import random
+def retry(times: int):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            for attempt in range(1, times + 1):
+                try:
+                    return fn(*args, **kwargs)
+                except Exception as e:
+                    print(f"attempt {attempt} failed: {e}")
+                    if attempt == times:
+                        raise
+        return wrapper
+    return decorator
+@retry(times=3)
+def flaky() -> str:
+    if random.random() < 0.5:
+        raise ConnectionError("network down")
+    return "ok"
+print(flaky(), flaky.__name__)`
         },
         {
           cmd: "generators و yield",
@@ -1067,7 +1154,24 @@ next(gen)`,
             "جوه الـ loop.",
             "النداء مبيشغّلش الدالة، بيرجع generator object.",
             R`[[next]] بتشغّله لحد أول [[yield]] وترجع أول حتة (1 و 2).`
-          ]
+          ],
+          sol: R`الملف فيه ٥ مليون سطر (حوالي 39MB على الديسك). لما جربناها وجمعنا الأرقام: [[f.readlines()]] وصّلت الذاكرة لحوالي 340MB، والـ generator فضل حوالي 8MB بس، والناتج واحد في الاتنين ([[12500002500000]]). [[readlines]] بتعمل list فيها ٥ مليون string مرة واحدة، وكل string في Python ليه overhead أكبر من حجم النص نفسه، فالرقم بيطلع أضعاف حجم الملف. والـ generator بيجيب سطر، تشتغل عليه، يرميه، يجيب اللي بعده.
+
+لو ملقتش فرق في htop، غالبًا البرنامج خلص بسرعة قبل ما تلحق تشوفه، أو إنت عملت [[list(read_lines(...))]] فرجّعت كل حاجة للذاكرة تاني. الأدق إنك تقيس جوه البرنامج بـ [[resource]] زي الكود تحت (على Linux و macOS).`,
+          solCode: R`import resource
+import sys
+def peak_mb() -> float:
+    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024  # KB على Linux
+def read_lines(path: str):
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            yield line.rstrip("\n")
+if sys.argv[1] == "list":
+    with open("big.txt", encoding="utf-8") as f:
+        total = sum(int(l) for l in f.readlines())
+else:
+    total = sum(int(l) for l in read_lines("big.txt"))
+print(sys.argv[1], total, f"peak {peak_mb():.0f} MB")`
         },
         {
           cmd: "scope و LEGB",
@@ -1238,7 +1342,10 @@ finally:
             "جوه الـ except.",
             R`[[finally]]: للتنضيف.`,
             "بيشتغل في كل الأحوال."
-          ]
+          ],
+          sol: R`مع [[from e]] هتشوف traceback لخطأين: الأول [[ValueError: invalid literal for int() with base 10: 'abc']] من [[int(raw)]]، وبعدين [[The above exception was the direct cause of the following exception:]]، وبعدين الخطأ بتاعك [[ValueError: age must be a number, got 'abc']]. يعني إنت قلت صراحة إن التاني سببه الأول.
+
+من غير [[from e]] نفس الخطأين هيظهروا، بس الجملة في النص هتبقى [[During handling of the above exception, another exception occurred:]]، ودي معناها «حصل خطأ تاني وإحنا بنعالج الأول»، كأنه bug في الـ except نفسه. فـ [[from e]] مش بتضيف معلومة جديدة، هي بتوضح إن ده مقصود. ولو عايز تخفي الأصل خالص (مثلًا عشان فيه بيانات حساسة) اكتب [[from None]].`
         },
         {
           cmd: "with و context managers",
@@ -1293,7 +1400,31 @@ with timer("sum"):
             "اطبع الوقت.",
             "استخدمه.",
             "الكود اللي بيتقاس."
-          ]
+          ],
+          sol: R`الفكرة: تحفظ الفولدر الحالي بـ [[os.getcwd()]] قبل الـ [[yield]]، وترجعله في [[finally]]. لو شغّلت الكود تحت هتشوف الفولدر الأصلي، وبعدين الفولدر الفرعي جوه البلوك، وبعدين الأصلي تاني حتى بعد ما البلوك رمى [[RuntimeError]].
+
+الغلطة المشهورة إنك تكتب [[os.chdir(old)]] بعد الـ [[yield]] من غير [[try/finally]]: ساعتها لو حصل خطأ جوه الـ [[with]]، الـ generator مش هيكمّل والبرنامج هيفضل في الفولدر الغلط. وفي الكود الحقيقي على 3.11 وأحدث استخدم [[contextlib.chdir]] الجاهز، وخد بالك إن تغيير الفولدر بيأثر على البروسيس كله، فمش آمن مع threads.`,
+          solCode: R`import os
+from contextlib import contextmanager
+from pathlib import Path
+@contextmanager
+def cd(path):
+    old = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old)
+Path("sub").mkdir(exist_ok=True)
+print(os.getcwd())
+with cd("sub"):
+    print(os.getcwd())
+try:
+    with cd("sub"):
+        raise RuntimeError("boom")
+except RuntimeError:
+    pass
+print(os.getcwd())  # رجع للأصلي رغم الخطأ`
         }
       ]
     },
@@ -1715,7 +1846,10 @@ Money("oops")                   # بيعدّي! dataclass مبيفحصش الأ�
             "الـ list بتاعتها لوحدها.",
             "حوّلها dict.",
             "مفيش فحص وقت التشغيل: الفحص ده شغل Pydantic."
-          ]
+          ],
+          sol: R`مع [[items: list[str] = []]] الـ class مش هيتعرّف أصلًا: [[ValueError: mutable default <class 'list'> for field items is not allowed: use default_factory]]. الـ dataclass بيمنعها عشان كل الـ carts هتشارك نفس الـ list (نفس غلطة الـ default المتغير في الدوال)، و [[default_factory=list]] بيعمل list جديدة لكل object.
+
+و [[{price: "x"}]] مع [[frozen=True]] بتشتغل: [[{Money(amount=15000, currency='EGP'): 'x'}]]، لأن frozen مع [[eq]] (الافتراضي) بيعملوا [[__hash__]] من الحقول. من غير frozen هتاخد [[TypeError: unhashable type: 'Money']]: الـ dataclass عمل [[__eq__]] فشال الـ hash الافتراضي، لأن object ممكن يتغير ميبقاش آمن كمفتاح.`
         },
         {
           cmd: "Enum",
@@ -1987,7 +2121,10 @@ if __name__ == "__main__":
             "الجسم.",
             R`الملف اتشغّل مباشرة ([[python -m app.routers.users]])؟`,
             "يبقى شغّل main. لو اتعمله import، ده مش هيشتغل."
-          ]
+          ],
+          sol: R`[[python a.py]] بيطبع [[__main__]]، و [[python b.py]] (اللي فيه [[import a]]) بيطبع [[a]]. الملف اللي بتشغّله مباشرة اسمه دايمًا [[__main__]]، وأي ملف بيتعمله import بياخد اسم الـ module بتاعه (ولو جوه package هيبقى [[app.routers.users]] مثلًا).
+
+ده بالظبط اللي بيخلي [[if __name__ == "__main__":]] تشتغل: الكود اللي جواها بيتنفذ لما تشغّل الملف بس، مش لما حد يعمله import. ولو عملت [[import a]] مرتين في نفس البرنامج هتلاقي الطباعة مرة واحدة بس، لأن Python بيحفظ الـ module في [[sys.modules]] وبيرجّعه من غير ما يشغّله تاني.`
         },
         {
           cmd: "uv و pyproject.toml",
@@ -2027,7 +2164,10 @@ uv export --no-hashes > requirements.txt`,
             "شغّل جوه الـ venv من غير activate (بعد ما تكتب التطبيق في main.py).",
             "سطّب من الـ lock بالظبط، ويفشل لو مش متزامن: لـ CI و Docker.",
             "requirements.txt لو حاجة لسه محتاجاه."
-          ]
+          ],
+          sol: R`بعد [[uv init shop-api]] و [[uv add "fastapi[standard]"]] هتلاقي في [[pyproject.toml]] قسم [[[project]]] فيه [[name]] و [[version]] و [[requires-python]] (على حسب نسخة Python اللي uv لقاها أو اللي عملتلها pin) و [[dependencies = ["fastapi[standard]>=0.1xx.x"]]]، يعني uv كتب اللي إنت طلبته بس بحد أدنى. أما [[uv.lock]] فطويل جدًا: فيه كل الـ packages (الـ dependencies وdependencies بتاعتها، حوالي ٥٠ واحدة لـ fastapi[standard])، كل واحدة بنسختها الدقيقة ورابط تحميلها و [[hash]] بتاعها.
+
+وبعد [[rm -rf .venv]] و [[uv sync]] الوقت هيبقى صغير جدًا (في تجربتنا أقل من ثانية)، لأن uv بيجيب الـ packages من الـ cache بتاعه ويعمل links بدل ما ينزّل وينسخ. الفرق ده هو سبب إن الناس نقلت من pip. ولو [[uv sync]] أخد وقت طويل، يبقى الـ cache فاضي (أول مرة على الجهاز) أو في CI من غير cache. والـ [[pyproject.toml]] بتكتبه إنت، والـ [[uv.lock]] uv بيكتبه، والاتنين يتعملهم commit.`
         }
       ]
     },
@@ -2873,7 +3013,10 @@ asyncio.run(main())`,
             R`...بيطبع [[<class 'coroutine'>]].`,
             "دلوقتي بس اشتغل.",
             "اعمل event loop وشغّل main. في FastAPI، uvicorn بيعمل ده."
-          ]
+          ],
+          sol: R`بالمثال زي ما هو: [[واحدة ورا التانية: 2.0s]] و [[مع بعض: 1.0s]] و [[<class 'coroutine'>]]. وبعد ما تحط [[time.sleep(1)]]: الاتنين بقوا [[2.0s]].
+
+السبب: [[await asyncio.sleep(1)]] بيقول للـ event loop «أنا مستني، شغّل حد تاني»، فالطلبين بيستنوا مع بعض. أما [[time.sleep(1)]] فبيوقف الـ thread كله، والـ event loop عايش في الـ thread ده، فمفيش حد تاني يشتغل، والـ gather بيبقى واحدة ورا التانية. ولاحظ إن [[fetch_user(3)]] لوحدها مبتشغلش حاجة، بترجع coroutine بس، ولو نسيت [[await]] هتاخد تحذير [[RuntimeWarning: coroutine 'fetch_user' was never awaited]].`
         },
         {
           cmd: "gather و TaskGroup",
@@ -2946,7 +3089,33 @@ asyncio.run(main())`,
             "نادي الأصلية.",
             "١٠٠ طلب، بس ١٠ بس في نفس الوقت: حوالي ٥ ثواني.",
             "شغّل."
-          ]
+          ],
+          sol: R`لما [[t2]] ينادي [[get_price("bad")]]، الـ TaskGroup بيلغي باقي الـ tasks ويرمي [[ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)]]، وجواه الـ [[ValueError: bad]] الأصلي. وبـ [[except* ValueError as eg]] بتمسكه، و [[eg.exceptions]] فيها [[(ValueError('bad'),)]]. لو كتبت [[except ValueError]] العادية مش هتمسكه، لأن اللي طلع [[ExceptionGroup]] مش [[ValueError]].
+
+والـ ١٠٠ طلب كل واحد نص ثانية: مع [[Semaphore(10)]] حوالي [[5.0s]] (١٠ دفعات × 0.5)، ومع [[Semaphore(50)]] حوالي [[1.0s]] (دفعتين). القاعدة: الوقت ≈ (عدد الطلبات ÷ الحد) × وقت الطلب. والحد مش عشان السرعة، عشان متكسرش الـ API أو قاعدة البيانات اللي بتكلمها.`,
+          solCode: R`import asyncio
+import time
+async def get_price(sku: str) -> float:
+    await asyncio.sleep(0.5)
+    if sku == "bad":
+        raise ValueError(sku)
+    return 10.0
+async def main() -> None:
+    try:
+        async with asyncio.TaskGroup() as tg:
+            t1 = tg.create_task(get_price("a"))
+            t2 = tg.create_task(get_price("bad"))
+    except* ValueError as eg:
+        print("caught:", eg.exceptions)
+    for n in (10, 50):
+        sem = asyncio.Semaphore(n)
+        async def limited(sku: str) -> float:
+            async with sem:
+                return await get_price(sku)
+        start = time.perf_counter()
+        await asyncio.gather(*(limited(f"sku{i}") for i in range(100)))
+        print(n, f"{time.perf_counter() - start:.1f}s")
+asyncio.run(main())`
         },
         {
           cmd: "blocking في async",
@@ -3009,7 +3178,10 @@ asyncio.run(register("secret"))`,
             "دالة async محتاجة تستخدمها.",
             R`[[to_thread]]: الحسبة في thread جنب الـ loop، والـ loop فاضي لغيرك.`,
             "شغّل للتجربة."
-          ]
+          ],
+          sol: R`مع [[time.sleep(5)]] جوه [[async def]]: الطلب الأول بيرجع بعد ٥ ثواني والتاني بعد ١٠، يعني الأمر كله بياخد حوالي ١٠ ثواني. الـ sleep وقّف الـ event loop، فالسيرفر مقدرش حتى يستقبل الطلب التاني لحد ما الأول يخلص. ومع [[await asyncio.sleep(5)]] الاتنين بيرجعوا مع بعض بعد ٥ ثواني.
+
+ومع [[PYTHONASYNCIODEBUG=1 fastapi dev main.py]] هتلاقي في لوج السيرفر سطر زي [[Executing <Task finished name='Task-3' coro=<RequestResponseCycle.run_asgi() ...> took 5.002 seconds]]: asyncio بيحذّرك من أي خطوة خدت أكتر من 0.1 ثانية من غير ما ترجع للـ loop. لو التاني رجع بعد ٥ ثواني بس مع [[time.sleep]]، اتأكد إن الدالة [[async def]] فعلًا: لو [[def]] عادية FastAPI بيشغّلها في threadpool ومش هتشوف المشكلة.`
         },
         {
           cmd: "def ولا async def",
@@ -3066,7 +3238,10 @@ async def broken():
             "async def...",
             "...وجواها sync: الـ loop كله وقف، وكل الطلبات التانية مستنية.",
             "رجّع."
-          ]
+          ],
+          sol: R`الـ ٢٠ طلب على [[/broken]] بياخدوا حوالي ٢٠ ثانية (في تجربتنا 20.06s)، وعلى [[/sync-ok]] حوالي ثانية (1.15s). الاتنين فيهم نفس [[time.sleep(1)]]، والفرق كله في كلمة [[async]].
+
+[[/broken]] مكتوبة [[async def]]، فـ FastAPI بيشغّلها على الـ event loop مباشرة، و [[time.sleep]] بيوقفه، فالطلبات بتتنفذ واحد ورا التاني. [[/sync-ok]] مكتوبة [[def]] عادية، فـ FastAPI بيبعتها للـ threadpool (حوالي ٤٠ thread افتراضيًا)، فالعشرين بيناموا مع بعض. القاعدة: لو جوه الدالة كود blocking (مكتبة مش async) اكتبها [[def]]، ولو كل حاجة فيها [[await]] اكتبها [[async def]]. ولو لقيت [[/sync-ok]] أخدت أكتر من ثانية بكتير، اتأكد إن الطلبات فعلًا اتبعتت مع بعض ([[-P20]]).`
         },
         {
           cmd: "ThreadPoolExecutor و ProcessPoolExecutor",
@@ -3225,7 +3400,10 @@ async def health() -> dict[str, bool]:
             R`route تاني، و [[tags]] بتجمّعه في مجموعة في /docs.`,
             "الدالة.",
             "الرد."
-          ]
+          ],
+          sol: R`الترمنال هيطبع [[Server started at http://127.0.0.1:8000]] و [[Documentation at http://127.0.0.1:8000/docs]]. في [[/docs]] هتلاقي الـ endpoints الاتنين، و [[/health]] تحت قسم [[ops]] (من [[tags]]) والتاني تحت [[default]]. اضغط Try it out وبعدين Execute، وهتشوف [[{"message": "أهلًا"}]] و [[{"ok": true}]].
+
+[[/openapi.json]] هو الوصف الخام: فيه [[info]] بالـ [[title]] و [[version]] اللي كتبتهم، و [[paths]] فيها [[/]] و [[/health]]، وكل واحد عنده [[operationId]] و [[summary]] اتولّدوا من اسم الدالة، و schema للرد من نوع الرجوع ([[dict[str, bool]]] بقت object قيمه boolean). ولما تحفظ تعديل هتشوف [[WatchFiles detected changes in 'main.py'. Reloading...]] والرد الجديد يظهر من غير ما تعيد التشغيل. لو مفيش reload، غالبًا شغّلت [[fastapi run]] (للإنتاج، من غير reload) بدل [[dev]].`
         },
         {
           cmd: "path و query",
@@ -3294,7 +3472,10 @@ async def products(filters: Annotated[Filters, Query()]):
             "route بفلاتر كتير.",
             "الموديل كله من الـ query (FastAPI 0.115+).",
             "Pydantic model بيتحوّل JSON لوحده."
-          ]
+          ],
+          sol: R`كل الردود 422 وفيها [[detail]] بـ [[loc]] و [[msg]]: [[/items/0]] بترجع [[["path", "item_id"]]] و [[Input should be greater than or equal to 1]]، و [[/items/abc]] بترجع [[Input should be a valid integer, unable to parse string as an integer]]، و [[/items?size=500]] بترجع [[["query", "size"]]] و [[Input should be less than or equal to 100]]. وفي [[/items?tags=a&tags=b&sort=old]] الغلط في [[sort]] بس: [[Input should be 'new' or 'price']]، والـ tags سليمة، ولو شلت [[sort=old]] هترجع 200 و [[tags: ["a", "b"]]]. و [[/products?min_price=-1]] بترجع [[["query", "min_price"]]] و [[Input should be greater than or equal to 0]].
+
+أول عنصر في [[loc]] بيقولك الغلط جه منين ([[path]] ولا [[query]] ولا [[body]])، والتاني اسم الحقل. وفي [[/docs]] هتلاقي القيود ([[minimum]] و [[maximum]] و [[maxLength]] وقيم الـ enum) مكتوبة جنب كل باراميتر. ولو [[?tags=a,b]] رجعت [[["a,b"]]] فده طبيعي: الـ list في الـ query بتتكرر ([[tags=a&tags=b]]) مش بفاصلة.`
         },
         {
           cmd: "request body",
@@ -3361,7 +3542,10 @@ async def update_product(product_id: int, patch: ProductPatch):
             "path و body مع بعض.",
             "عدّل الحقول اللي اتبعتت بس.",
             "رجّع بعد التعديل."
-          ]
+          ],
+          sol: R`[[{"name": "x", "price": -5}]] بترجع 422 وفيها خطأين: [[loc: ["body", "name"]]] بـ [[String should have at least 2 characters]]، و [[loc: ["body", "price"]]] بـ [[Input should be greater than 0]]. Pydantic بيجمع كل الأخطاء مرة واحدة مش بيقف عند أول واحد، ودي ميزة للـ frontend.
+
+[[{"name": "Tea", "price": "12.5"}]] بترجع 201 و [[{"id": 1, "name": "Tea", "price": 12.5, "tags": []}]]: الـ string اتحوّل لـ float (الوضع العادي lax مش strict). والـ PATCH بـ [[{"price": 20}]] بترجع [[{"name": "Tea", "price": 20.0, "tags": []}]]: الاسم فضل زي ما هو بفضل [[exclude_unset=True]]. من غيرها [[patch.model_dump()]] كانت هترجع [[{"name": None, "price": 20.0}]] وتمسح الاسم. ولو عملت PATCH على id مش موجود هتاخد 500 من [[KeyError]]، والصح [[HTTPException(404)]].`
         },
         {
           cmd: "response model",
@@ -3422,7 +3606,10 @@ async def list_users():
             R`هنا الدالة بترجّع objects مش UserOut، فالموديل في [[response_model]].`,
             "الدالة.",
             "FastAPI بيقرا الـ attributes من كل object ويبني منها UserOut."
-          ]
+          ],
+          sol: R`[[/users/1]] بترجع [[{"id": 1, "email": "sara@example.com", "name": "Sara"}]] بس، مع إن الدالة رجّعت [[UserInDB]] فيه الـ hash. FastAPI بيعدّي الناتج على [[UserOut]] وبيشيل أي حقل مش فيه. ولما تغيّر لـ [[-> UserInDB]] هيظهر [[password_hash]] في الرد، وده بالظبط التسريب اللي الـ response model بيمنعه.
+
+ولو رجّعت [[email="x"]]: العميل بياخد [[500 Internal Server Error]]، وفي الترمنال هتشوف [[ResponseValidationError]] مع [[loc: ('response', 'email')]] و [[value is not a valid email address: An email address must have an @-sign.]]. الـ 422 معناها «العميل بعت حاجة غلط»، لكن هنا العميل مبعتش حاجة، السيرفر هو اللي طلّع بيانات مش مطابقة للعقد، فده bug عندك. ولو ظهر خطأ إن [[EmailStr]] محتاج [[email-validator]]، سطّب [[pip install "pydantic[email]"]] (بتيجي أصلًا مع [[fastapi[standard]]]).`
         },
         {
           cmd: "APIRouter",
@@ -3473,7 +3660,10 @@ app.include_router(orders.router, prefix="/api/v1")`,
             "التطبيق.",
             "ضيف routes المستخدمين.",
             R`ضيف routes الطلبات تحت [[/api/v1]]: المسار النهائي [[/api/v1/orders/]].`
-          ]
+          ],
+          sol: R`في [[/docs]] هتلاقي قسمين: [[users]] و [[orders]]، كل واحد تحت الـ tag اللي في الـ [[APIRouter]] بتاعه. والمسارات، لو الـ users router فيه [[prefix="/users"]] وعنده [[/]] و [[/{user_id}]]: [[['/users/', '/users/{user_id}', '/api/v1/orders/', '/api/v1/orders/{order_id}']]].
+
+لاحظ إن prefix الـ [[include_router]] بيتحط قبل prefix الـ router نفسه، فبقت [[/api/v1/orders/]]. ولاحظ الـ slash في الآخر: [[@router.get("/")]] مع prefix بتدّي [[/orders/]]، ولو طلبت [[/orders]] من غير slash FastAPI بيرد بـ 307 redirect. ولو ظهر [[ModuleNotFoundError: No module named 'app']]، شغّل من الفولدر اللي فوق [[app]] ([[fastapi dev app/main.py]]) ومتنساش [[__init__.py]] في [[app]] و [[app/routers]].`
         }
       ]
     },
@@ -3549,7 +3739,10 @@ except ValidationError as e:
             "امسك الخطأ.",
             "كل الأخطاء اتجمعت: 4.",
             "كل خطأ فيه مكانه ورسالته."
-          ]
+          ],
+          sol: R`[[e.errors()]] فيها ٤ أخطاء، كل واحد dict فيه [[type]] و [[loc]] و [[msg]] (و [[input]] و [[url]]): [[string_too_short ('name',)]]، و [[string_pattern_mismatch ('phone',)]]، و [[missing ('address', 'city')]] (الـ loc بيوصل لجوه الموديل المتداخل)، و [[extra_forbidden ('role',)]] (بسبب [[extra="forbid"]]). والـ [[type]] ثابت ومناسب للكود (تترجم منه الرسائل مثلًا)، والـ [[msg]] للبني آدمين.
+
+[[model_json_schema()]] بيرجع JSON Schema فيه [[required: ['name', 'phone', 'address']]]، و [[phone]] جواه [[pattern]]، و [[budget]] جواه [[exclusiveMinimum: 0]] و [[maximum: 1000000]]، و [[Address]] في [[$defs]]. و [[budget="50"]] بيعدّي ويبقى [[50.0]] (float)، لكن مع [[strict=True]] بيترفض: [[float_type]] و [[Input should be a valid number]]. الـ strict مفيد لما البيانات جاية من كود تاني مش من JSON أو فورم.`
         },
         {
           cmd: "model_dump و model_validate",
@@ -3614,7 +3807,10 @@ from_orm = Item.model_validate(Row())`,
             "object عادي زي صف من ORM.",
             "attributes.",
             R`[[from_attributes]] خلّاه يقرا الـ attributes.`
-          ]
+          ],
+          sol: R`[[model_dump()]] بيرجع [[created_at]] كـ [[datetime]] حقيقي ([[datetime.datetime(2026, 1, 10, 9, 0, tzinfo=TzInfo(0))]] ونوعه [[<class 'datetime.datetime'>]])، و [[model_dump(mode="json")]] بيرجعه string: [[2026-01-10T09:00:00Z]] ونوعه [[<class 'str'>]]. الأول لو هتكمّل شغل في Python، والتاني لو هتبعته لحاجة مبتفهمش غير JSON (Redis أو [[json.dumps]]).
+
+ومن غير [[from_attributes]]: [[Input should be a valid dictionary or instance of Item [type=model_type, input_value=<__main__.Row object at 0x...>, input_type=Row]]]. Pydantic افتراضيًا بيقبل dict أو object من نفس الموديل بس، و [[from_attributes=True]] بيخليه يقرا [[obj.id]] و [[obj.name]]، ودي اللي بتحتاجها مع صفوف SQLAlchemy.`
         },
         {
           cmd: "field_validator و model_validator",
@@ -3693,7 +3889,21 @@ print(b.model_dump())`,
             "الحسبة.",
             "الإيميل هيتنضّف، والتواريخ هتتحوّل.",
             R`فيه [[nights: 3]]، والإيميل [[sara@company.com]].`
-          ]
+          ],
+          sol: R`لما [[end]] قبل [[start]]: [[e.errors()]] فيها خطأ واحد بـ [[loc: ()]] (tuple فاضي، يعني على الموديل كله)، و [[type: 'value_error']]، و [[msg: 'Value error, end لازم بعد start']]. Pydantic بيضيف [[Value error, ]] قبل رسالتك، فخد بالك لو بتعرض الرسالة للمستخدم. ولو عايز الخطأ يتربط بحقل معين، اعمل الفحص في field validator.
+
+الـ [[@field_validator("guests")]] بيطلّع [[loc: ('guests',)]] و [[Value error, max 6 guests]]، و [[Field(le=6)]] بيطلّع [[less_than_equal]] و [[Input should be less than or equal to 6]] ومعاه [[ctx: {'le': 6}]]، وبيظهر كـ [[maximum]] في [[/docs]]. فـ [[Field(le=6)]] أقصر وأوضح وموثّق، والـ validator خليه للمنطق اللي Field ميعرفش يعبّر عنه.`,
+          solCode: R`from pydantic import BaseModel, Field, field_validator
+class WithValidator(BaseModel):
+    guests: int
+    @field_validator("guests")
+    @classmethod
+    def max_guests(cls, v: int) -> int:
+        if v > 6:
+            raise ValueError("max 6 guests")
+        return v
+class WithField(BaseModel):
+    guests: int = Field(le=6)`
         },
         {
           cmd: "pydantic-settings",
@@ -3764,7 +3974,10 @@ async def info(settings: SettingsDep):
             "route.",
             "الإعدادات جت كـ dependency: سهل تغيّرها في الاختبار.",
             "استخدمها."
-          ]
+          ],
+          sol: R`من غير [[.env]]، [[/info]] بترجع [[500 Internal Server Error]]، والترمنال فيه [[2 validation errors for Settings]] وتحتها [[database_url Field required]] و [[jwt_secret Field required]]. التطبيق قام عادي لأن [[get_settings()]] مبتتناداش غير مع أول طلب، وده سبب إنك تناديها في الـ lifespan: الأحسن السيرفر يرفض يقوم بدل ما يقوم ويقع مع أول مستخدم.
+
+بعد ما تعمل [[.env]]: [[print(settings.jwt_secret)]] بيطبع [[**********]] و [[repr]] بيطبع [[SecretStr('**********')]]، و [[get_secret_value()]] بس هي اللي بترجع القيمة الحقيقية، فلو اللوج طبع الـ settings كلها السر مش هيتسرّب. و [[CORS_ORIGINS=["https://shop.example.com"]]] بيتقري كـ JSON ويبقى list. و [[DB_POOL_SIZE=abc]] بيطلّع [[db_pool_size Input should be a valid integer, unable to parse string as an integer]]. ومتغيرات البيئة الحقيقية بتكسب على [[.env]].`
         }
       ]
     },
@@ -3838,7 +4051,10 @@ async def list_products(page: PageDep):
             "route تاني بنفس الـ pagination.",
             "سطر واحد.",
             "رجّع."
-          ]
+          ],
+          sol: R`من غير الـ header: 422 و [[{"detail": [{"type": "missing", "loc": ["header", "x-tenant-id"], "msg": "Field required", "input": null}]}]]. لاحظ إن FastAPI حوّل [[x_tenant_id]] لـ [[x-tenant-id]] لوحده (الـ underscore بقى شرطة). وبالـ header: [[{"tenant": "acme", "limit": 20, "offset": 40}]]، لأن الصفحة 3 بحجم 20 تبدأ من 40. ولو بعت [[X-Tenant-Id: ac-me]] هتاخد [[400]] و [[bad tenant]] من الـ HTTPException اللي جوه الـ dependency.
+
+وفي [[/docs]] هتلاقي على [[/orders]] تلات باراميترات: [[page]] و [[size]] (query) و [[x-tenant-id]] (header)، مع إن الـ route نفسه مكتوب فيه [[page]] و [[tenant]] بس. FastAPI بيفك الـ dependencies ويضيف باراميتراتها للـ route، وده اللي بيخلي الـ pagination تتكتب مرة وتتوثق في كل مكان.`
         },
         {
           cmd: "dependency بـ yield",
@@ -3903,7 +4119,10 @@ async def create_order(conn: Conn):
             "INSERT ويرجّع الـ id.",
             "INSERT تاني في نفس الـ transaction: الاتنين يا يتنفذوا يا لأ.",
             "رجّع."
-          ]
+          ],
+          sol: R`مع [[raise HTTPException(400)]] بعد أول INSERT، الرد [[400]] و [[{"detail": "Bad Request"}]]، و [[SELECT * FROM orders]] مش هيلاقي الصف. الـ exception عدّى من الـ [[yield]] جوه [[conn.transaction()]] فعمل rollback. بس لاحظ إن الطلب اللي بعده هياخد [[id]] 2 مش 1: الـ sequence مبيرجعش في الـ rollback، فالفجوات في الـ ids طبيعية ومتعتمدش إنها متتالية.
+
+وعشان تشوف التوقيت، اطبع حاجة بعد الـ [[async with conn.transaction()]] واطبع حاجة في middleware بعد [[call_next]]. مع [[scope="function"]] الترتيب: [[endpoint returning]] وبعدين طباعة الـ dependency (الـ commit حصل) وبعدين [[response ready in middleware]]، يعني الـ commit خلص قبل الرد. من غير [[scope]] (الافتراضي [[request]]) الطباعة بتاعة الـ dependency بتيجي بعد ما الرد اتجهّز، يعني العميل ممكن ياخد 200 والـ commit لسه مخلصش أو يفشل. عشان كده الـ transaction مع [[scope="function"]]. ولو ظهر [[TypeError]] عند [[scope]]، نسخة FastAPI عندك قديمة (الـ scope اتضاف في 0.121)، فحدّثها.`
         },
         {
           cmd: "auth dependency",
@@ -3986,7 +4205,10 @@ async def delete_user(user_id: int):
             "للأدمن بس، والـ route مش محتاج قيمة الـ dependency.",
             "الدالة.",
             "رجّع."
-          ]
+          ],
+          sol: R`[[jwt.encode]] بيطبع توكن من ٣ أجزاء بينهم نقط، زي [[eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIn0.3au3...]]، ومعاه تحذير [[InsecureKeyLengthWarning: The HMAC key is 9 bytes long]] من نسخ PyJWT الجديدة، لأن [[change-me]] أقصر من 32 byte. في الإنتاج السر يبقى طويل وعشوائي. و [[/me]] بالتوكن ده بترجع [[{"id": 1, "role": "admin"}]].
+
+لو غيّرت حرف في الجزء التالت (التوقيع): [[401]] و [[{"detail": "invalid token"}]] ومعاها header [[WWW-Authenticate: Bearer]]. ومن غير header خالص: [[401]] و [[{"detail": "Not authenticated"}]] من [[OAuth2PasswordBearer]] نفسه قبل ما دالتك تشتغل. وتوكن من غير [[role]] على الـ DELETE: [[403]] و [[{"detail": "forbidden"}]]، وبتوكن الأدمن: [[{"deleted": 5}]]. الفرق اللي بيتسأل في الانترفيو: 401 يعني «مش عارف إنت مين»، و 403 يعني «عارفك بس مش مسموحلك». ولو غيّرت حرف في الجزء التاني (الـ payload) هتاخد 401 برضه، لأن التوقيع مبقاش مطابق.`
         },
         {
           cmd: "dependency_overrides",
@@ -4045,7 +4267,24 @@ def test_validation(client: TestClient):
             "id مش رقم.",
             "422.",
             "مكان الخطأ بالظبط."
-          ]
+          ],
+          sol: R`الاختبار بيعمل override لـ [[current_user]] بمستخدم عادي، ويتأكد من [[status_code == 403]] و [[{"detail": "forbidden"}]]. ولو [[require_role]] بيعتمد على [[current_user]] جواه، الـ override بيوصل له كمان لأن FastAPI بيستبدل الـ dependency في أي مكان في الشجرة. ولو الاختبار رجع 401 يبقى عملت override لحاجة غير اللي الـ route بيستخدمها فعلًا (مثلًا نسخة اتعملت import من مكان تاني)، لازم نفس الـ object بالظبط.
+
+ولو ضفت [[print("LIFESPAN START")]] في الـ lifespan وشغّلت بـ [[pytest -s]]: مع [[with TestClient(app) as c]] هتشوف [[LIFESPAN START]] وبعدين [[LIFESPAN STOP]]، ومن غير [[with]] مش هتشوف حاجة، والـ lifespan مش هيشتغل خالص. يعني لو الـ lifespan بيعمل pool لقاعدة البيانات، الـ endpoints هتقع بـ [[AttributeError]] على [[app.state.pool]]. ومتنساش [[dependency_overrides.clear()]] وإلا الـ override هيفضل موجود في الاختبارات اللي بعده.`,
+          solCode: R`import pytest
+from fastapi.testclient import TestClient
+from app.main import app
+from app.deps import User, current_user
+@pytest.fixture
+def as_user():
+    app.dependency_overrides[current_user] = lambda: User(id=2, role="user")
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
+def test_delete_forbidden_for_normal_user(as_user: TestClient):
+    r = as_user.delete("/users/5")
+    assert r.status_code == 403
+    assert r.json() == {"detail": "forbidden"}`
         }
       ]
     },
@@ -4113,7 +4352,10 @@ async def delete_user(user_id: int) -> None:
             "حذف، والنجاح 204 من غير body.",
             "مبترجعش حاجة.",
             "احذف لو موجود، ومتعترضش لو مش موجود (DELETE متكرر بيدّي نفس النتيجة)."
-          ]
+          ],
+          sol: R`[[/users/99]] بترجع [[404 Not Found]] و [[{"detail":"User not found"}]]: FastAPI بيحط اللي في [[detail]] جوه مفتاح اسمه [[detail]] دايمًا.
+
+و [[curl -i -X POST "localhost:8000/users?email=sara@example.com"]] بيطبع [[HTTP/1.1 409 Conflict]] والـ headers، وبعدين [[{"detail":{"code":"EMAIL_TAKEN","message":"الإيميل ده مستخدم"}}]]. الـ [[detail]] ممكن يبقى أي حاجة تتحوّل JSON، فالـ dict بيدّي الـ frontend [[code]] ثابت يعمل عليه if، ورسالة يعرضها. ولو شلت [[-i]] مش هتشوف الـ status، وده سبب إنك تستخدمه دايمًا وإنت بتجرّب. ولو كتبت [[return HTTPException(...)]] بدل [[raise]] هتاخد 200 والـ exception نفسه متحوّل JSON، ودي غلطة مشهورة.`
         },
         {
           cmd: "exception handlers",
@@ -4194,7 +4436,10 @@ handler الـ [[Exception]] بيشتغل في ServerErrorMiddleware (آخر ط�
             "route.",
             "الدالة.",
             "بترمي خطأ business، والـ handler بيحوّله 404."
-          ]
+          ],
+          sol: R`[[/orders/5]] بترجع [[404]] و [[{"error": {"code": "NOT_FOUND", "message": "order 5 not found"}}]]، و [[/orders/abc]] بترجع [[422]] و [[{"error": {"code": "VALIDATION", "fields": [{"field": "order_id", "message": "Input should be a valid integer, unable to parse string as an integer"}]}}]]. الاتنين تحت [[error.code]]، فالـ frontend يعمل parse بطريقة واحدة. و [[loc[1:]]] شالت [[path]] من أول الـ loc عشان الاسم يبقى [[order_id]] بس.
+
+والـ route اللي فيه [[1 / 0]] بيرجع [[500]] و [[{"error": {"code": "INTERNAL", "ref": "44f9e7b5"}}]] (الـ ref عشوائي)، وفي اللوج [[ERROR:app:unhandled error ref=44f9e7b5 path=/boom]] ومعاه traceback الـ [[ZeroDivisionError]]. نفس الـ ref في الاتنين، فلما مستخدم يبعتلك الـ ref تلاقي الخطأ في اللوج على طول، من غير ما تسرّب تفاصيل للعميل. وخد بالك إن تحت uvicorn هتلاقي الـ traceback مرتين: مرة من الـ [[log.exception]] بتاعك، ومرة [[Exception in ASGI application]]، لأن Starlette بيرمي الخطأ تاني للسيرفر بعد ما الـ handler بتاعك يرد. ده طبيعي ومش معناه إن الـ handler مشتغلش.`
         },
         {
           cmd: "CORS و middleware",
@@ -4261,7 +4506,10 @@ async def timing(request: Request, call_next):
             "رجّع الـ id في الرد، عشان العميل يقولهولك لما يشتكي.",
             "الوقت، وبيظهر في DevTools في تاب Timing.",
             "رجّع الرد."
-          ]
+          ],
+          sol: R`قبل ما تضيف الدومين، الـ console هيطبع حاجة زي: [[Access to fetch at 'http://localhost:8000/health' from origin 'https://example.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.]] و [[fetch]] بيرمي [[TypeError: Failed to fetch]]. والمهم: لو بصيت في لوج السيرفر هتلاقي الطلب وصل ورجع [[200]]. الـ CORS مش بيمنع الطلب، بيمنع JavaScript إنه يقرا الرد. وبعد ما تضيف الدومين، الرد بيبقى فيه [[access-control-allow-origin: https://example.com]] والـ fetch بينجح. (Chrome الجديد ممكن كمان يسألك إذن «local network access» لما صفحة من الإنترنت تكلم localhost، وده غير الـ CORS.)
+
+و [[curl -i localhost:8000/health]] هيطلع فيه [[x-request-id: 8cd8b4e4...]] (32 حرف hex عشوائي) و [[server-timing: app;dur=0.6]]. ولو بعت [[-H "X-Request-ID: abc123"]] هيرجعلك [[abc123]] نفسه، ودي الفكرة: الـ id يمشي مع الطلب من الـ frontend أو الـ proxy لحد اللوج. و [[curl]] مبيعملش CORS خالص، فلو جرّبت منه هيشتغل في كل الحالات.`
         }
       ]
     },
@@ -4325,7 +4573,10 @@ asyncpg بيستخدم البروتوكول الثنائي و prepared statement
             "نفس الأمر لكذا صف.",
             "list بتتبعت كـ Postgres array.",
             "اقفل الـ pool (في التطبيق: بعد الـ yield في الـ lifespan)."
-          ]
+          ],
+          sol: R`على جدول فيه ١٠ منتجات بأسعار من 700 لـ 7000: [[fetch]] بيرجع list من [[Record]] زي [[<Record id=1 name='p1' price_cents=700>]]، و [[fetchrow]] بيرجع Record واحد أو [[None]] لو مفيش، و [[fetchval]] قيمة واحدة ([[10]])، و [[execute]] بيرجع حالة الأمر كـ string ([[UPDATE 1]])، و [[executemany]] بيرجع [[None]]، و [[ANY($1::int[])]] مع list Python بيرجع التلاتة.
+
+والـ f-string مع [[name = "x' OR '1'='1"]] بيرجع الـ ١٠ صفوف كلهم، لأن الـ query بقت [[WHERE name = 'x' OR '1'='1']] والشرط بقى صح دايمًا (SQL injection). ونفس الكلام بـ [[$1]] بيرجع ٠ صفوف: القيمة بتتبعت لـ Postgres منفصلة عن الـ SQL، فمهما كان فيها مبتبقاش كود. ولاحظ إن asyncpg صارم في الأنواع: [[fetch("... WHERE id = $1", "7")]] بترمي [[DataError: invalid input for query argument $1: '7' ('str' object cannot be interpreted as an integer)]]، فحوّل القيم قبلها (وده دور Pydantic).`
         },
         {
           cmd: "transactions",
@@ -4390,7 +4641,10 @@ async def place_order(conn: asyncpg.Connection, user_id: int, product_id: int, q
             "الـ payload كـ JSON.",
             "قفلة.",
             "هنا الـ commit حصل."
-          ]
+          ],
+          sol: R`في الـ psql التاني، الـ UPDATE هيفضل واقف من غير ما يطبع حاجة لحد ما تعمل [[COMMIT]] (أو [[ROLLBACK]]) في الأول. Postgres عامل row lock على الصف. ولما الأول يعمل commit، التاني بيكمّل على القيمة الجديدة: لو المخزون كان 10 وكل واحد نقّص 1 هتلاقي [[8]] مش [[9]]. ده اللي بيخلي [[stock = stock - $1 WHERE stock >= $1]] آمن من غير ما تقرا الأول وتكتب بعدين.
+
+وفي Python لو رميت exception بعد أول INSERT: المخزون هيفضل زي ما هو وجدول orders مفيهوش صف، لأن [[async with conn.transaction()]] عمل rollback للـ UPDATE والـ INSERT مع بعض. الطلب اللي بعده هياخد id أكبر بواحد (الـ sequence مبترجعش). ولو لقيت المخزون نقص، غالبًا الـ UPDATE كان برّه الـ [[async with]]، أو استخدمت connection تاني غير اللي فتح الـ transaction.`
         },
         {
           cmd: "SQLAlchemy async",
@@ -4481,7 +4735,10 @@ async def create_user(session: AsyncSession, email: str) -> User:
             "ضيفه للـ session.",
             "INSERT و COMMIT، والـ id و created_at بيرجعوا بـ RETURNING.",
             "رجّع."
-          ]
+          ],
+          sol: R`من غير [[selectinload]]، [[order.user.email]] بترمي [[MissingGreenlet: greenlet_spawn has not been called; can't call await_() here. Was IO attempted in an unexpected place?]]. الـ [[user]] متحمّلش، فـ SQLAlchemy حاول يعمل query وإنت بتقرا attribute عادي من غير [[await]]، وده مينفعش في async. الحل تحمّله مقدمًا بـ [[selectinload]]، أو [[await session.refresh(order, ["user"])]]، أو [[lazy="raise"]] على الـ relationship عشان الغلطة تبان بدري.
+
+ومع [[echo=True]] هتشوف [[SELECT orders.id, orders.user_id, orders.total_cents FROM orders WHERE orders.user_id = $1::INTEGER ORDER BY orders.id DESC LIMIT $2::INTEGER]]، وبعدها query تانية من [[selectinload]]: [[SELECT users.id, users.email, users.created_at FROM users WHERE users.id IN ($1::INTEGER)]]، يعني ٢ queries مهما كان عدد الطلبات، مش N+1. ولو ظهر [[ImportError: The SQLAlchemy asyncio module requires that the Python 'greenlet' library is installed]]، سطّب [[pip install "sqlalchemy[asyncio]" asyncpg]]: من SQLAlchemy 2.1 الـ greenlet مبقاش بيتسطّب لوحده.`
         },
         {
           cmd: "alembic",
@@ -4521,7 +4778,10 @@ autogenerate بيلقط الجداول والأعمدة والـ indexes وال�
             "السلسلة كلها بالتفصيل.",
             "ارجع خطوة (بحذر: ممكن يمسح داتا).",
             "اطبع الـ SQL من غير ما تنفّذه، للمراجعة."
-          ]
+          ],
+          sol: R`[[alembic init -t async migrations]] بيعمل [[alembic.ini]] وفولدر [[migrations/]] فيه [[env.py]] و [[versions/]]. وفي [[env.py]] بتحط [[from app.models import Base]] و [[target_metadata = Base.metadata]] و [[config.set_main_option("sqlalchemy.url", settings.database_url)]]. بعد ما تضيف [[total_cents: Mapped[int] = mapped_column(server_default="0")]]، الـ autogenerate بيطبع [[Detected added column 'orders.total_cents']] ويعمل ملف في [[versions/]] فيه [[revision]] و [[down_revision]] (اللي قبله)، و [[upgrade()]] فيها [[op.add_column('orders', sa.Column('total_cents', sa.Integer(), server_default='0', nullable=False))]]، و [[downgrade()]] فيها [[op.drop_column]]. وبعد [[upgrade head]]، [[alembic current]] بيطبع الـ revision ومعاه [[(head)]].
+
+ليه تقراه قبل [[upgrade]]؟ لو القاعدة فيها جداول مش في الـ models، الـ autogenerate هيكتب [[Detected removed table]] ويحط [[op.drop_table]] في الملف، وفي تجربتنا ده حصل فعلًا. وكمان تغيير اسم عمود بيطلع drop و add (يعني البيانات تضيع)، مش rename. ولو ضفت عمود NOT NULL من غير [[server_default]] على جدول فيه صفوف، الـ upgrade هيفشل. الملف اللي اتولّد مسودة، مش حاجة تشغّلها من غير ما تبص فيها.`
         }
       ]
     },
@@ -4621,7 +4881,10 @@ async def payment(pid: str, request: Request):
             "رجّع رد الخدمة.",
             "الخدمة فشلت.",
             "502: المشكلة في خدمة ورانا، مش عندنا ولا عند العميل."
-          ]
+          ],
+          sol: R`مع [[/status/503]] هتشوف في اللوج ٣ سطور [[INFO:httpx:HTTP Request: GET https://httpbin.org/status/503 "HTTP/1.1 503 Service Unavailable"]]، بينهم 0.2 ثانية وبعدين 0.4 (الـ backoff)، وبعد التالتة الـ [[raise]] بيطلّع [[HTTPStatusError: Server error '503 Service Unavailable']] والـ route بيحوّلها [[502]] و [[payment provider unavailable]]. وجرّب كمان [[/status/404]]: طلب واحد بس ومفيش retry، لأن 404 غلط عندك مش عند السيرفر، وإعادته مش هتغيّر حاجة.
+
+و [[/delay/10]] مع [[Timeout(5.0)]]: كل محاولة بتقف بعد ٥ ثواني بـ [[ReadTimeout]]، والـ [[ReadTimeout]] نوع من [[TransportError]] فبيتعاد، فالطلب كله بياخد حوالي ١٥.٦ ثانية (٣ × ٥ + 0.6 backoff) قبل الـ 502. خد بالك: الـ retry بيضرب الـ timeout في عدد المحاولات، فلو عندك حد أقصى لوقت الرد، احسبه على كده. ولو httpbin.org مش متاح عندك، اعمل FastAPI صغير فيه [[/status/{code}]] بيرجع [[Response(status_code=code)]] و [[/delay/{n}]] بـ [[asyncio.sleep]]، والنتيجة هتبقى هي هي.`
         },
         {
           cmd: "redis cache",
@@ -4686,7 +4949,10 @@ cache-aside يعني التطبيق هو اللي بيقرر يقرا ويكتب
             "رجّع.",
             "لما منتج يتغير.",
             "امسح المفتاح، والطلب الجاي يجيب الجديد."
-          ]
+          ],
+          sol: R`النداء الأول بيروح للقاعدة ويكتب في Redis، والتاني بيرجع من Redis. عشان الفرق يبان، خلّي [[load_products_from_db]] تعمل [[await asyncio.sleep(0.3)]] كأنها query بطيئة: في تجربتنا الأول أخد حوالي [[301ms]] والتاني [[0.3ms]]. بالـ fake اللي في المثال زي ما هو، الاتنين أقل من ملّي ثانية ومش هتحس بفرق.
+
+و [[GET products:v1:tea]] في [[redis-cli]] بيرجع [[[{"id":1,"name":"Tea","price_cents":1500}]]] (JSON مضغوط من [[dump_json]])، و [[TTL products:v1:tea]] بيبدأ من [[60]] وبعد ثانيتين [[58]]، ولما يوصل للصفر المفتاح بيتمسح و [[TTL]] بيرجع [[-2]] (مش موجود). ولو [[TTL]] رجع [[-1]] يبقى المفتاح اتكتب من غير [[ex]] وهيفضل للأبد، ودي أشهر غلطة في الـ cache. ولو الدالة رجعت [[bytes]] بدل [[str]]، انت نسيت [[decode_responses=True]].`
         },
         {
           cmd: "redis rate limit",
@@ -4745,7 +5011,10 @@ async def login():
             "٥ محاولات login في الدقيقة لكل IP.",
             "الـ route.",
             "رجّع."
-          ]
+          ],
+          sol: R`الناتج: خمس [[200]] وبعدين [[429]] و [[429]]. ولو جربت [[curl -i]] على طلب زيادة هتشوف [[HTTP/1.1 429 Too Many Requests]] و [[retry-after: 11]] مثلًا (الثواني الباقية على الدقيقة) و [[{"detail":"Too many requests"}]].
+
+و [[SCAN 0 MATCH rl:*]] بيرجع cursor ([[0]] يعني خلص) ومفتاح زي [[rl:/auth/login:127.0.0.1:29845334]]: الـ path، والـ IP، ورقم الدقيقة من أول 1970. و [[GET]] عليه بيطلّع [[7]]. لو لقيت الطلب السادس رجع 200، غالبًا الدقيقة خلصت في النص والعداد بدأ من جديد: ده عيب الـ fixed window، ممكن حد يبعت ١٠ في ثانيتين على حدود دقيقتين. ولو السيرفر ورا Nginx أو load balancer، [[request.client.host]] هيبقى IP الـ proxy للكل، فالكل هيتقفل مع بعض، لازم تقرا [[X-Forwarded-For]] من proxy بتثق فيه.`
         },
         {
           cmd: "BackgroundTasks",
@@ -4813,7 +5082,10 @@ async def signup(data: Signup, tasks: BackgroundTasks):
             "ضيف task بالباراميترات (قيم، مش objects من الـ request).",
             "تانية، بتشتغل بعد الأولى.",
             "الرد بيتبعت فورًا، والـ tasks بعده."
-          ]
+          ],
+          sol: R`[[curl]] بيطبع [[{"ok":true}]] و [[time_total]] حوالي [[0.002]] ثانية، ولوج السيرفر بيطبع [[POST /signup HTTP/1.1" 201 Created]] على طول، وبعد ٥ ثواني [[welcome sent to a@example.com]] وبعده على طول [[audit signup a@example.com]]. لاحظ إن الـ audit استنى الإيميل يخلص: الـ tasks بتشتغل ورا بعض بالترتيب، مش مع بعض.
+
+ولو بعت طلب تاني وعملت [[kill -9]] للسيرفر قبل الخمس ثواني: الـ curl خد 201، بس [[welcome sent to b@example.com]] عمرها ما هتظهر، ومفيش أي أثر إنها كانت موجودة. ده الفرق بين BackgroundTasks و queue زي arq: الـ task عايشة في ذاكرة البروسيس بس. فلو ضياعها مشكلة (فاتورة، دفع، إيميل تأكيد) لازم تتكتب في Redis أو القاعدة الأول.`
         }
       ]
     },
@@ -4882,7 +5154,10 @@ Python 3.13 جاب نسخة free-threaded تجريبية ([[python3.13t]])، و 
             "الـ loop الحالي.",
             "ابعت الحسبة لـ process تانية واستنى من غير ما تقفل حد.",
             "الـ PID بيوريك أنهي worker اللي رد."
-          ]
+          ],
+          sol: R`لما [[heavy_report]] تتنادى مباشرة جوه [[async def]] وتفتح [[/health]] في نفس الوقت: [[/health]] هتستنى لحد ما التقرير يخلص (في تجربتنا 0.45 ثانية بدل بضع ملّي ثانية)، لأن الحساب ماسك الـ event loop. ومع [[run_in_executor]] بالـ ProcessPoolExecutor، [[/health]] بترجع في حوالي [[8ms]]: الحساب بقى في بروسيس تاني والـ loop فاضي.
+
+ومع [[hey]] أو [[wrk]] على route تقيل، [[--workers 4]] المفروض يدّيك requests/sec قريبة من ٤ أضعاف [[--workers 1]] لو عندك ٤ cores فاضية. و [[os.getpid()]] في الرد هيوريك ٤ PIDs مختلفة بدل واحد. ولو الفرق طلع صغير (في container محدود عندنا الزيادة كانت من 6.4 لـ 7.4 req/s بس)، يبقى الـ cores الحقيقية أقل من اللي [[nproc]] بيقوله، أو أداة الـ load نفسها بتاكل CPU على نفس الجهاز. القاعدة: workers ≈ عدد الـ cores، ومش أكتر، لأن كل worker بروسيس ليه ذاكرته.`
         },
         {
           cmd: "logging و profiling",
@@ -4955,7 +5230,10 @@ log.info("took %.1fms", (time.perf_counter() - start) * 1000)
             "امسك.",
             "ERROR ومعاه الـ traceback كامل.",
             "الوقت بالملّي ثانية."
-          ]
+          ],
+          sol: R`هتشوف ٣ سطور JSON: [[{"ts": "2026-...", "level": "INFO", "logger": "__main__", "msg": "order created id=42 total=1500"}]]، وبعدين سطر [[ERROR]] فيه مفتاح [[exc]] جواه الـ traceback كله كـ string واحد ([[ZeroDivisionError: division by zero]] في آخره)، وبعدين [[took 3.9ms]] أو قريب منها. سطر الـ debug مش موجود. ولما تغيّر لـ [[DEBUG]] هيظهر سطر زيادة بـ [[level: DEBUG]]. الـ traceback في سطر واحد هو المطلوب: أدوات زي Loki أو CloudWatch بتعتبر كل سطر حدث لوحده.
+
+و [[py-spy top --pid]] بيعرض جدول زي [[top]] بالدوال اللي واخدة أكتر وقت، ولو بتبعت طلبات على route تقيل هتلاقي الدالة بتاعتك (مثلًا [[heavy_report (main.py:6)]]) فوق. و [[py-spy dump --pid]] بيطبع الـ stack الحالي لكل thread، ومفيد جدًا لما السيرفر معلّق ومش عارف واقف فين. ولو قالك [[Permission denied]]، شغّله بـ [[sudo]] (على Linux و macOS محتاج صلاحية تقرا ذاكرة بروسيس تاني). وخد بالك: الـ PID الصح هو بتاع الـ worker، مش بتاع الـ reloader في [[fastapi dev]].`
         }
       ]
     },
@@ -4993,7 +5271,10 @@ def add_ok(item, items: list | None = None):
             "list جديدة لكل نداء.",
             "آمن.",
             "رجّع."
-          ]
+          ],
+          sol: R`الناتج: قبل أي نداء [[([],)]]، وبعد [[add(1)]] بقت [[([1],)]]، وبعد [[add(2)]] بقت [[([1, 2],)]]. و [[add(3, [])]] مش بتغيّرها، لأن إنت بعت list بتاعتك. و [[add.__defaults__[0] is add(4)]] بترجع [[True]]: الـ list اللي بترجعلك هي نفس الـ object المتخزن جوه الدالة.
+
+الإجابة اللي بتتقال في الانترفيو: الـ default بيتحسب مرة واحدة لما سطر [[def]] يتنفّذ، ويتخزن في [[__defaults__]]، فكل النداءات بتشارك نفس الـ list. عشان كده الـ default المتغير (list أو dict أو set) بيبقى [[None]]، وتعمل الجديد جوه الدالة. ونفس الفخ مع [[datetime.now()]] كـ default: هيفضل وقت تعريف الدالة للأبد.`
         },
         {
           cmd: "الـ GIL",
@@ -5026,7 +5307,33 @@ print(f"{time.perf_counter() - start:.2f}s")  # تقريبًا نفس وقت م�
             "ابدأهم.",
             "استناهم.",
             "مفيش تسريع: واحد بس بيشتغل في كل لحظة."
-          ]
+          ],
+          sol: R`الأرقام بتختلف حسب الجهاز، بس الشكل ثابت: عدّ مرتين ورا بعض وعدّهم في threadين بياخدوا نفس الوقت تقريبًا (عندنا [[1.13s]] و [[1.14s]])، لأن الـ GIL بيسمح لـ thread واحد بس ينفّذ Python bytecode في نفس اللحظة. مع [[ProcessPoolExecutor(2)]] الوقت بيقرب من النص (عندنا [[0.77s]] على container محدود، وعلى جهاز فيه cores فاضية بيقرب أكتر من النص)، لأن كل بروسيس ليه interpreter و GIL بتوعه.
+
+وعلى [[python3.14t]] (free-threaded، و [[sys._is_gil_enabled()]] بيرجع [[False]]) الـ threads بقت أسرع من الترتيب فعلًا (عندنا [[0.41s]] مقابل [[0.65s]]). الإجابة في الانترفيو: الـ GIL بيمنع التوازي في كود CPU بـ threads، بس مش بيأثر على I/O لأن الـ thread بيسيب الـ GIL وهو مستني. فللـ CPU استخدم processes أو مكتبة بتسيب الـ GIL (زي numpy) أو free-threaded build، وللـ I/O الـ threads أو async كفاية. ولو الـ threads عندك طلعت أبطأ بشكل واضح من الترتيب، ده بسبب التبديل بين الـ threads على الـ GIL، وده طبيعي.`,
+          solCode: R`import threading
+import time
+from concurrent.futures import ProcessPoolExecutor
+def count(n: int) -> None:
+    while n:
+        n -= 1
+if __name__ == "__main__":
+    N = 20_000_000
+    start = time.perf_counter()
+    count(N)
+    count(N)
+    print(f"ورا بعض: {time.perf_counter() - start:.2f}s")
+    start = time.perf_counter()
+    threads = [threading.Thread(target=count, args=(N,)) for _ in range(2)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    print(f"threads: {time.perf_counter() - start:.2f}s")
+    start = time.perf_counter()
+    with ProcessPoolExecutor(2) as pool:
+        list(pool.map(count, [N, N]))
+    print(f"processes: {time.perf_counter() - start:.2f}s")`
         },
         {
           cmd: "list و tuple و set و dict",
@@ -5053,7 +5360,10 @@ cache = {point: "Cairo"}`,
             "بيحسب الـ hash ويروح للخانة على طول.",
             "tuple: ثابتة و hashable.",
             "فتنفع مفتاح في dict."
-          ]
+          ],
+          sol: R`عندنا: [[99999 in l]] أخدت [[461 usec per loop]]، و [[99999 in s]] أخدت [[21.7 nsec per loop]]، يعني الـ set أسرع بحوالي ٢٠ ألف مرة هنا. الأرقام عندك هتختلف بس النسبة قريبة.
+
+الـ list بتلف عنصر عنصر لحد ما تلاقيه، و 99999 آخر عنصر فده أسوأ حالة (O(n)). الـ set بتحسب الـ hash وتروح للمكان على طول (O(1) في المتوسط). ولو جربت [[0 in l]] هتلاقيها سريعة جدًا ([[12.7 nsec]])، لأنها أول عنصر، فالقياس لازم يبقى على أسوأ حالة. والخلاصة للانترفيو: لو هتسأل «موجود ولا لأ» كتير، حوّل لـ set مرة واحدة الأول. بس التحويل نفسه O(n)، فلسؤال واحد بس مش هيفرق.`
         },
         {
           cmd: "generator مقابل list",
@@ -5080,7 +5390,22 @@ print(sum(squares_gen))   # 0: اتستهلك`,
             "الفرق في الذاكرة ضخم.",
             "بيحسب ويجمع واحد واحد.",
             "المرة التانية فاضي."
-          ]
+          ],
+          sol: R`الفكرة إنك تركّب generators فوق بعض: واحد بيقرا السطور، وواحد بيفلتر، و [[islice(..., 10)]] بياخد أول ١٠ ويقف. عشان تتأكد إن الملف مش بيتقري كله، عِد السطور اللي اتقرت فعلًا. على ملف مليون سطر فيه ERROR كل ألف سطر، الناتج [[10 lines_read: 10000]]: قرا لحد الـ ERROR العاشر ووقف، مش المليون.
+
+لو [[lines_read]] طلع 1000000، يبقى في مكان حوّلت لـ list: [[f.readlines()]] أو [[list(...)]] أو [[[l for l in f if ...]]] بأقواس مربعة. وخد بالك إن الملف بيفضل مفتوح لحد ما الـ generator يتقفل أو يتمسح، فلو هتوقف بدري في كود طويل العمر، اقفله صراحة أو خلّي الـ [[with]] برّه.`,
+          solCode: R`from itertools import islice
+lines_read = 0
+def read_lines(path: str):
+    global lines_read
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            lines_read += 1
+            yield line.rstrip("\n")
+def errors(lines):
+    return (l for l in lines if "ERROR" in l)
+first10 = list(islice(errors(read_lines("app.log")), 10))
+print(len(first10), "lines_read:", lines_read)`
         },
         {
           cmd: "decorator بإيدك",
@@ -5115,7 +5440,41 @@ def timed(fn):
             "في كل الأحوال...",
             "...اطبع الوقت.",
             "رجّع الـ wrapper."
-          ]
+          ],
+          sol: R`الحل: جوه الـ decorator اسأل [[inspect.iscoroutinefunction(fn)]]، لو True رجّع wrapper [[async def]] بيعمل [[await fn(...)]]، ولو False رجّع wrapper عادي. الناتج مع الكود تحت: [[slow_sum 24.9ms]] وبعده [[499999500000]]، وبعدين [[fetch 102.0ms]] و [[done]]. و [[inspect.iscoroutinefunction(fetch)]] بعد الـ decorator لسه [[True]]، وده مهم لأن FastAPI بيسأل نفس السؤال عشان يقرر يشغّل الدالة على الـ loop ولا في threadpool.
+
+الغلطة لو استخدمت الـ async wrapper بتاع المثال على دالة sync: [[f()]] مبترجعش 1، بترجع [[<coroutine object f at 0x...>]] ومعاها [[RuntimeWarning: coroutine 'f' was never awaited]]، ولو عملتلها await هترمي [[TypeError: object int can't be used in 'await' expression]]. ولو عملت wrapper sync على دالة async، التوقيت هيطلع صفر تقريبًا لأنه بيقيس عمل الـ coroutine مش تشغيلها.`,
+          solCode: R`import asyncio
+import functools
+import inspect
+import time
+def timed(fn):
+    if inspect.iscoroutinefunction(fn):
+        @functools.wraps(fn)
+        async def async_wrapper(*args, **kwargs):
+            start = time.perf_counter()
+            try:
+                return await fn(*args, **kwargs)
+            finally:
+                print(fn.__name__, f"{(time.perf_counter() - start) * 1000:.1f}ms")
+        return async_wrapper
+    @functools.wraps(fn)
+    def sync_wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            print(fn.__name__, f"{(time.perf_counter() - start) * 1000:.1f}ms")
+    return sync_wrapper
+@timed
+def slow_sum(n: int) -> int:
+    return sum(range(n))
+@timed
+async def fetch() -> str:
+    await asyncio.sleep(0.1)
+    return "done"
+print(slow_sum(1_000_000))
+print(asyncio.run(fetch()))`
         },
         {
           cmd: "Depends بيعمل إيه",
@@ -5146,7 +5505,12 @@ app.dependency_overrides[get_db] = fake_db`,
             "بيعلن هو محتاج إيه بس.",
             "استخدمهم.",
             "في الاختبارات: بدّلها."
-          ]
+          ],
+          sol: R`إجابة نموذجية لـ route زي [[GET /orders]] فيه [[user: CurrentUser]] و [[db: DB]] و [[page: PageDep]]، و [[CurrentUser]] نفسها معتمدة على [[oauth2]] (التوكن من الـ header) و [[DB]]:
+
+الشجرة: [[list_orders]] تحتها [[current_user]] (وتحتها [[oauth2]] و [[get_db]])، و [[get_db]]، و [[pagination]] (تحتها query params). الترتيب: FastAPI بيحل الأعمق الأول، فـ [[oauth2]] بيقرا الـ header، و [[get_db]] بيعمل [[acquire]] ويوقف عند الـ [[yield]]، وبعدين [[current_user]] بيستخدمهم، و [[pagination]] في أي وقت لأنها مستقلة، والـ route في الآخر. و [[get_db]] بيتنادى مرة واحدة بس مع إن اتنين طالبينه، لأن FastAPI بيعمل cache للنتيجة جوه نفس الطلب (إلا لو [[use_cache=False]]).
+
+والقفل عكس الفتح (زي stack): اللي عمل yield الأخير بيكمّل الأول، فالـ connection بيرجع للـ pool بعد ما كل اللي فوقه خلص. ولو أي dependency رمت HTTPException (مثلًا التوكن غلط)، الـ route مش بيتنادى أصلًا، والـ dependencies اللي عملت yield بتتقفل برضه. النقطة اللي بتميزك في الانترفيو: [[dependency_overrides[get_db]]] بيبدّل العقدة دي في الشجرة كلها، فالاختبار ميلمسش قاعدة حقيقية.`
         },
         {
           cmd: "Pydantic v2 عمل إيه",
@@ -5173,7 +5537,21 @@ user.model_dump(mode="json")   # {'id': 5, 'email': 'a@example.com'}`,
             "بيفحص الإيميل.",
             R`[["5"]] اتحوّل 5 (lax mode).`,
             "dict بأنواع JSON."
-          ]
+          ],
+          sol: R`موديل v1 نموذجي فيه [[class Config: orm_mode = True]] و [[@validator("email")]] و [[User.parse_obj(...)]] و [[u.dict()]] و [[u.json()]]. ولو شغّلته على Pydantic 2 عادي هيشتغل، بس مع تحذيرات [[PydanticDeprecatedSince20]] لكل واحدة: «The parse_obj method is deprecated; use model_validate instead» ونفس الكلام لـ [[dict]] و [[json]] و [[@validator]] و [[class Config]]، و [[orm_mode]] بيطلع تحذير إنه اتسمّى [[from_attributes]]. ومع [[python -W error::DeprecationWarning]] أول واحد بيبقى exception والبرنامج يقف عنده، لأن [[PydanticDeprecatedSince20]] نوع من [[DeprecationWarning]]. فبتصلّح وتشغّل تاني لحد ما يعدّي.
+
+التحويل: [[class Config]] بقت [[model_config = ConfigDict(from_attributes=True)]]، و [[@validator]] بقت [[@field_validator]] ومعاها [[@classmethod]]، و [[parse_obj]] بقت [[model_validate]]، و [[dict()]] بقت [[model_dump()]]، و [[json()]] بقت [[model_dump_json()]]. الناتج بعد التحويل: [[{'id': 5, 'email': 'a@x.com'} {"id":5,"email":"a@x.com"}]] من غير ولا تحذير.`,
+          solCode: R`from pydantic import BaseModel, ConfigDict, field_validator
+class User(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    email: str
+    @field_validator("email")
+    @classmethod
+    def lower(cls, v: str) -> str:
+        return v.lower()
+u = User.model_validate({"id": "5", "email": "A@X.com"})
+print(u.model_dump(), u.model_dump_json())`
         },
         {
           cmd: "async مش أسرع",
@@ -5206,7 +5584,10 @@ async def c():
             "route.",
             "async...",
             "...وجواها sync: كل الطلبات هتستنى."
-          ]
+          ],
+          sol: R`النتيجة المتوقعة (جربناها بـ ٢٠٠ طلب و ٥٠ مع بعض، مع خدمة خارجية بترد في 0.2 ثانية بدل example.com): [[/a]] الأسرع (عندنا حوالي 430 req/s)، لأن الـ query بتـ await والـ loop بيخدم غيرها. [[/b]] كويسة (حوالي 160 req/s، الـ ٢٠٠ في 1.5 ثانية)، لأن [[def]] بتروح للـ threadpool (٤٠ thread افتراضيًا)، فـ ٤٠ طلب بيستنوا مع بعض. و [[/c]] كارثة: حوالي 5 req/s، والـ ٢٠٠ أخدوا ٤١ ثانية، يعني ٢٠٠ × 0.2 ورا بعض، لأن [[requests]] blocking جوه [[async def]] فبيقفل الـ loop كله.
+
+الدرس: [[async def]] مش بتخلي الكود أسرع لوحدها، بتخليه أسرع لو كل الـ I/O جواها [[await]]. [[/b]] المكتوبة [[def]] عادية أحسن من [[/c]] بـ ٣٠ مرة، مع إن الاتنين نفس الكود. ولو [[/c]] طلعت عندك قريبة من [[/b]]، اتأكد إن الـ load tool بيبعت فعلًا ٥٠ مع بعض ([[-c 50]]).`
         }
       ]
     }
