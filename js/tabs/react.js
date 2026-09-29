@@ -3630,7 +3630,7 @@ export const handlers = [
 import { setupServer } from 'msw/node'
 export const server = setupServer(...handlers)
 // src/test/setup.ts
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))
 afterEach(() => { cleanup(); server.resetHandlers() })
 afterAll(() => server.close())
 // في اختبار: غيّر الرد للاختبار ده بس
@@ -3645,15 +3645,15 @@ it('shows the error when the API fails', async () => {
             why: R`الاختبار اللي بيكلم API حقيقي بطيء، وبيفشل لما السيرفر واقع أو الداتا اتغيرت، ومش بيعرف يختبر حالة الـ 500 أو الـ timeout. و [[vi.mock('./api')]] بيشيل كود الـ API من الاختبار خالص، فلو الـ URL غلط أو الـ headers ناقصة أو [[res.ok]] مش متفحوص، الاختبار هيعدّي. MSW في النص: كل الكود بتاعك بيشتغل، والشبكة بس هي اللي وهمية.`,
             how: R`في Node، [[setupServer]] بيعمل patch للـ fetch والـ http modules ([[@mswjs/interceptors]])، فأي طلب بيعدّي على الـ handlers بالترتيب، وأول واحد يطابق الـ method والـ path بيرد. و [[:id]] في المسار بيتقري من [[params]]، والـ query string من [[new URL(request.url).searchParams]]، والـ body من [[await request.json()]].
 
-الدورة في الـ setup: [[listen()]] مرة قبل كل الاختبارات، و [[resetHandlers()]] بعد كل اختبار بيشيل أي [[server.use()]] اتضاف في الاختبار ده، فالتغيير ميعديش للاختبار اللي بعده، و [[close()]] في الآخر. و [[onUnhandledRequest: 'error']] بيخلي أي طلب مالوش handler يفشّل الاختبار بدل ما يروح للشبكة بصمت.
+الدورة في الـ setup: [[listen()]] مرة قبل كل الاختبارات، و [[resetHandlers()]] بعد كل اختبار بيشيل أي [[server.use()]] اتضاف في الاختبار ده، فالتغيير ميعديش للاختبار اللي بعده، و [[close()]] في الآخر. و [[onUnhandledFrame: 'error']] بيخلي أي طلب مالوش handler يفشّل الاختبار بدل ما يروح للشبكة بصمت.
 
 [[server.use(...)]] بيضيف handlers في الأول فبتكسب على الأساسية: كده الملف الأساسي فيه الـ happy path، وكل اختبار بيغيّر اللي محتاجه (500، أو list فاضية، أو [[await delay('infinite')]] عشان يختبر الـ loading).
 
 في المتصفح، [[npx msw init public]] بيحط [[mockServiceWorker.js]] في public، و [[setupWorker(...handlers).start()]] بيسجّل Service Worker بيمسك الطلبات، وهتشوفها في Network بعلامة إنها من الـ worker. استنى [[start()]] قبل [[createRoot().render]] عشان أول الطلبات متعدّيش.
 
-الـ URLs النسبية ([[/api/products]]) شغالة في الاختبار لأن jsdom عنده [[location]] ([[http://localhost:3000]]). بس مكتبات بتعمل [[new Request('/api/...')]] بنفسها (زي [[fetchBaseQuery]] بتاع RTK Query) بتقع في Node بـ «Failed to parse URL»، والحل baseUrl كامل في الاختبار. والكود هنا متجرّب على msw 3 (نزلت آخر سبتمبر ٢٠٢٦)، والأساسيات دي نفسها في msw 2.`,
+الـ URLs النسبية ([[/api/products]]) شغالة في الاختبار لأن jsdom عنده [[location]] ([[http://localhost:3000]]). بس مكتبات بتعمل [[new Request('/api/...')]] بنفسها (زي [[fetchBaseQuery]] بتاع RTK Query) بتقع في Node بـ «Failed to parse URL»، والحل baseUrl كامل في الاختبار. والكود هنا متجرّب على msw 3 (نزلت آخر سبتمبر ٢٠٢٦)، والأساسيات دي نفسها في msw 2، ما عدا إن الخيار اسمه هناك [[onUnhandledRequest]]. في msw 3 الاسم ده بيتجاهل بصمت (فالطلب اللي مالوش handler بيطلع warning بس)، فلازم [[onUnhandledFrame]].`,
             when: R`أي اختبار لـ component بيجيب بيانات. وفي التطوير: الفرونت بيسبق الـ backend، أو عايز تشوف شكل الصفحة مع list فاضية أو خطأ، أو Storybook. ونفس الـ handlers تنفع في Playwright كمان.`,
-            mistakes: R`تنسى [[resetHandlers]] فـ [[server.use]] بتاع اختبار الـ 500 يوقّع كل اللي بعده. ومفيش [[onUnhandledRequest: 'error']] فطلب لـ URL غلط بيعدّي بصمت ويفشل بعدين برسالة مش مفهومة. و handler بـ URL كامل ([[https://api.example.com/products]]) والكود بيطلب [[/api/products]]، فمفيش مطابقة. و [[vi.mock]] للـ fetch وفي نفس الوقت MSW. وتشغيل الـ worker في build الإنتاج لأن الشرط على [[DEV]] ناقص. وسؤال انترفيو: «بتعمل mock للـ API إزاي؟» الإجابة الكويسة: على مستوى الشبكة، عشان الاختبار يغطي طبقة الـ API client كمان.`
+            mistakes: R`تنسى [[resetHandlers]] فـ [[server.use]] بتاع اختبار الـ 500 يوقّع كل اللي بعده. ومفيش [[onUnhandledFrame: 'error']] فطلب لـ URL غلط بيعدّي بصمت ويفشل بعدين برسالة مش مفهومة. و handler بـ URL كامل ([[https://api.example.com/products]]) والكود بيطلب [[/api/products]]، فمفيش مطابقة. و [[vi.mock]] للـ fetch وفي نفس الوقت MSW. وتشغيل الـ worker في build الإنتاج لأن الشرط على [[DEV]] ناقص. وسؤال انترفيو: «بتعمل mock للـ API إزاي؟» الإجابة الكويسة: على مستوى الشبكة، عشان الاختبار يغطي طبقة الـ API client كمان.`
           },
           lines: [
             "http لتعريف الـ handlers، و HttpResponse للرد، و delay للتأخير.",
@@ -3691,7 +3691,7 @@ export const worker = setupWorker(...handlers)
 async function enableMocking() {
   if (!import.meta.env.DEV || import.meta.env.VITE_MOCK !== '1') return
   const { worker } = await import('./mocks/browser')
-  await worker.start({ onUnhandledRequest: 'bypass' })
+  await worker.start({ onUnhandledFrame: 'bypass' })
 }
 enableMocking().then(() => {
   createRoot(document.getElementById('root')!).render(<App />)

@@ -3122,7 +3122,7 @@ Next بيعامل الملف كـ route: بيتبني وقت الـ build لو �
           title: "JSON-LD للمنتج والمقال عشان rich results في جوجل",
           desc: R`JSON-LD داتا منظمة بتوصف الصفحة بمفردات schema.org: «ده منتج، سعره كذا، ومتوفر، وتقييمه ٤.٦ من ٣٨ رأي». جوجل بيستخدمها في rich results: السعر والنجوم والتوفر تحت اللينك في النتايج، وتاريخ المقال وكاتبه. ومحركات الـ AI بتقراها كمان.
 
-في Next مفيش API خاص: [[<script type="application/ld+json">]] عادي جوه الصفحة (مش [[next/script]]، لأنه مش كود بيتنفذ)، ومحتواه [[JSON.stringify]] مع استبدال [[<]] بـ [[<]]، لأن الداتا جاية من الداتابيز وممكن يبقى فيها [[</script>]]. والأنواع جاهزة في مكتبة [[schema-dts]].`,
+في Next مفيش API خاص: [[<script type="application/ld+json">]] عادي جوه الصفحة (مش [[next/script]]، لأنه مش كود بيتنفذ)، ومحتواه [[JSON.stringify]] مع استبدال [[<]] بـ [[\u003c]]، لأن الداتا جاية من الداتابيز وممكن يبقى فيها [[</script>]]. والأنواع جاهزة في مكتبة [[schema-dts]].`,
           example: R`// app/products/[slug]/page.tsx
 import type { Product, WithContext } from "schema-dts";
 import { notFound } from "next/navigation";
@@ -3159,7 +3159,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             why: "نتيجة فيها السعر والنجوم و «متوفر» بتاخد ضغطات أكتر بكتير من لينك أزرق عادي، ودي حاجة بتاخدها مجانًا من داتا عندك أصلًا. ومن غيرها جوجل بيحاول يخمّن من الـ HTML، وغالبًا مبيخمّنش.",
             how: R`الـ [[<script type="application/ld+json">]] data block: المتصفح مبينفذوش، ومحدش بيقراه غير الـ crawlers. عشان كده مش محتاج [[next/script]]، ومش محتاج nonce حتى مع CSP صارم (الـ CSP بيطبّق على الـ scripts اللي بتتنفذ بس).
 
-ليه [[.replace(/</g, "\\u003c")]]؟ [[JSON.stringify]] مبيعملش escape لـ [[</script>]]. لو اسم المنتج فيه [[</script><script>...]]، المتصفح بيقفل الـ tag عند أول [[</script>]] وينفذ اللي بعده: XSS من حقل اسم منتج. و [[<]] هو نفس الحرف جوه JSON، فالـ parser بتاع جوجل بيقراه [[<]] عادي، والمتصفح مش شايف tag.
+ليه [[.replace(/</g, "\\u003c")]]؟ [[JSON.stringify]] مبيعملش escape لـ [[</script>]]. لو اسم المنتج فيه [[</script><script>...]]، المتصفح بيقفل الـ tag عند أول [[</script>]] وينفذ اللي بعده: XSS من حقل اسم منتج. و [[\u003c]] هو نفس الحرف جوه JSON، فالـ parser بتاع جوجل بيقراه [[<]] عادي، والمتصفح مش شايف tag.
 
 الحاجات اللي جوجل بيطلبها للـ Product rich result: [[name]]، وواحد على الأقل من [[offers]] أو [[review]] أو [[aggregateRating]]. و [[price]] رقم كنص من غير عملة، و [[priceCurrency]] كود ISO ([[EGP]])، و [[availability]] URL من schema.org. وللمقالات: [[Article]] أو [[NewsArticle]] أو [[BlogPosting]] مع [[headline]] و [[image]] و [[datePublished]] و [[author]] ([[Person]] فيه [[name]] و [[url]]). ومفيش ضمان إن جوجل يعرض الـ rich result حتى لو الداتا صح.
 
@@ -3194,7 +3194,7 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
             "قفلة.",
             "الـ JSX.",
             "main.",
-            R`data block. الـ [[replace]] بيحوّل كل [[<]] لـ [[<]] عشان محدش يقفل الـ tag من جوه الداتا.`,
+            R`data block. الـ [[replace]] بيحوّل كل [[<]] لـ [[\u003c]] عشان محدش يقفل الـ tag من جوه الداتا.`,
             "الصفحة نفسها.",
             "قفلة.",
             "قفلة.",
