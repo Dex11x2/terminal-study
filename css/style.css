@@ -50,7 +50,7 @@ header.hero{padding:48px 0 28px}
 .hero h1{font-size:clamp(34px,6vw,56px);line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.5px}
 .hero p.lead{max-width:62ch;color:var(--muted);margin:0 0 28px;font-size:18px}
 .switch{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:12px}
-.sw{all:unset;cursor:pointer;display:block;border:2px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);transition:border-color .15s}
+.sw{all:unset;cursor:pointer;display:flex;flex-direction:column;border:2px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);transition:border-color .15s}
 .sw:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 .sw .top{font-family:var(--mono);font-size:13px;padding:14px 64px 12px 14px;direction:ltr;text-align:left;min-height:62px;position:relative}
 .sw .pg{position:absolute;right:10px;top:10px;font-family:inherit;font-size:11px;line-height:1.4;padding:2px 8px;border-radius:999px;background:rgba(128,128,128,.28);direction:rtl}
