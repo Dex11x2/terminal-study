@@ -58,7 +58,12 @@ aws lambda invoke --function-name hello out.json`,
             "managed (PaaS): AWS بيشغّل ويحدّث Postgres، وانت بتسأل بس هو على أنهي نسخة.",
             "PaaS كامل: بتدّي Vercel الكود وهو يبني ويشغّل وينشر.",
             "serverless: بتنادي دالة، ومفيش سيرفر تشوفه ولا تحدّثه."
-          ]
+          ],
+          sol: R`مفيش ناتج واحد صح، بس الجدول بتاعك المفروض يطلع شبه كده: موقع static على Vercel أو Netlify = PaaS (المنصة بتحدّث كل حاجة، ومفيش قاعدة بيانات أصلًا). API على VPS من DigitalOcean أو Hetzner أو EC2 = IaaS: انت اللي كنت بتعمل [[apt upgrade]]، وانت اللي كنت المفروض تعمل [[pg_dump]] بـ cron. تطبيق على Render أو Railway مع Postgres بتاعهم = PaaS: هما بيحدّثوا النظام، والباك أب اليومي عليهم (بس على قد الخطة). دالة على Lambda أو Vercel Functions = serverless: مفيش نظام تشغيل تحدّثه خالص.
+
+السؤال التاني هو المهم: لو كتبت «محدش» قدام «مين بيعمل باك أب؟» في مشروع IaaS، يبقى ده خطر حقيقي لقيته، مش مجرد تصنيف. وخلي بالك إن Supabase أو Neon أو RDS بيعملوا باك أب، بس انت لسه مسؤول عن الداتا نفسها: لو مسحت جدول بالغلط، المنصة مش هترجّعه لوحدها إلا لو فيه PITR وانت عارف تستخدمه.
+
+الغلطة الشائعة: تكتب «Docker على VPS» على إنه PaaS. الـ Docker بيغيّر طريقة التشغيل، بس السيرفر لسه بتاعك: التحديثات والفايروول والديسك عليك، فده IaaS. ونفس الكلام لـ Coolify: شكله PaaS، بس السيرفر تحته لسه مسؤوليتك.`
         },
         {
           cmd: "VPS ولا managed ولا PaaS",
@@ -113,7 +118,20 @@ managed cloud (ECS و RDS على AWS): تقدر تبني أي حاجة وتكب�
             "نفس المشروع بس فيه حد يعرف Linux: VPS + Coolify.",
             "٤ مطورين وميزانية ١٥٠: container PaaS مدفوع.",
             "فريق أكبر وميزانية: managed."
-          ]
+          ],
+          sol: R`المثال نفسه بيطبع بالترتيب: [[frontend PaaS]]، و [[container PaaS: Render ...]]، و [[VPS + Coolify ...]]، و [[container PaaS مدفوع ...]]، و [[managed: ECS Fargate ...]]. ولما جرّبت ٣ مشاريع تانية (الكود تحت) طلع: موقع static لشخص واحد = [[frontend PaaS]]، و API بـ ٥ دولار وانت عارف Linux = [[VPS + Coolify]]، و API بترافيك متقطع وميزانية ١٠٠ = [[serverless]].
+
+وفيه حالة مفاجئة: فريق من ٣ بموقع static من غير سيرفر وميزانية صفر بيطلع [[container PaaS]]، لأن أول شرط فيه [[devs <= 2]]، و [[knowsLinux]] مش متبعت فبيبقى [[undefined]]. يعني الدالة بتجاوب على ترتيب الشروط مش على المنطق. ده بالظبط اللي التجربة عايزاك تلاحظه: لو النتيجة مختلفة عن اللي عملته، اسأل الأول «هل الدالة ناقصها سؤال؟» (زي: الموقع static ولا لأ؟ فيه SLA؟ فيه داتا حساسة؟) قبل ما تقول اختيارك كان غلط.
+
+الإجابة الكويسة لكل مشروع بتقول جملة زي: «اخترت VPS عشان كان رخيص، بس دفعت التمن في وقت الصيانة والباك أب اللي معملتوش، فالـ PaaS كان أحسن لحجم المشروع ده».`,
+          solCode: R`console.log(pickHosting({ devs: 1, traffic: "steady", needsServer: false, budgetUsd: 0 }));
+console.log(pickHosting({ devs: 1, traffic: "steady", needsServer: true, budgetUsd: 5, knowsLinux: true }));
+console.log(pickHosting({ devs: 3, traffic: "spiky", needsServer: true, budgetUsd: 100, knowsLinux: true }));
+console.log(pickHosting({ devs: 3, traffic: "spiky", needsServer: false, budgetUsd: 0 }));
+// frontend PaaS: Vercel + Neon أو Supabase
+// VPS + Coolify أو Dokploy (أو Docker Compose بإيدك)
+// serverless: Lambda أو Vercel Functions
+// container PaaS: Render أو Railway أو Fly.io`
         }
       ]
     },
@@ -150,7 +168,14 @@ aws account get-alternate-contact --alternate-contact-type SECURITY`,
             "اليوزرز اللي في الحساب وآخر مرة كل واحد دخل.",
             "مفاتيح يوزر معين: لو فيه مفتاح قديم مش مستخدم، امسحه.",
             "إيميل الأمان اللي AWS بيبعت عليه التنبيهات."
-          ]
+          ],
+          sol: R`أول أمر المفروض يطبع:
+
+[[{ "rootMfa": 1, "rootKeys": 0 }]]
+
+[[rootMfa: 1]] معناها إن الـ root عليه MFA، و [[rootKeys: 0]] معناها إن مفيش access keys للـ root. ولو عايز سطر واحد في سكربت ضيف [[--output text]] فيطلع [[1	0]].
+
+لو طلع [[rootMfa: 0]] يبقى الـ MFA اتضاف لـ IAM user مش للـ root (غلطة مشهورة: دخلت بيوزر وضفت MFA لنفسك). ولو [[rootKeys: 1]] امسح المفتاح فورًا من Security credentials وانت داخل بالـ root. ولو الأمر نفسه رجّع [[AccessDenied]] يبقى اليوزر اللي بتشغّل بيه ملوش صلاحية [[iam:GetAccountSummary]]، وده طبيعي لو هو يوزر محدود؛ شغّله من هوية فيها صلاحيات قراءة IAM. وأمر [[get-alternate-contact]] لو رجّع [[ResourceNotFoundException]] يبقى مفيش إيميل أمان متسجل: سجّله من Account settings.`
         },
         {
           cmd: "Budgets و free tier",
@@ -182,7 +207,20 @@ done`,
             "لف على كل region مفعّلة في الحساب.",
             "اطبع اسم الـ region والسيرفرات اللي فيها (لو فاضي يبقى مفيش).",
             "نهاية الـ loop."
-          ]
+          ],
+          sol: R`بعد ما تعمل الـ budget، أمر [[describe-budgets]] المفروض يرجّع حاجة زي [[["monthly", "5.0", "0.0"]]]: الاسم والحد (AWS بيرجّعه بعلامة عشرية) والمصروف الفعلي. وهيوصلك إيميل من AWS Budgets عند ٨٠٪ (٤ دولار). والملفين لو عايز تعمله بالترمنال تحت (نفس الـ JSON اللي في الـ deep).
+
+الـ loop المفروض يطبع كل region وجنبها فاضي، زي [[eu-central-1: ]] و [[us-east-1: ]]. أي region جنبها [[i-0...]] يبقى فيه سيرفر شغال (أو stopped، والـ stopped لسه بيتحاسب على الديسك). عشان تشوف الحالة كمان غيّر الـ query لـ [[Reservations[].Instances[].[InstanceId,State.Name]]].
+
+الأخطاء الشائعة: region طالعة [[An error occurred (AuthFailure)]] أو [[UnauthorizedOperation]]، وده غالبًا region مش مفعّلة (opt-in زي me-central-1) أو صلاحياتك ناقصة، مش سيرفر. والإيميل ميوصلش لأنك نسيت تأكد اشتراك SNS لو استخدمته بدل الإيميل المباشر.`,
+          solCode: R`cat > budget.json <<'EOF'
+{"BudgetName":"monthly","BudgetLimit":{"Amount":"5","Unit":"USD"},"BudgetType":"COST","TimeUnit":"MONTHLY"}
+EOF
+cat > notify.json <<'EOF'
+[{"Notification":{"NotificationType":"FORECASTED","ComparisonOperator":"GREATER_THAN","Threshold":80,"ThresholdType":"PERCENTAGE"},
+  "Subscribers":[{"SubscriptionType":"EMAIL","Address":"you@example.com"}]}]
+EOF
+aws budgets create-budget --account-id $(aws sts get-caller-identity --query Account --output text) --budget file://budget.json --notifications-with-subscribers file://notify.json`
         }
       ]
     },
@@ -229,7 +267,12 @@ aws logout --profile personal`,
             "كل الأوامر الجاية في الترمنال ده تروح لـ work.",
             "انت مين دلوقتي؟ رقم الحساب والـ ARN.",
             "امسح المفاتيح المؤقتة بتاعة personal."
-          ]
+          ],
+          sol: R`بعد [[aws login]] و [[aws sts get-caller-identity]] هيطلع JSON فيه ٣ حاجات: [[UserId]] و [[Account]] (رقم حسابك، ١٢ رقم) و [[Arn]]. والـ ARN بيقولك انت مين: لو دخلت بيوزر هتلاقي [[arn:aws:iam::123456789012:user/ali]]، ولو بـ SSO أو role هتلاقي [[arn:aws:sts::123456789012:assumed-role/...]]. و [[aws login]] نفسه في الآخر بيطبع سطر زي [[Updated profile default to use arn:aws:... credentials.]]
+
+وفي [[~/.aws/config]] هتلاقي section زي [[[profile personal]]] فيه [[login_session]] و [[region]]، ومفيش [[aws_access_key_id]]. و [[~/.aws/credentials]] يا إما مش موجود يا إما فاضي من الـ profile ده. ولو لقيت فيه [[aws_access_key_id = AKIA...]] يبقى ده مفتاح دايم من [[aws configure]] قديم: اتأكد إنه مش مستخدم وامسحه من IAM.
+
+الأخطاء الشائعة: [[aws: error: argument command: Invalid choice ... login]] معناها نسخة الـ CLI أقدم من 2.32، حدّثها. و [[Unable to locate credentials]] بعد الدخول معناها إنك دخلت بـ [[--profile personal]] وبتشغّل الأمر من غير [[--profile]] ولا [[AWS_PROFILE]]، فالـ CLI بيدوّر على [[default]].`
         },
         {
           cmd: "IAM users و roles",
@@ -263,7 +306,18 @@ aws sts get-caller-identity`,
             "اعمل instance profile (ده اللي بيتربط بالسيرفر فعلًا).",
             "حط الـ role جوه الـ instance profile.",
             "من جوه السيرفر: هتلاقي الهوية assumed-role/myapp-ec2 من غير أي مفتاح."
-          ]
+          ],
+          sol: R`من جوه السيرفر، [[aws sts get-caller-identity]] من غير أي configure المفروض يطلع [[Arn]] شكله [[arn:aws:sts::123456789012:assumed-role/myapp-ec2/i-0abc1234567890def]]: اسم الـ role، وبعده الـ instance id كاسم جلسة. ده دليل إن الـ CLI جاب مفاتيح مؤقتة من IMDS لوحده. وتقدر تشوف ده بنفسك بـ [[curl]] على IMDSv2 (تحت): هترجع اسم الـ role.
+
+لو طلع [[Unable to locate credentials]] يبقى الـ instance profile مش مربوط (اربطه بـ [[aws ec2 associate-iam-instance-profile]] أو من الكونسول Modify IAM role)، أو اتربط من ثواني والصلاحيات لسه مانتشرتش. ولو [[create-instance-profile]] اشتغل بس الربط رجّع [[Invalid IAM Instance Profile name]] استنى ١٠ ثواني وجرّب تاني، لأن IAM eventually consistent. ولو الـ Arn طلع [[user/...]] يبقى فيه [[~/.aws/credentials]] أو متغيرات بيئة على السيرفر بتسبق الـ role، وده بالظبط اللي الدرس بيحذّر منه.`,
+          solCode: R`cat > trust-ec2.json <<'EOF'
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ec2.amazonaws.com"},"Action":"sts:AssumeRole"}]}
+EOF
+aws ec2 associate-iam-instance-profile --instance-id i-0abc1234567890def --iam-instance-profile Name=myapp-ec2
+# من جوه السيرفر:
+aws sts get-caller-identity --query Arn --output text
+TOKEN=$(curl -s -X PUT http://169.254.169.254/latest/api/token -H "X-aws-ec2-metadata-token-ttl-seconds: 60")
+curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/iam/security-credentials/`
         },
         {
           cmd: "IAM policy JSON",
@@ -316,7 +370,22 @@ least privilege معناها أقل صلاحية تخلي الشغل يمشي: �
             "نهاية القاعدة التانية.",
             "نهاية القايمة.",
             "نهاية الـ policy."
-          ]
+          ],
+          sol: R`التلات أسئلة ونتيجتهم (بـ [[--query]] عشان يطلع الـ decision بس):
+
+[[s3:DeleteObject]] على [[uploads/a.png]] = [[explicitDeny]]: فيه statement فيه [[Deny]] بيغطي [[myapp-assets/*]]، والـ Deny بيكسب أي Allow.
+[[s3:PutObject]] على [[uploads/a.png]] = [[allowed]].
+[[s3:PutObject]] على [[avatars/a.png]] = [[implicitDeny]]: مفيش Allow بيغطي المسار ده، ومفيش Deny كمان، فبيقع في «ممنوع افتراضي».
+
+الفرق بين الاتنين هو الدرس كله: [[implicitDeny]] بيتحل بإنك تضيف Allow، إنما [[explicitDeny]] مش هيتحل غير لو شلت الـ Deny نفسه. ولو [[PutObject]] على [[uploads/]] طلع [[implicitDeny]] عندك، غالبًا الـ policy مش مربوطة بالـ role اللي في [[--policy-source-arn]]، أو كتبت الـ Resource من غير [[/*]]. ولو الأمر رجّع [[NoSuchEntity]] يبقى الـ role مش موجودة بالاسم ده أو رقم الحساب في الـ ARN مش بتاعك (استبدل [[123456789012]] برقمك).`,
+          solCode: R`aws iam put-role-policy --role-name myapp-ec2 --policy-name s3-uploads --policy-document file://s3-uploads.json
+ROLE=arn:aws:iam::123456789012:role/myapp-ec2
+aws iam simulate-principal-policy --policy-source-arn $ROLE --action-names s3:DeleteObject --resource-arns arn:aws:s3:::myapp-assets/uploads/a.png --query "EvaluationResults[].EvalDecision" --output text
+# explicitDeny
+aws iam simulate-principal-policy --policy-source-arn $ROLE --action-names s3:PutObject --resource-arns arn:aws:s3:::myapp-assets/uploads/a.png --query "EvaluationResults[].EvalDecision" --output text
+# allowed
+aws iam simulate-principal-policy --policy-source-arn $ROLE --action-names s3:PutObject --resource-arns arn:aws:s3:::myapp-assets/avatars/a.png --query "EvaluationResults[].EvalDecision" --output text
+# implicitDeny`
         }
       ]
     },
@@ -357,7 +426,12 @@ aws ec2 describe-availability-zones --region eu-central-1 --query "AvailabilityZ
             "نهاية الـ loop.",
             "الـ regions المفعّلة في حسابك (الافتراضية واللي فعّلتها).",
             "الـ AZs اللي في فرانكفورت."
-          ]
+          ],
+          sol: R`كل سطر هيطبع اسم الـ region وجنبه وقت فتح الاتصال بالثواني، زي [[eu-central-1 0.061]]. الأرقام الحقيقية بتفرق حسب مزوّد الإنترنت، بس من مصر الشكل المتوقع: فرانكفورت وميلان (eu-central-1 و eu-south-1) غالبًا الأقرب في حدود ٥٠ لـ ٩٠ مللي، والخليج (me-central-1 في الإمارات و me-south-1 في البحرين) ممكن يطلعوا أقرب أو أبعد حسب مسار الكابلات، مش حسب المسافة على الخريطة. وده ليه بتقيس ٣ مرات: رقم واحد ممكن يكون صدفة زحمة.
+
+من VPS في أوروبا الأرقام هتبقى أصغر بكتير (١٠ لـ ٣٠ مللي لفرانكفورت)، وده بيوضّح إن اللي يهم هو مكان اليوزرز مش مكانك انت.
+
+لو سطر طلع [[0.000000]] يبقى الاتصال فشل (DNS أو region انت مش واصل لها)، مش إنه سريع جدًا. واختيار الـ region مش على الـ latency بس: الأسعار (الخليج أغلى شوية) وتوفر الخدمات وقوانين حفظ البيانات بيفرقوا كمان. وأمر [[list-regions]] ممكن ميعرضش me-central-1 لو هي opt-in ومش مفعّلة عندك.`
         },
         {
           cmd: "الخدمات الأساسية",
@@ -396,7 +470,16 @@ messaging: SQS (طابور)، و SNS (إشعارات)، و SES (إيميل)، و
             "دوال Lambda ونسخة الـ runtime بتاعة كل واحدة.",
             "الـ CDN: رقم كل distribution والدومين بتاعه.",
             "الدومينات اللي على Route 53."
-          ]
+          ],
+          sol: R`على حساب فاضي، الأوامر مش هترجّع خطأ، هترجّع فاضي: الـ table من غير صفوف، و [[aws s3 ls]] مش هيطبع حاجة، و [[route53]] يطبع [[[]]]. ده المتوقع، مش مشكلة. ولو أي أمر رجّع [[AccessDenied]] يبقى هويتك ناقصها صلاحية قراءة للخدمة دي.
+
+وأمر الـ log groups ممكن يبقى كده:
+
+[[aws logs describe-log-groups --query "logGroups[].logGroupName" --output table]]
+
+على حساب جديد غالبًا فاضي، ولو عملت Lambda قبل كده هتلاقي [[/aws/lambda/hello]]. والغلطة الشائعة هنا إن حرف الـ query بيفرق: [[logGroups]] بـ g صغيرة، مش [[LogGroups]] زي [[Reservations]] في EC2. كل خدمة ليها شكل رد مختلف، فشغّل الأمر من غير [[--query]] الأول وشوف أسماء الحقول، وبعدين اكتب الـ query. ولو الـ table طلع فاضي في حساب فيه Lambdas، اتأكد من الـ region.`,
+          solCode: R`aws logs describe-log-groups --query "logGroups[].logGroupName" --output table
+aws logs describe-log-groups --query "logGroups[].[logGroupName,retentionInDays,storedBytes]" --output table`
         }
       ]
     },
@@ -439,7 +522,12 @@ aws s3 presign s3://myapp-assets/public/logo.png --expires-in 600`,
             "اعرض كل اللي في الـ bucket بأحجام مقروءة.",
             "نزّل ملف من S3 لجهازك.",
             "رابط مؤقت لمدة ١٠ دقايق للملف ده بس، والـ bucket لسه مقفول."
-          ]
+          ],
+          sol: R`الأوامر بتطبع بالترتيب تقريبًا: [[make_bucket: myapp-assets-ali-7]]، وبعدين JSON فيه الأربع قيم [[BlockPublicAcls]] و [[IgnorePublicAcls]] و [[BlockPublicPolicy]] و [[RestrictPublicBuckets]] كلهم [[true]] (ده الافتراضي للـ buckets الجديدة)، وبعدين [[upload: ./logo.png to s3://.../public/logo.png]]، و [[ls]] بيطبع سطر فيه التاريخ والحجم زي [[4.2 KiB public/logo.png]].
+
+الرابط العادي في المتصفح هيرجّع XML فيه [[<Code>AccessDenied</Code>]]، لأن الـ bucket مقفول ومفيش توقيع. والرابط اللي [[presign]] طلّعه طويل وفيه [[X-Amz-Algorithm=AWS4-HMAC-SHA256]] و [[X-Amz-Expires=600]] و [[X-Amz-Signature=...]]، وبيفتح الصورة. وبعد ١٠ دقايق نفس الرابط بيرجّع [[Request has expired]].
+
+أخطاء شائعة: [[BucketAlreadyExists]] يعني الاسم محجوز عند حد تاني في الدنيا، زوّد اسمك أو رقم. ولو فتحت رابط المثال نفسه ([[myapp-assets]]) من غير ما تغيّر الاسم هتلاقي [[NoSuchBucket]] مش AccessDenied، لأن الـ bucket ده مش موجود أصلًا. ولو الـ presign اتعمل بمفاتيح مؤقتة (login أو SSO)، الرابط بيحتوي [[X-Amz-Security-Token]] وبيموت مع الجلسة حتى لو [[--expires-in]] أطول. ولو رجّع [[SignatureDoesNotMatch]] اتأكد إن الـ region في الأمر هي region الـ bucket.`
         },
         {
           cmd: "presigned URL",
@@ -451,7 +539,7 @@ aws s3 presign s3://myapp-assets/public/logo.png --expires-in 600`,
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "node:crypto";
 
-const s3 = new S3Client({ region: "eu-central-1" });
+const s3 = new S3Client({ region: "eu-central-1", requestChecksumCalculation: "WHEN_REQUIRED" });
 const ALLOWED = ["image/png", "image/jpeg", "application/pdf"];
 
 app.post("/uploads/sign", requireAuth, async (req, res) => {
@@ -483,7 +571,7 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
             "كلاينت S3 والأمر اللي هنوقّعه.",
             "الدالة اللي بتوقّع من غير ما تكلّم S3.",
             "عشان أسامي ملفات عشوائية مبتتكررش.",
-            "الكلاينت مرة واحدة، وبياخد صلاحياته من الـ role.",
+            "الكلاينت مرة واحدة، وبياخد صلاحياته من الـ role. و WHEN_REQUIRED عشان الـ SDK ميحطّش checksum لملف فاضي في الـ URL فالرفع يفشل.",
             "الأنواع المسموحة بس.",
             "route محمي: لازم اليوزر يبقى مسجّل دخول.",
             "نوع مش مسموح؟ ارفض.",
@@ -492,7 +580,24 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
             "وقّع لمدة ٥ دقايق، وخلّي الـ Content-Type جزء من التوقيع (SDK v3 مش بيوقّعه لوحده).",
             "رجّع الـ URL والـ key للمتصفح.",
             "قفلة الـ route."
-          ]
+          ],
+          sol: R`الـ route بيرجّع JSON فيه [[key]] زي [[uploads/42/0e2027a6-...]] و [[url]] فيه [[X-Amz-SignedHeaders=content-type%3Bhost]]، يعني الـ Content-Type داخل في التوقيع. وطلب بنوع [[image/gif]] للـ route نفسه بيرجع [[400 {"error":"type"}]] من السيرفر. والرفع بـ curl بنوع [[image/png]] يرجّع 200 من غير body، والملف يظهر في [[aws s3 ls s3://myapp-assets/uploads/42/]]. ولو غيّرت الـ header في curl لـ [[image/gif]] على نفس الـ URL، S3 يرجّع 403 [[SignatureDoesNotMatch]].
+
+مهم: نسخ SDK v3 من أول 3.729 بتحسب checksum تلقائي، ومع الـ presign مفيش body وقت التوقيع، فالـ URL بيطلع فيه [[x-amz-checksum-crc32=AAAAAA%3D%3D]] (checksum لملف فاضي)، وأي رفع لملف حقيقي عليه بيفشل برسالة checksum. جرّبتها على 3.1143 والـ URL طلع فيه السطر ده فعلًا. الحل اللي في المثال دلوقتي: [[requestChecksumCalculation: "WHEN_REQUIRED"]] في الـ [[S3Client]]، وبعدها الـ URL بيطلع من غير checksum.
+
+الـ CORS: من المتصفح من غير CORS هتشوف في الـ console [[blocked by CORS policy]] والطلب نفسه اتبعت كـ preflight [[OPTIONS]] واترفض. بعد [[put-bucket-cors]] بالملف اللي تحت، الـ fetch يعدّي. ولو حطيت [[AllowedOrigins: ["*"]]] هيشتغل برضه، بس ده بيسمح لأي موقع يستخدم روابطك.`,
+          solCode: R`cat > cors.json <<'EOF'
+{
+  "CORSRules": [{
+    "AllowedOrigins": ["https://myapp.example.com", "http://localhost:5173"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["content-type"],
+    "MaxAgeSeconds": 3000
+  }]
+}
+EOF
+aws s3api put-bucket-cors --bucket myapp-assets --cors-configuration file://cors.json
+aws s3api get-bucket-cors --bucket myapp-assets`
         },
         {
           cmd: "S3 + CloudFront",
@@ -524,7 +629,12 @@ aws cloudfront create-invalidation --distribution-id E1ABCDEF2GHIJK --paths "/in
             "ارفع الـ assets (أسماءها فيها hash) بكاش سنة، و immutable.",
             "ارفع index.html في الآخر، من غير كاش.",
             "قول لـ CloudFront يرمي نسخته القديمة من index.html بس."
-          ]
+          ],
+          sol: R`بعد الرفع، رابط [[https://dXXXX.cloudfront.net/]] المفروض يفتح الموقع (بسبب Default root object). بس [[/about]] مباشرة هيرجّع XML فيه [[<Code>AccessDenied</Code>]] بكود 403، مش 404، لأن CloudFront بيطلب ملف اسمه [[about]] من S3، والملف مش موجود، والـ bucket مقفول ومفيش [[s3:ListBucket]]، فـ S3 بيقول 403 بدل ما يعترف إن الملف مش موجود.
+
+الحل: في الـ distribution، Error pages، اعمل custom error response لـ 403 (و 404) بـ Response page path [[/index.html]] و HTTP response code 200. بعد ما التعديل يخلص deploy، [[curl -sI https://dXXXX.cloudfront.net/about]] يرجّع [[HTTP/2 200]] والصفحة تفتح و React Router يعرض [[/about]].
+
+لو الرئيسية نفسها رجّعت AccessDenied، يبقى الـ bucket policy مش متحدّثة بالـ OAC (انسخ الـ policy اللي الكونسول بيعرضها وحطها في الـ bucket)، أو Default root object فاضي. ولو ظهرت صفحة بيضا والـ console فيه 403 على ملفات [[/assets/]]، يبقى رفعت [[dist/assets]] لمسار غلط.`
         },
         {
           cmd: "CloudFront cache",
@@ -558,7 +668,12 @@ aws cloudfront list-distributions --query "DistributionList.Items[].[Id,Origins.
             "ارمي من الكاش كل صفحات المدونة وملف index (كل واحد path).",
             "حالة الـ invalidation: InProgress ولا Completed.",
             "كل distribution والـ origin اللي بيقرا منه."
-          ]
+          ],
+          sol: R`أول طلب بيرجّع [[x-cache: Miss from cloudfront]] ومفيش [[age]]، والطلب التاني [[x-cache: Hit from cloudfront]] ومعاه [[age: 3]] مثلًا، والرقم ده بيزيد كل ما تطلب بعدها (عمر النسخة في الـ edge بالثواني). و [[cache-control]] هو اللي انت رفعت بيه: [[public,max-age=31536000,immutable]].
+
+بعد [[create-invalidation]] هتاخد [[Id]] وحالة [[InProgress]]، و [[get-invalidation]] بعد دقيقة أو اتنين يقول [[Completed]]. الطلب اللي بعدها يرجع [[Miss from cloudfront]] تاني، وبعدين Hit. ولو شفت [[RefreshHit from cloudfront]] ده معناه إن الـ edge سأل الـ origin «اتغيّر؟» ورد «لأ»، فكمّل بنفس النسخة.
+
+الغلطة الشائعة: الطلبين يرجعوا Miss على طول. ده غالبًا لأنهم راحوا لـ edge مختلفين (فيه أكتر من IP)، أو لأن الـ cache policy بتحط query string أو header في الـ key، أو لأن الملف مرفوع بـ [[no-cache]] أو [[max-age=0]]. وخد بالك إن [[age]] مش هيقل بعد invalidation في المتصفح لو المتصفح نفسه كاشه: [[curl]] مفيهوش كاش، فهو الأصدق في التجربة دي.`
         }
       ]
     },
@@ -599,7 +714,18 @@ stateful معناها: الطلب اللي دخل على 443 رده بيخرج �
             "اسمح بـ SSH من IP بيتك بس ([[/32]] يعني عنوان واحد).",
             "قاعدة البيانات تقبل 5432 من أي حاجة لابسة security group السيرفرات بس.",
             "اعرض قواعد الدخول بتاعة security group القاعدة."
-          ]
+          ],
+          sol: R`[[create-security-group]] بيرجّع [[{"GroupId": "sg-..."}]]، خزّنه في متغير بدل ما تنسخه بإيدك (تحت). و [[describe-security-groups]] على الـ db المفروض يرجّع قاعدة واحدة: [[IpProtocol: tcp]] و [[FromPort/ToPort: 5432]] و [[UserIdGroupPairs]] فيها الـ [[GroupId]] بتاع الـ web، و [[IpRanges: []]] فاضية. والـ query اللي تحت بتطلّع كل الـ CIDRs مباشرة، والناتج المتوقع للـ db [[[]]].
+
+لو لقيت [[0.0.0.0/0]] في الـ db، غالبًا عملت [[--cidr 0.0.0.0/0]] بالغلط أو الكونسول «Anywhere» وانت بتجرّب، امسحها بـ [[revoke-security-group-ingress]] بنفس البارامترات. ولو [[authorize]] رجّع [[InvalidPermission.Duplicate]] يبقى القاعدة موجودة أصلًا. ولو [[--source-group]] رجّع [[InvalidGroup.NotFound]] يبقى الـ security groups في VPCs مختلفة.
+
+وخد بالك إن الـ egress الافتراضي مفتوح لكل حاجة ([[IpPermissionsEgress]] فيها [[0.0.0.0/0]])، وده طبيعي، السؤال في الـ ingress بس.`,
+          solCode: R`VPC=vpc-0abc1234
+WEB=$(aws ec2 create-security-group --group-name myapp-web --description "web servers" --vpc-id $VPC --query GroupId --output text)
+DB=$(aws ec2 create-security-group --group-name myapp-db --description "postgres" --vpc-id $VPC --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $WEB --protocol tcp --port 443 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-id $DB --protocol tcp --port 5432 --source-group $WEB
+aws ec2 describe-security-groups --group-ids $DB --query "SecurityGroups[].IpPermissions[].IpRanges[].CidrIp"`
         },
         {
           cmd: "aws ec2 run-instances",
@@ -636,7 +762,17 @@ user data: السيرفر فيه برنامج اسمه cloud-init بيقرا ا�
             "شغّل السيرفر: النوع، والمفتاح، والفايروول، والـ role، وسكربت أول تشغيل، و IMDSv2، واسم.",
             "هات الـ IP العام والحالة.",
             "اقرا لوج سكربت أول تشغيل: نجح ولا فشل."
-          ]
+          ],
+          sol: R`الـ [[init.sh]] تحت. بعد دقيقتين، آخر سطور [[cloud-init-output.log]] المفروض فيها ناتج سكربت Docker (سطور زي [[Client: Docker Engine - Community]] ورقم النسخة)، وفي الآخر سطر زي [[Cloud-init v. 24.x finished at ... Up 95.3 seconds]]. وبعدها [[ssh ... docker --version]] يطبع النسخة، و [[docker ps]] من اليوزر ubuntu يشتغل (في جلسة SSH جديدة، لأن الـ group بيتقري عند الدخول).
+
+وبعد [[terminate-instances]] الحالة تبقى [[shutting-down]] وبعدين [[terminated]]، والـ instance بتفضل ظاهرة في [[describe-instances]] حوالي ساعة وبعدين تختفي؛ ده طبيعي ومش بتتحاسب عليها.
+
+أخطاء شائعة: اللوج فيه [[/var/lib/cloud/instance/scripts/part-001: ... not found]] أو السكربت متنفذش أصلًا، وده لأن أول سطر مش [[#!/bin/bash]] (أو الملف مكتوب على ويندوز بـ CRLF). و [[Permission denied (publickey)]] يبقى اليوزر غلط (Ubuntu = [[ubuntu]]) أو نسيت [[chmod 400]]. و [[docker: permission denied]] وانت ubuntu يبقى محتاج تخرج وتدخل تاني بعد [[usermod]]. و [[Connection timed out]] يبقى الـ security group مفيهاش 22 من IP بتاعك.`,
+          solCode: R`#!/bin/bash
+set -euxo pipefail
+curl -fsSL https://get.docker.com | sh
+usermod -aG docker ubuntu
+systemctl enable --now docker`
         },
         {
           cmd: "EBS",
@@ -673,7 +809,22 @@ gp3 هو النوع العادي والأرخص: ٣٠٠٠ IOPS افتراضي أ
             "على السيرفر: مد الـ partition رقم 1 لآخر الديسك.",
             "مد الـ filesystem (ext4) على الـ partition.",
             "اتأكد إن المساحة زادت."
-          ]
+          ],
+          sol: R`قبل التكبير، [[lsblk]] على Ubuntu 24.04 بيوري حاجة زي [[nvme0n1 8G]] والـ root [[nvme0n1p1]] حوالي 7G (وجنبه partitions صغيرة للـ boot). بعد [[modify-volume]] بدقيقة، [[lsblk]] يقول [[nvme0n1 12G]] بس [[nvme0n1p1]] لسه زي ما هو: الديسك كبر، الـ partition لأ. [[growpart]] يطبع [[CHANGED: partition=1 ...]] وبعدها [[lsblk]] يوري الـ partition كبرت. و [[df -h /]] لسه بيقول الحجم القديم لحد [[resize2fs]]، اللي بيطبع سطر زي [[The filesystem on /dev/nvme0n1p1 is now 3112699 (4k) blocks long.]]، وبعدها [[df -h /]] يوري حوالي 11G.
+
+وكل ده والسيرفر شغال: [[uptime]] قبل وبعد نفس الرقم تقريبًا.
+
+أخطاء شائعة: [[growpart]] يقول [[NOCHANGE: partition 1 is size ... it cannot be grown]]، وده لأنك شغّلته قبل ما الديسك الجديد يظهر (شوف [[aws ec2 describe-volumes-modifications]] لحد ما الحالة تبقى [[optimizing]] أو [[completed]]). و [[resize2fs]] يرجّع [[Bad magic number]] لو الـ filesystem مش ext4: على Amazon Linux بيبقى XFS، والأمر [[sudo xfs_growfs -d /]]. ولو جيت تكبّر تاني على طول هتاخد خطأ إنك لازم تستنى (حوالي ٦ ساعات بين كل تعديل للـ volume). وخلي بالك إنك مينفعش تصغّر volume.`,
+          solCode: R`aws ec2 create-snapshot --volume-id vol-0abc1234567890def --description "before resize"
+aws ec2 modify-volume --volume-id vol-0abc1234567890def --size 12
+aws ec2 describe-volumes-modifications --volume-ids vol-0abc1234567890def --query "VolumesModifications[].[ModificationState,Progress]"
+# على السيرفر:
+lsblk
+sudo growpart /dev/nvme0n1 1
+lsblk
+df -h /
+sudo resize2fs /dev/nvme0n1p1
+df -h /`
         }
       ]
     },
@@ -725,7 +876,18 @@ parameter groups: مفيش [[postgresql.conf]] تعدّله. الإعدادات 
             "باك أب يومي، وتقدر ترجع لأي لحظة في آخر ٧ أيام.",
             "استنى لحد ما تبقى جاهزة (بتاخد دقايق).",
             "هات العنوان والنسخة ومكان الباسورد في Secrets Manager."
-          ]
+          ],
+          sol: R`أول حاجة: آخر أمر في المثال بيطلّع [[EngineVersion]]، زي [[17.6]]، والـ family لازم تطابق الرقم الكبير: 17 = [[postgres17]]، ولو طلعت 18 يبقى [[postgres18]]. [[create-db-parameter-group]] بيرجّع [[DBParameterGroupFamily: postgres17]]، و [[modify-db-parameter-group]] بيرجّع [[{"DBParameterGroupName": "myapp-pg"}]] بس.
+
+بعد [[modify-db-instance]]، الـ parameter group الجديدة بتتربط، بس [[describe-db-instances]] هيقول [[ParameterApplyStatus: pending-reboot]]: ربط group جديدة محتاج reboot مرة واحدة. بعد [[reboot-db-instance]] الحالة تبقى [[in-sync]]، ومن هنا أي query أطول من ٥٠٠ مللي هتظهر في لوج Postgres (من الكونسول Logs أو [[describe-db-log-files]]). جرّب [[SELECT pg_sleep(1);]] وشوف سطر [[duration: 1001.xxx ms statement: SELECT pg_sleep(1);]].
+
+الغلطة الشائعة: family مش مطابقة، فالـ modify يرجع [[InvalidParameterCombination]] بيقول إن الـ group دي مينفعش مع النسخة دي. وتانية: تعدّل [[default.postgres17]] مباشرة، وده مش مسموح، لأن الـ default groups مبتتعدّلش؛ عشان كده بنعمل واحدة خاصة بينا.`,
+          solCode: R`aws rds create-db-parameter-group --db-parameter-group-name myapp-pg --db-parameter-group-family postgres17 --description "myapp"
+aws rds modify-db-parameter-group --db-parameter-group-name myapp-pg --parameters "ParameterName=log_min_duration_statement,ParameterValue=500,ApplyMethod=immediate"
+aws rds modify-db-instance --db-instance-identifier myapp-db --db-parameter-group-name myapp-pg --apply-immediately
+aws rds describe-db-instances --db-instance-identifier myapp-db --query "DBInstances[0].DBParameterGroups"
+aws rds reboot-db-instance --db-instance-identifier myapp-db
+aws rds wait db-instance-available --db-instance-identifier myapp-db`
         },
         {
           cmd: "RDS snapshots و PITR",
@@ -756,7 +918,20 @@ aws rds restore-db-instance-to-point-in-time --source-db-instance-identifier mya
             "اعرض الـ snapshots ووقتها وحالتها.",
             "أقرب لحظة تقدر ترجعلها دلوقتي.",
             "رجّع القاعدة زي ما كانت ١٠ الصبح في instance جديدة، بنفس الشبكة والفايروول."
-          ]
+          ],
+          sol: R`الخطوات والنتيجة: جدول [[notes]] فيه صفين (id 1 و 2)، استنيت، ومسحت id 2 الساعة مثلًا 10:25:00 UTC. الاسترجاع لـ 10:24:00 بيعمل instance جديدة اسمها [[myapp-db-restored]] بـ endpoint جديد خالص، وبياخد من ١٠ لـ ٢٠ دقيقة أو أكتر. بعدها [[SELECT * FROM notes;]] على الـ endpoint الجديد يرجّع الصفين، والقاعدة الأصلية لسه فيها صف واحد: الاسترجاع مبيلمسش الأصلية.
+
+اتأكد الأول إن الوقت اللي اخترته أقدم من [[LatestRestorableTime]] (غالبًا بيبقى متأخر عن دلوقتي بحوالي ٥ دقايق)، وإلا هيرجّع خطأ إن الوقت برا الـ window. والوقت بـ UTC، فلو كتبت الساعة بتوقيت مصر هترجع لوقت غلط بساعتين أو تلاتة، وتلاقي الصف ممسوح أو الجدول مش موجود.
+
+وفي الآخر امسح الـ instance الجديدة ([[--skip-final-snapshot]] لأنها تجربة). الغلطة المكلفة إنك تنساها: هي instance كاملة بتتحاسب بالساعة زي الأصلية.`,
+          solCode: R`psql "$DATABASE_URL" -c "CREATE TABLE notes(id int primary key, body text); INSERT INTO notes VALUES (1,'a'),(2,'b');"
+# بعد ١٠ دقايق:
+date -u +%Y-%m-%dT%H:%M:%SZ
+psql "$DATABASE_URL" -c "DELETE FROM notes WHERE id = 2;"
+aws rds restore-db-instance-to-point-in-time --source-db-instance-identifier myapp-db --target-db-instance-identifier myapp-db-restored --restore-time 2026-09-28T10:24:00Z --db-subnet-group-name myapp-private --vpc-security-group-ids sg-0db22222 --no-publicly-accessible
+aws rds wait db-instance-available --db-instance-identifier myapp-db-restored
+aws rds describe-db-instances --db-instance-identifier myapp-db-restored --query "DBInstances[0].Endpoint.Address" --output text
+aws rds delete-db-instance --db-instance-identifier myapp-db-restored --skip-final-snapshot`
         },
         {
           cmd: "RDS من جهازك",
@@ -786,7 +961,15 @@ SSH tunnel: نفس الفكرة بس عن طريق sshd على السيرفر، 
             "Session Manager: وصّل 5433 على جهازك بـ 5432 على القاعدة عن طريق السيرفر ده، من غير بورت مفتوح.",
             "في ترمنال تاني: psql على localhost كأن القاعدة عندك، والاتصال مشفّر.",
             "البديل بـ SSH tunnel لو 22 مفتوح لـ IP بيتك."
-          ]
+          ],
+          sol: R`في الترمنال الأول، [[start-session]] يطبع [[Starting session with SessionId: ...]] وبعدين [[Port 5433 opened for sessionId ...]] و [[Waiting for connections...]]، ويفضل مفتوح. في التاني، [[psql]] يسأل عن الباسورد (من Secrets Manager لو استخدمت [[--manage-master-user-password]]) ويطبع قبل الـ prompt سطر زي:
+
+[[SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)]]
+
+(psql 17 وأحدث بيزوّد [[ALPN: postgresql]]). السطر ده معناه إن الاتصال مشفّر لحد RDS نفسه. وأول ما psql يتصل، الترمنال الأول يطبع [[Connection accepted for session]].
+
+أخطاء شائعة: [[SessionManagerPlugin is not found]] يعني الـ plugin مش متسطّب. و [[TargetNotConnected]] يعني السيرفر مش ظاهر في SSM: ناقصه الـ role اللي فيها [[AmazonSSMManagedInstanceCore]] أو مش واصل للإنترنت أو لـ VPC endpoints. ولو psql فضل واقف لحد timeout، يبقى الـ security group بتاعة RDS مش بتقبل من السيرفر الوسيط. و [[no pg_hba.conf entry ... no encryption]] يعني RDS فارض SSL وانت نسيت [[sslmode=require]].`,
+          solCode: R`aws secretsmanager get-secret-value --secret-id "$(aws rds describe-db-instances --db-instance-identifier myapp-db --query 'DBInstances[0].MasterUserSecret.SecretArn' --output text)" --query SecretString --output text`
         }
       ]
     },
@@ -841,7 +1024,20 @@ export const handler = async (event) => {
             "الـ body لازم نص، فـ JSON.stringify.",
             "قفلة الرد.",
             "قفلة الـ handler."
-          ]
+          ],
+          sol: R`لو جرّبت محليًا بالكود اللي تحت (من غير رفع) هتشوف فكرة الدرس نفسها، لأن الـ module بيتحمّل مرة واحدة:
+
+[[{"hello":"Ali","invocations":1,"envAgeMs":0}]] وبعدين 2 و 3 و 4 و 5، و [[envAgeMs]] ثابت تقريبًا.
+
+وعلى Lambda فعلًا: الـ ٥ طلبات ورا بعض بيرجّعوا [[invocations]] من 1 لـ 5، و [[envAgeMs]] بيزيد بالثواني لأنها نفس البيئة. بعد ٢٠ دقيقة غالبًا يرجع [[invocations: 1]] و [[envAgeMs]] صغير، ده cold start. «غالبًا» لأن AWS مبتضمنش إمتى البيئة بتتقفل.
+
+الغلطة الشائعة في الفهم: تبعت ٥ طلبات في نفس اللحظة (مثلًا [[&]] في bash أو [[Promise.all]]) فتلاقي أرقام متكررة زي 1 و 1 و 2. ده مش bug: كل طلب متزامن بياخد بيئة لوحده، ولكل بيئة عدّاد. وده بالظبط ليه متعتمدش على متغير في الذاكرة كعدّاد أو كاش مشترك في Lambda.`,
+          solCode: R`// local.mjs جنب index.mjs
+import { handler } from "./index.mjs";
+for (let i = 0; i < 5; i++) {
+  const res = await handler({ queryStringParameters: { name: "Ali" } });
+  console.log(res.body);
+}`
         },
         {
           cmd: "Lambda deploy + API Gateway",
@@ -879,7 +1075,18 @@ HTTP API أرخص وأبسط من REST API القديم، وفيه JWT authorize
             "اعمل HTTP API بأمر واحد بيوصّل كل الطلبات للدالة.",
             "اسمح لـ API Gateway (الـ API ده بس) ينادي الدالة.",
             "تابع لوجات الدالة لايف."
-          ]
+          ],
+          sol: R`بعد [[create-function]] و [[invoke]]، [[out.json]] فيه [[{"statusCode":200,"headers":{...},"body":"{\"hello\":\"Ali\",\"invocations\":1,...}"}]]، والأمر نفسه يطبع [[{"StatusCode": 200, "ExecutedVersion": "$LATEST"}]]. و [[create-api]] يرجّع [[ApiEndpoint]] زي [[https://a1b2c3d4e5.execute-api.eu-central-1.amazonaws.com]]، وفتح [[?name=Ali]] في المتصفح يرجّع الـ JSON نفسه من غير الغلاف: [[{"hello":"Ali","invocations":2,...}]].
+
+وفي [[logs tail]] كل طلب ليه سطر [[REPORT RequestId: ... Duration: 2.1 ms Billed Duration: 3 ms Memory Size: 128 MB Max Memory Used: 70 MB]]، وأول طلب بس فيه كمان [[Init Duration: 150.3 ms]] (الرقم بيفرق)، وده الـ cold start.
+
+أخطاء شائعة: المتصفح يرجّع [[{"message":"Internal Server Error"}]] وده غالبًا لأنك نسيت [[add-permission]]، أو الـ [[--source-arn]] فيه API id مش بتاعك. و [[create-function]] يرجّع [[InvalidParameterValueException: The role defined for the function cannot be assumed by Lambda]] لو الـ trust مش لـ [[lambda.amazonaws.com]] أو لو شغّلته بعد إنشاء الـ role بثواني. و [[Runtime.ImportModuleError]] يعني الملف في الـ zip اسمه مش [[index.mjs]] أو جوه فولدر. واللوج مش بيظهر خالص يعني الـ role ناقصها [[AWSLambdaBasicExecutionRole]].`,
+          solCode: R`cat > trust-lambda.json <<'EOF'
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"},"Action":"sts:AssumeRole"}]}
+EOF
+aws iam create-role --role-name lambda-basic --assume-role-policy-document file://trust-lambda.json
+aws iam attach-role-policy --role-name lambda-basic --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+aws apigatewayv2 get-apis --query "Items[].[Name,ApiEndpoint]" --output table`
         },
         {
           cmd: "SES",
@@ -928,7 +1135,16 @@ SPF و DMARC: [[MAIL FROM]] مخصص (زي [[mail.example.com]]) بسجل MX و 
             "قفلة المحتوى.",
             "قفلة الأمر.",
             "قفلة الدالة."
-          ]
+          ],
+          sol: R`[[create-email-identity]] بيرجّع JSON فيه [[IdentityType: DOMAIN]] و [[VerifiedForSendingStatus: false]] و [[DkimAttributes.Tokens]] فيها ٣ tokens. كل token بيبقى CNAME: الاسم [[TOKEN._domainkey.example.com]] والقيمة [[TOKEN.dkim.amazonses.com]]. بعد ما الـ DNS ينتشر (دقايق لساعات)، [[get-email-identity]] يقول [[DkimAttributes.Status: SUCCESS]] و [[VerifiedForSendingStatus: true]]. وإيميلك الشخصي بيوصله رابط توثيق لازم تضغط عليه.
+
+في Gmail «Show original» المتوقع: [[DKIM: 'PASS' with domain example.com]]، و [[SPF: PASS]] بس غالبًا على دومين [[amazonses.com]] (لأن الـ MAIL FROM الافتراضي بتاع SES)، ولو عندك سجل DMARC هتلاقي [[DMARC: 'PASS']] بسبب الـ DKIM. ولو عايز الـ SPF على دومينك انت، اعمل custom MAIL FROM domain.
+
+الأخطاء الشائعة: [[MessageRejected: Email address is not verified. The following identities failed the check in region EU-CENTRAL-1: ...]] وده لأنك في الـ sandbox وبتبعت لإيميل مش موثّق، أو وثّقت في region والكود على region تانية. والإيميل يوصل Spam يبقى غالبًا الـ DKIM لسه مش SUCCESS.`,
+          solCode: R`aws sesv2 create-email-identity --email-identity example.com --query "DkimAttributes.Tokens"
+aws sesv2 create-email-identity --email-identity you@gmail.com
+aws sesv2 get-email-identity --email-identity example.com --query "[VerifiedForSendingStatus,DkimAttributes.Status]"
+aws sesv2 send-email --from-email-address "MyApp <no-reply@example.com>" --destination ToAddresses=you@gmail.com --content "Simple={Subject={Data=test},Body={Text={Data=hello}}}"`
         },
         {
           cmd: "Parameter Store و Secrets Manager",
@@ -963,7 +1179,20 @@ aws secretsmanager get-secret-value --secret-id myapp/prod/stripe --query Secret
             "اعرض أسماء كل أسرار الإنتاج تحت المسار ده.",
             "Secrets Manager: سر فيه JSON (بيتحاسب ٠.٤ دولار في الشهر).",
             "اقرا السر."
-          ]
+          ],
+          sol: R`السكربت تحت. أول تشغيل المفروض يطبع [[DATABASE_URL loaded (57 chars)]] (رقم على قد الـ URL بتاعك) وبعدين التطبيق يشتغل عادي. لاحظ إن السكربت مبيطبعش القيمة نفسها، عشان متتسربش في لوج.
+
+بعد ما تشيل [[ssm:GetParameter]] من الـ role، السكربت يقف ومش هيشغّل التطبيق، وتطلع رسالة زي:
+
+[[An error occurred (AccessDeniedException) when calling the GetParameter operation: User: arn:aws:sts::123456789012:assumed-role/myapp-ec2/i-0abc... is not authorized to perform: ssm:GetParameter on resource: arn:aws:ssm:eu-central-1:123456789012:parameter/myapp/dev/DATABASE_URL because no identity-based policy allows the ssm:GetParameter action]]
+
+الرسالة فيها كل اللي محتاجه: مين (الـ role)، وإيه (الـ action)، وعلى إيه (الـ ARN). والغلطة الشائعة إن السكربت من غير [[set -e]] يكمّل ويشغّل التطبيق بـ [[DATABASE_URL]] فاضي، فتاخد خطأ اتصال غامض من الـ ORM بدل AccessDenied الواضح. وتانية: قيمة SecureString ترجع مشفّرة (نص طويل غريب) لأنك نسيت [[--with-decryption]]، أو ترجع AccessDenied على [[kms:Decrypt]] لو المفتاح customer managed.`,
+          solCode: R`#!/bin/bash
+set -euo pipefail
+DATABASE_URL=$(aws ssm get-parameter --name /myapp/dev/DATABASE_URL --with-decryption --query Parameter.Value --output text)
+export DATABASE_URL
+echo "DATABASE_URL loaded ($(printf %s "$DATABASE_URL" | wc -c) chars)"
+exec node server.js`
         }
       ]
     },
@@ -1005,7 +1234,32 @@ dig +short www.example.com`,
             "اعرض الـ records: الاسم والنوع والـ TTL.",
             "مين الـ nameservers بتوع الدومين فعلًا.",
             "www بتشاور على إيه دلوقتي."
-          ]
+          ],
+          sol: R`[[www.json]] تحت. [[change-resource-record-sets]] بيرجّع [[ChangeInfo]] فيه [[Status: PENDING]] و [[Id]]، وبعد أقل من دقيقة غالبًا [[get-change]] يقول [[INSYNC]]. بعدها [[dig +short www.example.com]] بيرجّع كذا IP (عناوين CloudFront، بتتغير)، ومش هترجّع اسم cloudfront.net زي الـ CNAME، لأن الـ alias بيتحل جوه Route 53.
+
+لو [[dig]] مرجّعش حاجة، اتأكد إن [[dig +short NS example.com]] بيرجّع nameservers بتاعة [[awsdns]] نفس اللي في الـ hosted zone؛ لو لسه nameservers المسجّل القديم يبقى الـ zone ده محدش بيسأله. ولو الـ IPs رجعت بس فتح [[https://www.example.com]] طلّع [[403 ERROR The request could not be satisfied]]، يبقى الـ distribution ناقصه Alternate domain name [[www.example.com]] وشهادة ACM ليه (والشهادة لازم تبقى في us-east-1).
+
+وأخطاء الـ JSON: [[InvalidChangeBatch]] لو كتبت [[TTL]] أو [[ResourceRecords]] مع alias (الـ alias ملوش TTL)، أو حطيت [[HostedZoneId]] بتاع الـ zone بتاعك بدل [[Z2FDTNDATAQYW2]].`,
+          solCode: R`cat > www.json <<'EOF'
+{
+  "Comment": "www -> CloudFront",
+  "Changes": [{
+    "Action": "UPSERT",
+    "ResourceRecordSet": {
+      "Name": "www.example.com",
+      "Type": "A",
+      "AliasTarget": {
+        "HostedZoneId": "Z2FDTNDATAQYW2",
+        "DNSName": "d111111abcdef8.cloudfront.net",
+        "EvaluateTargetHealth": false
+      }
+    }
+  }]
+}
+EOF
+CHANGE=$(aws route53 change-resource-record-sets --hosted-zone-id Z0123456789ABCDEFGHIJ --change-batch file://www.json --query ChangeInfo.Id --output text)
+aws route53 wait resource-record-sets-changed --id $CHANGE
+dig +short www.example.com`
         },
         {
           cmd: "Cloudflare proxy و SSL",
@@ -1039,7 +1293,12 @@ IP سيرفرك ممكن يتسرّب برضه: سجل رمادي قديم عل�
             "كلّم سيرفرك مباشرة واطبع الشهادة: مين أصدرها وبتخلص إمتى (لازم سليمة عشان strict).",
             "تابع الـ redirects: لو لفّت ٥ مرات، عندك loop.",
             "اسمح لـ 80 و 443 من IPs بتاعة Cloudflare بس (واقفل الباقي بعدها)."
-          ]
+          ],
+          sol: R`مع السحابة البرتقاني، [[dig +short myapp.example.com]] بيرجّع IPs بتاعة Cloudflare (غالبًا بتبدأ بـ [[104.21.]] أو [[172.67.]])، مش IP سيرفرك. و [[curl -sI]] بيرجّع [[server: cloudflare]] و [[cf-ray: ...-CAI]] مثلًا (آخر ٣ حروف هي الـ data center اللي رد، و CAI يعني القاهرة) و [[cf-cache-status: DYNAMIC]] للـ HTML.
+
+أمر openssl على IP السيرفر مباشرة المفروض يطبع [[subject=CN=myapp.example.com]] و [[issuer=C=US, O=Let's Encrypt, CN=...]] وتاريخ [[notAfter]] في المستقبل. لو ده سليم، Full (strict) يشتغل والموقع يفتح عادي. وأمر [[curl -sIL http://...]] المفروض يوري [[301]] لـ https وبعدين [[200]].
+
+أخطاء شائعة: بعد Full (strict) الموقع يطلع Error 526 (Invalid SSL certificate)، وده لأن الشهادة على السيرفر self-signed أو منتهية أو اسمها مختلف. و [[ERR_TOO_MANY_REDIRECTS]] بيحصل لو الـ mode لسه Flexible والسيرفر بيحوّل HTTP لـ HTTPS، فالطلب يلف ما بينهم. و 521 أو 522 يعني Cloudflare مش واصل للسيرفر، غالبًا الفايروول بيقفل IPs بتاعة Cloudflare.`
         },
         {
           cmd: "Cloudflare cache و WAF",
@@ -1073,7 +1332,20 @@ WAF: الخطة المجانية فيها Free Managed Ruleset للثغرات ا
             "امسح ملف معين من كاش Cloudflare بالـ API.",
             "token محدود بصلاحية purge، والـ body JSON.",
             "الملفات اللي عايز تمسحها."
-          ]
+          ],
+          sol: R`قبل الـ Cache Rule: ملف [[app.js]] يرجّع [[cf-cache-status: HIT]] (بعد أول طلب MISS)، لأن Cloudflare بيكاش امتدادات static افتراضيًا، و [[/api/me]] يرجّع [[DYNAMIC]] (مش متكاش أصلًا). وصفحة [[/blog/post-1]] برضه [[DYNAMIC]] لأنها HTML. بعد الـ rule: أول طلب [[MISS]]، والتاني [[HIT]]، ولو الـ origin بعت [[Cache-Control: private]] أو [[Set-Cookie]] ممكن تلاقيها [[BYPASS]] أو [[DYNAMIC]] حسب إعدادات الـ rule.
+
+الـ WAF: [[curl -sI https://myapp.example.com/wp-login.php]] يرجّع [[HTTP/2 403]] ومعاه [[cf-ray]]، والـ body صفحة Cloudflare فيها «Sorry, you have been blocked». وفي Security Events هتلاقي الطلب ده باسم الـ rule. والـ purge API يرجّع [[{"success":true,"errors":[],"messages":[],"result":{"id":"..."}}]].
+
+الغلطة الشائعة: تعمل الـ Cache Rule على [[/blog/]] وصفحات فيها حاجة لليوزر المسجّل (زي اسمه في الـ header)، فيوزر يشوف اسم يوزر تاني. ولو [[cf-cache-status]] فضل [[DYNAMIC]] بعد الـ rule، يبقى الـ rule مش بيطابق (راجع الـ expression) أو السحابة رمادي (DNS only) فمفيش Cloudflare في النص أصلًا.`,
+          solCode: R`# Cache Rule expression:
+starts_with(http.request.uri.path, "/blog/")
+# WAF custom rule expression (Action: Block):
+(http.request.uri.path contains "/wp-login.php")
+# التجربة:
+curl -sI https://myapp.example.com/blog/post-1 | grep -i cf-cache-status
+curl -sI https://myapp.example.com/blog/post-1 | grep -i cf-cache-status
+curl -s -o /dev/null -w "%{http_code}\n" https://myapp.example.com/wp-login.php`
         }
       ]
     },
@@ -1381,7 +1653,12 @@ Netlify نفس الفكرة تقريبًا: deploy previews، ومتغيرات �
             "deploy كـ preview (URL لوحده).",
             "deploy للـ production.",
             "لوجات deploy معين."
-          ]
+          ],
+          sol: R`بعد ربط الريبو وفتح الـ PR، Vercel bot بيكتب تعليق على الـ PR فيه جدول بالـ Status (Building ثم Ready) ولينك Preview زي [[https://myapp-git-feature-x-yourteam.vercel.app]]، وكل push جديد على الـ branch بيعمل preview جديد ويحدّث التعليق. والـ Checks في الـ PR فيها Vercel كـ check.
+
+بعد ما تغيّر متغير بيئة للـ Preview من الداشبورد أو بـ [[vercel env]]، الـ preview القديم هيفضل بالقيمة القديمة. ده مقصود: كل deployment immutable، والمتغيرات بتتقري وقت الـ build (و [[NEXT_PUBLIC_*]] بتتكتب جوه الـ JS نفسه). عشان تاخد القيمة الجديدة لازم deployment جديد: push تاني أو Redeploy من الداشبورد.
+
+الغلطة الشائعة: تغيّر المتغير في Production بس وتستغرب إن الـ preview مش شايفه (كل environment ليه قيم لوحده). أو تنسى تعمل [[vercel env pull]] تاني فالـ [[.env.local]] على جهازك بالقيمة القديمة. وتانية: [[vercel logs]] مبيعرضش لوجات قديمة كتير على الخطة المجانية، فلو مش لاقي خطأ امبارح، ده سبب محتمل.`
         },
         {
           cmd: "Supabase / Neon",
@@ -1414,7 +1691,19 @@ Supabase المجاني: المشروع بيتوقف (pause) لو مفيش نش�
             "Supabase مباشر (5432): للـ migrations.",
             "Neon عن طريق الـ pooler: الهوست فيه -pooler.",
             "Neon مباشر: نفس الهوست من غير -pooler، للـ migrations."
-          ]
+          ],
+          sol: R`الأرقام بتفرق حسب الإعدادات، بس الشكل المتوقع: [[pg_stat_activity]] فيه أصلًا صفوف كتير من المنصة نفسها (خصوصًا Supabase: خدمات زي Auth و Realtime و PostgREST)، فقارن باتصالات يوزر التطبيق بس بالـ query اللي تحت. وانت بتضرب ٥٠ طلب: بالـ direct URL من تطبيق serverless، الرقم بيطلع مع عدد النسخ اللي اشتغلت (كل نسخة ليها pool لوحدها)، وممكن يوصل للحد وتاخد [[too many connections]] أو [[remaining connection slots are reserved]]. بالـ pooler، عدد اتصالات Postgres الحقيقية بيفضل صغير وثابت تقريبًا، لأن الـ pooler (Supavisor أو PgBouncer في Neon) بيوزّع الطلبات على عدد قليل من الاتصالات.
+
+والـ migration بالمباشر: [[prisma migrate deploy]] المفروض يعدّي على [[DIRECT_URL]] (أو [[NEON_DIRECT_URL]]). لو شغّلته على الـ pooler في transaction mode ممكن يقف أو يفشل، لأن الـ migrations محتاجة session كاملة (locks و prepared statements).
+
+الغلطة الأشهر: التطبيق بـ Prisma على بورت 6543 من غير [[?pgbouncer=true]]، فيطلع [[prepared statement "s0" already exists]] بشكل عشوائي تحت الضغط. وتانية: تحط الـ pooler URL في [[directUrl]] بالغلط فالـ migrate يفشل.`,
+          solCode: R`SELECT usename, application_name, state, count(*)
+FROM pg_stat_activity
+WHERE backend_type = 'client backend'
+GROUP BY 1, 2, 3
+ORDER BY 4 DESC;
+# في ترمنال تاني، ٥٠ طلب مع بعض:
+seq 50 | xargs -P 50 -I{} curl -s -o /dev/null https://myapp.example.com/api/items`
         }
       ]
     },
@@ -1830,7 +2119,26 @@ aws ecr describe-images --repository-name myapp-api --query "imageDetails[].[ima
             "ادّيها الاسم الكامل بتاع ECR.",
             "ارفعها.",
             "اعرض الـ images المرفوعة وحجمها."
-          ]
+          ],
+          sol: R`الـ [[keep-last-20.json]] تحت. [[put-lifecycle-policy]] بيرجّع [[registryId]] و [[repositoryName]] و [[lifecyclePolicyText]] (نفس الـ JSON). والقاعدة مش بتمسح فورًا: ECR بيطبّقها في الخلفية خلال ساعات، فلو عايز تشوف هتمسح إيه قبلها شغّل الـ preview اللي تحت.
+
+[[describe-image-scan-findings]] محتاج [[--image-id imageTag=1.4.0]]، وبيرجّع [[imageScanStatus.status: COMPLETE]] و [[findingSeverityCounts]] زي [[{"HIGH": 2, "MEDIUM": 7, "LOW": 12}]]. الأرقام بتفرق حسب الـ base image: [[node:22-alpine]] أو [[distroless]] غالبًا أقل بكتير من [[node:22]] الكامل، وده سبب كويس تصغّر الـ image.
+
+أخطاء شائعة: [[ScanNotFoundException]] يعني الـ image اترفعت قبل ما تفعّل [[scanOnPush]] أو لسه الفحص شغال (استنى أو [[aws ecr start-image-scan]]). و [[InvalidParameterException]] على الـ policy غالبًا [[countNumber]] مكتوب كنص [["20"]] بدل رقم، أو [[tagStatus]] بـ [[tagged]] من غير [[tagPrefixList]]. وخلي بالك إن [[tagStatus: any]] بيعدّ كل الـ images، فلو عندك tag اسمه [[prod]] قديم ممكن يتمسح؛ لو ده خطر اعمل قاعدة بأولوية أعلى تحميه.`,
+          solCode: R`cat > keep-last-20.json <<'EOF'
+{
+  "rules": [{
+    "rulePriority": 1,
+    "description": "keep last 20 images",
+    "selection": { "tagStatus": "any", "countType": "imageCountMoreThan", "countNumber": 20 },
+    "action": { "type": "expire" }
+  }]
+}
+EOF
+aws ecr put-lifecycle-policy --repository-name myapp-api --lifecycle-policy-text file://keep-last-20.json
+aws ecr start-lifecycle-policy-preview --repository-name myapp-api
+aws ecr get-lifecycle-policy-preview --repository-name myapp-api --query "previewResults[].[imageTags[0],action.type]" --output table
+aws ecr describe-image-scan-findings --repository-name myapp-api --image-id imageTag=1.4.0 --query "[imageScanStatus.status,imageScanFindings.findingSeverityCounts]"`
         },
         {
           cmd: "ECS Fargate",
@@ -1871,7 +2179,15 @@ VPS بـ Docker Compose أرخص بكتير لمشروع صغير. Fargate بي�
             "المسار اللي الـ load balancer بيسأله: التطبيق عايش؟",
             "من نسخة لـ ٤ حسب الضغط.",
             "اعرض الـ clusters في الـ region."
-          ]
+          ],
+          sol: R`الأمر بيرجّع [[service]] فيه [[serviceArn]] و [[status]]، والـ URL في [[activeConfigurations[0].ingressPaths[0].endpoint]] (نفس اللي بيظهر في الكونسول). أول ما الـ deployment يخلص (دقايق)، [[curl https://ENDPOINT/health]] يرجّع 200 من الـ container بتاعك. و [[list-clusters]] هيوري [[arn:aws:ecs:eu-central-1:123456789012:cluster/default]] لأن الـ express mode بيستخدم الـ cluster الافتراضي لو محددتش.
+
+في الكونسول هتلاقي الحاجات اللي اتعملت لوحدها: task definition، و service، و Application Load Balancer بـ listener على HTTPS، و target group بالـ health check على [[/health]]، و security groups (واحدة للـ ALB وواحدة للـ tasks بتقبل من الـ ALB بس)، و autoscaling بين 1 و 4 tasks، و log group في CloudWatch. ده بالظبط الشغل اللي كان محتاج عشرات الأوامر.
+
+أخطاء شائعة: الـ tasks تفضل تقوم وتقع، وفي Events [[CannotPullContainerError]] (الـ execution role ناقصها صلاحيات ECR، أو الـ image مبنية لـ arm64 والـ task على x86)، أو [[failed ELB health checks]] (الـ app مش بترد 200 على [[/health]]، أو بتسمع على [[localhost]] بدل [[0.0.0.0]]، أو البورت مش 3000). والمسح مهم: الـ ALB لوحده بيتحاسب بالساعة، فامسح بـ [[delete-express-gateway-service]] واتأكد إن الـ ALB اختفى.`,
+          solCode: R`aws ecs describe-express-gateway-service --service-arn arn:aws:ecs:eu-central-1:123456789012:service/default/myapp-api --query "service.activeConfigurations[0].ingressPaths[0].endpoint" --output text
+aws ecs delete-express-gateway-service --service-arn arn:aws:ecs:eu-central-1:123456789012:service/default/myapp-api
+aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,State.Code]" --output table`
         }
       ]
     },
@@ -1916,7 +2232,18 @@ kubectl rollout undo deployment/api`,
             "تابع لوجات الـ deployment اللي اسمه api.",
             "ادخل ترمنال جوه واحد من الـ pods.",
             "ارجع للنسخة اللي قبل كده."
-          ]
+          ],
+          sol: R`[[kind create cluster]] بيطبع خطوات بعلامات صح وفي الآخر [[Set kubectl context to "kind-dev"]]. و [[kubectl get nodes]] يطبع [[dev-control-plane Ready control-plane]]. بعد [[create deployment]]، [[kubectl get pods]] يوري ٣ pods أساميهم زي [[web-7c5b8d9f6-abcde]] وحالتهم [[Running]].
+
+في [[get pods -w]] بعد ما تمسح pod هتشوف في ثانية أو اتنين: الـ pod القديم [[Terminating]]، وواحد جديد باسم مختلف [[Pending]] ثم [[ContainerCreating]] ثم [[Running]]. العدد بيرجع ٣ لوحده لأن الـ ReplicaSet شايف «المطلوب ٣، والموجود ٢»، مش لأن حد عمل restart للـ pod القديم؛ ده pod جديد خالص باسم و IP جداد.
+
+أخطاء شائعة: [[kind: command not found]] أو [[Cannot connect to the Docker daemon]] (kind محتاج Docker شغال). و [[ImagePullBackOff]] لو كتبت اسم image غلط. ولو [[kubectl]] بيكلّم cluster تاني (مثلًا شغل)، شوف [[kubectl config current-context]] قبل ما تمسح أي حاجة. (ملحوظة: في بيئة التجهيز هنا kind نفسه مقدرش يقوم جوه container، فالناتج ده من الشكل المعروف لـ kind، مش من تشغيل هنا.)`,
+          solCode: R`kind create cluster --name dev
+kubectl create deployment web --image=nginx:alpine --replicas=3
+kubectl get pods -o wide
+kubectl delete pod $(kubectl get pods -l app=web -o name | head -1 | cut -d/ -f2)
+kubectl get pods -w
+kind delete cluster --name dev`
         },
         {
           cmd: "Deployment YAML",
@@ -1971,7 +2298,27 @@ spec:
             "متغيرات البيئة من ConfigMap و Secret (الدرس الجاي).",
             "متبعتش ترافيك غير لما /health يرد.",
             "احجز عُشر CPU و ١٢٨ ميجا، واقتله لو عدّى ٢٥٦ ميجا."
-          ]
+          ],
+          sol: R`الملف بعد التعديلات تحت (من غير envFrom). [[kubectl apply -f k8s/]] يطبع [[deployment.apps/api created]]، و [[kubectl get deploy api]] يوري [[READY 3/3]] بعد ما الـ readinessProbe تعدّي. [[expose]] يطبع [[service/api exposed]]، و [[port-forward]] يطبع [[Forwarding from 127.0.0.1:8080 -> 80]]، و [[http://localhost:8080]] يفتح صفحة [[Welcome to nginx!]].
+
+جرّب كمان تغيّر [[replicas]] لـ 5 وتعمل apply تاني: هيطبع [[deployment.apps/api configured]] ويقوم ٢ زيادة، لأن الـ YAML «حالة مطلوبة» مش أمر.
+
+أخطاء شائعة: [[READY 0/3]] والـ pods [[Running]] بس مش Ready، وده لأن الـ readinessProbe لسه على [[/health]] أو بورت 3000 فـ nginx بيرجّع 404 أو مفيش حد بيسمع. و [[CreateContainerConfigError]] يعني سبت [[envFrom]] والـ ConfigMap أو الـ Secret مش موجودين. و [[selector does not match template labels]] لو غيّرت الـ label في مكان واحد بس. الملف ده عدّى من [[kubeconform -strict]].`,
+          solCode: R`apiVersion: apps/v1
+kind: Deployment
+metadata: { name: api }
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: api } }
+  template:
+    metadata: { labels: { app: api } }
+    spec:
+      containers:
+        - name: api
+          image: nginx:alpine
+          ports: [{ containerPort: 80 }]
+          readinessProbe: { httpGet: { path: /, port: 80 } }
+          resources: { requests: { cpu: 100m, memory: 128Mi }, limits: { memory: 256Mi } }`
         },
         {
           cmd: "ConfigMap و Secret",
@@ -2005,7 +2352,17 @@ kubectl rollout status deployment/api`,
             "حدّث الـ Secret لو موجود (بدل ما create يفشل).",
             "أعد تشغيل الـ pods تدريجي عشان ياخدوا القيم الجديدة.",
             "استنى لحد ما الـ rollout يخلص وشوف نجح ولا لأ."
-          ]
+          ],
+          sol: R`أول مرة: [[kubectl exec deploy/api -- env | grep LOG_LEVEL]] يطبع [[LOG_LEVEL=info]]. بعد ما تغيّر الـ ConfigMap لـ [[debug]] (بالأمر اللي تحت)، نفس الأمر لسه يطبع [[LOG_LEVEL=info]]: متغيرات البيئة بتتقري مرة واحدة وقت ما الـ container يبدأ، والـ pod الشغال مش هيعرف إن الـ ConfigMap اتغير. بعد [[rollout restart]]، [[rollout status]] يطبع [[deployment "api" successfully rolled out]]، والـ pods الجديدة تطبع [[LOG_LEVEL=debug]].
+
+و [[get secret ... | base64 -d]] بيطبع الـ DATABASE_URL نفسه، يعني الـ Secret مش مشفّر، ده base64 بس: أي حد عنده صلاحية [[get secrets]] يقراه. ده الفرق اللي بيتسأل عليه في الانترفيو.
+
+أخطاء شائعة: تعمل [[kubectl create configmap]] تاني عشان تغيّر القيمة فتاخد [[AlreadyExists]]؛ الطريقة هي [[--dry-run=client -o yaml | kubectl apply -f -]]. و [[.env.production]] فيه سطر بعلامات تنصيص، فالقيمة تتخزن بالتنصيص نفسه. ولو [[env]] مطبعش المتغير خالص، الـ Deployment مفيهوش [[envFrom]] أو اسم الـ ConfigMap فيه مختلف.`,
+          solCode: R`kubectl create configmap api-config --from-literal=NODE_ENV=production --from-literal=LOG_LEVEL=debug --dry-run=client -o yaml | kubectl apply -f -
+kubectl exec deploy/api -- env | grep LOG_LEVEL
+kubectl rollout restart deployment/api
+kubectl rollout status deployment/api
+kubectl exec deploy/api -- env | grep LOG_LEVEL`
         }
       ]
     },
@@ -2065,7 +2422,38 @@ resource "aws_s3_bucket_public_access_block" "assets" {
             "تجاهل أي ACL عامة موجودة.",
             "اقفل الوصول لو فيه policy عامة.",
             "قفلة."
-          ]
+          ],
+          sol: R`الملف كامل تحت. [[terraform validate]] يقول [[Success! The configuration is valid.]]، و [[terraform plan]] ينتهي بـ:
+
+[[Plan: 2 to add, 0 to change, 0 to destroy.]]
+[[Changes to Outputs: + bucket_arn = (known after apply)]]
+
+يعني resource للـ bucket (وفيه [[bucket = "myapp-assets-dev"]]) وواحد للـ public access block، والـ ARN «known after apply» لأنه مش معروف غير بعد الإنشاء. جرّب [[terraform plan -var env=prod]] وشوف الاسم يبقى [[myapp-assets-prod]]. (شغّلت ده فعلًا بـ provider 6.x والنتيجة زي ما هي.)
+
+أخطاء شائعة: [[Error: Retrieving AWS account details: validating provider credentials ... InvalidClientTokenId]] يعني الترمنال مش داخل على AWS (اعمل [[aws login]] أو حدد [[AWS_PROFILE]]). و [[Reference to undeclared input variable]] لو كتبت [[var.env]] من غير block الـ variable. ولو كتبت [["myapp-assets-var.env"]] من غير [[$__{var.env}]]، الاسم هيبقى النص ده حرفيًا.`,
+          solCode: R`provider "aws" {
+  region = "eu-central-1"
+}
+
+variable "env" {
+  default = "dev"
+}
+
+resource "aws_s3_bucket" "assets" {
+  bucket = "myapp-assets-$__{var.env}"
+}
+
+resource "aws_s3_bucket_public_access_block" "assets" {
+  bucket                  = aws_s3_bucket.assets.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+output "bucket_arn" {
+  value = aws_s3_bucket.assets.arn
+}`
         },
         {
           cmd: "terraform plan / apply",
@@ -2106,7 +2494,18 @@ terraform destroy`,
             "نفّذ الـ plan المحفوظ بالظبط.",
             "الموارد اللي Terraform بيديرها.",
             "امسح كل حاجة في الـ state (بيسألك الأول)."
-          ]
+          ],
+          sol: R`بعد [[apply]]: [[Apply complete! Resources: 2 added, 0 changed, 0 destroyed.]] و [[bucket_arn = "arn:aws:s3:::myapp-assets-dev"]]، و [[state list]] يطبع السطرين [[aws_s3_bucket.assets]] و [[aws_s3_bucket_public_access_block.assets]].
+
+لما تغيّر الاسم (مثلًا [[-var env=staging]]) الـ plan يطبع:
+
+[[# aws_s3_bucket.assets must be replaced]]
+[[~ bucket = "myapp-assets-dev" -> "myapp-assets-staging" # forces replacement]]
+[[Plan: 2 to add, 0 to change, 2 to destroy.]]
+
+يعني الاتنين هيتمسحوا ويتعملوا من جديد ([[-/+]])، لأن اسم الـ bucket مينفعش يتعدّل، والـ access block تابع له. ده اللي عايزك تلاحظه: أي ملفات جوه الـ bucket كانت هتضيع. و [[destroy]] يطبع [[Plan: 0 to add, 0 to change, 2 to destroy.]] ويستنى [[yes]].
+
+الغلطة الشائعة: [[destroy]] يفشل بـ [[BucketNotEmpty]] لأن فيه ملفات جوه الـ bucket؛ ده حماية، فاضيه بإيدك ([[aws s3 rm s3://... --recursive]]) أو استخدم [[force_destroy = true]] في بيئات التجربة بس. (الـ plan ده اتجرّب هنا على state فيه الـ bucket بـ [[-refresh=false]].)`
         },
         {
           cmd: "Terraform state",
@@ -2157,7 +2556,14 @@ terraform destroy`,
             "شفّر الملف في S3.",
             "قفلة الـ backend.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[terraform init -migrate-state]] بيسألك [[Do you want to copy existing state to the new backend?]]، تكتب [[yes]]، وبعدها [[Successfully configured the backend "s3"!]]. وفي الـ bucket هتلاقي [[prod/terraform.tfstate]]، ومع versioning كل apply بيعمل version جديدة ترجع لها لو الـ state باظ. وتقدر تمسح [[terraform.tfstate]] المحلي بعد ما تتأكد إن [[terraform plan]] بيقول [[No changes]].
+
+والـ lock: الـ plan بياخد الـ lock ثواني بس، فلو الاتنين مجوش في نفس اللحظة بالظبط ممكن الاتنين يعدّوا. الأضمن: شغّل [[terraform apply]] في ترمنال وسيبه واقف عند [[Enter a value:]] (هو ماسك الـ lock)، وشغّل [[plan]] في التاني. هتاخد:
+
+[[Error: Error acquiring the state lock]] ومعاها [[Lock Info:]] فيها [[ID]] و [[Path]] و [[Operation: OperationTypeApply]] و [[Who]] (اليوزر والجهاز). جرّبت الرسالة دي بـ local state والشكل واحد؛ مع S3 الـ Path بيبقى [[myapp-tfstate/prod/terraform.tfstate]]، وملف [[.tflock]] بيظهر جنب الـ state طول ما الـ lock ماسك.
+
+الغلطة الشائعة: تعمل [[terraform force-unlock ID]] والعملية التانية لسه شغالة فعلًا، فالاتنين يكتبوا في نفس الـ state. استخدمه بس لو متأكد إن اللي ماسك الـ lock مات (مثلًا CI اتقفل في النص). وتانية: [[Error: Failed to get existing workspaces ... NoSuchBucket]] لأنك عملت الـ backend قبل ما تعمل الـ bucket بإيدك.`
         },
         {
           cmd: "GitHub OIDC",
@@ -2208,7 +2614,32 @@ terraform destroy`,
             "قفلة الشروط.",
             "قفلة القاعدة والقايمة.",
             "قفلة الـ policy."
-          ]
+          ],
+          sol: R`الـ workflow تحت (عدّى من [[actionlint]]). على main، step الـ credentials يطبع [[Assuming role with OIDC]] وبعدها [[Authenticated as assumedRoleId AROA...:GitHubActions]]، و [[get-caller-identity]] يطلّع [[arn:aws:sts::123456789012:assumed-role/github-readonly/GitHubActions]]، و [[s3 ls]] يعرض الملفات. من branch تاني، نفس الـ step يفشل بـ [[Could not assume role with OIDC: Not authorized to perform sts:AssumeRoleWithWebIdentity]]، لأن الـ [[sub]] في التوكن بقى [[repo:myorg/myapp:ref:refs/heads/feature-x]] ومش مطابق للـ Condition.
+
+لاحظ إن [[s3:ListBucket]] بيتدّى على الـ bucket نفسه [[arn:aws:s3:::myapp-site]] مش [[/*]]. لو كتبته بـ [[/*]] هتاخد [[AccessDenied ... ListObjectsV2]] مع إن الـ role اتلبست صح.
+
+أخطاء شائعة: [[No OpenIDConnect provider found in your account]] يعني الـ provider مش معمول (أو الـ ARN في الـ trust فيه رقم حساب غلط). و [[Incorrect token audience]] يعني [[client-id-list]] مش [[sts.amazonaws.com]]. ولو الـ workflow بيشتغل على [[pull_request]] الـ sub بيبقى [[repo:myorg/myapp:pull_request]]، ولو فيه [[environment:]] بيبقى [[repo:myorg/myapp:environment:prod]]، فالـ Condition لازم تطابق الشكل ده.`,
+          solCode: R`aws iam create-open-id-connect-provider --url https://token.actions.githubusercontent.com --client-id-list sts.amazonaws.com
+# trust-github.json = الـ trust policy اللي في المثال
+aws iam create-role --role-name github-readonly --assume-role-policy-document file://trust-github.json
+aws iam put-role-policy --role-name github-readonly --policy-name list-site --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::myapp-site"}]}'
+# .github/workflows/whoami.yml
+name: whoami
+on: [push, workflow_dispatch]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  whoami:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-readonly
+          aws-region: eu-central-1
+      - run: aws sts get-caller-identity
+      - run: aws s3 ls s3://myapp-site`
         },
         {
           cmd: "deploy.yml إلى AWS",
@@ -2263,7 +2694,12 @@ jobs:
             "الـ region.",
             "ابني وارفع الـ assets بكاش سنة.",
             "ارفع index.html من غير كاش وامسحه من كاش CloudFront."
-          ]
+          ],
+          sol: R`الـ run المفروض يبقى أخضر، وفي step [[configure-aws-credentials]] هتلاقي [[Assuming role with OIDC]] و [[Authenticated as assumedRoleId ...]]. و step الـ sync يطبع [[upload: dist/assets/index-a1b2c3.js to s3://myapp-site/assets/index-a1b2c3.js]] لكل ملف جديد (والملفات اللي متغيرتش مش بتترفع تاني)، والأخير يطبع JSON الـ invalidation بحالة [[InProgress]].
+
+لما تشيل [[id-token: write]]: step الـ credentials يطبع [[It looks like you might be trying to authenticate with OIDC. Did you mean to set the id-token permission?]] وبعدها يفشل بـ [[Credentials could not be loaded, please check your action inputs: Could not load credentials from any providers]]. السبب: من غير الصلاحية دي GitHub مش بيدّي الـ job توكن OIDC أصلًا، فالـ action ملقاش حاجة يبدّلها بمفاتيح AWS.
+
+أخطاء شائعة: الـ run نجح والموقع لسه قديم لأن [[index.html]] اترفع بكاش طويل من deploy قديم (المتصفح نفسه كاشه). و [[AccessDenied]] على [[CreateInvalidation]] لأن الـ role ناقصها [[cloudfront:CreateInvalidation]]. ولو حطيت [[permissions]] على مستوى الـ job، اللي على مستوى الـ workflow بيتلغي للـ job ده، فلازم تكتب [[contents: read]] هناك كمان وإلا [[checkout]] يفشل في repo private.`
         }
       ]
     },
@@ -2305,7 +2741,31 @@ aws cloudwatch put-metric-alarm --alarm-name myapp-5xx --namespace AWS/Applicati
             "Logs Insights: عدد أخطاء 5xx لكل مسار في آخر ساعة.",
             "هات نتيجة الـ query بالرقم اللي رجع.",
             "إنذار: لو أكتر من ١٠ أخطاء 5xx في ٥ دقايق، ابعت لـ SNS."
-          ]
+          ],
+          sol: R`الـ logger تحت (جرّبته محليًا). كل طلب بيطبع سطر زي:
+
+[[{"level":"info","method":"GET","path":"/users/:id","status":200,"ms":4}]]
+
+لاحظ إن [[path]] هو الـ route pattern مش المسار الحقيقي ([[/users/:id]] مش [[/users/7]])، عشان الـ stats تجمّع كل المستخدمين في سطر واحد. Logs Insights بيقرا حقول الـ JSON لوحده، فالـ query تحت بترجع جدول: [[path]] و [[avgMs]] و [[n]]، مترتب من الأبطأ.
+
+من الترمنال: [[start-query]] بيرجّع [[queryId]]، و [[get-query-results]] بيرجّع [[status: Running]] وبعدين [[Complete]] ومعاه [[results]] كل صف فيها list من [[{field, value}]].
+
+أخطاء شائعة: الجدول فاضي لأن التطبيق بيطبع نص عادي مش JSON (أو بيطبع [[console.log(obj)]] من غير [[JSON.stringify]] فيطلع شكل Node مش JSON)، أو اختار log group غلط أو فترة زمنية مفيهاش لوجات. ولو الـ path هو المسار الحقيقي، الـ stats هتطلع آلاف الصفوف ومفيش فايدة. ولو [[sort]] على [[avg(ms)]] مباشرة مشتغلش عندك، سمّيه بـ [[as avgMs]] زي ما تحت.`,
+          solCode: R`app.use((req, res, next) => {
+  const start = performance.now();
+  res.on("finish", () => {
+    console.log(JSON.stringify({
+      level: res.statusCode >= 500 ? "error" : "info",
+      method: req.method,
+      path: req.route?.path ?? "unmatched",
+      status: res.statusCode,
+      ms: Math.round(performance.now() - start),
+    }));
+  });
+  next();
+});
+// Logs Insights:
+// fields path, ms | filter ispresent(ms) | stats avg(ms) as avgMs, count(*) as n by path | sort avgMs desc | limit 10`
         },
         {
           cmd: "Prometheus + Grafana",
@@ -2362,7 +2822,34 @@ app.get("/metrics", async (req, res) => res.type(client.register.contentType).se
             "كمّل للـ route.",
             "قفلة.",
             "endpoint بيطلّع كل الأرقام بصيغة Prometheus."
-          ]
+          ],
+          sol: R`الملفين تحت. بعد [[docker compose up -d]]: [[http://localhost:9090/targets]] المفروض يوري الـ job [[api]] بحالة [[UP]]. و [[curl localhost:3000/metrics]] يطلّع سطور زي:
+
+[[http_request_duration_seconds_bucket{le="0.3",method="GET",route="/users/:id",status="200"} 3]]
+
+جرّبت ده فعلًا: route بتاخد ١٢٠ مللي، والـ query بتاعة الـ p95 رجّعت [[0.29]] للـ route ده. مش غلط: الـ histogram عارف بس إن الطلبات بين 0.1 و 0.3 (الـ buckets)، فـ [[histogram_quantile]] بيقدّر بالـ interpolation جوه الـ bucket. عشان رقم أدق، حط buckets قريبة من الأرقام اللي تهمك. و route اسمها [[unmatched]] ممكن تطلع [[NaN]] لو مفيهاش ترافيك في آخر ٥ دقايق.
+
+أخطاء شائعة: الـ target [[DOWN]] بـ [[connection refused]] لأنك كتبت [[localhost:3000]] جوه Prometheus (ده الـ container نفسه)، الصح اسم الـ service في Compose [[api:3000]]. والـ panel فاضي في Grafana لأن الـ data source URL مكتوب [[http://localhost:9090]] بدل [[http://prometheus:9090]]. ولو شلت [[by (le, route)]] أو نسيت [[le]] الـ query بترجع فاضي أو خطأ.`,
+          solCode: R`# prometheus.yml
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: api
+    static_configs:
+      - targets: ["api:3000"]
+# compose.yaml
+services:
+  api:
+    build: .
+    ports: ["3000:3000"]
+  prometheus:
+    image: prom/prometheus
+    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+  grafana:
+    image: grafana/grafana
+    ports: ["3001:3000"]
+    depends_on: [prometheus]`
         },
         {
           cmd: "Sentry",
@@ -2410,7 +2897,16 @@ Sentry.setupExpressErrorHandler(app);
             "متبعتش بيانات شخصية تلقائي.",
             "قفلة.",
             "في app.mjs: ابعت أي خطأ في Express لـ Sentry."
-          ]
+          ],
+          sol: R`بعد ما تفتح الـ route، خلال ثواني هيظهر issue في Sentry عنوانه [[Error: test sentry]]، وجواه: الـ stack trace لحد السطر اللي فيه [[throw]] في ملفك، وقسم Request فيه الـ URL والـ method والـ headers (من غير IP والكوكيز لأن [[sendDefaultPii: false]])، و tags فيها [[environment]] و [[release]] (لو [[GIT_SHA]] متسجل). واليوزر نفسه هيشوف 500 عادي، لأن Sentry بيسجّل الخطأ وبيسيب الـ error handler التاني يرد.
+
+لو مفيش حاجة ظهرت: أول سبب إن [[SENTRY_DSN]] مش متعرّف في البيئة اللي شغّلت منها، و [[Sentry.init]] بـ dsn فاضي مبيشتكيش، بيقفل نفسه في صمت. تاني سبب: شغّلت [[node app.mjs]] من غير [[--import ./instrument.mjs]]، فالـ instrumentation متحمّلش قبل express. تالت: الـ route عامل [[try/catch]] وبيرجّع 500 بنفسه، فالخطأ موصلش للـ handler أصلًا (في الحالة دي استخدم [[Sentry.captureException(err)]]). ورابع: [[setupExpressErrorHandler]] متحط قبل الـ routes.
+
+جرّب كمان تفتح الـ route مرتين: هيبقى issue واحد عدده 2 events، مش اتنين. وبعدها امسح الـ route واعمل Resolve للـ issue.`,
+          solCode: R`app.get("/debug-sentry", () => {
+  throw new Error("test sentry");
+});
+// SENTRY_DSN=https://...ingest.sentry.io/... NODE_ENV=staging GIT_SHA=$(git rev-parse --short HEAD) node --import ./instrument.mjs app.mjs`
         },
         {
           cmd: "SLI / SLO / error budget",
@@ -2452,7 +2948,16 @@ console.log((sli * 100).toFixed(3) + "%", Math.round(budgetUsed * 100) + "% of b
             "الـ SLI: نسبة النجاح الفعلية.",
             "صرفنا كام من الميزانية.",
             "٩٩.٩٢٥٪ نجاح، وصرفنا ٧٥٪ من الميزانية."
-          ]
+          ],
+          sol: R`الحسبة لـ ٣٠ يوم (٤٣٢٠٠ دقيقة): ٩٩٪ = [[432.0]] دقيقة (٧.٢ ساعة)، و ٩٩.٩٪ = [[43.2]]، و ٩٩.٩٩٪ = [[4.3]] دقيقة بس. كل ٩ زيادة بتقسم الميزانية على ١٠، وده ليه ٩٩.٩٩٪ معناها إن deploy بايظ واحد في الشهر ممكن يخلّص الميزانية.
+
+للوجات: الـ awk تحت بيعد الطلبات والـ 5xx من لوج Nginx بالشكل الافتراضي (الحقل التاسع هو الـ status). على لوج تجربة فيه ٤ طلبات منهم 502 واحد طبع [[total=4 5xx=1 SLI=75.000%]]. على لوج حقيقي لأسبوع المفروض تلاقي رقم زي [[99.9xx%]]. وقارنه بالـ SLO: لو ٩٩.٩٥٪ والـ SLO ٩٩.٩٪، يبقى صرفت نص الميزانية.
+
+الأخطاء الشائعة: تحسب الـ 4xx كفشل (الـ 404 والـ 401 غالبًا غلطة العميل مش السيستم)، أو تعد طلبات الـ health check من الـ load balancer فتعلّي الـ SLI على الفاضي. ولو اللوج بصيغة مختلفة (JSON أو ALB)، رقم الحقل هيختلف: اطبع سطر واحد الأول وعدّ.`,
+          solCode: R`for (const slo of [0.99, 0.999, 0.9999]) console.log(slo, (30 * 24 * 60 * (1 - slo)).toFixed(1));
+// 0.99 432.0 / 0.999 43.2 / 0.9999 4.3
+# من لوجات Nginx لأسبوع:
+cat /var/log/nginx/access.log /var/log/nginx/access.log.1 | awk '{t++} $9>=500{f++} END{printf "total=%d 5xx=%d SLI=%.3f%%\n", t, f, 100*(1-f/t)}'`
         },
         {
           cmd: "incident response",
@@ -2488,7 +2993,22 @@ aws ecs wait services-stable --cluster myapp --services api`,
             "الأخطاء في آخر ربع ساعة.",
             "rollback: رجّع الـ service للـ task definition رقم 41 (آخر نسخة سليمة).",
             "استنى لحد ما النسخ ترجع healthy."
-          ]
+          ],
+          sol: R`runbook نموذجي من ٥ سطور (عدّله لمشروعك):
+
+١. الكشف: uptime check من برا على [[/health]] كل دقيقة بينبّه على Telegram أو الإيميل، أو إنذار 5xx من CloudWatch. أول خطوة أأكّد بـ [[curl -w "%{http_code}"]].
+٢. أبص فين الأول: هل فيه deploy في آخر ساعة؟ ([[describe-services]] أو تاريخ الـ releases). لو أيوه، ده المشتبه الأول.
+٣. اللوج: [[aws logs tail ... --since 15m --filter-pattern ERROR]] أو [[docker compose logs --since 15m]].
+٤. الرجوع: [[update-service]] بالـ task definition اللي قبلها (أو [[git revert]] و deploy)، ومتستناش لحد ما تفهم السبب.
+٥. أبلّغ: رسالة قصيرة للفريق أو العملاء، وبعد ما يستقر أكتب postmortem.
+
+على staging: المفروض تقيس ٣ أرقام: وقت الاكتشاف (من الـ deploy البايظ لحد الإنذار)، ووقت القرار، ووقت الرجوع ([[wait services-stable]] على ECS غالبًا دقايق). لو الرقم الكلي أكبر من ١٥ دقيقة، أكبر جزء فيه غالبًا الاكتشاف، مش الرجوع.
+
+الغلطة الشائعة: الـ rollback يرجّع الكود بس، والـ migration الجديدة اللي نزلت معاه لسه موجودة، فالنسخة القديمة تقع برضه. عشان كده الـ migrations لازم تبقى backward compatible. وتانية: تقعد تصلّح في الإنتاج قدام الناس بدل ما ترجع الأول.`,
+          solCode: R`aws ecs describe-services --cluster myapp --services api --query "services[0].deployments[].[status,taskDefinition,rolloutState]" --output table
+aws ecs list-task-definitions --family-prefix myapp-api --sort DESC --max-items 3
+aws ecs update-service --cluster myapp --service api --task-definition myapp-api:41
+aws ecs wait services-stable --cluster myapp --services api`
         },
         {
           cmd: "postmortem",
@@ -2528,7 +3048,14 @@ Action: اختبار الـ migrations على نسخة بحجم الإنتاج (
             "ليه الاختبارات مكشفتهوش.",
             "تصليح بصاحب وتاريخ.",
             "تصليح تاني يمنع النوع ده كله."
-          ]
+          ],
+          sol: R`مثال نموذجي لمشكلة بسيطة، عشان تشوف الـ «٥ ليه» بتوصل لفين:
+
+المشكلة: الموقع طلّع تحذير SSL ساعتين. ليه؟ الشهادة خلصت. ليه؟ التجديد التلقائي فشل. ليه؟ certbot كان محتاج بورت 80 وأنا قفلته في الفايروول من شهرين. ليه محدش عرف؟ مفيش إنذار على فشل التجديد ولا على تاريخ الانتهاء. ليه؟ مفيش مراقبة للشهادات أصلًا. الـ Action هنا مش «أفتكر أجدد»، دي: uptime check بيفحص تاريخ الشهادة وينبّه قبل ١٤ يوم (owner و تاريخ)، وتجديد بـ DNS challenge مش محتاج بورت 80.
+
+الـ postmortem الكويس لازم فيه: Impact بأرقام (مدة، نسبة، داتا ضاعت ولا لأ)، و Detection (عرفنا إزاي، ومن مين)، و Timeline بالدقايق، و Root cause في السيستم، و Actions كل واحدة ليها owner وتاريخ.
+
+الغلطة الشائعة: توقف عند «ليه» الأولى أو التانية وتكتب «فلان نسي» أو «هنخلّي بالنا». لو الإجابة شخص، اسأل «ليه السيستم سمح إن النسيان ده يوقّع الموقع؟». وتانية: Actions من غير owner وتاريخ، ودي عمليًا مش هتتعمل.`
         }
       ]
     },
@@ -3086,7 +3613,15 @@ Spot: سيرفرات AWS الفاضية بخصم لحد ٩٠٪، بس ممكن �
             "Compute Optimizer: السيرفرات اللي أكبر من احتياجها والنوع المقترح.",
             "آخر أسعار Spot لنوع معين.",
             "طريق مباشر ببلاش من الـ VPC لـ S3، من غير NAT."
-          ]
+          ],
+          sol: R`الجدول اللي هتطلع بيه شكله كده (الأرقام مثال):
+
+[[EUC1-NatGateway-Hours]] و [[NatGateway-Bytes]]: موجود لأن الـ private subnets بتطلع للإنترنت من خلاله (ونازل لـ ECR و S3 كمان). يقل بـ VPC endpoint لـ S3 (ببلاش، gateway endpoint) و ECR، أو NAT واحد بدل واحد لكل AZ في dev، أو تمسحه لو مفيش private subnets فعلًا.
+[[PublicIPv4:InUseAddress]] و [[IdleAddress]]: كل IP عام حوالي ٣.٦ دولار في الشهر. يقل بإنك تمسح Elastic IPs مش مربوطة، وتحط السيرفرات ورا load balancer واحد بدل IP لكل واحد.
+[[DataTransfer-Out-Bytes]]: ترافيك طالع للإنترنت، غالبًا صور وملفات. يقل بـ CloudFront قدام S3 (الخروج من CloudFront أرخص وليه شريحة مجانية) وضغط الصور.
+
+الغلطة الشائعة: تبص على الخدمة بس فتلاقي «EC2-Other» كبير ومش فاهم هو إيه؛ ده بالظبط ليه تقسّم بالـ usage type: جواه NAT و EBS و IPs. وخلي بالك إن أوامر [[aws ce]] نفسها بتتحاسب (حوالي سنت لكل طلب)، فمتحطهاش في loop كل دقيقة.`,
+          solCode: R`aws ce get-cost-and-usage --time-period Start=2026-07-01,End=2026-10-01 --granularity MONTHLY --metrics UnblendedCost --group-by Type=DIMENSION,Key=USAGE_TYPE --query "ResultsByTime[].Groups[].[Keys[0],Metrics.UnblendedCost.Amount]" --output text | sort -k2 -g -r | head -20`
         },
         {
           cmd: "امسح اللي مش مستخدم",
@@ -3125,7 +3660,21 @@ aws s3 rb s3://myapp-old-assets --force`,
             "رجّع الـ IP لـ AWS.",
             "امسح القاعدة بعد snapshot أخير.",
             "امسح الـ bucket وكل اللي فيه."
-          ]
+          ],
+          sol: R`السكربت تحت بيلف على كل region ويطبع بس اللي فيه حاجة. على حساب نضيف المفروض ميطبعش غير أسماء الـ regions. أي سطر تحتها زي [[volumes: vol-0abc... 8]] أو [[eips: eipalloc-...]] أو [[nat: nat-...]] ده مورد بيتحاسب. امسحه بالأوامر اللي في المثال، واستخدم [[aws ec2 delete-nat-gateway]] و [[aws elbv2 delete-load-balancer]] للباقي.
+
+وبعد المسح، شغّل السكربت تاني: الـ NAT Gateway بيفضل ظاهر بحالة [[deleted]] شوية، والـ instance بـ [[terminated]] حوالي ساعة، ودول مش بيتحاسبوا. وفي الكونسول، Resource Explorer (بعد ما تفعّله) أو Tag Editor بـ All regions و All resource types بيعرضوا نفس الصورة من غير سكربت.
+
+الغلطة الشائعة: تمسح الـ instance وتفتكر إن كده خلصت، والديسك فضل [[available]] لأن [[DeleteOnTermination]] كان false، أو الـ Elastic IP فضل محجوز. وتانية: [[delete-db-instance]] من غير snapshot نهائي لقاعدة فيها حاجة مهمة، أو بـ snapshot نهائي لقاعدة تجربة فيفضل الـ snapshot يتحاسب شهور.`,
+          solCode: R`for r in $(aws ec2 describe-regions --query "Regions[].RegionName" --output text); do
+  echo "== $r"
+  aws ec2 describe-instances --region $r --filters Name=instance-state-name,Values=pending,running,stopped --query "Reservations[].Instances[].InstanceId" --output text | sed 's/^/instances: /' | grep -v ': $'
+  aws ec2 describe-volumes --region $r --filters Name=status,Values=available --query "Volumes[].[VolumeId,Size]" --output text | sed 's/^/volumes: /' | grep -v ': $'
+  aws ec2 describe-addresses --region $r --query "Addresses[?AssociationId==null].AllocationId" --output text | sed 's/^/eips: /' | grep -v ': $'
+  aws ec2 describe-nat-gateways --region $r --filter Name=state,Values=available --query "NatGateways[].NatGatewayId" --output text | sed 's/^/nat: /' | grep -v ': $'
+  aws elbv2 describe-load-balancers --region $r --query "LoadBalancers[].LoadBalancerName" --output text | sed 's/^/lb: /' | grep -v ': $'
+  aws rds describe-db-instances --region $r --query "DBInstances[].DBInstanceIdentifier" --output text | sed 's/^/rds: /' | grep -v ': $'
+done`
         },
         {
           cmd: "HA و DR",
@@ -3160,7 +3709,20 @@ RDS Multi-AZ: نسخة standby في AZ تانية بتاخد كل كتابة ب�
             "على الأقل سيرفرين دايمًا، ولحد ٦ وقت الضغط.",
             "احتفظ بكل نسخة من كل ملف: المسح والكتابة فوق يترجعوا.",
             "انسخ snapshot لـ region تانية (أيرلندا) بمفتاح تشفير من هناك."
-          ]
+          ],
+          sol: R`السكربت تحت بيعمل اتصال جديد كل ثانية ويطبع الوقت و IP السيرفر اللي رد. قبل الـ failover هتلاقي نفس الـ IP. بعد [[--force-failover]] هتلاقي سطور [[FAIL]] (connection refused أو timeout) لفترة، والمتوقع حسب AWS حوالي دقيقة لدقيقتين في Multi-AZ instance العادي، وبعدين السطور ترجع بـ IP مختلف: ده الـ standby اللي بقى primary، والـ endpoint (الاسم) هو هو لأن DNS بتاعه اتحدّث.
+
+السكربت رجع لوحده لأنه بيفتح اتصال جديد كل مرة. التطبيق بتاعك ممكن ميرجعش: لو الـ pool ماسك اتصالات قديمة للسيرفر اللي وقع، أول طلبات بعد الـ failover هتفشل لحد ما الـ pool يكتشف إنها ميتة ويفتح جديدة، ولو المكتبة أو الـ runtime كاشين الـ DNS (زي JVM بإعدادات قديمة) ممكن تفضل تكلّم الـ IP القديم لحد restart. لو ده حصل، النتيجة اللي تكتبها: «التطبيق محتاج retry وإعدادات pool»، مش «Multi-AZ مش شغال».
+
+والغلطة الشائعة في التجربة: تنسى إن Multi-AZ بيضاعف سعر القاعدة، فتسيبه شغال على قاعدة تجربة. رجّعه بـ [[--no-multi-az]] بعد ما تخلص.`,
+          solCode: R`export PGCONNECT_TIMEOUT=2
+while true; do
+  if out=$(psql "$DATABASE_URL" -Atc "select inet_server_addr()" 2>&1); then echo "$(date +%T) OK $out"; else echo "$(date +%T) FAIL"; fi
+  sleep 1
+done
+# في ترمنال تاني:
+aws rds reboot-db-instance --db-instance-identifier myapp-db --force-failover
+aws rds describe-events --source-identifier myapp-db --source-type db-instance --duration 30 --query "Events[].[Date,Message]" --output table`
         }
       ]
     },
@@ -3183,7 +3745,12 @@ RDS Multi-AZ: نسخة standby في AZ تانية بتاخد كل كتابة ب�
 والتكلفة: IaaS سعر ثابت بالساعة سواء فيه ترافيك ولا لأ. و serverless سعر لكل طلب، أرخص جدًا للترافيك القليل أو المتقطع، وممكن يبقى أغلى من سيرفر مع ترافيك عالي ومستمر.`,
             when: "إمتى تختار serverless وإمتى لأ؟ إيه هو الـ cold start وتقلله إزاي؟ فين الـ containers (ECS و Fargate) من التقسيمة دي؟ إيه هو shared responsibility model؟",
             mistakes: "إن serverless يعني «مفيش سيرفرات» حرفيًا (فيه، بس مش بتديرها). أو إن PaaS و SaaS نفس الحاجة. أو إن managed يعني انت مش مسؤول عن الأمان."
-          }
+          },
+          sol: R`إجابة نموذجية في أقل من دقيقة: «الفرق في مين بيدير إيه. IaaS زي EC2: سيرفر، وأنا مسؤول عن النظام والتحديثات والـ runtime، وبدفع بالساعة حتى لو مفيش ترافيك. PaaS زي Vercel أو RDS أو Render: بدّي كود أو إعدادات والمنصة بتشغّل وتحدّث وتعمل باك أب. Serverless زي Lambda: دالة بتشتغل على حدث، بتكبر لوحدها، وبدفع على الطلب، وصفر لو مفيش ترافيك، بس فيه cold start وحدود مدة. كل ما أطلع لفوق بكسب سرعة وصيانة أقل وبخسر تحكم. وفي كل الحالات الكود والبيانات والصلاحيات مسؤوليتي.»
+
+النقط اللي لازم تتقال: (١) مين بيدير نظام التشغيل، (٢) طريقة الدفع (ساعة مقابل طلب)، (٣) التمن: تحكم وحدود و lock-in، (٤) shared responsibility. وتطبيقها على مشاريعك بيبقى جملة لكل واحد، زي: «API على VPS = IaaS، كنت أنا اللي بحدّث وبعمل باك أب»، «Next.js على Vercel = PaaS مع serverless functions للـ API routes».
+
+الغلطة الشائعة: تقول إن serverless «مفيهوش سيرفرات» وتقف، أو تقول إنه دايمًا أرخص. الإجابة الأقوى بتقول إمتى يبقى أغلى: ترافيك عالي ومستمر.`
         },
         {
           cmd: "CloudFront + ECS + RDS",
@@ -3210,7 +3777,18 @@ Next.js على أكتر من نسخة: [[output: 'standalone']] في الـ Dock
           lines: [
             "رحلة الطلب: DNS، ثم CDN، ثم load balancer، ثم containers، ثم القاعدة.",
             "والملفات الثابتة والمرفوعة من S3 من ورا نفس الـ CDN."
-          ]
+          ],
+          sol: R`الرسمة لمشروع متوسط (أرقام تقريبية لـ eu-central-1، بتتغير، راجعها بـ AWS Pricing Calculator):
+
+Route 53: نص دولار للـ zone + الاستعلامات. لو وقع (نادر جدًا) الدومين مش بيتحل؛ الحماية TTL معقول.
+CloudFront: على قد الترافيك، وفيه شريحة مجانية شهرية. لو وقع، ممكن تحوّل الـ DNS للـ ALB مباشرة مؤقتًا.
+ALB: حوالي ٢٠ دولار في الشهر + وحدات الاستخدام. موزّع على AZين، فوقوع مبنى مش بيوقّعه.
+ECS Fargate (نسختين web و ٢ api، صغيرين): عشرات الدولارات. لو task وقعت، ECS بيقوّم غيرها والـ ALB بيشيلها من الترافيك.
+RDS Postgres Multi-AZ صغير: تقريبًا ضعف سعر الـ single-AZ. لو الـ primary وقع، failover في دقيقة أو اتنين، والتطبيق لازم يعيد الاتصال.
+S3: سنتات للجيجا. عمليًا مش بيقع، والخطر مسح بالغلط، فالحماية versioning.
+NAT Gateway (لو الـ tasks في private subnets): حوالي ٣٥ لـ ٤٠ دولار للواحد + الجيجا، وده البند اللي ناس كتير بتنساه.
+
+الغلطة الشائعة: ترسم الرسمة وتنسى الـ NAT والـ public IPs، أو تكتب «لو وقع: مفيش مشكلة» قدام حاجة single point of failure (زي RDS من غير Multi-AZ). الإجابة القوية بتقول بصراحة: «الحاجة الوحيدة اللي وقوعها بيوقّع كل حاجة هي القاعدة، وده ليه دفعت في Multi-AZ».`
         },
         {
           cmd: "least privilege + roles",
@@ -3226,7 +3804,20 @@ Next.js على أكتر من نسخة: [[output: 'standalone']] في الـ Dock
 وفوقهم حدود: permission boundaries (أقصى حاجة role ممكن تاخدها حتى لو اتدّالها أكتر)، و SCPs على مستوى الـ Organization. الحدود دي مبتدّيش صلاحية، بتقفل بس.`,
             when: "الفرق بين user و role؟ identity-based و resource-based policy؟ إزاي تدّي حساب تاني صلاحية على bucket؟ لو فيه Allow و Deny يحصل إيه؟ إزاي الـ CI يدخل من غير مفاتيح؟",
             mistakes: "«بعمل IAM user لكل تطبيق وبحط المفتاح في .env». أو «بدّي AdministratorAccess وبعدين أضيّق» ومبيضيّقش أبدًا. أو نسيان MFA على الـ root."
-          }
+          },
+          sol: R`الجدول المتوقع لحساب شخصي جديد نسبيًا (وده غالبًا اللي هتلاقيه):
+
+الـ root عليه MFA ومفيش ليه مفاتيح: اتأكد بـ [[get-account-summary]] (درس «root + MFA»).
+البشر بيدخلوا بهوية مؤقتة (login أو Identity Center): غالبًا «لأ» لو لسه عندك access key في [[~/.aws/credentials]].
+كل workload بياخد role: «لأ» لو فيه مفتاح في .env على سيرفر.
+CI بـ OIDC: «لأ» لو فيه [[AWS_ACCESS_KEY_ID]] في GitHub Secrets.
+least privilege: ابحث عن [[AdministratorAccess]] أو [[*]] في الـ policies.
+مفاتيح ومستخدمين مش مستخدمين: [[aws iam generate-credential-report]] وبعدين [[get-credential-report]] بيدّيك CSV فيه آخر استخدام لكل باسورد ومفتاح.
+CloudTrail شغال: حساب جديد فيه Event history ٩٠ يوم ببلاش، بس trail بيحفظ في S3 لازم تعمله.
+
+الإجابة في الانترفيو بتبقى بنفس الترتيب ده: root، ثم البشر، ثم البرامج، ثم least privilege، ثم المراجعة. والغلطة الشائعة إنك تقول «بدّي كل واحد الصلاحيات اللي محتاجها» من غير ما تقول إزاي تعرف هو محتاج إيه (Access Analyzer، ورسالة AccessDenied، و [[simulate-principal-policy]]).`,
+          solCode: R`aws iam generate-credential-report
+aws iam get-credential-report --query Content --output text | base64 -d | cut -d, -f1,4,5,8,9,11 | column -t -s,`
         },
         {
           cmd: "direct-to-S3 upload",
@@ -3249,7 +3840,16 @@ await fetch(url, { method: "PUT", headers: { "Content-Type": file.type }, body: 
           lines: [
             "السيرفر: وقّع إذن رفع لملف واحد لمدة ٥ دقايق، والـ Content-Type جوه التوقيع.",
             "المتصفح: ارفع مباشرة على S3 بنفس الـ Content-Type."
-          ]
+          ],
+          sol: R`شرح في دقيقة: «المتصفح بيطلب من الـ API إذن رفع. الـ API بيتأكد من اليوزر والنوع والحجم المتوقع، ويختار الـ key، ويعمل presigned PUT URL لمدة دقايق، والتوقيع بصلاحيات الـ role بتاعة السيرفر. المتصفح بيرفع مباشرة على S3، و S3 بيتحقق من التوقيع والمدة والـ Content-Type. بعدها المتصفح يبعت الـ key للـ API، والـ API يتأكد إن الملف موجود وتبع اليوزر ده قبل ما يحفظه.»
+
+الـ sequence diagram وعلى كل سهم مين بيتحقق:
+١. Browser ← API: [[POST /uploads/sign]]. الـ API يتحقق: اليوزر مسجّل؟ النوع مسموح؟
+٢. API ← Browser: [[{url, key}]]. الـ API هو اللي اختار الـ key ([[uploads/USER_ID/uuid]]).
+٣. Browser ← S3: [[PUT url]]. S3 يتحقق: التوقيع سليم؟ المدة لسه؟ الـ Content-Type نفس اللي اتوقّع؟ الـ role اللي وقّعت ليها [[s3:PutObject]]؟ و CORS مسموح للدومين؟
+٤. Browser ← API: [[POST /files {key}]]. الـ API يتحقق: الـ key بيبدأ بـ [[uploads/USER_ID/]]؟ [[HeadObject]] بيقول إنه موجود وحجمه معقول؟
+
+نقطة تكسب بيها: مع SDK v3 الجديد، الـ presign ممكن يحط checksum لملف فاضي في الـ URL فالرفع يفشل، والحل [[requestChecksumCalculation: "WHEN_REQUIRED"]] (درس «presigned URL»). والغلطة الشائعة في الإجابة: تنسى الخطوة ٤، فأي حد يقدر يبعت key بتاع يوزر تاني.`
         },
         {
           cmd: "Cache-Control + CDN",
@@ -3274,7 +3874,14 @@ Cache-Control: private, no-store`,
             "ملف فيه hash: سنة، والمتصفح ميسألش تاني.",
             "HTML: خزّنه بس اسأل الـ origin قبل ما تستخدمه.",
             "بيانات يوزر: متتخزنش في أي مكان مشترك ولا غيره."
-          ]
+          ],
+          sol: R`اللي هتلاقيه غالبًا في أي موقع كبير:
+
+الـ HTML: [[no-cache]] أو [[max-age=0, must-revalidate]] أو [[private, max-age=0]]. ليه؟ الـ HTML هو اللي بيشاور على أسماء ملفات الـ JS الجديدة، فلازم يتجدد مع كل deploy.
+ملفات JS و CSS اللي أسماءها فيها hash (زي [[main.3f9a2c.js]]): [[public, max-age=31536000, immutable]]. ليه؟ الاسم بيتغير لو المحتوى اتغير، فالنسخة القديمة مش هتتطلب تاني أصلًا.
+طلبات API فيها بيانات يوزر: [[private, no-store]] أو [[no-cache]]، ومعاها أحيانًا [[Vary: Authorization]] أو [[Cookie]]. ليه؟ عشان CDN أو proxy ميحفظش رد يوزر ويدّيه لغيره.
+
+وفي DevTools لاحظ عمود Size: [[(memory cache)]] أو [[(disk cache)]] معناها المتصفح مطلبش أصلًا، و [[304]] معناها سأل السيرفر ورد «متغيرش». الغلطة الشائعة: تفتكر إن [[no-cache]] يعني «متكاشش»، هو معناه «كاش بس اسأل قبل ما تستخدم»، والمنع الكامل هو [[no-store]].`
         },
         {
           cmd: "scale out vs scale up",
@@ -3297,7 +3904,14 @@ aws rds modify-db-instance --db-instance-identifier myapp-db --db-instance-class
           lines: [
             "horizontal: من ٢ لـ ١٠ نسخ حسب الضغط.",
             "vertical: القاعدة على سيرفر أكبر (فيه توقف قصير، وبيتحاسب أكتر)."
-          ]
+          ],
+          sol: R`مثال لتطبيق Express عادي، التلات حاجات اللي غالبًا هتمنعه يشتغل على نسختين:
+
+١. الـ sessions في الذاكرة ([[express-session]] من غير store): اليوزر يسجّل دخول على نسخة، والطلب التاني يروح للتانية فيطلع خارج. جرّبتها بنسختين ورا Nginx والنتيجة إن طلبات راحت للنسخة التانية ورجعت [[NOT LOGGED IN]]. الحل Redis store أو JWT.
+٢. الملفات المرفوعة على الديسك ([[multer]] على [[uploads/]]): الملف موجود على نسخة واحدة، فصورة البروفايل تظهر مرة وتختفي مرة. الحل S3 أو R2.
+٣. cron جوه التطبيق ([[node-cron]]): الإيميل اليومي يتبعت مرتين. الحل scheduler واحد (EventBridge أو worker منفصل أو lock في Redis).
+
+والرابعة لو فيه: WebSockets مع Socket.IO، رسالة يوزر على نسخة مش بتوصل ليوزر على التانية من غير Redis adapter. الإجابة الكويسة في الانترفيو بتربط: «عشان كده بكبّر vertical الأول لأنه مش محتاج تغيير، بس بصمّم stateless من الأول عشان الـ horizontal يبقى متاح».`
         },
         {
           cmd: "blue-green vs canary",
@@ -3321,7 +3935,13 @@ expand/contract: عشان تمسح عمود من غير توقف، deploy أول
           lines: [
             "canary: ٩٠٪ للنسخة 6 و ١٠٪ للنسخة 7.",
             "الأرقام كويسة؟ كل الترافيك لـ 7."
-          ]
+          ],
+          sol: R`مع Lambda: الأمر الأول بيرجّع [[RoutingConfig]] فيه [[AdditionalVersionWeights: {"7": 0.1}]]. لو ناديت [[hello:live]] كذا مرة بـ [[aws lambda invoke]]، الرد فيه [[ExecutedVersion]] بـ [[6]] في حوالي ٩ من ١٠ مرات و [[7]] في الباقي (النسبة تقريبية وبتظهر مع عدد طلبات كبير). وفي CloudWatch Logs أسماء الـ log streams فيها رقم النسخة زي [[2026/09/29/[7]abc...]]، فتقدر تشوف النسبة وتفلتر أخطاء النسخة الجديدة لوحدها. الأمر التاني بيحوّل كل الترافيك لـ 7 ويفضّي الأوزان.
+
+مع Nginx: blue-green معناه upstream بيشاور على [[blue]]، تشغّل [[green]] جنبه وتجرّبه مباشرة، وتغيّر الـ upstream وتعمل [[nginx -s reload]]، فالتحويل لحظي والرجوع نفس الخطوة بالعكس.
+
+الغلطة الشائعة: تنادي [[--function-name hello]] من غير [[:live]] فكل الطلبات تروح [[$LATEST]] ومتشوفش أي تقسيم. وتانية: الـ canary من غير مراقبة ولا شرط رجوع، فبقى مجرد deploy بطيء. الإجابة القوية بتقول الشرط: «لو الأخطاء في النسخة الجديدة زادت عن كذا خلال ١٠ دقايق، رجوع أوتوماتيك».`,
+          solCode: R`for i in $(seq 1 20); do aws lambda invoke --function-name hello:live --query ExecutedVersion --output text /dev/null; done | sort | uniq -c`
         },
         {
           cmd: "orchestration",
@@ -3343,7 +3963,12 @@ kubectl rollout undo deployment/api`,
           lines: [
             "عايز ٥ نسخ: k8s يوزّعهم على السيرفرات.",
             "رجّع النسخة اللي قبلها."
-          ]
+          ],
+          sol: R`إجابة نموذجية في ٣ جمل: «الـ Pod أصغر وحدة، container أو أكتر بيشتغلوا مع بعض وليهم IP، وهو مؤقت ممكن يموت ويتعمل غيره باسم وعنوان جديد. الـ Deployment بيقول عايز كام نسخة من Pod معين وبأنهي image، ويفضل يصلّح الواقع عشان يطابق، ويعمل rolling update و rollback. الـ Service اسم وعنوان ثابت قدام مجموعة Pods بالـ labels، وبيوزّع عليهم، فالتطبيق بيكلّم [[api]] مش IP بيتغير.»
+
+وليه مش لآخر مشروع (مثال): «مشروع فيه API وقاعدة بيانات وفريق من ٢. k8s هيضيف control plane أدفع فيه أو أديره، و YAML و ingress وشهادات وتحديثات للـ cluster نفسه، عشان مشاكل أنا معنديش: خدمات كتير وفرق كتير. Docker Compose على VPS أو PaaS أو ECS Fargate كان كفاية.»
+
+الغلطة الشائعة: تقول إن الـ Service هو اللي «بيشغّل» الـ pods (ده الـ Deployment)، أو تقول إن k8s «أحسن» من غير ما تقول إمتى. الانترفيوير عايز يسمع التكلفة التشغيلية، مش قايمة مميزات.`
         },
         {
           cmd: "SLO vs SLA",
@@ -3364,7 +3989,15 @@ kubectl rollout undo deployment/api`,
           },
           lines: [
             "ميزانية ٩٩.٩٪ في ٣٠ يوم: ٤٣.٢ دقيقة."
-          ]
+          ],
+          sol: R`الحسبة لـ ٣٠ يوم: ٩٩.٥٪ = [[216.0]] دقيقة (حوالي ٣.٦ ساعة)، و ٩٩.٩٥٪ = [[21.6]] دقيقة.
+
+٩٩.٥٪: سيرفر واحد كويس مع باك أب ومراقبة ممكن يوصلها، حتى لو فيه deploy بيوقف دقيقة كل مرة، ومشكلة كبيرة واحدة في الشهر ممكن تتحل في ساعتين. ٩٩.٩٥٪: ٢١ دقيقة في الشهر كله، يعني مفيش مكان لـ downtime في الـ deploy (rolling أو blue-green)، ونسختين على الأقل في AZين، وقاعدة Multi-AZ، وإنذار أوتوماتيك وحد يرد في دقايق، و rollback في أقل من ٥ دقايق. الفرق بين الرقمين مش ٠.٤٥٪، ده ١٠ أضعاف الشغل والتكلفة تقريبًا.
+
+الغلطة الشائعة: تحسب على ٣٦٥ يوم وتقارن بأرقام على ٣٠ يوم. أو تقول SLA و SLO حاجة واحدة: الـ SLA عقد فيه تعويض، وبيبقى أقل من الـ SLO الداخلي عشان يبقى فيه هامش.`,
+          solCode: R`for (const slo of [0.995, 0.9995]) console.log(slo, (30 * 24 * 60 * (1 - slo)).toFixed(1));
+// 0.995 216.0
+// 0.9995 21.6`
         },
         {
           cmd: "rightsize + commit + clean",
@@ -3384,7 +4017,16 @@ kubectl rollout undo deployment/api`,
           },
           lines: [
             "التكلفة مقسومة بنوع الاستخدام: هنا بيبان NatGateway و DataTransfer-Out وغيرهم."
-          ]
+          ],
+          sol: R`جدول نموذجي لحساب صغير فيه تجارب (الأرقام مثال، بنودك هتختلف):
+
+١. EC2 (t3.medium شغال ٢٤ ساعة، الاستخدام ٥٪): اختاروه «احتياطي». الخطوة: t4g.small (Graviton) أو إطفاء بالليل لو dev.
+٢. NAT Gateway: private subnets من قالب جاهز. الخطوة: VPC endpoint لـ S3 و ECR، أو public subnet لبيئة dev.
+٣. RDS Multi-AZ لقاعدة staging: حد نسخ إعدادات الإنتاج. الخطوة: single-AZ لـ staging.
+٤. Public IPv4 و Elastic IPs مش مربوطة: بقايا تجارب. الخطوة: امسحها (درس «امسح اللي مش مستخدم»).
+٥. CloudWatch Logs: log groups من غير retention بقالها سنة. الخطوة: [[put-retention-policy]] بـ ٣٠ يوم.
+
+الإجابة في الانترفيو بتمشي بنفس ترتيب الجدول: أقيس (usage type، مش الخدمة بس)، أنضّف المنسي، أصغّر، وبعد ما الاستخدام يستقر Savings Plans، وفي الآخر أمنع الرجوع (budgets و anomaly detection و tags). الغلطة الشائعة: تبدأ بـ «هشتري Reserved Instances» قبل ما تعرف إن نص الفاتورة موارد منسية.`
         },
         {
           cmd: "stateless",
@@ -3405,7 +4047,27 @@ kubectl rollout undo deployment/api`,
           },
           lines: [
             "الـ sessions في Redis مش في رام السيرفر، فأي نسخة تعرف اليوزر."
-          ]
+          ],
+          sol: R`بالكود اللي تحت (sessions في الذاكرة) ونسختين ورا Nginx، جرّبتها فعلًا والناتج كان:
+
+[[logged in on 4101]]
+[[4101: ali]] (٣ مرات)
+[[4102: NOT LOGGED IN]]
+
+يعني بعد تسجيل الدخول، أي طلب راح للنسخة التانية طلع خارج. التوزيع مش شرط يبقى بالتبادل بالظبط (كل worker في Nginx ليه عدّاد round robin لوحده)، بس مع كذا refresh هيحصل. ده الإثبات إن التطبيق مش stateless.
+
+الحل: store خارجي ([[connect-redis]] مع Redis) زي سطر الدرس، وبعدها كل الطلبات ترجع [[ali]] مهما النسخة. الغلطة الشائعة: تحل المشكلة بـ [[ip_hash]] أو sticky sessions في Nginx؛ الأعراض تختفي، بس أول ما نسخة تقع أو تعمل deploy، كل اليوزرز اللي عليها يخرجوا، والتوزيع يبقى مش عادل.`,
+          solCode: R`// sess.mjs  (PORT=4101 node sess.mjs & PORT=4102 node sess.mjs &)
+import express from "express";
+import session from "express-session";
+const app = express();
+app.use(session({ secret: "dev-secret", resave: false, saveUninitialized: false }));
+app.get("/login", (req, res) => { req.session.user = "ali"; res.send("logged in on " + process.env.PORT + "\n"); });
+app.get("/me", (req, res) => res.send(process.env.PORT + ": " + (req.session.user ?? "NOT LOGGED IN") + "\n"));
+app.listen(process.env.PORT);
+# nginx: upstream app { server 127.0.0.1:4101; server 127.0.0.1:4102; }  و  location / { proxy_pass http://app; }
+curl -s -c jar -b jar localhost:8088/login
+for i in 1 2 3 4; do curl -s -c jar -b jar localhost:8088/me; done`
         },
         {
           cmd: "RPO / RTO",
@@ -3421,7 +4083,14 @@ kubectl rollout undo deployment/api`,
 والـ HA غير الـ DR: Multi-AZ بيحميك من وقوع مبنى، مش من مسح داتا ولا من region كاملة. والباك أب لازم يبقى في حساب منفصل كمان، عشان لو الحساب نفسه اتخترق.`,
             when: "الفرق بين HA و DR؟ Multi-AZ كفاية؟ بتختبر الـ DR إزاي؟ الـ DNS failover بياخد قد إيه؟",
             mistakes: "إن Multi-AZ هو الـ DR. أو باك أب في نفس الحساب ونفس الـ region. أو أرقام من غير ما تسأل البزنس."
-          }
+          },
+          sol: R`مثال لإجابة صريحة لمشروع صغير على VPS:
+
+الحالي: الباك أب [[pg_dump]] يومي الساعة ٣ الصبح على نفس السيرفر. يعني RPO الحقيقي لحد ٢٤ ساعة، ولو الديسك نفسه راح يبقى RPO لانهائي (الباك أب راح معاه). والـ RTO: عمري ما استرجعت، فمعرفوش؛ التقدير: سيرفر جديد وتسطيب وتنزيل الباك أب ٣ لـ ٤ ساعات.
+
+المفروض: RPO ساعة و RTO ساعتين مثلًا (اسأل: خسارة يوم طلبات تكلف قد إيه؟). ده محتاج: باك أب لـ مكان تاني (S3 أو R2 في حساب منفصل) كل ساعة أو WAL archiving، أو قاعدة مُدارة فيها PITR، وسكربت أو Terraform بيقوّم السيرفر، وتجربة استرجاع حقيقية كل شهر بتقيس الوقت.
+
+الغلطة الشائعة: تكتب RPO = «يوم» لأن الباك أب يومي وتنسى إن الباك أب على نفس الديسك، أو تكتب RTO رقم متخيّل من غير ما تكون جربت استرجاع ولو مرة. والفرق اللي الانترفيوير بيدوّر عليه: Multi-AZ ده HA مش DR، ومبيحميش من [[DELETE]] من غير [[WHERE]].`
         }
       ]
     }
