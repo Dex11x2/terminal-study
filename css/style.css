@@ -126,6 +126,10 @@ section.cat>h3 small{font-size:14px;color:var(--muted);font-weight:400}
 .path{padding:22px 0 8px;border-top:1px solid var(--line);margin-top:20px}
 .path h2{font-size:22px;margin:0 0 8px}
 .path ol{margin:0;padding-inline-start:22px;display:grid;gap:4px}
+.path-h{font-size:17px;margin:18px 0 6px}
+.path-note{margin:0 0 6px;line-height:1.9}
+.path-ops{margin-top:14px}
+.path-ops summary{cursor:pointer;font-weight:700;margin-bottom:8px}
 .path li::marker{color:var(--muted);font-weight:600}
 .path button{all:unset;cursor:pointer;color:var(--ink);border-bottom:1px dashed var(--muted)}
 .path button:hover,.path button:focus-visible{color:var(--a-vps);border-bottom-color:currentColor}
@@ -397,3 +401,14 @@ body[data-shell="apis"]{--accent:var(--a-apis);--t-bg:#05211e;--t-fg:#eef0f3;--t
 body[data-shell="cloud"]{--accent:var(--a-cloud);--t-bg:#2b1206;--t-fg:#eef0f3;--t-pr:#fdba74;--t-cm:#8b95a5;--t-bar:#2b1206}
 .sw[data-s="cloud"] .top{background:#2b1206;color:#eef0f3}
 .sol .term[data-k="cloud"]{--t-bg:#2b1206;--t-fg:#eef0f3;--t-pr:#fdba74;--t-cm:#8b95a5;--t-bar:#2b1206}
+
+/* projects and career tabs */
+:root{--a-projects:#0f766e;--a-career:#9d174d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a-projects:#5eead4;--a-career:#f9a8d4}}
+:root[data-theme="dark"]{--a-projects:#5eead4;--a-career:#f9a8d4}
+body[data-shell="projects"]{--accent:var(--a-projects);--t-bg:#042f2e;--t-fg:#eef0f3;--t-pr:#5eead4;--t-cm:#8b95a5;--t-bar:#042f2e}
+.sw[data-s="projects"] .top{background:#042f2e;color:#eef0f3}
+.sol .term[data-k="projects"]{--t-bg:#042f2e;--t-fg:#eef0f3;--t-pr:#5eead4;--t-cm:#8b95a5;--t-bar:#042f2e}
+body[data-shell="career"]{--accent:var(--a-career);--t-bg:#2a0a1b;--t-fg:#eef0f3;--t-pr:#f9a8d4;--t-cm:#8b95a5;--t-bar:#2a0a1b}
+.sw[data-s="career"] .top{background:#2a0a1b;color:#eef0f3}
+.sol .term[data-k="career"]{--t-bg:#2a0a1b;--t-fg:#eef0f3;--t-pr:#f9a8d4;--t-cm:#8b95a5;--t-bar:#2a0a1b}
