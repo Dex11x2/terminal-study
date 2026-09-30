@@ -1173,7 +1173,7 @@ pg_dump "$STAGING_URL" | grep -c "Mona" || echo "no real names left"`
           title: "اللوج و Sentry ميبقوش نسخة تانية من الداتابيز",
           desc: R`اللوج بيتبعت لخدمات بره (Datadog، و Loki، و Sentry)، وبيتحفظ مدة طويلة، ومحدش بيعمله حذف لما اليوزر يمسح حسابه، وناس كتير بتشوفه. فأي إيميل أو تليفون أو توكن اتكتب فيه بقى متسرّب لكل دول، وخارج أي طلب حذف أو تصدير.
 
-القاعدة: سجّل IDs مش بيانات. وحتى الـ id ممكن تبدّله بـ [[HMAC]] ثابت، فتقدر تتبع يوزر واحد في اللوج من غير ما يبقى مربوط بالداتابيز مباشرة. وكطبقة أمان تانية، [[redact]] في pino (شوف درس [[pino]] في «تاب Backend بـ Node») بيخفي الحقول اللي بالأسامي دي لو حد سجّلها بالغلط. وفي Sentry: [[sendDefaultPii: false]] وفلتر [[beforeSend]] (درس «Sentry» في «تاب بناء مشروع كامل»).`,
+القاعدة: سجّل IDs مش بيانات. وحتى الـ id ممكن تبدّله بـ [[HMAC]] ثابت، فتقدر تتبع يوزر واحد في اللوج من غير ما يبقى مربوط بالداتابيز مباشرة. وكطبقة أمان تانية، [[redact]] في pino (شوف درس [[pino]] في «تاب Backend بـ Node») بيخفي الحقول اللي بالأسامي دي لو حد سجّلها بالغلط. وفي Sentry: [[dataCollection: { userInfo: false, cookies: false }]] (SDK 11) وفلتر [[beforeSend]] (درس «Sentry» في «تاب بناء مشروع كامل»).`,
           example: R`import pino from "pino";
 import { createHmac } from "node:crypto";
 
@@ -1195,9 +1195,9 @@ log.warn({ body: { email: "mona@example.com", password: "hunter2" } }, "login fa
 
 [[userRef]]: HMAC بمفتاح ([[LOG_SALT]]) بيدّي نفس الـ 12 حرف لنفس اليوزر دايمًا. تقدر تجمّع كل لوجات يوزر واحد، ولما تحتاج تعرف هو مين فعلًا تحسبه من الـ id في الداتابيز وتقارن. ولو اليوزر اتمسح، الـ ref في اللوج مبقاش بيشاور على حد.
 
-في Sentry: [[sendDefaultPii: false]] (الافتراضي) بيمنع الـ IP والكوكيز والـ headers الحساسة. و [[beforeSend(event)]] بيدّيك الـ event قبل ما يتبعت: امسح [[event.user.email]] و [[event.request.data]] لو فيه form بيانات شخصية، وارجع الـ event. وافتكر إن رسالة الـ error نفسها ممكن يبقى فيها PII لو كتبتها كده: [[new Error("User " + email + " not found")]].`,
+في Sentry SDK 11: [[dataCollection: { userInfo: false, cookies: false }]] بيمنع الـ IP والكوكيز وبيانات اليوزر، ولازم تكتبه بنفسك لأن 11 بيجمعهم افتراضيًا. الخيار القديم [[sendDefaultPii]] (نسخة 10 وقبلها، وكان false افتراضيًا) نسخة 11 بتتجاهله من غير أي تحذير. و [[beforeSend(event)]] بيدّيك الـ event قبل ما يتبعت: امسح [[event.user.email]] و [[event.request.data]] لو فيه form بيانات شخصية، وارجع الـ event. وافتكر إن رسالة الـ error نفسها ممكن يبقى فيها PII لو كتبتها كده: [[new Error("User " + email + " not found")]].`,
             when: R`من أول سطر لوج في المشروع. وراجع أي لوج بيطبع object كامل (req.body، و user، و الـ response) لأن الـ object ده هيكبر بحقول جديدة ومحدش هيفتكر اللوج.`,
-            mistakes: R`[[console.log(req.body)]] في login أو signup، فالباسوردات في اللوج. تسجيل الـ query string كامل وفيه [[?token=]] أو [[?email=]]. [[logger.info(user)]] للـ object كله. الاعتماد على redact بس وهو مبيغطيش المستويات الأعمق. و Sentry مع [[sendDefaultPii: true]] علشان «نشوف مين اتأثر».
+            mistakes: R`[[console.log(req.body)]] في login أو signup، فالباسوردات في اللوج. تسجيل الـ query string كامل وفيه [[?token=]] أو [[?email=]]. [[logger.info(user)]] للـ object كله. الاعتماد على redact بس وهو مبيغطيش المستويات الأعمق. و Sentry من غير [[dataCollection]] في نسخة 11 (بيبعت الـ IP والكوكيز افتراضيًا)، أو تفتكر إن [[sendDefaultPii: false]] لسه شغال فيها.
 
 في الانترفيو: «إزاي تتعامل مع PII في اللوج؟» IDs مش بيانات، و pseudonymous refs، و redact كطبقة تانية، ومدة حفظ للوج، وسؤال: اللوج بيتبعت لأنهي خدمة وفي أنهي بلد.`
           },
