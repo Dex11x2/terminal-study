@@ -5009,9 +5009,9 @@ www.{$DOMAIN} {
     permissions:
       contents: read
       packages: write
-    env:
-      IMAGE: ghcr.io/$__{{ github.repository }}
     steps:
+      - name: image name (GHCR wants lowercase)
+        run: echo "IMAGE=ghcr.io/$__{GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7
       - uses: docker/login-action@v4
         with:
