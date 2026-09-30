@@ -112009,7 +112009,7 @@ check('.env مش في git', () => {
 })
 check('git status نضيف', () => sh('git status --porcelain').trim() === '' || 'فيه تعديلات مش متعملها commit')
 check('رسايل الـ commits مفهومة', () => {
-  const bad = sh('git log -10 --format=%s').split('\n').filter(s => s && (s.length < 10 || /^(wip|fix|update|changes|edit)\b/i.test(s)))
+  const bad = sh('git log -10 --format=%s').split('\n').filter(s => s && (s.length < 10 || /^wip\b/i.test(s) || /^(fix|update|changes|edit)\W*$/i.test(s)))
   return bad.length === 0 || $__btرسايل مش بتقول حاجة: $__{bad.join(' | ')}$__bt
 })
 check('الاختبارات عدّت', () => { sh('npm test'); return true })
@@ -112805,6 +112805,8 @@ GitHub Pages بيخدم على [[https://USER.github.io/REPO/]]. الروابط 
 
 لو [[deploy]] وقع بـ [[HttpError: Not Found]] أو [[Get Pages site failed]]: الـ Pages مش متفعّل أو الـ Source مش «GitHub Actions». ولو الصفحة طلعت من غير CSS على Pages بس: مسار بيبدأ بـ [[/]].
 
+وعشان [[done-check]] يبقى أخضر: السكربت بيشغّل [[npm test]]، و [[npm init -y]] بيحط [[test]] بيطبع «no test specified» ويخرج بـ 1. خلي [[scripts]] في [[package.json]] فيها [["test": "playwright test"]].
+
 الحل المرجعي فيه الـ workflow كامل وREADME. لاحظ إن الـ README فيه الأرقام، وأوامر التشغيل، وجملتين «اتعلمته» حقيقيين من المشروع نفسه.`,
           solCode: R`# ── .github/workflows/pages.yml ──
 name: pages
@@ -113256,7 +113258,7 @@ export function save(state, best) {
             R`[[setItem]] ممكن يرمي، فلو فشل كمّل من غير حفظ.`,
             R`قفلة الدالة.`
           ],
-          sol: R`بعد سؤالين و refresh: «سؤال 3 من 4» (اختبار Playwright «resume from the same question after reload» بيعمل ده على قسم js). الداتا البايظة: التطبيق بيفتح عادي على «سؤال 1 من 4» (اختبار «broken localStorage data does not break the app» بيحط [[{not json]] بـ [[addInitScript]] قبل ما الصفحة تحمّل). و [[id]] متغير: المقارنة في [[start]] بتطلع false فبيبدأ من الأول.
+          sol: R`بعد سؤالين و refresh: «سؤال 3 من 4». واختبار Playwright «resume from the same question after reload» بيعمل نفس الفكرة على قسم js: سؤال واحد و refresh، فيرجع على «سؤال 2 من 3». الداتا البايظة: التطبيق بيفتح عادي على «سؤال 1 من 4» (اختبار «broken localStorage data does not break the app» بيحط [[{not json]] بـ [[addInitScript]] قبل ما الصفحة تحمّل). و [[id]] متغير: المقارنة في [[start]] بتطلع false فبيبدأ من الأول.
 
 الحل المرجعي فيه [[storage.js]] كامل. لاحظ [[clearProgress(best)]]: «من الأول» بيمسح التقدم بس، و best بيفضل.
 
@@ -115722,7 +115724,7 @@ CI: [[services: postgres]] بيشغّل Postgres جنب الـ job على [[loca
           ],
           sol: R`[[/docs]] بيفتح Swagger UI فيه ٣ مجموعات، والـ schemas تحت: [[Credentials]] و [[AuthResponse]] و [[Task]] و [[CreateTask]] و [[UpdateTask]] و [[TaskPage]] و [[Error]]. [[CreateTask]] مثلًا بيطلع: [[title]] string بـ minLength 1 و maxLength 200 و required، و [[dueDate]] string بـ date-time. والاختبار «serves the OpenAPI document and Swagger UI» بيتأكد إن [[openapi]] هو [["3.1.0"]] وإن [[/tasks/{id}]] موجود وإن [[/docs/]] بيرجّع HTML.
 
-الـ workflow اتعمله parse وهو سليم، بس متشغّلش على GitHub فعلًا وقت كتابة الحل؛ نفس الخطوات اتشغّلت محليًا على Postgres 16.
+الـ workflow اتعمله parse وهو سليم، بس متشغّلش على GitHub فعلًا وقت كتابة الحل؛ نفس الخطوات اتشغّلت محليًا على Postgres 16. ولاحظ [[env]] على مستوى الـ job: [[.env.test]] مش في git (زي أي ملف [[.env]])، فمن غيره [[prisma migrate deploy]] بيقع بـ [[datasource.url property is required]] و [[config.ts]] بيقع على [[JWT_SECRET]]. اتجرّب محليًا: من غير [[.env]] و [[.env.test]] وبالمتغيرين دول بس، الـ ١٣ اختبار عدّوا.
 
 الحل المرجعي فيه [[openapi.ts]] كامل و [[ci.yml]] و [[package.json]]. ملحوظة: [[npm start]] بيشغّل بـ tsx عشان المشروع يفضل بسيط؛ في الإنتاج يا إما tsx في dependencies، يا إما build بـ [[tsc]] أو esbuild ل JS.`,
           solCode: R`// ── src/openapi.ts ──
@@ -115802,6 +115804,9 @@ jobs:
         ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U projlab" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://projlab:projlab@localhost:5432/tasks_test
+      JWT_SECRET: test-secret-test-secret-test-secret
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -116721,6 +116726,10 @@ jobs:
         ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U projlab" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://projlab:projlab@localhost:5432/myapp_test
+      BETTER_AUTH_SECRET: test-only-secret-0123456789abcdef0123
+      BETTER_AUTH_URL: http://localhost:3100
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -117110,7 +117119,7 @@ export default withSentryConfig(nextConfig, {
 
 إيه اللي ممكن يبوظ وحلّه: (١) webhook مرتين في نفس اللحظة ← [[ProcessedEvent.id]] primary key، والتاني ياخد P2002 ويرجع 200 «duplicate». (٢) event تاني لنفس الـ order ← [[updateMany]] بشرط PENDING، و upsert. (٣) مبلغ مختلف ← throw فـ 500 فـ Stripe يعيد، ومفيش حاجة اتسجلت (rollback)، وتنبيه. (٤) ضغطتين ← نفس الـ order الـ PENDING ونفس الـ idempotency key فنفس الـ Session. (٥) توقيع غلط ← 400. (٦) الطالب قفل التابة بعد الدفع ← مش مهم، الـ webhook هو اللي بيفعّل. (٧) الـ webhook اتأخر ← صفحة [[/orders/:id]] بتقول «بنأكد الدفع» وبتعمل refresh (درس [[صفحة ما بعد الدفع]]).
 
-الاختبار: الـ ٥ اختبارات في محطة الـ webhook، بـ webhooks متوقعة بـ [[generateTestHeaderString]]، و Stripe CLI للتجربة اليدوية.`
+الاختبار: الـ ٦ اختبارات في محطة الـ webhook، بـ webhooks متوقعة بـ [[generateTestHeaderString]]، و Stripe CLI للتجربة اليدوية.`
         },
         {
           cmd: "مشروع ٧ (دفع): الـ order والـ checkout",
@@ -117335,7 +117344,7 @@ export async function getOrCreatePendingOrder(userId: string, courseId: string, 
             R`أي خطأ تاني يطلع (الـ route يرجع 500 و Stripe يعيد).`,
             R`قفلة الـ catch.`
           ],
-          sol: R`الـ ٥ اختبارات عدّت على Postgres حقيقي: (١) توقيع بـ secret غلط: 400 وصفر اشتراكات. (٢) نفس [[evt_2]] مرتين بـ [[Promise.all]]: الاتنين 200، والنتايج [[duplicate]] و [[processed]]، واشتراك واحد، والـ order [[PAID]]. (٣) [[evt_3]] ثم [[evt_4]] لنفس الـ order: التاني [[processed]] بس الاشتراك لسه واحد. (٤) المبلغ ١٠٠ بدل ٤٩٩٠٠: [[rejects.toThrow("amount mismatch")]]، وصفر اشتراكات وصفر [[ProcessedEvent]]. (٥) [[payment_status: "unpaid"]]: [[ignored]].
+          sol: R`الـ ٦ اختبارات عدّت على Postgres حقيقي: (١) توقيع بـ secret غلط: 400 وصفر اشتراكات. (٢) نفس [[evt_2]] مرتين بـ [[Promise.all]]: الاتنين 200، والنتايج [[duplicate]] و [[processed]]، واشتراك واحد، والـ order [[PAID]]. (٣) [[evt_3]] ثم [[evt_4]] لنفس الـ order: التاني [[processed]] بس الاشتراك لسه واحد. (٤) المبلغ ١٠٠ بدل ٤٩٩٠٠: [[rejects.toThrow("amount mismatch")]]، وصفر اشتراكات وصفر [[ProcessedEvent]]. (٥) session مدفوعة من غير [[orderId]] في الـ metadata: 200 و [[ignored]]. (٦) [[payment_status: "unpaid"]]: [[ignored]].
 
 اللي متجرّبش: [[stripe listen]] و [[stripe events resend]] على حساب حقيقي. لما تجرّبهم، في لوج السيرفر هتلاقي [[{"msg":"stripe webhook","id":"evt_...","type":"checkout.session.completed","result":"processed"}]]، وبعد الـ resend نفس السطر بـ [[duplicate]].
 
