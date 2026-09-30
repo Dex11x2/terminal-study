@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>الترمنال بإيدك</title>
-<meta name="description" content="صفحة مذاكرة شاملة بالمصري للترمنال، البرمجة (JavaScript, TypeScript, Python, React, Next.js, Node.js)، قواعد البيانات، وإدارة السيرفرات مع أمثلة وتجارب تفاعلية واختبارات ذاتية">
+<title>الترمنال والبرمجة بإيدك - أكاديمية مهندس البرمجيات الشاملة</title>
+<meta name="description" content="أكاديمية ودليلك الشامل بالمصري لهندسة البرمجيات، الترمنال، لغات البرمجة (JS, TS, Python, Go, C++, C#, Java)، الـ Full Stack، الخوارزميات (DSA)، قواعد البيانات، وإدارة السيرفرات مع أكثر من 2600 درس وتجارب وتمارين تصحيح ذاتي تعمل بالكامل بدون إنترنت">
 <meta property="og:type" content="website">
-<meta property="og:title" content="الترمنال بإيدك - دليلك الشامل للترمنال والبرمجة">
-<meta property="og:description" content="أكثر من 2500 درس وتجربة تفاعلية بالمصري للترمنال، البرمجة، والـ Full Stack مع تمارين تصحيح ذاتي وتعمل بالكامل بدون إنترنت.">
+<meta property="og:title" content="الترمنال والبرمجة بإيدك - دليلك الشامل لهندسة البرمجيات والـ Full Stack">
+<meta property="og:description" content="أكثر من 2600 درس وتجربة تفاعلية بالمصري للترمنال، البرمجة، والـ Full Stack مع تمارين تصحيح ذاتي وتعمل بالكامل بدون إنترنت.">
 <meta property="og:image" content="icons/icon-512.png">
 <meta property="og:locale" content="ar_EG">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="الترمنال بإيدك">
-<meta name="twitter:description" content="أكثر من 2500 درس وتجربة تفاعلية بالمصري للترمنال والبرمجة مع تمارين تصحيح ذاتي بدون نت.">
+<meta name="twitter:title" content="الترمنال والبرمجة بإيدك - أكاديمية مهندس البرمجيات">
+<meta name="twitter:description" content="أكثر من 2600 درس وتجربة تفاعلية بالمصري لهندسة البرمجيات والـ Full Stack مع تمارين تصحيح ذاتي بدون نت.">
 <meta name="twitter:image" content="icons/icon-512.png">
 <meta name="theme-color" content="#1f2430">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -537,8 +537,8 @@ body[data-shell="go"]{--accent:var(--a-go);--t-bg:#051e26;--t-fg:#eef0f3;--t-pr:
 
 <header class="hero wrap">
   <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="dueBtn" hidden title="البطاقات اللي ميعاد مراجعتها جه النهارده، من كل التابات. كل ما تعرف بطاقة ميعادها الجاي بيبعد: يوم، ٣، ٧، ١٦، ٣٥ يوم">عليك مراجعة (<b id="dueN">0</b>)</button><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
-  <h1>الترمنال بإيدك</h1>
-  <p class="lead">كل أمر هنا معاه شرح، ومثال تنسخه، وتجربة تعملها بنفسك. الأوامر متقسمة على ٣ مستويات: ابدأ بالمستوى ١، ومتنقلش للي بعده غير لما تكون علّمت على «جربتها» في أغلبه. الصفحة بتفتكر تقدمك.</p>
+  <h1>الترمنال والبرمجة بإيدك</h1>
+  <p class="lead">أكاديميتك ودليلك الشامل لعلوم وهندسة البرمجيات: من الترمنال وأساسيات CS حتى احتراف الـ Full Stack والمعمارية ونشر المشاريع للإنتاج. كل درس معاه شرح عميق، ومثال تنسخه، وتجربة تعملها بإيدك، وتمارين تصحيح ذاتي. متقسمة على ٣ مستويات وبتفتكر تقدمك وتشتغل بالكامل بدون إنترنت.</p>
   <section class="sw-sec">
     <h2 class="sw-h">البداية</h2>
     <div class="switch" role="tablist" aria-label="البداية">
@@ -72422,7 +72422,25 @@ RETURNING id, status, created_at;`,
           solCode: R`SELECT count(*) FROM products;
 INSERT INTO products (name, price, stock) VALUES ('A', 10, 1), ('B', NULL, 1), ('C', 30, 1);
 -- ERROR:  null value in column "price" of relation "products" violates not-null constraint
-SELECT count(*) FROM products;   -- نفس الرقم`
+SELECT count(*) FROM products;   -- نفس الرقم`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL
+);
+INSERT INTO products VALUES (1, 'T-shirt', 250.00, 10);`,
+            starter: R`-- ضيف منتجين جديدين في أمر واحد: Cap بسعر 180 ومخزون 5، و Mug بسعر 120 ومخزون 20
+-- ورجّع الأسماء والأسعار بترتيب السعر تصاعدياً
+INSERT INTO products ...;
+SELECT name, price FROM products ORDER BY price;`,
+            expect: [["Mug", 120], ["Cap", 180], ["T-shirt", 250]],
+            solution: R`INSERT INTO products (id, name, price, stock) VALUES (2, 'Cap', 180, 5), (3, 'Mug', 120, 20);
+SELECT name, price FROM products ORDER BY price;`,
+            ordered: true
+          }
         },
         {
           cmd: "UPDATE",
@@ -72465,7 +72483,27 @@ BEGIN;
 UPDATE products SET price = 0;
 SELECT name, price FROM products;   -- كله 0.00
 ROLLBACK;
-SELECT name, price FROM products;   -- الأسعار رجعت`
+SELECT name, price FROM products;   -- الأسعار رجعت`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10),
+  (2, 'Mug', 120.00, 0),
+  (3, 'Hoodie', 650.00, 4);`,
+            starter: R`-- عدّل سعر Mug ليصبح 140 ومخزونه 15
+-- ثم استرجع اسم وسعر ومخزون Mug
+UPDATE products SET ...;
+SELECT name, price, stock FROM products WHERE name = 'Mug';`,
+            expect: [["Mug", 140, 15]],
+            solution: R`UPDATE products SET price = 140, stock = 15 WHERE name = 'Mug';
+SELECT name, price, stock FROM products WHERE name = 'Mug';`
+          }
         },
         {
           cmd: "DELETE",
@@ -72504,7 +72542,27 @@ SELECT name FROM products WHERE deleted_at IS NULL;`,
 الحلول المعتادة: [[VIEW]] اسمها مثلًا active_products فيها الشرط والكود يقرا منها، أو global filter في الـ ORM، أو partial index [[WHERE deleted_at IS NULL]] عشان الاستعلامات اليومية تفضل سريعة. وافتكر إن الـ UNIQUE constraints لسه شايفة الصف الممسوح: لو عايز تضيف Cap جديد باسم unique هيترفض.`,
           solCode: R`UPDATE products SET deleted_at = now() WHERE name = 'Cap';
 SELECT name FROM products WHERE deleted_at IS NULL;   -- من غير Cap
-SELECT name FROM products;                            -- Cap لسه ظاهر`
+SELECT name FROM products;                            -- Cap لسه ظاهر`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10),
+  (2, 'Old Poster', 50.00, 0),
+  (3, 'Broken Cap', 20.00, 0);`,
+            starter: R`-- احذف المنتجات التي نفد مخزونها (stock = 0)
+-- ثم استرجع id واسم المنتجات المتبقية
+DELETE FROM products ...;
+SELECT id, name FROM products;`,
+            expect: [[1, "T-shirt"]],
+            solution: R`DELETE FROM products WHERE stock = 0;
+SELECT id, name FROM products;`
+          }
         }
       ]
     },
@@ -152156,6 +152214,134 @@ int main() {
 - السعر: 49.99 ج
 - السعر: 120 ج
 - السعر: 15.5 ج`
+        },
+        {
+          cmd: "الـ map و unordered_map في C++",
+          title: "هياكل البيانات STL: الفرق بين std::map المرتب والـ unordered_map السريع O(1)",
+          desc: R`في مكتبة C++ STL، القواميس وجداول المفتاح والقيمة نوعان أساسيان:
+
+1. الـ [[std::unordered_map]]:
+• مبني على جدول التجزئة (Hash Table).
+• سرعة الوصول والإضافة فيه O(1) خارقة.
+• العناصر غير مرتبة في الذاكرة. الخيار الافتراضي للأداء العالي!
+
+2. الـ [[std::map]]:
+• مبني على شجرة بحث ثنائية متوازنة ذاتية (Red-Black Tree).
+• سرعة العمليات فيه O(log n).
+• المفاتيح تظل دائماً مرتبة ترتيباً تصاعدياً تلقائياً.
+
+3. الميزات الحديثة:
+في C++17 وما بعدها، يمكنك التفكيك الهيكلي السريع:
+[[for (const auto& [key, value] : myMap)]] دون الحاجة لكتابة [[.first]] و [[.second]] اليدوية.`,
+          example: R`# 1. استدعاء مكتبات الإدخال والنصوص وجدول التجزئة
+#include <iostream>
+#include <string>
+#include <unordered_map>
+using namespace std;
+
+int main() {
+  # 2. إنشاء خريطة تجزئة سريعة لتخزين السلع وأسعارها
+  unordered_map<string, double> inventory;
+  inventory["laptop"] = 1200.50;
+  inventory["phone"] = 800.00;
+
+  # 3. فحص وجود عنصر بأمان بدالة find
+  if (inventory.find("laptop") != inventory.end()) {
+    cout << "سعر اللابتوب: " << inventory["laptop"] << "$" << endl;
+  }
+
+  # 4. الدوران على المفاتيح والقيم بـ Structured Binding
+  for (const auto& [item, price] : inventory) {
+    cout << item << ": " << price << "$" << endl;
+  }
+  return 0;
+}`,
+          try: R`احفظ الكود في [[main.cpp]] وشغله بـ [[g++ -std=c++17 main.cpp -o app && ./app]]. جرب استبدال [[unordered_map]] بـ [[map]] ولاحظ كيف تُطبع العناصر مرتبة أبجدياً تلقائياً!`,
+          flag: "script",
+          deep: {
+            why: R`اختيار الحاوية المناسبة هو جوهر هندسة النظم في C++؛ unordered_map يوفر أقصى سرعة في استرجاع جلسات المستخدمين والكاش، بينما map مطلوب عندما تحتاج لطباعة تقارير مرتبة أبجدياً أو البحث عن نطاق أسعار (Range Query).`,
+            how: R`الـ unordered_map يحسب hash code للمفتاح ويوزع العناصر على باقات (Buckets). عند حدوث تصادم (Hash Collision)، يربط العناصر بقائمة متصلة، ولو زادت كثافة العناصر يعيد توزيع الباقات تلقائياً (Rehash).`,
+            when: "كتابة خوارزميات البحث وحل مسائل الـ DSA وإدارة جداول الرموز في المترجمات وقواعد البيانات.",
+            mistakes: R`استخدام معامل [[m["unknown"]]] لفحص وجود مفتاح؛ لأن هذا المعامل سيقوم بإدخال المفتاح بقيمة صفرية تلقائياً في الخريطة إذا لم يكن موجوداً! استخدم دائماً دالة [[m.find()]] أو [[m.count()]] للفحص الآمن.`
+          },
+          lines: [
+            "تضمين iostream للإخراج.",
+            "تضمين string للنصوص.",
+            "تضمين unordered_map لجدول التجزئة السريع.",
+            "استخدام std.",
+            "بداية main.",
+            "إنشاء جدول التجزئة بمفتاح نصي وقيمة عشرية.",
+            "إضافة السلعة الأولى وسعرها.",
+            "إضافة السلعة الثانية وسعرها.",
+            "التحقق من وجود المفتاح باستخدام find ومقارنته بنهاية الحاوية end().",
+            "طباعة السعر عند العثور على المفتاح.",
+            "قفلة شرط التحقق.",
+            "دوران حديث يفكك المفتاح والقيمة تلقائياً إلى item و price.",
+            "طباعة اسم السلعة وسعرها.",
+            "قفلة حلقة الدوران.",
+            "إرجاع كود 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+سعر اللابتوب: 1200.5$
+phone: 800$
+laptop: 1200.5$`
+        },
+        {
+          cmd: "القوالب Templates والبرمجة العامة",
+          title: "البرمجة العامة Generic Programming: كتابة دوال وكلاسات تقبل أي نوع بـ template <typename T>",
+          desc: R`في لغة C القديمة، لو أردت دالة ترجع الأكبر بين رقمين، كان يجب أن تكتب دالة لـ int، وأخرى لـ float، وثالثة لـ double!
+في C++، وُجدت ميزة [[Templates]] الثورية:
+
+ما هي الـ Templates؟
+• تتيح لك كتابة كود واحد عام ([[Generic Code]]) يعمل مع أي نوع بيانات في العالم دون تكرار.
+• تُعرف بـ [[template <typename T>]] حيث T يمثل نوعاً متغيراً يحدده المترجم تلقائياً.
+• المترجم يولد كود آلة مخصص لكل نوع تستخدمه في وقت الترجمة، فيكون الكود بأقصى سرعة ممكنة دون أي خسارة في الأداء ([[Zero-cost Abstraction]]).`,
+          example: R`# 1. استدعاء مكتبات الإدخال والنصوص
+#include <iostream>
+#include <string>
+using namespace std;
+
+# 2. دالة عامة تقبل أي نوع بيانات وتحدد الأكبر
+template <typename T>
+T getMax(T a, T b) {
+  return (a > b) ? a : b;
+}
+
+int main() {
+  # 3. استدعاء نفس الدالة مع أنواع بيانات مختلفة
+  cout << "الأكبر بين 10 و 25: " << getMax(10, 25) << endl;
+  cout << "الأكبر بين 3.14 و 2.71: " << getMax(3.14, 2.71) << endl;
+  cout << "الأكبر نصياً: " << getMax(string("apple"), string("banana")) << endl;
+  return 0;
+}`,
+          try: R`جرب استدعاء الدالة على حروف [[getMax('x', 'a')]] وشوف كيف طبعت حرف [[x]] تلقائياً دون أي تعديل في كود الدالة!`,
+          flag: "script",
+          deep: {
+            why: R`كل مكتبة الـ STL العملاقة في C++ (vector, map, set, algorithms) مبنية بالكامل باستخدام الـ Templates، وهي الأساس الذي يجعل لغة C++ اللغة الأكثر مرونة وقوة وسرعة في المعالجات الحسابية.`,
+            how: R`العملية تسمى توليد النماذج (Template Instantiation)؛ عندما تكتب getMax(10, 25)، يولد المترجم دالة int getMax(int, int) حقيقية في الكود المترجم، وعندما تكتب getMax(3.14, 2.71) يولد دالة ثانية منفصلة لـ double.`,
+            when: "بناء حاويات البيانات المخصصة (Custom Collections)، ومكتبات الحسابات الرياضية، وأطر العمل المشتركة.",
+            mistakes: R`كتابة كود الـ Template في ملف .cpp مستقل وفصل الرأس .h؛ في C++ لأن المترجم يحتاج لمعرفة الكود لإنشاء النسخ في وقت الترجمة، يجب وضع كود الـ Template كاملاً داخل ملف الـ Header (.h أو .hpp).`
+          },
+          lines: [
+            "تضمين iostream.",
+            "تضمين string.",
+            "استخدام std.",
+            "إعلان القالب العام بتعريف المتغير النوعي T.",
+            "تعريف دالة getMax وتستقبل وترجع نوع T.",
+            "المقارنة الشرطية التعبيرية لإرجاع القيمة الأكبر.",
+            "قفلة دالة getMax.",
+            "بداية main.",
+            "استدعاء الدالة مع أرقام صحيحة int.",
+            "استدعاء نفس الدالة مع أرقام عشرية double.",
+            "استدعاء الدالة مع كائنات نصية string.",
+            "إرجاع كود 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+الأكبر بين 10 و 25: 25
+الأكبر بين 3.14 و 2.71: 3.14
+الأكبر نصياً: banana`
         }
       ]
     },
@@ -152297,6 +152483,62 @@ int main() {
           sol: R`الناتج عند التشغيل:
 هادم Derived تم استدعاؤه بنجاح!
 هادم Base تم استدعاؤه بنجاح.`
+        },
+        {
+          cmd: "الـ Move Semantics و std::move",
+          title: "السرعة الفائقة لـ C++ الحديثة: نقل البيانات دون نسخ بـ Move Semantics و rvalue references &&",
+          desc: R`واحدة من أعظم الثورات في تاريخ C++ (بدءاً من معيار C++11) هي ميزة [[Move Semantics]]:
+
+المشكلة القديمة:
+عند تمرير كائن ضخم (مثل vector يحتوي على مليون عنصر) لدالة أو إرجاعه، كانت C++ تقوم بنسخ كل عنصر بايت ببايت في الرام ([[Deep Copy]])، مما يهدر المعالج والذاكرة بلا داعٍ.
+
+الحل مع Move Semantics:
+بدلاً من نسخ البيانات، نقوم **بنقل ملكية المؤشر الداخلي فقط** ([[Stealing the pointer]]) في نانو ثانية!
+• دالة [[std::move(x)]]: تحول المتغير إلى مرجع مؤقت ([[rvalue reference &&]]) مما يسمح للطرف الآخر بسرقة محتوياته بدلاً من نسخه.
+• الكائن الأصلي بعد النقل يصبح فارغاً وصالحاً للحذف دون أي كلفة.`,
+          example: R`# 1. استدعاء مكتبات الإدخال والنصوص والحاويات
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+int main() {
+  # 2. إنشاء نص ضخم في الذاكرة
+  string heavyData = "بيانات ضخمة جداً تشغل ميجابايتات في الذاكرة";
+  vector<string> storage;
+
+  # 3. نقل ملكية البيانات للـ vector دون نسخ بحجم بايت واحد
+  storage.push_back(std::move(heavyData));
+
+  cout << "حجم التخزين: " << storage.size() << endl;
+  cout << "النص الأصلي بعد النقل: \"" << heavyData << "\"" << endl;
+  return 0;
+}`,
+          try: R`شغل الكود بـ [[g++ -std=c++11 main.cpp -o app && ./app]]. لاحظ كيف طُبع النص الأصلي كسطر فارغ [[النص الأصلي بعد النقل: ""]] لأن std::move نقلت حروف النص إلى داخل الفيكتور في صفر ثانية دون نسخ!`,
+          flag: "script",
+          deep: {
+            why: R`ميزة Move Semantics هي السبب الرئيسي وراء تفوق أداء محركات ألعاب الفيديو والأنظمة عالية التردد (HFT - High Frequency Trading) المكتوبة بـ C++؛ فهي تجعل تمرير الحاويات الضخمة أسرع بآلاف المرات من اللغات التي تعتمد على Garbage Collection.`,
+            how: R`الكلاسات الحديثة تحتوي على باني نقل (Move Constructor) ومشغل إسناد نقل (Move Assignment Operator). هذان التابعان يستقبلان [[Type&&]] وينسخان المؤشر الداخلي للبيانات ويضعان مؤشر الكائن الأصلي بـ nullptr، فتنتهي العملية في تعليمة تجميع واحدة.`,
+            when: "إدخال كائنات ضخمة إلى الـ containers، وإرجاع هياكل بيانات كبيرة من الدوال، وتصميم مكتبات الأداء العالي.",
+            mistakes: R`محاولة قراءة أو استخدام الكائن الأصلي بعد تطبيق [[std::move]] عليه؛ حالته تكون غير محددة أو فارغة (Valid but unspecified state). لا تستخدم المتغير بعد نقله إلا إذا أعدت تعيين قيمة جديدة له.`
+          },
+          lines: [
+            "تضمين iostream.",
+            "تضمين string.",
+            "تضمين vector.",
+            "استخدام std.",
+            "بداية main.",
+            "إنشاء متغير نصي يحتوي على بيانات.",
+            "إنشاء فيكتور لتخزين النصوص.",
+            "نقل ملكية النص مباشرة إلى الفيكتور باستخدام std::move دون نسخ عميق.",
+            "طباعة حجم الفيكتور بعد استلام البيانات.",
+            "طباعة النص الأصلي للتأكد من تفريغه ونقل ملكيته.",
+            "إرجاع كود النجاح 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+حجم التخزين: 1
+النص الأصلي بعد النقل: ""`
         }
       ]
     }
@@ -153395,10 +153637,137 @@ func main() {
             "إنهاء الدالة بأمان ومنع استمرار الكود في مسار خاطئ.",
             "قفلة شرط التحقق.",
             "طباعة النتيجة في حالة النجاح.",
-            "قفلة دالة main."
+            "إغلاق دالة main."
           ],
           sol: R`الناتج في الترمنال:
 حدث خطأ متوقع: لا يمكن القسمة على صفر إطلاقاً`
+        },
+        {
+          cmd: "الـ Structs والـ Methods والـ Pointers",
+          title: "الكائنات في Go: تعريف الـ Structs ودوال الـ Methods والفرق بين Pointer و Value Receiver",
+          desc: R`لغة Go لا تحتوي على كلاسات ([[class]]) أو وراثة كلاسيكية، بل تستخدم هياكل البيانات ([[struct]]) والدوال المرتبطة بها ([[methods]]):
+
+1. تعريف الـ Struct:
+• هيكل يجمع حقول البيانات المرتبطة ببعضها (مثل Name و Email و Score).
+• الحقول التي تبدأ بحرف كبير تكون عامة ومكشوفة للحزم الأخرى ([[Exported]]).
+
+2. دوال الـ Methods والـ Receivers:
+في Go تُكتب الدالة مسبوقة بـ Receiver يحدد الكائن التابعة له:
+• الـ [[Value Receiver]] مثل [[(u User)]]: يحصل على نسخة منفصلة من الكائن، فأي تعديل بداخله لا يغير الكائن الأصلي.
+• الـ [[Pointer Receiver]] مثل [[(u *User)]]: يحصل على مؤشر يشير للعنوان الفعلي في الذاكرة، ويستخدم عندما تريد تعديل قيم الكائن أو تجنب نسخ الهياكل الضخمة لتوفير الذاكرة.`,
+          example: R`# 1. تعريف الـ Struct
+type User struct {
+  Name  string
+  Email string
+  Score int
+}
+
+# 2. Method بقيمة Value Receiver (للقراءة فقط دون تعديل الأصل)
+func (u User) PrintInfo() {
+  fmt.Printf("المستخدم: %s - النقاط: %d\n", u.Name, u.Score)
+}
+
+# 3. Method بمؤشر Pointer Receiver (لتعديل البيانات الأصلية في الذاكرة)
+func (u *User) AddPoints(pts int) {
+  u.Score += pts
+}
+
+func main() {
+  u := User{Name: "سارة", Email: "sara@example.com", Score: 10}
+  u.AddPoints(5)
+  u.PrintInfo()
+}`,
+          try: R`احفظ الكود في [[main.go]] وشغّله بـ [[go run main.go]]. هتشوف النقاط زادت لـ 15 لأن [[AddPoints]] استخدمت Pointer Receiver وعدلت الكائن الأصلي مباشرة في الذاكرة!`,
+          flag: "script",
+          deep: {
+            why: R`استخدام Pointer Receiver يوفر سرعة هائلة لأن تمرير هيكل ضخم عبر مؤشر ينسخ 8 بايت فقط (حجم المؤشر) بدلاً من نسخ كافة الحقول في الرام في كل استدعاء.`,
+            how: R`المترجم في Go يتعامل بذكاء؛ لو كتبت [[u.AddPoints(5)]] حيث u كائن عادي وليس مؤشراً، المترجم يحولها تلقائياً خلف الكواليس إلى [[(&u).AddPoints(5)]] دون أن تضطر لكتابة الرموز يدوياً.`,
+            when: "القاعدة الذهبية في Go: إذا كانت أي دالة في الـ Struct تعدل البيانات، اجعل كافة دوال هذا الـ Struct تستخدم Pointer Receivers لتوحيد السلوك.",
+            mistakes: R`تعديل حقل داخل Value Receiver والظن بأن القيمة تغيرت؛ التعديل سيذهب هباءً لأنك عدلت نسخة مؤقتة ستُحذف بمجرد خروج الدالة.`
+          },
+          lines: [
+            "تعريف هيكل User باسم يبدأ بحرف كبير.",
+            "حقل الاسم كنص string.",
+            "حقل الإيميل كنص string.",
+            "حقل النقاط كرقم صحيح int.",
+            "قفلة تعريف الـ Struct.",
+            "تعريف دالة PrintInfo مرتبطة بـ User بنظام Value Receiver.",
+            "طباعة بيانات المستخدم في الترمنال.",
+            "قفلة دالة PrintInfo.",
+            "تعريف دالة AddPoints بنظام Pointer Receiver عبر علامة النجمة *User.",
+            "تعديل النقاط مباشرة في الذاكرة الأصلية.",
+            "قفلة دالة AddPoints.",
+            "دالة main.",
+            "إنشاء مستخدم سارة ببيانات ابتدائية ونقاط 10.",
+            "استدعاء دالة إضافة 5 نقاط عبر المؤشر.",
+            "استدعاء دالة طباعة البيانات لعرض التعديل النهائي.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+المستخدم: سارة - النقاط: 15`
+        },
+        {
+          cmd: "الواجهات Interfaces والـ Duck Typing",
+          title: "تعدد الأشكال: الـ Interfaces دون كلمة implements والـ Any و Type Assertion",
+          desc: R`الواجهات ([[Interfaces]]) في Go هي قمة الأناقة البرمجية وتعتمد على مبدأ [[Implicit Interfaces]] أو Duck Typing:
+«إذا كان يمشي كالبطة ويصدر صوتاً كالبطة، فهو بطة!»
+
+ما الذي يميز واجهات Go عن Java و C#؟
+1. لا تكتب كلمة [[implements]] أبداً!
+2. بمجرد أن يحتوي الـ Struct على نفس الدوال المعرفة داخل الـ Interface، يُعتبر محققاً للواجهة تلقائياً.
+3. يمكنك استخدام واجهات مكتبات خارجية دون تعديل كودها الأصلي إطلاقاً!
+4. النوع [[any]] (وكان يسمى سابقاً interface{}) يقبل أي قيمة من أي نوع في Go.`,
+          example: R`package main
+import "fmt"
+
+# 1. تعريف الواجهة Interface
+type PaymentGateway interface {
+  Pay(amount float64) string
+}
+
+# 2. نوع يمثل بطاقة الائتمان
+type CreditCard struct{}
+func (c CreditCard) Pay(amount float64) string {
+  return fmt.Sprintf("تم خصم %.2f عبر البطاقة الائتمانية", amount)
+}
+
+# 3. دالة تقبل أي نوع يطبق الواجهة تلقائياً
+func ProcessOrder(p PaymentGateway, amt float64) {
+  fmt.Println(p.Pay(amt))
+}
+
+func main() {
+  card := CreditCard{}
+  ProcessOrder(card, 150.50)
+}`,
+          try: R`أضف Struct جديد باسم [[Cash]] ودالة [[Pay]] خاصة به بنفس التوقيع، واستدعه بـ [[ProcessOrder(Cash{}, 50.0)]]، هتشوف Go قبلت النوع الجديد دون أي وراثة أو تعديل في الواجهة!`,
+          flag: "script",
+          deep: {
+            why: R`الواجهات الضمنية تتيح فك الارتباط التام (Decoupling) وتجعل كتابة الـ Mocking واختبارات الوحدة (Unit Testing) أسهل ما يمكن دون الحاجة لمكاتب معقدة.`,
+            how: R`داخلياً، تمثل الـ Interface زوجاً من مؤشرين: مؤشر لنوع البيانات الفعلي ومؤشر لجدول دوال الواجهة (itable)، فيتم التحقق منها بكفاءة عالية في وقت الترجمة.`,
+            when: "تصميم طبقات الخدمات (Services) ومستودعات قواعد البيانات (Repositories) لتمكين التبديل بين بيئة الاختبار وقاعدة البيانات الحقيقية.",
+            mistakes: R`تصميم Interfaces ضخمة تحتوي على عشرات الدوال؛ في Go الممارسة القياسية هي كتابة واجهات صغيرة بدالة أو دالتين فقط (مثل io.Reader و io.Writer).`
+          },
+          lines: [
+            "حزمة main.",
+            "استيراد مكتبة الطباعة fmt.",
+            "تعريف واجهة بوابة الدفع PaymentGateway.",
+            "تحديد شرط الدالة Pay التي تقبل مبلغاً وترجع نصاً.",
+            "قفلة تعريف الواجهة.",
+            "تعريف Struct باسم CreditCard دون ذكر أي واجهة.",
+            "تنفيذ دالة Pay بنفس التوقيع المطلوب على CreditCard.",
+            "إرجاع نص منسق بنتيجة الخصم باستخدام Sprintf.",
+            "قفلة دالة Pay.",
+            "تعريف دالة ProcessOrder وتستقبل أي كائن يطبق PaymentGateway.",
+            "طباعة نتيجة تنفيذ الدفع في الترمنال.",
+            "قفلة دالة ProcessOrder.",
+            "دالة main.",
+            "إنشاء كائن بطاقة الائتمان card.",
+            "تمرير البطاقة لدالة المعالجة بكل مرونة.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+تم خصم 150.50 عبر البطاقة الائتمانية`
         }
       ]
     },
@@ -153542,6 +153911,139 @@ func main() {
   "status": "جاهز ويعمل بأقصى سرعة",
   "version": "1.0"
 }`
+        },
+        {
+          cmd: "القنوات Channels والتواصل بين الـ Goroutines",
+          title: "مشاركة الذاكرة بالتواصل: القنوات Channels واستخدام select والـ Buffered Channels",
+          desc: R`شعار لغة Go العالمي الشهير هو:
+«Do not communicate by sharing memory; instead, share memory by communicating.»
+«لا تتواصل بمشاركة الذاكرة المشتركة؛ بل شارك الذاكرة عبر قنوات التواصل الآمنة!»
+
+ما هي الـ [[Channel]]؟
+• هي أنبوب لنقل البيانات بأمان بين Goroutines متوازية.
+• تُنشأ باستخدام دالة [[make(chan Type)]].
+• الإرسال للقناة بمشغل السهم: [[ch <- value]].
+• الاستقبال من القناة بنفس السهم: [[value := <-ch]].
+• القناة تزامن العمليات تلقائياً دون الحاجة لكتابة أقفال معقدة، وتُغلق بدالة [[close(ch)]].`,
+          example: R`package main
+import "fmt"
+
+func produce(ch chan string) {
+  ch <- "طلب مدفوع رقم #101"
+  ch <- "طلب مدفوع رقم #102"
+  close(ch)
+}
+
+func main() {
+  # 1. إنشاء قناة اتصالات Channels لنقل النصوص
+  orders := make(chan string)
+
+  # 2. تشغيل المنتج في Goroutine مستقل
+  go produce(orders)
+
+  # 3. القراءة من القناة حتى إغلاقها
+  for order := range orders {
+    fmt.Println("تم استلام ومعالجة:", order)
+  }
+}`,
+          try: R`شغل الكود بـ [[go run main.go]] وشوف كيف استقبلت دالة main الرسائل بالترتيب أولاً بأول دون انتظار ثابت بالوقت، وأغلقت الحلقة تلقائياً فور استدعاء [[close(ch)]].`,
+          flag: "script",
+          deep: {
+            why: R`في اللغات الأخرى مشاركة المتغيرات بين الـ Threads تسبب كوارث الـ Race Conditions و Deadlocks. في Go القنوات تجعل نقل الملكية (Ownership) صريحاً وآمناً.`,
+            how: R`القنوات العادية غير مبطنة (Unbuffered) وتتطلب وجود مرسل ومستقبل في نفس اللحظة (Rendezvous)، بينما القنوات المبطنة [[make(chan int, 100)]] تسمح بإرسال حتى 100 عنصر في الذاكرة دون حظر المرسل.`,
+            when: "بناء خطوط معالجة البيانات (Pipelines)، وأنظمة الـ Worker Pools، ومعالجة رسائل قوائم الانتظار (Queues).",
+            mistakes: R`القراءة من قناة مغلقة ترجع القيمة الصفرية Zero-Value مباشرة، بينما الإرسال إلى قناة مغلقة يسبب كراش فوري [[panic: send on closed channel]]. أغلق القناة دائماً من طرف المرسل فقط.`
+          },
+          lines: [
+            "حزمة main.",
+            "استيراد مكتبة الطباعة fmt.",
+            "تعريف دالة المنتج produce وتستقبل قناة نصوص ch.",
+            "إرسال الطلب الأول داخل القناة باستخدام السهم <-.",
+            "إرسال الطلب الثاني داخل القناة.",
+            "إغلاق القناة لإعلام المستقبل باكتمال الإنتاج عبر close.",
+            "قفلة دالة produce.",
+            "دالة main.",
+            "إنشاء قناة نصوص orders باستخدام make.",
+            "إطلاق دالة الإنتاج في Goroutine مستقل في الخلفية بكلمة go.",
+            "استقبال كافة عناصر القناة دورياً باستخدام for .. range.",
+            "طباعة كل طلب يتم استلامه فور وصوله.",
+            "قفلة حلقة for.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+تم استلام ومعالجة: طلب مدفوع رقم #101
+تم استلام ومعالجة: طلب مدفوع رقم #102`
+        },
+        {
+          cmd: "التزامن الآمن بـ WaitGroup و Mutex",
+          title: "منع الـ Race Condition: تنظيم الخيوط بـ sync.WaitGroup وقفل الذاكرة بـ sync.Mutex",
+          desc: R`عندما تقوم عدة Goroutines بتعديل نفس المتغير في نفس اللحظة، يحدث خطأ كارثي يسمى [[Race Condition]] (سباق الذاكرة)، فتضيع العمليات الحسابية وتفسد البيانات!
+
+الحل عبر حزمة [[sync]]:
+1. [[sync.WaitGroup]]:
+تنتظر انتهاء جميع الـ Goroutines بدقة متناهية:
+• [[wg.Add(1)]]: إضافة مهمة للعداد.
+• [[defer wg.Done()]]: خصم مهمة عند انتهاء الدالة.
+• [[wg.Wait()]]: تجميد الكود الرئيسي حتى يصل العداد إلى صفر.
+
+2. [[sync.Mutex]] (القفل التبادلي Mutual Exclusion):
+• [[mu.Lock()]]: قفل الوصول؛ لا يمكن لأي Goroutine آخر تعديل المتغير في نفس الوقت.
+• [[mu.Unlock()]]: فك القفل ليأخذ التالي دوره بسلام.`,
+          example: R`package main
+import "fmt"
+import "sync"
+
+func main() {
+  var wg sync.WaitGroup
+  var mu sync.Mutex
+  counter := 0
+
+  for i := 0; i < 5; i++ {
+    wg.Add(1)
+    go func() {
+      defer wg.Done()
+      mu.Lock()
+      counter++
+      mu.Unlock()
+    }()
+  }
+
+  wg.Wait()
+  fmt.Println("العداد النهائي الآمن:", counter)
+}`,
+          try: R`شغّل الكود بأمر كاشف السباق السحري في Go:
+[[go run -race main.go]]
+وشاهد كيف يتأكد مترجم Go ذاتياً من خلو الكود من أي تصادم في الذاكرة بنسبة 100%!`,
+          flag: "script",
+          deep: {
+            why: R`أمر [[go test -race]] و [[go run -race]] هو أقوى أداة في ترسانة مطور Go؛ يكتشف أخطاء التزامن الخفية في أجزاء من الثانية ويحدد رقم السطر بدقة.`,
+            how: R`الـ Mutex يستخدم تعليمات ذرية من عتاد المعالج (Atomic CPU Instructions مثل Compare-And-Swap) لضمان حجز المتغير في نانوثانية دون إهدار موارد المعالج.`,
+            when: "تحديث الأرصدة البنكية، وحساب إحصائيات الزوار المتزامنة، وإدارة الكاش في الذاكرة.",
+            mistakes: R`نسيان فك القفل بـ [[mu.Unlock()]] في حال حدوث خطأ؛ استخدم دائماً [[defer mu.Unlock()]] مباشرة بعد Lock لضمان فك القفل مهما حدث.`
+          },
+          lines: [
+            "حزمة main.",
+            "استيراد مكتبة الطباعة fmt.",
+            "استيراد مكتبة التزامن sync.",
+            "دالة main.",
+            "تعريف مجموعة الانتظار wg.",
+            "تعريف قفل الذاكرة mu.",
+            "تعريف عداد مشترك بقيمة ابتدائية 0.",
+            "إنشاء حلقة تكرار لإطلاق 5 مهام متزامنة.",
+            "إضافة مهمة واحدة لعداد الانتظار قبل إطلاق الـ Goroutine.",
+            "إطلاق دالة مجهولة Goroutine في الخلفية.",
+            "جدولة خصم المهمة من العداد عند الانتهاء بـ defer wg.Done.",
+            "قفل الذاكرة لمنع أي تداخل متزامن.",
+            "زيادة العداد بأمان تام داخل منطقة القفل.",
+            "فك قفل الذاكرة للسماح للمهام التالية.",
+            "استدعاء الدالة المجهولة وإغلاقها بالأقواس ().",
+            "قفلة حلقة for.",
+            "انتظار وصول عداد كافة المهام إلى صفر عبر wg.Wait.",
+            "طباعة القيمة النهائية الدقيقة للعداد.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+العداد النهائي الآمن: 5`
         }
       ]
     },

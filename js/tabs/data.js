@@ -667,7 +667,25 @@ RETURNING id, status, created_at;`,
           solCode: R`SELECT count(*) FROM products;
 INSERT INTO products (name, price, stock) VALUES ('A', 10, 1), ('B', NULL, 1), ('C', 30, 1);
 -- ERROR:  null value in column "price" of relation "products" violates not-null constraint
-SELECT count(*) FROM products;   -- نفس الرقم`
+SELECT count(*) FROM products;   -- نفس الرقم`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL
+);
+INSERT INTO products VALUES (1, 'T-shirt', 250.00, 10);`,
+            starter: R`-- ضيف منتجين جديدين في أمر واحد: Cap بسعر 180 ومخزون 5، و Mug بسعر 120 ومخزون 20
+-- ورجّع الأسماء والأسعار بترتيب السعر تصاعدياً
+INSERT INTO products ...;
+SELECT name, price FROM products ORDER BY price;`,
+            expect: [["Mug", 120], ["Cap", 180], ["T-shirt", 250]],
+            solution: R`INSERT INTO products (id, name, price, stock) VALUES (2, 'Cap', 180, 5), (3, 'Mug', 120, 20);
+SELECT name, price FROM products ORDER BY price;`,
+            ordered: true
+          }
         },
         {
           cmd: "UPDATE",
@@ -710,7 +728,27 @@ BEGIN;
 UPDATE products SET price = 0;
 SELECT name, price FROM products;   -- كله 0.00
 ROLLBACK;
-SELECT name, price FROM products;   -- الأسعار رجعت`
+SELECT name, price FROM products;   -- الأسعار رجعت`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10),
+  (2, 'Mug', 120.00, 0),
+  (3, 'Hoodie', 650.00, 4);`,
+            starter: R`-- عدّل سعر Mug ليصبح 140 ومخزونه 15
+-- ثم استرجع اسم وسعر ومخزون Mug
+UPDATE products SET ...;
+SELECT name, price, stock FROM products WHERE name = 'Mug';`,
+            expect: [["Mug", 140, 15]],
+            solution: R`UPDATE products SET price = 140, stock = 15 WHERE name = 'Mug';
+SELECT name, price, stock FROM products WHERE name = 'Mug';`
+          }
         },
         {
           cmd: "DELETE",
@@ -749,7 +787,27 @@ SELECT name FROM products WHERE deleted_at IS NULL;`,
 الحلول المعتادة: [[VIEW]] اسمها مثلًا active_products فيها الشرط والكود يقرا منها، أو global filter في الـ ORM، أو partial index [[WHERE deleted_at IS NULL]] عشان الاستعلامات اليومية تفضل سريعة. وافتكر إن الـ UNIQUE constraints لسه شايفة الصف الممسوح: لو عايز تضيف Cap جديد باسم unique هيترفض.`,
           solCode: R`UPDATE products SET deleted_at = now() WHERE name = 'Cap';
 SELECT name FROM products WHERE deleted_at IS NULL;   -- من غير Cap
-SELECT name FROM products;                            -- Cap لسه ظاهر`
+SELECT name FROM products;                            -- Cap لسه ظاهر`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10),
+  (2, 'Old Poster', 50.00, 0),
+  (3, 'Broken Cap', 20.00, 0);`,
+            starter: R`-- احذف المنتجات التي نفد مخزونها (stock = 0)
+-- ثم استرجع id واسم المنتجات المتبقية
+DELETE FROM products ...;
+SELECT id, name FROM products;`,
+            expect: [[1, "T-shirt"]],
+            solution: R`DELETE FROM products WHERE stock = 0;
+SELECT id, name FROM products;`
+          }
         }
       ]
     },
