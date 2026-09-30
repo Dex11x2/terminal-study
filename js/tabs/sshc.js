@@ -73,7 +73,10 @@ Host staging
             "بدومين.",
             "يوزر.",
             "مفتاح مختلف."
-          ]
+          ],
+          sol: R`[[ssh prod]] يدخلك على طول من غير ما تكتب IP ولا بورت ولا مفتاح، وأول مرة بس هيسألك عن بصمة السيرفر. [[scp file prod:/tmp/]] هيرفع الملف ويطبع سطر تقدّم فيه اسمه و 100%، وتقدر تتأكد بـ [[ssh prod 'ls -l /tmp/file']]. جربنا ده على sshd محلي على بورت 2222 بنفس الشكل واشتغل من غير أي flag.
+
+لو ssh قال [[Bad owner or permissions on ~/.ssh/config]] يبقى الـ chmod متعملش أو الملف مملوك ليوزر تاني. ولو قال [[Could not resolve hostname prod]] يبقى ssh مش شايف الملف: اتأكد إن اسمه [[config]] بالظبط من غير امتداد (Notepad على ويندوز بيضيف [[.txt]] لوحده) وإنه في [[~/.ssh/]]. ولو [[Permission denied (publickey)]] شوف مسار [[IdentityFile]] وإن المفتاح العام متحط في [[authorized_keys]] على السيرفر.`
         },
         {
           cmd: "Host * والأنماط",
@@ -124,7 +127,10 @@ Host *
             "بعد ٣ من غير رد اعتبره وقع.",
             "ضيف المفتاح للـ agent أول استخدام.",
             "استخدم المفتاح المحدد بس."
-          ]
+          ],
+          sol: R`[[ssh -G prod]] بيطبع حوالي ٨٠ سطر، كل إعداد بقيمته النهائية وبحروف صغيرة. دوّر بـ [[ssh -G prod | grep -E '^(hostname|user|port|identityfile|serveraliveinterval|identitiesonly) ']] وهتلاقي حاجة زي: [[user deploy]] و [[hostname 203.0.113.10]] و [[port 2222]] من بلوك prod، و [[serveraliveinterval 30]] و [[identitiesonly yes]] من [[Host *]]. ولو جربت [[ssh -G web2]] هتلاقي [[hostname web2.example.com]] لأن [[%h]] اتبدلت باسم الـ host، و [[ssh -G db.internal]] يطلع [[user admin]] و [[proxyjump bastion]].
+
+القاعدة اللي بتفسر أي نتيجة غريبة: لكل إعداد، أول قيمة ssh يقابلها من فوق لتحت هي اللي بتكسب. عشان كده [[Host *]] لازم في الآخر. لو حطيته فوق وفيه [[User root]]، هتلاقي [[ssh -G prod]] بيقول [[user root]] مع إن بلوك prod فيه deploy. و [[-G]] مبيتصلش بالسيرفر خالص، فتقدر تجربه على أسامي وهمية.`
         },
         {
           cmd: "ProxyJump",
@@ -168,7 +174,10 @@ ssh -J deploy@203.0.113.5 deploy@10.0.0.12`,
             "يوزر.",
             "ادخله عبر bastion.",
             "نفس الحاجة لمرة واحدة بـ -J."
-          ]
+          ],
+          sol: R`الاتنين هيشتغلوا كأن db-internal قدامك، وهتلاحظ إنهم أبطأ شوية (اتصالين مش واحد). عشان تتأكد إنه عدّى عبر bastion فعلًا شغّل [[ssh -v db-internal true 2>&1 | grep -i proxy]]، هيطلع [[Setting implicit ProxyCommand from ProxyJump: ssh -W '[%h]:%p' bastion]] وبعدين [[Authenticated to 10.0.0.12 (via proxy)]]. جربناها بسيرفر محلي والسطرين دول طلعوا بالظبط.
+
+المفتاح بيتقري من جهازك في المرحلتين، مش من bastion، فمش محتاج تحط مفتاحك الخاص على bastion. ولو ظهر [[channel 0: open failed: administratively prohibited]] يبقى bastion قافل [[AllowTcpForwarding]] في sshd_config بتاعه. ولو الاتصال بـ bastion نفسه نجح بس بعده timeout، يبقى [[10.0.0.12]] مش متشاف من bastion (IP غلط أو firewall داخلي).`
         },
         {
           cmd: "مفاتيح متعددة",
@@ -220,7 +229,10 @@ git remote set-url origin git@github-work:company/repo.git`,
             "مفتاح الشغل.",
             "ده بس.",
             "في مشروع الشغل: الـ remote بالاسم الوهمي."
-          ]
+          ],
+          sol: R`الاتنين هيرجعوا exit code 1 ورسالة زي [[Hi work-user! You've successfully authenticated, but GitHub does not provide shell access.]]، والفرق في الاسم بعد Hi: [[ssh -T github-work]] باسم حساب الشغل، و [[ssh -T github.com]] باسمك الشخصي. الـ exit code 1 طبيعي هنا لأن GitHub مبيدكش shell.
+
+لو الاتنين ردوا بنفس الاسم، غالبًا [[IdentitiesOnly yes]] ناقص، فـ ssh بيجرب المفاتيح اللي في الـ agent الأول، وGitHub بيقبل أول مفتاح يعرفه. ولو [[Permission denied (publickey)]] يبقى المفتاح العام بتاع الشغل مش متضاف في حساب الشغل. وتقدر تتأكد إن الاسم بيتحول صح من غير نت: [[ssh -G github-work | grep -E '^(hostname|identityfile) ']] يطلع [[hostname github.com]] والمفتاح بتاع الشغل.`
         },
         {
           cmd: "keepalive و multiplexing",
@@ -263,7 +275,10 @@ ssh -O exit prod`,
             "يفضل مفتوح ١٠ دقايق بعد آخر جلسة.",
             "فيه اتصال مشترك؟",
             "اقفله."
-          ]
+          ],
+          sol: R`أول [[ssh prod]] بيعمل الاتصال الحقيقي وبيعمل socket في [[~/.ssh/]] باسم زي [[cm-deploy@203.0.113.10:22]]. التاني [[time ssh prod true]] هيطلع [[real 0m0.0xx]]: جربناها على سيرفر محلي والأول أخد ٠.٢ ثانية والتاني ٠.٠٠٩. وعلى سيرفر بعيد الفرق أوضح بكتير لأن مفيش handshake ولا مصادقة من جديد. [[ssh -O check prod]] يطبع [[Master running (pid=...)]]، و [[ssh -O exit prod]] يطبع [[Exit request sent.]].
+
+لو التاني لسه بطيء، [[ssh -O check prod]] هيقولك [[Control socket connect(...): No such file or directory]]، يعني الإعدادات مش متطبقة على الـ host ده (اتأكد بـ [[ssh -G prod | grep control]]). وعلى ويندوز بـ OpenSSH بتاع مايكروسوفت، ControlMaster مبيشتغلش أصلًا، اعمل التجربة من WSL.`
         },
         {
           cmd: "LocalForward",
@@ -303,7 +318,10 @@ Host prod-expose
             "العنوان.",
             "يوزر.",
             "9000 على السيرفر يروح لتطبيقك المحلي على 3000."
-          ]
+          ],
+          sol: R`[[ssh -N -f prod-db]] هيرجعلك الـ prompt على طول من غير ما يدخلك، لأن [[-f]] بيحطه في الخلفية و [[-N]] يعني من غير أوامر. اتأكد إن البورت بقى مفتوح عندك: [[ss -ltn | grep 5433]] (أو [[lsof -i :5433]] على الماك) هيطلع [[127.0.0.1:5433 LISTEN]]. في DBeaver: Host [[localhost]] و Port [[5433]] واليوزر والباسورد بتوع Postgres اللي على السيرفر، مش بتوع SSH. جربناها محليًا و psql على 5433 وصل لـ Postgres وطلب الباسورد، يعني النفق شغال.
+
+خد بالك: [[ssh -O exit prod-db]] بيشتغل بس لو [[ControlMaster]] و [[ControlPath]] متفعلين (زي [[Host *]] في الدرس اللي قبله)، غير كده هيقول [[No ControlPath specified]] وتقفله بـ [[pkill -f 'ssh -N -f prod-db']]. ولو قال [[bind [127.0.0.1]:5433: Address already in use]] يبقى نفق قديم لسه شغال أو Postgres محلي ماسك البورت.`
         },
         {
           cmd: "ssh-agent و forwarding",
@@ -338,7 +356,10 @@ ssh prod 'ssh -T git@github.com'`,
             "في config لسيرفرك.",
             "مرر الـ agent للسيرفر ده.",
             "من السيرفر: كلّم GitHub بمفتاحك اللي على جهازك."
-          ]
+          ],
+          sol: R`بعد [[ssh-add]]، [[ssh-add -l]] على جهازك يطبع سطر زي [[256 SHA256:... you@laptop (ED25519)]]. على السيرفر اللي دخلته بـ [[ForwardAgent yes]]، [[ssh-add -l]] هيطبع نفس السطر بالظبط، و [[echo $SSH_AUTH_SOCK]] يطبع مسار زي [[/tmp/ssh-XXXX/agent.1234]]. عشان كده [[git clone git@github.com:USER/private.git]] هناك هيشتغل من غير أي ملف مفتاح في [[~/.ssh]] على السيرفر.
+
+لو [[ssh-add -l]] على السيرفر قال [[Could not open a connection to your authentication agent]] (جربناها من غير ForwardAgent وده اللي طلع)، يبقى الـ forwarding مش شغال: إما [[ForwardAgent]] مش على الـ Host ده، أو السيرفر قافل [[AllowAgentForwarding]]، أو الـ agent عندك فاضي ([[The agent has no identities]]). وفعّله بس للسيرفرات اللي تثق فيها، لأن root عليها يقدر يستخدم مفتاحك طول ما انت متصل.`
         },
         {
           cmd: "الأدوات بتقرا الملف",
@@ -372,7 +393,10 @@ Ansible و Terraform و Docker context ([[docker context create prod --docker "h
             "أمر على السيرفر ويرجع.",
             "clone من repo على سيرفرك.",
             "VS Code يفتح فولدر على السيرفر."
-          ]
+          ],
+          sol: R`في VS Code: F1 ثم «Remote-SSH: Connect to Host...» هيظهر لستة فيها [[prod]] و [[staging]] بالأسامي اللي في [[Host]]، وأي بلوك فيه [[*]] زي [[Host *]] مش هيظهر. اختار prod هيفتح شباك جديد، أول مرة هيسألك نوع السيرفر (Linux) ويسطّب VS Code Server هناك، وبعدين في الركن الشمال تحت هتلاقي [[SSH: prod]].
+
+لو اللستة فاضية، VS Code بيقرا ملف تاني: من «Remote-SSH: Open SSH Configuration File...» شوف أنهي مسار مختار (الإعداد [[remote.SSH.configFile]]). وعلى ويندوز، الملف لازم يبقى في [[C:\Users\you\.ssh\config]]، مش جوه WSL، لأن Remote-SSH شغال بـ ssh بتاع ويندوز.`
         },
         {
           cmd: "known_hosts",
@@ -413,7 +437,10 @@ ssh-keygen -R 203.0.113.10`,
             "البصمة اللي بتوصلك من بره: لازم تطابق اللي فوقها.",
             "السيرفر ده موجود في known_hosts؟",
             "امسح بصمته القديمة (بعد إعادة تسطيب)."
-          ]
+          ],
+          sol: R`بعد إعادة التسطيب، أول [[ssh]] هيطلع تحذير كبير [[WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!]] ومعاه [[Offending ED25519 key in ~/.ssh/known_hosts:1]] والاتصال هيقف. [[ssh-keygen -R 203.0.113.10]] يطبع [[# Host 203.0.113.10 found: line 1]] و [[known_hosts updated.]] و [[Original contents retained as known_hosts.old]]. بعدها ssh هيتعامل معاه كسيرفر جديد: مع [[accept-new]] يضيفه لوحده ويطبع [[Warning: Permanently added ...]]، ومن غيرها هيسألك yes/no. جربنا ده كله على sshd محلي غيّرنا مفتاحه.
+
+قبل ما تعمل [[-R]]، قارن البصمة: [[ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub]] على السيرفر (من الـ console بتاع شركة الاستضافة) لازم يطابق اللي في رسالة التحذير. ولاحظ إن [[accept-new]] بيقبل السيرفرات الجديدة بس، والمفتاح اللي اتغير لسه بيوقف الاتصال، وده الصح. [[StrictHostKeyChecking no]] هو اللي بيعدّي ده، وعشان كده ممنوع.`
         }
       ]
     }

@@ -64,7 +64,12 @@ Electron نفسه حوالي ١٠٠ ميجا بينزل مع npm install، وع�
             "خلّي نقطة البداية main.js.",
             "سكربت start بيشغّل Electron على الفولدر ده.",
             "شغّل."
-          ]
+          ],
+          sol: R`[[npm start]] بيفتح نافذة سطح مكتب فيها الـ [[index.html]] بتاعك، وفوقها منيو [[File]] و [[Edit]] الافتراضية بتاعة Electron. جربتها (بـ Xvfb لأن مفيش شاشة هنا) والنافذة فتحت والعنوان طلع [[My App]] وكلمة «أهلًا» ظهرت.
+
+في الترمنال هتلاقي أي [[console.log]] من [[main.js]] بيظهر هنا (ده الـ main process)، مش في DevTools. لو النافذة فتحت بيضا خالص، غالبًا مسار الملف غلط في [[loadFile]]، أو نسيت [[app.whenReady()]].
+
+لو طلع [[Error: Cannot find module 'electron']] يبقى التسطيب مخلصش، و [[electron: command not found]] معناها إنك بتشغّل [[electron]] لوحده مش [[npx electron .]] أو [[npm start]]. وعلى سيرفر من غير شاشة لازم [[xvfb-run]] (ولو بتشتغل كـ root محتاج [[--no-sandbox]]).`
         },
         {
           cmd: "main.js",
@@ -111,7 +116,12 @@ app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(
             "نهاية الدالة.",
             "لما Electron يجهز افتح النافذة.",
             "لما النوافذ كلها تتقفل اقفل البرنامج (إلا على الماك)."
-          ]
+          ],
+          sol: R`لما تغيّر [[width]] و [[height]] وتشغّل تاني، النافذة بتفتح بالمقاس الجديد. جربت [[win.getSize()]] بعد التحميل ورجع [[[ 1000, 700 ]]] بالظبط.
+
+في DevTools (Ctrl+Shift+I) لو كتبت [[typeof require]] في Console الواجهة هيرجع [[undefined]]. جربتها من الكود ([[executeJavaScript('typeof require')]]) والنتيجة كانت [[undefined]]. ده مقصود وآمن: [[contextIsolation]] و [[nodeIntegration: false]] هما الافتراضي من Electron 12، فكود الصفحة ماينفعش يوصل لـ Node مباشرة. لو عايز الواجهة تنادي حاجة من النظام، بتعرّضها من [[preload.js]] بـ [[contextBridge]].
+
+لو [[require]] طلع [[function]] يبقى عندك [[nodeIntegration: true]] أو Electron قديم، وده ثغرة أمان حقيقية لو بتحمّل محتوى من النت.`
         },
         {
           cmd: "npm run dev",
@@ -142,7 +152,12 @@ npx wait-on tcp:5173 && npx electron .`,
             "شغّل الاتنين مع بعض.",
             "ترمنال ١: سيرفر الواجهة.",
             "ترمنال ٢: استنى البورت يرد، وبعدين افتح Electron."
-          ]
+          ],
+          sol: R`[[npm run dev]] بيشغّل Vite و Electron مع بعض. لما تعدّل كلمة في الواجهة وتحفظ، بتتغير في نافذة Electron لوحدها من غير reload، لأن Electron بيحمّل [[http://localhost:5173]] و Vite بيعمل HMR زي المتصفح بالظبط.
+
+بس لو عدّلت [[main.js]] (كود الـ main process) مش هيتغير: لازم تقفل Electron وتشغّل [[npm run dev]] تاني، لأن الـ main process مابيتعملوش hot reload. ده الفرق اللي المفروض تحسّه في التجربة.
+
+[[concurrently -k]] مهم: الـ [[-k]] بيقفل Vite لما تقفل Electron. من غيره Vite هيفضل شغال على 5173 وتقفل الترمنال. ولو Electron فتح على طول وطلّع شاشة بيضا أو خطأ اتصال، يبقى [[wait-on tcp:5173]] مش موجود وElectron سبق Vite.`
         }
       ]
     },
@@ -185,7 +200,14 @@ npx cap add android`,
             "منصة أندرويد.",
             "ابني الموقع الأول.",
             "اعمل مشروع أندرويد في فولدر android/."
-          ]
+          ],
+          sol: R`جربت الأوامر على مشروع فيه فولدر [[dist]]. [[npx cap init]] عمل [[capacitor.config.json]] (أو [[.ts]]) وجواه:
+
+[[{ "appId": "com.example.myapp", "appName": "myapp", "webDir": "dist" }]]
+
+و [[npx cap add android]] طلّع [[✔ add android]] و [[[success] android platform added!]] وعمل فولدر [[android/]] فيه مشروع Gradle كامل ([[gradlew]] و [[app/]] و [[settings.gradle]]).
+
+[[webDir]] لازم يشاور على فولدر البناء الحقيقي بتاعك ([[dist]] في Vite، [[build]] في CRA، [[out]] في Next export). لو غلط، الأوامر اللي بعده هتشتكي إنها ملقتش [[index.html]]. و [[appId]] لازم يبقى reverse-domain فريد لأنه هوية التطبيق في المتجر ومينفعش يتغير بعد النشر.`
         },
         {
           cmd: "npx cap sync android",
@@ -213,7 +235,12 @@ npx @capacitor/assets generate --android --iconBackgroundColor '#0f172a' --splas
             "انسخه جوه مشروع أندرويد وحدّث الـ plugins.",
             "أو الاتنين في سكربت واحد.",
             "ولّد كل مقاسات الأيقونة وشاشة البداية من صورة واحدة."
-          ]
+          ],
+          sol: R`جربتها: غيّرت العنوان في [[dist/index.html]] من [[Hello v1]] لـ [[Hello v2]]، عملت [[npx cap sync android]]، ولقيت [[Hello v2]] جوه [[android/app/src/main/assets/public/index.html]]. اللوج طبع [[✔ Copying web assets from dist to android/app/src/main/assets/public]].
+
+الفرق بين [[copy]] و [[sync]]: [[copy]] بينقل ملفات الويب بس، [[sync]] بينقلها + بيحدّث الـ native plugins. بعد ما تضيف أي [[@capacitor/...]] plugin لازم [[sync]] مش [[copy]].
+
+الغلط الأشهر: تعدّل الكود وتفتح Android Studio على طول من غير [[npm run build]] و [[cap sync]]، فتلاقي التطبيق شايف النسخة القديمة. خليها سكربت واحد [[vite build && cap sync android]]. و [[@capacitor/assets]] بياخد [[icon.png]] (1024×1024) و [[splash.png]] ويطلّع كل المقاسات لوحده.`
         },
         {
           cmd: "npx cap open android",
@@ -244,7 +271,12 @@ iOS بنفس الأوامر بس محتاج ماك و Xcode، ولازم حسا�
             "منصة iOS.",
             "اعمل مشروع iOS.",
             "افتحه في Xcode."
-          ]
+          ],
+          sol: R`[[npx cap open android]] بيفتح Android Studio على مشروع [[android/]]. أول مرة Android Studio هياخد وقت في «Gradle sync» وممكن يطلب يسطّب Android SDK أو build-tools ناقصة، سيبه يخلّص. [[npx cap run android --list]] بيطلّع الأجهزة والـ emulators المتاحة بالـ IDs بتاعتهم.
+
+بعد ما تعمل emulator من Device Manager وتشغّله، [[npx cap run android]] بيبني ويسطّب ويفتح التطبيق عليه. لو قال [[No target devices found]] يبقى مفيش emulator شغال ولا موبايل موصّل بـ USB debugging.
+
+(ما قدرتش أفتح Android Studio ولا أبني APK في البيئة دي: مفيش Android SDK متسطب، و [[./gradlew]] وقف عند [[Could not resolve com.android.tools.build:gradle]] لأنه محتاج ينزّل من النت. الأوامر نفسها صح، بس محتاجة جهاز فيه Android Studio.)`
         }
       ]
     },
@@ -287,7 +319,12 @@ npx @electron/asar list release/win-unpacked/resources/app.asar | head`,
             "exe واحد من غير تسطيب.",
             "شوف الناتج.",
             "إيه اللي دخل جوه app.asar فعلًا."
-          ]
+          ],
+          sol: R`[[npx electron-builder --win nsis]] بيطلّع فولدر [[release/]] فيه installer اسمه زي [[myapp Setup 1.0.0.exe]]. بعد ما تسطّبه هتلاقي البرنامج في قايمة Start وأيقونة على سطح المكتب. [[--win portable]] بيطلّع [[.exe]] واحد بيشتغل من غير تسطيب.
+
+في [[release/win-unpacked]] هتلاقي التطبيق «مفكوك»: [[myapp.exe]] وجنبه [[resources/app.asar]]. الـ [[.exe]] ده بيشتغل على طول من غير installer، مفيد للتجربة السريعة. و [[@electron/asar list]] بيوريك ملفاتك (main.js و index.html...) مضغوطة جوه الـ asar، فأي حد يقدر يفكها، يعني الكود مش سري.
+
+مهم: بناء نسخة ويندوز لازم يتعمل على ويندوز (أو Linux + Wine)، ونسخة الماك لازم على ماك للتوقيع. وأول مرة electron-builder بينزّل ملفات كبيرة، فمحتاج نت. (ما جربتوش هنا لأنه محتاج بيئة ويندوز.)`
         },
         {
           cmd: "build-exe.ps1",
@@ -347,7 +384,12 @@ Write-Host "Done: $out\myapp.exe" -ForegroundColor Green`,
             "غيّر أيقونة الـ exe.",
             "ولو فشل وقّف.",
             "خلصنا."
-          ]
+          ],
+          sol: R`السكربت ده هو electron-builder بإيدك عشان تفهم إن الـ exe مجرد نسخة Electron + ملفاتك. بعد ما يشتغل هتلاقي [[dist\myapp\myapp.exe]] وجنبه [[resources\app\]] وفيه [[main.js]] و [[preload.js]] و [[index.html]] و [[package.json]] زي ما هم نص عادي، مش مشفّرين.
+
+لو مسحت [[package.json]] اللي في [[resources\app]] وشغّلت الـ exe، Electron مش هيلاقي [[main]] فهيفتح الشاشة الترحيبية الافتراضية بتاعة Electron بدل تطبيقك. ده بيثبتلك إن الـ exe نفسه هو Electron، والـ [[resources\app]] هو تطبيقك.
+
+الفكرة اللي تطلع بيها: الـ .exe مش بيخبّي كودك. لو عايز حماية للكود استخدم asar (مش تشفير حقيقي) أو احتفظ بالمنطق الحساس على السيرفر. (السكربت PowerShell و rcedit، فما اتجربش على Linux، بس منطق النسخ صحيح.)`
         },
         {
           cmd: "app.isPackaged",
@@ -395,7 +437,12 @@ const logo = path.join(base, 'assets', 'logo.png');`,
             "متغير البيئة يكسب لو موجود (للتطوير).",
             "فولدر الملفات اللي جاية مع البرنامج: resources في النسخة المتغلّفة.",
             "مسار صورة بيشتغل في الحالتين."
-          ]
+          ],
+          sol: R`اطبع [[app.getPath('userData')]] في [[main.js]]. جربتها على Linux ورجعت [[/root/.config/myapp]] (باسم [[name]] من package.json). على ويندوز بتبقى [[C:\Users\<you>\AppData\Roaming\myapp]] (يعني [[%APPDATA%\myapp]])، وعلى الماك [[~/Library/Application Support/myapp]].
+
+الفكرة المهمة: في التطوير ملفاتك جنب الكود، لكن في النسخة المتغلّفة الكود جوه [[app.asar]] للقراءة بس، فأي ملف بتكتب فيه (config، database، logs) لازم يروح [[userData]]. عشان كده الكود بيعمل [[config.json]] هناك لو مش موجود.
+
+و [[app.isPackaged]] بيفرّق بين الحالتين: في التطوير [[false]] (فبيقرا [[.env]] و [[__dirname]])، وفي الـ build [[true]] (فبيقرا من [[process.resourcesPath]]). لو خلطت الاتنين هتلاقي التطبيق شغال في التطوير وبيكراش بعد الـ build بـ [[ENOENT]] على ملف مش لاقيه.`
         },
         {
           cmd: "launcher",
@@ -460,7 +507,12 @@ npx electron .`,
             "سطّب أول مرة.",
             "ابني الواجهة كل مرة.",
             "شغّل."
-          ]
+          ],
+          sol: R`الفكرة: المستخدم العادي مش هيفتح ترمنال ويكتب أوامر، فبتديله ملف يدوس عليه دبل كليك. جربت [[run.sh]] (نسخة معدّلة توقف قبل تشغيل النافذة): من غير [[.env]] وقف وطبع [[.env missing: copy .env.example to .env]] وخرج بـ 1، وبعد ما عملت [[.env]] كمّل عادي.
+
+جزء الـ sandbox في نسخة Linux مهم: [[chrome-sandbox]] بتاع Electron لازم يكون مملوك لـ root وبصلاحية [[4755]]، وإلا Electron بيكراش بـ [[The SUID sandbox helper binary was found, but is not configured correctly]]. جربت الشرط ده وفعلًا صلّح الصلاحية من [[0 755]] لـ [[0 4755]].
+
+بعد ما تمسح [[node_modules]] وتدوس على الملف، هتلاقيه بيعمل [[npm ci]] الأول (ياخد وقت) وبعدين [[vite build]] وبعدين يفتح. على ويندوز [[run.bat]] بيعمل نفس الشيء، و [[pause]] بيخلّي شاشة الخطأ تفضل مفتوحة عشان المستخدم يقراها بدل ما تقفل بسرعة.`
         }
       ]
     },
@@ -508,7 +560,14 @@ ls app/build/outputs/apk/debug/
             "الناتج هنا.",
             "نسخة الإصدار (محتاجة توقيع).",
             "نفس الأمر على ويندوز."
-          ]
+          ],
+          sol: R`[[./gradlew assembleDebug]] بيطلّع في آخره [[BUILD SUCCESSFUL]]، و [[ls app/build/outputs/apk/debug/]] بيوريك [[app-debug.apk]]. الـ debug APK موقّع بمفتاح debug تلقائي، فينفع يتسطب على أي موبايل للتجربة بس مش ينفع للمتجر.
+
+أول build Gradle بينزّل الـ Android Gradle Plugin والـ dependencies (دقايق)، والتانية بتبقى أسرع بكتير بسبب الـ cache والـ daemon. [[assembleRelease]] بيطلّع نسخة الإنتاج بس محتاجة توقيع (الدرس بتاع keytool).
+
+لو وقف بـ [[SDK location not found]] اعمل [[local.properties]] فيه [[sdk.dir=...]] أو ظبط [[ANDROID_HOME]]. ولو [[Permission denied]] على gradlew اعمل [[chmod +x gradlew]] (على ويندوز استخدم [[.\gradlew.bat]]).
+
+(ما قدرتش أبني APK هنا: [[./gradlew]] وقف عند [[Could not resolve com.android.tools.build:gradle:8.13.0]] لأن مفيش Android SDK ولا نت جوه Gradle. الأوامر صح لكن محتاجة بيئة فيها Android SDK.)`
         },
         {
           cmd: "adb",
@@ -544,7 +603,12 @@ adb reverse tcp:3000 tcp:3000`,
             "افتح التطبيق.",
             "لوج الموبايل لايف، متفلتر على التطبيق والـ WebView.",
             "localhost:3000 على الموبايل يروح للكمبيوتر."
-          ]
+          ],
+          sol: R`[[adb devices]] بيطلّع قايمة، وموبايلك المفروض يظهر كسطر [[XXXXXX  device]]. لو ظهر [[unauthorized]] بص على شاشة الموبايل ووافق على «Allow USB debugging». لو مفيش أي جهاز، فعّل Developer options ثم USB debugging، وجرّب كابل تاني.
+
+[[adb install -r ...apk]] بيطبع [[Success]]، و [[-r]] معناها replace (تحديث تطبيق متسطب من غير ما تمسحه). [[adb shell am start -n com.example.myapp/.MainActivity]] بيفتح التطبيق. [[adb logcat | grep -i capacitor]] بيوريك لوج الويب فيو وأي [[console.log]] من صفحتك.
+
+أقوى حاجة: افتح [[chrome://inspect]] في Chrome على الكمبيوتر والموبايل موصّل، هتلاقي الـ WebView بتاع تطبيقك، دوس inspect وهتفتحلك DevTools كاملة على تطبيق الموبايل الحقيقي، تعمل debugging زي أي موقع. و [[adb reverse tcp:3000 tcp:3000]] بيخلّي الموبايل يوصل لسيرفر شغال على الكمبيوتر عبر [[localhost:3000]]. (محتاج موبايل حقيقي أو emulator، مش متاح هنا.)`
         }
       ]
     },
@@ -587,7 +651,12 @@ cd android && ./gradlew assembleRelease`,
             "...ولا .jks.",
             "اتأكد إن الملف متجاهَل فعلًا.",
             "ابني نسخة الإصدار موقّعة."
-          ]
+          ],
+          sol: R`جربتها: [[keytool -genkeypair ...]] عمل ملف [[release.p12]] وطلب مني dname وبيانات، وطبع [[[Storing release.p12]]]. [[keytool -list -v -keystore release.p12]] طلّع [[Keystore type: PKCS12]] و [[Alias name: myapp]] و [[Entry type: PrivateKeyEntry]] و [[Valid from: ... until: ...]] (بعد ٢٧ سنة لأن [[-validity 10000]]) و بصمة [[SHA256:]].
+
+[[git check-ignore -v release.p12]] رجع [[.gitignore:1:*.p12  release.p12]] وexit code صفر، يعني متجاهَل فعلًا. جربت [[git check-ignore main.js]] ورجع فاضي وexit 1 (مش متجاهَل)، فده الفرق اللي يأكدلك إن القاعدة شغالة.
+
+الأهم اللي التجربة بتعلّمه: الـ keystore ده لو ضاع، مش هتقدر تطلّع تحديث للتطبيق على Google Play أبدًا (لازم نفس المفتاح لكل النسخ). فخد منه backup في مكانين على الأقل، والباسورد في password manager. وطبعًا برّه Git خالص.`
         },
         {
           cmd: "versionCode",
@@ -620,7 +689,12 @@ aapt dump badging app-release.apk | grep version`,
             "غيّر versionCode لـ 42.",
             "في CI: خليه رقم الـ run.",
             "اتأكد من الرقم جوه الـ APK نفسه."
-          ]
+          ],
+          sol: R`[[grep versionCode android/app/build.gradle]] بيوريك سطر زي [[versionCode 1]] و [[versionName "1.0"]]. جربت [[sed]] وغيّرته لـ [[versionCode 42]] بنجاح. الفرق بينهم: [[versionName]] نص بيشوفه المستخدم ([[1.2.3]])، و [[versionCode]] رقم صحيح بس، أندرويد بيقارن بيه أي نسخة أحدث.
+
+لو بنيت APK بـ versionCode 5 وسطّبته، وبعدين بنيت بـ 4 وعملت [[adb install -r]]، أندرويد بيرفض بـ [[INSTALL_FAILED_VERSION_DOWNGRADE]]: مش بيسمح تنزّل لنسخة أقدم فوق أحدث. ده اللي بيخلّي كتير يزوّدوه غلط أو ينسوه فيترفض الرفع على Play.
+
+الحل العملي في CI: خلّي [[versionCode]] من رقم الـ run زي [[$__{GITHUB_RUN_NUMBER}]]، فبيزيد لوحده مع كل build ومتنساش تزوّده. (عدّلت الملف وتأكدت من الرقم، لكن اختبار [[INSTALL_FAILED_VERSION_DOWNGRADE]] نفسه محتاج جهاز أندرويد.)`
         },
         {
           cmd: "android.yml",
@@ -709,7 +783,12 @@ jobs:
             "اسم الـ artifact.",
             "مسار الـ APK بالظبط.",
             "لو مش موجود افشل."
-          ]
+          ],
+          sol: R`الـ workflow ده بيبني APK موقّع على GitHub. الفكرة الأساسية إنك مش بترفع الـ keystore على Git، بترفعه كـ secret: تعمله base64 ([[base64 -w0 release.p12]]) وتحطه في secret اسمه [[ANDROID_KEYSTORE_BASE64]]، والباسورد في secret تاني، والـ workflow بيفكّه في [[$RUNNER_TEMP]] وقت البناء بس.
+
+بعد الـ push (أو Run workflow يدوي) هتلاقي الـ run في تاب Actions، وفي آخره artifact اسمه [[apk]] فيه [[app-release.apk]]، نزّله وسطّبه. [[if-no-files-found: error]] بيفشّل الـ run لو البناء ماطلّعش APK بدل ما يعدّي بصمت. و [[versionCode $GITHUB_RUN_NUMBER]] بيضمن رقم متزايد مع كل build.
+
+الغلط الأشهر: نسيان أي secret. الخطوة بتتشيّك [[[ -n "$KEYSTORE_BASE64" ]]] وتطلّع [[::error::ANDROID_KEYSTORE_BASE64 is missing]] بدل ما البناء يفشل برسالة غامضة. راجع الـ actions بأرقام نسخها في «تاب GitHub Actions». (ما شغّلتش الـ workflow لأنه محتاج repo على GitHub وrunner بـ Android SDK.)`
         }
       ]
     }

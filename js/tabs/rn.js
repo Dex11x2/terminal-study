@@ -199,7 +199,7 @@ npm run reset-project`,
           title: "Expo Go ولا development build: إمتى كل واحد؟",
           desc: R`Expo Go تطبيق جاهز من المتجر، جواه RN ومجموعة ثابتة من مكتبات Expo. بتفتح بيه مشروعك من غير build. سريع جدًا للتعلم، بس مينفعش تضيف مكتبة native مش جواه، ولا تغيّر اسم التطبيق أو الأيقونة أو الصلاحيات.
 
-الـ development build هو «Expo Go بتاعك»: تطبيق بتعمله build لمشروعك انت (بكل مكتباته)، ومعاه [[expo-dev-client]] اللي بيوصله بـ Metro زي Expo Go. أي مشروع حقيقي بيوصل له بسرعة: push notifications على Android، أو مكتبة native زي FlashList بنسخة مختلفة، أو إعداد في app.json.`,
+الـ development build هو «Expo Go بتاعك»: تطبيق بتعمله build لمشروعك انت (بكل مكتباته)، ومعاه [[expo-dev-client]] اللي بيوصله بـ Metro زي Expo Go. أي مشروع حقيقي بيوصل له بسرعة: push notifications على Android، أو مكتبة native بنسخة غير اللي جوه Expo Go (زي Reanimated)، أو إعداد في app.json.`,
           example: R`# Expo Go: مفيش build، امسح الـ QR وخلاص
 npx expo start
 # development build محلي (محتاج Android Studio أو Xcode)
@@ -233,7 +233,7 @@ npx expo start --dev-client`,
         {
           cmd: "npx expo install",
           title: "ليه تركّب المكتبات بـ npx expo install مش npm install؟",
-          desc: R`كل Expo SDK متجرّب مع نسخ معينة من المكتبات الـ native (Reanimated و FlashList و async-storage وغيرهم). [[npx expo install pkg]] بيختار النسخة المتوافقة مع الـ SDK بتاعك ويركّبها بالـ package manager بتاعك. [[npm install pkg]] بيجيب آخر نسخة، وممكن تبقى مش متوافقة وتوقع التطبيق.
+          desc: R`كل Expo SDK متجرّب مع نسخ معينة من المكتبات (Reanimated و gesture-handler و async-storage، وكمان مكتبات JS زي FlashList). [[npx expo install pkg]] بيختار النسخة المتوافقة مع الـ SDK بتاعك ويركّبها بالـ package manager بتاعك. [[npm install pkg]] بيجيب آخر نسخة، وممكن تبقى مش متوافقة وتوقع التطبيق.
 
 للمكتبات الـ JS البحتة (zod، react-hook-form، TanStack Query) الاتنين زي بعض، بس خليها عادة: كل حاجة بـ [[expo install]].`,
           example: R`npx expo install @tanstack/react-query expo-secure-store expo-sqlite
@@ -3627,7 +3627,7 @@ npx expo run:android --variant release`,
             when: R`أسئلة بتيجي بعدها: «إزاي تعرف إن الـ update اللي نشرته مش بيوقع التطبيق؟» (rollout 10% و monitoring زي Sentry مع الـ update id، وبعدين زوّد)، و «المستخدم اللي مفتحش التطبيق شهر هياخد إيه؟» (آخر update لنفس الـ runtime)، و «إيه الـ runtimeVersion؟».`,
             mistakes: R`«أي حاجة». و «OTA بيحتاج review» (مش بيحتاج، ده الهدف). ونسيان إن ترقية نسخة مكتبة native (حتى minor) تغيير native. و «هغيّر الأيقونة بـ OTA».`
           },
-          sol: R`تغيير لون زرار: OTA. إضافة [[expo-camera]]: build (مكتبة native وصلاحية جديدة). تصليح حساب الخصم: OTA. ترقية FlashList من 2.0 لـ 2.3: build (فيها native code، والـ fingerprint هيتغير). تغيير اسم التطبيق: build (الاسم native في Info.plist و strings.xml). ترجمة جديدة في JSON جوه المشروع: OTA (asset/JS).`
+          sol: R`تغيير لون زرار: OTA. إضافة [[expo-camera]]: build (مكتبة native وصلاحية جديدة). تصليح حساب الخصم: OTA. ترقية FlashList من 2.0 لـ 2.3: OTA، لأن FlashList v2 مكتوبة JS بالكامل ومفيهاش native code، والـ fingerprint مبيتغيرش (اتجرّب: نفس الـ hash قبل وبعد الترقية). بس لو المكتبة فيها native code (زي Reanimated أو expo-camera)، أي ترقية حتى minor = build. تغيير اسم التطبيق: build (الاسم native في Info.plist و strings.xml). ترجمة جديدة في JSON جوه المشروع: OTA (asset/JS).`
         },
         {
           cmd: "Expo ولا bare",

@@ -55,7 +55,12 @@ Inspect (تاب Elements) بيعرض الـ DOM بعد ما JavaScript اشتغ�
 وده بيشرح ليه SEO بيفرق: جوجل ممكن يقرا الـ source أو يعمل render كامل. لو المحتوى في الـ source، أسهل يتفهرس.`,
             when: "موقع React وعايز تعرف هل المحتوى في الـ source (SSR) ولا لأ. لما تدوّر على عنصر بعينه في الـ HTML. أول خطوة في أي debugging.",
             mistakes: "إنك تشوف Source وتقول «المحتوى مش موجود» وموقعك React. ابص في Elements عشان تشوف الحالة بعد التحميل."
-          }
+          },
+          sol: R`في موقع React عادي (Vite أو CRA) الـ Ctrl+F في View Source مش هيلاقي الجملة: هتلاقي [[<div id="root"></div>]] وسطر [[<script type="module" src="/assets/index-xxxx.js">]] وخلاص. نفس الجملة في Elements هتلاقيها، لأن JavaScript هو اللي رسمها بعد التحميل.
+
+في موقع Next.js أو موقع أخبار الجملة هتظهر في View Source نفسه، لأن السيرفر بعت الـ HTML جاهز (SSR أو static). ولو لقيتها في الاتنين في موقع React، يبقى الموقع ده عامل SSR أو prerender.
+
+الغلطة المشهورة: تدوّر في Elements وتفتكر إن ده اللي جوجل والـ bots شايفينه. الحكم على الـ SEO بيبقى من View Source (أو [[curl -s URL]]) مش من Elements.`
         },
         {
           cmd: "Elements",
@@ -77,7 +82,12 @@ Right-click > Copy > Copy selector   Get a CSS selector for it`,
 [[:hov]] بيثبّت الـ state (hover أو focus) عشان تظبط تصميمها من غير ما تفضل تحرك الماوس. و [[.cls]] بيخليك تضيف أو تشيل classes. ومربعات الـ box model تحت، تكليك عليها وتغيّرها.`,
             when: "لو زرار شكله وحش على screen size معين أو state معين. لو spacing مش صح وعايز تعرف القيمة الصح الأول.",
             mistakes: "تعمل تغيير في Elements وتفضل تدور عليه في الكود. خد screenshot أو اكتب القيمة قبل الريفريش."
-          }
+          },
+          sol: R`لون الزرار: اختار الزرار بـ Ctrl+Shift+C، وفي Styles دوس على قيمة [[background-color]] (أو ضيفها في [[element.style]]) واكتب لون جديد، هيتغير فورًا. وبعد ريفريش يرجع زي ما كان، ودي علامة إنك فهمت إن التعديل محلي بس.
+
+الـ hover: دوس [[:hov]] وعلّم [[:hover]]، هتلاقي قاعدة [[button:hover]] ظهرت في Styles والزرار ثابت على شكل الـ hover من غير ماوس.
+
+الـ font-size: اختار العنوان وافتح Computed واكتب [[font-size]] في الفلتر. هتلاقي القيمة النهائية بالـ px دايمًا (حتى لو كاتبها [[2rem]] هتشوف مثلًا [[32px]])، ولو فتحت السهم جنبها هتعرف أنهي قاعدة في أنهي ملف كسبت. لو لقيت القاعدة بتاعتك في Styles عليها خط، يبقى فيه selector أقوى منها غطّاها.`
         },
         {
           cmd: "Device Toolbar",
@@ -96,7 +106,15 @@ Ctrl+Shift+R          Reload inside the emulated device`,
 فيه فرق بين الإيميوليشن والجهاز الحقيقي: اللمس مختلف، والكيبورد على الشاشة بياكل مساحة ويدفع المحتوى، والأداء مختلف (الموبايل ممكن يكون أبطأ بكتير).`,
             when: "اختبار سريع لاستجابة الموقع على مقاسات مختلفة. لما موقع يتبلّغ عنه إنه «منكسر على الموبايل».",
             mistakes: "تعتبر إن الإيميوليشن كافي. دايمًا اختبر على جهاز حقيقي قبل الرفع."
-          }
+          },
+          sol: R`Ctrl+Shift+M، واكتب 360 في خانة العرض (أو اختار Responsive). اللي بيخرج بره الشاشة بيبان بسكرول أفقي تحت الصفحة أو عنصر مقطوع على اليمين. عشان تلاقي المتسبب بسرعة الصق ده في Console:
+
+[[$$("*").filter(e => e.getBoundingClientRect().right > innerWidth)]]
+
+الأشهر: صورة أو جدول بعرض ثابت ([[width: 600px]])، عنصر بـ [[100vw]] مع padding، [[<pre>]] أو لينك طويل من غير [[overflow-wrap: anywhere]]، أو flex row من غير [[flex-wrap]]. ولو ملقتش ولا حاجة والموقع شكله صغير جدًا، غالبًا ناقصه [[<meta name="viewport" content="width=device-width, initial-scale=1">]].`,
+          solCode: R`// paste in the Console while the page is 360px wide
+$$("*").filter(e => e.getBoundingClientRect().right > innerWidth)
+  .forEach(e => { e.style.outline = "2px solid red"; console.log(e); });`
         },
         {
           cmd: "Hard Reload",
@@ -116,7 +134,10 @@ Ctrl+Shift+R بيقول للمتصفح «حمّل من غير ما تستخدم 
 والأبسط: علّم على «Disable cache» في تاب Network، وده بيوقف الكاش خالص طول ما DevTools مفتوحة.`,
             when: "كل ما تغيّر CSS أو JS وعايز تشوف التغيير على طول.",
             mistakes: "تعمل ريفريش عادي وتفتكر التغيير مش اشتغل، وهو اشتغل بس لسه في الكاش."
-          }
+          },
+          sol: R`الريفريش العادي ممكن يفضل يعرض الـ CSS القديم: لو فتحت Network هتلاقي ملف الـ CSS جاي [[(memory cache)]] أو [[(disk cache)]] أو [[304]]، يعني المتصفح ما جابش النسخة الجديدة. مع Ctrl+Shift+R هتلاقيه [[200]] وحجمه الحقيقي، والتعديل ظهر.
+
+لو حتى بعد Hard Reload التعديل مش ظاهر، المشكلة مش كاش المتصفح: يا إما الملف مارفعش فعلًا (افتح الـ URL بتاع الـ CSS مباشرة واتأكد إن التعديل فيه)، يا إما فيه CDN أو Nginx كاش قدام السيرفر، يا إما service worker بيرجّع نسخة قديمة (Application ثم Service workers). والحل الدائم للمستخدمين هو إن اسم الملف يتغير مع كل build ([[app.3f9a1c.css]]) زي ما Vite و Next.js بيعملوا.`
         }
       ]
     },
@@ -149,7 +170,12 @@ console.error("something broke")`,
             "اطبع نص وبعده قيمة متغير. الفاصلة أحسن من [[+]] لأن الـ objects بتتعرض كاملة.",
             "اعرض array من objects كجدول بأعمدة.",
             "اطبع باللون الأحمر مع stack trace، وبيظهر في فلتر Errors."
-          ]
+          ],
+          sol: R`اللي هتشوفه غالبًا ٣ أنواع، وكل واحد معناه مختلف:
+
+[[Failed to load resource: the server responded with a status of 404 (Not Found)]]: ملف أو طلب مش موجود، دوس عليه وهيوديك Network. [[Uncaught TypeError: Cannot read properties of undefined (reading 'x')]] وجنبه اسم الملف ورقم السطر: bug في JavaScript، دوس على اللينك اللي على اليمين يفتحلك السطر في Sources. و [[Access to fetch at ... has been blocked by CORS policy]]: الـ API رافض الـ origin ده (شوف درس CORS).
+
+ركز على أول error بس، لأن التانيين كتير بيبقوا نتيجة ليه. ومتقلقش من الأصفر (warnings) ولا من errors جاية من extensions أو إعلانات (هتلاقي في اللينك [[chrome-extension://]] أو دومين إعلانات): دي مش مشكلة الموقع.`
         },
         {
           cmd: "أوامر Console المفيدة",
@@ -179,7 +205,12 @@ Shift+Enter في Console بينزّلك سطر جديد من غير تنفيذ،
             "كل الصور اللي من غير alt، وعددها. [[$$]] زي querySelectorAll بس بيرجع array.",
             "انسخ كل اللينكات في الصفحة للكليب بورد.",
             "خلّي الصفحة كلها قابلة للكتابة: تكليك على أي نص وتعدّله."
-          ]
+          ],
+          sol: R`[[$$("img:not([alt])").length]] بيرجع رقم. جرّبته على صفحة فيها صورتين واحدة بس عليها alt فرجّع [[1]]. لو طلع [[0]] يبقى كل الصور عليها alt (حتى لو فاضي [[alt=""]]، وده صح للصور الديكور). وعشان تشوفهم نفسهم: [[$$("img:not([alt])").map(i => i.src)]].
+
+[[copy($$("a").map(a => a.href))]] مش بيطبع حاجة (بيرجع [[undefined]])، لكن اللينكات بقت في الـ clipboard كـ JSON array، الصقها في أي ملف. لاحظ إن [[a.href]] بيرجع الـ URL الكامل ([[http://localhost:8791/x]]) حتى لو في الـ HTML مكتوب [[/x]].
+
+لو طلعلك [[$$ is not defined]] أو [[copy is not defined]]: انت بتشغّلهم في كود الصفحة أو في Node. دول أدوات Console بتاعة DevTools بس، مش JavaScript عادي.`
         }
       ]
     },
@@ -210,7 +241,12 @@ Disable cache            Always load fresh`,
 تحت: إجمالي عدد الطلبات، والحجم الكلي، والوقت. وفوق خالص: timeline بيوريك متى بدأ كل طلب.`,
             when: "API بيرجع error. الصفحة بطيئة وعايز تعرف أي طلب السبب. تتأكد إن طلب معين اتبعت أصلًا.",
             mistakes: "تفتح Network بعد تحميل الصفحة وتلاقيه فاضي. وتنسى Preserve log لما الصفحة بتعمل redirect."
-          }
+          },
+          sol: R`اعمل Ctrl+R وDevTools مفتوحة على Network. تحت خالص في الـ status bar هتلاقي حاجة زي [[42 requests | 1.8 MB transferred | 3.2 MB resources | Finish: 2.1 s]]: ده عدد الطلبات، و transferred هو اللي نزل فعلًا على الشبكة (مضغوط)، و resources حجمه بعد فك الضغط.
+
+أكبر ملف: دوس على عمود Size يترتب. أبطأ طلب: دوس على عمود Time. الأكبر غالبًا صورة مش مضغوطة أو JS bundle، والأبطأ غالبًا API call أو خط من بره.
+
+لو لقيت الأرقام صغيرة بشكل غريب والـ Size مكتوب فيه [[(memory cache)]]، علّم Disable cache وكرّر، عشان تقيس اللي زائر جديد بيشوفه.`
         },
         {
           cmd: "تفاصيل الطلب",
@@ -237,7 +273,10 @@ Preview: الرد منسّق. لو JSON هيوريكه كشجرة. أسرع من
 Timing: أهم تاب للأداء. «Waiting (TTFB)» وقت انتظار أول byte: لو كبير، المشكلة في السيرفر أو قاعدة البيانات. «Content Download» وقت تحميل الرد: لو كبير، الرد تقيل.`,
             when: "بعد أي API request يطلع error: Headers للـ status، وPayload للتأكد من البيانات، وPreview لرسالة الـ error. وTiming لو الـ API بطيء.",
             mistakes: "إنك تتجاهل Timing وتفضل تدوّر في الكود، والمشكلة query بطيء في قاعدة البيانات."
-          }
+          },
+          sol: R`طلب الـ login غالبًا [[POST /api/login]] (فلتر Fetch/XHR عشان تلاقيه). في Payload هتلاقي اللي بعته، غالبًا [[{"email":"...","password":"..."}]]، أيوه الباسورد باين هنا وده طبيعي لأنه جهازك والطلب ماشي على HTTPS. الـ status لو نجح [[200]] أو [[204]]، ولو غلط [[401]] مع body فيه رسالة.
+
+في Headers تحت Response Headers هتلاقي حاجة زي [[set-cookie: session=abc...; Path=/; HttpOnly; Secure; SameSite=Lax]]. لو ملقتش Set-Cookie خالص، يبقى موقعك غالبًا بيرجّع token في الـ body (شوفه في Preview) وبيحفظه في localStorage. ولو Chrome حاطط علامة تحذير صفرا جنب الكوكي، حط الماوس عليها: غالبًا الكوكي اترفضت عشان [[Secure]] على http أو [[SameSite=None]] من غير Secure.`
         },
         {
           cmd: "Throttling و Blocking",
@@ -257,7 +296,10 @@ Ctrl+Shift+P > "Show Request conditions"`,
 Request conditions: كليك يمين ثم Block request أو Throttle request (Chrome 145+). مفيد تشوف الموقع بيعمل إيه لو Google Fonts أو analytics وقعت.`,
             when: "قبل الرفع: جرّب على Slow 4G. لما بتشتغل على error handling.",
             mistakes: "تنسى إن Throttling شغال وتتساءل ليه التحميل بطيء. بيفضل حتى لو فتحت تاب جديد."
-          }
+          },
+          sol: R`على Slow 4G أي submit هياخد ثانية أو اتنين أو أكتر. اللي المفروض يشوفه المستخدم: الزرار اتقفل ([[disabled]]) ومكتوب عليه «جاري الحفظ...» أو spinner، وبعدين رسالة نجاح أو غلط.
+
+النتايج الوحشة اللي بتكشفها التجربة دي: مفيش أي feedback فالمستخدم يدوس تاني، وفي Network هتلاقي نفس الـ POST اتبعت مرتين (ودي بتعمل طلبين أو حسابين مكررين). أو الفورم بيتمسح قبل ما الرد يرجع. ولو جربت Offline هتشوف [[TypeError: Failed to fetch]] في Console: الواجهة لازم تمسك الـ error ده وتقول للمستخدم «مفيش نت» بدل ما تفضل تلف.`
         }
       ]
     },
@@ -297,7 +339,12 @@ Request conditions: كليك يمين ثم Block request أو Throttle request (
 200 OK نجح. 201 Created نجح وعمل resource جديد. 204 No Content نجح مفيش رد (شائع في DELETE). 304 Not Modified: المتصفح استخدم الكاش. 400 Bad Request: الطلب غلط أو validation. 401 Unauthorized: التوكن مش موجود أو منتهي. 403 Forbidden: معاك توكن بس مش مسموحلك. 404 Not Found. 409 Conflict: تعارض (إيميل موجود). 422 Unprocessable: validation فشل. 429 Too Many Requests. 500 Internal Server Error: كود السيرفر وقع. 502 Bad Gateway: Nginx شغال والتطبيق وراه واقع. 504 Gateway Timeout: التطبيق استغرق وقت أكتر مما يجب.`,
             when: "كل ما تشوف API call في Network: الرقم أول حاجة.",
             mistakes: "بتبعت 500 لأي error. استخدم الرقم الصح: 400 للـ validation، و401 لو مش logged in."
-          }
+          },
+          sol: R`الـ 304: اعمل ريفريش عادي (من غير Disable cache) على موقع زرته قبل كده. هتلاقي ملفات status بتاعها [[304]]: المتصفح بعت [[If-None-Match]] أو [[If-Modified-Since]] والسيرفر قال «النسخة اللي عندك لسه صح» فمبعتش body. جربتها على سيرفر محلي: أول طلب [[HTTP/1.1 200 OK]] ومعاه [[ETag: "v1"]]، والتاني بـ [[If-None-Match: "v1"]] رجع [[HTTP/1.1 304 Not Modified]].
+
+الـ 404: غالبًا [[favicon.ico]] أو صورة أو source map ([[.map]]) مش موجودة، أو URL غلط في الكود. دوس عليه وبص على Initiator عشان تعرف مين طلبه.
+
+لو لقيت الملفات مكتوب عندها [[(memory cache)]] مش 304، ده معناه إن المتصفح ما سألش السيرفر خالص (الكاش لسه صالح بـ Cache-Control)، وده أسرع من 304.`
         },
         {
           cmd: "Headers",
@@ -320,7 +367,12 @@ curl -sI https://example.com | grep -iE "content-type|cache-control|location|ser
           lines: [
             "هات الـ headers بس ([[-I]] طلب HEAD) من غير شريط تحميل ([[-s]]).",
             "وفلتر على أهم ٤: نوع المحتوى، والكاش، والتحويل، والسيرفر."
-          ]
+          ],
+          sol: R`[[curl -sI https://yoursite.com/logo.png]] و [[curl -sI https://yoursite.com/]] وقارن سطر [[cache-control]]. المتوقع في موقع مظبوط: الصورة (وخصوصًا الملفات اللي في اسمها hash زي [[/assets/app.3f9a1c.js]]) عليها حاجة زي [[cache-control: public, max-age=31536000, immutable]] (سنة)، والـ HTML عليه [[no-cache]] أو [[max-age=0, must-revalidate]] أو مفيش خالص.
+
+السبب: الـ HTML لازم المتصفح يسأل عليه كل مرة عشان يعرف أسماء الملفات الجديدة، إنما الصورة أو الـ bundle اللي اسمه بيتغير مع كل تعديل ينفع يتكاش للأبد.
+
+لو لقيت العكس (HTML عليه max-age طويل)، ده سبب «رفعت تعديل ومحدش شايفه». ولو الاتنين مفيهمش cache-control خالص، المتصفح بيخمّن بنفسه (heuristic caching) من [[last-modified]].`
         },
         {
           cmd: "Unexpected token '<'",
@@ -348,7 +400,12 @@ await res.text()`,
             "الـ status: 404 أو 502 هيقولك السبب.",
             "نوع الرد: لو text/html يبقى صفحة مش JSON.",
             "اقرا الرد كنص وشوف فيه إيه فعلًا."
-          ]
+          ],
+          sol: R`جربتها على سيرفر محلي بـ [[fetch("/api/nope")]]:
+
+[[res.status]] رجع [[404]]، و [[res.headers.get("content-type")]] رجع [[text/html]]، و [[await res.text()]] رجع [[<!DOCTYPE html><html><body><pre>Cannot GET /api/nope</pre></body></html>]] وده الشكل الافتراضي بتاع Express. ولو عملت [[res.json()]] بدل text، Chrome بيقول بالظبط: [[Unexpected token '<', "<!DOCTYPE "... is not valid JSON]].
+
+يعني الـ [[<]] ده أول حرف في صفحة HTML. في مشروع Vite أو Next.js ممكن تلاقي status [[200]] والـ text هو [[index.html]] بتاع الـ frontend نفسه (fallback الـ SPA): ده معناه إن الطلب ما وصلش للـ API أصلًا (proxy أو base URL غلط).`
         },
         {
           cmd: "CORS",
@@ -380,7 +437,12 @@ app.use(cors({
             "الدومينات المسموحلها تقرا الرد (الإنتاج والتطوير). مش [[*]].",
             "اسمح بالكوكيز والـ Authorization header.",
             "قفلة."
-          ]
+          ],
+          sol: R`من Console على موقع تاني (origin مختلف) الـ fetch هيفشل بـ [[TypeError: Failed to fetch]]، والسبب الحقيقي مكتوب في سطر أحمر منفصل. جربتها من [[http://localhost:8791]] على API على [[localhost:8792]] وطلع:
+
+[[Access to fetch at 'http://localhost:8792/x' from origin 'http://localhost:8791' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.]]
+
+في Network الطلب نفسه ممكن يكون وصل للسيرفر ورجع 200، المتصفح هو اللي منع الـ JavaScript يقرا الرد. بعد ما تضيف origin الموقع ده في [[origin: [...]]] وتعمل restart للـ API، نفس الـ fetch هيرجع البيانات، وفي Response Headers هتلاقي [[access-control-allow-origin]] بقيمة الـ origin. لو لسه واقف: اتأكد إنك كاتب الـ origin بالظبط (بروتوكول ودومين وبورت، ومن غير / في الآخر).`
         }
       ]
     },
@@ -410,7 +472,12 @@ Columns to check: HttpOnly, Secure, SameSite, Expires`,
 تقدر تدبل كليك وتغيّر قيمة أو تمسح بـ Delete. مفيد تختبر «إيه اللي هيحصل لو الـ session خلصت».`,
             when: "Session بتنتهي قبل المفروض. تختبر صفحة المستخدم غير الـ logged in.",
             mistakes: "SameSite=None من غير Secure. وكوكيات session من غير HttpOnly."
-          }
+          },
+          sol: R`اللي المفروض تشوفه في صف كوكي الـ session: علامة ✓ في عمود HttpOnly، و ✓ في Secure، و SameSite [[Lax]] أو [[Strict]]، و Expires إما تاريخ معقول أو [[Session]] (تتمسح لما تقفل المتصفح).
+
+اختبار سريع: اكتب [[document.cookie]] في Console. لو كوكي الـ session ظاهرة في الناتج، يبقى مفيهاش HttpOnly وأي XSS يقدر يسرقها، ودي أول حاجة تصلّحها. لو مش ظاهرة يبقى تمام.
+
+لو Secure مش متعلم عليها والموقع على HTTPS، الكوكي ممكن تتبعت على http لو حد فتح اللينك من غير s. وعلى localhost طبيعي تلاقيها من غير Secure في التطوير.`
         },
         {
           cmd: "localStorage و JWT",
@@ -436,7 +503,16 @@ localStorage.clear()`,
             "قيمة التوكن.",
             "فك الـ JWT: خد الجزء اللي في النص (بعد أول نقطة)، فك الـ base64 بـ atob، وحوّله object. هتلاقي فيه اليوزر و exp.",
             "امسح كل حاجة (زي logout يدوي)."
-          ]
+          ],
+          sol: R`السطر التالت بيرجع object. جربته على token فيه payload زي ده:
+
+[[{"sub":"42","role":"user","iat":1790000000,"exp":1790000900}]]
+
+[[exp]] بالثواني من ١٩٧٠، فعشان تقراه: [[new Date(1790000900 * 1000)]] = [[2026-09-21T14:28:20.000Z]]. و [[exp - iat]] = ٩٠٠ ثانية، يعني الـ token عمره ربع ساعة. الكود تحت بيطبعلك فاضل قد إيه.
+
+لو طلع [[Cannot read properties of null (reading 'split')]] يبقى مفيش key اسمه [[token]]، اكتب [[localStorage]] وشوف الاسم الحقيقي. ولو طلع [[InvalidCharacterError]] يبقى القيمة مش JWT أو محفوظة بعلامات تنصيص (اعمل [[JSON.parse]] الأول). وافتكر: أي حد معاه الـ token يقدر يقراه كده، فمفيش أسرار في الـ payload.`,
+          solCode: R`const p = JSON.parse(atob(localStorage.getItem("token").split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+console.log(p, new Date(p.exp * 1000).toISOString(), Math.round((p.exp * 1000 - Date.now()) / 60000) + " min left");`
         },
         {
           cmd: "Clear site data",
@@ -456,7 +532,10 @@ Service Workers مشكلة شائعة: ممكن يعرض نسخة قديمة ح�
 أسرع طريقة: افتح الموقع في نافذة Incognito.`,
             when: "لما الـ caching بيسبب مشاكل في التطوير. لما تختبر first-time user experience.",
             mistakes: "تعمل Hard Reload وتفتكر إنه بيمسح localStorage والـ cookies. هو بس بيتخطى الـ HTTP cache للتحميل ده، ومش بيلمس الكوكيز ولا التخزين."
-          }
+          },
+          sol: R`بعد Clear site data وريفريش: هتلاقي نفسك عملت logout، وأي banner بتاع cookies أو onboarding هيظهر تاني، وفي Network كل الملفات جاية [[200]] بحجمها الكامل (مفيش memory cache ولا 304). Application ثم Cookies و Local storage هيبقوا فاضيين لحد ما الموقع يكتب فيهم تاني.
+
+لو لسه شايف نفسك logged in، غالبًا الـ session محفوظة على دومين تاني (زي [[auth.yoursite.com]] أو [[.yoursite.com]]) مش الدومين اللي مسحته. ونافذة Incognito بتديك نفس النتيجة من غير ما تمسح بيانات نافذتك العادية.`
         },
         {
           cmd: "سيرفر محلي بدل file://",
@@ -483,7 +562,15 @@ npx serve . -l 8791`,
             "ادخل فولدر الموقع.",
             "سيرفر static على بورت 8791، لجهازك بس.",
             "أو نفس الحاجة بـ Node من غير Python."
-          ]
+          ],
+          sol: R`بالدبل كليك (file://) جربتها في Chromium وطلع في Console:
+
+[[Failed to register a ServiceWorker: The URL protocol of the current origin ('null') is not supported.]]
+و [[Fetch API cannot load file:///.../data.json. URL scheme "file" is not supported.]]
+
+من [[http://localhost:8791]] نفس الصفحة اشتغلت: الـ fetch رجع الـ JSON، و [[navigator.serviceWorker.register]] نجح، وفي Application ثم Service workers الحالة [[activated and is running]].
+
+السبب: الـ service worker لازم secure context (HTTPS أو localhost)، و file:// الـ origin بتاعه [[null]]. لو السيرفر ما اشتغلش وطلع [[Address already in use]] غيّر البورت. ولو قالك [[python: command not found]] اكتب [[python3]].`
         }
       ]
     },
@@ -524,7 +611,10 @@ Shift+Enter بينزّلك سطر جديد من غير تنفيذ، عشان ت�
             "قول للسيرفر إن البودي JSON، وإلا ممكن يتجاهله.",
             "البودي لازم يتحوّل لنص بـ stringify.",
             "وحوّل الرد."
-          ]
+          ],
+          sol: R`الـ GET بيرجع البيانات مباشرة في Console (object أو array)، والـ POST بيرجع اللي الـ API بيرجعه بعد الإنشاء (غالبًا الـ object الجديد ومعاه [[id]]). وفي تاب Network (فلتر Fetch/XHR) هتلاقي الطلبين، وفي عمود Initiator مكتوب حاجة زي [[VM123:1]] يعني جايين من Console.
+
+دوس على الـ POST: في Payload هتلاقي [[{"name":"test","email":"test@example.com"}]]، والـ status [[201]] لو الـ API مكتوب صح. لو رجع [[400]] أو [[415]] غالبًا نسيت [[Content-Type: application/json]] فالسيرفر مقراش الـ body. ولو الـ GET رجع [[401]] وانت عامل login، يبقى الـ API على دومين تاني والكوكي ما اتبعتتش (محتاج [[credentials: "include"]]).`
         },
         {
           cmd: "Copy as cURL",
@@ -547,7 +637,12 @@ curl -i 'https://example.com/api/orders?page=2' -H 'cookie: session=...'`,
           lines: [
             "اللي بيطلع من Copy as cURL: الـ URL، وكل header ([[-H]]) بما فيهم الكوكي، و [[--compressed]] يقبل رد مضغوط.",
             "نفس الطلب بعد ما عدّلت فيه: صفحة تانية، و [[-i]] عشان تشوف الـ status."
-          ]
+          ],
+          sol: R`في Network كليك يمين على الطلب ثم Copy ثم Copy as cURL (bash). هتلاقي أمر طويل فيه [[-H 'cookie: ...']] و headers كتير. الصقه في الترمنال، المفروض يرجع نفس الـ JSON اللي شايفه في Preview.
+
+غيّر [[page=1]] لـ [[page=2]] في الـ URL (خليه جوه علامات التنصيص عشان [[&]] و [[?]]) وشغّله، هتاخد الصفحة اللي بعدها. زوّد [[-i]] عشان تشوف الـ status.
+
+لو رجعلك [[401]] بعد شوية، الكوكي أو الـ token خلصوا، انسخ الطلب تاني. ولو الناتج رموز غريبة يبقى نسيت [[--compressed]]. وعلى ويندوز اختار «Copy as cURL (cmd)» أو شغّله من Git Bash/WSL لأن علامات التنصيص مختلفة.`
         },
         {
           cmd: "curl -i / -v",
@@ -576,7 +671,14 @@ curl -H "Authorization: Bearer $TOKEN" https://example.com/api/me`,
             "الرد JSON، خد منه حقلين بس بـ jq.",
             "POST بـ JSON: [[-X POST]] النوع، و [[-H]] نوع المحتوى، و [[-d]] البودي بين single quotes.",
             "طلب بتوكن في header الـ Authorization، والتوكن من متغير."
-          ]
+          ],
+          sol: R`جربتها على API محلي بباسورد غلط:
+
+[[HTTP/1.1 401 Unauthorized]]
+[[Content-Type: application/json]]
+وبعد السطر الفاضي الـ body: [[{"error":"Invalid email or password"}]]
+
+ده الصح: [[401]] (أو [[400]] لو الـ body نفسه ناقص) ورسالة عامة متقولش هل الإيميل موجود ولا لأ. لو رجعلك [[200]] ومعاه [[{"success":false}]] ده تصميم وحش لأن أي client أو monitoring هيفتكره نجح. ولو [[500]] يبقى فيه exception في الكود مع الباسورد الغلط، افتح logs. ولو [[404]] يبقى الـ route غلط أو ناقصه prefix زي [[/api/v1]].`
         }
       ]
     },
@@ -600,7 +702,12 @@ Export > Puppeteer / JSON`,
             how: "بيسجّل الخطوات مع selectors لكل عنصر، وتقدر تعدّل أي خطوة أو تحط breakpoint عليها. الـ Replay بسرعة عادية أو بطيئة. والتصدير لـ Puppeteer بيحوّله لاختبار أوتوماتيك.",
             when: "bugs في flows طويلة، وقياس أداء تفاعل كامل.",
             mistakes: "تسجّل على داتا بتتغير (IDs عشوائية) فالـ Replay يفشل."
-          }
+          },
+          sol: R`بعد End recording هتلاقي قائمة خطوات: [[Navigate]]، [[Click]] على selector زي [[aria/Login]] أو [[#email]]، [[Change]] بالقيمة اللي كتبتها، وهكذا. Replay بيعيدهم ولو كله عدّى هتلاقي علامة ✓ جنب كل خطوة.
+
+لو خطوة فشلت بعد تعديل، هتقف عندها ويقولك [[Timed out]] أو إن العنصر مش لاقيه: ده إما bug حقيقي في الـ flow أو selector اتغير (زي class بيتولد لوحده). الحل إنك تحط [[data-testid]] أو تستخدم aria labels ثابتة.
+
+متسجلش checkout بكارت حقيقي، استخدم وضع test في بوابة الدفع. وتقدر تعمل Export لـ Puppeteer أو JSON وتحوّله لـ test حقيقي في CI بدل ما تكرره بإيدك.`
         },
         {
           cmd: "Sources و breakpoints",
@@ -625,7 +732,12 @@ F8 (Resume) يكمّل. F10 (Step over) ينفّذ السطر ويوقف على 
 [[debugger;]] في الكود نفسه بيعمل breakpoint، وبيشتغل بس لو DevTools مفتوحة.`,
             when: "bug مش قادر تفهمه بـ console.log. متغير بياخد قيمة غلط ومش عارف متى ومنين.",
             mistakes: "تنسى تشيل breakpoints، فيومًا الكود يوقف ومش هتعرف ليه."
-          }
+          },
+          sol: R`لما تدوس الزرار الصفحة هتقف ويظهر شريط [[Paused in debugger]]، والسطر اللي عليه الـ breakpoint متعلّم بالأزرق. على اليمين في Scope هتلاقي المتغيرات بقيمها (زي [[event]] و [[this]])، ولو وقفت بالماوس على أي متغير في الكود هيوريك قيمته.
+
+F10 يمشي سطر سطر، F11 يدخل جوه دالة بتتنادي، F8 يكمّل. لو الكود minified ([[index-a1b2.js]] سطر واحد طويل) دوس [[{ }]] الأول، ولو فيه source maps هتلاقي ملفاتك الأصلية في Ctrl+P.
+
+لو دوست الزرار والصفحة ما وقفتش: الـ breakpoint في سطر مش بيتنفذ (مثلًا تعريف الدالة مش جسمها) أو في ملف قديم بعد تعديل. البديل الأسرع: Elements ثم Event Listeners على الزرار ثم دوس على اسم الملف، أو اكتب [[debugger;]] في الكود.`
         },
         {
           cmd: "chrome://inspect",
@@ -649,7 +761,15 @@ node --inspect-brk server.js
           lines: [
             "شغّل Node وافتح بورت للـ debugger، وبعدين chrome://inspect في المتصفح.",
             "نفس الحاجة بس يوقف على أول سطر ويستناك."
-          ]
+          ],
+          sol: R`[[node --inspect server.js]] بيطبع قبل أي حاجة:
+
+[[Debugger listening on ws://127.0.0.1:9229/720e51a2-...]]
+[[For help, see: https://nodejs.org/en/docs/inspector]]
+
+افتح [[chrome://inspect]] وهتلاقي تحت Remote Target اسم الملف ولينك [[inspect]]. دوسه، هتتفتح نافذة DevTools، افتح الملف بـ Ctrl+P وحط breakpoint في الـ route handler، وابعت طلب ([[curl localhost:3000/api/...]]). الطلب هيفضل معلّق والـ debugger وقف عند السطر، وتقدر تشوف [[req.body]] و [[req.params]] في Scope.
+
+لو مفيش حاجة ظاهرة في chrome://inspect: البورت 9229 مش في الـ Configure (ضيف [[localhost:9229]])، أو السيرفر شغال في Docker أو WSL من غير [[--inspect=0.0.0.0:9229]] وفتح البورت. ولو مع nodemon أو tsx، مرّر الفلاج ليهم هما.`
         }
       ]
     },
@@ -681,7 +801,12 @@ Core Web Vitals التلاتة: LCP (Largest Contentful Paint) وقت ظهور �
           lines: [
             "شغّل Lighthouse من الترمنال (npx بينزّله لو مش موجود) وافتح التقرير في المتصفح.",
             "بإعدادات الديسكتوب، واحفظ التقرير HTML في ملف."
-          ]
+          ],
+          sol: R`[[npx lighthouse https://yoursite.com --view]] بيعمل Mobile افتراضيًا ويفتح التقرير. هتلاقي ٤ درجات (Performance و Accessibility و Best Practices و SEO) وتحت Performance أرقام زي LCP و TBT و CLS، وتحتها Opportunities و Diagnostics مرتبين حسب التأثير.
+
+أول ٣ حاجات بتطلع غالبًا: صور كبيرة أو مش WebP/AVIF، render-blocking CSS/JS، صور من غير [[width]] و [[height]] (بتعمل CLS). بعد التصليح شغّله تاني، وخد بالك إن درجة Performance بتتغير كام نقطة بين كل تشغيل والتاني حتى من غير تعديل، فشغّله ٢ أو ٣ مرات وقارن المتوسط.
+
+لو قالك [[Unable to connect to Chrome]] يبقى مفيش Chrome متسطب على الجهاز، وتقدر تستخدم تاب Lighthouse في DevTools أو pagespeed.web.dev. (مقدرتش أشغّل Lighthouse هنا لأنه محتاج يوصل لموقع حقيقي.)`
         },
         {
           cmd: "Performance و Coverage",
@@ -698,7 +823,10 @@ Performance > Record > do the slow action > Stop`,
 Performance tab: Record ثم افعل الـ action البطيئة ثم Stop. الـ Long Tasks (مستطيلات حمرا) JavaScript بيشتغل لأكتر من ٥٠ms ويعلّق الشاشة.`,
             when: "لما Performance score منخفض. لما تضغط حاجة والصفحة تعلّق.",
             mistakes: "تتجاهل Coverage لأن درجتك مش وحشة. التطبيقات الكبيرة ممكن بتحمّل ضعف ما تحتاجه."
-          }
+          },
+          sol: R`Ctrl+Shift+P ثم Show Coverage ثم زرار الريفريش في اللوحة. هتلاقي جدول بكل ملف CSS و JS، وعمود Unused Bytes ونسبته، وشريط أحمر (مش مستخدم) وأخضر (مستخدم). نسبة CSS المش مستخدم في الصفحة الرئيسية بتبقى عادي ٥٠٪ لـ ٩٠٪ لو بتستخدم framework زي Bootstrap كامل.
+
+دوس على الملف وهيفتحه في Sources والسطور المش مستخدمة عليها علامة حمرا. خد بالك: «مش مستخدم في الصفحة دي وقت التحميل» مش معناها «مش مستخدم خالص»، ممكن يكون لصفحة تانية أو لـ hover أو modal. فالحل مش تمسحه، الحل تقسّم الـ CSS أو تستخدم purge (زي اللي Tailwind بيعمله).`
         },
         {
           cmd: "Overrides",
@@ -718,7 +846,12 @@ Override headers بيخليك تعدّل response headers، مفيد تجرّب 
 متنساش توقّف الـ Overrides من Sources ثم Overrides لما تخلص.`,
             when: "تجرّب bug fix على الموقع قبل PR. تتحقق من إن تصليح معين بيحل المشكلة.",
             mistakes: "تنسى Overrides شغال وتتساءل ليه التعديلات اللي بترفعها مش بتظهر."
-          }
+          },
+          sol: R`كليك يمين على طلب الـ API في Network ثم Override content. أول مرة هيطلب منك تختار فولدر وتدوس Allow. هيفتحلك الرد في Sources، امسح اللي فيه واكتب [[[]]] واحفظ Ctrl+S، وبعدين ريفريش. هتلاقي جنب الطلب في Network علامة بنفسجية (overridden)، والواجهة بقت شايفة array فاضي.
+
+اللي المفروض تشوفه: رسالة زي «مفيش طلبات لسه» (empty state). اللي بيطلع كتير: صفحة فاضية خالص، أو spinner بيلف للأبد، أو error في Console زي [[Cannot read properties of undefined (reading '0')]] لأن الكود فاكر إن فيه عنصر أول دايمًا.
+
+جرّب كمان تحط [[{}]] أو تغيّر الـ status من Override headers. ولما تخلص اقفل Enable Local Overrides في Sources ثم Overrides عشان متنساش إن الرد متزوّر.`
         },
         {
           cmd: "playwright screenshot",
@@ -749,7 +882,15 @@ npx playwright screenshot --device "iPhone 13" --color-scheme dark --wait-for-ti
             "ديسكتوب ١٤٤٠ في ٩٠٠.",
             "موبايل ٣٩٠ عرض، والصفحة كاملة.",
             "آيفون بالوضع الداكن، بعد ثانية من التحميل."
-          ]
+          ],
+          sol: R`جربت الأمر التاني على سيرفر محلي وطبع:
+
+[[Navigating to http://localhost:8791]]
+[[Capturing screenshot into mobile.png]]
+
+وطلع ملف PNG. هتلاقي ٣ صور: [[desktop.png]] مقاس 1440×900 بالظبط، و [[mobile.png]] عرضه 390 وطوله قد الصفحة كلها (بسبب [[--full-page]])، و [[iphone-dark.png]] بـ dark mode لو الـ CSS بتاعك فيه [[prefers-color-scheme: dark]]. قبل وبعد التعديل حطهم جنب بعض في أي image viewer.
+
+لو طلع [[Executable doesn't exist]] يبقى نسيت [[npx playwright install chromium]]. ولو الصورة فاضية أو نص غير متحمّل، زوّد [[--wait-for-timeout]] أو [[--wait-for-selector]]. ولو [[net::ERR_CONNECTION_REFUSED]] يبقى السيرفر المحلي مش شغال على البورت ده.`
         },
         {
           cmd: "Command Menu",
@@ -772,7 +913,10 @@ Show Coverage`,
 «Show Rendering»: emulate dark mode من غير ما تغيّر إعدادات النظام. وprint media query.`,
             when: "أي وقت تعرف إيه اللي عايزه بس مش لاقيه.",
             mistakes: "تبقى في تاب واحد وتنسى إن باقي DevTools فيه أدوات مهمة."
-          }
+          },
+          sol: R`Ctrl+Shift+P واكتب [[full size]] ثم Enter: هينزل PNG للصفحة كلها من فوق لتحت (مش بس الجزء الظاهر). لو الصورة مقصوصة أو فيها أجزاء فاضية، غالبًا عندك lazy loading أو عناصر [[position: fixed]]، اعمل scroll للآخر الأول.
+
+الـ dark mode: Ctrl+Shift+P ثم Show Rendering، وانزل لـ [[Emulate CSS media feature prefers-color-scheme]] واختار [[prefers-color-scheme: dark]]. لو موقعك داعم dark mode بالـ media query هيتقلب فورًا. لو ما اتغيرش يبقى الموقع مش بيقرا الـ media query (يمكن معتمد على زرار و localStorage بس).`
         }
       ]
     },
@@ -804,7 +948,14 @@ securityheaders.com بيدّيك درجة. مع Nginx بتضيفها بـ [[add_
             when: "بعد ما ترفع موقع: افحصه على securityheaders.com. واستهدف درجة A.",
             mistakes: "CSP بياخد وقت عشان تضبطه. ابدأ بـ report-only mode يجمعلك violations من غير ما يمنع حاجة."
           },
-          lines: ["الـ headers بس، وفلتر على headers الأمان الخمسة. اللي مش ظاهر يبقى ناقص."]
+          lines: ["الـ headers بس، وفلتر على headers الأمان الخمسة. اللي مش ظاهر يبقى ناقص."],
+          sol: R`securityheaders.com هيديك درجة من F لـ A+ وقايمة Missing Headers. موقع Nginx جديد من غير إعدادات غالبًا بياخد F أو D. أسهل واحد تضيفه وتقفل بيه ثغرة حقيقية:
+
+[[add_header X-Content-Type-Options "nosniff" always;]]
+
+حطه في الـ [[server]] block، واعمل [[sudo nginx -t]] (المفروض [[syntax is ok]] و [[test is successful]]) وبعدين [[sudo systemctl reload nginx]]، وشغّل أمر الـ curl تاني: السطر هيظهر.
+
+لو ما ظهرش: فيه [[add_header]] تاني جوه [[location]] (ولما location فيها add_header بتلغي كل اللي ورثته من server)، أو الرد error ونسيت [[always]]. سيب CSP للآخر وابدأها بـ [[Content-Security-Policy-Report-Only]] لأنها بتكسر سكربتات. (مقدرتش أجرّب Nginx حقيقي هنا.)`
         },
         {
           cmd: "SEO من الترمنال",
@@ -829,7 +980,10 @@ curl -sI https://example.com/sitemap.xml`,
             "هات الصفحة زي ما جوجل بيشوفها، وطلّع الـ title والـ description و Open Graph. لو فاضي، المحتوى بيتعمل بـ JavaScript.",
             "ملف robots.txt: إيه اللي مسموح للـ crawlers.",
             "الـ sitemap موجود؟ (200 يعني موجود)."
-          ]
+          ],
+          sol: R`على صفحة مظبوطة أمر الـ grep بيطلّع سطور فيها [[<title>...]] و [[<meta name="description" content="...">]] و [[<meta property="og:title" ...>]] و [[og:image]]. كرره على ٣ صفحات مختلفة (الرئيسية ومقال ومنتج) ولازم الـ title والـ description يختلفوا في كل واحدة.
+
+الغلط الأشهر في SPA: كل الصفحات بترجّع نفس الـ title، أو grep مش بيلاقي description خالص لأن React بيحطها بعد التحميل. [[robots.txt]] المفروض يرجع نص فيه [[Sitemap: https://...]] ومفيهوش [[Disallow: /]] (دي بتمنع جوجل من الموقع كله، وبتتنسي من staging). و [[curl -sI .../sitemap.xml]] لازم يرجع [[200]]، لو [[404]] اعمل واحد.`
         },
         {
           cmd: "أدوات جوجل",
@@ -853,7 +1007,12 @@ URL Inspection: بتحط URL وبيوريك Googlebot شايفه إيه. لو Go
 Rich Results Test: لو فيه structured data (JSON-LD)، بيتحقق إنه صح وهيظهر كـ rich result.`,
             when: "بعد إطلاق الموقع. كل شهر تشوف اللي الناس بيبحثوا عنه. لما صفحة مهمة مش في جوجل.",
             mistakes: "تستنى جوجل يلاقي موقعك لوحده. ابعت sitemap في Search Console على طول."
-          }
+          },
+          sol: R`في Search Console: Add property، واختار Domain (بيتأكد بـ TXT record في الـ DNS) أو URL prefix (بيتأكد بملف HTML أو meta tag). بعد التأكيد حط لينك الصفحة الجديدة في خانة البحث فوق (URL Inspection).
+
+الغالب هتشوف [[URL is not on Google]] لصفحة جديدة، وده طبيعي. دوس Test Live URL عشان تتأكد إن جوجل قادر يوصلها (لازم يقول [[URL is available to Google]])، وبعدين Request Indexing. بعد أيام ارجع هتلاقيها [[URL is on Google]].
+
+لو قالك [[Excluded by 'noindex' tag]] أو [[Blocked by robots.txt]] ده غلط عندك مش عند جوجل. وخد بالك إن البيانات في Performance بتاخد يومين تلاتة تظهر لموقع جديد.`
         }
       ]
     }

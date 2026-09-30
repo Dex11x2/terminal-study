@@ -68,7 +68,12 @@ deactivate
             "ارجع للـ Python العادي.",
             "التفعيل في PowerShell.",
             "التفعيل في CMD."
-          ]
+          ],
+          sol: R`بعد [[source .venv/bin/activate]] الـ prompt بيبدأ بـ [[(.venv)]]، و [[which python]] بيرجع مسار جوه الفولدر، عندي طلع [[/tmp/claude-0/python-sol/.venv/bin/python]]. على ويندوز [[where python]] بيطبع أكتر من سطر، وأولهم لازم يبقى [[...\.venv\Scripts\python.exe]].
+
+بعد [[deactivate]] الـ [[(.venv)]] بيختفي و [[which python]] يرجع لـ [[/usr/bin/python3]] أو مايلاقيش [[python]] خالص على أوبونتو (هناك اسمه [[python3]] بس).
+
+لو [[which python]] لسه بيشاور بره .venv بعد التفعيل، يبقى انت شغّلت [[bash activate]] أو [[./activate]] بدل [[source]] (دي بتفعّل في shell فرعي وتقفل). وعلى PowerShell لو طلع [[running scripts is disabled on this system]] شغّل [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]] مرة واحدة.`
         },
         {
           cmd: "pip install -r requirements.txt",
@@ -100,7 +105,12 @@ pip uninstall -y httpx`,
             "كل اللي متسطّب ونسخه.",
             "تفاصيل مكتبة.",
             "شيل مكتبة من غير ما يسأل."
-          ]
+          ],
+          sol: R`جربتها في venv جديد: [[pip install -r requirements.txt]] سطّب requests ومعاها ٤ مكتبات بتعتمد عليها. و [[pip show requests]] طلّع (أهم السطور):
+
+[[Name: requests]] و [[Version: 2.32.3]] و [[Location: .../.venv/lib/python3.11/site-packages]] و [[Requires: certifi, charset-normalizer, idna, urllib3]] و [[Required-by:]] فاضية.
+
+الـ Location هو اللي يأكدلك إنها اتسطبت جوه الـ venv مش على النظام. و Requires بتقولك ليه [[pip list]] طلّع مكتبات انت ماكتبتهاش. لو الـ Location طلع بره .venv (زي [[/usr/lib/python3/dist-packages]] أو [[~/.local]]) يبقى نسيت تفعّل الـ venv.`
         },
         {
           cmd: "pip freeze",
@@ -128,7 +138,10 @@ pip list --outdated`,
             "احفظها في ملف جديد.",
             "قارن بالقديم قبل ما تستبدل.",
             "المكتبات اللي ليها نسخ أحدث."
-          ]
+          ],
+          sol: R`في venv نضيف سطّبت فيه [[fastapi]] بس، [[pip freeze]] طلّع ١١ سطر، كلهم بالشكل [[name==version]]: [[fastapi==...]] و [[starlette]] و [[pydantic]] و [[pydantic_core]] و [[anyio]] و [[idna]] و [[typing_extensions]] وغيرهم. الرقم بالظبط بيتغير مع نسخة fastapi، المهم إنه أكتر بكتير من واحد.
+
+ده الفرق بين freeze و requirements اللي كتبتها بإيدك: freeze بيثبّت كل شجرة المكتبات بنسخها الحالية، فلما حد تاني يسطّب ياخد نفس الحاجات بالظبط. ولو لقيت فيه عشرات المكتبات اللي مالهاش علاقة (jupyter وغيره)، يبقى انت شغّلته على Python النظام أو venv قديم مش على venv المشروع.`
         },
         {
           cmd: "externally-managed-environment",
@@ -167,7 +180,16 @@ pipx list`,
             "الحل لأداة ترمنال: venv خاص بيها أوتوماتيك.",
             "ضيف فولدر أدوات pipx للـ PATH.",
             "الأدوات المتسطّبة بـ pipx."
-          ]
+          ],
+          sol: R`على أوبونتو 24.04 [[pip install requests]] بيرفض ويطلّع:
+
+[[error: externally-managed-environment]]
+[[× This environment is externally managed]]
+[[╰─> To install Python packages system-wide, try apt install python3-xyz ...]]
+
+وكمل بيقترح venv أو pipx. ده مش bug: أوبونتو بيحمي Python بتاع النظام من إنك تكسر أدوات زي apt. (جربتها على python3.12 بتاع النظام وطلعت نفس الرسالة.)
+
+بعد [[pipx install httpie]] و [[pipx ensurepath]] (وافتح ترمنال جديد)، [[pipx list]] هيوريك [[package httpie ...]] والأوامر [[http]] و [[https]]. و [[http example.com]] هيطبع [[HTTP/1.1 200 OK]] والـ headers ملونة وبعدها الـ HTML. لو طلع [[http: command not found]] يبقى الـ PATH لسه ما اتحدّثش. والغلط اللي متعملوش: [[--break-system-packages]] أو [[sudo pip install]].`
         }
       ]
     },
@@ -205,7 +227,12 @@ PWA: المتصفح بيسمح بالـ service worker على https أو على 
             "على جهازك بس، محدش من الشبكة.",
             "قدّم فولدر dist من غير ما تدخله.",
             "صورة للصفحة بمقاس موبايل، بطولها كلها."
-          ]
+          ],
+          sol: R`السيرفر بيطبع [[Serving HTTP on 127.0.0.1 port 8000 (http://127.0.0.1:8000/) ...]] ومع كل طلب سطر زي [[127.0.0.1 - - [30/Sep/2026 05:09:02] "GET / HTTP/1.1" 200 -]].
+
+لو الـ index.html عادي خالص (HTML و CSS بس) مش هتلاقي فرق في Console بين الاتنين. الفرق بيظهر أول ما تستخدم [[<script type="module">]] أو fetch. جربت صفحة بتعمل [[import]] من [[./m.js]]: بالدبل كليك Console طلّع [[Access to script at 'file:///.../m.js' from origin 'null' has been blocked by CORS policy]]، ومن [[http://localhost:8000]] اشتغلت عادي.
+
+لو طلع [[OSError: [Errno 98] Address already in use]] غيّر البورت. ولو فتحت [[http://0.0.0.0:8000]] وما اشتغلش على ويندوز، استخدم [[localhost]].`
         },
         {
           cmd: "python -m",
@@ -239,7 +266,17 @@ python -c "import sys; print(sys.version)"`,
             "شغّل ملف من مشروعك كجزء من الباكدج (عرض بس).",
             "pip بتاع الـ python ده بالظبط.",
             "سطر Python من الترمنال."
-          ]
+          ],
+          sol: R`جربتها بالظبط: [[python app/seed.py]] فشل بـ [[ModuleNotFoundError: No module named 'app']]، و [[python -m app.seed]] من نفس الفولدر (اللي فيه [[app/]]) اشتغل وطبع [[seed ok: demo]].
+
+السبب: لما تشغّل ملف بمساره، Python بيحط فولدر الملف نفسه ([[app/]]) في [[sys.path]]، فمش شايف حاجة اسمها [[app]] جواه. مع [[-m]] بيحط الفولدر الحالي، فـ [[app]] بقى package يتعمله import.
+
+لو [[-m]] كمان فشل بنفس الغلطة، يبقى انت واقف جوه [[app/]] نفسه مش في الفولدر اللي فوقه، أو ناسي [[__init__.py]] أحيانًا، أو كتبت [[app/seed]] أو [[app.seed.py]] بدل [[app.seed]].`,
+          solCode: R`mkdir -p app && touch app/__init__.py
+echo 'NAME = "demo"' > app/config.py
+printf 'from app import config\nprint("seed ok:", config.NAME)\n' > app/seed.py
+python app/seed.py     # ModuleNotFoundError: No module named 'app'
+python -m app.seed     # seed ok: demo`
         }
       ]
     },
@@ -282,7 +319,17 @@ python -m pytest -q --lf`,
             "الاختبارات اللي اسمها فيه login ومش slow.",
             "اختبار واحد بعينه بالتفصيل.",
             "اللي فشل المرة اللي فاتت بس."
-          ]
+          ],
+          sol: R`[[pytest]] بيطبع [[F]] وتحته حاجة زي:
+
+[[>   def test_add(): assert 1 + 1 == 3]]
+[[E   assert (1 + 1) == 3]]
+[[FAILED tests/test_math.py::test_add - assert (1 + 1) == 3]]
+[[1 failed in 0.02s]]
+
+السطر اللي بيبدأ بـ [[E]] هو المفيد: pytest بيعيد كتابة الـ [[assert]] العادي عشان يوريك الطرفين. مع متغيرات بيكتبلك قيمهم، زي [[assert 2 == 3]] ومعاها [[where 2 = add(1, 1)]]. بعد ما تصلّحه لـ [[== 2]] هتلاقي [[.]] و [[1 passed]].
+
+لو طلع [[no tests ran]] يبقى اسم الملف أو الدالة مش بيبدأ بـ [[test_]]. ولو [[pytest: command not found]] يبقى الـ venv مش متفعل، استخدم [[python -m pytest]].`
         },
         {
           cmd: "pytest.ini",
@@ -323,7 +370,13 @@ markers =
             "الدوال async تشتغل لوحدها (pytest-asyncio).",
             "العلامات المسموحة:",
             "slow للاختبارات البطيئة."
-          ]
+          ],
+          sol: R`مع اختبارين واحد منهم [[@pytest.mark.slow]]، [[pytest -m "not slow"]] بيطلّع [[1 passed, 1 deselected]]. ولما كتبت [[@pytest.mark.slwo]] وقفت الـ collection كلها بـ:
+
+[[ERROR tests/test_math.py - Failed: 'slwo' not found in $__btmarkers$__bt configuration option]]
+[[Interrupted: 1 error during collection]]
+
+من غير [[--strict-markers]] كان هيعدّي بـ warning بس، والاختبار «البطيء» هيفضل شغال في كل مرة من غير ما تاخد بالك. وخد بالك من حاجتين: سطر [[asyncio_mode = auto]] بيطلّع [[PytestConfigWarning: Unknown config option: asyncio_mode]] لو [[pytest-asyncio]] مش متسطبة. ولو عدّلت ملف الاختبار وشغّلت pytest على طول والنتيجة ما اتغيرتش، امسح [[__pycache__]] وجرّب تاني.`
         },
         {
           cmd: "uvicorn --reload",
@@ -354,7 +407,23 @@ curl -s localhost:8000/health
             "شغّل مع إعادة تشغيل تلقائية مع كل حفظ.",
             "على بورت تاني.",
             "جرّب endpoint."
-          ]
+          ],
+          sol: R`[[curl -s localhost:8000/health]] بيرجع [[{"ok":true}]] (JSON بيكتب [[true]] مش [[True]]). لما تعدّل الرد وتحفظ، اللوج بيطبع:
+
+[[WARNING:  WatchFiles detected changes in 'app/main.py'. Reloading...]]
+وبعدها [[Started server process [...]]] و [[Application startup complete.]]
+
+والـ curl التاني بيرجع الرد الجديد. جربتها وده اللي حصل بالظبط.
+
+لو ما عملش reload: انت شغّله من غير [[--reload]]، أو الملف بره الفولدر اللي بيراقبه (أول سطر في اللوج [[Will watch for changes in these directories]]). ولو طلع [[Error loading ASGI app. Could not import module "app.main"]] يبقى انت مش واقف في الفولدر اللي فيه [[app/]]. وافتح [[/docs]] هتلاقي [[/health]] ظاهر لوحده.`,
+          solCode: R`# app/main.py  (plus an empty app/__init__.py)
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/health")
+def health():
+    return {"ok": True}`
         },
         {
           cmd: "python3 - <<'PY'",
@@ -389,7 +458,18 @@ PY`,
             "البيانات، والتوكن من متغير بيئة.",
             "اكتبها JSON سليم في الملف.",
             "نهاية كود Python."
-          ]
+          ],
+          sol: R`جربتها بـ [[INTERNAL_TOKEN='ab"c']] والـ [[creds.json]] طلع سليم، و [[json.dump]] هرّب علامة التنصيص لوحده:
+
+[[    "value": "Bearer ab\"c"]]
+
+و [[python3 -m json.tool creds.json]] قراه من غير مشاكل. أما بـ echo:
+
+[[echo "[{\"name\":\"internal\",\"value\":\"Bearer $INTERNAL_TOKEN\"}]" > bad.json]]
+
+طلع [[[{"name":"internal","value":"Bearer ab"c"}]]] وده JSON مكسور، و json.tool قال [[Expecting ',' delimiter: line 1 column 40]].
+
+وعلامات التنصيص حوالين [[<<'PY']] مهمة: بتمنع bash إنه يغيّر [[$]] أو [[$__bt]] جوه كود Python. ولو نسيت تعمل [[export]] هيطلع [[KeyError: 'INTERNAL_TOKEN']].`
         }
       ]
     },
@@ -1200,7 +1280,20 @@ nginx بيبعت [[X-Forwarded-For]] (IP المستخدم) و [[X-Forwarded-Prot
             "شغّل على كل الواجهات، وصدّق headers الـ proxy.",
             "نفس الكلام بعمليتين.",
             "اتأكد إنه سامع على 0.0.0.0."
-          ]
+          ],
+          sol: R`جربتها بـ endpoint بيرجّع [[{"client": ..., "scheme": ...}]] وبعت الطلب بـ [[X-Forwarded-For: 203.0.113.7]] و [[X-Forwarded-Proto: https]] زي ما nginx بيعمل:
+
+مع [[--forwarded-allow-ips "*"]]: [[{"client":"203.0.113.7","scheme":"https"}]]، يعني IP المستخدم الحقيقي و https.
+من غيرها، والطلب جاي من IP غير 127.0.0.1 (زي nginx في container تاني): [[{"client":"192.0.2.2","scheme":"http"}]]، يعني IP البروكسي و http، و uvicorn تجاهل الـ headers.
+
+المفاجأة: لو nginx على نفس الجهاز وبيكلّم [[127.0.0.1:8080]] مش هتلاقي فرق، لأن uvicorn بيثق في [[127.0.0.1]] افتراضيًا. وده خطر لو البورت مفتوح للنت ومعاك [[*]]: أي حد يقدر يزوّر [[X-Forwarded-For]]، فخلي البورت على 127.0.0.1 أو شبكة Docker داخلية.`,
+          solCode: R`from fastapi import FastAPI, Request
+
+app = FastAPI()
+
+@app.get("/whoami")
+def whoami(request: Request):
+    return {"client": request.client.host, "scheme": request.url.scheme}`
         },
         {
           cmd: "Dockerfile",
@@ -1253,7 +1346,12 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--proxy-
             "البورت (توثيق).",
             "فحص صحة كل ٣٠ ثانية.",
             "شغّل uvicorn للإنتاج."
-          ]
+          ],
+          sol: R`[[docker images]] المفروض يوريك الصورة بحجم في حدود ٢٠٠ لـ ٣٠٠ ميجا حسب المكتبات (الـ base [[python:3.12-slim]] لوحدها حوالي ١٢٠ ميجا على الديسك). لو طلعت قرب الجيجا، غالبًا نسيت [[.dockerignore]] فـ [[.venv]] و [[.git]] اتنسخوا جوه الصورة، أو استخدمت [[python:3.12]] مش slim.
+
+[[docker compose exec app whoami]] المفروض يطبع [[app]]. لو طبع [[root]] يبقى سطر [[USER app]] مش موجود أو الـ service بيستخدم صورة قديمة (اعمل [[docker compose up -d --build]]). وبعد دقيقة [[docker ps]] يوريك [[(healthy)]]. لو [[(unhealthy)]] شوف [[docker inspect --format '{{json .State.Health}}' <id>]]: غالبًا مفيش route اسمه [[/health]].
+
+(مقدرتش أبني الصورة هنا لأن الشبكة جوه docker build مقفولة، فالأرقام دي تقريبية.)`
         },
         {
           cmd: "docker compose run --rm --no-deps",
@@ -1287,7 +1385,12 @@ docker compose run --rm -e LOG_LEVEL=debug app python -m app.check`,
             "شغّل سكربت جوه الـ container الشغال (من غير terminal).",
             "سكربت تاني في وضع العرض بس.",
             "تشغيل بمتغير بيئة إضافي."
-          ]
+          ],
+          sol: R`الأمر الأول بيطبع ناتج pytest العادي، حاجة زي [[..... [100%]]] و [[5 passed in 0.40s]]، والـ exit code بتاعه هو بتاع pytest (0 لو كله نجح). [[--no-deps]] معناها إنه مابيشغّلش الـ db ولا أي service في [[depends_on]]، فلو اختباراتك محتاجة قاعدة بيانات هتفشل بـ connection refused، وساعتها شيل [[--no-deps]].
+
+[[docker ps -a]] بعدها مش المفروض يوريك container اسمه زي [[project-app-run-a1b2c3]]، لأن [[--rm]] مسحه. لو لقيت واحد [[Exited]] يبقى شغّلت مرة من غير [[--rm]]، امسحه بـ [[docker rm]] أو [[docker container prune]].
+
+(ما قدرتش أشغّلها هنا لأن بناء الصورة محتاج نت جوه docker build.)`
         }
       ]
     }

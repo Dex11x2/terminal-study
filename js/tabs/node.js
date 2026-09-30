@@ -947,7 +947,7 @@ pnpm ignored-builds
 pnpm approve-builds
 git diff pnpm-workspace.yaml
 pnpm rebuild sharp`,
-          try: "في مشروع pnpm جديد سطّب sharp، واقرا الرسالة اللي بتطلع، وشغّل [[pnpm approve-builds]]، واقرا اللي اتكتب في pnpm-workspace.yaml.",
+          try: "في مشروع pnpm جديد سطّب esbuild (أو sharp@0.34؛ من sharp 0.35 مبقاش فيه سكربت install فمش هتطلع رسالة)، واقرا الرسالة اللي بتطلع، وشغّل [[pnpm approve-builds]]، واقرا اللي اتكتب في pnpm-workspace.yaml.",
           deep: {
             why: "هجمات supply chain كتير بتشتغل من postinstall: مكتبة اتخترقت، وأول ما حد يسطّبها بتسرق التوكنات من جهازه. pnpm قفل الباب ده افتراضيًا، والتمن إنك تفتحه بإيدك للمكتبات اللي تثق فيها.",
             how: R`في التسطيب pnpm بيطبع أسامي المكتبات اللي سكربتاتها اتمنعت: تحذير في pnpm 10، وخطأ بيوقف التسطيب في pnpm 11 (الإعداد [[strictDepBuilds]] بقى true افتراضيًا). [[pnpm ignored-builds]] بيعرضهم تاني.

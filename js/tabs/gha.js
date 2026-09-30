@@ -92,7 +92,12 @@ jobs:
             "سطّب المكتبات من الـ lock.",
             "lint.",
             "الاختبارات. أي فشل يعلّم الـ commit أحمر."
-          ]
+          ],
+          sol: R`بعد الـ push بثواني، تاب Actions بيعرض run باسم رسالة الـ commit، وتحته workflow اسمه [[CI]] و job اسمه [[test]]. بيبدأ بدايرة صفرا (queued ثم in progress)، ولو دخلت جوه الـ job هتشوف الـ steps بالترتيب: [[Set up job]] و [[Run actions/checkout@v7]] و [[Run actions/setup-node@v7]] و [[Run npm ci]] و [[Run npm run lint]] و [[Run npm test]]، وفي الآخر علامة صح خضرا. ونفس العلامة بتظهر جنب الـ commit في صفحة الـ repo.
+
+الأخطاء الشائعة في أول مرة: الـ workflow ما ظهرش خالص يبقى المسار غلط (لازم [[.github/workflows/]] بالظبط، مش [[.github/workflow]]) أو الـ push مش على main. ولو ظهر بعلامة حمرا ومكتوب [[Invalid workflow file]] يبقى فيه غلط YAML، غالبًا مسافات. ولو وقع في setup-node بـ [[Dependencies lock file is not found]] يبقى مفيش [[package-lock.json]] في الـ repo ([[cache: npm]] محتاجه، و [[npm ci]] كمان). ولو وقع بـ [[npm error Missing script: "lint"]] يبقى مفيش script بالاسم ده في package.json: ضيفه أو امسح السطر.
+
+قبل الـ push تقدر تفحص الملف على جهازك بـ [[actionlint]]: لو مطبعش حاجة يبقى الملف سليم.`
         },
         {
           cmd: "المفاهيم",
@@ -143,7 +148,26 @@ jobs:
             "اسم المدخل.",
             "اختيار من قايمة.",
             "الاختيارات."
-          ]
+          ],
+          sol: R`بعد ما تضيف [[workflow_dispatch:]] وتعمل push على الـ branch الافتراضي، ادخل تاب Actions واختار الـ workflow من الشمال: فوق قايمة الـ runs هيظهر شريط [[This workflow has a workflow_dispatch event trigger.]] وجنبه زرار [[Run workflow]]. بتدوس عليه تختار الـ branch، ومع الـ inputs اللي في المثال هتلاقي dropdown فيه [[staging]] و [[production]]. الـ run بيظهر بـ event [[workflow_dispatch]] واسمك جنبه.
+
+جوه الـ workflow القيمة بتتقري بـ [[inputs.env]]. ونفس التشغيل من الترمنال: [[gh workflow run ci.yml -f env=staging]].
+
+لو الزرار مش ظاهر: الملف اللي فيه [[workflow_dispatch]] لازم يكون على الـ default branch (غالبًا main)، مش على branch تاني بس. ولو ظهر [[Invalid workflow file]] بعد ما ضفت inputs، اتأكد إن [[options]] موجودة مع [[type: choice]] وإن المسافات مظبوطة.`,
+          solCode: R`on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        options: [staging, production]
+        default: staging
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "env=$__{{ inputs.env }} event=$__{{ github.event_name }}"`
         },
         {
           cmd: "uses و run",
@@ -192,7 +216,26 @@ jobs:
             "الأمر الأول.",
             "والتاني في نفس الشيل.",
             "اكتب في ملف الملخص: بيظهر في صفحة الـ run."
-          ]
+          ],
+          sol: R`في اللوج الـ step بتاعة [[run: |]] بتعرض السكربت كله فوق وبعده ناتج كل سطر بالترتيب. والملخص بيظهر في صفحة الـ run نفسها (Summary) تحت رسمة الـ jobs، في كارت باسم الـ job، ومتنسّق كـ Markdown: عنوان [[Build report]] وتحته bullets فيها الـ commit ونسخة Node.
+
+خلي بالك إن السطور جوه [[run: |]] بتتنفذ بـ [[bash -e]]، يعني أول أمر يفشل بيوقف الـ step كلها والباقي ميتنفذش، ودا غالبًا اللي انت عايزه.
+
+أخطاء شائعة: [[run: echo "next step: $VERSION"]] على سطر واحد من غير [[|]] ممكن يطلع [[Invalid workflow file]] لأن [[: ]] جوه الكلام YAML بيفهمها key، فالحل [[run: |]] أو تشيل النقطتين. و [[>]] بدل [[>>]] مع [[$GITHUB_STEP_SUMMARY]] بيمسح اللي اتكتب قبل كده في نفس الـ step. والملخص بيظهر بس لما الـ job تخلص.`,
+          solCode: R`steps:
+  - uses: actions/checkout@v7
+  - name: Multi-line
+    run: |
+      echo "line 1"
+      node --version
+      ls -la
+  - name: Summary
+    run: |
+      {
+        echo "## Build report"
+        echo "- commit: $GITHUB_SHA"
+        echo "- node: $(node --version)"
+      } >> "$GITHUB_STEP_SUMMARY"`
         },
         {
           cmd: "gh CLI",
@@ -228,7 +271,12 @@ gh run rerun 1234567890 --failed`,
             "تابع run شغال لايف.",
             "شغّل workflow يدوي بمدخل.",
             "أعد الـ jobs الفاشلة بس في run معين."
-          ]
+          ],
+          sol: R`[[gh run list --limit 5]] بيعرض جدول فيه الحالة و عنوان الـ commit واسم الـ workflow والـ branch والـ event والـ ID والوقت. الـ run الفاشل عليه [[X]] أحمر.
+
+[[gh run view --log-failed]] من غير ID بيسألك تختار run من قايمة، وبعدين بيطبع لوج الـ steps الفاشلة بس. كل سطر شكله: اسم الـ job، واسم الـ step، والوقت، والكلام، زي [[test  Run npm test  2026-09-30T10:12:03.4Z  ✕ adds two numbers]]، وتحته الـ expected والـ received اللي كسروا الاختبار، وفي الآخر [[Process completed with exit code 1.]].
+
+لو قالك [[To get started with GitHub CLI, please run: gh auth login]] يبقى محتاج login الأول. ولو [[no runs found]] يبقى انت في فولدر repo تاني أو الـ remote مش على GitHub، اتأكد بـ [[gh repo view]]. ولو الـ run لسه شغال، [[--log-failed]] مش هيلاقي حاجة، استخدم [[gh run watch]] واستنى.`
         },
         {
           cmd: "قراية الفشل",
@@ -260,7 +308,12 @@ gh run download 1234567890`,
             "آخر ٤٠ سطر من الـ steps الفاشلة في run معين.",
             "أسامي الـ jobs ونتيجتها (مفيد في matrix).",
             "نزّل الـ artifacts (screenshots، تقارير)."
-          ]
+          ],
+          sol: R`الإجابة النموذجية قايمة فحص، مش تخمين:
+
+١. نسخة Node: [[node -v]] عندك قدام الرقم في step الـ [[Setup node]] في اللوج (بيكتب النسخة اللي نزّلها). لو مختلفين، حط [[node-version-file: .nvmrc]] عشان الاتنين يقروا من نفس المكان. ٢. المتغيرات: كل اسم في [[.env]] عندك لازم يبقى له secret أو env في الـ workflow. المتغير الناقص بيبقى فاضي، والغلط بيطلع على شكل [[undefined]] أو [[Invalid URL]] أو [[DATABASE_URL is not set]]. ٣. فروق البيئة: الـ runner لينكس فأسماء الملفات case-sensitive ([[import "./button"]] بيشتغل على ويندوز وماك ويفشل هنا لو الملف [[Button.tsx]])، والوقت UTC، ومفيش قاعدة بيانات ولا خدمات إلا لو عملتها بـ services. ٤. [[npm ci]] أصرم من [[npm install]]: لو package.json و package-lock.json مش متطابقين هيقولك [[npm ci can only install packages when your package.json and package-lock.json are in sync]].
+
+وأسهل طريقة تتأكد: شغّل نفس أوامر الـ CI عندك بالظبط ([[rm -rf node_modules && npm ci && npm test]]). الغلط الشائع إنك تعمل «Re-run» كذا مرة على أمل إنه ينجح؛ دا بيشتغل بس مع الاختبارات الـ flaky، وساعتها المشكلة في الاختبار نفسه.`
         }
       ]
     },
@@ -322,7 +375,21 @@ jobs:
             "استخدم GitHub API.",
             "متغير للـ step.",
             "التوكن الجاهز بتاع الـ run."
-          ]
+          ],
+          sol: R`الـ step اللي بتطبع [[echo "value: $TEST_VALUE"]] هتطلّع في اللوج [[value: ***]]. GitHub بيدوّر على قيمة أي secret في اللوج ويستبدلها بـ [[***]]. و [[echo "length: $__{#TEST_VALUE}"]] بيطبع الطول الحقيقي (مثلًا [[length: 11]])، ودي طريقة آمنة تتأكد إن الـ secret وصل من غير ما تطبعه.
+
+لو طلع [[value: ]] فاضي و [[length: 0]]: اسم الـ secret مختلف (الأسماء بتتحول لـ uppercase، فـ [[secrets.TEST_VALUE]] لازم يطابق)، أو حاطط الـ secret في environment والـ job مش عامل [[environment:]]، أو الـ run جاي من pull request من fork، ودي الـ secrets مش بتتبعتلها أصلًا.
+
+والإخفاء مش حماية كاملة: لو طبعت الـ secret بعد تحويله ([[base64]] أو [[rev]] أو حرف حرف) هيظهر عادي. الإخفاء بيحميك من الغلطة، مش من حد عايز يسرّب.`,
+          solCode: R`jobs:
+  show:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "value: $TEST_VALUE"
+          echo "length: $__{#TEST_VALUE}"
+        env:
+          TEST_VALUE: $__{{ secrets.TEST_VALUE }}`
         },
         {
           cmd: "base64 -d",
@@ -365,7 +432,30 @@ rm keystore.b64
             "أوامر.",
             "رجّعه ملف في الفولدر المؤقت.",
             "وخلّي مساره متاح للـ steps الجاية."
-          ]
+          ],
+          sol: R`على جهازك: ملف فيه [[hello from terminal-study]] بيتحول لـ [[aGVsbG8gZnJvbSB0ZXJtaW5hbC1zdHVkeQo=]] و [[sha256sum note.txt]] بيطلّع [[ef14986c004127fe5bc10638ba798128dd8f9460b4286d7a97d9338e7113ef52]]. في الـ workflow بعد [[base64 -d]] نفس الـ hash بالظبط بيطلع قدام [[.../note.txt]]، ودا معناه إن الملف رجع byte by byte.
+
+لو الـ hash مختلف: غالبًا عملت [[base64]] من غير [[-w0]] ونسخت الناتج بإيدك فالـ line breaks اتلخبطت، أو استخدمت [[echo]] في ويندوز PowerShell فاتضاف BOM أو CRLF. ولو [[base64: invalid input]] يبقى الـ secret فيه حاجة زيادة (مسافة أو اقتباس). وأمان أكتر: خلي [[gh secret set NAME < file.b64]] يقرا من الملف بدل ما تلزق القيمة.`,
+          solCode: R`# على جهازك
+echo "hello from terminal-study" > note.txt
+sha256sum note.txt
+base64 -w0 note.txt > note.b64
+gh secret set NOTE_B64 < note.b64
+rm note.b64
+
+# .github/workflows/b64.yml
+name: B64
+on: [workflow_dispatch]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore file
+        env:
+          NOTE_B64: $__{{ secrets.NOTE_B64 }}
+        run: |
+          echo "$NOTE_B64" | base64 -d > "$RUNNER_TEMP/note.txt"
+          sha256sum "$RUNNER_TEMP/note.txt"`
         },
         {
           cmd: "matrix",
@@ -418,7 +508,12 @@ rm keystore.b64
             "النسخة من المصفوفة.",
             "سطّب.",
             "اختبر."
-          ]
+          ],
+          sol: R`صفحة الـ run هتعرض ٤ jobs بأسماء زي [[test (22, ubuntu-latest)]] و [[test (22, windows-latest)]] و [[test (24, ubuntu-latest)]] و [[test (24, windows-latest)]]، شغالين في نفس الوقت. الويندوز غالبًا أبطأ بدقيقة أو اتنين.
+
+الفايدة الحقيقية تظهر لما واحد بس يفشل، مثلًا ويندوز بسبب مسار مكتوب بـ [[/]] أو script في package.json بيستخدم [[rm -rf]]. ساعتها تعرف إن المشكلة في النظام مش في الكود. ومع [[fail-fast: false]] الباقيين بيكمّلوا، ولو شلتها أول فشل يلغي الباقي فتشوف [[The operation was canceled.]] على jobs ممكن كانت هتنجح.
+
+ولو اتعمل job واحد بس، راجع إن [[node]] و [[os]] تحت [[matrix:]] مش تحت [[strategy:]] مباشرة، وإن [[runs-on]] مكتوب [[$__{{ matrix.os }}]].`
         },
         {
           cmd: "services",
@@ -489,7 +584,19 @@ rm keystore.b64
             "سطّب.",
             "طبّق الـ migrations على القاعدة الفاضية.",
             "اختبر."
-          ]
+          ],
+          sol: R`الحل: step [[npx prisma migrate deploy]] قبل [[npm test]] (زي المثال). لو كله سليم هتشوف في اللوج أسماء الـ migrations اللي اتطبقت و [[All migrations have been successfully applied.]]. وفي بداية الـ job step اسمها [[Initialize containers]] بتستنى الـ health check قبل ما تكمّل.
+
+لو في migration غلط (مثلًا [[ALTER TABLE]] على جدول مش موجود) هتفشل الـ step دي بالـ error بتاع Postgres ورقم الـ migration، والـ tests مش هتشتغل. ودا المطلوب: عرفت في الـ PR بدل ما تعرف في الإنتاج.
+
+أخطاء شائعة: [[Can't reach database server at localhost:5432]] يعني الـ [[ports]] مش موجودة، أو الـ job شغال جوه [[container:]] وساعتها الـ host يبقى اسم الـ service ([[postgres]]) مش localhost. ومن غير الـ [[--health-cmd]] الـ migrations ممكن تجري قبل ما Postgres يجهز فتفشل مرة وتنجح مرة.`,
+          solCode: R`    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+      - run: npx prisma migrate deploy
+      - run: npm test`
         },
         {
           cmd: "cache و artifacts",
@@ -538,7 +645,12 @@ rm keystore.b64
             "في job تاني: نزّله.",
             "إعداداته.",
             "بنفس الاسم."
-          ]
+          ],
+          sol: R`بعد ما الـ run يخلص، انزل لآخر صفحة الـ Summary: هتلاقي قسم [[Artifacts]] فيه [[dist]] وحجمه. بتدوس عليه بينزل [[dist.zip]]، وجواه محتوى فولدر dist (الـ index.html والـ assets). دا نفس اللي هيتنشر، فافتحه وجرّبه لو محتاج.
+
+ولو ضفت [[actions/cache]]: أول run مكتوب فيه [[Cache not found for input keys: npm-...]]، والتاني [[Cache restored from key: npm-...]]، و [[npm ci]] بقى أسرع.
+
+أخطاء شائعة: [[No files were found with the provided path: dist/]] يعني الـ build طلّع في فولدر تاني ([[build]] أو [[out]]) أو الـ build نفسه فشل بصمت. و [[download-artifact]] في نفس الـ job مالوش لازمة، بيتستخدم في job تانية عاملة [[needs]] على الأولى. والـ artifact بيتمسح بعد [[retention-days]]، فمينفعش يبقى هو الباك أب بتاعك.`
         },
         {
           cmd: "GITHUB_ENV و GITHUB_OUTPUT",
@@ -577,7 +689,17 @@ rm keystore.b64
             "step ليها id...",
             "...بتكتب output اسمه size.",
             "اقرا الـ output بالـ id."
-          ]
+          ],
+          sol: R`الناتج في اللوج: الـ step الأولى بتطبع [[same step: []]] فاضي، والتانية بتطبع [[next step [1.2.3]]].
+
+السبب إن [[GITHUB_ENV]] مجرد ملف. الـ runner بيقراه بعد ما الـ step تخلص ويضيف اللي فيه لبيئة الـ steps اللي بعدها. أما الـ shell الحالي فمعندوش فكرة إن حاجة اتكتبت في ملف. لو محتاج القيمة في نفس الـ step، اعملها متغير عادي كمان: [[VERSION=1.2.3; echo "VERSION=$VERSION" >> "$GITHUB_ENV"]].
+
+الغلط الشائع التاني: [[echo "VERSION = 1.2.3"]] بمسافات، فيبقى اسم المتغير [["VERSION "]] بمسافة. أو [[>]] بدل [[>>]] فتمسح اللي اتكتب قبله. وخلي بالك إن [[$__{{ env.VERSION }}]] بيتحسب قبل ما الـ step تبدأ، فهو كمان هيطلع فاضي في نفس الـ step.`,
+          solCode: R`steps:
+  - run: |
+      echo "VERSION=1.2.3" >> "$GITHUB_ENV"
+      echo "same step: [$VERSION]"
+  - run: echo "next step [$VERSION]"`
         },
         {
           cmd: "::error::",
@@ -630,7 +752,12 @@ rm keystore.b64
             "ابدأ مجموعة مطوية في اللوج.",
             "لوج طويل جواها.",
             "اقفل المجموعة."
-          ]
+          ],
+          sol: R`الـ run هيبقى أحمر، وفوق في صفحة الـ Summary قسم [[Annotations]] فيه [[1 error]] وتحته اسم الـ job والرسالة: [[DEPLOY_SSH_KEY or DEPLOY_HOST is missing in Settings > Secrets]]. غالبًا هتلاقي جنبها annotation تانية [[Process completed with exit code 1.]]. وجوه اللوج نفسه السطر ده بيبان بالأحمر مكتوب [[Error:]] قبله.
+
+وعلى repo فيه الـ secrets الـ step بتنجح وبيظهر [[secrets OK]] كـ notice في نفس القسم. والـ [[::group::]] في اللوج بيبان كسطر واحد مقفول [[installed packages]] بتدوس عليه يفتح.
+
+لو الرسالة ظهرت في اللوج بس مش في Annotations: غالبًا فيه مسافة قبل [[::error::]] أو كتبتها [[:error:]] بنقطتين بس. الـ runner بيدوّر على السطر بيبدأ بـ [[::]] بالظبط. ولو الـ step نجحت رغم الرسالة، يبقى نسيت [[exit 1]]: الـ annotation لوحدها مش بتفشّل حاجة.`
         },
         {
           cmd: "git diff --quiet",
@@ -673,7 +800,12 @@ rm keystore.b64
             "...وقول الإصلاح...",
             "...وافشل.",
             "نهاية الشرط."
-          ]
+          ],
+          sol: R`لما تعدّل الملف المتولّد بإيدك وتعمل push، الـ step [[Types in sync?]] بتفشل ويظهر في اللوج الـ diff بين اللي الـ generator طلّعه واللي في الـ commit، زي:
+
+[[-export type A = 1;]] و [[+export type A = 2;]]، وبعدها annotation حمرا [[run npm run types:generate and commit the result]]. الـ generator كتب فوق تعديلك، فبقى فيه فرق عن الـ commit.
+
+لو الـ step نجحت رغم إنك غيّرت: غالبًا الملف مش متتبّع في git أصلًا (جديد أو في [[.gitignore]])، و [[git diff]] مش بيشوف الملفات الـ untracked. جرّبت دا: ملف جديد مش متضاف [[git diff --quiet]] رجّع 0 كأنه مفيش فرق، بينما [[git status --porcelain]] بيطلّعه بـ [[??]]. لو عايز تغطي الحالة دي استخدم [[test -z "$(git status --porcelain lib/)"]].`
         },
         {
           cmd: "needs و if و concurrency",
@@ -728,7 +860,12 @@ jobs:
             "الديبلوي.",
             "لو اللي قبلها فشلت...",
             "...نبّه."
-          ]
+          ],
+          sol: R`الـ run الأول بيبان رمادي بعلامة إلغاء، ولو فتحته هتلاقي annotation زي [[Canceling since a higher priority waiting request for 'CI-refs/heads/main' exists]]. التاني بيكمّل عادي. الـ group هنا اسم الـ workflow والـ ref، فأي run جديد على نفس الـ branch بيلغي القديم.
+
+ولأن [[deploy]] عليه [[needs: test]] والـ test اتلغى، الـ deploy بيبان [[skipped]]، مش بيشتغل بكود نصه قديم.
+
+لو الاتنين كمّلوا: غالبًا الـ push التاني جه بعد ما الأول خلص (الـ test سريع)، أو الـ [[concurrency]] مكتوبة جوه job مش على مستوى الـ workflow، أو الـ push على branches مختلفة فالـ group مختلف. وخلي بالك: [[cancel-in-progress: true]] مناسب للـ CI، بس للـ deploy غالبًا عايز [[false]] عشان متلغيش deploy في نصه.`
         },
         {
           cmd: "jobs متوازية",
@@ -805,7 +942,20 @@ jobs:
             "ماكينة.",
             "الخطوات.",
             "اطبع. ده اللي تخليه required check."
-          ]
+          ],
+          sol: R`الطريق: Settings ثم Rules ثم Rulesets (أو Branches ثم Add branch protection rule في الواجهة القديمة)، على [[main]]، فعّل [[Require status checks to pass]]، واكتب [[ok]] في البحث واختاره. بعدها أي PR ليه فحص فاشل زرار الـ Merge بيبقى مقفول ومكتوب إن الـ check المطلوب ما نجحش.
+
+لو [[ok]] مش ظاهر في البحث: لازم يكون اشتغل مرة على الأقل في الـ repo في آخر أسبوع. اعمل PR تجربة الأول.
+
+وفيه فخ مهم: لو [[lint]] فشل، [[ok]] بيبقى [[skipped]]، و GitHub بيعتبر الـ required check اللي اتعمله skip ناجح، فالـ PR ممكن يتعمله merge! الحل إن [[ok]] يشتغل دايمًا ويتأكد بنفسه من نتايج اللي قبله، زي الكود تحت. جرّب تكسر lint في PR وشوف إن الـ merge اتقفل فعلًا.`,
+          solCode: R`  ok:
+    needs: [lint, typecheck, test]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "results: $__{{ join(needs.*.result, ' ') }}"
+          test "$__{{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"`
         },
         {
           cmd: "الأمان",
@@ -844,7 +994,19 @@ Dependabot: ملف [[.github/dependabot.yml]] بـ [[package-ecosystem: github-a
             "الخطوات.",
             "checkout مثبّت على commit بعينه، والتعليق بيقول النسخة.",
             "setup-node مثبّت كمان."
-          ]
+          ],
+          sol: R`بعد ما تعمل push للملف، Dependabot بيعمل فحص ولو فيه actions قديمة بيفتح PRs بعناوين زي [[Bump actions/checkout from 6 to 7]]. ولو انت مثبّت بالـ SHA زي المثال، الـ PR بيغيّر الـ SHA ويحدّث التعليق [[# v7.0.1]] كمان.
+
+لو مفيش PRs: يا كل الـ actions محدّثة أصلًا (ودا كويس)، يا الفحص لسه ما اشتغلش. تقدر تشوف آخر فحص من Insights ثم Dependency graph ثم Dependabot. ولو [[directory]] غلط أو الملف فيه غلط YAML هيظهر error هناك.
+
+الغلط الشائع إنك تكتب [[package-ecosystem: github-actions]] وتفتكر إنه هيحدّث npm كمان. كل ecosystem محتاج entry لوحده، فضيف واحد لـ [[npm]] لو عايز.`,
+          solCode: R`# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly`
         }
       ]
     },
@@ -930,7 +1092,12 @@ jobs:
             "و latest.",
             "اقرا كاش الطبقات من GitHub.",
             "واكتبه، بكل الطبقات."
-          ]
+          ],
+          sol: R`بعد أول run ناجح، في صفحة الـ repo على اليمين قسم [[Packages]] فيه اسم الـ image. بتفتحه تلاقي tag [[latest]] و tag بالـ sha الكامل للـ commit، ومعاهم أمر [[docker pull ghcr.io/user/repo:latest]].
+
+على السيرفر: لو الـ package عامة الـ pull بينزل على طول. لو private (الافتراضي للـ repo الخاص) هتاخد [[unauthorized]] أو [[denied]]. الحل تعمل login مرة على السيرفر بـ personal access token فيه صلاحية [[read:packages]]: [[echo "$TOKEN" | docker login ghcr.io -u USER --password-stdin]].
+
+أخطاء في الـ workflow نفسه: [[denied: installation not allowed to Create organization package]] أو [[permission_denied: write_package]] يعني [[packages: write]] ناقصة. و [[repository name must be lowercase]] لو اسم اليوزر فيه حروف كبيرة ونسيت [[,,]] في [[$__{GITHUB_REPOSITORY,,}]].`
         },
         {
           cmd: "deploy عبر SSH",
@@ -993,7 +1160,18 @@ jobs:
             "استنى التطبيق يقوم.",
             "health check: لو مش 200 الـ deploy يفشل.",
             "نهاية الأوامر."
-          ]
+          ],
+          sol: R`[[ssh-keygen -t ed25519 -f deploy_key -N ""]] بيعمل ملفين: [[deploy_key]] (الخاص) و [[deploy_key.pub]] (العام). العام يتحط سطر في [[/home/deploy/.ssh/authorized_keys]] على السيرفر، والخاص كله (من [[-----BEGIN OPENSSH PRIVATE KEY-----]] لـ [[-----END ...]]) في secret [[DEPLOY_SSH_KEY]]. و [[DEPLOY_KNOWN_HOSTS]] بتاخده من [[ssh-keyscan -H SERVER_IP]].
+
+جرّب المفتاح من جهازك قبل ما تحطه في CI: [[ssh -i deploy_key deploy@SERVER 'echo ok']] لازم يطبع [[ok]] من غير ما يسأل باسورد. ولما الـ workflow يشتغل، آخر حاجة في اللوج هتبقى رد [[curl]] من [[/health]].
+
+أخطاء شائعة: [[Permission denied (publickey)]] يعني حطيت الـ .pub في الـ secret بدل الخاص، أو صلاحيات [[~/.ssh]] على السيرفر مش 700 و authorized_keys مش 600. و [[Host key verification failed]] يعني [[DEPLOY_KNOWN_HOSTS]] فاضي أو لـ IP تاني. و [[Load key ... invalid format]] يعني المفتاح اتلزق ناقص. وامسح [[deploy_key]] من جهازك بعد ما تحطه في GitHub.`,
+          solCode: R`ssh-keygen -t ed25519 -f deploy_key -N "" -C "github-actions-deploy"
+ssh-copy-id -i deploy_key.pub deploy@SERVER
+ssh -i deploy_key deploy@SERVER 'echo ok'
+gh secret set DEPLOY_SSH_KEY < deploy_key
+ssh-keyscan -H SERVER | gh secret set DEPLOY_KNOWN_HOSTS
+rm deploy_key`
         },
         {
           cmd: "نشر ملفات بـ scp",
@@ -1046,7 +1224,12 @@ latest.json آخر حاجة: لحد ما يترفع، التطبيق شايف ا
             "أوامر.",
             "اطلب رابط التحميل واطبع الـ status بس.",
             "لو مش 200، رسالة حمرا وافشل."
-          ]
+          ],
+          sol: R`التحميل اللي شغال على الموبايل بيكمّل للآخر حتى لو الرفع التاني خلص في نصه، والملف اللي نزل سليم (النسخة القديمة كاملة). وأي تحميل يبدأ بعد الـ [[mv]] بياخد النسخة الجديدة.
+
+السبب إن [[mv]] جوه نفس الـ filesystem مجرد rename، بيغيّر الاسم يشاور على الملف الجديد مرة واحدة. والتحميل القديم فاتح الملف القديم، ولينكس بيسيبه موجود لحد ما آخر حد يقفله. لو كنت عملت [[scp]] مباشرة فوق الملف، المستخدم كان ممكن ياخد ملف نصه قديم ونصه جديد، أو ملف ناقص.
+
+عشان كده الشرط إن [[tmp/]] يكون جوه نفس الفولدر (نفس الـ filesystem). لو [[tmp]] في [[/tmp]] على partition تانية، الـ [[mv]] بيبقى copy و delete ومش ذري. وآخر step ([[Check download link]]) لازم تطبع 200؛ لو طلّعت [[404]] اتأكد إن Nginx بيخدم الفولدر ده وإن الصلاحيات تسمح له يقرا.`
         },
         {
           cmd: "environments و approval",
@@ -1099,7 +1282,12 @@ latest.json آخر حاجة: لحد ما يترفع، التطبيق شايف ا
             "ماكينة.",
             "الخطوات.",
             "نفس الـ variable بقيمة الإنتاج."
-          ]
+          ],
+          sol: R`الـ run بيعدّي build و deploy-staging، وبعدين بيقف: الـ job [[deploy-prod]] بيبان بساعة وحالة [[Waiting]]، وفوق شريط أصفر مكتوب فيه إن الـ deployment مستني review وزرار [[Review deployments]]. بتدوس عليه، تعلّم على production، تكتب تعليق لو عايز، وتدوس [[Approve and deploy]]. ساعتها الـ job يكمّل، ويظهر رابط [[https://example.com]] جنب الـ job، وفي صفحة الـ repo قسم Deployments بيسجّل مين وافق وامتى.
+
+[[vars.DEPLOY_HOST]] بتاخد القيمة من الـ environment نفسه، فلو عملت variable بنفس الاسم في staging و production هتلاقي كل job طبع قيمة مختلفة. ولو طبع [[deploy to ]] فاضي يبقى الـ variable مش متعرف في الـ environment ده.
+
+لو الـ run ما وقفش: اسم الـ environment في الـ workflow لازم يطابق اللي في Settings. وخلي بالك إن الـ required reviewers على repo خاص مش متاحة في كل الخطط؛ لو الخيار مش ظاهر عندك، جرّب على repo public. وبعد ٣٠ يوم من غير موافقة الـ job بيفشل لوحده.`
         },
         {
           cmd: "deploy على tag",
@@ -1158,7 +1346,12 @@ jobs:
             "اعمل GitHub Release.",
             "إعداداته.",
             "اكتب التغييرات من الـ PRs لوحده."
-          ]
+          ],
+          sol: R`بعد [[git tag v1.0.0 && git push --tags]]، تاب Actions فيه run والـ branch مكتوب مكانها [[v1.0.0]]. لما يخلص: صفحة Releases فيها [[v1.0.0]] بـ release notes متولدة من الـ PRs والـ commits من آخر tag، و Packages فيه الـ image بتاج [[v1.0.0]].
+
+أخطاء شائعة: الـ workflow ما اشتغلش خالص لأن الـ tag اسمه [[1.0.0]] من غير [[v]] والفلتر [[v*]]، أو الملف مش موجود في الـ commit اللي عليه الـ tag. و [[Resource not accessible by integration]] من الـ release action يعني ناقص [[contents: write]]. و [[docker build]] يفشل بـ [[failed to read dockerfile]] لو مفيش Dockerfile في الـ root.
+
+ولو عايز تمسح الـ tag وتعيده: [[git tag -d v1.0.0 && git push origin :refs/tags/v1.0.0]]، وامسح الـ Release من الواجهة. بس الأحسن تعمل [[v1.0.1]] بدل ما تعيد كتابة tag حد ممكن يكون نزّله.`
         },
         {
           cmd: "rollback من Actions",
@@ -1219,7 +1412,12 @@ jobs:
             "بصمة السيرفر من secret.",
             "أوامر.",
             "على السيرفر: شغّل compose بالنسخة المطلوبة من غير build."
-          ]
+          ],
+          sol: R`شغّل الـ workflow من [[Run workflow]] واكتب tag قديم زي [[v1.0.0]]. على السيرفر اتأكد: [[docker compose ps]] أو [[docker inspect --format '{{.Config.Image}}' myapp-api-1]] لازم يطلّع [[ghcr.io/user/repo:v1.0.0]]. والموقع يرجع يرد بالنسخة القديمة.
+
+ولأن الـ compose فيه [[$__{IMAGE_TAG:-latest}]]، تشغيل [[docker compose up -d]] عادي من غير المتغير بيرجّع [[latest]] تاني. ودا تحذير: الـ rollback ده مؤقت لحد الـ deploy الجاي، مش تثبيت.
+
+أخطاء شائعة: [[manifest unknown]] أو [[not found]] يعني الـ tag ده متعملوش push أصلًا في ghcr (اتأكد من صفحة Packages). و [[unauthorized]] يعني السيرفر مش عامل login لـ ghcr. وخلي بالك إن حط [[$__{{ inputs.tag }}]] جوه الـ shell مباشرة بيسمح لأي حد يقدر يشغّل الـ workflow يحقن أوامر؛ الأأمن تعدّيه كـ env وتتأكد إنه بشكل [[v1.2.3]] أو sha قبل ما تستخدمه.`
         },
         {
           cmd: "schedule",
@@ -1274,7 +1472,12 @@ jobs:
             "لو الفحص فشل...",
             "...أوامر.",
             "...ابعت رسالة Telegram بالبوت."
-          ]
+          ],
+          sol: R`الإعداد: من BotFather خد التوكن، ابعت أي رسالة للبوت، وافتح [[https://api.telegram.org/botTOKEN/getUpdates]] هتلاقي [[chat":{"id":123456789]]، ودا الـ [[TG_CHAT]]. حط الاتنين secrets.
+
+عشان تجرّب الفشل من غير ما تستنى الموقع يقع: غيّر الـ URL مؤقتًا لحاجة بترجع 404 أو domain مش موجود، وشغّل الـ workflow بـ [[Run workflow]]. هتشوف في اللوج [[status=404]] (أو [[status=000]] لو مفيش اتصال)، والـ step تفشل، والـ step اللي بعدها تشتغل بسبب [[if: failure()]]، وتوصلك رسالة [[example.com is DOWN]].
+
+خلي بالك: الـ cron في GitHub بيتأخر أحيانًا دقايق كتير وقت الزحمة، وأقل فترة ٥ دقايق، وبيشتغل على الـ default branch بس. وفي الـ repo الـ public لو مفيش نشاط ٦٠ يوم الـ schedule بيتوقف لوحده. ولو الرسالة ما وصلتش: جرّب الـ curl بتاع Telegram من جهازك الأول، غالبًا الـ chat id غلط أو ما بعتّش للبوت رسالة قبل كده.`
         },
         {
           cmd: "debugging",
@@ -1308,7 +1511,17 @@ tmate: step [[mxschmitt/action-tmate]] بتوقف الـ run وتطبع أمر s
             "الـ jobs المتاحة محليًا.",
             "فعّل اللوج التفصيلي لكل الـ actions.",
             "سطور الـ debug في اللوج."
-          ]
+          ],
+          sol: R`بعد الـ step الفاشلة، الـ tmate step بتطبع في اللوج كل كام ثانية سطرين: [[SSH: ssh XXXXXXXX@nyc1.tmate.io]] و [[Web shell: https://tmate.io/t/XXXXXXXX]]. انسخ الـ ssh من اللوج وشغّله من ترمنالك: هتلاقي نفسك جوه الـ runner في فولدر الـ repo، وتقدر تشغّل [[npm test]] أو تبص على الملفات بنفسك.
+
+عشان الـ workflow يكمّل: [[touch continue]] جوه الجلسة (أو اقفل الجلسة حسب الإعداد)، وإلا هيفضل لحد timeout الـ job.
+
+تحذيرات لازم تعرفها: على repo public اللوج مفتوح لأي حد، فأي حد يقدر ياخد الرابط ويدخل الـ runner بالـ secrets بتاعتك. استخدم [[limit-access-to-actor: true]] عشان مفتاح الـ SSH بتاعك المسجّل في GitHub بس يدخل، وحط [[if: failure()]] عشان يشتغل لما حاجة تفشل بس، وامسح الـ step بعد ما تخلص. والغلط الشائع إنك تنساها فكل run فاشل يفضل مستني ساعات ويصرف دقايق Actions.`,
+          solCode: R`- uses: mxschmitt/action-tmate@v3
+  if: failure()
+  with:
+    limit-access-to-actor: true
+  timeout-minutes: 30`
         }
       ]
     }

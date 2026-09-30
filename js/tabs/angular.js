@@ -578,7 +578,7 @@ export class Settings {
 
 [[{{ user().name }}]] برا الـ @if بيطلّع خطأ build: [[TS2531: Object is possibly 'null']] من الـ angular-compiler، لأن strict templates بتفحص الـ template بنفس قواعد TypeScript. الحل إما جوه [[@if]]، أو [[{{ user()?.name }}]] لو عايز يطبع فاضي لما مفيش user.
 
-لو استخدمت [[routerLink]] ونسيت [[RouterLink]] في الـ imports، الـ build مش هيقع بس اللينك مش هيشتغل كـ navigation وهيطلع تحذير. ولو بتختبره بـ TestBed لازم [[provideRouter([])]] وإلا NG0201: No provider found for ActivatedRoute (حصلت فعلًا في الـ lab).`,
+لو استخدمت [[routerLink]] ونسيت [[RouterLink]] في الـ imports، الـ build مش هيقع ومفيش ولا تحذير (attribute مجهول مسموح في HTML)، بس اللينك مش هيشتغل كـ navigation. ولو بتختبره بـ TestBed لازم [[provideRouter([])]] وإلا NG0201: No provider found for ActivatedRoute (حصلت فعلًا في الـ lab).`,
           solCode: R`type Status = 'pending' | 'shipped' | 'delivered';
 @Component({
   selector: 'app-account',
@@ -726,7 +726,7 @@ export class Header {
 
 [[inject()]] لازم تتنادى في injection context: field initializer، أو constructor، أو دالة factory. مينفعش في click handler.
 
-الفرق بين الاتنين: [[@Service()]] مخصوص لـ singleton في الـ root بيستخدم [[inject()]]، ومش بيدعم constructor injection ولا [[useClass]] وغيرها. [[@Injectable]] أعم: ينفع تحطه في providers بتاع component أو route، وينفع [[constructor(private http: HttpClient)]] (الشكل القديم اللي هتلاقيه في كل مكان، ولسه شغال).
+الفرق بين الاتنين: [[@Service()]] معمول أساسًا لـ singleton في الـ root بيستخدم [[inject()]]، ومش بيدعم constructor injection ولا [[useClass]] وغيرها (ولو عايزه في providers بتاع component بتكتب [[@Service({ autoProvided: false })]]). [[@Injectable]] أعم: ينفع تحطه في providers بتاع component أو route، وينفع [[constructor(private http: HttpClient)]] (الشكل القديم اللي هتلاقيه في كل مكان، ولسه شغال).
 
 وفي الـ service اللي فوق: الـ signal [[private]] والتعديل من [[add]] بس، و [[count]] و [[total]] للقراية. كده محدش من برا يقدر يلخبط البيانات.`,
             when: R`أي state مشترك بين أكتر من component، وأي كلام مع API، وأي منطق مش خاص بالعرض (حسابات، صلاحيات، تنسيقات). والـ component يفضل مسؤول عن العرض والتفاعل بس.`,
@@ -1062,7 +1062,7 @@ export class Details {
 
 الـ params دايمًا strings، فـ [[Number(this.id())]] لو محتاج رقم. أو [[input.required({ transform: numberAttribute })]].
 
-الأولوية لو نفس الاسم موجود في أكتر من مصدر: بيانات الـ resolver، وبعدين الـ path params، وبعدين الـ query params (الأخير بيكسب حسب ترتيب الدمج، فالأحسن متكررش الاسم).
+الأولوية لو نفس الاسم موجود في أكتر من مصدر: بيانات الـ resolver، وبعدين الـ path params، وبعدين الـ query params (الراوتر بيدمج query وبعدين path وبعدين data، فاللي بيتدمج آخر، الـ resolver، هو اللي بيكسب. والأحسن متكررش الاسم).
 
 [[navigate(['/products', 6])]] بياخد array أجزاء. و [[navigateByUrl('/products/6?x=1')]] بياخد string كامل. و [[queryParamsHandling: 'merge']] بيحافظ على الـ query params الموجودة.`,
             when: "أي صفحة تفاصيل، وأي فلتر أو sort أو pagination أو tab عايز المستخدم يقدر يشاركه أو يرجعله بالـ back.",
@@ -3194,7 +3194,7 @@ inject(Parent, { skipSelf: true });                            // ابدأ من 
           flag: "script",
           deep: {
             why: "DI هو قلب Angular، والسؤال ده بيفرّق بين حد بيحفظ providedIn: 'root' وحد فاهم ليه state اتشارك أو متشاركش، وليه service اتعملت مرتين، وإزاي تعمل mock في الاختبار.",
-            how: R`نقط أكتر: [[useClass]] و [[useValue]] و [[useFactory]] و [[useExisting]] أشكال الـ provider. و [[InjectionToken<T>]] لقيم مش classes ([[API_URL]] مثلًا). و [[multi: true]] بيجمّع كذا provider في array (زي [[HTTP_INTERCEPTORS]] القديم). و [[viewProviders]] زي providers بس مش ظاهرة للـ content اللي جاي من [[ng-content]]. و [[@Service()]] الجديد في 22 = root singleton بس ومفيهوش useClass. والـ providers على الـ route بتعمل environment injector للـ route وأبناءه، ومفيد لـ state خاص بقسم. و [[inject()]] لازم injection context، و [[runInInjectionContext(injector, fn)]] لو لازم بره.`,
+            how: R`نقط أكتر: [[useClass]] و [[useValue]] و [[useFactory]] و [[useExisting]] أشكال الـ provider. و [[InjectionToken<T>]] لقيم مش classes ([[API_URL]] مثلًا). و [[multi: true]] بيجمّع كذا provider في array (زي [[HTTP_INTERCEPTORS]] القديم). و [[viewProviders]] زي providers بس مش ظاهرة للـ content اللي جاي من [[ng-content]]. و [[@Service()]] الجديد في 22 = root singleton افتراضيًا (إلا مع [[autoProvided: false]] فتسجّله انت في providers) ومفيهوش useClass. والـ providers على الـ route بتعمل environment injector للـ route وأبناءه، ومفيد لـ state خاص بقسم. و [[inject()]] لازم injection context، و [[runInInjectionContext(injector, fn)]] لو لازم بره.`,
             when: R`«providedIn: 'root' يعني إيه وليه tree-shakable؟»، و «إيه الفرق بين providers في component وفي app.config؟»، و «إزاي تعمل service مختلفة في الاختبار أو في بيئة معينة؟»، و «إيه InjectionToken؟»، و «ليه ممكن تلاقي نسختين من service المفروض singleton؟» (providers في lazy module أو component).`,
             mistakes: R`«DI يعني singleton». و «الـ service في providers بتاع component بتتشارك مع باقي التطبيق». وتنسى إن الـ element injectors ماشية على شجرة الـ DOM (الأب في الـ template) مش شجرة الـ modules.`
           },
