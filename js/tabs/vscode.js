@@ -52,7 +52,10 @@ type "settings json"   Preferences: Open User Settings (JSON)`,
 وأي أمر هنا تقدر تديله اختصار من عندك: الترس جنب الأمر في القايمة بيفتح Keyboard Shortcuts عليه على طول.`,
             when: "كل ما تعوز حاجة ومش فاكر مكانها أو اختصارها. ومع الوقت، الأوامر اللي بتكررها كتير اتعلم اختصارها.",
             mistakes: "تفضل تدوّر في قوايم File و View بالماوس. أو تكتب [[>]] جوه Ctrl+Shift+P نفسها فتدوّر على أمر فيه «>». وعلى الماك Cmd+Shift+P ممكن يتعارض مع برنامج تاني (تسجيل شاشة مثلًا)، و F1 بديل مضمون."
-          }
+          },
+          sol: R`حدد الـ ٥ سطور الأول، وبعدين Ctrl+Shift+P واكتب [[sort]]: هيظهر «Sort Lines Ascending» و «Sort Lines Descending». اختار الأول، والسطور هتترتب أبجديًا. الترتيب بيفرّق بين الكابيتال والصغير، فممكن [[Zebra]] تيجي قبل [[apple]]. ولو محددتش حاجة، هيرتب الملف كله. و [[Toggle Word Wrap]] هتلاقي جنبه [[Alt+Z]] (أو [[⌥Z]] على الماك): أي أمر ليه اختصار، الـ Palette بيعرضه جنبه، ودي أسهل طريقة تتعلم بيها الاختصارات.
+
+لو Ctrl+Shift+P معملش حاجة والكيبورد على العربي، جرّب F1، ده نفس الأمر ومش بيتأثر باللغة. ولو ظهرت خانة فيها [[>]] في أولها، ده الطبيعي: الـ [[>]] معناها «أوامر»، ولو مسحتها هتتحول لبحث ملفات زي Ctrl+P.`
         },
         {
           cmd: "Ctrl+P",
@@ -77,7 +80,10 @@ Ctrl+Enter             open the result in a split (Cmd+Enter on Mac)`,
 الملف اللي بيتفتح من هنا بيتفتح preview (اسم التاب مايل)، يعني الملف اللي بعده هياخد نفس التاب. أول ما تعدّل فيه أو تدبل كليك على التاب، بيثبت.`,
             when: "كل ما تعوز تفتح ملف اسمه في دماغك. شجرة الملفات للاستكشاف في مشروع جديد عليك.",
             mistakes: "تكتب المسار كامل بالـ slashes، مش محتاج: كفاية أجزاء منه. وتستغرب إن ملف في node_modules أو dist مش بيظهر: هو متجاهل عن قصد، دوّر عليه بـ Ctrl+Shift+F لو محتاجه."
-          }
+          },
+          sol: R`اكتب جزء من الاسم، زي [[usrctrl]]، وهيطلع [[users.controller.ts]] أول نتيجة والحروف اللي طابقتها ملوّنة. Enter يفتحه. وللسطر: [[user.ts:40]] يفتح الملف والمؤشر على سطر 40 في نص الشاشة. ملف بعد ملف، والتابات هتفضل مفتوحة فوق.
+
+لو الملف فتح واتقفل لما فتحت اللي بعده، ده «Preview mode»: التاب بيبقى اسمه مايل، والملف اللي بتفتحه بعده بياخد مكانه. دبل كليك على التاب أو عدّل في الملف يثبته، أو اقفل الخاصية بـ [[workbench.editor.enablePreviewFromQuickOpen]]. ولو ملف مش بيظهر خالص، غالبًا متجاهل بـ [[files.exclude]] أو في [[.gitignore]] (زي حاجة جوه dist).`
         },
         {
           cmd: "Ctrl+G",
@@ -98,7 +104,10 @@ Ctrl+G                 Mac (Control, not Cmd)
 والأسرع في الترمنال جوه VS Code: أي مسار شكله [[src/app.ts:40:5]] بيبقى link، و Ctrl+Click عليه (Cmd+Click على الماك) بيفتح الملف على السطر والعمود على طول. ومن ترمنال بره المحرر: [[code --goto]] (مستوى ٣).`,
             when: "بعد أي error فيه رقم سطر، أو لما حد يقولك «بص على سطر كذا» في review.",
             mistakes: "رقم السطر في الـ stack trace ممكن يكون من الملف بعد الـ build (dist) مش من الـ source، فتروح لسطر ملوش علاقة. بص على اسم الملف الأول: لو [[.js]] جوه dist، الـ source maps هي اللي بتوديك للمكان الصح."
-          }
+          },
+          sol: R`[[npx tsc --noEmit]] بيطبع أغلاط بالشكل ده: [[src/server.ts:118:12 - error TS2345: Argument of type ...]]. الرقمين بعد اسم الملف هما السطر والعمود. افتح الملف، و Ctrl+G هيطلع خانة فيها [[:]] ومكتوب تحتها السطر الحالي وعدد السطور. اكتب [[118:12]] و Enter، المؤشر هيقف على الغلط بالظبط. و Ctrl+Click (أو Cmd+Click على الماك) على [[src/server.ts:118:12]] في الترمنال المدمج بيعمل نفس الحاجة مرة واحدة.
+
+لو tsc مطبعش حاجة، مبروك مفيش أغلاط: جرّب تكتب غلط عمدًا. ولو الأغلاط طلعت بالشكل القديم [[src/server.ts(118,12)]] (بيحصل لو الناتج مش في ترمنال)، الرقمين نفس المعنى. وعلى الماك Ctrl+G بـ Control مش Cmd، لأن Cmd+G هو «find next».`
         },
         {
           cmd: "Ctrl+Shift+O",
@@ -119,7 +128,10 @@ Ctrl+T                 search names in the whole project (Cmd+T on Mac)`,
 Ctrl+T بيدوّر في كل ملفات المشروع اللي الـ language server فاهمها. في مشروع TypeScript كبير، أول مرة ممكن ياخد ثانية لحد ما يفهرس.`,
             when: "ملف طويل وعايز دالة بعينها. أو عارف اسم الدالة ومش فاكر في أنهي ملف: Ctrl+T.",
             mistakes: "في ملفات مفيهاش language server (لغة من غير extension)، اللستة هتبقى فاضية أو فقيرة، وده مش عطل. وفي Markdown بتعرض العناوين، ودي مفيدة جدًا في ملفات توثيق طويلة."
-          }
+          },
+          sol: R`Ctrl+Shift+O هيفتح لستة بكل الدوال والـ classes والمتغيرات في الملف، ووانت بتتحرك فيها بالأسهم، المحرر بيوريك مكان كل واحدة ويظللها. اكتب [[:]] بعد الـ [[@]] (يعني [[@:]]) واللستة تتقسم مجموعات: [[functions (6)]]، [[variables (3)]]، إلخ. و Ctrl+T هيطلع خانة بتبدأ بـ [[#]]: اكتب اسم دالة من ملف تاني وهيجيبها باسم الملف جنبها.
+
+لو اللستة فاضية أو فيها «No symbol information»، يبقى language server مش شغال للملف ده (مثلًا ملف [[.js]] من غير extension أو المشروع لسه بيتحمّل). و Ctrl+T ممكن ميلاقيش حاجة غير لما تفتح ملف TS واحد على الأقل، لأن TypeScript server بيبدأ مع أول ملف. وعلى لينكس Ctrl+Shift+O ممكن تكون محجوزة من الـ desktop في بعض التوزيعات.`
         },
         {
           cmd: "Ctrl+Tab",
@@ -140,7 +152,10 @@ hold Ctrl, tap Tab     walk the list, release to open`,
 ومع كتر التابات المفتوحة، Ctrl+Tab بيفضل سريع لأنه بيجيب اللي استخدمته أخيرًا، مش كل اللي مفتوح.`,
             when: "الشغل بين ملفين أو تلاتة مرتبطين ببعض.",
             mistakes: "تفتكره بيمشي بترتيب التابات فوق فتتلخبط. لو عايز الترتيب ده: Ctrl+PageDown و Ctrl+PageUp. وتسيب ٣٠ تاب مفتوح وتدوّر فيهم بعينك: Ctrl+Tab و Ctrl+P أسرع، ولو عايز حد أقصى للتابات فيه [[workbench.editor.limit.enabled]]."
-          }
+          },
+          sol: R`دوسة واحدة سريعة على Ctrl+Tab وتسيب: هترجع للملف اللي كنت فيه قبل كده. دوسة تانية: ترجع للأول. يعني الاتنين بيتبدلوا. ولو ماسك Ctrl ودوست Tab كذا مرة، هتشوف لستة بكل الملفات المفتوحة بترتيب آخر استخدام، والملف اللي تسيب Ctrl عنده هو اللي بيفتح.
+
+لو Ctrl+Tab بيمشي على التابات بالترتيب من الشمال لليمين بدل آخر استخدام، ده أمر تاني (Ctrl+PageDown). ممكن حد غيّر الاختصار، ارجعله في Keyboard Shortcuts. وعلى الماك الاختصار Control+Tab مش Cmd+Tab، لأن Cmd+Tab بتاع الماك نفسه.`
         },
         {
           cmd: "Alt+Left",
@@ -161,7 +176,10 @@ Ctrl+K Ctrl+Q                   back to the last place you typed (Cmd+K Cmd+Q)`,
 و Ctrl+K Ctrl+Q بيرجعك لآخر مكان كتبت فيه، حتى لو لفّيت في ملفات كتير بعدها.`,
             when: "بعد أي قفزة لتعريف أو لنتيجة بحث.",
             mistakes: "تستخدم Ctrl+Z عشان ترجع مكانك فتلغي تعديلات عملتها. و Alt+Left على لينكس مش هو، فتضغطه ومفيش حاجة تحصل."
-          }
+          },
+          sol: R`كل F12 بيوديك لملف أو مكان جديد، و VS Code بيحفظ كل قفزة. بعد ٣ قفزات، Alt+Left تلات مرات هيرجّعك بالعكس لنفس السطر اللي بدأت منه في ملف routes. و Alt+Right بيروح لقدام تاني.
+
+على لينكس الاختصار Ctrl+Alt+Minus، وعلى الماك Ctrl+Minus (Control مش Cmd). Alt+Left على لينكس ساعات بيتاخد من الـ desktop، ولو الكيبورد عربي ومحتاج Minus، استخدم الـ Minus اللي في الـ numpad أو جرّب الـ layout الإنجليزي. ولو Alt+Left رجّعك لمكان غريب، ده لأن أي تحريك كبير للمؤشر (زي Ctrl+End) بيتحسب كقفزة برضه.`
         }
       ]
     },
@@ -193,7 +211,10 @@ Mac: Cmd+Shift+E / F / D / X`,
 Ctrl+J بيقفل اللوحة كلها. ولو عايز الترمنال بالذات، ليه اختصار لوحده بيفتحه ويحط الـ focus فيه (مستوى ٢).`,
             when: "على شاشة صغيرة، ووقت ما تقرا كود طويل، ووقت ما تشارك الشاشة.",
             mistakes: "تدوس Ctrl+Shift+E وانت جوه الشجرة فتفتكره مش شغال: هو رجّعك للمحرر. وتقفل شريط الأيقونات على الشمال (Activity Bar) بالغلط من كليك يمين، فترجعه من View ثم Appearance."
-          }
+          },
+          sol: R`Ctrl+B يقفل الـ sidebar اللي فيه شجرة الملفات، و Ctrl+J يقفل اللوحة اللي تحت (الترمنال و Problems). المحرر هياخد الشاشة كلها. Ctrl+Shift+E هيفتح الـ sidebar على Explorer والـ focus جوه الشجرة، تقدر تتحرك بالأسهم و Enter يفتح. و Ctrl+B تاني يقفله لما تخلص.
+
+لو Ctrl+Shift+E فتح الشجرة وضغطت تاني ومقفلتش، ده طبيعي: Ctrl+Shift+E بيفتح بس، و Ctrl+B هو اللي بيبدّل. وعلى لينكس Ctrl+Shift+E ممكن تبقى محجوزة (في بعض أنظمة الإدخال زي IBus للرموز)، وساعتها هيطلع [[e]] بخط تحت بدل ما يفتح، غيّر اختصار IBus أو استخدم Palette.`
         },
         {
           cmd: "Ctrl+\\",
@@ -215,7 +236,10 @@ Shift+Alt+0            flip the split vertical / horizontal (Option+Cmd+0)`,
 Ctrl+1 على طول بيرجعك للجزء الأول، ودي أسرع طريقة ترجع للكود من الترمنال أو من شجرة الملفات.`,
             when: "مقارنة، أو كتابة test، أو نقل كود من ملف لملف.",
             mistakes: "تقسم ٤ مرات على شاشة لابتوب فكل جزء يبقى عرضه ٤٠ حرف. جزئين كفاية. ولو عايز تقارن نسختين من ملف، ده مش التقسيم: كليك يمين ثم Select for Compare، أو [[code --diff]] (مستوى ٣)."
-          }
+          },
+          sol: R`افتح [[schema.prisma]]، Ctrl+\ هيعمل نسخة منه في نص يمين. في النص اليمين Ctrl+P وافتح الملف التاني، هيفتح مكان النسخة. Ctrl+1 يحط المؤشر في الشمال و Ctrl+2 في اليمين، والإطار حوالين المحرر النشط بيوضح انت فين.
+
+لو Ctrl+\ مشتغلش والكيبورد على العربي، ده غالبًا بسبب إن زرار [[\]] في الـ layout العربي مش نفس الحرف، حوّل للإنجليزي أو استخدم Ctrl+Shift+P ثم «Split Editor». ولو Ctrl+1 فتح تاب رقم واحد بدل الانتقال، يبقى فيه extension غيّر الاختصار.`
         },
         {
           cmd: "Ctrl+Shift+T",
@@ -235,7 +259,10 @@ Ctrl+K Ctrl+W          close all editors (Cmd+K Cmd+W on Mac)`,
 لو قفلت ملف فيه تعديلات مش محفوظة، هيسألك تحفظ ولا لأ. لو قلت Don't Save، التعديلات راحت، و Ctrl+Shift+T هيفتح النسخة المحفوظة بس. هنا ممكن تلحق نسخة قديمة من Local History (مستوى ٢، درس Timeline) لو كنت حفظت قبل كده.`,
             when: "قفلت حاجة بالغلط، أو عايز تبدأ على نضيف بعد يوم شغل.",
             mistakes: "تدوس Don't Save بسرعة عشان تقفل، وتكتشف إن التعديل كان مهم. اقرا الرسالة، أو فعّل [[files.autoSave]] لو دايمًا بتنسى تحفظ."
-          }
+          },
+          sol: R`Ctrl+K (سيب) ثم Ctrl+W هيقفل الـ ٥ ملفات. Ctrl+Shift+T مرة هيرجّع ملف، ومرة تانية يرجّع التاني. كل دوسة ملف، وبترتيب عكسي للقفل. ولو في ملف منهم كنت عامل تعديل مش محفوظ، Ctrl+K Ctrl+W هيسألك Save ولا Don't Save قبل ما يقفل.
+
+لو Ctrl+Shift+T مرجعش حاجة، يبقى قفلت الشباك نفسه مش التابات (Ctrl+Shift+W)، وده بيتحفظ بطريقة تانية، استخدم File ثم Open Recent. وخد بالك: Ctrl+W في المتصفح وفي VS Code بيقفل تاب، مش بيمسح كلمة زي الترمنال.`
         },
         {
           cmd: "Ctrl+K Z",
@@ -258,7 +285,10 @@ Alt+Z                  toggle word wrap (Option+Z on Mac)`,
 الزووم بيكبّر الواجهة كلها (القوايم والترمنال) مش الكود بس. لو عايز الكود بس، [[editor.fontSize]] في الإعدادات. و Alt+Z عرض بس، مش بيحط سطور جديدة في الملف.`,
             when: "الشرح، والتسجيل، ومشاركة الشاشة في meeting، والقراية الطويلة.",
             mistakes: "تكبّر بـ Ctrl+= في meeting وتنسى، فترجع تلاقي الواجهة ضخمة ومش فاهم ليه: Ctrl+Numpad0. وتفتكر إن Alt+Z عدّل الملف: لا، ده عرض بس، والملف زي ما هو."
-          }
+          },
+          sol: R`Ctrl+K، سيب الاتنين، وبعدين Z: الشاشة كلها هتبقى الكود بس، من غير sidebar ولا تابات ولا status bar، والشباك ممكن يدخل full screen. Esc مرتين ورا بعض يرجّعك. و Alt+Z على README فيه سطور طويلة هيلف السطر على عرض الشاشة بدل ما تعمل scroll يمين، ومرة تانية يرجعه.
+
+لو Esc Esc مخرجكش، يبقى فيه popup مفتوح أكل أول Esc، دوس تاني. ولو Alt+Z كتب حرف أو مغيرش حاجة وانت على الماك، الاختصار Option+Z، وعلى الماك Option+Z ممكن يكتب [[Ω]] لو المحرر مش هو اللي عليه الـ focus.`
         }
       ]
     },
@@ -287,7 +317,10 @@ Shift+Option+Up / Down            Mac`,
 والنسخ بـ Shift+Alt+Down مش بيلمس الـ clipboard، فاللي نسخته قبل كده بيفضل زي ما هو، عكس Ctrl+C و Ctrl+V.`,
             when: "ترتيب imports أو cases أو خطوات، وتكرار سطر شبه اللي قبله (route، عمود في جدول، field في schema).",
             mistakes: "الاختصار مش شغال لأن برنامج تاني ماسكه (برامج كروت الشاشة القديمة كانت بتاخد Ctrl+Alt والأسهم لقلب الشاشة). Keyboard Shortcuts (Ctrl+K Ctrl+S) فيه Record Keys تضغط المفتاح ويقولك مين واخده."
-          }
+          },
+          sol: R`Alt+Up و Alt+Down بيحركوا السطر اللي عليه المؤشر (أو كل السطور المتحددة) من غير ما تعمل copy و paste، والـ indentation بيتظبط لوحده جوه البلوكات. Shift+Alt+Down على سطر route هيعمل نسخة منه تحته والمؤشر ينزل عليها، عدّل المسار واسم الدالة.
+
+على ويندوز والكيبورد العربي والإنجليزي متسطبين: Shift+Alt هو اختصار تغيير اللغة، فممكن تلاقي اللغة اتقلبت بعد Shift+Alt+Down. غيّر اختصار اللغة لـ Win+Space من إعدادات ويندوز (Typing ثم Advanced keyboard settings ثم Input language hot keys). وعلى لينكس النسخ Ctrl+Shift+Alt+Up/Down، و Shift+Alt+Down هناك ممكن يبقى محجوز من الـ desktop.`
         },
         {
           cmd: "Ctrl+Shift+K",
@@ -311,7 +344,10 @@ Mac: Cmd+X / Cmd+C / Cmd+Enter / Cmd+Shift+Enter / Cmd+L`,
 Ctrl+Enter بيعمل سطر جديد تحت بنفس المسافات، حتى لو المؤشر في نص كلمة. ومع مؤشرات كتير بيشتغل على كل السطور مرة واحدة.`,
             when: "تنضيف console.log والكود الميت، ونقل سطر لمكان بعيد (Ctrl+X ثم Ctrl+V).",
             mistakes: "تستخدم Ctrl+X عشان تمسح، وبعدين تعمل Ctrl+V لحاجة كنت ناسخها قبل كده فتلاقي السطر الممسوح بدلها. للمسح Ctrl+Shift+K. وعلى الماك Cmd+Shift+K مش Ctrl."
-          }
+          },
+          sol: R`حط المؤشر في أي حتة في سطر [[console.log]] ودوس Ctrl+Shift+K: السطر كله هيتمسح من غير ما يروح الكليب بورد، والسطر اللي تحته يطلع مكانه. كرر على التلاتة. وفي نص سطر، Ctrl+Enter بيفتح سطر فاضي تحته والمؤشر عليه بنفس الـ indentation، من غير ما يقسم السطر اللي كنت فيه زي Enter.
+
+لو Ctrl+Shift+K عمل حاجة تانية، غالبًا extension زي Git أو Vim خدته. وفرق مهم: Ctrl+X من غير تحديد بيمسح السطر ويحطه في الكليب بورد، يعني هيمسح اللي كنت ناسخه قبل كده، أما Ctrl+Shift+K فمش بيلمس الكليب بورد.`
         },
         {
           cmd: "Ctrl+/",
@@ -333,7 +369,10 @@ Shift+Option+A         Mac`,
 لو السطور المتحددة فيها سطور متعلّقة وسطور لأ، أول ضغطة بتعلّق الكل.`,
             when: "قفل كود مؤقتًا وانت بتجرّب، أو قفل سطر إعداد في ملف config.",
             mistakes: "تسيب كود متعلّق في الـ commit كـ «backup»: Git هو الـ backup. ولو لغة الملف غلط (ملف [[.env]] اتفتح كـ plain text)، العلامة هتطلع غلط: غيّر اللغة من شريط الحالة أو Ctrl+K M."
-          }
+          },
+          sol: R`Ctrl+/ على سطر [[app.use(cors());]] هيبقى [[// app.use(cors());]]. شغّل السيرفر وهتلاقي تأثير غيابه (مثلًا CORS error في المتصفح). Ctrl+/ تاني يرجّعه. في YAML العلامة بتبقى [[#]]، وفي JSX جوه الـ markup بتبقى [[{/* */}]] حوالين السطر، أما في جزء الـ JavaScript من نفس الملف فهي [[//]]. VS Code بيختار حسب المكان مش حسب الملف بس.
+
+الكيبورد العربي: زرار [[/]] في الـ layout العربي عليه حرف تاني، و VS Code ساعات مبيفهمش Ctrl+/ وهو على العربي (فيه issues كتير على GitHub عن ده مع layouts مختلفة). الحل الأسهل تحوّل للإنجليزي، أو تعمل اختصار تاني لـ «Toggle Line Comment» في Keyboard Shortcuts. على الماك Cmd+/.`
         },
         {
           cmd: "Shift+Alt+F",
@@ -355,7 +394,10 @@ Ctrl+] / Ctrl+[        indent / outdent the line (Cmd on Mac)`,
 Prettier بياخد إعداداته من المشروع، فنفس الملف بيطلع نفس الشكل عندك وعند زميلك وفي CI (درس «prettier» في تاب فحص الكود).`,
             when: "بعد لزق كود من برا، أو قبل commit لو format on save مش شغال.",
             mistakes: "تنسّق ملف قديم كله في نفس commit فيه تعديل حقيقي، فالـ review يبقى ٣٠٠ سطر مسافات وسطرين مهمين: نسّق في commit لوحده. وانت شغال بالـ formatter المدمج وزميلك بـ Prettier، فكل واحد بيقلب شكل الملف: ثبّت [[editor.defaultFormatter]] في [[.vscode/settings.json]]."
-          }
+          },
+          sol: R`بعد ما تبوظ المسافات، Shift+Alt+F هيرجّع الملف كله مترتب. لو ده أول مرة، VS Code ممكن يقول «There are multiple formatters for 'TypeScript' files» أو «There is no formatter for ... installed»، ويديك زرار Configure: اختار «Prettier - Code formatter». بعدها التنسيق هيتبع [[.prettierrc]]، زي علامات التنصيص المفردة أو المزدوجة.
+
+لو التنسيق طلع مختلف عن اللي في المشروع، يبقى اخترت الـ formatter بتاع VS Code نفسه مش Prettier. غيّره من Palette بـ «Format Document With...» ثم «Configure Default Formatter». وعلى لينكس الاختصار Ctrl+Shift+I، وعلى ويندوز Shift+Alt ممكن يقلب اللغة لو الإنجليزي والعربي متفعّلين.`
         }
       ]
     },
@@ -385,7 +427,10 @@ Esc                    back to one cursor`,
 كل المؤشرات بتتصرف زي بعض: Home و End والأسهم و Ctrl+Right بيشتغلوا على الكل.`,
             when: "تعديل محلي جوه دالة أو ملف. لو الاسم مستخدم في ملفات تانية، F2 (مستوى ٢) أضمن.",
             mistakes: "Ctrl+Shift+L على اسم زي [[id]] أو [[data]] بيمسك كل مكان في الملف حتى اللي ملوش علاقة. بص على العدد قبل ما تكتب، أو استخدم F2 للأسماء. وتضغط Ctrl+D زيادة وتفتكر مفيش رجوع: Ctrl+U."
-          }
+          },
+          sol: R`أول Ctrl+D وانت واقف في نص [[userName]] من غير تحديد هيحدد الكلمة كلها [[userName]]، ومش هيلاقي [[userEmail]] لأنه بيدوّر على الكلمة كاملة. عشان تمسك [[user]] بس: حدده بإيدك الأول (Shift+Right أربع مرات أو دبل كليك وبعدين تعديل)، وبعدين Ctrl+D أربع مرات. هيبقى عندك ٥ مؤشرات، اكتب [[customer]]: هيبقى [[customerName]] و [[customerEmail]] وهكذا. Esc يرجّعك لمؤشر واحد.
+
+لو اتحدد [[user]] في مكان مش عايزه (زي [[getUser]] أو [[currentUser]] لو مش case sensitive)، Ctrl+K Ctrl+D يتخطاه للي بعده. ولو عايز كله مرة واحدة Ctrl+Shift+L، بس بص على العدد تحت قبل ما تكتب.`
         },
         {
           cmd: "Alt+Click",
@@ -410,7 +455,10 @@ Shift+Alt + drag       column (box) selection (Shift+Option + drag on Mac)`,
 لو مش عايز Alt للمؤشرات، [[editor.multiCursorModifier]] بيخليها Ctrl+Click، وساعتها «روح للتعريف» بالماوس يبقى Alt+Click.`,
             when: "تعديلات متكررة في سطور ورا بعض، وتحويل لستة نص لكود.",
             mistakes: "على بعض توزيعات لينكس Alt+Click بيروح للـ window manager (بيسحب الشباك) فمش هيشتغل: غيّر الـ modifier. ولو السطور مش نفس الشكل، مؤشر في آخر كل سطر (Shift+Alt+I) أضمن من العمود."
-          }
+          },
+          sol: R`حدد الـ ٥ سطور، Shift+Alt+I هيحط مؤشر في آخر كل سطر. اكتب [[",]] هيتكتب في الخمسة. Home هيودّي كل المؤشرات لأول كل سطر (أول حرف مش مسافة)، اكتب [["]]. الناتج [["Ali",]] و [["Mona",]] وهكذا. ممكن تحطهم جوه أقواس array وتشيل الفاصلة الأخيرة.
+
+لو Home ودّى المؤشرات لأماكن مختلفة، يبقى فيه سطور فيها مسافات في الأول: Home أول مرة بيروح لأول حرف، ومرة تانية لأول السطر. ولو الـ autoclose حط [["]] مرتين، ده auto-closing quotes: مع مؤشرات كتير ممكن يحصل، امسح الزيادة بـ Delete أو اكتب علامة التنصيص الأولى الأول.`
         },
         {
           cmd: "Shift+Alt+Right",
@@ -431,7 +479,10 @@ Ctrl+Shift+\           jump to the matching bracket (Shift+Cmd+\ on Mac)`,
 ومع Ctrl+Shift+\ اللي بيقفز للقوس المقابل، تتنقل وتحدد جوه أي أقواس.`,
             when: "قبل نقل أو مسح أو تغليف بلوك: حدد بالـ expand، وبعدين Ctrl+X أو Alt+Up.",
             mistakes: "على الماك الاختصار تقيل (Ctrl+Shift+Cmd+Right) وناس كتير بتغيّره. وفي لغات من غير language server الخطوات بتبقى على الكلمات والأقواس بس."
-          }
+          },
+          sol: R`مثلًا في [[{ user: { address: { city: "Cairo" } } }]] والمؤشر جوه Cairo: الضغطة الأولى تحدد [[Cairo]]، والتانية الـ string بعلامات التنصيص، والتالتة [[city: "Cairo"]]، والرابعة محتوى الـ object، والخامسة [[{ city: "Cairo" }]]، وتكمل كده لبرّه. العدد بيفرق حسب شكل الكود، بس غالبًا بين ٥ و ٨ ضغطات للـ object الكبير. Shift+Alt+Left بيصغّر خطوة خطوة.
+
+على الماك الاختصار Ctrl+Shift+Cmd+Right. وعلى ويندوز لو الكيبورد العربي متسطب، Shift+Alt ممكن يقلب اللغة، شوف درس Alt+Up. ولو الضغطة الأولى حددت الكلمة والتانية السطر كله، يبقى الملف مش متعرف نوعه (Plain Text)، غيّر اللغة من تحت يمين.`
         },
         {
           cmd: "Ctrl+Shift+[",
@@ -453,7 +504,10 @@ Ctrl+K Ctrl+2          fold level 2 only: classes stay open, their methods fold`
 الـ fold عرض بس، الملف نفسه متغيرش. والـ Sticky Scroll (أول سطر من الدالة بيفضل ثابت فوق وانت نازل) بيكمّله.`,
             when: "ملف طويل أول مرة تشوفه، أو JSON ضخم عايز تشوف مفاتيحه الكبيرة، أو review.",
             mistakes: "تقفل بلوك وتنسى، فتدوّر على كود «اختفى». السهم جنب رقم السطر بيقولك إن فيه حاجة مقفولة، و Ctrl+K Ctrl+J بيفتح كله."
-          }
+          },
+          sol: R`Ctrl+K Ctrl+0 هيقفل كل البلوكات، وهتشوف الملف كسطر لكل دالة أو class وجنبه [[...]]، زي فهرس. روح على الدالة اللي تهمك و Ctrl+Shift+] هيفتحها هي بس. و Ctrl+K Ctrl+J يفتح كله.
+
+لو Ctrl+Shift+[ مش شغال والكيبورد على العربي، الأقواس المربعة في الـ layout العربي على زراير تانية (الحروف «ج» و «د»)، حوّل للإنجليزي. وعلى الماك Cmd+Option+[ و ]. ولو الـ fold بيقفل حتة غريبة، يبقى الـ indentation في الملف مش مظبوط، والـ folding بالـ indentation مش بالأقواس.`
         },
         {
           cmd: "Emmet",
@@ -474,7 +528,12 @@ Ctrl+Shift+P           Emmet: Wrap with Abbreviation (around a selection)`,
 Wrap with Abbreviation بيلف الجزء المتحدد بـ tags: تحدد ٣ سطور نص وتكتب [[ul>li*]] فيبقى كل سطر li.`,
             when: "كتابة هيكل صفحة أو component أو form جديد.",
             mistakes: "تكتب اسم متغير في JSX فـ Emmet يقترح tag بنفس الاسم، وتدوس Enter فيتحول لـ [[<user></user>]]. بص على الاقتراح قبل Enter. ولو مضايقك، [[emmet.showExpandedAbbreviation]] بقيمة inMarkupAndStylesheetFilesOnly أو never."
-          }
+          },
+          sol: R`في [[.tsx]] الاختصار هيطلع في لستة الاقتراحات باسم «Emmet Abbreviation»، و Tab يقبله. الناتج:
+
+[[<section className="hero">]] وجواه [[<h1>Hello</h1>]] و [[<p className="lead"></p>]] و زرارين [[<button className="btn"></button>]]. لاحظ [[className]] بدل [[class]]، لأن VS Code عارف إنه JSX. جربنا نفس الاختصار بمكتبة Emmet نفسها وطلع ده بالظبط. وفي Wrap with Abbreviation: حدد التلات سطور، Palette ثم «Emmet: Wrap with Abbreviation»، واكتب [[ul>li*]]: كل سطر هيبقى [[<li>]] جوه [[<ul>]].
+
+لو Tab كتب مسافات بدل ما يوسّع، يبقى لستة الاقتراحات مظهرتش (ممكن بسبب extension تاني). استخدم Palette ثم «Emmet: Expand Abbreviation»، أو فعّل [[emmet.triggerExpansionOnTab]]، وده مقفول افتراضيًا. وافتكر إن الاختصار لازم يبقى من غير مسافات، أي مسافة بتقطعه.`
         }
       ]
     },
@@ -507,7 +566,10 @@ F4 / Shift+F4          next / previous result`,
 Open in Editor (فوق النتايج) بيحطها في ملف Search Editor تحتفظ بيه وتدوّر فيه.`,
             when: "قبل ما تغيّر أي حاجة مشتركة، ولما تدوّر على مصدر رسالة error ظاهرة للمستخدم.",
             mistakes: "تدوّر على اسم دالة بالنص وتفتكر ده كل الاستخدامات، وهي ممكن تكون متنادية بإسم تاني بعد import. للكود نفسه Shift+F12 أدق. وتنسى إن الـ exclude شغال فتقول «مش موجود» وهو في ملف متجاهل."
-          }
+          },
+          sol: R`فعّل الـ regex (Alt+R أو زرار [[.*]])، والـ regex [[process\.env\.(\w+)]] هيطلع كل سطر فيه [[process.env.SOMETHING]] مجمّع حسب الملف، وفوق مكتوب العدد زي «23 results in 9 files». قارن الأسامي بـ [[.env.example]]: أي اسم في الكود ومش في الملف ده يبقى ناقص من التوثيق، وأي اسم في الملف ومش في الكود ممكن يبقى قديم.
+
+لو طلعت نتايج من [[node_modules]]، يبقى الـ search.exclude أو [[.gitignore]] متعطل (زرار «Use Exclude Settings and Ignore Files» في خانة files to exclude لازم يبقى مفعّل). ولو مفيش نتايج خالص، اتأكد إن الـ regex مفعّل، لأن من غيره هيدوّر على النص حرفيًا بالـ backslash. وممكن تلاقي كمان وصول بالأقواس المربعة بدل النقطة أو destructuring زي [[const { PORT } = process.env]]، والـ regex ده مش هيمسكهم.`
         },
         {
           cmd: "Ctrl+Shift+H",
@@ -529,7 +591,10 @@ AB button                        Preserve Case (User -> Customer, user -> custom
 الاستبدال بيحصل على الملفات فعلًا، عشان كده اعمله على branch نضيف: [[git diff]] بعده بيوريك كل اللي اتغير، و [[git restore .]] بيرجّعه لو غلط.`,
             when: "تغيير نصوص مش أسماء في الكود: رسايل، ومسارات، و classes في CSS، أو pattern متكرر.",
             mistakes: "تستخدمه عشان تغيّر اسم دالة أو type، فيغيّر نفس الكلمة في كومنت أو string ملهاش علاقة: للأسماء F2. وتنسى تفعّل regex فـ [[.]] و [[(]] يتعاملوا كحروف عادية أو العكس. واستبدال كبير على شغل مش متعمله commit: لو غلط، مفيش حاجة ترجعلها."
-          }
+          },
+          sol: R`بعد ما تكتب find و replace والـ regex متفعّل، كل نتيجة هتظهر بالقديم مشطوب بالأحمر والجديد بالأخضر. دوس على نتيجة يفتحلك diff كامل للملف. بعد Replace All (الزرار جنب خانة replace) هيسألك تأكيد بعدد الملفات، و [[git diff]] هيوريك كل [[console.log(x);]] بقت [[logger.debug(x);]]، والـ [[$1]] اتبدلت بالمحتوى اللي بين القوسين.
+
+الـ regex ده مش هيمسك سطر من غير [[;]] في الآخر، ولا [[console.log]] على أكتر من سطر، فهيفضل شوية. دوّر تاني بـ [[console.log(]] من غير regex تتأكد. وافتكر إن الملفات اللي اتغيرت لازم يبقى فيها [[import]] لـ logger، وده مش هيحصل لوحده، والـ build هيطلع error لو نسيته.`
         }
       ]
     },
@@ -559,7 +624,10 @@ Esc                    close the peek window`,
 Peek بيفتح شباك جوه الملف وتقدر تعدّل فيه على طول. وعلى لابتوب، F12 ممكن يحتاج Fn، أو يكون مربوط بالصوت أو الإضاءة.`,
             when: "كل ما تشوف اسم مش فاهمه.",
             mistakes: "F12 مش بيعمل حاجة لأن الملف مش جزء من المشروع اللي الـ language server شايفه: فتحت ملف لوحده من غير الفولدر، أو tsconfig مش شامله. افتح الفولدر كله بـ [[code .]]. ولو وصلت لـ [[.d.ts]] وعايز الكود نفسه: Go to Source Definition من Command Palette."
-          }
+          },
+          sol: R`F12 على اسم الـ service هيفتح ملفه والمؤشر على تعريف الدالة. Alt+F12 على type زي [[Request]] من Express هيفتح نافذة صغيرة جوه الملف الحالي فيها التعريف من [[node_modules/@types/express-serve-static-core/index.d.ts]]، وعلى type من Prisma هيوريك ملف الـ client المتولد. Esc يقفل النافذة وانت لسه في مكانك.
+
+لو F12 قال «No definition found»، يبقى الـ TypeScript server لسه بيحمّل، أو الـ import مكسور، أو الـ types مش متسطبة (زي [[@types/express]]). ولو F12 على اسم فتح ملف [[.d.ts]] بدل الكود الحقيقي، ده طبيعي للمكتبات. جرّب «Go to Source Definition» من كليك يمين. وعلى اللابتوب F12 ممكن يبقى زرار صوت أو سطوع، استخدم Fn+F12.`
         },
         {
           cmd: "Shift+F12",
@@ -579,7 +647,10 @@ Ctrl+F12               go to implementation (Cmd+F12 on Mac)`,
 السطر الصغير «3 references» فوق الدالة (CodeLens) نفس المعلومة، وبيتفعّل في TypeScript و JavaScript بـ [[js/ts.referencesCodeLens.enabled]] (الاسم القديم [[typescript.referencesCodeLens.enabled]] لسه شغال بس deprecated).`,
             when: "قبل أي تغيير في شكل دالة، أو قبل مسحها، أو عشان تفهم الكود بيتدفق إزاي.",
             mistakes: "تعتمد عليه في كود بيتنادي بالنص (اسم route في string، أو property بإسم جاي من متغير، أو template مش TS): الـ language server مش شايف ده. كمّل بـ Ctrl+Shift+F."
-          }
+          },
+          sol: R`Shift+F12 هيفتح peek فيه لستة بكل مكان بيستخدم الدالة، وفوق مكتوب العدد زي «3 references»، وتعريف الدالة نفسه ممكن يتحسب واحد منهم. لو ملهاش استخدامات غير التعريف، أو «No references found»، غالبًا كود ميت.
+
+قبل ما تمسحها، اتأكد إنها مش مستخدمة بطرق Shift+F12 مش بيشوفها: اسم جاي من string (زي [[router[methodName](req, res)]])، أو export من مكتبة لمشاريع تانية، أو ملف JS مش داخل في [[tsconfig]]. دوّر باسمها في Ctrl+Shift+F كمان للتأكيد.`
         },
         {
           cmd: "F2",
@@ -599,7 +670,10 @@ Enter                  apply`,
 نقل الملفات: [[js/ts.updateImportsOnFileMove.enabled]] (كان اسمه [[typescript.updateImportsOnFileMove.enabled]]) قيمتها prompt افتراضيًا فبيسألك، وتقدر تخليها always.`,
             when: "أي تغيير لاسم في الكود. Find و Replace للنصوص بس.",
             mistakes: "تعمل rename لحاجة اسمها بيتقري من برا: field في API، أو column في الداتابيز، أو key في JSON متخزّن. F2 بيغيّر الكود، بس الـ client أو الداتا القديمة لسه بالاسم القديم. وفي ملفات JS من غير types الـ rename أضعف، فبص على الـ preview."
-          }
+          },
+          sol: R`F2 على اسم الدالة هيطلع خانة صغيرة بالاسم القديم، اكتب الجديد و Enter. كل الاستدعاءات والـ imports في التلات ملفات هتتغير، والملفات هتتفتح مش محفوظة (نقطة على التاب)، احفظ بـ Ctrl+K S. [[git diff]] المفروض يوريك التلات ملفات بس، والتغيير في أماكن الاسم بس.
+
+الاسم في التعليقات والـ strings مش هيتغير (ده أمان مقصود)، فلو عندك log فيه اسم الدالة لازم تعدّله بإيدك. ولو [[git diff]] وراك ملفات أكتر من المتوقع، غالبًا عندك formatOnSave غيّر تنسيق حاجات. ولو F2 قال «Rename failed» أو «This element can't be renamed»، يبقى الاسم جاي من [[node_modules]].`
         },
         {
           cmd: "Ctrl+.",
@@ -620,7 +694,10 @@ Shift+Alt+O            organize imports (Shift+Option+O on Mac)`,
 وممكن تخلي أنواع منها تشتغل مع كل حفظ: [[source.fixAll.eslint]] و [[source.organizeImports]] جوه [[editor.codeActionsOnSave]] (درس settings.json في مستوى ٣).`,
             when: "كل ما يظهر خط أحمر أو لمبة، وقبل ما تكتب import بإيدك.",
             mistakes: "تختار أول auto import من غير ما تبص، فيجيب [[Button]] من مكتبة غلط أو من dist بدل src: بص على المسار في الاقتراح. و «Disable eslint for this line» كحل سريع: كده الغلط لسه موجود ومستخبي."
-          }
+          },
+          sol: R`بعد ما تمسح الـ import، الاسم هيبقى عليه خط أحمر. حط المؤشر عليه و Ctrl+.، هتلاقي «Add import from './utils'» أو لكل الأماكن اللي الاسم موجود فيها لو أكتر من واحد. اختار الصح، والـ import هيرجع فوق. ولما تحدد expression طويل و Ctrl+.، هتلاقي «Extract to constant in enclosing scope»، اختاره واكتب الاسم الجديد، والـ expression هيتحط في [[const]] فوق.
+
+لو Ctrl+. مطلعش «Add import»، يبقى الاسم مش exported من أي ملف، أو المكتبة مش متسطبة. ولو اقترح import من مكان غلط (زي نسخة داخلية من مكتبة)، اختار بعناية. وعلى الكيبورد العربي، زرار النقطة في الـ layout العربي حرف «ز»، فاختصار Ctrl+. ممكن ميشتغلش، حوّل للإنجليزي.`
         },
         {
           cmd: "Ctrl+Space",
@@ -639,7 +716,10 @@ Ctrl+K Ctrl+I          show hover: type + docs (Cmd+K Cmd+I)`,
 الـ hover بالكيبورد مفيد لما تكون شغال من غير ماوس، أو عايز تشوف type طويل وانت واقف على الاسم.`,
             when: "كتابة كود بمكتبة مش حافظها، وقراية types معقدة.",
             mistakes: "على الماك Ctrl+Space ممكن يكون مربوط بتغيير لغة الكيبورد (Input Sources)، فمش هيوصل لـ VS Code: غيّر واحد منهم. وتفتكر إن مفيش اقتراحات يبقى المكتبة وحشة: غالبًا ناقص [[@types]] بتاعها."
-          }
+          },
+          sol: R`اكتب [[obj.]] والاقتراحات هتظهر لوحدها غالبًا، لو قفلتها Ctrl+Space يرجّعها. هتلاقي كل الـ properties والـ methods من الـ type، وجنب كل واحد الـ type بتاعه. Ctrl+Space تاني يعرض التفاصيل على الجنب. جوه [[fetch(]]، Ctrl+Shift+Space هيطلع [[fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>]] والـ parameter اللي انت عليه متظلل.
+
+على ويندوز Ctrl+Space ساعات بتاخده أنظمة إدخال الصيني أو الياباني، وعلى الماك Ctrl+Space هو اختصار تغيير اللغة لما تضيف العربي. لو غيّر اللغة بدل ما يفتح الاقتراحات، غيّر اختصار الماك من Keyboard Shortcuts ثم Input Sources، أو استخدم اختصار تاني في VS Code.`
         },
         {
           cmd: "Ctrl+Shift+M",
@@ -660,7 +740,10 @@ Ctrl+.                 on the problem: quick fix`,
 عشان المشروع كله: شغّل [[tsc --noEmit]] كـ task بـ problem matcher اسمه [[$tsc]] (درس tasks.json في مستوى ٣)، فالنتيجة تتملي في اللوحة دي.`,
             when: "قبل commit، وبعد ما تسحب تعديلات، وبعد تغيير type مشترك.",
             mistakes: "تفتكر إن اللوحة فاضية يبقى المشروع سليم، وهي بتعرض الملفات المفتوحة بس. [[npm run typecheck]] و [[npm run lint]] هما الحكم (تاب فحص الكود)."
-          }
+          },
+          sol: R`Ctrl+Shift+M هيفتح لوحة Problems فيها الأغلاط والتحذيرات لكل الملفات المفتوحة (أو المشروع، حسب language server). F8 في المحرر هيوديك لأول مشكلة ويعرض الرسالة في شريط تحت السطر. Ctrl+. هناك يوريك الحلول المقترحة. F8 تاني للي بعدها.
+
+لو Problems قال «No problems have been detected in the workspace» ومع ذلك [[tsc]] بيطلع أغلاط، ده لأن VS Code بيعرض أغلاط الملفات المفتوحة بس لـ TypeScript افتراضيًا. شغّل tsc كـ task بـ [[$tsc]] (درس tasks.json) عشان كل أغلاط المشروع تظهر. ولو F8 مش شغال على لابتوب، جرّب Fn+F8.`
         }
       ]
     },
@@ -681,7 +764,10 @@ Ctrl+.                 on the problem: quick fix`,
             how: "كل ترمنال بيبدأ في فولدر المشروع. المسارات اللي بتتطبع (زي [[src/app.ts:40:5]]) بتبقى links، و Ctrl+Click بيفتح الملف على السطر.\n\nلو محدد كود في المحرر، Terminal: Run Selected Text In Active Terminal من Command Palette بيبعته للترمنال. ملوش اختصار افتراضي، وتقدر تعمله واحد (درس keybindings.json في مستوى ٣).\n\nلو فاتح المشروع من WSL ([[code .]] من Ubuntu)، الترمنال بيبقى bash جوه لينكس لوحده (تاب WSL، درس «VS Code»).",
             when: "كل يوم: dev server و git وأوامر سريعة.",
             mistakes: "تقفل الترمنال بأيقونة الزبالة بدل ما تخفيه، فالـ dev server يقف: الزبالة بتقتل العملية، و Ctrl+` بيخفي اللوحة بس. وبعض الاختصارات (زي Ctrl+P) جوه الترمنال بتروح لـ VS Code مش للـ shell، ودا بيتحكم فيه [[terminal.integrated.commandsToSkipShell]]."
-          }
+          },
+          sol: R`Ctrl+$__bt هيفتح الترمنال تحت. [[npm run dev]] هيشتغل. Ctrl+Shift+5 هيقسم الترمنال نصين جنب بعض، والجديد في نفس الفولدر، اكتب فيه [[git status]]. Ctrl+1 يرجّع المؤشر للمحرر. و Ctrl+$__bt تاني يرجعك للترمنال.
+
+الكيبورد العربي: زرار [[$__bt]] عليه حرف «ذ»، وفي أغلب الأحوال Ctrl+ذ شغال لأن VS Code بيقرا الزرار. لو مش شغال، استخدم Ctrl+J (بيفتح اللوحة اللي تحت كلها) أو View ثم Terminal. ولو Ctrl+Shift+5 مقسمش، على ويندوز والإنجليزي والعربي متسطبين، Ctrl+Shift هو اختصار تبديل الـ layout ساعات، غيّره من إعدادات ويندوز. وعلى الماك التقسيم Cmd+\ والترمنال عليه الـ focus.`
         },
         {
           cmd: "Ports",
@@ -702,7 +788,10 @@ Ctrl+Shift+P            Ports: Focus on Ports View`,
 اللينك العام (dev tunnel) بيعدّي على سيرفرات Microsoft. Private معناها محدش يفتحه غير انت بعد تسجيل دخول، و Public معناها أي حد معاه اللينك.`,
             when: "أي شغل Remote، أو webhook محتاج URL من برا وانت على جهازك.",
             mistakes: "تخلي البورت Public وفيه لوحة admin أو API من غير auth: أي حد معاه اللينك يدخل. وتنسى تقفل التحويل بعد ما تخلص. وتوصل لقاعدة بيانات الإنتاج على localhost عندك فتتعامل معاها كأنها محلية وتعدّل داتا حقيقية بالغلط."
-          }
+          },
+          sol: R`في WSL أو Remote-SSH، أول ما [[npm run dev]] يطبع بورت زي 5173، هيظهر إشعار صغير «Your application running on port 5173 is available» وفي تاب Ports (جنب Terminal) هيتضاف سطر فيه Port [[5173]] و Forwarded Address [[localhost:5173]]. دوس على العنوان يفتح في المتصفح. للـ 5432: Forward a Port، اكتب [[5432]]، وأداة DB تتصل على [[localhost]] والبورت اللي في عمود Forwarded Address.
+
+لو عمود Forwarded Address طلع [[localhost:5433]] مش 5432، يبقى البورت 5432 مشغول على جهازك (غالبًا Postgres محلي)، فـ VS Code اختار رقم تاني. استخدم الرقم اللي مكتوب مش الأصلي. ولو السيرفر مظهرش لوحده، بعض الأدوات مش بتطبع البورت بشكل VS Code يفهمه، ضيفه بإيدك.`
         }
       ]
     },
@@ -732,7 +821,10 @@ Ctrl+Enter                   commit, from the message box (Cmd+Enter on Mac)`,
 لو دوست Commit ومفيش حاجة متضافة، ممكن يسألك يضيف الكل، ودا بيتحكم فيه [[git.enableSmartCommit]]. الأوامر نفسها في تاب git، درس «git add / commit».`,
             when: "كل commit، خصوصًا لو عدّلت كذا حاجة ملهمش علاقة ببعض.",
             mistakes: "تدوس + على كل حاجة أو Commit All من غير ما تفتح الملفات. و Discard Changes (السهم الملفوف) بيمسح تعديلاتك من غير سلة محذوفات: لو دوسته بالغلط، Timeline (بعد درس) ممكن ينقذك."
-          }
+          },
+          sol: R`في Source Control هتلاقي الملف تحت «Changes». دوس عليه يفتح diff: الشمال آخر commit واليمين نسختك. حدد سطور الـ fix بس في الجزء اليمين، كليك يمين ثم «Stage Selected Ranges». الملف هيظهر مرتين: تحت «Staged Changes» (الـ fix) وتحت «Changes» (التنسيق). اكتب رسالة و Ctrl+Enter يعمل commit للـ staged بس. وبعدين commit تاني للباقي.
+
+لو دوست Ctrl+Enter ومفيش حاجة staged، VS Code هيسألك «There are no staged changes to commit. Would you like to stage all your changes?»، لو قلت Yes هيعمل commit لكله. اتأكد بـ [[git log -p -2]] إن كل commit فيه اللي المفروض بس.`
         },
         {
           cmd: "Merge Editor",
@@ -756,7 +848,10 @@ Accept Both بيحط الاتنين ورا بعض، وغالبًا محتاج ت
 المفاهيم والأوامر في تاب git، درس «الـ conflicts».`,
             when: "أي conflict في merge أو pull أو rebase أو stash pop.",
             mistakes: "تدوس Accept Current على كل الـ conflicts عشان تخلص، فتمسح شغل زميلك. أو Accept Both في [[package-lock.json]]: الملف ده ميتحلّش بإيدك، خد نسخة واحدة واعمل [[npm install]] يظبطه. وتنسى تشغّل التطبيق بعد الحل: مفيش علامات مش معناها إن الكود شغال."
-          }
+          },
+          sol: R`بعد [[git merge]] هيقول [[CONFLICT (content): Merge conflict in file.txt]]. في VS Code الملف هتلاقي فيه [[<<<<<<< HEAD]] و [[=======]] و [[>>>>>>> branch]]، وفوق الـ conflict أزرار «Accept Current Change | Accept Incoming Change | Accept Both Changes». المرة الأولى دوس واحد منهم. المرة التانية (اعمل conflict تاني)، دوس «Resolve in Merge Editor» تحت يمين: Incoming و Current فوق، و Result تحت، و checkbox جنب كل تعديل. بعد ما تخلص «Complete Merge»، ثم commit.
+
+«Current» يعني الـ branch اللي انت واقف فيه (main)، و «Incoming» يعني اللي بتعمله merge. ولو عملت merge من الاتجاه التاني هيتبدلوا، وده مصدر لخبطة كتير. و [[git log --oneline --graph]] في الآخر المفروض يوريك merge commit فيه أبين.`
         },
         {
           cmd: "Timeline",
@@ -779,7 +874,10 @@ Local History: Find Entry to Restore بيدوّر في النسخ المحفوظ
 الـ blame المدمج ليه إعدادين: [[git.blame.editorDecoration.enabled]] (في السطر) و [[git.blame.statusBarItem.enabled]] (في شريط الحالة). GitLens extension بتعمل ده وأكتر بكتير، بس أتقل. وفي الترمنال: درس «git log -S / blame» في تاب git.`,
             when: "ملف باظ ومفيش commit، أو عايز تفهم تاريخ سطر قبل ما تغيّره.",
             mistakes: "تعتمد على Local History كـ backup: ده على جهاز واحد وبيتمسح مع الوقت، والـ commit والـ push هما الـ backup. و Discard لملف جديد مكانش في Git خالص بيمسحه، وساعتها Local History أو سلة المحذوفات فرصتك الوحيدة."
-          }
+          },
+          sol: R`في Explorer تحت خالص قسم Timeline: هتلاقي ٣ مداخل «File Saved» بالوقت (Local History)، وممكن مداخل commits من Git. دوس على التاني يفتح diff بينه وبين النسخة الحالية. كليك يمين عليه ثم «Restore Contents»: الملف هيرجع للنسخة دي. و «Git: Toggle Git Blame Editor Decoration» هيكتب في آخر السطر اسم آخر حد غيّره ومن قد إيه، زي [[Ali, 3 months ago]].
+
+لو Timeline فاضي، يبقى الـ Local History مقفول ([[workbench.localHistory.enabled]])، أو الملف مش جوه workspace مفتوح. ولو الـ blame مش ظاهر، الأمر ده جديد نسبيًا (من 2024)، حدّث VS Code، أو استخدم [[git blame file]] في الترمنال.`
         }
       ]
     },
@@ -810,7 +908,10 @@ right-click the gutter Add Logpoint...
 الـ Logpoint بيطبع في Debug Console، واللي بين الأقواس المعووجة بيتقيّم. console.log من غير ما تلمس الكود.`,
             when: "أي bug محتاج تشوف فيه قيم المتغيرات في لحظة معينة.",
             mistakes: "breakpoint رمادي مش أحمر معناه الـ debugger مش قادر يربطه بالكود الشغال: غالبًا مفيش source maps، أو اللي شغال هو dist مش src. أو انت شغّلت بـ [[npm run dev]] في ترمنال عادي مش من الـ debugger، فمفيش حد يقف."
-          }
+          },
+          sol: R`Logpoint بيظهر كنقطة على شكل معين (diamond) بدل الدايرة الحمرا. كل ما الـ route يتنادى، هيطبع في Debug Console حاجة زي [[order 42 total=1500]] من غير ما يقف. الـ Conditional Breakpoint دايرة حمرا فيها علامة، والبرنامج هيقف بس لما الشرط يبقى true، زي [[req.params.id === "42"]].
+
+لو الـ breakpoint طلع دايرة رمادي فاضية بدل حمرا، ده «Unbound breakpoint»: الـ debugger مش شايف الملف ده في الكود اللي شغال (غالبًا TypeScript من غير source maps، أو شغّلت السيرفر من ترمنال عادي مش بـ F5). ولو الـ logpoint طبع [[{order.id}]] حرفيًا، يبقى المتغير اسمه مختلف في المكان ده. وخد بالك إن [[req.params.id]] string، فـ [[=== 42]] كرقم مش هيقف أبدًا.`
         },
         {
           cmd: "F5",
@@ -835,7 +936,10 @@ F10 بيعدّي على الدالة كوحدة واحدة، و F11 بيدخل �
 [[skipFiles]] في launch.json بيخلي F11 ميدخلش جوه node_modules أو Node نفسه.`,
             when: "bug محتاج تتبّع خطوة خطوة، أو عايز تشوف شكل data جاية من API أو DB.",
             mistakes: "تفضل تدوس F11 فتلاقي نفسك جوه Express أو node_modules: Shift+F11 يطلّعك، و skipFiles يمنعها من الأول. وتسيب الـ debugger واقف، فالـ request في المتصفح يعمل timeout وتفتكر فيه مشكلة تانية."
-          }
+          },
+          sol: R`F5 هيشغّل السيرفر في الـ debugger والـ status bar هيتلوّن. اطلب الـ route، الكود هيقف على الـ breakpoint والسطر متظلل أصفر. F10 بينزل سطر سطر من غير ما يدخل جوه الدوال. في Watch ضيف [[req.body]]، هتلاقي الـ object بتاعه (أو [[undefined]] لو مفيش [[express.json()]]). في Debug Console [[JSON.stringify(req.headers)]] يطبع الـ headers كـ string.
+
+لو [[req.body]] طلع [[{}]] أو undefined مع POST، ده مش مشكلة debugger، ده الـ middleware ناقص. ولو F5 سألك «Select debugger»، يبقى مفيش [[launch.json]]، اختار Node.js أو شوف درس JavaScript Debug Terminal. ولو الطلب علّق في المتصفح، ده طبيعي: الـ server واقف عند الـ breakpoint، F5 يكمّل.`
         },
         {
           cmd: "JavaScript Debug Terminal",
@@ -857,7 +961,10 @@ Auto Attach ليه أوضاع: smart (أي سكربت بره node_modules، وأ
 [[--inspect]] نفسه والـ attach على بورت 9229 في تاب node، درس «الـ debugger».`,
             when: "أسرع بداية debug لأي مشروع Node أو Next.js أو tests.",
             mistakes: "تفتح ترمنال عادي وتستغرب إن الـ breakpoints مش بتقف: لازم JavaScript Debug Terminal أو Auto Attach. و Auto Attach على always بيبطّأ أي أمر node صغير. وفي Docker الترمنال ده مش هيوصل للـ container: محتاج attach على بورت (launch.json في مستوى ٣)."
-          }
+          },
+          sol: R`الترمنال الجديد هيبقى اسمه «JavaScript Debug Terminal». [[npm run dev]] منه هيطبع [[Debugger attached.]] (ممكن أكتر من مرة، واحدة لكل عملية node زي npm و nodemon والسيرفر). اطلب الـ route من المتصفح، و VS Code هيقف على الـ breakpoint من غير أي launch.json.
+
+الـ [[Debugger attached.]] المتكرر ده طبيعي. ولو الـ breakpoint مابقفش، اتأكد إن الملف اللي حطيت فيه هو اللي بيتنفذ فعلًا (مش نسخة متبنية في [[dist]])، وإن الـ source maps موجودة لو TypeScript. وافتكر إن الأمر ده لـ Node، مش لكود المتصفح.`
         }
       ]
     },
@@ -884,7 +991,14 @@ Ctrl+Shift+O           jump between headings`,
 الصور بمسارات نسبية بتظهر من الـ repo، فتتأكد إن المسار صح قبل الرفع.`,
             when: "أي ملف Markdown قبل الرفع.",
             mistakes: "تكتب مسار الصورة بـ backslash بتاع ويندوز فيبان عندك ويبوظ على GitHub: استخدم / دايمًا. وتعدّل في المعاينة وتستغرب: المعاينة للقراية بس، التعديل في الملف."
-          }
+          },
+          sol: R`Ctrl+K ثم V هيفتح المعاينة جنب الملف، وكل ما تكتب بتتحدث. الجدول ده مثلًا:
+
+[[| Command | What it does |]] ثم [[|---|---|]] ثم [[| npm run dev | start the dev server |]]
+
+هيظهر جدول بخطوط وعناوين عريضة، شبه GitHub.
+
+لو الجدول ظهر كسطور عادية فيها [[|]]، يبقى ناقص سطر [[|---|---|]] أو ناقص سطر فاضي قبل الجدول. ولو Ctrl+K V مشتغلش، دوس Ctrl+K وسيب وبعدين V لوحدها. والمعاينة بتاعة VS Code قريبة من GitHub بس مش نفس الحاجة، فحاجات زي الـ alerts بتاعة GitHub (NOTE و WARNING) ممكن تبان مختلفة.`
         },
         {
           cmd: "Ctrl+Alt+I",
@@ -905,7 +1019,10 @@ Esc                    dismiss`,
 الـ chat بيشوف الملفات اللي تديهاله (التحديد، أو [[#]] واسم ملف)، والكود ده بيتبعت لسيرفرات الخدمة.`,
             when: "شرح كود مش بتاعك، أو boilerplate، أو اقتراح test. مش بديل إنك تفهم التعديل.",
             mistakes: "تقبل تعديل كبير من غير ما تقراه، أو تدّي الـ chat ملف فيه [[.env]] أو مفاتيح. ولو الـ AI مقفول عندك، Ctrl+I بيفتح الاقتراحات العادية زي Ctrl+Space."
-          }
+          },
+          sol: R`حدد الدالة و Ctrl+I هيطلع خانة صغيرة فوقها، اكتب «add JSDoc». الـ AI هيضيف comment زي [[/** ... @param ... @returns ... */]] وهيبان كـ diff: الأخضر جديد والأحمر اتشال. زرار Accept (أو Ctrl+Enter) يقبل، و Discard يلغي. اقرا كل [[@param]] واتأكد إن الـ types والوصف صح، لأنه بيخمّن من الأسامي.
+
+لو Ctrl+I مفتحش حاجة، يبقى Copilot (أو أي AI extension) مش متفعّل أو مش عامل sign in، وفيه plan مجاني بيكفي للتجربة. ولو الـ diff غيّر الكود نفسه مش بس ضاف comment، ارفضه، ده بالظبط ليه قلنا اقرا الـ diff. وعلى الماك Cmd+I.`
         }
       ]
     },
@@ -936,7 +1053,10 @@ User settings على ويندوز في [[%APPDATA%\Code\User\settings.json]]، �
 الملف JSON بيقبل كومنتات، فتقدر تكتب [[//]] جواه تشرح ليه الإعداد ده موجود.`,
             when: "قبل أي إعداد اسأل نفسك: «ده ذوقي ولا قاعدة المشروع؟»",
             mistakes: "تحط إعدادات شخصية (الخط، الثيم، [[editor.fontSize]]) في Workspace وتعمل commit، فتفرضها على الفريق. وتغيّر إعداد في User وهو متغلوب من Workspace فتفتكره مش شغال: الإعداد بيبقى جنبه «Also modified in: Workspace»."
-          }
+          },
+          sol: R`[[@modified]] هيعرض بس الإعدادات اللي غيّرتها، وجنب كل واحد خط أزرق. دوس على تاب «Workspace» فوق، دوّر على [[editor.tabSize]] واكتب 2. VS Code هيعمل [[.vscode/settings.json]] في المشروع وفيه [[{ "editor.tabSize": 2 }]].
+
+لو غيّرت tabSize والملف لسه بيعرض 4 تحت يمين، ده لأن [[editor.detectIndentation]] مفعّل وبيقرا المسافات من الملف نفسه، أو فيه [[.editorconfig]] بيكسب. ولو الملف اتعمل بس في [[settings.json]] بتاع اليوزر، يبقى كنت على تاب User مش Workspace.`
         },
         {
           cmd: ".vscode/settings.json",
@@ -980,7 +1100,10 @@ User settings على ويندوز في [[%APPDATA%\Code\User\settings.json]]، �
             "امسح المسافات الزيادة في آخر السطور.",
             "TypeScript بتاع المشروع في node_modules (كل واحد يختارها مرة بـ Use Workspace Version).",
             "نهاية الإعدادات."
-          ]
+          ],
+          sol: R`بعد الملف ده، بوّظ مسافات ملف و Ctrl+S: هيتنسّق بـ Prettier، ولو فيه مشاكل ESLint ليها fix (زي [[let]] ممكن تبقى [[const]]) هتتصلح. وتحت يمين في الـ status bar هيبقى مكتوب [[LF]].
+
+لو التنسيق محصلش: اتأكد إن extension Prettier (esbenp.prettier-vscode) متسطب، وإلا [[defaultFormatter]] بيشاور على حاجة مش موجودة. ولو الملف لسه [[CRLF]]، ده لأن [[files.eol]] بيأثر على الملفات الجديدة بس، مش القديمة. دوس على CRLF تحت واختار LF، أو Prettier هيحوّلها لما ينسّق لأن الافتراضي بتاعه [[endOfLine: "lf"]]. ولو ESLint مصلحش حاجة، extension ESLint لازم يكون متسطب وشغال (شوف Output ثم ESLint).`
         },
         {
           cmd: "files.exclude",
@@ -1012,7 +1135,10 @@ node_modules متشالة من البحث افتراضيًا، لكن [[.next]] 
             "شيل من البحث بس: dist والملفات المضغوطة والـ lock file.",
             "متراقبش تغييرات فولدرات الـ build.",
             "نهاية الإعدادات."
-          ]
+          ],
+          sol: R`قبل الإعداد، البحث عن اسم دالة ممكن يطلع نتايج من [[.next]] و [[dist]] (كود متبني) و [[package-lock.json]]. بعده هيطلع النتايج من [[src]] بس، والعدد هيقل. وفولدر [[.next]] هيختفي من شجرة الملفات كمان.
+
+لو العدد متغيرش خالص، ده غالبًا لأن [[.next]] و [[dist]] موجودين في [[.gitignore]]، و VS Code افتراضيًا بيتجاهل اللي في [[.gitignore]] في البحث ([[search.useIgnoreFiles]]). يعني كانوا مستبعدين من الأول، وده طبيعي. الفرق هيبان في الملفات اللي مش في [[.gitignore]] زي [[package-lock.json]]، أو في شجرة الملفات.`
         },
         {
           cmd: ".vscode/extensions.json",
@@ -1054,7 +1180,10 @@ node_modules متشالة من البحث افتراضيًا، لكن [[.next]] 
             "نهاية اللستة.",
             "extensions متقترحهاش (formatter بيتعارض مع Prettier).",
             "نهاية الملف."
-          ]
+          ],
+          sol: R`لما تفتح المشروع في profile فاضي، هيظهر إشعار تحت يمين: «Do you want to install the recommended extensions from ... for this repository?» بزرارين Install و Show Recommendations. التاني يفتح Extensions على [[@recommended]] وهتلاقي اللستة اللي كتبتها بالظبط.
+
+لو الإشعار مظهرش، ممكن تكون قلت قبل كده «Don't Show Again»، أو كل الـ extensions متسطبة أصلًا. افتح [[@recommended]] بإيدك. ولو extension مظهرتش في اللستة، الـ ID غلط: لازم [[publisher.name]] بالظبط، تقدر تنسخه من صفحة الـ extension (الترس ثم Copy Extension ID).`
         }
       ]
     },
@@ -1117,7 +1246,10 @@ node_modules متشالة من البحث افتراضيًا، لكن [[.next]] 
             "نهاية التانية.",
             "نهاية اللستة.",
             "نهاية الملف."
-          ]
+          ],
+          sol: R`F5 على «API: npm run dev» هيشغّل [[npm run dev]] في الترمنال المدمج والـ debugger متوصل. اطلب الـ route من المتصفح أو curl، والكود هيقف على الـ breakpoint، والـ variables هتظهر في الشمال.
+
+لو السيرفر شغال من nodemon أو tsx watch، ده مش مشكلة: الـ debugger بيتوصل بالعمليات الفرعية لوحده. ولو الـ breakpoint رمادي (Unbound)، غالبًا TypeScript من غير source maps أو السيرفر بيشغّل نسخة متبنية. ولو قال [[Port 3000 in use]]، يبقى فيه نسخة تانية من السيرفر شغالة في ترمنال تاني، اقفلها الأول.`
         },
         {
           cmd: "launch.json لـ Next.js",
@@ -1167,7 +1299,10 @@ node_modules متشالة من البحث افتراضيًا، لكن [[.next]] 
             "نهاية الإعدادات.",
             "الاتنين مع بعض بضغطة F5 واحدة.",
             "نهاية الملف."
-          ]
+          ],
+          sol: R`«Next.js: both» هيشغّل السيرفر بـ [[--inspect]] في ترمنال ويفتح نافذة Chrome جديدة على [[localhost:3000]]. الطلب للـ route handler هيقف عند الـ breakpoint بتاع السيرفر، ودوسة الزرار في Chrome ده هتقف عند الـ breakpoint بتاع [[onClick]]، والاتنين في VS Code.
+
+لو breakpoint الـ client مابقفش، اتأكد إنك دوست الزرار في نافذة Chrome اللي VS Code فتحها، مش المتصفح العادي بتاعك. ولو السيرفر قال إن [[--inspect]] مش معروف، النسخة قديمة. شوف توثيق Next.js للـ debugging للنسخة بتاعتك (النسخ الحديثة بتدعم [[next dev --inspect]]). ولو Chrome مش متسطب، غيّر [[type]] لـ [[msedge]].`
         },
         {
           cmd: "tasks.json",
@@ -1217,7 +1352,10 @@ node_modules متشالة من البحث افتراضيًا، لكن [[.next]] 
             "نهاية التانية.",
             "نهاية اللستة.",
             "نهاية الملف."
-          ]
+          ],
+          sol: R`Ctrl+Shift+B هيشغّل typecheck على طول (لأنه [[isDefault]])، والناتج في ترمنال. لو فيه أغلاط، هتظهر في Problems (Ctrl+Shift+M) لكل ملفات المشروع مش المفتوحة بس، ودوسة على غلط تفتحه على السطر. للـ lint: Palette ثم «Tasks: Run Task» ثم lint.
+
+لو الأغلاط ظهرت في الترمنال ومش في Problems، يبقى الـ problemMatcher مش فاهم شكل الناتج: [[$tsc]] لـ tsc، و [[$eslint-stylish]] محتاج ESLint يطبع بالـ formatter الافتراضي (stylish)، لو بتستخدم [[--format]] تاني مش هيفهمه. ولو قال «npm script typecheck not found»، ضيف السكربت في package.json، زي [["typecheck": "tsc --noEmit"]].`
         }
       ]
     },
@@ -1258,7 +1396,10 @@ node_modules متشالة من البحث افتراضيًا، لكن [[.next]] 
             "Ctrl+Shift+Alt+T: شغّل الـ task اللي اسمها typecheck.",
             "Ctrl+Alt+M: كبّر اللوحة اللي تحت (الترمنال) ورجّعها.",
             "نهاية اللستة."
-          ]
+          ],
+          sol: R`بعد ما تحفظ الملف، حدد سطر [[npm run build]] في README (لازم ترمنال مفتوح) ودوس Ctrl+Alt+R: النص هيتبعت للترمنال ويتنفذ على طول، والـ build يبدأ.
+
+لو محصلش حاجة، الـ README لازم يبقى عليه الـ focus، لأن [[when: editorTextFocus]]. ولو في Markdown preview، ده مش editor. ولو Keyboard Shortcuts قال إن الاختصار عليه أكتر من أمر (زرار «Show Same Keybindings»)، ممكن extension تاني واخده. وعلى ويندوز Ctrl+Alt يساوي AltGr في بعض الـ layouts (زي الأوروبية)، فممكن يكتب حرف بدل الاختصار. العربي غالبًا مش هيتأثر.`
         },
         {
           cmd: ".code-snippets",
@@ -1304,7 +1445,27 @@ node_modules متشالة من البحث افتراضيًا، لكن [[.next]] 
             "الوصف اللي بيظهر في لستة الاقتراحات.",
             "نهاية الـ snippet.",
             "نهاية الملف."
-          ]
+          ],
+          sol: R`اعمل ملف [[.vscode/express.code-snippets]] بالمحتوى اللي تحت. في أي ملف [[.js]] أو [[.ts]] اكتب [[exroute]]، هيظهر في الاقتراحات، و Tab يكتب الـ handler: أول وقفة لستة تختار منها [[get]] أو [[post]]، و Tab يوديك للمسار، و Tab تاني يوديك جوه [[try]] مكان [[$0]].
+
+لو الـ snippet مظهرش: اتأكد إن الـ [[scope]] فيه اللغة الصح (ملفات [[.ts]] اسمها [[typescript]]، و [[.tsx]] اسمها [[typescriptreact]])، وإن الـ JSON صح (أي فاصلة ناقصة بتلغي الملف كله من غير رسالة واضحة). والـ backslash قبل علامة التنصيص جوه body لازم يبقى [[\"]]، وده اللي بيبوظ ناس كتير.`,
+          solCode: R`{
+  "Express route handler": {
+    "scope": "javascript,typescript",
+    "prefix": "exroute",
+    "body": [
+      "router.$__{1|get,post,put,patch,delete|}('/$__{2:path}', async (req, res, next) => {",
+      "  try {",
+      "    $0",
+      "    res.json({ ok: true });",
+      "  } catch (err) {",
+      "    next(err);",
+      "  }",
+      "});"
+    ],
+    "description": "Express route with try/catch that forwards errors to next()"
+  }
+}`
         },
         {
           cmd: "Profiles",
@@ -1327,7 +1488,10 @@ Export بيطلّع ملف أو gist، ودي طريقة حلوة تدّي إع�
 Settings Sync بيزامن الإعدادات والاختصارات والـ snippets والـ extensions والـ profiles. والإعدادات الخاصة بجهاز معين (مسارات مثلًا) تستثنيها بـ [[settingsSync.ignoredSettings]].`,
             when: "أكتر من نوع شغل على نفس الجهاز، أو أكتر من جهاز، أو قبل ما تفرمت.",
             mistakes: "تسطّب extension وانت في profile غلط وتدوّر عليها في التاني: اسم الـ profile بيظهر على أيقونة الترس تحت. وتشغّل Sync على جهاز شغل فيه إعدادات proxy أو مسارات خاصة، فتتنقل لجهازك الشخصي وتبوّظه."
-          }
+          },
+          sol: R`بعد [[code --profile Teaching .]] هيفتح شباك جديد والترس تحت شمال عليه اختصار اسم الـ profile. الخط الكبير والـ ٣ extensions بس هيبانوا، ولو فتحت شباك عادي هتلاقي إعداداتك القديمة زي ما هي.
+
+لو الأمر عمل profile جديد فاضي باسم مختلف، يبقى الاسم مش مطابق بالظبط (الحروف الكابيتال والمسافات فارقة)، واللي فيه مسافة لازم بين علامات تنصيص. ولو فتح الفولدر في شباك موجود بالـ profile القديم، اقفل الشباك ده الأول، لأن VS Code بيربط الفولدر بآخر profile اتفتح بيه.`
         }
       ]
     },
@@ -1360,7 +1524,10 @@ ssh prod 'du -sh ~/.vscode-server'`,
             "افتح فولدر على السيرفر prod (الاسم من ~/.ssh/config).",
             "نفس الحكاية لتوزيعة WSL اسمها Ubuntu.",
             "الـ VS Code Server واخد مساحة قد إيه على السيرفر."
-          ]
+          ],
+          sol: R`بعد Connect to Host واختيار السيرفر، أول مرة هيسطّب VS Code Server هناك (بياخد دقيقة) وتحت شمال هيبقى [[SSH: prod]]. File ثم Open Folder واكتب [[/var/log]]. افتح [[auth.log]] أو [[nginx/access.log]] وهتلاقي السطور في المحرر عادي، و Ctrl+F شغال.
+
+لو ظهر [[EACCES: permission denied]] وانت بتفتح لوج، ده لأن معظم اللوجات مملوكة لـ root أو جروب [[adm]]. ضيف يوزرك للجروب بـ [[sudo usermod -aG adm deploy]] وادخل تاني، أو اقراه من الترمنال بـ [[sudo less]]. ولو الاتصال فشل من VS Code ونجح من الترمنال، غالبًا VS Code بيقرا ملف config تاني، شوف [[remote.SSH.configFile]].`
         },
         {
           cmd: "devcontainer.json",
@@ -1402,7 +1569,10 @@ ssh prod 'du -sh ~/.vscode-server'`,
             "extensions تتسطّب جوه الـ container.",
             "نهاية customizations.",
             "نهاية الملف."
-          ]
+          ],
+          sol: R`بعد Reopen in Container، أول مرة هيبني الـ container (بياخد دقايق، وتقدر تشوف اللوج)، وبعدين تحت شمال هيبقى [[Dev Container: ...]]. [[node -v]] في الترمنال هيطبع النسخة اللي في الـ image، زي [[v22.x.x]] لو [[typescript-node:22]]، حتى لو جهازك عليه نسخة تانية أو مفيش node خالص. وده بالظبط الهدف.
+
+لو فشل بـ «Docker is not running» أو «Cannot connect to the Docker daemon»، شغّل Docker Desktop الأول. ولو [[node -v]] طلع نسخة جهازك، يبقى الترمنال ده مفتوح من قبل ما تدخل الـ container. افتح ترمنال جديد. والـ wizard ممكن يختار نسخة Node أحدث من المثال، عادي.`
         },
         {
           cmd: ".code-workspace",
@@ -1440,7 +1610,10 @@ ssh prod 'du -sh ~/.vscode-server'`,
             "نهاية اللستة.",
             "إعداد يسري على كل الفولدرات.",
             "نهاية الملف."
-          ]
+          ],
+          sol: R`بعد ما تحفظ الـ workspace، [[code myapp.code-workspace]] هيفتح شباك عنوانه فيه [[myapp (Workspace)]]، وشجرة الملفات فيها الفولدرين كـ roots منفصلين. البحث والـ Git شغالين على الاتنين، و Source Control هيوريك repo لكل فولدر لو كانوا repos منفصلين.
+
+لو فتحت الملف بدبل كليك وفتحه كـ JSON في تاب، دوس «Open Workspace» تحت يمين. ولو فولدر مظهرش، الـ [[path]] نسبي لمكان ملف [[.code-workspace]] نفسه مش للفولدر اللي انت فيه. ولو الـ settings اللي في الـ workspace ماشتغلتش في فولدر، ممكن [[.vscode/settings.json]] بتاع الفولدر نفسه بيكسب.`
         }
       ]
     },
@@ -1473,7 +1646,10 @@ git log --oneline -30 | code -`,
             "افتحه في الشباك الحالي بدل شباك جديد.",
             "افتح ملفين.",
             "افتح output أي أمر كملف في المحرر."
-          ]
+          ],
+          sol: R`[[code -r .]] هيفتح المشروع في الشباك اللي مفتوح بالفعل بدل شباك جديد. [[git log --oneline -30 | code -]] هيطبع في الترمنال [[Reading from stdin via: /tmp/code-stdin-xxx]] ويفتح تاب فيه ٣٠ سطر من الـ log، وتقدر تدوّر فيه بـ Ctrl+F. الترمنال هيفضل مستني لحد ما تقفل التاب أو تدوس Ctrl+C.
+
+لو [[code]] قال command not found: على الماك افتح VS Code و Palette ثم «Shell Command: Install 'code' command in PATH». على ويندوز التسطيب بيضيفه لوحده، اقفل الترمنال وافتحه. وعلى ويندوز في PowerShell أو CMD، [[code -]] بيشتغل بنفس الطريقة.`
         },
         {
           cmd: "code --goto",
@@ -1499,7 +1675,10 @@ git config --global core.editor "code --wait"`,
             "افتح server.ts على سطر 118 عمود 12.",
             "في الشباك الحالي، على سطر 5.",
             "خلي Git يفتح رسايل الـ commit والـ rebase في VS Code ويستنى تقفلها."
-          ]
+          ],
+          sol: R`[[code -g src/server.ts:118:12]] يفتح الملف والمؤشر على السطر ١١٨ العمود ١٢. بعد [[git config --global core.editor "code --wait"]]، [[git commit]] من غير [[-m]] هيطبع [[hint: Waiting for your editor to close the file...]] ويفتح تاب [[COMMIT_EDITMSG]]. اكتب الرسالة في أول سطر، احفظ، واقفل التاب: الـ commit هيخلص.
+
+لو قفلت التاب من غير ما تكتب حاجة، git هيقول [[Aborting commit due to empty commit message.]]، وده طبيعي. ولو git مستناش وعمل commit فاضي أو فتح vim، يبقى [[--wait]] ناقص أو الإعداد متحفظ غلط، شوف [[git config --global core.editor]].`
         },
         {
           cmd: "code --diff",
@@ -1527,7 +1706,10 @@ git config --global difftool.vscode.cmd 'code --wait --diff $LOCAL $REMOTE'`,
             "قارن config بالنسخة الاحتياطية قبل ما ترجّعها.",
             "خلي VS Code أداة الـ diff بتاعة Git.",
             "الأمر اللي Git يشغّله: النسختين في diff، ويستنى تقفل."
-          ]
+          ],
+          sol: R`[[code --diff .env.example .env]] هيفتح تاب diff: الشمال [[.env.example]] واليمين [[.env]]. السطور اللي في الشمال بس (أحمر) يعني متغيرات موثّقة ومش موجودة عندك، واللي في اليمين بس (أخضر) عندك ومش موثّقة. بعد الإعداد، [[git difftool HEAD~1 -- package.json]] هيسأل [[Launch 'vscode' [Y/n]?]]، دوس Enter ويفتح diff بين النسخة القديمة والحالية.
+
+لو الـ diff ظهر كله أحمر وأخضر مع إن الملفين شبه بعض، غالبًا فرق في line endings (CRLF و LF) أو ترتيب السطور. ولو [[difftool]] فتح أداة تانية، يبقى [[diff.tool]] متحفظ في مكان تاني (زي config المشروع). ولو الأمر اتعمل على ويندوز في PowerShell، علامات التنصيص المفردة حوالين [[$LOCAL]] مهمة عشان PowerShell ميحاولش يفكها.`
         },
         {
           cmd: "code --list-extensions",
@@ -1560,7 +1742,10 @@ Get-Content extensions.txt | ForEach-Object { code --install-extension $_ }`,
             "سطّب واحدة بالـ ID.",
             "شيل واحدة.",
             "نفس الـ restore من PowerShell."
-          ]
+          ],
+          sol: R`[[code --list-extensions > extensions.txt]] هيعمل ملف فيه ID لكل extension في سطر، زي [[dbaeumer.vscode-eslint]] و [[esbenp.prettier-vscode]]. و [[--show-versions]] بيضيف الإصدار: [[dbaeumer.vscode-eslint@3.0.x]]. امسح من الملف اللي مش بتستخدمه، والملف ده هو اللي هتسطّب بيه على جهاز جديد.
+
+لو الملف طلع فاضي، يبقى فيه أكتر من VS Code (زي Insiders أو Cursor) والـ [[code]] بيشاور على واحد تاني. ولو شغّلته من ترمنال جوه Remote-SSH أو WSL، هيطلع الـ extensions المتسطبة على الجهاز البعيد بس. وعلى ويندوز، [[xargs]] مش موجود في PowerShell، استخدم سطر PowerShell اللي في المثال.`
         }
       ]
     },
@@ -1589,7 +1774,10 @@ Mac: Shift+Cmd+U / Linux: Ctrl+K Ctrl+H`,
 لوحة Output (من القايمة اللي فيها تختار الـ extension) بتوريك رسايل كل extension، زي «Cannot find module» أو «config not found»، ودا أول مكان تبص فيه لو extension مش شغالة.`,
             when: "أخطاء مش منطقية بعد تسطيب أو توليد أو تبديل فرع، أو extension بطّلت ترد.",
             mistakes: "تقفل VS Code كله وتفتحه، ودا أبطأ وبيقفل الترمنالات والـ dev server. أو تفضل تعمل Restart والمشكلة إن TypeScript بتاع VS Code غير بتاع المشروع: شوف [[js/ts.tsdk.path]] في درس «.vscode/settings.json»."
-          }
+          },
+          sol: R`بعد Palette ثم «TypeScript: Restart TS Server»، الـ status bar تحت هيقول «Initializing JS/TS language features» ثواني، وبعدين الخطوط الحمرا اللي كانت على types اتولدت جديد (زي Prisma client) هتختفي من غير ما تقفل VS Code. ولو لسه موجودة، Ctrl+Shift+U ثم اختار «TypeScript» من اللستة فوق يمين، هيوريك لوج الـ server.
+
+لو الخط الأحمر لسه موجود بعد الـ restart، يبقى الغلط حقيقي: شغّل [[npx tsc --noEmit]] في الترمنال. لو هو كمان قال نفس الغلط، يبقى مش مشكلة المحرر. ولو الترمنال مقالش حاجة والمحرر لسه أحمر، غالبًا VS Code بيستخدم نسخة TypeScript غير اللي في المشروع، «TypeScript: Select TypeScript Version» ثم Use Workspace Version.`
         },
         {
           cmd: "code --disable-extensions",
@@ -1615,7 +1803,10 @@ Help ثم Open Process Explorer بيوريك كل عملية VS Code والرا�
             "افتح المشروع من غير أي extension.",
             "اقفل extension واحدة بس للجلسة دي.",
             "اطبع العمليات والرام والـ CPU (و VS Code مفتوح)."
-          ]
+          ],
+          sol: R`بـ [[code --disable-extensions .]] الشباك هيفتح أسرع بشكل ملحوظ لو عندك extensions كتير، وفي Extensions هتلاقيهم كلهم تحت «Disabled» (الإعداد ده للشباك ده بس، مش هيأثر بعدين). في الوضع العادي، Palette ثم «Developer: Show Running Extensions» هيعرض كل extension وجنبها وقت التفعيل بالـ ms، والأبطأ يستاهل تبص عليه.
+
+لو المشكلة اختفت مع [[--disable-extensions]]، يبقى extension هي السبب، و «Help: Start Extension Bisect» بيلاقيها في كام خطوة بدل ما تجرب واحدة واحدة. ولو المشكلة لسه موجودة، يبقى مش من الـ extensions: جرّب الإعدادات أو حجم المشروع (فولدر [[node_modules]] ضخم من غير watcherExclude).`
         },
         {
           cmd: "Ctrl+Shift+X",
@@ -1639,7 +1830,10 @@ Disable (Workspace) بيتحفظ لكل مشروع، فمشروع Python ميش�
 قبل ما تسطّب: بص على الناشر (علامة verified) وعدد التسطيبات وآخر تحديث. الـ extension بتشتغل بصلاحيات حسابك: تقرا ملفاتك وتكلّم النت.`,
             when: "إعداد جهاز جديد، أو المحرر بقى بطيء، أو مشروع بستاك جديد.",
             mistakes: "تسطّب Prettier ومعاه Beautify ومعاه formatter تالت، فكل حفظ الشكل يتغير: واحد بس، ومحدد في [[editor.defaultFormatter]]. وتسطّب extension من ناشر مجهول بيقلّد اسم مشهور: الـ extensions ليها صلاحيات كاملة على ملفاتك."
-          }
+          },
+          sol: R`[[@installed]] هيعرض كل اللي متسطب ومقسّم Enabled و Disabled، وفوق العدد. الرقم الطبيعي لمطوّر Node و React بين ١٠ و ٢٥. اللي فوق ٤٠ غالبًا فيه تكرار (زي ٣ extensions للـ formatting). الترس جنب extension ثم «Disable» يقفلها لكل حاجة، و «Disable (Workspace)» للمشروع ده بس.
+
+ملحوظة: فيه extensions بتتسطب لوحدها كجزء من extension تانية (Extension Pack)، فلو عملت Disable لواحدة ولقيتها رجعت، شيل الـ pack نفسه. ولو [[@recommended]] فاضي، يبقى المشروع مفيهوش [[.vscode/extensions.json]].`
         }
       ]
     }
