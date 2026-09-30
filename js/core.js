@@ -74,9 +74,10 @@ async function runJsCheck(code, tests){
   const con = {log:out, info:out, warn:out, error:out, table:out};
   const errText = e => '[['+(e && e.message !== undefined ? (e.name || 'Error')+': '+e.message : String(e))+']]';
   let fn;
-  try{ fn = new (async function(){}).constructor('test', 'expect', 'console', code+'\n;\n'+tests); }
+  // the tests go in their own block, so a helper they declare (const node, const root...) can't clash with the same name in the learner's code
+  try{ fn = new (async function(){}).constructor('test', 'expect', 'console', code+'\n;\n{\n'+tests+'\n}'); }
   catch(e){ return {results, logs, error:'الكود فيه غلطة في الكتابة، فمتشغّلش خالص: '+errText(e)}; }
-  try{ await fn((name, f) => queue.push([name, f]), expect, con); }
+  try{ await fn((name, f) => queue.push([String(name), f]), expect, con); }
   catch(e){ return {results, logs, error:'الكود رمى error قبل ما الاختبارات تبدأ: '+errText(e)}; }
   if (!queue.length) return {results, logs, error:'مفيش ولا test() اتسجّل. لو كاتب return بره أي دالة شيله.'};
   for (const [name, f] of queue){

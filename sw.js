@@ -34,7 +34,7 @@ self.addEventListener('fetch', e => {
       const c = await caches.open(VENDOR), hit = await c.match(req, { ignoreSearch: true });
       if (hit) return hit;
       const r = await fetch(req);
-      if (r.ok) c.put(req, r.clone());
+      if (r.ok) e.waitUntil(c.put(req, r.clone()));
       return r;
     })());
     return;
@@ -44,7 +44,7 @@ self.addEventListener('fetch', e => {
     const c = await caches.open(CACHE);
     try {
       const r = await fetch(req, same ? { cache: 'no-cache' } : undefined);
-      if (r.ok || r.type === 'opaque') c.put(req, r.clone());
+      if (r.ok || r.type === 'opaque') e.waitUntil(c.put(req, r.clone()));
       return r;
     } catch (err) {
       const hit = await c.match(req, { ignoreSearch: same });

@@ -228,7 +228,8 @@ const weakPool = () => allCards(isWeak);
 const duePool = () => { const t = day(); return allCards(k => isDue(k, t)); };
 function updateWeak(){
   let n = 0;
-  store.keys().forEach(k => { if (k.startsWith('fc:') && isWeak(k.slice(3))) n++; });
+  // counted like weakPool(): a card of a lesson that no longer exists can't be reviewed, so it doesn't count
+  store.keys().forEach(k => { if (k.startsWith('fc:') && lessonKeys().has(k.slice(3)) && isWeak(k.slice(3))) n++; });
   $('#weakN').textContent = AR(n);
   $('#weakBtn').hidden = !n;
 }
@@ -297,12 +298,13 @@ function fcStart(mode, pool, extra){
 function fcOpen(mode){ fcStart(mode || '', mode==='weak' ? weakPool() : mode==='due' ? duePool() : cards(shell, c => !level || c.l === level)); }
 
 /* level exam: up to 10 random lessons of one level, graded by the learner; 80% (8 of 10) passes. exam:<tab>:<level> = {last, pass} */
-function examGet(tab, l){ try{ return JSON.parse(store.get('exam:'+tab+':'+l)) || null; }catch(e){ return null; } }
-const examScore = r => AR(r.score)+'/'+AR(r.n);
+// an imported backup can hold anything, so only a well-formed record counts (and its date is escaped where it's shown)
+function examGet(tab, l){ try{ const r = JSON.parse(store.get('exam:'+tab+':'+l)); return r && r.last && typeof r.last==='object' ? r : null; }catch(e){ return null; } }
+const examScore = r => esc(AR(r.score)+'/'+AR(r.n));
 function examHTML(l){
   const r = examGet(shell, l), n = Math.min(10, cards(shell, c => c.l === l).length);
   return '<div class="exam-row" data-l="'+l+'"><button type="button" class="quiz-btn exam-btn" data-exam="'+l+'">امتحان المستوى '+AR(l)+'</button>'+
-    '<span class="exam-last">'+(r ? (r.pass ? '<b class="exam-ok">✓ عدّيته</b> ' : '')+'آخر نتيجة '+examScore(r.last)+' يوم '+r.last.date : AR(n)+' أسئلة من المستوى ده، وتعدّي بـ '+AR(Math.ceil(n*.8)))+'</span></div>';
+    '<span class="exam-last">'+(r ? (r.pass ? '<b class="exam-ok">✓ عدّيته</b> ' : '')+'آخر نتيجة '+examScore(r.last)+' يوم '+esc(String(r.last.date)) : AR(n)+' أسئلة من المستوى ده، وتعدّي بـ '+AR(Math.ceil(n*.8)))+'</span></div>';
 }
 function lvBadges(){
   document.querySelectorAll('.lv').forEach(b => {
@@ -362,7 +364,7 @@ function runJs(code, tests){
   });
 }
 function jsResultHTML(r){
-  if (r.timeout) return '<p class="chk-sum bad">الكود مخلصش: غالبًا loop مبتخلصش. راجع شرط الوقوف في الـ while أو الـ for (وقفناه بعد ٣ ثواني).</p>';
+  if (r.timeout) return '<p class="chk-sum bad">الكود مخلصش: غالبًا loop مبتخلصش، أو الحل أبطأ من المطلوب (زي O(n^2) على اختبار كبير). راجع شرط الوقوف في الـ while أو الـ for (وقفناه بعد ٣ ثواني).</p>';
   const n = r.results.filter(x => x.ok).length, all = r.results.length;
   let h = r.error ? '<p class="chk-sum bad">'+fmt(r.error)+'</p>' : '<p class="chk-sum '+(n===all ? 'ok' : 'bad')+'">'+(n===all ? '✓ كل الاختبارات عدّت ('+AR(n)+' من '+AR(all)+')، واتعلّم على «جربتها».' : 'عدّى '+AR(n)+' من '+AR(all)+'. صلّح اللي عليه ✗ وجرّب تاني.')+'</p>';
   if (all) h += '<ul class="chk-res">'+r.results.map(x => '<li class="'+(x.ok ? 'ok' : 'bad')+'"><span class="mk" aria-hidden="true">'+(x.ok ? '✓' : '✗')+'</span><span class="vh">'+(x.ok ? 'عدّى: ' : 'فشل: ')+'</span><span class="tn">'+esc(x.name)+'</span>'+(x.msg ? '<span class="msg">'+fmt(x.msg)+'</span>' : '')+'</li>').join('')+'</ul>';
