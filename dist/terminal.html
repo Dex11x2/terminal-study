@@ -912,10 +912,7 @@ date`,
             "[[pwd]] اختصار print working directory، يعني «اطبعلي الفولدر اللي انا واقف فيه دلوقتي».",
             "[[whoami]] يعني «who am I؟»: بيطبع اسم اليوزر اللي انت داخل بيه.",
             "[[date]] بيطبع التاريخ والوقت دلوقتي."
-          ],
-          sol: R`كل أمر هيطبع سطر واحد تحته والـ prompt يرجع تاني. [[pwd]] هيطبع الفولدر اللي انت فيه، وغالبًا أول ما تفتح هيبقى فولدرك: [[/home/ali]] على لينكس، [[/Users/ali]] على الماك، و [[C:\Users\Ali]] في PowerShell (هناك بيطلع تحت عنوان [[Path]] وشرطة). [[whoami]] هيطبع اسم اليوزر، وعلى ويندوز بيطبعه مع اسم الجهاز زي [[laptop\ali]]. و [[date]] هيطبع التاريخ والوقت دلوقتي.
-
-لو كتبتهم في CMD بدل PowerShell: [[pwd]] هيقولك إنه مش معروف (CMD بيستخدم [[cd]] لوحده بدله)، و [[date]] هيسألك تدخل تاريخ جديد، دوس Enter بس عشان تسيبه زي ما هو. عشان كده قلنا افتح PowerShell.`
+          ]
         },
         {
           cmd: "الـ prompt",
@@ -936,10 +933,7 @@ C:\Users\Ali>`,
             "نفس الفكرة بس اليوزر [[root]] (المدير)، وعلامة [[#]] في الآخر بتفكّرك إنك مدير، فخد بالك.",
             "PowerShell على ويندوز: [[PS]] يعني PowerShell، والباقي الفولدر اللي انت فيه.",
             "CMD على ويندوز: الفولدر اللي انت فيه وبعده [[>]]."
-          ],
-          sol: R`في [[ali@laptop:~/projects$]]: اليوزر [[ali]]، والجهاز [[laptop]]، والفولدر [[~/projects]] (يعني projects جوه فولدرك). بعد [[cd ..]] الجزء بتاع الفولدر هيبقى [[~]] بس، لأنك طلعت فولدر لفوق. في PowerShell مفيش اسم يوزر ولا جهاز في الـ prompt، بس المسار كامل: [[PS C:\Users\Ali>]] هيبقى [[PS C:\Users>]].
-
-على الماك الـ prompt الافتراضي بتاع zsh شكله [[ali@MacBook-Air ~ %]]: نفس المعلومات بس الفولدر من غير المسار كله، والعلامة [[%]] بدل [[$]]. ولو الـ prompt عندك متظبط بثيم (زي Oh My Zsh) ممكن يبان مختلف تمامًا، بس الفولدر غالبًا لسه موجود فيه.`
+          ]
         },
         {
           cmd: "تشريح الأمر",
@@ -967,10 +961,7 @@ ls --all`,
             "نفس اللي فوقه بالظبط، بس جمعنا الـ flagين في شرطة واحدة. أسرع في الكتابة.",
             "ضفنا argument: اسم الفولدر [[Documents]]، يعني اعرض اللي جوه Documents بدل الفولدر الحالي.",
             "flag طويل بشرطتين وكلمة كاملة. [[--all]] هي هي [[-a]]، بس أوضح في القراية."
-          ],
-          sol: R`[[ls]] هيطبع الأسامي بس جنب بعض. [[-l]] بيحوّلها لستة: سطر لكل حاجة فيه الصلاحيات والمالك والحجم والتاريخ. [[-l -a]] و [[-la]] و [[--all]] مع [[-l]] بيضيفوا الملفات المخفية اللي بتبدأ بنقطة زي [[.bashrc]]، وكمان [[.]] و [[..]]، والتلاتة [[-l -a]] و [[-la]] ناتجهم واحد بالظبط. [[ls -la Documents]] نفس الكلام بس لمحتوى Documents. ولاحظ إن [[ls --all]] من غير [[-l]] بيعرض المخفي بس جنب بعض، مش لستة.
-
-[[LS]] هيطلع [[bash: LS: command not found]] (أو [[zsh: command not found: LS]] على الماك)، لأن الأسامي حساسة للحروف الكابيتال. في PowerShell الأوامر مش حساسة للكابيتال فـ [[LS]] هيشتغل، بس [[ls -la]] هناك هيطلع error لأن [[ls]] في PowerShell اسم تاني لـ [[Get-ChildItem]] واختياراته مختلفة.`
+          ]
         },
         {
           cmd: "شجرة الفولدرات",
@@ -989,10 +980,7 @@ ls --all`,
 └── var
     └── log          log files`,
           try: R`اكتب [[ls /]] تشوف الفولدرات اللي في الروت، وبعدين [[ls ~]] تشوف اللي في فولدرك. على ويندوز جرب [[ls C:\]] في PowerShell.`,
-          flag: "script",
-          sol: R`[[ls /]] هيطلع حاجة زي: [[bin boot dev etc home lib media mnt opt proc root run sbin srv sys tmp usr var]]، وممكن فولدرات زيادة حسب التوزيعة. على الماك هتلاقي أسامي مختلفة شوية زي [[Applications Library System Users Volumes]]، لأن الماك بيحط فولدرات اليوزرز في [[/Users]] مش [[/home]]. [[ls ~]] هيطلع فولدراتك انت زي [[Desktop Documents Downloads]]، وعلى سيرفر جديد ممكن ميطلعش حاجة خالص، وده طبيعي: الفولدر فاضي.
-
-في PowerShell، [[ls C:\]] هيطلع جدول فيه [[Program Files]] و [[Users]] و [[Windows]] وغيرهم، وقدام كل واحد تاريخ آخر تعديل. الحرف [[d]] في عمود Mode معناه فولدر.`
+          flag: "script"
         },
         {
           cmd: "المسار (path)",
@@ -1020,10 +1008,7 @@ cd /var/log`,
             "اطلع خطوة لفوق، للفولدر اللي فيه projects.",
             "[[.]] معناها «هنا»، فالأمر ده مش هينقلك في حتة. هتستخدم النقطة دي بعدين في أوامر زي [[cp file.txt .]] يعني «انسخ لهنا».",
             "مسار مطلق تاني: فولدر اللوجات في السيستم."
-          ],
-          sol: R`لو اسمك ali على لينكس، [[pwd]] بعد كل خطوة هيطلع بالترتيب: الفولدر اللي كنت فيه، بعدين [[/home]]، بعدين [[/home/ali]]، بعدين [[/home/ali/projects]]، بعدين [[/home/ali]] تاني (نقطتين = لفوق)، بعدين [[/home/ali]] برضه (نقطة واحدة = مكانك، فمفيش حاجة اتغيرت)، وفي الآخر [[/var/log]]. على الماك هيبقى [[/Users/ali]] بدل [[/home/ali]].
-
-لو [[cd projects]] طلعلك [[No such file or directory]]، يبقى انت مش في فولدرك وقتها (المسار النسبي بيتحسب من مكانك)، أو الفولدر لسه متعملش. الأمر [[cd ~]] قبله هو اللي بيضمن إنك في المكان الصح.`
+          ]
         },
         {
           cmd: "اختصارات هتنقذك",
@@ -1043,10 +1028,7 @@ Ctrl+L         clear the screen
 Ctrl+Shift+C   copy (Linux terminal)
 Ctrl+Shift+V   paste (Linux terminal)`,
           try: "اكتب [[cd Doc]] ودوس Tab وشوف بيكمّل Documents. اكتب [[ping google.com]] وسيبه شغال، وبعدين وقّفه بـ Ctrl+C (على ويندوز اكتب [[ping -t google.com]]، لأن ping هناك بيقف لوحده بعد ٤ مرات).",
-          flag: "keys",
-          sol: R`[[cd Doc]] + Tab هتبقى [[cd Documents/]] لوحدها (بالشرطة في الآخر). لو مكملتش، يبقى فيه أكتر من فولدر بيبدأ بـ Doc، أو مفيش خالص، أو انت مش في فولدرك. دوس Tab مرتين تشوف الاختيارات. وخلي بالك إن الحروف فارقة: [[cd doc]] + Tab مش هتلاقي Documents على لينكس.
-
-[[ping google.com]] هيفضل يطبع سطر كل ثانية زي [[64 bytes from ... time=20.1 ms]]. أول ما تدوس Ctrl+C هيقف ويطبع ملخص: كام packet اتبعت واتستلم، ونسبة الضايع. لو دوست Ctrl+C ومحصلش حاجة، اتأكد إن الشباك نفسه هو اللي عليه الـ focus.`
+          flag: "keys"
         },
         {
           cmd: "لما حاجة تغلط",
@@ -1071,10 +1053,7 @@ cat: /etc/shadow: Permission denied`,
             "الرد: «No such file or directory» يعني مفيش فولدر بالاسم ده هنا.",
             "حاولنا نقرا ملف الباسوردات بتاع السيستم وده ممنوع.",
             "الرد: «Permission denied» يعني مش مسموحلك."
-          ],
-          sol: R`هتشوف بالظبط زي المثال: [[lss: command not found]] (مفيش أمر بالاسم ده، كتبته غلط)، و [[cd: Documnets: No such file or directory]] (مفيش فولدر بالاسم ده، الحروف متلخبطة)، و [[cat: /etc/shadow: Permission denied]] (الملف موجود بس مش مسموحلك تقراه، لأنه فيه الباسوردات المتشفرة). لاحظ إن كل رسالة بتبدأ بالأمر اللي اشتكى، وبعده الحاجة اللي اشتكى منها، وفي الآخر المشكلة.
-
-على الماك هتلاقي [[zsh: command not found: lss]] بترتيب مختلف، والباقي زي بعض. و [[/etc/shadow]] مش موجود على الماك أصلًا، فهيطلعلك [[No such file or directory]] بدل Permission denied. ولو شغّلت [[cat /etc/shadow]] وطلعلك محتوى الملف، يبقى انت داخل كـ root، شوف الـ prompt: غالبًا آخره [[#]].`
+          ]
         }
       ]
     },
@@ -1099,10 +1078,7 @@ exit`,
             "[[ssh]] ادخل على السيرفر. [[root]] اسم اليوزر، و [[@]] بمعنى «على»، وبعدها الـ IP بتاع السيرفر. يعني «ادخل كـ root على السيرفر ده».",
             "[[hostname]] بيطبع اسم الجهاز، وهنا هيطبع اسم السيرفر، ودليل إنك جواه.",
             "[[exit]] اخرج من السيرفر وارجع لجهازك."
-          ],
-          sol: R`أول مرة هيسألك [[Are you sure you want to continue connecting (yes/no/[fingerprint])?]]: اكتب [[yes]] (دي بصمة السيرفر وبتتحفظ في [[~/.ssh/known_hosts]]). بعد الدخول الـ prompt هيتغير لحاجة زي [[root@my-server:~#]]، و [[hostname]] هيطبع اسم السيرفر اللي اخترته أو اللي الشركة حطته، مش اسم جهازك. و [[exit]] هيطبع [[Connection to 203.0.113.10 closed.]] والـ prompt يرجع لجهازك.
-
-لو طلعلك [[Connection timed out]] يبقى الـ IP غلط أو بورت 22 مقفول في الـ firewall. ولو [[Permission denied (publickey)]] يبقى السيرفر مستني مفتاح SSH ومش لاقيه، ودي بتتحل في تاب ssh config.`
+          ]
         },
         {
           cmd: "IP و الدومين و DNS",
@@ -1120,10 +1096,7 @@ nslookup example.com`,
           lines: [
             "[[ping]] بيبعت رسالة صغيرة للموقع ويستنى الرد. [[-c 1]] (من count) يعني ابعت مرة واحدة بس. وأول سطر في الناتج فيه الـ IP.",
             "[[nslookup]] بيسأل الـ DNS مباشرة: «الدومين ده IP بتاعه كام؟»."
-          ],
-          sol: R`أول سطر شكله [[PING example.com (104.20.23.154) 56(84) bytes of data.]]: الرقم اللي بين القوسين هو الـ IP. جرب مثلًا google.com و github.com و wikipedia.org. الأرقام عندك ممكن تختلف عن صاحبك، ومرة عن مرة، لأن المواقع الكبيرة عندها سيرفرات كتير والـ DNS بيديك الأقرب ليك. على ويندوز هتلاقيه [[Pinging google.com [142.250.x.x] with 32 bytes of data]]. ولو طلع عنوان طويل فيه نقطتين زي [[2606:4700::...]] ده IPv6، وهو برضه IP بس بالشكل الجديد.
-
-لو الـ ping طلع بالـ IP وبعدين قال [[Request timeout]] أو [[100% packet loss]]، ده مش معناه إن الموقع واقع: سيرفرات كتير بتقفل الـ ping عمدًا، والمهم هنا إن الـ DNS رجّعلك رقم.`
+          ]
         },
         {
           cmd: "البورت (port)",
@@ -1141,10 +1114,7 @@ curl https://example.com:443`,
           lines: [
             "[[curl]] بيعمل طلب زي المتصفح بالظبط بس من الترمنال. هنا بيكلّم البرنامج اللي على بورت 3000 على جهازك.",
             "نفس الفكرة لموقع حقيقي على بورت 443 (https). عادةً مش بنكتب 443 لأنه الافتراضي، بس كتبناه هنا عشان تشوف فين البورت في العنوان."
-          ],
-          sol: R`مشروع Vite هيكتب [[Local: http://localhost:5173/]]، و Next.js [[http://localhost:3000]]، و Express على حسب اللي في الكود. من ترمنال تاني [[curl http://localhost:5173]] (بالبورت اللي ظهرلك) هيطبع HTML الصفحة. في Vite هتلاقي صفحة صغيرة فيها [[<div id="root"></div>]] وسكربتات، لأن الـ React بيرسم الباقي في المتصفح مش في السيرفر.
-
-لو طلعلك [[Failed to connect to localhost port 3000: Connection refused]] يبقى مفيش حاجة على البورت ده: إما البورت غلط، أو السيرفر وقف لما قفلت الترمنال الأولاني. لازم السيرفر يفضل شغال في ترمنال والـ curl في تاني.`
+          ]
         },
         {
           cmd: "HTTP: الطلب والرد",
@@ -1162,10 +1132,7 @@ curl -i https://example.com/not-here`,
           lines: [
             "[[-i]] (من include) يعني اعرضلي الـ status والـ headers كمان، مش الصفحة بس. أول سطر فيه 200.",
             "طلب لصفحة مش موجودة، فهتلاقي أول سطر فيه 404."
-          ],
-          sol: R`الأمر الأول أول سطر فيه [[HTTP/2 200]] (أو [[HTTP/1.1 200 OK]]) وبعده headers زي [[content-type: text/html]] وبعدين HTML الصفحة. التاني الرقم المتوقع 404: الصفحة مش موجودة. الفرق كله في الرقم، والاتنين رد حقيقي من السيرفر، لأن 404 معناها «السيرفر اشتغل تمام وقالك مش لاقي الحاجة دي»، مش إن النت وقع.
-
-لو الـ curl مطبعش أي status ورجّع [[Could not resolve host]] يبقى مفيش نت أو كتبت الدومين غلط. ولو شبكتك وراها proxy أو firewall ممكن تشوف 403 في الاتنين، وده الـ proxy اللي رد مش example.com. وخد بالك إن مواقع كتير بترجّع 200 لأي مسار وتعرض صفحة «مش موجود» من جوه، فالرقم هو اللي يتصدّق مش شكل الصفحة.`
+          ]
         },
         {
           cmd: "root و sudo",
@@ -1187,10 +1154,7 @@ sudo apt update`,
             "نفس السؤال بصلاحيات المدير، فهيطبع [[root]]. ده بيوضّح إن sudo بيخليك مدير للأمر ده بس.",
             "تحديث لستة البرامج من غير صلاحيات، فهيرفض.",
             "نفس الأمر بـ sudo، فهيشتغل (بعد ما تكتب الباسورد)."
-          ],
-          sol: R`[[whoami]] هيطبع اسمك، و [[sudo whoami]] هيطلب باسوردك ويطبع [[root]]: الأمر اتنفذ كمدير. [[apt update]] من غير sudo هيطلع [[E: Could not open lock file /var/lib/apt/lists/lock - open (13: Permission denied)]]، ومع sudo هيشتغل ويطبع سطور [[Hit:]] و [[Get:]] وفي الآخر عدد الحزم اللي ليها تحديث. ولو كتبت الباسورد ومفيش حاجة ظهرت، ده الطبيعي.
-
-[[sudo]] بيفتكر الباسورد حوالي ١٥ دقيقة (في أوبونتو)، فالأمر التاني مش هيسألك تاني. ولو طلعلك [[ali is not in the sudoers file]] يبقى اليوزر ده مش مسموحله يبقى مدير، ومحتاج root يضيفه لجروب sudo. على الماك مفيش apt أصلًا (عندك [[brew]] ومش محتاج sudo)، فالتجربة دي لـ لينكس أو WSL.`
+          ]
         },
         {
           cmd: "الصلاحيات rwx",
@@ -1210,10 +1174,7 @@ ls -l script.sh`,
             "اعرض الملفات بالتفاصيل، والصلاحيات في أول كل سطر.",
             "[[chmod]] يعني change mode (غيّر الصلاحيات). [[+x]] يعني ضيف صلاحية التشغيل.",
             "اعرض الملف تاني، هتلاقي [[x]] ظهرت."
-          ],
-          sol: R`بعد [[touch]]: [[-rw-r--r-- 1 ali ali 0 Sep 30 05:08 script.sh]]: صاحبه يقرا ويكتب، والباقي يقروا بس، ومفيش [[x]] لحد. بعد [[chmod +x script.sh]]: [[-rwxr-xr-x]]: الـ [[x]] اتضاف للتلاتة. والرقم 0 هو الحجم لأن الملف فاضي. وفي بعض التيرمنالات الملف هيتلوّن أخضر لأنه بقى قابل للتشغيل.
-
-لو عملت التجربة دي في فولدر على ويندوز من جوه WSL (زي [[/mnt/c/...]]) ممكن تلاقي الصلاحيات [[-rwxrwxrwx]] من الأول ومش بتتغير. ده مش غلطك: نظام ملفات ويندوز معندوش rwx بتاع لينكس. اعملها في [[~]] جوه WSL.`
+          ]
         }
       ]
     },
@@ -1240,10 +1201,7 @@ cat files.txt | grep txt`,
             "ناتج [[ls]] بيروح لـ [[wc -l]] (من word count و lines)، اللي بيعدّ السطور. النتيجة: عدد الملفات.",
             "الناتج مش هيظهر على الشاشة، هيتحفظ في ملف اسمه files.txt.",
             "اقرا الملف، ووصّل اللي فيه لـ [[grep]] اللي بيسيب بس السطور اللي فيها كلمة txt."
-          ],
-          sol: R`[[ls]] بيطبع الأسامي. [[ls | wc -l]] بيطبع رقم واحد بس: عدد الحاجات في الفولدر. [[ls > files.txt]] مش هيطبع أي حاجة على الشاشة، والناتج راح الملف. و [[cat files.txt | grep txt]] بيطبع السطور اللي فيها txt بس.
-
-الحتة اللي بتفاجئ الناس: هتلاقي [[files.txt]] نفسه مكتوب جوه files.txt. ده لأن الشيل بيعمل الملف الأول (فاضي) وبعدين يشغّل [[ls]]، فـ ls بيشوفه. ولو شغّلت [[ls > files.txt]] مرتين، المرة التانية بتمسح الأولانية وتكتب من الأول، مش بتضيف. عشان تضيف استخدم [[>>]].`
+          ]
         },
         {
           cmd: "متغيرات البيئة",
@@ -1263,10 +1221,7 @@ echo $MY_NAME`,
             "اطبع الـ PATH: لستة فولدرات بينهم نقطتين.",
             "[[export]] اعمل متغير جديد اسمه MY_NAME وقيمته Ali. من غير مسافات حوالين [[=]].",
             "اطبع قيمة المتغير اللي لسه عاملينه."
-          ],
-          sol: R`[[export MY_NAME=Ali]] مش هيطبع حاجة، و [[echo $MY_NAME]] هيطبع [[Ali]]. بعد ما تقفل الترمنال وتفتحه، [[echo $MY_NAME]] هيطبع سطر فاضي، مش error، لأن bash بيعتبر المتغير اللي مش موجود نص فاضي. ولو عايزه يفضل، حط سطر الـ export في [[~/.bashrc]] (أو [[~/.zshrc]] على الماك).
-
-غلطتين مشهورين: [[export MY_NAME = Ali]] بمسافات حوالين [[=]] بيطلع error، لازم يبقوا لازقين. و [[echo MY_NAME]] من غير [[$]] بيطبع الكلمة نفسها «MY_NAME». في PowerShell الطريقة [[$env:MY_NAME = "Ali"]] وتقراه بـ [[$env:MY_NAME]].`
+          ]
         },
         {
           cmd: "Git ببساطة",
@@ -1286,10 +1241,7 @@ git log --oneline`,
             "[[add .]] جهّز كل التعديلات في الفولدر ده ([[.]] يعني هنا) للحفظ.",
             "[[commit]] احفظ نقطة. [[-m]] (من message) وبعدها رسالة بين علامتي تنصيص بتوصف عملت إيه.",
             "اعرض كل نقط الحفظ، كل واحدة في سطر ([[--oneline]])."
-          ],
-          sol: R`بعد الـ commit التاني، [[git log --oneline]] هيطبع سطرين، الأحدث فوق: [[eab4e2e second save]] وتحته [[a14340f first save]]. الأرقام اللي في الأول (hash) هتبقى مختلفة عندك، ودي طبيعية، كل commit ليه hash فريد.
-
-لو أول commit قالك [[Please tell me who you are]]، يبقى Git محتاج اسمك وإيميلك مرة واحدة: [[git config --global user.name "Ali"]] و [[git config --global user.email "ali@example.com"]]. ولو التاني قال [[nothing added to commit]]، يبقى نسيت [[git add .]] بعد التعديل، أو استخدم [[git commit -am "..."]] اللي بيعمل add للملفات المتتبعة لوحده.`
+          ]
         },
         {
           cmd: "السكربت",
@@ -1311,10 +1263,7 @@ echo "Done"`,
             "اعمل فولدر اسمه backup. [[-p]] يعني متطلعش error لو موجود أصلًا.",
             "انسخ كل ملف بينتهي بـ .txt لجوه فولدر backup. النجمة [[*]] معناها «أي اسم».",
             "اطبع إنه خلص."
-          ],
-          sol: R`هيطبع [[Starting...]] وبعدها [[Done]]، وفولدر [[backup]] هيتعمل وفيه نسخ من كل ملفات [[.txt]] اللي جنب السكربت. [[ls backup]] يوريك الملفات. ولو شغّلته تاني مش هيشتكي، لأن [[mkdir -p]] مبيعملش error لو الفولدر موجود.
-
-لو قبل [[chmod +x]] كتبت [[./my.sh]] هيطلع [[Permission denied]]. ولو مفيش ولا ملف txt جنبه هيطلع [[cp: cannot stat '*.txt': No such file or directory]] بس برضه هيكمّل ويطبع Done، لأن bash مش بيقف عند أول error من غير [[set -e]]. ولو كتبت [[my.sh]] من غير [[./]] هيقولك command not found، لأن الفولدر الحالي مش في الـ PATH.`
+          ]
         },
         {
           cmd: "إزاي تذاكر الصفحة دي",
@@ -1327,10 +1276,7 @@ echo "Done"`,
 
 وأهم حاجة: بوّظ حاجات. اعمل فولدر lab أو ماكينة تجربة، وجرّب فيها كل حاجة حتى الأوامر الخطيرة. الغلط في مكان التجربة بيعلّم أكتر من أي شرح.`,
           example: "",
-          try: "اعمل فولدر lab دلوقتي، وحدد لنفسك هتذاكر إمتى كل يوم (حتى لو ٢٠ دقيقة)، وابدأ بـ bash المستوى ١.",
-          sol: R`مفيش ناتج واحد صح هنا، بس التجربة تبقى متعملة لو عندك تلات حاجات: فولدر فعلًا اتعمل (مثلًا [[mkdir ~/lab]] وبعدين [[cd ~/lab]] و [[pwd]] يطبع [[/home/ali/lab]])، ومعاد محدد (مثلًا «كل يوم ٩ بالليل، ٢٠ دقيقة»، مش «لما أفضى»)، وانك فتحت bash المستوى ١ وعلّمت على أول درس.
-
-الغلطة المشهورة إنك تقرا تاب كامل في قعدة واحدة من غير ما تكتب ولا أمر. بعد أسبوع مش هيفضل حاجة. أحسن تخلص ٣ دروس بالتجربة بتاعتهم من إنك تقرا ٣٠.`
+          try: "اعمل فولدر lab دلوقتي، وحدد لنفسك هتذاكر إمتى كل يوم (حتى لو ٢٠ دقيقة)، وابدأ بـ bash المستوى ١."
         }
       ]
     }
@@ -11825,7 +11771,12 @@ exit`,
             when: "كل مرة تشتغل على السيرفر.",
             mistakes: "تنسى انت فين، وتنفّذ على جهازك حاجة كانت للسيرفر أو العكس. بص على الـ prompt قبل أي أمر مهم."
           },
-          lines: ["ادخل السيرفر كـ root.", "اخرج وارجع لجهازك."]
+          lines: ["ادخل السيرفر كـ root.", "اخرج وارجع لجهازك."],
+          sol: R`أول دخول بيسألك [[The authenticity of host '203.0.113.10' can't be established]] ومعاه fingerprint، اكتب [[yes]]، وبعدها الـ prompt بيتغير لحاجة زي [[root@my-server:~#]]. و [[exit]] بيطبع [[logout]] و [[Connection to 203.0.113.10 closed.]] وترجع لـ prompt جهازك.
+
+وبالـ alias ([[ssh myserver]] مثلًا) المفروض تدخل نفس السيرفر من غير ما تكتب IP ولا يوزر، لأن [[~/.ssh/config]] فيه [[HostName]] و [[User]] و [[IdentityFile]].
+
+الأغلاط الشائعة: [[Permission denied (publickey)]]: المفتاح مش متضاف للسيرفر أو [[IdentityFile]] غلط. و [[Connection timed out]]: IP غلط أو بورت 22 مقفول في firewall المزود. و [[REMOTE HOST IDENTIFICATION HAS CHANGED]] بعد ما تعيد تسطيب السيرفر: امسح السطر القديم بـ [[ssh-keygen -R 203.0.113.10]].`
         },
         {
           cmd: "hostnamectl",
@@ -11857,7 +11808,12 @@ uptime`,
             "الرام: المستخدم والفاضي.",
             "مساحة الديسك.",
             "شغال بقاله قد إيه، ومتوسط الضغط."
-          ]
+          ],
+          sol: R`الملخص بيبقى أربع سطور من الأوامر دي: النظام من [[hostnamectl]] (سطر [[Operating System: Ubuntu 24.04.x LTS]]) أو [[lsb_release -a]]، وعدد الأنوية من [[nproc]] (زي [[2]])، والرام من [[free -h]] في عمود [[total]] سطر [[Mem:]] (زي [[1.9Gi]])، والمساحة الفاضية من [[df -h]] عمود [[Avail]] سطر [[/]].
+
+مثال لملخص: «Ubuntu 24.04 LTS، 2 core، 2GB رام (1.3GB available)، 32GB فاضيين من 50». و [[uptime]] بيقولك من امتى السيرفر شغال والـ load.
+
+الغلط الشائع: تاخد [[free]] من عمود [[free]] وتفتكر الرام خلصانة؛ لينكس بيستخدم الرام الفاضية كاش، والرقم الحقيقي في [[available]]. وفي Docker أو WSL [[hostnamectl]] ممكن يطلع [[System has not been booted with systemd]]؛ ده عادي هناك، استخدم [[lsb_release -a]] أو [[cat /etc/os-release]].`
         },
         {
           cmd: "timedatectl",
@@ -11879,7 +11835,12 @@ date`,
             when: "أول ما تجهّز السيرفر، قبل ما تحط أي cron. ولما تلاقي الأوقات في اللوج مش منطقية.",
             mistakes: "تغيّر المنطقة بعد ما حطيت مهام cron، فكل المواعيد تتزق. قرّر من الأول."
           },
-          lines: ["الوقت والمنطقة الزمنية الحالية.", "غيّر المنطقة لتوقيت القاهرة.", "اتأكد إن الوقت بقى صح."]
+          lines: ["الوقت والمنطقة الزمنية الحالية.", "غيّر المنطقة لتوقيت القاهرة.", "اتأكد إن الوقت بقى صح."],
+          sol: R`بعد [[sudo timedatectl set-timezone Africa/Cairo]] (مش بيطبع حاجة)، [[timedatectl]] بيوري [[Time zone: Africa/Cairo (EEST, +0300)]] أو [[(EET, +0200)]] حسب التوقيت الصيفي، و [[System clock synchronized: yes]]. و [[date]] بيطبع الوقت بتوقيت مصر مع [[EEST]] أو [[EET]].
+
+[[System clock synchronized: yes]] و [[NTP service: active]] معناهم إن الساعة بتتظبط لوحدها من الإنترنت، وده مهم لشهادات SSL والتوكنز.
+
+الغلط الشائع: [[Invalid or missing time zone]]: الاسم لازم زي [[Africa/Cairo]] بالظبط؛ [[timedatectl list-timezones | grep -i cairo]] يطلّعهولك. وخلّي بالك إن التطبيقات اللي كانت شغالة (و cron) ممكن تفضل بالمنطقة القديمة لحد ما تعمل لها restart.`
         }
       ]
     },
@@ -11914,7 +11875,12 @@ sudo apt upgrade -y`,
             "حدّث لستة البرامج المتاحة.",
             "اعرض إيه اللي ليه تحديث.",
             "حدّث كل البرامج، و [[-y]] وافق على كل حاجة من غير ما تسأل."
-          ]
+          ],
+          sol: R`[[sudo apt update]] بيخلص بسطر زي [[45 packages can be upgraded. Run 'apt list --upgradable' to see them.]] (أو [[All packages are up to date.]]). و [[apt list --upgradable]] بيطبع سطر لكل باكدج بالشكل [[base-files/noble-updates 13ubuntu10.5 amd64 [upgradable from: 13ubuntu10.4]]]. عدّ السطور ده جوابك (عندي كانوا 160 تقريبًا على سيستم مااتحدثش من فترة).
+
+[[sudo apt upgrade -y]] بيطبع [[X upgraded, Y newly installed, 0 to remove and Z not upgraded.]] وبعدين بيسطّب. الـ X ده رقم اللي اتحدثوا.
+
+الأغلاط الشائعة: [[Could not get lock /var/lib/dpkg/lock-frontend]]: unattended-upgrades شغال في الخلفية، استنى دقايق وماتمسحش ملف الـ lock. وشاشة بنفسجي بتسأل [[Which services should be restarted?]]: سيب الاختيارات زي ما هي واضغط Enter. و [[Z not upgraded]] مش غلط؛ غالبًا phased updates أو kernel هتتسطب بعدين.`
         },
         {
           cmd: "apt install / remove",
@@ -11942,7 +11908,12 @@ sudo apt autoremove`,
             "معلومات عن برنامج قبل ما تسطّبه.",
             "شيل برنامج.",
             "شيل الحاجات اللي اتسطبت معاه ومبقاش ليها لازمة."
-          ]
+          ],
+          sol: R`[[sudo apt install -y htop]] بيخلص بـ [[Setting up htop (3.3.0-...)]]، و [[htop]] بيفتح شاشة ملونة بالـ CPU والرام والعمليات؛ اخرج بـ [[q]] أو F10.
+
+[[sudo apt remove htop]] بيطبع [[The following packages will be REMOVED: htop]] و [[Removing htop (...)]]. و [[sudo apt autoremove]] بيشيل الباكدجات اللي اتسطبت كـ dependencies ومبقاش حد محتاجها، ولو مفيش بيطبع [[0 upgraded, 0 newly installed, 0 to remove]].
+
+الغلط الشائع: [[E: Unable to locate package]]: نسيت [[apt update]] الأول، أو الاسم غلط (دوّر بـ [[apt search]]). وخلّي بالك إن [[remove]] بيسيب ملفات الإعدادات في [[/etc]]، و [[purge]] هو اللي بيمسحها.`
         },
         {
           cmd: "NodeSource",
@@ -11972,7 +11943,12 @@ node -v && npm -v`,
             "شغّله: بيضيف المستودع والمفتاح.",
             "سطّب Node (و npm معاه) من المستودع الجديد.",
             "اتأكد من النسخ."
-          ]
+          ],
+          sol: R`قبل الإضافة: [[apt-cache policy nodejs]] بيطبع [[Candidate: 18.19.1+dfsg-6ubuntu5]] وجنب النسخة [[500 http://archive.ubuntu.com/ubuntu noble/universe]]. يعني Node 18 القديمة من مستودع أوبونتو (جربتها على أوبونتو 24.04).
+
+بعد السكربت: [[Candidate: 24.x.x-1nodesource1]] ومصدرها [[https://deb.nodesource.com/node_24.x nodistro/main]]، وأولويتها أعلى من بتاعة أوبونتو فهي اللي هتتسطب. و [[node -v]] بعد التسطيب [[v24.x]].
+
+الغلط الشائع: Candidate لسه 18 بعد السكربت: السكربت فشل (اقرا آخر سطور ناتجه) أو ماعملش [[apt update]]. ولو كان عندك nodejs من أوبونتو متسطب قبل كده، ممكن التسطيب يطلع conflict مع [[libnode]]؛ [[sudo apt remove nodejs libnode*]] الأول. ماجربتش التسطيب نفسه هنا.`
         },
         {
           cmd: "reboot",
@@ -11996,7 +11972,12 @@ sudo reboot`,
             "لو الملف ده موجود، السيرفر محتاج ريستارت.",
             "أنهي برامج محتاجة الريستارت.",
             "اعمل ريستارت (الموقع هيقع ثواني)."
-          ]
+          ],
+          sol: R`[[sudo reboot]] بيقطع SSH على طول ([[Connection to ... closed by remote host.]]). استنى دقيقة وادخل تاني. [[uptime]] المفروض يقول [[up 1 min]].
+
+[[systemctl --failed]] في الحالة السليمة بيطبع [[0 loaded units listed.]]. ولو فيه خدمة واقعة بتظهر بـ [[failed]] واسمها، واقرا السبب بـ [[journalctl -u اسمها -b]].
+
+و [[ls /var/run/reboot-required]] بعد الـ reboot المفروض يقول [[No such file or directory]]، يعني مفيش reboot مطلوب تاني. الغلط الشائع: السيرفر مابيرجعش خالص: غالبًا تعديل في [[/etc/fstab]] لديسك مش موجود من غير [[nofail]]، والحل من console المزود مش SSH.`
         }
       ]
     },
@@ -12033,7 +12014,12 @@ tmux برنامج بيشتغل على السيرفر نفسه، وجواه تر�
             "اعرض الجلسات الموجودة.",
             "ارجع لجلسة work.",
             "اقفل الجلسة خالص."
-          ]
+          ],
+          sol: R`بعد [[Ctrl+B]] ثم [[D]] بيطبع [[[detached (from session work)]]] وترجع للشيل العادي. وبعد ما تخرج من SSH وتدخل تاني: [[tmux ls]] بيطبع [[work: 1 windows (created ...)]]، و [[tmux attach -t work]] بيرجّعك لـ htop زي ما سيبته بالظبط وشغال.
+
+ده لأن الجلسة شغالة على السيرفر نفسه مش مربوطة بالـ SSH، فقطع الاتصال مابيقتلهاش. نفس الفكرة لأمر طويل زي [[docker compose build]].
+
+الأغلاط الشائعة: [[no server running on /tmp/tmux-1000/default]]: مفيش جلسات (اتقفلت أو السيرفر اتعمله reboot؛ tmux مش بيعيش بعد reboot). و [[sessions should be nested with care]]: انت أصلًا جوه tmux. و Ctrl+B و D مع بعض مش هيشتغل؛ لازم تسيب Ctrl+B الأول وبعدين D.`
         }
       ]
     },
@@ -12062,7 +12048,12 @@ tmux برنامج بيشتغل على السيرفر نفسه، وجواه تر�
             when: "لما nano مش موجود، أو أمر يفتحلك vim لوحده. ولو حبيته، vim أسرع بكتير في التعديل لما تتعوّد عليه، بس ده اختياري.",
             mistakes: "إنك تكتب علطول من غير [[i]]، فالحروف تتنفذ كأوامر وتبوّظ الملف. لو حصل، Esc وبعدين [[:q!]] يخرجك من غير ما يحفظ الضرر."
           },
-          lines: ["افتح (أو اعمل) ملف test.txt في vim. اضغط i عشان تكتب، و Esc ثم [[:wq]] تحفظ وتخرج."]
+          lines: ["افتح (أو اعمل) ملف test.txt في vim. اضغط i عشان تكتب، و Esc ثم [[:wq]] تحفظ وتخرج."],
+          sol: R`بعد [[:wq]] الملف فيه التلات سطور. [[cat test.txt]] بيوريهم، و [[wc -l test.txt]] بيطبع [[3 test.txt]].
+
+التسلسل: [[vim test.txt]]، و [[i]] (تحت هيظهر [[-- INSERT --]])، واكتب التلات سطور، و [[Esc]]، وحط المؤشر على سطر و [[dd]] (السطر يختفي)، و [[u]] (يرجع، وتحت يطبع [[1 line less; before #1]] أو [[1 more line]])، و [[:wq]] (تحت [[written]]).
+
+الأغلاط الشائعة: تكتب [[dd]] أو [[:wq]] وانت لسه في INSERT فيتكتبوا كنص: اضغط Esc الأول. و [[E37: No write since last change]] لما تكتب [[:q]] بعد تعديل: يا [[:wq]] يا [[:q!]]. ولو فتحت ملف في [[/etc]] من غير sudo هيطلع [[E45: 'readonly' option is set]].`
         }
       ]
     },
@@ -12097,7 +12088,12 @@ su - deploy`,
             "ضيف deploy ([[-a]] append) لجروب ([[-G]]) اسمه sudo، فيقدر يستخدم sudo.",
             "اتأكد إن sudo ظهر في جروباته.",
             "بدّل ليوزر deploy في نفس الترمنال. الـ [[-]] بتحمّل إعداداته كاملة كأنه لسه داخل."
-          ]
+          ],
+          sol: R`[[sudo adduser deploy]] بيسألك باسورد مرتين وبعدين بيانات (Full Name وغيره، سيبها فاضية بـ Enter). و [[groups deploy]] بعد usermod بيطبع [[deploy : deploy sudo users]]. جربتها على أوبونتو 24.04 وطلعت كده ([[users]] بيتضاف افتراضيًا).
+
+[[su - deploy]] بيغيّر الـ prompt لـ [[deploy@server:~$]]، و [[sudo whoami]] بيسأل عن باسورد deploy (مش root) وبعدين بيطبع [[root]]. و [[exit]] بيرجّعك.
+
+الغلط الشائع: [[deploy is not in the sudoers file]]: الـ usermod اتعمل بعد ما دخلت بـ su، فالجلسة القديمة مش شايفة الجروب. اعمل [[exit]] وادخل تاني. ولو نسيت [[-a]] في [[usermod -aG]]، اليوزر هيتشال من كل الجروبات التانية.`
         },
         {
           cmd: "نقل مفتاح SSH",
@@ -12119,7 +12115,12 @@ ssh deploy@203.0.113.10`,
           lines: [
             "انسخ فولدر [[.ssh]] بتاع root (اللي فيه المفاتيح المسموحة) لفولدر deploy، وخلّي deploy صاحبه ([[--chown]]).",
             "من جهازك في نافذة جديدة: جرّب تدخل بـ deploy."
-          ]
+          ],
+          sol: R`[[ssh deploy@203.0.113.10]] من جهازك بيدخل على طول من غير باسورد، والـ prompt [[deploy@server:~$]]. و [[ls -la ~/.ssh]] جوه بيوري [[authorized_keys]] ملك [[deploy deploy]].
+
+وده شغال لأن [[rsync --chown=deploy:deploy]] نسخ نفس [[authorized_keys]] بتاع root وخلّى deploy صاحبه. لو صاحب الملف root، sshd بيرفض المفتاح.
+
+الغلط الشائع: [[Permission denied (publickey)]] مع إن الملف موجود: الصلاحيات أوسع من اللازم. لازم [[~/.ssh]] تبقى 700 و [[authorized_keys]] 600 وملك deploy: [[sudo chmod 700 /home/deploy/.ssh && sudo chmod 600 /home/deploy/.ssh/authorized_keys]]. و [[sudo tail /var/log/auth.log]] على السيرفر بيقولك السبب ([[bad ownership or modes]]).`
         },
         {
           cmd: "passwd / deluser",
@@ -12141,7 +12142,12 @@ sudo deluser --remove-home olduser`,
             when: "حد في الفريق ساب. يوزر تجربة خلص دوره. أو باسورد اتكشف ولازم يتغير.",
             mistakes: "[[--remove-home]] على يوزر في فولدره حاجات مهمة. خد باك أب الأول لو مش متأكد."
           },
-          lines: ["غيّر باسورد deploy (هيسألك الجديد مرتين).", "امسح يوزر olduser وفولدره كله."]
+          lines: ["غيّر باسورد deploy (هيسألك الجديد مرتين).", "امسح يوزر olduser وفولدره كله."],
+          sol: R`[[sudo adduser testuser]] بعدين [[sudo deluser --remove-home testuser]] بيطبع [[info: Removing files ...]] و [[info: Removing crontab ...]] و [[info: Removing user 'testuser' ...]]. وبعدها [[id testuser]] بيطبع [[no such user]]، و [[ls /home]] مابقاش فيه الفولدر. جربتها بالظبط.
+
+و [[sudo passwd deploy]] بيسأل الباسورد الجديد مرتين ويطبع [[passwd: password updated successfully]].
+
+الغلط الشائع: [[userdel: user testuser is currently used by process 1234]]: فيه جلسة أو عملية شغالة باليوزر ده، اقفلها الأول ([[sudo pkill -u testuser]]). و [[deluser]] من غير [[--remove-home]] بيسيب الفولدر وملفاته.`
         }
       ]
     },
@@ -12184,7 +12190,12 @@ sudo sshd -T | grep -Ei "permitrootlogin|passwordauthentication"`,
             "اختبر الملف ([[-t]] من test). لو مطبعش حاجة يبقى سليم.",
             "طبّق الإعدادات بريستارت لخدمة ssh.",
             "اعرض الإعدادات الفعلية ([[-T]] كابيتال)، وسيب بس السطرين المهمين. [[-E]] عشان [[|]] تبقى «أو»، و [[-i]] من غير فرق بين الحروف."
-          ]
+          ],
+          sol: R`[[sudo sshd -t]] مابيطبعش حاجة لو الملف سليم. و [[sudo sshd -T | grep -Ei "permitrootlogin|passwordauthentication"]] بعد التعديل بيطبع [[permitrootlogin no]] و [[passwordauthentication no]]. (قبل التعديل على أوبونتو بيبقى [[permitrootlogin without-password]].)
+
+من نافذة جديدة: [[ssh root@IP]] بيطلع [[Permission denied (publickey)]]، و [[ssh deploy@IP]] بيدخل عادي. سيب النافذة القديمة مفتوحة لحد ما تتأكد.
+
+الغلط الشائع: [[sshd -T]] لسه بيقول [[passwordauthentication yes]] مع إنك غيرته: فيه ملف في [[/etc/ssh/sshd_config.d/]] (زي [[50-cloud-init.conf]]) بيقول yes، و sshd بياخد أول قيمة يلاقيها، والـ Include في أول الملف. جربتها: Include فيه yes قبل سطر no، والنتيجة yes. عدّل الملف ده. ولو كتبت قيمة غلط، [[sshd -t]] بيقول [[unsupported option]] ورقم السطر.`
         }
       ]
     },
@@ -12224,7 +12235,12 @@ sudo ufw delete 3`,
             "شغّل الفايروول. هيحذرك إنه ممكن يقطع SSH، وانت فاتحه فتمام.",
             "اعرض القواعد وقدام كل واحدة رقم.",
             "امسح القاعدة رقم ٣."
-          ]
+          ],
+          sol: R`[[sudo ufw status numbered]] بعد enable بيطبع [[Status: active]] وقايمة مرقمة: [[[ 1] OpenSSH ALLOW IN Anywhere]]، و [[[ 2] 80,443/tcp ALLOW IN Anywhere]]، ونفسهم [[(v6)]].
+
+من جهازك: قبل enable، [[curl http://IP:3000]] بيرد (لو التطبيق سامع على 0.0.0.0). بعد enable بيعلّق ويخلص بـ [[Connection timed out]]، لأن 3000 مش مفتوح. ودي النتيجة الصح: التطبيق يتوصل له من Nginx بس.
+
+الغلط الشائع: تعمل [[ufw enable]] قبل [[allow OpenSSH]] فتقفل على نفسك (هو بيحذرك [[Command may disrupt existing ssh connections]]). والتاني: 3000 لسه مفتوح من بره مع إن ufw مقفول، لأن Docker بيفتح البورتات المنشورة من ورا ufw؛ انشرها على [[127.0.0.1:3000:3000]]. جربت صيغة القواعد هنا ([[Rules updated]])، بس ماشغلتش enable.`
         },
         {
           cmd: "fail2ban",
@@ -12250,7 +12266,12 @@ sudo fail2ban-client set sshd unbanip 198.51.100.7`,
             "شغّله دلوقتي ومع كل ريستارت ([[enable --now]]).",
             "اعرض حالة حماية SSH: كام محاولة فاشلة وكام IP محظور.",
             "فك الحظر عن IP معين."
-          ]
+          ],
+          sol: R`[[sudo fail2ban-client status sshd]] بيطبع شجرة زي:
+
+[[Status for the jail: sshd]]، وتحتها [[Currently failed: 3]] و [[Total failed: 412]]، وتحت Actions [[Currently banned: 7]] و [[Total banned: 58]] و [[Banned IP list:]] وبعدها الـ IPs. على سيرفر عليه IP عام، يوم واحد كفاية تلاقي عشرات أو مئات المحاولات، لأن بوتات بتلف على كل IP وتجرب باسوردات.
+
+ماعنديش سيرفر عام هنا، فالأرقام دي مثال للشكل مش نتيجة. الغلط الشائع: [[Sorry but the jail 'sshd' does not exist]]: الـ jail مش متفعّل؛ اعمل [[/etc/fail2ban/jail.local]] فيه [[[sshd]]] و [[enabled = true]]. ولو [[Total failed: 0]] على طول، غالبًا fail2ban مش لاقي اللوج (على 24.04 محتاج [[backend = systemd]]).`
         },
         {
           cmd: "unattended-upgrades",
@@ -12274,7 +12295,12 @@ cat /var/log/unattended-upgrades/unattended-upgrades.log`,
             "سطّبه (غالبًا موجود أصلًا).",
             "فعّله. هيسألك سؤال واحد، اختار Yes.",
             "اعرض سجل التحديثات اللي اتعملت لوحدها."
-          ]
+          ],
+          sol: R`[[sudo dpkg-reconfigure -plow unattended-upgrades]] بيسأل [[Automatically download and install stable updates?]] اختار Yes. وبعدها [[cat /etc/apt/apt.conf.d/20auto-upgrades]] بيوري [[APT::Periodic::Update-Package-Lists "1";]] و [[APT::Periodic::Unattended-Upgrade "1";]].
+
+بعد يوم، [[cat /var/log/unattended-upgrades/unattended-upgrades.log]] فيه سطور زي [[INFO Starting unattended upgrades script]] و [[INFO Allowed origins are: ...]] و [[INFO Packages that will be upgraded: ...]] أو [[INFO No packages found that can be upgraded unattended]].
+
+الغلط الشائع: اللوج فاضي أو مش موجود: الـ timers ([[apt-daily.timer]] و [[apt-daily-upgrade.timer]]) لسه مااشتغلوش؛ [[systemctl list-timers | grep apt]] يوريك الميعاد الجاي. وللتجربة الفورية: [[sudo unattended-upgrade --dry-run --debug]]. ماجربتش ده على سيرفر حقيقي هنا.`
         }
       ]
     },
@@ -12333,7 +12359,12 @@ cat /var/log/unattended-upgrades/unattended-upgrades.log`,
             "قول للتطبيق الزائر جه بـ http ولا https.",
             "قفلة بلوك location.",
             "قفلة بلوك server."
-          ]
+          ],
+          sol: R`المطلوب هنا الملف نفسه في [[/etc/nginx/sites-available/myapp]]، ومفيش ناتج لسه. [[cat /etc/nginx/sites-available/myapp]] المفروض يوريه بنفس الشكل، والأقواس [[{ }]] متقفلة، وكل سطر جوه بينتهي بـ [[;]].
+
+الدومين الوهمي كفاية، لأنك هتختبر بـ [[curl -H "Host: example.com" http://127.0.0.1]] في الدرس الجاي. وطبيعي لو التطبيق على 3000 مش شغال لسه، الرد يبقى 502.
+
+الغلط الشائع: تكتب الملف في [[sites-enabled]] مباشرة أو بامتداد غلط، أو تنسى [[;]] في آخر سطر، ودي هتبان في [[nginx -t]] الجاي. ولو فتحته بـ nano من غير sudo هيقولك [[Permission denied]] وقت الحفظ.`
         },
         {
           cmd: "تفعيل الموقع",
@@ -12367,7 +12398,12 @@ curl -H "Host: example.com" http://127.0.0.1`,
             "شيل الموقع التجريبي اللي جاي مع Nginx (بتشيل الاختصار بس).",
             "اختبر الإعدادات، ولو سليمة طبّقها من غير ما تقطع الزوار.",
             "جرّب من السيرفر نفسه كأن الزائر كتب example.com."
-          ]
+          ],
+          sol: R`لو مسحت [[;]] من آخر [[proxy_pass http://127.0.0.1:3000]]، [[sudo nginx -t]] بيطبع:
+
+[[nginx: [emerg] invalid number of arguments in "proxy_pass" directive in /etc/nginx/sites-enabled/myapp:6]] و [[nginx: configuration file /etc/nginx/nginx.conf test failed]]. ده لأن السطر اللي بعده اتضم له كـ arguments. ولو مسحتها من آخر سطر قبل [[}]]، الرسالة بتبقى [[unexpected "}"]] برقم السطر. جربت الحالتين.
+
+و [[&&]] منعت الـ reload، فالموقع شغال بالإعداد القديم. بعد ما تصلّح: [[syntax is ok]] و [[test is successful]]، و [[curl -H "Host: example.com" http://127.0.0.1]] بيرجع رد التطبيق (أو [[502 Bad Gateway]] لو التطبيق مش شغال). الغلط الشائع: رقم السطر بيشاور على ملف [[sites-enabled]] وانت بتعدّل في [[sites-available]]؛ ده نفس الملف لأنه link.`
         },
         {
           cmd: "لوجات Nginx",
@@ -12395,7 +12431,12 @@ sudo grep " 500 " /var/log/nginx/access.log | tail`,
             "آخر ٥٠ مشكلة.",
             "طلّع عمود الـ status من كل سطر، وعدّ كل رقم اتكرر كام مرة، ورتّبهم من الأكتر.",
             "هات الطلبات اللي رجعت 500 بس، وآخر ١٠ منهم. المسافات حوالين 500 عشان ميجيبش أرقام زي 1500."
-          ]
+          ],
+          sol: R`بعد ما توقّف التطبيق وتفتح الموقع: المتصفح بيوري [[502 Bad Gateway]]، و [[sudo tail -n 5 /var/log/nginx/error.log]] فيه:
+
+[[connect() failed (111: Connection refused) while connecting to upstream, client: ..., server: example.com, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/"]]. يعني Nginx شغال، بس مفيش حد سامع على 3000. و [[access.log]] فيه نفس الطلب بـ 502، وأمر الـ awk بيعدّها ([[1 502]]). جربتها بالظبط.
+
+الغلط الشائع: تدوّر في [[access.log]] بس وتلاقي 502 من غير سبب؛ السبب دايمًا في [[error.log]]. ولو الرسالة [[upstream timed out (110)]] يبقى التطبيق شغال بس بطيء أو مهنّج، وده غير الـ refused.`
         }
       ]
     },
@@ -12434,7 +12475,12 @@ systemctl list-timers | grep certbot`,
             "اعرض الشهادات اللي عندك وبتخلص إمتى.",
             "جرّب التجديد من غير ما تجدد فعلًا.",
             "اتأكد إن مهمة التجديد الأوتوماتيك موجودة."
-          ]
+          ],
+          sol: R`[[sudo certbot --nginx -d test.example.com]] بيسأل إيميل والموافقة أول مرة، وفي الآخر [[Successfully received certificate.]] و [[Certificate is saved at: /etc/letsencrypt/live/test.example.com/fullchain.pem]] و [[Successfully deployed certificate for test.example.com to /etc/nginx/sites-enabled/...]].
+
+[[sudo certbot certificates]] بيوري [[Expiry Date: ... (VALID: 89 days)]]، و [[certbot renew --dry-run]] بيخلص بـ [[Congratulations, all simulated renewals succeeded]]. وفي المتصفح القفل ظاهر.
+
+ماجربتهاش هنا (محتاجة دومين). الغلط الشائع: [[Timeout during connect (likely firewall problem)]]: بورت 80 مقفول في ufw أو firewall المزود. و [[DNS problem: NXDOMAIN]]: الـ subdomain لسه مش متسجل أو [[dig +short test.example.com]] مش بيرجّع IP السيرفر. استنى الـ DNS قبل ما تكرر، عشان rate limit.`
         },
         {
           cmd: "certbot --webroot",
@@ -12474,7 +12520,12 @@ ls certbot/conf/live/example.com/`,
             "...من غير أسئلة، وتجربة بس (--dry-run).",
             "الدومين بالـ www ومن غيرها.",
             "الشهادة اتحفظت هنا."
-          ]
+          ],
+          sol: R`مع [[--dry-run]] الناتج بيخلص بـ [[The dry run was successful.]]، ومفيش شهادة اتحفظت. من غيره: [[Successfully received certificate.]] و [[Certificate is saved at: /etc/letsencrypt/live/example.com/fullchain.pem]] (المسار جوه الـ container)، و [[ls certbot/conf/live/example.com/]] بيوري [[README cert.pem chain.pem fullchain.pem privkey.pem]].
+
+أول سطرين في المثال لازم يطلعوا نفس الـ IP: IP السيرفر من [[api.ipify.org]]، و IP الدومين من [[getent]]. لو مختلفين، مفيش داعي تكمّل.
+
+ماجربتهاش هنا (محتاجة دومين). الغلط الشائع: [[Invalid response from http://example.com/.well-known/acme-challenge/...: 404]]: الـ webroot في certbot ([[-w /var/www/certbot]]) مش نفس الفولدر اللي nginx بيخدم منه المسار ده، أو الـ volume مش مشترك بين الاتنين. و [[ls]] يقول [[Permission denied]] لأن الملفات ملك root: استخدم [[sudo ls]].`
         },
         {
           cmd: "certbot --standalone",
@@ -12508,7 +12559,12 @@ container الـ Nginx يركّب [[/etc/letsencrypt:/etc/letsencrypt:ro]] وي�
             "اتأكد إن الطريقة والـ hooks اتحفظوا للتجديد.",
             "timer التجديد موجود؟",
             "جرّب التجديد كامل بالـ hooks."
-          ]
+          ],
+          sol: R`[[sudo certbot renew --dry-run]] بيطبع [[Running pre-hook command: cd /srv/myapp && docker compose stop frontend]]، وبعدين [[Simulating renewal of an existing certificate for example.com]]، وبعدين [[Running post-hook command: ...start frontend]]، وفي الآخر [[Congratulations, all simulated renewals succeeded]].
+
+والموقع بيقف ثواني (لو عامل curl في لوب هتلاقي كام طلب فشلوا) ويرجع. و [[grep]] على ملف الـ renewal بيوري [[authenticator = standalone]] و [[pre_hook = ...]] و [[post_hook = ...]]، يعني التجديد الأوتوماتيك هيعمل نفس الحكاية.
+
+ماجربتهاش هنا. الغلط الشائع: [[Could not bind TCP port 80 because it is already in use]]: الـ pre-hook مااشتغلش أو وقف service غلط. ولو الـ hooks ماتسجلتش في الملف (عملت الشهادة من غيرها)، ضيفهم في [[/etc/letsencrypt/renewal-hooks/pre/]] و [[post/]] كسكربتات.`
         }
       ]
     },
@@ -12539,7 +12595,12 @@ docker run --rm hello-world`,
             "نزّل سكربت التسطيب الرسمي ([[-fsSL]]: اسكت، وافشل لو فيه error، وتابع التحويلات) وشغّله بـ sh.",
             "ضيف deploy لجروب docker. وبعدها لازم تخرج وتدخل تاني.",
             "جرّب كونتينر تجربة، وامسحه بعد ما يخلص ([[--rm]])."
-          ]
+          ],
+          sol: R`[[docker run --rm hello-world]] من غير sudo بيطبع [[Hello from Docker!]] و [[This message shows that your installation appears to be working correctly.]]، وبعدها شرح للخطوات اللي حصلت. جربت ده.
+
+ده بيشتغل من غير sudo لأن deploy بقى في جروب docker. و [[groups]] بيوري [[docker]] في القايمة.
+
+الغلط الشائع: [[permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock]]: الـ usermod اتعمل بس الجلسة قديمة. اخرج من SSH وادخل تاني (أو [[newgrp docker]]). وافتكر إن جروب docker = صلاحيات root عمليًا، فمتضفش له غير اليوزر اللي بيعمل deploy.`
         },
         {
           cmd: "docker ps / logs / exec",
@@ -12569,7 +12630,12 @@ docker stats`,
             "لوجات كونتينر api: آخر ١٠٠ سطر، وتابع اللي جاي ([[-f]]).",
             "افتح ترمنال sh جوه كونتينر api ([[-it]]: تفاعلي وترمنال). اخرج بـ exit.",
             "استهلاك كل كونتينر لايف. Ctrl+C للخروج."
-          ]
+          ],
+          sol: R`[[docker ps]] بيوري [[web]] و [[0.0.0.0:8080->80/tcp]] و [[Up ...]]. و [[docker exec -it web sh]] بيدخلك [[/ #]] جوه (أو [[#]] في صورة nginx العادية debian)، و [[exit]] بيخرجك والـ container شغال.
+
+و [[docker logs web]] بيوري سطور الـ entrypoint ([[/docker-entrypoint.sh: Configuration complete; ready for start up]])، وبعد ما تفتح [[http://IP:8080]] أو [[curl localhost:8080]] هتلاقي سطر [[GET / HTTP/1.1" 200]]. جربت نفس الخطوات.
+
+الغلط الشائع: [[docker logs api]] من المثال يطلع [[No such container: api]] لأن الاسم في التجربة [[web]]. و [[exec -it web bash]] ممكن يطلع [[executable file not found]] في صور alpine؛ استخدم [[sh]]. ولو فتحت 8080 من بره ومش شغال، ufw مش السبب (Docker بيعدّيه)؛ غالبًا firewall المزود.`
         },
         {
           cmd: "docker compose",
@@ -12599,7 +12665,24 @@ docker compose down`,
             "تابع لوجات خدمة api بس.",
             "نزّل أحدث نسخ للصور الجاهزة، وبعدين طبّقها.",
             "اقفل كل حاجة وامسح الكونتينرات (الداتا بتفضل)."
-          ]
+          ],
+          sol: R`[[docker compose ps]] بيوري خدمتين [[Up]]: nginx بالبورت المنشور و redis من غير بورت. و [[curl localhost:8080]] بيرجع صفحة nginx، و [[docker compose exec redis redis-cli ping]] بيرد [[PONG]].
+
+ملف بسيط كفاية: خدمة [[web]] بـ [[image: nginx:alpine]] و [[ports: ["127.0.0.1:8080:80"]]]، وخدمة [[redis]] بـ [[image: redis:7-alpine]]. وتقدر تتأكد إن الاتنين على نفس الشبكة: [[docker compose exec web ping -c1 redis]].
+
+الغلط الشائع: [[no configuration file provided: not found]]: انت مش في الفولدر اللي فيه [[compose.yml]]. و [[yaml: line X]]: مسافات غلط (لازم spaces مش tabs).`,
+          solCode: R`cat > compose.yml <<'EOF2'
+services:
+  web:
+    image: nginx:alpine
+    ports: ["127.0.0.1:8080:80"]
+  redis:
+    image: redis:7-alpine
+EOF2
+docker compose up -d
+docker compose ps
+curl -s localhost:8080 | head -4
+docker compose exec redis redis-cli ping`
         },
         {
           cmd: "تنضيف Docker",
@@ -12626,7 +12709,12 @@ docker system prune`,
             "Docker واكل قد إيه، ومنه قد إيه ممكن يتمسح.",
             "امسح كل الصور اللي مش مستخدمة ([[-a]] all). هيسألك تأكيد.",
             "امسح الكونتينرات الواقفة والصور المعلّقة والـ cache."
-          ]
+          ],
+          sol: R`[[docker system df]] قبل بيطبع جدول [[TYPE TOTAL ACTIVE SIZE RECLAIMABLE]]، وعلى سيرفر بقاله شهور بيعمل build هتلاقي [[Images]] و [[Build Cache]] بالجيجات، و RECLAIMABLE كبير.
+
+بعد [[docker image prune -a]] (بيسأل [[Are you sure you want to continue? [y/N]]]) بيطبع الـ images اللي اتمسحت وفي الآخر [[Total reclaimed space: 3.2GB]] مثلًا. و [[system df]] بعدها بيوري الأرقام قلّت، و [[df -h /]] بيوري المساحة الفاضية زادت.
+
+الغلط الشائع: [[docker system prune]] بيمسح الـ containers الواقفة، فلو فيه container موقّفه عن قصد هيتمسح. و [[Build Cache]] مش بيتمسح بـ image prune؛ محتاج [[docker builder prune]]. وماتستخدمش [[--volumes]] إلا لو متأكد.`
         }
       ]
     },
@@ -12669,7 +12757,12 @@ pm2 save`,
             "اعمل ريستارت لـ api (بعد ما تحدّث الكود).",
             "هيطبعلك أمر فيه sudo، انسخه ونفّذه عشان pm2 يقوم مع السيرفر.",
             "احفظ لستة التطبيقات الشغالة دلوقتي عشان ترجع بعد الريستارت."
-          ]
+          ],
+          sol: R`[[pm2 list]] بيوري جدول فيه [[api]] و [[status]] [[online]] و [[↺]] (عدد مرات الـ restart) و [[mem]]. و [[pm2 startup]] كيوزر عادي بيطبع سطر [[sudo env PATH=$PATH:/usr/bin ... pm2 startup systemd -u deploy --hp /home/deploy]]: انسخه وشغّله. و [[pm2 save]] بيطبع [[Successfully saved in /home/deploy/.pm2/dump.pm2]].
+
+بعد [[sudo reboot]] والدخول تاني، [[pm2 list]] بيوري [[api]] [[online]] بـ uptime قليل، من غير ما تعمل start.
+
+جربت start و list و save (وطلعت زي كده)، بس الـ reboot محتاج سيرفر حقيقي. الغلط الشائع: [[pm2 list]] بعد الـ reboot فاضي: نسيت [[pm2 save]] بعد آخر start، أو شغلت [[pm2 startup]] ونسيت تنفّذ السطر اللي طبعه. أو عملت startup بـ root والتطبيق شغال بـ deploy، فالقايمة اتحفظت عند يوزر تاني.`
         }
       ]
     },
@@ -12696,7 +12789,15 @@ grep CRON /var/log/syslog | tail`,
             when: "أي حاجة متكررة: باك أب، وتنضيف لوجات أو Docker، وفحص صحة الموقع.",
             mistakes: "تعديل الملف مباشرة بدل [[crontab -e]]. [[crontab -e]] بيتأكد إن الصيغة سليمة قبل ما يحفظ."
           },
-          lines: ["افتح جدول مهامك تعدّله.", "اعرض المهام.", "اتأكد إن cron شغّل المهام فعلًا، وآخر ١٠ مرات."]
+          lines: ["افتح جدول مهامك تعدّله.", "اعرض المهام.", "اتأكد إن cron شغّل المهام فعلًا، وآخر ١٠ مرات."],
+          sol: R`بعد دقيقتين [[cat ~/dates.txt]] فيه سطرين (أو أكتر)، كل واحد وقت بفرق دقيقة بالظبط وفي الثانية صفر تقريبًا:
+
+[[Wed Sep 30 05:06:01 UTC 2026]] و [[Wed Sep 30 05:07:01 UTC 2026]]. جربتها بالظبط كده بسطر [[* * * * * date >> ~/dates.txt]]. و [[crontab -l]] بيوري السطر.
+
+الأغلاط الشائعة: الملف مش موجود: خدمة cron مش شغالة ([[systemctl status cron]])، أو كتبت مسار نسبي، أو السطر الأخير في الـ crontab من غير سطر فاضي بعده (cron القديم بيتجاهله). و [[grep CRON /var/log/syslog]] بيوريك هل الأمر اتنفذ ([[CMD (date >> ...)]]). وافتكر إن [[~]] بيشتغل، بس الأحسن مسار كامل. وماتنساش تمسح السطر ده بعد التجربة.`,
+          solCode: R`(crontab -l 2>/dev/null; echo '* * * * * date >> $HOME/dates.txt') | crontab -
+crontab -l
+cat ~/dates.txt`
         },
         {
           cmd: "crontab",
@@ -12735,7 +12836,12 @@ grep CRON /var/log/syslog | tail`,
             "كل يوم الساعة ٣:٠٠ الفجر: شغّل سكربت الباك أب على فولدر الموقع، وضيف الناتج والأخطاء للوج.",
             "كل ٥ دقايق: اطلب صفحة health، ولو فشلت اكتب down في ملف.",
             "كل يوم أحد الساعة ٤ الفجر: نضّف Docker. المسار كامل عشان cron يلاقيه."
-          ]
+          ],
+          sol: R`مثال: [[0 3 * * *]] crontab.guru بيقول [[At 03:00]]. و [[*/5 * * * *]] بيقول [[At every 5th minute]]. و [[0 4 * * 0]] بيقول [[At 04:00 on Sunday]]. لو الجملة اللي بيطلّعها هي اللي في دماغك، التوقيت صح.
+
+وخلّي بالك إن التوقيت ده بتوقيت السيرفر: لو [[timedatectl]] بيقول [[Etc/UTC]]، الـ 3 الفجر UTC هي 5 أو 6 الصبح في مصر.
+
+الأغلاط الشائعة: [[* 3 * * *]] بدل [[0 3 * * *]]: ده بيشتغل كل دقيقة من 3:00 لـ 3:59 (60 مرة). واليوم 0 و 7 الاتنين الحد. و [[%]] في الأمر ليها معنى خاص في crontab (سطر جديد)، فـ [[date +%F]] جوه crontab لازم تبقى [[date +\%F]].`
         },
         {
           cmd: "systemd timer",
@@ -12886,7 +12992,16 @@ pg_dump "postgresql://user:password@host:5432/postgres" -Fc -f supabase.dump`,
             "باك أب من كونتينر اسمه db، واضغطه، والاسم فيه تاريخ النهارده.",
             "رجّع باك أب مضغوط لقاعدة في كونتينر. [[-i]] عشان الكونتينر يقرا اللي جاي.",
             "باك أب من Supabase بالـ connection string."
-          ]
+          ],
+          sol: R`[[pg_dump -Fc]] مابيطبعش حاجة وبيعمل ملف [[mydb.dump]] (binary، ماتفتحوش بـ cat). بعد [[DROP TABLE users]] و [[pg_restore --clean]] الجدول بيرجع ببياناته، و [[select * from users]] بيوري الصفوف. جربتها على Postgres محلي.
+
+بس فيه تفصيلة هتقابلك: [[pg_restore -d mydb --clean mydb.dump]] بعد ما مسحت الجدول بيطبع [[error: could not execute query: ERROR: table "users" does not exist]] و [[Command was: DROP TABLE public.users;]] و [[warning: errors ignored on restore: 1]] ويخرج بـ 1، مع إن الاسترجاع نجح. ده لأن [[--clean]] بيحاول يمسح الجدول قبل ما يعمله وهو مش موجود أصلًا.
+
+الحل: [[--clean --if-exists]]، وبيه نفس الأمر خلص من غير أي error و exit 0. الغلط الشائع التاني: الاسترجاع بـ psql لملف [[-Fc]] بيطلع [[invalid command]]؛ الـ custom format بيترجع بـ pg_restore بس.`,
+          solCode: R`pg_dump -U postgres -d mydb -Fc -f mydb.dump
+psql -U postgres -d mydb -c "DROP TABLE users"
+pg_restore -U postgres -d mydb --clean --if-exists mydb.dump
+psql -U postgres -d mydb -c "SELECT count(*) FROM users"`
         }
       ]
     },
@@ -12946,7 +13061,16 @@ WantedBy=multi-user.target`,
             "واقرا باقي المتغيرات من .env.",
             "قسم التشغيل التلقائي.",
             "شغّلها مع الوضع العادي للسيرفر (ده اللي enable بيستخدمه)."
-          ]
+          ],
+          sol: R`التطبيق الصغير: [[server.js]] بيسمع على 3000 ويرد ok، في [[/var/www/myapp]] وملك deploy، ومعاه [[.env]] (حتى لو فاضي، لأن [[EnvironmentFile]] من غير [[-]] قدامه بيفشل لو الملف مش موجود).
+
+قبل الـ start، [[sudo systemd-analyze verify /etc/systemd/system/myapp.service]] بيفحص الملف. جربته: لو [[ExecStart]] بيشاور على node مش موجود بيطبع [[Command /usr/bin/node is not executable: No such file or directory]]، ولو فيه مفتاح مكتوب غلط زي [[Restrat=]] بيطبع [[Unknown key name 'Restrat' in section 'Service', ignoring.]]. ومن غير مشاكل مابيطبعش حاجة.
+
+الغلط الشائع: node متسطّب بـ nvm فمساره [[/home/deploy/.nvm/versions/node/v24.x/bin/node]] مش [[/usr/bin/node]]. [[which node]] كيوزر deploy بيقولك المسار الحقيقي، حطه في ExecStart.`,
+          solCode: R`sudo mkdir -p /var/www/myapp && sudo chown deploy:deploy /var/www/myapp
+echo 'require("http").createServer((q, r) => r.end("ok\n")).listen(3000)' > /var/www/myapp/server.js
+touch /var/www/myapp/.env
+sudo systemd-analyze verify /etc/systemd/system/myapp.service`
         },
         {
           cmd: "daemon-reload",
@@ -12976,7 +13100,12 @@ journalctl -u myapp -f`,
             "شغّلها دلوقتي ومع كل ريستارت.",
             "حالتها وآخر لوجات.",
             "تابع لوجاتها لايف."
-          ]
+          ],
+          sol: R`[[systemctl status myapp]] بيوري [[Active: active (running) since ...]] و [[Main PID: 1234 (node)]]. خد الرقم ده، و [[sudo kill 1234]]، واستنى 5 ثواني، و [[status]] تاني: [[Active: active (running) since]] بوقت جديد من ثواني، و [[Main PID]] رقم جديد.
+
+و [[journalctl -u myapp -n 5]] بيوري اللي حصل: [[myapp.service: Main process exited, code=exited, status=143/n/a]] أو [[killed, status=15/TERM]]، وبعدها [[Scheduled restart job, restart counter is at 1.]] و [[Started myapp.service]]. ده [[Restart=always]] و [[RestartSec=5]].
+
+ماعنديش systemd شغال هنا، فده الشكل المتوقع مش ناتج جربته. الغلط الشائع: الخدمة مش بترجع بعد [[systemctl stop myapp]]؛ ده مقصود، الـ restart للموت المفاجئ بس. ولو [[Active: failed]] و [[start request repeated too quickly]]، التطبيق بيقع أول ما يقوم؛ اقرا [[journalctl -u myapp -n 50]].`
         },
         {
           cmd: "journalctl",
@@ -13002,7 +13131,12 @@ sudo journalctl --vacuum-time=7d`,
             "الأخطاء بس ([[-p err]]) من آخر تشغيل للسيرفر ([[-b]]).",
             "اللوجات واكلة قد إيه من الديسك.",
             "امسح أي لوج أقدم من ٧ أيام."
-          ]
+          ],
+          sol: R`[[journalctl -p err -b]] بيطبع الأخطاء بس (err وأخطر) من آخر boot، كل سطر بالتاريخ واسم الخدمة: [[Sep 30 05:01:12 server myapp[1234]: Error: connect ECONNREFUSED 127.0.0.1:5432]] مثلًا. لو السيرفر سليم ممكن تلاقي سطور قليلة من الـ kernel أو مفيش خالص ([[-- No entries --]]).
+
+عشان تشوف من ريستارت اللي قبله: [[journalctl -p err -b -1]]. و [[journalctl --list-boots]] بيوري الـ boots المتسجلة.
+
+ماعنديش systemd هنا فمجربتهاش. الغلط الشائع: [[-b -1]] يطلع [[Specifying boot ID or boot offset has no effect, no persistent journal was found]]: اللوجات مش بتتحفظ بعد reboot. اعمل [[sudo mkdir -p /var/log/journal]] وبعدين [[sudo systemctl restart systemd-journald]]. ولو مش شايف لوجات خدمات تانية كيوزر عادي، استخدم [[sudo]] أو ضيف نفسك لجروب [[adm]].`
         }
       ]
     },
@@ -13030,7 +13164,12 @@ sudo ncdu /`,
             when: "«No space left on device»، أو الديسك قرّب يتملى.",
             mistakes: "تمسح حاجات جوه [[/var/lib/docker]] أو [[/var/lib/postgresql]] بـ [[d]] مباشرة. دي بيانات برامج، وامسحها بأوامر البرنامج نفسه ([[docker system prune]] مثلًا)، وإلا هتبوّظه."
           },
-          lines: ["سطّبه.", "امشي في الديسك كله مترتب بالحجم. أسهم للتنقل، و q للخروج."]
+          lines: ["سطّبه.", "امشي في الديسك كله مترتب بالحجم. أسهم للتنقل، و q للخروج."],
+          sol: R`[[sudo ncdu /]] بيعدّ الملفات شوية وبعدين يعرض قايمة مترتبة من الأكبر للأصغر، الحجم وشريط جنب كل فولدر. أكبر 3 على سيرفر ويب غالبًا: [[/var]] (جواه [[/var/lib/docker]] و [[/var/log]])، و [[/usr]]، و [[/home]] أو [[/snap]]. ادخل بـ Enter وارجع بـ [[←]] أو [[h]]، واخرج بـ [[q]].
+
+من غير ncdu: [[sudo du -xh --max-depth=1 / | sort -h | tail -4]] بيطلّع نفس الفكرة كنص (السطر الأخير هو [[/]] نفسه).
+
+الغلط الشائع: تمسح حاجة جوه [[/var/lib/docker]] بإيدك من ncdu (زرار [[d]])؛ ده بيبوظ Docker. استخدم [[docker system prune]]. ولو ncdu عدّى على [[/proc]] أو ديسكات تانية، شغّله بـ [[-x]] عشان يفضل على نفس الـ filesystem.`
         },
         {
           cmd: "dig / curl -v",
@@ -13056,7 +13195,12 @@ curl -o /dev/null -s -w "%{http_code} %{time_total}s\n" https://example.com`,
             "سيرفرات الإيميل بتاعته.",
             "كل خطوات الاتصال والشهادة والـ headers ([[-v]] مع [[-I]]).",
             "ارمي الصفحة ([[-o /dev/null]])، واسكت ([[-s]])، واطبع الـ status والوقت بس."
-          ]
+          ],
+          sol: R`[[for i in 1 2 3; do curl -o /dev/null -s -w "%{http_code} %{time_total}s\n" https://example.com; done]] بيطبع ٣ سطور زي [[200 0.412s]] و [[200 0.188s]] و [[200 0.179s]]. الأول غالبًا أبطأ لأنه عمل DNS و TLS handshake من الصفر.
+
+عشان تعرف الوقت راح فين: [[-w "dns %{time_namelookup} connect %{time_connect} tls %{time_appconnect} ttfb %{time_starttransfer} total %{time_total}\n"]]. لو [[ttfb]] كبير والباقي صغير، السيرفر أو التطبيق هو البطيء مش الشبكة.
+
+الغلط الشائع: [[000]] بدل رقم: curl مقدرش يتصل خالص (DNS أو شهادة أو proxy)، شيل [[-s]] أو استخدم [[-sS]] عشان تشوف السبب. ده حصل معايا هنا فعلًا بسبب proxy بيرفض الاتصال، و [[-sS]] طلّع [[CONNECT tunnel failed, response 403]].`
         },
         {
           cmd: "watch",
@@ -13075,7 +13219,12 @@ watch -n 5 "df -h /"`,
             when: "بعد [[docker compose up]] تشوف الكونتينرات بتقوم. وانت بتمسح حاجات تتابع المساحة.",
             mistakes: "نسيان علامات التنصيص حوالين أمر فيه pipe."
           },
-          lines: ["اعرض docker ps وحدّثه كل ثانيتين.", "مساحة الديسك كل ٥ ثواني. الأمر بين علامات تنصيص."]
+          lines: ["اعرض docker ps وحدّثه كل ثانيتين.", "مساحة الديسك كل ٥ ثواني. الأمر بين علامات تنصيص."],
+          sol: R`[[watch -n 2 docker ps]] بيفتح شاشة بتتحدث كل ثانيتين، فوق [[Every 2.0s: docker ps]] والوقت. وانت بتعمل [[docker restart web]] من النافذة التانية، عمود STATUS بتاع web بيتغير لـ [[Up 1 second]] أو [[Up Less than a second]] (والأرقام بتبدأ تعدّ من الأول)، والباقيين زي ما هم.
+
+ولو مع healthcheck هتشوف [[(health: starting)]] وبعدين [[(healthy)]]. ضيف [[-d]] عشان يعلّم على التغيير بلون. واخرج بـ [[Ctrl+C]].
+
+الغلط الشائع: [[watch -n 5 df -h / | grep sda]] من غير تنصيص، فالـ grep بيتطبق على شاشة watch مش على الأمر. حط الأمر كله بين علامتين تنصيص: [[watch -n 5 "df -h / | grep sda"]].`
         },
         {
           cmd: "sha256sum",
@@ -13101,7 +13250,12 @@ sha256sum -c backup.sha256`,
             when: "بعد نقل باك أب مهم. قبل ما تسطّب برنامج نزّلته بإيدك. قبل ما ترجّع باك أب، تتأكد إنه سليم.",
             mistakes: "إنك تحسب البصمة بعد النقل بس، مش قبله كمان. لازم نسختين تقارنهم."
           },
-          lines: ["احسب بصمة الملف.", "احفظ البصمة في ملف جنبه.", "بعدين: احسب تاني وقارن. هيطبع OK أو FAILED."]
+          lines: ["احسب بصمة الملف.", "احفظ البصمة في ملف جنبه.", "بعدين: احسب تاني وقارن. هيطبع OK أو FAILED."],
+          sol: R`[[sha256sum -c backup.sha256]] الأول بيطبع [[backup.tar.gz: OK]]. وبعد ما تعدّل حرف واحد في الملف بيطبع [[backup.tar.gz: FAILED]] و [[sha256sum: WARNING: 1 computed checksum did NOT match]] ويخرج بـ 1. جربتها بتغيير حرف واحد والبصمة اتغيرت كلها.
+
+ده اللي يخليك تستخدمه في سكربت: [[sha256sum -c backup.sha256 || echo "الملف بايظ"]].
+
+الغلط الشائع: [[No such file or directory]] و [[FAILED open or read]]: [[-c]] بيدوّر على الملف بالاسم اللي مكتوب جوه ملف الـ sha256، فلازم تشغّله من نفس الفولدر. ولو نقلت الملف لسيرفر تاني، انقل ملف الـ [[.sha256]] معاه.`
         },
         {
           cmd: "lsblk / mount",
@@ -13138,7 +13292,12 @@ sudo growpart /dev/sda 1 && sudo resize2fs /dev/sda1`,
             "ضيفه لـ fstab بالـ UUID عشان يتركّب مع كل boot، و [[nofail]] يمنع السيرفر يقف لو الديسك مش موجود.",
             "فك التركيب وجرّب fstab كله. لو فيه غلطة هتظهر هنا مش في الـ boot.",
             "بعد تكبير الديسك الأساسي من اللوحة: كبّر البارتيشن رقم 1، وبعدين الـ filesystem."
-          ]
+          ],
+          sol: R`بعد الـ mount و reboot، [[df -h]] بيوري سطر زي [[/dev/sdb 9.8G 24K 9.3G 1% /mnt/data]]، و [[lsblk -f]] بيوري [[sdb ext4]] والـ UUID و [[/mnt/data]] في عمود MOUNTPOINTS.
+
+الأهم قبل الـ reboot: [[sudo umount /mnt/data && sudo mount -a]] يخلص من غير أي رسالة، و [[findmnt /mnt/data]] يوريه متركّب. لو [[mount -a]] طبع error، صلّح [[/etc/fstab]] قبل الـ reboot.
+
+ماعنديش ديسك إضافي هنا فمجربتهاش. الغلط الشائع: اسم الديسك مش [[sdb]] (على سيرفرات كتير [[vdb]] أو [[nvme1n1]])، فبص في [[lsblk]] الأول. والأخطر [[mkfs]] على الديسك الغلط بيمسح بياناته. ونسيان [[nofail]] بيخلّي السيرفر مايقومش لو الديسك اتشال.`
         },
         {
           cmd: "swap",
@@ -13172,7 +13331,12 @@ free -h`,
             "شغّله دلوقتي.",
             "ضيف سطر في fstab عشان يشتغل بعد كل ريستارت.",
             "اتأكد إن الـ swap ظهر."
-          ]
+          ],
+          sol: R`بعد الخطوات، [[free -h]] بيوري سطر [[Swap: 2.0Gi 0B 2.0Gi]] بدل [[Swap: 0B 0B 0B]]، و [[swapon --show]] بيوري [[/swapfile file 2G 0B -2]]. جربت نفس الخطوات بملف صغير 64 ميجا: [[mkswap]] طبع [[Setting up swapspace version 1, size = 64 MiB]] و [[free -h]] بقى فيه Swap، وبعدين شلته بـ [[swapoff]].
+
+وبعد الـ reboot نفس السطر في [[free -h]] لسه موجود، بسبب السطر في [[/etc/fstab]].
+
+الأغلاط الشائعة: [[swapon: /swapfile: insecure permissions 0644]]: نسيت [[chmod 600]]. و [[fallocate failed: Operation not supported]] على بعض الـ filesystems؛ استخدم [[dd if=/dev/zero of=/swapfile bs=1M count=2048]]. وماتضيفش السطر في fstab مرتين (لو كررت الأمر)، اتأكد بـ [[grep swap /etc/fstab]].`
         }
       ]
     },
@@ -13496,7 +13660,12 @@ git log --oneline -1`,
             "المفتاح.",
             "على السيرفر: ادخل الفولدر، اسحب آخر نسخة، واطبع آخر commit.",
             "آخر commit عندك: لازم يطابق."
-          ]
+          ],
+          sol: R`سطر الـ ssh بيطبع (بسبب [[-q]]) سطر واحد بس من [[git log --oneline -1]] على السيرفر، زي [[a1b2c3d fix: header text]]. و [[git log --oneline -1]] عندك بيطبع نفس السطر بالظبط، نفس الـ hash ونفس الرسالة. ده دليل إن السيرفر عليه آخر نسخة.
+
+وبعد ريفريش للموقع (Ctrl+F5) التعديل ظاهر.
+
+الأغلاط الشائعة: الـ hash مختلف: نسيت [[git push]] قبل الـ ssh. و [[error: Your local changes to the following files would be overwritten by merge]]: حد عدّل ملف على السيرفر بإيده. و [[Host key verification failed]] أو [[Permission denied]]: البورت (Hostinger مثلًا [[65002]]) أو اليوزر في [[~/.ssh/config]] غلط.`
         },
         {
           cmd: "php -l",
@@ -13524,7 +13693,12 @@ ssh shared 'cd ~/domains/example.com/public_html && php -v | head -1 && php -l i
             "افحص الملفات المهمة واطبع النتيجة بس.",
             "كل ملفات المشروع ما عدا vendor، واعرض المشاكل بس.",
             "على السيرفر: نسخة PHP هناك، وافحص بيها."
-          ]
+          ],
+          sol: R`بعد ما تمسح [[;]]: [[php -l index.php]] بيطبع [[PHP Parse error: syntax error, unexpected token "echo" in index.php on line 3]] و [[Errors parsing index.php]] ويخرج بـ 255. لاحظ إن رقم السطر هو السطر اللي بعد اللي فيه الغلطة، لأن PHP اكتشف المشكلة لما لقى [[echo]]. جربتها.
+
+الملف السليم بيطبع [[No syntax errors detected in login.php]]. و [[php -v]] عندي كان [[PHP 8.4.19 (cli)]]؛ قارنه بالسيرفر، ولو السيرفر أقدم (زي 8.1) ممكن كود شغال عندك يقع هناك.
+
+الغلط الشائع: تفتكر [[php -l]] بيلاقي كل الأخطاء؛ هو syntax بس. فانكشن مش موجودة أو متغير فاضي مش هيبانوا غير وقت التشغيل.`
         },
         {
           cmd: "config.sample.php",
@@ -13554,7 +13728,12 @@ chmod 600 config.php`,
             "على السيرفر: انسخ النموذج.",
             "املى القيم الحقيقية.",
             "القراية لصاحبه بس."
-          ]
+          ],
+          sol: R`[[grep -n "config.php" .gitignore]] بيطبع رقم السطر زي [[3:config.php]]. و [[git ls-files | grep -E "config\.php$|\.env$"]] المفروض مايطبعش ولا سطر. [[config.sample.php]] مش هيظهر لأن الـ regex بيدوّر على اسم آخره [[config.php]] بالظبط، وده آخره [[sample.php]].
+
+لو ظهر [[config.php]]، يبقى اتعمله commit قبل ما تضيفه لـ .gitignore، و .gitignore مابيأثرش على ملف متتبع. الحل [[git rm --cached config.php]] وبعدين commit، وغيّر الباسوردات اللي كانت فيه لأنها لسه في التاريخ.
+
+و [[ls -l config.php]] بعد [[chmod 600]] بيوري [[-rw-------]]. الغلط الشائع: تحط الباسورد الحقيقي في [[config.sample.php]] بالغلط.`
         },
         {
           cmd: ".htaccess",
@@ -13619,7 +13798,12 @@ ErrorDocument 404 /404.php
             "متخمّنش نوع الملف.",
             "ابعت الدومين بس للمواقع التانية مش الرابط كامل.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد أي تعديل: [[curl -sI https://example.com/nope | head -1]] لازم [[HTTP/2 404]]، و [[curl -sI https://example.com/login | head -1]] لازم [[HTTP/2 200]] (الـ login من غير .php اشتغل بسبب آخر 3 سطور Rewrite). و [[/.env]] أو [[/.git/config]] بيرجعوا [[403]] أو [[404]].
+
+لو أي واحد رجّع [[HTTP/2 500]] بعد تعديل: الملف فيه غلطة (غالبًا directive من موديول مش موجود أو قوس ناقص)، والموقع كله واقع. رجّع النسخة القديمة فورًا، و error log في cPanel بيقول السطر ([[Invalid command 'Header'...]] أو [[RewriteRule: bad flag delimiters]]).
+
+ماعنديش Apache هنا فمجربتهاش. الغلط الشائع: [[/login]] بيرجع 404: الـ [[RewriteCond %{REQUEST_FILENAME}.php -f]] محتاج الملف [[login.php]] يبقى في نفس الفولدر، أو [[RewriteEngine On]] مش في الأول.`
         },
         {
           cmd: "curl -I .git/config",
@@ -13649,7 +13833,12 @@ curl -sI https://example.com | grep -iE "strict-transport|x-content-type"`,
             "ملف الإعدادات: 403.",
             "فولدر الرفع: مفيش قايمة ملفات.",
             "headers الأمان موجودة في الرد؟"
-          ]
+          ],
+          sol: R`في الحالة الآمنة كل الأوامر الأربعة الأولى بترجع [[HTTP/2 403]] أو [[HTTP/2 404]]، والأخير بيطبع [[strict-transport-security: max-age=31536000]] و [[x-content-type-options: nosniff]].
+
+و [[curl -s https://example.com/.git/HEAD]] المفروض يرجع صفحة 404 أو 403 (HTML)، مش [[ref: refs/heads/main]]. جربت سيرفر PHP من غير حماية وفولدر [[.git]] جواه: رجّع [[ref: refs/heads/main]] بالظبط، يعني أي حد يقدر ينزّل الكود كله بأدوات زي git-dumper.
+
+لو ظهر مكشوف: اقفله فورًا ([[RedirectMatch 404 /\.(git|env)]] في .htaccess)، وغيّر كل الأسرار اللي كانت في الريبو. الغلط الشائع: [[/uploads/]] بيرجع 200 وقايمة ملفات: [[Options -Indexes]] مش شغال.`
         },
         {
           cmd: "cron PHP",
@@ -13693,7 +13882,12 @@ echo "done " . date('Y-m-d H:i') . "\n";`,
             "قفلة.",
             "التوقيت.",
             "اطبع إنه خلص (بيتكتب في اللوج)."
-          ]
+          ],
+          sol: R`من المتصفح من غير key: الصفحة بتطبع [[forbidden]] والـ status [[403]]. ومع [[?key=]] الصح بتشتغل. ومن SSH: [[php cron/reminders.php]] بيطبع [[done 2026-09-30 08:05]] بتوقيت القاهرة. جربت التلات حالات بسيرفر PHP محلي وطلعوا كده.
+
+ده لأن [[php_sapi_name()]] بيرجع [[cli]] من الترمنال و cron، فالسكربت مش محتاج key، ومن الويب بيرجع حاجة تانية زي [[fpm-fcgi]] فبيطلب key.
+
+الأغلاط الشائعة: [[Failed opening required '.../config.php']]: المسار [[/../../config.php]] معمول على إن config بره public_html بمستويين؛ عدّله حسب مكانه. و cron مابيشتغلش: [[/usr/bin/php]] على الاستضافة ممكن يبقى نسخة تانية (cPanel بيدّيك مسار زي [[/usr/local/bin/php]] أو [[ea-php82]]). اقرا [[cron.log]].`
         },
         {
           cmd: ".user.ini",
@@ -13722,7 +13916,12 @@ session.save_path = "/home/deploy/tmp/sessions"`,
             "https بس.",
             "متتبعتش مع POST من مواقع تانية.",
             "الجلسات في فولدر بتاعك (لازم يكون موجود)."
-          ]
+          ],
+          sol: R`بعد حوالي ٥ دقايق (PHP بيقرا [[.user.ini]] كل [[user_ini.cache_ttl]] = 300 ثانية)، في DevTools › Application › Cookies، كوكي [[PHPSESSID]] عليه علامة في [[HttpOnly]] و [[Secure]]، و [[SameSite]] مكتوب [[Lax]].
+
+للتأكد من غير DevTools: صفحة فيها [[<?php echo ini_get('session.cookie_httponly'), ini_get('session.save_path');]] بتطبع [[1]] والمسار بتاعك. و [[ls ~/tmp/sessions]] بعد ما تفتح الموقع بيوري ملفات [[sess_...]].
+
+ماجربتهاش على استضافة هنا. الأغلاط الشائعة: مفيش أي تغيير بعد ساعة: الاستضافة شغالة بـ mod_php مش FPM/CGI، و [[.user.ini]] مابيتقريش أصلًا؛ جرّب [[php_value]] في .htaccess. و [[session_start(): open(...) failed: No such file]]: الفولدر مش موجود أو المسار فيه اسم يوزر غلط، والجلسات كلها بتقع.`
         }
       ]
     },
@@ -13747,7 +13946,12 @@ timedatectl set-timezone Africa/Cairo`,
             when: "أول ٥ دقايق مع أي سيرفر.",
             mistakes: "إنك تأجّل التحديث لبعدين، وتبدأ تسطّب وتظبط على نظام قديم."
           },
-          lines: ["ادخل كـ root.", "حدّث الكتالوج، ولو نجح حدّث كل البرامج.", "اضبط التوقيت."]
+          lines: ["ادخل كـ root.", "حدّث الكتالوج، ولو نجح حدّث كل البرامج.", "اضبط التوقيت."],
+          sol: R`[[hostnamectl]] بيطلّع [[Operating System: Ubuntu 24.04.x LTS]] و [[Kernel]] و [[Architecture: x86-64]]، و [[free -h]] بيطلّع الرام في [[Mem: total]]. اكتبهم في ملف ملاحظاتك: النظام، والرام، وعدد الأنوية من [[nproc]]، والمساحة من [[df -h /]]. مثال: «Ubuntu 24.04، 2GB رام، 1 core، 25GB».
+
+و [[apt upgrade]] المفروض يخلص بـ [[X upgraded ...]]، و [[date]] بعد set-timezone بيقول [[EEST]] أو [[EET]].
+
+الغلط الشائع: الرام 1GB أو أقل: هتحتاج swap (درس swap) قبل ما تعمل أي build على السيرفر. ولو [[ls /var/run/reboot-required]] موجود بعد الـ upgrade، اعمل [[reboot]] دلوقتي قبل ما تكمّل.`
         },
         {
           cmd: "خطوة 2",
@@ -13765,7 +13969,12 @@ rsync --archive --chown=deploy:deploy ~/.ssh /home/deploy`,
             when: "بعد خطوة ١ على طول.",
             mistakes: "تكمّل للخطوة ٣ من غير ما تجرّب الدخول باليوزر الجديد."
           },
-          lines: ["اعمل اليوزر.", "اديله sudo.", "انسخله مفاتيحك."]
+          lines: ["اعمل اليوزر.", "اديله sudo.", "انسخله مفاتيحك."],
+          sol: R`[[ssh deploy@IP]] من نافذة جديدة بيدخل من غير باسورد (بالمفتاح)، والـ prompt [[deploy@server:~$]]. و [[sudo whoami]] بيسأل باسورد deploy مرة وبعدين يطبع [[root]].
+
+سيب نافذة root القديمة مفتوحة لحد ما الاتنين دول ينجحوا، عشان لو فيه غلطة تصلّحها.
+
+الغلط الشائع: [[Permission denied (publickey)]]: الـ rsync ماتعملش أو صلاحيات [[.ssh]] غلط ([[700]] للفولدر و [[600]] للملف). و [[deploy is not in the sudoers file]]: الـ usermod مااتعملش أو كتبت [[-G]] من غير [[-a]].`
         },
         {
           cmd: "خطوة 3",
@@ -13782,7 +13991,12 @@ sudo sshd -t && sudo systemctl restart ssh`,
             when: "بعد ما خطوة ٢ نجحت واتجرّبت.",
             mistakes: "تقفل النافذة التانية قبل ما تجرّب دخول جديد."
           },
-          lines: ["عدّل PermitRootLogin و PasswordAuthentication لـ no.", "اختبر، ولو سليم اعمل ريستارت لـ SSH."]
+          lines: ["عدّل PermitRootLogin و PasswordAuthentication لـ no.", "اختبر، ولو سليم اعمل ريستارت لـ SSH."],
+          sol: R`من نافذة جديدة: [[ssh root@IP]] بيطلع [[root@IP: Permission denied (publickey).]]. و [[ssh deploy@IP]] لسه بيدخل عادي.
+
+وتتأكد من الإعداد نفسه: [[sudo sshd -T | grep -Ei "permitrootlogin|passwordauthentication"]] بيطبع [[permitrootlogin no]] و [[passwordauthentication no]]. ولو عايز تتأكد إن الباسورد مقفول: [[ssh -o PubkeyAuthentication=no deploy@IP]] بيطلع [[Permission denied (publickey)]] من غير ما يسأل باسورد.
+
+الغلط الشائع: root لسه بيدخل: نسيت [[systemctl restart ssh]]، أو ملف في [[/etc/ssh/sshd_config.d/]] بيعكس الإعداد. وماتقفلش نافذة root القديمة قبل ما تتأكد إن deploy بيدخل.`
         },
         {
           cmd: "خطوة 4",
@@ -13801,7 +14015,12 @@ sudo apt install -y fail2ban unattended-upgrades`,
             when: "بعد ما SSH اتأمّن.",
             mistakes: "[[enable]] قبل [[allow OpenSSH]]."
           },
-          lines: ["اسمح بـ SSH الأول.", "اسمح بالمواقع.", "شغّل الفايروول.", "سطّب الحظر التلقائي والتحديثات التلقائية."]
+          lines: ["اسمح بـ SSH الأول.", "اسمح بالمواقع.", "شغّل الفايروول.", "سطّب الحظر التلقائي والتحديثات التلقائية."],
+          sol: R`[[sudo ufw status]] بيطبع [[Status: active]] وتحته جدول [[To Action From]] فيه [[OpenSSH ALLOW Anywhere]] و [[80,443/tcp ALLOW Anywhere]]، ونفسهم [[(v6)]]. مفيش أي بورت تاني.
+
+و [[sudo systemctl status fail2ban]] بيقول [[active (running)]]، و [[sudo fail2ban-client status]] بيوري [[Jail list: sshd]].
+
+الغلط الشائع: [[Status: inactive]]: نسيت [[ufw enable]] (بيسألك [[Proceed with operation (y|n)?]]). ولو الـ SSH اتقطع بعد enable، نسيت [[allow OpenSSH]] أو SSH على بورت غير 22؛ ادخل من console المزود و [[ufw allow البورت/tcp]].`
         },
         {
           cmd: "خطوة 5",
@@ -13819,7 +14038,12 @@ exit`,
             when: "بعد الحماية الأساسية.",
             mistakes: "تجرّب Docker قبل ما تخرج وتدخل، فيقولك permission denied."
           },
-          lines: ["سطّب Docker.", "اسمح لـ deploy يستخدمه من غير sudo.", "اخرج، وادخل تاني عشان الجروب يتطبق."]
+          lines: ["سطّب Docker.", "اسمح لـ deploy يستخدمه من غير sudo.", "اخرج، وادخل تاني عشان الجروب يتطبق."],
+          sol: R`بعد [[exit]] والدخول تاني، [[docker run --rm hello-world]] من غير sudo بيطبع [[Hello from Docker!]] و [[This message shows that your installation appears to be working correctly.]].
+
+و [[groups]] بيوري [[deploy sudo users docker]]، و [[docker compose version]] بيطبع نسخة Compose (بيتسطب مع السكربت الرسمي).
+
+الغلط الشائع: [[permission denied while trying to connect to the Docker daemon socket]]: ماعملتش exit ودخلت تاني بعد الـ usermod. و [[Cannot connect to the Docker daemon ... Is the docker daemon running?]]: الخدمة واقفة، [[sudo systemctl enable --now docker]].`
         },
         {
           cmd: "خطوة 6",
@@ -13851,7 +14075,12 @@ curl -I http://127.0.0.1:3000`,
             "ادخل الفولدر.",
             "ابني وشغّل.",
             "اتأكد إن التطبيق بيرد من جوه السيرفر."
-          ]
+          ],
+          sol: R`[[curl -I http://127.0.0.1:3000]] المفروض أول سطر [[HTTP/1.1 200 OK]] وبعده headers التطبيق (زي [[X-Powered-By: Express]] أو [[Content-Type]]). و [[docker compose ps]] بيوري كل الخدمات [[Up]] (و [[healthy]] لو فيه healthcheck).
+
+لو مش 200، ماتكمّلش على Nginx: المشكلة في التطبيق، ومش هتتحل بالدومين.
+
+الأغلاط الشائعة: [[Connection refused]]: التطبيق لسه بيقوم أو وقع؛ [[docker compose logs --tail 50]]. و [[Empty reply from server]] أو [[Connection reset]]: التطبيق سامع على 127.0.0.1 جوه الـ container بدل 0.0.0.0. و [[404]] على [[/]]: التطبيق API مفيهوش route للـ root، جرّب [[/health]]. و [[git clone]] يطلب باسورد لـ repo خاص: استخدم deploy key أو token.`
         },
         {
           cmd: "خطوة 7",
@@ -13881,7 +14110,12 @@ dig +short example.com`,
             "شيل الموقع التجريبي.",
             "اختبر وطبّق.",
             "اتأكد إن الدومين بيشاور على السيرفر."
-          ]
+          ],
+          sol: R`[[dig +short example.com]] لازم يطبع IP السيرفر بالظبط. وفتح [[http://example.com]] من المتصفح بيوري التطبيق (مكتوب جنبه «Not secure» لأنه http، وده طبيعي لحد الخطوة الجاية).
+
+وقبلها [[sudo nginx -t]] بيقول [[syntax is ok]] و [[test is successful]]، و [[curl -H "Host: example.com" http://127.0.0.1]] على السيرفر بيرجع رد التطبيق.
+
+الأغلاط الشائعة: [[dig]] مابيطبعش حاجة أو IP قديم: الـ DNS لسه ماتنشرش (استنى) أو الـ A record غلط. و [[502 Bad Gateway]]: التطبيق مش على 3000 أو واقف. وصفحة [[Welcome to nginx]]: الـ default لسه متفعّل أو [[server_name]] غلط. والصفحة مش بتفتح خالص: بورت 80 مقفول في ufw.`
         },
         {
           cmd: "خطوة 8",
@@ -13909,7 +14143,12 @@ crontab -e`,
             "الزق سكربت الباك أب.",
             "اديله صلاحية التشغيل.",
             "ضيفه في الجدول اليومي."
-          ]
+          ],
+          sol: R`السطر في [[crontab -e]]: [[0 3 * * * /home/deploy/backup.sh >> /home/deploy/backup.log 2>&1]]، و [[crontab -l]] بيوريه. وقبل ما تعتمد عليه شغّل [[~/backup.sh]] بإيدك مرة واتأكد إن ملف الباك أب اتعمل.
+
+بعد [[sudo reboot]] والانتظار دقيقة: [[https://example.com]] بيفتح بالقفل من غير ما تعمل حاجة، و [[curl -I https://example.com]] بيرجع [[HTTP/2 200]] أو [[HTTP/1.1 200]]، و [[http://]] بيعمل 301 لـ https. ده معناه إن Nginx و Docker (بـ [[restart: unless-stopped]]) قاموا لوحدهم.
+
+الغلط الشائع: الموقع بيرجع 502 بعد الـ reboot: الـ containers مش عليها restart policy أو خدمة docker مش enabled. والباك أب مابيتعملش: السكربت من غير [[chmod +x]] أو فيه مسارات نسبية؛ اقرا [[backup.log]].`
         }
       ]
     }
@@ -15532,12 +15771,7 @@ Inspect (تاب Elements) بيعرض الـ DOM بعد ما JavaScript اشتغ�
 وده بيشرح ليه SEO بيفرق: جوجل ممكن يقرا الـ source أو يعمل render كامل. لو المحتوى في الـ source، أسهل يتفهرس.`,
             when: "موقع React وعايز تعرف هل المحتوى في الـ source (SSR) ولا لأ. لما تدوّر على عنصر بعينه في الـ HTML. أول خطوة في أي debugging.",
             mistakes: "إنك تشوف Source وتقول «المحتوى مش موجود» وموقعك React. ابص في Elements عشان تشوف الحالة بعد التحميل."
-          },
-          sol: R`في موقع React عادي (Vite أو CRA) الـ Ctrl+F في View Source مش هيلاقي الجملة: هتلاقي [[<div id="root"></div>]] وسطر [[<script type="module" src="/assets/index-xxxx.js">]] وخلاص. نفس الجملة في Elements هتلاقيها، لأن JavaScript هو اللي رسمها بعد التحميل.
-
-في موقع Next.js أو موقع أخبار الجملة هتظهر في View Source نفسه، لأن السيرفر بعت الـ HTML جاهز (SSR أو static). ولو لقيتها في الاتنين في موقع React، يبقى الموقع ده عامل SSR أو prerender.
-
-الغلطة المشهورة: تدوّر في Elements وتفتكر إن ده اللي جوجل والـ bots شايفينه. الحكم على الـ SEO بيبقى من View Source (أو [[curl -s URL]]) مش من Elements.`
+          }
         },
         {
           cmd: "Elements",
@@ -15559,12 +15793,7 @@ Right-click > Copy > Copy selector   Get a CSS selector for it`,
 [[:hov]] بيثبّت الـ state (hover أو focus) عشان تظبط تصميمها من غير ما تفضل تحرك الماوس. و [[.cls]] بيخليك تضيف أو تشيل classes. ومربعات الـ box model تحت، تكليك عليها وتغيّرها.`,
             when: "لو زرار شكله وحش على screen size معين أو state معين. لو spacing مش صح وعايز تعرف القيمة الصح الأول.",
             mistakes: "تعمل تغيير في Elements وتفضل تدور عليه في الكود. خد screenshot أو اكتب القيمة قبل الريفريش."
-          },
-          sol: R`لون الزرار: اختار الزرار بـ Ctrl+Shift+C، وفي Styles دوس على قيمة [[background-color]] (أو ضيفها في [[element.style]]) واكتب لون جديد، هيتغير فورًا. وبعد ريفريش يرجع زي ما كان، ودي علامة إنك فهمت إن التعديل محلي بس.
-
-الـ hover: دوس [[:hov]] وعلّم [[:hover]]، هتلاقي قاعدة [[button:hover]] ظهرت في Styles والزرار ثابت على شكل الـ hover من غير ماوس.
-
-الـ font-size: اختار العنوان وافتح Computed واكتب [[font-size]] في الفلتر. هتلاقي القيمة النهائية بالـ px دايمًا (حتى لو كاتبها [[2rem]] هتشوف مثلًا [[32px]])، ولو فتحت السهم جنبها هتعرف أنهي قاعدة في أنهي ملف كسبت. لو لقيت القاعدة بتاعتك في Styles عليها خط، يبقى فيه selector أقوى منها غطّاها.`
+          }
         },
         {
           cmd: "Device Toolbar",
@@ -15583,15 +15812,7 @@ Ctrl+Shift+R          Reload inside the emulated device`,
 فيه فرق بين الإيميوليشن والجهاز الحقيقي: اللمس مختلف، والكيبورد على الشاشة بياكل مساحة ويدفع المحتوى، والأداء مختلف (الموبايل ممكن يكون أبطأ بكتير).`,
             when: "اختبار سريع لاستجابة الموقع على مقاسات مختلفة. لما موقع يتبلّغ عنه إنه «منكسر على الموبايل».",
             mistakes: "تعتبر إن الإيميوليشن كافي. دايمًا اختبر على جهاز حقيقي قبل الرفع."
-          },
-          sol: R`Ctrl+Shift+M، واكتب 360 في خانة العرض (أو اختار Responsive). اللي بيخرج بره الشاشة بيبان بسكرول أفقي تحت الصفحة أو عنصر مقطوع على اليمين. عشان تلاقي المتسبب بسرعة الصق ده في Console:
-
-[[$$("*").filter(e => e.getBoundingClientRect().right > innerWidth)]]
-
-الأشهر: صورة أو جدول بعرض ثابت ([[width: 600px]])، عنصر بـ [[100vw]] مع padding، [[<pre>]] أو لينك طويل من غير [[overflow-wrap: anywhere]]، أو flex row من غير [[flex-wrap]]. ولو ملقتش ولا حاجة والموقع شكله صغير جدًا، غالبًا ناقصه [[<meta name="viewport" content="width=device-width, initial-scale=1">]].`,
-          solCode: R`// paste in the Console while the page is 360px wide
-$$("*").filter(e => e.getBoundingClientRect().right > innerWidth)
-  .forEach(e => { e.style.outline = "2px solid red"; console.log(e); });`
+          }
         },
         {
           cmd: "Hard Reload",
@@ -15611,10 +15832,7 @@ Ctrl+Shift+R بيقول للمتصفح «حمّل من غير ما تستخدم 
 والأبسط: علّم على «Disable cache» في تاب Network، وده بيوقف الكاش خالص طول ما DevTools مفتوحة.`,
             when: "كل ما تغيّر CSS أو JS وعايز تشوف التغيير على طول.",
             mistakes: "تعمل ريفريش عادي وتفتكر التغيير مش اشتغل، وهو اشتغل بس لسه في الكاش."
-          },
-          sol: R`الريفريش العادي ممكن يفضل يعرض الـ CSS القديم: لو فتحت Network هتلاقي ملف الـ CSS جاي [[(memory cache)]] أو [[(disk cache)]] أو [[304]]، يعني المتصفح ما جابش النسخة الجديدة. مع Ctrl+Shift+R هتلاقيه [[200]] وحجمه الحقيقي، والتعديل ظهر.
-
-لو حتى بعد Hard Reload التعديل مش ظاهر، المشكلة مش كاش المتصفح: يا إما الملف مارفعش فعلًا (افتح الـ URL بتاع الـ CSS مباشرة واتأكد إن التعديل فيه)، يا إما فيه CDN أو Nginx كاش قدام السيرفر، يا إما service worker بيرجّع نسخة قديمة (Application ثم Service workers). والحل الدائم للمستخدمين هو إن اسم الملف يتغير مع كل build ([[app.3f9a1c.css]]) زي ما Vite و Next.js بيعملوا.`
+          }
         }
       ]
     },
@@ -15647,12 +15865,7 @@ console.error("something broke")`,
             "اطبع نص وبعده قيمة متغير. الفاصلة أحسن من [[+]] لأن الـ objects بتتعرض كاملة.",
             "اعرض array من objects كجدول بأعمدة.",
             "اطبع باللون الأحمر مع stack trace، وبيظهر في فلتر Errors."
-          ],
-          sol: R`اللي هتشوفه غالبًا ٣ أنواع، وكل واحد معناه مختلف:
-
-[[Failed to load resource: the server responded with a status of 404 (Not Found)]]: ملف أو طلب مش موجود، دوس عليه وهيوديك Network. [[Uncaught TypeError: Cannot read properties of undefined (reading 'x')]] وجنبه اسم الملف ورقم السطر: bug في JavaScript، دوس على اللينك اللي على اليمين يفتحلك السطر في Sources. و [[Access to fetch at ... has been blocked by CORS policy]]: الـ API رافض الـ origin ده (شوف درس CORS).
-
-ركز على أول error بس، لأن التانيين كتير بيبقوا نتيجة ليه. ومتقلقش من الأصفر (warnings) ولا من errors جاية من extensions أو إعلانات (هتلاقي في اللينك [[chrome-extension://]] أو دومين إعلانات): دي مش مشكلة الموقع.`
+          ]
         },
         {
           cmd: "أوامر Console المفيدة",
@@ -15682,12 +15895,7 @@ Shift+Enter في Console بينزّلك سطر جديد من غير تنفيذ،
             "كل الصور اللي من غير alt، وعددها. [[$$]] زي querySelectorAll بس بيرجع array.",
             "انسخ كل اللينكات في الصفحة للكليب بورد.",
             "خلّي الصفحة كلها قابلة للكتابة: تكليك على أي نص وتعدّله."
-          ],
-          sol: R`[[$$("img:not([alt])").length]] بيرجع رقم. جرّبته على صفحة فيها صورتين واحدة بس عليها alt فرجّع [[1]]. لو طلع [[0]] يبقى كل الصور عليها alt (حتى لو فاضي [[alt=""]]، وده صح للصور الديكور). وعشان تشوفهم نفسهم: [[$$("img:not([alt])").map(i => i.src)]].
-
-[[copy($$("a").map(a => a.href))]] مش بيطبع حاجة (بيرجع [[undefined]])، لكن اللينكات بقت في الـ clipboard كـ JSON array، الصقها في أي ملف. لاحظ إن [[a.href]] بيرجع الـ URL الكامل ([[http://localhost:8791/x]]) حتى لو في الـ HTML مكتوب [[/x]].
-
-لو طلعلك [[$$ is not defined]] أو [[copy is not defined]]: انت بتشغّلهم في كود الصفحة أو في Node. دول أدوات Console بتاعة DevTools بس، مش JavaScript عادي.`
+          ]
         }
       ]
     },
@@ -15718,12 +15926,7 @@ Disable cache            Always load fresh`,
 تحت: إجمالي عدد الطلبات، والحجم الكلي، والوقت. وفوق خالص: timeline بيوريك متى بدأ كل طلب.`,
             when: "API بيرجع error. الصفحة بطيئة وعايز تعرف أي طلب السبب. تتأكد إن طلب معين اتبعت أصلًا.",
             mistakes: "تفتح Network بعد تحميل الصفحة وتلاقيه فاضي. وتنسى Preserve log لما الصفحة بتعمل redirect."
-          },
-          sol: R`اعمل Ctrl+R وDevTools مفتوحة على Network. تحت خالص في الـ status bar هتلاقي حاجة زي [[42 requests | 1.8 MB transferred | 3.2 MB resources | Finish: 2.1 s]]: ده عدد الطلبات، و transferred هو اللي نزل فعلًا على الشبكة (مضغوط)، و resources حجمه بعد فك الضغط.
-
-أكبر ملف: دوس على عمود Size يترتب. أبطأ طلب: دوس على عمود Time. الأكبر غالبًا صورة مش مضغوطة أو JS bundle، والأبطأ غالبًا API call أو خط من بره.
-
-لو لقيت الأرقام صغيرة بشكل غريب والـ Size مكتوب فيه [[(memory cache)]]، علّم Disable cache وكرّر، عشان تقيس اللي زائر جديد بيشوفه.`
+          }
         },
         {
           cmd: "تفاصيل الطلب",
@@ -15750,10 +15953,7 @@ Preview: الرد منسّق. لو JSON هيوريكه كشجرة. أسرع من
 Timing: أهم تاب للأداء. «Waiting (TTFB)» وقت انتظار أول byte: لو كبير، المشكلة في السيرفر أو قاعدة البيانات. «Content Download» وقت تحميل الرد: لو كبير، الرد تقيل.`,
             when: "بعد أي API request يطلع error: Headers للـ status، وPayload للتأكد من البيانات، وPreview لرسالة الـ error. وTiming لو الـ API بطيء.",
             mistakes: "إنك تتجاهل Timing وتفضل تدوّر في الكود، والمشكلة query بطيء في قاعدة البيانات."
-          },
-          sol: R`طلب الـ login غالبًا [[POST /api/login]] (فلتر Fetch/XHR عشان تلاقيه). في Payload هتلاقي اللي بعته، غالبًا [[{"email":"...","password":"..."}]]، أيوه الباسورد باين هنا وده طبيعي لأنه جهازك والطلب ماشي على HTTPS. الـ status لو نجح [[200]] أو [[204]]، ولو غلط [[401]] مع body فيه رسالة.
-
-في Headers تحت Response Headers هتلاقي حاجة زي [[set-cookie: session=abc...; Path=/; HttpOnly; Secure; SameSite=Lax]]. لو ملقتش Set-Cookie خالص، يبقى موقعك غالبًا بيرجّع token في الـ body (شوفه في Preview) وبيحفظه في localStorage. ولو Chrome حاطط علامة تحذير صفرا جنب الكوكي، حط الماوس عليها: غالبًا الكوكي اترفضت عشان [[Secure]] على http أو [[SameSite=None]] من غير Secure.`
+          }
         },
         {
           cmd: "Throttling و Blocking",
@@ -15773,10 +15973,7 @@ Ctrl+Shift+P > "Show Request conditions"`,
 Request conditions: كليك يمين ثم Block request أو Throttle request (Chrome 145+). مفيد تشوف الموقع بيعمل إيه لو Google Fonts أو analytics وقعت.`,
             when: "قبل الرفع: جرّب على Slow 4G. لما بتشتغل على error handling.",
             mistakes: "تنسى إن Throttling شغال وتتساءل ليه التحميل بطيء. بيفضل حتى لو فتحت تاب جديد."
-          },
-          sol: R`على Slow 4G أي submit هياخد ثانية أو اتنين أو أكتر. اللي المفروض يشوفه المستخدم: الزرار اتقفل ([[disabled]]) ومكتوب عليه «جاري الحفظ...» أو spinner، وبعدين رسالة نجاح أو غلط.
-
-النتايج الوحشة اللي بتكشفها التجربة دي: مفيش أي feedback فالمستخدم يدوس تاني، وفي Network هتلاقي نفس الـ POST اتبعت مرتين (ودي بتعمل طلبين أو حسابين مكررين). أو الفورم بيتمسح قبل ما الرد يرجع. ولو جربت Offline هتشوف [[TypeError: Failed to fetch]] في Console: الواجهة لازم تمسك الـ error ده وتقول للمستخدم «مفيش نت» بدل ما تفضل تلف.`
+          }
         }
       ]
     },
@@ -15816,12 +16013,7 @@ Request conditions: كليك يمين ثم Block request أو Throttle request (
 200 OK نجح. 201 Created نجح وعمل resource جديد. 204 No Content نجح مفيش رد (شائع في DELETE). 304 Not Modified: المتصفح استخدم الكاش. 400 Bad Request: الطلب غلط أو validation. 401 Unauthorized: التوكن مش موجود أو منتهي. 403 Forbidden: معاك توكن بس مش مسموحلك. 404 Not Found. 409 Conflict: تعارض (إيميل موجود). 422 Unprocessable: validation فشل. 429 Too Many Requests. 500 Internal Server Error: كود السيرفر وقع. 502 Bad Gateway: Nginx شغال والتطبيق وراه واقع. 504 Gateway Timeout: التطبيق استغرق وقت أكتر مما يجب.`,
             when: "كل ما تشوف API call في Network: الرقم أول حاجة.",
             mistakes: "بتبعت 500 لأي error. استخدم الرقم الصح: 400 للـ validation، و401 لو مش logged in."
-          },
-          sol: R`الـ 304: اعمل ريفريش عادي (من غير Disable cache) على موقع زرته قبل كده. هتلاقي ملفات status بتاعها [[304]]: المتصفح بعت [[If-None-Match]] أو [[If-Modified-Since]] والسيرفر قال «النسخة اللي عندك لسه صح» فمبعتش body. جربتها على سيرفر محلي: أول طلب [[HTTP/1.1 200 OK]] ومعاه [[ETag: "v1"]]، والتاني بـ [[If-None-Match: "v1"]] رجع [[HTTP/1.1 304 Not Modified]].
-
-الـ 404: غالبًا [[favicon.ico]] أو صورة أو source map ([[.map]]) مش موجودة، أو URL غلط في الكود. دوس عليه وبص على Initiator عشان تعرف مين طلبه.
-
-لو لقيت الملفات مكتوب عندها [[(memory cache)]] مش 304، ده معناه إن المتصفح ما سألش السيرفر خالص (الكاش لسه صالح بـ Cache-Control)، وده أسرع من 304.`
+          }
         },
         {
           cmd: "Headers",
@@ -15844,12 +16036,7 @@ curl -sI https://example.com | grep -iE "content-type|cache-control|location|ser
           lines: [
             "هات الـ headers بس ([[-I]] طلب HEAD) من غير شريط تحميل ([[-s]]).",
             "وفلتر على أهم ٤: نوع المحتوى، والكاش، والتحويل، والسيرفر."
-          ],
-          sol: R`[[curl -sI https://yoursite.com/logo.png]] و [[curl -sI https://yoursite.com/]] وقارن سطر [[cache-control]]. المتوقع في موقع مظبوط: الصورة (وخصوصًا الملفات اللي في اسمها hash زي [[/assets/app.3f9a1c.js]]) عليها حاجة زي [[cache-control: public, max-age=31536000, immutable]] (سنة)، والـ HTML عليه [[no-cache]] أو [[max-age=0, must-revalidate]] أو مفيش خالص.
-
-السبب: الـ HTML لازم المتصفح يسأل عليه كل مرة عشان يعرف أسماء الملفات الجديدة، إنما الصورة أو الـ bundle اللي اسمه بيتغير مع كل تعديل ينفع يتكاش للأبد.
-
-لو لقيت العكس (HTML عليه max-age طويل)، ده سبب «رفعت تعديل ومحدش شايفه». ولو الاتنين مفيهمش cache-control خالص، المتصفح بيخمّن بنفسه (heuristic caching) من [[last-modified]].`
+          ]
         },
         {
           cmd: "Unexpected token '<'",
@@ -15877,12 +16064,7 @@ await res.text()`,
             "الـ status: 404 أو 502 هيقولك السبب.",
             "نوع الرد: لو text/html يبقى صفحة مش JSON.",
             "اقرا الرد كنص وشوف فيه إيه فعلًا."
-          ],
-          sol: R`جربتها على سيرفر محلي بـ [[fetch("/api/nope")]]:
-
-[[res.status]] رجع [[404]]، و [[res.headers.get("content-type")]] رجع [[text/html]]، و [[await res.text()]] رجع [[<!DOCTYPE html><html><body><pre>Cannot GET /api/nope</pre></body></html>]] وده الشكل الافتراضي بتاع Express. ولو عملت [[res.json()]] بدل text، Chrome بيقول بالظبط: [[Unexpected token '<', "<!DOCTYPE "... is not valid JSON]].
-
-يعني الـ [[<]] ده أول حرف في صفحة HTML. في مشروع Vite أو Next.js ممكن تلاقي status [[200]] والـ text هو [[index.html]] بتاع الـ frontend نفسه (fallback الـ SPA): ده معناه إن الطلب ما وصلش للـ API أصلًا (proxy أو base URL غلط).`
+          ]
         },
         {
           cmd: "CORS",
@@ -15914,12 +16096,7 @@ app.use(cors({
             "الدومينات المسموحلها تقرا الرد (الإنتاج والتطوير). مش [[*]].",
             "اسمح بالكوكيز والـ Authorization header.",
             "قفلة."
-          ],
-          sol: R`من Console على موقع تاني (origin مختلف) الـ fetch هيفشل بـ [[TypeError: Failed to fetch]]، والسبب الحقيقي مكتوب في سطر أحمر منفصل. جربتها من [[http://localhost:8791]] على API على [[localhost:8792]] وطلع:
-
-[[Access to fetch at 'http://localhost:8792/x' from origin 'http://localhost:8791' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.]]
-
-في Network الطلب نفسه ممكن يكون وصل للسيرفر ورجع 200، المتصفح هو اللي منع الـ JavaScript يقرا الرد. بعد ما تضيف origin الموقع ده في [[origin: [...]]] وتعمل restart للـ API، نفس الـ fetch هيرجع البيانات، وفي Response Headers هتلاقي [[access-control-allow-origin]] بقيمة الـ origin. لو لسه واقف: اتأكد إنك كاتب الـ origin بالظبط (بروتوكول ودومين وبورت، ومن غير / في الآخر).`
+          ]
         }
       ]
     },
@@ -15949,12 +16126,7 @@ Columns to check: HttpOnly, Secure, SameSite, Expires`,
 تقدر تدبل كليك وتغيّر قيمة أو تمسح بـ Delete. مفيد تختبر «إيه اللي هيحصل لو الـ session خلصت».`,
             when: "Session بتنتهي قبل المفروض. تختبر صفحة المستخدم غير الـ logged in.",
             mistakes: "SameSite=None من غير Secure. وكوكيات session من غير HttpOnly."
-          },
-          sol: R`اللي المفروض تشوفه في صف كوكي الـ session: علامة ✓ في عمود HttpOnly، و ✓ في Secure، و SameSite [[Lax]] أو [[Strict]]، و Expires إما تاريخ معقول أو [[Session]] (تتمسح لما تقفل المتصفح).
-
-اختبار سريع: اكتب [[document.cookie]] في Console. لو كوكي الـ session ظاهرة في الناتج، يبقى مفيهاش HttpOnly وأي XSS يقدر يسرقها، ودي أول حاجة تصلّحها. لو مش ظاهرة يبقى تمام.
-
-لو Secure مش متعلم عليها والموقع على HTTPS، الكوكي ممكن تتبعت على http لو حد فتح اللينك من غير s. وعلى localhost طبيعي تلاقيها من غير Secure في التطوير.`
+          }
         },
         {
           cmd: "localStorage و JWT",
@@ -15980,16 +16152,7 @@ localStorage.clear()`,
             "قيمة التوكن.",
             "فك الـ JWT: خد الجزء اللي في النص (بعد أول نقطة)، فك الـ base64 بـ atob، وحوّله object. هتلاقي فيه اليوزر و exp.",
             "امسح كل حاجة (زي logout يدوي)."
-          ],
-          sol: R`السطر التالت بيرجع object. جربته على token فيه payload زي ده:
-
-[[{"sub":"42","role":"user","iat":1790000000,"exp":1790000900}]]
-
-[[exp]] بالثواني من ١٩٧٠، فعشان تقراه: [[new Date(1790000900 * 1000)]] = [[2026-09-21T14:28:20.000Z]]. و [[exp - iat]] = ٩٠٠ ثانية، يعني الـ token عمره ربع ساعة. الكود تحت بيطبعلك فاضل قد إيه.
-
-لو طلع [[Cannot read properties of null (reading 'split')]] يبقى مفيش key اسمه [[token]]، اكتب [[localStorage]] وشوف الاسم الحقيقي. ولو طلع [[InvalidCharacterError]] يبقى القيمة مش JWT أو محفوظة بعلامات تنصيص (اعمل [[JSON.parse]] الأول). وافتكر: أي حد معاه الـ token يقدر يقراه كده، فمفيش أسرار في الـ payload.`,
-          solCode: R`const p = JSON.parse(atob(localStorage.getItem("token").split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-console.log(p, new Date(p.exp * 1000).toISOString(), Math.round((p.exp * 1000 - Date.now()) / 60000) + " min left");`
+          ]
         },
         {
           cmd: "Clear site data",
@@ -16009,10 +16172,7 @@ Service Workers مشكلة شائعة: ممكن يعرض نسخة قديمة ح�
 أسرع طريقة: افتح الموقع في نافذة Incognito.`,
             when: "لما الـ caching بيسبب مشاكل في التطوير. لما تختبر first-time user experience.",
             mistakes: "تعمل Hard Reload وتفتكر إنه بيمسح localStorage والـ cookies. هو بس بيتخطى الـ HTTP cache للتحميل ده، ومش بيلمس الكوكيز ولا التخزين."
-          },
-          sol: R`بعد Clear site data وريفريش: هتلاقي نفسك عملت logout، وأي banner بتاع cookies أو onboarding هيظهر تاني، وفي Network كل الملفات جاية [[200]] بحجمها الكامل (مفيش memory cache ولا 304). Application ثم Cookies و Local storage هيبقوا فاضيين لحد ما الموقع يكتب فيهم تاني.
-
-لو لسه شايف نفسك logged in، غالبًا الـ session محفوظة على دومين تاني (زي [[auth.yoursite.com]] أو [[.yoursite.com]]) مش الدومين اللي مسحته. ونافذة Incognito بتديك نفس النتيجة من غير ما تمسح بيانات نافذتك العادية.`
+          }
         },
         {
           cmd: "سيرفر محلي بدل file://",
@@ -16039,15 +16199,7 @@ npx serve . -l 8791`,
             "ادخل فولدر الموقع.",
             "سيرفر static على بورت 8791، لجهازك بس.",
             "أو نفس الحاجة بـ Node من غير Python."
-          ],
-          sol: R`بالدبل كليك (file://) جربتها في Chromium وطلع في Console:
-
-[[Failed to register a ServiceWorker: The URL protocol of the current origin ('null') is not supported.]]
-و [[Fetch API cannot load file:///.../data.json. URL scheme "file" is not supported.]]
-
-من [[http://localhost:8791]] نفس الصفحة اشتغلت: الـ fetch رجع الـ JSON، و [[navigator.serviceWorker.register]] نجح، وفي Application ثم Service workers الحالة [[activated and is running]].
-
-السبب: الـ service worker لازم secure context (HTTPS أو localhost)، و file:// الـ origin بتاعه [[null]]. لو السيرفر ما اشتغلش وطلع [[Address already in use]] غيّر البورت. ولو قالك [[python: command not found]] اكتب [[python3]].`
+          ]
         }
       ]
     },
@@ -16088,10 +16240,7 @@ Shift+Enter بينزّلك سطر جديد من غير تنفيذ، عشان ت�
             "قول للسيرفر إن البودي JSON، وإلا ممكن يتجاهله.",
             "البودي لازم يتحوّل لنص بـ stringify.",
             "وحوّل الرد."
-          ],
-          sol: R`الـ GET بيرجع البيانات مباشرة في Console (object أو array)، والـ POST بيرجع اللي الـ API بيرجعه بعد الإنشاء (غالبًا الـ object الجديد ومعاه [[id]]). وفي تاب Network (فلتر Fetch/XHR) هتلاقي الطلبين، وفي عمود Initiator مكتوب حاجة زي [[VM123:1]] يعني جايين من Console.
-
-دوس على الـ POST: في Payload هتلاقي [[{"name":"test","email":"test@example.com"}]]، والـ status [[201]] لو الـ API مكتوب صح. لو رجع [[400]] أو [[415]] غالبًا نسيت [[Content-Type: application/json]] فالسيرفر مقراش الـ body. ولو الـ GET رجع [[401]] وانت عامل login، يبقى الـ API على دومين تاني والكوكي ما اتبعتتش (محتاج [[credentials: "include"]]).`
+          ]
         },
         {
           cmd: "Copy as cURL",
@@ -16114,12 +16263,7 @@ curl -i 'https://example.com/api/orders?page=2' -H 'cookie: session=...'`,
           lines: [
             "اللي بيطلع من Copy as cURL: الـ URL، وكل header ([[-H]]) بما فيهم الكوكي، و [[--compressed]] يقبل رد مضغوط.",
             "نفس الطلب بعد ما عدّلت فيه: صفحة تانية، و [[-i]] عشان تشوف الـ status."
-          ],
-          sol: R`في Network كليك يمين على الطلب ثم Copy ثم Copy as cURL (bash). هتلاقي أمر طويل فيه [[-H 'cookie: ...']] و headers كتير. الصقه في الترمنال، المفروض يرجع نفس الـ JSON اللي شايفه في Preview.
-
-غيّر [[page=1]] لـ [[page=2]] في الـ URL (خليه جوه علامات التنصيص عشان [[&]] و [[?]]) وشغّله، هتاخد الصفحة اللي بعدها. زوّد [[-i]] عشان تشوف الـ status.
-
-لو رجعلك [[401]] بعد شوية، الكوكي أو الـ token خلصوا، انسخ الطلب تاني. ولو الناتج رموز غريبة يبقى نسيت [[--compressed]]. وعلى ويندوز اختار «Copy as cURL (cmd)» أو شغّله من Git Bash/WSL لأن علامات التنصيص مختلفة.`
+          ]
         },
         {
           cmd: "curl -i / -v",
@@ -16148,14 +16292,7 @@ curl -H "Authorization: Bearer $TOKEN" https://example.com/api/me`,
             "الرد JSON، خد منه حقلين بس بـ jq.",
             "POST بـ JSON: [[-X POST]] النوع، و [[-H]] نوع المحتوى، و [[-d]] البودي بين single quotes.",
             "طلب بتوكن في header الـ Authorization، والتوكن من متغير."
-          ],
-          sol: R`جربتها على API محلي بباسورد غلط:
-
-[[HTTP/1.1 401 Unauthorized]]
-[[Content-Type: application/json]]
-وبعد السطر الفاضي الـ body: [[{"error":"Invalid email or password"}]]
-
-ده الصح: [[401]] (أو [[400]] لو الـ body نفسه ناقص) ورسالة عامة متقولش هل الإيميل موجود ولا لأ. لو رجعلك [[200]] ومعاه [[{"success":false}]] ده تصميم وحش لأن أي client أو monitoring هيفتكره نجح. ولو [[500]] يبقى فيه exception في الكود مع الباسورد الغلط، افتح logs. ولو [[404]] يبقى الـ route غلط أو ناقصه prefix زي [[/api/v1]].`
+          ]
         }
       ]
     },
@@ -16179,12 +16316,7 @@ Export > Puppeteer / JSON`,
             how: "بيسجّل الخطوات مع selectors لكل عنصر، وتقدر تعدّل أي خطوة أو تحط breakpoint عليها. الـ Replay بسرعة عادية أو بطيئة. والتصدير لـ Puppeteer بيحوّله لاختبار أوتوماتيك.",
             when: "bugs في flows طويلة، وقياس أداء تفاعل كامل.",
             mistakes: "تسجّل على داتا بتتغير (IDs عشوائية) فالـ Replay يفشل."
-          },
-          sol: R`بعد End recording هتلاقي قائمة خطوات: [[Navigate]]، [[Click]] على selector زي [[aria/Login]] أو [[#email]]، [[Change]] بالقيمة اللي كتبتها، وهكذا. Replay بيعيدهم ولو كله عدّى هتلاقي علامة ✓ جنب كل خطوة.
-
-لو خطوة فشلت بعد تعديل، هتقف عندها ويقولك [[Timed out]] أو إن العنصر مش لاقيه: ده إما bug حقيقي في الـ flow أو selector اتغير (زي class بيتولد لوحده). الحل إنك تحط [[data-testid]] أو تستخدم aria labels ثابتة.
-
-متسجلش checkout بكارت حقيقي، استخدم وضع test في بوابة الدفع. وتقدر تعمل Export لـ Puppeteer أو JSON وتحوّله لـ test حقيقي في CI بدل ما تكرره بإيدك.`
+          }
         },
         {
           cmd: "Sources و breakpoints",
@@ -16209,12 +16341,7 @@ F8 (Resume) يكمّل. F10 (Step over) ينفّذ السطر ويوقف على 
 [[debugger;]] في الكود نفسه بيعمل breakpoint، وبيشتغل بس لو DevTools مفتوحة.`,
             when: "bug مش قادر تفهمه بـ console.log. متغير بياخد قيمة غلط ومش عارف متى ومنين.",
             mistakes: "تنسى تشيل breakpoints، فيومًا الكود يوقف ومش هتعرف ليه."
-          },
-          sol: R`لما تدوس الزرار الصفحة هتقف ويظهر شريط [[Paused in debugger]]، والسطر اللي عليه الـ breakpoint متعلّم بالأزرق. على اليمين في Scope هتلاقي المتغيرات بقيمها (زي [[event]] و [[this]])، ولو وقفت بالماوس على أي متغير في الكود هيوريك قيمته.
-
-F10 يمشي سطر سطر، F11 يدخل جوه دالة بتتنادي، F8 يكمّل. لو الكود minified ([[index-a1b2.js]] سطر واحد طويل) دوس [[{ }]] الأول، ولو فيه source maps هتلاقي ملفاتك الأصلية في Ctrl+P.
-
-لو دوست الزرار والصفحة ما وقفتش: الـ breakpoint في سطر مش بيتنفذ (مثلًا تعريف الدالة مش جسمها) أو في ملف قديم بعد تعديل. البديل الأسرع: Elements ثم Event Listeners على الزرار ثم دوس على اسم الملف، أو اكتب [[debugger;]] في الكود.`
+          }
         },
         {
           cmd: "chrome://inspect",
@@ -16238,15 +16365,7 @@ node --inspect-brk server.js
           lines: [
             "شغّل Node وافتح بورت للـ debugger، وبعدين chrome://inspect في المتصفح.",
             "نفس الحاجة بس يوقف على أول سطر ويستناك."
-          ],
-          sol: R`[[node --inspect server.js]] بيطبع قبل أي حاجة:
-
-[[Debugger listening on ws://127.0.0.1:9229/720e51a2-...]]
-[[For help, see: https://nodejs.org/en/docs/inspector]]
-
-افتح [[chrome://inspect]] وهتلاقي تحت Remote Target اسم الملف ولينك [[inspect]]. دوسه، هتتفتح نافذة DevTools، افتح الملف بـ Ctrl+P وحط breakpoint في الـ route handler، وابعت طلب ([[curl localhost:3000/api/...]]). الطلب هيفضل معلّق والـ debugger وقف عند السطر، وتقدر تشوف [[req.body]] و [[req.params]] في Scope.
-
-لو مفيش حاجة ظاهرة في chrome://inspect: البورت 9229 مش في الـ Configure (ضيف [[localhost:9229]])، أو السيرفر شغال في Docker أو WSL من غير [[--inspect=0.0.0.0:9229]] وفتح البورت. ولو مع nodemon أو tsx، مرّر الفلاج ليهم هما.`
+          ]
         }
       ]
     },
@@ -16278,12 +16397,7 @@ Core Web Vitals التلاتة: LCP (Largest Contentful Paint) وقت ظهور �
           lines: [
             "شغّل Lighthouse من الترمنال (npx بينزّله لو مش موجود) وافتح التقرير في المتصفح.",
             "بإعدادات الديسكتوب، واحفظ التقرير HTML في ملف."
-          ],
-          sol: R`[[npx lighthouse https://yoursite.com --view]] بيعمل Mobile افتراضيًا ويفتح التقرير. هتلاقي ٤ درجات (Performance و Accessibility و Best Practices و SEO) وتحت Performance أرقام زي LCP و TBT و CLS، وتحتها Opportunities و Diagnostics مرتبين حسب التأثير.
-
-أول ٣ حاجات بتطلع غالبًا: صور كبيرة أو مش WebP/AVIF، render-blocking CSS/JS، صور من غير [[width]] و [[height]] (بتعمل CLS). بعد التصليح شغّله تاني، وخد بالك إن درجة Performance بتتغير كام نقطة بين كل تشغيل والتاني حتى من غير تعديل، فشغّله ٢ أو ٣ مرات وقارن المتوسط.
-
-لو قالك [[Unable to connect to Chrome]] يبقى مفيش Chrome متسطب على الجهاز، وتقدر تستخدم تاب Lighthouse في DevTools أو pagespeed.web.dev. (مقدرتش أشغّل Lighthouse هنا لأنه محتاج يوصل لموقع حقيقي.)`
+          ]
         },
         {
           cmd: "Performance و Coverage",
@@ -16300,10 +16414,7 @@ Performance > Record > do the slow action > Stop`,
 Performance tab: Record ثم افعل الـ action البطيئة ثم Stop. الـ Long Tasks (مستطيلات حمرا) JavaScript بيشتغل لأكتر من ٥٠ms ويعلّق الشاشة.`,
             when: "لما Performance score منخفض. لما تضغط حاجة والصفحة تعلّق.",
             mistakes: "تتجاهل Coverage لأن درجتك مش وحشة. التطبيقات الكبيرة ممكن بتحمّل ضعف ما تحتاجه."
-          },
-          sol: R`Ctrl+Shift+P ثم Show Coverage ثم زرار الريفريش في اللوحة. هتلاقي جدول بكل ملف CSS و JS، وعمود Unused Bytes ونسبته، وشريط أحمر (مش مستخدم) وأخضر (مستخدم). نسبة CSS المش مستخدم في الصفحة الرئيسية بتبقى عادي ٥٠٪ لـ ٩٠٪ لو بتستخدم framework زي Bootstrap كامل.
-
-دوس على الملف وهيفتحه في Sources والسطور المش مستخدمة عليها علامة حمرا. خد بالك: «مش مستخدم في الصفحة دي وقت التحميل» مش معناها «مش مستخدم خالص»، ممكن يكون لصفحة تانية أو لـ hover أو modal. فالحل مش تمسحه، الحل تقسّم الـ CSS أو تستخدم purge (زي اللي Tailwind بيعمله).`
+          }
         },
         {
           cmd: "Overrides",
@@ -16323,12 +16434,7 @@ Override headers بيخليك تعدّل response headers، مفيد تجرّب 
 متنساش توقّف الـ Overrides من Sources ثم Overrides لما تخلص.`,
             when: "تجرّب bug fix على الموقع قبل PR. تتحقق من إن تصليح معين بيحل المشكلة.",
             mistakes: "تنسى Overrides شغال وتتساءل ليه التعديلات اللي بترفعها مش بتظهر."
-          },
-          sol: R`كليك يمين على طلب الـ API في Network ثم Override content. أول مرة هيطلب منك تختار فولدر وتدوس Allow. هيفتحلك الرد في Sources، امسح اللي فيه واكتب [[[]]] واحفظ Ctrl+S، وبعدين ريفريش. هتلاقي جنب الطلب في Network علامة بنفسجية (overridden)، والواجهة بقت شايفة array فاضي.
-
-اللي المفروض تشوفه: رسالة زي «مفيش طلبات لسه» (empty state). اللي بيطلع كتير: صفحة فاضية خالص، أو spinner بيلف للأبد، أو error في Console زي [[Cannot read properties of undefined (reading '0')]] لأن الكود فاكر إن فيه عنصر أول دايمًا.
-
-جرّب كمان تحط [[{}]] أو تغيّر الـ status من Override headers. ولما تخلص اقفل Enable Local Overrides في Sources ثم Overrides عشان متنساش إن الرد متزوّر.`
+          }
         },
         {
           cmd: "playwright screenshot",
@@ -16359,15 +16465,7 @@ npx playwright screenshot --device "iPhone 13" --color-scheme dark --wait-for-ti
             "ديسكتوب ١٤٤٠ في ٩٠٠.",
             "موبايل ٣٩٠ عرض، والصفحة كاملة.",
             "آيفون بالوضع الداكن، بعد ثانية من التحميل."
-          ],
-          sol: R`جربت الأمر التاني على سيرفر محلي وطبع:
-
-[[Navigating to http://localhost:8791]]
-[[Capturing screenshot into mobile.png]]
-
-وطلع ملف PNG. هتلاقي ٣ صور: [[desktop.png]] مقاس 1440×900 بالظبط، و [[mobile.png]] عرضه 390 وطوله قد الصفحة كلها (بسبب [[--full-page]])، و [[iphone-dark.png]] بـ dark mode لو الـ CSS بتاعك فيه [[prefers-color-scheme: dark]]. قبل وبعد التعديل حطهم جنب بعض في أي image viewer.
-
-لو طلع [[Executable doesn't exist]] يبقى نسيت [[npx playwright install chromium]]. ولو الصورة فاضية أو نص غير متحمّل، زوّد [[--wait-for-timeout]] أو [[--wait-for-selector]]. ولو [[net::ERR_CONNECTION_REFUSED]] يبقى السيرفر المحلي مش شغال على البورت ده.`
+          ]
         },
         {
           cmd: "Command Menu",
@@ -16390,10 +16488,7 @@ Show Coverage`,
 «Show Rendering»: emulate dark mode من غير ما تغيّر إعدادات النظام. وprint media query.`,
             when: "أي وقت تعرف إيه اللي عايزه بس مش لاقيه.",
             mistakes: "تبقى في تاب واحد وتنسى إن باقي DevTools فيه أدوات مهمة."
-          },
-          sol: R`Ctrl+Shift+P واكتب [[full size]] ثم Enter: هينزل PNG للصفحة كلها من فوق لتحت (مش بس الجزء الظاهر). لو الصورة مقصوصة أو فيها أجزاء فاضية، غالبًا عندك lazy loading أو عناصر [[position: fixed]]، اعمل scroll للآخر الأول.
-
-الـ dark mode: Ctrl+Shift+P ثم Show Rendering، وانزل لـ [[Emulate CSS media feature prefers-color-scheme]] واختار [[prefers-color-scheme: dark]]. لو موقعك داعم dark mode بالـ media query هيتقلب فورًا. لو ما اتغيرش يبقى الموقع مش بيقرا الـ media query (يمكن معتمد على زرار و localStorage بس).`
+          }
         }
       ]
     },
@@ -16425,14 +16520,7 @@ securityheaders.com بيدّيك درجة. مع Nginx بتضيفها بـ [[add_
             when: "بعد ما ترفع موقع: افحصه على securityheaders.com. واستهدف درجة A.",
             mistakes: "CSP بياخد وقت عشان تضبطه. ابدأ بـ report-only mode يجمعلك violations من غير ما يمنع حاجة."
           },
-          lines: ["الـ headers بس، وفلتر على headers الأمان الخمسة. اللي مش ظاهر يبقى ناقص."],
-          sol: R`securityheaders.com هيديك درجة من F لـ A+ وقايمة Missing Headers. موقع Nginx جديد من غير إعدادات غالبًا بياخد F أو D. أسهل واحد تضيفه وتقفل بيه ثغرة حقيقية:
-
-[[add_header X-Content-Type-Options "nosniff" always;]]
-
-حطه في الـ [[server]] block، واعمل [[sudo nginx -t]] (المفروض [[syntax is ok]] و [[test is successful]]) وبعدين [[sudo systemctl reload nginx]]، وشغّل أمر الـ curl تاني: السطر هيظهر.
-
-لو ما ظهرش: فيه [[add_header]] تاني جوه [[location]] (ولما location فيها add_header بتلغي كل اللي ورثته من server)، أو الرد error ونسيت [[always]]. سيب CSP للآخر وابدأها بـ [[Content-Security-Policy-Report-Only]] لأنها بتكسر سكربتات. (مقدرتش أجرّب Nginx حقيقي هنا.)`
+          lines: ["الـ headers بس، وفلتر على headers الأمان الخمسة. اللي مش ظاهر يبقى ناقص."]
         },
         {
           cmd: "SEO من الترمنال",
@@ -16457,10 +16545,7 @@ curl -sI https://example.com/sitemap.xml`,
             "هات الصفحة زي ما جوجل بيشوفها، وطلّع الـ title والـ description و Open Graph. لو فاضي، المحتوى بيتعمل بـ JavaScript.",
             "ملف robots.txt: إيه اللي مسموح للـ crawlers.",
             "الـ sitemap موجود؟ (200 يعني موجود)."
-          ],
-          sol: R`على صفحة مظبوطة أمر الـ grep بيطلّع سطور فيها [[<title>...]] و [[<meta name="description" content="...">]] و [[<meta property="og:title" ...>]] و [[og:image]]. كرره على ٣ صفحات مختلفة (الرئيسية ومقال ومنتج) ولازم الـ title والـ description يختلفوا في كل واحدة.
-
-الغلط الأشهر في SPA: كل الصفحات بترجّع نفس الـ title، أو grep مش بيلاقي description خالص لأن React بيحطها بعد التحميل. [[robots.txt]] المفروض يرجع نص فيه [[Sitemap: https://...]] ومفيهوش [[Disallow: /]] (دي بتمنع جوجل من الموقع كله، وبتتنسي من staging). و [[curl -sI .../sitemap.xml]] لازم يرجع [[200]]، لو [[404]] اعمل واحد.`
+          ]
         },
         {
           cmd: "أدوات جوجل",
@@ -16484,12 +16569,7 @@ URL Inspection: بتحط URL وبيوريك Googlebot شايفه إيه. لو Go
 Rich Results Test: لو فيه structured data (JSON-LD)، بيتحقق إنه صح وهيظهر كـ rich result.`,
             when: "بعد إطلاق الموقع. كل شهر تشوف اللي الناس بيبحثوا عنه. لما صفحة مهمة مش في جوجل.",
             mistakes: "تستنى جوجل يلاقي موقعك لوحده. ابعت sitemap في Search Console على طول."
-          },
-          sol: R`في Search Console: Add property، واختار Domain (بيتأكد بـ TXT record في الـ DNS) أو URL prefix (بيتأكد بملف HTML أو meta tag). بعد التأكيد حط لينك الصفحة الجديدة في خانة البحث فوق (URL Inspection).
-
-الغالب هتشوف [[URL is not on Google]] لصفحة جديدة، وده طبيعي. دوس Test Live URL عشان تتأكد إن جوجل قادر يوصلها (لازم يقول [[URL is available to Google]])، وبعدين Request Indexing. بعد أيام ارجع هتلاقيها [[URL is on Google]].
-
-لو قالك [[Excluded by 'noindex' tag]] أو [[Blocked by robots.txt]] ده غلط عندك مش عند جوجل. وخد بالك إن البيانات في Performance بتاخد يومين تلاتة تظهر لموقع جديد.`
+          }
         }
       ]
     }
@@ -23703,12 +23783,7 @@ deactivate
             "ارجع للـ Python العادي.",
             "التفعيل في PowerShell.",
             "التفعيل في CMD."
-          ],
-          sol: R`بعد [[source .venv/bin/activate]] الـ prompt بيبدأ بـ [[(.venv)]]، و [[which python]] بيرجع مسار جوه الفولدر، عندي طلع [[/tmp/claude-0/python-sol/.venv/bin/python]]. على ويندوز [[where python]] بيطبع أكتر من سطر، وأولهم لازم يبقى [[...\.venv\Scripts\python.exe]].
-
-بعد [[deactivate]] الـ [[(.venv)]] بيختفي و [[which python]] يرجع لـ [[/usr/bin/python3]] أو مايلاقيش [[python]] خالص على أوبونتو (هناك اسمه [[python3]] بس).
-
-لو [[which python]] لسه بيشاور بره .venv بعد التفعيل، يبقى انت شغّلت [[bash activate]] أو [[./activate]] بدل [[source]] (دي بتفعّل في shell فرعي وتقفل). وعلى PowerShell لو طلع [[running scripts is disabled on this system]] شغّل [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]] مرة واحدة.`
+          ]
         },
         {
           cmd: "pip install -r requirements.txt",
@@ -23740,12 +23815,7 @@ pip uninstall -y httpx`,
             "كل اللي متسطّب ونسخه.",
             "تفاصيل مكتبة.",
             "شيل مكتبة من غير ما يسأل."
-          ],
-          sol: R`جربتها في venv جديد: [[pip install -r requirements.txt]] سطّب requests ومعاها ٤ مكتبات بتعتمد عليها. و [[pip show requests]] طلّع (أهم السطور):
-
-[[Name: requests]] و [[Version: 2.32.3]] و [[Location: .../.venv/lib/python3.11/site-packages]] و [[Requires: certifi, charset-normalizer, idna, urllib3]] و [[Required-by:]] فاضية.
-
-الـ Location هو اللي يأكدلك إنها اتسطبت جوه الـ venv مش على النظام. و Requires بتقولك ليه [[pip list]] طلّع مكتبات انت ماكتبتهاش. لو الـ Location طلع بره .venv (زي [[/usr/lib/python3/dist-packages]] أو [[~/.local]]) يبقى نسيت تفعّل الـ venv.`
+          ]
         },
         {
           cmd: "pip freeze",
@@ -23773,10 +23843,7 @@ pip list --outdated`,
             "احفظها في ملف جديد.",
             "قارن بالقديم قبل ما تستبدل.",
             "المكتبات اللي ليها نسخ أحدث."
-          ],
-          sol: R`في venv نضيف سطّبت فيه [[fastapi]] بس، [[pip freeze]] طلّع ١١ سطر، كلهم بالشكل [[name==version]]: [[fastapi==...]] و [[starlette]] و [[pydantic]] و [[pydantic_core]] و [[anyio]] و [[idna]] و [[typing_extensions]] وغيرهم. الرقم بالظبط بيتغير مع نسخة fastapi، المهم إنه أكتر بكتير من واحد.
-
-ده الفرق بين freeze و requirements اللي كتبتها بإيدك: freeze بيثبّت كل شجرة المكتبات بنسخها الحالية، فلما حد تاني يسطّب ياخد نفس الحاجات بالظبط. ولو لقيت فيه عشرات المكتبات اللي مالهاش علاقة (jupyter وغيره)، يبقى انت شغّلته على Python النظام أو venv قديم مش على venv المشروع.`
+          ]
         },
         {
           cmd: "externally-managed-environment",
@@ -23815,16 +23882,7 @@ pipx list`,
             "الحل لأداة ترمنال: venv خاص بيها أوتوماتيك.",
             "ضيف فولدر أدوات pipx للـ PATH.",
             "الأدوات المتسطّبة بـ pipx."
-          ],
-          sol: R`على أوبونتو 24.04 [[pip install requests]] بيرفض ويطلّع:
-
-[[error: externally-managed-environment]]
-[[× This environment is externally managed]]
-[[╰─> To install Python packages system-wide, try apt install python3-xyz ...]]
-
-وكمل بيقترح venv أو pipx. ده مش bug: أوبونتو بيحمي Python بتاع النظام من إنك تكسر أدوات زي apt. (جربتها على python3.12 بتاع النظام وطلعت نفس الرسالة.)
-
-بعد [[pipx install httpie]] و [[pipx ensurepath]] (وافتح ترمنال جديد)، [[pipx list]] هيوريك [[package httpie ...]] والأوامر [[http]] و [[https]]. و [[http example.com]] هيطبع [[HTTP/1.1 200 OK]] والـ headers ملونة وبعدها الـ HTML. لو طلع [[http: command not found]] يبقى الـ PATH لسه ما اتحدّثش. والغلط اللي متعملوش: [[--break-system-packages]] أو [[sudo pip install]].`
+          ]
         }
       ]
     },
@@ -23862,12 +23920,7 @@ PWA: المتصفح بيسمح بالـ service worker على https أو على 
             "على جهازك بس، محدش من الشبكة.",
             "قدّم فولدر dist من غير ما تدخله.",
             "صورة للصفحة بمقاس موبايل، بطولها كلها."
-          ],
-          sol: R`السيرفر بيطبع [[Serving HTTP on 127.0.0.1 port 8000 (http://127.0.0.1:8000/) ...]] ومع كل طلب سطر زي [[127.0.0.1 - - [30/Sep/2026 05:09:02] "GET / HTTP/1.1" 200 -]].
-
-لو الـ index.html عادي خالص (HTML و CSS بس) مش هتلاقي فرق في Console بين الاتنين. الفرق بيظهر أول ما تستخدم [[<script type="module">]] أو fetch. جربت صفحة بتعمل [[import]] من [[./m.js]]: بالدبل كليك Console طلّع [[Access to script at 'file:///.../m.js' from origin 'null' has been blocked by CORS policy]]، ومن [[http://localhost:8000]] اشتغلت عادي.
-
-لو طلع [[OSError: [Errno 98] Address already in use]] غيّر البورت. ولو فتحت [[http://0.0.0.0:8000]] وما اشتغلش على ويندوز، استخدم [[localhost]].`
+          ]
         },
         {
           cmd: "python -m",
@@ -23901,17 +23954,7 @@ python -c "import sys; print(sys.version)"`,
             "شغّل ملف من مشروعك كجزء من الباكدج (عرض بس).",
             "pip بتاع الـ python ده بالظبط.",
             "سطر Python من الترمنال."
-          ],
-          sol: R`جربتها بالظبط: [[python app/seed.py]] فشل بـ [[ModuleNotFoundError: No module named 'app']]، و [[python -m app.seed]] من نفس الفولدر (اللي فيه [[app/]]) اشتغل وطبع [[seed ok: demo]].
-
-السبب: لما تشغّل ملف بمساره، Python بيحط فولدر الملف نفسه ([[app/]]) في [[sys.path]]، فمش شايف حاجة اسمها [[app]] جواه. مع [[-m]] بيحط الفولدر الحالي، فـ [[app]] بقى package يتعمله import.
-
-لو [[-m]] كمان فشل بنفس الغلطة، يبقى انت واقف جوه [[app/]] نفسه مش في الفولدر اللي فوقه، أو ناسي [[__init__.py]] أحيانًا، أو كتبت [[app/seed]] أو [[app.seed.py]] بدل [[app.seed]].`,
-          solCode: R`mkdir -p app && touch app/__init__.py
-echo 'NAME = "demo"' > app/config.py
-printf 'from app import config\nprint("seed ok:", config.NAME)\n' > app/seed.py
-python app/seed.py     # ModuleNotFoundError: No module named 'app'
-python -m app.seed     # seed ok: demo`
+          ]
         }
       ]
     },
@@ -23954,17 +23997,7 @@ python -m pytest -q --lf`,
             "الاختبارات اللي اسمها فيه login ومش slow.",
             "اختبار واحد بعينه بالتفصيل.",
             "اللي فشل المرة اللي فاتت بس."
-          ],
-          sol: R`[[pytest]] بيطبع [[F]] وتحته حاجة زي:
-
-[[>   def test_add(): assert 1 + 1 == 3]]
-[[E   assert (1 + 1) == 3]]
-[[FAILED tests/test_math.py::test_add - assert (1 + 1) == 3]]
-[[1 failed in 0.02s]]
-
-السطر اللي بيبدأ بـ [[E]] هو المفيد: pytest بيعيد كتابة الـ [[assert]] العادي عشان يوريك الطرفين. مع متغيرات بيكتبلك قيمهم، زي [[assert 2 == 3]] ومعاها [[where 2 = add(1, 1)]]. بعد ما تصلّحه لـ [[== 2]] هتلاقي [[.]] و [[1 passed]].
-
-لو طلع [[no tests ran]] يبقى اسم الملف أو الدالة مش بيبدأ بـ [[test_]]. ولو [[pytest: command not found]] يبقى الـ venv مش متفعل، استخدم [[python -m pytest]].`
+          ]
         },
         {
           cmd: "pytest.ini",
@@ -24005,13 +24038,7 @@ markers =
             "الدوال async تشتغل لوحدها (pytest-asyncio).",
             "العلامات المسموحة:",
             "slow للاختبارات البطيئة."
-          ],
-          sol: R`مع اختبارين واحد منهم [[@pytest.mark.slow]]، [[pytest -m "not slow"]] بيطلّع [[1 passed, 1 deselected]]. ولما كتبت [[@pytest.mark.slwo]] وقفت الـ collection كلها بـ:
-
-[[ERROR tests/test_math.py - Failed: 'slwo' not found in $__btmarkers$__bt configuration option]]
-[[Interrupted: 1 error during collection]]
-
-من غير [[--strict-markers]] كان هيعدّي بـ warning بس، والاختبار «البطيء» هيفضل شغال في كل مرة من غير ما تاخد بالك. وخد بالك من حاجتين: سطر [[asyncio_mode = auto]] بيطلّع [[PytestConfigWarning: Unknown config option: asyncio_mode]] لو [[pytest-asyncio]] مش متسطبة. ولو عدّلت ملف الاختبار وشغّلت pytest على طول والنتيجة ما اتغيرتش، امسح [[__pycache__]] وجرّب تاني.`
+          ]
         },
         {
           cmd: "uvicorn --reload",
@@ -24042,23 +24069,7 @@ curl -s localhost:8000/health
             "شغّل مع إعادة تشغيل تلقائية مع كل حفظ.",
             "على بورت تاني.",
             "جرّب endpoint."
-          ],
-          sol: R`[[curl -s localhost:8000/health]] بيرجع [[{"ok":true}]] (JSON بيكتب [[true]] مش [[True]]). لما تعدّل الرد وتحفظ، اللوج بيطبع:
-
-[[WARNING:  WatchFiles detected changes in 'app/main.py'. Reloading...]]
-وبعدها [[Started server process [...]]] و [[Application startup complete.]]
-
-والـ curl التاني بيرجع الرد الجديد. جربتها وده اللي حصل بالظبط.
-
-لو ما عملش reload: انت شغّله من غير [[--reload]]، أو الملف بره الفولدر اللي بيراقبه (أول سطر في اللوج [[Will watch for changes in these directories]]). ولو طلع [[Error loading ASGI app. Could not import module "app.main"]] يبقى انت مش واقف في الفولدر اللي فيه [[app/]]. وافتح [[/docs]] هتلاقي [[/health]] ظاهر لوحده.`,
-          solCode: R`# app/main.py  (plus an empty app/__init__.py)
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/health")
-def health():
-    return {"ok": True}`
+          ]
         },
         {
           cmd: "python3 - <<'PY'",
@@ -24093,18 +24104,7 @@ PY`,
             "البيانات، والتوكن من متغير بيئة.",
             "اكتبها JSON سليم في الملف.",
             "نهاية كود Python."
-          ],
-          sol: R`جربتها بـ [[INTERNAL_TOKEN='ab"c']] والـ [[creds.json]] طلع سليم، و [[json.dump]] هرّب علامة التنصيص لوحده:
-
-[[    "value": "Bearer ab\"c"]]
-
-و [[python3 -m json.tool creds.json]] قراه من غير مشاكل. أما بـ echo:
-
-[[echo "[{\"name\":\"internal\",\"value\":\"Bearer $INTERNAL_TOKEN\"}]" > bad.json]]
-
-طلع [[[{"name":"internal","value":"Bearer ab"c"}]]] وده JSON مكسور، و json.tool قال [[Expecting ',' delimiter: line 1 column 40]].
-
-وعلامات التنصيص حوالين [[<<'PY']] مهمة: بتمنع bash إنه يغيّر [[$]] أو [[$__bt]] جوه كود Python. ولو نسيت تعمل [[export]] هيطلع [[KeyError: 'INTERNAL_TOKEN']].`
+          ]
         }
       ]
     },
@@ -24915,20 +24915,7 @@ nginx بيبعت [[X-Forwarded-For]] (IP المستخدم) و [[X-Forwarded-Prot
             "شغّل على كل الواجهات، وصدّق headers الـ proxy.",
             "نفس الكلام بعمليتين.",
             "اتأكد إنه سامع على 0.0.0.0."
-          ],
-          sol: R`جربتها بـ endpoint بيرجّع [[{"client": ..., "scheme": ...}]] وبعت الطلب بـ [[X-Forwarded-For: 203.0.113.7]] و [[X-Forwarded-Proto: https]] زي ما nginx بيعمل:
-
-مع [[--forwarded-allow-ips "*"]]: [[{"client":"203.0.113.7","scheme":"https"}]]، يعني IP المستخدم الحقيقي و https.
-من غيرها، والطلب جاي من IP غير 127.0.0.1 (زي nginx في container تاني): [[{"client":"192.0.2.2","scheme":"http"}]]، يعني IP البروكسي و http، و uvicorn تجاهل الـ headers.
-
-المفاجأة: لو nginx على نفس الجهاز وبيكلّم [[127.0.0.1:8080]] مش هتلاقي فرق، لأن uvicorn بيثق في [[127.0.0.1]] افتراضيًا. وده خطر لو البورت مفتوح للنت ومعاك [[*]]: أي حد يقدر يزوّر [[X-Forwarded-For]]، فخلي البورت على 127.0.0.1 أو شبكة Docker داخلية.`,
-          solCode: R`from fastapi import FastAPI, Request
-
-app = FastAPI()
-
-@app.get("/whoami")
-def whoami(request: Request):
-    return {"client": request.client.host, "scheme": request.url.scheme}`
+          ]
         },
         {
           cmd: "Dockerfile",
@@ -24981,12 +24968,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--proxy-
             "البورت (توثيق).",
             "فحص صحة كل ٣٠ ثانية.",
             "شغّل uvicorn للإنتاج."
-          ],
-          sol: R`[[docker images]] المفروض يوريك الصورة بحجم في حدود ٢٠٠ لـ ٣٠٠ ميجا حسب المكتبات (الـ base [[python:3.12-slim]] لوحدها حوالي ١٢٠ ميجا على الديسك). لو طلعت قرب الجيجا، غالبًا نسيت [[.dockerignore]] فـ [[.venv]] و [[.git]] اتنسخوا جوه الصورة، أو استخدمت [[python:3.12]] مش slim.
-
-[[docker compose exec app whoami]] المفروض يطبع [[app]]. لو طبع [[root]] يبقى سطر [[USER app]] مش موجود أو الـ service بيستخدم صورة قديمة (اعمل [[docker compose up -d --build]]). وبعد دقيقة [[docker ps]] يوريك [[(healthy)]]. لو [[(unhealthy)]] شوف [[docker inspect --format '{{json .State.Health}}' <id>]]: غالبًا مفيش route اسمه [[/health]].
-
-(مقدرتش أبني الصورة هنا لأن الشبكة جوه docker build مقفولة، فالأرقام دي تقريبية.)`
+          ]
         },
         {
           cmd: "docker compose run --rm --no-deps",
@@ -25020,12 +25002,7 @@ docker compose run --rm -e LOG_LEVEL=debug app python -m app.check`,
             "شغّل سكربت جوه الـ container الشغال (من غير terminal).",
             "سكربت تاني في وضع العرض بس.",
             "تشغيل بمتغير بيئة إضافي."
-          ],
-          sol: R`الأمر الأول بيطبع ناتج pytest العادي، حاجة زي [[..... [100%]]] و [[5 passed in 0.40s]]، والـ exit code بتاعه هو بتاع pytest (0 لو كله نجح). [[--no-deps]] معناها إنه مابيشغّلش الـ db ولا أي service في [[depends_on]]، فلو اختباراتك محتاجة قاعدة بيانات هتفشل بـ connection refused، وساعتها شيل [[--no-deps]].
-
-[[docker ps -a]] بعدها مش المفروض يوريك container اسمه زي [[project-app-run-a1b2c3]]، لأن [[--rm]] مسحه. لو لقيت واحد [[Exited]] يبقى شغّلت مرة من غير [[--rm]]، امسحه بـ [[docker rm]] أو [[docker container prune]].
-
-(ما قدرتش أشغّلها هنا لأن بناء الصورة محتاج نت جوه docker build.)`
+          ]
         }
       ]
     }
@@ -30491,10 +30468,7 @@ psql -U postgres -c "SELECT version();"`,
             "نفس الحاجة بـ connection string (زي DATABASE_URL في .env).",
             "لو Postgres جوه Docker: شغّل psql جوه الـ container.",
             "نفّذ أمر واحد واخرج."
-          ],
-          sol: R`المفروض تشوف جدول صغير فيه عمود واحد اسمه [[now]] وصف واحد بالوقت الحالي بالـ timezone، زي [[2026-09-30 04:55:42.283158+00]] وتحته [[(1 row)]]. و [[\q]] بيرجّعك للترمنال من غير أي رسالة.
-
-لو الـ prompt فضل [[app-#]] بدل [[app=#]] بعد ما دوست Enter، يبقى نسيت الـ [[;]] و psql مستني باقي الأمر: اكتب [[;]] ودوس Enter. ولو طلعلك [[Peer authentication failed for user "postgres"]] يبقى اتصلت بالسوكت المحلي بيوزر لينكس غير postgres: استخدم [[sudo -u postgres psql]] أو ضيف [[-h localhost]] مع باسورد. و [[connection refused]] معناها السيرفر مش شغال أو بيسمع على بورت تاني، اتأكد بـ [[pg_isready -h localhost]].`
+          ]
         },
         {
           cmd: "أوامر الـ backslash",
@@ -30534,12 +30508,7 @@ psql -U postgres -c "SELECT version();"`,
             "الـ schemas.",
             "الدوال.",
             "اخرج."
-          ],
-          sol: R`[[\d users]] بيطلّع جدول فيه [[Column]] و [[Type]] و [[Nullable]] و [[Default]]، وتحته أقسام. على جدول users بسيط الناتج كان كده:
-
-[[id | bigint | not null | nextval('users_id_seq'::regclass)]] يعني الـ id بيتولّد من sequence. وتحت [[Indexes:]] لقيت [["users_pkey" PRIMARY KEY, btree (id)]] و [["users_email_key" UNIQUE CONSTRAINT, btree (email)]]. وفي الآخر [[Referenced by:]] فيها [[TABLE "orders" CONSTRAINT "orders_user_id_fkey" FOREIGN KEY (user_id) REFERENCES users(id)]]، يعني جدول تاني بيشاور على ده. ولو الجدول نفسه بيشاور على غيره هتلاقي قسم [[Foreign-key constraints:]].
-
-الحاجات اللي تسأل نفسك عنها وانت بتقرا: فيه index على الأعمدة اللي بتعمل عليها WHERE؟ الأعمدة المهمة [[not null]]؟ الـ foreign keys عليها index (Postgres مش بيعمله لوحده على العمود اللي بيشاور)؟ ولو [[\d users]] قالك [[Did not find any relation named "users"]] يبقى انت في قاعدة غلط ([[\c]] للصح) أو الجدول في schema تانية ([[\dn]]).`
+          ]
         },
         {
           cmd: R`\x و \timing`,
@@ -30573,12 +30542,7 @@ SELECT count(*) FROM orders;
             "جرّب.",
             "اعرض NULL بشكل واضح بدل فراغ.",
             "الناتج CSV."
-          ],
-          sol: R`مع [[\x]] الصف بيتعرض عمودي: [[-[ RECORD 1 ]---]] وتحته كل عمود في سطر [[email | u2@x.com]]. و [[\timing]] بيطبع [[Timing is on.]] وبعد كل استعلام [[Time: ... ms]].
-
-المقارنة الحقيقية محتاجة جدول كبير. على جدول فيه مليون صف: [[SELECT count(*) FROM big WHERE user_id = 4242]] أخد [[Time: 30.416 ms]] من غير index، وبعد [[CREATE INDEX idx_big_user ON big(user_id)]] نفس الاستعلام أخد [[Time: 0.678 ms]]، يعني أسرع بحوالي ٤٠ مرة.
-
-الغلط الشائع: تجرّب على جدول فيه ٥ صفوف فتلاقي الاتنين [[1.5 ms]] و [[0.3 ms]] وتفتكر إن الـ index مالوش لازمة. على الجداول الصغيرة Postgres بيقرا الجدول كله أسرع من الـ index أصلًا. وخلي بالك إن أول تشغيل ممكن يبقى أبطأ عشان الداتا لسه مش في الـ cache، فشغّل كل استعلام مرتين وخد التاني.`
+          ]
         },
         {
           cmd: "تشغيل SQL من ملف",
@@ -30610,22 +30574,7 @@ psql -U postgres -d app -At -c "SELECT email FROM users;" > emails.txt
             "أمر واحد من الترمنال.",
             "القيم بس من غير عناوين ولا خطوط ([[-A]] و [[-t]])، في ملف.",
             "من جوه psql: نفّذ ملف."
-          ],
-          sol: R`من غير ON_ERROR_STOP، psql بيطبع الـ error ويكمّل: في التجربة بملف فيه INSERT مكرر في النص الناتج كان [[CREATE TABLE]] و [[INSERT 0 1]] وبعدين [[psql:seed.sql:3: ERROR:  duplicate key value violates unique constraint "t1_pkey"]] وبعدين [[CREATE TABLE]] للجدول التاني، و exit code [[0]]. يعني السكربت أو الـ CI هيفتكر إن كله تمام.
-
-مع [[-v ON_ERROR_STOP=1]] بيقف عند السطر 3: الجدول التاني متعملش، و exit code بقى [[3]]. ودا اللي عايزه في أي deploy.
-
-خلي بالك إن الجدول الأول اتعمل في الحالتين، لأن كل أمر بيتنفذ لوحده. لو عايز الملف كله يا يتنفذ يا لأ ضيف [[--single-transaction]] (أو [[-1]]). الغلط الشائع إنك تبص على آخر سطر في الناتج بس وتفوّت الـ ERROR اللي في النص.`,
-          solCode: R`cat > seed.sql <<'EOF'
-CREATE TABLE t1 (id int PRIMARY KEY, name text);
-INSERT INTO t1 VALUES (1, 'a');
-INSERT INTO t1 VALUES (1, 'dup');
-CREATE TABLE t2 (id int);
-EOF
-psql -d lab -f seed.sql; echo "exit=$?"
-psql -d lab -c "DROP TABLE IF EXISTS t1, t2"
-psql -d lab -v ON_ERROR_STOP=1 -f seed.sql; echo "exit=$?"
-psql -d lab -v ON_ERROR_STOP=1 --single-transaction -f seed.sql; echo "exit=$?"`
+          ]
         },
         {
           cmd: R`\copy`,
@@ -30653,17 +30602,7 @@ psql -d app -c "\copy orders TO STDOUT CSV HEADER" | head`,
             "صدّر استعلام (مش جدول كامل).",
             "استورد CSV في جدول (الأعمدة بنفس الترتيب).",
             "من الترمنال: صدّر على stdout وشوف أول سطور."
-          ],
-          sol: R`التصدير بيطبع [[COPY 5]] (عدد الصفوف)، والملف أوله سطر الـ header: [[id,email,plan,created_at]] وبعده صف لكل user. وبعد ما تعدّل وتعمل جدول جديد بنفس الشكل وترجّع بـ FROM هتشوف [[COPY 5]] تاني، و SELECT على الصف اللي عدلته هيطلّع القيمة الجديدة.
-
-[[\copy]] مش بيعمل الجدول: لو كتبت اسم جدول مش موجود هيقولك [[ERROR:  relation "users_new" does not exist]]. اعمله الأول بـ [[CREATE TABLE users_new (LIKE users INCLUDING DEFAULTS);]].
-
-المشاكل الشائعة من Excel: بيغيّر شكل التواريخ لـ [[30/09/2026 04:55]] فيطلع [[invalid input syntax for type timestamp]] أو [[date/time field value out of range]]، وممكن يحفظ بـ separator [[;]] بدل [[,]] حسب إعدادات اللغة، أو يضيف BOM في أول الملف فالعمود الأول يبقى اسمه غريب. احفظ كـ «CSV UTF-8». ولو استخدمت [[COPY]] من غير الـ backslash هيدوّر على الملف على السيرفر مش جهازك، ويقولك [[could not open file]] أو [[must be superuser or have privileges of the pg_read_server_files role]].`,
-          solCode: R`\copy users TO 'users.csv' CSV HEADER
--- عدّل users.csv واحفظه CSV UTF-8
-CREATE TABLE users_import (LIKE users INCLUDING DEFAULTS);
-\copy users_import FROM 'users.csv' CSV HEADER
-SELECT id, email, plan FROM users_import ORDER BY id;`
+          ]
         },
         {
           cmd: "psql -tAc",
@@ -30700,17 +30639,7 @@ echo "SELECT name FROM staff WHERE code = :'code'" | psql -U app -d appdb -tA -v
             "لف على نتيجة استعلام سطر سطر.",
             "من جوه Docker في سكربت (-T)، والقايمة في سطر واحد.",
             "قيمة من بره بأمان: متغير psql بدل ما تلزقها في SQL."
-          ],
-          sol: R`السكربت بيطبع [[users: 5]] (أو عدد الصفوف عندك) من غير مسافات ولا header، بفضل [[-t]] و [[-A]]. وتشغيل سطر إنشاء القاعدة أول مرة بيعمل القاعدة، وتاني مرة [[grep -q 1]] بيلاقي الـ 1 فالـ [[||]] مش بيشغّل createdb، والسكربت بيخرج بـ 0 من غير أي رسالة.
-
-قارن بـ [[createdb lab_test]] لوحده مرتين: التانية بتقول [[createdb: error: database creation failed: ERROR:  database "lab_test" already exists]] و exit 1، ومع [[set -e]] السكربت كله يقع.
-
-الغلط الشائع: تنسى [[-A]] فيبقى [[COUNT]] فيه مسافات زي [["     5"]] والمقارنات تبوظ، أو تنسى [[-t]] فالمتغير يبقى فيه [[count]] و [[-------]] و [[(1 row)]].`,
-          solCode: R`#!/usr/bin/env bash
-set -euo pipefail
-COUNT=$(psql -X -d lab -tAc "SELECT count(*) FROM users")
-echo "users: $COUNT"
-psql -X -d postgres -tAc "SELECT 1 FROM pg_database WHERE datname = 'lab_test'" | grep -q 1 || createdb lab_test`
+          ]
         },
         {
           cmd: "createdb / dropdb",
@@ -30743,12 +30672,7 @@ psql -l`,
             "اعمل يوزر واسأل الباسورد.",
             "السيرفر بيقبل اتصالات؟ (بيرجع 0 لو أيوه).",
             "القواعد من الترمنال."
-          ],
-          sol: R`[[createdb]] و [[dropdb]] لما ينجحوا مش بيطبعوا حاجة خالص. في [[psql -l]] بعد الإنشاء هتلاقي سطر [[app_test | postgres | UTF8 | ...]]، وبعد [[dropdb]] السطر يختفي (اتأكد بـ [[psql -l | grep app_test]]: مش هيطلع حاجة).
-
-لو dropdb قالك [[database "app_test" is being accessed by other users]] يبقى فيه جلسة مفتوحة عليها (غالبًا psql تاني عندك أو التطبيق): اقفلها، أو في PG 13+ استخدم [[dropdb --force app_test]]. ولو createdb قالك [[already exists]] فالاسم مستخدم.
-
-واتعلمها كعادة: قبل [[dropdb]] اقرا الاسم مرتين. dropdb مالوش undo، وعلى سيرفر مشترك ممكن قاعدة بنفس الاسم تبقى بتاعة حد تاني.`
+          ]
         }
       ]
     },
@@ -30787,12 +30711,7 @@ psql بيطبع [[UPDATE 3]]، يعني ٣ صفوف: لو متوقع واحد و
             "transaction جديدة.",
             "امسح الـ sessions الأقدم من ٣٠ يوم.",
             "العدد مظبوط؟ ثبّت."
-          ],
-          sol: R`الترتيب اللي هتشوفه: [[BEGIN]]، وبعدين [[DELETE 5]] (عدد صفوف الجدول)، و [[SELECT count(*)]] جوه نفس الـ transaction بيرجّع [[0]]، وبعد [[ROLLBACK]] نفس الـ SELECT بيرجّع [[5]] تاني. الـ prompt نفسه بيتغير لـ [[app=*#]] طول ما فيه transaction مفتوحة.
-
-الفكرة إن الـ DELETE اتعمل فعلًا بس محدش شافه غير جلستك لحد ما تعمل COMMIT. أي جلسة تانية كانت هتشوف ٥ صفوف طول الوقت.
-
-الأخطاء الشائعة: تنسى BEGIN فالـ DELETE يتنفذ ويتحفظ فورًا (psql بيعمل autocommit)، وبعدها ROLLBACK بيطلّع [[WARNING:  there is no transaction in progress]]. أو تعمل error جوه الـ transaction فكل اللي بعده يترفض بـ [[current transaction is aborted]] لحد ما تعمل ROLLBACK. ولو في جدول تاني بيشاور على users بـ foreign key، الـ DELETE نفسه ممكن يترفض بـ [[violates foreign key constraint]].`
+          ]
         },
         {
           cmd: "يوزرز وصلاحيات",
@@ -30833,22 +30752,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly;`,
             "ونفس الكلام للـ sequences الجديدة، وإلا INSERT في جدول جديد يفشل بـ permission denied for sequence.",
             "يوزر تاني للتقارير.",
             "قراية بس."
-          ],
-          sol: R`لما تتصل كـ app_user وتعمل [[DROP TABLE users;]] الرد: [[ERROR:  must be owner of table users]]. و [[SELECT count(*) FROM users]] بيشتغل عادي. ولو جرّبت [[CREATE TABLE x (id int);]] هتاخد [[ERROR:  permission denied for schema public]]، لأن من PG 15 اليوزر العادي مالوش CREATE على public.
-
-دا بالظبط المطلوب: التطبيق يقرا ويكتب بس، ولو حد عمل SQL injection مش هيقدر يمسح جداول. الـ migrations تشتغل بيوزر تاني صاحب الجداول.
-
-لو الـ DROP اشتغل يبقى انت متصل بالـ owner أو superuser: اعمل [[SELECT current_user;]]. ولو الـ SELECT نفسه اترفض بـ [[permission denied for table users]] يبقى الجداول اتعملت بعد الـ GRANT، ودا اللي [[ALTER DEFAULT PRIVILEGES]] بيحله للجداول الجاية (بشرط تتعمل بنفس اليوزر اللي نفّذ الأمر).`,
-          solCode: R`-- كـ postgres
-CREATE ROLE app_user LOGIN PASSWORD 'secret';
-GRANT CONNECT ON DATABASE lab TO app_user;
-GRANT USAGE ON SCHEMA public TO app_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
-
--- من الترمنال
-psql -h localhost -U app_user -d lab -c "DROP TABLE users"
--- ERROR:  must be owner of table users
-psql -h localhost -U app_user -d lab -c "SELECT count(*) FROM users"`
+          ]
         },
         {
           cmd: "connection string و .pgpass",
@@ -30878,15 +30782,7 @@ psql "$DATABASE_URL" -c "SELECT current_user, current_database();"`,
             "الباسورد في ملف بصلاحية 600، مفيش باسورد في الأوامر تاني.",
             "اتصال بـ SSL إجباري.",
             "جرّب الـ URL اللي في .env: مين انت وعلى أنهي قاعدة."
-          ],
-          sol: R`بعد ما تعمل الملف و [[chmod 600]]، [[psql -h localhost -U app_user -d app]] بيدخل على طول من غير [[Password for user app_user:]]. و [[SELECT current_user, current_database();]] بيرجّع [[app_user | app]].
-
-لو نسيت الـ chmod، psql بيطبع [[WARNING: password file "/home/you/.pgpass" has group or world access; permissions should be u=rw (0600) or less]] ويتجاهل الملف، فيسألك عن الباسورد تاني. ولو لسه بيسألك: السطر لازم يطابق بالظبط الـ host (لو كتبت [[localhost]] في الملف واتصلت بـ [[127.0.0.1]] مش هيطابق)، والبورت والقاعدة واليوزر. وتقدر تحط [[*]] في أي خانة.
-
-وخلي بالك: من غير [[-h]] psql بيتصل بالسوكت، ولو الـ auth هناك peer مش هيبص على الباسورد أصلًا.`,
-          solCode: R`echo "localhost:5432:app:app_user:secret" >> ~/.pgpass
-chmod 600 ~/.pgpass
-psql -h localhost -U app_user -d app -c "SELECT current_user, current_database();"`
+          ]
         },
         {
           cmd: "الوصول من بره",
@@ -30916,12 +30812,7 @@ psql -h localhost -p 5433 -U app_user app`,
             "آخر قواعد الوصول: مين يدخل منين وبإيه.",
             "الطريقة الآمنة: tunnel، 5433 عندك يوصل لـ 5432 على السيرفر.",
             "اتصل عبر الـ tunnel."
-          ],
-          sol: R`الأمر [[ssh -N -L 5433:127.0.0.1:5432 deploy@SERVER]] مش بيطبع حاجة وبيفضل واقف. دا الطبيعي: الـ tunnel شغال طول ما الأمر شغال. في DBeaver تحط Host [[localhost]] و Port [[5433]] واليوزر والباسورد بتوع Postgres، و Test Connection يقول Connected. ومن ترمنال تاني [[psql -h localhost -p 5433 -U app_user app]] يدخل.
-
-وتتأكد إن البورت مش مفتوح للعالم: من جهازك [[nc -zv SERVER 5432]] المفروض يفشل (timeout أو refused)، و [[SHOW listen_addresses;]] على السيرفر يفضل [[localhost]].
-
-المشاكل الشائعة: [[bind [127.0.0.1]:5433: Address already in use]] يعني عندك Postgres محلي أو tunnel قديم على البورت، غيّر الرقم. و DBeaver يقولك [[Connection refused]] لما الـ tunnel يكون وقع (قفلت الترمنال). والغلط الأخطر إنك تحل المشكلة بـ [[listen_addresses = '*']] وفتح 5432 في الفايروول.`
+          ]
         },
         {
           cmd: "الجلسات والأقفال",
@@ -30953,20 +30844,7 @@ SHOW max_connections;`,
             "مين مستني إيه (Lock يعني مستني اتصال تاني).",
             "اقفل اتصال برقمه.",
             "الحد الأقصى للاتصالات."
-          ],
-          sol: R`الجلسة التانية بتفضل واقفة بعد الـ UPDATE من غير أي رسالة. و pg_stat_activity من جلسة تالتة بيطلّع حاجة زي:
-
-الجلسة الأولى بـ [[state = idle in transaction]] (خلصت الـ UPDATE ومستنية COMMIT)، والتانية بـ [[state = active]] و [[wait_event_type = Lock]] و [[wait_event = transactionid]] والـ query بتاعها هو الـ UPDATE. يعني التانية مستنية الـ transaction بتاعة الأولى تخلص.
-
-أول ما تعمل COMMIT أو ROLLBACK في الأولى، التانية تكمّل فورًا وتطبع [[UPDATE 1]]. الدرس: [[idle in transaction]] لفترة طويلة هو غالبًا سبب «القاعدة واقفة». ولو التانية ما اتعلقتش، يبقى الأولى مكانش فيها BEGIN (اتعملت commit لوحدها) أو الـ UPDATE التاني على صف مختلف. وحط [[SET lock_timeout = '5s';]] في التانية عشان تشوف [[canceling statement due to lock timeout]] بدل الانتظار للأبد.`,
-          solCode: R`-- جلسة 1
-BEGIN;
-UPDATE users SET plan = 'pro' WHERE id = 1;
--- جلسة 2 (هتتعلق)
-UPDATE users SET plan = 'x' WHERE id = 1;
--- جلسة 3
-SELECT pid, state, wait_event_type, wait_event, left(query, 50)
-FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();`
+          ]
         },
         {
           cmd: "الحجم",
@@ -30991,12 +30869,7 @@ SELECT indexrelname, pg_size_pretty(pg_relation_size(indexrelid)) FROM pg_stat_u
             when: "شهريًا. ولما الباك أب أو الديسك يكبر فجأة.",
             mistakes: "تمسح صفوف قديمة وتستغرب إن الحجم منقصش. DELETE بيعلّم الصفوف بس، و VACUUM بيحرر المساحة للاستخدام، و VACUUM FULL بس اللي بيرجّعها للنظام (وبيقفل الجدول)."
           },
-          lines: ["حجم القاعدة كلها.", "أكبر ١٠ جداول (بيانات و indexes).", "أكبر ١٠ indexes.", "الجداول بحجمها."],
-          sol: R`الاستعلام بيرجّع [[relname | size]] مترتبين من الأكبر. في قاعدة التجربة كان [[big | 82 MB]] وبعده [[users | 48 kB]] و [[orders | 16 kB]]. في مشروع حقيقي غالبًا هتلاقي فوق جدول زي [[sessions]] أو [[audit_logs]] أو [[notifications]] بحجم أكبر من الداتا المهمة نفسها.
-
-خلي بالك إن [[pg_total_relation_size]] بيحسب الجدول والـ indexes والـ TOAST، فالرقم أكبر من اللي في [[\dt+]] (دا بيعرض الجدول بس). والقرار بعدها مش إنك تمسح وخلاص: حط سياسة (مثلًا امسح sessions المنتهية من ٣٠ يوم) بـ cron.
-
-المفاجأة الشائعة: تمسح نص الجدول والحجم ما يقلّش. دا طبيعي، [[VACUUM]] العادي بيخلي المساحة متاحة لإعادة الاستخدام جوه الجدول بس، ودا موضوع درس VACUUM.`
+          lines: ["حجم القاعدة كلها.", "أكبر ١٠ جداول (بيانات و indexes).", "أكبر ١٠ indexes.", "الجداول بحجمها."]
         },
         {
           cmd: "الـ indexes",
@@ -31028,20 +30901,7 @@ index مركب [[(status, created_at DESC)]] بيخدم [[WHERE status = 'paid' 
             "index مركب لاستعلام بيفلتر بالحالة ويرتب بالتاريخ.",
             "indexes عمرها ما اتستخدمت (غير الـ primary keys).",
             "امسح واحد من غير قفل."
-          ],
-          sol: R`على جدول مليون صف من [[generate_series]] الأرقام اللي طلعت: [[SELECT count(*) FROM big WHERE user_id = 4242]] أخد حوالي [[30 ms]] من غير index، وإنشاء الـ index أخد [[393 ms]]، ونفس الاستعلام بعده بقى [[0.678 ms]].
-
-الأرقام عندك هتختلف حسب الجهاز، بس الفرق لازم يبقى عشرات المرات. ولو ما لقيتش فرق: يا الاستعلام بيرجّع جزء كبير من الجدول (Postgres بيفضّل الـ Seq Scan لو هترجع مثلًا ٣٠٪ من الصفوف)، يا الـ WHERE عامل حاجة على العمود زي [[lower(email)]] فالـ index العادي مش بيستخدم. واعمل [[ANALYZE big;]] بعد إنشاء الجدول عشان الـ planner يعرف حجمه.
-
-وخلي بالك: [[CREATE INDEX CONCURRENTLY]] مينفعش جوه BEGIN، هيقولك [[cannot run inside a transaction block]].`,
-          solCode: R`CREATE TABLE big AS
-  SELECT g AS id, (random() * 100000)::int AS user_id, md5(g::text) AS note
-  FROM generate_series(1, 1000000) g;
-ANALYZE big;
-\timing on
-SELECT count(*) FROM big WHERE user_id = 4242;
-CREATE INDEX idx_big_user ON big (user_id);
-SELECT count(*) FROM big WHERE user_id = 4242;`
+          ]
         },
         {
           cmd: "EXPLAIN ANALYZE",
@@ -31071,14 +30931,7 @@ EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) SELECT o.*, u.email FROM orders o JOIN u
             "الخطة بالتقديرات من غير تنفيذ.",
             "الخطة بالأرقام الفعلية (بينفّذ).",
             "مع عدد الصفحات المقروءة من الكاش والديسك، لاستعلام فيه JOIN."
-          ],
-          sol: R`على عمود من غير index هتشوف حاجة زي:
-
-[[Parallel Seq Scan on big (actual time=32.013..32.013 rows=0 loops=3)]] و [[Filter: (note = 'abc'::text)]] و [[Rows Removed by Filter: 333333]] و [[Execution Time: 43.563 ms]]. الـ [[Rows Removed by Filter]] الكبيرة هي الإشارة: قرينا مليون صف عشان نرجّع صفر.
-
-وعلى عمود عليه index: [[Bitmap Index Scan on idx_big_user]] مع [[Index Cond: (user_id = 4242)]] و [[Execution Time: 0.054 ms]]. أحيانًا تشوف [[Index Scan]] بدل Bitmap، الاتنين معناهم إن الـ index اشتغل.
-
-متقلقش من Seq Scan على جدول صغير أو استعلام بيرجّع أغلب الجدول، دا الصح. قارن كمان [[rows=]] المتوقعة بالـ actual: لو الفرق ضخم (متوقع 1 وطلع 50000) يبقى الإحصائيات قديمة و [[ANALYZE]] هيحسّن الخطة. وخلي بالك إن EXPLAIN ANALYZE بينفّذ الاستعلام فعلًا، فمع UPDATE أو DELETE حطه جوه BEGIN و ROLLBACK.`
+          ]
         },
         {
           cmd: "VACUUM و ANALYZE",
@@ -31108,18 +30961,7 @@ VACUUM (VERBOSE) orders;`,
             "الجداول اللي فيها أكتر صفوف ميتة، وآخر مرة اتنضّفت.",
             "autovacuum شغال؟ (لازم on).",
             "نضّف بتفاصيل."
-          ],
-          sol: R`بعد [[DELETE FROM big WHERE id % 2 = 0]] على مليون صف، [[pg_stat_user_tables]] طلّع [[n_live_tup = 500000]] و [[n_dead_tup = 500000]]. بعد [[VACUUM big;]] بقى [[n_dead_tup = 0]].
-
-بس الحجم فضل [[82 MB]] قبل وبعد. ودي النقطة المهمة: VACUUM العادي بيعلّم المساحة إنها فاضية لإعادة الاستخدام جوه الجدول، مش بيرجّعها للديسك. [[VACUUM FULL]] بيرجّعها بس بيقفل الجدول كله وهو شغال.
-
-لو [[n_dead_tup]] لسه بصفر بعد الـ DELETE على طول: الإحصائيات بتتحدّث بتأخير بسيط، استنى ثانية. ولو لقيتها صفر من غير ما تعمل VACUUM يبقى الـ autovacuum سبقك، وهتلاقي [[last_autovacuum]] فيه وقت.`,
-          solCode: R`DELETE FROM big WHERE id % 2 = 0;
-SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'big';
-SELECT pg_size_pretty(pg_total_relation_size('big'));
-VACUUM big;
-SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'big';
-SELECT pg_size_pretty(pg_total_relation_size('big'));`
+          ]
         },
         {
           cmd: "الإعدادات",
@@ -31151,12 +30993,7 @@ SHOW config_file;`,
             "غيّر إعداد (بيتكتب في postgresql.auto.conf).",
             "طبّق من غير ريستارت.",
             "فين ملف الإعدادات."
-          ],
-          sol: R`[[SHOW shared_buffers;]] على تثبيت جديد بيرجّع [[128MB]]. و في [[pg_settings]] هتلاقيه [[setting = 16384]] و [[unit = 8kB]] (يعني 16384 × 8kB = 128MB) و [[context = postmaster]]، ودي معناها إنه محتاج ريستارت.
-
-بعد [[ALTER SYSTEM SET shared_buffers = '1GB';]] و [[SELECT pg_reload_conf();]]، الـ SHOW لسه هيقول [[128MB]]، ودا الغلط الشائع: تفتكر الإعداد ما اتحفظش. [[SELECT pending_restart FROM pg_settings WHERE name = 'shared_buffers';]] هيقولك [[t]]. بعد [[sudo systemctl restart postgresql]] (أو ريستارت الـ container) هيبقى [[1GB]].
-
-على العكس، [[work_mem]] الـ context بتاعه [[user]] فيتطبق بعد reload. و ALTER SYSTEM بيكتب في [[postgresql.auto.conf]] جوه مجلد الداتا، مش في postgresql.conf.`
+          ]
         },
         {
           cmd: "docker-entrypoint-initdb.d",
@@ -31211,12 +31048,7 @@ volumes:
             "كل ٥ ثواني.",
             "تعريف الـ volumes.",
             "volume البيانات."
-          ],
-          sol: R`أول [[docker compose up -d]] بفولدر فيه [[01-schema.sql]]: في [[docker compose logs postgres]] هتلاقي [[running /docker-entrypoint-initdb.d/01-schema.sql]]، و [[\dt]] بيطلّع جدولك.
-
-بعد ما تضيف [[02-more.sql]] و [[docker compose up -d]]: الجدول الجديد مش موجود. ولو عملت restart هتلاقي في اللوج [[PostgreSQL Database directory appears to contain a database; Skipping initialization]]. السكربتات بتشتغل مرة واحدة بس لما الـ volume يكون فاضي.
-
-بعد [[docker compose down -v]] و [[up]] تاني: الاتنين اتنفذوا بالترتيب و [[\dt]] فيه الجدولين، بس كل الداتا القديمة راحت. لو السكربت نفسه فيه error الـ container بيقع في الـ init؛ صلّح الملف وامسح الـ volume تاني، لأن init نص مخلص ممكن يسيب الـ volume مش فاضي. ولو الملف مش بيتقري خالص اتأكد إن امتداده [[.sql]] أو [[.sh]] أو [[.sql.gz]] وإنه readable.`
+          ]
         }
       ]
     },
@@ -31258,17 +31090,7 @@ pg_dump بياخد snapshot متماسك حتى لو القاعدة شغالة �
             "فهرس اللي جوه الـ dump.",
             "رجّع جدول واحد بس منه.",
             "خطر: رجّع كله فوق قاعدة فيها بيانات (بيمسح الموجود الأول)، ومتحاولش تطابق المالك. خد dump جديد قبلها."
-          ],
-          sol: R`[[pg_restore -l app.dump]] بيطبع الـ header ([[Format: CUSTOM]] و [[Dumped from database version: 16.13]]) وبعده قايمة فيها سطور زي [[TABLE public users postgres]] و [[TABLE DATA public users postgres]] و [[CONSTRAINT public users users_pkey postgres]] و [[FK CONSTRAINT public orders orders_user_id_fkey postgres]].
-
-[[pg_restore -d app_copy -t users app.dump]] بيرجّع الجدول والداتا ([[SELECT count(*)]] زي الأصل). بس لو عملت [[\d users]] هتلاقي إن الجدول من غير primary key ولا unique ولا default للـ id، لأن [[-t]] بيرجّع الجدول وداتاه بس، مش الـ constraints والـ indexes والـ sequence. دي المفاجأة اللي لازم تعرفها قبل ما تحتاجها في طوارئ.
-
-لو عايز كل حاجة تخص الجدول: [[pg_restore -l app.dump > list.txt]]، سيب السطور اللي فيها users وامسح الباقي، و [[pg_restore -L list.txt -d app_copy app.dump]]. وتذكّر إن [[app_copy]] لازم تبقى موجودة الأول بـ createdb.`,
-          solCode: R`pg_dump -U postgres -d app -Fc -f app.dump
-pg_restore -l app.dump | head -30
-createdb -U postgres app_copy
-pg_restore -U postgres -d app_copy -t users app.dump
-psql -U postgres -d app_copy -c "SELECT count(*) FROM users" -c "\d users"`
+          ]
         },
         {
           cmd: "ترجيع الباك أب",
@@ -31300,27 +31122,7 @@ dropdb -U postgres app_restore_test`,
             "عدّ الصفوف في النسخة.",
             "وفي الأصل. لازم يطابقوا.",
             "امسح قاعدة الاختبار."
-          ],
-          sol: R`الحل سكربت بيعمل قاعدة مؤقتة، ويرجّع آخر dump، ويقارن العدد بالأصل، ويبعت رسالة لو مختلفين، ويمسح القاعدة المؤقتة في كل الحالات بـ [[trap]].
-
-لما يشتغل وكله تمام يطبع [[restore ok: users 5 = 5]]. وأي فرق بسيط مقبول لو الموقع شغال والناس بتسجّل بين وقت الـ dump ووقت العد، فالمقارنة الأدق إنك تقارن بعدد متسجّل وقت الـ dump، أو تقبل فرق صغير.
-
-الغلط الشائع: السكربت ينجح بس لأن [[pg_restore]] طبع errors وكمّل (مثلًا [[role "app_user" does not exist]]). عشان كده [[--exit-on-error]] و [[--no-owner]]، وبنقارن أعداد فعلية مش بنصدّق الـ exit code بس. وجدوله في cron الأسبوعي: [[0 4 * * 0 /home/deploy/restore-test.sh]].`,
-          solCode: R`#!/usr/bin/env bash
-set -euo pipefail
-DUMP=$(ls -1t /home/deploy/backups/db/app-*.dump | head -1)
-TMP=app_restore_test
-trap 'dropdb -U postgres --if-exists "$TMP"' EXIT
-createdb -U postgres "$TMP"
-pg_restore -U postgres -d "$TMP" --no-owner --exit-on-error "$DUMP"
-a=$(psql -U postgres -d "$TMP" -tAc "SELECT count(*) FROM users")
-b=$(psql -U postgres -d app -tAc "SELECT count(*) FROM users")
-if [ "$a" != "$b" ]; then
-  curl -fsS -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
-    -d chat_id="$CHAT_ID" -d text="restore test: users $a != $b ($DUMP)"
-  exit 1
-fi
-echo "restore ok: users $a = $b"`
+          ]
         },
         {
           cmd: "سكربت migrations",
@@ -31378,14 +31180,7 @@ echo "applied: $applied  skipped: $skipped"`,
             "عدّ.",
             "نهاية اللوب.",
             "الملخص."
-          ],
-          sol: R`أول تشغيل بـ ٣ ملفات:
-
-[[--> 001_a.sql]] و [[--> 002_b.sql]] و [[--> 003_a_name.sql]] وبعدين [[applied: 3  skipped: 0]]. التشغيل التاني: [[applied: 0  skipped: 3]] (ومعاه [[NOTICE: relation "schema_migrations" already exists, skipping]] ودي عادي).
-
-بملف رابع فيه [[CREATE TABLE d]] وبعده [[SELECT * FROM nope]]: الناتج [[--> 004_bad.sql]] و [[ERROR:  relation "nope" does not exist]] والسكربت بيقف بـ exit code 3. و [[SELECT name FROM schema_migrations]] لسه فيه الـ ٣ بس، و [[SELECT to_regclass('d')]] بيرجّع فاضي (NULL)، يعني الجدول d متعملش رغم إنه قبل السطر الغلط. دا شغل [[--single-transaction]]: الملف والـ INSERT في schema_migrations يا ينجحوا مع بعض يا لأ.
-
-لو لقيت الجدول d موجود، يبقى شلت [[--single-transaction]]. ولو لقيت 004 في schema_migrations، يبقى شلت [[ON_ERROR_STOP]] فـ psql كمّل بعد الـ error.`
+          ]
         },
         {
           cmd: "Prisma migrate",
@@ -31421,12 +31216,7 @@ npx prisma db pull`,
             "SQL الفرق بين القاعدة والـ schema، من غير تطبيق.",
             "لو migration فشلت في النص وصلّحتها بإيدك: اعتبرها اتطبقت.",
             "العكس: اقرا القاعدة واكتب الـ schema."
-          ],
-          sol: R`لما تضيف مثلًا [[status String @default("pending")]] وتشغّل [[npx prisma migrate dev --name add_orders_status]]، هيقولك إنه عمل فولدر زي [[prisma/migrations/20260930045902_add_orders_status/migration.sql]] و [[Your database is now in sync with your schema.]]. والملف فيه:
-
-[[ALTER TABLE "Order" ADD COLUMN "status" TEXT NOT NULL DEFAULT 'pending';]] وده آمن.
-
-الحالة اللي لازم تتعلم تمسكها: غيّر اسم عمود من [[amount]] لـ [[total]]. Prisma مش بيعرف إنه rename، فبيولّد [[DROP COLUMN "amount"]] و [[ADD COLUMN "total" INTEGER NOT NULL]]، وفي أول الملف تحذير [[All the data in the column will be lost]]. استخدم [[--create-only]] وعدّل الملف لـ [[ALTER TABLE "Order" RENAME COLUMN "amount" TO "total";]] قبل ما تطبّقه. وعلى جدول فيه داتا، [[ADD COLUMN ... NOT NULL]] من غير default هيفشل. و [[npx prisma migrate status]] في الآخر المفروض يقول [[Database schema is up to date!]].`
+          ]
         },
         {
           cmd: "تغييرات آمنة في الإنتاج",
@@ -31461,21 +31251,7 @@ ALTER TABLE orders VALIDATE CONSTRAINT chk_amount;`,
             "index من غير قفل الجدول.",
             "constraint على الصفوف الجديدة بس (لحظي).",
             "وبعدين افحص القديمة من غير قفل قوي."
-          ],
-          sol: R`على جدول مليون صف مع [[\timing]] الأرقام اللي طلعت:
-
-[[ADD COLUMN status text NOT NULL DEFAULT 'pending']] أخد [[2.5 ms]]. و [[ADD COLUMN c1 timestamptz DEFAULT now()]] أخد [[0.8 ms]]. و [[ADD COLUMN c2 timestamptz DEFAULT clock_timestamp()]] أخد [[626 ms]]، يعني مئات المرات أبطأ، لأنه بيعيد كتابة كل صف.
-
-والدليل: [[SELECT count(DISTINCT c1), count(DISTINCT c2) FROM big;]] رجّع [[1]] و حوالي [[332265]]. الـ now() اتحسبت مرة واحدة واتحفظت في الـ catalog، والـ clock_timestamp() اتحسبت لكل صف. وعلى جدول ١٠٠ مليون صف ده دقايق والجدول مقفول [[ACCESS EXCLUSIVE]]، يعني حتى الـ SELECT واقف.
-
-الغلط الشائع إنك تجرّب على جدول صغير فتلاقي الاتنين لحظيين. والـ [[SET lock_timeout = '3s']] قبلهم يخلي الـ ALTER يفشل بسرعة لو فيه transaction طويلة ماسكة الجدول، بدل ما يقف ويوقف الطابور وراه.`,
-          solCode: R`CREATE TABLE big AS SELECT g AS id FROM generate_series(1, 1000000) g;
-\timing on
-SET lock_timeout = '3s';
-ALTER TABLE big ADD COLUMN status text NOT NULL DEFAULT 'pending';
-ALTER TABLE big ADD COLUMN c1 timestamptz DEFAULT now();
-ALTER TABLE big ADD COLUMN c2 timestamptz DEFAULT clock_timestamp();
-SELECT count(DISTINCT c1), count(DISTINCT c2) FROM big;`
+          ]
         },
         {
           cmd: "Supabase CLI",
@@ -31519,12 +31295,7 @@ supabase db dump -f backup.sql`,
             "تغييرات اتعملت من لوحة التحكم: هاتها كـ migration.",
             "أنواع TypeScript من الـ schema.",
             "باك أب من المشروع المربوط."
-          ],
-          sol: R`[[supabase start]] بيحتاج Docker شغال، وأول مرة بيسحب images كتير فبياخد دقايق. في الآخر بيطبع الـ URLs المحلية: الـ API على [[http://127.0.0.1:54321]]، والقاعدة [[postgresql://postgres:postgres@127.0.0.1:54322/postgres]]، و Studio على [[http://127.0.0.1:54323]]، ومعاهم الـ keys المحلية (شكل العرض بيتغير بين نسخ الـ CLI، بس البورتات دي الافتراضية). [[supabase status]] بيطبعهم تاني في أي وقت.
-
-افتح Studio هتلاقي مشروع فاضي شبه اللوحة الحقيقية. و [[psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "\dt"]] بيتصل بنفس القاعدة.
-
-المشاكل الشائعة: [[Cannot connect to the Docker daemon]] يعني Docker مش شغال. و [[port is already allocated]] يعني مشروع Supabase تاني شغال، اعمل [[supabase stop]] جوه فولدره أو غيّر البورتات في [[supabase/config.toml]]. و [[supabase stop]] بيحتفظ بالداتا، و [[supabase stop --no-backup]] بيمسحها.`
+          ]
         },
         {
           cmd: "Supabase Management API",
@@ -31557,12 +31328,7 @@ jq -Rs '{query: .}' < db/ensure_schema.sql \
             "...وابعته بـ POST (وافشل لو الرد error)...",
             "...بتوكن الحساب...",
             "...كـ JSON من الـ stdin، واعرض الرد بشكل مقروء."
-          ],
-          sol: R`لو التوكن صح، الـ [[jq .]] في الآخر بيطبع array فيها صف واحد: [[[ { "now": "2026-09-30 05:10:11.123456+00" } ]]]. الـ API بيرجّع نتيجة آخر statement كـ JSON، وأوامر زي CREATE TABLE بترجّع array فاضية [[[]]].
-
-لو التوكن غلط أو اتلغى هتاخد رد 401 وفيه رسالة Unauthorized، و [[--fail-with-body]] بيخلي curl يطلع بـ exit code غير صفر ويطبع الرد، فالسكربت يقف. ولو الـ SQL نفسه فيه غلط هتاخد رد 400 والـ body فيه رسالة Postgres. ولو كتبت الـ PROJECT_REF غلط هيقولك إن المشروع مش موجود أو مالكش صلاحية عليه.
-
-بعد ما تلغي التوكن من صفحة Access Tokens، نفس الأمر لازم يرجّع 401، ودي علامة إن الإلغاء اشتغل. والـ [[read -rs]] مش بيطبع حاجة وانت بتلزق، عشان التوكن ما يظهرش على الشاشة ولا في الـ history.`
+          ]
         },
         {
           cmd: "Supabase: الاتصال المباشر",
@@ -31592,10 +31358,7 @@ psql "$SUPABASE_DB_URL" -c "SELECT count(*) FROM pg_stat_activity;"`,
             "جداولك.",
             "باك أب لـ schema public بس (من غير schemas بتاعة Supabase).",
             "عدد الاتصالات (الخطة المجانية ليها حد)."
-          ],
-          sol: R`بعد ما تلزق الـ URL وتكتب الباسورد مكان [[[YOUR-PASSWORD]]]، [[\dt]] بيطلّع جداول الـ schema [[public]] بس، زي [[public | todos | table | postgres]]. جداول Supabase نفسها في schemas تانية: [[\dt auth.*]] هتلاقي فيها [[users]] و [[sessions]] وغيرهم، و [[\dn]] بيعرض الـ schemas كلها ([[auth]] و [[storage]] و [[realtime]] و [[extensions]] ...).
-
-المشاكل الشائعة: [[password authentication failed for user "postgres"]] يعني الباسورد غلط، أو اليوزر مكتوب [[postgres]] بس مع pooler محتاج [[postgres.PROJECTREF]]. ولو الباسورد فيه رموز زي [[@]] أو [[#]] لازم تعملها URL-encode ([[%40]] و [[%23]]) وإلا الـ URL يتقري غلط. والـ direct connection ([[db.PROJECTREF.supabase.co]]) بقى IPv6 بس في أغلب المشاريع، فلو شبكتك IPv4 استخدم الـ pooler في session mode (بورت 5432) زي المثال.`
+          ]
         },
         {
           cmd: "connection pooling",
@@ -31623,12 +31386,7 @@ PgBouncer على سيرفرك: بيسمع على 6432، وإعداداته [[poo
             "الحد.",
             "عبر PgBouncer على سيرفرك (6432).",
             "عبر pooler بتاع Supabase (6543) بـ transaction mode."
-          ],
-          sol: R`الشكل الصح في [[.env]]: [[DATABASE_URL="postgres://postgres.PROJECTREF:PASS@aws-0-REGION.pooler.supabase.com:6543/postgres?pgbouncer=true"]] و [[DIRECT_URL="postgres://postgres.PROJECTREF:PASS@aws-0-REGION.pooler.supabase.com:5432/postgres"]]. التطبيق بيستخدم الأول (transaction mode)، و [[prisma migrate]] بيستخدم التاني (session mode)، لأن الـ migrations محتاجة جلسة كاملة وأقفال.
-
-في Prisma 7 الـ URL بتاع CLI بيتحط في [[prisma.config.ts]] جوه [[datasource: { url: env("DIRECT_URL") }]]، والتطبيق بياخد [[DATABASE_URL]] من خلال الـ adapter في الكود.
-
-المشاكل اللي بتقول إنك عكستهم: [[prepared statement "s0" already exists]] يعني التطبيق على 6543 من غير [[pgbouncer=true]]. و [[migrate dev]] يعلّق أو يقول إنه مش قادر ياخد advisory lock يعني الـ migrations شغالة على 6543. و [[SELECT count(*), state FROM pg_stat_activity GROUP BY state]] مع pooling شغال المفروض يفضل رقم ثابت صغير حتى لو عندك functions كتير شغالة.`
+          ]
         },
         {
           cmd: "الاستعلامات البطيئة",
@@ -31662,12 +31420,7 @@ SELECT pg_stat_statements_reset();`,
             "فعّل extension الإحصائيات (بعد shared_preload_libraries وريستارت).",
             "أعلى ١٠ استعلامات في الوقت الإجمالي، بعدد المرات والمتوسط.",
             "صفّر عشان تقيس فترة جديدة."
-          ],
-          sol: R`بعد ما تفعّله، أي استعلام أبطأ من نص ثانية بيظهر في اللوج كده:
-
-[[2026-09-30 04:57:27.272 UTC [25161] postgres@lab LOG:  duration: 702.895 ms  statement: SELECT pg_sleep(0.7), count(*) FROM users]]. فيه الوقت، والـ pid، واليوزر@القاعدة، والمدة، والاستعلام كامل. جرّب بنفسك بـ [[SELECT pg_sleep(0.7);]] عشان تتأكد إن الإعداد اشتغل قبل ما تستنى استعلام حقيقي.
-
-خلي بالك: [[pg_reload_conf()]] بيبعت signal وبيطبق بعد لحظة، مش في نفس اللحظة. والـ [[pg_stat_statements]] مش هيشتغل من [[CREATE EXTENSION]] بس: أول SELECT منه هيقولك [[pg_stat_statements must be loaded via shared_preload_libraries]]. لازم تضيفه في [[shared_preload_libraries]] وتعمل ريستارت (في Supabase مفعّل جاهز). ولما تخلص رجّع اللوج بـ [[ALTER SYSTEM RESET log_min_duration_statement;]] أو سيبه على رقم أكبر، عشان حجم اللوج.`
+          ]
         },
         {
           cmd: "النقل بين سيرفرين",
@@ -31697,14 +31450,7 @@ psql "$NEW_URL" -c "SELECT count(*) FROM users;"`,
             "القديم مش متاح من جهازك: dump عبر SSH ومضغوط، يتفك ويدخل الجديد.",
             "للقواعد الكبيرة: ملف custom وبعدين restore من غير مالكين وصلاحيات.",
             "اتأكد من العدد على الجديد."
-          ],
-          sol: R`[[pg_dump "$OLD" | psql "$NEW"]] بيطبع سيل من [[SET]] و [[CREATE TABLE]] و [[ALTER TABLE]] و [[COPY 5]] لكل جدول، وأرقام [[setval]] للـ sequences. بعدها [[SELECT count(*) FROM users]] على الاتنين لازم يطلّع نفس الرقم (في التجربة [[5]] و [[5]]).
-
-قارن كذا جدول مش جدول واحد. والطريقة الأسرع إنك تقارن كل الجداول مرة واحدة:
-
-[[SELECT relname, n_live_tup FROM pg_stat_user_tables ORDER BY relname;]] (دا تقريبي، بس [[count(*)]] هو الدقيق).
-
-المشاكل الشائعة: [[role "app_user" does not exist]] لأن الـ dump فيه OWNER لأدوار مش موجودة على السيرفر الجديد، الحل تعمل الـ role الأول أو تستخدم [[--no-owner --no-privileges]]. وكمان إن القاعدة الجديدة لازم تبقى موجودة وفاضية قبلها، وإلا [[already exists]] errors. وخلي بالك إن الـ pipe مش بيقف عند أول error، فزوّد [[-v ON_ERROR_STOP=1]] على psql.`
+          ]
         },
         {
           cmd: "ترقية Postgres في Docker",
@@ -31734,12 +31480,7 @@ docker exec pg18 psql -U postgres -c "SELECT version();"`,
             "Postgres 18 على volume جديد، على المسار الجديد.",
             "رجّع الـ dump فيها.",
             "اتأكد من النسخة."
-          ],
-          sol: R`[[docker exec pg18 psql -U postgres -c "SELECT version();"]] المفروض يبدأ بـ [[PostgreSQL 18.]]. و [[count(*)]] لأهم جدول لازم يبقى نفس الرقم قبل وبعد (في تجربة من 16 لـ 17 كان [[1234]] قبل و [[1234]] بعد).
-
-أثناء الترجيع هتشوف [[ERROR:  role "postgres" already exists]]. دا طبيعي ومش مشكلة: [[pg_dumpall]] بيحاول يعمل كل الأدوار ومنهم postgres اللي موجود أصلًا. أي error تاني اقراه كويس.
-
-في compose.yml بعدها: غيّر [[image: postgres:18]]، وغيّر الـ volume لاسم جديد، ومع 18 خلي الـ mount على [[/var/lib/postgresql]] مش [[/var/lib/postgresql/data]]، لأن 18 غيّر مكان الداتا الافتراضي. الغلط الأشهر إنك تشاور 18 على الـ volume القديم بتاع 16، فالـ container يقع ومايقومش، واللوج يقولك إن ملفات الداتا من نسخة تانية (زي [[database files are incompatible with server]]) أو إنه مش لاقي داتا في المكان الجديد. سيب الـ volume القديم كام يوم كـ rollback قبل ما تمسحه.`
+          ]
         },
         {
           cmd: "الباك أب المجدول",
@@ -31781,12 +31522,7 @@ echo "backup ok: $FILE ($(du -h "$FILE" | cut -f1))"`,
             "امسح الأقدم من أسبوعين.",
             "انسخ لتخزين خارجي، والأخطاء في لوج.",
             "اطبع النتيجة بالحجم."
-          ],
-          sol: R`بعد ما تضيف السطر بـ [[crontab -e]]، [[crontab -l]] لازم يعرضه. وتاني يوم الصبح [[cron.log]] فيه سطر زي [[backup ok: /home/deploy/backups/db/app-2026-10-01.dump (1.2M)]]، و [[ls backups/db]] فيه ملف بتاريخ اليوم.
-
-شغّل السكربت بإيدك الأول [[/home/deploy/db-backup.sh]] عشان تتأكد إنه شغال، بعدين استنى أول تشغيل من cron. ولازم تعمل [[chmod +x]] للسكربت.
-
-المشاكل الشائعة في cron: السكربت يشتغل بإيدك ويفشل من cron لأن الـ PATH جوه cron قصير ([[pg_dump: command not found]] أو [[rclone: command not found]]) فاكتب المسار الكامل أو حط PATH في أول السكربت. و [[peer authentication failed]] لو cron بيشتغل بيوزر deploy وانت بتتصل كـ postgres من غير [[.pgpass]]. واعرف إن [[2>&1]] في آخر السطر هو اللي بيخلي الـ errors تتسجل، من غيره بتضيع.`
+          ]
         },
         {
           cmd: "الأمان",
@@ -31820,16 +31556,7 @@ SELECT rolname, rolsuper FROM pg_roles WHERE rolsuper;`,
             "امنع أي يوزر يعمل جداول في public (Postgres 15+ عامله).",
             "غيّر باسورد (بيتخزن بالصيغة الجديدة).",
             "مين superuser (المفروض postgres بس)."
-          ],
-          sol: R`من كود التطبيق (مثلًا [[await prisma.$queryRaw]] أو route مؤقت) لازم الناتج يبقى [[current_user = app_user]] و [[usesuper = false]].
-
-لو طلع [[postgres | t]] يبقى التطبيق متصل بالـ superuser، ودا معناه إن أي SQL injection يقدر يعمل أي حاجة، حتى [[COPY ... TO PROGRAM]] اللي بيشغّل أوامر على السيرفر. الحل تعمل يوزر زي درس «يوزرز وصلاحيات» وتغيّر [[DATABASE_URL]].
-
-وخلي بالك إن على Supabase اليوزر [[postgres]] مش superuser حقيقي ([[usesuper]] بيطلع [[f]])، بس هو برضه صاحب الجداول ومعاه صلاحيات كتير، فبرضه مش المفروض يكون اللي في كود الـ backend لو تقدر.`,
-          solCode: R`SELECT current_user, usesuper FROM pg_user WHERE usename = current_user;
---  current_user | usesuper
--- --------------+----------
---  app_user     | f`
+          ]
         },
         {
           cmd: "Row Level Security",
@@ -31855,12 +31582,7 @@ SELECT policyname, cmd, qual FROM pg_policies WHERE tablename = 'todos';`,
             "policy: اليوزر اللي عامل login يشوف ويكتب الصفوف اللي user_id بتاعها هو بس.",
             "أنهي جداول في public عليها RLS وأنهي لأ.",
             "الـ policies الموجودة على الجدول وشروطها."
-          ],
-          sol: R`بعد [[ENABLE ROW LEVEL SECURITY]] من غير policies: [[supabase.from('todos').select()]] بيرجّع [[data: []]] و [[error: null]]، مش error. دي النقطة اللي بتلخبط الناس: RLS مش بيرفض، بيفلتر لحد ما مفيش صفوف.
-
-بعد الـ policy و login: بيرجّع صفوف اليوزر ده بس. ولو عملت logout ترجع array فاضية، لأن الـ policy لـ [[authenticated]] بس. ونفس السلوك تقدر تشوفه في Postgres عادي: يوزر مش owner بيعمل [[SELECT count(*) FROM todos]] يطلع [[0]]، وبعد policy بيشوف صفوفه بس، والـ owner بيشوف الكل.
-
-الأخطاء الشائعة: تجرّب من SQL Editor في اللوحة فتشوف كل الصفوف، لأنه بيشتغل كـ [[postgres]] اللي بيعدّي RLS. أو تستخدم الـ service_role key في الكود فكل حاجة تبان شغالة، وهو كده بيعدّي RLS خالص. ولو INSERT رجّع [[new row violates row-level security policy]] يبقى الـ [[user_id]] اللي بتبعته مش بتاع اليوزر اللي عامل login، ودا شغل [[WITH CHECK]].`
+          ]
         },
         {
           cmd: "pgcli",
@@ -31882,12 +31604,7 @@ pgcli -h localhost -p 5433 -U app_user app`,
             when: "على جهازك للشغل اليومي مع القاعدة.",
             mistakes: "تعتمد عليها بس وتنسى psql، وبعدين على السيرفر في طوارئ تتوه."
           },
-          lines: ["سطّب.", "اتصل بـ URL.", "اتصل عبر tunnel."],
-          sol: R`لما تكتب [[SELECT * FROM us]] قايمة بتفتح تحت الكلام فيها [[users]] (وأي جدول بيبدأ بـ us). دوس Tab أو Enter يكمّلها. وبعد [[WHERE ]] هتقترح أسماء أعمدة الجدول ده بالذات، ودي الميزة الكبيرة عن psql.
-
-pgcli بيقبل نفس أوامر الـ backslash زي [[\dt]] و [[\d users]]، وبيلوّن الـ SQL وبيعرض النتايج في جدول مرتب.
-
-لو [[pipx: command not found]] نزّله الأول ([[sudo apt install pipx]] على أوبونتو). ولو الـ completion مش بيطلع أسماء الجداول، ممكن يكون لسه بيحمّلها في أول ثواني، أو إنك في قاعدة مفيهاش جداول في الـ search_path. وخلي بالك إن pgcli للشغل اليدوي بس، في السكربتات استخدم psql.`
+          lines: ["سطّب.", "اتصل بـ URL.", "اتصل عبر tunnel."]
         }
       ]
     }
@@ -32111,7 +31828,7 @@ mongosh "$MONGO_URI" --quiet --eval 'db.users.drop()'`,
 MONGODB_URI=mongodb://admin:secret@mongo:27017/myapp?authSource=admin
 MONGODB_URI=mongodb://myapp_user:YOUR_PASSWORD@mongo:27017/myapp
 MONGODB_URI=mongodb+srv://myapp_user:YOUR_PASSWORD@cluster0.example.mongodb.net/myapp?retryWrites=true&w=majority`,
-          try: R`جرّب الرابط قبل ما تحطه في .env: [[mongosh "الرابط" --quiet --eval "db.getCollectionNames()"]]، ولازم يطبع أسماء الـ collections (أو [[[]]] لو القاعدة فاضية) من غير error.`,
+          try: R`جرّب الرابط قبل ما تحطه في .env: [[mongosh "الرابط" --quiet --eval "db.getName()"]]، ولازم يطبع اسم القاعدة.`,
           flag: "script",
           deep: {
             why: "أغلب مشاكل «التطبيق مش شايف القاعدة» سببها سطر واحد: الرابط. host غلط، أو authSource ناقص، أو باسورد فيه حرف بيكسر الرابط.",
@@ -34217,12 +33934,7 @@ jobs:
             "سطّب المكتبات من الـ lock.",
             "lint.",
             "الاختبارات. أي فشل يعلّم الـ commit أحمر."
-          ],
-          sol: R`بعد الـ push بثواني، تاب Actions بيعرض run باسم رسالة الـ commit، وتحته workflow اسمه [[CI]] و job اسمه [[test]]. بيبدأ بدايرة صفرا (queued ثم in progress)، ولو دخلت جوه الـ job هتشوف الـ steps بالترتيب: [[Set up job]] و [[Run actions/checkout@v7]] و [[Run actions/setup-node@v7]] و [[Run npm ci]] و [[Run npm run lint]] و [[Run npm test]]، وفي الآخر علامة صح خضرا. ونفس العلامة بتظهر جنب الـ commit في صفحة الـ repo.
-
-الأخطاء الشائعة في أول مرة: الـ workflow ما ظهرش خالص يبقى المسار غلط (لازم [[.github/workflows/]] بالظبط، مش [[.github/workflow]]) أو الـ push مش على main. ولو ظهر بعلامة حمرا ومكتوب [[Invalid workflow file]] يبقى فيه غلط YAML، غالبًا مسافات. ولو وقع في setup-node بـ [[Dependencies lock file is not found]] يبقى مفيش [[package-lock.json]] في الـ repo ([[cache: npm]] محتاجه، و [[npm ci]] كمان). ولو وقع بـ [[npm error Missing script: "lint"]] يبقى مفيش script بالاسم ده في package.json: ضيفه أو امسح السطر.
-
-قبل الـ push تقدر تفحص الملف على جهازك بـ [[actionlint]]: لو مطبعش حاجة يبقى الملف سليم.`
+          ]
         },
         {
           cmd: "المفاهيم",
@@ -34273,26 +33985,7 @@ jobs:
             "اسم المدخل.",
             "اختيار من قايمة.",
             "الاختيارات."
-          ],
-          sol: R`بعد ما تضيف [[workflow_dispatch:]] وتعمل push على الـ branch الافتراضي، ادخل تاب Actions واختار الـ workflow من الشمال: فوق قايمة الـ runs هيظهر شريط [[This workflow has a workflow_dispatch event trigger.]] وجنبه زرار [[Run workflow]]. بتدوس عليه تختار الـ branch، ومع الـ inputs اللي في المثال هتلاقي dropdown فيه [[staging]] و [[production]]. الـ run بيظهر بـ event [[workflow_dispatch]] واسمك جنبه.
-
-جوه الـ workflow القيمة بتتقري بـ [[inputs.env]]. ونفس التشغيل من الترمنال: [[gh workflow run ci.yml -f env=staging]].
-
-لو الزرار مش ظاهر: الملف اللي فيه [[workflow_dispatch]] لازم يكون على الـ default branch (غالبًا main)، مش على branch تاني بس. ولو ظهر [[Invalid workflow file]] بعد ما ضفت inputs، اتأكد إن [[options]] موجودة مع [[type: choice]] وإن المسافات مظبوطة.`,
-          solCode: R`on:
-  push:
-    branches: [main]
-  workflow_dispatch:
-    inputs:
-      env:
-        type: choice
-        options: [staging, production]
-        default: staging
-jobs:
-  hello:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "env=$__{{ inputs.env }} event=$__{{ github.event_name }}"`
+          ]
         },
         {
           cmd: "uses و run",
@@ -34341,26 +34034,7 @@ jobs:
             "الأمر الأول.",
             "والتاني في نفس الشيل.",
             "اكتب في ملف الملخص: بيظهر في صفحة الـ run."
-          ],
-          sol: R`في اللوج الـ step بتاعة [[run: |]] بتعرض السكربت كله فوق وبعده ناتج كل سطر بالترتيب. والملخص بيظهر في صفحة الـ run نفسها (Summary) تحت رسمة الـ jobs، في كارت باسم الـ job، ومتنسّق كـ Markdown: عنوان [[Build report]] وتحته bullets فيها الـ commit ونسخة Node.
-
-خلي بالك إن السطور جوه [[run: |]] بتتنفذ بـ [[bash -e]]، يعني أول أمر يفشل بيوقف الـ step كلها والباقي ميتنفذش، ودا غالبًا اللي انت عايزه.
-
-أخطاء شائعة: [[run: echo "next step: $VERSION"]] على سطر واحد من غير [[|]] ممكن يطلع [[Invalid workflow file]] لأن [[: ]] جوه الكلام YAML بيفهمها key، فالحل [[run: |]] أو تشيل النقطتين. و [[>]] بدل [[>>]] مع [[$GITHUB_STEP_SUMMARY]] بيمسح اللي اتكتب قبل كده في نفس الـ step. والملخص بيظهر بس لما الـ job تخلص.`,
-          solCode: R`steps:
-  - uses: actions/checkout@v7
-  - name: Multi-line
-    run: |
-      echo "line 1"
-      node --version
-      ls -la
-  - name: Summary
-    run: |
-      {
-        echo "## Build report"
-        echo "- commit: $GITHUB_SHA"
-        echo "- node: $(node --version)"
-      } >> "$GITHUB_STEP_SUMMARY"`
+          ]
         },
         {
           cmd: "gh CLI",
@@ -34396,12 +34070,7 @@ gh run rerun 1234567890 --failed`,
             "تابع run شغال لايف.",
             "شغّل workflow يدوي بمدخل.",
             "أعد الـ jobs الفاشلة بس في run معين."
-          ],
-          sol: R`[[gh run list --limit 5]] بيعرض جدول فيه الحالة و عنوان الـ commit واسم الـ workflow والـ branch والـ event والـ ID والوقت. الـ run الفاشل عليه [[X]] أحمر.
-
-[[gh run view --log-failed]] من غير ID بيسألك تختار run من قايمة، وبعدين بيطبع لوج الـ steps الفاشلة بس. كل سطر شكله: اسم الـ job، واسم الـ step، والوقت، والكلام، زي [[test  Run npm test  2026-09-30T10:12:03.4Z  ✕ adds two numbers]]، وتحته الـ expected والـ received اللي كسروا الاختبار، وفي الآخر [[Process completed with exit code 1.]].
-
-لو قالك [[To get started with GitHub CLI, please run: gh auth login]] يبقى محتاج login الأول. ولو [[no runs found]] يبقى انت في فولدر repo تاني أو الـ remote مش على GitHub، اتأكد بـ [[gh repo view]]. ولو الـ run لسه شغال، [[--log-failed]] مش هيلاقي حاجة، استخدم [[gh run watch]] واستنى.`
+          ]
         },
         {
           cmd: "قراية الفشل",
@@ -34433,12 +34102,7 @@ gh run download 1234567890`,
             "آخر ٤٠ سطر من الـ steps الفاشلة في run معين.",
             "أسامي الـ jobs ونتيجتها (مفيد في matrix).",
             "نزّل الـ artifacts (screenshots، تقارير)."
-          ],
-          sol: R`الإجابة النموذجية قايمة فحص، مش تخمين:
-
-١. نسخة Node: [[node -v]] عندك قدام الرقم في step الـ [[Setup node]] في اللوج (بيكتب النسخة اللي نزّلها). لو مختلفين، حط [[node-version-file: .nvmrc]] عشان الاتنين يقروا من نفس المكان. ٢. المتغيرات: كل اسم في [[.env]] عندك لازم يبقى له secret أو env في الـ workflow. المتغير الناقص بيبقى فاضي، والغلط بيطلع على شكل [[undefined]] أو [[Invalid URL]] أو [[DATABASE_URL is not set]]. ٣. فروق البيئة: الـ runner لينكس فأسماء الملفات case-sensitive ([[import "./button"]] بيشتغل على ويندوز وماك ويفشل هنا لو الملف [[Button.tsx]])، والوقت UTC، ومفيش قاعدة بيانات ولا خدمات إلا لو عملتها بـ services. ٤. [[npm ci]] أصرم من [[npm install]]: لو package.json و package-lock.json مش متطابقين هيقولك [[npm ci can only install packages when your package.json and package-lock.json are in sync]].
-
-وأسهل طريقة تتأكد: شغّل نفس أوامر الـ CI عندك بالظبط ([[rm -rf node_modules && npm ci && npm test]]). الغلط الشائع إنك تعمل «Re-run» كذا مرة على أمل إنه ينجح؛ دا بيشتغل بس مع الاختبارات الـ flaky، وساعتها المشكلة في الاختبار نفسه.`
+          ]
         }
       ]
     },
@@ -34500,21 +34164,7 @@ jobs:
             "استخدم GitHub API.",
             "متغير للـ step.",
             "التوكن الجاهز بتاع الـ run."
-          ],
-          sol: R`الـ step اللي بتطبع [[echo "value: $TEST_VALUE"]] هتطلّع في اللوج [[value: ***]]. GitHub بيدوّر على قيمة أي secret في اللوج ويستبدلها بـ [[***]]. و [[echo "length: $__{#TEST_VALUE}"]] بيطبع الطول الحقيقي (مثلًا [[length: 11]])، ودي طريقة آمنة تتأكد إن الـ secret وصل من غير ما تطبعه.
-
-لو طلع [[value: ]] فاضي و [[length: 0]]: اسم الـ secret مختلف (الأسماء بتتحول لـ uppercase، فـ [[secrets.TEST_VALUE]] لازم يطابق)، أو حاطط الـ secret في environment والـ job مش عامل [[environment:]]، أو الـ run جاي من pull request من fork، ودي الـ secrets مش بتتبعتلها أصلًا.
-
-والإخفاء مش حماية كاملة: لو طبعت الـ secret بعد تحويله ([[base64]] أو [[rev]] أو حرف حرف) هيظهر عادي. الإخفاء بيحميك من الغلطة، مش من حد عايز يسرّب.`,
-          solCode: R`jobs:
-  show:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "value: $TEST_VALUE"
-          echo "length: $__{#TEST_VALUE}"
-        env:
-          TEST_VALUE: $__{{ secrets.TEST_VALUE }}`
+          ]
         },
         {
           cmd: "base64 -d",
@@ -34557,30 +34207,7 @@ rm keystore.b64
             "أوامر.",
             "رجّعه ملف في الفولدر المؤقت.",
             "وخلّي مساره متاح للـ steps الجاية."
-          ],
-          sol: R`على جهازك: ملف فيه [[hello from terminal-study]] بيتحول لـ [[aGVsbG8gZnJvbSB0ZXJtaW5hbC1zdHVkeQo=]] و [[sha256sum note.txt]] بيطلّع [[ef14986c004127fe5bc10638ba798128dd8f9460b4286d7a97d9338e7113ef52]]. في الـ workflow بعد [[base64 -d]] نفس الـ hash بالظبط بيطلع قدام [[.../note.txt]]، ودا معناه إن الملف رجع byte by byte.
-
-لو الـ hash مختلف: غالبًا عملت [[base64]] من غير [[-w0]] ونسخت الناتج بإيدك فالـ line breaks اتلخبطت، أو استخدمت [[echo]] في ويندوز PowerShell فاتضاف BOM أو CRLF. ولو [[base64: invalid input]] يبقى الـ secret فيه حاجة زيادة (مسافة أو اقتباس). وأمان أكتر: خلي [[gh secret set NAME < file.b64]] يقرا من الملف بدل ما تلزق القيمة.`,
-          solCode: R`# على جهازك
-echo "hello from terminal-study" > note.txt
-sha256sum note.txt
-base64 -w0 note.txt > note.b64
-gh secret set NOTE_B64 < note.b64
-rm note.b64
-
-# .github/workflows/b64.yml
-name: B64
-on: [workflow_dispatch]
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restore file
-        env:
-          NOTE_B64: $__{{ secrets.NOTE_B64 }}
-        run: |
-          echo "$NOTE_B64" | base64 -d > "$RUNNER_TEMP/note.txt"
-          sha256sum "$RUNNER_TEMP/note.txt"`
+          ]
         },
         {
           cmd: "matrix",
@@ -34633,12 +34260,7 @@ jobs:
             "النسخة من المصفوفة.",
             "سطّب.",
             "اختبر."
-          ],
-          sol: R`صفحة الـ run هتعرض ٤ jobs بأسماء زي [[test (22, ubuntu-latest)]] و [[test (22, windows-latest)]] و [[test (24, ubuntu-latest)]] و [[test (24, windows-latest)]]، شغالين في نفس الوقت. الويندوز غالبًا أبطأ بدقيقة أو اتنين.
-
-الفايدة الحقيقية تظهر لما واحد بس يفشل، مثلًا ويندوز بسبب مسار مكتوب بـ [[/]] أو script في package.json بيستخدم [[rm -rf]]. ساعتها تعرف إن المشكلة في النظام مش في الكود. ومع [[fail-fast: false]] الباقيين بيكمّلوا، ولو شلتها أول فشل يلغي الباقي فتشوف [[The operation was canceled.]] على jobs ممكن كانت هتنجح.
-
-ولو اتعمل job واحد بس، راجع إن [[node]] و [[os]] تحت [[matrix:]] مش تحت [[strategy:]] مباشرة، وإن [[runs-on]] مكتوب [[$__{{ matrix.os }}]].`
+          ]
         },
         {
           cmd: "services",
@@ -34709,19 +34331,7 @@ jobs:
             "سطّب.",
             "طبّق الـ migrations على القاعدة الفاضية.",
             "اختبر."
-          ],
-          sol: R`الحل: step [[npx prisma migrate deploy]] قبل [[npm test]] (زي المثال). لو كله سليم هتشوف في اللوج أسماء الـ migrations اللي اتطبقت و [[All migrations have been successfully applied.]]. وفي بداية الـ job step اسمها [[Initialize containers]] بتستنى الـ health check قبل ما تكمّل.
-
-لو في migration غلط (مثلًا [[ALTER TABLE]] على جدول مش موجود) هتفشل الـ step دي بالـ error بتاع Postgres ورقم الـ migration، والـ tests مش هتشتغل. ودا المطلوب: عرفت في الـ PR بدل ما تعرف في الإنتاج.
-
-أخطاء شائعة: [[Can't reach database server at localhost:5432]] يعني الـ [[ports]] مش موجودة، أو الـ job شغال جوه [[container:]] وساعتها الـ host يبقى اسم الـ service ([[postgres]]) مش localhost. ومن غير الـ [[--health-cmd]] الـ migrations ممكن تجري قبل ما Postgres يجهز فتفشل مرة وتنجح مرة.`,
-          solCode: R`    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with: { node-version: 24, cache: npm }
-      - run: npm ci
-      - run: npx prisma migrate deploy
-      - run: npm test`
+          ]
         },
         {
           cmd: "cache و artifacts",
@@ -34770,12 +34380,7 @@ jobs:
             "في job تاني: نزّله.",
             "إعداداته.",
             "بنفس الاسم."
-          ],
-          sol: R`بعد ما الـ run يخلص، انزل لآخر صفحة الـ Summary: هتلاقي قسم [[Artifacts]] فيه [[dist]] وحجمه. بتدوس عليه بينزل [[dist.zip]]، وجواه محتوى فولدر dist (الـ index.html والـ assets). دا نفس اللي هيتنشر، فافتحه وجرّبه لو محتاج.
-
-ولو ضفت [[actions/cache]]: أول run مكتوب فيه [[Cache not found for input keys: npm-...]]، والتاني [[Cache restored from key: npm-...]]، و [[npm ci]] بقى أسرع.
-
-أخطاء شائعة: [[No files were found with the provided path: dist/]] يعني الـ build طلّع في فولدر تاني ([[build]] أو [[out]]) أو الـ build نفسه فشل بصمت. و [[download-artifact]] في نفس الـ job مالوش لازمة، بيتستخدم في job تانية عاملة [[needs]] على الأولى. والـ artifact بيتمسح بعد [[retention-days]]، فمينفعش يبقى هو الباك أب بتاعك.`
+          ]
         },
         {
           cmd: "GITHUB_ENV و GITHUB_OUTPUT",
@@ -34814,17 +34419,7 @@ jobs:
             "step ليها id...",
             "...بتكتب output اسمه size.",
             "اقرا الـ output بالـ id."
-          ],
-          sol: R`الناتج في اللوج: الـ step الأولى بتطبع [[same step: []]] فاضي، والتانية بتطبع [[next step [1.2.3]]].
-
-السبب إن [[GITHUB_ENV]] مجرد ملف. الـ runner بيقراه بعد ما الـ step تخلص ويضيف اللي فيه لبيئة الـ steps اللي بعدها. أما الـ shell الحالي فمعندوش فكرة إن حاجة اتكتبت في ملف. لو محتاج القيمة في نفس الـ step، اعملها متغير عادي كمان: [[VERSION=1.2.3; echo "VERSION=$VERSION" >> "$GITHUB_ENV"]].
-
-الغلط الشائع التاني: [[echo "VERSION = 1.2.3"]] بمسافات، فيبقى اسم المتغير [["VERSION "]] بمسافة. أو [[>]] بدل [[>>]] فتمسح اللي اتكتب قبله. وخلي بالك إن [[$__{{ env.VERSION }}]] بيتحسب قبل ما الـ step تبدأ، فهو كمان هيطلع فاضي في نفس الـ step.`,
-          solCode: R`steps:
-  - run: |
-      echo "VERSION=1.2.3" >> "$GITHUB_ENV"
-      echo "same step: [$VERSION]"
-  - run: echo "next step [$VERSION]"`
+          ]
         },
         {
           cmd: "::error::",
@@ -34877,12 +34472,7 @@ jobs:
             "ابدأ مجموعة مطوية في اللوج.",
             "لوج طويل جواها.",
             "اقفل المجموعة."
-          ],
-          sol: R`الـ run هيبقى أحمر، وفوق في صفحة الـ Summary قسم [[Annotations]] فيه [[1 error]] وتحته اسم الـ job والرسالة: [[DEPLOY_SSH_KEY or DEPLOY_HOST is missing in Settings > Secrets]]. غالبًا هتلاقي جنبها annotation تانية [[Process completed with exit code 1.]]. وجوه اللوج نفسه السطر ده بيبان بالأحمر مكتوب [[Error:]] قبله.
-
-وعلى repo فيه الـ secrets الـ step بتنجح وبيظهر [[secrets OK]] كـ notice في نفس القسم. والـ [[::group::]] في اللوج بيبان كسطر واحد مقفول [[installed packages]] بتدوس عليه يفتح.
-
-لو الرسالة ظهرت في اللوج بس مش في Annotations: غالبًا فيه مسافة قبل [[::error::]] أو كتبتها [[:error:]] بنقطتين بس. الـ runner بيدوّر على السطر بيبدأ بـ [[::]] بالظبط. ولو الـ step نجحت رغم الرسالة، يبقى نسيت [[exit 1]]: الـ annotation لوحدها مش بتفشّل حاجة.`
+          ]
         },
         {
           cmd: "git diff --quiet",
@@ -34925,12 +34515,7 @@ jobs:
             "...وقول الإصلاح...",
             "...وافشل.",
             "نهاية الشرط."
-          ],
-          sol: R`لما تعدّل الملف المتولّد بإيدك وتعمل push، الـ step [[Types in sync?]] بتفشل ويظهر في اللوج الـ diff بين اللي الـ generator طلّعه واللي في الـ commit، زي:
-
-[[-export type A = 1;]] و [[+export type A = 2;]]، وبعدها annotation حمرا [[run npm run types:generate and commit the result]]. الـ generator كتب فوق تعديلك، فبقى فيه فرق عن الـ commit.
-
-لو الـ step نجحت رغم إنك غيّرت: غالبًا الملف مش متتبّع في git أصلًا (جديد أو في [[.gitignore]])، و [[git diff]] مش بيشوف الملفات الـ untracked. جرّبت دا: ملف جديد مش متضاف [[git diff --quiet]] رجّع 0 كأنه مفيش فرق، بينما [[git status --porcelain]] بيطلّعه بـ [[??]]. لو عايز تغطي الحالة دي استخدم [[test -z "$(git status --porcelain lib/)"]].`
+          ]
         },
         {
           cmd: "needs و if و concurrency",
@@ -34985,12 +34570,7 @@ jobs:
             "الديبلوي.",
             "لو اللي قبلها فشلت...",
             "...نبّه."
-          ],
-          sol: R`الـ run الأول بيبان رمادي بعلامة إلغاء، ولو فتحته هتلاقي annotation زي [[Canceling since a higher priority waiting request for 'CI-refs/heads/main' exists]]. التاني بيكمّل عادي. الـ group هنا اسم الـ workflow والـ ref، فأي run جديد على نفس الـ branch بيلغي القديم.
-
-ولأن [[deploy]] عليه [[needs: test]] والـ test اتلغى، الـ deploy بيبان [[skipped]]، مش بيشتغل بكود نصه قديم.
-
-لو الاتنين كمّلوا: غالبًا الـ push التاني جه بعد ما الأول خلص (الـ test سريع)، أو الـ [[concurrency]] مكتوبة جوه job مش على مستوى الـ workflow، أو الـ push على branches مختلفة فالـ group مختلف. وخلي بالك: [[cancel-in-progress: true]] مناسب للـ CI، بس للـ deploy غالبًا عايز [[false]] عشان متلغيش deploy في نصه.`
+          ]
         },
         {
           cmd: "jobs متوازية",
@@ -35067,20 +34647,7 @@ jobs:
             "ماكينة.",
             "الخطوات.",
             "اطبع. ده اللي تخليه required check."
-          ],
-          sol: R`الطريق: Settings ثم Rules ثم Rulesets (أو Branches ثم Add branch protection rule في الواجهة القديمة)، على [[main]]، فعّل [[Require status checks to pass]]، واكتب [[ok]] في البحث واختاره. بعدها أي PR ليه فحص فاشل زرار الـ Merge بيبقى مقفول ومكتوب إن الـ check المطلوب ما نجحش.
-
-لو [[ok]] مش ظاهر في البحث: لازم يكون اشتغل مرة على الأقل في الـ repo في آخر أسبوع. اعمل PR تجربة الأول.
-
-وفيه فخ مهم: لو [[lint]] فشل، [[ok]] بيبقى [[skipped]]، و GitHub بيعتبر الـ required check اللي اتعمله skip ناجح، فالـ PR ممكن يتعمله merge! الحل إن [[ok]] يشتغل دايمًا ويتأكد بنفسه من نتايج اللي قبله، زي الكود تحت. جرّب تكسر lint في PR وشوف إن الـ merge اتقفل فعلًا.`,
-          solCode: R`  ok:
-    needs: [lint, typecheck, test]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "results: $__{{ join(needs.*.result, ' ') }}"
-          test "$__{{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"`
+          ]
         },
         {
           cmd: "الأمان",
@@ -35119,19 +34686,7 @@ Dependabot: ملف [[.github/dependabot.yml]] بـ [[package-ecosystem: github-a
             "الخطوات.",
             "checkout مثبّت على commit بعينه، والتعليق بيقول النسخة.",
             "setup-node مثبّت كمان."
-          ],
-          sol: R`بعد ما تعمل push للملف، Dependabot بيعمل فحص ولو فيه actions قديمة بيفتح PRs بعناوين زي [[Bump actions/checkout from 6 to 7]]. ولو انت مثبّت بالـ SHA زي المثال، الـ PR بيغيّر الـ SHA ويحدّث التعليق [[# v7.0.1]] كمان.
-
-لو مفيش PRs: يا كل الـ actions محدّثة أصلًا (ودا كويس)، يا الفحص لسه ما اشتغلش. تقدر تشوف آخر فحص من Insights ثم Dependency graph ثم Dependabot. ولو [[directory]] غلط أو الملف فيه غلط YAML هيظهر error هناك.
-
-الغلط الشائع إنك تكتب [[package-ecosystem: github-actions]] وتفتكر إنه هيحدّث npm كمان. كل ecosystem محتاج entry لوحده، فضيف واحد لـ [[npm]] لو عايز.`,
-          solCode: R`# .github/dependabot.yml
-version: 2
-updates:
-  - package-ecosystem: github-actions
-    directory: "/"
-    schedule:
-      interval: weekly`
+          ]
         }
       ]
     },
@@ -35217,12 +34772,7 @@ jobs:
             "و latest.",
             "اقرا كاش الطبقات من GitHub.",
             "واكتبه، بكل الطبقات."
-          ],
-          sol: R`بعد أول run ناجح، في صفحة الـ repo على اليمين قسم [[Packages]] فيه اسم الـ image. بتفتحه تلاقي tag [[latest]] و tag بالـ sha الكامل للـ commit، ومعاهم أمر [[docker pull ghcr.io/user/repo:latest]].
-
-على السيرفر: لو الـ package عامة الـ pull بينزل على طول. لو private (الافتراضي للـ repo الخاص) هتاخد [[unauthorized]] أو [[denied]]. الحل تعمل login مرة على السيرفر بـ personal access token فيه صلاحية [[read:packages]]: [[echo "$TOKEN" | docker login ghcr.io -u USER --password-stdin]].
-
-أخطاء في الـ workflow نفسه: [[denied: installation not allowed to Create organization package]] أو [[permission_denied: write_package]] يعني [[packages: write]] ناقصة. و [[repository name must be lowercase]] لو اسم اليوزر فيه حروف كبيرة ونسيت [[,,]] في [[$__{GITHUB_REPOSITORY,,}]].`
+          ]
         },
         {
           cmd: "deploy عبر SSH",
@@ -35285,18 +34835,7 @@ jobs:
             "استنى التطبيق يقوم.",
             "health check: لو مش 200 الـ deploy يفشل.",
             "نهاية الأوامر."
-          ],
-          sol: R`[[ssh-keygen -t ed25519 -f deploy_key -N ""]] بيعمل ملفين: [[deploy_key]] (الخاص) و [[deploy_key.pub]] (العام). العام يتحط سطر في [[/home/deploy/.ssh/authorized_keys]] على السيرفر، والخاص كله (من [[-----BEGIN OPENSSH PRIVATE KEY-----]] لـ [[-----END ...]]) في secret [[DEPLOY_SSH_KEY]]. و [[DEPLOY_KNOWN_HOSTS]] بتاخده من [[ssh-keyscan -H SERVER_IP]].
-
-جرّب المفتاح من جهازك قبل ما تحطه في CI: [[ssh -i deploy_key deploy@SERVER 'echo ok']] لازم يطبع [[ok]] من غير ما يسأل باسورد. ولما الـ workflow يشتغل، آخر حاجة في اللوج هتبقى رد [[curl]] من [[/health]].
-
-أخطاء شائعة: [[Permission denied (publickey)]] يعني حطيت الـ .pub في الـ secret بدل الخاص، أو صلاحيات [[~/.ssh]] على السيرفر مش 700 و authorized_keys مش 600. و [[Host key verification failed]] يعني [[DEPLOY_KNOWN_HOSTS]] فاضي أو لـ IP تاني. و [[Load key ... invalid format]] يعني المفتاح اتلزق ناقص. وامسح [[deploy_key]] من جهازك بعد ما تحطه في GitHub.`,
-          solCode: R`ssh-keygen -t ed25519 -f deploy_key -N "" -C "github-actions-deploy"
-ssh-copy-id -i deploy_key.pub deploy@SERVER
-ssh -i deploy_key deploy@SERVER 'echo ok'
-gh secret set DEPLOY_SSH_KEY < deploy_key
-ssh-keyscan -H SERVER | gh secret set DEPLOY_KNOWN_HOSTS
-rm deploy_key`
+          ]
         },
         {
           cmd: "نشر ملفات بـ scp",
@@ -35349,12 +34888,7 @@ latest.json آخر حاجة: لحد ما يترفع، التطبيق شايف ا
             "أوامر.",
             "اطلب رابط التحميل واطبع الـ status بس.",
             "لو مش 200، رسالة حمرا وافشل."
-          ],
-          sol: R`التحميل اللي شغال على الموبايل بيكمّل للآخر حتى لو الرفع التاني خلص في نصه، والملف اللي نزل سليم (النسخة القديمة كاملة). وأي تحميل يبدأ بعد الـ [[mv]] بياخد النسخة الجديدة.
-
-السبب إن [[mv]] جوه نفس الـ filesystem مجرد rename، بيغيّر الاسم يشاور على الملف الجديد مرة واحدة. والتحميل القديم فاتح الملف القديم، ولينكس بيسيبه موجود لحد ما آخر حد يقفله. لو كنت عملت [[scp]] مباشرة فوق الملف، المستخدم كان ممكن ياخد ملف نصه قديم ونصه جديد، أو ملف ناقص.
-
-عشان كده الشرط إن [[tmp/]] يكون جوه نفس الفولدر (نفس الـ filesystem). لو [[tmp]] في [[/tmp]] على partition تانية، الـ [[mv]] بيبقى copy و delete ومش ذري. وآخر step ([[Check download link]]) لازم تطبع 200؛ لو طلّعت [[404]] اتأكد إن Nginx بيخدم الفولدر ده وإن الصلاحيات تسمح له يقرا.`
+          ]
         },
         {
           cmd: "environments و approval",
@@ -35407,12 +34941,7 @@ latest.json آخر حاجة: لحد ما يترفع، التطبيق شايف ا
             "ماكينة.",
             "الخطوات.",
             "نفس الـ variable بقيمة الإنتاج."
-          ],
-          sol: R`الـ run بيعدّي build و deploy-staging، وبعدين بيقف: الـ job [[deploy-prod]] بيبان بساعة وحالة [[Waiting]]، وفوق شريط أصفر مكتوب فيه إن الـ deployment مستني review وزرار [[Review deployments]]. بتدوس عليه، تعلّم على production، تكتب تعليق لو عايز، وتدوس [[Approve and deploy]]. ساعتها الـ job يكمّل، ويظهر رابط [[https://example.com]] جنب الـ job، وفي صفحة الـ repo قسم Deployments بيسجّل مين وافق وامتى.
-
-[[vars.DEPLOY_HOST]] بتاخد القيمة من الـ environment نفسه، فلو عملت variable بنفس الاسم في staging و production هتلاقي كل job طبع قيمة مختلفة. ولو طبع [[deploy to ]] فاضي يبقى الـ variable مش متعرف في الـ environment ده.
-
-لو الـ run ما وقفش: اسم الـ environment في الـ workflow لازم يطابق اللي في Settings. وخلي بالك إن الـ required reviewers على repo خاص مش متاحة في كل الخطط؛ لو الخيار مش ظاهر عندك، جرّب على repo public. وبعد ٣٠ يوم من غير موافقة الـ job بيفشل لوحده.`
+          ]
         },
         {
           cmd: "deploy على tag",
@@ -35471,12 +35000,7 @@ jobs:
             "اعمل GitHub Release.",
             "إعداداته.",
             "اكتب التغييرات من الـ PRs لوحده."
-          ],
-          sol: R`بعد [[git tag v1.0.0 && git push --tags]]، تاب Actions فيه run والـ branch مكتوب مكانها [[v1.0.0]]. لما يخلص: صفحة Releases فيها [[v1.0.0]] بـ release notes متولدة من الـ PRs والـ commits من آخر tag، و Packages فيه الـ image بتاج [[v1.0.0]].
-
-أخطاء شائعة: الـ workflow ما اشتغلش خالص لأن الـ tag اسمه [[1.0.0]] من غير [[v]] والفلتر [[v*]]، أو الملف مش موجود في الـ commit اللي عليه الـ tag. و [[Resource not accessible by integration]] من الـ release action يعني ناقص [[contents: write]]. و [[docker build]] يفشل بـ [[failed to read dockerfile]] لو مفيش Dockerfile في الـ root.
-
-ولو عايز تمسح الـ tag وتعيده: [[git tag -d v1.0.0 && git push origin :refs/tags/v1.0.0]]، وامسح الـ Release من الواجهة. بس الأحسن تعمل [[v1.0.1]] بدل ما تعيد كتابة tag حد ممكن يكون نزّله.`
+          ]
         },
         {
           cmd: "rollback من Actions",
@@ -35537,12 +35061,7 @@ jobs:
             "بصمة السيرفر من secret.",
             "أوامر.",
             "على السيرفر: شغّل compose بالنسخة المطلوبة من غير build."
-          ],
-          sol: R`شغّل الـ workflow من [[Run workflow]] واكتب tag قديم زي [[v1.0.0]]. على السيرفر اتأكد: [[docker compose ps]] أو [[docker inspect --format '{{.Config.Image}}' myapp-api-1]] لازم يطلّع [[ghcr.io/user/repo:v1.0.0]]. والموقع يرجع يرد بالنسخة القديمة.
-
-ولأن الـ compose فيه [[$__{IMAGE_TAG:-latest}]]، تشغيل [[docker compose up -d]] عادي من غير المتغير بيرجّع [[latest]] تاني. ودا تحذير: الـ rollback ده مؤقت لحد الـ deploy الجاي، مش تثبيت.
-
-أخطاء شائعة: [[manifest unknown]] أو [[not found]] يعني الـ tag ده متعملوش push أصلًا في ghcr (اتأكد من صفحة Packages). و [[unauthorized]] يعني السيرفر مش عامل login لـ ghcr. وخلي بالك إن حط [[$__{{ inputs.tag }}]] جوه الـ shell مباشرة بيسمح لأي حد يقدر يشغّل الـ workflow يحقن أوامر؛ الأأمن تعدّيه كـ env وتتأكد إنه بشكل [[v1.2.3]] أو sha قبل ما تستخدمه.`
+          ]
         },
         {
           cmd: "schedule",
@@ -35597,12 +35116,7 @@ jobs:
             "لو الفحص فشل...",
             "...أوامر.",
             "...ابعت رسالة Telegram بالبوت."
-          ],
-          sol: R`الإعداد: من BotFather خد التوكن، ابعت أي رسالة للبوت، وافتح [[https://api.telegram.org/botTOKEN/getUpdates]] هتلاقي [[chat":{"id":123456789]]، ودا الـ [[TG_CHAT]]. حط الاتنين secrets.
-
-عشان تجرّب الفشل من غير ما تستنى الموقع يقع: غيّر الـ URL مؤقتًا لحاجة بترجع 404 أو domain مش موجود، وشغّل الـ workflow بـ [[Run workflow]]. هتشوف في اللوج [[status=404]] (أو [[status=000]] لو مفيش اتصال)، والـ step تفشل، والـ step اللي بعدها تشتغل بسبب [[if: failure()]]، وتوصلك رسالة [[example.com is DOWN]].
-
-خلي بالك: الـ cron في GitHub بيتأخر أحيانًا دقايق كتير وقت الزحمة، وأقل فترة ٥ دقايق، وبيشتغل على الـ default branch بس. وفي الـ repo الـ public لو مفيش نشاط ٦٠ يوم الـ schedule بيتوقف لوحده. ولو الرسالة ما وصلتش: جرّب الـ curl بتاع Telegram من جهازك الأول، غالبًا الـ chat id غلط أو ما بعتّش للبوت رسالة قبل كده.`
+          ]
         },
         {
           cmd: "debugging",
@@ -35636,17 +35150,7 @@ tmate: step [[mxschmitt/action-tmate]] بتوقف الـ run وتطبع أمر s
             "الـ jobs المتاحة محليًا.",
             "فعّل اللوج التفصيلي لكل الـ actions.",
             "سطور الـ debug في اللوج."
-          ],
-          sol: R`بعد الـ step الفاشلة، الـ tmate step بتطبع في اللوج كل كام ثانية سطرين: [[SSH: ssh XXXXXXXX@nyc1.tmate.io]] و [[Web shell: https://tmate.io/t/XXXXXXXX]]. انسخ الـ ssh من اللوج وشغّله من ترمنالك: هتلاقي نفسك جوه الـ runner في فولدر الـ repo، وتقدر تشغّل [[npm test]] أو تبص على الملفات بنفسك.
-
-عشان الـ workflow يكمّل: [[touch continue]] جوه الجلسة (أو اقفل الجلسة حسب الإعداد)، وإلا هيفضل لحد timeout الـ job.
-
-تحذيرات لازم تعرفها: على repo public اللوج مفتوح لأي حد، فأي حد يقدر ياخد الرابط ويدخل الـ runner بالـ secrets بتاعتك. استخدم [[limit-access-to-actor: true]] عشان مفتاح الـ SSH بتاعك المسجّل في GitHub بس يدخل، وحط [[if: failure()]] عشان يشتغل لما حاجة تفشل بس، وامسح الـ step بعد ما تخلص. والغلط الشائع إنك تنساها فكل run فاشل يفضل مستني ساعات ويصرف دقايق Actions.`,
-          solCode: R`- uses: mxschmitt/action-tmate@v3
-  if: failure()
-  with:
-    limit-access-to-actor: true
-  timeout-minutes: 30`
+          ]
         }
       ]
     }

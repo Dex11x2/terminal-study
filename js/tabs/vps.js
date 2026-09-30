@@ -52,7 +52,12 @@ exit`,
             when: "كل مرة تشتغل على السيرفر.",
             mistakes: "تنسى انت فين، وتنفّذ على جهازك حاجة كانت للسيرفر أو العكس. بص على الـ prompt قبل أي أمر مهم."
           },
-          lines: ["ادخل السيرفر كـ root.", "اخرج وارجع لجهازك."]
+          lines: ["ادخل السيرفر كـ root.", "اخرج وارجع لجهازك."],
+          sol: R`أول دخول بيسألك [[The authenticity of host '203.0.113.10' can't be established]] ومعاه fingerprint، اكتب [[yes]]، وبعدها الـ prompt بيتغير لحاجة زي [[root@my-server:~#]]. و [[exit]] بيطبع [[logout]] و [[Connection to 203.0.113.10 closed.]] وترجع لـ prompt جهازك.
+
+وبالـ alias ([[ssh myserver]] مثلًا) المفروض تدخل نفس السيرفر من غير ما تكتب IP ولا يوزر، لأن [[~/.ssh/config]] فيه [[HostName]] و [[User]] و [[IdentityFile]].
+
+الأغلاط الشائعة: [[Permission denied (publickey)]]: المفتاح مش متضاف للسيرفر أو [[IdentityFile]] غلط. و [[Connection timed out]]: IP غلط أو بورت 22 مقفول في firewall المزود. و [[REMOTE HOST IDENTIFICATION HAS CHANGED]] بعد ما تعيد تسطيب السيرفر: امسح السطر القديم بـ [[ssh-keygen -R 203.0.113.10]].`
         },
         {
           cmd: "hostnamectl",
@@ -84,7 +89,12 @@ uptime`,
             "الرام: المستخدم والفاضي.",
             "مساحة الديسك.",
             "شغال بقاله قد إيه، ومتوسط الضغط."
-          ]
+          ],
+          sol: R`الملخص بيبقى أربع سطور من الأوامر دي: النظام من [[hostnamectl]] (سطر [[Operating System: Ubuntu 24.04.x LTS]]) أو [[lsb_release -a]]، وعدد الأنوية من [[nproc]] (زي [[2]])، والرام من [[free -h]] في عمود [[total]] سطر [[Mem:]] (زي [[1.9Gi]])، والمساحة الفاضية من [[df -h]] عمود [[Avail]] سطر [[/]].
+
+مثال لملخص: «Ubuntu 24.04 LTS، 2 core، 2GB رام (1.3GB available)، 32GB فاضيين من 50». و [[uptime]] بيقولك من امتى السيرفر شغال والـ load.
+
+الغلط الشائع: تاخد [[free]] من عمود [[free]] وتفتكر الرام خلصانة؛ لينكس بيستخدم الرام الفاضية كاش، والرقم الحقيقي في [[available]]. وفي Docker أو WSL [[hostnamectl]] ممكن يطلع [[System has not been booted with systemd]]؛ ده عادي هناك، استخدم [[lsb_release -a]] أو [[cat /etc/os-release]].`
         },
         {
           cmd: "timedatectl",
@@ -106,7 +116,12 @@ date`,
             when: "أول ما تجهّز السيرفر، قبل ما تحط أي cron. ولما تلاقي الأوقات في اللوج مش منطقية.",
             mistakes: "تغيّر المنطقة بعد ما حطيت مهام cron، فكل المواعيد تتزق. قرّر من الأول."
           },
-          lines: ["الوقت والمنطقة الزمنية الحالية.", "غيّر المنطقة لتوقيت القاهرة.", "اتأكد إن الوقت بقى صح."]
+          lines: ["الوقت والمنطقة الزمنية الحالية.", "غيّر المنطقة لتوقيت القاهرة.", "اتأكد إن الوقت بقى صح."],
+          sol: R`بعد [[sudo timedatectl set-timezone Africa/Cairo]] (مش بيطبع حاجة)، [[timedatectl]] بيوري [[Time zone: Africa/Cairo (EEST, +0300)]] أو [[(EET, +0200)]] حسب التوقيت الصيفي، و [[System clock synchronized: yes]]. و [[date]] بيطبع الوقت بتوقيت مصر مع [[EEST]] أو [[EET]].
+
+[[System clock synchronized: yes]] و [[NTP service: active]] معناهم إن الساعة بتتظبط لوحدها من الإنترنت، وده مهم لشهادات SSL والتوكنز.
+
+الغلط الشائع: [[Invalid or missing time zone]]: الاسم لازم زي [[Africa/Cairo]] بالظبط؛ [[timedatectl list-timezones | grep -i cairo]] يطلّعهولك. وخلّي بالك إن التطبيقات اللي كانت شغالة (و cron) ممكن تفضل بالمنطقة القديمة لحد ما تعمل لها restart.`
         }
       ]
     },
@@ -141,7 +156,12 @@ sudo apt upgrade -y`,
             "حدّث لستة البرامج المتاحة.",
             "اعرض إيه اللي ليه تحديث.",
             "حدّث كل البرامج، و [[-y]] وافق على كل حاجة من غير ما تسأل."
-          ]
+          ],
+          sol: R`[[sudo apt update]] بيخلص بسطر زي [[45 packages can be upgraded. Run 'apt list --upgradable' to see them.]] (أو [[All packages are up to date.]]). و [[apt list --upgradable]] بيطبع سطر لكل باكدج بالشكل [[base-files/noble-updates 13ubuntu10.5 amd64 [upgradable from: 13ubuntu10.4]]]. عدّ السطور ده جوابك (عندي كانوا 160 تقريبًا على سيستم مااتحدثش من فترة).
+
+[[sudo apt upgrade -y]] بيطبع [[X upgraded, Y newly installed, 0 to remove and Z not upgraded.]] وبعدين بيسطّب. الـ X ده رقم اللي اتحدثوا.
+
+الأغلاط الشائعة: [[Could not get lock /var/lib/dpkg/lock-frontend]]: unattended-upgrades شغال في الخلفية، استنى دقايق وماتمسحش ملف الـ lock. وشاشة بنفسجي بتسأل [[Which services should be restarted?]]: سيب الاختيارات زي ما هي واضغط Enter. و [[Z not upgraded]] مش غلط؛ غالبًا phased updates أو kernel هتتسطب بعدين.`
         },
         {
           cmd: "apt install / remove",
@@ -169,7 +189,12 @@ sudo apt autoremove`,
             "معلومات عن برنامج قبل ما تسطّبه.",
             "شيل برنامج.",
             "شيل الحاجات اللي اتسطبت معاه ومبقاش ليها لازمة."
-          ]
+          ],
+          sol: R`[[sudo apt install -y htop]] بيخلص بـ [[Setting up htop (3.3.0-...)]]، و [[htop]] بيفتح شاشة ملونة بالـ CPU والرام والعمليات؛ اخرج بـ [[q]] أو F10.
+
+[[sudo apt remove htop]] بيطبع [[The following packages will be REMOVED: htop]] و [[Removing htop (...)]]. و [[sudo apt autoremove]] بيشيل الباكدجات اللي اتسطبت كـ dependencies ومبقاش حد محتاجها، ولو مفيش بيطبع [[0 upgraded, 0 newly installed, 0 to remove]].
+
+الغلط الشائع: [[E: Unable to locate package]]: نسيت [[apt update]] الأول، أو الاسم غلط (دوّر بـ [[apt search]]). وخلّي بالك إن [[remove]] بيسيب ملفات الإعدادات في [[/etc]]، و [[purge]] هو اللي بيمسحها.`
         },
         {
           cmd: "NodeSource",
@@ -199,7 +224,12 @@ node -v && npm -v`,
             "شغّله: بيضيف المستودع والمفتاح.",
             "سطّب Node (و npm معاه) من المستودع الجديد.",
             "اتأكد من النسخ."
-          ]
+          ],
+          sol: R`قبل الإضافة: [[apt-cache policy nodejs]] بيطبع [[Candidate: 18.19.1+dfsg-6ubuntu5]] وجنب النسخة [[500 http://archive.ubuntu.com/ubuntu noble/universe]]. يعني Node 18 القديمة من مستودع أوبونتو (جربتها على أوبونتو 24.04).
+
+بعد السكربت: [[Candidate: 24.x.x-1nodesource1]] ومصدرها [[https://deb.nodesource.com/node_24.x nodistro/main]]، وأولويتها أعلى من بتاعة أوبونتو فهي اللي هتتسطب. و [[node -v]] بعد التسطيب [[v24.x]].
+
+الغلط الشائع: Candidate لسه 18 بعد السكربت: السكربت فشل (اقرا آخر سطور ناتجه) أو ماعملش [[apt update]]. ولو كان عندك nodejs من أوبونتو متسطب قبل كده، ممكن التسطيب يطلع conflict مع [[libnode]]؛ [[sudo apt remove nodejs libnode*]] الأول. ماجربتش التسطيب نفسه هنا.`
         },
         {
           cmd: "reboot",
@@ -223,7 +253,12 @@ sudo reboot`,
             "لو الملف ده موجود، السيرفر محتاج ريستارت.",
             "أنهي برامج محتاجة الريستارت.",
             "اعمل ريستارت (الموقع هيقع ثواني)."
-          ]
+          ],
+          sol: R`[[sudo reboot]] بيقطع SSH على طول ([[Connection to ... closed by remote host.]]). استنى دقيقة وادخل تاني. [[uptime]] المفروض يقول [[up 1 min]].
+
+[[systemctl --failed]] في الحالة السليمة بيطبع [[0 loaded units listed.]]. ولو فيه خدمة واقعة بتظهر بـ [[failed]] واسمها، واقرا السبب بـ [[journalctl -u اسمها -b]].
+
+و [[ls /var/run/reboot-required]] بعد الـ reboot المفروض يقول [[No such file or directory]]، يعني مفيش reboot مطلوب تاني. الغلط الشائع: السيرفر مابيرجعش خالص: غالبًا تعديل في [[/etc/fstab]] لديسك مش موجود من غير [[nofail]]، والحل من console المزود مش SSH.`
         }
       ]
     },
@@ -260,7 +295,12 @@ tmux برنامج بيشتغل على السيرفر نفسه، وجواه تر�
             "اعرض الجلسات الموجودة.",
             "ارجع لجلسة work.",
             "اقفل الجلسة خالص."
-          ]
+          ],
+          sol: R`بعد [[Ctrl+B]] ثم [[D]] بيطبع [[[detached (from session work)]]] وترجع للشيل العادي. وبعد ما تخرج من SSH وتدخل تاني: [[tmux ls]] بيطبع [[work: 1 windows (created ...)]]، و [[tmux attach -t work]] بيرجّعك لـ htop زي ما سيبته بالظبط وشغال.
+
+ده لأن الجلسة شغالة على السيرفر نفسه مش مربوطة بالـ SSH، فقطع الاتصال مابيقتلهاش. نفس الفكرة لأمر طويل زي [[docker compose build]].
+
+الأغلاط الشائعة: [[no server running on /tmp/tmux-1000/default]]: مفيش جلسات (اتقفلت أو السيرفر اتعمله reboot؛ tmux مش بيعيش بعد reboot). و [[sessions should be nested with care]]: انت أصلًا جوه tmux. و Ctrl+B و D مع بعض مش هيشتغل؛ لازم تسيب Ctrl+B الأول وبعدين D.`
         }
       ]
     },
@@ -289,7 +329,12 @@ tmux برنامج بيشتغل على السيرفر نفسه، وجواه تر�
             when: "لما nano مش موجود، أو أمر يفتحلك vim لوحده. ولو حبيته، vim أسرع بكتير في التعديل لما تتعوّد عليه، بس ده اختياري.",
             mistakes: "إنك تكتب علطول من غير [[i]]، فالحروف تتنفذ كأوامر وتبوّظ الملف. لو حصل، Esc وبعدين [[:q!]] يخرجك من غير ما يحفظ الضرر."
           },
-          lines: ["افتح (أو اعمل) ملف test.txt في vim. اضغط i عشان تكتب، و Esc ثم [[:wq]] تحفظ وتخرج."]
+          lines: ["افتح (أو اعمل) ملف test.txt في vim. اضغط i عشان تكتب، و Esc ثم [[:wq]] تحفظ وتخرج."],
+          sol: R`بعد [[:wq]] الملف فيه التلات سطور. [[cat test.txt]] بيوريهم، و [[wc -l test.txt]] بيطبع [[3 test.txt]].
+
+التسلسل: [[vim test.txt]]، و [[i]] (تحت هيظهر [[-- INSERT --]])، واكتب التلات سطور، و [[Esc]]، وحط المؤشر على سطر و [[dd]] (السطر يختفي)، و [[u]] (يرجع، وتحت يطبع [[1 line less; before #1]] أو [[1 more line]])، و [[:wq]] (تحت [[written]]).
+
+الأغلاط الشائعة: تكتب [[dd]] أو [[:wq]] وانت لسه في INSERT فيتكتبوا كنص: اضغط Esc الأول. و [[E37: No write since last change]] لما تكتب [[:q]] بعد تعديل: يا [[:wq]] يا [[:q!]]. ولو فتحت ملف في [[/etc]] من غير sudo هيطلع [[E45: 'readonly' option is set]].`
         }
       ]
     },
@@ -324,7 +369,12 @@ su - deploy`,
             "ضيف deploy ([[-a]] append) لجروب ([[-G]]) اسمه sudo، فيقدر يستخدم sudo.",
             "اتأكد إن sudo ظهر في جروباته.",
             "بدّل ليوزر deploy في نفس الترمنال. الـ [[-]] بتحمّل إعداداته كاملة كأنه لسه داخل."
-          ]
+          ],
+          sol: R`[[sudo adduser deploy]] بيسألك باسورد مرتين وبعدين بيانات (Full Name وغيره، سيبها فاضية بـ Enter). و [[groups deploy]] بعد usermod بيطبع [[deploy : deploy sudo users]]. جربتها على أوبونتو 24.04 وطلعت كده ([[users]] بيتضاف افتراضيًا).
+
+[[su - deploy]] بيغيّر الـ prompt لـ [[deploy@server:~$]]، و [[sudo whoami]] بيسأل عن باسورد deploy (مش root) وبعدين بيطبع [[root]]. و [[exit]] بيرجّعك.
+
+الغلط الشائع: [[deploy is not in the sudoers file]]: الـ usermod اتعمل بعد ما دخلت بـ su، فالجلسة القديمة مش شايفة الجروب. اعمل [[exit]] وادخل تاني. ولو نسيت [[-a]] في [[usermod -aG]]، اليوزر هيتشال من كل الجروبات التانية.`
         },
         {
           cmd: "نقل مفتاح SSH",
@@ -346,7 +396,12 @@ ssh deploy@203.0.113.10`,
           lines: [
             "انسخ فولدر [[.ssh]] بتاع root (اللي فيه المفاتيح المسموحة) لفولدر deploy، وخلّي deploy صاحبه ([[--chown]]).",
             "من جهازك في نافذة جديدة: جرّب تدخل بـ deploy."
-          ]
+          ],
+          sol: R`[[ssh deploy@203.0.113.10]] من جهازك بيدخل على طول من غير باسورد، والـ prompt [[deploy@server:~$]]. و [[ls -la ~/.ssh]] جوه بيوري [[authorized_keys]] ملك [[deploy deploy]].
+
+وده شغال لأن [[rsync --chown=deploy:deploy]] نسخ نفس [[authorized_keys]] بتاع root وخلّى deploy صاحبه. لو صاحب الملف root، sshd بيرفض المفتاح.
+
+الغلط الشائع: [[Permission denied (publickey)]] مع إن الملف موجود: الصلاحيات أوسع من اللازم. لازم [[~/.ssh]] تبقى 700 و [[authorized_keys]] 600 وملك deploy: [[sudo chmod 700 /home/deploy/.ssh && sudo chmod 600 /home/deploy/.ssh/authorized_keys]]. و [[sudo tail /var/log/auth.log]] على السيرفر بيقولك السبب ([[bad ownership or modes]]).`
         },
         {
           cmd: "passwd / deluser",
@@ -368,7 +423,12 @@ sudo deluser --remove-home olduser`,
             when: "حد في الفريق ساب. يوزر تجربة خلص دوره. أو باسورد اتكشف ولازم يتغير.",
             mistakes: "[[--remove-home]] على يوزر في فولدره حاجات مهمة. خد باك أب الأول لو مش متأكد."
           },
-          lines: ["غيّر باسورد deploy (هيسألك الجديد مرتين).", "امسح يوزر olduser وفولدره كله."]
+          lines: ["غيّر باسورد deploy (هيسألك الجديد مرتين).", "امسح يوزر olduser وفولدره كله."],
+          sol: R`[[sudo adduser testuser]] بعدين [[sudo deluser --remove-home testuser]] بيطبع [[info: Removing files ...]] و [[info: Removing crontab ...]] و [[info: Removing user 'testuser' ...]]. وبعدها [[id testuser]] بيطبع [[no such user]]، و [[ls /home]] مابقاش فيه الفولدر. جربتها بالظبط.
+
+و [[sudo passwd deploy]] بيسأل الباسورد الجديد مرتين ويطبع [[passwd: password updated successfully]].
+
+الغلط الشائع: [[userdel: user testuser is currently used by process 1234]]: فيه جلسة أو عملية شغالة باليوزر ده، اقفلها الأول ([[sudo pkill -u testuser]]). و [[deluser]] من غير [[--remove-home]] بيسيب الفولدر وملفاته.`
         }
       ]
     },
@@ -411,7 +471,12 @@ sudo sshd -T | grep -Ei "permitrootlogin|passwordauthentication"`,
             "اختبر الملف ([[-t]] من test). لو مطبعش حاجة يبقى سليم.",
             "طبّق الإعدادات بريستارت لخدمة ssh.",
             "اعرض الإعدادات الفعلية ([[-T]] كابيتال)، وسيب بس السطرين المهمين. [[-E]] عشان [[|]] تبقى «أو»، و [[-i]] من غير فرق بين الحروف."
-          ]
+          ],
+          sol: R`[[sudo sshd -t]] مابيطبعش حاجة لو الملف سليم. و [[sudo sshd -T | grep -Ei "permitrootlogin|passwordauthentication"]] بعد التعديل بيطبع [[permitrootlogin no]] و [[passwordauthentication no]]. (قبل التعديل على أوبونتو بيبقى [[permitrootlogin without-password]].)
+
+من نافذة جديدة: [[ssh root@IP]] بيطلع [[Permission denied (publickey)]]، و [[ssh deploy@IP]] بيدخل عادي. سيب النافذة القديمة مفتوحة لحد ما تتأكد.
+
+الغلط الشائع: [[sshd -T]] لسه بيقول [[passwordauthentication yes]] مع إنك غيرته: فيه ملف في [[/etc/ssh/sshd_config.d/]] (زي [[50-cloud-init.conf]]) بيقول yes، و sshd بياخد أول قيمة يلاقيها، والـ Include في أول الملف. جربتها: Include فيه yes قبل سطر no، والنتيجة yes. عدّل الملف ده. ولو كتبت قيمة غلط، [[sshd -t]] بيقول [[unsupported option]] ورقم السطر.`
         }
       ]
     },
@@ -451,7 +516,12 @@ sudo ufw delete 3`,
             "شغّل الفايروول. هيحذرك إنه ممكن يقطع SSH، وانت فاتحه فتمام.",
             "اعرض القواعد وقدام كل واحدة رقم.",
             "امسح القاعدة رقم ٣."
-          ]
+          ],
+          sol: R`[[sudo ufw status numbered]] بعد enable بيطبع [[Status: active]] وقايمة مرقمة: [[[ 1] OpenSSH ALLOW IN Anywhere]]، و [[[ 2] 80,443/tcp ALLOW IN Anywhere]]، ونفسهم [[(v6)]].
+
+من جهازك: قبل enable، [[curl http://IP:3000]] بيرد (لو التطبيق سامع على 0.0.0.0). بعد enable بيعلّق ويخلص بـ [[Connection timed out]]، لأن 3000 مش مفتوح. ودي النتيجة الصح: التطبيق يتوصل له من Nginx بس.
+
+الغلط الشائع: تعمل [[ufw enable]] قبل [[allow OpenSSH]] فتقفل على نفسك (هو بيحذرك [[Command may disrupt existing ssh connections]]). والتاني: 3000 لسه مفتوح من بره مع إن ufw مقفول، لأن Docker بيفتح البورتات المنشورة من ورا ufw؛ انشرها على [[127.0.0.1:3000:3000]]. جربت صيغة القواعد هنا ([[Rules updated]])، بس ماشغلتش enable.`
         },
         {
           cmd: "fail2ban",
@@ -477,7 +547,12 @@ sudo fail2ban-client set sshd unbanip 198.51.100.7`,
             "شغّله دلوقتي ومع كل ريستارت ([[enable --now]]).",
             "اعرض حالة حماية SSH: كام محاولة فاشلة وكام IP محظور.",
             "فك الحظر عن IP معين."
-          ]
+          ],
+          sol: R`[[sudo fail2ban-client status sshd]] بيطبع شجرة زي:
+
+[[Status for the jail: sshd]]، وتحتها [[Currently failed: 3]] و [[Total failed: 412]]، وتحت Actions [[Currently banned: 7]] و [[Total banned: 58]] و [[Banned IP list:]] وبعدها الـ IPs. على سيرفر عليه IP عام، يوم واحد كفاية تلاقي عشرات أو مئات المحاولات، لأن بوتات بتلف على كل IP وتجرب باسوردات.
+
+ماعنديش سيرفر عام هنا، فالأرقام دي مثال للشكل مش نتيجة. الغلط الشائع: [[Sorry but the jail 'sshd' does not exist]]: الـ jail مش متفعّل؛ اعمل [[/etc/fail2ban/jail.local]] فيه [[[sshd]]] و [[enabled = true]]. ولو [[Total failed: 0]] على طول، غالبًا fail2ban مش لاقي اللوج (على 24.04 محتاج [[backend = systemd]]).`
         },
         {
           cmd: "unattended-upgrades",
@@ -501,7 +576,12 @@ cat /var/log/unattended-upgrades/unattended-upgrades.log`,
             "سطّبه (غالبًا موجود أصلًا).",
             "فعّله. هيسألك سؤال واحد، اختار Yes.",
             "اعرض سجل التحديثات اللي اتعملت لوحدها."
-          ]
+          ],
+          sol: R`[[sudo dpkg-reconfigure -plow unattended-upgrades]] بيسأل [[Automatically download and install stable updates?]] اختار Yes. وبعدها [[cat /etc/apt/apt.conf.d/20auto-upgrades]] بيوري [[APT::Periodic::Update-Package-Lists "1";]] و [[APT::Periodic::Unattended-Upgrade "1";]].
+
+بعد يوم، [[cat /var/log/unattended-upgrades/unattended-upgrades.log]] فيه سطور زي [[INFO Starting unattended upgrades script]] و [[INFO Allowed origins are: ...]] و [[INFO Packages that will be upgraded: ...]] أو [[INFO No packages found that can be upgraded unattended]].
+
+الغلط الشائع: اللوج فاضي أو مش موجود: الـ timers ([[apt-daily.timer]] و [[apt-daily-upgrade.timer]]) لسه مااشتغلوش؛ [[systemctl list-timers | grep apt]] يوريك الميعاد الجاي. وللتجربة الفورية: [[sudo unattended-upgrade --dry-run --debug]]. ماجربتش ده على سيرفر حقيقي هنا.`
         }
       ]
     },
@@ -560,7 +640,12 @@ cat /var/log/unattended-upgrades/unattended-upgrades.log`,
             "قول للتطبيق الزائر جه بـ http ولا https.",
             "قفلة بلوك location.",
             "قفلة بلوك server."
-          ]
+          ],
+          sol: R`المطلوب هنا الملف نفسه في [[/etc/nginx/sites-available/myapp]]، ومفيش ناتج لسه. [[cat /etc/nginx/sites-available/myapp]] المفروض يوريه بنفس الشكل، والأقواس [[{ }]] متقفلة، وكل سطر جوه بينتهي بـ [[;]].
+
+الدومين الوهمي كفاية، لأنك هتختبر بـ [[curl -H "Host: example.com" http://127.0.0.1]] في الدرس الجاي. وطبيعي لو التطبيق على 3000 مش شغال لسه، الرد يبقى 502.
+
+الغلط الشائع: تكتب الملف في [[sites-enabled]] مباشرة أو بامتداد غلط، أو تنسى [[;]] في آخر سطر، ودي هتبان في [[nginx -t]] الجاي. ولو فتحته بـ nano من غير sudo هيقولك [[Permission denied]] وقت الحفظ.`
         },
         {
           cmd: "تفعيل الموقع",
@@ -594,7 +679,12 @@ curl -H "Host: example.com" http://127.0.0.1`,
             "شيل الموقع التجريبي اللي جاي مع Nginx (بتشيل الاختصار بس).",
             "اختبر الإعدادات، ولو سليمة طبّقها من غير ما تقطع الزوار.",
             "جرّب من السيرفر نفسه كأن الزائر كتب example.com."
-          ]
+          ],
+          sol: R`لو مسحت [[;]] من آخر [[proxy_pass http://127.0.0.1:3000]]، [[sudo nginx -t]] بيطبع:
+
+[[nginx: [emerg] invalid number of arguments in "proxy_pass" directive in /etc/nginx/sites-enabled/myapp:6]] و [[nginx: configuration file /etc/nginx/nginx.conf test failed]]. ده لأن السطر اللي بعده اتضم له كـ arguments. ولو مسحتها من آخر سطر قبل [[}]]، الرسالة بتبقى [[unexpected "}"]] برقم السطر. جربت الحالتين.
+
+و [[&&]] منعت الـ reload، فالموقع شغال بالإعداد القديم. بعد ما تصلّح: [[syntax is ok]] و [[test is successful]]، و [[curl -H "Host: example.com" http://127.0.0.1]] بيرجع رد التطبيق (أو [[502 Bad Gateway]] لو التطبيق مش شغال). الغلط الشائع: رقم السطر بيشاور على ملف [[sites-enabled]] وانت بتعدّل في [[sites-available]]؛ ده نفس الملف لأنه link.`
         },
         {
           cmd: "لوجات Nginx",
@@ -622,7 +712,12 @@ sudo grep " 500 " /var/log/nginx/access.log | tail`,
             "آخر ٥٠ مشكلة.",
             "طلّع عمود الـ status من كل سطر، وعدّ كل رقم اتكرر كام مرة، ورتّبهم من الأكتر.",
             "هات الطلبات اللي رجعت 500 بس، وآخر ١٠ منهم. المسافات حوالين 500 عشان ميجيبش أرقام زي 1500."
-          ]
+          ],
+          sol: R`بعد ما توقّف التطبيق وتفتح الموقع: المتصفح بيوري [[502 Bad Gateway]]، و [[sudo tail -n 5 /var/log/nginx/error.log]] فيه:
+
+[[connect() failed (111: Connection refused) while connecting to upstream, client: ..., server: example.com, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:3000/"]]. يعني Nginx شغال، بس مفيش حد سامع على 3000. و [[access.log]] فيه نفس الطلب بـ 502، وأمر الـ awk بيعدّها ([[1 502]]). جربتها بالظبط.
+
+الغلط الشائع: تدوّر في [[access.log]] بس وتلاقي 502 من غير سبب؛ السبب دايمًا في [[error.log]]. ولو الرسالة [[upstream timed out (110)]] يبقى التطبيق شغال بس بطيء أو مهنّج، وده غير الـ refused.`
         }
       ]
     },
@@ -661,7 +756,12 @@ systemctl list-timers | grep certbot`,
             "اعرض الشهادات اللي عندك وبتخلص إمتى.",
             "جرّب التجديد من غير ما تجدد فعلًا.",
             "اتأكد إن مهمة التجديد الأوتوماتيك موجودة."
-          ]
+          ],
+          sol: R`[[sudo certbot --nginx -d test.example.com]] بيسأل إيميل والموافقة أول مرة، وفي الآخر [[Successfully received certificate.]] و [[Certificate is saved at: /etc/letsencrypt/live/test.example.com/fullchain.pem]] و [[Successfully deployed certificate for test.example.com to /etc/nginx/sites-enabled/...]].
+
+[[sudo certbot certificates]] بيوري [[Expiry Date: ... (VALID: 89 days)]]، و [[certbot renew --dry-run]] بيخلص بـ [[Congratulations, all simulated renewals succeeded]]. وفي المتصفح القفل ظاهر.
+
+ماجربتهاش هنا (محتاجة دومين). الغلط الشائع: [[Timeout during connect (likely firewall problem)]]: بورت 80 مقفول في ufw أو firewall المزود. و [[DNS problem: NXDOMAIN]]: الـ subdomain لسه مش متسجل أو [[dig +short test.example.com]] مش بيرجّع IP السيرفر. استنى الـ DNS قبل ما تكرر، عشان rate limit.`
         },
         {
           cmd: "certbot --webroot",
@@ -701,7 +801,12 @@ ls certbot/conf/live/example.com/`,
             "...من غير أسئلة، وتجربة بس (--dry-run).",
             "الدومين بالـ www ومن غيرها.",
             "الشهادة اتحفظت هنا."
-          ]
+          ],
+          sol: R`مع [[--dry-run]] الناتج بيخلص بـ [[The dry run was successful.]]، ومفيش شهادة اتحفظت. من غيره: [[Successfully received certificate.]] و [[Certificate is saved at: /etc/letsencrypt/live/example.com/fullchain.pem]] (المسار جوه الـ container)، و [[ls certbot/conf/live/example.com/]] بيوري [[README cert.pem chain.pem fullchain.pem privkey.pem]].
+
+أول سطرين في المثال لازم يطلعوا نفس الـ IP: IP السيرفر من [[api.ipify.org]]، و IP الدومين من [[getent]]. لو مختلفين، مفيش داعي تكمّل.
+
+ماجربتهاش هنا (محتاجة دومين). الغلط الشائع: [[Invalid response from http://example.com/.well-known/acme-challenge/...: 404]]: الـ webroot في certbot ([[-w /var/www/certbot]]) مش نفس الفولدر اللي nginx بيخدم منه المسار ده، أو الـ volume مش مشترك بين الاتنين. و [[ls]] يقول [[Permission denied]] لأن الملفات ملك root: استخدم [[sudo ls]].`
         },
         {
           cmd: "certbot --standalone",
@@ -735,7 +840,12 @@ container الـ Nginx يركّب [[/etc/letsencrypt:/etc/letsencrypt:ro]] وي�
             "اتأكد إن الطريقة والـ hooks اتحفظوا للتجديد.",
             "timer التجديد موجود؟",
             "جرّب التجديد كامل بالـ hooks."
-          ]
+          ],
+          sol: R`[[sudo certbot renew --dry-run]] بيطبع [[Running pre-hook command: cd /srv/myapp && docker compose stop frontend]]، وبعدين [[Simulating renewal of an existing certificate for example.com]]، وبعدين [[Running post-hook command: ...start frontend]]، وفي الآخر [[Congratulations, all simulated renewals succeeded]].
+
+والموقع بيقف ثواني (لو عامل curl في لوب هتلاقي كام طلب فشلوا) ويرجع. و [[grep]] على ملف الـ renewal بيوري [[authenticator = standalone]] و [[pre_hook = ...]] و [[post_hook = ...]]، يعني التجديد الأوتوماتيك هيعمل نفس الحكاية.
+
+ماجربتهاش هنا. الغلط الشائع: [[Could not bind TCP port 80 because it is already in use]]: الـ pre-hook مااشتغلش أو وقف service غلط. ولو الـ hooks ماتسجلتش في الملف (عملت الشهادة من غيرها)، ضيفهم في [[/etc/letsencrypt/renewal-hooks/pre/]] و [[post/]] كسكربتات.`
         }
       ]
     },
@@ -766,7 +876,12 @@ docker run --rm hello-world`,
             "نزّل سكربت التسطيب الرسمي ([[-fsSL]]: اسكت، وافشل لو فيه error، وتابع التحويلات) وشغّله بـ sh.",
             "ضيف deploy لجروب docker. وبعدها لازم تخرج وتدخل تاني.",
             "جرّب كونتينر تجربة، وامسحه بعد ما يخلص ([[--rm]])."
-          ]
+          ],
+          sol: R`[[docker run --rm hello-world]] من غير sudo بيطبع [[Hello from Docker!]] و [[This message shows that your installation appears to be working correctly.]]، وبعدها شرح للخطوات اللي حصلت. جربت ده.
+
+ده بيشتغل من غير sudo لأن deploy بقى في جروب docker. و [[groups]] بيوري [[docker]] في القايمة.
+
+الغلط الشائع: [[permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock]]: الـ usermod اتعمل بس الجلسة قديمة. اخرج من SSH وادخل تاني (أو [[newgrp docker]]). وافتكر إن جروب docker = صلاحيات root عمليًا، فمتضفش له غير اليوزر اللي بيعمل deploy.`
         },
         {
           cmd: "docker ps / logs / exec",
@@ -796,7 +911,12 @@ docker stats`,
             "لوجات كونتينر api: آخر ١٠٠ سطر، وتابع اللي جاي ([[-f]]).",
             "افتح ترمنال sh جوه كونتينر api ([[-it]]: تفاعلي وترمنال). اخرج بـ exit.",
             "استهلاك كل كونتينر لايف. Ctrl+C للخروج."
-          ]
+          ],
+          sol: R`[[docker ps]] بيوري [[web]] و [[0.0.0.0:8080->80/tcp]] و [[Up ...]]. و [[docker exec -it web sh]] بيدخلك [[/ #]] جوه (أو [[#]] في صورة nginx العادية debian)، و [[exit]] بيخرجك والـ container شغال.
+
+و [[docker logs web]] بيوري سطور الـ entrypoint ([[/docker-entrypoint.sh: Configuration complete; ready for start up]])، وبعد ما تفتح [[http://IP:8080]] أو [[curl localhost:8080]] هتلاقي سطر [[GET / HTTP/1.1" 200]]. جربت نفس الخطوات.
+
+الغلط الشائع: [[docker logs api]] من المثال يطلع [[No such container: api]] لأن الاسم في التجربة [[web]]. و [[exec -it web bash]] ممكن يطلع [[executable file not found]] في صور alpine؛ استخدم [[sh]]. ولو فتحت 8080 من بره ومش شغال، ufw مش السبب (Docker بيعدّيه)؛ غالبًا firewall المزود.`
         },
         {
           cmd: "docker compose",
@@ -826,7 +946,24 @@ docker compose down`,
             "تابع لوجات خدمة api بس.",
             "نزّل أحدث نسخ للصور الجاهزة، وبعدين طبّقها.",
             "اقفل كل حاجة وامسح الكونتينرات (الداتا بتفضل)."
-          ]
+          ],
+          sol: R`[[docker compose ps]] بيوري خدمتين [[Up]]: nginx بالبورت المنشور و redis من غير بورت. و [[curl localhost:8080]] بيرجع صفحة nginx، و [[docker compose exec redis redis-cli ping]] بيرد [[PONG]].
+
+ملف بسيط كفاية: خدمة [[web]] بـ [[image: nginx:alpine]] و [[ports: ["127.0.0.1:8080:80"]]]، وخدمة [[redis]] بـ [[image: redis:7-alpine]]. وتقدر تتأكد إن الاتنين على نفس الشبكة: [[docker compose exec web ping -c1 redis]].
+
+الغلط الشائع: [[no configuration file provided: not found]]: انت مش في الفولدر اللي فيه [[compose.yml]]. و [[yaml: line X]]: مسافات غلط (لازم spaces مش tabs).`,
+          solCode: R`cat > compose.yml <<'EOF2'
+services:
+  web:
+    image: nginx:alpine
+    ports: ["127.0.0.1:8080:80"]
+  redis:
+    image: redis:7-alpine
+EOF2
+docker compose up -d
+docker compose ps
+curl -s localhost:8080 | head -4
+docker compose exec redis redis-cli ping`
         },
         {
           cmd: "تنضيف Docker",
@@ -853,7 +990,12 @@ docker system prune`,
             "Docker واكل قد إيه، ومنه قد إيه ممكن يتمسح.",
             "امسح كل الصور اللي مش مستخدمة ([[-a]] all). هيسألك تأكيد.",
             "امسح الكونتينرات الواقفة والصور المعلّقة والـ cache."
-          ]
+          ],
+          sol: R`[[docker system df]] قبل بيطبع جدول [[TYPE TOTAL ACTIVE SIZE RECLAIMABLE]]، وعلى سيرفر بقاله شهور بيعمل build هتلاقي [[Images]] و [[Build Cache]] بالجيجات، و RECLAIMABLE كبير.
+
+بعد [[docker image prune -a]] (بيسأل [[Are you sure you want to continue? [y/N]]]) بيطبع الـ images اللي اتمسحت وفي الآخر [[Total reclaimed space: 3.2GB]] مثلًا. و [[system df]] بعدها بيوري الأرقام قلّت، و [[df -h /]] بيوري المساحة الفاضية زادت.
+
+الغلط الشائع: [[docker system prune]] بيمسح الـ containers الواقفة، فلو فيه container موقّفه عن قصد هيتمسح. و [[Build Cache]] مش بيتمسح بـ image prune؛ محتاج [[docker builder prune]]. وماتستخدمش [[--volumes]] إلا لو متأكد.`
         }
       ]
     },
@@ -896,7 +1038,12 @@ pm2 save`,
             "اعمل ريستارت لـ api (بعد ما تحدّث الكود).",
             "هيطبعلك أمر فيه sudo، انسخه ونفّذه عشان pm2 يقوم مع السيرفر.",
             "احفظ لستة التطبيقات الشغالة دلوقتي عشان ترجع بعد الريستارت."
-          ]
+          ],
+          sol: R`[[pm2 list]] بيوري جدول فيه [[api]] و [[status]] [[online]] و [[↺]] (عدد مرات الـ restart) و [[mem]]. و [[pm2 startup]] كيوزر عادي بيطبع سطر [[sudo env PATH=$PATH:/usr/bin ... pm2 startup systemd -u deploy --hp /home/deploy]]: انسخه وشغّله. و [[pm2 save]] بيطبع [[Successfully saved in /home/deploy/.pm2/dump.pm2]].
+
+بعد [[sudo reboot]] والدخول تاني، [[pm2 list]] بيوري [[api]] [[online]] بـ uptime قليل، من غير ما تعمل start.
+
+جربت start و list و save (وطلعت زي كده)، بس الـ reboot محتاج سيرفر حقيقي. الغلط الشائع: [[pm2 list]] بعد الـ reboot فاضي: نسيت [[pm2 save]] بعد آخر start، أو شغلت [[pm2 startup]] ونسيت تنفّذ السطر اللي طبعه. أو عملت startup بـ root والتطبيق شغال بـ deploy، فالقايمة اتحفظت عند يوزر تاني.`
         }
       ]
     },
@@ -923,7 +1070,15 @@ grep CRON /var/log/syslog | tail`,
             when: "أي حاجة متكررة: باك أب، وتنضيف لوجات أو Docker، وفحص صحة الموقع.",
             mistakes: "تعديل الملف مباشرة بدل [[crontab -e]]. [[crontab -e]] بيتأكد إن الصيغة سليمة قبل ما يحفظ."
           },
-          lines: ["افتح جدول مهامك تعدّله.", "اعرض المهام.", "اتأكد إن cron شغّل المهام فعلًا، وآخر ١٠ مرات."]
+          lines: ["افتح جدول مهامك تعدّله.", "اعرض المهام.", "اتأكد إن cron شغّل المهام فعلًا، وآخر ١٠ مرات."],
+          sol: R`بعد دقيقتين [[cat ~/dates.txt]] فيه سطرين (أو أكتر)، كل واحد وقت بفرق دقيقة بالظبط وفي الثانية صفر تقريبًا:
+
+[[Wed Sep 30 05:06:01 UTC 2026]] و [[Wed Sep 30 05:07:01 UTC 2026]]. جربتها بالظبط كده بسطر [[* * * * * date >> ~/dates.txt]]. و [[crontab -l]] بيوري السطر.
+
+الأغلاط الشائعة: الملف مش موجود: خدمة cron مش شغالة ([[systemctl status cron]])، أو كتبت مسار نسبي، أو السطر الأخير في الـ crontab من غير سطر فاضي بعده (cron القديم بيتجاهله). و [[grep CRON /var/log/syslog]] بيوريك هل الأمر اتنفذ ([[CMD (date >> ...)]]). وافتكر إن [[~]] بيشتغل، بس الأحسن مسار كامل. وماتنساش تمسح السطر ده بعد التجربة.`,
+          solCode: R`(crontab -l 2>/dev/null; echo '* * * * * date >> $HOME/dates.txt') | crontab -
+crontab -l
+cat ~/dates.txt`
         },
         {
           cmd: "crontab",
@@ -962,7 +1117,12 @@ grep CRON /var/log/syslog | tail`,
             "كل يوم الساعة ٣:٠٠ الفجر: شغّل سكربت الباك أب على فولدر الموقع، وضيف الناتج والأخطاء للوج.",
             "كل ٥ دقايق: اطلب صفحة health، ولو فشلت اكتب down في ملف.",
             "كل يوم أحد الساعة ٤ الفجر: نضّف Docker. المسار كامل عشان cron يلاقيه."
-          ]
+          ],
+          sol: R`مثال: [[0 3 * * *]] crontab.guru بيقول [[At 03:00]]. و [[*/5 * * * *]] بيقول [[At every 5th minute]]. و [[0 4 * * 0]] بيقول [[At 04:00 on Sunday]]. لو الجملة اللي بيطلّعها هي اللي في دماغك، التوقيت صح.
+
+وخلّي بالك إن التوقيت ده بتوقيت السيرفر: لو [[timedatectl]] بيقول [[Etc/UTC]]، الـ 3 الفجر UTC هي 5 أو 6 الصبح في مصر.
+
+الأغلاط الشائعة: [[* 3 * * *]] بدل [[0 3 * * *]]: ده بيشتغل كل دقيقة من 3:00 لـ 3:59 (60 مرة). واليوم 0 و 7 الاتنين الحد. و [[%]] في الأمر ليها معنى خاص في crontab (سطر جديد)، فـ [[date +%F]] جوه crontab لازم تبقى [[date +\%F]].`
         },
         {
           cmd: "systemd timer",
@@ -1113,7 +1273,16 @@ pg_dump "postgresql://user:password@host:5432/postgres" -Fc -f supabase.dump`,
             "باك أب من كونتينر اسمه db، واضغطه، والاسم فيه تاريخ النهارده.",
             "رجّع باك أب مضغوط لقاعدة في كونتينر. [[-i]] عشان الكونتينر يقرا اللي جاي.",
             "باك أب من Supabase بالـ connection string."
-          ]
+          ],
+          sol: R`[[pg_dump -Fc]] مابيطبعش حاجة وبيعمل ملف [[mydb.dump]] (binary، ماتفتحوش بـ cat). بعد [[DROP TABLE users]] و [[pg_restore --clean]] الجدول بيرجع ببياناته، و [[select * from users]] بيوري الصفوف. جربتها على Postgres محلي.
+
+بس فيه تفصيلة هتقابلك: [[pg_restore -d mydb --clean mydb.dump]] بعد ما مسحت الجدول بيطبع [[error: could not execute query: ERROR: table "users" does not exist]] و [[Command was: DROP TABLE public.users;]] و [[warning: errors ignored on restore: 1]] ويخرج بـ 1، مع إن الاسترجاع نجح. ده لأن [[--clean]] بيحاول يمسح الجدول قبل ما يعمله وهو مش موجود أصلًا.
+
+الحل: [[--clean --if-exists]]، وبيه نفس الأمر خلص من غير أي error و exit 0. الغلط الشائع التاني: الاسترجاع بـ psql لملف [[-Fc]] بيطلع [[invalid command]]؛ الـ custom format بيترجع بـ pg_restore بس.`,
+          solCode: R`pg_dump -U postgres -d mydb -Fc -f mydb.dump
+psql -U postgres -d mydb -c "DROP TABLE users"
+pg_restore -U postgres -d mydb --clean --if-exists mydb.dump
+psql -U postgres -d mydb -c "SELECT count(*) FROM users"`
         }
       ]
     },
@@ -1173,7 +1342,16 @@ WantedBy=multi-user.target`,
             "واقرا باقي المتغيرات من .env.",
             "قسم التشغيل التلقائي.",
             "شغّلها مع الوضع العادي للسيرفر (ده اللي enable بيستخدمه)."
-          ]
+          ],
+          sol: R`التطبيق الصغير: [[server.js]] بيسمع على 3000 ويرد ok، في [[/var/www/myapp]] وملك deploy، ومعاه [[.env]] (حتى لو فاضي، لأن [[EnvironmentFile]] من غير [[-]] قدامه بيفشل لو الملف مش موجود).
+
+قبل الـ start، [[sudo systemd-analyze verify /etc/systemd/system/myapp.service]] بيفحص الملف. جربته: لو [[ExecStart]] بيشاور على node مش موجود بيطبع [[Command /usr/bin/node is not executable: No such file or directory]]، ولو فيه مفتاح مكتوب غلط زي [[Restrat=]] بيطبع [[Unknown key name 'Restrat' in section 'Service', ignoring.]]. ومن غير مشاكل مابيطبعش حاجة.
+
+الغلط الشائع: node متسطّب بـ nvm فمساره [[/home/deploy/.nvm/versions/node/v24.x/bin/node]] مش [[/usr/bin/node]]. [[which node]] كيوزر deploy بيقولك المسار الحقيقي، حطه في ExecStart.`,
+          solCode: R`sudo mkdir -p /var/www/myapp && sudo chown deploy:deploy /var/www/myapp
+echo 'require("http").createServer((q, r) => r.end("ok\n")).listen(3000)' > /var/www/myapp/server.js
+touch /var/www/myapp/.env
+sudo systemd-analyze verify /etc/systemd/system/myapp.service`
         },
         {
           cmd: "daemon-reload",
@@ -1203,7 +1381,12 @@ journalctl -u myapp -f`,
             "شغّلها دلوقتي ومع كل ريستارت.",
             "حالتها وآخر لوجات.",
             "تابع لوجاتها لايف."
-          ]
+          ],
+          sol: R`[[systemctl status myapp]] بيوري [[Active: active (running) since ...]] و [[Main PID: 1234 (node)]]. خد الرقم ده، و [[sudo kill 1234]]، واستنى 5 ثواني، و [[status]] تاني: [[Active: active (running) since]] بوقت جديد من ثواني، و [[Main PID]] رقم جديد.
+
+و [[journalctl -u myapp -n 5]] بيوري اللي حصل: [[myapp.service: Main process exited, code=exited, status=143/n/a]] أو [[killed, status=15/TERM]]، وبعدها [[Scheduled restart job, restart counter is at 1.]] و [[Started myapp.service]]. ده [[Restart=always]] و [[RestartSec=5]].
+
+ماعنديش systemd شغال هنا، فده الشكل المتوقع مش ناتج جربته. الغلط الشائع: الخدمة مش بترجع بعد [[systemctl stop myapp]]؛ ده مقصود، الـ restart للموت المفاجئ بس. ولو [[Active: failed]] و [[start request repeated too quickly]]، التطبيق بيقع أول ما يقوم؛ اقرا [[journalctl -u myapp -n 50]].`
         },
         {
           cmd: "journalctl",
@@ -1229,7 +1412,12 @@ sudo journalctl --vacuum-time=7d`,
             "الأخطاء بس ([[-p err]]) من آخر تشغيل للسيرفر ([[-b]]).",
             "اللوجات واكلة قد إيه من الديسك.",
             "امسح أي لوج أقدم من ٧ أيام."
-          ]
+          ],
+          sol: R`[[journalctl -p err -b]] بيطبع الأخطاء بس (err وأخطر) من آخر boot، كل سطر بالتاريخ واسم الخدمة: [[Sep 30 05:01:12 server myapp[1234]: Error: connect ECONNREFUSED 127.0.0.1:5432]] مثلًا. لو السيرفر سليم ممكن تلاقي سطور قليلة من الـ kernel أو مفيش خالص ([[-- No entries --]]).
+
+عشان تشوف من ريستارت اللي قبله: [[journalctl -p err -b -1]]. و [[journalctl --list-boots]] بيوري الـ boots المتسجلة.
+
+ماعنديش systemd هنا فمجربتهاش. الغلط الشائع: [[-b -1]] يطلع [[Specifying boot ID or boot offset has no effect, no persistent journal was found]]: اللوجات مش بتتحفظ بعد reboot. اعمل [[sudo mkdir -p /var/log/journal]] وبعدين [[sudo systemctl restart systemd-journald]]. ولو مش شايف لوجات خدمات تانية كيوزر عادي، استخدم [[sudo]] أو ضيف نفسك لجروب [[adm]].`
         }
       ]
     },
@@ -1257,7 +1445,12 @@ sudo ncdu /`,
             when: "«No space left on device»، أو الديسك قرّب يتملى.",
             mistakes: "تمسح حاجات جوه [[/var/lib/docker]] أو [[/var/lib/postgresql]] بـ [[d]] مباشرة. دي بيانات برامج، وامسحها بأوامر البرنامج نفسه ([[docker system prune]] مثلًا)، وإلا هتبوّظه."
           },
-          lines: ["سطّبه.", "امشي في الديسك كله مترتب بالحجم. أسهم للتنقل، و q للخروج."]
+          lines: ["سطّبه.", "امشي في الديسك كله مترتب بالحجم. أسهم للتنقل، و q للخروج."],
+          sol: R`[[sudo ncdu /]] بيعدّ الملفات شوية وبعدين يعرض قايمة مترتبة من الأكبر للأصغر، الحجم وشريط جنب كل فولدر. أكبر 3 على سيرفر ويب غالبًا: [[/var]] (جواه [[/var/lib/docker]] و [[/var/log]])، و [[/usr]]، و [[/home]] أو [[/snap]]. ادخل بـ Enter وارجع بـ [[←]] أو [[h]]، واخرج بـ [[q]].
+
+من غير ncdu: [[sudo du -xh --max-depth=1 / | sort -h | tail -4]] بيطلّع نفس الفكرة كنص (السطر الأخير هو [[/]] نفسه).
+
+الغلط الشائع: تمسح حاجة جوه [[/var/lib/docker]] بإيدك من ncdu (زرار [[d]])؛ ده بيبوظ Docker. استخدم [[docker system prune]]. ولو ncdu عدّى على [[/proc]] أو ديسكات تانية، شغّله بـ [[-x]] عشان يفضل على نفس الـ filesystem.`
         },
         {
           cmd: "dig / curl -v",
@@ -1283,7 +1476,12 @@ curl -o /dev/null -s -w "%{http_code} %{time_total}s\n" https://example.com`,
             "سيرفرات الإيميل بتاعته.",
             "كل خطوات الاتصال والشهادة والـ headers ([[-v]] مع [[-I]]).",
             "ارمي الصفحة ([[-o /dev/null]])، واسكت ([[-s]])، واطبع الـ status والوقت بس."
-          ]
+          ],
+          sol: R`[[for i in 1 2 3; do curl -o /dev/null -s -w "%{http_code} %{time_total}s\n" https://example.com; done]] بيطبع ٣ سطور زي [[200 0.412s]] و [[200 0.188s]] و [[200 0.179s]]. الأول غالبًا أبطأ لأنه عمل DNS و TLS handshake من الصفر.
+
+عشان تعرف الوقت راح فين: [[-w "dns %{time_namelookup} connect %{time_connect} tls %{time_appconnect} ttfb %{time_starttransfer} total %{time_total}\n"]]. لو [[ttfb]] كبير والباقي صغير، السيرفر أو التطبيق هو البطيء مش الشبكة.
+
+الغلط الشائع: [[000]] بدل رقم: curl مقدرش يتصل خالص (DNS أو شهادة أو proxy)، شيل [[-s]] أو استخدم [[-sS]] عشان تشوف السبب. ده حصل معايا هنا فعلًا بسبب proxy بيرفض الاتصال، و [[-sS]] طلّع [[CONNECT tunnel failed, response 403]].`
         },
         {
           cmd: "watch",
@@ -1302,7 +1500,12 @@ watch -n 5 "df -h /"`,
             when: "بعد [[docker compose up]] تشوف الكونتينرات بتقوم. وانت بتمسح حاجات تتابع المساحة.",
             mistakes: "نسيان علامات التنصيص حوالين أمر فيه pipe."
           },
-          lines: ["اعرض docker ps وحدّثه كل ثانيتين.", "مساحة الديسك كل ٥ ثواني. الأمر بين علامات تنصيص."]
+          lines: ["اعرض docker ps وحدّثه كل ثانيتين.", "مساحة الديسك كل ٥ ثواني. الأمر بين علامات تنصيص."],
+          sol: R`[[watch -n 2 docker ps]] بيفتح شاشة بتتحدث كل ثانيتين، فوق [[Every 2.0s: docker ps]] والوقت. وانت بتعمل [[docker restart web]] من النافذة التانية، عمود STATUS بتاع web بيتغير لـ [[Up 1 second]] أو [[Up Less than a second]] (والأرقام بتبدأ تعدّ من الأول)، والباقيين زي ما هم.
+
+ولو مع healthcheck هتشوف [[(health: starting)]] وبعدين [[(healthy)]]. ضيف [[-d]] عشان يعلّم على التغيير بلون. واخرج بـ [[Ctrl+C]].
+
+الغلط الشائع: [[watch -n 5 df -h / | grep sda]] من غير تنصيص، فالـ grep بيتطبق على شاشة watch مش على الأمر. حط الأمر كله بين علامتين تنصيص: [[watch -n 5 "df -h / | grep sda"]].`
         },
         {
           cmd: "sha256sum",
@@ -1328,7 +1531,12 @@ sha256sum -c backup.sha256`,
             when: "بعد نقل باك أب مهم. قبل ما تسطّب برنامج نزّلته بإيدك. قبل ما ترجّع باك أب، تتأكد إنه سليم.",
             mistakes: "إنك تحسب البصمة بعد النقل بس، مش قبله كمان. لازم نسختين تقارنهم."
           },
-          lines: ["احسب بصمة الملف.", "احفظ البصمة في ملف جنبه.", "بعدين: احسب تاني وقارن. هيطبع OK أو FAILED."]
+          lines: ["احسب بصمة الملف.", "احفظ البصمة في ملف جنبه.", "بعدين: احسب تاني وقارن. هيطبع OK أو FAILED."],
+          sol: R`[[sha256sum -c backup.sha256]] الأول بيطبع [[backup.tar.gz: OK]]. وبعد ما تعدّل حرف واحد في الملف بيطبع [[backup.tar.gz: FAILED]] و [[sha256sum: WARNING: 1 computed checksum did NOT match]] ويخرج بـ 1. جربتها بتغيير حرف واحد والبصمة اتغيرت كلها.
+
+ده اللي يخليك تستخدمه في سكربت: [[sha256sum -c backup.sha256 || echo "الملف بايظ"]].
+
+الغلط الشائع: [[No such file or directory]] و [[FAILED open or read]]: [[-c]] بيدوّر على الملف بالاسم اللي مكتوب جوه ملف الـ sha256، فلازم تشغّله من نفس الفولدر. ولو نقلت الملف لسيرفر تاني، انقل ملف الـ [[.sha256]] معاه.`
         },
         {
           cmd: "lsblk / mount",
@@ -1365,7 +1573,12 @@ sudo growpart /dev/sda 1 && sudo resize2fs /dev/sda1`,
             "ضيفه لـ fstab بالـ UUID عشان يتركّب مع كل boot، و [[nofail]] يمنع السيرفر يقف لو الديسك مش موجود.",
             "فك التركيب وجرّب fstab كله. لو فيه غلطة هتظهر هنا مش في الـ boot.",
             "بعد تكبير الديسك الأساسي من اللوحة: كبّر البارتيشن رقم 1، وبعدين الـ filesystem."
-          ]
+          ],
+          sol: R`بعد الـ mount و reboot، [[df -h]] بيوري سطر زي [[/dev/sdb 9.8G 24K 9.3G 1% /mnt/data]]، و [[lsblk -f]] بيوري [[sdb ext4]] والـ UUID و [[/mnt/data]] في عمود MOUNTPOINTS.
+
+الأهم قبل الـ reboot: [[sudo umount /mnt/data && sudo mount -a]] يخلص من غير أي رسالة، و [[findmnt /mnt/data]] يوريه متركّب. لو [[mount -a]] طبع error، صلّح [[/etc/fstab]] قبل الـ reboot.
+
+ماعنديش ديسك إضافي هنا فمجربتهاش. الغلط الشائع: اسم الديسك مش [[sdb]] (على سيرفرات كتير [[vdb]] أو [[nvme1n1]])، فبص في [[lsblk]] الأول. والأخطر [[mkfs]] على الديسك الغلط بيمسح بياناته. ونسيان [[nofail]] بيخلّي السيرفر مايقومش لو الديسك اتشال.`
         },
         {
           cmd: "swap",
@@ -1399,7 +1612,12 @@ free -h`,
             "شغّله دلوقتي.",
             "ضيف سطر في fstab عشان يشتغل بعد كل ريستارت.",
             "اتأكد إن الـ swap ظهر."
-          ]
+          ],
+          sol: R`بعد الخطوات، [[free -h]] بيوري سطر [[Swap: 2.0Gi 0B 2.0Gi]] بدل [[Swap: 0B 0B 0B]]، و [[swapon --show]] بيوري [[/swapfile file 2G 0B -2]]. جربت نفس الخطوات بملف صغير 64 ميجا: [[mkswap]] طبع [[Setting up swapspace version 1, size = 64 MiB]] و [[free -h]] بقى فيه Swap، وبعدين شلته بـ [[swapoff]].
+
+وبعد الـ reboot نفس السطر في [[free -h]] لسه موجود، بسبب السطر في [[/etc/fstab]].
+
+الأغلاط الشائعة: [[swapon: /swapfile: insecure permissions 0644]]: نسيت [[chmod 600]]. و [[fallocate failed: Operation not supported]] على بعض الـ filesystems؛ استخدم [[dd if=/dev/zero of=/swapfile bs=1M count=2048]]. وماتضيفش السطر في fstab مرتين (لو كررت الأمر)، اتأكد بـ [[grep swap /etc/fstab]].`
         }
       ]
     },
@@ -1723,7 +1941,12 @@ git log --oneline -1`,
             "المفتاح.",
             "على السيرفر: ادخل الفولدر، اسحب آخر نسخة، واطبع آخر commit.",
             "آخر commit عندك: لازم يطابق."
-          ]
+          ],
+          sol: R`سطر الـ ssh بيطبع (بسبب [[-q]]) سطر واحد بس من [[git log --oneline -1]] على السيرفر، زي [[a1b2c3d fix: header text]]. و [[git log --oneline -1]] عندك بيطبع نفس السطر بالظبط، نفس الـ hash ونفس الرسالة. ده دليل إن السيرفر عليه آخر نسخة.
+
+وبعد ريفريش للموقع (Ctrl+F5) التعديل ظاهر.
+
+الأغلاط الشائعة: الـ hash مختلف: نسيت [[git push]] قبل الـ ssh. و [[error: Your local changes to the following files would be overwritten by merge]]: حد عدّل ملف على السيرفر بإيده. و [[Host key verification failed]] أو [[Permission denied]]: البورت (Hostinger مثلًا [[65002]]) أو اليوزر في [[~/.ssh/config]] غلط.`
         },
         {
           cmd: "php -l",
@@ -1751,7 +1974,12 @@ ssh shared 'cd ~/domains/example.com/public_html && php -v | head -1 && php -l i
             "افحص الملفات المهمة واطبع النتيجة بس.",
             "كل ملفات المشروع ما عدا vendor، واعرض المشاكل بس.",
             "على السيرفر: نسخة PHP هناك، وافحص بيها."
-          ]
+          ],
+          sol: R`بعد ما تمسح [[;]]: [[php -l index.php]] بيطبع [[PHP Parse error: syntax error, unexpected token "echo" in index.php on line 3]] و [[Errors parsing index.php]] ويخرج بـ 255. لاحظ إن رقم السطر هو السطر اللي بعد اللي فيه الغلطة، لأن PHP اكتشف المشكلة لما لقى [[echo]]. جربتها.
+
+الملف السليم بيطبع [[No syntax errors detected in login.php]]. و [[php -v]] عندي كان [[PHP 8.4.19 (cli)]]؛ قارنه بالسيرفر، ولو السيرفر أقدم (زي 8.1) ممكن كود شغال عندك يقع هناك.
+
+الغلط الشائع: تفتكر [[php -l]] بيلاقي كل الأخطاء؛ هو syntax بس. فانكشن مش موجودة أو متغير فاضي مش هيبانوا غير وقت التشغيل.`
         },
         {
           cmd: "config.sample.php",
@@ -1781,7 +2009,12 @@ chmod 600 config.php`,
             "على السيرفر: انسخ النموذج.",
             "املى القيم الحقيقية.",
             "القراية لصاحبه بس."
-          ]
+          ],
+          sol: R`[[grep -n "config.php" .gitignore]] بيطبع رقم السطر زي [[3:config.php]]. و [[git ls-files | grep -E "config\.php$|\.env$"]] المفروض مايطبعش ولا سطر. [[config.sample.php]] مش هيظهر لأن الـ regex بيدوّر على اسم آخره [[config.php]] بالظبط، وده آخره [[sample.php]].
+
+لو ظهر [[config.php]]، يبقى اتعمله commit قبل ما تضيفه لـ .gitignore، و .gitignore مابيأثرش على ملف متتبع. الحل [[git rm --cached config.php]] وبعدين commit، وغيّر الباسوردات اللي كانت فيه لأنها لسه في التاريخ.
+
+و [[ls -l config.php]] بعد [[chmod 600]] بيوري [[-rw-------]]. الغلط الشائع: تحط الباسورد الحقيقي في [[config.sample.php]] بالغلط.`
         },
         {
           cmd: ".htaccess",
@@ -1846,7 +2079,12 @@ ErrorDocument 404 /404.php
             "متخمّنش نوع الملف.",
             "ابعت الدومين بس للمواقع التانية مش الرابط كامل.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد أي تعديل: [[curl -sI https://example.com/nope | head -1]] لازم [[HTTP/2 404]]، و [[curl -sI https://example.com/login | head -1]] لازم [[HTTP/2 200]] (الـ login من غير .php اشتغل بسبب آخر 3 سطور Rewrite). و [[/.env]] أو [[/.git/config]] بيرجعوا [[403]] أو [[404]].
+
+لو أي واحد رجّع [[HTTP/2 500]] بعد تعديل: الملف فيه غلطة (غالبًا directive من موديول مش موجود أو قوس ناقص)، والموقع كله واقع. رجّع النسخة القديمة فورًا، و error log في cPanel بيقول السطر ([[Invalid command 'Header'...]] أو [[RewriteRule: bad flag delimiters]]).
+
+ماعنديش Apache هنا فمجربتهاش. الغلط الشائع: [[/login]] بيرجع 404: الـ [[RewriteCond %{REQUEST_FILENAME}.php -f]] محتاج الملف [[login.php]] يبقى في نفس الفولدر، أو [[RewriteEngine On]] مش في الأول.`
         },
         {
           cmd: "curl -I .git/config",
@@ -1876,7 +2114,12 @@ curl -sI https://example.com | grep -iE "strict-transport|x-content-type"`,
             "ملف الإعدادات: 403.",
             "فولدر الرفع: مفيش قايمة ملفات.",
             "headers الأمان موجودة في الرد؟"
-          ]
+          ],
+          sol: R`في الحالة الآمنة كل الأوامر الأربعة الأولى بترجع [[HTTP/2 403]] أو [[HTTP/2 404]]، والأخير بيطبع [[strict-transport-security: max-age=31536000]] و [[x-content-type-options: nosniff]].
+
+و [[curl -s https://example.com/.git/HEAD]] المفروض يرجع صفحة 404 أو 403 (HTML)، مش [[ref: refs/heads/main]]. جربت سيرفر PHP من غير حماية وفولدر [[.git]] جواه: رجّع [[ref: refs/heads/main]] بالظبط، يعني أي حد يقدر ينزّل الكود كله بأدوات زي git-dumper.
+
+لو ظهر مكشوف: اقفله فورًا ([[RedirectMatch 404 /\.(git|env)]] في .htaccess)، وغيّر كل الأسرار اللي كانت في الريبو. الغلط الشائع: [[/uploads/]] بيرجع 200 وقايمة ملفات: [[Options -Indexes]] مش شغال.`
         },
         {
           cmd: "cron PHP",
@@ -1920,7 +2163,12 @@ echo "done " . date('Y-m-d H:i') . "\n";`,
             "قفلة.",
             "التوقيت.",
             "اطبع إنه خلص (بيتكتب في اللوج)."
-          ]
+          ],
+          sol: R`من المتصفح من غير key: الصفحة بتطبع [[forbidden]] والـ status [[403]]. ومع [[?key=]] الصح بتشتغل. ومن SSH: [[php cron/reminders.php]] بيطبع [[done 2026-09-30 08:05]] بتوقيت القاهرة. جربت التلات حالات بسيرفر PHP محلي وطلعوا كده.
+
+ده لأن [[php_sapi_name()]] بيرجع [[cli]] من الترمنال و cron، فالسكربت مش محتاج key، ومن الويب بيرجع حاجة تانية زي [[fpm-fcgi]] فبيطلب key.
+
+الأغلاط الشائعة: [[Failed opening required '.../config.php']]: المسار [[/../../config.php]] معمول على إن config بره public_html بمستويين؛ عدّله حسب مكانه. و cron مابيشتغلش: [[/usr/bin/php]] على الاستضافة ممكن يبقى نسخة تانية (cPanel بيدّيك مسار زي [[/usr/local/bin/php]] أو [[ea-php82]]). اقرا [[cron.log]].`
         },
         {
           cmd: ".user.ini",
@@ -1949,7 +2197,12 @@ session.save_path = "/home/deploy/tmp/sessions"`,
             "https بس.",
             "متتبعتش مع POST من مواقع تانية.",
             "الجلسات في فولدر بتاعك (لازم يكون موجود)."
-          ]
+          ],
+          sol: R`بعد حوالي ٥ دقايق (PHP بيقرا [[.user.ini]] كل [[user_ini.cache_ttl]] = 300 ثانية)، في DevTools › Application › Cookies، كوكي [[PHPSESSID]] عليه علامة في [[HttpOnly]] و [[Secure]]، و [[SameSite]] مكتوب [[Lax]].
+
+للتأكد من غير DevTools: صفحة فيها [[<?php echo ini_get('session.cookie_httponly'), ini_get('session.save_path');]] بتطبع [[1]] والمسار بتاعك. و [[ls ~/tmp/sessions]] بعد ما تفتح الموقع بيوري ملفات [[sess_...]].
+
+ماجربتهاش على استضافة هنا. الأغلاط الشائعة: مفيش أي تغيير بعد ساعة: الاستضافة شغالة بـ mod_php مش FPM/CGI، و [[.user.ini]] مابيتقريش أصلًا؛ جرّب [[php_value]] في .htaccess. و [[session_start(): open(...) failed: No such file]]: الفولدر مش موجود أو المسار فيه اسم يوزر غلط، والجلسات كلها بتقع.`
         }
       ]
     },
@@ -1974,7 +2227,12 @@ timedatectl set-timezone Africa/Cairo`,
             when: "أول ٥ دقايق مع أي سيرفر.",
             mistakes: "إنك تأجّل التحديث لبعدين، وتبدأ تسطّب وتظبط على نظام قديم."
           },
-          lines: ["ادخل كـ root.", "حدّث الكتالوج، ولو نجح حدّث كل البرامج.", "اضبط التوقيت."]
+          lines: ["ادخل كـ root.", "حدّث الكتالوج، ولو نجح حدّث كل البرامج.", "اضبط التوقيت."],
+          sol: R`[[hostnamectl]] بيطلّع [[Operating System: Ubuntu 24.04.x LTS]] و [[Kernel]] و [[Architecture: x86-64]]، و [[free -h]] بيطلّع الرام في [[Mem: total]]. اكتبهم في ملف ملاحظاتك: النظام، والرام، وعدد الأنوية من [[nproc]]، والمساحة من [[df -h /]]. مثال: «Ubuntu 24.04، 2GB رام، 1 core، 25GB».
+
+و [[apt upgrade]] المفروض يخلص بـ [[X upgraded ...]]، و [[date]] بعد set-timezone بيقول [[EEST]] أو [[EET]].
+
+الغلط الشائع: الرام 1GB أو أقل: هتحتاج swap (درس swap) قبل ما تعمل أي build على السيرفر. ولو [[ls /var/run/reboot-required]] موجود بعد الـ upgrade، اعمل [[reboot]] دلوقتي قبل ما تكمّل.`
         },
         {
           cmd: "خطوة 2",
@@ -1992,7 +2250,12 @@ rsync --archive --chown=deploy:deploy ~/.ssh /home/deploy`,
             when: "بعد خطوة ١ على طول.",
             mistakes: "تكمّل للخطوة ٣ من غير ما تجرّب الدخول باليوزر الجديد."
           },
-          lines: ["اعمل اليوزر.", "اديله sudo.", "انسخله مفاتيحك."]
+          lines: ["اعمل اليوزر.", "اديله sudo.", "انسخله مفاتيحك."],
+          sol: R`[[ssh deploy@IP]] من نافذة جديدة بيدخل من غير باسورد (بالمفتاح)، والـ prompt [[deploy@server:~$]]. و [[sudo whoami]] بيسأل باسورد deploy مرة وبعدين يطبع [[root]].
+
+سيب نافذة root القديمة مفتوحة لحد ما الاتنين دول ينجحوا، عشان لو فيه غلطة تصلّحها.
+
+الغلط الشائع: [[Permission denied (publickey)]]: الـ rsync ماتعملش أو صلاحيات [[.ssh]] غلط ([[700]] للفولدر و [[600]] للملف). و [[deploy is not in the sudoers file]]: الـ usermod مااتعملش أو كتبت [[-G]] من غير [[-a]].`
         },
         {
           cmd: "خطوة 3",
@@ -2009,7 +2272,12 @@ sudo sshd -t && sudo systemctl restart ssh`,
             when: "بعد ما خطوة ٢ نجحت واتجرّبت.",
             mistakes: "تقفل النافذة التانية قبل ما تجرّب دخول جديد."
           },
-          lines: ["عدّل PermitRootLogin و PasswordAuthentication لـ no.", "اختبر، ولو سليم اعمل ريستارت لـ SSH."]
+          lines: ["عدّل PermitRootLogin و PasswordAuthentication لـ no.", "اختبر، ولو سليم اعمل ريستارت لـ SSH."],
+          sol: R`من نافذة جديدة: [[ssh root@IP]] بيطلع [[root@IP: Permission denied (publickey).]]. و [[ssh deploy@IP]] لسه بيدخل عادي.
+
+وتتأكد من الإعداد نفسه: [[sudo sshd -T | grep -Ei "permitrootlogin|passwordauthentication"]] بيطبع [[permitrootlogin no]] و [[passwordauthentication no]]. ولو عايز تتأكد إن الباسورد مقفول: [[ssh -o PubkeyAuthentication=no deploy@IP]] بيطلع [[Permission denied (publickey)]] من غير ما يسأل باسورد.
+
+الغلط الشائع: root لسه بيدخل: نسيت [[systemctl restart ssh]]، أو ملف في [[/etc/ssh/sshd_config.d/]] بيعكس الإعداد. وماتقفلش نافذة root القديمة قبل ما تتأكد إن deploy بيدخل.`
         },
         {
           cmd: "خطوة 4",
@@ -2028,7 +2296,12 @@ sudo apt install -y fail2ban unattended-upgrades`,
             when: "بعد ما SSH اتأمّن.",
             mistakes: "[[enable]] قبل [[allow OpenSSH]]."
           },
-          lines: ["اسمح بـ SSH الأول.", "اسمح بالمواقع.", "شغّل الفايروول.", "سطّب الحظر التلقائي والتحديثات التلقائية."]
+          lines: ["اسمح بـ SSH الأول.", "اسمح بالمواقع.", "شغّل الفايروول.", "سطّب الحظر التلقائي والتحديثات التلقائية."],
+          sol: R`[[sudo ufw status]] بيطبع [[Status: active]] وتحته جدول [[To Action From]] فيه [[OpenSSH ALLOW Anywhere]] و [[80,443/tcp ALLOW Anywhere]]، ونفسهم [[(v6)]]. مفيش أي بورت تاني.
+
+و [[sudo systemctl status fail2ban]] بيقول [[active (running)]]، و [[sudo fail2ban-client status]] بيوري [[Jail list: sshd]].
+
+الغلط الشائع: [[Status: inactive]]: نسيت [[ufw enable]] (بيسألك [[Proceed with operation (y|n)?]]). ولو الـ SSH اتقطع بعد enable، نسيت [[allow OpenSSH]] أو SSH على بورت غير 22؛ ادخل من console المزود و [[ufw allow البورت/tcp]].`
         },
         {
           cmd: "خطوة 5",
@@ -2046,7 +2319,12 @@ exit`,
             when: "بعد الحماية الأساسية.",
             mistakes: "تجرّب Docker قبل ما تخرج وتدخل، فيقولك permission denied."
           },
-          lines: ["سطّب Docker.", "اسمح لـ deploy يستخدمه من غير sudo.", "اخرج، وادخل تاني عشان الجروب يتطبق."]
+          lines: ["سطّب Docker.", "اسمح لـ deploy يستخدمه من غير sudo.", "اخرج، وادخل تاني عشان الجروب يتطبق."],
+          sol: R`بعد [[exit]] والدخول تاني، [[docker run --rm hello-world]] من غير sudo بيطبع [[Hello from Docker!]] و [[This message shows that your installation appears to be working correctly.]].
+
+و [[groups]] بيوري [[deploy sudo users docker]]، و [[docker compose version]] بيطبع نسخة Compose (بيتسطب مع السكربت الرسمي).
+
+الغلط الشائع: [[permission denied while trying to connect to the Docker daemon socket]]: ماعملتش exit ودخلت تاني بعد الـ usermod. و [[Cannot connect to the Docker daemon ... Is the docker daemon running?]]: الخدمة واقفة، [[sudo systemctl enable --now docker]].`
         },
         {
           cmd: "خطوة 6",
@@ -2078,7 +2356,12 @@ curl -I http://127.0.0.1:3000`,
             "ادخل الفولدر.",
             "ابني وشغّل.",
             "اتأكد إن التطبيق بيرد من جوه السيرفر."
-          ]
+          ],
+          sol: R`[[curl -I http://127.0.0.1:3000]] المفروض أول سطر [[HTTP/1.1 200 OK]] وبعده headers التطبيق (زي [[X-Powered-By: Express]] أو [[Content-Type]]). و [[docker compose ps]] بيوري كل الخدمات [[Up]] (و [[healthy]] لو فيه healthcheck).
+
+لو مش 200، ماتكمّلش على Nginx: المشكلة في التطبيق، ومش هتتحل بالدومين.
+
+الأغلاط الشائعة: [[Connection refused]]: التطبيق لسه بيقوم أو وقع؛ [[docker compose logs --tail 50]]. و [[Empty reply from server]] أو [[Connection reset]]: التطبيق سامع على 127.0.0.1 جوه الـ container بدل 0.0.0.0. و [[404]] على [[/]]: التطبيق API مفيهوش route للـ root، جرّب [[/health]]. و [[git clone]] يطلب باسورد لـ repo خاص: استخدم deploy key أو token.`
         },
         {
           cmd: "خطوة 7",
@@ -2108,7 +2391,12 @@ dig +short example.com`,
             "شيل الموقع التجريبي.",
             "اختبر وطبّق.",
             "اتأكد إن الدومين بيشاور على السيرفر."
-          ]
+          ],
+          sol: R`[[dig +short example.com]] لازم يطبع IP السيرفر بالظبط. وفتح [[http://example.com]] من المتصفح بيوري التطبيق (مكتوب جنبه «Not secure» لأنه http، وده طبيعي لحد الخطوة الجاية).
+
+وقبلها [[sudo nginx -t]] بيقول [[syntax is ok]] و [[test is successful]]، و [[curl -H "Host: example.com" http://127.0.0.1]] على السيرفر بيرجع رد التطبيق.
+
+الأغلاط الشائعة: [[dig]] مابيطبعش حاجة أو IP قديم: الـ DNS لسه ماتنشرش (استنى) أو الـ A record غلط. و [[502 Bad Gateway]]: التطبيق مش على 3000 أو واقف. وصفحة [[Welcome to nginx]]: الـ default لسه متفعّل أو [[server_name]] غلط. والصفحة مش بتفتح خالص: بورت 80 مقفول في ufw.`
         },
         {
           cmd: "خطوة 8",
@@ -2136,7 +2424,12 @@ crontab -e`,
             "الزق سكربت الباك أب.",
             "اديله صلاحية التشغيل.",
             "ضيفه في الجدول اليومي."
-          ]
+          ],
+          sol: R`السطر في [[crontab -e]]: [[0 3 * * * /home/deploy/backup.sh >> /home/deploy/backup.log 2>&1]]، و [[crontab -l]] بيوريه. وقبل ما تعتمد عليه شغّل [[~/backup.sh]] بإيدك مرة واتأكد إن ملف الباك أب اتعمل.
+
+بعد [[sudo reboot]] والانتظار دقيقة: [[https://example.com]] بيفتح بالقفل من غير ما تعمل حاجة، و [[curl -I https://example.com]] بيرجع [[HTTP/2 200]] أو [[HTTP/1.1 200]]، و [[http://]] بيعمل 301 لـ https. ده معناه إن Nginx و Docker (بـ [[restart: unless-stopped]]) قاموا لوحدهم.
+
+الغلط الشائع: الموقع بيرجع 502 بعد الـ reboot: الـ containers مش عليها restart policy أو خدمة docker مش enabled. والباك أب مابيتعملش: السكربت من غير [[chmod +x]] أو فيه مسارات نسبية؛ اقرا [[backup.log]].`
         }
       ]
     }

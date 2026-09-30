@@ -60,7 +60,12 @@ docker run --rm hello-world`,
             "الصور اللي على جهازك، بحجمها.",
             "شغّل container منها ينفّذ أمر واحد ويخرج، وامسحه بعدها ([[--rm]]).",
             "أشهر اختبار: image صغيرة بتطبع رسالة وتخلص."
-          ]
+          ],
+          sol: R`[[docker pull nginx:alpine]] بيخلص بـ [[Status: Downloaded newer image for nginx:alpine]] أو [[docker.io/library/nginx:alpine]]. و [[docker images]] بيوريها بحجم صغير: في Docker 29 الأعمدة [[IMAGE ID DISK USAGE CONTENT SIZE]] وطلعت عندي [[94.4MB]] على الديسك و [[27.2MB]] حجم التحميل. في النسخ الأقدم هتلاقي عمود [[SIZE]] واحد بنفس الفكرة. قارنها بـ [[node:22]] العادية اللي بتعدّي الـ 1GB.
+
+و [[docker run --rm nginx:alpine nginx -v]] بيطبع سطور [[/docker-entrypoint.sh]] وبعدين [[nginx version: nginx/1.x]] ويخرج. الـ container اتعمل واشتغل ومات واتمسح، والـ image لسه موجودة في [[docker images]].
+
+الغلط الشائع: [[429 Too Many Requests]] من Docker Hub وقت الـ pull: ده حد التحميل للي مش عامل login. استنى شوية أو [[docker login]]. و [[permission denied ... docker.sock]] على لينكس يعني يوزرك مش في جروب docker.`
         },
         {
           cmd: "docker run",
@@ -86,7 +91,12 @@ docker run -d --name db -e POSTGRES_PASSWORD=secret -p 127.0.0.1:5432:5432 postg
             "في الخلفية، اسمه web، بورت 8080 عندك يروح لـ 80 جواه.",
             "ادخل alpine بترمنال تفاعلي، وامسحه لما تخرج.",
             "قاعدة بيانات: باسورد بمتغير بيئة، والبورت على 127.0.0.1 بس (مش مفتوح للنت)."
-          ]
+          ],
+          sol: R`بعد [[docker run -d --name web -p 8080:80 nginx:alpine]] بيطبع رقم الـ container الطويل بس، و localhost:8080 بيفتح صفحة [[Welcome to nginx!]]. و [[docker ps]] بيوري [[0.0.0.0:8080->80/tcp]] في عمود PORTS.
+
+[[docker run -it --rm alpine sh]] بيدخلك prompt [[/ #]]، و [[ls /]] بيطبع [[bin dev etc home lib media mnt opt proc root run sbin srv sys tmp usr var]]: نظام ملفات لينكس كامل صغير. و [[exit]] بيخرجك، وبسبب [[--rm]] الـ container بيتمسح ومش هيظهر حتى في [[docker ps -a]].
+
+الغلط الشائع: [[Bind for 0.0.0.0:8080 failed: port is already allocated]]: فيه حاجة تانية على 8080، غيّر الرقم الشمال بس ([[-p 8081:80]]). و [[Conflict. The container name "/web" is already in use]] يعني فيه container قديم بنفس الاسم: [[docker rm -f web]].`
         },
         {
           cmd: "ps / stop / start / rm",
@@ -118,7 +128,12 @@ docker container prune`,
             "رجّعه بنفس إعداداته.",
             "وقّفه وامسحه في خطوة.",
             "امسح كل الواقفين."
-          ]
+          ],
+          sol: R`بعد [[docker stop web]] (بيطبع [[web]] بس)، [[docker ps]] مش هيوريه، و [[docker ps -a]] بيوريه بحالة [[Exited (0) ... ago]]. الـ 0 معناها إن nginx قفل بهدوء لما استلم الإشارة.
+
+[[docker start web]] بيرجّعه، و [[docker ps]] بيوريه [[Up ...]] وبنفس [[0.0.0.0:8080->80/tcp]] ونفس الاسم، والصفحة بتفتح تاني. ده لأن الإعدادات محفوظة في الـ container نفسه، و start بيشغّل نفس الـ container مش واحد جديد.
+
+الغلط الشائع: تعمل [[docker run]] تاني بدل [[start]]، فيطلعلك [[The container name "/web" is already in use]]. و [[Exited (137)]] بدل 0 معناها إنه اتقتل بالعافية بعد ١٠ ثواني لأنه ماسمعش الإشارة، ودي مشكلة في التطبيق (درس entrypoint.sh و exec).`
         },
         {
           cmd: "docker logs",
@@ -146,7 +161,12 @@ docker logs web 2>&1 | grep -i error`,
             "آخر ١٠٠ سطر وتابع الجديد.",
             "آخر ١٠ دقايق.",
             "دوّر على error. [[2>&1]] لازمة لأن الأخطاء على stderr والـ pipe بياخد stdout."
-          ]
+          ],
+          sol: R`كل ما تفتح الصفحة بيظهر سطر جديد لحظيًا في [[docker logs -f web]] بالشكل:
+
+[[172.17.0.1 - - [30/Sep/2026:04:43:46 +0000] "GET / HTTP/1.1" 200 615 "-" "Mozilla/5.0 ..."]]. الـ [[172.17.0.1]] ده عنوان جهازك من ناحية شبكة Docker، والـ 200 كود الرد. ولو طلبت صفحة مش موجودة هتلاقي سطر 404، وقبله سطر [[[error] ... open() "/usr/share/nginx/html/nope" failed]].
+
+[[Ctrl+C]] بيقفل المتابعة بس، والـ container لسه شغال. الغلط الشائع: تشوف اللوج فاضي وانت فاتح [[localhost:8080]] على container تاني أو بورت تاني؛ اتأكد بـ [[docker ps]]. وكمان المتصفح ممكن يجيب الصفحة من الكاش فمايوصلش طلب؛ اعمل Ctrl+F5.`
         },
         {
           cmd: "docker exec",
@@ -174,7 +194,12 @@ docker exec -u root -it web sh`,
             "نفّذ أمر واحد جواه من غير ما تدخل.",
             "افتح psql جوه container القاعدة.",
             "ادخل كـ root ([[-u]]) لو محتاج تسطّب أداة مؤقتة."
-          ]
+          ],
+          sol: R`[[docker exec -it web sh]] بيدخلك [[/ #]] جوه الـ container الشغال. و [[cat /etc/nginx/nginx.conf]] بيبدأ بـ [[user nginx;]] و [[worker_processes auto;]]، وفيه [[include /etc/nginx/conf.d/*.conf;]] اللي بيقرا ملف الموقع [[default.conf]].
+
+بعد [[exit]]، [[docker ps]] لسه بيوري web شغال، لأن exec بيشغّل برنامج إضافي (sh) جنب nginx، ولما تخرج بيموت sh بس.
+
+الغلط الشائع: [[docker exec -it web bash]] يطلع [[exec: "bash": executable file not found]]، لأن صور alpine فيها [[sh]] بس. ولو قال [[is not running]] يبقى الـ container واقف، و exec مايشتغلش غير على container شغال.`
         },
         {
           cmd: "images / tags / rmi",
@@ -204,7 +229,15 @@ docker image prune`,
             "اسم تاني لنفس الصورة (مش نسخة).",
             "امسح صورة.",
             "امسح الصور المعلّقة (من غير tag)."
-          ]
+          ],
+          sol: R`بعد [[docker tag nginx:alpine myweb:1.0]] (مش بيطبع حاجة)، [[docker images]] بيوري سطرين: [[nginx:alpine df221db836e1]] و [[myweb:1.0 df221db836e1]]، بنفس الـ ID ونفس الحجم.
+
+ده معناه إن الـ tag مجرد اسم تاني لنفس الـ image، مفيش نسخة اتعملت والديسك مازادش. [[docker rmi myweb:1.0]] بيطبع [[Untagged: myweb:1.0]] بس ومش بيمسح أي طبقات، لأن الاسم التاني لسه بيشاور عليها.
+
+الغلط الشائع: [[docker tag myapp:latest ...]] يطلع [[No such image]] لأنك لسه مبنتش image بالاسم ده؛ استخدم اسم ظاهر في [[docker images]]. و [[docker rmi]] يرفض بـ [[image is being used by running container]]: امسح الـ container الأول.`,
+          solCode: R`docker tag nginx:alpine myweb:1.0
+docker images
+docker rmi myweb:1.0`
         },
         {
           cmd: "inspect / stats",
@@ -227,7 +260,12 @@ docker stats --no-stream`,
             when: "container وقع ومش عارف ليه. تعرف IP container. تتأكد إن الـ volume مربوط صح. السيرفر بطيء ومين السبب.",
             mistakes: "تقرا JSON الـ inspect كله. استخدم [[--format]] أو jq على الجزء اللي محتاجه."
           },
-          lines: ["كل تفاصيل الـ container كـ JSON.", "الحالة بس.", "الـ IP بس.", "استهلاك كل container، لقطة واحدة."]
+          lines: ["كل تفاصيل الـ container كـ JSON.", "الحالة بس.", "الـ IP بس.", "استهلاك كل container، لقطة واحدة."],
+          sol: R`[[docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web]] بيطبع IP زي [[172.17.0.2]]. و [[curl 172.17.0.2]] من جهاز لينكس بيرجّع صفحة nginx ([[<title>Welcome to nginx!</title>]]) من غير ما تعدّي على البورت 8080، لأن جهازك متوصل بشبكة Docker مباشرة. و [[--format '{{.State.Status}}']] بيطبع [[running]].
+
+و [[docker stats --no-stream]] بيطبع جدول فيه [[CPU %]] و [[MEM USAGE / LIMIT]] (nginx فاضي بياخد حوالي ٥ ميجا).
+
+على ويندوز والماك الـ curl على الـ IP ده هيعلّق أو يفشل، لأن Docker شغال جوه VM والشبكة دي جواها. ده مش غلط في الأمر؛ استخدم localhost والبورت المنشور. ومتبنيش أي حاجة على IP الـ container: بيتغير كل restart، واستخدم الاسم على network.`
         },
         {
           cmd: "run --rm كأداة",
@@ -259,7 +297,12 @@ docker run --rm -i alpine wc -l < notes.txt`,
             "نفّذ سطر JavaScript على Node 20 من غير ما تسطّبها.",
             "الفولدر الحالي جوه الـ container على /work، واعرض حجم كل حاجة فيه.",
             "ابعت ملف من جهازك على الـ stdin لأداة جوه الـ container."
-          ]
+          ],
+          sol: R`[[docker run --rm caddy:2.8 caddy hash-password --plaintext 'secret']] (بعد ما ينزل الـ image أول مرة) بيطبع سطر واحد bcrypt hash زي [[$2a$14$/eS4y3qJmjVoo5l.0bjAQ...]]. الرقم بيتغير كل مرة حتى لنفس الباسورد، لأن فيه salt عشوائي، وده طبيعي.
+
+و [[docker ps -a]] بعدها مش هيوري أي container من caddy، لأن [[--rm]] مسحه أول ما خلص. الـ image بس اللي فاضلة في [[docker images]]، وتقدر تمسحها بـ [[docker rmi caddy:2.8]] لو مش محتاجها.
+
+الغلط الشائع: تنسى [[--rm]]، فتلاقي بعد أسبوع عشرات الـ containers الـ Exited في [[docker ps -a]]. نضّفهم بـ [[docker container prune]].`
         }
       ]
     },
@@ -305,7 +348,19 @@ CMD ["node", "server.js"]`,
             "دلوقتي انسخ باقي الكود.",
             "توثيق إن التطبيق على 3000.",
             "الأمر اللي يتشغّل، بالشكل اللي يخلي node العملية رقم 1."
-          ]
+          ],
+          sol: R`[[docker build -t myapi .]] بيطبع خطوات [[[1/5] FROM]] لحد [[[5/5] COPY . .]] وفي الآخر [[naming to docker.io/library/myapi:latest]]. و [[docker run -p 3000:3000 myapi]] بيطبع اللي التطبيق بيطبعه (زي [[listening on 3000]])، و [[curl localhost:3000]] بيرد.
+
+الأمر ماسك الترمنال لأنه من غير [[-d]]. [[Ctrl+C]] ممكن مايقفلوش لو التطبيق مش بيسمع SIGINT؛ ساعتها [[docker stop]] من ترمنال تاني.
+
+الأغلاط الشائعة: [[npm ci]] يفشل بـ [[The npm ci command can only install with an existing package-lock.json]]: اعمل [[npm install]] مرة على جهازك عشان يتولد الـ lock. و [[Cannot find module '/app/server.js']] يعني اسم الملف في CMD غلط أو الـ [[.dockerignore]] استبعده. و [[curl]] يرجع [[Connection reset]] يعني السيرفر بيسمع على 127.0.0.1 بس جوه الـ container (درس 0.0.0.0).`,
+          solCode: R`cat > server.js <<'EOF2'
+require("http").createServer((q, r) => r.end("hello\n")).listen(3000, () => console.log("listening on 3000"));
+EOF2
+echo '{"name":"api","version":"1.0.0"}' > package.json
+npm install --package-lock-only
+docker build -t myapi .
+docker run --rm -p 3000:3000 myapi`
         },
         {
           cmd: "الطبقات والكاش",
@@ -335,7 +390,12 @@ docker build --no-cache -t myapi .`,
             "ابني تاني: كل خطوة CACHED.",
             "الطبقات وحجم كل واحدة.",
             "ابني من غير كاش خالص."
-          ]
+          ],
+          sol: R`البناء التاني على طول بيطبع [[CACHED]] تحت [[[2/5] WORKDIR]] و [[[3/5] COPY package*.json]] و [[[4/5] RUN npm ci]] و [[[5/5] COPY . .]]، ويخلص في أقل من ثانية.
+
+بعد ما تغيّر سطر في [[server.js]]: [[2/5]] و [[3/5]] و [[4/5]] لسه [[CACHED]]، و [[5/5] COPY . .]] بس اللي اتنفذ من جديد. ده لأن [[package.json]] مااتغيرش، فطبقة [[npm ci]] زي ما هي. و [[docker history myapi]] بيوري كل طبقة وحجمها، وطبقة [[RUN npm ci]] هي التقيلة.
+
+الغلط الشائع: [[npm ci]] بيتنفذ كل مرة. ده معناه إن [[COPY . .]] جاي قبله في الـ Dockerfile، فأي تعديل في أي ملف بيكسر الكاش لكل اللي بعده. أو إن [[package-lock.json]] بيتغير كل مرة لأنك بتعمل [[npm install]] بدل [[npm ci]].`
         },
         {
           cmd: ".dockerignore",
@@ -374,7 +434,12 @@ node_modules لازم يتستثنى لسببين: الحجم، وإن اللي 
             "ناتج build بتاع Next.",
             "الـ Dockerfile نفسه مش محتاج يتنسخ.",
             "ولا ملفات compose."
-          ]
+          ],
+          sol: R`أول سطر في الـ build بيقولك حجم اللي اتبعت لـ Docker: [[transferring context: 62.93MB]] من غير الملف (لو node_modules عندك كبير هتلاقيه مئات الميجا)، و [[transferring context: 177B]] بيه. والفرق باين في الوقت، وفي [[docker images]] الـ image اللي من غير الملف أكبر لأن [[COPY . .]] نسخ node_modules بتاع جهازك فوق اللي [[npm ci]] سطّبه.
+
+وأخطر من الحجم: node_modules بتاعة ويندوز أو ماك جوه image لينكس بتبوّظ أي باكدج native، و [[.env]] بيدخل جوه الـ image.
+
+الغلط الشائع: الملف يتسمى [[dockerignore]] من غير نقطة، أو يتحط في فولدر غير الـ context (الفولدر اللي في آخر [[docker build ... .]])، فمايتقريش خالص والـ context يفضل كبير.`
         },
         {
           cmd: "multi-stage",
@@ -428,7 +493,12 @@ CMD ["node", "dist/server.js"]`,
             "اشتغل كيوزر node مش root.",
             "توثيق البورت.",
             "شغّل الناتج المبني."
-          ]
+          ],
+          sol: R`الـ image المتقسمة هتطلع أصغر بوضوح، لأن المرحلة الأخيرة فيها [[dist]] والـ dependencies بتاعة الإنتاج بس، من غير TypeScript والـ devDependencies والـ source. في مشروع Express عادي الفرق ممكن يبقى من حوالي 400-600MB لحوالي 150-250MB في عمود الحجم في [[docker images]]، والرقم بيعتمد على الـ devDependencies عندك (لو فيها Jest و ESLint و Prisma CLI الفرق هيبقى كبير).
+
+اتأكد إنها شغالة: [[docker run --rm myapi ls /app]] المفروض يوري [[dist]] و [[node_modules]] و [[package.json]] بس، من غير [[src]]. و [[docker run --rm myapi whoami]] يطبع [[node]].
+
+الغلط الشائع: [[Cannot find module '/app/dist/server.js']]: اسم الفولدر اللي [[tsc]] بيطلّع فيه مش [[dist]]، أو ملف [[server.ts]] في فولدر [[src]] فبيطلع [[dist/src/server.js]]. شوف [[outDir]] و [[rootDir]] في tsconfig.`
         },
         {
           cmd: "ENV و ARG",
@@ -459,7 +529,12 @@ EXPOSE 3000`,
             "متغير بيئة بيفضل في الصورة ووقت التشغيل.",
             "البورت الافتراضي.",
             "توثيق."
-          ]
+          ],
+          sol: R`[[docker run --rm myapi node -v]] بعد البناء بـ [[--build-arg NODE_VERSION=20]] بيطبع [[v20.x.x]]، ومن غيره بيطبع [[v22.x.x]] (عندي [[v22.23.3]]). ده لأن الـ ARG اتحط في سطر FROM، فاختار base image مختلفة.
+
+و [[docker run --rm myapi env | grep -E "NODE_ENV|PORT"]] بيوري [[NODE_ENV=production]] و [[PORT=3000]]: الـ ENV بيفضل في الـ image، لكن [[NODE_VERSION]] الـ ARG مش هيظهر كمتغير بتاعك (اللي هتلاقيه [[NODE_VERSION]] تاني بتاع صورة node نفسها).
+
+الغلط الشائع: تحط [[ARG NODE_VERSION]] بعد [[FROM]] وتستخدمه في FROM، فيطلع [[base name (node:-alpine) should not be blank]] أو [[invalid reference format]]. الـ ARG اللي FROM بيستخدمه لازم يبقى قبله.`
         },
         {
           cmd: "USER و HEALTHCHECK",
@@ -500,7 +575,12 @@ CMD ["node", "server.js"]`,
             "فحص كل ٣٠ ثانية، مهلة ٣ ثواني، وأول ١٠ ثواني متتحسبش. الشرطة المايلة: مكمّل في السطر الجاي.",
             "الفحص نفسه: اطلب /health، ولو فشل ارجع 1 (unhealthy). wget لأن alpine مفيهاش curl.",
             "شغّل التطبيق."
-          ]
+          ],
+          sol: R`أول ما تشغّل، [[docker ps]] بيوري [[Up 2 seconds (health: starting)]]. وبعد الـ start-period وأول فحص ناجح: [[Up 35 seconds (healthy)]]. و [[docker exec api whoami]] بيطبع [[node]] مش [[root]].
+
+لو عايز تشوف تفاصيل الفحص: [[docker inspect --format '{{.State.Health.Status}}' api]] بيطبع [[healthy]]، و [[.State.Health.Log]] فيه آخر نتايج بالـ exit code والناتج.
+
+لو طلع [[unhealthy]]: غالبًا مسار [[/health]] مش موجود فـ [[wget]] بيطبع [[server returned error: HTTP/1.1 404 Not Found]] ويخرج بـ 1، أو التطبيق على بورت تاني. والغلط التاني الشائع: [[npm ci]] أو الكتابة في فولدر يفشل بـ [[EACCES]] بعد [[USER node]]، لأن الملفات اتنسخت ملك root من غير [[--chown=node:node]].`
         },
         {
           cmd: "build / tag / push",
@@ -530,7 +610,12 @@ docker pull ghcr.io/user/myapi:1.2.0`,
             "ادخل على GitHub registry (بـ token فيه write:packages).",
             "ارفع.",
             "على السيرفر: نزّل."
-          ]
+          ],
+          sol: R`[[docker login ghcr.io]] بيسألك Username (اسمك على GitHub) و Password (الـ token مش باسورد حسابك)، ويطبع [[Login Succeeded]].
+
+[[docker push ghcr.io/USER/myapi:1.2.0]] بيطبع سطر لكل طبقة بـ [[Pushed]] (أو [[Mounted from]] لو موجودة)، وفي الآخر [[1.2.0: digest: sha256:... size: ...]]. والـ package بيظهر في صفحة حسابك تحت Packages، Private افتراضيًا.
+
+الأغلاط الشائعة: [[denied: permission_denied: The token provided does not match expected scopes]] يعني الـ token ناقصه [[write:packages]]. و [[denied: installation not allowed to Write organization package]] لو الـ USER اسم org مش حسابك. والاسم لازم يبقى lowercase: [[ghcr.io/Ahmed/api]] بيترفض بـ [[repository name must be lowercase]].`
         },
         {
           cmd: "buildx و --platform",
@@ -556,7 +641,12 @@ docker build --platform linux/amd64 -t myapi:amd64 --load .`,
             "ابني لـ amd64 و arm64 في image واحدة وارفعها.",
             "اتأكد المعماريات اللي اترفعت.",
             "معمارية السيرفر بس، والناتج عندك في docker images."
-          ]
+          ],
+          sol: R`[[docker image inspect --format '{{.Architecture}}' myapi:amd64]] بيطبع [[amd64]]. وده اللي السيرفر محتاجه حتى لو انت على ماك M1 (اللي هيطلع عليه [[arm64]] من غير [[--platform]]).
+
+على ماك الـ build لـ amd64 هياخد وقت أطول بكتير، لأنه بيشغّل كل خطوة RUN من خلال emulation (QEMU/Rosetta). و [[docker buildx ls]] بيوري الـ builders والـ platforms اللي كل واحد يقدر يبنيها.
+
+الغلط الشائع: على جهاز مفيهوش emulation متسطّب، البناء لمعمارية تانية بيقع في أول RUN بـ [[exec /bin/sh: exec format error]]. ونفس الرسالة بتظهر على السيرفر لو شغّلت image arm64 على سيرفر amd64، وده أشهر سبب للـ container اللي بيموت أول ما يقوم.`
         },
         {
           cmd: "CMD و ENTRYPOINT",
@@ -576,7 +666,12 @@ docker run --rm --entrypoint sh myapi -c "ls /app"`,
             when: "CMD لتطبيقك. ENTRYPOINT للأدوات. وعشان تشخّص image: [[--entrypoint sh]].",
             mistakes: "shell form في CMD. و [[CMD npm start]]: npm نفسه بيبقى وسيط بيبلع الإشارة. شغّل node مباشرة."
           },
-          lines: ["الأمر الافتراضي (CMD).", "استبدل CMD بأمر تاني.", "استبدل ENTRYPOINT نفسه بـ sh ونفّذ أمر."]
+          lines: ["الأمر الافتراضي (CMD).", "استبدل CMD بأمر تاني.", "استبدل ENTRYPOINT نفسه بـ sh ونفّذ أمر."],
+          sol: R`[[docker run --rm myapi node -v]] بيطبع [[v22.x.x]] ويخرج، والسيرفر مااشتغلش خالص. أي حاجة بعد اسم الـ image بتحل محل [[CMD]] بالكامل.
+
+و [[docker run --rm --entrypoint sh myapi -c "ls /app"]] بيطبع محتوى [[/app]]: [[package.json]] و [[server.js]]... وده لأن [[--entrypoint]] غيّر البرنامج و [[-c "ls /app"]] بقت الـ arguments.
+
+الغلط الشائع: لو الـ Dockerfile فيه [[ENTRYPOINT ["node"]]]، فـ [[docker run myapi node -v]] هيشغّل [[node node -v]] ويطلع [[Cannot find module '/app/node']]. مع ENTRYPOINT اللي بعد اسم الـ image بيتضاف كـ arguments، فالصح [[docker run myapi -v]].`
         },
         {
           cmd: "entrypoint.sh و exec",
@@ -608,7 +703,21 @@ exec node server.js`,
             "وقّف السكربت عند أول أمر يفشل.",
             "الخطوة القبلية: مزامنة الـ schema.",
             "node ياخد مكان الشيل ويبقى العملية رقم 1."
-          ]
+          ],
+          sol: R`من غير [[exec]]: [[docker stop]] بياخد حوالي [[10]] ثواني بالظبط، و [[docker inspect --format '{{.State.ExitCode}}' api]] بيطبع [[137]] (اتقتل بـ SIGKILL). ده لأن [[sh]] هو PID 1 واستلم SIGTERM ومابعتهاش لـ node، فـ Docker استنى المهلة وقتله.
+
+مع [[exec node server.js]]: الـ stop بياخد أقل من ثانية (عندي 0.29 ثانية)، والـ exit code [[0]]، ولو التطبيق بيسمع SIGTERM هتلاقي رسالته في [[docker logs]]. لأن [[exec]] خلّى node ياخد مكان sh ويبقى هو PID 1.
+
+الغلط الشائع: السكربت يفشل بـ [[exec /entrypoint.sh: permission denied]] (نسيت [[chmod +x]]) أو [[no such file or directory]] مع إن الملف موجود: دي نهايات سطور CRLF من ويندوز، فالسطر الأول بقى [[#!/bin/sh\r]].`,
+          solCode: R`printf '#!/bin/sh\nset -e\necho migrate\nnode server.js\n' > entrypoint.sh
+chmod +x entrypoint.sh
+printf 'FROM myapi\nCOPY entrypoint.sh /entrypoint.sh\nENTRYPOINT ["/entrypoint.sh"]\n' > Dockerfile.ep
+docker build -f Dockerfile.ep -t myapi:ep .
+docker run -d --name api myapi:ep
+time docker stop api
+docker inspect --format '{{.State.ExitCode}}' api
+docker rm api
+sed -i 's/^node server.js/exec node server.js/' entrypoint.sh`
         },
         {
           cmd: "alpine ولا slim",
@@ -656,7 +765,12 @@ CMD ["node", "server.js"]`,
             "الكود.",
             "يوزر عادي.",
             "شغّل."
-          ]
+          ],
+          sol: R`على alpine من غير [[apk add]] الـ build بيقع في [[npm ci]] بـ error طويل من [[node-gyp]]، أهم سطر فيه حاجة زي [[gyp ERR! find Python]] أو [[make: not found]] / [[g++: not found]]، وده لما npm مايلاقيش prebuilt binary لـ musl فيحاول يبني من الـ source. (مع نسخ bcrypt الجديدة ممكن الـ prebuilt يتلاقي وماتشوفش error، فجرّبه كمان مع [[npm ci --build-from-source]] عشان تشوف المشكلة.)
+
+بعد سطر [[apk add --no-cache python3 make g++]] الـ build بينجح. ومع [[node:22-bookworm-slim]] غالبًا بينجح من غير أي سطر زيادة لأن الباكدجات عندها prebuilt لـ glibc. وفي [[docker images]] الـ slim هتطلع أكبر من الـ alpine بشوية (عشرات الميجا)، والـ alpine اللي فيها أدوات البناء في المرحلة الأخيرة هتطلع الأكبر، وده ليه بنحطها في مرحلة deps بس.
+
+الغلط الشائع: تسطّب [[python3 make g++]] في المرحلة الأخيرة، فالـ image تكبر مئات الميجا من غير لازمة.`
         },
         {
           cmd: "أسرار وقت الـ build",
@@ -694,7 +808,16 @@ RUN npm run build`,
             "الكود.",
             "متغير عام مش سر، عادي يبقى ARG لأنه رايح للمتصفح أصلًا.",
             "ابني."
-          ]
+          ],
+          sol: R`مع [[--secret]]: [[docker history --no-trunc myapp | grep TOKEN]] مش بيطلّع حاجة، وسطر الـ RUN في الـ history شكله [[RUN /bin/sh -c npm ci # buildkit]] من غير أي أثر للملف. و [[docker run --rm myapp ls /root/.npmrc]] بيقول [[No such file or directory]]: الملف كان موجود وقت الخطوة دي بس.
+
+مع نفس التوكن كـ [[ARG]]: الـ history بيوريه صريح في سطرين: [[ARG TOKEN=TOKEN123]] و [[RUN |1 TOKEN=TOKEN123 /bin/sh -c ...]]. يعني أي حد معاه الـ image يقدر يقراه، حتى لو مسحت الملف في خطوة بعدها.
+
+الغلط الشائع: [[Dockerfile parse error ... unknown flag: mount]]: الـ builder القديم شغال. شغّل BuildKit ([[DOCKER_BUILDKIT=1]] أو Docker حديث) وحط سطر [[# syntax=docker/dockerfile:1.7]] أول الملف.`,
+          solCode: R`echo "//registry.npmjs.org/:_authToken=TOKEN123" > .npmrc
+docker build --secret id=npmrc,src=.npmrc -t myapp .
+docker history --no-trunc myapp | grep TOKEN123
+docker run --rm myapp ls /root/.npmrc`
         },
         {
           cmd: "Next.js standalone",
@@ -755,7 +878,12 @@ server.js بيقرا [[PORT]] و [[HOSTNAME]]. Docker نفسه بيحط متغي
             "يوزر node مش root.",
             "توثيق البورت.",
             "شغّل server.js مباشرة."
-          ]
+          ],
+          sol: R`الـ standalone المفروض يطلع أصغر بشكل واضح: الفولدر [[.next/standalone]] فيه بس الـ node_modules اللي السيرفر بيستخدمها فعلًا (اتحسبت بـ tracing)، مش كل الباكدجات. في مشروع Next صغير الفرق في [[docker images]] بيبقى في حدود مئات الميجا (مثلًا حوالي ٢٠٠-٣٠٠ ميجا قدام ٦٠٠ ميجا لـ 1GB للطريقة الكاملة)، والرقم بيعتمد على الـ dependencies بتاعتك.
+
+وتتأكد إنها شغالة: [[docker run -p 3000:3000 myapp]] بيطبع [[▲ Next.js]] و [[Ready in ...]]، والصفحات والصور تفتح.
+
+الأغلاط الشائعة: الصفحة تفتح من غير CSS و JS (404 على [[/_next/static/...]]) لأنك نسيت تنسخ [[.next/static]]. والصور من [[public]] مش ظاهرة لأنك نسيت [[public]]. و [[test -d .next/standalone]] بيفشل البناء لو [[output: "standalone"]] مش في next.config، وده مقصود.`
         },
         {
           cmd: "SPA جوه nginx",
@@ -803,7 +931,22 @@ nginx.conf لازم فيه [[try_files $uri $uri/ /index.html]] عشان روا�
             "إعدادات الموقع (SPA و proxy لـ /api).",
             "توثيق البورت.",
             "nginx في الـ foreground عشان الـ container يفضل عايش."
-          ]
+          ],
+          sol: R`[[curl -i localhost:8080/products/5]] (أو فتحها مباشرة من المتصفح) بيرجع [[200]] ومحتوى [[index.html]]، والـ React Router هو اللي بيعرض الصفحة الصح.
+
+من غير [[try_files $uri $uri/ /index.html;]] (يعني بـ default.conf الأصلي بتاع nginx) نفس الرابط بيرجع [[404 Not Found]]، لأن nginx بيدوّر على ملف اسمه [[products/5]] في الفولدر ومش لاقيه. جربتها الاتنين: من غيره 404، ومعاه 200.
+
+الغلط الشائع: nginx.conf الخاص بيك مش واصل للـ image (غلط في مسار الـ COPY)، وتقدر تتأكد بـ [[docker run --rm IMAGE cat /etc/nginx/conf.d/default.conf]]. ولو الـ assets بترجع HTML بدل JS يبقى [[base]] في Vite غلط والمتصفح بيطلب [[/products/assets/...]].`,
+          solCode: R`cat > nginx.conf <<'EOF2'
+server {
+  listen 80;
+  root /usr/share/nginx/html;
+  location / { try_files $uri $uri/ /index.html; }
+}
+EOF2
+docker build -t myspa .
+docker run -d --name spa -p 8080:80 myspa
+curl -s -o /dev/null -w "%{http_code}\n" localhost:8080/products/5`
         }
       ]
     },
@@ -842,7 +985,20 @@ docker rm -f db && docker run -d --name db -v pgdata:/var/lib/postgresql/data -e
             "الـ volumes عندك.",
             "فين على الديسك.",
             "امسح الـ container وشغّل واحد جديد بنفس الـ volume: البيانات موجودة."
-          ]
+          ],
+          sol: R`بعد ما تمسح الـ container وتعمل واحد جديد بنفس [[-v pgdata:/var/lib/postgresql/data]]، [[select * from t]] بيرجّع الصف اللي دخلته ([[1]] و [[(1 row)]]). ولوج Postgres التاني مش هيقول [[initdb]] تاني، هيقول [[Skipping initialization]] لأنه لقى البيانات.
+
+[[docker volume inspect pgdata]] بيوري [[Mountpoint]] زي [[/var/lib/docker/volumes/pgdata/_data]]: البيانات عايشة هناك على الجهاز، مش جوه الـ container.
+
+الغلط الشائع: الجدول اختفى. يبقى الاسم في [[-v]] اتكتب غلط (فاتعمل volume جديد فاضي)، أو المسار جوه الـ container غلط، أو استخدمت [[postgres:18]] اللي المسار المقترح فيها بقى [[/var/lib/postgresql]]. و [[psql: could not connect]] أول ثواني طبيعي: استنى الـ DB تقوم.`,
+          solCode: R`docker volume create pgdata
+docker run -d --name db -v pgdata:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret postgres:16-alpine
+sleep 5
+docker exec db psql -U postgres -c "create table t(x int); insert into t values(1);"
+docker rm -f db
+docker run -d --name db -v pgdata:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret postgres:16-alpine
+sleep 3
+docker exec db psql -U postgres -c "select * from t"`
         },
         {
           cmd: "bind mount",
@@ -866,7 +1022,12 @@ docker run -it --rm -v $(pwd):/app -w /app node:22-alpine npm test`,
           lines: [
             "اربط فولدر site من جهازك على مسار ملفات nginx، للقراءة بس.",
             "شغّل الاختبارات من صورة node على كودك: الفولدر الحالي على /app، واشتغل من هناك."
-          ]
+          ],
+          sol: R`أول مرة الصفحة بتوري المحتوى القديم، وبعد ما تعدّل [[site/index.html]] من جهازك وتعمل ريفريش بتوري الجديد على طول، من غير build ولا restart. جربتها: [[<h1>v1</h1>]] وبعد التعديل [[<h1>v2</h1>]].
+
+ده لأن الفولدر نفسه متوصل جوه الـ container، مش نسخة منه. و [[:ro]] معناها nginx يقرا بس، ومايقدرش يكتب في فولدرك.
+
+الأغلاط الشائعة: الصفحة 403 أو صفحة nginx الافتراضية: المسار غلط (مثلًا انت مش في الفولدر اللي فيه [[site]])، و Docker بيعمل فولدر فاضي لو المسار مش موجود. وعلى ويندوز في PowerShell [[$(pwd)]] ممكن تبوظ بسبب المسافات؛ حطها بين علامتين أو استخدم [[$__{PWD}]].`
         },
         {
           cmd: "networks",
@@ -894,7 +1055,16 @@ docker network inspect appnet`,
             "القاعدة على الشبكة، من غير -p خالص.",
             "container مؤقت على نفس الشبكة يتصل بالقاعدة باسمها db.",
             "مين على الشبكة وبأي IP."
-          ]
+          ],
+          sol: R`من container على نفس الشبكة: [[ping -c1 db]] بيطبع [[PING db (172.19.0.2)]] و [[64 bytes from 172.19.0.2]]، و [[nc -zv db 5432]] بيطبع [[db (172.19.0.2:5432) open]]. يعني الاسم اتحل لـ IP والبورت مفتوح.
+
+ومن container مش على الشبكة (على الـ bridge الافتراضية) نفس الأمر بيقول [[ping: bad address 'db']]: الأسامي بتشتغل بس جوه شبكة انت عاملها ([[docker network create]]) أو شبكة compose.
+
+الغلط الشائع: تحاول [[localhost:5432]] من container التطبيق فيرد [[Connection refused]]، لأن localhost جوه الـ container هو الـ container نفسه. استخدم اسم الـ service. و [[psql -h db]] ممكن يطلع [[Connection refused]] أول ثواني وقاعدة البيانات لسه بتقوم.`,
+          solCode: R`docker network create appnet
+docker run -d --name db --network appnet -e POSTGRES_PASSWORD=secret postgres:16-alpine
+docker run --rm --network appnet alpine sh -c "ping -c1 db; nc -zv db 5432"
+docker run --rm alpine ping -c1 db`
         },
         {
           cmd: "env file",
@@ -916,7 +1086,12 @@ docker exec api env | sort`,
             when: "كل container إنتاج. الملف على السيرفر بصلاحيات 600.",
             mistakes: ".env جوه الـ image (نسيان .dockerignore)، أو ملف .env على السيرفر مقروء لكل اليوزرز."
           },
-          lines: ["كل المتغيرات من الملف.", "الملف، و -e بتغطي على متغير واحد منه.", "اتأكد إن المتغيرات وصلت."]
+          lines: ["كل المتغيرات من الملف.", "الملف، و -e بتغطي على متغير واحد منه.", "اتأكد إن المتغيرات وصلت."],
+          sol: R`[[docker exec api env | sort]] بيوري المتغيرات اللي في الملف بالظبط زي [[API_KEY=abc]] و [[PORT=3000]]، ومعاهم متغيرات الـ image نفسها زي [[NODE_VERSION=22.x]] و [[PATH]] و [[HOSTNAME]].
+
+ولو ضفت [[-e PORT=4000]] مع [[--env-file]]، [[env]] هيوري [[PORT=4000]]: الـ [[-e]] بيكسب.
+
+الأغلاط الشائعة: قيمة ظاهرة بعلامات تنصيص زي [[API_KEY="abc"]]: [[docker run --env-file]] مابيشيلش العلامات (عكس compose)، فاكتب القيم من غير تنصيص. ولو عدّلت [[.env]] والتطبيق لسه شايف القديم، المتغيرات بتتقري وقت إنشاء الـ container بس؛ لازم [[docker rm -f]] وتشغّل من جديد، مش restart.`
         },
         {
           cmd: "bind mount لملف واحد",
@@ -951,7 +1126,19 @@ docker exec web nginx -t && docker exec web nginx -s reload
             "رقم الـ inode على السيرفر.",
             "رقمه جوه الـ container: لازم يبقى هو هو.",
             "اختبر الإعدادات، ولو سليمة اعمل reload."
-          ]
+          ],
+          sol: R`قبل أي تعديل رقم الـ inode بره وجوه واحد (عندي [[2214043]] الاتنين). بعد [[sed -i]] الرقم بره اتغير ([[2214050]]) وجوه فضل القديم، و [[grep]] جوه الـ container بيوري المحتوى القديم. ده لأن [[sed -i]] بيكتب ملف جديد ويبدّله بالاسم، والـ container لسه ماسك الملف القديم.
+
+بعد [[docker restart web]] الرقمين بقوا زي بعض تاني. ومن هنا لو كتبت بـ [[cat new.conf > file]] الرقم مابيتغيرش، والتعديل بيبان جوه على طول، و [[nginx -t]] و [[nginx -s reload]] كفاية.
+
+الغلط الشائع: تعمل [[nginx -s reload]] بعد التعديل بمحرر زي VS Code أو [[sed -i]] وتستغرب إن مفيش حاجة اتغيرت. الأسهل: اربط الفولدر كله ([[./nginx:/etc/nginx/conf.d]]) بدل ملف واحد.`,
+          solCode: R`docker run -d --name web -v $(pwd)/nginx/default.conf:/etc/nginx/conf.d/default.conf nginx:alpine
+stat -c %i nginx/default.conf; docker exec web stat -c %i /etc/nginx/conf.d/default.conf
+sed -i 's/localhost;/localhost2;/' nginx/default.conf
+stat -c %i nginx/default.conf; docker exec web stat -c %i /etc/nginx/conf.d/default.conf
+docker restart web
+cat new.conf > nginx/default.conf
+stat -c %i nginx/default.conf; docker exec web stat -c %i /etc/nginx/conf.d/default.conf`
         },
         {
           cmd: "volume external",
@@ -981,7 +1168,12 @@ volumes:
             "المفتاح اللي الخدمات بتستخدمه.",
             "الاسم الحقيقي من غير بادئة المشروع.",
             "موجود بره: compose ميعملوش وميمسحوش."
-          ]
+          ],
+          sol: R`[[docker compose down -v]] بيطبع إنه شال الـ containers والـ network، لكن مفيش سطر [[Volume ... Removed]] للـ volume الـ external. و [[docker volume ls]] بعدها لسه بيوري [[pgdata]].
+
+قارنها بـ volume عادي: نفس الأمر بيطبع [[Volume myapp_pgdata Removed]] والبيانات بتروح. الـ external معناه «compose مش صاحبه»، فلا بيعمله ولا بيمسحه.
+
+الغلط الشائع: [[docker compose up]] يقول [[external volume "pgdata" not found]]: لازم [[docker volume create pgdata]] الأول. ولو نسيت [[name: pgdata]]، compose ممكن يدوّر على اسم تاني، فاكتبه صريح.`
         },
         {
           cmd: "شبكة مشتركة",
@@ -1021,7 +1213,12 @@ networks:
             "تعريف الشبكات.",
             "الشبكة المشتركة...",
             "...موجودة بره: انضم لها بس."
-          ]
+          ],
+          sol: R`[[docker compose exec nginx wget -qO- http://myapp:3000]] بيطبع رد التطبيق (HTML أو JSON). ده معناه إن الاتنين على شبكة [[proxy]] والاسم بيتحل. و [[docker network inspect proxy]] بيوري الـ containers الاتنين تحت [[Containers]].
+
+كل مشروع لسه على شبكته [[default]] كمان، فقاعدة بيانات المشروع مش ظاهرة للمشاريع التانية طالما مش على proxy.
+
+الأغلاط الشائعة: [[network proxy declared as external, but could not be found]]: نسيت [[docker network create proxy]]. و [[wget: bad address 'myapp']]: الخدمة مش على proxy (نسيت [[networks: [default, proxy]]]) أو اسم الخدمة غير اللي بتطلبه. ولو مشروعين فيهم خدمة بنفس الاسم [[app]] على proxy، الاسم هيتحل لأي واحد منهم؛ استخدم أسامي مختلفة أو [[container_name]] أو aliases.`
         },
         {
           cmd: "0.0.0.0 جوه الـ container",
@@ -1060,7 +1257,12 @@ networks:
             "البورت من جهازك للـ container.",
             "أسماء إضافية في /etc/hosts جوه الـ container:",
             "host.docker.internal يشاور على جهازك (لازم على لينكس، Docker Desktop بيعملها لوحده)."
-          ]
+          ],
+          sol: R`من غير [[--host]]: [[docker exec web wget -qO- localhost:5173]] بيرجع صفحة Vite (شغال من جوه)، لكن [[curl localhost:5173]] من جهازك بيطلع [[Recv failure: Connection reset by peer]] أو [[Empty reply from server]]، والمتصفح بيقول الصفحة مش متاحة.
+
+بعد [[--host 0.0.0.0]] وإعادة التشغيل: الاتنين بيشتغلوا. جربتها بسيرفر Node: على [[127.0.0.1]] الـ curl من بره فشل بـ exit 56، وعلى [[0.0.0.0]] رد عادي.
+
+الغلط الشائع: تفتكر المشكلة في [[ports]] وتغيّرها. Docker بيوصّل البورت لـ interface الشبكة بتاع الـ container، والتطبيق اللي سامع على 127.0.0.1 مش سامع هناك. ونفس الكلام لـ Next ([[-H 0.0.0.0]]) و FastAPI ([[--host 0.0.0.0]]).`
         }
       ]
     },
@@ -1112,7 +1314,12 @@ networks:
             "المتغيرات.",
             "Next يعمل polling بدل ما يستنى إشعارات مش جاية.",
             "ونفس الحكاية للأدوات المبنية على chokidar."
-          ]
+          ],
+          sol: R`من غير سطور POLLING (والمشروع على درايف ويندوز زي [[C:]] أو [[/mnt/c]]): بتحفظ الملف ومفيش حاجة بتحصل، ولا [[docker compose logs -f web]] بيطبع [[Compiling]]. ده لأن أحداث تغيير الملفات مش بتعدّي من ويندوز لجوه VM بتاع Docker.
+
+بعد ما تضيفهم و [[docker compose up -d]] (بيعمل recreate للـ container لأن environment اتغير): أي حفظ بيطلّع في اللوج [[○ Compiling /page ...]] أو [[✓ Compiled]] والصفحة بتتحدث في ثانية أو اتنين.
+
+لو المشروع جوه فايلات WSL نفسها ([[~/projects]] مش [[/mnt/c]]) غالبًا هيشتغل من غير polling وأسرع بكتير، ودي الطريقة الأحسن. الغلط الشائع: تعمل [[docker compose restart]] بعد إضافة المتغيرات، و restart مش بيقرا environment جديد؛ لازم [[up -d]].`
         },
         {
           cmd: "البورت متاخد",
@@ -1141,7 +1348,12 @@ networks:
             "البورتات.",
             "Postgres: 5433 على جهازك بس، لـ 5432 جوه.",
             "التطبيق: 3010 على السيرفر بس (Nginx يوصله)، لـ 3000 جوه."
-          ]
+          ],
+          sol: R`[[psql -h localhost -p 5433 -U myapp myapp]] من جهازك بيدخلك Postgres اللي في Docker، و [[select version();]] هيوري نسخة الـ image. و [[docker compose port db 5432]] بيطبع [[127.0.0.1:5433]].
+
+يعني البورت 5432 جوه الـ container (وده اللي الـ containers التانية بتستخدمه بـ [[db:5432]])، و 5433 على جهازك بس. و Postgres بتاع جهازك لسه على 5432 ومحدش اتخانق.
+
+الغلط الشائع: [[psql -p 5433]] من غير [[-h localhost]] على لينكس بيحاول socket محلي ويقول [[No such file or directory]]، لأن من غير host بيروح لـ Postgres الجهاز. ولو [[connection refused]] اتأكد إنك كتبت [[5433:5432]] مش [[5432:5433]]: الشمال جهازك واليمين جوه.`
         },
         {
           cmd: "docker compose ولا docker-compose",
@@ -1172,7 +1384,12 @@ $DC up -d --build`,
             "...ولو لأ، دوّر على القديمة...",
             "...ولو ولا واحدة، وقّف برسالة.",
             "باقي السكربت يستخدم المتغير."
-          ]
+          ],
+          sol: R`على أي سيرفر Docker حديث [[docker compose version]] بيطبع [[Docker Compose version v2.x]] أو أحدث (عندي [[v5.1.1]]). و [[docker-compose version]] غالبًا بيطبع [[command not found]]، إلا لو حد مسطّب النسخة القديمة v1 (بتطبع [[docker-compose version 1.29.x]]) أو الـ binary المنفصل.
+
+لو [[docker compose]] قال [[docker: 'compose' is not a docker command]]: سطّب [[sudo apt install docker-compose-plugin]] (من repo بتاع Docker)، وجرّب تاني.
+
+الغلط الشائع: تفضل على v1 القديمة. هي متوقفة من ٢٠٢٣ ومش بتفهم حاجات زي [[depends_on.condition]] الجديدة ولا [[develop.watch]]، وأسماء الـ containers فيها بشرطة سفلية بدل الشرطة، فالسكربتات تتلخبط.`
         },
         {
           cmd: "-f و -p",
@@ -1202,7 +1419,17 @@ docker compose -p myapp2 down`,
             "حالة النسخة التانية بس.",
             "شوف الملف النهائي بعد الدمج.",
             "اقفل النسخة التانية بس (الـ -p مهمة هنا)."
-          ]
+          ],
+          sol: R`[[docker compose -p myapp2 ps]] بيوري containers أساميها بتبدأ بـ [[myapp2-]] (زي [[myapp2-web-1]])، و [[docker compose ps]] العادي بيوري بتاعة المشروع الأصلي بس. الاتنين بيفتحوا في المتصفح على البورتين المختلفين، ولكل واحد volumes وشبكة خاصة بيه.
+
+و [[config]] بيوريك الـ ports النهائية بعد الدمج. خلّي بالك: الـ [[ports]] في الملف التاني بتتضاف على اللي في الأول مش بتحل محلها، فلو الأول فيه [[8080:80]] النسخة التانية هتحاول تاخده برضه وتفشل بـ [[port is already allocated]]. الحل تحط البورت في [[.env]] كمتغير، أو تكتب [[ports: !override ["8081:80"]]] في الملف التاني (جربتها وكل نسخة طلعت على بورتها).
+
+الغلط الشائع: تنسى [[-p myapp2]] في [[down]]، فتقفل النسخة الأصلية بدل التانية.`,
+          solCode: R`printf 'services:\n  web:\n    ports: !override ["127.0.0.1:8081:80"]\n' > compose.second.yml
+docker compose up -d
+docker compose -p myapp2 -f compose.yml -f compose.second.yml up -d
+docker compose -p myapp2 ps
+docker compose -p myapp2 down`
         },
         {
           cmd: "التعديل مش ظاهر",
@@ -1236,7 +1463,12 @@ docker compose --progress=plain build --no-cache web`,
             "التعديل موجود جوه الـ container فعلًا؟",
             "أعد إنشاء الـ container حتى لو مفيش تغيير في الإعدادات.",
             "آخر حل: ابني من غير كاش، والـ output كامل عشان تشوف أنهي خطوة."
-          ]
+          ],
+          sol: R`[[docker compose exec web grep -rl "النص الجديد" /usr/share/nginx/html]] (أو المسار اللي فيه الـ build) بيطبع اسم ملف زي [[/usr/share/nginx/html/assets/index-B2x9.js]] لو التعديل وصل. ساعتها المشكلة في المتصفح أو CDN: Ctrl+Shift+R أو افتح incognito.
+
+لو الـ grep مطلّعش حاجة، يبقى الـ image القديمة لسه شغالة. قارن [[docker compose images web]] (الـ ID والوقت) بـ آخر build، وشوف هل الـ container اتعمله recreate فعلًا. [[up -d --force-recreate]] بيحل ده، ولو لسه، [[--no-cache]] مع [[--progress=plain]] يوريك خطوة الـ COPY نسخت إيه.
+
+الغلط الشائع: النص مكتوب في ملف [[.env]] أو متغير [[VITE_]] ومتغيرات Vite بتتحط وقت البناء. أو الـ [[.dockerignore]] مستبعد الفولدر اللي عدّلته.`
         }
       ]
     },
@@ -1318,7 +1550,12 @@ volumes:
             "ترجع لو وقعت.",
             "تعريف الـ volumes.",
             "pgdata (Docker يعمله لو مش موجود)."
-          ]
+          ],
+          sol: R`[[docker compose up -d]] بيطبع ترتيب زي: [[Container myapp-db-1 Started]] وبعدها [[Container myapp-db-1 Waiting]] وبعدها [[Container myapp-db-1 Healthy]]، وبعد كده بس [[Container myapp-api-1 Starting]] و [[Started]]. ده [[condition: service_healthy]] شغال: api استنى الـ healthcheck.
+
+و [[docker compose ps]] بيوري الاتنين [[Up ... (healthy)]] للـ db و [[Up]] للـ api.
+
+الغلط الشائع: [[dependency failed to start: container myapp-db-1 is unhealthy]]: الـ healthcheck بيفشل (مثلًا [[pg_isready -U postgres]] واليوزر عندك اسمه تاني). شوف [[docker inspect --format '{{json .State.Health}}' myapp-db-1]]. ولو [[env file .env not found]]، اعمل ملف [[.env]] حتى لو فاضي.`
         },
         {
           cmd: "compose up / down",
@@ -1352,7 +1589,12 @@ docker compose down`,
             "ادخل api.",
             "أعد تشغيل api بنفس الصورة (مش بيقرا تعديلات).",
             "اقفل وامسح الـ containers والشبكة (الـ volumes تفضل)."
-          ]
+          ],
+          sol: R`بعد ما تعدّل كود الـ api وتعمل [[docker compose up -d --build]]، الناتج بيوري [[Container myapp-db-1 Running]] (ماتلمسش) و [[Container myapp-api-1 Recreate]] و [[Recreated]] و [[Started]]. عندي بالظبط كده، و curl بعدها رجّع النص الجديد.
+
+ده لأن compose بيقارن إعدادات كل خدمة والـ image بتاعتها: db الـ image والإعدادات زي ما هي، فمفيش سبب يعيده.
+
+الغلط الشائع: [[docker compose restart api]] بعد تعديل الكود ومفيش حاجة تتغير: restart بيعيد تشغيل نفس الـ container بنفس الـ image القديمة. محتاج [[up -d --build]]. وخلّي بالك إن [[down -v]] بيمسح الـ volumes، يعني قاعدة البيانات.`
         },
         {
           cmd: "dev و prod",
@@ -1401,7 +1643,12 @@ docker compose down`,
             "volume فاضي فوق node_modules عشان يحمي اللي جوه الصورة من التغطية.",
             "المتغيرات.",
             "وضع التطوير."
-          ]
+          ],
+          sol: R`[[docker compose up]] بيقرا [[compose.yml]] و [[compose.override.yml]] لوحده، فهتلاقي في اللوج [[[nodemon] starting $__btnode server.js$__bt]]. ولما تعدّل ملف وتحفظ: [[[nodemon] restarting due to changes...]] وبعدها [[starting]] تاني، من غير build.
+
+و [[docker compose config]] بيوري الدمج: [[command: npm run dev]] و [[target: build]] والبورتين والـ volumes.
+
+الأغلاط الشائعة: [[nodemon: not found]]: مرحلة الـ build مفيهاش devDependencies (اتسطبت بـ [[--omit=dev]]) أو الـ target غلط. والتعديل مش بيوصل على ويندوز: ضيف polling (درس hot reload). وفي الإنتاج اكتب [[docker compose -f compose.yml up -d]] صريح عشان الـ override مايتقريش.`
         },
         {
           cmd: "compose watch",
@@ -1442,7 +1689,12 @@ docker compose down`,
             "...لـ /app/src جوه الـ container.",
             "القاعدة التانية: أعد البناء...",
             "...لو package.json اتغير."
-          ]
+          ],
+          sol: R`[[docker compose watch]] بيبني ويشغّل ويطبع [[Watch enabled]]. لما تعدّل ملف في [[src]]: [[Syncing service "api" after 1 changes were detected]]، و [[docker compose exec api cat /app/src/الملف]] بيوري المحتوى الجديد، من غير build.
+
+لما تعدّل [[package.json]] (زي ما تضيف باكدج): [[Rebuilding service(s) ["api"] after changes were detected...]] وبعدها [[Container ...-api-1 Recreated]] و [[Started]]. جربت الاتنين والنتيجة كانت كده بالظبط.
+
+الغلط الشائع: الـ sync بيوصل بس التطبيق مش بيعيد التحميل، لأن الـ container شغال بـ [[node]] مش nodemon أو [[node --watch]]؛ الـ sync بينقل الملف بس. و [[path]] لازم يبقى نسبي من مكان الـ compose.yml، و [[target]] مسار جوه الـ container.`
         },
         {
           cmd: "profiles و scale",
@@ -1470,7 +1722,22 @@ docker compose pull && docker compose up -d`,
             "٣ نسخ من worker.",
             "اطبع الملف النهائي بعد الدمج والمتغيرات.",
             "deploy لو الصور من registry: نزّل الجديد وطبّق."
-          ]
+          ],
+          sol: R`[[docker compose up -d]] العادي مش بيشغّل adminer خالص. و [[docker compose --profile tools up -d]] بيطبع [[Container myapp-adminer-1 Created]] و [[Started]] والباقي [[Running]]، و [[docker compose ps]] بيوريه في القايمة.
+
+والخدمة نفسها:
+[[adminer: { image: adminer, profiles: [tools], ports: ["127.0.0.1:8081:8080"] }]].
+
+الغلط الشائع: [[docker compose down]] من غير [[--profile tools]] ممكن يسيب adminer شغال أو يشتكي إن الشبكة لسه مستخدمة. استخدم نفس الـ profile في down. و [[--scale]] مع خدمة عندها [[container_name]] أو بورت ثابت زي [[3000:3000]] هيفشل بـ [[port is already allocated]]، فالخدمة اللي بتعملها scale ماتنشرش بورت.`,
+          solCode: R`cat >> compose.yml <<'EOF2'
+  adminer:
+    image: adminer
+    profiles: [tools]
+    ports: ["127.0.0.1:8081:8080"]
+EOF2
+docker compose up -d
+docker compose --profile tools up -d
+docker compose --profile tools ps`
         },
         {
           cmd: "أوامر مفيدة",
@@ -1497,7 +1764,12 @@ docker compose down -v --remove-orphans`,
             "العمليات جوه كل خدمة.",
             "لوجات كل الخدمات في آخر ٥ دقايق.",
             "امسح كل حاجة بما فيها volumes وخدمات اتشالت من الملف. للتطوير بس."
-          ]
+          ],
+          sol: R`[[docker compose config]] بيطبع ملف واحد متدمج ومتنضف: كل خدمة بـ [[environment]] فيه القيم الحقيقية بعد التعويض من [[.env]] (وحتى [[env_file]] بيتحول لقيم)، والـ [[volumes]] مكتوبة بالشكل الطويل [[type: volume]] و [[source]] و [[target]]، والـ ports بـ [[published]] و [[target]]، واسم الشبكة الافتراضية [[myapp_default]].
+
+لو عندك [[compose.override.yml]]، هتلاقي حاجاته متدمجة فوق الأصلي (مثلًا [[command: npm run dev]]). ده أسرع طريقة تعرف «إيه اللي Compose شايفه فعلًا».
+
+خلّي بالك: الناتج فيه الأسرار بقيمها، فماتلصقوش في issue أو شات. والغلط الشائع إن الأمر يقع برسالة زي [[yaml: line 12: did not find expected key]]: ده غلط مسافات في الملف، والرقم بيقولك فين.`
         },
         {
           cmd: "متغيرات في compose.yml",
@@ -1540,7 +1812,12 @@ docker compose down -v --remove-orphans`,
             "رابط Redis، وافتراضيًا الخدمة اللي في نفس المشروع.",
             "اختياري: لو مش موجود يتبعت فاضي من غير تحذير.",
             "إجباري: لو ناقص، compose يوقف بالرسالة دي."
-          ]
+          ],
+          sol: R`من غير [[DB_PASSWORD]]: [[docker compose config]] بيقف ويطبع [[required variable DB_PASSWORD is missing a value: DB_PASSWORD missing in .env]] ويخرج بـ 1. وده نفس اللي هيحصل مع [[up]]، فالنشر مش هيكمل بباسورد فاضي.
+
+بعد ما ترجّعه: الناتج فيه [[DB_PASSWORD: s3cret]] و [[REDIS_URL: redis://redis:6379]] (الافتراضي) و [[SENTRY_DSN: ""]] و [[image: ghcr.io/USER/myapi:latest]] و [[published: "3000"]]. جربته بالظبط كده.
+
+الغلط الشائع: تحط المتغير في ملف [[env_file]] تاني غير [[.env]] وتستغرب إنه مش بيتعوض: التعويض [[$__{...}]] جوه compose.yml بيقرا من [[.env]] جنب الملف (أو [[--env-file]]) ومن الـ shell، مش من [[env_file:]] بتاع الخدمة.`
         },
         {
           cmd: "healthchecks جاهزة",
@@ -1605,12 +1882,17 @@ Redis: [[--appendonly yes]] بيحفظ كل عملية على الديسك فا�
             "وليها فحص صحة هي كمان:",
             "اطلب /health بـ wget (مفيش curl في alpine) واتأكد إن الرد فيه ok.",
             "أول ٣٠ ثانية الفشل مش بيتحسب."
-          ]
+          ],
+          sol: R`[[docker compose up -d --wait]] بيفضل يطبع [[Waiting]] لحد ما يطبع [[Healthy]] لكل خدمة، وبعدين بيرجّعك للـ prompt بـ exit code 0. لو خدمة وقعت أو فضلت unhealthy بيطبع زي [[container myapp-api-1 is unhealthy]] ويرجع بـ 1، فتقدر تستخدمه في سكربت ديبلوي.
+
+لما تبوّظ [[/health]]: [[docker compose exec api sh -c 'wget -qO- http://localhost:3000/health | grep -q ok || exit 1'; echo $?]] بيطبع [[wget: server returned error: HTTP/1.1 404 Not Found]] و [[1]]. وبعد كام محاولة [[docker compose ps]] بيوري [[(unhealthy)]].
+
+الغلط الشائع: الـ healthcheck بيستخدم [[curl]] والـ image alpine مفيهاش curl، فيفضل unhealthy للأبد. استخدم [[wget]] أو node نفسه. وفي compose لازم [[$$]] بدل [[$]] جوه الـ test.`
         },
         {
           cmd: "exec -T",
           title: "تبعت ملف أو pipe لأمر جوه الـ container",
-          desc: R`[[docker compose exec]] بيفتح TTY افتراضيًا، وده بيبوّظ أي input جاي من ملف أو pipe، وبيفشل خالص في cron ([[the input device is not a TTY]]). [[-T]] بيقفل الـ TTY، فتقدر تعمل [[< file.sql]] أو [[gunzip | ...]] لأمر جوه الـ container. أي exec في سكربت لازم يبقى معاه [[-T]].`,
+          desc: R`[[docker compose exec]] بيفتح TTY افتراضيًا، وده بيبوّظ أي input جاي من ملف أو pipe، ولو شغّلته من الترمنال و input جاي من ملف بيفشل خالص ([[the input device is not a TTY]]). [[-T]] بيقفل الـ TTY، فتقدر تعمل [[< file.sql]] أو [[gunzip | ...]] لأمر جوه الـ container. أي exec في سكربت لازم يبقى معاه [[-T]].`,
           example: R`docker compose exec -T db psql -v ON_ERROR_STOP=1 -U app -d appdb < db/migrations/10-schema.sql
 gunzip -c backups/appdb-2026-09-01.sql.gz | docker compose exec -T db psql -U app -d appdb
 docker compose exec -T db pg_dump -U app -Fc appdb > appdb.dump
@@ -1639,7 +1921,12 @@ docker compose exec -T n8n rm -f /tmp/creds.json`,
             "انقل ملف لخدمة n8n باسمها.",
             "استورده من جوه.",
             "وامسحه على طول لأن فيه أسرار."
-          ]
+          ],
+          sol: R`[[docker compose exec -T db psql -v ON_ERROR_STOP=1 -U app -d appdb < file.sql]] بيطبع ناتج كل أمر ([[CREATE TABLE]] و [[INSERT 0 2]]) ويخرج بـ 0. ولو فيه غلطة في الـ SQL بيقف عندها ويخرج بـ 3 بسبب [[ON_ERROR_STOP]].
+
+من غير [[-T]] وانت شغّال السكربت من ترمنال عادي (والـ input جاي من ملف)، بيقع على طول بـ [[the input device is not a TTY]] و exit 1. جربتها. من cron أو CI (مفيش ترمنال خالص) Compose الحديث ممكن يعدّيها، بس ماتعتمدش على ده: حط [[-T]] في أي سكربت.
+
+الغلط الشائع: تشغّل الملف مرتين، فالمرة التانية تطلع [[ERROR: relation "items" already exists]]. ومن غير [[ON_ERROR_STOP]] بيكمل بعد الغلطة ويخرج بـ 0، فالسكربت يفتكر كله تمام.`
         },
         {
           cmd: "compose run",
@@ -1675,7 +1962,12 @@ docker compose run --rm app npx prisma migrate deploy`,
             "...و Redis على قاعدة ١٥ منفصلة...",
             "...وشغّل pytest من غير ما يكتب ملفات كاش.",
             "استخدام تاني: migration لمرة في container بيتمسح."
-          ]
+          ],
+          sol: R`[[docker compose run --rm --no-deps -e DATABASE_URL=postgresql://x@db/app_test app env | grep DATABASE_URL]] بيطبع القيمة الجديدة، و [[docker compose exec app env | grep DATABASE_URL]] بيطبع القيمة الأصلية زي ما هي. جربتها وطلع [[app_test]] في الأول والأصلية في التاني.
+
+ده لأن [[run]] بيعمل container جديد مؤقت اسمه زي [[myapp-app-run-7375a64e3329]]، بإعدادات الخدمة زائد اللي انت غيرته، وبيتمسح بسبب [[--rm]]. والخدمة الشغالة ماتلمستش.
+
+الغلط الشائع: تنسى [[--rm]] فتتراكم containers [[-run-]] في [[docker compose ps -a]]. ومن غير [[--no-deps]] الـ run بيشغّل db و redis لو واقفين. و [[run]] مابينشرش [[ports]] إلا لو ضفت [[--service-ports]].`
         },
         {
           cmd: "x- و anchors",
@@ -1724,7 +2016,12 @@ services:
             "خدمة الـ worker:",
             "نفس الإعدادات...",
             "...بأمر مختلف."
-          ]
+          ],
+          sol: R`[[docker compose config]] بيوري [[web]] و [[worker]] الاتنين فيهم نفس [[image]] و [[env_file]] (متحول لـ environment) و [[restart: unless-stopped]] و [[depends_on]]، وكل واحد بالـ [[command]] بتاعه. و [[web]] بس اللي فيه [[ports]]. وقسم [[x-app-common]] مش ظاهر كخدمة.
+
+جربتها بخدمتين من anchor واحد، والاتنين طلعوا بنفس الإعدادات والـ [[command]] المختلف.
+
+الغلط الشائع: تكتب [[<<: *app-common]] وبعدين [[environment]] في الخدمة، فتلاقي environment بتاع الـ anchor اتمسح. الـ [[<<]] بيدمج أول مستوى بس؛ لو الخدمة فيها نفس المفتاح بيحل محله بالكامل، مش بيدمج جواه. وتعريف الـ anchor لازم يبقى قبل استخدامه في الملف.`
         }
       ]
     },
@@ -1763,7 +2060,12 @@ docker image prune -f`,
             "الطريقة التانية: نزّل الصور الجاهزة وشغّل.",
             "أعد إنشاء api حتى لو الإعدادات متغيرتش (بعد تعديل env file).",
             "امسح الصور القديمة بعد كل deploy."
-          ]
+          ],
+          sol: R`[[time (git pull && docker compose up -d --build)]] بيطبع خطوات البناء وفي الآخر [[real 1m30s]] مثلًا. الرقم بيعتمد على السيرفر: على سيرفر 1GB RAM بناء Next أو TypeScript ممكن ياخد دقايق.
+
+والإشارة إن الـ build لازم يتنقل لـ CI: [[npm ci]] أو [[npm run build]] بيقع بـ [[Killed]] أو [[JavaScript heap out of memory]]، أو SSH يعلّق وقت البناء، أو الموقع نفسه يبطأ للزوار وقت الـ deploy. شوف [[free -h]] و [[docker stats]] أثناء البناء.
+
+وافتكر إن الموقع بيقف ثواني وقت الـ recreate، ده طبيعي في الطريقة دي. والغلط الشائع: [[git pull]] يفشل بسبب تعديل يدوي على السيرفر، فالسكربت بيكمل ويبني الكود القديم. خلّي [[set -e]] أول السكربت.`
         },
         {
           cmd: "restart policies",
@@ -1791,7 +2093,12 @@ docker inspect --format '{{.HostConfig.RestartPolicy.Name}}' api`,
             "شغّل بسياسة: ارجع إلا لو انا وقّفتك.",
             "غيّر السياسة لـ container شغال.",
             "اتأكد من السياسة الحالية."
-          ]
+          ],
+          sol: R`بعد [[sudo reboot]] ورجوع SSH، [[docker ps]] بيوري الـ container [[Up X seconds]] (أو دقايق) من غير ما تعمل حاجة. و [[docker inspect --format '{{.HostConfig.RestartPolicy.Name}}' api]] بيطبع [[unless-stopped]].
+
+ده بيشتغل لأن خدمة Docker نفسها بتقوم مع الجهاز ([[systemctl is-enabled docker]] بيقول [[enabled]]) وبتشغّل الـ containers اللي الـ policy بتاعتها بتقول كده.
+
+الغلط الشائع: لو عملت [[docker stop api]] قبل الـ reboot، مش هيرجع، وده معنى unless-stopped بالظبط. ولو خدمة docker نفسها مش enabled مفيش حاجة هترجع: [[sudo systemctl enable docker]].`
         },
         {
           cmd: "ليه الـ container وقع",
@@ -1819,7 +2126,17 @@ docker events --since 1h --filter container=api`,
             "آخر ٥٠ سطر: الـ error هنا.",
             "رقم الخروج، ورسالة الخطأ، ووقت الوقوع.",
             "كل الأحداث لـ api في آخر ساعة."
-          ]
+          ],
+          sol: R`[[docker ps -a]] بيوري [[bad]] بحالة [[Exited (1)]]. و [[docker inspect --format '{{.State.ExitCode}} {{.State.Error}} {{.State.FinishedAt}}' bad]] بيطبع [[1]] وبعدها وقت الوقوع (الـ Error فاضي لأن Docker نفسه ماغلطش، البرنامج هو اللي خرج).
+
+و [[docker logs bad]] بيوري السبب الحقيقي: [[Error: Cannot find module '/nothing.js']] و [[code: 'MODULE_NOT_FOUND']]. لاحظ إن المسار [[/nothing.js]] لأن الـ WORKDIR في صورة node هو [[/]].
+
+قاعدة الأرقام: 1 = التطبيق نفسه وقع (اقرا اللوج)، 137 = اتقتل (OOM أو stop بعد مهلة، شوف [[.State.OOMKilled]])، 139 = segfault، 127 = الأمر مش موجود. والغلط الشائع إنك تدوّر في [[.State.Error]] بس وتلاقيه فاضي فتفتكر مفيش مشكلة.`,
+          solCode: R`docker run --name bad node:22-alpine node nothing.js
+docker ps -a --filter name=bad
+docker inspect --format '{{.State.ExitCode}} {{.State.Error}} {{.State.FinishedAt}}' bad
+docker logs bad
+docker rm bad`
         },
         {
           cmd: "حدود الموارد",
@@ -1841,7 +2158,15 @@ Node لوحده مش بيعرف بالحد وممكن يحاول ياخد أكت
             when: "كل container على سيرفر مشترك. خصوصًا لو السيرفر رامه صغير.",
             mistakes: "حد أقل من اللي التطبيق محتاجه فعلًا، فيفضل يتقتل ويرجع (137 باستمرار). وقاعدة بيانات بحد رام صغير فتبقى بطيئة جدًا."
           },
-          lines: ["أقصى 512 ميجا رام ومعالج واحد.", "زوّد الحد لـ container شغال.", "الاستهلاك مقارنة بالحد."]
+          lines: ["أقصى 512 ميجا رام ومعالج واحد.", "زوّد الحد لـ container شغال.", "الاستهلاك مقارنة بالحد."],
+          sol: R`مع [[--memory 64m]] وتطبيق بياكل ذاكرة، الـ container بيقف و [[docker inspect --format '{{.State.ExitCode}} {{.State.OOMKilled}}' api]] بيطبع [[137 true]]. جربتها بسكربت بيحجز 1MB ورا التاني، واتقتل بـ 137 و OOMKilled=true.
+
+مع حد أكبر (مثلًا 512m) نفس السكربت لحد 100MB خلص عادي بـ 0. و [[docker stats --no-stream]] بيوري الحد في [[MEM USAGE / LIMIT]] زي [[45MiB / 512MiB]].
+
+الغلط الشائع: Node التطبيق نفسه يقع بـ [[JavaScript heap out of memory]] (exit 134) قبل ما يوصل للحد، أو يتقتل فجأة من غير رسالة. خلّي [[--max-old-space-size]] أقل من حد الـ container بحوالي ٢٥٪، وماتحطش الحد أقل من اللي التطبيق بياخده فعلًا في [[docker stats]].`,
+          solCode: R`docker run --name oom --memory 64m node:22-alpine node -e "const a=[];while(true)a.push(Buffer.alloc(1e6,1))"
+docker inspect --format '{{.State.ExitCode}} OOMKilled={{.State.OOMKilled}}' oom
+docker rm oom`
         },
         {
           cmd: "نسخ وباك أب",
@@ -1867,7 +2192,18 @@ docker exec db pg_dump -U postgres app | gzip > db-$(date +%F).sql.gz`,
             "انسخ ملف من جهازك للـ container.",
             "container مؤقت: الـ volume على /data، وفولدرك على /backup، واعمل tar من الأول للتاني (وقّف القاعدة الأول بـ docker stop db، وإلا النسخة ممكن تتكسر).",
             "الأصح للقاعدة: pg_dump من جوه container القاعدة، واضغط، والاسم بالتاريخ."
-          ]
+          ],
+          sol: R`[[tar czf]] بيعمل [[pgdata.tar.gz]] في فولدرك (عندي حوالي 4.5MB لقاعدة فاضية فيها جدول واحد). بعد [[docker volume rm pgdata]] و [[docker volume create pgdata]] والاسترجاع بـ [[tar xzf /backup/pgdata.tar.gz -C /data]]، [[ls]] جوه الـ volume بيوري [[PG_VERSION]] و [[base]] و [[global]]، و Postgres بيقوم والجدول بصفوفه موجود.
+
+الترتيب مهم: وقّف الـ container قبل الـ tar، عشان الملفات ماتبقاش بتتكتب وانت بتنسخها. عشان كده [[pg_dump]] أأمن لقواعد البيانات وهي شغالة.
+
+الغلط الشائع: [[docker volume rm]] يرفض بـ [[volume is in use]]: فيه container (حتى لو واقف) لسه مربوط بيه، امسحه الأول. ولو الاسترجاع حصل في volume فيه بيانات قديمة، الملفات هتتخلط؛ ابدأ دايمًا بـ volume فاضي.`,
+          solCode: R`docker stop db
+docker run --rm -v pgdata:/data -v $(pwd):/backup alpine tar czf /backup/pgdata.tar.gz -C /data .
+docker rm db && docker volume rm pgdata
+docker volume create pgdata
+docker run --rm -v pgdata:/data -v $(pwd):/backup alpine sh -c "tar xzf /backup/pgdata.tar.gz -C /data && ls /data"
+docker run -d --name db -v pgdata:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret postgres:16-alpine`
         },
         {
           cmd: "التشخيص من جوه",
@@ -1897,7 +2233,12 @@ docker run --rm -it --network myapp_default alpine sh`,
             "متغيرات القاعدة وصلت صح؟",
             "القاعدة بترد على البورت من جوه التطبيق؟",
             "container تشخيص مؤقت على شبكة المشروع."
-          ]
+          ],
+          sol: R`الحالة السليمة: [[docker exec api wget -qO- http://localhost:3000/health]] بيطبع [[ok]] أو JSON، و [[docker exec api nc -zv db 5432]] بيطبع [[db (172.x.x.x:5432) open]].
+
+لو الأولى طلعت [[wget: can't connect to remote host (127.0.0.1): Connection refused]]: التطبيق مش سامع أصلًا (وقع أو على بورت تاني)، اقرا [[docker logs api]]. ولو [[wget: server returned error: HTTP/1.1 500]]: التطبيق شغال بس فيه غلطة.
+
+لو التانية طلعت [[nc: bad address 'db']]: الاتنين مش على نفس الشبكة أو اسم الخدمة غلط. ولو [[Connection refused]]: الاسم اتحل بس Postgres واقف أو لسه بيقوم. والغلط الشائع: [[nc: not found]] في بعض الصور؛ استخدم [[docker run --rm -it --network myapp_default alpine sh]] وجرّب من هناك.`
         },
         {
           cmd: "الأمان",
@@ -1927,7 +2268,12 @@ docker history --no-trunc myapi | grep -i secret`,
             "نظام ملفات للقراءة بس، مع /tmp قابل للكتابة في الرام.",
             "افحص الصورة ضد الثغرات المعروفة.",
             "دوّر في تاريخ الصورة على أي سر اتحط بالغلط."
-          ]
+          ],
+          sol: R`[[trivy image myapi:latest]] (بعد ما ينزل قاعدة الثغرات أول مرة) بيطبع جدول لكل مصدر: سطر للنظام زي [[myapi:latest (alpine 3.x)]] وسطر لـ [[Node.js]] (الباكدجات في package-lock). وتحت كل واحد [[Total: N (UNKNOWN: 0, LOW: .., MEDIUM: .., HIGH: .., CRITICAL: ..)]] وجدول فيه [[Library]] و [[Vulnerability]] (رقم CVE) و [[Installed Version]] و [[Fixed Version]].
+
+ركّز على HIGH و CRITICAL اللي ليها [[Fixed Version]]. في النظام الحل غالبًا [[docker pull node:22-alpine]] وتبني تاني، وفي Node تحدّث الباكدج. جرّب [[--severity HIGH,CRITICAL --ignore-unfixed]] عشان القايمة تبقى مفيدة.
+
+ماجربتش trivy هنا، فالأرقام عندك هتختلف حسب تاريخ الـ image. الغلط الشائع: تحاول تصفّر القايمة كلها؛ ثغرات LOW من غير fix أو في باكدج مابتستخدمهاش مش أولوية.`
         },
         {
           cmd: "تنضيف",
@@ -1960,7 +2306,12 @@ docker builder prune -f`,
             "امسح كل صورة مش مستخدمة.",
             "الـ volumes اللي محدش بيستخدمها (راجعها بإيدك).",
             "امسح build cache بس."
-          ]
+          ],
+          sol: R`[[docker system df]] بيطبع جدول بـ [[TYPE TOTAL ACTIVE SIZE RECLAIMABLE]] لأربع حاجات: Images و Containers و Local Volumes و Build Cache. مثلًا عندي: [[Build Cache 74 0 2.827GB 1.59GB]]. و RECLAIMABLE هو اللي ممكن يتمسح من غير ما يأثر على الشغال.
+
+بعد [[docker image prune -f]] و [[docker builder prune -f]] كل أمر بيطبع [[Total reclaimed space: ...]]، و [[system df]] بيوري الأرقام قلّت. وسطر الـ cron الأسبوعي: [[0 4 * * 0 docker image prune -f && docker builder prune -f]] في [[crontab -e]] بتاع يوزر في جروب docker.
+
+الغلط الشائع: [[docker system prune -a --volumes]] على السيرفر عشان توفر مساحة، فتمسح volume فيه قاعدة بيانات container واقف. ماتحطش [[--volumes]] في أي حاجة أوتوماتيك.`
         },
         {
           cmd: "nginx-proxy",
@@ -2006,7 +2357,12 @@ nginx-proxy بيقرا متغيرات كل container شغال، ويولّد إ�
             "على شبكة المشروع وشبكة البروكسي.",
             "تعريف الشبكات:",
             "شبكة البروكسي موجودة بره."
-          ]
+          ],
+          sol: R`بعد ما تشغّل nginx-proxy و acme-companion والمشروع، [[docker logs nginx-proxy]] بيوري إنه ولّد config للدومين، و [[docker logs acme-companion]] بيطبع حاجة زي [[Creating/renewal example.com certificates...]] وبعدين [[Cert success]] (الصياغة بتختلف حسب النسخة).
+
+بعد دقيقة تقريبًا [[curl -I https://example.com]] بيرد [[HTTP/2 200]] بشهادة Let's Encrypt، و [[http://]] بيعمل redirect لـ https.
+
+ماجربتهاش هنا (محتاجة دومين حقيقي وسيرفر). الأغلاط الشائعة: [[503 Service Temporarily Unavailable]] من nginx-proxy معناها إنه مش لاقي container بالـ VIRTUAL_HOST ده على شبكته (نسيت [[networks]] أو الشبكة غلط). والشهادة مش بتطلع لأن DNS مش بيشاور على السيرفر لسه، أو البورت 80 مقفول في الـ firewall، أو خبطت rate limit بتاع Let's Encrypt من كتر المحاولات.`
         },
         {
           cmd: "certbot في compose",
@@ -2047,7 +2403,12 @@ nginx-proxy بيقرا متغيرات كل container شغال، ويولّد إ�
             "loop: جرّب renew، ونام ١٢ ساعة بطريقة تتقطع بالإشارة، و trap عشان يقفل على طول مع down.",
             "خدمة nginx (باقي إعداداتها زي ما هي):",
             "loop في الخلفية يعمل reload كل ٦ ساعات عشان يقرا أي شهادة اتجددت، و nginx نفسه في المقدمة."
-          ]
+          ],
+          sol: R`[[docker compose exec certbot certbot renew --dry-run]] المفروض يطبع [[Processing /etc/letsencrypt/renewal/example.com.conf]] و [[Simulating renewal of an existing certificate for example.com]]، وفي الآخر [[Congratulations, all simulated renewals succeeded:]] وتحتها مسار الشهادة و [[(success)]].
+
+ده معناه إن nginx بيخدم [[/.well-known/acme-challenge/]] من [[/var/www/certbot]] صح، واليوم اللي الشهادة تقرب تخلص فيه الـ loop هيجددها و nginx هيعمل reload لوحده خلال ٦ ساعات.
+
+ماجربتهاش هنا (محتاجة دومين وسيرفر). الغلط الشائع: [[Challenge failed ... 404]]: مسار الـ volume في nginx مش نفس اللي في certbot، أو [[location /.well-known/acme-challenge/]] مش في server بتاع البورت 80. و [[Connection refused]] يعني بورت 80 مقفول.`
         },
         {
           cmd: "Traefik labels",
