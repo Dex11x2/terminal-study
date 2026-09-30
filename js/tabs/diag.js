@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("diag", {

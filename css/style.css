@@ -412,3 +412,57 @@ body[data-shell="projects"]{--accent:var(--a-projects);--t-bg:#042f2e;--t-fg:#ee
 body[data-shell="career"]{--accent:var(--a-career);--t-bg:#2a0a1b;--t-fg:#eef0f3;--t-pr:#f9a8d4;--t-cm:#8b95a5;--t-bar:#2a0a1b}
 .sw[data-s="career"] .top{background:#2a0a1b;color:#eef0f3}
 .sol .term[data-k="career"]{--t-bg:#2a0a1b;--t-fg:#eef0f3;--t-pr:#f9a8d4;--t-cm:#8b95a5;--t-bar:#2a0a1b}
+
+/* auto-checked exercises, level exams, spaced repetition */
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#dueBtn{border-style:solid;font-weight:600}
+#dueBtn b{color:inherit}
+.chk{margin-top:12px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:8px;background:color-mix(in srgb,var(--accent) 4%,var(--surface));min-width:0}
+.chk-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:6px}
+.chk-h .lbl{font-weight:700;color:var(--accent)}
+.chk-eng{font-size:13.5px;color:var(--muted)}
+.chk-ok,.exam-ok{font-size:13px;font-weight:700;color:var(--ok)}
+.chk-more{margin:0 0 8px}
+.chk-more summary{font-size:14px}
+.chk-more .term{margin-top:6px}
+.chk-code{display:block;width:100%;min-height:96px;margin:0;padding:10px 12px;font:14px/1.6 var(--mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;resize:vertical;text-align:left;tab-size:2;white-space:pre;overflow:auto}
+.chk-code:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.chk-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.chk-actions button{all:unset;cursor:pointer;font-size:14.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);background:var(--surface)}
+.chk-actions .chk-run{background:var(--accent);color:var(--surface)}
+.chk-actions button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chk-actions button[disabled]{opacity:.55;cursor:progress}
+.chk-kbd{font-size:12.5px;color:var(--muted)}
+.chk-out:empty{display:none}
+.chk-out{margin-top:10px;font-size:15px}
+.chk-sum{margin:0 0 6px;font-weight:600}
+.chk-sum.ok{color:var(--ok)}
+.chk-sum.bad{color:var(--danger)}
+.chk-wait{margin:0;color:var(--muted)}
+.chk-res{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.chk-res li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;padding:4px 8px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+.chk-res .mk{font-weight:700}
+.chk-res .ok .mk{color:var(--ok)}
+.chk-res .bad .mk{color:var(--danger)}
+.chk-res .bad{border-color:color-mix(in srgb,var(--danger) 40%,var(--line))}
+.chk-res .msg{flex-basis:100%;font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.chk-res .msg code,.chk-sum code{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+.chk-log,.chk-err{margin-top:8px}
+.chk-log pre,.chk-err{margin:4px 0 0;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:6px;font:13px/1.6 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}
+.chk-tbl{margin-top:8px}
+.chk-tbl .cap{margin:0 0 4px;font-size:13.5px;color:var(--muted)}
+.chk-scroll{overflow-x:auto;max-width:100%}
+.chk-tbl table{border-collapse:collapse;font:13.5px/1.5 var(--mono);text-align:left}
+.chk-tbl th,.chk-tbl td{border:1px solid var(--line);padding:3px 10px}
+.chk-tbl th{text-align:left;background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.chk-tbl .nul{color:var(--muted);font-style:italic}
+body.quiz article.cmd:not(.shown) .chk{display:none}
+.exam-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:10px}
+.exam-last{font-size:14px;color:var(--muted)}
+.lv-b{margin-inline-start:6px;font-weight:700;color:var(--ok)}
+.lv[aria-pressed="true"] .lv-b{color:inherit}
+.fc-sol{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line)}
+.fc-sol .desc{margin:4px 0 0}
+.fc-wrong{margin:4px 0 0;padding-inline-start:20px}
+.fc-wrong li{margin:2px 0}
+@media print{.chk,.exam-row,.topline .quiz-btn{display:none!important}}

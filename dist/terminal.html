@@ -424,12 +424,66 @@ body[data-shell="projects"]{--accent:var(--a-projects);--t-bg:#042f2e;--t-fg:#ee
 body[data-shell="career"]{--accent:var(--a-career);--t-bg:#2a0a1b;--t-fg:#eef0f3;--t-pr:#f9a8d4;--t-cm:#8b95a5;--t-bar:#2a0a1b}
 .sw[data-s="career"] .top{background:#2a0a1b;color:#eef0f3}
 .sol .term[data-k="career"]{--t-bg:#2a0a1b;--t-fg:#eef0f3;--t-pr:#f9a8d4;--t-cm:#8b95a5;--t-bar:#2a0a1b}
+
+/* auto-checked exercises, level exams, spaced repetition */
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+#dueBtn{border-style:solid;font-weight:600}
+#dueBtn b{color:inherit}
+.chk{margin-top:12px;padding:12px 14px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:8px;background:color-mix(in srgb,var(--accent) 4%,var(--surface));min-width:0}
+.chk-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:6px}
+.chk-h .lbl{font-weight:700;color:var(--accent)}
+.chk-eng{font-size:13.5px;color:var(--muted)}
+.chk-ok,.exam-ok{font-size:13px;font-weight:700;color:var(--ok)}
+.chk-more{margin:0 0 8px}
+.chk-more summary{font-size:14px}
+.chk-more .term{margin-top:6px}
+.chk-code{display:block;width:100%;min-height:96px;margin:0;padding:10px 12px;font:14px/1.6 var(--mono);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;resize:vertical;text-align:left;tab-size:2;white-space:pre;overflow:auto}
+.chk-code:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.chk-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
+.chk-actions button{all:unset;cursor:pointer;font-size:14.5px;font-weight:600;padding:6px 14px;border-radius:6px;border:1px solid var(--accent);color:var(--accent);background:var(--surface)}
+.chk-actions .chk-run{background:var(--accent);color:var(--surface)}
+.chk-actions button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chk-actions button[disabled]{opacity:.55;cursor:progress}
+.chk-kbd{font-size:12.5px;color:var(--muted)}
+.chk-out:empty{display:none}
+.chk-out{margin-top:10px;font-size:15px}
+.chk-sum{margin:0 0 6px;font-weight:600}
+.chk-sum.ok{color:var(--ok)}
+.chk-sum.bad{color:var(--danger)}
+.chk-wait{margin:0;color:var(--muted)}
+.chk-res{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.chk-res li{display:flex;flex-wrap:wrap;gap:2px 8px;align-items:baseline;padding:4px 8px;border-radius:6px;background:var(--surface);border:1px solid var(--line)}
+.chk-res .mk{font-weight:700}
+.chk-res .ok .mk{color:var(--ok)}
+.chk-res .bad .mk{color:var(--danger)}
+.chk-res .bad{border-color:color-mix(in srgb,var(--danger) 40%,var(--line))}
+.chk-res .msg{flex-basis:100%;font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.chk-res .msg code,.chk-sum code{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
+.chk-log,.chk-err{margin-top:8px}
+.chk-log pre,.chk-err{margin:4px 0 0;padding:8px 10px;background:var(--bg);border:1px solid var(--line);border-radius:6px;font:13px/1.6 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}
+.chk-tbl{margin-top:8px}
+.chk-tbl .cap{margin:0 0 4px;font-size:13.5px;color:var(--muted)}
+.chk-scroll{overflow-x:auto;max-width:100%}
+.chk-tbl table{border-collapse:collapse;font:13.5px/1.5 var(--mono);text-align:left}
+.chk-tbl th,.chk-tbl td{border:1px solid var(--line);padding:3px 10px}
+.chk-tbl th{text-align:left;background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.chk-tbl .nul{color:var(--muted);font-style:italic}
+body.quiz article.cmd:not(.shown) .chk{display:none}
+.exam-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:10px}
+.exam-last{font-size:14px;color:var(--muted)}
+.lv-b{margin-inline-start:6px;font-weight:700;color:var(--ok)}
+.lv[aria-pressed="true"] .lv-b{color:inherit}
+.fc-sol{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line)}
+.fc-sol .desc{margin:4px 0 0}
+.fc-wrong{margin:4px 0 0;padding-inline-start:20px}
+.fc-wrong li{margin:2px 0}
+@media print{.chk,.exam-row,.topline .quiz-btn{display:none!important}}
 </style>
 </head>
 <body data-shell="bash">
 
 <header class="hero wrap">
-  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
+  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="dueBtn" hidden title="البطاقات اللي ميعاد مراجعتها جه النهارده، من كل التابات. كل ما تعرف بطاقة ميعادها الجاي بيبعد: يوم، ٣، ٧، ١٦، ٣٥ يوم">عليك مراجعة (<b id="dueN">0</b>)</button><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
   <h1>الترمنال بإيدك</h1>
   <p class="lead">كل أمر هنا معاه شرح، ومثال تنسخه، وتجربة تعملها بنفسك. الأوامر متقسمة على ٣ مستويات: ابدأ بالمستوى ١، ومتنقلش للي بعده غير لما تكون علّمت على «جربتها» في أغلبه. الصفحة بتفتكر تقدمك.</p>
   <section class="sw-sec">
@@ -607,7 +661,8 @@ body[data-shell="career"]{--accent:var(--a-career);--t-bg:#2a0a1b;--t-fg:#eef0f3
       <button type="button" class="lv" data-l="1" aria-pressed="false">١ البداية</button>
       <button type="button" class="lv" data-l="2" aria-pressed="false">٢ المتوسط</button>
       <button type="button" class="lv" data-l="3" aria-pressed="false">٣ المتقدم</button>
-      <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات عشوائية من التاب والمستوى اللي انت فيهم، والأوامر اللي بتنساها بتتكرر أكتر">اختبرني</button>
+      <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات من التاب والمستوى اللي انت فيهم: اللي ميعاد مراجعتها جه بتظهر الأول، واللي بتنساها بتتكرر أكتر">اختبرني</button>
+      <button type="button" class="quiz-btn" id="examBtn" hidden title="١٠ أسئلة عشوائية من المستوى ده. لو عرفت ٨ المستوى بيتعلّم عليه">امتحان المستوى</button>
       <button type="button" class="quiz-btn" id="todoBtn" aria-pressed="false" title="بيخبّي الأوامر اللي علّمت عليها «جربتها»">اللي فاضل بس</button>
       <button type="button" class="quiz-btn" id="briefBtn" aria-pressed="false" title="بيخبّي الشرح العميق ويسيب الخلاصة والمثال، للمراجعة السريعة">شرح مختصر</button>
       <button type="button" class="quiz-btn" id="quizBtn" aria-pressed="false" title="بيخبّي الأوامر والشرح، وانت تفتكر الأمر من الوصف">وضع المراجعة</button>
@@ -661,7 +716,7 @@ body[data-shell="career"]{--accent:var(--a-career);--t-bg:#2a0a1b;--t-fg:#eef0f3
 /* ===== js/core.js ===== */
 // الأساس المشترك: كل ملف في tabs/ بينادي TAB() فيتسجّل في الأماكن اللي الصفحة بتقرا منها
 const R = String.raw;
-const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, SOL = {}, BASH_OS = {};
+const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, SOL = {}, BASH_OS = {}, CHECK = {};
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -690,12 +745,76 @@ function TAB(key, def){
       if (it.lines) BREAK[id] = it.lines;
       if (it.sol) SOL[id] = {text: it.sol, code: it.solCode};
       if (it.mac) BASH_OS[it.cmd] = it.mac;
+      if (it.check) CHECK[id] = it.check;
       const row = [it.cmd, it.title, it.desc, it.example, it.try];
       if (it.flag !== undefined) row.push(it.flag);
       return row;
     });
     return cat;
   });
+}
+
+/* ---------- auto-checked exercises (the lesson field check) ---------- */
+/* runs a JS exercise: the learner's code, then the tests, in one async function so the tests see the learner's functions.
+   The page runs it inside a Worker built from this function's source (so it has to stay self-contained),
+   and tools/check.js runs it in node against check.solution. */
+async function runJsCheck(code, tests){
+  const logs = [], results = [], queue = [];
+  const show = v => { try{ return typeof v==='number' || typeof v==='undefined' ? String(v) : typeof v==='bigint' ? v+'n' : typeof v==='function' ? 'function' : JSON.stringify(v) ?? String(v); }catch(e){ return String(v); } };
+  const eq = (a, b) => {
+    if (Object.is(a, b)) return true;
+    if (!a || !b || typeof a!=='object' || typeof b!=='object') return false;
+    if (a instanceof Date || b instanceof Date) return a instanceof Date && b instanceof Date && +a===+b;
+    if (Array.isArray(a)!==Array.isArray(b)) return false;
+    const ka = Object.keys(a), kb = Object.keys(b);
+    return ka.length===kb.length && ka.every(k => Object.prototype.hasOwnProperty.call(b, k) && eq(a[k], b[k]));
+  };
+  const q = v => '[['+show(v)+']]';
+  const fail = m => { const e = new Error(m); e.isExpect = true; throw e; };
+  const expect = x => ({
+    toBe: y => Object.is(x, y) || fail('المتوقع '+q(y)+' بس طلع '+q(x)),
+    toEqual: y => eq(x, y) || fail('المتوقع '+q(y)+' بس طلع '+q(x)),
+    toBeTruthy: () => !!x || fail('المتوقع قيمة truthy بس طلع '+q(x)),
+    toBeFalsy: () => !x || fail('المتوقع قيمة falsy بس طلع '+q(x)),
+    toThrow: m => {
+      if (typeof x!=='function') fail('toThrow محتاج دالة: expect(() => ...).toThrow()');
+      try{ x(); }catch(e){
+        const msg = String(e && e.message !== undefined ? e.message : e);
+        if (m===undefined || (m instanceof RegExp ? m.test(msg) : msg.includes(m))) return true;
+        fail('رمى error رسالته '+q(msg)+'، والمتوقع يكون فيها '+q(String(m)));
+      }
+      fail('المتوقع يرمي error، بس خلص عادي');
+    }
+  });
+  const out = (...a) => { if (logs.length < 200) logs.push(a.map(v => typeof v==='string' ? v : show(v)).join(' ')); };
+  const con = {log:out, info:out, warn:out, error:out, table:out};
+  const errText = e => '[['+(e && e.message !== undefined ? (e.name || 'Error')+': '+e.message : String(e))+']]';
+  let fn;
+  try{ fn = new (async function(){}).constructor('test', 'expect', 'console', code+'\n;\n'+tests); }
+  catch(e){ return {results, logs, error:'الكود فيه غلطة في الكتابة، فمتشغّلش خالص: '+errText(e)}; }
+  try{ await fn((name, f) => queue.push([name, f]), expect, con); }
+  catch(e){ return {results, logs, error:'الكود رمى error قبل ما الاختبارات تبدأ: '+errText(e)}; }
+  if (!queue.length) return {results, logs, error:'مفيش ولا test() اتسجّل. لو كاتب return بره أي دالة شيله.'};
+  for (const [name, f] of queue){
+    try{ await f(); results.push({name, ok:true}); }
+    catch(e){ results.push({name, ok:false, msg: e && e.isExpect ? e.message : 'رمى error: '+errText(e)}); }
+  }
+  return {results, logs};
+}
+/* SQL exercises compare rows by value: numbers as numbers (count() = 2 and numeric 2.50 = 2.5), dates as ISO text,
+   and the row order is ignored unless the exercise sets ordered: true */
+const sqlCell = v => v===null || v===undefined ? null : typeof v==='boolean' ? v : v instanceof Date ? v.toISOString()
+  : typeof v==='number' || typeof v==='bigint' || (typeof v==='string' && /^-?\d+(\.\d+)?$/.test(v.trim())) ? Number(v)
+  : typeof v==='object' ? JSON.stringify(v) : String(v);
+function sqlDiff(got, exp, ordered){
+  const k = rows => rows.map(r => JSON.stringify(r.map(sqlCell)));
+  const a = k(got), b = k(exp), wa = got[0] ? got[0].length : 0, wb = exp[0] ? exp[0].length : 0;
+  if (a.length && b.length && wa!==wb) return 'عدد الأعمدة: المتوقع '+wb+' وطلع '+wa+'.';
+  if (a.length!==b.length) return 'عدد الصفوف: المتوقع '+b.length+' وطلع '+a.length+'.';
+  if (a.every((x, i) => x===b[i])) return '';
+  const sa = a.slice().sort(), sb = b.slice().sort();
+  if (sa.every((x, i) => x===sb[i])) return ordered ? 'الصفوف صح بس الترتيب لأ: التمرين طالب ترتيب معيّن (ORDER BY).' : '';
+  return 'القيم مش زي المتوقع. قارن جدولك بالناتج المتوقع.';
 }
 
 /* ===== js/tabs/start.js ===== */
@@ -711,6 +830,10 @@ function TAB(key, def){
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("start", {
@@ -1132,6 +1255,10 @@ echo "Done"`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("os", {
@@ -2544,6 +2671,10 @@ KeyRepeat هو السرعة (رقم أصغر = أسرع)، و InitialKeyRepeat �
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("vscode", {
@@ -4189,6 +4320,10 @@ Disable (Workspace) بيتحفظ لكل مشروع، فمشروع Python ميش�
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("bash", {
@@ -4218,7 +4353,10 @@ pwd`,
             when: "أول ما تدخل سيرفر بـ ssh ومش عارف انت فين. قبل أي أمر مسح أو نقل، عشان تتأكد إنك في المكان الصح. ولما أمر يقولك «No such file or directory» وانت متأكد إن الملف موجود، أول سؤال: انت واقف فين أصلًا؟",
             mistakes: "الغلطة الأشهر إنك تفتكر انت في فولدر وانت في فولدر تاني، وتنفّذ أمر مسح أو نقل في المكان الغلط. عوّد نفسك تعمل [[pwd]] قبل أي أمر خطير، أو بص على الـ prompt لأنه غالبًا بيكتب الفولدر."
           },
-          lines: ["print working directory: اطبع مسار الفولدر اللي انت فيه كامل."]
+          lines: ["print working directory: اطبع مسار الفولدر اللي انت فيه كامل."],
+          sol: R`هتلاقي [[pwd]] طبع حاجة زي [[/home/ali]] (أو [[/Users/ali]] على الماك)، وبعد [[cd lab]] مثلًا يطبع [[/home/ali/lab]]. المسار اتغير لأن [[cd]] بيغيّر «الفولدر الحالي» بتاع الشيل، و [[pwd]] بيقرا القيمة دي ويطبعها بس.
+
+لو دخلت لينك رمزي (symlink) هتلاقي [[pwd]] بيطبع اسم اللينك مش الفولدر الحقيقي، و [[pwd -P]] بيطبع الحقيقي. ولو [[cd]] قالك No such file or directory، الاسم مش موجود جوه الفولدر اللي انت فيه، والـ [[pwd]] مش هيتغير.`
         },
         {
           cmd: "ls",
@@ -4246,7 +4384,10 @@ ls -lt | head`,
             "[[-l]] long (تفاصيل) + [[-a]] all (حتى المخفي، اللي بيبدأ بنقطة).",
             "[[-l]] تفاصيل + [[-h]] human (الحجم بالـ KB و MB بدل البايت) + [[-S]] Size (رتّب بالحجم، الأكبر فوق).",
             "[[-t]] time (رتّب بالأحدث)، وبعدين الـ pipe بيبعت الناتج لـ [[head]] اللي بيعرض أول ١٠ سطور بس."
-          ]
+          ],
+          sol: R`[[ls]] هيطلعلك حاجات زي [[index.js  node_modules  package.json  src]] من غير أي ملف بيبدأ بنقطة. و [[ls -la]] هيزوّد [[.]] و [[..]] و [[.env]] و [[.gitignore]] (و [[.git]] لو المشروع repo)، كل واحد في سطر فيه الصلاحيات والمالك والحجم والتاريخ.
+
+الملفات اللي بتبدأ بـ [[.]] مش محمية بأي حاجة، ده مجرد اتفاق إن ls ميعرضهاش إلا لو طلبت [[-a]]. ولو [[.env]] مظهرش حتى مع [[-la]]، يبقى فعلًا مش موجود في الفولدر ده (يمكن انت واقف في فولدر تاني، اعمل [[pwd]]).`
         },
         {
           cmd: "cd",
@@ -4272,7 +4413,10 @@ cd -`,
             "اطلع فولدر لفوق.",
             "روح لفولدر اللوجات بمسار مطلق (بيبدأ بـ /).",
             "ارجع للمكان اللي كنت فيه قبل آخر cd، زي زرار «رجوع»."
-          ]
+          ],
+          sol: R`[[cd /var/log]] وبعدين [[cd ~]] بيرجعك [[/home/ali]]. أول [[cd -]] بيطبع [[/var/log]] ويوديك هناك، والتاني بيطبع [[/home/ali]] ويرجعك. يعني [[cd -]] بيبدّل بين آخر مكانين بس، مش history كامل.
+
+[[cd -]] بيطبع المسار لوحده عشان تعرف وصلت فين، وده الوحيد من أوامر cd اللي بيطبع حاجة. ولو قالك [[OLDPWD not set]] يبقى ده أول [[cd]] في الترمنال ده، ومفيش مكان قبله يرجعله.`
         },
         {
           cmd: "tree",
@@ -4295,7 +4439,10 @@ tree -L 3 -I node_modules`,
           lines: [
             "اعرض الشجرة لحد عمق ٢ فولدر بس ([[-L]] من level).",
             "عمق ٣، و [[-I]] (من ignore) تجاهل فولدر node_modules لأنه ضخم."
-          ]
+          ],
+          sol: R`بعد [[sudo apt install tree]] (أو [[brew install tree]] على الماك)، اكتب في فولدر المشروع [[tree -L 2 -I node_modules]]. هتشوف الفولدرات ومستوى واحد جواها، وفي الآخر سطر زي [[5 directories, 12 files]]، ومن غير أي أثر لـ node_modules.
+
+لو ظهرلك آلاف السطور يبقى [[-I]] مكتوب غلط (هو حرف I كابيتال والنمط بعده). وعشان تستبعد أكتر من حاجة افصل بـ [[|]] جوه علامات تنصيص: [[tree -L 2 -I 'node_modules|dist']]. و [[tree]] زي [[ls]]، مش بيعرض الملفات المخفية زي [[.env]] إلا بـ [[-a]].`
         }
       ]
     },
@@ -4326,7 +4473,10 @@ mkdir -p app/{public,logs,tests}`,
             "make directory: اعمل فولدر اسمه test.",
             "[[-p]] من parents: اعمل app، وجواه src، وجواه components، مرة واحدة، حتى لو مش موجودين.",
             "الأقواس بتعمل ٣ فولدرات جوه app في أمر واحد. متحطش مسافة بعد الفاصلة جوه الأقواس."
-          ]
+          ],
+          sol: R`[[ls app]] هيطبع [[logs  public  src]] (مترتبين أبجديًا مش بترتيب ما كتبتهم). الأقواس [[{src,public,logs}]] مش بتاعة mkdir، الشيل هو اللي بيفردها لـ [[app/src app/public app/logs]] قبل ما mkdir يشتغل، و [[-p]] بيعمل [[app]] نفسه الأول لو مش موجود.
+
+لو لقيت فولدر واحد اسمه حرفيًا [[{src,public,logs}]]، يبقى حطيت مسافة بعد الفاصلة ([[{src, public}]]) أو حطيت النمط جوه علامات تنصيص، والاتنين بيوقفوا الفرد. وتقدر تشوف الفرد قبل التنفيذ بـ [[echo app/{src,public,logs}]].`
         },
         {
           cmd: "touch",
@@ -4345,7 +4495,10 @@ touch app/src/{server,routes}.js`,
             when: "عمل ملفات فاضية لمشروع جديد. عمل .env أو .gitignore. وأحيانًا عشان تخلي أداة (زي أدوات الـ build) تفتكر إن الملف اتغير فتعيد تشغيل حاجة.",
             mistakes: R`إنك تستنى [[touch]] يحط كلام في الملف. هو بيعمل ملف فاضي بس. عشان تكتب جواه استخدم محرر زي nano، أو [[echo "text" > file]] (في المستوى ٢).`
           },
-          lines: ["اعمل ملفين فاضيين: index.js و .env.", "اعمل server.js و routes.js جوه app/src بالأقواس."]
+          lines: ["اعمل ملفين فاضيين: index.js و .env.", "اعمل server.js و routes.js جوه app/src بالأقواس."],
+          sol: R`[[touch app/src/server.js .env]] بيعمل الاتنين فاضيين ومش بيطبع حاجة. [[ls]] هيعرض [[app]] (والباقي اللي عندك) من غير [[.env]]، و [[ls -a]] هيعرض [[.  ..  .env  app]].
+
+لو [[touch]] قالك No such file or directory على [[app/src/server.js]]، يبقى فولدر [[app/src]] نفسه مش موجود: touch مش بيعمل فولدرات، اعمله الأول بـ [[mkdir -p app/src]].`
         },
         {
           cmd: "cp",
@@ -4371,7 +4524,10 @@ cp -i *.js backup/`,
             "copy: انسخ .env.example لملف جديد اسمه .env. أول اسم المصدر وتاني اسم الهدف.",
             "[[-r]] recursive: انسخ فولدر src بكل اللي جواه لفولدر جديد src_backup.",
             "[[-i]] interactive: اسألني قبل ما تكتب فوق ملف موجود. وانسخ كل ملفات .js لفولدر backup."
-          ]
+          ],
+          sol: R`[[cp -r app app_copy]] مش هيطبع حاجة لو نجح. اتأكد بـ [[ls -R app_copy]]، أو بـ [[diff -r app app_copy]]: لو مطبعش حاجة يبقى الاتنين متطابقين.
+
+أشهر غلطة إنك تنسى [[-r]]، فيطلعلك [[cp: -r not specified; omitting directory 'app']] (على الماك [[cp: app is a directory (not copied).]]) ومفيش حاجة اتنسخت. والغلطة التانية: لو [[app_copy]] كان موجود أصلًا، النسخة هتتحط جواه كـ [[app_copy/app]] بدل ما تبقى هي نفسها app_copy.`
         },
         {
           cmd: "mv",
@@ -4395,7 +4551,10 @@ mv app_copy app_v2`,
             "move: غيّر اسم old.js لـ new.js (النقل لنفس المكان باسم جديد = تغيير اسم).",
             "انقل كل ملفات .log لجوه فولدر logs.",
             "غيّر اسم فولدر app_copy لـ app_v2."
-          ]
+          ],
+          sol: R`[[mv app_copy app_v2]] وبعدين [[mv app_v2/src/server.js .]] (النقطة يعني الفولدر اللي انت فيه). [[ls]] هيوريك [[app_v2]] و [[server.js]]، ومفيش [[app_copy]] خلاص، ومن غير [[-r]] لأن mv مش بينسخ، بيغيّر المكان أو الاسم بس.
+
+خلي بالك: لو [[app_v2]] كان موجود قبل كده كفولدر، [[mv app_copy app_v2]] هيحط app_copy جواه بدل ما يغيّر اسمه. ولو فيه ملف بنفس اسم الهدف، mv هيكتب فوقه من غير ما يسأل؛ استخدم [[mv -i]] أو [[mv -n]] لو خايف.`
         },
         {
           cmd: "rm",
@@ -4422,7 +4581,10 @@ rm -rf node_modules`,
             "امسح كل ملفات .log، و [[-i]] يسألك على كل واحد (y يعني أيوه، n لأ).",
             "[[-r]] recursive: امسح فولدر بكل اللي فيه.",
             "[[-r]] + [[-f]] force (من غير أسئلة ولا اعتراض). خطير، فاتأكد من الاسم كويس. مسح node_modules آمن لأنك بترجّعه بـ npm install."
-          ]
+          ],
+          sol: R`اشتغل جوه [[~/lab]] بس، واتأكد بـ [[pwd]] الأول. [[rm -ri app_v2]] هيسألك سؤال لكل حاجة بالترتيب: [[rm: descend into directory 'app_v2'?]]، وبعدين لكل فولدر وملف جواه ([[remove regular file 'app_v2/src/server.js'?]])، وفي الآخر [[rm: remove directory 'app_v2'?]]. بترد y و Enter كل مرة. ولو رديت n على ملف، الفولدر اللي فوقه مش هيتمسح لأنه مش فاضي.
+
+بعد ما تخلص [[ls]] مش هيلاقي app_v2، ومفيش سلة مهملات ترجعه منها. وعشان تشوف اللي هيتمسح قبل ما تمسح أي حاجة: [[find app_v2]] الأول. والفكرة كلها إنك تحس إن [[-r]] بيدخل جوه كل حاجة، وده اللي [[-rf]] بيعمله بالظبط بس من غير ما يسأل.`
         },
         {
           cmd: "ln -s",
@@ -4447,7 +4609,10 @@ sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/`,
             "link: اعمل اختصار اسمه current بيشاور على ~/lab/app. [[-s]] soft (اختصار عادي).",
             "اعرض الاختصار بالتفاصيل، هتلاقي سهم [[->]] بيقولك بيشاور على إيه.",
             "على السيرفر: فعّل موقع في Nginx بعمل اختصار من sites-available لـ sites-enabled."
-          ]
+          ],
+          sol: R`[[ls -l current]] هيطبع سطر بيبدأ بـ [[l]] وفي آخره سهم: [[current -> /home/ali/lab/app]]. بعد [[cd current]] هتلاقي [[pwd]] بيقول [[/home/ali/lab/current]]، و [[pwd -P]] بيقول [[/home/ali/lab/app]]، لأن اللينك مجرد عنوان بيشاور على المكان الحقيقي.
+
+لو عملته بمسار نسبي زي [[ln -s app current]] هيشتغل طالما اللينك والفولدر جنب بعض. الغلطة المشهورة [[ln -s app ~/other/current]]: اللينك بيدوّر على [[app]] جنبه هو في [[~/other]] فيبقى مكسور، و [[ls -l]] يعرضه عادي بس [[cd]] يقولك No such file or directory. عشان كده المثال بيستخدم مسار كامل.`
         },
         {
           cmd: "* و ? و [ ]",
@@ -4473,7 +4638,10 @@ ls "*.js"`,
             "حرف واحد رقم من 0 لـ 9 مكان الأقواس.",
             "بيطبع الأمر بالأسامي اللي النجمة اتفكت لها، من غير ما يمسح حاجة.",
             "بين علامات تنصيص: بيدوّر على ملف اسمه حرفيًا *.js."
-          ]
+          ],
+          sol: R`[[ls a?.log]] بيطبع [[a1.log  a2.log]] بس، لأن [[?]] حرف واحد بالظبط و [[b10.log]] فيه رقمين. [[ls *.log]] بيطبع التلاتة. أما [[ls "*.log"]] بيقولك [[ls: cannot access '*.log': No such file or directory]]، لأن علامات التنصيص منعت الشيل يفرد النجمة، فـ ls دوّر على ملف اسمه حرفيًا [[*.log]].
+
+ده بيوريك إن الفرد بيحصل في الشيل قبل ما الأمر يشتغل: جرّب [[echo *.log]] هتشوف الأسامي نفسها اللي ls استلمها. ولو مفيش ولا ملف ماشي مع النمط، bash بيسيب النمط زي ما هو، وعشان كده الأمر بيشتكي من [[*.log]] نفسها.`
         }
       ]
     },
@@ -4502,7 +4670,10 @@ cat a.txt b.txt > all.txt`,
           lines: [
             "اطبع محتوى package.json على الشاشة.",
             "اطبع a.txt ووراه b.txt، وبدل الشاشة احفظ الاتنين في ملف واحد all.txt."
-          ]
+          ],
+          sol: R`[[echo "PORT=3000" > .env]] (أو افتحه بـ nano واكتب)، وبعدين [[cat .env]] هيطبع [[PORT=3000]] زي ما هو. ولو فيه أكتر من سطر هيطبعهم كلهم ورا بعض من غير أي تقليب.
+
+لو [[cat .env]] مطبعش حاجة يبقى الملف فاضي (اتعمل بـ touch ومتكتبش فيه). ولو قالك No such file or directory، اتأكد بـ [[ls -a]] إنك في نفس الفولدر. ولو الملف كبير استخدم [[less]] مش cat.`
         },
         {
           cmd: "less",
@@ -4521,7 +4692,10 @@ cat a.txt b.txt > all.txt`,
             when: "قراية أي لوج على السيرفر، وبعدين [[G]] تروح للآخر حيث أحدث الأحداث، و [[/error]] تدوّر على الأخطاء. ومع pipe لناتج أمر طويل: [[docker logs api | less]].",
             mistakes: "إنك متعرفش تخرج، فتتوتر. الإجابة دايمًا q. ومحاولة تعدّل الملف منه: less للقراية بس."
           },
-          lines: ["افتح ملف اللوج بتاع السيستم صفحة صفحة. اتنقل بـ Space، وابحث بـ /، واخرج بـ q."]
+          lines: ["افتح ملف اللوج بتاع السيستم صفحة صفحة. اتنقل بـ Space، وابحث بـ /، واخرج بـ q."],
+          sol: R`جوه less اكتب [[/error]] و Enter: أول نتيجة بتتعلّم والشاشة بتنزل عندها. [[n]] للي بعدها و [[N]] (كابيتال) للي قبلها، و [[q]] للخروج. ولو مفيش ولا نتيجة هيكتبلك تحت [[Pattern not found]].
+
+البحث حساس للحروف: [[/error]] مش هيلاقي [[ERROR]]؛ اكتب [[-i]] جوه less (أو افتحه بـ [[less -i]]) عشان يتجاهل الفرق. ولو [[/var/log/syslog]] مش موجود عندك (بعض التوزيعات ومعظم الـ containers مفيهاش)، استخدم [[journalctl | less]]، وعلى الماك [[log show --last 10m | less]].`
         },
         {
           cmd: "head / tail",
@@ -4545,7 +4719,10 @@ tail -f app.log`,
             "[[head]] أول الملف، و [[-n 5]] (من number) أول ٥ سطور.",
             "[[tail]] آخر الملف: آخر ٥٠ سطر، وده اللي فيه أحدث الأحداث في أي لوج.",
             "[[-f]] follow: فضّل مفتوح واعرض أي سطر جديد يتكتب لايف. اخرج بـ Ctrl+C."
-          ]
+          ],
+          sol: R`في الترمنال الأول [[tail -f app.log]] بيطبع آخر 10 سطور ويفضل مستني. كل ما تكتب [[echo "hello" >> app.log]] في التاني، سطر [[hello]] بيظهر فورًا في الأول. و Ctrl+C بيوقف المتابعة من غير ما يلمس الملف.
+
+لو كتبت [[>]] بدل [[>>]] الملف بيتفضى ويتكتب من الأول، و tail بيطبع [[tail: app.log: file truncated]] ويكمّل. ولو الملف مش موجود لما شغّلت tail، هيقولك No such file ويستنى من غير فايدة أو يخرج؛ استخدم [[tail -F]] عشان يستنى لحد ما الملف يتعمل ويتابعه حتى لو اتعمل من جديد (وده اللي بيحصل مع اللوجات لما logrotate يلفّها).`
         },
         {
           cmd: "wc",
@@ -4567,7 +4744,10 @@ ls | wc -l`,
           lines: [
             "word count، و [[-l]] lines: عدد السطور في الملف.",
             "[[ls]] بيطلّع الملفات، والـ pipe بيعدّ سطورها، يعني عدد الملفات."
-          ]
+          ],
+          sol: R`[[ls | wc -l]] بيطبع رقم واحد، زي [[6]]. ده عدد الملفات والفولدرات مع بعض في الفولدر الحالي، من غير الملفات المخفية ومن غير اللي جوه الفولدرات الفرعية.
+
+لو عايز المخفية كمان: [[ls -A | wc -l]] (هيزيد واحد لو عندك [[.env]]). ولو عايز الملفات بس من غير الفولدرات: [[find . -maxdepth 1 -type f | wc -l]]. ولو استخدمت [[ls -l | wc -l]] الرقم هيطلع زيادة واحد، بسبب سطر [[total]] اللي في الأول.`
         },
         {
           cmd: "nano",
@@ -4589,7 +4769,10 @@ sudo nano /etc/nginx/sites-available/default`,
           lines: [
             "افتح .env في المحرر nano عشان تعدّله. Ctrl+O تحفظ، و Ctrl+X تخرج.",
             "نفس الحاجة لملف سيستم، فمحتاج sudo عشان تقدر تحفظ."
-          ]
+          ],
+          sol: R`بعد ما تكتب [[DEBUG=true]] في سطر جديد، Ctrl+O وبعدين Enter بيحفظ (الـ Enter بيأكد اسم الملف)، و Ctrl+X بيخرج. [[cat .env]] هيوريك السطور القديمة وتحتها [[DEBUG=true]].
+
+لو دوست Ctrl+X من غير حفظ هيسألك [[Save modified buffer?]]: [[Y]] يحفظ و [[N]] يرمي التعديل. ولو [[cat]] مطلعش السطر الجديد، يبقى رديت N، أو فتحت [[.env]] في فولدر تاني غير اللي بتعمل فيه cat.`
         },
         {
           cmd: "file / stat",
@@ -4614,7 +4797,10 @@ stat -c '%a %U %s' app.log`,
             "هيقولك Bourne-Again shell script، وهيقولك لو فيه CRLF.",
             "كل بيانات الملف: الحجم، والصلاحيات، والمالك، والتواريخ.",
             "الصلاحيات بالأرقام ([[%a]])، والمالك ([[%U]])، والحجم ([[%s]]) بس."
-          ]
+          ],
+          sol: R`[[cp logo.png fake.txt]] وبعدين [[file fake.txt]] بيطبع حاجة زي [[fake.txt: PNG image data, 512 x 512, 8-bit/color RGBA, non-interlaced]]. [[file]] مش بيبص على الامتداد خالص، بيقرا أول كام byte في الملف (الـ magic number؛ في PNG أول بايتات هي [[89 50 4E 47]] وآخر تلاتة منهم حروف PNG) ويعرف منهم النوع.
+
+ولو الصورة JPEG هيقول [[JPEG image data]]. ولو قالك [[ASCII text]] أو [[empty]] يبقى اللي نسخته مكانش صورة أصلًا. والفكرة دي مهمة في رفع الملفات في تطبيقك: متثقش في الامتداد اللي اليوزر باعته. وعلى الماك [[file]] زي ما هو، بس [[stat]] محتاج [[-f]] بدل [[-c]].`
         }
       ]
     },
@@ -4651,7 +4837,10 @@ grep -c "ERROR" app.log`,
             "[[-i]] ignore case: error أو ERROR أو Error، كله واحد.",
             "[[-v]] invert (العكس): كل السطور اللي مفيهاش DEBUG.",
             "[[-c]] count: عدد السطور اللي فيها ERROR بس، من غير ما يطبعها."
-          ]
+          ],
+          sol: R`من جوه فولدر المشروع: [[grep -rn "console.log" . --exclude-dir=node_modules]]. كل نتيجة في سطر بالشكل [[./src/index.js:2:console.log(a);]]: الملف، ورقم السطر، والسطر نفسه.
+
+لو المشروع فيه [[dist]] أو [[.next]] هتلاقي نتايج من الكود المبني كمان؛ زوّد [[--exclude-dir=dist]] أو دوّر في [[src]] بس. ولو الأمر قعد وقت طويل وطلّع آلاف النتايج، يبقى الـ exclude مكتوب غلط، مثلًا [[--exclude=node_modules]] من غير dir، ودي بتستبعد ملفات بالاسم ده مش فولدرات.`
         },
         {
           cmd: "find",
@@ -4679,7 +4868,10 @@ find ./logs -name "*.log" -mtime +7 -delete`,
             "دوّر في فولدرك ([[~]]) على الفولدرات بس ([[-type d]] من directory) اللي اسمها node_modules.",
             "الملفات بس ([[-type f]]) اللي حجمها أكبر من ٥٠ ميجا.",
             "ملفات log اللي عدّى عليها أكتر من ٧ أيام ([[-mtime +7]])، وامسحها. شغّله من غير [[-delete]] الأول عشان تشوف هيمسح إيه."
-          ]
+          ],
+          sol: R`[[find ~ -type d -name node_modules -prune]] بيطبع مسار كل فولدر node_modules، و [[-prune]] بيمنعه يدخل جوه كل واحد ويلاقي node_modules متداخلة جواه (من غيرها هتلاقي مئات السطور). والحجم: [[find ~ -type d -name node_modules -prune -exec du -sh {} + | sort -h]]، هيطلع حجم جنب كل مسار زي [[312M  /home/ali/shop/node_modules]]، والأكبر في الآخر.
+
+الأمرين دول بيقروا بس. متحطش [[-delete]] ولا [[-exec rm]] في الآخر وانت بتجرّب، لأن المسح من غير رجوع. لو عايز تمسح واحد، امسحه بإيدك بعد ما تشوف مساره، وتقدر ترجّعه بـ [[npm install]] في المشروع ده. ولو ظهرلك [[Permission denied]] كتير، زوّد [[2>/dev/null]].`
         },
         {
           cmd: "which / type",
@@ -4705,7 +4897,10 @@ type ll`,
             "فين برنامج node متسطب؟ بيطبع مساره.",
             "[[-a]] all: اعرض كل النسخ لو فيه أكتر من واحدة.",
             "[[type]] بيقولك الأمر ده إيه: برنامج ولا alias ولا حاجة جوه الشيل."
-          ]
+          ],
+          sol: R`[[which node npm git]] بيطبع مسار لكل واحد، زي [[/usr/bin/node]] أو [[/home/ali/.nvm/versions/node/v22.../bin/node]] لو سطّبت بـ nvm، و [[/usr/bin/git]]. على الماك غالبًا [[/opt/homebrew/bin/...]].
+
+لو واحد منهم مطبعش حاجة ([[echo $?]] بعده = 1)، يبقى مش في الـ PATH: يا إما مش متسطب، يا إما متسطب في فولدر الـ PATH مش شايفه. ولو node طالع من nvm و npm طالع من [[/usr/bin]] يبقى عندك نسختين، وده سبب مشاكل كتير؛ [[which -a node]] بيوريك كل النسخ بالترتيب.`
         },
         {
           cmd: "zgrep / zcat",
@@ -4728,7 +4923,10 @@ zless /var/log/nginx/error.log.2.gz`,
             "فك لوج من يومين في الذاكرة واعرض آخره.",
             "دوّر على الطلبات اللي رجعت 500 في كل اللوجات المضغوطة مرة واحدة.",
             "اقرا لوج مضغوط صفحة صفحة زي less."
-          ]
+          ],
+          sol: R`[[zgrep " 500 " /var/log/nginx/access.log.*.gz]] بيفك كل ملف في الذاكرة ويدوّر فيه، وكل نتيجة قبلها اسم الملف، زي [[access.log.2.gz:1.2.3.4 - - ... "GET / HTTP/1.1" 500 12]]. ولو عايز العدد لكل يوم: [[zgrep -c " 500 " ...]].
+
+خلي بالك إن مش كل اللوجات مضغوطة: [[access.log]] (النهارده) و [[access.log.1]] (امبارح) ملفات عادية، والنمط [[*.gz]] مش بيشملهم. و [[zgrep]] بيقرا الملف العادي كمان، فالأشمل: [[sudo zgrep " 500 " /var/log/nginx/access.log*]]. والمسافات حوالين 500 مهمة، من غيرها هتمسك أي 500 في الحجم أو الـ URL. ولو قالك Permission denied زوّد sudo.`
         }
       ]
     },
@@ -4761,7 +4959,10 @@ ps aux | grep node`,
             "اعرض كل الملفات، وسيب بس اللي فيها كلمة env.",
             "اعرض كل الأوامر اللي كتبتها قبل كده، وسيب بس اللي فيها docker.",
             "اعرض كل البرامج الشغالة، وسيب بس اللي فيها node."
-          ]
+          ],
+          sol: R`هيطلعلك لحد 5 سطور، كل واحد رقمه في الـ history والأمر، زي [[  512  git status]]. وغالبًا آخر سطر هيبقى الأمر نفسه اللي لسه كاتبه ([[history | grep git | tail -5]])، لأن فيه كلمة git، والأمر بيتسجّل في الـ history قبل ما يتنفّذ.
+
+لو مطلعش حاجة يبقى مكتبتش git في الترمنال ده ولا اتحفظ في [[~/.bash_history]]. ولو عايز تشيل سطر الأمر نفسه: [[history | grep git | grep -v history | tail -5]]. وعلى zsh في الماك [[history]] لوحدها بتعرض آخر 16 بس، فاكتب [[history 1 | grep git | tail -5]].`
         },
         {
           cmd: "> و >>",
@@ -4785,7 +4986,10 @@ ls -la > files.txt`,
             "اكتب PORT=3000 في .env. [[>]] بتمسح أي حاجة كانت في الملف الأول.",
             "[[>>]] بتضيف السطر ده في آخر الملف من غير ما تمسح اللي فيه.",
             "بدل ما لستة الملفات تطلع على الشاشة، احفظها في files.txt."
-          ]
+          ],
+          sol: R`بعد [[echo "PORT=3000" > .env]] و [[echo "NODE_ENV=development" >> .env]]، [[cat .env]] بيطبع السطرين. ولو عملت [[echo "PORT=4000" > .env]] تاني، [[cat .env]] هيطبع [[PORT=4000]] بس، والسطرين القدام راحوا.
+
+السبب إن [[>]] بيفضّي الملف قبل ما الأمر يبدأ يكتب، و [[>>]] بيكتب في آخره. ودي نفس الغلطة اللي بتمسح .env حقيقي. لو عايز الشيل يرفض يكتب فوق ملف موجود بـ [[>]]، اعمل [[set -o noclobber]]، وساعتها هيقولك [[cannot overwrite existing file]].`
         },
         {
           cmd: "2>&1",
@@ -4813,7 +5017,10 @@ find / -name "*.conf" 2>/dev/null`,
             "شغّل الـ build، واحفظ الناتج العادي ([[>]]) والأخطاء كمان ([[2>&1]] يعني «ابعت الأخطاء لنفس المكان») في build.log.",
             "[[2>]] الأخطاء بس تروح لملف errors.txt.",
             "دوّر في الجهاز كله، وارمي الأخطاء في [[/dev/null]] (صندوق زبالة) عشان متزحمش الشاشة."
-          ]
+          ],
+          sol: R`[[ls not-here]] بيطبع [[ls: cannot access 'not-here': No such file or directory]]. ومع [[2>/dev/null]] مفيش ولا حرف، لأن الرسالة بتطلع على قناة stderr (رقم 2) وانت وجهتها لـ [[/dev/null]].
+
+الـ error اختفى من الشاشة بس الأمر لسه فاشل: [[echo $?]] بعده بيقول 2 في الحالتين. والعكس: لو كتبت [[ls not-here > out.txt]]، الرسالة هتفضل تطلع على الشاشة و [[out.txt]] هيبقى فاضي، لأن [[>]] لوحده بيوجّه stdout بس.`
         },
         {
           cmd: "&& و || و ;",
@@ -4839,7 +5046,10 @@ cd ~/lab; ls`,
             "سطّب، ولو نجح ([[&&]]) اعمل build. لو التسطيب فشل الـ build مش هيشتغل.",
             "اعمل فولدر، ولو فشل ([[||]]) اطبع رسالة.",
             "[[;]] نفّذ الاتنين ورا بعض في كل الأحوال."
-          ]
+          ],
+          sol: R`أول مرة: [[done]]، والفولدر اتعمل. تاني مرة: [[mkdir: cannot create directory 'app': File exists]] ومفيش done، لأن [[&&]] بينفّذ اللي بعده بس لو اللي قبله رجع 0، و mkdir رجع 1.
+
+جرّب بعدها [[mkdir app || echo "already exists"]]: هيطبع الـ error وبعده [[already exists]]. ولو عايز الأمر ينجح في الحالتين من غير رسايل، استخدم [[mkdir -p app]]، وساعتها [[&& echo done]] هيطبع done كل مرة.`
         },
         {
           cmd: "$( )",
@@ -4863,7 +5073,10 @@ echo "Files: $(ls | wc -l)"`,
             "[[$( )]] بتنفّذ الأمر اللي جواها وتحط ناتجه مكانها. هنا بتحط تاريخ النهارده جوه الجملة.",
             "انسخ اللوج لملف اسمه فيه التاريخ، زي app-2026-09-25.log.",
             "اطبع جملة جواها عدد الملفات."
-          ]
+          ],
+          sol: R`[[cp app.log "app-$(date +%F).log"]] وبعدين [[ls]] هتلاقي ملف زي [[app-2026-09-30.log]]. الشيل نفّذ [[date +%F]] الأول وحط ناتجه مكان [[$( )]]، وبعدين شغّل cp بالاسم الكامل.
+
+لو اتعمل ملف اسمه فيه [[$(date +%F)]] حرفيًا، يبقى حطيت الاسم بين علامات تنصيص مفردة، ودي بتمنع الشيل ينفّذ؛ استخدم المزدوجة. ولو عايز الساعة كمان: [[date +%F_%H-%M]]، ومتستخدمش [[date]] لوحده في اسم ملف لأن ناتجه فيه مسافات و [[:]].`
         },
         {
           cmd: "xargs",
@@ -4886,7 +5099,10 @@ cat urls.txt | xargs -n1 curl -sI`,
           lines: [
             "[[find]] بيطلّع أسامي الملفات مفصولة بفاصل خاص ([[-print0]])، و [[xargs -0]] بيفهم الفاصل ده ويديهم لـ [[rm]] يمسحهم، حتى الأسامي اللي فيها مسافات.",
             "اقرا URLs من ملف، و [[-n1]] يعني واحد واحد، واعمل لكل واحد طلب curl."
-          ]
+          ],
+          sol: R`اشتغل جوه [[~/lab]] بس، وجرّب الأول من غير مسح: [[find . -name "*.tmp" -print0 | xargs -0 echo rm]] بيطبع [[rm ./a.tmp ./b.tmp ./c.tmp]] (الترتيب ممكن يختلف). لما تتأكد إن مفيش في اللستة غير الملفات دي، شيل [[echo]]، وبعدها [[ls *.tmp]] هيقول No such file or directory.
+
+ضيف ملف رابع [[touch "my file.tmp"]] وجرّب من غير [[-print0]] و [[-0]]: هيطلعلك [[rm: cannot remove './my': No such file or directory]] و [[rm: cannot remove 'file.tmp']]، لأن xargs قطع الاسم عند المسافة، وكان ممكن يمسح ملف تاني اسمه my لو موجود. عشان كده [[-print0]] و [[-0]] دايمًا مع بعض. وفي الحالة دي بالذات [[find . -name "*.tmp" -delete]] أبسط.`
         }
       ]
     },
@@ -4917,7 +5133,10 @@ id`,
             when: "كل Permission denied: قارن انت مين ([[whoami]]) بصاحب الملف والصلاحيات ([[ls -l]]). و Nginx بيطلع 403 على ملفات الموقع: شوف مين صاحبها.",
             mistakes: "إنك تنسى إن البرامج بتشتغل كيوزرز كمان. Nginx مثلًا بيشتغل كيوزر اسمه [[www-data]]، فالسؤال مش «انا أقدر أقرا الملف؟» لكن «هو يقدر؟». وإنك تنسى إن الفولدر نفسه ليه صلاحيات، ومن غير [[x]] على الفولدر محدش يقدر يدخله حتى لو الملف اللي جواه مفتوح."
           },
-          lines: ["اعرض صلاحيات deploy.sh ومالكه.", "انت مين؟", "اسمك والجروبات اللي انت فيها، عشان تعرف صلاحياتك."]
+          lines: ["اعرض صلاحيات deploy.sh ومالكه.", "انت مين؟", "اسمك والجروبات اللي انت فيها، عشان تعرف صلاحياتك."],
+          sol: R`مثال: [[-rw-r--r-- 1 ali ali 21 Sep 30 10:00 .env]]. أول حرف [[-]] يعني ملف ([[d]] فولدر، [[l]] لينك). بعده 3 مجموعات: المالك [[rw-]] = 4+2+0 = 6، والجروب [[r--]] = 4، والباقي [[r--]] = 4، يعني 644. و [[rwxr-xr-x]] يبقى 755.
+
+تقدر تتأكد من حسابك بـ [[stat -c '%a %A' .env]] (على الماك [[stat -f '%OLp %Sp' .env]])، هيطبع [[644 -rw-r--r--]]. الغلطة الشائعة إنك تحسب أول حرف (نوع الملف) كجزء من الصلاحيات، أو تجمع التسعة مع بعض بدل ما تحسب كل تلاتة لوحدهم.`
         },
         {
           cmd: "chmod",
@@ -4945,7 +5164,10 @@ chmod -R u=rwX,go=rX public/`,
             "644: صاحبه يقرا ويكتب (6)، والباقي يقرا بس (4). مناسب للملفات العادية.",
             "600: صاحبه بس يقرا ويكتب، ومحدش غيره يقدر يشوفه. لازم لمفتاح SSH.",
             "[[-R]] على public وكل اللي جواه: صاحبه يقرا ويكتب، والباقي يقرا بس. و [[X]] الكابيتال بتدّي تشغيل للفولدرات بس (عشان يتدخلوا) مش للملفات، فالفولدرات تبقى 755 والملفات 644."
-          ]
+          ],
+          sol: R`[[./script.sh]] أول مرة بيرد [[bash: ./script.sh: Permission denied]] (والـ exit code 126). بعد [[chmod +x script.sh]]، [[ls -l]] هيبين [[-rwxr-xr-x]] بدل [[-rw-r--r--]]، و [[./script.sh]] يطبع [[hi]].
+
+[[Permission denied]] هنا مش معناها إنك مش مالك الملف، معناها إن الملف معندوش صلاحية التنفيذ. ولو بعد chmod طلعلك [[bad interpreter]] أو [[No such file or directory]] وانت متأكد إن الملف موجود، غالبًا الملف اتكتب على ويندوز وفي آخر كل سطر [[\r]]؛ صلّحه بـ [[sed -i 's/\r$//' script.sh]].`
         },
         {
           cmd: "chown",
@@ -4968,7 +5190,10 @@ sudo chown $USER:$USER file.txt`,
           lines: [
             "change owner: خلّي اليوزر www-data (بتاع Nginx) هو صاحب فولدر الموقع وكل اللي فيه ([[-R]]).",
             "خلّي انت صاحب الملف. [[$USER]] متغير فيه اسمك."
-          ]
+          ],
+          sol: R`[[ls -l /var/www]] بيطلع سطر لكل موقع، والعمودين التالت والرابع هما المالك والجروب: [[www-data www-data]] يعني Nginx أو PHP-FPM (اللي شغالين بيوزر www-data) يقدروا يكتبوا فيه، و [[root root]] يعني root بس اللي يكتب والباقي يقرا لو الصلاحيات سامحة، و [[deploy deploy]] مثلًا يعني يوزر الديبلوي.
+
+الأمر ده بيقرا بس، متغيّرش حاجة وانت بتجرّب. وعشان تشوف اللي جوه موقع معين: [[ls -l /var/www/myapp]]. والمشكلة المشهورة إنك تلاقي ملفات التطبيق ملك [[root]] لأنك عملت git pull بـ sudo، فالتطبيق مش قادر يكتب في [[uploads]] مثلًا؛ الحل [[sudo chown -R]] لليوزر الصح على الفولدر ده بس، مش [[chmod 777]].`
         },
         {
           cmd: "sudo",
@@ -4993,7 +5218,10 @@ sudo !!`,
             "حدّث لستة البرامج بصلاحيات المدير.",
             "اعمل ريستارت لـ Nginx، وده محتاج مدير.",
             "[[!!]] معناها «آخر أمر»، يعني كرر آخر أمر بس بـ sudo. مفيد لما تنسى sudo."
-          ]
+          ],
+          sol: R`[[apt update]] من غير sudo بيطلّع [[E: Could not open lock file /var/lib/apt/lists/lock - open (13: Permission denied)]] وتحته [[E: Unable to lock directory /var/lib/apt/lists/]]. بعدها [[sudo !!]] بيطبع الأمر كامل [[sudo apt update]] وينفّذه، ويسألك باسورد يوزرك انت (مش باسورد root)، ومش هتشوف نجوم وانت بتكتب، ده طبيعي.
+
+لو قالك [[ali is not in the sudoers file]] يبقى اليوزر ده ملوش صلاحية sudo، ومحتاج حد عنده صلاحية يضيفه لجروب [[sudo]]. وعلى الماك مفيش apt: [[brew update]] ومن غير sudo خالص.`
         }
       ]
     },
@@ -5022,7 +5250,10 @@ ps aux | grep node`,
           lines: [
             "process status: اعرض كل البرامج الشغالة. [[aux]] يعني كل البرامج بكل التفاصيل.",
             "نفسه، بس سيب بس اللي فيها node."
-          ]
+          ],
+          sol: R`في الترمنال التاني [[ps aux | grep setInterval]] بيطلع سطرين: سطر عمليتك [[ali  8715 ... node -e setInterval(()=>{},1000)]] والـ PID هو العمود التاني (8715 هنا)، وسطر تاني لـ [[grep setInterval]] نفسه. السطر ده مش عمليتك، ده grep لقى نفسه لأن الكلمة في الأمر بتاعه.
+
+عشان تتجنبه: [[pgrep -af setInterval]] (بيطبع الـ PID والأمر بس)، أو الحيلة المشهورة [[ps aux | grep [s]etInterval]]. واحفظ الـ PID، هتحتاجه في درس kill.`
         },
         {
           cmd: "top / htop",
@@ -5047,7 +5278,10 @@ uptime`,
             "شاشة لايف بالبرامج وقد إيه بتاكل من المعالج والرام. q للخروج.",
             "الرام: قد إيه مستخدم وقد إيه فاضي. [[-h]] human.",
             "السيرفر شغال بقاله قد إيه، ومتوسط الضغط عليه."
-          ]
+          ],
+          sol: R`جوه htop دوس F6 واختار [[PERCENT_MEM]] و Enter (أو اختصار Shift+M)، فعمود [[MEM%]] يبقى هو اللي بيرتب، وأول سطر هو أكتر عملية بتاكل رام. على جهاز مطور غالبًا هتلاقي المتصفح أو VS Code أو [[node]]، وعلى السيرفر [[postgres]] أو [[java]] أو [[node]]. و [[q]] أو F10 للخروج.
+
+لو لقيت نفس البرنامج في سطور كتير (خصوصًا المتصفح)، دي threads أو عمليات فرعية؛ دوس [[H]] يخفي الـ threads. ومن غير htop: [[ps aux --sort=-%mem | head -5]]. وعلى الماك مفيش [[--sort]] ولا [[free]]: استخدم [[top -o mem]]، و htop بـ [[brew install htop]].`
         },
         {
           cmd: "kill",
@@ -5076,7 +5310,10 @@ pkill -f "node server.js"`,
             "اطلب من البرنامج رقم 1234 يقفل بهدوء.",
             "[[-9]] اقفله غصب فورًا (لو الأول ماسمعش الكلام).",
             "اقفل أي برنامج في أمره «node server.js»، بالاسم بدل الرقم."
-          ]
+          ],
+          sol: R`اقتل العملية اللي انت شغلتها بس، بالـ PID اللي لقيته في درس ps: [[kill 8715]]. مش هيطبع حاجة، والـ node في الترمنال الأول هيقف ويرجعلك الـ prompt (وممكن bash يكتب [[Terminated]]). اتأكد بـ [[ps -p 8715]]: هيطبع سطر العناوين بس، و [[echo $?]] = 1 يعني العملية مش موجودة.
+
+متستخدمش [[-9]] غير لو [[kill]] العادي مجابش نتيجة بعد كام ثانية. وخلي بالك من [[pkill -f]]: بيدوّر في سطر الأمر كله، ولو كلمة البحث عامة زي [[node]] ممكن يقتل حاجات كتير تانية (VS Code نفسه بيشغّل node). اتفرج الأول بـ [[pgrep -af الكلمة]] قبل أي [[pkill]].`
         },
         {
           cmd: "& و jobs و fg",
@@ -5102,7 +5339,10 @@ fg %1`,
             "[[&]] في الآخر: شغّل الأمر في الخلفية وارجعلي الترمنال فاضي.",
             "اعرض البرامج اللي في الخلفية.",
             "foreground: هات البرنامج رقم ١ قدامي تاني."
-          ]
+          ],
+          sol: R`Ctrl+Z بيطبع [[[1]+  Stopped                 sleep 300]]. [[bg]] بيطبع [[[1]+ sleep 300 &]] ويكمّله في الخلفية. [[jobs]] بيطبع [[[1]+  Running                 sleep 300 &]]. [[fg]] بيطبع [[sleep 300]] ويرجّعه قدامك، و Ctrl+C يوقفه ([[echo $?]] بعدها = 130).
+
+الفرق المهم: بعد Ctrl+Z العملية واقفة مش شغالة (Stopped)، و [[bg]] هو اللي بيخليها تكمّل. ولو [[jobs]] مطبعش حاجة يبقى انت في ترمنال تاني، لأن الـ jobs خاصة بكل شيل لوحده.`
         },
         {
           cmd: "nohup",
@@ -5127,7 +5367,10 @@ pm2 logs api`,
             "شغّل السيرفر في الخلفية ([[&]])، وفضّله شغال حتى لو قفلت الترمنال ([[nohup]])، والناتج والأخطاء في out.log.",
             "الطريقة الأحسن: [[pm2]] يشغّل التطبيق ويرجّعه لو وقع. [[--name api]] اسم تنادي بيه.",
             "اعرض اللوجات بتاعة التطبيق اللي اسمه api."
-          ]
+          ],
+          sol: R`[[nohup sleep 600 > out.log 2>&1 &]] بيطبع رقم الـ job والـ PID زي [[[1] 12345]]. اقفل الترمنال، وافتح واحد جديد و [[ps aux | grep [s]leep]]: هتلاقي [[sleep 600]] لسه شغال بنفس الـ PID، لأن nohup خلاه يتجاهل إشارة SIGHUP اللي بتتبعت لما الترمنال يتقفل.
+
+من غير nohup العملية بتموت مع الترمنال. ولو كتبت [[nohup]] من غير [[> out.log]]، هيعمل ملف [[nohup.out]] ويكتب فيه. ونضّف وراك بـ [[kill 12345]]. وعلى سيرفر حقيقي استخدم pm2 أو systemd بدل nohup، عشان التطبيق يرجع يشتغل لوحده لو وقع أو السيرفر عمل restart.`
         },
         {
           cmd: "systemctl",
@@ -5156,7 +5399,10 @@ journalctl -u nginx -n 50 -f`,
             "[[nginx -t]] اختبر الإعدادات، ولو سليمة ([[&&]]) طبّقها من غير ما تقطع الزوار.",
             "خلّي Docker يشتغل لوحده مع كل تشغيل للسيرفر.",
             "اعرض آخر ٥٠ سطر لوج لـ Nginx ([[-n 50]])، وفضّل متابع ([[-f]])."
-          ]
+          ],
+          sol: R`[[sudo systemctl status nginx]] بيطلّع كام سطر، أهمهم [[Active: active (running) since ...]]؛ لو [[inactive (dead)]] يبقى واقف، و [[failed]] يبقى وقع. و [[Loaded: ... enabled]] معناها بيقوم مع السيرفر. بيفتح في pager، فـ [[q]] للخروج. وللوج: [[sudo journalctl -u nginx -n 20 --no-pager]] ونفس الأمر بـ [[-u docker]].
+
+لو journalctl قالك [[-- No entries --]]، يا إما الخدمة مابدأتش خالص، يا إما محتاج sudo عشان تشوف لوجات النظام. ولو [[Unit nginx.service could not be found]] يبقى nginx مش متسطب كخدمة (أو شغال جوه Docker، وساعتها [[docker logs]]). وعلى الماك مفيش systemctl أصلًا: [[brew services list]].`
         }
       ]
     },
@@ -5191,7 +5437,10 @@ curl -o logo.png https://example.com/logo.png`,
             "[[-I]] الـ headers بس، من غير الصفحة.",
             "طلب POST ([[-X]])، معاه header بيقول «اللي باعته JSON» ([[-H]])، والبيانات نفسها ([[-d]] من data).",
             "نزّل ملف واحفظه باسم logo.png ([[-o]] من output)."
-          ]
+          ],
+          sol: R`[[curl https://api.github.com/users/USERNAME]] (حط اسمك) بيرجّع JSON فيه [["login"]] و [["id"]] و [["name"]] و [["public_repos"]] و [["created_at"]]. ولو الاسم غلط هيرجّع [[{"message": "Not Found", ...}]]؛ الـ status هنا 404، بس curl مش بيعتبرها غلطة إلا لو زوّدت [[-f]].
+
+و [[curl -I https://yoursite.com]] بيطبع الهيدرز بس: أولها [[HTTP/2 200]] وبعدين [[content-type]] و [[date]] وغيرهم. لو أول سطر [[HTTP/1.1 301 Moved Permanently]] ومعاه [[location:]]، يبقى الموقع بيحوّلك (غالبًا من http لـ https أو من غير www)؛ زوّد [[-L]] عشان curl يمشي ورا التحويل.`
         },
         {
           cmd: "ping",
@@ -5211,7 +5460,10 @@ curl -o logo.png https://example.com/logo.png`,
             when: "النت واقع؟ جرّب [[ping google.com]]. الدومين بيشاور على IP صح؟ [[ping]] بيطبعه في أول سطر. الاتصال بسيرفرك بطيء ولا لأ.",
             mistakes: "إنك تفتكر السيرفر واقع عشان [[ping]] مبيردش. سيرفرات وفايروولات كتير بتقفل الـ ping عن قصد، والسيرفر شغال عادي. اتأكد بطريقة تانية: [[curl]] للموقع، أو [[nc -zv]] للبورت."
           },
-          lines: ["ابعت ٤ رسايل ([[-c 4]]) لـ google.com واعرف بيرد في قد إيه."]
+          lines: ["ابعت ٤ رسايل ([[-c 4]]) لـ google.com واعرف بيرد في قد إيه."],
+          sol: R`هتشوف سطر لكل رد: [[64 bytes from 203.0.113.10: icmp_seq=1 ttl=54 time=38.2 ms]]. الـ time هو وقت الرحلة رايح جاي بالملّي ثانية، وكل ما السيرفر أبعد جغرافيًا الرقم بيزيد. وفي الآخر ملخص فيه [[0% packet loss]] و [[min/avg/max]].
+
+من غير [[-c 4]] على لينكس هيفضل شغال لحد Ctrl+C. ولو مفيش ولا رد ([[100% packet loss]]) مش شرط السيرفر واقع: firewalls وشركات cloud كتير بتقفل ICMP. اتأكد بطريقة تانية زي [[nc -zv IP 22]] أو [[curl -I]].`
         },
         {
           cmd: "ss / lsof",
@@ -5236,7 +5488,10 @@ lsof -i :3000`,
             "اعرض كل البورتات اللي فيها برامج بتسمع ([[-tulpn]]: tcp و udp و listening و processes و numbers).",
             "نفسه، بس سيب بورت 3000.",
             "مين ماسك بورت 3000؟ بيطبع اسم البرنامج ورقمه."
-          ]
+          ],
+          sol: R`[[sudo ss -tulpn | grep 3000]] بيطلع سطر زي [[tcp LISTEN 0 5 0.0.0.0:3000 0.0.0.0:* users:(("python3",pid=10481,fd=3))]]، والـ PID بعد [[pid=]]. و [[lsof -i :3000]] بيطلع جدول فيه [[python3 10481 ali 3u IPv4 ... TCP *:3000 (LISTEN)]]، والـ PID في العمود التاني.
+
+لو [[ss]] طلّع السطر من غير جزء [[users:]]، يبقى نسيت sudo والعملية مش بتاعتك. ولو مطلعش حاجة خالص، اتأكد إن السيرفر لسه شغال في الترمنال التاني وإنه مطلّعش [[Address already in use]]. وعلى الماك مفيش ss، استخدم [[lsof -i :3000]].`
         },
         {
           cmd: "ssh",
@@ -5266,7 +5521,16 @@ ssh -p 2222 user@203.0.113.10`,
             "ابعت المفتاح العام للسيرفر عشان تدخل بعد كده من غير باسورد.",
             "ادخل السيرفر.",
             "ادخل سيرفر شغال على بورت غير 22 ([[-p]] port)."
-          ]
+          ],
+          sol: R`بعد [[ssh-keygen -t ed25519]] (Enter على المسار، وحط passphrase) هيتعمل [[~/.ssh/id_ed25519]] و [[~/.ssh/id_ed25519.pub]]. [[ssh-copy-id root@IP]] بيسألك باسورد السيرفر مرة أخيرة، وبعدها [[ssh root@IP]] بيدخلك من غير باسورد. والـ config زي الكود تحت، وبعده [[ssh myvps]] بيدخل على طول. وتقدر تشوف ssh فهم إيه من غير ما يتصل: [[ssh -G myvps | grep -E '^(hostname|user|port) ']].
+
+لو لسه بيسألك باسورد، غالبًا صلاحيات [[~/.ssh]] على السيرفر واسعة (لازم 700 للفولدر و 600 لـ [[authorized_keys]])؛ [[ssh -v myvps]] بيوريك هو جرّب إيه. ولو [[Could not resolve hostname myvps]]، يبقى الملف مش في [[~/.ssh/config]] بالظبط، أو كلمة Host مكتوبة غلط.`,
+          solCode: R`# ~/.ssh/config
+Host myvps
+    HostName 203.0.113.10
+    User root
+    IdentityFile ~/.ssh/id_ed25519
+    # Port 2222   لو غيّرت بورت SSH`
         },
         {
           cmd: "scp / rsync",
@@ -5296,7 +5560,10 @@ rsync -avz --dry-run ./ root@203.0.113.10:/var/www/app/`,
             "العكس: نزّل ملف من السيرفر لهنا ([[.]]).",
             "[[rsync]] بينقل الفرق بس. [[-a]] archive (يحافظ على كل حاجة)، [[-v]] verbose (يوريك بيعمل إيه)، [[-z]] يضغط وهو بينقل.",
             "[[--dry-run]] وريني هتنقل إيه من غير ما تنقل فعلًا."
-          ]
+          ],
+          sol: R`[[rsync -avz --dry-run ~/lab/ root@IP:/root/lab/]] بيطبع [[sending incremental file list]] وبعدها لستة الملفات اللي كان هينقلها، وفي الآخر [[total size is ... speedup is ... (DRY RUN)]]. مفيش ولا ملف اتنقل فعلًا. ولو نقلت مرة من غير [[--dry-run]] وبعدين رجعت عملت dry-run، اللستة هتبقى شبه فاضية، لأن rsync بينقل اللي اتغير بس.
+
+خلي بالك من الـ [[/]] في آخر المصدر: [[~/lab/]] بينقل اللي جوه lab، و [[~/lab]] بينقل الفولدر نفسه فيبقى [[/root/lab/lab]] على السيرفر. وده بالظبط اللي الـ dry-run بيكشفه قبل ما يحصل.`
         }
       ]
     },
@@ -5331,7 +5598,10 @@ du -sh /var/log/* | sort -h | tail`,
             "disk usage: حجم فولدر node_modules. [[-s]] summary (الإجمالي بس).",
             "حجم كل حاجة هنا ([[*]])، ومترتبة من الأصغر للأكبر.",
             "نفسه لفولدر اللوجات، وآخر ١٠ بس (الأكبر)."
-          ]
+          ],
+          sol: R`[[du -sh ~/* | sort -h | tail -3]] بيطبع آخر 3 سطور وهما الأكبر، زي [[1.2G  /home/ali/projects]]. [[sort -h]] بيفهم الـ K و M و G، عشان كده مش [[sort -n]] (اللي هيحط 900K بعد 2G).
+
+بس [[~/*]] مش بتشمل الفولدرات المخفية، وهي كتير الأكبر ([[.cache]] و [[.npm]] و [[.local]]). الأشمل: [[du -sh ~/* ~/.[!.]* 2>/dev/null | sort -h | tail -3]]. ولو الأمر قعد شوية ده طبيعي في home كبير.`
         },
         {
           cmd: "tar",
@@ -5361,7 +5631,10 @@ tar -xzvf backup.tar.gz -C /tmp/restore`,
             "[[t]] اعرض اللي جوه الملف من غير ما تفكه.",
             "اعمل الفولدر اللي هنفك فيه.",
             "[[x]] extract (فك). و [[-C]] فك جوه الفولدر ده."
-          ]
+          ],
+          sol: R`[[tar -czvf backup.tar.gz app/]] بيطبع [[app/]] و [[app/src/]] وكل ملف جواه. بعد [[rm -rf app]] (جوه lab بس)، [[ls app]] بيقول No such file or directory. وبعدين [[tar -xzvf backup.tar.gz]] بيطبع نفس اللستة ويرجّع الفولدر زي ما كان بالظبط.
+
+قبل ما تمسح الأصلي، اتأكد إن الأرشيف سليم بـ [[tar -tzf backup.tar.gz]]؛ دي عادة كويسة مع أي باك أب. ولو ضغطت بمسار كامل زي [[tar -czf b.tar.gz /home/ali/lab/app]]، tar هيشيل الـ [[/]] الأولانية ويطبع [[Removing leading '/' from member names]]، ولما تفك هيتعمل [[home/ali/lab/app]] جوه الفولدر اللي انت فيه، مش في مكانه الأصلي.`
         },
         {
           cmd: "zip / unzip",
@@ -5383,7 +5656,10 @@ unzip site.zip -d out/`,
           lines: [
             "اضغط فولدر dist بكل اللي فيه ([[-r]]) في site.zip.",
             "فك site.zip جوه فولدر out ([[-d]] directory)."
-          ]
+          ],
+          sol: R`[[zip -r site.zip app/]] بيطبع [[adding: app/ (stored 0%)]] لكل ملف، و [[unzip site.zip -d out/]] بيعمل [[out/]] لو مش موجود ويطبع [[creating: out/app/]] و [[extracting: out/app/src/s.js]]. [[ls out]] هيوريك [[app]] جواه.
+
+لو نسيت [[-r]]، الـ zip هيبقى فيه الفولدر فاضي من غير اللي جواه. ولو عايز تشوف اللي جوه الـ zip من غير ما تفكه: [[unzip -l site.zip]].`
         }
       ]
     },
@@ -5422,7 +5698,10 @@ env | grep NODE`,
             "اطبع الفولدرات اللي الشيل بيدوّر فيها على البرامج.",
             "اعمل متغير API_URL للجلسة دي.",
             "اعرض كل المتغيرات، وسيب اللي فيها NODE."
-          ]
+          ],
+          sol: R`بعد [[export API_URL=http://localhost:3000]]، [[echo $API_URL]] بيطبع [[http://localhost:3000]]. اقفل وافتح ترمنال جديد، [[echo $API_URL]] هيطبع سطر فاضي. المتغير كان عايش في ذاكرة الشيل ده والبرامج اللي بيشغّلها بس، ومتسجلش في أي ملف.
+
+عشان يفضل موجود: حطه في [[~/.bashrc]] (أو [[~/.zshrc]] على الماك)، وللمشاريع استخدم [[.env]]. والغلطة الشائعة [[export API_URL = http://...]] بمسافات، ودي بتطلّع [[not a valid identifier]].`
         },
         {
           cmd: "alias و .bashrc",
@@ -5449,7 +5728,10 @@ source ~/.bashrc`,
             "اختصار gs لـ git status.",
             "احفظ الاختصار في آخر ملف .bashrc عشان يفضل موجود كل مرة.",
             "اقرا .bashrc تاني دلوقتي عشان الاختصار يشتغل من غير ما تقفل الترمنال."
-          ]
+          ],
+          sol: R`[[echo "alias dc='docker compose'" >> ~/.bashrc]] وبعدين [[source ~/.bashrc]]. اتأكد بـ [[type dc]]، هيطبع [[dc is aliased to ...docker compose...]]، وجرّب [[dc version]] هيطبع نسخة Docker Compose اللي عندك.
+
+لو [[dc: command not found]] في ترمنال جديد، يبقى كتبت في ملف الشيل الغلط: على الماك zsh بيقرا [[~/.zshrc]] مش [[.bashrc]]. وخلي بالك إن [[dc]] اسم حاسبة قديمة في بعض التوزيعات، والـ alias بيغطي عليها في الترمنال بتاعك، ومفيش مشكلة.`
         },
         {
           cmd: "history",
@@ -5472,7 +5754,10 @@ source ~/.bashrc`,
             when: "كل يوم. أمر docker طويل كتبته امبارح: Ctrl+R واكتب docker.",
             mistakes: "كتابة باسوردات أو مفاتيح جوه الأوامر، فتتحفظ في ملف أي حد يقدر يقراه لو دخل الجهاز. و [[!]] جوه نص بين double quotes ممكن الشيل يفهمه كأمر history."
           },
-          lines: ["اعرض آخر ٢٠ أمر كتبتهم.", "كرر آخر أمر.", "كرر الأمر رقم ٤٢ في الـ history."]
+          lines: ["اعرض آخر ٢٠ أمر كتبتهم.", "كرر آخر أمر.", "كرر الأمر رقم ٤٢ في الـ history."],
+          sol: R`Ctrl+R بيحوّل الـ prompt لـ [[(reverse-i-search)]]، وأول ما تكتب [[mkdir]] بيظهر آخر أمر فيه الكلمة دي. Ctrl+R تاني بيجيب اللي قبله، وهكذا. Enter بينفّذه زي ما هو، والسهم يمين أو شمال بيحطه في السطر تعدّله، و Ctrl+G (أو Ctrl+C) بيلغي.
+
+لو كتبت ومظهرش حاجة (أو ظهر [[failed reverse-i-search]])، يبقى مفيش أمر فيه الكلمة دي في الـ history. ولو فوّت الأمر اللي عايزه بـ Ctrl+R زيادة، الغي وابدأ تاني؛ Ctrl+S (اللي المفروض يرجع لقدام) في أغلب الترمنالات بتجمّد الشاشة بدل كده، ولو حصل Ctrl+Q بيفكها.`
         },
         {
           cmd: "man / --help",
@@ -5497,7 +5782,10 @@ tldr tar`,
             "manual: الدليل الكامل لأمر grep. q للخروج.",
             "شرح مختصر للـ flags.",
             "أمثلة جاهزة ومختصرة (محتاج تسطّب tldr الأول)."
-          ]
+          ],
+          sol: R`على أوبونتو [[sudo apt install tldr]]، وعلى الماك [[brew install tlrc]]، أو [[npm i -g tldr]] في أي مكان فيه node. أول مرة لازم يحمّل الصفحات: [[tldr --update]]. بعدها [[tldr find]] بيطبع وصف في سطر وتحته حوالي 8 أمثلة جاهزة، زي البحث بالاسم أو الامتداد، والبحث بتاريخ التعديل، وتنفيذ أمر على كل نتيجة.
+
+لو قالك [[No tldr entry for find]]، يبقى الصفحات لسه ماتحمّلتش (أو الجهاز مش واصل للنت)، شغّل [[tldr --update]]. ولو شفت flag في tldr وعايز تفاصيله، ساعتها [[man find]] وابحث جواه بـ [[/]] زي less.`
         }
       ]
     },
@@ -5530,7 +5818,12 @@ awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head`,
             "رتّب السطور أبجديًا.",
             "رتّب وشيل المتكرر ([[-u]] unique).",
             "طلّع IP كل زائر، ورتّبهم، وعدّ كل IP ([[uniq -c]])، ورتّب بالعدد من الأكبر ([[-rn]])، وخد أول ١٠."
-          ]
+          ],
+          sol: R`لو الملف فيه [[Ali Sara Ali Omar Sara Ali]] كل اسم في سطر، [[sort names.txt | uniq -c | sort -rn]] بيطبع [[3 Ali]] ثم [[2 Sara]] ثم [[1 Omar]]، الأكتر تكرار الأول.
+
+أشهر غلطة إنك تكتب [[uniq -c names.txt]] من غير sort: [[uniq]] بيعدّ التكرار المتجاور بس، فهيطلعلك [[1 Ali]] أكتر من مرة. وخلي بالك من المسافات في آخر السطر: [[Ali]] و [[Ali ]] بالنسبة له اسمين مختلفين.`,
+          solCode: R`printf 'Ali\nSara\nAli\nOmar\nSara\nAli\n' > names.txt
+sort names.txt | uniq -c | sort -rn`
         },
         {
           cmd: "cut",
@@ -5554,7 +5847,10 @@ cut -d: -f1 /etc/passwd`,
           lines: [
             "قسّم عند الفاصلة ([[-d',']]) وخد العمود التاني ([[-f2]]).",
             "قسّم عند النقطتين وخد العمود الأول، وده اسم اليوزر في ملف passwd."
-          ]
+          ],
+          sol: R`[[cut -d: -f1 /etc/passwd]] بيطبع اسم في كل سطر: [[root]] و [[daemon]] و [[bin]] و [[sys]]... واسمك غالبًا قرب الآخر. أغلبهم يوزرز نظام للخدمات مش ناس. ولو عايز اليوزرز العاديين بس (UID من 1000 وطالع): [[awk -F: '$3 >= 1000 {print $1}' /etc/passwd]]، وهيطلع معاهم [[nobody]] لأن رقمه 65534.
+
+لو نسيت [[-d:]] هيطبع السطر كامل، لأن الفاصل الافتراضي Tab مش [[:]]. وعلى الماك [[/etc/passwd]] فيه يوزرز النظام بس ومعاهم سطور تعليقات، واليوزرز الحقيقيين بتشوفهم بـ [[dscl . list /Users]].`
         },
         {
           cmd: "awk",
@@ -5582,7 +5878,12 @@ awk -F, '{sum += $3} END {print sum}' sales.csv`,
           lines: [
             "اطبع العمود الأول (IP) والسابع (الصفحة) من كل سطر.",
             "الفاصل فاصلة ([[-F,]])، اجمع العمود التالت من كل السطور، وفي الآخر ([[END]]) اطبع المجموع."
-          ]
+          ],
+          sol: R`الناتج [[185.5]]. [[-F,]] بيقول إن الفاصل فاصلة، و [[$3]] العمود التالت، و [[END]] بيتنفّذ مرة واحدة بعد آخر سطر. و [[NR > 1]] بيتخطى سطر العناوين؛ هنا مش فارقة لأن awk بيعتبر كلمة [[price]] صفر، بس في شغل حقيقي أوضح تتخطاه صريح.
+
+لو طلعلك [[0]] يبقى نسيت [[-F,]]: awk قسم على المسافات، فالسطر كله بقى [[$1]] و [[$3]] فاضي. ولو الأرقام فيها فاصلة الآلاف أو فيه قيم بين علامات تنصيص جواها فاصلة، awk هيقسم غلط؛ ساعتها استخدم أداة بتفهم CSV أو Python.`,
+          solCode: R`printf 'name,qty,price\npen,2,10\nbook,1,55.5\nbag,3,120\n' > sales.csv
+awk -F, 'NR > 1 {sum += $3} END {print sum}' sales.csv`
         },
         {
           cmd: "sed",
@@ -5609,7 +5910,12 @@ sed -n '10,20p' app.log`,
             "استبدل localhost بـ 127.0.0.1 في كل مكان ([[g]])، واطبع النتيجة من غير ما تعدّل الملف.",
             "استبدل 3000 بـ 4000 جوه .env نفسه ([[-i]]).",
             "اطبع السطور من ١٠ لـ ٢٠ بس."
-          ]
+          ],
+          sol: R`[[sed -i 's/3000/4000/g' .env]] مش بيطبع حاجة، و [[cat .env]] هيوريك [[PORT=4000]]. بس خلي بالك إن ده بيغيّر أي 3000 في الملف: لو فيه [[API_URL=http://localhost:3000]] هيبقى 4000 هو كمان. الأدق إنك تحدد السطر زي الكود تحت، و [[^]] أول السطر و [[$]] آخره.
+
+على الماك [[sed -i 's/...' .env]] هيطلّع [[invalid command code .]]؛ لازم [[sed -i '' 's/3000/4000/g' .env]]. ولو عايز تشوف النتيجة قبل ما تكتب في الملف، شيل [[-i]] الأول، والناتج هيطلع على الشاشة بس والملف زي ما هو.`,
+          solCode: R`sed -i 's/^PORT=3000$/PORT=4000/' .env
+cat .env`
         },
         {
           cmd: "jq",
@@ -5646,7 +5952,10 @@ docker inspect api | jq '.[0].State.Status'`,
             "الرد array من الـ repos. اطبع اسم كل واحد ([[.[] ]] كل عنصر).",
             "من package.json هات أسامي كل الـ dependencies.",
             "حالة كونتينر api (شغال ولا واقف) من ناتج docker inspect."
-          ]
+          ],
+          sol: R`[[curl -s "https://api.github.com/users/USERNAME/repos?per_page=100" | jq -r '.[].name']] بيطبع اسم كل repo في سطر، من غير علامات تنصيص (ده شغل [[-r]]).
+
+أول غلطة: من غير [[per_page=100]] هتاخد أول 30 بس، لأن GitHub بيقسم النتايج صفحات؛ ولو عندك أكتر من 100 زوّد [[&page=2]]. التانية: اسم يوزر غلط بيرجّع [[{"message":"Not Found"}]]، و [[.[].name]] عليه بيطلّع [[jq: error ... Cannot index string with string "name"]]. والتالتة: من غير [[-r]] كل اسم هيطلع بين علامات تنصيص. والـ repos الـ private مش هتظهر من غير token.`
         },
         {
           cmd: "diff",
@@ -5668,7 +5977,11 @@ docker inspect api | jq '.[0].State.Status'`,
           },
           lines: [
             "قارن .env.example بـ .env بالشكل الموحّد ([[-u]]). السطور اللي بـ [[-]] في example بس، يعني ناقصة عندك."
-          ]
+          ],
+          sol: R`[[diff -u .env.example .env]] بيطبع سطرين عناوين ([[---]] للملف الأول و [[+++]] للتاني)، وبعدين كل سطر عليه [[-]] موجود في الـ example بس، وكل سطر عليه [[+]] في .env بس. المتغير الناقص هو اللي عليه [[-]] ومفيش سطر [[+]] بنفس الاسم، زي [[-JWT_SECRET=]].
+
+المشكلة إن القيم أكيد مختلفة ([[PORT=3000]] مقابل [[PORT=4000]])، فهتلاقي سطور كتير فيها [[-]] و [[+]] وتتلخبط. الأوضح إنك تقارن الأسامي بس زي الكود تحت، وده بيطبع [[JWT_SECRET]] لوحده. و exit code بتاع [[diff]] بيبقى 1 لما فيه فرق، ودي مش غلطة.`,
+          solCode: R`comm -23 <(cut -d= -f1 .env.example | sort) <(cut -d= -f1 .env | sort)`
         },
         {
           cmd: "tr",
@@ -5690,7 +6003,10 @@ echo "a    b   c" | tr -s ' '`,
             "بدّل كل [[:]] بسطر جديد، فكل فولدر في الـ PATH يطلع في سطر.",
             R`امسح حرف [[\r]] اللي ويندوز بيحطه آخر كل سطر، واحفظ النتيجة في ملف جديد.`,
             "المسافات المتكررة تبقى مسافة واحدة: a b c."
-          ]
+          ],
+          sol: R`[[echo "$PATH" | tr ':' '\n']] بيطبع كل فولدر في سطر، زي [[/usr/local/bin]] و [[/usr/bin]] و [[/bin]]، بنفس الترتيب اللي الشيل بيدوّر بيه على البرامج. و [[echo "ali" | tr 'a-z' 'A-Z']] بيطبع [[ALI]].
+
+[[tr]] بيشتغل على الحروف واحد واحد، مش كلمات: [[tr 'ali' 'ALI']] هيبدّل كل a و l و i في أي مكان. والحروف العربي ملهاش كابيتال، فـ [[علي ali]] هتبقى [[علي ALI]]. والأدق من [[a-z]] إنك تكتب [[tr '[:lower:]' '[:upper:]']].`
         }
       ]
     },
@@ -5722,7 +6038,10 @@ sudo ss -tlnp | grep -E ':(3000|5432|6379)'`,
           lines: [
             "اعرض البورتات اللي فيها برامج بتسمع (tcp بس)، والعمود Local Address بيقولك سامعة لمين.",
             "سيب بس بورتات 3000 و 5432 و 6379 ([[-E]] بيسمح بـ «أو» بعلامة [[|]])."
-          ]
+          ],
+          sol: R`[[sudo ss -tlnp]] بيطلع سطر لكل بورت بيسمع. بص على عمود [[Local Address:Port]]: [[0.0.0.0:80]] أو [[*:443]] أو [[[::]:22]] يعني مفتوح لكل الشبكات، و [[127.0.0.1:5432]] أو [[[::1]:6379]] يعني من جوه السيرفر بس.
+
+القاعدة: اللي لازم يبقى عام هو 80 و 443 (Nginx أو Caddy) و 22 (SSH). أي داتابيز (5432 و 3306 و 27017) و Redis (6379) وتطبيقك نفسه (3000) لازم يبقوا 127.0.0.1، لأن Nginx هو اللي بيوصلهم. ولو لقيت [[0.0.0.0:5432]] وانت شغال Docker، غالبًا عندك [[ports: "5432:5432"]] في الـ compose؛ خليها [[127.0.0.1:5432:5432]] أو شيلها خالص. وافتكر إن Docker بيعدّي ufw، فالـ firewall مش هيحميك هنا.`
         },
         {
           cmd: "ip a / ip route",
@@ -5756,7 +6075,10 @@ curl -s ifconfig.me`,
             "الطريق للنت: أول سطر default هو الراوتر.",
             "الـ IP المحلي بتاعك بس.",
             "الـ IP العام اللي النت شايفك بيه ([[-s]] silent)."
-          ]
+          ],
+          sol: R`[[ip -br a]] بيطبع كل كارت شبكة وعنوانه: [[lo  127.0.0.1/8]] وبعدين حاجة زي [[wlan0  UP  192.168.1.23/24]]. و [[curl -s ifconfig.me]] بيطبع رقم تاني خالص. الأول عنوانك جوه شبكة البيت أو الشغل (private)، والتاني عنوان الراوتر اللي العالم كله شايفه (public)، والراوتر بيترجم بينهم بـ NAT.
+
+لو الاتنين طلعوا نفس الرقم، غالبًا انت على VPS عنده IP عام مباشرة. ولو ظهر [[172.17.0.1]] على [[docker0]]، ده شبكة Docker الداخلية مش عنوانك. وعلى الماك مفيش [[ip]]: [[ipconfig getifaddr en0]] للـ IP المحلي.`
         },
         {
           cmd: "/etc/hosts",
@@ -5785,7 +6107,10 @@ sudo nano /etc/hosts`,
             "ضيف سطر في آخره ([[tee -a]] append) بـ sudo عشان الملف محمي.",
             "اتأكد إن example.com بقى بيروح للـ IP اللي حطيته.",
             "افتح الملف تعدّله أو تمسح السطر بعد ما تخلص."
-          ]
+          ],
+          sol: R`[[echo "127.0.0.1 myapp.local" | sudo tee -a /etc/hosts]]، وبعدين [[python3 -m http.server 3000]]. [[ping -c 1 myapp.local]] هيرد من [[127.0.0.1]]، والمتصفح على [[http://myapp.local:3000]] هيعرض Directory listing للفولدر. وعلى لينكس تقدر تتأكد من غير متصفح: [[getent hosts myapp.local]] بيطبع [[127.0.0.1  myapp.local]].
+
+اكتب [[http://]] صريح في المتصفح، وإلا ممكن يعتبرها كلمة بحث. وعلى الماك [[.local]] محجوزة لـ Bonjour، فممكن يحصل تأخير كام ثانية؛ لو ضايقك استخدم [[myapp.test]]. ولما تخلص امسح السطر من [[/etc/hosts]] بـ [[sudo nano]].`
         },
         {
           cmd: "nc",
@@ -5817,7 +6142,10 @@ nc -l 9000`,
             "نفسه لبورت 443.",
             "[[-w 3]] استنى ٣ ثواني بس. قاعدة البيانات على جهازك شغالة؟",
             "[[-l]] listen: اسمع على بورت 9000 كأنك سيرفر."
-          ]
+          ],
+          sol: R`اللي تكتبه في ترمنال [[nc localhost 9000]] وتدوس Enter بيظهر في ترمنال [[nc -l 9000]]، والعكس كمان، لأن ده اتصال TCP في الاتجاهين. و Ctrl+C في أي ناحية بيقفل الاتصال.
+
+لو التاني قالك [[Connection refused]] يبقى الأول مش شغال أو على بورت تاني. ولو [[nc -l 9000]] نفسه اشتكى من الـ syntax، غالبًا عندك نسخة netcat القديمة (traditional) ومحتاجة [[nc -l -p 9000]]. على أوبونتو (OpenBSD netcat) والماك [[nc -l 9000]] شغالة.`
         },
         {
           cmd: "traceroute / mtr",
@@ -5844,7 +6172,10 @@ mtr -rwc 10 google.com`,
             "سطّب الأداتين.",
             "اعرض كل راوتر في الطريق لـ google.com.",
             "ping و traceroute مع بعض ١٠ مرات ([[-c 10]])، وتقرير في الآخر ([[-r]])."
-          ]
+          ],
+          sol: R`كل سطر في [[traceroute]] هو hop (راوتر في الطريق) ورقمه والوقت لحد عنده. في الطريقين، أول hop أو اتنين هيبقوا نفس الحاجة: راوتر بيتك ([[192.168.1.1]] مثلًا) وبعده شبكة الـ ISP. بعدها الطريق بيتفرق: جوجل غالبًا قريب لأن عندها سيرفرات في بلاد كتير، وسيرفرك هيعدّي على شبكة الـ datacenter بتاعته، فعدد الـ hops والوقت هيختلفوا. و [[mtr -rwc 10]] بيعمل نفس الحاجة بس بيبعت 10 مرات ويطلّع [[Loss%]] و [[Avg]] لكل hop.
+
+سطور [[* * *]] مش معناها إن الطريق مقطوع؛ راوترات كتير مش بترد على الـ probes دي. اللي يقلق إن الـ loss يبدأ عند hop معين ويفضل لحد آخر سطر، أو الوقت يقفز جامد عند hop ويفضل عالي بعده.`
         },
         {
           cmd: "wget",
@@ -5871,7 +6202,10 @@ wget -qO- https://example.com | head`,
             "[[-c]] continue: كمّل تحميل اتقطع.",
             "[[-O]] احفظه بالاسم ده.",
             "[[-q]] quiet، و [[-O-]] اطبع على الشاشة بدل ملف، وخد أول سطور بس."
-          ]
+          ],
+          sol: R`[[wget URL]] بيطبع شريط تقدّم. Ctrl+C في النص بيسيب ملف ناقص بنفس الاسم ([[ls -l]] هيوريك حجمه أقل). بعدها [[wget -c URL]] بيقول [[206 Partial Content]] وسطر [[Length: ... remaining]]، ويكمّل من مكان ما وقف مش من الأول.
+
+لو شغّلته تاني من غير [[-c]] هيحمّل من الأول في ملف جديد اسمه [[big.iso.1]]. ولو مع [[-c]] شفت [[200 OK]] بدل 206 وبدأ من الصفر، يبقى السيرفر مش بيدعم الاستكمال (Range requests)، وده بيحصل مع سيرفرات بسيطة زي [[python3 -m http.server]].`
         }
       ]
     },
@@ -5912,7 +6246,10 @@ dig +trace example.com`,
             "سيرفرات الإيميل.",
             "سجلات النص (تحقق وإعدادات إيميل).",
             "امشي السلسلة كلها من السيرفرات الرئيسية وورّيني كل خطوة."
-          ]
+          ],
+          sol: R`[[dig @1.1.1.1 +short yourdomain.com]] و [[dig @8.8.8.8 +short yourdomain.com]] كل واحد بيطبع IP أو أكتر. بعد تغيير حديث طبيعي تلاقي واحد بيرد بالـ IP الجديد والتاني لسه بالقديم، لأن كل resolver شايل الإجابة القديمة في الكاش لحد ما الـ TTL بتاعها يخلص.
+
+عشان تشوف الـ TTL الفاضل: [[dig @8.8.8.8 yourdomain.com +noall +answer]]، والرقم بعد اسم الدومين بالثواني. والإجابة الأكيدة من الـ nameserver نفسه: [[dig yourdomain.com NS +short]] وبعدين [[dig @ns1.xxx +short yourdomain.com]]. لو الـ NS نفسه لسه بيرد بالقديم، يبقى التغيير متحفظش عند شركة الـ DNS، ومش مسألة انتظار.`
         },
         {
           cmd: "ssh -L",
@@ -5940,7 +6277,10 @@ ssh -f -N -L 8080:127.0.0.1:3000 deploy@203.0.113.10`,
             "افتح ممر: بورت 5433 عندك يوصل لـ 5432 جوه السيرفر. [[-N]] ممر بس من غير ترمنال. سيبه شغال.",
             "في ترمنال تاني: اتصل بقاعدة البيانات كأنها على جهازك على بورت 5433.",
             "ممر تاني لتطبيق على بورت 3000، و [[-f]] يشتغل في الخلفية. افتح localhost:8080 في المتصفح."
-          ]
+          ],
+          sol: R`على سيرفر التجربة اتأكد الأول إن التطبيق شغال على 3000: [[curl -I localhost:3000]] من جوه السيرفر. من جهازك: [[ssh -N -L 8080:127.0.0.1:3000 user@IP]]، والترمنال هيفضل ساكت، وده طبيعي لأن [[-N]] معناها «متفتحش شيل». افتح [[http://localhost:8080]] في المتصفح هتلاقي تطبيقك، و Ctrl+C في الترمنال بيقفل النفق.
+
+لو المتصفح قال connection refused والترمنال طبع [[channel 2: open failed: connect failed: Connection refused]]، يبقى النفق شغال بس مفيش حاجة بتسمع على 3000 في السيرفر. ولو ssh نفسه قال [[bind: Address already in use]]، يبقى 8080 مشغول على جهازك؛ اختار بورت تاني.`
         },
         {
           cmd: "openssl s_client",
@@ -5960,7 +6300,10 @@ ssh -f -N -L 8080:127.0.0.1:3000 deploy@203.0.113.10`,
           },
           lines: [
             "اتصل HTTPS بالموقع وخد الشهادة (والرسايل الزيادة ترمى)، وبعدين اطبع منها: لمين، ومين أصدرها، وتواريخها."
-          ]
+          ],
+          sol: R`الأمر بيطبع 4 سطور: [[subject=CN = example.com]] (الدومين اللي الشهادة معمولة له)، و [[issuer=...]] زي [[O = Let's Encrypt]] (مين اللي مصدرها)، و [[notBefore=]] و [[notAfter=Dec 21 12:00:00 2026 GMT]]، وده تاريخ الانتهاء. شهادات Let's Encrypt مدتها قصيرة (90 يوم أو أقل)، فلو فاضل على الانتهاء أقل من 30 يوم، غالبًا التجديد التلقائي مش شغال.
+
+لو الـ issuer طلع اسم شركة أو proxy مش متوقع، يبقى فيه حاجة في الشبكة بتفتح الـ TLS وتقفله (شبكة شغل مثلًا)، جرّب من جهاز أو شبكة تانية. ولو مطلعش حاجة خالص، شيل [[2>/dev/null]] وشوف الـ error؛ غالبًا الدومين غلط أو بورت 443 مقفول. ومتنساش [[-servername]]، من غيرها ممكن تاخد شهادة موقع تاني على نفس السيرفر.`
         },
         {
           cmd: "nmap",
@@ -5991,7 +6334,10 @@ nmap -sV -p 22,80,443 203.0.113.10`,
             "افحص أشهر ١٠٠٠ بورت على سيرفرك.",
             "افحص كل البورتات (بياخد وقت).",
             "للبورتات دي بس، حاول تعرف البرنامج ونسخته ([[-sV]])."
-          ]
+          ],
+          sol: R`قبل ufw، [[nmap IP]] بيطلّع جدول [[PORT STATE SERVICE]] زي [[22/tcp open ssh]] و [[80/tcp open http]] و [[443/tcp open https]]، ولو فيه [[5432/tcp open postgresql]] أو [[3000/tcp open]] يبقى دي حاجات مكشوفة للنت. بعد [[sudo ufw default deny incoming]] و [[sudo ufw allow 22,80,443/tcp]] و [[sudo ufw enable]]، نفس الـ scan هيطلّع التلاتة دول بس، والباقي [[filtered]] أو مش هيظهر.
+
+[[nmap IP]] بيفحص أشهر 1000 بورت بس، فبورت زي 8123 ممكن يفوته؛ استخدم [[-p-]] للكل. ولو بورت منشور من Docker لسه ظاهر open بعد ufw، ده مش غلط في الـ scan: Docker بيكتب قواعد iptables بتعدّي ufw. وافحص سيرفراتك انت بس.`
         },
         {
           cmd: "tcpdump",
@@ -6020,7 +6366,10 @@ sudo tcpdump -i any -n port 443 -w capture.pcap`,
             "اعرض ٢٠ packet على بورت 80 من أي كارت، بالأرقام.",
             "اعرض الـ packets من أو لـ IP معين بس.",
             "احفظ packets بورت 443 في ملف تفتحه في Wireshark. Ctrl+C يوقف."
-          ]
+          ],
+          sol: R`لما تفتح [[http://IP]] من جهازك هتشوف سطور زي [[IP 198.51.100.7.52344 > 203.0.113.10.80: Flags [S], ...]]، وده أول packet في الـ handshake، وبعده [[Flags [S.]]] الرد، و [[Flags [.]]]، وبعدين packet فيه [[length]] أكبر وده الطلب نفسه (تقدر تشوف [[GET / HTTP/1.1]] لو زوّدت [[-A]]). وبعد 20 packet بيقف لوحده بسبب [[-c 20]].
+
+لو مظهرش حاجة: يا إما الموقع بيحوّل لـ https فالمتصفح راح 443 على طول (جرّب [[curl http://IP]] بدل المتصفح)، يا إما فيه Cloudflare قدام السيرفر فالطلب جاي من IP بتاعها مش بتاعك. وعلى الماك [[-i en0]] بدل [[-i any]].`
         },
         {
           cmd: "nethogs",
@@ -6040,7 +6389,10 @@ sudo nethogs`,
             when: "السيرفر بطيء والمعالج والرام تمام. تكتشف برنامج بيبعت بيانات مش مفروض يبعتها، وده ممكن يكون علامة اختراق.",
             mistakes: "إنك تتوقع إنه يوريك المواقع أو الـ IPs. هو بيوريك البرامج بس. للتفاصيل استخدم [[ss]] أو [[tcpdump]]."
           },
-          lines: ["سطّبه.", "اعرض استهلاك النت لكل برنامج لايف. q للخروج."]
+          lines: ["سطّبه.", "اعرض استهلاك النت لكل برنامج لايف. q للخروج."],
+          sol: R`[[sudo nethogs]] بيفتح جدول لايف فيه [[PID USER PROGRAM DEV SENT RECEIVED]]. وانت بتعمل [[docker compose pull]] هتلاقي [[dockerd]] (أو [[containerd]]، حسب إعداد Docker) طالع فوق وعمود RECEIVED فيه أرقام كبيرة بالـ KB/sec، لأن الـ daemon هو اللي بيحمّل الـ layers مش أمر docker اللي كتبته. [[m]] بيبدّل بين السرعة والإجمالي، و [[q]] بيخرج.
+
+لو ظهر [[unknown TCP]] كتير، دي اتصالات nethogs مش قادر يربطها ببرنامج (غالبًا من جوه containers). ولو الجدول فاضي خالص، اتأكد إنك شغّلته بـ sudo. وعلى الماك مفيش nethogs، استخدم تاب Network في Activity Monitor.`
         }
       ]
     },
@@ -6078,7 +6430,17 @@ echo "Running as $USER in $PWD"`,
           lines: [
             "اطبع رسالة فيها [[$0]]، وده اسم السكربت نفسه.",
             "[[$USER]] و [[$PWD]] متغيرات جاهزة: اسمك، والفولدر اللي انت فيه."
-          ]
+          ],
+          sol: R`الملف لازم يبقى الأربع سطور بالظبط، والسطر الأول [[#!/usr/bin/env bash]] من غير أي مسافة أو سطر فاضي قبله، لأن النظام بيبص على أول حرفين في الملف بس. اتأكد بـ [[head -1 hello.sh]]، وبـ [[cat -A hello.sh | head -1]] إن آخر السطر [[$]] مش [[^M$]] (يعني الملف مش متكتب بنهايات سطور ويندوز).
+
+لسه مش هيشتغل بـ [[./hello.sh]]، هيقولك Permission denied، وده متوقع لحد ما تعمل chmod في الدرس الجاي. تقدر تجرّبه دلوقتي بـ [[bash hello.sh]]، هيطبع [[Hello from hello.sh]] و [[Running as ali in /home/ali/lab]].`,
+          solCode: R`cat > hello.sh <<'EOF'
+#!/usr/bin/env bash
+# ده تعليق
+echo "Hello from $0"
+echo "Running as $USER in $PWD"
+EOF
+bash hello.sh`
         },
         {
           cmd: "chmod +x و ./",
@@ -6115,7 +6477,10 @@ hello`,
             "اعمل فولدر bin في فولدرك، وانسخ السكربت فيه باسم hello من غير .sh.",
             "ضيف الفولدر ده للـ PATH في .bashrc، وطبّق التغيير دلوقتي.",
             "شغّله باسمه من أي مكان."
-          ]
+          ],
+          sol: R`[[./hello.sh]] بيطبع [[Hello from ./hello.sh]]، و [[bash hello.sh]] بيطبع [[Hello from hello.sh]]، ومن فولدر تاني (مثلًا بعد [[cd /tmp]]) [[hello]] بيطبع [[Hello from /home/ali/bin/hello]] و [[Running as ali in /tmp]]. لاحظ إن [[$0]] بيتغير حسب طريقة التشغيل، و [[$PWD]] هو المكان اللي انت واقف فيه مش مكان السكربت.
+
+لو [[hello]] قال [[command not found]]: [[echo $PATH | tr ':' '\n']] واتأكد إن [[/home/ali/bin]] موجود؛ لو مش موجود يبقى الـ export متحطش في الملف الصح أو محتاج ترمنال جديد. ولو قال [[Permission denied]]، يبقى النسخة اللي في [[~/bin]] اتنسخت قبل chmod؛ اعمل [[chmod +x ~/bin/hello]]. وعلى الماك [[~/.zshrc]] بدل [[.bashrc]].`
         },
         {
           cmd: "shellcheck",
@@ -6144,7 +6509,13 @@ bash -x hello.sh`,
             "افحص السكربت واطبع أي مشاكل.",
             "اختبر الكتابة (syntax) بس من غير تشغيل.",
             "شغّله واطبع كل سطر قبل تنفيذه، بالقيم الحقيقية."
-          ]
+          ],
+          sol: R`shellcheck هيطلّع تحذيرين على نفس السطر: [[SC2115 (warning): Use "$__{var:?}" to ensure this never expands to / .]] و [[SC2086 (info): Double quote to prevent globbing and word splitting.]] والـ exit code 1. الأول هو المهم: لو [[DIR]] فاضي أو مش متعرّف، السطر بيبقى [[rm -rf /]]، يعني امسح الجهاز كله.
+
+الحل زي الكود تحت: [[$__{DIR:?}]] بيوقف السكربت برسالة لو المتغير فاضي، وعلامات التنصيص بتمنع المسافات تقسم المسار. شغّل shellcheck على النسخة المصلّحة، مش هيطبع حاجة والـ exit code 0. ومتشغّلش النسخة الأولانية أبدًا، حتى للتجربة.`,
+          solCode: R`#!/usr/bin/env bash
+DIR="$HOME/lab/tmp"
+rm -rf "$__{DIR:?}/"`
         }
       ]
     },
@@ -6189,7 +6560,10 @@ unset NAME`,
             "احفظ ناتج أمر (تاريخ النهارده) في متغير.",
             "استخدمه.",
             "امسح المتغير."
-          ]
+          ],
+          sol: R`[[NAME = Ali]] بيطلّع [[NAME: command not found]] (والـ exit code 127)، لأن الشيل شاف [[NAME]] كأنها اسم برنامج، و [[=]] و [[Ali]] arguments ليه. الصح [[NAME=Ali]] لازقين من غير ولا مسافة، وبعدها [[echo "Hello $NAME"]] بيطبع [[Hello Ali]].
+
+ولو كتبت [[NAME= Ali]] (مسافة بعد = بس)، الشيل هيفهمها «شغّل أمر اسمه Ali والمتغير NAME فاضي»، فيقولك [[Ali: command not found]]. ولو القيمة فيها مسافة لازم علامات تنصيص: [[NAME="Ali Hassan"]].`
         },
         {
           cmd: "read",
@@ -6219,7 +6593,17 @@ echo "Creating $NAME (password length: $__{#PASS})"`,
             "نفسه للباسورد، بس [[-s]] بتخفي اللي بيتكتب.",
             "اطبع سطر فاضي، لأن [[-s]] مش بتنزل سطر بعد Enter.",
             "اطبع رسالة فيها الاسم، وطول الباسورد (عدد حروفه) من غير ما تطبعه هو."
-          ]
+          ],
+          sol: R`لما تشغّله هيكتب [[Folder name: ]] ويستنى. اكتب [[my project]] و Enter، هيطبع [[Created my project]]، و [[ls]] هيوريك فولدر واحد اسمه [[my project]]. علامات التنصيص حوالين [[$DIR]] هي اللي خلته فولدر واحد؛ من غيرها [[mkdir -p $DIR]] هيعمل فولدرين [[my]] و [[project]].
+
+ولو دوست Enter من غير ما تكتب حاجة، mkdir هيقولك [[cannot create directory '': No such file or directory]]. الأنضف إنك تتأكد إن الاسم مش فاضي قبلها، زي الكود تحت.`,
+          solCode: R`#!/usr/bin/env bash
+read -r -p "Folder name: " DIR
+if [[ -z "$DIR" ]]; then
+  echo "No name given" >&2
+  exit 1
+fi
+mkdir -p -- "$DIR" && echo "Created $DIR"`
         },
         {
           cmd: "$1 و $# و $@",
@@ -6259,7 +6643,10 @@ echo "Branch: $BRANCH"`,
             "آخر اللوب.",
             "BRANCH = أول argument، ولو مفيش استخدم main.",
             "اطبع القيمة اللي اتاخدت."
-          ]
+          ],
+          sol: R`[[./args.sh dev "my app" 3]] بيطبع: [[Script: ./args.sh]] و [[First: dev]] و [[Count: 3]]، وبعدين [[- dev]] و [[- my app]] و [[- 3]]، وفي الآخر [[Branch: dev]]. العدد 3 مش 4، لأن علامات التنصيص خلت الشيل يبعت [[my app]] كـ argument واحد، و [["$@"]] حافظ عليه واحد جوه اللوب.
+
+جرّب من غير التنصيص [[./args.sh dev my app 3]] هيقول [[Count: 4]]. ومن غير أي arguments: [[First:]] فاضي و [[Count: 0]] و [[Branch: main]] من القيمة الافتراضية. ولو لقيت [[my]] و [[app]] منفصلين رغم التنصيص، يبقى كتبت [[$@]] من غير علامات تنصيص في اللوب.`
         },
         {
           cmd: "$(( ))",
@@ -6289,7 +6676,10 @@ echo "scale=2; 10/3" | bc`,
             "القسمة: 3 مش 3.33، لأن bash بيشيل الكسر.",
             "باقي القسمة: 1.",
             "للكسور: ابعت العملية لـ bc، و [[scale=2]] رقمين بعد العلامة."
-          ]
+          ],
+          sol: R`[[echo $(( $(ls | wc -l) * 2 ))]] بيطبع ضعف عدد الحاجات في الفولدر؛ لو فيه 5 يطبع [[10]]. الـ [[$( )]] اللي جوه بتتنفّذ الأول وترجّع الرقم، و [[$(( ))]] بتحسب.
+
+الغلطة الشائعة [[echo $(ls | wc -l) * 2]] من غير الأقواس المزدوجة، وده بيطبع الرقم وبعده أسامي كل الملفات وبعدها 2، لأن [[*]] بقت wildcard. وخلي بالك إن bash بيحسب أعداد صحيحة بس: [[$((5 / 2))]] = 2؛ للكسور استخدم [[bc]] أو [[awk]].`
         },
         {
           cmd: "set -a و .env",
@@ -6324,7 +6714,10 @@ echo "$DB_USER"`,
             "وأي برنامج تشغّله بعدها بيشوفها كمتغير بيئة.",
             "هات قيمة واحدة: السطر اللي بيبدأ بـ POSTGRES_USER=، وخد كل اللي بعد أول [[=]] ([[-f2-]]).",
             "اطبعها."
-          ]
+          ],
+          sol: R`[[export $(cat .env | xargs)]] وبعدين [[echo "$APP_NAME"]] بيطبع [[My]] بس. xargs شال علامات التنصيص، والشيل قسم الناتج على المسافة، فبقى الأمر [[export APP_NAME=My Shop]]: المتغير اتعمل بأول كلمة، و [[Shop]] بقت اسم متغير تاني فاضي. ولو في .env تعليق زي [[# comment]] هيطلعلك كمان [[export: '#': not a valid identifier]].
+
+في الترمنال الجديد [[set -a; . ./.env; set +a]] وبعدين [[echo "$APP_NAME"]] بيطبع [[My Shop]] كاملة، لأن الشيل نفسه قرا الملف كسكربت وفهم علامات التنصيص، و [[set -a]] خلّى كل متغير يتعمل له export فالبرامج اللي هتشغّلها بعد كده تشوفه. وخلي بالك إن ده بيشغّل الملف فعلًا: سطر زي [[NAME=My Shop]] من غير تنصيص هيطلّع [[Shop: command not found]].`
         },
         {
           cmd: R`$__{VAR:-default}`,
@@ -6361,7 +6754,15 @@ echo "Starting on port $PORT"`,
             "[[:]] أمر مبيعملش حاجة، بس bash لازم يفك اللي بعده، فلو DATABASE_URL فاضي السكربت يقف ويطبع الرسالة.",
             "نفسه للباسورد، والرسالة بتقول لليوزر يعمله إزاي.",
             "هنا انت متأكد إن كل حاجة موجودة."
-          ]
+          ],
+          sol: R`النسخة الأولى بتقف وتطبع [[line 3: MISSING: unbound variable]] ومش بتكمّل، و [[echo $?]] = 1. التانية [[echo "$__{MISSING:-none}"]] بتطبع [[none]] وتكمّل عادي، لأن القيمة الافتراضية بتمنع [[set -u]] يعترض. التالتة بتوقف برسالتك انت: [[line 4: MISSING: حط MISSING]] و exit 1.
+
+جرّب بعدها [[MISSING=x bash script.sh]]: كله يعدّي والسطر التاني يطبع [[x]]. الفرق المهم: [[:-]] بيدّي قيمة لو المتغير ناقص ويكمّل، و [[:?]] بيوقف كل حاجة؛ استخدم التاني للحاجات اللي مينفعش السكربت يشتغل من غيرها، زي باسورد الداتابيز.`,
+          solCode: R`#!/usr/bin/env bash
+set -u
+echo "$__{MISSING:-none}"
+: "$__{MISSING:?حط MISSING}"
+echo "after"`
         },
         {
           cmd: "envsubst",
@@ -6392,7 +6793,10 @@ DOMAIN=example.com envsubst '$__{DOMAIN}' < nginx/site.conf.tpl > nginx/site.con
             "بدّل المتغيرين دول بس في الـ template واكتب النتيجة في ملف جديد. القايمة بين single quotes عشان الشيل ميفكهاش.",
             "دوّر على أي placeholder لسه فاضل في الناتج (حاجة نسيت تحطها في القايمة).",
             "نفس الفكرة لإعداد Nginx: DOMAIN لأمر واحد بس، وأي [[$host]] أو [[$uri]] في الملف يفضل زي ما هو."
-          ]
+          ],
+          sol: R`من غير قايمة: [[Hello Ali]] و [[const x = ]]، يعني envsubst بدّل [[$__{y}]] بقيمة فاضية لأن y مش متعرّف، وبوّظ السطر التاني. مع القايمة [[envsubst '$__{NAME}']]: [[Hello Ali]] و [[const x = $__{y}]] زي ما هي، لأنه بقى بيبدّل NAME بس.
+
+وده بالظبط سبب القايمة مع ملفات زي nginx.conf (فيها [[$host]] و [[$remote_addr]]) أو كود JS فيه template literals. ولاحظ إن القايمة بين علامات تنصيص مفردة، عشان الشيل نفسه ميبدّلش [[$__{NAME}]] قبل ما envsubst يشوفها. ولو [[envsubst: command not found]]: [[sudo apt install gettext-base]]، أو [[brew install gettext]] على الماك.`
         }
       ]
     },
@@ -6433,7 +6837,10 @@ grep -q root /etc/passwd && echo "found"`,
             "أمر هيفشل (فولدر مش موجود).",
             "اطبع الـ exit code: رقم غير 0.",
             "دوّر على root من غير ما تطبع ([[-q]])، ولو لقيته اطبع found."
-          ]
+          ],
+          sol: R`[[curl https://nope.invalid]] وبعده [[echo $?]] بيطبع [[6]]، ومعاه رسالة [[curl: (6) Could not resolve host: nope.invalid]]. الرقم 6 عند curl معناه «مقدرتش أحوّل الاسم لـ IP»، والدومين [[.invalid]] محجوز رسميًا إنه ميبقاش موجود أبدًا.
+
+لو طلعلك [[0]] يبقى فيه أمر تاني اتنفّذ بين curl و echo؛ حتى [[echo]] نفسها بتغيّر [[$?]]، جرّب [[echo $?]] مرتين ورا بعض: التانية 0. ولو طلع رقم تاني زي [[5]] أو [[56]]، غالبًا انت ورا proxy، ودي أرقام curl لمشاكل الـ proxy. وجدول الأرقام كلها في [[man curl]] تحت EXIT CODES.`
         },
         {
           cmd: "if",
@@ -6490,7 +6897,22 @@ fi`,
             "لو ([[!]] يعني العكس) docker مش متسطب. [[command -v]] بيدوّر عليه، والناتج بيترمي.",
             "...اطبع إنه مش متسطب.",
             "نهاية الـ if."
-          ]
+          ],
+          sol: R`في فولدر مفيهوش package.json بيطبع [[No package.json here]] و exit 1. في فولدر فيه package.json ومفيش node_modules بيطبع [[Installing...]] وبعده خرج npm. ولو node_modules موجود: [[node_modules already there]] ومش بيشغّل npm خالص.
+
+مفاجأة ممكن تقابلك: لو package.json ملوش أي dependencies، [[npm install]] مش بيعمل node_modules أصلًا، فالسكربت هيقول Installing كل مرة، وده مش غلط في السكربت. وخلي بالك من المسافات جوه الأقواس المربعة وبعد [[!]]: لو لزقتهم، bash هيفتكر أول كلمة لازقة في القوس اسم أمر ويطلّع [[command not found]].`,
+          solCode: R`#!/usr/bin/env bash
+if [[ ! -f package.json ]]; then
+  echo "No package.json here"
+  exit 1
+fi
+
+if [[ ! -d node_modules ]]; then
+  echo "Installing..."
+  npm install
+else
+  echo "node_modules already there"
+fi`
         },
         {
           cmd: "case",
@@ -6522,7 +6944,18 @@ esac`,
             "لو logs: اعرض اللوجات.",
             "أي حاجة تانية ([[*]]): اطبع طريقة الاستخدام، واخرج برقم فشل.",
             "نهاية الـ case ([[esac]] هي case بالمقلوب)."
-          ]
+          ],
+          sol: R`[[./ctl.sh start]] بيشغّل [[docker compose up -d]] (ولو مفيش ملف compose في الفولدر هيقولك [[no configuration file provided: not found]]، فشغّله جنب ملف compose). و [[./ctl.sh xyz]] بيقع في [[*)]] فيطبع [[Usage: ./ctl.sh {start|stop|restart|logs}]] و exit 1، ونفس الكلام لو شغّلته من غير argument.
+
+الـ restart زي الكود: [[down && up -d]]، و [[&&]] بتضمن إن up مش هيشتغل لو down فشل. أشهر غلطتين: تنسى [[;;]] في آخر الفرع (bash هيطلّع syntax error)، أو تحط [[restart)]] بعد [[*)]] فمش هيوصله أبدًا، لأن [[*]] بتمسك أي حاجة.`,
+          solCode: R`#!/usr/bin/env bash
+case "$1" in
+  start)   docker compose up -d ;;
+  stop)    docker compose down ;;
+  restart) docker compose down && docker compose up -d ;;
+  logs)    docker compose logs -f ;;
+  *)       echo "Usage: $0 {start|stop|restart|logs}"; exit 1 ;;
+esac`
         }
       ]
     },
@@ -6574,7 +7007,14 @@ done`,
             "لف على لستة أسامي مكتوبة.",
             "اطبع كل اسم.",
             "نهاية اللوب."
-          ]
+          ],
+          sol: R`[[ls -d day*]] بيطبع [[day1 day2 day3 day4 day5]]. الشيل بيفرد [[{1..5}]] لـ [[1 2 3 4 5]] قبل اللوب، و [[-p]] بيخلي اللوب ينفع يتعاد من غير errors لو الفولدرات موجودة.
+
+وفي الحالة دي بالذات مش محتاج لوب أصلًا: [[mkdir day{1..5}]] بتعمل نفس الحاجة في أمر واحد. ولو لقيت فولدر واحد اسمه [[day{1..5}]]، يبقى حطيت متغير جوه الرينج (زي [[{1..$N}]]، ودي مش بتشتغل)؛ استخدم [[$(seq 1 "$N")]] بدلها.`,
+          solCode: R`for i in {1..5}; do
+  mkdir -p "day$i"
+done
+ls -d day*`
         },
         {
           cmd: "while read",
@@ -6615,7 +7055,18 @@ done < servers.txt`,
             "...اطبع إنه واقع.",
             "نهاية الـ if.",
             "نهاية اللوب، والسطور جاية من ملف servers.txt ([[<]])."
-          ]
+          ],
+          sol: R`مع [[example.com]] و [[google.com]] و [[nope.invalid]] هتشوف [[example.com up]] و [[google.com up]]، وبعدين سطر من ping نفسه [[ping: nope.invalid: Name or service not known]] وتحته [[nope.invalid DOWN]]. رسالة ping ظهرت لأن [[> /dev/null]] بيسكّت stdout بس؛ لو عايزها تختفي زوّد [[2>&1]].
+
+لو كل حاجة طلعت DOWN: يا إما الشبكة بتمنع ping (ICMP)، يا إما انت على الماك و [[-W 2]] هناك بالمللي ثانية، فاكتب [[-W 2000]]. ولو آخر دومين ماتفحصش خالص، يبقى الملف مفيهوش سطر جديد في آخره، و [[read]] بيفشل على آخر سطر ناقص؛ nano بيحط السطر ده لوحده، أو ضيفه بـ Enter في آخر الملف.`,
+          solCode: R`printf 'example.com\ngoogle.com\nnope.invalid\n' > servers.txt
+while IFS= read -r host; do
+  if ping -c 1 -W 2 "$host" > /dev/null; then
+    echo "$host up"
+  else
+    echo "$host DOWN"
+  fi
+done < servers.txt`
         },
         {
           cmd: "function",
@@ -6672,7 +7123,24 @@ log "Size is $SIZE"`,
             "نادي check_dir، ولو رجعت فشل ([[||]]) اقفل السكربت كله.",
             "نادي folder_size وخد اللي طبعته في متغير.",
             "اطبعه بفانكشن log."
-          ]
+          ],
+          sol: R`زي الكود تحت. الناتج: [[git: installed (/usr/bin/git)]] و [[node: installed (...)]]، و [[nothing-here: NOT installed]] وبعدها [[exit code was 1]]. الفانكشن بتطبع للإنسان، و [[return 1]] بترجع للسكربت نفسه، فتقدر تستخدمها في شرط زي [[is_installed docker || exit 1]].
+
+استخدمنا [[command -v]] مش [[which]]، لأنها جزء من الشيل وبتلاقي كمان الـ builtins والفانكشنز. وأشهر غلطة إنك تكتب [[return "not installed"]]: return بياخد رقم من 0 لـ 255 بس، و bash هيطلّع [[numeric argument required]].`,
+          solCode: R`#!/usr/bin/env bash
+is_installed() {
+  local prog="$1"
+  if command -v "$prog" > /dev/null 2>&1; then
+    echo "$prog: installed ($(command -v "$prog"))"
+  else
+    echo "$prog: NOT installed"
+    return 1
+  fi
+}
+
+is_installed git
+is_installed node
+is_installed nothing-here || echo "exit code was $?"`
         },
         {
           cmd: "arrays",
@@ -6710,7 +7178,17 @@ done`,
             "لف على كل العناصر، وعلامات التنصيص تحافظ على كل عنصر لوحده.",
             "اطبع كل واحد.",
             "نهاية اللوب."
-          ]
+          ],
+          sol: R`الناتج [[made src]] و [[made public]] و [[made my logs]] و [[Count: 3]]، و [[ls]] بيوريك 3 فولدرات بس، منهم [[my logs]] فولدر واحد بمسافة.
+
+السر في [["$__{DIRS[@]}"]] بعلامات التنصيص: كل عنصر بيطلع زي ما هو. لو كتبتها من غير تنصيص، [[my logs]] هتتقسم لـ [[my]] و [[logs]] وهيطلعلك 4 فولدرات. وخلي بالك من [[DIRS=("a", "b")]] بفاصلة: الفاصلة بتبقى جزء من الاسم ([[a,]])، والعناصر بتتفصل بمسافات بس.`,
+          solCode: R`#!/usr/bin/env bash
+DIRS=("src" "public" "my logs")
+for d in "$__{DIRS[@]}"; do
+  mkdir -p "$d"
+  echo "made $d"
+done
+echo "Count: $__{#DIRS[@]}"`
         }
       ]
     },
@@ -6750,7 +7228,10 @@ echo "This never prints"`,
             "هيتطبع.",
             "هيفشل (الملف مش موجود)، والسكربت يقف هنا.",
             "عمره ما هيتطبع."
-          ]
+          ],
+          sol: R`مع السطر: [[Start]] وبعده [[cp: cannot stat 'nothing.txt': No such file or directory]] والسكربت بيقف، و [[echo $?]] = 1. من غيره: نفس الـ error بس السكربت بيكمّل ويطبع [[This never prints]]، و [[echo $?]] = 0، يعني السكربت بيقول إنه نجح وهو فشل في النص.
+
+ده أخطر من الـ error نفسه: أي حاجة بتشغّل السكربت (CI أو cron) هتفتكر كله تمام. ولو شغّلته بـ [[sh script.sh]] على أوبونتو، هيقع بـ [[set: Illegal option -o pipefail]]، لأن [[sh]] هناك هو dash مش bash؛ شغّله بـ [[bash script.sh]] أو [[./script.sh]].`
         },
         {
           cmd: "trap",
@@ -6790,7 +7271,10 @@ wc -c page.html`,
             "ادخل الفولدر المؤقت.",
             "نزّل صفحة. [[-f]] يخلي curl يفشل لو السيرفر رد بـ error.",
             "اطبع حجمها بالبايت ([[-c]])."
-          ]
+          ],
+          sol: R`مع رابط غلط زي [[https://nope.invalid]]: [[curl: (6) Could not resolve host: nope.invalid]] وبعدها [[Failed at line 10]] (رقم سطر الـ curl في ملفك)، والسكربت بيقف بـ exit code 6. وعشان تتأكد إن الفولدر اتمسح، زوّد مؤقتًا [[echo "TMP is $TMP"]] بعد mktemp، وبعد ما السكربت يقع اعمل [[ls]] على المسار اللي طبعه: No such file or directory. الـ EXIT trap بيشتغل في كل الحالات، نجاح أو فشل.
+
+لو استخدمت رابط موجود بس صفحته 404، من غير [[-f]] curl بيعتبرها نجاح ويحفظ صفحة الـ error، ومش هتشوف رسالة ERR. ولو مظهرتش رسالة curl نفسها، يبقى شلت [[-S]]، و [[-s]] لوحده بيسكّت الأخطاء كمان.`
         },
         {
           cmd: "heredoc و tee",
@@ -6841,7 +7325,10 @@ EOF`,
             "لو اللوج فاضي متلفّوش.",
             "نهاية القاعدة.",
             "نهاية الكلام."
-          ]
+          ],
+          sol: R`[[cat .env]] بيطبع [[PORT=3000]] و [[NODE_ENV=production]] و [[CREATED=2026-09-30]] (تاريخ النهارده)، لأن [[<<EOF]] من غير تنصيص بيخلي الشيل ينفّذ [[$(date +%F)]] قبل ما يكتب.
+
+لو كتبت [[<<'EOF']] بعلامات تنصيص هتلاقي [[CREATED=$(date +%F)]] حرفيًا في الملف. وأشهر رسالة: [[warning: here-document at line 1 delimited by end-of-file]]، ودي معناها إن سطر [[EOF]] الأخير فيه مسافة قبله أو بعده، أو مش موجود؛ لازم يبقى لوحده في أول السطر.`
         },
         {
           cmd: "grep -q || echo >>",
@@ -6880,7 +7367,15 @@ command -v jq >/dev/null || sudo apt install -y jq`,
             "وقّف الـ container القديم، ولو مش موجود متوقفش السكربت.",
             "وامسحه بنفس الطريقة.",
             "سطّب jq بس لو مش متسطب."
-          ]
+          ],
+          sol: R`بعد التلات مرات [[cat list.txt]] بيطبع [[one]] و [[two]] و [[three]]، و three مرة واحدة بس. أول مرة grep ملقاش السطر فرجع 1، فالـ [[||]] نفّذ echo. في المرتين التانيين لقاه فرجع 0 ومحصلش حاجة.
+
+[[-x]] يعني السطر كله بالظبط، و [[-F]] يعني النص حرفي مش regex. لو شلت [[-x]] وعندك سطر [[threefold]] هيعتبره موجود ومش هيضيف. ولو آخر سطر في الملف الأصلي من غير newline، هتلاقي [[twothree]] لازقين؛ ده من الملف مش من الأمر.`,
+          solCode: R`printf 'one\ntwo\n' > list.txt
+for _ in 1 2 3; do
+  grep -qxF "three" list.txt || echo "three" >> list.txt
+done
+cat list.txt`
         },
         {
           cmd: "setup-env.sh",
@@ -6946,7 +7441,10 @@ ls -l .env`,
             "نهاية الملف.",
             "قفلة الـ subshell.",
             "اتأكد من الصلاحيات: لازم [[-rw-------]]."
-          ]
+          ],
+          sol: R`أول مرة هيسألك [[Domain:]] (بيظهر وانت بتكتب) و [[API key:]] (مش بيظهر)، وبعدين يطبع [[-rw------- 1 ali ali 79 ... .env]]. جوه الملف 3 سطور، و [[DB_PASSWORD]] حوالي 30 حرف عشوائي. تاني مرة: [[.env already exists, not touching it]] و exit 0، والملف زي ما هو (تقدر تتأكد بـ [[sha1sum .env]] قبل وبعد).
+
+لو طلعت الصلاحيات [[-rw-r--r--]]، يبقى [[umask 077]] مش جوه نفس القوسين مع [[cat >]]، أو الملف كان موجود من قبل فالسكربت ما عملهوش. ولو السكربت وقف بـ [[openssl: command not found]]، سطّب openssl، و [[set -e]] هو اللي منعه يكمّل بباسورد فاضي.`
         },
         {
           cmd: "preflight.sh",
@@ -7006,7 +7504,10 @@ echo "passed $PASS, failed $FAIL"
             "آخر اللوب.",
             "الملخص.",
             "exit code السكربت: 0 لو مفيش فشل، 1 لو فيه."
-          ]
+          ],
+          sol: R`أول مرة كل سطر بـ [[ok]] أو [[FAIL]] وفي الآخر مثلًا [[passed 7, failed 0]] و [[echo $?]] = 0. بعد ما تخلي [[DOMAIN=]] فاضية: [[FAIL DOMAIN empty]] و [[passed 6, failed 1]] و [[echo $?]] = 1، لأن آخر سطر [[[ "$FAIL" -eq 0 ]]] هو اللي بيحدد exit code السكربت.
+
+على سيرفر تجربة صغير ممكن تلاقي FAIL من غير ما تلمس حاجة (زي [[only 11 GB free]] أو [[need 2+ cores]])، وده السكربت شغال صح. ولو لسه طالع [[DOMAIN set]]، غالبًا فضلت مسافة بعد [[=]]، والنمط [[.+]] بيعتبرها قيمة. و [[echo $?]] لازم تبقى أول حاجة بعد السكربت، وإلا هتقرا exit code أمر تاني.`
         },
         {
           cmd: "backup.sh",
@@ -7054,7 +7555,10 @@ echo "Saved $DEST/$NAME"`,
             "اضغط الفولدر. [[-C]] بتدخل الفولدر الأب الأول، فالأرشيف ميبقاش جواه المسار الكامل.",
             "امسح أي باك أب أقدم من ٧ أيام.",
             "اطبع مكان الباك أب الجديد."
-          ]
+          ],
+          sol: R`بيطبع [[Saved /home/ali/backups/app-2026-09-30_14-05.tar.gz]]، و [[tar -tzf]] على الملف ده بيوريك [[app/]] و [[app/src/...]] من غير المسار الكامل (ده شغل [[-C]]). و [[shellcheck backup.sh]] مش بيطبع حاجة والـ exit code 0، لأن كل متغير متحط بين علامات تنصيص.
+
+جرّب من غير argument: [[line 4: 1: Usage: backup.sh <folder>]] و exit 1، ودي رسالة [[:?]]. ولو شغّلته مرتين في نفس الدقيقة، التانية هتكتب فوق الأولى لأن الاسم بالدقيقة. ولو shellcheck اشتكى بـ SC2086، يبقى نسيت علامات تنصيص في مكان ما.`
         },
         {
           cmd: "deploy.sh",
@@ -7129,7 +7633,23 @@ fi`,
             "...سجّل الفشل...",
             "...واخرج برقم فشل.",
             "نهاية الـ if."
-          ]
+          ],
+          sol: R`الـ endpoint زي الكود تحت: بيرجّع 200 و [[{"status":"ok"}]]. جرّبه لوحده الأول على السيرفر: [[curl -fsS http://127.0.0.1:3000/health]] بيطبع [[{"status":"ok"}]] و exit 0، وأي مسار مش موجود مع [[-f]] بيطلّع [[curl: (22) The requested URL returned error: 404]].
+
+بعدها [[./deploy.sh main]] بيكتب في [[~/deploy.log]] سطور زي [[[2026-09-30 14:05:01] Deploying main]] وفي الآخر [[Deploy OK]]. لو طلع [[Health check failed]]، بص في [[docker compose logs app]]: غالبًا التطبيق جوه الـ container بيسمع على [[127.0.0.1]] بدل كل العناوين، أو البورت مش منشور، أو [[sleep 5]] مش كفاية (الحل الأحسن لوب الانتظار في درس «sleep & wait»).`,
+          solCode: R`// في Express:
+// app.get("/health", (req, res) => res.json({ status: "ok" }));
+
+// أو من غير أي مكتبة:
+const http = require("http");
+http.createServer((req, res) => {
+  if (req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify({ status: "ok" }));
+  }
+  res.writeHead(404);
+  res.end("not found");
+}).listen(3000);`
         }
       ]
     },
@@ -7177,7 +7697,20 @@ docker restart proxy`,
             "اكتب المحتوى الجديد جوه نفس الملف (نفس الـ inode)، فالـ container يشوفه على طول.",
             "اختبر الإعداد جوه الـ container، ولو سليم اعمل reload من غير ما توقف الموقع.",
             "لو الـ inode كان اتغير قبل كده، reload مش كفاية: restart يعمل الـ mount من جديد."
-          ]
+          ],
+          sol: R`جرّب على container تجربة لوحده في فولدر lab، مش على proxy شغال: الكود تحت بيعمل container صغير بـ alpine وملف واحد متركّب. في الأول [[ls -i]] برا وجوه بيطبعوا نفس الرقم. بعد [[sed -i]]: الرقم برا اتغير وجوه لسه القديم، و [[cat]] من جوه بيطبع [[v1]] رغم إن الملف برا [[v2]]، لأن [[sed -i]] بيكتب ملف جديد ويعمله rename مكان القديم، والـ container لسه ماسك الـ inode القديم.
+
+[[docker restart inode-test]] بيخليه يشوف [[v2]]. وبعدها [[cat new.conf > app.conf]]: الرقم مش بيتغير، والتعديل بيظهر جوه على طول من غير restart. وفي الآخر امسح الـ container التجريبي بـ [[docker rm -f inode-test]].`,
+          solCode: R`cd ~/lab && echo v1 > app.conf
+docker run -d --name inode-test -v "$PWD/app.conf:/app.conf" alpine:3 sleep 600
+ls -i app.conf; docker exec inode-test ls -i /app.conf
+sed -i 's/v1/v2/' app.conf
+ls -i app.conf; docker exec inode-test ls -i /app.conf
+docker exec inode-test cat /app.conf
+docker restart inode-test && docker exec inode-test cat /app.conf
+echo v3 > new.conf && cat new.conf > app.conf
+docker exec inode-test cat /app.conf
+docker rm -f inode-test`
         },
         {
           cmd: "openssl enc",
@@ -7210,7 +7743,14 @@ openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:BACKUP_PASSPHRASE -in
             "اضغط الملفات، و [[-]] معناها اكتب الأرشيف على الـ stdout بدل ملف.",
             "شفّره وهو معدّي في الـ pipe، والباسورد من المتغير ([[env:]]) مش مكتوب في الأمر.",
             "اتأكد إنه بيتفك: [[-d]] فك، وبعدين [[tar -tzf -]] يعرض اللي جواه من غير ما يفكه."
-          ]
+          ],
+          sol: R`التشفير مش بيطبع حاجة، و [[file lab.tar.gz.enc]] بيقول [[openssl enc'd data with salted password]]. بباسورد غلط والخرج رايح لـ tar، غالبًا أول حاجة هتشوفها [[gzip: stdin: not in gzip format]] من tar، لأن اللي طلع كلام ملخبط. عشان تشوف رسالة openssl لوحدها وجّه الخرج لـ [[/dev/null]] زي الكود: [[bad decrypt]] وسطر تحته فيه [[bad decrypt]] تاني، و exit 1. بالباسورد الصح [[tar -tzf -]] بيعرض [[lab/]] والملفات اللي جواه.
+
+وارد (نادرًا) إن باسورد غلط يعدّي من غير bad decrypt ويطلّع كلام ملخبط، وعشان كده الـ tar في الآخر مهم: هو اللي بيأكد إن اللي اتفك سليم. ولو bad decrypt ظهر مع الباسورد الصح، اتأكد إن [[-pbkdf2]] و [[-iter]] زي التشفير بالظبط، أو إنك مش على ماك بـ LibreSSL قديم.`,
+          solCode: R`export BACKUP_PASSPHRASE="$(cat ~/.backup-pass)"
+tar -czf - -C ~ lab | openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:BACKUP_PASSPHRASE -out lab.tar.gz.enc
+BACKUP_PASSPHRASE=wrong openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:BACKUP_PASSPHRASE -in lab.tar.gz.enc -out /dev/null
+openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:BACKUP_PASSPHRASE -in lab.tar.gz.enc | tar -tzf - | head`
         },
         {
           cmd: "curl -w '%{http_code}'",
@@ -7252,7 +7792,10 @@ exit $fail`,
             "لو الكود مش زي المتوقع، علّم إن فيه فشل (ومتقفش، كمّل الباقي).",
             "آخر اللوب.",
             "اخرج بـ 0 لو كله تمام، و 1 لو فيه صفحة فشلت."
-          ]
+          ],
+          sol: R`على موقع شغال: سطر لكل صفحة زي [[200 /]] و [[200 /login]] و [[404 /this-should-404]]، و [[echo $?]] = 0. بعد ما تضيف صفحة غلط زي [[/wrong-page]] للستة: [[404 /wrong-page]] و [[echo $?]] = 1، لأن الكود مش زي المتوقع (200) فبقى [[fail=1]]. والـ 404 على [[/this-should-404]] نجاح هنا، لأن السكربت متوقعها.
+
+لو شفت [[301]] أو [[308]] بدل 200، الصفحة بتحوّل (مثلًا [[/login]] لـ [[/login/]])؛ يا إما تكتب المسار النهائي، يا إما تزوّد [[-L]]. ولو كله [[000]] يبقى curl موصلش خالص (دومين غلط أو الموقع واقع أو timeout). ولو الصفحة الغلط رجعت 200، يبقى الموقع (غالبًا SPA) بيرجّع index.html لأي مسار، ودي مشكلة تستاهل تتصلّح.`
         },
         {
           cmd: "sleep & wait",
@@ -7289,7 +7832,10 @@ while :; do certbot renew; sleep 12h & wait $!; done`,
             "آخر اللوب.",
             "لما توصل إشارة TERM (من docker stop)، اخرج على طول.",
             "للأبد: جدّد، وبعدين نام ١٢ ساعة في الخلفية واستنى بـ [[wait]] اللي بيتقطع مع الإشارة."
-          ]
+          ],
+          sol: R`والتطبيق مقفول هتشوف [[curl: (7) Failed to connect to 127.0.0.1 port 3000 ...]] كل ثانيتين (ده من [[-S]] وطبيعي). أول ما تشغّل التطبيق بعد حوالي 10 ثواني، اللوب بيطبع [[up after 12s]] أو رقم قريب، ويخرج بـ 0. الرقم تقريبي: رقم المحاولة × 2، ومش بيحسب وقت الـ curl نفسه.
+
+لو عدّت دقيقة من غير ما التطبيق يقوم، هيطبع [[app never came up]] و exit 1. ولو قال [[up after 2s]] على طول والتطبيق مقفول، يبقى فيه حاجة تانية ماسكة البورت 3000 (اعرفها بـ [[ss -tlnp]])، أو شلت [[-f]] فبقى أي رد، حتى 404، بيتحسب نجاح.`
         }
       ]
     },
@@ -7348,7 +7894,12 @@ build:
             "تابع آخر ١٠٠ سطر من خدمة app.",
             "target للبناء.",
             "ابني صورة app."
-          ]
+          ],
+          sol: R`[[make hello]] بيطبع الأمر نفسه الأول [[date]] وبعده الناتج، زي [[Wed Sep 30 14:05:01 EEST 2026]]. make بيطبع كل سطر قبل ما ينفّذه، ولو مش عايز ده حط [[@]] قبله ([[@date]]).
+
+بالمسافات بدل الـ Tab: [[Makefile:2: *** missing separator.  Stop.]]، ولو المسافات 8 بالظبط، GNU make بيقولك صراحة [[missing separator (did you mean TAB instead of 8 spaces?)]]. لو الـ editor بيحوّل الـ Tab لمسافات لوحده، شغّل [[cat -A Makefile]]: الـ Tab بيظهر [[^I]].`,
+          solCode: R`hello:
+	date`
         },
         {
           cmd: "make VAR=value",
@@ -7390,7 +7941,14 @@ import:
             "اسم ملف compose بيتبني من ENV.",
             "target للاستيراد.",
             "[[--folder]] بيتضاف بس لو FOLDER اتبعت، وبعده أي ARGS."
-          ]
+          ],
+          sol: R`[[make greet]] بيطبع [[echo Hello world]] وتحته [[Hello world]]، و [[make greet NAME=Ali]] بيطبع [[Hello Ali]]. [[?=]] معناها «حط world لو محدش إدّى قيمة»، والقيمة اللي في سطر الأوامر بتكسب أي حاجة في الملف.
+
+ومتغير البيئة كمان بيكسب [[?=]]: [[NAME=env make greet]] بيطبع [[Hello env]]، وده ممكن يفاجئك لو عندك متغير بنفس الاسم في الشيل. ولو القيمة فيها مسافة حطها بين علامات تنصيص: [[make greet NAME="Ali Hassan"]]. ولو طلعلك [[Hello AME]]، يبقى كتبت [[$NAME]] بدل [[$(NAME)]]، و make فهمها [[$N]] (فاضي) وبعدها كلمة [[AME]].`,
+          solCode: R`NAME ?= world
+
+greet:
+	echo Hello $(NAME)`
         },
         {
           cmd: "$$ في Makefile",
@@ -7433,7 +7991,16 @@ make بيفك أي [[$]] الأول قبل ما يبعت السطر للشيل: 
             "[[@]] متطبعش السطر. لوب على ملفات SQL بالترتيب، و [[$$f]] عشان توصل [[$f]] للشيل، وأول فشل يوقف.",
             "target يكلّم الـ API.",
             "حمّل .env وابعت التوكن في نفس السطر. و [[@]] عشان التوكن ميتطبعش."
-          ]
+          ],
+          sol: R`[[make where]] بيطبع [[cd /tmp]] ثم [[pwd]] ثم فولدر المشروع مش [[/tmp]]، لأن كل سطر في الـ recipe بيشتغل في شيل جديد، فالـ cd اتنسى مع نهاية سطره. في سطر واحد [[cd /tmp && pwd]] بيطبع [[/tmp]].
+
+لو السطور طويلة، تقدر تكمّل بـ [[\]] في آخر السطر عشان تبقى سطر واحد منطقيًا، أو تحط [[.ONESHELL:]] في الملف (GNU make 3.82 وأحدث، مش نسخة الماك 3.81)، وساعتها الـ recipe كلها بتشتغل في شيل واحد. ولو محتاج متغير شيل زي [[$PWD]] جوه الـ recipe اكتبه [[$$PWD]].`,
+          solCode: R`where:
+	cd /tmp
+	pwd
+
+where2:
+	cd /tmp && pwd`
         },
         {
           cmd: "make help",
@@ -7481,7 +8048,10 @@ migrate: ## طبّق الـ migrations بالترتيب
             "أمره.",
             "target تالت.",
             "بيشغّل سكربت، و [[@]] عشان ميتطبعش."
-          ]
+          ],
+          sol: R`[[make]] لوحدها بتطبع قايمة بالـ targets اللي جنبها [[##]] بس، كل واحد في سطر: [[help]] وجنبه [[القايمة دي]]، و [[up]] وجنبه [[شغّل الـ stack]]... والأسامي ملوّنة ومحاذية في عمود. أي target من غير [[##]] مش هيظهر، ودي طريقة تخبّي بيها الـ targets الداخلية.
+
+لو [[make]] لوحدها شغّلت target تاني بدل help، يبقى [[.DEFAULT_GOAL := help]] ناقص أو مكتوب غلط. ولو target معين مش ظاهر، غالبًا اسمه فيه رقم أو نقطة (النمط بيقبل حروف و [[_]] و [[-]] بس)، أو مفيش مسافة بعد [[##]]. ولو القايمة كلها فاضية، يبقى كتبت [[$]] واحدة بدل [[$$]] في الـ grep أو الـ awk.`
         }
       ]
     }
@@ -7501,6 +8071,10 @@ migrate: ## طبّق الـ migrations بالترتيب
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("ps", {
@@ -9255,6 +9829,10 @@ Write-Host "Ready: http://localhost:8000" -ForegroundColor Green`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("cmd", {
@@ -10302,6 +10880,10 @@ exit /b 1`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("zsh", {
@@ -11106,6 +11688,10 @@ zsh بيدعم colors بـ [[%F{color}]] في prompt strings و[[tput]] في ا�
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("vps", {
@@ -13248,6 +13834,10 @@ crontab -e`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("git", {
@@ -14576,6 +15166,10 @@ GIT_EDITOR=true git rebase --continue`
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("web", {
@@ -15435,6 +16029,10 @@ Rich Results Test: لو فيه structured data (JSON-LD)، بيتحقق إنه �
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("sec", {
@@ -17017,6 +17615,10 @@ Backups: بيتعملوا ومتحفظين بره السيرفر، ومجرّب�
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("real", {
@@ -20054,6 +20656,10 @@ docker compose up -d`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("docker", {
@@ -22198,6 +22804,10 @@ networks:
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("python", {
@@ -23491,6 +24101,10 @@ docker compose run --rm -e LOG_LEVEL=debug app python -m app.check`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("apps", {
@@ -24206,6 +24820,10 @@ jobs:
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("node", {
@@ -26779,6 +27397,10 @@ curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/deleteWebhook?drop_pen
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("quality", {
@@ -28873,6 +29495,10 @@ upload: [[temporary-public-storage]] بيرفع التقرير لرابط مؤق
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("pg", {
@@ -30077,6 +30703,10 @@ pgcli -h localhost -p 5433 -U app_user app`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("mongo", {
@@ -31266,6 +31896,10 @@ mongodump --uri "mongodb+srv://myapp_user:YOUR_PASSWORD@cluster0.example.mongodb
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("diag", {
@@ -32297,6 +32931,10 @@ wc -l /tmp/diag.txt && head -40 /tmp/diag.txt`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("gha", {
@@ -33611,6 +34249,10 @@ tmate: step [[mxschmitt/action-tmate]] بتوقف الـ run وتطبع أمر s
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("wsl", {
@@ -34120,6 +34762,10 @@ Optimize-VHD -Path "$env:LOCALAPPDATA\Packages\CanonicalGroupLimited.Ubuntu24.04
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("nginx", {
@@ -35445,6 +36091,10 @@ admin.example.com {
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("sshc", {
@@ -35864,6 +36514,10 @@ ssh-keygen -R 203.0.113.10`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("glossary", {
@@ -36557,6 +37211,10 @@ TAB("glossary", {
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("js", {
@@ -42825,6 +43483,10 @@ console.log("S");
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("ts", {
@@ -46227,6 +46889,10 @@ const c = {} as Cfg;`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("css", {
@@ -50472,6 +51138,10 @@ el.style.transform = "translateX(10px)";`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("react", {
@@ -56009,6 +56679,10 @@ function ProfileFixed({ userId }: { userId?: string }) {
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("next", {
@@ -60378,6 +61052,10 @@ npx next experimental-analyze`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("api", {
@@ -64946,6 +65624,10 @@ process.on("SIGTERM", async () => {
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("data", {
@@ -69660,6 +70342,10 @@ ORDER BY created_at DESC LIMIT 20;`,
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("pyapi", {
@@ -75259,6 +75945,10 @@ async def c():
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("php", {
@@ -79855,6 +80545,10 @@ JIT: بيفرق في الحسابات التقيلة، ونادرًا في مو�
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("flutter", {
@@ -84864,6 +85558,10 @@ class AddButton extends StatelessWidget {
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("ai", {
@@ -87253,6 +87951,10 @@ for (const model of ["claude-haiku-4-5", "claude-sonnet-5-5", "claude-opus-5-5"]
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("arch", {
@@ -92703,6 +93405,10 @@ if (!r.ok) throw new AppError(502, "GATEWAY_DOWN", "بوابة الدفع مش �
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("interview", {
@@ -95290,6 +95996,10 @@ Email: "Thank you for your time today. If possible, I'd appreciate any feedback 
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("dsa", {
@@ -101794,6 +102504,10 @@ console.log(main(["Coin Change", "ok"], "2026-09-30")); // Coin Change -> next r
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("sweng", {
@@ -104534,6 +105248,10 @@ Requirements: Node 22 (see .nvmrc)، و Docker.
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("apis", {
@@ -107812,6 +108530,10 @@ server.bindAsync("127.0.0.1:50051", grpc.ServerCredentials.createInsecure(), () 
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("cloud", {
@@ -111913,6 +112635,10 @@ for i in 1 2 3 4; do curl -s -c jar -b jar localhost:8088/me; done`
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 //
 // التاب ده مختلف عن الباقي: كل فئة مشروع كامل، وكل درس فيها «محطة» (milestone) في المشروع بالترتيب.
@@ -118046,6 +118772,10 @@ for i in $(seq 31); do curl -s -o /dev/null -w "%{http_code} " -b cookies.txt -X
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها، والـ backtick اكتبه $__bt.
 
 TAB("career", {
@@ -120804,7 +121534,7 @@ function render(){
     shown += items.length;
     if (cat.l !== lastL){
       lastL = cat.l;
-      html += '<div class="lvl"><span class="n">المستوى '+AR(cat.l)+'</span><h2>'+lvInfo(cat.l)[0]+'</h2><p>'+lvInfo(cat.l)[1]+'</p></div>';
+      html += '<div class="lvl"><span class="n">المستوى '+AR(cat.l)+'</span><h2>'+lvInfo(cat.l)[0]+'</h2><p>'+lvInfo(cat.l)[1]+'</p>'+examHTML(cat.l)+'</div>';
     }
     const id = shell+'-c'+cat.i;
     chips += '<button class="chip" type="button" data-t="'+id+'">'+esc(cat.t)+'</button>';
@@ -120819,7 +121549,7 @@ function render(){
         (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
         '<button type="button" class="reveal">اكشف الإجابة</button>'+
         '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-        solHTML(c)+noteHTML(c)+
+        chkHTML(c)+solHTML(c)+noteHTML(c)+
       '</article>';
     });
     html += '</section>';
@@ -120853,7 +121583,7 @@ function cardProgress(){
 }
 function updateProgress(){
   cardProgress();
-  updateWeak();
+  updateWeak(); updateDue(); lvBadges();
   let total = 0, done = 0;
   DATA[shell].filter(c => !level || c.l === level).forEach(c => c.items.forEach(it => { total++; if (store.get('done:'+shell+':'+it[0])==='1') done++; }));
   $('#doneN').textContent = AR(done);
@@ -120894,70 +121624,248 @@ function applyTheme(t){
   $('#themeBtn').textContent = 'المظهر: '+(THEMES.find(x => x[0]===t) || THEMES[0])[1];
 }
 
-const fc = {pool:[], cur:null, last:null, ok:0, n:0};
+const fc = {pool:[], cur:null, last:null, ok:0, n:0, mode:'', missed:new Set(), wrong:[], over:false};
 function fcStats(k){ try{ return JSON.parse(store.get('fc:'+k)) || {k:0,m:0}; }catch(e){ return {k:0,m:0}; } }
+/* spaced repetition (Leitner): every «عرفتها» moves the card one box up, and each box waits longer before the card is due again.
+   «لسه» sends it back to box 1. Stored as srs:<tab>:<cmd> = {box, due} with due as a local YYYY-MM-DD */
+const SRS_DAYS = [1, 3, 7, 16, 35];
+const day = (n = 0) => { const d = new Date(); d.setDate(d.getDate()+n); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+function srsGet(k){ try{ const s = JSON.parse(store.get('srs:'+k)); return s && s.box ? s : null; }catch(e){ return null; } }
+function srsRate(k, ok){ const s = srsGet(k), box = ok ? Math.min((s ? s.box : 0)+1, SRS_DAYS.length) : 1; store.set('srs:'+k, JSON.stringify({box, due:day(SRS_DAYS[box-1])})); }
+const isDue = (k, today = day()) => { const s = srsGet(k); return !!s && s.due <= today; };
+// progress from before the boxes has only fc: counts: forgotten cards start in box 1 and are due today, the rest as if reviewed today
+function srsMigrate(){
+  store.keys().forEach(k => {
+    const key = k.slice(3);
+    if (!k.startsWith('fc:') || srsGet(key)) return;
+    const st = fcStats(key), weak = st.m > st.k, box = weak ? 1 : Math.min(Math.max(st.k-st.m, 1), 3);
+    store.set('srs:'+key, JSON.stringify({box, due: weak ? day() : day(SRS_DAYS[box-1])}));
+  });
+}
 function fcPick(){
-  const w = fc.pool.map(x => { const st = fcStats(x.key); return x.key===fc.last && fc.pool.length>1 ? 0 : (st.m*3+1)/(st.k+1); });
+  const today = day();
+  // in «اختبرني» a due card weighs 8x, a card never seen 2x, and one that isn't due yet half
+  const w = fc.pool.map(x => { if (x.key===fc.last && fc.pool.length>1) return 0; const st = fcStats(x.key), s = srsGet(x.key); return (st.m*3+1)/(st.k+1) * (fc.mode ? 1 : !s ? 2 : s.due <= today ? 8 : .5); });
   let r = Math.random() * w.reduce((a,b) => a+b, 0);
   for (let i = 0; i < w.length; i++){ r -= w[i]; if (r <= 0 && w[i]) return fc.pool[i]; }
   return fc.pool.find(x => x.key!==fc.last) || fc.pool[0];
 }
 const tabName = k => $('.sw[data-s="'+k+'"] .top b') ? $('.sw[data-s="'+k+'"] .top b').textContent : SHELLS[k].label;
+const cards = (tab, keep) => { const a = []; DATA[tab].forEach(cat => { if (!keep || keep(cat)) cat.items.forEach(([c,t,d,ex,tr,flag]) => a.push({key:tab+':'+c, tab, cat:cat.t, c, t, d, ex, flag})); }); return a; };
+const allCards = test => Object.keys(DATA).flatMap(k => cards(k).filter(x => test(x.key)));
+let _lk; const lessonKeys = () => _lk || (_lk = new Set(allCards(() => true).map(x => x.key)));
 // a card counts as "forgotten" while it was missed more often than recalled
 const isWeak = key => { const st = fcStats(key); return st.m > st.k; };
-function weakPool(){
-  const pool = [];
-  for (const k in DATA) DATA[k].forEach(cat => cat.items.forEach(([c,t,d,ex,tr,flag]) => { if (isWeak(k+':'+c)) pool.push({key:k+':'+c, tab:k, cat:cat.t, c, t, d, ex, flag}); }));
-  return pool;
-}
+const weakPool = () => allCards(isWeak);
+const duePool = () => { const t = day(); return allCards(k => isDue(k, t)); };
 function updateWeak(){
   let n = 0;
   store.keys().forEach(k => { if (k.startsWith('fc:') && isWeak(k.slice(3))) n++; });
   $('#weakN').textContent = AR(n);
   $('#weakBtn').hidden = !n;
 }
+function updateDue(){
+  const t = day(); let n = 0;
+  store.keys().forEach(k => { if (k.startsWith('srs:') && lessonKeys().has(k.slice(4)) && isDue(k.slice(4), t)) n++; });
+  $('#dueN').textContent = AR(n);
+  $('#dueBtn').hidden = !n;
+}
 function withTab(tab, fn){ const prev = shell; shell = tab; try{ return fn(); } finally { shell = prev; } }
 function fcNext(){
   if (!fc.pool.length){ fcClose(); return; }
-  const x = fc.cur = fcPick(); fc.last = x.key;
-  const st = fcStats(x.key);
-  $('#fcMeta').textContent = (fc.weak ? tabName(x.tab)+' › ' : '') + x.cat + (st.m ? ' · نسيتها '+AR(st.m)+' مرة' : '');
+  const x = fc.cur = fc.mode==='exam' ? fc.pool[fc.n] : fcPick(); fc.last = x.key;
+  const st = fcStats(x.key), cross = fc.mode==='weak' || fc.mode==='due', N = AR(fc.pool.length);
+  $('#fcMeta').textContent = fc.mode==='exam' ? 'امتحان المستوى '+AR(fc.exam)+' · سؤال '+AR(fc.n+1)+' من '+N : (cross ? tabName(x.tab)+' › ' : '') + x.cat + (st.m ? ' · نسيتها '+AR(st.m)+' مرة' : '');
   $('#fcQ').textContent = x.t || x.c;
   $('#fcHint').textContent = x.tab==='glossary' ? 'إيه المصطلح ده، وبيعمل إيه؟' : 'إيه الأمر اللي بيعمل كده؟ قوله بصوت عالي أو اكتبه في دماغك، وبعدين اكشف.';
   $('#fcAns').hidden = true; $('#fcShow').hidden = false; $('#fcKnow').hidden = $('#fcMiss').hidden = true;
-  const from = fc.weak ? 'اللي نسيته من كل التابات ('+AR(fc.pool.length)+' بطاقة). ' : 'البطاقات من '+$('#shellName').textContent+' ('+AR(fc.pool.length)+' بطاقة). ';
-  $('#fcStat').textContent = (fc.n ? 'الجلسة دي: عرفت '+AR(fc.ok)+' من '+AR(fc.n)+'. ' : from)+'مسافة تكشف، و 1 عرفتها، و 2 لسه.';
+  const keys = 'مسافة تكشف، و 1 عرفتها، و 2 لسه.';
+  if (fc.mode==='exam') $('#fcStat').textContent = (fc.n ? 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' لحد دلوقتي. ' : '')+'تنجح لو عرفت '+AR(Math.ceil(fc.pool.length*.8))+' من '+N+'. '+keys;
+  else {
+    const due = fc.mode ? 0 : fc.pool.filter(y => isDue(y.key)).length;
+    const from = fc.mode==='weak' ? 'اللي نسيته من كل التابات ('+N+' بطاقة). ' : fc.mode==='due' ? 'المراجعة المستحقة النهارده من كل التابات ('+N+' بطاقة). ' : 'البطاقات من '+$('#shellName').textContent+' ('+N+' بطاقة'+(due ? '، منهم '+AR(due)+' عليك مراجعتهم النهارده وبيظهروا الأول' : '')+'). ';
+    $('#fcStat').textContent = (fc.n ? 'الجلسة دي: عرفت '+AR(fc.ok)+' من '+AR(fc.n)+'. ' : from)+keys;
+  }
   $('#fcShow').focus();
 }
 function fcReveal(){
-  const x = fc.cur, sum = x.d ? x.d.split(/\n\s*\n/)[0] : '';
-  $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? withTab(x.tab, () => termBlock(x.ex, x.c, x.flag)) : '');
+  const x = fc.cur, sum = x.d ? x.d.split(/\n\s*\n/)[0] : '', sol = fc.mode==='exam' && SOL[x.tab+'|'+x.c];
+  $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? withTab(x.tab, () => termBlock(x.ex, x.c, x.flag)) : '')+
+    (sol ? '<div class="fc-sol"><b>حل التجربة:</b>'+descHTML(sol.text)+'</div>' : '');
   $('#fcAns').hidden = false; $('#fcShow').hidden = true; $('#fcKnow').hidden = $('#fcMiss').hidden = false;
   $('#fcKnow').focus();
 }
+function fcEnd(q, hint, html){
+  fc.over = true; fc.cur = null;
+  $('#fcQ').textContent = q; $('#fcHint').textContent = hint;
+  $('#fcAns').innerHTML = html || ''; $('#fcAns').hidden = !html;
+  $('#fcKnow').hidden = $('#fcMiss').hidden = $('#fcShow').hidden = true; $('#fcStat').textContent = '';
+  $('#fcClose').focus();
+}
 function fcMark(ok){
-  if (!fc.cur || (fc.weak && !fc.pool.length)) return;
-  const st = fcStats(fc.cur.key); ok ? st.k++ : st.m++;
-  store.set('fc:'+fc.cur.key, JSON.stringify(st));
+  if (!fc.cur || fc.over) return;
+  const key = fc.cur.key, st = fcStats(key); ok ? st.k++ : st.m++;
+  store.set('fc:'+key, JSON.stringify(st));
+  // a card missed earlier in this session stays in box 1 even if it's recalled later in the same session
+  if (!ok){ srsRate(key, false); fc.missed.add(key); fc.wrong.push(fc.cur); } else if (!fc.missed.has(key)) srsRate(key, true);
   fc.n++; if (ok) fc.ok++;
-  // in the forgotten-cards review, a card leaves the pile once it's recalled more than missed
-  if (fc.weak && !isWeak(fc.cur.key)) fc.pool = fc.pool.filter(x => x.key !== fc.cur.key);
-  updateWeak();
-  if (fc.weak && !fc.pool.length){ $('#fcQ').textContent = 'خلصت كل اللي كنت ناسيه'; $('#fcHint').textContent = 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' في الجلسة دي. ارجع بعد يوم وجرّب «اختبرني» تاني.'; $('#fcAns').hidden = true; $('#fcKnow').hidden = $('#fcMiss').hidden = true; $('#fcShow').hidden = true; $('#fcStat').textContent = ''; $('#fcClose').focus(); return; }
+  updateWeak(); updateDue();
+  if (fc.mode==='exam'){ if (fc.n >= fc.pool.length) examFinish(); else fcNext(); return; }
+  // in the forgotten-cards review a card leaves the pile once it's recalled more than missed; in the due review once it's recalled
+  if (fc.mode==='weak' && !isWeak(key)) fc.pool = fc.pool.filter(x => x.key !== key);
+  if (fc.mode==='due' && ok) fc.pool = fc.pool.filter(x => x.key !== key);
+  const score = 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' في الجلسة دي. ';
+  if (fc.mode==='weak' && !fc.pool.length) return fcEnd('خلصت كل اللي كنت ناسيه', score+'ارجع بعد يوم وجرّب «اختبرني» تاني.');
+  if (fc.mode==='due' && !fc.pool.length) return fcEnd('خلصت مراجعة النهارده', score+'كل بطاقة هترجعلك في ميعادها: اللي عرفتها بعد أيام أكتر، واللي نسيتها بكرة.');
   fcNext();
 }
-function fcOpen(weak){
-  fc.pool = []; fc.ok = fc.n = 0; fc.last = null; fc.weak = !!weak;
-  if (weak) fc.pool = weakPool();
-  else DATA[shell].filter(c => !level || c.l === level).forEach(cat => cat.items.forEach(([c,t,d,ex,tr,flag]) => fc.pool.push({key:shell+':'+c, tab:shell, cat:cat.t, c, t, d, ex, flag})));
-  if (!fc.pool.length) return;
+function fcStart(mode, pool, extra){
+  Object.assign(fc, {mode, pool, ok:0, n:0, last:null, cur:null, over:false, missed:new Set(), wrong:[]}, extra);
+  if (!pool.length) return;
   const dlg = $('#fc');
-  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+  if (typeof dlg.showModal === 'function'){ if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', '');
   fcNext();
+}
+function fcOpen(mode){ fcStart(mode || '', mode==='weak' ? weakPool() : mode==='due' ? duePool() : cards(shell, c => !level || c.l === level)); }
+
+/* level exam: up to 10 random lessons of one level, graded by the learner; 80% (8 of 10) passes. exam:<tab>:<level> = {last, pass} */
+function examGet(tab, l){ try{ return JSON.parse(store.get('exam:'+tab+':'+l)) || null; }catch(e){ return null; } }
+const examScore = r => AR(r.score)+'/'+AR(r.n);
+function examHTML(l){
+  const r = examGet(shell, l), n = Math.min(10, cards(shell, c => c.l === l).length);
+  return '<div class="exam-row" data-l="'+l+'"><button type="button" class="quiz-btn exam-btn" data-exam="'+l+'">امتحان المستوى '+AR(l)+'</button>'+
+    '<span class="exam-last">'+(r ? (r.pass ? '<b class="exam-ok">✓ عدّيته</b> ' : '')+'آخر نتيجة '+examScore(r.last)+' يوم '+r.last.date : AR(n)+' أسئلة من المستوى ده، وتعدّي بـ '+AR(Math.ceil(n*.8)))+'</span></div>';
+}
+function lvBadges(){
+  document.querySelectorAll('.lv').forEach(b => {
+    const l = +b.dataset.l, old = b.querySelector('.lv-b'), r = l && examGet(shell, l);
+    if (old) old.remove();
+    if (r && r.pass) b.insertAdjacentHTML('beforeend', '<span class="lv-b" title="عدّيت امتحان المستوى ده ('+examScore(r.pass)+')"><span aria-hidden="true">✓</span><span class="vh">، عدّيت امتحانه</span></span>');
+  });
+  const eb = $('#examBtn'), has = !!level && DATA[shell].some(c => c.l===level && c.items.length);
+  eb.hidden = !has;
+  if (has){ const r = examGet(shell, level); eb.textContent = 'امتحان المستوى '+AR(level)+(r ? ' (آخر مرة '+examScore(r.last)+')' : ''); }
+}
+function examOpen(l){
+  const all = cards(shell, c => c.l === l);
+  for (let i = all.length-1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [all[i], all[j]] = [all[j], all[i]]; }
+  fcStart('exam', all.slice(0, 10), {exam:l, examTab:shell});
+}
+function examFinish(){
+  const n = fc.pool.length, need = Math.ceil(n*.8), pass = fc.ok >= need, l = fc.exam, now = {score:fc.ok, n, date:day()};
+  const r = examGet(fc.examTab, l) || {};
+  r.last = now; if (pass) r.pass = now;
+  store.set('exam:'+fc.examTab+':'+l, JSON.stringify(r));
+  const wrong = fc.wrong.length ? '<p>راجع دول:</p><ul class="fc-wrong">'+fc.wrong.map(x => '<li><code>'+esc(x.c)+'</code> '+esc(x.t || '')+'</li>').join('')+'</ul>' : '';
+  $('#fcMeta').textContent = 'امتحان المستوى '+AR(l)+' · خلص';
+  fcEnd(pass ? 'عدّيت امتحان المستوى '+AR(l)+': '+examScore(now) : 'لسه: '+examScore(now)+'، والنجاح من '+AR(need),
+    pass ? 'المستوى ده اتعلّم عليه ✓. '+(fc.wrong.length ? 'وراجع اللي نسيته تحت، هيظهرلك في «عليك مراجعة» بكرة.' : 'ولا غلطة.') : 'راجع الدروس دي وارجع امتحن تاني. البطاقات اللي نسيتها هتظهرلك في «عليك مراجعة» بكرة.', wrong);
+  if (fc.examTab===shell){ document.querySelectorAll('.exam-row[data-l="'+l+'"]').forEach(el => { el.outerHTML = examHTML(l); }); lvBadges(); }
 }
 function fcClose(){ const dlg = $('#fc'); if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
 
-const BACKUP_KEYS = /^(done:|note:|fc:|shell$|level$|brief$|todo$|theme$)/;
+/* ---------- auto-checked exercises (lesson field check) ---------- */
+function chkHTML(c){
+  const ch = CHECK[shell+'|'+c];
+  if (!ch) return '';
+  const k = shell+':'+c, saved = store.get('code:'+k), code = saved !== null ? saved : ch.starter || '', sql = ch.lang==='sql';
+  return '<section class="chk" data-t="'+esc(shell)+'" data-c="'+esc(c)+'" aria-label="تمرين بيتصحح لوحده: '+esc(c)+'">'+
+    '<div class="chk-h"><span class="lbl">تمرين بيتصحح لوحده</span><span class="chk-eng">'+(sql ? 'PostgreSQL حقيقي جوه المتصفح (PGlite)' : 'JavaScript، والاختبارات بتتشغل على كودك')+'</span>'+(store.get('chk:'+k)==='1' ? '<span class="chk-ok">✓ عدّى الاختبارات</span>' : '')+'</div>'+
+    '<details class="chk-more"><summary>'+(sql ? 'الجداول والبيانات اللي هتشتغل عليها' : 'الاختبارات اللي هتتشغل على كودك')+'</summary>'+termHTML(sql ? ch.setup : ch.tests, shell, true, sql ? 'setup.sql' : 'tests.js')+'</details>'+
+    '<textarea class="chk-code" dir="ltr" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" rows="'+Math.min(Math.max(code.split('\n').length+1, 4), 16)+'" aria-label="'+(sql ? 'استعلام SQL بتاعك' : 'كود JavaScript بتاعك')+'">'+esc(code)+'</textarea>'+
+    '<div class="chk-actions"><button type="button" class="chk-run">شغّل واختبر</button><button type="button" class="chk-reset">رجّع كود البداية</button><span class="chk-kbd">أو Ctrl+Enter</span></div>'+
+    '<div class="chk-out" role="status" aria-live="polite"></div></section>';
+}
+// JS runs in a Worker built from runJsCheck's source (core.js): a blob works from file:// and in the single-file build,
+// and a loop that never ends is stopped by terminate() after 3 seconds
+let jsWorkerURL;
+function runJs(code, tests){
+  return new Promise(res => {
+    let w;
+    try{
+      jsWorkerURL = jsWorkerURL || URL.createObjectURL(new Blob(['const runJsCheck = '+runJsCheck+';\nonmessage = async e => postMessage(await runJsCheck(e.data.code, e.data.tests));'], {type:'text/javascript'}));
+      w = new Worker(jsWorkerURL);
+    }catch(e){ return res({results:[], error:'المتصفح ده مش مخلّيني أشغّل الكود في worker: [['+e.message+']]'}); }
+    const end = r => { clearTimeout(tm); w.terminate(); res(r); };
+    const tm = setTimeout(() => end({timeout:true, results:[]}), 3000);
+    w.onmessage = e => end(e.data);
+    w.onerror = e => { e.preventDefault(); end({results:[], error:'الكود وقع: [['+e.message+']]'}); };
+    w.postMessage({code, tests});
+  });
+}
+function jsResultHTML(r){
+  if (r.timeout) return '<p class="chk-sum bad">الكود مخلصش: غالبًا loop مبتخلصش. راجع شرط الوقوف في الـ while أو الـ for (وقفناه بعد ٣ ثواني).</p>';
+  const n = r.results.filter(x => x.ok).length, all = r.results.length;
+  let h = r.error ? '<p class="chk-sum bad">'+fmt(r.error)+'</p>' : '<p class="chk-sum '+(n===all ? 'ok' : 'bad')+'">'+(n===all ? '✓ كل الاختبارات عدّت ('+AR(n)+' من '+AR(all)+')، واتعلّم على «جربتها».' : 'عدّى '+AR(n)+' من '+AR(all)+'. صلّح اللي عليه ✗ وجرّب تاني.')+'</p>';
+  if (all) h += '<ul class="chk-res">'+r.results.map(x => '<li class="'+(x.ok ? 'ok' : 'bad')+'"><span class="mk" aria-hidden="true">'+(x.ok ? '✓' : '✗')+'</span><span class="vh">'+(x.ok ? 'عدّى: ' : 'فشل: ')+'</span><span class="tn">'+esc(x.name)+'</span>'+(x.msg ? '<span class="msg">'+fmt(x.msg)+'</span>' : '')+'</li>').join('')+'</ul>';
+  if (r.logs && r.logs.length) h += '<div class="chk-log"><b>console.log</b><pre dir="ltr">'+esc(r.logs.join('\n'))+'</pre></div>';
+  return h;
+}
+// SQL runs on real Postgres (PGlite, vendor/pglite) in a module worker, loaded the first time a SQL exercise is focused or run.
+// It needs http(s): file:// and the single-file dist can't load the worker, so they show a note instead
+const sqlEng = {w:null, ready:null, id:0};
+function sqlReady(){
+  if (!/^https?:$/.test(location.protocol)) return Promise.reject(new Error('file'));
+  if (!sqlEng.ready) sqlEng.ready = new Promise((res, rej) => {
+    let w;
+    try{ w = new Worker('js/sql-worker.js', {type:'module'}); }catch(e){ return rej(e); }
+    w.onmessage = e => { if (e.data.id) return; if (e.data.ready){ sqlEng.w = w; res(w); } else if (e.data.fail){ w.terminate(); rej(new Error(e.data.fail)); } };
+    w.onerror = e => { if (e.preventDefault) e.preventDefault(); if (sqlEng.w===w) return; w.terminate(); rej(new Error(e.message || 'js/sql-worker.js مش موجود')); };
+  }).catch(e => { sqlEng.ready = null; throw e; });
+  return sqlEng.ready;
+}
+function sqlExec(w, msg){
+  return new Promise(res => {
+    const id = ++sqlEng.id;
+    const tm = setTimeout(() => { w.terminate(); sqlEng.w = sqlEng.ready = null; res({timeout:true}); }, 5000);
+    const h = e => { if (e.data.id!==id) return; clearTimeout(tm); w.removeEventListener('message', h); res(e.data); };
+    w.addEventListener('message', h);
+    w.postMessage(Object.assign({id}, msg));
+  });
+}
+function tblHTML(cap, r){
+  const rows = r.rows.slice(0, 20), cell = v => v===null ? '<td class="nul">NULL</td>' : '<td>'+esc(String(v))+'</td>';
+  return '<div class="chk-tbl"><p class="cap">'+cap+' ('+AR(r.rows.length)+' صف)</p>'+(r.rows.length || r.cols.length ? '<div class="chk-scroll" dir="ltr"><table>'+(r.cols.length ? '<thead><tr>'+r.cols.map(c => '<th>'+esc(c)+'</th>').join('')+'</tr></thead>' : '')+
+    '<tbody>'+rows.map(x => '<tr>'+x.map(cell).join('')+'</tr>').join('')+'</tbody></table></div>' : '')+(r.rows.length > 20 ? '<p class="cap">وكمان '+AR(r.rows.length-20)+' صف</p>' : '')+'</div>';
+}
+async function runSql(ch, code, status){
+  let w;
+  try{ if (!sqlEng.w) status('بيحمّل PostgreSQL: حوالي ٦ ميجا أول مرة بس، وبعدها بيشتغل من غير نت…'); w = await sqlReady(); }
+  catch(e){ return {html:'<p class="chk-sum bad">التمارين دي محتاجة النسخة الأونلاين أو التطبيق. '+(e.message==='file' ? 'انت فاتح الصفحة كملف من الجهاز، والمتصفح مبيسمحش يحمّل محرك قاعدة البيانات كده.' : 'محرك PostgreSQL محملش: '+esc(e.message))+'</p>'}; }
+  status('بيشغّل الاستعلام…');
+  const r = await sqlExec(w, {setup:ch.setup, sql:code, ref:ch.expectSql});
+  if (r.timeout) return {html:'<p class="chk-sum bad">الاستعلام مخلصش في ٥ ثواني: غالبًا WITH RECURSIVE مبيقفش. هنحمّل المحرك من جديد في التشغيل الجاي.</p>'};
+  if (r.fail) return {html:'<p class="chk-sum bad">التمرين نفسه فيه مشكلة، مش انت:</p><pre class="chk-err" dir="ltr">'+esc(r.fail)+'</pre>'};
+  if (r.got.err) return {html:'<p class="chk-sum bad">PostgreSQL رجّع error:</p><pre class="chk-err" dir="ltr">'+esc(r.got.err)+'</pre>'};
+  const exp = r.exp || {cols:[], rows:ch.expect}, diff = sqlDiff(r.got.rows, exp.rows, ch.ordered);
+  return {pass:!diff, html:'<p class="chk-sum '+(diff ? 'bad' : 'ok')+'">'+(diff ? esc(diff) : '✓ الناتج مطابق، واتعلّم على «جربتها».')+'</p>'+tblHTML('ناتج استعلامك', r.got)+(diff ? tblHTML('الناتج المتوقع', exp) : '')};
+}
+async function chkRun(box){
+  const t = box.dataset.t, c = box.dataset.c, ch = CHECK[t+'|'+c], out = box.querySelector('.chk-out'), btn = box.querySelector('.chk-run'), code = box.querySelector('.chk-code').value;
+  if (!ch || btn.disabled) return;
+  const status = m => { out.innerHTML = '<p class="chk-wait">'+m+'</p>'; };
+  btn.disabled = true; btn.setAttribute('aria-busy', 'true'); status('بيشغّل…');
+  try{
+    let res;
+    if (ch.lang==='sql') res = await runSql(ch, code, status);
+    else { const r = await runJs(code, ch.tests); res = {pass: !r.timeout && !r.error && r.results.length > 0 && r.results.every(x => x.ok), html: jsResultHTML(r)}; }
+    out.innerHTML = res.html;
+    if (res.pass) chkPass(box, t, c);
+  }catch(e){ out.innerHTML = '<p class="chk-sum bad">حصلت مشكلة: '+esc(String(e && e.message || e))+'</p>'; }
+  finally{ btn.disabled = false; btn.removeAttribute('aria-busy'); }
+}
+// all tests pass → chk:<tab>:<cmd> = 1, and the lesson's «جربتها» gets checked
+function chkPass(box, t, c){
+  store.set('chk:'+t+':'+c, '1'); store.set('done:'+t+':'+c, '1');
+  const art = box.closest('article'), cb = art && art.querySelector('input[type=checkbox][data-k]');
+  if (cb) cb.checked = true;
+  // in «اللي فاضل بس» the lesson would vanish with its result, so it's hidden on the next render instead
+  if (art && !document.body.classList.contains('todo')) art.classList.add('is-done');
+  if (!box.querySelector('.chk-ok')) box.querySelector('.chk-h').insertAdjacentHTML('beforeend', '<span class="chk-ok">✓ عدّى الاختبارات</span>');
+  updateProgress();
+}
+
+const BACKUP_KEYS = /^(done:|note:|fc:|srs:|exam:|chk:|code:|shell$|level$|brief$|todo$|theme$)/;
 function exportProgress(){
   const o = {}; store.keys().filter(k => BACKUP_KEYS.test(k)).forEach(k => o[k] = store.get(k));
   const a = document.createElement('a');
@@ -120973,7 +121881,7 @@ function importProgress(file){
       const j = JSON.parse(r.result), o = j && j.data;
       if (!o || typeof o !== 'object') throw 0;
       let n = 0; Object.keys(o).forEach(k => { if (BACKUP_KEYS.test(k) && typeof o[k]==='string'){ store.set(k, o[k]); n++; } });
-      alert('اترجّع '+n+' عنصر.'); render();
+      srsMigrate(); alert('اترجّع '+n+' عنصر.'); render();
     }catch(e){ alert('الملف ده مش نسخة تقدم من الصفحة دي.'); }
   };
   r.readAsText(file);
@@ -120999,7 +121907,19 @@ document.addEventListener('click', e => {
   const nb = e.target.closest('.note-btn');
   if (nb){ const ta = nb.nextElementSibling, on = !ta.classList.contains('open'); ta.classList.toggle('open', on); nb.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) ta.focus(); return; }
   if (e.target.closest('#fcBtn')){ fcOpen(); return; }
-  if (e.target.closest('#weakBtn')){ fcOpen(true); return; }
+  if (e.target.closest('#weakBtn')){ fcOpen('weak'); return; }
+  if (e.target.closest('#dueBtn')){ fcOpen('due'); return; }
+  if (e.target.closest('#examBtn')){ examOpen(level); return; }
+  const ex = e.target.closest('[data-exam]');
+  if (ex){ examOpen(+ex.dataset.exam); return; }
+  const run = e.target.closest('.chk-run');
+  if (run){ chkRun(run.closest('.chk')); return; }
+  const rs = e.target.closest('.chk-reset');
+  if (rs){
+    const box = rs.closest('.chk'), ta = box.querySelector('.chk-code');
+    ta.value = CHECK[box.dataset.t+'|'+box.dataset.c].starter || ''; store.del('code:'+box.dataset.t+':'+box.dataset.c);
+    box.querySelector('.chk-out').innerHTML = ''; ta.focus(); return;
+  }
   if (e.target.closest('#fcClose')){ fcClose(); return; }
   if (e.target.closest('#fcShow')){ fcReveal(); return; }
   if (e.target.closest('#fcKnow')){ fcMark(true); return; }
@@ -121021,8 +121941,8 @@ document.addEventListener('click', e => {
   if (e.target.closest('#printBtn')){ window.print(); return; }
   if (e.target.closest('#resetBtn')){
     const name = $('#shellName').textContent.replace(/ المستوى .*/, '');
-    if (confirm('هتمسح علامات «جربتها» ونتايج «اختبرني» في '+name+'. الملاحظات مش هتتمسح. متأكد؟')){
-      store.keys().filter(k => k.startsWith('done:'+shell+':') || k.startsWith('fc:'+shell+':')).forEach(k => store.del(k));
+    if (confirm('هتمسح علامات «جربتها» ونتايج «اختبرني» والمراجعة والامتحانات والتمارين في '+name+'. الملاحظات والكود اللي كتبته مش هيتمسحوا. متأكد؟')){
+      store.keys().filter(k => ['done:','fc:','srs:','exam:','chk:'].some(p => k.startsWith(p+shell+':'))).forEach(k => store.del(k));
       render();
     }
     return;
@@ -121054,8 +121974,15 @@ document.addEventListener('click', e => {
     if (go.dataset.lv !== undefined) $('#list').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
 });
+// the SQL engine is ~6 MB, so it starts loading only when the learner reaches a SQL exercise's box
+document.addEventListener('focusin', e => {
+  const box = e.target.closest('.chk');
+  if (box && e.target.matches('.chk-code') && (CHECK[box.dataset.t+'|'+box.dataset.c] || {}).lang==='sql') sqlReady().catch(() => {});
+});
 $('#importFile').addEventListener('change', e => { const fl = e.target.files[0]; if (fl) importProgress(fl); e.target.value = ''; });
 document.addEventListener('input', e => {
+  const code = e.target.closest('.chk-code');
+  if (code){ const box = code.closest('.chk'); store.set('code:'+box.dataset.t+':'+box.dataset.c, code.value); return; }
   const ta = e.target.closest('textarea[data-n]');
   if (!ta) return;
   const v = ta.value.trim();
@@ -121063,6 +121990,7 @@ document.addEventListener('input', e => {
   const nb = ta.previousElementSibling; nb.classList.toggle('has', !!v); nb.textContent = v ? 'ملاحظتي' : 'اكتب ملاحظة';
 });
 document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key==='Enter' && e.target.closest('.chk-code')){ e.preventDefault(); chkRun(e.target.closest('.chk')); return; }
   if (!$('#fc').open) return;
   const asking = !$('#fcShow').hidden;
   if (asking && e.key===' ' && document.activeElement!==$('#fcShow')){ e.preventDefault(); fcReveal(); }
@@ -121078,6 +122006,7 @@ document.addEventListener('change', e => {
 });
 
 renderStatic();
+srsMigrate();
 applyTheme(store.get('theme') || 'auto');
 if (store.get('todo')==='1'){ document.body.classList.add('todo'); $('#todoBtn').setAttribute('aria-pressed','true'); }
 if (store.get('brief')==='1'){ document.body.classList.add('brief'); $('#briefBtn').setAttribute('aria-pressed','true'); }

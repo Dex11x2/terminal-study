@@ -17,7 +17,7 @@
 <body data-shell="bash">
 
 <header class="hero wrap">
-  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
+  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="dueBtn" hidden title="البطاقات اللي ميعاد مراجعتها جه النهارده، من كل التابات. كل ما تعرف بطاقة ميعادها الجاي بيبعد: يوم، ٣، ٧، ١٦، ٣٥ يوم">عليك مراجعة (<b id="dueN">0</b>)</button><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
   <h1>الترمنال بإيدك</h1>
   <p class="lead">كل أمر هنا معاه شرح، ومثال تنسخه، وتجربة تعملها بنفسك. الأوامر متقسمة على ٣ مستويات: ابدأ بالمستوى ١، ومتنقلش للي بعده غير لما تكون علّمت على «جربتها» في أغلبه. الصفحة بتفتكر تقدمك.</p>
   <section class="sw-sec">
@@ -195,7 +195,8 @@
       <button type="button" class="lv" data-l="1" aria-pressed="false">١ البداية</button>
       <button type="button" class="lv" data-l="2" aria-pressed="false">٢ المتوسط</button>
       <button type="button" class="lv" data-l="3" aria-pressed="false">٣ المتقدم</button>
-      <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات عشوائية من التاب والمستوى اللي انت فيهم، والأوامر اللي بتنساها بتتكرر أكتر">اختبرني</button>
+      <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات من التاب والمستوى اللي انت فيهم: اللي ميعاد مراجعتها جه بتظهر الأول، واللي بتنساها بتتكرر أكتر">اختبرني</button>
+      <button type="button" class="quiz-btn" id="examBtn" hidden title="١٠ أسئلة عشوائية من المستوى ده. لو عرفت ٨ المستوى بيتعلّم عليه">امتحان المستوى</button>
       <button type="button" class="quiz-btn" id="todoBtn" aria-pressed="false" title="بيخبّي الأوامر اللي علّمت عليها «جربتها»">اللي فاضل بس</button>
       <button type="button" class="quiz-btn" id="briefBtn" aria-pressed="false" title="بيخبّي الشرح العميق ويسيب الخلاصة والمثال، للمراجعة السريعة">شرح مختصر</button>
       <button type="button" class="quiz-btn" id="quizBtn" aria-pressed="false" title="بيخبّي الأوامر والشرح، وانت تفتكر الأمر من الوصف">وضع المراجعة</button>

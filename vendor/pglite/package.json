@@ -1,0 +1,6 @@
+{
+ "type": "module",
+ "name": "@electric-sql/pglite",
+ "version": "0.5.8",
+ "license": "Apache-2.0 (PGlite) + PostgreSQL License (Postgres)"
+}

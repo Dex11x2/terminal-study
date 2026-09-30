@@ -102,7 +102,7 @@ function render(){
     shown += items.length;
     if (cat.l !== lastL){
       lastL = cat.l;
-      html += '<div class="lvl"><span class="n">المستوى '+AR(cat.l)+'</span><h2>'+lvInfo(cat.l)[0]+'</h2><p>'+lvInfo(cat.l)[1]+'</p></div>';
+      html += '<div class="lvl"><span class="n">المستوى '+AR(cat.l)+'</span><h2>'+lvInfo(cat.l)[0]+'</h2><p>'+lvInfo(cat.l)[1]+'</p>'+examHTML(cat.l)+'</div>';
     }
     const id = shell+'-c'+cat.i;
     chips += '<button class="chip" type="button" data-t="'+id+'">'+esc(cat.t)+'</button>';
@@ -117,7 +117,7 @@ function render(){
         (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
         '<button type="button" class="reveal">اكشف الإجابة</button>'+
         '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
-        solHTML(c)+noteHTML(c)+
+        chkHTML(c)+solHTML(c)+noteHTML(c)+
       '</article>';
     });
     html += '</section>';
@@ -151,7 +151,7 @@ function cardProgress(){
 }
 function updateProgress(){
   cardProgress();
-  updateWeak();
+  updateWeak(); updateDue(); lvBadges();
   let total = 0, done = 0;
   DATA[shell].filter(c => !level || c.l === level).forEach(c => c.items.forEach(it => { total++; if (store.get('done:'+shell+':'+it[0])==='1') done++; }));
   $('#doneN').textContent = AR(done);
@@ -192,70 +192,248 @@ function applyTheme(t){
   $('#themeBtn').textContent = 'المظهر: '+(THEMES.find(x => x[0]===t) || THEMES[0])[1];
 }
 
-const fc = {pool:[], cur:null, last:null, ok:0, n:0};
+const fc = {pool:[], cur:null, last:null, ok:0, n:0, mode:'', missed:new Set(), wrong:[], over:false};
 function fcStats(k){ try{ return JSON.parse(store.get('fc:'+k)) || {k:0,m:0}; }catch(e){ return {k:0,m:0}; } }
+/* spaced repetition (Leitner): every «عرفتها» moves the card one box up, and each box waits longer before the card is due again.
+   «لسه» sends it back to box 1. Stored as srs:<tab>:<cmd> = {box, due} with due as a local YYYY-MM-DD */
+const SRS_DAYS = [1, 3, 7, 16, 35];
+const day = (n = 0) => { const d = new Date(); d.setDate(d.getDate()+n); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+function srsGet(k){ try{ const s = JSON.parse(store.get('srs:'+k)); return s && s.box ? s : null; }catch(e){ return null; } }
+function srsRate(k, ok){ const s = srsGet(k), box = ok ? Math.min((s ? s.box : 0)+1, SRS_DAYS.length) : 1; store.set('srs:'+k, JSON.stringify({box, due:day(SRS_DAYS[box-1])})); }
+const isDue = (k, today = day()) => { const s = srsGet(k); return !!s && s.due <= today; };
+// progress from before the boxes has only fc: counts: forgotten cards start in box 1 and are due today, the rest as if reviewed today
+function srsMigrate(){
+  store.keys().forEach(k => {
+    const key = k.slice(3);
+    if (!k.startsWith('fc:') || srsGet(key)) return;
+    const st = fcStats(key), weak = st.m > st.k, box = weak ? 1 : Math.min(Math.max(st.k-st.m, 1), 3);
+    store.set('srs:'+key, JSON.stringify({box, due: weak ? day() : day(SRS_DAYS[box-1])}));
+  });
+}
 function fcPick(){
-  const w = fc.pool.map(x => { const st = fcStats(x.key); return x.key===fc.last && fc.pool.length>1 ? 0 : (st.m*3+1)/(st.k+1); });
+  const today = day();
+  // in «اختبرني» a due card weighs 8x, a card never seen 2x, and one that isn't due yet half
+  const w = fc.pool.map(x => { if (x.key===fc.last && fc.pool.length>1) return 0; const st = fcStats(x.key), s = srsGet(x.key); return (st.m*3+1)/(st.k+1) * (fc.mode ? 1 : !s ? 2 : s.due <= today ? 8 : .5); });
   let r = Math.random() * w.reduce((a,b) => a+b, 0);
   for (let i = 0; i < w.length; i++){ r -= w[i]; if (r <= 0 && w[i]) return fc.pool[i]; }
   return fc.pool.find(x => x.key!==fc.last) || fc.pool[0];
 }
 const tabName = k => $('.sw[data-s="'+k+'"] .top b') ? $('.sw[data-s="'+k+'"] .top b').textContent : SHELLS[k].label;
+const cards = (tab, keep) => { const a = []; DATA[tab].forEach(cat => { if (!keep || keep(cat)) cat.items.forEach(([c,t,d,ex,tr,flag]) => a.push({key:tab+':'+c, tab, cat:cat.t, c, t, d, ex, flag})); }); return a; };
+const allCards = test => Object.keys(DATA).flatMap(k => cards(k).filter(x => test(x.key)));
+let _lk; const lessonKeys = () => _lk || (_lk = new Set(allCards(() => true).map(x => x.key)));
 // a card counts as "forgotten" while it was missed more often than recalled
 const isWeak = key => { const st = fcStats(key); return st.m > st.k; };
-function weakPool(){
-  const pool = [];
-  for (const k in DATA) DATA[k].forEach(cat => cat.items.forEach(([c,t,d,ex,tr,flag]) => { if (isWeak(k+':'+c)) pool.push({key:k+':'+c, tab:k, cat:cat.t, c, t, d, ex, flag}); }));
-  return pool;
-}
+const weakPool = () => allCards(isWeak);
+const duePool = () => { const t = day(); return allCards(k => isDue(k, t)); };
 function updateWeak(){
   let n = 0;
   store.keys().forEach(k => { if (k.startsWith('fc:') && isWeak(k.slice(3))) n++; });
   $('#weakN').textContent = AR(n);
   $('#weakBtn').hidden = !n;
 }
+function updateDue(){
+  const t = day(); let n = 0;
+  store.keys().forEach(k => { if (k.startsWith('srs:') && lessonKeys().has(k.slice(4)) && isDue(k.slice(4), t)) n++; });
+  $('#dueN').textContent = AR(n);
+  $('#dueBtn').hidden = !n;
+}
 function withTab(tab, fn){ const prev = shell; shell = tab; try{ return fn(); } finally { shell = prev; } }
 function fcNext(){
   if (!fc.pool.length){ fcClose(); return; }
-  const x = fc.cur = fcPick(); fc.last = x.key;
-  const st = fcStats(x.key);
-  $('#fcMeta').textContent = (fc.weak ? tabName(x.tab)+' › ' : '') + x.cat + (st.m ? ' · نسيتها '+AR(st.m)+' مرة' : '');
+  const x = fc.cur = fc.mode==='exam' ? fc.pool[fc.n] : fcPick(); fc.last = x.key;
+  const st = fcStats(x.key), cross = fc.mode==='weak' || fc.mode==='due', N = AR(fc.pool.length);
+  $('#fcMeta').textContent = fc.mode==='exam' ? 'امتحان المستوى '+AR(fc.exam)+' · سؤال '+AR(fc.n+1)+' من '+N : (cross ? tabName(x.tab)+' › ' : '') + x.cat + (st.m ? ' · نسيتها '+AR(st.m)+' مرة' : '');
   $('#fcQ').textContent = x.t || x.c;
   $('#fcHint').textContent = x.tab==='glossary' ? 'إيه المصطلح ده، وبيعمل إيه؟' : 'إيه الأمر اللي بيعمل كده؟ قوله بصوت عالي أو اكتبه في دماغك، وبعدين اكشف.';
   $('#fcAns').hidden = true; $('#fcShow').hidden = false; $('#fcKnow').hidden = $('#fcMiss').hidden = true;
-  const from = fc.weak ? 'اللي نسيته من كل التابات ('+AR(fc.pool.length)+' بطاقة). ' : 'البطاقات من '+$('#shellName').textContent+' ('+AR(fc.pool.length)+' بطاقة). ';
-  $('#fcStat').textContent = (fc.n ? 'الجلسة دي: عرفت '+AR(fc.ok)+' من '+AR(fc.n)+'. ' : from)+'مسافة تكشف، و 1 عرفتها، و 2 لسه.';
+  const keys = 'مسافة تكشف، و 1 عرفتها، و 2 لسه.';
+  if (fc.mode==='exam') $('#fcStat').textContent = (fc.n ? 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' لحد دلوقتي. ' : '')+'تنجح لو عرفت '+AR(Math.ceil(fc.pool.length*.8))+' من '+N+'. '+keys;
+  else {
+    const due = fc.mode ? 0 : fc.pool.filter(y => isDue(y.key)).length;
+    const from = fc.mode==='weak' ? 'اللي نسيته من كل التابات ('+N+' بطاقة). ' : fc.mode==='due' ? 'المراجعة المستحقة النهارده من كل التابات ('+N+' بطاقة). ' : 'البطاقات من '+$('#shellName').textContent+' ('+N+' بطاقة'+(due ? '، منهم '+AR(due)+' عليك مراجعتهم النهارده وبيظهروا الأول' : '')+'). ';
+    $('#fcStat').textContent = (fc.n ? 'الجلسة دي: عرفت '+AR(fc.ok)+' من '+AR(fc.n)+'. ' : from)+keys;
+  }
   $('#fcShow').focus();
 }
 function fcReveal(){
-  const x = fc.cur, sum = x.d ? x.d.split(/\n\s*\n/)[0] : '';
-  $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? withTab(x.tab, () => termBlock(x.ex, x.c, x.flag)) : '');
+  const x = fc.cur, sum = x.d ? x.d.split(/\n\s*\n/)[0] : '', sol = fc.mode==='exam' && SOL[x.tab+'|'+x.c];
+  $('#fcAns').innerHTML = '<span class="name">'+esc(x.c)+'</span>'+(sum ? '<p>'+fmt(sum)+'</p>' : '')+(x.ex ? withTab(x.tab, () => termBlock(x.ex, x.c, x.flag)) : '')+
+    (sol ? '<div class="fc-sol"><b>حل التجربة:</b>'+descHTML(sol.text)+'</div>' : '');
   $('#fcAns').hidden = false; $('#fcShow').hidden = true; $('#fcKnow').hidden = $('#fcMiss').hidden = false;
   $('#fcKnow').focus();
 }
+function fcEnd(q, hint, html){
+  fc.over = true; fc.cur = null;
+  $('#fcQ').textContent = q; $('#fcHint').textContent = hint;
+  $('#fcAns').innerHTML = html || ''; $('#fcAns').hidden = !html;
+  $('#fcKnow').hidden = $('#fcMiss').hidden = $('#fcShow').hidden = true; $('#fcStat').textContent = '';
+  $('#fcClose').focus();
+}
 function fcMark(ok){
-  if (!fc.cur || (fc.weak && !fc.pool.length)) return;
-  const st = fcStats(fc.cur.key); ok ? st.k++ : st.m++;
-  store.set('fc:'+fc.cur.key, JSON.stringify(st));
+  if (!fc.cur || fc.over) return;
+  const key = fc.cur.key, st = fcStats(key); ok ? st.k++ : st.m++;
+  store.set('fc:'+key, JSON.stringify(st));
+  // a card missed earlier in this session stays in box 1 even if it's recalled later in the same session
+  if (!ok){ srsRate(key, false); fc.missed.add(key); fc.wrong.push(fc.cur); } else if (!fc.missed.has(key)) srsRate(key, true);
   fc.n++; if (ok) fc.ok++;
-  // in the forgotten-cards review, a card leaves the pile once it's recalled more than missed
-  if (fc.weak && !isWeak(fc.cur.key)) fc.pool = fc.pool.filter(x => x.key !== fc.cur.key);
-  updateWeak();
-  if (fc.weak && !fc.pool.length){ $('#fcQ').textContent = 'خلصت كل اللي كنت ناسيه'; $('#fcHint').textContent = 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' في الجلسة دي. ارجع بعد يوم وجرّب «اختبرني» تاني.'; $('#fcAns').hidden = true; $('#fcKnow').hidden = $('#fcMiss').hidden = true; $('#fcShow').hidden = true; $('#fcStat').textContent = ''; $('#fcClose').focus(); return; }
+  updateWeak(); updateDue();
+  if (fc.mode==='exam'){ if (fc.n >= fc.pool.length) examFinish(); else fcNext(); return; }
+  // in the forgotten-cards review a card leaves the pile once it's recalled more than missed; in the due review once it's recalled
+  if (fc.mode==='weak' && !isWeak(key)) fc.pool = fc.pool.filter(x => x.key !== key);
+  if (fc.mode==='due' && ok) fc.pool = fc.pool.filter(x => x.key !== key);
+  const score = 'عرفت '+AR(fc.ok)+' من '+AR(fc.n)+' في الجلسة دي. ';
+  if (fc.mode==='weak' && !fc.pool.length) return fcEnd('خلصت كل اللي كنت ناسيه', score+'ارجع بعد يوم وجرّب «اختبرني» تاني.');
+  if (fc.mode==='due' && !fc.pool.length) return fcEnd('خلصت مراجعة النهارده', score+'كل بطاقة هترجعلك في ميعادها: اللي عرفتها بعد أيام أكتر، واللي نسيتها بكرة.');
   fcNext();
 }
-function fcOpen(weak){
-  fc.pool = []; fc.ok = fc.n = 0; fc.last = null; fc.weak = !!weak;
-  if (weak) fc.pool = weakPool();
-  else DATA[shell].filter(c => !level || c.l === level).forEach(cat => cat.items.forEach(([c,t,d,ex,tr,flag]) => fc.pool.push({key:shell+':'+c, tab:shell, cat:cat.t, c, t, d, ex, flag})));
-  if (!fc.pool.length) return;
+function fcStart(mode, pool, extra){
+  Object.assign(fc, {mode, pool, ok:0, n:0, last:null, cur:null, over:false, missed:new Set(), wrong:[]}, extra);
+  if (!pool.length) return;
   const dlg = $('#fc');
-  if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open', '');
+  if (typeof dlg.showModal === 'function'){ if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', '');
   fcNext();
+}
+function fcOpen(mode){ fcStart(mode || '', mode==='weak' ? weakPool() : mode==='due' ? duePool() : cards(shell, c => !level || c.l === level)); }
+
+/* level exam: up to 10 random lessons of one level, graded by the learner; 80% (8 of 10) passes. exam:<tab>:<level> = {last, pass} */
+function examGet(tab, l){ try{ return JSON.parse(store.get('exam:'+tab+':'+l)) || null; }catch(e){ return null; } }
+const examScore = r => AR(r.score)+'/'+AR(r.n);
+function examHTML(l){
+  const r = examGet(shell, l), n = Math.min(10, cards(shell, c => c.l === l).length);
+  return '<div class="exam-row" data-l="'+l+'"><button type="button" class="quiz-btn exam-btn" data-exam="'+l+'">امتحان المستوى '+AR(l)+'</button>'+
+    '<span class="exam-last">'+(r ? (r.pass ? '<b class="exam-ok">✓ عدّيته</b> ' : '')+'آخر نتيجة '+examScore(r.last)+' يوم '+r.last.date : AR(n)+' أسئلة من المستوى ده، وتعدّي بـ '+AR(Math.ceil(n*.8)))+'</span></div>';
+}
+function lvBadges(){
+  document.querySelectorAll('.lv').forEach(b => {
+    const l = +b.dataset.l, old = b.querySelector('.lv-b'), r = l && examGet(shell, l);
+    if (old) old.remove();
+    if (r && r.pass) b.insertAdjacentHTML('beforeend', '<span class="lv-b" title="عدّيت امتحان المستوى ده ('+examScore(r.pass)+')"><span aria-hidden="true">✓</span><span class="vh">، عدّيت امتحانه</span></span>');
+  });
+  const eb = $('#examBtn'), has = !!level && DATA[shell].some(c => c.l===level && c.items.length);
+  eb.hidden = !has;
+  if (has){ const r = examGet(shell, level); eb.textContent = 'امتحان المستوى '+AR(level)+(r ? ' (آخر مرة '+examScore(r.last)+')' : ''); }
+}
+function examOpen(l){
+  const all = cards(shell, c => c.l === l);
+  for (let i = all.length-1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); [all[i], all[j]] = [all[j], all[i]]; }
+  fcStart('exam', all.slice(0, 10), {exam:l, examTab:shell});
+}
+function examFinish(){
+  const n = fc.pool.length, need = Math.ceil(n*.8), pass = fc.ok >= need, l = fc.exam, now = {score:fc.ok, n, date:day()};
+  const r = examGet(fc.examTab, l) || {};
+  r.last = now; if (pass) r.pass = now;
+  store.set('exam:'+fc.examTab+':'+l, JSON.stringify(r));
+  const wrong = fc.wrong.length ? '<p>راجع دول:</p><ul class="fc-wrong">'+fc.wrong.map(x => '<li><code>'+esc(x.c)+'</code> '+esc(x.t || '')+'</li>').join('')+'</ul>' : '';
+  $('#fcMeta').textContent = 'امتحان المستوى '+AR(l)+' · خلص';
+  fcEnd(pass ? 'عدّيت امتحان المستوى '+AR(l)+': '+examScore(now) : 'لسه: '+examScore(now)+'، والنجاح من '+AR(need),
+    pass ? 'المستوى ده اتعلّم عليه ✓. '+(fc.wrong.length ? 'وراجع اللي نسيته تحت، هيظهرلك في «عليك مراجعة» بكرة.' : 'ولا غلطة.') : 'راجع الدروس دي وارجع امتحن تاني. البطاقات اللي نسيتها هتظهرلك في «عليك مراجعة» بكرة.', wrong);
+  if (fc.examTab===shell){ document.querySelectorAll('.exam-row[data-l="'+l+'"]').forEach(el => { el.outerHTML = examHTML(l); }); lvBadges(); }
 }
 function fcClose(){ const dlg = $('#fc'); if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); }
 
-const BACKUP_KEYS = /^(done:|note:|fc:|shell$|level$|brief$|todo$|theme$)/;
+/* ---------- auto-checked exercises (lesson field check) ---------- */
+function chkHTML(c){
+  const ch = CHECK[shell+'|'+c];
+  if (!ch) return '';
+  const k = shell+':'+c, saved = store.get('code:'+k), code = saved !== null ? saved : ch.starter || '', sql = ch.lang==='sql';
+  return '<section class="chk" data-t="'+esc(shell)+'" data-c="'+esc(c)+'" aria-label="تمرين بيتصحح لوحده: '+esc(c)+'">'+
+    '<div class="chk-h"><span class="lbl">تمرين بيتصحح لوحده</span><span class="chk-eng">'+(sql ? 'PostgreSQL حقيقي جوه المتصفح (PGlite)' : 'JavaScript، والاختبارات بتتشغل على كودك')+'</span>'+(store.get('chk:'+k)==='1' ? '<span class="chk-ok">✓ عدّى الاختبارات</span>' : '')+'</div>'+
+    '<details class="chk-more"><summary>'+(sql ? 'الجداول والبيانات اللي هتشتغل عليها' : 'الاختبارات اللي هتتشغل على كودك')+'</summary>'+termHTML(sql ? ch.setup : ch.tests, shell, true, sql ? 'setup.sql' : 'tests.js')+'</details>'+
+    '<textarea class="chk-code" dir="ltr" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" rows="'+Math.min(Math.max(code.split('\n').length+1, 4), 16)+'" aria-label="'+(sql ? 'استعلام SQL بتاعك' : 'كود JavaScript بتاعك')+'">'+esc(code)+'</textarea>'+
+    '<div class="chk-actions"><button type="button" class="chk-run">شغّل واختبر</button><button type="button" class="chk-reset">رجّع كود البداية</button><span class="chk-kbd">أو Ctrl+Enter</span></div>'+
+    '<div class="chk-out" role="status" aria-live="polite"></div></section>';
+}
+// JS runs in a Worker built from runJsCheck's source (core.js): a blob works from file:// and in the single-file build,
+// and a loop that never ends is stopped by terminate() after 3 seconds
+let jsWorkerURL;
+function runJs(code, tests){
+  return new Promise(res => {
+    let w;
+    try{
+      jsWorkerURL = jsWorkerURL || URL.createObjectURL(new Blob(['const runJsCheck = '+runJsCheck+';\nonmessage = async e => postMessage(await runJsCheck(e.data.code, e.data.tests));'], {type:'text/javascript'}));
+      w = new Worker(jsWorkerURL);
+    }catch(e){ return res({results:[], error:'المتصفح ده مش مخلّيني أشغّل الكود في worker: [['+e.message+']]'}); }
+    const end = r => { clearTimeout(tm); w.terminate(); res(r); };
+    const tm = setTimeout(() => end({timeout:true, results:[]}), 3000);
+    w.onmessage = e => end(e.data);
+    w.onerror = e => { e.preventDefault(); end({results:[], error:'الكود وقع: [['+e.message+']]'}); };
+    w.postMessage({code, tests});
+  });
+}
+function jsResultHTML(r){
+  if (r.timeout) return '<p class="chk-sum bad">الكود مخلصش: غالبًا loop مبتخلصش. راجع شرط الوقوف في الـ while أو الـ for (وقفناه بعد ٣ ثواني).</p>';
+  const n = r.results.filter(x => x.ok).length, all = r.results.length;
+  let h = r.error ? '<p class="chk-sum bad">'+fmt(r.error)+'</p>' : '<p class="chk-sum '+(n===all ? 'ok' : 'bad')+'">'+(n===all ? '✓ كل الاختبارات عدّت ('+AR(n)+' من '+AR(all)+')، واتعلّم على «جربتها».' : 'عدّى '+AR(n)+' من '+AR(all)+'. صلّح اللي عليه ✗ وجرّب تاني.')+'</p>';
+  if (all) h += '<ul class="chk-res">'+r.results.map(x => '<li class="'+(x.ok ? 'ok' : 'bad')+'"><span class="mk" aria-hidden="true">'+(x.ok ? '✓' : '✗')+'</span><span class="vh">'+(x.ok ? 'عدّى: ' : 'فشل: ')+'</span><span class="tn">'+esc(x.name)+'</span>'+(x.msg ? '<span class="msg">'+fmt(x.msg)+'</span>' : '')+'</li>').join('')+'</ul>';
+  if (r.logs && r.logs.length) h += '<div class="chk-log"><b>console.log</b><pre dir="ltr">'+esc(r.logs.join('\n'))+'</pre></div>';
+  return h;
+}
+// SQL runs on real Postgres (PGlite, vendor/pglite) in a module worker, loaded the first time a SQL exercise is focused or run.
+// It needs http(s): file:// and the single-file dist can't load the worker, so they show a note instead
+const sqlEng = {w:null, ready:null, id:0};
+function sqlReady(){
+  if (!/^https?:$/.test(location.protocol)) return Promise.reject(new Error('file'));
+  if (!sqlEng.ready) sqlEng.ready = new Promise((res, rej) => {
+    let w;
+    try{ w = new Worker('js/sql-worker.js', {type:'module'}); }catch(e){ return rej(e); }
+    w.onmessage = e => { if (e.data.id) return; if (e.data.ready){ sqlEng.w = w; res(w); } else if (e.data.fail){ w.terminate(); rej(new Error(e.data.fail)); } };
+    w.onerror = e => { if (e.preventDefault) e.preventDefault(); if (sqlEng.w===w) return; w.terminate(); rej(new Error(e.message || 'js/sql-worker.js مش موجود')); };
+  }).catch(e => { sqlEng.ready = null; throw e; });
+  return sqlEng.ready;
+}
+function sqlExec(w, msg){
+  return new Promise(res => {
+    const id = ++sqlEng.id;
+    const tm = setTimeout(() => { w.terminate(); sqlEng.w = sqlEng.ready = null; res({timeout:true}); }, 5000);
+    const h = e => { if (e.data.id!==id) return; clearTimeout(tm); w.removeEventListener('message', h); res(e.data); };
+    w.addEventListener('message', h);
+    w.postMessage(Object.assign({id}, msg));
+  });
+}
+function tblHTML(cap, r){
+  const rows = r.rows.slice(0, 20), cell = v => v===null ? '<td class="nul">NULL</td>' : '<td>'+esc(String(v))+'</td>';
+  return '<div class="chk-tbl"><p class="cap">'+cap+' ('+AR(r.rows.length)+' صف)</p>'+(r.rows.length || r.cols.length ? '<div class="chk-scroll" dir="ltr"><table>'+(r.cols.length ? '<thead><tr>'+r.cols.map(c => '<th>'+esc(c)+'</th>').join('')+'</tr></thead>' : '')+
+    '<tbody>'+rows.map(x => '<tr>'+x.map(cell).join('')+'</tr>').join('')+'</tbody></table></div>' : '')+(r.rows.length > 20 ? '<p class="cap">وكمان '+AR(r.rows.length-20)+' صف</p>' : '')+'</div>';
+}
+async function runSql(ch, code, status){
+  let w;
+  try{ if (!sqlEng.w) status('بيحمّل PostgreSQL: حوالي ٦ ميجا أول مرة بس، وبعدها بيشتغل من غير نت…'); w = await sqlReady(); }
+  catch(e){ return {html:'<p class="chk-sum bad">التمارين دي محتاجة النسخة الأونلاين أو التطبيق. '+(e.message==='file' ? 'انت فاتح الصفحة كملف من الجهاز، والمتصفح مبيسمحش يحمّل محرك قاعدة البيانات كده.' : 'محرك PostgreSQL محملش: '+esc(e.message))+'</p>'}; }
+  status('بيشغّل الاستعلام…');
+  const r = await sqlExec(w, {setup:ch.setup, sql:code, ref:ch.expectSql});
+  if (r.timeout) return {html:'<p class="chk-sum bad">الاستعلام مخلصش في ٥ ثواني: غالبًا WITH RECURSIVE مبيقفش. هنحمّل المحرك من جديد في التشغيل الجاي.</p>'};
+  if (r.fail) return {html:'<p class="chk-sum bad">التمرين نفسه فيه مشكلة، مش انت:</p><pre class="chk-err" dir="ltr">'+esc(r.fail)+'</pre>'};
+  if (r.got.err) return {html:'<p class="chk-sum bad">PostgreSQL رجّع error:</p><pre class="chk-err" dir="ltr">'+esc(r.got.err)+'</pre>'};
+  const exp = r.exp || {cols:[], rows:ch.expect}, diff = sqlDiff(r.got.rows, exp.rows, ch.ordered);
+  return {pass:!diff, html:'<p class="chk-sum '+(diff ? 'bad' : 'ok')+'">'+(diff ? esc(diff) : '✓ الناتج مطابق، واتعلّم على «جربتها».')+'</p>'+tblHTML('ناتج استعلامك', r.got)+(diff ? tblHTML('الناتج المتوقع', exp) : '')};
+}
+async function chkRun(box){
+  const t = box.dataset.t, c = box.dataset.c, ch = CHECK[t+'|'+c], out = box.querySelector('.chk-out'), btn = box.querySelector('.chk-run'), code = box.querySelector('.chk-code').value;
+  if (!ch || btn.disabled) return;
+  const status = m => { out.innerHTML = '<p class="chk-wait">'+m+'</p>'; };
+  btn.disabled = true; btn.setAttribute('aria-busy', 'true'); status('بيشغّل…');
+  try{
+    let res;
+    if (ch.lang==='sql') res = await runSql(ch, code, status);
+    else { const r = await runJs(code, ch.tests); res = {pass: !r.timeout && !r.error && r.results.length > 0 && r.results.every(x => x.ok), html: jsResultHTML(r)}; }
+    out.innerHTML = res.html;
+    if (res.pass) chkPass(box, t, c);
+  }catch(e){ out.innerHTML = '<p class="chk-sum bad">حصلت مشكلة: '+esc(String(e && e.message || e))+'</p>'; }
+  finally{ btn.disabled = false; btn.removeAttribute('aria-busy'); }
+}
+// all tests pass → chk:<tab>:<cmd> = 1, and the lesson's «جربتها» gets checked
+function chkPass(box, t, c){
+  store.set('chk:'+t+':'+c, '1'); store.set('done:'+t+':'+c, '1');
+  const art = box.closest('article'), cb = art && art.querySelector('input[type=checkbox][data-k]');
+  if (cb) cb.checked = true;
+  // in «اللي فاضل بس» the lesson would vanish with its result, so it's hidden on the next render instead
+  if (art && !document.body.classList.contains('todo')) art.classList.add('is-done');
+  if (!box.querySelector('.chk-ok')) box.querySelector('.chk-h').insertAdjacentHTML('beforeend', '<span class="chk-ok">✓ عدّى الاختبارات</span>');
+  updateProgress();
+}
+
+const BACKUP_KEYS = /^(done:|note:|fc:|srs:|exam:|chk:|code:|shell$|level$|brief$|todo$|theme$)/;
 function exportProgress(){
   const o = {}; store.keys().filter(k => BACKUP_KEYS.test(k)).forEach(k => o[k] = store.get(k));
   const a = document.createElement('a');
@@ -271,7 +449,7 @@ function importProgress(file){
       const j = JSON.parse(r.result), o = j && j.data;
       if (!o || typeof o !== 'object') throw 0;
       let n = 0; Object.keys(o).forEach(k => { if (BACKUP_KEYS.test(k) && typeof o[k]==='string'){ store.set(k, o[k]); n++; } });
-      alert('اترجّع '+n+' عنصر.'); render();
+      srsMigrate(); alert('اترجّع '+n+' عنصر.'); render();
     }catch(e){ alert('الملف ده مش نسخة تقدم من الصفحة دي.'); }
   };
   r.readAsText(file);
@@ -297,7 +475,19 @@ document.addEventListener('click', e => {
   const nb = e.target.closest('.note-btn');
   if (nb){ const ta = nb.nextElementSibling, on = !ta.classList.contains('open'); ta.classList.toggle('open', on); nb.setAttribute('aria-expanded', on ? 'true' : 'false'); if (on) ta.focus(); return; }
   if (e.target.closest('#fcBtn')){ fcOpen(); return; }
-  if (e.target.closest('#weakBtn')){ fcOpen(true); return; }
+  if (e.target.closest('#weakBtn')){ fcOpen('weak'); return; }
+  if (e.target.closest('#dueBtn')){ fcOpen('due'); return; }
+  if (e.target.closest('#examBtn')){ examOpen(level); return; }
+  const ex = e.target.closest('[data-exam]');
+  if (ex){ examOpen(+ex.dataset.exam); return; }
+  const run = e.target.closest('.chk-run');
+  if (run){ chkRun(run.closest('.chk')); return; }
+  const rs = e.target.closest('.chk-reset');
+  if (rs){
+    const box = rs.closest('.chk'), ta = box.querySelector('.chk-code');
+    ta.value = CHECK[box.dataset.t+'|'+box.dataset.c].starter || ''; store.del('code:'+box.dataset.t+':'+box.dataset.c);
+    box.querySelector('.chk-out').innerHTML = ''; ta.focus(); return;
+  }
   if (e.target.closest('#fcClose')){ fcClose(); return; }
   if (e.target.closest('#fcShow')){ fcReveal(); return; }
   if (e.target.closest('#fcKnow')){ fcMark(true); return; }
@@ -319,8 +509,8 @@ document.addEventListener('click', e => {
   if (e.target.closest('#printBtn')){ window.print(); return; }
   if (e.target.closest('#resetBtn')){
     const name = $('#shellName').textContent.replace(/ المستوى .*/, '');
-    if (confirm('هتمسح علامات «جربتها» ونتايج «اختبرني» في '+name+'. الملاحظات مش هتتمسح. متأكد؟')){
-      store.keys().filter(k => k.startsWith('done:'+shell+':') || k.startsWith('fc:'+shell+':')).forEach(k => store.del(k));
+    if (confirm('هتمسح علامات «جربتها» ونتايج «اختبرني» والمراجعة والامتحانات والتمارين في '+name+'. الملاحظات والكود اللي كتبته مش هيتمسحوا. متأكد؟')){
+      store.keys().filter(k => ['done:','fc:','srs:','exam:','chk:'].some(p => k.startsWith(p+shell+':'))).forEach(k => store.del(k));
       render();
     }
     return;
@@ -352,8 +542,15 @@ document.addEventListener('click', e => {
     if (go.dataset.lv !== undefined) $('#list').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
 });
+// the SQL engine is ~6 MB, so it starts loading only when the learner reaches a SQL exercise's box
+document.addEventListener('focusin', e => {
+  const box = e.target.closest('.chk');
+  if (box && e.target.matches('.chk-code') && (CHECK[box.dataset.t+'|'+box.dataset.c] || {}).lang==='sql') sqlReady().catch(() => {});
+});
 $('#importFile').addEventListener('change', e => { const fl = e.target.files[0]; if (fl) importProgress(fl); e.target.value = ''; });
 document.addEventListener('input', e => {
+  const code = e.target.closest('.chk-code');
+  if (code){ const box = code.closest('.chk'); store.set('code:'+box.dataset.t+':'+box.dataset.c, code.value); return; }
   const ta = e.target.closest('textarea[data-n]');
   if (!ta) return;
   const v = ta.value.trim();
@@ -361,6 +558,7 @@ document.addEventListener('input', e => {
   const nb = ta.previousElementSibling; nb.classList.toggle('has', !!v); nb.textContent = v ? 'ملاحظتي' : 'اكتب ملاحظة';
 });
 document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key==='Enter' && e.target.closest('.chk-code')){ e.preventDefault(); chkRun(e.target.closest('.chk')); return; }
   if (!$('#fc').open) return;
   const asking = !$('#fcShow').hidden;
   if (asking && e.key===' ' && document.activeElement!==$('#fcShow')){ e.preventDefault(); fcReveal(); }
@@ -376,6 +574,7 @@ document.addEventListener('change', e => {
 });
 
 renderStatic();
+srsMigrate();
 applyTheme(store.get('theme') || 'auto');
 if (store.get('todo')==='1'){ document.body.classList.add('todo'); $('#todoBtn').setAttribute('aria-pressed','true'); }
 if (store.get('brief')==='1'){ document.body.classList.add('brief'); $('#briefBtn').setAttribute('aria-pressed','true'); }
