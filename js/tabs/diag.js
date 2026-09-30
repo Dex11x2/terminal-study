@@ -869,7 +869,19 @@ exit $fail`,
 
 الفكرة العبقرية في السطر بتاع 404: مش بس بيتأكد إن الصفحات الشغالة بترد 200، بيتأكد كمان إن صفحة مش موجودة بترد 404 (مش 200). ده بيكشف لو الـ routing باظ وبقى كله بيرجّع الصفحة الرئيسية. لو أي شرط فشل، [[fail=1]] و [[exit $fail]] بيخلّي السكربت يخرج بكود 1.
 
-الكود ده بيخليه يشتغل في CI أو بعد أي deploy: [[./smoke.sh && echo "deploy ok" || ./rollback.sh]]. [[echo $?]] بعده بيطبع 0 لو كله تمام، 1 لو حاجة اتكسرت. جرّب اكسر صفحة عمدًا وشوف الرقم بقى 1، ده اللي بيخلّيه أوتوماتيك. أضمن حاجة تعملها بعد deploy.`
+الكود ده بيخليه يشتغل في CI أو بعد أي deploy: [[./smoke.sh && echo "deploy ok" || ./rollback.sh]]. [[echo $?]] بعده بيطبع 0 لو كله تمام، 1 لو حاجة اتكسرت. جرّب اكسر صفحة عمدًا وشوف الرقم بقى 1، ده اللي بيخلّيه أوتوماتيك. أضمن حاجة تعملها بعد deploy.`,
+          solCode: R`#!/usr/bin/env bash
+# smoke.sh — run after every deploy
+fail=0
+for u in / /login /contact /api/health; do
+  code=$(curl -s -o /dev/null --max-time 10 -w "%{http_code}" "https://example.com$u")
+  echo "$u $code"
+  [ "$code" = "200" ] || fail=1
+done
+code=$(curl -s -o /dev/null --max-time 10 -w "%{http_code}" https://example.com/nope-404)
+echo "/nope-404 $code"
+[ "$code" = "404" ] || fail=1
+exit $fail`
         },
         {
           cmd: "بوت بيضرب الموقع",

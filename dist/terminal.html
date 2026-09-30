@@ -19301,7 +19301,12 @@ git tag v0.1 && git push --tags`,
             "طبّق كل الـ migrations اللي لسه متطبقتش.",
             "تقفيلة اليوم: commit ورفع في سطر.",
             "علامة على نسخة، وارفع العلامات."
-          ]
+          ],
+          sol: R`الجزء بتاع Git: بعد [[git push -u origin main]] هتلاقي [[branch 'main' set up to track 'origin/main']] والملفات ظاهرة في الريبو على GitHub. لو ظهر [[rejected ... (fetch first)]] يبقى الريبو على GitHub مش فاضي (عملته بـ README)، اعمله فاضي خالص أو اعمل [[git pull --rebase origin main]] الأول.
+
+جزء Supabase: [[npx supabase init]] بيعمل فولدر [[supabase/]] فيه [[config.toml]]. [[npx supabase migration new create_courses]] بيعمل ملف فاضي اسمه زي [[supabase/migrations/20260930081500_create_courses.sql]]، اكتب فيه [[create table notes (id serial primary key, body text);]]. [[npx supabase db push]] بيوريك الملفات اللي هتتطبّق ويسألك تأكيد، وبعدها الجدول بيظهر في Table Editor في الداشبورد.
+
+لو [[db push]] قال [[Cannot find project ref]] يبقى نسيت [[link]]. ولو طلب باسورد، ده باسورد قاعدة المشروع (من Settings ثم Database) مش باسورد حسابك. واتأكد إنك عامل [[link]] على مشروع التجربة مش مشروع الشغل، لأن [[db push]] بيعدّل القاعدة الحقيقية. (ما قدرتش أجرّب جزء Supabase هنا لأنه محتاج حساب.)`
         },
         {
           cmd: "compose: Postgres محلي",
@@ -19380,7 +19385,12 @@ pnpm dev`,
             "اعمل .env من المثال (وعدّل الـ URL على 5433).",
             "طبّق الـ migrations على القاعدة الفاضية.",
             "شغّل الموقع."
-          ]
+          ],
+          sol: R`جربته بالظبط. [[docker compose up -d --wait]] استنى لحد ما ظهر [[Container pg-db-1 Healthy]] (ده شغل الـ healthcheck مع [[--wait]]). بعدها:
+
+[[psql postgresql://myapp:change-me-dev-only@localhost:5433/myapp -c "create table notes(...); insert ..."]] رجّع [[CREATE TABLE]] و [[INSERT 0 1]]. بعد [[docker compose down]] و [[up -d --wait]] تاني، [[table notes]] رجّع نفس الصف. البيانات فضلت لأنها في الـ volume [[pgdata]] مش جوه الـ container.
+
+لو الجدول اختفى، غالبًا عملت [[docker compose down -v]]: الـ [[-v]] بيمسح الـ volumes. ولو psql قال [[Connection refused]] بص على البورت: [[5433]] على جهازك بيروح لـ [[5432]] جوه الـ container. ولو [[password authentication failed]] والباسورد صح، يبقى الـ volume متعمل قبل كده بباسورد تاني. [[POSTGRES_PASSWORD]] بيتقري أول مرة بس، فلازم [[down -v]] (وده بيمسح الداتا).`
         },
         {
           cmd: "compose: نسخة تانية",
@@ -19443,7 +19453,15 @@ redis من غير [[ports:]] خالص، يعني مش مكشوف على جهاز
             "جهازك 5174 بدل 5173.",
             "متغيرات البيئة.",
             "الـ API بتاع النسخة دي على 3001."
-          ]
+          ],
+          sol: R`اسم المشروع هو اللي بيفرق بين المجموعتين. جربتها بـ service واحد: [[docker compose up -d]] من فولدر [[two]] عمل [[two-web-1]]، و [[docker compose -p myapp2 up -d]] من نفس الفولدر بعد تغيير البورت عمل [[myapp2-web-1]]. [[docker ps]] وراهم الاتنين شغالين:
+
+[[myapp2-web-1   127.0.0.1:8102->80/tcp]]
+[[two-web-1      127.0.0.1:8101->80/tcp]]
+
+كل مشروع ليه containers و network و volumes منفصلين، فالداتا مش بتتخلط. لما جربت [[-p myapp2]] من غير ما أغيّر البورت، فشل بـ [[Bind for 127.0.0.1:8101 failed: port is already allocated]]، وده السبب إن الملف التاني في الدرس فيه بورتات مختلفة ([[3001]] و [[5174]]) و [[name: myapp2]].
+
+خد بالك إن كل أمر بعد كده لازم يبقى معاه نفس [[-p]] أو [[-f]]. [[docker compose down]] من غيره بيقفل النسخة الأولى مش التانية. و [[docker compose ls]] بيوريك كل المشاريع الشغالة.`
         },
         {
           cmd: "Next.js dev في Docker",
@@ -19526,7 +19544,12 @@ docker compose up -d --build -V`,
             "الأسرار من .env على السيرفر.",
             "يقوم لوحده.",
             "ابني تاني وجدّد الـ volumes المجهولة."
-          ]
+          ],
+          sol: R`بعد [[docker compose up -d --build]] افتح [[http://localhost:3002]] هتلاقي صفحة Next.js. اللوج ([[docker compose logs -f web]]) لازم يقول [[Ready]] و [[Local: http://0.0.0.0:3000]]. الـ [[-H 0.0.0.0]] ضروري: من غيره Next بيسمع على localhost جوه الـ container بس، والمتصفح يقولك [[ERR_EMPTY_RESPONSE]].
+
+عدّل كلمة في [[app/page.tsx]] واحفظ: خلال ثانية أو اتنين الصفحة بتتحدّث لوحدها، وفي اللوج [[Compiled]]. ده بسبب [[WATCHPACK_POLLING=true]]، لأن الملفات جاية من ويندوز عبر bind mount و inotify مش بيوصل، فـ Next لازم يسأل على الملفات بنفسه كل شوية.
+
+لو التعديل ماظهرش غير بعد restart، الـ polling مش شغال (اتأكد من المتغيرات في [[docker compose exec web env]]). ولو ضفت مكتبة وطلع [[Module not found]]، ده عشان [[/app/node_modules]] volume قديم: [[docker compose up -d --build -V]] بيعمله من جديد. (ما شغّلتش Next.js هنا، الوصف من سلوك الإعداد ده المعروف.)`
         },
         {
           cmd: "verify-docker.ps1",
@@ -19594,7 +19617,12 @@ Write-Host "Done! http://localhost:8000" -ForegroundColor Green`,
             "قفلة الـ if.",
             "الحالة النهائية.",
             "الرابط."
-          ]
+          ],
+          sol: R`وDocker Desktop مقفول، السكربت بيوقف عند أول سطر ويطبع بالأحمر [[Docker Desktop is not running.]] والـ exit code [[1]]. لاحظ إن [[docker info]] بيتنفّذ قبل [[$ErrorActionPreference = "Stop"]] عشان فشله مايرميش exception، وبنقرا [[$LASTEXITCODE]] بنفسنا.
+
+لو في حاجة تانية فاتحة 3000 (زي [[npx serve -l 3000]])، هيطلع تحذير أصفر [[WARNING: Port 3000 is already in use.]] ويكمّل. بعدها [[docker compose up --wait]] هيفشل غالبًا بـ [[port is already allocated]]، فالسكربت هيطبع [[docker compose ps]] وآخر ٥٠ سطر لوج ويرمي [[Stack failed to become healthy.]]. ولو كله تمام، هتلاقي [[Done! http://localhost:8000]] بالأخضر.
+
+لو PowerShell رفض يشغّله بـ [[running scripts is disabled]] شغّله بـ [[powershell -ExecutionPolicy Bypass -File .\verify-docker.ps1]]. (ما جربتوش لأن مفيش PowerShell ولا Docker Desktop هنا.)`
         }
       ]
     },
@@ -19645,7 +19673,12 @@ echo "shot-*.png" >> .gitignore
             "صورة بمقاس تابلت.",
             "صورة موبايل بطول الصفحة كلها.",
             "متدخّلش الصور في git."
-          ]
+          ],
+          sol: R`جربت الـ [[npx playwright screenshot]] على سيرفر محلي وطبع [[Navigating to http://localhost:8791]] و [[Capturing screenshot into shot-mobile.png]]. هتلاقي ٣ صور: [[shot-desktop.png]] بـ 1440×900، و [[shot-tablet.png]] بـ 800×1000، و [[shot-mobile.png]] بعرض 390 وطول الصفحة كلها (بسبب [[--full-page]]).
+
+على 360×640 اللي بيتكسر عادةً: عنصر بعرض ثابت بيعمل سكرول أفقي، عنوان طويل بيخرج بره الشاشة، أزرار جنب بعض بتتزنق، أو صورة من غير [[max-width: 100%]]. ولو الصفحة كلها طالعة صغيرة جدًا، يبقى ناقص [[<meta name="viewport" content="width=device-width, initial-scale=1">]].
+
+لو طلع [[Executable doesn't exist]] يبقى نسيت [[npx playwright install chromium]]. و [[echo "shot-*.png" >> .gitignore]] عشان الصور ماتترفعش. ولو عدّلت الصفحة وفضلت شايف القديم في المتصفح، ده الـ service worker، والسطر اللي في آخر المثال بيشيله.`
         },
         {
           cmd: "shots.ps1",
@@ -19714,7 +19747,12 @@ Invoke-Item $outDir`,
             "الصورة اتعملت؟",
             "قفلة الـ foreach.",
             "افتح الفولدر."
-          ]
+          ],
+          sol: R`السكربت بيطبع سطر لكل صفحة: [[OK   01_home.png]] لو الصورة اتعملت، و [[FAIL ...]] لو لأ، وفي الآخر بيفتح فولدر [[%TEMP%\shots]]. كل صورة عرضها 1440 وطولها الـ [[h]] اللي في الـ target.
+
+لما تغيّر [[1440]] لـ [[390]] هتاخد نسخة الموبايل، بس خد بالك إن [[--window-size]] بيغيّر حجم النافذة بس، مش بيعمل device emulation كامل (مفيش touch ولا user agent موبايل). فالنتيجة قريبة من Device Toolbar على Responsive، مش iPhone حقيقي.
+
+لو كل الصفحات طلعت FAIL، غالبًا مسار Chrome غلط (غيّر [[$chrome]]) أو Chrome مفتوح بنفس الـ profile. ولو الصورة بيضا أو ناقصة، زوّد [[--virtual-time-budget]] عشان JavaScript يلحق يرسم، أو الموقع مش شغال على 3000. (ما جربتوش هنا لأنه PowerShell و Chrome على ويندوز.)`
         },
         {
           cmd: "launch.sh / launch.bat",
@@ -19786,7 +19824,13 @@ chrome-sandbox على لينكس لازم يبقى ملك root وعليه setuid
             "سطّب أول مرة.",
             "ابني الواجهة.",
             "شغّل Electron."
-          ]
+          ],
+          sol: R`من غير [[.env]]، [[launch.bat]] بيطبع [[.env missing]] ويستنى ([[pause]]) عشان تلحق تقرا، و [[launch.sh]] بيطبع [[.env missing: cp .env.example .env]] ويخرج بـ 1. جربت نفس الفحص في سكربت شبهه ده بالظبط اللي حصل.
+
+على لينكس، أول تشغيل ممكن يطلب باسورد sudo مرة واحدة عشان صلاحيات [[chrome-sandbox]] (لازم [[0 4755]]). جربت الشرط ده وغيّر الصلاحية من [[0 755]] لـ [[0 4755]]. وبعد كده:
+لو عدّلت ملف في [[src/]]، [[find src -newer dist/index.html]] بيلاقيه، فبتشوف [[vite build]] شغال قبل ما النافذة تفتح. ولو ماعدّلتش حاجة، بيفتح على طول من غير build.
+
+[[launch.bat]] بيعمل [[vite build]] كل مرة، لأن مفيش [[find -newer]] سهل في CMD. ولو الدبل كليك على [[launch.sh]] فتحه في محرر نصوص، اعمل [[chmod +x launch.sh]] وفعّل «Run as program» أو شغّله من الترمنال.`
         },
         {
           cmd: "Capacitor: موقع لـ APK",
@@ -19838,7 +19882,12 @@ npx cap open ios`,
             "اعمل مشروع Xcode.",
             "انسخ الموقع جواه.",
             "افتح Xcode."
-          ]
+          ],
+          sol: R`جربت جزء Capacitor: [[npx cap add android]] طبع [[[success] android platform added!]] وعمل فولدر [[android/]]. [[npx cap sync android]] نقل الـ build لـ [[android/app/src/main/assets/public]] (غيّرت كلمة وتأكدت إنها وصلت هناك). وخد بالك إن [[cap init]] بيعمل [[capacitor.config.json]] لو المشروع مفيهوش TypeScript، و [[capacitor.config.ts]] لو فيه.
+
+[[./gradlew assembleDebug]] في الآخر بيقول [[BUILD SUCCESSFUL]] والـ APK في [[android/app/build/outputs/apk/debug/app-debug.apk]]. [[adb install -r]] بيطبع [[Success]] والتطبيق بيظهر على الموبايل. لو [[adb devices]] مش شايف الموبايل أو بيقول [[unauthorized]]، وافق على رسالة USB debugging على الموبايل.
+
+الغلط الأشهر: التطبيق بيفتح شاشة بيضا، لأن [[webDir]] مش [[dist]] أو نسيت [[npm run build]] قبل [[cap sync]]. ولو الـ API مش بيرد من الموبايل، [[localhost]] على الموبايل هو الموبايل نفسه، استخدم IP الكمبيوتر أو [[adb reverse]]. (ما قدرتش أبني الـ APK هنا، [[gradlew]] محتاج Android SDK ونت.)`
         }
       ]
     },
@@ -19927,7 +19976,12 @@ echo "now, from a NEW terminal: ssh $APP_USER@203.0.113.10 docker ps"`,
             "اسمح بـ HTTPS.",
             "فعّل الفايروول من غير ما يسألك.",
             "افكرك تجرّب الدخول باليوزر الجديد من ترمنال تاني."
-          ]
+          ],
+          sol: R`أول تشغيل بياخد دقايق (apt upgrade و Docker) وفي الآخر بيطبع نسخة Docker و [[Docker Compose version v2...]] و [[Firewall is active and enabled on system startup]] و [[now, from a NEW terminal: ssh deploy@... docker ps]].
+
+التشغيل التاني لازم يعدّي من غير أخطاء: [[command -v docker]] بيلاقي Docker فمش بيسطّبه تاني، و [[id deploy]] بيلاقي اليوزر فمش بيعمله، و [[ufw allow]] بيقول [[Skipping adding existing rule]]. ده معنى idempotent: تشغّله مرة ولا عشرة والنتيجة واحدة. لو [[adduser]] فشل في التانية يبقى نسيت الشرط.
+
+من ترمنال جديد، [[ssh deploy@IP]] ثم [[docker ps]] لازم يرجّع جدول فاضي ([[CONTAINER ID   IMAGE ...]]) من غير sudo. لو طلع [[permission denied while trying to connect to the Docker daemon socket]] يبقى انت لسه في session قديمة قبل [[usermod -aG docker]]، اخرج وادخل تاني. ومتقفلش ترمنال الـ root قبل ما تتأكد إن SSH بيوزر deploy شغال. (ده بيعدّل سيرفر حقيقي فما شغّلتوش هنا.)`
         },
         {
           cmd: "preflight.sh",
@@ -20018,7 +20072,19 @@ DNS: [[getent ahostsv4]] بيجيب IPv4 بس، فالمقارنة مع IP ال�
             "لو الاتنين متطابقين تمام، وإلا فشل برسالة فيها القيمتين.",
             "الملخص.",
             "الـ exit code: 0 لو مفيش ولا فشل."
-          ]
+          ],
+          sol: R`شغّلته على بيئة التجربة هنا وطلع شكل الناتج ده (الأرقام هتختلف عندك):
+
+[[ok    4 cores]]
+[[FAIL  12 GB free (need 20)]]
+[[warn  no swap (run again with --fix)]]
+[[ok    port 6379 private]]
+[[warn  SSH password login is on]]
+[[pass 4 · warn 2 · fail 3]] والـ exit code [[1]].
+
+بعد [[docker run -d -p 6379:6379 redis]] (جربتها بـ container تاني على نفس البورت) الفحص طلع [[FAIL  port 6379 open to the world]]، لأن Docker نشر البورت على [[0.0.0.0]]. بعد ما تمسح الـ container يرجع [[ok]]. والدرس هنا إن [[ufw]] مش بيحميك من ده، Docker بيتخطاه.
+
+سطر [[APP_HOST]] بيقع لو [[.env]] مش جنب السكربت أو الدومين لسه مش بيشاور على السيرفر، وده مقصود: متنشرش قبل ما DNS يبقى صح. و [[--fix]] محتاج sudo لأنه بيعمل swap في [[/etc/fstab]].`
         },
         {
           cmd: "server-map.sh",
@@ -20083,7 +20149,14 @@ du -sh /var/lib/docker /var/log`,
             "عنوان.",
             "المساحة على /.",
             "حجم Docker واللوجات، أكبر اتنين بياكلوا المساحة عادة."
-          ]
+          ],
+          sol: R`الإجابة النموذجية سطر لكل موقع، بالشكل ده:
+
+[[example.com → nginx (server_name example.com) → proxy_pass http://127.0.0.1:3000 → container myapp-web-1 (0.0.0.0:3000->3000) → كوده في /opt/myapp (فيه compose.yml و .git)]]
+
+بتجمّعها كده: من [[nginx -T]] خد الـ [[server_name]] و [[proxy_pass]] اللي تحته. البورت ده دوّر عليه في [[ss -tlnp]]: لو البرنامج [[docker-proxy]] يبقى container، وهتلاقيه في [[docker ps]] بنفس البورت. ولو [[node]] أو [[python]] يبقى process عادي، و [[pgrep -af]] بيوريك الأمر الكامل ومساره. ولو فيه [[root]] بدل [[proxy_pass]] يبقى موقع static من الفولدر ده. وبعدين [[find]] بيوريك فين الكود و compose.
+
+لو بورت ظاهر في [[ss]] ومش لاقي ليه دومين في Nginx، يا إما حاجة قديمة منسية يا إما خدمة مكشوفة للنت من غير قصد (خصوصًا لو [[0.0.0.0]]). دوّنها في الخريطة. واقرا [[cron]] عشان متتفاجئش بباك أب أو سكربت بيشتغل بالليل.`
         }
       ]
     },
@@ -20179,7 +20252,14 @@ update: [[git status --porcelain]] بيطبع أي ملف متغيّر، ولو 
             "اقفل المشروع.",
             "أي حاجة تانية: اطبع سطر الاستخدام من السكربت نفسه واخرج بفشل.",
             "نهاية الـ case."
-          ]
+          ],
+          sol: R`جربته على مشروع compose صغير فيه healthcheck:
+
+[[./deploy.sh]] من غير argument طبع سطر الاستخدام (السطر التاني في الملف) [[# ./deploy.sh deploy | update | ssl | logs [service] | status | restart | stop]] وخرج بـ 1.
+[[./deploy.sh deploy]] بنى وشغّل واستنى الـ healthcheck، وفي الآخر [[docker compose ps]] وحالته [[Up 5 seconds (healthy)]].
+بعد ما عدّلت [[compose.yml]] على «السيرفر»، [[./deploy.sh update]] رفض وطبع [[local changes on server:]] و [[ M compose.yml]] وخرج بـ 1 من غير ما يعمل pull.
+
+الرفض ده مقصود: أي تعديل بإيدك على السيرفر هيضيع أو يعمل conflict مع [[git pull]]. الصح إنك ترجّعه ([[git checkout -- file]]) أو تنقله للريبو. ولو [[deploy]] قال [[.env missing]] يبقى ده أول نشر، و [[--wait]] لو فشل يبقى الـ healthcheck مش بيعدّي، فشوف [[./deploy.sh logs app]].`
         },
         {
           cmd: "update.sh",
@@ -20255,7 +20335,16 @@ fi`,
             "...ابنيه وشغّله.",
             "...واخرج بفشل عشان اللي شغّله يعرف.",
             "نهاية الـ if."
-          ]
+          ],
+          sol: R`جربتها: ريبو origin محلي، وcommit بيغيّر مسار الـ healthcheck لملف مش موجود. [[./update.sh >> ../update.log 2>&1]] رجّع exit [[1]]، واللوج فيه:
+
+[[[2026-09-30 07:58:15] building b8fec57, the site is still up on a2f374e]]
+[[container upd-app-1 is unhealthy]]
+[[[2026-09-30 07:58:35] b8fec57 is unhealthy, rolling back to a2f374e]]
+
+وبعدها [[git log -1]] رجع [[a2f374e]] و [[docker compose ps]] بيقول [[(healthy)]]. يعني الموقع رجع للنسخة السليمة لوحده.
+
+لقيت فخ في التجربة نفسها: لو اللوج جوه فولدر المشروع ([[>> update.log]])، [[git status --porcelain]] بيشوف [[update.log]] كملف جديد فالسكربت بيقف على طول بـ [[local changes on the server, stopping]]. عشان كده الـ try بقى يكتب اللوج برّه المشروع ([[~/update.log]])، أو ضيف [[update.log]] لـ [[.gitignore]]. وخد بالك إن بعد الـ rollback الـ origin لسه عليه الـ commit البايظ، فالتشغيل الجاي هيجرّبه تاني لحد ما تصلّحه وتعمل push.`
         },
         {
           cmd: "deploy-run.sh",
@@ -20320,7 +20409,12 @@ fi`,
             "...شيل الجديد وشغّل previous.",
             "...واخرج بفشل.",
             "نهاية الـ if."
-          ]
+          ],
+          sol: R`جربتها بـ image صغيرة بترد على [[/api/health]]. أول تشغيلين طبعوا [[live]]، و [[docker images myapp]] فيها [[latest]] و [[previous]] (IDs مختلفة). بعد ما مسحت الـ health من الكود، التشغيل التالت استنى حوالي دقيقة (٣٠ محاولة كل ثانيتين) وطبع [[new image is unhealthy, back to previous]] وخرج بـ 1، و [[docker ps]] بيوريك [[myapp:previous]] شغال، و [[curl /api/health]] رجّع [[200]].
+
+فيه نقطة ضعف لازم تعرفها: بعد النشر الفاشل، [[myapp:latest]] بقى هو الـ image البايظة. لو شغّلت السكربت تاني من غير ما تصلّح، أول سطر هيعمل tag للبايظة كـ [[previous]] ويضيع السليمة. فبعد أي rollback صلّح الكود الأول، أو اعمل [[docker tag myapp:previous myapp:good]] كنسخة احتياطية.
+
+ولو [[docker run]] نفسه فشل (بورت مشغول أو أمر غلط في الـ image)، [[set -e]] بيوقف السكربت قبل الـ rollback والموقع يفضل واقف. ساعتها شغّل [[previous]] بإيدك.`
         },
         {
           cmd: "deploy-static.sh",
@@ -20373,7 +20467,12 @@ curl -fsS -o /dev/null -w '%{http_code} https://example.com/\n' https://example.
             "حوّل current على النسخة الجديدة.",
             "امسح كل النسخ ما عدا آخر ٥.",
             "اتأكد إن الموقع بيرد، واطبع الكود."
-          ]
+          ],
+          sol: R`بعد نشرين هتلاقي على السيرفر [[/var/www/example.com/releases/20260930-101500]] و [[.../20260930-103000]]، و [[ls -l /var/www/example.com]] بيوريك [[current -> /var/www/example.com/releases/20260930-103000]]. الـ curl في آخر السكربت بيطبع [[200 https://example.com/]].
+
+الرجوع: [[ln -sfn /var/www/example.com/releases/20260930-101500 /var/www/example.com/current]] وبعدين refresh، الموقع القديم بيظهر على طول من غير reload لـ Nginx. جربت تبديل الـ symlink ده محليًا: [[cat current/index.html]] طلّع [[v2]] وبعد [[ln -sfn]] على الأولانية طلّع [[v1]]. الـ [[-n]] مهم، من غيره [[ln]] بيعمل لينك جوه الفولدر القديم بدل ما يبدّله.
+
+لو Nginx رجّع [[404]] أو [[403]]، اتأكد إن [[root]] بيشاور على [[.../current]] (مش [[releases]])، وإن اليوزر بتاع Nginx يقدر يقرا ([[--chmod=D755,F644]]). والسكربت بيسيب آخر ٥ نسخ بس، فالرجوع لنسخة أقدم من كده مش هيبقى متاح.`
         },
         {
           cmd: "deploy.yml (SSH)",
@@ -20450,7 +20549,12 @@ jobs:
             "بدّل واستنى الـ healthcheck.",
             "نضّف الـ images القديمة.",
             "تأكيد أخير إن التطبيق بيرد."
-          ]
+          ],
+          sol: R`[[ssh-keygen -t ed25519 -f deploy_key -N ""]] بيعمل ملفين: [[deploy_key]] (الخاص، بيبدأ بـ [[-----BEGIN OPENSSH PRIVATE KEY-----]]، كله بيروح في secret [[DEPLOY_SSH_KEY]]) و [[deploy_key.pub]] (سطر واحد بيتضاف لـ [[/home/deploy/.ssh/authorized_keys]]). [[ssh-keygen -lf]] بيطبع حاجة زي [[256 SHA256:2lvtGXRU... (ED25519)]]. الجزء اللي بيبدأ بـ [[SHA256:]] هو اللي في [[DEPLOY_HOST_FINGERPRINT]].
+
+بعد الـ push، في تاب Actions الـ run بيطلّع لوج السيرفر: [[git pull]] ثم بناء compose ثم [[curl]] بيرجّع رد الـ health. لو كله عدّى علامة خضرا. وجرّب push تاني بسرعة: [[concurrency]] بيخلّي التاني يستنى الأول بدل ما يشتغلوا مع بعض.
+
+الأعطال الشائعة: [[ssh: handshake failed: ssh: unable to authenticate]] (المفتاح العام مش في authorized_keys، أو الخاص اتنسخ ناقص سطر)، و [[ssh: host key fingerprint mismatch]] (البصمة غلط، وده بالظبط اللي بتحميك منه). ومتحطش المفتاح الخاص في الريبو أبدًا. (ما شغّلتش workflow حقيقي، بس جربت ssh-keygen والبصمة.)`
         },
         {
           cmd: "deploy-shared.sh",
@@ -20503,7 +20607,17 @@ exit $fail`,
             "لو مش زي المتوقع علّم إنه فشل.",
             "نهاية اللوب.",
             "اخرج بـ 0 لو كله تمام، و 1 لو فيه حاجة غلط."
-          ]
+          ],
+          sol: R`لو كله تمام، السكربت بيطبع آخر commit ([[a1b2c3d fix contact form]])، وبعده [[No syntax errors detected in index.php]] لكل ملف، وبعدين:
+
+[[/ -> 200 (want 200)]]
+[[/login -> 200 (want 200)]]
+[[/contact -> 200 (want 200)]]
+[[/no-such-page -> 404 (want 404)]] و exit [[0]].
+
+لو بوّظت صفحة بحيث ترجّع 500، السطر بتاعها هيبقى [[/contact -> 500 (want 200)]] والـ exit [[1]]. ولو الغلطة syntax، [[php -l]] بيمسكها قبل الـ curl، جربته على ملف ناقصه [[;]] وطلّع [[PHP Parse error: syntax error, unexpected variable "$x"]] و [[Errors parsing bad.php]] بـ exit 255، فالسكربت بيقف هنا.
+
+خد بالك إن [[git pull]] بيحصل الأول، فلو الفحص فشل الموقع بايظ فعلًا دلوقتي، ارجع بـ [[ssh shared "cd DIR && git reset --hard HEAD~1"]]. ولو [[/no-such-page]] رجّع 200، الاستضافة بتحوّل أي حاجة للصفحة الرئيسية، وده بيضر الـ SEO.`
         }
       ]
     },
@@ -20595,7 +20709,12 @@ webroot: certbot بيكتب ملف تحدي في [[certbot/www]]، و Nginx بي
             "رجّع الإعداد الكامل بالـ SSL.",
             "restart لـ Nginx عشان يقراه.",
             "اتأكد إن https بيرد."
-          ]
+          ],
+          sol: R`بـ [[DRY=1]] والـ DNS صح، certbot بيقول [[The dry run was successful.]]، وبعدين فحص [[fullchain.pem]] بيفشل (لأن dry run مابيحفظش شهادة)، فالسكربت بيطبع [[no certificate yet (dry run?), nginx stays on HTTP]] ويخرج بـ 1، و [[trap]] بيرجّع [[nginx.conf]] الكامل. ده متوقع. من غير DRY بتشوف [[Successfully received certificate.]] وفي الآخر [[HTTP/2 200]] من الـ curl.
+
+على دومين مش بيشاور على السيرفر، بيقف قبل أي حاجة: [[test.example.com -> 198.51.100.4, server is 203.0.113.10: fix DNS first]] أو [[-> nothing]] لو مفيش record أصلًا. جربت منطق الفحص ده وطلّع نفس الرسالة. الفايدة إنك متكلّمش Let's Encrypt وانت عارف إنه هيفشل، لأنه بيحظرك مؤقتًا بعد محاولات فاشلة كتير (rate limit).
+
+لو certbot قال [[Timeout during connect]] أو [[Invalid response ... 404]]، يبقى بورت 80 مقفول أو [[/.well-known/acme-challenge/]] مش بيروح لـ [[/var/www/certbot]]. (ده محتاج سيرفر ودومين حقيقي، فجربت جزء فحص DNS بس.)`
         },
         {
           cmd: "renew-ssl.sh",
@@ -20660,7 +20779,12 @@ echo "served certificate: $DAYS days left"
             "كام يوم فاضل.",
             "اطبعه في اللوج.",
             "لو أقل من ١٤ يوم، اطبع تنبيه واخرج بفشل."
-          ]
+          ],
+          sol: R`[[certbot renew --dry-run]] لازم يخلص بـ [[Congratulations, all simulated renewals succeeded]]. لو قال [[failed]] المشكلة غالبًا بورت 80 أو مسار الـ webroot.
+
+تشغيل السكربت بإيدك والشهادة لسه جديدة بيطبع [[== 2026-09-30 03:17:00]]، وبعدها certbot بيقول [[Certificate not yet due for renewal]] (فمفيش reload)، وفي الآخر [[served certificate: 85 days left]]. جربت حساب الأيام على شهادة سيرفر عام وطلع [[21]] يوم، والحساب بيقرا الشهادة اللي بتتقدّم فعلًا، مش الملف اللي على الديسك. وده بيمسك حالة إن certbot جدّد بس Nginx ماعملش reload.
+
+بعد يوم في cron، [[tail /home/deploy/ssl-renew.log]] لازم يكون فيه سطر [[==]] بتاريخ النهارده. لو فاضي، cron ماشتغلش (راجع [[/etc/cron.d]]: لازم فيه اسم اليوزر، والملف ينتهي بسطر فاضي). ولو فيه [[ALERT: ... unreachable]] يبقى السيرفر مش بيرد على 443 من جوه نفسه.`
         },
         {
           cmd: "nginx.conf (Next.js)",
@@ -20750,7 +20874,16 @@ http {
             "ملفات Next.js الثابتة (أساميها فيها hash): كاش سنة.",
             "نهاية الـ server.",
             "نهاية http."
-          ]
+          ],
+          sol: R`جربت الملف ده في nginx:alpine بشهادة self-signed و app بيسمع على 3000:
+
+[[nginx -t]] طلّع [[syntax is ok]] و [[test is successful]].
+[[curl -I -H "Host: example.com" http://.../x]] طلّع [[HTTP/1.1 301 Moved Permanently]] و [[Location: https://example.com/x]].
+[[https://www.example.com]] طلّع [[HTTP/2 301]] و [[location: https://example.com/]].
+[[-H "Host: other.test"]] على http طلّع [[curl: (52) Empty reply from server]]، ده الـ [[return 444]]: Nginx بيقفل الاتصال من غير رد. وعلى https [[ssl_reject_handshake]] بيرفض قبل الشهادة ([[tlsv1 unrecognized name]]).
+و [[https://example.com]] طلّع [[HTTP/2 200]] ومعاه [[strict-transport-security]] و [[x-content-type-options: nosniff]].
+
+لو [[nginx -t]] قال [[cannot load certificate]] يبقى لسه مفيش شهادة (شوف init-ssl.sh). ولو قال [[host not found in upstream "app"]] يبقى الـ service مش اسمه [[app]] أو مش على نفس الـ network.`
         },
         {
           cmd: "nginx-apply.sh",
@@ -20828,7 +20961,14 @@ fi`,
             "وإلا...",
             "...restart عشان يتركّب الملف من جديد.",
             "نهاية الـ if."
-          ]
+          ],
+          sol: R`جربته على nginx container بملف متركّب:
+
+ببلوك سليم: [[nginx -t]] عدّى، والملف الحقيقي بقى فيه البلوك بين [[# >>> myapp (managed)]] و [[# <<< myapp]] قبل آخر [[}]]، واتعمل [[nginx -s reload]]، والـ server الجديد رد. وتشغيله تاني مابيكرّرش البلوك، بيستبدله.
+ببلوك ناقصه [[;]]: طلّع [[nginx: configuration file /etc/nginx/nginx.conf test failed]] و [[nginx -t failed, ... not touched]]، والـ md5 بتاع الملف ماتغيّرش والموقع فضل شغال. ده لأن الفحص بيحصل على نسخة مؤقتة في container منفصل.
+بعد ما الملف اتحفظ بطريقة بتغيّر الـ inode (زي vim أو [[cp x; mv x nginx.conf]])، رقم الـ inode على الجهاز بقى مختلف عن اللي جوه الـ container، فالسكربت عمل [[docker restart]] بدل reload ([[StartedAt]] اتغيّر).
+
+السبب: bind mount لملف واحد بيمسك الـ inode القديم، فـ reload كان هيقرا النسخة القديمة من غير ما يقولك. ولو [[markers broken]] ظهر، يبقى حد مسح سطر من العلامتين بإيده.`
         },
         {
           cmd: "dashboard_users.sh",
@@ -20894,7 +21034,17 @@ nginx -t -q && systemctl reload nginx || echo "nginx -t failed, not reloaded" >&
             "اطبع صف في الجدول.",
             "نهاية اللوب.",
             "لو إعدادات Nginx سليمة اعمل reload، وإلا قول."
-          ]
+          ],
+          sol: R`بكودين بإيدك ([[ali sara]]) الناتج جدول:
+
+[[code     name                 password]]
+[[ali      Ali Hassan           OJWX0aIkY5]]
+
+الباسورد ١٠ حروف من غير [[/+=]]. وجوه [[.htpasswd-dashboard]] بيتضاف سطر زي [[ali:$2y$05$...]] (bcrypt). جربت [[htpasswd -iB]] والتحقق بـ [[htpasswd -vb]] قال [[Password for user ali correct.]]. الجدول ده بيظهر مرة واحدة بس، ابعته لكل موظف من طريق آمن.
+
+كود زي [[a'b]] بيتطبع على stderr [[skip bad code: a'b]] ومايتبعتش لـ psql خالص، لأن الـ regex [[^[a-z0-9]+$]] بيقفل الـ SQL injection في الاستعلام اللي فيه [[$code]]. جربت الـ regex: [[a'b]] و [[x;rm]] اتعدّوا، وكمان [[Ali]] بحرف كبير اتعدّى، فاكتب الأكواد small. ولو الكود مش موجود أو مش active: [[ali not active, skipped]].
+
+وافتح اللوحة: المتصفح بيطلب يوزر وباسورد، ولو غلط [[401]]. (جربت htpasswd والـ regex، مش Nginx و Postgres الحقيقيين.)`
         }
       ]
     },
@@ -20990,7 +21140,12 @@ certbot: [[certbot renew]] كل ١٢ ساعة (مش هيعمل حاجة إلا �
             "الشهادات.",
             "لوب: جدد، واستنى ١٢ ساعة، ويقفل فورًا مع stop.",
             "يقوم لوحده."
-          ]
+          ],
+          sol: R`بعد [[docker compose up -d]]، [[sudo ss -tlnp]] لازم يوريك [[0.0.0.0:80]] و [[0.0.0.0:443]] بس (البرنامج [[docker-proxy]]). مفيش 3000، لأن [[app]] عليه [[expose]] مش [[ports]]: البورت متاح لـ nginx جوه شبكة compose بس. لو لقيت 3000 يبقى فيه [[ports]] قديم.
+
+[[docker compose ps]] المفروض يوريك [[app]] بحالة [[(healthy)]] بعد أول ٣٠ ثانية. و [[docker compose exec certbot certbot renew --dry-run]] لازم يخلص بـ [[Congratulations, all simulated renewals succeeded]].
+
+الفكرة في اللوبات: certbot بيحاول يجدّد كل ١٢ ساعة (مش بيعمل حاجة غير لو فاضل أقل من ٣٠ يوم)، و nginx بيعمل reload كل ٦ ساعات عشان ياخد أي شهادة جديدة. ولو [[exec]] قال [[service "certbot" is not running]]، اتأكد إن الـ entrypoint مكتوب صح: [[$$!]] في compose بتبقى [[$!]]. (ده محتاج دومين وشهادة حقيقية فما شغّلتوش كامل.)`
         },
         {
           cmd: "Dockerfile (Next.js)",
@@ -21072,7 +21227,12 @@ screenshots/`,
             "ولا البناء القديم.",
             "ولا أي ملف أسرار.",
             "ولا فولدر الـ screenshots بس (مش كل الصور)."
-          ]
+          ],
+          sol: R`[[docker build -t myapp .]] بيعدّي بـ ٣ مراحل، و [[docker images myapp]] بيوريك حجم في حدود ٢٠٠ ميجا تقريبًا (node:22-alpine لوحدها قريب من ١٦٠ ميجا على الديسك، والباقي الـ standalone). لو طلعت أكتر من جيجا، غالبًا [[.dockerignore]] مش شغال و [[node_modules]] أو [[.next]] اتنسخوا، أو [[output: "standalone"]] مش في [[next.config.ts]] (ساعتها البناء بيقف عند [[test -f .next/standalone/server.js]]).
+
+[[docker run --rm myapp ls public]] لازم يطبع صورك ([[logo.png]] وغيرها). لو فاضي أو [[No such file]]، يبقى فولدر [[public]] مش موجود في المشروع (اعمله حتى لو فاضي، وإلا الـ COPY بيفشل).
+
+[[docker run --rm myapp whoami]] لازم يطبع [[nextjs]]. لو طبع [[root]] يبقى سطر [[USER nextjs]] اتشال. ولو التطبيق قام وبيرجّع 404 على الصور والـ CSS، يبقى نسيت تنسخ [[.next/static]]. (البناء محتاج مشروع Next.js ونت، فما جربتوش هنا.)`
         },
         {
           cmd: "Dockerfile (Vite + nginx)",
@@ -21157,7 +21317,16 @@ server {
             "استنى الرد لحد ١٠ دقايق (رفع أو عمليات طويلة).",
             "نهاية الـ location.",
             "نهاية الـ server."
-          ]
+          ],
+          sol: R`جربت ملف الـ [[nginx.conf]] ده على nginx:alpine جنب backend بيسمع على 3000:
+
+[[curl -I /settings]] رجّع [[200]] و [[Content-Type: text/html]]، ده [[index.html]] بسبب [[try_files ... /index.html]]، فالـ refresh على صفحة داخلية بيشتغل.
+[[curl -I /index.html]] رجّع [[Cache-Control: no-cache]]، و [[/settings]] كمان بياخد [[no-cache]] لأنه بيتحوّل داخليًا لـ [[/index.html]].
+[[curl -I /assets/index-abc123.js]] رجّع [[Cache-Control: public, max-age=31536000, immutable]].
+[[/assets/nope.js]] رجّع [[404]] مش [[index.html]]، وده الصح عشان المتصفح مايحاولش يشغّل HTML كـ JavaScript.
+[[/api/users]] وصل للـ backend بنفس المسار.
+
+فخ جربته: لو الـ image اشتغلت من غير service اسمه [[backend]] على نفس الشبكة، nginx مابيقومش خالص: [[host not found in upstream "backend"]]. فلازم تشغّلها في compose مع الباك إند.`
         },
         {
           cmd: "compose dev / prod",
@@ -21236,7 +21405,12 @@ networks:
             "يقوم لوحده.",
             "الشبكات:",
             "شبكة nginx-proxy الموجودة قبل كده."
-          ]
+          ],
+          sol: R`ملف الـ dev: لما تعدّل سطر في [[backend/src]]، لوج الباك إند ([[docker compose -f compose.dev.yml logs -f backend]]) بيطبع [[[nodemon] restarting due to changes...]] وبعدها [[[nodemon] starting node src/server.js]]. لو مابيحصلش على ويندوز أو ماك، غالبًا الـ file events مش بتوصل عبر bind mount، استخدم [[nodemon -L]] (polling).
+
+ملف الإنتاج: [[sudo ss -tlnp]] مش هيوريك أي بورت للمشروع، مفيش 3000 ولا 80 تبعه. اللي سامع على 80 و 443 هو container [[nginx-proxy]] بس. nginx-proxy بيكتشف [[frontend]] لوحده من [[VIRTUAL_HOST]] لأنه على شبكة [[nginx-proxy]]، و acme-companion بيطلب الشهادة من [[LETSENCRYPT_HOST]].
+
+لو الدومين رجّع [[503]] من nginx-proxy، يبقى الـ frontend مش على شبكة [[proxy]] أو [[VIRTUAL_HOST]] مكتوب غلط. ولو [[docker compose up]] قال [[network nginx-proxy declared as external, but could not be found]] يبقى nginx-proxy مش متسطب. (ده محتاج nginx-proxy ودومين، فما جربتوش.)`
         },
         {
           cmd: "compose.yml (Mongo)",
@@ -21327,7 +21501,16 @@ volumes:
             "الـ volumes:",
             "volume الداتا...",
             "...موجود قبل كده، و compose مش بيعمله ولا بيمسحه."
-          ]
+          ],
+          sol: R`بعد [[docker compose up -d]]، [[docker compose ps]] بيوريك [[mongo]] بحالة [[(health: starting)]] لحد ٤٠ ثانية ([[start_period]])، والباك إند لسه [[Created]] مش [[Up]]. أول ما mongo يبقى [[(healthy)]] الباك إند بيقوم. ده شغل [[condition: service_healthy]].
+
+لما شلت [[JWT_SECRET]] من [[.env]] وجربت [[docker compose config]]، compose رفض قبل ما يعمل أي حاجة:
+
+[[error while interpolating services.backend.environment.JWT_SECRET: required variable JWT_SECRET is missing a value: set it in .env]]
+
+وده بالظبط فايدة [[:?]]: السيرفر مايقومش بسر فاضي. وبعد ما رجّعته [[config]] عدّى، و [[JWT_EXPIRE]] خد [[7d]] الافتراضي من [[:-7d]].
+
+لو [[up]] قال [[external volume "mongodb_data" not found]] يبقى نسيت [[docker volume create mongodb_data]]. ولو الباك إند قام وبيقول [[Authentication failed]]، الباسورد في [[MONGODB_URI]] مختلف عن [[MONGO_ROOT_PASSWORD]]، أو ناقص [[?authSource=admin]].`
         }
       ]
     },
@@ -21412,7 +21595,17 @@ tar بيطلع على stdout ([[-f -]]) ويدخل على openssl مباشرة،
             "اتأكد إن اللي اترفع زي المحلي.",
             "امسح النسخ الأقدم من ٩٠ يوم.",
             "خلصت."
-          ]
+          ],
+          sol: R`جربته على Postgres في compose، وبدّلت rclone بـ [[cp]] لفولدر محلي (زي remote من نوع local). الناتج:
+
+[[appdb: 4.0K]]
+[[n8n: 4.0K]]
+[[check: identical]]
+[[done: myapp_2026-09-30_0806.tar.gz.enc]]
+
+والاسترجاع على قاعدة جديدة فاضية: [[openssl enc -d ... | tar -xzf -]] طلّع [[appdb.dump]] و [[n8n.dump]]، و [[pg_restore -d appdb_restore --clean --if-exists < appdb.dump]] خلص بـ exit 0، و [[select count(*) from t]] رجّع [[100]] زي الأصل. مع rclone الحقيقي، [[rclone check]] بيطبع [[0 differences found]].
+
+الاسترجاع هو الاختبار الحقيقي، مش إن الملف اترفع. لو [[pg_restore]] قال [[database "appdb" does not exist]] اعمل القاعدة الأول. ولو فك التشفير قال [[bad decrypt]] يبقى الـ passphrase مختلف، وخزّنها برّه السيرفر (password manager)، لأن لو السيرفر ضاع والـ passphrase عليه بس، الباك أب ملوش لازمة.`
         },
         {
           cmd: "backup_mongodb.sh",
@@ -21479,7 +21672,12 @@ log "kept: $(ls "$BACKUP_DIR"/myapp_*.archive.gz | wc -l) backups"
             "سجّل النجاح بالحجم.",
             "امسح النسخ الأقدم من ٣٠ يوم.",
             "سجّل عدد النسخ الموجودة."
-          ]
+          ],
+          sol: R`جربت الفرق: [[false | tee x.log; echo $?]] طبع [[0]]، و [[set -o pipefail; false | tee x.log; echo $?]] طبع [[1]]. من غير pipefail، خطوة فاشلة قبل [[|]] بتبان ناجحة.
+
+السكربت على Mongo 8 شغال: اللوج طلّع [[start: .../myapp_2026-09-30_08-06.archive.gz]] وبعدين [[ok: 4.0K]] و [[kept: 1 backups]]. بعد [[docker stop myapp-mongodb]] وتشغيله تاني: [[ERROR: mongodump failed]] و exit [[1]]، واللوج فيه سبب الخطأ ([[container ... is not running]]).
+
+ملاحظتين من التجربة: لو شغّلته قبل ما Mongo يخلص أول تشغيل، بيفشل بـ [[Authentication failed]] لأن اليوزر root لسه بيتعمل، فاستنى ping ينجح الأول. واسم الملف بالدقيقة، فلو نسخة فشلت في نفس دقيقة نسخة ناجحة، [[rm -f "$FILE"]] بيمسح الناجحة. ده مش هيحصل في cron يومي، بس خد بالك وانت بتجرّب.`
         },
         {
           cmd: "backup.bat",
@@ -21550,7 +21748,12 @@ timeout /t 5 >nul`,
             "ارفع.",
             "نجح ولا لأ.",
             "استنى ٥ ثواني قبل ما الشباك يقفل."
-          ]
+          ],
+          sol: R`أول تشغيل بدبل كليك: [[git pull]] وبعدين commit باسم زي [[backup 30/09/2026 10:15:02.33]] و [[git push]]، وفي الآخر [[تم الرفع بنجاح.]]. ولو مفيش تغيير، [[git diff --cached --quiet]] بيرجّع 0 فبيطبع [[مفيش تغييرات جديدة للرفع.]] ويقفل.
+
+بعد ما تضيف [[data.json]] لـ [[.gitignore]]، بيطبع التحذير ويستنى. جربت [[git check-ignore -v data.json]]: من غير القاعدة طبع ولا حاجة وexit [[1]]، ومعاها طبع [[.gitignore:1:data.json	data.json]] وexit [[0]]. السطر ده بيقولك بالظبط أنهي ملف وأنهي سطر عامل ignore.
+
+لو العربي طالع رموز غريبة، [[chcp 65001]] محتاج الملف يتحفظ UTF-8. ولو الـ push قال [[rejected]]، فيه تعديل على GitHub من جهاز تاني والـ [[pull --rebase]] فشل بسبب conflict، ساعتها حلّه بإيدك. (جربت أوامر git، مش الـ .bat نفسه لأنه ويندوز.)`
         }
       ]
     },
@@ -21636,7 +21839,14 @@ jobs:
             "الاختبارات.",
             "اسم الخطوة.",
             "الـ build (الأغلى)."
-          ]
+          ],
+          sol: R`في [[package.json]] بتاع الجذر:
+
+[[format:check]] = [[prettier --check .]]، [[lint]] = [[eslint . --max-warnings=0]]، [[typecheck]] = [[pnpm -r typecheck]]، [[test]] = [[pnpm -r test]]، [[build]] = [[pnpm -r build]].
+
+بإيدك بالترتيب: [[pnpm format:check]] على كود سليم بيطبع [[All matched files use Prettier code style!]]، وكل واحد بعده بيخلص بـ exit 0. بعد ما تضيف مسافة زيادة، [[format:check]] بيطبع [[[warn] src/x.ts]] و [[Code style issues found in the above file. Run Prettier with --write to fix.]] وexit 1.
+
+في الـ PR: الـ job بيقع في خطوة Format، وكل الخطوات بعدها عليها علامة skipped، فمادفعتش وقت build عشان مسافة. ده سبب الترتيب من الأرخص للأغلى. لو الـ CI قال [[ERR_PNPM_OUTDATED_LOCKFILE]] يبقى نسيت تعمل commit للـ [[pnpm-lock.yaml]] بعد ما ضفت مكتبة، و [[--frozen-lockfile]] رفض يعدّله.`
         },
         {
           cmd: "ci.yml: Postgres + Prisma",
@@ -21727,7 +21937,15 @@ jobs:
             "فحص الأنواع.",
             "الاختبارات.",
             "الـ build."
-          ]
+          ],
+          sol: R`اعمل migration فيها غلطة، مثلًا [[ALTER TABLE "User" ADD COLUMN "age" INTEGR;]] (نوع مش موجود). في الـ PR، خطوة [[pnpm exec prisma migrate deploy]] هتقع برسالة زي:
+
+[[Error: P3018 ... Migration name: 20260930_add_age]]
+[[Database error: ERROR: type "integr" does not exist]]
+
+والخطوات اللي بعدها (tsc و test و build) مش هتشتغل. ده بالظبط اللي كان هيحصل على سيرفر الإنتاج، بس هنا وقع في CI على قاعدة فاضية.
+
+بعد التصليح اتأكد إنك عدّلت ملف الـ migration نفسه أو عملت واحدة جديدة، مش [[schema.prisma]] بس. ولو الـ CI قال [[Can't reach database server at localhost:5432]]، الـ service لسه بتقوم والـ health options ناقصة. ولو [[migrate deploy]] قال [[No pending migrations]] وانت ضايف واحدة، يبقى نسيت تعمل commit لفولدر [[prisma/migrations]]. (ما شغّلتش workflow على GitHub، بس جربت إن [[psql -v ON_ERROR_STOP=1]] بيقف عند غلطة SQL في درس apply-migrations.)`
         },
         {
           cmd: "db-schema-check.yml",
@@ -21798,7 +22016,16 @@ jobs:
             "سكربت متعدد السطور:",
             "فيه فرق عن الـ commit؟...",
             "...رسالة حمرا في GitHub وافشل."
-          ]
+          ],
+          sol: R`جربتها بالظبط: بعد تعديل من غير commit، [[git diff --exit-code file; echo $?]] طبع الفرق:
+
+[[@@ -1 +1,2 @@]]
+[[ a]]
+[[+b]]
+
+وبعده [[1]]. بعد [[git checkout file]] نفس الأمر ماطبعش حاجة وطبع [[0]].
+
+ده كل الفكرة في الـ workflow: بيولّد الأنواع من القاعدة الحقيقية فوق الملف المتسجّل في الريبو. لو حد عمل migration ونسي يولّد الأنواع ويعمل commit، الملف هيتغير و [[--exit-code]] يرجّع 1 فالـ CI يقع برسالة [[Types drifted. Run npm run types:generate and commit.]]. ولو الأنواع متطابقة، 0 والـ job أخضر. وخد بالك إن [[git diff]] من غير [[--exit-code]] بيرجّع 0 دايمًا حتى لو فيه فرق.`
         },
         {
           cmd: "husky + commitlint",
@@ -21861,7 +22088,18 @@ husky بيعمل ده بإنه يغيّر [[core.hooksPath]] في git لفولد
             "رسالة ماشية على القواعد.",
             "رسالة من غير type: هتترفض.",
             "عدّي الـ hooks مرة في الطوارئ."
-          ]
+          ],
+          sol: R`جربت الإعداد (بـ npm بدل pnpm) في ريبو تجربة:
+
+ملف [[a.ts]] فيه [[const   x =    {a:1,b:2}]]. بعد [[git commit -m "feat: add a"]] الـ pre-commit شغّل lint-staged ([[✔ Done running tasks for staged files!]])، والملف اتعمله commit بعد التنسيق: [[const x = { a: 1, b: 2 };]].
+[[git commit --allow-empty -m "fixed stuff"]] اترفض:
+[[✖   subject may not be empty [subject-empty]]]
+[[✖   type may not be empty [type-empty]]]
+[[husky - commit-msg script failed (code 1)]]
+لازم يبقى بالشكل [[fix: ...]] أو [[feat: ...]].
+[[HUSKY=0 git commit -m "wip"]] عدّى من غير hooks، وده للطوارئ بس.
+
+لو الـ hooks مش بتشتغل خالص، اتأكد إن [[git config core.hooksPath]] بيقول [[.husky/_]] (ده اللي [[husky init]] أو [[prepare]] بيعمله). ولو [[commitlint.config.js]] بـ [[export default]] واشتكى من الـ syntax، ضيف [["type": "module"]] في package.json أو سمّيه [[.mjs]].`
         }
       ]
     },
@@ -21944,7 +22182,17 @@ echo "ok: $ok/$__{#migrations[@]}  failed: $fail"
             "قفلة اللوب.",
             "الملخص.",
             "كله نجح؟ أعد تشغيل التطبيق."
-          ]
+          ],
+          sol: R`جربتها على Postgres: الملف الأول [[create table courses]]، التاني فيه [[create table exams]] وبعده [[ALTR TABLE ...]] غلط، والتالت insert. الناتج مع جواب [[n]]:
+
+[[applying 01_... CREATE TABLE]]
+[[applying 02_... CREATE TABLE]]
+[[ERROR:  syntax error at or near "ALTR"]]
+[[ok: 1/3  failed: 1]] والـ exit [[1]]، ومفيش restart للـ app.
+
+و [[\dt]] بعدها وراني [[courses]] بس، مفيش [[exams]]، رغم إن psql طبع [[CREATE TABLE]] ليه. ده [[--single-transaction]]: الملف كله transaction واحدة، فالغلطة رجّعت كل اللي قبلها في نفس الملف. والملف التالت ماتنفّذش لأنك قلت n.
+
+من غير [[--single-transaction]] كان [[exams]] هيفضل موجود والملف نص متطبّق، وتشغيله تاني هيقع على [[already exists]]. ومن غير [[ON_ERROR_STOP=1]]، psql كان هيكمّل بعد الغلطة ويرجّع exit 0.`
         },
         {
           cmd: "Makefile",
@@ -22019,7 +22267,17 @@ make بيفك [[$(VAR)]] الأول، فلو عايز [[$]] توصل للـ shel
             "ادخل app وشغّل pytest في نفس السطر.",
             "shell-db.",
             "افتح psql تفاعلي."
-          ]
+          ],
+          sol: R`جربتها: [[make help]] طبع:
+
+[[  help       القايمة دي]]
+[[  up         تشغيل]]
+[[  down       إيقاف (البيانات بتفضل)]]
+[[  logs       متابعة لوج التطبيق]]
+
+الكلام ده جاي من التعليق بعد [[##]] في كل target. وبعد ما بدّلت الـ Tab قبل [[$(COMPOSE) up -d]] بـ ٤ مسافات، [[make up]] طبع [[Makefile:6: *** missing separator.  Stop.]] وexit 2. رقم السطر بيقولك فين.
+
+Make لازم Tab حقيقي قبل كل أمر، والمحررات كتير بتحوّله لمسافات لوحدها. في VS Code شوف تحت على اليمين ([[Spaces: 2]] أو [[Tab Size]])، أو [[cat -A Makefile]] هيوريك [[^I]] مكان كل Tab. ولو [[make: *** No rule to make target 'up']] يبقى اسم الـ target مكتوب غلط أو فيه مسافة قبل النقطتين.`
         },
         {
           cmd: "n8n_import.sh",
@@ -22095,7 +22353,16 @@ echo "imported: activate the workflows from the n8n UI"`,
             "انسخ الـ workflows.",
             "استوردهم، ملف لكل workflow.",
             "فكّرني أفعّلهم."
-          ]
+          ],
+          sol: R`جربت أمر envsubst:
+
+[[{"url": "http://app:8080", "x": "$__{HOME}"}]]
+
+[[$__{APP_URL}]] اتبدّل لأنه في القايمة، و [[$__{HOME}]] فضل زي ما هو لأنه مش فيها. من غير القايمة، envsubst بيبدّل كل متغير موجود في البيئة، فـ [[$__{HOME}]] كان هيبقى [[/root]]، وأي متغير مش موجود بيبقى نص فاضي من غير أي تحذير.
+
+في السكربت الكامل، [[grep -rqE '\$\{[A-Z_]+\}']] بيمسك أي placeholder فضل مكتوب ([[unfilled placeholders]]) قبل الاستيراد. ولو الاستيراد نجح، n8n بيطبع حاجة زي [[Successfully imported 1 credential.]] و [[Successfully imported 3 workflows.]]، والـ workflows بتظهر في الواجهة Inactive لحد ما تفعّلها بإيدك.
+
+لو طلع [[envsubst: command not found]] سطّب [[gettext-base]]. ولو n8n قال [[Could not find workflows]] يبقى المسار في [[--input]] غلط أو [[docker compose cp]] ماوصلش الملفات. (جربت envsubst بس، مش n8n.)`
         },
         {
           cmd: "normalize-phones.mjs",
@@ -22188,7 +22455,14 @@ try {
             "في كل الحالات:",
             "اقفل الاتصال.",
             "قفلة الـ try."
-          ]
+          ],
+          sol: R`جربتها على جدول فيه [[01012345678]] و [[010-1234-5678]] (نفس الرقم) و [[0101234]] (ناقص) و [[0111 222 3333]] و [[01122223333]] و [[+201099999999]] (مش مرشّح):
+
+من غير [[--apply]]: [[DRY-RUN candidates: 5]]، و ٣ سطور تغيير، و [[{ changed: 3, skipped: 1, conflicts: 1 }]] و [[Run again with --apply to write.]]، والجدول ماتغيّرش.
+بـ [[--apply]]: نفس الأرقام بالظبط، والصفوف اتعدّلت لـ [[+2...]].
+التشغيل التالت: [[candidates: 2]] (الرقم الناقص والرقم اللي عليه تعارض بس) و [[changed: 0]]. يعني اللي اتعدّل مابقاش مرشح.
+
+لقيت مشكلة في النسخة الأصلية: كانت بتعمل [[UPDATE]] في الـ apply بس، فالـ dry-run ماكانش شايف إن [[01012345678]] و [[010-1234-5678]] هيبقوا نفس الرقم، وقال [[changed: 4, conflicts: 0]]، وبعدين الـ apply قال [[changed: 3, conflicts: 1]]. اتصلّحت إن الـ UPDATE يحصل دايمًا جوه الـ transaction، والـ ROLLBACK في المعاينة بيلغيه. فدلوقتي المعاينة بتوري نفس اللي هيحصل. التعارض ده محتاج قرار منك، أنهي حساب يفضل بالرقم.`
         },
         {
           cmd: "fix-docker.sh",
@@ -22239,7 +22513,14 @@ docker compose up -d`,
             "وقّف وامسح صور المشروع ده بس (الـ volumes بتفضل).",
             "ابني من غير كاش.",
             "شغّل."
-          ]
+          ],
+          sol: R`الإجابة النموذجية إنك تقف عند أول خطوة بتفشل:
+
+خطوة ١: [[docker compose ps]] لازم الـ frontend يبقى [[Up]] بوقت جديد ([[Up 5 seconds]]). لو [[Restarting]] أو [[Exited]] يبقى المشكلة في البناء أو الإقلاع، واللوج هيقولك.
+خطوة ٢: [[ls -la /usr/share/nginx/html]] جوه الـ container. لو تاريخ الملفات قديم أو الـ [[index-*.js]] نفس الاسم القديم، يبقى التعديل ماوصلش للـ image: غالبًا [[COPY]] بيجيب من فولدر غلط، أو [[.dockerignore]] بيستبعد حاجة، أو مانسيتش [[--build]] بس بنيت service تانية.
+خطوة ٣: [[curl -sI]] لو [[etag]] أو [[last-modified]] اتغيّروا، يبقى السيرفر بيرجّع الجديد والمشكلة كاش المتصفح أو CDN. وهنا Ctrl+Shift+R بيوريك الجديد. ولو [[index.html]] عليه [[max-age]] طويل، ده السبب الحقيقي.
+
+خطوة ٤ نادرًا ما تحتاجها، و [[--rmi local]] بيمسح صور المشروع ده اللي مالهاش tag بس، مش volumes ولا مشاريع تانية زي [[docker system prune]]. (الخطوات دي نفس اللي جربتها في درس Dockerfile (Vite + nginx) لما قارنت الـ Cache-Control.)`
         }
       ]
     }
@@ -35810,7 +36091,19 @@ exit $fail`,
 
 الفكرة العبقرية في السطر بتاع 404: مش بس بيتأكد إن الصفحات الشغالة بترد 200، بيتأكد كمان إن صفحة مش موجودة بترد 404 (مش 200). ده بيكشف لو الـ routing باظ وبقى كله بيرجّع الصفحة الرئيسية. لو أي شرط فشل، [[fail=1]] و [[exit $fail]] بيخلّي السكربت يخرج بكود 1.
 
-الكود ده بيخليه يشتغل في CI أو بعد أي deploy: [[./smoke.sh && echo "deploy ok" || ./rollback.sh]]. [[echo $?]] بعده بيطبع 0 لو كله تمام، 1 لو حاجة اتكسرت. جرّب اكسر صفحة عمدًا وشوف الرقم بقى 1، ده اللي بيخلّيه أوتوماتيك. أضمن حاجة تعملها بعد deploy.`
+الكود ده بيخليه يشتغل في CI أو بعد أي deploy: [[./smoke.sh && echo "deploy ok" || ./rollback.sh]]. [[echo $?]] بعده بيطبع 0 لو كله تمام، 1 لو حاجة اتكسرت. جرّب اكسر صفحة عمدًا وشوف الرقم بقى 1، ده اللي بيخلّيه أوتوماتيك. أضمن حاجة تعملها بعد deploy.`,
+          solCode: R`#!/usr/bin/env bash
+# smoke.sh — run after every deploy
+fail=0
+for u in / /login /contact /api/health; do
+  code=$(curl -s -o /dev/null --max-time 10 -w "%{http_code}" "https://example.com$u")
+  echo "$u $code"
+  [ "$code" = "200" ] || fail=1
+done
+code=$(curl -s -o /dev/null --max-time 10 -w "%{http_code}" https://example.com/nope-404)
+echo "/nope-404 $code"
+[ "$code" = "404" ] || fail=1
+exit $fail`
         },
         {
           cmd: "بوت بيضرب الموقع",
