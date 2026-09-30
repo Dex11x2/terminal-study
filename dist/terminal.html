@@ -137618,7 +137618,7 @@ EF Core بيسمح بـ client evaluation في آخر [[Select]] بس (مثلً�
             R`[[avg()]] في SQL.`,
             "تنفيذ."
           ],
-          sol: R`[[Where(p => IsCheap(p))]] بيرمي وقت التنفيذ: [[InvalidOperationException: The LINQ expression 'DbSet<Product>().Where(p => Program.IsCheap(p))' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'.]] EF مش شايف جوه الـ method، شايف نداء بس.
+          sol: R`[[Where(p => IsCheap(p))]] بيرمي وقت التنفيذ: [[InvalidOperationException: The LINQ expression 'DbSet<Product>().Where(p => Program.IsCheap(p))' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'.]] EF مش شايف جوه الـ method، شايف نداء بس. (ده لو الـ method static في class. لو كتبتها local function تحت الـ top-level statements، الـ build نفسه بيفشل قبل كده بـ [[error CS8110: An expression tree may not contain a reference to a local function]].)
 
 الحل الأول: اكتب الشرط inline [[Where(p => p.Price < 10)]]. التاني: خلي الـ method ترجع [[Expression<Func<Product, bool>>]]: [[static Expression<Func<Product, bool>> IsCheap => p => p.Price < 10;]] و [[Where(IsCheap)]]. (الـ AsEnumerable اللي الرسالة بتقترحه بيشتغل بس بيحمّل الجدول كله، فمش حل.)
 
@@ -138158,7 +138158,7 @@ public class CheckoutService(IPaymentGateway payments, IEmailSender email)
 
 بتعدّل فيه اللي محتاجه للاختبار: environment اسمه [[Testing]]، و connection string لداتابيز اختبار، و [[ConfigureTestServices]] تشيل الـ background services أو تبدّل الـ payment gateway بـ fake.
 
-عشان الـ factory تلاقي [[Program]]، ضيف في آخر [[Program.cs]]: [[public partial class Program;]].`,
+الـ factory محتاجة توصل لـ [[Program]]. الـ top-level statements بتعمل [[Program]] internal، بس من .NET 10 الـ Web SDK بيولّد [[public partial class Program]] لوحده، فمش محتاج تكتب حاجة (لو كتبت [[public partial class Program;]] بإيدك الـ analyzer بيقولك إنها زيادة: ASP0027). في .NET 8 و 9 لازم تكتبها في آخر [[Program.cs]].`,
           example: R`public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -138188,7 +138188,7 @@ public class ProductApiTests(ApiFactory factory) : IClassFixture<ApiFactory>
         Assert.Equal("application/problem+json", res.Content.Headers.ContentType?.MediaType);
     }
 }`,
-          try: R`اكتب اختبار [[Creating_a_product_needs_the_admin_role]]: نفس الـ POST تلات مرات (من غير توكن، وبتوكن user، وبتوكن admin) وتتأكد من 401 و 403 و 201. التوكن اعمله من [[TokenService]] اللي في [[factory.Services]]. وبعدين شيل [[public partial class Program;]] وشوف الخطأ.`,
+          try: R`اكتب اختبار [[Creating_a_product_needs_the_admin_role]]: نفس الـ POST تلات مرات (من غير توكن، وبتوكن user، وبتوكن admin) وتتأكد من 401 و 403 و 201. التوكن اعمله من [[TokenService]] اللي في [[factory.Services]]. وبعدين ضيف في آخر [[Program.cs]] سطر [[partial class Program { }]] (من غير [[public]]) وشوف الخطأ.`,
           flag: "script",
           deep: {
             why: R`الـ unit tests مش بتختبر الـ routing والـ binding والـ validation والـ auth والـ EF mapping مع بعض، ودول مكان أغلب الـ bugs في API. اختبار integration واحد بيعدي على كل الطبقات بيمسك حاجات عشر unit tests مش هيمسكوها. نفس فكرة supertest في «تاب Backend بـ Node».`,
@@ -138200,10 +138200,10 @@ public class ProductApiTests(ApiFactory factory) : IClassFixture<ApiFactory>
 
 الداتابيز: Postgres حقيقي أحسن من in-memory provider (اللي مبيعملش constraints ولا SQL حقيقي). في CI: service container في GitHub Actions، أو Testcontainers ([[Testcontainers.PostgreSql]]) بيقوّم Postgres في Docker لكل test run.`,
             when: R`اختبار أو اتنين لكل endpoint: الحالة السعيدة، والـ validation، والـ auth (401 و 403)، و 404. الـ edge cases الكتير في unit tests على الـ service. وخلي الداتابيز تتعمل من الأول في كل run عشان الاختبارات متعتمدش على داتا قديمة.`,
-            mistakes: R`تستخدم in-memory provider وتفتكر إن الـ unique indexes اتختبرت. وتنسى [[public partial class Program;]]. وتسيب الـ BackgroundService شغال في الاختبارات فيعمل queries عشوائية. واختبارات بتعدّل نفس الصفوف بالتوازي من classes مختلفة. ونسخ EF مختلفة في مشروع الاختبار فيقع بـ [[ReflectionTypeLoadException]] (حصلت هنا: شوف درس DbContext).`
+            mistakes: R`تستخدم in-memory provider وتفتكر إن الـ unique indexes اتختبرت. وتنسى [[public partial class Program;]] على .NET 8 أو 9، أو تكتب [[partial class Program]] من غير [[public]] فتقفله. وتسيب الـ BackgroundService شغال في الاختبارات فيعمل queries عشوائية. واختبارات بتعدّل نفس الصفوف بالتوازي من classes مختلفة. ونسخ EF مختلفة في مشروع الاختبار فيقع بـ [[ReflectionTypeLoadException]] (حصلت هنا: شوف درس DbContext).`
           },
           lines: [
-            R`factory لـ [[Program]] (من [[public partial class Program;]]).`,
+            R`factory لـ [[Program]] (public لوحده من .NET 10).`,
             "بداية.",
             "تعديل الـ host قبل ما يقوم.",
             "بداية.",
@@ -138237,7 +138237,7 @@ public class ProductApiTests(ApiFactory factory) : IClassFixture<ApiFactory>
 
 [[var anonymous = await client.PostAsJsonAsync("/api/products", body, ct);]] ثم [[client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(admin: false));]] ونفس الـ POST، ثم بتوكن admin. والـ asserts: [[Unauthorized]] و [[Forbidden]] و [[Created]]. والتوكن: [[using var scope = factory.Services.CreateScope(); scope.ServiceProvider.GetRequiredService<TokenService>().Create("u1", "u1@test.com", admin ? ["admin"] : []);]] لأن [[TokenService]] Scoped. عندنا الـ ٨ اختبارات عدّوا في ٣ ثواني تقريبًا مع Postgres حقيقي.
 
-من غير [[public partial class Program;]]: [[error CS0122: 'Program' is inaccessible due to its protection level]]، لأن الـ top-level statements بتعمل [[Program]] internal. (بديل: [[InternalsVisibleTo]] في الـ csproj.)`,
+بعد [[partial class Program { }]] من غير [[public]]: [[error CS0122: 'Program' is inaccessible due to its protection level]] في مشروع الاختبار، لأن الـ partial بتاعك من غير modifier بيخلي الـ class كلها internal وبيلغي الـ public اللي الـ SDK بيولّده. شيله أو اكتبه [[public partial class Program;]] (وده اللي كان لازم دايمًا في .NET 8 و 9). جرّبناها على .NET 10: من غير أي سطر الـ factory شغالة. (بديل: [[InternalsVisibleTo]] في الـ csproj.)`,
           solCode: R`[Fact]
 public async Task Creating_a_product_needs_the_admin_role()
 {
