@@ -1798,7 +1798,7 @@ app.UseStatusCodePages();`,
           ],
           sol: R`الـ handler: [[if (ex is not DbUpdateException { InnerException: PostgresException { SqlState: "23505" } pg }) return false;]] وبعدين نفس الكود بـ 409 و [[Title = "Duplicate"]] و [[Detail = pg.ConstraintName]] (بيطلع [[IX_Products_Name]]). المنتج التاني بقى يرجع [[409]] بدل 500، والـ pattern المتداخل ده (property pattern جوه property pattern) من درس switch expression.
 
-ولما تشيل [[AddProblemDetails]] التطبيق مش هيقوم أصلًا: [[Unable to resolve service for type 'Microsoft.AspNetCore.Http.IProblemDetailsService' while attempting to activate 'Shop.Api.Services.DomainExceptionHandler']]، لأن الـ handlers بتوعك بتطلبه في الـ constructor. ولاحظ من نفس الرسالة إن [[AddExceptionHandler<T>]] بيسجّل الـ handler كـ Singleton، يعني مينفعش تطلب فيه [[ShopDb]] أو أي Scoped service (درس DI و lifetimes). لو مكانش عندك handlers خاصة، الـ 404 كان هيرجع من [[UseStatusCodePages]] كنص عادي [[Status Code: 404; Not Found]] بـ [[text/plain]]، مش JSON.`,
+ولما تشيل [[AddProblemDetails]] التطبيق مش هيقوم أصلًا: [[Unable to resolve service for type 'Microsoft.AspNetCore.Http.IProblemDetailsService' while attempting to activate 'Shop.Api.Services.DomainExceptionHandler']]، لأن الـ handlers بتوعك بتطلبه في الـ constructor. ولاحظ من نفس الرسالة إن [[AddExceptionHandler<T>]] بيسجّل الـ handler كـ Singleton، يعني مينفعش تطلب فيه [[ShopDb]] أو أي Scoped service (درس DI و lifetimes). ولو مكانش عندك handlers خاصة، [[app.UseExceptionHandler()]] من غير [[AddProblemDetails]] ولا path هو نفسه بيرمي أول ما الـ pipeline يتبني: [[An error occurred when configuring the exception handler middleware. Either the 'ExceptionHandlingPath' or the 'ExceptionHandler' property must be set]]. ولو شلته أو اديته path، الـ 404 بيرجع من [[UseStatusCodePages]] كنص عادي [[Status Code: 404; Not Found]] بـ [[text/plain]]، مش JSON.`,
           solCode: R`using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -2431,7 +2431,7 @@ Console.WriteLine($"{tracked} {state} {saved}");`,
             R`[[1]]: UPDATE واحد بس، للمنتج 1، لعمود [[Price]] بس.`,
             R`[[1 Modified 1]].`
           ],
-          sol: R`اللوج فيه [[UPDATE]] واحد: [[UPDATE "Products" SET "Price" = @p0 WHERE "Id" = @p1;]] للمنتج 1 بس، وعمود [[Price]] بس، والـ endpoint رجّع [[{"tracked":1,"state":"Modified","saved":1}]]. المنتج 2 اتعدّل في الذاكرة بس ومحدش حفظه.
+          sol: R`اللوج فيه [[UPDATE]] واحد: [[UPDATE "Products" SET "Price" = @p0 WHERE "Id" = @p1;]] للمنتج 1 بس، وعمود [[Price]] بس، والـ endpoint رجّع [[{"tracked":1,"state":3,"saved":1}]] (الـ [[3]] هو [[EntityState.Modified]]: الـ enum بيطلع رقم في JSON افتراضيًا، ولو عايز الاسم رجّع [[state.ToString()]]). المنتج 2 اتعدّل في الذاكرة بس ومحدش حفظه.
 
 الـ PUT بالتحميل: [[SELECT ... WHERE "Id" = @id LIMIT 1]] ثم [[UPDATE "Products" SET "Name" = @p0, "Price" = @p1 WHERE "Id" = @p2]] (لو القيم اتغيرت فعلًا؛ لو بعت نفس القيم مفيش UPDATE خالص). بـ [[ExecuteUpdateAsync(s => s.SetProperty(p => p.Name, dto.Name).SetProperty(p => p.Price, dto.Price))]] query واحدة [[UPDATE "Products" AS p SET "Name" = @p, "Price" = @p0 WHERE p."Id" = @id]]، وبترجع عدد الصفوف، فلو 0 ترجع 404.`
         },
@@ -2549,7 +2549,7 @@ public string Create(string userId, string email, IEnumerable<string> roles)
 
 لو فشل، الـ endpoint المحمية بترجع 401 و [[WWW-Authenticate: Bearer error="invalid_token", error_description="The token expired at '...'"]] أو [["The signature key was not found"]] (دي اللي بتطلع لما التوقيع ميطابقش أي مفتاح عنده، مش رسالة أوضح زي «التوقيع غلط»). من غير توكن خالص: [[WWW-Authenticate: Bearer]] بس.
 
-الـ claims: [[ClaimTypes.Role]] (اسم طويل URI) الـ handler بيكتبه في التوكن كـ [[role]]، وعند القراية بيرجّعه للـ URI، فـ [[RequireRole]] و [[User.IsInRole]] بيشتغلوا. نفس الكلام [[sub]] بيبقى [[ClaimTypes.NameIdentifier]].
+الـ claims: [[ClaimTypes.Role]] اسمه URI طويل، و [[JsonWebTokenHandler]] بيكتبه في التوكن زي ما هو (مش بيختصره لـ [[role]]). عند القراية الـ JwtBearer بيحوّل الأسماء القصيرة المعروفة ([[role]] و [[sub]] و [[email]]) للـ URIs (لأن [[MapInboundClaims]] true افتراضيًا)، فـ [[RequireRole]] و [[User.IsInRole]] بيشتغلوا سواء التوكن فيه [[role]] (من identity provider) أو الـ URI. ونفس الكلام [[sub]] بيبقى [[ClaimTypes.NameIdentifier]].
 
 مع identity provider برّه متحطش مفتاح: [[o.Authority = "https://login.example.com"]] و [[o.Audience = "shop-api"]]، والـ handler بيجيب المفاتيح العامة من [[/.well-known/openid-configuration]] (JWKS) ويحدّثها لوحده.
 
@@ -2568,7 +2568,7 @@ public string Create(string userId, string email, IEnumerable<string> roles)
             R`method في [[TokenService]]: بتعمل التوكن.`,
             "بداية.",
             R`[[sub]] و [[email]] claims.`,
-            R`كل role كـ claim (بيطلع [[role]] في الـ JSON).`,
+            R`كل role كـ claim (بيطلع في الـ JSON باسم الـ URI الطويل، مش [[role]]).`,
             R`[[TimeProvider]] بدل [[DateTime.UtcNow]] عشان تقدر تتحكم فيه في الاختبارات.`,
             R`[[JsonWebTokenHandler]]: الـ handler الحديث (أسرع من [[JwtSecurityTokenHandler]] القديم).`,
             "بداية.",
@@ -2582,7 +2582,7 @@ public string Create(string userId, string email, IEnumerable<string> roles)
             "نهاية.",
             "نهاية."
           ],
-          sol: R`الـ payload بعد الفك: [[{"aud":"shop-api","iss":"shop-dev","exp":1790745678,"nbf":1790742078,"sub":"sara@x.com","email":"sara@x.com","iat":1790742078}]] (ومع admin بيبقى فيه [["role":"admin"]]). أي حد يقدر يقراه، فمتحطش فيه أسرار.
+          sol: R`الـ payload بعد الفك: [[{"aud":"shop-api","iss":"shop-dev","exp":1790745678,"nbf":1790742078,"sub":"sara@x.com","email":"sara@x.com","iat":1790742078}]] (ومع admin بيبقى فيه [["http://schemas.microsoft.com/ws/2008/06/identity/claims/role":"admin"]]، لأن [[ClaimTypes.Role]] بيتكتب زي ما هو). أي حد يقدر يقراه، فمتحطش فيه أسرار.
 
 (١) من غير توكن: 401 و [[WWW-Authenticate: Bearer]]. (٢) توقيع متغير: 401 و [[WWW-Authenticate: Bearer error="invalid_token", error_description="The signature key was not found"]] (الرسالة مش «signature invalid»: الـ handler بيدور على مفتاح يطابق التوقيع ومبيلاقيش). (٣) منتهي: 401 و [[error_description="The token expired at '09/30/2026 03:54:30'"]]. لو التوكن المنتهي لسه شغال، افتكر الـ [[ClockSkew]] الافتراضي ٥ دقايق: خلي [[MinutesValid = -10]] أو [[ClockSkew = TimeSpan.Zero]]. ولو الـ token سليم ولسه 401، بص على ترتيب [[UseAuthentication]] و [[UseAuthorization]] (درس middleware).`
         },

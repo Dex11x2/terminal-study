@@ -53,7 +53,10 @@ cd ..`,
             "جذر الدرايف الحالي.",
             "روح لفولدر على درايف تاني. [[/d]] لازمة، من غيرها بيغيّر الفولدر على D بس وانت فاضل على C.",
             "الفولدر اللي فوق."
-          ]
+          ],
+          sol: R`وانت على [[C:\Users\ali>]] اكتب [[cd D:\projects]]: مش هيطبع error، والـ prompt هيفضل [[C:\Users\ali>]]. اللي حصل إن CMD غيّر «الفولدر الحالي بتاع D» بس وانت لسه على C. لو كتبت [[D:]] دلوقتي هتلاقي نفسك على طول في [[D:\projects>]]. أما [[cd /d D:\projects]] فبيغيّر الدرايف والفولدر مع بعض، والـ prompt يبقى [[D:\projects>]] على طول.
+
+لو جهازك مفيهوش D هتشوف [[The system cannot find the drive specified.]]، جرب أي درايف تاني أو فلاشة. وده عكس PowerShell اللي [[cd D:\...]] فيه بتنقلك على طول.`
         },
         {
           cmd: "dir",
@@ -81,7 +84,10 @@ dir /o-d`,
             "مع المخفي.",
             "كل ملفات .js في كل الفولدرات الفرعية ([[/s]])، أسامي بس من غير تفاصيل ([[/b]]).",
             "مرتب بالتاريخ من الأحدث ([[/o-d]]: الشرطة تعكس)."
-          ]
+          ],
+          sol: R`في فولدر المشروع: [[dir /s /b *.json]]. هيطبع مسارات كاملة، كل واحد في سطر، زي [[C:\lab\app\package.json]] و [[C:\lab\app\tsconfig.json]]، من غير التاريخ والحجم والملخص اللي في الآخر، لأن [[/b]] بيشيل كل ده.
+
+لو فيه node_modules هتلاقي مئات الملفات منه، فلترهم: [[dir /s /b *.json | findstr /v /i /c:"node_modules"]]. ولو طلع [[File Not Found]] يبقى مفيش ملفات json في الفولدر ده واللي تحته، اتأكد بـ [[cd]] إنك في فولدر المشروع.`
         },
         {
           cmd: "tree",
@@ -100,7 +106,10 @@ tree /f lab`,
             when: "شرح هيكل مشروع. التأكد من إن الفولدرات اتعملت صح.",
             mistakes: "tree على فولدر كبير فيه node_modules أو .git بيطبع آلاف السطور. محدودش بـ /f."
           },
-          lines: ["شجرة الفولدرات.", "فولدر lab بالملفات كمان ([[/f]])."]
+          lines: ["شجرة الفولدرات.", "فولدر lab بالملفات كمان ([[/f]])."],
+          sol: R`[[tree /f lab]] بيطبع في الأول سطر [[Folder PATH listing for volume ...]] وبعده رقم الـ volume ومسار lab، وبعدين الشجرة: الملفات تحت كل فولدر بمسافة، والفولدرات الفرعية بخطوط زي [[├───src]] و [[└───public]].
+
+من غير [[/f]] هتشوف الفولدرات بس، وده أكتر غلطة بتخلي الناس تفتكر إن الملفات مش موجودة. ولو الخطوط طلعت رموز غريبة (بيحصل مع بعض صفحات الترميز) استخدم [[tree /f /a lab]] يرسمها بـ [[+---]] و [[\---]] العادية.`
         },
         {
           cmd: "cls",
@@ -114,7 +123,10 @@ tree /f lab`,
             when: "الشاشة مليانة. قبل ما تبدأ مهمة جديدة وعايز تشوف الـ output بوضوح.",
             mistakes: "مفيش. أبسط أمر في CMD."
           },
-          lines: ["نضّف الشاشة (زي clear)."]
+          lines: ["نضّف الشاشة (زي clear)."],
+          sol: R`بعد [[dir]] كذا مرة الشاشة هتبقى مليانة، و [[cls]] بيمسحها كلها ويرجع الـ prompt لوحده في أول سطر فوق، من غير ما يطبع أي حاجة.
+
+[[cls]] مش بيمسح تاريخ الأوامر، سهم فوق لسه بيجيب اللي كتبته. ولو كتبت [[clear]] في CMD هيقولك [[is not recognized as an internal or external command]]، لأن clear مش أمر CMD. و Ctrl+L في CMD مش بتمسح.`
         }
       ]
     },
@@ -140,7 +152,10 @@ mkdir app\public app\logs`,
             when: "إعداد هيكل مشروع. سكربتات setup.",
             mistakes: "نسيان علامات تنصيص مع أسامي فيها مسافات."
           },
-          lines: ["اعمل الفولدرات التلاتة ورا بعض. CMD بيعمل الوسيط لوحده من غير -p.", "فولدرين في أمر واحد."]
+          lines: ["اعمل الفولدرات التلاتة ورا بعض. CMD بيعمل الوسيط لوحده من غير -p.", "فولدرين في أمر واحد."],
+          sol: R`[[mkdir app\src app\public app\logs]] مش بيطبع حاجة لو نجح، وبيعمل [[app]] نفسه في السكة. [[dir app]] هيعرض [[<DIR>]] جنب logs و public و src.
+
+لو شغلته مرة تانية هيطبع [[A subdirectory or file app\src already exists.]] لكل فولدر موجود، وده مش ضرر، مفيش حاجة اتمسحت. ولو كتبت [[mkdir app/src]] بـ slash بدل backslash هيطلع error في CMD، لأن [[/]] بتتقري option.`
         },
         {
           cmd: "type nul / echo >",
@@ -164,7 +179,10 @@ mkdir app\public app\logs`,
             "ملف فاضي: اطبع «لا شيء» وودّيه للملف.",
             "اكتب سطر في ملف جديد. الأقواس حوالين echo عشان ميتكتبش مسافة قبل النهاية.",
             "ضيف سطر في الآخر ([[>>]])."
-          ]
+          ],
+          sol: R`[[(echo PORT=3000)> .env]] وبعدين [[(echo NODE_ENV=development)>> .env]] وبعدين [[type .env]] هيطبع سطرين: [[PORT=3000]] و [[NODE_ENV=development]].
+
+لو شفت سطر واحد بس، يبقى استخدمت [[>]] في المرتين، فالتانية كتبت فوق الأولى. ولو كتبت [[echo PORT=3000 > .env]] من غير أقواس، السطر هيتحفظ [[PORT=3000 ]] بمسافة في الآخر، ومش هتشوفها بعينك في type، بس ممكن تبوظ قيمة زي باسورد. ومفيش error لو .env موجود قبل كده، [[>]] بتكتب فوقه على طول.`
         },
         {
           cmd: "copy / xcopy",
@@ -190,7 +208,10 @@ xcopy src src_backup /E /I`,
             "انسخ ملف باسم جديد.",
             "انسخ كل .txt لفولدر backup.",
             "انسخ فولدر بكل اللي جواه ([[/E]] حتى الفاضي)، واعتبر الهدف فولدر من غير ما تسأل ([[/I]])."
-          ]
+          ],
+          sol: R`[[xcopy app app_copy /E /I]] هيطبع مسار كل ملف بيتنسخ زي [[app\src\server.js]]، وفي الآخر [[3 File(s) copied]] (الرقم حسب ملفاتك). [[dir /s /b app_copy]] يأكدلك إن كل حاجة اتنسخت.
+
+لو نسيت [[/I]] و app_copy مش موجود، xcopy هيسألك [[Does app_copy specify a file name or directory name on the target (F = file, D = directory)?]]، والإجابة D. ولو نسيت [[/E]]، الفولدرات الفاضية (زي public لو فاضي) مش هتتنسخ. ولو استخدمت [[copy app app_copy]] هينسخ الملفات اللي في أول مستوى بس من غير الفولدرات اللي جوه.`
         },
         {
           cmd: "robocopy",
@@ -213,7 +234,10 @@ robocopy src D:\backup\src /MIR /XD node_modules`,
           lines: [
             "انسخ الفولدر بكل اللي جواه (بيكمّل من مكان ما وقف لو الاتصال قطع).",
             "اعمل مرآة: الهدف يبقى نسخة طبق الأصل، حتى المحذوف يتمسح ([[/MIR]])، ومن غير node_modules ([[/XD]] استثني فولدر)."
-          ]
+          ],
+          sol: R`[[robocopy app D:\backup\app /E /XD node_modules]] بيطبع هيدر [[ROBOCOPY :: Robust File Copy for Windows]] فيه Source و Dest و Options، وبعدين كل ملف جديد جنبه [[New File]]، وفي الآخر جدول ملخص فيه صفوف Dirs و Files و Bytes وأعمدة Total و Copied و Skipped و FAILED. لو شغلته تاني من غير تغيير هتلاقي Copied بـ 0 والكل Skipped، وده معناه إنه بينسخ المتغير بس.
+
+[[/XD node_modules]] بتستبعد أي فولدر بالاسم ده في أي مستوى. وخد بالك: robocopy بيرجع exit code 1 لما ينسخ ملفات بنجاح، و 0 لو مفيش حاجة اتغيرت، والفشل الحقيقي من 8 وطالع. فـ [[robocopy ... && echo ok]] هيبان كأنه فشل وهو ناجح. في السكربت افحص [[if %errorlevel% geq 8]].`
         },
         {
           cmd: "move / ren",
@@ -237,7 +261,10 @@ ren *.txt *.md`,
             "انقل كل .log لفولدر logs.",
             "غيّر اسم ملف.",
             "غيّر امتداد كل ملفات .txt لـ .md في أمر واحد (ren بتقبل wildcards)."
-          ]
+          ],
+          sol: R`[[type nul > a.txt]] و [[type nul > b.txt]] وبعدين [[ren *.txt *.md]]. مش هيطبع حاجة، و [[dir]] هيعرض [[a.md]] و [[b.md]] ومفيش txt.
+
+لو فيه ملف [[a.md]] موجود قبل كده هيطلع [[A duplicate file name exists, or the file cannot be found.]] للملف ده بس والباقي يتغير. ولو كتبت [[ren *.txt md]] من غير [[*.]] هيحاول يسمي كل الملفات md بالظبط ويفشل بعد أول واحد. وخد بالك إن ren مش بتنقل: الاسم الجديد اسم بس من غير مسار.`
         },
         {
           cmd: "del / rd",
@@ -264,7 +291,10 @@ rd /s /q app_copy`,
             "اسأل قبل كل ملف ([[/p]] من prompt).",
             "امسح كل .tmp في كل الفولدرات الفرعية ([[/s]]) من غير أسئلة ([[/q]]).",
             "امسح فولدر بكل اللي جواه من غير أسئلة (زي rm -rf)."
-          ]
+          ],
+          sol: R`[[dir]] الأول هيبان فيه [[<DIR>  app_copy]]. [[rd /s /q app_copy]] مش بيطبع حاجة، و [[dir]] بعدها مش هتلاقي app_copy.
+
+من غير [[/q]] هيسألك [[app_copy, Are you sure (Y/N)?]]. ولو قالك [[The process cannot access the file because it is being used by another process.]] يبقى فيه برنامج (VS Code أو سيرفر شغال أو انت نفسك واقف جوه الفولدر بـ cd) ماسك ملف جواه، اقفله أو اطلع بره بـ [[cd ..]] وجرب تاني. و [[del app_copy]] بيمسح الملفات اللي جوه بس بعد سؤال، والفولدر نفسه بيفضل.`
         },
         {
           cmd: "attrib",
@@ -283,7 +313,10 @@ attrib -h secret.txt`,
             when: "عرض أو تغيير attributes. لما del بيرفض.",
             mistakes: "+h مش أمان حقيقي. الملفات المخفية ظاهرة بـ [[dir /a]]."
           },
-          lines: ["اخفي الملف.", "اظهره تاني."]
+          lines: ["اخفي الملف.", "اظهره تاني."],
+          sol: R`[[attrib +h secret.txt]] مش بيطبع حاجة. [[dir]] مش هيعرض secret.txt خالص، و [[dir /a]] هيعرضه. و [[attrib secret.txt]] بيوريك حروف الـ attributes قبل المسار، وهتلاقي فيها [[H]].
+
+[[dir /ah]] بيعرض المخفي بس. ده «إخفاء» شكلي: أي حد يكتب dir /a أو يفعّل Show hidden files في Explorer هيشوفه، فمش حماية. ولو [[attrib -h]] رفض وقال Not resetting system file، يبقى الملف عليه [[+s]] كمان، شيلهم مع بعض: [[attrib -h -s secret.txt]].`
         }
       ]
     },
@@ -311,7 +344,10 @@ type app.log | more`,
             when: "قراية ملف نصي صغير أو كبير. التأكد من محتوى ملف إعداد.",
             mistakes: "[[type]] على ملف binary بيلخبط الشاشة وممكن يعمل صوت beep. قفله بـ Ctrl+C."
           },
-          lines: ["اطبع الملف كله (زي cat).", "صفحة صفحة، Space للي بعدها و q للخروج (زي less)."]
+          lines: ["اطبع الملف كله (زي cat).", "صفحة صفحة، Space للي بعدها و q للخروج (زي less)."],
+          sol: R`[[type package-lock.json | more]] بيعرض صفحة واحدة وفي آخر الشاشة [[-- More (12%) --]] (النسبة بتزيد وانت ماشي). Space يجيب الصفحة اللي بعدها، Enter سطر واحد، و q يخرجك على طول للـ prompt من غير ما يكمل الملف.
+
+لو الملف كله نزل مرة واحدة من غير توقف، يبقى نسيت [[| more]] أو الملف أصغر من الشاشة. و [[more]] في CMD مش بيرجع لورا، لو محتاج تتحرك فوق وتحت افتح الملف في محرر أو استخدم [[less]] من Git Bash.`
         },
         {
           cmd: "findstr",
@@ -337,7 +373,10 @@ find /c "ERROR" app.log`,
             "دوّر على PORT في .env (زي grep).",
             "دوّر على TODO في كل ملفات .js في كل الفولدرات ([[/s]])، من غير فرق بين الحروف ([[/i]])، واطبع رقم السطر ([[/n]]).",
             "عدّ السطور اللي فيها ERROR ([[/c]] count)."
-          ]
+          ],
+          sol: R`[[findstr /s /i /n "TODO" *.js]] من فولدر المشروع بيطبع كل سطر فيه الكلمة بالشكل [[src\app.js:12:// TODO fix login]]: الملف، رقم السطر، والسطر نفسه. ولو عايز كذا نوع: [[findstr /s /i /n "TODO" *.js *.ts]].
+
+أشهر فخ: [[findstr "hello world"]] بيدوّر على hello أو world، مش الجملة. للجملة استخدم [[/c:"hello world"]]. و [[/s]] بيدخل node_modules فهتلاقي نتايج كتير منه وبطء، فلتر بـ [[| findstr /v /i /c:"node_modules"]]. ولو مفيش ناتج خالص مش هيطبع أي رسالة.`
         },
         {
           cmd: "where",
@@ -356,7 +395,10 @@ where git`,
             when: "تحقق إن برنامج متسطب ومكانه. النسخة اللي بتشتغل.",
             mistakes: "[[where]] في PowerShell اختصار لـ Where-Object فمش هيطبع حاجة. استخدم [[where.exe]] أو [[Get-Command]]."
           },
-          lines: ["node جاي منين (زي which).", "وgit."]
+          lines: ["node جاي منين (زي which).", "وgit."],
+          sol: R`[[where python]] بيطبع كل مسار في سطر، زي [[C:\Users\ali\AppData\Local\Programs\Python\Python313\python.exe]]، وممكن تحته [[C:\Users\ali\AppData\Local\Microsoft\WindowsApps\python.exe]]. التاني ده مش Python حقيقي، ده اختصار بيفتح Microsoft Store، ولو هو الأول في الترتيب [[python]] هيفتحلك الـ Store بدل ما يشتغل.
+
+الحل إنك تقفل الاختصار من Settings، App execution aliases، أو تنزل مسار Python الحقيقي فوقه في الـ PATH. ولو طلع [[INFO: Could not find files for the given pattern(s).]] يبقى python مش في الـ PATH خالص، جرب [[where py]] (الـ launcher الرسمي).`
         }
       ]
     },
@@ -391,7 +433,10 @@ ipconfig | clip`,
             "احفظ ناتج الـ build وأخطاءه في ملف.",
             "ارمي رسالة الـ error ([[nul]] هو /dev/null بتاع ويندوز).",
             "انسخ الناتج للكليب بورد (clip زي pbcopy)."
-          ]
+          ],
+          sol: R`[[ipconfig | clip]] مش بيطبع حاجة على الشاشة، ده الطبيعي لأن الناتج راح للكليب بورد. افتح notepad واعمل Ctrl+V، هتلاقي ناتج ipconfig كامل بـ [[Windows IP Configuration]] وكل الكروت.
+
+لو لزقت ولقيت حاجة قديمة، يبقى الأمر مشتغلش أو كتبت [[ipconfig > clip]]، ودي بتعمل ملف اسمه clip في الفولدر بدل ما تبعت للكليب بورد. امسحه بـ [[del clip]].`
         },
         {
           cmd: "&& و || و &",
@@ -417,7 +462,10 @@ cd lab & dir`,
             "شغّل الثاني بس لو الأول نجح.",
             "شغّل الثاني بس لو الأول فشل.",
             "شغّل الاتنين في كل الأحوال (زي [[;]] في bash)."
-          ]
+          ],
+          sol: R`أول مرة [[mkdir app && echo done]] بيطبع [[done]]. تاني مرة بيطبع [[A subdirectory or file app already exists.]] ومش بيطبع done، لأن mkdir فشل (errorlevel 1) و [[&&]] بتنفذ اللي بعدها بس لو اللي قبلها نجح.
+
+لو استخدمت [[&]] بدل [[&&]]، done هتطلع في المرتين حتى مع الـ error. ولو كتبت [[;]] زي bash، CMD هيعتبرها جزء من الأمر مش فاصل.`
         }
       ]
     },
@@ -451,7 +499,10 @@ taskkill /PID 1234 /F /T`,
             "عمليات node بس.",
             "اقفل كل node بالاسم، غصب ([[/F]]). الامتداد .exe لازم.",
             "اقفل عملية برقمها، هي واللي عملتهم ([[/T]] شجرة)."
-          ]
+          ],
+          sol: R`[[start notepad]] وبعدين [[tasklist | findstr /i notepad]] يوريك السطر ورقم الـ PID. [[taskkill /IM notepad.exe]] يطبع [[SUCCESS: Sent termination signal to the process "notepad.exe" with PID 1234.]] والنافذة تتقفل (ولو فيه كلام مش محفوظ ممكن notepad يسألك). مع [[/F]] الرسالة [[SUCCESS: The process "notepad.exe" with PID 1234 has been terminated.]] ومن غير سؤال.
+
+لو قالك [[ERROR: The process "notepad" not found.]] يبقى كتبت الاسم من غير [[.exe]]، أو notepad مقفول أصلًا. و [[/IM]] بيقفل كل النسخ اللي بنفس الاسم.`
         },
         {
           cmd: "netstat -ano",
@@ -475,7 +526,10 @@ taskkill /PID 1234 /F`,
           lines: [
             "مين ماسك بورت 3000. آخر عمود هو رقم العملية. النقطتين قبل الرقم عشان ميجيبش 13000.",
             "اقفلها بالرقم اللي طلع."
-          ]
+          ],
+          sol: R`شغّل [[npx http-server -p 3000]]، ومن نافذة تانية [[netstat -ano | findstr :3000]]. هتلاقي سطر زي [[TCP    0.0.0.0:3000    0.0.0.0:0    LISTENING    12345]] (وممكن سطر [[[::]:3000]] لـ IPv6)، آخر رقم هو الـ PID. [[taskkill /PID 12345 /F]] يطبع [[SUCCESS: The process with PID 12345 has been terminated.]] والسيرفر في النافذة الأولى يقف.
+
+خد بالك: [[:3000]] بتطابق كمان [[:30001]] واتصالات قديمة حالتها TIME_WAIT ورقمها 0، فخد رقم سطر [[LISTENING]] بس، أو ضيف [[| findstr LISTENING]]. ولو [[taskkill]] قال Access is denied، العملية شغالة كأدمن، افتح CMD كأدمن.`
         },
         {
           cmd: "start",
@@ -501,7 +555,10 @@ start "" "C:\Program Files\Git\git-bash.exe"`,
             "افتح برنامج.",
             "افتح لينك في المتصفح.",
             R`افتح برنامج مساره فيه مسافات. الـ [[""]] الفاضية لازمة: أول حاجة بين علامات تنصيص start بيعتبرها عنوان النافذة.`
-          ]
+          ],
+          sol: R`[[start .]] بيفتح نافذة File Explorer على الفولدر اللي انت فيه، ومش بيطبع حاجة في CMD.
+
+لو كتبت [[start "C:\my folder"]] بين علامات تنصيص، هتفتح نافذة CMD جديدة عنوانها «C:\my folder» بدل الفولدر، لأن أول حاجة بين علامات تنصيص بتتقري عنوان. الحل [[start "" "C:\my folder"]]، أو [[explorer .]].`
         }
       ]
     },
@@ -530,7 +587,10 @@ ipconfig /flushdns`,
             when: "إيجاد عنوان الجهاز على الشبكة. بعد تغيير DNS. مشاكل الشبكة.",
             mistakes: "الخلط بين IPv4 الحقيقي والـ 169.254.x.x: ده Automatic Private IP Address ومعناه مش قادر يتصل بـ DHCP (راوترك)."
           },
-          lines: ["عناوين الشبكة (زي ip a).", "كل التفاصيل: MAC والـ DNS والـ DHCP.", "امسح كاش الـ DNS."]
+          lines: ["عناوين الشبكة (زي ip a).", "كل التفاصيل: MAC والـ DNS والـ DHCP.", "امسح كاش الـ DNS."],
+          sol: R`[[ipconfig]] بيطبع قسم لكل كارت، دوّر على الكارت اللي انت متوصل بيه ([[Wireless LAN adapter Wi-Fi]] أو [[Ethernet adapter Ethernet]]). تحته [[IPv4 Address. . . : 192.168.1.15]] ده الـ IP المحلي، و [[Default Gateway . . . : 192.168.1.1]] ده الراوتر.
+
+اتجاهل كروت زي [[vEthernet (WSL)]] أو [[Media disconnected]]، دي مش اتصالك الحقيقي. ولو الـ IPv4 بيبدأ بـ [[169.254]] يبقى الجهاز مخدش IP من الراوتر (مشكلة DHCP أو الكابل). والـ IP ده مش اللي الناس بتشوفه على النت، ده جوه شبكة البيت بس.`
         },
         {
           cmd: "ping / tracert / nslookup",
@@ -556,7 +616,10 @@ nslookup example.com`,
             "ping ٤ مرات ([[-n]] هنا عدد المرات، مش زي لينكس).",
             "الطريق لحد جوجل (زي traceroute).",
             "الدومين بيشاور على أنهي IP (زي dig)."
-          ]
+          ],
+          sol: R`[[nslookup yourdomain.com]] بيطبع الأول [[Server:]] و [[Address:]] بتوع الـ DNS اللي سألته (غالبًا الراوتر)، وبعدين [[Non-authoritative answer:]] وتحته [[Name:]] و [[Address:]]. الـ Address الأخيرة لازم تبقى IP السيرفر بتاعك.
+
+لو IP تاني: إما الـ A record غلط، أو غيّرته قريب والكاش لسه قديم (استنى أو [[ipconfig /flushdns]])، أو الدومين ورا Cloudflare بالسحابة البرتقالي، فهتشوف IPs بتوع Cloudflare وده طبيعي. ولو [[Non-existent domain]] يبقى الـ record مش موجود أصلًا.`
         },
         {
           cmd: "systeminfo / whoami",
@@ -576,7 +639,10 @@ hostname`,
             when: "استلام جهاز جديد أو VM. التأكد إنك Admin. إرسال معلومات support.",
             mistakes: "[[systeminfo]] بطيء. لو محتاج معلومات محددة، استخدم [[ver]]، أو من PowerShell [[Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version]] (wmic اتشال من ويندوز 11 الجديد)."
           },
-          lines: ["كل معلومات الجهاز والنظام (بياخد ثواني).", "انت مين.", "اسم الجهاز."]
+          lines: ["كل معلومات الجهاز والنظام (بياخد ثواني).", "انت مين.", "اسم الجهاز."],
+          sol: R`الأسرع: [[systeminfo | findstr /B /C:"OS Name" /C:"OS Version" /C:"Total Physical Memory"]]. هيطلع زي [[OS Name: Microsoft Windows 11 Pro]] و [[OS Version: 10.0.26100 N/A Build 26100]] و [[Total Physical Memory: 16,097 MB]].
+
+متتلخبطش إن ويندوز 11 مكتوب نسخته 10.0: رقم الـ Build من 22000 وطالع يعني ويندوز 11. و systeminfo بياخد ثواني قبل ما يطبع، ده طبيعي. ولو ويندوزك عربي الـ labels هتبقى بالعربي، فـ findstr بالإنجليزي مش هيلاقي حاجة، شغّله من غير فلتر ودوّر بعينك.`
         }
       ]
     },
@@ -603,7 +669,10 @@ ipconfig /displaydns`,
             when: "الاتصال بايظ وعنوانك 169.254. بعد تغيير إعدادات الشبكة.",
             mistakes: "Release/Renew مش هيحل مشاكل wifi password أو MAC filtering. هو بس بيجدد العنوان."
           },
-          lines: ["سيب عنوان الـ IP الحالي.", "اطلب عنوان جديد من الراوتر.", "اعرض كاش الـ DNS."]
+          lines: ["سيب عنوان الـ IP الحالي.", "اطلب عنوان جديد من الراوتر.", "اعرض كاش الـ DNS."],
+          sol: R`[[ipconfig /displaydns]] هيطبع لكل دومين زرته قريب بلوك فيه [[Record Name]] و [[Record Type]] و [[Time To Live]] و [[A (Host) Record . . . : IP]]. بعد [[ipconfig /flushdns]] هيطبع [[Successfully flushed the DNS Resolver Cache.]]، و [[/displaydns]] تاني هيطلع شبه فاضي.
+
+لو لقيت كام entry لسه موجودين بعد الـ flush، غالبًا دول من ملف hosts (بيتحمّلوا دايمًا)، أو برنامج في الخلفية سأل تاني في الثواني اللي فاتت. [[/release]] و [[/renew]] مش جزء من التجربة دي، دول بيقطعوا النت ثواني.`
         },
         {
           cmd: "nslookup",
@@ -624,7 +693,10 @@ nslookup -type=txt example.com`,
             when: "DNS troubleshooting. التأكد من MX أو TXT records.",
             mistakes: "nslookup ممكن يطلعلك «Non-authoritative answer» ومش مشكلة، ده يعني الجواب من cache مش من السيرفر الأصلي."
           },
-          lines: ["الـ IP بتاع الدومين.", "اسأل Cloudflare بدل الـ DNS بتاعك.", "سيرفرات الإيميل.", "سجلات TXT."]
+          lines: ["الـ IP بتاع الدومين.", "اسأل Cloudflare بدل الـ DNS بتاعك.", "سيرفرات الإيميل.", "سجلات TXT."],
+          sol: R`[[nslookup -type=mx yourdomain.com]] بيطبع سطر لكل سيرفر زي [[yourdomain.com  MX preference = 1, mail exchanger = smtp.google.com]] لو بتستخدم Google Workspace، أو سيرفرات [[...mail.protection.outlook.com]] لو Microsoft 365. الرقم الأصغر في preference أولويته أعلى.
+
+لو مطلعش أي [[mail exchanger]] ولقيت بس بيانات SOA (primary name server)، يبقى الدومين ملوش MX، والإيميل عليه مش هيوصل. ولو عايز تتأكد إن الرد مش من كاش قديم اسأل سيرفر عام: [[nslookup -type=mx yourdomain.com 1.1.1.1]].`
         },
         {
           cmd: "arp / route",
@@ -646,7 +718,10 @@ route print`,
           lines: [
             "الأجهزة اللي جهازك شافها على الشبكة المحلية، بالـ IP والـ MAC.",
             "جدول الراوتينج، وفيه الـ gateway الافتراضي."
-          ]
+          ],
+          sol: R`في [[route print]] روح لقسم [[IPv4 Route Table]] تحت [[Active Routes:]]، ودوّر على السطر اللي Network Destination و Netmask فيه [[0.0.0.0]] و [[0.0.0.0]]. عمود [[Gateway]] في السطر ده هو IP الراوتر، زي [[192.168.1.1]]، وعمود Interface هو الـ IP بتاعك.
+
+لو فيه أكتر من سطر 0.0.0.0 (مثلًا واي فاي وكابل أو VPN)، اللي Metric بتاعه أصغر هو اللي بيتستخدم. ولو عايز تختصر [[route print -4]] يعرض IPv4 بس. والـ IP ده نفسه اللي هتلاقيه في [[Default Gateway]] بتاع ipconfig.`
         },
         {
           cmd: "pathping",
@@ -664,7 +739,10 @@ route print`,
             when: "الاتصال بيقطع ومش عارف فين. مشاكل VoIP أو جودة الاتصال.",
             mistakes: "pathping بياخد وقت، لو محتاج تشخيص سريع استخدم tracert."
           },
-          lines: ["الطريق + نسبة الضياع عند كل راوتر (بياخد دقيقتين)."]
+          lines: ["الطريق + نسبة الضياع عند كل راوتر (بياخد دقيقتين)."],
+          sol: R`[[pathping google.com]] بيطبع الأول قايمة الـ hops زي tracert، وبعدين [[Computing statistics for 250 seconds...]] (الوقت حسب عدد الـ hops)، وفي الآخر جدول فيه Hop و RTT و [[Source to Here]] و [[This Node/Link]] و Address. العمود [[This Node/Link Lost/Sent = Pct]] هو نسبة الخسارة عند الراوتر ده بالذات.
+
+لو لقيت راوتر في النص عليه [[100%]] أو نسبة عالية بس اللي بعده [[0%]]، ده مش مشكلة: الراوتر ده بيتجاهل الـ ping بتاع الاختبار بس وبيعدّي الترافيك عادي. الخسارة الحقيقية هي اللي بتبدأ عند hop وتفضل في كل اللي بعده. وأول hop (الراوتر بتاعك) لو عليه خسارة، المشكلة في الواي فاي أو الكابل عندك.`
         },
         {
           cmd: "netsh",
@@ -690,7 +768,10 @@ netsh wlan show profile name="MyWiFi" key=clear`,
             "إعدادات IP لكل كارت.",
             "شبكات الواي فاي المحفوظة.",
             "تفاصيل شبكة معينة، وباسوردها تحت Key Content ([[key=clear]])."
-          ]
+          ],
+          sol: R`[[netsh wlan show profiles]] الأول عشان تعرف الاسم بالظبط (بيظهر بعد [[All User Profile :]]). بعدين [[netsh wlan show profile name="اسم الشبكة" key=clear]]، ودوّر تحت [[Security settings]] على سطر [[Key Content : ...]]، ده الباسورد.
+
+لو سطر Key Content مش ظاهر، افتح CMD كأدمن. ولو [[Profile "..." is not found on the system.]] يبقى الاسم مش مطابق (مسافة أو حرف كابيتال)، انسخه من ناتج show profiles. وده بيشتغل بس على شبكة الجهاز ده اتوصل بيها قبل كده.`
         },
         {
           cmd: "hosts",
@@ -711,7 +792,10 @@ notepad C:\Windows\System32\drivers\etc\hosts`,
             when: "تجرّب موقع على سيرفر جديد. دومين محلي للتطوير.",
             mistakes: "تعدّل من غير صلاحيات Admin فيرفض الحفظ (Access denied). افتحه كـ Admin دايمًا واعمل flush بعده."
           },
-          lines: ["اعرض ملف hosts.", "افتحه في Notepad (لازم CMD يكون مفتوح كمدير عشان تقدر تحفظ)."]
+          lines: ["اعرض ملف hosts.", "افتحه في Notepad (لازم CMD يكون مفتوح كمدير عشان تقدر تحفظ)."],
+          sol: R`[[type C:\Windows\System32\drivers\etc\hosts]] على ويندوز جديد هيطبع سطور كلها بتبدأ بـ [[#]]: حقوق Microsoft، وشرح للصيغة، وسطرين معلقين [[# 127.0.0.1 localhost]] و [[# ::1 localhost]]. يعني الملف فعليًا مفيهوش حاجة شغالة، والـ [[#]] معناها تعليق.
+
+لو عندك Docker Desktop هتلاقي قسم [[# Added by Docker Desktop]] فيه [[host.docker.internal]] و [[kubernetes.docker.internal]]، وده طبيعي. أما لو لقيت سطور بدومينات معروفة (بنوك أو جوجل) شاورة على IP غريب وانت محطتهاش، ده ممكن يكون برنامج خبيث، راجعه.`
         }
       ]
     },
@@ -748,7 +832,10 @@ setx API_URL "http://localhost:3000"`,
             "اقراه: النسبة المئوية من الطرفين.",
             "الـ PATH.",
             "متغير دائم لليوزر (بيظهر في النوافذ الجديدة بس)."
-          ]
+          ],
+          sol: R`[[set PORT=3000]] وبعدين [[echo %PORT%]] بيطبع [[3000]]. افتح نافذة CMD جديدة واكتب [[echo %PORT%]]: هيطبع [[%PORT%]] زي ما هي، لأن CMD لما المتغير مش موجود بيسيب الكلام زي ما هو بدل ما يطبع فاضي.
+
+لو عايزه يفضل استخدم [[setx PORT 3000]]، هيقولك [[SUCCESS: Specified value was saved.]]، بس في النافذة الحالية [[echo %PORT%]] مش هتتأثر، النوافذ الجديدة بس. وخد بالك من [[set PORT = 3000]] بمسافات، ده بيعمل متغير اسمه [["PORT "]] بمسافة وقيمته [[" 3000"]].`
         },
         {
           cmd: "doskey",
@@ -767,7 +854,10 @@ doskey gs=git status`,
             when: "اختصارات للأوامر الطويلة في CMD.",
             mistakes: "doskey macros بتضيع لما تقفل CMD. للحل الدائم في الـ registry."
           },
-          lines: ["اختصار: [[ll]] تبقى dir /a، و [[$*]] بيمرر أي arguments.", "اختصار لـ git status."]
+          lines: ["اختصار: [[ll]] تبقى dir /a، و [[$*]] بيمرر أي arguments.", "اختصار لـ git status."],
+          sol: R`[[doskey ll=dir /a $*]] مش بيطبع حاجة. [[ll]] بعدها بيطبع dir بالملفات المخفية، و [[ll src]] بيعرض src لأن [[$*]] بتاخد أي حاجة بعد ll.
+
+الـ alias بيروح لما تقفل النافذة، ومش بيشتغل في PowerShell ولا جوه ملفات bat. لو [[ll]] قالك is not recognized، يبقى انت في نافذة جديدة أو في PowerShell. و [[doskey /macros]] بيعرض كل الـ aliases اللي عملتها.`
         }
       ]
     },
@@ -807,7 +897,10 @@ echo Script folder: %~dp0`,
             "حسبة رقمية ([[/a]]).",
             "اطبع المتغيرين.",
             "مسار الفولدر اللي السكربت فيه. [[%~dp0]]: drive وpath للسكربت نفسه."
-          ]
+          ],
+          sol: R`احفظه [[test.bat]]. [[test.bat myapp]] يطبع [[Name: myapp, count: 10]] و [[Script folder: C:\Users\ali\lab\]] (بـ backslash في الآخر). من غير argument هيوقف ويسألك [[Project name:]] وياخد اللي تكتبه. شغّله من فولدر تاني بالمسار الكامل وهتلاقي Script folder لسه فولدر السكربت، وده الغرض من [[%~dp0]].
+
+لو دوست Enter من غير ما تكتب اسم، [[NAME]] هيفضل فاضي و الناتج [[Name: , count: 10]]. ولو كتبت [[set /a COUNT = 5*2]] بمسافات بتشتغل عادي لأن [[/a]] بيتجاهلها، بس [[set NAME = %1]] لأ. (ملاحظة: مقدرتش أشغّل CMD هنا، السلوك ده من توثيق Microsoft لـ set و call.)`
         },
         {
           cmd: "if و errorlevel",
@@ -857,7 +950,10 @@ Labels في batch: [[:LABEL]] سطر بيبدأ بـ :، و[[goto LABEL]] بين
             "اخرج من السكربت برقم فشل.",
             "قفلة.",
             "اطبع."
-          ]
+          ],
+          sol: R`في فولدر من غير package.json هيطبع [[Not a Node project]]، وبعدين npm يطلع [[npm error code ENOENT]] و [[Could not read package.json]]، وبعدين [[Build failed]]، والسكربت يخرج بـ 1 ([[echo %errorlevel%]] بعدها يطبع 1).
+
+جرب تشيل [[call]]: هتلاقي كلام npm ظهر وبعدها السكربت خلص على طول من غير Build failed ولا Build OK، لأن npm نفسه ملف [[npm.cmd]]، وتشغيل bat من bat من غير call بيسلّمه التحكم ومش بيرجع. ولو استخدمت [[exit 1]] من غير [[/b]] هتتقفل نافذة CMD كلها.`
         },
         {
           cmd: "for و delayed expansion",
@@ -896,7 +992,10 @@ endlocal`,
             "قفلة.",
             "الإجمالي.",
             "رجّع الإعدادات."
-          ]
+          ],
+          sol: R`في فولدر فيه [[a.log]] و [[b.log]] و [[c.log]]: الأصلي بيطبع [[1: a.log]] و [[2: b.log]] و [[3: c.log]] و [[Total: 3]]. بعد التغيير لـ [[%COUNT%]] جوه اللوب هيطبع [[0: a.log]] و [[0: b.log]] و [[0: c.log]]، بس [[Total: 3]] لسه صح.
+
+ده لأن CMD بيفك [[%COUNT%]] مرة واحدة لما يقرا البلوك كله (والقيمة ساعتها 0)، أما [[!COUNT!]] بتتفك كل لفة. العدّ نفسه شغال في الحالتين، العرض بس اللي غلط. ولو مفيش ملفات log خالص هيطبع [[Total: 0]] بس. ولو كتبت [[!COUNT!]] من غير [[setlocal enabledelayedexpansion]] هتطبع [[!COUNT!]] حرفيًا.`
         },
         {
           cmd: "build.bat",
@@ -946,7 +1045,10 @@ exit /b 1`,
             "label: هنا بيبدأ كود الفشل.",
             "اطبع.",
             "اخرج بفشل."
-          ]
+          ],
+          sol: R`في مشروع فيه script اسمه build: [[build.bat]] هيعمل فولدر dist لو مش موجود، ويشغّل الـ build، وفي الآخر [[Build done in dist]]. لو الـ build فشل (أو مفيش package.json) هتشوف error npm وبعده [[Build failed!]]، و [[echo %errorlevel%]] يطبع 1.
+
+خد بالك إن [[%1]] (TARGET) هنا بيعمل الفولدر ويطبع اسمه بس، مش بيغيّر مكان ناتج npm؛ الـ build بيطلع في المكان المظبوط في الـ config (vite مثلًا dist). ولو شلت [[call]] قبل npm، السطر [[|| goto :error]] مش هيوصله الدور. وفولدر dist بيتعمل حتى لو الـ build فشل، لأن mkdir قبله.`
         },
         {
           cmd: "chcp 65001",
@@ -975,7 +1077,10 @@ echo تم.`,
             "حوّل النافذة لـ UTF-8، واخفي رسالة التأكيد.",
             "هيطلع عربي صح.",
             "وده كمان."
-          ]
+          ],
+          sol: R`من غير [[chcp]]: الـ echo العربي هيطلع رموز غريبة زي [[╪¼╪º╪▒┘è]] أو حروف عربي ملخبطة، لأن CMD قرا بايتات UTF-8 بصفحة ترميز قديمة. بعد ما تضيف [[chcp 65001 >nul]]: الجمل هتظهر عربي صح (في Windows Terminal، الكونسول القديم ممكن يعرض الحروف مفصولة أو مقلوبة).
+
+ولو حفظته UTF-8 with BOM، أول سطر هيبوظ: هتشوف حاجة زي [['ï»¿@echo' is not recognized as an internal or external command]]، لأن 3 بايتات الـ BOM اتلزقوا في أول [[@echo]] قبل ما chcp يشتغل، وبما إن [[echo off]] مشتغلش هتلاقي كل أمر بيتطبع قبل تنفيذه. رجّعه UTF-8 عادي من شريط VS Code تحت.`
         },
         {
           cmd: "git-backup.bat",
@@ -1041,7 +1146,10 @@ exit /b 1`,
             "اطبع رسالة مفهومة.",
             "استنى لحد ما يدوس زرار، عشان يلحق يقرا.",
             "اخرج برقم فشل."
-          ]
+          ],
+          sol: R`من غير تغييرات: git pull هيقول حاجة زي [[Already up to date.]]، وبعدين [[مفيش تغييرات جديدة.]] والنافذة تتقفل بعد 4 ثواني. بعد ما تعدّل ملف: هتشوف سطر commit زي [[[main 1a2b3c4] backup: Wed 09/30/2026 14:05:12.34]] (شكل التاريخ حسب إعدادات ويندوز)، وبعدين push بـ [[main -> main]]، و [[تم رفع النسخة الاحتياطية.]].
+
+والنت مقفول: git pull هيفشل برسالة زي [[Could not resolve host: github.com]]، و [[|| goto :fail]] هتنط على طول لـ [[حصل خطأ...]] و [[Press any key to continue . . .]]، ومفيش commit حصل. لو دبل كليك فتح النافذة واتقفلت فورًا من غير ما تشوف حاجة، شغّله من CMD مفتوح عشان تقرا الـ error. ولو git طلب باسورد، يبقى الريبو محتاج تسجيل دخول (Git Credential Manager) قبل ما تستخدمه بدبل كليك.`
         }
       ]
     }

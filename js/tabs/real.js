@@ -1003,7 +1003,7 @@ else
   docker compose build && docker compose up -d --wait
   exit 1
 fi`,
-          try: "على مشروع تجربة: اعمل commit بيخلّي الـ healthcheck يفشل (مثلًا غيّر مسار /health) وادفعه، وشغّل [[./update.sh >> update.log 2>&1]]. لازم تلاقي في اللوج إنه رجع للـ commit القديم والموقع لسه شغال.",
+          try: "على مشروع تجربة: اعمل commit بيخلّي الـ healthcheck يفشل (مثلًا غيّر مسار /health) وادفعه، وشغّل [[./update.sh >> ~/update.log 2>&1]] (اللوج برّه فولدر المشروع، لأن ملف جديد جوه الريبو بيخلّي [[git status --porcelain]] يوقف السكربت). لازم تلاقي في اللوج إنه رجع للـ commit القديم والموقع لسه شغال.",
           flag: "script",
           deep: {
             why: "أسوأ لحظة في النشر: الجديد مش شغال والقديم اتمسح. السكربت ده بيضمن إن فيه دايمًا نسخة شغالة: القديم فاضل شغال طول البناء، ولو الجديد فشل بيرجع لوحده.",
@@ -2915,7 +2915,7 @@ try {
       "SELECT 1 FROM users WHERE phone=$1 AND id<>$2", [next, u.id]);
     if (clash.rowCount) { conflicts++; continue; }
     console.log(" ", u.phone, "->", next);
-    if (APPLY) await c.query("UPDATE users SET phone=$1 WHERE id=$2", [next, u.id]);
+    await c.query("UPDATE users SET phone=$1 WHERE id=$2", [next, u.id]);
     changed++;
   }
   await c.query(APPLY ? "COMMIT" : "ROLLBACK");
@@ -2969,7 +2969,7 @@ try {
             "...بـ parameters مش string.",
             "تعارض؟ متخمّنش، اتخطاه وعدّه.",
             "اطبع التغيير.",
-            "اكتب بس لو --apply.",
+            "اكتب جوه الـ transaction حتى في المعاينة، عشان رقمين بيتحولوا لنفس القيمة يبانوا تعارض من الـ dry-run. ومن غير --apply الـ ROLLBACK بيلغي كل ده.",
             "عدّه.",
             "قفلة اللوب.",
             "apply: احفظ. dry-run: ارجع في كل حاجة.",
