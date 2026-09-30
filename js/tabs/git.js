@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("git", {
@@ -59,7 +63,17 @@ git config --list`,
             "لما Git يحتاج يفتح محرر، يفتح VS Code ويستنى تقفله.",
             "لو الفرعين اتفرّعوا، pull يعمل merge بدل ما يقف بـ «divergent branches».",
             "اعرض كل الإعدادات."
-          ]
+          ],
+          sol: R`[[git config --list]] المفروض يطلّع سطورك انت وسط غيرها، بالشكل ده بالظبط: [[user.name=Your Name]] و [[user.email=you@example.com]] و [[init.defaultbranch=main]] و [[pull.rebase=false]] و [[core.editor=code --wait]]. لاحظ إن [[defaultBranch]] بيظهر [[defaultbranch]] بحروف صغيرة، وده طبيعي لأن أسماء المفاتيح مش حساسة لحالة الحروف.
+
+ممكن تلاقي سطور زيادة من إعدادات الجهاز (زي [[credential.helper]])، وده عادي. ولو عايز تشوف كل سطر جاي منين: [[git config --list --show-origin]].
+
+الغلط الشائع: تنسى [[--global]] وانت بره أي repo، فيطلعلك [[fatal: not in a git directory]]. أو الاسم يظهر مرتين بقيمتين مختلفتين: يبقى فيه قيمة في المشروع وقيمة global، والأقرب (بتاعة المشروع) هي اللي بتكسب.`,
+          solCode: R`git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+git config --global init.defaultBranch main
+git config --global pull.rebase false
+git config --list --show-origin`
         },
         {
           cmd: "git init / clone",
@@ -88,7 +102,16 @@ git clone git@github.com:USER/REPO.git`,
             "حوّل الفولدر لمشروع Git.",
             "نزّل مشروع موجود من GitHub بكل تاريخه (بـ HTTPS).",
             "نفسه بس بـ SSH، وده من غير باسورد لو عامل مفتاح."
-          ]
+          ],
+          sol: R`[[git init]] بيطبع [[Initialized empty Git repository in .../myapp/.git/]]. و [[ls -a]] بيوري فولدر [[.git]]، و [[git status]] بيقول [[On branch main]] و [[No commits yet]].
+
+لو طلعلك [[On branch master]] يبقى [[init.defaultBranch]] مش متظبط (ارجع لدرس git config)، أو غيّر الفرع دلوقتي بـ [[git branch -m main]].
+
+الغلط الشائع: تعمل init جوه فولدر هو أصلًا جوه repo تاني (أو في الـ home كله)، فكل ملفاتك تبان untracked. [[git rev-parse --show-toplevel]] بيقولك الـ repo اللي انت فيه جذره فين، ولو مش الفولدر اللي انت قاصده امسح الـ [[.git]] الغلط.`,
+          solCode: R`mkdir -p ~/lab/myapp && cd ~/lab/myapp
+git init
+ls -a
+git status`
         },
         {
           cmd: "git status",
@@ -116,7 +139,12 @@ git status -s`,
           lines: [
             "إيه اللي اتغير من آخر commit؟ وإيه اللي متجهز؟",
             "نفسه بشكل مختصر ([[-s]] short)، حرفين قبل كل ملف."
-          ]
+          ],
+          sol: R`الملف الجديد بيظهر تحت [[Untracked files]]، والقديم اللي عدّلته تحت [[Changes not staged for commit]] جنبه [[modified:]]. وفي [[git status -s]] الشكل:
+
+[[ M old.txt]] (الـ M في العمود التاني: اتعدّل ولسه مش staged) و [[?? new.txt]] (جديد و Git مش متابعه).
+
+بعد [[git add old.txt]] الـ M بتنقل للعمود الأول: [[M  old.txt]]، ومعناها staged. لو ملف ظهر [[MM]] يبقى عملت add وبعدين عدّلت تاني، فجزء متجهز وجزء لأ. ولو الملف الجديد مش ظاهر خالص، غالبًا متسمّي في [[.gitignore]].`
         },
         {
           cmd: "git add / commit",
@@ -146,7 +174,16 @@ git commit -m "add login validation"`,
             "جهّز كل التعديلات في الفولدر.",
             "[[-p]] patch: اعرض كل تعديل لوحده واسألني أضيفه ولا لأ (y أو n).",
             "احفظ نقطة برسالة بتوصف التعديل."
-          ]
+          ],
+          sol: R`كل commit بيطبع سطر زي [[[main 8a61323] edit old]] وتحته [[1 file changed, 1 insertion(+)]]. وفي الآخر [[git log --oneline]] المفروض يوري تلات سطور، كل سطر رسالة واضحة بتوصف تعديل واحد، الأحدث فوق.
+
+المقصود من التمرين إن كل commit يبقى فيه حاجة واحدة، فلو حبيت ترجّع واحد منهم بعدين ترجّعه لوحده. استخدم [[git add ملف]] أو [[git add -p]] عشان تختار، مش [[git add .]] على كل حاجة.
+
+الغلط الشائع: [[git commit -m "..."]] يطبع [[nothing added to commit]]: يعني نسيت الـ add. ولو [[git log]] وراك commit فيه ٣ ملفات مالهمش علاقة ببعض، يبقى عملت add لكله مرة واحدة.`,
+          solCode: R`echo a > a.txt && git add a.txt && git commit -m "add a"
+echo b > b.txt && git add b.txt && git commit -m "add b"
+echo a2 >> a.txt && git add a.txt && git commit -m "update a"
+git log --oneline`
         },
         {
           cmd: "git log",
@@ -176,7 +213,12 @@ git show a1b2c3d`,
             "ارسم الـ branches بخطوط ([[--graph]]) لكل الـ branches ([[--all]]).",
             "تاريخ ملف واحد، والتعديلات نفسها ([[-p]]).",
             "اعرض commit واحد برقمه: مين عمله وإمتى وغيّر إيه."
-          ]
+          ],
+          sol: R`[[git log --oneline]] بيطلّع سطر لكل commit: أول ٧ حروف من الرقم والرسالة، والأحدث فوق، والأحدث جنبه [[(HEAD -> main)]].
+
+[[git show 8a61323]] (أو أي رقم نسخته) بيعرض [[commit]] والرقم كامل، و [[Author:]] و [[Date:]] والرسالة، وتحتهم الـ diff بتاع الـ commit ده بس: السطور اللي اتضافت بـ [[+]] واللي اتشالت بـ [[-]].
+
+لو [[git log]] فتح شاشة ومش راضي يخلص، ده الـ pager: اضغط [[q]]. ولو [[git show]] قال [[unknown revision]] يبقى الرقم متنسخ غلط أو من repo تاني.`
         },
         {
           cmd: "git diff",
@@ -206,7 +248,12 @@ git diff main feature/login`,
             "الفرق في التعديلات اللي لسه متجهزتش.",
             "الفرق في التعديلات اللي جهزتها بـ add.",
             "الفرق بين branchين."
-          ]
+          ],
+          sol: R`بعد التعديل: [[git diff]] بيوري السطر الجديد بـ [[+]] (زي [[+c]])، و [[git diff --staged]] فاضي.
+
+بعد [[git add]] بتتقلب: [[git diff]] بقى فاضي (مفيش حاجة مش متجهزة)، و [[git diff --staged]] هو اللي بيوري نفس الـ [[+c]]. يعني [[diff]] = الشغل اللي لسه مجهزتوش، و [[--staged]] = اللي هيدخل الـ commit الجاي.
+
+الغلط الشائع إنك تعمل add وبعدين [[git diff]] يطلع فاضي فتفتكر التعديل ضاع. هو موجود في الـ staging، شوفه بـ [[--staged]].`
         },
         {
           cmd: ".gitignore",
@@ -234,7 +281,16 @@ git commit -m "stop tracking .env"`,
             "اتأكد إن Git مبقاش شايف الملفات دي.",
             "لو .env اتضاف قبل كده بالغلط: شيله من Git ([[--cached]]) وسيبه على جهازك.",
             "احفظ التغيير ده."
-          ]
+          ],
+          sol: R`[[git status -s]] المفروض يوري [[?? .gitignore]] بس، ومايظهرش [[.env]] ولا [[app.log]].
+
+للتأكيد: [[git check-ignore -v .env app.log]] بيقولك مين القاعدة اللي خبّتهم: [[.gitignore:2:.env .env]] و [[.gitignore:4:*.log app.log]].
+
+الغلط الشائع: [[.env]] لسه ظاهر كـ [[M .env]] مش [[??]]. ده معناه إنه اتعمله commit قبل كده، و [[.gitignore]] مش بيأثر على ملف Git متابعه أصلًا. الحل [[git rm --cached .env]] وبعدين commit. وافتكر إنه لسه موجود في التاريخ القديم، فلو فيه أسرار غيّرها.`,
+          solCode: R`printf "node_modules/\n.env\ndist/\n*.log\n" > .gitignore
+echo SECRET=1 > .env && echo x > app.log
+git status -s
+git check-ignore -v .env app.log`
         }
       ]
     },
@@ -271,7 +327,17 @@ git branch -d feature/login`,
             "ارجع لـ main.",
             "اعرض كل الـ branches حتى اللي على GitHub ([[-a]] all).",
             "امسح branch خلصت ([[-d]] delete)."
-          ]
+          ],
+          sol: R`[[git switch -c feature/login]] بيطبع [[Switched to a new branch 'feature/login']]. بعد الـ commit والرجوع بـ [[git switch main]]، [[ls]] مش هيوري الملف الجديد، و [[git branch]] بيوري الاتنين والنجمة جنب [[* main]].
+
+الملف مااتمسحش: هو موجود في commit على الـ branch التاني بس. ارجع لها وهتلاقيه.
+
+الغلط الشائع: تعدّل من غير commit وتعمل switch، فالتعديل يمشي معاك لـ main لأنه لسه مش متسجل في أي branch. أو Git يرفض بـ [[Your local changes ... would be overwritten]]: اعمل commit أو stash الأول.`,
+          solCode: R`git switch -c feature/login
+echo login > login.js && git add login.js && git commit -m "add login"
+git switch main
+ls
+git branch`
         },
         {
           cmd: "git merge",
@@ -299,7 +365,12 @@ git log --oneline --graph`,
             "روح لـ main الأول، ده المكان اللي هتدمج فيه.",
             "هات تعديلات feature/login وادمجها هنا.",
             "اعرض التاريخ مرسوم وشوف الدمج."
-          ]
+          ],
+          sol: R`لو main متحركش من ساعة ما عملت الـ branch، هيطبع [[Updating b5f32ec..6de874a]] و [[Fast-forward]] وأسماء الملفات. ده معناه إن Git نقل main لقدام بس من غير commit دمج، و [[git log --oneline --graph]] هيبان خط مستقيم.
+
+لو main كان عليه commits جديدة، هيعمل commit دمج ويطبع [[Merge made by the 'ort' strategy.]]، والـ graph هيبان فيه فرعين بيتقابلوا.
+
+الغلط الشائع: تعمل [[git merge feature/login]] وانت واقف على الـ feature نفسها، فيقول [[Already up to date.]]. لازم تقف على الفرع اللي عايز تدمج فيه (main) الأول.`
         },
         {
           cmd: "الـ conflicts",
@@ -334,7 +405,22 @@ git merge --abort`,
             "قول لـ Git إنك صلّحته.",
             "كمّل الدمج.",
             "أو الغي الدمج كله وارجع زي ما كنت."
-          ]
+          ],
+          sol: R`الـ merge بيطبع [[CONFLICT (content): Merge conflict in index.html]] و [[Automatic merge failed]]. و [[git status]] بيوري [[both modified: index.html]] تحت [[Unmerged paths]]. والملف فيه:
+
+[[<<<<<<< HEAD]] وتحتها سطر main، و [[=======]]، وتحتها سطر الـ branch، و [[>>>>>>> feature/header]].
+
+الحل: اكتب السطر اللي عايزه وامسح التلات علامات، وبعدين [[git add index.html]] و [[git commit --no-edit]]، والـ graph هيوري الفرعين اتقابلوا في [[Merge branch 'feature/header']]. الغلط الشائع: تنسى علامة زي [[=======]] جوه الملف وتعمل commit، فالموقع يبوظ. [[git diff --check]] قبل الـ add بيمسك العلامات المنسية.`,
+          solCode: R`echo '<h1>Shop</h1>' > index.html && git add . && git commit -m idx
+git switch -c feature/header
+echo '<h1>Shop Red</h1>' > index.html && git commit -am red
+git switch main
+echo '<h1>Shop Green</h1>' > index.html && git commit -am green
+git merge feature/header
+cat index.html
+echo '<h1>Shop Red Green</h1>' > index.html
+git add index.html && git commit --no-edit
+git log --oneline --graph`
         },
         {
           cmd: "git remote / push / pull",
@@ -364,7 +450,12 @@ git pull`,
             "ارفع main أول مرة، و [[-u]] يفتكر الربط عشان بعد كده تكتب [[git push]] بس.",
             "نزّل التعديلات الجديدة من غير ما تدمجها.",
             "نزّل وادمج على طول."
-          ]
+          ],
+          sol: R`[[git remote -v]] بيطبع سطرين: [[origin git@github.com:USER/REPO.git (fetch)]] و [[(push)]]. وأول [[git push -u origin main]] بيطبع [[* [new branch] main -> main]] و [[branch 'main' set up to track 'origin/main']]. بعدها صفحة الـ repo على GitHub بتوري ملفاتك.
+
+و [[git status]] بعد كده بيقول [[Your branch is up to date with 'origin/main']]، و [[git pull]] بيقول [[Already up to date.]].
+
+الأغلاط الشائعة: [[Permission denied (publickey)]] يعني الـ ssh key مش متضاف (الدرس الجاي). و [[rejected ... (fetch first)]] يعني عملت الـ repo على GitHub ومعاه README، فاعمل [[git pull]] الأول وبعدين push. و [[error: remote origin already exists]] صلّحه بـ [[git remote set-url origin]].`
         },
         {
           cmd: "ssh key لـ GitHub",
@@ -390,7 +481,12 @@ ssh -T git@github.com`,
             "اعمل مفتاح جديد، و [[-C]] تعليق (إيميلك) عشان تعرفه.",
             "اطبع المفتاح العام، انسخه وحطه في GitHub.",
             "اختبر: GitHub المفروض يرد باسم حسابك."
-          ]
+          ],
+          sol: R`بعد ما تحط محتوى [[id_ed25519.pub]] في GitHub › Settings › SSH and GPG keys، الأمر [[ssh -T git@github.com]] المفروض يرد:
+
+[[Hi USER! You've successfully authenticated, but GitHub does not provide shell access.]] بـ USER اسم حسابك. ولو أول مرة هيسألك [[Are you sure you want to continue connecting]]، اكتب yes.
+
+متقلقش من إن الـ exit code بيطلع 1، ده طبيعي لأن GitHub مش بيدّيك shell. الغلط الشائع: [[Permission denied (publickey)]] يعني حطيت المفتاح الخاص بدل الـ [[.pub]]، أو المفتاح مش متحمّل (جرّب [[ssh -vT git@github.com]] وشوف أنهي ملف بيجرّبه). ولو رد باسم حساب تاني يبقى المفتاح ده متضاف لحساب غير اللي قاصده.`
         },
         {
           cmd: "gh pr",
@@ -426,7 +522,12 @@ git pull`,
             "ادمجه كـ commit واحد ([[--squash]]) وامسح الـ branch.",
             "ارجع لـ main.",
             "هات الدمج الجديد."
-          ]
+          ],
+          sol: R`[[gh pr create --fill]] بياخد العنوان والوصف من الـ commits ويطبع رابط زي [[https://github.com/USER/REPO/pull/1]]. و [[gh pr list]] بيوريه بالرقم والعنوان واسم الـ branch.
+
+[[gh pr merge 1 --squash --delete-branch]] بيطبع حاجة زي [[✓ Squashed and merged pull request USER/REPO#1]] و [[✓ Deleted branch feature/login]]. وبعد [[git switch main]] و [[git pull]] بتلاقي commit واحد جديد على main فيه كل شغل الـ PR.
+
+الغلط الشائع: [[gh pr create]] يقول [[you must first push the current branch]]: نسيت [[git push -u]]. أو [[gh]] يقول إنك مش مسجّل: [[gh auth login]] الأول. ولو الـ merge اترفض بسبب checks أو branch protection، الرسالة بتقولك إيه الناقص.`
         },
         {
           cmd: "git stash",
@@ -454,7 +555,12 @@ git stash pop`,
             "اعرض كل اللي متشال.",
             "روح branch تانية وانت مطمّن.",
             "رجّع آخر حاجة شيلتها ([[pop]])."
-          ]
+          ],
+          sol: R`[[git stash push -m "half-done header"]] بيطبع [[Saved working directory and index state On main: half-done header]]. و [[git stash list]] بيوري [[stash@{0}: On main: half-done header]]، و [[git status]] بيبقى نضيف كأنك معدّلتش حاجة.
+
+[[git stash pop]] بيرجّع التعديل ([[git status]] يوريه modified تاني) ويطبع [[Dropped refs/stash@{0}]]، يعني اتشال من القايمة.
+
+الغلط الشائع: ملف جديد (untracked) مش بيتعمله stash من غير [[-u]]، فتلاقيه لسه موجود. ولو pop عمل conflict، الـ stash مش بيتمسح؛ صلّح وبعدين [[git stash drop]].`
         }
       ]
     },
@@ -495,7 +601,20 @@ test -z "$(git status --porcelain)" && echo "clean"`,
             "اعمل commit بس لو فيه تغييرات، ومن غير ما السكربت يقع لو مفيش.",
             "نفس السؤال على التعديلات اللي لسه متجهزتش.",
             "الـ repo نضيف خالص؟ [[--porcelain]] بيشمل الملفات الجديدة وشكله ثابت للسكربتات."
-          ]
+          ],
+          sol: R`أول تشغيل: فيه تغييرات، فـ [[git diff --cached --quiet]] بيرجع 1، و [[||]] بيشغّل الـ commit ويطبع [[[main bc27540] backup 2026-09-30]]. تاني تشغيل: مفيش حاجة جديدة، فـ [[--quiet]] بيرجع 0، والـ commit مش بيتشغل والسكربت بيخلص ساكت. و [[git log --oneline]] بيوري commit باك أب واحد بس.
+
+ولو شغلت [[echo $?]] بعد [[git diff --cached --quiet]] على repo نضيف هيطبع 0، وبعد تعديل متعمله add هيطبع 1.
+
+الغلط الشائع: تستخدم [[git diff --quiet]] من غير [[--cached]] بعد [[git add -A]]، فيرجع 0 دايمًا لأن كل حاجة بقت staged، والباك أب عمره ما يتعمل.`,
+          solCode: R`cat > backup.sh <<'EOF2'
+git add -A
+git diff --cached --quiet || git commit -m "backup $(date +%F)"
+EOF2
+echo data > notes.txt
+bash backup.sh
+bash backup.sh
+git log --oneline -2`
         },
         {
           cmd: "safe.directory",
@@ -528,7 +647,14 @@ sudo chown -R deploy:deploy /opt/myapp`,
             "اعرض كل الفولدرات اللي سجّلتها.",
             "للأمر ده بس من غير ما تحفظ حاجة: [[-c]] إعداد مؤقت، و [[-C]] الفولدر.",
             "على لينكس: الحل الأصلي، رجّع ملكية الفولدر لليوزر اللي بيشتغل عليه."
-          ]
+          ],
+          sol: R`[[git status]] كيوزر عادي على repo صاحبه root بيطبع:
+
+[[fatal: detected dubious ownership in repository at '/opt/test']] وتحته [[git config --global --add safe.directory /opt/test]].
+
+بعد [[sudo chown -R $USER:$USER /opt/test]]، نفس الأمر بيشتغل ويقول [[On branch main]]. الـ chown أحسن من safe.directory لأنه بيصلّح السبب: اليوزر اللي بيشغّل Git هو صاحب الملفات، فمفيش حد يقدر يحط [[.git/config]] فيه أوامر تتنفذ باسمك.
+
+الغلط الشائع: [[safe.directory '*']] في الإعدادات الـ global عشان الرسالة تختفي، وده بيقفل الحماية على كل الجهاز. ولو استخدمت [[sudo git]] جوه الـ repo بعد كده، الملفات هترجع ملك root وتتكرر المشكلة.`
         },
         {
           cmd: ".gitattributes",
@@ -564,7 +690,19 @@ sudo chown -R deploy:deploy /opt/myapp`,
             "ونفسه لملفات cmd.",
             "الصور binary: متحوّلش ومتعملش diff.",
             "ونفسه لـ jpg."
-          ]
+          ],
+          sol: R`لو الـ repo فيه ملف متعمله commit بـ CRLF، بعد [[git add --renormalize .]] [[git status -s]] بيوري [[M  win.txt]] (staged)، و [[git diff --cached --stat]] بيقول إن كل سطوره اتغيرت ([[2 insertions(+), 2 deletions(-)]] لملف سطرين) مع إن الكلام نفسه مااتغيرش، التغيير في نهاية السطر بس. و [[.gitattributes]] نفسه ظاهر [[??]] لحد ما تعمله add.
+
+اعمل commit للاتنين مع بعض برسالة زي [[normalize line endings]]، عشان الـ commit ده ميتخلطش بتعديلات حقيقية.
+
+لو مفيش ولا ملف ظهر، ده معناه إن الـ repo كان نضيف أصلًا (كله LF). وده مش غلط. تقدر تتأكد بـ [[git ls-files --eol]]: العمود [[i/crlf]] هو اللي كان هيتغير.`,
+          solCode: R`git init crlf && cd crlf
+git config core.autocrlf false
+printf 'a\r\nb\r\n' > win.txt && git add . && git commit -m crlf
+printf '* text=auto eol=lf\n' > .gitattributes
+git add --renormalize .
+git status -s
+git add .gitattributes && git commit -m "normalize line endings"`
         }
       ]
     },
@@ -748,7 +886,12 @@ git restore --source a1b2c3d index.js`,
             "رجّع الملف زي آخر نسخة محفوظة، وتعديلاتك عليه تضيع.",
             "شيل الملف من التحضير (الغي الـ add)، والتعديل يفضل.",
             "هات الملف زي ما كان في commit معين قديم."
-          ]
+          ],
+          sol: R`بعد ما تبوّظ الملف: [[git status -s]] بيوري [[ M index.js]]. بعد [[git restore index.js]]: [[git status -s]] مش بيطلّع حاجة، و [[cat]] بيوري المحتوى زي آخر commit.
+
+[[restore]] مش بيطبع أي رسالة لو نجح، والسكوت هنا معناه إنه اشتغل.
+
+الغلط الشائع: تبوّظ الملف وتعمل [[git add]] وبعدين [[git restore index.js]] فمايرجعش. الـ restore العادي بيرجّع من الـ staging، واللي في الـ staging هو البوظان. اعمل [[git restore --staged index.js]] الأول وبعدين [[git restore index.js]]. وخلّي بالك: التعديل اللي بيضيع بـ restore مش بيرجع من أي حتة.`
         },
         {
           cmd: "git clean",
@@ -775,7 +918,17 @@ git clean -ndx`,
             "نفسه والفولدرات الجديدة كمان ([[-d]]).",
             "امسحهم فعلًا. [[-f]] لازمة، من غيرها Git بيرفض.",
             "وريني اللي هيتمسح لو ضفت [[-x]]: هتلاقي node_modules و .env. متشيلش [[-n]] من ده غير لو متأكد."
-          ]
+          ],
+          sol: R`[[git clean -n]] بيطبع [[Would remove a.tmp]] و [[Would remove b.tmp]] بس، من غير الفولدر. و [[-nd]] بيزوّد [[Would remove build/]]. و [[-fd]] بيمسحهم فعلًا ويطبع [[Removing a.tmp]]، و [[Removing b.tmp]]، و [[Removing build/]].
+
+و [[-ndx]] بعدها بيوري الملفات المتجاهلة زي [[.env]] و [[app.log]]، ودي اللي [[-x]] كان هيمسحها. عشان كده [[-x]] خطير: ممكن يمسح [[.env]] بتاعك.
+
+الغلط الشائع: [[git clean]] من غير [[-n]] ولا [[-f]] يرفض ويقول [[clean.requireForce defaults to true]]، وده مقصود. والملفات اللي clean مسحها مش في سلة المهملات ولا في reflog.`,
+          solCode: R`touch a.tmp b.tmp && mkdir build && touch build/x
+git clean -n
+git clean -nd
+git clean -fd
+git clean -ndx`
         },
         {
           cmd: "git commit --amend",
@@ -799,7 +952,17 @@ git commit --amend -m "better message"`,
             "جهّز الملف اللي نسيته.",
             "ضيفه لآخر commit، بنفس الرسالة ([[--no-edit]]).",
             "أو غيّر رسالة آخر commit."
-          ]
+          ],
+          sol: R`[[git commit --amend --no-edit]] بيطبع نفس رسالة الـ commit القديم بس برقم جديد (زي [[[main 095033e] feat x]])، وتحته [[create mode 100644 forgotten.js]].
+
+[[git log --oneline]] لسه فيه commit واحد بالرسالة دي مش اتنين، و [[git show --stat HEAD]] بيوري الملف الجديد جواه. الرقم اتغير لأن amend بيعمل commit جديد مكان القديم.
+
+الغلط الشائع: تعمل amend لـ commit اتعمله push، وبعدين [[git push]] يترفض بـ [[rejected (non-fast-forward)]]. على branch لوحدك استخدم [[--force-with-lease]]، لكن على main المشترك متعملش amend، اعمل commit جديد.`,
+          solCode: R`echo x > main.js && git add main.js && git commit -m "feat x"
+echo f > forgotten.js && git add forgotten.js
+git commit --amend --no-edit
+git log --oneline -2
+git show --stat HEAD`
         },
         {
           cmd: "git reset",
@@ -830,7 +993,16 @@ git reset --hard HEAD~1`,
             "الغي آخر commit، والتعديلات تفضل متجهزة.",
             "الغي آخر commit، والتعديلات تفضل في ملفاتك بس.",
             "الغي آخر commit وامسح تعديلاته من ملفاتك. خطر."
-          ]
+          ],
+          sol: R`بعد [[git reset --soft HEAD~1]]: [[git log --oneline -1]] بيوري الـ commit اللي قبله (بتاعك اختفى من التاريخ)، بس [[git status -s]] بيوري [[A  r.txt]]، يعني التعديل موجود و staged وجاهز تعمل له commit تاني.
+
+الفرق: [[--soft]] بيسيب التعديل staged، والـ reset العادي بيسيبه في الملفات بس مش staged ([[?? r.txt]] أو [[ M]])، و [[--hard]] بيمسحه خالص.
+
+الغلط الشائع: [[--hard]] بدل [[--soft]] فالتعديل يختفي. لو كان متعمله commit ترجّعه من [[git reflog]]. ولو عملت reset لـ commit اتعمله push، الـ push الجاي هيترفض، وده معناه إنك كان المفروض تستخدم revert.`,
+          solCode: R`echo r > r.txt && git add r.txt && git commit -m "rtest"
+git reset --soft HEAD~1
+git status -s
+git log --oneline -1`
         },
         {
           cmd: "git revert",
@@ -850,7 +1022,12 @@ git push`,
             when: "أي تصليح لحاجة اترفعت ومتشاركة، خصوصًا على main.",
             mistakes: "استخدام reset و force push على main المشتركة بدل revert."
           },
-          lines: ["لاقي رقم الـ commit اللي عايز تلغيه.", "اعمل commit جديد بعكسه.", "ارفع، ومحدش تاريخه هيتلخبط."]
+          lines: ["لاقي رقم الـ commit اللي عايز تلغيه.", "اعمل commit جديد بعكسه.", "ارفع، ومحدش تاريخه هيتلخبط."],
+          sol: R`[[git revert]] بيفتح المحرر برسالة جاهزة [[Revert "feat x"]]، ولما تقفله بيطبع [[[main f9fca78] Revert "feat x"]] والملفات اللي اتعكست (لو الـ commit كان ضاف ملف هتلاقي [[delete mode]]).
+
+[[git log --oneline]] بيوري الـ commit الأصلي زي ما هو، وفوقه commit جديد بيلغيه. ده الفرق عن reset: التاريخ مااتمسحش، فتقدر تعمل push عادي من غير force.
+
+الغلط الشائع: revert لـ merge commit بيطلع [[is a merge but no -m option was given]]، وساعتها لازم [[-m 1]]. ولو التعديل ده اتعدّل بعده، ممكن يطلع conflict زي الـ merge: صلّح و [[git revert --continue]].`
         },
         {
           cmd: "git reflog",
@@ -878,7 +1055,17 @@ git branch rescue a1b2c3d`,
             "اعرض كل الأماكن اللي HEAD كان فيها.",
             "ارجع بالـ branch لمكانها من خطوتين.",
             "أو اعمل branch جديدة على الـ commit ده تنقذه بيها."
-          ]
+          ],
+          sol: R`بعد [[git reset --hard HEAD~1]]، [[git reflog]] بيوري حاجة زي:
+
+[[f9fca78 HEAD@{0}: reset: moving to HEAD~1]] و [[7fb1381 HEAD@{1}: commit: precious]]. الـ commit اللي اتمسح موجود في [[HEAD@{1}]] (مش لازم [[{2}]] زي المثال، الرقم بيعتمد على عملت كام حاجة بعده)، فـ [[git reset --hard "HEAD@{1}"]] بيطبع [[HEAD is now at 7fb1381 precious]] و [[git log]] بيرجع زي ما كان.
+
+الغلط الشائع: تعمل reset على رقم reflog غلط. عشان كده الأضمن [[git branch rescue 7fb1381]]: بيحفظ الـ commit في branch من غير ما يلمس اللي انت فيه. والتعديلات اللي عمرها ما اتعملها commit مش في reflog.`,
+          solCode: R`git commit --allow-empty -m "precious"
+git reset --hard HEAD~1
+git reflog | head -3
+git reset --hard "HEAD@{1}"
+git log --oneline -1`
         },
         {
           cmd: "git rebase",
@@ -907,7 +1094,16 @@ git push --force-with-lease`,
             "حط الـ commits بتاعتك فوق آخر main.",
             "افتح آخر ٣ commits عشان تدمجهم أو تعدّل رسايلهم.",
             "ارفع غصب، بس بعد ما تتأكد إن محدش رفع حاجة جديدة."
-          ]
+          ],
+          sol: R`[[git rebase -i HEAD~3]] بيفتح ملف فيه تلات سطور [[pick]]، الأقدم فوق. سيب الأول [[pick]] وغيّر التانيين لـ [[squash]] (أو [[s]])، واحفظ. هيفتح محرر تاني بالرسايل التلاتة مع بعض، اكتب رسالة واحدة واحفظ.
+
+في الآخر هيطبع [[Successfully rebased and updated refs/heads/main.]]، و [[git log --oneline]] هيوري commit واحد مكان التلاتة، برقم جديد، و [[git show]] بيوري التعديلات التلاتة جواه.
+
+الغلط الشائع: تحط [[squash]] على السطر الأول، فيقول [[cannot 'squash' without a previous commit]]. ولو اتلخبطت في النص [[git rebase --abort]] بيرجّع كل حاجة. ولو الـ commits دي اتعملها push قبل كده، هتحتاج [[git push --force-with-lease]].`,
+          solCode: R`for i in 1 2 3; do echo $i >> sq.txt; git add sq.txt; git commit -m "wip $i"; done
+git rebase -i HEAD~3
+# في المحرر: pick, squash, squash
+git log --oneline -3`
         },
         {
           cmd: "git log -S / blame",
@@ -931,7 +1127,12 @@ git log -S "calculateTotal" --oneline`,
             "قدام كل سطر: مين آخر حد عدّله وفي أنهي commit.",
             "نفسه للسطور من ١٠ لـ ٢٠ بس.",
             "هات الـ commits اللي ضافت أو شالت النص ده."
-          ]
+          ],
+          sol: R`[[git log -S "calculateTotal" --oneline]] بيطلّع الـ commits اللي زوّدت أو شالت الكلمة دي بس، مش كل commit لمس الملف. أقدم واحد فيهم (الأخير في القايمة) هو اللي الفانكشن ظهرت فيه أول مرة، زي [[b51ccba add calc]].
+
+ولو عدّلت سطر تاني في نفس الملف بعد كده، commit التعديل ده مش هيظهر، لأن عدد مرات ظهور الكلمة مااتغيرش. و [[git blame calc.js]] بيوري جنب كل سطر رقم الـ commit واسمك والتاريخ.
+
+الغلط الشائع: [[-S]] مايطلّعش حاجة لأن الاسم مكتوب بحروف مختلفة (case-sensitive). ولو عايز كل commit غيّر سطر فيه الاسم حتى لو العدد مااتغيرش، استخدم [[-G]].`
         },
         {
           cmd: "git bisect",
@@ -967,7 +1168,21 @@ git bisect reset`,
             "ابدأ من تاني، والسيئ HEAD والسليم v1.0.0 في سطر واحد.",
             "خلّي Git يشغّل الاختبار على كل خطوة لوحده: لو نجح يبقى good، ولو فشل يبقى bad.",
             "ارجع مكانك."
-          ]
+          ],
+          sol: R`[[git bisect start HEAD v1.0.0]] و [[git bisect run]] بيجرّب نص المسافة كل مرة، ولـ 8 commits بيوصل في حوالي ٣ خطوات. وفي الآخر بيطبع:
+
+[[cfd341e... is the first bad commit]] وتحته تفاصيل commit رقم 5 ([[c5]]) والملفات اللي اتغيرت فيه، و [[bisect found first bad commit]].
+
+[[git bisect reset]] بيرجّعك للـ branch بتاعك ([[Switched to branch 'main']]). الغلط الشائع: تحدد good على commit فيه الـ bug أصلًا، فيطلّعلك commit غلط. واختبار [[bisect run]] لازم يرجع 0 للسليم وأي رقم من 1 لـ 127 للمكسور (ماعدا 125 اللي معناها skip).`,
+          solCode: R`git init bis && cd bis
+for i in 1 2 3 4 5 6 7 8; do
+  if [ $i -ge 5 ]; then echo "exit 1" > test.sh; else echo "exit 0" > test.sh; fi
+  echo $i > v.txt; git add .; git commit -m "c$i"
+  [ $i = 1 ] && git tag v1.0.0
+done
+git bisect start HEAD v1.0.0
+git bisect run sh test.sh
+git bisect reset`
         },
         {
           cmd: "git tag / cherry-pick",
@@ -993,7 +1208,12 @@ git cherry-pick a1b2c3d`,
             "علّم الـ commit الحالي بنسخة v1.0.0، برسالة ([[-a]] annotated و [[-m]] الرسالة).",
             "ارفع الـ tags لـ GitHub (مش بتترفع لوحدها).",
             "خد commit واحد بس من أي branch وطبّقه هنا."
-          ]
+          ],
+          sol: R`[[git tag]] بيوري [[v1.0.0]] في القايمة، و [[git show v1.0.0]] بيبدأ بـ [[tag v1.0.0]] و [[Tagger:]] و [[Release v1.0.0]] وبعدين الـ commit. ده لأن [[-a]] بيعمل annotated tag فيه اسمك وتاريخ ورسالة.
+
+[[git push origin --tags]] بيطبع [[* [new tag] v1.0.0 -> v1.0.0]]، والـ tag بيظهر في GitHub تحت Tags وتقدر تعمل منه Release.
+
+الغلط الشائع: [[git push]] العادي لوحده مش بيرفع الـ tags، فتلاقيها مش على GitHub. ولو قال [[tag 'v1.0.0' already exists]] يبقى الاسم مستخدم؛ متمسحش tag اترفع وناس نزّلته، اعمل واحد برقم أكبر.`
         },
         {
           cmd: "git worktree",
@@ -1019,7 +1239,12 @@ git worktree remove ../myapp-hotfix`,
             "اعرض كل الفولدرات المربوطة بالـ repo ده.",
             "ارجع لمشروعك الأصلي، وشغلك زي ما سبته.",
             "امسح فولدر الـ worktree (الـ branch والـ commits بيفضلوا)."
-          ]
+          ],
+          sol: R`[[git worktree list]] بيوري فولدرين، كل واحد جنبه الـ branch بتاعته: [[.../myapp 815e63b [main]]] و [[.../myapp-hotfix 815e63b [hotfix/cart]]].
+
+بعد الـ commit في myapp-hotfix والرجوع لـ myapp: [[git status -s]] لسه بيوري تعديلاتك زي ما هي ([[ M old.txt]])، والملف الجديد مش موجود هنا. لكن [[git log --oneline -1 hotfix/cart]] بيوري commit الـ hotfix، لأن الفولدرين شايفين نفس الـ repo.
+
+الغلط الشائع: تعمل [[git switch hotfix/cart]] في الفولدر الأصلي وهي مفتوحة في worktree، فيرفض بـ [[already used by worktree]]. و [[worktree remove]] بيرفض لو فيه تعديلات مش متسجلة في الفولدر ده، وده بيحميك.`
         },
         {
           cmd: "git alias",
@@ -1037,7 +1262,12 @@ git lg`,
             when: "أكتر ٣ أو ٤ أوامر بتكتبها.",
             mistakes: "اختصارات كتير أوي فتنسى الأوامر الأصلية، ولما تشتغل على جهاز حد تاني تتلخبط. خليهم قليلين."
           },
-          lines: ["اعمل اختصار lg لعرض التاريخ مرسوم.", "اختصار st لـ status المختصر.", "استخدم الاختصار."]
+          lines: ["اعمل اختصار lg لعرض التاريخ مرسوم.", "اختصار st لـ status المختصر.", "استخدم الاختصار."],
+          sol: R`[[git config --global --get-regexp '^alias\.']] بيوري الاختصارات بتاعتك، زي [[alias.lg log --oneline --graph --all]] و [[alias.st status -s]]. و [[git st]] بيطلّع نفس ناتج [[git status -s]] بالظبط، و [[git lg]] نفس الـ graph.
+
+اختار أمر بتكتبه كتير فعلًا (زي [[switch]] أو [[log --oneline -10]])، والاختصار يبقى قصير ومايتلخبطش مع أمر Git موجود.
+
+الغلط الشائع: تكتب [[git config --global alias.lg "git log --oneline"]] بكلمة git جوه، فيطلع [[git: 'git' is not a git command]]. الـ alias بيتكتب من غير git. ولو عايز alias يشغّل أمر shell حطه بعلامة [[!]] في الأول.`
         }
       ]
     },

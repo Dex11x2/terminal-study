@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("zsh", {
@@ -45,7 +49,10 @@ bash على الماك قديم (bash 3.2 من 2007) بسبب قضية ترخي�
             "الشيل الافتراضي بتاعك: /bin/zsh على الماك الحديث.",
             "نسخة zsh.",
             "نسخة bash: هتلاقيها 3.2 قديمة جدًا (من 2007) بسبب الترخيص."
-          ]
+          ],
+          sol: R`على ماك جديد [[echo $SHELL]] بيطبع [[/bin/zsh]]، و [[zsh --version]] حاجة زي [[zsh 5.9 (arm64-apple-darwin24.0)]]، و [[bash --version]] أول سطر فيه [[GNU bash, version 3.2.57]]. اكتب [[bash]]: الماك هيطبع رسالة [[The default interactive shell is now zsh.]] والـ prompt يتغير لشكل bash ([[bash-3.2$]])، و [[exit]] يرجعك للـ prompt بتاع zsh.
+
+خد بالك إن [[$SHELL]] هو الشيل الافتراضي بتاع اليوزر، مش الشيل اللي انت فيه دلوقتي: جوه bash هيفضل يطبع [[/bin/zsh]]. عشان تعرف انت فين فعلًا [[echo $0]]. (جربتها على لينكس: zsh 5.9 و bash 5.2، النسخ على الماك مختلفة زي ما فوق.)`
         },
         {
           cmd: "~/.zshrc",
@@ -73,7 +80,13 @@ source ~/.zshrc`,
             "ضيف اختصار في آخره.",
             "ضيف فولدر للـ PATH. single quotes عشان [[$HOME]] يتكتب زي ما هو ويتفك كل مرة.",
             "طبّق في الجلسة دي."
-          ]
+          ],
+          sol: R`[[echo "alias dc='docker compose'" >> ~/.zshrc]] وبعدين [[source ~/.zshrc]]. اتأكد بـ [[type dc]]، جربتها في zsh وطبعت [[dc is an alias for docker compose]]. دلوقتي [[dc up -d]] هي [[docker compose up -d]].
+
+لو [[dc]] لسه مش شغالة يبقى نسيت [[source]] أو انت في تاب اتفتح قبل التعديل. ولو كتبت [[>]] بدل [[>>]] هتمسح الـ zshrc كله وتكتب السطر ده بس. و dc اسم برنامج آلة حاسبة قديم موجود في النظام، والـ alias بيغطي عليه، وده مش مشكلة.`,
+          solCode: R`echo "alias dc='docker compose'" >> ~/.zshrc
+source ~/.zshrc
+type dc`
         },
         {
           cmd: "**/*.js",
@@ -99,7 +112,10 @@ patterns تانية في zsh: [[ls *(.)]] ملفات بس (مش فولدرات).
             "كل ملفات .js بأي عمق (zsh بتفهم [[**]] من غير إعداد).",
             "عدّ سطور كل ملفات .ts جوه src.",
             "[[(N)]] في الآخر: لو مفيش ملفات، متطلعش error، طلّع لستة فاضية."
-          ]
+          ],
+          sol: R`[[ls src/**/*.json]] بيطبع كل ملفات json جوه src وأي فولدر تحتها. جربتها في zsh على مشروع فيه [[src/app.json]] و [[src/a/b/deep.json]] فطلع الاتنين، ومن غير أي حاجة من node_modules لأن البحث بدأ من src.
+
+لو كتبت [[**/*.json]] من فولدر المشروع هيدخل node_modules (جربتها فطلع [[node_modules/x/package.json]] معاهم)، استبعده بـ [[ls **/*.json~node_modules/*]] بعد [[setopt extended_glob]]. وخد بالك من فخ [[(N)]]: لو مفيش نتايج، [[ls **/*.log(N)]] بتبقى [[ls]] لوحدها فبتعرض الفولدر الحالي كله. جربتها فعلًا وطبعت كل حاجة في الفولدر.`
         },
         {
           cmd: "no matches found",
@@ -122,7 +138,10 @@ curl "https://api.github.com/search/repositories?q=zsh"`,
           lines: [
             "لو مفيش ملفات .tmp: zsh بتطلع «no matches found» وتوقف (bash كانت هتبعت *.tmp لـ rm زي ما هو).",
             "الـ URL فيه [[?]]، وده رمز glob في zsh. علامات التنصيص تخليه يعدّي كنص."
-          ]
+          ],
+          sol: R`[[ls *.xyz]] في zsh بيطبع [[zsh: no matches found: *.xyz]] والأمر مش بيتنفذ أصلًا (ls متشغلش)، والـ exit code 1. في bash نفس الأمر بيبعت [[*.xyz]] لـ ls فتطبع [[ls: cannot access '*.xyz': No such file or directory]].
+
+الـ curl من غير علامات تنصيص: zsh بيقف بـ [[zsh: no matches found: https://api.github.com/search/repositories?q=zsh]] من غير ما يبعت أي طلب، لأن [[?]] معناها «أي حرف» في الـ glob. جربتها بـ echo على URL فيه [[?q=]] وطلعت نفس الرسالة. الحل علامات تنصيص، أو backslash قبل [[?]].`
         },
         {
           cmd: "Cmd+K",
@@ -144,7 +163,10 @@ Cmd+K في Terminal.app وiTerm2 بيمسح الـ scrollback buffer الكلي.
           lines: [
             "الـ history من الأول ([[history 1]] في zsh، مش history لوحدها) وفلتر على docker.",
             "آخر أمر تاني (بيشتغل في zsh زي bash)."
-          ]
+          ],
+          sol: R`Ctrl+R وبعدين اكتب [[git]]: هيظهرلك تحت [[bck-i-search: git_]] وجنبه آخر أمر فيه git. Ctrl+R تاني يرجع للأقدم، Enter ينفذه، وسهم يمين (أو Ctrl+E) يحطه في السطر عشان تعدّله. Ctrl+G أو Ctrl+C يلغي.
+
+لو مطلعش حاجة، يبقى التاريخ فاضي أو مش بيتحفظ. ولو كتبت [[history | grep git]] ولقيت أوامر قليلة، ده لأن [[history]] لوحدها في zsh بتعرض آخر 16 بس، استخدم [[history 1 | grep git]]. ولو الأوامر مش بتتحفظ بين التابات، ضيف [[setopt share_history]] في [[~/.zshrc]].`
         },
         {
           cmd: "Oh My Zsh",
@@ -166,7 +188,10 @@ source ~/.zshrc`,
             when: "أول ما تجهّز ماك جديد للتطوير.",
             mistakes: "تسطّبه وتبقى لا تعرف إيه اللي بيعمله. الـ plugins غير المعرّفة هتطلع error كل ما تفتح terminal."
           },
-          lines: ["نزّل سكربت التسطيب الرسمي وشغّله.", "افتح الإعدادات: غيّر [[ZSH_THEME]] وضيف plugins.", "طبّق."]
+          lines: ["نزّل سكربت التسطيب الرسمي وشغّله.", "افتح الإعدادات: غيّر [[ZSH_THEME]] وضيف plugins.", "طبّق."],
+          sol: R`بعد التسطيب الـ prompt هيتغير لشكل زي [[➜  myrepo git:(main)]] (ثيم robbyrussell الافتراضي)، و [[~/.zshrc]] القديم بيتحفظ باسم [[~/.zshrc.pre-oh-my-zsh]]. جوه أي repo اكتب [[gst]]، هيطبع نفس ناتج [[git status]]: [[On branch main]] وبعدها الملفات.
+
+لو [[gst]] قالت [[command not found]]، يبقى [[git]] مش في سطر [[plugins=(...)]] أو نسيت [[source ~/.zshrc]]. ولو aliases قديمة بتاعتك اختفت، ده لأن الـ zshrc اتبدل: انقلها من [[.zshrc.pre-oh-my-zsh]] للجديد. واعرف كل الـ aliases بـ [[alias | grep git]].`
         }
       ]
     },
@@ -197,7 +222,10 @@ Homebrew بيحط كل شئ في مسار واحد ([[/opt/homebrew]] على App
             "سطّب Homebrew نفسه (مرة واحدة). بيطلب باسورد الماك.",
             "سطّب ٣ أدوات مرة واحدة.",
             "نسخة معينة من node (بعض الباكدجات بتحتاج تضيفها للـ PATH، اقرا الـ Caveats بعد التسطيب)."
-          ]
+          ],
+          sol: R`بعد [[brew install tree htop]]، [[tree -L 2]] في فولدر مشروع بيطبع الفولدرات ومستوى واحد جواها، وفي الآخر سطر زي [[5 directories, 12 files]]. و [[htop]] بيفتح شاشة ملونة بالعمليات، q للخروج.
+
+لو [[brew]] نفسه قال [[command not found]] بعد التسطيب، يبقى مشغّلتش السطرين اللي طبعهم في الآخر ([[eval "$(/opt/homebrew/bin/brew shellenv)"]] على Apple Silicon)، ودول بيضيفوا brew للـ PATH. على ماك Intel مكانه [[/usr/local/bin]] ومفيش المشكلة دي غالبًا. ولو [[tree]] طبع آلاف السطور، ضيف [[-I node_modules]].`
         },
         {
           cmd: "brew --cask",
@@ -218,7 +246,10 @@ brew install --cask docker-desktop`,
             when: "تجهيز ماك جديد للتطوير. تسطيب Docker Desktop أو VS Code.",
             mistakes: "[[brew install chrome]] مش شغال. الاسم الصح [[google-chrome]] وتاخده من الـ formulae.brew.sh."
           },
-          lines: ["برنامج بواجهة (GUI) بيتسطب بـ [[--cask]].", "Docker Desktop."]
+          lines: ["برنامج بواجهة (GUI) بيتسطب بـ [[--cask]].", "Docker Desktop."],
+          sol: R`[[brew search --cask chrome]] مثلًا بيطبع تحت [[==> Casks]] أسامي زي [[google-chrome]] و [[google-chrome@beta]]. الاسم ده اللي تكتبه في [[brew install --cask google-chrome]]. و [[brew info --cask google-chrome]] يوريك النسخة والموقع الرسمي قبل ما تسطب.
+
+الاسم في brew مش دايمًا زي اسم التطبيق: VS Code اسمه [[visual-studio-code]]. ولو التطبيق متسطب قبل كده من dmg، brew هيقولك إن فيه app موجود بالفعل في Applications، إما امسحه الأول أو استخدم [[--force]] وانت عارف انت بتعمل إيه.`
         },
         {
           cmd: "brew upgrade",
@@ -246,7 +277,10 @@ brew cleanup`,
             "إيه اللي فيه نسخة أحدث.",
             "حدّث كله (زي apt upgrade).",
             "امسح النسخ القديمة ووفّر مساحة."
-          ]
+          ],
+          sol: R`[[brew outdated]] بيطبع سطر لكل حاجة قديمة زي [[node (24.1.0) < 24.8.0]]، ولو كله محدث مش بيطبع أي حاجة، وده معناه إنك تمام.
+
+اعمل [[brew update]] الأول، وإلا الأداة هتقارن بلستة قديمة ومش هتشوف التحديثات الجديدة. وخد بالك إن الـ casks اللي بتحدث نفسها (زي Chrome) ممكن متظهرش هنا، [[brew outdated --greedy]] بيعرضها. وقبل [[brew upgrade]] في يوم شغل مهم، فكّر إن ترقية postgresql أو node ممكن تغيّر سلوك مشروعك.`
         },
         {
           cmd: "brew list / info",
@@ -269,7 +303,10 @@ brew uninstall wget`,
             when: "بعد مشاكل تسطيب. التأكد من version معين. مراجعة ما هو مسطّب.",
             mistakes: "[[brew list]] بيطلع كتير. افلتر بـ [[brew list | grep git]]."
           },
-          lines: ["المسطّب.", "دوّر على باكدج.", "تفاصيل باكدج ونسخته ومتسطب ولا لأ.", "شيل باكدج."]
+          lines: ["المسطّب.", "دوّر على باكدج.", "تفاصيل باكدج ونسخته ومتسطب ولا لأ.", "شيل باكدج."],
+          sol: R`[[brew info tree]] (أو أي حاجة من [[brew list]]) بيطبع أول سطر زي [[==> tree: stable 2.2.1 (bottled)]]، ووصف والموقع الرسمي، ومكان التسطيب زي [[/opt/homebrew/Cellar/tree/2.2.1]] وحجمه، وقسم Dependencies لو ليها اعتمادات.
+
+لو قالك [[Not installed]] يبقى الأداة مش متسطبة لسه، والمعلومات اللي فوق عن النسخة المتاحة. ولو كتبت اسم غلط هيقولك [[No available formula with the name]]، دوّر الأول بـ [[brew search]].`
         },
         {
           cmd: "brew services",
@@ -295,7 +332,10 @@ brew services stop postgresql@16`,
             "شغّله كخدمة دايمة (بتقوم مع الماك). زي systemctl enable --now.",
             "الخدمات وحالتها.",
             "وقّفه."
-          ]
+          ],
+          sol: R`[[brew install redis]] وبعدين [[brew services start redis]] يطبع [[==> Successfully started redis (label: homebrew.mxcl.redis)]]. [[brew services list]] يوريك redis بحالة [[started]]. و [[redis-cli ping]] يرد [[PONG]].
+
+لو ping قالت [[Could not connect to Redis at 127.0.0.1:6379: Connection refused]]، بص في [[brew services list]]: لو الحالة [[error]] يبقى فيه حاجة تانية ماسكة بورت 6379 (زي Redis في Docker)، اعرفها بـ [[lsof -i :6379]]. وخد بالك إن start بيخليها تقوم مع كل boot، ولو عايزها تشتغل دلوقتي بس استخدم [[brew services run redis]].`
         }
       ]
     },
@@ -330,7 +370,10 @@ open https://github.com`,
             "افتح ملف بالبرنامج الافتراضي (html في المتصفح).",
             "افتح الفولدر في VS Code ([[-a]] اختار برنامج).",
             "افتح لينك."
-          ]
+          ],
+          sol: R`في فولدر المشروع: [[open -a "Visual Studio Code" .]] يفتح VS Code على الفولدر، ومش بيطبع حاجة. أو ثبت أمر [[code]] من VS Code نفسه (Cmd+Shift+P ثم Shell Command: Install 'code' command in PATH) وبعدها [[code .]].
+
+لو ظهر [[Unable to find application named 'Visual Studio Code']] يبقى الاسم مختلف عندك (زي [[Visual Studio Code - Insiders]]) أو التطبيق مش في Applications. الاسم لازم بين علامات تنصيص لأن فيه مسافات. و [[open]] أمر ماك بس، على أوبونتو [[xdg-open]].`
         },
         {
           cmd: "pbcopy / pbpaste",
@@ -356,7 +399,10 @@ pbpaste > notes.txt`,
             "انسخ مفتاحك العام للكليب بورد، جاهز تلزقه في GitHub.",
             "نفس الفكرة بـ pipe.",
             "الزق اللي في الكليب بورد في ملف."
-          ]
+          ],
+          sol: R`[[ls -la | pbcopy]] مش بيطبع حاجة في الترمنال، الناتج راح للكليب بورد. Cmd+V في أي مكان (Notes أو المتصفح) هيلزق الناتج كامل. و [[pbpaste]] في الترمنال يطبعه تاني.
+
+لو لزقت ولقيت حاجة قديمة، يبقى الـ pipe مش متكتب صح. و pbcopy بيشيل الألوان (مش بيحافظ عليها) وده كويس. ودي أوامر ماك بس، على لينكس فيه [[xclip]] أو [[wl-copy]]، وفي WSL [[clip.exe]].`
         },
         {
           cmd: "mdfind",
@@ -379,7 +425,10 @@ mdfind -onlyin ~/projects "TODO"`,
             when: "إيجاد ملف سريع. إيجاد كل ملفات بمحتوى معين.",
             mistakes: "مش بيدوّر في ملفات مخفية أو في فولدرات Spotlight excluded."
           },
-          lines: ["دوّر على ملف بالاسم في الجهاز كله بـ Spotlight (لحظي).", "دوّر على كلمة جوه ملفات فولدر معين."]
+          lines: ["دوّر على ملف بالاسم في الجهاز كله بـ Spotlight (لحظي).", "دوّر على كلمة جوه ملفات فولدر معين."],
+          sol: R`[[mdfind -name docker-compose.yml]] بيطبع مسار كامل لكل ملف في سطر، زي [[/Users/ali/projects/shop/docker-compose.yml]]، في ثانية تقريبًا لأنه بيسأل فهرس Spotlight مش بيلف على الديسك.
+
+[[-name]] بيطابق أي اسم فيه الكلمة، فممكن يطلع [[docker-compose.yml.bak]] كمان. ولو مطلعش حاجة وانت متأكد إن الملف موجود، يبقى الفولدر ده مستبعد من Spotlight (Privacy في إعدادات Spotlight) أو لسه متفهرسش، استخدم [[find ~ -name docker-compose.yml]] بدله. و mdfind ماك بس.`
         },
         {
           cmd: "caffeinate",
@@ -398,7 +447,10 @@ caffeinate -t 3600`,
             when: "npm install كبير. Docker build. نقل ملفات كبيرة.",
             mistakes: "إنك تنسى إنه شغال وتستغرب ليه الماك مش بيخش sleep. [[pkill caffeinate]] يقفله."
           },
-          lines: ["شغّل الـ build وامنع الماك ينام لحد ما يخلص ([[-i]] idle).", "امنع النوم لساعة (٣٦٠٠ ثانية)."]
+          lines: ["شغّل الـ build وامنع الماك ينام لحد ما يخلص ([[-i]] idle).", "امنع النوم لساعة (٣٦٠٠ ثانية)."],
+          sol: R`[[caffeinate -t 60]] مش بيطبع حاجة وبيفضل شغال دقيقة ويرجعلك الـ prompt لوحده. في الدقيقة دي الجهاز مش هينام حتى لو إعدادات النوم أقل. Ctrl+C يوقفه قبل كده.
+
+عشان تتأكد وهو شغال، افتح ترمنال تاني واكتب [[pmset -g assertions]]، هتلاقي caffeinate في اللستة. وخد بالك إن [[-t]] لوحدها بتمنع نوم النظام بس وقفل الشاشة ممكن يحصل عادي، لو عايز الشاشة تفضل صاحية ضيف [[-d]]. وقفل غطا اللابتوب بيخليه ينام برضه.`
         },
         {
           cmd: "defaults",
@@ -419,7 +471,10 @@ killall Finder`,
             when: "تخصيص الماك بشكل متقدم. automation لإعداد ماك جديد.",
             mistakes: "بعض التغييرات محتاج restart. وبعضها بيترجع للأصل بعد تحديث نظام."
           },
-          lines: ["خلّي Finder يعرض الملفات المخفية.", "اقفل Finder وافتحه عشان يطبّق."]
+          lines: ["خلّي Finder يعرض الملفات المخفية.", "اقفل Finder وافتحه عشان يطبّق."],
+          sol: R`جوه أي نافذة Finder دوس Cmd+Shift+. (نقطة): هتظهر الملفات والفولدرات اللي بتبدأ بنقطة زي [[.git]] و [[.env]] باهتة شوية. دوسها تاني ترجع مخفية. التغيير ده بيفضل حتى بعد ما تقفل Finder.
+
+الفرق عن أمر [[defaults write]] إن الاختصار سريع ومش محتاج [[killall Finder]]. لو مفيش حاجة ظهرت، يبقى الفولدر ده مفيهوش ملفات مخفية أصلًا، جرب الـ home بتاعك. ولو استخدمت الأمر ونسيت [[killall Finder]] مش هيبان تغيير لحد ما Finder يعيد التشغيل.`
         },
         {
           cmd: "sw_vers",
@@ -439,7 +494,10 @@ system_profiler SPHardwareDataType`,
             when: "قبل ما تاخد شرح من أونلاين: تتأكد إنه للنسخة بتاعتك. ولما تطلب مساعدة تقدر تدّي المعلومات.",
             mistakes: "تطبّق شرح مكتوب لنسخة macOS تانية. بعض الأوامر اتغيرت مع الوقت."
           },
-          lines: ["نسخة macOS.", "المعالج: arm64 يعني Apple Silicon، و x86_64 يعني Intel.", "كل تفاصيل الجهاز."]
+          lines: ["نسخة macOS.", "المعالج: arm64 يعني Apple Silicon، و x86_64 يعني Intel.", "كل تفاصيل الجهاز."],
+          sol: R`[[sw_vers]] بيطبع 3 سطور: [[ProductName: macOS]] و [[ProductVersion: 15.6]] (الرقم حسب جهازك) و [[BuildVersion]]. و [[uname -m]] بيطبع [[arm64]] (Apple Silicon: M1 وما بعده) أو [[x86_64]] (Intel). و [[system_profiler SPHardwareDataType]] يطلع اسم الشريحة (زي [[Chip: Apple M2]]) والرام.
+
+فخ مهم: لو الترمنال نفسه شغال بـ Rosetta، [[uname -m]] هيطبع [[x86_64]] حتى على جهاز M. اتأكد من [[sysctl -n machdep.cpu.brand_string]] أو من سطر Chip في system_profiler.`
         }
       ]
     },
@@ -470,7 +528,10 @@ sed -i '.bak' 's/3000/4000/g' .env`,
           lines: [
             "عدّل الملف مباشرة. على الماك لازم [['']] الفاضية بعد -i، وإلا error.",
             "أو اعمل نسخة احتياطية باسم .env.bak قبل التعديل."
-          ]
+          ],
+          sol: R`[[sed -i '' 's/3000/4000/g' .env]] مش بيطبع حاجة، و [[cat .env]] هيوريك [[PORT=4000]]. التانية [[sed -i '.bak' ...]] بتعدّل .env وبتعمل [[.env.bak]] فيه القديم. [[ls -a]] هيوريك الاتنين.
+
+لو شغلت أمر لينكس [[sed -i 's/3000/4000/g' .env]] على الماك هيطلع error زي [[sed: 1: ".env": invalid command code .]]، لأن sed الماك اعتبر السكربت امتداد الباك أب واعتبر [[.env]] هو الأوامر. والعكس: أمر الماك على لينكس (GNU sed) بيفشل؛ جربته فطلع [[sed: can't read s/3000/4000/g: No such file or directory]] والملف متغيرش. عشان سكربت يشتغل على الاتنين استخدم [[-i.bak]] لازقة من غير مسافة.`
         },
         {
           cmd: "lsof -i",
@@ -497,7 +558,10 @@ kill -9 $(lsof -t -i :3000)`,
             "مين ماسك بورت 3000 (بديل ss على الماك).",
             "كل البورتات اللي بتسمع، بأرقام ([[-P]]).",
             "اقفل اللي ماسك البورت: [[-t]] يطلع رقم العملية بس، و kill ياخده."
-          ]
+          ],
+          sol: R`في ترمنال: [[python3 -m http.server 3000]] يطبع [[Serving HTTP on :: port 3000]]. في التاني [[lsof -i :3000]] يطبع سطر فيه [[COMMAND Python]] و الـ PID و [[TCP *:hbci (LISTEN)]]. hbci هو اسم بورت 3000 في ملف services، و [[-P]] بتخليه يكتب 3000. بعدين [[kill -9 $(lsof -t -i :3000)]]، والترمنال الأول هيطبع [[zsh: killed     python3 -m http.server 3000]].
+
+لو السيرفر مش شغال، [[lsof -t]] مش هيطبع حاجة و kill يقول [[kill: not enough arguments]] (جربتها في zsh وطلعت كده). ولو [[lsof -i :3000]] مطبعش حاجة والبرنامج شغال، يبقى البرنامج بتاع يوزر تاني، جرب [[sudo lsof -i :3000]]. وابدأ بـ [[kill]] من غير [[-9]] عشان البرنامج يقفل بهدوء.`
         },
         {
           cmd: "top -o mem",
@@ -523,7 +587,10 @@ Activity Monitor أسهل للاستخدام اليومي: Cmd+Space ثم «Acti
             "top مرتب بالرام ([[-o]] ترتيب، مش زي لينكس).",
             "إحصائيات الذاكرة (بديل free اللي مش موجود على الماك).",
             "أو سطّب htop وخلاص."
-          ]
+          ],
+          sol: R`[[top -o mem]] بيرتب العمليات بعمود MEM من الأكبر، فأول سطر تحت الهيدر هو أكتر حاجة بتاكل رام (غالبًا Chrome Helper أو Safari أو Docker أو WindowServer). q يخرجك.
+
+لو بتدور على «التطبيق» كله مش عملية واحدة، Activity Monitor أوضح لأن Chrome مثلًا متقسم لعشرات العمليات. و [[vm_stat]] بيطبع أرقام بالـ pages مش بالبايت (الـ page على Apple Silicon 16KB)، فمتقارنش الأرقام دي مباشرة بالجيجا. ولو [[top -o mem]] قال illegal option، يبقى انت على لينكس، هناك [[top]] ثم Shift+M.`
         },
         {
           cmd: "date -v",
@@ -545,7 +612,10 @@ date -v+7d +%F`,
             when: "سكربتات باك أب أو reports بتحتاج تواريخ.",
             mistakes: "استخدام [[date -d]] (GNU) في سكربت على الماك."
           },
-          lines: ["تاريخ النهارده.", "امبارح: [[-v-1d]] (على لينكس كانت [[-d yesterday]]).", "بعد أسبوع."]
+          lines: ["تاريخ النهارده.", "امبارح: [[-v-1d]] (على لينكس كانت [[-d yesterday]]).", "بعد أسبوع."],
+          sol: R`على الماك: [[date +%F]] بيطبع زي [[2026-09-30]]، و [[date -v-1d +%F]] بيطبع [[2026-09-29]]، و [[date -v+7d +%F]] بيطبع [[2026-10-07]].
+
+لو جربت [[date -v-1d]] على لينكس هيطلع [[date: invalid option -- 'v']] (جربتها فعلًا)، والعكس [[date -d yesterday]] على الماك بيطلع [[illegal option -- d]]. و [[-v]] بتتعامل مع آخر الشهر صح، يعني [[date -v+1d]] من 30 سبتمبر يطلع 1 أكتوبر. ولو محتاج نفس الأمر على الاتنين، سطب coreutils واستخدم [[gdate]] (درس coreutils).`
         },
         {
           cmd: "shasum",
@@ -568,7 +638,10 @@ md5 file.zip`,
             when: "التحقق من ملف نزّلته. باك أب integrity check.",
             mistakes: "استخدام [[sha256sum]] مباشرة على الماك: «command not found». استخدم [[shasum -a 256]]."
           },
-          lines: ["بصمة SHA256 (الأمر اسمه shasum مش sha256sum).", "بصمة MD5 (الأمر md5 مش md5sum)."]
+          lines: ["بصمة SHA256 (الأمر اسمه shasum مش sha256sum).", "بصمة MD5 (الأمر md5 مش md5sum)."],
+          sol: R`[[echo hello > f.txt]] و [[shasum -a 256 f.txt]] بيطبع 64 حرف وبعدهم اسم الملف. جربتها فطلع [[5891b5b5...6be03  f.txt]]. غيّر حرف واحد ([[hellp]]) وشغّله تاني: طلع [[bf8c8341...3cda6]]، رقم مختلف تمامًا مش حرف أو اتنين.
+
+ده اللي بيخلي الهاش مفيد: أصغر تغيير بيغيّر البصمة كلها. ولو كتبت [[shasum f.txt]] من غير [[-a 256]] هيطلع SHA-1 (40 حرف) ومش هيطابق SHA256 المكتوب في صفحة التحميل. و [[md5]] على الماك شكل ناتجه [[MD5 (f.txt) = ...]] مش زي md5sum بتاع لينكس.`
         },
         {
           cmd: "coreutils",
@@ -595,7 +668,10 @@ gdate -d yesterday +%F`,
             "سطّب نسخ GNU من الأدوات، بتيجي بحرف g قبل الاسم.",
             "gsed بيشتغل زي sed لينكس بالظبط.",
             "gdate بيفهم كلام زي yesterday."
-          ]
+          ],
+          sol: R`بعد [[brew install coreutils gnu-sed]]، [[gsed -i 's/3000/4000/g' .env]] يشتغل زي لينكس بالظبط من غير [['']]، و [[gdate -d yesterday +%F]] يطبع تاريخ إمبارح. و [[gsed --version]] أول سطر [[sed (GNU sed) 4.9]].
+
+لو [[gsed]] قالت command not found يبقى brew مش في الـ PATH أو التسطيب لسه مخلصش. والأوامر الأصلية ([[sed]] و [[date]]) لسه هي بتاعة الماك، ومتغيرش أسماءها في النظام؛ ده مقصود عشان متبوظش سكربتات الماك نفسه.`
         },
         {
           cmd: "man بدل --help",
@@ -623,7 +699,10 @@ tldr find`,
             "الدليل الرسمي، q للخروج.",
             "سطّب tldr.",
             "أشهر أمثلة لأمر find في صفحة واحدة."
-          ]
+          ],
+          sol: R`على الماك [[ls --help]] بيطبع error زي [[ls: unrecognized option]] وتحته سطر [[usage: ls ...]] فيه لستة حروف الـ options بس، لأن ls بتاع BSD مش بيعرف [[--help]]. على أوبونتو نفس الأمر بيطبع شرح طويل لكل option بالإنجليزي.
+
+ده مش معناه إن ls على الماك ناقص، الشرح في [[man ls]]. وخد بالك إن الـ options نفسها ممكن تختلف بين الاتنين، فأمر نقلته من شرح لينكس ممكن يطلع [[illegal option]]، وساعتها بص في man على الماك أو استخدم نسخة GNU من coreutils.`
         }
       ]
     },
@@ -648,7 +727,10 @@ tldr find`,
             when: "النت بطيء وعايز تعرف المشكلة. قبل مكالمة مهمة.",
             mistakes: "[[networkQuality]] موجود من Monterey فصاعدًا. على الإصدارات الأقدم مش موجود."
           },
-          lines: ["قياس سرعة النت والاستجابة، مبني في الماك."]
+          lines: ["قياس سرعة النت والاستجابة، مبني في الماك."],
+          sol: R`[[networkQuality]] بياخد حوالي 20 ثانية وبعدين يطبع [[Uplink capacity]] و [[Downlink capacity]] بالـ Mbps، و [[Responsiveness]] بالـ RPM مع تقييم زي High أو Medium أو Low، وقيمة Idle Latency.
+
+المتوقع إن الكابل يطلع Responsiveness أعلى وسرعة أثبت من الواي فاي، خصوصًا لو بعيد عن الراوتر. لو الواي فاي أقل بكتير، المشكلة غالبًا في الإشارة مش الخط. و Responsiveness واطية مع سرعة عالية معناها إن النت بيعلق لما حد تاني بيحمّل. ولو قالك command not found يبقى نسختك أقدم من Monterey.`
         },
         {
           cmd: "ifconfig / route",
@@ -676,7 +758,10 @@ sudo nano /etc/hosts`,
             "الراوتر الافتراضي (زي ip route).",
             "أسامي كل الكروت، عشان تعرف الواي فاي en0 ولا en1.",
             "ملف hosts نفس مكانه زي لينكس."
-          ]
+          ],
+          sol: R`[[ifconfig en0]] دوّر فيه على سطر [[inet 192.168.1.15 netmask 0xffffff00 broadcast 192.168.1.255]]: الرقم بعد inet هو IP جهازك. و [[route -n get default]] هيطبع سطر [[gateway: 192.168.1.1]]، ده الراوتر، ومعاه [[interface: en0]].
+
+لو [[ifconfig en0]] مفيهوش سطر inet، يبقى en0 مش الكارت اللي انت متوصل بيه (مثلًا على Mac بكابل أو بعض الموديلات الواي فاي بيبقى en1)؛ [[route -n get default]] بيقولك الـ interface الصح في سطر interface، و [[networksetup -listallhardwareports]] يوريك أنهي en هو Wi-Fi. سطر [[inet6]] ده IPv6 مش هو المطلوب.`
         },
         {
           cmd: "ipconfig getifaddr",
@@ -695,7 +780,10 @@ curl ifconfig.me`,
             when: "شارك الـ URL مع موبايل على نفس الواي فاي. تعرف عنوانك على الشبكة.",
             mistakes: "تستخدم [[en0]] وجهازك الـ Wi-Fi على [[en1]]. افحص بـ [[ifconfig]] أو [[networksetup]]."
           },
-          lines: ["عنوانك على الواي فاي في سطر واحد.", "عنوانك العام على النت."]
+          lines: ["عنوانك على الواي فاي في سطر واحد.", "عنوانك العام على النت."],
+          sol: R`[[ipconfig getifaddr en0]] بيطبع الـ IP المحلي بس، زي [[192.168.1.15]]. و [[curl ifconfig.me]] بيطبع الـ IP العام زي [[41.x.x.x]]، ومن غير سطر جديد في الآخر فالـ prompt بيلزق جنبه، ده طبيعي.
+
+الاتنين مختلفين لأن الراوتر بيعمل NAT. لو [[getifaddr en0]] مطبعش حاجة، يبقى الكارت ده مش متوصل، جرب [[en1]]. ولو [[curl ifconfig.me]] طبع IP غريب مش بتاع مزود النت، يبقى انت على VPN.`
         },
         {
           cmd: "flush DNS",
@@ -715,7 +803,10 @@ curl ifconfig.me`,
             when: "بعد تعديل [[/etc/hosts]]. بعد تغيير DNS settings. لما موقع لسه بيفتح عنوان قديم.",
             mistakes: "تعمل flush بدون sudo: مش هيشتغل أو هيطلع error. لازم sudo للاتنين."
           },
-          lines: ["امسح كاش الـ DNS وأعد تحميل خدمة الـ DNS. الاتنين لازمين، وبـ sudo."]
+          lines: ["امسح كاش الـ DNS وأعد تحميل خدمة الـ DNS. الاتنين لازمين، وبـ sudo."],
+          sol: R`الأمر هيطلب باسورد الماك (عشان sudo)، وبعدها مش بيطبع أي حاجة، وده معناه إنه نجح. بعدها [[dscacheutil -q host -a name yourdomain.com]] أو افتح الموقع، المفروض ياخد الـ IP الجديد.
+
+لو لسه بيفتح القديم: المتصفح نفسه عنده كاش (Chrome: chrome://net-internals/#dns ثم Clear host cache)، أو راوتر البيت عامل كاش، أو الـ TTL القديم عند الـ DNS بتاعك لسه مخلصش؛ اتأكد إن السجل اتغير فعلًا بـ [[dig @1.1.1.1 yourdomain.com]]. ولو ملف [[/etc/hosts]] فيه سطر للدومين ده، هو اللي بيكسب على أي DNS.`
         },
         {
           cmd: "ssh-add",
@@ -741,7 +832,14 @@ pbcopy < ~/.ssh/id_ed25519.pub`,
             "اعمل زوج مفاتيح.",
             "ضيف المفتاح للـ agent واحفظ الـ passphrase في Keychain، فمش هيسأل عليها تاني.",
             "انسخ المفتاح العام عشان تحطه في GitHub أو السيرفر."
-          ]
+          ],
+          sol: R`[[ssh-keygen -t ed25519]] هيسألك عن المكان (Enter للافتراضي) والـ passphrase، ويطبع [[Your public key has been saved in /Users/ali/.ssh/id_ed25519.pub]]. [[ssh-add --apple-use-keychain ~/.ssh/id_ed25519]] يطبع [[Identity added: ...]]. بعد [[pbcopy < ~/.ssh/id_ed25519.pub]] الصق في GitHub، Settings، SSH and GPG keys، New SSH key. التأكيد: [[ssh -T git@github.com]] يرد [[Hi username! You've successfully authenticated, but GitHub does not provide shell access.]]
+
+لو لزقت ولقيت كلام طويل غريب يبدأ بـ [[-----BEGIN OPENSSH PRIVATE KEY-----]]، نسخت المفتاح الخاص بالغلط؛ متحطهوش في أي مكان، وانسخ الملف اللي بينتهي بـ [[.pub]]. ولو [[ssh -T]] قال [[Permission denied (publickey)]]، المفتاح مش متضاف في GitHub أو الـ agent مش شايفه ([[ssh-add -l]]).`,
+          solCode: R`ssh-keygen -t ed25519 -C "you@example.com"
+ssh-add --apple-use-keychain ~/.ssh/id_ed25519
+pbcopy < ~/.ssh/id_ed25519.pub
+ssh -T git@github.com`
         }
       ]
     },
@@ -794,7 +892,10 @@ zsh بيدعم colors بـ [[%F{color}]] في prompt strings و[[tput]] في ا�
             "لكل فولدر جوه lab. [[(/)]] في zsh يعني فولدرات بس.",
             "اطبع اسمه وحجمه ([[cut -f1]] ياخد الرقم بس من ناتج du).",
             "قفلة."
-          ]
+          ],
+          sol: R`جربته على lab فيه [[api/err.log]] بسطر و [[app/logs/app.log]] بـ 3 سطور، فطبع [[Log files:]] وتحته [[api/err.log (1 lines)]] و [[app/logs/app.log (3 lines)]]، وبعدين [[Project sizes:]] وتحته كل فولدر في [[~/lab]] وحجمه زي [[/…/lab/api -> 8.0K]]. وفي فولدر فاضي من غير lab طبع العنوانين بس من غير أي error، وده شغل [[null_glob]].
+
+عشان تغيّر المسار، بدّل [[~/lab/*(/)]] بفولدر مشاريعك، مثلًا [[~/projects/*(/)]]. خد بالك إن [[**/*.log]] بيدوّر من المكان اللي انت واقف فيه مش من lab، فاعمل cd الأول. ولو شغلته بـ [[bash report.zsh]] هيبوظ عند [[setopt]] و [[*(/)]] لأنهم zsh بس. وعلى الماك [[du -sh]] بيطبع أحجام بشكل زي [[12K]] برضه.`
         }
       ]
     }

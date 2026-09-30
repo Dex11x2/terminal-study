@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("quality", {
@@ -69,7 +73,24 @@ tsc (typecheck) بيتأكد إن الأنواع ماشية مع بعض: بتب�
             "شغّل الاختبارات مرة واحدة واقفل.",
             "الكل بالترتيب، ويقف عند أول فشل.",
             "نهاية السكربتات."
-          ]
+          ],
+          sol: R`في مشروع الـ lab زي ما هو ([[npm init -y]] والأدوات بس)، [[npm run check]] بيعدّي [[format:check]] ([[All matched files use Prettier code style!]]) وبيقع في [[lint]] بـ [[ESLint couldn't find an eslint.config.* file.]]. من ESLint 9 لازم ملف config، ومفيش واحد افتراضي.
+
+بعد ما تعمل [[eslint.config.js]]، اللي بعده [[typecheck]]: من غير [[tsconfig.json]]، [[tsc --noEmit]] بيطبع صفحة الـ help ويخرج بـ 1، مش بيفحص حاجة. وبعد الـ tsconfig، [[vitest run]] من غير ملفات اختبار بيقول [[No test files found, exiting with code 1]].
+
+دا بالظبط الهدف: الـ [[&&]] بيوقف عند أول خطوة واقعة، فتصلّح واحدة واحدة بالترتيب. لو عايز الـ test يعدّي مؤقتًا لحد ما تكتب اختبارات حط [[vitest run --passWithNoTests]]. والغلط الشائع إنك تستخدم [[;]] بدل [[&&]] فكل الخطوات تشتغل و exit code النهائي يبقى بتاع آخر واحدة بس.`,
+          solCode: R`// eslint.config.js
+import js from "@eslint/js";
+import tseslint from "typescript-eslint";
+
+export default tseslint.config(
+  { ignores: ["dist", "coverage"] },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+);
+
+// tsconfig.json
+{ "compilerOptions": { "strict": true, "module": "ESNext", "moduleResolution": "bundler", "target": "ES2022", "noEmit": true, "skipLibCheck": true }, "include": ["src"] }`
         },
         {
           cmd: "eslint",
@@ -103,7 +124,14 @@ npx eslint --print-config src/index.ts`,
             "أي warning يفشّل الأمر. ده للـ CI.",
             "اعرض الـ errors بس واخفي الـ warnings.",
             "اطبع القواعد اللي بتتطبق فعلًا على الملف ده."
-          ]
+          ],
+          sol: R`على ملف فيه [[let unused = 1;]] و [[let total = sum(1, 2);]] و [[if (total == 3)]]، مع [[js.configs.recommended]] و [[typescript-eslint]] و قاعدتين [[eqeqeq]] و [[prefer-const]]، الناتج:
+
+[[2:5 error 'unused' is never reassigned. Use 'const' instead prefer-const]] و [[2:5 error 'unused' is assigned a value but never used @typescript-eslint/no-unused-vars]] و [[4:11 error Expected '===' and instead saw '==' eqeqeq]]، وفي الآخر [[✖ 4 problems (4 errors, 0 warnings)]] و [[2 errors and 0 warnings potentially fixable with the --fix option.]]
+
+بعد [[--fix]]: الـ [[let]] بقت [[const]] (دي آمنة)، بس المتغير المش مستخدم لسه موجود و [[==]] زي ما هو. الاتنين محتاجين قرار منك: يمكن المتغير لازم يتمسح ويمكن نسيت تستخدمه، و [[==]] لـ [[===]] ممكن يغيّر السلوك لو النوع مختلف.
+
+آخر كلمة في كل سطر هي اسم القاعدة، ودا اللي تدوّر عليه في الـ docs. ولو ما طلعش [[eqeqeq]] خالص، دي مش في [[recommended]]؛ ضيفها في [[rules]].`
         },
         {
           cmd: "eslint.config.mjs",
@@ -263,7 +291,12 @@ git diff --stat`,
             "رتّب ملفات TS في src بس. التنصيص عشان prettier يفسّر الـ glob مش الشيل.",
             "اطبع أسماء الملفات اللي مش متنسّقة بس.",
             "شوف write غيّر إيه قبل ما تعمل commit."
-          ]
+          ],
+          sol: R`بعد ما تبوّظ [[src/sum.ts]]، [[npx prettier --check src]] بيطبع [[[warn] src/sum.ts]] و [[[warn] Code style issues found in the above file. Run Prettier with --write to fix.]] ويخرج بـ 1. و [[--write]] بيطبع اسم الملف والوقت ([[src/sum.ts 38ms]]) ويرجّعه لـ [[export function sum(a: number, b: number) {]] بمسافتين.
+
+بعدها [[git diff --stat]] بيوريك الملفات اللي اتغيرت، والمفروض يبقى ملفك بس. لو لقيت عشرات الملفات اتغيرت، يبقى المشروع ما كانش متنسّق من الأول: اعمل commit للتنسيق لوحده عشان ما يختلطش بشغلك.
+
+الغلط الشائع: [[prettier --check .]] يمسك [[dist]] أو ملفات متولّدة. prettier بيتجاهل اللي في [[.gitignore]] و [[.prettierignore]]، فحطها هناك. ولو [[--write]] ما غيّرش حاجة والـ [[--check]] لسه بيشتكي، اتأكد إن مفيش اتنين prettier config متعارضين.`
         },
         {
           cmd: "tsc --noEmit",
@@ -295,7 +328,14 @@ npx tsc --showConfig`,
             "سيبه شغال ويعيد الفحص مع كل حفظ.",
             "عدّ الأخطاء. [[--pretty false]] بيخلي كل خطأ في سطر عشان grep.",
             "اطبع الإعدادات النهائية بعد ما يدمج extends."
-          ]
+          ],
+          sol: R`[[npm run dev]] بيشتغل والصفحة بتفتح عادي، و [[vite build]] كمان بينجح ([[✓ built in 154ms]])، لأن Vite بيشيل الأنواع بس بـ esbuild من غير ما يفحصها. المتصفح نفسه هيطبع [["5"]] كنص.
+
+[[npx tsc --noEmit]] بيمسكه:
+
+[[src/n.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.]] ويخرج بـ 2. وبـ [[--pretty false]] مع [[grep -c "error TS"]] بيطبع [[1]].
+
+لو [[tsc]] طبع صفحة الـ help بدل ما يفحص، يبقى مفيش [[tsconfig.json]] في الفولدر. ولو ما مسكش الغلط، يبقى الملف مش جوه [[include]]، أو المشروع فيه [[tsconfig.json]] بـ [[references]] (قالب Vite الجديد)، وساعتها الصح [[tsc -b]] أو [[tsc --noEmit -p tsconfig.app.json]].`
         },
         {
           cmd: ".editorconfig و .prettierrc",
@@ -334,7 +374,12 @@ insert_final_newline = true
             "نهاية السطر LF زي لينكس، حتى على ويندوز.",
             "سطر فاضي في آخر كل ملف.",
             "اختيارات prettier: علامة تنصيص مفردة، وفاصلة منقوطة، والسطر لحد ١٠٠ حرف."
-          ]
+          ],
+          sol: R`في VS Code، ملف جديد والضغط على Tab بيكتب مسافتين، وتحت على اليمين في شريط الحالة هتلاقي [[Spaces: 2]] و [[LF]]. ولما تحفظ، الملف بيخلص بسطر فاضي.
+
+ولو شغّلت [[npx prettier --write]] على ملف فيه [[const s = "hi"]] هيبقى [[const s = 'hi';]] بسبب [[singleQuote]] و [[semi]].
+
+لو Tab لسه بيكتب ٤ مسافات: VS Code محتاج إضافة [[EditorConfig for VS Code]] عشان يقرا [[.editorconfig]]، أو إعداد [[editor.detectIndentation]] أخد المسافات من الملف المفتوح. وخلي بالك إن الـ JSON في [[.prettierrc]] لازم يبقى سليم؛ لو فيه فاصلة زيادة prettier هيطلع error، مش هيتجاهله.`
         }
       ]
     },
@@ -379,7 +424,26 @@ npx vitest run --reporter=verbose`,
             "الاختبارات اللي اسمها فيه الجملة دي بس ([[-t]]).",
             "لو مفيش ملفات اختبار أصلًا، اعتبرها نجاح.",
             "اطبع كل اختبار باسمه."
-          ]
+          ],
+          sol: R`أول تشغيل بـ [[npx vitest]]: [[✓ src/sum.test.ts (1 test)]] و [[Test Files 1 passed (1)]] و [[Tests 1 passed (1)]]، وبعدين بيقعد مستني ([[Waiting for file changes...]]).
+
+لما تغيّر الدالة لـ [[a - b]] وتحفظ، بيعيد الاختبار لوحده ويطبع:
+
+[[FAIL src/sum.test.ts > adds two numbers]] و [[AssertionError: expected +0 to be 4 // Object.is equality]] وتحتها [[- 4]] و [[+ 0]]، وسهم على السطر اللي فيه [[toBe(4)]]. ترجّعها وتحفظ فيرجع أخضر.
+
+لو ما اتعادش لما حفظت: انت شغّلت [[vitest run]] مش [[vitest]]، أو شغّال في CI (هناك بيبقى run تلقائي). ولو قال [[No test files found]]، اسم الملف لازم يخلص بـ [[.test.ts]] أو [[.spec.ts]]. واكتب [[q]] عشان تخرج.`,
+          solCode: R`// src/sum.ts
+export function sum(a: number, b: number) {
+  return a + b;
+}
+
+// src/sum.test.ts
+import { expect, test } from 'vitest';
+import { sum } from './sum';
+
+test('adds two numbers', () => {
+  expect(sum(2, 2)).toBe(4);
+});`
         },
         {
           cmd: "--coverage",
@@ -410,7 +474,23 @@ npx jest --coverage`,
             "شغّل الاختبارات وسجّل السطور اللي اتنفّذت: جدول في الترمنال وفولدر coverage.",
             "نفسه، ويفشل لو السطور المتغطية أقل من ٨٠٪.",
             "نفس الفكرة في jest، من غير تسطيب زيادة."
-          ]
+          ],
+          sol: R`على دالة فيها [[if (coupon === 'SAVE10')]] واختبار واحد من غير كوبون، الجدول طلّع [[price.ts | 66.66 | 50 | 100 | 66.66 | 3]]، يعني نص الـ branches بس (الـ if ما اتدخلش) وسطر 3 مش متغطي. وفي [[coverage/index.html]] لما تفتح [[price.ts]] هتلاقي السطر ده أحمر، وجنب الـ if علامة إن الاتجاه ده ما اتجربش.
+
+بعد اختبار تاني بـ [['SAVE10']]: [[All files 100% Branches 100% ( 2/2 )]] و [[No files with missing coverage.]] والسطور كلها خضرا مع عدد مرات التنفيذ جنب كل سطر.
+
+الأخطاء الشائعة: [[MISSING DEPENDENCY Cannot find dependency '@vitest/coverage-v8']] لو نسيت السطر الأول. وملف ما ظهرش في التقرير خالص لأن محدش عمله import في أي اختبار؛ دا أخطر من ٠٪ لأنك مش شايفه (حط [[coverage.include]] عشان يظهر). وافتكر إن ١٠٠٪ هنا معناها إن الاتجاهين اتشغلوا، مش إنك اختبرت القيمة الصح في كل واحد.`,
+          solCode: R`// src/price.test.ts
+import { expect, test } from 'vitest';
+import { price } from './price';
+
+test('no coupon', () => {
+  expect(price(100)).toBe(100);
+});
+
+test('SAVE10 gives 10% off', () => {
+  expect(price(100, 'SAVE10')).toBe(90);
+});`
         },
         {
           cmd: "jest",
@@ -424,7 +504,7 @@ npx jest src/auth -t "rejects expired token"
 npx jest --runInBand
 NODE_OPTIONS=--experimental-vm-modules npx jest
 npx cross-env NODE_OPTIONS=--experimental-vm-modules jest`,
-          try: R`في مشروع فيه [["type": "module"]] شغّل [[jest]] وشوف خطأ [[Cannot use import statement outside a module]]، وبعدين شغّله بـ [[NODE_OPTIONS]].`,
+          try: R`في مشروع فيه [["type": "module"]] شغّل [[jest]] وشوف الخطأ ([[Must use import to load ES Module]] في jest 30، و [[Cannot use import statement outside a module]] في النسخ الأقدم)، وبعدين شغّله بـ [[NODE_OPTIONS]].`,
           deep: {
             why: "مش كل مشروع هتشتغل عليه هيبقى vitest. jest لسه في مشاريع كتير، ولازم تعرف تشغّله وتفهم مشاكله المشهورة.",
             how: R`عكس vitest، [[jest]] من غير حاجة بيشغّل مرة ويقفل، و [[--watch]] هو اللي بيقعد، وبيعيد الاختبارات المتأثرة بالملفات اللي اتغيرت من آخر commit (عشان كده محتاج Git).
@@ -444,7 +524,27 @@ jest اتعمل أيام CommonJS ([[require]]). لو مشروعك ES Modules ([
             "شغّل الملفات واحد ورا التاني مش بالتوازي.",
             "شغّل jest على كود ES Modules (bash بس).",
             "نفسه بس بيشتغل على ويندوز كمان."
-          ]
+          ],
+          sol: R`مع jest 30 على Node 22 في مشروع [["type": "module"]]:
+
+[[FAIL ./sum.test.js]] و [[Test suite failed to run]] و [[Must use import to load ES Module: .../sum.test.js]]، وتحته إقتراحات: Babel، أو [[transformIgnorePatterns]]، أو Node 24.9 وأحدث. في jest 29 وأقدم الرسالة المعروفة كانت [[SyntaxError: Cannot use import statement outside a module]]. نفس السبب: jest بيحاول يشغّل الملف كـ CommonJS.
+
+مع [[NODE_OPTIONS=--experimental-vm-modules npx jest]]: [[ExperimentalWarning: VM Modules is an experimental feature]] (عادي) وبعدها [[Tests: 1 passed, 1 total]].
+
+الغلط الشائع إنك تحط [[NODE_OPTIONS=...]] في سكربت package.json وزميلك على ويندوز CMD يقع بـ [['NODE_OPTIONS' is not recognized]]؛ دا شغل [[cross-env]]. وفي ملفات الـ ESM لو استخدمت [[jest.fn()]] أو [[jest.mock()]] من غير import هتاخد [[jest is not defined]]: اعمل [[import { jest } from "@jest/globals";]].`,
+          solCode: R`// package.json: "type": "module"
+// sum.js
+export const sum = (a, b) => a + b;
+
+// sum.test.js
+import { sum } from "./sum.js";
+test("adds", () => {
+  expect(sum(2, 2)).toBe(4);
+});
+
+// الترمنال
+npx jest
+NODE_OPTIONS=--experimental-vm-modules npx jest`
         }
       ]
     },
@@ -1195,7 +1295,12 @@ git config core.hooksPath`,
             "شوف الـ hook هيشغّل إيه (أول مرة فيه npm test).",
             "اتأكد إن سكربت prepare اتضاف، وده اللي بيفعّل الـ hooks بعد كل install.",
             "اتأكد إن Git بقى بيدوّر على الـ hooks في .husky/_."
-          ]
+          ],
+          sol: R`[[npx husky init]] بيعمل فولدر [[.husky]] فيه [[pre-commit]] وفولدر داخلي [[_]]، وبيضيف [["prepare": "husky"]] للـ scripts، وبيظبط [[git config core.hooksPath]] على [[.husky/_]]. و [[cat .husky/pre-commit]] بيطبع [[npm test]] جاهز (مش محتاج تكتبه).
+
+لما تعمل commit، قبل الرسالة بتاعة git هتشوف [[> vitest run]] ونتيجة الاختبارات. ولو كسرت اختبار: [[husky - pre-commit script failed (code 1)]] والـ commit مش بيتعمل ([[git log]] زي ما هو).
+
+لو الـ hook ما اشتغلش: [[git config core.hooksPath]] فاضي، يعني الـ init اتعمل في فولدر مش هو root الـ repo أو قبل [[git init]]. شغّل [[npm run prepare]]. ولو قال [[.git can't be found]] يبقى الفولدر مش git repo أصلًا.`
         },
         {
           cmd: ".husky/pre-commit و commit-msg",
@@ -1229,7 +1334,12 @@ git commit --allow-empty -m "bad message"`,
             "اتأكد إن الملفات موجودة فعلًا، مش فولدر _ لوحده.",
             "ضيفهم لـ Git عشان يوصلوا لباقي الفريق.",
             "جرّب commit برسالة غلط ومن غير تعديلات. المفروض يترفض."
-          ]
+          ],
+          sol: R`[[git commit --allow-empty -m "bad message"]] بيترفض بـ:
+
+[[✖ subject may not be empty [subject-empty]]] و [[✖ type may not be empty [type-empty]]] و [[found 2 problems, 0 warnings]]، وبعدها [[husky - commit-msg script failed (code 1)]]. الـ pre-commit قبلها بتقول [[lint-staged could not find any staged files.]] وتعدّي، لأن الـ commit فاضي.
+
+لو الرسالة عدّت، دور على الناقص: غالبًا [[commitlint.config.js]] مش موجود (ساعتها commitlint بيقع بـ [[Please add rules to your commitlint.config.js]])، أو الباكدجات [[@commitlint/cli]] و [[@commitlint/config-conventional]] مش متسطبة. ولو الـ config بـ [[export default]] والمشروع مش [["type": "module"]] سمّيه [[commitlint.config.mjs]]. ولو [[ls -la .husky]] مفيهوش [[commit-msg]]، يبقى الـ echo اتعمل في فولدر تاني.`
         },
         {
           cmd: "lint-staged",
@@ -1260,7 +1370,12 @@ git commit --allow-empty -m "bad message"`,
             "ملفات الكود: صلّح بـ eslint وبعدين نسّق بـ prettier، على الملفات المتجهزة بس.",
             "باقي الملفات (JSON و Markdown و YAML): نسّقها بس.",
             "نهاية الإعدادات."
-          ]
+          ],
+          sol: R`في التجربة: [[src/a.ts]] و [[src/b.ts]] الاتنين فيهم [[export const a=1]] من غير مسافات، و [[git add src/a.ts]] بس. الـ commit طبع [[✔ eslint --fix]] و [[✔ prettier --write]] و [[Done running tasks for staged files!]]، والـ commit اتعمل.
+
+[[git show HEAD:src/a.ts]] بيطلّع [[export const a = 1;]] متنسّق. و [[cat src/b.ts]] لسه [[export const b=2]]، و [[git status]] بيوريه [[?? src/b.ts]]. ودي الفكرة: lint-staged بيلمس اللي في الـ commit بس، فمش بيقلب commit صغير لتعديل في مية ملف.
+
+لو [[b.ts]] اتظبط كمان، يبقى الـ hook فيه [[prettier --write .]] بدل [[npx lint-staged]]. ولو eslint رجّع error مش قابل للإصلاح (زي متغير مش مستخدم)، lint-staged بيرجّع ملفاتك زي ما كانت والـ commit مش بيتعمل، ودا صح.`
         },
         {
           cmd: "commitlint",
@@ -1298,7 +1413,14 @@ commitlint بيقرا [[commitlint.config.js]]، و [[config-conventional]] في
             "تصليح bug في جزء الـ auth.",
             "صيانة: تحديث مكتبة.",
             "[[!]] معناها تغيير بيكسر اللي بيستخدم الـ API القديم."
-          ]
+          ],
+          sol: R`[[echo "update" | npx commitlint]] بيطلّع:
+
+[[✖ subject may not be empty [subject-empty]]] و [[✖ type may not be empty [type-empty]]]. الكلمة لوحدها اتفهمت كأنها مش على الشكل [[type: subject]] خالص.
+
+ومحاولة زي [[Fix: Update login.]] بتطلّع ٤ أخطاء: [[type must be lower-case]] و [[type must be one of [build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test]]] و [[subject must not be sentence-case]] و [[subject may not end with full stop]]. الإصلاح: [[fix: update login]] أو أحسن [[fix(auth): refresh token before expiry]]، وساعتها commitlint مش بيطبع حاجة ويخرج بـ 0.
+
+عشان تتأكد: [[echo $?]] بعد كل محاولة. الغلط الشائع إنك تنسى المسافة بعد النقطتين ([[fix:update]])، أو تكتب type مش في القايمة زي [[feature]] أو [[update]].`
         },
         {
           cmd: "HUSKY=0 و --no-verify",
@@ -1330,7 +1452,12 @@ git push --no-verify`,
             "rebase طويل من غير ما كل commit يشغّل الـ hooks.",
             "شغّل الـ hook واطبع كل سطر فيه عشان تعرف بيقع فين.",
             "push من غير pre-push."
-          ]
+          ],
+          sol: R`مع [[.husky/pre-commit]] فيه [[echo "pre-commit: blocked"; exit 1]]:
+
+الـ commit العادي: [[pre-commit: blocked]] و [[husky - pre-commit script failed (code 1)]] ومفيش commit. بـ [[--no-verify]]: الـ commit اتعمل على طول، والـ hook ما اشتغلش خالص (مفيش blocked). بـ [[HUSKY=2]]: husky بيطبع كل سطر بينفّذه بـ [[+]] قبله، زي [[+ sh -e .husky/pre-commit]] و [[+ c=1]] و [[+ echo husky - pre-commit script failed (code 1)]]، فتشوف الـ PATH اللي استخدمه والـ exit code، والـ commit برضه بيترفض.
+
+وخلي بالك إن [[HUSKY=0]] و [[--no-verify]] بيعدّوا كل الـ hooks، ومنهم [[commit-msg]]: جرّبت [[HUSKY=0 git commit -m "anything"]] واتقبلت رغم إنها مش conventional. عشان كده الـ CI لازم يعيد نفس الفحوص، الـ hooks سهل تتعدّى. ورجّع الـ pre-commit الأصلي بعد التجربة.`
         }
       ]
     },
@@ -1412,7 +1539,12 @@ jobs:
             "الأنواع (tsc --noEmit).",
             "الاختبارات مرة واحدة.",
             "الـ build في الآخر لأنه الأتقل."
-          ]
+          ],
+          sol: R`في الـ PR اللي فيه ملف مش متنسّق، الـ job [[quality]] بيقع في step [[Run pnpm format:check]] بعد ثواني من [[pnpm install]]، واللوج فيه [[[warn] src/x.ts]] و [[Code style issues found in the above file.]] و [[Process completed with exit code 1.]]. الـ steps اللي بعدها (lint و typecheck و test و build) بتظهر رمادي، ما اشتغلتش. والـ PR عليه X أحمر جنب [[CI / quality]].
+
+الفكرة: الأسرع والأرخص الأول. مفيش داعي تستنى الـ build دقيقتين عشان تعرف إن فيه مسافة غلط.
+
+مشاكل هتقابلها أول مرة: [[pnpm/action-setup]] بيقع بـ error إنه مش لاقي نسخة pnpm لو package.json مفيهوش [["packageManager": "pnpm@..."]] ولا [[with: version]]. و [[--frozen-lockfile]] بيقع لو [[pnpm-lock.yaml]] مش متحدّث مع package.json، ودا مقصود. والملف نفسه تقدر تفحصه قبل الـ push بـ [[actionlint]]. ولو الـ PR ما شغّلش الـ workflow خالص، الملف مش على الـ branch أو [[pull_request]] ناقصة.`
         },
         {
           cmd: "pnpm -r و --filter",
@@ -1454,7 +1586,12 @@ npm run test --workspaces --if-present`,
             "الاختبارات للباكدجات اللي اتغيرت من main واللي بيعتمد عليها بس.",
             "ابني web ومعاها كل الباكدجات اللي هي معتمدة عليها.",
             "نفس فكرة [[-r]] في npm workspaces."
-          ]
+          ],
+          sol: R`في monorepo فيه [[@myapp/web]] و [[@myapp/api]]، وعدّلت web بس: [[pnpm --filter "...[HEAD~1]" run test]] شغّل [[testing web]] بس، و [[pnpm -r run test]] شغّل الاتنين.
+
+بعد ما خليت api يعتمد على web ([["@myapp/web": "workspace:*"]]) وعدّلت web تاني: نفس الأمر شغّل web و api الاتنين، لأن الـ [[...]] قبل القوس معناها «واللي بيعتمدوا عليه». أما [[--filter "[HEAD~1]"]] من غير النقط شغّل web بس. دا الفرق اللي بيحميك: تغيير في باكدج مشتركة لازم يختبر التطبيقات اللي بتستخدمها.
+
+لو ما اشتغلش حاجة خالص ([[No projects matched the filters]])، يبقى التعديل لسه مش في commit (الفلتر بيقارن commits) أو الملف اللي عدلته بره أي باكدج. ولو كل حاجة اشتغلت، اتأكد إنك كتبت الـ filter بين علامات تنصيص عشان الـ shell ما يلعبش في الأقواس.`
         },
         {
           cmd: "git diff --exit-code",
@@ -1486,7 +1623,16 @@ test -z "$(git status --porcelain)" || { git status --short; exit 1; }`,
             "نفسه للمشروع كله، بس اطبع أسماء الملفات وعدد السطور.",
             "كل التغييرات حتى الملفات الجديدة، بشكل ثابت للسكربتات.",
             "لو فيه أي تغيير، اعرضه واقفل بفشل."
-          ]
+          ],
+          sol: R`بعد ما تعدّل ملف متابَع: [[git diff --exit-code; echo $?]] بيطبع الـ diff وبعده [[1]]. بعد [[git restore الملف]]: مفيش diff، و [[0]].
+
+دي كل الفكرة في CI: الـ exit code غير صفر بيوقف الـ step لوحده، فمش محتاج if.
+
+خلي بالك من حالتين: ملف جديد مش متضاف في git مش بيظهر في [[git diff]] خالص (هيطلع 0)، فعشان كده آخر سطر في المثال بيستخدم [[git status --porcelain]] اللي بيوريه بـ [[??]]. وتعديل عملت له [[git add]] مش بيظهر في [[git diff]] من غير [[--cached]]. لو عايز الاتنين: [[git diff HEAD --exit-code]].`,
+          solCode: R`echo "// changed" >> src/sum.ts
+git diff --exit-code; echo $?
+git restore src/sum.ts
+git diff --exit-code; echo $?`
         },
         {
           cmd: "فحص أسرع",
@@ -1524,7 +1670,12 @@ time npm run check`,
             "الاختبارات اللي ليها علاقة بملفات اتغيرت من main بس.",
             "الاختبارات اللي بتلمس الملف ده، مرة واحدة من غير watch.",
             "قيس الفحص كله بياخد كام ثانية."
-          ]
+          ],
+          sol: R`على مشروع صغير الفرق صغير: عندي [[npx eslint .]] أخد 1394ms و 1356ms، و [[--cache]] أخد 1284ms أول مرة و 1029ms التانية. أغلب الوقت هنا تشغيل Node وتحميل الـ config، مش فحص الملفات. و [[--cache]] عمل ملف [[.eslintcache]] في root المشروع (حطه في [[.gitignore]]، أو استخدم [[--cache-location]] زي المثال).
+
+على مشروع حقيقي فيه مئات الملفات، وخصوصًا مع قواعد typescript-eslint اللي محتاجة الأنواع، المرة التانية بـ cache بتنزل من ثواني كتير لثانية أو اتنين، لأن ESLint بيفحص الملفات اللي اتغيرت بس.
+
+الأخطاء الشائعة: تقارن أول مرة بـ cache بأول مرة من غيره فمتلاقيش فرق، لأن الـ cache بيتبني في الأولى. أو تعمل cache في CI من غير ما تحفظ الفولدر بين الـ runs ([[actions/cache]])، فكل run بيبدأ من الصفر.`
         }
       ]
     },

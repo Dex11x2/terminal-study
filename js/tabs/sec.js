@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("sec", {
@@ -51,7 +55,10 @@ OWASP Juice Shop موقع Node.js مبني بثغرات عشان تتعلم. ش�
           },
           lines: [
             "شغّل Juice Shop على جهازك: موقع معمول بثغرات عشان تتعلم عليه بشكل قانوني. افتح localhost:3000."
-          ]
+          ],
+          sol: R`بعد [[docker run -d -p 3000:3000 bkimminich/juice-shop]] افتح [[http://localhost:3000]]: هتلاقي متجر عصاير شكله عادي. [[docker ps]] لازم يوريك الـ container شغال والبورت [[0.0.0.0:3000->3000/tcp]]. جوه الموقع فيه صفحة Score Board مخفية، ولقيانها هو أول تحدي، وكل تحدي بتحله بيظهرلك إشعار أخضر فوق.
+
+القاعدة اللي بتتعلمها هنا: التجارب دي على حاجة انت اللي مشغّلها على جهازك أو على موقع معمول للتدريب (زي PortSwigger Academy). نفس التجربة على موقع حد تاني من غير إذن مكتوب جريمة حتى لو "بتتفرج بس". لو الصفحة مفتحتش: يا الـ container لسه بيقوم (استنى ثواني و [[docker logs]])، يا البورت 3000 مستخدم عندك من مشروع تاني، غيّره لـ [[-p 3001:3000]].`
         },
         {
           cmd: "إزاي تفكّر",
@@ -74,7 +81,15 @@ curl https://example.com/api/users/124 -H "cookie: session=..."`,
           },
           lines: [
             "الاختبار الأساسي لـ IDOR: انت يوزر 123، غيّر الرقم لـ 124 بنفس الكوكي. لو رجعت بيانات، فيه ثغرة."
-          ]
+          ],
+          sol: R`المطلوب إنك تكلّم الـ API بتاعك من الترمنال مباشرة، زي [[curl -i http://localhost:3000/api/orders]]، من غير المتصفح ومن غير الواجهة. النتيجة الصح: السيرفر يرد [[401]] لو مفيش توكن، و [[400]] لو بعت داتا ناقصة أو غلط، بالظبط زي ما لو جيت من الواجهة.
+
+لو رد بـ [[200]] وداتا، يبقى الحماية كانت في الواجهة بس (زرار مخفي أو validation في الفورم)، وده مش حماية: أي حد يقدر يبعت الطلب بنفسه. الدرس هنا إن كل فحص صلاحية وكل validation لازم يتعمل على السيرفر، والواجهة بس بتسهّل على المستخدم.`,
+          solCode: R`# من غير توكن: المفروض 401
+curl -i http://localhost:3000/api/orders
+# داتا ناقصة: المفروض 400 مش 500
+curl -i -X POST http://localhost:3000/api/orders \
+  -H "Content-Type: application/json" -d '{}'`
         },
         {
           cmd: "الطبقات",
@@ -95,7 +110,10 @@ JWT_SECRET=long-random-string
             when: "وانت بتبني أي تطبيق جديد: ارسم الطبقات من الأول.",
             mistakes: "الاعتماد على طبقة واحدة. والخلط بين Authentication (مين انت) وAuthorization (مسموحلك بإيه)."
           },
-          lines: ["سر في .env: مسار قاعدة البيانات بالباسورد.", "سر تاني: مفتاح توقيع الـ JWT، طويل وعشوائي."]
+          lines: ["سر في .env: مسار قاعدة البيانات بالباسورد.", "سر تاني: مفتاح توقيع الـ JWT، طويل وعشوائي."],
+          sol: R`في كل مشروع: [[git check-ignore -v .env]] لازم يطبع السطر من [[.gitignore]] اللي بيتجاهله، ولو مطبعش حاجة يبقى .env مش متجاهَل. و [[git ls-files | grep -i env]] المفروض يطلع فاضي أو [[.env.example]] بس. وللمفاتيح في الكود: [[grep -rnE "(sk_live|sk_test|AKIA|api[_-]?key\s*[:=])" --exclude-dir=node_modules .]] المفروض ميطلعش حاجة.
+
+لو .env طالع في [[git ls-files]] يبقى اتعمله commit قبل كده، وإضافته لـ .gitignore دلوقتي مش هتشيله من التاريخ: روح لدرس «.env اترفع على Git» في نفس التاب. ولو لقيت مفتاح مكتوب في الكود: انقله لـ .env واقراه بـ [[process.env]]، وغيّر المفتاح نفسه عند مقدم الخدمة لأنه اتشاف.`
         },
         {
           cmd: "أسرار مكشوفة",
@@ -120,7 +138,10 @@ gitleaks بتفحص الـ repo كله بتاريخه ودوّر على patterns
           },
           lines: [
             "شغّل gitleaks من Docker على المشروع الحالي ([[-v $(pwd):/repo]] بيربط الفولدر)، وافحص تاريخ Git كله ([[git /repo]])، بتفاصيل ([[-v]])."
-          ]
+          ],
+          sol: R`على repo نضيف gitleaks بيخلص بسطر زي [[no leaks found]] و exit code صفر. لو لقى حاجة بيطبع لكل واحدة: نوع القاعدة (مثلًا [[RuleID: generic-api-key]])، الملف، السطر، الـ commit، واسم اللي عمله، وفي الآخر [[leaks found: 3]] و exit code 1، وده اللي بيخليه يوقّف الـ CI.
+
+أهم حاجة تفهمها: الـ [[git]] في الأمر معناه إنه بيفحص تاريخ الـ commits كله، مش الملفات الحالية بس، فممكن يلاقي مفتاح انت مسحته من شهور. ولو لقى مفتاح حقيقي، مسحه من الكود مش كفاية: غيّره (rotate) عند مقدم الخدمة الأول، لأن أي حد عمل clone قبل كده عنده نسخة. أحيانًا بيطلع إنذار كاذب (زي مفتاح تجربة في test)، وده بتحطه في [[.gitleaksignore]] بالـ fingerprint بتاعه.`
         }
       ]
     },
@@ -175,7 +196,20 @@ app.get("/api/orders/:id", auth, async (req, res) => {
             "لو ملقاش (الطلب مش بتاعه)، 404 من غير ما يقول إنه موجود أصلًا.",
             "رجّعه.",
             "قفلة."
-          ]
+          ],
+          sol: R`اعمل يوزرين A و B، وخد توكن A، واطلب بيه أوردر بتاع B: [[curl -H "Authorization: Bearer $TOKEN_A" http://localhost:3000/api/orders/42]] حيث 42 أوردر B. الرد الصح [[404]] (أو [[403]])، مش داتا B. الـ 404 أحسن غالبًا لأنه مبيأكدش إن الأوردر موجود أصلًا.
+
+لو رجعلك داتا B يبقى عندك IDOR: الكود بيتأكد إنك داخل، بس مش بيتأكد إن الحاجة دي بتاعتك. الحل إن الاستعلام نفسه يشمل صاحب الداتا: [[WHERE id = $1 AND user_id = $2]] بالـ user id اللي جاي من التوكن، مش من الـ body أو الـ URL. وجرّب نفس الكلام على التعديل والمسح (PUT/DELETE)، لأنهم غالبًا اللي بيتنسوا.`,
+          solCode: R`# التوكن بتاع A، والأوردر 42 بتاع B
+curl -i -H "Authorization: Bearer $TOKEN_A" http://localhost:3000/api/orders/42
+# المتوقع: HTTP/1.1 404 Not Found
+
+// الإصلاح: صاحب الداتا جزء من الاستعلام
+const { rows } = await db.query(
+  "SELECT * FROM orders WHERE id = $1 AND user_id = $2",
+  [req.params.id, req.user.id]
+);
+if (!rows.length) return res.status(404).json({ error: "Not found" });`
         },
         {
           cmd: "2. SQL Injection",
@@ -207,7 +241,10 @@ ORMs زي Prisma بيعملوا parameterized queries تلقائيًا. الخط
             "وتنفيذه.",
             "الصح: الاستعلام فيه [[$1]] كمكان فاضي، والقيمة بتتبعت لوحدها في array. قاعدة البيانات عمرها ما هتعتبرها SQL.",
             "أو ORM زي Prisma، وده بيعمل نفس الحاجة لوحده."
-          ]
+          ],
+          sol: R`الأمر اللي بيدوّر: [[grep -rnE "(query|execute|raw)\(.*(\+|\$__{)" --include=*.js --include=*.ts --exclude-dir=node_modules .]]. كل سطر بيطلع معناه إن فيه استعلام بيتبني بلزق نص، زي [[db.query("SELECT * FROM users WHERE email = '" + email + "'")]] أو template string فيها [[$__{email}]]. المشروع السليم المفروض ميطلعش فيه ولا سطر.
+
+كل واحد تلاقيه حوّله لـ parameters: [[db.query("SELECT * FROM users WHERE email = $1", [email])]]، أو استخدم الـ ORM (Prisma مثلًا). خد بالك من حاجتين: Prisma نفسها فيها [[$queryRawUnsafe]] وده بيلزق النص زي الأول بالظبط، أما [[$queryRaw]] بالـ tagged template فأمان. وأسماء الأعمدة والجداول مينفعش تبقى parameters، فلو المستخدم بيختار عمود الترتيب، قارن باللي جاي بقايمة مسموحة (allowlist).`
         },
         {
           cmd: "3. XSS",
@@ -245,7 +282,10 @@ React آمن افتراضيًا. الخطر الوحيد [[dangerouslySetInnerHT
             "الصح في React: الـ JSX بيهرب النص لوحده.",
             "لو لازم تعرض HTML من اليوزر: استورد DOMPurify.",
             "نضّفه الأول، وبعدين اعرضه."
-          ]
+          ],
+          sol: R`[[grep -rn "dangerouslySetInnerHTML" src/]]: لو مطلعش حاجة، React بيعمل escape لكل نص بتعرضه بـ [[{value}]]، وانت في أمان من ناحية دي. لو طلع، شوف الـ HTML ده جاي منين: لو من ملف انت كاتبه أو من محتوى ثابت، مفيش مشكلة. لو من المستخدم أو من API خارجي (كومنت، وصف منتج، رد AI)، لازم يعدّي على [[DOMPurify.sanitize()]] قبل ما يتعرض.
+
+الغلطة الشائعة إنك تفكر إن الـ validation على الفورم كفاية: الـ HTML ممكن يوصل قاعدة البيانات من API مباشرة. وفيه مكان تاني بيتنسي: [[href={user.website}]]، لأن React مش بيمنع [[javascript:]] في اللينكات بشكل كامل، فاتأكد إن اللينك بيبدأ بـ [[https://]].`
         },
         {
           cmd: "Command Injection",
@@ -514,7 +554,16 @@ function checkOrigin(req, res, next) {
             "لو الـ Origin مش دومينك، ارفض بـ 403.",
             "كمّل للـ handler.",
             "قفلة."
-          ]
+          ],
+          sol: R`اعمل ملف [[attack.html]] فيه form بيعمل POST على [[http://localhost:3000/api/transfer]]، وشغّله من بورت تاني بـ [[npx serve -l 5000]]. اعمل login على الـ API الأول عشان الكوكي يتحط، وبعدين افتح الصفحة من البورت التاني. خد بالك إن localhost:3000 و localhost:5000 نفس الـ site بالنسبة لـ SameSite (البورت مش بيفرق)، فالكوكي هيتبعت في الحالتين، وهنا الـ [[checkOrigin]] هو اللي هيرد [[403]] لأن الـ Origin بقى [[http://localhost:5000]].
+
+عشان تشوف SameSite نفسه شغال، لازم site مختلف فعلًا: افتح الصفحة من [[http://127.0.0.1:5000]] والـ API على [[localhost]]. مع [[sameSite: "lax"]] الكوكي مش هيتبعت مع POST جاي من site تاني، فالـ API يرد 401. مع [[sameSite: "none"]] (ولازم معاها secure) هيتبعت. شوف ده في DevTools ← Network ← الطلب ← Cookies. الدرس: SameSite=Lax مع فحص Origin على كل POST هو الدفاع الأساسي، وعمره ما تعمل تغيير بـ GET.`,
+          solCode: R`<!-- attack.html: شغّله بـ npx serve -l 5000 -->
+<form action="http://localhost:3000/api/transfer" method="POST">
+  <input type="hidden" name="to" value="attacker">
+  <input type="hidden" name="amount" value="1000">
+</form>
+<script>document.forms[0].submit()</script>`
         },
         {
           cmd: "4. مصادقة سليمة",
@@ -548,7 +597,10 @@ if (!ok) return res.status(401).json({ error: "Invalid credentials" });
             "اعمل hash للباسورد بتكلفة 12 (كل ما تزيد، أبطأ وأصعب على المهاجم). ده اللي بيتخزن.",
             "عند الدخول: قارن الباسورد المكتوب بالـ hash المتخزن. مفيش فك، bcrypt بيعمل hash ويقارن.",
             "لو غلط: 401 برسالة واحدة عامة، متقولش «الإيميل مش موجود» ولا «الباسورد غلط»."
-          ]
+          ],
+          sol: R`[[SELECT id, email, left(password, 7) FROM users LIMIT 5;]]: كل الباسوردات المفروض تبدأ بـ [[$2b$10$]] أو [[$2b$12$]] (bcrypt) أو [[$argon2id$]] (argon2)، وطولها ثابت (60 حرف لـ bcrypt) مهما كان الباسورد. تقدر تتأكد بـ [[SELECT count(*) FROM users WHERE password NOT LIKE '$2b$%' AND password NOT LIKE '$argon2%';]] والمفروض يطلع صفر.
+
+لو شفت باسورد مقروء، أو hash طوله 32 أو 64 حرف hex (يعني MD5 أو SHA-256 من غير salt)، يبقى لازم تصلّح: مينفعش تحوّل القديم لـ bcrypt من غير الباسورد الأصلي، فالحل إنك تعمل hash للباسورد بـ bcrypt أول ما اليوزر يعمل login صح، أو تجبر الكل يعمل reset. وخد بالك الـ select نفسه متسيبهوش في كود الـ API: عمود الباسورد عمره ما يرجع في أي response.`
         },
         {
           cmd: "5. إعدادات غلط",
@@ -583,7 +635,10 @@ Stack traces في الإنتاج: لو error handler بيرجع التفاصيل
             "سجّل التفاصيل الكاملة في اللوج بتاعك.",
             "ورجّع للمستخدم رسالة عامة بس، من غير stack trace.",
             "قفلة."
-          ]
+          ],
+          sol: R`DevTools ← Network ← اختار أول طلب (الصفحة أو أي API) ← Headers ← Response Headers. في Express من غير أي إعداد هتلاقي [[X-Powered-By: Express]]، وفي Nginx من غير إعداد [[Server: nginx/1.24.0]] بالنسخة. نفس الكلام من الترمنال: [[curl -sI http://localhost:3000 | grep -iE "x-powered-by|server"]].
+
+الحل: في Express [[app.disable("x-powered-by")]] أو [[helmet()]] اللي بيشيله لوحده، وفي Nginx [[server_tokens off;]] فيبقى [[Server: nginx]] من غير نسخة. شيله مش لأنه بيحميك لوحده، لكن لأنه بيسهّل على أي سكانر يعرف إنت على نسخة فيها ثغرة معروفة. ولو شفت [[X-Powered-By: Next.js]] فده بيتقفل بـ [[poweredByHeader: false]] في [[next.config]].`
         },
         {
           cmd: "6. مكتبات فيها ثغرات",
@@ -610,7 +665,10 @@ npm outdated`,
             "مكتبات الإنتاج بس (من غير devDependencies).",
             "صلّح اللي ينفع يتصلّح بتحديث آمن.",
             "إيه المكتبات اللي ليها نسخ أحدث."
-          ]
+          ],
+          sol: R`[[npm audit]] بيطبع لكل ثغرة اسم المكتبة، الخطورة (low/moderate/high/critical)، ولينك الـ advisory، وسلسلة الاعتماد (مين جابها)، وفي الآخر سطر زي [[5 vulnerabilities (3 moderate, 2 high)]] وتحته [[To address all issues, run: npm audit fix]]. على مشروع نضيف [[found 0 vulnerabilities]].
+
+الترتيب الصح: [[npm audit fix]] الأول (بيحدّث في حدود الـ semver ومش بيكسر)، وبعدين شوف الباقي بنفسك. متعملش [[npm audit fix --force]] من غير ما تقرا، لأنه ممكن ينقلك لنسخة major جديدة وتكسر المشروع. وافهم إن مش كل ثغرة بتأثر عليك: ثغرة في أداة build بتشتغل على جهازك بس أقل خطورة بكتير من واحدة في مكتبة بتستقبل داتا المستخدمين في الإنتاج، وعشان كده [[npm audit --omit=dev]] بيوريك اللي في الإنتاج بس.`
         },
         {
           cmd: "7. SSRF (بقت جزء من رقم 1)",
@@ -646,7 +704,21 @@ const safe = await fetch(req.body.url, { redirect: "error" });`,
             "...ارفض.",
             "قفلة.",
             "دلوقتي بس اطلب، ومن غير ما تتبع redirects، وإلا الدومين المسموح يحوّلك لعنوان داخلي."
-          ]
+          ],
+          sol: R`المطلوب تتأكد إن الميزة (preview للينك، رفع صورة من URL، webhook) بترفض أي URL مش في قايمة مسموحة. اختبرها بـ: [[http://127.0.0.1:5432]]، [[http://localhost/admin]]، [[http://169.254.169.254/latest/meta-data/]] (عنوان الميتاداتا في السحابة)، و [[file:///etc/passwd]]. المفروض كلهم يترفضوا بـ [[400]] قبل ما السيرفر يحاول يوصلهم.
+
+لو الفلتر بيقارن النص بس (زي [[url.includes("mysite.com")]]) هيعدّي [[http://mysite.com.evil.net]]، فقارن بـ [[new URL(u).hostname]] على قايمة ثابتة. ولو لازم تسمح بأي دومين، حل الدومين لـ IP وارفض أي IP خاص (127.x، 10.x، 192.168.x، 169.254.x)، واقفل الـ redirects ([[redirect: "manual"]]) لأن موقع مسموح ممكن يحوّلك على عنوان داخلي.`,
+          solCode: R`const ALLOWED = new Set(["images.example.com", "cdn.example.com"]);
+
+function checkUrl(input) {
+  let u;
+  try { u = new URL(input); } catch { return false; }
+  return u.protocol === "https:" && ALLOWED.has(u.hostname);
+}
+
+// checkUrl("https://images.example.com/a.png")      -> true
+// checkUrl("http://169.254.169.254/latest/")        -> false
+// checkUrl("https://images.example.com.evil.net/")  -> false`
         },
         {
           cmd: "8. Rate limiting",
@@ -682,7 +754,15 @@ app.post("/api/login", loginLimiter, loginHandler);`,
             "الرسالة اللي بترجع مع 429.",
             "قفلة.",
             "حط الـ limiter على route الـ login بس، قبل الـ handler."
-          ]
+          ],
+          sol: R`بالـ limiter اللي في المثال (5 محاولات كل 15 دقيقة) لوب الـ 10 طلبات لازم يطبع [[401]] خمس مرات (باسورد غلط) وبعدين [[429]] خمس مرات. لو اتطبع 401 عشر مرات، يبقى الـ limiter مش متركّب على الـ route ده، أو متركّب بعد الـ handler.
+
+لو السيرفر ورا Nginx أو Cloudflare وكل الطلبات جاية من نفس الـ IP (IP البروكسي)، هيتقفل على الناس كلها مع بعض: لازم [[app.set("trust proxy", 1)]] عشان Express يقرا IP العميل الحقيقي. وفي الإنتاج بأكتر من instance، الذاكرة مش مشتركة بينهم، فالعداد يتخزن في Redis.`,
+          solCode: R`for i in $(seq 1 10); do
+  curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:3000/api/login \
+    -H "Content-Type: application/json" -d '{"email":"a@a.com","password":"wrong"}'
+done
+# المتوقع: 401 خمس مرات، وبعدين 429 خمس مرات`
         },
         {
           cmd: "npm و Supply Chain",
@@ -705,7 +785,10 @@ npm view express time.modified`,
             "اتأكد من توقيعات المكتبات من الـ registry.",
             "خلّيها الافتراضي على جهازك.",
             "آخر مرة المكتبة اتنشر فيها حاجة."
-          ]
+          ],
+          sol: R`[[npm audit signatures]] بيطبع حاجة زي [[audited 312 packages in 2s]] و [[312 packages have verified registry signatures]]، ولو فيه مكتبات عليها attestations هيقولك [[N packages have verified attestations]]. ده معناه إن اللي نزل عندك هو نفسه اللي اتنشر على الـ registry. لو طلعلك [[invalid]] أو [[missing]] فيه حاجة غلط وتستاهل تبص عليها.
+
+[[npm ci --ignore-scripts]] بيسطب من غير ما يشغّل أي [[postinstall]]. معظم المكتبات هتشتغل عادي. اللي بيبوظ غالبًا المكتبات اللي بتنزّل أو بتبني حاجة native وقت التسطيب، زي [[esbuild]] و [[sharp]] و [[bcrypt]] و [[prisma]]: هتلاقي خطأ وقت التشغيل مش وقت التسطيب. عشان تعرف مين عنده scripts قبل ما تشغّل: [[npm query ":attr(scripts, [postinstall])"]]. بعدها سيب ignore-scripts وشغّل الـ scripts للمكتبات دي بس (في pnpm ده [[allowBuilds]]).`
         },
         {
           cmd: "باقي القايمة",
@@ -728,7 +811,10 @@ A09 Logging & Alerting Failures  Log logins, failed auth, admin actions; alert o
             "التصميم: فكّر في إساءة الاستخدام قبل الكود.",
             "سلامة الكود والداتا: تحقق من التوقيعات وثبّت الـ actions.",
             "اللوج والتنبيه: سجّل الأحداث الحساسة ونبّه عليها."
-          ]
+          ],
+          sol: R`مثال لإجابة كويسة على A09 (Logging): على آخر مشروع، جرّب login بباسورد غلط وشوف اللوج. المفروض تلاقي سطر فيه الوقت، والـ IP، والإيميل، وإنه فشل، ومتلاقيش الباسورد نفسه ولا التوكن. لو ملقيتش حاجة خالص، يبقى لو حد جرّب ألف باسورد مش هتعرف.
+
+أي بند تختاره، الإجابة الكويسة فيها تلات حاجات: البند اتطبّق ولا لأ، الدليل (أمر جربته أو سطر في الكود)، والإصلاح لو ناقص. مثلًا A04 (Insecure Design): هل ممكن تعمل أوردر بكمية سالبة أو سعر جاي من الواجهة؟ A08 (Integrity): هل الـ webhook بيتأكد من التوقيع قبل ما يصدّق الداتا؟ الغلط الشائع إنك تقرا البند وتقول "أنا عامل كده" من غير ما تجرّب فعلًا.`
         },
         {
           cmd: "الجديد في 2025",
@@ -753,7 +839,10 @@ Mishandling of Exceptional Conditions (A10): كود بيقع أو بيتصرف �
           lines: [
             "سطّب بالظبط النسخ اللي في package-lock (للإنتاج و CI)، من غير أي تحديث مفاجئ.",
             "شجرة كل المكتبات بما فيها مكتبات المكتبات، عشان تعرف إيه اللي داخل مشروعك فعلًا."
-          ]
+          ],
+          sol: R`[[npm ci]] بيقرا [[package-lock.json]] بس ويسطب النسخ اللي فيه بالظبط، وبيمسح [[node_modules]] الأول، ولو الـ lock مش متوافق مع [[package.json]] بيقف بخطأ زي [[npm ci can only install packages when your package.json and package-lock.json are in sync]]. أما [[npm install]] فممكن يحدّث نسخ جوه الحدود ([[^1.2.0]] ممكن تبقى [[1.9.0]]) ويعدّل الـ lock.
+
+الفرق ده مهم للأمان: في الإنتاج عايز نفس الكود اللي جربته بالظبط. لو مكتبة اتخطفت ونزلت نسخة خبيثة بكرة، [[npm install]] ممكن يجيبها، و [[npm ci]] لأ. ولازم الـ lock file يبقى في Git، من غيره [[npm ci]] مش هيشتغل أصلًا ويقولك إنه محتاج lock file.`
         }
       ]
     },
@@ -1263,7 +1352,10 @@ log.info({ user: { id: userRef(42) } }, "profile updated");`
             when: "بعد كل deploy. واجعله جزء من checklist الرفع.",
             mistakes: "CSP بتحتاج تعرف كل مصدر بيحمّل منه. ابدأ بـ [[Content-Security-Policy-Report-Only]]."
           },
-          lines: ["الـ headers بس، وفلتر على headers الأمان الستة. اللي ناقص ضيفه في Nginx أو helmet."]
+          lines: ["الـ headers بس، وفلتر على headers الأمان الستة. اللي ناقص ضيفه في Nginx أو helmet."],
+          sol: R`securityheaders.com بيديك درجة من A+ لـ F ولستة بالـ headers الموجودة (أخضر) والناقصة (أحمر). موقع من غير أي إعداد بياخد غالبًا F أو D. عشان توصل A، لازم يبقى موجود: [[Strict-Transport-Security]]، [[Content-Security-Policy]]، [[X-Frame-Options]] (أو [[frame-ancestors]] في الـ CSP)، [[X-Content-Type-Options: nosniff]]، [[Referrer-Policy]]، و [[Permissions-Policy]].
+
+في Express [[helmet()]] بيحط معظمهم مرة واحدة، والناقص غالبًا [[Permissions-Policy]] تضيفه بنفسك. في Nginx بـ [[add_header ... always;]]. خد بالك: الـ CSP اللي helmet بيحطها ممكن تكسر سكريبتات خارجية أو inline، فافتح الـ Console بعد ما تفعّلها. والموقع لازم يكون على الإنترنت عشان الأداة توصله، ومش هتقدر تفحص localhost.`
         },
         {
           cmd: "SSL Labs",
@@ -1283,7 +1375,10 @@ certbot مع Nginx بيحط إعدادات معقولة، بس ممكن تحتا
             when: "بعد تجهيز HTTPS لأول مرة. وكل ٣ شهور تتأكد إن certbot جدّد.",
             mistakes: "تكتفي بـ certbot وتفتكر كل حاجة تمام. إعدادات TLS الافتراضية في Nginx القديمة ممكن ضعيفة."
           },
-          lines: ["نفس أمر bash: اتصل HTTPS، خد الشهادة، واطبع تاريخ بدايتها ونهايتها."]
+          lines: ["نفس أمر bash: اتصل HTTPS، خد الشهادة، واطبع تاريخ بدايتها ونهايتها."],
+          sol: R`SSL Labs بياخد دقيقة أو اتنين وبيطلع درجة من A+ لـ F. سيرفر متظبط بـ Let's Encrypt و certbot و Nginx حديث بياخد A عادة، وعشان A+ محتاج [[Strict-Transport-Security]] بـ [[max-age]] طويل (6 شهور أو أكتر). التقرير فيه أربع أجزاء: الشهادة، دعم البروتوكولات، تبادل المفاتيح، والـ ciphers.
+
+الأسباب المعتادة لدرجة أقل: TLS 1.0 أو 1.1 لسه مفعّلين (حدّد [[ssl_protocols TLSv1.2 TLSv1.3;]])، سلسلة الشهادة ناقصة (استخدم [[fullchain.pem]] مش [[cert.pem]])، أو ciphers قديمة. لو الدرجة T يبقى الشهادة مش موثوقة (self-signed أو الدومين مش مطابق)، و F يبقى فيه ثغرة معروفة.`
         },
         {
           cmd: "OWASP ZAP",
@@ -1304,7 +1399,10 @@ Passive Scan بيراقب فقط (بدون هجوم)، مناسب على الإ�
           lines: [
             "شغّل ZAP من Docker (الشرطة المايلة في الآخر: الأمر مكمّل في السطر اللي بعده).",
             "فحص baseline (passive، مش بيهاجم) على موقعك انت."
-          ]
+          ],
+          sol: R`الـ baseline بيزحف على الموقع دقيقة تقريبًا ويفحص بشكل passive بس (مش بيهاجم)، وفي الآخر بيطبع سطر لكل قاعدة: [[PASS]]، [[WARN-NEW]]، أو [[FAIL-NEW]]، وملخص زي [[FAIL-NEW: 0 FAIL-INPROG: 0 WARN-NEW: 8 WARN-INPROG: 0 INFO: 0 IGNORE: 0 PASS: 58]]. الـ WARN المعتادة على موقع جديد: CSP مش موجودة، X-Content-Type-Options ناقص، الكوكي من غير SameSite أو HttpOnly، و Server بيفشي النسخة.
+
+لو عايز تقرير تقراه براحتك، ضيف [[-v $(pwd):/zap/wrk -r report.html]] فيتحفظ [[report.html]] عندك. خد بالك: الـ exit code بيبقى 2 لو فيه WARN، وده عادي، مش معناه إن الأداة فشلت. ومتشغّلوش على سيرفر مش بتاعك، ولا الـ full scan على الإنتاج لأنه بيبعت طلبات كتير ممكن تغيّر داتا.`
         },
         {
           cmd: "nmap",
@@ -1322,7 +1420,10 @@ nmap -p- 203.0.113.10`,
             when: "بعد أي تغيير في ufw أو إضافة خدمة جديدة.",
             mistakes: "تشغيله على أي حاجة مش ملكك."
           },
-          lines: ["افحص البورتات المشهورة واعرف البرنامج ونسخته على كل واحد.", "افحص كل الـ 65535 بورت."]
+          lines: ["افحص البورتات المشهورة واعرف البرنامج ونسخته على كل واحد.", "افحص كل الـ 65535 بورت."],
+          sol: R`على سيرفر متظبط، [[nmap -Pn -p- your-server-ip]] (أو البورتات المشهورة بس من غير [[-p-]]) لازم يطلع [[22/tcp open ssh]] و [[80/tcp open http]] و [[443/tcp open https]] بس، والباقي [[filtered]] (الفايروول بيرمي الطلب) أو [[closed]]. أي [[5432]] أو [[3306]] أو [[6379]] أو [[27017]] حالته [[open]] معناه إن قاعدة البيانات مكشوفة للإنترنت.
+
+شغّله من جهازك مش من السيرفر نفسه: من جوه السيرفر كل حاجة هتبان مفتوحة لأنك بتكلم localhost. ولو قاعدة البيانات في Docker وطالعة open رغم إن ufw مفعّل، ده مش خطأ في ufw، Docker بيعدّي عليه: شوف درس «ss -tlnp بعد compose» في نفس التاب.`
         },
         {
           cmd: "السكانرات في CI",
@@ -1348,7 +1449,23 @@ Trivy بيفحص Docker images. كل package في الـ image بيقارنها 
             "فشّل الـ build لو فيه ثغرة high أو critical.",
             "Semgrep بيفحص الكود نفسه على أنماط خطيرة، والقواعد بتتختار حسب اللغة.",
             "Trivy بيفحص الـ Docker image: كل package في النظام جواها."
-          ]
+          ],
+          sol: R`الخطوة: [[- run: npm audit --audit-level=high]] بعد [[npm ci]] في الـ workflow. لو فيه ثغرة high أو critical الأمر بيرجع exit code 1 والـ job يبقى أحمر ❌، ولو الموجود moderate أو low بس بيعدّي ✅ مع إنه بيطبعهم في اللوج.
+
+الغلطة الشائعة إن الـ CI يفضل أحمر بسبب ثغرة في devDependency ملهاش علاقة بالإنتاج، فالفريق يبطّل يبص عليه. الحل: [[npm audit --audit-level=high --omit=dev]] يفحص مكتبات الإنتاج بس. وخليه جزء من الـ PR مش خطوة لوحدها بعد الـ merge، عشان الثغرة توقف الـ PR قبل ما تدخل.`,
+          solCode: R`name: security
+on: [push, pull_request]
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high --omit=dev`
         }
       ]
     },
@@ -1387,7 +1504,18 @@ docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .
             "متغيرات ENV المحفوظة في الـ image.",
             "متغير عام (بيروح للمتصفح أصلًا): عادي كـ build-arg.",
             "سر وقت البناء: يتركّب كملف مؤقت ومبيتسجلش."
-          ]
+          ],
+          sol: R`[[docker history --no-trunc test-img]] هيطلع سطر زي [[RUN |1 TOKEN=abc123 /bin/sh -c echo done]]. يعني قيمة الـ ARG اتسجلت في تاريخ الـ image، وأي حد يعمل pull للـ image يقدر يشوفها، حتى لو ما اتكتبتش في أي ملف. ولو ملقيتهاش، يبقى غالبًا مفيش RUN بعد الـ ARG، أو BuildKit بيعرض التاريخ بشكل مختلف، وده مش معناه إنها آمنة.
+
+الحل للأسرار اللي محتاجها وقت البناء (زي توكن npm private): [[RUN --mount=type=secret,id=npm_token]] وتبني بـ [[docker build --secret id=npm_token,env=NPM_TOKEN .]]، فالسر بيبقى متاح للأمر ده بس ومش بيتسجل. والأسرار اللي محتاجها وقت التشغيل مكانها [[environment]] أو [[env_file]] في compose، مش في البناء خالص.`,
+          solCode: R`# Dockerfile (تجربة)
+FROM alpine
+ARG TOKEN
+RUN echo done
+
+# بناء وفحص
+docker build --build-arg TOKEN=abc123 -t test-img .
+docker history --no-trunc test-img | grep abc123`
         },
         {
           cmd: ".env اترفع على Git",
@@ -1421,7 +1549,18 @@ git push`,
             "امنعه يرجع.",
             "احفظ التغيير.",
             "ارفع."
-          ]
+          ],
+          sol: R`بعد الخطوات، [[git ls-files .env]] بيطلع فاضي (الملف مبقاش متتبّع) والملف لسه موجود على جهازك. بس [[git log --all --oneline -- .env]] لسه بيطبع الـ commit القديم، و [[git show <hash>:.env]] لسه بيوريك [[API_KEY=test]]. يعني أي حد عنده clone أو شاف الـ repo على GitHub عنده المفتاح.
+
+عشان كده الخطوة الأولى في الحقيقة مش git خالص: غيّر كل مفتاح كان في الملف عند مقدم الخدمة. مسح التاريخ ([[git filter-repo --path .env --invert-paths]] وبعدين force push) خطوة إضافية بعدها، ومش بتلغي النسخ اللي اتعملها clone ولا الـ forks ولا الكاش عند GitHub. الغلطة الشائعة إنك تفتكر إن [[git rm --cached]] حلّ المشكلة.`,
+          solCode: R`mkdir leak-test && cd leak-test && git init
+echo "API_KEY=test" > .env
+git add .env && git commit -m "oops"
+git rm --cached .env
+echo ".env" >> .gitignore
+git add .gitignore && git commit -m "stop tracking .env"
+git log --all --oneline -- .env    # لسه ظاهر
+git show HEAD~1:.env               # API_KEY=test`
         },
         {
           cmd: "ss -tlnp بعد compose",
@@ -1449,7 +1588,10 @@ nmap -Pn -p 22,80,443,3000,5000,5432,6379,27017 203.0.113.10`,
             "مين بيسمع على كل العناوين؟",
             "كل service ومنشورة على أنهي عنوان.",
             "من جهازك: البورتات دي مفتوحة للنت فعلًا؟"
-          ]
+          ],
+          sol: R`مع [[ports: ["6379:6379"]]]، الـ nmap من جهازك هيطلع [[6379/tcp open redis]] حتى لو [[ufw status]] مش فيه قاعدة لـ 6379. ده لأن Docker بيضيف قواعد iptables خاصة بيه بتتنفذ قبل قواعد ufw. و [[ss -tlnp]] على السيرفر هيوريك [[0.0.0.0:6379]] (docker-proxy).
+
+بعد ما تغيّرها لـ [[127.0.0.1:6379:6379]] و [[docker compose up -d]]، [[ss -tlnp]] يطلع [[127.0.0.1:6379]]، والـ nmap من جهازك يطلع [[closed]] أو [[filtered]]. الأحسن من كده لو الـ API في نفس الـ compose: شيل [[ports]] خالص من Redis وقاعدة البيانات، والـ API يوصلهم باسم الـ service ([[redis:6379]]) على شبكة compose الداخلية. وخلّي في بالك إن Redis من غير باسورد ومفتوح للنت بيتلقط في دقايق.`
         },
         {
           cmd: "openssl enc",
@@ -1481,7 +1623,18 @@ rclone copy backup.tar.gz.enc remote:backups/ && rclone check backup.tar.gz.enc 
             "اضغط وشفّر في pipe واحد، ومفيش نسخة مكشوفة على الديسك.",
             "اختبار: فك واعرض المحتوى من غير ما تفك فعلًا.",
             "ارفع بره السيرفر واتأكد إن النسخة مطابقة."
-          ]
+          ],
+          sol: R`التشفير بيطلع ملف [[backup.tar.gz.enc]] مش مقروء. فك التشفير في فولدر تاني بـ [[tar -xzf -]] بدل [[-tzf]] بيطلّع الملفات فعلًا، و [[diff -r]] بين الفولدر الأصلي والجديد المفروض ميطبعش حاجة ويرجع exit code صفر، ده معناه إن الباك أب رجع زي ما هو بالظبط.
+
+لو الباسورد غلط، [[openssl]] بيطبع [[bad decrypt]] والـ tar يطبع [[gzip: stdin: not in gzip format]]. ولو غيّرت [[-iter]] أو شلت [[-pbkdf2]] وقت الفك هيحصل نفس الخطأ، لأن المفتاح بيتحسب من الباسورد والإعدادات دي مع بعض. ودي الحكمة من التجربة: باك أب ماتجربش إنه بيرجع كأنه مش موجود، وباسورد التشفير لازم يكون محفوظ بره السيرفر وإلا هيضيع معاه.`,
+          solCode: R`export BACKUP_PASSPHRASE="test-pass-123"
+mkdir -p data && echo hello > data/a.txt
+tar -czf - data | openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt \
+  -pass env:BACKUP_PASSPHRASE -out data.tar.gz.enc
+mkdir -p restore
+openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
+  -pass env:BACKUP_PASSPHRASE -in data.tar.gz.enc | tar -xzf - -C restore
+diff -r data restore/data && echo "backup OK"`
         }
       ]
     },
@@ -1515,7 +1668,10 @@ JWT secret: طويل (٣٢ بايت على الأقل)، عشوائي، ومش �
 HTTPS على كل environments إلا localhost.`,
             when: "قبل أي deploy للإنتاج. وبعد أي feature جديدة بتضيف authentication أو routes.",
             mistakes: "تعتمد على الـ frontend validation لأي من دول. والـ JWT secret في الكود أو في GitHub."
-          }
+          },
+          sol: R`الإجابة الكويسة إنك تمشي على كل بند بدليل مش بإحساس: الباسوردات بـ [[SELECT left(password,7) FROM users LIMIT 5]] (لازم تبدأ بـ [[$2b$]] أو [[$argon2id$]])، الـ JWT secret بـ [[echo -n "$JWT_SECRET" | wc -c]] (32 حرف عشوائي أو أكتر، مش "secret")، الـ IDOR بتجربة اليوزرين من درس Broken Access Control، الـ SQL بالـ grep من درس SQL Injection، والـ rate limit باللوب من درسه.
+
+النتيجة المعتادة على أول مشروع: بندين أو تلاتة ناقصين، وأشهرهم validation على السيرفر لبعض الـ routes، و IDOR في التعديل أو المسح مع إن القراءة سليمة، ومفيش rate limit على reset password. اكتب اللي لقيته ورتبه بالخطورة وصلّح الأخطر الأول.`
         },
         {
           cmd: "البنية",
@@ -1546,7 +1702,10 @@ Rate limiting على login وregistration وأي endpoint بياخد وقت.
 Database: يوزر بصلاحيات أقل ما ممكن، ومش root أو superuser.`,
             when: "وانت بتجهّز السيرفر لأول مرة، مش بعد الرفع.",
             mistakes: "CORS بـ [[*]] مع cookies. والـ database user بصلاحيات admin من الأصل."
-          }
+          },
+          sol: R`[[nmap]] من جهازك على IP السيرفر: المتوقع [[22]] و [[80]] و [[443]] بس open، وكل بورت قاعدة بيانات (5432، 3306، 6379، 27017) مش ظاهر أو [[filtered]]. وعلى السيرفر [[sudo ss -tlnp]] يأكد: قواعد البيانات على [[127.0.0.1]] أو جوه شبكة Docker بس، مش [[0.0.0.0]].
+
+لو لقيت بورت الـ API زي [[3000]] open، يبقى التطبيق مكشوف مباشرة ومش لازم يعدّي على Nginx: اربطه على [[127.0.0.1:3000]] وسيب Nginx هو اللي على 80 و 443. ولو لقيت بورت قاعدة بيانات open، اقفله فورًا ودوّر في اللوجات على اتصالات غريبة، لأن الـ bots بتلف على البورتات دي طول الوقت.`
         },
         {
           cmd: "المتابعة",
@@ -1572,7 +1731,18 @@ npm audit وDependabot: بانتظام وفي CI.
 Backups: بيتعملوا ومتحفظين بره السيرفر، ومجرّبة الاستعادة منهم. باك أب مش بيتجرّب مش باك أب فعلي.`,
             when: "ضيف فيهم كل أسبوع أو كل ٢ أسبوع وقت ثابت.",
             mistakes: "إنك تعمل كل ده مرة في الأول وتنسى. الأمان maintenance مستمر مش project له نهاية."
-          }
+          },
+          sol: R`في GitHub: Settings ← Advanced Security (أو Code security في بعض الحسابات) ← فعّل Dependabot alerts و Dependabot security updates. خلال دقايق هتلاقي تاب Security ← Dependabot فيه تنبيه لكل مكتبة فيها ثغرة، ومع الـ security updates هيفتح PRs لوحده بالتحديث.
+
+عشان كمان تحديثات عادية بشكل منتظم، ضيف ملف [[.github/dependabot.yml]] زي اللي تحت، فيفتح PRs كل أسبوع. الغلطة الشائعة إنك تفعّله وبعدين تتجاهل الـ PRs لحد ما يبقوا عشرين: خليه weekly، والـ CI عندك يشغّل الاختبارات على كل PR، فتعمل merge للي نجح بسرعة.`,
+          solCode: R`# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5`
         }
       ]
     }

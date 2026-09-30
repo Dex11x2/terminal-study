@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("wsl", {
@@ -61,7 +65,10 @@ wsl`,
             "توزيعة معينة.",
             "نسخة WSL.",
             "ادخل التوزيعة الافتراضية."
-          ]
+          ],
+          sol: R`أول ما تفتح Ubuntu هيكتب [[Installing, this may take a few minutes...]] وبعدين يطلب [[Enter new UNIX username:]] وباسورد مرتين (مش هيظهر وانت بتكتبه، وده طبيعي). اليوزر ده مالوش علاقة بحساب ويندوز، واختاره حروف صغيرة من غير مسافات. بعدها [[uname -a]] هيطبع حاجة زي [[Linux DESKTOP-ABC 6.6.87.2-microsoft-standard-WSL2 #1 SMP ... x86_64 GNU/Linux]]: الكلمة المهمة [[microsoft-standard-WSL2]]، يعني كيرنل لينكس حقيقي من مايكروسوفت. و [[cat /etc/os-release]] هيطبع [[PRETTY_NAME="Ubuntu 24.04.x LTS"]] أو نسخة أحدث حسب اللي [[wsl --install]] نزّله وقتها. رقم الكيرنل بالظبط بيتغير مع تحديثات WSL.
+
+لو التسطيب وقف بـ [[0x80370102]] أو رسالة عن الـ virtualization، يبقى Virtualization مقفول في الـ BIOS/UEFI (اسمه Intel VT-x أو AMD SVM). ولو فتحت Ubuntu ولقيته قافل على طول من غير ما يسأل عن يوزر، اعمل الريستارت اللي طلبه التسطيب الأول.`
         },
         {
           cmd: "wsl -l -v",
@@ -91,7 +98,13 @@ wsl --status`,
             "حوّل توزيعة لـ WSL 2.",
             "افتح توزيعة معينة.",
             "الإعدادات العامة ونسخة الـ kernel."
-          ]
+          ],
+          sol: R`[[wsl -l -v]] في PowerShell هيطلع جدول زي ده، والنجمة قدام التوزيعة الافتراضية:
+
+[[  NAME            STATE           VERSION]]
+[[* Ubuntu-24.04    Running         2]]
+
+لو [[VERSION]] طلع 1، [[wsl --set-version Ubuntu-24.04 2]] هيكتب [[Conversion in progress, this may take a few minutes.]] وبعد شوية [[The operation completed successfully.]]. الاسم لازم يبقى زي عمود NAME بالظبط، مش «Ubuntu» لو هو [[Ubuntu-24.04]]، وإلا هيقولك [[There is no distribution with the supplied name]]. و STATE ممكن يبقى [[Stopped]]، ده عادي، معناه إنها مش شغالة دلوقتي بس.`
         },
         {
           cmd: "أول دخول",
@@ -123,7 +136,10 @@ exit`,
             "أدوات البناء (لمكتبات Node native) والأساسيات.",
             "إعدادات التوزيعة.",
             "اخرج (WSL يفضل شغال شوية)."
-          ]
+          ],
+          sol: R`[[whoami && pwd]] هيطبع اليوزر اللي عملته و [[/home/اسمك]]. لو [[pwd]] طلع [[/mnt/c/Users/...]] يبقى فتحت الترمنال من فولدر ويندوز (مثلًا من Explorer أو بـ [[wsl]] من PowerShell وانت في C:)، اكتب [[cd ~]] واشتغل من هنا. [[sudo apt update]] هيطلب باسورد لينكس اللي عملته، مش باسورد ويندوز.
+
+باقي أوامر bash المستوى ١ هتطلع نفس نتايج أوبونتو على السيرفر بالظبط. الفرق الوحيد اللي هتلاحظه إن [[ls /mnt]] فيه [[c]] (ودي درايفات ويندوز)، و [[cat /etc/wsl.conf]] غالبًا فيه قسم boot وتحته [[systemd=true]] في نسخ أوبونتو الحديثة، وممكن قسم user فيه [[default=]] كمان. ولو قال [[No such file or directory]] يبقى الملف مش موجود لسه، وده عادي.`
         },
         {
           cmd: "ملفات ويندوز من لينكس",
@@ -155,7 +171,10 @@ wslpath -w ~/projects`,
             "افتح الفولدر الحالي في Explorer.",
             "حوّل مسار ويندوز لمسار لينكس.",
             "والعكس."
-          ]
+          ],
+          sol: R`[[\\wsl$]] في شريط عنوان Explorer هيوريك فولدر لكل توزيعة زي [[Ubuntu-24.04]]، وجوه كل واحدة شجرة لينكس كاملة. ويندوز الحديث بيحوّلك لـ [[\\wsl.localhost\Ubuntu-24.04]]، وده نفس المكان باسم أحدث. وكمان في Explorer هتلاقي «Linux» في الشريط الشمال بطريق الاختصار. وفي الاتجاه التاني، [[wslpath -w ~/projects]] بيطبع [[\\wsl.localhost\Ubuntu-24.04\home\you\projects]]، و [[wslpath -u 'C:\Users\you\Desktop']] بيطبع [[/mnt/c/Users/you/Desktop]].
+
+لو الفولدر فاضي، افتح Ubuntu مرة الأول، ويندوز القديم كان بيعرض التوزيعات الشغالة بس. ومتعدلش ملفات لينكس بأدوات ويندوز قديمة وتحفظ بـ CRLF، وادخل [[~/projects]] من Explorer للتصفح والنسخ عادي.`
         },
         {
           cmd: "فين تحط المشروع",
@@ -187,7 +206,10 @@ df -h ~ /mnt/c`,
             "قيس وقت التسطيب.",
             "انقل مشروع قديم من ويندوز لجوه (وبعدين امسح node_modules وسطّب).",
             "المساحة في الاتنين."
-          ]
+          ],
+          sol: R`النتيجة المتوقعة إن [[time npm run build]] (و [[npm ci]] أكتر) في [[~/projects]] أسرع بشكل واضح من [[/mnt/c/...]]. الرقم بيختلف حسب الجهاز والمشروع ومضاد الفيروسات، بس فرق ٣ لـ ١٠ مرات مش غريب في المشاريع اللي فيها node_modules كبير، لأن كل ملف على [[/mnt/c]] بيعدّي على بروتوكول بين لينكس وويندوز. قارن سطر [[real]] في الاتنين.
+
+لو الفرق طلع صغير، غالبًا المشروع صغير أو الـ build نفسه تقيل على المعالج مش على الملفات، جرّب [[npm ci]] من غير cache. وخد بالك: متنسخش node_modules من ويندوز وتشغّلها في لينكس. الحزم اللي فيها binaries (زي esbuild و sharp) متسطبة لويندوز وهتطلع errors، امسحها واعمل [[npm ci]] جوه لينكس.`
         },
         {
           cmd: "VS Code",
@@ -219,7 +241,10 @@ which code`,
             "أو مسار معين.",
             "الـ extensions المسطّبة في قسم WSL.",
             "الأمر code نفسه جاي من ويندوز."
-          ]
+          ],
+          sol: R`أول مرة [[code .]] هيطبع [[Installing VS Code Server for x64...]] وبعدين يفتح VS Code على ويندوز. تحت شمال (Remote indicator) هتلاقي زرار أخضر أو أزرق مكتوب فيه [[WSL: Ubuntu-24.04]] (بالاسم اللي في [[wsl -l]]). ولو فتحت الترمنال بـ Ctrl+$__bt (زرار الـ backtick، اللي عليه حرف «ذ» في الكيبورد العربي) هتلاقيه bash والـ prompt بتاع لينكس، و [[which code]] جوه لينكس بيطبع مسار على [[/mnt/c/.../Microsoft VS Code/bin/code]].
+
+لو VS Code اتفتح من غير [[WSL:]] في الركن، يبقى امتداد WSL (بتاع مايكروسوفت) مش متسطب، أو فتحت الفولدر من ويندوز عن طريق [[\\wsl$]]، وساعتها الترمنال والـ extensions شغالين على ويندوز. ولو [[code]] قال command not found جوه لينكس، اقفل الترمنال وافتحه تاني، أو اتأكد إن VS Code متسطب بخيار «Add to PATH».`
         }
       ]
     },
@@ -258,7 +283,10 @@ wslview https://github.com`,
             "أمر PowerShell من bash.",
             "أمر CMD من bash.",
             "افتح لينك في متصفح ويندوز."
-          ]
+          ],
+          sol: R`[[cat ~/.ssh/id_ed25519.pub | clip.exe]] مش هيطبع حاجة، بس الكليب بورد بتاع ويندوز بقى فيه سطر يبدأ بـ [[ssh-ed25519 AAAA...]]. في GitHub: Settings ثم SSH and GPG keys ثم New SSH key، الزق واحفظ، و [[ssh -T git@github.com]] يرد [[Hi USER! You've successfully authenticated...]]. ومن PowerShell، [[wsl cat /etc/os-release]] يطبع بيانات أوبونتو جوه PowerShell.
+
+لو [[clip.exe]] قال command not found، يبقى [[appendWindowsPath=false]] في [[wsl.conf]] أو ويندوز مش في الـ PATH، استخدم [[/mnt/c/Windows/System32/clip.exe]]. وخد بالك إن clip.exe بيتعامل مع العربي غلط أحيانًا (بيطلع رموز) لأنه مش متوقع UTF-8، فللمفاتيح والإنجليزي بس. ولو [[wslview]] مش موجود سطّبه بـ [[sudo apt install wslu]].`
         },
         {
           cmd: "إدارة WSL",
@@ -292,7 +320,10 @@ wsl --unregister Ubuntu-dev`,
             "باك أب كامل للتوزيعة في ملف.",
             "اعمل توزيعة جديدة من الباك أب في مسار معين.",
             "امسح توزيعة نهائيًا."
-          ]
+          ],
+          sol: R`[[wsl --export Ubuntu-24.04 D:\backup\ubuntu.tar]] هيكتب [[Export in progress, this may take a few minutes.]] وبعدين [[The operation completed successfully.]]، والملف حجمه بحجم اللي جوه التوزيعة (عادي يبقى كام GB). اتأكد إن فولدر [[D:\backup]] موجود قبلها، وإلا هيفشل. ولو [[wsl --import]] اشتغل، [[wsl -l -v]] هيوريك [[Ubuntu-dev]] جنب الأصلية.
+
+بعد import، التوزيعة الجديدة بتدخل كـ root افتراضيًا، لأن اليوزر الافتراضي مش جوه ملف الـ tar. حطه في [[/etc/wsl.conf]] (قسم user وتحته [[default=you]]) وبعدين [[wsl --terminate Ubuntu-dev]]. وخد بالك إن [[--unregister]] بيمسح التوزيعة والديسك بتاعها نهائيًا من غير سؤال.`
         },
         {
           cmd: ".wslconfig و wsl.conf",
@@ -339,7 +370,10 @@ options="metadata,umask=22,fmask=11"`,
             "اليوزر الافتراضي.",
             "قسم الـ mounts.",
             "صلاحيات لينكس على ملفات ويندوز."
-          ]
+          ],
+          sol: R`بعد [[wsl --shutdown]] واستنى حوالي ٨ ثواني، افتح و [[free -h]]: لو جهازك 16GB وحطيت [[memory=8GB]]، هتلاقي [[total]] في سطر Mem حوالي [[7.7Gi]] أو [[7.8Gi]] (أقل شوية من الرقم لأن الكيرنل حاجز جزء). وسطر [[Swap]] هيبقى حوالي [[2.0Gi]] من [[swap=2GB]]. من غير الملف، الافتراضي نص رام ويندوز.
+
+لو الرقم متغيرش: الملف غالبًا اتحفظ [[.wslconfig.txt]] (فعّل «File name extensions» في Explorer تشوف)، أو مش في [[%UserProfile%]] يعني [[C:\Users\you]]، أو لسه فيه توزيعة شغالة (اتأكد بـ [[wsl --list --running]]). و [[networkingMode=mirrored]] محتاج ويندوز 11 22H2 أو أحدث، على ويندوز 10 بيتجاهله.`
         },
         {
           cmd: "Docker مع WSL",
@@ -373,7 +407,10 @@ Docker Engine جوه أوبونتو: نفس تسطيب السيرفر ([[apt ins
             "أو سطّب Engine جوه أوبونتو (محتاج systemd).",
             "استخدمه من غير sudo (اخرج وادخل).",
             "شغّله كخدمة."
-          ]
+          ],
+          sol: R`مع Docker Desktop وبعد تفعيل Ubuntu في WSL integration: [[docker version]] جوه أوبونتو يطبع قسم [[Client]] وقسم [[Server: Docker Desktop ...]]، و [[docker context ls]] بيوريك context عليه نجمة. مع Engine جوه لينكس: [[Server: Docker Engine - Community]] أو نسخة أوبونتو، و [[systemctl status docker]] يقول [[active (running)]]. وفي الحالتين [[docker run hello-world]] يطبع [[Hello from Docker!]].
+
+أشهر رسالتين: [[permission denied while trying to connect to the Docker daemon socket]] يعني انت اتضفت لجروب docker بس الجلسة قديمة، اقفل الترمنال أو [[wsl --shutdown]] وافتح تاني. و [[Cannot connect to the Docker daemon at unix:///var/run/docker.sock]] يعني الـ daemon مش شغال: Docker Desktop مقفول، أو systemd مش مفعّل فـ [[systemctl]] نفسه بيقول [[System has not been booted with systemd]]. ومتشغّلش الاتنين (Desktop و Engine) مع بعض على نفس التوزيعة.`
         },
         {
           cmd: "الشبكة والبورتات",
@@ -405,7 +442,10 @@ Docker من جوه WSL بيشوف نفس localhost.`,
             "IP ويندوز على الواي فاي (للموبايل).",
             "اسمع على كل الكروت مش localhost بس.",
             "جرّب من جوه."
-          ]
+          ],
+          sol: R`Vite مع [[--host]] هيطبع سطرين: [[Local: http://localhost:5173/]] و [[Network: http://172.x.x.x:5173/]]. الـ IP ده (في NAT mode) عنوان لينكس الداخلي، والموبايل مش هيوصله. الموبايل لازم يفتح IP ويندوز على الواي فاي (زي [[192.168.1.20:5173]]) اللي بيطلع من الأمر التالت. في NAT mode ده مش هيشتغل لوحده: محتاج [[netsh interface portproxy]] من ويندوز يحوّل البورت للينكس. مع [[networkingMode=mirrored]] الـ Network URL هيبقى IP ويندوز نفسه.
+
+وبعد كده لو لسه مبيفتحش، الفايروول: جرّب من PowerShell كمدير قاعدة inbound للبورت ده، ومع mirrored لازم كمان تسمح في Hyper-V firewall بتاع WSL. وخد بالك إن [[curl localhost:3000]] من جوه لينكس بيشتغل حتى من غير [[--host]]، فده مش دليل إن الموبايل هيوصل. الدليل الحقيقي إن السطر [[Network:]] يظهر أصلًا.`
         },
         {
           cmd: "Git و line endings",
@@ -416,7 +456,7 @@ git config --global core.filemode false
 git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
 file src/index.js
 sed -i 's/\r$//' script.sh`,
-          try: "لو سكربت bash بيطلع [[bad interpreter: /bin/bash^M]]، فيه CRLF. الأمر الأخير بيصلّحه.",
+          try: "لو سكربت bash بيطلع [[bad interpreter: /bin/bash^M]] (أو في bash 5.1 وأحدث زي أوبونتو 24.04: [[cannot execute: required file not found]])، فيه CRLF. الأمر الأخير بيصلّحه.",
           deep: {
             why: "فتحت مشروع وكل الملفات modified في git status من غير ما تلمسها. أو سكربت bash بيطلع [[^M]]. الاتنين من الفرق بين ويندوز ولينكس في نهاية السطر والصلاحيات.",
             how: R`ويندوز بيكتب نهاية السطر CRLF (حرفين)، ولينكس LF (حرف). Git على ويندوز غالبًا بـ [[core.autocrlf=true]]: بيحوّل لـ CRLF عند checkout ولـ LF عند commit. لو نفس المشروع اتفتح من WSL بإعداد مختلف، كل ملف يبان متعدل.
@@ -437,7 +477,10 @@ sed -i 's/\r$//' script.sh`,
             "استخدم مدير credentials بتاع ويندوز.",
             "الملف فيه CRLF ولا LF؟",
             "شيل الـ CR من ملف."
-          ]
+          ],
+          sol: R`[[file script.sh]] على الملف البايظ بيطبع [[Bourne-Again shell script, ASCII text executable, with CRLF line terminators]]. تشغيله بـ [[./script.sh]] بيطلع [[bad interpreter: /bin/bash^M]] في bash القديم، وفي bash 5.2 (أوبونتو 24.04) الرسالة بقت [[cannot execute: required file not found]]، ولو الـ shebang [[#!/usr/bin/env bash]] هيطلع [[/usr/bin/env: 'bash\r': No such file or directory]]. التلاتة نفس السبب: [[\r]] في آخر السطر الأول. جربنا الحالات دي كلها.
+
+بعد [[sed -i 's/\r$//' script.sh]]، [[file]] هيطبع نفس الكلام من غير [[with CRLF line terminators]] والسكربت يشتغل. عشان ميرجعش تاني: [[core.autocrlf input]] جوه WSL، وملف [[.gitattributes]] فيه [[*.sh text eol=lf]] في الريبو عشان يحمي كل الفريق، وفي VS Code غيّر CRLF لـ LF من شريط الحالة تحت يمين.`
         },
         {
           cmd: "systemd والخدمات",
@@ -465,7 +508,10 @@ Postgres جوه WSL بيسمع على localhost، وويندوز بيشوف loca
             when: "قاعدة بيانات و Redis للتطوير. وتمرين على إدارة السيرفر.",
             mistakes: "Postgres جوه WSL و Postgres على ويندوز الاتنين على 5432 فيتخانقوا. واحد بس."
           },
-          lines: ["systemd شغال؟", "سطّب Postgres.", "شغّله دلوقتي ومع كل مرة.", "اتأكد.", "الحالة."]
+          lines: ["systemd شغال؟", "سطّب Postgres.", "شغّله دلوقتي ومع كل مرة.", "اتأكد.", "الحالة."],
+          sol: R`[[systemctl is-system-running]] يطبع [[running]] أو [[degraded]] (يعني فيه خدمة واحدة فشلت، وده شائع وعادي في WSL). لو طبع [[offline]] أو [[System has not been booted with systemd]]، فعّل [[systemd=true]] الأول. [[SELECT version();]] يطبع سطر زي [[PostgreSQL 16.x (Ubuntu 16.x-...) on x86_64-pc-linux-gnu]] على أوبونتو 24.04.
+
+في DBeaver: Host [[localhost]] و Port [[5432]] و User [[postgres]]. أول محاولة غالبًا هتفشل بـ [[password authentication failed]]، لأن [[sudo -u postgres psql]] بيدخل بـ peer auth من غير باسورد، بس الاتصال من DBeaver بيجي على TCP ومحتاج باسورد. حطه بـ [[sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'dev'"]]. ولو [[Connection refused]] اتأكد إن مفيش Postgres تاني على ويندوز نفسه ماسك 5432.`
         },
         {
           cmd: "مشاكل شائعة",
@@ -499,7 +545,10 @@ Optimize-VHD -Path "$env:LOCALAPPDATA\Packages\CanonicalGroupLimited.Ubuntu24.04
             "زامن الساعة من ويندوز.",
             "اقفل WSL (قبل ضغط الديسك).",
             "من PowerShell كمدير: اضغط ملف الديسك بتاع أوبونتو."
-          ]
+          ],
+          sol: R`بعد إصلاح DNS، [[apt update]] هيكمّل بسطور [[Hit:]] و [[Get:]] بدل [[Temporary failure resolving 'archive.ubuntu.com']]. اتأكد بـ [[cat /etc/resolv.conf]]: لازم يبقى [[nameserver 1.1.1.1]] ويفضل كده بعد [[wsl --shutdown]]. لو رجع اتغير، يبقى [[generateResolvConf=false]] مش متحفظ صح في [[/etc/wsl.conf]]. بس قبل كل ده جرّب [[wsl --update]]، لأن dnsTunneling في النسخ الحديثة بيحل معظمها.
+
+الوقت: قارن [[date]] بساعة ويندوز. [[sudo hwclock -s]] في نسخ WSL كتير بيفشل بـ [[Cannot access the Hardware Clock]] لأن مفيش RTC حقيقي، وساعتها [[wsl --shutdown]] من PowerShell هو الحل المضمون. و [[Optimize-VHD]] محتاج Hyper-V PowerShell module (ويندوز Pro أو Enterprise)، وعلى Home هيقول الأمر مش معروف، استخدم [[diskpart]] بـ [[compact vdisk]]. ومسار ملف [[ext4.vhdx]] مش ثابت: التوزيعات اللي اتسطبت بـ [[wsl --install]] الحديث ممكن تبقى في [[%LOCALAPPDATA%\wsl\{GUID}]]، والمسار الصح في الريجستري [[HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss]] تحت [[BasePath]].`
         }
       ]
     }

@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("ps", {
@@ -45,7 +49,10 @@ $PSVersionTable.PSVersion`,
             "سطّب PowerShell 7 بـ winget (مدير باكدجات ويندوز). [[-e]] يعني الاسم بالظبط.",
             "شغّل النسخة الجديدة (الأمر بتاع 5.1 القديمة اسمه powershell).",
             "اطبع رقم النسخة. المفروض 7 أو أعلى."
-          ]
+          ],
+          sol: R`[[winget]] هيقولك في الآخر [[Successfully installed]]. افتح نافذة terminal جديدة (القديمة مش شايفة الـ PATH الجديد) واكتب [[pwsh]]، وبعدين [[$PSVersionTable.PSVersion]]. المفروض تشوف جدول فيه [[Major]] بـ 7 و [[Minor]] بـ 5 أو أكتر (أنا شغّلته على 7.5.3 فطلع [[7  5  3]] تحت [[Major  Minor  Patch]]).
+
+لو الجدول طلع فيه [[Major 5]] و [[Minor 1]] وعمود اسمه [[Build]] بدل [[Patch]]، يبقى انت لسه في Windows PowerShell 5.1 القديم (الأيقونة الزرقا أو أمر [[powershell]]). ولو [[pwsh]] قالك «is not recognized»، اقفل كل نوافذ الترمنال وافتح واحدة جديدة، أو اعمل Restart لـ VS Code لو بتشتغل من جواه.`
         },
         {
           cmd: "Verb-Noun",
@@ -69,7 +76,10 @@ Aliases موجودة لكل ده: [[cd]] = Set-Location، [[ls]] = Get-ChildItem
           lines: [
             "[[ls]] اختصار لإيه؟ هيقولك Get-ChildItem.",
             "العكس: إيه الاختصارات اللي بتشاور على Get-ChildItem؟"
-          ]
+          ],
+          sol: R`[[Get-Alias -Definition Get-Content]] على ويندوز بيطلع 3 سطور: [[cat -> Get-Content]] و [[gc -> Get-Content]] و [[type -> Get-Content]]. [[type]] جاية من أيام CMD، و [[cat]] عشان اللي جاي من لينكس، و [[gc]] الاختصار الرسمي من أول حروف الفعل والاسم.
+
+جربتها على PowerShell 7 على لينكس فطلع [[gc]] و [[type]] بس، لأن على لينكس والماك PowerShell بيشيل الـ aliases اللي ليها نفس اسم أمر حقيقي في النظام زي [[cat]] و [[ls]]. عشان كده في سكربت هيشتغل على أكتر من نظام اكتب الاسم الكامل [[Get-Content]]. ولو كتبت [[Get-Alias Get-Content]] من غير [[-Definition]] هيطلعلك error، لأنه بيدوّر على alias اسمه Get-Content مش على aliases بتشاور عليه.`
         },
         {
           cmd: "Get-Help",
@@ -91,7 +101,10 @@ Get-Help Get-ChildItem -Online`,
           lines: [
             "أمثلة استخدام Copy-Item بس، من غير باقي الشرح.",
             "افتح الصفحة الرسمية في المتصفح، ودي دايمًا أحدث وأشمل."
-          ]
+          ],
+          sol: R`[[Get-Help Remove-Item -Examples]] المفروض يطلع أمثلة مترقمة زي [[Example 1: Delete files that have any file name extension]] وتحت كل واحد الأمر وشرحه، ومنها أمثلة فيها [[-Include]] و [[-Exclude]] و [[-Recurse]] و [[-Force]] للملفات المخفية أو read-only. لاحظ إن كل أمثلة المسح الخطيرة ممكن تجربها الأول بـ [[-WhatIf]].
+
+لو طلعلك [[Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.]] ومعاه الاسم والـ aliases بس ([[ri]] و [[del]] و [[rd]] و [[erase]])، يبقى الـ help مش متحمّل. شغّل [[Update-Help]] (في PowerShell 7 بيتحمّل للمستخدم الحالي ومش محتاج أدمن، في 5.1 محتاج أدمن)، أو استخدم [[Get-Help Remove-Item -Online]] يفتحلك صفحة Microsoft Learn.`
         },
         {
           cmd: "Get-Command",
@@ -108,7 +121,10 @@ Get-Command -Verb Get -Noun *Item*`,
             when: "مش فاكر الاسم الكامل. أو عايز تعرف كل الأوامر اللي بتتعامل مع خدمة معينة.",
             mistakes: "تكتب [[Get-Command]] بدون parameters وتغرق في آلاف الأوامر."
           },
-          lines: ["أي أمر اسمه فيه process.", "الأوامر اللي فعلها Get واسمها فيه Item."]
+          lines: ["أي أمر اسمه فيه process.", "الأوامر اللي فعلها Get واسمها فيه Item."],
+          sol: R`[[Get-Command *service*]] على ويندوز هيطلع جدول [[CommandType  Name]] فيه الـ cmdlets: [[Get-Service]] و [[New-Service]] و [[Remove-Service]] و [[Restart-Service]] و [[Resume-Service]] و [[Set-Service]] و [[Start-Service]] و [[Stop-Service]] و [[Suspend-Service]]، وممكن معاهم برامج (Application) من الـ PATH اسمها فيه service.
+
+الأدق [[Get-Command -Noun Service]] لأنه بيجيب الأوامر اللي الاسم بتاعها Service بالظبط من غير البرامج الخارجية. لاحظ إن كل الأسامي بنفس نمط Verb-Noun، فلو عرفت [[Get-Service]] تقدر تخمّن [[Stop-Service]] من غير ما تدوّر. ولو [[*service*]] رجع حاجات غريبة من برامج متسطبة، دي مش cmdlets، بص على عمود CommandType.`
         },
         {
           cmd: "Get-Member",
@@ -125,7 +141,10 @@ Get-Item .\notes.txt | Get-Member -MemberType Property`,
             when: "لما بتتعلم أمر جديد. أو لما مش عارف إزاي توصل لمعلومة معينة من object.",
             mistakes: "تتجاهل Get-Member وتفضل تخمّن property names."
           },
-          lines: ["إيه الـ properties والـ methods اللي في object العملية.", "الـ properties بس لـ object ملف."]
+          lines: ["إيه الـ properties والـ methods اللي في object العملية.", "الـ properties بس لـ object ملف."],
+          sol: R`[[Get-Item .\notes.txt | Get-Member -MemberType Property]] بيطلع [[TypeName: System.IO.FileInfo]] وتحته properties زي [[Attributes]] و [[CreationTime]] و [[DirectoryName]] و [[Extension]] و [[FullName]] و [[IsReadOnly]] و [[LastWriteTime]] و [[Length]] و [[Name]]. و [[(Get-Item .\notes.txt).LastWriteTime]] بيطبع تاريخ ووقت زي [[Wednesday, September 30, 2026 5:11:17 AM]] (الشكل بيختلف حسب لغة ويندوز).
+
+الـ TypeName هو المفتاح: FileInfo للملف و DirectoryInfo للفولدر، فالفولدر مفيهوش [[Length]] مثلًا. ولو ظهرلك [[Cannot find path]]، الملف مش موجود في الفولدر اللي انت واقف فيه: اعمله الأول بـ [[New-Item notes.txt]]. ولو كتبت [[Get-Item .\notes.txt.LastWriteTime]] من غير أقواس هيدوّر على ملف بالاسم ده كله، الأقواس هي اللي بتقول «نفّذ الأول وبعدين هات الـ property».`
         }
       ]
     },
@@ -158,7 +177,10 @@ PowerShell بيشوف الـ drives بطريقة تانية. مش بس [[C:]]، 
             "نفس الحاجة بالاختصار، ولدرايف تاني على طول (مش زي CMD).",
             "فولدرك الشخصي.",
             "انت فين دلوقتي (زي pwd)."
-          ]
+          ],
+          sol: R`[[cd D:\]] (أو [[D:]] لوحدها) الـ prompt هيبقى [[PS D:\>]]، و [[cd ~]] يرجعك [[C:\Users\ali]]، و [[Get-Location]] بيطبع جدول فيه [[Path]] وتحته المسار. ومش محتاج [[/d]] زي CMD، PowerShell بيغيّر الدرايف والفولدر مع بعض.
+
+لو ظهر [[Cannot find drive. A drive with the name 'D' does not exist.]] يبقى الجهاز مفيهوش D، شوف الدرايفات الموجودة بـ [[Get-PSDrive -PSProvider FileSystem]]. ولو المسار فيه مسافات حطه بين علامات تنصيص: [[cd "C:\Program Files"]].`
         },
         {
           cmd: "Get-ChildItem",
@@ -184,7 +206,10 @@ Get-ChildItem -Directory`,
             "مع المخفي ([[-Force]] هنا زي [[-a]]).",
             "كل ملفات .js في كل الفولدرات الفرعية. [[-Filter]] أسرع من Where-Object.",
             "الفولدرات بس."
-          ]
+          ],
+          sol: R`الحل: [[Get-ChildItem -File -Filter *.json]] في فولدر المشروع. هتلاقي حاجات زي [[package.json]] و [[package-lock.json]] و [[tsconfig.json]]، كل واحد في سطر فيه Mode (زي [[-a---]]) و LastWriteTime و Length و Name، ومفيش ولا فولدر لأن [[-File]] شالهم.
+
+لو زودت [[-Recurse]] هيدخل node_modules ويطلعلك آلاف الملفات، فلو عايز الفولدرات الفرعية فلتر بعدها: [[Get-ChildItem -Recurse -File -Filter *.json | Where-Object FullName -notmatch 'node_modules']]. ولو استخدمت [[-Include *.json]] من غير [[-Recurse]] ممكن ميرجعش حاجة خالص، [[-Filter]] هو الأسرع والأبسط هنا.`
         },
         {
           cmd: "Push-Location",
@@ -203,7 +228,10 @@ Pop-Location`,
             when: "سكربت محتاج يدخل فولدر، يعمل حاجة، ويرجع. أو بتشتغل على مشاريع متعددة وبترجع لمشروعك الأصلي.",
             mistakes: "نسيان Pop-Location في حالة error. استخدم try/finally."
           },
-          lines: ["احفظ مكاني وروح لـ Windows.", "ارجعني للمكان المحفوظ."]
+          lines: ["احفظ مكاني وروح لـ Windows.", "ارجعني للمكان المحفوظ."],
+          sol: R`جربتها: [[Push-Location /tmp]] وبعدين [[Push-Location /usr]] (على ويندوز استخدم [[C:\Windows]] و [[C:\Users]] مثلًا). [[Get-Location -Stack]] بيوريك المكانين المحفوظين، وأول [[Pop-Location]] رجعني [[/tmp]] (المكان اللي كنت فيه قبل آخر push)، والتاني رجعني للفولدر اللي بدأت منه.
+
+يعني الـ stack بيرجعك بالعكس: آخر حاجة اتحفظت أول حاجة ترجعلها. [[pushd]] نفسه مش بيطبع حاجة، وده طبيعي. ولو عملت [[popd]] زيادة مرة تالتة مش هيحصل حاجة (مفيش error، مفيش مكان يرجعله)، ففي السكربت اعمل pop بعدد الـ push بالظبط.`
         }
       ]
     },
@@ -236,7 +264,13 @@ mkdir logs`,
             "ملف فاضي (الافتراضي ملف).",
             "ملف بمحتوى على طول.",
             "الاختصار بيشتغل برضه."
-          ]
+          ],
+          sol: R`[[New-Item -ItemType Directory app\src, app\public -Force]] بيعمل الفولدرين (ويعمل [[app]] نفسه في السكة)، وبعدين [[New-Item app\src\server.js]]. كل أمر بيطبع جدول تحت [[Directory: C:\...\app\src]] فيه Mode و LastWriteTime و Length (صفر للملف الجديد) و Name.
+
+لو عملت الملف قبل الفولدر هتشوف [[Could not find a part of the path '...\app\src\server.js']]، لأن New-Item مش بيعمل الفولدرات الناقصة للملف إلا بـ [[-Force]]. ولو شغّلت نفس الأمر مرتين: [[The file '...\server.js' already exists.]] وده في صالحك، أما لو ضفت [[-Force]] على ملف موجود فهيفضّيه من غير ما يسأل.`,
+          solCode: R`New-Item -ItemType Directory app\src, app\public -Force
+New-Item app\src\server.js
+Get-ChildItem app -Recurse | Select-Object FullName`
         },
         {
           cmd: "Copy-Item",
@@ -256,7 +290,10 @@ Copy-Item src src_backup -Recurse`,
             when: "نسخ .env.example لـ .env. نسخ فولدر مشروع للتجربة.",
             mistakes: "نسيان [[-Recurse]] مع الفولدرات: بينسخ الفولدر فاضي."
           },
-          lines: ["انسخ ملف باسم جديد.", "انسخ كل .js لفولدر backup.", "انسخ فولدر بكل اللي جواه ([[-Recurse]])."]
+          lines: ["انسخ ملف باسم جديد.", "انسخ كل .js لفولدر backup.", "انسخ فولدر بكل اللي جواه ([[-Recurse]])."],
+          sol: R`[[Copy-Item app app_copy -Recurse]] مش بيطبع حاجة. اتأكد بـ [[Get-ChildItem app_copy -Recurse -Name]]، هتلاقي [[public]] و [[src]] و [[src\server.js]] زي الأصل بالظبط.
+
+غلطتين شفتهم بعيني وأنا بجرب: من غير [[-Recurse]] PowerShell بيعمل [[app_copy]] فولدر فاضي ومن غير أي error، فتفتكر النسخ اشتغل. والتانية: لو شغّلت نفس الأمر مرة تانية و [[app_copy]] موجود، النسخة بتتحط جواه كـ [[app_copy\app]]. فامسح النسخة القديمة الأول أو انسخ المحتوى بـ [[Copy-Item app\* app_copy -Recurse]].`
         },
         {
           cmd: "Move-Item / Rename-Item",
@@ -280,7 +317,13 @@ Get-ChildItem *.txt | Rename-Item -NewName { $_.Name -replace '\.txt$', '.md' }`
             "انقل كل .log لفولدر logs.",
             "غيّر اسم ملف.",
             "لكل ملف .txt: غيّر امتداده لـ .md. الـ [[-replace]] بتاخد regex، والدولار في الآخر يعني «نهاية الاسم»."
-          ]
+          ],
+          sol: R`بعد [[1..3 | ForEach-Object { New-Item "n$_.txt" }]] والأمر الأخير، [[Get-ChildItem]] هيعرض [[n1.md]] و [[n2.md]] و [[n3.md]] ومفيش ولا txt. جربته فعلًا والأمر مبيطبعش حاجة، بيغيّر وبس.
+
+الـ [[{ }]] بعد [[-NewName]] بيتنفذ لكل ملف لوحده و [[$_]] هو الملف الحالي. أشهر غلطة إنك تكتب [[-NewName "$_.Name -replace ..."]] بعلامات تنصيص بدل الأقواس: جربتها فطلع error لكل ملف ومفيش ولا ملف اتغير، لأن [[$_]] بره الـ [[{ }]] فاضي، فالاسم الجديد بقى نص غريب بيبدأ بـ [[.Name -replace]]. وخلي بالك إن [[-replace]] بياخد regex، عشان كده النقطة مكتوبة [[\.]] و [[$]] معناها آخر الاسم، فـ [[my.txt.bak]] مش هيتغير.`,
+          solCode: R`1..3 | ForEach-Object { New-Item "n$_.txt" }
+Get-ChildItem *.txt | Rename-Item -NewName { $_.Name -replace '\.txt$', '.md' }
+Get-ChildItem *.md`
         },
         {
           cmd: "Remove-Item",
@@ -305,7 +348,10 @@ wildcard شغال: [[Remove-Item *.log]] يمسح كل ملفات .log.`,
             "امسح ملف.",
             "جرّب مسح node_modules من غير ما تمسح فعلًا ([[-WhatIf]] يطبع هيعمل إيه).",
             "امسحه فعلًا: بكل اللي جواه ([[-Recurse]]) ومن غير أسئلة ([[-Force]])."
-          ]
+          ],
+          sol: R`مع [[-WhatIf]] هتشوف سطر زي [[What if: Performing the operation "Remove Directory" on target "C:\lab\app_copy".]] والفولدر لسه موجود ([[Test-Path app_copy]] يرجع True). من غير [[-WhatIf]] الأمر مش بيطبع حاجة، و [[Test-Path app_copy]] يرجع False.
+
+لو شغلته تاني بعد ما اتمسح هيقولك [[Cannot find path '...\app_copy' because it does not exist.]] وده معناه إنه اتمسح فعلًا مش إن فيه مشكلة. ولو نسيت [[-Recurse]] على فولدر فيه ملفات، PowerShell هيسألك «The item has children... Are you sure?» في الترمنال، وفي السكربت ده ممكن يوقفه مستنيك. ومفيش Recycle Bin هنا، اللي اتمسح راح.`
         },
         {
           cmd: "Test-Path",
@@ -322,7 +368,10 @@ if (Test-Path .env) { "found" } else { "missing" }`,
             when: "في أي سكربت قبل ما يتعامل مع ملف. تتأكد إن .env موجود قبل التشغيل.",
             mistakes: "تنسى علامات تنصيص حوالين المسار لو فيه مسافات."
           },
-          lines: ["الملف موجود؟ True أو False.", "نفس السؤال جوه شرط."]
+          lines: ["الملف موجود؟ True أو False.", "نفس السؤال جوه شرط."],
+          sol: R`[[Test-Path app]] (موجود) رجّع [[True]] و [[Test-Path nope.txt]] رجّع [[False]]، والسطر التاني في المثال طبع [[missing]] عشان مكانش عندي .env.
+
+خد بالك إن [[Test-Path]] مش بيطلع error أبدًا لو الملف مش موجود، بيرجع False وبس، وده اللي مخليه مناسب لـ [[if]]. ولو عايز تفرق بين ملف وفولدر استخدم [[-PathType Leaf]] للملف و [[-PathType Container]] للفولدر: [[Test-Path app -PathType Leaf]] هترجع False لأن app فولدر.`
         },
         {
           cmd: "Get-Item",
@@ -346,7 +395,10 @@ Get-Item .\app.log | Format-List *`,
             "حجم الملف بالبايت. الأقواس عشان تاخد الـ object الأول وبعدين تقرا منه property.",
             "آخر تعديل.",
             "كل الـ properties بتاعته في قايمة."
-          ]
+          ],
+          sol: R`[[(Get-Item .\app.log).Length]] بيرجع رقم بالبايت زي [[1532]]، و [[.LastWriteTime]] بيرجع التاريخ والوقت. ولو عايز الحجم بالكيلو: [[(Get-Item .\app.log).Length / 1KB]].
+
+لو جربتها على فولدر هتلاقي [[.Length]] مبيرجعش حاجة، لأن الفولدر (DirectoryInfo) مفيهوش Length، حجمه لازم يتحسب بـ Measure-Object (درس Measure-Object). ولو الملف بيبدأ بنقطة زي [[.env]] على لينكس أو الماك، [[Get-Item]] مش هيلاقيه إلا بـ [[-Force]] لأنه مخفي هناك، أما على ويندوز النقطة مش بتخفي حاجة.`
         }
       ]
     },
@@ -381,7 +433,10 @@ Get-Content app.log -Tail 5 -Wait
             "آخر ٢٠ سطر (زي tail).",
             "آخر ٥ سطور وتابع اللي جاي (زي tail -f). Ctrl+C يوقف.",
             "عدد السطور، لأن Get-Content بيرجع array وكل سطر عنصر."
-          ]
+          ],
+          sol: R`في النافذة الأولى [[Get-Content app.log -Wait]] هيطبع محتوى الملف الموجود ويفضل مستني. أول ما تكتب [[Add-Content app.log "hello"]] في النافذة التانية، هتلاقي [[hello]] ظهرت في الأولى خلال ثانية تقريبًا. تخرج من المتابعة بـ Ctrl+C.
+
+لو الملف كبير ضيف [[-Tail 5]] عشان ميطبعش كل اللي فيه الأول. ولو مظهرش حاجة، اتأكد إن النافذتين واقفين في نفس الفولدر (الاسم نسبي)، بـ [[Get-Location]] في الاتنين.`
         },
         {
           cmd: "Set-Content / Add-Content",
@@ -405,7 +460,10 @@ Get-Process | Out-File procs.txt -Encoding utf8`,
             "اكتب في الملف ويمسح القديم (زي [[>]]). [[-Encoding utf8]]: في PowerShell 7 من غير BOM، لكن في 5.1 بيحط BOM في أول الملف.",
             "ضيف سطر في الآخر (زي [[>>]]).",
             "ودّي ناتج أمر لملف بدل الشاشة."
-          ]
+          ],
+          sol: R`[[Set-Content .env "PORT=3000"]] وبعدين [[Add-Content .env "NODE_ENV=development"]] وبعدين [[Get-Content .env]] بيطبع السطرين: [[PORT=3000]] و [[NODE_ENV=development]]. و [[(Get-Content .env).Count]] يرجع [[2]].
+
+لو لقيت سطر واحد بس، يبقى استخدمت Set-Content في المرتين فالتانية كتبت فوق الأولى. ولو انت على PowerShell 7 الملف UTF-8 من غير BOM (أنا فحصت أول بايتات الملف فطلعوا حروف PORT على طول). أما في 5.1، [[-Encoding utf8]] بيحط 3 بايتات BOM في الأول، وساعات مكتبة .env تقرا أول مفتاح على إنه مش PORT، فيبقى [[process.env.PORT]] فاضي من غير سبب واضح.`
         },
         {
           cmd: "ConvertFrom-Json",
@@ -429,7 +487,10 @@ $pkg.dependencies`,
             "اقرا الملف كنص واحد ([[-Raw]])، وحوّله لـ object.",
             "دلوقتي تقدر تقرا أي حقل بالنقطة.",
             "حتى الحقول اللي جواها حقول."
-          ]
+          ],
+          sol: R`في فولدر مشروع Node: [[$pkg = Get-Content package.json -Raw | ConvertFrom-Json]] وبعدين [[$pkg.name]] و [[$pkg.version]]. جربتها على package.json فيه name بـ myapp و version بـ 1.2.0، وسطر [["$($pkg.name)@$($pkg.version)"]] طبع [[myapp@1.2.0]]. و [[$pkg.dependencies]] بيطبع جدول فيه اسم كل مكتبة ونسختها.
+
+[[-Raw]] بيقرا الملف كله كنص واحد بدل array سطور. في PowerShell 7 الأمر اشتغل معايا من غيرها برضه، لكن في 5.1 ممكن يطلع error، فخليها عادة. ولو [[$pkg.name]] رجع فاضي، يبقى انت مش في فولدر المشروع أو كتبت الاسم غلط؛ PowerShell مش بيطلع error لما property مش موجودة، بيرجع null بس.`
         }
       ]
     },
@@ -460,7 +521,10 @@ Get-ChildItem -Recurse -File -Include *.js,*.ts | Where-Object FullName -notmatc
             "دوّر على TODO في كل ملفات .js (زي grep).",
             "الاختصار [[sls]]: دوّر على error في اللوج.",
             "كل ملفات js و ts، من غير node_modules، ودوّر فيهم على console.log كنص حرفي ([[-SimpleMatch]] مش regex)."
-          ]
+          ],
+          sol: R`الأمر التالت في المثال هو الحل. جربته على مشروع فيه [[src\a.js]] و [[src\b.ts]] و [[node_modules\x\i.js]]، فطلع سطرين بس: [[src\a.js:1:console.log("a")]] و [[src\b.ts:1:const b=1; console.log(b)]]، والملف اللي جوه node_modules اتشال. الشكل: مسار الملف : رقم السطر : السطر نفسه.
+
+[[-SimpleMatch]] مهمة لأن من غيرها النقطة في console.log بتبقى regex يعني «أي حرف». ولو عملت [[-Exclude node_modules]] مع [[-Recurse]] هتلاقيه لسه بيدخل جوه، لأن Exclude بيفلتر أسامي الملفات مش الفولدرات، عشان كده الفلترة بـ [[Where-Object FullName -notmatch]].`
         },
         {
           cmd: "Get-Command (which)",
@@ -484,7 +548,10 @@ where.exe node`,
             "node ده جاي منين؟",
             "المسار بس كنص.",
             "أمر where بتاع CMD، بس لازم [[.exe]] لأن where في PowerShell اختصار لـ Where-Object."
-          ]
+          ],
+          sol: R`[[Get-Command node]] بيطبع سطر فيه [[Application]] و [[node.exe]] والمسار زي [[C:\Program Files\nodejs\node.exe]]، و [[(Get-Command node).Source]] بيطبع المسار بس. [[Get-Command npm]] غالبًا هيطلع [[npm.ps1]] من نوع ExternalScript، لأن Node على ويندوز بيحط npm.ps1 و npm.cmd، و [[where.exe npm]] هيطبعلك الاتنين (مع [[npm]] من غير امتداد).
+
+عشان تشوف كل النسخ: [[Get-Command node -All]] أو [[where.exe node]]. لما جربت على لينكس [[Get-Command npm -All]] طلع مسارين، وده بالظبط اللي الدرس بيحذر منه: اللي أول واحد في الـ PATH هو اللي بيشتغل. ولو كتبت [[where node]] من غير [[.exe]] مش هيطبع حاجة لأن where هنا Where-Object.`
         }
       ]
     },
@@ -515,7 +582,10 @@ Get-Service | Where-Object Status -eq Running`,
             "العمليات اللي استهلاكها للمعالج أكبر من 100. الشكل المختصر: property وبعدين المقارنة.",
             "الملفات اللي أكبر من ميجا. الشكل الكامل بالأقواس و [[$_]] لما الشرط أعقد.",
             "الخدمات الشغالة بس."
-          ]
+          ],
+          sol: R`[[Get-ChildItem -File | Where-Object LastWriteTime -gt (Get-Date).Date]] بيعرض الملفات اللي اتعدلت النهارده بس. جربتها بعد ما عملت كام ملف فظهروا هما بس. [[(Get-Date).Date]] معناها النهارده الساعة 12 بالليل، فأي حاجة اتعدلت بعدها تبقى من النهارده.
+
+لو طلعلك ولا حاجة، جرب [[New-Item test.txt]] وشغله تاني، المفروض يظهر. ولو كتبت [[-gt Get-Date]] من غير أقواس هيطلع error، لأن PowerShell هيعتبر Get-Date كلمة نص مش أمر. والأقواس حوالين [[(Get-Date)]] هي اللي بتنفذ الأمر الأول وتاخد منه [[.Date]].`
         },
         {
           cmd: "Select-Object",
@@ -534,7 +604,10 @@ Get-ChildItem | Select-Object -ExpandProperty Name`,
             when: "تعمل output نضيف بأعمدة معينة. تاخد أول N نتايج. تجيب قيمة property كنص.",
             mistakes: "الخلط بين Select-Object وWhere-Object. Select بيختار أعمدة، Where بيفلتر صفوف."
           },
-          lines: ["٣ أعمدة بس، وأول ٥ صفوف.", "الأسامي كنصوص عادية بدل objects ([[-ExpandProperty]])."]
+          lines: ["٣ أعمدة بس، وأول ٥ صفوف.", "الأسامي كنصوص عادية بدل objects ([[-ExpandProperty]])."],
+          sol: R`[[Get-ChildItem -File | Select-Object Name, Length]] بيطبع جدول بعمودين. جربتها فطلع مثلًا [[b.txt  5]] و [[package.json  85]] (الحجم بالبايت).
+
+لو شلت [[-File]] الفولدرات هتظهر وعمود Length جنبها فاضي، لأن الفولدر مفيهوش حجم. وخلي بالك: لو كتبت [[Select-Object Name, Size]] مش هيطلع error، هيطلعلك عمود Size فاضي، لأن الاسم الصح Length. استخدم [[Get-Member]] لو مش متأكد من اسم الـ property.`
         },
         {
           cmd: "Sort-Object",
@@ -554,7 +627,13 @@ Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5`,
           lines: [
             "كل الملفات، مرتبة بالحجم من الأكبر، وخد أكبر ١٠ بالاسم والحجم.",
             "أكتر ٥ عمليات استهلاكًا للرام."
-          ]
+          ],
+          sol: R`[[Get-Process | Sort-Object WorkingSet -Descending | Select-Object -First 5]] بيطلع أكتر 5 عمليات بتاكل رام. غالبًا هتلاقي chrome أو msedge أو Code أو MsMpEng (Defender)، والعمود [[WS(M)]] في PowerShell 7 بالميجا (في 5.1 اسمه [[WS(K)]] وبالكيلو).
+
+لو عايز عمود بالميجا واضح استخدم الـ solCode. ولاحظ إن Chrome بيطلع كذا مرة لأن كل تاب عملية لوحده، فعشان تعرف Chrome كله بياخد كام، جمّع بالاسم (درس Group-Object). ولو رتبت بـ [[CPU]] بدل WorkingSet هتجيب اللي أكل وقت معالج من ساعة ما فتح، مش الرام.`,
+          solCode: R`Get-Process |
+    Sort-Object WorkingSet -Descending |
+    Select-Object -First 5 Name, Id, @{ Name = "MB"; Expression = { [math]::Round($_.WorkingSet / 1MB, 1) } }`
         },
         {
           cmd: "Measure-Object",
@@ -571,7 +650,13 @@ Get-ChildItem -Recurse -File | Measure-Object Length -Sum`,
             when: "عد الملفات. إجمالي حجم فولدر. متوسط أو أعلى استهلاك CPU.",
             mistakes: "نسيان property اسمها [[-Property]] لما بتعمل Sum أو Average."
           },
-          lines: ["عدد الملفات (الأقواس تجمع الناتج الأول وبعدين .Count).", "مجموع أحجام كل الملفات."]
+          lines: ["عدد الملفات (الأقواس تجمع الناتج الأول وبعدين .Count).", "مجموع أحجام كل الملفات."],
+          sol: R`[[Get-ChildItem node_modules -Recurse -File | Measure-Object Length -Sum]] بيطبع [[Count]] (عدد الملفات) و [[Sum]] (الحجم بالبايت)، وبعدين تقسم على [[1MB]]. جربتها على فولدر node_modules فيه 8463 ملف فطلع Sum بـ 229935708 والقسمة طلعت [[219.28]] ميجا.
+
+الرقم ممكن يختلف شوية عن «Size on disk» في Explorer، لأن Explorer بيحسب حجم الـ clusters على الديسك. وعلى لينكس والماك ضيف [[-Force]] عشان الملفات اللي بتبدأ بنقطة متتشالش من الحساب. ولو كتبت [[Measure-Object -Sum]] من غير [[Length]] هيطلع error أو يحاول يجمع الـ objects نفسها.`,
+          solCode: R`$m = Get-ChildItem .\node_modules -Recurse -File -Force | Measure-Object Length -Sum
+$m.Count
+[math]::Round($m.Sum / 1MB, 2)`
         },
         {
           cmd: "ForEach-Object",
@@ -593,7 +678,12 @@ Get-ChildItem *.log | ForEach-Object { $_.Name.ToUpper() }`,
           lines: [
             "الأرقام من ١ لـ ٥، ولكل واحد اطبع Item ورقمه. [[$_]] هو العنصر الحالي.",
             "اسم كل ملف log بحروف كابيتال. بتقدر تنادي methods على [[$_]]."
-          ]
+          ],
+          sol: R`[[1..5 | ForEach-Object { New-Item "test$_.txt" }]] بيعمل [[test1.txt]] لـ [[test5.txt]] وبيطبع جدول بالـ 5 ملفات. جربتها وطلعوا الخمسة.
+
+[[$_]] جوه الـ [[{ }]] هو الرقم الحالي، والـ double quotes هي اللي بتخليه يتحط في الاسم. لو كتبت [['test$_.txt']] بـ single quotes هيعمل ملف واحد اسمه حرفيًا [[test$_.txt]] والباقي هيطلع error إنه موجود. ولو شغلته مرة تانية هيطلعلك 5 errors [[already exists]] لأن الملفات موجودة.`,
+          solCode: R`1..5 | ForEach-Object { New-Item "test$_.txt" }
+Get-ChildItem test*.txt | Select-Object Name`
         },
         {
           cmd: "Group-Object",
@@ -611,7 +701,10 @@ Get-ChildItem *.log | ForEach-Object { $_.Name.ToUpper() }`,
             when: "كام process بكل اسم. إيه أكتر نوع لوج بيتكرر.",
             mistakes: "استخدامه من غير Sort-Object بعده. عادة الناتج محتاج ترتيب."
           },
-          lines: ["جمّع الملفات حسب الامتداد، ورتّب المجموعات من الأكتر عددًا."]
+          lines: ["جمّع الملفات حسب الامتداد، ورتّب المجموعات من الأكتر عددًا."],
+          sol: R`[[Get-ChildItem -Recurse -File | Group-Object Extension | Sort-Object Count -Descending]] بيطلع جدول [[Count  Name  Group]]. جربته على مشروع صغير فطلع [[2 .js]] و [[1 .ts]]. في مشروع حقيقي أول سطر غالبًا [[.js]] بآلاف، وده لأن node_modules داخل في الحساب.
+
+عشان تشوف كودك انت بس، فلتر node_modules الأول بـ [[Where-Object FullName -notmatch 'node_modules']]. الملفات اللي ملهاش امتداد بتتجمع تحت Name فاضي. وعمود Group فيه الملفات نفسها لو عايز تفتحها، ولو مش محتاجها ضيف [[-NoElement]] يبقى الجدول أنضف.`
         },
         {
           cmd: "Export-Csv / ConvertTo-Json",
@@ -635,7 +728,15 @@ Get-Service | Select-Object Name, Status -First 3 | ConvertTo-Json`,
             "اعرض جدول مضبوط الأعمدة (للشاشة بس).",
             "احفظ كـ CSV تفتحه في Excel. [[-NoTypeInformation]] يشيل سطر أول غريب.",
             "حوّل لـ JSON."
-          ]
+          ],
+          sol: R`الحل في الـ solCode. جربته فطلع ملف أوله [["Name","Length"]] وبعدين سطر لكل ملف زي [["b.txt","5"]]. [[ii files.csv]] بيفتحه في Excel لو متسطب.
+
+أشهر غلطة إنك تعمل [[Format-Table]] قبل [[Export-Csv]]: جربتها فطلع ملف فيه أعمدة غريبة زي [[ClassId2e4f51ef21dd47e99d3c952918aff9cd]] بدل الاسم والحجم، لأن Format-Table بيطلع أوامر عرض مش بيانات. ولو أسامي الملفات عربي وطلعت رموز غريبة في Excel استخدم [[-Encoding utf8BOM]] في PowerShell 7 (أو [[-Encoding UTF8]] في 5.1)، ولو كل البيانات اتحطت في عمود واحد جرب [[-UseCulture]] عشان يستخدم الفاصل بتاع إعدادات ويندوز.`,
+          solCode: R`Get-ChildItem -File |
+    Select-Object Name, Length |
+    Export-Csv files.csv -NoTypeInformation -Encoding utf8BOM
+Get-Content files.csv
+ii files.csv`
         }
       ]
     },
@@ -667,7 +768,10 @@ Stop-Process -Id 1234 -Force`,
             "عمليات node الشغالة (زي pgrep).",
             "اقفلهم كلهم بالاسم.",
             "اقفل عملية برقمها، غصب ([[-Force]] زي kill -9)."
-          ]
+          ],
+          sol: R`[[Start-Process notepad]] وبعدين [[Get-Process notepad]] هيطلع سطر فيه Id و ProcessName، و [[Stop-Process -Name notepad]] يقفله من غير أي رسالة. تأكد بـ [[Get-Process notepad]] تاني، المفروض يقولك [[Cannot find a process with the name "notepad"]].
+
+Stop-Process مش بيسأل «تحب تحفظ؟»، أي كلام مكتوب مش محفوظ بيضيع. ولو قالك [[Access is denied]] يبقى العملية شغالة كأدمن وانت مش أدمن. ولو فيه أكتر من notepad مفتوح، [[-Name]] هيقفلهم كلهم، فلو عايز واحد بس استخدم [[-Id]].`
         },
         {
           cmd: "Get-NetTCPConnection",
@@ -691,7 +795,10 @@ Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProc
             "مين بيسمع على بورت 3000 (زي ss -tlnp). OwningProcess هو رقم العملية.",
             "هات العملية نفسها برقمها (الأقواس بتنفّذ الجوّاني الأول).",
             "واقفلها. الحل الكامل لـ EADDRINUSE في سطر."
-          ]
+          ],
+          sol: R`في نافذة: [[npx http-server -p 3000]]. في التانية [[Get-NetTCPConnection -LocalPort 3000 -State Listen]] هيطلع سطر أو اتنين (IPv4 و IPv6) فيهم [[LocalPort 3000]] و [[State Listen]] و [[OwningProcess]] رقم زي 12345، وبعدين [[Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProcess -Force]]. النافذة الأولى هترجع للـ prompt والسيرفر وقف.
+
+لو ملقاش حاجة هيقولك [[No MSFT_NetTCPConnection objects found with property 'LocalPort' equal to '3000']]، يعني مفيش حد بيسمع على البورت (أو السيرفر لسه بيقوم). و Get-NetTCPConnection موجود على ويندوز بس (جوه PowerShell 5.1 و 7)، على لينكس والماك استخدم [[ss -tlnp]] أو [[lsof -i :3000]].`
         },
         {
           cmd: "Start-Process",
@@ -717,7 +824,10 @@ ii .`,
             "افتح لينك في المتصفح الافتراضي.",
             "افتح PowerShell كمدير (هيطلع سؤال UAC).",
             "[[ii]] اختصار Invoke-Item: افتح الفولدر الحالي في Explorer."
-          ]
+          ],
+          sol: R`[[ii .]] بيفتح نافذة File Explorer على الفولدر اللي انت واقف فيه، ومش بيطبع حاجة في الترمنال. [[ii]] اختصار Invoke-Item، وبيفتح أي حاجة بالبرنامج الافتراضي بتاعها: [[ii .\report.pdf]] يفتح الـ PDF، و [[ii .\files.csv]] يفتح Excel.
+
+لو انت جوه WSL الأمر ده مش موجود أصلًا، المقابل هناك [[explorer.exe .]]. وعلى لينكس PowerShell بيستخدم [[xdg-open]]، فلو مفيش واجهة رسومية مش هيفتح حاجة.`
         },
         {
           cmd: "& (call operator)",
@@ -753,7 +863,10 @@ $chromeArgs = @("--headless=new", "--screenshot=$env:TEMP\page.png", "http://loc
             "مسار Chrome.",
             "array فيها الـ arguments، كل واحد عنصر لوحده.",
             "شغّل Chrome وابعتله كل عناصر الـ array كـ arguments منفصلة."
-          ]
+          ],
+          sol: R`من غير [[&]]: جربتها على PowerShell 7 والمسار بين علامات تنصيص، فطلع ParserError: [[Unexpected token 'version' in expression or statement.]] ومعاه [[The '--' operator works only on variables or on properties.]]، لأن PowerShell شاف نص وبعده حاجة مش مفهومة. ولو كتبت المسار لوحده من غير أي arguments هيطبعه كنص وخلاص.
+
+مع [[&]] قبلها: طبعت نسخة node زي [[v22.22.2]]. ونفس الحكاية [[& $node --version]]. أما [[$node --version]] من غير [[&]] بيطلع نفس الـ ParserError. القاعدة: لو السطر بيبدأ بـ علامة تنصيص أو [[$]] وانت عايز تشغّل، حط [[&]] قبله.`
         },
         {
           cmd: "screenshots.ps1",
@@ -816,7 +929,10 @@ ii $outDir`,
             "الصورة اتعملت؟ اطبع OK، أو FAIL بالأحمر.",
             "آخر اللوب.",
             "افتح فولدر الصور في Explorer."
-          ]
+          ],
+          sol: R`شغّل موقعك ([[npm run dev]] مثلًا على 3000) وبعدين السكربت. هيطبع [[OK   home.png]] و [[OK   home-m.png]] و [[OK   contact.png]] بالأخضر، وفي الآخر يفتح فولدر [[%TEMP%\shots]]. Chrome نفسه ممكن يطبع سطر زيادة فيه «written to file»، ده طبيعي.
+
+الصورة الأولى عرضها 1440 والتانية 390، ولو موقعك responsive فيه viewport meta و media queries، صورة الموبايل هتبان بالـ menu المقفول والعناصر تحت بعض. لو الصورتين شكلهم واحد متصغّر، يبقى الـ CSS مش responsive أو مفيش viewport meta. ولو كله OK بس الصور فيها «This site can't be reached»، السيرفر مكانش شغال، لأن Chrome بيصوّر صفحة الـ error عادي. و [[FAIL]] مع error إن الملف مش موجود معناه مسار Chrome غلط عندك.`
         },
         {
           cmd: "Get-Service",
@@ -842,7 +958,10 @@ Restart-Service com.docker.service`,
             "الخدمات الشغالة بس.",
             "أي خدمة اسمها فيه docker.",
             "اعمل ريستارت لخدمة Docker (محتاج PowerShell كمدير)."
-          ]
+          ],
+          sol: R`[[Get-Service *docker*]] بيطلع جدول [[Status  Name  DisplayName]]، زي [[Running  com.docker.service  Docker Desktop Service]]. لو مطلعش حاجة يبقى Docker Desktop مش متسطب أو نسختك مش بتسطب خدمة بالاسم ده، جرب أي خدمة موجودة زي [[Get-Service Spooler]] (خدمة الطباعة) أو [[Get-Service wuauserv]] (Windows Update).
+
+Status بيبقى Running أو Stopped. و [[Restart-Service]] من غير أدمن هيطلع error فيه [[Cannot open ... service on computer '.']]، مش معناه إن الخدمة بايظة، معناه إنك محتاج تفتح PowerShell كأدمن. و Get-Service على ويندوز بس، على لينكس المقابل [[systemctl status]].`
         }
       ]
     },
@@ -873,7 +992,10 @@ Test-NetConnection localhost -Port 5432`,
             "ping ومعلومات الاتصال في أمر واحد.",
             "جرّب بورت 22 على السيرفر: TcpTestSucceeded True يعني مفتوح (زي nc -zv).",
             "قاعدة البيانات المحلية بتسمع؟"
-          ]
+          ],
+          sol: R`[[Test-NetConnection IP -Port 22]] بيطبع [[ComputerName]] و [[RemoteAddress]] و [[RemotePort : 22]] وفي الآخر [[TcpTestSucceeded : True]] لو البورت مفتوح. اعمل نفس الحكاية مع [[-Port 443]].
+
+لو البورت مقفول أو فيه firewall، هيطبع [[WARNING: TCP connect to (IP : 443) failed]] و [[TcpTestSucceeded : False]]، وممكن ياخد ثواني قبل ما يرد. False ممكن معناها إن مفيش حاجة شغالة على البورت ده (مثلًا Nginx مش شغال على 443) مش بس firewall. و Test-NetConnection موجود على ويندوز بس؛ في PowerShell 7 على أي نظام فيه [[Test-Connection IP -TcpPort 22]].`
         },
         {
           cmd: "Invoke-RestMethod",
@@ -899,7 +1021,10 @@ Invoke-WebRequest https://example.com/file.zip -OutFile file.zip`,
             "اقرا حقل منه على طول.",
             "طلب POST بـ JSON (زي curl -X POST -d).",
             "نزّل ملف واحفظه (زي wget)."
-          ]
+          ],
+          sol: R`[[(irm https://api.github.com/users/YOUR_NAME).public_repos]] بيطبع رقم زي [[12]]. الـ API بيرجع JSON و irm بيحوله لـ PSCustomObject على طول، فبتوصل للقيمة بالنقطة. جربت نفس الفكرة على سيرفر محلي بيرجع JSON فيه public_repos بـ 8، فطلع [[8]] ونوع الناتج PSCustomObject.
+
+الرقم ده الـ repos العامة بس، الـ private مش محسوبة. لو طلعلك [[Not Found]] يبقى اسم المستخدم غلط. ولو [[API rate limit exceeded]] يبقى عملت أكتر من 60 طلب في الساعة من غير توكن، استنى شوية.`
         },
         {
           cmd: "ssh / scp",
@@ -923,7 +1048,10 @@ scp .\dist.zip root@203.0.113.10:/var/www/`,
             "اعمل مفاتيح SSH (نفس الأمر زي لينكس، OpenSSH مبني في ويندوز).",
             "ادخل السيرفر.",
             "ارفع ملف للسيرفر."
-          ]
+          ],
+          sol: R`أول مرة [[ssh root@IP]] هيسألك [[The authenticity of host ... can't be established.]] ومعاه fingerprint، اكتب [[yes]]، وبعدها الـ prompt يبقى بتاع السيرفر زي [[root@server:~#]]. [[exit]] يرجعك PowerShell.
+
+لو قالك [[ssh : The term 'ssh' is not recognized]] يبقى OpenSSH Client مش متسطب: من Settings، Optional features، OpenSSH Client. ولو [[Permission denied (publickey)]] يبقى المفتاح العام مش في السيرفر، وويندوز مفيهوش [[ssh-copy-id]]، فابعته كده: [[type $HOME\.ssh\id_ed25519.pub | ssh root@IP "cat >> ~/.ssh/authorized_keys"]] (محتاج باسورد أو دخول تاني للسيرفر).`
         }
       ]
     },
@@ -956,7 +1084,10 @@ Get-NetRoute -DestinationPrefix 0.0.0.0/0
             "عناوين IPv4 بس مع اسم الكارت.",
             "الراوت الافتراضي، يعني الـ gateway (زي ip route).",
             "عنوانك العام على النت. [[.Trim()]] يشيل سطر جديد في الآخر."
-          ]
+          ],
+          sol: R`[[Get-NetIPConfiguration]] هيطلع لكل كارت [[InterfaceAlias]] (زي Wi-Fi أو Ethernet)، و [[IPv4Address]] زي [[192.168.1.15]] (المحلي)، و [[IPv4DefaultGateway]] زي [[192.168.1.1]] (الراوتر)، و [[DNSServer]]. و [[(Invoke-RestMethod https://ifconfig.me/ip).Trim()]] بيطبع IP عام مختلف تمامًا.
+
+الاتنين مختلفين لأن الراوتر بيعمل NAT: كل أجهزة البيت ليها IP محلي، وكلهم بيطلعوا للنت بنفس الـ IP العام. هتلاقي كمان كروت زي [[vEthernet (WSL)]] بـ IP زي 172.x، دي شبكات افتراضية مش هي اللي انت عايزها. ولو الـ IPv4 بيبدأ بـ [[169.254]] يبقى الجهاز مخدش IP من الراوتر أصلًا.`
         },
         {
           cmd: "Resolve-DnsName",
@@ -980,7 +1111,10 @@ Clear-DnsClientCache`,
             "اسأل Cloudflare بدل الـ DNS بتاعك، للمقارنة.",
             "سيرفرات الإيميل.",
             "امسح كاش الـ DNS (زي ipconfig /flushdns)."
-          ]
+          ],
+          sol: R`[[Resolve-DnsName yourdomain.com -Server 1.1.1.1]] و [[-Server 8.8.8.8]] المفروض الاتنين يطلعوا جدول [[Name  Type  TTL  Section  IPAddress]] بنفس الـ IPAddress. الـ TTL ممكن يختلف لأن كل واحد عنده الكاش بتاعه وفاضله وقت مختلف.
+
+لو الـ IP مختلف: إما غيرت الـ DNS قريب والتغيير لسه بينتشر (استنى الـ TTL القديم)، أو الدومين ورا CDN بيدي IPs مختلفة حسب المكان. ولو طلعلك [[DNS name does not exist]] يبقى الـ record مش موجود فعلًا. ولو timeout مع السيرفرين العامين بس، شبكتك غالبًا بتقفل DNS الخارجي. والأمر ده ويندوز بس، المقابل على لينكس والماك [[dig @1.1.1.1 yourdomain.com]].`
         },
         {
           cmd: "hosts",
@@ -1001,7 +1135,10 @@ Start-Process notepad C:\Windows\System32\drivers\etc\hosts -Verb RunAs`,
             when: "تجرّب موقع على سيرفر جديد قبل نقل الـ DNS. تعمل دومين محلي للتطوير.",
             mistakes: "تحاول تعدّله بدون صلاحيات فيطلع Access Denied. وكتابة غلط في الملف تسبب مشاكل في الشبكة."
           },
-          lines: ["اعرض ملف hosts.", "افتحه في Notepad كمدير عشان تقدر تحفظ."]
+          lines: ["اعرض ملف hosts.", "افتحه في Notepad كمدير عشان تقدر تحفظ."],
+          sol: R`افتح notepad كأدمن بالأمر التاني، ضيف في الآخر سطر [[127.0.0.1 myapp.local]] واحفظ. بعدها [[ping myapp.local]] المفروض يرد من 127.0.0.1، و http://myapp.local:3000 يفتح نفس اللي بيفتحه localhost:3000.
+
+لو notepad رفض الحفظ، يبقى مفتحتوش كأدمن. ولو حفظته واتسمّى [[hosts.txt]] يبقى notepad زوّد الامتداد، اختار All Files. ولو ping شغال والمتصفح لأ، امسح الكاش بـ [[Clear-DnsClientCache]] أو جرب نافذة Incognito. ولو Vite رد بـ [[Blocked request. This host ("myapp.local") is not allowed.]]، ده حماية في Vite، ضيف الاسم في [[server.allowedHosts]] في vite.config.`
         },
         {
           cmd: "Test-NetConnection -TraceRoute",
@@ -1021,7 +1158,16 @@ Test-NetConnection 203.0.113.10 -Port 443 -InformationLevel Quiet`,
           lines: [
             "الطريق لحد جوجل، راوتر راوتر (زي traceroute).",
             "البورت مفتوح ولا لأ، الإجابة True أو False بس ([[-InformationLevel Quiet]])، مناسب للسكربتات."
-          ]
+          ],
+          sol: R`الحل في الـ solCode. [[-InformationLevel Quiet]] بيرجع True أو False بس، فالسكربت بيطبع سطر زي [[CLOSED 443]] للبورتات المقفولة بس، ولو كله مفتوح مش هيطبع حاجة. [[-WarningAction SilentlyContinue]] عشان التحذير الأصفر ميظهرش مع كل بورت مقفول.
+
+ولو عايزه يشتغل في PowerShell 7 على أي نظام، استخدم [[Test-Connection $server -TcpPort $port -Quiet]] (السطر المتعلق عليه). جربت النسخة دي على 127.0.0.1 مع 22 و 5432 و 3917 فطبع [[CLOSED 22]] و [[CLOSED 3917]] بس، لأن Postgres بس اللي كان شغال على 5432. البورت المقفول بياخد وقت لحد ما يستسلم، فمتستغربش لو السكربت بطيء شوية.`,
+          solCode: R`$server = "203.0.113.10"
+foreach ($port in 22, 80, 443) {
+    $open = Test-NetConnection $server -Port $port -InformationLevel Quiet -WarningAction SilentlyContinue
+    # PowerShell 7 على أي نظام: $open = Test-Connection $server -TcpPort $port -Quiet -TimeoutSeconds 3
+    if (-not $open) { "CLOSED $port" }
+}`
         },
         {
           cmd: "Get-NetTCPConnection -State Listen",
@@ -1041,7 +1187,10 @@ Get-NetTCPConnection -State Listen | ForEach-Object { [pscustomobject]@{ Port = 
           lines: [
             "كل البورتات اللي بتسمع، مع رقم العملية، مرتبة بالبورت.",
             "نفس الحاجة بس بدل رقم العملية اسمها: لكل اتصال اعمل object جديد فيه البورت واسم البرنامج."
-          ]
+          ],
+          sol: R`التاني في المثال هو الحل. هيطلع جدول [[Port  App]] مترتب، زي [[135 svchost]] و [[445 System]] و [[5432 postgres]] و [[3000 node]]. [[-Unique]] بيشيل التكرار لأن البرنامج الواحد ممكن يسمع على IPv4 و IPv6.
+
+البورتات الصغيرة زي 135 و 445 تبع ويندوز نفسه، سيبهم. رقم العملية 4 اسمه [[System]]، و 0 اسمه [[Idle]]. ولو ظهر error [[Cannot find a process with the process identifier]]، البرنامج اتقفل بين الأمرين، شغّل تاني. ولو عايز تعرف مين مكشوف للشبكة ضيف عمود [[LocalAddress]] وشوف مين عليه [[0.0.0.0]] أو [[::]].`
         },
         {
           cmd: "ssh -L",
@@ -1057,7 +1206,10 @@ Get-NetTCPConnection -State Listen | ForEach-Object { [pscustomobject]@{ Port = 
             when: "تفتح قاعدة بيانات سيرفر من pgAdmin أو DBeaver على ويندوز.",
             mistakes: "نفس غلطات bash: تنسى -N فيفتح terminal على السيرفر. وتنسى إنه شغال في الخلفية."
           },
-          lines: ["نفس الممر زي لينكس بالظبط: بورت 5433 عندك يوصل لـ 5432 على السيرفر."]
+          lines: ["نفس الممر زي لينكس بالظبط: بورت 5433 عندك يوصل لـ 5432 على السيرفر."],
+          sol: R`الأمر مش بيطبع حاجة بعد ما تدخل، والنافذة بتفضل واقفة، وده معناه إن الـ tunnel شغال ([[-N]] يعني من غير shell). في DBeaver اعمل connection جديد: Host [[localhost]] و Port [[5433]] واسم الداتابيز واليوزر والباسورد بتوع Postgres اللي على السيرفر، و Test Connection هيقول Connected.
+
+لو قفلت نافذة الـ ssh الاتصال هيقع. لو ظهر [[bind [127.0.0.1]:5433: Address already in use]] يبقى 5433 مستخدم عندك، غيّر الرقم. ولو DBeaver قال connection refused والـ ssh طبع [[channel ... open failed: connect failed: Connection refused]]، يبقى Postgres على السيرفر مش بيسمع على 127.0.0.1:5432 (مثلًا شغال في Docker على بورت تاني).`
         }
       ]
     },
@@ -1092,7 +1244,10 @@ Get-ChildItem env:`,
             "متغير للجلسة دي بس (زي export).",
             "متغير دائم لليوزر ده، يفضل بعد ما تقفل (User ممكن تبقى Machine للكل).",
             "كل متغيرات البيئة (زي env)."
-          ]
+          ],
+          sol: R`[[$env:PATH -split ';']] بيطبع كل مسار في سطر، زي [[C:\Program Files\nodejs\]] و [[C:\Program Files\Git\cmd]] و [[C:\Users\ali\AppData\Roaming\npm]]. أول سطور هي اللي ليها الأولوية لما نفس البرنامج يبقى موجود في أكتر من مكان.
+
+لو آخر سطر طالع فاضي ده عادي، معناه إن الـ PATH بيخلص بـ [[;]]. ولو طلعلك كله في سطر واحد طويل، يبقى كتبت [[-split ':']] زي لينكس: في ويندوز الفاصل [[;]] لأن [[:]] جزء من [[C:\]]. (جربتها على لينكس بـ [[:]] وطلع [[/tmp/...]] و [[/root/.local/bin]] ... سطر سطر).`
         },
         {
           cmd: "المتغيرات",
@@ -1122,7 +1277,10 @@ $user.name`,
             "كام عنصر فيه.",
             "hashtable: مفاتيح وقيم.",
             "اقرا قيمة بالنقطة."
-          ]
+          ],
+          sol: R`[[$p = Get-Process]] وبعدين [[$p.Count]] بيرجع رقم زي [[250]] (عندي على لينكس طلع [[147]]). و [[$p.GetType().Name]] بيرجع Object[] (array)، يعني المتغير شايل array من objects كاملة، مش نص.
+
+الرقم بيتغير كل شوية لأن العمليات بتفتح وتقفل، و [[$p]] صورة ثابتة من لحظة ما خزنته. لو عايز أحدث رقم لازم تشغّل Get-Process تاني. ولو عملت [[$p.Count]] على حاجة رجعت object واحد بس، PowerShell 7 برضه هيرجع 1، مش فاضي.`
         },
         {
           cmd: "$PROFILE",
@@ -1152,7 +1310,15 @@ Set-Alias ll Get-ChildItem
             "فانكشن تحطها جوه الملف: [[gst]] تشغّل git status.",
             "اختصار: [[ll]] بدل Get-ChildItem.",
             "طبّق الملف في الجلسة دي (النقطة والمسافة زي source)."
-          ]
+          ],
+          sol: R`أول [[Get-Command dev]] المفروض يطلع error [[The term 'dev' is not recognized]]، ودي أخبار حلوة: الاسم فاضي. بعدين [[notepad $PROFILE]] وضيف [[function dev { npm run dev }]] واحفظ، وبعدين [[. $PROFILE]]. دلوقتي [[dev]] في فولدر مشروع بيشغّل [[npm run dev]].
+
+[[$PROFILE]] مسار زي [[C:\Users\ali\Documents\PowerShell\Microsoft.PowerShell_profile.ps1]] في PowerShell 7 (ولو OneDrive بيعمل backup لـ Documents هيبقى جوه OneDrive). ولو [[. $PROFILE]] طلع [[running scripts is disabled on this system]] يبقى محتاج تظبط الـ ExecutionPolicy (درس ExecutionPolicy). ولو نسيت [[. $PROFILE]] الـ function مش هتشتغل إلا في نافذة جديدة.`,
+          solCode: R`Get-Command dev
+if (-not (Test-Path $PROFILE)) { New-Item $PROFILE -Force }
+Add-Content $PROFILE 'function dev { npm run dev }'
+. $PROFILE
+Get-Command dev`
         },
         {
           cmd: "History والاختصارات",
@@ -1173,7 +1339,10 @@ Tab completion قوية في PowerShell: بتكمّل أسامي Parameters. Ctr
             when: "أمر طويل كتبته امبارح. التنقل في الـ history.",
             mistakes: "إنك تفتكر [[!!]] شغالة. هي مش موجودة في PowerShell، استخدم [[r]]."
           },
-          lines: ["الأوامر اللي كتبتها، بأرقام.", "نفّذ الأمر رقم ٥ تاني."]
+          lines: ["الأوامر اللي كتبتها، بأرقام.", "نفّذ الأمر رقم ٥ تاني."],
+          sol: R`[[Get-Child]] وبعدين Ctrl+Space هيكمّلها على طول لـ [[Get-ChildItem]]، لأنه الأمر الوحيد اللي بيبدأ كده. عشان تشوف القايمة، جرب [[Get-Net]] وبعدين Ctrl+Space: هتظهرلك قايمة كبيرة (Get-NetAdapter و Get-NetIPAddress و Get-NetTCPConnection ...) وتتحرك فيها بالأسهم.
+
+نفس الحكاية على الـ parameters: [[Get-ChildItem -]] وبعدين Ctrl+Space يعرض كل الـ parameters. ولو Ctrl+Space مش بيعمل حاجة جوه VS Code، غالبًا VS Code نفسه واخد الاختصار، جربها في Windows Terminal.`
         },
         {
           cmd: "ExecutionPolicy",
@@ -1195,7 +1364,10 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`,
           lines: [
             "السياسة الحالية (غالبًا Restricted على ويندوز).",
             "اسمح بالسكربتات المحلية لليوزر ده، من غير ما تحتاج مدير."
-          ]
+          ],
+          sol: R`[[Get-ExecutionPolicy]] في Windows PowerShell 5.1 على جهاز عادي غالبًا هيرجع [[Restricted]]، وفي PowerShell 7 على ويندوز [[RemoteSigned]]. و [[Get-ExecutionPolicy -List]] بيوريك كل scope لوحده (MachinePolicy و UserPolicy و Process و CurrentUser و LocalMachine) واللي مش متظبط بيبان [[Undefined]].
+
+لو MachinePolicy أو UserPolicy عليهم قيمة، ده Group Policy من الشركة، و [[Set-ExecutionPolicy]] مش هيغيّر حاجة. وعلى لينكس والماك هتلاقيها [[Unrestricted]] (جربتها وكل الـ scopes طلعت كده) ومبتتغيرش، لأن الـ ExecutionPolicy ميزة ويندوز بس.`
         }
       ]
     },
@@ -1224,7 +1396,13 @@ tar -czf app.tar.gz app`,
             when: "باك أب. إرسال مشروع. نقل ملفات.",
             mistakes: R`Path ممكن تاخد * : [[Compress-Archive ".\logs\*.log"]] بس الـ wildcards مش شغالة في كل الأحوال. خليها بين quotes.`
           },
-          lines: ["اضغط محتوى dist في zip.", "فك zip في فولدر out.", "tar موجود في ويندوز 10 وأحدث، بنفس حروف لينكس."]
+          lines: ["اضغط محتوى dist في zip.", "فك zip في فولدر out.", "tar موجود في ويندوز 10 وأحدث، بنفس حروف لينكس."],
+          sol: R`[[Compress-Archive -Path app\* -DestinationPath app.zip]] وبعدين [[Expand-Archive app.zip -DestinationPath out]]. جربتها فـ [[Get-ChildItem out -Recurse -Name]] طلع [[src]] و [[src\server.js]] زي الأصل.
+
+لو كتبت [[-Path app]] من غير [[\*]]، الـ zip هيبقى جواه فولدر app، فبعد الفك هتلاقي [[out\app\src]]. ولو شغلت الضغط تاني على نفس اسم الـ zip هيطلع [[The archive file ... already exists. Use the -Update parameter ... or use the -Force parameter]]، ونفس الحكاية Expand-Archive على فولدر فيه نفس الملفات محتاج [[-Force]].`,
+          solCode: R`Compress-Archive -Path app\* -DestinationPath app.zip
+Expand-Archive app.zip -DestinationPath out
+Get-ChildItem out -Recurse -Name`
         },
         {
           cmd: "Get-FileHash",
@@ -1242,7 +1420,10 @@ tar -czf app.tar.gz app`,
             when: "بعد تحميل برنامج. بعد نسخ ملفات مهمة. للتأكد من سلامة باك أب.",
             mistakes: "نسيان إن الأحرف lowercase وuppercase ممكن تختلف في الـ hash المعروض وذاك. PowerShell بيطبع uppercase."
           },
-          lines: ["بصمة SHA256 للملف، قارنها باللي على موقع التحميل."]
+          lines: ["بصمة SHA256 للملف، قارنها باللي على موقع التحميل."],
+          sol: R`[[Get-FileHash .\setup.exe -Algorithm SHA256]] بيطبع 3 حاجات: [[Algorithm SHA256]] و [[Hash]] (64 حرف hex كابيتال) و [[Path]]. جربتها على ملف وقارنتها بـ [[sha256sum]] على لينكس، طلعوا نفس الرقم بالظبط بس sha256sum بيكتبه حروف صغيرة.
+
+الفرق في الكابيتال مش مهم، و [[-eq]] في PowerShell مش بيفرق بين كابيتال وسمول، فتقدر تقارن: [[(Get-FileHash .\setup.exe).Hash -eq "abc..."]]. لو رجع False يبقى الملف اتعدل أو التحميل بايظ، أو انت بتقارن بهاش نسخة تانية. [[SHA256]] هو الافتراضي أصلًا، فممكن تشيل [[-Algorithm]].`
         }
       ]
     },
@@ -1289,7 +1470,14 @@ $count.GetType().Name`,
             "قيمة من الـ hashtable.",
             "أول عنصر في الـ array (العد من صفر).",
             "نوع المتغير: Int32."
-          ]
+          ],
+          sol: R`[["items: $list.Count"]] طبعت [[items: web api db.Count]]: الـ double quotes فكّت [[$list]] بس (العناصر بمسافات) وسابت [[.Count]] نص عادي. أما [[items: $($list.Count)]] فطبعت [[items: 3]]. وبـ single quotes [['items: $($list.Count)']] طبعت الكلام زي ما هو من غير أي فك.
+
+القاعدة: أي حاجة بعد اسم المتغير (نقطة، أقواس، index) لازم تبقى جوه [[$( )]] في النص. ونفس الحكاية [["$config.port"]] هتطبع حاجة زي [[System.Collections.Hashtable.port]] بدل 3000.`,
+          solCode: R`$list = @("web", "api", "db")
+"items: $list.Count"
+"items: $($list.Count)"
+'items: $($list.Count)'`
         },
         {
           cmd: "if / switch",
@@ -1344,7 +1532,10 @@ switch ($args[0]) {
             "لو stop.",
             "أي حاجة تانية.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[if (5 > 3) { "yes" }]] مطبعش [[yes]]، ولو عملت [[Get-ChildItem]] هتلاقي ملف جديد اسمه [[3]]، وجواه [[5]]. جربتها بالظبط كده. [[>]] في PowerShell redirect زي bash، فالشرط بقى «اكتب 5 في ملف اسمه 3»، والشرط نفسه ملوش output فاتحسب False.
+
+الصح [[if (5 -gt 3) { "yes" }]] وده طبع [[yes]]. امسح الملف بـ [[Remove-Item 3]]. والغلطة دي مبتطلعش أي error، عشان كده خطيرة في السكربتات: الشرط دايمًا False وملفات بأرقام بتظهر في الفولدر.`
         },
         {
           cmd: "foreach / for / while",
@@ -1388,7 +1579,14 @@ while ($n -lt 3) {
             "زوّد.",
             "قفلة.",
             "نفس التكرار بس في pipeline: كل رقم في اتنين."
-          ]
+          ],
+          sol: R`الحل في الـ solCode (أو [[1..5 | ForEach-Object { New-Item -ItemType Directory "day$_" }]] في سطر). جربته و [[Get-ChildItem -Directory day*]] طلع [[day1]] لـ [[day5]].
+
+من غير [[-ItemType Directory]] هتلاقي 5 ملفات فاضية مش فولدرات. ولو كتبت [[for ($i = 1; $i -lt 5; $i++)]] هتعمل 4 بس، عشان كده [[-le]]. ولو شغلته مرتين New-Item هيطلع error إن الفولدر موجود، [[-Force]] أو [[mkdir]] بتعدّيها.`,
+          solCode: R`foreach ($i in 1..5) {
+    New-Item -ItemType Directory "day$i" -Force | Out-Null
+}
+Get-ChildItem -Directory day* | Select-Object Name`
         },
         {
           cmd: "function",
@@ -1428,7 +1626,20 @@ Get-FolderSize -Path .\node_modules`,
             "حوّله لميجا وقرّب لرقمين. القيمة دي هي اللي الفانكشن بترجعها (آخر حاجة اتطبعت).",
             "قفلة.",
             "نادي الفانكشن زي أي أمر."
-          ]
+          ],
+          sol: R`الفكرة: [[Get-Command]] بيرجع الأمر لو موجود، و [[-ErrorAction SilentlyContinue]] يخليه يرجع لا شيء من غير error لو مش موجود، و [[bool]] بيحول ده لـ True أو False. جربتها: [[Test-Tool node]] رجّع [[True]] و [[Test-Tool nosuchtool]] رجّع [[False]].
+
+لو نسيت [[-ErrorAction SilentlyContinue]] هتشوف error أحمر قبل False. ولو ناديتها من غير اسم، [[Mandatory]] هيطلب منك [[Name:]] في الترمنال. ولاحظ إنها بتلاقي أي حاجة ممكن تتشغل (برامج و cmdlets و aliases)، فـ [[Test-Tool ls]] هترجع True.`,
+          solCode: R`function Test-Tool {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name
+    )
+    [bool](Get-Command $Name -ErrorAction SilentlyContinue)
+}
+
+Test-Tool node
+Test-Tool nosuchtool`
         },
         {
           cmd: "try / catch",
@@ -1477,7 +1688,10 @@ PowerShell فيه نوعين errors: Terminating (بيوقف) وNon-Terminating 
             "اطبع.",
             "اقفل السكربت برقم فشل.",
             "قفلة."
-          ]
+          ],
+          sol: R`في فولدر فاضي السكربت هيطبع: [[Error: Cannot find path '...\missing.txt' because it does not exist.]] بالأحمر، وبعدها [[Done either way]]، وبعدين npm يطلع [[npm error code ENOENT]] و [[Could not read package.json]]، وفي الآخر [[Build failed]]. و [[$LASTEXITCODE]] رقم غير صفر (على لينكس طلع [[254]]).
+
+لاحظ إن الـ catch مسك غلطة Copy-Item بس، أما npm فمحدش مسكه غير سطر [[$LASTEXITCODE]]. ولو شفت [[npm.ps1 cannot be loaded because running scripts is disabled]]، ده مش من السكربت، ده الـ ExecutionPolicy مانع npm.ps1 نفسه، ظبطها أو شغّل [[npm.cmd run build]].`
         },
         {
           cmd: "$LASTEXITCODE",
@@ -1514,7 +1728,17 @@ PowerShell بيحفظ الرقم ده في [[$LASTEXITCODE]] بعد كل برن�
             "ابني الصور وافحص.",
             "ابني الفرونت وافحص.",
             "في PowerShell 7.4+ بس: خلّي فشل أي برنامج خارجي يوقف السكربت لوحده."
-          ]
+          ],
+          sol: R`[[try { npm run build } catch { "caught" }]] هيطلع كلام npm الأحمر، لكن [[caught]] مش هتظهر. و [[$LASTEXITCODE]] بعدها رقم غير 0 (جربتها في PowerShell 7.5 على لينكس فطلع [[1]] مع missing script و [[254]] من غير package.json). يعني PowerShell شاف npm خلص، ومش شايف إن ده فشل.
+
+لو شغلت في PowerShell 7.4+ [[$PSNativeCommandUseErrorActionPreference = $true]] مع [[$ErrorActionPreference = "Stop"]] قبلها، نفس السطر بيدخل الـ catch. جربتها وطلع [[Program "npm" ended with non-zero exit code: 1.]]. في 5.1 المتغير ده ملوش أي تأثير، فافحص [[$LASTEXITCODE]] بإيدك.`,
+          solCode: R`$ErrorActionPreference = "Stop"
+try { npm run build } catch { "caught" }
+"exit code: $LASTEXITCODE"
+
+# PowerShell 7.4+
+$PSNativeCommandUseErrorActionPreference = $true
+try { npm run build } catch { "caught: $($_.Exception.Message)" }`
         },
         {
           cmd: "$PSScriptRoot",
@@ -1545,7 +1769,12 @@ if (-not (Test-Path $dist)) { npm run build }`,
             "المسار الكامل لملف السكربت نفسه.",
             "الفولدر الحالي، وهيبقى فولدر السكربت.",
             "المسار النسبي بقى آمن: لو مفيش dist ابنيها."
-          ]
+          ],
+          sol: R`جربتها: من جوه فولدر السكربت طبع المسارين زي بعض ([[.../s .../s]]). ومن [[/]] (على ويندوز [[C:\]]) بالمسار الكامل طبع [[.../s /]]: [[$PSScriptRoot]] فضل فولدر السكربت، و [[Get-Location]] بقى المكان اللي انت واقف فيه.
+
+ده بالظبط سبب إن مسار زي [[.\frontend\dist]] يبوظ لما تشغل السكربت من مكان تاني. ولو [[$PSScriptRoot]] طلع فاضي، يبقى انت كتبته في الترمنال مباشرة مش في ملف .ps1، هو بيتملي بس جوه سكربت.`,
+          solCode: R`# where.ps1
+Write-Host $PSScriptRoot (Get-Location)`
         },
         {
           cmd: "cmd /c ... > log 2>&1",
@@ -1579,7 +1808,10 @@ Get-Content dev-log.txt -Wait -Tail 20`,
             "لو عايز تفضل في PowerShell: حوّل كل سطر لنص عادي واكتبه UTF-8.",
             "في PowerShell 7: اطبع على الشاشة واكتب في الملف في نفس الوقت، و UTF-8 من غير BOM.",
             "من نافذة تانية: تابع آخر ٢٠ سطر والملف بيتكتب (زي [[tail -f]])."
-          ]
+          ],
+          sol: R`الملف [[a.txt]] Notepad هيكتب تحت [[UTF-16 LE]]، وجواه سطور زي [[npm : npm error ...]] و [[+ CategoryInfo : NotSpecified]] و [[NativeCommandError]]، لأن 5.1 حوّل كل سطر stderr لـ error record وكتبه بترميز UTF-16. أما [[b.txt]] فمكتوب [[UTF-8]]، وجواه كلام npm زي ما هو من غير أي زيادات.
+
+لو فتحت a.txt في أداة زي VS Code أو [[grep]] في Git Bash وشفت مسافات بين كل حرف، ده UTF-16. ودي حاجة ويندوز 5.1 بس، مقدرتش أجربها هنا على لينكس، الكلام ده من توثيق Microsoft عن الـ redirection والـ encoding في 5.1. في PowerShell 7 الاتنين هيطلعوا UTF-8.`
         },
         {
           cmd: "Write-Host والـ output",
@@ -1607,7 +1839,10 @@ function Get-Greeting { "hi" }
             "فانكشن بترجع قيمة (النص لوحده = output).",
             "عدّ اللي رجع منها: صفر، لأن Write-Host مش بيدخل الـ pipeline.",
             "عدّ اللي رجع من التانية: واحد. ده الفرق كله."
-          ]
+          ],
+          sol: R`شغلتهم: الأول طبع [[hi]] وبعدها [[0]]، والتاني طبع [[1]] بس من غير hi. Write-Host بعت hi للشاشة مباشرة، فـ Measure-Object مستلمش حاجة. أما [["hi"]] في Get-Greeting راحت للـ pipeline فاتعدّت.
+
+من PowerShell 5 Write-Host بيكتب في information stream (رقم 6)، فتقدر تمسكه بـ [[6>&1]]: [[(Show-Greeting 6>&1 | Measure-Object).Count]] هترجع 1، وجربتها. والقاعدة في الفانكشنز: الداتا اللي هترجع تطلع output عادي، والرسايل للمستخدم Write-Host أو Write-Verbose.`
         },
         {
           cmd: "PSScriptAnalyzer",
@@ -1635,7 +1870,10 @@ Set-PSDebug -Off`,
             "شغّل التتبع: اطبع كل سطر قبل تنفيذه (زي bash -x).",
             "شغّل السكربت وشوف التتبع.",
             "اقفل التتبع."
-          ]
+          ],
+          sol: R`الـ Install-Module بيحمّل من PowerShell Gallery (ممكن يسألك إنك تثق في PSGallery، اكتب Y). بعدين [[Invoke-ScriptAnalyzer .\backup.ps1]]. جربته على backup.ps1 بتاع الدرس اللي تحت بالظبط، فطلع تحذير واحد: [[PSAvoidUsingWriteHost]] بـ Severity Warning على [[Line 16]]، عشان Write-Host مش بيدخل الـ pipeline.
+
+ده مش error والسكربت شغال، بس لو هتستخدم الناتج في سكربت تاني استخدم Write-Output. ولو عندك aliases زي [[gci]] و [[%]] في السكربت هيطلع [[PSAvoidUsingCmdletAliases]]، ولو متغير متعرفش وما استخدمتوش [[PSUseDeclaredVarsMoreThanAssignment]]. و [[Set-PSDebug -Trace 1]] بيطبع [[DEBUG:]] قبل كل سطر برقمه، وهتلاقيه بيدخل جوه Compress-Archive نفسه ويطبع مئات السطور، فمتتخضش، دور على أرقام سطور سكربتك.`
         },
         {
           cmd: "backup.ps1",
@@ -1686,7 +1924,31 @@ Write-Host "Saved $zip" -ForegroundColor Green`,
             "المسار الكامل لملف الـ zip، و [[Join-Path]] بيحط الفاصل الصح.",
             "اضغط محتوى المصدر.",
             "اطبع النتيجة بالأخضر."
-          ]
+          ],
+          sol: R`[[.\backup.ps1 -Source .\app -Dest .\bk]] طبع [[Saved .\bk\backup_2026-09-30_05-12.zip]] بالأخضر. والحل الكامل في الـ solCode: آخر 3 سطور بيمسحوا أي باك أب أقدم من [[KeepDays]] أيام. جربته بملف قديم معمول بتاريخ من 10 أيام فطلع [[VERBOSE: Performing the operation "Remove File" on target "...backup_2020-01-01_00-00.zip"]]، والجديد فضل.
+
+لو شغلته مرتين في نفس الدقيقة هيطلع [[The archive file ... already exists]]، لأن الاسم بالدقيقة؛ ضيف ثواني للـ format ([[yyyy-MM-dd_HH-mm-ss]]) لو محتاج. واتأكد إن [[Where-Object]] قبل [[Remove-Item]] دايمًا، وجرب الأول بـ [[-WhatIf]] بدل [[-Verbose]].`,
+          solCode: R`param(
+    [string]$Source = ".\src",
+    [string]$Dest = ".\backups",
+    [int]$KeepDays = 7
+)
+
+$ErrorActionPreference = "Stop"
+
+if (-not (Test-Path $Dest)) {
+    New-Item -ItemType Directory -Path $Dest | Out-Null
+}
+
+$stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
+$zip = Join-Path $Dest "backup_$stamp.zip"
+
+Compress-Archive -Path "$Source\*" -DestinationPath $zip
+Write-Host "Saved $zip" -ForegroundColor Green
+
+Get-ChildItem $Dest -Filter "backup_*.zip" |
+    Where-Object LastWriteTime -lt (Get-Date).AddDays(-$KeepDays) |
+    Remove-Item -Verbose`
         },
         {
           cmd: "verify-stack.ps1",
@@ -1744,7 +2006,10 @@ Write-Host "Ready: http://localhost:8000" -ForegroundColor Green`,
             "قفلة.",
             "الحالة النهائية.",
             "جاهز."
-          ]
+          ],
+          sol: R`و Docker Desktop مقفول: [[docker info]] بيطبع error زي [[error during connect ... dockerDesktopLinuxEngine: The system cannot find the file specified]]، وبعدها السكربت يرمي [[Docker Desktop is not running]] بالأحمر ويقف، من غير ما يحاول يعمل build.
+
+وهو شغال: لو فيه بورت مستخدم هتشوف [[WARNING: Port 5432 is already in use]]. وبعدين الـ build، وسطور زي [[Container app-db-1 Healthy]]، وفي الآخر جدول [[docker compose ps]] و [[Ready: http://localhost:8000]] بالأخضر. لو خدمة مفيهاش healthcheck، [[--wait]] بيستنى إنها تبقى running بس. ولو خدمة وقعت أو فضلت unhealthy 120 ثانية، هتشوف حالة الخدمات وآخر 50 سطر لوج وبعدين [[Stack did not become healthy]]. مقدرتش أشغّل Docker Desktop هنا، فالرسايل دي من توثيق Docker والسكربت نفسه.`
         }
       ]
     }

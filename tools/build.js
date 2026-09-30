@@ -7,6 +7,8 @@ let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const read = f => fs.readFileSync(path.join(ROOT, f), 'utf8');
 
 // the single file has no manifest, icons or service worker next to it, so drop those links
+// it has no js/sql-worker.js or vendor/pglite either: SQL exercises there say they need the hosted site or the installed app,
+// while JS exercises run from a blob Worker and work in the single file too
 html = html.replace(/<link rel="(manifest|icon|apple-touch-icon)"[^>]*>\n?/g, '');
 
 html = html.replace(/<link rel="stylesheet" href="([^"]+)">/g, (_, f) => '<style>\n' + read(f) + '</style>');

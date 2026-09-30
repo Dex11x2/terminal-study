@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("js", {
@@ -91,7 +95,7 @@ if (score >= 85) {
 console.log(score, grade);
 const label = score >= 50 ? "ناجح" : "راسب";
 console.log(label);`,
-          try: R`اكتب دالة [[shipping(total, city)]] ترجّع مصاريف الشحن: لو الطلب 1000 أو أكتر يبقى 0، ولو المدينة "cairo" أو "giza" يبقى 30، وغير كده 60. وبعدين اطبع رسالة بـ ternary: [["الشحن مجاني"]] لو 0، وإلا [["الشحن X جنيه"]]. جرّبها على (1200, "aswan") و (300, "giza") و (300, "aswan").`,
+          try: R`اكتب دالة [[shipping(total, city)]] ترجّع مصاريف الشحن: لو الطلب 1000 أو أكتر يبقى 0، ولو المدينة "cairo" أو "giza" يبقى 30 (والحروف الكبيرة متفرقش: "Giza" زي "giza")، وغير كده 60. وبعدين اطبع رسالة بـ ternary: [["الشحن مجاني"]] لو 0، وإلا [["الشحن X جنيه"]]. جرّبها على (1200, "aswan") و (300, "giza") و (300, "aswan"). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[shipping]] و [[shippingText(cost)]] اللي بترجّع رسالة الـ ternary.`,
           flag: "script",
           deep: {
             why: "من غير شروط البرنامج بيعمل نفس الحاجة كل مرة. كل منطق في أي تطبيق (اليوزر عامل login؟ المخزون كفاية؟ الباسورد صح؟) هو if في الآخر.",
@@ -135,7 +139,32 @@ console.log(label);`,
 for (const [total, city] of [[1200, "aswan"], [300, "giza"], [300, "Aswan"]]) {
   const cost = shipping(total, city);
   console.log(cost === 0 ? "الشحن مجاني" : $__btالشحن $__{cost} جنيه$__bt);
+}`,
+          check: {
+            lang: "js",
+            starter: R`function shipping(total, city) {
+  // 1000 أو أكتر: 0، والقاهرة أو الجيزة: 30، وغير كده 60
+}
+function shippingText(cost) {
+  // ternary: "الشحن مجاني" أو "الشحن 30 جنيه"
+}`,
+            tests: R`test("shipping(1200, 'aswan') ← 0", () => expect(shipping(1200, "aswan")).toBe(0));
+test("shipping(300, 'giza') ← 30", () => expect(shipping(300, "giza")).toBe(30));
+test("shipping(300, 'aswan') ← 60", () => expect(shipping(300, "aswan")).toBe(60));
+test("الحد نفسه: shipping(1000, 'aswan') ← 0 (>= مش >)", () => expect(shipping(1000, "aswan")).toBe(0));
+test("شرط الـ 1000 قبل المدينة: shipping(1500, 'cairo') ← 0 مش 30", () => expect(shipping(1500, "cairo")).toBe(0));
+test("الحروف الكبيرة: shipping(300, 'Giza') ← 30 (toLowerCase)", () => expect(shipping(300, "Giza")).toBe(30));
+test("shippingText(0) و shippingText(30)", () => expect([shippingText(0), shippingText(30)]).toEqual(["الشحن مجاني", "الشحن 30 جنيه"]));`,
+            solution: R`function shipping(total, city) {
+  if (total >= 1000) return 0;
+  const c = city.toLowerCase();
+  if (c === "cairo" || c === "giza") return 30;
+  return 60;
+}
+function shippingText(cost) {
+  return cost === 0 ? "الشحن مجاني" : $__btالشحن $__{cost} جنيه$__bt;
 }`
+          }
         },
         {
           cmd: "switch ولا object lookup",
@@ -160,7 +189,7 @@ const status = "paid";
 console.log(statusText[status] ?? "حالة مش معروفة");
 const actions = { add: (a, b) => a + b, sub: (a, b) => a - b };
 console.log(actions["sub"]?.(10, 4));`,
-          try: R`امسح أول [[break]] (اللي بعد «أجازة») وشغّل الكود بـ [[day = "fri"]]: هيطبع إيه؟ وبعدين اكتب دالة [[httpMessage(code)]] ترجّع رسالة عربي لـ 200 و 201 و 400 و 401 و 404 و 500 مرة بـ switch ومرة بـ object، وخلي أي كود تاني يرجّع «حاجة غير متوقعة».`,
+          try: R`امسح أول [[break]] (اللي بعد «أجازة») وشغّل الكود بـ [[day = "fri"]]: هيطبع إيه؟ وبعدين اكتب دالة [[httpMessage(code)]] ترجّع رسالة عربي لـ 200 و 201 و 400 و 401 و 404 و 500 مرة بـ switch ومرة بـ object، وخلي أي كود تاني يرجّع «حاجة غير متوقعة». اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[httpMessageSwitch]] بالـ switch و [[httpMessage]] بالـ object، والرسايل نفسها براحتك.`,
           flag: "script",
           deep: {
             why: "سلسلة else if طويلة على نفس المتغير بتتعب في القراية وسهل تغلط فيها. switch بيوضّح إن كله بيقارن قيمة واحدة، والـ object بيحوّل المنطق لداتا: تقدر تضيف حالة جديدة من غير ما تلمس الكود.",
@@ -208,7 +237,37 @@ console.log(actions["sub"]?.(10, 4));`,
 const MESSAGES = { 200: "تمام", 201: "اتعمل", 400: "الطلب غلط", 401: "لازم تعمل login", 404: "مش موجود", 500: "السيرفر وقع" };
 const httpMessage = (code) => MESSAGES[code] ?? "حاجة غير متوقعة";
 console.log(httpMessageSwitch(404), httpMessage(404), httpMessage(418));
-console.log(httpMessageSwitch("404"), "|", httpMessage("404"));`
+console.log(httpMessageSwitch("404"), "|", httpMessage("404"));`,
+          check: {
+            lang: "js",
+            starter: R`function httpMessageSwitch(code) {
+  switch (code) {
+    // case 200: ...
+    default: return "حاجة غير متوقعة";
+  }
+}
+const MESSAGES = {};
+const httpMessage = (code) => MESSAGES[code] ?? "حاجة غير متوقعة";`,
+            tests: R`const codes = [200, 201, 400, 401, 404, 500], FALLBACK = "حاجة غير متوقعة";
+test("كود مش معروف (418) ← 'حاجة غير متوقعة' في النسختين", () => expect([httpMessageSwitch(418), httpMessage(418)]).toEqual([FALLBACK, FALLBACK]));
+test("الـ switch: كل كود من الستة ليه رسالة مش الـ default", () => expect(codes.every(c => typeof httpMessageSwitch(c) === "string" && httpMessageSwitch(c) !== FALLBACK)).toBe(true));
+test("الـ switch: الستة رسايل مختلفة (مفيش fall-through بالغلط)", () => expect(new Set(codes.map(httpMessageSwitch)).size).toBe(6));
+test("الـ object: نفس الرسايل بالظبط زي الـ switch", () => expect(codes.map(httpMessage)).toEqual(codes.map(httpMessageSwitch)));
+test("'404' كـ string: الـ switch مش بيلاقيه (===) والـ object بيلاقيه (المفاتيح strings)", () => expect([httpMessageSwitch("404"), httpMessage("404")]).toEqual([FALLBACK, httpMessageSwitch(404)]));`,
+            solution: R`function httpMessageSwitch(code) {
+  switch (code) {
+    case 200: return "تمام";
+    case 201: return "اتعمل";
+    case 400: return "الطلب غلط";
+    case 401: return "لازم تعمل login";
+    case 404: return "مش موجود";
+    case 500: return "السيرفر وقع";
+    default: return "حاجة غير متوقعة";
+  }
+}
+const MESSAGES = { 200: "تمام", 201: "اتعمل", 400: "الطلب غلط", 401: "لازم تعمل login", 404: "مش موجود", 500: "السيرفر وقع" };
+const httpMessage = (code) => MESSAGES[code] ?? "حاجة غير متوقعة";`
+          }
         },
         {
           cmd: "&& و || و !",
@@ -229,7 +288,7 @@ console.log(Math.round(2.5), Math.round(-2.5), Math.floor(-2.5), Math.trunc(-2.5
 console.log(Math.max(3, 9, 1), Math.min(...[4, 2, 8]), Math.abs(-7));
 console.log(Math.floor(Math.random() * 6) + 1);
 console.log("" || "ضيف", 0 || 10, 0 ?? 10);`,
-          try: R`اكتب [[isLeap(year)]]: السنة كبيسة لو بتقبل القسمة على 4 ومش على 100، أو بتقبل القسمة على 400. جرّبها على 2024 و 1900 و 2000 و 2026. وبعدين اكتب [[randomInt(min, max)]] ترجّع رقم صحيح عشوائي من min لـ max شامل الاتنين، وشغّلها ألف مرة واتأكد إن min و max بيطلعوا.`,
+          try: R`اكتب [[isLeap(year)]]: السنة كبيسة لو بتقبل القسمة على 4 ومش على 100، أو بتقبل القسمة على 400. جرّبها على 2024 و 1900 و 2000 و 2026. وبعدين اكتب [[randomInt(min, max)]] ترجّع رقم صحيح عشوائي من min لـ max شامل الاتنين، وشغّلها ألف مرة واتأكد إن min و max بيطلعوا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[isLeap]] و [[randomInt]] (الاختبار بيناديها ألفين مرة).`,
           flag: "script",
           deep: {
             why: "الشروط الحقيقية نادرًا ما بتبقى شرط واحد: «يوزر عامل login و (أدمن أو صاحب البوست)». ولو الأولوية مش واضحة في دماغك هتكتب شرط شكله صح وبيعدّي ناس مش المفروض تعدّي، ودي ثغرات صلاحيات حقيقية.",
@@ -262,7 +321,27 @@ console.log([2024, 1900, 2000, 2026].map(isLeap));
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const counts = { 1: 0, 2: 0, 3: 0 };
 for (let i = 0; i < 1000; i++) counts[randomInt(1, 3)]++;
-console.log(counts);`
+console.log(counts);`,
+          check: {
+            lang: "js",
+            starter: R`const isLeap = (y) => y % 4 === 0;
+const randomInt = (min, max) => Math.round(Math.random() * (max - min)) + min;`,
+            tests: R`test("2024 كبيسة و 2026 لأ", () => expect([isLeap(2024), isLeap(2026)]).toEqual([true, false]));
+test("1900 مش كبيسة: بتتقسم على 100 ومش على 400", () => expect(isLeap(1900)).toBe(false));
+test("2000 كبيسة: بتتقسم على 400", () => expect(isLeap(2000)).toBe(true));
+test("randomInt(1, 3): كل النواتج أرقام صحيحة من 1 لـ 3", () => {
+  const xs = Array.from({ length: 2000 }, () => randomInt(1, 3));
+  expect(xs.every(x => Number.isInteger(x) && x >= 1 && x <= 3)).toBe(true);
+});
+test("randomInt(1, 3): الطرفين بيطلعوا، وكل رقم حوالي التلت (مش Math.round)", () => {
+  const c = { 1: 0, 2: 0, 3: 0 };
+  for (let i = 0; i < 3000; i++) c[randomInt(1, 3)]++;
+  expect([c[1] > 700, c[2] > 700, c[3] > 700]).toEqual([true, true, true]);
+});
+test("randomInt(5, 5) ← 5 دايمًا", () => expect(randomInt(5, 5)).toBe(5));`,
+            solution: R`const isLeap = (y) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;`
+          }
         },
         {
           cmd: "for و while",
@@ -666,9 +745,11 @@ console.log(average([10, 20, 30]), average([]));`
         {
           cmd: "تمارين أساسيات ١",
           title: "٨ تمارين أساسيات: من FizzBuzz لجدول الضرب",
-          desc: R`دلوقتي عندك كل القطع: متغيرات، و if، و loops، و break. التمارين دي مترتبة من السهل للأصعب، وكل واحد بيجرّب حاجة واحدة. حلها لوحدك الأول في ملف [[lab/js/basics1.js]]، وكل تمرين في دالة، واطبع ناتجها، وبعدين قارن بالحل.
+          desc: R`دلوقتي عندك كل القطع: متغيرات، و if، و loops، و break. التمارين دي مترتبة من السهل للأصعب، وكل واحد بيجرّب حاجة واحدة. الدرس ده فيه التمرين الأول، وكل تمرين بعده ليه درس لوحده بعده على طول، وفي كل واحد مربع كود بيتصحح لوحده: تكتب الحل وتدوس «شغّل واختبر»، والاختبارات تقولك صح ولا لأ وليه.
 
-المثال تحت هو حل التمرين الأول (FizzBuzz): أشهر سؤال فلترة في انترفيوهات المبتدئين. شوف ليه شرط الـ 15 لازم ييجي الأول.
+المثال تحت FizzBuzz بيطبع من 1 لـ 15: أشهر سؤال فلترة في انترفيوهات المبتدئين. شوف ليه شرط الـ 15 لازم ييجي الأول.
+
+القايمة كلها (كل واحد في درسه):
 
 ١. FizzBuzz: من 1 لـ 100، اطبع Fizz لمضاعفات 3، و Buzz لمضاعفات 5، و FizzBuzz للاتنين، وغير كده الرقم.
 
@@ -684,14 +765,14 @@ console.log(average([10, 20, 30]), average([]));`
 
 ٧. countVowels(str): عدد حروف a e i o u (كبيرة أو صغيرة). [["JavaScript"]] ← 3.
 
-٨. table(n): اطبع جدول ضرب n من 1 لـ 12 بالشكل [[3 x 4 = 12]].`,
+٨. table(n): جدول ضرب n من 1 لـ 12 بالشكل [[3 x 4 = 12]].`,
           example: R`for (let n = 1; n <= 15; n++) {
   if (n % 15 === 0) console.log("FizzBuzz");
   else if (n % 3 === 0) console.log("Fizz");
   else if (n % 5 === 0) console.log("Buzz");
   else console.log(n);
 }`,
-          try: R`حل التمارين الـ ٨ اللي فوق في [[lab/js/basics1.js]]، كل واحد في دالة، واطبع ناتجها على الأمثلة المكتوبة. متفتحش الحل غير لما تخلص أو تقعد على تمرين ١٠ دقايق.`,
+          try: R`اكتب [[fizzBuzz(n)]] ترجّع array فيها النتيجة من 1 لـ n: [["Fizz"]] لمضاعفات 3، و [["Buzz"]] لمضاعفات 5، و [["FizzBuzz"]] للاتنين، وغير كده الرقم نفسه (number مش string). الفرق عن المثال إنها بترجّع النتيجة بدل ما تطبعها، وده اللي بيخلّي الكود يتختبر. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           flag: "script",
           deep: {
             why: "القراية لوحدها مبتعلّمش برمجة، الإيد هي اللي بتتعلم. التمارين دي نفس القطع اللي في كل برنامج أكبر: accumulator (sum و count)، و «أحسن واحد لحد دلوقتي» (max)، وبناء نتيجة حرف حرف (reverse). لو عرفت تحلهم لوحدك يبقى جاهز لقسم المصفوفات والدوال.",
@@ -709,62 +790,452 @@ console.log(average([10, 20, 30]), average([]));`
             "وإلا الرقم نفسه.",
             "قفلة."
           ],
-          sol: R`الحلول كلها تحت في ملف واحد تقدر تشغّله. الناتج المتوقع بالترتيب: آخر سطرين في FizzBuzz [[Fizz]] (99) و [[Buzz]] (100)، وبعدين [[5050]]، و [[3]]، و [[-2]]، و [["olleh"]]، و [[120 1]]، و [[3]]، وجدول 3 من [[3 x 1 = 3]] لحد [[3 x 12 = 36]].
+          sol: R`[[fizzBuzz(15)]] بترجّع [[[1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]]]، و [[fizzBuzz(100)]] طولها 100 وآخرها [["Fizz"]] (99) و [["Buzz"]] (100)، وفيها ٦ FizzBuzz (15 و 30 و 45 و 60 و 75 و 90).
 
-لو حلك مختلف بس الناتج نفسه، تمام. البرمجة فيها أكتر من حل صح. بس اتأكد من الأطراف: [[maxOf]] على أرقام كلها سالبة، و [[factorial(0)]]، و [[countVowels("")]] لازم 0.`,
-          solCode: R`for (let n = 1; n <= 100; n++) {
-  if (n % 15 === 0) console.log("FizzBuzz");
-  else if (n % 3 === 0) console.log("Fizz");
-  else if (n % 5 === 0) console.log("Buzz");
-  else console.log(n);
+الغلطتين اللي الاختبارات بتمسكهم: شرط 3 قبل شرط 15 فالـ 15 تطلع Fizz، و [[out.push(String(i))]] فالأرقام تبقى strings. وفيه حل من غير شرط 15 خالص: ركّب النص [[(i % 3 === 0 ? "Fizz" : "") + (i % 5 === 0 ? "Buzz" : "")]]، ولو طلع فاضي حط الرقم.`,
+          solCode: R`function fizzBuzz(n) {
+  const out = [];
+  for (let i = 1; i <= n; i++) {
+    if (i % 15 === 0) out.push("FizzBuzz");
+    else if (i % 3 === 0) out.push("Fizz");
+    else if (i % 5 === 0) out.push("Buzz");
+    else out.push(i);
+  }
+  return out;
 }
-function sumTo(n) {
+console.log(fizzBuzz(15).join(" "));`,
+          check: {
+            lang: "js",
+            starter: R`function fizzBuzz(n) {
+  const out = [];
+  // لكل رقم من 1 لـ n ضيف "FizzBuzz" أو "Fizz" أو "Buzz" أو الرقم نفسه
+  return out;
+}`,
+            tests: R`test("fizzBuzz(5) ← [1, 2, 'Fizz', 4, 'Buzz']", () => expect(fizzBuzz(5)).toEqual([1, 2, "Fizz", 4, "Buzz"]));
+test("15 لازم تبقى FizzBuzz مش Fizz: شرط الـ 15 ييجي الأول", () => expect(fizzBuzz(15)[14]).toBe("FizzBuzz"));
+test("الأرقام العادية تفضل number مش string: fizzBuzz(7)[6] ← 7", () => expect(fizzBuzz(7)[6]).toBe(7));
+test("fizzBuzz(100): الطول 100، و 99 ← Fizz، و 100 ← Buzz", () => {
+  const r = fizzBuzz(100);
+  expect([r.length, r[98], r[99]]).toEqual([100, "Fizz", "Buzz"]);
+});
+test("من 1 لـ 100 فيه 6 FizzBuzz بالظبط", () => expect(fizzBuzz(100).filter(x => x === "FizzBuzz").length).toBe(6));
+test("fizzBuzz(0) ← [] (مفيش أرقام)", () => expect(fizzBuzz(0)).toEqual([]));`,
+            solution: R`function fizzBuzz(n) {
+  const out = [];
+  for (let i = 1; i <= n; i++) {
+    if (i % 15 === 0) out.push("FizzBuzz");
+    else if (i % 3 === 0) out.push("Fizz");
+    else if (i % 5 === 0) out.push("Buzz");
+    else out.push(i);
+  }
+  return out;
+}`
+          }
+        },
+        {
+          cmd: "تمرين sumTo",
+          title: "تمرين ٢: مجموع الأرقام من 1 لـ n (sumTo)",
+          desc: R`اكتب [[sumTo(n)]] ترجّع مجموع الأرقام من 1 لـ n: [[sumTo(100)]] ← 5050، و [[sumTo(1)]] ← 1، و [[sumTo(0)]] ← 0.
+
+ده أول نمط هتستخدمه في كل حتة: الـ accumulator. متغير بيبدأ بقيمة «محايدة» (0 للجمع)، و loop بتزوّد عليه كل لفة، وفي الآخر ترجّعه. المثال تحت بيعدّ مضاعفات 3 بنفس النمط (عدّ مش جمع)، عشان تكتب الجمع بإيدك.`,
+          example: R`let count = 0;
+for (let i = 1; i <= 30; i++) {
+  if (i % 3 === 0) count++;
+}
+console.log(count); // 10`,
+          try: R`اكتب [[sumTo(n)]] بـ for loop و accumulator. وبعد ما الاختبارات تعدّي، اكتبها من غير loop بالمعادلة [[n * (n + 1) / 2]] وشغّل تاني. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`الـ accumulator أبسط نمط وأكتر واحد بيتكرر: مجموع سلة مشتريات، وعدد الرسايل اللي متقرتش، ومتوسط التقييمات. لو فهمته هنا، reduce في قسم المصفوفات هتبقى نفس الفكرة في سطر.`,
+            how: R`[[let sum = 0]] برا الـ loop، وجوّاها [[sum += i]]، وبعدها [[return sum]]. لو حطيت [[let sum = 0]] جوه الـ loop هيتصفّر كل لفة. ولأن الشرط [[i <= n]]، لما n = 0 الـ loop مبتلفش خالص فترجّع 0 من غير أي if.`,
+            when: R`أي وقت محتاج تجمع أو تعدّ على مجموعة حاجات. لو فيه معادلة مباشرة (زي n(n+1)/2) هي أسرع، بس الـ loop أسهل تتعدّل لما الشرط يتغيّر (مثلًا تجمع الزوجي بس).`,
+            mistakes: R`[[i < n]] بدل [[i <= n]] فتنسى آخر رقم ([[sumTo(100)]] تطلع 4950). وتبدأ [[sum]] من 1. وتنسى [[return]] فالدالة ترجّع undefined حتى لو الحساب صح. وفي الانترفيو اسأل «n ممكن تبقى سالبة؟» قبل ما تكتب.`
+          },
+          lines: [
+            R`العدّاد بيبدأ من 0: لسه معدّناش حاجة.`,
+            R`من 1 لـ 30 شامل الـ 30 ([[<=]]).`,
+            R`كل مضاعف 3 بيزوّد العدّاد واحد.`,
+            R`قفلة الـ loop.`,
+            R`بيطبع 10: 3 و 6 و ... و 30.`
+          ],
+          sol: R`[[sumTo(100)]] ← 5050، و [[sumTo(10)]] ← 55، و [[sumTo(0)]] ← 0 لأن الـ loop مبتلفش. نسخة المعادلة [[n * (n + 1) / 2]] بتعدّي نفس الاختبارات وهي [[O(1)]] بدل [[O(n)]].
+
+لو الاختبار قال «المتوقع 5050 بس طلع 4950»، شرط الـ loop [[<]] بدل [[<=]]. ولو قال «طلع undefined»، نسيت [[return]].`,
+          solCode: R`function sumTo(n) {
   let sum = 0;
   for (let i = 1; i <= n; i++) sum += i;
   return sum;
 }
-function countEvens(arr) {
+console.log(sumTo(100), sumTo(0)); // 5050 0`,
+          check: {
+            lang: "js",
+            starter: R`function sumTo(n) {
+  let sum = 0;
+  // loop من 1 لـ n وزوّد sum
+  return sum;
+}`,
+            tests: R`test("sumTo(100) ← 5050 (لو طلع 4950 يبقى الشرط < بدل <=)", () => expect(sumTo(100)).toBe(5050));
+test("sumTo(10) ← 55", () => expect(sumTo(10)).toBe(55));
+test("sumTo(1) ← 1", () => expect(sumTo(1)).toBe(1));
+test("sumTo(0) ← 0 (الـ loop مبتلفش)", () => expect(sumTo(0)).toBe(0));
+test("sumTo(10000) ← 50005000", () => expect(sumTo(10000)).toBe(50005000));`,
+            solution: R`function sumTo(n) {
+  let sum = 0;
+  for (let i = 1; i <= n; i++) sum += i;
+  return sum;
+}`
+          }
+        },
+        {
+          cmd: "تمرين countEvens",
+          title: "تمرين ٣: كام رقم زوجي في الـ array؟ (countEvens)",
+          desc: R`اكتب [[countEvens(arr)]] ترجّع عدد الأرقام الزوجية: [[countEvens([1, 2, 3, 4, 6])]] ← 3، و [[countEvens([])]] ← 0.
+
+الرقم زوجي لو باقي قسمته على 2 صفر: [[x % 2 === 0]]. والـ loop المناسبة لـ array هي [[for...of]] (درس for...of): بتديك العنصر نفسه كل لفة من غير index. المثال بيجمع الأرقام الموجبة بنفس الطريقة.`,
+          example: R`const temps = [12, -3, 25, 0, -8, 30];
+let sumPositive = 0;
+for (const t of temps) {
+  if (t > 0) sumPositive += t;
+}
+console.log(sumPositive); // 67`,
+          try: R`اكتب [[countEvens(arr)]] بـ for...of وعدّاد. فكّر قبل ما تشغّل: [[-2]] زوجي؟ و [[0]]؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`عدّ العناصر اللي بتحقق شرط حاجة يومية: كام أوردر pending، وكام يوزر active، وكام حقل فاضي في فورم. هنا بتدمج الـ accumulator مع if جوه loop.`,
+            how: R`[[%]] بيرجّع باقي القسمة. [[6 % 2]] = 0 فزوجي، و [[7 % 2]] = 1 ففردي. مع الأرقام السالبة [[-3 % 2]] = -1 مش 1، عشان كده افحص الزوجي بـ [[=== 0]] مش الفردي بـ [[=== 1]]. و [[-2 % 2]] بيطلع [[-0]]، و [[-0 === 0]] true، فالسالب الزوجي بيتعد صح.`,
+            when: R`دلوقتي بـ for...of عشان تفهم اللي بيحصل. بعد قسم المصفوفات هتكتبها في سطر: [[arr.filter(x => x % 2 === 0).length]].`,
+            mistakes: R`تفحص الفردي بـ [[x % 2 === 1]] وتعكس، فالسالب الفردي ([[-3]]) يتعد زوجي. وتستخدم [[for...in]] على array فتاخد الـ indexes كـ strings ([["0"]] و [["1"]]) بدل القيم. وتنسى إن [[0]] زوجي.`
+          },
+          lines: [
+            R`array فيها موجب وسالب وصفر.`,
+            R`المجموع بيبدأ من 0.`,
+            R`[[t]] بياخد كل عنصر بالترتيب.`,
+            R`الموجب بس بيتجمع (الصفر لأ لأن 0 > 0 false).`,
+            R`قفلة الـ loop.`,
+            R`12 + 25 + 30 = 67.`
+          ],
+          sol: R`[[countEvens([1, 2, 3, 4, 6])]] ← 3، و [[countEvens([-2, 0, 7])]] ← 2 (السالب الزوجي والصفر زوجيين)، و [[countEvens([])]] ← 0.
+
+لو [[-2]] مش بيتعد، غالبًا كتبت الشرط بالفردي ([[x % 2 !== 1]] أو [[=== 1]]) أو بتقارن بـ [[== 1]]. الشرط الآمن [[x % 2 === 0]].`,
+          solCode: R`function countEvens(arr) {
   let count = 0;
   for (const x of arr) if (x % 2 === 0) count++;
   return count;
 }
-function maxOf(arr) {
+console.log(countEvens([1, 2, 3, 4, 6]), countEvens([-2, 0, 7])); // 3 2`,
+          check: {
+            lang: "js",
+            starter: R`function countEvens(arr) {
+  let count = 0;
+  // for...of، وزوّد count لو الرقم زوجي
+  return count;
+}`,
+            tests: R`test("[1, 2, 3, 4, 6] ← 3", () => expect(countEvens([1, 2, 3, 4, 6])).toBe(3));
+test("[] ← 0", () => expect(countEvens([])).toBe(0));
+test("[1, 3, 5] ← 0", () => expect(countEvens([1, 3, 5])).toBe(0));
+test("السالب الزوجي والصفر زوجيين: [-2, 0, 7] ← 2", () => expect(countEvens([-2, 0, 7])).toBe(2));
+test("السالب الفردي مش زوجي: [-3, -5] ← 0 (-3 % 2 = -1 مش 1)", () => expect(countEvens([-3, -5])).toBe(0));
+test("١٠ آلاف رقم ← 5000", () => expect(countEvens(Array.from({ length: 10000 }, (_, i) => i))).toBe(5000));`,
+            solution: R`function countEvens(arr) {
+  let count = 0;
+  for (const x of arr) if (x % 2 === 0) count++;
+  return count;
+}`
+          }
+        },
+        {
+          cmd: "تمرين maxOf",
+          title: "تمرين ٤: أكبر رقم من غير Math.max (maxOf)",
+          desc: R`اكتب [[maxOf(arr)]] ترجّع أكبر رقم في الـ array من غير [[Math.max]]: [[maxOf([3, 9, 2])]] ← 9، و [[maxOf([-5, -2, -9])]] ← -2، و [[maxOf([])]] ← undefined.
+
+النمط هنا «أحسن واحد لحد دلوقتي»: متغير شايل أحسن قيمة شفتها، وكل عنصر جديد تقارنه بيه. السؤال المهم: المتغير يبدأ بكام؟ المثال بيدوّر على أطول كلمة بنفس النمط.`,
+          example: R`const words = ["hi", "hello", "hey"];
+let longest = words[0];
+for (const w of words) {
+  if (w.length > longest.length) longest = w;
+}
+console.log(longest); // hello`,
+          try: R`اكتب [[maxOf(arr)]] بنمط «أحسن واحد لحد دلوقتي». جرّب الأول تبدأ من 0 وشوف أنهي اختبار بيفشل وليه، وبعدين صلّحها. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`«أحسن واحد لحد دلوقتي» نمط بتقابله كتير: أغلى منتج، وأحدث أوردر، وأقرب فرع لليوزر. والسؤال بيتسأل في الانترفيو عشان يشوف هتبدأ بـ 0 ولا لأ.`,
+            how: R`ابدأ بـ [[arr[0]]] (أول عنصر)، مش 0: لو كل الأرقام سالبة، 0 هيكسبهم كلهم وهو مش في الـ array أصلًا. ولو الـ array فاضية [[arr[0]]] بيرجّع undefined، والـ loop مبتلفش، فالدالة ترجّع undefined، وده معناه «مفيش أكبر». بديل تاني: ابدأ بـ [[-Infinity]]، بس ساعتها الفاضية ترجّع [[-Infinity]]، فقرّر إنت عايز إيه.`,
+            when: R`في الشغل الحقيقي [[Math.max(...arr)]] كفاية للـ arrays الصغيرة. بس مع array فيها مئات الآلاف من العناصر، الـ spread ممكن يطلّع [[RangeError]] لأن كل عنصر بيبقى argument، والـ loop مفيهاش المشكلة دي.`,
+            mistakes: R`[[let max = 0]] فالأرقام السالبة كلها تطلع 0. و [[if (x >= max)]] مش غلط بس ملوش لازمة. وتنسى الـ array الفاضية. و [[Math.max()]] من غير أرقام بترجّع [[-Infinity]] مش undefined، وده بيتسأل.`
+          },
+          lines: [
+            R`كلمات بأطوال مختلفة.`,
+            R`ابدأ بأول كلمة، مش بنص فاضي.`,
+            R`لف على كل كلمة.`,
+            R`لو أطول من اللي معاك، خدها مكانه.`,
+            R`قفلة.`,
+            R`بيطبع [[hello]] (5 حروف).`
+          ],
+          sol: R`[[maxOf([3, 9, 2])]] ← 9، و [[maxOf([-5, -2, -9])]] ← -2، و [[maxOf([7])]] ← 7، و [[maxOf([])]] ← undefined.
+
+لو بدأت بـ [[let max = 0]]، اختبار السالب هيقولك «المتوقع -2 بس طلع 0»، لأن 0 أكبر من كل الأرقام دي وهو مش منهم. ابدأ بـ [[arr[0]]].`,
+          solCode: R`function maxOf(arr) {
   let max = arr[0];
   for (const x of arr) if (x > max) max = x;
   return max;
 }
-function reverse(str) {
+console.log(maxOf([3, 9, 2]), maxOf([-5, -2, -9]), maxOf([])); // 9 -2 undefined`,
+          check: {
+            lang: "js",
+            starter: R`function maxOf(arr) {
+  let max = 0; // هل 0 بداية صح؟
+  for (const x of arr) {
+    // ...
+  }
+  return max;
+}`,
+            tests: R`test("[3, 9, 2] ← 9", () => expect(maxOf([3, 9, 2])).toBe(9));
+test("كلها سالبة: [-5, -2, -9] ← -2 (لو طلع 0 يبقى بدأت من 0)", () => expect(maxOf([-5, -2, -9])).toBe(-2));
+test("عنصر واحد: [7] ← 7", () => expect(maxOf([7])).toBe(7));
+test("الأكبر في الأول أو في الآخر", () => expect([maxOf([10, 1, 2]), maxOf([1, 2, 10])]).toEqual([10, 10]));
+test("array فاضية ← undefined (مفيش أكبر)", () => expect(maxOf([])).toBe(undefined));
+test("١٠٠ ألف رقم: نفس ناتج Math.max", () => {
+  const a = Array.from({ length: 100000 }, (_, i) => (i * 7919) % 100003 - 50000);
+  expect(maxOf(a)).toBe(a.reduce((m, x) => (x > m ? x : m)));
+});`,
+            solution: R`function maxOf(arr) {
+  let max = arr[0];
+  for (const x of arr) if (x > max) max = x;
+  return max;
+}`
+          }
+        },
+        {
+          cmd: "تمرين reverse",
+          title: "تمرين ٥: اعكس نص بـ loop (reverse)",
+          desc: R`اكتب [[reverse(str)]] ترجّع النص معكوس، بـ loop ومن غير [[split().reverse().join()]]: [[reverse("hello")]] ← [["olleh"]]، و [[reverse("")]] ← [[""]].
+
+النمط هنا «ابني نتيجة حرف حرف»: تبدأ بنص فاضي وتضيف عليه كل لفة. والسؤال: تضيف الحرف قبل النتيجة ولا بعدها؟ المثال بيكرر كل حرف مرتين بنفس النمط.`,
+          example: R`const word = "abc";
+let doubled = "";
+for (const ch of word) {
+  doubled += ch + ch;
+}
+console.log(doubled); // aabbcc`,
+          try: R`اكتب [[reverse(str)]] بـ for...of. فكّر: لو كتبت [[out += ch]] هيطلع إيه؟ ولو [[out = ch + out]]؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`بناء نص أو array خطوة خطوة بيتكرر في كل حتة: تركّب HTML من ليستة، أو رسالة من أجزاء، أو CSV من صفوف. والعكس بالذات بيتسأل كتير لأنه بيوضح إنك فاهم ترتيب الإضافة.`,
+            how: R`[[for (const ch of str)]] بيديك الحروف من الأول للآخر. لو كل حرف جديد اتحط قبل النتيجة ([[out = ch + out]]) يبقى آخر حرف قريته هو أول حرف في النتيجة. طريقة تانية: loop بـ index من [[str.length - 1]] لـ 0 و [[out += str[i]]].`,
+            when: R`في الشغل هتكتب [[[...str].reverse().join("")]] في سطر. الـ [[...]] بتفصل الحروف صح حتى مع الإيموجي، و [[split("")]] بتكسرها لنصين. الـ loop هنا عشان تفهم الفكرة.`,
+            mistakes: R`[[out += ch]] بترجّع نفس النص من غير عكس. و loop بـ index يبدأ من [[str.length]] فأول حرف يبقى undefined وتلاقي [["undefinedolleh"]]. و [[i > 0]] بدل [[i >= 0]] فتنسى أول حرف.`
+          },
+          lines: [
+            R`النص اللي هنلف عليه.`,
+            R`النتيجة بتبدأ نص فاضي.`,
+            R`كل حرف بالترتيب.`,
+            R`ضيف الحرف مرتين في آخر النتيجة.`,
+            R`قفلة.`,
+            R`بيطبع [[aabbcc]].`
+          ],
+          sol: R`[[reverse("hello")]] ← [["olleh"]]، و [[reverse("ab c")]] ← [["c ba"]] (المسافة حرف زي أي حرف)، و [[reverse("")]] ← [[""]]، و [[reverse("مرحبا")]] ← [["ابحرم"]].
+
+لو طلعلك نفس النص، كتبت [[out += ch]]. ولو طلعلك [["undefinedolleh"]]، الـ loop بالـ index بدأت من [[str.length]] بدل [[str.length - 1]].`,
+          solCode: R`function reverse(str) {
   let out = "";
   for (const ch of str) out = ch + out;
   return out;
 }
-function factorial(n) {
+console.log(reverse("hello"), reverse("مرحبا")); // olleh ابحرم`,
+          check: {
+            lang: "js",
+            starter: R`function reverse(str) {
+  let out = "";
+  // لف على الحروف وابني out
+  return out;
+}`,
+            tests: R`test("'hello' ← 'olleh'", () => expect(reverse("hello")).toBe("olleh"));
+test("'' ← ''", () => expect(reverse("")).toBe(""));
+test("حرف واحد ← نفسه", () => expect(reverse("a")).toBe("a"));
+test("المسافة حرف زي أي حرف: 'ab c' ← 'c ba'", () => expect(reverse("ab c")).toBe("c ba"));
+test("عربي: 'مرحبا' ← 'ابحرم'", () => expect(reverse("مرحبا")).toBe("ابحرم"));
+test("مرتين يرجّع الأصل", () => expect(reverse(reverse("JavaScript"))).toBe("JavaScript"));`,
+            solution: R`function reverse(str) {
+  let out = "";
+  for (const ch of str) out = ch + out;
+  return out;
+}`
+          }
+        },
+        {
+          cmd: "تمرين factorial",
+          title: "تمرين ٦: المضروب n! بـ loop (factorial)",
+          desc: R`اكتب [[factorial(n)]] ترجّع [[1 × 2 × ... × n]]: [[factorial(5)]] ← 120، و [[factorial(0)]] ← 1 (بالتعريف).
+
+نفس الـ accumulator بتاع sumTo، بس للضرب. والفرق كله في القيمة المحايدة: الجمع بيبدأ من 0، والضرب لازم يبدأ من 1. المثال بيحسب 2 أس 10 بنفس الطريقة.`,
+          example: R`let result = 1;
+for (let i = 0; i < 10; i++) {
+  result *= 2;
+}
+console.log(result); // 1024`,
+          try: R`اكتب [[factorial(n)]] بـ loop. خمّن الأول: لو بدأت [[result]] من 0 إيه اللي هيطلع؟ وبعدين جرّب [[factorial(25)]] واطبعه: الرقم مظبوط؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`المضروب بيظهر في حساب الاحتمالات والترتيبات (كام طريقة ترتّب 5 كتب؟ 5! = 120)، وهو المثال الكلاسيكي اللي هتشوفه تاني في تاب DSA بالـ recursion. هنا بتكتبه بـ loop الأول.`,
+            how: R`[[let result = 1]]، و loop من 2 لـ n و [[result *= i]]. الـ loop من 2 مش 1 لأن الضرب في 1 ملوش لازمة. ولما n = 0 أو 1 الـ loop مبتلفش فترجّع 1، وده صح (0! = 1 بالتعريف).`,
+            when: R`للأرقام الصغيرة. الـ number في JS دقيق لحد [[Number.MAX_SAFE_INTEGER]] (حوالي 9 × 10^15)، و 18! بيعدّيه. لو محتاج أرقام أكبر بدقة استخدم [[BigInt]]: [[let r = 1n]] و [[r *= BigInt(i)]].`,
+            mistakes: R`[[let result = 0]] فكل حاجة تطلع 0. و [[i < n]] بدل [[i <= n]] فـ [[factorial(5)]] تطلع 24. وتفتكر إن [[factorial(25)]] مظبوطة: الرقم بيتطبع بس آخر أرقامه غلط لأنه عدّى حدود الدقة.`
+          },
+          lines: [
+            R`الضرب بيبدأ من 1 مش 0.`,
+            R`عشر لفات.`,
+            R`[[result = result * 2]].`,
+            R`قفلة.`,
+            R`2 أس 10 = 1024.`
+          ],
+          sol: R`[[factorial(5)]] ← 120، و [[factorial(0)]] و [[factorial(1)]] ← 1، و [[factorial(10)]] ← 3628800.
+
+[[factorial(25)]] بتطبع [[1.5511210043330986e+25]]: الرقم تقريبي مش مظبوط، لأن الـ number في JS دقيق لحد حوالي 9 × 10^15 بس. بـ BigInt ([[let r = 1n]]) بيطلع مظبوط: [[15511210043330985984000000n]].`,
+          solCode: R`function factorial(n) {
   let result = 1;
   for (let i = 2; i <= n; i++) result *= i;
   return result;
 }
-function countVowels(str) {
+console.log(factorial(5), factorial(0)); // 120 1`,
+          check: {
+            lang: "js",
+            starter: R`function factorial(n) {
+  let result = 0; // هل 0 بداية صح للضرب؟
+  // ...
+  return result;
+}`,
+            tests: R`test("factorial(5) ← 120", () => expect(factorial(5)).toBe(120));
+test("factorial(0) ← 1 (لو طلع 0 يبقى بدأت من 0)", () => expect(factorial(0)).toBe(1));
+test("factorial(1) ← 1", () => expect(factorial(1)).toBe(1));
+test("factorial(10) ← 3628800", () => expect(factorial(10)).toBe(3628800));
+test("factorial(18) ← 6402373705728000 (آخر رقم دقيق تقريبًا)", () => expect(factorial(18)).toBe(6402373705728000));`,
+            solution: R`function factorial(n) {
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}`
+          }
+        },
+        {
+          cmd: "تمرين countVowels",
+          title: "تمرين ٧: عدّ حروف العلة (countVowels)",
+          desc: R`اكتب [[countVowels(str)]] ترجّع عدد حروف a و e و i و o و u، كبيرة أو صغيرة: [[countVowels("JavaScript")]] ← 3، و [[countVowels("AEIOU")]] ← 5.
+
+عشان تسأل «الحرف ده واحد من دول؟» مش محتاج ٥ شروط بـ [[||]]: حط الحروف في نص وإسأل [[vowels.includes(ch)]]. المثال بيعدّ المسافات في جملة.`,
+          example: R`const sentence = "I love JS so much";
+let spaces = 0;
+for (const ch of sentence) {
+  if (ch === " ") spaces++;
+}
+console.log(spaces); // 4`,
+          try: R`اكتب [[countVowels(str)]] بـ for...of و [[includes]]. خلّي بالك من الحروف الكبيرة: حوّل النص كله لـ lowercase مرة واحدة قبل الـ loop. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`«الحرف ده من المجموعة دي؟» سؤال بيتكرر: validation لكلمة سر (فيها رقم؟ فيها رمز؟)، وتنضيف input من حروف ممنوعة. و [[includes]] على نص أو array بتختصر شروط كتير.`,
+            how: R`[[str.toLowerCase()]] بترجّع نسخة صغيرة (الـ strings immutable، الأصل مش بيتغير)، و [[for (const ch of ...)]] بيلف على الحروف، و [[("aeiou").includes(ch)]] بيرجّع true لو الحرف موجود في النص ده.`,
+            when: R`لما المجموعة صغيرة وثابتة. لو بتسأل عن حروف كتير في نص طويل جدًا، [[new Set("aeiou")]] و [[has]] أسرع، وده موضوع تاب DSA. وفي الشغل ممكن [[str.match(/[aeiou]/gi)?.length ?? 0]] (درس regex في المستوى ٢).`,
+            mistakes: R`تنسى الحروف الكبيرة فـ [["AEIOU"]] تطلع 0. أو تعمل [[toLowerCase()]] جوه الـ loop على [[str]] كل لفة (شغال بس بيعمل نص جديد كل مرة). أو تكتب [[ch == "a" || "e"]]: الجزء التاني [["e"]] لوحده truthy فكل حرف بيتعد.`
+          },
+          lines: [
+            R`جملة فيها ٤ مسافات.`,
+            R`العدّاد من 0.`,
+            R`كل حرف بالترتيب.`,
+            R`لو الحرف مسافة زوّد.`,
+            R`قفلة.`,
+            R`بيطبع 4.`
+          ],
+          sol: R`[[countVowels("JavaScript")]] ← 3 (a و a و i)، و [[countVowels("AEIOU")]] ← 5، و [[countVowels("rhythm")]] ← 0، و [[countVowels("")]] ← 0.
+
+لو [["AEIOU"]] طلعت 0، نسيت [[toLowerCase]]. ولو كل الحروف بتتعد، غالبًا كتبت [[ch === "a" || "e"]] بدل ما تقارن كل حرف.`,
+          solCode: R`function countVowels(str) {
   let count = 0;
   for (const ch of str.toLowerCase()) if ("aeiou".includes(ch)) count++;
   return count;
 }
-function table(n) {
-  for (let i = 1; i <= 12; i++) console.log($__bt$__{n} x $__{i} = $__{n * i}$__bt);
+console.log(countVowels("JavaScript"), countVowels("AEIOU")); // 3 5`,
+          check: {
+            lang: "js",
+            starter: R`function countVowels(str) {
+  let count = 0;
+  // ...
+  return count;
+}`,
+            tests: R`test("'JavaScript' ← 3", () => expect(countVowels("JavaScript")).toBe(3));
+test("الكبيرة زي الصغيرة: 'AEIOU' ← 5", () => expect(countVowels("AEIOU")).toBe(5));
+test("'rhythm' ← 0", () => expect(countVowels("rhythm")).toBe(0));
+test("'' ← 0", () => expect(countVowels("")).toBe(0));
+test("'Hello World' ← 3 (المسافة مش حرف علة)", () => expect(countVowels("Hello World")).toBe(3));`,
+            solution: R`function countVowels(str) {
+  let count = 0;
+  for (const ch of str.toLowerCase()) if ("aeiou".includes(ch)) count++;
+  return count;
+}`
+          }
+        },
+        {
+          cmd: "تمرين table",
+          title: "تمرين ٨: جدول الضرب كـ array من السطور (table)",
+          desc: R`اكتب [[table(n)]] ترجّع array فيها ١٢ سطر نص، من [["3 x 1 = 3"]] لحد [["3 x 12 = 36"]] لو n = 3. بترجّع السطور بدل ما تطبعها، عشان اللي بيستخدم الدالة يقرر: يطبعها، أو يعرضها في صفحة، أو يختبرها.
+
+هنا بتجمع حاجتين: loop بعدد لفات ثابت، و template literal (درس template literals) عشان تركّب النص. المثال بيعمل سطور مربعات الأرقام.`,
+          example: R`const lines = [];
+for (let i = 1; i <= 3; i++) {
+  lines.push($__bt$__{i} squared = $__{i * i}$__bt);
 }
-console.log(sumTo(100), countEvens([1, 2, 3, 4, 6]), maxOf([-5, -2, -9]));
-console.log(reverse("hello"), factorial(5), factorial(0), countVowels("JavaScript"));
-table(3);`
+console.log(lines); // ["1 squared = 1", "2 squared = 4", "3 squared = 9"]`,
+          try: R`اكتب [[table(n)]] ترجّع array السطور، وبعدين اطبعها بـ [[console.log(table(7).join("\n"))]]. خلّي الشكل بالظبط [["7 x 3 = 21"]] بمسافة قبل وبعد x و =. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`الفصل بين «احسب» و «اعرض» من أهم عادات الكود النضيف: الدالة اللي بترجّع داتا تتختبر وتتستخدم في أي مكان (Console، صفحة، API)، والدالة اللي بتطبع على طول مينفعش تستخدمها غير في الترمنال.`,
+            how: R`[[const out = []]]، و loop من 1 لـ 12، وكل لفة [[out.push($__bt$__{n} x $__{i} = $__{n * i}$__bt)]]، وبعدين [[return out]]. الـ [[$__{...}]] جوه الـ backticks بيحط القيمة، ولو كتبت حساب زي [[n * i]] بيتحسب الأول.`,
+            when: R`أي دالة ممكن تبقى «بترجّع» بدل «بتطبع» خليها بترجّع. [[console.log]] مكانها في الآخر خالص، في المكان اللي بينادي الدالة.`,
+            mistakes: R`تطبع جوه الدالة ومترجعش حاجة، فالنتيجة undefined. وتستخدم علامات تنصيص عادية بدل الـ backtick فيطلع النص [["$__{n} x $__{i}"]] زي ما هو. والمسافات: [["3x1=3"]] مش زي [["3 x 1 = 3"]]، والاختبار بيقارن حرف حرف.`
+          },
+          lines: [
+            R`هنجمع فيها السطور.`,
+            R`من 1 لـ 3.`,
+            R`ركّب السطر بالـ template literal وضيفه.`,
+            R`قفلة.`,
+            R`بيطبع الـ array بالتلات سطور.`
+          ],
+          sol: R`[[table(3)]] بترجّع ١٢ سطر: أولهم [["3 x 1 = 3"]] وآخرهم [["3 x 12 = 36"]]. و [[table(7)[6]]] ← [["7 x 7 = 49"]]. و [[table(7).join("\n")]] بتحوّلهم نص واحد كل سطر تحت التاني.
+
+لو الاختبار قال «طلع undefined»، الدالة بتطبع ومش بترجّع. ولو قال إن النص مختلف، قارن المسافات حرف حرف.`,
+          solCode: R`function table(n) {
+  const out = [];
+  for (let i = 1; i <= 12; i++) out.push($__bt$__{n} x $__{i} = $__{n * i}$__bt);
+  return out;
+}
+console.log(table(7).join("\n"));`,
+          check: {
+            lang: "js",
+            starter: R`function table(n) {
+  const out = [];
+  // 12 سطر بالشكل "3 x 4 = 12"
+  return out;
+}`,
+            tests: R`test("table(3) فيها 12 سطر", () => expect(table(3).length).toBe(12));
+test("أول سطر '3 x 1 = 3' (مسافة قبل وبعد x و =)", () => expect(table(3)[0]).toBe("3 x 1 = 3"));
+test("آخر سطر '3 x 12 = 36'", () => expect(table(3)[11]).toBe("3 x 12 = 36"));
+test("table(7)[6] ← '7 x 7 = 49'", () => expect(table(7)[6]).toBe("7 x 7 = 49"));
+test("كل السطور strings", () => expect(table(5).every(s => typeof s === "string")).toBe(true));`,
+            solution: R`function table(n) {
+  const out = [];
+  for (let i = 1; i <= 12; i++) out.push($__bt$__{n} x $__{i} = $__{n * i}$__bt);
+  return out;
+}`
+          }
         },
         {
           cmd: "تمارين أساسيات ٢",
           title: "٧ تمارين أصعب: أعداد أولية و Fibonacci وتكرار الحروف",
-          desc: R`نفس الفكرة، بس كل تمرين فيه خطوتين أو تلاتة أو loop جوه loop. اكتب الـ pseudocode الأول (درس pseudocode)، وجرّب الأطراف.
+          desc: R`نفس الفكرة، بس كل تمرين فيه خطوتين أو تلاتة أو loop جوه loop. اكتب الـ pseudocode الأول (درس pseudocode)، وجرّب الأطراف. الدرس ده فيه التمرين ٩، والباقي كل واحد في درس لوحده بعده بمربع بيتصحح لوحده.
 
-المثال تحت حل التمرين العاشر ([[isPrime]])، وفيه فكرة مهمة: مش لازم تجرّب كل الأرقام لحد n، كفاية لحد الجذر التربيعي. لو n = a × b، واحد منهم على الأقل أصغر من أو يساوي √n.
+المثال تحت حل التمرين العاشر ([[isPrime]]) كمثال محلول، وفيه فكرة مهمة: مش لازم تجرّب كل الأرقام لحد n، كفاية لحد الجذر التربيعي. لو n = a × b، واحد منهم على الأقل أصغر من أو يساوي √n.
 
-٩. isPalindrome(str): لو اتحلت في درس pseudocode، حلها المرة دي بـ loop بمؤشرين (واحد من الأول وواحد من الآخر) من غير reverse.
+٩. isPalindrome(str): لو اتحلت في درس pseudocode، حلها المرة دي بـ loop بمؤشرين (واحد من الأول وواحد من الآخر) من غير reverse، وتجاهل الحروف الكبيرة والمسافات.
 
-١٠. isPrime(n) واطبع الأعداد الأولية لحد 50 (الحل فوق).
+١٠. isPrime(n) والأعداد الأولية لحد n (المثال تحت، ودرسه بيزوّد عليه).
 
 ١١. fibonacci(n): أول n رقم: 0 1 1 2 3 5 8 ...، كل رقم مجموع اللي قبله. [[fibonacci(10)]].
 
@@ -785,7 +1256,7 @@ table(3);`
 const primes = [];
 for (let n = 1; n <= 50; n++) if (isPrime(n)) primes.push(n);
 console.log(primes.join(" "));`,
-          try: R`حل التمارين من ٩ لـ ١٥ اللي فوق في [[lab/js/basics2.js]]، واكتب الـ pseudocode كتعليقات قبل كل دالة. جرّب كل دالة على المثال المكتوب وعلى حالة طرف واحدة على الأقل (فاضي، أو رقم واحد، أو سالب).`,
+          try: R`اكتب [[isPalindrome(str)]] بمؤشرين [[i]] من الأول و [[j]] من الآخر، من غير [[reverse]]، وبتتجاهل الحروف الكبيرة والمسافات. اكتب الـ pseudocode كتعليقات قبل الدالة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           flag: "script",
           deep: {
             why: "دي نفس الأسئلة اللي بتتسأل في أول مرحلة انترفيو لـ junior، وبتختبر إنك تقدر تمسك حالتين في دماغك مرة واحدة (أعلى وتاني أعلى، أو مؤشرين). وكلها بتمهّد لتاب DSA: two pointers، و hash map للعد، و early exit.",
@@ -807,11 +1278,9 @@ console.log(primes.join(" "));`,
             R`اختبر كل رقم، و [[push]] بتضيف في الآخر.`,
             "2 3 5 7 11 13 17 19 23 29 31 37 41 43 47."
           ],
-          sol: R`الناتج المتوقع لملف الحل: [[true false true]] للـ palindrome، و [[0 1 1 2 3 5 8 13 21 34]]، و [[19]]، و [[{ b: 1, a: 3, n: 2 }]]، و [[[ 3, 1, 2 ]]]، و [[7 undefined]].
+          sol: R`[[isPalindrome("level")]] ← true، و [[isPalindrome("abca")]] ← false، و [[isPalindrome("Race car")]] ← true (بعد [[toLowerCase]] وشيل المسافات بقت [["racecar"]])، و [[isPalindrome("")]] ← true.
 
-في الـ palindrome بالمؤشرين: [[i]] من الأول و [[j]] من الآخر، ولو [[s[i] !== s[j]]] ارجع false، وقرّبهم لحد ما يتقابلوا. ده أسرع من reverse لأنه ممكن يقف من أول حرف ومش بيعمل نص جديد.
-
-في [[secondLargest]] الحالة المهمة: رقم يساوي الأول لازم يتجاهل مش ينزل تاني. عشان كده الشرط [[x < first && x > second]].`,
+المؤشرين: [[i]] من الأول و [[j]] من الآخر، ولو [[s[i] !== s[j]]] ارجع false على طول، وقرّبهم لحد ما يتقابلوا. ده أسرع من reverse لأنه ممكن يقف من أول حرف ومش بيعمل نص جديد. والغلطة الشائعة إنك تنضّف بعد ما تبدأ تقارن، أو تنسى [[replaceAll(" ", "")]] فـ [["Race car"]] تطلع false.`,
           solCode: R`function isPalindrome(str) {
   const s = str.toLowerCase().replaceAll(" ", "");
   for (let i = 0, j = s.length - 1; i < j; i++, j--) {
@@ -819,7 +1288,152 @@ console.log(primes.join(" "));`,
   }
   return true;
 }
-function fibonacci(n) {
+console.log(isPalindrome("level"), isPalindrome("abca"), isPalindrome("Race car"));`,
+          check: {
+            lang: "js",
+            starter: R`function isPalindrome(str) {
+  const s = str.toLowerCase().replaceAll(" ", "");
+  // i من الأول و j من الآخر، ولو اختلفوا ارجع false
+}`,
+            tests: R`test("'level' ← true", () => expect(isPalindrome("level")).toBe(true));
+test("'abca' ← false", () => expect(isPalindrome("abca")).toBe(false));
+test("'Race car' ← true: الحروف الكبيرة والمسافات مش بتفرق", () => expect(isPalindrome("Race car")).toBe(true));
+test("'Never odd or even' ← true", () => expect(isPalindrome("Never odd or even")).toBe(true));
+test("'' و 'a' ← true (مفيش حاجة تختلف)", () => expect([isPalindrome(""), isPalindrome("a")]).toEqual([true, true]));
+test("'ab' ← false", () => expect(isPalindrome("ab")).toBe(false));`,
+            solution: R`function isPalindrome(str) {
+  const s = str.toLowerCase().replaceAll(" ", "");
+  for (let i = 0, j = s.length - 1; i < j; i++, j--) {
+    if (s[i] !== s[j]) return false;
+  }
+  return true;
+}`
+          }
+        },
+        {
+          cmd: "تمرين isPrime",
+          title: "تمرين ١٠: الأعداد الأولية لحد n (isPrime و primesUpTo)",
+          desc: R`حل [[isPrime(n)]] موجود كمثال في «تمارين أساسيات ٢». هنا هتكتبه بنفسك من غير ما تبص، وتزوّد عليه دالتين: [[primesUpTo(n)]] ترجّع كل الأعداد الأولية من 2 لـ n، و [[nextPrime(n)]] ترجّع أول عدد أولي أكبر من n.
+
+فكّر في الأطراف قبل ما تكتب: 0 و 1 والسالب مش أولية، و 2 أولي (وهو الزوجي الوحيد). المثال تحت بيجيب قواسم رقم بالحيلة نفسها (لحد الجذر بس).`,
+          example: R`function divisors(n) {
+  const small = [], big = [];
+  for (let d = 1; d * d <= n; d++) {
+    if (n % d !== 0) continue;
+    small.push(d);
+    if (d !== n / d) big.unshift(n / d);
+  }
+  return [...small, ...big];
+}
+console.log(divisors(36)); // [1, 2, 3, 4, 6, 9, 12, 18, 36]`,
+          try: R`اكتب [[isPrime]] و [[primesUpTo]] و [[nextPrime]]، واستخدم [[isPrime]] جوه التانيين بدل ما تكرر الكود. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`دالة بتنادي دالة تانية كتبتها هي أول خطوة في تقسيم المسألة لقطع صغيرة. و «لحد الجذر» أول مرة تشوف فيها إن تفكير بسيط بيخلي الكود أسرع بمراحل: لرقم زي مليون، ١٠٠٠ لفة بدل مليون.`,
+            how: R`[[isPrime]]: لو [[n < 2]] ارجع false، وبعدين جرّب [[d]] من 2 طول ما [[d * d <= n]]، وأول قاسم ارجع false. [[primesUpTo]]: loop من 2 لـ n و [[push]] لكل رقم [[isPrime]] بتاعه true. [[nextPrime]]: ابدأ من [[n + 1]] وزوّد لحد ما تلاقي أولي، وده [[while]] لأنك مش عارف هتلف كام مرة.`,
+            when: R`لما يبقى عندك عمليتين أو تلاتة بيعتمدوا على نفس السؤال، اكتب السؤال في دالة لوحده. ولو محتاج كل الأعداد الأولية لحد رقم كبير (مليون مثلًا)، فيه طريقة أسرع اسمها Sieve of Eratosthenes.`,
+            mistakes: R`[[isPrime(1)]] بـ true لأنك مفحصتش [[n < 2]]. و [[d < Math.sqrt(n)]] بدل [[<=]] فـ 25 و 49 يطلعوا أولية. و [[nextPrime(7)]] ترجّع 7 نفسها لأنك بدأت من n مش n + 1.`
+          },
+          lines: [
+            R`دالة بترجّع كل قواسم n بالترتيب.`,
+            R`الصغيرين والكبار في arrays منفصلة.`,
+            R`القواسم لحد الجذر بس.`,
+            R`مش قاسم؟ [[continue]] للي بعده.`,
+            R`d قاسم صغير.`,
+            R`وقرينه [[n / d]] قاسم كبير، إلا لو هو نفسه (زي 6 × 6).`,
+            R`قفلة الـ loop.`,
+            R`الصغيرين وبعدهم الكبار.`,
+            R`قفلة.`,
+            R`كل قواسم 36 بـ 6 لفات بس.`
+          ],
+          sol: R`[[isPrime]]: 0 و 1 و -7 و 91 (7 × 13) ← false، و 2 و 97 و 1000003 ← true. [[primesUpTo(50)]] ← [[[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]]]، و [[primesUpTo(1)]] ← [[[]]]. [[nextPrime(7)]] ← 11، و [[nextPrime(0)]] ← 2.
+
+لو [[isPrime(25)]] طلعت true، شرطك [[d * d < n]] بدل [[<=]]: الـ 5 مش بتتجرّب.`,
+          solCode: R`function isPrime(n) {
+  if (n < 2) return false;
+  for (let d = 2; d * d <= n; d++) if (n % d === 0) return false;
+  return true;
+}
+function primesUpTo(n) {
+  const out = [];
+  for (let i = 2; i <= n; i++) if (isPrime(i)) out.push(i);
+  return out;
+}
+function nextPrime(n) {
+  let x = n + 1;
+  while (!isPrime(x)) x++;
+  return x;
+}
+console.log(primesUpTo(50).join(" "), nextPrime(7)); // 2 3 5 ... 47 11`,
+          check: {
+            lang: "js",
+            starter: R`function isPrime(n) {
+  // الأقل من 2 مش أولي، وجرّب القواسم لحد الجذر
+}
+function primesUpTo(n) {
+  return [];
+}
+function nextPrime(n) {
+  // ابدأ من n + 1
+}`,
+            tests: R`test("0 و 1 و -7 مش أولية", () => expect([isPrime(0), isPrime(1), isPrime(-7)]).toEqual([false, false, false]));
+test("2 أولي (الزوجي الوحيد)، و 97 أولي", () => expect([isPrime(2), isPrime(97)]).toEqual([true, true]));
+test("25 و 49 و 91 مش أولية (d * d <= n مش <)", () => expect([isPrime(25), isPrime(49), isPrime(91)]).toEqual([false, false, false]));
+test("1000003 أولي (لحد الجذر = حوالي 1000 لفة بس)", () => expect(isPrime(1000003)).toBe(true));
+test("primesUpTo(50) ← 15 عدد من 2 لـ 47", () => expect(primesUpTo(50)).toEqual([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]));
+test("primesUpTo(1) ← []", () => expect(primesUpTo(1)).toEqual([]));
+test("nextPrime(7) ← 11 (أكبر من n، مش n نفسها)، و nextPrime(0) ← 2", () => expect([nextPrime(7), nextPrime(0)]).toEqual([11, 2]));`,
+            solution: R`function isPrime(n) {
+  if (n < 2) return false;
+  for (let d = 2; d * d <= n; d++) if (n % d === 0) return false;
+  return true;
+}
+function primesUpTo(n) {
+  const out = [];
+  for (let i = 2; i <= n; i++) if (isPrime(i)) out.push(i);
+  return out;
+}
+function nextPrime(n) {
+  let x = n + 1;
+  while (!isPrime(x)) x++;
+  return x;
+}`
+          }
+        },
+        {
+          cmd: "تمرين fibonacci",
+          title: "تمرين ١١: أول n رقم في Fibonacci (fibonacci)",
+          desc: R`اكتب [[fibonacci(n)]] ترجّع array فيها أول n رقم في المتسلسلة: [[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]] لـ n = 10. كل رقم مجموع الاتنين اللي قبله، وأول رقمين 0 و 1.
+
+الجديد هنا إنك محتاج تمسك «حالتين» مع بعض وتحركهم كل لفة: الرقم الحالي واللي بعده. المثال بيعمل نفس الحكاية مع متتالية كل رقم فيها ضعف اللي قبله زائد واحد.`,
+          example: R`let a = 1;
+const seq = [];
+for (let i = 0; i < 6; i++) {
+  seq.push(a);
+  a = a * 2 + 1;
+}
+console.log(seq.join(" ")); // 1 3 7 15 31 63`,
+          try: R`اكتب [[fibonacci(n)]] بمتغيرين [[a]] و [[b]]، وحرّكهم كل لفة بـ [[[a, b] = [b, a + b]]]. جرّب الأطراف: n = 0 و 1 و 2. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`Fibonacci أشهر متسلسلة في البرمجة، وهتقابلها تاني في تاب DSA (recursion و memoization و DP). هنا الهدف إنك تمسك حالتين وتحدّثهم مع بعض من غير ما تبوّظ واحدة وانت بتحسب التانية.`,
+            how: R`[[let a = 0, b = 1]]، وكل لفة [[out.push(a)]] وبعدين [[[a, b] = [b, a + b]]]. الـ destructuring ده بيحسب الطرف اليمين كله الأول بالقيم القديمة، وبعدين يوزّع. لو كتبت [[a = b; b = a + b]] هتلاقي b بقت ضعف b لأن a اتغيرت قبلها.`,
+            when: R`أي وقت الخطوة الجاية بتعتمد على أكتر من قيمة سابقة. ولو محتاج رقم واحد بس (الـ n) مش الليستة كلها، نفس الـ loop بترجّع [[a]] في الآخر من غير array.`,
+            mistakes: R`تبدأ بـ 1 و 1 بدل 0 و 1. و n + 1 رقم لأن الـ loop [[i <= n]]. و [[a = b; b = a + b]] من غير متغير مؤقت. و [[fibonacci(1)]] بترجّع [[[0, 1]]] لأنك حاطط أول رقمين في الـ array من البداية.`
+          },
+          lines: [
+            R`أول رقم.`,
+            R`هنجمع فيها.`,
+            R`٦ لفات.`,
+            R`سجّل الحالي.`,
+            R`احسب اللي بعده من الحالي.`,
+            R`قفلة.`,
+            R`بيطبع 1 3 7 15 31 63.`
+          ],
+          sol: R`[[fibonacci(10)]] ← [[[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]]]، و [[fibonacci(0)]] ← [[[]]]، و [[fibonacci(1)]] ← [[[0]]]، و [[fibonacci(2)]] ← [[[0, 1]]]، و آخر رقم في [[fibonacci(50)]] ← 7778742049.
+
+لو [[fibonacci(1)]] طلعت [[[0, 1]]]، انت بادئ الـ array بالرقمين. خلّيها فاضية وسيب الـ loop تزوّد.`,
+          solCode: R`function fibonacci(n) {
   const out = [];
   let a = 0, b = 1;
   for (let i = 0; i < n; i++) {
@@ -828,7 +1442,68 @@ function fibonacci(n) {
   }
   return out;
 }
-function sumDigits(n) {
+console.log(fibonacci(10).join(" ")); // 0 1 1 2 3 5 8 13 21 34`,
+          check: {
+            lang: "js",
+            starter: R`function fibonacci(n) {
+  const out = [];
+  let a = 0, b = 1;
+  // n لفة: سجّل a وحرّك الاتنين
+  return out;
+}`,
+            tests: R`test("fibonacci(10) ← 0 1 1 2 3 5 8 13 21 34", () => expect(fibonacci(10)).toEqual([0, 1, 1, 2, 3, 5, 8, 13, 21, 34]));
+test("fibonacci(0) ← []", () => expect(fibonacci(0)).toEqual([]));
+test("fibonacci(1) ← [0] (مش [0, 1])", () => expect(fibonacci(1)).toEqual([0]));
+test("fibonacci(2) ← [0, 1]", () => expect(fibonacci(2)).toEqual([0, 1]));
+test("الطول n بالظبط: fibonacci(50) فيها 50 رقم وآخرها 7778742049", () => {
+  const r = fibonacci(50);
+  expect([r.length, r[49]]).toEqual([50, 7778742049]);
+});`,
+            solution: R`function fibonacci(n) {
+  const out = [];
+  let a = 0, b = 1;
+  for (let i = 0; i < n; i++) {
+    out.push(a);
+    [a, b] = [b, a + b];
+  }
+  return out;
+}`
+          }
+        },
+        {
+          cmd: "تمرين sumDigits",
+          title: "تمرين ١٢: مجموع أرقام عدد بالحساب (sumDigits)",
+          desc: R`اكتب [[sumDigits(n)]] ترجّع مجموع أرقام العدد: [[sumDigits(4096)]] ← 4 + 0 + 9 + 6 = 19. بالحساب مش بتحويله لـ string.
+
+الحيلتين: [[n % 10]] بيديك آخر رقم (4096 % 10 = 6)، و [[Math.floor(n / 10)]] بيشيل آخر رقم (409). كررهم لحد ما n يبقى 0، وده [[while]] لأنك مش عارف عدد الأرقام. المثال بيعدّ أرقام عدد بنفس الحيلة.`,
+          example: R`let n = 90210;
+let digits = 0;
+while (n > 0) {
+  n = Math.floor(n / 10);
+  digits++;
+}
+console.log(digits); // 5`,
+          try: R`اكتب [[sumDigits(n)]] بـ while و [[%]] و [[Math.floor]]. فكّر: لو n سالب زي [[-4096]]، الـ while هتلف كام مرة؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`التفكير في الرقم كأرقام منفصلة بيطلع في حاجات حقيقية: رقم التحقق (check digit) في كروت الفيزا والرقم القومي، وتحويل الأرقام لنظام تاني. و while هي الـ loop الطبيعية لما عدد اللفات مش معروف من الأول.`,
+            how: R`[[sum += n % 10]] ياخد آخر رقم، و [[n = Math.floor(n / 10)]] يشيله. 4096 → 409 → 40 → 4 → 0 والمجموع 6 + 9 + 0 + 4 = 19. للسالب: [[n = Math.abs(n)]] الأول، وإلا [[n > 0]] من البداية false.`,
+            when: R`في الشغل [[String(n).split("").reduce(...)]] أسهل تتقري. الحساب أسرع ومبيعملش strings، وبيتسأل في الانترفيو مخصوص عشان يشوف فاهم [[%]] و القسمة الصحيحة.`,
+            mistakes: R`[[n / 10]] من غير [[Math.floor]] فـ n تبقى 409.6 والـ loop تلف مرات كتير أوي والمجموع كسور. و [[while (n)]] مع رقم سالب بتلف لحد ما n تبقى صغيرة جدًا. وتنسى إن [[sumDigits(0)]] لازم ترجّع 0.`
+          },
+          lines: [
+            R`العدد اللي هنعدّ أرقامه.`,
+            R`العدّاد.`,
+            R`طول ما فيه أرقام.`,
+            R`شيل آخر رقم: 90210 → 9021.`,
+            R`رقم كمان.`,
+            R`قفلة.`,
+            R`بيطبع 5.`
+          ],
+          sol: R`[[sumDigits(4096)]] ← 19، و [[sumDigits(0)]] ← 0، و [[sumDigits(7)]] ← 7، و [[sumDigits(1000)]] ← 1، و [[sumDigits(-4096)]] ← 19 بعد [[Math.abs]].
+
+لو الاختبار قال «طلع 19.xxx» أو رقم غريب، نسيت [[Math.floor]]. ولو السالب طلع 0، نسيت [[Math.abs]].`,
+          solCode: R`function sumDigits(n) {
   let sum = 0;
   n = Math.abs(n);
   while (n > 0) {
@@ -837,12 +1512,125 @@ function sumDigits(n) {
   }
   return sum;
 }
-function charCount(str) {
+console.log(sumDigits(4096), sumDigits(-4096)); // 19 19`,
+          check: {
+            lang: "js",
+            starter: R`function sumDigits(n) {
+  let sum = 0;
+  // while: خد n % 10 وشيله بـ Math.floor(n / 10)
+  return sum;
+}`,
+            tests: R`test("sumDigits(4096) ← 19", () => expect(sumDigits(4096)).toBe(19));
+test("sumDigits(0) ← 0", () => expect(sumDigits(0)).toBe(0));
+test("رقم واحد: sumDigits(7) ← 7", () => expect(sumDigits(7)).toBe(7));
+test("أصفار في النص: sumDigits(1000) ← 1", () => expect(sumDigits(1000)).toBe(1));
+test("السالب: sumDigits(-4096) ← 19 (Math.abs الأول)", () => expect(sumDigits(-4096)).toBe(19));
+test("sumDigits(999999999) ← 81", () => expect(sumDigits(999999999)).toBe(81));`,
+            solution: R`function sumDigits(n) {
+  let sum = 0;
+  n = Math.abs(n);
+  while (n > 0) {
+    sum += n % 10;
+    n = Math.floor(n / 10);
+  }
+  return sum;
+}`
+          }
+        },
+        {
+          cmd: "تمرين charCount",
+          title: "تمرين ١٣: كل حرف اتكرر كام مرة (charCount)",
+          desc: R`اكتب [[charCount(str)]] ترجّع object فيه كل حرف وعدد مرات ظهوره: [[charCount("banana")]] ← [[{ b: 1, a: 3, n: 2 }]]. الحروف الكبيرة والصغيرة مختلفة، والمسافة حرف.
+
+الـ object هنا «عدّاد»: المفتاح الحرف والقيمة العدد. أول مرة تشوف الحرف مفيش مفتاح ليه ([[counts[ch]]] بـ undefined)، فابدأ من 0: [[counts[ch] = (counts[ch] ?? 0) + 1]]. المثال بيعدّ الأصوات في انتخابات صغيرة بنفس الحيلة.`,
+          example: R`const votes = ["Sara", "Ali", "Sara", "Omar", "Sara"];
+const tally = {};
+for (const name of votes) {
+  tally[name] = (tally[name] ?? 0) + 1;
+}
+console.log(tally); // { Sara: 3, Ali: 1, Omar: 1 }`,
+          try: R`اكتب [[charCount(str)]] بـ object عدّاد. جرّب [[charCount("aA")]] وفكّر ليه طلعوا مفتاحين. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`العدّ بـ object (أو Map) أهم أداة في حل المسائل: anagrams، وأكتر عنصر متكرر، وأول حرف مش متكرر. تاب DSA بيبني عليها كتير، والانترفيو بيعتبرها أساسية.`,
+            how: R`[[counts[ch]]] بالأقواس المربعة لأن اسم المفتاح جوه متغير ([[counts.ch]] معناها مفتاح اسمه حرفيًا "ch"). و [[??]] بيدّي 0 لما القيمة undefined. من غير [[?? 0]]، [[undefined + 1]] بتطلع NaN.`,
+            when: R`لما المفاتيح strings بسيطة، object كفاية. لو المفاتيح أي نوع (أرقام وobjects) أو محتاج ترتيب الإضافة مضمون، استخدم [[Map]] (درس Map و Set).`,
+            mistakes: R`[[counts[ch]++]] من غير قيمة أولية فتطلع NaN. و [[counts.ch]] بدل [[counts[ch]]] فكل الحروف تتعد في مفتاح واحد اسمه ch. و [[||]] بدل [[??]] مش مشكلة هنا (العدد عمره ما يبقى 0 قبل الزيادة) بس [[??]] أدق.`
+          },
+          lines: [
+            R`الأصوات، وفيه أسماء متكررة.`,
+            R`العدّاد فاضي.`,
+            R`كل صوت.`,
+            R`لو الاسم جديد ابدأ من 0، وزوّد واحد.`,
+            R`قفلة.`,
+            R`Sara 3 و Ali 1 و Omar 1.`
+          ],
+          sol: R`[[charCount("banana")]] ← [[{ b: 1, a: 3, n: 2 }]]، و [[charCount("")]] ← [[{}]]، و [[charCount("aA")]] ← [[{ a: 1, A: 1 }]] (الـ keys حساسة للحروف)، و [[charCount("a a")]] ← [[{ a: 2, " ": 1 }]].
+
+لو القيم طلعت NaN، نسيت القيمة الأولية ([[?? 0]]). ولو طلعلك [[{ ch: 6 }]]، كتبت [[counts.ch]] بدل [[counts[ch]]].`,
+          solCode: R`function charCount(str) {
   const counts = {};
   for (const ch of str) counts[ch] = (counts[ch] ?? 0) + 1;
   return counts;
 }
-function unique(arr) {
+console.log(charCount("banana")); // { b: 1, a: 3, n: 2 }`,
+          check: {
+            lang: "js",
+            starter: R`function charCount(str) {
+  const counts = {};
+  // ...
+  return counts;
+}`,
+            tests: R`test("'banana' ← { b: 1, a: 3, n: 2 }", () => expect(charCount("banana")).toEqual({ b: 1, a: 3, n: 2 }));
+test("'' ← {}", () => expect(charCount("")).toEqual({}));
+test("الكبيرة والصغيرة مختلفين: 'aA' ← { a: 1, A: 1 }", () => expect(charCount("aA")).toEqual({ a: 1, A: 1 }));
+test("المسافة حرف: 'a a' ← { a: 2, ' ': 1 }", () => expect(charCount("a a")).toEqual({ a: 2, " ": 1 }));
+test("مفيش NaN: كل القيم أرقام", () => expect(Object.values(charCount("mississippi"))).toEqual([1, 4, 4, 2]));`,
+            solution: R`function charCount(str) {
+  const counts = {};
+  for (const ch of str) counts[ch] = (counts[ch] ?? 0) + 1;
+  return counts;
+}`
+          }
+        },
+        {
+          cmd: "تمرين unique",
+          title: "تمرين ١٤: شيل التكرار وحافظ على الترتيب (unique)",
+          desc: R`اكتب [[unique(arr)]] ترجّع array جديدة من غير تكرار وبنفس ترتيب أول ظهور، ومن غير Set: [[unique([3, 1, 3, 2, 1])]] ← [[[3, 1, 2]]]. والأصل ميتغيرش.
+
+محتاج تفتكر «شفت العنصر ده قبل كده؟». أسهل طريقة: object اسمه [[seen]] مفاتيحه العناصر اللي عديت عليها. المثال بيجيب أول تكرار في ليستة بنفس الفكرة.`,
+          example: R`const emails = ["a@x.com", "b@x.com", "a@x.com", "c@x.com"];
+const seen = {};
+for (const e of emails) {
+  if (seen[e]) {
+    console.log("أول تكرار:", e);
+    break;
+  }
+  seen[e] = true;
+}`,
+          try: R`اكتب [[unique(arr)]] بـ object [[seen]] و array جديدة. وبعد ما تعدّي، اكتبها في سطر بـ Set ([[[...new Set(arr)]]]) وقارن. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`شيل التكرار بيحصل كل يوم: تاجات مكررة، وإيميلات اتسجلت مرتين، و IDs راجعة من كذا API. والنسخة اللي بتحافظ على الترتيب أهم، لأن الترتيب غالبًا ليه معنى (الأحدث، أو اللي اليوزر اختاره الأول).`,
+            how: R`[[const seen = {}]] و [[const out = []]]. لكل عنصر: لو [[seen[x]]] موجود [[continue]]، وإلا علّمه و [[push]]. [[seen[x]]] بيدوّر في الـ object مباشرة فسريع، أما [[out.includes(x)]] بيعدّي على الـ array كلها كل مرة. الاتنين شغالين، بس الأول أسرع مع الليستات الكبيرة (تاب DSA بيشرح ليه).`,
+            when: R`في الشغل [[[...new Set(arr)]]] هي الإجابة، وبتحافظ على الترتيب كمان. object [[seen]] ليه عيب: مفاتيحه strings، فـ [[1]] و [["1"]] بيبقوا نفس المفتاح. Set مفيهاش المشكلة دي.`,
+            mistakes: R`تعدّل الـ array الأصلية بـ [[splice]] وانت بتلف عليها فتنط عناصر. وترجّع [[Object.keys(seen)]] فالأرقام تبقى strings والترتيب ممكن يتغير (المفاتيح الرقمية بتترتب تصاعدي في الـ object). وتنسى إن [[seen[x]]] لازم تتحط بعد الفحص مش قبله.`
+          },
+          lines: [
+            R`إيميلات، وفيه واحد متكرر.`,
+            R`اللي شفناهم لحد دلوقتي.`,
+            R`كل إيميل.`,
+            R`شفناه قبل كده؟`,
+            R`يبقى ده أول تكرار.`,
+            R`وقّف.`,
+            R`قفلة الـ if.`,
+            R`علّم إننا شفناه.`,
+            R`قفلة الـ loop.`
+          ],
+          sol: R`[[unique([3, 1, 3, 2, 1])]] ← [[[3, 1, 2]]]، و [[unique([])]] ← [[[]]]، و [[unique(["a", "b", "a"])]] ← [[["a", "b"]]]، والأصل زي ما هو.
+
+لو الناتج طلع [[["1", "2", "3"]]] (strings) أو بترتيب تاني، انت راجع [[Object.keys(seen)]] بدل array [[out]] اللي بنيتها بالترتيب. ونسخة Set: [[const unique = (arr) => [...new Set(arr)]]] بتعدّي نفس الاختبارات.`,
+          solCode: R`function unique(arr) {
   const seen = {};
   const out = [];
   for (const x of arr) {
@@ -852,7 +1640,79 @@ function unique(arr) {
   }
   return out;
 }
-function secondLargest(arr) {
+console.log(unique([3, 1, 3, 2, 1])); // [3, 1, 2]`,
+          check: {
+            lang: "js",
+            starter: R`function unique(arr) {
+  const seen = {};
+  const out = [];
+  // ...
+  return out;
+}`,
+            tests: R`test("[3, 1, 3, 2, 1] ← [3, 1, 2] بترتيب أول ظهور", () => expect(unique([3, 1, 3, 2, 1])).toEqual([3, 1, 2]));
+test("[] ← []", () => expect(unique([])).toEqual([]));
+test("strings: ['a', 'b', 'a'] ← ['a', 'b']", () => expect(unique(["a", "b", "a"])).toEqual(["a", "b"]));
+test("الأرقام تفضل أرقام مش strings", () => expect(unique([10, 2, 10])).toEqual([10, 2]));
+test("الأصل ميتغيرش", () => {
+  const a = [1, 1, 2];
+  unique(a);
+  expect(a).toEqual([1, 1, 2]);
+});
+test("١٠ آلاف عنصر فيهم 100 قيمة بس", () => expect(unique(Array.from({ length: 10000 }, (_, i) => i % 100)).length).toBe(100));`,
+            solution: R`function unique(arr) {
+  const seen = {};
+  const out = [];
+  for (const x of arr) {
+    if (seen[x]) continue;
+    seen[x] = true;
+    out.push(x);
+  }
+  return out;
+}`
+          }
+        },
+        {
+          cmd: "تمرين secondLargest",
+          title: "تمرين ١٥: تاني أكبر رقم في لفة واحدة (secondLargest)",
+          desc: R`اكتب [[secondLargest(arr)]] ترجّع تاني أكبر رقم «مختلف» في لفة واحدة، من غير sort: [[secondLargest([5, 9, 9, 7])]] ← 7 (مش 9)، ولو مفيش ([[[5]]] أو [[[2, 2]]]) ترجّع undefined.
+
+زي maxOf بس بتمسك رقمين: [[first]] و [[second]]. والحالات تلاتة: رقم أكبر من first (first ينزل second)، أو رقم بين الاتنين (يبقى second)، أو رقم = first (يتجاهل). المثال بيمسك أقل رقمين بنفس الطريقة.`,
+          example: R`const prices = [40, 15, 90, 15, 30];
+let low = Infinity, low2 = Infinity;
+for (const p of prices) {
+  if (p < low) {
+    low2 = low;
+    low = p;
+  } else if (p > low && p < low2) {
+    low2 = p;
+  }
+}
+console.log(low, low2); // 15 30`,
+          try: R`اكتب [[secondLargest(arr)]] بمتغيرين و loop واحدة. جرّب في دماغك [[[5, 9, 9, 7]]] خطوة خطوة قبل ما تشغّل. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
+          flag: "script",
+          deep: {
+            why: R`سؤال انترفيو كلاسيكي لأنه بيختبر إنك تمسك حالتين وتحدّثهم بالترتيب الصح، وإنك تفكر في الأطراف (تكرار، عنصر واحد، كلهم زي بعض) قبل ما حد يسألك عليها.`,
+            how: R`ابدأ الاتنين بـ [[-Infinity]]. لو [[x > first]]: [[second = first]] الأول وبعدين [[first = x]] (لو عكست الترتيب هتضيع القيمة القديمة). ولو [[x < first && x > second]]: [[second = x]]. الرقم اللي = first مش بيدخل أي فرع. وفي الآخر لو second لسه [[-Infinity]] ارجع undefined.`,
+            when: R`أي «أحسن k» بـ k صغير (اتنين أو تلاتة) لفة واحدة أحسن من sort ([[O(n)]] مقابل [[O(n log n)]]). لو k كبير، الحل heap (تاب DSA المستوى ٣).`,
+            mistakes: R`تنسى تنزّل first القديمة لـ second فـ [[[1, 2]]] ترجع undefined. و [[x >= first]] فالتكرار يبقى تاني أكبر ([[[5, 9, 9, 7]]] ← 9). و sort وترجّع [[arr[1]]] فالتكرار يبوّظك وكمان بتعدّل الأصل. وتقرر ترجّع إيه لـ [[[5]]] وقولها بصوت عالي في الانترفيو.`
+          },
+          lines: [
+            R`أسعار، والأقل متكرر.`,
+            R`الاتنين بيبدأوا بـ Infinity عشان أي سعر يبقى أقل.`,
+            R`كل سعر.`,
+            R`أقل من الأقل؟`,
+            R`الأقل القديم ينزل تاني.`,
+            R`والجديد يبقى الأقل.`,
+            R`بين الاتنين (ومش زي الأقل)؟`,
+            R`يبقى هو التاني.`,
+            R`قفلة الـ if.`,
+            R`قفلة الـ loop.`,
+            R`بيطبع 15 30: التكرار اتجاهل.`
+          ],
+          sol: R`[[secondLargest([5, 9, 9, 7])]] ← 7، و [[secondLargest([1, 2, 3, 4, 5])]] ← 4، و [[secondLargest([10, 5, 10])]] ← 5، و [[secondLargest([-1, -5])]] ← -5، و [[secondLargest([5])]] و [[secondLargest([2, 2, 2])]] ← undefined.
+
+لو [[[5, 9, 9, 7]]] طلعت 9، شرطك [[>=]] أو ناسي [[x < first]] في الفرع التاني. ولو [[[1, 2]]] طلعت undefined، مش بتنزّل first القديمة لـ second.`,
+          solCode: R`function secondLargest(arr) {
   let first = -Infinity, second = -Infinity;
   for (const x of arr) {
     if (x > first) {
@@ -864,10 +1724,33 @@ function secondLargest(arr) {
   }
   return second === -Infinity ? undefined : second;
 }
-console.log(isPalindrome("level"), isPalindrome("abca"), isPalindrome("Race car"));
-console.log(fibonacci(10).join(" "), sumDigits(4096));
-console.log(charCount("banana"), unique([3, 1, 3, 2, 1]));
-console.log(secondLargest([5, 9, 9, 7]), secondLargest([5]));`
+console.log(secondLargest([5, 9, 9, 7]), secondLargest([5])); // 7 undefined`,
+          check: {
+            lang: "js",
+            starter: R`function secondLargest(arr) {
+  let first = -Infinity, second = -Infinity;
+  // ...
+  return second;
+}`,
+            tests: R`test("[5, 9, 9, 7] ← 7: التكرار مش تاني أكبر", () => expect(secondLargest([5, 9, 9, 7])).toBe(7));
+test("[1, 2, 3, 4, 5] ← 4", () => expect(secondLargest([1, 2, 3, 4, 5])).toBe(4));
+test("الأكبر جه الأول: [10, 5, 10] ← 5", () => expect(secondLargest([10, 5, 10])).toBe(5));
+test("first القديمة بتنزل second: [1, 2] ← 1", () => expect(secondLargest([1, 2])).toBe(1));
+test("سالب: [-1, -5] ← -5", () => expect(secondLargest([-1, -5])).toBe(-5));
+test("مفيش تاني: [5] و [2, 2, 2] و [] ← undefined (مش -Infinity)", () => expect([secondLargest([5]), secondLargest([2, 2, 2]), secondLargest([])]).toEqual([undefined, undefined, undefined]));`,
+            solution: R`function secondLargest(arr) {
+  let first = -Infinity, second = -Infinity;
+  for (const x of arr) {
+    if (x > first) {
+      second = first;
+      first = x;
+    } else if (x < first && x > second) {
+      second = x;
+    }
+  }
+  return second === -Infinity ? undefined : second;
+}`
+          }
         }
       ]
     },
@@ -947,7 +1830,7 @@ typeof function () {}  // "function"
 typeof notDeclared     // "undefined" من غير ReferenceError
 Array.isArray([])      // true
 new Date() instanceof Date  // true`,
-          try: R`افتح Console في المتصفح (F12) وجرّب كل سطر. وبعدين اكتب دالة [[getType(v)]] بترجّع [["null"]] و [["array"]] صح وباقي الأنواع من typeof.`,
+          try: R`افتح Console في المتصفح (F12) وجرّب كل سطر. وبعدين اكتب دالة [[getType(v)]] بترجّع [["null"]] و [["array"]] صح وباقي الأنواع من typeof. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           flag: "console",
           deep: {
             why: "JS مبيفحصش الأنواع قبل التشغيل، فساعات لازم تفحص بنفسك: الباراميتر ده string ولا array؟ القيمة دي جت من API ولا undefined؟ وأسئلة typeof من أشهر أسئلة «اتوقع الناتج» في الانترفيو.",
@@ -982,7 +1865,23 @@ new Date() instanceof Date  // true`,
   if (Array.isArray(v)) return "array";
   return typeof v;
 }
-console.log([null, [], {}, "x", 1, undefined, () => 1, new Date()].map(getType));`
+console.log([null, [], {}, "x", 1, undefined, () => 1, new Date()].map(getType));`,
+          check: {
+            lang: "js",
+            starter: R`function getType(v) {
+  return typeof v;
+}`,
+            tests: R`test("getType(null) ← 'null' (typeof null = 'object')", () => expect(getType(null)).toBe("null"));
+test("getType([]) ← 'array'", () => expect(getType([1, 2])).toBe("array"));
+test("getType({}) ← 'object'", () => expect(getType({})).toBe("object"));
+test("الباقي زي typeof", () => expect(["x", 1, undefined, () => 1, true, 10n].map(getType)).toEqual(["string", "number", "undefined", "function", "boolean", "bigint"]));
+test("الـ Date بتفضل 'object'", () => expect(getType(new Date())).toBe("object"));`,
+            solution: R`function getType(v) {
+  if (v === null) return "null";
+  if (Array.isArray(v)) return "array";
+  return typeof v;
+}`
+          }
         },
         {
           cmd: "== و ===",
@@ -1053,7 +1952,7 @@ const items = [];
 if (items) console.log("[] truthy دايمًا");
 if (items.length) console.log("فيه عناصر");
 const isLoggedIn = !!"token";    // true`,
-          try: R`اكتب دالة [[pageSize(n)]] بترجّع 20 لو n مش متبعت، وجرّبها بـ [[pageSize(0)]]: لازم ترجّع 0 مش 20. جرّبها بـ [[||]] وبعدين بـ [[??]].`,
+          try: R`اكتب دالة [[pageSize(n)]] بترجّع 20 لو n مش متبعت، وجرّبها بـ [[pageSize(0)]]: لازم ترجّع 0 مش 20. جرّبها بـ [[||]] وبعدين بـ [[??]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[pageSize]].`,
           flag: "script",
           deep: {
             why: "الكود الحقيقي مليان [[if (user)]] و [[name || \"Guest\"]] و [[{count && <Badge />}]]. لو مش حافظ القايمة، هتقع في bugs زي إن الصفحة رقم 0 بتتحوّل 1، أو React بيعرض 0 على الشاشة.",
@@ -1088,7 +1987,16 @@ const pageSize = (n) => n ?? 20;
 console.log(pageSizeOr(0));   // 20: غلط
 console.log(pageSize(0));     // 0
 console.log(pageSize());      // 20
-console.log(pageSize(null));  // 20`
+console.log(pageSize(null));  // 20`,
+          check: {
+            lang: "js",
+            starter: R`const pageSize = (n) => n || 20;`,
+            tests: R`test("pageSize(0) ← 0 مش 20 (|| بتعدّي الـ 0)", () => expect(pageSize(0)).toBe(0));
+test("pageSize() ← 20", () => expect(pageSize()).toBe(20));
+test("pageSize(null) ← 20 (القيمة جاية من API)", () => expect(pageSize(null)).toBe(20));
+test("pageSize(50) ← 50", () => expect(pageSize(50)).toBe(50));`,
+            solution: R`const pageSize = (n) => n ?? 20;`
+          }
         },
         {
           cmd: "number و NaN",
@@ -1272,7 +2180,7 @@ clean.replaceAll(".", "_")                  // "sara@example_com"
 clean.at(-1)                                // "m"
 "a,b,,c".split(",").filter(Boolean)         // ["a", "b", "c"]
 [..."مرحبا"].reverse().join("")             // اقلب نص`,
-          try: R`اكتب دالة [[slugify(title)]] تحوّل [["  Hello World JS  "]] لـ [["hello-world-js"]] بـ trim و toLowerCase و split و join. وبعدين جرّب [[slugify("كورس جافاسكريبت")]].`,
+          try: R`اكتب دالة [[slugify(title)]] تحوّل [["  Hello World JS  "]] لـ [["hello-world-js"]] بـ trim و toLowerCase و split و join. وبعدين جرّب [[slugify("كورس جافاسكريبت")]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[slugify]] كمان على نص فيه مسافتين ورا بعض.`,
           flag: "console",
           deep: {
             why: "تنضيف inputs (إيميل فيه مسافات أو حروف كبيرة)، وتقطيع URLs، وعمل slugs، وتنسيق أرقام الفواتير: كله string methods. ومعرفتها بتوفّر عليك regex في أغلب الحالات.",
@@ -1306,7 +2214,18 @@ clean.at(-1)                                // "m"
           solCode: R`const slugify = (title) => title.trim().toLowerCase().split(/\s+/).join("-");
 console.log(slugify("  Hello World JS  ")); // "hello-world-js"
 console.log(slugify("كورس جافاسكريبت"));    // "كورس-جافاسكريبت"
-console.log(slugify("Hello  World"));       // "hello-world"`
+console.log(slugify("Hello  World"));       // "hello-world"`,
+          check: {
+            lang: "js",
+            starter: R`function slugify(title) {
+  return title.toLowerCase();
+}`,
+            tests: R`test("'  Hello World JS  ' ← 'hello-world-js'", () => expect(slugify("  Hello World JS  ")).toBe("hello-world-js"));
+test("عربي: 'كورس جافاسكريبت' ← 'كورس-جافاسكريبت'", () => expect(slugify("كورس جافاسكريبت")).toBe("كورس-جافاسكريبت"));
+test("مسافتين ورا بعض ← شرطة واحدة: 'Hello  World' ← 'hello-world'", () => expect(slugify("Hello  World")).toBe("hello-world"));
+test("من غير trim هتطلع شرطة في الأول والآخر", () => expect(slugify(" JS ")).toBe("js"));`,
+            solution: R`const slugify = (title) => title.trim().toLowerCase().split(/\s+/).join("-");`
+          }
         }
       ]
     },
@@ -1688,7 +2607,7 @@ const unique = [...new Set([1, 1, 2, 3, 3])]; // [1, 2, 3]
 const withNew = [...merged, 6];            // إضافة من غير push
 const rows = [[1, 2], [3, 4]];
 rows.flat();                               // [1, 2, 3, 4]`,
-          try: R`اكتب دالة [[removeAt(arr, i)]] بترجّع array جديدة من غير العنصر رقم i، بـ spread و slice (من غير splice). وبعدين اعملها بـ [[toSpliced]].`,
+          try: R`اكتب دالة [[removeAt(arr, i)]] بترجّع array جديدة من غير العنصر رقم i، بـ spread و slice (من غير splice). وبعدين اعملها بـ [[toSpliced]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[removeAt]] (النسخة بتاعة spread و slice).`,
           flag: "script",
           deep: {
             why: R`destructuring بيخلّي الكود أقصر وأوضح من [[arr[0]]] و [[arr[1]]]، وهو أساس الـ hooks في React. والـ spread هو الطريقة المعتادة تضيف أو تشيل من array من غير ما تعدّل الأصل.`,
@@ -1723,7 +2642,21 @@ rows.flat();                               // [1, 2, 3, 4]`,
 const letters = ["a", "b", "c", "d"];
 console.log(removeAt(letters, 1));     // ["a", "c", "d"]
 console.log(letters.toSpliced(1, 1));  // ["a", "c", "d"]
-console.log(letters);                  // ["a", "b", "c", "d"]: الأصل زي ما هو`
+console.log(letters);                  // ["a", "b", "c", "d"]: الأصل زي ما هو`,
+          check: {
+            lang: "js",
+            starter: R`const removeAt = (arr, i) => arr;`,
+            tests: R`test("removeAt(['a', 'b', 'c', 'd'], 1) ← ['a', 'c', 'd']", () => expect(removeAt(["a", "b", "c", "d"], 1)).toEqual(["a", "c", "d"]));
+test("الأصل زي ما هو", () => {
+  const letters = ["a", "b", "c"];
+  removeAt(letters, 0);
+  expect(letters).toEqual(["a", "b", "c"]);
+});
+test("بترجّع array جديدة مش نفس الـ reference", () => { const a = [1, 2]; expect(removeAt(a, 5) === a).toBe(false); });
+test("أول عنصر وآخر عنصر", () => expect([removeAt([1, 2, 3], 0), removeAt([1, 2, 3], 2)]).toEqual([[2, 3], [1, 2]]));
+test("index برا الحدود ← نسخة زي ما هي", () => expect(removeAt([1, 2, 3], 7)).toEqual([1, 2, 3]));`,
+            solution: R`const removeAt = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)];`
+          }
         }
       ]
     },
@@ -1979,7 +2912,7 @@ const a = new Set([1, 2, 3]), b = new Set([2, 3, 4]);
 a.intersection(b);               // Set {2, 3}
 a.union(b);                      // Set {1, 2, 3, 4}
 a.difference(b);                 // Set {1}`,
-          try: R`اكتب دالة [[countWords(text)]] بترجّع Map فيها كل كلمة وعدد مرات ظهورها. وبعدين حوّل الناتج لـ object بـ [[Object.fromEntries]] واطبعه.`,
+          try: R`اكتب دالة [[countWords(text)]] بترجّع Map فيها كل كلمة وعدد مرات ظهورها. وبعدين حوّل الناتج لـ object بـ [[Object.fromEntries]] واطبعه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[countWords]] بترجّع Map، وبتتجاهل الحروف الكبيرة والمسافات الزيادة.`,
           flag: "script",
           deep: {
             why: "مسائل كتير (في الشغل وفي الانترفيو) بتبقى «اتأكد إن ده مكررش» أو «عدّ كل حاجة ظهرت كام مرة» أو «هات العنصر بالـ id بسرعة». Set و Map بيحوّلوا حلول O(n²) لـ O(n) (تاب DSA).",
@@ -2021,7 +2954,27 @@ Map أحسن من object كـ dictionary لما: المفاتيح مش strings،
 }
 const counts = countWords("js is fun and JS is fast");
 console.log(counts);
-console.log(Object.fromEntries(counts)); // { js: 2, is: 2, fun: 1, and: 1, fast: 1 }`
+console.log(Object.fromEntries(counts)); // { js: 2, is: 2, fun: 1, and: 1, fast: 1 }`,
+          check: {
+            lang: "js",
+            starter: R`function countWords(text) {
+  const counts = new Map();
+  // ...
+  return counts;
+}`,
+            tests: R`test("بترجّع Map", () => expect(countWords("a b") instanceof Map).toBe(true));
+test("'js is fun and JS is fast' ← { js: 2, is: 2, fun: 1, and: 1, fast: 1 }", () => expect(Object.fromEntries(countWords("js is fun and JS is fast"))).toEqual({ js: 2, is: 2, fun: 1, and: 1, fast: 1 }));
+test("مسافات زيادة مش كلمات: '  a   b a ' ← { a: 2, b: 1 }", () => expect(Object.fromEntries(countWords("  a   b a "))).toEqual({ a: 2, b: 1 }));
+test("نص فاضي ← Map فاضية", () => expect(countWords("").size).toBe(0));
+test("مفيش NaN: (m.get(w) ?? 0) + 1", () => expect([...countWords("x x x").values()]).toEqual([3]));`,
+            solution: R`function countWords(text) {
+  const counts = new Map();
+  for (const word of text.toLowerCase().split(/\s+/).filter(Boolean)) {
+    counts.set(word, (counts.get(word) ?? 0) + 1);
+  }
+  return counts;
+}`
+          }
         },
         {
           cmd: "JSON",
@@ -2678,7 +3631,7 @@ c1.increment();          // 2
 c2.increment();          // 11: كل counter ليه count بتاعه
 console.log(c1.count);   // undefined: مفيش طريقة توصله غير من الدوال
 console.log(c1.get());   // 2`,
-          try: R`اكتب [[once(fn)]] بترجّع دالة بتنادي fn أول مرة بس، وبعد كده بترجّع نفس الناتج الأول. هتحتاج متغيرين في الـ closure: [[called]] و [[result]].`,
+          try: R`اكتب [[once(fn)]] بترجّع دالة بتنادي fn أول مرة بس، وبعد كده بترجّع نفس الناتج الأول. هتحتاج متغيرين في الـ closure: [[called]] و [[result]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           flag: "script",
           deep: {
             why: "ده السؤال رقم واحد في انترفيوهات JS. وهو اللي بيفسّر ليه الـ callbacks بتشتغل، وليه React hooks بتقرا قيم «قديمة» ساعات (stale closure)، وإزاي تعمل private state من غير classes.",
@@ -2724,7 +3677,49 @@ console.log(c1.get());   // 2`,
 }
 let runs = 0;
 const init = once((x) => { runs++; return x * 2; });
-console.log(init(5), init(100), runs); // 10 10 1`
+console.log(init(5), init(100), runs); // 10 10 1`,
+          check: {
+            lang: "js",
+            starter: R`function once(fn) {
+  // called و result هنا، برّا الدالة اللي هترجّعها
+  return fn;
+}`,
+            tests: R`test("init(5) ← 10 وبعدين init(100) ← 10 برضه", () => {
+  const init = once((x) => x * 2);
+  expect([init(5), init(100)]).toEqual([10, 10]);
+});
+test("الدالة الأصلية بتتنادي مرة واحدة بس", () => {
+  let runs = 0;
+  const f = once(() => runs++);
+  f(); f(); f();
+  expect(runs).toBe(1);
+});
+test("لو fn رجّعت 0 أو undefined متتناديش تاني (افحص called مش result)", () => {
+  let runs = 0;
+  const f = once(() => { runs++; return 0; });
+  f(); f();
+  expect([runs, f()]).toEqual([1, 0]);
+});
+test("كل once ليها closure لوحدها", () => {
+  const a = once(() => "a"), b = once(() => "b");
+  expect([a(), b()]).toEqual(["a", "b"]);
+});
+test("بتعدّي الـ arguments و this", () => {
+  const obj = { n: 3, get: once(function (x) { return this.n + x; }) };
+  expect(obj.get(4)).toBe(7);
+});`,
+            solution: R`function once(fn) {
+  let called = false;
+  let result;
+  return function (...args) {
+    if (!called) {
+      called = true;
+      result = fn.apply(this, args);
+    }
+    return result;
+  };
+}`
+          }
         },
         {
           cmd: "closures في loop",
@@ -2933,7 +3928,7 @@ saraIntro("?");                       // "Hello, I'm Sara?"
 saraIntro.call({ name: "Ali" }, "!"); // "Hello, I'm Sara!": bind مبيتغيرش
 const btn = { label: "Save", click() { console.log(this.label); } };
 setTimeout(btn.click.bind(btn), 0);   // "Save"`,
-          try: R`اكتب [[myBind(fn, ctx, ...args)]] بإيدك: بترجّع دالة بتنادي [[fn.apply(ctx, [...args, ...newArgs])]]. ده سؤال انترفيو مشهور (المستوى ٣ فيه نسخة كاملة).`,
+          try: R`اكتب [[myBind(fn, ctx, ...args)]] بإيدك: بترجّع دالة بتنادي [[fn.apply(ctx, [...args, ...newArgs])]]. ده سؤال انترفيو مشهور (المستوى ٣ فيه نسخة كاملة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر».`,
           flag: "script",
           deep: {
             why: "بتحتاجهم لما تبعت method كـ callback (bind)، أو تستعير method من object لـ object تاني (call). و bind بالذات بيحل مشكلة this الضايعة في setTimeout و addEventListener.",
@@ -2973,7 +3968,28 @@ function intro(greeting, punct) {
 }
 const saraIntro = myBind(intro, { name: "Sara" }, "Hi");
 console.log(saraIntro("!"));                    // "Hi, I'm Sara!"
-console.log(saraIntro.call({ name: "Ali" }, "?")); // "Hi, I'm Sara?"`
+console.log(saraIntro.call({ name: "Ali" }, "?")); // "Hi, I'm Sara?"`,
+          check: {
+            lang: "js",
+            starter: R`function myBind(fn, ctx, ...args) {
+  // رجّع دالة، متنفّذش fn دلوقتي
+}`,
+            tests: R`function intro(greeting, punct) { return greeting + ", I'm " + this.name + punct; }
+test("myBind(intro, sara, 'Hi')('!') ← \"Hi, I'm Sara!\"", () => expect(myBind(intro, { name: "Sara" }, "Hi")("!")).toBe("Hi, I'm Sara!"));
+test("بترجّع دالة ومش بتنادي fn وقت الـ bind", () => {
+  let calls = 0;
+  const b = myBind(() => calls++, null);
+  expect([typeof b, calls]).toEqual(["function", 0]);
+});
+test("الـ args بتاعة الـ bind الأول وبعدها بتاعة النداء", () => expect(myBind((...a) => a.join(""), null, "a", "b")("c", "d")).toBe("abcd"));
+test("this متتغيرش بـ call بعد الـ bind", () => expect(myBind(intro, { name: "Sara" }, "Hi").call({ name: "Ali" }, "?")).toBe("Hi, I'm Sara?"));
+test("بترجّع ناتج fn", () => expect(myBind(function () { return this.x * 2; }, { x: 21 })()).toBe(42));`,
+            solution: R`function myBind(fn, ctx, ...args) {
+  return function (...newArgs) {
+    return fn.apply(ctx, [...args, ...newArgs]);
+  };
+}`
+          }
         }
       ]
     },
@@ -3066,7 +4082,7 @@ acc.balance;          // 150
 acc.balance = 1e6;    // مفيش setter: بيتجاهل (وفي strict TypeError)
 BankAccount.count;    // 1
 typeof BankAccount;   // "function"`,
-          try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا.`,
+          try: R`ضيف [[withdraw(amount)]] بترمي error لو الرصيد مش كفاية. وبعدين جرّب تكتب [[acc.#balance]] برا الكلاس: هتلاقي SyntaxError قبل ما الملف يشتغل أصلًا. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس جاهز في المربع، ضيف [[withdraw]].`,
           flag: "script",
           deep: {
             why: R`الـ classes في كل حتة: Error مخصص، و services في الباك، و SDKs زي [[new PrismaClient()]] و [[new Stripe()]]، و Web Components. ومع private fields بقى عندك encapsulation حقيقي، مش underscore بالاتفاق.`,
@@ -3130,7 +4146,56 @@ typeof BankAccount;   // "function"`,
 const acc = new BankAccount("Sara");
 acc.deposit(100).deposit(50).withdraw(30);
 console.log(acc.balance); // 120
-try { acc.withdraw(500); } catch (e) { console.log(e.message); }`
+try { acc.withdraw(500); } catch (e) { console.log(e.message); }`,
+          check: {
+            lang: "js",
+            starter: R`class BankAccount {
+  #balance = 0;
+  constructor(owner) { this.owner = owner; }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+  withdraw(amount) {
+    // موجب، ومش أكبر من الرصيد، و return this
+  }
+  get balance() { return this.#balance; }
+}`,
+            tests: R`test("deposit(100).deposit(50).withdraw(30) ← balance 120", () => expect(new BankAccount("Sara").deposit(100).deposit(50).withdraw(30).balance).toBe(120));
+test("withdraw أكبر من الرصيد بترمي error", () => expect(() => new BankAccount("Ali").deposit(100).withdraw(500)).toThrow());
+test("المبلغ السالب أو الصفر بيترمي", () => {
+  const acc = new BankAccount("Ali").deposit(100);
+  expect(() => acc.withdraw(-5)).toThrow();
+  expect(() => acc.withdraw(0)).toThrow();
+});
+test("السحب الفاشل ميغيّرش الرصيد", () => {
+  const acc = new BankAccount("Mona").deposit(100);
+  try { acc.withdraw(500); } catch {}
+  expect(acc.balance).toBe(100);
+});
+test("withdraw بترجّع this عشان الـ chaining", () => {
+  const acc = new BankAccount("Omar").deposit(50);
+  expect(acc.withdraw(10) === acc).toBe(true);
+});
+test("تسحب الرصيد كله بالظبط ← 0", () => expect(new BankAccount("Nour").deposit(70).withdraw(70).balance).toBe(0));`,
+            solution: R`class BankAccount {
+  #balance = 0;
+  constructor(owner) { this.owner = owner; }
+  deposit(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    this.#balance += amount;
+    return this;
+  }
+  withdraw(amount) {
+    if (amount <= 0) throw new RangeError("المبلغ لازم يبقى موجب");
+    if (amount > this.#balance) throw new Error($__btالرصيد مش كفاية: معاك $__{this.#balance} وعايز تسحب $__{amount}$__bt);
+    this.#balance -= amount;
+    return this;
+  }
+  get balance() { return this.#balance; }
+}`
+          }
         },
         {
           cmd: "extends و super",
@@ -3848,7 +4913,7 @@ const a = new Date("2026-09-29T10:00:00Z");
 const b = new Date(a);
 b.setDate(b.getDate() + 3);
 console.log(a.getDate(), b.getDate(), b - a);`,
-          try: R`شغّل الملف مرتين: [[TZ=Africa/Cairo node dates.js]] و [[TZ=America/New_York node dates.js]] (على Windows استخدم WSL أو Git Bash). أنهي سطور اتغيرت وليه؟ وبعدين اكتب [[addMonths(date, n)]] ترجّع Date جديد ولو اليوم مش موجود في الشهر الجديد تقف على آخر يوم ([[2026-01-31]] + 1 ← [[2026-02-28]]).`,
+          try: R`شغّل الملف مرتين: [[TZ=Africa/Cairo node dates.js]] و [[TZ=America/New_York node dates.js]] (على Windows استخدم WSL أو Git Bash). أنهي سطور اتغيرت وليه؟ وبعدين اكتب [[addMonths(date, n)]] ترجّع Date جديد ولو اليوم مش موجود في الشهر الجديد تقف على آخر يوم ([[2026-01-31]] + 1 ← [[2026-02-28]]). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[addMonths]].`,
           flag: "script",
           deep: {
             why: "كل مشروع فيه تواريخ: created_at، وطلبات النهارده، ومواعيد الحجز، وانتهاء الاشتراك. وأخطاء التواريخ خبيثة: الكود بيشتغل تمام على جهازك وعلى السيرفر بيطلع يوم قبله، أو بيبوظ مرتين في السنة بس (التوقيت الصيفي).",
@@ -3888,7 +4953,35 @@ console.log(a.getDate(), b.getDate(), b - a);`,
 }
 const jan31 = new Date(2026, 0, 31);
 console.log(addMonths(jan31, 1).toDateString(), jan31.toDateString());
-console.log(addMonths(new Date(2028, 0, 31), 1).toDateString(), addMonths(jan31, 12).toDateString());`
+console.log(addMonths(new Date(2028, 0, 31), 1).toDateString(), addMonths(jan31, 12).toDateString());`,
+          check: {
+            lang: "js",
+            starter: R`function addMonths(date, n) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + n);
+  return d;
+}`,
+            tests: R`const ymd = d => [d.getFullYear(), d.getMonth() + 1, d.getDate()];
+test("31 يناير 2026 + شهر ← 28 فبراير (مش 3 مارس)", () => expect(ymd(addMonths(new Date(2026, 0, 31), 1))).toEqual([2026, 2, 28]));
+test("2028 كبيسة ← 29 فبراير", () => expect(ymd(addMonths(new Date(2028, 0, 31), 1))).toEqual([2028, 2, 29]));
+test("15 مارس + شهر ← 15 أبريل (اليوم العادي زي ما هو)", () => expect(ymd(addMonths(new Date(2026, 2, 15), 1))).toEqual([2026, 4, 15]));
+test("بتعدّي السنة: 30 نوفمبر 2026 + 3 ← 28 فبراير 2027", () => expect(ymd(addMonths(new Date(2026, 10, 30), 3))).toEqual([2027, 2, 28]));
+test("n سالب: 31 مارس - 1 ← 28 فبراير", () => expect(ymd(addMonths(new Date(2026, 2, 31), -1))).toEqual([2026, 2, 28]));
+test("الأصل ميتغيرش", () => {
+  const jan31 = new Date(2026, 0, 31);
+  addMonths(jan31, 1);
+  expect(ymd(jan31)).toEqual([2026, 1, 31]);
+});`,
+            solution: R`function addMonths(date, n) {
+  const d = new Date(date);
+  const day = d.getDate();
+  d.setDate(1);
+  d.setMonth(d.getMonth() + n);
+  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(day, lastDay));
+  return d;
+}`
+          }
         },
         {
           cmd: "UTC و Intl.DateTimeFormat",
@@ -4151,7 +5244,7 @@ console.log(sticky.exec("abc 42")?.[0], /\d+/y.exec("abc 42"));
 console.log("😀".length, /^.$/.test("😀"), /^.$/u.test("😀"));
 console.log(/[\p{L}--\p{Ll}]/v.test("A"), /[\p{L}--\p{Ll}]/v.test("a"), /[\p{L}--\p{Ll}]/v.test("ع"));
 console.log("price: 100 EGP".match(/\d+(?= EGP)/)[0], "$50 €30".match(/(?<=€)\d+/)[0]);`,
-          try: R`اكتب regex بـ named groups يفك [["Sara Ahmed <sara@example.com>"]] لـ [[name]] و [[email]]. وبعدين اعمل bug الـ [[g]] بإيدك: [[const re = /\d/g]] وفلتر [[["1", "2", "3"].filter((s) => re.test(s))]]. الناتج المتوقع كل الـ ٣، طلع كام؟ وليه؟`,
+          try: R`اكتب regex بـ named groups يفك [["Sara Ahmed <sara@example.com>"]] لـ [[name]] و [[email]]. وبعدين اعمل bug الـ [[g]] بإيدك: [[const re = /\d/g]] وفلتر [[["1", "2", "3"].filter((s) => re.test(s))]]. الناتج المتوقع كل الـ ٣، طلع كام؟ وليه؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[parseContact(str)]] بترجّع [[{ name, email }]] من الـ named groups، أو null لو النص مش بالشكل ده.`,
           flag: "script",
           deep: {
             why: "التحقق بـ test بيقولك «الشكل صح» بس. أغلب الشغل الحقيقي «هات لي الجزء ده»: السنة من تاريخ، والـ status من سطر log، والإيميل من نص. والـ groups هي اللي بتعمل كده، والـ named groups بتخلي الكود يتقري بعد ٦ شهور.",
@@ -4190,7 +5283,23 @@ console.log("Sara Ahmed <sara@example.com>".match(contact).groups);
 const withG = /\d/g;
 console.log(["1", "2", "3"].filter((s) => withG.test(s)));
 const noG = /\d/;
-console.log(["1", "2", "3"].filter((s) => noG.test(s)));`
+console.log(["1", "2", "3"].filter((s) => noG.test(s)));`,
+          check: {
+            lang: "js",
+            starter: R`function parseContact(str) {
+  const m = str.match(/(.+) <(.+)>/);
+  return m ? { name: m[1], email: m[2] } : null;
+}`,
+            tests: R`test("'Sara Ahmed <sara@example.com>'", () => expect(parseContact("Sara Ahmed <sara@example.com>")).toEqual({ name: "Sara Ahmed", email: "sara@example.com" }));
+test("الاسم ميبلعش المسافة: 'Ali   <ali@x.io>' ← name 'Ali'", () => expect(parseContact("Ali   <ali@x.io>")).toEqual({ name: "Ali", email: "ali@x.io" }));
+test("من غير مسافة: 'Mona<m@x.io>'", () => expect(parseContact("Mona<m@x.io>")).toEqual({ name: "Mona", email: "m@x.io" }));
+test("من غير <> ← null", () => expect(parseContact("sara@example.com")).toBe(null));
+test("كلام بعد الـ > ← null (^ و $)", () => expect(parseContact("Sara <s@x.io> extra")).toBe(null));`,
+            solution: R`function parseContact(str) {
+  const m = str.match(/^(?<name>.+?)\s*<(?<email>[^>]+)>$/);
+  return m ? { name: m.groups.name, email: m.groups.email } : null;
+}`
+          }
         },
         {
           cmd: "test و match و matchAll و replace",
@@ -4214,7 +5323,7 @@ console.log("a.b.c".replaceAll(".", "/"), "a-b_c  d".split(/[-_\s]+/));
 const userInput = "1+1";
 const safe = userInput.replace(/[.*+?^$__{}()|[\]\\]/g, "\\$&");
 console.log(safe, new RegExp(safe).test("1+1=2"));`,
-          try: R`اكتب [[slugify(title)]]: [["  Hello, World! JS 2026  "]] ← [["hello-world-js-2026"]] (حروف صغيرة، وأي حاجة مش حرف أو رقم تبقى شرطة، ومفيش شرطات مكررة ولا في الأطراف). وبعدين اكتب [[maskPhone]] بـ replace ودالة: [["01012345678"]] ← [["010*****678"]]. وبعدين من الـ log اللي فوق اطبع متوسط الـ ms لكل الطلبات.`,
+          try: R`اكتب [[slugify(title)]]: [["  Hello, World! JS 2026  "]] ← [["hello-world-js-2026"]] (حروف صغيرة، وأي حاجة مش حرف أو رقم تبقى شرطة، ومفيش شرطات مكررة ولا في الأطراف). وبعدين اكتب [[maskPhone]] بـ replace ودالة: [["01012345678"]] ← [["010*****678"]]. وبعدين من الـ log اللي فوق اطبع متوسط الـ ms لكل الطلبات. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[slugify]] و [[maskPhone]] و [[avgMs(log)]] (متوسط الـ ms من الـ log).`,
           flag: "script",
           deep: {
             why: "ده الاستخدام اليومي: تقطّع logs، وتعمل slug، وتخفي بيانات حساسة قبل ما تطبعها (masking)، وتعيد ترتيب تاريخ، وتنظّف input. ومعرفة أنهي method ترجّع إيه بتوفّر عليك «undefined is not iterable» كتير.",
@@ -4255,7 +5364,29 @@ const maskPhone = (p) => p.replace(/^(\d{3})(\d+)(\d{3})$/, (_, a, mid, c) => a 
 console.log(maskPhone("01012345678"));
 const log = "GET /api/users 200 12ms\nPOST /api/login 401 8ms\nGET /api/orders 500 230ms";
 const times = [...log.matchAll(/(?<ms>\d+)ms$/gm)].map((m) => Number(m.groups.ms));
-console.log(times, (times.reduce((a, b) => a + b, 0) / times.length).toFixed(2));`
+console.log(times, (times.reduce((a, b) => a + b, 0) / times.length).toFixed(2));`,
+          check: {
+            lang: "js",
+            starter: R`const slugify = (title) => title.toLowerCase().replaceAll(" ", "-");
+const maskPhone = (p) => p;
+function avgMs(log) {
+  // matchAll على /(?<ms>\d+)ms$/gm وحوّل لـ Number قبل الجمع
+}`,
+            tests: R`test("slugify('  Hello, World! JS 2026  ') ← 'hello-world-js-2026'", () => expect(slugify("  Hello, World! JS 2026  ")).toBe("hello-world-js-2026"));
+test("العربي ميتمسحش: 'أول درس في JS' ← 'أول-درس-في-js'", () => expect(slugify("أول درس في JS")).toBe("أول-درس-في-js"));
+test("مفيش شرطات مكررة ولا في الأطراف: '--a  --  b--' ← 'a-b'", () => expect(slugify("--a  --  b--")).toBe("a-b"));
+test("maskPhone('01012345678') ← '010*****678' بنفس الطول", () => expect(maskPhone("01012345678")).toBe("010*****678"));
+test("avgMs للـ log اللي في المثال ← 83.33 تقريبًا (Number مش لزق نصوص)", () => {
+  const log = "GET /api/users 200 12ms\nPOST /api/login 401 8ms\nGET /api/orders 500 230ms";
+  expect(Math.round(avgMs(log) * 100) / 100).toBe(83.33);
+});`,
+            solution: R`const slugify = (title) => title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-+|-+$/g, "");
+const maskPhone = (p) => p.replace(/^(\d{3})(\d+)(\d{3})$/, (_, a, mid, c) => a + "*".repeat(mid.length) + c);
+function avgMs(log) {
+  const times = [...log.matchAll(/(?<ms>\d+)ms$/gm)].map((m) => Number(m.groups.ms));
+  return times.reduce((a, b) => a + b, 0) / times.length;
+}`
+          }
         },
         {
           cmd: "إمتى regex غلط",
@@ -4503,7 +5634,7 @@ const input = document.querySelector("#search");
 const search = debounce((q) => console.log("ابحث عن", q), 300);
 input.addEventListener("input", (e) => search(e.target.value));
 window.addEventListener("scroll", throttle(() => console.log(scrollY), 200), { passive: true });`,
-          try: R`حط counter بيعد مرات تنفيذ الـ callback الأصلي، واكتب كلمة ١٠ حروف بسرعة: من غير debounce ١٠ مرات، ومعاه مرة. وبعدين ضيف لـ debounce method اسمها [[cancel]] بتلغي الـ timer.`,
+          try: R`حط counter بيعد مرات تنفيذ الـ callback الأصلي، واكتب كلمة ١٠ حروف بسرعة: من غير debounce ١٠ مرات، ومعاه مرة. وبعدين ضيف لـ debounce method اسمها [[cancel]] بتلغي الـ timer. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات مش بتستنى وقت حقيقي، بتبعت ساعة وهمية كـ argument تالت [[clock]] فيها [[setTimeout]] و [[clearTimeout]]، فاستخدم [[clock.setTimeout]] و [[clock.clearTimeout]]، وضيف [[cancel]].`,
           flag: "script",
           deep: {
             why: "بحث بيبعت request مع كل حرف = ١٠ requests لكلمة واحدة، والردود ممكن توصل بترتيب غلط. و scroll handler تقيل = scroll بيقطّع. والاتنين من أشهر أسئلة انترفيو الفرونت: «اكتب debounce بإيدك».",
@@ -4562,7 +5693,77 @@ for (let i = 1; i <= word.length; i++) {
   await new Promise((r) => setTimeout(r, 50));
 }
 await new Promise((r) => setTimeout(r, 400));
-console.log({ raw, calls }); // { raw: 10, calls: 1 }`
+console.log({ raw, calls }); // { raw: 10, calls: 1 }`,
+          check: {
+            lang: "js",
+            starter: R`function debounce(fn, ms, clock = globalThis) {
+  let timer;
+  function debounced(...args) {
+    // clock.clearTimeout(timer) وبعدين timer = clock.setTimeout(...)
+  }
+  debounced.cancel = () => {};
+  return debounced;
+}`,
+            tests: R`function fakeClock() {
+  let now = 0, id = 0;
+  const timers = new Map();
+  return {
+    setTimeout(f, ms) { timers.set(++id, { at: now + ms, f }); return id; },
+    clearTimeout(t) { timers.delete(t); },
+    tick(ms) {
+      now += ms;
+      for (const [t, { at, f }] of [...timers].sort((a, b) => a[1].at - b[1].at)) if (at <= now) { timers.delete(t); f(); }
+    }
+  };
+}
+test("10 نداءات ورا بعض ← الـ fn بتتنادي مرة واحدة بآخر قيمة", () => {
+  const clock = fakeClock(), got = [];
+  const search = debounce((q) => got.push(q), 300, clock);
+  const word = "javascript";
+  for (let i = 1; i <= word.length; i++) { search(word.slice(0, i)); clock.tick(50); }
+  clock.tick(300);
+  expect(got).toEqual(["javascript"]);
+});
+test("قبل ما الـ ms تخلص مفيش نداء", () => {
+  const clock = fakeClock();
+  let calls = 0;
+  const f = debounce(() => calls++, 300, clock);
+  f();
+  clock.tick(299);
+  expect(calls).toBe(0);
+  clock.tick(1);
+  expect(calls).toBe(1);
+});
+test("نداءين بينهم أكتر من ms ← مرتين", () => {
+  const clock = fakeClock();
+  let calls = 0;
+  const f = debounce(() => calls++, 100, clock);
+  f(); clock.tick(150); f(); clock.tick(150);
+  expect(calls).toBe(2);
+});
+test("cancel بتلغي النداء اللي مستني", () => {
+  const clock = fakeClock();
+  let calls = 0;
+  const f = debounce(() => calls++, 100, clock);
+  f("x"); f.cancel(); clock.tick(500);
+  expect(calls).toBe(0);
+});
+test("بتعدّي الـ arguments و this", () => {
+  const clock = fakeClock();
+  const obj = { name: "Sara", hi: debounce(function (g) { obj.out = g + " " + this.name; }, 10, clock) };
+  obj.hi("Hi"); clock.tick(10);
+  expect(obj.out).toBe("Hi Sara");
+});`,
+            solution: R`function debounce(fn, ms, clock = globalThis) {
+  let timer;
+  function debounced(...args) {
+    clock.clearTimeout(timer);
+    timer = clock.setTimeout(() => fn.apply(this, args), ms);
+  }
+  debounced.cancel = () => clock.clearTimeout(timer);
+  return debounced;
+}`
+          }
         },
         {
           cmd: "memory leaks",
@@ -4726,7 +5927,7 @@ cart.once("add", () => console.log("أول منتج!"));
 cart.emit("add", "mug");
 unsubscribe();
 cart.emit("add", "cap");`,
-          try: R`ضيف [[listenerCount(event)]]. وبعدين خلي handler يرمي error وشوف الـ handlers اللي بعده بتشتغل ولا لأ، وصلّحها بـ try/catch جوه emit. وقارن بـ [[EventTarget]] المدمج: [[class Cart extends EventTarget]] و [[dispatchEvent(new CustomEvent("add", { detail: "mug" }))]].`,
+          try: R`ضيف [[listenerCount(event)]]. وبعدين خلي handler يرمي error وشوف الـ handlers اللي بعده بتشتغل ولا لأ، وصلّحها بـ try/catch جوه emit. وقارن بـ [[EventTarget]] المدمج: [[class Cart extends EventTarget]] و [[dispatchEvent(new CustomEvent("add", { detail: "mug" }))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس من المثال جاهز في المربع، ضيف [[listenerCount]] و try/catch جوه [[emit]].`,
           flag: "script",
           deep: {
             why: "بيفصل اللي بيحصل عن اللي بيتفاعل معاه: السلة مش لازم تعرف إن فيه badge وإشعار و analytics مستنيين. وده أساس الـ events في المتصفح و Node و WebSockets والـ state management.",
@@ -4787,7 +5988,82 @@ listenerCount(event) {
 class Cart extends EventTarget {}
 const cart = new Cart();
 cart.addEventListener("add", (e) => console.log("اتضاف", e.detail));
-cart.dispatchEvent(new CustomEvent("add", { detail: "mug" }));`
+cart.dispatchEvent(new CustomEvent("add", { detail: "mug" }));`,
+          check: {
+            lang: "js",
+            starter: R`class Emitter {
+  #handlers = new Map();
+  on(event, fn) {
+    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
+    this.#handlers.get(event).add(fn);
+    return () => this.off(event, fn);
+  }
+  off(event, fn) {
+    this.#handlers.get(event)?.delete(fn);
+  }
+  emit(event, ...args) {
+    for (const fn of this.#handlers.get(event) ?? []) fn(...args);
+  }
+  once(event, fn) {
+    const off = this.on(event, (...args) => { off(); fn(...args); });
+    return off;
+  }
+  listenerCount(event) {}
+}`,
+            tests: R`test("listenerCount: 2 وبعد الـ once 1 وبعد unsubscribe 0", () => {
+  const cart = new Emitter(), counts = [];
+  const unsubscribe = cart.on("add", () => {});
+  cart.once("add", () => {});
+  counts.push(cart.listenerCount("add"));
+  cart.emit("add", "mug");
+  counts.push(cart.listenerCount("add"));
+  unsubscribe();
+  counts.push(cart.listenerCount("add"));
+  expect(counts).toEqual([2, 1, 0]);
+});
+test("event محدش سمعه ← 0 مش undefined", () => expect(new Emitter().listenerCount("nope")).toBe(0));
+test("handler بيرمي error: اللي بعده بيشتغل، و emit مبترميش", () => {
+  const e = new Emitter(), got = [];
+  e.on("x", () => { throw new Error("boom"); });
+  e.on("x", (v) => got.push(v));
+  e.emit("x", 42);
+  expect(got).toEqual([42]);
+});
+test("الـ arguments بتوصل للـ handlers", () => {
+  const e = new Emitter();
+  let sum = 0;
+  e.on("add", (a, b) => (sum = a + b));
+  e.emit("add", 2, 3);
+  expect(sum).toBe(5);
+});`,
+            solution: R`class Emitter {
+  #handlers = new Map();
+  on(event, fn) {
+    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
+    this.#handlers.get(event).add(fn);
+    return () => this.off(event, fn);
+  }
+  off(event, fn) {
+    this.#handlers.get(event)?.delete(fn);
+  }
+  emit(event, ...args) {
+    for (const fn of this.#handlers.get(event) ?? []) {
+      try {
+        fn(...args);
+      } catch (err) {
+        console.error($__bthandler لـ "$__{event}" وقع:$__bt, err.message);
+      }
+    }
+  }
+  once(event, fn) {
+    const off = this.on(event, (...args) => { off(); fn(...args); });
+    return off;
+  }
+  listenerCount(event) {
+    return this.#handlers.get(event)?.size ?? 0;
+  }
+}`
+          }
         },
         {
           cmd: "immutability",
@@ -4808,7 +6084,7 @@ const added = [...state.items, { id: 3, qty: 1 }];
 const frozen = Object.freeze({ a: 1, nested: { b: 2 } });
 frozen.a = 99;                   // اتجاهل (TypeError في strict)
 frozen.nested.b = 99;            // اتغير: freeze سطحي`,
-          try: R`اكتب [[updateQty(state, id, qty)]] بترجّع state جديدة، واتأكد بـ === إن الأصل متغيرش وإن اللي متغيرش لسه متشارك. وبعدين اكتب [[deepFreeze(obj)]] بـ recursion.`,
+          try: R`اكتب [[updateQty(state, id, qty)]] بترجّع state جديدة، واتأكد بـ === إن الأصل متغيرش وإن اللي متغيرش لسه متشارك. وبعدين اكتب [[deepFreeze(obj)]] بـ recursion. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[updateQty]] و [[deepFreeze]].`,
           flag: "script",
           deep: {
             why: "الـ bugs اللي سببها «حد عدّل الداتا دي من ورايا» من أصعب الأنواع في التتبّع. والـ immutability بتخلّي التغيير واضح: الـ reference الجديد = فيه تغيير. وده اللي بيخلي React.memo و useMemo و undo/redo و time-travel debugging ممكنين.",
@@ -4856,7 +6132,53 @@ function deepFreeze(obj) {
 const state = { user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] };
 const next = updateQty(state, 1, 5);
 console.log(state.items[0].qty, next.items[0].qty, next.user === state.user, next.items[1] === state.items[1]);
-// 1 5 true true`
+// 1 5 true true`,
+          check: {
+            lang: "js",
+            starter: R`function updateQty(state, id, qty) {
+  const item = state.items.find((it) => it.id === id);
+  item.qty = qty;
+  return state;
+}
+function deepFreeze(obj) {
+  return Object.freeze(obj);
+}`,
+            tests: R`const make = () => ({ user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] });
+test("الأصل ميتغيرش والجديد فيه qty 5", () => {
+  const state = make(), next = updateQty(state, 1, 5);
+  expect([state.items[0].qty, next.items[0].qty]).toEqual([1, 5]);
+});
+test("اللي اتغير بقى object جديد: state و items والعنصر", () => {
+  const state = make(), next = updateQty(state, 1, 5);
+  expect([next === state, next.items === state.items, next.items[0] === state.items[0]]).toEqual([false, false, false]);
+});
+test("اللي متغيرش لسه متشارك: user والعنصر التاني", () => {
+  const state = make(), next = updateQty(state, 1, 5);
+  expect([next.user === state.user, next.items[1] === state.items[1]]).toEqual([true, true]);
+});
+test("deepFreeze بتجمّد اللي جوه كمان", () => {
+  const f = deepFreeze({ a: 1, nested: { b: 2, list: [1] } });
+  expect([Object.isFrozen(f), Object.isFrozen(f.nested), Object.isFrozen(f.nested.list)]).toEqual([true, true, true]);
+});
+test("deepFreeze على object بيشاور على نفسه ميقعش (جمّد الأول وبعدين ادخل)", () => {
+  const a = { x: 1 };
+  a.self = a;
+  expect(Object.isFrozen(deepFreeze(a))).toBe(true);
+});`,
+            solution: R`function updateQty(state, id, qty) {
+  return {
+    ...state,
+    items: state.items.map((it) => (it.id === id ? { ...it, qty } : it)),
+  };
+}
+function deepFreeze(obj) {
+  Object.freeze(obj);
+  for (const value of Object.values(obj)) {
+    if (typeof value === "object" && value !== null && !Object.isFrozen(value)) deepFreeze(value);
+  }
+  return obj;
+}`
+          }
         },
         {
           cmd: "iterators و generators",
@@ -4885,7 +6207,7 @@ async function* pages(url) {
     next = data.nextUrl;
   }
 }`,
-          try: R`اكتب [[function* fibonacci()]] لانهائية، وخد أول ١٠ أرقام بـ [[.take(10).toArray()]]. وبعدين استخدم [[pages]] مع [[for await (const items of pages(url))]].`,
+          try: R`اكتب [[function* fibonacci()]] لانهائية، وخد أول ١٠ أرقام بـ [[.take(10).toArray()]]. وبعدين استخدم [[pages]] مع [[for await (const items of pages(url))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[function* fibonacci()]] بـ [[next()]] مباشرة.`,
           flag: "script",
           deep: {
             why: "بتفسّر إزاي for...of و spread بيشتغلوا على أي حاجة. والـ generators مفيدة للداتا الكبيرة أو اللانهائية (IDs، و pagination، و streams)، لأنك بتحسب اللي محتاجه بس. و async generators هي الطريقة النضيفة تلف على API بصفحات.",
@@ -4944,7 +6266,38 @@ async function* pages(url) {
 }
 for await (const items of pages("https://api.example.com/items?page=1")) {
   console.log(items.length);
+}`,
+          check: {
+            lang: "js",
+            starter: R`function* fibonacci() {
+  // while (true) و yield
+}`,
+            tests: R`const first = (it, n) => { const out = []; for (const x of it) { if (out.length === n) break; out.push(x); } return out; };
+test("أول 10 ← 0 1 1 2 3 5 8 13 21 34", () => expect(first(fibonacci(), 10)).toEqual([0, 1, 1, 2, 3, 5, 8, 13, 21, 34]));
+test("next() بيرجّع { value, done: false }", () => {
+  const it = fibonacci();
+  it.next();
+  expect(it.next()).toEqual({ value: 1, done: false });
+});
+test("لانهائي: الـ 50 بيطلع 7778742049 من غير ما يخلص", () => {
+  const it = fibonacci();
+  let v;
+  for (let i = 0; i < 50; i++) v = it.next();
+  expect([v.value, v.done]).toEqual([7778742049, false]);
+});
+test("كل generator ليه حالته: اتنين مع بعض مستقلين", () => {
+  const a = fibonacci(), b = fibonacci();
+  a.next(); a.next(); a.next();
+  expect([a.next().value, b.next().value]).toEqual([2, 0]);
+});`,
+            solution: R`function* fibonacci() {
+  let [a, b] = [0, 1];
+  while (true) {
+    yield a;
+    [a, b] = [b, a + b];
+  }
 }`
+          }
         }
       ]
     },
@@ -5944,7 +7297,7 @@ for (const v of [null, undefined, 0, "", false, NaN, []]) {
 }
 const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
 promiseAll([slow, 2, Promise.resolve(3)]).then(console.log); // ["slow", 2, 3]`,
-          try: R`اكتب [[promiseAllSettled]] بنفس الطريقة، وبعدين [[promiseRace]] (أسهل بكتير: كل واحد بيعمل resolve أو reject مباشرة).`,
+          try: R`اكتب [[promiseAllSettled]] بنفس الطريقة، وبعدين [[promiseRace]] (أسهل بكتير: كل واحد بيعمل resolve أو reject مباشرة). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[promiseAllSettled]] و [[promiseRace]] (الاختبارات بـ promises جاهزة من غير timers).`,
           flag: "script",
           deep: {
             why: "بيختبر فهمك للـ Promises مش حفظ الـ API: الترتيب، والعدّاد، و fail-fast، والقيم اللي مش Promises، والحالة الفاضية.",
@@ -5998,7 +7351,61 @@ function promiseRace(items) {
 const slow = new Promise((r) => setTimeout(() => r("slow"), 100));
 const fast = new Promise((r) => setTimeout(() => r("fast"), 10));
 promiseAllSettled([slow, 2, Promise.reject(new Error("x"))]).then(console.log);
-promiseRace([slow, fast]).then((v) => console.log("race:", v)); // race: fast`
+promiseRace([slow, fast]).then((v) => console.log("race:", v)); // race: fast`,
+          check: {
+            lang: "js",
+            starter: R`function promiseAllSettled(items) {
+  return Promise.all(items);
+}
+function promiseRace(items) {
+  return new Promise((resolve, reject) => {
+    // كل واحد: Promise.resolve(item).then(resolve, reject)
+  });
+}`,
+            tests: R`const later = (v, steps = 5) => { let p = Promise.resolve(v); for (let i = 0; i < steps; i++) p = p.then(x => x); return p; };
+const within = p => Promise.race([p, later("لسه pending", 60)]);
+const rejected = msg => { const p = Promise.reject(new Error(msg)); p.catch(() => {}); return p; };
+test("fulfilled و rejected وقيمة عادية، بنفس الترتيب ومبترفضش", async () => {
+  const r = await within(promiseAllSettled([later("slow"), 2, rejected("x")]));
+  expect([r[0], r[1], r[2].status, r[2].reason.message]).toEqual([{ status: "fulfilled", value: "slow" }, { status: "fulfilled", value: 2 }, "rejected", "x"]);
+});
+test("الترتيب حسب الـ input مش حسب مين خلص الأول", async () => {
+  const r = await within(promiseAllSettled([later("a", 10), "b"]));
+  expect(r.map(x => x.value)).toEqual(["a", "b"]);
+});
+test("[] ← []", async () => expect(await within(promiseAllSettled([]))).toEqual([]));
+test("promiseRace: الأسرع يكسب", async () => expect(await within(promiseRace([later("slow", 10), later("fast", 1)]))).toBe("fast"));
+test("promiseRace: لو الأسرع اترفض، بترفض", async () => {
+  let msg = "";
+  try { await within(promiseRace([later("slow", 10), rejected("fail")])); } catch (e) { msg = e.message; }
+  expect(msg).toBe("fail");
+});
+test("promiseRace([]) بتفضل pending للأبد، زي Promise.race([])", async () => {
+  const r = await Promise.race([promiseRace([]).then(() => "resolved"), later("still pending", 20)]);
+  expect(r).toBe("still pending");
+});`,
+            solution: R`function promiseAllSettled(items) {
+  return new Promise((resolve) => {
+    const list = Array.from(items);
+    const results = new Array(list.length);
+    let done = 0;
+    if (list.length === 0) return resolve(results);
+    list.forEach((item, i) => {
+      Promise.resolve(item)
+        .then(
+          (value) => { results[i] = { status: "fulfilled", value }; },
+          (reason) => { results[i] = { status: "rejected", reason }; }
+        )
+        .then(() => { if (++done === list.length) resolve(results); });
+    });
+  });
+}
+function promiseRace(items) {
+  return new Promise((resolve, reject) => {
+    for (const item of items) Promise.resolve(item).then(resolve, reject);
+  });
+}`
+          }
         },
         {
           cmd: "polyfills: map و bind",
@@ -6021,7 +7428,7 @@ Function.prototype.myBind = function (ctx, ...preset) {
 [1, 2, 3].myMap((x) => x * 2);                    // [2, 4, 6]
 const hi = function (greet) { return greet + " " + this.name; };
 hi.myBind({ name: "Sara" }, "Hi")();              // "Hi Sara"`,
-          try: R`اكتب [[myFilter]] و [[myReduce]] (خد بالك من حالة من غير قيمة أولية على array فاضية: لازم TypeError). وبعدين خلي [[myBind]] تشتغل مع [[new]].`,
+          try: R`اكتب [[myFilter]] و [[myReduce]] (خد بالك من حالة من غير قيمة أولية على array فاضية: لازم TypeError). وبعدين خلي [[myBind]] تشتغل مع [[new]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[myFilter]] و [[myReduce]] و [[myBind]] اللي بتشتغل مع [[new]].`,
           flag: "script",
           deep: {
             why: "بيختبر this، و prototypes، و call و apply، والـ closures في سؤال واحد. و map و reduce و bind و debounce و Promise.all هم أشهر ٥ polyfills بتتسأل.",
@@ -6084,7 +7491,69 @@ Function.prototype.myBind = function (ctx, ...preset) {
 };
 function Point(x, y) { this.x = x; this.y = y; }
 const P = Point.myBind(null, 1);
-console.log(new P(2), new P(2) instanceof Point); // Point { x: 1, y: 2 } true`
+console.log(new P(2), new P(2) instanceof Point); // Point { x: 1, y: 2 } true`,
+          check: {
+            lang: "js",
+            starter: R`Array.prototype.myFilter = function (callback, thisArg) {
+  // ...
+};
+Array.prototype.myReduce = function (callback, ...init) {
+  // init.length بيفرّق بين «مفيش قيمة أولية» و «القيمة الأولية undefined»
+};
+Function.prototype.myBind = function (ctx, ...preset) {
+  const fn = this;
+  return function (...args) {
+    return fn.apply(ctx, [...preset, ...args]);
+  };
+};`,
+            tests: R`test("[1, 2, 3, 4].myFilter(زوجي) ← [2, 4]", () => expect([1, 2, 3, 4].myFilter((x) => x % 2 === 0)).toEqual([2, 4]));
+test("myFilter بتبعت (value, index, array)", () => expect(["a", "b", "c"].myFilter((v, i, arr) => i > 0 && arr.length === 3)).toEqual(["b", "c"]));
+test("[1, 2, 3].myReduce(جمع) ← 6، ومع قيمة أولية 10 ← 16", () => expect([[1, 2, 3].myReduce((a, b) => a + b), [1, 2, 3].myReduce((a, b) => a + b, 10)]).toEqual([6, 16]));
+test("[].myReduce من غير قيمة أولية ← TypeError", () => {
+  let err;
+  try { [].myReduce((a, b) => a + b); } catch (e) { err = e; }
+  expect(err instanceof TypeError).toBe(true);
+});
+test("القيمة الأولية undefined مش زي مفيش قيمة: [1].myReduce(f, undefined) ← [undefined, 1]", () => expect([1].myReduce((a, b) => [a, b], undefined)).toEqual([undefined, 1]));
+test("[].myReduce(f, 0) ← 0", () => expect([].myReduce((a, b) => a + b, 0)).toBe(0));
+test("myBind مع new: new (Point.myBind(null, 1))(2) instanceof Point و x = 1 و y = 2", () => {
+  function Point(x, y) { this.x = x; this.y = y; }
+  const P = Point.myBind(null, 1);
+  const p = new P(2);
+  expect([p instanceof Point, p.x, p.y]).toEqual([true, 1, 2]);
+});`,
+            solution: R`Array.prototype.myFilter = function (callback, thisArg) {
+  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
+  const result = [];
+  for (let i = 0; i < this.length; i++) {
+    if (i in this && callback.call(thisArg, this[i], i, this)) result.push(this[i]);
+  }
+  return result;
+};
+Array.prototype.myReduce = function (callback, ...init) {
+  if (typeof callback !== "function") throw new TypeError(callback + " is not a function");
+  let i = 0;
+  let acc;
+  if (init.length > 0) {
+    acc = init[0];
+  } else {
+    while (i < this.length && !(i in this)) i++;
+    if (i >= this.length) throw new TypeError("Reduce of empty array with no initial value");
+    acc = this[i++];
+  }
+  for (; i < this.length; i++) if (i in this) acc = callback(acc, this[i], i, this);
+  return acc;
+};
+Function.prototype.myBind = function (ctx, ...preset) {
+  const fn = this;
+  function bound(...args) {
+    if (new.target) return new fn(...preset, ...args);
+    return fn.apply(ctx, [...preset, ...args]);
+  }
+  if (fn.prototype) bound.prototype = Object.create(fn.prototype);
+  return bound;
+};`
+          }
         },
         {
           cmd: "curry",
@@ -6104,7 +7573,7 @@ add(1)(2, 3);    // 6
 const withTax = curry((ratePct, price) => (price * (100 + ratePct)) / 100);
 const addVat = withTax(14);
 addVat(100);     // 114`,
-          try: R`اكتب [[sum(1)(2)(3)()]] بيرجّع 6 بأي عدد نداءات، ويخلص لما تناديه من غير arguments. ده سؤال تاني مشهور بنفس الفكرة.`,
+          try: R`اكتب [[sum(1)(2)(3)()]] بيرجّع 6 بأي عدد نداءات، ويخلص لما تناديه من غير arguments. ده سؤال تاني مشهور بنفس الفكرة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[sum]].`,
           flag: "script",
           deep: {
             why: "بيختبر closures و recursion و fn.length و rest/spread. وفكرته (partial application) موجودة في الشغل الحقيقي حتى لو مش بالاسم ده: [[bind]] مع arguments، و factories، و middleware.",
@@ -6139,7 +7608,32 @@ addVat(100);     // 114`,
 }
 console.log(sum(1)(2)(3)());        // 6
 console.log(sum(5)());              // 5
-console.log(sum(1)(2)(3)(4)(10)()); // 20`
+console.log(sum(1)(2)(3)(4)(10)()); // 20`,
+          check: {
+            lang: "js",
+            starter: R`let total = 0;
+function sum(a) {
+  total += a;
+  return function next(b) {
+    if (b === undefined) return total;
+    return sum(b);
+  };
+}`,
+            tests: R`test("sum(1)(2)(3)() ← 6", () => expect(sum(1)(2)(3)()).toBe(6));
+test("sum(5)() ← 5", () => expect(sum(5)()).toBe(5));
+test("sum(1)(2)(3)(4)(10)() ← 20", () => expect(sum(1)(2)(3)(4)(10)()).toBe(20));
+test("كل سلسلة مستقلة (مفيش مجموع global): a = sum(1)، و a(2)() ← 3، و a(10)() ← 11", () => {
+  const a = sum(1);
+  expect([a(2)(), a(10)()]).toEqual([3, 11]);
+});
+test("النداء الفاضي بس اللي بيرجّع رقم", () => expect(typeof sum(1)(2)).toBe("function"));`,
+            solution: R`function sum(a) {
+  return function next(b) {
+    if (b === undefined) return a;
+    return sum(a + b);
+  };
+}`
+          }
         },
         {
           cmd: "deep equal",
@@ -6158,7 +7652,7 @@ deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] }); // true
 deepEqual({ a: 1 }, { a: "1" });                       // false
 deepEqual([1, 2], { 0: 1, 1: 2 });                     // false
 deepEqual(NaN, NaN);                                   // true`,
-          try: R`ضيف دعم لـ Date (قارن [[getTime()]]) و Map و Set. وبعدين جرّب object بيشاور على نفسه ([[a.self = a]]) وشوف الـ stack overflow، وفكّر إزاي تحلها بـ WeakMap للأزواج اللي اتقارنت.`,
+          try: R`ضيف دعم لـ Date (قارن [[getTime()]]) و Map و Set. وبعدين جرّب object بيشاور على نفسه ([[a.self = a]]) وشوف الـ stack overflow، وفكّر إزاي تحلها بـ WeakMap للأزواج اللي اتقارنت. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[deepEqual]] مع Date و Map و Set، والـ object اللي بيشاور على نفسه.`,
           flag: "script",
           deep: {
             why: "بيختبر recursion، والفرق بين الـ reference والقيمة، والحالات الحدية (null و NaN و arrays مقابل objects). وهي نفس الفكرة اللي ورا [[expect(x).toEqual(y)]] في الـ tests و [[assert.deepStrictEqual]] في Node.",
@@ -6210,7 +7704,52 @@ const x = { v: 1 }; x.self = x;
 const y = { v: 1 }; y.self = y;
 console.log(deepEqual(x, y));                                  // true
 console.log(deepEqual(new Date(1), new Date(2)));              // false
-console.log(deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))); // true`
+console.log(deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))); // true`,
+          check: {
+            lang: "js",
+            starter: R`function deepEqual(a, b) {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
+}`,
+            tests: R`test("objects و arrays متداخلة", () => expect([deepEqual({ a: [1, { b: 2 }] }, { a: [1, { b: 2 }] }), deepEqual({ a: 1 }, { a: "1" }), deepEqual([1, 2], { 0: 1, 1: 2 })]).toEqual([true, false, false]));
+test("Date: new Date(1) و new Date(2) مش متساويين (الأصلية كانت بتقول true)", () => expect([deepEqual(new Date(1), new Date(2)), deepEqual(new Date(5), new Date(5))]).toEqual([false, true]));
+test("Map: بالمفاتيح والقيم", () => expect([deepEqual(new Map([[1, 1]]), new Map([[2, 2]])), deepEqual(new Map([["a", [1]]]), new Map([["a", [1]]]))]).toEqual([false, true]));
+test("Set: نفس العناصر", () => expect([deepEqual(new Set([1, 2]), new Set([2, 1])), deepEqual(new Set([1]), new Set([2]))]).toEqual([true, false]));
+test("Date مش زي {} فاضي", () => expect(deepEqual(new Date(1), {})).toBe(false));
+test("NaN زي NaN", () => expect(deepEqual({ x: NaN }, { x: NaN })).toBe(true));
+test("اتنين بيشاوروا على نفسهم ← true من غير stack overflow (WeakMap)", () => {
+  const x = { v: 1 }; x.self = x;
+  const y = { v: 1 }; y.self = y;
+  expect(deepEqual(x, y)).toBe(true);
+});`,
+            solution: R`function deepEqual(a, b, seen = new WeakMap()) {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b)) return false;
+  if (seen.get(a) === b) return true;
+  seen.set(a, b);
+  if (a instanceof Date) return a.getTime() === b.getTime();
+  if (a instanceof Map) {
+    if (a.size !== b.size) return false;
+    for (const [k, v] of a) if (!b.has(k) || !deepEqual(v, b.get(k), seen)) return false;
+    return true;
+  }
+  if (a instanceof Set) {
+    if (a.size !== b.size) return false;
+    for (const v of a) if (!b.has(v)) return false;
+    return true;
+  }
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+  if (keysA.length !== keysB.length) return false;
+  return keysA.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k], seen));
+}`
+          }
         },
         {
           cmd: "اتوقع الناتج",

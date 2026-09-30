@@ -10,6 +10,10 @@
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
+//   check    اختياري: تمرين بيتصحح لوحده في الصفحة
+//            JS:  { lang: "js", starter, tests: R`test("..", () => expect(x).toBe(y))`, solution }
+//            SQL: { lang: "sql", setup: R`CREATE TABLE ...; INSERT ...`, starter, expect: [[...صفوف]] أو expectSql: R`استعلام مرجعي`, solution, ordered }
+//            solution حل مرجعي مش بيظهر، و npm run check بيتأكد إنه بيعدّي الاختبارات. المتاح في tests: test و expect(x).toBe/toEqual/toThrow/toBeTruthy/toBeFalsy
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("mongo", {
@@ -55,7 +59,10 @@ mongosh "mongodb://admin:secret@localhost:27017/?authSource=admin" --quiet --eva
             "نفس الحاجة من جهازك برابط كامل، واليوزر متخزن في admin.",
             "من غير -p: هيسألك الباسورد وميظهرش.",
             "نفّذ أمر واحد واخرج: السيرفر بيرد؟"
-          ]
+          ],
+          sol: R`بعد أول سطر هتلاقي الـ prompt [[test>]]، يعني انت متصل وواقف على قاعدة اسمها test (دي الافتراضية). و [[db.version()]] بيرجّع نسخة السيرفر، زي [[8.3.11]] مع image [[mongo:8]]. و [[exit]] بيرجّعك للترمنال.
+
+لو طلعلك [[MongoServerError: Authentication failed.]] يبقى اليوزر أو الباسورد غلط، أو الأشهر: اتصلت بـ URI فيه اسم قاعدة ([[/myapp]]) من غير [[?authSource=admin]]، فـ mongosh دوّر على اليوزر admin جوه myapp ومالقاهوش. ولو [[Error: No such container: mongo]] يبقى الـ lab مش شغال أو اسم الـ container مختلف، شوف [[docker ps]]. ولو اتصلت من غير [[-u]] هيدخلك عادي، بس أول أمر حقيقي هيقول [[requires authentication]].`
         },
         {
           cmd: "show dbs و use",
@@ -92,7 +99,12 @@ exit`,
             "عدد المستندات في users.",
             "أول مستند: تشوف شكل البيانات.",
             "اخرج."
-          ]
+          ],
+          sol: R`بعد [[use lab]] الـ prompt بقى [[lab>]] وكتب [[switched to db lab]]، بس [[show dbs]] بيعرض [[admin]] و [[config]] و [[local]] بس، ومفيش lab.
+
+بعد [[db.notes.insertOne({ text: "hi" })]] الرد فيه [[acknowledged: true]] و [[insertedId: ObjectId('...')]]، و [[show dbs]] بقى فيه سطر [[lab  8.00 KiB]].
+
+السبب إن Mongo بيعمل القاعدة والـ collection بشكل كسول: [[use]] بيغيّر المتغير [[db]] في الـ shell بس، ومفيش حاجة بتتكتب على الديسك لحد أول مستند. عشان كده غلطة في اسم القاعدة (مثلًا [[use myap]]) مش بتطلع أي error، وتلاقي نفسك بتدوّر على داتا مش موجودة. عادة كويسة تكتب [[db.getName()]] قبل أي أمر مهم.`
         },
         {
           cmd: "insertOne و find",
@@ -131,7 +143,23 @@ db.users.countDocuments({ age: { $gte: 18 } })`,
             "اللي اسمهم واحد من دول.",
             "أكبر اتنين سنًا.",
             "عدد اللي عمرهم ١٨ أو أكتر."
-          ]
+          ],
+          sol: R`الحل: [[insertMany]] بخمس يوزرز، وبعدين sort تنازلي بالعمر و limit 2، مع projection للاسم بس. في التجربة الأعمار كانت 28 و 35 و 17 و 42 و 23، والناتج:
+
+[[[ { name: 'Ali' }, { name: 'Omar' } ]]]
+
+لو عايز تتأكد إن الترتيب صح، ضيف [[age: 1]] للـ projection مؤقتًا: هيطلع [[{ name: 'Ali', age: 42 }]] و [[{ name: 'Omar', age: 35 }]].
+
+الأخطاء الشائعة: تنسى الـ sort فتاخد أول اتنين اتضافوا ([[Sara]] و [[Omar]] في تجربتي)، وده مش مضمون أصلًا. أو تكتب [[{ age: 1 }]] وانت عايز تنازلي فتاخد الأصغر. أو تنسى [[_id: 0]] فيظهر الـ [[_id]] مع الاسم. ولو خزنت العمر كـ نص [["28"]] الترتيب هيبقى أبجدي مش رقمي.`,
+          solCode: R`use lab
+db.users.insertMany([
+  { name: "Sara", email: "sara@example.com", age: 28 },
+  { name: "Omar", age: 35 },
+  { name: "Mona", age: 17 },
+  { name: "Ali", age: 42 },
+  { name: "Hana", age: 23 }
+])
+db.users.find({}, { name: 1, _id: 0 }).sort({ age: -1 }).limit(2)`
         },
         {
           cmd: "updateOne",
@@ -164,7 +192,18 @@ db.users.updateOne({ email: "new@example.com" }, { $set: { name: "New" } }, { up
             "شيل حقل من المستند.",
             "علّم كل اللي أقل من ١٨.",
             "عدّل، ولو مش موجود اعمله."
-          ]
+          ],
+          sol: R`كل updateOne ناجحة بترجّع [[matchedCount: 1]] و [[modifiedCount: 1]]. وبعد [[$set]] للعمر و [[$inc]] مرتين، [[findOne]] بيطلّع:
+
+[[{ _id: ObjectId('...'), name: 'Sara', email: 'sara@example.com', age: 29, logins: 2 }]]
+
+الحقل [[logins]] ما كانش موجود، و [[$inc]] عمله بـ 0 وزوّد عليه.
+
+علامات الغلط: [[matchedCount: 0]] يعني الفلتر مالقاش حاجة (غلطة في الإيميل مثلًا)، ومفيش error فممكن تفوتك. و [[modifiedCount: 0]] مع [[matchedCount: 1]] يعني القيمة كانت كده أصلًا. ولو كتبت [[updateOne({ email: ... }, { age: 30 })]] من غير [[$set]]، mongosh بيرفض بـ [[MongoInvalidArgumentError: Update document requires atomic operators]]؛ دي حماية، لأن الشكل ده في [[replaceOne]] كان هيمسح كل الحقول التانية.`,
+          solCode: R`db.users.updateOne({ email: "sara@example.com" }, { $set: { age: 29 } })
+db.users.updateOne({ email: "sara@example.com" }, { $inc: { logins: 1 } })
+db.users.updateOne({ email: "sara@example.com" }, { $inc: { logins: 1 } })
+db.users.findOne({ email: "sara@example.com" })`
         },
         {
           cmd: "deleteOne و deleteMany",
@@ -198,7 +237,12 @@ mongosh "$MONGO_URI" --quiet --eval 'db.users.drop()'`,
             "امسح مستند واحد بالإيميل.",
             "يمسح كل المستندات (الـ indexes بتفضل).",
             "يشيل الـ collection كلها بالـ indexes."
-          ]
+          ],
+          sol: R`الـ find بيرجّع array فيها المستندات اللي هتتمسح، زي [[[ { _id: ObjectId('...'), name: 'Mona', age: 17 } ]]]، يعني واحد. والـ deleteMany بنفس الشرط بترجّع [[{ acknowledged: true, deletedCount: 1 }]]. الرقمين لازم يبقوا متساويين، ودي الفكرة: شوف قبل ما تمسح.
+
+لو [[deletedCount]] أكبر من اللي شفته، يبقى الشرط اتكتب مختلف في المرتين، أو حد ضاف داتا في النص. ولو [[deletedCount: 0]] رغم إن الـ find لقى، غالبًا نوع القيمة مختلف: [[{ age: "17" }]] كنص مش هيطابق 17 كرقم، ودا بيحصل كتير مع قيم جاية من query string.
+
+وأسهل عادة: استخدم [[countDocuments]] بنفس الشرط بالظبط قبل الـ delete، وانسخ الشرط copy/paste مش تكتبه تاني.`
         },
         {
           cmd: "mongodb:// و mongodb+srv://",
@@ -210,7 +254,7 @@ mongosh "$MONGO_URI" --quiet --eval 'db.users.drop()'`,
 MONGODB_URI=mongodb://admin:secret@mongo:27017/myapp?authSource=admin
 MONGODB_URI=mongodb://myapp_user:YOUR_PASSWORD@mongo:27017/myapp
 MONGODB_URI=mongodb+srv://myapp_user:YOUR_PASSWORD@cluster0.example.mongodb.net/myapp?retryWrites=true&w=majority`,
-          try: R`جرّب الرابط قبل ما تحطه في .env: [[mongosh "الرابط" --quiet --eval "db.getName()"]]، ولازم يطبع اسم القاعدة.`,
+          try: R`جرّب الرابط قبل ما تحطه في .env: [[mongosh "الرابط" --quiet --eval "db.getCollectionNames()"]]، ولازم يطبع أسماء الـ collections (أو [[[]]] لو القاعدة فاضية) من غير error.`,
           flag: "script",
           deep: {
             why: "أغلب مشاكل «التطبيق مش شايف القاعدة» سببها سطر واحد: الرابط. host غلط، أو authSource ناقص، أو باسورد فيه حرف بيكسر الرابط.",
@@ -231,7 +275,12 @@ MONGODB_URI=mongodb+srv://myapp_user:YOUR_PASSWORD@cluster0.example.mongodb.net/
             "جوه compose باليوزر root، وهو متخزن في admin.",
             "يوزر خاص بالتطبيق اتعمل جوه myapp.",
             "Atlas: اسم واحد والسيرفرات بتيجي من الـ DNS، و TLS لوحده."
-          ]
+          ],
+          sol: R`مع الرابط الصح بيطبع أسماء الـ collections، زي [[[ 'users', 'notes' ]]]، أو [[[]]] لو القاعدة لسه فاضية.
+
+ليه مش [[db.getName()]]؟ جرّبتها: بتطبع [[myapp]] حتى مع رابط من غير يوزر ولا باسورد خالص، لأن mongosh بياخد الاسم من الرابط ومش بيسأل السيرفر. فمش بتثبت إن اليوزر والباسورد صح. أي أمر بيقرا من القاعدة زي [[getCollectionNames()]] هو اللي بيكشف المشكلة: من غير يوزر بيطلع [[Command listCollections requires authentication]].
+
+الأخطاء اللي هتقابلها: [[Authentication failed.]] مع [[mongodb://admin:secret@localhost:27017/myapp]] لأن admin متعمل في قاعدة admin، والحل [[?authSource=admin]]. واليوزر اللي متعمل جوه myapp يشتغل من غيرها. والباسورد اللي فيه [[@]] أو [[:]] أو [[/]] لازم يتعمله URL-encode ([[@]] تبقى [[%40]])، وإلا الرابط يتقري غلط. ولو استخدمت [[mongo]] كـ host من جهازك بدل من جوه compose هيطلع [[getaddrinfo ENOTFOUND mongo]].`
         }
       ]
     },
@@ -287,7 +336,14 @@ volumes:
             "على السيرفر نفسه بس، مش على الإنترنت.",
             "تعريف الـ volumes.",
             "volume البيانات."
-          ]
+          ],
+          sol: R`[[docker compose exec mongo mongosh --quiet --eval "db.getMongo().getDBNames()"]] بيطبع:
+
+[[MongoServerError: Command listDatabases requires authentication]] وبيخرج بـ exit code 1. يعني الاتصال نفسه نجح، بس السيرفر رافض أي أمر من غير login. ودا اللي عايزه.
+
+ونفس الأمر مع [[-u "$MONGO_ROOT_USER" -p "$MONGO_ROOT_PASSWORD"]] بيرجّع [[[ 'admin', 'config', 'local' ]]].
+
+لو الأمر من غير يوزر رجّع القواعد عادي: غالبًا الـ volume كان فيه داتا قديمة من قبل ما تضيف المتغيرات. [[MONGO_INITDB_*]] بيشتغلوا بس لما [[/data/db]] يكون فاضي، فالـ root ما اتعملش والـ auth مش متفعلة. على التجربة: [[docker compose down -v]] وارفع تاني. ولو المتغيرات فاضية لأن [[.env]] مش جنب compose.yml، هتلاقي تحذير [[The "MONGO_ROOT_USER" variable is not set]] وقت [[up]].`
         },
         {
           cmd: "healthcheck بـ ping",
@@ -336,7 +392,12 @@ volumes:
             "بيعتمد على:",
             "Mongo...",
             "...لما يبقى healthy مش بس شغال."
-          ]
+          ],
+          sol: R`أول ما تعمل [[up -d]]، [[docker compose ps mongo]] بيطلّع في STATUS حاجة زي [[Up Less than a second (health: starting)]]، وبعد أول فحص ناجح (في تجربتي بعد ~١٠ ثواني) بيبقى [[Up 12 seconds (healthy)]].
+
+والـ backend اللي عليه [[condition: service_healthy]] مش هيبدأ غير بعد الـ healthy. في لوج [[docker compose up]] هتشوف [[Waiting]] ثم [[Healthy]] للـ mongo قبل ما الـ backend يبدأ.
+
+لو فضل [[health: starting]] وبعدين بقى [[unhealthy]]: شوف السبب بـ [[docker inspect --format '{{json .State.Health}}' CONTAINER]]، هتلاقي ناتج آخر فحوصات. الأسباب الشائعة: image قديمة مفيهاش [[mongosh]] (قبل Mongo 6 كان اسمه [[mongo]])، أو كتبت الـ test كـ string واحد مع [[CMD]] بدل [[CMD-SHELL]]. والـ ping نفسه مش محتاج auth، فمش هيفشل بسبب الباسورد.`
         },
         {
           cmd: "createUser",
@@ -373,7 +434,19 @@ db.createUser({ user: "backup", pwd: passwordPrompt(), roles: ["backup", "restor
             "غيّر باسورده.",
             "ادخل admin.",
             "يوزر للباك أب والترجيع بس."
-          ]
+          ],
+          sol: R`[[db.createUser(...)]] بيرجّع [[{ ok: 1 }]]، و [[db.getUsers()]] بيعرض اليوزر بـ [[roles: [ { role: 'readWrite', db: 'myapp' } ]]].
+
+بعدين بالرابط [[mongodb://myapp_user:PASS@localhost:27017/myapp]]: [[db.notes.insertOne({ text: "ok" })]] بيرجّع [[acknowledged: true]]. و [[db.getSiblingDB("other").notes.insertOne({ text: "no" })]] بيرجّع [[MongoServerError[Unauthorized]: not authorized on other to execute command { insert: "notes", ... }]].
+
+الأخطاء الشائعة: تعمل الـ createUser وانت واقف على [[admin]] بدل [[myapp]]، فاليوزر يتسجّل في admin والرابط من غير [[authSource=admin]] يقول [[Authentication failed.]]. ونفس الـ error لو شلت [[/myapp]] من الرابط، لأن الـ authSource الافتراضي ساعتها admin. وخلي بالك إن [[mongodump --db myapp]] مش بياخد اليوزرز، لأنهم متخزنين في [[admin.system.users]]؛ في النقل لسيرفر جديد لازم تعملهم تاني.`,
+          solCode: R`use myapp
+db.createUser({ user: "myapp_user", pwd: passwordPrompt(), roles: [{ role: "readWrite", db: "myapp" }] })
+exit
+
+mongosh "mongodb://myapp_user:PASS@localhost:27017/myapp"
+db.notes.insertOne({ text: "ok" })
+db.getSiblingDB("other").notes.insertOne({ text: "no" })`
         },
         {
           cmd: "createIndex و explain",
@@ -406,7 +479,19 @@ index على أكتر من حقل: الترتيب مهم. القاعدة: حقو
             "الـ indexes الموجودة وأساميها.",
             "Mongo عمل إيه فعلًا في الاستعلام ده.",
             "شيل index باسمه."
-          ]
+          ],
+          sol: R`خلي بالك إن اللوب ده بطيء: ١٠٠ ألف [[insertOne]] كل واحد رحلة للسيرفر، وأخد عندي حوالي دقيقة ونص. نفس الداتا بـ [[insertMany]] خلصت في أقل من ثانية.
+
+قبل الـ index: [[winningPlan.stage]] بيبقى [[COLLSCAN]]، و [[totalDocsExamined: 100000]] و [[totalKeysExamined: 0]]. قرا كل المستندات عشان يلاقي واحد.
+
+بعد [[createIndex({ n: 1 })]] (بيرجّع اسمه [['n_1']]): الخطة بقت [[FETCH]] وتحتها [[IXSCAN]] على [[n_1]]، و [[totalDocsExamined: 1]] و [[totalKeysExamined: 1]]. الوقت نزل من حوالي 20ms لـ 1ms.
+
+المقياس المهم هو نسبة [[totalDocsExamined]] لـ [[nReturned]]: قريبة من 1 يبقى الـ index شغال. ولو بعد الـ index لسه [[COLLSCAN]]، اتأكد إن اسم الحقل في الـ find هو نفسه في الـ index، وإنك على نفس الـ collection. و [[explain()]] من غير [["executionStats"]] مش هيطلّع الأرقام دي.`,
+          solCode: R`use lab
+db.t.insertMany(Array.from({ length: 100000 }, (_, i) => ({ n: i })))
+db.t.find({ n: 99999 }).explain("executionStats").executionStats.totalDocsExamined
+db.t.createIndex({ n: 1 })
+db.t.find({ n: 99999 }).explain("executionStats").executionStats.totalDocsExamined`
         },
         {
           cmd: "بورت 27017",
@@ -436,7 +521,12 @@ Docker بيكتب قواعد iptables بتاعته قبل قواعد ufw، فـ 
             "مين بيسمع على 27017 وعلى أنهي عنوان.",
             "من جهازك: البورت ده مفتوح من بره؟ (المفروض يفشل).",
             "نفق: 27017 على جهازك يوصل للقاعدة على السيرفر."
-          ]
+          ],
+          sol: R`النتيجة الصح من جهازك: [[nc]] يفشل، يا بـ [[Connection timed out]] (الفايروول بيرمي الباكتات) يا [[Connection refused]]. وعلى السيرفر [[docker ps]] لازم يطلّع البورت كده [[127.0.0.1:27017->27017/tcp]]، و [[ss -ltnp]] يطلّع [[127.0.0.1:27017]].
+
+لو طلع [[Connection to 203.0.113.10 27017 port [tcp/*] succeeded!]] يبقى القاعدة مفتوحة للإنترنت. غالبًا compose فيه [["27017:27017"]] من غير [[127.0.0.1]]، و [[docker ps]] بيوريك [[0.0.0.0:27017->27017/tcp]]. والمفاجأة إن ufw مش بيحميك هنا: Docker بيكتب قواعد iptables بتاعته قبل ufw، فحتى لو [[ufw status]] مش فاتح 27017 البورت مفتوح. الحل تغيّر السطر لـ [["127.0.0.1:27017:27017"]] وتعمل [[docker compose up -d]]، أو تشيل [[ports]] خالص لو التطبيق في نفس الـ compose.
+
+وبعدها تستخدم الـ tunnel (السطر الرابع) لما تحتاج توصل من جهازك.`
         }
       ]
     },
@@ -1040,7 +1130,12 @@ docker exec mongo rm -rf /tmp/dump`,
             "الطريقة التانية: فولدر جوه الـ container.",
             "انسخه للسيرفر.",
             "امسحه من جوه الـ container."
-          ]
+          ],
+          sol: R`الأمر بيطبع على الـ stderr سطور زي [[writing $__btmyapp.users$__bt to $__btarchive on stdout$__bt]] و [[done dumping $__btmyapp.users$__bt (500 documents)]] لكل collection. و [[ls -lh]] بيعرض الملف بحجم مش صفر (عندي [[3.2K]] لـ ٥٠١ مستند مضغوطين).
+
+أهم غلطة تتعلمها هنا: لو الباسورد غلط، mongodump بيطبع [[Failed: can't create session: ... (AuthenticationFailed) Authentication failed.]] ويخرج بـ 1، بس الـ shell عمل الملف قبل ما الأمر يشتغل بسبب الـ [[>]]، فهتلاقي [[myapp-2026-09-30.archive.gz]] بحجم [[0]]. عشان كده لازم تبص على الحجم، وفي السكربتات تشيك بـ [[-s]].
+
+ولو الملف طلع صغير جدًا (كام بايت) رغم إن عندك داتا: غالبًا اسم القاعدة غلط ([[--db myap]])، و mongodump مش بيقول error، بيعمل dump فاضي.`
         },
         {
           cmd: "mongorestore",
@@ -1080,7 +1175,12 @@ docker exec -i mongo mongorestore -u admin -p secret --authenticationDatabase ad
             "عدّ المستندات وقارن بالإنتاج.",
             "امسح الـ container المؤقت والـ volume بتاعه.",
             "الترجيع الحقيقي: امسح الموجود ورجّع اللي في الملف."
-          ]
+          ],
+          sol: R`الـ [[--dryRun -v]] بيطبع [[found collection $__btmyapp.users$__bt bson to restore]] لكل collection وفي الآخر [[dry run completed]] و [[0 document(s) restored successfully]]، يعني الملف سليم ومفيش حاجة اتكتبت.
+
+الـ container المؤقت: [[501 document(s) restored successfully. 0 document(s) failed to restore.]] و [[countDocuments()]] على users رجّع [[500]] زي الأصل.
+
+في الـ lab بعد ما مسحت users: restore من غير [[--drop]] رجّعها، بس لو فيه collection تانية لسه موجودة زي notes هتلاقي [[E11000 duplicate key error ... index: _id_]] و [[1 document(s) failed to restore]]، لأن mongorestore بيضيف ومش بيستبدل. مع [[--drop]]: [[501 document(s) restored successfully. 0 document(s) failed to restore.]] والعدد رجع [[500]]. وخلي بالك إن [[--drop]] بيمسح بس الـ collections اللي في الملف، أي collection جديدة مش في الباك أب بتفضل زي ما هي.`
         },
         {
           cmd: "باك أب Mongo مجدول",
@@ -1145,7 +1245,14 @@ log "done: $(ls "$DIR"/myapp-*.archive.gz | wc -l) backups on disk"`,
             "امسح الأقدم من ٣٠ يوم (بعد النجاح بس).",
             "نسخة بره السيرفر.",
             "سجّل العدد اللي على الديسك."
-          ]
+          ],
+          sol: R`التشغيل الأول بيطبع:
+
+[[[2026-09-30 05:10:56] start: .../myapp-2026-09-30_0510.archive.gz]] و [[ok: 4.0K]] و [[done: 1 backups on disk]]، و [[echo $?]] بيطبع 0.
+
+بالباسورد الغلط: [[start: ...]] وبعدها على طول [[ERROR: backup failed at line 15]] (رقم السطر اللي فيه [[docker exec ... mongodump]])، و [[echo $?]] بيطبع 1. والـ [[.part]] اتمسح، والباك أب القديم ما اتلمسش، لأن الـ [[mv]] ما اتنفذش. لاحظ إن [[--quiet]] بيخبّي رسالة mongodump نفسها، فالسطر ده في اللوج هو دليلك الوحيد؛ لو عايز السبب شغّل الأمر من غير [[--quiet]] بإيدك.
+
+لو السكربت خرج بـ 0 رغم الباسورد الغلط، يبقى [[pipefail]] مش شغال (مثلًا شغّلته بـ [[sh backup.sh]] بدل [[bash]] أو [[./backup.sh]]). وفي cron: [[crontab -l]] لازم يعرض السطر، و [[/var/log/myapp-backup-cron.log]] يبدأ يتملي بعد ٣ الفجر. ولو قال [[docker: command not found]] أو [[rclone: command not found]] يبقى PATH بتاع cron قصير.`
         },
         {
           cmd: "نقل Mongo لسيرفر تاني",
@@ -1179,7 +1286,19 @@ mongodump --uri "mongodb+srv://myapp_user:YOUR_PASSWORD@cluster0.example.mongodb
             "رجّعه في Mongo اللي على الجديد.",
             "اتأكد من العدّ على الجديد.",
             "من Atlas: باك أب بالرابط بتاعهم على جهازك."
-          ]
+          ],
+          sol: R`من غير ssh الخطوات بتبقى pipe واحد: dump من الأول وrestore في التاني على طول. الناتج في الآخر [[501 document(s) restored successfully. 0 document(s) failed to restore.]]، و [[countDocuments()]] على users في الاتنين [[500]] و [[500]].
+
+قارن كل الـ collections المهمة مش واحدة بس. وخلي بالك إن [[myapp_user]] ما اتنقلش: [[--db myapp]] مش بياخد اليوزرز لأنهم في قاعدة admin، فالتطبيق على السيرفر الجديد هيقول [[Authentication failed.]] لحد ما تعمل [[createUser]] تاني هناك.
+
+وتأكد من الـ indexes: [[db.users.getIndexes()]] لازم يطلع نفس القايمة في الاتنين (mongorestore بيرجّعها من الـ metadata). ولو الـ container التاني ما بدأش لأن البورت 27018 مستخدم هيقولك [[port is already allocated]].`,
+          solCode: R`docker run -d --name mongo2 -p 127.0.0.1:27018:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=secret2 mongo:8
+until docker exec mongo2 mongosh --quiet --eval "db.adminCommand('ping')" >/dev/null 2>&1; do sleep 2; done
+docker exec mongo mongodump -u admin -p secret --authenticationDatabase admin --db myapp --archive --gzip \
+  | docker exec -i mongo2 mongorestore -u admin -p secret2 --authenticationDatabase admin --archive --gzip
+docker exec mongo  mongosh myapp -u admin -p secret  --authenticationDatabase admin --quiet --eval "db.users.countDocuments()"
+docker exec mongo2 mongosh myapp -u admin -p secret2 --authenticationDatabase admin --quiet --eval "db.users.countDocuments()"`
         }
       ]
     }

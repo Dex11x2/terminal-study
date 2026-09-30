@@ -17,7 +17,7 @@
 <body data-shell="bash">
 
 <header class="hero wrap">
-  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
+  <div class="topline"><span>تقدمك في الصفحة كلها: جربت <b id="totalDone">0</b> من <b id="totalAll">0</b></span><button type="button" class="quiz-btn" id="dueBtn" hidden title="البطاقات اللي ميعاد مراجعتها جه النهارده، من كل التابات. كل ما تعرف بطاقة ميعادها الجاي بيبعد: يوم، ٣، ٧، ١٦، ٣٥ يوم">عليك مراجعة (<b id="dueN">0</b>)</button><button type="button" class="quiz-btn" id="weakBtn" hidden title="بطاقات «اختبرني» اللي نسيتها أكتر ما افتكرتها، من كل التابات">راجع اللي نسيته (<b id="weakN">0</b>)</button><button type="button" class="quiz-btn" id="themeBtn" title="فاتح أو غامق أو حسب جهازك">المظهر: تلقائي</button></div>
   <h1>الترمنال بإيدك</h1>
   <p class="lead">كل أمر هنا معاه شرح، ومثال تنسخه، وتجربة تعملها بنفسك. الأوامر متقسمة على ٣ مستويات: ابدأ بالمستوى ١، ومتنقلش للي بعده غير لما تكون علّمت على «جربتها» في أغلبه. الصفحة بتفتكر تقدمك.</p>
   <section class="sw-sec">
@@ -28,6 +28,13 @@
       <button class="sw" role="tab" data-s="vscode" aria-selected="false"><div class="top"><b>VS Code</b><span>Ctrl+Shift+P</span></div><div class="bot">الاختصارات اللي بتفرق، والترمنال و Git و Debugger جواه، وإعدادات المشروع اللي بتوفر ساعات</div></button>
       <button class="sw" role="tab" data-s="wsl" aria-selected="false"><div class="top"><b>WSL على ويندوز</b><span>PS&gt; wsl --install</span></div><div class="bot">لينكس حقيقي جوه ويندوز: التسطيب، وفين تحط المشروع، و VS Code و Docker والشبكة والمشاكل المتكررة</div></button>
       <button class="sw" role="tab" data-s="glossary" aria-selected="false"><div class="top"><b>القاموس</b><span>$ man terms</span></div><div class="bot">كل مصطلح في سطرين: PID و daemon و socket و TTL و HMAC وغيرهم، مع أمر بيوريه ومكان شرحه</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">الإنجليزي للمبرمج</h2>
+    <div class="switch" role="tablist" aria-label="الإنجليزي للمبرمج">
+      <button class="sw" role="tab" data-s="english" aria-selected="false"><div class="top"><b>إنجليزي للمبرمج: قراية وكتابة</b><span>fix: handle empty cart</span></div><div class="bot">الكلمات اللي في الـ docs ورسايل الأخطاء، وتكتب commit و PR و README وإيميل، وخطة ٩٠ يوم. ابدأه من أول يوم</div></button>
+      <button class="sw" role="tab" data-s="speak" aria-selected="false"><div class="top"><b>إنجليزي للمبرمج: كلام وانترفيو</b><span>Yesterday I fixed the login bug</span></div><div class="bot">نطق الكلمات التقنية، والـ standup والاجتماعات، والانترفيو بالإنجليزي بإجابات جاهزة، وخطة كلام ٣٠ يوم</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -53,6 +60,16 @@
       <button class="sw" role="tab" data-s="pyapi" aria-selected="false"><div class="top"><b>Python و FastAPI</b><span>async def read(id: int):</span></div><div class="bot">اللغة نفسها، و async، و pydantic، و FastAPI، و httpx و asyncpg و Redis، وأسئلة الانترفيو</div></button>
       <button class="sw" role="tab" data-s="php" aria-selected="false"><div class="top"><b>PHP و MySQL</b><span>$stmt = $pdo-&gt;prepare(...)</span></div><div class="bot">PHP من الصفر، و PDO و prepared statements، و sessions و forms، والأمان، والاستضافة المشتركة</div></button>
       <button class="sw" role="tab" data-s="flutter" aria-selected="false"><div class="top"><b>Flutter و Dart</b><span>flutter run</span></div><div class="bot">تطبيق موبايل native من كود واحد: Dart، و widgets، و state، و http، والبناء والنشر. جديد عليك</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
+    <h2 class="sw-h">مطلوب في السوق</h2>
+    <p class="sw-note">مرتّبين حسب الطلب على الـ junior في مصر والخليج (بحث في إعلانات الشغل ٢٠٢٥–٢٠٢٦، تقريبي). اختار واحد بس بعد ما تخلص React و Backend، وشوف درس «تختار أنهي stack» في «الشغل والكارير».</p>
+    <div class="switch" role="tablist" aria-label="مطلوب في السوق">
+      <button class="sw" role="tab" data-s="dotnet" aria-selected="false"><div class="top"><b>C# و .NET</b><span>app.MapGet("/orders", ...)</span></div><div class="bot">ASP.NET Core و EF Core: أكتر backend مطلوب في شركات مصر والبنوك والخليج، وغالبًا مع Angular</div></button>
+      <button class="sw" role="tab" data-s="angular" aria-selected="false"><div class="top"><b>Angular</b><span>@for (item of items(); track item.id)</span></div><div class="bot">signals و routing و forms و RxJS، ومطلوب جدًا في الشركات الكبيرة، وقراية الكود القديم بـ NgModule</div></button>
+      <button class="sw" role="tab" data-s="spring" aria-selected="false"><div class="top"><b>Java و Spring Boot</b><span>@GetMapping("/orders")</span></div><div class="bot">Java من TypeScript، و Spring Boot و JPA و Security: البنوك والاتصالات والخليج، بس فرص الـ junior أقل</div></button>
+      <button class="sw" role="tab" data-s="rn" aria-selected="false"><div class="top"><b>React Native و Expo</b><span>npx expo start</span></div><div class="bot">تطبيقات موبايل بنفس React اللي اتعلمته، و Expo Router و EAS، والأكتر طلبًا برّه مصر</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -132,12 +149,13 @@
     <p class="path-note">الهدف هنا إنك تبني مواقع كاملة وتوصل لأول شغل. المدد تقريبية لحد بيذاكر ساعتين لـ ٣ في اليوم، وكل مرحلة بتخلص بمشروع من <button type="button" data-go="projects" data-lv="0">المشاريع</button>: متنقلش للمرحلة اللي بعدها غير لما مشروعها يشتغل ويتنشر. واختار <b>backend واحد</b> بس (Node أو Python أو PHP) وكمّل بيه، متذاكرش التلاتة.</p>
     <h3 class="path-h">مسار الـ Full Stack</h3>
     <ol class="path-full">
-      <li><b>الشهر الأول، الأساس:</b> <button type="button" data-go="start" data-lv="0">ابدأ من هنا</button>، و <button type="button" data-go="vscode" data-lv="1">VS Code ١</button> و <button type="button" data-go="os" data-lv="1">اختصارات النظام ١</button>، و <button type="button" data-go="wsl" data-lv="1">WSL</button> لو على ويندوز، و <button type="button" data-go="bash" data-lv="1">bash ١</button> و <button type="button" data-go="git" data-lv="1">Git ١</button>. وفي نفس الوقت <button type="button" data-go="js" data-lv="1">JavaScript ١</button> من أول «أساسيات البرمجة»، و <button type="button" data-go="css" data-lv="1">HTML و CSS ١</button>. المشروع: <button type="button" data-go="projects" data-lv="1">مشروع ١ و ٢</button>.</li>
+      <li><b>الشهر الأول، الأساس:</b> <button type="button" data-go="start" data-lv="0">ابدأ من هنا</button>، و <button type="button" data-go="vscode" data-lv="1">VS Code ١</button> و <button type="button" data-go="os" data-lv="1">اختصارات النظام ١</button>، و <button type="button" data-go="wsl" data-lv="1">WSL</button> لو على ويندوز، و <button type="button" data-go="bash" data-lv="1">bash ١</button> و <button type="button" data-go="git" data-lv="1">Git ١</button>. وفي نفس الوقت <button type="button" data-go="js" data-lv="1">JavaScript ١</button> من أول «أساسيات البرمجة»، و <button type="button" data-go="css" data-lv="1">HTML و CSS ١</button>. المشروع: <button type="button" data-go="projects" data-lv="1">مشروع ١ و ٢</button>. ومن أول يوم <button type="button" data-go="english" data-lv="1">إنجليزي للمبرمج</button> ٢٠ دقيقة كل يوم (خطة الـ ٩٠ يوم في آخر التاب)، ومن الشهر التالت ضيف <button type="button" data-go="speak" data-lv="1">الكلام والانترفيو</button> ١٥ دقيقة كلام بصوت عالي.</li>
       <li><b>الشهر التاني، الويب بجد:</b> <button type="button" data-go="js" data-lv="2">JavaScript ٢</button> و <button type="button" data-go="css" data-lv="2">HTML و CSS ٢</button>، و <button type="button" data-go="web" data-lv="1">المتصفح ١ و ٢</button>، و <button type="button" data-go="git" data-lv="2">Git ٢</button>، و <button type="button" data-go="node" data-lv="1">Node و npm ١</button>. وابدأ <button type="button" data-go="dsa" data-lv="1">DSA ١</button> مسألة كل يوم. المشروع: <button type="button" data-go="projects" data-lv="1">مشروع ٣</button>.</li>
       <li><b>الشهر ٣ و ٤، الفرونت إند:</b> <button type="button" data-go="ts" data-lv="1">TypeScript ١ و ٢</button>، و <button type="button" data-go="react" data-lv="1">React ١ و ٢</button>، و <button type="button" data-go="quality" data-lv="2">فحص الكود ٢: تكتب اختبارات</button>، و <button type="button" data-go="react" data-lv="3">React ٣: الاختبارات</button>. المشروع: <button type="button" data-go="projects" data-lv="2">مشروع ٤</button>.</li>
       <li><b>الشهر ٤ و ٥، الباك إند (واحد بس):</b> <button type="button" data-go="api" data-lv="1">Backend بـ Node ١ و ٢</button>، أو <button type="button" data-go="pyapi" data-lv="1">Python و FastAPI</button>، أو <button type="button" data-go="php" data-lv="1">PHP و MySQL</button>. ومعاه <button type="button" data-go="data" data-lv="1">SQL و Prisma ١ و ٢</button> و <button type="button" data-go="pg" data-lv="1">PostgreSQL ١</button>، و <button type="button" data-go="sec" data-lv="1">أمان الموقع</button>، و <button type="button" data-go="api" data-lv="3">Backend ٣: الاختبارات</button>. المشروع: <button type="button" data-go="projects" data-lv="2">مشروع ٥</button>.</li>
       <li><b>الشهر ٦، full-stack ونشر:</b> <button type="button" data-go="next" data-lv="1">Next.js ١ و ٢</button>، و <button type="button" data-go="arch" data-lv="1">بناء مشروع كامل ١ و ٢</button>، و <button type="button" data-go="vps" data-lv="1">VPS ١ و ٢</button> و <button type="button" data-go="docker" data-lv="1">Docker ١</button> و <button type="button" data-go="nginx" data-lv="1">Nginx</button> و <button type="button" data-go="gha" data-lv="1">GitHub Actions ١</button>، و <button type="button" data-go="quality" data-lv="3">Playwright</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٦</button> منشور على دومين.</li>
       <li><b>الشهر ٧ وبعده، العمق:</b> <button type="button" data-go="arch" data-lv="3">بناء مشروع كامل ٣</button>، و <button type="button" data-go="apis" data-lv="1">APIs متقدمة</button>، و <button type="button" data-go="sweng" data-lv="1">هندسة البرمجيات</button>، و <button type="button" data-go="data" data-lv="3">SQL و Prisma ٣</button>، و <button type="button" data-go="next" data-lv="3">Next.js ٣</button>، و <button type="button" data-go="diag" data-lv="1">التشخيص</button> و <button type="button" data-go="real" data-lv="1">من مشاريعي</button>، و <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button> لما تحتاجه، و <button type="button" data-go="ai" data-lv="1">الذكاء الاصطناعي</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٧</button>. وكمّل <button type="button" data-go="dsa" data-lv="2">DSA ٢ و ٣</button>.</li>
+      <li><b>ستاك إضافي حسب السوق (واحد بس):</b> لمصر والخليج <button type="button" data-go="dotnet" data-lv="1">C# و .NET</button> مع <button type="button" data-go="angular" data-lv="1">Angular</button>، وللبنوك <button type="button" data-go="spring" data-lv="1">Java و Spring Boot</button>، وللموبايل <button type="button" data-go="rn" data-lv="1">React Native و Expo</button>. واختار بعد درس «تختار أنهي stack» في <button type="button" data-go="career" data-lv="1">الشغل والكارير</button>.</li>
       <li><b>التوظيف:</b> <button type="button" data-go="career" data-lv="1">الشغل والكارير</button> من بعد مشروع ٥ (الـ portfolio والـ CV مش لازم يستنوا)، و <button type="button" data-go="interview" data-lv="1">الانترفيو</button> قبل أي انترفيو بأسبوعين، و «اختبرني» و «راجع اللي نسيته» كل يوم.</li>
     </ol>
     <h3 class="path-h">مسار الاختبارات</h3>
@@ -195,7 +213,8 @@
       <button type="button" class="lv" data-l="1" aria-pressed="false">١ البداية</button>
       <button type="button" class="lv" data-l="2" aria-pressed="false">٢ المتوسط</button>
       <button type="button" class="lv" data-l="3" aria-pressed="false">٣ المتقدم</button>
-      <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات عشوائية من التاب والمستوى اللي انت فيهم، والأوامر اللي بتنساها بتتكرر أكتر">اختبرني</button>
+      <button type="button" class="quiz-btn" id="fcBtn" title="بطاقات من التاب والمستوى اللي انت فيهم: اللي ميعاد مراجعتها جه بتظهر الأول، واللي بتنساها بتتكرر أكتر">اختبرني</button>
+      <button type="button" class="quiz-btn" id="examBtn" hidden title="١٠ أسئلة عشوائية من المستوى ده. لو عرفت ٨ المستوى بيتعلّم عليه">امتحان المستوى</button>
       <button type="button" class="quiz-btn" id="todoBtn" aria-pressed="false" title="بيخبّي الأوامر اللي علّمت عليها «جربتها»">اللي فاضل بس</button>
       <button type="button" class="quiz-btn" id="briefBtn" aria-pressed="false" title="بيخبّي الشرح العميق ويسيب الخلاصة والمثال، للمراجعة السريعة">شرح مختصر</button>
       <button type="button" class="quiz-btn" id="quizBtn" aria-pressed="false" title="بيخبّي الأوامر والشرح، وانت تفتكر الأمر من الوصف">وضع المراجعة</button>
@@ -290,6 +309,12 @@
 <script src="js/tabs/cloud.js"></script>
 <script src="js/tabs/projects.js"></script>
 <script src="js/tabs/career.js"></script>
+<script src="js/tabs/english.js"></script>
+<script src="js/tabs/speak.js"></script>
+<script src="js/tabs/dotnet.js"></script>
+<script src="js/tabs/angular.js"></script>
+<script src="js/tabs/spring.js"></script>
+<script src="js/tabs/rn.js"></script>
 <script src="js/extras.js"></script>
 <script src="js/app.js"></script>
 </body>
