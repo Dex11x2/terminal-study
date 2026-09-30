@@ -2250,7 +2250,7 @@ void main() => runApp(MaterialApp.router(routerConfig: router));
 
 [[ShellRoute]] و [[StatefulShellRoute.indexedStack]] للشاشات اللي ليها bottom navigation ثابت: كل تاب ليه stack خاص بيه وبيحافظ على مكانه.
 
-و [[errorBuilder]] للشاشة اللي تظهر لما المسار مش موجود أو حصل exception وقت بناء الـ route.`,
+و [[errorBuilder]] للشاشة اللي تظهر لما المسار مش موجود أو الـ redirect رمى exception. أما exception جوه الـ builder نفسه فمبيوصلوش: دا error عادي وقت الـ build.`,
             when: "أي تطبيق فيه أكتر من كام شاشة، أو deep links، أو ويب، أو شاشات محمية بـ login. ولو تطبيق صغير جدًا من غير لينكات، Navigator العادي كفاية.",
             mistakes: R`تبعت الـ object في [[extra]] وتعتمد عليه، فالـ deep link والـ refresh يضربوا. وتنسى إن الـ path params نصوص فتعمل [[state.pathParameters['id'] as int]]. وتستخدم [[go]] وانت عايز ترجع بنتيجة، فالـ await مبيرجعش حاجة. وتحط [[/]] في أول مسار route فرعي. وتعمل [[GoRouter(...)]] جوه build فكل rebuild يعمل router جديد ويرجعك لأول شاشة: اعمله مرة واحدة بره (top-level أو في provider).`
           },
@@ -2279,7 +2279,7 @@ void main() => runApp(MaterialApp.router(routerConfig: router));
           ],
           sol: R`[[/products/7]] مباشرة: ProductScreen بيظهر بـ [[tab: info]] (القيمة الافتراضية لأن مفيش [[?tab=]])، وفيه زرار رجوع في الـ AppBar لأن go_router بنى الـ stack من الشجرة وحط HomeScreen تحته. لو كنت عامل الـ route ده top-level (مش جوه [[/]]) مكانش هيبقى فيه رجوع.
 
-[[/products/abc]]: [[int.parse('abc')]] بيرمي FormatException جوه الـ builder، و go_router بيعرض شاشة الخطأ الافتراضية. الحل الصح: [[int.tryParse(...)]] ولو null اعرض شاشة «المنتج مش موجود»، أو [[errorBuilder]] على الـ GoRouter.
+[[/products/abc]]: المسار نفسه اتطابق عادي (أي نص ينفع يبقى [[:id]])، بس [[int.parse('abc')]] بيرمي FormatException جوه الـ builder وقت بناء الشاشة. go_router مش بيمسك الـ exception ده ([[errorBuilder]] بتاعه للمسارات اللي ملهاش route أو لأخطاء الـ redirect)، فهتشوف الشاشة الحمرا بتاعة Flutter في debug وفي الترمنال [[FormatException: Invalid radix-10 number]]. الحل الصح: [[int.tryParse(...)]] ولو null اعرض شاشة «المنتج مش موجود» من الـ builder نفسه.
 
 على الويب لاحظ إن الـ URL في المتصفح بيتغير مع كل تنقل، وزرار back بتاع المتصفح بيشتغل.`
         },
@@ -3716,7 +3716,7 @@ class TokenStore {
           flag: "script",
           deep: {
             why: "shared_preferences ملف XML أو DataStore عادي في فولدر التطبيق: على موبايل عليه root، أو من backup، أو من malware بصلاحيات عالية، التوكن بيتقري كنص. الـ secure storage بيشفّر بمفاتيح محمية من الـ hardware، فحتى لو الملف اتسحب مش هيتفك.",
-            how: R`على Android من نسخة 10 من الـ package: التشفير بقى RSA OAEP لتغليف المفتاح + AES-GCM للبيانات، والمفتاح في Android Keystore، وأقل Android مدعوم 6.0 (minSdk 23). والخيار القديم [[encryptedSharedPreferences]] (مبني على مكتبة Jetpack Security اللي اتعملها deprecate) مبقاش موصى بيه. ونسخة 11 هي الحالية. وفيه [[AndroidOptions.biometric(...)]] لو عايز بصمة قبل القراية.
+            how: R`على Android من نسخة 10 من الـ package: التشفير بقى RSA OAEP لتغليف المفتاح + AES-GCM للبيانات، والمفتاح في Android Keystore، والخيار القديم [[encryptedSharedPreferences]] (مبني على مكتبة Jetpack Security اللي اتعملها deprecate) بقى deprecated ونسخة 10 بتنقل بياناته. ونسخة 11 (الحالية) شالته خالص، ورفعت أقل Android مدعوم لـ 7.0 (minSdk 24). فلو جاي من نسخة أقدم من 10، عدّي على 10 الأول عشان البيانات تتنقل. وفيه [[AndroidOptions.biometric(...)]] لو عايز بصمة قبل القراية.
 
 على iOS: Keychain. وخلي بالك إن Keychain بيفضل موجود حتى بعد ما التطبيق يتمسح (سلوك النظام)، عكس Android. فمستخدم مسح التطبيق وسطّبه تاني ممكن يلاقي نفسه عامل login. الحل الشائع: flag في shared_preferences اسمه [[first_run]]؛ لو مش موجود امسح الـ secure storage.
 

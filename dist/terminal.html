@@ -82095,7 +82095,7 @@ void main() => runApp(MaterialApp.router(routerConfig: router));
 
 [[ShellRoute]] و [[StatefulShellRoute.indexedStack]] للشاشات اللي ليها bottom navigation ثابت: كل تاب ليه stack خاص بيه وبيحافظ على مكانه.
 
-و [[errorBuilder]] للشاشة اللي تظهر لما المسار مش موجود أو حصل exception وقت بناء الـ route.`,
+و [[errorBuilder]] للشاشة اللي تظهر لما المسار مش موجود أو الـ redirect رمى exception. أما exception جوه الـ builder نفسه فمبيوصلوش: دا error عادي وقت الـ build.`,
             when: "أي تطبيق فيه أكتر من كام شاشة، أو deep links، أو ويب، أو شاشات محمية بـ login. ولو تطبيق صغير جدًا من غير لينكات، Navigator العادي كفاية.",
             mistakes: R`تبعت الـ object في [[extra]] وتعتمد عليه، فالـ deep link والـ refresh يضربوا. وتنسى إن الـ path params نصوص فتعمل [[state.pathParameters['id'] as int]]. وتستخدم [[go]] وانت عايز ترجع بنتيجة، فالـ await مبيرجعش حاجة. وتحط [[/]] في أول مسار route فرعي. وتعمل [[GoRouter(...)]] جوه build فكل rebuild يعمل router جديد ويرجعك لأول شاشة: اعمله مرة واحدة بره (top-level أو في provider).`
           },
@@ -82124,7 +82124,7 @@ void main() => runApp(MaterialApp.router(routerConfig: router));
           ],
           sol: R`[[/products/7]] مباشرة: ProductScreen بيظهر بـ [[tab: info]] (القيمة الافتراضية لأن مفيش [[?tab=]])، وفيه زرار رجوع في الـ AppBar لأن go_router بنى الـ stack من الشجرة وحط HomeScreen تحته. لو كنت عامل الـ route ده top-level (مش جوه [[/]]) مكانش هيبقى فيه رجوع.
 
-[[/products/abc]]: [[int.parse('abc')]] بيرمي FormatException جوه الـ builder، و go_router بيعرض شاشة الخطأ الافتراضية. الحل الصح: [[int.tryParse(...)]] ولو null اعرض شاشة «المنتج مش موجود»، أو [[errorBuilder]] على الـ GoRouter.
+[[/products/abc]]: المسار نفسه اتطابق عادي (أي نص ينفع يبقى [[:id]])، بس [[int.parse('abc')]] بيرمي FormatException جوه الـ builder وقت بناء الشاشة. go_router مش بيمسك الـ exception ده ([[errorBuilder]] بتاعه للمسارات اللي ملهاش route أو لأخطاء الـ redirect)، فهتشوف الشاشة الحمرا بتاعة Flutter في debug وفي الترمنال [[FormatException: Invalid radix-10 number]]. الحل الصح: [[int.tryParse(...)]] ولو null اعرض شاشة «المنتج مش موجود» من الـ builder نفسه.
 
 على الويب لاحظ إن الـ URL في المتصفح بيتغير مع كل تنقل، وزرار back بتاع المتصفح بيشتغل.`
         },
@@ -83561,7 +83561,7 @@ class TokenStore {
           flag: "script",
           deep: {
             why: "shared_preferences ملف XML أو DataStore عادي في فولدر التطبيق: على موبايل عليه root، أو من backup، أو من malware بصلاحيات عالية، التوكن بيتقري كنص. الـ secure storage بيشفّر بمفاتيح محمية من الـ hardware، فحتى لو الملف اتسحب مش هيتفك.",
-            how: R`على Android من نسخة 10 من الـ package: التشفير بقى RSA OAEP لتغليف المفتاح + AES-GCM للبيانات، والمفتاح في Android Keystore، وأقل Android مدعوم 6.0 (minSdk 23). والخيار القديم [[encryptedSharedPreferences]] (مبني على مكتبة Jetpack Security اللي اتعملها deprecate) مبقاش موصى بيه. ونسخة 11 هي الحالية. وفيه [[AndroidOptions.biometric(...)]] لو عايز بصمة قبل القراية.
+            how: R`على Android من نسخة 10 من الـ package: التشفير بقى RSA OAEP لتغليف المفتاح + AES-GCM للبيانات، والمفتاح في Android Keystore، والخيار القديم [[encryptedSharedPreferences]] (مبني على مكتبة Jetpack Security اللي اتعملها deprecate) بقى deprecated ونسخة 10 بتنقل بياناته. ونسخة 11 (الحالية) شالته خالص، ورفعت أقل Android مدعوم لـ 7.0 (minSdk 24). فلو جاي من نسخة أقدم من 10، عدّي على 10 الأول عشان البيانات تتنقل. وفيه [[AndroidOptions.biometric(...)]] لو عايز بصمة قبل القراية.
 
 على iOS: Keychain. وخلي بالك إن Keychain بيفضل موجود حتى بعد ما التطبيق يتمسح (سلوك النظام)، عكس Android. فمستخدم مسح التطبيق وسطّبه تاني ممكن يلاقي نفسه عامل login. الحل الشائع: flag في shared_preferences اسمه [[first_run]]؛ لو مش موجود امسح الـ secure storage.
 
@@ -86155,7 +86155,7 @@ try {
           flag: "script",
           deep: {
             why: "[[JSON.parse]] على نص حر بيقع أول ما الموديل يحط مقدمة أو علامات markdown حوالين الـ JSON. والـ structured output بيقفل الباب ده من عند المزوّد، والـ validation بيقفله عندك.",
-            how: R`[[zodOutputFormat]] بيحوّل الـ Zod schema لـ JSON Schema ويبعتها في [[output_config.format]]. المزوّد بيقيّد التوليد نفسه (constrained decoding)، فالـ tokens اللي تكسر الـ schema مش بتتولّد أصلًا. و [[messages.parse]] بياخد النص ويعدّيه على Zod ويحطه في [[parsed_output]] بنوعه. ولو فشل (الرد اتقطع عند [[max_tokens]]، أو الموديل رفض)، بيرمي خطأ، عشان كده الـ try.
+            how: R`[[zodOutputFormat]] بيحوّل الـ Zod schema لـ JSON Schema ويبعتها في [[output_config.format]]. المزوّد بيقيّد التوليد نفسه (constrained decoding)، فالـ tokens اللي تكسر الـ schema مش بتتولّد أصلًا. و [[messages.parse]] بياخد النص ويعدّيه على Zod ويحطه في [[parsed_output]] بنوعه. ولو النص مش JSON صالح أو مش مطابق (زي لما الرد يتقطع عند [[max_tokens]])، بيرمي خطأ. ولو الموديل رفض ومفيش نص أصلًا، [[parsed_output]] بيرجع [[null]] من غير خطأ، فافحص [[stop_reason]] أو القيمة قبل ما تستخدمها (في المثال الـ try بيمسك الحالتين، لأن [[booking.intent]] على null بيرمي TypeError).
 
 في Gemini نفس الفكرة بـ [[response_format]] في Interactions (أو [[responseSchema]] في generateContent)، وتقدر تحوّل Zod لـ JSON Schema بـ [[z.toJSONSchema]] وتعمل [[safeParse]] على الرد بنفسك.
 
@@ -87178,7 +87178,7 @@ console.log(redact("المفتاح sk-ant-api03-abcDEF_123 اتسرب"));`,
           ],
           sol: R`من غير [[LOG_PROMPTS]]: سطر JSON فيه [[user]] (hash) و [[model]] و [[in: 812]] و [[out: 95]] و [[ms: 1840]] بس، ومفيش [[sample]] خالص لأن [[undefined]] بيختفي من JSON. ومعاه: [[sample]] فيه «أنا كريم، رقمي [PHONE] وإيميلي [EMAIL] والكارت [CARD]». لاحظ إن «كريم» لسه موجود: الـ regex ميعرفش الأسامي، وده سبب إن المحتوى مقفول افتراضيًا.
 
-[[+20 101 234 5678]] بمسافات هيعدّي من غير ما يتمسح، لأن القاعدة متوقعة أرقام ورا بعض. تقدر توسّعها بـ [[[ -]?]] بين المجموعات، بس كل توسيع بيمسك حاجات مش تليفونات. والرقم القومي (١٤ رقم ورا بعض) هيتمسح كـ [[CARD]] بالصدفة لأنه في مدى ١٣ لـ ١٩ رقم، وده كويس هنا، بس اعرف إنه اتمسح بالصدفة مش لأنك قصدته، وضيف قاعدة صريحة ليه.`
+[[+20 101 234 5678]] بمسافات هيعدّي من غير ما يتمسح، لأن القاعدة متوقعة أرقام ورا بعض. تقدر توسّعها بـ [[[ -]?]] بين المجموعات، بس كل توسيع بيمسك حاجات مش تليفونات. والرقم القومي (١٤ رقم ورا بعض) غالبًا هيتمسح كـ [[CARD]] بالصدفة لأنه في مدى ١٣ لـ ١٩ رقم. بس لو الشهر فيه يناير واليوم بيبدأ بـ 0 أو 1 أو 2 (زي [[29801011234567]])، قاعدة التليفون بتسبق وتمسك آخر ١١ رقم منه، فيطلع [[298[PHONE]]] وأول ٣ أرقام باينين. في الحالتين اللي اتمسح اتمسح بالصدفة مش لأنك قصدته، فضيف قاعدة صريحة للرقم القومي قبل قاعدة التليفون.`
         },
         {
           cmd: "latency ولا جودة",
