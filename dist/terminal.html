@@ -91164,7 +91164,7 @@ Sentry.init({
   environment: process.env.APP_ENV,
   release: process.env.GIT_SHA,
   tracesSampleRate: 0.1,
-  sendDefaultPii: false,
+  dataCollection: { userInfo: false, cookies: false },
 });
 
 worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: job?.queueName, job: job?.name } }));`,
@@ -91176,7 +91176,7 @@ worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: 
 
 [[environment]] بيفصل أخطاء staging عن production. و [[release]] (رقم الـ commit) بيوريك الخطأ بدأ مع أنهي deploy، وبيربط الـ source maps. والـ source maps للواجهة بتترفع في CI، عشان الـ stack يبان بأسماء الملفات الحقيقية مش الكود المضغوط.
 
-[[tracesSampleRate: 0.1]] معناها إنه بيقيس أداء ١٠٪ من الطلبات بس، عشان الكوتة والتكلفة. و [[sendDefaultPii: false]] معناها إنه مش بيبعت IPs و cookies. والـ [[Sentry.setUser({ id })]] في requireAuth بـ id بس، من غير إيميل.
+[[tracesSampleRate: 0.1]] معناها إنه بيقيس أداء ١٠٪ من الطلبات بس، عشان الكوتة والتكلفة. و [[dataCollection: { userInfo: false, cookies: false }]] معناها إنه مش بيبعت IPs و cookies (ده في SDK نسخة 11. في نسخة 10 وقبلها كان الاختيار [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 الاختيار ده اتشال وبيتجاهل من غير أي تحذير، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك). والـ [[Sentry.setUser({ id })]] في requireAuth بـ id بس، من غير إيميل.
 
 والأخطاء اللي بتحصل برّه الـ requests، زي الـ jobs، لازم تبعتها بنفسك بـ [[captureException]]. المثال بيعمل ده لأي job فشلت.
 
@@ -91191,18 +91191,18 @@ worker.on("failed", (job, err) => Sentry.captureException(err, { tags: { queue: 
             "staging ولا production.",
             "رقم الـ commit، عشان تعرف الخطأ بدأ مع أنهي deploy.",
             "قيس أداء ١٠٪ من الطلبات بس.",
-            "متبعتش IPs و cookies.",
+            "متبعتش IPs و cookies (SDK نسخة 11).",
             "قفلة.",
             "في ملف الـ worker: أي job فشلت، ابعتها لـ Sentry باسم الـ queue والـ job."
           ],
           sol: R`بعد ما تفتح الـ route مرة، في Sentry تحت Issues هيظهر issue جديد عنوانه نص الخطأ (مثلًا [[Error: sentry test]])، وجواه الـ stack trace بأسماء ملفاتك، وفي الـ tags [[environment: staging]] و [[release]] بقيمة الـ GIT_SHA. ولو فتحت الـ route ١٠ مرات، هيفضل issue واحد والـ Events بقوا ١٠، لأن Sentry بيجمع الأخطاء اللي ليها نفس الـ stack.
 
-لو مفيش حاجة ظهرت: اتأكد إن [[SENTRY_DSN]] واصل (اطبع [[Boolean(process.env.SENTRY_DSN)]])، وإن [[Sentry.init]] بيتنادي قبل ما express يتعمل import (في ملف [[instrument.js]] بيتحمّل بـ [[node --import ./instrument.js]])، وإنك سجّلت [[Sentry.setupExpressErrorHandler(app)]] قبل الـ errorHandler بتاعك. من غيره، الـ errorHandler بيبلع الخطأ ويرد 500، و Sentry ميعرفش.
+لو مفيش حاجة ظهرت: اتأكد إن [[SENTRY_DSN]] واصل (اطبع [[Boolean(process.env.SENTRY_DSN)]])، وإن [[Sentry.init]] بيتنادي قبل ما express يتعمل import (في ملف [[instrument.js]] بيتحمّل بـ [[node --import ./instrument.js]])، ولو على نسخة SDK قديمة، اتأكد إنك سجّلت [[Sentry.setupExpressErrorHandler(app)]] قبل الـ errorHandler بتاعك، لأن من غيره الـ errorHandler بيبلع الخطأ ويرد 500 و Sentry ميعرفش. (في نسخة 11 الخطأ بيوصل حتى من غيره، وتسجيله مش بيضر.)
 
 الـ alert: في Alerts اعمل rule من نوع Issue alert، شرطها «A new issue is created» والفلتر [[environment = production]]، والـ action إيميل أو integration. وجرّبه بخطأ في staging بعد ما تشيل الفلتر مؤقتًا. ولو الـ stack فيه أسماء ملفات غريبة زي [[dist/index.js:1:23456]]، محتاج ترفع الـ source maps.`,
           solCode: R`// instrument.js: node --import ./instrument.js dist/server.js
 import * as Sentry from "@sentry/node";
-Sentry.init({ dsn: process.env.SENTRY_DSN, environment: process.env.APP_ENV, release: process.env.GIT_SHA, tracesSampleRate: 0.1, sendDefaultPii: false });
+Sentry.init({ dsn: process.env.SENTRY_DSN, environment: process.env.APP_ENV, release: process.env.GIT_SHA, tracesSampleRate: 0.1, dataCollection: { userInfo: false, cookies: false } });
 
 // app.ts
 import * as Sentry from "@sentry/node";
@@ -107762,7 +107762,7 @@ deadlines: كل نداء gRPC المفروض يبقى ليه deadline ([[{ deadl
             "الـ package، والـ version جزء من الاسم.",
             "الخدمة:",
             "unary: طلب ورد.",
-            "server streaming: طلب واحد، والسيرفر بيبعت طلبات كتير لحد ما يقفل.",
+            "server streaming: طلب واحد، والسيرفر بيبعت ردود كتير لحد ما يقفل.",
             "قفلة.",
             "رسالة الطلب: الحقل رقمه ١ (ده اللي بيتبعت، مش الاسم).",
             "رسالة المتابعة.",
@@ -110459,7 +110459,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::123456789012:role/github-deploy
@@ -110668,7 +110668,7 @@ Sentry.init({
   environment: process.env.NODE_ENV,
   release: process.env.GIT_SHA,
   tracesSampleRate: 0.1,
-  sendDefaultPii: false,
+  dataCollection: { userInfo: false, cookies: false },
 });
 // app.mjs: بعد كل الـ routes وقبل أي error handler تاني
 Sentry.setupExpressErrorHandler(app);
@@ -110685,7 +110685,7 @@ Sentry.setupExpressErrorHandler(app);
 
 [[tracesSampleRate: 0.1]]: ١٠٪ من الطلبات بتتسجل كـ traces للأداء. و [[1.0]] في الإنتاج بيخلّص الـ quota بسرعة.
 
-[[sendDefaultPii: false]]: ميبعتش IPs والكوكيز وبيانات اليوزر تلقائي. بيانات العملاء لما تطلع لخدمة برا دي مسؤولية قانونية.
+[[dataCollection: { userInfo: false, cookies: false }]]: ميبعتش IPs والكوكيز وبيانات اليوزر تلقائي. ده في SDK نسخة 11 (الحالية). في نسخة 10 وقبلها كان [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 اتشال وبيتجاهل في صمت، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك. بيانات العملاء لما تطلع لخدمة برا دي مسؤولية قانونية.
 
 وفي المتصفح (React أو Next.js) فيه SDK لكل framework، ولازم ترفع source maps عشان الـ stack trace يبقى على الكود الأصلي مش الـ minified.`,
             when: "أي تطبيق في الإنتاج، backend و frontend. والخطة المجانية كفاية لمشروع صغير.",
@@ -110702,7 +110702,7 @@ Sentry.setupExpressErrorHandler(app);
             "قفلة.",
             "في app.mjs: ابعت أي خطأ في Express لـ Sentry."
           ],
-          sol: R`بعد ما تفتح الـ route، خلال ثواني هيظهر issue في Sentry عنوانه [[Error: test sentry]]، وجواه: الـ stack trace لحد السطر اللي فيه [[throw]] في ملفك، وقسم Request فيه الـ URL والـ method والـ headers (من غير IP والكوكيز لأن [[sendDefaultPii: false]])، و tags فيها [[environment]] و [[release]] (لو [[GIT_SHA]] متسجل). واليوزر نفسه هيشوف 500 عادي، لأن Sentry بيسجّل الخطأ وبيسيب الـ error handler التاني يرد.
+          sol: R`بعد ما تفتح الـ route، خلال ثواني هيظهر issue في Sentry عنوانه [[Error: test sentry]]، وجواه: الـ stack trace لحد السطر اللي فيه [[throw]] في ملفك، وقسم Request فيه الـ URL والـ method والـ headers (من غير IP والكوكيز لأن [[userInfo: false]] و [[cookies: false]])، و tags فيها [[environment]] و [[release]] (لو [[GIT_SHA]] متسجل). واليوزر نفسه هيشوف 500 عادي، لأن Sentry بيسجّل الخطأ وبيسيب الـ error handler التاني يرد.
 
 لو مفيش حاجة ظهرت: أول سبب إن [[SENTRY_DSN]] مش متعرّف في البيئة اللي شغّلت منها، و [[Sentry.init]] بـ dsn فاضي مبيشتكيش، بيقفل نفسه في صمت. تاني سبب: شغّلت [[node app.mjs]] من غير [[--import ./instrument.mjs]]، فالـ instrumentation متحمّلش قبل express. تالت: الـ route عامل [[try/catch]] وبيرجّع 500 بنفسه، فالخطأ موصلش للـ handler أصلًا (في الحالة دي استخدم [[Sentry.captureException(err)]]). ورابع: [[setupExpressErrorHandler]] متحط قبل الـ routes.
 

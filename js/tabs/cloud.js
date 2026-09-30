@@ -2657,7 +2657,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::123456789012:role/github-deploy
@@ -2866,7 +2866,7 @@ Sentry.init({
   environment: process.env.NODE_ENV,
   release: process.env.GIT_SHA,
   tracesSampleRate: 0.1,
-  sendDefaultPii: false,
+  dataCollection: { userInfo: false, cookies: false },
 });
 // app.mjs: بعد كل الـ routes وقبل أي error handler تاني
 Sentry.setupExpressErrorHandler(app);
@@ -2883,7 +2883,7 @@ Sentry.setupExpressErrorHandler(app);
 
 [[tracesSampleRate: 0.1]]: ١٠٪ من الطلبات بتتسجل كـ traces للأداء. و [[1.0]] في الإنتاج بيخلّص الـ quota بسرعة.
 
-[[sendDefaultPii: false]]: ميبعتش IPs والكوكيز وبيانات اليوزر تلقائي. بيانات العملاء لما تطلع لخدمة برا دي مسؤولية قانونية.
+[[dataCollection: { userInfo: false, cookies: false }]]: ميبعتش IPs والكوكيز وبيانات اليوزر تلقائي. ده في SDK نسخة 11 (الحالية). في نسخة 10 وقبلها كان [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 اتشال وبيتجاهل في صمت، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك. بيانات العملاء لما تطلع لخدمة برا دي مسؤولية قانونية.
 
 وفي المتصفح (React أو Next.js) فيه SDK لكل framework، ولازم ترفع source maps عشان الـ stack trace يبقى على الكود الأصلي مش الـ minified.`,
             when: "أي تطبيق في الإنتاج، backend و frontend. والخطة المجانية كفاية لمشروع صغير.",
@@ -2900,7 +2900,7 @@ Sentry.setupExpressErrorHandler(app);
             "قفلة.",
             "في app.mjs: ابعت أي خطأ في Express لـ Sentry."
           ],
-          sol: R`بعد ما تفتح الـ route، خلال ثواني هيظهر issue في Sentry عنوانه [[Error: test sentry]]، وجواه: الـ stack trace لحد السطر اللي فيه [[throw]] في ملفك، وقسم Request فيه الـ URL والـ method والـ headers (من غير IP والكوكيز لأن [[sendDefaultPii: false]])، و tags فيها [[environment]] و [[release]] (لو [[GIT_SHA]] متسجل). واليوزر نفسه هيشوف 500 عادي، لأن Sentry بيسجّل الخطأ وبيسيب الـ error handler التاني يرد.
+          sol: R`بعد ما تفتح الـ route، خلال ثواني هيظهر issue في Sentry عنوانه [[Error: test sentry]]، وجواه: الـ stack trace لحد السطر اللي فيه [[throw]] في ملفك، وقسم Request فيه الـ URL والـ method والـ headers (من غير IP والكوكيز لأن [[userInfo: false]] و [[cookies: false]])، و tags فيها [[environment]] و [[release]] (لو [[GIT_SHA]] متسجل). واليوزر نفسه هيشوف 500 عادي، لأن Sentry بيسجّل الخطأ وبيسيب الـ error handler التاني يرد.
 
 لو مفيش حاجة ظهرت: أول سبب إن [[SENTRY_DSN]] مش متعرّف في البيئة اللي شغّلت منها، و [[Sentry.init]] بـ dsn فاضي مبيشتكيش، بيقفل نفسه في صمت. تاني سبب: شغّلت [[node app.mjs]] من غير [[--import ./instrument.mjs]]، فالـ instrumentation متحمّلش قبل express. تالت: الـ route عامل [[try/catch]] وبيرجّع 500 بنفسه، فالخطأ موصلش للـ handler أصلًا (في الحالة دي استخدم [[Sentry.captureException(err)]]). ورابع: [[setupExpressErrorHandler]] متحط قبل الـ routes.
 
