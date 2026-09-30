@@ -812,7 +812,7 @@ $q = $_GET['q'] ?? '<script>alert(1)</script>';
           ],
           sol: R`من غير [[e()]] في سطر [[<p>]]: الـ alert بيطلع، والـ View Source فيه [[<p>نتايج البحث عن: <script>alert(1)</script></p>]]. المتصفح شاف tag حقيقي ونفّذه.
 
-بعد [[e()]] الـ View Source: [[<p>نتايج البحث عن: &lt;script&gt;alert(1)&lt;/script&gt;</p>]] والكلام بيظهر نص عادي. وفي الـ script: [[const q = "<script>alert(1)<\/script>";]]، فـ [[</script>]] مش هيقفل الـ tag بدري.
+بعد [[e()]] الـ View Source: [[<p>نتايج البحث عن: &lt;script&gt;alert(1)&lt;/script&gt;</p>]] والكلام بيظهر نص عادي. وفي الـ script: [[const q = "\u003Cscript\u003Ealert(1)\u003C\/script\u003E";]]: [[JSON_HEX_TAG]] حوّل [[<]] و [[>]] لـ [[\u003C]] و [[\u003E]]، فمفيش [[</script>]] حرفي يقفل الـ tag بدري، و JavaScript بيقرا النص زي ما هو.
 
 مع [[?q=" onfocus="alert(1)]] الـ input بقى [[value="&quot; onfocus=&quot;alert(1)"]]: التنصيص اتحوّل لـ [[&quot;]] فمقدرش يخرج من الـ attribute. لو كنت كاتب [[htmlspecialchars($q)]] من غير [[ENT_QUOTES]] في PHP قديم (قبل 8.1)، الـ [[']] مكانتش بتتحوّل، وأي attribute بين [[' ']] كان بيتكسر.`
         },
@@ -1704,7 +1704,7 @@ json_out(['id' => 7, 'title' => $title], 201);`,
 
 [[-d 'x']]: [[400]] و [[{"error":"JSON غلط"}]]. من غير [[-d]]: [[405]] و [[{"error":"POST بس"}]]. وجرّب كمان [[-d '{"title":"  "}']]: [[422]] و [[{"error":"title مطلوب"}]]. كل حالة ليها status مختلف، والـ client يقدر يفرّق من غير ما يقرا الرسالة.
 
-من غير [[JSON_UNESCAPED_UNICODE]]: [[{"id":7,"title":"أهلًا"}]]. ده JSON صحيح والـ client هيقراه صح، بس صعب تقراه انت في اللوج. ولو [[-d 'x']] رجّع 201 أو 500، يبقى انت بتفحص [[$in === null]] بدل [[is_array]]، أو نسيت [[true]] في [[json_decode]] فرجعلك object.`
+من غير [[JSON_UNESCAPED_UNICODE]]: [[{"id":7,"title":"\u0623\u0647\u0644\u064b\u0627"}]]. ده JSON صحيح والـ client هيقراه صح، بس صعب تقراه انت في اللوج. ولو [[-d 'x']] رجّع 201 أو 500، يبقى انت بتفحص [[$in === null]] بدل [[is_array]]، أو نسيت [[true]] في [[json_decode]] فرجعلك object.`
         },
         {
           cmd: "return config",
@@ -1992,7 +1992,7 @@ echo checkout(new FakeGateway('YOUR_KEY'));`,
             "الدالة عايزة أي حاجة بتنفّذ العقد.",
             "ابعتلها الـ fake."
           ],
-          sol: R`من غير [[charge]] في [[FakeGateway]]: [[Fatal error: Class FakeGateway contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (PaymentGateway::charge)]]، ومفيش ولا سطر من الملف اتنفّذ (حتى [[echo]] اللي فوق خالص)، لأن PHP بيفحص الكلاس وهو بيترجم الملف.
+          sol: R`من غير [[charge]] في [[FakeGateway]]: [[Fatal error: Class FakeGateway contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (PaymentGateway::charge)]]، والغلطة بتطلع أول ما PHP يوصل لتعريف الكلاس (قبل ما [[checkout]] يتنادى أصلًا)، مش لما حد ينادي [[charge]]: PHP بيفحص إن الكلاس مكمّل كل الـ methods وهو بيعرّفه.
 
 [[LoggingGateway]] بيعدّي لـ [[checkout]] عادي رغم إنه مش وارث من [[BaseGateway]]، لأن [[checkout]] طالب الـ interface بس. الناتج مثلًا [[txn_26a81e2e]] للأول و [[log_500]] للتاني، وسطر [[FakeGateway: charge 500]] من [[error_log]] بيظهر في الترمنال.`,
           solCode: R`final class LoggingGateway implements PaymentGateway {
@@ -3178,7 +3178,7 @@ class PostFactory extends Factory
           ],
           sol: R`الأرقام: البوستات 10 + 15 = 25، والتعليقات 10 × 2 = 20 (لو اليوزرز العشوائيين من غير تعليقات). و [[Post::published()->count()]] = 7 من بوستات اليوزر الثابت + حوالي 80% من الـ 15 (بتختلف كل مرة لأن [[optional(0.8)]] عشوائي).
 
-الغلط الشائع: [[Post::factory(10)->create()]] من غير [[for($user)]] فكل بوست يعمل يوزر جديد وتلاقي 16 يوزر زيادة. أو [[published_at]] في المستقبل من الـ factory فالـ scope ميعدّهوش.`,
+الغلط الشائع: [[Post::factory(10)->create()]] من غير [[for($user)]] فكل بوست يعمل يوزر جديد: 10 يوزرز زيادة، وتلاقي في الجدول 16 يوزر بدل 6. أو [[published_at]] في المستقبل من الـ factory فالـ scope ميعدّهوش.`,
           solCode: R`<?php
 
 namespace Database\Seeders;
@@ -4308,7 +4308,7 @@ echo '<script>const n = ' . json_encode($name, JSON_HEX_TAG | JSON_HEX_QUOT) . '
           ],
           sol: R`من غير escape ([[echo '<p>' . $name . '</p>';]]) الـ alert بيطلع: المتصفح شاف [[<img>]] حقيقي، الصورة [[x]] فشلت، فـ [[onerror]] اشتغل.
 
-بالسطرين اللي في المثال View Source بيبقى: [[<p>&lt;img src=x onerror=alert(1)&gt;</p>]] وبيظهر كنص، و [[<script>const n = "<img src=x onerror=alert(1)>";</script>]] ومفيش alert. كل مكان ليه escape بتاعه: HTML بـ [[htmlspecialchars]]، وجوه [[<script>]] بـ [[json_encode]] مع [[JSON_HEX_TAG]] عشان [[</script>]] جوه النص ميقفلش الـ tag.
+بالسطرين اللي في المثال View Source بيبقى: [[<p>&lt;img src=x onerror=alert(1)&gt;</p>]] وبيظهر كنص، و [[<script>const n = "\u003Cimg src=x onerror=alert(1)\u003E";</script>]] ومفيش alert (الـ [[<]] و [[>]] بقوا [[\u003C]] و [[\u003E]]، و JavaScript بيرجّعهم حروف عادية جوه النص). كل مكان ليه escape بتاعه: HTML بـ [[htmlspecialchars]]، وجوه [[<script>]] بـ [[json_encode]] مع [[JSON_HEX_TAG]] عشان [[</script>]] جوه النص ميقفلش الـ tag.
 
 للانترفيو: الـ escape وقت الطباعة مش وقت الحفظ، لأن نفس القيمة ممكن تتطبع في HTML أو JSON أو CSV. وزوّد Content-Security-Policy كطبقة تانية، و [[htmlspecialchars]] مش كفاية جوه [[href]] ([[javascript:alert(1)]] مفيهاش ولا حرف يتعمله escape)، فالروابط لازم تتأكد إنها بتبدأ بـ [[https://]].`
         },

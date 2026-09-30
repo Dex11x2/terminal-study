@@ -23163,7 +23163,7 @@ print(average([10, 20, 30]))`,
           flag: "script",
           deep: {
             why: "print debugging بيتحول لعشرين print، تشيلهم وتنسى واحد في الكود اللي نزل. والـ debugger بيوريك كل حاجة في اللحظة دي: كل المتغيرات، ومين نادى مين، وتقدر تجرّب تعبير على القيم الحقيقية قبل ما تعدّل الكود.",
-            how: R`[[breakpoint()]] (من Python 3.7) بتنادي [[pdb.set_trace()]] بشكل افتراضي. البرنامج بيقف قبل تنفيذ السطر اللي بعدها، وبيطبع [[> file.py(6)average()]] و [[-> return ...]]: ده السطر اللي لسه هيتنفذ.
+            how: R`[[breakpoint()]] (من Python 3.7) بتنادي [[pdb.set_trace()]] بشكل افتراضي. من Python 3.13 البرنامج بيقف عند سطر الـ [[breakpoint()]] نفسه، وبيطبع [[> file.py(5)average()]] و [[-> breakpoint()]] (السهم هو السطر الحالي). في النسخ الأقدم كان بيقف على السطر اللي بعدها ([[-> return ...]]).
 
 الأوامر:
 
@@ -23190,7 +23190,7 @@ print(average([10, 20, 30]))`,
             "رجّع المتوسط.",
             "شغّل على [10, 20, 30]."
           ],
-          sol: R`البرنامج بيطبع [[16.666666666666668]] مش 20. عند [[(Pdb)]]، [[p total, len(nums)]] بيطبع [[(50, 3)]]: المجموع 50 مش 60، فالقسمة سليمة والجمع هو الغلط. [[ll]] بيعرض الدالة وسهم [[->]] عند سطر الـ return.
+          sol: R`البرنامج بيطبع [[16.666666666666668]] مش 20. عند [[(Pdb)]]، [[p total, len(nums)]] بيطبع [[(50, 3)]]: المجموع 50 مش 60، فالقسمة سليمة والجمع هو الغلط. [[ll]] بيعرض الدالة وسهم [[->]] عند سطر الـ [[breakpoint()]] (في Python 3.13 وأحدث؛ الأقدم كان بيوقف السهم عند الـ return).
 
 وبالـ breakpoint جوه الـ for: أول وقفة [[p i, nums[i] ]] بيطبع [[(1, 20)]]، يعني أول عنصر (10) اتفوّت خالص. الغلطة [[range(1, len(nums))]]، وصحها [[range(len(nums))]]، والأحسن من غير index أصلًا: [[sum(nums)]].
 
@@ -23237,7 +23237,7 @@ PYTHONBREAKPOINT=0 python seed.py data.csv`,
           ],
           sol: R`التشغيل العادي بيقع بـ [[ValueError: invalid literal for int() with base 10: 'ten']] وسطر [[int(row[1])]]، من غير ما يقولك أنهي صف.
 
-بـ pdb: بيطبع نفس الـ traceback وبعده [[Uncaught exception. Entering post mortem debugging]] و [[> seed.py(3)parse()]]. [[p row]] بيطبع [[['cup', 'ten'] ]]، و [[w]] بيوريك الـ stack: الـ module نادى الـ list comprehension نادى parse.
+بـ pdb: بيطبع نفس الـ traceback وبعده [[Uncaught exception. Entering post mortem debugging]] و [[> seed.py(3)parse()]]. [[p row]] بيطبع [[['cup', 'ten'] ]]، و [[w]] بيوريك الـ stack: الـ module (سطر الـ list comprehension) نادى parse. (من Python 3.12 الـ comprehension مبقاش ليه frame لوحده في الـ stack.)
 
 التصليح: [[enumerate(..., start=1)]] عشان رقم السطر، وتمسك [[ValueError]] وترمي رسالة واضحة فيها السطر والقيمة (أو تسجّل الصف وتكمّل لو ده المطلوب). من غير ما تبلع الخطأ بصمت.`,
           solCode: R`import csv
@@ -71911,7 +71911,7 @@ print(sorted(str(p.relative_to("inbox")) for p in Path("inbox").rglob("*") if p.
           title: "من CSV لـ JSON وبالعكس: من ملف لملف",
           desc: R`[[csv.DictReader]] بيقرا كل صف كـ dict بأسماء الأعمدة من أول سطر، و [[csv.DictWriter]] بيكتب list of dicts. وافتح ملفات الـ CSV دايمًا بـ [[newline=""]] و [[encoding="utf-8"]]. وكل القيم اللي بتيجي من CSV strings، فحوّل الأرقام بنفسك.
 
-و [[json.loads]] و [[json.dumps]] بيحوّلوا بين string و dict/list، و [[json.load]] و [[json.dump]] نفس الكلام مع ملف مفتوح. و [[ensure_ascii=False]] عشان العربي يتكتب عربي مش [[س]]، و [[indent=2]] للقراية.`,
+و [[json.loads]] و [[json.dumps]] بيحوّلوا بين string و dict/list، و [[json.load]] و [[json.dump]] نفس الكلام مع ملف مفتوح. و [[ensure_ascii=False]] عشان العربي يتكتب عربي مش [[\u0633]]، و [[indent=2]] للقراية.`,
           example: R`import csv
 import json
 from datetime import date
@@ -76061,7 +76061,7 @@ $q = $_GET['q'] ?? '<script>alert(1)$__lt/script>';
           ],
           sol: R`من غير [[e()]] في سطر [[<p>]]: الـ alert بيطلع، والـ View Source فيه [[<p>نتايج البحث عن: <script>alert(1)$__lt/script></p>]]. المتصفح شاف tag حقيقي ونفّذه.
 
-بعد [[e()]] الـ View Source: [[<p>نتايج البحث عن: &lt;script&gt;alert(1)&lt;/script&gt;</p>]] والكلام بيظهر نص عادي. وفي الـ script: [[const q = "<script>alert(1)<\/script>";]]، فـ [[$__lt/script>]] مش هيقفل الـ tag بدري.
+بعد [[e()]] الـ View Source: [[<p>نتايج البحث عن: &lt;script&gt;alert(1)&lt;/script&gt;</p>]] والكلام بيظهر نص عادي. وفي الـ script: [[const q = "\u003Cscript\u003Ealert(1)\u003C\/script\u003E";]]: [[JSON_HEX_TAG]] حوّل [[<]] و [[>]] لـ [[\u003C]] و [[\u003E]]، فمفيش [[$__lt/script>]] حرفي يقفل الـ tag بدري، و JavaScript بيقرا النص زي ما هو.
 
 مع [[?q=" onfocus="alert(1)]] الـ input بقى [[value="&quot; onfocus=&quot;alert(1)"]]: التنصيص اتحوّل لـ [[&quot;]] فمقدرش يخرج من الـ attribute. لو كنت كاتب [[htmlspecialchars($q)]] من غير [[ENT_QUOTES]] في PHP قديم (قبل 8.1)، الـ [[']] مكانتش بتتحوّل، وأي attribute بين [[' ']] كان بيتكسر.`
         },
@@ -76953,7 +76953,7 @@ json_out(['id' => 7, 'title' => $title], 201);`,
 
 [[-d 'x']]: [[400]] و [[{"error":"JSON غلط"}]]. من غير [[-d]]: [[405]] و [[{"error":"POST بس"}]]. وجرّب كمان [[-d '{"title":"  "}']]: [[422]] و [[{"error":"title مطلوب"}]]. كل حالة ليها status مختلف، والـ client يقدر يفرّق من غير ما يقرا الرسالة.
 
-من غير [[JSON_UNESCAPED_UNICODE]]: [[{"id":7,"title":"أهلًا"}]]. ده JSON صحيح والـ client هيقراه صح، بس صعب تقراه انت في اللوج. ولو [[-d 'x']] رجّع 201 أو 500، يبقى انت بتفحص [[$in === null]] بدل [[is_array]]، أو نسيت [[true]] في [[json_decode]] فرجعلك object.`
+من غير [[JSON_UNESCAPED_UNICODE]]: [[{"id":7,"title":"\u0623\u0647\u0644\u064b\u0627"}]]. ده JSON صحيح والـ client هيقراه صح، بس صعب تقراه انت في اللوج. ولو [[-d 'x']] رجّع 201 أو 500، يبقى انت بتفحص [[$in === null]] بدل [[is_array]]، أو نسيت [[true]] في [[json_decode]] فرجعلك object.`
         },
         {
           cmd: "return config",
@@ -77241,7 +77241,7 @@ echo checkout(new FakeGateway('YOUR_KEY'));`,
             "الدالة عايزة أي حاجة بتنفّذ العقد.",
             "ابعتلها الـ fake."
           ],
-          sol: R`من غير [[charge]] في [[FakeGateway]]: [[Fatal error: Class FakeGateway contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (PaymentGateway::charge)]]، ومفيش ولا سطر من الملف اتنفّذ (حتى [[echo]] اللي فوق خالص)، لأن PHP بيفحص الكلاس وهو بيترجم الملف.
+          sol: R`من غير [[charge]] في [[FakeGateway]]: [[Fatal error: Class FakeGateway contains 1 abstract method and must therefore be declared abstract or implement the remaining methods (PaymentGateway::charge)]]، والغلطة بتطلع أول ما PHP يوصل لتعريف الكلاس (قبل ما [[checkout]] يتنادى أصلًا)، مش لما حد ينادي [[charge]]: PHP بيفحص إن الكلاس مكمّل كل الـ methods وهو بيعرّفه.
 
 [[LoggingGateway]] بيعدّي لـ [[checkout]] عادي رغم إنه مش وارث من [[BaseGateway]]، لأن [[checkout]] طالب الـ interface بس. الناتج مثلًا [[txn_26a81e2e]] للأول و [[log_500]] للتاني، وسطر [[FakeGateway: charge 500]] من [[error_log]] بيظهر في الترمنال.`,
           solCode: R`final class LoggingGateway implements PaymentGateway {
@@ -78427,7 +78427,7 @@ class PostFactory extends Factory
           ],
           sol: R`الأرقام: البوستات 10 + 15 = 25، والتعليقات 10 × 2 = 20 (لو اليوزرز العشوائيين من غير تعليقات). و [[Post::published()->count()]] = 7 من بوستات اليوزر الثابت + حوالي 80% من الـ 15 (بتختلف كل مرة لأن [[optional(0.8)]] عشوائي).
 
-الغلط الشائع: [[Post::factory(10)->create()]] من غير [[for($user)]] فكل بوست يعمل يوزر جديد وتلاقي 16 يوزر زيادة. أو [[published_at]] في المستقبل من الـ factory فالـ scope ميعدّهوش.`,
+الغلط الشائع: [[Post::factory(10)->create()]] من غير [[for($user)]] فكل بوست يعمل يوزر جديد: 10 يوزرز زيادة، وتلاقي في الجدول 16 يوزر بدل 6. أو [[published_at]] في المستقبل من الـ factory فالـ scope ميعدّهوش.`,
           solCode: R`<?php
 
 namespace Database\Seeders;
@@ -79557,7 +79557,7 @@ echo '<script>const n = ' . json_encode($name, JSON_HEX_TAG | JSON_HEX_QUOT) . '
           ],
           sol: R`من غير escape ([[echo '<p>' . $name . '</p>';]]) الـ alert بيطلع: المتصفح شاف [[<img>]] حقيقي، الصورة [[x]] فشلت، فـ [[onerror]] اشتغل.
 
-بالسطرين اللي في المثال View Source بيبقى: [[<p>&lt;img src=x onerror=alert(1)&gt;</p>]] وبيظهر كنص، و [[<script>const n = "<img src=x onerror=alert(1)>";$__lt/script>]] ومفيش alert. كل مكان ليه escape بتاعه: HTML بـ [[htmlspecialchars]]، وجوه [[<script>]] بـ [[json_encode]] مع [[JSON_HEX_TAG]] عشان [[$__lt/script>]] جوه النص ميقفلش الـ tag.
+بالسطرين اللي في المثال View Source بيبقى: [[<p>&lt;img src=x onerror=alert(1)&gt;</p>]] وبيظهر كنص، و [[<script>const n = "\u003Cimg src=x onerror=alert(1)\u003E";$__lt/script>]] ومفيش alert (الـ [[<]] و [[>]] بقوا [[\u003C]] و [[\u003E]]، و JavaScript بيرجّعهم حروف عادية جوه النص). كل مكان ليه escape بتاعه: HTML بـ [[htmlspecialchars]]، وجوه [[<script>]] بـ [[json_encode]] مع [[JSON_HEX_TAG]] عشان [[$__lt/script>]] جوه النص ميقفلش الـ tag.
 
 للانترفيو: الـ escape وقت الطباعة مش وقت الحفظ، لأن نفس القيمة ممكن تتطبع في HTML أو JSON أو CSV. وزوّد Content-Security-Policy كطبقة تانية، و [[htmlspecialchars]] مش كفاية جوه [[href]] ([[javascript:alert(1)]] مفيهاش ولا حرف يتعمله escape)، فالروابط لازم تتأكد إنها بتبدأ بـ [[https://]].`
         },
