@@ -870,7 +870,7 @@ fatal: cannot switch branch while merging`,
           title: "رسايل TypeScript: is not assignable و possibly undefined و does not exist on type",
           desc: R`رسايل TS شكلها واحد: [[file.ts(line,col): error TSxxxx: message]]. الرقم [[TS2322]] ثابت وتقدر تدوّر بيه. والرسايل بتستخدم كام كلمة بتتكرر: [[assignable to]] = ينفع يتحط مكان، و [[possibly]] = ممكن يبقى، و [[implicitly]] = ضمنيًا (من غير ما تكتب)، و [[does not exist on type]] = مش موجود في النوع ده، و [[Expected ... but got ...]] = كان متوقع كذا وجالي كذا، و [[Object literal may only specify known properties]] = الـ object اللي كاتبه بإيدك فيه خاصية مش في النوع، و [[corresponding type declarations]] = ملف الأنواع المقابل.
 
-دي ٨ رسايل حقيقية اتطلعت من [[tsc --noEmit --strict]] (TypeScript 6.0).`,
+دي ٨ رسايل حقيقية اتطلعت من [[tsc --noEmit --strict]] (TypeScript 6 و 7، والناتج واحد في الاتنين).`,
           example: R`a.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
 a.ts(3,33): error TS2353: Object literal may only specify known properties, and 'age' does not exist in type 'User'.
 a.ts(4,30): error TS18048: 'u.email' is possibly 'undefined'.
@@ -1635,7 +1635,7 @@ Closes #42`,
 [[Invalid emails reached the API and returned a 500 from the database.]]
 [[Check the format on the client so the user sees the error immediately.]]
 
-راجع: العنوان [[Validate email format on the signup form]] = ٤١ حرف، فعل imperative، من غير نقطة. والجسم بيقول ليه (كانت بتوصل للـ API وتعمل 500) مش إيه (ضفت regex).
+راجع: العنوان [[Validate email format on the signup form]] = ٤٠ حرف، فعل imperative، من غير نقطة. والجسم بيقول ليه (كانت بتوصل للـ API وتعمل 500) مش إيه (ضفت regex).
 
 لو [[git log -1]] ورّاك العنوان والجسم لازقين من غير سطر فاضي، git هيعتبرهم عنوان واحد طويل. صلّح بـ [[git commit --amend]] (لو لسه معملتش push).`
         },
@@ -2346,7 +2346,7 @@ Online appointment booking for small clinics.
 والرسالة الكويسة فيها: ١) السياق: شغال على إيه. ٢) المشكلة: إيه اللي حصل (والخطأ بالنص). ٣) جربت إيه. ٤) السؤال بالظبط. ٥) قد إيه مستعجل. كده الشخص يقدر يرد في رسالة واحدة، أو يقولك «مش أنا، اسأل فلان».`,
           example: R`Hi Omar, quick question about the payments webhook when you have a moment.
 Context: I'm working on #231 (order status after payment).
-Problem: the webhook returns 400 "No signatures found matching the expected signature".
+Problem: the webhook returns 400 "No signatures found matching the expected signature for payload".
 What I tried: I checked the secret in .env and logged the raw body; it looks correct.
 Question: do we parse the body as JSON before the webhook route? I think the signature needs the raw body.
 Not urgent: I'm working on the tests in the meantime.`,
@@ -2793,7 +2793,7 @@ I think this sentence means: "..."  Am I right? If not, explain what I missed.`,
 
 إجاباتك الصح: POST مش idempotent (كل طلب ممكن يعمل حاجة جديدة). و DELETE idempotent لأن التأثير على السيرفر واحد (الحاجة ممسوحة)، حتى لو الرد اتغير (200 بعدين 404). الفكرة إن idempotent عن التأثير (effect) مش عن الرد.
 
-و [[words.md]] المفروض يبقى فيه حاجة زي: [[idempotent = same effect if you repeat it — "PUT and DELETE are idempotent"]]. لو الـ AI قالك حاجة عن HTTP مش متأكد منها، ارجع لـ MDN أو RFC 9110.`
+و [[words.md]] المفروض يبقى فيه حاجة زي: [[idempotent = same effect if you repeat it — "All safe methods are idempotent, as well as PUT and DELETE" (MDN)]]. لو الـ AI قالك حاجة عن HTTP مش متأكد منها، ارجع لـ MDN أو RFC 9110.`
         },
         {
           cmd: "تصحيح كتابتك",
@@ -3062,9 +3062,9 @@ Month 3: RFC/spec sections, changelogs, and writing a README or blog post`,
 القاعدة الذهبية: الكلمة من غير جملة متتحفظش. [[deprecated = مهمل]] هتتنسى. [[deprecated: "request has been deprecated" (npm warning) = still works but will be removed; use X instead]] هتفضل.`,
           example: R`| word          | meaning (my words)                    | real sentence (source)                               | my sentence                               | next review |
 | deprecated    | still works, will be removed; move on | "request has been deprecated" (npm warn)             | "This method is deprecated; use fetch()." | Oct 3       |
-| idempotent    | same effect if you repeat it          | "PUT and DELETE are idempotent" (MDN)                | "Our payment endpoint must be idempotent."| Oct 1       |
+| idempotent    | same effect if you repeat it          | "All safe methods are idempotent, as well as PUT and DELETE" (MDN) | "Our payment endpoint must be idempotent."| Oct 1       |
 | take precedence over | wins when both are set         | "CLI flags take precedence over the config file"     | "Env vars take precedence over defaults." | Oct 7       |
-| stale         | old, needs refresh                    | "The cached data is stale" (React Query docs)        | "The cache was stale after the deploy."   | Oct 21      |
+| stale         | old, needs refresh                    | "by default consider cached data as stale" (TanStack Query docs) | "The cache was stale after the deploy."   | Oct 21      |
 Review rule: correct -> next gap (1 -> 3 -> 7 -> 21 -> 60 days). Wrong -> back to 1 day.`,
           try: R`اعمل [[words.md]] بالجدول ده. ضيف ١٠ كلمات من أي درس في المستوى ١ من التاب ده، ولكل واحدة جملة حقيقية (انسخها من الـ docs أو من رسالة خطأ شفتها) وجملة من عندك عن مشروعك. حط مراجعة بكرة. وبكرة: غطّي عمود المعنى، وحاول تفتكر، وحدّث التاريخ.`,
           flag: "script",

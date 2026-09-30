@@ -103,7 +103,7 @@ Sentence 4:  I'll pair with Pavel on the Python API.`,
             R`أزواج p و b: الفرق في النفخة. pull تسحب / bull ثور، و pack / back، و pin / bin سلة، و cap / cab.`,
             R`كلمات فيها v: server، و value قيمة، و variable متغير، و Vue، و environment بيئة، و version إصدار، و invalid مش صالح، و vs (versus)، و dev.`,
             R`أزواج v و f: very جدًا / fairy جنية، و van / fan مروحة، و save تحفظ / safe آمن، و view / few.`,
-            R`«من فضلك ادفع الـ patch للـ pipeline». فيها ٦ p.`,
+            R`«من فضلك ادفع الـ patch للـ pipeline». فيها ٥ p.`,
             R`«السيرفر رجّع قيمة مش صالحة في الإصدار ٧». فيها ٥ v.`,
             R`«ممكن تسحب آخر إصدار وتنزّله على الإنتاج؟» prod = production.`,
             R`«هشتغل مع Pavel على الـ Python API». pair with = تشتغل جنب حد على نفس الكود.`
@@ -150,9 +150,9 @@ Sentence 4:  Thanks, that makes sense.`,
             R`«خليني أشوف الـ branch التاني، وبعدين أجيب التغييرات». check و other و branch و then و fetch و changes.`,
             R`«شكرًا، كده منطقي». thanks بـ ث، و that بـ ذ. makes sense = مفهوم/منطقي.`
           ],
-          sol: R`في المراية: المفروض تشوف طرف لسانك ٧–٩ مرات في الجمل الـ ٤ (think, thread, this, method, both, paths, through, auth, other, then, thanks, that). لو شفته في نصهم بس، انت لسه بتقول «س» و «ز» في الباقي.
+          sol: R`في المراية: المفروض تشوف طرف لسانك ١٢ مرة على الأقل في الجمل الـ ٤ (think, thread, this, method, both, paths, through, auth, other, then, thanks, that). لو شفته في نصهم بس، انت لسه بتقول «س» و «ز» في الباقي.
 
-جملة التحدي فيها ١٠ مرات [[th]]. التسجيل الكويس فيه [[three threads]] مش [[tree sreads]]، و [[thread-safe]] واضحة. ولو اتلخبطت في النص (ده بيحصل للكل، هي tongue twister)، قسّمها: [[Three threads]] / [[think the method]] / [[is thread-safe]] وكرر كل جزء ٣ مرات.
+جملة التحدي فيها ٩ مرات [[th]]. التسجيل الكويس فيه [[three threads]] مش [[tree sreads]]، و [[thread-safe]] واضحة. ولو اتلخبطت في النص (ده بيحصل للكل، هي tongue twister)، قسّمها: [[Three threads]] / [[think the method]] / [[is thread-safe]] وكرر كل جزء ٣ مرات.
 
 الغلط الشائع: إنك تطلّع لسانك جامد ومتنفخش، فيطلع صوت «ت» غريب. النفخ هو اللي بيعمل الـ ث.`
         },
@@ -270,7 +270,7 @@ Sentence 2:  We need to im-PORT the RE-cords; the IM-port script is in the de-VE
 
 وخلي بالك: في الجملة كمان فيه ضغط: الكلمة المهمة (الجديدة أو المختلفة) بتتقال أعلى. [[I said the TEST failed, not the BUILD]].`,
             when: "كل كلمة طويلة (٣ مقاطع أو أكتر) أول مرة تستخدمها في كلام، وخصوصًا اسم الـ stack والأدوات اللي هتتكرر في الانترفيو.",
-            mistakes: R`[[DEvelop]] و [[COMponent]] و [[paraMEEter]] و [[ENvironment]] و [[techNOlogy]] صح، بس «TECHnology» غلط. و [[aLGOrithm]] غلط، الصح [[AL-go-ri-thm]]. و [[VAriable]] هي الصح ([[VA-ri-a-ble]])، والمصري ساعات بيقول «ڤاريّا-بل» بضغط على [[RI]]. و [[an upDATE]] للاسم (الصح [[UP-date]]).`
+            mistakes: R`[[DEvelop]] و [[COMponent]] و [[paraMEEter]] و [[ENvironment]] و «TECHnology» كلهم غلط (الصح [[de-VEL-op]] و [[com-PO-nent]] و [[pa-RA-me-ter]] و [[en-VI-ron-ment]] و [[tech-NO-lo-gy]]). و [[aLGOrithm]] غلط، الصح [[AL-go-ri-thm]]. و [[VAriable]] هي الصح ([[VA-ri-a-ble]])، والمصري ساعات بيقول «ڤاريّا-بل» بضغط على [[RI]]. و [[an upDATE]] للاسم (الصح [[UP-date]]).`
           },
           lines: [
             R`develop وعيلتها: الضغط دايمًا على VEL. «ديڤيلَب»، «ديڤيلَپَر»، «ديڤيلَپمِنت».`,
@@ -679,7 +679,7 @@ Sentence:  We cut the response time from 800 milliseconds to 250, and errors dro
 [[I reduced the page load time from four seconds to one point five.]]
 [[After I added the index, the query went from two seconds to about thirty milliseconds, roughly sixty times faster.]]
 
-راجع: [[about]] أو [[roughly]] لو الرقم تقريبي، و [[from ... to ...]] للمقارنة، و [[percent]] مفرد. وفي التسجيل: [[fifteen hundred]] الضغط على [[TEEN]]، و [[thirty]] على [[THIR]]، و [[sixty]] على [[SIX]].
+راجع: [[about]] أو [[roughly]] لو الرقم تقريبي، و [[from ... to ...]] للمقارنة، و [[percent]] مفرد. وفي التسجيل: [[fifteen hundred]] الـ [[n]] في [[teen]] واضحة، و [[thirty]] الضغط على [[THIR]]، و [[sixty]] على [[SIX]].
 
 الإجابة الضعيفة: [[I made it faster]] من غير أرقام، أو رقم مش عارف جبته منين: هيتسأل «How did you measure that?» والإجابة الصح عليه: [[I used Lighthouse / the Network tab / the logs]].`
         },
