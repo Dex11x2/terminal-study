@@ -244,7 +244,7 @@ SELECT name, price * 1.14 AS price_with_vat FROM products;
 SELECT DISTINCT status FROM orders;
 SELECT count(DISTINCT user_id) AS buyers FROM orders;
 SELECT now(), 2 + 2 AS four;`,
-          try: R`الجدول فيه منتج واحد دلوقتي؛ بعد درس INSERT ارجع شغّل الأسطر تاني. وجرّب تضيف [[WHERE price_with_vat > 200]] على السطر التاني وشوف الـ error.`,
+          try: R`الجدول فيه منتج واحد دلوقتي؛ بعد درس INSERT ارجع شغّل الأسطر تاني. وجرّب تضيف [[WHERE price_with_vat > 200]] على السطر التاني وشوف الـ error. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: هات [[name]] والسعر بعد الضريبة مقرّب لخانتين، للمنتجات اللي سعرها بعد الضريبة أكبر من 200 بس.`,
           flag: "script",
           deep: {
             why: "كل شاشة في التطبيق محتاجة جزء من الداتا بس: اسم وسعر مش كل الأعمدة. لو جبت كل حاجة، الـ response بيتقل، والـ memory بتتملي، ولما حد يضيف عمود حساس في الجدول يطلع في الـ API من غير ما حد ياخد باله.",
@@ -272,7 +272,33 @@ SELECT now(), 2 + 2 AS four;`,
 -- ERROR:  column "price_with_vat" does not exist
 SELECT name, round(price * 1.14, 2) AS price_with_vat
 FROM products
+WHERE price * 1.14 > 200;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL,
+  is_active boolean NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10, true),
+  (2, 'Mug', 120.00, 0, true),
+  (3, 'Hoodie', 650.00, 3, true),
+  (4, 'Cap', 180.00, 0, false),
+  (5, 'Sticker', 0.00, 0, true),
+  (6, 'Old Poster', 0.00, 0, false),
+  (7, 'Pen', 15.00, 100, true),
+  (8, 'Pin', 15.00, 40, true);`,
+            starter: R`SELECT name, round(price * 1.14, 2) AS price_with_vat
+FROM products
+WHERE price_with_vat > 200;`,
+            expect: [["T-shirt",285], ["Hoodie",741], ["Cap",205.2]],
+            solution: R`SELECT name, round(price * 1.14, 2) AS price_with_vat
+FROM products
 WHERE price * 1.14 > 200;`
+          }
         },
         {
           cmd: "WHERE",
@@ -286,7 +312,7 @@ SELECT id, status FROM orders WHERE status IN ('paid', 'shipped');
 SELECT id FROM orders WHERE created_at >= now() - interval '7 days';
 SELECT name FROM products WHERE price BETWEEN 100 AND 500;
 SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);`,
-          try: R`شيل الأقواس من آخر سطر وقارن النتيجة. وبعدين جرّب [[WHERE status = "paid"]] بالتنصيص المزدوج واقرا الـ error.`,
+          try: R`شيل الأقواس من آخر سطر وقارن النتيجة. وبعدين جرّب [[WHERE status = "paid"]] بالتنصيص المزدوج واقرا الـ error. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: هات أسماء المنتجات النشطة ([[is_active]]) اللي يا إما في المخزون يا إما ببلاش. في الجدول منتج ببلاش ومش نشط، ومينفعش يظهر.`,
           flag: "script",
           deep: {
             why: "من غير WHERE هتجيب الجدول كله وتفلتر في الكود، يعني مليون صف بيعدّوا على الشبكة عشان تستخدم عشرة. الفلترة جوه القاعدة أسرع بمراحل، وممكن تستخدم index.",
@@ -315,7 +341,31 @@ SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);`,
 INSERT INTO products (name, price, stock, is_active) VALUES ('Gift', 0, 0, false);
 SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);   -- مفيش Gift
 SELECT name FROM products WHERE is_active AND stock > 0 OR price = 0;     -- Gift ظهر
-ROLLBACK;`
+ROLLBACK;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL,
+  is_active boolean NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10, true),
+  (2, 'Mug', 120.00, 0, true),
+  (3, 'Hoodie', 650.00, 3, true),
+  (4, 'Cap', 180.00, 0, false),
+  (5, 'Sticker', 0.00, 0, true),
+  (6, 'Old Poster', 0.00, 0, false),
+  (7, 'Pen', 15.00, 100, true),
+  (8, 'Pin', 15.00, 40, true);`,
+            starter: R`SELECT name FROM products
+WHERE is_active AND stock > 0 OR price = 0;`,
+            expect: [["T-shirt"], ["Hoodie"], ["Sticker"], ["Pen"], ["Pin"]],
+            solution: R`SELECT name FROM products
+WHERE is_active AND (stock > 0 OR price = 0);`
+          }
         },
         {
           cmd: "ORDER BY و LIMIT",
@@ -327,7 +377,7 @@ ROLLBACK;`
 SELECT name, price FROM products ORDER BY price DESC, name ASC;
 SELECT id, created_at FROM orders ORDER BY created_at DESC LIMIT 5;
 SELECT name, price FROM products ORDER BY price LIMIT 10 OFFSET 20;`,
-          try: R`ضيف منتجين بنفس السعر، واعمل [[ORDER BY price LIMIT 1]] كذا مرة بعد UPDATE على واحد منهم. وبعدين ضيف [[, id]] للترتيب وشوف النتيجة بقت ثابتة.`,
+          try: R`ضيف منتجين بنفس السعر، واعمل [[ORDER BY price LIMIT 1]] كذا مرة بعد UPDATE على واحد منهم. وبعدين ضيف [[, id]] للترتيب وشوف النتيجة بقت ثابتة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: أرخص ٣ منتجات بالاسم والسعر، ولو سعرين متساويين الأصغر [[id]] الأول. الترتيب جزء من الإجابة.`,
           flag: "script",
           deep: {
             why: "كل ليستة في التطبيق مترتبة بحاجة: الأحدث الأول، أو الأرخص، أو الأكتر مبيعًا. و LIMIT بيخليك تجيب صفحة واحدة بدل الجدول كله.",
@@ -355,7 +405,34 @@ SELECT id, name FROM products ORDER BY price LIMIT 1;       -- Pen
 UPDATE products SET stock = 9 WHERE name = 'Pen';
 SELECT id, name FROM products ORDER BY price LIMIT 1;       -- ممكن يبقى Pin
 SELECT id, name FROM products ORDER BY price, id LIMIT 1;   -- دايمًا Pen
-DELETE FROM products WHERE name IN ('Pen', 'Pin');`
+DELETE FROM products WHERE name IN ('Pen', 'Pin');`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL,
+  is_active boolean NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10, true),
+  (2, 'Mug', 120.00, 0, true),
+  (3, 'Hoodie', 650.00, 3, true),
+  (4, 'Cap', 180.00, 0, false),
+  (5, 'Sticker', 0.00, 0, true),
+  (6, 'Old Poster', 0.00, 0, false),
+  (7, 'Pen', 15.00, 100, true),
+  (8, 'Pin', 15.00, 40, true);`,
+            starter: R`SELECT name, price FROM products
+ORDER BY price
+LIMIT 3;`,
+            expect: [["Sticker",0], ["Old Poster",0], ["Pen",15]],
+            solution: R`SELECT name, price FROM products
+ORDER BY price, id
+LIMIT 3;`,
+            ordered: true
+          }
         },
         {
           cmd: "LIKE و ILIKE",
@@ -368,7 +445,7 @@ SELECT email FROM users WHERE email ILIKE '%@example.com';
 SELECT name FROM products WHERE name ILIKE '%shirt%';
 SELECT name FROM products WHERE name LIKE '_ug';
 SELECT name FROM products WHERE name NOT ILIKE '%test%';`,
-          try: R`جرّب [[LIKE '%Shirt%']] و [[ILIKE '%Shirt%']] وشوف مين لقى T-shirt. وبعدين دوّر على منتج اسمه فيه [[%]] فعلًا: هتحتاج [[ESCAPE]] أو [[\%]].`,
+          try: R`جرّب [[LIKE '%Shirt%']] و [[ILIKE '%Shirt%']] وشوف مين لقى T-shirt. وبعدين دوّر على منتج اسمه فيه [[%]] فعلًا: هتحتاج [[ESCAPE]] أو [[\%]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: هات المنتجات اللي اسمها فيه علامة [[%]] حقيقية (مش wildcard).`,
           flag: "script",
           deep: {
             why: "خانة البحث في أي لوحة أدمن أو متجر. قبل ما تفكر في محرك بحث كامل، ILIKE بيحل ٩٠٪ من الحالات في الجداول الصغيرة والمتوسطة.",
@@ -397,7 +474,15 @@ INSERT INTO products (name, price) VALUES ('50% off bag', 100), ('Big bag', 100)
 SELECT name FROM products WHERE name LIKE '%%%';                 -- الكل
 SELECT name FROM products WHERE name LIKE '%\%%';                -- 50% off bag بس
 SELECT name FROM products WHERE name LIKE '%!%%' ESCAPE '!';     -- 50% off bag بس
-ROLLBACK;`
+ROLLBACK;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (id int PRIMARY KEY, name text NOT NULL);
+INSERT INTO products VALUES (1, '50% Off Mug'), (2, 'Plain Mug'), (3, '100% Cotton Tee'), (4, 'T-shirt'), (5, 'Discount_Pen');`,
+            starter: R`SELECT name FROM products WHERE name LIKE '%%%';`,
+            expect: [["50% Off Mug"], ["100% Cotton Tee"]],
+            solution: R`SELECT name FROM products WHERE name LIKE '%\%%';`
+          }
         },
         {
           cmd: "NULL",
@@ -411,7 +496,7 @@ SELECT email FROM users WHERE phone IS NULL;
 SELECT email, COALESCE(phone, 'no phone') AS phone FROM users;
 SELECT count(*) AS all_users, count(phone) AS with_phone FROM users;
 SELECT NULL = NULL, NULL IS NULL, 5 + NULL;          -- NULL, true, NULL`,
-          try: R`حط رقم تليفون ليوزر واحد، وجرّب [[WHERE phone <> '0100']]: اليوزرز اللي تليفونهم NULL مش هيظهروا، مع إن تليفونهم فعلًا مش 0100.`,
+          try: R`حط رقم تليفون ليوزر واحد، وجرّب [[WHERE phone <> '0100']]: اليوزرز اللي تليفونهم NULL مش هيظهروا، مع إن تليفونهم فعلًا مش 0100. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: هات إيميلات كل اليوزرز اللي تليفونهم مش [['0100']]، ومنهم اللي ملوش تليفون أصلًا.`,
           flag: "script",
           deep: {
             why: "الداتا الحقيقية فيها حاجات مش معروفة: تليفون محدش دخّله، أو وقت شحن لأوردر لسه متشحنش. NULL هو الطريقة القياسية تقول «مفيش قيمة». بس قواعده غريبة، ولو مفهمتهاش هتلاقي صفوف بتختفي من التقارير من غير سبب واضح.",
@@ -441,7 +526,25 @@ INSERT INTO users (email, name) VALUES ('sara@example.com', 'Sara');
 UPDATE users SET phone = '0123' WHERE email = 'you@example.com';
 SELECT email FROM users WHERE phone <> '0100';                  -- you@example.com بس
 SELECT email FROM users WHERE phone IS DISTINCT FROM '0100';    -- الاتنين
-ROLLBACK;`
+ROLLBACK;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');`,
+            starter: R`SELECT email FROM users WHERE phone <> '0100';`,
+            expect: [["sara@example.com"], ["ali@shop.eg"], ["omar@gmail.com"]],
+            solution: R`SELECT email FROM users WHERE phone IS DISTINCT FROM '0100';`
+          }
         }
       ]
     },
@@ -598,7 +701,7 @@ SELECT count(*) FILTER (WHERE status = 'paid') AS paid_orders FROM orders;
 SELECT sum(total) AS revenue FROM orders WHERE status = 'paid';
 SELECT round(avg(price), 2) AS avg_price, min(price), max(price) FROM products;
 SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';`,
-          try: R`شغّل [[SELECT sum(total) FROM orders WHERE status = 'refunded']] من غير COALESCE: هترجع NULL مش صفر، والواجهة كانت هتكتب «null جنيه».`,
+          try: R`شغّل [[SELECT sum(total) FROM orders WHERE status = 'refunded']] من غير COALESCE: هترجع NULL مش صفر، والواجهة كانت هتكتب «null جنيه». اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: صف واحد فيه عمودين: إجمالي الأوردرات [[refunded]] (ولو مفيش يبقى 0 مش NULL)، وعدد الأوردرات [[paid]].`,
           flag: "script",
           deep: {
             why: "لوحة الأدمن كلها أرقام: عدد الأوردرات، والإيرادات، ومتوسط الأوردر. لو جبت الصفوف كلها وحسبت في JavaScript، هتنقل ميجات على الشبكة عشان رقم واحد، والصفحة هتبطأ كل ما الداتا تكبر.",
@@ -627,7 +730,45 @@ SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';
           solCode: R`\pset null '(null)'
 SELECT sum(total) FROM orders WHERE status = 'refunded';                  -- (null)
 SELECT count(*) FROM orders WHERE status = 'refunded';                    -- 0
-SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';   -- 0`
+SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';   -- 0`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT sum(total) FILTER (WHERE status = 'refunded') AS refunded,
+       count(*) AS paid_orders
+FROM orders;`,
+            expect: [[0,5]],
+            solution: R`SELECT COALESCE(sum(total) FILTER (WHERE status = 'refunded'), 0) AS refunded,
+       count(*) FILTER (WHERE status = 'paid') AS paid_orders
+FROM orders;`
+          }
         },
         {
           cmd: "GROUP BY",
@@ -642,7 +783,7 @@ SELECT date_trunc('day', created_at) AS day, sum(total) AS revenue
 FROM orders WHERE status = 'paid'
 GROUP BY day ORDER BY day;
 SELECT status, user_id FROM orders GROUP BY status;       -- error: user_id لازم يبقى في GROUP BY`,
-          try: R`غيّر [[date_trunc('day', ...)]] لـ [[date_trunc('month', ...)]]. وبعدين اعمل GROUP BY على [[created_at]] نفسه من غير date_trunc، وشوف ليه كل أوردر بقى مجموعة لوحده.`,
+          try: R`غيّر [[date_trunc('day', ...)]] لـ [[date_trunc('month', ...)]]. وبعدين اعمل GROUP BY على [[created_at]] نفسه من غير date_trunc، وشوف ليه كل أوردر بقى مجموعة لوحده. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: إيراد كل شهر من الأوردرات [[paid]]: عمود الشهر بـ [[date_trunc('month', created_at)]] وعمود المجموع، مترتبين بالشهر.`,
           flag: "script",
           deep: {
             why: "أغلب التقارير «لكل»: إيرادات لكل يوم، أوردرات لكل يوزر، مبيعات لكل منتج. GROUP BY بيعملها في استعلام واحد بدل loop على كل يوزر.",
@@ -677,7 +818,50 @@ FROM orders WHERE status = 'paid'
 GROUP BY month ORDER BY month;
 SELECT created_at, sum(total) AS revenue
 FROM orders WHERE status = 'paid'
-GROUP BY created_at ORDER BY created_at;   -- صف لكل أوردر`
+GROUP BY created_at ORDER BY created_at;   -- صف لكل أوردر`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT created_at AS month, sum(total) AS revenue
+FROM orders
+WHERE status = 'paid'
+GROUP BY created_at
+ORDER BY 1;`,
+            expectSql: R`SELECT date_trunc('month', created_at), sum(total) FROM orders WHERE status = 'paid' GROUP BY 1 ORDER BY 1;`,
+            solution: R`SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue
+FROM orders
+WHERE status = 'paid'
+GROUP BY 1
+ORDER BY 1;`,
+            ordered: true
+          }
         },
         {
           cmd: "HAVING",
@@ -696,7 +880,7 @@ GROUP BY user_id
 HAVING sum(total) >= 1000
 ORDER BY spent DESC;
 SELECT user_id FROM orders WHERE count(*) > 3 GROUP BY user_id;   -- error: aggregate في WHERE`,
-          try: R`جرّب [[HAVING spent >= 1000]] بالاسم بدل [[sum(total)]]: Postgres هيرفض. وبعدين حط نفس الاسم في ORDER BY: هيقبله. ليه؟ الإجابة في ترتيب التنفيذ.`,
+          try: R`جرّب [[HAVING spent >= 1000]] بالاسم بدل [[sum(total)]]: Postgres هيرفض. وبعدين حط نفس الاسم في ORDER BY: هيقبله. ليه؟ الإجابة في ترتيب التنفيذ. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[user_id]] ومجموع اللي دفعه (أوردرات [[paid]] بس)، لليوزرز اللي دفعوا 1000 أو أكتر، من الأكبر للأصغر.`,
           flag: "script",
           deep: {
             why: "أسئلة زي «اليوزرز الـ VIP» و «المنتجات اللي اتباعت أكتر من ١٠٠ مرة» شرطها على رقم متجمّع، ومفيش طريقة تكتبها في WHERE.",
@@ -733,7 +917,52 @@ GROUP BY user_id HAVING spent >= 1000;
 -- ERROR:  column "spent" does not exist
 SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid'
 GROUP BY user_id HAVING sum(total) >= 1000
-ORDER BY spent DESC;`
+ORDER BY spent DESC;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT user_id, sum(total) AS spent
+FROM orders
+WHERE status = 'paid'
+GROUP BY user_id
+HAVING spent >= 1000
+ORDER BY spent DESC;`,
+            expect: [[1,1410], [2,1200]],
+            solution: R`SELECT user_id, sum(total) AS spent
+FROM orders
+WHERE status = 'paid'
+GROUP BY user_id
+HAVING sum(total) >= 1000
+ORDER BY spent DESC;`,
+            ordered: true
+          }
         }
       ]
     },
@@ -768,7 +997,7 @@ ORDER BY CASE WHEN stock = 0 THEN 1 ELSE 0 END, name;
 UPDATE products
 SET price = CASE name WHEN 'Mug' THEN 110 WHEN 'Cap' THEN 170 ELSE price END
 WHERE name IN ('Mug', 'Cap');`,
-          try: R`اعمل تقرير فيه صف لكل user_id وعمود لكل حالة (pending و paid و cancelled) بعدد الأوردرات، مرة بـ CASE ومرة بـ FILTER، وقارن النتيجتين. وبعدين شيل [[ELSE 0]] من الـ sum وشوف اليوزر اللي ملوش أوردرات مدفوعة بقى عنده إيه. وآخر حاجة اكتب [[count(CASE WHEN status = 'paid' THEN 1 ELSE 0 END)]] وشوف الرقم طلع كام.`,
+          try: R`اعمل تقرير فيه صف لكل user_id وعمود لكل حالة (pending و paid و cancelled) بعدد الأوردرات، مرة بـ CASE ومرة بـ FILTER، وقارن النتيجتين. وبعدين شيل [[ELSE 0]] من الـ sum وشوف اليوزر اللي ملوش أوردرات مدفوعة بقى عنده إيه. وآخر حاجة اكتب [[count(CASE WHEN status = 'paid' THEN 1 ELSE 0 END)]] وشوف الرقم طلع كام. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: صف لكل [[user_id]] عنده أوردرات، وتلات أعمدة بعدد الـ pending والـ paid والـ cancelled (بالترتيب ده). اليوزر اللي ملوش حالة معينة يطلع عنده 0 مش NULL.`,
           sol: R`الاستعلامين لازم يطلّعوا نفس الأرقام بالظبط: صف لكل user_id، وتلات أعمدة أرقام. لو يوزر ملوش أوردرات pending، العمود بتاعه [[0]] مش NULL، لأن [[count]] بيعدّ القيم اللي مش NULL، و CASE من غير ELSE بيرجّع NULL للصفوف اللي مش مطابقة.
 
 لما تشيل [[ELSE 0]] من [[sum]]: اليوزر اللي ملوش ولا أوردر مدفوع هيطلع عنده خانة فاضية (NULL) بدل [[0]]، لأن [[sum]] لقيم كلها NULL بيرجّع NULL. في الـ API ده بيوصل [[null]] والواجهة تكتب «NaN ج.م». الحل [[ELSE 0]] أو [[COALESCE(sum(...), 0)]].
@@ -819,7 +1048,51 @@ GROUP BY user_id;`,
             "تعديل الأسعار:",
             "كل منتج بسعره الجديد، و ELSE price عشان أي صف تاني يفضل زي ما هو.",
             "على المنتجين دول بس."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT user_id,
+       count(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
+       count(CASE WHEN status = 'paid' THEN 1 ELSE 0 END) AS paid,
+       count(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) AS cancelled
+FROM orders
+GROUP BY user_id;`,
+            expect: [[3,1,1,0], [2,1,1,0], [1,0,3,1]],
+            solution: R`SELECT user_id,
+       count(*) FILTER (WHERE status = 'pending') AS pending,
+       count(*) FILTER (WHERE status = 'paid') AS paid,
+       count(CASE WHEN status = 'cancelled' THEN 1 END) AS cancelled
+FROM orders
+GROUP BY user_id;`
+          }
         },
         {
           cmd: "دوال التاريخ",
@@ -843,7 +1116,7 @@ SELECT id, created_at::date AS day, now() - created_at AS age,
 FROM orders ORDER BY id;
 SELECT count(*) FROM orders
 WHERE created_at >= date_trunc('month', now()) AND created_at < date_trunc('month', now()) + interval '1 month';`,
-          try: R`ضيف أوردر مدفوع وقته [['2026-08-31 22:30+00']] (يعني ١:٣٠ الفجر يوم ١ سبتمبر في القاهرة). شغّل أول استعلامين وقارن: الأوردر ده في أنهي شهر في كل واحد؟ وبعدين اكتب استعلام يطلّع أكتر يوم في الأسبوع فيه أوردرات بتوقيت القاهرة، واسم اليوم بالإنجليزي.`,
+          try: R`ضيف أوردر مدفوع وقته [['2026-08-31 22:30+00']] (يعني ١:٣٠ الفجر يوم ١ سبتمبر في القاهرة). شغّل أول استعلامين وقارن: الأوردر ده في أنهي شهر في كل واحد؟ وبعدين اكتب استعلام يطلّع أكتر يوم في الأسبوع فيه أوردرات بتوقيت القاهرة، واسم اليوم بالإنجليزي. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: أكتر يوم في الأسبوع فيه أوردرات بتوقيت القاهرة: اسم اليوم بالإنجليزي من غير مسافات ([[FMDay]]) وعدد الأوردرات، صف واحد. (بتوقيت UTC الإجابة مختلفة.)`,
           sol: R`في الاستعلام الأول (من غير توقيت) الأوردر هيتحسب في [[2026-08-01]]، لأن Postgres بيقصّ الوقت بتوقيت الـ session، وفي Docker الافتراضي [[UTC]] (اتأكد بـ [[SHOW timezone;]]). في التاني هيتحسب في [[2026-09]]، لأن القاهرة في الصيف UTC+3 فالوقت بقى ١:٣٠ يوم ١ سبتمبر. يعني إيراد الشهرين اتغيّر، ورقم التقرير بتاعك كان هيختلف عن رقم المحاسب.
 
 ولأكتر يوم في الأسبوع: [[to_char(..., 'FMDay')]] بيرجّع اسم اليوم ([[FM]] بتشيل المسافات اللي في الآخر)، و [[extract(dow ...)]] بيرجّع رقم من ٠ (الأحد) لـ ٦ (السبت). الغلطة الشائعة إنك تعمل GROUP BY على [[created_at]] نفسه فكل صف يبقى مجموعة لوحده.`,
@@ -888,7 +1161,26 @@ LIMIT 1;`,
             "مترتبين بالـ id.",
             "عدد أوردرات الشهر الحالي:",
             "من أول الشهر لحد قبل أول الشهر الجاي، بشكل يستخدم الـ index."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE orders (id int PRIMARY KEY, created_at timestamptz NOT NULL);
+INSERT INTO orders VALUES
+  (1, '2026-08-31 22:30+00'), (2, '2026-09-07 21:15+00'), (3, '2026-09-14 23:00+00'),
+  (4, '2026-09-01 10:00+00'), (5, '2026-09-21 09:00+00'), (6, '2026-09-28 12:00+00'),
+  (7, '2026-09-03 12:00+00');`,
+            starter: R`SELECT to_char(created_at, 'FMDay') AS day, count(*) AS orders
+FROM orders
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 1;`,
+            expect: [["Tuesday",4]],
+            solution: R`SELECT to_char(created_at AT TIME ZONE 'Africa/Cairo', 'FMDay') AS day, count(*) AS orders
+FROM orders
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 1;`
+          }
         },
         {
           cmd: "دوال النصوص",
@@ -908,7 +1200,7 @@ SELECT regexp_replace('010-123 45 678', '[^0-9]', '', 'g') AS digits;
 SELECT initcap('ahmed mohamed'), left('Hoodie', 3), right('01012345678', 4), lpad('7', 4, '0');
 SELECT length('محمد') AS chars, octet_length('محمد') AS bytes;
 UPDATE users SET email = lower(trim(email)) WHERE email <> lower(trim(email));`,
-          try: R`اعمل استعلام يرجّع لكل يوزر: الاسم الأول بس (قبل أول مسافة)، والدومين بتاع الإيميل، ورقم التليفون مكتوب بنجوم ماعدا آخر ٤ أرقام (زي [[*******5678]]). جرّب على يوزر تليفونه NULL وشوف بيطلع إيه.`,
+          try: R`اعمل استعلام يرجّع لكل يوزر: الاسم الأول بس (قبل أول مسافة)، والدومين بتاع الإيميل، ورقم التليفون مكتوب بنجوم ماعدا آخر ٤ أرقام (زي [[*******5678]]). جرّب على يوزر تليفونه NULL وشوف بيطلع إيه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: لكل يوزر (بترتيب [[id]]): الاسم الأول بس، ودومين الإيميل، والتليفون بنجوم ماعدا آخر ٤ أرقام بنفس طوله (واللي ملوش تليفون يفضل NULL).`,
           sol: R`الاسم الأول: [[split_part(name, ' ', 1)]]، ولو الاسم كلمة واحدة بيرجّعه زي ما هو. الدومين: [[split_part(email, '@', 2)]].
 
 والتليفون: [[lpad(right(phone, 4), length(phone), '*')]] بياخد آخر ٤ أرقام ويكمّل الشمال بنجوم لحد نفس طول الرقم الأصلي. ولليوزر اللي تليفونه NULL النتيجة NULL، لأن أي دالة على NULL بترجّع NULL (ماعدا [[concat]] و [[concat_ws]] اللي بيتجاهلوه). لو عايز نص بداله لفّها بـ [[COALESCE(..., 'no phone')]].
@@ -946,7 +1238,32 @@ FROM users;`,
             "أول حرف كبير، وأول ٣ حروف، وآخر ٤، وتكميل بأصفار من الشمال: 0007.",
             "٤ حروف، بس ٨ bytes في UTF-8.",
             "نضّف الإيميلات القديمة مرة واحدة، والصفوف اللي محتاجة بس."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');`,
+            starter: R`SELECT name, email, phone
+FROM users
+ORDER BY id;`,
+            expect: [["Sara","example.com","*******5678"], ["Ali","shop.eg",null], ["Mona","example.com","0100"], ["Omar","gmail.com",null]],
+            solution: R`SELECT split_part(name, ' ', 1) AS first_name,
+       split_part(email, '@', 2) AS domain,
+       lpad(right(phone, 4), length(phone), '*') AS phone
+FROM users
+ORDER BY id;`,
+            ordered: true
+          }
         }
       ]
     },
@@ -1169,7 +1486,7 @@ FROM orders o
 JOIN order_items oi ON oi.order_id = o.id
 JOIN products p ON p.id = oi.product_id
 WHERE o.id = 2;`,
-          try: R`اعمل أوردر جديد وضيفله بندين، وجرّب الاستعلام التاني عليه. وبعدين بدّل أول [[JOIN ... ON ...]] بـ [[CROSS JOIN users u]] من غير ON، وشوف عدد الصفوف بقى كام.`,
+          try: R`اعمل أوردر جديد وضيفله بندين، وجرّب الاستعلام التاني عليه. وبعدين بدّل أول [[JOIN ... ON ...]] بـ [[CROSS JOIN users u]] من غير ON، وشوف عدد الصفوف بقى كام. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: بنود الأوردر رقم 6: اسم المنتج، والكمية، وسعر الوحدة، و [[line_total]] (الكمية × السعر).`,
           flag: "script",
           deep: {
             why: "الـ normalization قسّم الداتا على جداول عشان كل معلومة تتكتب مرة. JOIN هو اللي بيجمّعها تاني وقت العرض: شاشة الأوردر محتاجة إيميل اليوزر وأسماء المنتجات، وكلهم في جداول مختلفة.",
@@ -1206,7 +1523,77 @@ WHERE o.id = 2;`,
 INSERT INTO order_items (order_id, product_id, quantity, unit_price)
 SELECT o.id, p.id, 1, p.price FROM o, products p WHERE p.name IN ('Mug', 'Hoodie')
 RETURNING order_id;
-SELECT count(*) FROM orders o CROSS JOIN users u;   -- orders × users`
+SELECT count(*) FROM orders o CROSS JOIN users u;   -- orders × users`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL,
+  is_active boolean NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10, true),
+  (2, 'Mug', 120.00, 0, true),
+  (3, 'Hoodie', 650.00, 3, true),
+  (4, 'Cap', 180.00, 0, false),
+  (5, 'Sticker', 0.00, 0, true),
+  (6, 'Old Poster', 0.00, 0, false),
+  (7, 'Pen', 15.00, 100, true),
+  (8, 'Pin', 15.00, 40, true);
+CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+CREATE TABLE order_items (
+  order_id int REFERENCES orders (id),
+  product_id int REFERENCES products (id),
+  quantity int NOT NULL,
+  unit_price numeric(10,2) NOT NULL,
+  PRIMARY KEY (order_id, product_id)
+);
+INSERT INTO order_items VALUES
+  (1, 1, 1, 250.00), (1, 7, 2, 15.00), (1, 2, 1, 120.00),
+  (2, 3, 1, 650.00), (2, 1, 1, 250.00),
+  (3, 2, 1, 120.00),
+  (5, 1, 1, 250.00),
+  (6, 3, 1, 650.00), (6, 2, 2, 120.00), (6, 4, 1, 180.00),
+  (8, 7, 4, 15.00);`,
+            starter: R`SELECT p.name, oi.quantity, oi.unit_price, oi.quantity * oi.unit_price AS line_total
+FROM order_items oi
+CROSS JOIN products p
+WHERE oi.order_id = 6;`,
+            expect: [["Mug",2,120,240], ["Hoodie",1,650,650], ["Cap",1,180,180]],
+            solution: R`SELECT p.name, oi.quantity, oi.unit_price, oi.quantity * oi.unit_price AS line_total
+FROM order_items oi
+JOIN products p ON p.id = oi.product_id
+WHERE oi.order_id = 6;`
+          }
         },
         {
           cmd: "LEFT JOIN",
@@ -1224,7 +1611,7 @@ LEFT JOIN order_items oi ON oi.product_id = p.id
 WHERE oi.product_id IS NULL;
 SELECT u.email, o.id FROM users u
 LEFT JOIN orders o ON o.user_id = u.id AND o.status = 'paid';`,
-          try: R`ضيف يوزر جديد من غير أوردرات. في أول استعلام غيّر [[count(o.id)]] لـ [[count(*)]]: هتلاقي اليوزر الجديد بقى عنده «1». وفي آخر استعلام انقل شرط status من ON لـ WHERE: اليوزر الجديد هيختفي.`,
+          try: R`ضيف يوزر جديد من غير أوردرات. في أول استعلام غيّر [[count(o.id)]] لـ [[count(*)]]: هتلاقي اليوزر الجديد بقى عنده «1». وفي آخر استعلام انقل شرط status من ON لـ WHERE: اليوزر الجديد هيختفي. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: كل اليوزرز بالإيميل وعدد أوردراتهم، حتى اللي ملوش أوردرات (لازم يطلع 0 مش 1).`,
           flag: "script",
           deep: {
             why: "تقارير كتير عن «اللي ملوش»: يوزرز سجلوا ومشتروش، منتجات عمرها ما اتباعت، كورسات محدش اشترك فيها. INNER JOIN بيخفي الصفوف دي خالص، و LEFT JOIN بيظهرها.",
@@ -1261,7 +1648,47 @@ FROM users u LEFT JOIN orders o ON o.user_id = u.id
 GROUP BY u.id;                                            -- new@example.com = 1 (غلط)
 SELECT u.email, o.id FROM users u
 LEFT JOIN orders o ON o.user_id = u.id
-WHERE o.status = 'paid';                                  -- new@example.com اختفى`
+WHERE o.status = 'paid';                                  -- new@example.com اختفى`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT u.email, count(*) AS orders
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.id;`,
+            expect: [["omar@gmail.com",0], ["ali@shop.eg",2], ["mona@example.com",2], ["sara@example.com",4]],
+            solution: R`SELECT u.email, count(o.id) AS orders
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.id;`
+          }
         },
         {
           cmd: "EXISTS",
@@ -1279,7 +1706,7 @@ SELECT email FROM users u
 WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id);
 SELECT name, price FROM products
 WHERE price > (SELECT avg(price) FROM products);`,
-          try: R`جرّب [[SELECT 1 WHERE 3 NOT IN (1, 2, NULL)]]: مش هترجع حاجة. وبعدين [[SELECT 1 WHERE 3 NOT IN (1, 2)]]: هترجع. NULL واحدة بوّظت الشرط كله.`,
+          try: R`جرّب [[SELECT 1 WHERE 3 NOT IN (1, 2, NULL)]]: مش هترجع حاجة. وبعدين [[SELECT 1 WHERE 3 NOT IN (1, 2)]]: هترجع. NULL واحدة بوّظت الشرط كله. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: إيميلات اليوزرز اللي معملوش ولا أوردر. خلي بالك: فيه أوردر ضيف [[user_id]] بتاعه NULL.`,
           flag: "script",
           deep: {
             why: "«مين اشترى X» بـ JOIN بيرجّع اليوزر مرة لكل أوردر فيه X، فتضطر تحط DISTINCT. EXISTS بيرجّع كل يوزر مرة واحدة ومش بيكمّل بعد أول تطابق.",
@@ -1310,7 +1737,44 @@ WHERE price > (SELECT avg(price) FROM products);`,
 في الحقيقة ده بيحصل لما تكتب [[WHERE id NOT IN (SELECT user_id FROM ...)]] والـ subquery فيها صف واحد user_id بتاعه NULL: الاستعلام يرجّع فاضي فجأة من غير أي error. عشان كده استخدم [[NOT EXISTS]] دايمًا بدل [[NOT IN]] مع subquery، وده سؤال انترفيو مشهور.`,
           solCode: R`SELECT 1 WHERE 3 NOT IN (1, 2, NULL);   -- 0 rows
 SELECT 1 WHERE 3 NOT IN (1, 2);         -- 1
-SELECT 3 NOT IN (1, 2, NULL);           -- NULL`
+SELECT 3 NOT IN (1, 2, NULL);           -- NULL`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+INSERT INTO orders VALUES (9, NULL, 'paid', 75.00, '2026-09-15 10:00+00');`,
+            starter: R`SELECT email FROM users
+WHERE id NOT IN (SELECT user_id FROM orders);`,
+            expect: [["omar@gmail.com"]],
+            solution: R`SELECT email FROM users u
+WHERE NOT EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id);`
+          }
         },
         {
           cmd: "WITH (CTE)",
@@ -1331,7 +1795,7 @@ FROM vip v
 JOIN users u ON u.id = v.user_id
 JOIN paid p ON p.user_id = v.user_id
 ORDER BY p.spent DESC;`,
-          try: R`اكتب نفس الاستعلام من غير WITH، بـ subqueries جوه بعض، وقارن أنهي أسهل في القراية. وبعدين حط [[EXPLAIN]] قدام الاتنين: في نسخة WITH هتلاقي [[CTE paid]] و [[CTE Scan]]، لأن paid متستخدمة مرتين فـ Postgres بيحسبها مرة ويحفظها، ونسخة الـ subqueries بتحسبها مرتين. وبعدين اكتب [[paid AS NOT MATERIALIZED (...)]] وشوف الخطة بقت زي الـ subqueries.`,
+          try: R`اكتب نفس الاستعلام من غير WITH، بـ subqueries جوه بعض، وقارن أنهي أسهل في القراية. وبعدين حط [[EXPLAIN]] قدام الاتنين: في نسخة WITH هتلاقي [[CTE paid]] و [[CTE Scan]]، لأن paid متستخدمة مرتين فـ Postgres بيحسبها مرة ويحفظها، ونسخة الـ subqueries بتحسبها مرتين. وبعدين اكتب [[paid AS NOT MATERIALIZED (...)]] وشوف الخطة بقت زي الـ subqueries. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: بـ WITH: إيميل كل يوزر ومجموع اللي دفعه ([[paid]])، لليوزرز اللي دفعوا أكتر من متوسط الدفع بين اليوزرز اللي دفعوا.`,
           flag: "script",
           deep: {
             why: "التقارير الحقيقية فيها ٣ و ٤ خطوات: احسب كذا، وفلتر، واربط، ورتّب. متداخلة جوه بعض بتبقى صعبة تتقري أو تتصلح. الـ CTE بيدّي كل خطوة اسم تفهمه.",
@@ -1370,7 +1834,59 @@ FROM (SELECT user_id
 JOIN users u ON u.id = v.user_id
 JOIN (SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid' GROUP BY user_id) p
   ON p.user_id = v.user_id
-ORDER BY p.spent DESC;`
+ORDER BY p.spent DESC;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`WITH paid AS (
+  SELECT user_id, sum(total) AS spent
+  FROM orders WHERE status = 'paid'
+  GROUP BY user_id
+)
+SELECT u.email, p.spent
+FROM paid p
+JOIN users u ON u.id = p.user_id;`,
+            expect: [["sara@example.com",1410], ["ali@shop.eg",1200]],
+            solution: R`WITH paid AS (
+  SELECT user_id, sum(total) AS spent
+  FROM orders WHERE status = 'paid'
+  GROUP BY user_id
+),
+avg_spent AS (
+  SELECT avg(spent) AS value FROM paid
+)
+SELECT u.email, p.spent
+FROM paid p
+JOIN users u ON u.id = p.user_id
+WHERE p.spent > (SELECT value FROM avg_spent);`
+          }
         }
       ]
     },
@@ -1964,7 +2480,7 @@ SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock
 RETURNING id, price, stock;
 INSERT INTO products (sku, name, price) VALUES ('TS-BLK-M', 'T-shirt black M', 250)
 ON CONFLICT (sku) DO NOTHING;`,
-          try: R`شغّل أول INSERT تلات مرات، وشوف المخزون بيزيد ١٠ كل مرة والـ id ثابت. وبعدين حط نفس الـ sku مرتين في نفس الـ VALUES واقرا الـ error.`,
+          try: R`شغّل أول INSERT تلات مرات، وشوف المخزون بيزيد ١٠ كل مرة والـ id ثابت. وبعدين حط نفس الـ sku مرتين في نفس الـ VALUES واقرا الـ error. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: شغّل نفس الـ upsert تلات مرات (sku [['TS-BLK-M']] وسعر 250 ومخزون 10)، بحيث المخزون يتجمع والسعر يتحدث، وفي الآخر [[SELECT sku, price, stock FROM products;]].`,
           flag: "script",
           deep: {
             why: "استيراد كتالوج من مورّد كل يوم، أو «ضيف للسلة» (موجود؟ زوّد الكمية)، أو webhook من بوابة دفع بيتبعت مرتين. الحل الساذج SELECT وبعدين INSERT أو UPDATE في الكود، وده بيتكسر لما طلبين ييجوا مع بعض: الاتنين يلاقوا «مش موجود» والاتنين يعملوا INSERT.",
@@ -2001,7 +2517,29 @@ RETURNING id, price, stock;   -- نفس الـ id، والمخزون +10 كل م
 INSERT INTO products (sku, name, price, stock)
 VALUES ('TS-BLK-L', 'T-shirt black L', 250, 5), ('TS-BLK-L', 'T-shirt black L', 250, 5)
 ON CONFLICT (sku) DO UPDATE SET stock = products.stock + EXCLUDED.stock;
--- ERROR:  ON CONFLICT DO UPDATE command cannot affect row a second time`
+-- ERROR:  ON CONFLICT DO UPDATE command cannot affect row a second time`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  sku text UNIQUE NOT NULL,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL DEFAULT 0
+);`,
+            starter: R`INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10);
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10);
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10);
+SELECT sku, price, stock FROM products;`,
+            expect: [["TS-BLK-M",250,30]],
+            solution: R`INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
+ON CONFLICT (sku) DO UPDATE SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock;
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
+ON CONFLICT (sku) DO UPDATE SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock;
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
+ON CONFLICT (sku) DO UPDATE SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock;
+SELECT sku, price, stock FROM products;`
+          }
         }
       ]
     },
@@ -2029,7 +2567,7 @@ FROM (
   FROM orders WHERE status = 'paid' GROUP BY 1
 ) d
 ORDER BY day;`,
-          try: R`غيّر [[rn = 1]] لـ [[rn <= 3]] (آخر ٣ أوردرات لكل يوزر). وضيف عمود [[LAG(revenue) OVER (ORDER BY day)]] للاستعلام التاني عشان تقارن كل يوم باللي قبله.`,
+          try: R`غيّر [[rn = 1]] لـ [[rn <= 3]] (آخر ٣ أوردرات لكل يوزر). وضيف عمود [[LAG(revenue) OVER (ORDER BY day)]] للاستعلام التاني عشان تقارن كل يوم باللي قبله. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: آخر ٣ أوردرات لكل يوزر: [[user_id]] و [[id]] و [[rn]]، مترتبين بـ [[user_id]] وبعدين [[rn]].`,
           flag: "script",
           deep: {
             why: "«آخر أوردر لكل يوزر» و «أعلى ٣ في كل قسم» و «مجموع تراكمي» و «الفرق عن امبارح» أسئلة بتتسأل كل يوم في التقارير. من غير window functions بتتحل بـ subqueries معقدة أو بتجيب كل الداتا وتحسب في الكود.",
@@ -2078,7 +2616,54 @@ FROM (
   SELECT date_trunc('day', created_at) AS day, sum(total) AS revenue
   FROM orders WHERE status = 'paid' GROUP BY 1
 ) d
-ORDER BY day;`
+ORDER BY day;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT user_id, id, rn FROM (
+  SELECT user_id, id,
+         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC) AS rn
+  FROM orders
+) t
+WHERE rn = 1
+ORDER BY user_id, rn;`,
+            expect: [[1,8,1], [1,4,2], [1,2,3], [2,6,1], [2,3,2], [3,7,1], [3,5,2]],
+            solution: R`SELECT user_id, id, rn FROM (
+  SELECT user_id, id,
+         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC) AS rn
+  FROM orders
+) t
+WHERE rn <= 3
+ORDER BY user_id, rn;`,
+            ordered: true
+          }
         },
         {
           cmd: "keyset pagination",
@@ -2097,7 +2682,7 @@ SELECT id, total, created_at FROM orders
 WHERE (created_at, id) < ('2026-03-01 10:00:00+00', 1234)
 ORDER BY created_at DESC, id DESC
 LIMIT 20;`,
-          try: R`قيس الاستعلام الأول بـ [[\timing]] مع OFFSET 0 و OFFSET 100000. وبعدين خد آخر صف من صفحة، وحط الـ created_at والـ id بتوعه في الاستعلام الأخير، وقيس.`,
+          try: R`قيس الاستعلام الأول بـ [[\timing]] مع OFFSET 0 و OFFSET 100000. وبعدين خد آخر صف من صفحة، وحط الـ created_at والـ id بتوعه في الاستعلام الأخير، وقيس. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: آخر صف في الصفحة اللي فاتت كان [[created_at = '2026-09-10 10:00+00']] و [[id = 11]]. هات [[id]] بتاع الـ ٣ صفوف اللي بعده بالترتيب [[created_at DESC, id DESC]]. فيه أوردرين تانيين في نفس اللحظة بالظبط (10 و 7)، ولازم ميضيعوش.`,
           flag: "script",
           deep: {
             why: "الـ infinite scroll والـ feeds والـ APIs اللي بتتقلّب بالصفحات بتوصل لصفحات بعيدة، والـ OFFSET بيخلي كل صفحة أبطأ من اللي قبلها، والـ database بتتعب على الفاضي.",
@@ -2136,7 +2721,51 @@ SELECT id FROM orders ORDER BY created_at DESC, id DESC LIMIT 20 OFFSET 100000;
 SELECT id, total, created_at FROM orders
 WHERE (created_at, id) < ('2026-03-30 18:06:41.224496+00', 32378)
 ORDER BY created_at DESC, id DESC
-LIMIT 20;`
+LIMIT 20;`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+INSERT INTO orders VALUES
+  (10, 2, 'paid', 40.00, '2026-09-10 10:00+00'),
+  (11, 3, 'paid', 55.00, '2026-09-10 10:00+00');`,
+            starter: R`SELECT id FROM orders
+WHERE created_at < '2026-09-10 10:00+00'
+ORDER BY created_at DESC, id DESC
+LIMIT 3;`,
+            expect: [[10], [7], [6]],
+            solution: R`SELECT id FROM orders
+WHERE (created_at, id) < ('2026-09-10 10:00+00', 11)
+ORDER BY created_at DESC, id DESC
+LIMIT 3;`,
+            ordered: true
+          }
         }
       ]
     },
@@ -2165,7 +2794,7 @@ SELECT m.name AS manager, count(e.id) AS reports
 FROM employees m
 JOIN employees e ON e.manager_id = m.id
 GROUP BY m.name;`,
-          try: R`اعمل جدول [[comments]] فيه [[id]] و [[body]] و [[parent_id]] بيشاور على نفس الجدول، وضيف تعليقين وردّين على الأول ورد على الرد. اكتب استعلام يرجّع كل رد ومعاه نص التعليق اللي بيرد عليه. وبعدين هات كل السلسلة من الرد الأخير لحد التعليق الأصلي.`,
+          try: R`اعمل جدول [[comments]] فيه [[id]] و [[body]] و [[parent_id]] بيشاور على نفس الجدول، وضيف تعليقين وردّين على الأول ورد على الرد. اكتب استعلام يرجّع كل رد ومعاه نص التعليق اللي بيرد عليه. وبعدين هات كل السلسلة من الرد الأخير لحد التعليق الأصلي. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: بـ [[WITH RECURSIVE]]: السلسلة من الرد رقم 5 لحد التعليق الأصلي: [[id]] و [[body]] و [[depth]] (الرد نفسه 0)، مترتبة بالـ depth.`,
           sol: R`الاستعلام الأول self join عادي: [[comments r JOIN comments p ON p.id = r.parent_id]]. هيرجّع ٣ صفوف (الردين على الأول، والرد على الرد) ومعاهم نص الأب. التعليقات الأصلية مش هتظهر لأن parent_id بتاعها NULL و INNER JOIN بيشيلها؛ لو عايزها تظهر بأب فاضي استخدم LEFT JOIN.
 
 السلسلة كلها مش هتتعمل بـ JOIN ثابت، لأنك مش عارف العمق كام. الحل [[WITH RECURSIVE]]: تبدأ من الرد الأخير، وكل خطوة تجيب الأب بتاع اللي قبله، لحد ما parent_id يبقى NULL. النتيجة ٣ صفوف: الرد على الرد (depth 0)، وبعده الرد، وبعده التعليق الأصلي (depth 2).
@@ -2220,7 +2849,35 @@ SELECT body, depth FROM thread;`,
             "m المدير،",
             "و e الموظفين اللي manager_id بتاعهم هو.",
             "مجمّعين بالمدير."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE comments (
+  id int PRIMARY KEY,
+  body text NOT NULL,
+  parent_id int REFERENCES comments (id)
+);
+INSERT INTO comments VALUES
+  (1, 'Great post', NULL),
+  (2, 'Typo in line 3', NULL),
+  (3, 'Agreed', 1),
+  (4, 'Which part?', 1),
+  (5, 'The intro', 4),
+  (6, 'Fixed, thanks', 2);`,
+            starter: R`SELECT r.id, r.body, 0 AS depth
+FROM comments r
+WHERE r.id = 5;`,
+            expect: [[5,"The intro",0], [4,"Which part?",1], [1,"Great post",2]],
+            solution: R`WITH RECURSIVE chain AS (
+  SELECT id, body, parent_id, 0 AS depth FROM comments WHERE id = 5
+  UNION ALL
+  SELECT c.id, c.body, c.parent_id, chain.depth + 1
+  FROM comments c
+  JOIN chain ON c.id = chain.parent_id
+)
+SELECT id, body, depth FROM chain ORDER BY depth;`,
+            ordered: true
+          }
         },
         {
           cmd: "UNION و UNION ALL",
@@ -2243,7 +2900,7 @@ SELECT email FROM users
 EXCEPT
 SELECT u.email FROM users u JOIN orders o ON o.user_id = u.id;
 SELECT id FROM orders UNION SELECT email FROM users;`,
-          try: R`ضيف للـ feed نوع تالت: كل بند اتضاف في أوردر من أوردرات اليوزر ده (من order_items)، بنص زي [[Mug x2]]. وخلّي الـ feed يرجّع آخر ٥ أحداث بس. وبعدين بدّل UNION ALL بـ UNION وشوف لو النتيجة اتغيرت، وفكّر ليه.`,
+          try: R`ضيف للـ feed نوع تالت: كل بند اتضاف في أوردر من أوردرات اليوزر ده (من order_items)، بنص زي [[Mug x2]]. وخلّي الـ feed يرجّع آخر ٥ أحداث بس. وبعدين بدّل UNION ALL بـ UNION وشوف لو النتيجة اتغيرت، وفكّر ليه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الـ feed بتاع [[sara@example.com]] بتلات أنواع: [['signup']] بالإيميل، و [['order']] برقم الأوردر كنص، و [['item']] بنص زي [[Mug x2]] ووقت الأوردر بتاعه. التلات أعمدة: [[kind]] و [[ref]] و [[created_at]]، والترتيب مش مهم.`,
           sol: R`هتضيف استعلام تالت بـ UNION ALL فيه نفس التلات أعمدة بنفس الترتيب: [['item']] كـ kind، و [[p.name || ' x' || oi.quantity]] كـ ref، و [[o.created_at]] كوقت (order_items ملوش وقت خاص بيه، فبتاخد وقت الأوردر). الـ ORDER BY و LIMIT بيتكتبوا مرة واحدة في الآخر وبيتطبقوا على النتيجة كلها.
 
 لو بدّلت لـ UNION غالبًا النتيجة مش هتتغير، لأن مفيش صفين متطابقين في كل الأعمدة. بس Postgres عمل شغل زيادة يدوّر على تكرار مش موجود. ولو فيه منتج اتضاف مرتين بنفس الكمية في نفس الأوردر (مش ممكن هنا عشان الـ PRIMARY KEY)، UNION كان هيشيل واحد منهم من غير ما تاخد بالك.
@@ -2289,7 +2946,87 @@ LIMIT 5;`,
             "ناقص",
             "إيميلات اللي عملوا أوردرات: اللي فاضل معملش ولا أوردر.",
             "error: الأنواع مش متوافقة (bigint و text)."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL,
+  is_active boolean NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10, true),
+  (2, 'Mug', 120.00, 0, true),
+  (3, 'Hoodie', 650.00, 3, true),
+  (4, 'Cap', 180.00, 0, false),
+  (5, 'Sticker', 0.00, 0, true),
+  (6, 'Old Poster', 0.00, 0, false),
+  (7, 'Pen', 15.00, 100, true),
+  (8, 'Pin', 15.00, 40, true);
+CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+CREATE TABLE order_items (
+  order_id int REFERENCES orders (id),
+  product_id int REFERENCES products (id),
+  quantity int NOT NULL,
+  unit_price numeric(10,2) NOT NULL,
+  PRIMARY KEY (order_id, product_id)
+);
+INSERT INTO order_items VALUES
+  (1, 1, 1, 250.00), (1, 7, 2, 15.00), (1, 2, 1, 120.00),
+  (2, 3, 1, 650.00), (2, 1, 1, 250.00),
+  (3, 2, 1, 120.00),
+  (5, 1, 1, 250.00),
+  (6, 3, 1, 650.00), (6, 2, 2, 120.00), (6, 4, 1, 180.00),
+  (8, 7, 4, 15.00);`,
+            starter: R`SELECT 'order' AS kind, id::text AS ref, created_at
+FROM orders WHERE user_id = (SELECT id FROM users WHERE email = 'sara@example.com')
+UNION ALL
+SELECT 'signup', email, created_at
+FROM users WHERE email = 'sara@example.com';`,
+            expectSql: R`SELECT 'order', id::text, created_at FROM orders WHERE user_id = 1
+UNION ALL SELECT 'signup', email, created_at FROM users WHERE id = 1
+UNION ALL SELECT 'item', p.name || ' x' || oi.quantity, o.created_at FROM order_items oi JOIN orders o ON o.id = oi.order_id JOIN products p ON p.id = oi.product_id WHERE o.user_id = 1;`,
+            solution: R`SELECT 'order' AS kind, id::text AS ref, created_at
+FROM orders WHERE user_id = (SELECT id FROM users WHERE email = 'sara@example.com')
+UNION ALL
+SELECT 'signup', email, created_at
+FROM users WHERE email = 'sara@example.com'
+UNION ALL
+SELECT 'item', p.name || ' x' || oi.quantity, o.created_at
+FROM order_items oi
+JOIN orders o ON o.id = oi.order_id
+JOIN products p ON p.id = oi.product_id
+WHERE o.user_id = (SELECT id FROM users WHERE email = 'sara@example.com');`
+          }
         },
         {
           cmd: "json_agg",
@@ -2401,7 +3138,7 @@ LEFT JOIN LATERAL (
   SELECT id, created_at FROM orders WHERE user_id = u.id ORDER BY created_at DESC LIMIT 1
 ) last ON true
 ORDER BY u.name;`,
-          try: R`اكتب «أغلى منتجين في كل أوردر» بـ LATERAL (من order_items و products)، مرة بـ CROSS JOIN ومرة بـ LEFT JOIN، وقارن عدد الصفوف لو فيه أوردر من غير بنود. وبعدين حط [[EXPLAIN]] قدام الاستعلام الأول في المثال، واعمل index على [[orders (user_id, created_at DESC)]] (لو مش موجود من درس composite index) وشوف الـ plan اتغير إزاي.`,
+          try: R`اكتب «أغلى منتجين في كل أوردر» بـ LATERAL (من order_items و products)، مرة بـ CROSS JOIN ومرة بـ LEFT JOIN، وقارن عدد الصفوف لو فيه أوردر من غير بنود. وبعدين حط [[EXPLAIN]] قدام الاستعلام الأول في المثال، واعمل index على [[orders (user_id, created_at DESC)]] (لو مش موجود من درس composite index) وشوف الـ plan اتغير إزاي. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: أغلى بندين في كل أوردر: [[order_id]] واسم المنتج و [[unit_price]]، والأوردر اللي ملوش بنود يطلع مرة واحدة بـ NULL (يعني LEFT JOIN LATERAL).`,
           sol: R`الـ LATERAL هنا بيلف على الأوردرات: [[FROM orders o CROSS JOIN LATERAL (SELECT ... FROM order_items oi JOIN products p ... WHERE oi.order_id = o.id ORDER BY oi.unit_price DESC LIMIT 2) top]]. الأوردر اللي فيه بند واحد هيطلع صف واحد، واللي فيه ٣ هيطلع أغلى ٢ بس.
 
 الأوردر اللي من غير بنود هيختفي مع CROSS JOIN، ويظهر مرة واحدة بقيم NULL مع [[LEFT JOIN LATERAL ... ON true]]. فعدد الصفوف في LEFT هيبقى أكبر بعدد الأوردرات الفاضية.
@@ -2454,7 +3191,89 @@ LATERAL ولا ROW_NUMBER؟ ROW_NUMBER أبسط لما تكون عايز معظ�
             "أحدث أوردر واحد.",
             "ON true لأن الشرط جوه.",
             "بالاسم."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL,
+  is_active boolean NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10, true),
+  (2, 'Mug', 120.00, 0, true),
+  (3, 'Hoodie', 650.00, 3, true),
+  (4, 'Cap', 180.00, 0, false),
+  (5, 'Sticker', 0.00, 0, true),
+  (6, 'Old Poster', 0.00, 0, false),
+  (7, 'Pen', 15.00, 100, true),
+  (8, 'Pin', 15.00, 40, true);
+CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+CREATE TABLE order_items (
+  order_id int REFERENCES orders (id),
+  product_id int REFERENCES products (id),
+  quantity int NOT NULL,
+  unit_price numeric(10,2) NOT NULL,
+  PRIMARY KEY (order_id, product_id)
+);
+INSERT INTO order_items VALUES
+  (1, 1, 1, 250.00), (1, 7, 2, 15.00), (1, 2, 1, 120.00),
+  (2, 3, 1, 650.00), (2, 1, 1, 250.00),
+  (3, 2, 1, 120.00),
+  (5, 1, 1, 250.00),
+  (6, 3, 1, 650.00), (6, 2, 2, 120.00), (6, 4, 1, 180.00),
+  (8, 7, 4, 15.00);`,
+            starter: R`SELECT o.id AS order_id, top.name, top.unit_price
+FROM orders o
+CROSS JOIN LATERAL (
+  SELECT p.name, oi.unit_price
+  FROM order_items oi
+  JOIN products p ON p.id = oi.product_id
+  WHERE oi.order_id = o.id
+  ORDER BY oi.unit_price DESC
+  LIMIT 2
+) top;`,
+            expect: [[1,"T-shirt",250], [1,"Mug",120], [2,"Hoodie",650], [2,"T-shirt",250], [3,"Mug",120], [4,null,null], [5,"T-shirt",250], [6,"Hoodie",650], [6,"Cap",180], [7,null,null], [8,"Pen",15]],
+            solution: R`SELECT o.id AS order_id, top.name, top.unit_price
+FROM orders o
+LEFT JOIN LATERAL (
+  SELECT p.name, oi.unit_price
+  FROM order_items oi
+  JOIN products p ON p.id = oi.product_id
+  WHERE oi.order_id = o.id
+  ORDER BY oi.unit_price DESC
+  LIMIT 2
+) top ON true;`
+          }
         }
       ]
     },
@@ -2690,7 +3509,7 @@ BEGIN
 END;
 $$;
 SELECT place_order((SELECT id FROM users LIMIT 1), 2, 3);`,
-          try: R`نادي [[place_order]] على منتج مخزونه صفر (Cap بعد درس UPDATE مثلًا)، وبعدين اتأكد إن عدد الأوردرات متغيّرش. وبعدين اكتب function بـ [[LANGUAGE sql]] اسمها [[top_products(p_limit int)]] ترجّع جدول ([[RETURNS TABLE (name text, sold bigint)]]) بأكتر المنتجات مبيعًا، وناديها بـ [[SELECT * FROM top_products(3)]].`,
+          try: R`نادي [[place_order]] على منتج مخزونه صفر (Cap بعد درس UPDATE مثلًا)، وبعدين اتأكد إن عدد الأوردرات متغيّرش. وبعدين اكتب function بـ [[LANGUAGE sql]] اسمها [[top_products(p_limit int)]] ترجّع جدول ([[RETURNS TABLE (name text, sold bigint)]]) بأكتر المنتجات مبيعًا، وناديها بـ [[SELECT * FROM top_products(3)]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: اعمل [[top_products(p_limit int)]] بـ [[LANGUAGE sql]] و [[RETURNS TABLE (name text, sold bigint)]] (مجموع الكميات من order_items)، وآخر سطر [[SELECT * FROM top_products(3);]].`,
           sol: R`على منتج خلصان هتاخد [[ERROR: OUT_OF_STOCK]] ومعاها [[CONTEXT: PL/pgSQL function place_order(uuid,bigint,integer) line 10 at RAISE]]. و [[SELECT count(*) FROM orders]] هيطلع نفس الرقم قبل وبعد: الـ UPDATE مغيّرش ولا صف أصلًا ([[NOT FOUND]])، والـ exception وقّفت الدالة قبل الـ INSERT. ولو الغلطة حصلت بعد الـ INSERT (زي product_id مش موجود في order_items)، كل اللي حصل جوه الدالة كان هيترجع برضه، لأن الـ function جزء من transaction الأمر اللي ناداها.
 
 و [[top_products(3)]] هترجع ٣ صفوف بعمودين، زي أي جدول: تقدر تعمل عليها WHERE و JOIN. لو نسيت [[RETURNS TABLE]] وكتبت [[RETURNS bigint]] هترجع أول قيمة بس. وخلي بالك أسماء الأعمدة في [[RETURNS TABLE]] بتبقى متغيرات جوه الدالة، فلو في plpgsql عندك عمود في جدول اسمه name هتاخد [[column reference "name" is ambiguous]]. في LANGUAGE sql مفيش المشكلة دي.`,
@@ -2755,7 +3574,85 @@ SELECT * FROM top_products(3);`,
             "النهاية.",
             "قفلة الكود.",
             "ناديها: أول يوزر، ومنتج رقم ٢، و٣ قطع."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE products (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  price numeric(10,2) NOT NULL,
+  stock int NOT NULL,
+  is_active boolean NOT NULL
+);
+INSERT INTO products VALUES
+  (1, 'T-shirt', 250.00, 10, true),
+  (2, 'Mug', 120.00, 0, true),
+  (3, 'Hoodie', 650.00, 3, true),
+  (4, 'Cap', 180.00, 0, false),
+  (5, 'Sticker', 0.00, 0, true),
+  (6, 'Old Poster', 0.00, 0, false),
+  (7, 'Pen', 15.00, 100, true),
+  (8, 'Pin', 15.00, 40, true);
+CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+CREATE TABLE order_items (
+  order_id int REFERENCES orders (id),
+  product_id int REFERENCES products (id),
+  quantity int NOT NULL,
+  unit_price numeric(10,2) NOT NULL,
+  PRIMARY KEY (order_id, product_id)
+);
+INSERT INTO order_items VALUES
+  (1, 1, 1, 250.00), (1, 7, 2, 15.00), (1, 2, 1, 120.00),
+  (2, 3, 1, 650.00), (2, 1, 1, 250.00),
+  (3, 2, 1, 120.00),
+  (5, 1, 1, 250.00),
+  (6, 3, 1, 650.00), (6, 2, 2, 120.00), (6, 4, 1, 180.00),
+  (8, 7, 4, 15.00);`,
+            starter: R`CREATE FUNCTION top_products(p_limit int) RETURNS bigint
+LANGUAGE sql STABLE AS $$
+  SELECT sum(quantity) FROM order_items;
+$$;
+SELECT * FROM top_products(3);`,
+            expect: [["Pen",6], ["Mug",4], ["T-shirt",3]],
+            solution: R`CREATE FUNCTION top_products(p_limit int)
+RETURNS TABLE (name text, sold bigint)
+LANGUAGE sql STABLE AS $$
+  SELECT p.name, sum(oi.quantity)::bigint AS sold
+  FROM order_items oi
+  JOIN products p ON p.id = oi.product_id
+  GROUP BY p.name
+  ORDER BY sold DESC, p.name
+  LIMIT p_limit;
+$$;
+SELECT * FROM top_products(3);`
+          }
         },
         {
           cmd: "generated columns",
@@ -3495,7 +4392,7 @@ const topCustomers = await prisma.user.findMany({
   orderBy: { orders: { _count: "desc" } },
   take: 10,
 });`,
-          try: R`اعمل يوزر جديد معملش ولا أوردر، وشغّل [[where: { orders: { every: { status: "paid" } } }]] من غير [[some: {}]]. اليوزر الجديد طلع؟ ليه؟ وبعدين هات لكل يوزر عدد أوردراته المدفوعة بس في [[_count]]، وشوف الـ SQL اللي اتولّد لـ [[none]] في الـ log.`,
+          try: R`اعمل يوزر جديد معملش ولا أوردر، وشغّل [[where: { orders: { every: { status: "paid" } } }]] من غير [[some: {}]]. اليوزر الجديد طلع؟ ليه؟ وبعدين هات لكل يوزر عدد أوردراته المدفوعة بس في [[_count]]، وشوف الـ SQL اللي اتولّد لـ [[none]] في الـ log. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: اكتب بـ SQL اللي Prisma بيعمله لـ [[{ some: {}, every: { status: "paid" } }]]: إيميلات اليوزرز اللي عندهم أوردر واحد على الأقل وكل أوردراتهم [[paid]]. اليوزر اللي ملوش أوردرات مينفعش يطلع.`,
           sol: R`أيوه، اليوزر اللي ملوش أوردرات هيطلع في نتيجة [[every]]. في المنطق، «كل أوردراته مدفوعة» صح لما ميكونش عنده أوردرات أصلًا (vacuous truth)، و Prisma بيترجمها لـ [[NOT EXISTS (أوردر مش مدفوع)]]، واليوزر ده مفيش عنده أوردر مش مدفوع. عشان كده في المثال فيه [[some: {}]] مع every: «عنده أوردر واحد على الأقل، وكلهم مدفوعين».
 
 عدد المدفوع بس: [[_count: { select: { orders: { where: { status: "paid" } } } }]]. اليوزر اللي ملوش هيطلع [[0]] مش null.
@@ -3543,7 +4440,50 @@ console.log(paidCounts);`,
             "مترتبين بالعدد،",
             "أول ١٠.",
             "قفلة."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');
+INSERT INTO users VALUES (5, 'Nour', 'nour@example.com', NULL, '2026-04-01 10:00+00');
+INSERT INTO orders VALUES (9, 5, 'paid', 99.00, '2026-09-20 10:00+00'), (10, 5, 'paid', 10.00, '2026-09-21 10:00+00');`,
+            starter: R`SELECT email FROM users u
+WHERE NOT EXISTS (
+  SELECT 1 FROM orders o WHERE o.user_id = u.id AND o.status <> 'paid'
+);`,
+            expect: [["nour@example.com"]],
+            solution: R`SELECT email FROM users u
+WHERE EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id)
+  AND NOT EXISTS (
+    SELECT 1 FROM orders o WHERE o.user_id = u.id AND o.status <> 'paid'
+  );`
+          }
         },
         {
           cmd: "$queryRaw",
@@ -3576,7 +4516,7 @@ const some = await prisma.$queryRaw$__btSELECT name FROM products WHERE id = ANY
 await prisma.$transaction(async (tx) => {
   await tx.$queryRaw$__btSELECT id FROM orders WHERE id = $__{orderId} FOR UPDATE$__bt;
 });`,
-          try: R`اعمل يوزر، وبعدين خلي [[email]] يساوي [["ali@example.com' OR '1'='1"]]، وشغّل الاستعلام مرة بـ [[$queryRaw]] (tagged) ومرة بـ [[$queryRawUnsafe]] وانت راكب الـ string بـ template literal عادي. كام صف رجع في كل مرة؟ وبعدين شغّل تقرير الإيراد من غير [[::int]] و [[::text]] وجرّب [[JSON.stringify]] على النتيجة.`,
+          try: R`اعمل يوزر، وبعدين خلي [[email]] يساوي [["ali@example.com' OR '1'='1"]]، وشغّل الاستعلام مرة بـ [[$queryRaw]] (tagged) ومرة بـ [[$queryRawUnsafe]] وانت راكب الـ string بـ template literal عادي. كام صف رجع في كل مرة؟ وبعدين شغّل تقرير الإيراد من غير [[::int]] و [[::text]] وجرّب [[JSON.stringify]] على النتيجة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: تقرير الإيراد اللي بيتبعت لـ [[$queryRaw]]: من أول أغسطس 2026، الشهر، والإيراد [[::text]]، وعدد الأوردرات [[::int]]، للأوردرات [[paid]]، مترتب بالشهر.`,
           sol: R`الـ tagged هيرجّع [[[]]]: الإيميل اتبعت parameter واحد كنص كامل، ومفيش يوزر إيميله كده. الـ Unsafe بالـ template literal هيرجّع كل اليوزرز، لأن النص بقى [[WHERE email = 'ali@example.com' OR '1'='1']]، والشرط التاني دايمًا صح. ده SQL injection بالظبط. ولو كتبت [[$queryRawUnsafe("... WHERE email = $1", email)]] هيرجّع [[[]]] برضه، لأن القيمة اتبعتت parameter.
 
 ومن غير الـ casts: [[count(*)]] نوعه bigint في Postgres، فبيرجع JavaScript [[BigInt]] ([[1n]])، و [[JSON.stringify]] هيقع بـ [[Do not know how to serialize a BigInt]]. و [[sum(total)]] بيرجع [[Decimal]] object. الحل الأسهل تحوّل جوه SQL: [[count(*)::int]] (لو العدد مش هيعدّي ٢ مليار) و [[sum(total)::text]] للفلوس عشان متضيعش دقة.
@@ -3628,7 +4568,50 @@ await prisma.$disconnect();`,
             "transaction تفاعلية:",
             "اقفل صف الأوردر لحد آخر الـ callback (مفيش FOR UPDATE في API بتاع Prisma).",
             "قفلة."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue, count(*) AS orders
+FROM orders
+WHERE status = 'paid'
+GROUP BY 1
+ORDER BY 1;`,
+            expectSql: R`SELECT date_trunc('month', created_at), sum(total), count(*) FROM orders WHERE status = 'paid' AND created_at >= '2026-08-01' GROUP BY 1 ORDER BY 1;`,
+            solution: R`SELECT date_trunc('month', created_at) AS month, sum(total)::text AS revenue, count(*)::int AS orders
+FROM orders
+WHERE status = 'paid' AND created_at >= '2026-08-01'
+GROUP BY 1
+ORDER BY 1;`,
+            ordered: true
+          }
         },
         {
           cmd: "N+1",
@@ -3657,7 +4640,7 @@ const counts = await prisma.user.findMany({
 const userIds = users.map((u) => u.id);
 const orders = await prisma.order.findMany({ where: { userId: { in: userIds } } });
 const byUser = Map.groupBy(orders, (o) => o.userId);`,
-          try: R`اعمل ٢٠٠ يوزر بأوردرات (بـ createMany، أو بسكربت الـ seed في درس faker)، و [[log: ["query"]]] شغال. شغّل الـ loop الأول وعدّ سطور [[prisma:query]]، وقيس الوقت بـ [[console.time]]. وبعدين نفس الحاجة للـ include، وللـ _count.`,
+          try: R`اعمل ٢٠٠ يوزر بأوردرات (بـ createMany، أو بسكربت الـ seed في درس faker)، و [[log: ["query"]]] شغال. شغّل الـ loop الأول وعدّ سطور [[prisma:query]]، وقيس الوقت بـ [[console.time]]. وبعدين نفس الحاجة للـ include، وللـ _count. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: استعلام واحد بدل الـ loop: لكل يوزر الإيميل، وعدد أوردراته، ووقت آخر أوردر (NULL لو ملوش)، واليوزر اللي ملوش أوردرات يطلع بـ 0.`,
           sol: R`الـ loop هيطبع ٢٠١ سطر [[prisma:query]]: واحد [[SELECT ... FROM "public"."users"]] وبعده ٢٠٠ مرة [[SELECT ... FROM "public"."orders" WHERE "public"."orders"."user_id" = $1]]. الـ include هيطبع سطرين بس: اليوزرز، وبعدهم [[... WHERE "public"."orders"."user_id" IN ($1,$2,...)]]. والـ _count سطر واحد: الـ count بيتحسب بـ LEFT JOIN على subquery فيها [[COUNT(*)]] و GROUP BY، جوه نفس الاستعلام.
 
 الوقت على القاعدة اللي على جهازك ممكن يبان قريب (كل استعلام أقل من ملّي ثانية)، لأن مفيش network. الفرق الحقيقي بيبان لما القاعدة على سيرفر تاني: لو كل round trip بياخد ٢٠ ملّي ثانية (Supabase من منطقة بعيدة مثلًا)، الـ loop هياخد حوالي ٤ ثواني والـ include حوالي ٤٠ ملّي ثانية. عشان كده N+1 بيعدّي في التطوير ويبان في الإنتاج.
@@ -3718,7 +4701,47 @@ await prisma.$disconnect();`,
             "أو يدوي: اجمع الـ ids،",
             "استعلام واحد بـ IN،",
             "وقسّم النتيجة على اليوزرز في الكود."
-          ]
+          ],
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE users (
+  id int PRIMARY KEY,
+  name text NOT NULL,
+  email text NOT NULL UNIQUE,
+  phone text,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO users VALUES
+  (1, 'Sara Ahmed', 'sara@example.com', '01012345678', '2026-01-05 10:00+00'),
+  (2, 'Ali Hassan', 'ali@shop.eg', NULL, '2026-02-10 09:00+00'),
+  (3, 'Mona', 'mona@example.com', '0100', '2026-03-01 12:00+00'),
+  (4, 'Omar Khaled', 'omar@gmail.com', NULL, '2026-09-20 08:00+00');
+CREATE TABLE orders (
+  id int PRIMARY KEY,
+  user_id int REFERENCES users (id),
+  status text NOT NULL,
+  total numeric(10,2) NOT NULL,
+  created_at timestamptz NOT NULL
+);
+INSERT INTO orders VALUES
+  (1, 1, 'paid', 450.00, '2026-07-03 10:00+00'),
+  (2, 1, 'paid', 900.00, '2026-08-15 18:30+00'),
+  (3, 2, 'pending', 120.00, '2026-08-20 09:00+00'),
+  (4, 1, 'cancelled', 300.00, '2026-08-31 22:30+00'),
+  (5, 3, 'paid', 250.00, '2026-09-01 11:00+00'),
+  (6, 2, 'paid', 1200.00, '2026-09-05 14:00+00'),
+  (7, 3, 'pending', 80.00, '2026-09-10 10:00+00'),
+  (8, 1, 'paid', 60.00, '2026-09-12 16:45+00');`,
+            starter: R`SELECT u.email, count(*) AS orders, max(o.created_at) AS last_order
+FROM users u
+JOIN orders o ON o.user_id = u.id
+GROUP BY u.id;`,
+            expectSql: R`SELECT u.email, (SELECT count(*) FROM orders o WHERE o.user_id = u.id), (SELECT max(created_at) FROM orders o WHERE o.user_id = u.id) FROM users u;`,
+            solution: R`SELECT u.email, count(o.id) AS orders, max(o.created_at) AS last_order
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.id;`
+          }
         }
       ]
     },

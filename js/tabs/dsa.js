@@ -388,7 +388,7 @@ console.log(reverseInPlace([]));              // []
 const s = "hello";
 console.log(reverseInPlace([...s]).join("")); // olleh
 // O(n) time, O(1) extra space (a string needs an O(n) copy because strings are immutable)`,
-          try: R`اكتب [[reverseRange(a, from, to)]] تقلب جزء بس، واستخدمها تعمل rotate لليمين: [1, 2, 3, 4, 5] بـ k = 2 تبقى [4, 5, 1, 2, 3]. (اقلب الكل، وبعدين اقلب أول k، وبعدين الباقي).`,
+          try: R`اكتب [[reverseRange(a, from, to)]] تقلب جزء بس، واستخدمها تعمل rotate لليمين: [1, 2, 3, 4, 5] بـ k = 2 تبقى [4, 5, 1, 2, 3]. (اقلب الكل، وبعدين اقلب أول k، وبعدين الباقي). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[reverseRange]] و [[rotateRight]] وبتتأكد إن التعديل في نفس الـ array.`,
           flag: "script",
           deep: {
             why: "مسألة بسيطة بس فيها أهم فكرة في النوع ده: مؤشرين بيتحركوا ناحية بعض. نفس الفكرة هتلاقيها في palindrome، و two sum على array مترتبة، و container with most water. وكمان بتوريك الفرق بين «in-place» و «نسخة جديدة».",
@@ -448,7 +448,51 @@ function rotateRight(a, k) {
 console.log(rotateRight([1, 2, 3, 4, 5], 2)); // [4, 5, 1, 2, 3]
 console.log(rotateRight([1, 2, 3], 5));       // [2, 3, 1]  (5 % 3 = 2)
 console.log(rotateRight([], 3));              // []
-// O(n) time (every item is swapped at most twice), O(1) extra space`
+// O(n) time (every item is swapped at most twice), O(1) extra space`,
+          check: {
+            lang: "js",
+            starter: R`function reverseRange(a, from, to) {
+  // اقلب العناصر من from لـ to (الاتنين داخلين) في نفس الـ array
+}
+function rotateRight(a, k) {
+  // اقلب الكل، وبعدين أول k، وبعدين الباقي، ورجّع a نفسها
+  return a;
+}`,
+            tests: R`test("reverseRange(a, 1, 3) على [1, 2, 3, 4, 5] ← [1, 4, 3, 2, 5]", () => {
+  const a = [1, 2, 3, 4, 5];
+  reverseRange(a, 1, 3);
+  expect(a).toEqual([1, 4, 3, 2, 5]);
+});
+test("rotateRight([1, 2, 3, 4, 5], 2) ← [4, 5, 1, 2, 3]", () => expect(rotateRight([1, 2, 3, 4, 5], 2)).toEqual([4, 5, 1, 2, 3]));
+test("in-place: بترجّع نفس الـ array بعد ما عدّلتها", () => {
+  const a = [1, 2, 3];
+  expect(rotateRight(a, 1) === a).toBe(true);
+  expect(a).toEqual([3, 1, 2]);
+});
+test("k أكبر من الطول: rotateRight([1, 2, 3], 5) ← [2, 3, 1] (اعمل k %= n الأول)", () => expect(rotateRight([1, 2, 3], 5)).toEqual([2, 3, 1]));
+test("array فاضية ← [] (من غير k % 0 = NaN)", () => expect(rotateRight([], 3)).toEqual([]));
+test("١٠٠ ألف عنصر و k = 12345: الحل O(n) ومن غير array جديدة", () => {
+  const n = 100000, a = Array.from({ length: n }, (_, i) => i);
+  rotateRight(a, 12345);
+  expect([a[0], a[12344], a[12345], a[n - 1]]).toEqual([n - 12345, n - 1, 0, n - 12346]);
+});`,
+            solution: R`function reverseRange(a, from, to) {
+  while (from < to) {
+    const t = a[from]; a[from] = a[to]; a[to] = t;
+    from++; to--;
+  }
+  return a;
+}
+function rotateRight(a, k) {
+  const n = a.length;
+  if (n === 0) return a;
+  k %= n;
+  reverseRange(a, 0, n - 1);
+  reverseRange(a, 0, k - 1);
+  reverseRange(a, k, n - 1);
+  return a;
+}`
+          }
         },
         {
           cmd: "frequency count",
@@ -471,7 +515,7 @@ console.log(mostFrequent([3, 1, 3, 2, 1, 3])); // [3, 3]
 console.log(mostFrequent(["a", "b", "b"]));    // ["b", 2]
 console.log(mostFrequent([]));                 // [undefined, 0]
 // O(n) time, O(k) space (k = number of distinct values)`,
-          try: R`عدّلها ترجّع كل القيم اللي ليها أعلى عدد لو فيه تعادل: [1, 1, 2, 2, 3] ترجع [1, 2]. وبعدين عدّ الحروف في جملة بـ [[reduce]] بدل [[for]].`,
+          try: R`عدّلها ترجّع كل القيم اللي ليها أعلى عدد لو فيه تعادل: [1, 1, 2, 2, 3] ترجع [1, 2]. وبعدين عدّ الحروف في جملة بـ [[reduce]] بدل [[for]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[mostFrequentAll]] بترجّع كل القيم اللي ليها أعلى عدد بترتيب أول ظهور، و [[countChars]] بـ reduce وبتتجاهل المسافات.`,
           flag: "script",
           deep: {
             why: "جزء كبير من المسائل بيتحل لما تعرف «كل حاجة ظهرت كام مرة»: الحرف المكرر، والكلمتين anagram، والعنصر اللي ظاهر أكتر من النص. ومن غير Map هتعمل loop جوه loop تعدّ كل عنصر: O(n^2).",
@@ -526,7 +570,42 @@ const letters = [..."hello world"].reduce((acc, ch) => {
   return acc;
 }, {});
 console.log(letters); // { h: 1, e: 1, l: 3, o: 2, w: 1, r: 1, d: 1 }
-// O(n) time, O(k) space (k = distinct values)`
+// O(n) time, O(k) space (k = distinct values)`,
+          check: {
+            lang: "js",
+            starter: R`function mostFrequentAll(a) {
+  const count = new Map();
+  // عدّ، وبعدين لف على الـ Map: عدد أكبر يبدأ array جديدة، وعدد مساوي يتضاف
+  return [];
+}
+function countChars(text) {
+  // بـ reduce، والـ accumulator يبدأ {}
+  return {};
+}`,
+            tests: R`test("[1, 1, 2, 2, 3] ← [1, 2] (تعادل: الاتنين)", () => expect(mostFrequentAll([1, 1, 2, 2, 3])).toEqual([1, 2]));
+test("[3, 1, 3] ← [3]", () => expect(mostFrequentAll([3, 1, 3])).toEqual([3]));
+test("بترتيب أول ظهور: [2, 1, 2, 1] ← [2, 1]", () => expect(mostFrequentAll([2, 1, 2, 1])).toEqual([2, 1]));
+test("array فاضية ← []", () => expect(mostFrequentAll([])).toEqual([]));
+test("strings: ['a', 'b', 'b'] ← ['b']", () => expect(mostFrequentAll(["a", "b", "b"])).toEqual(["b"]));
+test("countChars('hello world') من غير المسافة", () => expect(countChars("hello world")).toEqual({ h: 1, e: 1, l: 3, o: 2, w: 1, r: 1, d: 1 }));
+test("١٠٠ ألف عنصر، ألف قيمة متعادلة (O(n))", () => expect(mostFrequentAll(Array.from({ length: 100000 }, (_, i) => i % 1000)).length).toBe(1000));`,
+            solution: R`function mostFrequentAll(a) {
+  const count = new Map();
+  for (const x of a) count.set(x, (count.get(x) || 0) + 1);
+  let best = [], bestCount = 0;
+  for (const [x, c] of count) {
+    if (c > bestCount) { best = [x]; bestCount = c; }
+    else if (c === bestCount) best.push(x);
+  }
+  return best;
+}
+function countChars(text) {
+  return [...text].reduce((acc, ch) => {
+    if (ch !== " ") acc[ch] = (acc[ch] || 0) + 1;
+    return acc;
+  }, {});
+}`
+          }
         },
         {
           cmd: "anagram (char count)",
@@ -551,7 +630,7 @@ console.log(isAnagram("listen", "silent")); // true
 console.log(isAnagram("rat", "car"));       // false
 console.log(isAnagram("aab", "abb"));       // false
 // O(n) time, O(k) space (k = distinct chars); sorting both strings would be O(n log n)`,
-          try: R`حلّها بطريقة الـ sort في سطر واحد وقارن الـ Big-O. وبعدين خليها تتجاهل المسافات والحروف الكبيرة: [[isAnagram("Dormitory", "dirty room")]] تطلع true.`,
+          try: R`حلّها بطريقة الـ sort في سطر واحد وقارن الـ Big-O. وبعدين خليها تتجاهل المسافات والحروف الكبيرة: [[isAnagram("Dormitory", "dirty room")]] تطلع true. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[isAnagram]] لازم تتجاهل المسافات والحروف الكبيرة.`,
           flag: "script",
           deep: {
             why: "سؤال انترفيو كلاسيكي، والأهم إنه بيعلّمك تحوّل «نفس الحاجة بترتيب مختلف» لـ «نفس العدّ». نفس الفكرة في group anagrams، وفي «هل فيه permutation من الكلمة دي جوه string تانية» (sliding window مع عدّ).",
@@ -606,7 +685,38 @@ function isAnagram(s, t) {
 console.log(isAnagram("Dormitory", "dirty room")); // true
 console.log(isAnagram("Hello", "olleh "));         // true
 console.log(isAnagram("aab", "abb"));              // false
-// sort version: O(n log n) time, O(n) space; count version: O(n) time, O(k) space`
+// sort version: O(n log n) time, O(n) space; count version: O(n) time, O(k) space`,
+          check: {
+            lang: "js",
+            starter: R`function isAnagram(s, t) {
+  // نضّف الاتنين (حروف صغيرة ومن غير مسافات) قبل ما تشيّك على الطول
+}`,
+            tests: R`test("('listen', 'silent') ← true", () => expect(isAnagram("listen", "silent")).toBe(true));
+test("('rat', 'car') ← false", () => expect(isAnagram("rat", "car")).toBe(false));
+test("('aab', 'abb') ← false: نفس الحروف بس بعدد مختلف", () => expect(isAnagram("aab", "abb")).toBe(false));
+test("('Dormitory', 'dirty room') ← true: نضّف قبل فحص الطول", () => expect(isAnagram("Dormitory", "dirty room")).toBe(true));
+test("('Listen', 'Silent') ← true: الحروف الكبيرة زي الصغيرة", () => expect(isAnagram("Listen", "Silent")).toBe(true));
+test("('', '') ← true", () => expect(isAnagram("", "")).toBe(true));
+test("نصين ٥٠ ألف حرف (O(n) بالعدّ، O(n log n) بالـ sort)", () => {
+  const s = "abcde".repeat(10000);
+  expect(isAnagram(s, [...s].reverse().join(""))).toBe(true);
+  expect(isAnagram(s, s.slice(1) + "z")).toBe(false);
+});`,
+            solution: R`function isAnagram(s, t) {
+  const clean = x => x.toLowerCase().replace(/\s+/g, "");
+  s = clean(s);
+  t = clean(t);
+  if (s.length !== t.length) return false;
+  const count = new Map();
+  for (const ch of s) count.set(ch, (count.get(ch) || 0) + 1);
+  for (const ch of t) {
+    const c = count.get(ch);
+    if (!c) return false;
+    count.set(ch, c - 1);
+  }
+  return true;
+}`
+          }
         },
         {
           cmd: "palindrome (two ends)",
@@ -629,7 +739,7 @@ console.log(isPalindrome("A man, a plan, a canal: Panama")); // true
 console.log(isPalindrome("race a car"));                     // false
 console.log(isPalindrome(""));                               // true
 // O(n) time, O(n) space for the cleaned copy (skipping symbols with the pointers makes it O(1))`,
-          try: R`اعملها O(1) space: من غير [[clean]]، خلي المؤشرين يعدّوا أي حاجة مش حرف أو رقم وهما ماشيين. وبعدين حل النسخة الأصعب: مسموح تمسح حرف واحد بس، تقدر تخليها palindrome؟ (aba آه، abca آه، abc لأ).`,
+          try: R`اعملها O(1) space: من غير [[clean]]، خلي المؤشرين يعدّوا أي حاجة مش حرف أو رقم وهما ماشيين. وبعدين حل النسخة الأصعب: مسموح تمسح حرف واحد بس، تقدر تخليها palindrome؟ (aba آه، abca آه، abc لأ). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[isPalindrome]] من غير نسخة نضيفة، و [[validPalindrome]] بمسح حرف واحد بالكتير.`,
           flag: "script",
           deep: {
             why: "سؤال بيختبر المؤشرين من الناحيتين، وبيختبر إنك بتسأل عن التفاصيل: المسافات؟ الحروف الكبيرة؟ العلامات؟ الانترفيوير بيحب يشوف الأسئلة دي قبل ما تكتب.",
@@ -689,7 +799,54 @@ function validPalindrome(s) {
   return true;
 }
 console.log(validPalindrome("aba"), validPalindrome("abca"), validPalindrome("abc")); // true true false
-// both: O(n) time, O(1) extra space`
+// both: O(n) time, O(1) extra space`,
+          check: {
+            lang: "js",
+            starter: R`function isPalindrome(s) {
+  // مؤشرين، وكل واحد يعدّي أي حاجة مش حرف أو رقم وهو ماشي
+}
+function validPalindrome(s) {
+  // أول اختلاف: جرّب تشيل الشمال أو اليمين (الاتنين)
+}`,
+            tests: R`test("'A man, a plan, a canal: Panama' ← true", () => expect(isPalindrome("A man, a plan, a canal: Panama")).toBe(true));
+test("'race a car' ← false", () => expect(isPalindrome("race a car")).toBe(false));
+test("'.,' ← true (مفيش حروف خالص)", () => expect(isPalindrome(".,")).toBe(true));
+test("'0P' ← false: الأرقام بتتقارن برضه", () => expect(isPalindrome("0P")).toBe(false));
+test("validPalindrome: aba و abca ← true، و abc ← false", () => expect([validPalindrome("aba"), validPalindrome("abca"), validPalindrome("abc")]).toEqual([true, true, false]));
+test("validPalindrome محتاجة تجرّب الاحتمالين مش واحد بس", () => {
+  expect(validPalindrome("ebcbbececabbacecbbcbe")).toBe(true);
+  expect(validPalindrome("cbbcc")).toBe(true);
+  expect(validPalindrome("eeccccbebaeeabebccceea")).toBe(false);
+});
+test("١٠٠ ألف حرف (O(n))", () => {
+  const s = "a".repeat(50000) + "b" + "a".repeat(50000);
+  expect(isPalindrome(s)).toBe(true);
+  expect(validPalindrome("x" + s)).toBe(true);
+});`,
+            solution: R`const isAlnum = ch => /[a-z0-9]/i.test(ch);
+function isPalindrome(s) {
+  let i = 0, j = s.length - 1;
+  while (i < j) {
+    while (i < j && !isAlnum(s[i])) i++;
+    while (i < j && !isAlnum(s[j])) j--;
+    if (s[i].toLowerCase() !== s[j].toLowerCase()) return false;
+    i++; j--;
+  }
+  return true;
+}
+function validPalindrome(s) {
+  const isPal = (i, j) => {
+    while (i < j) { if (s[i] !== s[j]) return false; i++; j--; }
+    return true;
+  };
+  let i = 0, j = s.length - 1;
+  while (i < j) {
+    if (s[i] !== s[j]) return isPal(i + 1, j) || isPal(i, j - 1);
+    i++; j--;
+  }
+  return true;
+}`
+          }
         }
       ]
     },
@@ -720,7 +877,7 @@ console.log(twoSum([3, 2, 4], 6));      // [1, 2]
 console.log(twoSum([3, 3], 6));         // [0, 1]
 console.log(twoSum([], 7));             // []
 // O(n) time, O(n) space (brute force over all pairs: O(n^2) time, O(1) space)`,
-          try: R`عدّلها ترجّع كل الأزواج (القيم مش الـ indexes) من غير تكرار: [1, 5, 3, 3, 7, 5] مع target = 8 ترجع [5, 3] و [1, 7] بس. فكّر: هتخزّن إيه، وإزاي تمنع الزوج يتكرر؟`,
+          try: R`عدّلها ترجّع كل الأزواج (القيم مش الـ indexes) من غير تكرار: [1, 5, 3, 3, 7, 5] مع target = 8 ترجع [5, 3] و [1, 7] بس. فكّر: هتخزّن إيه، وإزاي تمنع الزوج يتكرر؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[allPairs]] بترجّع الأزواج (القيم)، وترتيبهم مش مهم.`,
           flag: "script",
           deep: {
             why: "أشهر مسألة انترفيو في الدنيا، ومش عشان صعبة: عشان بتوريك إزاي Map بتحوّل O(n^2) لـ O(n). ونفس الفكرة («دوّر على المكمّل في اللي فات») هتلاقيها في مسائل كتير: عدد الأجزاء اللي مجموعها k، وأي «زوج بيحقق شرط».",
@@ -775,7 +932,38 @@ i = 2: الرقم 4، والناقص 2. موجود عند 1! نرجّع [1, 2].
 console.log(allPairs([1, 5, 3, 3, 7, 5], 8)); // [[5, 3], [1, 7]]
 console.log(allPairs([4, 4, 4], 8));          // [[4, 4]]
 console.log(allPairs([1, 2], 10));            // []
-// O(n) time, O(n) space (seen + used)`
+// O(n) time, O(n) space (seen + used)`,
+          check: {
+            lang: "js",
+            starter: R`function allPairs(nums, target) {
+  const seen = new Set();
+  const used = new Set();
+  const out = [];
+  // ...
+  return out;
+}`,
+            tests: R`const norm = ps => ps.map(p => [...p].sort((a, b) => a - b).join(",")).sort();
+test("[1, 5, 3, 3, 7, 5] مع 8 ← [5, 3] و [1, 7] بس", () => expect(norm(allPairs([1, 5, 3, 3, 7, 5], 8))).toEqual(["1,7", "3,5"]));
+test("[4, 4, 4] مع 8 ← [4, 4] مرة واحدة", () => expect(norm(allPairs([4, 4, 4], 8))).toEqual(["4,4"]));
+test("[4] مع 8 ← []: الرقم مينفعش يتاخد مع نفسه", () => expect(allPairs([4], 8)).toEqual([]));
+test("أرقام سالبة: [-2, 10, 3, 5] مع 8", () => expect(norm(allPairs([-2, 10, 3, 5], 8))).toEqual(["-2,10", "3,5"]));
+test("[] ← []", () => expect(allPairs([], 8)).toEqual([]));
+test("١٠ آلاف رقم ← ٥ آلاف زوج (O(n) بالـ Set)", () => expect(allPairs(Array.from({ length: 10000 }, (_, i) => i), 9999).length).toBe(5000));`,
+            solution: R`function allPairs(nums, target) {
+  const seen = new Set();
+  const used = new Set();
+  const out = [];
+  for (const x of nums) {
+    const need = target - x;
+    if (seen.has(need)) {
+      const key = Math.min(x, need) + "," + Math.max(x, need);
+      if (!used.has(key)) { used.add(key); out.push([need, x]); }
+    }
+    seen.add(x);
+  }
+  return out;
+}`
+          }
         },
         {
           cmd: "contains duplicate (Set)",
@@ -798,7 +986,7 @@ console.log(containsDuplicate([1, 2, 3, 1])); // true
 console.log(containsDuplicate([1, 2, 3]));    // false
 console.log(hasDupShort([NaN, NaN]));         // true
 // O(n) time, O(n) space; sort + compare neighbors = O(n log n) time and no Set`,
-          try: R`اكتب [[missingIds(requested, existing)]] ترجّع الـ ids اللي في الأولى ومش في التانية، مرة بـ [[filter]] و [[includes]] ومرة بـ Set، وقيس الوقت على ٥٠ ألف id في كل واحدة.`,
+          try: R`اكتب [[missingIds(requested, existing)]] ترجّع الـ ids اللي في الأولى ومش في التانية، مرة بـ [[filter]] و [[includes]] ومرة بـ Set، وقيس الوقت على ٥٠ ألف id في كل واحدة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[missingFast]] (اكتب نسخة الـ Set).`,
           flag: "script",
           deep: {
             why: R`«هل شفت الحاجة دي قبل كده؟» سؤال بيتسأل في الكود طول الوقت: الإيميل مسجّل قبل كده؟ الطلب اتبعت مرتين؟ الـ id موجود في القايمة التانية؟ والإجابة بـ [[includes]] بتكلّف O(n) كل مرة، وبـ Set بتكلّف O(1).`,
@@ -845,7 +1033,27 @@ console.timeEnd("includes"); // 1-2 s (depends on the machine)
 console.time("set");
 console.log(missingFast(requested, existing).length); // 25000
 console.timeEnd("set");      // a few ms
-// includes: O(n * m) time; Set: O(n + m) time, O(m) extra space`
+// includes: O(n * m) time; Set: O(n + m) time, O(m) extra space`,
+          check: {
+            lang: "js",
+            starter: R`function missingFast(requested, existing) {
+  // ابني Set من existing مرة واحدة برّا الـ filter
+  return [];
+}`,
+            tests: R`test("([1, 2, 3, 4], [2, 4]) ← [1, 3]", () => expect(missingFast([1, 2, 3, 4], [2, 4])).toEqual([1, 3]));
+test("بتحافظ على ترتيب الأولى: ([5, 1, 4], [4]) ← [5, 1]", () => expect(missingFast([5, 1, 4], [4])).toEqual([5, 1]));
+test("التانية فاضية ← الأولى كلها", () => expect(missingFast([1, 2], [])).toEqual([1, 2]));
+test("strings كمان: (['a', 'b'], ['b']) ← ['a']", () => expect(missingFast(["a", "b"], ["b"])).toEqual(["a"]));
+test("5000 id في كل ناحية (Set: O(n + m)، includes: O(n × m))", () => {
+  const req = Array.from({ length: 5000 }, (_, i) => i), have = req.filter(x => x % 2 === 0);
+  const r = missingFast(req, have);
+  expect([r.length, r[0], r.at(-1)]).toEqual([2500, 1, 4999]);
+});`,
+            solution: R`function missingFast(requested, existing) {
+  const have = new Set(existing);
+  return requested.filter(id => !have.has(id));
+}`
+          }
         },
         {
           cmd: "first unique (count + scan)",
@@ -867,7 +1075,7 @@ console.log(firstUniqChar("leetcode"));     // 0
 console.log(firstUniqChar("loveleetcode")); // 2
 console.log(firstUniqChar("aabb"));         // -1
 // O(n) time, O(k) space (k = alphabet size, so O(1) for a-z)`,
-          try: R`اعملها بـ array طولها 26 بدل Map (الحروف a-z بس). وبعدين النسخة الـ stream: الحروف جاية واحد واحد، وبعد كل حرف لازم ترد «أول حرف مش متكرر لحد دلوقتي» (فكّر في Map مع queue).`,
+          try: R`اعملها بـ array طولها 26 بدل Map (الحروف a-z بس). وبعدين النسخة الـ stream: الحروف جاية واحد واحد، وبعد كل حرف لازم ترد «أول حرف مش متكرر لحد دلوقتي» (فكّر في Map مع queue). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[firstUniqChar]] بـ array طولها 26، و [[FirstUnique]] فيها [[add(ch)]] بترجّع الرد بعد كل حرف (أو null).`,
           flag: "script",
           deep: {
             why: "بتعلّمك نمط «عدّ الأول، بعدين دوّر»، وبتختبر إنك بتحافظ على الترتيب. ولو عملتها بـ loop جوه loop (لكل حرف عدّ هو اتكرر كام مرة) هتبقى O(n^2).",
@@ -922,7 +1130,49 @@ class FirstUnique {
 }
 const fu = new FirstUnique();
 console.log([..."aabcbc"].map(ch => String(fu.add(ch))).join(" ")); // a null b b c null
-// array: O(n) time, O(1) space (26 slots); stream: amortized O(1) per char (head only moves forward)`
+// array: O(n) time, O(1) space (26 slots); stream: amortized O(1) per char (head only moves forward)`,
+          check: {
+            lang: "js",
+            starter: R`function firstUniqChar(s) {
+  const count = new Array(26).fill(0);
+  // الـ index: ch.charCodeAt(0) - 97
+  return -1;
+}
+class FirstUnique {
+  constructor() { this.count = new Map(); this.queue = []; this.head = 0; }
+  add(ch) {
+    // زوّد العدّ وحط الحرف في الـ queue، وقدّم head طول ما الحرف اللي عنده متكرر
+    return null;
+  }
+}`,
+            tests: R`test("'leetcode' ← 0", () => expect(firstUniqChar("leetcode")).toBe(0));
+test("'loveleetcode' ← 2", () => expect(firstUniqChar("loveleetcode")).toBe(2));
+test("'aabb' و '' ← -1", () => expect([firstUniqChar("aabb"), firstUniqChar("")]).toEqual([-1, -1]));
+const stream = s => { const fu = new FirstUnique(); return [...s].map(ch => fu.add(ch)); };
+test("stream 'aabcbc' ← a null b b c null", () => expect(stream("aabcbc")).toEqual(["a", null, "b", "b", "c", null]));
+test("كل FirstUnique ليها حالتها: 'ab' ← a a، و 'b' لوحدها ← b", () => expect([stream("ab"), stream("b")]).toEqual([["a", "a"], ["b"]]));
+test("١٠٠ ألف حرف: الـ head بيمشي لقدام بس (amortized O(1) لكل حرف)", () => {
+  const s = "ab".repeat(50000) + "c";
+  expect(firstUniqChar(s)).toBe(100000);
+  const r = stream(s);
+  expect([r.length, r[0], r[1], r.at(-1)]).toEqual([100001, "a", "a", "c"]);
+});`,
+            solution: R`function firstUniqChar(s) {
+  const count = new Array(26).fill(0);
+  for (const ch of s) count[ch.charCodeAt(0) - 97]++;
+  for (let i = 0; i < s.length; i++) if (count[s.charCodeAt(i) - 97] === 1) return i;
+  return -1;
+}
+class FirstUnique {
+  constructor() { this.count = new Map(); this.queue = []; this.head = 0; }
+  add(ch) {
+    this.count.set(ch, (this.count.get(ch) || 0) + 1);
+    this.queue.push(ch);
+    while (this.head < this.queue.length && this.count.get(this.queue[this.head]) > 1) this.head++;
+    return this.head < this.queue.length ? this.queue[this.head] : null;
+  }
+}`
+          }
         },
         {
           cmd: "group anagrams (key)",
@@ -945,7 +1195,7 @@ console.log(groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]));
 // [["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]
 console.log(groupAnagrams([""])); // [[""]]
 // O(n * k log k) time (k = longest word), O(n * k) space`,
-          try: R`غيّر المفتاح لعدّ الحروف: array من 26 صفر، زوّد عند كل حرف، و [[join("#")]]. اتأكد إن النتيجة زي ما هي. ليه الـ # مهمة؟ (من غيرها العدّين [1, 11] و [11, 1] الاتنين يبقوا 111).`,
+          try: R`غيّر المفتاح لعدّ الحروف: array من 26 صفر، زوّد عند كل حرف، و [[join("#")]]. اتأكد إن النتيجة زي ما هي. ليه الـ # مهمة؟ (من غيرها العدّين [1, 11] و [11, 1] الاتنين يبقوا 111). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[groupAnagrams]] بمفتاح العدّ و [[#]]، وترتيب المجموعات مش مهم.`,
           flag: "script",
           deep: {
             why: "مسألة بتعلّمك أقوى استخدام للـ Map: التجميع بمفتاح محسوب. في الشغل هتعمله كل يوم: الطلبات حسب اليوم، والمنتجات حسب الفئة، واللوجات حسب نوع الـ error. وفي JS الجديد فيه [[Object.groupBy]] و [[Map.groupBy]] بيعملوا ده جاهز.",
@@ -994,7 +1244,38 @@ console.log(groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]));
 // [["eat", "tea", "ate"], ["tan", "nat"], ["bat"]]
 console.log(groupAnagrams([""])); // [[""]]
 console.log([1, 11].join(""), [11, 1].join(""), [1, 11].join("#"), [11, 1].join("#")); // 111 111 1#11 11#1
-// O(n * k) time (no sort), O(n * k) space`
+// O(n * k) time (no sort), O(n * k) space`,
+          check: {
+            lang: "js",
+            starter: R`function groupAnagrams(words) {
+  const groups = new Map();
+  for (const w of words) {
+    const count = new Array(26).fill(0);
+    // زوّد العدّ لكل حرف، والمفتاح count.join("#")
+  }
+  return [...groups.values()];
+}`,
+            tests: R`const norm = gs => gs.map(g => JSON.stringify([...g].sort())).sort();
+test("eat tea tan ate nat bat ← ٣ مجموعات", () => expect(norm(groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]))).toEqual(norm([["eat", "tea", "ate"], ["tan", "nat"], ["bat"]])));
+test("[''] ← [['']]", () => expect(groupAnagrams([""])).toEqual([[""]]));
+test("[] ← []", () => expect(groupAnagrams([])).toEqual([]));
+test("فخ الـ #: a×11 + b و a + b×11 مجموعتين مش واحدة", () => expect(groupAnagrams(["aaaaaaaaaaab", "abbbbbbbbbbb"]).length).toBe(2));
+test("٢٠ ألف كلمة (O(n × k))", () => {
+  const words = Array.from({ length: 20000 }, (_, i) => (i % 2 ? "listen" : "silent") + "abcdefghij"[i % 10]);
+  expect(groupAnagrams(words).length).toBe(10);
+});`,
+            solution: R`function groupAnagrams(words) {
+  const groups = new Map();
+  for (const w of words) {
+    const count = new Array(26).fill(0);
+    for (const ch of w) count[ch.charCodeAt(0) - 97]++;
+    const key = count.join("#");
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(w);
+  }
+  return [...groups.values()];
+}`
+          }
         }
       ]
     },
@@ -1024,7 +1305,7 @@ console.log(factorial(0));    // 1
 console.log(sumDigits(9045)); // 18
 console.log(factorial(171));  // Infinity
 // factorial: O(n) time, O(n) call stack; sumDigits: O(number of digits)`,
-          try: R`اكتب [[power(x, n)]] بـ recursion بطريقتين: [[x * power(x, n - 1)]]، و «لو n زوجي، احسب [[power(x, n / 2)]] مرة واحدة وربّعها». عدّ النداءات في الاتنين لـ n = 1024، وقول الـ Big-O لكل واحدة.`,
+          try: R`اكتب [[power(x, n)]] بـ recursion بطريقتين: [[x * power(x, n - 1)]]، و «لو n زوجي، احسب [[power(x, n / 2)]] مرة واحدة وربّعها». عدّ النداءات في الاتنين لـ n = 1024، وقول الـ Big-O لكل واحدة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[powerFast]] بالنسخة اللي بتقسم n على ٢.`,
           flag: "script",
           deep: {
             why: "recursion هي الطريقة الطبيعية لأي حاجة شكلها «جواها نسخة أصغر منها»: شجرة (كل فرع شجرة)، وفولدرات جوه فولدرات، و JSON متداخل، وكومنتات عليها ردود عليها ردود. ومن غيرها trees و backtracking و DP هيبقوا صعبين جدًا.",
@@ -1075,7 +1356,28 @@ function powerFast(x, n) {
 console.log(powerSlow(2, 10), powerFast(2, 10)); // 1024 1024
 calls = 0; powerSlow(2, 1024); console.log("slow calls:", calls); // slow calls: 1025
 calls = 0; powerFast(2, 1024); console.log("fast calls:", calls); // fast calls: 12
-// powerSlow: O(n) time and O(n) stack; powerFast: O(log n) time and O(log n) stack`
+// powerSlow: O(n) time and O(n) stack; powerFast: O(log n) time and O(log n) stack`,
+          check: {
+            lang: "js",
+            starter: R`function powerFast(x, n) {
+  // base case الأول: n === 0
+  // لو n زوجي: احسب powerFast(x, n / 2) مرة واحدة في متغير وربّعه
+}`,
+            tests: R`test("powerFast(2, 10) ← 1024", () => expect(powerFast(2, 10)).toBe(1024));
+test("powerFast(5, 0) ← 1 (الـ base case)", () => expect(powerFast(5, 0)).toBe(1));
+test("n فردي: powerFast(3, 13) ← 1594323", () => expect(powerFast(3, 13)).toBe(1594323));
+test("powerFast(2, 31) ← 2147483648", () => expect(powerFast(2, 31)).toBe(2147483648));
+test("n = 100001: النسخة اللي بتنزّل n واحد هتعمل stack overflow، والنسخة O(log n) بتنزل حوالي ٣٤ مستوى", () => {
+  expect(powerFast(1, 100000)).toBe(1);
+  expect(powerFast(-1, 100001)).toBe(-1);
+});`,
+            solution: R`function powerFast(x, n) {
+  if (n === 0) return 1;
+  if (n % 2 === 1) return x * powerFast(x, n - 1);
+  const half = powerFast(x, n / 2);
+  return half * half;
+}`
+          }
         },
         {
           cmd: "call stack",
@@ -1168,7 +1470,7 @@ function fib(n, memo = new Map()) {
 console.log(fibSlow(20)); // 6765
 console.log(fib(50));     // 12586269025
 // fibSlow: O(2^n) time; fib with memo: O(n) time, O(n) space (map + call stack)`,
-          try: R`حط عدّاد نداءات في النسختين وقارن لـ n = 25 (حوالي ربع مليون نداء مقابل ٤٩). وبعدين اكتب [[memoize(fn)]] عامة: تاخد أي دالة ليها argument واحد وترجّع نسخة بـ cache.`,
+          try: R`حط عدّاد نداءات في النسختين وقارن لـ n = 25 (حوالي ربع مليون نداء مقابل ٤٩). وبعدين اكتب [[memoize(fn)]] عامة: تاخد أي دالة ليها argument واحد وترجّع نسخة بـ cache. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[memoize]] وبتعدّ كام مرة الدالة الأصلية اتنادت.`,
           flag: "script",
           deep: {
             why: "فيه مسائل كتير الحل البديهي فيها recursion بتحسب نفس الحاجة مرات كتير: عدد الطرق، أقل تكلفة، هل ممكن. الـ memoization بتحوّلها من «مستحيل» لـ «فوري» بسطرين زيادة. وفي الشغل نفس الفكرة اسمها caching: [[useMemo]] في React، و cache لنتايج API.",
@@ -1234,7 +1536,47 @@ console.log(fibM(50)); // 12586269025
 let squareRuns = 0;
 const square = memoize(x => { squareRuns++; return x * x; });
 console.log(square(9), square(9), squareRuns); // 81 81 1
-// fibSlow: O(2^n) time; memo: O(n) time, O(n) space`
+// fibSlow: O(2^n) time; memo: O(n) time, O(n) space`,
+          check: {
+            lang: "js",
+            starter: R`function memoize(fn) {
+  const cache = new Map();
+  // رجّع دالة جديدة: لو الـ argument في الـ cache رجّع قيمته، وإلا نادي fn وخزّن
+}`,
+            tests: R`test("بترجّع نفس نتايج الدالة الأصلية", () => {
+  const sq = memoize(x => x * x);
+  expect([sq(9), sq(3), sq(9)]).toEqual([81, 9, 81]);
+});
+test("الدالة الأصلية بتتنادي مرة واحدة لنفس الـ argument", () => {
+  let calls = 0;
+  const f = memoize(x => { calls++; return x * 2; });
+  f(9); f(9); f(9);
+  expect(calls).toBe(1);
+});
+test("بتخزّن النتايج falsy زي 0 و undefined (افحص بـ has مش get)", () => {
+  let calls = 0;
+  const f = memoize(x => { calls++; return x === 1 ? 0 : undefined; });
+  f(1); f(1); f(2); f(2);
+  expect(calls).toBe(2);
+});
+test("كل دالة memoized ليها cache لوحدها", () => {
+  const a = memoize(x => x + 1), b = memoize(x => x + 100);
+  expect([a(1), b(1)]).toEqual([2, 101]);
+});
+test("fibM(78) بتنادي النسخة الـ memoized نفسها فبتخلص في لحظة (O(n) بدل O(2^n))", () => {
+  const fibM = memoize(n => (n < 2 ? n : fibM(n - 1) + fibM(n - 2)));
+  expect(fibM(78)).toBe(8944394323791464);
+});`,
+            solution: R`function memoize(fn) {
+  const cache = new Map();
+  return x => {
+    if (cache.has(x)) return cache.get(x);
+    const value = fn(x);
+    cache.set(x, value);
+    return value;
+  };
+}`
+          }
         },
         {
           cmd: "prefix sum",
@@ -1257,7 +1599,7 @@ console.log(rangeSum(pre, 1, 3)); // 4
 console.log(rangeSum(pre, 0, 5)); // 21
 console.log(rangeSum(pre, 4, 4)); // 5
 // build: O(n) time and O(n) space, then every query is O(1)`,
-          try: R`حل «عدد الأجزاء المتصلة اللي مجموعها k» ([1, 2, 3] و k = 3 الإجابة 2): وانت بتجمّع، خزّن في Map كل مجموع شفته كام مرة، واسأل «[[sum - k]] ظهر كام مرة قبل كده؟». ده prefix sum مع hash map، وبيشتغل مع الأرقام السالبة.`,
+          try: R`حل «عدد الأجزاء المتصلة اللي مجموعها k» ([1, 2, 3] و k = 3 الإجابة 2): وانت بتجمّع، خزّن في Map كل مجموع شفته كام مرة، واسأل «[[sum - k]] ظهر كام مرة قبل كده؟». ده prefix sum مع hash map، وبيشتغل مع الأرقام السالبة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[subarraySum(nums, k)]] بترجّع عدد الأجزاء المتصلة اللي مجموعها k.`,
           flag: "script",
           deep: {
             why: "لما عندك أسئلة كتير على نفس البيانات (مجموع المبيعات من يوم لـ يوم، عدد الزيارات في فترة)، الحساب من الأول كل مرة بيضيّع وقت. التجهيز مرة واحدة ودفع شوية ذاكرة بيخلّي كل سؤال فوري. وهو أساس مسائل «subarray sum» كلها.",
@@ -1308,7 +1650,39 @@ console.log(subarraySum([1, 2, 3], 3));    // 2  ([1, 2] and [3])
 console.log(subarraySum([1, 1, 1], 2));    // 2
 console.log(subarraySum([1, -1, 0], 0));   // 3  ([1, -1], [0], [1, -1, 0])
 console.log(subarraySum([3, 4, -7], 0));   // 1
-// O(n) time, O(n) space`
+// O(n) time, O(n) space`,
+          check: {
+            lang: "js",
+            starter: R`function subarraySum(nums, k) {
+  const seen = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  // لكل عنصر: زوّد sum، وضيف seen.get(sum - k)، وبعدين سجّل sum
+  return count;
+}`,
+            tests: R`test("([1, 2, 3], 3) ← 2", () => expect(subarraySum([1, 2, 3], 3)).toBe(2));
+test("([1, 1, 1], 2) ← 2", () => expect(subarraySum([1, 1, 1], 2)).toBe(2));
+test("أصفار وسالب: ([1, -1, 0], 0) ← 3", () => expect(subarraySum([1, -1, 0], 0)).toBe(3));
+test("سالب في النص: ([2, -1, 1, 2], 2) ← 4 (sliding window كانت هتغلط)", () => expect(subarraySum([2, -1, 1, 2], 2)).toBe(4));
+test("([], 0) ← 0", () => expect(subarraySum([], 0)).toBe(0));
+test("3000 رقم عشوائي من -5 لـ 5، مقارنة بالـ brute force O(n^2)", () => {
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) % 11 - 5;
+  const a = Array.from({ length: 3000 }, rnd);
+  let want = 0;
+  for (let i = 0; i < a.length; i++) { let s = 0; for (let j = i; j < a.length; j++) { s += a[j]; if (s === 3) want++; } }
+  expect(subarraySum(a, 3)).toBe(want);
+});`,
+            solution: R`function subarraySum(nums, k) {
+  const seen = new Map([[0, 1]]);
+  let sum = 0, count = 0;
+  for (const x of nums) {
+    sum += x;
+    count += seen.get(sum - k) || 0;
+    seen.set(sum, (seen.get(sum) || 0) + 1);
+  }
+  return count;
+}`
+          }
         }
       ]
     },
@@ -1339,7 +1713,7 @@ console.log(twoSumSorted([1, 3, 4, 6, 9], 10)); // [0, 4]
 console.log(twoSumSorted([-3, -1, 0, 2], -4));  // [0, 1]
 console.log(twoSumSorted([1, 2, 3], 100));      // []
 // O(n) time, O(1) space`,
-          try: R`حل three sum: كل التلاتيات اللي مجموعها 0 من غير تكرار. رتّب الأول، وثبّت عنصر، وشغّل المؤشرين على اللي بعده. [-1, 0, 1, 2, -1, -4] ترجع [-1, -1, 2] و [-1, 0, 1]. الـ Big-O المتوقع [[O(n^2)]].`,
+          try: R`حل three sum: كل التلاتيات اللي مجموعها 0 من غير تكرار. رتّب الأول، وثبّت عنصر، وشغّل المؤشرين على اللي بعده. [-1, 0, 1, 2, -1, -4] ترجع [-1, -1, 2] و [-1, 0, 1]. الـ Big-O المتوقع [[O(n^2)]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[threeSum]] بترجّع التلاتيات من غير تكرار، وترتيبهم مش مهم.`,
           flag: "script",
           deep: {
             why: "المؤشرين من الطرفين بيستغلوا إن الـ array مترتبة عشان يشيلوا عنصر كامل من الحساب مع كل خطوة. ده بيحوّل مسائل «كل زوج» من O(n^2) لـ O(n) من غير ذاكرة، وهو أساس three sum، و container with most water، و «أقرب مجموع لـ target».",
@@ -1401,7 +1775,48 @@ lo = 1 و hi = 2: 3 + 4 = 7، أصغر. زوّد lo. دلوقتي lo = hi، وق
 console.log(threeSum([-1, 0, 1, 2, -1, -4])); // [[-1, -1, 2], [-1, 0, 1]]
 console.log(threeSum([0, 0, 0, 0]));          // [[0, 0, 0]]
 console.log(threeSum([1, 2]));                // []
-// O(n^2) time (n fixed items x an O(n) two-pointer pass; the sort is only O(n log n)), O(1) extra space besides the output and the sorted copy`
+// O(n^2) time (n fixed items x an O(n) two-pointer pass; the sort is only O(n log n)), O(1) extra space besides the output and the sorted copy`,
+          check: {
+            lang: "js",
+            starter: R`function threeSum(nums) {
+  const a = [...nums].sort((x, y) => x - y);
+  const out = [];
+  // ثبّت i، وشغّل lo و hi على اللي بعده، وفوّت التكرار في المكانين
+  return out;
+}`,
+            tests: R`const norm = ts => ts.map(t => [...t].sort((a, b) => a - b).join(",")).sort();
+test("[-1, 0, 1, 2, -1, -4] ← [-1, -1, 2] و [-1, 0, 1]", () => expect(norm(threeSum([-1, 0, 1, 2, -1, -4]))).toEqual(["-1,-1,2", "-1,0,1"]));
+test("[0, 0, 0, 0] ← [0, 0, 0] مرة واحدة", () => expect(norm(threeSum([0, 0, 0, 0]))).toEqual(["0,0,0"]));
+test("[1, 2, -2, -1] ← [] (مفيش)", () => expect(threeSum([1, 2, -2, -1])).toEqual([]));
+test("[] و [0, 0] ← []", () => expect([threeSum([]), threeSum([0, 0])]).toEqual([[], []]));
+test("متغيّرش الـ input", () => { const a = [3, -3, 0]; threeSum(a); expect(a).toEqual([3, -3, 0]); });
+test("150 رقم عشوائي، مقارنة بـ brute force O(n^3)؛ الحل المطلوب O(n^2)", () => {
+  let seed = 11;
+  const a = Array.from({ length: 150 }, () => (seed = (seed * 1103515245 + 12345) % 2147483648) % 21 - 10);
+  const want = new Set();
+  for (let i = 0; i < a.length; i++) for (let j = i + 1; j < a.length; j++) for (let k = j + 1; k < a.length; k++)
+    if (a[i] + a[j] + a[k] === 0) want.add([a[i], a[j], a[k]].sort((x, y) => x - y).join(","));
+  expect(norm(threeSum(a))).toEqual([...want].sort());
+});`,
+            solution: R`function threeSum(nums) {
+  const a = [...nums].sort((x, y) => x - y);
+  const out = [];
+  for (let i = 0; i < a.length - 2; i++) {
+    if (i > 0 && a[i] === a[i - 1]) continue;
+    let lo = i + 1, hi = a.length - 1;
+    while (lo < hi) {
+      const sum = a[i] + a[lo] + a[hi];
+      if (sum === 0) {
+        out.push([a[i], a[lo], a[hi]]);
+        lo++; hi--;
+        while (lo < hi && a[lo] === a[lo - 1]) lo++;
+      } else if (sum < 0) lo++;
+      else hi--;
+    }
+  }
+  return out;
+}`
+          }
         },
         {
           cmd: "read/write pointers",
@@ -1427,7 +1842,7 @@ const k = removeDuplicates(nums);
 console.log(k, nums.slice(0, k));  // 4 [0, 1, 2, 3]
 console.log(removeDuplicates([])); // 0
 // O(n) time, O(1) extra space`,
-          try: R`حرّك كل الأصفار لآخر الـ array مع الحفاظ على ترتيب الباقي، in-place: [0, 1, 0, 3, 12] تبقى [1, 3, 12, 0, 0]. وبعدين: شيل التكرار بس اسمح لكل رقم يظهر مرتين بالكتير (قارن بالعنصر عند [[write - 2]]).`,
+          try: R`حرّك كل الأصفار لآخر الـ array مع الحفاظ على ترتيب الباقي، in-place: [0, 1, 0, 3, 12] تبقى [1, 3, 12, 0, 0]. وبعدين: شيل التكرار بس اسمح لكل رقم يظهر مرتين بالكتير (قارن بالعنصر عند [[write - 2]]). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[moveZeroes]] بتعدّل الـ array نفسها، و [[removeDuplicatesTwice]] بترجّع الطول الجديد.`,
           flag: "script",
           deep: {
             why: "in-place يعني من غير array جديدة، ودي بتتطلب لما البيانات كبيرة أو في انترفيو بيقولك «O(1) extra space». ومعظم المسائل دي بتتحل بنفس الفكرة: مؤشر بيقرا كل حاجة، ومؤشر بيكتب اللي عايزه بس.",
@@ -1491,7 +1906,58 @@ function removeDuplicatesTwice(a) {
 const nums = [1, 1, 1, 2, 2, 3];
 const k = removeDuplicatesTwice(nums);
 console.log(k, nums.slice(0, k)); // 5 [1, 1, 2, 2, 3]
-// both: O(n) time, O(1) extra space`
+// both: O(n) time, O(1) extra space`,
+          check: {
+            lang: "js",
+            starter: R`function moveZeroes(a) {
+  let write = 0;
+  // كل رقم مش صفر اكتبه عند write، وبعدين املا الباقي أصفار
+}
+function removeDuplicatesTwice(a) {
+  // اكتب العنصر لو write < 2 أو لو مختلف عن a[write - 2]
+  return a.length;
+}`,
+            tests: R`test("moveZeroes([0, 1, 0, 3, 12]) ← [1, 3, 12, 0, 0] في نفس الـ array", () => {
+  const a = [0, 1, 0, 3, 12];
+  moveZeroes(a);
+  expect(a).toEqual([1, 3, 12, 0, 0]);
+});
+test("moveZeroes([0]) و [1, 2] زي ما هم", () => {
+  const a = [0], b = [1, 2];
+  moveZeroes(a); moveZeroes(b);
+  expect([a, b]).toEqual([[0], [1, 2]]);
+});
+test("removeDuplicatesTwice([1, 1, 1, 2, 2, 3]) ← 5 و [1, 1, 2, 2, 3]", () => {
+  const a = [1, 1, 1, 2, 2, 3];
+  const k = removeDuplicatesTwice(a);
+  expect([k, a.slice(0, k)]).toEqual([5, [1, 1, 2, 2, 3]]);
+});
+test("قارن بـ a[write - 2] مش a[read - 2]: [0, 0, 1, 1, 1, 1, 2, 3, 3] ← 7", () => {
+  const a = [0, 0, 1, 1, 1, 1, 2, 3, 3];
+  const k = removeDuplicatesTwice(a);
+  expect([k, a.slice(0, k)]).toEqual([7, [0, 0, 1, 1, 2, 3, 3]]);
+});
+test("[] ← 0 و [1] ← 1", () => expect([removeDuplicatesTwice([]), removeDuplicatesTwice([1])]).toEqual([0, 1]));
+test("١٠٠ ألف عنصر (O(n) و O(1) ذاكرة)", () => {
+  const a = Array.from({ length: 99999 }, (_, i) => Math.floor(i / 3));
+  expect(removeDuplicatesTwice(a)).toBe(66666);
+  const z = Array.from({ length: 100000 }, (_, i) => (i % 2 ? i : 0));
+  moveZeroes(z);
+  expect([z[0], z[49999], z[50000]]).toEqual([1, 99999, 0]);
+});`,
+            solution: R`function moveZeroes(a) {
+  let write = 0;
+  for (const x of a) if (x !== 0) a[write++] = x;
+  while (write < a.length) a[write++] = 0;
+}
+function removeDuplicatesTwice(a) {
+  let write = 0;
+  for (const x of a) {
+    if (write < 2 || x !== a[write - 2]) a[write++] = x;
+  }
+  return write;
+}`
+          }
         },
         {
           cmd: "two pointers (move the shorter)",
@@ -1515,7 +1981,7 @@ console.log(maxArea([1, 8, 6, 2, 5, 4, 8, 3, 7])); // 49
 console.log(maxArea([1, 1]));                      // 1
 console.log(maxArea([5]));                         // 0
 // O(n) time, O(1) space (brute force over all pairs = O(n^2))`,
-          try: R`حل trapping rain water: كام وحدة مية تتحبس فوق كل الأعمدة؟ [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1] الإجابة 6. نفس الفكرة: مؤشرين، وأعلى عمود شفته من كل ناحية لحد دلوقتي.`,
+          try: R`حل trapping rain water: كام وحدة مية تتحبس فوق كل الأعمدة؟ [0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1] الإجابة 6. نفس الفكرة: مؤشرين، وأعلى عمود شفته من كل ناحية لحد دلوقتي. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[trap(heights)]].`,
           flag: "script",
           deep: {
             why: "مسألة بتختبر إنك تقدر تثبت إن تحريك المؤشرين مش بيفوّت الإجابة. الانترفيوير هيسألك «ليه تحرّك الأقصر؟» وده أهم من الكود نفسه.",
@@ -1573,7 +2039,39 @@ lo = 1 (8) و hi = 6 (8): 8 × 5 = 40. متساويين، الـ else بتحرّ
 console.log(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])); // 6
 console.log(trap([4, 2, 0, 3, 2, 5]));                   // 9
 console.log(trap([1, 2, 3]));                            // 0
-// O(n) time, O(1) space (the leftMax/rightMax arrays version is O(n) space)`
+// O(n) time, O(1) space (the leftMax/rightMax arrays version is O(n) space)`,
+          check: {
+            lang: "js",
+            starter: R`function trap(h) {
+  let lo = 0, hi = h.length - 1, leftMax = 0, rightMax = 0, water = 0;
+  // حرّك الناحية اللي عمودها أقصر، وحدّث الـ max بتاعها قبل ما تضيف المية
+  return water;
+}`,
+            tests: R`test("[0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1] ← 6", () => expect(trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1])).toBe(6));
+test("[4, 2, 0, 3, 2, 5] ← 9", () => expect(trap([4, 2, 0, 3, 2, 5])).toBe(9));
+test("[3, 0, 3] ← 3", () => expect(trap([3, 0, 3])).toBe(3));
+test("سلم طالع [1, 2, 3] مبيحبسش حاجة ← 0", () => expect(trap([1, 2, 3])).toBe(0));
+test("[] و [5] ← 0", () => expect([trap([]), trap([5])]).toEqual([0, 0]));
+test("5000 عمود (O(n) بمؤشرين، و O(n^2) لو لكل عمود دوّرت على الأعلى يمين وشمال)", () => {
+  const h = [5, ...new Array(4998).fill(0), 5];
+  expect(trap(h)).toBe(5 * 4998);
+});`,
+            solution: R`function trap(h) {
+  let lo = 0, hi = h.length - 1, leftMax = 0, rightMax = 0, water = 0;
+  while (lo < hi) {
+    if (h[lo] < h[hi]) {
+      leftMax = Math.max(leftMax, h[lo]);
+      water += leftMax - h[lo];
+      lo++;
+    } else {
+      rightMax = Math.max(rightMax, h[hi]);
+      water += rightMax - h[hi];
+      hi--;
+    }
+  }
+  return water;
+}`
+          }
         }
       ]
     },
@@ -1605,7 +2103,7 @@ console.log(maxSumK([2, 1, 5, 1, 3, 2], 3)); // 9
 console.log(maxSumK([-4, -2, -7], 2));       // -6
 console.log(maxSumK([1, 2], 5));             // null
 // O(n) time, O(1) space (summing every window again = O(n * k))`,
-          try: R`عدّلها ترجّع index بداية أحسن شباك بدل المجموع. وبعدين حل: كام شباك طوله k متوسطه ≥ threshold؟`,
+          try: R`عدّلها ترجّع index بداية أحسن شباك بدل المجموع. وبعدين حل: كام شباك طوله k متوسطه ≥ threshold؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[bestWindowStart(a, k)]] بترجّع index بداية أحسن شباك (أو -1 لو k مش مناسب)، و [[countAvgAtLeast(a, k, threshold)]].`,
           flag: "script",
           deep: {
             why: "أي سؤال عن «k عناصر ورا بعض» (أعلى مبيعات في ٧ أيام متتالية، متوسط آخر ٥ قراءات) الحل البديهي بيعيد الجمع لكل شباك. الشباك المتحرك بيخلي كل خطوة O(1)، وده نفس المنطق اللي ورا moving average في الرسوم البيانية.",
@@ -1672,7 +2170,50 @@ function countAvgAtLeast(a, k, threshold) {
 }
 console.log(countAvgAtLeast([2, 2, 2, 2, 5, 5, 5, 8], 3, 4)); // 3
 console.log(countAvgAtLeast([1, 1, 1], 2, 5));               // 0
-// both: O(n) time, O(1) space`
+// both: O(n) time, O(1) space`,
+          check: {
+            lang: "js",
+            starter: R`function bestWindowStart(a, k) {
+  if (k <= 0 || k > a.length) return -1;
+  // نفس maxSumK، وسجّل bestWindowStart = i - k + 1 لما تلاقي مجموع أكبر
+}
+function countAvgAtLeast(a, k, threshold) {
+  // قارن المجموع بـ k * threshold بدل ما تقسم
+  return 0;
+}`,
+            tests: R`test("bestWindowStart([2, 1, 5, 1, 3, 2], 3) ← 2", () => expect(bestWindowStart([2, 1, 5, 1, 3, 2], 3)).toBe(2));
+test("التعادل: أول شباك ← bestWindowStart([1, 1, 1], 2) = 0", () => expect(bestWindowStart([1, 1, 1], 2)).toBe(0));
+test("أرقام سالبة: bestWindowStart([-4, -2, -7], 2) ← 0", () => expect(bestWindowStart([-4, -2, -7], 2)).toBe(0));
+test("k أكبر من الطول ← -1", () => expect(bestWindowStart([1, 2], 5)).toBe(-1));
+test("countAvgAtLeast([2, 2, 2, 2, 5, 5, 5, 8], 3, 4) ← 3", () => expect(countAvgAtLeast([2, 2, 2, 2, 5, 5, 5, 8], 3, 4)).toBe(3));
+test("countAvgAtLeast([11, 13, 17, 23, 29, 31, 7, 5, 2, 3], 3, 5) ← 6", () => expect(countAvgAtLeast([11, 13, 17, 23, 29, 31, 7, 5, 2, 3], 3, 5)).toBe(6));
+test("١٠٠ ألف عنصر و k = 1000 (O(n)، مش O(n × k))", () => {
+  const a = Array.from({ length: 100000 }, (_, i) => (i >= 50000 && i < 51000 ? 2 : 1));
+  expect(bestWindowStart(a, 1000)).toBe(50000);
+  expect(countAvgAtLeast(a, 1000, 1)).toBe(99001);
+});`,
+            solution: R`function bestWindowStart(a, k) {
+  if (k <= 0 || k > a.length) return -1;
+  let sum = 0;
+  for (let i = 0; i < k; i++) sum += a[i];
+  let best = sum, start = 0;
+  for (let i = k; i < a.length; i++) {
+    sum += a[i] - a[i - k];
+    if (sum > best) { best = sum; start = i - k + 1; }
+  }
+  return start;
+}
+function countAvgAtLeast(a, k, threshold) {
+  if (k <= 0 || k > a.length) return 0;
+  let sum = 0, count = 0;
+  for (let i = 0; i < a.length; i++) {
+    sum += a[i];
+    if (i >= k) sum -= a[i - k];
+    if (i >= k - 1 && sum >= k * threshold) count++;
+  }
+  return count;
+}`
+          }
         },
         {
           cmd: "variable sliding window",
@@ -1698,7 +2239,7 @@ console.log(longestUnique("pwwkew"));   // 3
 console.log(longestUnique("abba"));     // 2
 console.log(longestUnique(""));         // 0
 // O(n) time, O(k) space (k = distinct chars)`,
-          try: R`حل: أطول جزء متصل فيه k حروف مختلفة بالكتير ([[eceba]] مع k = 2 الإجابة 3: ece). المرة دي ضيّق الشباك بـ while من الشمال، وشيل من عدّاد الحروف، لحد ما عدد الحروف المختلفة يرجع ≤ k.`,
+          try: R`حل: أطول جزء متصل فيه k حروف مختلفة بالكتير ([[eceba]] مع k = 2 الإجابة 3: ece). المرة دي ضيّق الشباك بـ while من الشمال، وشيل من عدّاد الحروف، لحد ما عدد الحروف المختلفة يرجع ≤ k. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[longestKDistinct(s, k)]].`,
           flag: "script",
           deep: {
             why: "أي «أطول» أو «أقصر» جزء متصل بيحقق شرط، الحل البديهي بيجرّب كل بداية وكل نهاية: O(n^2) أو أكتر. الشباك المتغير بيحلها في O(n)، لأنه بيستغل إن الشرط لو اتكسر، تكبير الشباك مش هيصلّحه، لازم تضيّقه.",
@@ -1761,7 +2302,37 @@ i = 7 (b): عند 6 ≥ 5، فـ start = 7. الطول 1. النتيجة 3.
 console.log(longestKDistinct("eceba", 2));  // 3  (ece)
 console.log(longestKDistinct("aa", 1));     // 2
 console.log(longestKDistinct("abc", 0));    // 0
-// O(n) time (start only moves forward, each char enters and leaves once), O(k) space`
+// O(n) time (start only moves forward, each char enters and leaves once), O(k) space`,
+          check: {
+            lang: "js",
+            starter: R`function longestKDistinct(s, k) {
+  const count = new Map();
+  let start = 0, best = 0;
+  // زوّد عدّ الحرف الجديد، و while (count.size > k) ضيّق من الشمال
+  return best;
+}`,
+            tests: R`test("('eceba', 2) ← 3 (ece)", () => expect(longestKDistinct("eceba", 2)).toBe(3));
+test("('aa', 1) ← 2", () => expect(longestKDistinct("aa", 1)).toBe(2));
+test("('aabbcc', 1) ← 2 و ('aabbcc', 3) ← 6", () => expect([longestKDistinct("aabbcc", 1), longestKDistinct("aabbcc", 3)]).toEqual([2, 6]));
+test("لما العدّ يوصل صفر امسح الحرف من الـ Map: ('abaccc', 2) ← 4", () => expect(longestKDistinct("abaccc", 2)).toBe(4));
+test("('', 2) و ('abc', 0) ← 0", () => expect([longestKDistinct("", 2), longestKDistinct("abc", 0)]).toEqual([0, 0]));
+test("٩٠ ألف حرف (O(n): start بيتحرك لقدام بس)", () => expect(longestKDistinct("abc".repeat(30000), 2)).toBe(2));`,
+            solution: R`function longestKDistinct(s, k) {
+  const count = new Map();
+  let start = 0, best = 0;
+  for (let i = 0; i < s.length; i++) {
+    count.set(s[i], (count.get(s[i]) || 0) + 1);
+    while (count.size > k) {
+      const c = count.get(s[start]) - 1;
+      if (c === 0) count.delete(s[start]);
+      else count.set(s[start], c);
+      start++;
+    }
+    best = Math.max(best, i - start + 1);
+  }
+  return best;
+}`
+          }
         }
       ]
     },
@@ -1794,7 +2365,7 @@ console.log(isValid("([)]"));   // false
 console.log(isValid("(("));     // false
 console.log(isValid("))"));     // false
 // O(n) time, O(n) space`,
-          try: R`عدّلها ترجّع index أول قوس غلط (أو -1). وبعدين حل: أقل عدد أقواس تضيفها عشان [[())(]] تبقى سليمة (الإجابة 2).`,
+          try: R`عدّلها ترجّع index أول قوس غلط (أو -1). وبعدين حل: أقل عدد أقواس تضيفها عشان [[())(]] تبقى سليمة (الإجابة 2). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[firstBadIndex(s)]] بترجّع مكان أول قوس غلط أو -1، و [[minAddToMakeValid(s)]].`,
           flag: "script",
           deep: {
             why: "الـ stack هو الـ data structure اللي ورا حاجات بتستخدمها كل يوم: الـ call stack نفسه، و undo في أي editor، وزرار back في المتصفح، والـ parser اللي بيقرا JSON و HTML ويتأكد إن كل حاجة اتقفلت. والمسألة دي أبسط مثال عليه، وبتتسأل كتير.",
@@ -1864,7 +2435,52 @@ function minAddToMakeValid(s) {
 console.log(minAddToMakeValid("())("));  // 2
 console.log(minAddToMakeValid("((("));   // 3
 console.log(minAddToMakeValid("()"));    // 0
-// firstBadIndex: O(n) time, O(n) space; minAdd: O(n) time, O(1) space (one kind of bracket needs only a counter)`
+// firstBadIndex: O(n) time, O(n) space; minAdd: O(n) time, O(1) space (one kind of bracket needs only a counter)`,
+          check: {
+            lang: "js",
+            starter: R`function firstBadIndex(s) {
+  const pairs = { ")": "(", "]": "[", "}": "{" };
+  const stack = []; // خزّن الـ indexes مش الحروف
+  return -1;
+}
+function minAddToMakeValid(s) {
+  let open = 0, add = 0;
+  // ...
+  return add + open;
+}`,
+            tests: R`test("'({[]})' ← -1", () => expect(firstBadIndex("({[]})")).toBe(-1));
+test("'([)]' ← 2 (القفلة مش مناسبة)", () => expect(firstBadIndex("([)]")).toBe(2));
+test("'((' ← 0 (أول فتحة ماتقفلتش)", () => expect(firstBadIndex("((")).toBe(0));
+test("'())' ← 2 و ')(' ← 0", () => expect([firstBadIndex("())"), firstBadIndex(")(")]).toEqual([2, 0]));
+test("أي حرف تاني بيتجاهل: 'a(b)c' ← -1", () => expect(firstBadIndex("a(b)c")).toBe(-1));
+test("minAddToMakeValid('())(') ← 2", () => expect(minAddToMakeValid("())(")).toBe(2));
+test("')(' ← 2 مش 0: open مينزلش تحت الصفر", () => expect(minAddToMakeValid(")(")).toBe(2));
+test("'' ← 0 و '(((' ← 3", () => expect([minAddToMakeValid(""), minAddToMakeValid("(((")]).toEqual([0, 3]));`,
+            solution: R`function firstBadIndex(s) {
+  const pairs = { ")": "(", "]": "[", "}": "{" };
+  const stack = [];
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === "(" || ch === "[" || ch === "{") stack.push(i);
+    else if (ch in pairs) {
+      if (!stack.length || s[stack.at(-1)] !== pairs[ch]) return i;
+      stack.pop();
+    }
+  }
+  return stack.length ? stack[0] : -1;
+}
+function minAddToMakeValid(s) {
+  let open = 0, add = 0;
+  for (const ch of s) {
+    if (ch === "(") open++;
+    else if (ch === ")") {
+      if (open > 0) open--;
+      else add++;
+    }
+  }
+  return add + open;
+}`
+          }
         },
         {
           cmd: "min stack",
@@ -1889,7 +2505,7 @@ console.log(st.getMin());           // 1
 console.log(st.pop(), st.getMin()); // 1 2
 console.log(st.pop(), st.getMin()); // 7 2
 // push, pop and getMin are all O(1) time; O(n) extra space for mins`,
-          try: R`ضيف [[top()]] و [[size]]. وبعدين حل النسخة الموفّرة: خزّن في mins بس لما الجديد ≤ الأصغر الحالي، وفي pop شيل من mins بس لو العنصر اللي خارج = الأصغر. ليه لازم ≤ مش <؟ (جرّب push 2 و push 2 و pop).`,
+          try: R`ضيف [[top()]] و [[size]]. وبعدين حل النسخة الموفّرة: خزّن في mins بس لما الجديد ≤ الأصغر الحالي، وفي pop شيل من mins بس لو العنصر اللي خارج = الأصغر. ليه لازم ≤ مش <؟ (جرّب push 2 و push 2 و pop). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[top()]] و [[size]] والنسخة الموفّرة (بتبص على [[mins]]).`,
           flag: "script",
           deep: {
             why: "سؤال بيختبر إزاي تصمّم data structure بعمليات O(1) بإنك تدفع ذاكرة. ونفس الفكرة («خزّن معلومة زيادة مع كل عنصر») بتتكرر كتير: max stack، و undo بحالة كاملة، وقوايم بتحفظ المجموع لحد كل عنصر.",
@@ -1952,7 +2568,59 @@ st.pop();
 console.log(st.getMin()); // 2  (with < instead of <=, mins would be [5, 2], the pop removes that 2, and this prints 5)
 st.pop(); st.pop();
 console.log(st.getMin(), st.size); // 5 1
-// all operations O(1); mins holds only the new records, O(n) in the worst case (a decreasing input)`
+// all operations O(1); mins holds only the new records, O(n) in the worst case (a decreasing input)`,
+          check: {
+            lang: "js",
+            starter: R`class MinStack {
+  constructor() { this.items = []; this.mins = []; }
+  push(x) {
+    this.items.push(x);
+    this.mins.push(this.mins.length ? Math.min(x, this.mins.at(-1)) : x);
+  }
+  pop() { this.mins.pop(); return this.items.pop(); }
+  getMin() { return this.mins.at(-1); }
+}`,
+            tests: R`test("push 5 و 2 و 7 و 1: getMin ← 1، وبعد pop ← 2", () => {
+  const st = new MinStack();
+  [5, 2, 7, 1].forEach(x => st.push(x));
+  expect(st.getMin()).toBe(1);
+  expect([st.pop(), st.getMin()]).toEqual([1, 2]);
+});
+test("top() و size", () => {
+  const st = new MinStack();
+  st.push(4); st.push(9);
+  expect([st.top(), st.size]).toEqual([9, 2]);
+});
+test("الموفّرة: بعد push 5 و 2 و 7 و 2، الـ mins فيها [5, 2, 2] بس", () => {
+  const st = new MinStack();
+  [5, 2, 7, 2].forEach(x => st.push(x));
+  expect(st.mins).toEqual([5, 2, 2]);
+});
+test("ليه <= مش <: push 2 و push 2 و pop ← getMin لسه 2", () => {
+  const st = new MinStack();
+  st.push(2); st.push(2); st.pop();
+  expect(st.getMin()).toBe(2);
+});
+test("stack فاضي: getMin و top ← undefined و size ← 0", () => {
+  const st = new MinStack();
+  expect([st.getMin(), st.top(), st.size]).toEqual([undefined, undefined, 0]);
+});`,
+            solution: R`class MinStack {
+  constructor() { this.items = []; this.mins = []; }
+  push(x) {
+    this.items.push(x);
+    if (!this.mins.length || x <= this.mins.at(-1)) this.mins.push(x);
+  }
+  pop() {
+    const x = this.items.pop();
+    if (x === this.mins.at(-1)) this.mins.pop();
+    return x;
+  }
+  getMin() { return this.mins.at(-1); }
+  top() { return this.items.at(-1); }
+  get size() { return this.items.length; }
+}`
+          }
         },
         {
           cmd: "monotonic stack",
@@ -1977,7 +2645,7 @@ console.log(nextGreater([2, 1, 2, 4, 3])); // [4, 2, 4, -1, -1]
 console.log(nextGreater([5, 4, 3]));       // [-1, -1, -1]
 console.log(nextGreater([]));              // []
 // O(n) time (every index is pushed and popped at most once), O(n) space`,
-          try: R`حل daily temperatures: لكل يوم، كام يوم لحد ما الحرارة تبقى أعلى؟ [73, 74, 75, 71, 69, 72, 76, 73] ترجع [1, 1, 4, 2, 1, 1, 0, 0]. (نفس الكود، بس سجّل الفرق بين الـ indexes بدل القيمة، والافتراضي 0).`,
+          try: R`حل daily temperatures: لكل يوم، كام يوم لحد ما الحرارة تبقى أعلى؟ [73, 74, 75, 71, 69, 72, 76, 73] ترجع [1, 1, 4, 2, 1, 1, 0, 0]. (نفس الكود، بس سجّل الفرق بين الـ indexes بدل القيمة، والافتراضي 0). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[dailyTemperatures]].`,
           flag: "script",
           deep: {
             why: "الـ monotonic stack بيحل عيلة كاملة من المسائل في O(n) بدل O(n^2): أول أكبر أو أصغر على اليمين أو الشمال، وأيام لحد درجة حرارة أعلى، وأكبر مستطيل في histogram، و stock span. الحل البديهي لكل عنصر بيدوّر على يمينه: O(n^2).",
@@ -2034,7 +2702,37 @@ i = 4 (3): اللي فوق قيمته 4، مش أصغر. حط 4. خلصنا، و
 }
 console.log(dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73]).join(" ")); // 1 1 4 2 1 1 0 0
 console.log(dailyTemperatures([30, 30, 30]).join(" "));                     // 0 0 0
-// O(n) time (each index is pushed and popped once), O(n) space`
+// O(n) time (each index is pushed and popped once), O(n) space`,
+          check: {
+            lang: "js",
+            starter: R`function dailyTemperatures(t) {
+  const res = new Array(t.length).fill(0);
+  const stack = [];
+  // زي nextGreater، بس سجّل res[j] = i - j
+  return res;
+}`,
+            tests: R`test("[73, 74, 75, 71, 69, 72, 76, 73] ← [1, 1, 4, 2, 1, 1, 0, 0]", () => expect(dailyTemperatures([73, 74, 75, 71, 69, 72, 76, 73])).toEqual([1, 1, 4, 2, 1, 1, 0, 0]));
+test("درجات متساوية ← أصفار (أعلى مش أعلى أو زي)", () => expect(dailyTemperatures([30, 30, 30])).toEqual([0, 0, 0]));
+test("[30, 40, 50, 60] ← [1, 1, 1, 0]", () => expect(dailyTemperatures([30, 40, 50, 60])).toEqual([1, 1, 1, 0]));
+test("[] ← []", () => expect(dailyTemperatures([])).toEqual([]));
+test("3000 يوم نازلين وبعدهم يوم حر (O(n): كل index بيدخل ويخرج مرة)", () => {
+  const t = [...Array.from({ length: 3000 }, (_, i) => 3000 - i), 5000];
+  const r = dailyTemperatures(t);
+  expect([r[0], r[2999], r[3000]]).toEqual([3000, 1, 0]);
+});`,
+            solution: R`function dailyTemperatures(t) {
+  const res = new Array(t.length).fill(0);
+  const stack = [];
+  for (let i = 0; i < t.length; i++) {
+    while (stack.length && t[stack.at(-1)] < t[i]) {
+      const j = stack.pop();
+      res[j] = i - j;
+    }
+    stack.push(i);
+  }
+  return res;
+}`
+          }
         },
         {
           cmd: "queue و deque",
@@ -2059,7 +2757,7 @@ const q = new Queue();
 q.enqueue("a"); q.enqueue("b"); q.enqueue("c");
 console.log(q.dequeue(), q.dequeue(), q.size); // a b 1
 // enqueue and dequeue are O(1); Array.prototype.shift is O(n) because every item moves down one index`,
-          try: R`قيس الفرق: ١٠٠ ألف عنصر بـ push و shift، وبعدين بالـ Queue دي، بـ [[console.time]]. وبعدين حوّلها deque: ضيف [[pushFront]] (بتقلّل head وتكتب فيه) و [[popBack]].`,
+          try: R`قيس الفرق: ١٠٠ ألف عنصر بـ push و shift، وبعدين بالـ Queue دي، بـ [[console.time]]. وبعدين حوّلها deque: ضيف [[pushFront]] (بتقلّل head وتكتب فيه) و [[popBack]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[Deque]] بالأربع عمليات و [[size]].`,
           flag: "script",
           deep: {
             why: "BFS، وطابور مهام (إيميلات بتتبعت واحد واحد)، و sliding window maximum، كلهم queue. ولو كتبته بـ shift الكود هيشتغل في التجربة ويبقى بطيء جدًا على بيانات حقيقية. قياس على Node 24: تفضية array فيها ١٠٠ ألف عنصر بـ shift خدت حوالي نص ثانية، و ٤٠٠ ألف خدت أكتر من ٤٠ ثانية. ده شكل O(n^2).",
@@ -2131,7 +2829,66 @@ console.log(s1 === s2); // true
 const d = new Deque();
 d.pushBack("b"); d.pushFront("a"); d.pushBack("c");
 console.log(d.popFront(), d.popBack(), d.popBack(), d.size); // a c b 0
-// all four operations O(1); head can go negative, which is fine for object keys`
+// all four operations O(1); head can go negative, which is fine for object keys`,
+          check: {
+            lang: "js",
+            starter: R`class Deque {
+  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
+  pushBack(x) { this.items[this.tail++] = x; }
+  popFront() {
+    if (this.head === this.tail) return undefined;
+    const x = this.items[this.head];
+    delete this.items[this.head++];
+    return x;
+  }
+  pushFront(x) {
+    // قلّل head الأول وبعدين اكتب
+  }
+  popBack() {
+    // قلّل tail واقرا وامسح
+  }
+  get size() { return this.tail - this.head; }
+}`,
+            tests: R`test("pushBack b، pushFront a، pushBack c ← popFront a و popBack c و popBack b", () => {
+  const d = new Deque();
+  d.pushBack("b"); d.pushFront("a"); d.pushBack("c");
+  expect([d.size, d.popFront(), d.popBack(), d.popBack(), d.size]).toEqual([3, "a", "c", "b", 0]);
+});
+test("--this.head مش this.head--: pushFront متكتبش فوق أول عنصر", () => {
+  const d = new Deque();
+  d.pushBack(1); d.pushFront(0);
+  expect([d.popFront(), d.popFront()]).toEqual([0, 1]);
+});
+test("فاضي: popFront و popBack ← undefined والـ size يفضل 0", () => {
+  const d = new Deque();
+  expect([d.popFront(), d.popBack(), d.size]).toEqual([undefined, undefined, 0]);
+});
+test("١٠٠ ألف pushFront وبعدين popBack بنفس ترتيب الدخول (كله O(1))", () => {
+  const d = new Deque();
+  for (let i = 0; i < 100000; i++) d.pushFront(i);
+  let ok = true;
+  for (let i = 0; i < 100000; i++) if (d.popBack() !== i) ok = false;
+  expect([ok, d.size]).toEqual([true, 0]);
+});`,
+            solution: R`class Deque {
+  constructor() { this.items = {}; this.head = 0; this.tail = 0; }
+  pushBack(x) { this.items[this.tail++] = x; }
+  popFront() {
+    if (this.head === this.tail) return undefined;
+    const x = this.items[this.head];
+    delete this.items[this.head++];
+    return x;
+  }
+  pushFront(x) { this.items[--this.head] = x; }
+  popBack() {
+    if (this.head === this.tail) return undefined;
+    const x = this.items[--this.tail];
+    delete this.items[this.tail];
+    return x;
+  }
+  get size() { return this.tail - this.head; }
+}`
+          }
         }
       ]
     },
@@ -2163,7 +2920,7 @@ console.log(binarySearch(a, 7));  // 3
 console.log(binarySearch(a, 4));  // -1
 console.log(binarySearch([], 1)); // -1
 // O(log n) time, O(1) space`,
-          try: R`اكتبها recursive بـ [[(a, target, lo, hi)]]، وقول الـ space complexity بتاعتها. وبعدين دوّر في array مترتبة واتلفّت زي [4, 5, 6, 7, 0, 1, 2] في O(log n): في كل خطوة، نص واحد على الأقل مترتب.`,
+          try: R`اكتبها recursive بـ [[(a, target, lo, hi)]]، وقول الـ space complexity بتاعتها. وبعدين دوّر في array مترتبة واتلفّت زي [4, 5, 6, 7, 0, 1, 2] في O(log n): في كل خطوة، نص واحد على الأقل مترتب. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[bsRec(a, target, lo, hi)]] (والـ lo و hi ليهم قيم افتراضية)، و [[searchRotated(a, target)]].`,
           flag: "script",
           deep: {
             why: "أي بحث في بيانات مترتبة: الـ index في قاعدة البيانات (B-tree بنفس الروح)، و [[git bisect]] اللي بيدوّر على الـ commit اللي بوّظ الكود، والبحث في لوج مترتب بالوقت. والانترفيو بيحبها لأن فيها off-by-one كتير وسهل تتكتب غلط.",
@@ -2232,7 +2989,51 @@ function searchRotated(a, target) {
 const r = [4, 5, 6, 7, 0, 1, 2];
 console.log(searchRotated(r, 0), searchRotated(r, 4), searchRotated(r, 2), searchRotated(r, 3)); // 4 0 6 -1
 console.log(searchRotated([1], 1), searchRotated([3, 1], 1)); // 0 1
-// bsRec: O(log n) time, O(log n) stack space; searchRotated: O(log n) time, O(1) space (distinct values)`
+// bsRec: O(log n) time, O(log n) stack space; searchRotated: O(log n) time, O(1) space (distinct values)`,
+          check: {
+            lang: "js",
+            starter: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
+  // if (lo > hi) return -1، واحسب mid، ونادي نفسك على نص واحد
+}
+function searchRotated(a, target) {
+  let lo = 0, hi = a.length - 1;
+  // في كل خطوة: a[lo] <= a[mid] يبقى الشمال مترتب
+  return -1;
+}`,
+            tests: R`test("bsRec([1, 3, 5, 7, 9, 11], 7) ← 3", () => expect(bsRec([1, 3, 5, 7, 9, 11], 7)).toBe(3));
+test("مش موجود ← -1، و [] ← -1", () => expect([bsRec([1, 3, 5, 7, 9, 11], 4), bsRec([], 1)]).toEqual([-1, -1]));
+test("searchRotated([4, 5, 6, 7, 0, 1, 2]): 0 ← 4، و 4 ← 0، و 2 ← 6", () => {
+  const a = [4, 5, 6, 7, 0, 1, 2];
+  expect([searchRotated(a, 0), searchRotated(a, 4), searchRotated(a, 2)]).toEqual([4, 0, 6]);
+});
+test("searchRotated: 3 مش موجودة ← -1", () => expect(searchRotated([4, 5, 6, 7, 0, 1, 2], 3)).toBe(-1));
+test("فخ <= : searchRotated([3, 1], 1) ← 1", () => expect(searchRotated([3, 1], 1)).toBe(1));
+test("مليون عنصر متلفّتين: كل بحث O(log n)", () => {
+  const n = 1000000, k = 377777, a = Array.from({ length: n }, (_, i) => (i + k) % n);
+  expect([searchRotated(a, 0), searchRotated(a, n - 1), searchRotated(a, k), bsRec(Array.from({ length: n }, (_, i) => i * 2), 1999998)]).toEqual([n - k, n - k - 1, 0, 999999]);
+});`,
+            solution: R`function bsRec(a, target, lo = 0, hi = a.length - 1) {
+  if (lo > hi) return -1;
+  const mid = lo + Math.floor((hi - lo) / 2);
+  if (a[mid] === target) return mid;
+  return a[mid] < target ? bsRec(a, target, mid + 1, hi) : bsRec(a, target, lo, mid - 1);
+}
+function searchRotated(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[lo] <= a[mid]) {
+      if (a[lo] <= target && target < a[mid]) hi = mid - 1;
+      else lo = mid + 1;
+    } else {
+      if (a[mid] < target && target <= a[hi]) lo = mid + 1;
+      else hi = mid - 1;
+    }
+  }
+  return -1;
+}`
+          }
         },
         {
           cmd: "lower bound (first/last)",
@@ -2258,7 +3059,7 @@ function firstLast(a, x) {
 }
 console.log(firstLast([5, 7, 7, 8, 8, 8, 10], 8), firstLast([5, 7], 6)); // [3, 5] [-1, -1]
 // O(log n) time, O(1) space; x + 1 works for integers only (use an upperBound for anything else)`,
-          try: R`اكتب [[upperBound]] (أول مكان قيمته > x) بتغيير علامة واحدة، واستخدمها بدل [[x + 1]] عشان تشتغل مع أرقام عشرية و strings. وبعدين: عدد مرات ظهور x = [[upperBound - lowerBound]].`,
+          try: R`اكتب [[upperBound]] (أول مكان قيمته > x) بتغيير علامة واحدة، واستخدمها بدل [[x + 1]] عشان تشتغل مع أرقام عشرية و strings. وبعدين: عدد مرات ظهور x = [[upperBound - lowerBound]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[upperBound]] و [[firstLast]] من غير [[x + 1]]، و [[count]].`,
           flag: "script",
           deep: {
             why: "الـ binary search العادية بترجّع «أي» مكان للقيمة، ودا مش كفاية لما فيه تكرار: أول طلب في يوم معين، أو عدد المستخدمين اللي عمرهم بين ٢٠ و ٣٠ في array مترتبة. الـ lower bound هو القالب اللي بيحل كل ده، وموجود جاهز في لغات تانية ([[bisect_left]] في Python، و [[std::lower_bound]] في C++).",
@@ -2330,7 +3131,65 @@ console.log(firstLast([5, 7, 7, 8, 8, 8, 10], 8));        // [3, 5]
 console.log(firstLast([1.5, 2.5, 2.5, 3], 2.5));         // [1, 2]
 console.log(firstLast(["ali", "bob", "bob", "zed"], "bob")); // [1, 2]
 console.log(count([5, 7, 7, 8, 8, 8, 10], 8), count([5, 7], 6)); // 3 0
-// O(log n) time, O(1) space`
+// O(log n) time, O(1) space`,
+          check: {
+            lang: "js",
+            starter: R`function lowerBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function upperBound(a, target) {
+  // نفس lowerBound بعلامة واحدة مختلفة
+}
+function firstLast(a, x) {
+  return [-1, -1];
+}
+function count(a, x) {
+  return 0;
+}`,
+            tests: R`test("upperBound([5, 7, 7, 8, 8, 8, 10], 8) ← 6", () => expect(upperBound([5, 7, 7, 8, 8, 8, 10], 8)).toBe(6));
+test("upperBound([1, 2], 5) ← 2 (بعد الآخر)", () => expect(upperBound([1, 2], 5)).toBe(2));
+test("firstLast([5, 7, 7, 8, 8, 8, 10], 8) ← [3, 5]", () => expect(firstLast([5, 7, 7, 8, 8, 8, 10], 8)).toEqual([3, 5]));
+test("أرقام عشرية: firstLast([1.5, 2.5, 2.5, 3], 2.5) ← [1, 2]", () => expect(firstLast([1.5, 2.5, 2.5, 3], 2.5)).toEqual([1, 2]));
+test("strings: firstLast(['ali', 'bob', 'bob', 'zed'], 'bob') ← [1, 2]", () => expect(firstLast(["ali", "bob", "bob", "zed"], "bob")).toEqual([1, 2]));
+test("مش موجود ← [-1, -1]", () => expect(firstLast([5, 7], 6)).toEqual([-1, -1]));
+test("count: 8 ← 3، و [] ← 0", () => expect([count([5, 7, 7, 8, 8, 8, 10], 8), count([], 1)]).toEqual([3, 0]));
+test("مليون عنصر (O(log n))", () => {
+  const a = Array.from({ length: 1000000 }, (_, i) => Math.floor(i / 10));
+  expect([count(a, 4242), firstLast(a, 99999)]).toEqual([10, [999990, 999999]]);
+});`,
+            solution: R`function lowerBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function upperBound(a, target) {
+  let lo = 0, hi = a.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] <= target) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+function firstLast(a, x) {
+  const first = lowerBound(a, x);
+  if (first === a.length || a[first] !== x) return [-1, -1];
+  return [first, upperBound(a, x) - 1];
+}
+function count(a, x) {
+  return upperBound(a, x) - lowerBound(a, x);
+}`
+          }
         },
         {
           cmd: "search insert position",
@@ -2356,7 +3215,7 @@ console.log(searchInsert([1, 3, 5, 6], 7)); // 4
 console.log(searchInsert([1, 3, 5, 6], 0)); // 0
 console.log(searchInsert([], 3));           // 0
 // O(log n) time, O(1) space`,
-          try: R`استخدمها عشان تضيف رقم لـ array مترتبة: [[a.splice(searchInsert(a, x), 0, x)]]. البحث [[O(log n)]]، بس الإضافة نفسها Big-O بتاعتها إيه؟ (O(n)، لأن splice بتحرّك اللي بعدها).`,
+          try: R`استخدمها عشان تضيف رقم لـ array مترتبة: [[a.splice(searchInsert(a, x), 0, x)]]. البحث [[O(log n)]]، بس الإضافة نفسها Big-O بتاعتها إيه؟ (O(n)، لأن splice بتحرّك اللي بعدها). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[insertSorted(a, x)]] بتضيف في نفس الـ array وترجّعها.`,
           flag: "script",
           deep: {
             why: "«يتحط فين» سؤال بيتسأل كتير: leaderboard مترتب وعايز تضيف score جديد، أو مواعيد مترتبة وعايز تحط ميعاد، أو autocomplete بيدوّر على أول كلمة بتبدأ بحروف معينة. ولو فهمت ليه [[lo]] هو الإجابة، يبقى فهمت الـ binary search فعلًا.",
@@ -2416,7 +3275,46 @@ const a = [];
 for (const x of [5, 1, 4, 2, 3, 0, 6]) insertSorted(a, x);
 console.log(a.join(" ")); // 0 1 2 3 4 5 6
 // find the spot: O(log n); splice shifts everything after it: O(n); so one insert is O(n)
-// n inserts = O(n^2) in the worst case: to build a big sorted array, push everything then sort once (O(n log n))`
+// n inserts = O(n^2) in the worst case: to build a big sorted array, push everything then sort once (O(n log n))`,
+          check: {
+            lang: "js",
+            starter: R`function searchInsert(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+function insertSorted(a, x) {
+  // a.splice(مكان, 0, x)
+  return a;
+}`,
+            tests: R`test("ضيف 5 و 1 و 4 و 2 و 3 و 0 و 6 لـ [] ← [0, 1, 2, 3, 4, 5, 6]", () => {
+  const a = [];
+  for (const x of [5, 1, 4, 2, 3, 0, 6]) insertSorted(a, x);
+  expect(a).toEqual([0, 1, 2, 3, 4, 5, 6]);
+});
+test("بترجّع نفس الـ array", () => { const a = [1, 3]; expect(insertSorted(a, 2) === a).toBe(true); });
+test("رقم مكرر: insertSorted([1, 3, 3, 5], 3) ← [1, 3, 3, 3, 5]", () => expect(insertSorted([1, 3, 3, 5], 3)).toEqual([1, 3, 3, 3, 5]));
+test("في الأطراف: 0 في الأول و 9 في الآخر", () => expect(insertSorted(insertSorted([2, 4], 0), 9)).toEqual([0, 2, 4, 9]));`,
+            solution: R`function searchInsert(a, target) {
+  let lo = 0, hi = a.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    if (a[mid] === target) return mid;
+    if (a[mid] < target) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+function insertSorted(a, x) {
+  a.splice(searchInsert(a, x), 0, x);
+  return a;
+}`
+          }
         },
         {
           cmd: "binary search on answer",
@@ -2440,7 +3338,7 @@ console.log(minEatingSpeed([3, 6, 7, 11], 8));       // 4
 console.log(minEatingSpeed([30, 11, 23, 4, 20], 5)); // 30
 console.log(minEatingSpeed([30, 11, 23, 4, 20], 6)); // 23
 // O(n log m) time (m = biggest pile), O(1) space`,
-          try: R`حل «ship within D days»: أوزان طرود بالترتيب، وأقل حمولة للمركب تشحنهم كلهم في D أيام (كل يوم بتشحن طرود ورا بعض لحد ما الحمولة تتملي). الأوزان من 1 لـ 10 و D = 5 الإجابة 15. المدى هنا من أتقل طرد لمجموع الكل.`,
+          try: R`حل «ship within D days»: أوزان طرود بالترتيب، وأقل حمولة للمركب تشحنهم كلهم في D أيام (كل يوم بتشحن طرود ورا بعض لحد ما الحمولة تتملي). الأوزان من 1 لـ 10 و D = 5 الإجابة 15. المدى هنا من أتقل طرد لمجموع الكل. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[shipWithinDays(weights, days)]].`,
           flag: "script",
           deep: {
             why: "من أقوى الأفكار في الانترفيو لأنها مش واضحة: المسألة مفيهاش array مترتبة خالص، ومع ذلك الحل binary search. بتظهر في مسائل التحسين: أقل حمولة، أقل وقت، أكبر مسافة ممكنة، أقل عدد سيرفرات يستحمل الضغط.",
@@ -2500,7 +3398,45 @@ lo = 4 و hi = 5. mid = 4: الساعات 1 + 2 + 2 + 3 = 8، بتلحق، hi = 
 console.log(shipWithinDays([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)); // 15
 console.log(shipWithinDays([3, 2, 2, 4, 1, 4], 3));             // 6
 console.log(shipWithinDays([1, 2, 3, 1, 1], 4));                // 3
-// O(n log S) time (S = sum of weights), O(1) space`
+// O(n log S) time (S = sum of weights), O(1) space`,
+          check: {
+            lang: "js",
+            starter: R`function shipWithinDays(weights, days) {
+  const daysAt = cap => {
+    // امشي على الطرود، وابدأ يوم جديد لما load + w > cap
+  };
+  let lo = 1, hi = 0; // المدى الصح: من أتقل طرد لمجموع الكل
+  return lo;
+}`,
+            tests: R`const daysNeeded = (ws, cap) => { let d = 1, load = 0; for (const w of ws) { if (load + w > cap) { d++; load = 0; } load += w; } return d; };
+test("الأوزان من 1 لـ 10 و 5 أيام ← 15", () => expect(shipWithinDays([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 5)).toBe(15));
+test("([3, 2, 2, 4, 1, 4], 3) ← 6", () => expect(shipWithinDays([3, 2, 2, 4, 1, 4], 3)).toBe(6));
+test("([1, 2, 3, 1, 1], 4) ← 3", () => expect(shipWithinDays([1, 2, 3, 1, 1], 4)).toBe(3));
+test("lo يبدأ من أتقل طرد: ([10, 1, 1], 3) ← 10", () => expect(shipWithinDays([10, 1, 1], 3)).toBe(10));
+test("يوم واحد ← المجموع كله", () => expect(shipWithinDays([4, 5, 6], 1)).toBe(15));
+test("20 ألف طرد: الناتج بيكفي، والناتج - 1 مبيكفيش (O(n log S))", () => {
+  const ws = Array.from({ length: 20000 }, (_, i) => (i * 37) % 500 + 1);
+  const cap = shipWithinDays(ws, 100);
+  expect([daysNeeded(ws, cap) <= 100, daysNeeded(ws, cap - 1) > 100]).toEqual([true, true]);
+});`,
+            solution: R`function shipWithinDays(weights, days) {
+  const daysAt = cap => {
+    let d = 1, load = 0;
+    for (const w of weights) {
+      if (load + w > cap) { d++; load = 0; }
+      load += w;
+    }
+    return d;
+  };
+  let lo = Math.max(...weights), hi = weights.reduce((s, w) => s + w, 0);
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (daysAt(mid) <= days) hi = mid;
+    else lo = mid + 1;
+  }
+  return lo;
+}`
+          }
         }
       ]
     },
@@ -2532,7 +3468,7 @@ console.log(shipWithinDays([1, 2, 3, 1, 1], 4));                // 3
 console.log(mergeSort([5, 2, 9, 1, 5, 6])); // [1, 2, 5, 5, 6, 9]
 console.log(mergeSort([]));                 // []
 // O(n log n) time in every case, O(n) extra space; stable`,
-          try: R`اكتب دمج اتنين array مترتبين لوحده، ده سؤال انترفيو لوحده. وبعدين عدّ الـ inversions: كام زوج (i < j) العنصر الأول فيه أكبر من التاني؟ عدّل الدمج: كل ما تاخد من اليمين، زوّد العدّاد بعدد العناصر الفاضلة في الشمال.`,
+          try: R`اكتب دمج اتنين array مترتبين لوحده، ده سؤال انترفيو لوحده. وبعدين عدّ الـ inversions: كام زوج (i < j) العنصر الأول فيه أكبر من التاني؟ عدّل الدمج: كل ما تاخد من اليمين، زوّد العدّاد بعدد العناصر الفاضلة في الشمال. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[mergeSorted(a, b)]] و [[countInversions(a)]].`,
           flag: "script",
           deep: {
             why: "في الشغل مش هتكتب sort بإيدك، [[Array.prototype.sort]] موجودة. بس merge sort هو أوضح مثال على divide and conquer، والانترفيو بيسأل عنه («اشرح merge sort» أو «ليه O(n log n)»). وفكرة الدمج نفسها بتتكرر: دمج linked lists، ودمج نتايج من أكتر من سيرفر، و external sort لملف أكبر من الرام.",
@@ -2598,7 +3534,49 @@ function countInversions(a) {
 console.log(countInversions([2, 4, 1, 3, 5])[1]); // 3  (2,1) (4,1) (4,3)
 console.log(countInversions([5, 4, 3, 2, 1])[1]); // 10 (every pair: 5*4/2)
 console.log(countInversions([1, 2, 2])[1]);       // 0
-// merge: O(n + m); inversions: O(n log n) time, O(n) space (brute force over pairs = O(n^2))`
+// merge: O(n + m); inversions: O(n log n) time, O(n) space (brute force over pairs = O(n^2))`,
+          check: {
+            lang: "js",
+            starter: R`function mergeSorted(a, b) {
+  const out = [];
+  let i = 0, j = 0;
+  // خد الأصغر كل مرة، وبعدين ضيف اللي فاضل
+  return out;
+}
+function countInversions(a) {
+  // merge sort بيرجّع [مترتبة، عدد]: لما تاخد من اليمين زوّد left.length - i
+  return 0;
+}`,
+            tests: R`test("mergeSorted([1, 4, 9], [2, 3, 10, 11]) ← [1, 2, 3, 4, 9, 10, 11]", () => expect(mergeSorted([1, 4, 9], [2, 3, 10, 11])).toEqual([1, 2, 3, 4, 9, 10, 11]));
+test("واحدة فاضية: ([], [1]) ← [1]، و ([], []) ← []", () => expect([mergeSorted([], [1]), mergeSorted([], [])]).toEqual([[1], []]));
+test("countInversions([2, 4, 1, 3, 5]) ← 3", () => expect(countInversions([2, 4, 1, 3, 5])).toBe(3));
+test("[5, 4, 3, 2, 1] ← 10", () => expect(countInversions([5, 4, 3, 2, 1])).toBe(10));
+test("المتساويين مش inversion: [1, 2, 2] ← 0 (<= مش <)", () => expect(countInversions([1, 2, 2])).toBe(0));
+test("[] ← 0", () => expect(countInversions([])).toBe(0));
+test("3000 رقم نازلين ← 4498500 (O(n log n)، والـ brute force O(n^2))", () => expect(countInversions(Array.from({ length: 3000 }, (_, i) => 3000 - i))).toBe(4498500));`,
+            solution: R`function mergeSorted(a, b) {
+  const out = [];
+  let i = 0, j = 0;
+  while (i < a.length && j < b.length) out.push(a[i] <= b[j] ? a[i++] : b[j++]);
+  return out.concat(a.slice(i), b.slice(j));
+}
+function countInversions(a) {
+  const sort = arr => {
+    if (arr.length <= 1) return [arr, 0];
+    const mid = arr.length >> 1;
+    const [left, x] = sort(arr.slice(0, mid));
+    const [right, y] = sort(arr.slice(mid));
+    const out = [];
+    let i = 0, j = 0, count = x + y;
+    while (i < left.length && j < right.length) {
+      if (left[i] <= right[j]) out.push(left[i++]);
+      else { out.push(right[j++]); count += left.length - i; }
+    }
+    return [out.concat(left.slice(i), right.slice(j)), count];
+  };
+  return sort(a)[1];
+}`
+          }
         },
         {
           cmd: "quick sort",
@@ -2723,7 +3701,7 @@ const orig = [3, 1, 2];
 const sorted = orig.toSorted((a, b) => a - b);
 console.log(orig, sorted); // [3, 1, 2] [1, 2, 3]
 // sort is O(n log n) comparisons; V8 uses TimSort: stable, O(n) extra memory in the worst case`,
-          try: R`رتّب منتجات: المتاح الأول ([[inStock]] true)، وبعدين السعر تصاعدي، وبعدين الاسم. وبعدين جرّب comparator غلط [[(a, b) => a > b]] على [3, 1, 2]: هترجع زي ما هي من غير ترتيب.`,
+          try: R`رتّب منتجات: المتاح الأول ([[inStock]] true)، وبعدين السعر تصاعدي، وبعدين الاسم. وبعدين جرّب comparator غلط [[(a, b) => a > b]] على [3, 1, 2]: هترجع زي ما هي من غير ترتيب. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[sortProducts(products)]] بترجّع المنتجات مترتبة: المتاح، وبعدين السعر، وبعدين الاسم.`,
           flag: "script",
           deep: {
             why: "bug مشهور جدًا في الشغل: ترتيب أسعار أو IDs أو أعمار بـ [[sort()]] من غير comparator، وتلاقي 100 قبل 20. والترتيب بأكتر من مفتاح (الحالة وبعدين التاريخ) موجود في أي جدول في أي dashboard.",
@@ -2772,7 +3750,33 @@ console.log(sorted.map(p => p.name).join(", "));
 // Adapter, Keyboard, Mouse, Cable, Monitor
 console.log([3, 1, 2].sort((a, b) => a > b)); // [3, 1, 2]  (never negative, so nothing moves)
 console.log([3, 1, 2].sort((a, b) => (a > b) - (a < b))); // [1, 2, 3]  (returns -1, 0 or 1)
-// O(n log n) comparisons, each O(1) here; toSorted makes an O(n) copy`
+// O(n log n) comparisons, each O(1) here; toSorted makes an O(n) copy`,
+          check: {
+            lang: "js",
+            starter: R`function sortProducts(products) {
+  return [...products].sort((a, b) => a.price - b.price);
+}`,
+            tests: R`const P = [
+  { name: "Monitor", price: 3000, inStock: false },
+  { name: "Mouse", price: 250, inStock: true },
+  { name: "Cable", price: 50, inStock: false },
+  { name: "Keyboard", price: 250, inStock: true },
+  { name: "Adapter", price: 120, inStock: true },
+];
+test("Adapter, Keyboard, Mouse, Cable, Monitor", () => expect(sortProducts(P.map(p => ({ ...p }))).map(p => p.name)).toEqual(["Adapter", "Keyboard", "Mouse", "Cable", "Monitor"]));
+test("نفس السعر ← الاسم أبجديًا (Keyboard قبل Mouse)", () => {
+  const r = sortProducts([P[1], P[3]].map(p => ({ ...p })));
+  expect(r.map(p => p.name)).toEqual(["Keyboard", "Mouse"]);
+});
+test("المتاح قبل الأرخص: Cable (50) بعد Adapter (120)", () => {
+  const r = sortProducts([P[2], P[4]].map(p => ({ ...p }))).map(p => p.name);
+  expect(r).toEqual(["Adapter", "Cable"]);
+});
+test("array مقلوبة كمان (مترتبة بالصدفة مش دليل)", () => expect(sortProducts(P.map(p => ({ ...p })).reverse()).map(p => p.name)).toEqual(["Adapter", "Keyboard", "Mouse", "Cable", "Monitor"]));`,
+            solution: R`function sortProducts(products) {
+  return [...products].sort((a, b) => (b.inStock - a.inStock) || (a.price - b.price) || a.name.localeCompare(b.name));
+}`
+          }
         }
       ]
     },
@@ -2805,7 +3809,7 @@ const list = node(1, node(2, node(3)));
 console.log(toArray(reverseList(list))); // [3, 2, 1]
 console.log(reverseList(null));          // null
 // O(n) time, O(1) space (the recursive version uses O(n) call stack)`,
-          try: R`اكتبها recursive: اقلب الباقي من [[head.next]]، وبعدين خلّي [[head.next.next = head]] و [[head.next = null]]. وقول الـ space. وبعدين اقلب جزء بس من الـ list من المكان m لـ n.`,
+          try: R`اكتبها recursive: اقلب الباقي من [[head.next]]، وبعدين خلّي [[head.next.next = head]] و [[head.next = null]]. وقول الـ space. وبعدين اقلب جزء بس من الـ list من المكان m لـ n. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[reverseRec(head)]] و [[reverseBetween(head, m, n)]] (m و n بيبدأوا من 1).`,
           flag: "script",
           deep: {
             why: "أشهر مسألة linked list، ومش عشان هتقلب lists في الشغل: عشان بتختبر إنك تقدر تتعامل مع pointers من غير ما تضيّع جزء من السلسلة. وهي خطوة في مسائل أكبر: palindrome linked list، و reverse in k-groups.",
@@ -2878,7 +3882,64 @@ function reverseBetween(head, m, n) {
 }
 console.log(toArray(reverseBetween(fromArray([1, 2, 3, 4, 5]), 2, 4))); // [1, 4, 3, 2, 5]
 console.log(toArray(reverseBetween(fromArray([1, 2, 3]), 1, 3)));       // [3, 2, 1]
-// reverseRec: O(n) time, O(n) call stack; reverseBetween: O(n) time, O(1) space (1-based m and n)`
+// reverseRec: O(n) time, O(n) call stack; reverseBetween: O(n) time, O(1) space (1-based m and n)`,
+          check: {
+            lang: "js",
+            starter: R`function reverseRec(head) {
+  // لو !head || !head.next رجّع head
+}
+function reverseBetween(head, m, n) {
+  const dummy = { next: head };
+  // امشي لحد العقدة اللي قبل m، واقلب n - m + 1 عقدة، واربط الطرفين
+  return dummy.next;
+}`,
+            tests: R`const fromArray = arr => arr.reduceRight((next, val) => ({ val, next }), null);
+const toArray = head => {
+  const out = [];
+  for (let n = head; n; n = n.next) {
+    out.push(n.val);
+    if (out.length > 100000) throw new Error("الـ list فيها دايرة: عقدتين بيشاوروا على بعض");
+  }
+  return out;
+};
+test("reverseRec([1, 2, 3, 4]) ← [4, 3, 2, 1]", () => expect(toArray(reverseRec(fromArray([1, 2, 3, 4])))).toEqual([4, 3, 2, 1]));
+test("null ← null، وعقدة واحدة زي ما هي", () => {
+  expect(reverseRec(null)).toBe(null);
+  expect(toArray(reverseRec(fromArray([7])))).toEqual([7]);
+});
+test("reverseBetween([1, 2, 3, 4, 5], 2, 4) ← [1, 4, 3, 2, 5]", () => expect(toArray(reverseBetween(fromArray([1, 2, 3, 4, 5]), 2, 4))).toEqual([1, 4, 3, 2, 5]));
+test("m = 1 (الـ head بيتغير): ([1, 2, 3], 1, 3) ← [3, 2, 1]", () => expect(toArray(reverseBetween(fromArray([1, 2, 3]), 1, 3))).toEqual([3, 2, 1]));
+test("m = n ← زي ما هي", () => expect(toArray(reverseBetween(fromArray([1, 2, 3]), 2, 2))).toEqual([1, 2, 3]));
+test("مبتعملش nodes جديدة: أول عقدة بقت الأخيرة", () => {
+  const head = fromArray([1, 2, 3]);
+  const r = reverseRec(head);
+  expect([r.next.next === head, head.next]).toEqual([true, null]);
+});
+test("3000 عقدة (الـ recursive: O(n) stack)", () => expect(toArray(reverseRec(fromArray(Array.from({ length: 3000 }, (_, i) => i))))[0]).toBe(2999));`,
+            solution: R`function reverseRec(head) {
+  if (!head || !head.next) return head;
+  const newHead = reverseRec(head.next);
+  head.next.next = head;
+  head.next = null;
+  return newHead;
+}
+function reverseBetween(head, m, n) {
+  const dummy = { next: head };
+  let before = dummy;
+  for (let i = 1; i < m; i++) before = before.next;
+  const first = before.next;
+  let prev = null, curr = first;
+  for (let i = m; i <= n; i++) {
+    const next = curr.next;
+    curr.next = prev;
+    prev = curr;
+    curr = next;
+  }
+  before.next = prev;
+  first.next = curr;
+  return dummy.next;
+}`
+          }
         },
         {
           cmd: "fast/slow pointers",
@@ -2904,7 +3965,7 @@ c.next = b;
 console.log(hasCycle(a));    // true
 console.log(hasCycle(null)); // false
 // O(n) time, O(1) space (a Set of visited nodes also works, with O(n) space)`,
-          try: R`اكتب [[middleNode(head)]] بنفس الفكرة: لما الـ fast يخلص، الـ slow في النص. وبعدين (أصعب): رجّع أول node في الدايرة. بعد ما يتقابلوا، رجّع مؤشر للـ head وحرّك الاتنين خطوة خطوة، هيتقابلوا عند بداية الدايرة.`,
+          try: R`اكتب [[middleNode(head)]] بنفس الفكرة: لما الـ fast يخلص، الـ slow في النص. وبعدين (أصعب): رجّع أول node في الدايرة. بعد ما يتقابلوا، رجّع مؤشر للـ head وحرّك الاتنين خطوة خطوة، هيتقابلوا عند بداية الدايرة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[middleNode(head)]] و [[cycleStart(head)]] بيرجّعوا العقدة نفسها (أو null).`,
           flag: "script",
           deep: {
             why: "bug حقيقي ممكن يحصل: بيانات فيها references دايرية (parent بيشاور على child والعكس)، وأي loop بيمشي عليها هيلف للأبد. والمؤشرين السريع والبطيء بيظهروا في مسائل تانية: نص الـ list، و palindrome linked list، و happy number، و find the duplicate number.",
@@ -2971,7 +4032,69 @@ const list = fromArray([1, 2, 3, 4, 5]);
 list.next.next.next.next.next = list.next.next; // 5 -> 3
 console.log(cycleStart(list).val);            // 3
 console.log(cycleStart(fromArray([1, 2])));   // null
-// both: O(n) time, O(1) space`
+// both: O(n) time, O(1) space`,
+          check: {
+            lang: "js",
+            starter: R`function middleNode(head) {
+  let slow = head, fast = head;
+  // ...
+  return slow;
+}
+function cycleStart(head) {
+  // اتقابلوا؟ رجّع مؤشر للـ head وحرّك الاتنين خطوة خطوة
+  return null;
+}`,
+            tests: R`const fromArray = arr => arr.reduceRight((next, val) => ({ val, next }), null);
+const toArray = head => {
+  const out = [];
+  for (let n = head; n; n = n.next) {
+    out.push(n.val);
+    if (out.length > 100000) throw new Error("الـ list فيها دايرة: عقدتين بيشاوروا على بعض");
+  }
+  return out;
+};
+const nodes = n => { const a = Array.from({ length: n }, (_, i) => ({ val: i + 1, next: null })); a.forEach((x, i) => (x.next = a[i + 1] || null)); return a; };
+test("middleNode([1..5]) ← 3", () => expect(middleNode(fromArray([1, 2, 3, 4, 5])).val).toBe(3));
+test("طول زوجي: middleNode([1..4]) ← 3 (النص التاني)", () => expect(middleNode(fromArray([1, 2, 3, 4])).val).toBe(3));
+test("عقدة واحدة ← نفسها", () => expect(middleNode(fromArray([9])).val).toBe(9));
+test("cycleStart: [1..5] وآخرها بيرجع لـ 3 ← العقدة 3", () => {
+  const a = nodes(5);
+  a[4].next = a[2];
+  expect(cycleStart(a[0]) === a[2]).toBe(true);
+});
+test("الدايرة من أول عقدة ← الـ head", () => {
+  const a = nodes(4);
+  a[3].next = a[0];
+  expect(cycleStart(a[0]) === a[0]).toBe(true);
+});
+test("مفيش دايرة ← null، و null ← null", () => expect([cycleStart(fromArray([1, 2, 3])), cycleStart(null)]).toEqual([null, null]));
+test("١٠٠ ألف عقدة ودايرة من النص (O(n) و O(1) ذاكرة)", () => {
+  const a = nodes(100000);
+  a[99999].next = a[31337];
+  expect(cycleStart(a[0]) === a[31337]).toBe(true);
+});`,
+            solution: R`function middleNode(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+  }
+  return slow;
+}
+function cycleStart(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) {
+      let p = head;
+      while (p !== slow) { p = p.next; slow = slow.next; }
+      return p;
+    }
+  }
+  return null;
+}`
+          }
         },
         {
           cmd: "merge (dummy head)",
@@ -2997,7 +4120,7 @@ function mergeTwo(l1, l2) {
 console.log(toArray(mergeTwo(fromArray([1, 2, 4]), fromArray([1, 3, 4])))); // [1, 1, 2, 3, 4, 4]
 console.log(toArray(mergeTwo(null, fromArray([0]))));                       // [0]
 // O(n + m) time, O(1) extra space (it relinks the existing nodes)`,
-          try: R`ادمج k lists مترتبين. جرّب الأول تدمجهم واحدة واحدة (الـ Big-O كام؟)، وبعدين بالتقسيم: ادمجهم اتنين اتنين زي merge sort، أو بـ min heap (درس «merge k sorted lists» في المستوى التالت).`,
+          try: R`ادمج k lists مترتبين. جرّب الأول تدمجهم واحدة واحدة (الـ Big-O كام؟)، وبعدين بالتقسيم: ادمجهم اتنين اتنين زي merge sort، أو بـ min heap (درس «merge k sorted lists» في المستوى التالت). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[mergeKPairs(lists)]] بالتقسيم اتنين اتنين.`,
           flag: "script",
           deep: {
             why: "الدمج بيتكرر في حاجات كتير: merge sort، ودمج نتايج مترتبة من كذا مصدر (لوجات من كذا سيرفر مترتبة بالوقت)، و k-way merge. والـ dummy node بتبسّط أي مسألة linked list بتبني list جديدة أو بتشيل من أولها.",
@@ -3073,7 +4196,63 @@ console.log(toArray(mergeOneByOne(make())).join(" ")); // 1 1 2 3 4 4 5 6
 console.log(toArray(mergeKPairs(make())).join(" "));   // 1 1 2 3 4 4 5 6
 console.log(mergeKPairs([]), toArray(mergeKPairs([null, fromArray([0])]))); // null [0]
 // N = all nodes, k = lists: one by one O(N * k) (the growing result is re-walked k times)
-// pairs: O(N log k) time (log k rounds, each touches all N nodes), O(k) space for the array of heads`
+// pairs: O(N log k) time (log k rounds, each touches all N nodes), O(k) space for the array of heads`,
+          check: {
+            lang: "js",
+            starter: R`function mergeTwo(l1, l2) {
+  const dummy = { next: null };
+  let tail = dummy;
+  while (l1 && l2) {
+    if (l1.val <= l2.val) { tail.next = l1; l1 = l1.next; }
+    else { tail.next = l2; l2 = l2.next; }
+    tail = tail.next;
+  }
+  tail.next = l1 || l2;
+  return dummy.next;
+}
+function mergeKPairs(lists) {
+  // ادمج [0 مع 1]، [2 مع 3]... لحد ما تفضل واحدة
+  return null;
+}`,
+            tests: R`const fromArray = arr => arr.reduceRight((next, val) => ({ val, next }), null);
+const toArray = head => {
+  const out = [];
+  for (let n = head; n; n = n.next) {
+    out.push(n.val);
+    if (out.length > 100000) throw new Error("الـ list فيها دايرة: عقدتين بيشاوروا على بعض");
+  }
+  return out;
+};
+test("[[1, 4, 5], [1, 3, 4], [2, 6]] ← [1, 1, 2, 3, 4, 4, 5, 6]", () => expect(toArray(mergeKPairs([[1, 4, 5], [1, 3, 4], [2, 6]].map(fromArray)))).toEqual([1, 1, 2, 3, 4, 4, 5, 6]));
+test("[] ← null", () => expect(mergeKPairs([])).toBe(null));
+test("[null, [0]] ← [0]", () => expect(toArray(mergeKPairs([null, fromArray([0])]))).toEqual([0]));
+test("عدد فردي (5 lists): lists[i + 1] || null", () => expect(toArray(mergeKPairs([[5], [1], [4], [2], [3]].map(fromArray)))).toEqual([1, 2, 3, 4, 5]));
+test("200 list × 50 عقدة (O(N log k))", () => {
+  const lists = Array.from({ length: 200 }, (_, i) => fromArray(Array.from({ length: 50 }, (_, j) => j * 200 + i)));
+  const r = toArray(mergeKPairs(lists));
+  expect([r.length, r.every((x, i) => x === i)]).toEqual([10000, true]);
+});`,
+            solution: R`function mergeTwo(l1, l2) {
+  const dummy = { next: null };
+  let tail = dummy;
+  while (l1 && l2) {
+    if (l1.val <= l2.val) { tail.next = l1; l1 = l1.next; }
+    else { tail.next = l2; l2 = l2.next; }
+    tail = tail.next;
+  }
+  tail.next = l1 || l2;
+  return dummy.next;
+}
+function mergeKPairs(lists) {
+  if (lists.length === 0) return null;
+  while (lists.length > 1) {
+    const next = [];
+    for (let i = 0; i < lists.length; i += 2) next.push(mergeTwo(lists[i], lists[i + 1] || null));
+    lists = next;
+  }
+  return lists[0];
+}`
+          }
         },
         {
           cmd: "merge intervals",
@@ -3098,7 +4277,7 @@ console.log(mergeIntervals([[1, 4], [4, 5]]));                    // [[1, 5]]
 console.log(mergeIntervals([[1, 10], [2, 3]]));                   // [[1, 10]]
 console.log(mergeIntervals([]));                                  // []
 // O(n log n) time for the sort, O(n) space for the output`,
-          try: R`حل insert interval: عندك فترات مترتبة ومش متداخلة، ضيف فترة جديدة وادمج اللي لازم يتدمج، في O(n) من غير sort. وبعدين: «أقل عدد قاعات اجتماعات» لمواعيد متداخلة (رتّب البدايات لوحدها والنهايات لوحدها وامشي بمؤشرين).`,
+          try: R`حل insert interval: عندك فترات مترتبة ومش متداخلة، ضيف فترة جديدة وادمج اللي لازم يتدمج، في O(n) من غير sort. وبعدين: «أقل عدد قاعات اجتماعات» لمواعيد متداخلة (رتّب البدايات لوحدها والنهايات لوحدها وامشي بمؤشرين). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[insertInterval(intervals, newInterval)]] و [[minMeetingRooms(intervals)]].`,
           flag: "script",
           deep: {
             why: "الفترات في كل حتة في الشغل: مواعيد حجز، وورديات، وفترات اشتراك، و time ranges في الـ analytics. «الميعاد ده بيتعارض مع ميعاد تاني؟» و «إجمالي الوقت اللي الموظف كان online فيه» كلها merge intervals.",
@@ -3171,7 +4350,57 @@ function minMeetingRooms(meetings) {
 console.log(minMeetingRooms([[0, 30], [5, 10], [15, 20]])); // 2
 console.log(minMeetingRooms([[7, 10], [2, 4]]));            // 1
 console.log(minMeetingRooms([[1, 5], [5, 10]]));            // 1  (a meeting ending at 5 frees the room for one starting at 5)
-// insert: O(n) time and O(n) output; rooms: O(n log n) time for the sorts, O(n) space`
+// insert: O(n) time and O(n) output; rooms: O(n log n) time for the sorts, O(n) space`,
+          check: {
+            lang: "js",
+            starter: R`function insertInterval(intervals, newInterval) {
+  const out = [];
+  let [s, e] = newInterval;
+  // ٣ مراحل: اللي قبل، واللي بيتداخل، واللي بعد
+  return out;
+}
+function minMeetingRooms(intervals) {
+  const starts = intervals.map(x => x[0]).sort((a, b) => a - b);
+  const ends = intervals.map(x => x[1]).sort((a, b) => a - b);
+  // ...
+  return 0;
+}`,
+            tests: R`test("[[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]] + [4, 8] ← [[1, 2], [3, 10], [12, 16]]", () => expect(insertInterval([[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 8])).toEqual([[1, 2], [3, 10], [12, 16]]));
+test("ليستة فاضية ← الفترة لوحدها", () => expect(insertInterval([], [5, 7])).toEqual([[5, 7]]));
+test("قبل الكل وبعد الكل وجوه واحدة", () => {
+  expect(insertInterval([[3, 5]], [1, 2])).toEqual([[1, 2], [3, 5]]);
+  expect(insertInterval([[1, 5]], [6, 8])).toEqual([[1, 5], [6, 8]]);
+  expect(insertInterval([[1, 5]], [2, 3])).toEqual([[1, 5]]);
+});
+test("فترتين بيلمسوا بعض بيتدمجوا: [[1, 2]] + [2, 3] ← [[1, 3]]", () => expect(insertInterval([[1, 2]], [2, 3])).toEqual([[1, 3]]));
+test("minMeetingRooms([[0, 30], [5, 10], [15, 20]]) ← 2", () => expect(minMeetingRooms([[0, 30], [5, 10], [15, 20]])).toBe(2));
+test("[[1, 5], [5, 10]] ← 1 (<= في شرط الخلصان)", () => expect(minMeetingRooms([[1, 5], [5, 10]])).toBe(1));
+test("[[1, 10], [2, 9], [3, 8]] ← 3، و [] ← 0", () => expect([minMeetingRooms([[1, 10], [2, 9], [3, 8]]), minMeetingRooms([])]).toEqual([3, 0]));`,
+            solution: R`function insertInterval(intervals, newInterval) {
+  const out = [];
+  let [s, e] = newInterval, i = 0;
+  while (i < intervals.length && intervals[i][1] < s) out.push(intervals[i++]);
+  while (i < intervals.length && intervals[i][0] <= e) {
+    s = Math.min(s, intervals[i][0]);
+    e = Math.max(e, intervals[i][1]);
+    i++;
+  }
+  out.push([s, e]);
+  while (i < intervals.length) out.push(intervals[i++]);
+  return out;
+}
+function minMeetingRooms(intervals) {
+  const starts = intervals.map(x => x[0]).sort((a, b) => a - b);
+  const ends = intervals.map(x => x[1]).sort((a, b) => a - b);
+  let rooms = 0, best = 0, j = 0;
+  for (const start of starts) {
+    while (ends[j] <= start) { rooms--; j++; }
+    rooms++;
+    best = Math.max(best, rooms);
+  }
+  return best;
+}`
+          }
         }
       ]
     },
@@ -3220,7 +4449,7 @@ console.log(dfs(root, "pre").join(" "));  // 4 2 1 3 6 5 7
 console.log(dfs(root, "in").join(" "));   // 1 2 3 4 5 6 7
 console.log(dfs(root, "post").join(" ")); // 1 3 2 5 7 6 4
 // O(n) time (every node once), O(h) space for the call stack (h = height of the tree)`,
-          try: R`اكتب [[inorderIter]] و [[preorderIter]] من غير recursion: stack انت اللي ماسكه بـ [[push]] و [[pop]]. لازم يطلّعوا نفس ناتج [[dfs]] بالظبط، وجرّبهم على شجرة فاضية ([[null]]) لازم ترجّع [[[]]].`,
+          try: R`اكتب [[inorderIter]] و [[preorderIter]] من غير recursion: stack انت اللي ماسكه بـ [[push]] و [[pop]]. لازم يطلّعوا نفس ناتج [[dfs]] بالظبط، وجرّبهم على شجرة فاضية ([[null]]) لازم ترجّع [[[]]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[inorderIter]] و [[preorderIter]] بـ stack انت ماسكه.`,
           sol: R`الناتج المتوقع: [[1 2 3 4 5 6 7]] للـ in-order، و [[4 2 1 3 6 5 7]] للـ pre-order، و [[[]]] للشجرة الفاضية.
 
 in-order: انزل شمال لآخره وانت بتحط كل عقدة في الـ stack. لما توصل null، اعمل [[pop]]، سجّل القيمة، وروح يمين العقدة دي وكرر. الشرط [[while (cur || stack.length)]] لازم يبقى الاتنين: ممكن الـ stack يفضى وإنت لسه عندك فرع يمين.
@@ -3296,7 +4525,59 @@ console.log(inorderIter(null), preorderIter(null)); // [] []
             "pre-order: الـ root الأول.",
             "in-order: مترتبة لأن الشجرة دي BST.",
             "post-order: الـ root في الآخر."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function inorderIter(root) {
+  const out = [], stack = [];
+  let cur = root;
+  // while (cur || stack.length): انزل شمال لآخره، وبعدين pop وسجّل وروح يمين
+  return out;
+}
+function preorderIter(root) {
+  const out = [];
+  // حط الـ root، وكل مرة pop وسجّل، و push اليمين قبل الشمال
+  return out;
+}`,
+            tests: R`const node = (val, left = null, right = null) => ({ val, left, right });
+const root = node(4, node(2, node(1), node(3)), node(6, node(5), node(7)));
+test("inorderIter ← 1 2 3 4 5 6 7", () => expect(inorderIter(root)).toEqual([1, 2, 3, 4, 5, 6, 7]));
+test("preorderIter ← 4 2 1 3 6 5 7 (اليمين يدخل الـ stack قبل الشمال)", () => expect(preorderIter(root)).toEqual([4, 2, 1, 3, 6, 5, 7]));
+test("شجرة فاضية (null) ← [] في الاتنين", () => expect([inorderIter(null), preorderIter(null)]).toEqual([[], []]));
+test("شجرة فروعها يمين بس: node(1, null, node(2, null, node(3)))", () => {
+  const t = node(1, null, node(2, null, node(3)));
+  expect([inorderIter(t), preorderIter(t)]).toEqual([[1, 2, 3], [1, 2, 3]]);
+});
+test("سلسلة عمقها ١٠٠ ألف: الـ recursion كانت هتعمل stack overflow، الـ stack بتاعك لأ", () => {
+  let t = null;
+  for (let i = 0; i < 100000; i++) t = node(i, t);
+  const a = inorderIter(t), b = preorderIter(t);
+  expect([a.length, a[0], a.at(-1), b[0], b.at(-1)]).toEqual([100000, 0, 99999, 99999, 0]);
+});`,
+            solution: R`function inorderIter(root) {
+  const out = [], stack = [];
+  let cur = root;
+  while (cur || stack.length) {
+    while (cur) { stack.push(cur); cur = cur.left; }
+    cur = stack.pop();
+    out.push(cur.val);
+    cur = cur.right;
+  }
+  return out;
+}
+function preorderIter(root) {
+  const out = [];
+  if (!root) return out;
+  const stack = [root];
+  while (stack.length) {
+    const n = stack.pop();
+    out.push(n.val);
+    if (n.right) stack.push(n.right);
+    if (n.left) stack.push(n.left);
+  }
+  return out;
+}`
+          }
         },
         {
           cmd: "BFS (level order)",
@@ -3332,7 +4613,7 @@ console.log(levelOrder(root)); // [[3], [9, 20], [15, 7]]
 console.log(levelOrder(node(1))); // [[1]]
 console.log(levelOrder(null)); // []
 // O(n) time, O(w) space where w = the widest level (up to n/2 in a full tree)`,
-          try: R`حل «Binary Tree Right Side View»: لو واقف على يمين الشجرة، هتشوف أنهي قيم؟ (آخر عقدة في كل مستوى). جرّبه على الشجرة [[node(1, node(2, null, node(5)), node(3, null, node(4)))]]، والمفروض يطلع [[[1, 3, 4]]]. وبعدين عدّل [[levelOrder]] يرجّع zigzag: مستوى شمال لليمين والجاي يمين للشمال.`,
+          try: R`حل «Binary Tree Right Side View»: لو واقف على يمين الشجرة، هتشوف أنهي قيم؟ (آخر عقدة في كل مستوى). جرّبه على الشجرة [[node(1, node(2, null, node(5)), node(3, null, node(4)))]]، والمفروض يطلع [[[1, 3, 4]]]. وبعدين عدّل [[levelOrder]] يرجّع zigzag: مستوى شمال لليمين والجاي يمين للشمال. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[rightSideView(root)]] و [[zigzag(root)]].`,
           sol: R`right side view: نفس الـ loop، بس بدل ما تسجّل المستوى كله سجّل [[queue.at(-1).val]] (آخر عقدة). الناتج [[[1, 3, 4]]]: المستوى الأول 1، والتاني [2, 3] آخره 3، والتالت [5, 4] آخره 4.
 
 الغلطة الشائعة: تمشي على الفروع اليمين بس (root.right.right...)، فتطلع [[[1, 3, 4]]] هنا بالصدفة، لكن لو الفرع اليمين أقصر من الشمال هتفوّت عقد باينة. جرّب [[node(1, node(2, node(4)), node(3))]]: الصح [[[1, 3, 4]]] لأن 4 باينة من اليمين رغم إنها في الشمال.
@@ -3402,7 +4683,47 @@ console.log(rightSideView(null)); // []
             "٣ مستويات.",
             "عقدة واحدة: مستوى واحد.",
             "فاضية."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function rightSideView(root) {
+  // نفس levelOrder، بس سجّل آخر عقدة في كل مستوى
+  return [];
+}
+function zigzag(root) {
+  // flag بيتقلب كل مستوى، ولو true اعكس القيم
+  return [];
+}`,
+            tests: R`const node = (val, left = null, right = null) => ({ val, left, right });
+test("node(1, node(2, null, node(5)), node(3, null, node(4))) ← [1, 3, 4]", () => expect(rightSideView(node(1, node(2, null, node(5)), node(3, null, node(4))))).toEqual([1, 3, 4]));
+test("فرع شمال أطول: node(1, node(2, node(4)), node(3)) ← [1, 3, 4] (4 باينة من اليمين)", () => expect(rightSideView(node(1, node(2, node(4)), node(3)))).toEqual([1, 3, 4]));
+test("null ← [] في الاتنين", () => expect([rightSideView(null), zigzag(null)]).toEqual([[], []]));
+test("zigzag للشجرة 3 / 9 20 / 15 7 ← [[3], [20, 9], [15, 7]]", () => expect(zigzag(node(3, node(9), node(20, node(15), node(7))))).toEqual([[3], [20, 9], [15, 7]]));
+test("zigzag ٤ مستويات", () => {
+  const t = node(1, node(2, node(4, node(8)), node(5)), node(3, node(6), node(7)));
+  expect(zigzag(t)).toEqual([[1], [3, 2], [4, 5, 6, 7], [8]]);
+});`,
+            solution: R`function levels(root) {
+  const out = [];
+  let queue = root ? [root] : [];
+  while (queue.length) {
+    out.push(queue.map(n => n.val));
+    const next = [];
+    for (const n of queue) {
+      if (n.left) next.push(n.left);
+      if (n.right) next.push(n.right);
+    }
+    queue = next;
+  }
+  return out;
+}
+function rightSideView(root) {
+  return levels(root).map(level => level.at(-1));
+}
+function zigzag(root) {
+  return levels(root).map((level, i) => (i % 2 ? level.reverse() : level));
+}`
+          }
         },
         {
           cmd: "max depth",
@@ -3428,7 +4749,7 @@ console.log(maxDepth(chain), minDepth(chain)); // 3 3
 console.log(wrongMin(chain)); // 1
 console.log(maxDepth(null)); // 0
 // O(n) time, O(h) stack: h is about log n if balanced, n if the tree is a chain`,
-          try: R`حل «Diameter of Binary Tree»: أطول مسار بين أي عقدتين (بعدد الـ edges، ومش لازم يعدّي على الـ root). للشجرة [[node(1, node(2, node(4), node(5)), node(3))]] الإجابة 3 (من 4 لـ 2 لـ 1 لـ 3). وبعدين «Balanced Binary Tree»: الشجرة متوازنة لو فرق العمق بين الشمال واليمين عند كل عقدة ≤ 1.`,
+          try: R`حل «Diameter of Binary Tree»: أطول مسار بين أي عقدتين (بعدد الـ edges، ومش لازم يعدّي على الـ root). للشجرة [[node(1, node(2, node(4), node(5)), node(3))]] الإجابة 3 (من 4 لـ 2 لـ 1 لـ 3). وبعدين «Balanced Binary Tree»: الشجرة متوازنة لو فرق العمق بين الشمال واليمين عند كل عقدة ≤ 1. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[diameter(root)]] و [[isBalanced(root)]]، الاتنين في لفة واحدة [[O(n)]].`,
           sol: R`diameter: عند كل عقدة، أطول مسار بيعدّي عليها = عمق الشمال + عمق اليمين. فاكتب دالة عمق عادية، وجوّاها حدّث متغير [[best]] بـ [[left + right]]. الإجابة 3 للشجرة اللي في السؤال، و 0 لعقدة لوحدها.
 
 الغلطة الشائعة: ترجّع [[maxDepth(root.left) + maxDepth(root.right)]] للـ root بس. ده غلط لما أطول مسار يبقى كله جوه فرع واحد، زي فرع شمال عميق فيه فرعين طوال. وغلطة تانية: تنادي [[maxDepth]] من جوه loop على كل العقد فتبقى [[O(n^2)]] بدل [[O(n)]].
@@ -3487,7 +4808,58 @@ min depth ممكن تتحل بـ BFS أسرع: أول leaf تقابلها في B
             "في السلسلة الاتنين 3، لأن فيه leaf واحدة بس.",
             "النسخة الغلط بتقول 1، لأنها اعتبرت الشمال الفاضي مسار.",
             "شجرة فاضية."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function diameter(root) {
+  let best = 0;
+  // دالة عمق عادية، وجوّاها best = max(best, left + right)
+  return best;
+}
+function isBalanced(root) {
+  // الدالة ترجّع العمق، أو -1 لو لقت فرق أكبر من 1
+}`,
+            tests: R`const node = (val, left = null, right = null) => ({ val, left, right });
+test("node(1, node(2, node(4), node(5)), node(3)) ← 3", () => expect(diameter(node(1, node(2, node(4), node(5)), node(3)))).toBe(3));
+test("عقدة لوحدها ← 0، و null ← 0", () => expect([diameter(node(1)), diameter(null)]).toEqual([0, 0]));
+test("أطول مسار جوه فرع واحد ومش بيعدّي على الـ root ← 6", () => {
+  const t = node(1, node(2, node(3, node(4, node(5))), node(6, null, node(7, null, node(8)))));
+  expect(diameter(t)).toBe(6);
+});
+test("isBalanced: 3 / 9 20 / 15 7 ← true", () => expect(isBalanced(node(3, node(9), node(20, node(15), node(7))))).toBe(true));
+test("سلسلة 1 → 2 → 3 ← false، و null ← true", () => expect([isBalanced(node(1, node(2, node(3)))), isBalanced(null)]).toEqual([false, true]));
+test("الـ root متوازن بس فيه عقدة جوه مش متوازنة ← false", () => {
+  const t = node(1, node(2, node(3, node(4))), node(5, null, node(6, null, node(7))));
+  expect(isBalanced(t)).toBe(false);
+});
+test("شجرة متوازنة فيها 65535 عقدة (O(n)، مش maxDepth عند كل عقدة)", () => {
+  const build = d => (d === 0 ? null : node(d, build(d - 1), build(d - 1)));
+  const t = build(16);
+  expect([isBalanced(t), diameter(t)]).toEqual([true, 30]);
+});`,
+            solution: R`function diameter(root) {
+  let best = 0;
+  const depth = n => {
+    if (!n) return 0;
+    const l = depth(n.left), r = depth(n.right);
+    best = Math.max(best, l + r);
+    return 1 + Math.max(l, r);
+  };
+  depth(root);
+  return best;
+}
+function isBalanced(root) {
+  const h = n => {
+    if (!n) return 0;
+    const l = h(n.left);
+    if (l === -1) return -1;
+    const r = h(n.right);
+    if (r === -1 || Math.abs(l - r) > 1) return -1;
+    return 1 + Math.max(l, r);
+  };
+  return h(root) !== -1;
+}`
+          }
         },
         {
           cmd: "validate BST",
@@ -3516,7 +4888,7 @@ console.log(naive(trap)); // true
 console.log(isValidBST(node(2, node(2)))); // false
 console.log(isValidBST(null)); // true
 // O(n) time, O(h) space`,
-          try: R`حلها بطريقة تانية: in-order traversal لـ BST لازم يطلّع قيم متزايدة بشكل صارم. امشي in-order واحفظ القيمة اللي قبلك، ولو لقيت قيمة ≤ اللي قبلها يبقى مش BST. وبعدين حل «Kth Smallest Element in a BST» بنفس المشية: وقف عند العقدة رقم k.`,
+          try: R`حلها بطريقة تانية: in-order traversal لـ BST لازم يطلّع قيم متزايدة بشكل صارم. امشي in-order واحفظ القيمة اللي قبلك، ولو لقيت قيمة ≤ اللي قبلها يبقى مش BST. وبعدين حل «Kth Smallest Element in a BST» بنفس المشية: وقف عند العقدة رقم k. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[isValidInorder(root)]] بالـ in-order، و [[kthSmallest(root, k)]].`,
           sol: R`الناتج: [[true]] لـ [[good]]، و [[false]] لـ [[trap]] (الـ in-order بيطلّع 3 5 4 8 9، و 4 بعد 5)، و [[false]] لـ [[node(2, node(2))]] لأن التكرار مش مسموح.
 
 الـ prev لازم يبدأ بـ [[-Infinity]] (أو null مع شرط)، مش 0، لأن الشجرة ممكن يبقى فيها أرقام سالبة. ولازم يبقى متغير برّا الدالة الـ recursive (closure) عشان يفضل محفوظ بين النداءات.
@@ -3581,7 +4953,49 @@ console.log(kthSmallest(good, 3), kthSmallest(good, 7)); // 4 9
             "النسخة الغلط اتضحك عليها.",
             "تكرار: 2 في شمال 2 مش مسموح.",
             "الشجرة الفاضية BST."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function isValidInorder(root) {
+  let prev = -Infinity;
+  // امشي in-order، ولو قيمة <= prev يبقى مش BST
+}
+function kthSmallest(root, k) {
+  // نفس المشية، ووقّف عند العقدة رقم k
+}`,
+            tests: R`const node = (val, left = null, right = null) => ({ val, left, right });
+const good = node(5, node(3, node(2), node(4)), node(8, node(7), node(9)));
+const trap = node(5, node(3), node(8, node(4), node(9)));
+test("good ← true، و trap ← false (4 تحت 8 بس أصغر من 5)", () => expect([isValidInorder(good), isValidInorder(trap)]).toEqual([true, false]));
+test("التكرار مش مسموح: node(2, node(2)) ← false", () => expect(isValidInorder(node(2, node(2)))).toBe(false));
+test("أرقام سالبة: node(-5, node(-10)) ← true (prev يبدأ -Infinity مش 0)", () => expect(isValidInorder(node(-5, node(-10)))).toBe(true));
+test("null ← true", () => expect(isValidInorder(null)).toBe(true));
+test("prev بيبدأ من جديد مع كل نداء: trap وبعدين good", () => expect([isValidInorder(trap), isValidInorder(good)]).toEqual([false, true]));
+test("kthSmallest(good, 3) ← 4، و k = 1 ← 2، و k = 7 ← 9", () => expect([kthSmallest(good, 3), kthSmallest(good, 1), kthSmallest(good, 7)]).toEqual([4, 2, 9]));`,
+            solution: R`function isValidInorder(root) {
+  let prev = -Infinity, ok = true;
+  const walk = n => {
+    if (!n || !ok) return;
+    walk(n.left);
+    if (n.val <= prev) ok = false;
+    prev = n.val;
+    walk(n.right);
+  };
+  walk(root);
+  return ok;
+}
+function kthSmallest(root, k) {
+  let count = 0, answer;
+  const walk = n => {
+    if (!n || count >= k) return;
+    walk(n.left);
+    if (++count === k) answer = n.val;
+    walk(n.right);
+  };
+  walk(root);
+  return answer;
+}`
+          }
         },
         {
           cmd: "lowest common ancestor",
@@ -3614,7 +5028,7 @@ console.log(lca(root, n5, n1).val); // 3
 console.log(lca(root, n7, n4).val); // 2
 console.log(lca(root, n5, n4).val); // 5
 // O(n) time, O(h) space; assumes both p and q are in the tree`,
-          try: R`حل «Lowest Common Ancestor of a Binary Search Tree»: في BST مش محتاج تزور الشجرة كلها. لو p و q الاتنين أصغر من العقدة، الإجابة في الشمال. لو الاتنين أكبر، في اليمين. غير كده، العقدة دي هي الإجابة. اكتبها بـ while loop من غير recursion، وجرّبها على BST فيها 6 و 2 و 8 و 0 و 4 و 7 و 9 و 3 و 5.`,
+          try: R`حل «Lowest Common Ancestor of a Binary Search Tree»: في BST مش محتاج تزور الشجرة كلها. لو p و q الاتنين أصغر من العقدة، الإجابة في الشمال. لو الاتنين أكبر، في اليمين. غير كده، العقدة دي هي الإجابة. اكتبها بـ while loop من غير recursion، وجرّبها على BST فيها 6 و 2 و 8 و 0 و 4 و 7 و 9 و 3 و 5. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[lcaBST(root, p, q)]] بتاخد قيمتين وترجّع العقدة، بـ while loop.`,
           sol: R`على الـ BST [[6 → (2 → 0, 4 → 3, 5), (8 → 7, 9)]]: [[lca(2, 8)]] = 6 (واحد شمال وواحد يمين)، و [[lca(2, 4)]] = 2 (4 تحت 2)، و [[lca(3, 5)]] = 4.
 
 الـ Big-O [[O(h)]] وقت و [[O(1)]] ذاكرة، لأنك بتنزل في مسار واحد بس ومن غير recursion. في BST متوازنة ده [[O(log n)]]، مقابل [[O(n)]] للحل العام.
@@ -3667,7 +5081,37 @@ console.log(lcaBST(bst, 7, 9)); // 8
             "5 شمال و 1 يمين: الإجابة الـ root.",
             "7 و 4 أولاد 2.",
             "4 تحت 5، فـ 5 هي الإجابة."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function lcaBST(root, p, q) {
+  let n = root;
+  // الاتنين أصغر؟ انزل شمال. الاتنين أكبر؟ انزل يمين. غير كده n هي الإجابة
+  return n;
+}`,
+            tests: R`const node = (val, left = null, right = null) => ({ val, left, right });
+const bst = node(6, node(2, node(0), node(4, node(3), node(5))), node(8, node(7), node(9)));
+test("lca(2, 8) ← 6", () => expect(lcaBST(bst, 2, 8).val).toBe(6));
+test("lca(2, 4) ← 2 (واحدة تحت التانية)", () => expect(lcaBST(bst, 2, 4).val).toBe(2));
+test("lca(3, 5) ← 4، و lca(7, 9) ← 8", () => expect([lcaBST(bst, 3, 5).val, lcaBST(bst, 7, 9).val]).toEqual([4, 8]));
+test("p أكبر من q: lca(8, 2) ← 6", () => expect(lcaBST(bst, 8, 2).val).toBe(6));
+test("نفس القيمة: lca(0, 0) ← 0", () => expect(lcaBST(bst, 0, 0).val).toBe(0));
+test("سلسلة عمقها ١٠٠ ألف: الـ while مبتستخدمش stack (O(h) وقت و O(1) ذاكرة)", () => {
+  const root = node(0);
+  let cur = root;
+  for (let i = 1; i < 100000; i++) cur = cur.right = node(i);
+  expect(lcaBST(root, 99998, 99999).val).toBe(99998);
+});`,
+            solution: R`function lcaBST(root, p, q) {
+  let n = root;
+  while (n) {
+    if (p < n.val && q < n.val) n = n.left;
+    else if (p > n.val && q > n.val) n = n.right;
+    else return n;
+  }
+  return null;
+}`
+          }
         },
         {
           cmd: "walk nested JSON",
@@ -3703,7 +5147,7 @@ console.log(flatten(comments).map(c => "-".repeat(c.depth) + c.id).join(" ")); /
 console.log(count(comments)); // 4
 console.log(paths({ user: { name: "Mona", tags: ["admin"] }, ok: true })); // ['$.user.name = "Mona"', '$.user.tags.0 = "admin"', '$.ok = true']
 // O(n) time for n comments or values, O(depth) stack`,
-          try: R`اكتب [[flattenIter]]: نفس [[flatten]] بس بـ stack صريح من غير recursion، ولازم يطلّع نفس الترتيب بالظبط. وبعدين ابني كومنت متداخل عمقه ١٠٠ ألف (كل كومنت رد على اللي قبله) بـ loop، وشوف [[flatten]] الـ recursive بتعمل إيه، و [[flattenIter]] بتعمل إيه. وكمان اكتب [[findPath(list, id)]] ترجّع الـ ids من الـ root لحد الكومنت ده.`,
+          try: R`اكتب [[flattenIter]]: نفس [[flatten]] بس بـ stack صريح من غير recursion، ولازم يطلّع نفس الترتيب بالظبط. وبعدين ابني كومنت متداخل عمقه ١٠٠ ألف (كل كومنت رد على اللي قبله) بـ loop، وشوف [[flatten]] الـ recursive بتعمل إيه، و [[flattenIter]] بتعمل إيه. وكمان اكتب [[findPath(list, id)]] ترجّع الـ ids من الـ root لحد الكومنت ده. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[flattenIter(list)]] بترجّع [[{ id, depth }]] بنفس ترتيب [[flatten]]، و [[findPath(list, id)]].`,
           sol: R`[[flattenIter]]: حط الـ roots في الـ stack بالعكس (عشان أول واحد يطلع الأول)، ومع كل [[pop]] سجّل العقدة وحط ردودها بالعكس برضه مع [[depth + 1]]. الناتج لازم يبقى [[1 -2 --3 4]] زي النسخة الـ recursive. لو نسيت العكس هيطلع [[4 1 -2 --3]].
 
 مع عمق ١٠٠ ألف: النسخة الـ recursive بتقع بـ [[RangeError: Maximum call stack size exceeded]] (الحد في Node حوالي ١٠ آلاف نداء، والرقم بيختلف حسب حجم الـ frame). والنسخة اللي بـ stack بتشتغل عادي لأن الـ array بتتخزن في الـ heap مش في الـ call stack.
@@ -3790,7 +5234,63 @@ console.log(flattenIter([deep]).length); // 100000
             "الشرطة = مستوى عمق، فبتشوف الشكل المتداخل.",
             "٤ كومنتات في كل المستويات.",
             "كل قيمة في الـ JSON ومسارها."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function flattenIter(list) {
+  const out = [];
+  const stack = []; // [comment, depth]، والـ roots بالعكس
+  return out;
+}
+function findPath(list, id) {
+  const path = [];
+  // DFS: push قبل ما تنزل و pop بعد ما ترجع
+  return null;
+}`,
+            tests: R`const comments = [
+  { id: 1, text: "Great post", replies: [
+    { id: 2, text: "Agreed", replies: [{ id: 3, text: "Same", replies: [] }] },
+  ] },
+  { id: 4, text: "Typo in line 3", replies: [] },
+];
+test("flattenIter ← 1 -2 --3 4 (نفس ترتيب النسخة الـ recursive)", () => expect(flattenIter(comments)).toEqual([{ id: 1, depth: 0 }, { id: 2, depth: 1 }, { id: 3, depth: 2 }, { id: 4, depth: 0 }]));
+test("[] ← []", () => expect(flattenIter([])).toEqual([]));
+test("ردين على نفس الكومنت بيطلعوا بترتيبهم", () => {
+  const c = [{ id: 1, replies: [{ id: 2, replies: [] }, { id: 3, replies: [] }] }];
+  expect(flattenIter(c).map(x => x.id)).toEqual([1, 2, 3]);
+});
+test("findPath(comments, 3) ← [1, 2, 3]، و 4 ← [4]، و 99 ← null", () => expect([findPath(comments, 3), findPath(comments, 4), findPath(comments, 99)]).toEqual([[1, 2, 3], [4], null]));
+test("كومنت متداخل عمقه ١٠٠ ألف: الـ recursion بتقع، الـ stack الصريح لأ", () => {
+  const root = { id: 0, replies: [] };
+  let cur = root;
+  for (let i = 1; i < 100000; i++) { const c = { id: i, replies: [] }; cur.replies.push(c); cur = c; }
+  const r = flattenIter([root]);
+  expect([r.length, r.at(-1)]).toEqual([100000, { id: 99999, depth: 99999 }]);
+});`,
+            solution: R`function flattenIter(list) {
+  const out = [];
+  const stack = [];
+  for (let i = list.length - 1; i >= 0; i--) stack.push([list[i], 0]);
+  while (stack.length) {
+    const [c, depth] = stack.pop();
+    out.push({ id: c.id, depth });
+    for (let i = c.replies.length - 1; i >= 0; i--) stack.push([c.replies[i], depth + 1]);
+  }
+  return out;
+}
+function findPath(list, id) {
+  const path = [];
+  const dfs = items => {
+    for (const c of items) {
+      path.push(c.id);
+      if (c.id === id || dfs(c.replies)) return true;
+      path.pop();
+    }
+    return false;
+  };
+  return dfs(list) ? [...path] : null;
+}`
+          }
         }
       ]
     },
@@ -3836,7 +5336,7 @@ console.log(g.get("d")); // ['b', 'c', 'e']
 console.log([...dfs(g, "a")].join(" ")); // a b d c e
 console.log(countComponents(buildGraph([["a", "b"], ["c", "d"], ["d", "e"]]))); // 2
 // build: O(V + E); DFS visits every vertex once and every edge twice: O(V + E) time, O(V) space`,
-          try: R`حل «Find if Path Exists in Graph»: عندك n عقدة مترقمة من 0 لـ n - 1، و edges، و source و destination. فيه طريق؟ ابني الـ graph بـ arrays بدل Map، وحلها بـ BFS المرة دي (queue ومؤشر [[head]]). جرّب n = 6 و edges [[[0,1],[0,2],[3,5],[5,4],[4,3]]]: من 0 لـ 5 الإجابة false، ومن 3 لـ 4 true. وخلي بالك إن فيه عقد ممكن متبقاش في أي edge.`,
+          try: R`حل «Find if Path Exists in Graph»: عندك n عقدة مترقمة من 0 لـ n - 1، و edges، و source و destination. فيه طريق؟ ابني الـ graph بـ arrays بدل Map، وحلها بـ BFS المرة دي (queue ومؤشر [[head]]). جرّب n = 6 و edges [[[0,1],[0,2],[3,5],[5,4],[4,3]]]: من 0 لـ 5 الإجابة false، ومن 3 لـ 4 true. وخلي بالك إن فيه عقد ممكن متبقاش في أي edge. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[validPath(n, edges, source, destination)]].`,
           sol: R`الناتج: [[false]] من 0 لـ 5 (0 و 1 و 2 في جزيرة، و 3 و 4 و 5 في جزيرة تانية)، و [[true]] من 3 لـ 4، و [[true]] من 2 لـ 2 (العقدة بتوصل لنفسها).
 
 ليه arrays؟ لما العقد أرقام من 0 لـ n - 1، [[Array.from({ length: n }, () => [])]] أسرع وأبسط من Map، وكل عقدة ليها قائمة حتى لو ملهاش edges. لو استخدمت [[new Array(n).fill([])]] كل الخانات هتشاور على نفس الـ array، وكل الجيران هيتخلطوا: دي أشهر غلطة في المسألة دي.
@@ -3902,7 +5402,38 @@ connected components: لف على كل العقد، وأي عقدة لسه ما�
             "جيران d.",
             "كل اللي يوصل له من a بترتيب الـ DFS.",
             "جزيرة a-b وجزيرة c-d-e."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function validPath(n, edges, source, destination) {
+  const graph = Array.from({ length: n }, () => []);
+  // ابني الـ graph (الاتجاهين)، وبعدين BFS بـ queue ومؤشر head
+  return false;
+}`,
+            tests: R`const E = [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]];
+test("من 0 لـ 5 ← false (جزيرتين)", () => expect(validPath(6, E, 0, 5)).toBe(false));
+test("من 3 لـ 4 ← true", () => expect(validPath(6, E, 3, 4)).toBe(true));
+test("العقدة بتوصل لنفسها: من 2 لـ 2 ← true", () => expect(validPath(6, E, 2, 2)).toBe(true));
+test("عقدة ملهاش edges خالص: (3, [[0, 1]], 0, 2) ← false", () => expect(validPath(3, [[0, 1]], 0, 2)).toBe(false));
+test("الـ edges في الاتجاهين: (3, [[1, 0], [2, 1]], 0, 2) ← true", () => expect(validPath(3, [[1, 0], [2, 1]], 0, 2)).toBe(true));
+test("سلسلة 200 ألف عقدة (O(V + E)، و fill([]) كانت هتخلط الجيران)", () => {
+  const n = 200000, edges = Array.from({ length: n - 1 }, (_, i) => [i, i + 1]);
+  expect([validPath(n, edges, 0, n - 1), validPath(n + 1, edges, 0, n)]).toEqual([true, false]);
+});`,
+            solution: R`function validPath(n, edges, source, destination) {
+  const graph = Array.from({ length: n }, () => []);
+  for (const [u, v] of edges) { graph[u].push(v); graph[v].push(u); }
+  const seen = new Array(n).fill(false);
+  const queue = [source];
+  seen[source] = true;
+  for (let head = 0; head < queue.length; head++) {
+    const u = queue[head];
+    if (u === destination) return true;
+    for (const v of graph[u]) if (!seen[v]) { seen[v] = true; queue.push(v); }
+  }
+  return false;
+}`
+          }
         },
         {
           cmd: "number of islands",
@@ -3932,7 +5463,7 @@ console.log(numIslands([["1", "1"], ["1", "1"]])); // 1
 console.log(numIslands([["1", "0", "1"]])); // 2
 console.log(numIslands([])); // 0
 // O(rows × cols) time; O(rows × cols) space for the copy and, in the worst case, the recursion`,
-          try: R`حل «Max Area of Island»: رجّع مساحة أكبر جزيرة بدل العدد (خلّي [[sink]] ترجّع عدد الخانات اللي غرّقتها). وبعدين اكتبها بـ BFS (queue) بدل recursion، وجرّبها على grid 1000 × 1000 كله 1: النسخة الـ recursive هتعمل إيه؟`,
+          try: R`حل «Max Area of Island»: رجّع مساحة أكبر جزيرة بدل العدد (خلّي [[sink]] ترجّع عدد الخانات اللي غرّقتها). وبعدين اكتبها بـ BFS (queue) بدل recursion، وجرّبها على grid 1000 × 1000 كله 1: النسخة الـ recursive هتعمل إيه؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[maxAreaOfIsland(grid)]] بـ BFS (الـ grid فيها "1" و "0" زي المثال).`,
           sol: R`للخريطة اللي في المثال: أكبر جزيرة مساحتها 4 (المربع اللي فوق على الشمال). و grid كله 0 الإجابة 0.
 
 [[area]] ترجّع 0 لو برّا الحدود أو مش 1، وغير كده [[1 + area(4 جيران)]]. وخد [[Math.max]] على كل الجزر.
@@ -4006,7 +5537,47 @@ console.log(maxAreaOfIsland(big)); // 1000000
             "كله أرض: جزيرة واحدة.",
             "اتنين مفصولين بـ 0.",
             "فاضي."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function maxAreaOfIsland(grid) {
+  const rows = grid.length, cols = grid[0]?.length ?? 0;
+  const g = grid.map(row => [...row]);
+  let best = 0;
+  // لكل "1": BFS بـ queue ومؤشر head، وعلّم الخانة لحظة ما تدخل الـ queue
+  return best;
+}`,
+            tests: R`const grid = rows => rows.map(s => s.split(""));
+test("الخريطة اللي في المثال ← 4", () => expect(maxAreaOfIsland(grid(["11000", "11000", "00100", "00011"]))).toBe(4));
+test("كله 0 ← 0، و [] ← 0", () => expect([maxAreaOfIsland(grid(["000", "000"])), maxAreaOfIsland([])]).toEqual([0, 0]));
+test("[['1']] ← 1", () => expect(maxAreaOfIsland([["1"]])).toBe(1));
+test("القطري مش جار: ['101', '010', '101'] ← 1", () => expect(maxAreaOfIsland(grid(["101", "010", "101"]))).toBe(1));
+test("شكل U ← 7", () => expect(maxAreaOfIsland(grid(["101", "101", "111"]))).toBe(7));
+test("400 × 400 كله 1: الـ DFS الـ recursive هيقع، الـ BFS بيرجّع 160000", () => expect(maxAreaOfIsland(Array.from({ length: 400 }, () => new Array(400).fill("1")))).toBe(160000));`,
+            solution: R`function maxAreaOfIsland(grid) {
+  const rows = grid.length, cols = grid[0]?.length ?? 0;
+  const g = grid.map(row => [...row]);
+  let best = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      if (g[r][c] !== "1") continue;
+      g[r][c] = "0";
+      const queue = [[r, c]];
+      for (let head = 0; head < queue.length; head++) {
+        const [y, x] = queue[head];
+        for (const [dy, dx] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const ny = y + dy, nx = x + dx;
+          if (ny < 0 || nx < 0 || ny >= rows || nx >= cols || g[ny][nx] !== "1") continue;
+          g[ny][nx] = "0";
+          queue.push([ny, nx]);
+        }
+      }
+      best = Math.max(best, queue.length);
+    }
+  }
+  return best;
+}`
+          }
         },
         {
           cmd: "shortest path in grid (BFS)",
@@ -4048,7 +5619,7 @@ console.log(shortestPath(maze, [0, 0], [0, 3])); // 7
 console.log(shortestPath(maze, [0, 0], [0, 0])); // 0
 console.log(shortestPath([".#", "#."], [0, 0], [1, 1])); // -1
 // O(rows × cols) time and space: every cell enters the queue at most once`,
-          try: R`خلّي الدالة ترجّع الطريق نفسه مش طوله بس: احفظ لكل خانة «جيت منين» ([[parent]])، ولما توصل للهدف ارجع بالـ parents لحد البداية واعكس. وبعدين حل «Rotting Oranges»: كل البرتقان البايظ بيبوّظ جيرانه كل دقيقة، في كام دقيقة كله يبوظ؟ (BFS بيبدأ من كل البايظين مع بعض: multi-source BFS).`,
+          try: R`خلّي الدالة ترجّع الطريق نفسه مش طوله بس: احفظ لكل خانة «جيت منين» ([[parent]])، ولما توصل للهدف ارجع بالـ parents لحد البداية واعكس. وبعدين حل «Rotting Oranges»: كل البرتقان البايظ بيبوّظ جيرانه كل دقيقة، في كام دقيقة كله يبوظ؟ (BFS بيبدأ من كل البايظين مع بعض: multi-source BFS). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[shortestRoute(grid, start, goal)]] بترجّع الخانات كـ [["r,c"]] من البداية للهدف (أو null)، و [[orangesRotting(grid)]].`,
           sol: R`الطريق في المتاهة من [[(0,0)]] لـ [[(0,3)]]: ٨ خانات (٧ خطوات)، زي [[0,0 → 1,0 → 2,0 → 2,1 → 2,2 → 2,3 → 1,3 → 0,3]]. ممكن يطلع عندك طريق تاني بنفس الطول حسب ترتيب [[dirs]]، وده صح برضه.
 
 الـ [[parent]] ممكن تبقى Map مفتاحها [[r + "," + c]]، أو جدول زي [[dist]]. واحفظ الـ parent لحظة ما تحط الخانة في الـ queue (نفس لحظة [[dist]]).
@@ -4142,7 +5713,78 @@ multi-source BFS (الـ try): بدل ما الـ queue تبدأ بعنصر وا
             "لازم تنزل لصف 2 وتلف: ٧ خطوات.",
             "البداية هي الهدف.",
             "محبوس بين حيطتين."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function shortestRoute(grid, start, goal) {
+  const key = (r, c) => r + "," + c;
+  const parent = new Map([[key(...start), null]]);
+  // نفس shortestPath، واحفظ parent لكل خانة لحظة ما تدخل الـ queue
+  return null;
+}
+function orangesRotting(grid) {
+  // multi-source BFS: كل الـ 2 في الـ queue من الأول
+  return -1;
+}`,
+            tests: R`const maze = ["..#.", "..#.", "....", "#.#."];
+const isRoute = (g, p, s, t) => Array.isArray(p) && p[0] === s.join(",") && p.at(-1) === t.join(",") && p.every((k, i) => {
+  const [r, c] = k.split(",").map(Number);
+  if (g[r][c] === "#") return false;
+  if (i === 0) return true;
+  const [pr, pc] = p[i - 1].split(",").map(Number);
+  return Math.abs(r - pr) + Math.abs(c - pc) === 1;
+});
+test("المتاهة من 0,0 لـ 0,3: 8 خانات (7 خطوات) وكل خطوة لجار مفتوح", () => {
+  const p = shortestRoute(maze, [0, 0], [0, 3]);
+  expect([p && p.length, isRoute(maze, p, [0, 0], [0, 3])]).toEqual([8, true]);
+});
+test("البداية هي الهدف ← ['0,0']", () => expect(shortestRoute(maze, [0, 0], [0, 0])).toEqual(["0,0"]));
+test("مفيش طريق ← null", () => expect(shortestRoute([".#", "#."], [0, 0], [1, 1])).toBe(null));
+test("orangesRotting([[2,1,1],[1,1,0],[0,1,1]]) ← 4", () => expect(orangesRotting([[2, 1, 1], [1, 1, 0], [0, 1, 1]])).toBe(4));
+test("برتقانة محدش يوصلها ← -1", () => expect(orangesRotting([[2, 1, 1], [0, 1, 1], [1, 0, 1]])).toBe(-1));
+test("مفيش سليم من الأول ← 0، وسليم من غير بايظ ← -1", () => expect([orangesRotting([[0, 2]]), orangesRotting([[1]])]).toEqual([0, -1]));
+test("بايظين في طرفين بيشتغلوا مع بعض: [[2,1,1,1,2]] ← 2", () => expect(orangesRotting([[2, 1, 1, 1, 2]])).toBe(2));
+test("متاهة 300 × 300 مفتوحة ← 599 خانة (O(rows × cols))", () => {
+  const g = Array.from({ length: 300 }, () => ".".repeat(300));
+  const p = shortestRoute(g, [0, 0], [299, 299]);
+  expect([p && p.length, isRoute(g, p, [0, 0], [299, 299])]).toEqual([599, true]);
+});`,
+            solution: R`function shortestRoute(grid, start, goal) {
+  const rows = grid.length, cols = grid[0].length;
+  const key = (r, c) => r + "," + c;
+  const parent = new Map([[key(...start), null]]);
+  const queue = [start];
+  for (let head = 0; head < queue.length; head++) {
+    const [r, c] = queue[head];
+    if (r === goal[0] && c === goal[1]) {
+      const path = [];
+      for (let k = key(r, c); k !== null; k = parent.get(k)) path.push(k);
+      return path.reverse();
+    }
+    for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nr = r + dr, nc = c + dc;
+      if (nr < 0 || nc < 0 || nr >= rows || nc >= cols || grid[nr][nc] === "#" || parent.has(key(nr, nc))) continue;
+      parent.set(key(nr, nc), key(r, c));
+      queue.push([nr, nc]);
+    }
+  }
+  return null;
+}
+function orangesRotting(grid) {
+  const g = grid.map(row => [...row]);
+  let queue = [], fresh = 0, minutes = 0;
+  g.forEach((row, r) => row.forEach((v, c) => { if (v === 2) queue.push([r, c]); if (v === 1) fresh++; }));
+  while (queue.length && fresh > 0) {
+    const next = [];
+    for (const [r, c] of queue)
+      for (const [nr, nc] of [[r + 1, c], [r - 1, c], [r, c + 1], [r, c - 1]])
+        if (g[nr]?.[nc] === 1) { g[nr][nc] = 2; fresh--; next.push([nr, nc]); }
+    queue = next;
+    minutes++;
+  }
+  return fresh === 0 ? minutes : -1;
+}`
+          }
         },
         {
           cmd: "topological sort (course schedule)",
@@ -4173,7 +5815,7 @@ console.log(courseOrder(4, [[1, 0], [2, 0], [3, 1], [3, 2]])); // [0, 1, 2, 3]
 console.log(courseOrder(2, [[1, 0], [0, 1]])); // []
 console.log(courseOrder(3, [])); // [0, 1, 2]
 // O(V + E) time and space`,
-          try: R`طبّقها على حاجة حقيقية: عندك packages ومعتمدة على بعض كـ object: [[{ app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] }]]. اكتب [[buildOrder(deps)]] ترجّع ترتيب تبني بيه كل package بعد اللي هي معتمدة عليه، أو ترمي Error فيه كلمة cycle لو فيه اعتماد دائري. وجرّبها لما [[db]] تعتمد على [[app]].`,
+          try: R`طبّقها على حاجة حقيقية: عندك packages ومعتمدة على بعض كـ object: [[{ app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] }]]. اكتب [[buildOrder(deps)]] ترجّع ترتيب تبني بيه كل package بعد اللي هي معتمدة عليه، أو ترمي Error فيه كلمة cycle لو فيه اعتماد دائري. وجرّبها لما [[db]] تعتمد على [[app]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[buildOrder(deps)]] بترجّع ترتيب صح (أي ترتيب بيحقق الشروط)، أو ترمي Error فيه كلمة cycle.`,
           sol: R`الكود اللي تحت بيطلّع [[ui db auth api app]]، وأي ترتيب تاني فيه db قبل auth و api، و auth قبل api، و api و ui قبل app. الـ topological sort مش وحيد، وأي ترتيب يحقق الشروط صح.
 
 خلي بالك من اتجاه السهم: «api معتمدة على db» يعني السهم من db لـ api (لازم db تتبني الأول)، فـ [[graph.get(db).push(api)]] و [[indegree(api)++]]. لو عكست الاتجاه هيطلعلك الترتيب مقلوب (app الأول).
@@ -4243,7 +5885,54 @@ try { buildOrder({ ...deps, db: ["app"] }); } catch (e) { console.log(e.message)
             "0 الأول، وبعدين 1 و 2، وبعدين 3.",
             "كل واحد مستني التاني: مستحيل.",
             "مفيش شروط: أي ترتيب، والكود بيطلّعهم بالترتيب."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function buildOrder(deps) {
+  const graph = new Map(), indegree = new Map();
+  // «api معتمدة على db» يعني السهم من db لـ api
+  // واتأكد إن كل dependency ليها مكان حتى لو مش key
+  return [];
+}`,
+            tests: R`const isValid = (deps, order) => {
+  const pos = new Map(order.map((p, i) => [p, i]));
+  const all = new Set(Object.entries(deps).flatMap(([p, ds]) => [p, ...ds]));
+  return order.length === all.size && pos.size === all.size && Object.entries(deps).every(([p, ds]) => ds.every(d => pos.get(d) < pos.get(p)));
+};
+const deps = { app: ["api", "ui"], api: ["db", "auth"], auth: ["db"], ui: [], db: [] };
+test("المثال: db قبل auth و api، و auth قبل api، و api و ui قبل app", () => expect(isValid(deps, buildOrder(deps))).toBe(true));
+test("{} ← []", () => expect(buildOrder({})).toEqual([]));
+test("dependency مش key: { a: ['ext'] } ← ['ext', 'a']", () => expect(buildOrder({ a: ["ext"] })).toEqual(["ext", "a"]));
+test("db معتمدة على app ← Error فيه cycle", () => expect(() => buildOrder({ ...deps, db: ["app"] })).toThrow(/cycle/));
+test("package معتمدة على نفسها ← cycle", () => expect(() => buildOrder({ a: ["a"] })).toThrow(/cycle/));
+test("سلسلة 20 ألف package (O(V + E))", () => {
+  const d = {};
+  for (let i = 1; i < 20000; i++) d["p" + i] = ["p" + (i - 1)];
+  const order = buildOrder(d);
+  expect([order.length, order[0], order.at(-1)]).toEqual([20000, "p0", "p19999"]);
+});`,
+            solution: R`function buildOrder(deps) {
+  const graph = new Map(), indegree = new Map();
+  const add = p => { if (!graph.has(p)) { graph.set(p, []); indegree.set(p, 0); } };
+  for (const [p, ds] of Object.entries(deps)) {
+    add(p);
+    for (const d of ds) {
+      add(d);
+      graph.get(d).push(p);
+      indegree.set(p, indegree.get(p) + 1);
+    }
+  }
+  const queue = [...graph.keys()].filter(p => indegree.get(p) === 0);
+  for (let head = 0; head < queue.length; head++) {
+    for (const next of graph.get(queue[head])) {
+      indegree.set(next, indegree.get(next) - 1);
+      if (indegree.get(next) === 0) queue.push(next);
+    }
+  }
+  if (queue.length !== graph.size) throw new Error("cycle detected");
+  return queue;
+}`
+          }
         },
         {
           cmd: "cycle detection",
@@ -4292,7 +5981,7 @@ console.log(hasCycleDirected(3, [[0, 1], [0, 2], [1, 2]])); // false
 console.log(hasCycleUndirected(3, [[0, 1], [1, 2]])); // false
 console.log(hasCycleUndirected(3, [[0, 1], [1, 2], [2, 0]])); // true
 // both O(V + E) time, O(V) space`,
-          try: R`اكشف الـ circular imports في مشروع: [[{ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] }]] (كل ملف والملفات اللي بيعملها import). اكتب [[findCycle(imports)]] ترجّع الدايرة نفسها كـ array، زي [[["a.js", "b.js", "c.js", "a.js"]]]، أو null لو مفيش. (احفظ المسار الحالي في stack، ولما تقابل عقدة حالتها 1، اقطع المسار من عندها.)`,
+          try: R`اكشف الـ circular imports في مشروع: [[{ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] }]] (كل ملف والملفات اللي بيعملها import). اكتب [[findCycle(imports)]] ترجّع الدايرة نفسها كـ array، زي [[["a.js", "b.js", "c.js", "a.js"]]]، أو null لو مفيش. (احفظ المسار الحالي في stack، ولما تقابل عقدة حالتها 1، اقطع المسار من عندها.) اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[findCycle(imports)]] بترجّع الدايرة (أول ملف متكرر في الآخر) أو null.`,
           sol: R`الإجابة: [[a.js → b.js → c.js → a.js]]. لو بدأت الـ DFS من [[d.js]] الأول برضه هتلاقي نفس الدايرة، بس d.js مش جزء منها، عشان كده بنقطع المسار من أول ظهور لـ [[a.js]] مش من أوله.
 
 الحالات: [[path]] array فيها المسار الحالي. أول ما تنزل على ملف: حالته 1 و [[path.push]]. لما ترجع منه: حالته 2 و [[path.pop]]. لو قابلت ملف حالته 1: [[path.slice(path.indexOf(file))]] وضيف الملف في الآخر عشان تقفل الدايرة.
@@ -4373,7 +6062,54 @@ console.log(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "c.js": [] })); // n
             "diamond: طريقين لـ 2، مش دايرة.",
             "خط: مفيش دايرة.",
             "مثلث: دايرة."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function findCycle(imports) {
+  const state = new Map(); // 0 مزارش، 1 في المسار الحالي، 2 خلص
+  const path = [];
+  // لما تقابل ملف حالته 1: path.slice(path.indexOf(file)) وضيف الملف في الآخر
+  return null;
+}`,
+            tests: R`const isCycle = (g, c) => Array.isArray(c) && c.length >= 2 && c[0] === c.at(-1) && new Set(c.slice(0, -1)).size === c.length - 1 && c.slice(0, -1).every((f, i) => (g[f] || []).includes(c[i + 1]));
+const g = { "a.js": ["b.js"], "b.js": ["c.js"], "c.js": ["a.js"], "d.js": ["a.js"] };
+test("a.js → b.js → c.js → a.js", () => {
+  const c = findCycle(g);
+  expect([isCycle(g, c), c && [...c.slice(0, -1)].sort()]).toEqual([true, ["a.js", "b.js", "c.js"]]);
+});
+test("d.js مش جزء من الدايرة حتى لو الـ DFS بدأ منها", () => {
+  const g2 = { "d.js": ["a.js"], "a.js": ["b.js"], "b.js": ["a.js"] };
+  const c = findCycle(g2);
+  expect([isCycle(g2, c), c.includes("d.js")]).toEqual([true, false]);
+});
+test("من غير دايرة ← null", () => expect(findCycle({ "a.js": ["b.js"], "b.js": ["c.js"], "d.js": ["a.js"] })).toBe(null));
+test("ملف بيعمل import لنفسه ← ['a.js', 'a.js']", () => expect(findCycle({ "a.js": ["a.js"] })).toEqual(["a.js", "a.js"]));
+test("import لحاجة مش ملف في المشروع (lodash) ← null من غير ما يقع", () => expect(findCycle({ "a.js": ["lodash"] })).toBe(null));
+test("شكل الماسة من غير دايرة (حالة 2 مش 1) ← null", () => expect(findCycle({ a: ["b", "c"], b: ["d"], c: ["d"], d: [] })).toBe(null));`,
+            solution: R`function findCycle(imports) {
+  const state = new Map();
+  const path = [];
+  const visit = f => {
+    const s = state.get(f) || 0;
+    if (s === 1) return [...path.slice(path.indexOf(f)), f];
+    if (s === 2) return null;
+    state.set(f, 1);
+    path.push(f);
+    for (const next of imports[f] || []) {
+      const c = visit(next);
+      if (c) return c;
+    }
+    path.pop();
+    state.set(f, 2);
+    return null;
+  };
+  for (const f of Object.keys(imports)) {
+    const c = visit(f);
+    if (c) return c;
+  }
+  return null;
+}`
+          }
         }
       ]
     },
@@ -4446,7 +6182,7 @@ if (require.main === module) {
   console.log(maxHeap.pop(), new MinHeap().pop()); // 8 undefined
 }
 // push and pop: O(log n); peek: O(1); n pushes: O(n log n)`,
-          try: R`اختبر الـ heap بعشوائية: ضيف ١٠ آلاف رقم عشوائي، وطلّعهم كلهم، وقارن بـ [[sort]]. لازم يطلعوا متطابقين. وبعدين استخدمه كـ «task queue» بأولويات: كل مهمة [[{ name, priority }]]، والأولوية الأقل تطلع الأول، ولو أولويتين متساويتين يطلع اللي اتضاف الأول.`,
+          try: R`اختبر الـ heap بعشوائية: ضيف ١٠ آلاف رقم عشوائي، وطلّعهم كلهم، وقارن بـ [[sort]]. لازم يطلعوا متطابقين. وبعدين استخدمه كـ «task queue» بأولويات: كل مهمة [[{ name, priority }]]، والأولوية الأقل تطلع الأول، ولو أولويتين متساويتين يطلع اللي اتضاف الأول. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[TaskQueue]] فيه [[push(name, priority)]] و [[pop()]] و [[size]]، والتعادل يطلع اللي اتضاف الأول.`,
           sol: R`الاختبار العشوائي لازم يطبع [[true]]. لو طلع false، الغلط في الغالب في [[pop]]: يا إما نسيت حالة [[d.length > 0]] بعد الـ [[pop]] (heap فيه عنصر واحد)، يا إما بتقارن بالابن الشمال بس في الـ sift down.
 
 المهام بأولويات: الـ heap مش stable، يعني عنصرين متساويين ممكن يطلعوا بأي ترتيب. عشان «اللي اتضاف الأول يطلع الأول»، ضيف عدّاد [[seq]] بيزيد مع كل push، وخلي الـ compare يقارن الأولوية الأول، ولو متساويين يقارن الـ seq. الناتج: [[deploy fix-bug write-docs lunch]] (deploy و fix-bug أولويتهم 1، و deploy اتضافت الأول).
@@ -4535,7 +6271,116 @@ pop: الـ top هو 1. آخر عنصر (5) يروح مكانه: [[[5, 3, 8]]]. 
             "ضيف ٣ أرقام.",
             "الأكبر طلع الأول، و pop على heap فاضي undefined.",
             "قفلة الـ if."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+class TaskQueue {
+  constructor() {
+    this.seq = 0;
+    this.heap = new MinHeap(/* قارن الأولوية، ولو متساويين قارن seq */);
+  }
+  push(name, priority) {}
+  pop() {}
+  get size() { return this.heap.size; }
+}`,
+            tests: R`test("lunch 3، deploy 1، write-docs 2، fix-bug 1 ← deploy fix-bug write-docs lunch", () => {
+  const q = new TaskQueue();
+  q.push("lunch", 3); q.push("deploy", 1); q.push("write-docs", 2); q.push("fix-bug", 1);
+  expect([q.pop(), q.pop(), q.pop(), q.pop()]).toEqual(["deploy", "fix-bug", "write-docs", "lunch"]);
+});
+test("فاضي: pop ← undefined و size ← 0", () => { const q = new TaskQueue(); expect([q.pop(), q.size]).toEqual([undefined, 0]); });
+test("size بيزيد ويقل", () => { const q = new TaskQueue(); q.push("a", 1); q.push("b", 1); q.pop(); expect(q.size).toBe(1); });
+test("20 ألف مهمة بأولويات عشوائية: نفس ناتج sort الـ stable (كل عملية O(log n))", () => {
+  let seed = 3;
+  const tasks = Array.from({ length: 20000 }, (_, i) => ({ name: "t" + i, p: (seed = (seed * 1103515245 + 12345) % 2147483648) % 10 }));
+  const q = new TaskQueue();
+  tasks.forEach(t => q.push(t.name, t.p));
+  const got = [];
+  while (q.size) got.push(q.pop());
+  expect(got).toEqual([...tasks].sort((a, b) => a.p - b.p).map(t => t.name));
+});`,
+            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+class TaskQueue {
+  constructor() {
+    this.seq = 0;
+    this.heap = new MinHeap((a, b) => a.priority - b.priority || a.seq - b.seq);
+  }
+  push(name, priority) { this.heap.push({ name, priority, seq: this.seq++ }); }
+  pop() { return this.heap.pop()?.name; }
+  get size() { return this.heap.size; }
+}`
+          }
         },
         {
           cmd: "kth largest",
@@ -4562,7 +6407,7 @@ console.log(kthLargest([3, 2, 3, 1, 2, 4, 5, 5, 6], 4)); // 4
 console.log(kthLargest([7], 1)); // 7
 console.log(bySort([3, 2, 1, 5, 6, 4], 2)); // 5
 // heap: O(n log k) time, O(k) space; sort: O(n log n) time, O(n) space`,
-          try: R`حل «Kth Largest Element in a Stream»: class اسمه [[KthLargest]] بياخد k وأرقام أولية، وفيه [[add(val)]] بتضيف رقم وترجّع الـ k أكبر لحد دلوقتي. جرّب [[new KthLargest(3, [4, 5, 8, 2])]] وبعدين [[add]] لـ 3 و 5 و 10 و 9 و 4، والمفروض يطلع 4 و 5 و 5 و 8 و 8.`,
+          try: R`حل «Kth Largest Element in a Stream»: class اسمه [[KthLargest]] بياخد k وأرقام أولية، وفيه [[add(val)]] بتضيف رقم وترجّع الـ k أكبر لحد دلوقتي. جرّب [[new KthLargest(3, [4, 5, 8, 2])]] وبعدين [[add]] لـ 3 و 5 و 10 و 9 و 4، والمفروض يطلع 4 و 5 و 5 و 8 و 8. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[KthLargest]] (الـ MinHeap جاهز في المربع).`,
           sol: R`الناتج: [[4 5 5 8 8]]. نفس الفكرة: heap حجمه k، والـ [[add]] بتعمل push، ولو الحجم عدّى k تعمل pop، وترجّع [[peek]]. كل add [[O(log k)]].
 
 dry run: بعد الأرقام الأولية الـ heap فيه [4, 5, 8] (2 اتطردت). add 3: دخلت وطلعت على طول، والـ root لسه 4. add 5: [4, 5, 5, 8] نطرد 4، الـ root 5. add 10: نطرد 5، والـ heap [5, 8, 10]، الـ root 5. add 9: نطرد 5، الـ root 8. add 4: تدخل وتطلع، 8.
@@ -4610,7 +6455,124 @@ console.log([3, 5, 10, 9, 4].map(x => s.add(x)).join(" ")); // 4 5 5 8 8
             "رابع أكبر مع تكرار: 4.",
             "عنصر واحد.",
             "الـ sort بيدّي نفس الإجابة."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+class KthLargest {
+  constructor(k, nums) {
+    this.k = k;
+    this.heap = new MinHeap();
+    // ضيف الأرقام الأولية بنفس طريقة add
+  }
+  add(val) {
+    // push، ولو الحجم عدّى k اعمل pop، ورجّع peek
+  }
+}`,
+            tests: R`test("KthLargest(3, [4, 5, 8, 2]) و add 3، 5، 10، 9، 4 ← 4 5 5 8 8", () => {
+  const kth = new KthLargest(3, [4, 5, 8, 2]);
+  expect([3, 5, 10, 9, 4].map(x => kth.add(x))).toEqual([4, 5, 5, 8, 8]);
+});
+test("الأرقام الأولية أقل من k: KthLargest(1, []) و add -3، -2، -4، 0، 4 ← -3 -2 -2 0 4", () => {
+  const kth = new KthLargest(1, []);
+  expect([-3, -2, -4, 0, 4].map(x => kth.add(x))).toEqual([-3, -2, -2, 0, 4]);
+});
+test("الـ heap حجمه k بس، مش كل الأرقام", () => {
+  const kth = new KthLargest(2, [1, 2, 3, 4, 5]);
+  kth.add(6);
+  expect(kth.heap.size).toBe(2);
+});
+test("١٠٠ ألف add و k = 10 (كل add O(log k))", () => {
+  const kth = new KthLargest(10, []);
+  let last;
+  for (let i = 0; i < 100000; i++) last = kth.add((i * 7919) % 100003);
+  const all = Array.from({ length: 100000 }, (_, i) => (i * 7919) % 100003).sort((a, b) => b - a);
+  expect(last).toBe(all[9]);
+});`,
+            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+class KthLargest {
+  constructor(k, nums) {
+    this.k = k;
+    this.heap = new MinHeap();
+    for (const x of nums) this.add(x);
+  }
+  add(val) {
+    this.heap.push(val);
+    if (this.heap.size > this.k) this.heap.pop();
+    return this.heap.peek();
+  }
+}`
+          }
         },
         {
           cmd: "top k frequent",
@@ -4649,7 +6611,7 @@ console.log(topKHeap([1, 1, 1, 2, 2, 3], 2)); // [1, 2]
 console.log(topKBucket([1, 1, 1, 2, 2, 3], 2)); // [1, 2]
 console.log(topKHeap([4], 1), topKBucket([5, 5, 6], 1)); // [4] [5]
 // heap: O(n log k) time; bucket: O(n) time; both O(n) space`,
-          try: R`حل «Top K Frequent Words»: نفس المسألة على كلمات، بس لو كلمتين نفس التكرار، اللي أبجديًا أصغر تيجي الأول. [[["i", "love", "leetcode", "i", "love", "coding"]]] و k = 2 الإجابة [[["i", "love"]]]، و [[["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"]]] و k = 4 الإجابة [[["the", "is", "sunny", "day"]]]. فكّر كويس في الـ compare بتاع الـ min heap.`,
+          try: R`حل «Top K Frequent Words»: نفس المسألة على كلمات، بس لو كلمتين نفس التكرار، اللي أبجديًا أصغر تيجي الأول. [[["i", "love", "leetcode", "i", "love", "coding"]]] و k = 2 الإجابة [[["i", "love"]]]، و [[["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"]]] و k = 4 الإجابة [[["the", "is", "sunny", "day"]]]. فكّر كويس في الـ compare بتاع الـ min heap. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[topKWords(words, k)]].`,
           sol: R`الإجابتين: [[i love]] و [[the is sunny day]].
 
 الـ compare في الـ min heap بيحدد مين يطلع (يتطرد) الأول. عايز تطرد الأقل تكرارًا، ولو متساويين تطرد اللي أبجديًا أكبر (عشان الأصغر أبجديًا هو اللي يفضل). فـ [[(a, b) => a[1] - b[1] || b[0].localeCompare(a[0])]]. لاحظ إن الـ tie-break معكوس ([[b]] قبل [[a]]).
@@ -4715,7 +6677,108 @@ heap بـ k = 2: push [1, 3]. push [2, 2]. push [3, 1]، الحجم 3، pop ال
             "1 اتكرر ٣ مرات و 2 مرتين.",
             "نفس الإجابة بالـ bucket.",
             "عنصر واحد، وحالة فيها تكرار واضح."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+function topKWords(words, k) {
+  const count = new Map();
+  for (const w of words) count.set(w, (count.get(w) ?? 0) + 1);
+  // min heap حجمه k: يطرد الأقل تكرارًا، ولو متساويين يطرد الأكبر أبجديًا
+  return [];
+}`,
+            tests: R`test("i love leetcode i love coding، k = 2 ← ['i', 'love']", () => expect(topKWords(["i", "love", "leetcode", "i", "love", "coding"], 2)).toEqual(["i", "love"]));
+test("k = 4 ← ['the', 'is', 'sunny', 'day']", () => expect(topKWords(["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"], 4)).toEqual(["the", "is", "sunny", "day"]));
+test("كلهم مرة واحدة ← أبجدي: ['b', 'a', 'c'] و k = 2 ← ['a', 'b']", () => expect(topKWords(["b", "a", "c"], 2)).toEqual(["a", "b"]));
+test("k = عدد الكلمات المختلفة ← كلهم", () => expect(topKWords(["x", "y", "x"], 2)).toEqual(["x", "y"]));
+test("50 ألف كلمة و k = 3 (O(n log k))", () => {
+  const words = Array.from({ length: 50000 }, (_, i) => "w" + (i % 1000 < 3 ? i % 1000 : i % 997));
+  expect(topKWords(words, 3)).toEqual(["w0", "w1", "w2"]);
+});`,
+            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+function topKWords(words, k) {
+  const count = new Map();
+  for (const w of words) count.set(w, (count.get(w) ?? 0) + 1);
+  const heap = new MinHeap((a, b) => a[1] - b[1] || b[0].localeCompare(a[0]));
+  for (const entry of count) {
+    heap.push(entry);
+    if (heap.size > k) heap.pop();
+  }
+  const out = [];
+  while (heap.size) out.push(heap.pop()[0]);
+  return out.reverse();
+}`
+          }
         },
         {
           cmd: "merge k sorted lists",
@@ -4746,7 +6809,7 @@ console.log(toArray(mergeKLists(lists)).join(" ")); // 1 1 2 3 4 4 5 6
 console.log(toArray(mergeKLists([]))); // []
 console.log(toArray(mergeKLists([null, toList([0])]))); // [0]
 // N total nodes, k lists: O(N log k) time, O(k) space for the heap`,
-          try: R`حلها من غير heap بالتقسيم (divide and conquer): ادمج الـ lists اتنين اتنين (0 مع 1، و 2 مع 3، ...)، وبعدين ادمج النواتج اتنين اتنين، لحد ما تفضل واحدة. زي merge sort بالظبط. احسب الـ Big-O. وبعدين طبّقها على حاجة حقيقية: ٣ ملفات logs كل واحد مترتب بالوقت، ادمجهم في timeline واحد.`,
+          try: R`حلها من غير heap بالتقسيم (divide and conquer): ادمج الـ lists اتنين اتنين (0 مع 1، و 2 مع 3، ...)، وبعدين ادمج النواتج اتنين اتنين، لحد ما تفضل واحدة. زي merge sort بالظبط. احسب الـ Big-O. وبعدين طبّقها على حاجة حقيقية: ٣ ملفات logs كل واحد مترتب بالوقت، ادمجهم في timeline واحد. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[mergeKDivide(lists)]] بالتقسيم اتنين اتنين، والاختبارات فيها lists أرقام و lists سطور logs.`,
           sol: R`الناتج [[1 1 2 3 4 4 5 6]] زي نسخة الـ heap.
 
 الـ Big-O: كل «جولة» بتعدّي على كل العقد مرة، [[O(N)]]، وعدد الجولات [[log k]] (كل جولة عدد الـ lists بيقل للنص)، فالإجمالي [[O(N log k)]]، نفس الـ heap، ومن غير heap خالص، وذاكرة [[O(1)]] زيادة (غير الـ array بتاعة الـ lists).
@@ -4815,7 +6878,63 @@ console.log(toArray(mergeKDivide(logs.map(toList))).join(" | ")); // 09:00 api u
             "٨ عقد مترتبة.",
             "مفيش lists.",
             "list فاضية (null) و list فيها عنصر."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function mergeTwo(a, b) {
+  const dummy = { next: null };
+  let tail = dummy;
+  while (a && b) {
+    if (a.val <= b.val) { tail.next = a; a = a.next; } else { tail.next = b; b = b.next; }
+    tail = tail.next;
+  }
+  tail.next = a ?? b;
+  return dummy.next;
+}
+function mergeKDivide(lists) {
+  // كل جولة: ادمج [0 مع 1]، [2 مع 3]... لحد ما تفضل list واحدة
+  return null;
+}`,
+            tests: R`const toList = arr => arr.reduceRight((next, val) => ({ val, next }), null);
+const toArray = list => { const out = []; for (let n = list; n && out.length <= 100000; n = n.next) out.push(n.val); return out; };
+test("[[1, 4, 5], [1, 3, 4], [2, 6]] ← 1 1 2 3 4 4 5 6", () => expect(toArray(mergeKDivide([[1, 4, 5], [1, 3, 4], [2, 6]].map(toList)))).toEqual([1, 1, 2, 3, 4, 4, 5, 6]));
+test("[] ← null", () => expect(mergeKDivide([])).toBe(null));
+test("lists فاضية (null) في النص وعدد فردي", () => expect(toArray(mergeKDivide([null, toList([3]), null, toList([1, 2]), null])) ).toEqual([1, 2, 3]));
+test("٣ ملفات logs ← timeline واحد (مقارنة الـ strings بـ <= بتنفع مع HH:MM)", () => {
+  const logs = [["09:00 api up", "09:05 db slow"], ["09:01 worker start"], ["09:03 cache miss", "09:06 cache hit"]];
+  expect(toArray(mergeKDivide(logs.map(toList))).map(l => l.slice(0, 5))).toEqual(["09:00", "09:01", "09:03", "09:05", "09:06"]);
+});
+test("بتربط العقد الموجودة، مش بتعمل عقد جديدة", () => {
+  const a = toList([1]), b = toList([2]);
+  const r = mergeKDivide([a, b]);
+  expect([r === a, r.next === b]).toEqual([true, true]);
+});
+test("500 list × 40 عقدة (O(N log k)، مش O(N × k))", () => {
+  const lists = Array.from({ length: 500 }, (_, i) => toList(Array.from({ length: 40 }, (_, j) => j * 500 + i)));
+  const r = toArray(mergeKDivide(lists));
+  expect([r.length, r.every((x, i) => x === i)]).toEqual([20000, true]);
+});`,
+            solution: R`function mergeTwo(a, b) {
+  const dummy = { next: null };
+  let tail = dummy;
+  while (a && b) {
+    if (a.val <= b.val) { tail.next = a; a = a.next; } else { tail.next = b; b = b.next; }
+    tail = tail.next;
+  }
+  tail.next = a ?? b;
+  return dummy.next;
+}
+function mergeKDivide(lists) {
+  if (lists.length === 0) return null;
+  let round = lists;
+  while (round.length > 1) {
+    const next = [];
+    for (let i = 0; i < round.length; i += 2) next.push(mergeTwo(round[i], round[i + 1] ?? null));
+    round = next;
+  }
+  return round[0];
+}`
+          }
         }
       ]
     },
@@ -4868,7 +6987,7 @@ console.log(climbMemo(5), climbTable(5), climbTwoVars(5)); // 8 8 8
 console.log(climbTwoVars(45)); // 1836311903
 console.log(climbTable(1), climbTwoVars(0)); // 1 1
 // memo: O(n) time, O(n) map + O(n) stack; table: O(n) time, O(n) space; two vars: O(n) time, O(1) space`,
-          try: R`حل «House Robber» بالـ ٥ أسئلة: بيوت في شارع، كل بيت فيه فلوس، ومينفعش تسرق بيتين جنب بعض. أقصى مبلغ كام؟ [[[2, 7, 9, 3, 1]]] الإجابة 12 (2 + 9 + 1)، و [[[2, 1, 1, 2]]] الإجابة 4. اكتبها بجدول الأول، وبعدين بمتغيرين. وبعدين «Min Cost Climbing Stairs»: [[[10, 15, 20]]] الإجابة 15.`,
+          try: R`حل «House Robber» بالـ ٥ أسئلة: بيوت في شارع، كل بيت فيه فلوس، ومينفعش تسرق بيتين جنب بعض. أقصى مبلغ كام؟ [[[2, 7, 9, 3, 1]]] الإجابة 12 (2 + 9 + 1)، و [[[2, 1, 1, 2]]] الإجابة 4. اكتبها بجدول الأول، وبعدين بمتغيرين. وبعدين «Min Cost Climbing Stairs»: [[[10, 15, 20]]] الإجابة 15. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[rob(nums)]] و [[minCostClimbing(cost)]].`,
           sol: R`House Robber: الحالة [[dp[i]]] = أقصى مبلغ من أول i بيوت. الانتقال: يا إما متسرقش البيت i (فالإجابة [[dp[i - 1]]])، يا إما تسرقه (فلوسه + [[dp[i - 2]]])، وخد الأكبر. الـ base: [[dp[0] = 0]]، و [[dp[1] = nums[0]]]. الإجابات 12 و 4 و 0 للشارع الفاضي.
 
 [[[2, 1, 1, 2]]] بتوقع اللي بيفكر greedy («خد البيوت الزوجية أو الفردية»): الاتنين بيدّوا 3، والإجابة 4 (أول بيت وآخر بيت).
@@ -4939,7 +7058,35 @@ climbTwoVars(45) = 1836311903، لسه أقل من [[Number.MAX_SAFE_INTEGER]]. 
             "الـ ٣ نسخ نفس الإجابة.",
             "45 سلمة في لحظة.",
             "الحالات الصغيرة."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function rob(nums) {
+  // dp[i] = max(dp[i - 1], nums[i - 1] + dp[i - 2])، أو بمتغيرين
+  return 0;
+}
+function minCostClimbing(cost) {
+  // الإجابة dp[n] (القمة فوق آخر سلمة)
+  return 0;
+}`,
+            tests: R`test("rob([2, 7, 9, 3, 1]) ← 12", () => expect(rob([2, 7, 9, 3, 1])).toBe(12));
+test("rob([2, 1, 1, 2]) ← 4 (الزوجي أو الفردي بيدّوا 3)", () => expect(rob([2, 1, 1, 2])).toBe(4));
+test("rob([]) ← 0 و rob([5]) ← 5", () => expect([rob([]), rob([5])]).toEqual([0, 5]));
+test("minCostClimbing([10, 15, 20]) ← 15", () => expect(minCostClimbing([10, 15, 20])).toBe(15));
+test("[1, 100, 1, 1, 1, 100, 1, 1, 100, 1] ← 6", () => expect(minCostClimbing([1, 100, 1, 1, 1, 100, 1, 1, 100, 1])).toBe(6));
+test("١٠٠ ألف بيت كلهم 1 ← 50000 (O(n))", () => expect(rob(new Array(100000).fill(1))).toBe(50000));`,
+            solution: R`function rob(nums) {
+  let prev = 0, cur = 0;
+  for (const x of nums) [prev, cur] = [cur, Math.max(cur, prev + x)];
+  return cur;
+}
+function minCostClimbing(cost) {
+  const n = cost.length;
+  const dp = new Array(n + 1).fill(0);
+  for (let i = 2; i <= n; i++) dp[i] = Math.min(dp[i - 1] + cost[i - 1], dp[i - 2] + cost[i - 2]);
+  return dp[n];
+}`
+          }
         },
         {
           cmd: "coin change (DP)",
@@ -4974,7 +7121,7 @@ console.log(coinChange([1, 3, 4], 6)); // 2
 console.log(coinChange([7], 0)); // 0
 console.log(countWays([1, 2, 5], 5)); // 4
 // both: O(amount × coins) time, O(amount) space`,
-          try: R`خلّي [[coinChange]] ترجّع العملات نفسها مش عددها بس: احفظ في array تانية [[pick[a]]] آخر عملة اخترتها للمبلغ a، وارجع بيها من amount لـ 0. [[([1, 2, 5], 11)]] المفروض ترجّع [[[5, 5, 1]]] (أو أي ترتيب ليها). وبعدين في [[countWays]] بدّل ترتيب الـ loopين (المبلغ برّا والعملات جوه)، وشوف [[([1, 2, 5], 5)]] بقت كام، وفسّر ليه.`,
+          try: R`خلّي [[coinChange]] ترجّع العملات نفسها مش عددها بس: احفظ في array تانية [[pick[a]]] آخر عملة اخترتها للمبلغ a، وارجع بيها من amount لـ 0. [[([1, 2, 5], 11)]] المفروض ترجّع [[[5, 5, 1]]] (أو أي ترتيب ليها). وبعدين في [[countWays]] بدّل ترتيب الـ loopين (المبلغ برّا والعملات جوه)، وشوف [[([1, 2, 5], 5)]] بقت كام، وفسّر ليه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[coinsUsed(coins, amount)]] بترجّع العملات نفسها (أي ترتيب) أو null.`,
           sol: R`[[coinsUsed([1, 2, 5], 11)]] = [[[1, 5, 5]]] بالكود اللي تحت (الترتيب حسب [[pick]])، و [[([1, 3, 4], 6)]] = [[[3, 3]]]، و [[([2], 3)]] = [[null]].
 
 كل ما [[dp[a]]] تتحسن، احفظ [[pick[a] = c]]. وبعدين: [[while (a > 0) { out.push(pick[a]); a -= pick[a]; }]].
@@ -5038,7 +7185,40 @@ Big-O: [[O(amount × coins)]]. ده اسمه pseudo-polynomial: لو amount مل
             "3 + 3، مش 4 + 1 + 1.",
             "مبلغ 0.",
             "٤ طرق للـ 5."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function coinsUsed(coins, amount) {
+  const dp = new Array(amount + 1).fill(Infinity);
+  const pick = new Array(amount + 1);
+  dp[0] = 0;
+  // كل ما dp[a] تتحسن احفظ pick[a] = c، وبعدين ارجع من amount لـ 0
+  return null;
+}`,
+            tests: R`const sorted = a => a && [...a].sort((x, y) => x - y);
+test("([1, 2, 5], 11) ← [1, 5, 5]", () => expect(sorted(coinsUsed([1, 2, 5], 11))).toEqual([1, 5, 5]));
+test("([1, 3, 4], 6) ← [3, 3] (الـ greedy كان هيقول 4 + 1 + 1)", () => expect(sorted(coinsUsed([1, 3, 4], 6))).toEqual([3, 3]));
+test("([2], 3) ← null", () => expect(coinsUsed([2], 3)).toBe(null));
+test("([7], 0) ← []", () => expect(coinsUsed([7], 0)).toEqual([]));
+test("([1, 7, 13], 10000): المجموع صح وعدد العملات أقل عدد (O(amount × coins))", () => {
+  const r = coinsUsed([1, 7, 13], 10000);
+  const dp = new Array(10001).fill(Infinity); dp[0] = 0;
+  for (let a = 1; a <= 10000; a++) for (const c of [1, 7, 13]) if (c <= a) dp[a] = Math.min(dp[a], dp[a - c] + 1);
+  expect([r.reduce((s, x) => s + x, 0), r.length]).toEqual([10000, dp[10000]]);
+});`,
+            solution: R`function coinsUsed(coins, amount) {
+  const dp = new Array(amount + 1).fill(Infinity);
+  const pick = new Array(amount + 1);
+  dp[0] = 0;
+  for (let a = 1; a <= amount; a++)
+    for (const c of coins)
+      if (c <= a && dp[a - c] + 1 < dp[a]) { dp[a] = dp[a - c] + 1; pick[a] = c; }
+  if (dp[amount] === Infinity) return null;
+  const out = [];
+  for (let a = amount; a > 0; a -= pick[a]) out.push(pick[a]);
+  return out;
+}`
+          }
         },
         {
           cmd: "LCS (2D table)",
@@ -5069,7 +7249,7 @@ console.log(lcs("abcde", "ace")); // { length: 3, text: 'ace' }
 console.log(lcs("abc", "def")); // { length: 0, text: '' }
 console.log(lcs("AGGTAB", "GXTXAYB")); // { length: 4, text: 'GTAB' }
 // O(n × m) time and space (n and m are the two lengths)`,
-          try: R`حل «Edit Distance»: أقل عدد عمليات (إضافة حرف، أو مسح حرف، أو تبديل حرف) عشان تحوّل كلمة لكلمة. [[("horse", "ros")]] = 3، و [[("intention", "execution")]] = 5، و [[("", "abc")]] = 3. نفس شكل الجدول بالظبط، بس فكّر: الصف 0 والعمود 0 قيمتهم إيه هنا؟`,
+          try: R`حل «Edit Distance»: أقل عدد عمليات (إضافة حرف، أو مسح حرف، أو تبديل حرف) عشان تحوّل كلمة لكلمة. [[("horse", "ros")]] = 3، و [[("intention", "execution")]] = 5، و [[("", "abc")]] = 3. نفس شكل الجدول بالظبط، بس فكّر: الصف 0 والعمود 0 قيمتهم إيه هنا؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[editDistance(a, b)]].`,
           sol: R`الإجابات 3 و 5 و 3.
 
 [[dp[i][j]]] = أقل عمليات لتحويل أول i حروف من a لأول j حروف من b. الـ base مختلف عن LCS: [[dp[i][0] = i]] (امسح i حروف)، و [[dp[0][j] = j]] (ضيف j حروف). لو خليتهم 0 زي LCS، الإجابة هتطلع أقل من الحقيقة.
@@ -5130,7 +7310,29 @@ console.log(editDistance("", "abc"), editDistance("same", "same")); // 3 0
             "a و c و e.",
             "مفيش حاجة مشتركة.",
             "مثال أطول: GTAB."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function editDistance(a, b) {
+  const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  // الصف 0 والعمود 0 هنا مش أصفار: dp[i][0] = i و dp[0][j] = j
+  return dp[a.length][b.length];
+}`,
+            tests: R`test("('horse', 'ros') ← 3", () => expect(editDistance("horse", "ros")).toBe(3));
+test("('intention', 'execution') ← 5", () => expect(editDistance("intention", "execution")).toBe(5));
+test("('', 'abc') ← 3 و ('abc', '') ← 3", () => expect([editDistance("", "abc"), editDistance("abc", "")]).toEqual([3, 3]));
+test("نفس الكلمة ← 0", () => expect(editDistance("same", "same")).toBe(0));
+test("كلمتين 1000 حرف (O(n × m) = مليون خانة)", () => expect(editDistance("a".repeat(1000), "b".repeat(999) + "a")).toBe(999));`,
+            solution: R`function editDistance(a, b) {
+  const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+  return dp[a.length][b.length];
+}`
+          }
         },
         {
           cmd: "0/1 knapsack",
@@ -5160,7 +7362,7 @@ console.log(knapsack([1, 3, 4, 5], [1, 4, 5, 7], 7)); // 9
 console.log(knapsack([2], [3], 4), unbounded([2], [3], 4)); // 3 6
 console.log(knapsack([5], [10], 4)); // 0
 // O(n × capacity) time, O(capacity) space`,
-          try: R`حل «Partition Equal Subset Sum»: تقدر تقسم الأرقام لمجموعتين مجموعهم متساوي؟ [[[1, 5, 11, 5]]] true (11 و 1 + 5 + 5)، و [[[1, 2, 3, 5]]] false. ده knapsack متنكر: السعة = نص المجموع، والسؤال «فيه مجموعة جزئية مجموعها بالظبط كده؟». استخدم جدول true/false بدل القيم.`,
+          try: R`حل «Partition Equal Subset Sum»: تقدر تقسم الأرقام لمجموعتين مجموعهم متساوي؟ [[[1, 5, 11, 5]]] true (11 و 1 + 5 + 5)، و [[[1, 2, 3, 5]]] false. ده knapsack متنكر: السعة = نص المجموع، والسؤال «فيه مجموعة جزئية مجموعها بالظبط كده؟». استخدم جدول true/false بدل القيم. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[canPartition(nums)]].`,
           sol: R`الإجابات: [[true]] و [[false]]، و [[[1, 1]]] true، و [[[3]]] false، و [[[2, 6]]] false.
 
 لو المجموع فردي: false على طول. غير كده [[target = sum / 2]]، و [[can[s]]] = «ممكن أكوّن المجموع s». [[can[0] = true]]. لكل رقم، من target لتحت: [[can[s] = can[s] || can[s - x]]]. ومن الكبير للصغير عشان كل رقم يتاخد مرة واحدة (0/1).
@@ -5213,7 +7415,33 @@ dry run لـ [[([2], [3], 4)]]: 0/1 من 4 لـ 2: [[dp[4] = max(0, dp[2] + 3) =
             "وزن 3 + وزن 4 = قيمة 9.",
             "0/1 تاخدها مرة (3)، و unbounded مرتين (6).",
             "الحاجة أتقل من الشنطة."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function canPartition(nums) {
+  const sum = nums.reduce((s, x) => s + x, 0);
+  // لو فردي false، وإلا can[s] من target لتحت
+  return false;
+}`,
+            tests: R`test("[1, 5, 11, 5] ← true", () => expect(canPartition([1, 5, 11, 5])).toBe(true));
+test("[1, 2, 3, 5] ← false", () => expect(canPartition([1, 2, 3, 5])).toBe(false));
+test("[1, 1] ← true و [3] ← false", () => expect([canPartition([1, 1]), canPartition([3])]).toEqual([true, false]));
+test("فخ الاتجاه: [2, 6] ← false (لو مشيت من الصغير للكبير هتستخدم 2 مرتين)", () => expect(canPartition([2, 6])).toBe(false));
+test("200 رقم مجموعهم 20000 (O(n × sum))", () => {
+  const nums = Array.from({ length: 200 }, (_, i) => (i % 2 ? 99 : 101));
+  expect([canPartition(nums), canPartition([...new Array(199).fill(100), 102])]).toEqual([true, false]);
+});`,
+            solution: R`function canPartition(nums) {
+  const sum = nums.reduce((s, x) => s + x, 0);
+  if (sum % 2) return false;
+  const target = sum / 2;
+  const can = new Array(target + 1).fill(false);
+  can[0] = true;
+  for (const x of nums)
+    for (let s = target; s >= x; s--) can[s] = can[s] || can[s - x];
+  return can[target];
+}`
+          }
         },
         {
           cmd: "greedy (interval scheduling)",
@@ -5251,7 +7479,7 @@ console.log(greedyCoins([1, 5, 10, 25], 63)); // 6
 console.log(greedyCoins([1, 3, 4], 6)); // 3
 console.log(greedyCoins([3, 4], 6)); // -1
 // maxMeetings: O(n log n) for the sort; greedyCoins: O(k log k) for k coin types`,
-          try: R`حل «Non-overlapping Intervals»: أقل عدد فترات تشيلها عشان الباقي ميتداخلش. [[[[1,2],[2,3],[3,4],[1,3]]]] الإجابة 1، و [[[[1,2],[1,2],[1,2]]]] الإجابة 2. (فكّر: ده مرتبط بـ [[maxMeetings]] إزاي؟) وبعدين «Jump Game»: كل خانة فيها أقصى قفزة منها، تقدر توصل للآخر؟ [[[2,3,1,1,4]]] true و [[[3,2,1,0,4]]] false. وبعدين جرّب ترتّب الاجتماعات بالبداية بدل النهاية وشوف [[maxMeetings]] بتطلّع كام.`,
+          try: R`حل «Non-overlapping Intervals»: أقل عدد فترات تشيلها عشان الباقي ميتداخلش. [[[[1,2],[2,3],[3,4],[1,3]]]] الإجابة 1، و [[[[1,2],[1,2],[1,2]]]] الإجابة 2. (فكّر: ده مرتبط بـ [[maxMeetings]] إزاي؟) وبعدين «Jump Game»: كل خانة فيها أقصى قفزة منها، تقدر توصل للآخر؟ [[[2,3,1,1,4]]] true و [[[3,2,1,0,4]]] false. وبعدين جرّب ترتّب الاجتماعات بالبداية بدل النهاية وشوف [[maxMeetings]] بتطلّع كام. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[eraseOverlap(intervals)]] و [[canJump(nums)]].`,
           sol: R`Non-overlapping Intervals = العدد الكلي ناقص أكبر عدد فترات مش متداخلة، يعني [[n - maxMeetings(intervals).length]]. الإجابات 1 و 2. الفترات اللي بتلمس بعض ([1,2] و [2,3]) مش متداخلة، عشان كده الشرط [[>=]].
 
 Jump Game: امشي من الشمال واحفظ [[reach]] = أبعد خانة تقدر توصلها. لو وصلت لخانة [[i > reach]]، معناها في حتة مش هتعرف تعدّيها: false. غير كده [[reach = max(reach, i + nums[i])]]. [[O(n)]] وقت و [[O(1)]] ذاكرة. في [[[3,2,1,0,4]]] كل الطرق بتقف عند index 3 (قيمته 0).
@@ -5316,7 +7544,42 @@ dry run: بعد الترتيب بالنهاية: [1,4] [3,5] [0,6] [5,7] [3,9] [
             "عملات أمريكا: 25 + 25 + 10 + 1 + 1 + 1، صح.",
             "3 (4 + 1 + 1)، والصح 2 (3 + 3).",
             "بيقول مستحيل، والصح 2 (3 + 3)."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function eraseOverlap(intervals) {
+  // n - عدد اللي maxMeetings بتختاره (رتّب بالنهاية)
+  return 0;
+}
+function canJump(nums) {
+  let reach = 0;
+  // لو i > reach يبقى مش هتعدّي
+  return false;
+}`,
+            tests: R`test("[[1,2],[2,3],[3,4],[1,3]] ← 1", () => expect(eraseOverlap([[1, 2], [2, 3], [3, 4], [1, 3]])).toBe(1));
+test("[[1,2],[1,2],[1,2]] ← 2", () => expect(eraseOverlap([[1, 2], [1, 2], [1, 2]])).toBe(2));
+test("فترات بتلمس بعض مش متداخلة: [[1,2],[2,3]] ← 0، و [] ← 0", () => expect([eraseOverlap([[1, 2], [2, 3]]), eraseOverlap([])]).toEqual([0, 0]));
+test("فترة طويلة بتغطي الكل: [[1,100],[11,22],[1,11],[2,12]] ← 2", () => expect(eraseOverlap([[1, 100], [11, 22], [1, 11], [2, 12]])).toBe(2));
+test("canJump([2,3,1,1,4]) ← true و [3,2,1,0,4] ← false", () => expect([canJump([2, 3, 1, 1, 4]), canJump([3, 2, 1, 0, 4])]).toEqual([true, false]));
+test("[0] ← true (انت أصلًا في الآخر)، و [0, 1] ← false", () => expect([canJump([0]), canJump([0, 1])]).toEqual([true, false]));
+test("١٠٠ ألف خانة (O(n))", () => expect([canJump(new Array(100000).fill(1)), canJump([...new Array(50000).fill(1), 0, 1])]).toEqual([true, false]));`,
+            solution: R`function eraseOverlap(intervals) {
+  const sorted = [...intervals].sort((a, b) => a[1] - b[1]);
+  let kept = 0, lastEnd = -Infinity;
+  for (const [start, end] of sorted) {
+    if (start >= lastEnd) { kept++; lastEnd = end; }
+  }
+  return intervals.length - kept;
+}
+function canJump(nums) {
+  let reach = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (i > reach) return false;
+    reach = Math.max(reach, i + nums[i]);
+  }
+  return true;
+}`
+          }
         }
       ]
     },
@@ -5354,7 +7617,7 @@ const show = sets => sets.map(s => "[" + s.join(",") + "]").join(" ");
 console.log(show(subsets([1, 2, 3]))); // [] [1] [1,2] [1,2,3] [1,3] [2] [2,3] [3]
 console.log(subsets([]).length, subsets([1, 2, 3, 4, 5]).length); // 1 32
 // 2^n subsets, each copied in O(n): O(n × 2^n) time and output; O(n) extra for path + stack`,
-          try: R`حل «Subsets II»: الـ input فيه تكرار، والناتج مينفعش يكون فيه مجموعتين متطابقتين. [[[1, 2, 2]]] الإجابة ٦ مجموعات: [[[] [1] [1,2] [1,2,2] [2] [2,2]]]. (رتّب الأول، وفي نفس المستوى فوّت العنصر لو زي اللي قبله.) وبعدين اكتب [[subsets]] من غير recursion خالص باستخدام الـ bits: كل رقم من 0 لـ [[2^n - 1]] بيمثّل مجموعة.`,
+          try: R`حل «Subsets II»: الـ input فيه تكرار، والناتج مينفعش يكون فيه مجموعتين متطابقتين. [[[1, 2, 2]]] الإجابة ٦ مجموعات: [[[] [1] [1,2] [1,2,2] [2] [2,2]]]. (رتّب الأول، وفي نفس المستوى فوّت العنصر لو زي اللي قبله.) وبعدين اكتب [[subsets]] من غير recursion خالص باستخدام الـ bits: كل رقم من 0 لـ [[2^n - 1]] بيمثّل مجموعة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[subsetsWithDup(nums)]] و [[subsetsBits(nums)]]، وترتيب المجموعات مش مهم.`,
           sol: R`Subsets II: بعد الـ sort، الشرط [[if (i > start && nums[i] === nums[i - 1]) continue]]. الـ [[i > start]] مهم: التكرار ممنوع كـ «أول اختيار في نفس المستوى» بس، لكن مسموح إنك تاخد الـ 2 التانية بعد الأولى (عشان [1,2,2] تطلع). لو كتبت [[i > 0]] هتفوّت [[[1,2,2]]] و [[[2,2]]] وتطلع ٤ بس.
 
 بالـ bits: [[mask]] من 0 لـ [[(1 << n) - 1]]، والعنصر i داخل لو [[mask & (1 << i)]] مش صفر. لـ [1, 2, 3]: الـ mask 5 = 101 = [1, 3]. الناتج نفس الـ ٨ مجموعات بترتيب تاني: [[[] [1] [2] [1,2] [3] [1,3] [2,3] [1,2,3]]].
@@ -5415,7 +7678,51 @@ console.log(show(subsetsBits([1, 2, 3]))); // [] [1] [2] [1,2] [3] [1,3] [2,3] [
             "طباعة مختصرة.",
             "٨ مجموعات بترتيب الـ DFS.",
             "array فاضية ليها مجموعة واحدة (الفاضية)، و ٥ عناصر 32."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function subsetsWithDup(nums) {
+  const sorted = [...nums].sort((a, b) => a - b);
+  const out = [], path = [];
+  // زي subsets، وفوّت: i > start && sorted[i] === sorted[i - 1]
+  return out;
+}
+function subsetsBits(nums) {
+  const out = [];
+  // mask من 0 لـ (1 << n) - 1
+  return out;
+}`,
+            tests: R`const norm = xs => xs.map(x => JSON.stringify(x)).sort();
+const normSorted = xs => xs.map(x => JSON.stringify([...x].sort((a, b) => a - b))).sort();
+test("[1, 2, 2] ← 6 مجموعات: [] [1] [1,2] [1,2,2] [2] [2,2]", () => expect(normSorted(subsetsWithDup([1, 2, 2]))).toEqual(normSorted([[], [1], [1, 2], [1, 2, 2], [2], [2, 2]])));
+test("i > start مش i > 0: [2, 2] ← [] [2] [2,2]", () => expect(normSorted(subsetsWithDup([2, 2]))).toEqual(normSorted([[], [2], [2, 2]])));
+test("[4, 4, 4, 1, 4] ← 10 مجموعات", () => expect(subsetsWithDup([4, 4, 4, 1, 4]).length).toBe(10));
+test("[] ← [[]]", () => expect(subsetsWithDup([])).toEqual([[]]));
+test("subsetsBits([1, 2, 3]) ← نفس الـ 8 مجموعات", () => expect(normSorted(subsetsBits([1, 2, 3]))).toEqual(normSorted([[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]])));
+test("subsetsBits لـ 12 عنصر ← 4096 (O(n × 2^n))", () => expect(subsetsBits(Array.from({ length: 12 }, (_, i) => i)).length).toBe(4096));`,
+            solution: R`function subsetsWithDup(nums) {
+  const sorted = [...nums].sort((a, b) => a - b);
+  const out = [], path = [];
+  const backtrack = start => {
+    out.push([...path]);
+    for (let i = start; i < sorted.length; i++) {
+      if (i > start && sorted[i] === sorted[i - 1]) continue;
+      path.push(sorted[i]);
+      backtrack(i + 1);
+      path.pop();
+    }
+  };
+  backtrack(0);
+  return out;
+}
+function subsetsBits(nums) {
+  const out = [];
+  for (let mask = 0; mask < 1 << nums.length; mask++) {
+    out.push(nums.filter((_, i) => mask & (1 << i)));
+  }
+  return out;
+}`
+          }
         },
         {
           cmd: "permutations",
@@ -5447,7 +7754,7 @@ console.log(permutations([1, 2, 3]).map(p => p.join("")).join(" ")); // 123 132 
 console.log(permutations([1, 2, 3, 4]).length); // 24
 console.log(permutations([])); // [[]]
 // n! permutations, each copied in O(n): O(n × n!) time; O(n) extra for path, used and the stack`,
-          try: R`حل «Permutations II» (الـ input فيه تكرار): [[[1, 1, 2]]] الإجابة ٣ بس: 112 و 121 و 211. وبعدين «N-Queens»: كام طريقة تحط n وزير على رقعة n × n من غير ما اتنين يهاجموا بعض (نفس الصف أو العمود أو القطر)؟ n = 4 الإجابة 2، و n = 8 الإجابة 92. (كل صف فيه وزير واحد، فجرّب كل عمود في الصف الحالي، واحفظ الأعمدة والقطرين المشغولين في Sets.)`,
+          try: R`حل «Permutations II» (الـ input فيه تكرار): [[[1, 1, 2]]] الإجابة ٣ بس: 112 و 121 و 211. وبعدين «N-Queens»: كام طريقة تحط n وزير على رقعة n × n من غير ما اتنين يهاجموا بعض (نفس الصف أو العمود أو القطر)؟ n = 4 الإجابة 2، و n = 8 الإجابة 92. (كل صف فيه وزير واحد، فجرّب كل عمود في الصف الحالي، واحفظ الأعمدة والقطرين المشغولين في Sets.) اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[permuteUnique(nums)]] و [[nQueens(n)]].`,
           sol: R`Permutations II: رتّب، وفوّت العنصر لو زي اللي قبله واللي قبله مش مستخدم في المسار الحالي: [[if (i > 0 && nums[i] === nums[i - 1] && !used[i - 1]) continue]]. المعنى: من النسخ المتكررة، استخدمهم دايمًا بالترتيب (الأولى قبل التانية)، فكل ترتيب يطلع مرة واحدة. الناتج [[112 121 211]].
 
 N-Queens: [[place(row)]]: لو row = n لقيت حل. غير كده لكل عمود c: لو c أو [[row - c]] (قطر) أو [[row + c]] (القطر التاني) مشغولين، فوّت. غير كده علّمهم، وانزل للصف الجاي، وشيل العلامات. الإجابات 2 و 92.
@@ -5523,7 +7830,62 @@ permutations([]) بترجّع [[[[]]]] (ترتيب واحد: الفاضي)، م�
             "٦ ترتيبات بالترتيب ده.",
             "4! = 24.",
             "ترتيب واحد: الفاضي."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function permuteUnique(nums) {
+  const sorted = [...nums].sort((a, b) => a - b);
+  const out = [], path = [], used = new Array(sorted.length).fill(false);
+  // فوّت: i > 0 && sorted[i] === sorted[i - 1] && !used[i - 1]
+  return out;
+}
+function nQueens(n) {
+  const cols = new Set(), d1 = new Set(), d2 = new Set();
+  // place(row): الأعمدة، و row - c، و row + c
+  return 0;
+}`,
+            tests: R`const norm = xs => xs.map(x => JSON.stringify(x)).sort();
+const normSorted = xs => xs.map(x => JSON.stringify([...x].sort((a, b) => a - b))).sort();
+test("[1, 1, 2] ← 112 و 121 و 211 بس", () => expect(norm(permuteUnique([1, 1, 2]))).toEqual(norm([[1, 1, 2], [1, 2, 1], [2, 1, 1]])));
+test("[1, 2, 3] ← 6، و [2, 2, 2] ← 1", () => expect([permuteUnique([1, 2, 3]).length, permuteUnique([2, 2, 2]).length]).toEqual([6, 1]));
+test("[] ← [[]]", () => expect(permuteUnique([])).toEqual([[]]));
+test("7 عناصر فيهم تكرار ← 7! / (2! × 3!) = 420", () => expect(permuteUnique([1, 1, 2, 2, 2, 3, 4]).length).toBe(420));
+test("N-Queens: 1 ← 1، و 2 و 3 ← 0، و 4 ← 2", () => expect([1, 2, 3, 4].map(nQueens)).toEqual([1, 0, 0, 2]));
+test("8 وزراء ← 92 (الـ pruning بيخليها أجزاء من الثانية)", () => expect(nQueens(8)).toBe(92));`,
+            solution: R`function permuteUnique(nums) {
+  const sorted = [...nums].sort((a, b) => a - b);
+  const out = [], path = [], used = new Array(sorted.length).fill(false);
+  const backtrack = () => {
+    if (path.length === sorted.length) { out.push([...path]); return; }
+    for (let i = 0; i < sorted.length; i++) {
+      if (used[i]) continue;
+      if (i > 0 && sorted[i] === sorted[i - 1] && !used[i - 1]) continue;
+      used[i] = true;
+      path.push(sorted[i]);
+      backtrack();
+      path.pop();
+      used[i] = false;
+    }
+  };
+  backtrack();
+  return out;
+}
+function nQueens(n) {
+  const cols = new Set(), d1 = new Set(), d2 = new Set();
+  let count = 0;
+  const place = row => {
+    if (row === n) { count++; return; }
+    for (let c = 0; c < n; c++) {
+      if (cols.has(c) || d1.has(row - c) || d2.has(row + c)) continue;
+      cols.add(c); d1.add(row - c); d2.add(row + c);
+      place(row + 1);
+      cols.delete(c); d1.delete(row - c); d2.delete(row + c);
+    }
+  };
+  place(0);
+  return count;
+}`
+          }
         },
         {
           cmd: "combination sum",
@@ -5558,7 +7920,7 @@ console.log(combinationSum([2, 3, 6, 7], 7)); // [[2, 2, 3], [7]]
 console.log(combinationSum([2, 3, 5], 8)); // [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
 console.log(combinationSum([2], 1)); // []
 // exponential: the tree has at most about n^(target / min) nodes; O(target / min) depth`,
-          try: R`حل «Combination Sum II»: كل رقم يتاخد مرة واحدة بس، والـ input فيه تكرار، والناتج مينفعش يكون فيه تركيبتين متطابقتين. [[[10, 1, 2, 7, 6, 1, 5]]] و target = 8 الإجابة [[[[1,1,6], [1,2,5], [1,7], [2,6]]]]. (خليط من الدرس ده ومن Subsets II.)`,
+          try: R`حل «Combination Sum II»: كل رقم يتاخد مرة واحدة بس، والـ input فيه تكرار، والناتج مينفعش يكون فيه تركيبتين متطابقتين. [[[10, 1, 2, 7, 6, 1, 5]]] و target = 8 الإجابة [[[[1,1,6], [1,2,5], [1,7], [2,6]]]]. (خليط من الدرس ده ومن Subsets II.) اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[combinationSum2(candidates, target)]]، وترتيب التركيبات مش مهم.`,
           sol: R`الإجابة: [[[[1,1,6], [1,2,5], [1,7], [2,6]]]].
 
 التغييرين: [[backtrack(i + 1, ...)]] بدل [[backtrack(i, ...)]] (كل رقم مرة)، و [[if (i > start && sorted[i] === sorted[i - 1]) continue]] (فوّت التكرار في نفس المستوى، زي Subsets II بالظبط).
@@ -5619,7 +7981,39 @@ console.log(combinationSum2([2, 5, 2, 1, 2], 5)); // [[1, 2, 2], [5]]
             "2 + 2 + 3، و 7.",
             "٣ تركيبات.",
             "مستحيل."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function combinationSum2(candidates, target) {
+  const sorted = [...candidates].sort((a, b) => a - b);
+  const out = [], path = [];
+  // backtrack(i + 1, ...) بدل backtrack(i, ...)، وفوّت التكرار في نفس المستوى
+  return out;
+}`,
+            tests: R`const norm = xs => xs.map(x => JSON.stringify(x)).sort();
+const normSorted = xs => xs.map(x => JSON.stringify([...x].sort((a, b) => a - b))).sort();
+test("[10, 1, 2, 7, 6, 1, 5] و 8 ← [1,1,6] [1,2,5] [1,7] [2,6]", () => expect(normSorted(combinationSum2([10, 1, 2, 7, 6, 1, 5], 8))).toEqual(normSorted([[1, 1, 6], [1, 2, 5], [1, 7], [2, 6]])));
+test("[2, 5, 2, 1, 2] و 5 ← [1,2,2] و [5]", () => expect(normSorted(combinationSum2([2, 5, 2, 1, 2], 5))).toEqual(normSorted([[1, 2, 2], [5]])));
+test("كل رقم مرة واحدة: [1, 1, 1] و 2 ← [1,1] مرة واحدة", () => expect(normSorted(combinationSum2([1, 1, 1], 2))).toEqual(normSorted([[1, 1]])));
+test("مفيش ← []", () => expect([combinationSum2([], 3), combinationSum2([3], 1)]).toEqual([[], []]));
+test("30 واحد و target 15 ← تركيبة واحدة (التكرار في نفس المستوى بيتفوّت، وإلا 155 مليون فرع)", () => expect(combinationSum2(new Array(30).fill(1), 15).length).toBe(1));`,
+            solution: R`function combinationSum2(candidates, target) {
+  const sorted = [...candidates].sort((a, b) => a - b);
+  const out = [], path = [];
+  const backtrack = (start, remaining) => {
+    if (remaining === 0) { out.push([...path]); return; }
+    for (let i = start; i < sorted.length; i++) {
+      if (sorted[i] > remaining) break;
+      if (i > start && sorted[i] === sorted[i - 1]) continue;
+      path.push(sorted[i]);
+      backtrack(i + 1, remaining - sorted[i]);
+      path.pop();
+    }
+  };
+  backtrack(0, target);
+  return out;
+}`
+          }
         },
         {
           cmd: "trie (autocomplete)",
@@ -5668,7 +8062,7 @@ console.log(t.complete("car")); // ['car', 'card', 'care']
 console.log(t.complete("d")); // ['do', 'dog']
 console.log(t.has("ca"), t.has("cat"), t.complete("x")); // false true []
 // insert, has, find: O(L) for length L; complete: O(L + size of the visited subtree)`,
-          try: R`خلّي الاقتراحات مترتبة بالشعبية: كل مرة المستخدم يختار كلمة، [[insert]] بتزوّد عدّاد [[count]] في آخر عقدة. و [[complete]] ترجّع أعلى k كلمات تحت الـ prefix حسب العدد (والتعادل أبجدي). بعد ما تضيف "care" ٣ مرات و "card" مرتين و "car" مرة، [[complete("car", 2)]] لازم ترجّع [[["care", "card"]]].`,
+          try: R`خلّي الاقتراحات مترتبة بالشعبية: كل مرة المستخدم يختار كلمة، [[insert]] بتزوّد عدّاد [[count]] في آخر عقدة. و [[complete]] ترجّع أعلى k كلمات تحت الـ prefix حسب العدد (والتعادل أبجدي). بعد ما تضيف "care" ٣ مرات و "card" مرتين و "car" مرة، [[complete("car", 2)]] لازم ترجّع [[["care", "card"]]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[RankedTrie]] فيه [[insert(word)]] بتزوّد العدّاد، و [[complete(prefix, k)]] مترتبة بالعدد والتعادل أبجدي.`,
           sol: R`الناتج: [[["care", "card"]]]، و [[complete("ca", 3)]] = [[["care", "card", "car"]]] لو "cat" اتضافت مرة و "car" مرة (التعادل أبجدي: car قبل cat).
 
 [[end]] بقت [[count]] (رقم، و 0 يعني مش كلمة). في [[complete]]: اجمع كل الكلمات تحت الـ prefix مع عددها، ورتّبهم بـ [[(a, b) => b.count - a.count || a.word.localeCompare(b.word)]]، وخد أول k. لو الفرع ضخم، استخدم heap حجمه k (درس «top k frequent»).
@@ -5757,7 +8151,68 @@ console.log(t.complete("z")); // []
             "تحت car.",
             "تحت d: do الأول لأنها أقصر (بتتسجّل قبل أولادها).",
             "ca مش كلمة، و cat كلمة، و x مفيش."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`class RankedTrie {
+  constructor() { this.root = { children: new Map(), count: 0 }; }
+  insert(word) {
+    let node = this.root;
+    for (const ch of word) {
+      if (!node.children.has(ch)) node.children.set(ch, { children: new Map(), count: 0 });
+      node = node.children.get(ch);
+    }
+    // زوّد العدّاد في آخر عقدة
+  }
+  complete(prefix, k = 5) {
+    // اجمع كل الكلمات تحت الـ prefix مع عددها، ورتّب، وخد أول k
+    return [];
+  }
+}`,
+            tests: R`const make = () => {
+  const t = new RankedTrie();
+  for (const [w, n] of [["care", 3], ["card", 2], ["car", 1]]) for (let i = 0; i < n; i++) t.insert(w);
+  return t;
+};
+test("care ×3 و card ×2 و car ×1: complete('car', 2) ← ['care', 'card']", () => expect(make().complete("car", 2)).toEqual(["care", "card"]));
+test("التعادل أبجدي: + cat مرة ← complete('ca', 3) ← ['care', 'card', 'car']", () => {
+  const t = make();
+  t.insert("cat");
+  expect(t.complete("ca", 3)).toEqual(["care", "card", "car"]);
+});
+test("k أكبر من عدد الكلمات ← كلهم", () => expect(make().complete("car", 10)).toEqual(["care", "card", "car"]));
+test("prefix مش موجود ← []", () => expect(make().complete("x", 3)).toEqual([]));
+test("كلمة بتتختار كتير تطلع فوق: car ×5", () => {
+  const t = make();
+  for (let i = 0; i < 5; i++) t.insert("car");
+  expect(t.complete("c", 1)).toEqual(["car"]);
+});`,
+            solution: R`class RankedTrie {
+  constructor() { this.root = { children: new Map(), count: 0 }; }
+  insert(word) {
+    let node = this.root;
+    for (const ch of word) {
+      if (!node.children.has(ch)) node.children.set(ch, { children: new Map(), count: 0 });
+      node = node.children.get(ch);
+    }
+    node.count++;
+  }
+  complete(prefix, k = 5) {
+    let node = this.root;
+    for (const ch of prefix) {
+      node = node.children.get(ch);
+      if (!node) return [];
+    }
+    const found = [];
+    const walk = (n, word) => {
+      if (n.count) found.push({ word, count: n.count });
+      for (const [ch, child] of n.children) walk(child, word + ch);
+    };
+    walk(node, prefix);
+    return found.sort((a, b) => b.count - a.count || a.word.localeCompare(b.word)).slice(0, k).map(x => x.word);
+  }
+}`
+          }
         }
       ]
     },
@@ -5813,7 +8268,7 @@ console.log(uf.count); // 3
 console.log(uf.find(2) === uf.find(0), uf.find(3) === uf.find(5)); // true false
 console.log(uf.union(0, 2), uf.count); // false 3
 // find and union: amortized almost O(1) (inverse Ackermann) with path compression + union by size; O(n) space`,
-          try: R`حل «Redundant Connection»: عندك شجرة من n عقدة (مترقمة من 1)، واتضاف عليها edge زيادة عمل دايرة. رجّع الـ edge ده (ولو فيه أكتر من إجابة، آخر واحد في الـ input). [[[[1,2],[1,3],[2,3]]]] الإجابة [[[2,3]]]، و [[[[1,2],[2,3],[3,4],[1,4],[1,5]]]] الإجابة [[[1,4]]]. وبعدين «Number of Provinces»: matrix فيها 1 لو المدينتين متوصلين، كام مجموعة؟`,
+          try: R`حل «Redundant Connection»: عندك شجرة من n عقدة (مترقمة من 1)، واتضاف عليها edge زيادة عمل دايرة. رجّع الـ edge ده (ولو فيه أكتر من إجابة، آخر واحد في الـ input). [[[[1,2],[1,3],[2,3]]]] الإجابة [[[2,3]]]، و [[[[1,2],[2,3],[3,4],[1,4],[1,5]]]] الإجابة [[[1,4]]]. وبعدين «Number of Provinces»: matrix فيها 1 لو المدينتين متوصلين، كام مجموعة؟ اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[findRedundantConnection(edges)]] و [[findCircleNum(isConnected)]] (الـ UnionFind جاهز في المربع).`,
           sol: R`Redundant Connection: امشي على الـ edges بالترتيب واعمل [[union]]. أول edge [[union]] بتاعه يرجّع false (الطرفين أصلًا في نفس المجموعة) هو اللي عمل الدايرة. الإجابات [[[2,3]]] و [[[1,4]]].
 
 الـ UnionFind لازم يبقى حجمه n + 1 لأن العقد بتبدأ من 1. لو عملته بحجم n، العقدة n هتبقى برّا الـ array، و [[parent[n]]] هتبقى undefined، والـ find هتلف للأبد أو ترجّع قيمة غلط.
@@ -5895,7 +8350,84 @@ console.log(findCircleNum([[1, 1, 0], [1, 1, 0], [0, 0, 1]]), findCircleNum([[1,
             "3 مجموعات (و 5 لوحدها).",
             "0 و 2 مع بعض، و 3 و 5 لأ.",
             "في نفس المجموعة أصلًا: false، والعدد ثابت."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`class UnionFind {
+  constructor(n) {
+    this.parent = Array.from({ length: n }, (_, i) => i);
+    this.size = new Array(n).fill(1);
+    this.count = n;
+  }
+  find(x) {
+    while (this.parent[x] !== x) {
+      this.parent[x] = this.parent[this.parent[x]];
+      x = this.parent[x];
+    }
+    return x;
+  }
+  union(a, b) {
+    let ra = this.find(a), rb = this.find(b);
+    if (ra === rb) return false;
+    if (this.size[ra] < this.size[rb]) [ra, rb] = [rb, ra];
+    this.parent[rb] = ra;
+    this.size[ra] += this.size[rb];
+    this.count--;
+    return true;
+  }
+}
+function findRedundantConnection(edges) {
+  // UnionFind بحجم n + 1 (العقد من 1)، وأول union بيرجّع false هو الإجابة
+}
+function findCircleNum(isConnected) {
+  return 0;
+}`,
+            tests: R`test("[[1,2],[1,3],[2,3]] ← [2,3]", () => expect(findRedundantConnection([[1, 2], [1, 3], [2, 3]])).toEqual([2, 3]));
+test("[[1,2],[2,3],[3,4],[1,4],[1,5]] ← [1,4]", () => expect(findRedundantConnection([[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]])).toEqual([1, 4]));
+test("العقدة n موجودة (حجم n + 1): [[1,2],[2,3],[3,1]] ← [3,1]", () => expect(findRedundantConnection([[1, 2], [2, 3], [3, 1]])).toEqual([3, 1]));
+test("findCircleNum: [[1,1,0],[1,1,0],[0,0,1]] ← 2", () => expect(findCircleNum([[1, 1, 0], [1, 1, 0], [0, 0, 1]])).toBe(2));
+test("كلهم لوحدهم ← 3", () => expect(findCircleNum([[1, 0, 0], [0, 1, 0], [0, 0, 1]])).toBe(3));
+test("سلسلة 20 ألف عقدة و edge زيادة في الآخر (تقريبًا O(1) لكل عملية)", () => {
+  const edges = Array.from({ length: 19999 }, (_, i) => [i + 1, i + 2]);
+  edges.push([1, 20000]);
+  expect(findRedundantConnection(edges)).toEqual([1, 20000]);
+});`,
+            solution: R`class UnionFind {
+  constructor(n) {
+    this.parent = Array.from({ length: n }, (_, i) => i);
+    this.size = new Array(n).fill(1);
+    this.count = n;
+  }
+  find(x) {
+    while (this.parent[x] !== x) {
+      this.parent[x] = this.parent[this.parent[x]];
+      x = this.parent[x];
+    }
+    return x;
+  }
+  union(a, b) {
+    let ra = this.find(a), rb = this.find(b);
+    if (ra === rb) return false;
+    if (this.size[ra] < this.size[rb]) [ra, rb] = [rb, ra];
+    this.parent[rb] = ra;
+    this.size[ra] += this.size[rb];
+    this.count--;
+    return true;
+  }
+}
+function findRedundantConnection(edges) {
+  const uf = new UnionFind(edges.length + 1);
+  for (const [a, b] of edges) if (!uf.union(a, b)) return [a, b];
+  return null;
+}
+function findCircleNum(isConnected) {
+  const n = isConnected.length, uf = new UnionFind(n);
+  for (let i = 0; i < n; i++)
+    for (let j = i + 1; j < n; j++)
+      if (isConnected[i][j] === 1) uf.union(i, j);
+  return uf.count;
+}`
+          }
         },
         {
           cmd: "Dijkstra",
@@ -5933,7 +8465,7 @@ const roads = {
 console.log(Object.fromEntries(dijkstra(roads, "A"))); // { A: 0, B: 3, C: 1, D: 4 }
 console.log(dijkstra(roads, "D").get("A")); // undefined
 // O((V + E) log V) time with a binary heap, O(V + E) space; all weights must be >= 0`,
-          try: R`حل «Network Delay Time»: n سيرفر مترقمين من 1، و times فيها [[[u, v, w]]] (رسالة من u لـ v بتاخد w)، وبتبعت من k. إمتى كل السيرفرات تستلم؟ ولو فيه سيرفر مش هيستلم أبدًا رجّع -1. [[times = [[2,1,1],[2,3,1],[3,4,1]]]] و n = 4 و k = 2 الإجابة 2. وبعدين خلّي [[dijkstra]] ترجّع الطريق نفسه من A لـ D (احفظ «جيت منين»).`,
+          try: R`حل «Network Delay Time»: n سيرفر مترقمين من 1، و times فيها [[[u, v, w]]] (رسالة من u لـ v بتاخد w)، وبتبعت من k. إمتى كل السيرفرات تستلم؟ ولو فيه سيرفر مش هيستلم أبدًا رجّع -1. [[times = [[2,1,1],[2,3,1],[3,4,1]]]] و n = 4 و k = 2 الإجابة 2. وبعدين خلّي [[dijkstra]] ترجّع الطريق نفسه من A لـ D (احفظ «جيت منين»). اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[networkDelayTime(times, n, k)]] و [[path(graph, from, to)]] بترجّع نص زي [["A -> C -> B -> D (4)"]] أو null (الـ MinHeap جاهز في المربع).`,
           sol: R`Network Delay Time: شغّل Dijkstra من k، والإجابة أكبر مسافة بين كل السيرفرات. لو عدد السيرفرات اللي وصلتلها أقل من n، الإجابة -1. للمثال: من 2 لـ 1 و 3 بـ 1، ومن 3 لـ 4 بـ 1، فالمسافات 1 و 1 و 2، والإجابة 2. ولو k = 1 في نفس المثال، 1 مبتبعتش لحد، فـ -1.
 
 الطريق: [[prev.set(v, u)]] جنب [[dist.set(v, nd)]]، وبعدين من D ارجع بالـ prev لحد A واعكس: [[A → C → B → D]] بطول 4. لاحظ إن الطريق المباشر A → B (4) أطول من A → C → B (3)، وده اللي BFS كان هيغلط فيه لأنه بيعدّ الخطوات.
@@ -6013,7 +8545,132 @@ console.log(path({ A: [["B", 4], ["C", 1]], C: [["B", 2], ["D", 5]], B: [["D", 1
             "قفلة.",
             "B بـ 3 (من خلال C) مش 4، و D بـ 4.",
             "مفيش طرق طالعة من D: A مش متوصلة."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+function shortest(graph, source) {
+  const dist = new Map([[source, 0]]), prev = new Map();
+  // Dijkstra عادي، و prev.set(v, u) جنب dist.set
+  return { dist, prev };
+}
+function networkDelayTime(times, n, k) {
+  // ابني graph كـ object، والإجابة أكبر مسافة أو -1
+  return -1;
+}
+function path(graph, from, to) {
+  // ارجع من to بالـ prev لحد from
+  return null;
+}`,
+            tests: R`const roads = { A: [["B", 4], ["C", 1]], C: [["B", 2], ["D", 5]], B: [["D", 1]] };
+test("([[2,1,1],[2,3,1],[3,4,1]], 4, 2) ← 2", () => expect(networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2)).toBe(2));
+test("نفس المثال من 1 ← -1 (1 مبتبعتش لحد)", () => expect(networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 1)).toBe(-1));
+test("الطريق المباشر أطول: ([[1,2,5],[1,3,1],[3,2,1]], 3, 1) ← 2", () => expect(networkDelayTime([[1, 2, 5], [1, 3, 1], [3, 2, 1]], 3, 1)).toBe(2));
+test("path(A → D) ← 'A -> C -> B -> D (4)' مش A B D", () => expect(path(roads, "A", "D")).toBe("A -> C -> B -> D (4)"));
+test("من D لـ A مفيش طريق ← null", () => expect(path(roads, "D", "A")).toBe(null));
+test("شبكة 2000 سيرفر (O((V + E) log V))", () => {
+  const times = [];
+  for (let i = 1; i < 2000; i++) { times.push([i, i + 1, 1]); times.push([1, i + 1, 3000]); }
+  expect(networkDelayTime(times, 2000, 1)).toBe(1999);
+});`,
+            solution: R`// الـ MinHeap من درس «min heap (by hand)» جاهز هنا تستخدمه
+class MinHeap {
+  constructor(compare = (a, b) => a - b) { this.data = []; this.compare = compare; }
+  get size() { return this.data.length; }
+  peek() { return this.data[0]; }
+  push(value) {
+    const d = this.data;
+    d.push(value);
+    let i = d.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (this.compare(d[i], d[p]) >= 0) break;
+      [d[i], d[p]] = [d[p], d[i]];
+      i = p;
+    }
+  }
+  pop() {
+    const d = this.data;
+    if (d.length === 0) return undefined;
+    const top = d[0], last = d.pop();
+    if (d.length > 0) {
+      d[0] = last;
+      let i = 0;
+      while (true) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < d.length && this.compare(d[l], d[m]) < 0) m = l;
+        if (r < d.length && this.compare(d[r], d[m]) < 0) m = r;
+        if (m === i) break;
+        [d[i], d[m]] = [d[m], d[i]];
+        i = m;
+      }
+    }
+    return top;
+  }
+}
+function shortest(graph, source) {
+  const dist = new Map([[source, 0]]), prev = new Map();
+  const heap = new MinHeap((a, b) => a[0] - b[0]);
+  heap.push([0, source]);
+  while (heap.size) {
+    const [d, u] = heap.pop();
+    if (d > dist.get(u)) continue;
+    for (const [v, w] of graph[u] ?? []) {
+      if (d + w < (dist.get(v) ?? Infinity)) { dist.set(v, d + w); prev.set(v, u); heap.push([d + w, v]); }
+    }
+  }
+  return { dist, prev };
+}
+function networkDelayTime(times, n, k) {
+  const graph = {};
+  for (const [u, v, w] of times) (graph[u] ??= []).push([v, w]);
+  const { dist } = shortest(graph, k);
+  return dist.size === n ? Math.max(...dist.values()) : -1;
+}
+function path(graph, from, to) {
+  const { dist, prev } = shortest(graph, from);
+  if (!dist.has(to)) return null;
+  const out = [to];
+  while (out[0] !== from) out.unshift(prev.get(out[0]));
+  return out.join(" -> ") + " (" + dist.get(to) + ")";
+}`
+          }
         },
         {
           cmd: "bit manipulation (XOR)",
@@ -6044,7 +8701,7 @@ console.log(countBits(11), (11).toString(2)); // 3 1011
 console.log((perms & WRITE) !== 0, (perms & ADMIN) !== 0); // true false
 console.log(2 ** 31 | 0, 2n ** 40n); // -2147483648 1099511627776n
 // single and missing: O(n) time, O(1) space; countBits: O(number of 1 bits)`,
-          try: R`حل «Counting Bits»: array فيها عدد الـ 1s لكل رقم من 0 لـ n في [[O(n)]] (مش [[countBits]] لكل رقم). n = 5 الإجابة [[[0, 1, 1, 2, 1, 2]]]. (عدد الـ 1s في i = عدد الـ 1s في [[i >> 1]] + آخر bit في i.) وبعدين «Single Number III»: كل رقم متكرر مرتين ما عدا اتنين، هاتهم الاتنين في [[O(1)]] ذاكرة. [[[1, 2, 1, 3, 2, 5]]] الإجابة 3 و 5.`,
+          try: R`حل «Counting Bits»: array فيها عدد الـ 1s لكل رقم من 0 لـ n في [[O(n)]] (مش [[countBits]] لكل رقم). n = 5 الإجابة [[[0, 1, 1, 2, 1, 2]]]. (عدد الـ 1s في i = عدد الـ 1s في [[i >> 1]] + آخر bit في i.) وبعدين «Single Number III»: كل رقم متكرر مرتين ما عدا اتنين، هاتهم الاتنين في [[O(1)]] ذاكرة. [[[1, 2, 1, 3, 2, 5]]] الإجابة 3 و 5. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[countBitsUpTo(n)]] و [[singleNumberIII(nums)]] (بترجّع الرقمين من الأصغر للأكبر).`,
           sol: R`Counting Bits: [[dp[i] = dp[i >> 1] + (i & 1)]]. [[i >> 1]] هو i من غير آخر bit (أصغر من i، فمحسوب قبل كده)، و [[i & 1]] هو آخر bit. ده DP صغير. الناتج لـ 5: [[[0, 1, 1, 2, 1, 2]]].
 
 Single Number III: الـ XOR للكل = [[a ^ b]] (الأزواج اتلغت)، ومش صفر لأن a ≠ b. أي bit فيه 1 في الناتج ده معناه إن a و b مختلفين فيه. خد أيمن bit بـ [[x & -x]]، وقسّم الأرقام لمجموعتين: اللي فيها الـ bit ده واللي مفيهاش. a في مجموعة و b في التانية، وكل زوج متكرر بيقع كله في نفس المجموعة. XOR لكل مجموعة لوحدها يطلّع a و b.
@@ -6103,7 +8760,43 @@ countBits(11): 11 = 1011. [[1011 & 1010 = 1010]]، [[1010 & 1001 = 1000]]، [[10
             "11 فيها ٣ واحدات.",
             "فيه WRITE، ومفيش ADMIN.",
             "2^31 بيلف لسالب في 32-bit، و BigInt مفيهوش حد."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function countBitsUpTo(n) {
+  const dp = new Array(n + 1).fill(0);
+  // dp[i] = dp[i >> 1] + (i & 1)
+  return dp;
+}
+function singleNumberIII(nums) {
+  // XOR الكل = a ^ b، وخد أيمن bit بـ x & -x، وقسّم
+  return [];
+}`,
+            tests: R`test("countBitsUpTo(5) ← [0, 1, 1, 2, 1, 2]", () => expect(countBitsUpTo(5)).toEqual([0, 1, 1, 2, 1, 2]));
+test("countBitsUpTo(0) ← [0]", () => expect(countBitsUpTo(0)).toEqual([0]));
+test("countBitsUpTo(100000): الطول 100001 وآخر رقم 6 (O(n))", () => {
+  const r = countBitsUpTo(100000);
+  expect([r.length, r[100000], r[65535]]).toEqual([100001, 6, 16]);
+});
+test("singleNumberIII([1, 2, 1, 3, 2, 5]) ← [3, 5]", () => expect(singleNumberIII([1, 2, 1, 3, 2, 5])).toEqual([3, 5]));
+test("صفر وسالب: [-1, 0] ← [-1, 0]", () => expect(singleNumberIII([-1, 0])).toEqual([-1, 0]));
+test("(x & mask) !== 0 مش === 1: [4, 6, 1, 1] ← [4, 6]", () => expect(singleNumberIII([4, 6, 1, 1])).toEqual([4, 6]));`,
+            solution: R`function countBitsUpTo(n) {
+  const dp = new Array(n + 1).fill(0);
+  for (let i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
+  return dp;
+}
+function singleNumberIII(nums) {
+  const xor = nums.reduce((acc, x) => acc ^ x, 0);
+  const bit = xor & -xor;
+  let a = 0, b = 0;
+  for (const x of nums) {
+    if ((x & bit) !== 0) a ^= x;
+    else b ^= x;
+  }
+  return [Math.min(a, b), Math.max(a, b)];
+}`
+          }
         },
         {
           cmd: "LRU cache (Map)",
@@ -6143,7 +8836,7 @@ cache.put(1, "ONE");
 cache.put(4, "four");
 console.log([...cache.map.entries()]); // [[1, 'ONE'], [4, 'four']]
 // get and put: O(1) average; O(capacity) space`,
-          try: R`اكتب [[LRUList]] بنفس الـ API من غير ما تعتمد على ترتيب الـ Map: Map من الـ key للعقدة، و doubly linked list فيها عقدتين وهميتين [[head]] و [[tail]] (عشان متعملش if للأطراف). محتاج دالتين صغيرين: [[remove(node)]] و [[addToEnd(node)]]. لازم تعدّي نفس السيناريو اللي في المثال وتطلّع نفس النتايج.`,
+          try: R`اكتب [[LRUList]] بنفس الـ API من غير ما تعتمد على ترتيب الـ Map: Map من الـ key للعقدة، و doubly linked list فيها عقدتين وهميتين [[head]] و [[tail]] (عشان متعملش if للأطراف). محتاج دالتين صغيرين: [[remove(node)]] و [[addToEnd(node)]]. لازم تعدّي نفس السيناريو اللي في المثال وتطلّع نفس النتايج. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[LRUList]] بـ [[get]] و [[put]]، والاختبارات بتمشي على الـ list من [[head]] لـ [[tail]].`,
           sol: R`نفس الناتج: [[one]]، وبعدين [[-1]] و الترتيب [[1 3]]، وبعد ما [[put(1)]] و [[put(4)]]، الـ cache فيه 1 و 4 (الـ 3 اتطردت لأن 1 اتحدثت بعدها).
 
 العقدة فيها [[key]] و [[value]] و [[prev]] و [[next]]. الـ key لازم يبقى في العقدة، عشان لما تطرد [[head.next]] تعرف تمسحه من الـ Map.
@@ -6234,7 +8927,98 @@ console.log(cache.keys(), cache.get(1)); // [1, 4] ONE
             "حدّث 1: بقى الأحدث.",
             "ضيف 4: الأقدم 3، فيتطرد.",
             "الباقي 1 بالقيمة الجديدة و 4."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`class LRUList {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.map = new Map(); // key → node
+    this.head = { prev: null, next: null };
+    this.tail = { prev: this.head, next: null };
+    this.head.next = this.tail;
+  }
+  remove(node) {}
+  addToEnd(node) {}
+  get(key) { return -1; }
+  put(key, value) {}
+}`,
+            tests: R`const keys = c => { const out = []; for (let n = c.head.next; n && n !== c.tail; n = n.next) out.push(n.key); return out; };
+test("put 1، put 2، get 1 ← 'one'", () => {
+  const c = new LRUList(2);
+  c.put(1, "one"); c.put(2, "two");
+  expect(c.get(1)).toBe("one");
+});
+test("put 3 بتطرد 2 (1 اتقرت): get 2 ← -1، والترتيب من القديم للجديد [1, 3]", () => {
+  const c = new LRUList(2);
+  c.put(1, "one"); c.put(2, "two"); c.get(1); c.put(3, "three");
+  expect([c.get(2), keys(c)]).toEqual([-1, [1, 3]]);
+});
+test("put على key موجود بيحدّث وبيحرّكه للآخر: put 1 'ONE'، put 4 ← 3 اتطردت", () => {
+  const c = new LRUList(2);
+  c.put(1, "one"); c.put(3, "three"); c.put(1, "ONE"); c.put(4, "four");
+  expect([c.get(3), c.get(1), c.get(4), keys(c)]).toEqual([-1, "ONE", "four", [1, 4]]);
+});
+test("capacity 1", () => {
+  const c = new LRUList(1);
+  c.put("a", 1); c.put("b", 2);
+  expect([c.get("a"), c.get("b"), c.map.size]).toEqual([-1, 2, 1]);
+});
+test("الـ list والـ Map دايمًا نفس الحجم، والـ prev متظبطة", () => {
+  const c = new LRUList(3);
+  for (let i = 0; i < 10; i++) { c.put(i % 5, i); c.get((i * 3) % 5); }
+  let back = 0;
+  for (let n = c.tail.prev; n !== c.head; n = n.prev) back++;
+  expect([keys(c).length, back, c.map.size]).toEqual([3, 3, 3]);
+});
+test("١٠٠ ألف عملية (كل واحدة O(1))", () => {
+  const c = new LRUList(1000);
+  for (let i = 0; i < 100000; i++) { c.put(i, i); if (i % 3 === 0) c.get(i - 500); }
+  expect([c.get(99999), c.get(0), c.map.size]).toEqual([99999, -1, 1000]);
+});`,
+            solution: R`class LRUList {
+  constructor(capacity) {
+    this.capacity = capacity;
+    this.map = new Map();
+    this.head = { prev: null, next: null };
+    this.tail = { prev: this.head, next: null };
+    this.head.next = this.tail;
+  }
+  remove(node) {
+    node.prev.next = node.next;
+    node.next.prev = node.prev;
+  }
+  addToEnd(node) {
+    node.prev = this.tail.prev;
+    node.next = this.tail;
+    this.tail.prev.next = node;
+    this.tail.prev = node;
+  }
+  get(key) {
+    const node = this.map.get(key);
+    if (!node) return -1;
+    this.remove(node);
+    this.addToEnd(node);
+    return node.value;
+  }
+  put(key, value) {
+    let node = this.map.get(key);
+    if (node) {
+      node.value = value;
+      this.remove(node);
+    } else {
+      node = { key, value, prev: null, next: null };
+      this.map.set(key, node);
+    }
+    this.addToEnd(node);
+    if (this.map.size > this.capacity) {
+      const old = this.head.next;
+      this.remove(old);
+      this.map.delete(old.key);
+    }
+  }
+}`
+          }
         }
       ]
     },
@@ -6290,7 +9074,7 @@ const tests = [{ input: [100, 4, 200, 1, 3, 2], want: 4 }, { input: [], want: 0 
 const results = tests.map(({ input, want }) => longestConsecutive(input) === want && longestBrute(input) === want);
 console.log(results.every(Boolean) ? "all passed" : results); // all passed
 // 7. Complexity: brute O(n log n) time; optimized O(n) time (each run is walked once, from its start), O(n) space`,
-          try: R`طبّق الـ ٧ خطوات على «Product of Array Except Self» بتايمر ٣٠ دقيقة وبصوت عالي: array، رجّع array كل خانة فيها حاصل ضرب كل العناصر ما عدا اللي في مكانها، من غير قسمة، في [[O(n)]]. [[[1, 2, 3, 4]]] → [[[24, 12, 8, 6]]]. اكتب الـ clarify والـ examples كـ comments الأول، وبعدين brute force، وبعدين الحل الأحسن، وقارن الاتنين على الأمثلة.`,
+          try: R`طبّق الـ ٧ خطوات على «Product of Array Except Self» بتايمر ٣٠ دقيقة وبصوت عالي: array، رجّع array كل خانة فيها حاصل ضرب كل العناصر ما عدا اللي في مكانها، من غير قسمة، في [[O(n)]]. [[[1, 2, 3, 4]]] → [[[24, 12, 8, 6]]]. اكتب الـ clarify والـ examples كـ comments الأول، وبعدين brute force، وبعدين الحل الأحسن، وقارن الاتنين على الأمثلة. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[productExceptSelf(nums)]] بالحل الـ [[O(n)]].`,
           sol: R`clarify: فيه أصفار؟ (مهم جدًا: القسمة كانت هتقع). أرقام سالبة؟ الطول ≥ 2؟ ممكن الناتج يعدّي حدود الأرقام؟
 
 examples: [[[1, 2, 3, 4]]] → [[[24, 12, 8, 6]]]، و [[[-1, 1, 0, -3, 3]]] → [[[0, 0, 9, 0, 0]]] (صفر واحد: كل الخانات صفر ما عدا مكانه)، و [[[0, 0]]] → [[[0, 0]]].
@@ -6358,7 +9142,36 @@ for (const [input, want] of tests) {
             "الأمثلة والـ edge cases: الـ input والإجابة المتوقعة.",
             "كل test: الحلين لازم يدّوا الإجابة.",
             "لو كله نجح اطبع كده، غير كده اطبع أنهي فشل."
-          ]
+          ],
+          check: {
+            lang: "js",
+            starter: R`function productExceptSelf(nums) {
+  const out = new Array(nums.length).fill(1);
+  // لفة من الشمال تكتب الـ prefix، ولفة من اليمين تضرب في suffix متراكم
+  return out;
+}`,
+            tests: R`const noNegZero = a => a.map(x => x + 0);
+test("[1, 2, 3, 4] ← [24, 12, 8, 6]", () => expect(productExceptSelf([1, 2, 3, 4])).toEqual([24, 12, 8, 6]));
+test("صفر واحد: [-1, 1, 0, -3, 3] ← [0, 0, 9, 0, 0] (القسمة كانت هتقع)", () => expect(noNegZero(productExceptSelf([-1, 1, 0, -3, 3]))).toEqual([0, 0, 9, 0, 0]));
+test("صفرين ← كله صفر", () => expect(noNegZero(productExceptSelf([0, 0]))).toEqual([0, 0]));
+test("[2, 3] ← [3, 2]", () => expect(productExceptSelf([2, 3])).toEqual([3, 2]));
+test("3000 رقم (O(n)، الـ brute force O(n^2))", () => {
+  const a = Array.from({ length: 3000 }, (_, i) => (i % 7 === 0 ? -1 : 1));
+  const neg = a.filter(x => x < 0).length;
+  const r = productExceptSelf(a);
+  expect([r[0], r[1]]).toEqual([(-1) ** (neg - 1), (-1) ** neg]);
+});`,
+            solution: R`function productExceptSelf(nums) {
+  const out = new Array(nums.length).fill(1);
+  for (let i = 1; i < nums.length; i++) out[i] = out[i - 1] * nums[i - 1];
+  let suffix = 1;
+  for (let i = nums.length - 1; i >= 0; i--) {
+    out[i] *= suffix;
+    suffix *= nums[i];
+  }
+  return out;
+}`
+          }
         },
         {
           cmd: "practice regimen",

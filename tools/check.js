@@ -60,7 +60,7 @@ for (const tab in DATA) {
 }
 
 // روابط القاموس: «bash المستوى ٢: [[grep]]» لازم تشاور على درس موجود
-const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real', 'اختصارات النظام': 'os', 'VS Code': 'vscode', 'JavaScript': 'js', 'TypeScript': 'ts', 'HTML و CSS': 'css', 'React': 'react', 'Next.js': 'next', 'Backend بـ Node': 'api', 'SQL و Prisma': 'data', 'Python و FastAPI': 'pyapi', 'PHP و MySQL': 'php', 'Flutter و Dart': 'flutter', 'الذكاء الاصطناعي': 'ai', 'بناء مشروع كامل': 'arch', 'الانترفيو': 'interview', 'DSA': 'dsa', 'هندسة البرمجيات': 'sweng', 'APIs متقدمة': 'apis', 'Cloud و DevOps': 'cloud', 'المشاريع': 'projects', 'الشغل والكارير': 'career' };
+const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real', 'اختصارات النظام': 'os', 'VS Code': 'vscode', 'JavaScript': 'js', 'TypeScript': 'ts', 'HTML و CSS': 'css', 'React': 'react', 'Next.js': 'next', 'Backend بـ Node': 'api', 'SQL و Prisma': 'data', 'Python و FastAPI': 'pyapi', 'PHP و MySQL': 'php', 'Flutter و Dart': 'flutter', 'الذكاء الاصطناعي': 'ai', 'بناء مشروع كامل': 'arch', 'الانترفيو': 'interview', 'DSA': 'dsa', 'هندسة البرمجيات': 'sweng', 'APIs متقدمة': 'apis', 'Cloud و DevOps': 'cloud', 'المشاريع': 'projects', 'الشغل والكارير': 'career', 'إنجليزي للمبرمج: قراية وكتابة': 'english', 'إنجليزي للمبرمج: كلام وانترفيو': 'speak', 'C# و .NET': 'dotnet', 'Angular': 'angular', 'Java و Spring Boot': 'spring', 'React Native و Expo': 'rn' };
 if (DATA.glossary) DATA.glossary.forEach(cat => cat.items.forEach(it => {
   const ref = it[4] || '', m = ref.match(/^(.*?)(?: المستوى [١٢٣123])?(?:: \[\[(.+)\]\])?$/);
   const tab = m && TAB_NAMES[m[1]];
@@ -96,6 +96,8 @@ for (const id in CHECK) {
   checks.push([id, w, ch]);
 }
 
+// a test that leaves a rejected promise unhandled shouldn't crash the whole check; report it and fail
+process.on('unhandledRejection', e => { console.error('✗ promise اترفض من غير catch في اختبار: ' + (e && e.message || e)); process.exitCode = 1; });
 (async () => {
   const js = checks.filter(([, , ch]) => ch.lang === 'js' && str(ch.tests) && str(ch.solution));
   const runJs = (code, tests) => {
@@ -147,5 +149,5 @@ for (const id in CHECK) {
   warnings.forEach(x => console.log('! ' + x));
   errors.forEach(x => console.log('✗ ' + x));
   console.log(`\n${Object.keys(DATA).length} تاب، ${total} درس، ${MISSIONS.length} تحدي، ${checks.length} تمرين بيتصحح لوحده | ${errors.length} خطأ، ${warnings.length} تنبيه${sqlNote}`);
-  process.exit(errors.length ? 1 : 0);
+  process.exit(errors.length || process.exitCode ? 1 : 0);
 })();
