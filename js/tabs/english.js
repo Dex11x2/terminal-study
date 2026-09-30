@@ -3199,5 +3199,140 @@ Notes Day 60: reading faster; writing still slow. Focus: PR templates.`,
         }
       ]
     },
+    {
+      t: "إنجليزي الفريلانس والتعامل مع العملاء الأجانب",
+      l: 2,
+      n: "كتابة Proposal مقنع على Upwork، ومراسلات وتفاوض السعر، ومصطلحات الـ Agile والـ Scrum",
+      items: [
+        {
+          cmd: "كتابة Proposal مقنع على Upwork",
+          title: "كتابة عرض احترافي (Proposal) على منصات العمل الحر (Upwork و Fiverr) يجذب انتباه العميل",
+          desc: R`في منصات الفريلانس العالمية، العميل بيستلم ما بين 20 إلى 50 عرض (Proposal) على كل وظيفة.
+العميل لا يقرأ كل العروض؛ بل يرى في شاشة المعاينة أول سطرين فقط (حوالي 150 حرف) قبل أن يقرر يفتح عرضك أو يتجاهله!
+
+الهيكل الذهبي للـ Winning Proposal (٤ أجزاء):
+1. الـ Hook (الخطاف في أول سطرين): أثبت فوراً إنك قرأت مشكلته بالتحديد، بلاش مقدمات تقليدية زي "Hi, I have 5 years of experience".
+2. الفهم والحل المباشر (The Solution): اشرح باختصار كيف ستحل المشكلة (مثلاً: سأقوم بدمج Stripe webhook باستخدام Express و Postgres).
+3. إثبات المصداقية والسابقة (Proof): رابط مشروع مشابه تماماً من أعمالك أو مستودع GitHub.
+4. الدعوة لاتخاذ إجراء بدون ضغط (Low-friction Call to Action): مثل اقتراح مناقشة سريعة لمتطلبات الـ API.`,
+          example: R`# 1. السطر الأول المباشر في قلب المشكلة (The Hook)
+Hi, I noticed your Next.js app has hydration issues with user authentication.
+
+# 2. الحل التقني المقترح في سطرين
+I can resolve this by moving the session check to the middleware and caching the JWT.
+I recently fixed a similar issue for an e-commerce dashboard.
+
+# 3. إثبات الكفاءة برابط حي
+Here is a live demo of a similar project I built: https://myportfolio.dev/demo
+
+# 4. ختام العرض بسؤال ذكي (Call to Action)
+Are you available for a quick 10-minute chat today to discuss your API requirements?`,
+          try: R`افتح موقع Upwork وابحث عن وظيفة في مجالك (React أو Python أو Node). اكتب Proposal مخصص لها بالهيكل المكون من ٤ خطوات ده. اقرأ أول سطرين بصوت عالي: هل ذكرت فيهم اسم مشكلته بالتحديد؟ لو نعم، عرضك أصبح في أول 5% من المتقدمين!`,
+          flag: "script",
+          deep: {
+            why: R`العملاء الأجانب لا يبحثون عن مبرمج يكرر سيرته الذاتية، بل يبحثون عن شريك يحل مشكلتهم ويوفر عليهم الوقت. العرض المخصص يثبت للعميل أنك لست مجرد بوت يرسل قوالب منسوخة.`,
+            how: R`استخدم أسلوب "You" بدلاً من "I". بدلاً من كتابة "I am an expert in React"، اكتب "Your React app will load 2x faster by optimizing the re-renders". هذا التحول البسيط يوجه التركيز نحو مصلحة العميل وليس مجرد التفاخر.`,
+            when: "عند التقديم على أي وظيفة فريلانس على Upwork, Freelancer, LinkedIn, أو مراسلة عميل عبر الإيميل (Cold Outreach).",
+            mistakes: R`بدء العرض بـ [[Dear Sir/Madam]] أو جمل نسخ ولصق محفوظة مثل [[I am a full stack developer with 7 years of experience]]. العميل يرفض هذه العروض فوراً لأنها تدل على الكسل وعدم قراءة التفاصيل.`
+          },
+          lines: [
+            "السطر الافتتاحي: استهداف المشكلة بدقة وإثبات قراءة تفاصيل المشروع.",
+            "اقتراح الحل التقني المباشر بالخطوات.",
+            "ذكر سابقة أعمال حقيقية مشابهة لنفس المشكلة.",
+            "مشاركة رابط حي لمعاينة العمل المماثل.",
+            "سؤال ختامي محدد يدعو العميل لمحادثة سريعة دون ضغط."
+          ],
+          sol: R`النتيجة:
+عرض فريلانس احترافي يركز بنسبة 100% على مشكلة العميل، ويبرز حلولك العملية مع رابط إثبات حي وسؤال ذكي يرفع نسبة الردود لأكثر من 30%.`
+        },
+        {
+          cmd: "مراسلات وتفاوض السعر مع العميل",
+          title: "التفاوض والمراسلات اليومية: مناقشة الميزانية والمواعيد (Deadlines) ونطاق العمل (Scope)",
+          desc: R`بعد موافقة العميل، تبدأ مرحلة إدارة المشروع والاتفاق على التفاصيل المالية والمواعيد باللغة الإنجليزية.
+
+المصطلحات والمفاهيم الثلاثة الأساسية:
+• [[Scope of Work]]: نطاق العمل المحدد المتفق عليه في العقد.
+• [[Scope Creep]]: الخطر الأكبر للفريلانسر، لما العميل يبدأ يطلب ميزات إضافية خارج الاتفاق الأصلي دون زيادة في السعر!
+• [[Deliverables / Milestones]]: المخرجات ومراحل تسليم المشروع ودفع المستحقات.
+
+عبارات إنجليزية احترافية للتعامل مع المواقف الصعبة:
+1. عند طلب ميزة إضافية خارج الاتفاق (Handling Scope Creep):
+[[I would be happy to add that feature. Since it's outside our initial scope, it will require an additional 2 days and $150. Shall I update the milestone?]]
+2. عند طلب ملفات أو صلاحيات من العميل:
+[[Could you please share the API credentials and Figma designs so I can proceed with the integration?]]
+3. عند تسليم المشروع وطلب المراجعة:
+[[The payment gateway is now fully integrated and tested. Please review the live demo and let me know if you have any feedback.]]`,
+          example: R`# 1. الرد باحترافية على طلب ميزة إضافية (Out of Scope)
+I can definitely build the export-to-PDF feature for you.
+Since this is outside our initial scope, it will take an extra 2 days.
+The cost for this addition would be $120.
+
+# 2. السؤال عن الموعد النهائي المناسب للعميل
+What is your target deadline for launching the MVP?
+
+# 3. إرسال رابط التسليم النهائي لطلب المراجعة والموافقة
+Please test the checkout flow on the staging server and confirm the milestone.`,
+          try: R`احفظ هذه العبارات في ملف ملاحظات عندك. في المرة القادمة التي يطلب فيها عميل ميزة إضافية، جرب استخدام الصيغة المهذبة: [[I'd be glad to help with that! It's beyond our current scope, so I can create a separate milestone for it]]. ستلاحظ كيف يحترم العميل احترافيتك ويوافق على دفع السعر العادل!`,
+          flag: "script",
+          deep: {
+            why: R`الخجل أو الضعف في إنجليزي التفاوض يجعل المبرمجين يعملون ضعف الوقت بنصف السعر. الوضوح الحازم والمهذب في اللغة الإنجليزية يحميك ويضمن لك تقييم 5 نجوم وأجراً عادلاً.`,
+            how: R`استخدم دائماً صيغ التلطيف والتهذيب الإنجليزية مثل [[I would recommend]] و [[Could we please]] و [[Would it be possible]]، وتجنب الأوامر المباشرة الحادة مثل [[Give me the API key]] أو [[You must pay now]].`,
+            when: "في كل محادثة يومية مع العميل، وتحديثات التقدم في العمل (Status Updates)، وتسليم المراحل.",
+            mistakes: R`الموافقة الشفهية على أي طلب جديد مجاناً خوفاً من غضب العميل؛ العميل المحترف يتوقع تماماً أن أي عمل إضافي له تكلفة ووقت إضافي.`
+          },
+          lines: [
+            "الموافقة الإيجابية أولاً على قدرتك على تنفيذ الميزة المطلوبة.",
+            "التوضيح المهذب أن الميزة خارج نطاق العمل المتفق عليه مسبقاً وتتطلب يومين.",
+            "تحديد التكلفة المالية الصريحة للميزة الإضافية.",
+            "الاستفسار عن الموعد النهائي المستهدف لإطلاق النسخة الأولية.",
+            "طلب فحص المسار التجريبي واعتماد مرحلة الدفع."
+          ],
+          sol: R`النتيجة:
+أسلوب تواصل دبلوماسي يحفظ حقوقك المالية والزمنية ويمنع استنزاف وقتك في طلبات مجانية غير منتهية.`
+        },
+        {
+          cmd: "مصطلحات الـ Agile والـ Scrum في فرق العمل الأجنبية",
+          title: "مصطلحات العمل في الشركات العالمية: Sprint، و Backlog، و Story Points، و Blockers، و Retrospective",
+          desc: R`عندما تعمل مع فريق برمجي في شركة عالمية أو ناشئة في أمريكا أو أوروبا، ستجد الجميع يتحدث بمصطلحات منهجية [[Agile / Scrum]].
+فهم هذه المصطلحات يجعلك تبدو كمهندس خبير ذو سنوات من العمل في الفرق الدولية من أول يوم.
+
+أهم مصطلحات الـ Scrum الإنجليزية:
+• [[Sprint]]: دورة عمل محددة (عادة أسبوعين) يلتزم الفريق بإنهاء مجموعة مهام محددة خلالها.
+• [[Product Backlog]]: قائمة كل الميزات والأفكار المطلوبة في المشروع للمستقبل.
+• [[Sprint Backlog]]: المهام التي اختارها الفريق ليتم تنفيذها في الـ Sprint الحالي فقط.
+• [[Story Points]]: رقم تقديري لمدى صعوبة وتعقيد المهمة (مثلاً: 1, 2, 3, 5, 8).
+• [[Blocker]]: أي عائق يمنعك من تكملة كودك (زي مستني موافقة، أو الـ API واقعة).
+• [[Standup Meeting]]: اجتماع يومي سريع (15 دقيقة) يقول فيه كل مبرمج: عملت إيه إمبارح، وهعمل إيه النهارده، وإيه الـ Blockers.
+• [[Retrospective (Retro)]]: اجتماع نهاية الـ Sprint لمناقشة ما نجح وما يحتاج لتحسين في أسلوب العمل.`,
+          example: R`# 1. جملة نموذجية في اجتماع الـ Standup اليومي
+Yesterday I completed the user authentication endpoints and unit tests.
+Today I am working on the Stripe payment integration.
+I currently have no blockers and everything is on track for this sprint.
+
+# 2. جملة للإبلاغ عن وجود عائق تقني (Blocker)
+I am blocked on the mobile push notifications because the FCM keys are missing.
+
+# 3. جملة أثناء تقدير المهام في الـ Sprint Planning
+I estimate this task as 3 story points because we need to write integration tests.`,
+          try: R`تدرب على نطق جملة الـ Standup بصوت مسموع: [[Yesterday I worked on..., Today I will..., I have no blockers]]. هذا القالب البسيط هو نفسه الذي يستخدمه مئات الآلاف من مهندسي وادي السيليكون وجوجل يومياً في كل صباح!`,
+          flag: "script",
+          deep: {
+            why: R`في شركات البرمجة الحديثة، مهارات التواصل داخل الفريق (Team Collaboration) تماثل في أهميتها مهارات كتابة الكود. التحدث بلغة الصناعة يمنح الفريق ومديرك ثقة كاملة في احترافيتك.`,
+            how: R`منهجية Scrum تهدف لتسليم برمجيات حقيقية للمستخدمين باستمرار كل أسبوعين بدلاً من الانتظار لشهور، والشفافية في الإبلاغ المبكر عن الـ Blockers تساعد مدير المشروع (Scrum Master) على حل المشكلات قبل فوات الأوان.`,
+            when: "العمل في أي شركة برمجية عن بعد (Remote)، أو فرق العمل متعددة الجنسيات، والمقابلات السلوكية للوظائف العالمية.",
+            mistakes: R`إخفاء الـ Blocker والسكوت عنه أياماً بدافع الإحراج؛ في فرق الـ Agile، كلما أعلنت عن العائق مبكراً كلما ساعدك الفريق في حله بسرعة وأظهرت نضجاً هندسياً.`
+          },
+          lines: [
+            "تقرير ما تم إنجازه بالأمس مع الاختبارات.",
+            "تحديد المهمة المستهدفة اليوم بوضوح.",
+            "التأكيد على عدم وجود أي عوائق وأن العمل يسير وفق الخطة الزمنية.",
+            "الإبلاغ الواضح والمحدد عن وجود عائق مع ذكر سببه بدقة.",
+            "تقدير حجم وصعوبة المهمة بنقاط الصعوبة مع ذكر المبرر."
+          ],
+          sol: R`النتيجة:
+إتقان المصطلحات والأدوار اليومية لفرق العمل العالمية والتحدث بثقة تامة كمهندس برمجيات محترف داخل الاجتماعات الدولية.`
+        }
+      ]
+    }
   ]
 });

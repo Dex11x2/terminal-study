@@ -16,7 +16,7 @@ function termHTML(code, shell, script, label, prOverride){
   const pr = prOverride || SHELLS[shell].prompt;
   const lines = code.split('\n').map(l => {
     if (l.trim()==='') return '';
-    if (script) return /^\s*(#(?!!|[A-Za-z_$][\w$]*\s*[=;(])|REM\b|\/\/)/.test(l) ? '<span class="cm">'+esc(l)+'</span>' : esc(l);
+    if (script) return /^\s*(#(?!(?:include|define|pragma|ifdef|ifndef|endif)\b|!|[A-Za-z_$][\w$]*\s*[=;(])|REM\b|\/\/)/.test(l) ? '<span class="cm">'+esc(l)+'</span>' : esc(l);
     if (isComment(l)) return '<span class="cm">'+esc(l)+'</span>';
     // psql tab mixes SQL (app=#) with shell commands (psql, pg_dump, docker...), which start lowercase
     const p = shell==='pg' && !prOverride && /^\s*[a-z]/.test(l) ? '$ ' : pr;
@@ -27,7 +27,7 @@ function termHTML(code, shell, script, label, prOverride){
 
 let shell = 'bash';
 const lvInfo = l => (LEVEL_TAB[shell] && LEVEL_TAB[shell][l]) || LEVEL_INFO[l];
-const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud','projects','career','english','dotnet','angular','spring','rn','speak'];
+const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud','projects','career','english','dotnet','angular','spring','rn','speak','cpp','kotlin'];
 function countLabel(n){
   const lesson = LESSON_TABS.includes(shell);
   if (shell==='glossary') return n + ' مصطلح';
@@ -53,7 +53,7 @@ function solHTML(c){
 function breakHTML(c, ex){
   const b = BREAK[shell+'|'+c];
   if (!b || !ex) return '';
-  const lines = ex.split('\n').filter(l => l.trim() && !/^\s*(#(?![A-Za-z_$][\w$]*\s*[=;(])|\/\/|REM\b)/.test(l));
+  const lines = ex.split('\n').filter(l => l.trim() && !/^\s*(#(?!(?:include|define|pragma|ifdef|ifndef|endif)\b|[A-Za-z_$][\w$]*\s*[=;(])|\/\/|REM\b)/.test(l));
   const n = Math.min(lines.length, b.length);
   let h = '<div class="bd"><h4>فكّ الأمر سطر سطر</h4><ol>';
   for (let i = 0; i < n; i++) h += '<li><code dir="ltr">'+esc(lines[i].trim())+'</code><span>'+fmt(b[i])+'</span></li>';
@@ -78,13 +78,19 @@ function osNote(c){
   return '<p class="osnote"><b>على الماك:</b> '+fmt(BASH_OS[c][1])+'</p>';
 }
 
+const normAr = s => (s || '').toLowerCase()
+  .replace(/[أإآٱ]/g, 'ا')
+  .replace(/ة/g, 'ه')
+  .replace(/ى/g, 'ي')
+  .replace(/[\u064B-\u065F\u0670]/g, '');
+
 const _st = {};
 function searchText(sh, it){
   const k = sh+'|'+it[0];
-  const note = (store.get('note:'+k) || '').toLowerCase();
+  const note = normAr(store.get('note:'+sh+':'+it[0]) || '');
   if (_st[k]) return _st[k] + ' ' + note;
   const d = DEEP[k], b = BREAK[k];
-  _st[k] = (it.slice(0,5).join(' ')+' '+(d ? [d.why,d.how,d.when,d.mistakes].join(' ') : '')+' '+(b ? b.join(' ') : '')).toLowerCase();
+  _st[k] = normAr(it.slice(0,5).join(' ')+' '+(d ? [d.why,d.how,d.when,d.mistakes].join(' ') : '')+' '+(b ? b.join(' ') : ''));
   return _st[k] + ' ' + note;
 }
 function noteHTML(c){
@@ -93,7 +99,8 @@ function noteHTML(c){
     '<textarea class="note'+(v?' open':'')+'" data-n="'+esc(nk)+'" placeholder="اكتب بكلامك انت: الأمر ده بيعمل إيه، وإمتى هتحتاجه، وأي غلطة وقعت فيها." aria-label="ملاحظتك على '+esc(c)+'">'+esc(v)+'</textarea></div>';
 }
 function render(){
-  const q = $('#q').value.trim().toLowerCase();
+  const rawQ = $('#q').value.trim();
+  const q = normAr(rawQ);
   const cats = DATA[shell].map((c, i) => Object.assign({i}, c)).sort((a, b) => a.l - b.l).filter(c => !level || c.l === level);
   let html = '', chips = '', shown = 0, lastL = 0;
   cats.forEach(cat => {
@@ -124,7 +131,7 @@ function render(){
   });
   if (!shown){
     const other = Object.keys(DATA).filter(k => k!==shell && DATA[k].some(c => c.items.some(it => searchText(k, it).includes(q))));
-    html = '<div class="empty">مفيش نتيجة لـ «'+esc(q)+'» في '+SHELLS[shell].label+'.'+
+    html = '<div class="empty">مفيش نتيجة لـ «'+esc(rawQ)+'» في '+SHELLS[shell].label+'.'+
       (other.length ? ' موجودة في: '+other.map(k=>'<button type="button" data-go="'+k+'">'+SHELLS[k].label+'</button>').join(' و ') : ' جرّب كلمة أقصر أو اسم الأمر بالإنجليزي.')+'</div>';
   }
   $('#list').innerHTML = html;
@@ -451,7 +458,13 @@ function importProgress(file){
       const j = JSON.parse(r.result), o = j && j.data;
       if (!o || typeof o !== 'object') throw 0;
       let n = 0; Object.keys(o).forEach(k => { if (BACKUP_KEYS.test(k) && typeof o[k]==='string'){ store.set(k, o[k]); n++; } });
-      srsMigrate(); alert('اترجّع '+n+' عنصر.'); render();
+      srsMigrate();
+      if (o.theme) applyTheme(o.theme);
+      if (o.todo !== undefined) { document.body.classList.toggle('todo', o.todo === '1'); $('#todoBtn').setAttribute('aria-pressed', o.todo === '1' ? 'true' : 'false'); }
+      if (o.brief !== undefined) { document.body.classList.toggle('brief', o.brief === '1'); $('#briefBtn').setAttribute('aria-pressed', o.brief === '1' ? 'true' : 'false'); }
+      if (o.level !== undefined && [0,1,2,3].includes(+o.level)) { level = +o.level; markLevel(); }
+      if (o.shell && DATA[o.shell]) setShell(o.shell); else render();
+      alert('اترجّع '+n+' عنصر.');
     }catch(e){ alert('الملف ده مش نسخة تقدم من الصفحة دي.'); }
   };
   r.readAsText(file);
@@ -459,9 +472,13 @@ function importProgress(file){
 
 /* ---------- events ---------- */
 document.querySelectorAll('.sw').forEach(b => b.addEventListener('click', () => setShell(b.dataset.s)));
-$('#q').addEventListener('input', render);
+let qTm;
+$('#q').addEventListener('input', () => {
+  clearTimeout(qTm);
+  qTm = setTimeout(render, 120);
+});
 document.addEventListener('keydown', e => {
-  if (e.key==='/' && document.activeElement!==$('#q') && !/^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName) && !$('#fc').open){ e.preventDefault(); $('#q').focus(); }
+  if ((e.code === 'Slash' || e.key === '/' || e.key === 'ظ') && document.activeElement !== $('#q') && !/^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName) && !$('#fc').open){ e.preventDefault(); $('#q').focus(); }
 });
 document.addEventListener('click', e => {
   const cp = e.target.closest('.copy');
@@ -564,8 +581,8 @@ document.addEventListener('keydown', e => {
   if (!$('#fc').open) return;
   const asking = !$('#fcShow').hidden;
   if (asking && e.key===' ' && document.activeElement!==$('#fcShow')){ e.preventDefault(); fcReveal(); }
-  else if (!asking && e.key==='1'){ e.preventDefault(); fcMark(true); }
-  else if (!asking && e.key==='2'){ e.preventDefault(); fcMark(false); }
+  else if (!asking && (e.key==='1' || e.key==='١' || e.code==='Digit1' || e.code==='Numpad1')){ e.preventDefault(); fcMark(true); }
+  else if (!asking && (e.key==='2' || e.key==='٢' || e.code==='Digit2' || e.code==='Numpad2')){ e.preventDefault(); fcMark(false); }
 });
 document.addEventListener('change', e => {
   const cb = e.target.closest('input[type=checkbox][data-k]');

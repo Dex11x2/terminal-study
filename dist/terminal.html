@@ -4,7 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>الترمنال بإيدك</title>
-<meta name="description" content="صفحة مذاكرة بالمصري للترمنال وإدارة السيرفرات و Docker و Git و VS Code، فيها شرح ومثال وتجربة لكل أمر">
+<meta name="description" content="صفحة مذاكرة شاملة بالمصري للترمنال، البرمجة (JavaScript, TypeScript, Python, React, Next.js, Node.js)، قواعد البيانات، وإدارة السيرفرات مع أمثلة وتجارب تفاعلية واختبارات ذاتية">
+<meta property="og:type" content="website">
+<meta property="og:title" content="الترمنال بإيدك - دليلك الشامل للترمنال والبرمجة">
+<meta property="og:description" content="أكثر من 2500 درس وتجربة تفاعلية بالمصري للترمنال، البرمجة، والـ Full Stack مع تمارين تصحيح ذاتي وتعمل بالكامل بدون إنترنت.">
+<meta property="og:image" content="icons/icon-512.png">
+<meta property="og:locale" content="ar_EG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="الترمنال بإيدك">
+<meta name="twitter:description" content="أكثر من 2500 درس وتجربة تفاعلية بالمصري للترمنال والبرمجة مع تمارين تصحيح ذاتي بدون نت.">
+<meta name="twitter:image" content="icons/icon-512.png">
 <meta name="theme-color" content="#1f2430">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -287,7 +296,7 @@ body.quiz article.cmd:not(.shown) .notes{display:none}
 .fc-actions #fcMiss{border-color:var(--danger);color:var(--danger)}
 .fc-stat{margin:12px 0 0;font-size:13.5px;color:var(--muted)}
 @media print{
-  .bar,.switch,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path{display:none!important}
+  .bar,.switch,.sw-sec,.hero .lead,.hero .topline,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path,#compare,#missions{display:none!important}
   body{background:#fff;color:#000;font-size:11pt}
   article.cmd{break-inside:avoid;border:1px solid #bbb}
   .term pre{white-space:pre-wrap}
@@ -550,6 +559,7 @@ body[data-shell="rn"]{--accent:var(--a-rn);--t-bg:#062033;--t-fg:#eef0f3;--t-pr:
       <button class="sw" role="tab" data-s="pyapi" aria-selected="false"><div class="top"><b>Python و FastAPI</b><span>async def read(id: int):</span></div><div class="bot">اللغة نفسها، و async، و pydantic، و FastAPI، و httpx و asyncpg و Redis، وأسئلة الانترفيو</div></button>
       <button class="sw" role="tab" data-s="php" aria-selected="false"><div class="top"><b>PHP و MySQL</b><span>$stmt = $pdo-&gt;prepare(...)</span></div><div class="bot">PHP من الصفر، و PDO و prepared statements، و sessions و forms، والأمان، والاستضافة المشتركة</div></button>
       <button class="sw" role="tab" data-s="flutter" aria-selected="false"><div class="top"><b>Flutter و Dart</b><span>flutter run</span></div><div class="bot">تطبيق موبايل native من كود واحد: Dart، و widgets، و state، و http، والبناء والنشر. جديد عليك</div></button>
+      <button class="sw" role="tab" data-s="cpp" aria-selected="false"><div class="top"><b>C و C++</b><span>g++ -std=c++20 main.cpp</span></div><div class="bot">أساس كل لغات البرمجة والأنظمة والألعاب: الذاكرة وإدارتها، والمؤشرات (Pointers)، والـ STL، و C++ الحديثة</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -560,6 +570,7 @@ body[data-shell="rn"]{--accent:var(--a-rn);--t-bg:#062033;--t-fg:#eef0f3;--t-pr:
       <button class="sw" role="tab" data-s="angular" aria-selected="false"><div class="top"><b>Angular</b><span>@for (item of items(); track item.id)</span></div><div class="bot">signals و routing و forms و RxJS، ومطلوب جدًا في الشركات الكبيرة، وقراية الكود القديم بـ NgModule</div></button>
       <button class="sw" role="tab" data-s="spring" aria-selected="false"><div class="top"><b>Java و Spring Boot</b><span>@GetMapping("/orders")</span></div><div class="bot">Java من TypeScript، و Spring Boot و JPA و Security: البنوك والاتصالات والخليج، بس فرص الـ junior أقل</div></button>
       <button class="sw" role="tab" data-s="rn" aria-selected="false"><div class="top"><b>React Native و Expo</b><span>npx expo start</span></div><div class="bot">تطبيقات موبايل بنفس React اللي اتعلمته، و Expo Router و EAS، والأكتر طلبًا برّه مصر</div></button>
+      <button class="sw" role="tab" data-s="kotlin" aria-selected="false"><div class="top"><b>Kotlin و Android</b><span>kotlinc main.kt</span></div><div class="bot">اللغة الرسمية الأولى من Google لتطبيقات Android: Jetpack Compose، و Coroutines، والنشر على Play Store</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -645,13 +656,13 @@ body[data-shell="rn"]{--accent:var(--a-rn);--t-bg:#062033;--t-fg:#eef0f3;--t-pr:
       <li><b>الشهر ٤ و ٥، الباك إند (واحد بس):</b> <button type="button" data-go="api" data-lv="1">Backend بـ Node ١ و ٢</button>، أو <button type="button" data-go="pyapi" data-lv="1">Python و FastAPI</button>، أو <button type="button" data-go="php" data-lv="1">PHP و MySQL</button>. ومعاه <button type="button" data-go="data" data-lv="1">SQL و Prisma ١ و ٢</button> و <button type="button" data-go="pg" data-lv="1">PostgreSQL ١</button>، و <button type="button" data-go="sec" data-lv="1">أمان الموقع</button>، و <button type="button" data-go="api" data-lv="3">Backend ٣: الاختبارات</button>. المشروع: <button type="button" data-go="projects" data-lv="2">مشروع ٥</button>.</li>
       <li><b>الشهر ٦، full-stack ونشر:</b> <button type="button" data-go="next" data-lv="1">Next.js ١ و ٢</button>، و <button type="button" data-go="arch" data-lv="1">بناء مشروع كامل ١ و ٢</button>، و <button type="button" data-go="vps" data-lv="1">VPS ١ و ٢</button> و <button type="button" data-go="docker" data-lv="1">Docker ١</button> و <button type="button" data-go="nginx" data-lv="1">Nginx</button> و <button type="button" data-go="gha" data-lv="1">GitHub Actions ١</button>، و <button type="button" data-go="quality" data-lv="3">Playwright</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٦</button> منشور على دومين.</li>
       <li><b>الشهر ٧ وبعده، العمق:</b> <button type="button" data-go="arch" data-lv="3">بناء مشروع كامل ٣</button>، و <button type="button" data-go="apis" data-lv="1">APIs متقدمة</button>، و <button type="button" data-go="sweng" data-lv="1">هندسة البرمجيات</button>، و <button type="button" data-go="data" data-lv="3">SQL و Prisma ٣</button>، و <button type="button" data-go="next" data-lv="3">Next.js ٣</button>، و <button type="button" data-go="diag" data-lv="1">التشخيص</button> و <button type="button" data-go="real" data-lv="1">من مشاريعي</button>، و <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button> لما تحتاجه، و <button type="button" data-go="ai" data-lv="1">الذكاء الاصطناعي</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٧</button>. وكمّل <button type="button" data-go="dsa" data-lv="2">DSA ٢ و ٣</button>.</li>
-      <li><b>ستاك إضافي حسب السوق (واحد بس):</b> لمصر والخليج <button type="button" data-go="dotnet" data-lv="1">C# و .NET</button> مع <button type="button" data-go="angular" data-lv="1">Angular</button>، وللبنوك <button type="button" data-go="spring" data-lv="1">Java و Spring Boot</button>، وللموبايل <button type="button" data-go="rn" data-lv="1">React Native و Expo</button>. واختار بعد درس «تختار أنهي stack» في <button type="button" data-go="career" data-lv="1">الشغل والكارير</button>.</li>
+      <li><b>ستاك إضافي حسب السوق (واحد بس):</b> لمصر والخليج <button type="button" data-go="dotnet" data-lv="1">C# و .NET</button> مع <button type="button" data-go="angular" data-lv="1">Angular</button>، وللبنوك <button type="button" data-go="spring" data-lv="1">Java و Spring Boot</button>، وللموبايل <button type="button" data-go="rn" data-lv="1">React Native و Expo</button> أو <button type="button" data-go="kotlin" data-lv="1">Kotlin و Android</button>، وللأنظمة ومحركات الألعاب <button type="button" data-go="cpp" data-lv="1">C و C++</button>. واختار بعد درس «تختار أنهي stack» في <button type="button" data-go="career" data-lv="1">الشغل والكارير</button>.</li>
       <li><b>التوظيف:</b> <button type="button" data-go="career" data-lv="1">الشغل والكارير</button> من بعد مشروع ٥ (الـ portfolio والـ CV مش لازم يستنوا)، و <button type="button" data-go="interview" data-lv="1">الانترفيو</button> قبل أي انترفيو بأسبوعين، و «اختبرني» و «راجع اللي نسيته» كل يوم.</li>
     </ol>
     <h3 class="path-h">مسار الاختبارات</h3>
     <p class="path-note"><button type="button" data-go="quality" data-lv="2">فحص الكود ٢: أول اختبار</button> ثم <button type="button" data-go="api" data-lv="3">Backend ٣: supertest وقاعدة اختبار</button> ثم <button type="button" data-go="react" data-lv="3">React ٣: Testing Library و MSW</button> ثم <button type="button" data-go="quality" data-lv="3">فحص الكود ٣: Playwright</button> ثم <button type="button" data-go="sweng" data-lv="3">هندسة البرمجيات ٣: TDD</button>.</p>
     <h3 class="path-h">مش محتاجهم بعمق لهدف الويب</h3>
-    <p class="path-note"><button type="button" data-go="ps" data-lv="0">PowerShell</button> و <button type="button" data-go="cmd" data-lv="0">CMD</button> و <button type="button" data-go="zsh" data-lv="0">zsh</button>: اللي على جهازك بس، وأساسياته. <button type="button" data-go="os" data-lv="2">اختصارات النظام ٢ و ٣</button>: وقت ما تحتاجها. أجزاء AWS و Kubernetes و Terraform في <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button>: بعد أول شغل. <button type="button" data-go="flutter" data-lv="1">Flutter</button> و <button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button>: لو عايز موبايل. <button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو اخترت PostgreSQL، والباك إندات التانية غير اللي اخترته.</p>
+    <p class="path-note"><button type="button" data-go="ps" data-lv="0">PowerShell</button> و <button type="button" data-go="cmd" data-lv="0">CMD</button> و <button type="button" data-go="zsh" data-lv="0">zsh</button>: اللي على جهازك بس، وأساسياته. <button type="button" data-go="os" data-lv="2">اختصارات النظام ٢ و ٣</button>: وقت ما تحتاجها. أجزاء AWS و Kubernetes و Terraform في <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button>: بعد أول شغل. <button type="button" data-go="flutter" data-lv="1">Flutter</button> و <button type="button" data-go="kotlin" data-lv="1">Kotlin</button> و <button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button>: لو عايز موبايل. و <button type="button" data-go="cpp" data-lv="1">C و C++</button>: للأنظمة والألعاب. <button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو اخترت PostgreSQL، والباك إندات التانية غير اللي اخترته.</p>
     <details class="path-ops">
       <summary>ترتيب مسار السيرفرات والترمنال بالتفصيل</summary>
     <ol>
@@ -15076,6 +15087,53 @@ git init`,
       n: "Git بيشتغل بنفس الأوامر بالظبط في bash و PowerShell و CMD و zsh",
       items: [
         {
+          cmd: "مقدمة Git و GitHub",
+          title: "مقدمة Git: يعني إيه نظام تتبع التغييرات (Version Control)، والفرق بين Git و GitHub",
+          desc: R`قبل Git، كان المبرمج لما يعدّل مشروعه يعمل فولدرات زي:
+[[project_final]] ثم [[project_final_v2]] ثم [[project_really_final_last_edit]]. ولو حب يرجع لكود كتبه الأسبوع اللي فات بيتوه، ولو شغال مع زميله بيبعتوا ملفات بالـ zip والتعديلات بتضيع على بعض!
+
+[[Git]] هو نظام تتبع التغييرات ([[Version Control System - VCS]]):
+برنامج شغال على جهازك زي "آلة زمن"، بياخد لقطة ([[Commit]]) من كل تعديل في ملفاتك، وتقدر ترجع لأي دقيقة في تاريخ مشروعك، أو تشوف مين غيّر سطر كود بالتحديد وليه.
+
+والفرق بين Git و GitHub:
+• [[Git]]: البرنامج اللي متثبت على جهازك في الترمنال وبيسجل التاريخ محلياً.
+• [[GitHub]]: موقع على النت بيستضيف نفس المشروع ده في السحاب عشان تشاركه مع فريقك أو تعرضه للشركات كـ Portfolio.
+
+مراحل حفظ الملفات في Git (المناطق التلاتة):
+1. مساحة العمل ([[Working Directory]]): الملفات اللي انت بتعدلها حالياً في VS Code.
+2. منطقة التجهيز ([[Staging Area]]): المكان اللي بتحدد فيه الملفات اللي جاهزة للحفظ بأمر [[git add]].
+3. الأرشيف الدائم ([[Repository / Commit]]): نقطة الحفظ الرسمية اللي اتسجلت في التاريخ بأمر [[git commit]].`,
+          example: R`# 1. اتأكد إن Git متسطب عندك واعرف نسخته
+git --version
+
+# 2. شوف حالة الملفات دلوقتي (مين اتغير ومين اتجهز)
+git status
+
+# 3. اعرض تاريخ نقاط الحفظ السابقة (الـ commits) في سطر واحد
+git log --oneline -n 3`,
+          try: R`افتح الترمنال في فولدر المشروع ده واكتب [[git status]]. اقرا اللي طلعهولك: هيقولك اسم الفرع [[On branch main]] وهيقولك إيه الملفات المتعدلة. بعدين اكتب [[git log --oneline -n 5]] وشوف تاريخ آخر ٥ تعديلات اتعملت في المشروع ده مع رسائل الشرح بتاعتها.`,
+          deep: {
+            why: R`في أي شغل برمجة حقيقي مع شركة، 100% من الكود بيتم إدارته بـ Git. مستحيل تشتغل كـ Software Engineer من غير ما تتقن Git و GitHub: بيه بتعمل branches لكل ميزة، وتطلب مراجعة كودك بـ Pull Request (PR)، وترجع لأي نسخة سابقة لو حصل bug في الإنتاج.`,
+            how: R`لما بتعمل [[git init]] في أي فولدر، Git بيعمل فولدر مخفي اسمه [[.git]]. الفولدر ده هو المخزن اللي بيحتوي على كل تاريخ وتغييرات كل ملف كـ Objects ومضغوطة بصيغة SHA-1 hash.
+أي ملف في جهازك بيمر بحالات:
+• [[Untracked]]: ملف جديد Git ميعرفوش.
+• [[Modified]]: ملف كان محفوظ وتعدل وماتسجلش لسه.
+• [[Staged]]: ملف حطيته في صندوق الحفظ بـ [[git add]].
+• [[Committed]]: ملف اتحفظ رسمياً في قاعدة بيانات Git بـ [[git commit]].`,
+            when: "من أول يوم بتكتب فيه كود: ابدأ كل مشروع جديد بـ git init، ومع كل إنجاز صغير (عملت صفحة، صلحت زرار) اعمل commit مع رسالة معبرة.",
+            mistakes: R`تفتكر إن Git هو نفسه GitHub: Git مش محتاج إنترنت خالص وبيشتغل أوفلاين على جهازك، بينما GitHub مجرد سيرفر خارجي بترفع عليه كود الـ Git. وتعمل commit واحد ضخم بعد شهر فيه 200 ملف ورسالة "updates": خلي كل commit صغير ومحدد بمهمة واحدة.`
+          },
+          lines: [
+            R`بيطبع نسخة Git المثبتة على جهازك عشان تتأكد إنه جاهز.`,
+            R`أهم أمر في Git: بيقولك انت على أي فرع (branch) وإيه الملفات اللي اتعدلت.`,
+            R`بيعرض آخر ٣ نقاط حفظ (commits) باختصار: كود الـ commit ورسالة الشرح.`
+          ],
+          sol: R`الناتج في الترمنال:
+[[git --version]] هيطبع نسخة Git عندك، مثلاً: [[git version 2.45.0]].
+[[git status]] هيطبع اسم الفرع الحالي (غالباً [[main]]) وقائمة الملفات المعدلة باللون الأحمر أو الأخضر.
+و [[git log --oneline -n 3]] هيعرض آخر ٣ نقاط حفظ، كل سطر يبدأ برمز قصير للـ commit (مثلاً [[a931a25]]) وبعده وصف التعديل اللي المبرمج كتبه.`
+        },
+        {
           cmd: "git config",
           title: "عرّف نفسك مرة واحدة",
           desc: "الاسم والإيميل بيتكتبوا على كل commit، فخليهم نفس إيميل GitHub. [[init.defaultBranch main]] يخلي أي repo جديد يبدأ بـ main. و [[pull.rebase false]] بيقول لـ pull يدمج لو شغلك وشغل GitHub اتفرّعوا، ومن غيره Git الجديد بيقف ويطلب منك تختار.",
@@ -27437,6 +27495,53 @@ node -v`,
       l: 1,
       n: "نسخ Node، و package.json، وإيه اللي بيحصل فعلًا لما تكتب npm install",
       items: [
+        {
+          cmd: "مقدمة Node.js وتشغيل الملفات",
+          title: "مقدمة Node.js: يعني إيه بيئة تشغيل، وتشغيل أول ملف JavaScript بالترمنال، والفرق عن المتصفح",
+          desc: R`في الأصل، كانت لغة JavaScript محبوسة داخل متصفحات الويب فقط (زي Chrome و Firefox).
+في سنة 2009، قام مهندس اسمه Ryan Dahl بأخذ محرك V8 الخاص بجوجل كروم وشغله خارج المتصفح مباشرة على نظام التشغيل، وأطلق عليه اسم [[Node.js]].
+
+يعني إيه [[Node.js]]؟
+هو بيئة تشغيل ([[JavaScript Runtime Environment]]) بتمكّنك من كتابة كود جافاسكريبت وتنفيذه مباشرة على جهاز الكمبيوتر أو السيرفر بدون الحاجة لفتح متصفح.
+
+الفرق الجوهري بين المتصفح و Node.js:
+• في المتصفح: عندك كائنات الواجهة زي [[window]] و [[document]]، وتقدر تتفاعل مع أزرار الصفحة وتعدل الـ DOM، لكن ممنوع أمنياً تقرأ أو تكتب ملفات على هارد ديسك المستخدم مباشرة.
+• في Node.js: مفيش [[window]] ولا [[document]] (لو كتبت document.getElementById هيديك خطأ ReferenceError). في المقابل، عندك كائنات النظام والـ Backend زي [[process]]، وموديول الملفات [[fs]]، وموديول الشبكات والسيرفرات [[http]].
+
+طرق تشغيل كود JavaScript في Node:
+1. تشغيل ملف كامل: [[node app.js]]
+2. تشغيل سطر كود فوري: [[node -e "console.log(1+1)"]] (حرف e اختصار لـ evaluate).
+3. بيئة تفاعلية (REPL): اكتب [[node]] في الترمنال واضغط Enter، تقدر تجرب وتكتب كود سطر بسطر.`,
+          example: R`# 1. طباعة جملة فورية للتأكد من عمل بيئة Node
+node -e 'console.log("Hello from Node.js runtime!")'
+
+# 2. تشغيل كود حسابي وقراءة بيئة النظام الحالية
+node -p "process.platform + ' | Node ' + process.version"
+
+# 3. تشغيل ملف جافاسكريبت محفوظ على جهازك
+node app.js`,
+          try: R`اعمل ملف اسمه [[app.js]] في VS Code واكتب جواه سطر واحد: [[console.log("تطبيقي الأول في Node.js!");]]. افتح الترمنال في نفس المجلد واكتب: [[node app.js]] واضغط Enter. هتشوف جملتك طُبعت في الترمنال في لمح البصر بدون ما تحتاج تفتح أي متصفح!`,
+          deep: {
+            why: R`تحرير جافاسكريبت من المتصفح جعلها اللغة الوحيدة في العالم اللي تقدر تبني بيها التطبيق بالكامل (Full-Stack): واجهات React في الفرونت إند، وسيرفرات Express و NestJS في الباك إند، وأدوات بناء زي Vite و Webpack، وسكربتات أتمتة على السيرفرات.`,
+            how: R`Node.js مبني على معمارية غير متزامنة مبنية على الأحداث (Single-threaded Event-driven Architecture) مع مكتبة مكتوبة بـ C اسمها [[libuv]]. ده بيخليه ممتاز جداً في التعامل مع مئات الآلاف من طلبات الشبكة وقراءة الملفات (I/O) في نفس الوقت باستهلاك قليل جداً من الذاكرة مقارنة باللغات القديمة زي PHP أو Java الكلاسيكية.`,
+            when: "بداية رحلة أي مطور Full-Stack أو Backend. كل مشاريع الويب الحديثة (React, Next.js, Express) بتعتمد على Node في التطوير والتشغيل.",
+            mistakes: R`تحاول تستخدم [[localStorage]] أو [[document]] أو [[window]] جوه كود Node على السيرفر، فالبرنامج يقع بـ ReferenceError. وتنسى إن Node بيشغل ملف الـ JS وينتهي فوراً إلا لو فيه سيرفر أو listener شغال بيفضل مستني.`
+          },
+          lines: [
+            "أمر node مع خيار e لتنفيذ سطر جافاسكريبت مباشرة وطباعة ترحيب.",
+            "أمر node مع خيار p لطباعة ناتج كائن بيئة التشغيل وإصدار نود.",
+            "تشغيل ملف جافاسكريبت كامل بالترمنال."
+          ],
+          sol: R`الناتج في الترمنال:
+1. من الأمر الأول:
+Hello from Node.js runtime!
+
+2. من الأمر الثاني:
+اسم نظام تشغيلك (مثل win32 أو linux) متبوعاً بإصدار نود الحالي (مثل Node v22.12.0).
+
+3. من الأمر الثالث:
+محتوى الطباعة اللي كتبته جوه ملف [[app.js]].`
+        },
         {
           cmd: "node -v",
           title: "النسخ اللي شغالة عندك",
@@ -41357,46 +41462,116 @@ TAB("js", {
       items: [
         {
           cmd: "يعني إيه برنامج",
-          title: "يعني إيه برنامج، وتشغّل ملف JavaScript إزاي؟",
-          desc: R`البرنامج ليستة أوامر الكمبيوتر بينفّذها واحد ورا التاني من فوق لتحت. وأي برنامج مهما كبر شكله واحد: ياخد input (حاجة داخلة: كلام من اليوزر، ملف، request)، ويعمل process (حسابات وقرارات)، ويطلّع output (حاجة خارجة: كلام على الشاشة، صفحة، response).
+          title: "مقدمة جافا سكريبت: يعني إيه برنامج، وأول سطر كود (Hello World)",
+          desc: R`جافا سكريبت ([[JavaScript]]) هي لغة البرمجة الأساسية للويب. بتخلي الصفحات حية وتتفاعل مع ضغطات المستخدم والبيانات.
 
-JavaScript بتشتغل في مكانين، والاتنين عندك دلوقتي: Node في الترمنال (اكتب [[node order.js]] وهو يشغّل الملف)، وConsole بتاع المتصفح (اضغط F12 واختار Console واكتب أي سطر). الكود نفسه واحد، الفرق في الحاجات اللي حواليه: Node عنده ملفات ونت و [[process]]، والمتصفح عنده الصفحة ([[document]]) و [[alert]] و [[prompt]].
+البرنامج ([[Program]]) ببساطة هو قايمة أوامر الكمبيوتر بينفّذها سطر سطر بالترتيب من فوق لتحت. وأي برنامج بيتكون من ٣ أركان أساسية:
+1. مدخلات ([[Input]]): داتا بتدخل للبرنامج (كتابة مستخدم، ضغطة زر، أو بيانات من سيرفر).
+2. معالجة ([[Process]]): حسابات وقرارات وشروط.
+3. مخرجات ([[Output]]): النتيجة بتظهر للمستخدم على الشاشة أو في الصفحة.
 
-و [[console.log(...)]] هي أول أداة عندك: بتطبع أي قيمة عشان تشوف البرنامج بيعمل إيه. هتستخدمها في كل درس جاي.`,
-          example: R`// order.js، وشغّله كده: node order.js Sara 3
-const name = process.argv[2] ?? "ضيف";
-const qty = Number(process.argv[3] ?? 1);
+تقدر تكتب جافا سكريبت وتشغّلها في ٣ أماكن:
+• في المتصفح فوراً: اضغط [[F12]] وافتح خانة [[Console]] واكتب أي كود وهيشتغل في ثانية.
+• جوه صفحة ويب: بين وسمين [[<script>]] كودك [[$__lt/script>]].
+• في ملف مستقل: تحفظه باسم [[hello.js]] وتشغله بالترمنال بـ [[node hello.js]].
+
+وأول وأهم أداة عندك هي [[console.log(...)]]: بتطبع أي قيمة أو رسالة على الشاشة عشان تشوف كودك بيعمل إيه.`,
+          example: R`// أهلاً بالعالم: تعريف متغيرات (Variables) وحساب الإجمالي
+const name = "Sara";
 const price = 120;
+const qty = 3;
 const total = price * qty;
-console.log($__btأهلًا $__{name}$__bt);
+console.log("أهلًا " + name);
 console.log("الإجمالي:", total, "جنيه");`,
-          try: R`اعمل فولدر [[lab/js]] وجواه ملف [[order.js]] بالكود ده، وشغّله ٣ مرات: [[node order.js]] من غير حاجة، و [[node order.js Sara 3]]، و [[node order.js Sara abc]]. قبل كل مرة خمّن الناتج. وبعدين افتح Console في المتصفح واكتب [[const qty = Number(prompt("كام قطعة؟"))]] وبعدها [[qty * 120]].`,
+          try: R`افتح المتصفح واضغط [[F12]] (أو كليك يمين واختار Inspect ثم Console). اكتب [[console.log("Hello World")]] واضغط Enter. بعدها جرّب تعمل متغيرين: [[let a = 10]] وبعدها [[let b = 20]] ثم [[console.log(a + b)]]. بعد كده اعمل ملف [[lab/js/hello.js]] وحط فيه الكود وشغّله في الترمنال بـ [[node hello.js]].`,
           flag: "script",
           deep: {
-            why: "قبل ما تتعلم أي syntax لازم تعرف الشكل العام: البرنامج مش سحر، هو أوامر بتتنفذ بالترتيب على داتا داخلة وبتطلّع داتا خارجة. كل مسألة هتقابلها (من FizzBuzz لـ API كامل) هتسأل فيها نفس الـ ٣ أسئلة: إيه الداخل؟ أعمل فيه إيه؟ إيه الخارج؟",
-            how: R`لما تكتب [[node order.js Sara 3]]، Node بيقرا الملف كله، ويتأكد إن الـ syntax سليم، وبعدين ينفّذه سطر سطر. [[process.argv]] array فيها الكلام اللي كتبته في الترمنال: أول عنصرين مسار node ومسار الملف، وبعدهم الـ arguments بتاعتك، فـ [[process.argv[2]]] هو "Sara".
-
-أي حاجة جاية من برّه (ترمنال، فورم، URL) بتيجي string. عشان كده [[Number(...)]]: من غير التحويل [["3" * 120]] كانت هتشتغل صدفة، بس [["3" + 120]] كانت هتطلع "3120". و [[??]] معناها «لو الحاجة دي مش موجودة خد القيمة دي بدالها».
-
-في المتصفح مفيش [[process]]، والـ input بييجي من [[prompt()]] أو من فورم في الصفحة (قسم الـ DOM تحت).`,
-            when: R`دايمًا. أي كود في التاب ده عليه [[flag]] ملف (script) احفظه في ملف وشغّله بـ node، واللي عليه Console جرّبه في المتصفح.`,
-            mistakes: R`تكتب [[node order]] وانت مش في نفس الفولدر فيطلعلك «Cannot find module»: اعمل [[cd]] للفولدر الأول (تاب bash). وتنسى إن الـ input string. وتكتب الكود في الترمنال مباشرة بدل ما تكتبه في ملف: الترمنال بيفهم أوامر bash مش JavaScript، إلا لو فتحت [[node]] لوحده (REPL) واتكتب قدامك [[>]].`
+            why: "قبل ما تحفظ أي كود لازم تتخيل فكرة البرمجة: الكمبيوتر بينفذ سطر سطر بدون تخمين. المتغيرات (Variables) هي صناديق بنسميها ونخزن فيها قيم في الذاكرة عشان نستخدمها بعدين في الحسابات، ودالة console.log هي نافذتك اللي بتشوف منها اللي بيدور جوه البرنامج.",
+            how: R`محرك جافا سكريبت بيقرا الكود من فوق لتحت. بيحجز مكان في الذاكرة لكل متغير بالاسم اللي اخترته، ولما يقابل علامة [[*]] بيحسب العملية الحسابية فوراً، ولما يقابل [[console.log]] بيبعت النص لمخرجات الشاشة. علامة [[+]] بين النصوص بتعمل دمج ([[Concatenation]]) للكلام جنب بعضه.`,
+            when: R`في كل برنامج أو صفحة ويب هتبنيها، المتغيرات وطباعة المخرجات هما الخطوة الأولى في أي منطق برمجي ([[Logic]]).`,
+            mistakes: R`تنسى علامات التنصيص حول النصوص: [["Sara"]] نص، لكن [[Sara]] من غير تنصيص هيعتبرها اسم متغير مش موجود فيرمي [[ReferenceError]]. وتخلط بين كتابة الكود في ملف وكتابته في الترمنال: الترمنال بيفهم أوامر bash إلا لو كتبت [[node]] ودخلت بيئة الجافا سكريبت.`
           },
           lines: [
-            R`الـ input الأول: أول كلمة بعد اسم الملف، ولو مفيش خد "ضيف".`,
-            R`التاني، ومحوّل لرقم لأن أي حاجة من الترمنال بتيجي string.`,
-            "قيمة ثابتة في البرنامج.",
-            "الـ process: الحساب.",
-            R`الـ output. الـ backtick و [[$__{}]] بيحطوا قيمة جوه النص (درس template literals).`,
-            R`[[console.log]] بتقبل كذا قيمة وبتحط بينهم مسافة.`
+            R`متغير ([[const]]) بيحفظ نص ([[String]]) في الذاكرة.`,
+            R`متغير بيحفظ رقم ([[Number]]) هو سعر القطعة.`,
+            R`متغير للكمية المطلوبة.`,
+            R`المعالجة ([[Process]]): ضرب السعر في الكمية وحفظ الناتج.`,
+            R`المخرجات ([[Output]]): طباعة رسالة ترحيب ودمج النص مع المتغير.`,
+            R`طباعة الإجمالي، ودالة [[console.log]] بتحط مسافة تلقائية بين القيم.`
           ],
-          sol: R`[[node order.js]] بتطبع [[أهلًا ضيف]] و [[الإجمالي: 120 جنيه]] لأن الاتنين مش موجودين فخدنا القيم البديلة.
+          sol: R`الناتج في Console أو الترمنال:
+السطر الأول هيطبع: [[أهلًا Sara]]
+السطر الثاني هيطبع: [[الإجمالي: 360 جنيه]]
 
-[[node order.js Sara 3]] بتطبع [[أهلًا Sara]] و [[الإجمالي: 360 جنيه]].
+وفي تجربة الـ F12:
+[[console.log("Hello World")]] هتطبع Hello World باللون العادي، وتحتها سطر رمادي خفيف [[undefined]] (ده معناه إن دالة log نفذت ومبترجعش قيمة حسابية، وده طبيعي تماماً).
+و [[console.log(a + b)]] هيطبع [[30]].`
+        },
+        {
+          cmd: "المتغيرات والأنواع والعمليات",
+          title: "المتغيرات والأنواع والمعاملات (Variables, Data Types & Operators)",
+          desc: R`في جافا سكريبت، البيانات هي قلب أي برنامج. وعشان تتعامل مع البيانات محتاج حاجتين:
+1. تحفظها في الذاكرة: باستخدام المتغيرات ([[Variables]]).
+2. تعمل عليها عمليات وحسابات: باستخدام المعاملات ([[Operators]]).
 
-[[node order.js Sara abc]] بتطبع [[الإجمالي: NaN جنيه]]: [[Number("abc")]] بـ NaN (Not a Number)، وأي حساب فيه NaN بيطلع NaN. ده أول درس في التعامل مع input: متصدقش اليوزر، اتأكد إن الرقم رقم (هتعمل ده في درس if الجاي).
+المتغير هو صندوق في الذاكرة له اسم وقيمة. في الكود الحديث بنستخدم كلمتين:
+• [[const]]: صندوق ثابت ([[Constant]]) قيمته مبتتغيرش بعد ما تحطها. استخدمه افتراضيًا في 90% من كودك.
+• [[let]]: صندوق متغير تقدر تغير قيمته في أي وقت (زي عداد بيزيد أو نتيجة حسابات).
 
-وفي Console لو كتبت 3 في الـ prompt يطلعلك 360، ولو ضغطت Cancel يبقى [[prompt]] رجّع null و [[Number(null)]] بـ 0 فالناتج 0.`
+أنواع البيانات الأساسية ([[Data Types]]):
+• نصوص ([[String]]): كلام بين علامات تنصيص [["Ali"]] أو [['Sara']].
+• أرقام ([[Number]]): أعداد صحيحة وعشرية [[42]] أو [[19.99]].
+• منطقي ([[Boolean]]): إما [[true]] (صح) أو [[false]] (خطأ)، ودي نتيجة أي مقارنة.
+
+معاملات المقارنة ([[Comparison Operators]]) هي اللي بتطلّع boolean:
+[[>]] (أكبر)، [[<]] (أصغر)، [[>=]] (أكبر أو يساوي)، و [[===]] (يساوي بالظبط القيمة والنوع). النتيجة دي هي اللي بياخد عليها [[if]] قراره في الدرس الجاي.`,
+          example: R`// 1. المتغيرات والأنواع (Variables & Types)
+const appName = "المتجر السريع";
+let cartItems = 2;
+const pricePerItem = 75;
+const isDeliveryFree = false;
+
+// 2. العمليات الحسابية والمقارنات (Arithmetic & Comparisons)
+cartItems = cartItems + 1;
+const subtotal = cartItems * pricePerItem;
+const isBigOrder = subtotal >= 200;
+
+// 3. المخرجات (Output)
+console.log(appName);
+console.log("عدد المنتجات:", cartItems);
+console.log("الإجمالي:", subtotal, "جنيه");
+console.log("هل الطلب كبير؟", isBigOrder);`,
+          try: R`افتح الـ Console بـ [[F12]] وجرّب: اعمل متغير [[const price = 50]] ومتغير [[let qty = 2]]، وبعدين اضربهم في بعض [[price * qty]]. بعدين جرّب تغير الـ qty لـ 4: [[qty = 4]] واضرب تاني. بعدين جرّب تغير الـ price لـ 60: [[price = 60]] وشوف الـ error اللي هيطلعلك عشان هو const! بعدها قارن: اكتب [[price > 40]] واقرا الناتج ([[true]]).`,
+          flag: "script",
+          deep: {
+            why: "أي منطق برمجي بيتكون من داتا بنقارنها وداتا بنغيرها. لو مش فاهم الفرق بين let و const، كودك هيضرب أخطاء غريبة أو قيم تتغير بدون قصدك. قاعدة المحترفين: ابدأ دايمًا بـ const، وخليها let بس لو انت متأكد إنك هتعيد تعيينها لاحقًا.",
+            how: R`المتصفح بيحجز مكان في الذاكرة (RAM) مع كل [[let]] أو [[const]]. لما تكتب [[cartItems = cartItems + 1]] المحرك بيحسب اليمين الأول (2 + 1 = 3) وبعدين يحطه في الصندوق cartItems. ولما تكتب [[subtotal >= 200]]، المحرك بيقارن 225 مع 200، ولأنها أكبر فعلاً بيخزن القيمة المنطقية [[true]] في المتغير isBigOrder.`,
+            when: "في كل سطر كود تكتبه، تحديد نوع المتغير واسمه المعبر هو أول خطوة في كتابة Clean Code.",
+            mistakes: R`تحاول تغير قيمة const ([[const x = 5; x = 6]]) فيطلعلك [[TypeError: Assignment to constant variable]]. وتستخدم [[=]] الواحدة للمقارنة بدل [[===]]: علامة [[=]] بتخزن قيمة (Assignment)، لكن [[===]] بتقارن قيمتين (Strict Equality).`
+          },
+          lines: [
+            R`متغير نصي ثابت ([[String]]) لاسم التطبيق.`,
+            R`متغير عددي قابل للتغيير ([[let]]) لعدد عناصر السلة.`,
+            "سعر القطعة الواحدة كقيمة ثابتة.",
+            R`متغير منطقي ([[Boolean]]) قيمته إما true أو false.`,
+            "زيادة قيمة المتغير cartItems بواحد (الآن أصبح 3).",
+            "عملية ضرب لحساب إجمالي السعر (3 * 75 = 225).",
+            "مقارنة: هل 225 أكبر من أو تساوي 200؟ النتيجة true.",
+            "طباعة اسم التطبيق.",
+            "طباعة عدد العناصر بعد الزيادة.",
+            "طباعة إجمالي الفاتورة.",
+            "طباعة نتيجة المقارنة المنطقية (true)."
+          ],
+          sol: R`الناتج في Console:
+[[المتجر السريع]]
+[[عدد المنتجات: 3]]
+[[الإجمالي: 225 جنيه]]
+[[هل الطلب كبير؟ true]]
+
+وفي تجربة الـ F12:
+لما حاولت تكتب [[price = 60]] على متغير تم تعريفه بـ const، طلعلك في الـ Console باللون الأحمر:
+[[TypeError: Assignment to constant variable]]
+وده معناه: المتغير ده ثابت مينفعش تعيد تعيين قيمته. دي ميزة مش عيب: بتحميك من تغيير داتا حساسة بالغلط في الكود.`
         },
         {
           cmd: "if و else if",
@@ -42066,6 +42241,70 @@ console.table([{ i: 0, v: 10 }, { i: 1, v: 20 }]);`,
   return sum / nums.length;
 }
 console.log(average([10, 20, 30]), average([]));`
+        },
+        {
+          cmd: "مقدمة الدوال function",
+          title: "مقدمة الدوال: يعني إيه دالة، والـ return، وليه بنستخدمها؟ (Functions)",
+          desc: R`الدالة ([[Function]]) هي حجر البناء في البرمجة: كود بنكتبه مرة واحدة ونديله اسم، ونشغّله أي عدد من المرات في أي مكان.
+
+فكر فيها كـ «ماكينة عصير»:
+1. مدخلات ([[Parameters]]): الفاكهة اللي بتدخلها للماكينة (زي المتغيرات [[price, percentage]]).
+2. جسم الدالة ([[Body]]): الشغل والحسابات اللي بتحصل جوه الأقواس [[{ }]].
+3. مخرج ([[Return Value]]): كوباية العصير اللي بتطلعلك في الآخر بكلمة [[return]].
+
+قاعدة ذهبية: أي دالة لازم تنهي شغلها بـ [[return]] عشان ترجّع قيمة. لو نسيت كلمة return الدالة هتخلص وترجّع [[undefined]].
+
+الدوال بتخلي كودك منظم ومفهوم وبتمنع التكرار (مبدأ DRY: Don't Repeat Yourself). كل التمارين اللي جاية في القسم ده هتطلب منك تكتب دالة بتاخد مدخلات وترجع ناتج.`,
+          example: R`// تعريف الدالة (Function Definition)
+function calculateDiscount(price, percentage) {
+  const discountAmount = price * (percentage / 100);
+  const finalPrice = price - discountAmount;
+  return finalPrice;
+}
+
+// استدعاء الدالة واستخدام الناتج (Function Call)
+const order1 = calculateDiscount(200, 10);
+const order2 = calculateDiscount(500, 20);
+console.log("سعر الطلب الأول:", order1);
+console.log("سعر الطلب الثاني:", order2);`,
+          try: R`افتح الـ Console بـ [[F12]] واكتب دالة بسيطة لجمع رقمين: [[function add(x, y) { return x + y; }]] ودوس Enter. بعدين شغّلها بـ [[add(5, 7)]] وشوف النتيجة ([[12]]). بعدها جرّب تكتب دالة من غير return: [[function test() { const z = 5; }]] وناديها بـ [[test()]] وشوف إزاي بترجع [[undefined]]!`,
+          flag: "script",
+          deep: {
+            why: "من غير الدوال، لو عندك عملية حسابية أو فحص معين هتضطر تنسخ وتلصق نفس الـ 10 سطور في 20 مكان في مشروعك. لو حبيت تعدل سطر، هتعدل في 20 مكان وممكن تغلط. الدالة بتجمع المنطق في مكان واحد مضمون.",
+            how: R`كلمة [[function]] بتعرّف الدالة. الأقواس [[( )]] بتحتوي على أسماء المعاملات ([[Parameters]]) اللي هي مجرد متغيرات مؤقتة بتعيش بس جوة الدالة وبتستقبل القيم اللي باعتها ([[Arguments]]). كلمة [[return]] بتعمل حاجتين: بتسلّم القيمة الناتجة للي نادى الدالة، وبتنهي تنفيذ الدالة فوراً (أي سطر بعد return مش هيتنفذ).`,
+            when: "أي كود هتستخدمه أكتر من مرة، أو أي عملية منطقية ليها مهمة واحدة محددة (زي حساب خصم، أو تنسيق تاريخ، أو التحقق من إيميل)، اعمله دالة.",
+            mistakes: R`تنسى كلمة [[return]]: الدالة تحسب كل حاجة وترمي الناتج في الهوا وترجعلك [[undefined]]. وتخلط بين تعريف الدالة واستدعائها: كتابة الدالة لوحدها مبيعملش حاجة لحد ما تناديها بالأقواس [[calculateDiscount(100, 10)]].`
+          },
+          lines: [
+            R`تعريف دالة بالاسم والمعاملات المستقبلة ([[price]] و [[percentage]]).`,
+            "حساب قيمة الخصم.",
+            "طرح الخصم من السعر الأساسي.",
+            "تسليم السعر النهائي للي نادى الدالة وإنهاء التنفيذ.",
+            "قوس قفلة الدالة.",
+            "تشغيل الدالة للطلب الأول (خصم 10% على 200 = 180).",
+            "تشغيل الدالة للطلب الثاني (خصم 20% على 500 = 400).",
+            "طباعة ناتج الطلب الأول.",
+            "طباعة ناتج الطلب الثاني."
+          ],
+          sol: R`الناتج في Console:
+[[سعر الطلب الأول: 180]]
+[[سعر الطلب الثاني: 400]]
+
+وفي تجربة الـ F12:
+[[add(5, 7)]] بتطبع [[12]].
+ودالة [[test()]] اللي من غير return بتطبع [[undefined]] لأنها مخرجتش أي قيمة بـ return، فالمتصفح بيعتبر الناتج غير معرف.`,
+          check: {
+            lang: "js",
+            starter: R`// اكتب دالة sayHello تستقبل اسم وترجع: "Hello, " + name + "!"
+function sayHello(name) {
+  
+}`,
+            tests: R`test("sayHello('Sara') ← 'Hello, Sara!'", () => expect(sayHello("Sara")).toBe("Hello, Sara!"));
+test("sayHello('Ali') ← 'Hello, Ali!'", () => expect(sayHello("Ali")).toBe("Hello, Ali!"));`,
+            solution: R`function sayHello(name) {
+  return "Hello, " + name + "!";
+}`
+          }
         },
         {
           cmd: "تمارين أساسيات ١",
@@ -49163,6 +49402,56 @@ npx tsx index.ts`,
       n: "أنواع بتتفحص وانت بتكتب، وبتتمسح قبل ما الكود يشتغل",
       items: [
         {
+          cmd: "مقدمة TypeScript والفرق عن JS",
+          title: "مقدمة TypeScript: ليه مايكروسوفت طورت TS، والفرق بين الأنواع الثابتة والديناميكية، ومميزاتها",
+          desc: R`لغة [[TypeScript]] هي طبقة فوقية فائقة من جافاسكريبت ([[Superset of JavaScript]]) طورتها شركة مايكروسوفت (بقيادة أندرس هيلسبرغ مخترع لغة C#).
+أي كود جافاسكريبت سليم هو بالضرورة كود تايب سكريبت سليم، لكن TS بتضيف نظام أنواع صارم وثابت ([[Static Typing]]).
+
+ليه كل الشركات والمشاريع الحديثة بتستخدم TypeScript بدل JS العادية؟
+1. اكتشاف الأخطاء فوراً وأنت بتكتب الكود ([[Compile-Time Errors]]): بدلاً من أن تكتشف Bug كارثية بعد ما ترفع الموقع للمستخدمين ويفاجئك بـ [[undefined is not a function]].
+2. الإكمال التلقائي الأسطوري في المحرر ([[IntelliSense]]): بمجرد ما تضغط نقطة [[.]] محرر VS Code بيعرضلك كل الخصائص والدوال المتاحة مع أنواعها وشرحها، فمش محتاج تراجع ملفات الدوكيومنتشن كل دقيقة.
+3. سهولة وتأمين التعديل على المشاريع الضخمة ([[Safe Refactoring]]): لو غيّرت اسم خاصية في كائن، تايب سكريبت هيحددلك كل الأماكن اللي محتاجة تتعدل فوراً.
+
+الفرق بين [[Static Typing]] و [[Dynamic Typing]]:
+• في JS العادية (Dynamic): المتغير ممكن يكون رقم وبعدها نصه يتقلب سترينج عادي [[let x = 10; x = "hello";]]، وده بيسبب أخطاء خفية كتيرة.
+• في TS (Static): بتحدد نوع المتغير مثل [[let age: number = 25;]]، ولو حاولت تحط فيه نص المحرر هيحطلك تحته خط أحمر ويعترض فوراً قبل ما تشغل الكود.`,
+          example: R`# 1. تعريف متغيرات مع إعلان النوع الصريح (Type Annotation)
+let developerName: string = "سارة";
+let experienceYears: number = 3;
+let isFullStack: boolean = true;
+
+# 2. تعريف دالة تأخذ مدخلات محددة وترجع ناتج بنوع مضمون
+function getProfile(name: string, years: number): string {
+  return "المطور: " + name + " - خبرة: " + years + " سنوات";
+}
+
+# 3. استدعاء الدالة واستقبال الناتج بأمان
+const profileText = getProfile(developerName, experienceYears);
+console.log(profileText);`,
+          try: R`افتح موقع التجربة السريع [[typescriptlang.org/play]]، الصق الكود ده هناك. شوف إزاي المحرر عارف كل نوع. بعدين جرب تروح لسطر الاستدعاء وتكتب [[getProfile(developerName, "تلاتة")]]: هتشوف خط أحمر زجزاج ظهر فوراً تحت كلمة "تلاتة" بيقولك إن الدالة مستنية number مش string! ده سحر تايب سكريبت اللي بيحميك من الأخطاء قبل ما تحصل.`,
+          flag: "script",
+          deep: {
+            why: R`في فرق العمل والمشاريع الكبيرة التي تحتوي على مئات الآلاف من أسطر الكود، كتابة JS عادية بتتحول لكابوس، لأن مفيش ضمان لشكل البيانات اللي بتتنقل بين المبرمجين. TypeScript بيعتبر بمثابة عقد توثيق حي ومكتوب ذاتياً (Self-documenting Code).`,
+            how: R`مترجم تايب سكريبت ([[tsc]]) بيقوم بتحليل الشجرة النحوية للكود (Abstract Syntax Tree - AST) ويتأكد من تطابق الأنواع بالكامل. بعدها بيقوم بعملية حذف الأنواع (Type Erasure) لإنتاج ملف JavaScript نظيف 100% لأن المتصفحات ومحركات التشغيل بتشغل JS فقط ولا تفهم كود TS مباشرة.`,
+            when: "المعيار الافتراضي لأي مشروع جديد تبدأه اليوم في React، Next.js، Angular، Node.js، أو أي مكتبة برمجية.",
+            mistakes: R`تستخدم نوع [[any]] في كل مكان للهروب من الأخطاء: كتابة any بتلغي كل حماية تايب سكريبت وترجعك لنقطة الصفر في JS العادية. والافتراض بأن TS بيفحص البيانات اللي جاية من السيرفر أو مدخلات المستخدم وقت التشغيل (Runtime).`
+          },
+          lines: [
+            "متغير نصي بنوع string صريح.",
+            "متغير رقمي بنوع number صريح.",
+            "متغير منطقي بنوع boolean صريح.",
+            "تعريف دالة تقبل اسم (string) وسنوات خبرة (number) وترجع نصاً (string).",
+            "جسم الدالة لدمج القيم وإرجاعها كنص منسق.",
+            "قفلة الدالة.",
+            "استدعاء الدالة وتخزين القيمة في متغير ثابت.",
+            "طباعة النص المرجع في الترمنال."
+          ],
+          sol: R`الناتج عند تشغيل الكود:
+المطور: سارة - خبرة: 3 سنوات
+
+وعند فتح تبويب .JS في TypeScript Playground، هتشوف إن كل إعلانات الأنواع (: string, : number, : boolean) اتحذفت تماماً وأصبح كود JavaScript قياسي بسيط ونظيف.`
+        },
+        {
           cmd: "type erasure",
           title: "الأنواع بتروح فين لما الكود يشتغل؟",
           desc: R`TypeScript هو JavaScript وفوقه أنواع. الأنواع بتتفحص وانت بتكتب ووقت الـ build، وبعدين بتتمسح خالص، والمتصفح أو Node بيشغّل JS عادي مفيهوش ولا نوع.
@@ -52569,6 +52858,59 @@ npm run dev`,
       n: "الصفحة شجرة عناصر، وكل عنصر بيقول للمتصفح ولقارئ الشاشة ولجوجل هو إيه",
       items: [
         {
+          cmd: "مقدمة HTML والـ Tags",
+          title: "مقدمة HTML: يعني إيه لغة توصيف، والـ Tags والـ Elements والـ Attributes",
+          desc: R`لغة [[HTML]] اختصار لـ HyperText Markup Language (لغة توصيف النص الفائق). هي ليست لغة برمجة (مفيهاش حسابات أو if)، بل هي «لغة هيكلة» بتوصف للمتصفح محتوى الصفحة: ده عنوان، ده زرار، دي صورة، وده رابط.
+
+كل حاجة في HTML بتتكون من عناصر ([[Elements]]). والعنصر بيتكون من:
+1. وسم بداية ([[Opening Tag]]): زي [[<h1>]].
+2. المحتوى ([[Content]]): النص أو العناصر اللي جواه (زي "متجري الإلكتروني").
+3. وسم نهاية ([[Closing Tag]]): زي [[$__lt/h1>]] وفيه علامة الـ slash [[/]].
+
+وفيه وسوم مفردة بتتقفل لوحدها ملهاش وسم نهاية ([[Self-closing / Void Tags]])، زي الصور [[<img>]] وحقول الإدخال [[<input>]].
+
+الخصائص ([[Attributes]]):
+معلومات إضافية بتتحط جوه وسم البداية، شكلها دايمًا [[name="value"]]:
+• في الروابط: [[href]] بيقول للمتصفح الرابط هيروح على أي موقع.
+• في الصور: [[src]] مسار الصورة، و [[alt]] وصف بديل يتقري لو الصورة محملتش ولأصحاب الإعاقة البصرية.`,
+          example: R`# 1. العناوين والفقرات (Headings & Paragraphs)
+<h1>متجري الإلكتروني</h1>
+<p>أفضل المنتجات بأفضل الأسعار.</p>
+
+# 2. الروابط والصور مع الخصائص (Links, Images & Attributes)
+<a href="https://example.com/products">تصفح المنتجات</a>
+<img src="logo.png" alt="شعار المتجر">
+
+# 3. الأزرار وحقول الإدخال (Buttons & Inputs)
+<input type="text" placeholder="ابحث عن منتج...">
+<button type="button">بحث</button>`,
+          try: R`افتح محرر VS Code واعمل ملف اسمه [[index.html]]، انسخ الكود ده جواه، وبعدين افتحه في متصفحك (دبل كليك على الملف أو كليك يمين ثم Open with Chrome). شوف إزاي العنوان ظهر كبير، والزرار بيتضغط، وحقل البحث تقدر تكتب جواه! بعدها اضغط كليك يمين في أي مكان في الصفحة واختار Inspect وشوف كودك ظاهر إزاي في شجرة الـ Elements.`,
+          flag: "script",
+          deep: {
+            why: R`أي موقع على النت - من أبسط مدونة لحد فيسبوك وجوجل - عظمته وهيكله الأساسي مبني على HTML. المتصفح مبيفهمش تصميم ولا تفاعل من غير ما يلاقي عناصر HTML حقيقية يطبق عليها الـ CSS ويشغل فيها الـ JavaScript.`,
+            how: R`المتصفح بيقرا ملف الـ HTML حرف حرف، ولما يلاقي علامة [[<]] بيعرف إنه قدام وسم (Tag). بيبني في الذاكرة شجرة اسمها DOM (Document Object Model)، كل وسم بيمثل عقدة (Node) في الشجرة. الوسوم المتداخلة بتكون علاقة أب وابن (Parent & Child)، مثلاً لو حطيت رابط جوة فقرة بيكون الـ a ابن للـ p.`,
+            when: "أول وأهم خطوة في بناء أي واجهة مستخدم (Frontend). في React و Next.js بتكتب JSX اللي هو في الأصل مبني تماماً على نفس وسوم وقواعد HTML دي.",
+            mistakes: R`تنسى قفلة الوسم: تسيب [[<p>]] مفتوحة من غير [[$__lt/p>]]، فالمتصفح يتلخبط ويدخل العناصر اللي بعدها جواها. وتنسى خاصية [[alt]] في الصور، فجوجل ميفهمش صورتك عن إيه ولما الموقع يفتح لقارئ الشاشة ميقرأش حاجة.`
+          },
+          lines: [
+            R`عنوان رئيسي كبير ([[h1]]). بيمثّل أهم عنوان في الصفحة.`,
+            R`فقرة نصية عادية ([[p]]) اختصار لـ paragraph.`,
+            R`رابط تشعبي ([[a]]) اختصار لـ anchor، مع خاصية [[href]] للعنوان المطلوب.`,
+            R`عنصر صورة ([[img]]) مع خاصية مسار الصورة [[src]] والوصف البديل [[alt]].`,
+            R`حقل إدخال نصوص ([[input]]) مع نص توضيحي باهت ([[placeholder]]).`,
+            R`زرار قابل للضغط ([[button]]) لتنفيذ أمر أو بحث.`
+          ],
+          sol: R`النتيجة لما تفتح الملف في المتصفح:
+• عنوان [[متجري الإلكتروني]] هيظهر بخط كبير وعريض.
+• تحته جملة وصفية بخط عادي.
+• تحتهما رابط باللون الأزرق وتحته خط، لما تقف عليه الماوس بيتحول لشكل يد.
+• صندوق إدخال مكتوب جواه بخط باهت "ابحث عن منتج..." وبيمسح لما تبدأ تكتب.
+• زرار بحث جنبه تقدر تدوس عليه.
+
+وفي تجربة الـ Inspect:
+شجرة الـ Elements في الـ DevTools هتوريك نفس الأكواد الستة دي بالظبط، وده بيثبتلك إن المتصفح حول كودك لـ DOM Nodes حيّة على الشاشة.`
+        },
+        {
           cmd: "<!doctype html>",
           title: "أقل صفحة HTML سليمة",
           desc: R`كل صفحة بتبدأ بـ [[<!doctype html>]] وبعدها [[<html>]] فيه جزئين: [[<head>]] للمعلومات اللي مش بتظهر (الترميز، والعنوان، والـ viewport، والـ CSS)، و [[<body>]] للي بيظهر فعلًا.
@@ -53403,6 +53745,71 @@ console.log(view(rows, readState('?sort=price&dir=desc&page=2'), 2));
       l: 1,
       n: "الـ selector بيختار، والـ cascade بيقرر مين يكسب، والـ box model بيحسب المساحة",
       items: [
+        {
+          cmd: "مقدمة CSS وتنسيق العناصر",
+          title: "مقدمة CSS: يعني إيه Cascading Style Sheets، وطرق ربط التنسيق بالـ HTML، وبنية الـ Rule",
+          desc: R`لغة [[CSS]] اختصار لـ Cascading Style Sheets (صفحات الأنماط الانسيابية). هي المسؤولة عن المظهر الجمالي لموقعك: الألوان، والخطوط، والمسافات، وتوزيع العناصر على الشاشة. من غير CSS، موقعك هيكون نص أبيض وأسود وروابط زرقاء بدائية زي صفحات التسعينات.
+
+طرق ربط الـ CSS بصفحة الـ HTML (٣ طرق):
+1. ملف خارجي ([[External CSS]]): الطريقة الأفضل والأكثر احترافية، بتعمل ملف [[style.css]] وتربطه في الـ [[<head>]] باستخدام [[<link rel="stylesheet" href="style.css">]]. ده بيخليك تستخدم نفس التصميم في كل صفحات موقعك.
+2. تنسيق داخلي ([[Internal CSS]]): وسم [[<style>]] جوه [[<head>]] الصفحة، مناسب للتجارب السريعة أو صفحة واحدة خاصة.
+3. تنسيق مباشر على العنصر ([[Inline CSS]]): خاصية [[style="..."]] على وسم الـ HTML نفسه، وينصح بتجنبها إلا للضرورة القصوى.
+
+بنية قاعدة الـ CSS ([[Rule Structure]]):
+القاعدة بتتكون من جزئين:
+• المحدِّد ([[Selector]]): بيشاور على العنصر المطلوب تنسيقه (زي [[h1]] أو [[.btn]]).
+• كتلة الخصائص ([[Declaration Block]]): بين قوسين [[{ }]] وفيها خصائص وقيم:
+  [[property: value;]] (الخاصية: القيمة، ثم الفاصلة المنقوطة [[;]]).`,
+          example: R`# 1. تنسيق العناوين الرئيسية
+h1 {
+  color: #2563eb;
+  font-size: 28px;
+  text-align: center;
+}
+
+# 2. تنسيق الفقرات النصية
+p {
+  color: #374151;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+# 3. تنسيق الأزرار بواسطة الـ class
+.btn {
+  background-color: #10b981;
+  color: #ffffff;
+  border-radius: 6px;
+}`,
+          try: R`في ملف [[index.html]] اللي عملته في درس HTML، ضيف وسم [[<style>]] جوه الـ [[<head>]] وانسخ القواعد دي جواه. ضيف خاصية [[class="btn"]] على الزرار [[<button class="btn">]]، واعمل ريفريش للمتصفح. شوف إزاي العنوان اتحول للون أزرق وبقى في المنتصف، والكلام بقى مريح للعين، والزرار اتلون بالأخضر وحوافه بقت دائرية ناعمة!`,
+          flag: "script",
+          deep: {
+            why: R`فصل الهيكل (HTML) عن الشكل (CSS) هو أعظم مبدأ في الويب (Separation of Concerns). بيسمحلك تغيّر شكل موقعك بالكامل بتعديل ملف CSS واحد فقط، من غير ما تلمس كود الـ HTML في مئات الصفحات.`,
+            how: R`المتصفح بعد ما يبني شجرة الـ DOM من كود الـ HTML، بيبدأ يقرا ملفات الـ CSS ويبني شجرة موازية اسمها CSSOM (CSS Object Model). بعدين بيدمج الشجرتين مع بعض في شجرة اسمها Render Tree، ومنها بيحسب أبعاد كل عنصر على الشاشة (Layout) وبعدين يرسم البيكسلات والألوان (Paint). كلمة Cascading (انسيابي) بتعني إن القواعد بتنساب من أعلى لأسفل؛ لو فيه قاعدتين على نفس العنصر، المتصفح بيحدد مين يكسب بناءً على الترتيب والخصوصية (Specificity).`,
+            when: "في كل موقع أو تطبيق واجهة مستخدم (Frontend) بتعمله. حتى في React و Next.js و Tailwind، كل كلاس بتستخدمه بيترجم في النهاية لقواعد CSS دي.",
+            mistakes: R`تنسى الفاصلة المنقوطة [[;]] في نهاية أي سطر CSS، فتتوقف كل الخصائص اللي بعدها عن العمل تماماً. وتكتب تنسيقاتك كلها Inline style جوه ملفات الـ HTML، فالمشروع يبقى مستحيل صيانته وتفقد ميزة الكاش وإعادة الاستخدام.`
+          },
+          lines: [
+            "تحديد كل عناصر العناوين الكبيرة في الصفحة.",
+            "تغيير لون النص للون أزرق هادئ.",
+            "تحديد حجم الخط بـ 28 بكسل.",
+            "محاذاة النص في منتصف الشاشة أفقياً.",
+            "قفلة قاعدة الـ h1.",
+            "تحديد كل الفقرات النصية.",
+            "لون خط رمادي داكن مريح للقراءة.",
+            "حجم خط قياسي 16 بكسل.",
+            "ارتفاع السطر 1.6 لترك مسافة مريحة بين السطور.",
+            "قفلة قاعدة الـ p.",
+            "تحديد أي عنصر يمتلك class اسمه btn.",
+            "لون خلفية الزرار أخضر مميز.",
+            "لون النص أبيض ناصع.",
+            "تدوير حواف الزرار لتصبح منحنية وناعمة بـ 6 بكسل.",
+            "قفلة قاعدة الـ btn."
+          ],
+          sol: R`عند حفظ الملف وتشغيله في المتصفح:
+• العنوان [[متجري الإلكتروني]] هيظهر باللون الأزرق وفي منتصف الشاشة بحجم 28px.
+• الفقرات النصية هتتحول للون الرمادي الداكن المريح بدلاً من الأسود الصريح، والمسافة بين سطورها هتكون واسعة ومريحة للقراءة.
+• الزرار اللي واخد [[class="btn"]] خلفيته هتتحول للون الأخضر الجذاب، والنص اللي جواه أبيض ناصع، وحوافه الحادة هتكون دائرية بنعومة.`
+        },
         {
           cmd: "selectors",
           title: "تختار العناصر اللي عايز تنسّقها",
@@ -56817,6 +57224,59 @@ npm run dev`,
       l: 1,
       n: "React بترسم الشاشة من البيانات، وانت بتكتب components بترجع JSX",
       items: [
+        {
+          cmd: "مقدمة React والـ Components",
+          title: "مقدمة React: يعني إيه مكتبة React، وليه مش JS عادية، والـ Components و JSX من الصفر",
+          desc: R`مكتبة [[React]] هي أشهر مكتبة برمجية في العالم لبناء واجهات المستخدم التفاعلية (User Interfaces)، طورتها شركة فيسبوك (Meta) وتستخدمها كبرى شركات العالم (Netflix, Airbnb, Twitter).
+
+ليه بنستخدم React بدل JavaScript العادية (Vanilla JS)؟
+في JS العادية، لما بيانات تتغير في صفحتك بتضطر تكتب كود طويل ومعقد:
+تدوّر على العنصر بـ [[document.querySelector]]، وتعدل نصه بـ [[textContent]]، وتضيف كلاسات وتمسح كلاسات. ومع كبر الموقع، الكود بيتحول لعقدة يصعب تتبعها وتحدث أخطاء كثيرة.
+في React، المعادلة مقلوبة وبسيطة:
+بتوصف شكل الواجهة لكل حالة من حالات البيانات، وبمجرد ما البيانات تتغير، ريآكت بتتكفل بتحديث الشاشة بأعلى سرعة وكفاءة ممكنة.
+
+المكونات ([[Components]]):
+حجر الأساس في React هو المكوّن: دالة JavaScript عادية بترجع واجهة مستخدم. تقدر تتخيل المكونات زي قطع المكعبات (Lego)؛ بتبني مكوّن للزرار، ومكوّن لشريط التنقل (Navbar)، ومكوّن لكارت المنتج، وتعيد استخدامهم آلاف المرات.
+
+لغة [[JSX]] (JavaScript XML):
+هي طريقة سهلة وعبقرية بتسمحلك تكتب كود يشبه الـ HTML مباشرة داخل كود الـ JavaScript، وبتقدر تحط أي متغير جواه بين قوسين معقوفين [[{variable}]].`,
+          example: R`# 1. استيراد React في مشروعك
+import React from 'react';
+
+# 2. بناء أول Component كدالة بسيطة ترجع JSX
+function WelcomeBanner() {
+  const userName = "عبد الرحمن";
+  return <h1>أهلًا بك يا {userName} في عالم React!</h1>;
+}
+
+# 3. استخدام المكون وعرضه في الشاشة
+export default function App() {
+  return <WelcomeBanner />;
+}`,
+          try: R`في مشروع Vite اللي عملته في الـ lab، افتح ملف [[src/App.tsx]] وامسح كل اللي جواه وضع هذا الكود البسيط. احفظ الملف وشوف كيف المتصفح بيحدّث نفسه في جزء من الثانية (Fast Refresh) وعارض جملتك الترحيبية الجميلة! بعدين جرب تغيّر الاسم في المتغير وشوف التحديث الفوري.`,
+          flag: "script",
+          deep: {
+            why: R`فصل الواجهة لمكونات صغيرة مستقلة وقابلة لإعادة الاستخدام يجعل بناء وصيانة التطبيقات الكبيرة أمراً منظماً وممتعاً، ويسمح لفرق العمل البرمجية بالعمل على أجزاء مختلفة من الموقع في نفس الوقت بدون أي تضارب.`,
+            how: R`المتصفحات لا تفهم JSX مباشرة؛ أدوات البناء مثل Vite و Babel تقوم بترجمة JSX في الخلفية لدوال JavaScript نقية مثل [[React.createElement]]. وفي الذاكرة، تحتفظ ريآكت بشجرة افتراضية للواجهة (Virtual DOM) وتقوم بمقارنة التغييرات (Diffing Algorithm) وتعديل الجزء المتغير فقط في شجرة المتصفح الحقيقية دون إعادة رسم الصفحة كلها.`,
+            when: "المعيار العالمي لبناء لوحات التحكم، والمتاجر الإلكترونية، وتطبيقات الويب الحديثة المعقدة ذات التفاعل اللحظي.",
+            mistakes: R`تسمي الـ Component بحرف صغير مثل [[function myButton]]؛ في React لازم أسماء المكونات تبدأ بحرف كبير Capital ([[MyButton]]) عشان ريآكت تفرق بينها وبين عناصر HTML العادية زي button و div.`
+          },
+          lines: [
+            "استيراد مكتبة React الأساسية.",
+            "تعريف دالة المكون الترحيبي بحرف كبير.",
+            "متغير نصي يحمل اسم المستخدم.",
+            "إرجاع كود JSX يحتوي على وسم h1 ومتغير مدمج بين قوسين.",
+            "قفلة دالة المكون الترحيبي.",
+            "المكون الرئيسي للتطبيق المصدر افتراضياً.",
+            "استدعاء وعرض المكون الترحيبي كوسم مخصص.",
+            "قفلة المكون الرئيسي."
+          ],
+          sol: R`النتيجة على الشاشة في المتصفح:
+عنوان رئيسي كبير بالخط العريض:
+«أهلًا بك يا عبد الرحمن في عالم React!»
+
+ولو غيرت قيمة المتغير [[userName]] في الكود وضغطت Ctrl+S، الشاشة هتتحدث في لحظتها بالاسم الجديد بدون ما الصفحة تعمل إعادة تحميل كاملة.`
+        },
         {
           cmd: "UI = f(state)",
           title: "React بتحل مشكلة إيه أصلًا",
@@ -71303,6 +71763,74 @@ docker exec -it pg psql -U postgres`,
       n: "القاعدة جداول، وكل عمود ليه نوع بيرفض الداتا الغلط. هنشتغل على متجر واحد: users و products و orders و order_items",
       items: [
         {
+          cmd: "مقدمة قواعد البيانات و SQL",
+          title: "مقدمة قواعد البيانات: يعني إيه Database، والفرق بين الجداول وشيت الإكسيل، وأساسيات SQL",
+          desc: R`قاعدة البيانات ([[Database]]) هي مستودع مركزي منظم مصمم لتخزين واسترجاع كميات ضخمة من البيانات بسرعة وأمان وموثوقية فائقة.
+
+ليه منخزنش البيانات في ملفات Excel أو JSON؟
+1. السرعة: قاعدة البيانات بتبحث في ملايين السجلات في أجزاء من الألف من الثانية باستخدام الفهارس ([[Indexes]]).
+2. التزامن ([[Concurrency]]): آلاف المستخدمين يقدروا يشتروا في نفس الثانية بدون ما الداتا تضيع أو يحصل تضارب.
+3. الصرامة ([[Integrity]]): بترفض الداتا الغلط (مينفعش يوزر يسجل من غير إيميل، أو يدفع برقم سالب).
+
+قواعد البيانات العلائقية ([[Relational Databases - RDBMS]]) زي PostgreSQL و MySQL و SQLite بتنظم الداتا في جداول:
+• الجدول ([[Table]]): زي جدول المنتجات أو جدول المستخدمين.
+• العمود ([[Column / Field]]): خاصية محددة بنوعها (اسم المنتج نص، السعر رقم).
+• الصف ([[Row / Record]]): عنصر واحد محدد (بيانات عميل واحد كاملة).
+
+ولغة [[SQL]] اختصار لـ Structured Query Language: هي اللغة القياسية اللي بنخاطب بيها قواعد البيانات دي عشان نعمل ٤ عمليات أساسية (CRUD):
+• [[C]]reate: إنشاء بيانات بـ [[INSERT]].
+• [[R]]ead: قراءة واستعلام بـ [[SELECT]].
+• [[U]]pdate: تعديل بـ [[UPDATE]].
+• [[D]]elete: مسح بـ [[DELETE]].`,
+          example: R`# 1. جدول تجريبي بسيط: أعمدة محددة بأنواعها
+CREATE TABLE demo_products (
+  id serial PRIMARY KEY,
+  name text NOT NULL,
+  price numeric NOT NULL
+);
+
+# 2. إدخال سجل جديد (Create)
+INSERT INTO demo_products (name, price) VALUES ('لابتوب', 15000);
+
+# 3. قراءة السجلات (Read)
+SELECT id, name, price FROM demo_products;`,
+          try: R`في محرك تمارين SQL في المتصفح أو في psql، شغل الأوامر دي بالترتيب وشوف إزاي الجدول اتعمل واضاف فيه صف ورجعلك في جدول منسق. بعد كده جرب تعمل INSERT لمنتج جديد اسمه 'ماوس' وسعره 250 وشوف إزاي رقم الـ id بتاعه بقى 2 لوحده!`,
+          flag: "script",
+          deep: {
+            why: R`كل تطبيق full stack بتشوفه (أوبر، أمازون، فيسبوك) في قلبه قاعدة بيانات. لو البيانات مش منظمة صح من اليوم الأول، التطبيق هيبقى بطيء جداً، وهيحصل مشاكل كارثية زي رصيد يتحسب غلط أو بيانات عميل تظهر لعميل تاني.`,
+            how: R`محرك قاعدة البيانات (زي Postgres) بيخزن الجداول في صفحات على القرص الصلب، وبيستخدم لغة SQL المكتوبة لتفسير المطلوب وتنفيذه بأسرع خطة بحث ممكنة عبر الـ Query Planner. المفتاح الأساسي ([[PRIMARY KEY]]) بيضمن إن كل صف في العالم ليه رقم فريد ميتكررش، وده اللي بيخليك تقدر تربط بعدين جدول الطلبات بجدول المستخدمين بدقة.`,
+            when: "أول ما تبدأ أي مشروع باك إند أو متجر إلكتروني، التفكير بيبدأ بتصميم الجداول وعلاقاتها قبل كتابة سطر كود واحد في الـ API.",
+            mistakes: R`تخزن الفلوس في نوع float بدل numeric فتلاقي السعر فيه كسور غريبة زي 19.9999999994. وتنسى تحط PRIMARY KEY لكل جدول، فتتكرر السجلات ومتقدرش تميز صف عن صف.`
+          },
+          lines: [
+            R`إنشاء جدول جديد اسمه [[demo_products]].`,
+            R`عمود المعرف المميز: رقم متسلسل تلقائي ([[serial]]) ومفتاح أساسي لا يتكرر ([[PRIMARY KEY]]).`,
+            R`عمود اسم المنتج: نص إجباري لا يمكن أن يكون فارغاً ([[NOT NULL]]).`,
+            "عمود السعر: رقم حسابي دقيق للأموال.",
+            "قفلة تعريف الجدول بالفاصلة المنقوطة.",
+            "إدخال سجل جديد للابتوب بسعر 15000.",
+            "استعلام لعرض الأعمدة الثلاثة لكل المنتجات المسجلة في الجدول."
+          ],
+          sol: R`نتيجة أمر SELECT:
+هيرجعلك جدول فيه صف واحد:
+الـ id = 1
+الـ name = لابتوب
+الـ price = 15000
+
+ولما تضيف المنتج التاني ('ماوس', 250):
+أمر SELECT هيرجع صفين، والـ id للماوس هيكون 2 تلقائياً بفضل كلمة serial اللي بتخلي العداد يزيد مع كل صف جديد.`,
+          check: {
+            lang: "sql",
+            setup: R`CREATE TABLE demo_products (id serial PRIMARY KEY, name text NOT NULL, price numeric NOT NULL);
+INSERT INTO demo_products (name, price) VALUES ('لابتوب', 15000), ('ماوس', 250);`,
+            starter: R`-- اكتب استعلام يرجع اسم المنتج وسعره فقط من جدول demo_products
+SELECT ...`,
+            expect: [["لابتوب", 15000], ["ماوس", 250]],
+            solution: R`SELECT name, price FROM demo_products;`,
+            ordered: false
+          }
+        },
+        {
           cmd: "CREATE TABLE",
           title: "اعمل أول جدول: صفوف وأعمدة",
           desc: R`الجدول زي شيت Excel بس صارم: كل عمود ليه اسم ونوع ثابت، وكل صف سجل واحد (يوزر واحد، أوردر واحد). بتعرّف الأعمدة مرة واحدة، وبعد كده القاعدة ترفض أي داتا مش ماشية مع التعريف.
@@ -77045,6 +77573,61 @@ fastapi dev main.py`,
       n: "المتغير اسم بيشاور على object، والنوع بتاع القيمة مش الاسم، والـ type hints للأدوات مش للتشغيل",
       items: [
         {
+          cmd: "مقدمة بايثون والـ print",
+          title: "مقدمة Python: يعني إيه بايثون، أول برنامج Hello World، والطباعة بـ print، والمتغيرات والأنواع",
+          desc: R`لغة [[Python]] هي واحدة من أشهر وأقوى لغات البرمجة في العالم وأكثرها طلباً. تتميز بإن كتابتها شديدة البساطة والقرب من اللغة الإنجليزية الطبيعية (قراءة الكود كأنه إنجليزي واضح). تُستخدم في كل المجالات: تطوير الويب والـ Backend (زي FastAPI و Django)، والذكاء الاصطناعي وتعلم الآلة (AI & Machine Learning)، وتحليل البيانات، والأتمتة والسكربتات.
+
+أول برنامج في بايثون:
+الطباعة بتتم بدالة [[print()]] البسيطة، ومفيش حاجة لأي تعقيدات أو كلاسات أو أقواس معقدة عشان تطبع سطر:
+[[print("أهلًا بك في عالم بايثون!")]]
+
+المتغيرات وأنواع البيانات الأساسية:
+في بايثون لا تحتاج لكتابة كلمات زي let أو var، بتكتب اسم المتغير وعلامة [[=]] وقيمته مباشرة:
+• [[str]] (نصوص): بين علامات تنصيص مفردة أو مزدوجة مثل [["محمد"]].
+• [[int]] (أرقام صحيحة): مثل [[25]] أو [[-10]].
+• [[float]] (أرقام عشرية): مثل [[99.95]] أو [[3.14]].
+• [[bool]] (قيم منطقية): تأخذ إما [[True]] أو [[False]] (لاحظ الحرف الأول كبير Capital).
+
+العمليات الحسابية والتعليقات:
+• التعليق يبدأ بعلامة [[#]] ويتجاهله مفسر بايثون تماماً.
+• العمليات الأساسية: الجمع [[+]]، الطرح [[-]]، الضرب [[*]]، القسمة [[/]]، وقسمة الأعداد الصحيحة بدون كسور [[//]].`,
+          example: R`# 1. طباعة أول جملة ترحيبية في بايثون
+print("Hello, Python!")
+
+# 2. تخزين البيانات في متغيرات بأنواع مختلفة
+course_title = "FastAPI Masterclass"
+enrolled_students = 150
+rating = 4.95
+is_published = True
+
+# 3. طباعة المتغيرات وعمليات حسابية مباشرة
+print("اسم الدورة:", course_title)
+print("إجمالي المقاعد بعد التوسعة:", enrolled_students + 50)`,
+          try: R`افتح الترمنال واكتب [[python3]] (أو [[python]] على ويندوز) للدخول في البيئة التفاعلية (REPL). انسخ الأسطر دي سطر بسطر وشوف النتيجة على الفور! بعدها جرب تعمل متغير اسمه [[price = 200]] ومتغير [[discount = 30]] واطبع ناتج [[price - discount]]. وللخروج من بايثون اكتب [[exit()]] واضغط Enter.`,
+          flag: "script",
+          deep: {
+            why: R`فهم كيفية عمل بايثون من أبسط سطر كود بيزيل الرهبة تماماً. بايثون لغة مفسرة (Interpreted)، يعني تقدر تشغل سطر واحد تشوف نتيجته في ثانية بدون خطوات ترجمة (compilation) معقدة.`,
+            how: R`مفسر بايثون (CPython) بيقرا ملف الكود ويحوله لـ Bytecode (ملفات .pyc)، وبعدين بيشغله على آلة بايثون الافتراضية (Python Virtual Machine - PVM). المتغيرات في بايثون ليست أماكن ثابتة محجوزة بحجم محدد زي C++، بل هي أسماء بتشاور على كائنات في الذاكرة Heap، والـ Garbage Collector بينضف أي كائن مبقاش حد بيشاور عليه تلقائياً.`,
+            when: "أول خطوة لدخول عالم برمجة الباك إند مع FastAPI، أو التعامل مع نماذج الذكاء الاصطناعي ومكتبات البيانات.",
+            mistakes: R`تكتب الحرف الأول في القيم المنطقية صغيراً زي [[true]] أو [[false]] بدل [[True]] أو [[False]] فبايثون يعترض بـ NameError. وتخلط بين المسافات والـ Tabs لأن بايثون صارمة جداً في المسافات البادئة (Indentation).`
+          },
+          lines: [
+            "طباعة نص ترحيبي في نافذة الترمنال.",
+            "متغير نصي (str) لتخزين عنوان الدورة التدريبية.",
+            "متغير رقمي صحيح (int) لعدد الطلاب.",
+            "متغير رقم عشري (float) لتقييم الدورة.",
+            "متغير منطقي (bool) بحالة الدورة منشورة أم لا.",
+            "طباعة جملة متبوعة بقيمة المتغير النصي مفصولين بمسافة تلقائية.",
+            "إجراء عملية جمع حسابية على المتغير الرقمي وطباعة الناتج 200."
+          ],
+          sol: R`الناتج عند تشغيل الكود في الترمنال:
+Hello, Python!
+اسم الدورة: FastAPI Masterclass
+إجمالي المقاعد بعد التوسعة: 200
+
+كل سطر print بيطبع ناتجه في سطر مستقل. وعند تمرير عدة قيم لدالة print مفصولة بفاصلة [[,]] بتطبع بينهم مسافة واحدة تلقائياً.`
+        },
+        {
           cmd: "names و objects",
           title: "المتغير في Python علبة ولا لافتة؟",
           desc: R`المتغير في Python مش علبة جواها قيمة، هو اسم (لافتة) بيشاور على object. [[a = [1, 2]]] وبعدين [[b = a]] معناها إن الاسمين بيشاوروا على نفس الـ list، فأي تعديل من [[b]] بيبان في [[a]].
@@ -82648,6 +83231,58 @@ php -l index.php`,
       n: "كل طلب بيشغّل الملف من أوله لآخره، واللي اتطبع بيرجع للمتصفح، وبعدها كل المتغيرات بتتمسح",
       items: [
         {
+          cmd: "مقدمة PHP والـ echo",
+          title: "مقدمة PHP: يعني إيه لغة سيرفر، وكتابة أول كود بـ echo، والمتغيرات مع علامة $، وطباعة نصوص وأرقام",
+          desc: R`لغة [[PHP]] (اختصار لـ Hypertext Preprocessor) هي إحدى أشهر لغات البرمجة على جانب الخادم ([[Server-Side]]) في تاريخ الويب. تشغّل أكثر من 75% من مواقع الإنترنت العالمية، ومبني عليها أنظمة عملاقة زي WordPress و Wikipedia و Laravel.
+
+كيف تعمل PHP؟
+كود PHP يتم تنفيذه بالكامل على خادم الويب (السيرفر)، وليس في متصفح العميل:
+1. المتصفح يطلب صفحة (مثل [[index.php]]).
+2. خادم PHP يقرأ الملف وينفذ الأوامر البرمجية التي بداخله ويولد صفحة HTML قياسية.
+3. الخادم يرسل الناتج النهائي فقط للمتصفح، دون أن يرى العميل كود PHP المصدري أو كلمات المرور الحساسة.
+
+أساسيات لغة PHP:
+• يبدأ الكود بوسم [[<?php]] وينتهي بـ [[?>]] (لو الملف كله كود PHP، يُفضّل ترك قفلة الوسم مفتوحة لمنع المسافات الزائدة).
+• الطباعة: نستخدم أمر [[echo]] لطباعة أي نص أو رقم إلى المتصفح.
+• المتغيرات: تبدأ دائماً بعلامة الدولار [[$]] متبوعة باسم المتغير مثل [[$username = "أحمد";]].
+• دمج النصوص: في PHP نستخدم علامة النقطة [[.]] لدمج النصوص والمتغيرات (وليس علامة + كما في جافاسكريبت وبايثون).`,
+          example: R`# 1. طباعة أول نص من سيرفر PHP
+<?php
+echo "Hello from PHP server!";
+
+# 2. تعريف المتغيرات بعلامة الدولار
+$app_name = "متجري الإلكتروني";
+$products_count = 15;
+$unit_price = 120.5;
+
+# 3. دمج النصوص مع المتغيرات باستخدام علامة النقطة
+echo "اسم التطبيق: " . $app_name;
+echo "إجمالي البضاعة: " . ($products_count * $unit_price) . " جنيه";
+?>`,
+          try: R`اعمل ملف جديد اسمه [[test.php]] في VS Code وانسخ الكود ده جواه. افتح الترمنال في نفس الفولدر واكتب: [[php test.php]] واضغط Enter. هتشوف ناتج تنفيذ كود PHP مطبوع في الترمنال مباشرة!`,
+          flag: "script",
+          deep: {
+            why: R`معظم المتاجر وأنظمة إدارة المحتوى في العالم معتمدة على PHP. فهم طبيعة تنفيذ الكود على السيرفر قبل إرسال النتيجة للمتصفح هو حجر الأساس لأي مبرمج ويب، لأنه يوضح لك كيف تخزن البيانات في قاعدة البيانات وتتحقق من صلاحيات الدخول بأمان.`,
+            how: R`محرك Zend Engine المسؤول عن تشغيل PHP يقوم بقراءة الملف وتحويله لرموز داخلية (OpCodes)، ثم تنفيذه سطراً بسطر وحساب التعبيرات الرياضية واستبدال المتغيرات بقيمها الحقيقية. المخرجات الناتجة من دوال [[echo]] يتم تجميعها في Output Buffer وإرسالها كاستجابة HTTP Response للمتصفح.`,
+            when: "بداية مسار تطوير تطبيقات الويب بـ PHP الكلاسيكية أو أطر عمل حديثة زي Laravel أو منصات WordPress.",
+            mistakes: R`تنسى علامة الدولار [[$]] قبل اسم المتغير فيعتبره PHP اسم ثابت (Constant) غير معرف. وتستخدم علامة [[+]] لدمج النصوص فيحاول PHP تحويل النص لرقم حسابي وتفاجأ بناتج غير متوقع، واستخدم النقطة [[.]] دائمًا لدمج النصوص.`
+          },
+          lines: [
+            "وسم بداية كود PHP.",
+            "طباعة رسالة ترحيبية للمتصفح.",
+            "متغير نصي مسبوق بعلامة الدولار.",
+            "متغير رقمي صحيح لعدد المنتجات.",
+            "متغير رقم عشري لسعر القطعة الواحدة.",
+            "طباعة نص مدمج مع قيمة المتغير النصي بواسطة النقطة.",
+            "حساب إجمالي السعر بعملية ضرب وطباعة الناتج مع كلمة جنيه.",
+            "وسم نهاية كود PHP."
+          ],
+          sol: R`الناتج عند تشغيل الملف في الترمنال بـ php test.php:
+Hello from PHP server!
+اسم التطبيق: متجري الإلكتروني
+إجمالي البضاعة: 1807.5 جنيه`
+        },
+        {
           cmd: "php -S",
           title: "شغّل موقع على جهازك من غير Apache",
           desc: R`[[php -S localhost:8000]] بيشغّل سيرفر تجربة جوه PHP نفسه. تفتح [[localhost:8000/hello.php]]، فـ PHP يقرا الملف وينفّذه من أوله لآخره، واللي اتطبع يرجع للمتصفح كـ HTML.
@@ -87419,6 +88054,59 @@ hot restart بيرمي الـ Dart state كله ويشغّل [[main()]] من ا�
       l: 1,
       n: "لغة شبه TypeScript و Java، بس الـ null مقفول عليه من الأول",
       items: [
+        {
+          cmd: "مقدمة Dart ودالة main()",
+          title: "مقدمة لغة Dart: أول برنامج Hello World، ودالة main، وطباعة نصوص وأرقام، والأنواع الأساسية",
+          desc: R`لغة [[Dart]] هي لغة برمجة كائنية التوجه حديثة وقوية، طورتها شركة Google خصيصاً لتكون اللغة التي تدير محرك [[Flutter]] لبناء تطبيقات الموبايل (Android و iOS) والويب والديسكتوب بكود واحد.
+
+نقطة البداية الإجبارية ([[Entry Point]]):
+في كل تطبيق أو ملف Dart، نقطة الانطلاق الأولى لتشغيل الكود هي دالة اسمها [[main()]]. البرنامج بيبدأ منها وينفذ السطور التي بداخلها بالترتيب، ومفيش أي كود يقدر يشتغل بدون هذه الدالة.
+
+أساسيات لغة Dart:
+• الطباعة: نستخدم دالة [[print()]] لطباعة المخرجات إلى نافذة الـ Console.
+• الأنواع الأساسية الصارمة:
+  - [[String]]: للنصوص بين علامات تنصيص مفردة أو مزدوجة مثل [['محمد']].
+  - [[int]]: للأرقام الصحيحة مثل [[25]].
+  - [[double]]: للأرقام العشرية والكسور مثل [[99.9]].
+  - [[bool]]: للقيم المنطقية [[true]] أو [[false]].
+• دمج المتغيرات في النصوص ([[String Interpolation]]):
+نضع علامة [[$]] قبل اسم المتغير مباشرة داخل النص زي [['السعر: $price']]، أو [[$__{expression}]] للعمليات الحسابية.`,
+          example: R`# 1. الدالة الأساسية ونقطة انطلاق كود دارت
+void main() {
+  # 2. طباعة أول جملة ترحيبية
+  print('Hello, Dart & Flutter!');
+
+  # 3. تخزين البيانات في متغيرات بأنواعها الصريحة
+  String developer = 'خالد';
+  int appsCount = 5;
+  double rating = 4.8;
+  bool isAvailable = true;
+
+  # 4. طباعة جملة مدمجة باستخدام علامة $
+  print('المطور: $developer - برمج $appsCount تطبيقات بتقييم $rating');
+}`,
+          try: R`افتح موقع التجربة السريع لدارت [[dartpad.dev]] في متصفحك. امسح الكود الموجود والصق هذا المثال بدله واضغط على زرار Run الأزرق. هتشوف ناتج الطباعة ظاهر فوراً في الشاشة السوداء على اليمين! جرب بعدها تضيف متغير [[appsCount + 1]] داخل طباعة باستخدام [[$__{appsCount + 1}]] وشوف النتيجة.`,
+          flag: "script",
+          deep: {
+            why: R`فهم لغة Dart بشكل مستقل وواضح قبل الدخول في ويدجتات Flutter هو السر الذي يجعل برمجتك للتطبيقات سهلة ونظيفة وخالية من التعقيد، لأن كل واجهة فلاتر في النهاية هي كود دارت نقي.`,
+            how: R`لغة Dart تتميز بمرونة فريدة؛ أثناء التطوير تعمل بنظام الترجمة الفورية (JIT - Just-In-Time) لتمكين ميزة الـ Hot Reload الفائقة التي تعدل شاشة الموبايل في أقل من ثانية. وعند إنتاج التطبيق النهائي للنشر على Google Play أو App Store، تترجم لغة Dart كودك مباشرة لكود آلة أصلي (AOT - Ahead-Of-Time Machine Code) لأعلى سرعة وأداء 60 إلى 120 إطار في الثانية.`,
+            when: "الخطوة الأولى المطلقة لكل من يريد دخول عالم برمجة وتطوير تطبيقات الموبايل باستخدام Flutter.",
+            mistakes: R`تنسى الفاصلة المنقوطة [[;]] في نهاية كل سطر كود؛ دارت لغة صارمة تتطلب الفاصلة المنقوطة دائماً. وتضع قيمة نصية في متغير رقمي فيعترض المترجم فوراً بـ type mismatch.`
+          },
+          lines: [
+            "تعريف دالة البداية main بنوع إرجاع فارغ void.",
+            "طباعة رسالة ترحيبية في الـ Console.",
+            "متغير نصي String لاسم المطور.",
+            "متغير رقمي صحيح int لعدد التطبيقات.",
+            "متغير رقم عشري double لتقييم المطور.",
+            "متغير منطقي bool بحالة التوفر للعمل.",
+            "طباعة نص مدمج بقيم المتغيرات باستخدام علامة $.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج عند الضغط على Run في DartPad أو تشغيل الملف:
+Hello, Dart & Flutter!
+المطور: خالد - برمج 5 تطبيقات بتقييم 4.8`
+        },
         {
           cmd: "final و const",
           title: "متغير مبيتغيرش، والفرق بين وقت التشغيل ووقت الترجمة",
@@ -133046,6 +133734,141 @@ Notes Day 60: reading faster; writing still slow. Focus: PR templates.`,
         }
       ]
     },
+    {
+      t: "إنجليزي الفريلانس والتعامل مع العملاء الأجانب",
+      l: 2,
+      n: "كتابة Proposal مقنع على Upwork، ومراسلات وتفاوض السعر، ومصطلحات الـ Agile والـ Scrum",
+      items: [
+        {
+          cmd: "كتابة Proposal مقنع على Upwork",
+          title: "كتابة عرض احترافي (Proposal) على منصات العمل الحر (Upwork و Fiverr) يجذب انتباه العميل",
+          desc: R`في منصات الفريلانس العالمية، العميل بيستلم ما بين 20 إلى 50 عرض (Proposal) على كل وظيفة.
+العميل لا يقرأ كل العروض؛ بل يرى في شاشة المعاينة أول سطرين فقط (حوالي 150 حرف) قبل أن يقرر يفتح عرضك أو يتجاهله!
+
+الهيكل الذهبي للـ Winning Proposal (٤ أجزاء):
+1. الـ Hook (الخطاف في أول سطرين): أثبت فوراً إنك قرأت مشكلته بالتحديد، بلاش مقدمات تقليدية زي "Hi, I have 5 years of experience".
+2. الفهم والحل المباشر (The Solution): اشرح باختصار كيف ستحل المشكلة (مثلاً: سأقوم بدمج Stripe webhook باستخدام Express و Postgres).
+3. إثبات المصداقية والسابقة (Proof): رابط مشروع مشابه تماماً من أعمالك أو مستودع GitHub.
+4. الدعوة لاتخاذ إجراء بدون ضغط (Low-friction Call to Action): مثل اقتراح مناقشة سريعة لمتطلبات الـ API.`,
+          example: R`# 1. السطر الأول المباشر في قلب المشكلة (The Hook)
+Hi, I noticed your Next.js app has hydration issues with user authentication.
+
+# 2. الحل التقني المقترح في سطرين
+I can resolve this by moving the session check to the middleware and caching the JWT.
+I recently fixed a similar issue for an e-commerce dashboard.
+
+# 3. إثبات الكفاءة برابط حي
+Here is a live demo of a similar project I built: https://myportfolio.dev/demo
+
+# 4. ختام العرض بسؤال ذكي (Call to Action)
+Are you available for a quick 10-minute chat today to discuss your API requirements?`,
+          try: R`افتح موقع Upwork وابحث عن وظيفة في مجالك (React أو Python أو Node). اكتب Proposal مخصص لها بالهيكل المكون من ٤ خطوات ده. اقرأ أول سطرين بصوت عالي: هل ذكرت فيهم اسم مشكلته بالتحديد؟ لو نعم، عرضك أصبح في أول 5% من المتقدمين!`,
+          flag: "script",
+          deep: {
+            why: R`العملاء الأجانب لا يبحثون عن مبرمج يكرر سيرته الذاتية، بل يبحثون عن شريك يحل مشكلتهم ويوفر عليهم الوقت. العرض المخصص يثبت للعميل أنك لست مجرد بوت يرسل قوالب منسوخة.`,
+            how: R`استخدم أسلوب "You" بدلاً من "I". بدلاً من كتابة "I am an expert in React"، اكتب "Your React app will load 2x faster by optimizing the re-renders". هذا التحول البسيط يوجه التركيز نحو مصلحة العميل وليس مجرد التفاخر.`,
+            when: "عند التقديم على أي وظيفة فريلانس على Upwork, Freelancer, LinkedIn, أو مراسلة عميل عبر الإيميل (Cold Outreach).",
+            mistakes: R`بدء العرض بـ [[Dear Sir/Madam]] أو جمل نسخ ولصق محفوظة مثل [[I am a full stack developer with 7 years of experience]]. العميل يرفض هذه العروض فوراً لأنها تدل على الكسل وعدم قراءة التفاصيل.`
+          },
+          lines: [
+            "السطر الافتتاحي: استهداف المشكلة بدقة وإثبات قراءة تفاصيل المشروع.",
+            "اقتراح الحل التقني المباشر بالخطوات.",
+            "ذكر سابقة أعمال حقيقية مشابهة لنفس المشكلة.",
+            "مشاركة رابط حي لمعاينة العمل المماثل.",
+            "سؤال ختامي محدد يدعو العميل لمحادثة سريعة دون ضغط."
+          ],
+          sol: R`النتيجة:
+عرض فريلانس احترافي يركز بنسبة 100% على مشكلة العميل، ويبرز حلولك العملية مع رابط إثبات حي وسؤال ذكي يرفع نسبة الردود لأكثر من 30%.`
+        },
+        {
+          cmd: "مراسلات وتفاوض السعر مع العميل",
+          title: "التفاوض والمراسلات اليومية: مناقشة الميزانية والمواعيد (Deadlines) ونطاق العمل (Scope)",
+          desc: R`بعد موافقة العميل، تبدأ مرحلة إدارة المشروع والاتفاق على التفاصيل المالية والمواعيد باللغة الإنجليزية.
+
+المصطلحات والمفاهيم الثلاثة الأساسية:
+• [[Scope of Work]]: نطاق العمل المحدد المتفق عليه في العقد.
+• [[Scope Creep]]: الخطر الأكبر للفريلانسر، لما العميل يبدأ يطلب ميزات إضافية خارج الاتفاق الأصلي دون زيادة في السعر!
+• [[Deliverables / Milestones]]: المخرجات ومراحل تسليم المشروع ودفع المستحقات.
+
+عبارات إنجليزية احترافية للتعامل مع المواقف الصعبة:
+1. عند طلب ميزة إضافية خارج الاتفاق (Handling Scope Creep):
+[[I would be happy to add that feature. Since it's outside our initial scope, it will require an additional 2 days and $150. Shall I update the milestone?]]
+2. عند طلب ملفات أو صلاحيات من العميل:
+[[Could you please share the API credentials and Figma designs so I can proceed with the integration?]]
+3. عند تسليم المشروع وطلب المراجعة:
+[[The payment gateway is now fully integrated and tested. Please review the live demo and let me know if you have any feedback.]]`,
+          example: R`# 1. الرد باحترافية على طلب ميزة إضافية (Out of Scope)
+I can definitely build the export-to-PDF feature for you.
+Since this is outside our initial scope, it will take an extra 2 days.
+The cost for this addition would be $120.
+
+# 2. السؤال عن الموعد النهائي المناسب للعميل
+What is your target deadline for launching the MVP?
+
+# 3. إرسال رابط التسليم النهائي لطلب المراجعة والموافقة
+Please test the checkout flow on the staging server and confirm the milestone.`,
+          try: R`احفظ هذه العبارات في ملف ملاحظات عندك. في المرة القادمة التي يطلب فيها عميل ميزة إضافية، جرب استخدام الصيغة المهذبة: [[I'd be glad to help with that! It's beyond our current scope, so I can create a separate milestone for it]]. ستلاحظ كيف يحترم العميل احترافيتك ويوافق على دفع السعر العادل!`,
+          flag: "script",
+          deep: {
+            why: R`الخجل أو الضعف في إنجليزي التفاوض يجعل المبرمجين يعملون ضعف الوقت بنصف السعر. الوضوح الحازم والمهذب في اللغة الإنجليزية يحميك ويضمن لك تقييم 5 نجوم وأجراً عادلاً.`,
+            how: R`استخدم دائماً صيغ التلطيف والتهذيب الإنجليزية مثل [[I would recommend]] و [[Could we please]] و [[Would it be possible]]، وتجنب الأوامر المباشرة الحادة مثل [[Give me the API key]] أو [[You must pay now]].`,
+            when: "في كل محادثة يومية مع العميل، وتحديثات التقدم في العمل (Status Updates)، وتسليم المراحل.",
+            mistakes: R`الموافقة الشفهية على أي طلب جديد مجاناً خوفاً من غضب العميل؛ العميل المحترف يتوقع تماماً أن أي عمل إضافي له تكلفة ووقت إضافي.`
+          },
+          lines: [
+            "الموافقة الإيجابية أولاً على قدرتك على تنفيذ الميزة المطلوبة.",
+            "التوضيح المهذب أن الميزة خارج نطاق العمل المتفق عليه مسبقاً وتتطلب يومين.",
+            "تحديد التكلفة المالية الصريحة للميزة الإضافية.",
+            "الاستفسار عن الموعد النهائي المستهدف لإطلاق النسخة الأولية.",
+            "طلب فحص المسار التجريبي واعتماد مرحلة الدفع."
+          ],
+          sol: R`النتيجة:
+أسلوب تواصل دبلوماسي يحفظ حقوقك المالية والزمنية ويمنع استنزاف وقتك في طلبات مجانية غير منتهية.`
+        },
+        {
+          cmd: "مصطلحات الـ Agile والـ Scrum في فرق العمل الأجنبية",
+          title: "مصطلحات العمل في الشركات العالمية: Sprint، و Backlog، و Story Points، و Blockers، و Retrospective",
+          desc: R`عندما تعمل مع فريق برمجي في شركة عالمية أو ناشئة في أمريكا أو أوروبا، ستجد الجميع يتحدث بمصطلحات منهجية [[Agile / Scrum]].
+فهم هذه المصطلحات يجعلك تبدو كمهندس خبير ذو سنوات من العمل في الفرق الدولية من أول يوم.
+
+أهم مصطلحات الـ Scrum الإنجليزية:
+• [[Sprint]]: دورة عمل محددة (عادة أسبوعين) يلتزم الفريق بإنهاء مجموعة مهام محددة خلالها.
+• [[Product Backlog]]: قائمة كل الميزات والأفكار المطلوبة في المشروع للمستقبل.
+• [[Sprint Backlog]]: المهام التي اختارها الفريق ليتم تنفيذها في الـ Sprint الحالي فقط.
+• [[Story Points]]: رقم تقديري لمدى صعوبة وتعقيد المهمة (مثلاً: 1, 2, 3, 5, 8).
+• [[Blocker]]: أي عائق يمنعك من تكملة كودك (زي مستني موافقة، أو الـ API واقعة).
+• [[Standup Meeting]]: اجتماع يومي سريع (15 دقيقة) يقول فيه كل مبرمج: عملت إيه إمبارح، وهعمل إيه النهارده، وإيه الـ Blockers.
+• [[Retrospective (Retro)]]: اجتماع نهاية الـ Sprint لمناقشة ما نجح وما يحتاج لتحسين في أسلوب العمل.`,
+          example: R`# 1. جملة نموذجية في اجتماع الـ Standup اليومي
+Yesterday I completed the user authentication endpoints and unit tests.
+Today I am working on the Stripe payment integration.
+I currently have no blockers and everything is on track for this sprint.
+
+# 2. جملة للإبلاغ عن وجود عائق تقني (Blocker)
+I am blocked on the mobile push notifications because the FCM keys are missing.
+
+# 3. جملة أثناء تقدير المهام في الـ Sprint Planning
+I estimate this task as 3 story points because we need to write integration tests.`,
+          try: R`تدرب على نطق جملة الـ Standup بصوت مسموع: [[Yesterday I worked on..., Today I will..., I have no blockers]]. هذا القالب البسيط هو نفسه الذي يستخدمه مئات الآلاف من مهندسي وادي السيليكون وجوجل يومياً في كل صباح!`,
+          flag: "script",
+          deep: {
+            why: R`في شركات البرمجة الحديثة، مهارات التواصل داخل الفريق (Team Collaboration) تماثل في أهميتها مهارات كتابة الكود. التحدث بلغة الصناعة يمنح الفريق ومديرك ثقة كاملة في احترافيتك.`,
+            how: R`منهجية Scrum تهدف لتسليم برمجيات حقيقية للمستخدمين باستمرار كل أسبوعين بدلاً من الانتظار لشهور، والشفافية في الإبلاغ المبكر عن الـ Blockers تساعد مدير المشروع (Scrum Master) على حل المشكلات قبل فوات الأوان.`,
+            when: "العمل في أي شركة برمجية عن بعد (Remote)، أو فرق العمل متعددة الجنسيات، والمقابلات السلوكية للوظائف العالمية.",
+            mistakes: R`إخفاء الـ Blocker والسكوت عنه أياماً بدافع الإحراج؛ في فرق الـ Agile، كلما أعلنت عن العائق مبكراً كلما ساعدك الفريق في حله بسرعة وأظهرت نضجاً هندسياً.`
+          },
+          lines: [
+            "تقرير ما تم إنجازه بالأمس مع الاختبارات.",
+            "تحديد المهمة المستهدفة اليوم بوضوح.",
+            "التأكيد على عدم وجود أي عوائق وأن العمل يسير وفق الخطة الزمنية.",
+            "الإبلاغ الواضح والمحدد عن وجود عائق مع ذكر سببه بدقة.",
+            "تقدير حجم وصعوبة المهمة بنقاط الصعوبة مع ذكر المبرر."
+          ],
+          sol: R`النتيجة:
+إتقان المصطلحات والأدوار اليومية لفرق العمل العالمية والتحدث بثقة تامة كمهندس برمجيات محترف داخل الاجتماعات الدولية.`
+        }
+      ]
+    }
   ]
 });
 
@@ -150744,6 +151567,989 @@ npx @react-native-community/cli init MyApp`,
   ]
 });
 
+/* ===== js/tabs/cpp.js ===== */
+// تاب C و C++
+TAB("cpp", {
+  label: "C و C++",
+  prompt: "$ ",
+  lab: R`gcc --version && g++ --version
+gcc -Wall -Wextra main.c -o app && ./app
+g++ -std=c++20 main.cpp -o app_cpp && ./app_cpp`,
+  labText: "C و C++ هما أساس كل لغات البرمجة وأنظمة التشغيل ومحركات الألعاب. سطّر كودك وافهم الذاكرة والمعالج بيشتغلوا إزاي بجد.",
+  levels: {
+    "1": ["أساسيات C", "البرنامج الأول، والأنواع، و printf و scanf، والمؤشرات (Pointers)، وإدارة الذاكرة بـ malloc و free"],
+    "2": ["الانتقال لـ C++ والـ OOP", "المراجع (References)، والـ Classes والوراثة، والـ Templates، ومكتبة STL: vector و map و string"],
+    "3": ["C++ الحديثة والمشاريع", "Smart Pointers (unique_ptr و shared_ptr)، و Move Semantics، و CMake، وأسئلة الإنترفيو وأخطاء الذاكرة"]
+  },
+  categories: [
+    {
+      t: "C من الصفر: الذاكرة والـ Pointers",
+      l: 1,
+      n: "التحكم المباشر في الذاكرة والمعالج بدون وسيط أو Garbage Collector",
+      items: [
+        {
+          cmd: "مقدمة C وكتابة أول برنامج",
+          title: "مقدمة C: أم لغات البرمجة، والترجمة بـ gcc، ودالة main، وطباعة النصوص بـ printf",
+          desc: R`لغة [[C]] طورها دينيس ريتشي عام 1972 في مختبرات بيل، وهي بمثابة "الأم الكبرى" لأغلب لغات البرمجة الحديثة (C++, Java, JavaScript, Python, C# كلها ورثت نفس الـ syntax من C).
+حتى نواة نظام لينكس (Linux Kernel) ومحركات قواعد البيانات ومفسر بايثون نفسه (CPython) مكتوبين بلغة C!
+
+كيف يعمل كود C؟
+كود C لا يُفسر وقت التشغيل، بل تتم ترجمته بالكامل ([[Compilation]]) بواسطة مترجم مثل [[gcc]] أو [[clang]] إلى كود آلة أصلي ([[Machine Code]]) يفهمه المعالج مباشرة، مما يمنحه سرعة خارقة وأقل استهلاك ممكن للذاكرة.
+
+هيكل البرنامج القياسي:
+• استدعاء مكتبة الإدخال والإخراج القياسية: [[#include <stdio.h>]].
+• نقطة البداية الإجبارية: دالة [[int main()]] وترجع [[0]] للإشارة بأن البرنامج انتهى بنجاح بدون أخطاء.
+• الطباعة: دالة [[printf()]] المطبوعة بحرف الـ f (اختصار لـ formatted print)، مع [[\\n]] لإنشاء سطر جديد.`,
+          example: R`# 1. استدعاء مكتبة الإدخال والإخراج القياسية
+#include <stdio.h>
+
+# 2. نقطة بداية تنفيذ أي برنامج في C
+int main() {
+  # 3. طباعة رسالة ترحيبية في الترمنال
+  printf("Hello, World from C!\\n");
+  
+  # 4. إرجاع 0 لنظام التشغيل دلالة على النجاح
+  return 0;
+}`,
+          try: R`افتح VS Code واعمل ملف اسمه [[main.c]] والصق الكود فيه. افتح الترمنال واكتب أمر الترجمة: [[gcc main.c -o app]] ثم شغّله بـ [[./app]] (أو [[app.exe]] على ويندوز). هتشوف الجملة طُبعت فوراً كبرنامج ثنائي مستقل لا يحتاج لأي بيئة تشغيل!`,
+          flag: "script",
+          deep: {
+            why: R`تعلم لغة C هو الطريق الوحيد لتفهم ما يحدث خلف الستار في علوم الحاسب (Computer Science): كيف تُخزن الأرقام بالبايت، وكيف يتحرك المعالج، ولماذا توجد مؤشرات وذاكرة عشوائية RAM.`,
+            how: R`عملية الترجمة تمر بـ 4 مراحل متتالية:
+1. الـ Preprocessor: ينفذ أوامر [[#include]] و [[#define]].
+2. الـ Compiler: يحول الكود للغة التجميع (Assembly).
+3. الـ Assembler: يحول كود التجميع لملفات ثنائية موضعية (Object Files .o).
+4. الـ Linker: يربط ملفاتك بمكتبات النظام القياسية ويخرج الملف التنفيذي النهائي.`,
+            when: "بناء برمجيات الأنظمة (Systems Programming)، وأنظمة التشغيل، وبرمجة الأنظمة المدمجة (Embedded Systems والميكروكنترولر)، ومحركات الألعاب السريعة.",
+            mistakes: R`تنسى علامة الفاصلة المنقوطة [[;]] في نهاية أي سطر؛ C لغة صارمة للغاية. وتنسى كتابة [[\\n]] في نهاية جملة printf فيخرج النص ملتصقاً باسم المستخدم في الترمنال.`
+          },
+          lines: [
+            "تضمين مكتبة الإدخال والإخراج القياسية للوصول لدالة printf.",
+            "تعريف دالة البداية الرئيسية main بنوع إرجاع رقم صحيح.",
+            "طباعة رسالة الترحيب في الترمنال مع سطر جديد.",
+            "إنهاء البرنامج بنجاح وإرجاع كود الخروج صفر لنظام التشغيل.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال عند تشغيل البرنامج:
+Hello, World from C!
+
+وإنشاء ملف تنفيذي جديد app (أو app.exe) يمكن تشغيله مباشرة على أي جهاز مماثل دون الحاجة لأي مفسر.`
+        },
+        {
+          cmd: "المتغيرات والأنواع في C",
+          title: "المتغيرات وأنواع البيانات الصارمة: int و float و char وتنسيقات printf",
+          desc: R`في لغة C، كل متغير يجب أن يُعلن عن نوعه وحجمه في الذاكرة صراحة قبل استخدامه ([[Static & Strong Typing]]).
+
+الأنواع الأساسية ومساحتها التقديرية في الذاكرة:
+• [[int]]: أرقام صحيحة (4 بايت، تقريباً من -2 مليار إلى +2 مليار).
+• [[float]]: أرقام عشرية ذات دقة مفردة (4 بايت).
+• [[double]]: أرقام عشرية ذات دقة مضاعفة (8 بايت، دقة أعلى بكثير).
+• [[char]]: حرف واحد فقط (1 بايت، مثل 'A' أو '9').
+
+الطباعة بالتنسيق ([[Format Specifiers]]):
+دالة [[printf]] تستخدم رموزاً خاصة لتعويض قيم المتغيرات داخل النص:
+• [[%d]] أو [[%i]]: للأرقام الصحيحة int.
+• [[%.2f]]: للأرقام العشرية float (الـ .2 تعني رقمين فقط بعد العلامة).
+• [[%c]]: للحرف المفرد char.
+• [[%s]]: لسلسلة النصوص string.`,
+          example: R`# 1. تضمين المكتبة القياسية
+#include <stdio.h>
+
+# 2. الإعلان عن متغيرات بأنواعها وطباعتها بالتنسيق
+int main() {
+  int age = 22;
+  float gpa = 3.85f;
+  char grade = 'A';
+
+  printf("العمر: %d سنة\\n", age);
+  printf("المعدل: %.2f - التقدير: %c\\n", gpa, grade);
+  return 0;
+}`,
+          try: R`في ملف [[main.c]] جرب تعديل قيمة الـ age واطبع [[sizeof(age)]] باستخدام [[printf("حجم int: %zu بايت\\n", sizeof(age));]] لترى بعينك المساحة المحجوزة في الرام لهذا المتغير!`,
+          flag: "script",
+          deep: {
+            why: R`في C لا يوجد سحر ولا افتراضات؛ تحديد النوع يخبر المعالج بالضبط بعدد البايتات المحجوزة في الرام وطريقة تفسير تلك البتات (Bits)، مما يضمن أداء فائق وتحكماً تاماً بالموارد.`,
+            how: R`المعالج يتعامل مع الـ int كأرقام مكمل اثنين (Two's Complement)، بينما يتعامل مع الـ float بنظام IEEE 754 (جزء للإشارة وجزء للأس وجزء للقيمة المانتيسية). لذلك لو طبعت float بـ %d ستحصل على رقم عشوائي غريب لأن المعالج سيقرأ بتات الرقم العشري كأنه رقم صحيح.`,
+            when: "في كل برنامج C تكتبه لتمثيل الأرقام والبيانات بدقة وبأقل استهلاك لذاكرة الجهاز.",
+            mistakes: R`تستخدم نوع [[char]] وتضع نصاً كاملاً بين علامات تنصيص مزدوجة [["Hello"]]؛ char يستقبل حرفاً واحداً فقط بين علامات تنصيص مفردة [['H']]. وتخلط بين %d و %f في طباعة printf فتظهر قيم غير صحيحة.`
+          },
+          lines: [
+            "تضمين مكتبة stdio.",
+            "بداية دالة main.",
+            "تعريف متغير رقم صحيح age بقيمة 22.",
+            "تعريف متغير رقم عشري gpa بقيمة 3.85.",
+            "تعريف متغير حرفي grade بحرف A مفرد.",
+            "طباعة العمر بتعويض %d بقيمة المتغير age.",
+            "طباعة المعدل والتقدير بتعويض %.2f و %c بقيم المتغيرات.",
+            "إرجاع كود النجاح 0.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج عند التشغيل:
+العمر: 22 سنة
+المعدل: 3.85 - التقدير: A`
+        },
+        {
+          cmd: "المؤشرات Pointers والذاكرة",
+          title: "المؤشرات (Pointers): يعني إيه عنوان في الذاكرة (&)، والمؤشر (*)، والوصول للقيمة",
+          desc: R`المؤشر ([[Pointer]]) هو أهم وأقوى مفهوم في لغة C، وهو السبب في سرعتها وقدرتها على بناء أنظمة التشغيل.
+
+ما هو المؤشر؟
+الذاكرة العشوائية (RAM) عبارة عن مليارات الخلايا المرقمة بعناوين رقمية (زي رقم البيت في الشارع).
+المتغير العادي بيخزن قيمة (زي رقم 50).
+أما المؤشر فهو متغير خاص **بيخزن عنوان متغير تاني في الذاكرة**!
+
+الرمزان السحريان:
+1. علامة العنوان ([[Address-of Operator &]]):
+توضع قبل اسم المتغير لجلب عنوان مكانه في الرام، مثل [[&age]].
+2. علامة المؤشر وفك الإشارة ([[Dereference Operator *]]):
+• عند الإعلان: [[int *ptr = &age;]] (يعني ptr ده مؤشر بيشاور على int).
+• عند الاستخدام: [[*ptr = 30;]] (يعني روح للعنوان اللي ptr بيشاور عليه وغيّر القيمة اللي جواه إلى 30!).`,
+          example: R`# 1. تضمين المكتبة القياسية
+#include <stdio.h>
+
+int main() {
+  int score = 100;
+  # 2. إنشاء مؤشر يخزن عنوان متغير score
+  int *ptr = &score;
+
+  printf("قيمة score الأصلية: %d\\n", score);
+  printf("عنوان score في الرام: %p\\n", (void*)ptr);
+
+  # 3. تعديل قيمة score عن طريق المؤشر مباشرة
+  *ptr = 250;
+  printf("قيمة score بعد التعديل عبر المؤشر: %d\\n", score);
+
+  return 0;
+}`,
+          try: R`انسخ الكود وشغله في الترمنال. لاحظ السطر الثاني: هتشوف عنوان المتغير طالع كرمز هيديكسيمال سداسي عشر زي [[0x7ffd98b76abc]]، ده العنوان الحقيقي لمتغيرك جوه شريحة الرام دلوقتي! ولاحظ كيف السطر الثالث غيّر قيمة المتغير الأصلي [[score]] دون كتابة اسمه!`,
+          flag: "script",
+          deep: {
+            why: R`المؤشرات تسمح للدوال بتعديل المتغيرات الأصلية (Pass by Reference)، وتسمح بمشاركة هياكل بيانات ضخمة كالمصفوفات والصور بين أجزاء البرنامج بدون نسخها في الذاكرة، وهي الأساس لحجز الذاكرة الديناميكية وبناء القوائم المترابطة (Linked Lists) والأشجار (Trees).`,
+            how: R`المعالج يمتلك سجلات عناوين (Address Registers). عندما تكتب [[*ptr = 250]]، المعالج يقرأ العنوان المحفوظ في ptr، ويذهب مباشرة لذاك الموقع في الـ L1 Cache أو الـ RAM، ويكتب القيمة 250 في تلك الـ 4 بايتات المحددة، كل ذلك في دورة معالج واحدة (CPU Cycle) بسرعة مذهلة.`,
+            when: "في تمرير البيانات للدوال، وإدارة المصفوفات، وبناء هياكل البيانات المتقدمة، وبرمجة برامج تشغيل العتاد (Drivers).",
+            mistakes: R`المؤشر المعلق أو الجامح (Wild / Dangling Pointer): استخدام مؤشر لم يتم إعطاؤه عنواناً حقيقياً بعد، ومحاولة الكتابة فيه بـ [[*ptr = 5]]، مما يسبب انهيار البرنامج فوراً بخطأ فادح اسمه [[Segmentation fault]] لأنك حاولت لمس ذاكرة غير مسموح لك بها.`
+          },
+          lines: [
+            "تضمين stdio.",
+            "بداية main.",
+            "تعريف متغير رقم صحيح score بقيمة 100.",
+            "تعريف مؤشر ptr وتخزين عنوان score بداخله باستخدام علامة &.",
+            "طباعة قيمة score الأصلية 100.",
+            "طباعة العنوان الحقيقي بالذاكرة باستخدام %p.",
+            "تعديل القيمة الموجودة بالعنوان إلى 250 عبر *ptr.",
+            "طباعة قيمة score للتأكد أنها أصبحت 250.",
+            "إرجاع كود 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+قيمة score الأصلية: 100
+عنوان score في الرام: 0x7fff... (عنوان سداسي عشري حقيقي)
+قيمة score بعد التعديل عبر المؤشر: 250`
+        },
+        {
+          cmd: "إدارة الذاكرة: malloc و free",
+          title: "حجز الذاكرة الديناميكية: malloc و free، والفرق بين Stack و Heap، وتجنب تسريب الذاكرة",
+          desc: R`في البرامج الحقيقية، أنت لا تعرف حجم البيانات مسبقاً (مثلاً: كم مستخدم سيسجل اليوم؟ 10 أم 10,000؟).
+لذلك نستخدم حجز الذاكرة الديناميكية ([[Dynamic Memory Allocation]]) أثناء تشغيل البرنامج من منطقة الـ [[Heap]].
+
+الفرق بين الـ Stack والـ Heap:
+• الـ [[Stack]]: ذاكرة سريعة جداً ومحدودة الحجم للمتغيرات العادية، وتُمسح تلقائياً عند انتهاء الدالة.
+• الـ [[Heap]]: مساحة الذاكرة الضخمة للنظام، تحجز منها ما تشاء وقتما تشاء، ولكنك **مسؤول بنفسك عن تحريرها**!
+
+الدوال الأساسية في مكتبة [[<stdlib.h>]]:
+1. [[malloc(size)]]: اختصار لـ Memory Allocation، تحجز عدداً معيناً من البايتات وترجع مؤشراً للذاكرة المحجوزة.
+2. [[free(ptr)]]: تحرر الذاكرة وتعيدها لنظام التشغيل بعد الانتهاء منها.
+3. قاعدة ذهبية: **لكل malloc يجب أن يكون هناك free تقابلها**، وإلا ستحدث كارثة تسريب الذاكرة ([[Memory Leak]]).`,
+          example: R`# 1. تضمين مكتبات الإدخال والذاكرة الديناميكية
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+  int n = 3;
+  # 2. حجز مساحة تكفي لـ 3 أرقام صحيحة في الـ Heap
+  int *arr = (int*)malloc(n * sizeof(int));
+  if (arr == NULL) return 1;
+
+  # 3. ملء واستخدام المصفوفة الديناميكية
+  arr[0] = 10;
+  arr[1] = 20;
+  arr[2] = 30;
+
+  printf("العنصر الثاني: %d\\n", arr[1]);
+
+  # 4. تحرير الذاكرة لمنع تسريبها
+  free(arr);
+  arr = NULL;
+  return 0;
+}`,
+          try: R`جرب تشغيل الكود وتأكد أنه يعمل بنجاح. بعدين جرب في مشروع كبير تشغل أداة فحص تسريب الذاكرة الشهيرة [[valgrind ./app]] وشوف إزاي بتفحص كل بايت وتتأكد إن كل malloc اتقفلت بـ free بنسبة 100%!`,
+          flag: "script",
+          deep: {
+            why: R`لغات زي Python و JS فيها Garbage Collector ينظف الذاكرة تلقائياً ولكنه يبطئ البرنامج ويستهلك رام مضاعفة. في C أنت المتحكم الكامل؛ التطبيق يستهلك فقط البايتات التي يحتاجها بالضبط بدون أي بطء أو توقفات للمهملات.`,
+            how: R`دالة malloc تتواصل مع نواة نظام التشغيل عبر نداءات نظام مثل [[brk]] أو [[mmap]] لتوسيع مساحة الـ Heap الخاصة بالعملية. وعند استدعاء free، يضع مدير الذاكرة تلك الكتلة في قائمة الكتل الحرة (Free List) لإعادة استخدامها دون الحاجة لطلب ذاكرة جديدة من النظام.`,
+            when: "عند التعامل مع أحجام بيانات غير معروفة مقدماً، مثل قراءة ملف كامل، أو استقبال بيانات من الشبكة، أو بناء قواعد البيانات.",
+            mistakes: R`تنسى كتابة [[free(arr)]] في لوب متكرر؛ فيمتلئ الرام بالكامل ويتجمد السيرفر بسبب Memory Leak. واستخدام المؤشر بعد تحريره (Use After Free): لذلك نضع دائماً [[arr = NULL]] بعد الـ free مباشرة لمنع أي وصول خاطئ.`
+          },
+          lines: [
+            "تضمين مكتبة الإدخال والإخراج.",
+            "تضمين مكتبة stdlib لدوال الذاكرة malloc و free.",
+            "بداية دالة main.",
+            "تعريف عدد العناصر المطلوبة n.",
+            "حجز مساحة n أرقام صحيحة في الـ Heap وتخزين المؤشر في arr.",
+            "التحقق من أن النظام نجح في تخصيص الذاكرة ولم يرجع NULL.",
+            "تعبئة العنصر الأول في المصفوفة الديناميكية.",
+            "تعبئة العنصر الثاني.",
+            "تعبئة العنصر الثالث.",
+            "طباعة العنصر الثاني للتأكد من تخزينه.",
+            "تحرير الذاكرة المحجوزة وإعادتها لنظام التشغيل.",
+            "تصفير المؤشر إلى NULL لمنع الأخطاء.",
+            "إرجاع كود النجاح 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+العنصر الثاني: 20
+
+والذاكرة تم حجزها بدقة وتحريرها بالكامل بنجاح بدون تسريب ولا بايت واحد.`
+        }
+      ]
+    },
+    {
+      t: "الانتقال لـ C++ والـ OOP ومكتبة STL",
+      l: 2,
+      n: "الانتقال للبرمجة الكائنية والقوالب وهياكل البيانات الجاهزة فائقة السرعة",
+      items: [
+        {
+          cmd: "مقدمة C++ والفرق عن C",
+          title: "مقدمة C++: يعني إيه C with Classes، والـ iostream و cin و cout و namespaces",
+          desc: R`لغة [[C++]] طورها بيارن ستروستروب عام 1979 بهدف إضافة ميزات البرمجة كائنية التوجه (OOP) والنوعية القوية فوق لغة C دون التضحية بالسرعة والأداء الخارقين.
+
+أهم الفروق في البداية عن C:
+• مكتبة الإدخال والإخراج الحديثة: نستخدم [[#include <iostream>]] بدلاً من stdio.h.
+• الطباعة: نستخدم كائن التدفق [[std::cout]] مع معامل الإرسال [[<<]]، بدون الحاجة لتنسيقات %d و %f!
+• الإدخال: نستخدم كائن [[std::cin]] مع معامل الاستقبال [[>>]] لقراءة مدخلات المستخدم من الكيبورد مباشرة.
+• فضاء الأسماء ([[Namespace]]): نكتب [[using namespace std;]] حتى لا نكرر كلمة std:: قبل كل أمر.`,
+          example: R`# 1. استدعاء مكتبة تيار الإدخال والإخراج في C++
+#include <iostream>
+using namespace std;
+
+int main() {
+  # 2. طباعة نص وأرقام بسهولة باستخدام cout
+  string devName = "أحمد";
+  int experience = 5;
+
+  cout << "مرحبًا بك في عالم C++ يا " << devName << "!" << endl;
+  cout << "سنوات الخبرة: " << experience << endl;
+  return 0;
+}`,
+          try: R`اعمل ملف اسمه [[main.cpp]] والصق الكود فيه. افتح الترمنال وترجمه بمترجم سي بلس بلس: [[g++ main.cpp -o app_cpp]] وشغله بـ [[./app_cpp]]. لاحظ كيف جمل الطباعة أصبحت أسهل وأوضح بكثير من C القديمة!`,
+          flag: "script",
+          deep: {
+            why: R`لغة C++ هي لغة الصناعات الثقيلة برمجياً: محركات الألعاب العملاقة (Unreal Engine)، وبرامج التصميم والجرافيك (Adobe Photoshop, Blender)، ومتصفحات الويب (Google Chrome V8 Engine)، ومحركات التداول المالي عالي التردد (HFT).`,
+            how: R`كائن [[std::cout]] هو مثيل من كلاس ostream يقوم بتحميل المعامل [[<<]] (Operator Overloading) ليتعرف تلقائياً على نوع البيانات المرسلة له سواء كانت string أو int أو float ويحولها لتمثيل نصي بدون أي تدخل يدوي منك.`,
+            when: "محركات الألعاب ثلاثية الأبعاد، وتطوير برمجيات الأنظمة المعقدة، والمسابقات البرمجية العالمية (Competitive Programming و Problem Solving).",
+            mistakes: R`تستخدم [[endl]] بكثرة في حلقات تكرار ضخمة؛ endl تطبع سطراً جديداً وتجبر النظام على تفريغ الذاكرة المؤقتة (flush) مما يبطئ الطباعة جداً. الأسرع دائمًا كتابة [[\\n]].`
+          },
+          lines: [
+            "تضمين مكتبة iostream لطباعة وقراءة البيانات في C++.",
+            "استخدام فضاء الأسماء القياسي std لتجنب كتابة std:: كل مرة.",
+            "بداية دالة main.",
+            "تعريف متغير نصي string لاسم المطور.",
+            "تعريف متغير رقمي صحيح لسنوات الخبرة.",
+            "طباعة رسالة ترحيبية مدمجة بالاسم مع إنهاء السطر بـ endl.",
+            "طباعة سنوات الخبرة في سطر مستقل.",
+            "إرجاع كود 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج عند التشغيل:
+مرحبًا بك في عالم C++ يا أحمد!
+سنوات الخبرة: 5`
+        },
+        {
+          cmd: "الـ Classes والـ OOP في C++",
+          title: "الكلاسات والبرمجة كائنية التوجه: public و private، والـ Constructor والـ Destructor",
+          desc: R`الـ [[Class]] في C++ هو مخطط بناء يجمع البيانات (الخصائص) والدوال (السلوكيات) في كبسولة واحدة ([[Encapsulation]]).
+
+محددات الوصول ([[Access Specifiers]]):
+• [[private]]: بيانات سرية محمية لا يمكن لأي كود خارجي الوصول لها أو تعديلها مباشرة.
+• [[public]]: دوال وخصائص عامة يمكن لأي مستخدم للكائن استدعاؤها بأمان.
+
+دوال دورة الحياة الخاصة:
+• الباني ([[Constructor]]): دالة تحمل نفس اسم الكلاس تُنفذ تلقائياً بمجرد إنشاء الكائن لتهيئة متغيراته.
+• الهادم ([[Destructor]]): دالة مسبوقة بعلامة [[~]] تُنفذ تلقائياً عندما يموت الكائن لتنظيف أي ذاكرة أو موارد حجزها!`,
+          example: R`# 1. استدعاء مكتبة الإدخال
+#include <iostream>
+using namespace std;
+
+# 2. تعريف كلاس الحساب البنكي
+class BankAccount {
+private:
+  double balance;
+
+public:
+  # 3. الباني لتهيئة الرصيد الأولي
+  BankAccount(double initialBalance) {
+    balance = initialBalance;
+  }
+
+  # 4. دالة الإيداع العامة
+  void deposit(double amount) {
+    if (amount > 0) balance += amount;
+  }
+
+  void showBalance() {
+    cout << "الرصيد الحالي: " << balance << " ج" << endl;
+  }
+};
+
+int main() {
+  BankAccount myAccount(1000.0);
+  myAccount.deposit(500.0);
+  myAccount.showBalance();
+  return 0;
+}`,
+          try: R`في ملف [[main.cpp]] جرب إضافة دالة سحب [[withdraw(double amount)]] تتحقق أولاً أن الرصيد يكفي قبل الخصم، وشوف إزاي encapsulation بيحمي الحساب من أن يتحول لرقم سالب!`,
+          flag: "script",
+          deep: {
+            why: R`في المشاريع الضخمة التي تحتوي على ملايين الأسطر، ترك المتغيرات مكشوفة يسبب كوارث. الـ OOP والـ Classes توفر حماية صارمة وتتيح تنظيم الكود في وحدات منطقية تشبه العالم الحقيقي.`,
+            how: R`عند إنشاء كائن من الكلاس، C++ تحجز في الذاكرة مساحة للبيانات فقط (الـ balance يأخذ 8 بايت)، أما الدوال فتشترك فيها كل كائنات الكلاس في الذاكرة لتوفير المساحة، ويتم تمرير مؤشر خفي للدالة اسمه [[this]] يشير للكائن الحالي الذي نادى الدالة.`,
+            when: "بناء الأنظمة الكبيرة، ومحركات الألعاب، وبرامج إدارة البيانات والحسابات.",
+            mistakes: R`تنسى الفاصلة المنقوطة [[;]] بعد قفلة قوس تعريف الكلاس [[};]]؛ في C++ تعريف الكلاس يجب أن ينتهي بفاصلة منقوطة وإلا سيعطيك المترجم خطأ بناء مربك.`
+          },
+          lines: [
+            "تضمين iostream.",
+            "استخدام std.",
+            "بداية تعريف كلاس الحساب البنكي BankAccount.",
+            "قسم الخصائص الخاصة المحمية private.",
+            "متغير الرصيد balance من نوع double.",
+            "قسم الدوال والخصائص العامة public.",
+            "تعريف الباني Constructor الذي يأخذ الرصيد الأولي.",
+            "تعيين الرصيد الأولي للمتغير الداخلي balance.",
+            "قفلة الباني.",
+            "تعريف دالة الإيداع deposit التي تستقبل المبلغ amount.",
+            "التحقق من أن المبلغ موجب ثم إضافته للرصيد.",
+            "قفلة دالة الإيداع.",
+            "دالة عرض الرصيد showBalance.",
+            "طباعة الرصيد مع وحدة العملة وإنهاء السطر.",
+            "قفلة دالة العرض.",
+            "قفلة تعريف الكلاس بالفاصلة المنقوطة الإجبارية.",
+            "بداية دالة main.",
+            "إنشاء كائن حساب بنكي myAccount برصيد أولي 1000.",
+            "إيداع مبلغ 500 في الحساب عبر الدالة العامة.",
+            "عرض الرصيد المحدث.",
+            "إرجاع كود النجاح 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج عند التشغيل:
+الرصيد الحالي: 1500 ج`
+        },
+        {
+          cmd: "الـ std::vector في C++",
+          title: "الـ std::vector: مصفوفة ديناميكية تكبر لوحدها، مع push_back و size و loop",
+          desc: R`في لغة C القديمة، كانت المصفوفات ثابتة الحجم وتتطلب إدارة ذاكرة يدوية معقدة بـ malloc.
+في C++، تقدم لنا مكتبة القوالب القياسية ([[Standard Template Library - STL]]) حاوية عبقرية اسمها [[std::vector]]!
+
+ما هو الـ [[vector]]؟
+هو مصفوفة ديناميكية ذكية تكبر وتتقلص في الذاكرة تلقائياً عند إضافة أو حذف عناصر.
+• تضمين المكتبة: [[#include <vector>]].
+• الإعلان: [[vector<int> numbers;]] (مصفوفة أرقام صحيحة قابلة للزيادة).
+• إضافة عناصر في النهاية: [[numbers.push_back(10);]].
+• معرفة عدد العناصر: [[numbers.size()]].
+• الدوران الحديث: [[for (const auto& item : numbers)]].`,
+          example: R`# 1. استدعاء مكتبتي iostream و vector
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+  # 2. إنشاء فيكتور لحفظ أسعار المنتجات
+  vector<double> prices;
+
+  # 3. إضافة أسعار جديدة ديناميكياً
+  prices.push_back(49.99);
+  prices.push_back(120.00);
+  prices.push_back(15.50);
+
+  cout << "إجمالي عدد السلع: " << prices.size() << endl;
+
+  # 4. طباعة كل الأسعار بحلقة التكرار الحديثة
+  for (double p : prices) {
+    cout << "- السعر: " << p << " ج" << endl;
+  }
+  return 0;
+}`,
+          try: R`جرب إضافة سطر لحذف آخر عنصر تمت إضافته باستخدام [[prices.pop_back();]]، واطبع الـ size وشوف كيف تحول لـ 2 تلقائياً! وميزة vector إنه آمن وسريع جداً ومفيش أي فرصة لتسريب الذاكرة لأنه يدير نفسه بالكامل.`,
+          flag: "script",
+          deep: {
+            why: R`الـ vector هو الحاوية الافتراضية الأولى التي ينصح بها مصمم C++ في 95% من الحالات. فهو يجمع بين سرعة الوصول العشوائي للمصفوفات المتتالية في الذاكرة (Cache Friendly) وبين مرونة التوسع التلقائي.`,
+            how: R`عندما يمتلئ الفيكتور، يقوم داخلياً بمضاعفة حجم الذاكرة (Capacity Doubling): يحجز كتلة جديدة بحجم مضاعف، وينقل العناصر السابقة إليها بسرعة فائقة باستخدام Move Semantics، ويحرر الكتلة القديمة. لذلك عملية الإضافة amortized O(1) سريعة للغاية.`,
+            when: "في أي وقت تحتاج فيه مصفوفة أو قائمة عناصر في C++، vector هو خيارك الأول بدون تردد.",
+            mistakes: R`تستخدم معامل القوسين [[prices[10]]] للوصول لعنصر خارج حدود المصفوفة؛ هذا يسبب سلوكاً غير محدد (Undefined Behavior) أو كراش فوري. لو أردت فحص الحدود بأمان استخدم دالة [[prices.at(10)]] التي ترمي خطأ out_of_range.`
+          },
+          lines: [
+            "تضمين iostream.",
+            "تضمين مكتبة vector من STL.",
+            "استخدام std.",
+            "بداية main.",
+            "إنشاء فيكتور ديناميكي لحفظ أرقام عشرية prices.",
+            "إضافة السعر الأول 49.99 بنهاية الفيكتور.",
+            "إضافة السعر الثاني 120.00.",
+            "إضافة السعر الثالث 15.50.",
+            "طباعة عدد العناصر المسجلة باستخدام size().",
+            "حلقة دوران على كل عنصر p في الفيكتور.",
+            "طباعة قيمة كل سعر مع علامة العملة.",
+            "قفلة حلقة الدوران.",
+            "إرجاع 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+إجمالي عدد السلع: 3
+- السعر: 49.99 ج
+- السعر: 120 ج
+- السعر: 15.5 ج`
+        }
+      ]
+    },
+    {
+      t: "C++ الحديثة وسوق العمل",
+      l: 3,
+      n: "المؤشرات الذكية وإدارة الموارد بدون تسريب وأنظمة البناء الاحترافية",
+      items: [
+        {
+          cmd: "Smart Pointers: الذاكرة الذكية",
+          title: "المؤشرات الذكية الحديثة: std::unique_ptr و std::shared_ptr لمنع تسريب الذاكرة للأبد",
+          desc: R`في C++ الحديثة (من C++11 وحتى C++23)، انتهى عصر كتابة [[new]] و [[delete]] اليدوية!
+أصبح المعيار الحديث هو استخدام المؤشرات الذكية ([[Smart Pointers]]) من مكتبة [[<memory>]].
+
+ما هو المؤشر الذكي؟
+هو كائن يلف حول المؤشر العادي ويدير دورة حياته ذاتياً وفق مبدأ [[RAII]] (Resource Acquisition Is Initialization):
+بمجرد خروج المؤشر الذكي من نطاق الدالة أو البلوك [[{ }]]، يقوم تلقائياً بحذف الذاكرة المحجوزة من الـ Heap وتحريرها فوراً!
+
+النوعان الأساسيان:
+1. [[std::unique_ptr]]: يمتلك الذاكرة بمفرده (Exclusive Ownership). لا يمكن نسخه أبداً، وعندما يموت تُحذف الذاكرة معه. الأسرع والأكثر استخداماً!
+2. [[std::shared_ptr]]: يتيح لعدة أطراف مشاركة نفس الذاكرة (Shared Ownership)، ويحتفظ بعداد مرجعي (Reference Count)؛ لا تُحذف الذاكرة إلا عندما يموت آخر مؤشر يشير إليها.`,
+          example: R`# 1. استدعاء مكتبات الإدخال والذاكرة الذكية
+#include <iostream>
+#include <memory>
+using namespace std;
+
+class Device {
+public:
+  Device() { cout << "تم تشغيل الجهاز في الذاكرة." << endl; }
+  ~Device() { cout << "تم إغلاق وتحرير الجهاز تلقائيًا!" << endl; }
+  void work() { cout << "الجهاز يعمل بكفاءة..." << endl; }
+};
+
+int main() {
+  {
+    # 2. إنشاء مؤشر فريد ذكي باستخدام make_unique
+    unique_ptr<Device> dev = make_unique<Device>();
+    dev->work();
+    # 3. عند الوصول لنهاية هذا القوس، سيتم هدم وتحرير الذاكرة ذاتيًا
+  }
+  cout << "انتهى البلوك الداخلي." << endl;
+  return 0;
+}`,
+          try: R`انسخ الكود وشغله في الترمنال. لاحظ جيداً في المخرجات: جملة «تم إغلاق وتحرير الجهاز تلقائيًا!» طُبعت قبل جملة «انتهى البلوك الداخلي!»، ده يثبت لك بالدليل إن C++ حررت الذاكرة ونادت الـ Destructor لوحدها أول ما القوس اتقفل دون أن تكتب كلمة delete واحدة!`,
+          flag: "script",
+          deep: {
+            why: R`أكثر من 70% من الثغرات الأمنية والكراشات في تاريخ البرمجيات كان سببها أخطاء الذاكرة (Memory Leaks و Double Free). المؤشرات الذكية في C++ الحديثة قضت على هذا الكابوس للأبد وجعلت C++ آمنة تماماً مثل لغات الـ Managed مع الحفاظ على السرعة الصفرية (Zero-cost Abstraction).`,
+            how: R`الـ unique_ptr لا يستهلك أي بايت إضافي عن المؤشر الخام (Raw Pointer)، وعند الترجمة يتم تحويله لنفس كود التجميع الدقيق مع حقن استدعاء delete في نقطة الخروج.`,
+            when: "المعيار الإجباري في كل كود C++ حديث يُكتب اليوم في الشركات والإنتاج.",
+            mistakes: R`تستخدم مؤشرات خام مع new وتنسى تحريرها؛ في C++ الحديثة تجنب استخدام new المباشرة واستخدم دائماً [[std::make_unique]] و [[std::make_shared]].`
+          },
+          lines: [
+            "تضمين iostream.",
+            "تضمين مكتبة memory للمؤشرات الذكية.",
+            "استخدام std.",
+            "بداية كلاس Device التجريبي.",
+            "القسم العام public.",
+            "الباني ويطبع رسالة عند إنشاء الجهاز.",
+            "الهادم ويطبع رسالة عند تحرير الجهاز من الذاكرة.",
+            "دالة work لمحاكاة عمل الجهاز.",
+            "قفلة الكلاس بالفاصلة المنقوطة.",
+            "بداية main.",
+            "فتح نطاق محدد بقوسين لمعاينة دورة حياة المؤشر.",
+            "إنشاء مؤشر ذكي فريد dev باستخدام make_unique.",
+            "استدعاء دالة work عبر المؤشر الذكي بواسطة السهم ->.",
+            "قفلة النطاق، وهنا يُهدم المؤشر تلقائياً.",
+            "طباعة رسالة بعد انتهاء النطاق.",
+            "إرجاع كود 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+تم تشغيل الجهاز في الذاكرة.
+الجهاز يعمل بكفاءة...
+تم إغلاق وتحرير الجهاز تلقائيًا!
+انتهى البلوك الداخلي.`
+        },
+        {
+          cmd: "أسئلة إنترفيو C و C++",
+          title: "أشهر أسئلة الإنترفيو: Segmentation Fault، و Memory Leak، والـ Virtual Destructor، و vtable",
+          desc: R`في المقابلات التقنية لشركات الأنظمة ومحركات الألعاب وجوجل، أسئلة C و C++ تركز على فهمك العميق للذاكرة والمعمارية الداخلية.
+
+أهم ٤ أسئلة لا يخلو منها أي إنترفيو:
+1. ما هو الـ [[Segmentation Fault (Segfault)]]؟
+محاولة البرنامج الوصول لمكان في الذاكرة غير مخصص له من قبل نظام التشغيل (مثل قراءة مؤشر NULL أو مؤشر محرر مسبقاً)، فتقوم وحدة إدارة الذاكرة ([[MMU]]) بإرسال إشارة قتل فورية للبرنامج ([[SIGSEGV]]).
+
+2. ما هو الـ [[Memory Leak]] وكيف تكشفه؟
+حجز ذاكرة في الـ Heap بـ malloc أو new وعدم تحريرها بعد انتهاء الحاجة إليها. يتم كشفها بأدوات متقدمة مثل [[Valgrind]] أو [[AddressSanitizer (ASan)]].
+
+3. لماذا يجب أن يكون الـ Destructor في الكلاس الأساسي [[virtual]]؟
+عند حذف كائن مشتق عبر مؤشر من الكلاس الأساسي [[Base *p = new Derived(); delete p;]]، لو لم يكن الـ Destructor معرفاً كـ [[virtual ~Base()]]، فسيتم استدعاء هادم Base فقط ولن يتم استدعاء هادم Derived، مما يسبب تسريب ذاكرة خطير!
+
+4. ما هو جدول الـ [[vtable]]؟
+هو جدول دوال ينشئه المترجم لكل كلاس يحتوي على دالة virtual، لتمكين تعدد الأشكال في وقت التشغيل ([[Runtime Polymorphism]]) عبر توجيه النداء للدالة الصحيحة عبر مؤشر [[vptr]].`,
+          example: R`# 1. مثال يوضح أهمية الهادم الافتراضي Virtual Destructor
+#include <iostream>
+#include <memory>
+using namespace std;
+
+class Base {
+public:
+  virtual ~Base() { cout << "هادم Base تم استدعاؤه بنجاح." << endl; }
+};
+
+class Derived : public Base {
+public:
+  ~Derived() override { cout << "هادم Derived تم استدعاؤه بنجاح!" << endl; }
+};
+
+int main() {
+  # 2. حذف كائن مشتق عبر مؤشر الكلاس الأساسي بأمان تام
+  unique_ptr<Base> obj = make_unique<Derived>();
+  return 0;
+}`,
+          try: R`شغل الكود وشوف كيف طبع هادم Derived أولاً ثم هادم Base بالترتيب الصحيح. جرب مسح كلمة [[virtual]] من أمام هادم Base في الكود وشوف إزاي كان هادم Derived هيتجاهل تماماً ومش هيتنفذ لو كانت الذاكرة محذوفة بمؤشر عادي!`,
+          flag: "script",
+          deep: {
+            why: R`هذه المفاهيم تفصل بين مبرمج يكتب كود سطحي وبين مهندس برمجيات حقيقي يفهم كيف ينفذ نظام التشغيل المعالجات على الذاكرة، وهو المعيار الذي تقيم به الشركات الكبرى مهندسيها.`,
+            how: R`كلمة virtual تجعل المترجم يضيف مؤشراً خفياً (vptr) في أول كل كائن يشير لمصفوفة عناوين الدوال (vtable). عند استدعاء delete، يقرأ النظام مؤشر الهادم من جدول vtable للكائن الحقيقي Derived وينفذه أولاً، ثم يصعد لسلسلة الوراثة للأعلى.`,
+            when: "التحضير للمقابلات التقنية المتقدمة لمهندسي الأنظمة ومحركات الألعاب ومطوري النواة (Kernel).",
+            mistakes: R`تعريف كلاس أساسي يحتوي على دوال virtual وإهمال كتابة [[virtual ~Base() = default;]] للهادم؛ هذا الخطأ يكلف الشركات شهوراً من البحث عن تسريبات الذاكرة الغامضة في الإنتاج.`
+          },
+          lines: [
+            "تضمين iostream.",
+            "تضمين memory.",
+            "استخدام std.",
+            "تعريف الكلاس الأساسي Base.",
+            "القسم العام public.",
+            "تعريف الهادم الافتراضي virtual لمنع تسريب الذاكرة في الوراثة.",
+            "قفلة كلاس Base.",
+            "تعريف كلاس مشتق Derived يرث من Base.",
+            "القسم العام public.",
+            "هادم الكلاس المشتق ويطبع رسالة عند تحريره.",
+            "قفلة كلاس Derived.",
+            "بداية main.",
+            "إنشاء كائن مشتق موجه بمؤشر من النوع الأساسي Base.",
+            "إرجاع كود النجاح 0.",
+            "قفلة main."
+          ],
+          sol: R`الناتج عند التشغيل:
+هادم Derived تم استدعاؤه بنجاح!
+هادم Base تم استدعاؤه بنجاح.`
+        }
+      ]
+    }
+  ]
+});
+
+/* ===== js/tabs/kotlin.js ===== */
+// تاب Kotlin و Android
+TAB("kotlin", {
+  label: "Kotlin و Android",
+  prompt: "$ ",
+  lab: R`kotlinc -version
+kotlinc main.kt -include-runtime -d app.jar && java -jar app.jar
+./gradlew assembleDebug`,
+  labText: "Kotlin هي اللغة الرسمية الأولى المعتمدة من Google لتطوير تطبيقات الأندرويد. مع Jetpack Compose بتصمم واجهات عصرية بكود نقي.",
+  levels: {
+    "1": ["لغة Kotlin من الصفر", "المتغيرات val و var، و Null Safety، والدوال، و data classes"],
+    "2": ["واجهات Jetpack Compose", "المكونات الأساسية @Composable، و Row و Column، والـ State بـ remember، و LazyColumn"],
+    "3": ["معمارية التطبيقات والنشر", "ViewModel، و Coroutines للعمليات الخلفية، وبناء ونشر ملف الـ APK و AAB"]
+  },
+  categories: [
+    {
+      t: "لغة Kotlin: البداية الآمنة",
+      l: 1,
+      n: "لغة حديثة وموجزة 100% متوافقة مع Java وتقضي على الـ NullPointerException",
+      items: [
+        {
+          cmd: "مقدمة Kotlin وكتابة أول برنامج",
+          title: "مقدمة Kotlin: لماذا فضلتها جوجل على Java، وكتابة أول كود بدالة main والـ println",
+          desc: R`لغة [[Kotlin]] طورتها شركة JetBrains عام 2011، وفي عام 2019 أعلنت Google رسمياً أن كوتلن هي "اللغة المفضلة الأولى" ([[Kotlin-first]]) لتطوير تطبيقات Android.
+
+لماذا تفوقت Kotlin على Java الكلاسيكية؟
+1. إيجاز غير عادي: الكود أقصر بنسبة 40% من كود جافا لنفس الوظيفة (مفيش boilerplate كود ولا getters و setters مكررة).
+2. آمنة بنسبة 100% ضد انهيار التطبيقات ([[Null Safety]]): تمنع خطأ المليار دولار الشهير (NullPointerException) في مرحلة الترجمة قبل أن يصل التطبيق للمستخدمين.
+3. متوافقة تماماً مع Java بنسبة 100% ([[Interoperable]]): تعمل على نفس آلة الـ JVM وتستطيع استخدام كل مكتبات جافا القديمة داخل كود كوتلن والعكس بسلاسة.
+
+هيكل كود Kotlin:
+• لا تحتاج لفواصل منقوطة [[;]] نهائياً.
+• نقطة البداية: دالة [[fun main()]] وتُكتب كلمة [[fun]] اختصاراً لـ function.
+• الطباعة: دالة [[println()]] البسيطة والمباشرة.`,
+          example: R`# 1. نقطة انطلاق كود كوتلن
+fun main() {
+  # 2. طباعة ترحيب في الترمنال
+  println("Hello, Android & Kotlin!")
+
+  # 3. دمج النصوص مع المتغيرات باستخدام علامة $
+  val developer = "عمر"
+  println("المطور: $developer يرحب بكم في عالم كوتلن!")
+}`,
+          try: R`افتح المتصفح واكتب [[play.kotlinlang.org]] (محرر كوتلن الرسمي السريع أونلاين). الصق هذا الكود واضغط على زر Run الأزرق. هتشوف كودك اشتغل في ثانية! جرب تضيف متغير للنسخة [[val version = 2.0]] واطبعه بـ [[println("الإصدار: $version")]].`,
+          flag: "script",
+          deep: {
+            why: R`معظم تطبيقات العالم الشهيرة (Netflix, Duolingo, Twitter, Slack) أعادت كتابة تطبيقاتها بالكامل من Java إلى Kotlin بسبب استقرارها وسرعة كتابتها وخلوها من الكراشات.`,
+            how: R`مترجم كوتلن ([[kotlinc]]) يقوم بترجمة كود الـ .kt إلى ملفات بايت كود (.class) متطابقة تماماً مع جافا، لتشغيلها على محرك تشغيل أندرويد (ART - Android Runtime). لذلك التطبيق المكتوب بكوتلن يعمل بنفس السرعة الفائقة لـ Java.`,
+            when: "الخطوة الأولى المطلوبة لكل من يريد أن يصبح مطور تطبيقات أندرويد محترف (Android Developer).",
+            mistakes: R`تكتب فواصل منقوطة [[;]] في كل سطر بحكم العادة من لغات تانية؛ كوتلن لغة حديثة ونظيفة والفواصل المنقوطة اختيارية ويُفضل تجنبها تماماً.`
+          },
+          lines: [
+            "تعريف دالة البداية الرئيسية main باستخدام كلمة fun.",
+            "طباعة رسالة ترحيبية في سطر مستقل.",
+            "تعريف متغير ثابت developer بنوع نصي تم استنتاجه تلقائياً.",
+            "طباعة جملة مدمجة بقيمة المتغير باستخدام علامة $ المباشرة.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+Hello, Android & Kotlin!
+المطور: عمر يرحب بكم في عالم كوتلن!`
+        },
+        {
+          cmd: "المتغيرات والـ Null Safety في Kotlin",
+          title: "المتغيرات والـ Null Safety: الفرق بين val و var، وحماية التطبيق من الـ NullPointerException الشهير",
+          desc: R`في Kotlin، نوع المتغير يحدد ما إذا كان قابلاً للتعديل أم ثابتاً، وما إذا كان يقبل القيمة الفارغة ([[null]]) أم مستحيلاً أن يقبلها!
+
+الفرق بين [[val]] و [[var]]:
+• [[val]] (اختصار لـ Value): متغير للقراءة فقط (غير قابل للتغيير Immutable)؛ بمجرد إعطائه قيمة يستحيل تغييرها، وهو الخيار المفضل دائماً للأمان.
+• [[var]] (اختصار لـ Variable): متغير عادي قابل للتعديل وتغيير قيمته لاحقاً.
+
+نظام حماية الـ [[Null Safety]] العبقري:
+• في كوتلن، كل المتغيرات بطبيعتها **ممنوع أن تكون null** ([[Non-Nullable]]):
+  [[var name: String = "علي"]] -> لو حاولت تكتب [[name = null]] المترجم سيرفض ويبعث خطأ فوراً!
+• إذا كنت مضطراً لجعل المتغير يقبل الفراغ، تضع علامة استفهام [[?]] بعد نوعه ([[Nullable]]):
+  [[var city: String? = null]]
+• معامل الاستدعاء الآمن ([[Safe Call ?.]]):
+  [[city?.length]] (لو المدينة null يرجع null بهدوء ولا يسقط التطبيق أبداً!).
+• معامل إلفيس ([[Elvis Operator ?: ]]):
+  [[val display = city ?: "مدينة غير محددة"]] (لو كانت null استخدم القيمة البديلة).`,
+          example: R`# 1. نقطة البداية
+fun main() {
+  # 2. متغير ثابت val ممنوع يكون null
+  val appName: String = "طبيبي"
+
+  # 3. متغير يقبل القيمة الفارغة لوجود علامة الاستفهام
+  var userLocation: String? = null
+
+  # 4. استخدام معامل Elvis لتوفير قيمة افتراضية آمنة
+  val currentLocation = userLocation ?: "الموقع غير مفعل"
+
+  println("تطبيق: $appName")
+  println("الموقع الحالي: $currentLocation")
+}`,
+          try: R`في محرر Kotlin Playground، جرب تعديل [[appName = "متجري"]] وشوف المترجم هيعترض إزاي بـ [[Val cannot be reassigned]]. بعدين جرب تحط قيمة لـ [[userLocation = "القاهرة"]] وشوف إزاي كلمة الموقع الحالي هتتغير للقاهرة بدلاً من القيمة الافتراضية!`,
+          flag: "script",
+          deep: {
+            why: R`الـ NullPointerException كان مسؤولاً عن أكثر من 60% من حوادث انهيار التطبيقات على متجر جوجل بلاي. نظام كوتلن حوّل هذه المشكلة من فحص وقت التشغيل إلى فحص وقت الترجمة، فالتطبيق لا ينهار في يد العميل أبداً.`,
+            how: R`المترجم ينشئ علامات حماية (Nullability Annotations) داخل الـ Bytecode، ويمنع حتى من استدعاء الدوال على كائن يحتمل أن يكون null إلا بعد أن تجبر الكود على التحقق من سلامته عبر [[?.]] أو if شرطية.`,
+            when: "في كل سطر كود كوتلن تكتبه؛ القاعدة الذهبية: ابدأ دائماً بـ val، ولا تستخدم var إلا عند الحاجة، ولا تضع علامة ؟ إلا إذا كانت البيانات من المحتمل أن تغيب فعلاً.",
+            mistakes: R`استخدام معامل التأكيد القهري [[!!]] مثل [[city!!.length]]؛ هذا المعامل يجبر كوتلن على تجاوز الحماية، وإذا كانت القيمة null سينهار التطبيق فوراً. تجنب استخدام !! في مشاريع الإنتاج واستخدم بدلاً منها [[?: ]].`
+          },
+          lines: [
+            "بداية دالة main.",
+            "تعريف متغير ثابت appName بنوع String صريح يرفض الـ null.",
+            "تعريف متغير قابل للتعديل userLocation بنوع String? يقبل null وقيمته فارغة.",
+            "استخدام معامل Elvis ?: لقراءة الموقع أو وضع بديل آمن إذا كان null.",
+            "طباعة اسم التطبيق المدمج.",
+            "طباعة الموقع الآمن.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+تطبيق: طبيبي
+الموقع الحالي: الموقع غير مفعل`
+        },
+        {
+          cmd: "الـ Data Classes والـ Lambdas",
+          title: "الـ Data Classes: كلاسات البيانات الفورية بـ data class، والـ Lambdas ودوال الـ Collections",
+          desc: R`في لغة Java القديمة، لإنشاء كائن مستخدم يحمل (id, name, email)، كنت تضطر لكتابة 50 سطر كود (getters, setters, equals, hashCode, toString, copy).
+في Kotlin، سطر واحد بكلمة [[data class]] يفعل كل هذا السحر تلقائياً!
+
+ما هي الـ [[Data Class]]؟
+هي كلاس مخصص لحمل البيانات فقط:
+[[data class Product(val id: Int, val title: String, val price: Double)]]
+كوتلن تنشئ له تلقائياً:
+• دالة [[toString()]] لطباعة محتويات الكائن بشكل جميل ومقروء.
+• دالة [[copy()]] لنسخ الكائن وتعديل خاصية واحدة فقط منه بسهولة فائقة.
+• دوال [[equals()]] للمقارنة بالقيم وليس بعناوين الذاكرة.
+
+دوال المجموعات والـ Lambdas:
+كوتلن تجعل فلترة وتعديل القوائم متعة:
+• [[filter { it.price > 100 }]]: لفلترة العناصر.
+• [[map { it.title }]]: لتحويل القائمة لأشكال جديدة.`,
+          example: R`# 1. كلاس بيانات في سطر واحد فقط
+data class Product(val id: Int, val title: String, val price: Double)
+
+fun main() {
+  # 2. إنشاء قائمة من المنتجات
+  val products = listOf(
+    Product(1, "سماعة لاسلكية", 150.0),
+    Product(2, "كابل شاحن", 45.0),
+    Product(3, "ساعة ذكية", 300.0)
+  )
+
+  # 3. فلترة المنتجات التي سعرها أعلى من 100 باستخدام Lambda
+  val premium = products.filter { it.price >= 100.0 }
+
+  println("المنتجات الممتازة:")
+  for (item in premium) {
+    println("- $__{item.title} بسعر: $__{item.price} ج")
+  }
+}`,
+          try: R`جرب استخدام دالة [[map]] لطباعة أسماء كل المنتجات فقط في سطر واحد: [[val titles = products.map { it.title }; println(titles)]] وشوف كيف تحولت لقائمة نصوص بسيطة في لمح البصر!`,
+          flag: "script",
+          deep: {
+            why: R`تطبيقات الموبايل تقضي 80% من وقتها في استقبال داتا JSON من الـ API وعرضها في قوائم. الـ data classes مع مكتبات زي Retrofit و Kotlinx Serialization تجعل تحويل واستقبال بيانات الباك إند أمراً يتم في أسطر معدودة وبأعلى أمان للأنواع.`,
+            how: R`كلمة [[it]] في كوتلن هي اسم افتراضي للمعامل المفرد داخل أي Lambda، مما يغنيك عن كتابة [[{ product -> product.price }]] ويجعل الكود شبيهاً بالقراءة الإنجليزية العادية.`,
+            when: "تمثيل البيانات القادمة من السيرفر، وقواعد البيانات المحلية (Room Database)، وحالات الواجهة (UI States).",
+            mistakes: R`تعديل محتويات قائمة من نوع [[listOf]]؛ في كوتلن listOf ترجع قائمة غير قابلة للتعديل (Read-only)، وإذا أردت قائمة تقبل الإضافة والحذف استخدم [[mutableListOf]].`
+          },
+          lines: [
+            "تعريف كلاس بيانات Product يحتوي على id و title و price في سطر واحد.",
+            "بداية دالة main.",
+            "إنشاء قائمة منتجات غير قابلة للتعديل بـ listOf.",
+            "إضافة المنتج الأول.",
+            "إضافة المنتج الثاني.",
+            "إضافة المنتج الثالث.",
+            "قفلة القائمة.",
+            "فلترة المنتجات التي سعرها 100 فما فوق باستخدام دالة filter.",
+            "طباعة عنوان النتائج.",
+            "حلقة تكرار على عناصر القائمة المفلترة.",
+            "طباعة تفاصيل كل منتج مدمجة بالقيم.",
+            "قفلة حلقة التكرار.",
+            "قفلة main."
+          ],
+          sol: R`الناتج:
+المنتجات الممتازة:
+- سماعة لاسلكية بسعر: 150.0 ج
+- ساعة ذكية بسعر: 300.0 ج`
+        }
+      ]
+    },
+    {
+      t: "واجهات Jetpack Compose الحديثة",
+      l: 2,
+      n: "وداعاً لملفات الـ XML: بناء واجهات الموبايل بالكامل بكود Kotlin تفاعلي وتصريحي",
+      items: [
+        {
+          cmd: "مقدمة Jetpack Compose",
+          title: "مقدمة Jetpack Compose: وداعاً لملفات الـ XML، وبناء أول واجهة بدوال @Composable",
+          desc: R`في تاريخ الأندرويد، كان تصميم الشاشات يتم عبر ملفات XML معقدة، وربطها بالكود بـ findViewById الطويلة.
+في عام 2021، أطلقت Google ثورة [[Jetpack Compose]]: نظام بناء الواجهات الحديث والتصريحي ([[Declarative UI]]) للأندرويد، بنفس فلسفة React و Flutter!
+
+ما هو الـ [[@Composable]]؟
+في Compose، كل عنصر على الشاشة (زرار، نص، بطاقة، صورة) هو عبارة عن **دالة كوتلن عادية** مسبوقة بالتعليق التوضيحي [[@Composable]].
+• بدل ملفات XML منفصلة: الواجهة والتصميم والتفاعل كلها مكتوبة بلغة كوتلن واحدة.
+• العناصر الأساسية الجاهزة:
+  - [[Text("نص")]]: لعرض النصوص وتنسيق الخطوط والألوان.
+  - [[Button(onClick = { ... }) { ... }]]: لإنشاء الأزرار التفاعلية.
+  - [[Image(...)]]: لعرض الصور والأيقونات.`,
+          example: R`# 1. استيراد عناصر واجهات Compose
+import androidx.compose.material3.Text
+import androidx.compose.material3.Button
+import androidx.compose.runtime.Composable
+
+# 2. تعريف مكون واجهة Composable مخصص
+@Composable
+fun WelcomeCard(userName: String) {
+  # 3. رسم نص ترحيبي بسيط
+  Text(text = "أهلًا بك يا $userName في تطبيق أندرويد الحديث!")
+}`,
+          try: R`في برنامج Android Studio، أنشئ مشروعاً جديداً باختيار قالب [[Empty Compose Activity]]. افتح ملف [[MainActivity.kt]] وضع فيه دالة الـ Composable دي، واضغط على زر الـ Split في المحرر: هتشوف شاشة الموبايل بتترسم قدامك فوراً في لوحة المعاينة التفاعلية (Compose Preview)!`,
+          flag: "script",
+          deep: {
+            why: R`الـ Declarative UI يقلل كود الواجهات بأكثر من 60%، ويلغي تماماً أخطاء عدم تطابق الـ XML مع كود الجافا، ويوفر أداءً فائقاً وحركات سلسة (Animations) بأسطر معدودة.`,
+            how: R`عندما تتغير البيانات، يقوم محرك Compose بعملية إعادة التركيب الذكية ([[Recomposition]]): يعيد استدعاء دوال الـ Composable المتأثرة بالتغيير فقط دون إعادة رسم الشاشة بأكملها، مما يوفر طاقة البطارية والمعالج لأقصى درجة.`,
+            when: "المعيار الرسمي الإجباري المعتمد من Google لأي تطبيق أندرويد جديد يبدأ العمل عليه اليوم.",
+            mistakes: R`استدعاء دالة Composable من داخل دالة عادية غير معرفة بـ @Composable؛ دوال الكومبوز لا يمكن استدعاؤها إلا من داخل دوال كومبوز أخرى لأنها تحتاج لسياق الـ Composer.`
+          },
+          lines: [
+            "استيراد مكون النص من Material 3.",
+            "استيراد مكون الزرار.",
+            "استيراد إعلان Composable.",
+            "إعلان دالة واجهة مستخدم بعلامة @Composable.",
+            "تعريف دالة WelcomeCard وتقبل اسم المستخدم.",
+            "رسم عنصر نصي متكامل يحمل الجملة الترحيبية المدمجة.",
+            "قفلة دالة Composable."
+          ],
+          sol: R`النتيجة على شاشة الموبايل:
+ظهور كارت نصي جميل بتصميم Material Design 3 يحمل النص:
+«أهلًا بك يا عمر في تطبيق أندرويد الحديث!»`
+        },
+        {
+          cmd: "التنسيق والـ Modifiers في Compose",
+          title: "تنظيم الشاشة: Column و Row و Box، واستخدام الـ Modifier للتحكم في الحجم والـ Padding واللون",
+          desc: R`لتوزيع العناصر وترتيبها على شاشة الموبايل، توفر Compose حاويات توزيع رئيسية:
+• [[Column]]: لترتيب العناصر رأسياً (عنصر تحت عنصر).
+• [[Row]]: لترتيب العناصر أفقياً (عنصر بجانب عنصر).
+• [[Box]]: لوضع العناصر فوق بعضها في طبقات (زي صورة وعليها أيقونة في الزاوية).
+
+أداة التنسيق السحرية: الـ [[Modifier]]:
+الـ Modifier هو المسؤول عن شكل وسلوك أي عنصر في شاشة Compose:
+• [[Modifier.fillMaxSize()]]: تمديد العنصر ليملأ كامل شاشة الموبايل.
+• [[Modifier.padding(16.dp)]]: ترك مسافات وهوامش داخلية بالأبعاد الكثافية (Density-independent Pixels).
+• [[Modifier.background(Color.White)]]: تغيير لون الخلفية.
+• [[Modifier.clickable { ... }]]: جعل أي عنصر قابلاً للضغط!`,
+          example: R`# 1. استيراد عناصر التصميم
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+
+# 2. بطاقة منتج مرتبة رأسياً وأفقياً
+@Composable
+fun ProductCard(title: String, price: Double) {
+  Card(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
+    Column(modifier = Modifier.padding(16.dp)) {
+      Text(text = title, style = MaterialTheme.typography.titleMedium)
+      Spacer(modifier = Modifier.height(8.dp))
+      Text(text = "السعر: $price ج", color = MaterialTheme.colorScheme.primary)
+    }
+  }
+}`,
+          try: R`في Android Studio، جرب تغيير [[Spacer(modifier = Modifier.height(8.dp))]] إلى مسافة أكبر 16.dp أو جرب لف العنوان والسعر في [[Row]] مع [[horizontalArrangement = Arrangement.SpaceBetween]] وشوف إزاي العنوان هيكون في أقصى اليمين والسعر في أقصى اليسار مثل تطبيقات المتاجر العالمية!`,
+          flag: "script",
+          deep: {
+            why: R`ترتيب الـ Modifiers في Compose يتبع التسلسل؛ كتابة [[padding]] قبل [[background]] تعطي هوامش خارجية (Margin)، بينما كتابة [[background]] قبل [[padding]] تلون الخلفية مع مسافات داخلية (Padding). هذا المنطق الموحد ألغى الفوضى التي كانت في XML.`,
+            how: R`محرك التصميم في Compose يحسب مقاسات الشجرة بمرحلة قياس وحيدة ([[Single Measure Pass]]) تمنع أخطاء الأداء وبطء المعالجة الذي كان يحدث في الـ Nested Layouts القديمة بملفات XML.`,
+            when: "تصميم أي شاشة أو بطاقة أو قائمة في تطبيقات الأندرويد الحديثة.",
+            mistakes: R`تحديد أبعاد النصوص بالأرقام الثابتة بالبكسل px؛ في الموبايل يجب دائماً استخدام [[sp]] للنصوص و [[dp]] للمسافات والأبعاد حتى تتكيف الشاشة تلقائياً مع حجم خط إعدادات هاتف المستخدم وكثافة الشاشة.`
+          },
+          lines: [
+            "استيراد مكتبات تنظيم الحاويات Column و Row.",
+            "استيراد مكتبة Material 3 للبطاقات والنصوص.",
+            "استيراد Composable.",
+            "استيراد كائن Modifier.",
+            "استيراد وحدة الأبعاد dp.",
+            "إعلان دالة واجهة مستخدم بعلامة @Composable.",
+            "تعريف مكون بطاقة المنتج ProductCard ويقبل العنوان والسعر.",
+            "إنشاء بطاقة Card مع مسافات خارجية 12dp وتمديد العرض لكامل الشاشة.",
+            "حاوية عمودية Column لترتيب محتوى البطاقة مع padding داخلي 16dp.",
+            "عرض عنوان المنتج بنمط خط titleMedium المعتمد.",
+            "فراغ عمودي بارتفاع 8dp باستخدام Spacer.",
+            "عرض سعر المنتج بلون الـ primary الخاص بهوية التطبيق.",
+            "قفلة الـ Column.",
+            "قفلة الـ Card.",
+            "قفلة الدالة."
+          ],
+          sol: R`النتيجة على الشاشة:
+بطاقة جميلة ذات حواف منحنية وظل خفيف (Card) تحتوي على عنوان السلعة بخط عريض، وتحته مسافة مريحة وسعر السلعة بلون أندرويد البنفسجي الأساسي.`
+        }
+      ]
+    },
+    {
+      t: "معمارية التطبيقات والنشر على متجر Google Play",
+      l: 3,
+      n: "حفظ البيانات عند تدوير الشاشة والعمليات الخلفية وتصدير ملفات التطبيق الرسمية",
+      items: [
+        {
+          cmd: "الـ ViewModel وحفظ البيانات",
+          title: "معمارية أندرويد الحديثة: الـ ViewModel والـ StateFlow لحماية البيانات عند تدوير الشاشة",
+          desc: R`في نظام أندرويد، عندما يقوم المستخدم بتدوير الشاشة (Rotate Screen) من عمودي إلى أفقي، يقوم النظام افتراضياً **بتدمير الشاشة وإعادة إنشائها من الصفر**!
+لو كانت بياناتك مخزنة في الشاشة العادية، ستفقد كل ما كتبه المستخدم فوراً.
+
+الحل المعتمد من Google: معمارية [[MVVM]] والـ [[ViewModel]]:
+الـ [[ViewModel]] هو كائن مخصص لإدارة وتخزين بيانات الشاشة، ويتميز بأنه **يعيش طوال فترة بقاء الشاشة ولا يموت عند تدوير الهاتف**!
+
+تدفق البيانات عبر الـ [[StateFlow]]:
+• الـ [[StateFlow]]: قناة تدفق بيانات حية تصدر أحدث قيمة للشاشة.
+• الشاشة تستمع للبيانات عبر [[collectAsState()]]: بمجرد تحديث البيانات في الـ ViewModel، تتحدث الشاشة تلقائياً دون أي تدخل يدوي!`,
+          example: R`# 1. استيراد كلاسات المعمارية
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+# 2. إنشاء كلاس الـ ViewModel لإدارة عداد السلة
+class CartViewModel : ViewModel() {
+  private val _cartCount = MutableStateFlow(0)
+  val cartCount: StateFlow<Int> = _cartCount.asStateFlow()
+
+  # 3. دالة إضافة منتج للسلة
+  fun addToCart() {
+    _cartCount.value += 1
+  }
+}`,
+          try: R`في تطبيقك، اربط زرار الإضافة بـ [[viewModel.addToCart()]]، واعرض القيمة بـ [[val count by viewModel.cartCount.collectAsState()]]. دور شاشة الموبايل في المحاكي (Emulator) 90 درجة، وشوف كيف رقم السلة سيبقى ثابتاً كما هو دون أن يتصفر!`,
+          flag: "script",
+          deep: {
+            why: R`فصل منطق البيانات والأعمال (Business Logic) عن واجهة العرض (UI) يجعل التطبيق قابلاً للاختبار التلقائي (Unit Testing)، ويمنع تسريب الذاكرة (Memory Leaks) الناتجة عن تعليق كائنات الـ Activity القديمة.`,
+            how: R`نظام أندرويد يربط الـ ViewModel بمخزن داخلي اسمه ViewModelStoreOwner لا يتأثر بإعادة إنشاء الـ Activity عند أحداث Configuration Changes، ولا يتم التخلص منه إلا عندما يضغط المستخدم زر الخروج النهائي (Back) أو إغلاق التطبيق.`,
+            when: "في كل شاشة حقيقية تحتوي على بيانات، أو فورمات تسجيل، أو سلة مشتريات في أندرويد.",
+            mistakes: R`تمرير سياق الشاشة (Context أو Activity) داخل الـ ViewModel؛ هذا يسبب تسريب ذاكرة خطير جداً (Context Leak) لأن الـ ViewModel سيعيش بعد موت الشاشة وسيحتجز الذاكرة الخاصة بها دون تحرير.`
+          },
+          lines: [
+            "استيراد كلاس ViewModel من مكتبة Lifecycle.",
+            "استيراد تدفق البيانات القابل للتعديل MutableStateFlow.",
+            "استيراد تدفق البيانات للقراءة فقط StateFlow.",
+            "استيراد دالة التحويل asStateFlow.",
+            "تعريف كلاس CartViewModel يرث من كلاس ViewModel الرسمي.",
+            "متغير تدفق خاص ومحمي _cartCount يبدأ بقيمة صفر.",
+            "متغير تدفق عام ومكشوف للشاشة للقراءة فقط لمنع التعديل المباشر من الخارج.",
+            "دالة عامة لإضافة عنصر للسلة.",
+            "زيادة قيمة العداد بـ 1 بأمان تام.",
+            "قفلة دالة الإضافة.",
+            "قفلة كلاس الـ ViewModel."
+          ],
+          sol: R`النتيجة:
+نموذج معمارية متكامل يحفظ عدد عناصر السلة في الذاكرة بأعلى أمان، ويتيح لواجهة Compose الاستماع للتحديثات فورياً وعرضها للمستخدم دون تأخير.`
+        },
+        {
+          cmd: "بناء ونشر التطبيق: APK و AAB",
+          title: "تجهيز التطبيق للنشر: إنشاء Signed APK و Android App Bundle (AAB) لمتجر Google Play",
+          desc: R`بعد الانتهاء من برمجة تطبيق الأندرويد، تأتي مرحلة البناء والتوقيع الرقمي ([[Signing]]) لإنتاج الملف القابل للنشر على متجر Google Play.
+
+الفرق بين [[APK]] و [[AAB]]:
+• ملف [[APK]] (اختصار لـ Android Package): الملف القابل للتثبيت المباشر على أي هاتف أندرويد للتجربة والمشاركة اليدوية.
+• ملف [[AAB]] (اختصار لـ Android App Bundle): المعيار الإجباري الرسمي لمتجر Google Play؛ تقوم جوجل بتقسيمه في السيرفر ليرسل لكل مستخدم فقط الملفات المتوافقة مع نوع معالجه وحجم شاشته ولغته، مما يقلل حجم التحميل بنسبة تصل إلى 35%!
+
+أهم أوامر البناء عبر أداة [[Gradle]]:
+• بناء نسخة تجريبية سريعة: [[./gradlew assembleDebug]].
+• بناء حزمة المتجر الرسمية الموقعة: [[./gradlew bundleRelease]].`,
+          example: R`# 1. بناء نسخة تجريبية لاختبارها على هاتفك مباشرة
+./gradlew assembleDebug
+
+# 2. فحص والتحقق من كود التطبيق قبل الإنتاج
+./gradlew lintRelease
+
+# 3. بناء حزمة النشر الرسمية لمتجر جوجل بلاي
+./gradlew bundleRelease`,
+          try: R`افتح الترمنال في مجلد مشروع أندرويد وشغل أمر [[./gradlew assembleDebug]]. بعد اكتمال البناء بنجاح، ستجد ملف الـ APK جاهزاً في المسار: [[app/build/outputs/apk/debug/app-debug.apk]]. انقله إلى هاتفك وثبته فوراً لتشاهد تطبيقك حياً بين يديك!`,
+          flag: "script",
+          deep: {
+            why: R`التوقيع الرقمي بمفتاح خاص (Keystore) يثبت لجوجل ونظام أندرويد أنك المطور الشرعي للتطبيق، ويمنع أي شخص من تعديل كودك أو رفع تحديث خبيث بنفس اسم الحزمة.`,
+            how: R`أداة تقليص وحماية الكود [[R8 / ProGuard]] تقوم تلقائياً بحذف كل الكود غير المستخدم (Tree Shaking)، وإعادة تسمية الكلاسات لأسماء قصيرة ومبهمة (Obfuscation مثل تحويل OrderService إلى a.b)، مما يصعّب هندسة كودك عكسياً ويصغر حجم التطبيق.`,
+            when: "الخطوة النهائية قبل تسليم المشروع للعميل أو إطلاقه رسمياً لجمهور المستخدمين على متجر Google Play.",
+            mistakes: R`فقدان ملف مفتاح التوقيع الرقمي (Keystore file) أو نسيان كلمة سر المفتاح؛ في أندرويد لو ضاع المفتاح فلن تتمكن أبداً من إرسال أي تحديث لتطبيقك على متجر جوجل بلاي وستضطر لحذف التطبيق وبدء اسم حزمة جديد من الصفر!`
+          },
+          lines: [
+            "أمر Gradle لبناء وتجميع نسخة APK التجريبية للاختبار المحلي.",
+            "أمر فحص الكود والتأكد من عدم وجود أخطاء أمان أو استيرادات معطلة.",
+            "أمر إنتاج حزمة AAB الرسمية النهائية المجهزة لمتجر Google Play."
+          ],
+          sol: R`الناتج في الترمنال:
+BUILD SUCCESSFUL in 18s
+42 actionable tasks: 42 executed
+
+وإنشاء ملف الحزمة النهائي في:
+app/build/outputs/bundle/release/app-release.aab
+جاهز تماماً للرفع إلى لوحة تحكم Google Play Console!`
+        }
+      ]
+    }
+  ]
+});
+
 /* ===== js/extras.js ===== */
 // جدول «نفس المهمة في التلاتة»: [المهمة، bash، PowerShell، CMD]
 const CMP = [
@@ -152091,7 +153897,7 @@ function termHTML(code, shell, script, label, prOverride){
   const pr = prOverride || SHELLS[shell].prompt;
   const lines = code.split('\n').map(l => {
     if (l.trim()==='') return '';
-    if (script) return /^\s*(#(?!!|[A-Za-z_$][\w$]*\s*[=;(])|REM\b|\/\/)/.test(l) ? '<span class="cm">'+esc(l)+'</span>' : esc(l);
+    if (script) return /^\s*(#(?!(?:include|define|pragma|ifdef|ifndef|endif)\b|!|[A-Za-z_$][\w$]*\s*[=;(])|REM\b|\/\/)/.test(l) ? '<span class="cm">'+esc(l)+'</span>' : esc(l);
     if (isComment(l)) return '<span class="cm">'+esc(l)+'</span>';
     // psql tab mixes SQL (app=#) with shell commands (psql, pg_dump, docker...), which start lowercase
     const p = shell==='pg' && !prOverride && /^\s*[a-z]/.test(l) ? '$ ' : pr;
@@ -152102,7 +153908,7 @@ function termHTML(code, shell, script, label, prOverride){
 
 let shell = 'bash';
 const lvInfo = l => (LEVEL_TAB[shell] && LEVEL_TAB[shell][l]) || LEVEL_INFO[l];
-const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud','projects','career','english','dotnet','angular','spring','rn','speak'];
+const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud','projects','career','english','dotnet','angular','spring','rn','speak','cpp','kotlin'];
 function countLabel(n){
   const lesson = LESSON_TABS.includes(shell);
   if (shell==='glossary') return n + ' مصطلح';
@@ -152128,7 +153934,7 @@ function solHTML(c){
 function breakHTML(c, ex){
   const b = BREAK[shell+'|'+c];
   if (!b || !ex) return '';
-  const lines = ex.split('\n').filter(l => l.trim() && !/^\s*(#(?![A-Za-z_$][\w$]*\s*[=;(])|\/\/|REM\b)/.test(l));
+  const lines = ex.split('\n').filter(l => l.trim() && !/^\s*(#(?!(?:include|define|pragma|ifdef|ifndef|endif)\b|[A-Za-z_$][\w$]*\s*[=;(])|\/\/|REM\b)/.test(l));
   const n = Math.min(lines.length, b.length);
   let h = '<div class="bd"><h4>فكّ الأمر سطر سطر</h4><ol>';
   for (let i = 0; i < n; i++) h += '<li><code dir="ltr">'+esc(lines[i].trim())+'</code><span>'+fmt(b[i])+'</span></li>';
@@ -152153,13 +153959,19 @@ function osNote(c){
   return '<p class="osnote"><b>على الماك:</b> '+fmt(BASH_OS[c][1])+'</p>';
 }
 
+const normAr = s => (s || '').toLowerCase()
+  .replace(/[أإآٱ]/g, 'ا')
+  .replace(/ة/g, 'ه')
+  .replace(/ى/g, 'ي')
+  .replace(/[\u064B-\u065F\u0670]/g, '');
+
 const _st = {};
 function searchText(sh, it){
   const k = sh+'|'+it[0];
-  const note = (store.get('note:'+k) || '').toLowerCase();
+  const note = normAr(store.get('note:'+sh+':'+it[0]) || '');
   if (_st[k]) return _st[k] + ' ' + note;
   const d = DEEP[k], b = BREAK[k];
-  _st[k] = (it.slice(0,5).join(' ')+' '+(d ? [d.why,d.how,d.when,d.mistakes].join(' ') : '')+' '+(b ? b.join(' ') : '')).toLowerCase();
+  _st[k] = normAr(it.slice(0,5).join(' ')+' '+(d ? [d.why,d.how,d.when,d.mistakes].join(' ') : '')+' '+(b ? b.join(' ') : ''));
   return _st[k] + ' ' + note;
 }
 function noteHTML(c){
@@ -152168,7 +153980,8 @@ function noteHTML(c){
     '<textarea class="note'+(v?' open':'')+'" data-n="'+esc(nk)+'" placeholder="اكتب بكلامك انت: الأمر ده بيعمل إيه، وإمتى هتحتاجه، وأي غلطة وقعت فيها." aria-label="ملاحظتك على '+esc(c)+'">'+esc(v)+'</textarea></div>';
 }
 function render(){
-  const q = $('#q').value.trim().toLowerCase();
+  const rawQ = $('#q').value.trim();
+  const q = normAr(rawQ);
   const cats = DATA[shell].map((c, i) => Object.assign({i}, c)).sort((a, b) => a.l - b.l).filter(c => !level || c.l === level);
   let html = '', chips = '', shown = 0, lastL = 0;
   cats.forEach(cat => {
@@ -152199,7 +154012,7 @@ function render(){
   });
   if (!shown){
     const other = Object.keys(DATA).filter(k => k!==shell && DATA[k].some(c => c.items.some(it => searchText(k, it).includes(q))));
-    html = '<div class="empty">مفيش نتيجة لـ «'+esc(q)+'» في '+SHELLS[shell].label+'.'+
+    html = '<div class="empty">مفيش نتيجة لـ «'+esc(rawQ)+'» في '+SHELLS[shell].label+'.'+
       (other.length ? ' موجودة في: '+other.map(k=>'<button type="button" data-go="'+k+'">'+SHELLS[k].label+'</button>').join(' و ') : ' جرّب كلمة أقصر أو اسم الأمر بالإنجليزي.')+'</div>';
   }
   $('#list').innerHTML = html;
@@ -152526,7 +154339,13 @@ function importProgress(file){
       const j = JSON.parse(r.result), o = j && j.data;
       if (!o || typeof o !== 'object') throw 0;
       let n = 0; Object.keys(o).forEach(k => { if (BACKUP_KEYS.test(k) && typeof o[k]==='string'){ store.set(k, o[k]); n++; } });
-      srsMigrate(); alert('اترجّع '+n+' عنصر.'); render();
+      srsMigrate();
+      if (o.theme) applyTheme(o.theme);
+      if (o.todo !== undefined) { document.body.classList.toggle('todo', o.todo === '1'); $('#todoBtn').setAttribute('aria-pressed', o.todo === '1' ? 'true' : 'false'); }
+      if (o.brief !== undefined) { document.body.classList.toggle('brief', o.brief === '1'); $('#briefBtn').setAttribute('aria-pressed', o.brief === '1' ? 'true' : 'false'); }
+      if (o.level !== undefined && [0,1,2,3].includes(+o.level)) { level = +o.level; markLevel(); }
+      if (o.shell && DATA[o.shell]) setShell(o.shell); else render();
+      alert('اترجّع '+n+' عنصر.');
     }catch(e){ alert('الملف ده مش نسخة تقدم من الصفحة دي.'); }
   };
   r.readAsText(file);
@@ -152534,9 +154353,13 @@ function importProgress(file){
 
 /* ---------- events ---------- */
 document.querySelectorAll('.sw').forEach(b => b.addEventListener('click', () => setShell(b.dataset.s)));
-$('#q').addEventListener('input', render);
+let qTm;
+$('#q').addEventListener('input', () => {
+  clearTimeout(qTm);
+  qTm = setTimeout(render, 120);
+});
 document.addEventListener('keydown', e => {
-  if (e.key==='/' && document.activeElement!==$('#q') && !/^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName) && !$('#fc').open){ e.preventDefault(); $('#q').focus(); }
+  if ((e.code === 'Slash' || e.key === '/' || e.key === 'ظ') && document.activeElement !== $('#q') && !/^(TEXTAREA|INPUT)$/.test(document.activeElement.tagName) && !$('#fc').open){ e.preventDefault(); $('#q').focus(); }
 });
 document.addEventListener('click', e => {
   const cp = e.target.closest('.copy');
@@ -152639,8 +154462,8 @@ document.addEventListener('keydown', e => {
   if (!$('#fc').open) return;
   const asking = !$('#fcShow').hidden;
   if (asking && e.key===' ' && document.activeElement!==$('#fcShow')){ e.preventDefault(); fcReveal(); }
-  else if (!asking && e.key==='1'){ e.preventDefault(); fcMark(true); }
-  else if (!asking && e.key==='2'){ e.preventDefault(); fcMark(false); }
+  else if (!asking && (e.key==='1' || e.key==='١' || e.code==='Digit1' || e.code==='Numpad1')){ e.preventDefault(); fcMark(true); }
+  else if (!asking && (e.key==='2' || e.key==='٢' || e.code==='Digit2' || e.code==='Numpad2')){ e.preventDefault(); fcMark(false); }
 });
 document.addEventListener('change', e => {
   const cb = e.target.closest('input[type=checkbox][data-k]');

@@ -275,7 +275,7 @@ body.quiz article.cmd:not(.shown) .notes{display:none}
 .fc-actions #fcMiss{border-color:var(--danger);color:var(--danger)}
 .fc-stat{margin:12px 0 0;font-size:13.5px;color:var(--muted)}
 @media print{
-  .bar,.switch,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path{display:none!important}
+  .bar,.switch,.sw-sec,.hero .lead,.hero .topline,.lab,.copy,.try .done,.reveal,.notes .note-btn,.tools,#fc,.path,#compare,#missions{display:none!important}
   body{background:#fff;color:#000;font-size:11pt}
   article.cmd{break-inside:avoid;border:1px solid #bbb}
   .term pre{white-space:pre-wrap}

@@ -4,7 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>الترمنال بإيدك</title>
-<meta name="description" content="صفحة مذاكرة بالمصري للترمنال وإدارة السيرفرات و Docker و Git و VS Code، فيها شرح ومثال وتجربة لكل أمر">
+<meta name="description" content="صفحة مذاكرة شاملة بالمصري للترمنال، البرمجة (JavaScript, TypeScript, Python, React, Next.js, Node.js)، قواعد البيانات، وإدارة السيرفرات مع أمثلة وتجارب تفاعلية واختبارات ذاتية">
+<meta property="og:type" content="website">
+<meta property="og:title" content="الترمنال بإيدك - دليلك الشامل للترمنال والبرمجة">
+<meta property="og:description" content="أكثر من 2500 درس وتجربة تفاعلية بالمصري للترمنال، البرمجة، والـ Full Stack مع تمارين تصحيح ذاتي وتعمل بالكامل بدون إنترنت.">
+<meta property="og:image" content="icons/icon-512.png">
+<meta property="og:locale" content="ar_EG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="الترمنال بإيدك">
+<meta name="twitter:description" content="أكثر من 2500 درس وتجربة تفاعلية بالمصري للترمنال والبرمجة مع تمارين تصحيح ذاتي بدون نت.">
+<meta name="twitter:image" content="icons/icon-512.png">
 <meta name="theme-color" content="#1f2430">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
@@ -60,6 +69,7 @@
       <button class="sw" role="tab" data-s="pyapi" aria-selected="false"><div class="top"><b>Python و FastAPI</b><span>async def read(id: int):</span></div><div class="bot">اللغة نفسها، و async، و pydantic، و FastAPI، و httpx و asyncpg و Redis، وأسئلة الانترفيو</div></button>
       <button class="sw" role="tab" data-s="php" aria-selected="false"><div class="top"><b>PHP و MySQL</b><span>$stmt = $pdo-&gt;prepare(...)</span></div><div class="bot">PHP من الصفر، و PDO و prepared statements، و sessions و forms، والأمان، والاستضافة المشتركة</div></button>
       <button class="sw" role="tab" data-s="flutter" aria-selected="false"><div class="top"><b>Flutter و Dart</b><span>flutter run</span></div><div class="bot">تطبيق موبايل native من كود واحد: Dart، و widgets، و state، و http، والبناء والنشر. جديد عليك</div></button>
+      <button class="sw" role="tab" data-s="cpp" aria-selected="false"><div class="top"><b>C و C++</b><span>g++ -std=c++20 main.cpp</span></div><div class="bot">أساس كل لغات البرمجة والأنظمة والألعاب: الذاكرة وإدارتها، والمؤشرات (Pointers)، والـ STL، و C++ الحديثة</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -70,6 +80,7 @@
       <button class="sw" role="tab" data-s="angular" aria-selected="false"><div class="top"><b>Angular</b><span>@for (item of items(); track item.id)</span></div><div class="bot">signals و routing و forms و RxJS، ومطلوب جدًا في الشركات الكبيرة، وقراية الكود القديم بـ NgModule</div></button>
       <button class="sw" role="tab" data-s="spring" aria-selected="false"><div class="top"><b>Java و Spring Boot</b><span>@GetMapping("/orders")</span></div><div class="bot">Java من TypeScript، و Spring Boot و JPA و Security: البنوك والاتصالات والخليج، بس فرص الـ junior أقل</div></button>
       <button class="sw" role="tab" data-s="rn" aria-selected="false"><div class="top"><b>React Native و Expo</b><span>npx expo start</span></div><div class="bot">تطبيقات موبايل بنفس React اللي اتعلمته، و Expo Router و EAS، والأكتر طلبًا برّه مصر</div></button>
+      <button class="sw" role="tab" data-s="kotlin" aria-selected="false"><div class="top"><b>Kotlin و Android</b><span>kotlinc main.kt</span></div><div class="bot">اللغة الرسمية الأولى من Google لتطبيقات Android: Jetpack Compose، و Coroutines، والنشر على Play Store</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -155,13 +166,13 @@
       <li><b>الشهر ٤ و ٥، الباك إند (واحد بس):</b> <button type="button" data-go="api" data-lv="1">Backend بـ Node ١ و ٢</button>، أو <button type="button" data-go="pyapi" data-lv="1">Python و FastAPI</button>، أو <button type="button" data-go="php" data-lv="1">PHP و MySQL</button>. ومعاه <button type="button" data-go="data" data-lv="1">SQL و Prisma ١ و ٢</button> و <button type="button" data-go="pg" data-lv="1">PostgreSQL ١</button>، و <button type="button" data-go="sec" data-lv="1">أمان الموقع</button>، و <button type="button" data-go="api" data-lv="3">Backend ٣: الاختبارات</button>. المشروع: <button type="button" data-go="projects" data-lv="2">مشروع ٥</button>.</li>
       <li><b>الشهر ٦، full-stack ونشر:</b> <button type="button" data-go="next" data-lv="1">Next.js ١ و ٢</button>، و <button type="button" data-go="arch" data-lv="1">بناء مشروع كامل ١ و ٢</button>، و <button type="button" data-go="vps" data-lv="1">VPS ١ و ٢</button> و <button type="button" data-go="docker" data-lv="1">Docker ١</button> و <button type="button" data-go="nginx" data-lv="1">Nginx</button> و <button type="button" data-go="gha" data-lv="1">GitHub Actions ١</button>، و <button type="button" data-go="quality" data-lv="3">Playwright</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٦</button> منشور على دومين.</li>
       <li><b>الشهر ٧ وبعده، العمق:</b> <button type="button" data-go="arch" data-lv="3">بناء مشروع كامل ٣</button>، و <button type="button" data-go="apis" data-lv="1">APIs متقدمة</button>، و <button type="button" data-go="sweng" data-lv="1">هندسة البرمجيات</button>، و <button type="button" data-go="data" data-lv="3">SQL و Prisma ٣</button>، و <button type="button" data-go="next" data-lv="3">Next.js ٣</button>، و <button type="button" data-go="diag" data-lv="1">التشخيص</button> و <button type="button" data-go="real" data-lv="1">من مشاريعي</button>، و <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button> لما تحتاجه، و <button type="button" data-go="ai" data-lv="1">الذكاء الاصطناعي</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٧</button>. وكمّل <button type="button" data-go="dsa" data-lv="2">DSA ٢ و ٣</button>.</li>
-      <li><b>ستاك إضافي حسب السوق (واحد بس):</b> لمصر والخليج <button type="button" data-go="dotnet" data-lv="1">C# و .NET</button> مع <button type="button" data-go="angular" data-lv="1">Angular</button>، وللبنوك <button type="button" data-go="spring" data-lv="1">Java و Spring Boot</button>، وللموبايل <button type="button" data-go="rn" data-lv="1">React Native و Expo</button>. واختار بعد درس «تختار أنهي stack» في <button type="button" data-go="career" data-lv="1">الشغل والكارير</button>.</li>
+      <li><b>ستاك إضافي حسب السوق (واحد بس):</b> لمصر والخليج <button type="button" data-go="dotnet" data-lv="1">C# و .NET</button> مع <button type="button" data-go="angular" data-lv="1">Angular</button>، وللبنوك <button type="button" data-go="spring" data-lv="1">Java و Spring Boot</button>، وللموبايل <button type="button" data-go="rn" data-lv="1">React Native و Expo</button> أو <button type="button" data-go="kotlin" data-lv="1">Kotlin و Android</button>، وللأنظمة ومحركات الألعاب <button type="button" data-go="cpp" data-lv="1">C و C++</button>. واختار بعد درس «تختار أنهي stack» في <button type="button" data-go="career" data-lv="1">الشغل والكارير</button>.</li>
       <li><b>التوظيف:</b> <button type="button" data-go="career" data-lv="1">الشغل والكارير</button> من بعد مشروع ٥ (الـ portfolio والـ CV مش لازم يستنوا)، و <button type="button" data-go="interview" data-lv="1">الانترفيو</button> قبل أي انترفيو بأسبوعين، و «اختبرني» و «راجع اللي نسيته» كل يوم.</li>
     </ol>
     <h3 class="path-h">مسار الاختبارات</h3>
     <p class="path-note"><button type="button" data-go="quality" data-lv="2">فحص الكود ٢: أول اختبار</button> ثم <button type="button" data-go="api" data-lv="3">Backend ٣: supertest وقاعدة اختبار</button> ثم <button type="button" data-go="react" data-lv="3">React ٣: Testing Library و MSW</button> ثم <button type="button" data-go="quality" data-lv="3">فحص الكود ٣: Playwright</button> ثم <button type="button" data-go="sweng" data-lv="3">هندسة البرمجيات ٣: TDD</button>.</p>
     <h3 class="path-h">مش محتاجهم بعمق لهدف الويب</h3>
-    <p class="path-note"><button type="button" data-go="ps" data-lv="0">PowerShell</button> و <button type="button" data-go="cmd" data-lv="0">CMD</button> و <button type="button" data-go="zsh" data-lv="0">zsh</button>: اللي على جهازك بس، وأساسياته. <button type="button" data-go="os" data-lv="2">اختصارات النظام ٢ و ٣</button>: وقت ما تحتاجها. أجزاء AWS و Kubernetes و Terraform في <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button>: بعد أول شغل. <button type="button" data-go="flutter" data-lv="1">Flutter</button> و <button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button>: لو عايز موبايل. <button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو اخترت PostgreSQL، والباك إندات التانية غير اللي اخترته.</p>
+    <p class="path-note"><button type="button" data-go="ps" data-lv="0">PowerShell</button> و <button type="button" data-go="cmd" data-lv="0">CMD</button> و <button type="button" data-go="zsh" data-lv="0">zsh</button>: اللي على جهازك بس، وأساسياته. <button type="button" data-go="os" data-lv="2">اختصارات النظام ٢ و ٣</button>: وقت ما تحتاجها. أجزاء AWS و Kubernetes و Terraform في <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button>: بعد أول شغل. <button type="button" data-go="flutter" data-lv="1">Flutter</button> و <button type="button" data-go="kotlin" data-lv="1">Kotlin</button> و <button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button>: لو عايز موبايل. و <button type="button" data-go="cpp" data-lv="1">C و C++</button>: للأنظمة والألعاب. <button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو اخترت PostgreSQL، والباك إندات التانية غير اللي اخترته.</p>
     <details class="path-ops">
       <summary>ترتيب مسار السيرفرات والترمنال بالتفصيل</summary>
     <ol>
@@ -315,6 +326,8 @@
 <script src="js/tabs/angular.js"></script>
 <script src="js/tabs/spring.js"></script>
 <script src="js/tabs/rn.js"></script>
+<script src="js/tabs/cpp.js"></script>
+<script src="js/tabs/kotlin.js"></script>
 <script src="js/extras.js"></script>
 <script src="js/app.js"></script>
 </body>
