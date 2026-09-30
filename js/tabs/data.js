@@ -8,6 +8,8 @@
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
+//   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
+//   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("data", {
@@ -60,7 +62,17 @@ SELECT * FROM users;`,
             "قفلة التعريف.",
             "ضيف صف: بتبعت الإيميل والاسم بس، والباقي بياخد الـ DEFAULT.",
             "اعرض كل الصفوف بكل الأعمدة."
-          ]
+          ],
+          sol: R`أول INSERT بنفس الإيميل هيترفض بـ [[ERROR:  duplicate key value violates unique constraint "users_email_key"]] وتحته [[DETAIL:  Key (email)=(you@example.com) already exists.]]. الاسم [[users_email_key]] هو اسم الـ constraint اللي Postgres عمله لوحده من كلمة [[UNIQUE]]، وده اللي بتدوّر عليه في الـ error عشان ترجّع للمستخدم «الإيميل ده متسجل قبل كده».
+
+الـ INSERT من غير name هيترفض بـ [[null value in column "name" of relation "users" violates not-null constraint]]، والـ DETAIL بيوريك الصف اللي كان هيتضاف وفيه [[null]] مكان الاسم. لاحظ إن الـ id والـ created_at اتملوا لوحدهم من الـ DEFAULT. ولو [[SELECT * FROM users;]] بعدها، هتلاقي صف واحد بس: ولا محاولة غلط اتحفظت.
+
+لو الـ INSERT التاني عدّى، يبقى انت نسيت [[UNIQUE]] أو [[NOT NULL]] في تعريف الجدول. امسحه بـ [[DROP TABLE users;]] وشغّل المثال تاني.`,
+          solCode: R`INSERT INTO users (email, name) VALUES ('you@example.com', 'Ali');
+-- ERROR:  duplicate key value violates unique constraint "users_email_key"
+INSERT INTO users (email) VALUES ('x@example.com');
+-- ERROR:  null value in column "name" of relation "users" violates not-null constraint
+SELECT count(*) FROM users;   -- 1`
         },
         {
           cmd: "أنواع الأعمدة",
@@ -111,7 +123,17 @@ VALUES ('T-shirt', 250.00, 40, '{"color": "black", "sizes": ["M", "L"]}');`,
             "قفلة التعريف.",
             "ضيف منتج بالأعمدة اللي محتاجها.",
             "القيم: الـ JSON بيتكتب نص وPostgres بيتأكد إنه JSON سليم."
-          ]
+          ],
+          sol: R`[['abc']] في stock هيترفض: [[invalid input syntax for type integer: "abc"]]. و [['{bad json']] في attrs هيترفض: [[invalid input syntax for type json]] ومعاه [[Token "bad" is invalid]]. أما [['yes']] في is_active فهيتقبل ويتخزن [[t]]، لأن Postgres بيفهم [['yes']] و [['on']] و [['1']] و [['true']] كـ true (ومقابلهم no و off و 0 و false). جرّب [[RETURNING is_active]] وهتشوف [[t]].
+
+الفكرة: النوع بيرفض الداتا اللي مش منطقية للعمود، بس بيحوّل الصيغ المعروفة. ولو المنتج التجريبي اتضاف امسحه عشان ميلخبطش باقي الدروس.`,
+          solCode: R`INSERT INTO products (name, price, stock) VALUES ('X', 1, 'abc');
+-- ERROR:  invalid input syntax for type integer: "abc"
+INSERT INTO products (name, price, is_active) VALUES ('Yes-test', 1, 'yes') RETURNING is_active;
+--  is_active = t
+INSERT INTO products (name, price, attrs) VALUES ('X', 1, '{bad json');
+-- ERROR:  invalid input syntax for type json
+DELETE FROM products WHERE name = 'Yes-test';`
         },
         {
           cmd: "numeric للفلوس",
@@ -140,7 +162,17 @@ SELECT round(100 / 3.0, 2);             -- 33.33`,
             "numeric: النتيجة مظبوطة.",
             "بيقرّب لخانتين من غير ما يقولك.",
             "قسمة فيها كسر بيتكرر: قرّب بنفسك لخانتين."
-          ]
+          ],
+          sol: R`[[0.1 + 0.2]] في الـ console هتطلع [[0.30000000000000004]]، بالظبط زي [[float8]] في Postgres. والـ loop هتطلع [[0.9999999999999999]] مش [[1]]، فـ [[sum === 1]] هتبقى [[false]]. كل جمعة بتزوّد غلطة صغيرة، ومع آلاف العمليات القرش بيبان.
+
+الحل في الكود: خزّن الفلوس بالقروش كـ integer ([[1050]] بدل [[10.50]])، أو استخدم مكتبة decimal. ولاحظ إن [[pg]] في Node بيرجّعلك عمود [[numeric]] كـ string ([['250.00']]) عشان ميضيعش الدقة؛ لو عملت [[Number()]] وبعدين جمعت، رجعت لنفس المشكلة. الغلط الشائع: [[toFixed(2)]] على النتيجة وتفتكر المشكلة اتحلت، هي بس اتخبت في العرض.`,
+          solCode: R`console.log(0.1 + 0.2);            // 0.30000000000000004
+let sum = 0;
+for (let i = 0; i < 10; i++) sum += 0.1;
+console.log(sum, sum === 1);       // 0.9999999999999999 false
+let cents = 0;
+for (let i = 0; i < 10; i++) cents += 10;
+console.log(cents / 100);          // 1`
         },
         {
           cmd: "PRIMARY KEY",
@@ -181,7 +213,14 @@ INSERT INTO orders (id, user_id) SELECT 999, id FROM users LIMIT 1;   -- error: 
             "قفلة التعريف.",
             "اعمل أوردر لأول يوزر، ورجّع الـ id اللي اتولّد.",
             "حاول تحط id بإيدك: مرفوض لأنه ALWAYS."
-          ]
+          ],
+          sol: R`الـ INSERT جوه الـ transaction هيرجّع id (مثلًا [[2]])، وبعد [[ROLLBACK]] الصف مش موجود. الـ INSERT العادي بعدها هيرجّع [[3]] مش [[2]]: الرقم اتحجز واتصرف ومش هيرجع تاني. ونفس الحكاية مع أي INSERT فشل بسبب constraint.
+
+ده مقصود: الـ sequence مش جزء من الـ transaction، عشان لو اتنين بيضيفوا في نفس اللحظة ميستنوش بعض. متعتمدش أبدًا إن الـ ids متتالية من غير فجوات، ومتستخدمهاش كـ «رقم فاتورة» لازم يبقى متسلسل قانونيًا؛ ده محتاج جدول عدّاد لوحده. ولو شفت الـ id بقى [[1]] تاني فانت غالبًا عملت [[DROP TABLE]] وأنشأته من الأول.`,
+          solCode: R`BEGIN;
+INSERT INTO orders (user_id) SELECT id FROM users LIMIT 1 RETURNING id;   -- 2
+ROLLBACK;
+INSERT INTO orders (user_id) SELECT id FROM users LIMIT 1 RETURNING id;   -- 3`
         }
       ]
     },
@@ -221,7 +260,15 @@ SELECT now(), 2 + 2 AS four;`,
             "الحالات الموجودة من غير تكرار.",
             "عدد اليوزرز المختلفين اللي عملوا أوردرات.",
             "SELECT من غير جدول: ينفع تحسب أي تعبير."
-          ]
+          ],
+          sol: R`بعد درس INSERT هتلاقي كل المنتجات ظاهرة، وعمود [[price_with_vat]] فيه ٤ أرقام عشرية (مثلًا [[285.0000]] للـ T-shirt)، لأن ضرب [[numeric(10,2)]] في [[1.14]] بيجمع عدد الخانات العشرية. لو عايزها خانتين: [[round(price * 1.14, 2)]].
+
+الـ WHERE على الاسم المستعار هيطلّع [[ERROR:  column "price_with_vat" does not exist]]. السبب إن WHERE بيتنفذ قبل SELECT، فالاسم لسه متعملش. الحل إنك تكرر الحسبة: [[WHERE price * 1.14 > 200]]، أو تحط الاستعلام في subquery أو CTE وتفلتر برّه.`,
+          solCode: R`SELECT name, price * 1.14 AS price_with_vat FROM products WHERE price_with_vat > 200;
+-- ERROR:  column "price_with_vat" does not exist
+SELECT name, round(price * 1.14, 2) AS price_with_vat
+FROM products
+WHERE price * 1.14 > 200;`
         },
         {
           cmd: "WHERE",
@@ -256,7 +303,15 @@ SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);`,
             "أوردرات آخر ٧ أيام.",
             "سعر بين 100 و 500، والطرفين داخلين.",
             "الأقواس بتحدد الأولوية: ظاهر، و (ليه مخزون أو مجاني)."
-          ]
+          ],
+          sol: R`من غير أقواس، [[AND]] بيتحسب قبل [[OR]]، فالشرط بيبقى [[(is_active AND stock > 0) OR price = 0]]: أي منتج سعره صفر هيظهر حتى لو [[is_active = false]]. على الداتا الحالية (منتج واحد نشط) النتيجة غالبًا هي هي؛ عشان تشوف الفرق ضيف جوه [[BEGIN;]] منتج سعره 0 و is_active = false، وقارن: بالأقواس مش هيظهر، ومن غيرها هيظهر. وبعدين [[ROLLBACK;]].
+
+[[WHERE status = "paid"]] هيطلّع [[ERROR:  column "paid" does not exist]]. في SQL التنصيص المزدوج لأسماء الأعمدة والجداول، والنصوص بتنصيص مفرد بس: [[WHERE status = 'paid']].`,
+          solCode: R`BEGIN;
+INSERT INTO products (name, price, stock, is_active) VALUES ('Gift', 0, 0, false);
+SELECT name FROM products WHERE is_active AND (stock > 0 OR price = 0);   -- مفيش Gift
+SELECT name FROM products WHERE is_active AND stock > 0 OR price = 0;     -- Gift ظهر
+ROLLBACK;`
         },
         {
           cmd: "ORDER BY و LIMIT",
@@ -287,7 +342,16 @@ NULL في Postgres بيعتبر أكبر من أي قيمة: بييجي في ا�
             "الأغلى الأول، ولو السعر متساوي بالاسم أبجدي.",
             "آخر ٥ أوردرات.",
             "الصفحة التالتة لو كل صفحة ١٠: عدّي ٢٠ وخد ١٠."
-          ]
+          ],
+          sol: R`مع منتجين بنفس السعر، [[ORDER BY price LIMIT 1]] ممكن يرجّع واحد مرة والتاني مرة بعد كل UPDATE. في تجربة حقيقية على Postgres: Pen، وبعد UPDATE على Pen بقى Pin، وبعد UPDATE على Pin رجع Pen. السبب إن UPDATE في Postgres بيكتب نسخة جديدة من الصف في مكان تاني في الجدول، والترتيب بين الصفوف المتساوية مش محدد، فبيطلع على حسب مكانها على الديسك.
+
+بعد [[ORDER BY price, id]] النتيجة ثابتة دايمًا (صاحب الـ id الأصغر). ده مهم جدًا في الـ pagination: من غير عمود فريد في آخر الترتيب، نفس المنتج ممكن يظهر في صفحتين أو ميظهرش خالص. ولو لقيت النتيجة ثابتة من غير id، ده حظ مش ضمان.`,
+          solCode: R`INSERT INTO products (name, price, stock) VALUES ('Pen', 50, 10), ('Pin', 50, 10);
+SELECT id, name FROM products ORDER BY price LIMIT 1;       -- Pen
+UPDATE products SET stock = 9 WHERE name = 'Pen';
+SELECT id, name FROM products ORDER BY price LIMIT 1;       -- ممكن يبقى Pin
+SELECT id, name FROM products ORDER BY price, id LIMIT 1;   -- دايمًا Pen
+DELETE FROM products WHERE name IN ('Pen', 'Pin');`
         },
         {
           cmd: "LIKE و ILIKE",
@@ -318,7 +382,18 @@ SELECT name FROM products WHERE name NOT ILIKE '%test%';`,
             "أي اسم فيه shirt في أي مكان.",
             "حرف واحد أي حاجة وبعده ug، زي Mug.",
             "استبعد اللي فيها test."
-          ]
+          ],
+          sol: R`[[LIKE '%Shirt%']] هيرجّع [[0 rows]] لأن الاسم [[T-shirt]] بـ s صغيرة و LIKE حساس لحالة الحروف. [[ILIKE '%Shirt%']] هيلاقي T-shirt.
+
+للبحث عن [[%]] حقيقية: [[LIKE '%%%']] هيرجّع كل المنتجات، لأن الـ % بقت wildcard. الصح [[LIKE '%\%%']] (الـ backslash هو الـ escape الافتراضي في Postgres)، أو تختار حرف escape بنفسك: [[LIKE '%!%%' ESCAPE '!']]. نفس الكلام على [[_]]. ولو بتبني النمط من input المستخدم في الكود، لازم تعمل escape لـ [[%]] و [[_]] و [[\]] قبل ما تحطها بين علامتين %.`,
+          solCode: R`SELECT name FROM products WHERE name LIKE '%Shirt%';    -- 0 rows
+SELECT name FROM products WHERE name ILIKE '%Shirt%';   -- T-shirt
+BEGIN;
+INSERT INTO products (name, price) VALUES ('50% off bag', 100), ('Big bag', 100);
+SELECT name FROM products WHERE name LIKE '%%%';                 -- الكل
+SELECT name FROM products WHERE name LIKE '%\%%';                -- 50% off bag بس
+SELECT name FROM products WHERE name LIKE '%!%%' ESCAPE '!';     -- 50% off bag بس
+ROLLBACK;`
         },
         {
           cmd: "NULL",
@@ -353,7 +428,16 @@ SELECT NULL = NULL, NULL IS NULL, 5 + NULL;          -- NULL, true, NULL`,
             "اعرض قيمة بديلة مكان الـ NULL.",
             "count(*) بيعد كل الصفوف، و count(phone) بيعد اللي ليهم تليفون بس.",
             "NULL مش بتساوي نفسها، و IS NULL بترجّع true، وأي حساب مع NULL بيبقى NULL."
-          ]
+          ],
+          sol: R`عشان تشوف المشكلة لازم يبقى عندك يوزر تاني من غير تليفون. ضيف واحد، وحط [[0123]] لليوزر الأول. [[WHERE phone <> '0100']] هيرجّع اليوزر الأول بس، والتاني اختفى، لأن [[NULL <> '0100']] نتيجتها NULL مش true، و WHERE بيعدّي الـ true بس.
+
+عشان تجيبهم الاتنين: [[WHERE phone IS DISTINCT FROM '0100']]، أو [[WHERE phone <> '0100' OR phone IS NULL]]. و IS DISTINCT FROM بيعامل NULL كقيمة عادية في المقارنة. نفس المشكلة بتحصل مع [[NOT IN]] ومع أي فلتر «مش بيساوي» في لوحة الأدمن.`,
+          solCode: R`BEGIN;
+INSERT INTO users (email, name) VALUES ('sara@example.com', 'Sara');
+UPDATE users SET phone = '0123' WHERE email = 'you@example.com';
+SELECT email FROM users WHERE phone <> '0100';                  -- you@example.com بس
+SELECT email FROM users WHERE phone IS DISTINCT FROM '0100';    -- الاتنين
+ROLLBACK;`
         }
       ]
     },
@@ -401,7 +485,14 @@ RETURNING id, status, created_at;`,
             "ضيف أوردر، والقيم جاية من استعلام مش مكتوبة بإيدك:",
             "الـ user_id من جدول users بالإيميل.",
             "رجّع الـ id والحالة الافتراضية ووقت الإنشاء."
-          ]
+          ],
+          sol: R`الأمر هيفشل بـ [[null value in column "price" of relation "products" violates not-null constraint]]، و [[SELECT count(*) FROM products]] قبله وبعده هيطلع نفس الرقم: ولا A ولا C اتضافوا. الـ INSERT الواحد (حتى لو فيه ١٠٠٠ صف) هو statement واحد، والـ statement في Postgres atomic.
+
+حاجة هتلاحظها: لو عملت INSERT سليم بعدها، الـ id هيبقى نط رقمين أو تلاتة، لأن الصفوف اللي اتحسبت قبل الغلطة حجزت أرقام من الـ sequence. ولو شفت A و C اتضافوا، يبقى انت بعت ٣ أوامر INSERT منفصلة مش أمر واحد فيه ٣ صفوف.`,
+          solCode: R`SELECT count(*) FROM products;
+INSERT INTO products (name, price, stock) VALUES ('A', 10, 1), ('B', NULL, 1), ('C', 30, 1);
+-- ERROR:  null value in column "price" of relation "products" violates not-null constraint
+SELECT count(*) FROM products;   -- نفس الرقم`
         },
         {
           cmd: "UPDATE",
@@ -434,7 +525,17 @@ UPDATE products SET price = 0;                -- من غير WHERE: كل الم�
             "غيّر عمودين مرة واحدة: الفاصل كومة مش AND.",
             "غيّر الحالة بس لو لسه pending: مينفعش يتدفع مرتين.",
             "الكارثة: من غير WHERE كل الصفوف اتعدلت."
-          ]
+          ],
+          sol: R`أول مرة: [[UPDATE 1]] والأوردر بقى paid. تاني مرة: [[UPDATE 0]]، لأن الصف مبقاش pending فمحدش طابق الشرط. في الكود بتقرا [[rowCount]]: لو 0 يبقى الأوردر اتدفع قبل كده (أو مش موجود)، فمتخصمش فلوس تاني. ده أبسط شكل من الـ idempotency.
+
+السطر الأخير جوه [[BEGIN;]] هيقول [[UPDATE 5]] (أو عدد كل المنتجات)، و [[SELECT name, price FROM products;]] هيوريك كله [[0.00]]. بعد [[ROLLBACK;]] الأسعار رجعت. لو نسيت الـ BEGIN ونفّذته، الأسعار اتصفرت فعلًا، ومفيش undo غير backup أو إنك ترجّعها بإيدك.`,
+          solCode: R`UPDATE orders SET status = 'paid' WHERE id = 1 AND status = 'pending';   -- UPDATE 1
+UPDATE orders SET status = 'paid' WHERE id = 1 AND status = 'pending';   -- UPDATE 0
+BEGIN;
+UPDATE products SET price = 0;
+SELECT name, price FROM products;   -- كله 0.00
+ROLLBACK;
+SELECT name, price FROM products;   -- الأسعار رجعت`
         },
         {
           cmd: "DELETE",
@@ -467,7 +568,13 @@ SELECT name FROM products WHERE deleted_at IS NULL;`,
             "ضيف عمود للـ soft delete.",
             "بدل المسح: علّم إنه اتمسح إمتى.",
             "وكل قراية لازم تستبعد الممسوح."
-          ]
+          ],
+          sol: R`بعد [[UPDATE products SET deleted_at = now() WHERE name = 'Cap']]، الاستعلام اللي فيه [[WHERE deleted_at IS NULL]] مش هيجيب Cap، لكن [[SELECT name FROM products]] من غير شرط هيجيبه عادي جنب الباقيين. يعني أي صفحة أو تقرير أو join نسي الشرط هيعرض منتج «ممسوح».
+
+الحلول المعتادة: [[VIEW]] اسمها مثلًا active_products فيها الشرط والكود يقرا منها، أو global filter في الـ ORM، أو partial index [[WHERE deleted_at IS NULL]] عشان الاستعلامات اليومية تفضل سريعة. وافتكر إن الـ UNIQUE constraints لسه شايفة الصف الممسوح: لو عايز تضيف Cap جديد باسم unique هيترفض.`,
+          solCode: R`UPDATE products SET deleted_at = now() WHERE name = 'Cap';
+SELECT name FROM products WHERE deleted_at IS NULL;   -- من غير Cap
+SELECT name FROM products;                            -- Cap لسه ظاهر`
         }
       ]
     },
@@ -509,7 +616,14 @@ SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';
             "إجمالي الإيرادات من المدفوع.",
             "متوسط السعر لخانتين، وأرخص وأغلى منتج.",
             "لو مفيش صفوف sum بترجّع NULL، فـ COALESCE تخليها صفر."
-          ]
+          ],
+          sol: R`هيرجّع صف واحد وعمود sum فاضي: ده NULL (psql بيعرض NULL كخانة فاضية؛ اكتب [[\pset null '(null)']] عشان تشوفها). [[sum]] على صفر صفوف مش بيرجّع 0، بيرجّع NULL، لأن مفيش قيم يجمعها. نفس الكلام على avg و min و max. أما [[count]] فبيرجّع 0.
+
+من Node بـ [[pg]] هتوصلك [[null]]، والواجهة تكتب «null جنيه» أو [[NaN]] لو جمعت عليها. الحل [[COALESCE(sum(total), 0)]] في الاستعلام نفسه. ولاحظ إن COALESCE بيرجّع [[0]] من غير [[.00]]، لأن الـ 0 integer؛ لو عايز الشكل ثابت اكتب [[COALESCE(sum(total), 0.00)]] أو [[0::numeric(10,2)]].`,
+          solCode: R`\pset null '(null)'
+SELECT sum(total) FROM orders WHERE status = 'refunded';                  -- (null)
+SELECT count(*) FROM orders WHERE status = 'refunded';                    -- 0
+SELECT COALESCE(sum(total), 0) AS revenue FROM orders WHERE status = 'refunded';   -- 0`
         },
         {
           cmd: "GROUP BY",
@@ -548,7 +662,18 @@ Postgres بيسمح تكتب اسم عمود الناتج أو رقمه في GRO
             "من المدفوع بس،",
             "مجمّعة باليوم ومترتبة.",
             "غلط: user_id مش في GROUP BY ومش جوه aggregate."
-          ]
+          ],
+          sol: R`بـ [[date_trunc('month', ...)]] هتاخد صف لكل شهر، والقيمة بتبان كأول لحظة في الشهر: [[2026-09-01 00:00:00+00]]. عشان تشوف أكتر من صف ضيف أوردرين paid بتاريخ في أغسطس (INSERT بـ created_at صريح).
+
+GROUP BY على [[created_at]] نفسه هيرجّع صف لكل أوردر تقريبًا، لأن الوقت فيه ميكروثواني ومفيش أوردرين في نفس اللحظة بالظبط، فكل مجموعة فيها صف واحد والـ sum هو نفس total. المجموعة بتتكوّن من القيم المتساوية بالظبط، فلازم تقرّب الوقت لليوم أو الشهر الأول. ولو التقرير طلع صف لكل أوردر، أول حاجة تبص عليها هي العمود اللي في GROUP BY.`,
+          solCode: R`INSERT INTO orders (user_id, status, total, created_at)
+SELECT id, 'paid', 300, '2026-08-15 10:00+00' FROM users LIMIT 1;
+SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue
+FROM orders WHERE status = 'paid'
+GROUP BY month ORDER BY month;
+SELECT created_at, sum(total) AS revenue
+FROM orders WHERE status = 'paid'
+GROUP BY created_at ORDER BY created_at;   -- صف لكل أوردر`
         },
         {
           cmd: "HAVING",
@@ -593,6 +718,230 @@ SELECT user_id FROM orders WHERE count(*) > 3 GROUP BY user_id;   -- error: aggr
             "HAVING: المجموعات اللي صرفت ١٠٠٠ أو أكتر، بعد التجميع،",
             "والأكتر الأول (ORDER BY يعرف اسم spent).",
             "غلط: WHERE ميعرفش count لسه."
+          ],
+          sol: R`[[HAVING spent >= 1000]] هيطلّع [[ERROR:  column "spent" does not exist]]. و [[ORDER BY spent DESC]] هيشتغل عادي.
+
+السبب ترتيب التنفيذ المنطقي: FROM ثم WHERE ثم GROUP BY ثم HAVING ثم SELECT ثم ORDER BY ثم LIMIT. الاسم [[spent]] بيتعمل في SELECT، فـ HAVING (اللي قبلها) مش شايفاه، و ORDER BY (اللي بعدها) شايفاه. عشان كده في HAVING بتكرر [[sum(total)]]، وده مش بيحسبها مرتين، Postgres بيعرف إنها نفس الـ aggregate. (بعض القواعد زي MySQL بتسمح بالاسم في HAVING، بس دي إضافة منها مش SQL قياسي.)
+
+ده سؤال انترفيو مشهور: «اكتب ترتيب تنفيذ SELECT»، و «ليه مينفعش aggregate في WHERE».`,
+          solCode: R`SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid'
+GROUP BY user_id HAVING spent >= 1000;
+-- ERROR:  column "spent" does not exist
+SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid'
+GROUP BY user_id HAVING sum(total) >= 1000
+ORDER BY spent DESC;`
+        }
+      ]
+    },
+    {
+      t: "CASE والتواريخ والنصوص",
+      l: 1,
+      n: "الدوال اللي أي تقرير أو لوحة أدمن محتاجاها من أول أسبوع: قيمة حسب شرط، وإيراد كل شهر بتوقيت مصر، وتنضيف النصوص",
+      items: [
+        {
+          cmd: "CASE WHEN",
+          title: "قيمة حسب شرط جوه الـ SELECT، وعدّ مشروط جوه GROUP BY",
+          desc: R`[[CASE]] هو الـ if/else بتاع SQL: بيرجّع قيمة حسب شرط، وتقدر تحطه في أي مكان بتكتب فيه قيمة: في SELECT، أو ORDER BY، أو جوه [[sum()]] و [[count()]]، أو في SET بتاع UPDATE.
+
+الشروط بتتقري بالترتيب، وأول شرط يتحقق هو اللي بيكسب. ولو مفيش شرط اتحقق ومفيش [[ELSE]]، النتيجة [[NULL]].
+
+أشهر استخدام في الشغل: تقرير فيه صف لكل يوزر وعمود لكل حالة ([[count(CASE WHEN status = 'paid' THEN 1 END)]]). وده نفس اللي [[FILTER]] بيعمله في درس count و sum و avg، بس CASE شغال في كل قواعد البيانات (MySQL و SQL Server كمان)، و FILTER في Postgres و SQLite بس.`,
+          example: R`SELECT name, price,
+       CASE
+         WHEN price < 100 THEN 'cheap'
+         WHEN price < 500 THEN 'normal'
+         ELSE 'premium'
+       END AS price_band
+FROM products;
+SELECT user_id,
+       count(*) AS orders,
+       count(CASE WHEN status = 'paid' THEN 1 END) AS paid,
+       sum(CASE WHEN status = 'paid' THEN total ELSE 0 END) AS paid_total
+FROM orders
+GROUP BY user_id;
+SELECT name, stock FROM products
+ORDER BY CASE WHEN stock = 0 THEN 1 ELSE 0 END, name;
+UPDATE products
+SET price = CASE name WHEN 'Mug' THEN 110 WHEN 'Cap' THEN 170 ELSE price END
+WHERE name IN ('Mug', 'Cap');`,
+          try: R`اعمل تقرير فيه صف لكل user_id وعمود لكل حالة (pending و paid و cancelled) بعدد الأوردرات، مرة بـ CASE ومرة بـ FILTER، وقارن النتيجتين. وبعدين شيل [[ELSE 0]] من الـ sum وشوف اليوزر اللي ملوش أوردرات مدفوعة بقى عنده إيه. وآخر حاجة اكتب [[count(CASE WHEN status = 'paid' THEN 1 ELSE 0 END)]] وشوف الرقم طلع كام.`,
+          sol: R`الاستعلامين لازم يطلّعوا نفس الأرقام بالظبط: صف لكل user_id، وتلات أعمدة أرقام. لو يوزر ملوش أوردرات pending، العمود بتاعه [[0]] مش NULL، لأن [[count]] بيعدّ القيم اللي مش NULL، و CASE من غير ELSE بيرجّع NULL للصفوف اللي مش مطابقة.
+
+لما تشيل [[ELSE 0]] من [[sum]]: اليوزر اللي ملوش ولا أوردر مدفوع هيطلع عنده خانة فاضية (NULL) بدل [[0]]، لأن [[sum]] لقيم كلها NULL بيرجّع NULL. في الـ API ده بيوصل [[null]] والواجهة تكتب «NaN ج.م». الحل [[ELSE 0]] أو [[COALESCE(sum(...), 0)]].
+
+والغلطة الأخيرة: [[count(CASE ... ELSE 0 END)]] بيطلع نفس عدد كل الأوردرات، لأن [[0]] قيمة مش NULL فـ count بيعدّها. مع count سيب ELSE خالص، ومع sum حط [[ELSE 0]].`,
+          solCode: R`SELECT user_id,
+       count(CASE WHEN status = 'pending' THEN 1 END)   AS pending,
+       count(CASE WHEN status = 'paid' THEN 1 END)      AS paid,
+       count(CASE WHEN status = 'cancelled' THEN 1 END) AS cancelled
+FROM orders
+GROUP BY user_id;
+
+SELECT user_id,
+       count(*) FILTER (WHERE status = 'pending')   AS pending,
+       count(*) FILTER (WHERE status = 'paid')      AS paid,
+       count(*) FILTER (WHERE status = 'cancelled') AS cancelled
+FROM orders
+GROUP BY user_id;`,
+          flag: "script",
+          deep: {
+            why: "الداتا بتتخزن بشكل، والتقرير محتاجها بشكل تاني: «رخيص/عادي/غالي» بدل الرقم، أو عمود لكل حالة بدل صف لكل حالة، أو المنتجات الخلصانة في آخر القايمة. من غير CASE بتجيب كل الصفوف وتعمل الحسبة دي في JavaScript، وده أبطأ وبيتكرر في كل مكان.",
+            how: R`فيه شكلين: [[CASE WHEN شرط THEN قيمة ... END]] (الشكل العام، كل WHEN شرط مستقل)، و [[CASE عمود WHEN قيمة THEN ... END]] (مقارنة بـ = مع قيمة واحدة، زي switch). والشكل التاني مبيعرفش يطابق NULL، لأن [[NULL = NULL]] مش true.
+
+كل الفروع لازم ترجّع نوع واحد: [[THEN 1 ELSE 'none']] هيطلع error، لأن Postgres بيحاول يحوّل 'none' لرقم.
+
+جوه aggregate، الـ CASE بيتحسب لكل صف قبل التجميع. عشان كده [[sum(CASE WHEN status = 'paid' THEN total ELSE 0 END)]] معناها «اجمع total للمدفوع بس» في نفس الـ GROUP BY اللي فيه باقي الأعمدة. وده اسمه conditional aggregation، وبيعمل pivot بسيط: الحالات بقت أعمدة.
+
+في [[UPDATE]]: [[CASE name WHEN 'Mug' THEN 110 ... ELSE price END]] بيعدّل أكتر من صف بقيم مختلفة في أمر واحد. الـ [[ELSE price]] مهم: من غيره أي صف عدّى من الـ WHERE ومش متغطي في الـ CASE سعره هيبقى NULL (أو error لو العمود NOT NULL).`,
+            when: "تقارير الأدمن (أوردرات كل حالة، مبيعات كل فئة سعرية)، والترتيب المخصص (المتاح الأول، أو حالات بترتيب منطقي مش أبجدي)، وتحويل أكواد لنصوص مفهومة، وتعديل كذا صف بقيم مختلفة في أمر واحد.",
+            mistakes: R`[[count(CASE ... ELSE 0 END)]] فيعدّ كل حاجة. [[sum(CASE ...)]] من غير ELSE فيطلع NULL بدل صفر. تنسى [[END]] (الـ error بيبقى [[syntax error at or near "AS"]]). ترتيب الشروط غلط: [[WHEN price < 500]] قبل [[WHEN price < 100]] فمفيش حاجة هتبقى cheap أبدًا. وفي الانترفيو سؤال مشهور: «هات عدد الأوردرات المدفوعة والملغية لكل يوزر في استعلام واحد»، والإجابة conditional aggregation بـ CASE أو FILTER مش استعلامين.`
+          },
+          lines: [
+            "الاسم والسعر، وعمود محسوب:",
+            "ابدأ الـ CASE.",
+            "لو السعر أقل من ١٠٠: رخيص.",
+            "غير كده لو أقل من ٥٠٠: عادي (أول شرط يتحقق هو اللي بيكسب).",
+            "أي حاجة تانية: غالي.",
+            "قفلة الـ CASE واسم العمود.",
+            "من المنتجات.",
+            "لكل يوزر:",
+            "عدد كل أوردراته،",
+            "وعدد المدفوع بس: CASE بترجّع 1 للمدفوع و NULL لغيره، و count بيعدّ اللي مش NULL.",
+            "ومجموع المدفوع: غير المدفوع بيتحسب صفر.",
+            "من الأوردرات،",
+            "مجمّعة باليوزر.",
+            "المنتجات ومخزونها،",
+            "الخلصان (stock = 0) ياخد 1 فينزل تحت، والباقي 0 فيطلع فوق، وبعدين بالاسم.",
+            "تعديل الأسعار:",
+            "كل منتج بسعره الجديد، و ELSE price عشان أي صف تاني يفضل زي ما هو.",
+            "على المنتجين دول بس."
+          ]
+        },
+        {
+          cmd: "دوال التاريخ",
+          title: "إيراد كل شهر، والشهر بتوقيت القاهرة مش UTC",
+          desc: R`أغلب التقارير سؤالها «كام في اليوم أو الشهر؟». الدوال اللي هتستخدمها طول الوقت:
+
+[[date_trunc('month', created_at)]] بيقصّ الوقت لأول الشهر، فكل أوردرات سبتمبر ياخدوا نفس القيمة وتقدر تعمل GROUP BY عليها. و [[extract(hour FROM created_at)]] بيطلّع جزء واحد (الساعة، أو يوم الأسبوع [[dow]]). و [[to_char(created_at, 'YYYY-MM')]] بيحوّل الوقت لنص بالشكل اللي انت عايزه للعرض.
+
+والأهم: [[timestamptz]] متخزن UTC. أوردر اتعمل الساعة ١:٣٠ الفجر يوم ١ سبتمبر في القاهرة، هو في UTC الساعة ١٠:٣٠ بالليل يوم ٣١ أغسطس. لو قصّيت بالشهر من غير توقيت، الأوردر ده هيتحسب في أغسطس. [[AT TIME ZONE 'Africa/Cairo']] بيحوّل الوقت لساعة القاهرة قبل ما تقصّ.`,
+          example: R`SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue
+FROM orders WHERE status IN ('paid', 'shipped')
+GROUP BY 1 ORDER BY 1;
+SELECT to_char(date_trunc('month', created_at AT TIME ZONE 'Africa/Cairo'), 'YYYY-MM') AS month,
+       count(*) AS orders, sum(total) AS revenue
+FROM orders WHERE status IN ('paid', 'shipped')
+GROUP BY 1 ORDER BY 1;
+SELECT extract(hour FROM created_at AT TIME ZONE 'Africa/Cairo') AS hour, count(*)
+FROM orders GROUP BY 1 ORDER BY 2 DESC;
+SELECT id, created_at::date AS day, now() - created_at AS age,
+       to_char(created_at AT TIME ZONE 'Africa/Cairo', 'DD/MM/YYYY HH24:MI') AS cairo_time
+FROM orders ORDER BY id;
+SELECT count(*) FROM orders
+WHERE created_at >= date_trunc('month', now()) AND created_at < date_trunc('month', now()) + interval '1 month';`,
+          try: R`ضيف أوردر مدفوع وقته [['2026-08-31 22:30+00']] (يعني ١:٣٠ الفجر يوم ١ سبتمبر في القاهرة). شغّل أول استعلامين وقارن: الأوردر ده في أنهي شهر في كل واحد؟ وبعدين اكتب استعلام يطلّع أكتر يوم في الأسبوع فيه أوردرات بتوقيت القاهرة، واسم اليوم بالإنجليزي.`,
+          sol: R`في الاستعلام الأول (من غير توقيت) الأوردر هيتحسب في [[2026-08-01]]، لأن Postgres بيقصّ الوقت بتوقيت الـ session، وفي Docker الافتراضي [[UTC]] (اتأكد بـ [[SHOW timezone;]]). في التاني هيتحسب في [[2026-09]]، لأن القاهرة في الصيف UTC+3 فالوقت بقى ١:٣٠ يوم ١ سبتمبر. يعني إيراد الشهرين اتغيّر، ورقم التقرير بتاعك كان هيختلف عن رقم المحاسب.
+
+ولأكتر يوم في الأسبوع: [[to_char(..., 'FMDay')]] بيرجّع اسم اليوم ([[FM]] بتشيل المسافات اللي في الآخر)، و [[extract(dow ...)]] بيرجّع رقم من ٠ (الأحد) لـ ٦ (السبت). الغلطة الشائعة إنك تعمل GROUP BY على [[created_at]] نفسه فكل صف يبقى مجموعة لوحده.`,
+          solCode: R`INSERT INTO orders (user_id, status, total, created_at)
+SELECT id, 'paid', 500, '2026-08-31 22:30+00' FROM users LIMIT 1;
+
+SELECT to_char(created_at AT TIME ZONE 'Africa/Cairo', 'FMDay') AS weekday,
+       count(*) AS orders
+FROM orders
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 1;`,
+          flag: "script",
+          deep: {
+            why: "«مبيعات الشهر ده» و «أكتر ساعة فيها طلبات» و «الأوردرات اللي عدّى عليها أكتر من ٣ أيام من غير شحن» أسئلة يومية. ولو حسبتها غلط بالتوقيت، أرقامك هتختلف عن أرقام البنك وبوابة الدفع، وهتقضي يوم تدوّر على الفرق.",
+            how: R`[[date_trunc('day'|'week'|'month'|'year', ts)]] بيرجّع نفس النوع مقصوص. الأسبوع بيبدأ الاتنين (ISO). ومن Postgres 12 فيه شكل بتلات arguments: [[date_trunc('month', created_at, 'Africa/Cairo')]] بيقصّ بتوقيت القاهرة ويرجّع timestamptz، وده أنضف لو هتكمّل حسابات على النتيجة.
+
+[[ts AT TIME ZONE 'Africa/Cairo']] على timestamptz بيرجّع [[timestamp]] من غير tz (الساعة على الحيطة في القاهرة). استخدم اسم المنطقة مش [['+03']]: مصر رجّعت التوقيت الصيفي من ٢٠٢٣، فالفرق بيبقى ٢ في الشتا و ٣ في الصيف، واسم المنطقة بيعرف ده لوحده.
+
+[[extract(field FROM ts)]]: [[year]] و [[month]] و [[day]] و [[hour]] و [[dow]] و [[epoch]] (ثواني من ١٩٧٠، مفيد تحسب مدة بالثواني).
+
+[[now() - created_at]] بيرجّع [[interval]]، و [[age()]] بيرجّع interval بالسنين والشهور. و [[created_at::date]] بياخد التاريخ بتوقيت الـ session.
+
+[[to_char]] للعرض بس: [[YYYY]] و [[MM]] و [[DD]] و [[HH24]] و [[MI]] و [[Mon]] و [[Day]]. النتيجة نص، فلو رتّبت بيها رتّب بصيغة زي [[YYYY-MM]] اللي ترتيبها الأبجدي هو نفس الترتيب الزمني.
+
+والفلترة بالفترة: [[created_at >= بداية AND created_at < بداية الفترة اللي بعدها]]. ده بيستخدم index على created_at. أما [[WHERE date_trunc('month', created_at) = ...]] أو [[WHERE extract(month FROM created_at) = 9]] بيحسب الدالة على كل صف ومبيستخدمش الـ index العادي.`,
+            when: "أي تقرير زمني، وأي فلتر «آخر ٧ أيام» أو «الشهر ده»، وعرض الأوقات في لوحة الأدمن. والأحسن إن الـ API يرجّع الوقت ISO بـ UTC والواجهة تعرضه بتوقيت المستخدم؛ استخدم to_char في التقارير والـ exports.",
+            mistakes: R`تقصّ بالشهر من غير توقيت فأوردرات أول يوم في الشهر تروح للشهر اللي قبله. تكتب [[+02]] ثابت فالصيف كله يبوظ. [[BETWEEN '2026-09-01' AND '2026-09-30']] على timestamptz: بيقف عند أول لحظة في يوم ٣٠ فيضيّع اليوم كله؛ استخدم [[>=]] و [[<]]. دالة على العمود في WHERE فالـ index ميشتغلش. و [[timestamp]] من غير tz في الجدول أصلًا، فمحدش عارف الوقت المتخزن ده بتوقيت أنهي بلد.`
+          },
+          lines: [
+            "أول كل شهر، ومجموع الإيراد:",
+            "من المدفوع والمشحون،",
+            "مجمّع بأول عمود (الشهر) ومترتب بيه. التقصيص هنا بتوقيت الـ session (UTC في Docker).",
+            "نفس التقرير بس: حوّل للقاهرة الأول، واقصّ بالشهر، واكتبه نص زي 2026-09.",
+            "وعدد الأوردرات والإيراد.",
+            "نفس الفلتر.",
+            "نفس التجميع والترتيب.",
+            "الساعة بتوقيت القاهرة، وعدد الأوردرات فيها:",
+            "مجمّعة بالساعة، والأكتر الأول.",
+            "لكل أوردر: التاريخ بس، وعدّى عليه قد إيه (interval)،",
+            "ووقته مكتوب بشكل مصري بتوقيت القاهرة.",
+            "مترتبين بالـ id.",
+            "عدد أوردرات الشهر الحالي:",
+            "من أول الشهر لحد قبل أول الشهر الجاي، بشكل يستخدم الـ index."
+          ]
+        },
+        {
+          cmd: "دوال النصوص",
+          title: "نضّف الإيميل، وطلّع الدومين، وركّب نص من كذا عمود",
+          desc: R`الداتا اللي اليوزر بيكتبها بتيجي بمسافات زيادة وحروف كبيرة وصغيرة مخلوطة. الدوال دي بتنضّفها وتقطّعها وتركّبها:
+
+[[lower]] و [[upper]] و [[initcap]] للحروف. [[trim]] بيشيل المسافات من الأول والآخر. [[split_part(email, '@', 2)]] بيقسم بفاصل وياخد جزء. [[concat]] و [[concat_ws]] بيركّبوا نص من كذا عمود. [[length]] بيعدّ الحروف. [[replace]] و [[regexp_replace]] للاستبدال.
+
+والبحث بـ [[LIKE]] و [[ILIKE]] اتشرح في درسه في المستوى ده. هنا بنجهّز النص نفسه، سواء للعرض أو قبل ما تقارنه.`,
+          example: R`SELECT lower(trim('  Ali@Example.COM ')) AS clean_email;
+SELECT name, split_part(email, '@', 2) AS domain, length(name) AS len FROM users;
+SELECT concat(name, ' <', email, '>') AS contact,
+       concat_ws(' - ', name, phone, email) AS line
+FROM users;
+SELECT 'x' || NULL AS pipe, concat('x', NULL) AS concat_fn;
+SELECT regexp_replace('010-123 45 678', '[^0-9]', '', 'g') AS digits;
+SELECT initcap('ahmed mohamed'), left('Hoodie', 3), right('01012345678', 4), lpad('7', 4, '0');
+SELECT length('محمد') AS chars, octet_length('محمد') AS bytes;
+UPDATE users SET email = lower(trim(email)) WHERE email <> lower(trim(email));`,
+          try: R`اعمل استعلام يرجّع لكل يوزر: الاسم الأول بس (قبل أول مسافة)، والدومين بتاع الإيميل، ورقم التليفون مكتوب بنجوم ماعدا آخر ٤ أرقام (زي [[*******5678]]). جرّب على يوزر تليفونه NULL وشوف بيطلع إيه.`,
+          sol: R`الاسم الأول: [[split_part(name, ' ', 1)]]، ولو الاسم كلمة واحدة بيرجّعه زي ما هو. الدومين: [[split_part(email, '@', 2)]].
+
+والتليفون: [[lpad(right(phone, 4), length(phone), '*')]] بياخد آخر ٤ أرقام ويكمّل الشمال بنجوم لحد نفس طول الرقم الأصلي. ولليوزر اللي تليفونه NULL النتيجة NULL، لأن أي دالة على NULL بترجّع NULL (ماعدا [[concat]] و [[concat_ws]] اللي بيتجاهلوه). لو عايز نص بداله لفّها بـ [[COALESCE(..., 'no phone')]].
+
+والغلطة الشائعة: [[replace(phone, '0', '*')]]، ده بيبدّل كل صفر في الرقم مش أول الأرقام. و [[substring]] بأرقام ثابتة بتبوظ لو الأرقام مختلفة الطول (+20 ولا 0).`,
+          solCode: R`SELECT split_part(name, ' ', 1) AS first_name,
+       split_part(email, '@', 2) AS domain,
+       COALESCE(lpad(right(phone, 4), length(phone), '*'), 'no phone') AS masked_phone
+FROM users;`,
+          flag: "script",
+          deep: {
+            why: "«Ali@Example.com» و «ali@example.com » نفس اليوزر، بس القاعدة شايفاهم اتنين، فيعمل حسابين، أو ميعرفش يعمل login. وأي تقرير أو export محتاج يركّب اسم وتليفون في خانة واحدة، أو يخفي جزء من الرقم. الدوال دي بتعمل ده في نفس الاستعلام من غير loop في الكود.",
+            how: R`[[||]] بيركّب نصين، بس لو أي طرف NULL النتيجة كلها NULL. [[concat]] بيعامل NULL كأنه نص فاضي، و [[concat_ws(فاصل, ...)]] بيحط الفاصل بين القيم ويتخطى الـ NULL خالص، فمش هتلاقي [[Ali -  - ali@...]] لما التليفون فاضي.
+
+[[split_part(نص, فاصل, رقم)]] بيبدأ العد من 1، ولو الجزء مش موجود بيرجّع نص فاضي مش NULL. ومن Postgres 14 الرقم السالب بيعدّ من الآخر ([[-1]] آخر جزء).
+
+[[length]] بيعدّ حروف، و [[octet_length]] بيعدّ bytes. الحرف العربي في UTF-8 بياخد ٢ byte، فـ «محمد» ٤ حروف و ٨ bytes. ده يفرق لو فيه حد أقصى بالـ bytes في حتة تانية (زي رسايل SMS).
+
+[[regexp_replace(نص, pattern, بديل, 'g')]]: الـ [['g']] معناها كل المطابقات مش أول واحدة بس. و [[replace]] بيبدّل كل ظهور للنص حرفيًا.
+
+[[trim]] بيشيل المسافات العادية بس. المسافات الغريبة (زي non-breaking space اللي بتيجي من copy/paste) محتاجة [[regexp_replace(x, '\s+', ' ', 'g')]] أو تنضيف في الـ validation.
+
+أحسن مكان للتنضيف: الـ validation قبل ما الداتا تدخل (zod مثلًا بـ [[.trim().toLowerCase()]])، والـ UPDATE اللي في المثال لتنضيف الداتا القديمة مرة واحدة. ولو عايز القاعدة نفسها تمنع التكرار مهما حصل: [[UNIQUE INDEX ON users (lower(email))]] من درس constraints.`,
+            when: "تنضيف الإيميلات والأسماء، وتقسيم أو تركيب أعمدة في تقرير أو export، وإخفاء بيانات حساسة في العرض، وتجهيز نص قبل البحث.",
+            mistakes: R`[[||]] مع عمود ممكن يبقى NULL فيختفي السطر كله. تقارن [[email = 'Ali@x.com']] من غير lower. [[replace]] لما تقصد أول مرة بس. تنسى [['g']] في [[regexp_replace]] فيتبدّل أول حرف بس. [[WHERE lower(email) = ...]] من غير index على [[lower(email)]] فيعمل seq scan على كل اليوزرز. وتقصّ نص عربي بـ [[left(x, 50)]] وتفتكر إنه ٥٠ byte.`
+          },
+          lines: [
+            "شيل المسافات وحوّل لحروف صغيرة: ali@example.com.",
+            "الدومين من الإيميل (الجزء التاني بعد @) وطول الاسم.",
+            "ركّب نص: الاسم وجنبه الإيميل بين < >،",
+            "وسطر فيه الاسم والتليفون والإيميل بينهم « - »، والـ NULL بيتشال.",
+            "من اليوزرز.",
+            "الفرق: || مع NULL بيطلع NULL، و concat بيتجاهله فيطلع x.",
+            "سيب الأرقام بس: 01012345678.",
+            "أول حرف كبير، وأول ٣ حروف، وآخر ٤، وتكميل بأصفار من الشمال: 0007.",
+            "٤ حروف، بس ٨ bytes في UTF-8.",
+            "نضّف الإيميلات القديمة مرة واحدة، والصفوف اللي محتاجة بس."
           ]
         }
       ]
@@ -633,7 +982,12 @@ WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com');`,
             "أوردر ليوزر مش موجود: مرفوض.",
             "أوردرات يوزر معين،",
             "والـ id جاي من استعلام بالإيميل."
-          ]
+          ],
+          sol: R`هتاخد [[ERROR:  update or delete on table "users" violates foreign key constraint "orders_user_fk" on table "orders"]] ومعاه [[DETAIL:  Key (id)=(...) is still referenced from table "orders".]]. اليوزر متمسحش، لأن الافتراضي في أي FK هو [[NO ACTION]]: مينفعش تمسح أب ليه ولاد.
+
+ده بالظبط اللي انت عايزه في الأوردرات: مسح يوزر مينفعش يمسح تاريخ مبيعات بالغلط. الاختيارات التانية (CASCADE أو SET NULL أو soft delete) في درس ON DELETE. لو المسح نجح، يبقى الـ ALTER TABLE اللي بيضيف الـ FK مكملش (غالبًا فيه أوردر قديم بـ user_id مش موجود في users، فالـ constraint اترفض)؛ اقرا الـ error بتاعه.`,
+          solCode: R`DELETE FROM users WHERE email = 'you@example.com';
+-- ERROR:  update or delete on table "users" violates foreign key constraint "orders_user_fk" on table "orders"`
         },
         {
           cmd: "many-to-many",
@@ -674,7 +1028,14 @@ SELECT 1, id, 2, price FROM products WHERE name = 'Mug';`,
             "index للناحية التانية: الأوردرات اللي فيها منتج معين.",
             "ضيف بند:",
             "لأوردر 1، منتج Mug، كمية ٢، والسعر من جدول المنتجات نفسه."
-          ]
+          ],
+          sol: R`التكرار هيترفض: [[duplicate key value violates unique constraint "order_items_pkey"]] مع [[Key (order_id, product_id)=(1, 2) already exists.]]. الـ PRIMARY KEY المركب معناه إن المنتج يظهر مرة واحدة في الأوردر؛ لو العميل عايز تاني بتزوّد [[quantity]] مش بتضيف صف.
+
+بعد [[UPDATE products SET price = 140 WHERE name = 'Mug']]، الـ join هيوريك [[unit_price]] في البند لسه بالسعر القديم و [[price]] في products بالجديد. ده مقصود: البند بيحفظ السعر وقت الشراء، والفاتورة القديمة متتغيرش لما المنتج يغلى. الغلطة الشائعة إنك تحسب total الأوردر من [[products.price]] بدل [[order_items.unit_price]].`,
+          solCode: R`UPDATE products SET price = 140 WHERE name = 'Mug';
+SELECT oi.unit_price, p.price
+FROM order_items oi JOIN products p ON p.id = oi.product_id
+WHERE p.name = 'Mug';   -- unit_price القديم، price الجديد`
         },
         {
           cmd: "one-to-one",
@@ -717,7 +1078,19 @@ CREATE TABLE shipments (
             "FK للأوردر وعليه UNIQUE: شحنة واحدة لكل أوردر.",
             "رقم التتبع.",
             "قفلة."
-          ]
+          ],
+          sol: R`البروفايل التاني لنفس اليوزر هيترفض بـ [[duplicate key value violates unique constraint "profiles_pkey"]]، لأن user_id هو الـ PRIMARY KEY نفسه، فمينفعش يتكرر: يوزر واحد، بروفايل واحد.
+
+في shipments: الشحنة التانية لنفس الأوردر هتترفض بـ [[shipments_order_id_key]]. بعد ما تشيل الـ UNIQUE ([[ALTER TABLE shipments DROP CONSTRAINT shipments_order_id_key;]]) هتتقبل، و [[SELECT order_id, count(*) FROM shipments GROUP BY 1]] هيطلّع 2. محدش هيحذرك: العلاقة بقت one-to-many، والكود اللي بيقرا «الشحنة» بـ [[LIMIT 1]] هيجيب واحدة عشوائي.
+
+بعد التجربة امسح الشحنات ([[DELETE FROM shipments;]]) ورجّع الـ UNIQUE، لأن FK الشحنات مفيهوش ON DELETE، فدرس ON DELETE هيفشل وهو بيمسح الأوردر لو سبت شحنة عليه.`,
+          solCode: R`INSERT INTO profiles (user_id, bio) SELECT id, 'hi' FROM users WHERE email = 'you@example.com';
+INSERT INTO profiles (user_id, bio) SELECT id, 'again' FROM users WHERE email = 'you@example.com';
+-- ERROR:  duplicate key value violates unique constraint "profiles_pkey"
+ALTER TABLE shipments DROP CONSTRAINT shipments_order_id_key;
+INSERT INTO shipments (order_id, tracking) VALUES (1, 'TRK1'), (1, 'TRK2');   -- اتقبلت
+DELETE FROM shipments;
+ALTER TABLE shipments ADD CONSTRAINT shipments_order_id_key UNIQUE (order_id);`
         },
         {
           cmd: "ON DELETE",
@@ -752,7 +1125,22 @@ ALTER TABLE orders ADD CONSTRAINT orders_user_fk
             "عشان تغيّر السلوك: شيل الـ FK القديم،",
             "وارجع ضيفه بالسلوك اللي عايزه:",
             "مسح يوزر ليه أوردرات ممنوع صراحةً."
-          ]
+          ],
+          sol: R`الـ CREATE TABLE هيعدّي عادي (Postgres مش بيعترض على التركيبة وقت التعريف)، والمشكلة تظهر وقت المسح: [[ERROR:  null value in column "parent_id" of relation "t_child" violates not-null constraint]]، و الـ CONTEXT بيوريك إن Postgres كان بينفذ [[UPDATE ONLY "public"."t_child" SET "parent_id" = NULL ...]] من وراك. المسح كله اترفض، والأب لسه موجود.
+
+الحل يا تشيل [[NOT NULL]] من العمود لو فعلًا الابن ينفع يعيش من غير أب، يا تختار [[CASCADE]] أو [[RESTRICT]]. الخلاصة: SET NULL وعده إنه هيكتب NULL، فالعمود لازم يقبلها.`,
+          solCode: R`CREATE TABLE t_parent (id int PRIMARY KEY);
+CREATE TABLE t_child (
+  id int PRIMARY KEY,
+  parent_id int NOT NULL REFERENCES t_parent (id) ON DELETE SET NULL
+);
+INSERT INTO t_parent VALUES (1);
+INSERT INTO t_child VALUES (10, 1);
+DELETE FROM t_parent WHERE id = 1;
+-- ERROR:  null value in column "parent_id" of relation "t_child" violates not-null constraint
+ALTER TABLE t_child ALTER COLUMN parent_id DROP NOT NULL;
+DELETE FROM t_parent WHERE id = 1;   -- DELETE 1، و parent_id بقى NULL
+DROP TABLE t_child, t_parent;`
         }
       ]
     },
@@ -804,7 +1192,17 @@ WHERE o.id = 2;`,
             "مع بنود كل أوردر،",
             "ومع المنتج بتاع كل بند،",
             "لأوردر واحد."
-          ]
+          ],
+          sol: R`اعمل الأوردر بـ [[RETURNING id]] عشان تعرف رقمه (مش هيبقى ٢ ولا ٣ غالبًا، لأن محاولات فاشلة قبل كده حجزت أرقام)، وحط الرقم ده بدل [[o.id = 2]]. هتاخد صفين: اسم كل منتج وكميته وسعره و line_total. لو الاستعلام رجّع [[0 rows]]، يبقى الـ id غلط أو البنود اتضافت لأوردر تاني.
+
+الـ [[CROSS JOIN users u]] من غير ON بيربط كل أوردر بكل يوزر: عدد الصفوف = عدد الأوردرات × عدد اليوزرز. لو عندك يوزر واحد مش هتلاحظ فرق، فضيف يوزر تاني: أوردرين × يوزرين = ٤ صفوف، ونص الإيميلات غلط. ده نفس اللي بيحصل لما تنسى شرط الـ join، والرقم بيتضاعف في التقارير من غير error.`,
+          solCode: R`WITH o AS (
+  INSERT INTO orders (user_id) SELECT id FROM users WHERE email = 'you@example.com' RETURNING id
+)
+INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+SELECT o.id, p.id, 1, p.price FROM o, products p WHERE p.name IN ('Mug', 'Hoodie')
+RETURNING order_id;
+SELECT count(*) FROM orders o CROSS JOIN users u;   -- orders × users`
         },
         {
           cmd: "LEFT JOIN",
@@ -849,7 +1247,17 @@ LEFT JOIN orders o ON o.user_id = u.id AND o.status = 'paid';`,
             "واللي ملهاش بنود خالص: عمره ما اتباع.",
             "كل اليوزرز، ومعاهم أوردراتهم المدفوعة بس:",
             "شرط اليمين في ON عشان اليوزرز التانيين ميختفوش."
-          ]
+          ],
+          sol: R`مع [[count(o.id)]] اليوزر الجديد عنده [[0]]. مع [[count(*)]] بقى عنده [[1]]، لأن LEFT JOIN رجّع له صف واحد فيه أعمدة الأوردر كلها NULL، و [[count(*)]] بيعدّ الصفوف، أما [[count(o.id)]] بيعدّ القيم اللي مش NULL.
+
+في آخر استعلام، والشرط في ON: اليوزر الجديد ظاهر وجنبه id فاضي. لما تنقل [[o.status = 'paid']] لـ WHERE هيختفي، لأن WHERE بيتنفذ بعد الـ join، و [[NULL = 'paid']] مش true، فالـ LEFT JOIN اتحول فعليًا لـ INNER JOIN. (ولو مفيش ولا أوردر paid خالص، الاستعلام هيرجّع صفر صفوف.) القاعدة: الشروط على الجدول اليمين في LEFT JOIN مكانها ON.`,
+          solCode: R`INSERT INTO users (email, name) VALUES ('new@example.com', 'New');
+SELECT u.email, count(*) AS orders
+FROM users u LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.id;                                            -- new@example.com = 1 (غلط)
+SELECT u.email, o.id FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+WHERE o.status = 'paid';                                  -- new@example.com اختفى`
         },
         {
           cmd: "EXISTS",
@@ -892,7 +1300,13 @@ WHERE price > (SELECT avg(price) FROM products);`,
             "اللي ملهمش ولا أوردر (anti-join).",
             "المنتجات،",
             "اللي سعرها أعلى من متوسط الأسعار (subquery بترجّع رقم واحد)."
-          ]
+          ],
+          sol: R`الأول هيرجّع [[(0 rows)]] والتاني هيرجّع [[1]]. [[3 NOT IN (1, 2, NULL)]] معناها [[3 <> 1 AND 3 <> 2 AND 3 <> NULL]]، والأخيرة NULL، و [[true AND NULL]] = NULL، فالشرط مش true. جرّب [[SELECT 3 NOT IN (1, 2, NULL);]] وهتلاقي خانة فاضية (NULL) مش false.
+
+في الحقيقة ده بيحصل لما تكتب [[WHERE id NOT IN (SELECT user_id FROM ...)]] والـ subquery فيها صف واحد user_id بتاعه NULL: الاستعلام يرجّع فاضي فجأة من غير أي error. عشان كده استخدم [[NOT EXISTS]] دايمًا بدل [[NOT IN]] مع subquery، وده سؤال انترفيو مشهور.`,
+          solCode: R`SELECT 1 WHERE 3 NOT IN (1, 2, NULL);   -- 0 rows
+SELECT 1 WHERE 3 NOT IN (1, 2);         -- 1
+SELECT 3 NOT IN (1, 2, NULL);           -- NULL`
         },
         {
           cmd: "WITH (CTE)",
@@ -941,7 +1355,18 @@ ORDER BY p.spent DESC;`,
             "مع جدول اليوزرز عشان الإيميل،",
             "ومع paid عشان المبلغ،",
             "والأكتر صرفًا الأول."
-          ]
+          ],
+          sol: R`النسخة من غير WITH لازم تكرر حسبة paid مرتين (مرة للفلترة ومرة للـ spent)، وده بيخليها أطول وأصعب في التعديل. في EXPLAIN بتاع نسخة WITH هتلاقي [[CTE paid]] فيها [[Seq Scan on orders]] مرة واحدة، وتحتها سطرين [[CTE Scan on paid]]. في نسخة الـ subqueries هتلاقي [[Seq Scan on orders]] و [[Seq Scan on orders orders_1]]: الجدول اتقري مرتين.
+
+مع [[NOT MATERIALIZED]] الخطة بقت نفس خطة الـ subqueries بالظبط (سطرين Seq Scan ومفيش CTE Scan). ومن Postgres 12 الـ CTE اللي بتتستخدم مرة واحدة بس بتتدمج تلقائي، فـ MATERIALIZED بيفرق بس لما الـ CTE بتتقري أكتر من مرة. الاستعلام نفسه هيرجّع صفر صفوف غالبًا، لأن مفيش حد صرف ١٠٠٠؛ ده طبيعي.`,
+          solCode: R`EXPLAIN SELECT u.email, p.spent
+FROM (SELECT user_id
+      FROM (SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid' GROUP BY user_id) x
+      WHERE spent >= 1000) v
+JOIN users u ON u.id = v.user_id
+JOIN (SELECT user_id, sum(total) AS spent FROM orders WHERE status = 'paid' GROUP BY user_id) p
+  ON p.user_id = v.user_id
+ORDER BY p.spent DESC;`
         }
       ]
     },
@@ -987,7 +1412,14 @@ UNIQUE بيسمح بكذا NULL، إلا لو كتبت [[NULLS NOT DISTINCT]] (�
             "القيم المسموحة.",
             "إيميل فريد من غير ما يفرق حروف كبيرة وصغيرة.",
             "خصم أكتر من المخزون: القاعدة رفضت."
-          ]
+          ],
+          sol: R`[[YOU@example.com]] هيترفض: [[duplicate key value violates unique constraint "users_email_lower_uq"]] و [[Key (lower(email))=(you@example.com) already exists.]]. الـ UNIQUE العادي على email كان هيقبله، لأنه نص مختلف حرفيًا. وخلي بالك إن الـ index ده بيخدم بس الاستعلامات اللي فيها [[lower(email)]] بالظبط، فالـ login لازم يدوّر بـ [[WHERE lower(email) = lower($1)]].
+
+[[status = 'shiped']] (سواء UPDATE أو INSERT) هيترفض: [[new row for relation "orders" violates check constraint "status_valid"]]. من غير الـ CHECK كانت الكلمة الغلط هتتحفظ، والأوردر يختفي من أي تقرير بيدوّر على 'shipped'. لو الـ ALTER TABLE نفسه فشل، ده معناه إن فيه داتا قديمة بتكسر الشرط؛ صلّحها الأول.`,
+          solCode: R`INSERT INTO users (email, name) VALUES ('YOU@example.com', 'Ali 2');
+-- ERROR:  duplicate key value violates unique constraint "users_email_lower_uq"
+UPDATE orders SET status = 'shiped' WHERE id = (SELECT min(id) FROM orders);
+-- ERROR:  new row for relation "orders" violates check constraint "status_valid"`
         },
         {
           cmd: "normalization",
@@ -1037,7 +1469,38 @@ CREATE TABLE product_prices (
             "السعر بالعملة دي.",
             "المفتاح المركب: سعر واحد لكل منتج في كل عملة.",
             "قفلة."
-          ]
+          ],
+          sol: R`إجابة نموذجية على شيت مبيعات أعمدته: التاريخ، اسم العميل، تليفونه، عنوانه، المنتج، سعره، الكمية، المندوب. اسم العميل وتليفونه وعنوانه بيتكرروا في كل صف اشترى فيه، فدول جدول [[customers]]. المنتج وسعره بيتكرروا، فدول جدول منتجات. المندوب جدول لوحده. والعملية نفسها (مين اشترى امتى ومن أنهي مندوب) جدول، وبنودها (منتج وكمية وسعر وقت البيع) جدول تاني بـ PRIMARY KEY مركب.
+
+علامات لازم تلاحظها: عمود فيه أكتر من قيمة ([[«تيشيرت، كاب»]]) يبقى محتاج جدول بنود؛ أعمدة مترقمة ([[تليفون1، تليفون2]]) نفس الحكاية؛ وقيمة لو اتغيرت لازم تعدلها في صفوف كتير (عنوان العميل) يبقى مكانها جدول تاني. والاستثناء: السعر يتنسخ في البند عن قصد، لأنه سعر لحظة البيع مش السعر الحالي. الكود ده اتجرّب على Postgres.`,
+          solCode: R`CREATE TABLE customers (
+  id      bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name    text NOT NULL,
+  phone   text NOT NULL UNIQUE,
+  address text
+);
+CREATE TABLE sales_reps (
+  id   bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name text NOT NULL
+);
+CREATE TABLE items (
+  id    bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name  text NOT NULL UNIQUE,
+  price numeric(10,2) NOT NULL
+);
+CREATE TABLE sales (
+  id          bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  customer_id bigint NOT NULL REFERENCES customers (id),
+  rep_id      bigint REFERENCES sales_reps (id),
+  sold_at     date NOT NULL
+);
+CREATE TABLE sale_items (
+  sale_id    bigint REFERENCES sales (id) ON DELETE CASCADE,
+  item_id    bigint REFERENCES items (id),
+  quantity   integer NOT NULL CHECK (quantity > 0),
+  unit_price numeric(10,2) NOT NULL,
+  PRIMARY KEY (sale_id, item_id)
+);`
         },
         {
           cmd: "denormalization",
@@ -1078,7 +1541,16 @@ HAVING o.total <> sum(oi.quantity * oi.unit_price);`,
             "من الأوردرات مع بنودها،",
             "لكل أوردر،",
             "واعرض اللي الرقمين فيه مختلفين بس."
-          ]
+          ],
+          sol: R`بعد ما تضيف بند لأوردر من غير ما تحدّث total، استعلام المراجعة هيطلّع صف زي [[2 | 0.00 | 170.00]]: الأوردر رقم كذا، الـ total المتخزن، والمجموع الحقيقي من البنود. قبل الإضافة كان بيرجّع [[0 rows]]، ودي الحالة السليمة.
+
+الـ UPDATE الأول بيصلّح الفرق. خلي بالك إن الاستعلام ده بـ JOIN، فأوردر total بتاعه مش صفر ومفيش ولا بند مش هيظهر فيه؛ لو عايز تمسكه كمان استخدم LEFT JOIN و [[COALESCE(sum(...), 0)]]. والحل الدائم إن أي كود بيضيف بند يحدّث total في نفس الـ transaction (زي درس transaction)، أو trigger، أو إنك تبطل تخزّن total وتحسبه وقت القراية لو الأداء مسموح.`,
+          solCode: R`INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+SELECT (SELECT max(id) FROM orders), id, 1, price FROM products WHERE name = 'Cap';
+SELECT o.id, o.total, sum(oi.quantity * oi.unit_price) AS real_total
+FROM orders o JOIN order_items oi ON oi.order_id = o.id
+GROUP BY o.id
+HAVING o.total <> sum(oi.quantity * oi.unit_price);   -- الأوردر ده ظهر`
         },
         {
           cmd: "jsonb",
@@ -1113,7 +1585,16 @@ GIN index الافتراضي على jsonb بيخدم [[@>]] و [[?]] و [[?|]] �
             "المنتجات اللي لستة المقاسات فيها L.",
             "ضيف key جديد من غير ما تمسح الباقي.",
             "GIN index للاستعلام جوه الـ JSON."
-          ]
+          ],
+          sol: R`[[attrs->'color']] بيرجّع [["black"]] بعلامات تنصيص ونوعه [[jsonb]]، و [[attrs->>'color']] بيرجّع [[black]] ونوعه [[text]] (اتأكد بـ [[pg_typeof]]). عشان كده المقارنة بنص عادي لازم تبقى بـ [[->>]].
+
+في EXPLAIN على جدول صغير الاتنين هيقولوا [[Seq Scan on products]]، لأن قراية ٥ صفوف أرخص من فتح أي index. عشان تشوف الفرق اكتب [[SET enable_seqscan = off;]] قبلهم: [[@>]] هيبقى [[Bitmap Index Scan on products_attrs_gin]]، و [[->>'color' = 'black']] هيفضل Seq Scan (وتكلفته بقت رقم ضخم لأنه مجبور). الـ GIN الافتراضي بيخدم [[@>]] و [[?]] و [[?|]] و [[?&]]، مش [[->>]] مع [[=]]؛ ده محتاج expression index على [[(attrs->>'color')]].`,
+          solCode: R`SELECT attrs->'color', attrs->>'color', pg_typeof(attrs->'color'), pg_typeof(attrs->>'color')
+FROM products WHERE name = 'T-shirt';   -- "black" | black | jsonb | text
+SET enable_seqscan = off;
+EXPLAIN SELECT name FROM products WHERE attrs->>'color' = 'black';        -- Seq Scan
+EXPLAIN SELECT name FROM products WHERE attrs @> '{"color": "black"}';   -- Bitmap Index Scan on products_attrs_gin
+RESET enable_seqscan;`
         }
       ]
     },
@@ -1159,7 +1640,16 @@ PRIMARY KEY و UNIQUE بيعملوا index لوحدهم، والـ FK لأ. وف
             "من غير index: بيقرا الـ ٢٠٠ ألف صف.",
             "اعمل index على التاريخ.",
             "نفس الاستعلام: بيروح للصفوف على طول. قارن الوقت."
-          ]
+          ],
+          sol: R`في تجربة على ٢٠٠ ألف صف: قبل الـ index العدّ أخد حوالي ٢٠ms، وبعده حوالي ١.٥ms. [[date(created_at) = current_date]] رجع ~١٩ms تاني، و EXPLAIN بيقول [[Parallel Seq Scan on orders]] ومعاه [[Rows Removed by Filter]] بعشرات الآلاف. المدى [[created_at >= current_date AND created_at < current_date + 1]] رجع أقل من ١ms بـ [[Bitmap Index Scan on orders_created_at_idx]]. الأرقام عندك هتختلف، بس الفرق بالأضعاف هيفضل.
+
+السبب إن الـ index مترتب بقيم [[created_at]] نفسها، مش بـ [[date(created_at)]]، فالدالة بتجبر Postgres يحسبها لكل صف. الحل يا تكتب الشرط كمدى على العمود زي ما عملت، يا تعمل expression index على نفس الدالة بالظبط. والعددين لازم يطلعوا متساويين؛ لو مختلفين يبقى المدى بتاعك فيه [[<=]] بدل [[<]] أو ناقص يوم.`,
+          solCode: R`\timing on
+EXPLAIN ANALYZE SELECT count(*) FROM orders WHERE date(created_at) = current_date;
+-- Parallel Seq Scan on orders
+EXPLAIN ANALYZE SELECT count(*) FROM orders
+WHERE created_at >= current_date AND created_at < current_date + 1;
+-- Bitmap Index Scan on orders_created_at_idx`
         },
         {
           cmd: "composite index",
@@ -1196,7 +1686,20 @@ DROP INDEX orders_user_id_idx;`,
             "شرط على أول عمود بس: بيستخدمه برضه.",
             "شرط على التاني بس: المركب مش مناسب (بيستخدم index التاريخ اللي عملناه قبل كده).",
             "index الـ user_id لوحده بقى زيادة: المركب بيغطيه."
-          ]
+          ],
+          sol: R`الاستعلام الأول هيقول [[Index Scan using orders_user_created_idx]] ومفيش [[Sort]] في الخطة، لأن الـ index جايب الصفوف مترتبة. التالت هيستخدم [[orders_created_at_idx]] (index التاريخ من الدرس اللي فات) مش المركب. أما التاني فغالبًا هيطلع [[Seq Scan]]، وده مش غلط: في الـ lab كل الـ ٢٠٠ ألف أوردر بتوع نفس اليوزر، والـ planner عارف إن الشرط هيجيب الجدول كله، فقراية الجدول على طول أرخص. لو عملت يوزر تاني ليه أوردر واحد وحطيت الـ uuid بتاعه نص صريح في الشرط، هتلاقي [[Index Only Scan using orders_user_created_idx]].
+
+بالترتيب العكسي [[(created_at, user_id)]] (امسح المركب الأول عشان تقارن): الاستعلام الأول بقى [[Index Scan Backward using orders_created_at_idx]] ومعاه سطر [[Filter]] على user_id، يعني بيمشي على الأوردرات بالأحدث ويرمي اللي مش بتوع اليوزر. مع يوزر ليه أوردرات قليلة ده ممكن يلف على الجدول كله. المساواة الأول، والترتيب أو المدى بعدها.`,
+          solCode: R`EXPLAIN SELECT id, total FROM orders
+WHERE user_id = (SELECT id FROM users LIMIT 1) ORDER BY created_at DESC LIMIT 20;
+-- Index Scan using orders_user_created_idx
+BEGIN;
+DROP INDEX orders_user_created_idx;
+CREATE INDEX orders_created_user_idx ON orders (created_at, user_id);
+EXPLAIN SELECT id, total FROM orders
+WHERE user_id = (SELECT id FROM users LIMIT 1) ORDER BY created_at DESC LIMIT 20;
+-- Index Scan Backward using orders_created_at_idx + Filter
+ROLLBACK;`
         },
         {
           cmd: "transaction",
@@ -1251,7 +1754,35 @@ try {
             "في كل الأحوال:",
             "رجّع الـ connection للـ pool.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[throw new Error("test")]] بعد الـ INSERT التاني، الـ catch بيعمل ROLLBACK ويرمي الـ error تاني. [[SELECT count(*) FROM orders]] و [[order_items]] قبل وبعد هيطلعوا نفس الأرقام: الأوردر والبند اتلغوا مع بعض. (الـ id بتاع الأوردر اتحجز واتحرق، فالأوردر الجاي هيبقى رقمه نط.)
+
+[[pool.query("BEGIN")]] مش بتشتغل لأن كل [[pool.query]] ممكن تروح لـ connection مختلفة، والـ transaction ملك connection واحدة. الخطير إنها غالبًا هتبان شغالة وانت بتجرب لوحدك، لأن الـ pool بيرجّعلك نفس الـ connection الفاضية. في تجربة فيها ٢٠ request في نفس الوقت بالكود الغلط، ٦ أوردرات و ٦ بنود اتحفظوا رغم إن كل request عمل ROLLBACK، لأن الـ INSERT راح لـ connection مفيهاش BEGIN فاتحفظ لوحده. عشان كده دايمًا [[pool.connect()]] وكل الأوامر على نفس الـ client، و [[release()]] في finally.`,
+          solCode: R`import pg from "pg";
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+
+async function createOrder(userId, productId, qty) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const { rows } = await client.query("INSERT INTO orders (user_id) VALUES ($1) RETURNING id", [userId]);
+    await client.query("INSERT INTO order_items (order_id, product_id, quantity, unit_price) SELECT $1::bigint, id, $3::int, price FROM products WHERE id = $2", [rows[0].id, productId, qty]);
+    throw new Error("test");
+  } catch (e) {
+    await client.query("ROLLBACK");
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+const count = async () => (await pool.query("SELECT (SELECT count(*) FROM orders) AS orders, (SELECT count(*) FROM order_items) AS items")).rows[0];
+const userId = (await pool.query("SELECT id FROM users LIMIT 1")).rows[0].id;
+const productId = (await pool.query("SELECT id FROM products WHERE name = 'Hoodie'")).rows[0].id;
+console.log("before:", await count());
+try { await createOrder(userId, productId, 1); } catch (e) { console.log("error:", e.message); }
+console.log("after:", await count());   // نفس الأرقام
+await pool.end();`
         },
         {
           cmd: "atomic UPDATE",
@@ -1293,7 +1824,10 @@ if (r.rowCount === 0) throw new Error("OUT_OF_STOCK");`,
             "القيم كـ parameters.",
             "قفلة.",
             "ولا صف اتعدل؟ يبقى المخزون خلص."
-          ]
+          ],
+          sol: R`التانية هتقف ومش هترجع لحد ما تعمل COMMIT في الأولى، لأن الأولى ماسكة lock على صف الـ Hoodie. بعد الـ COMMIT التانية هتكمّل على طول وتقول [[UPDATE 1]]، والمخزون نزل ٢ (من 8 لـ 6 مثلًا). المهم إن التانية مقرتش القيمة القديمة: Postgres في READ COMMITTED بيعيد تقييم [[stock >= 1]] على النسخة الجديدة من الصف بعد ما القفل يتفك.
+
+عشان تشوف الحماية بجد، خلي المخزون [[1]] ([[UPDATE products SET stock = 1 WHERE name = 'Hoodie';]]) وكرر: الأولى [[UPDATE 1]]، والتانية بعد الـ COMMIT هتقول [[UPDATE 0]]، والمخزون [[0]] مش [[-1]]. الـ 0 ده هو [[rowCount === 0]] اللي بيرمي OUT_OF_STOCK في الكود. أما بالطريقة الغلطة (SELECT في الكود وبعدين SET بالرقم) الاتنين كانوا هيقروا 1 ويكتبوا 0، وتبيع قطعتين وعندك واحدة.`
         },
         {
           cmd: "SELECT FOR UPDATE",
@@ -1342,7 +1876,20 @@ COMMIT;`,
             "في أمر واحد بـ UPDATE ... FROM.",
             "علّم الأوردر مدفوع.",
             "ثبّت، والأقفال اتفكت."
-          ]
+          ],
+          sol: R`النافذة التانية هتقف ومش هترجع لحد ما الأولى تعمل COMMIT أو ROLLBACK. في تجربة الأولى مسكت الصف ثانيتين، والتانية أخدت [[Time: 1713 ms]] وهي مستنية. التالتة (SELECT عادي) رجعت في أقل من ١ms وشافت الصف بقيمته الحالية، لأن القراية العادية في Postgres مش بتاخد locks ومش بتستنى الكتابة (MVCC).
+
+لو عايز التانية متستناش خالص: [[FOR UPDATE NOWAIT]] بترجع فورًا بـ [[ERROR:  could not obtain lock on row in relation "orders"]]، و [[FOR UPDATE SKIP LOCKED]] بتتخطى الصف المقفول (ودي اللي بتتعمل بيها job queues). ولو التانية فضلت واقفة ومش بتكمل حتى بعد الـ COMMIT، اتأكد إن الأولى فعلًا عملت COMMIT ومش لسه جوه transaction بعد error ([[current transaction is aborted]]).`,
+          solCode: R`-- نافذة 1
+BEGIN;
+SELECT * FROM orders WHERE id = 5 FOR UPDATE;
+-- نافذة 2: هتقف
+BEGIN;
+SELECT * FROM orders WHERE id = 5 FOR UPDATE;
+-- نافذة 3: بترجع على طول
+SELECT * FROM orders WHERE id = 5;
+SELECT * FROM orders WHERE id = 5 FOR UPDATE NOWAIT;
+-- ERROR:  could not obtain lock on row in relation "orders"`
         },
         {
           cmd: "isolation levels",
@@ -1385,7 +1932,20 @@ SERIALIZABLE في Postgres (SSI) مش بيقفل كل حاجة؛ بيراقب م
             "اتأكد إن اليوزر معندوش أوردر pending.",
             "مفيش؟ ضيف واحد.",
             "لو transaction تانية عملت نفس الحكاية في نفس الوقت، واحدة منهم هتفشل هنا."
-          ]
+          ],
+          sol: R`بـ REPEATABLE READ: السطرين هيرجّعوا نفس الرقم (8 و 8) حتى لو النافذة التانية زوّدت المخزون وعملت COMMIT بينهم، لأن الـ transaction بتشوف snapshot اتاخدت عند أول استعلام فيها. بـ [[BEGIN;]] العادي (READ COMMITTED): السطر التاني هيشوف الرقم الجديد (مثلًا 13 ثم 18 بعد +5)، لأن كل statement بياخد snapshot جديدة.
+
+وفيه حاجة زيادة تستاهل تجربها: جوه REPEATABLE READ، بعد ما التانية عدّلت الصف وعملت COMMIT، اعمل UPDATE على نفس الصف في الأولى: هتاخد [[ERROR:  could not serialize access due to concurrent update]]. Postgres رفض يكتب فوق تعديل انت مشفتوش، والكود لازم يعمل retry للـ transaction كلها. ولو السطرين في REPEATABLE READ طلعوا مختلفين، يبقى التعديل حصل قبل أول SELECT مش بينهم.`,
+          solCode: R`-- نافذة 1
+BEGIN ISOLATION LEVEL REPEATABLE READ;
+SELECT stock FROM products WHERE name = 'Hoodie';   -- 8
+-- نافذة 2
+UPDATE products SET stock = stock + 5 WHERE name = 'Hoodie';
+-- نافذة 1
+SELECT stock FROM products WHERE name = 'Hoodie';   -- لسه 8
+UPDATE products SET stock = stock - 1 WHERE name = 'Hoodie';
+-- ERROR:  could not serialize access due to concurrent update
+ROLLBACK;`
         },
         {
           cmd: "ON CONFLICT",
@@ -1426,7 +1986,18 @@ ON CONFLICT (sku) DO NOTHING;`,
             "ورجّع الصف في الحالتين.",
             "نفس المحاولة،",
             "بس لو موجود متعملش حاجة خالص."
-          ]
+          ],
+          sol: R`التلات مرات هيرجّعوا نفس الـ id، والمخزون [[10]] ثم [[20]] ثم [[30]]: أول مرة INSERT، وبعدها كل مرة UPDATE بيجمع [[EXCLUDED.stock]] (القيمة اللي كنت عايز تدخلها) على [[products.stock]] (القيمة الموجودة). لو شغّلت الدرس قبل كده بالـ ALTER، هيقولك [[column "sku" of relation "products" already exists]]، عادي، والأرقام هتكمل من اللي موجود.
+
+نفس الـ sku مرتين في نفس الـ VALUES مع DO UPDATE: [[ERROR:  ON CONFLICT DO UPDATE command cannot affect row a second time]]، لأن الأمر الواحد مينفعش يعدّل نفس الصف مرتين. الحل تجمّع الصفوف في الكود (أو بـ GROUP BY) قبل الإرسال. ومع DO NOTHING مش هيطلع error، هيتضاف صف واحد بس. وخلي بالك: كل محاولة upsert بتحرق رقم من الـ sequence حتى لو عملت UPDATE، فالـ id الجاي للمنتجات الجديدة هيبقى نط.`,
+          solCode: R`INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
+ON CONFLICT (sku) DO UPDATE
+SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock
+RETURNING id, price, stock;   -- نفس الـ id، والمخزون +10 كل مرة
+INSERT INTO products (sku, name, price, stock)
+VALUES ('TS-BLK-L', 'T-shirt black L', 250, 5), ('TS-BLK-L', 'T-shirt black L', 250, 5)
+ON CONFLICT (sku) DO UPDATE SET stock = products.stock + EXCLUDED.stock;
+-- ERROR:  ON CONFLICT DO UPDATE command cannot affect row a second time`
         }
       ]
     },
@@ -1484,7 +2055,26 @@ ORDER BY day;`,
             "من المدفوع، مجمّع باليوم.",
             "قفلة.",
             "بالترتيب."
-          ]
+          ],
+          sol: R`بـ [[rn <= 3]] هتاخد لحد ٣ صفوف لكل يوزر، مرتبين من الأحدث، وعمود rn فيه 1 و 2 و 3. اليوزر اللي عنده أوردرين بس هيظهر بصفين. ضيف [[rn]] للـ SELECT و [[ORDER BY user_id, rn]] عشان تشوفها واضحة.
+
+عمود [[LAG(revenue) OVER (ORDER BY day)]] بيجيب إيراد اليوم اللي قبله في نفس الصف. أول يوم هيبقى NULL لأن مفيش قبله، وده صح. و [[revenue - LAG(revenue) OVER (ORDER BY day)]] بيديك الفرق (موجب أو سالب). الغلطة الشائعة إنك تفتكر LAG بيجيب «امبارح» بالتاريخ: هو بيجيب الصف اللي قبله في الترتيب، فلو يوم مفيهوش أوردرات هيقارن بآخر يوم فيه. لو عايز كل الأيام، اعمل join مع [[generate_series]] للتواريخ الأول.`,
+          solCode: R`SELECT id, user_id, total, rn FROM (
+  SELECT id, user_id, total,
+         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC) AS rn
+  FROM orders
+) t
+WHERE rn <= 3
+ORDER BY user_id, rn;
+SELECT day, revenue,
+       SUM(revenue) OVER (ORDER BY day) AS running_total,
+       LAG(revenue) OVER (ORDER BY day) AS prev_day,
+       revenue - LAG(revenue) OVER (ORDER BY day) AS diff
+FROM (
+  SELECT date_trunc('day', created_at) AS day, sum(total) AS revenue
+  FROM orders WHERE status = 'paid' GROUP BY 1
+) d
+ORDER BY day;`
         },
         {
           cmd: "keyset pagination",
@@ -1531,10 +2121,2592 @@ LIMIT 20;`,
             "اللي أقدم من آخر صف شفته (الوقت والـ id بتوعه).",
             "نفس الترتيب،",
             "٢٠ صف، ومن غير ما يعدّي حاجة."
+          ],
+          sol: R`في تجربة على ٢٠٠ ألف أوردر: OFFSET 0 أخد حوالي ١ms، و OFFSET 100000 أخد حوالي ٩٠ms من غير الـ index الجديد و ٤٤ms بيه. حتى مع الـ index لازم يعدّي على ١٠٠ ألف صف ويرميهم، فالوقت بيكبر مع رقم الصفحة. الـ keyset من نفس المكان أخد أقل من ١ms، و EXPLAIN بيقول [[Index Only Scan using orders_created_id_idx]] ومعاه [[Index Cond: (ROW(created_at, id) < ROW(...))]]: بيروح للمكان على طول ويقرا ٢٠ صف بس.
+
+لما تنسخ الـ created_at من الناتج خده بالميكروثواني والتوقيت زي ما هو ([['2026-03-30 18:06:41.224496+00']])؛ لو قصّيته للثانية الصفحة الجاية هتكرر أو تنط صفوف. ونفس الكلام لو نسيت الـ id وقارنت بـ created_at لوحده: صفين بنفس الوقت ممكن واحد فيهم يضيع بين صفحتين. والعيب الوحيد: مفيش «روح لصفحة 57» مباشرة، فيه «اللي بعده» بس.`,
+          solCode: R`\timing on
+SELECT id FROM orders ORDER BY created_at DESC, id DESC LIMIT 20 OFFSET 0;
+SELECT id FROM orders ORDER BY created_at DESC, id DESC LIMIT 20 OFFSET 100000;
+-- خد created_at و id من آخر صف في الصفحة، وحطهم هنا:
+SELECT id, total, created_at FROM orders
+WHERE (created_at, id) < ('2026-03-30 18:06:41.224496+00', 32378)
+ORDER BY created_at DESC, id DESC
+LIMIT 20;`
+        }
+      ]
+    },
+    {
+      t: "استعلامات للتقارير والـ API",
+      l: 2,
+      n: "جدول بيتربط بنفسه، ونتايج من كذا جدول في قايمة واحدة، والأوردر وبنوده في صف واحد جاهز للـ JSON، وآخر N صفوف لكل يوزر",
+      items: [
+        {
+          cmd: "self join",
+          title: "الموظف ومديره في نفس الجدول",
+          desc: R`أحيانًا الصف بيشاور على صف تاني في نفس الجدول: الموظف ومديره موظف برضه، والتعليق والرد عليه تعليق برضه، والتصنيف وتصنيفه الأب. العمود ده FK على نفس الجدول ([[manager_id REFERENCES employees (id)]]).
+
+عشان تجيب الاتنين في صف واحد، بتعمل JOIN للجدول على نفسه بـ alias مختلف: [[employees e]] للموظف و [[employees m]] للمدير. SQL شايفهم جدولين، مع إنهم نفس الداتا.`,
+          example: R`CREATE TABLE employees (
+  id         bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name       text NOT NULL,
+  manager_id bigint REFERENCES employees (id)
+);
+INSERT INTO employees (name, manager_id) VALUES ('Mona', NULL), ('Karim', 1), ('Hany', 1), ('Nour', 2);
+SELECT e.name AS employee, m.name AS manager
+FROM employees e
+LEFT JOIN employees m ON m.id = e.manager_id
+ORDER BY e.id;
+SELECT m.name AS manager, count(e.id) AS reports
+FROM employees m
+JOIN employees e ON e.manager_id = m.id
+GROUP BY m.name;`,
+          try: R`اعمل جدول [[comments]] فيه [[id]] و [[body]] و [[parent_id]] بيشاور على نفس الجدول، وضيف تعليقين وردّين على الأول ورد على الرد. اكتب استعلام يرجّع كل رد ومعاه نص التعليق اللي بيرد عليه. وبعدين هات كل السلسلة من الرد الأخير لحد التعليق الأصلي.`,
+          sol: R`الاستعلام الأول self join عادي: [[comments r JOIN comments p ON p.id = r.parent_id]]. هيرجّع ٣ صفوف (الردين على الأول، والرد على الرد) ومعاهم نص الأب. التعليقات الأصلية مش هتظهر لأن parent_id بتاعها NULL و INNER JOIN بيشيلها؛ لو عايزها تظهر بأب فاضي استخدم LEFT JOIN.
+
+السلسلة كلها مش هتتعمل بـ JOIN ثابت، لأنك مش عارف العمق كام. الحل [[WITH RECURSIVE]]: تبدأ من الرد الأخير، وكل خطوة تجيب الأب بتاع اللي قبله، لحد ما parent_id يبقى NULL. النتيجة ٣ صفوف: الرد على الرد (depth 0)، وبعده الرد، وبعده التعليق الأصلي (depth 2).
+
+الغلطة الشائعة: تنسى الـ alias وتكتب [[JOIN comments ON comments.id = comments.parent_id]]، فـ Postgres يقول [[table name "comments" specified more than once]].`,
+          solCode: R`CREATE TABLE comments (
+  id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  body      text NOT NULL,
+  parent_id bigint REFERENCES comments (id) ON DELETE CASCADE
+);
+INSERT INTO comments (body, parent_id) VALUES
+  ('first', NULL), ('second', NULL), ('reply 1', 1), ('reply 2', 1), ('reply to reply', 3);
+
+SELECT r.body AS reply, p.body AS replying_to
+FROM comments r
+JOIN comments p ON p.id = r.parent_id;
+
+WITH RECURSIVE thread AS (
+  SELECT id, body, parent_id, 0 AS depth FROM comments WHERE id = 5
+  UNION ALL
+  SELECT c.id, c.body, c.parent_id, t.depth + 1
+  FROM comments c JOIN thread t ON c.id = t.parent_id
+)
+SELECT body, depth FROM thread;`,
+          flag: "script",
+          deep: {
+            why: "الهياكل الشجرية في كل حتة: موظفين ومديرين، وتعليقات وردود، وتصنيفات جوه تصنيفات، ويوزر دعا يوزر (referral). عمل جدول تاني للمديرين أو للردود بيكرر نفس الأعمدة، وبيخلي «رد على رد» مستحيل.",
+            how: R`الـ alias هو كل الحكاية: [[FROM employees e JOIN employees m]] بيخلي Postgres يقرا الجدول مرتين كأنهم جدولين. [[ON m.id = e.manager_id]] معناها «المدير هو الصف اللي الـ id بتاعه هو manager_id بتاعي».
+
+[[LEFT JOIN]] مهم هنا: المدير الكبير ملوش مدير (manager_id NULL)، فلو INNER JOIN هيختفي من القايمة.
+
+الاتجاه بيفرق: [[e.manager_id = m.id]] بيجيب مدير كل موظف (صف لكل موظف)، و [[GROUP BY m]] بيعدّ اللي تحت كل مدير.
+
+لعمق مش معروف (سلسلة المديرين لحد الآخر، أو شجرة ردود كاملة) بتستخدم [[WITH RECURSIVE]]: جزء بيبدأ (الصف الأول)، و [[UNION ALL]]، وجزء بيتكرر وبيعمل JOIN على نتيجة الخطوة اللي قبله، لحد ما مفيش صفوف جديدة. وحط شرط عمق ([[WHERE depth < 20]]) لو ممكن الداتا يكون فيها دايرة (A مديره B و B مديره A)، وإلا الاستعلام مش هيخلص.
+
+والـ index على العمود اللي بيشاور ([[manager_id]] أو [[parent_id]]) ضروري، زي أي FK.`,
+            when: "أي علاقة أب وابن من نفس النوع: مديرين، ردود، تصنيفات، فولدرات، referrals. ولو الشجرة كبيرة جدًا وبتتقري أكتر ما بتتكتب، فيه تصميمات تانية (materialized path أو extension [[ltree]]).",
+            mistakes: R`INNER JOIN فالمدير الكبير أو التعليقات الأصلية تختفي. نفس الاسم من غير alias. اتجاه الـ ON معكوس فتطلع «مرؤوسين» بدل «مدير». استعلام لكل مستوى في الكود (الرد، وبعدين ردود الرد، وبعدين...)، وده N+1 على شكل شجرة. و WITH RECURSIVE من غير حد للعمق على داتا ممكن يكون فيها دايرة. وفي الانترفيو سؤال كلاسيكي: «هات الموظفين اللي مرتبهم أعلى من مرتب مديرهم»، والإجابة self join وشرط [[e.salary > m.salary]].`
+          },
+          lines: [
+            "جدول الموظفين:",
+            "رقم كل موظف،",
+            "اسمه،",
+            "ومديره: FK بيشاور على نفس الجدول، و NULL للمدير الكبير.",
+            "قفلة.",
+            "Mona مالهاش مدير، و Karim و Hany تحتها، و Nour تحت Karim.",
+            "لكل موظف: اسمه واسم مديره،",
+            "e هو الموظف،",
+            "و m نفس الجدول بس في دور المدير. LEFT عشان Mona تظهر.",
+            "بالترتيب.",
+            "لكل مدير: عدد اللي تحته،",
+            "m المدير،",
+            "و e الموظفين اللي manager_id بتاعهم هو.",
+            "مجمّعين بالمدير."
+          ]
+        },
+        {
+          cmd: "UNION و UNION ALL",
+          title: "activity feed من كذا جدول في قايمة واحدة",
+          desc: R`JOIN بيحط أعمدة جنب بعض، و [[UNION]] بيحط صفوف تحت بعض: نتيجة استعلامين (أو أكتر) في قايمة واحدة. الشرط إن الاستعلامات ترجّع نفس عدد الأعمدة وبأنواع متوافقة وبنفس الترتيب.
+
+[[UNION ALL]] بيحطهم زي ما هم. [[UNION]] من غير ALL بيشيل الصفوف المتكررة، وده معناه sort أو hash على النتيجة كلها. لو عارف إن مفيش تكرار، أو التكرار مش فارق، استخدم UNION ALL دايمًا.
+
+المثال المشهور: «النشاط الأخير» لليوزر، أوردرات وتسجيل ومراجعات من جداول مختلفة، في feed واحد مترتب بالوقت.`,
+          example: R`SELECT 'order' AS kind, id::text AS ref, created_at
+FROM orders WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com')
+UNION ALL
+SELECT 'signup', email, created_at
+FROM users WHERE email = 'you@example.com'
+ORDER BY created_at DESC
+LIMIT 10;
+SELECT status FROM orders UNION SELECT 'refunded';
+SELECT status FROM orders UNION ALL SELECT 'refunded';
+SELECT email FROM users
+EXCEPT
+SELECT u.email FROM users u JOIN orders o ON o.user_id = u.id;
+SELECT id FROM orders UNION SELECT email FROM users;`,
+          try: R`ضيف للـ feed نوع تالت: كل بند اتضاف في أوردر من أوردرات اليوزر ده (من order_items)، بنص زي [[Mug x2]]. وخلّي الـ feed يرجّع آخر ٥ أحداث بس. وبعدين بدّل UNION ALL بـ UNION وشوف لو النتيجة اتغيرت، وفكّر ليه.`,
+          sol: R`هتضيف استعلام تالت بـ UNION ALL فيه نفس التلات أعمدة بنفس الترتيب: [['item']] كـ kind، و [[p.name || ' x' || oi.quantity]] كـ ref، و [[o.created_at]] كوقت (order_items ملوش وقت خاص بيه، فبتاخد وقت الأوردر). الـ ORDER BY و LIMIT بيتكتبوا مرة واحدة في الآخر وبيتطبقوا على النتيجة كلها.
+
+لو بدّلت لـ UNION غالبًا النتيجة مش هتتغير، لأن مفيش صفين متطابقين في كل الأعمدة. بس Postgres عمل شغل زيادة يدوّر على تكرار مش موجود. ولو فيه منتج اتضاف مرتين بنفس الكمية في نفس الأوردر (مش ممكن هنا عشان الـ PRIMARY KEY)، UNION كان هيشيل واحد منهم من غير ما تاخد بالك.
+
+لو الـ error هو [[each UNION query must have the same number of columns]] يبقى عدد الأعمدة مختلف. ولو [[UNION types text and bigint cannot be matched]] يبقى محتاج [[::text]] على الـ id.`,
+          solCode: R`SELECT 'order' AS kind, id::text AS ref, created_at
+FROM orders WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com')
+UNION ALL
+SELECT 'signup', email, created_at
+FROM users WHERE email = 'you@example.com'
+UNION ALL
+SELECT 'item', p.name || ' x' || oi.quantity, o.created_at
+FROM order_items oi
+JOIN orders o ON o.id = oi.order_id
+JOIN products p ON p.id = oi.product_id
+WHERE o.user_id = (SELECT id FROM users WHERE email = 'you@example.com')
+ORDER BY created_at DESC
+LIMIT 5;`,
+          flag: "script",
+          deep: {
+            why: "لوحة اليوزر («آخر نشاط»)، وسجل التغييرات في لوحة الأدمن، وبحث واحد بيدوّر في المنتجات والتصنيفات مع بعض، وتقرير بيجمع جدولين نفس الشكل (أوردرات السنة دي وأرشيف السنة اللي فاتت). من غير UNION بتعمل استعلامين وتدمجهم وترتبهم في JavaScript، وده أصعب لما يبقى فيه pagination.",
+            how: R`أسماء الأعمدة بتيجي من أول استعلام بس، فحط الـ [[AS]] هناك. الأنواع لازم تتوافق عمود بعمود، ولو مش متوافقة حوّل بـ [[::text]].
+
+[[ORDER BY]] و [[LIMIT]] في الآخر بيتطبقوا على النتيجة المدموجة كلها. لو عايز ترتب أو تحدد جوه جزء واحد بس، حطه بين قوسين: [[(SELECT ... ORDER BY ... LIMIT 5) UNION ALL (...)]].
+
+[[UNION]] = [[UNION ALL]] + إزالة تكرار، والإزالة بتعدّي على النتيجة كلها. [[INTERSECT]] بيرجّع اللي موجود في الاتنين، و [[EXCEPT]] بيرجّع اللي في الأول ومش في التاني (زي «يوزرز معملوش أوردرات»، مع إن [[NOT EXISTS]] غالبًا أوضح).
+
+في feed كبير بـ pagination: خلّي كل جزء يرجّع [[LIMIT]] بتاعه بعد ما يترتب بالوقت (مفيش جزء محتاج يرجّع أكتر من حجم الصفحة)، وبعدين ادمج ورتّب وخد الصفحة. ولو الـ feed ده بيتقري كتير جدًا، فيه تصميم تاني: جدول [[activities]] واحد بيتكتب فيه كل حدث وقت ما يحصل (بـ trigger أو من الكود).`,
+            when: "feeds وسجلات نشاط، وبحث في كذا جدول، ودمج جداول نفس الشكل، وإضافة صف «إجمالي» تحت تقرير. أما لو عايز أعمدة من جدول جنب أعمدة من جدول تاني، ده JOIN مش UNION.",
+            mistakes: R`UNION من غير ALL على نتايج كبيرة فيبطأ على الفاضي، أو بيشيل صفوف حقيقية متطابقة (زي بندين بنفس القيمة). عدد أعمدة أو ترتيب مختلف فتلاقي الإيميل في عمود التاريخ. ORDER BY جوه جزء من غير أقواس. وفي الانترفيو: «إيه الفرق بين UNION و UNION ALL؟» الإجابة: ALL بيحتفظ بالتكرار ومش بيعمل sort أو hash، فأسرع.`
+          },
+          lines: [
+            "أوردرات اليوزر كأحداث: نوع ثابت، والـ id كنص، والوقت.",
+            "أوردرات اليوزر ده بس.",
+            "وتحتهم:",
+            "حدث التسجيل: نفس التلات أعمدة بنفس الترتيب.",
+            "من جدول اليوزرز.",
+            "الترتيب على النتيجة كلها: الأحدث الأول،",
+            "وآخر ١٠ أحداث.",
+            "الحالات من غير تكرار، ومعاها refunded (UNION شال التكرار).",
+            "نفس الحاجة بـ ALL: كل الصفوف زي ما هي، والمتكرر يتكرر.",
+            "كل الإيميلات،",
+            "ناقص",
+            "إيميلات اللي عملوا أوردرات: اللي فاضل معملش ولا أوردر.",
+            "error: الأنواع مش متوافقة (bigint و text)."
+          ]
+        },
+        {
+          cmd: "json_agg",
+          title: "الأوردر وبنوده في صف واحد جاهز للـ API",
+          desc: R`الـ JOIN بين orders و order_items بيرجّع صف لكل بند، فالأوردر اللي فيه ٣ منتجات بيطلع ٣ صفوف والبيانات بتاعته متكررة. والـ API عايز object واحد للأوردر وجواه array البنود.
+
+[[json_agg]] بيجمّع صفوف المجموعة في JSON array، و [[json_build_object]] بيعمل object من أزواج اسم وقيمة. مع [[GROUP BY o.id]] بيطلع صف واحد لكل أوردر وفيه عمود [[items]] جاهز.
+
+وفيه أخوات: [[array_agg]] بيجمّع في array بتاع Postgres ([[{1,2}]])، و [[string_agg(name, ', ')]] بيجمّع في نص واحد مفصول بفاصل، مفيد في التقارير والـ CSV.`,
+          example: R`SELECT o.id, o.total,
+       json_agg(json_build_object('product', p.name, 'qty', oi.quantity, 'price', oi.unit_price)
+                ORDER BY p.name) AS items
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON p.id = oi.product_id
+WHERE o.id = 1
+GROUP BY o.id;
+SELECT o.id, string_agg(p.name, ', ' ORDER BY p.name) AS products,
+       array_agg(p.id ORDER BY p.id) AS product_ids
+FROM orders o
+JOIN order_items oi ON oi.order_id = o.id
+JOIN products p ON p.id = oi.product_id
+GROUP BY o.id ORDER BY o.id;
+SELECT u.email,
+       COALESCE(json_agg(o.id) FILTER (WHERE o.id IS NOT NULL), '[]') AS order_ids
+FROM users u LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.email;`,
+          try: R`اكتب استعلام يرجّع لكل يوزر (حتى اللي معملش أوردرات): الإيميل، و [[orders]] كـ JSON array، كل عنصر فيه id الأوردر وحالته والـ total. شغّله الأول من غير [[FILTER]] وشوف اليوزر اللي ملوش أوردرات بيطلع عنده إيه. وبعدين استدعيه من Node بـ [[pg]] واطبع [[typeof rows[0].orders]] و [[typeof]] الـ total جوه أول عنصر.`,
+          sol: R`من غير FILTER، اليوزر اللي ملوش أوردرات هيطلع عنده [[[{"id" : null, "status" : null, "total" : null}]]] مش [[[]]]: الـ LEFT JOIN رجّع له صف واحد كل أعمدة orders فيه NULL، و json_agg جمّع الصف ده. الحل [[FILTER (WHERE o.id IS NOT NULL)]] ولفّه بـ [[COALESCE(..., '[]')]] لأن json_agg على صفر صفوف بيرجّع NULL مش array فاضي.
+
+من Node: [[typeof rows[0].orders]] هيطلع [['object']] (array)، لأن [[pg]] بيعمل parse لأعمدة json و jsonb لوحده. و [[total]] جوه الـ JSON هيطلع [['number']]، مش string زي ما [[numeric]] بيرجع لما يكون عمود عادي. يعني [[250.00]] بقى [[250]]، ولو الرقم فيه كسور كتير ممكن يتقرّب. لو ده فارق معاك (فلوس)، حوّله نص جوه SQL: [['total', o.total::text]].`,
+          solCode: R`SELECT u.email,
+       COALESCE(
+         json_agg(json_build_object('id', o.id, 'status', o.status, 'total', o.total)
+                  ORDER BY o.created_at DESC)
+           FILTER (WHERE o.id IS NOT NULL),
+         '[]'
+       ) AS orders
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.email;
+
+// check.mjs
+import pg from "pg";
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const { rows } = await pool.query(
+  "SELECT u.email, COALESCE(json_agg(json_build_object('id', o.id, 'total', o.total)) FILTER (WHERE o.id IS NOT NULL), '[]') AS orders FROM users u LEFT JOIN orders o ON o.user_id = u.id GROUP BY u.email"
+);
+console.log(typeof rows[0].orders, Array.isArray(rows[0].orders), typeof rows.find(r => r.orders.length)?.orders[0].total);
+await pool.end();`,
+          flag: "script",
+          deep: {
+            why: "من غير json_agg عندك طريقتين وحشين: استعلام للأوردرات وبعدين استعلام لبنود كل أوردر (N+1)، أو JOIN يرجّع صفوف متكررة وتقعد تجمّعها في JavaScript بـ reduce. json_agg بيخلّي القاعدة تسلّمك الشكل النهائي في رحلة واحدة، وده نفس اللي Supabase (PostgREST) و Prisma في بعض الحالات بيعملوه من جوه.",
+            how: R`[[json_agg(قيمة ORDER BY ...)]] بيحترم ترتيب انت بتحدده، ومن غير ORDER BY الترتيب مش مضمون.
+
+[[json_build_object('key', value, ...)]] بياخد أزواج. و [[to_jsonb(p)]] بيحوّل الصف كله لـ object، و [[to_jsonb(p) - 'attrs']] بيشيل منه مفتاح.
+
+[[json]] ولا [[jsonb]]: [[json_agg]] بيحافظ على ترتيب المفاتيح زي ما كتبتها، و [[jsonb_agg]] بيعيد ترتيبها وبيشيل التكرار. للرد على الـ API غالبًا json_agg كفاية.
+
+مع [[LEFT JOIN]]: اليوزر اللي ملوش أوردرات بيطلع [[[null]]] أو object كل قيمه null. [[FILTER (WHERE ... IS NOT NULL)]] بيشيل الصف ده، و [[COALESCE(..., '[]')]] بيحوّل NULL لـ array فاضي.
+
+تحويل الأنواع: الـ uuid والتواريخ بيتحولوا نصوص في JSON (التواريخ ISO)، و numeric بيتحول رقم JSON، فلما [[pg]] يعمل parse بيبقى JavaScript number (float). ده عكس العمود العادي اللي [[pg]] بيرجّعه string عشان ميضيعش دقة.
+
+[[array_agg]] بيرجّع Postgres array، والـ driver بيحوّله JavaScript array. [[string_agg(x, ', ' ORDER BY x)]] للعرض. ولو عندك مستويين (أوردرات وجوا كل أوردر بنوده) استخدم subquery أو LATERAL لكل مستوى بدل GROUP BY واحد كبير.`,
+            when: "endpoints بترجّع object ومعاه أولاده (أوردر وبنوده، بوست وتاجاته)، والتقارير اللي محتاجة «كل المنتجات في خانة واحدة»، وأي مكان بتعمل فيه reduce على صفوف JOIN في الكود.",
+            mistakes: R`[[[null]]] لليوزرز اللي من غير أولاد. تنسى ORDER BY جوه json_agg فالبنود ترجع بترتيب عشوائي. الفلوس جوه JSON بقت float. [[GROUP BY o.id]] وبتختار عمود من جدول تاني مش بيعتمد على o.id فتاخد error. و json_agg على مئات الآلاف من الصفوف في صف واحد فيعمل رد ضخم بدل pagination.`
+          },
+          lines: [
+            "لكل أوردر: رقمه والـ total،",
+            "وكل بنوده كـ JSON array، كل بند object فيه المنتج والكمية والسعر،",
+            "مترتبين بالاسم.",
+            "من الأوردرات،",
+            "مع بنودها،",
+            "ومنتجاتها.",
+            "أوردر واحد.",
+            "صف واحد لكل أوردر.",
+            "أسماء المنتجات في نص واحد بفاصلة،",
+            "وأرقامها في array.",
+            "من الأوردرات،",
+            "مع البنود،",
+            "والمنتجات.",
+            "لكل أوردر.",
+            "كل يوزر،",
+            "وأرقام أوردراته كـ array، و [] بدل [null] لليوزر اللي ملوش.",
+            "LEFT عشان اليوزر من غير أوردرات يظهر.",
+            "صف لكل يوزر."
+          ]
+        },
+        {
+          cmd: "LATERAL",
+          title: "آخر ٣ أوردرات لكل يوزر",
+          desc: R`subquery عادية في FROM مش بتقدر تشوف أعمدة الجداول اللي قبلها. [[LATERAL]] بيسمح لها تشوفهم، فتبقى زي loop: لكل يوزر، شغّل الاستعلام ده بالـ id بتاعه.
+
+وده بيحل «أعلى N لكل مجموعة» بشكل مباشر: لكل يوزر، هات أوردراته مترتبة بالأحدث و [[LIMIT 3]]. ومع index على [[(user_id, created_at DESC)]] كل لفة بتقرا ٣ صفوف من الـ index وتقف.
+
+[[CROSS JOIN LATERAL]] بيشيل اليوزر اللي ملوش نتيجة (زي INNER JOIN)، و [[LEFT JOIN LATERAL ... ON true]] بيسيبه بقيم NULL.`,
+          example: R`SELECT u.name, o.id, o.total, o.created_at
+FROM users u
+CROSS JOIN LATERAL (
+  SELECT id, total, created_at FROM orders
+  WHERE user_id = u.id
+  ORDER BY created_at DESC
+  LIMIT 3
+) o
+ORDER BY u.name, o.created_at DESC;
+SELECT u.name, last.id AS last_order, last.created_at
+FROM users u
+LEFT JOIN LATERAL (
+  SELECT id, created_at FROM orders WHERE user_id = u.id ORDER BY created_at DESC LIMIT 1
+) last ON true
+ORDER BY u.name;`,
+          try: R`اكتب «أغلى منتجين في كل أوردر» بـ LATERAL (من order_items و products)، مرة بـ CROSS JOIN ومرة بـ LEFT JOIN، وقارن عدد الصفوف لو فيه أوردر من غير بنود. وبعدين حط [[EXPLAIN]] قدام الاستعلام الأول في المثال، واعمل index على [[orders (user_id, created_at DESC)]] (لو مش موجود من درس composite index) وشوف الـ plan اتغير إزاي.`,
+          sol: R`الـ LATERAL هنا بيلف على الأوردرات: [[FROM orders o CROSS JOIN LATERAL (SELECT ... FROM order_items oi JOIN products p ... WHERE oi.order_id = o.id ORDER BY oi.unit_price DESC LIMIT 2) top]]. الأوردر اللي فيه بند واحد هيطلع صف واحد، واللي فيه ٣ هيطلع أغلى ٢ بس.
+
+الأوردر اللي من غير بنود هيختفي مع CROSS JOIN، ويظهر مرة واحدة بقيم NULL مع [[LEFT JOIN LATERAL ... ON true]]. فعدد الصفوف في LEFT هيبقى أكبر بعدد الأوردرات الفاضية.
+
+في الـ EXPLAIN من غير index هتلاقي [[Nested Loop]] وجواه لكل يوزر [[Seq Scan on orders]] و [[Sort]]، يعني بيقرا جدول الأوردرات كله مرة لكل يوزر. بعد الـ index هتلاقي [[Index Scan using ...]] من غير Sort، لأن الـ index مترتب أصلًا. على جدول صغير ممكن Postgres يفضل الـ Seq Scan عشان أرخص، فجرّب بعد ما تضيف الـ ٢٠٠ ألف صف من درس B-tree index.`,
+          solCode: R`SELECT o.id AS order_id, top.name, top.unit_price
+FROM orders o
+LEFT JOIN LATERAL (
+  SELECT p.name, oi.unit_price
+  FROM order_items oi
+  JOIN products p ON p.id = oi.product_id
+  WHERE oi.order_id = o.id
+  ORDER BY oi.unit_price DESC
+  LIMIT 2
+) top ON true
+ORDER BY o.id, top.unit_price DESC;
+
+EXPLAIN SELECT u.name, o.id FROM users u
+CROSS JOIN LATERAL (
+  SELECT id FROM orders WHERE user_id = u.id ORDER BY created_at DESC LIMIT 3
+) o;`,
+          flag: "script",
+          deep: {
+            why: "«آخر ٣ أوردرات لكل يوزر» و «أحدث رسالة في كل محادثة» و «أغلى منتجين في كل تصنيف» بتتسأل كتير. ROW_NUMBER (درس window functions) بيحلها، بس بيرقّم كل الصفوف وبعدين يفلتر. LATERAL مع LIMIT بيقف بدري، فلما كل يوزر عنده آلاف الأوردرات وانت عايز ٣ بس، الفرق كبير.",
+            how: R`Postgres بينفّذ الـ LATERAL كـ Nested Loop: لكل صف من الجدول الشمال، بيشغّل الـ subquery بقيم الصف ده. ومع index مركّب على [[(user_id, created_at DESC)]]، كل تشغيل بيبقى Index Scan بيقرا أول ٣ entries ويقف.
+
+ليه مش subquery في SELECT؟ [[(SELECT id FROM orders WHERE ... LIMIT 1)]] في الـ SELECT بيرجّع قيمة واحدة بس. لو عايز عمودين أو ٣ صفوف هتاخد [[subquery must return only one column]] أو [[more than one row returned by a subquery]]. الـ LATERAL بيرجّع جدول كامل.
+
+[[LEFT JOIN LATERAL (...) x ON true]]: الـ ON لازم يتكتب مع LEFT JOIN، و true معناها «مفيش شرط إضافي، الشرط جوه الـ subquery».
+
+LATERAL ولا ROW_NUMBER؟ ROW_NUMBER أبسط لما تكون عايز معظم الصفوف أو الجدول صغير. LATERAL أسرع لما N صغير والمجموعات كبيرة، وفيه index مناسب. و [[DISTINCT ON]] لما N = 1 بس.
+
+وده بالظبط اللي Prisma بيحتاجه لما تكتب [[include: { orders: { take: 3, orderBy: ... } }]]: مش كل الـ ORMs بتطلّع LATERAL، فلو الـ query بطيء اكتبه بـ $queryRaw.`,
+            when: "top-N لكل مجموعة، وأحدث صف لكل حاجة، ولما محتاج كذا عمود من subquery مربوطة بالصف اللي برّه، وكمان مع دوال بترجّع جداول زي [[jsonb_array_elements]] و [[generate_series]].",
+            mistakes: R`CROSS JOIN LATERAL لما عايز اليوزرز اللي من غير أوردرات يظهروا. من غير index على (user_id, created_at) فكل لفة Seq Scan وSort، وده أبطأ من ROW_NUMBER. ORDER BY برّه بس فالـ LIMIT جوه بياخد ٣ عشوائيين. وتعمل ده في الكود: loop على اليوزرز وفي كل لفة query، وده N+1.`
+          },
+          lines: [
+            "لكل يوزر وأوردراته:",
+            "من اليوزرز،",
+            "ولكل يوزر شغّل الـ subquery دي (وهي شايفة u):",
+            "أوردراته،",
+            "بتاعة اليوزر ده،",
+            "الأحدث الأول،",
+            "٣ بس.",
+            "اسم النتيجة o، ويوزر من غير أوردرات بيختفي (CROSS).",
+            "الترتيب النهائي.",
+            "لكل يوزر: آخر أوردر ليه،",
+            "من اليوزرز،",
+            "LEFT: اليوزر من غير أوردرات يفضل موجود بقيم NULL،",
+            "أحدث أوردر واحد.",
+            "ON true لأن الشرط جوه.",
+            "بالاسم."
           ]
         }
       ]
     },
-    // __L3__
+    {
+      t: "views و triggers و functions",
+      l: 2,
+      n: "استعلام متسمّي بتستخدمه كأنه جدول، وكود بيشتغل جوه القاعدة لوحده مع كل تعديل، ودوال بتناديها من SQL أو من Supabase",
+      items: [
+        {
+          cmd: "VIEW و MATERIALIZED VIEW",
+          title: "استعلام بتكرره كتير: خليه جدول وهمي أو نسخة محفوظة",
+          desc: R`[[CREATE VIEW]] بيدّي اسم لاستعلام. بعد كده [[SELECT * FROM order_summaries]] كأنه جدول، بس مفيش داتا متخزنة: كل مرة Postgres بيشغّل الاستعلام الأصلي. فالنتيجة دايمًا محدّثة، والسرعة هي سرعة الاستعلام الأصلي.
+
+[[CREATE MATERIALIZED VIEW]] بيشغّل الاستعلام مرة ويخزّن النتيجة على الديسك زي جدول. القراية منه سريعة جدًا، بس النتيجة بتفضل قديمة لحد ما تعمل [[REFRESH MATERIALIZED VIEW]]. و [[CONCURRENTLY]] بيحدّثه من غير ما يقفل القراية، بشرط يكون عليه unique index.
+
+القاعدة: VIEW لتبسيط استعلام بيتكرر. MATERIALIZED لتقرير تقيل بيتقري كتير ومش لازم يبقى لحظي (لوحة أرقام بتتحدث كل ساعة).`,
+          example: R`CREATE VIEW order_summaries AS
+SELECT o.id, u.email, o.status, o.total, o.created_at,
+       count(oi.product_id) AS lines
+FROM orders o
+JOIN users u ON u.id = o.user_id
+LEFT JOIN order_items oi ON oi.order_id = o.id
+GROUP BY o.id, u.email;
+SELECT * FROM order_summaries WHERE status = 'paid' ORDER BY created_at DESC;
+CREATE MATERIALIZED VIEW monthly_revenue AS
+SELECT date_trunc('month', created_at) AS month, sum(total) AS revenue, count(*) AS orders
+FROM orders WHERE status IN ('paid', 'shipped')
+GROUP BY 1;
+CREATE UNIQUE INDEX monthly_revenue_month_uq ON monthly_revenue (month);
+SELECT * FROM monthly_revenue ORDER BY month;
+REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_revenue;`,
+          try: R`بعد ما تعمل الاتنين: ضيف أوردر مدفوع جديد، واعمل SELECT من الـ view ومن الـ materialized view من غير refresh. مين شاف الأوردر ومين لأ؟ اعمل REFRESH واتأكد. وبعدين اعمل materialized view تاني من غير unique index وجرّب [[REFRESH ... CONCURRENTLY]] عليه.`,
+          sol: R`الـ view هيشوف الأوردر الجديد على طول، لأنه بيشغّل الاستعلام كل مرة. الـ materialized view هيفضل بالأرقام القديمة (نفس revenue ونفس عدد orders للشهر ده) لحد ما تعمل [[REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_revenue]]، وبعدها الشهر الحالي هيزيد بقيمة الأوردر والعدد يزيد ١.
+
+والـ materialized view اللي من غير unique index: الـ refresh العادي هيشتغل، بس CONCURRENTLY هيفشل بـ [[cannot refresh materialized view "public.mv2" concurrently]] ومعاه hint إنك تعمل unique index على عمود أو أكتر من غير WHERE. السبب إن CONCURRENTLY بيحسب النتيجة الجديدة جنب القديمة ويقارنهم صف بصف، ومحتاج مفتاح يعرف بيه الصف.`,
+          solCode: R`INSERT INTO orders (user_id, status, total)
+SELECT id, 'paid', 999 FROM users LIMIT 1;
+
+SELECT count(*) FROM order_summaries;
+SELECT * FROM monthly_revenue ORDER BY month DESC LIMIT 1;
+REFRESH MATERIALIZED VIEW CONCURRENTLY monthly_revenue;
+SELECT * FROM monthly_revenue ORDER BY month DESC LIMIT 1;
+
+CREATE MATERIALIZED VIEW mv2 AS SELECT status, count(*) FROM orders GROUP BY status;
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv2;`,
+          flag: "script",
+          deep: {
+            why: "نفس الـ JOIN بتاع «الأوردر وإيميل صاحبه وعدد بنوده» بيتكتب في ١٠ أماكن، ولما تغيّر فيه حاجة لازم تلف عليهم كلهم. والـ view بيخليه في مكان واحد. وتقارير الأدمن اللي بتجمّع ملايين الصفوف ممكن تاخد ثواني. لو ٥٠ واحد فاتحين اللوحة، القاعدة هتحسب نفس الرقم ٥٠ مرة، والـ materialized view بيحسبه مرة كل ساعة.",
+            how: R`الـ view مجرد استعلام متخزن. Postgres بيدمجه في الاستعلام بتاعك، فـ [[WHERE status = 'paid']] بتتطبق جوه وبتستخدم الـ indexes عادي. الـ view البسيط (جدول واحد من غير GROUP BY) ينفع تعمل عليه INSERT و UPDATE كمان.
+
+[[CREATE OR REPLACE VIEW]] بيسمح تضيف أعمدة في الآخر بس. لو عايز تشيل أو تغيّر نوع عمود: [[DROP VIEW]] وتعمله تاني. ولو فيه view تاني معتمد عليه، الـ DROP هيرفض إلا بـ CASCADE.
+
+الـ materialized view جدول حقيقي: ليه مساحة، وتقدر تعمل عليه indexes. [[REFRESH]] العادي بيعيد حسابه وبيقفل القراية لحد ما يخلص. [[REFRESH ... CONCURRENTLY]] بيحسب نسخة جديدة ويقارنها بالقديمة ويطبّق الفرق، فالقراية شغالة طول الوقت، بس أبطأ ومحتاج [[UNIQUE INDEX]].
+
+الـ refresh مش بيحصل لوحده. بتجدوله: [[pg_cron]] جوه القاعدة (موجود في Supabase)، أو cron job على السيرفر، أو من الكود بعد عملية معينة.
+
+وفي Supabase: الـ view العادي بيشتغل بصلاحيات اللي عمله (غالبًا postgres) فبيعدّي RLS. من Postgres 15 اكتب [[CREATE VIEW ... WITH (security_invoker = true)]] عشان يطبّق RLS على اللي بيقرا. والـ materialized view مبيطبّقش RLS خالص، فمتعرضوش في الـ API لو فيه داتا خاصة.`,
+            when: "VIEW: استعلام بيتكرر، أو عايز تدّي حد (أو أداة BI) شكل مبسّط من الداتا من غير ما يشوف الجداول. MATERIALIZED: dashboards وتقارير تقيلة، أو ليدربورد بتتحدث كل كام دقيقة، والتأخير فيها مقبول.",
+            mistakes: R`تفتكر إن الـ view بيسرّع. هو بيبسّط بس، والسرعة هي سرعة الاستعلام الأصلي. materialized view ومحدش عامل له refresh، فالأرقام واقفة من أسبوع. CONCURRENTLY من غير unique index. [[SELECT *]] جوه الـ view: الأعمدة بتتحدد وقت الإنشاء، فالعمود الجديد في الجدول مش هيظهر. وفي Supabase: view عادي بيكشف صفوف محمية بـ RLS لأي حد معاه الـ publishable key.`
+          },
+          lines: [
+            "اعمل view اسمه order_summaries على الاستعلام ده:",
+            "الأوردر وإيميل صاحبه وحالته وقيمته ووقته،",
+            "وعدد بنوده.",
+            "من الأوردرات،",
+            "مع اليوزرز،",
+            "والبنود (LEFT عشان الأوردر الفاضي يطلع بصفر).",
+            "صف لكل أوردر.",
+            "استخدمه كأنه جدول، وبشروط عادي.",
+            "materialized view: النتيجة هتتحسب دلوقتي وتتخزن.",
+            "الإيراد وعدد الأوردرات لكل شهر،",
+            "من المدفوع والمشحون،",
+            "مجمّع بالشهر.",
+            "unique index على الشهر: شرط الـ refresh من غير قفل.",
+            "قراية سريعة من النسخة المحفوظة.",
+            "حدّث النسخة المحفوظة من غير ما تقفل القراية."
+          ]
+        },
+        {
+          cmd: "CREATE TRIGGER",
+          title: "updated_at يتحدث لوحده، وكل تعديل يتسجل في audit log",
+          desc: R`الـ trigger دالة بتشتغل أوتوماتيك جوه القاعدة لما يحصل INSERT أو UPDATE أو DELETE على جدول. مش مهم مين عمل التعديل: الـ API، ولا سكربت، ولا أدمن من psql. الـ trigger هيشتغل.
+
+أشهر استخدامين:
+
+[[updated_at]] يتحدث مع كل UPDATE من غير ما تفتكر تبعته من الكود. ده trigger من نوع [[BEFORE]]: بيعدّل الصف ([[NEW]]) قبل ما يتكتب.
+
+audit log: كل تعديل على الأوردرات يتسجل في جدول (مين، وإمتى، وكان إيه وبقى إيه). ده trigger من نوع [[AFTER]]: بيتفرج على الصف القديم ([[OLD]]) والجديد ([[NEW]]) ويكتب في جدول تاني.`,
+          example: R`ALTER TABLE products ADD COLUMN updated_at timestamptz NOT NULL DEFAULT now();
+CREATE FUNCTION set_updated_at() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.updated_at := now();
+  RETURN NEW;
+END;
+$$;
+CREATE TRIGGER products_updated_at
+BEFORE UPDATE ON products
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+UPDATE products SET price = 260 WHERE name = 'T-shirt' RETURNING name, price, updated_at;
+CREATE TABLE audit_log (
+  id         bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  table_name text NOT NULL,
+  op         text NOT NULL,
+  row_id     text,
+  old_data   jsonb,
+  new_data   jsonb,
+  changed_by text NOT NULL DEFAULT current_user,
+  changed_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE FUNCTION audit_row() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+  INSERT INTO audit_log (table_name, op, row_id, old_data, new_data)
+  VALUES (TG_TABLE_NAME, TG_OP, COALESCE(NEW.id, OLD.id)::text,
+          CASE WHEN TG_OP <> 'INSERT' THEN to_jsonb(OLD) END,
+          CASE WHEN TG_OP <> 'DELETE' THEN to_jsonb(NEW) END);
+  RETURN NULL;
+END;
+$$;
+CREATE TRIGGER orders_audit
+AFTER INSERT OR UPDATE OR DELETE ON orders
+FOR EACH ROW EXECUTE FUNCTION audit_row();`,
+          try: R`غيّر حالة أوردر لـ shipped، وامسح أوردر تاني، وبعدين اعرض من audit_log: العملية، ورقم الصف، والحالة القديمة والجديدة (من جوه الـ jsonb). وبعدين ركّب نفس trigger الـ updated_at على جدول orders (ضيف العمود الأول)، وجرّب UPDATE تبعت فيه [[updated_at = '2020-01-01']] بإيدك: القيمة اللي اتخزنت كام؟`,
+          sol: R`في audit_log هتلاقي صفين: [[UPDATE]] فيه old_status [[paid]] (أو اللي كانت) و new_status [[shipped]]، و [[DELETE]] فيه old_data كامل و new_data [[NULL]]. الاستعلام: [[old_data->>'status']] و [[new_data->>'status']]. و [[changed_by]] هيبقى اسم يوزر القاعدة ([[postgres]] في الـ lab)، مش اليوزر بتاع التطبيق. عشان تسجّل يوزر التطبيق لازم تبعته، زي [[SET LOCAL app.user_id = '...']] جوه الـ transaction وتقراه في الـ trigger بـ [[current_setting('app.user_id', true)]].
+
+وتجربة updated_at: القيمة المتخزنة هتبقى وقت دلوقتي مش 2020، لأن الـ BEFORE trigger بيكتب فوق أي قيمة بعتها في NEW قبل ما الصف يتحفظ. ده المقصود: محدش يقدر يزوّر وقت التعديل.
+
+لو الـ trigger مش شغال، اتأكد إنه [[FOR EACH ROW]] مش STATEMENT (الـ STATEMENT مفيهوش NEW)، وإنه BEFORE مش AFTER (تعديل NEW في AFTER ملوش تأثير).`,
+          solCode: R`UPDATE orders SET status = 'shipped' WHERE id = (SELECT min(id) FROM orders);
+DELETE FROM orders WHERE id = (SELECT max(id) FROM orders);
+
+SELECT op, row_id,
+       old_data->>'status' AS old_status,
+       new_data->>'status' AS new_status,
+       changed_by, changed_at
+FROM audit_log ORDER BY id;
+
+ALTER TABLE orders ADD COLUMN updated_at timestamptz NOT NULL DEFAULT now();
+CREATE TRIGGER orders_updated_at
+BEFORE UPDATE ON orders
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+UPDATE orders SET status = 'paid', updated_at = '2020-01-01' WHERE id = (SELECT min(id) FROM orders) RETURNING updated_at;`,
+          flag: "script",
+          deep: {
+            why: "لو updated_at معتمد على إن كل مطوّر يفتكر يبعته، هيتنسي في endpoint من العشرين، والـ sync والـ cache اللي معتمدين عليه هيبوظوا. والـ audit log من الكود بيفوّت أي تعديل حصل من برّه الكود: سكربت، أو migration، أو أدمن صلّح حاجة بإيده من psql، وده بالظبط التعديل اللي هتحتاج تعرفه لما فلوس تختفي.",
+            how: R`الـ trigger ليه جزئين: function بترجّع نوع [[trigger]] (ده الكود)، و [[CREATE TRIGGER]] (ده بيقول إمتى تشتغل). نفس الـ function ينفع تتركّب على جداول كتير.
+
+جوه الـ function عندك متغيرات جاهزة: [[NEW]] الصف الجديد (INSERT و UPDATE)، و [[OLD]] الصف القديم (UPDATE و DELETE)، و [[TG_OP]] اسم العملية، و [[TG_TABLE_NAME]] اسم الجدول.
+
+[[BEFORE]] بيشتغل قبل الكتابة وتقدر تعدّل NEW. لو رجّعت NEW الصف بيتكتب، ولو رجّعت NULL العملية بتتلغي للصف ده من غير error. [[AFTER]] بيشتغل بعد الكتابة، والقيمة اللي بيرجّعها ملهاش لازمة (عشان كده [[RETURN NULL]])، وبيستخدم للتسجيل أو لتحديث جداول تانية.
+
+[[FOR EACH ROW]] مرة لكل صف. [[FOR EACH STATEMENT]] مرة لكل أمر حتى لو عدّل مليون صف. و [[WHEN (OLD.status IS DISTINCT FROM NEW.status)]] في CREATE TRIGGER بيشغّله بس لو الحالة اتغيرت فعلًا.
+
+الـ trigger جزء من نفس الـ transaction. لو فشل، التعديل الأصلي كله بيترجع. وده حلو (مفيش تعديل من غير audit)، بس كمان معناه إن trigger بطيء بيبطّأ كل INSERT.
+
+[[to_jsonb(OLD)]] بيحوّل الصف كله لـ jsonb، فنفس الـ audit function تشتغل على أي جدول من غير ما تكتب أسماء الأعمدة.
+
+وفي Prisma: [[@updatedAt]] في الـ schema بيحدّث القيمة من الـ client، مش من القاعدة. يعني UPDATE من psql أو من سكربت مش هيحدّثه. الـ trigger بيغطي كل الطرق.`,
+            when: "updated_at، والـ audit logs، والـ counters اللي لازم تفضل مظبوطة، وفي Supabase: إنشاء صف في profiles لما يوزر يسجّل (trigger على auth.users، درس one-to-one). أما منطق البيزنس الكبير (إيميلات، ودفع، ومناداة APIs) مكانه الكود مش trigger.",
+            mistakes: R`منطق كتير مستخبي في triggers، فمحدش فاهم ليه القيمة اتغيرت. trigger بيعدّل نفس الجدول اللي عليه فيعمل loop. AFTER وبتعدّل NEW وتستغرب مفيش حاجة حصلت. [[FOR EACH ROW]] على جدول بيتعمله bulk insert بملايين الصفوف فيبقى بطيء جدًا. [[DROP FUNCTION]] بيفشل لأن فيه trigger معتمد عليها. وفي الانترفيو: «إيه عيوب الـ triggers؟» منطق مستخبي، وصعب في الـ testing والـ debugging، وبيأثر على سرعة الكتابة.`
+          },
+          lines: [
+            "ضيف عمود updated_at للمنتجات.",
+            "function بترجّع trigger،",
+            "مكتوبة بـ plpgsql. الـ $$ بتبدأ الكود.",
+            "البداية.",
+            "حط الوقت الحالي في الصف الجديد.",
+            "رجّع الصف المعدّل عشان يتكتب.",
+            "النهاية.",
+            "قفلة الكود.",
+            "trigger اسمه products_updated_at:",
+            "قبل أي UPDATE على المنتجات،",
+            "لكل صف، شغّل الدالة دي.",
+            "جرّب: updated_at اتغير لوحده.",
+            "جدول الـ audit:",
+            "رقم،",
+            "اسم الجدول،",
+            "العملية (INSERT و UPDATE و DELETE)،",
+            "رقم الصف،",
+            "الصف قبل التعديل،",
+            "والصف بعده،",
+            "مين عمل التعديل (يوزر القاعدة)،",
+            "وإمتى.",
+            "قفلة.",
+            "function الـ audit،",
+            "بـ plpgsql.",
+            "البداية.",
+            "سجّل صف:",
+            "اسم الجدول والعملية ورقم الصف (من NEW، ولو DELETE من OLD)،",
+            "القديم لو مش INSERT،",
+            "والجديد لو مش DELETE.",
+            "AFTER trigger: القيمة اللي بترجع ملهاش لازمة.",
+            "النهاية.",
+            "قفلة الكود.",
+            "trigger على الأوردرات:",
+            "بعد أي إضافة أو تعديل أو مسح،",
+            "لكل صف."
+          ]
+        },
+        {
+          cmd: "CREATE FUNCTION",
+          title: "منطق جوه القاعدة: دالة SQL أو plpgsql وتناديها من أي مكان",
+          desc: R`الـ function في Postgres بتاخد parameters وترجّع قيمة أو جدول، وتناديها من أي استعلام: [[SELECT user_spent(id) FROM users]].
+
+فيه لغتين هتستخدمهم: [[LANGUAGE sql]] لاستعلام واحد (أبسط وPostgres يقدر يحسّنه)، و [[LANGUAGE plpgsql]] لما محتاج متغيرات و IF و RAISE.
+
+الاستخدام الأهم في الشغل: عملية لازم تحصل كلها مع بعض (خصم مخزون وإنشاء أوردر وبنده). الـ function كلها بتشتغل في transaction واحدة، فلو حاجة فشلت كله بيترجع. وفي Supabase دي الطريقة اللي الـ frontend بينفّذ بيها عملية زي دي: [[supabase.rpc('place_order', {...})]] (درس rpc في المستوى التالت).`,
+          example: R`CREATE FUNCTION user_spent(p_user_id uuid) RETURNS numeric
+LANGUAGE sql STABLE AS $$
+  SELECT COALESCE(sum(total), 0) FROM orders
+  WHERE user_id = p_user_id AND status IN ('paid', 'shipped');
+$$;
+SELECT email, user_spent(id) FROM users ORDER BY 2 DESC;
+CREATE FUNCTION place_order(p_user_id uuid, p_product_id bigint, p_qty int)
+RETURNS bigint LANGUAGE plpgsql AS $$
+DECLARE
+  v_price numeric;
+  v_order_id bigint;
+BEGIN
+  UPDATE products SET stock = stock - p_qty
+  WHERE id = p_product_id AND stock >= p_qty
+  RETURNING price INTO v_price;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'OUT_OF_STOCK';
+  END IF;
+  INSERT INTO orders (user_id, total) VALUES (p_user_id, v_price * p_qty)
+  RETURNING id INTO v_order_id;
+  INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+  VALUES (v_order_id, p_product_id, p_qty, v_price);
+  RETURN v_order_id;
+END;
+$$;
+SELECT place_order((SELECT id FROM users LIMIT 1), 2, 3);`,
+          try: R`نادي [[place_order]] على منتج مخزونه صفر (Cap بعد درس UPDATE مثلًا)، وبعدين اتأكد إن عدد الأوردرات متغيّرش. وبعدين اكتب function بـ [[LANGUAGE sql]] اسمها [[top_products(p_limit int)]] ترجّع جدول ([[RETURNS TABLE (name text, sold bigint)]]) بأكتر المنتجات مبيعًا، وناديها بـ [[SELECT * FROM top_products(3)]].`,
+          sol: R`على منتج خلصان هتاخد [[ERROR: OUT_OF_STOCK]] ومعاها [[CONTEXT: PL/pgSQL function place_order(uuid,bigint,integer) line 10 at RAISE]]. و [[SELECT count(*) FROM orders]] هيطلع نفس الرقم قبل وبعد: الـ UPDATE مغيّرش ولا صف أصلًا ([[NOT FOUND]])، والـ exception وقّفت الدالة قبل الـ INSERT. ولو الغلطة حصلت بعد الـ INSERT (زي product_id مش موجود في order_items)، كل اللي حصل جوه الدالة كان هيترجع برضه، لأن الـ function جزء من transaction الأمر اللي ناداها.
+
+و [[top_products(3)]] هترجع ٣ صفوف بعمودين، زي أي جدول: تقدر تعمل عليها WHERE و JOIN. لو نسيت [[RETURNS TABLE]] وكتبت [[RETURNS bigint]] هترجع أول قيمة بس. وخلي بالك أسماء الأعمدة في [[RETURNS TABLE]] بتبقى متغيرات جوه الدالة، فلو في plpgsql عندك عمود في جدول اسمه name هتاخد [[column reference "name" is ambiguous]]. في LANGUAGE sql مفيش المشكلة دي.`,
+          solCode: R`SELECT count(*) FROM orders;
+SELECT place_order((SELECT id FROM users LIMIT 1), (SELECT id FROM products WHERE stock = 0 LIMIT 1), 1);
+SELECT count(*) FROM orders;
+
+CREATE FUNCTION top_products(p_limit int)
+RETURNS TABLE (name text, sold bigint)
+LANGUAGE sql STABLE AS $$
+  SELECT p.name, sum(oi.quantity)
+  FROM order_items oi JOIN products p ON p.id = oi.product_id
+  GROUP BY p.name
+  ORDER BY 2 DESC
+  LIMIT p_limit;
+$$;
+
+SELECT * FROM top_products(3);`,
+          flag: "script",
+          deep: {
+            why: "لما نفس المنطق (حساب رصيد، أو إنشاء أوردر) بيتكتب في الـ API وفي سكربت وفي لوحة الأدمن، كل نسخة بتختلف شوية. الـ function بتحطه في مكان واحد جنب الداتا، وبتشتغل في رحلة واحدة للقاعدة بدل ٤ queries رايحة جاية. وفي Supabase، لو الـ frontend بيكلّم القاعدة مباشرة، ده الطريق الوحيد لعملية فيها كذا خطوة لازم تتم مع بعض.",
+            how: R`[[$$ ... $$]] مجرد علامات تنصيص للكود، عشان متحتاجش تهرّب كل [[']] جواه.
+
+الـ parameters باسم زي [[p_user_id]]: الـ prefix بيمنع التضارب مع أسماء الأعمدة. في plpgsql لو الـ parameter اسمه [[user_id]] والجدول فيه عمود [[user_id]]، Postgres مش هيعرف تقصد مين.
+
+[[STABLE]] معناها «مش بتعدّل حاجة، ونفس المدخلات في نفس الاستعلام بترجّع نفس النتيجة»، و [[IMMUTABLE]] «نفس المدخلات بترجّع نفس النتيجة دايمًا» (شرط عشان تستخدمها في index أو generated column)، و [[VOLATILE]] الافتراضي لأي حاجة بتعدّل. التصنيف الصح بيخلي Postgres يحسّن.
+
+في plpgsql: [[DECLARE]] للمتغيرات، و [[SELECT ... INTO v]] أو [[RETURNING ... INTO v]] يحط نتيجة في متغير، و [[FOUND]] بيقولك آخر أمر أثّر في صفوف ولا لأ، و [[RAISE EXCEPTION]] بيوقف كل حاجة ويرجّع error.
+
+الـ function مش بتعمل COMMIT لوحدها: هي جوه الـ transaction بتاع الأمر اللي ناداها. عشان كده أي exception بيرجّع كل اللي عملته. ولو محتاج COMMIT في النص (batch كبير) ده [[PROCEDURE]] مش function.
+
+[[RETURNS TABLE (...)]] أو [[RETURNS SETOF orders]] بيرجّع صفوف، فتستخدمها في FROM. و [[CREATE OR REPLACE FUNCTION]] بيعدّلها، بس لو غيّرت نوع الـ return لازم DROP الأول.
+
+والأمان: الافتراضي [[SECURITY INVOKER]]، يعني بتشتغل بصلاحيات اللي بيناديها. [[SECURITY DEFINER]] بتشتغل بصلاحيات اللي عملها، ودي خطيرة لو مش واخد بالك (بتعدّي RLS). التفاصيل في درس rpc.`,
+            when: "عمليات من كذا خطوة لازم تتم مع بعض (خصوصًا في Supabase)، وحسابات بتتكرر في استعلامات كتير، ودوال الـ triggers، ودوال IMMUTABLE للـ indexes (زي التطبيع في درس البحث بالعربي). أما منطق فيه مناداة APIs برّه أو إيميلات، مكانه الكود.",
+            mistakes: R`parameter بنفس اسم عمود في plpgsql. [[SECURITY DEFINER]] من غير [[SET search_path]] ومن غير ما تتأكد مين بيناديها. تعليم دالة بتقرا من جدول IMMUTABLE عشان تحطها في index، فالـ index يبقى غلط لما الجدول يتغير. منطق كتير جدًا جوه القاعدة ومفيش tests ولا version control، فخليها في ملفات migrations زي أي حاجة تانية. و [[RAISE EXCEPTION]] برسالة فيها داتا حساسة بتوصل للـ client.`
+          },
+          lines: [
+            "دالة بتاخد id يوزر وترجّع رقم،",
+            "SQL عادي، و STABLE: بتقرا بس.",
+            "مجموع مدفوعاته (أو صفر)،",
+            "للأوردرات المدفوعة والمشحونة بتاعته.",
+            "قفلة الكود.",
+            "استخدمها في SELECT زي أي دالة.",
+            "دالة بتعمل أوردر: يوزر ومنتج وكمية،",
+            "بترجّع رقم الأوردر، ومكتوبة بـ plpgsql.",
+            "المتغيرات:",
+            "سعر المنتج،",
+            "ورقم الأوردر الجديد.",
+            "البداية.",
+            "اخصم المخزون،",
+            "بشرط يكون كفاية (atomic UPDATE)،",
+            "وحط السعر في المتغير.",
+            "لو مفيش صف اتعدّل (المنتج خلصان أو مش موجود):",
+            "وقّف وارمي error، وكل حاجة ترجع.",
+            "نهاية الـ IF.",
+            "اعمل الأوردر بالإجمالي،",
+            "وخد رقمه.",
+            "ضيف البند،",
+            "بنفس السعر اللي اتخصم بيه.",
+            "رجّع رقم الأوردر.",
+            "النهاية.",
+            "قفلة الكود.",
+            "ناديها: أول يوزر، ومنتج رقم ٢، و٣ قطع."
+          ]
+        },
+        {
+          cmd: "generated columns",
+          title: "عمود بيتحسب لوحده من أعمدة تانية",
+          desc: R`[[GENERATED ALWAYS AS (تعبير) STORED]] بيعمل عمود قيمته بتتحسب من أعمدة تانية في نفس الصف، وبتتخزن وتتحدث لوحدها مع كل INSERT و UPDATE. محدش يقدر يكتب فيه بإيده.
+
+مثال: [[line_total]] في order_items = الكمية × السعر. بدل ما تحسبه في كل استعلام أو تثق إن الكود بعته صح، القاعدة بتحسبه. وتقدر تعمل عليه index زي أي عمود.
+
+الشرط: التعبير يعتمد على أعمدة نفس الصف بس، وبدوال IMMUTABLE. مينفعش [[now()]] ولا subquery ولا جدول تاني.`,
+          example: R`ALTER TABLE order_items
+  ADD COLUMN line_total numeric(12,2) GENERATED ALWAYS AS (quantity * unit_price) STORED;
+SELECT order_id, quantity, unit_price, line_total FROM order_items ORDER BY order_id LIMIT 3;
+UPDATE order_items SET quantity = 3 WHERE order_id = 1 AND product_id = 2 RETURNING line_total;
+UPDATE order_items SET line_total = 1;
+ALTER TABLE users ADD COLUMN email_domain text GENERATED ALWAYS AS (split_part(email, '@', 2)) STORED;
+CREATE INDEX users_email_domain_idx ON users (email_domain);`,
+          try: R`ضيف لجدول users عمود [[email_normalized]] generated من [[lower(trim(email))]] واعمل عليه unique index. جرّب تضيف يوزر إيميله [['  YOU@example.com']]. وبعدين جرّب تعمل عمود generated من [[now() - created_at]] وشوف الـ error.`,
+          sol: R`اليوزر الجديد هيترفض بـ [[duplicate key value violates unique constraint "users_email_normalized_uq"]]، لأن العمود المحسوب بقى [[you@example.com]]، وده موجود قبل كده. يعني القاعدة نفسها بقت تمنع التكرار مهما الكود بعت الإيميل بأي شكل. وده بديل للـ expression index [[ON users (lower(email))]] اللي في درس constraints، والفرق إن القيمة المتطبّعة بقت عمود تقدر تعمل عليه SELECT و WHERE مباشرة.
+
+والعمود من [[now() - created_at]] هيفشل بـ [[generation expression is not immutable]]، لأن [[now()]] قيمتها بتتغير، والعمود المخزن مش هيتحدث لوحده كل ثانية. أي حاجة معتمدة على الوقت الحالي احسبها في SELECT أو اعملها view.`,
+          solCode: R`ALTER TABLE users
+  ADD COLUMN email_normalized text GENERATED ALWAYS AS (lower(trim(email))) STORED;
+CREATE UNIQUE INDEX users_email_normalized_uq ON users (email_normalized);
+
+INSERT INTO users (email, name) VALUES ('  YOU@example.com', 'Copy');
+
+ALTER TABLE users ADD COLUMN age interval GENERATED ALWAYS AS (now() - created_at) STORED;`,
+          flag: "script",
+          deep: {
+            why: "القيم المحسوبة لما تتخزن من الكود بتختلف عن الحقيقة مع الوقت: حد عدّل الكمية من لوحة الأدمن ونسي يعدّل line_total. والحساب في كل SELECT بيتكرر ومبيتعملوش index. الـ generated column بيجمع الاتنين: القيمة دايمًا صح، ومتخزنة فتتفلتر وتترتب وتتعمل عليها index.",
+            how: R`[[STORED]] معناها القيمة بتتحسب وقت الكتابة وتتخزن على الديسك. Postgres 18 ضاف كمان [[VIRTUAL]] (بتتحسب وقت القراية ومبتاخدش مساحة) وخلاه الافتراضي. بس الـ lab على Postgres 17 فاكتب STORED، وده اللي بتحتاجه لو هتعمل index.
+
+الإضافة على جدول موجود ([[ALTER TABLE ... ADD COLUMN ... STORED]]) بتعيد كتابة الجدول كله عشان تحسب القيمة لكل صف القديم، وده بياخد قفل. على جدول كبير في الإنتاج خد بالك (درس تغييرات آمنة في الإنتاج في تاب «PostgreSQL»).
+
+مينفعش تكتب فيه: [[UPDATE ... SET line_total = 1]] بيطلع [[column "line_total" can only be updated to DEFAULT]]. وفي INSERT متبعتوش خالص.
+
+الاستخدامات الشائعة: مجموع من أعمدة، أو نسخة متطبّعة من نص (lowercase، أو من غير تشكيل)، أو [[tsvector]] للبحث (الدرس الجاي)، أو استخراج قيمة من jsonb عشان تعمل عليها index عادي.
+
+في Prisma: العمود ده بيتعرف في الـ schema عادي، بس لازم تعدّل الـ migration بإيدك وتكتب الـ GENERATED، لأن Prisma مبيعرفش يولّده. ومتبعتوش في create، أو استخدم [[@default(dbgenerated())]] عشان Prisma ميطلبوش منك.`,
+            when: "قيمة بتتحسب من نفس الصف وبتتقري أو بتتفلتر كتير: إجماليات، ونصوص متطبّعة للبحث والـ unique، و tsvector، ومفاتيح من jsonb.",
+            mistakes: R`تحاول تستخدم [[now()]] أو جدول تاني. تبعت قيمة للعمود في INSERT من الكود (Prisma أو غيره) فيطلع error. تضيفه على جدول فيه ملايين الصفوف في وقت الذروة. تعمل generated column لحاجة بتتحسب مرة واحدة ومش بتتفلتر بيها، فتخزن حاجة ملهاش لازمة.`
+          },
+          lines: [
+            "ضيف لـ order_items عمود:",
+            "line_total = الكمية × السعر، بيتحسب ويتخزن لوحده.",
+            "القيمة موجودة من غير ما حد يحسبها.",
+            "غيّر الكمية: line_total اتحدث لوحده.",
+            "error: العمود ده محدش يكتب فيه.",
+            "عمود دومين الإيميل محسوب من الإيميل،",
+            "وعليه index عشان الفلترة بالدومين تبقى سريعة."
+          ]
+        }
+      ]
+    },
+    {
+      t: "البحث: full-text و pg_trgm والعربي",
+      l: 2,
+      n: "خانة البحث اللي في كل موقع: بحث بالكلمات مترتب بالأهمية، وبحث بيستحمل الأخطاء الإملائية، وتطبيع العربي عشان «أحمد» تلاقي «احمد»",
+      items: [
+        {
+          cmd: "full-text search",
+          title: "بحث بالكلمات مترتب بالأهمية بدل ILIKE",
+          desc: R`[[ILIKE '%docker run%']] بيدوّر على النص ده بالحرف، فـ «running docker» مش هتطلع، ومع جدول كبير بيقرا كل الصفوف. الـ full-text search بيفهم الكلمات: بيقطّع النص لكلمات، ويرجّع كل كلمة لأصلها (running و runs بيبقوا run)، ويشيل الكلمات اللي ملهاش معنى (the و a)، وبيرتب النتايج بالأهمية.
+
+الأجزاء: [[tsvector]] النص بعد التقطيع (بيتخزن في عمود generated وعليه GIN index)، و [[tsquery]] كلام البحث، و [[@@]] بيقول «مطابق ولا لأ»، و [[ts_rank]] بيدّي درجة للترتيب.
+
+و [[websearch_to_tsquery]] بياخد اللي اليوزر كتبه في خانة البحث زي ما هو، وبيفهم [["عبارة بالظبط"]] و [[-كلمة]] للاستبعاد و [[or]]، ومبيرميش error أبدًا مهما اليوزر كتب.`,
+          example: R`CREATE TABLE articles (
+  id     bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  title  text NOT NULL,
+  body   text NOT NULL,
+  search tsvector GENERATED ALWAYS AS (
+    setweight(to_tsvector('english', title), 'A') || setweight(to_tsvector('english', body), 'B')
+  ) STORED
+);
+CREATE INDEX articles_search_idx ON articles USING gin (search);
+INSERT INTO articles (title, body) VALUES
+  ('Running Postgres in Docker', 'How to run a database container with volumes and backups'),
+  ('Indexes explained', 'Why queries get slow and how a B-tree index helps when running reports'),
+  ('Docker volumes', 'Keep your data when the container is removed');
+SELECT id, title, ts_rank(search, q) AS rank
+FROM articles, websearch_to_tsquery('english', 'docker run') q
+WHERE search @@ q
+ORDER BY rank DESC;
+SELECT to_tsvector('english', 'Running containers ran quickly');
+SELECT websearch_to_tsquery('english', '"docker volumes" -backup or index');
+SELECT ts_headline('english', body, websearch_to_tsquery('english', 'slow reports')) FROM articles WHERE id = 2;`,
+          try: R`دوّر على [[running]] وعلى [[containers]]، وقارن النتيجة بـ [[ILIKE '%running%']]. وبعدين جرّب [[to_tsquery('english', 'docker run')]] (من غير websearch) وشوف بيحصل إيه، وجرّب [[websearch_to_tsquery('english', 'docker -backups')]].`,
+          sol: R`[[running]] هترجع المقالتين الأولى والتانية، لأن البحث بقى [['run']] بعد الـ stemming، والأولى فيها Running و run، والتانية فيها running. أما [[ILIKE '%running%']] هترجع نفس الاتنين هنا بالصدفة، بس لو دوّرت بـ [[run]] الـ ILIKE هيجيب أي كلمة فيها run (زي runtime) و full-text مش هيجيبها. و [[containers]] هترجع الأولى والتالتة (container).
+
+[[to_tsquery('english', 'docker run')]] هيطلع [[syntax error in tsquery: "docker run"]]، لأن to_tsquery محتاجة operators صريحة زي [['docker & run']]. عشان كده متحطش اللي اليوزر كتبه في to_tsquery أبدًا، استخدم websearch_to_tsquery أو plainto_tsquery.
+
+و [[docker -backups]] هترجع المقالة التالتة بس (Docker volumes)، لأن الأولى فيها backups فاتشالت.
+
+خد بالك من الحاجة الغريبة: [[ran]] مش بتبقى run، لأن الـ stemmer بيقطع نهايات الكلام بس، مبيعرفش الأفعال الشاذة.`,
+          solCode: R`SELECT title FROM articles WHERE search @@ websearch_to_tsquery('english', 'running');
+SELECT title FROM articles WHERE title ILIKE '%running%' OR body ILIKE '%running%';
+SELECT title FROM articles WHERE search @@ websearch_to_tsquery('english', 'containers');
+SELECT to_tsquery('english', 'docker run');
+SELECT title FROM articles WHERE search @@ websearch_to_tsquery('english', 'docker -backups');`,
+          flag: "script",
+          deep: {
+            why: "خانة البحث موجودة في كل منتج تقريبًا: منتجات، ومقالات، وتذاكر دعم. ILIKE مع % في الأول مبيستخدمش B-tree index، ومبيفهمش صيغ الكلمة، ومبيرتبش. والحل مش لازم يبقى Elasticsearch من أول يوم: Postgres فيه بحث كويس كفاية لأغلب المشاريع.",
+            how: R`[[to_tsvector('english', text)]] بيقطّع ويعمل stemming ويشيل الـ stop words، وبيحفظ مكان كل كلمة: [['contain':2 'quick':4 'ran':3 'run':1]]. أول argument هو الـ configuration (اللغة)، ولازم يبقى نفسه في التخزين والبحث.
+
+[[setweight(..., 'A')]] بيدّي كلمات العنوان وزن أعلى من كلمات الـ body، فـ ts_rank بيطلّع المقالة اللي الكلمة في عنوانها الأول. الأوزان A و B و C و D.
+
+العمود [[GENERATED ... STORED]] بيحسب الـ tsvector مرة وقت الكتابة بدل كل بحث، و [[GIN]] index بيعمل «inverted index»: لكل كلمة، قايمة الصفوف اللي فيها. فالبحث بيروح للكلمة على طول. ومن غير العمود ده ممكن تعمل expression index على [[to_tsvector('english', title || ' ' || body)]]، بس لازم تكتب نفس التعبير بالظبط في كل WHERE.
+
+[[websearch_to_tsquery]] للي اليوزر بيكتبه. [[plainto_tsquery]] بيعمل AND بين كل الكلمات. [[to_tsquery]] للي انت بتكتبه في الكود بـ operators: [[&]] و [[|]] و [[!]] و [[<->]] (ورا بعض) و [[:*]] (prefix: [['dock:*']] للـ autocomplete).
+
+[[ts_rank]] بيحسب على الصفوف اللي طابقت بس، فهو مش بيستخدم index. عشان كده الفلترة بـ [[@@]] الأول (بالـ index) وبعدين الترتيب. و [[ts_headline]] بيطلّع جزء من النص والكلمات المطابقة جوه [[<b>]] للعرض (خد بالك: HTML، اعمله escape أو sanitize قبل ما تحطه في الصفحة).
+
+الحدود: مفيش تسامح مع الأخطاء الإملائية (ده pg_trgm، الدرس الجاي)، والعربي محتاج شغل زيادة (نفس الدرس). ولو محتاج facets وتصحيح إملائي وsynonyms وملايين المستندات، ساعتها فكّر في Meilisearch أو Typesense أو Elasticsearch.`,
+            when: "بحث في نصوص طويلة (مقالات، وأوصاف منتجات، وتذاكر)، ولما محتاج ترتيب بالأهمية. للأسماء القصيرة والأكواد والبحث اللي لازم يستحمل أخطاء إملائية، pg_trgm أنسب، وكتير من المشاريع بتستخدم الاتنين مع بعض.",
+            mistakes: R`to_tsquery على كلام اليوزر فأي علامة غريبة تطلّع error 500. لغة مختلفة في التخزين والبحث ([['english']] هنا و [['simple']] هناك) فمفيش حاجة تطابق. تحسب to_tsvector جوه WHERE من غير index فكل بحث يقرا الجدول كله. الترتيب بـ ts_rank على مليون صف طابقوا. [[ts_headline]] بيطلع HTML وبتحطه في الصفحة من غير escape.`
+          },
+          lines: [
+            "جدول المقالات:",
+            "رقم،",
+            "عنوان،",
+            "ومحتوى،",
+            "وعمود البحث: tsvector بيتحسب لوحده،",
+            "كلمات العنوان بوزن A وكلمات المحتوى بوزن B.",
+            "وبيتخزن.",
+            "قفلة.",
+            "GIN index على عمود البحث.",
+            "تلات مقالات:",
+            "واحدة عن Docker و Postgres،",
+            "وواحدة عن الـ indexes،",
+            "وواحدة عن الـ volumes.",
+            "المقالات ودرجة كل واحدة،",
+            "والبحث جاي من كلام اليوزر زي ما هو،",
+            "اللي طابقت بس (بالـ index)،",
+            "والأهم الأول.",
+            "شوف التقطيع: running بقت run، و ran فضلت ran، و quickly بقت quick.",
+            "شوف بيفهم إيه: عبارة ورا بعض، واستبعاد، و or.",
+            "جزء من النص والكلمات المطابقة معلّمة بـ <b>."
+          ]
+        },
+        {
+          cmd: "البحث بالعربي",
+          title: "«أحمد» تلاقي «احمد»، و«محمد مصطفا» تلاقي «مُحَمَّد مصطفى»",
+          desc: R`العربي فيه مشاكل الإنجليزي مفيهوش: نفس الاسم بيتكتب بـ «أحمد» و «احمد»، و «فاطمة» و «فاطمه»، و «مصطفى» و «مصطفي»، وممكن يكون فيه تشكيل أو تطويل (الـــقاهرة). لو قارنت النص زي ما هو، اليوزر اللي كتب «احمد» مش هيلاقي «أحمد».
+
+الحل على خطوتين: تطبيع (normalization) للنص المتخزن ولكلام البحث بنفس الدالة: الهمزات كلها ا، والتاء المربوطة ه، والألف المقصورة ي، ومن غير تشكيل ولا تطويل. وبعدين للأخطاء الإملائية: extension [[pg_trgm]] بيقارن النصوص بالتشابه (similarity) بدل التطابق.
+
+الدالة لازم تكون [[IMMUTABLE]] عشان تتحط في عمود generated وعليه index.`,
+          example: R`CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE FUNCTION ar_normalize(t text) RETURNS text
+LANGUAGE sql IMMUTABLE PARALLEL SAFE AS $$
+  SELECT translate(regexp_replace(lower(t), '[ً-ْـ]', '', 'g'), 'أإآٱةى', 'ااااهي');
+$$;
+SELECT ar_normalize('مُحَمَّد أحمد إبراهيم مدرسة مصطفى الـــقاهرة');
+CREATE TABLE teachers (
+  id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name      text NOT NULL,
+  name_norm text GENERATED ALWAYS AS (ar_normalize(name)) STORED
+);
+CREATE INDEX teachers_name_trgm ON teachers USING gin (name_norm gin_trgm_ops);
+INSERT INTO teachers (name) VALUES ('أحمد إبراهيم'), ('مُحَمَّد مصطفى'), ('فاطمة الزهراء'), ('أسامة عبد الله');
+SELECT name FROM teachers WHERE name_norm LIKE '%' || ar_normalize('فاطمه') || '%';
+SELECT name, similarity(name_norm, ar_normalize('محمد مصطفا')) AS score
+FROM teachers
+WHERE name_norm % ar_normalize('محمد مصطفا')
+ORDER BY score DESC;
+SELECT name FROM teachers WHERE name LIKE '%احمد%';`,
+          try: R`دوّر بـ [[اسامه]] (من غير همزة وبهاء) مرة بـ LIKE على name_norm ومرة بـ [[word_similarity]] و [[<%]]. وبعدين دوّر بغلطة إملائية زي [[ابراهم]] وشوف مين من الطريقتين لقاه. وآخر حاجة: اعمل 5000 مدرس بأسماء متولّدة ([[generate_series]])، وقارن [[EXPLAIN ANALYZE]] للبحث بـ LIKE على name_norm قبل وبعد الـ index.`,
+          sol: R`[[اسامه]] بعد التطبيع بقت [[اسامه]]، و [[أسامة عبد الله]] اتخزنت [[اسامه عبد الله]]، فالـ LIKE هيلاقيها. و [[word_similarity(ar_normalize('اسامه'), name_norm)]] هيطلع [[1]] لأن الكلمة موجودة بالكامل جوه الاسم.
+
+[[ابراهم]] (ناقصها ي): الـ LIKE مش هيلاقي حاجة لأن النص مش موجود بالحرف. أما [[ar_normalize('ابراهم') <% name_norm]] هيلاقي [[أحمد إبراهيم]] لأن أغلب الـ trigrams مشتركة. ده الفرق: التطبيع بيحل اختلاف الكتابة، و pg_trgm بيحل الأخطاء.
+
+في EXPLAIN ANALYZE قبل الـ index هتلاقي [[Seq Scan on teachers]] ومعاها [[Rows Removed by Filter]] بالآلاف، وبعده [[Bitmap Index Scan on teachers_name_trgm]]. وخد بالك: pg_trgm محتاج ٣ حروف على الأقل في البحث عشان يستخدم الـ index بكفاءة، فالبحث بحرفين بيقرا كتير.`,
+          solCode: R`SELECT name FROM teachers WHERE name_norm LIKE '%' || ar_normalize('اسامه') || '%';
+SELECT name, word_similarity(ar_normalize('اسامه'), name_norm) AS score
+FROM teachers WHERE ar_normalize('اسامه') <% name_norm;
+
+SELECT name FROM teachers WHERE name_norm LIKE '%' || ar_normalize('ابراهم') || '%';
+SELECT name FROM teachers WHERE ar_normalize('ابراهم') <% name_norm;
+
+DROP INDEX teachers_name_trgm;
+INSERT INTO teachers (name) SELECT 'مدرس رقم ' || g FROM generate_series(1, 5000) g;
+ANALYZE teachers;
+EXPLAIN ANALYZE SELECT name FROM teachers WHERE name_norm LIKE '%فاطمه%';
+CREATE INDEX teachers_name_trgm ON teachers USING gin (name_norm gin_trgm_ops);
+EXPLAIN ANALYZE SELECT name FROM teachers WHERE name_norm LIKE '%فاطمه%';`,
+          flag: "script",
+          deep: {
+            why: "في منصة تعليمية، أو متجر، أو نظام موظفين مصري، أغلب البحث بأسماء عربي. اليوزر بيكتب بسرعة من الموبايل من غير همزات، أو بيغلط حرف. لو البحث مش بيستحمل ده، اليوزر هيقول «الاسم مش موجود» وهو موجود، وده بيبان للعميل كأنه bug.",
+            how: R`التطبيع: [[regexp_replace(..., '[ً-ْـ]', '', 'g')]] بيشيل التشكيل (الفتحة والضمة والكسرة والتنوين والشدة والسكون، من U+064B لـ U+0652) والتطويل (U+0640). و [[translate(نص, 'أإآٱةى', 'ااااهي')]] بيبدّل كل حرف من الأولى باللي قصاده في التانية بالترتيب، فعدد الحروف لازم يبقى متساوي والترتيب مظبوط. [[lower]] عشان لو فيه إنجليزي في الاسم.
+
+القاعدة الذهبية: نفس الدالة على المتخزن وعلى كلام البحث. لو طبّعت واحد بس، مفيش حاجة هتطابق.
+
+ليه ة تبقى ه مش العكس؟ الاتنين شغالين طالما ثابت. المهم إن «فاطمة» و «فاطمه» يبقوا نفس النص بعد التطبيع.
+
+[[pg_trgm]] بيقطّع النص لـ trigrams (كل ٣ حروف ورا بعض)، و [[similarity(a, b)]] = نسبة الـ trigrams المشتركة من ٠ لـ ١. [[a % b]] معناها «التشابه أكبر من [[pg_trgm.similarity_threshold]]» (الافتراضي 0.3). و [[word_similarity(كلمة, نص)]] مع [[<%]] بيدوّر على الكلمة جوه نص أطول، وده الأنسب لما اليوزر يكتب جزء من الاسم.
+
+الـ index [[gin (col gin_trgm_ops)]] بيخدم [[%]] و [[<%]] و [[LIKE '%x%']] و [[ILIKE]] كمان. يعني نفس الـ index بيحل مشكلة «LIKE بـ % في الأول مبيستخدمش index» من درس LIKE و ILIKE.
+
+والـ full-text بالعربي: Postgres فيه configuration [[arabic]] بيعمل stemming ([[to_tsvector('arabic', 'المدرسون')]] بتطلع [['مدرس']])، بس مبيطبّعش الهمزات والتاء المربوطة. فلو محتاجه: [[to_tsvector('arabic', ar_normalize(body))]] في العمود الـ generated، ونفس الحاجة في البحث.
+
+و Supabase فيه pg_trgm و unaccent جاهزين، فعّلهم من Database ← Extensions.`,
+            when: "أي بحث بأسماء عربي (مدرسين، وطلاب، وعملاء، ومنتجات)، وأي بحث لازم يستحمل أخطاء إملائية أو autocomplete. للنصوص الطويلة: full-text على النص المتطبّع، ومعاه pg_trgm للأسماء.",
+            mistakes: R`تطبّع المتخزن وتنسى تطبّع كلام البحث (أو العكس). [[translate]] بعدد حروف مختلف أو ترتيب غلط، فالتاء المربوطة تبقى ي (حصلت وانا بكتب الدرس ده). الدالة من غير IMMUTABLE فالعمود الـ generated يرفض. threshold عالي فمفيش نتايج، أو واطي فكل حاجة تطلع. بحث بحرف أو حرفين على trigram index. و ILIKE على name الأصلي وتفتكر إنه هيلاقي «احمد» جوه «أحمد».`
+          },
+          lines: [
+            "فعّل extension الـ trigrams.",
+            "دالة التطبيع: نص داخل ونص خارج،",
+            "IMMUTABLE: نفس المدخل يرجّع نفس المخرج دايمًا (شرط الـ index).",
+            "شيل التشكيل والتطويل، وبعدين بدّل الهمزات بـ ا، و ة بـ ه، و ى بـ ي.",
+            "قفلة.",
+            "جرّب: محمد احمد ابراهيم مدرسه مصطفي القاهره.",
+            "جدول المدرسين:",
+            "رقم،",
+            "الاسم زي ما اتكتب (للعرض)،",
+            "والاسم المتطبّع، بيتحسب لوحده.",
+            "قفلة.",
+            "trigram index على الاسم المتطبّع.",
+            "٤ مدرسين بهمزات وتشكيل وتاء مربوطة.",
+            "«فاطمه» بالهاء لقت «فاطمة» بالتاء، لأن الاتنين اتطبّعوا.",
+            "بحث بغلطة إملائية: درجة التشابه،",
+            "من المدرسين،",
+            "اللي تشابههم فوق الحد (0.3 افتراضيًا)،",
+            "الأقرب الأول.",
+            "من غير تطبيع: مفيش نتيجة، لأن المتخزن «أحمد» بهمزة."
+          ]
+        }
+      ]
+    },
+    {
+      t: "Prisma من الكود",
+      l: 3,
+      n: "نفس المتجر بس من TypeScript: إعداد Prisma 7، والـ schema والعلاقات، وتجيب وتكتب علاقات في query واحد، و SQL خام بأمان، و N+1",
+      items: [
+        {
+          cmd: "إعداد Prisma 7",
+          title: "prisma.config.ts و driver adapter والـ client المتولّد",
+          desc: R`Prisma 7 غيّر طريقة الإعداد عن 5 و 6. تلات حاجات لازم تعرفها:
+
+رابط القاعدة مبقاش في [[schema.prisma]]. بقى في ملف [[prisma.config.ts]] جنب package.json، وده اللي الـ CLI (migrate و generate) بيقراه. والملف ده مش بيقرا [[.env]] لوحده: لازم [[import "dotenv/config"]] في أوله.
+
+الـ client مبقاش بيتولّد جوه node_modules. الـ generator الجديد [[prisma-client]] بيكتب كود TypeScript في فولدر انت بتحدده بـ [[output]]، وبتستورد منه: [[./generated/prisma/client]].
+
+والـ client محتاج driver adapter: لـ Postgres هو [[@prisma/adapter-pg]]، وده بيستخدم مكتبة [[pg]] من تحت. بتعمل adapter برابط القاعدة وتدّيه لـ [[new PrismaClient({ adapter })]].
+
+والمثال هنا نفس متجر التاب ده (users و orders و products و order_items)، بس جداول جديدة بتعملها Prisma في قاعدة فاضية.`,
+          example: R`// prisma.config.ts
+import "dotenv/config";
+import { defineConfig } from "prisma/config";
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: { path: "prisma/migrations" },
+  datasource: { url: process.env["DATABASE_URL"] },
+});
+
+// prisma/schema.prisma (أول الملف)
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+datasource db {
+  provider = "postgresql"
+}
+
+// src/db.ts
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "./generated/prisma/client";
+
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+export const prisma = new PrismaClient({ adapter, log: ["query", "warn", "error"] });`,
+          try: R`اعمل مشروع جديد في فولدر فاضي: [[npm init -y]]، و [[npm pkg set type=module]]، وسطّب [[prisma@7]] و [[tsx]] و [[dotenv]] كـ dev dependencies، و [[@prisma/client@7]] و [[@prisma/adapter-pg@7]] و [[pg]]. شغّل [[npx prisma init --datasource-provider postgresql --output ../src/generated/prisma]] وشوف اسم ملف الـ config اللي اتعمل. عدّل [[DATABASE_URL]] في .env يشاور على قاعدة فاضية في الـ lab (مثلًا [[createdb shop]])، وضيف model بسيط، وشغّل [[npx prisma migrate dev --name init]]. فيه فولدر [[src/generated]] اتعمل؟`,
+          sol: R`بعد [[prisma init]] هتلاقي [[prisma/schema.prisma]] و [[.env]] وملف config. في آخر نسخ Prisma 7 (7.10 وقت كتابة الدرس) الملف بيتسمّى [[prisma7.config.ts]] مش [[prisma.config.ts]]، عشان الاسم ده هيبقى لـ Prisma 8. الاتنين بيتقروا في Prisma 7 وجواهم نفس الكلام، فلو المشروع أو الدروس بتقول prisma.config.ts متقلقش.
+
+بعد [[migrate dev]] هتشوف [[Your database is now in sync with your schema]] وفولدر [[prisma/migrations/التاريخ_init/migration.sql]]. بس فولدر [[src/generated]] مش هيبقى موجود. من Prisma 7 الـ migrate مبقاش بيعمل generate لوحده، فلازم [[npx prisma generate]] وبعدها هتلاقي [[src/generated/prisma/client.ts]].
+
+الأخطاء الشائعة: لو نسيت [[import "dotenv/config"]] في ملف الـ config، الـ CLI مش هيلاقي الرابط. ولو كتبت [[npm i -D prisma]] من غير [[@7]]، ممكن تنزل نسخة 8 (وقت كتابة الدرس الـ tag [[latest]] بتاع الـ CLI كان بيشاور على 8.0.0-rc)، و 8 ليها API مختلف تمامًا. ولو استوردت [[PrismaClient]] من [[@prisma/client]] بدل الفولدر المتولّد هيقولك إن الـ client مش متولّد. ولو السكربت فيه top-level await واشتكى من [[cjs]]، يبقى ناقصك [[type=module]] في package.json.`,
+          solCode: R`mkdir shop-prisma && cd shop-prisma
+npm init -y && npm pkg set type=module
+npm i -D prisma@7 tsx dotenv
+npm i @prisma/client@7 @prisma/adapter-pg@7 pg
+npx prisma init --datasource-provider postgresql --output ../src/generated/prisma
+# عدّل DATABASE_URL في .env، وضيف model في prisma/schema.prisma
+npx prisma migrate dev --name init
+npx prisma generate
+ls src/generated/prisma
+npx tsx src/main.ts`,
+          flag: "script",
+          deep: {
+            why: "Prisma هو الـ ORM الأشهر في مشاريع Node و Next.js، وتقريبًا كل tutorial قديم على النت بيوريك إعداد 5 أو 6 (url جوه الـ schema، و import من @prisma/client). لو مشيت وراه على Prisma 7 هتقع في errors مش مفهومة. وفهم الأجزاء (CLI بيقرا config، و client بيتولّد، و adapter بيكلّم القاعدة) بيخليك تعرف المشكلة فين لما حاجة تقع.",
+            how: R`في Prisma 7 الـ client اتكتب من غير الـ query engine القديم (binary مكتوب بـ Rust كان بيتحط جنب التطبيق). دلوقتي الـ client TypeScript بيبني SQL ويبعته عن طريق الـ driver adapter، و [[@prisma/adapter-pg]] بيستخدم pool من مكتبة [[pg]]. عشان كده الـ adapter إجباري، والـ bundle أصغر، ومفيش binary يختلف بين الماك والسيرفر.
+
+[[prisma.config.ts]] للـ CLI بس: [[migrate]] و [[db pull]] و [[studio]] بيقروا منه رابط القاعدة ومكان الـ schema والـ migrations. التطبيق نفسه مش بيقراه. التطبيق بياخد الرابط من [[process.env.DATABASE_URL]] ويدّيه للـ adapter. يعني ممكن الاتنين يبقوا مختلفين: الـ CLI على رابط مباشر (direct) عشان الـ migrations، والتطبيق على رابط الـ pooler (زي Supabase، درس connection pooling في تاب «PostgreSQL»).
+
+الـ generator [[prisma-client]] بيكتب ملفات [[.ts]] في الـ output. عشان كده التطبيق لازم يكون TypeScript أو يتشغّل بـ [[tsx]]، أو تبنيه بـ [[tsc]]. و [[src/generated]] حطه في [[.gitignore]] وولّده في الـ CI والـ Docker build بـ [[prisma generate]].
+
+[[log: ["query"]]] بيطبع كل SQL الـ client بيبعته. ده أهم أداة عندك عشان تفهم Prisma بيعمل إيه، وهتستخدمه في درس N+1. خليه في التطوير بس.
+
+وعمل instance واحد من PrismaClient للتطبيق كله (singleton) اتشرح في درس Prisma client في تاب «Backend بـ Node». والـ migrations (migrate dev على جهازك و migrate deploy على السيرفر) في درس Prisma migrate في تاب «PostgreSQL».`,
+            when: "أي مشروع Node أو Next.js جديد بـ Postgres أو MySQL أو SQLite. في مشروع قديم على Prisma 6 خد النقل خطوة خطوة بدليل الـ upgrade الرسمي. و Prisma 8 وقت كتابة الدرس لسه RC و API بتاعه مختلف تمامًا، فمتبدأش بيه مشروع حقيقي لحد ما يبقى stable ويكون فيه دليل واضح.",
+            mistakes: R`[[npm i prisma]] من غير version فتنزل major مش هي اللي انت متوقعها. ناسي [[dotenv/config]]. [[prisma generate]] مش في الـ build، فالسيرفر يقوم من غير client. الـ generated في git فيحصل conflicts. [[migrate dev]] على الإنتاج (بيقترح reset ويمسح الداتا). وتعدّل ملف migration اتطبق قبل كده: Prisma بيحسب checksum لكل ملف، فهيقولك إن الـ migration اتغيرت ويطلب reset. أي تصليح بيبقى migration جديدة.`
+          },
+          lines: [
+            "حمّل .env في process.env، لأن الـ config مش بيعملها لوحده.",
+            "دالة الإعداد من Prisma.",
+            "الإعداد:",
+            "مكان الـ schema،",
+            "ومكان فولدر الـ migrations،",
+            "ورابط القاعدة اللي الـ CLI هيستخدمه.",
+            "قفلة.",
+            "الـ generator الجديد:",
+            "prisma-client بدل prisma-client-js القديم،",
+            "والكود المتولّد يتكتب هنا (المسار نسبةً لملف الـ schema).",
+            "قفلة.",
+            "نوع القاعدة، ومفيش url هنا خلاص.",
+            "postgresql.",
+            "قفلة.",
+            "في التطبيق: حمّل .env برضه.",
+            "الـ driver adapter بتاع Postgres.",
+            "الـ client من الفولدر المتولّد، مش من @prisma/client.",
+            "adapter برابط القاعدة (بيعمل pool من pg).",
+            "client واحد للتطبيق كله، وبيطبع كل SQL بيتبعت."
+          ]
+        },
+        {
+          cmd: "schema.prisma",
+          title: "models و @relation و onDelete و @@index",
+          desc: R`كل [[model]] في [[schema.prisma]] بيبقى جدول، وكل سطر جواه عمود: الاسم، والنوع، وبعدين attributes بـ [[@]]. ومن الملف ده Prisma بيعمل حاجتين: الـ migrations (الـ SQL)، والـ types في الـ client.
+
+العلاقة ليها ناحيتين: في [[Order]] عمود حقيقي [[userId]] ومعاه [[user User @relation(fields: [userId], references: [id])]] (ده FK)، وفي [[User]] سطر [[orders Order[]]] مالوش عمود في القاعدة: موجود بس عشان تقدر تكتب [[include: { orders: true }]].
+
+و [[@map]] و [[@@map]] بيخلّوا الأسماء في TypeScript زي [[createdAt]] وفي القاعدة [[created_at]]، فالـ SQL الخام يفضل snake_case زي باقي التاب.`,
+          example: R`model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  status    String   @default("pending")
+  total     Decimal  @default(0) @db.Decimal(10, 2)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("orders")
+}`,
+          try: R`حط الموديلين في الـ schema وشغّل [[migrate dev]]، وافتح [[migration.sql]] ودوّر على: الـ FOREIGN KEY وفيه ON DELETE إيه، والـ index المركّب، ونوع عمود total. وبعدين غيّر [[onDelete: Restrict]] لـ [[Cascade]] واعمل migration تانية واقرا الـ SQL بتاعها. وآخر حاجة: اعمل يوزر وأوردر ليه من الكود، وجرّب [[prisma.user.delete]] مع Restrict، واطبع [[e.code]].`,
+          sol: R`في الـ migration الأولى هتلاقي [[CREATE TABLE "users"]] و [[CREATE TABLE "orders"]] بأسماء snake_case (بسبب [[@map]])، و [[CREATE INDEX "orders_user_id_created_at_idx" ON "orders"("user_id", "created_at" DESC)]]، و [[ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE]]، و total نوعه [[DECIMAL(10,2)]].
+
+الـ migration التانية هتبقى [[DROP CONSTRAINT]] وبعده [[ADD CONSTRAINT]] بنفس الاسم بس [[ON DELETE CASCADE]]. وده بيوريك إن تغيير سطر في الـ schema ممكن يبقى أكتر من أمر SQL، فاقرا الملف قبل ما تعمله commit.
+
+والمسح مع Restrict هيفشل، و [[e.code]] هيبقى [[P2003]] (Foreign key constraint violated on the constraint orders_user_id_fkey). في الـ error handler حوّله لـ 409 برسالة زي «اليوزر ده عنده أوردرات». ولو قريت الرسالة وملقيتش P2003، اتأكد إن الـ migration الأولى هي اللي متطبقة مش التانية.`,
+          solCode: R`// src/try-delete.ts
+import { prisma } from "./db";
+
+const user = await prisma.user.create({
+  data: { email: "ali@example.com", name: "Ali", orders: { create: { total: 250 } } },
+});
+try {
+  await prisma.user.delete({ where: { id: user.id } });
+} catch (e: any) {
+  console.log(e.code);
+}
+await prisma.$disconnect();`,
+          flag: "script",
+          deep: {
+            why: "الـ schema هو المصدر الوحيد للحقيقة: منه بتطلع الجداول في القاعدة، والـ types اللي بتحميك في الكود. أي غلطة فيه (FK من غير index، أو onDelete غلط، أو Float للفلوس) بتتحول لجدول غلط في الإنتاج، وتصليحها بعد ما يبقى فيه داتا أصعب بكتير.",
+            how: R`الأنواع: [[String]] بيبقى [[text]]، و [[Int]] بيبقى [[integer]]، و [[BigInt]] بيبقى [[bigint]] (وبيرجع JavaScript bigint، ودي مبتتحولش JSON لوحدها)، و [[Decimal]] بيبقى [[numeric]] (وبيرجع object من نوع Decimal مش number، درس numeric للفلوس)، و [[DateTime]] بيبقى timestamp. و [[@db.Timestamptz]] و [[@db.Uuid]] و [[@db.Decimal(10, 2)]] بيحددوا النوع الـ native بالظبط. من غيرهم DateTime بيبقى [[timestamp(3)]] من غير tz، ودي المشكلة اللي في درس أنواع الأعمدة.
+
+[[@id]] الـ primary key، و [[@@id([a, b])]] مفتاح مركّب. [[@default(uuid())]] الـ id بيتولّد من الـ client، و [[@default(dbgenerated("gen_random_uuid()"))]] بيخلي القاعدة هي اللي تولّده. [[@unique]] و [[@@unique([a, b])]] بيعملوا unique constraint.
+
+[[@relation(fields: [userId], references: [id])]] بيتكتب في الناحية اللي فيها العمود. [[onDelete]]: [[Cascade]] و [[Restrict]] و [[SetNull]] (العمود لازم يبقى optional بـ [[?]]) و [[NoAction]]. الافتراضي لو العلاقة إجبارية [[Restrict]]، ولو optional [[SetNull]]. نفس معاني درس ON DELETE في المستوى التاني.
+
+مهم: Prisma على Postgres مش بيعمل index لوحده على عمود الـ FK. [[@@index([userId])]] انت اللي بتكتبه. والـ index المركّب [[(userId, createdAt DESC)]] بيخدم «أوردرات يوزر مترتبة بالأحدث» زي درس composite index.
+
+[[status String]] ولا [[enum]]؟ الـ enum في Prisma بيبقى [[CREATE TYPE ... AS ENUM]] في Postgres، وده صعب تشيل منه قيمة بعدين. كتير من الفرق بتفضّل String ومعاه CHECK في migration بإيدها، أو validation في الكود.`,
+            when: "مع كل تغيير في الداتا: عدّل الـ schema، وشغّل migrate dev، واقرا الـ SQL، وبعدين commit للاتنين مع بعض. ولو القاعدة موجودة قبل Prisma: [[prisma db pull]] بيكتب الـ schema منها.",
+            mistakes: R`[[Float]] للفلوس. [[DateTime]] من غير [[@db.Timestamptz]]. FK من غير [[@@index]]. [[onDelete: Cascade]] على علاقة فيها فلوس (مسح يوزر يمسح أوردراته وفواتيره). أسماء PascalCase من غير [[@@map]]، وبعدين تكتب SQL خام فتحتاج [["User"]] بتنصيص في كل حتة. [[@updatedAt]] وتفتكر إنه trigger في القاعدة: ده الـ client بيحطه، فالتعديل من psql مش بيحدّثه (درس CREATE TRIGGER). وفي الانترفيو: «ليه onDelete Restrict للأوردرات؟» عشان مسح يوزر بالغلط ميضيّعش تاريخ المبيعات، والأحسن soft delete.`
+          },
+          lines: [
+            "model User = جدول.",
+            "id نص بيتخزن uuid، وبيتولّد لوحده.",
+            "الإيميل unique.",
+            "الاسم إجباري (من غير ? يعني NOT NULL).",
+            "createdAt في الكود، و created_at في القاعدة، ونوعه timestamptz.",
+            "الناحية التانية من العلاقة: مالهاش عمود، بس بتخليك تعمل include للأوردرات.",
+            "اسم الجدول في القاعدة users.",
+            "قفلة.",
+            "model Order.",
+            "id رقم متسلسل.",
+            "العمود الحقيقي للـ FK: user_id في القاعدة.",
+            "العلاقة: userId بيشاور على User.id، ومسح يوزر عنده أوردرات مرفوض.",
+            "الحالة نص، وافتراضيًا pending.",
+            "الفلوس Decimal(10,2)، مش Float.",
+            "وقت الإنشاء timestamptz.",
+            "index مركّب: أوردرات اليوزر بالأحدث.",
+            "اسم الجدول orders.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "علاقات Prisma",
+          title: "one-to-many و many-to-many: implicit ولا explicit join table",
+          desc: R`one-to-many اتشرحت في الدرس اللي فات: FK في ناحية، و [[Model[]]] في الناحية التانية.
+
+many-to-many في Prisma ليها طريقتين:
+
+implicit: بتكتب [[tags Tag[]]] في Product و [[products Product[]]] في Tag، و Prisma بيعمل جدول ربط لوحده اسمه [[_ProductToTag]] بعمودين [[A]] و [[B]]، ومبتشوفوش في الكود خالص.
+
+explicit: بتعمل انت model للربط، زي [[OrderItem]] بين Order و Product. ده لازم لما الربط نفسه ليه داتا: الكمية وسعر الوحدة وقت الشرا. وده نفس جدول order_items في درس many-to-many في المستوى التاني.
+
+القاعدة: لو الربط ممكن يحتاج أي عمود في يوم من الأيام (وقت الإضافة، مين ضافه، ترتيب)، ابدأ explicit. التحويل من implicit لـ explicit بعدين migration مش لطيفة.`,
+          example: R`model Product {
+  id    Int         @id @default(autoincrement())
+  name  String
+  price Decimal     @db.Decimal(10, 2)
+  stock Int         @default(0)
+  items OrderItem[]
+  tags  Tag[]
+
+  @@map("products")
+}
+
+model OrderItem {
+  orderId   Int     @map("order_id")
+  productId Int     @map("product_id")
+  quantity  Int
+  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@id([orderId, productId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  products Product[]
+
+  @@map("tags")
+}`,
+          try: R`ضيف الموديلات دي، وضيف في Order السطر [[items OrderItem[]]]. شغّل migrate dev واقرا الـ SQL: الجدول الـ implicit اسمه إيه وأعمدته إيه وعليه إيه؟ وبعدين من الكود: اعمل منتج بتاجين، وشيل تاج منه بـ [[disconnect]]، وهات المنتجات اللي فيها تاج معين.`,
+          sol: R`في الـ SQL هتلاقي [[CREATE TABLE "_ProductToTag" ("A" INTEGER NOT NULL, "B" INTEGER NOT NULL, CONSTRAINT "_ProductToTag_AB_pkey" PRIMARY KEY ("A","B"))]] و [[CREATE INDEX "_ProductToTag_B_index"]]، واتنين FOREIGN KEY بـ [[ON DELETE CASCADE]]. [[A]] بيشاور على الموديل اللي اسمه أول أبجديًا (Product) و [[B]] على التاني (Tag). يعني الأسماء مش واضحة لو كتبت SQL خام عليه، وده من أسباب إن ناس كتير بتفضّل explicit.
+
+ومن الكود: [[tags: { connectOrCreate: [...] }]] وقت الإنشاء، و [[tags: { disconnect: { name: "kitchen" } }]] في update بيمسح صف الربط بس (التاج نفسه بيفضل موجود)، و [[where: { tags: { some: { name: "kitchen" } } }]] بيجيب المنتجات اللي فيها التاج.
+
+لو الـ migrate اشتكى إن Order ناقصه العلاقة التانية ([[The relation field order on model OrderItem is missing an opposite relation field]])، يبقى نسيت [[items OrderItem[]]] في Order. كل علاقة في Prisma لازم يكون ليها الناحيتين.`,
+          solCode: R`import { prisma } from "./db";
+
+const tag = (name: string) => ({ where: { name }, create: { name } });
+const mug = await prisma.product.create({
+  data: { name: "Mug", price: 120, stock: 15, tags: { connectOrCreate: [tag("kitchen"), tag("gift")] } },
+  include: { tags: true },
+});
+console.log(mug.tags.map((t) => t.name));
+
+await prisma.product.update({ where: { id: mug.id }, data: { tags: { disconnect: { name: "gift" } } } });
+
+const kitchen = await prisma.product.findMany({
+  where: { tags: { some: { name: "kitchen" } } },
+  select: { name: true },
+});
+console.log(kitchen);
+await prisma.$disconnect();`,
+          flag: "script",
+          deep: {
+            why: "تقريبًا كل مشروع فيه many-to-many: منتجات وتاجات، وطلاب وكورسات، ويوزرز وأدوار. والاختيار بين implicit و explicit بيتعمل في أول يوم، وبيفرق جدًا بعد سنة لما حد يطلب «امتى الطالب اشترك في الكورس؟» ومفيش مكان تخزن فيه التاريخ.",
+            how: R`الـ implicit: Prisma بيدير جدول [[_AToB]] بالكامل. [[connect]] بيضيف صف فيه، و [[disconnect]] بيمسحه، و [[set: [...]]] بيستبدل كل الروابط. والـ include بيعدّي عليه لوحده: [[include: { tags: true }]] بيرجّع التاجات على طول.
+
+الـ explicit: جدول عادي وليه model، والمفتاح غالبًا مركّب [[@@id([orderId, productId])]] (فمينفعش نفس المنتج يتكرر في نفس الأوردر). والـ include بيبقى مستويين: [[include: { items: { include: { product: true } } }]]. وبتضيف وتشيل بـ [[create]] و [[delete]] على الـ OrderItem نفسه.
+
+الـ [[@@index([productId])]]: الـ primary key [[(orderId, productId)]] بيخدم البحث بـ orderId (أول عمود)، بس البحث بـ productId لوحده («المنتج ده اتباع في أنهي أوردرات») محتاج index تاني. نفس فكرة درس composite index. في الـ implicit، Prisma بيعمل index على B لوحده.
+
+[[onDelete: Cascade]] من OrderItem لـ Order: مسح الأوردر بيمسح بنوده. ومن غير onDelete لـ Product، يعني Restrict: مينفعش تمسح منتج اتباع قبل كده. ودي نفس قرارات درس ON DELETE.
+
+وفيه كمان self-relation (يوزر بيتابع يوزر، أو موظف ومديره): العلاقة على نفس الـ model، ومحتاجة اسم [[@relation("Manager")]] على الناحيتين عشان Prisma يفرّق بينهم.`,
+            when: "implicit: ربط بسيط مش هيحتاج أي بيانات إضافية ومش هتكتب عليه SQL خام كتير (تاجات، وفئات). explicit: أي حاجة فيها كمية، أو سعر، أو تاريخ، أو دور، أو ترتيب (بنود أوردر، واشتراك في كورس، وعضوية في فريق بدور).",
+            mistakes: R`implicit لبنود الأوردر فمفيش مكان للكمية. تنسى الناحية التانية من العلاقة فالـ schema ميتعملوش validate. explicit من غير unique على الزوج، فنفس المنتج يتضاف مرتين. تكتب SQL خام على [[_ProductToTag]] وتنسى إن A و B بيتحددوا بالترتيب الأبجدي. وفي الانترفيو: «إزاي بتعمل many-to-many في قاعدة relational؟» جدول وسيط فيه FK للطرفين ومفتاح مركّب، والـ ORM بيخفيه بس هو موجود.`
+          },
+          lines: [
+            "model Product.",
+            "id متسلسل.",
+            "الاسم.",
+            "السعر Decimal.",
+            "المخزون.",
+            "بنود الأوردرات اللي فيها المنتج (ناحية الـ explicit).",
+            "التاجات: many-to-many implicit، Prisma بيعمل جدول الربط لوحده.",
+            "الجدول products.",
+            "قفلة.",
+            "جدول الربط explicit: بند في أوردر.",
+            "عمود الأوردر.",
+            "عمود المنتج.",
+            "الكمية: داتا خاصة بالربط نفسه.",
+            "سعر الوحدة وقت الشرا.",
+            "العلاقة بالأوردر، ومسح الأوردر يمسح بنوده.",
+            "العلاقة بالمنتج، ومسح منتج اتباع مرفوض (Restrict).",
+            "مفتاح مركّب: المنتج مرة واحدة في كل أوردر.",
+            "index للبحث بالمنتج لوحده.",
+            "الجدول order_items.",
+            "قفلة.",
+            "model Tag.",
+            "id.",
+            "اسم التاج unique (عشان connectOrCreate بالاسم).",
+            "الناحية التانية من الـ many-to-many.",
+            "الجدول tags.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "include و select",
+          title: "هات العلاقات والحقول اللي محتاجها بس",
+          desc: R`[[findMany]] من غير حاجة بيرجّع كل أعمدة الجدول ومن غير أي علاقات.
+
+[[include]] بيضيف علاقات فوق كل الأعمدة: [[include: { user: true }]] يرجّع الأوردر كامل ومعاه اليوزر كامل.
+
+[[select]] بيحدد بالظبط إيه اللي يرجع، أعمدة وعلاقات، ولأي عمق: [[select: { id: true, user: { select: { email: true } } }]]. والـ type اللي بيرجع بيتغير على حسب اللي اخترته، فلو حاولت تقرا حاجة مطلبتهاش، TypeScript هيقولك قبل ما تشغّل.
+
+القاعدة: في الـ API استخدم select. الأسرع (أعمدة أقل)، والأأمن (مفيش [[passwordHash]] بيتسرّب في رد)، والرد شكله ثابت. ومينفعش select و include في نفس المستوى، بس ينفع include جوه select أو العكس في مستوى أعمق.`,
+          example: R`const orders = await prisma.order.findMany({
+  where: { status: "pending" },
+  orderBy: { createdAt: "desc" },
+  take: 20,
+  select: {
+    id: true,
+    total: true,
+    user: { select: { email: true } },
+    items: { select: { quantity: true, product: { select: { name: true } } } },
+  },
+});
+
+const order = await prisma.order.findUnique({
+  where: { id: 1 },
+  include: { user: true, items: { include: { product: true } } },
+});
+
+const user = await prisma.user.findUnique({
+  where: { email: "ali@example.com" },
+  include: { orders: { where: { status: "paid" }, orderBy: { createdAt: "desc" }, take: 3 } },
+});`,
+          try: R`شغّل الاستعلام الأول والتاني و [[log: ["query"]]] شغال، وعدّ كام SQL اتبعت لكل واحد وإيه الأعمدة اللي اتطلبت. وبعدين حاول في الاستعلام الأول تقرا [[orders[0].status]] وشوف TypeScript قال إيه. وجرّب تحط select و include مع بعض في نفس المستوى.`,
+          sol: R`الاستعلام الأول هيطلّع كذا SQL (واحد للأوردرات، وواحد لليوزرز، وواحد للبنود، وواحد للمنتجات)، وكل واحد فيه [[WHERE ... IN ($1, $2, ...)]] بالـ ids اللي جات من اللي قبله، مش استعلام لكل أوردر. وفي SELECT هتلاقي الأعمدة اللي طلبتها بس، ومعاها الـ ids اللي Prisma محتاجها عشان يربط النتايج ببعض.
+
+التاني نفس عدد الاستعلامات بس بـ [[SELECT]] لكل الأعمدة في كل جدول.
+
+[[orders[0].status]]: TypeScript هيطلّع [[Property 'status' does not exist on type]]، لأن الـ type اتبنى من الـ select. ده بيمنعك تعتمد على حقل مش جاي. ولو بتكتب JavaScript من غير types، القيمة هتبقى [[undefined]] من غير أي error، وده بيبقى bug صعب تلاقيه.
+
+و select مع include في نفس المستوى: [[Please either use include or select, but not both at the same time]]. لو محتاج أعمدة معينة وعلاقة: select للأعمدة، وجواه [[user: { select: {...} }]] أو [[user: true]].`,
+          solCode: R`// نفس الـ client بـ log: ["query"]
+const orders = await prisma.order.findMany({
+  where: { status: "pending" },
+  select: { id: true, total: true, user: { select: { email: true } } },
+});
+console.log(orders[0]?.total.toString());
+
+await prisma.order.findMany({ select: { id: true }, include: { user: true } } as any)
+  .catch((e) => console.log(e.message.split("\n").at(-1)));`,
+          flag: "script",
+          deep: {
+            why: "أغلب مشاكل الأداء مع ORM بتيجي من إنه بيجيب أكتر من اللازم: كل الأعمدة (ومنها jsonb تقيل أو نص طويل) وعلاقات مش محتاجها. وأغلب تسريبات البيانات في APIs بتيجي من [[res.json(user)]] على object فيه hash الباسورد أو توكن. select بيحل الاتنين من نفس المكان.",
+            how: R`Prisma 7 بيطلّع لكل مستوى من العلاقات استعلام منفصل بـ [[IN]] (زي اللي بتشوفه في الـ log). يعني include بـ ٣ مستويات = ٤ استعلامات، مهما كان عدد الصفوف. ده مش N+1: عدد الاستعلامات ثابت. بس لو المستوى الأول رجّع ١٠ آلاف صف، الـ [[IN]] بتاع المستوى التاني هيبقى فيه ١٠ آلاف قيمة، فخلي [[take]] دايمًا موجود.
+
+جوه include أو select لعلاقة many، تقدر تكتب [[where]] و [[orderBy]] و [[take]] و [[skip]] للأولاد بس: «آخر ٣ أوردرات مدفوعة». وده بيطبّق الـ take على كل أب لوحده في النتيجة.
+
+والأنواع: [[Decimal]] بيرجع object ([[Prisma.Decimal]])، فـ [[JSON.stringify]] بيحوّله string زي [["250"]]، و [[BigInt]] بيوقّع JSON.stringify خالص. و [[DateTime]] بيرجع Date.
+
+ولو نفس الـ select بيتكرر، اعمله ثابت واحد: [[const orderListSelect = { id: true, total: true } satisfies Prisma.OrderSelect]]، واستخدم [[Prisma.OrderGetPayload<{ select: typeof orderListSelect }>]] عشان تجيب الـ type بتاع النتيجة.
+
+وفيه [[omit]] (موجود في Prisma من 6.2): [[omit: { passwordHash: true }]] على الـ query، أو على مستوى الـ client كله، بيرجّع كل الأعمدة ماعدا دي. مفيد لما الأعمدة كتير والممنوع حاجة واحدة.`,
+            when: "select في كل endpoint بيرجّع داتا للعميل. include في الكود الداخلي (سكربتات، و jobs، و tests) لما محتاج الـ object كامل. و omit لما فيه عمود حساس لازم ميطلعش أبدًا من غير ما تعدّ باقي الأعمدة.",
+            mistakes: R`[[include: { user: true }]] في رد API فالـ hash يطلع. include متداخل ٤ مستويات من غير take فيرجع ميجات. [[findMany]] من غير take على جدول بيكبر. [[JSON.stringify]] على نتيجة فيها BigInt. وتفتكر إن include بيعمل JOIN واحد، وهو في الحقيقة استعلام لكل مستوى. وفي الانترفيو: «إيه الفرق بين include و select في Prisma؟» include بيضيف علاقات فوق كل الأعمدة، و select بيحدد كل حاجة بالظبط وبيغيّر الـ type.`
+          },
+          lines: [
+            "قايمة أوردرات لصفحة الأدمن:",
+            "الـ pending بس،",
+            "الأحدث الأول،",
+            "٢٠ بس.",
+            "والحقول دي بالظبط:",
+            "رقم الأوردر،",
+            "والإجمالي،",
+            "وإيميل صاحبه بس (مش كل بيانات اليوزر)،",
+            "والبنود: الكمية واسم المنتج.",
+            "قفلة الـ select.",
+            "قفلة.",
+            "صفحة أوردر واحد في الكود الداخلي:",
+            "بالـ id،",
+            "كل الأعمدة، ومعاها اليوزر كامل، والبنود وجوا كل بند المنتج كامل.",
+            "قفلة.",
+            "يوزر ومعاه:",
+            "بالإيميل،",
+            "آخر ٣ أوردرات مدفوعة ليه بس (فلتر وترتيب وحد على الأولاد).",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "nested writes",
+          title: "اعمل أوردر ببنوده في أمر واحد: create و connect و connectOrCreate",
+          desc: R`بدل ما تعمل الأوردر وتاخد الـ id وبعدين تعمل البنود واحد واحد، Prisma بيخليك تكتب الأب والأولاد في أمر واحد، وبيحطهم في transaction واحدة: يا كلهم يتكتبوا، يا ولا حاجة.
+
+جوه علاقة في [[data]] عندك:
+
+[[create]] اعمل صف جديد مربوط (الأوردر ومعاه بنوده).
+
+[[connect]] اربط بصف موجود بمفتاح unique ([[product: { connect: { id: 5 } }]]).
+
+[[connectOrCreate]] اربط لو موجود، واعمله لو مش موجود (التاج بالاسم).
+
+وفي update كمان: [[disconnect]] و [[set]] و [[update]] و [[delete]] و [[deleteMany]] على الأولاد.`,
+          example: R`const user = await prisma.user.create({
+  data: {
+    email: "ali@example.com",
+    name: "Ali",
+    orders: {
+      create: {
+        total: 300,
+        items: {
+          create: [
+            { product: { connect: { id: mugId } }, quantity: 1, unitPrice: 120 },
+            { product: { connect: { id: capId } }, quantity: 1, unitPrice: 180 },
+          ],
+        },
+      },
+    },
+  },
+  include: { orders: { include: { items: true } } },
+});
+
+await prisma.product.update({
+  where: { id: mugId },
+  data: { tags: { connectOrCreate: [{ where: { name: "gift" }, create: { name: "gift" } }] } },
+});
+
+await prisma.order.update({
+  where: { id: orderId },
+  data: { items: { deleteMany: {}, create: [{ product: { connect: { id: mugId } }, quantity: 2, unitPrice: 120 }] } },
+});`,
+          try: R`اعمل يوزر بأوردر فيه بندين زي المثال و [[log: ["query"]]] شغال، وشوف الـ SQL: الكتابة كلها بتخلص بـ COMMIT واحد؟ وبعدين اعمله تاني بس خلّي بند منهم يشاور على [[id: 999999]] (منتج مش موجود): اليوزر اتعمل ولا لأ؟ وجرّب تكتب بند بـ [[productId: mugId]] والتاني بـ [[product: { connect: ... }]] في نفس الـ array.`,
+          sol: R`في الـ log هتلاقي INSERT في users، و INSERT في orders، وقبل كل بند SELECT صغير بيتأكد إن المنتج موجود (ده الـ connect)، و INSERT في order_items، وبعدين الـ SELECTs بتاعة الـ include، وفي الآخر [[COMMIT]] واحد. يعني الكتابة كلها transaction واحدة (الـ BEGIN نفسه مش بيظهر في الـ log، بس الـ COMMIT والـ ROLLBACK بيظهروا).
+
+مع المنتج اللي مش موجود هتاخد [[P2025]] (فيه سجل مطلوب للـ connect ملقاهوش)، وهتلاقي [[ROLLBACK]] في الـ log. و [[prisma.user.count()]] مش هيزيد: اليوزر والأوردر اترجعوا مع البند.
+
+والخلط بين الشكلين في نفس الـ array هيطلع validation error زي [[Argument product is missing]]. Prisma عنده شكلين للـ input: «checked» بالعلاقات ([[product: { connect }]]) و «unchecked» بالـ ids الخام ([[productId]]). الشكل بيتحدد للـ create كله، فاختار واحد والتزم بيه. والـ unchecked ([[productId]]) مش متاح لما تكون جوه nested create للأب، لأن [[orderId]] لسه مش معروف.`,
+          solCode: R`import { prisma } from "./db";
+
+const before = await prisma.user.count();
+try {
+  await prisma.user.create({
+    data: {
+      email: "fail@example.com",
+      name: "Fail",
+      orders: { create: { total: 100, items: { create: [{ product: { connect: { id: 999999 } }, quantity: 1, unitPrice: 100 }] } } },
+    },
+  });
+} catch (e: any) {
+  console.log(e.code);
+}
+console.log(before === (await prisma.user.count()));
+await prisma.$disconnect();`,
+          flag: "script",
+          deep: {
+            why: "«اعمل أوردر ببنوده» هي أهم عملية في أي متجر، ولو اتكتبت خطوات منفصلة من غير transaction، أي error في النص بيسيب أوردر من غير بنود أو بنود من غير أوردر. الـ nested write بيدّيك الـ transaction ببلاش، والكود بيبان زي شكل الداتا.",
+            how: R`Prisma بيحوّل الـ nested write لسلسلة INSERTs جوه transaction: الأب الأول عشان ياخد الـ id، وبعدين الأولاد بالـ id ده. عشان كده في nested create مبتكتبش [[orderId]] أبدًا.
+
+[[connect]] محتاج حقل unique ([[id]] أو [[email]] أو [[@unique]] تاني). لو الصف مش موجود: P2025 والكل يترجع.
+
+[[connectOrCreate]] بيعمل SELECT وبعدين INSERT لو ملقاش. لو طلبين في نفس اللحظة عملوا نفس التاج، واحد منهم ممكن ياخد P2002 (unique). لو ده متوقع كتير (زي تاجات بيكتبها اليوزرز)، اعمل [[upsert]] على التاج الأول أو اعمل retry.
+
+[[createMany]] أسرع بكتير للكميات الكبيرة (INSERT واحد بكل الصفوف)، بس مبيعملش nested للأولاد. ومن Prisma 5.14 فيه [[createManyAndReturn]] بيرجّع الصفوف.
+
+الـ nested write مش بيحل مشكلة المخزون. «اخصم المخزون بشرط يكون كفاية» لسه محتاج [[updateMany]] بـ [[where: { stock: { gte: qty } }]] و [[data: { stock: { decrement: qty } }]] جوه [[$transaction]] التفاعلية، وتتأكد إن [[count]] مش صفر (درس atomic UPDATE، ودرس $transaction في تاب «Backend بـ Node»).
+
+وفي update: [[deleteMany: {}]] جوه علاقة بيمسح كل أولاد الأب ده بس (مش الجدول كله)، وبعده [[create]] بيضيف الجداد. ده أبسط طريقة «استبدل البنود» في transaction واحدة.`,
+            when: "أي إنشاء لأب وأولاده مع بعض (أوردر وبنوده، وبوست وتاجاته، ويوزر وبروفايله)، وربط بحاجات موجودة وقت الإنشاء. أما آلاف الصفوف مرة واحدة (import أو seed) فـ createMany.",
+            mistakes: R`[[await]] في loop على البنود بعد ما الأوردر يتعمل من غير transaction. خلط [[productId]] مع [[product: { connect }]]. [[connectOrCreate]] على قيمة مش unique. تفتكر إن [[deleteMany: {}]] جوه nested update بيمسح الجدول كله (لأ، أولاد الأب ده بس)، والعكس: [[prisma.orderItem.deleteMany({})]] من برّه بيمسح الجدول كله فعلًا. وتثق في السعر اللي جاي من العميل في [[unitPrice]] بدل ما تقراه من المنتج في السيرفر.`
+          },
+          lines: [
+            "اعمل يوزر، وكل اللي تحت في transaction واحدة:",
+            "البيانات:",
+            "الإيميل،",
+            "والاسم،",
+            "والأوردرات:",
+            "اعمل أوردر جديد مربوط بيه:",
+            "بإجمالي ٣٠٠،",
+            "والبنود:",
+            "اعمل بنود جديدة مربوطة بالأوردر:",
+            "بند مربوط بمنتج موجود (connect بالـ id)،",
+            "وبند تاني.",
+            "قفلة الـ array.",
+            "قفلة items.",
+            "قفلة الأوردر.",
+            "قفلة orders.",
+            "قفلة data.",
+            "ورجّع اليوزر ومعاه أوردراته وبنودها.",
+            "قفلة.",
+            "في update:",
+            "على المنتج ده،",
+            "اربط تاج gift لو موجود، واعمله لو مش موجود.",
+            "قفلة.",
+            "استبدل بنود أوردر:",
+            "الأوردر ده،",
+            "امسح بنوده كلها، وضيف بند جديد، في transaction واحدة.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "relation filters",
+          title: "فلتر بالعلاقات: some و every و none و _count",
+          desc: R`عايز «اليوزرز اللي عملوا أوردر مدفوع»؟ ده فلتر على اليوزر بشرط في جدول تاني. في SQL ده [[EXISTS]] (درس EXISTS)، وفي Prisma:
+
+[[some]] فيه ولد واحد على الأقل بيحقق الشرط. [[none]] مفيش ولا ولد بيحققه. [[every]] كل الأولاد بيحققوه. وللعلاقة الـ one (زي [[order.user]]) بتستخدم [[is]] و [[isNot]].
+
+و [[_count]] بيرجّع عدد الأولاد من غير ما يجيبهم: [[select: { _count: { select: { orders: true } } }]]. وتقدر ترتب بيه: [[orderBy: { orders: { _count: "desc" } }]].`,
+          example: R`const buyers = await prisma.user.findMany({
+  where: { orders: { some: { status: "paid", total: { gte: 100 } } } },
+  select: { email: true },
+});
+
+const neverOrdered = await prisma.user.findMany({ where: { orders: { none: {} } } });
+
+const allPaid = await prisma.user.findMany({
+  where: { orders: { some: {}, every: { status: "paid" } } },
+});
+
+const kitchen = await prisma.product.findMany({ where: { tags: { some: { name: "kitchen" } } } });
+
+const topCustomers = await prisma.user.findMany({
+  select: { email: true, _count: { select: { orders: true } } },
+  orderBy: { orders: { _count: "desc" } },
+  take: 10,
+});`,
+          try: R`اعمل يوزر جديد معملش ولا أوردر، وشغّل [[where: { orders: { every: { status: "paid" } } }]] من غير [[some: {}]]. اليوزر الجديد طلع؟ ليه؟ وبعدين هات لكل يوزر عدد أوردراته المدفوعة بس في [[_count]]، وشوف الـ SQL اللي اتولّد لـ [[none]] في الـ log.`,
+          sol: R`أيوه، اليوزر اللي ملوش أوردرات هيطلع في نتيجة [[every]]. في المنطق، «كل أوردراته مدفوعة» صح لما ميكونش عنده أوردرات أصلًا (vacuous truth)، و Prisma بيترجمها لـ [[NOT EXISTS (أوردر مش مدفوع)]]، واليوزر ده مفيش عنده أوردر مش مدفوع. عشان كده في المثال فيه [[some: {}]] مع every: «عنده أوردر واحد على الأقل، وكلهم مدفوعين».
+
+عدد المدفوع بس: [[_count: { select: { orders: { where: { status: "paid" } } } }]]. اليوزر اللي ملوش هيطلع [[0]] مش null.
+
+والـ SQL بتاع none هتلاقي فيه [[NOT EXISTS]] أو [[NOT IN]] على subquery من orders، نفس اللي كتبته بإيدك في درس EXISTS. الشكل بالظبط ممكن يختلف بين النسخ، المهم إنه استعلام واحد مش استعلام لكل يوزر.`,
+          solCode: R`await prisma.user.create({ data: { email: "new@example.com", name: "New" } });
+
+const everyOnly = await prisma.user.findMany({
+  where: { orders: { every: { status: "paid" } } },
+  select: { email: true },
+});
+console.log(everyOnly);
+
+const paidCounts = await prisma.user.findMany({
+  select: { email: true, _count: { select: { orders: { where: { status: "paid" } } } } },
+});
+console.log(paidCounts);`,
+          flag: "script",
+          deep: {
+            why: "الشاشات والتقارير مليانة الأسئلة دي: «العملاء اللي اشتروا المنتج ده»، «اليوزرز اللي سجلوا ومعملوش ولا أوردر» (عشان تبعتلهم خصم)، «الكورسات اللي فيها طلاب». من غير relation filters بتجيب كل اليوزرز وأوردراتهم وتفلتر في JavaScript، وده بيبقى أبطأ مع كل يوزر جديد.",
+            how: R`كل relation filter بيتحول subquery في نفس الـ SQL ([[EXISTS]] أو [[IN]])، فالقاعدة هي اللي بتفلتر، ومع index على الـ FK بيبقى سريع.
+
+[[some: {}]] من غير شرط = «عنده أي ولد». [[none: {}]] = «ملوش ولا ولد». وتقدر تتداخل: [[orders: { some: { items: { some: { productId: 5 } } } }]] = «اشترى المنتج ٥ في أي أوردر».
+
+[[every]] بيرجّع الأب اللي ملوش أولاد خالص، وده بيفاجئ ناس كتير. لو ده مش قصدك، ضيف [[some: {}]] جنبه.
+
+[[_count]] بيتحسب جوه نفس الاستعلام (JOIN على subquery فيها [[COUNT(*)]] مجمّعة بالـ FK) من غير ما يجيب الصفوف. و [[_count]] ينفع في [[include]] كمان، وفيه [[where]] من Prisma 4.16.
+
+لتجميعات أكتر (مجموع ومتوسط): [[prisma.order.aggregate]] و [[prisma.order.groupBy({ by: ["status"], _sum: { total: true } })]]. ولو التقرير فيه JOIN و CASE و date_trunc مع بعض، اكتبه SQL بـ $queryRaw (الدرس الجاي) بدل ما تحاول تلوي الـ API.`,
+            when: "فلترة بوجود أو عدم وجود أولاد، وعرض عدادات («٣ أوردرات»، «١٢ طالب») جنب كل صف، وترتيب بالأكتر نشاط.",
+            mistakes: R`every من غير some فتطلع يوزرز ملهمش أوردرات. تجيب الأولاد كلهم عشان تعرف [[.length]] بدل [[_count]]. [[include: { orders: true }]] وبعدين [[filter]] في JavaScript. شرط على علاقة one بـ some (هي [[is]]). ومن غير index على الـ FK، كل subquery بتقرا جدول الأوردرات كله.`
+          },
+          lines: [
+            "اليوزرز اللي عندهم:",
+            "أوردر واحد على الأقل مدفوع وقيمته ١٠٠ أو أكتر،",
+            "الإيميل بس.",
+            "قفلة.",
+            "اللي ملهمش ولا أوردر خالص.",
+            "اللي كل أوردراتهم مدفوعة:",
+            "و some: {} عشان اللي ملوش أوردرات ميطلعش (every لوحدها بتطلّعه).",
+            "قفلة.",
+            "المنتجات اللي عليها تاج kitchen (many-to-many).",
+            "أكتر ١٠ عملاء:",
+            "الإيميل وعدد الأوردرات من غير ما تجيبها،",
+            "مترتبين بالعدد،",
+            "أول ١٠.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "$queryRaw",
+          title: "SQL خام من Prisma بأمان: tagged template ولا Unsafe",
+          desc: R`لما Prisma ميكفيش (تقرير فيه date_trunc و CASE، أو [[FOR UPDATE]]، أو LATERAL، أو full-text)، بتكتب SQL بإيدك:
+
+[[prisma.$queryRaw]] لاستعلام بيرجّع صفوف، و [[prisma.$executeRaw]] لأمر بيعدّل وبيرجّع عدد الصفوف.
+
+الاتنين tagged templates: بتكتبهم بعلامة الـ backtick من غير أقواس، وأي [[$__{قيمة}]] جواهم مش بتتلزق في النص. بتتبعت parameter منفصل ([[$1]] و [[$2]])، فمفيش SQL injection. ده نفس اللي [[pool.query(sql, [params])]] بيعمله في درس WHERE.
+
+أما [[$queryRawUnsafe]] و [[$executeRawUnsafe]] بياخدوا string عادي. لو ركّبته بـ template literal عادي فيه قيمة من اليوزر، ده SQL injection. لو لازم تستخدمهم، القيم بتتبعت parameters بعد الـ string: [[$queryRawUnsafe("... WHERE email = $1", email)]].`,
+          example: R`const email = req.query.email;
+const users = await prisma.$queryRaw$__bt
+  SELECT id, email FROM users WHERE email = $__{email}
+$__bt;
+
+const revenue = await prisma.$queryRaw<{ month: Date; revenue: string; orders: number }[]>$__bt
+  SELECT date_trunc('month', created_at) AS month, sum(total)::text AS revenue, count(*)::int AS orders
+  FROM orders WHERE status = 'paid' AND created_at >= $__{from}
+  GROUP BY 1 ORDER BY 1
+$__bt;
+
+const changed = await prisma.$executeRaw$__bt
+  UPDATE products SET stock = stock - $__{qty} WHERE id = $__{productId} AND stock >= $__{qty}
+$__bt;
+
+const ids = [1, 2, 3];
+const some = await prisma.$queryRaw$__btSELECT name FROM products WHERE id = ANY($__{ids})$__bt;
+
+await prisma.$transaction(async (tx) => {
+  await tx.$queryRaw$__btSELECT id FROM orders WHERE id = $__{orderId} FOR UPDATE$__bt;
+});`,
+          try: R`اعمل يوزر، وبعدين خلي [[email]] يساوي [["ali@example.com' OR '1'='1"]]، وشغّل الاستعلام مرة بـ [[$queryRaw]] (tagged) ومرة بـ [[$queryRawUnsafe]] وانت راكب الـ string بـ template literal عادي. كام صف رجع في كل مرة؟ وبعدين شغّل تقرير الإيراد من غير [[::int]] و [[::text]] وجرّب [[JSON.stringify]] على النتيجة.`,
+          sol: R`الـ tagged هيرجّع [[[]]]: الإيميل اتبعت parameter واحد كنص كامل، ومفيش يوزر إيميله كده. الـ Unsafe بالـ template literal هيرجّع كل اليوزرز، لأن النص بقى [[WHERE email = 'ali@example.com' OR '1'='1']]، والشرط التاني دايمًا صح. ده SQL injection بالظبط. ولو كتبت [[$queryRawUnsafe("... WHERE email = $1", email)]] هيرجّع [[[]]] برضه، لأن القيمة اتبعتت parameter.
+
+ومن غير الـ casts: [[count(*)]] نوعه bigint في Postgres، فبيرجع JavaScript [[BigInt]] ([[1n]])، و [[JSON.stringify]] هيقع بـ [[Do not know how to serialize a BigInt]]. و [[sum(total)]] بيرجع [[Decimal]] object. الحل الأسهل تحوّل جوه SQL: [[count(*)::int]] (لو العدد مش هيعدّي ٢ مليار) و [[sum(total)::text]] للفلوس عشان متضيعش دقة.
+
+وخد بالك: الـ type اللي بتكتبه في [[$queryRaw<...>]] مجرد وعد منك، Prisma مش بيتأكد منه. لو كتبت [[orders: number]] والقاعدة رجّعت bigint، TypeScript هيصدقك والـ bug هيطلع في الـ runtime.`,
+          solCode: R`import { prisma } from "./db";
+
+const email = "ali@example.com' OR '1'='1";
+const safe = await prisma.$queryRaw$__btSELECT id, email FROM users WHERE email = $__{email}$__bt;
+const unsafe = await prisma.$queryRawUnsafe($__btSELECT id, email FROM users WHERE email = '$__{email}'$__bt);
+const unsafeButParam = await prisma.$queryRawUnsafe("SELECT id, email FROM users WHERE email = $1", email);
+console.log((safe as any[]).length, (unsafe as any[]).length, (unsafeButParam as any[]).length);
+
+const rows: any[] = await prisma.$queryRaw$__btSELECT count(*) AS n FROM orders$__bt;
+try { JSON.stringify(rows); } catch (e: any) { console.log(e.message); }
+await prisma.$disconnect();`,
+          flag: "script",
+          deep: {
+            why: "مهما الـ ORM كان كويس، فيه استعلامات بيعملها غلط أو مبيعرفهاش خالص: تقارير بالتواريخ، و window functions، و LATERAL، والأقفال. SQL الخام هو الحل، والخطر الوحيد إنك تفتح SQL injection. والإجابة على سؤال انترفيو «إزاي بتمنع SQL injection؟» هي parameterized queries، و $queryRaw بالـ backtick هو ده.",
+            how: R`الـ tagged template: JavaScript بيدّي الدالة الأجزاء الثابتة من النص لوحدها والقيم لوحدها، و Prisma بيبني [[... WHERE email = $1]] ويبعت القيم منفصلة. القاعدة بتعامل القيمة كـ data، مستحيل تبقى جزء من الأمر.
+
+عشان كده مينفعش تحط اسم عمود أو جدول أو اتجاه ترتيب كـ [[$__{}]]: هيتبعت كقيمة نصية مش اسم. للحاجات دي فيه [[Prisma.raw("name")]] بيلزق النص زي ما هو، ودي Unsafe فعليًا، فاستخدمها مع whitelist بس: [[const col = ["name", "price"].includes(x) ? x : "name"]].
+
+[[Prisma.sql]] بيبني جزء من استعلام بنفس الأمان عشان تركّب شروط اختيارية، و [[Prisma.join(ids)]] بيطلّع [[$1, $2, $3]] لـ [[IN (...)]]. أو ابعت array واستخدم [[= ANY($__{ids})]]، وده أبسط.
+
+أسماء الجداول والأعمدة في SQL الخام هي أسماء القاعدة، مش أسماء الـ models. لو عامل [[@@map("orders")]] يبقى [[orders]] و [[created_at]]، ولو مش عامل يبقى [["Order"]] و [["createdAt"]] بتنصيص.
+
+الأنواع اللي بترجع: [[bigint]] بيرجع BigInt، و [[numeric]] بيرجع Decimal، و [[timestamptz]] بيرجع Date. و Prisma فيه كمان [[TypedSQL]]: بتكتب الاستعلام في ملف [[.sql]] جوه [[prisma/sql]] و [[prisma generate --sql]] بيولّد function ليها types حقيقية من القاعدة. مفيد للتقارير اللي بتتكرر.
+
+و [[FOR UPDATE]]: مفيش في API بتاع Prisma. بتكتبه بـ [[tx.$queryRaw]] جوه [[$transaction]] التفاعلية، والقفل بيفضل لحد آخر الـ callback (درس SELECT FOR UPDATE).`,
+            when: "تقارير وتجميعات معقدة، و window functions و LATERAL و CTE، والأقفال، و full-text و pg_trgm، وأي استعلام الـ log بيوريك إن Prisma عامله أبطأ بكتير من اللي تكتبه بإيدك. وللـ CRUD العادي، الـ API العادي أوضح وأأمن في الـ types.",
+            mistakes: R`[[$queryRawUnsafe]] بـ template literal فيه قيمة من اليوزر. [[$queryRaw("SELECT ...")]] بأقواس: دي بقت دالة عادية مش tagged template، و Prisma هيرفضها أو يعاملها غلط. [[$__{column}]] لاسم عمود فالترتيب ميشتغلش. أسماء الـ models بدل أسماء الجداول. [[JSON.stringify]] على BigInt. تثق في الـ generic type من غير ما تتأكد. و [[Prisma.raw]] على قيمة من اليوزر.`
+          },
+          lines: [
+            "قيمة جاية من اليوزر.",
+            "SQL خام كـ tagged template (backtick من غير أقواس):",
+            "الإيميل بيتبعت parameter ($1)، مش بيتلزق في النص.",
+            "قفلة.",
+            "تقرير الإيراد الشهري، والـ type اللي متوقعه (وعد منك، مش متأكد منه):",
+            "count متحوّل int و sum متحوّل text، عشان ميرجعوش BigInt و Decimal.",
+            "المدفوع من تاريخ معين، والتاريخ parameter.",
+            "مجمّع ومترتب بالشهر.",
+            "قفلة.",
+            "أمر بيعدّل: بيرجّع عدد الصفوف اللي اتغيرت.",
+            "خصم المخزون بشرط، وكل القيم parameters.",
+            "قفلة. لو changed = 0 يبقى المخزون مش كفاية.",
+            "array ids.",
+            "ANY بياخد الـ array كـ parameter واحد.",
+            "transaction تفاعلية:",
+            "اقفل صف الأوردر لحد آخر الـ callback (مفيش FOR UPDATE في API بتاع Prisma).",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "N+1",
+          title: "query جوه loop: ليه الصفحة بتبطأ مع كل يوزر جديد",
+          desc: R`N+1 يعني: استعلام واحد يجيب قايمة (N صف)، وبعدين استعلام لكل صف يجيب حاجة مرتبطة بيه. ١٠٠ يوزر = ١٠١ استعلام. كل واحد سريع لوحده، بس الـ round trips بتتجمع، والصفحة اللي كانت سريعة وفيها ١٠ يوزرز بتبقى بطيئة لما يبقوا ١٠٠٠.
+
+المشكلة إن الكود شكله بريء: [[for (const u of users) { await prisma.order.findMany({ where: { userId: u.id } }) }]]. ومش هتلاقيها غير لما تشغّل [[log: ["query"]]] وتشوف نفس الـ SELECT بيتكرر.
+
+الحل: اطلب العلاقة مع القايمة ([[include]] أو [[select]] للعلاقة)، و Prisma هيجيب الكل باستعلامين: واحد لليوزرز، وواحد للأوردرات بـ [[WHERE user_id IN (...)]]. أو اجمع الـ ids بنفسك واعمل استعلام واحد بـ [[in]]، أو اكتب JOIN أو json_agg بـ $queryRaw.`,
+          example: R`const users = await prisma.user.findMany({ take: 100 });
+for (const u of users) {
+  const orders = await prisma.order.findMany({ where: { userId: u.id } });
+  console.log(u.email, orders.length);
+}
+
+const withOrders = await prisma.user.findMany({
+  take: 100,
+  include: { orders: { select: { id: true, total: true } } },
+});
+
+const counts = await prisma.user.findMany({
+  take: 100,
+  select: { email: true, _count: { select: { orders: true } } },
+});
+
+const userIds = users.map((u) => u.id);
+const orders = await prisma.order.findMany({ where: { userId: { in: userIds } } });
+const byUser = Map.groupBy(orders, (o) => o.userId);`,
+          try: R`اعمل ٢٠٠ يوزر بأوردرات (بـ createMany، أو بسكربت الـ seed في درس faker)، و [[log: ["query"]]] شغال. شغّل الـ loop الأول وعدّ سطور [[prisma:query]]، وقيس الوقت بـ [[console.time]]. وبعدين نفس الحاجة للـ include، وللـ _count.`,
+          sol: R`الـ loop هيطبع ٢٠١ سطر [[prisma:query]]: واحد [[SELECT ... FROM "public"."users"]] وبعده ٢٠٠ مرة [[SELECT ... FROM "public"."orders" WHERE "public"."orders"."user_id" = $1]]. الـ include هيطبع سطرين بس: اليوزرز، وبعدهم [[... WHERE "public"."orders"."user_id" IN ($1,$2,...)]]. والـ _count سطر واحد: الـ count بيتحسب بـ LEFT JOIN على subquery فيها [[COUNT(*)]] و GROUP BY، جوه نفس الاستعلام.
+
+الوقت على القاعدة اللي على جهازك ممكن يبان قريب (كل استعلام أقل من ملّي ثانية)، لأن مفيش network. الفرق الحقيقي بيبان لما القاعدة على سيرفر تاني: لو كل round trip بياخد ٢٠ ملّي ثانية (Supabase من منطقة بعيدة مثلًا)، الـ loop هياخد حوالي ٤ ثواني والـ include حوالي ٤٠ ملّي ثانية. عشان كده N+1 بيعدّي في التطوير ويبان في الإنتاج.
+
+ولو عدد السطور في الـ include طلع أكتر من ٢، اتأكد إنك مش عامل include جوه include، كل مستوى بيزوّد استعلام واحد (مش N).`,
+          solCode: R`import { prisma } from "./db";
+
+console.time("loop");
+const users = await prisma.user.findMany({ take: 200 });
+for (const u of users) {
+  await prisma.order.findMany({ where: { userId: u.id } });
+}
+console.timeEnd("loop");
+
+console.time("include");
+await prisma.user.findMany({ take: 200, include: { orders: true } });
+console.timeEnd("include");
+
+console.time("count");
+await prisma.user.findMany({ take: 200, select: { email: true, _count: { select: { orders: true } } } });
+console.timeEnd("count");
+await prisma.$disconnect();`,
+          flag: "script",
+          deep: {
+            why: "N+1 أشهر مشكلة أداء في أي تطبيق بيستخدم ORM، وسؤال شبه ثابت في انترفيوهات الـ backend. ومش بتبان في التطوير (داتا قليلة وقاعدة على نفس الجهاز)، وتظهر فجأة في الإنتاج لما الداتا تكبر.",
+            how: R`التكلفة مش في الاستعلام نفسه، في الـ round trip: الكود بيبعت، ويستنى الشبكة، والقاعدة تعمل parse و plan وتنفّذ، والرد يرجع. ١٠٠ مرة ورا بعض بـ await يعني ١٠٠ مرة الانتظار ده. و [[Promise.all]] على الـ loop بيوازي الانتظار، بس بيبعت ١٠٠ استعلام في نفس اللحظة ويقفل الـ connection pool (الافتراضي في pg ١٠ اتصالات). فده مش حل.
+
+أشكاله المستخبية:
+
+في الـ serializer أو الـ mapper: دالة [[toDTO(order)]] جواها [[await prisma.user.findUnique]].
+
+في GraphQL: resolver لكل حقل علاقة بيتنادي لكل أب (والحل DataLoader: بيجمع الـ ids في نفس الـ tick ويعمل استعلام واحد).
+
+في React Server Components: component لكل صف بيعمل fetch لوحده.
+
+الـ polymorphic relations (زي [[paymentableId]] و [[paymentableType]] في درس one-to-many): مفيش FK، فمفيش include، فالكود بيجيب كل واحدة لوحدها.
+
+الحلول بالترتيب: include أو select للعلاقة. [[_count]] لو محتاج العدد بس. [[in]] بالـ ids وتجمّع في الكود ([[Map.groupBy]] موجودة من Node 21). SQL واحد بـ JOIN أو json_agg أو LATERAL عن طريق $queryRaw لو الشكل معقد.
+
+وإزاي تكتشفه: [[log: ["query"]]] في التطوير، و test بيعدّ الاستعلامات (event [[query]] من الـ client)، و [[pg_stat_statements]] في الإنتاج (نفس الاستعلام بـ [[calls]] رقم ضخم)، أو APM زي Sentry بيوريك نفس الـ span متكرر.`,
+            when: "راجع أي loop فيه await على القاعدة، وأي دالة بتتنادي لكل عنصر في list وجواها query. والقاعدة: عدد الاستعلامات في الصفحة لازم يبقى ثابت، مش بيكبر مع عدد الصفوف.",
+            mistakes: R`[[Promise.all]] على الـ loop وتفتكر إنك حليتها. include متداخل كتير من غير take فبدل N+1 عندك استعلام بيرجّع ميجات. [[findUnique]] جوه map في الـ serializer. تقيس في التطوير على ١٠ صفوف وتقول «سريع». وفي الانترفيو: «إيه هي مشكلة N+1 وإزاي بتحلها؟» عرّفها بالأرقام (استعلام للقايمة و N للتفاصيل)، وقول إزاي بتكتشفها (query log أو APM)، والحل (eager loading بـ include أو JOIN أو batching بـ IN أو DataLoader).`
+          },
+          lines: [
+            "استعلام واحد: ١٠٠ يوزر (الـ 1).",
+            "لكل يوزر:",
+            "استعلام لأوردراته (الـ N): ١٠٠ استعلام ورا بعض.",
+            "اطبع.",
+            "قفلة الـ loop. الإجمالي ١٠١ استعلام.",
+            "الحل: نفس القايمة،",
+            "١٠٠ يوزر،",
+            "ومعاهم أوردراتهم: Prisma بيجيبهم باستعلام تاني واحد بـ IN.",
+            "قفلة. الإجمالي ٢ استعلام.",
+            "لو محتاج العدد بس:",
+            "١٠٠ يوزر،",
+            "والعدد من غير ما تجيب الأوردرات.",
+            "قفلة.",
+            "أو يدوي: اجمع الـ ids،",
+            "استعلام واحد بـ IN،",
+            "وقسّم النتيجة على اليوزرز في الكود."
+          ]
+        }
+      ]
+    },
+    {
+      t: "Supabase من الكود",
+      l: 3,
+      n: "الـ frontend بيكلّم Postgres مباشرة بـ supabase-js، والحماية كلها في RLS: أنهي key يروح فين، و policies لكل عملية، ودوال بـ rpc، وملفات و realtime",
+      items: [
+        {
+          cmd: "supabase-js",
+          title: "اقرا واكتب من الـ frontend، وأنهي key يروح فين",
+          desc: R`Supabase بيدّيك Postgres ومعاه API جاهز (PostgREST) على كل جدول في [[public]]. من الكود بتستخدم [[@supabase/supabase-js]]: [[supabase.from("orders").select(...)]] بيتحول لطلب HTTP، والـ API بيحوله SQL.
+
+المفاتيح: [[publishable key]] (بيبدأ بـ [[sb_publishable_]]، وده بديل الـ [[anon]] key القديم) مكانه الـ frontend، ومفيش مشكلة إن أي حد يشوفه. هو بس بيقول «الطلب ده من تطبيقك»، والصلاحيات بتتحدد بالـ RLS وباليوزر اللي عامل login. أما [[secret key]] (بيبدأ بـ [[sb_secret_]]، بديل [[service_role]]) بيعدّي RLS خالص، ومكانه السيرفر بس: backend، أو Edge Function، أو سكربت. الاتنين القدام (anon و service_role) لسه شغالين في المشاريع القديمة لحد ما تقفلهم.
+
+و [[select]] بيجيب العلاقات بالـ FK: [[select("id, total, order_items(quantity, products(name))")]] بيرجّع الأوردر وجواه بنوده وجوا كل بند المنتج، في طلب واحد.`,
+          example: R`import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+
+const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+if (authError) throw authError;
+
+const { data: orders, error } = await supabase
+  .from("orders")
+  .select("id, total, status, created_at, order_items(quantity, products(name))")
+  .eq("status", "paid")
+  .order("created_at", { ascending: false })
+  .limit(20);
+if (error) throw error;
+
+const { data: note, error: insertError } = await supabase
+  .from("notes")
+  .insert({ body: "hello" })
+  .select()
+  .single();
+
+// على السيرفر بس:
+const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, {
+  auth: { persistSession: false },
+});`,
+          try: R`في مشروع Supabase (أو [[supabase start]] محليًا، درس Supabase CLI في تاب «PostgreSQL»)، اعمل جدول [[notes]] من غير RLS، واقرا منه بالـ publishable key من غير login. وبعدين فعّل RLS من غير policies واقرا تاني. وآخر حاجة اقرا بالـ secret key من سكربت Node. قارن التلات نتايج، وبص على [[error]] في كل مرة.`,
+          sol: R`من غير RLS: هترجع كل الصفوف لأي حد معاه الـ publishable key، حتى من غير login. يعني أي حد فتح DevTools وخد الـ key من الـ JS بتاع موقعك يقدر يقرا الجدول كله (وممكن يكتب ويمسح كمان لو الجدول ليه صلاحيات كتابة). ده أشهر ثغرة في مشاريع Supabase.
+
+بعد RLS من غير policies: [[data]] هيرجع [[[]]] و [[error]] هيبقى [[null]]. مش error. الـ RLS بيفلتر الصفوف بهدوء، فالواجهة هتعرض «مفيش داتا» ومحدش هيعرف ليه. لو عملت insert هتاخد error فيه [[new row violates row-level security policy]].
+
+وبالـ secret key: كل الصفوف هترجع رغم الـ RLS، لأن الـ secret key بيعدّي RLS. عشان كده مكانه السيرفر بس، والـ secret keys الجديدة بترفض لو اتبعتت من متصفح (401).
+
+ولو الجدول مش ظاهر للـ API خالص (error فيه إن الـ relation مش موجودة أو permission denied)، ده غالبًا بسبب الـ grants: Supabase بيغيّر الافتراضي عشان الجداول الجديدة متبقاش مكشوفة للـ API لوحدها، فممكن تحتاج [[grant select on public.notes to anon, authenticated]]. تأكد من إعدادات مشروعك.`,
+          solCode: R`create table public.notes (
+  id bigint generated always as identity primary key,
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  body text not null
+);
+insert into public.notes (user_id, body) select id, 'secret note' from auth.users limit 1;
+
+// من المتصفح أو Node بالـ publishable key:
+const { data, error } = await supabase.from("notes").select("*");
+console.log(data, error);
+
+alter table public.notes enable row level security;
+
+// بالـ secret key من السيرفر:
+const { data: all } = await admin.from("notes").select("*");
+console.log(all.length);`,
+          flag: "script",
+          deep: {
+            why: "Supabase بيشيل عنك كتابة backend لـ CRUD: الـ auth والـ API والملفات والـ realtime جاهزين. بس ده معناه إن الـ frontend بيكلّم القاعدة تقريبًا مباشرة، فكل الأمان اللي كان في الـ backend (مين يشوف إيه) لازم يبقى في القاعدة نفسها. لو فهمت أنهي key بيعمل إيه، هتتجنب أغلب الكوارث.",
+            how: R`كل طلب من supabase-js بيروح لـ [[https://xxx.supabase.co/rest/v1/orders?select=...]] ومعاه الـ key، ولو اليوزر عامل login معاه JWT بتاعه. الـ API بيحوّل الطلب SQL وبيشغّله بـ role حسب الـ JWT: [[anon]] لو مفيش login، و [[authenticated]] لو فيه. والـ RLS بتطبّق بـ [[auth.uid()]] اللي جاي من الـ JWT. أما الـ secret key بيشغّل الطلب بـ role [[service_role]] اللي عنده [[BYPASSRLS]].
+
+كل دالة بترجّع [[{ data, error }]] ومش بترمي exception. لازم تتحقق من [[error]] كل مرة، وإلا الفشل هيعدّي كأن مفيش داتا.
+
+الفلاتر: [[eq]] و [[neq]] و [[gt]] و [[gte]] و [[lt]] و [[like]] و [[ilike]] و [[in]] و [[is]] و [[or("status.eq.paid,total.gt.500")]]. و [[range(0, 19)]] للـ pagination بالـ offset. و [[single()]] بيرجّع object بدل array ويرمي error لو مش صف واحد بالظبط، و [[maybeSingle()]] بيسمح بصفر.
+
+العلاقات في select بتمشي على الـ FKs. و [[products!inner(name)]] بيخليها INNER JOIN (الأوردر اللي ملوش منتج مطابق بيختفي)، فتقدر تفلتر بعمود في جدول مرتبط.
+
+والـ types: [[supabase gen types typescript]] بيولّد types من القاعدة، وبتدّيها لـ [[createClient<Database>]] فالـ select والـ insert يبقوا typed.
+
+الـ insert والـ update مش بيرجّعوا الصفوف غير لو كتبت [[.select()]] بعدهم. وخلي بالك: الـ select بعد الـ insert محتاج policy للـ SELECT كمان، وإلا الـ insert هينجح والـ select يرجع فاضي أو error.`,
+            when: "تطبيقات من غير backend خاص (أو backend صغير)، وتطبيقات موبايل، ولوحات أدمن داخلية، والـ MVPs. ولو المنطق معقد (دفع، وحسابات، وصلاحيات متشابكة) خلي الـ frontend ينادي Edge Function أو backend بتاعك، واللي بيستخدم الـ secret key.",
+            mistakes: R`الـ secret key أو service_role في الـ frontend أو في متغير بيبدأ بـ [[NEXT_PUBLIC_]] أو [[VITE_]]: كده أي حد عنده صلاحيات أدمن على القاعدة. جدول في public من غير RLS. تتجاهل [[error]]. [[single()]] على استعلام ممكن يرجع صفر فيطلع error. تعتمد على فلتر في الـ frontend ([[eq("user_id", myId)]]) كأنه أمان، وده سهل أي حد يشيله من الطلب. الأمان هو RLS بس.`
+          },
+          lines: [
+            "المكتبة.",
+            "client برابط المشروع والـ publishable key (عادي يبقوا في كود الواجهة).",
+            "login بإيميل وباسورد: من هنا ورايح الطلبات معاها JWT اليوزر.",
+            "الدوال مش بترمي error، فاتحقق بنفسك.",
+            "اقرا الأوردرات:",
+            "من جدول orders،",
+            "الأعمدة دي، وجواها البنود، وجوا كل بند اسم المنتج (بالـ FKs)،",
+            "المدفوعة بس،",
+            "الأحدث الأول،",
+            "٢٠ بس. والـ RLS هتفلتر لأوردرات اليوزر ده لوحدها لو الـ policy كده.",
+            "اتحقق من الـ error.",
+            "ضيف note:",
+            "في جدول notes،",
+            "الـ body بس، والـ user_id بياخد auth.uid() كـ default في القاعدة،",
+            "ورجّع الصف اللي اتعمل (محتاج policy للـ SELECT كمان)،",
+            "كـ object مش array.",
+            "client بالـ secret key: بيعدّي RLS، ومكانه السيرفر بس ومن env مش في الكود،",
+            "ومن غير حفظ session، لأنه مش يوزر.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "policies و auth.uid()",
+          title: "policy لكل عملية: مين يقرا ومين يكتب ومين يعدّل",
+          desc: R`درس Row Level Security في تاب «PostgreSQL» شرح الفكرة وعمل policy واحدة [[FOR ALL]]. في مشروع حقيقي غالبًا كل عملية ليها قاعدة مختلفة: الكل يقرا الـ notes العامة، وصاحب الـ note بس يقرا الخاصة بتاعته، وأي حد عامل login يضيف note باسمه هو بس، وصاحبها بس يعدّل ويمسح.
+
+عشان كده بتعمل policy لكل عملية ([[FOR SELECT]] و [[FOR INSERT]] و [[FOR UPDATE]] و [[FOR DELETE]]) ولكل role ([[TO anon, authenticated]]).
+
+[[USING]] بيحدد الصفوف الموجودة اللي تقدر تشوفها أو تعدّلها أو تمسحها. [[WITH CHECK]] بيحدد شكل الصف الجديد المسموح بيه بعد INSERT أو UPDATE. و [[auth.uid()]] هو id اليوزر من الـ JWT، و NULL لو مش عامل login.`,
+          example: R`CREATE TABLE notes (
+  id        bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  user_id   uuid NOT NULL DEFAULT auth.uid() REFERENCES auth.users (id) ON DELETE CASCADE,
+  body      text NOT NULL,
+  is_public boolean NOT NULL DEFAULT false
+);
+CREATE INDEX notes_user_id_idx ON notes (user_id);
+ALTER TABLE notes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "read public or own" ON notes FOR SELECT TO anon, authenticated
+  USING (is_public OR user_id = (select auth.uid()));
+CREATE POLICY "insert as self" ON notes FOR INSERT TO authenticated
+  WITH CHECK (user_id = (select auth.uid()));
+CREATE POLICY "update own" ON notes FOR UPDATE TO authenticated
+  USING (user_id = (select auth.uid())) WITH CHECK (user_id = (select auth.uid()));
+CREATE POLICY "delete own" ON notes FOR DELETE TO authenticated
+  USING (user_id = (select auth.uid()));
+BEGIN;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims', '{"sub": "11111111-1111-1111-1111-111111111111", "role": "authenticated"}', true);
+SELECT body FROM notes;
+UPDATE notes SET body = 'hacked' WHERE user_id <> (select auth.uid());
+ROLLBACK;`,
+          try: R`في SQL Editor بتاع Supabase (أو [[supabase start]])، اعمل يوزرين من لوحة Auth، وضيف لكل واحد note خاصة وواحد منهم note عامة. استخدم الـ BEGIN و [[SET LOCAL ROLE]] اللي في المثال بالـ id بتاع اليوزر الأول، وجرّب: SELECT، و UPDATE على note اليوزر التاني، و INSERT بـ user_id اليوزر التاني، و UPDATE يغيّر user_id بتاع note بتاعته لليوزر التاني. وبعدين جرّب SELECT كـ [[anon]] من غير claims.`,
+          sol: R`كيوزر أول: الـ SELECT هيرجّع الـ notes بتاعته (الخاصة والعامة) والـ notes العامة بتاعة غيره، ومش هيرجّع الخاصة بتاعة اليوزر التاني.
+
+الـ UPDATE على note غيره هيرجّع [[UPDATE 0]] من غير error: الـ USING خبّى الصف، فالأمر ملقاش حاجة يعدّلها. نفس الحاجة للـ DELETE.
+
+الـ INSERT بـ user_id حد تاني: [[new row violates row-level security policy for table "notes"]]، لأن الـ WITH CHECK رفض.
+
+تغيير user_id بتاع note بتاعته لحد تاني: نفس الـ error. الـ USING سمح له يوصل للصف (هو بتاعه)، بس الـ WITH CHECK رفض الشكل الجديد. من غير WITH CHECK في policy الـ UPDATE، كان هيقدر «يرمي» notes على حساب حد تاني.
+
+وكـ anon من غير claims: [[auth.uid()]] بيرجّع NULL، فالشرط بيبقى [[is_public OR NULL]]، فيرجع العام بس.
+
+ولو كل حاجة رجعت، اتأكد إنك مش شغال كـ postgres: الـ superuser وصاحب الجدول بيعدّوا RLS، عشان كده الـ SET LOCAL ROLE مهم في الاختبار.`,
+          solCode: R`BEGIN;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims', '{"sub": "<id اليوزر الأول>", "role": "authenticated"}', true);
+SELECT body, is_public FROM notes;
+UPDATE notes SET body = 'hacked' WHERE user_id = '<id اليوزر التاني>';
+INSERT INTO notes (user_id, body) VALUES ('<id اليوزر التاني>', 'fake');
+ROLLBACK;
+
+BEGIN;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims', '{"sub": "<id اليوزر الأول>", "role": "authenticated"}', true);
+UPDATE notes SET user_id = '<id اليوزر التاني>' WHERE user_id = (select auth.uid());
+ROLLBACK;
+
+BEGIN;
+SET LOCAL ROLE anon;
+SELECT body FROM notes;
+ROLLBACK;`,
+          flag: "script",
+          deep: {
+            why: "الـ RLS هو الـ backend بتاعك في Supabase. policy واحدة FOR ALL سهلة بس غالبًا غلط: يا إما بتقفل حاجة المفروض تبقى عامة، يا بتفتح كتابة لحد المفروض يقرا بس. ولما كل عملية ليها policy، القواعد بتبان زي متطلبات البيزنس بالظبط، وسهل تراجعها.",
+            how: R`الـ policies بتتجمع بـ OR: لو فيه اتنين FOR SELECT، الصف بيظهر لو أي واحدة سمحت (دي الـ PERMISSIVE، الافتراضي). وفيه [[AS RESTRICTIVE]] بتتجمع بـ AND، مفيدة لشرط لازم يتحقق دايمًا (زي «الحساب مش موقوف»).
+
+[[FOR SELECT]] بتاخد USING بس. [[FOR INSERT]] بتاخد WITH CHECK بس. [[FOR UPDATE]] بتاخد الاتنين. [[FOR DELETE]] بتاخد USING بس. وفي UPDATE و DELETE، Postgres محتاج يقرا الصف الأول، فالـ SELECT policy بتأثر عليهم كمان.
+
+[[(select auth.uid())]] بين قوسين بـ select: Postgres بيحسبها مرة واحدة للاستعلام كله (initPlan) بدل مرة لكل صف. على جدول فيه مليون صف الفرق كبير. ونفس الحاجة لـ [[auth.jwt()]].
+
+[[auth.uid()]] في Supabase دالة بتقرا [[request.jwt.claims]] من إعدادات الـ session، والـ API بيحطها من الـ JWT مع كل طلب. عشان كده الاختبار في SQL بيبقى بـ [[set_config('request.jwt.claims', ...)]] و [[SET LOCAL ROLE authenticated]] جوه transaction.
+
+الأداء: كل شرط في policy بيتضاف على كل استعلام. index على [[user_id]] ضروري. والـ policies اللي فيها subquery على جدول تاني ([[EXISTS (SELECT 1 FROM members WHERE ...)]]) لازم يكون عليها index، أو تحطها في دالة [[security definer]] بتتعمل مرة.
+
+[[DEFAULT auth.uid()]] على user_id بيخلي الـ frontend ميبعتش user_id خالص. والـ WITH CHECK بيضمن إنه لو بعته، يكون هو.`,
+            when: "كل جدول في public في مشروع Supabase، من أول migration. ابدأ بـ «مقفول» (ENABLE RLS)، وافتح كل عملية لوحدها باللي محتاجه. وحط الـ policies في ملفات migrations مش من اللوحة بإيدك، عشان تبقى في git وتتراجع.",
+            mistakes: R`UPDATE policy من غير WITH CHECK. [[TO public]] أو من غير TO فتنطبق على anon كمان من غير ما تقصد. [[auth.uid()]] من غير select حواليها فالاستعلام يبطأ على جداول كبيرة. تختبر من SQL Editor كـ postgres فكل حاجة تعدّي. من غير index على user_id. شرط بيعتمد على [[user_metadata]] في الـ JWT: ده اليوزر يقدر يعدّله بنفسه، فمتستخدموش للصلاحيات. استخدم [[app_metadata]] أو جدول أدوار.`
+          },
+          lines: [
+            "جدول notes:",
+            "رقم،",
+            "صاحبها: افتراضيًا اليوزر اللي عامل الطلب، ومسح اليوزر يمسح notes بتاعته،",
+            "النص،",
+            "وعامة ولا خاصة.",
+            "قفلة.",
+            "index على user_id: كل policy هتفلتر بيه.",
+            "اقفل الجدول: مفيش صف لحد لحد ما تضيف policy.",
+            "القراية: للـ anon والـ authenticated،",
+            "العامة، أو بتاعتي أنا.",
+            "الإضافة: للي عامل login بس،",
+            "والصف الجديد لازم يكون باسمي.",
+            "التعديل: الصفوف اللي أوصلها بتاعتي،",
+            "والشكل الجديد لازم يفضل بتاعي (ممنوع تحوّلها لحد تاني).",
+            "المسح: للي عامل login،",
+            "بتاعتي بس.",
+            "اختبار من SQL: transaction،",
+            "اشتغل بدور authenticated (زي ما الـ API بيعمل)،",
+            "وحط الـ JWT claims: auth.uid() هترجّع الـ sub ده.",
+            "هيرجّع العام وبتاعي بس.",
+            "هيرجّع UPDATE 0: صفوف غيري مستخبية.",
+            "ارجع من غير ما تحفظ أي حاجة."
+          ]
+        },
+        {
+          cmd: "rpc",
+          title: "نادي دالة Postgres من الـ frontend: security invoker ولا definer",
+          desc: R`لما عملية محتاجة كذا خطوة لازم تحصل مع بعض (خصم مخزون وإنشاء أوردر)، أو حساب على داتا كتير (إجمالي، ترتيب)، مينفعش تعملها بكذا طلب من الـ frontend. بتكتبها function في Postgres (درس CREATE FUNCTION في المستوى التاني) وتناديها: [[supabase.rpc("place_order", { p_product_id: 5, p_qty: 2 })]].
+
+أسماء الـ parameters في الـ object لازم تبقى نفس أسماء الـ parameters في الدالة. والنتيجة في [[data]]: قيمة، أو array لو الدالة بترجّع جدول.
+
+الأمان: الافتراضي [[SECURITY INVOKER]]، يعني الدالة بتشتغل بصلاحيات اليوزر اللي ناداها، والـ RLS بتتطبق جواها. [[SECURITY DEFINER]] بتشتغل بصلاحيات صاحبها (غالبًا postgres) وبتعدّي RLS، فلازم تتحقق جواها بنفسك مين بينادي، وتقفلها بـ [[REVOKE EXECUTE]] عن اللي مش المفروض يناديها.`,
+          example: R`CREATE FUNCTION public.my_notes_count() RETURNS bigint
+LANGUAGE sql STABLE SECURITY INVOKER SET search_path = '' AS $$
+  SELECT count(*) FROM public.notes WHERE user_id = (select auth.uid());
+$$;
+CREATE FUNCTION public.all_notes_count() RETURNS bigint
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
+  SELECT count(*) FROM public.notes;
+$$;
+REVOKE EXECUTE ON FUNCTION public.all_notes_count() FROM PUBLIC, anon, authenticated;
+BEGIN;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims', '{"sub": "22222222-2222-2222-2222-222222222222"}', true);
+SELECT public.my_notes_count();
+SELECT public.all_notes_count();
+ROLLBACK;`,
+          try: R`اعمل الدالتين في مشروعك. من supabase-js وانت عامل login، نادي [[rpc("my_notes_count")]] و [[rpc("all_notes_count")]]. وبعدين من سكربت على السيرفر بالـ secret key نادي التانية. وبعدين شيل سطر الـ REVOKE (اعمل الدالة من جديد) ونادي [[all_notes_count]] من المتصفح تاني.`,
+          sol: R`[[my_notes_count]] هترجّع عدد الـ notes بتاعتك بس، لأنها INVOKER والـ RLS شغالة، والشرط كمان جواها بـ auth.uid().
+
+[[all_notes_count]] من المتصفح هترجّع error: [[permission denied for function all_notes_count]] (في supabase-js هتلاقيها في [[error.message]] و [[error.code]] = [[42501]]). ومن السيرفر بالـ secret key هترجّع العدد الكلي لكل اليوزرز، لأن service_role عنده صلاحيات والدالة DEFINER.
+
+من غير الـ REVOKE: أي يوزر (وحتى anon) يقدر يناديها ويعرف عدد كل الـ notes في النظام. هنا العدد بس، بس تخيّل دالة DEFINER بترجّع صفوف أو بتعدّل: ده يبقى bypass كامل للـ RLS من الـ frontend. عشان كده أي دالة DEFINER في public يا إما جواها check على [[auth.uid()]]، يا إما مقفولة بـ REVOKE. وخد بالك إن Postgres بيدّي [[EXECUTE]] لـ [[PUBLIC]] افتراضيًا على أي دالة جديدة، و Supabase كمان بيدّي anon و authenticated، فلازم الـ REVOKE يشيل الاتنين.`,
+          solCode: R`// في الواجهة، واليوزر عامل login
+const mine = await supabase.rpc("my_notes_count");
+console.log(mine.data, mine.error);
+const all = await supabase.rpc("all_notes_count");
+console.log(all.data, all.error?.code, all.error?.message);
+
+// على السيرفر بالـ secret key
+const adminAll = await admin.rpc("all_notes_count");
+console.log(adminAll.data);`,
+          flag: "script",
+          deep: {
+            why: "من غير backend، الـ rpc هو الطريقة الوحيدة تعمل عملية ذرية (atomic) من الـ frontend: عشر طلبات insert و update ورا بعض من المتصفح ممكن نصهم ينجح ونصهم يفشل، أو اليوزر يقفل الصفحة في النص. والدالة بتشتغل في transaction واحدة جوه القاعدة.",
+            how: R`[[supabase.rpc(name, args)]] بيبعت POST لـ [[/rest/v1/rpc/name]] والـ args JSON، والـ API بيطابق أسماء المفاتيح بأسماء الـ parameters. لو الاسم غلط هتاخد error إن الدالة مش موجودة بالتوقيع ده. ولو الدالة بترجّع جدول تقدر تكمّل عليها فلاتر: [[rpc("search_notes", { q }).select("id, body").limit(10)]].
+
+[[SET search_path = '']] مهم جدًا مع DEFINER: من غيره، حد يقدر يعمل object بنفس الاسم في schema تانية ويخلي دالتك تستخدمه بصلاحيات postgres. عشان كده كل الأسماء جوه الدالة بتتكتب كاملة ([[public.notes]]). و Security Advisor في لوحة Supabase بينبّهك لأي دالة من غير search_path.
+
+إمتى DEFINER؟ لما الدالة محتاجة تقرا جدول اليوزر مش مسموح له يقراه مباشرة، زي «هل أنا عضو في الفريق ده؟» على جدول members، أو trigger على [[auth.users]] بيعمل profile. وفي الحالة دي الدالة بترجّع أقل حاجة ممكنة (boolean مثلًا)، ومش بتاخد id يوزر كـ parameter (خدها من [[auth.uid()]]، وإلا أي حد هيبعت id غيره).
+
+الأخطاء: [[RAISE EXCEPTION 'OUT_OF_STOCK']] بترجع في [[error.message]]، فتقدر تتعامل معاها في الواجهة. ومتحطش فيها داتا حساسة.
+
+والـ Edge Functions بديل لما المنطق محتاج API برّه (دفع أو إيميل) أو مكتبات JavaScript. الـ rpc للمنطق اللي كله داتا.`,
+            when: "عمليات من كذا خطوة (أوردر، تحويل رصيد، حجز)، وبحث أو تقارير فيها SQL معقد (full-text، و pg_trgm، و window functions)، وأي حاجة محتاجة تبقى atomic أو أسرع من كذا رحلة للسيرفر.",
+            mistakes: R`DEFINER من غير search_path ومن غير REVOKE. دالة DEFINER بتاخد [[p_user_id]] من الـ client وتثق فيه. أسماء parameters مختلفة بين الدالة والـ object. تتجاهل [[error]]. تعمل الدالة من اللوحة ومحدش عارف إنها موجودة؛ حطها في migration. ودالة بترجّع [[SETOF notes]] وهي DEFINER، فبترجّع كل الـ notes لأي حد.`
+          },
+          lines: [
+            "دالة بتعدّ notes اليوزر اللي بينادي،",
+            "INVOKER (بصلاحياته والـ RLS شغالة)، و search_path فاضي عشان الأمان.",
+            "العد بـ auth.uid()، والأسماء كاملة بالـ schema.",
+            "قفلة.",
+            "دالة بتعدّ كل الـ notes في النظام،",
+            "DEFINER: بتشتغل بصلاحيات postgres وبتعدّي RLS.",
+            "العد من غير أي شرط.",
+            "قفلة.",
+            "اقفلها: محدش من الـ frontend يقدر يناديها (السيرفر بالـ secret key بس).",
+            "اختبار:",
+            "كيوزر عامل login،",
+            "بالـ id ده.",
+            "بترجّع notes بتاعته بس.",
+            "error: permission denied.",
+            "ارجع."
+          ]
+        },
+        {
+          cmd: "Storage و Realtime",
+          title: "ارفع صورة البروفايل في فولدر اليوزر، واسمع الأوردرات الجديدة لحظة بلحظة",
+          desc: R`Storage: ملفات في buckets. الـ bucket ممكن يبقى public (أي حد معاه الرابط يشوف الملف) أو private (بتطلب رابط مؤقت [[createSignedUrl]]). والصلاحيات بـ RLS برضه، بس على جدول [[storage.objects]]: كل ملف صف، واسم الملف (المسار) في عمود [[name]]. النمط المشهور: كل يوزر يرفع في فولدر اسمه الـ id بتاعه، والـ policy بتقارن أول جزء من المسار بـ [[auth.uid()]].
+
+Realtime: [[postgres_changes]] بيبعتلك كل INSERT أو UPDATE أو DELETE على جدول لحظة ما يحصل، عن طريق websocket. الجدول لازم يتضاف لـ publication اسمها [[supabase_realtime]]، والـ RLS بتتطبق: كل يوزر بيوصله بس التغييرات على الصفوف اللي يقدر يقراها.`,
+          example: R`const path = $__bt$__{user.id}/avatar.png$__bt;
+const { error: upError } = await supabase.storage
+  .from("avatars")
+  .upload(path, file, { upsert: true, contentType: file.type });
+const { data: signed } = await supabase.storage.from("avatars").createSignedUrl(path, 60 * 60);
+
+const channel = supabase
+  .channel("my-orders")
+  .on("postgres_changes", { event: "INSERT", schema: "public", table: "orders" }, (payload) => {
+    console.log("new order", payload.new);
+  })
+  .subscribe();
+
+await supabase.removeChannel(channel);`,
+          try: R`اعمل bucket private اسمه [[avatars]]، وضيف policies على storage.objects للـ INSERT والـ SELECT والـ UPDATE بشرط [[(storage.foldername(name))[1] = (select auth.uid())::text]]. ارفع صورة في فولدرك، وبعدين جرّب ترفع في [[other-user-id/avatar.png]]. وبعدين فعّل realtime على جدول orders ([[alter publication supabase_realtime add table orders]])، وافتح الصفحة في تابين بيوزرين مختلفين، وضيف أوردر ليوزر منهم.`,
+          sol: R`الرفع في فولدرك هينجح. الرفع في فولدر حد تاني هيرجّع error فيه [[new row violates row-level security policy]] (بـ status 403). ولو الرفع العادي نفسه فشل بنفس الرسالة رغم إن INSERT policy صح، غالبًا ناقصك SELECT policy: الـ Storage API بيعمل INSERT ومعاه RETURNING، فمحتاج يقدر يقرا الصف اللي اتعمل. و [[upsert: true]] (استبدال الصورة) محتاج UPDATE policy كمان.
+
+الـ signed URL هيشتغل ساعة وبعدين يرجّع error. الرابط العادي ([[getPublicUrl]]) مش هيشتغل لأن الـ bucket private.
+
+وفي realtime: التاب بتاع صاحب الأوردر هيطبع [[new order]] ومعاه الصف، والتاب التاني مش هيوصله حاجة، لو الـ RLS على orders بتسمح لكل يوزر يقرا أوردراته بس. لو ولا تاب وصله حاجة: الجدول مش في الـ publication، أو الـ subscribe فشل (بص على الـ status في callback الـ subscribe). ولو الاتنين وصلهم: الـ RLS مش متفعلة أو فيها policy فاتحة.`,
+          solCode: R`create policy "avatar read own" on storage.objects for select to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = (select auth.uid())::text);
+create policy "avatar upload own" on storage.objects for insert to authenticated
+  with check (bucket_id = 'avatars' and (storage.foldername(name))[1] = (select auth.uid())::text);
+create policy "avatar replace own" on storage.objects for update to authenticated
+  using (bucket_id = 'avatars' and (storage.foldername(name))[1] = (select auth.uid())::text);
+
+alter publication supabase_realtime add table public.orders;
+
+// في الواجهة
+const bad = await supabase.storage.from("avatars").upload("someone-else/avatar.png", file);
+console.log(bad.error?.message);`,
+          flag: "script",
+          deep: {
+            why: "كل تطبيق تقريبًا فيه صور بروفايل أو مرفقات، وكتير فيهم «تحديث لحظي» (أوردر جديد في لوحة المطعم، رسالة جديدة). Supabase بيدّيك الاتنين من غير سيرفر ملفات ولا websocket server، بس نفس قاعدة الأمان: كله RLS، وأي policy ناقصة يا إما بتقفل الخدمة يا بتفتحها للكل.",
+            how: R`Storage: الملفات نفسها في object storage (زي S3)، والـ metadata صف في [[storage.objects]] (bucket_id و name و owner). كل عملية من الـ client بتتحول عملية على الجدول ده، فالـ RLS بتحكم: upload = INSERT، و download و list = SELECT، و upsert = SELECT و UPDATE، و remove = DELETE.
+
+[[storage.foldername(name)]] بتقسم المسار لـ array فولدرات، و [[(...)[1]]] أول فولدر (Postgres arrays بتبدأ من 1). والمقارنة بـ [[auth.uid()::text]] لأن الـ uid نوعه uuid والمسار نص.
+
+الـ public bucket: القراية مش محتاجة policy ولا login، أي حد عنده الرابط. مناسب للصور العامة (صور منتجات). الـ private: [[createSignedUrl(path, ثواني)]] رابط مؤقت. ومتحطش حاجة حساسة (بطايق، وعقود) في public أبدًا. الـ URL ممكن يتخمن أو يتسرّب.
+
+Realtime postgres_changes: Postgres بيكتب التغييرات في الـ WAL، وسيرفر Realtime بيقراها من publication [[supabase_realtime]]، ولكل subscriber بيتأكد من RLS قبل ما يبعت. و [[filter: "user_id=eq." + id]] بيقلل اللي بيتبعت. للـ DELETE، الـ payload فيه الـ primary key بس، إلا لو عملت [[REPLICA IDENTITY FULL]] على الجدول.
+
+الحدود: postgres_changes بيشيّك RLS لكل subscriber على كل تغيير، فمع آلاف المشتركين بيبقى تقيل. Supabase بينصح بـ [[Broadcast]] (رسايل بتبعتها انت، أو من trigger في القاعدة) للحاجات الكبيرة زي الشات، و [[Presence]] لـ «مين أونلاين».
+
+والـ realtime مش بديل للداتا: لو الـ websocket اتقطع، اللي حصل وقتها ضاع. لما يرجع اعمل fetch للحالة الحالية.`,
+            when: "Storage: صور بروفايل، ومرفقات، وملفات بتترفع من اليوزر. Realtime: لوحات بتتحدث لوحدها (أوردرات، تذاكر دعم)، وإشعارات جوه التطبيق، وحاجات تعاونية بسيطة.",
+            mistakes: R`bucket public لملفات خاصة. policy للـ INSERT بس فالرفع يفشل (ناقص SELECT) أو الاستبدال يفشل (ناقص UPDATE). مسار الملف من غير فولدر اليوزر، فمفيش طريقة تكتب policy. تنسى تضيف الجدول للـ publication. تنسى [[removeChannel]] لما الـ component يتشال، فالـ subscriptions تتراكم. وتعتمد على realtime لوحده من غير fetch بعد إعادة الاتصال.`
+          },
+          lines: [
+            "المسار: فولدر باسم id اليوزر، وجواه الصورة.",
+            "ارفع:",
+            "في bucket اسمه avatars،",
+            "الملف في المسار ده، واستبدله لو موجود (محتاج UPDATE policy).",
+            "رابط مؤقت لمدة ساعة (للـ bucket الـ private).",
+            "اشترك في التغييرات:",
+            "channel باسم،",
+            "كل INSERT على جدول orders (والـ RLS بتحدد أنهي صفوف توصلك)،",
+            "الصف الجديد في payload.new.",
+            "قفلة الـ callback.",
+            "ابدأ الاشتراك.",
+            "لما تخلص (الـ component اتشال): الغي الاشتراك."
+          ]
+        }
+      ]
+    },
+    {
+      t: "Mongoose و Drizzle و seed",
+      l: 3,
+      n: "populate و N+1 في Mongoose، وبديل Prisma الأقرب لـ SQL، وإزاي تملا القاعدة بداتا شبه الحقيقية",
+      items: [
+        {
+          cmd: "populate",
+          title: "Mongoose: populate بدل JOIN، و N+1 بشكل تاني",
+          desc: R`MongoDB مفيهاش JOIN زي SQL. في Mongoose بتخزن الـ ObjectId بتاع المستند المرتبط ([[user: { type: ObjectId, ref: "User" }]])، و [[populate("user")]] بيجيبه.
+
+الـ populate مش JOIN في القاعدة: هو استعلام تاني. Mongoose بيجيب الأوردرات، ويجمع الـ user ids كلها، ويعمل [[User.find({ _id: { $in: ids } })]] واحد، ويحط كل يوزر مكانه. يعني ٢ استعلام، زي include في Prisma.
+
+والـ N+1 بيرجع لو عملت populate أو findById جوه loop. وأساسيات Mongoose (الاتصال، والـ schema، و lean) في درس mongoose في تاب «Backend بـ Node»، وأوامر الشيل والباك أب في تاب «MongoDB».`,
+          example: R`const orderSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
+  items: [{ name: String, qty: Number, unitPrice: Number }],
+  status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
+}, { timestamps: true });
+const Order = mongoose.model("Order", orderSchema);
+
+mongoose.set("debug", true);
+
+const orders = await Order.find({ status: "paid" })
+  .sort({ createdAt: -1 })
+  .limit(20)
+  .populate("user", "email name")
+  .lean();
+
+for (const o of await Order.find().limit(20)) {
+  const user = await User.findById(o.user);
+}
+
+const stats = await Order.aggregate([
+  { $match: { status: "paid" } },
+  { $lookup: { from: "users", localField: "user", foreignField: "_id", as: "user" } },
+  { $unwind: "$user" },
+  { $group: { _id: "$user.email", orders: { $sum: 1 } } },
+]);`,
+          try: R`شغّل Mongo في Docker (تاب «MongoDB»)، واعمل ١٠ يوزرز و ١٠٠ أوردر، و [[mongoose.set("debug", true)]] شغال. شغّل الـ find بالـ populate وعدّ الأوامر اللي اتطبعت، وبعدين الـ loop اللي فيه findById. وجرّب populate على حقل مش عليه [[ref]].`,
+          sol: R`الـ find بالـ populate هيطبع أمرين: [[orders.find({ status: 'paid' }, ...)]] و [[users.find({ _id: { '$in': [ ... ] } }, { projection: { email: 1, name: 1 } })]]. مهما كان عدد الأوردرات، ٢ بس. والـ user في النتيجة بقى object فيه email و name (والـ _id).
+
+الـ loop هيطبع أمر واحد للأوردرات وبعده ٢٠ مرة [[users.findOne({ _id: ... })]]، يعني ٢١. ده N+1 بالظبط زي درس N+1 في Prisma.
+
+والـ populate على حقل من غير ref: هيطلع [[MissingSchemaError]] أو الحقل هيفضل ObjectId زي ما هو، حسب الحالة. لازم الـ schema يقول الحقل بيشاور على أنهي model، أو تكتب [[populate({ path: "user", model: "User" })]].
+
+(ملاحظة: الأمثلة دي متجرّبتش على MongoDB حقيقي وقت كتابة الدرس. الأسماء بالظبط في سطور الـ debug ممكن تختلف شوية بين نسخ Mongoose، المهم عدد الأوامر.)`,
+          solCode: R`mongoose.set("debug", true);
+
+console.log("--- populate");
+await Order.find({ status: "paid" }).limit(20).populate("user", "email name").lean();
+
+console.log("--- loop (N+1)");
+for (const o of await Order.find().limit(20)) {
+  await User.findById(o.user);
+}`,
+          flag: "script",
+          deep: {
+            why: "مشاريع Node كتير (خصوصًا القديمة ولوحات الإدارة) على Mongo و Mongoose، ونفس أسئلة الأداء بتتسأل: «ليه الصفحة دي بطيئة؟». لو فاهم إن populate استعلام تاني مش JOIN، هتعرف تصمم الداتا صح وتلاقي الـ N+1.",
+            how: R`[[populate]] بيجمع كل قيم الحقل من النتيجة، ويعمل find واحد بـ [[$in]]، ويبدّل الـ ids بالمستندات. التاني argument ([["email name"]]) projection: الحقول اللي عايزها بس، زي select في Prisma. و [[populate({ path: "items.product" })]] للحقول جوه arrays، والـ populate المتداخل بيزوّد استعلام لكل مستوى.
+
+[[lean()]] بيرجّع objects عادية من غير دوال Mongoose، أسرع وأخف لو هتقرا بس.
+
+[[$lookup]] في aggregation هو اللي أقرب لـ JOIN: بيتعمل جوه القاعدة في رحلة واحدة. مفيد للتقارير اللي فيها group و sum على داتا مرتبطة.
+
+في Mongo التصميم بيبدأ من سؤال: الداتا دي بتتقري مع بعض؟ البنود جوه الأوردر (embedded) لأنها دايمًا بتتقري معاه ومبتتعدّلش لوحدها. واليوزر reference لأنه مستقل وليه أوردرات كتير. ومن غير كده بتلاقي نفسك بتعمل populate في كل حتة، وده علامة إن الداتا relational وكان Postgres أنسب.
+
+و index على الحقل اللي بتدوّر بيه ([[index: true]] على user) زي index على FK في SQL.`,
+            when: "populate لما محتاج بيانات مستند مرتبط في الرد (اسم اليوزر مع الأوردر). $lookup للتقارير. والـ embedding لداتا بتتقري دايمًا مع الأب ومش بتكبر من غير حد.",
+            mistakes: R`findById أو populate جوه loop. populate من غير projection فتجيب اليوزر كامل ومعاه الـ hash. populate متداخل ٣ مستويات على كل request. embedding لحاجة بتكبر من غير حد (كل تعليقات البوست جوه البوست، والمستند ليه حد أقصى ١٦ ميجا). وتنسى index على حقل الـ ref.`
+          },
+          lines: [
+            "schema الأوردر:",
+            "reference ليوزر (ObjectId و ref)، وعليه index.",
+            "البنود embedded جوه الأوردر.",
+            "الحالة بقيم محددة.",
+            "و createdAt و updatedAt لوحدهم.",
+            "الـ model.",
+            "اطبع كل أمر Mongoose بيبعته.",
+            "الأوردرات المدفوعة:",
+            "الأحدث الأول،",
+            "٢٠،",
+            "وهات اليوزر بتاع كل واحد (email و name بس) باستعلام تاني واحد بـ $in،",
+            "كـ objects عادية.",
+            "غلط: لكل أوردر،",
+            "استعلام لليوزر بتاعه (N+1).",
+            "قفلة.",
+            "تقرير بـ aggregation:",
+            "المدفوع،",
+            "JOIN جوه القاعدة على users،",
+            "فكّ الـ array لـ object،",
+            "وعدد الأوردرات لكل إيميل.",
+            "قفلة."
+          ]
+        },
+        {
+          cmd: "Drizzle",
+          title: "schema بـ TypeScript و drizzle-kit، و Prisma ولا Drizzle",
+          desc: R`Drizzle ORM بديل لـ Prisma، وأقرب لـ SQL: الـ schema ملف TypeScript عادي ([[pgTable]])، والاستعلامات شبه SQL بالظبط ([[db.select().from(users).where(eq(users.email, x))]])، ومفيش generate: الـ types بتطلع من الـ schema على طول.
+
+[[drizzle-kit generate]] بيقارن الـ schema بآخر migration ويكتب ملف SQL جديد، و [[drizzle-kit migrate]] بيطبّقه. زي migrate dev و deploy في Prisma بس خطوتين منفصلين.
+
+Prisma ولا Drizzle؟ Prisma: API عالي المستوى (include و nested writes)، وأسهل للمبتدئ، وليه أدوات (Studio و migrate). Drizzle: لو بتفكر بـ SQL وعايز تتحكم في الاستعلام بالظبط، وأخف (مفيش خطوة generate)، ومناسب للـ serverless والـ edge. معرفة Prisma و SQL بتنقل لـ Drizzle بسرعة.`,
+          example: R`// src/schema.ts
+import { pgTable, uuid, text, bigint, numeric, timestamp, index } from "drizzle-orm/pg-core";
+
+export const users = pgTable("users", {
+  id: uuid().primaryKey().defaultRandom(),
+  email: text().notNull().unique(),
+  name: text().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+export const orders = pgTable("orders", {
+  id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
+  status: text().notNull().default("pending"),
+  total: numeric({ precision: 10, scale: 2 }).notNull().default("0"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("orders_user_created_idx").on(t.userId, t.createdAt.desc())]);
+
+// src/report.ts
+const db = drizzle(process.env.DATABASE_URL!);
+const top = await db
+  .select({ email: users.email, spent: sql<string>$__btsum($__{orders.total})$__bt })
+  .from(users)
+  .innerJoin(orders, eq(orders.userId, users.id))
+  .where(and(eq(orders.status, "paid"), gte(orders.createdAt, sql$__btnow() - interval '90 days'$__bt)))
+  .groupBy(users.id)
+  .orderBy(desc(sql$__btsum($__{orders.total})$__bt))
+  .limit(3);`,
+          try: R`اعمل مشروع فيه [[drizzle-orm]] و [[pg]] و [[drizzle-kit]]، وملف [[drizzle.config.ts]] فيه [[dialect: "postgresql"]] ومكان الـ schema و [[out: "./drizzle"]] ورابط القاعدة. شغّل [[npx drizzle-kit generate --name init]] واقرا الـ SQL، وبعدين [[npx drizzle-kit migrate]]. واطبع [[db.select().from(users).where(eq(users.email, "x")).toSQL()]].`,
+          sol: R`[[generate]] هيكتب [[drizzle/0000_init.sql]] وفيه [[CREATE TABLE "orders"]] بـ [[GENERATED ALWAYS AS IDENTITY]]، و [[CREATE TABLE "users"]] بـ [[DEFAULT gen_random_uuid()]] و [[CONSTRAINT "users_email_unique" UNIQUE("email")]]، والـ FK بـ [[ON DELETE restrict]]، و [[CREATE INDEX "orders_user_created_idx" ON "orders" USING btree ("user_id","created_at" DESC NULLS LAST)]]. وبين الأوامر [[--> statement-breakpoint]]، ده فاصل Drizzle بيستخدمه وهو بيطبّق. و [[migrate]] هيطبع [[migrations applied successfully!]].
+
+و [[toSQL()]] هيطبع [[{ sql: 'select "id", "email", "name", "created_at" from "users" where "users"."email" = $1', params: [ 'x' ] }]]. شايف: نفس الـ SQL اللي كنت هتكتبه، والقيمة parameter.
+
+ولاحظ إن [[numeric]] بيرجع string في Drizzle (زي pg)، مش Decimal زي Prisma. فالفلوس بتفضل string لحد ما تقرر تعمل بيها إيه.
+
+لو generate قال مفيش تغييرات، اتأكد إن مسار [[schema]] في الـ config صح. ولو migrate فشل في الاتصال، الـ config مش بيقرا .env لوحده، فمحتاج [[import "dotenv/config"]] زي Prisma.`,
+          solCode: R`// drizzle.config.ts
+import "dotenv/config";
+import { defineConfig } from "drizzle-kit";
+
+export default defineConfig({
+  dialect: "postgresql",
+  schema: "./src/schema.ts",
+  out: "./drizzle",
+  dbCredentials: { url: process.env.DATABASE_URL! },
+});
+
+// في الترمنال:
+// npx drizzle-kit generate --name init
+// npx drizzle-kit migrate
+
+// src/check.ts
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { eq } from "drizzle-orm";
+import { users } from "./schema";
+
+const db = drizzle(process.env.DATABASE_URL!);
+console.log(db.select().from(users).where(eq(users.email, "x")).toSQL());`,
+          flag: "script",
+          deep: {
+            why: "Drizzle انتشر جدًا في مشاريع Next.js والـ serverless، وهتقابله في مشاريع وفي انترفيوهات. ومقارنته بـ Prisma بتوضحلك الـ trade-offs في أي ORM: API مريح ولا تحكم في الـ SQL، وأدوات جاهزة ولا خفة.",
+            how: R`الـ schema هو TypeScript حقيقي، فالـ types بتطلع منه على طول: [[typeof users.$inferSelect]] نوع الصف. مفيش كود متولّد ولا خطوة generate للـ client.
+
+الـ query builder بيتبني SQL واحد: الـ select والـ join والـ where بالظبط زي ما كتبتهم، وده بيخلي الأداء متوقع. و [[sql$__bt...$__bt]] template للأجزاء اللي مش موجودة في الـ API، وبرضه بيبعت القيم parameters (زي $queryRaw).
+
+وفيه كمان relational queries API ([[db.query.users.findMany({ with: { orders: true } })]]) شبه include في Prisma، بس محتاج تعرّف الـ relations. والـ API ده بيتغير في Drizzle 1.0 (كان beta وقت كتابة الدرس)، فارجع للـ docs بتاعة النسخة اللي عندك.
+
+[[drizzle-kit generate]] بيحفظ snapshot للـ schema جنب كل migration، وبيقارن بيه. لو فيه rename بيسألك (rename ولا drop و create). [[drizzle-kit push]] بيطبّق الـ schema على القاعدة مباشرة من غير ملفات migrations، مفيد للتجربة بس مش للإنتاج. و [[drizzle-kit studio]] واجهة زي Prisma Studio.
+
+الـ numeric بيرجع string، و [[bigint({ mode: "number" })]] بيرجّعه number (خد بالك من الأرقام الأكبر من 2^53)، و [[mode: "bigint"]] بيرجّعه BigInt.`,
+            when: "Drizzle: فريق مرتاح مع SQL، وتطبيقات serverless أو edge، ولما عايز الاستعلام متوقع ومفيش خطوة build. Prisma: فريق فيه ناس جديدة على SQL، و CRUD كتير بعلاقات متداخلة، ولما Studio و nested writes هيوفروا وقت. والاتنين فيهم مخرج لـ SQL خام.",
+            mistakes: R`[[drizzle-kit push]] على الإنتاج. تعدّل ملف migration اتطبق. تنسى [[import "dotenv/config"]] في الـ config. [[mode: "number"]] على IDs ممكن تعدّي 2^53. وتفتكر إن Drizzle بيمنع N+1 لوحده؛ الـ loop بـ await هو هو في أي ORM.`
+          },
+          lines: [
+            "الدوال اللي بتعرّف أعمدة Postgres.",
+            "جدول users:",
+            "uuid بيتولّد من القاعدة (gen_random_uuid).",
+            "نص إجباري و unique.",
+            "نص إجباري.",
+            "timestamptz بعمود اسمه created_at في القاعدة.",
+            "قفلة.",
+            "جدول orders:",
+            "bigint identity، وبيرجع JavaScript number.",
+            "FK على users، ومسح يوزر عنده أوردرات مرفوض.",
+            "نص وافتراضيًا pending.",
+            "numeric(10,2) (بيرجع string).",
+            "timestamptz.",
+            "index مركّب (user_id, created_at DESC) في آخر argument.",
+            "الـ client برابط القاعدة (بيستخدم pg من تحت).",
+            "أكتر ٣ عملاء صرفوا في آخر ٩٠ يوم:",
+            "الإيميل ومجموع الصرف (sql template للـ sum)،",
+            "من users،",
+            "JOIN مع orders،",
+            "المدفوع في آخر ٩٠ يوم،",
+            "مجمّع باليوزر،",
+            "الأكتر الأول،",
+            "٣ بس."
+          ]
+        },
+        {
+          cmd: "seed بـ faker",
+          title: "املا القاعدة بآلاف الصفوف شبه الحقيقية، بالعربي",
+          desc: R`دروس كتير بتقولك «جرّب على مليون صف» أو «قيس قبل وبعد الـ index». عشان كده محتاج seed: سكربت بيملا القاعدة بداتا شكلها حقيقي، بكميات كبيرة، وتقدر تعيده في أي وقت.
+
+[[@faker-js/faker]] بيولّد أسماء وإيميلات وأسعار وتواريخ، وفيه locale عربي: [[fakerAR]] بيطلّع أسماء زي «نوف بن عبد السلام». و [[faker.seed(42)]] بيخلي نفس الداتا تطلع كل مرة، فالتجارب تبقى قابلة للتكرار.
+
+والأهم في السرعة: متعملش INSERT لكل صف. ابعت الصفوف دفعات ([[createMany]] في Prisma، أو [[insert().values([...])]] في Drizzle، ألف صف في المرة). ولو محتاج ملايين: [[generate_series]] في SQL أو [[\copy]] من ملف أسرع من أي ORM.`,
+          example: R`import { fakerAR as faker } from "@faker-js/faker";
+
+faker.seed(42);
+
+const fakeUsers = Array.from({ length: 1000 }, (_, i) => ({
+  email: $__btuser$__{i}@example.com$__bt,
+  name: faker.person.fullName(),
+  createdAt: faker.date.past({ years: 1 }),
+}));
+const inserted = await db.insert(users).values(fakeUsers).returning({ id: users.id });
+
+const fakeOrders = inserted.flatMap(({ id }) =>
+  Array.from({ length: faker.number.int({ min: 0, max: 5 }) }, () => ({
+    userId: id,
+    status: faker.helpers.weightedArrayElement([
+      { value: "paid", weight: 7 }, { value: "pending", weight: 2 }, { value: "cancelled", weight: 1 },
+    ]),
+    total: faker.commerce.price({ min: 50, max: 3000 }),
+    createdAt: faker.date.recent({ days: 180 }),
+  })),
+);
+for (let i = 0; i < fakeOrders.length; i += 1000) {
+  await db.insert(orders).values(fakeOrders.slice(i, i + 1000));
+}`,
+          try: R`شغّل السكربت ده (مع schema الـ Drizzle من الدرس اللي فات، أو حوّله لـ [[prisma.user.createMany]])، واطبع أول ٣ أسماء وعدد الأوردرات. شغّله مرتين بعد ما تفضّي الجداول: الأسماء اتغيرت؟ وبعدين شيل [[faker.seed(42)]] وشغّل تاني. وقيس الوقت لو خليت الـ loop يعمل insert لكل أوردر لوحده.`,
+          sol: R`مع [[faker.seed(42)]] هتطلع نفس الأسماء ونفس عدد الأوردرات في كل مرة (عندي كانت [[نوف بن عبد السلام]] و [[دكتور فاطمه بوهاها]] و [[بتول النفير]]، وحوالي ٢٤٠٠ أوردر، والأرقام عندك ممكن تختلف لو نسخة faker مختلفة). من غير seed كل تشغيلة بداتا مختلفة. ده مفيد للتجربة، بس وحش في test بيعتمد على رقم معين.
+
+والإيميلات من [[user$__{i}]] مش من faker عشان عمود الإيميل unique، و faker ممكن يكرر مع آلاف الصفوف. و [[fakerAR]] أصلًا بيطلّع إيميلات بحروف عربي أحيانًا أو مش مفهومة، فالـ index أضمن.
+
+الـ insert لكل صف لوحده هياخد وقت أكتر بمراحل: كل صف round trip. ألف صف في كل insert بيقسم الوقت على ألف تقريبًا. ومتكبّرش الدفعة أوي: Postgres ليه حد ٦٥٥٣٥ parameter في الأمر الواحد، فلو كل صف ٥ أعمدة يبقى أقصى حاجة حوالي ١٣ ألف صف في الدفعة.`,
+          solCode: R`import "dotenv/config";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { fakerAR as faker } from "@faker-js/faker";
+import { users, orders } from "./schema";
+
+const db = drizzle(process.env.DATABASE_URL!);
+await db.delete(orders);
+await db.delete(users);
+faker.seed(42);
+
+const fakeUsers = Array.from({ length: 1000 }, (_, i) => ({
+  email: $__btuser$__{i}@example.com$__bt,
+  name: faker.person.fullName(),
+  createdAt: faker.date.past({ years: 1 }),
+}));
+console.time("seed");
+const inserted = await db.insert(users).values(fakeUsers).returning({ id: users.id });
+const fakeOrders = inserted.flatMap(({ id }) =>
+  Array.from({ length: faker.number.int({ min: 0, max: 5 }) }, () => ({
+    userId: id,
+    status: "paid",
+    total: faker.commerce.price({ min: 50, max: 3000 }),
+    createdAt: faker.date.recent({ days: 180 }),
+  })),
+);
+for (let i = 0; i < fakeOrders.length; i += 1000) {
+  await db.insert(orders).values(fakeOrders.slice(i, i + 1000));
+}
+console.timeEnd("seed");
+console.log(fakeUsers.slice(0, 3).map((u) => u.name), fakeOrders.length);
+process.exit(0);`,
+          flag: "script",
+          deep: {
+            why: "مشاكل الأداء (N+1، و index ناقص، و OFFSET) مش بتبان على ١٠ صفوف. والواجهة بتبان مختلفة خالص مع أسماء عربي طويلة ونصوص حقيقية. والـ seed بيخلّي أي حد في الفريق يقوم بقاعدة فيها داتا في دقيقة، بدل ما كل واحد يضيف بإيده.",
+            how: R`faker مولّد عشوائي بـ seed: نفس الـ seed ونفس ترتيب المناداة يطلّعوا نفس القيم. لو غيّرت ترتيب الأسطر، القيم هتتغير.
+
+[[fakerAR]] instance جاهز بالـ locale العربي (أسماء وعناوين)، والحاجات اللي مش موجودة بالعربي بترجع للإنجليزي. و [[faker.helpers.weightedArrayElement]] بيختار بنسب (٧٠٪ مدفوع)، فالتوزيع يبقى شبه الحقيقة مش متساوي.
+
+الداتا الواقعية مش بس أسماء: التوزيع مهم. أغلب اليوزرز عندهم أوردرات قليلة وشوية عندهم كتير، والتواريخ متوزعة على شهور. ده اللي بيطلّع مشاكل الـ indexes وخطط الاستعلام الحقيقية.
+
+السرعة: batch insert بيبعت صفوف كتير في أمر واحد. [[createMany]] في Prisma بيعمل كده، و [[skipDuplicates: true]] بيتجاهل التكرار. ولملايين الصفوف، [[INSERT ... SELECT ... FROM generate_series(1, 1000000)]] جوه القاعدة (درس B-tree index) أسرع بكتير، لأن الداتا مش بتعدّي على الشبكة أصلًا.
+
+وفي Prisma: [[migrations.seed]] في [[prisma.config.ts]] (زي [[seed: "tsx prisma/seed.ts"]]) و [[npx prisma db seed]] بيشغّله. ومن Prisma 7 مبيشتغلش لوحده بعد migrate dev أو reset، لازم تشغّله انت.`,
+            when: "أول ما تعمل الـ schema: seed صغير للتطوير. قبل ما تقيس أداء: seed كبير. في الـ tests: داتا محددة بـ seed ثابت. وعمره ما يشتغل على الإنتاج.",
+            mistakes: R`insert لكل صف في loop. faker للإيميلات في عمود unique فيقع بعد آلاف الصفوف. من غير seed ثابت فالـ test يعدّي مرة ويفشل مرة. سكربت seed بيمسح الجداول وبيقرا DATABASE_URL فحد يشغّله بالغلط على الإنتاج (حط check إن الرابط localhost). ودفعة أكبر من حد الـ parameters.`
+          },
+          lines: [
+            "faker بالـ locale العربي.",
+            "ثبّت الـ seed: نفس الداتا كل مرة.",
+            "١٠٠٠ يوزر:",
+            "إيميل فريد من الرقم (مش من faker عشان الـ unique)،",
+            "اسم عربي،",
+            "وتاريخ تسجيل في آخر سنة.",
+            "قفلة.",
+            "insert واحد بكل اليوزرز، ورجّع الـ ids.",
+            "لكل يوزر من ٠ لـ ٥ أوردرات:",
+            "عدد عشوائي.",
+            "صاحب الأوردر،",
+            "حالة بنسب:",
+            "٧٠٪ مدفوع، و٢٠٪ pending، و١٠٪ ملغي.",
+            "قفلة.",
+            "سعر بين ٥٠ و ٣٠٠٠ (بيرجع string مناسب لـ numeric)،",
+            "وتاريخ في آخر ٦ شهور.",
+            "قفلة.",
+            "قفلة الـ flatMap: array واحد فيه كل الأوردرات.",
+            "دفعات ألف ألف:",
+            "insert واحد لكل ألف أوردر.",
+            "قفلة."
+          ]
+        }
+      ]
+    },
+    {
+      t: "أسئلة انترفيو قواعد البيانات",
+      l: 3,
+      n: "الأسئلة اللي بتتسأل في أي انترفيو backend، والإجابة بمثال من المتجر بدل التعريف المحفوظ",
+      items: [
+        {
+          cmd: "SQL ولا NoSQL",
+          title: "امتى Postgres وامتى MongoDB، وإزاي تجاوب من غير «حسب الحالة» وبس",
+          desc: R`السؤال مش «أنهي أحسن». السؤال «شكل الداتا إيه، وهتتقري إزاي، وإيه اللي لازم يفضل مظبوط؟».
+
+SQL (Postgres و MySQL): جداول بـ schema صارم، وعلاقات بـ FKs و JOINs، و transactions و constraints بتحمي الداتا. مناسب لأي حاجة فيها فلوس، أو علاقات كتير، أو تقارير بتجمّع من كذا جدول.
+
+NoSQL (MongoDB، و Redis، و DynamoDB): أنواع مختلفة، مش حاجة واحدة. Mongo مستندات مرنة بتتقري كوحدة واحدة. Redis key-value في الذاكرة للـ cache والـ sessions. DynamoDB و Cassandra لحجم ضخم بأنماط قراية معروفة مسبقًا.
+
+الإجابة القوية: الافتراضي Postgres (وفيه jsonb للأجزاء المرنة)، ونختار حاجة تانية لما يبقى فيه سبب محدد تقدر تقوله.`,
+          example: R`SELECT name, price, attrs FROM products WHERE is_active;
+SELECT name FROM products WHERE attrs @> '{"color": "black"}';
+SELECT u.email, sum(o.total) FROM users u JOIN orders o ON o.user_id = u.id GROUP BY u.email;`,
+          try: R`لكل حالة من دول قول هتختار إيه وليه في جملتين: (١) محفظة فلوس للمدرسين فيها سحب وإيداع. (٢) لوج أحداث من تطبيق موبايل، ملايين في اليوم وكل حدث شكله مختلف. (٣) cache لنتيجة API بتتطلب كتير. (٤) كتالوج منتجات كل فئة ليها مواصفات مختلفة.`,
+          sol: R`(١) Postgres: فلوس يعني transactions و constraints ([[CHECK (balance >= 0)]]) و [[SELECT FOR UPDATE]] أو atomic UPDATE. ولو قلت Mongo لازم تبرر الـ transactions (محتاجة replica set) وإن الـ schema مش هيحمي الرصيد.
+
+(٢) ممكن الاتنين: Postgres بجدول فيه عمود jsonb و partitioning بالتاريخ بيستحمل كويس، و Mongo أو ClickHouse لو الحجم ضخم والتحليل هو الأساس. الإجابة الأقوى تسأل: هنعمل إيه بيها؟ تقارير تجميع؟ يبقى محتاجين حاجة معمولة للتحليل.
+
+(٣) Redis، بـ TTL. مش قاعدة أساسية: لو ضاع، بيتحسب تاني.
+
+(٤) Postgres بجدول products بأعمدة ثابتة (الاسم والسعر والمخزون) و [[attrs jsonb]] للمواصفات، و GIN index عليه (درس jsonb). ده بيدّيك مرونة Mongo في جزء واحد بس، والباقي محمي.
+
+الغلطة في الانترفيو: «NoSQL أسرع و scalable أكتر». ده مش صحيح بشكل عام. السرعة بتيجي من الـ indexes وشكل الاستعلام.`,
+          flag: "script",
+          deep: {
+            why: "السؤال ده في أغلب انترفيوهات الـ backend، وبيكشف لو انت بتختار أدوات بالموضة ولا بالمتطلبات. والإجابة الكويسة بتبين إنك عارف trade-offs حقيقية.",
+            how: R`الفروق اللي تتقال: الـ schema (صارم ولا مرن، مع إن Mongoose بيرجّع schema في التطبيق). والعلاقات (JOIN في القاعدة ولا embedding و populate). والـ consistency (ACID من زمان في SQL، و Mongo بقت فيها transactions بس مكلفة ومش الأسلوب الأساسي). والـ scaling (Postgres بيكبر رأسيًا وبـ read replicas كويس جدًا لأغلب الشركات، و Mongo معمولة للـ sharding من الأول).
+
+وفي الحقيقة الاتنين قربوا من بعض: Postgres فيه jsonb، و Mongo فيها transactions و $lookup.`,
+            when: "أول قرار في أي مشروع، وفي أي سؤال system design.",
+            mistakes: R`«Mongo عشان مفيش schema» (فيه schema، بس في الكود ومحدش بيحميه). «SQL مش بيعمل scale». تختار حاجتين من الأول من غير سبب. وتنسى إن الفريق بيعرف إيه جزء من القرار.`
+          },
+          lines: [
+            "جدول products من أول التاب: أعمدة ثابتة للحاجات المهمة، و attrs jsonb للمواصفات المرنة.",
+            "بحث جوه الـ jsonb (زي Mongo)، ومعاه GIN index يبقى سريع.",
+            "و JOIN و GROUP BY في استعلام واحد، ودي الحاجة اللي Mongo بتصعّبها."
+          ],
+          solCode: R`CREATE TABLE teacher_wallets (
+  teacher_id bigint PRIMARY KEY,
+  balance_cents bigint NOT NULL DEFAULT 0 CHECK (balance_cents >= 0)
+);
+UPDATE teacher_wallets SET balance_cents = balance_cents - 5000
+WHERE teacher_id = 1 AND balance_cents >= 5000;`
+        },
+        {
+          cmd: "ACID",
+          title: "ACID بمثال: تحويل فلوس من محفظة لمحفظة",
+          desc: R`ACID أربع ضمانات للـ transaction:
+
+Atomicity: كله أو ولا حاجة. الخصم من محفظة والإضافة للتانية يا حصلوا الاتنين يا ولا واحد.
+
+Consistency: الداتا بتنتقل من حالة صحيحة لحالة صحيحة. الـ constraints (زي [[CHECK (balance >= 0)]]) عمرها ما تتكسر حتى في النص.
+
+Isolation: transactions شغالة في نفس الوقت متشوفش تعديلات بعض الناقصة. وقد إيه بالظبط بيتحدد بالـ isolation level (الدرس الجاي).
+
+Durability: بعد COMMIT الداتا مش هتضيع حتى لو الكهربا قطعت. Postgres بيكتبها في الـ WAL على الديسك قبل ما يقولك تم.`,
+          example: R`CREATE TABLE wallets (id bigint PRIMARY KEY, balance numeric(10,2) NOT NULL CHECK (balance >= 0));
+INSERT INTO wallets VALUES (1, 100), (2, 0);
+BEGIN;
+UPDATE wallets SET balance = balance - 150 WHERE id = 1;
+UPDATE wallets SET balance = balance + 150 WHERE id = 2;
+COMMIT;
+SELECT * FROM wallets ORDER BY id;`,
+          try: R`شغّل المثال: أول UPDATE هيفشل. بعد الـ error جرّب تكمّل التاني وتعمل COMMIT. إيه اللي حصل للمحفظتين؟ وبعدين كرر بمبلغ ٥٠ وشوف.`,
+          sol: R`بـ ١٥٠: أول UPDATE هيفشل بـ [[violates check constraint "wallets_balance_check"]]. بعدها أي أمر في نفس الـ transaction هيطلع [[current transaction is aborted, commands ignored until end of transaction block]]، و COMMIT هيتحول ROLLBACK (psql هيكتب [[ROLLBACK]]). المحفظتين هيفضلوا ١٠٠ و ٠. ده الـ Atomicity والـ Consistency مع بعض: مفيش ١٥٠ اتضافوا لحد من غير ما يتخصموا من حد.
+
+بـ ٥٠: الاتنين هيتنفذوا و COMMIT: ٥٠ و ٥٠.
+
+في الانترفيو قول المثال ده بالظبط، وضيف إن الـ durability في Postgres جاية من الـ WAL (بيتكتب قبل الـ COMMIT يرجع)، و [[synchronous_commit = off]] بيتنازل عن جزء منها عشان السرعة.`,
+          solCode: R`BEGIN;
+UPDATE wallets SET balance = balance - 150 WHERE id = 1;
+UPDATE wallets SET balance = balance + 150 WHERE id = 2;
+COMMIT;
+SELECT * FROM wallets ORDER BY id;
+
+BEGIN;
+UPDATE wallets SET balance = balance - 50 WHERE id = 1;
+UPDATE wallets SET balance = balance + 50 WHERE id = 2;
+COMMIT;
+SELECT * FROM wallets ORDER BY id;`,
+          flag: "script",
+          deep: {
+            why: "أكتر سؤال قواعد بيانات بيتسأل. والتعريف المحفوظ للأربع حروف مش كفاية؛ اللي بيفرق إنك تدّي مثال وتوضح كل حرف بيحمي من إيه.",
+            how: R`Atomicity في Postgres جاية من MVCC: كل صف ليه نسخ، والتعديلات بتبقى مش ظاهرة لحد الـ COMMIT، والـ ROLLBACK بيسيبها ميتة (والـ VACUUM بينضفها). Consistency جاية من الـ constraints والـ FKs والـ triggers. Isolation من الـ snapshots والأقفال. Durability من الـ WAL و fsync.
+
+وخلي بالك: الـ C في ACID غير الـ C في CAP theorem. هنا معناها «القواعد متتكسرش»، هناك معناها «كل النسخ شايفة نفس القيمة».`,
+            when: "أي عملية بتعدّل أكتر من صف ولازم تبقى مع بعض: تحويل، وأوردر، وحجز. التفاصيل العملية في درس transaction ودرس $transaction في تاب «Backend بـ Node».",
+            mistakes: R`تحفظ التعريفات من غير مثال. تخلط C بتاعة ACID مع CAP. تقول إن Mongo «مش ACID» (بقت فيها transactions متعددة المستندات، بشروط). وفي الكود: تعمل الخطوتين من غير transaction وتفتكر إن القاعدة هتحميك لوحدها.`
+          },
+          lines: [
+            "محافظ، والرصيد مينفعش يبقى سالب.",
+            "محفظة فيها ١٠٠ ومحفظة فاضية.",
+            "ابدأ transaction.",
+            "اخصم ١٥٠: هيفشل (الرصيد هيبقى سالب).",
+            "أضيف للتانية: متجاهل، الـ transaction بقت aborted.",
+            "COMMIT هنا بيبقى ROLLBACK.",
+            "المحفظتين زي ما كانوا."
+          ]
+        },
+        {
+          cmd: "isolation anomalies",
+          title: "dirty read و lost update و phantom و write skew: كل واحدة بمثال",
+          desc: R`لما two transactions شغالين في نفس الوقت، ممكن يحصل مشاكل (anomalies)، والـ isolation level بيحدد أنهي منها ممكن:
+
+dirty read: تقرا تعديل لسه متعملوش COMMIT. مستحيل في Postgres خالص.
+
+non-repeatable read: تقرا نفس الصف مرتين في transaction واحدة فتلاقي قيمتين، لأن حد عمل COMMIT في النص. بيحصل في [[READ COMMITTED]] (الافتراضي)، ومش بيحصل في [[REPEATABLE READ]].
+
+phantom: نفس الـ WHERE يرجّع صفوف زيادة في المرة التانية. في Postgres الـ REPEATABLE READ بيمنعه.
+
+lost update: الاتنين قروا المخزون ١٠، والاتنين كتبوا ٩، فبيعتين بقوا واحدة. بيحصل في READ COMMITTED لو قريت في الكود وكتبت. REPEATABLE READ بيرفض التاني بـ error.
+
+write skew: كل واحد قرا حاجة وكتب في صف مختلف، فالقاعدة (زي «لازم دكتور واحد مناوب على الأقل») اتكسرت. [[SERIALIZABLE]] بس اللي بيمنعه.`,
+          example: R`// session A و B في نفس الوقت، READ COMMITTED
+await a.query("BEGIN"); await b.query("BEGIN");
+const sa = (await a.query("SELECT stock FROM products WHERE name = 'Hoodie'")).rows[0].stock;
+const sb = (await b.query("SELECT stock FROM products WHERE name = 'Hoodie'")).rows[0].stock;
+await a.query("UPDATE products SET stock = $1 WHERE name = 'Hoodie'", [sa - 1]);
+const pending = b.query("UPDATE products SET stock = $1 WHERE name = 'Hoodie'", [sb - 1]);
+await a.query("COMMIT");
+await pending;
+await b.query("COMMIT");`,
+          try: R`شغّل السيناريو بمكتبة pg وعميلين ([[new pg.Client]] مرتين)، والمخزون ١٠. المخزون النهائي كام؟ وبعدين غيّر BEGIN في الاتنين لـ [[BEGIN ISOLATION LEVEL REPEATABLE READ]] وشوف B حصله إيه.`,
+          sol: R`في READ COMMITTED: المخزون النهائي [[9]] مع إن قطعتين اتباعوا. ده lost update. الـ UPDATE بتاع B استنى A يخلص (قفل على الصف)، وبعدين كتب 9 اللي كان حسبها من قراية قديمة.
+
+في REPEATABLE READ: الـ UPDATE بتاع B هيفشل بـ [[could not serialize access due to concurrent update]] (code [[40001]])، والمخزون 9 بعد بيعة واحدة بس. التطبيق لازم يعمل retry للـ transaction كلها.
+
+والحل الأبسط من غير تغيير الـ level: متقراش في الكود وتكتب. [[UPDATE products SET stock = stock - 1 WHERE ... AND stock >= 1]] (درس atomic UPDATE)، أو [[SELECT ... FOR UPDATE]].`,
+          solCode: R`import pg from "pg";
+const url = process.env.DATABASE_URL;
+const a = new pg.Client(url), b = new pg.Client(url);
+await a.connect(); await b.connect();
+
+for (const level of ["READ COMMITTED", "REPEATABLE READ"]) {
+  await a.query("UPDATE products SET stock = 10 WHERE name = 'Hoodie'");
+  await a.query($__btBEGIN ISOLATION LEVEL $__{level}$__bt); await b.query($__btBEGIN ISOLATION LEVEL $__{level}$__bt);
+  const sa = (await a.query("SELECT stock FROM products WHERE name = 'Hoodie'")).rows[0].stock;
+  const sb = (await b.query("SELECT stock FROM products WHERE name = 'Hoodie'")).rows[0].stock;
+  await a.query("UPDATE products SET stock = $1 WHERE name = 'Hoodie'", [sa - 1]);
+  const pending = b.query("UPDATE products SET stock = $1 WHERE name = 'Hoodie'", [sb - 1])
+    .then(() => "ok", (e) => "ERR " + e.code);
+  await a.query("COMMIT");
+  const res = await pending;
+  await b.query(res === "ok" ? "COMMIT" : "ROLLBACK");
+  const { rows } = await a.query("SELECT stock FROM products WHERE name = 'Hoodie'");
+  console.log(level, res, rows[0].stock);
+}
+await a.end(); await b.end();`,
+          flag: "script",
+          deep: {
+            why: "السؤال «إيه الـ isolation levels؟» بيتسأل كتير، والإجابة اللي بتفرق هي إنك تربط كل level بالمشكلة اللي بيمنعها، بمثال حقيقي زي المخزون، وتقول الحل العملي.",
+            how: R`Postgres بيطبّق الـ levels بـ snapshots (MVCC): READ COMMITTED بياخد snapshot جديد لكل أمر، و REPEATABLE READ snapshot واحد للـ transaction كلها، و SERIALIZABLE نفس الـ snapshot ومعاه تتبع للاعتماديات (SSI) ويلغي transaction لو النتيجة مش ممكن تطلع من تنفيذ ورا بعض.
+
+الأعلى = مشاكل أقل بس errors أكتر ([[40001]]) لازم الكود يعيد عليها. التفاصيل في درس isolation levels في المستوى التاني.
+
+optimistic ولا pessimistic locking؟ pessimistic: اقفل الأول ([[FOR UPDATE]]) لما التضارب متوقع كتير (آخر قطعة في flash sale). optimistic: عمود [[version]] و [[UPDATE ... SET version = version + 1 WHERE id = $1 AND version = $2]]، ولو 0 صفوف اتعدّلت يبقى حد سبقك، اعرض رسالة أو أعد المحاولة. مناسب لتعديلات الفورمز اللي التضارب فيها نادر.`,
+            when: "أي read-modify-write: مخزون، ورصيد، وكوبونات، وحجز مواعيد.",
+            mistakes: R`تقول إن READ COMMITTED بيمنع lost update. ترفع كل حاجة لـ SERIALIZABLE من غير retry. تفتكر إن الـ transaction لوحدها (BEGIN و COMMIT) بتمنع التضارب. وتنسى إن Postgres مفيهوش dirty read حتى لو طلبت READ UNCOMMITTED.`
+          },
+          lines: [
+            "افتح transaction في الاتنين.",
+            "A قرا المخزون (١٠).",
+            "B قرا نفس المخزون (١٠).",
+            "A كتب ٩.",
+            "B بيحاول يكتب ٩: بيستنى قفل A.",
+            "A عمل COMMIT.",
+            "B كمّل وكتب ٩ فوق ٩ (في READ COMMITTED).",
+            "B عمل COMMIT: بيعتين والمخزون نقص واحد."
+          ]
+        },
+        {
+          cmd: "index trade-offs",
+          title: "ليه متعملش index على كل عمود",
+          desc: R`الـ index بيسرّع القراية، بس ليه تمن:
+
+كل INSERT و UPDATE و DELETE لازم يعدّل كل index على الجدول. جدول عليه ١٠ indexes الكتابة فيه أبطأ بكتير.
+
+مساحة على الديسك وفي الذاكرة (الـ index اللي ميدخلش الـ RAM بيبقى أبطأ).
+
+والـ planner ممكن ميستخدموش أصلًا: لو الشرط بيرجّع جزء كبير من الجدول ([[status = 'paid']] و ٩٠٪ مدفوع)، الـ Seq Scan أسرع.
+
+القاعدة: index للأعمدة اللي في WHERE و JOIN و ORDER BY لاستعلامات بتتشغّل كتير، والـ FKs، وبعد كده قيس بـ EXPLAIN وامسح اللي مش مستخدم.`,
+          example: R`SELECT relname, indexrelname, idx_scan, pg_size_pretty(pg_relation_size(indexrelid)) AS size
+FROM pg_stat_user_indexes
+ORDER BY idx_scan, pg_relation_size(indexrelid) DESC;
+CREATE INDEX orders_pending_idx ON orders (created_at) WHERE status = 'pending';
+CREATE INDEX CONCURRENTLY orders_user_idx ON orders (user_id);`,
+          try: R`شغّل أول استعلام على قاعدة الـ lab بعد الدروس اللي فاتت: فيه indexes عندها [[idx_scan = 0]]؟ وبعدين اعمل ١٠٠ ألف INSERT في orders مرة بالـ indexes اللي عليها ومرة بعد ما تمسح الـ indexes الزيادة، وقارن الوقت بـ [[\timing]].`,
+          sol: R`هتلاقي indexes [[idx_scan]] بتاعها صفر أو قليل جدًا، غالبًا اللي عملتها للتجربة (زي [[orders_created_at_idx]] لو مبقتش بتفلتر بيه). الـ primary keys والـ unique ممكن يبقوا صفر برضه بس دول متمسحهمش: وظيفتهم منع التكرار مش السرعة.
+
+الـ INSERT هيبقى أسرع بعد ما تمسح الـ indexes الزيادة، والفرق بيكبر مع عدد الـ indexes وحجمها. لو الجدول مكانش عليه indexes زيادة أصلًا (أوامر DROP طلّعت NOTICE إن الـ index مش موجود)، الوقتين هيبقوا قريبين، وده منطقي. ده بالظبط السبب إن الـ bulk imports الكبيرة أحيانًا بتمسح الـ indexes وتعملها تاني بعد الـ import.
+
+في الانترفيو: «الـ index بيسرّع القراية ويبطّأ الكتابة وياخد مساحة، وبعمله على اللي بقيس إنه محتاجه».`,
+          solCode: R`\timing on
+INSERT INTO orders (user_id, status, total)
+SELECT (SELECT id FROM users LIMIT 1), 'paid', 100 FROM generate_series(1, 100000);
+DROP INDEX IF EXISTS orders_created_at_idx;
+DROP INDEX IF EXISTS orders_created_id_idx;
+INSERT INTO orders (user_id, status, total)
+SELECT (SELECT id FROM users LIMIT 1), 'paid', 100 FROM generate_series(1, 100000);`,
+          flag: "script",
+          deep: {
+            why: "«ليه منعملش index على كل حاجة؟» سؤال كلاسيكي، والإجابة بتبين إنك فاهم الـ index بيتخزن ويتحدث إزاي، مش بس إنه «بيسرّع».",
+            how: R`الـ B-tree شجرة مترتبة، وكل تعديل في الجدول بيضيف entry فيها أو يعدّلها، وأحيانًا يقسم صفحة. في Postgres كمان أي UPDATE بيعمل نسخة جديدة من الصف، فبيحتاج entry جديدة في كل index (إلا لو HOT update: العمود المتعدل مش في أي index والصفحة فيها مكان).
+
+أنواع تقلل التكلفة: partial index ([[WHERE status = 'pending']]) أصغر بكتير ومفيد لو بتسأل عن جزء صغير. covering index ([[INCLUDE (total)]]) بيخلي القراية من الـ index بس (Index Only Scan). و [[CREATE INDEX CONCURRENTLY]] على الإنتاج عشان متقفلش الكتابة.
+
+وترتيب الأعمدة في الـ composite index بيفرق (درس composite index)، و GIN للـ jsonb والبحث، و BRIN لجداول ضخمة مترتبة بالوقت.`,
+            when: "بعد ما تشوف استعلام بطيء في EXPLAIN أو pg_stat_statements، مش قبل. والـ FKs من الأول.",
+            mistakes: R`index على عمود boolean لوحده. index مكرر (عندك [[(user_id, created_at)]] وعامل [[(user_id)]] كمان، الأول بيغطي التاني). CREATE INDEX من غير CONCURRENTLY على جدول كبير في الإنتاج. وتمسح unique index لأن idx_scan صفر.`
+          },
+          lines: [
+            "كل index: اسم الجدول والـ index، واتستخدم كام مرة، وحجمه،",
+            "من إحصائيات Postgres،",
+            "الأقل استخدامًا والأكبر الأول (مرشحين للمسح).",
+            "partial index: على الأوردرات الـ pending بس، فصغير.",
+            "على الإنتاج: اعمله من غير ما تقفل الكتابة."
+          ]
+        },
+        {
+          cmd: "replication و sharding",
+          title: "القاعدة مبقتش مستحملة: read replicas ولا sharding",
+          desc: R`replication: نسخ من القاعدة كلها على سيرفرات تانية. الـ primary بيستقبل الكتابة، والـ replicas بتاخد التغييرات منه (streaming من الـ WAL) وبتخدم القراية. بيحل: قراية كتير، و high availability (لو الـ primary وقع، replica تبقى primary).
+
+sharding: تقسيم الداتا نفسها على كذا سيرفر، كل واحد عنده جزء (مثلًا حسب tenant_id). بيحل: كتابة أكتر من اللي سيرفر واحد يستحمله، أو داتا أكبر من سيرفر. وتمنه كبير: JOIN و transactions بين shards صعبة، وتغيير الـ shard key شبه مستحيل.
+
+الترتيب الطبيعي: indexes واستعلامات أحسن، وبعدين سيرفر أكبر، وبعدين connection pooling و cache، وبعدين read replicas، و sharding في الآخر خالص.`,
+          example: R`SELECT client_addr, state, sync_state, replay_lag FROM pg_stat_replication;
+SELECT pg_is_in_recovery();
+SELECT now() - pg_last_xact_replay_timestamp() AS replica_lag;`,
+          try: R`يوزر عمل تعديل على بروفايله، وبعدين الصفحة اتعملها refresh وظهر الاسم القديم. التطبيق بيكتب على الـ primary ويقرا من replica. اشرح ليه، واقترح حلين.`,
+          sol: R`ده replication lag: الـ replica بتستلم التغييرات asynchronous، فممكن تكون ورا الـ primary بملّي ثواني أو ثواني. القراية اللي جات بعد الكتابة على طول راحت replica لسه موصلهاش التعديل.
+
+الحلول: (١) read-your-writes: القراية اللي بعد كتابة من نفس اليوزر (لفترة قصيرة، أو لنفس الـ session) تروح للـ primary. (٢) القراية المهمة (البروفايل، والرصيد، وحالة الدفع) دايمًا من الـ primary، والـ replicas للتقارير والقوايم والبحث. (٣) synchronous replication بتحل ده بس بتبطّأ كل كتابة.
+
+وقول في الانترفيو إن [[pg_stat_replication]] على الـ primary و [[pg_last_xact_replay_timestamp()]] على الـ replica بيقيسوا الـ lag.`,
+          solCode: R`-- على الـ replica: هي ورا بقد إيه؟
+SELECT now() - pg_last_xact_replay_timestamp() AS replica_lag;
+
+// في الكود: القراية بعد كتابة من الـ primary
+const user = await primary.user.update({ where: { id }, data: { name } });
+const profile = await primary.user.findUnique({ where: { id } });
+const feed = await replica.post.findMany({ take: 20 });`,
+          flag: "script",
+          deep: {
+            why: "أي سؤال system design بيوصل لـ «والقاعدة لما الترافيك يزيد؟». والإجابة الناضجة إنك متقفزش لـ sharding، وتعرف مشاكل كل حل (lag، و cross-shard queries).",
+            how: R`الـ streaming replication في Postgres: الـ replica بتقرا الـ WAL من الـ primary وتطبّقه، فهي نسخة طبق الأصل وللقراية بس. الـ logical replication بتنقل تغييرات جداول معينة (مفيد للنقل بين نسخ أو لأنظمة تانية). Supabase و RDS و Neon بيدّوك read replicas بزرار.
+
+الـ sharding في Postgres مش built-in: Citus extension، أو تقسيم في التطبيق (كل tenant في قاعدة). والـ partitioning (جدول واحد مقسوم بالتاريخ جوه نفس السيرفر) حاجة تانية خالص، بتسهّل مسح الداتا القديمة وبتسرّع استعلامات الفترات.`,
+            when: "replicas لما القراية هي الضغط والـ primary CPU عالي. sharding لما الكتابة أو الحجم فعلًا أكبر من أكبر سيرفر معقول، وده نادر في أغلب الشركات.",
+            mistakes: R`sharding من أول يوم. قراية من replica بعد الكتابة على طول. تفتكر إن الـ replica باك أب (مسح بالغلط بيتنسخ للـ replica في ثانية؛ الباك أب في تاب «PostgreSQL»). و shard key بيعمل hot spot (كل الترافيك على shard واحد).`
+          },
+          lines: [
+            "على الـ primary: الـ replicas المتصلة وحالتها والتأخير.",
+            "true يعني السيرفر ده replica.",
+            "على الـ replica: آخر تعديل اتطبق من قد إيه."
+          ]
+        },
+        {
+          cmd: "الاستعلام بطيء",
+          title: "الصفحة بطيئة وبيقولوا «القاعدة»: هتعمل إيه خطوة بخطوة",
+          desc: R`الإجابة المرتبة أهم من أي أداة:
+
+١. اتأكد إنها القاعدة: الـ query log أو APM بيوريك وقت كل استعلام. ممكن المشكلة N+1 (استعلامات سريعة كتير) مش استعلام بطيء.
+
+٢. لاقي الاستعلام: [[pg_stat_statements]] مترتب بـ [[total_exec_time]] (الأكتر تكلفة إجمالًا، مش الأبطأ مرة واحدة).
+
+٣. [[EXPLAIN (ANALYZE, BUFFERS)]]: دوّر على Seq Scan على جدول كبير، و [[Rows Removed by Filter]] كبير، و Sort على داتا كتير، وفرق كبير بين rows المتوقع والحقيقي.
+
+٤. صلّح: index مناسب، أو اكتب الاستعلام تاني (keyset بدل OFFSET، و EXISTS، وأعمدة أقل)، أو [[ANALYZE]] لو الإحصائيات قديمة.
+
+٥. قيس تاني، وراقب.`,
+          example: R`SELECT query, calls, round(total_exec_time) AS total_ms, round(mean_exec_time, 1) AS mean_ms
+FROM pg_stat_statements
+ORDER BY total_exec_time DESC
+LIMIT 10;
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT id, total FROM orders
+WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com')
+ORDER BY created_at DESC LIMIT 20;
+CREATE INDEX IF NOT EXISTS orders_user_created_idx ON orders (user_id, created_at DESC);`,
+          try: R`على جدول orders بعد ما تضيف ٢٠٠ ألف صف (درس B-tree index) امسح أي index على user_id (عندك [[orders_user_created_idx]] من درس composite index)، وشغّل الـ EXPLAIN اللي في المثال واكتب أهم ٣ سطور فيه. وبعدين اعمل الـ index وشغّله تاني وقارن Execution Time والـ Buffers.`,
+          sol: R`قبل الـ index هتلاقي [[Seq Scan on orders]] (أو Parallel Seq Scan) ومعاها [[Filter: (user_id = $0)]]، وفوقها [[Sort]] بـ [[Sort Key: orders.created_at DESC]]: قرا الجدول كله ورتّب عشان ٢٠ صف. و Buffers بالآلاف (عندي حوالي ١٩٠٠ صفحة لـ ٢٠٠ ألف صف)، و Execution Time عشرات الملّي ثواني حسب الجهاز وحسب عدد أوردرات اليوزر ده.
+
+بعد الـ index: [[Index Scan using orders_user_created_idx on orders]] و [[Index Cond: (user_id = $0)]] ومفيش Sort (الـ index مترتب)، و Buffers بقت أرقام صغيرة (٦ تقريبًا)، والوقت أقل من ملّي ثانية. عندي كان ٢٩ ملّي ثانية قبل و ٠٫٠٦ بعد.
+
+في الانترفيو اشرح الـ Buffers: عدد الصفحات (8KB) اللي اتقرت، ودي أثبت من الوقت اللي بيتأثر بالـ cache. ولو [[pg_stat_statements]] مش متفعّل: محتاج [[shared_preload_libraries]] و [[CREATE EXTENSION pg_stat_statements]] (درس الاستعلامات البطيئة في تاب «PostgreSQL»).`,
+          solCode: R`DROP INDEX IF EXISTS orders_user_created_idx;
+DROP INDEX IF EXISTS orders_user_id_idx;
+
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT id, total FROM orders
+WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com')
+ORDER BY created_at DESC LIMIT 20;
+
+CREATE INDEX orders_user_created_idx ON orders (user_id, created_at DESC);
+ANALYZE orders;
+
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT id, total FROM orders
+WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com')
+ORDER BY created_at DESC LIMIT 20;`,
+          flag: "script",
+          deep: {
+            why: "«إزاي تتعامل مع استعلام بطيء؟» سؤال شبه أكيد، والانترفيور عايز يشوف طريقة تفكير: قياس الأول، وبعدين سبب، وبعدين تصليح، وبعدين قياس تاني. مش «هعمل index» على طول.",
+            how: R`الـ EXPLAIN بيتقري من جوه لبرّه: أعمق node بتشتغل الأول. [[actual time]] بالملّي ثانية لكل loop، و [[loops]] عدد المرات (في Nested Loop اضرب). لو [[rows]] المتوقع بعيد جدًا عن الحقيقي، الإحصائيات قديمة أو الشرط معقد، و ANALYZE بيساعد.
+
+أسباب شائعة غير الـ index: دالة على العمود في WHERE ([[lower(email)]]، أو date_trunc)، ونوع مختلف ([[WHERE id = '5']] على bigint ده تمام بس uuid مقارن بـ text لأ)، و OFFSET كبير، و [[SELECT *]] بيجيب jsonb تقيل، و [[LIKE '%x%']] من غير trigram، وأقفال (استعلام مستني lock مش بطيء، شوف [[pg_stat_activity]] و [[wait_event]]).
+
+وبرّه الاستعلام: connection pool مليان (الطلبات مستنية اتصال)، و N+1، والـ network لسيرفر بعيد.`,
+            when: "أي شكوى بطء، وكمان بشكل دوري: بص على أعلى ١٠ في pg_stat_statements كل فترة قبل ما حد يشتكي.",
+            mistakes: R`تعمل index من غير EXPLAIN. تقيس مرة واحدة (أول مرة الـ cache بارد). EXPLAIN ANALYZE على UPDATE أو DELETE على الإنتاج: ده بينفّذ فعلًا (لفه في BEGIN و ROLLBACK). تبص على أبطأ استعلام مرة واحدة وتسيب استعلام ٥ ملّي ثانية بيتنادي مليون مرة. وتنسى إن الإجابة ممكن تكون cache أو تغيير في الـ API مش في SQL.`
+          },
+          lines: [
+            "كل استعلام: نصه، واتنادى كام مرة، والوقت الإجمالي والمتوسط،",
+            "من الإحصائيات (extension pg_stat_statements)،",
+            "الأكتر تكلفة إجمالًا الأول،",
+            "أول ١٠.",
+            "اشرح الاستعلام ونفّذه فعلًا، ومعاه الصفحات اللي اتقرت:",
+            "آخر ٢٠ أوردر،",
+            "ليوزر معين،",
+            "بالأحدث.",
+            "الـ index اللي بيخدمه (الفلتر والترتيب)."
+          ]
+        }
+      ]
+    }
   ]
 });

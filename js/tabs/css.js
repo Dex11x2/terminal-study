@@ -8,6 +8,8 @@
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
+//   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
+//   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("css", {
@@ -71,7 +73,12 @@ npm run dev`,
             R`الـ JavaScript، و [[defer]] بيخليه يتحمّل من غير ما يوقف قراية الصفحة، ويتنفّذ بعد ما تخلص.`,
             "قفلة الـ body.",
             "قفلة الـ html."
-          ]
+          ],
+          sol: R`بالهيكل الكامل: كلمة «أهلًا» بتظهر بخطها الطبيعي (الـ h1 حوالي 32px) والعربي مقروء مش رموز غريبة، وعنوان التاب «متجري | الرئيسية». لو فتحت الـ Console واكتبت [[innerWidth]] في وضع الموبايل (مثلًا 375) هيرجع [[375]].
+
+بعد ما تمسح سطر الـ viewport: [[innerWidth]] بيرجع حوالي [[980]]، يعني الموبايل بيرسم الصفحة كأنها شاشة كمبيوتر عرضها 980 ويصغّرها عشان تدخل في الشاشة (scale حوالي 0.38)، فالكلام بيبان صغير جدًا ومحتاج تكبّر بصوابعك. ودا بيحصل حتى لو الـ CSS بتاعك responsive، لأن الـ media queries بتشوف 980 مش 375.
+
+لو مشفتش فرق خالص وانت في DevTools: اتأكد إن وضع الموبايل متفعّل ومختار جهاز (مش Responsive بـ DPR 1 وعرض كبير)، واعمل refresh بعد ما تمسح السطر. ولو العربي طلع رموز زي [[Ø£Ù‡Ù„Ù‹Ø§]] يبقى سطر الـ charset ناقص أو الملف متحفظ بترميز غير UTF-8.`
         },
         {
           cmd: "lang و dir",
@@ -108,7 +115,12 @@ npm run dev`,
             "حقل الإيميل دايمًا LTR حتى في صفحة عربي.",
             "قفلة الـ body.",
             "قفلة الـ html."
-          ]
+          ],
+          sol: R`مع [[dir="rtl"]]: المربع 1 على أقصى اليمين، وبعده 2 على شماله، وبعده 3. غيّر لـ [[ltr]]: 1 بقى على أقصى الشمال والترتيب اتعكس، من غير ما تلمس أي CSS. ده لأن flex بيمشي على اتجاه الكتابة (main-start بيبقى اليمين في rtl).
+
+رقم التليفون [[+20 100 000 0000]] من غير [[dir="ltr"]] جوه فقرة عربي بيتعرض كده: [[0000 000 100 20+]]. الـ + راحت آخر الرقم (على الشمال)، والأدهى إن المجموعات اتعكس ترتيبها لأن المسافات اللي بينها بتاخد اتجاه الفقرة (rtl). مع [[<span dir="ltr">]] بيرجع [[+20 100 000 0000]] زي ما كتبته.
+
+الغلط الشائع إنك تفتكر المشكلة في الـ + بس فتحلها بإنك تشيلها؛ المجموعات برضه هتتعكس طول ما فيه مسافات. الحل دايمًا تعزل الرقم بـ [[dir="ltr"]] أو [[<bdi>]].`
         },
         {
           cmd: "semantic HTML",
@@ -157,7 +169,12 @@ npm run dev`,
             "قفلة section.",
             "قفلة main.",
             "آخر الصفحة: حقوق وروابط ثانوية."
-          ]
+          ],
+          sol: R`قبل التغيير: شجرة الـ Accessibility فيها [[generic]] جوه [[generic]] ومفيش ولا landmark. بعد ما تحوّل: هتلاقي [[main]] و [[navigation]] (وبالاسم اللي في [[aria-label]]، زي «الرئيسية»)، ولو عندك header و footer مباشرة تحت الـ body هيظهروا [[banner]] و [[contentinfo]]. والـ [[<article>]] بيظهر [[article]]، والعناوين [[heading]] بمستواها.
+
+ممكن تشوفها أسرع من الـ Accessibility tree الكامل (الأيقونة اللي فوق الـ Elements panel): هتلاقي banner › link «متجري» و navigation «الرئيسية» › link، و main › heading level 1 وهكذا. وقارئ الشاشة بيقدر ينط بينهم بمفتاح واحد (D في NVDA مثلًا).
+
+لو الـ [[<section>]] مظهرش كـ [[region]] ده طبيعي: section من غير اسم (aria-label أو aria-labelledby) مش بيبقى landmark. ولو الـ header جوه article أو section مش هيبقى banner. ولو مفيش أي تغيير خالص، غالبًا عندك [[role="presentation"]] أو [[role]] تاني على العنصر بيغطي على معناه.`
         },
         {
           cmd: "a و button",
@@ -196,7 +213,12 @@ npm run dev`,
             R`زرار بيعمل حاجة. [[type="button"]] عشان لو جوه فورم ميبعتهاش.`,
             "زرار بيبعت الفورم اللي هو جواها.",
             "غلط: شكله زرار بس مش بيتوصله بـ Tab ولا بيشتغل بـ Enter، وقارئ الشاشة بيقراه كلام عادي."
-          ]
+          ],
+          sol: R`وانت بتدوس Tab: الـ focus بيروح للـ [[<button>]] على طول ويعدّي من فوق الـ [[<div>]] كأنه مش موجود، والـ Tab اللي بعده بيخرج من الصفحة (لشريط العنوان). وانت واقف على الزرار: Enter بيشغّل [[openCart()]]، و Space كمان بتشغّله (Space بتشتغل لما تسيب الزرار، مش لما تدوس).
+
+الـ div مش هيتوصله بالكيبورد خالص، ومفيش طريقة يشتغل غير بالماوس. وفي شجرة الـ Accessibility الـ div بيبان كـ نص عادي «السلة» والزرار [[button "السلة"]]، فقارئ الشاشة مش هيقول إنه بيتضغط.
+
+لو حد حاول يصلّح الـ div بـ [[tabindex="0"]] بس: هيتوصله بـ Tab، بس Enter و Space مش هيعملوا حاجة لحد ما تكتب keydown handler بنفسك وتضيف [[role="button"]]. ده بالظبط سبب إن الإجابة الصح في الانترفيو «استخدم button».`
         },
         {
           cmd: "form و label",
@@ -243,7 +265,12 @@ npm run dev`,
             "label حوالين الـ checkbox: ربط من غير for و id، والضغط على الكلام بيعلّم المربع.",
             "زرار الإرسال.",
             "قفلة الفورم."
-          ]
+          ],
+          sol: R`الكيبورد: حقل الاسم كيبورد حروف عادي، والإيميل فيه [[@]] و [[.]] ظاهرين، والموبايل ([[type="tel"]]) كيبورد أرقام زي بتاع الاتصال، وكلمة السر بتظهر نقط والموبايل بيعرض يقترح كلمة سر قوية بسبب [[new-password]]. (في DevTools مش هتشوف الكيبورد نفسه؛ ده محتاج موبايل حقيقي أو محاكي Android/iOS.)
+
+لما تدوس «سجّل» والكل فاضي: الفورم مش بيتبعت، والـ focus بيروح لحقل «الاسم» (أول حقل غلط) وفقاعة جنبه بتقول «Please fill out this field.» (أو «يُرجى ملء هذا الحقل» لو المتصفح عربي). المتصفح بيعرض رسالة واحدة بس، لأول حقل. املا الاسم ودوس تاني: الرسالة تنتقل للإيميل. اكتب [[ahmed]] في الإيميل: «Please include an '@' in the email address». ولو الكل تمام والـ checkbox مش متعلّم: «Please check this box if you want to proceed».
+
+كلمة السر مش required، فلو سبتها فاضية مش هتعترض، بس لو كتبت 3 حروف هتقول لازم 8 على الأقل. ولو الفورم اتبعت عادي وهو فاضي، يبقى غالبًا عندك [[novalidate]] على الـ form أو الزرار [[type="button"]].`
         },
         {
           cmd: "img",
@@ -286,7 +313,546 @@ npm run dev`,
             "قفلة الـ img.",
             R`صورة منتج تحت في الصفحة: [[lazy]] بيأجّلها لحد ما تقرّب منها.`,
             R`صورة زينة: [[alt=""]] فاضي عشان قارئ الشاشة يتجاهلها.`
-          ]
+          ],
+          sol: R`في Network (فلتر Img)، الملف اللي بيتحمّل بيعتمد على العرض وعلى كثافة الشاشة (DPR)، لأن المتصفح بيحسب [[sizes × DPR]] وياخد أصغر صورة تكفي. قيس ده بنفسك: موبايل 375 بـ DPR 1 بياخد [[hero-400.webp]]، و DPR 2 (زي iPhone SE في DevTools) بياخد [[hero-800.webp]]، و DPR 3 بياخد [[hero-1600.webp]]. على شاشة كمبيوتر 1440 بـ DPR 1 الـ sizes بقى [[50vw]] يعني 720، فبياخد [[hero-800.webp]]؛ ولو 1920 (أو شاشة retina) بياخد [[hero-1600.webp]]. ملف واحد بس بيتحمّل كل مرة.
+
+لو صغّرت الشاشة ولقيت المتصفح لسه مستخدم الصورة الكبيرة: ده مش غلط، Chrome لو عنده نسخة أكبر في الكاش بيستخدمها بدل ما يحمّل أصغر. اعمل refresh بـ Disable cache عشان تشوف الاختيار الحقيقي. ولو لقيت [[hero-800.webp]] دايمًا، اتأكد إن فيه [[srcset]] فعلًا وإن [[w]] مكتوبة مش [[x]].
+
+بعد ما تمسح width و height وتعمل Slow 4G: الصفحة بتظهر والكلام اللي تحت الصورة فوق، ولما الصورة توصل الكلام بيتزق لتحت فجأة (layout shift). مع width و height المتصفح بيحجز مكان بنسبة 1600:900 من الأول والكلام مبيتحركش. والصورة التانية عليها [[loading="lazy"]]، فلو هي تحت أول شاشة مش هتلاقيها في Network لحد ما تقرب منها بالـ scroll (لو ظاهرة من الأول هتتحمّل على طول، وده طبيعي).`
+        }
+      ]
+    },
+    {
+      t: "الفورم: كل أنواع الحقول والأخطاء",
+      l: 1,
+      n: "اختيارات بـ fieldset، والنوع الصح لكل حقل، و validation المتصفح من JavaScript، وأخطاء واضحة للكل",
+      items: [
+        {
+          cmd: "fieldset و radio",
+          title: "اختيار واحد ولا أكتر؟ radio و checkbox و select",
+          desc: R`[[radio]] لاختيار واحد بس من مجموعة، وكل الـ radios اللي في المجموعة ليهم نفس الـ [[name]]. و [[checkbox]] لصفر أو أكتر. و [[<select>]] لاختيار واحد من قايمة طويلة.
+
+والمجموعة كلها بتتلف في [[<fieldset>]] وأول حاجة جواه [[<legend>]] فيه السؤال. من غيرهم قارئ الشاشة بيقول «كارت، radio button» ومش بيقول السؤال أصلًا. ومعاهم بيقول «طريقة الدفع، مجموعة، كارت، radio button، 1 من 2».
+
+قاعدة سريعة: 5 اختيارات أو أقل يبقى radio (كلهم باينين وضغطة واحدة)، أكتر من كده select.`,
+          example: R`<fieldset>
+  <legend>طريقة الدفع</legend>
+  <label><input type="radio" name="pay" value="card" required> كارت</label>
+  <label><input type="radio" name="pay" value="cod"> كاش عند الاستلام</label>
+</fieldset>
+<fieldset>
+  <legend>ابعتلي إشعارات على</legend>
+  <label><input type="checkbox" name="notify" value="email" checked> الإيميل</label>
+  <label><input type="checkbox" name="notify" value="sms"> SMS</label>
+</fieldset>
+<label for="city">المحافظة</label>
+<select id="city" name="city" required>
+  <option value="">اختار…</option>
+  <optgroup label="الدلتا">
+    <option value="gharbia">الغربية</option>
+    <option value="dakahlia">الدقهلية</option>
+  </optgroup>
+</select>`,
+          try: R`حط الكود في [[<form>]] ومعاه زرار submit، ودوس عليه من غير ما تختار حاجة وشوف المتصفح بيقف فين. وبعدين علّم الـ checkboxes الاتنين، وافتح الـ Console واكتب [[Object.fromEntries(new FormData(document.forms[0]))]] وبعدها [[new FormData(document.forms[0]).getAll('notify')]] وقارن.`,
+          flag: "script",
+          deep: {
+            why: R`أي فورم دفع أو تسجيل أو إعدادات فيه اختيارات. ولو المجموعة ملهاش legend، مستخدم قارئ الشاشة بيسمع «نعم، لا» ومش عارف السؤال إيه. ولو الـ radios أسماءهم مختلفة، المستخدم يقدر يختار الاتنين مع بعض والسيرفر يستلم بيانات متناقضة.`,
+            how: R`الـ radios اللي ليهم نفس الـ [[name]] جوه نفس الفورم بقوا مجموعة: تعليم واحد بيشيل التاني، والمجموعة كلها وقفة Tab واحدة، وجواها بتتنقل بالأسهم (والسهم بيختار كمان). و [[required]] على radio واحد بس بيكفي للمجموعة كلها.
+
+وقت الإرسال: الـ checkbox اللي مش متعلّم مش بيتبعت خالص (مش [[false]])، والمتعلّم بيتبعت بالـ [[value]] بتاعه (ولو ملوش value بيتبعت [[on]]). ولو كذا checkbox ليهم نفس الـ name بيتبعتوا كذا مرة، فلازم [[formData.getAll('notify')]] مش [[get]].
+
+في الـ select: أول option بـ [[value=""]] هو اللي بيخلي [[required]] يشتغل، لأن الـ required بيرفض القيمة الفاضية. و [[<optgroup>]] بيقسّم القايمة بعناوين مبتتختارش.
+
+والشكل: [[accent-color: var(--color-brand)]] بيلوّن الـ checkbox والـ radio الأصليين من غير ما تكسرهم. وفيه [[appearance: base-select]] جديد بيخليك تعمل ستايل كامل للـ select، بس لسه مش في كل المتصفحات، فاتأكد من caniuse قبل ما تعتمد عليه.`,
+            when: R`radio: اختيار واحد إجباري وقليل (الجنس، طريقة الدفع، حجم). checkbox لوحده: موافقة أو تشغيل/إطفاء. checkboxes: اختيارات متعددة. select: قايمة طويلة (محافظات، دول). ولو القايمة طويلة جدًا ومحتاجة بحث، ده combobox (مستوى تالت).`,
+            mistakes: R`كل radio بـ name مختلف فيتعلّموا كلهم. checkbox لاختيار واحد من اتنين. select لـ «نعم/لا». option أولاني من غير [[value=""]] فالـ required ميشتغلش. [[Object.fromEntries(formData)]] مع checkboxes بنفس الاسم: بيسيب آخر قيمة بس. وتخفي الـ input بـ [[display: none]] عشان تعمل شكل مخصص: كده اتشال من الكيبورد وقارئ الشاشة. وسؤال انترفيو: «ليه الـ radio group وقفة Tab واحدة؟» لأنها widget واحد، والأسهم للتنقل جواه، ودا نفس فكرة roving tabindex.`
+          },
+          lines: [
+            "بداية المجموعة الأولى.",
+            "السؤال. قارئ الشاشة بيقوله قبل أول اختيار.",
+            R`radio متعلّم باسم [[pay]]. [[required]] على واحد بيكفي للمجموعة.`,
+            R`نفس الـ [[name]]، فتعليمه بيشيل التاني.`,
+            "قفلة المجموعة.",
+            "مجموعة checkboxes: تختار صفر أو أكتر.",
+            "السؤال.",
+            R`[[checked]] متعلّم من الأول، وهيتبعت [[notify=email]].`,
+            R`نفس الاسم، فلو اتعلّموا الاتنين هيتبعتوا مرتين.`,
+            "قفلة.",
+            "label الـ select مربوط بالـ id زي أي حقل.",
+            R`قايمة، و [[required]] يرفض القيمة الفاضية.`,
+            R`اختيار مبدئي قيمته فاضية، فالمستخدم مجبر يختار حاجة تانية.`,
+            "عنوان مجموعة جوه القايمة، مبيتختارش.",
+            R`الكلام بالعربي للمستخدم، والـ [[value]] ثابت للسيرفر.`,
+            "اختيار تاني.",
+            "قفلة المجموعة.",
+            "قفلة الـ select."
+          ],
+          sol: R`لما تدوس submit والحقول فاضية: المتصفح بيقف عند أول حقل required فاضي (مجموعة الدفع) ويعرض رسالة جنبها، ومش بيبعت حاجة.
+
+بعد ما تختار وتعلّم الـ checkboxes الاتنين، [[Object.fromEntries(...)]] هيطلّع حاجة زي [[{pay: 'cod', notify: 'sms', city: 'gharbia'}]]: الـ [[notify]] فيها قيمة واحدة بس (آخر واحدة) لأن الـ object مينفعش يبقى فيه نفس المفتاح مرتين. أما [[getAll('notify')]] فبترجّع [[['email', 'sms']]].
+
+ولو شلت العلامة من الاتنين، [[notify]] مش هتظهر خالص في الـ FormData. الغلط الشائع: تتوقعها [[false]] أو [[[]]] وتكتب كود في السيرفر على الأساس ده.`
+        },
+        {
+          cmd: "textarea و date و number",
+          title: "كل حقل بنوعه، وإمتى متستخدمش type=\"number\"",
+          desc: R`[[<textarea>]] للكلام اللي أكتر من سطر. و [[type="date"]] بيدّي calendar أصلي، وقيمته دايمًا [[2026-10-05]] مهما كان الشكل اللي المستخدم شايفه. و [[type="number"]] للكميات الحقيقية (كمية، سن) ومعاه [[min]] و [[max]] و [[step]]. و [[email]] و [[tel]] و [[url]] بيغيّروا الكيبورد وبعضهم بيعمل validation.
+
+وإمتى متستخدمش number: أي رقم مش «كمية» (تليفون، كارت، كود OTP، رقم قومي، رمز بريدي). هنا [[inputmode="numeric"]] على حقل نص: كيبورد أرقام من غير أسهم ولا شيل للأصفار.`,
+          example: R`<label for="msg">رسالتك</label>
+<textarea id="msg" name="msg" rows="4" maxlength="500"></textarea>
+<label for="qty">الكمية</label>
+<input id="qty" name="qty" type="number" min="1" max="10" step="1" value="1">
+<label for="date">ميعاد التوصيل</label>
+<input id="date" name="date" type="date" min="2026-10-01">
+<label for="otp">كود التأكيد</label>
+<input id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6">
+<label for="site">موقعك</label>
+<input id="site" name="site" type="url" placeholder="https://" dir="ltr">`,
+          try: R`حط الحقول في صفحة وافتح الـ Console. اختار تاريخ واكتب [[date.value]] و [[date.valueAsDate]]. وبعدين [[qty.value = 'abc']] واقرا [[qty.value]] و [[qty.valueAsNumber]]. وافتح الصفحة من الموبايل وشوف كيبورد كل حقل.`,
+          flag: "script",
+          deep: {
+            why: R`النوع الصح بيوفّر على المستخدم: كيبورد مناسب، و calendar بدل ما يكتب التاريخ بإيده ويغلط في الترتيب، و validation ببلاش. والنوع الغلط بيبوّظ البيانات: [[type="number"]] على تليفون بيشيل الصفر اللي على الشمال، وفيه أسهم، والـ scroll بالماوس فوقه بيغيّر القيمة من غير ما تاخد بالك.`,
+            how: R`[[value]] دايمًا string. للأرقام فيه [[valueAsNumber]] (و [[NaN]] لو فاضي)، وللتاريخ [[valueAsDate]] (Date بتوقيت UTC). و type=number لما تكتب فيه حاجة مش رقم، [[value]] بيرجع [[""]] مش الكلام اللي اتكتب، فمتعرفش من JavaScript المستخدم كتب إيه غلط.
+
+الـ [[date]] بيعرض التاريخ بلغة وشكل جهاز المستخدم، بس القيمة اللي بتتبعت وبتتقري ثابتة [[YYYY-MM-DD]]، ودا اللي خلّي الحقل ده أحسن من نص حر. و [[min]] و [[max]] بيقفلوا الأيام اللي مينفعش تتختار.
+
+[[autocomplete="one-time-code"]] بيخلي الموبايل يقترح الكود اللي جه في SMS. و [[maxlength]] على textarea بيوقف الكتابة عند الحد، واعرض عدّاد جنبه عشان المستخدم ميتفاجئش.
+
+وفيه [[field-sizing: content]] في CSS بيخلي الـ textarea يكبر مع الكلام من غير JavaScript، بس لسه مش في كل المتصفحات، فخليه تحسين إضافي.`,
+            when: R`number: كمية، سن، عدد أفراد. date: ميعاد قريب (توصيل، حجز). تاريخ الميلاد: ناس كتير (زي GOV.UK) بيفضّلوا 3 حقول نص (يوم وشهر وسنة) لأن الـ calendar بيخليك ترجع 30 سنة ورا. tel: أي تليفون. inputmode=numeric: أكواد وأرقام تعريفية.`,
+            mistakes: R`type=number لتليفون أو كارت. [[pattern]] من غير رسالة واضحة جنب الحقل، فالمستخدم يشوف «Please match the requested format» ومش فاهم. تعتمد على [[qty.value]] كرقم فتجمع strings ([[1 + '1']] بيطلّع [[11]]). و date بتحوّله بـ [[new Date(value)]] وتعرضه بتوقيت محلي فيطلع يوم قبله في بعض المناطق: خليه string أو اتعامل معاه كتاريخ من غير وقت. وسؤال انترفيو: «امتى type=number مش مناسب؟» والإجابة: لما القيمة مش حاجة بتتجمع وتطرح.`
+          },
+          lines: [
+            "label الرسالة.",
+            R`حقل كلام متعدد السطور. [[rows]] الارتفاع المبدئي، و [[maxlength]] أقصى عدد حروف.`,
+            "label الكمية.",
+            R`رقم حقيقي: أقل حاجة 1 وأكتر حاجة 10 وبيزيد 1، ومبدئيًا 1.`,
+            "label التاريخ.",
+            R`calendar أصلي، والأيام قبل [[min]] مقفولة. القيمة دايمًا [[YYYY-MM-DD]].`,
+            "label الكود.",
+            R`نص مش number: كيبورد أرقام، والموبايل يقترح الكود من الـ SMS، و [[pattern]] 6 أرقام بالظبط.`,
+            "label الموقع.",
+            R`[[type="url"]]: كيبورد فيه / و .com، ومبيقبلش غير رابط كامل. و [[dir="ltr"]] عشان الرابط ميتقلبش.`
+          ],
+          sol: R`[[date.value]] بيرجع حاجة زي [[2026-10-05]] حتى لو الحقل بيعرض «٥/١٠/٢٠٢٦» أو بالإنجليزي. و [[date.valueAsDate]] بيرجع Date الساعة 00:00 UTC، فلو عملته [[toLocaleDateString()]] في منطقة غرب جرينتش هيطلع يوم 4.
+
+[[qty.value = 'abc']] وبعدها [[qty.value]] بيرجع [[""]] لأن الحقل رفض القيمة، و [[qty.valueAsNumber]] بيرجع [[NaN]].
+
+على الموبايل: qty و otp كيبورد أرقام، و url كيبورد فيه [[/]]، و date بيفتح calendar. لو otp طلعلك كيبورد حروف يبقى نسيت [[inputmode="numeric"]].`
+        },
+        {
+          cmd: "Constraint Validation API",
+          title: "validation المتصفح من JavaScript: validity و setCustomValidity",
+          desc: R`كل حقل فيه [[validity]]: object فيه سبب الغلط ([[valueMissing]] و [[typeMismatch]] و [[tooShort]] و [[rangeUnderflow]] و [[patternMismatch]] و [[customError]]) و [[valid]] لو كله تمام. و [[validationMessage]] الرسالة اللي المتصفح هيعرضها.
+
+[[checkValidity()]] بترجع true أو false، و [[reportValidity()]] كمان بتعرض الرسالة وتحط الـ focus على الحقل. و [[setCustomValidity('...')]] بتخلي الحقل غلط برسالتك انت (زي «كلمتين السر مش زي بعض»)، و [[setCustomValidity('')]] بترجّعه سليم.
+
+و [[novalidate]] على الفورم بيوقف رسايل المتصفح وقت الإرسال عشان تعرض انت أخطائك، بس الـ API كله لسه شغال. وفي CSS، [[:user-invalid]] بتلوّن الحقل الغلط بعد ما المستخدم يلمسه بس، مش أول ما الصفحة تفتح زي [[:invalid]].`,
+          example: R`const form = document.querySelector('#signup');
+const pass = form.elements.password;
+const confirm = form.elements.confirm;
+confirm.addEventListener('input', () => {
+  confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
+});
+form.addEventListener('submit', (e) => {
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    form.reportValidity();
+  }
+});
+console.log(pass.validity.valueMissing, pass.validity.tooShort, pass.validationMessage);
+// styles.css
+input:user-invalid { border-color: crimson; }`,
+          try: R`اعمل [[<form id="signup" novalidate>]] فيه [[password]] بـ [[required minlength="8"]] و [[confirm]]، وحط السكربت. اكتب باسورد وتأكيد مختلف ودوس submit. وبعدين في الـ Console اكتب [[confirm.validity]] و [[form.checkValidity()]]. وبعدين غيّر الباسورد الأصلي بس (مش التأكيد) لحد ما يبقوا زي بعض: الرسالة لسه موجودة؟`,
+          flag: "script",
+          deep: {
+            why: R`الـ attributes ([[required]] و [[minlength]] و [[type]]) بتغطي أغلب الحالات، بس فيه قواعد بتعتمد على أكتر من حقل (تأكيد الباسورد، تاريخ النهاية بعد البداية) أو على السيرفر (الإيميل مستخدم قبل كده). الـ API ده بيخليك تحط القواعد دي في نفس نظام المتصفح، فالـ [[:user-invalid]] والرسايل و [[checkValidity]] كلهم يشتغلوا عليها من غير ما تبني نظام validation من الصفر.`,
+            how: R`لو الفورم من غير [[novalidate]]، المتصفح بيعمل validation قبل حدث [[submit]]، ولو فيه غلط حدث submit مش بيحصل أصلًا. ولو بـ [[novalidate]]، حدث submit بيحصل دايمًا وانت اللي بتسأل [[form.checkValidity()]].
+
+[[setCustomValidity]] بتلزق في الحقل: طول ما الرسالة مش فاضية الحقل غلط، حتى لو المستخدم صلّح. عشان كده لازم تنادي [[setCustomValidity('')]] (string فاضي) في كل تغيير يخلي الحقل سليم، وعلى الحقلين (الباسورد والتأكيد) مش واحد بس.
+
+[[tooShort]] و [[tooLong]] بيتحسبوا بس لما المستخدم هو اللي يكتب، مش لما تحط [[value]] من الكود. ودي تفصيلة بتلخبط في الاختبارات.
+
+[[:user-invalid]] (وأختها [[:user-valid]]) بتشتغل بعد ما المستخدم يعدّل الحقل ويسيبه، أو بعد محاولة submit. ودي Baseline في كل المتصفحات الحديثة، وأحسن بكتير من [[:invalid]] اللي بتلوّن الفورم كله أحمر أول ما يفتح.`,
+            when: R`قواعد بين أكتر من حقل، ورسايل بلغتك بدل رسايل المتصفح، وأخطاء راجعة من السيرفر تحطها على الحقل بتاعها. ولو بتستخدم React Hook Form أو Zod في الفرونت، هما بيعملوا نفس الفكرة بنظامهم، بس الـ attributes الأصلية لسه مفيدة كخط أول.`,
+            mistakes: R`تنادي [[setCustomValidity('غلط')]] ومترجعش تناديها بـ string فاضي لما الغلط يتصلح، فالحقل يفضل غلط للأبد والفورم مبيتبعتش. تسمع على التأكيد بس فلو المستخدم غيّر الباسورد الأصلي الغلط ميتحدثش. تستخدم [[:invalid]] فالحقول تبقى حمرا قبل ما حد يكتب. وتفتكر إن validation المتصفح أمان: أي حد يقدر يبعت request من غير الفورم، فالسيرفر لازم يتأكد تاني.`
+          },
+          lines: [
+            R`الفورم، وعليه [[novalidate]] في الـ HTML عشان احنا اللي نقرر امتى نعرض.`,
+            R`[[form.elements]] بيجيب الحقل بالـ [[name]] بتاعه.`,
+            "حقل التأكيد.",
+            "مع كل حرف في التأكيد...",
+            R`...لو زي الباسورد الرسالة فاضية (الحقل سليم)، غير كده الحقل غلط بالرسالة دي.`,
+            "قفلة.",
+            "وقت الإرسال...",
+            "لو فيه أي حقل غلط (بما فيهم الـ custom)...",
+            "...امنع الإرسال...",
+            "...واعرض رسالة المتصفح على أول حقل غلط وحط الـ focus عليه.",
+            "قفلة الـ if.",
+            "قفلة الـ listener.",
+            R`تقدر تسأل عن أي سبب: فاضي؟ قصير؟ والرسالة بلغة المتصفح.`,
+            R`بوردر أحمر بعد ما المستخدم يلمس الحقل بس، مش أول ما الصفحة تفتح.`
+          ],
+          sol: R`بعد ما تكتب تأكيد مختلف: [[confirm.validity.customError]] بـ true و [[valid]] بـ false، و [[form.checkValidity()]] بـ false، والـ submit بيعرض «كلمتين السر مش زي بعض» على حقل التأكيد.
+
+المشكلة اللي هتلاقيها: لو غيّرت الباسورد الأصلي لحد ما يبقى زي التأكيد، الرسالة لسه موجودة، لأن الـ listener على التأكيد بس. الحل تعمل دالة واحدة وتسمع بيها على الحقلين.
+
+وتفصيلة: لو حطيت [[pass.value = 'abc']] من الـ Console، [[pass.validity.tooShort]] هتفضل false، لأنها بتتحسب بس لما المستخدم يكتب بإيده.`,
+          solCode: R`const form = document.querySelector('#signup');
+const pass = form.elements.password;
+const confirm = form.elements.confirm;
+const sync = () => confirm.setCustomValidity(confirm.value === pass.value ? '' : 'كلمتين السر مش زي بعض');
+pass.addEventListener('input', sync);
+confirm.addEventListener('input', sync);
+form.addEventListener('submit', (e) => {
+  if (!form.checkValidity()) {
+    e.preventDefault();
+    form.reportValidity();
+  }
+});`
+        },
+        {
+          cmd: "ملخص الأخطاء",
+          title: "الفورم رفض: المستخدم يعرف الغلط فين، وميبعتش مرتين",
+          desc: R`لما الإرسال يفشل، اعمل 3 حاجات: رسالة جنب كل حقل غلط ومربوطة بيه بـ [[aria-describedby]] ومعاها [[aria-invalid="true"]]، وملخص فوق الفورم فيه لينك لكل حقل غلط (مهم في الفورمات الطويلة)، وحط الـ focus على أول حقل غلط عشان قارئ الشاشة يقول اسمه والغلط بتاعه على طول.
+
+ولما الإرسال يبدأ فعلًا، امنع الضغطة التانية: flag في الكود، والزرار يبقى [[aria-disabled]] لحد ما الرد يرجع.
+
+الـ HTML المتوقع: كل حقل ليه [[id]] و [[aria-describedby="<id>-err"]] وبعده [[<p id="<id>-err">]]، وفوق الفورم [[<div id="summary" hidden>]] فيه [[<h2>]] و [[<ul>]].`,
+          example: R`const form = document.querySelector('#signup');
+const summary = document.querySelector('#summary');
+const submitBtn = form.querySelector('[type=submit]');
+let sending = false;
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (sending) return;
+  const fields = [...form.querySelectorAll('input, select, textarea')];
+  const bad = fields.filter((el) => !el.checkValidity());
+  for (const el of fields) {
+    el.setAttribute('aria-invalid', String(!el.validity.valid));
+    document.getElementById(el.id + '-err').textContent = el.validationMessage;
+  }
+  summary.hidden = bad.length === 0;
+  summary.querySelector('h2').textContent = $__btفيه $__{bad.length} حاجات محتاجة تتصلح$__bt;
+  summary.querySelector('ul').innerHTML = bad.map((el) => $__bt<li><a href="#$__{el.id}">$__{el.labels[0].textContent}</a></li>$__bt).join('');
+  if (bad.length) return bad[0].focus();
+  sending = true;
+  submitBtn.setAttribute('aria-disabled', 'true');
+  try {
+    await fetch(form.action, { method: 'POST', body: new FormData(form) });
+  } finally {
+    sending = false;
+    submitBtn.removeAttribute('aria-disabled');
+  }
+});`,
+          try: R`اعمل فورم فيه الاسم والإيميل (required) بالـ HTML اللي في الشرح، وحط [[novalidate]] على الفورم وشغّل السكربت. دوس سجّل والحقول فاضية: الـ focus راح فين؟ الملخص فيه كام لينك؟ وبعدين املاهم صح، ودوس سجّل مرتين ورا بعض بسرعة وبص في Network › Fetch/XHR: كام request اتبعت؟`,
+          flag: "script",
+          deep: {
+            why: R`لو الفورم رفض من غير ما يقول ليه، أو الرسالة ظهرت فوق والمستخدم تحت، أو قارئ الشاشة فضل ساكت، المستخدم بيمشي. والضغطة المزدوجة على «ادفع» أو «اطلب» بتعمل طلبين ودفع مرتين، ودي من أشهر مشاكل المتاجر.`,
+            how: R`[[aria-describedby]] بيخلي قارئ الشاشة يقرا الرسالة بعد اسم الحقل ونوعه: «الإيميل، edit، invalid entry، اكتب الإيميل». و [[aria-invalid]] هو اللي بيقول «invalid». فلما الـ focus يروح لأول حقل غلط، المستخدم بيسمع كل اللي محتاجه في جملة واحدة.
+
+الملخص: اللينكات [[href="#email"]] بتنقل الـ focus للحقل نفسه لما تتضغط. في فورم قصير (2 أو 3 حقول) ممكن تستغنى عن الملخص وتكتفي بالـ focus على أول حقل. في فورم طويل (زي GOV.UK) بيحطوا الـ focus على الملخص نفسه ([[tabindex="-1"]]) عشان المستخدم يعرف العدد الأول.
+
+الـ [[validationMessage]] بيبقى فاضي لما الحقل سليم، فنفس السطر بيمسح الرسالة القديمة. ورسايل المتصفح بلغته، ولو عايز رسايلك انت استخدم [[setCustomValidity]] (الدرس اللي فات).
+
+ليه [[aria-disabled]] مش [[disabled]]؟ [[disabled]] بيشيل الزرار من الـ Tab، فلو الـ focus كان عليه بيضيع لأول الصفحة. [[aria-disabled]] بيقول لقارئ الشاشة إنه مقفول والـ focus بيفضل مكانه، والـ flag [[sending]] هو اللي بيمنع فعلًا. وفي React 19 فيه [[useFormStatus]] بيدّيك [[pending]] جوه الفورم، وفي السيرفر الحماية الحقيقية idempotency key (نفس المفتاح مرتين = طلب واحد).`,
+            when: R`أي فورم فيه أكتر من حقل، وخصوصًا الدفع والتسجيل. ومنع الضغطة المزدوجة في أي زرار بيعمل حاجة مش بتتعاد (طلب، دفع، إرسال رسالة).`,
+            mistakes: R`رسالة واحدة عامة «فيه أخطاء» من غير ما تقول فين. الأخطاء بالأحمر بس (اللي عنده عمى ألوان مش هيشوفها). رسالة مش مربوطة بالحقل فقارئ الشاشة ميقولهاش. الـ focus يفضل على الزرار. [[disabled]] على الزرار وقت الإرسال فالـ focus يضيع. تنسى ترجّع الزرار لو الطلب فشل فالمستخدم يفضل محبوس. و [[innerHTML]] بكلام جاي من المستخدم (XSS)، هنا الـ labels بتاعتنا فمفيش مشكلة، بس لو فيه أي قيمة من المستخدم استخدم [[textContent]].`
+          },
+          lines: [
+            "الفورم (عليه novalidate في الـ HTML).",
+            "صندوق الملخص فوق الفورم.",
+            "زرار الإرسال.",
+            "flag: بنبعت دلوقتي ولا لأ.",
+            "وقت الإرسال...",
+            "إحنا اللي هنبعت بـ fetch، فامنع الإرسال العادي.",
+            "لو فيه طلب لسه مخلصش، تجاهل الضغطة دي.",
+            R`كل الحقول (من غير الأزرار، لأن الزرار كمان ليه [[checkValidity]]).`,
+            "الحقول الغلط بس.",
+            "لكل حقل...",
+            R`[[aria-invalid]] بـ true أو false حسب حالته.`,
+            "رسالته تحته، وبتتمسح لوحدها لو بقى سليم.",
+            "قفلة.",
+            "الملخص يظهر لو فيه غلط.",
+            "العنوان فيه العدد.",
+            "لينك لكل حقل غلط باسمه من الـ label.",
+            "لو فيه غلط: الـ focus على أول حقل غلط ووقف هنا.",
+            "كله سليم: علّم إننا بنبعت.",
+            "الزرار يبان مقفول ويفضل ماسك الـ focus.",
+            "حاول تبعت...",
+            "الطلب نفسه بالبيانات.",
+            "...ومهما حصل (نجح أو فشل)...",
+            "...افتح الإرسال تاني...",
+            "...ورجّع الزرار.",
+            "قفلة الـ finally.",
+            "قفلة الـ listener."
+          ],
+          sol: R`أول submit والحقول فاضية: الـ focus بيروح لحقل الاسم (أول حقل غلط)، وقارئ الشاشة بيقول اسمه و invalid والرسالة. الملخص بيظهر وفيه لينكين (الاسم والإيميل) والعنوان «فيه 2 حاجات محتاجة تتصلح». وكل حقل عليه [[aria-invalid="true"]] وتحته رسالة المتصفح.
+
+بعد ما تملاهم صح وتدوس مرتين بسرعة: request واحد بس في Network، لأن الضغطة التانية لقت [[sending]] بـ true ورجعت. ولو لقيت اتنين يبقى الـ flag اتحط بعد الـ await مش قبله.
+
+لو الـ focus مراحش للحقل: اتأكد إن الـ id في الـ HTML زي اللي في [[aria-describedby]]، وإن الـ [[<p>]] بتاع الغلط موجود (لو مش موجود [[getElementById]] بيرجع null والسكربت يقع).`,
+          solCode: R`<div id="summary" hidden>
+  <h2></h2>
+  <ul></ul>
+</div>
+<form id="signup" action="/api/signup" novalidate>
+  <label for="name">الاسم</label>
+  <input id="name" name="name" required aria-describedby="name-err">
+  <p id="name-err"></p>
+  <label for="email">الإيميل</label>
+  <input id="email" name="email" type="email" required aria-describedby="email-err">
+  <p id="email-err"></p>
+  <button type="submit">سجّل</button>
+</form>`
+        }
+      ]
+    },
+    {
+      t: "الجداول",
+      l: 1,
+      n: "جدول بيانات حقيقي: عناوين مربوطة بالخلايا، وبيتعرض على الموبايل، وبيترتب ويتقسم صفحات",
+      items: [
+        {
+          cmd: "table",
+          title: "جدول بيانات يفهمه قارئ الشاشة",
+          desc: R`[[<table>]] للبيانات اللي ليها صفوف وأعمدة بس (طلبات، مستخدمين، أسعار)، مش لتقسيم الصفحة. و [[<caption>]] عنوان الجدول، و [[<thead>]] و [[<tbody>]] و [[<tfoot>]] بيقسموه، و [[<th>]] خلية عنوان.
+
+و [[scope="col"]] بيقول إن الـ th ده عنوان العمود اللي تحته، و [[scope="row"]] عنوان الصف اللي جنبه. فقارئ الشاشة وهو ماشي في الخلايا بيقول «الإجمالي، 1,250 ج» مش «1,250 ج» وخلاص.`,
+          example: R`<table>
+  <caption>طلبات الأسبوع ده</caption>
+  <thead>
+    <tr>
+      <th scope="col">رقم الطلب</th>
+      <th scope="col">العميل</th>
+      <th scope="col">الإجمالي</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1042</th>
+      <td>منى علي</td>
+      <td>1,250 ج</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th scope="row" colspan="2">المجموع</th>
+      <td>1,250 ج</td>
+    </tr>
+  </tfoot>
+</table>`,
+          try: R`اعمل الجدول وزوّد 3 طلبات. افتح DevTools › Elements واختار خلية [[<td>]]، وافتح تاب Accessibility (جنب Styles) وبص على الـ role. وبعدين غيّر كل [[<th>]] لـ [[<td>]] وبص تاني. ولو معاك قارئ شاشة: في NVDA ادخل الجدول واتنقل بـ Ctrl+Alt+الأسهم، وفي VoiceOver بـ Ctrl+Option+الأسهم.`,
+          flag: "script",
+          deep: {
+            why: R`لوحات الأدمن والداشبوردات أغلبها جداول. والجدول من غير عناوين مربوطة بالنسبة لقارئ الشاشة لستة أرقام ملهاش معنى: «1,250، 980، 3,400» من غير ما يعرف دي إيه. ولو عملته بـ divs و grid، بيضيع التنقل بالصف والعمود خالص.`,
+            how: R`المتصفح بيبني من الجدول شجرة accessibility فيها [[table]] و [[row]] و [[columnheader]] و [[rowheader]] و [[cell]]. قارئ الشاشة بيستخدمها في وضع الجدول: لما تتحرك عمود يقول عنوان العمود الجديد، ولما تنزل صف يقول عنوان الصف.
+
+[[<caption>]] هو الاسم (accessible name) بتاع الجدول، ولازم يبقى أول حاجة جوه [[<table>]]. ولو مش عايزه يبان، خبيه بـ [[sr-only]] بدل ما تشيله.
+
+الجدول البسيط (صف عناوين واحد فوق) المتصفح غالبًا بيخمّن الـ scope صح لوحده، بس [[scope]] بيخليه أكيد، وضروري لو فيه عناوين صفوف. والجداول المعقدة (عنوانين متداخلين) محتاجة [[headers]] و [[id]]، بس الأحسن تقسمها لجداول أبسط.
+
+و [[colspan]] و [[rowspan]] بيدمجوا خلايا. و [[tfoot]] للمجموع، وبيتقري في آخر الجدول.`,
+            when: R`أي بيانات القارئ ممكن يقارن فيها بين صفوف أو أعمدة. لو كل عنصر ليه صورة ووصف وزرار (كروت منتجات)، ده مش جدول، ده list أو grid عادي.`,
+            mistakes: R`جدول لتقسيم الصفحة (ده كان من 2005). [[<td><b>]] بدل [[<th>]]. من غير caption فالجدول ملوش اسم. جدول بـ divs و [[display: grid]] وبعدين محتاج [[role="table"]] و [[role="row"]] على كل حاجة. وتغيّر [[display]] بتاع [[<table>]] أو [[<tr>]] لـ block أو flex عشان الموبايل: في متصفحات (Safari بالذات، ولو في نسخ قديمة) ده كان بيشيل معنى الجدول من قارئ الشاشة، فلو عملت كده اختبر.`
+          },
+          lines: [
+            "بداية الجدول.",
+            "عنوان الجدول، واسمه عند قارئ الشاشة.",
+            "جزء العناوين.",
+            "صف.",
+            R`عنوان عمود: [[scope="col"]].`,
+            "عنوان عمود تاني.",
+            "عنوان عمود تالت.",
+            "قفلة الصف.",
+            "قفلة العناوين.",
+            "جسم الجدول: البيانات.",
+            "صف طلب.",
+            R`رقم الطلب عنوان الصف ده: [[scope="row"]].`,
+            "خلية عادية.",
+            "خلية عادية.",
+            "قفلة الصف.",
+            "قفلة الجسم.",
+            "جزء المجموع تحت.",
+            "صف.",
+            R`عنوان صف واخد عمودين بـ [[colspan="2"]].`,
+            "المجموع.",
+            "قفلة الصف.",
+            "قفلة tfoot.",
+            "قفلة الجدول."
+          ],
+          sol: R`مع [[<th scope="col">]]، تاب Accessibility بيعرض الـ role بتاع العناوين [[columnheader]]، والخلية [[cell]] (في Chrome ممكن تلاقيها [[gridcell]])، والجدول اسمه «طلبات الأسبوع ده» من الـ caption.
+
+لما تحوّل الـ th لـ td: العناوين بقت [[cell]] عادية، ولو قارئ الشاشة شغال هتلاحظ إنه بيقول الرقم لوحده من غير اسم العمود. ودا بالظبط الفرق اللي المستخدم الكفيف بيحس بيه.
+
+لو الجدول ملوش اسم في تاب Accessibility، اتأكد إن الـ [[<caption>]] أول حاجة جوه [[<table>]] مش قبله.`
+        },
+        {
+          cmd: "جدول responsive",
+          title: "جدول عريض على موبايل عرضه 375",
+          desc: R`الجدول مبيتكسرش زي الكلام، فعلى الموبايل بيوسّع الصفحة كلها ويعمل scroll أفقي. الحل: لفّه في [[<div>]] عليه [[overflow-x: auto]]، فالجدول هو اللي يعمل scroll جوه مكانه والصفحة تفضل ثابتة.
+
+والـ div ده بياخد [[tabindex="0"]] عشان مستخدم الكيبورد يقدر يعمل scroll بالأسهم، و [[role="region"]] مع [[aria-labelledby]] للـ caption عشان قارئ الشاشة يعرف هو إيه.
+
+وتحسينات: عناوين ثابتة فوق بـ [[position: sticky]]، وصفوف مخططة (zebra) بـ [[nth-child(even)]]، و hover على الصف، والأرقام [[tabular-nums]] ومحاذية للآخر. وفي Tailwind: [[overflow-x-auto]] و [[sticky top-0]] و [[even:bg-gray-50]] و [[hover:bg-gray-100]] و [[tabular-nums]].`,
+          example: R`<div class="table-wrap" role="region" aria-labelledby="orders-cap" tabindex="0">
+  <table>
+    <caption id="orders-cap">الطلبات</caption>
+    ...
+  </table>
+</div>
+// styles.css
+.table-wrap { overflow: auto; max-height: 70dvh; }
+.table-wrap table { border-collapse: separate; border-spacing: 0; min-width: 40rem; width: 100%; }
+.table-wrap th, .table-wrap td { padding: 0.5rem 0.75rem; text-align: start; white-space: nowrap; border-block-end: 1px solid var(--color-border); }
+.table-wrap thead th { position: sticky; top: 0; z-index: 1; background: var(--color-bg); }
+.table-wrap tbody tr:nth-child(even) { background: var(--color-muted); }
+.table-wrap tbody tr:hover { background: var(--color-hover); }
+.table-wrap .num { text-align: end; font-variant-numeric: tabular-nums; }
+.table-wrap:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 2px; }`,
+          try: R`اعمل جدول 8 أعمدة و 30 صف، وافتحه في وضع الموبايل في DevTools من غير الـ wrapper: الصفحة كلها بتتحرك يمين وشمال. حط الـ wrapper: الجدول بس اللي بيتحرك. وبعدين دوس Tab لحد ما الـ wrapper ياخد focus وجرّب الأسهم، وانزل تحت وشوف العناوين فاضلة فوق ولا لأ. وأخيرًا غيّر [[separate]] لـ [[collapse]] وبص على خط العناوين وانت نازل.`,
+          flag: "script",
+          deep: {
+            why: R`لوحات الأدمن بتتفتح من الموبايل أكتر مما تتخيل. والجدول اللي بيوسّع الصفحة بيبوّظ كل حاجة تانية: الـ header بيتحرك، والأزرار بتخرج برا الشاشة. والعناوين الثابتة مهمة لأن بعد 20 صف محدش فاكر العمود التالت كان إيه.`,
+            how: R`[[overflow: auto]] بيخلي الـ div ده scroll container. و [[position: sticky]] بيلزق في أقرب scroll container فوقه، فالـ th هنا بيلزق في أول الـ wrapper مش في أول الشاشة. عشان كده الـ wrapper محتاج [[max-height]]: من غيرها مفيش scroll رأسي جواه، والعناوين مش هتلزق.
+
+[[border-collapse: collapse]] بيخلي البوردرات تتشارك بين الخلايا، وده بيخلي بوردر الـ th الـ sticky ميتحركش معاه. عشان كده [[separate]] مع [[border-spacing: 0]] والبوردر على كل خلية. والـ [[background]] على الـ th ضروري، وإلا الصفوف هتبان من ورا العنوان وهي بتعدّي.
+
+[[tabular-nums]] بيخلي كل الأرقام نفس العرض فالأعمدة تبقى على خط واحد. و [[text-align: start]] و [[end]] بدل left و right عشان يتقلبوا لوحدهم في العربي.
+
+و [[tabindex="0"]] على div عادي محتاج role واسم، وإلا قارئ الشاشة هيقول «clickable» أو ولا حاجة. و Chrome الحديث بيدّي الـ scroll containers focus لوحده، بس مش كل المتصفحات، فخليه صريح.
+
+البديل التاني على الموبايل: كل صف يتحول لكارت (label و value). بيبقى أحلى في الجداول الصغيرة، بس بيضيّع المقارنة بين الصفوف، ومحتاج CSS كتير. ابدأ بالـ scroll.`,
+            when: R`أي جدول أكتر من 3 أو 4 أعمدة. الـ sticky header لما الجدول أطول من الشاشة. الـ zebra في الجداول العريضة عشان العين متتوهش في الصف.`,
+            mistakes: R`[[overflow-x: auto]] على [[<table>]] نفسه (مش بيشتغل، الجدول مبيعملش overflow). sticky من غير max-height على الـ wrapper. th sticky من غير background. [[border-collapse: collapse]] فالبوردر يفضل مكانه. [[text-align: left]] في موقع عربي. وتقطع الأعمدة على الموبايل بـ [[display: none]] فالمستخدم ميعرفش إنها موجودة.`
+          },
+          lines: [
+            R`الـ wrapper: منطقة ليها اسم، وبتاخد focus عشان الكيبورد يعمل scroll.`,
+            "الجدول نفسه جوه.",
+            R`الـ caption ليه id عشان الـ wrapper ياخد اسمه منه.`,
+            "الصفوف (زي الدرس اللي فات).",
+            "قفلة الجدول.",
+            "قفلة الـ wrapper.",
+            R`الـ scroll جوه الـ wrapper في الاتجاهين، وأقصى ارتفاع 70% من الشاشة عشان الـ sticky يشتغل.`,
+            R`عرض أدنى للجدول (غير كده الأعمدة هتتزنق)، و [[separate]] عشان البوردر يتحرك مع العنوان الـ sticky.`,
+            R`مسافات، ومحاذاة للبداية (يمين في العربي)، ومن غير كسر سطر، وخط تحت كل خلية.`,
+            R`العناوين بتلزق فوق وهي جوه الـ wrapper، وخلفية عشان الصفوف متبانش من وراها.`,
+            "الصفوف الزوجية بلون خفيف (zebra).",
+            "الصف اللي الماوس عليه بيتلوّن.",
+            "أعمدة الأرقام: للآخر وكل الأرقام نفس العرض.",
+            "لما الـ wrapper ياخد focus من الكيبورد يبان."
+          ],
+          sol: R`من غير الـ wrapper: الصفحة كلها بيبقى فيها scroll أفقي، والـ header واللينكات بيتحركوا مع الجدول. مع الـ wrapper: الصفحة ثابتة، والجدول بس اللي بيتحرك جوه مكانه.
+
+بالكيبورد: Tab بيوصل للـ wrapper وبيظهر عليه outline، والأسهم يمين وشمال وتحت وفوق بتعمل scroll. قارئ الشاشة بيقول «الطلبات، region».
+
+وانت نازل: العناوين فاضلة فوق الـ wrapper. لو مش لازقة، يبقى الـ wrapper ملوش [[max-height]] (فالـ scroll بيحصل في الصفحة مش جواه). ومع [[collapse]] هتلاقي خط تحت العناوين فاضل مكانه والعناوين طالعة من غيره: ده السبب إننا استخدمنا [[separate]].`
+        },
+        {
+          cmd: "ترتيب وصفحات في الـ URL",
+          title: "جدول بيترتب ويتقسم صفحات، والرابط فاكر مكانك",
+          desc: R`حالة الجدول (مترتب بإيه، وأنهي صفحة، وبتدوّر على إيه) مكانها الـ URL: [[?sort=price&dir=desc&page=2]]. كده الـ refresh مبيرجّعكش للأول، وزرار Back بيشتغل، وتقدر تبعت اللينك لزميلك يشوف نفس اللي انت شايفه.
+
+الترتيب: [[<button>]] جوه الـ [[<th>]] (عشان يتضغط بالكيبورد)، و [[aria-sort="ascending"]] أو [[descending]] على الـ th المترتب بيه بس.
+
+ولو البيانات كبيرة (آلاف الصفوف)، الترتيب والتقسيم بيحصلوا في السيرفر (LIMIT و OFFSET أو cursor، في «تاب SQL و Prisma»)، والصفحة بتبعت الـ query بس. وفي React فيه TanStack Table: مكتبة headless بتدّيك منطق الترتيب والفلترة والصفحات، وانت اللي بترسم الـ HTML (راجع «تاب React» لـ TanStack Query من نفس العيلة).`,
+          example: R`const COLS = ['name', 'price', 'stock'];
+function readState(search = location.search) {
+  const p = new URLSearchParams(search);
+  const sort = COLS.includes(p.get('sort')) ? p.get('sort') : 'name';
+  const dir = p.get('dir') === 'desc' ? 'desc' : 'asc';
+  const page = Math.max(1, Number.parseInt(p.get('page'), 10) || 1);
+  return { sort, dir, page };
+}
+document.querySelector('thead').addEventListener('click', (e) => {
+  const col = e.target.closest('button')?.closest('th')?.dataset.col;
+  if (!col) return;
+  const s = readState();
+  const p = new URLSearchParams(location.search);
+  p.set('sort', col);
+  p.set('dir', s.sort === col && s.dir === 'asc' ? 'desc' : 'asc');
+  p.delete('page');
+  history.pushState(null, '', '?' + p);
+  render();
+});
+window.addEventListener('popstate', render);
+function render() {
+  const { sort, dir } = readState();
+  for (const th of document.querySelectorAll('thead th[data-col]')) {
+    if (th.dataset.col === sort) th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    else th.removeAttribute('aria-sort');
+  }
+  // وارسم الصفوف: view(rows, readState()) وحط النتيجة في tbody
+}`,
+          try: R`اكتب الدالة [[view(rows, state, perPage)]] اللي بترتب الصفوف حسب [[sort]] و [[dir]] وترجع صفوف الصفحة المطلوبة وعدد الصفحات. جرّبها في node على 5 منتجات بـ [[readState('?sort=price&dir=desc&page=2')]] و [[perPage = 2]]، وكمان على [[?page=99]] و [[?sort=hack]].`,
+          flag: "script",
+          deep: {
+            why: R`أشهر شكوى في لوحات الأدمن: «رتّبت وفلترت ودخلت على طلب ورجعت، لقيت كل حاجة راحت». لو الحالة في [[useState]] بس، أي refresh أو Back بيمسحها. الـ URL هو الـ state الوحيد اللي بيعيش مع الـ refresh والـ history والمشاركة.`,
+            how: R`[[URLSearchParams]] بيقرا ويكتب الـ query بأمان (بيعمل encode للعربي والمسافات). [[history.pushState]] بيغيّر الـ URL من غير reload وبيضيف خطوة في الـ history، و [[replaceState]] بيغيّره من غير خطوة (مناسب للكتابة في البحث حرف حرف). و [[popstate]] بيحصل لما المستخدم يدوس Back أو Forward، فبترسم تاني من الـ URL.
+
+كل حاجة جاية من الـ URL مدخلات من المستخدم: عشان كده [[COLS.includes]] (قايمة بالأعمدة المسموحة) و [[parseInt]] مع حد أدنى. ولو الـ sort بيتحط في SQL من غير تحقق، دي SQL injection.
+
+لما الترتيب يتغير، الصفحة ترجع للأولى ([[p.delete('page')]])، وإلا هتفضل في صفحة 7 من ترتيب جديد ملوش علاقة.
+
+[[aria-sort]] بيتحط على عمود واحد بس في المرة، وقارئ الشاشة بيقول «السعر، ascending». والزرار جوه الـ th مش الـ th نفسه اللي بيتضغط، عشان ياخد focus ويشتغل بـ Enter.
+
+في Next.js الصفحة (server component) بتستلم [[searchParams]] وتجيب الصفحة المطلوبة بس من الداتابيز، واللينكات بين الصفحات [[<Link href="?page=3">]] (تفاصيل في «تاب Next.js»). وفي client component بتقرا بـ [[useSearchParams]] وتكتب بـ [[router.replace]].`,
+            when: R`أي جدول فيه ترتيب أو فلترة أو صفحات. لو الصفوف أقل من كام مية، رتّب وقسّم في المتصفح. لو أكتر، في السيرفر. و TanStack Table لما يبقى عندك جداول كتير بمميزات كتير (إخفاء أعمدة، اختيار صفوف، فلترة لكل عمود)، مش لجدول واحد بسيط.`,
+            mistakes: R`الحالة في state بس فتضيع مع الـ refresh. تثق في [[?sort=]] وتحطه في SQL. متصفّرش الصفحة لما الترتيب يتغير. [[pushState]] مع كل حرف في البحث فالـ Back يبقى 20 ضغطة. تعمل الـ th كله clickable من غير زرار. [[aria-sort]] على كل الأعمدة. وتجيب 10,000 صف للمتصفح عشان تعرض 20. وسؤال انترفيو: «offset ولا cursor pagination؟» offset سهل ويدّيك «صفحة 7 من 20» بس بيبطأ في الصفحات البعيدة وبيكرر أو يفوّت صفوف لو البيانات بتتغير، و cursor سريع وثابت بس مفيهوش «روح لصفحة 7».`
+          },
+          lines: [
+            R`الأعمدة المسموح الترتيب بيها. أي حاجة تانية في الـ URL بتتجاهل.`,
+            "بتقرا الحالة من الـ URL.",
+            "بتفك الـ query.",
+            R`عمود الترتيب لو مسموح، غير كده [[name]].`,
+            R`الاتجاه: [[desc]] أو [[asc]] بس.`,
+            "رقم الصفحة، ولو مش رقم أو أقل من 1 يبقى 1.",
+            "ترجع الحالة.",
+            "قفلة.",
+            "ضغطة على أي حاجة في العناوين...",
+            R`...لو كانت على زرار جوه th عليه [[data-col]]، خد اسم العمود.`,
+            "مش زرار ترتيب؟ اخرج.",
+            "الحالة الحالية.",
+            "نسخة من الـ query عشان نعدّلها ونسيب الباقي (زي البحث).",
+            "العمود الجديد.",
+            "نفس العمود وكان تصاعدي؟ يبقى تنازلي. غير كده تصاعدي.",
+            "الترتيب اتغير، فارجع للصفحة الأولى.",
+            "غيّر الـ URL من غير reload، وضيف خطوة في الـ history.",
+            "ارسم.",
+            "قفلة.",
+            "Back و Forward: ارسم من الـ URL تاني.",
+            "الرسم.",
+            "الحالة من الـ URL.",
+            "لكل عنوان بيترتب...",
+            R`العمود المترتب بيه ياخد [[aria-sort]]...`,
+            "...والباقي من غيره.",
+            "قفلة الـ for.",
+            "قفلة."
+          ],
+          sol: R`على 5 منتجات (سماعة 450، ماوس 180، كيبورد 900، شاحن 250، كابل 60) بـ [[?sort=price&dir=desc&page=2]] و 2 في الصفحة: الترتيب تنازلي 900، 450، 250، 180، 60، فصفحة 2 فيها الشاحن (250) والماوس (180)، و [[pages]] بـ 3.
+
+[[?sort=hack&page=-3]] بيرجع [[{ sort: 'name', dir: 'asc', page: 1 }]]، و [[?page=99]] بيرجع آخر صفحة (3) مش صفحة فاضية.
+
+الغلط الشائع: ترتيب الأسماء العربي بـ [[a < b]] أو [[sort()]] من غير دالة، فالترتيب يمشي بأكواد الحروف. [[localeCompare(b, 'ar')]] بترتب زي القاموس. والغلط التاني: [[rows.sort()]] بيغيّر المصفوفة الأصلية، و [[toSorted()]] بيرجّع نسخة.`,
+          solCode: R`function view(rows, { sort, dir, page }, perPage = 20) {
+  const sorted = rows.toSorted((a, b) => {
+    const r = typeof a[sort] === 'number' ? a[sort] - b[sort] : a[sort].localeCompare(b[sort], 'ar');
+    return dir === 'asc' ? r : -r;
+  });
+  const pages = Math.max(1, Math.ceil(sorted.length / perPage));
+  const p = Math.min(page, pages);
+  return { rows: sorted.slice((p - 1) * perPage, p * perPage), page: p, pages };
+}
+const rows = [
+  { name: 'سماعة', price: 450, stock: 12 },
+  { name: 'ماوس', price: 180, stock: 0 },
+  { name: 'كيبورد', price: 900, stock: 5 },
+  { name: 'شاحن', price: 250, stock: 30 },
+  { name: 'كابل', price: 60, stock: 100 },
+];
+console.log(view(rows, readState('?sort=price&dir=desc&page=2'), 2));
+// { rows: [ شاحن 250, ماوس 180 ], page: 2, pages: 3 }`
         }
       ]
     },
@@ -334,7 +900,20 @@ li:nth-child(odd) { background: whitesmoke; }
             "لما الزرار ياخد focus من الكيبورد (مش من ضغطة ماوس).",
             "الصفوف الفردية: 1 و 3 و 5...",
             "حتة مش موجودة في الـ HTML بتتضاف بعد الكلام: نجمة الحقل المطلوب."
-          ]
+          ],
+          sol: R`على الصفحة اللي في الحل تحت (كارتين وفقرة برا ومنيو فيها منيو جوه منيو)، الـ Console بيرجع: [[querySelectorAll("p")]] ‏4، و [[".card p"]] ‏3 (بما فيهم الـ p اللي جوه div جوه الكارت، لأن المسافة معناها «أي حفيد»)، و [[".card > p"]] ‏2 بس (أولاد مباشرين). و [[".menu > li"]] ‏3 بينما [[".menu li"]] ‏4 لأن الـ li اللي في المنيو الداخلية حفيد مش ابن. و [[li:nth-child(odd)]] ‏3، و [[input[type="email"]]] ‏1.
+
+فيه اتنين هيطلعولك 0 وده صح: [[a:hover]] لأن مفيش حاجة الماوس واقف عليها وانت بتكتب في الـ Console، و [[.required::after]] لأن الـ pseudo-element مش عنصر في الـ DOM أصلًا، بيتشاف بس في Styles. لو رقم طلع أكبر من المتوقع، غالبًا نسيت الفرق بين المسافة و [[>]].`,
+          solCode: R`<div class="card"><p>وصف</p><p class="required">الاسم</p></div>
+<div class="card"><h3>عنوان</h3><div><p>جوه div جوه الكارت</p></div></div>
+<p>برا أي كارت</p>
+<ul class="menu"><li>أ</li><li>ب<ul><li>ج</li></ul></li><li>د</li></ul>
+<input type="email"><input type="text">
+<!-- في الـ Console -->
+document.querySelectorAll(".card p").length   // 3
+document.querySelectorAll(".card > p").length // 2
+document.querySelectorAll(".menu > li").length // 3
+document.querySelectorAll(".menu li").length   // 4`
         },
         {
           cmd: "specificity",
@@ -371,7 +950,12 @@ nav#main .btn { color: red; }`,
             R`(0,2,0): زي [[.nav .btn]] بالظبط، فاللي مكتوبة آخر تكسب، ودي هي.`,
             R`(0,1,0): [[:where()]] وزنها صفر مهما كان جواها، فدي وزنها وزن [[.btn]] بس.`,
             "(1,1,1): فيها id، فتغلب كل اللي فوق حتى لو فيهم عشر classes."
-          ]
+          ],
+          sol: R`الزرار هيطلع أحمر، وهيفضل أحمر حتى لما تقف عليه بالماوس. في Styles هتلاقي [[nav#main .btn]] فوق ومش متشطّب، وكل اللي تحته ([[.btn.primary]] و [[.nav .btn]] و [[:where(.nav) .btn]] و [[.btn]] و [[button]]) الـ color بتاعهم متشطّب.
+
+الأرقام اللي هتظهر لما تقف على كل selector: [[nav#main .btn]] ‏(1,1,1)، و [[nav .btn:hover]] ‏(0,2,1)، و [[.nav .btn]] و [[.btn.primary]] ‏(0,2,0) (متعادلين، والأخير في الملف كسب بينهم)، و [[:where(.nav) .btn]] ‏(0,1,0) لأن [[:where]] بيصفّر اللي جواه، و [[.btn]] ‏(0,1,0)، و [[button]] ‏(0,0,1). الـ id لوحده بيغلب أي عدد من الكلاسات.
+
+الغلط الشائع: تتوقع الـ hover يطلّع برتقاني لأنه «أحدث». (0,2,1) أقل من (1,1,1) فبيخسر. ولو امسحت سطر [[nav#main .btn]] هيبقى أبيض، ومع الـ hover برتقاني لأن (0,2,1) أكبر من (0,2,0).`
         },
         {
           cmd: "cascade",
@@ -412,7 +996,12 @@ body { color: black; font-family: system-ui; }
             R`قاعدة برا أي layer: بتغلب كل الـ layers، فكل اللينكات هتبقى حمرا حتى [[.link]].`,
             R`[[color]] و [[font-family]] بيتورّثوا: كل اللي جوه body هياخدهم لو ملوش قاعدة.`,
             R`[[border]] مش بيتورّث، بس [[inherit]] بيجبره ياخد قيمة الأب.`
-          ]
+          ],
+          sol: R`بالكود زي ما هو: اللينك أحمر. الـ [[a { color: red; }]] برا أي layer، والقواعد اللي برا الـ layers بتكسب أي قاعدة جوه layer مهما كانت الـ specificity، فحتى [[.link]] (كلاس) خسر قدام [[a]] (عنصر).
+
+بعد ما تمسح السطر: أخضر، لأن [[components]] متعرّف بعد [[base]] في أول سطر، فهو الأقوى بين الطبقتين، مش عشان [[.link]] specificity أعلى. (لو قلبت الترتيب لـ [[@layer components, base;]] هيبقى أزرق رغم إن [[a]] أضعف.) في Computed › color السهم بيوديك لـ [[.link]] جوه [[@layer components]]، وتحتها القواعد اللي خسرت.
+
+والـ [[font-family]] اللي على body هتلاقيها في Computed على اللينك كمان لأنها بتتورث، لكن [[border]] مش بيتورث لوحده، عشان كده محتاج [[inherit]] صريح. لو اللينك طلع أزرق من الأول يبقى غالبًا الـ CSS متحطّش خالص وده لون المتصفح الافتراضي للينكات.`
         },
         {
           cmd: "box model",
@@ -459,7 +1048,12 @@ Tailwind بيحط [[box-sizing: border-box]] على كل حاجة في الـ Pr
             "أي عنصر جوه stack وقبله أخ: المسافة بين العناصر بس، مش قبل الأول.",
             "16 بكسل فوق كل عنصر من التاني ورايح.",
             "قفلة."
-          ]
+          ],
+          sol: R`في Computed هتلاقي رسمة الصندوق: المحتوى 300 × (ارتفاع السطر)، والـ padding 20 من كل ناحية، والـ border 5، والـ margin 0. العرض اللي بيتشاف على الشاشة ([[offsetWidth]]) = 300 + 20×2 + 5×2 = [[350]].
+
+بعد [[box-sizing: border-box]]: [[offsetWidth]] بقى [[300]]، والمحتوى جوه الرسمة بقى 250 (300 − 40 − 10). يعني الـ width بقت تحسب الـ padding والـ border جواها بدل ما تزودهم.
+
+لو مشفتش فرق، اتأكد إن مفيش reset عندك (زي Tailwind أو الكود اللي في المثال) عامل border-box على كل حاجة أصلًا، فانت كده شايف 300 من الأول. ولو العرض طلع أكبر من 350، يبقى فيه scrollbar أو margin داخل في حسابك؛ الـ margin برا الصندوق ومش بيتحسب في العرض.`
         },
         {
           cmd: "display",
@@ -498,7 +1092,12 @@ Tailwind بيحط [[box-sizing: border-box]] على كل حاجة في الـ Pr
             "بيطلّعه من الترتيب العادي ويصغّره لبكسل.",
             "بيقصّ أي حاجة ظاهرة وميكسرش السطر.",
             "قفلة."
-          ]
+          ],
+          sol: R`الـ [[<span>]] العادي ([[inline]]): الـ width و الـ height ملهمش أي تأثير، والصندوق على قد الكلام بس. [[inline-block]]: بياخدوا 100×50 وبيفضلوا جنب بعض في نفس السطر (وهتلاقي فراغ صغير بينهم حوالي 4px سببه الـ enter أو المسافة اللي بينهم في الـ HTML). [[block]]: نفس المقاس بس كل واحد في سطر لوحده تحت اللي قبله.
+
+مع Tab على الزرار: [[display: none]] و [[visibility: hidden]] الـ focus بيعدّي من فوقهم للعنصر اللي بعدهم، لأنهم مش موجودين بالنسبة للكيبورد وقارئ الشاشة. أما [[opacity: 0]] مع [[pointer-events: none]]: الـ focus بيقف على زرار مش باين، ولو دوست Enter هيشتغل. الـ [[pointer-events]] بيمنع الماوس بس.
+
+دي أخطر نتيجة في التجربة: مودال أو منيو مخفي بـ opacity بيفضل ياخد Tab ويتقري لقارئ الشاشة. لو عايز تخفيه بحركة fade، ضيف [[visibility: hidden]] أو [[inert]] بعد ما الحركة تخلص.`
         }
       ]
     },
@@ -542,7 +1141,12 @@ Tailwind v4 كله rem: [[p-4]] = [[calc(var(--spacing) * 4)]] و [[--spacing]] 
             "الـ border بـ px عشان يفضل خط رفيع، والتدوير بـ rem.",
             "ربع عرض الأب.",
             "خطر: em جوه em بيتضرب. li جوه li جوه li بيصغر كل مرة."
-          ]
+          ],
+          sol: R`بعد ما تخلّي Font size «Large» (بيبقى 20px بدل 16): الصفحة المكتوبة بـ rem الخط بتاعها كبر (h1 بـ [[2rem]] بقى 40px بدل 32)، والمسافات اللي بالـ rem و em كبرت معاه. الصفحة المكتوبة بـ [[font-size: 16px]] مفيش فيها حاجة اتغيرت. (الـ zoom بـ Ctrl و + بيكبّر الاتنين، فهو مش الاختبار ده.)
+
+الـ ul المتداخلة بـ [[0.9em]]: المستوى الأول 14.4px، والتاني 12.96px، والتالت 11.664px، لأن كل em بيتحسب من خط الأب اللي اتصغّر قبله. تقدر تشوف الأرقام دي في Computed › font-size على كل li.
+
+لو الخط مصغرش مع كل مستوى، غالبًا حطيت الـ font-size على [[li]] بس بدل [[ul]]، أو كتبت rem بدل em. والحل لو مش عايز الصغر ده: استخدم [[rem]] للخط، و em للحاجات اللي المفروض تتناسب مع خط العنصر نفسه زي الـ padding.`
         },
         {
           cmd: "dvh",
@@ -585,7 +1189,12 @@ Tailwind v4 كله rem: [[p-4]] = [[calc(var(--spacing) * 4)]] و [[--spacing]] 
             "قفلة.",
             "عرض الشاشة كلها. خد بالك: على ويندوز بيشمل الـ scrollbar فيعمل scroll أفقي.",
             "عرض الأب. غالبًا ده اللي انت عايزه."
-          ]
+          ],
+          sol: R`على موبايل حقيقي (Chrome على Android أو Safari على iPhone) أول ما الصفحة تفتح وشريط العنوان ظاهر: مع [[100vh]] الزرار اللي في الآخر مستخبي تحت شريط المتصفح، لأن 100vh = ارتفاع الشاشة لما الشريط يختفي (أكبر حالة)، ولازم تعمل scroll شوية عشان تشوفه.
+
+مع [[100dvh]]: الزرار باين من الأول، ولما تعمل scroll والشريط يختفي العنصر بيطول معاه (ممكن تحس بنطّة صغيرة). مع [[100svh]]: الزرار باين من الأول، ولما الشريط يختفي بيفضل ثابت ويبان تحته فراغ صغير، بس مفيش أي نطّة.
+
+وضع الموبايل في DevTools مش هيوريك الفرق ده، لأن مفيش شريط عنوان بيظهر ويختفي، فالتلاتة بيطلعوا نفس الرقم. لو جرّبت على موبايل ولسه الزرار مستخبي مع dvh، اتأكد إن مفيش [[height: 100vh]] تانية على body أو على أب فوقه.`
         },
         {
           cmd: "clamp()",
@@ -618,7 +1227,12 @@ Tailwind v4 كله rem: [[p-4]] = [[calc(var(--spacing) * 4)]] و [[--spacing]] 
             "أصغر قيمة من الاتنين: عرض الأب ناقص 16 من كل ناحية، لحد 1200. وبعدين يتوسّط.",
             "أكبر قيمة: 20% من الأب، بس مش أقل من 250.",
             "حسبة بتخلط وحدات مختلفة."
-          ]
+          ],
+          sol: R`وانت بتسحب العرض: من 320 لحد حوالي 427px الخط ثابت 32px (الـ MIN، لأن [[1.2rem + 3vw]] لسه أقل من 2rem)، وبعدها بيكبر بنعومة مع كل بكسل، لحد حوالي 1227px يوصل 56px ([[3.5rem]]) ويقف. عند 800px مثلًا هتلاقي في Computed ‏43.2px (19.2 + 24).
+
+مع [[5vw]] بس على عرض 800: الخط 40px. اعمل zoom 110% و 125%: الخط على الشاشة مش بيكبر، لأن الـ zoom بيصغّر عرض الـ viewport بالـ CSS px فالـ 5vw بتقل بنفس النسبة. بعد حوالي 125% الـ 5vw بتنزل تحت 32px فالـ MIN يشتغل والخط يبدأ يكبر. مع [[1.2rem + 3vw]] الخط بيكبر من أول ضغطة لأن جزء الـ rem بيكبر مع الـ zoom.
+
+ده بالظبط سبب قاعدة WCAG إن الكلام لازم يكبر لـ 200% مع الـ zoom: قيمة بـ vw لوحدها بتكسرها. لو الخط مش بيتحرك خالص وانت بتسحب العرض، اتأكد إن الـ viewport meta موجود (من غيره الموبايل بيعتبر العرض 980).`
         },
         {
           cmd: "CSS variables",
@@ -669,7 +1283,12 @@ body { background: var(--bg); color: var(--fg); }
             "الزرار بلون البراند وتدويره.",
             "عند الـ hover: نفس اللون متخلوط بـ 15% أسود، من غير ما تعرّف لون تاني.",
             R`لو [[--card-padding]] مش متعرّف، خد 1rem.`
-          ]
+          ],
+          sol: R`بعد [[document.documentElement.dataset.theme = "dark"]]: الخلفية بقت كحلي غامق والكلام فاتح في لحظة، من غير refresh ولا build، لأن [[--bg]] و [[--fg]] اتغيروا على [[<html>]] وكل حاجة بتقراهم اتحدّثت. والزراير فضلت بنفس لونها لأن [[--brand]] مش متعرّف تاني جوه الـ dark. ارجع بـ [[delete document.documentElement.dataset.theme]].
+
+لما تغيّر [[--brand]] على [[:root]] من Styles (مثلًا لـ [[oklch(0.6 0.2 30)]] برتقاني): كل الزراير اتغيرت مرة واحدة، ولون الـ hover كمان اتغير لوحده لأن [[color-mix]] بيحسبه من [[--brand]]. والـ [[.card]] بياخد [[1rem]] padding لأن [[--card-padding]] مش متعرّف فبيستخدم القيمة الاحتياطية.
+
+لو الصفحة متقلبتش: اتأكد إن القيمة [["dark"]] بالظبط زي اللي في الـ selector (من غير مسافة ولا حرف كابيتال)، وإن مفيش لون ثابت مكتوب مباشرة على عنصر بيغطي على [[var(--fg)]]. ولو الزراير متغيرتش لما عدّلت [[--brand]]، غالبًا عدّلته على عنصر تاني مش [[:root]].`
         }
       ]
     },
@@ -725,7 +1344,12 @@ body { background: var(--bg); color: var(--fg); }
             "الروابط نفسها flex تاني جوه الأول، وشيلنا شكل القايمة الافتراضي.",
             "أشهر 3 خصائص: أي حاجة في النص أفقي ورأسي.",
             "قفلة."
-          ]
+          ],
+          sol: R`على شاشة عرضها 1200 (ltr): [[space-between]] اللوجو لازق في أقصى الشمال، و «ابدأ» في أقصى اليمين، واللينكات في النص. [[flex-start]]: التلاتة لازقين في بعض ناحية الشمال والمسافة بينهم الـ [[gap]] بس (16px). [[center]]: التلاتة متجمّعين في نص الشاشة. [[space-around]]: كل عنصر حواليه مسافة متساوية، فالطرفين بعاد عن الحافة بنص المسافة اللي بين العناصر.
+
+بعد [[dir="rtl"]] على html ومع [[space-between]]: اللوجو بقى على أقصى اليمين و «ابدأ» على أقصى الشمال، ومن غير ما تغيّر ولا سطر CSS. ده لأن [[flex-start]] معناها «بداية السطر» مش «الشمال»، وبداية السطر في العربي يمين.
+
+لو اللوجو فضل على الشمال في rtl، غالبًا عندك [[flex-direction: row-reverse]] أو [[margin-left: auto]] مكتوب صريح، أو حطيت [[dir]] على عنصر تاني مش على الـ html أو الـ nav أو أب ليها.`
         },
         {
           cmd: "flex: 1",
@@ -778,7 +1402,12 @@ body { background: var(--bg); color: var(--fg); }
             "كروت بتنزل سطر جديد لو المكان مكفاش.",
             "كل كارت يبدأ من 250px ويكبر يملا السطر، ولو مفيش مكان ينزل تحت.",
             "قفلة."
-          ]
+          ],
+          sol: R`على موبايل عرضه 360 من غير [[min-width: 0]]: الاسم بيطلع في سطر واحد طويل، والـ [[.info]] بيرفض يصغر عن طول الاسم، فالزرار «متابعة» بيتزق برا الشاشة (في تجربتي آخره وصل 475px على شاشة 360) ويظهر scroll أفقي للصفحة كلها. والـ «...» مش بتظهر لأن الـ div واسع قد الكلام، فمفيش حاجة تتقص.
+
+ترجّع [[min-width: 0]]: الزرار رجع جوه الشاشة لازق في الحافة، والاسم اتقص وفي آخره «...». السبب إن عناصر flex الـ min-width الافتراضي بتاعها [[auto]] يعني «مش أصغر من المحتوى»، و [[0]] بتسمحله يصغر.
+
+الكروت ([[flex: 1 1 250px]]) مع 5 كروت: على 360 كل كارت في سطر لوحده بعرض الشاشة. على 600 اتنين في السطر وكارت خامس لوحده تحت ممطوط بعرض السطر كله. على 1200 أربعة في السطر والخامس برضه ممطوط لوحده. ده الفرق اللي هيخليك تستخدم grid بعدين لو عايز الكارت الأخير بنفس عرض الباقيين.`
         },
         {
           cmd: "grid",
@@ -827,7 +1456,12 @@ body { background: var(--bg); color: var(--fg); }
             "قفلة.",
             "الصورة المميزة تاخد عمودين وصفين.",
             "من أول خط لآخر خط: عرض الـ grid كله مهما كان عدد الأعمدة."
-          ]
+          ],
+          sol: R`على عرض 1000: الصورة الأولى ([[.featured]]) واخدة مربع 2×2 في الركن (عرضها عمودين + الـ gap، وطولها صفين)، والصور 2 و 3 على جنبها في الصف الأول، و 4 و 5 تحتهم في الصف التاني، وبعدين 6 و 7 و 8 في صف تالت كامل تحت، والخانة الرابعة في الصف ده فاضية. يعني الـ 8 صور بياخدوا 3 صفوف.
+
+لما تدوس على شارة [[grid]] جنب الـ div في Elements: هيترسم فوق الصفحة خطوط الأعمدة (5 خطوط لأن 4 أعمدة) وأرقامها من 1 لـ 5 ومن -1 لـ -5 من الناحية التانية، والـ gap متظلل. من Layout panel تقدر تشغّل «Show area names» و «Extend grid lines».
+
+لو الصورة الكبيرة طلعت عمودين بس من غير ما تطول صفين، اتأكد إن مفيش [[height]] ثابت على العنصر. ولو الصفحة rtl هتلاقي العمود 1 على اليمين والـ featured في الركن اليمين فوق، وده صح.`
         },
         {
           cmd: "auto-fit و minmax",
@@ -868,7 +1502,12 @@ auto-fill بيعمل نفس الحسبة وبيسيب الأعمدة اللي م
             "fill: لو فيه 3 تاجات بس، هيفضلوا بعرض 120 تقريبًا والباقي أعمدة فاضية، مش هيتمطّوا على السطر كله.",
             "مسافة.",
             "قفلة."
-          ]
+          ],
+          sol: R`بـ 3 كروت على شاشة 1200: مع [[auto-fit]] الـ 3 كروت اتمطّوا وكل واحد حوالي 384px ومالين السطر كله. مع [[auto-fill]] كل كارت حوالي 282px وفيه خانة رابعة فاضية على الطرف. في DevTools هتلاقي [[grid-template-columns]] في Computed: [[384px 384px 384px 0px]] للـ fit (العمود الرابع اتقفل لصفر) و [[282px 282px 282px 282px]] للـ fill.
+
+على عرض 200 مع [[min(250px, 100%)]]: كارت واحد في السطر بعرض 200 بالظبط، ومفيش scroll. بـ [[250px]] بس: الشبكة عرضها 250 أكبر من الشاشة، فالصفحة بقى فيها scroll أفقي 50px والكروت مقصوصة.
+
+القاعدة اللي تطلع بيها: الفرق بين fit و fill بيبان بس لما الكروت أقل من اللي يملوا السطر. لو مشفتش فرق، غالبًا عندك كروت كفاية تملا السطر، قللهم.`
         },
         {
           cmd: "grid-template-areas",
@@ -919,7 +1558,19 @@ Tailwind مفيهوش utility للـ areas، فبتكتبها arbitrary property
             "المحتوى.",
             "الجانبي.",
             "الفوتر."
-          ]
+          ],
+          sol: R`الحل إنك تغيّر الرسمة بس، مع عكس الأعمدة كمان. لو غيّرت [[main aside]] لـ [[aside main]] بس، الـ aside هيروح فعلًا للناحية التانية، بس هيبقى هو العريض (العمود [[1fr]]) والـ main محشور في الـ 300px، لأن عرض الأعمدة مرتبط بمكانها مش بالاسم. عشان كده لازم تقلب [[grid-template-columns]] لـ [[300px 1fr]] (الحل تحت).
+
+شكل L زي [["main aside" "main main"]]: المتصفح بيرفض الـ declaration كلها. في Styles هتلاقيها متشطّب عليها وجنبها علامة تحذير (Invalid property value)، والـ layout بيرجع للرسمة بتاعة الموبايل (عمود واحد) رغم إن الشاشة كبيرة، وعمود الـ 300px بيبقى فاضي على الجنب. كل منطقة لازم تبقى مستطيل (عمود واحد متصل أو صف أو مربع)، فـ [["main aside" "main footer"]] مثلًا تنفع لأن main مستطيل طولي.`,
+          solCode: R`@media (min-width: 64rem) {
+  .page {
+    grid-template-columns: 300px 1fr;
+    grid-template-areas:
+      "header header"
+      "aside  main"
+      "footer footer";
+  }
+}`
         }
       ]
     },
@@ -973,7 +1624,12 @@ Tailwind مفيهوش utility للـ areas، فبتكتبها arbitrary property
             "الكارت كله يبقى clickable: طبقة شفافة من اللينك مغطية الكارت، والـ HTML لسه لينك واحد صح.",
             R`طبقة غامقة على الأب كله. [[inset: 0]] = top و right و bottom و left كلهم صفر.`,
             "قفلة."
-          ]
+          ],
+          sol: R`بـ [[position: relative]]: شارة «جديد» في ركن الكارت فوق، ناحية نهاية السطر (الشمال في صفحة rtl، واليمين في ltr) لأن [[inset-inline-end]] منطقية. بعد ما تمسحه: الشارة بتطير لركن الصفحة فوق خالص (أو لركن أقرب جد عليه position غير static)، لأن الـ absolute بيتحسب من أقرب أب positioned، ولو مفيش بيتحسب من الصفحة.
+
+والحاجة اللي ممكن متاخدش بالك منها: الـ [[::after]] بتاع اللينك برضه بقى [[inset: 0]] على أول شاشة من الصفحة كلها (الـ initial containing block)، يعني أي ضغطة في أي حتة فيها بتفتح المنتج، حتى برا الكارت. ترجّع الـ relative وتدوس على الصورة أو على فراغ في الكارت: اللينك بيشتغل والماوس بيبقى إيد، وده من [[::after]] اللي مغطي الكارت.
+
+لو اللينك مش بيشتغل لما تدوس على الصورة، غالبًا فيه عنصر تاني عليه position وجاي بعد اللينك في الـ HTML فهو فوقه، أو الـ card ناقصها relative.`
         },
         {
           cmd: "sticky و fixed",
@@ -1022,7 +1678,12 @@ Tailwind مفيهوش utility للـ areas، فبتكتبها arbitrary property
             "وعلى ناحية النهاية (بيتقلب في العربي).",
             "قفلة.",
             "رأس الجدول يفضل ظاهر وانت نازل في الصفوف."
-          ]
+          ],
+          sol: R`الأول الهيدر بيلزق فوق وانت بتعمل scroll، ولما تنزل تحته الكلام بيبان مغبّش ورا الخلفية النص شفافة. بعد [[overflow: hidden]] على الـ div اللي بيلف الصفحة: الهيدر بيمشي مع الصفحة ويختفي فوق زي أي عنصر عادي. السبب إن [[overflow: hidden]] بيخلي الـ div ده scroll container، فالـ sticky بيلزق جواه هو، وهو نفسه مش بيعمل scroll (الصفحة هي اللي بتعمل)، فمفيش حاجة تحصل.
+
+مع [[overflow: clip]]: الهيدر رجع يلزق. [[clip]] بيقص اللي طالع برا زي hidden بالظبط، بس من غير ما يعمل scroll container. زرار الواتساب ([[fixed]]) في الحالات التلاتة ثابت في ركن الشاشة (تحت ناحية الشمال في rtl).
+
+لو الـ sticky مش شغال من الأول خالص، الأسباب المعتادة: ناسي [[top: 0]]، أو الأب المباشر للهيدر طوله قد الهيدر بس (sticky بيلزق جوه أبوه بس)، أو فيه [[overflow]] على أي جد فوق.`
         },
         {
           cmd: "z-index",
@@ -1067,7 +1728,12 @@ framer-motion بيحط transform على العناصر اللي بيحركها،
             R`[[isolation: isolate]]: اعمل stacking context مقصود من غير z-index، عشان الـ z-index اللي جوه الكارت ميهربش برا.`,
             "خد بالك: opacity أقل من 1 و transform بيعملوا stacking context من غير ما تاخد بالك.",
             "قفلة."
-          ]
+          ],
+          sol: R`بالكود زي ما هو: القايمة الحمرا اللي تحت الهيدر مستخبية ورا الهيرو، رغم الـ 9999. الهيدر عنده [[z-index: 1]] فعمل stacking context، وكل اللي جواه محبوس في الطبقة 1 كوحدة واحدة، والهيرو بـ 2 فوقها كلها. الـ 9999 بتتقارن بس مع إخوات القايمة جوه الهيدر.
+
+غيّر الهيدر لـ 3: القايمة ظهرت فوق الهيرو، لأن الطبقة كلها بقت أعلى من 2. امسح الـ z-index من الهيدر خالص: القايمة برضه بتظهر (مفيش context، فالـ 9999 بتتقارن مع الهيرو مباشرة). ضيف [[opacity: 0.99]] من غير z-index: القايمة استخبت تاني، لأن opacity أقل من 1 بتعمل stacking context لوحدها، وكذلك [[transform]] و [[filter]] و [[isolation: isolate]].
+
+الغلط الشائع إنك تزوّد القايمة لـ 99999: مش هيفرق أبدًا. ابحث عن الأب اللي عامل الـ context (في DevTools › Layers أو بإنك تشيل خصائص من الأب واحدة واحدة).`
         },
         {
           cmd: "media queries",
@@ -1116,7 +1782,225 @@ framer-motion بيحط transform على العناصر اللي بيحركها،
             "لو نظام التشغيل على الوضع الغامق...",
             "...غيّر متغير الخلفية.",
             "قفلة."
-          ]
+          ],
+          sol: R`وانت بتسحب العرض: من الأصغر لحد 639px عمود واحد (كل كارت بعرض الشاشة). عند 640 بالظبط (يعني [[40rem]] لو خط المتصفح 16px) بيبقوا عمودين. عند 1024 ([[64rem]]) أربعة أعمدة. العرض الحالي بيظهر فوق الشاشة في وضع الموبايل، وشريط الـ media queries (من قايمة الـ ⋮ › Show media queries) بيرسم الـ breakpoints ألوان تدوس عليها.
+
+من Rendering › Emulate CSS media feature prefers-color-scheme اختار [[dark]]: متغيّر [[--bg]] على [[:root]] اتغير؛ لو الـ body بيستخدم [[var(--bg)]] الخلفية هتغمق فورًا من غير ما تغيّر ثيم الجهاز. وتأثير الـ hover على الكروت مش هيشتغل في وضع الموبايل بالـ touch، لأن [[(hover: hover)]] مش متحققة.
+
+لو عدد الأعمدة اتغير عند أرقام تانية، غالبًا خط المتصفح مش 16px (الـ rem في الـ media query بيتحسب من إعداد المتصفح، مش من [[html { font-size }]]). ولو مفيش أي تغيير، اتأكد إن الـ viewport meta موجود.`
+        }
+      ]
+    },
+    {
+      t: "الصور والفيديو و SVG",
+      l: 1,
+      n: "صورة بتملا مكانها من غير ما تتمط، وصيغ حديثة بـ fallback، وفيديو و YouTube و SVG بيتصرفوا صح",
+      items: [
+        {
+          cmd: "object-fit",
+          title: "صورة الكارت تملا المكان من غير ما تتمط",
+          desc: R`لما تدّي صورة عرض وارتفاع مش بنفس نسبتها، المتصفح بيمطّها. [[object-fit: cover]] بيخليها تملا المكان كله وتتقص من الأطراف، و [[contain]] بيخليها تبان كلها وتسيب فراغ (مناسب للّوجو وصور المنتجات اللي مينفعش حاجة منها تتقص).
+
+و [[object-position]] بيحدد أنهي جزء يفضل باين لما تتقص: [[50% 20%]] يعني قريب من فوق، مفيد لصور الناس عشان الوش ميتقصش.
+
+ومعاهم [[aspect-ratio]] عشان كل الكروت تبقى نفس الشكل مهما كانت الصور. وفي Tailwind: [[aspect-square]] و [[object-cover]] و [[object-top]].`,
+          example: R`.card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 50% 20%;
+}
+.logo { width: 8rem; height: 4rem; object-fit: contain; }
+<img class="card-img" src="/p/42.webp" width="800" height="600" alt="سماعة سودا">
+<img className="aspect-square w-full object-cover object-top" src="/team/mona.webp" alt="منى، مديرة المبيعات" width="400" height="400" />
+<div className="relative aspect-video"><Image src="/hero.webp" alt="" fill sizes="100vw" className="object-cover" /></div>`,
+          try: R`حط صورة طولية (بورتريه) في صندوق [[aspect-ratio: 4 / 3]]، وفي DevTools غيّر [[object-fit]] بين [[fill]] و [[cover]] و [[contain]] و [[none]]. وبعدين مع cover غيّر [[object-position]] لـ [[top]] و [[bottom]] وشوف أنهي جزء بيختفي.`,
+          flag: "script",
+          deep: {
+            why: R`كروت المنتجات والفريق والمقالات بتيجي صورها بمقاسات مختلفة من ناس مختلفة. من غير object-fit يا الصور تتمط (منظر مش احترافي خالص)، يا كل كارت بارتفاع مختلف والـ grid يبوظ.`,
+            how: R`الـ [[<img>]] ليه صندوق (العرض والارتفاع اللي انت اديتهم) ومحتوى (الصورة نفسها بنسبتها). [[object-fit]] بيقول المحتوى يتحط إزاي جوه الصندوق: [[fill]] (الافتراضي) بيمطّه، و [[cover]] بيكبّره لحد ما يغطي الصندوق كله ويقص الزيادة، و [[contain]] بيصغّره لحد ما يبان كله، و [[none]] بيسيبه بمقاسه الأصلي، و [[scale-down]] زي contain بس عمره ما يكبّر الصورة.
+
+[[object-position]] بنفس فكرة [[background-position]]: القيمة الافتراضية [[50% 50%]] (النص). لو القص بيقطع الوشوش، ارفعها لفوق.
+
+الـ [[width]] و [[height]] في الـ HTML لسه مهمين عشان يحجزوا المكان (درس img)، والـ [[aspect-ratio]] في CSS بيكسب لو الاتنين موجودين.
+
+[[<Image fill>]] في Next.js بيخلي الصورة [[position: absolute]] وتملا أبوها، فالأب لازم يبقى [[relative]] وليه مقاس (هنا [[aspect-video]])، و [[object-cover]] بيمنع المط، و [[sizes]] ضروري عشان يختار الملف الصح.`,
+            when: R`أي صورة في صندوق مقاسه ثابت: كروت، و avatars، وهيرو. contain للّوجو وصور المنتجات على خلفية بيضا اللي مينفعش حاجة منها تتقص. و [[object-fit]] بيشتغل كمان على [[<video>]].`,
+            mistakes: R`[[height: 200px]] على صورة من غير object-fit فتتمط. [[background-image]] بدل [[<img>]] عشان تستخدم [[background-size: cover]]: كده ضاع الـ alt والـ lazy loading والـ srcset. [[<Image fill>]] والأب مش relative فالصورة تملا الصفحة كلها. و cover على لوجو فيتقص نصه.`
+          },
+          lines: [
+            "صورة الكارت.",
+            "عرض الكارت كله.",
+            "كل الكروت نفس النسبة مهما كانت الصورة.",
+            "املا الصندوق كله واقصص الزيادة بدل ما تمط.",
+            "لو فيه قص، خلّي الجزء اللي فوق شوية باين (عشان الوشوش).",
+            "قفلة.",
+            R`لوجو: مقاس ثابت، و [[contain]] عشان يبان كله من غير قص.`,
+            "الصورة في الـ HTML، ومقاسها الأصلي لحجز المكان.",
+            "نفس الفكرة بـ Tailwind: مربع، ومليان، والقص من تحت.",
+            R`Next Image بـ [[fill]]: الأب [[relative]] وليه نسبة، والصورة [[object-cover]].`
+          ],
+          sol: R`[[fill]]: الصورة الطولية اتمطت بالعرض والوشوش عريضة. [[cover]]: الصندوق مليان والصورة بنسبتها، بس اتقص جزء من فوق ومن تحت. [[contain]]: الصورة كلها باينة وفيه فراغ يمين وشمال. [[none]]: الصورة بحجمها الأصلي، غالبًا جزء صغير منها بس اللي باين.
+
+مع cover و [[object-position: top]]: اللي فوق باين واللي تحت اتقص، و [[bottom]] العكس. لو التغيير ملوش أي تأثير، يبقى الصورة نسبتها قريبة من الصندوق أصلًا، جرّب صورة أطول.`
+        },
+        {
+          cmd: "picture",
+          title: "صورة مختلفة للموبايل، و AVIF مع fallback",
+          desc: R`[[<picture>]] بيحط جواه كذا [[<source>]] وفي الآخر [[<img>]]. المتصفح بيمشي على الـ sources بالترتيب وياخد أول واحد ينفع (نوعه مدعوم و [[media]] بتاعته متحققة)، ويعرضه في الـ img. ولو ولا واحد نفع، بياخد الـ img نفسه.
+
+استخدامين: صيغ حديثة ([[AVIF]] أصغر بكتير، وبعدها [[WebP]]، وبعدها JPEG للقديم)، و art direction: صورة مقصوصة مختلفة للموبايل (مش نفس الصورة أصغر، لأن ده شغل [[srcset]] في درس img).
+
+الـ [[alt]] والـ [[width]] و [[height]] و [[loading]] والكلاسات كلها على الـ [[<img>]]، مش على picture.`,
+          example: R`<picture>
+  <source media="(max-width: 767px)" type="image/avif" srcset="/hero-mobile.avif" width="800" height="1000">
+  <source media="(max-width: 767px)" type="image/webp" srcset="/hero-mobile.webp" width="800" height="1000">
+  <source type="image/avif" srcset="/hero-800.avif 800w, /hero-1600.avif 1600w" sizes="100vw">
+  <source type="image/webp" srcset="/hero-800.webp 800w, /hero-1600.webp 1600w" sizes="100vw">
+  <img src="/hero-1600.jpg" width="1600" height="700" alt="عرض الصيف: خصم 30% على السماعات" fetchpriority="high">
+</picture>`,
+          try: R`حوّل صورة لـ AVIF و WebP (من squoosh.app أو [[npx sharp-cli]])، واعمل الـ picture. افتح DevTools › Network وفلتر على Img: شوف أنهي ملف اتحمّل على عرض كبير، وبعدين وضع الموبايل واعمل refresh. وقارن أحجام الملفات التلاتة.`,
+          flag: "script",
+          deep: {
+            why: R`صورة الهيرو غالبًا أكبر حاجة في الصفحة وهي اللي بتحدد LCP. نفس الصورة بـ AVIF ممكن تبقى نص حجم الـ WebP وأصغر بكتير من JPEG. وصورة عريضة 16:9 على موبايل طولي بتبقى شريط صغير الكلام اللي فيها مش باين، فمحتاج صورة مقصوصة تانية.`,
+            how: R`المتصفح بيقرا [[type]] ويسأل نفسه: أعرف أفك الصيغة دي؟ لو لأ بيعدّي من غير ما يحمّل حاجة. وبيقرا [[media]] زي media query. أول source يعدّي الاتنين بيكسب، وجواه [[srcset]] و [[sizes]] بيشتغلوا عادي زي درس img. فالترتيب مهم: الأدق (موبايل + AVIF) الأول، والعام في الآخر.
+
+[[width]] و [[height]] على الـ source: لما صورة الموبايل نسبتها مختلفة (4:5 بدل 16:9)، دول بيخلوا المتصفح يحجز المكان الصح ليها بدل ما يستخدم نسبة الـ img، فمفيش CLS.
+
+AVIF بقت مدعومة في كل المتصفحات الحديثة، بس الـ fallback مش بيكلّف حاجة (المتصفح مبيحمّلش غير ملف واحد)، والـ encode بتاعها أبطأ، فاعملها وقت الـ build مش مع كل request.
+
+في Next.js، [[<Image>]] بيحوّل الصيغة لوحده حسب اللي المتصفح بيقول إنه بيدعمه (WebP افتراضيًا، و AVIF لو ضفتها في [[images.formats]] في الـ config)، فمش محتاج picture عشان الصيغ. بس لـ art direction لسه محتاج picture أو [[getImageProps]].`,
+            when: R`صور الهيرو والبانرات الكبيرة: صيغ حديثة دايمًا، و art direction لما الصورة فيها كلام أو تفاصيل هتضيع على الموبايل. الصور الصغيرة والأيقونات: مش محتاجة.`,
+            mistakes: R`الـ [[alt]] أو الكلاس على [[<picture>]] بدل الـ img. الـ source العام قبل الخاص فالموبايل ياخد صورة الديسكتوب. picture لنفس الصورة بمقاسات مختلفة (ده srcset). تنسى الـ [[<img>]] جوه فمفيش صورة خالص. و [[src]] على [[<source>]] بدل [[srcset]] (الـ source مبيقراش src جوه picture).`
+          },
+          lines: [
+            "بداية الـ picture.",
+            R`موبايل وبيدعم AVIF: صورة مقصوصة طولي، ونسبتها الخاصة بـ width و height.`,
+            "موبايل ومش بيدعم AVIF: نفس الصورة WebP.",
+            R`شاشة كبيرة وبيدعم AVIF: مقاسين، والمتصفح يختار بـ [[sizes]].`,
+            "شاشة كبيرة و WebP.",
+            R`آخر احتمال والمكان اللي الصورة بتتعرض فيه فعلًا: الـ alt والمقاس والأولوية هنا.`,
+            "قفلة."
+          ],
+          sol: R`على عرض كبير في Chrome: هتلاقي [[hero-1600.avif]] أو [[hero-800.avif]] (حسب كثافة الشاشة) اتحمّل، ومفيش WebP ولا JPEG. في وضع الموبايل بعد refresh: [[hero-mobile.avif]] والصورة بقت طولية. ملف واحد بس بيتحمّل في كل مرة.
+
+الأحجام: غالبًا AVIF أصغر من WebP بشوية لنص، والاتنين أصغر بكتير من JPEG (الأرقام بتختلف حسب الصورة والجودة).
+
+لو لقيت صورة الديسكتوب على الموبايل: الـ sources الخاصة بالموبايل لازم تيجي الأول. ولو مفيش حاجة اتحمّلت: اتأكد إنك كتبت [[srcset]] مش [[src]] على الـ source.`
+        },
+        {
+          cmd: "video و iframe",
+          title: "فيديو بيشتغل لوحده على الموبايل، و YouTube ميتقّلش الصفحة",
+          desc: R`[[<video>]] محتاج [[controls]] عشان المستخدم يشغّل ويوقف، و [[poster]] صورة لحد ما يشتغل، و [[preload="metadata"]] عشان ميحمّلش الفيديو كله على الفاضي. والترجمة بـ [[<track kind="captions">]] وملف WebVTT.
+
+فيديو خلفية بيشتغل لوحده لازم [[muted autoplay loop playsinline]]: المتصفحات بتمنع الـ autoplay بصوت، و iPhone من غير [[playsinline]] بيفتحه full screen.
+
+و [[<iframe>]] (YouTube أو خريطة) لازم له [[title]] و [[loading="lazy"]]. وأحسن من كده: facade، يعني صورة الفيديو وزرار تشغيل، والـ iframe يتعمل بس لما المستخدم يدوس.`,
+          example: R`<video controls preload="metadata" poster="/video/intro.jpg" width="1280" height="720">
+  <source src="/video/intro.webm" type="video/webm">
+  <source src="/video/intro.mp4" type="video/mp4">
+  <track kind="captions" src="/video/intro.ar.vtt" srclang="ar" label="عربي" default>
+</video>
+<video autoplay muted loop playsinline poster="/hero.jpg" aria-hidden="true" src="/hero.mp4"></video>
+<iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID" title="شرح المنتج في دقيقتين" width="560" height="315" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+<button type="button" class="yt-facade" data-id="VIDEO_ID" aria-label="شغّل: شرح المنتج في دقيقتين" style="background-image: url(https://i.ytimg.com/vi/VIDEO_ID/hqdefault.jpg)">▶</button>`,
+          try: R`حط iframe يوتيوب عادي في صفحة، وافتح Network واعمل refresh: عدّ الـ requests والحجم. وبعدين بدّله بزرار الـ facade واكتب السكربت اللي لما تدوس عليه يحط الـ iframe مكانه ويشغّله، وقارن الـ Network تاني قبل الضغط.`,
+          flag: "script",
+          deep: {
+            why: R`iframe يوتيوب واحد بيحمّل مئات الـ KB من JavaScript قبل ما حد يدوس play، وبيبطّأ الصفحة حتى لو محدش هيتفرج. والفيديو من غير poster بيبان مربع أسود. والفيديو من غير ترجمة مش مفهوم للصم، ولا لأي حد فاتح الموبايل في مواصلات من غير سماعة.`,
+            how: R`الـ [[<source>]] جوه video زي picture: المتصفح ياخد أول نوع يعرف يشغّله. [[preload="none"]] مبيحمّلش حاجة، و [[metadata]] بيحمّل المدة وأول frame بس، و [[auto]] ممكن يحمّل كتير.
+
+سياسة الـ autoplay: المتصفح بيسمح بالتشغيل التلقائي لو الفيديو [[muted]] (أو المستخدم اتفاعل مع الموقع قبل كده). و [[playsinline]] لـ iOS Safari. والفيديو اللي بيشتغل لوحده أكتر من 5 ثواني لازم يبقى فيه طريقة توقفه (WCAG)، وتحترم [[prefers-reduced-motion]] (متشغلوش لوحده).
+
+ملف الـ VTT نص عادي: أول سطر [[WEBVTT]]، وبعدين لكل جملة سطر وقت [[00:00.000 --> 00:03.000]] وتحته الكلام. و [[kind="captions"]] (كل الصوت مكتوب) غير [[subtitles]] (ترجمة للغة تانية). ولو الـ VTT على domain تاني، الـ video محتاج [[crossorigin]] والسيرفر يبعت CORS.
+
+الـ facade: زرار بصورة الفيديو من [[i.ytimg.com]]، ولما يتضغط تعمل iframe بـ [[?autoplay=1]] وتحطه مكانه. فيه مكتبة جاهزة اسمها [[lite-youtube-embed]]. و [[youtube-nocookie.com]] بيقلل الـ cookies لحد ما المستخدم يشغّل. وفي الحالتين الـ iframe محتاج [[title]] عشان قارئ الشاشة يعرف هو إيه.`,
+            when: R`فيديو بتاعك (شرح، إعلان): [[<video>]] بـ controls و poster و captions. خلفية للهيرو: muted autoplay loop playsinline وقصير وخفيف، ومعاه زرار إيقاف. فيديو يوتيوب في صفحة فيها كذا فيديو أو في الـ landing: facade دايمًا.`,
+            mistakes: R`autoplay من غير muted فمبيشتغلش ومفيش أي error. نسيان playsinline فالآيفون يفتحه full screen. فيديو 50MB في الهيرو على موبايل. iframe من غير title. 10 iframes يوتيوب في صفحة واحدة. فيديو خلفية ملوش زرار إيقاف ومبيحترمش reduced motion. وترجمة محروقة في الفيديو نفسه بدل track (مبتتكبرش ومبتتقفلش ومبتتدوّرش).`
+          },
+          lines: [
+            "فيديو عادي: أزرار تحكم، ويحمّل المدة بس، وصورة لحد ما يشتغل، ومقاس عشان يحجز المكان.",
+            "WebM الأول (أصغر غالبًا).",
+            "MP4 للباقي.",
+            R`الترجمة: ملف VTT بالعربي، و [[default]] مفعّلة من الأول.`,
+            "قفلة.",
+            R`فيديو خلفية: بيشتغل لوحده لأنه [[muted]]، ومش full screen على الآيفون، ومخفي عن قارئ الشاشة لأنه زينة.`,
+            R`يوتيوب عادي: [[nocookie]]، و [[title]] للـ accessibility، و [[lazy]] ميتحملش غير لما يقرب.`,
+            "الـ facade: زرار بصورة الفيديو، والـ iframe بيتعمل بس لما يتضغط."
+          ],
+          sol: R`الـ iframe العادي: عشرات الـ requests (JavaScript و CSS و fonts من يوتيوب) وحجم ممكن يعدّي 1MB قبل ما تدوس play. الـ facade قبل الضغط: request واحد (الصورة، عشرات الـ KB). بعد الضغط: الـ iframe بيتحمّل ويشتغل على طول لأن فيه [[autoplay=1]].
+
+لو الفيديو مشتغلش لوحده بعد الضغط: اتأكد إن [[allow]] فيه [[autoplay]]. ولو الـ focus ضاع بعد ما الزرار اتشال: حط الـ focus على الـ iframe الجديد.`,
+          solCode: R`document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.yt-facade');
+  if (!btn) return;
+  const iframe = document.createElement('iframe');
+  iframe.src = $__bthttps://www.youtube-nocookie.com/embed/$__{btn.dataset.id}?autoplay=1$__bt;
+  iframe.title = btn.getAttribute('aria-label');
+  iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+  iframe.allowFullscreen = true;
+  iframe.width = 560;
+  iframe.height = 315;
+  btn.replaceWith(iframe);
+  iframe.focus();
+});`
+        },
+        {
+          cmd: "SVG",
+          title: "SVG: inline ولا img؟ و currentColor و svgo",
+          desc: R`[[<img src="logo.svg">]]: سهل وبيتكاش، بس الـ CSS بتاع صفحتك مش بيوصل جواه، فمتقدرش تغيّر لونه مع الـ hover أو الـ dark mode.
+
+[[<svg>]] inline في الـ HTML: الـ CSS بيوصل لكل جزء فيه، و [[fill="currentColor"]] أو [[stroke="currentColor"]] بيخليه ياخد لون الكلام اللي حواليه ([[color]]). ده اللي lucide-react بيعمله.
+
+وأي SVG طالع من Figma أو Illustrator فيه زبالة (metadata، و groups فاضية، وأرقام بـ 6 decimals). [[svgo]] بينضّفه وغالبًا بيصغّره للنص أو أقل.`,
+          example: R`<img src="/logo.svg" alt="متجر النور" width="120" height="32">
+<button type="button" class="icon-btn" aria-label="السلة">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" />
+    <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
+  </svg>
+</button>
+<svg role="img" aria-labelledby="chart-t" viewBox="0 0 100 40"><title id="chart-t">المبيعات زادت 20% الشهر ده</title>...</svg>
+// styles.css
+.icon-btn { color: var(--color-gray-700); }
+.icon-btn:hover { color: var(--color-brand); }`,
+          try: R`صدّر أيقونة من Figma (أو خد أي SVG) وشغّل [[npx svgo icon.svg -o icon.min.svg]] وقارن الملفين. وبعدين حط نفس الأيقونة مرة كـ [[<img>]] ومرة inline جوه زرار عليه [[color: red]]: أنهي واحدة اتلوّنت؟`,
+          flag: "script",
+          deep: {
+            why: R`الأيقونات في كل حتة: أزرار، ومنيو، وحالات. لو كل لون محتاج ملف SVG منفصل، هيبقى عندك 4 نسخ من كل أيقونة (عادي، و hover، و dark، و disabled). مع currentColor أيقونة واحدة بتاخد لون أي مكان تتحط فيه.`,
+            how: R`الـ [[<img>]] بيعامل الـ SVG كصورة منفصلة: document لوحده، والـ CSS و JavaScript بتوع الصفحة مش بيوصلوله، والمتصفح بيكاشه زي أي صورة. الـ inline جزء من الـ DOM: [[:hover]] و CSS variables و [[currentColor]] كلهم بيشتغلوا، بس بيتقل حجم الـ HTML ومبيتكاش لوحده.
+
+[[currentColor]] معناها «قيمة [[color]] في العنصر ده»، وبتتورث من الأب. فلو الـ path عليه [[fill="currentColor"]] والزرار [[color: red]]، الأيقونة حمرا.
+
+الـ accessibility: أيقونة جوه زرار أو جنب كلام يبقى [[aria-hidden="true"]] والاسم على الزرار. SVG بيعني حاجة لوحده (رسم بياني، لوجو inline) ياخد [[role="img"]] واسم من [[<title>]] أو [[aria-label]].
+
+svgo (نسخة 4) بيشيل الـ XML declaration والتعليقات والـ metadata والـ groups الفاضية ويقصّر الأرقام، وبيسيب [[viewBox]] و [[<title>]] افتراضيًا. والـ [[fill="#000"]] بيشيله لأن الأسود هو الافتراضي، وساعتها الأيقونة inline بتبقى سودا مش currentColor، فحط [[fill="currentColor"]] على الـ [[<svg>]] نفسه، أو اعمل [[svgo.config.mjs]] فيه plugin [[convertColors]] بـ [[currentColor: true]].
+
+وفي React: الأيقونات من مكتبة (lucide-react) أو ملفات بتتحول لـ components بـ SVGR. واللوجو الكبير أو الرسومات التوضيحية [[<img>]] أحسن عشان الكاش.`,
+            when: R`أيقونات بتتلوّن أو بتتحرك: inline أو مكتبة أيقونات. لوجو ثابت، ورسومات كبيرة، وصور مقالات: [[<img>]]. وأي SVG جاي من برنامج تصميم: svgo قبل ما يدخل المشروع.`,
+            mistakes: R`SVG من غير [[viewBox]] فمبيتكبرش ولا بيصغر صح. لون ثابت [[fill="#333"]] جوه الأيقونة فمبتتلونش. [[<img src="icon.svg">]] وتستغرب ليه [[color]] مش شغال. SVG inline تقيل (خريطة، رسمة 200KB) بيتكرر في كل صفحة. أيقونة لوحدها في زرار من غير اسم. و SVG جاي من مستخدمين بيتحط inline: ممكن يكون فيه [[<script>]] (XSS)، فنضّفه أو اعرضه كـ img.`
+          },
+          lines: [
+            R`لوجو ثابت: [[<img>]] بيتكاش، ومقاس، و alt.`,
+            "زرار أيقونة: الاسم على الزرار.",
+            R`الأيقونة inline: الخطوط بلون الكلام ([[currentColor]])، ومخفية عن قارئ الشاشة لأن الزرار ليه اسم.`,
+            "عجلتين السلة.",
+            "جسم السلة.",
+            "قفلة الـ svg.",
+            "قفلة الزرار.",
+            R`SVG بيعني حاجة لوحده: [[role="img"]] واسمه من الـ [[<title>]].`,
+            "لون الأيقونة هو لون الزرار.",
+            "في الـ hover الزرار بيتلوّن، والأيقونة معاه من غير أي CSS ليها."
+          ],
+          sol: R`على أيقونة تجربة، svgo طبع حاجة زي [[Done in 14 ms! 0.449 KiB - 65.4% = 0.155 KiB]]. الملف الجديد سطر واحد: من غير [[<?xml>]] ولا التعليق بتاع البرنامج ولا [[<metadata>]] ولا الـ [[<g>]]، والأرقام اتقصّرت ([[7.000]] بقت [[7]])، والـ [[viewBox]] و [[<title>]] لسه موجودين.
+
+الـ inline جوه الزرار الأحمر اتلوّن أحمر (لو فيه [[currentColor]])، والـ img فضل بلونه الأصلي، لأن الـ CSS مش بيدخل جوه الـ img.
+
+لو الـ inline فضل أسود: الأيقونة فيها [[fill]] بلون ثابت أو svgo شال [[fill="#000"]] فبقت على الافتراضي (أسود). حط [[fill="currentColor"]] على الـ [[<svg>]].`,
+          solCode: R`// svgo.config.mjs: أي لون ثابت في الأيقونة يبقى currentColor
+export default {
+  plugins: ['preset-default', { name: 'convertColors', params: { currentColor: true } }],
+};`
         }
       ]
     },
@@ -1171,7 +2055,12 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
             "السطر الوحيد في ملف الـ CSS: بيجيب الـ theme والـ reset (Preflight) والـ utilities.",
             "زرار كامل من غير ولا سطر CSS: تدوير، وخلفية، ومسافات، ولون كلام، ولون عند الـ hover.",
             "في Next.js: PostCSS بالـ plugin بتاعه، و [[@import]] نفسه في globals.css."
-          ]
+          ],
+          sol: R`الزرار بيظهر بنفسجي غامق (indigo-600) والكلام أبيض ومدوّر، ولما تقف عليه بالماوس بيفتح شوية (indigo-500). في Sources (أو في Elements › Styles على الزرار) هتلاقي CSS متولد فيه قواعد زي دي بالظبط (من Tailwind v4.3):
+
+[[.px-4 { padding-inline: calc(var(--spacing) * 4); }]] و [[--spacing: 0.25rem]] متعرّف على [[:root]]، يعني 1rem. ومش هتلاقي [[.px-5]] خالص. اكتب [[px-5]] بدل [[px-4]] واحفظ: الـ Vite بيحدّث الصفحة من غير refresh، والقاعدة [[.px-5]] ظهرت في الملف، و [[.px-4]] اختفت لو مبقتش مستخدمة في أي حتة. وقاعدة الـ hover هتلاقيها ملفوفة جوه [[@media (hover: hover)]]، فعلى الموبايل بالـ touch مش بتعلق.
+
+لو مفيش أي ستايل اتطبق: اتأكد إن [[tailwindcss()]] في plugins بتاعة vite.config، وإن [[@import "tailwindcss";]] في أول ملف CSS، وإن الملف ده متعمله import في [[main.tsx]]. ولو الملف فيه كلاسات كتير مش كاتبها، ده الـ preflight (reset) والـ theme، وده طبيعي.`
         },
         {
           cmd: "@theme",
@@ -1220,7 +2109,12 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
             R`[[text-fg]].`,
             "قفلة.",
             "القيم الحقيقية، ودي اللي الثيم بيغيّرها."
-          ]
+          ],
+          sol: R`الزرار بقى بلون الـ brand (أزرق بنفسجي) والكلام أبيض. في الـ CSS الناتج هتلاقي جوه [[@layer theme]] قاعدة [[:root, :host { ... --color-brand: oklch(0.55 0.2 265); }]]، والكلاس [[.bg-brand { background-color: var(--color-brand); }]]. يعني الكلاس نفسه بيقرا المتغير، فلو كتبت في CSS عادي [[border-color: var(--color-brand)]] هيشتغل، ولو غيّرت المتغير على [[:root]] من DevTools كل حاجة بتتغير معاه.
+
+حاجة هتلاحظها: [[--color-brand-soft]] مش موجود في الناتج، لأنك مستخدمتش [[bg-brand-soft]] ولا أي كلاس بيقراه. Tailwind v4 بيطلّع متغيرات الـ theme المستخدمة بس. لو عايزها كلها تطلع دايمًا عشان تستخدمها في CSS عادي أو JavaScript، اكتب [[@theme static]] بدل [[@theme]] (جرّبتها ولقيت الاتنين بقوا موجودين).
+
+ولو الكلاس [[bg-brand]] ملوش أي تأثير، غالبًا كتبت الاسم [[--brand]] من غير [[--color-]] في الأول، فـ Tailwind مش عارف إنه لون.`
         },
         {
           cmd: "variants",
@@ -1261,7 +2155,12 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
             "قفلة.",
             R`[[*:]] = على كل الأولاد المباشرين: خط تحت كل واحد، إلا الأخير.`,
             "قفلة."
-          ]
+          ],
+          sol: R`لما تدوس Tab من أول الصفحة: الـ focus بيروح للينك «الأسعار» وحواليه outline بعرض 2px بلون الـ brand. لما تدوس عليه بالماوس: الـ focus عليه برضه بس مفيش outline، لأن المتصفح بيعتبر إن الضغط بالماوس مش محتاج مؤشر، فـ [[:focus-visible]] مش متحققة. ده بالظبط الفرق بين [[focus:]] (هيظهر في الحالتين) و [[focus-visible:]].
+
+لما تصغّر الشاشة تحت 768px ([[md]] = 48rem): الـ nav بقى عمود ([[flex-direction: column]]) والزرار «ابدأ» اختفى ([[display: none]]). فوق 768 رجع صف والزرار ظاهر [[inline-flex]] ونصه باهت لأنه [[disabled]].
+
+الغلط الشائع إنك تكتب [[md:hidden]] وتتوقعه يخفي على الموبايل: md معناها «من 768 وأكبر»، مش «على الموبايل». الإخفاء على الموبايل بس = [[max-md:hidden]] أو [[hidden md:block]] زي المثال.`
         },
         {
           cmd: "arbitrary values",
@@ -1307,7 +2206,12 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
             "في النص.",
             "مسافة من الجنبين (بتتقلب مع RTL).",
             "قفلة."
-          ]
+          ],
+          sol: R`[[bg-[#ff0]]] بيدّي خلفية صفرا، وفي الـ CSS الناتج هتلاقي القاعدة بالشكل ده: [[.bg-\[\#ff0\] { background-color: #ff0; }]]. الأقواس و الـ [[#]] اتعمل لهم escape بـ backslash عشان يبقوا selector صحيح.
+
+الـ [[@utility container-app]] بيطلع كلاس عادي في layer الـ utilities، ولما تستخدم [[md:container-app]] Tailwind بيولّد نسخة تانية جوه [[@media (width >= 48rem)]] بنفس الخصائص، زي أي كلاس جاهز. على الشاشة: المحتوى بقى في النص وعرضه أقصى 75rem وحواليه padding.
+
+لو القيمة الـ arbitrary ملهاش أي تأثير: غالبًا فيه مسافة جوه الأقواس ([[bg-[#ff 0]]] أو [[calc(4rem + 1px)]])، والمسافة بتقسم الكلاس لكلاسين. استخدم [[_]] مكان المسافة. ولو [[@utility]] رفض يشتغل، اتأكد إن الاسم مفيهوش [[.]] قبله وإنه مش جوه [[@layer]].`
         },
         {
           cmd: "group و peer",
@@ -1348,7 +2252,12 @@ export default { plugins: { "@tailwindcss/postcss": {} } };`,
             R`[[peer]]: الإخوات اللي بعد الحقل ده يقدروا يسألوا عن حالته.`,
             "مخفية، وتظهر لما الحقل يبقى غلط بعد ما المستخدم يتعامل معاه.",
             "قفلة."
-          ]
+          ],
+          sol: R`لما تقف على الكارت في أي حتة (مش على العنوان بس): العنوان بيتلوّن بلون الـ brand والسهم بيتحرك 4px (شمال في المثال). ده لأن الـ hover على الأب اللي عليه [[group]]، والأبناء بيسمعوا له.
+
+الإيميل: الصفحة بتفتح والرسالة مستخبية. اكتب [[ahmed]]: وانت بتكتب الرسالة لسه مستخبية. اخرج من الحقل بـ Tab: «إيميل مش صحيح» ظهرت، لأن [[:user-invalid]] بيتحقق بس بعد ما المستخدم يتعامل مع الحقل ويخرج منه. مع [[peer-invalid:]]: الرسالة ظاهرة من أول ما الصفحة تفتح والحقل فاضي، لأن الحقل [[required]] وفاضي فهو [[:invalid]] من الأول.
+
+لو الرسالة مش بتظهر خالص: اتأكد إن الـ span جاي بعد الـ input في الـ HTML وإنهم إخوات (نفس الأب)، لأن [[peer]] بيشتغل بـ [[~]] اللي بيشوف الإخوات اللي بعده بس.`
         }
       ]
     },
@@ -1396,7 +2305,20 @@ tailwind-merge v3 لـ Tailwind v4 (و v2.6 لـ v3). الألوان الجدي�
             R`كلاس شرطي بـ [[&&]] و object: لو isActive بـ false الجزء ده بيختفي.`,
             R`تعارض: [[px-4]] و [[px-6]]، الأخير يكسب.`,
             R`النمط الأساسي: الافتراضي الأول، والـ [[className]] اللي جاي من برا آخر حاجة عشان يكسب.`
-          ]
+          ],
+          sol: R`[[cn("p-2", "px-4")]] بيرجع [[p-2 px-4]]: الاتنين فضلوا، لأن [[px-4]] بيغطي الجزء الأفقي بس، والـ [[p-2]] لسه محتاجينه للرأسي، و tailwind-merge عارف إن اللي جاي بعد هو الأقوى. [[cn("px-4", "p-2")]] بيرجع [[p-2]] بس: الـ [[p-2]] جه بعد وبيغطي كل الاتجاهات، فالـ [[px-4]] ملوش لازمة.
+
+جرّبت كمان: [[cn("px-4 bg-gray-100", "px-6")]] ← [[bg-gray-100 px-6]]، و [[cn("text-brand", "text-lg")]] ← [[text-brand text-lg]] (مش بيتخانقوا لأن واحد لون والتاني حجم). ولو [[cn]] رجّع الاتنين في [[cn("px-4", "px-6")]]، يبقى انت عامل [[clsx]] لوحده من غير [[twMerge]].
+
+الغلط الشائع: تفتكر إن ترتيب الكلاسات في الـ HTML هو اللي بيحدد مين يكسب. في CSS اللي بيكسب هو ترتيب القواعد في ملف الـ CSS، مش في الـ class، وعشان كده محتاج twMerge يشيل الخسران من الأول.`,
+          solCode: R`// cn.mjs  (npm i clsx tailwind-merge ثم node cn.mjs)
+import { clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+const cn = (...inputs) => twMerge(clsx(inputs));
+console.log(cn("p-2", "px-4"));              // p-2 px-4
+console.log(cn("px-4", "p-2"));              // p-2
+console.log(cn("px-4 bg-gray-100", "px-6")); // bg-gray-100 px-6
+console.log(cn("text-brand", "text-lg"));    // text-brand text-lg`
         },
         {
           cmd: "cva",
@@ -1449,7 +2371,25 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
             "المكون.",
             "cva تطلّع الكلاسات، و cn تدمج معاها الـ className اللي من برا.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[<Button variant="outline" size="lg">]] بيطلع زرار شفاف ليه border وارتفاعه 48px. الكلاسات اللي بيولّدها [[buttonVariants]] بالترتيب: الأساسية، وبعدين [[border hover:bg-gray-50]]، وبعدين [[h-12 px-6 text-lg]]، وفي الآخر [[border-2]] من الـ compoundVariants. و [[cn]] بيشيل [[border]] لأن [[border-2]] بيغطيه، فالـ border بيبقى 2px.
+
+[[variant="danger"]] قبل ما تضيفه: TypeScript بيعترض بالرسالة دي بالظبط:
+[[Type '"danger"' is not assignable to type '"ghost" | "outline" | "primary" | null | undefined'.]]
+بعد ما تضيف [[danger]] للـ variants الخطأ بيختفي من غير ما تلمس الـ type، لأن [[VariantProps]] بيقرا الأنواع من الـ cva نفسه. والزرار بيطلع أحمر بنفس ارتفاع md لأن الـ size الافتراضي md.
+
+لو TypeScript مااعترضش على danger، غالبًا الـ props متعرّفة [[any]] أو انت شايل [[VariantProps]] من الـ type. ولو الزرار طلع من غير ستايل، يبقى الكلاسات زي [[bg-brand]] مش متعرّفة في الـ theme.`,
+          solCode: R`variants: {
+  variant: {
+    primary: "bg-brand text-white hover:bg-brand/90",
+    outline: "border hover:bg-gray-50",
+    ghost: "hover:bg-gray-100",
+    danger: "bg-red-600 text-white hover:bg-red-700",
+  },
+  size: { sm: "h-9 px-3 text-sm", md: "h-10 px-4", lg: "h-12 px-6 text-lg" },
+},
+// <Button variant="danger">امسح</Button>
+// → ... bg-red-600 text-white hover:bg-red-700 h-10 px-4`
         },
         {
           cmd: "shadcn/ui",
@@ -1485,7 +2425,12 @@ git diff components/ui/button.tsx`,
             "يرجّع النسخة الأصلية فوق نسختك. خد بالك: تعديلاتك هتروح.",
             "إعدادات shadcn: الـ style، والمكتبة، ومسارات الـ aliases، وملف الـ CSS.",
             "قبل ما تعمل commit، شوف الفرق بين نسختك والأصلية بعد الـ overwrite."
-          ]
+          ],
+          sol: R`بعد [[init]] هتلاقي [[components.json]] و [[lib/utils.ts]] فيه [[cn]] بالظبط زي درس [[cn()]]، والـ globals.css اتضاف فيه متغيرات زي [[--radius]] و [[--primary]] و [[--background]]. بعد [[add button]] هتلاقي [[components/ui/button.tsx]] جواه [[const buttonVariants = cva(...)]] وفيه variants زي [[default]] و [[destructive]] و [[outline]] و [[secondary]] و [[ghost]] و [[link]]، وأحجام زي [[default]] و [[sm]] و [[lg]] و [[icon]]، والـ component بيعمل [[cn(buttonVariants({ variant, size, className }))]]. (الأسماء بالظبط ممكن تختلف حسب الـ style اللي اخترته في init.)
+
+عشان تغيّر التدوير: فيه طريقتين. الأولى في button.tsx: غيّر [[rounded-md]] في الـ string الأساسي لـ [[rounded-full]] مثلًا، وخلي بالك إن بعض الأحجام ([[sm]] و [[lg]]) ممكن تكون كاتبة [[rounded-md]] تاني جواها، فلازم تغيّرها هي كمان وإلا هتلاقي الزراير الكبيرة والصغيرة لسه زي ما هي. التانية في globals.css: غيّر [[--radius]] على [[:root]]، ودي بتغيّر كل المكونات مش الزراير بس، لأن [[rounded-md]] و [[rounded-lg]] محسوبين منه.
+
+بعد التعديل، [[git diff components/ui/button.tsx]] بيوريك التغيير بتاعك. ولو عملت [[add button --overwrite]] بعدين هيمسحه، ودي النقطة اللي تفرّق shadcn عن مكتبة متسطبة: الكود بتاعك وانت المسؤول عنه.`
         },
         {
           cmd: "Dialog",
@@ -1532,7 +2477,12 @@ git diff components/ui/button.tsx`,
             "قفلة Content.",
             "قفلة Portal.",
             "قفلة Root."
-          ]
+          ],
+          sol: R`أول ما تدوس «امسح»: المودال بيفتح والـ focus بيروح على أول عنصر ممكن يتوصله جواه (زرار «أيوه امسح»). اضغط Tab كذا مرة: الـ focus بيلف جوه المودال وعمره ما يخرج (في تجربتي 5 Tabs ورا بعض فضلوا على نفس الزرار لأنه الوحيد جواه). الـ Content عليه [[role="dialog"]] واسمه «متأكد؟» جاي من [[Dialog.Title]]، وباقي الصفحة عليها [[aria-hidden]] ومبتقبلش الماوس.
+
+Escape: المودال بيقفل والـ focus بيرجع على زرار «امسح» نفسه، فقارئ الشاشة والكيبورد بيكمّلوا من نفس المكان.
+
+المودال المعمول بـ [[useState]] و div: Tab بيطلع من المودال على طول ويوصل لعناصر الصفحة اللي ورا (في تجربتي راح للـ body وبعدين لزرار الـ trigger ولينك تحت)، و Escape مش بيعمل أي حاجة، ولما يقفل الـ focus بيضيع على الـ body. كل ده انت كنت هتكتبه بإيدك. ولو Radix طلّع تحذير في الـ Console إن [[DialogContent]] محتاج [[DialogTitle]]، يبقى نسيت الـ Title؛ حطه ولو مخفي بـ [[VisuallyHidden]].`
         }
       ]
     },
@@ -1589,7 +2539,12 @@ next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنف
             "قفلة.",
             R`[[resolvedTheme]] = الثيم الفعلي (لو system بيقولك light ولا dark).`,
             "زرار بيقلب."
-          ]
+          ],
+          sol: R`بعد ما تختار dark وتعمل refresh: الصفحة بتفتح غامقة من أول frame، من غير ولا لمحة بيضا. لو فتحت Elements هتلاقي على [[<html>]] ‏[[class="dark"]] ومعاها [[style="color-scheme: dark;"]]، ودول اتحطوا بـ script صغير next-themes بيحطه قبل ما الصفحة تترسم. وفي Application › Local Storage هتلاقي مفتاح [[theme]] وقيمته [[dark]] (أو [[light]]، ولو لسه مختارتش هتلاقيه مش موجود أو [[system]]).
+
+لما تمسح [[suppressHydrationWarning]] وتعمل refresh وانت على dark: في الـ Console خطأ hydration من React بيقول إن attributes الـ HTML اللي جاي من السيرفر مش زي اللي على العميل، وهتلاقي فيه [[class]] و [[style]] بتوع الـ html. ده لأن السيرفر بعت html من غير class، والـ script غيّرها قبل React. الـ prop ده بيسكّت التحذير للعنصر ده بس، مش لأولاده.
+
+لو لسه فيه وميض أبيض: اتأكد إن [[@custom-variant dark]] مكتوب (من غيره [[dark:]] بيشتغل على ثيم الجهاز مش على الكلاس)، وإن [[attribute="class"]] على الـ provider. ولو الزرار مش بيعمل حاجة أول مرة، غالبًا بتقرا [[theme]] (اللي ممكن يبقى [[system]]) بدل [[resolvedTheme]].`
         },
         {
           cmd: "logical properties",
@@ -1634,7 +2589,10 @@ next-themes بيحقن [[<script>]] صغير في أول الصفحة بيتنف
             "خط فاصل على ناحية النهاية، و padding من البداية.",
             R`شارة في ركن النهاية فوق. [[inset-e-2]] من v4.2 بدل [[end-2]].`,
             "رقم التليفون LTR جوه صفحة عربي."
-          ]
+          ],
+          sol: R`مع [[dir="rtl"]]: الصورة على اليمين وجنبها «محمد»، و «من 5 دقايق» لازقة في أقصى الشمال، والـ padding الأكبر (16px) ناحية اليمين، وسهم «التالي» معكوس بيشاور شمال، والـ border بتاع الـ aside على الشمال، والشارة «جديد» في الركن الشمال فوق. قلّب لـ [[ltr]]: كل ده اتعكس (الصورة شمال، والوقت أقصى اليمين، والسهم يمين)، من غير ولا [[rtl:]] ولا سطر زيادة. رقم التليفون بيفضل [[+20 100 000 0000]] في الحالتين.
+
+بعد ما تغيّر [[ms-auto]] لـ [[ml-auto]] في العربي: «من 5 دقايق» بقت لازقة في «محمد» والفراغ كله راح على الطرف الشمال. قست ده في صفحة عرضها 600: مع [[ms-auto]] الوقت كان من 8 لـ 82px (أقصى الشمال)، ومع [[ml-auto]] بقى من 409 لـ 483 جنب الاسم. لأن [[ml-auto]] = [[margin-left]] دايمًا، والوقت في rtl آخر عنصر وعلى الشمال أصلًا، فالـ margin زقّه لليمين ناحية الاسم. في الـ ltr التغيير مش هيبان لأن start = left، وده بالظبط ليه الغلط ده بيعدّي على اللي بيجرّب بالإنجليزي بس.`
         },
         {
           cmd: "next/font",
@@ -1684,7 +2642,12 @@ const cairo = Cairo({ subsets: ["arabic", "latin"], variable: "--font-cairo", di
             "ملف variable واحد فيه كل الأوزان من 200 لـ 1000.",
             "اعرض الكلام فورًا بخط احتياطي وبدّل لما الخط يوصل.",
             "قفلة."
-          ]
+          ],
+          sol: R`في Network بفلتر Font: هتلاقي ملف أو اتنين [[.woff2]] بأسماء فيها hash زي [[/_next/static/media/xxxxxxxx-s.p.woff2]]، والدومين هو دومين موقعك (localhost:3000)، ومفيش ولا request لـ [[fonts.googleapis.com]] ولا [[fonts.gstatic.com]]. Next نزّل الخط وقت الـ build وبيقدّمه من عندك. والـ [[.p.]] في الاسم معناها إن عليه preload في الـ head.
+
+مع Slow 4G وrefresh: الكلام بيظهر الأول بخط النظام وبعد ثانية أو اتنين بيتبدّل لـ Cairo (ده الـ [[swap]]). والنطّة وقت التبديل صغيرة جدًا، لأن next/font بيعمل خط fallback اسمه زي [[Cairo Fallback]] معدّل بـ [[size-adjust]] عشان مقاساته تبقى قريبة من Cairo. هتلاقيه في Computed › font-family.
+
+لو لقيت request لجوجل، يبقى فيه [[<link>]] لـ Google Fonts لسه في الـ layout أو [[@import url(...)]] في الـ CSS، امسحهم. ولو الخط متطبقش خالص، غالبًا [[--font-sans]] مش بيقرا [[var(--font-cairo)]] أو الـ [[className={cairo.variable}]] مش على [[<html>]].`
         },
         {
           cmd: "lucide-react",
@@ -1725,7 +2688,12 @@ lucide v1 (2026): شال أيقونات البراندات (GitHub وفيسبو�
             "قفلة.",
             R`سهم «التالي» في صفحة عربي بيشاور شمال، وفي الإنجليزي بيلف لليمين. و [[shrink-0]] عشان ميتزنقش جنب كلام طويل.`,
             "loader بيلف، ويختفي عند اللي طالبين حركة أقل."
-          ]
+          ],
+          sol: R`زرار الأيقونة من غير [[aria-label]]: في Accessibility pane هتلاقي Role [[button]] و Name فاضي، وقارئ الشاشة بيقول «button» بس، و Lighthouse بيطلّعه في «Buttons do not have an accessible name». بعد [[aria-label="افتح القايمة"]] الـ Name بقى «افتح القايمة» وجنبه إنه جاي من [[aria-label]].
+
+لما تغيّر [[text-brand]] لـ [[text-red-600]] على الزرار: الأيقونة والكلمة الاتنين بقوا أحمر مع بعض، لأن الـ SVG بتاع lucide مرسوم بـ [[stroke="currentColor"]]، يعني بياخد لون الـ [[color]] من الأب. لو فتحت الـ SVG في Elements هتلاقي [[stroke="currentColor"]] و [[fill="none"]].
+
+الغلط الشائع: تحاول تلوّن الأيقونة بـ [[fill-red-600]] فتطلع مليانة ومشوّهة، لأن lucide أيقونات خطوط. اللون بالـ [[text-*]] والتخانة بـ [[strokeWidth]].`
         }
       ]
     },
@@ -1773,7 +2741,12 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
             "الحقل: غلط ولا لأ، ورسالة الخطأ بتاعته فين.",
             "الرسالة. قارئ الشاشة بيقراها بعد اسم الحقل.",
             "منطقة بتعلن التغييرات: لما «اتحفظ» تظهر بتتقري من غير ما الـ focus يتحرك."
-          ]
+          ],
+          sol: R`مع [[aria-expanded]]: لما توصل للزرار بـ Tab، قارئ الشاشة بيقول حاجة زي «القايمة، زرار، مقفول» (Narrator بيقول collapsed، و VoiceOver بيقول «collapsed» أو «مطوي» حسب اللغة). اضغط Enter: بيقول «متفتح / expanded»، ولما تنزل بـ Tab تلاقي لينك «الرئيسية» ومعاه «current page» لو انت فيها. اضغط تاني: «مقفول».
+
+من غير [[aria-expanded]]: بيقول «القايمة، زرار» بس، ولما تدوس مفيش أي كلام بيقولك إن حاجة اتفتحت؛ المستخدم مش عارف إن المنيو ظهرت ولا لأ غير لو كمّل Tab بالصدفة. ولو شلت [[aria-label]] كمان هيقول «زرار» من غير اسم، لأن الأيقونة لوحدها ملهاش كلام.
+
+الصياغة بالظبط بتختلف من قارئ لقارئ ومن لغة لأخرى، المهم إن الحالة (expanded/collapsed) تتقال وتتغير. لو سمعت الحالة مش بتتغير، يبقى القيمة مش بتتحدّث مع الـ state (مثلًا كاتبها [[aria-expanded="true"]] ثابتة).`
         },
         {
           cmd: "focus-visible",
@@ -1809,7 +2782,12 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
             R`المحتوى. [[tabIndex={-1}]] عشان الـ focus يتنقل له فعلًا لما تدوس اللينك.`,
             "زرار عليه outline واضح بلون البراند، لما ييجي من الكيبورد بس.",
             "أو قاعدة واحدة للموقع كله: أي عنصر ياخد focus من الكيبورد عليه outline."
-          ]
+          ],
+          sol: R`دي تجربة ملهاش إجابة واحدة، بس النتيجة الكويسة شكلها قايمة زي دي: «بعد ما فتحت المودال الـ focus فضل ورا على الصفحة»، «زرار إغلاق المنيو مش بيتوصله»، «الـ dropdown بيفتح بالماوس بس»، «بعد ما المودال يقفل الـ focus بيروح لأول الصفحة»، «الـ outline مختفي على الزراير لأن فيه [[outline: none]] في الـ CSS»، «ترتيب الـ Tab بيقفز من الهيدر للفوتر بسبب [[tabindex]] موجب». كل واحدة منهم bug حقيقي تصلّحه.
+
+أول ما الصفحة تفتح وتدوس Tab: لينك «تخطى للمحتوى» بيظهر فوق في الركن ناحية بداية السطر (يمين في العربي) على خلفية بيضا. Enter: الصفحة بتنزل للـ main والـ Tab اللي بعده بيبدأ من جوه المحتوى مش من الهيدر، وده سبب [[tabIndex={-1}]] على الـ main. ولو دوست عليه بالماوس (نادر) مش هيبان outline، بالكيبورد هتلاقي outline الـ brand بـ offset 2px.
+
+لو لينك التخطي مظهرش، اتأكد إنه أول عنصر في الـ body فعلًا وإن مفيش حاجة قبله بتاخد الـ focus (زي بانر الكوكيز)، وإن [[focus:not-sr-only]] مكتوبة صح.`
         },
         {
           cmd: "contrast ratio",
@@ -1850,7 +2828,299 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
             "لو المستخدم طالب تباين أعلى من إعدادات النظام...",
             "...خلّي الكلام الباهت أغمق.",
             "قفلة."
-          ]
+          ],
+          sol: R`الأرقام اللي هتشوفها على خلفية بيضا (بألوان Tailwind v4، قستها): [[gray-500]] حوالي 4.8:1، يعني AA ✓ للكلام العادي (محتاج 4.5) و AAA ✗ (محتاج 7). [[gray-400]] حوالي 2.6:1، ساقط في الاتنين، وحتى للكلام الكبير (محتاج 3). [[gray-700]] حوالي 10:1 وناجح في كله. والزرار [[indigo-600]] مع أبيض حوالي 6.5:1 ناجح AA. وفي الـ dark: [[gray-400]] على [[gray-950]] حوالي 7.7:1 وده ليه المثال بيستخدمه هناك.
+
+Chrome بيوريك الرقم مع علامة ✓ أو ⚠ جنب AA و AAA، وخط أو اتنين على لوحة الألوان: أي لون تحت الخط ناجح. اسحب اللون لتحت الخط وشوف الرقم بيتغير. Lighthouse › Accessibility بيطلّع «Background and foreground colors do not have a sufficient contrast ratio» ومعاه كل العناصر الساقطة.
+
+الغلط الشائع: تقيس placeholder أو كلام disabled وتفتكره مشكلة لازم تتحل؛ الـ disabled مستثنى من القاعدة، لكن الـ placeholder لو هو الـ label الوحيد يبقى لازم يعدّي. وبرضه Lighthouse مش بيعرف يقيس الكلام اللي فوق صورة، فده لازم تبص عليه بعينك.`
+        }
+      ]
+    },
+    {
+      t: "اختبار الـ accessibility",
+      l: 3,
+      n: "WCAG 2.2 AA هو المعيار، والأدوات الأوتوماتيك بتمسك جزء، والباقي بالكيبورد وقارئ الشاشة",
+      items: [
+        {
+          cmd: "WCAG 2.2",
+          title: "WCAG 2.2 AA يعني إيه بالظبط؟",
+          desc: R`WCAG قواعد من W3C بتقول الموقع يبقى accessible إزاي. متقسمة على 4 مبادئ اسمها POUR: Perceivable (تقدر تدرك المحتوى: alt، وترجمة، وتباين)، و Operable (تقدر تستخدمه: كيبورد، ووقت كفاية، ومفيش حاجة بتومض)، و Understandable (مفهوم: لغة الصفحة، وأخطاء واضحة، وسلوك متوقع)، و Robust (شغال مع قارئات الشاشة: HTML سليم و role و name).
+
+كل مبدأ تحته success criteria، ولكل واحد مستوى: A (الحد الأدنى)، و AA (اللي العقود والقوانين بتطلبه)، و AAA (أعلى، ومحدش بيطلبه على الموقع كله). فـ «WCAG 2.2 AA» معناها كل قواعد A و AA في نسخة 2.2.
+
+نسخة 2.2 (أكتوبر 2023) زوّدت 9 قواعد، منهم 6 في A و AA: الـ focus ميستخباش ورا header ثابت، وبديل للسحب (dragging)، وأهداف اللمس 24×24 على الأقل، والمساعدة في نفس المكان في كل صفحة، ومتطلبش نفس البيانات مرتين، وتسجيل الدخول من غير اختبار ذاكرة (تسمح بالـ paste ومديري كلمات السر). وشالت قاعدة Parsing القديمة.`,
+          example: R`html { scroll-padding-top: 5rem; }
+.icon-btn { min-inline-size: 24px; min-block-size: 24px; }
+<a href="/help" class="help-link">مساعدة</a>
+<label><input type="checkbox" name="billing_same" checked> عنوان الفاتورة هو نفس عنوان الشحن</label>
+<input type="password" name="password" autocomplete="current-password">
+<button type="button" aria-label="انقل لفوق">↑</button>`,
+          try: R`خد صفحة من مشروعك وامشي على الـ 6 قواعد الجديدة: دوس Tab تحت الـ header الثابت (الـ focus بيستخبى؟)، وقيس أصغر زرار أيقونة في DevTools، ودوّر على أي حاجة بتتسحب (ترتيب، slider)، وشوف لينك المساعدة في نفس المكان في كل صفحة؟ وفي الـ checkout بتطلب العنوان مرتين؟ وفي تسجيل الدخول جرّب تعمل paste في الباسورد.`,
+          flag: "script",
+          deep: {
+            why: R`العملاء الكبار والحكومات والبنوك بيطلبوا WCAG AA في العقد. وفيه قوانين: الـ European Accessibility Act بقى مطبّق من يونيو 2025 على منتجات وخدمات كتير بتتباع في أوروبا (متاجر، وبنوك، وتذاكر)، وفي أمريكا قضايا الـ ADA على المواقع كتير. والقوانين دي غالبًا بتشاور على WCAG 2.1 AA (بشكل مباشر أو من خلال مواصفات زي EN 301 549)، و 2.2 متوافقة معاها، فلو اشتغلت على 2.2 AA انت مغطي الاتنين. وسؤال «تعرف إيه عن WCAG؟» بيتسأل في انترفيوهات الفرونت.`,
+            how: R`القواعد الجديدة في 2.2 بأرقامها: 2.4.11 Focus Not Obscured (Minimum) في AA: العنصر اللي عليه focus ميبقاش مستخبي كله ورا sticky header أو cookie banner، والحل [[scroll-padding-top]] بارتفاع الـ header. و 2.5.7 Dragging Movements في AA: أي حاجة بتتعمل بالسحب ليها بديل بضغطة (أزرار فوق وتحت للترتيب). و 2.5.8 Target Size (Minimum) في AA: أي هدف بيتضغط 24×24 CSS px على الأقل أو حواليه مسافة كفاية (مع استثناءات زي اللينكات جوه الكلام). و 3.2.6 Consistent Help في A: لو فيه مساعدة (تواصل، شات) تبقى في نفس الترتيب في كل الصفحات. و 3.3.7 Redundant Entry في A: متطلبش من المستخدم يكتب حاجة كتبها قبل كده في نفس العملية (اعرضها أو خليه يختارها). و 3.3.8 Accessible Authentication (Minimum) في AA: متطلبش تذكّر أو حل لغز عشان يدخل، يعني اسمح بالـ paste و autocomplete ومديري كلمات السر، و CAPTCHA بصور لازم ليها بديل.
+
+وفيه 3 في AAA: 2.4.12 (الـ focus ميستخباش خالص)، و 2.4.13 Focus Appearance (شكل الـ focus بمقاس وتباين محددين)، و 3.3.9 (دخول من غير أي اختبار حتى التعرف على صور).
+
+و 4.1.1 Parsing اتشالت لأن المتصفحات وقارئات الشاشة بقت بتتعامل مع الـ HTML الغلط بنفس الطريقة.
+
+POUR مش checklist، هي طريقة تفكير: لكل مكون اسأل: حد أعمى يدركه؟ حد من غير ماوس يستخدمه؟ حد مشتت يفهمه؟ وقارئ الشاشة يعرف هو إيه؟`,
+            when: R`في بداية المشروع (التصميم بيحدد التباين وأحجام الأزرار)، وفي كل review لمكون جديد، وقبل أي تسليم لعميل كبير. والمعيار العملي: 2.2 AA.`,
+            mistakes: R`تفتكر AAA هو الهدف فتيأس، أو A كفاية فتسقط في عقد. تمنع الـ paste في حقل الباسورد «للأمان» (بيكسر 3.3.8 وبيخلي الناس تختار باسوردات أضعف). header ثابت بياكل الحقل اللي عليه الـ focus. أيقونات 16px من غير مساحة حواليها. و «الموقع accessible عشان Lighthouse 100»: ده مش WCAG. وفي الانترفيو: «AA ولا AAA؟» الإجابة AA، و AAA لأجزاء معينة لو المستخدمين محتاجينها.`
+          },
+          lines: [
+            R`2.4.11: لما Tab ينقلك لعنصر تحت الـ header الثابت، المتصفح يسيب 5rem فوقه فميستخباش.`,
+            "2.5.8: أي زرار أيقونة 24×24 على الأقل.",
+            "3.2.6: لينك المساعدة في نفس المكان في كل صفحة (في الـ header أو الـ footer).",
+            "3.3.7: متطلبش العنوان مرتين، خليه يختار «نفس العنوان».",
+            R`3.3.8: [[autocomplete]] ومفيش منع للـ paste، فمدير كلمات السر يشتغل.`,
+            "2.5.7: أزرار تنقل العنصر كبديل للسحب."
+          ],
+          sol: R`النتيجة المعتادة في أول مرة: الـ focus بيستخبى ورا الـ header لما تعمل Tab وانت نازل (الحل [[scroll-padding-top]] بارتفاع الـ header على [[html]])، وفيه أزرار أيقونات أصغر من 24px (زرار قفل المودال أو أيقونات الجدول غالبًا)، وقوايم بتترتب بالسحب بس من غير أزرار.
+
+في تسجيل الدخول: لو الـ paste اتمنع (فيه [[onPaste={e => e.preventDefault()}]] أو مكتبة بتعمل كده) ده سقوط في 3.3.8، شيله. ولو الـ checkout بيطلب عنوان الفاتورة والشحن كل واحد لوحده من غير اختيار «نفس العنوان»، ده 3.3.7.
+
+لو ملقيتش حاجة خالص، جرّب على الموبايل: أغلب مشاكل 2.5.8 بتبان هناك.`
+        },
+        {
+          cmd: "axe و Lighthouse",
+          title: "الفحص الأوتوماتيك: بيمسك إيه وبيفوّت إيه؟",
+          desc: R`axe DevTools (extension من Deque) و Lighthouse › Accessibility (جوه Chrome DevTools، وبيستخدم axe-core من جوه) بيفحصوا الصفحة في ثواني: صور من غير alt، وحقول من غير label، وتباين ضعيف، وأزرار ملهاش اسم، و ids متكررة، و aria غلط، وصفحة من غير [[lang]].
+
+بس بيفوّتوا كتير: مبيعرفوش الـ alt ده بيوصف الصورة صح ولا لأ، ولا ترتيب الـ focus منطقي، ولا فيه keyboard trap، ولا الـ div اللي عليه onClick المفروض يبقى زرار. الأرقام المشهورة إن الأدوات دي بتغطي جزء بس من قواعد WCAG (أقل من النص في أغلب التقديرات)، فـ Lighthouse 100 مش معناها إن الموقع accessible.
+
+وتقدر تشغّل axe في الاختبارات نفسها (Playwright مثلًا) عشان أي مشكلة واضحة متدخلش الـ main تاني.`,
+          example: R`import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+test('الصفحة الرئيسية مفيهاش مشاكل a11y واضحة', async ({ page }) => {
+  await page.goto('/');
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(results.violations).toEqual([]);
+});`,
+          try: R`اعمل صفحة فيها 5 مشاكل: [[<input placeholder="ابحث">]] من غير label، و [[<img src="a.png">]] من غير alt، و [[<button>]] جواه أيقونة SVG بس، وكلام [[color: #aaa]] على أبيض، و [[<div onclick="save()">حفظ</div>]]. شغّل axe DevTools و Lighthouse › Accessibility، وعدّ كل واحد مسك كام من الـ 5. أو من التيرمنال: [[npx lighthouse http://localhost:5173 --only-categories=accessibility --view]].`,
+          flag: "script",
+          deep: {
+            why: R`الفحص الأوتوماتيك رخيص وسريع ومبيتعبش، فبيمسك المشاكل الواضحة قبل ما توصل لحد. بس لو اعتمدت عليه لوحده هتفتكر إنك خلصت وانت لسه في النص، ودا اللي بيحصل في مشاريع كتير: score أخضر وموقع مستحيل بالكيبورد.`,
+            how: R`axe-core بيمشي على الـ DOM ويطبق قواعد (rules) ليها tags زي [[wcag2a]] و [[wcag2aa]] و [[wcag22aa]] و [[best-practice]]. كل قاعدة بتطلّع violations (غلط أكيد) أو incomplete (محتاج إنسان يبص، زي تباين الكلام فوق صورة أو gradient). و axe قاصد يبقى «zero false positives»: لو قال غلط يبقى غلط، بس ده معناه إنه بيسكت عن حاجات مش متأكد منها.
+
+Lighthouse بيشغّل جزء من قواعد axe ويحسب score بأوزان. الـ score ده للمتابعة بس: مشكلة واحدة critical (زرار الدفع ملوش اسم) ممكن تسيب الـ score فوق 90.
+
+اللي مستحيل على أداة: الـ alt مناسب؟ ([[alt="صورة"]] بيعدّي). العنوان بيوصف المحتوى؟ ترتيب الـ Tab منطقي؟ المودال بيرجّع الـ focus؟ div عليه onClick (الأداة شايفة div عادي فيه كلام، والـ listener مش باين في الـ HTML). المحتوى بيتقري بترتيب منطقي بعد CSS grid؟
+
+في الـ CI: [[@axe-core/playwright]] مع [[withTags]] بيمنع أي regression واضحة. وفي React فيه كمان axe في اختبارات Vitest (الدرس الجاي).`,
+            when: R`axe DevTools وانت بتشتغل على أي صفحة جديدة. Lighthouse قبل الـ release. و axe في Playwright على أهم الصفحات (الرئيسية، والتسجيل، والدفع) في كل PR. وبعد كل ده، الفحص اليدوي (بعد درسين).`,
+            mistakes: R`Lighthouse 100 = تمام. تتجاهل الـ incomplete أو «Needs review» (غالبًا فيها التباين الحقيقي). تفحص الصفحة وهي مقفولة بس (المودال والمنيو المفتوحة ليهم مشاكل تانية، افتحهم وافحص تاني). تحط [[disableRules]] عشان الاختبار يعدّي. وفي الانترفيو: «بتختبر الـ accessibility إزاي؟» لو قلت Lighthouse بس ده ضعيف: قول أوتوماتيك (axe في CI) + lint + كيبورد يدوي + قارئ شاشة للمسارات المهمة.`
+          },
+          lines: [
+            "Playwright.",
+            "axe مخصوص لـ Playwright.",
+            "اختبار للصفحة الرئيسية.",
+            "افتح الصفحة (الـ baseURL في الـ config).",
+            "شغّل axe على الصفحة المفتوحة...",
+            "...بقواعد WCAG من A لـ 2.2 AA بس (من غير best-practice).",
+            "...وارجع النتيجة.",
+            "أي violation يوقّع الاختبار ويطبع العناصر والسبب.",
+            "قفلة."
+          ],
+          sol: R`لما جربنا الصفحة دي بـ axe-core: مسك [[image-alt]] (الصورة من غير alt) و [[button-name]] (الزرار اللي فيه أيقونة بس)، الاتنين critical. والتباين بيطلع violation في المتصفح الحقيقي ([[color-contrast]]، حوالي 2.3:1). يعني 3 من 5.
+
+اللي فات: الـ input اللي عليه placeholder بس، axe بيعتبر الـ placeholder اسم فمبيقولش حاجة (مع إن الـ placeholder مش بديل للـ label، شوف درس «form و label»). والـ div اللي عليه onclick مبيظهرش خالص لأن الأداة مش عارفة إنه المفروض يبقى زرار.
+
+Lighthouse بيطلّع نفس النتيجة تقريبًا، والـ score ممكن يفضل عالي. الدرس: 2 من 5 مشاكل حقيقية عدّوا من الأداة.`
+        },
+        {
+          cmd: "jsx-a11y و getByRole",
+          title: "امسك غلط الـ accessibility وانت بتكتب وفي الاختبارات",
+          desc: R`[[eslint-plugin-jsx-a11y]] بيقرا الـ JSX وانت بتكتب ويطلّع error على [[<img>]] من غير alt، و [[<div onClick>]] من غير كيبورد، و [[<a href="#" onClick>]] المفروض يبقى زرار. (إعداد ESLint نفسه في «تاب فحص الكود».)
+
+وفي الاختبارات، Testing Library بتدوّر على العناصر زي قارئ الشاشة: [[getByRole('button', { name: 'حفظ' })]]. لو الاختبار مش لاقي الزرار بالطريقة دي، يبقى قارئ الشاشة كمان مش لاقيه، فالاختبار نفسه بقى اختبار accessibility.
+
+ومع [[user-event]] تقدر تعمل [[user.tab()]] وتتأكد إن الـ focus راح المكان الصح.`,
+          example: R`// eslint.config.mjs
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+export default [jsxA11y.flatConfigs.recommended];
+// Signup.test.jsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import axe from 'axe-core';
+import { expect, test } from 'vitest';
+test('الخطأ مربوط بالحقل والفورم بيتوصل بالكيبورد', async () => {
+  const user = userEvent.setup();
+  const { container } = render(<Signup />);
+  const email = screen.getByRole('textbox', { name: 'الإيميل' });
+  await user.tab();
+  expect(email).toHaveFocus();
+  await user.click(screen.getByRole('button', { name: 'سجّل' }));
+  expect(email).toHaveAttribute('aria-invalid', 'true');
+  expect(email).toHaveAccessibleDescription('اكتب الإيميل');
+  expect((await axe.run(container)).violations).toEqual([]);
+});`,
+          try: R`في مشروع React فيه ESLint، ركّب [[npm i -D eslint-plugin-jsx-a11y]] وضيفه للـ config، واكتب component فيه [[<div onClick={save}>حفظ</div>]] و [[<img src="x.png" />]] و [[<a href="#" onClick={save}>حفظ</a>]] و [[<input placeholder="ابحث" />]] وشغّل [[npx eslint]]. وبعدين اكتب اختبار فيه [[screen.getByRole('button', { name: 'حفظ' })]] على نفس الـ component واقرا الـ error.`,
+          flag: "script",
+          deep: {
+            why: R`أرخص وقت تصلّح فيه غلط accessibility هو وانت بتكتب السطر. الـ lint بيمسك الغلطات المتكررة (div بيتضغط، img من غير alt) قبل الـ commit، والاختبارات بـ getByRole بتضمن إن المكون لسه ليه اسم و role صح بعد أي refactor.`,
+            how: R`jsx-a11y تحليل ثابت: بيشوف الكود مش الصفحة. فبيعرف إن [[<div onClick>]] ملوش [[onKeyDown]] ولا role، بس ميعرفش لو [[<Button>]] بتاعك بيطلّع div ولا button (إلا لو عرّفته في [[settings]] بتاعت components). و [[recommended]] مبيشغّلش كل القواعد، مثلًا حقل عليه placeholder بس بيعدّي.
+
+[[getByRole]] بيحسب الـ role والـ accessible name بنفس قواعد المتصفح (من الـ label، و aria-label، والمحتوى). و [[textbox]] للـ input العادي، و [[spinbutton]] لـ number، و [[combobox]] لـ select، و [[checkbox]] و [[radio]] و [[group]] لـ fieldset، و [[columnheader]] لـ th. وترتيب أولوية الـ queries في دوكس Testing Library: [[getByRole]] الأول، و [[getByLabelText]]، وفي الآخر خالص [[getByTestId]].
+
+[[toHaveFocus]] و [[toHaveAccessibleDescription]] من [[@testing-library/jest-dom]]، وبتتفعل بـ [[import '@testing-library/jest-dom/vitest']] في ملف الـ setup. و [[axe.run(container)]] على الـ container مش الـ body، عشان قواعد الصفحة الكاملة (زي landmarks) متطلعش على component لوحده.
+
+و Next.js بيجي ومعاه جزء من قواعد jsx-a11y في [[eslint-config-next]] كـ warnings، فلو عايز الـ recommended كاملة ضيف الـ plugin صريح. ولو npm اشتكى من peer dependency مع نسخة ESLint أحدث من اللي الـ plugin معلن إنه بيدعمها، شوف صفحة الـ plugin قبل ما تستخدم [[--legacy-peer-deps]] (في تجربتنا مع ESLint 10 اشتغل عادي).`,
+            when: R`jsx-a11y في أي مشروع React من أول يوم، ومع lint-staged قبل الـ commit («تاب فحص الكود»). getByRole في كل اختبار component. و axe في الاختبارات للمكونات المعقدة (فورمات، ومودالات، وجداول).`,
+            mistakes: R`[[getByTestId]] في كل حتة: الاختبار بيعدّي حتى لو الزرار ملوش اسم. تطفي قاعدة jsx-a11y بـ [[eslint-disable]] بدل ما تصلّح. تفتكر إن الـ lint بيشوف الـ components بتاعتك من جوه. [[fireEvent.click]] بدل [[user-event]] (مبيعملش focus ولا keyboard زي المستخدم). وفي الانترفيو: «ليه getByRole أحسن من getByTestId؟» لأنه بيختبر اللي المستخدم (وقارئ الشاشة) شايفه، ولو فشل يبقى فيه مشكلة حقيقية.`
+          },
+          lines: [
+            R`الـ recommended من jsx-a11y بصيغة الـ flat config (ESLint 9 وطالع).`,
+            "مصفوفة الإعدادات (ضيفه جنب باقي الإعدادات بتاعتك).",
+            "Testing Library لـ React.",
+            "user-event: كيبورد وماوس زي المستخدم الحقيقي.",
+            "axe-core نفسه.",
+            R`Vitest (أو فعّل [[globals: true]] في الـ config).`,
+            "الاختبار.",
+            "جهّز user-event.",
+            "ارسم الفورم.",
+            R`هات الحقل بالـ role والاسم زي قارئ الشاشة. لو الـ label مش مربوط، السطر ده بيفشل.`,
+            "دوس Tab.",
+            "الـ focus لازم يبقى على الإيميل (أول حقل).",
+            "دوس سجّل والحقل فاضي.",
+            R`الحقل بقى [[aria-invalid]].`,
+            R`والرسالة مربوطة بيه بـ [[aria-describedby]].`,
+            "ومفيش أي مخالفة axe في الـ component.",
+            "قفلة."
+          ],
+          sol: R`[[npx eslint]] بيطلّع 4 errors: [[click-events-have-key-events]] و [[no-static-element-interactions]] على الـ div، و [[alt-text]] على الـ img، و [[anchor-is-valid]] على اللينك (رسالته «Anchor used as a button»). والـ input اللي عليه placeholder بس عدّى، لأن القاعدة بتاعته مش في الـ recommended.
+
+والاختبار بيفشل برسالة زي: [[Unable to find an accessible element with the role "button" and name "حفظ"]] وتحتها «There are no accessible roles». ودا بالظبط اللي قارئ الشاشة شايفه: مفيش زرار.
+
+الحل: [[<button type="button" onClick={save}>حفظ</button>]] والاختبار والـ lint الاتنين يعدّوا.`
+        },
+        {
+          cmd: "كيبورد وقارئ شاشة",
+          title: "الـ checklist اليدوي: كيبورد بس، و NVDA و VoiceOver",
+          desc: R`الفحص اليدوي هو اللي بيمسك الباقي. أولًا الكيبورد (5 دقايق لكل صفحة): شيل الماوس، ودوس Tab من أول الصفحة لآخرها. كل حاجة بتتضغط بتتوصل؟ الـ focus باين دايمًا؟ الترتيب زي ترتيب القراية؟ Enter و Space بيشغّلوا الأزرار؟ Escape بيقفل المودال والـ focus بيرجع للزرار؟ مفيش مكان بتدخله ومتعرفش تخرج؟
+
+ثانيًا قارئ الشاشة للمسارات المهمة (التسجيل، والدفع): NVDA على ويندوز (مجاني) مع Chrome أو Firefox، و VoiceOver على الماك والآيفون. اسمع: كل حاجة ليها اسم؟ العناوين بالترتيب؟ الأخطاء بتتقري؟
+
+المثال تحت أهم الاختصارات عشان تبدأ.`,
+          example: R`Tab / Shift+Tab           العنصر اللي بعده / قبله
+Enter / Space            شغّل الزرار أو اللينك أو الـ checkbox
+Esc                      اقفل المودال أو المنيو
+NVDA: Ctrl+Alt+N         شغّل NVDA (ويندوز)
+NVDA: H / Shift+H        العنوان اللي بعده / قبله
+NVDA: D                  الـ landmark اللي بعده (main و nav)
+NVDA: Insert+F7          لستة كل اللينكات والعناوين
+NVDA: Ctrl               اسكت
+Mac: Cmd+F5              شغّل واقفل VoiceOver
+Mac: Ctrl+Option+←/→     العنصر اللي قبله / بعده
+Mac: Ctrl+Option+Space   اضغط على العنصر
+Mac: Ctrl+Option+U       الـ rotor: لستة العناوين واللينكات والحقول`,
+          try: R`خد صفحة التسجيل في مشروعك واعمل الـ checklist بالكيبورد بس، واكتب كل مشكلة. وبعدين شغّل NVDA أو VoiceOver وسجّل حساب من غير ما تبص على الشاشة (أو غمّض عينك): دوس H عشان تعرف الصفحة فيها إيه، وبعدين املا الفورم واغلط عمدًا في الإيميل.`,
+          flag: "keys",
+          deep: {
+            why: R`حوالي نص قواعد WCAG محتاجة حكم إنسان. والمستخدم الحقيقي بيستخدم الموقع بقارئ شاشة ومتصفح معين، والأداة مبتسمعش اللي هو بيسمعه. خمس دقايق كيبورد بتلاقي مشاكل أكتر من أي أداة.`,
+            how: R`checklist الكيبورد الكامل: (1) لينك «تخطى للمحتوى» أول Tab. (2) كل عنصر تفاعلي بيتوصل ومفيش حاجة مش تفاعلية بتاخد focus على الفاضي. (3) الـ focus ظاهر وتباينه واضح ومش مستخبي ورا header. (4) ترتيب الـ Tab زي ترتيب القراية (من اليمين لليسار في العربي، ومن فوق لتحت). (5) المنيو والـ dropdown بيفتحوا بـ Enter ويقفلوا بـ Esc. (6) المودال بيحبس الـ focus جواه ويرجّعه بعد ما يقفل. (7) مفيش keyboard trap (حتة بتدخلها ومتعرفش تخرج، زي iframe أو editor). (8) الـ tabs والـ radio بتتحرك بالأسهم.
+
+قارئ الشاشة بيشتغل في وضعين: browse mode (بتقرا الصفحة بالأسهم وبحروف زي H للعناوين و K للينكات و F للحقول و B للأزرار و T للجداول)، و focus mode (لما تدخل حقل، الحروف بتتكتب فيه). NVDA بيبدّل لوحده، و Insert هو «مفتاح NVDA» (أو Caps Lock في إعداد laptop).
+
+VoiceOver: الـ VO هو Ctrl+Option، و الـ rotor (VO+U) بيدّيك لستة بالعناوين واللينكات والحقول والـ landmarks، تتنقل بينهم بالأسهم يمين وشمال. على الآيفون: من Settings › Accessibility، وبتتنقل بـ swipe يمين وشمال و double tap للضغط.
+
+التركيبات الشائعة: NVDA + Chrome أو Firefox، و JAWS + Chrome (مدفوع وشائع في الشركات)، و VoiceOver + Safari، و TalkBack + Chrome على أندرويد. اختبر على اتنين على الأقل لو المشروع مهم.
+
+واسمع لـ: اسم كل زرار (مش «button» بس)، والـ state (expanded، checked، invalid)، والرسايل الديناميكية (اتحفظ، خطأ) بتتقري من غير ما تدور عليها.`,
+            when: R`الكيبورد: قبل ما تقفل أي PR فيه UI. قارئ الشاشة: للمسارات المهمة قبل الـ release، وأي مكون مخصص (combobox، و tabs، و date picker).`,
+            mistakes: R`تختبر VoiceOver مع Chrome (التركيبة مش مستقرة، استخدم Safari). تشغّل قارئ الشاشة وانت بتبص على الشاشة فتشوف اللي هو مبيقولوش. تختبر بالماوس جنب الكيبورد. تنسى الموبايل (TalkBack و VoiceOver على iOS بيتصرفوا مختلف). وتقرر «محدش من مستخدمينا بيستخدم قارئ شاشة» من غير ما تعرف، لأن محدش بيقولك.`
+          },
+          lines: [
+            "التنقل للأمام وللخلف.",
+            "التشغيل.",
+            "القفل.",
+            "تشغيل NVDA (لو اخترت الاختصار ده وقت التسطيب).",
+            "القفز بين العناوين: أسرع طريقة تعرف الصفحة فيها إيه.",
+            "القفز بين أجزاء الصفحة الأساسية.",
+            "Elements List: كل اللينكات أو العناوين في لستة واحدة.",
+            "إسكات الكلام الحالي.",
+            "VoiceOver على الماك.",
+            "التنقل بين العناصر (VO = Ctrl+Option).",
+            "تفعيل العنصر الحالي.",
+            "الـ rotor: قوايم بالعناوين واللينكات والحقول."
+          ],
+          sol: R`المشاكل اللي غالبًا هتلاقيها في صفحة تسجيل: لينك التخطي مش موجود، وزرار «إظهار الباسورد» أيقونة من غير اسم (قارئ الشاشة بيقول «button» بس)، والأخطاء بتظهر تحت بالأحمر ومحدش بيقراها (ناقص [[aria-describedby]] أو [[aria-live]])، والـ focus فاضل على زرار التسجيل بعد الغلط بدل ما يروح للحقل الغلط.
+
+ولو دوست H ومسمعتش أي عنوان، أو سمعت «heading level 3» من غير h1، يبقى هيكل العناوين محتاج تظبيط (درس semantic HTML).
+
+الغلط الشائع في التجربة نفسها: تبص على الشاشة وتفتكر إن كله تمام. لو مش قادر تغمّض، اطفي الشاشة (في NVDA فيه Screen Curtain، و VoiceOver فيه Screen Curtain بـ VO+Fn+Shift+-).`
+        },
+        {
+          cmd: "إعلان تغيير الصفحة",
+          title: "SPA بتغيّر الصفحة وقارئ الشاشة ساكت",
+          desc: R`في موقع عادي، كل لينك بيحمّل صفحة جديدة وقارئ الشاشة بيقول عنوانها. في SPA (React Router مثلًا)، اللينك بيغيّر المحتوى بـ JavaScript: مفيش page load، فقارئ الشاشة ساكت، والـ focus فاضل على اللينك اللي اتداس (أو راح لأول الصفحة). المستخدم مش عارف إن حاجة اتغيرت.
+
+الحل: غيّر [[document.title]]، وانقل الـ focus لعنوان الصفحة الجديدة ([[<h1 tabIndex={-1}>]])، أو أعلن التغيير في منطقة [[aria-live]].
+
+و Next.js App Router عامل ده لوحده: فيه route announcer بيقرا [[document.title]]، ولو مفيش يقرا أول [[<h1>]]، ولو مفيش يقرا الـ URL. فكل صفحة لازم ليها title مختلف ومفهوم (من [[metadata]]).`,
+          example: R`import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router';
+export function RouteFocus() {
+  const { pathname } = useLocation();
+  const prev = useRef(pathname);
+  useEffect(() => {
+    if (prev.current === pathname) return;
+    prev.current = pathname;
+    const h1 = document.querySelector('main h1');
+    if (!h1) return;
+    h1.tabIndex = -1;
+    h1.focus();
+  }, [pathname]);
+  return null;
+}
+// في الـ layout: <main><Outlet /></main><RouteFocus />
+// وفي كل صفحة (React 19 بينقلها للـ head لوحده):
+<title>المنتجات | متجر النور</title>`,
+          try: R`في مشروع React Router، شغّل قارئ الشاشة واتنقل بين صفحتين بلينك في الـ nav: قال حاجة؟ وبعدين حط [[<RouteFocus />]] في الـ layout و [[<title>]] في كل صفحة وجرّب تاني. وفي Next.js شيل الـ [[title]] من [[metadata]] بتاعت صفحة وشوف الـ announcer بيقول إيه.`,
+          flag: "script",
+          deep: {
+            why: R`ده من أشهر مشاكل الـ SPAs وأقلها ملاحظة، لأن اللي بيبص على الشاشة شايف الصفحة اتغيرت. المستخدم الكفيف بيدوس «المنتجات» ومبيسمعش حاجة، فيفتكر اللينك مش شغال ويدوس تاني، أو الـ focus يفضل في الـ nav فيضطر يعدّي 30 عنصر عشان يوصل للمحتوى الجديد.`,
+            how: R`فيه طريقتين والاتنين مقبولين. (1) نقل الـ focus: [[tabIndex={-1}]] بيخلي الـ h1 ياخد focus من الكود ومش بيدخل الـ Tab، وقارئ الشاشة بيقرا العنوان لما الـ focus يوصله، والـ Tab اللي بعده بيكمّل من المحتوى الجديد. عيبها إن الـ focus بيبعد عن الـ nav. (2) إعلان: منطقة [[<div aria-live="polite" className="sr-only">]] موجودة في الـ layout من الأول، ولما الـ route يتغير تحط فيها «اتنقلت لـ: المنتجات». الـ focus فاضل مكانه، وده اللي Next.js بيعمله.
+
+أول تحميل للصفحة مش محتاج أي حاجة (المتصفح بيعلن الصفحة لوحده)، عشان كده [[prev]] بيبدأ بالمسار الحالي: من غيره الـ focus هيتنقل للـ h1 أول ما الموقع يفتح ويعدّي لينك التخطي. والمقارنة بالمسار أأمن من flag «أول مرة»، لأن React StrictMode بيشغّل الـ effect مرتين في الـ development، والـ flag كان هينقل الـ focus في التانية.
+
+المكون ده لازم يبقى في الـ layout اللي فاضل ثابت بين الصفحات، مش جوه كل صفحة: لو جوه الصفحة، كل تنقل بيعمل نسخة جديدة منه والـ ref بيبدأ من الأول فمش هيعرف إن المسار اتغير. والـ effect بتاع الأب بيشتغل بعد ما الصفحة الجديدة اترسمت، فالـ h1 بيبقى موجود. لو الصفحة بتحمّل بياناتها بعد كده (loading)، انقل الـ focus بعد ما المحتوى يظهر.
+
+والـ outline على الـ h1 لما ياخد focus من الكود: ممكن تشيله بـ [[h1:focus { outline: none }]] لأنه مش عنصر تفاعلي، بس أي عنصر بيتضغط لازم الـ outline يفضل.
+
+وخلي الـ title فيه اسم الصفحة الأول واسم الموقع بعده، عشان اللي بيسمع يعرف الصفحة من أول كلمة، وعشان التابات في المتصفح.`,
+            when: R`أي SPA فيها client-side routing: React Router، و TanStack Router، و Vue Router. وفي Next.js: اتأكد إن كل صفحة ليها [[title]] مختلف، وخلاص. وكمان لما محتوى كبير يتغير من غير تغيير الـ URL (خطوة جديدة في wizard): نفس الفكرة.`,
+            mistakes: R`كل الصفحات نفس الـ title («متجر النور») فالـ announcer بيقول نفس الكلمة كل مرة. نقل الـ focus في أول تحميل. نقل الـ focus للـ [[<body>]] أو لـ div ملوش اسم فقارئ الشاشة يقول «blank». عمل منطقة aria-live مع الرسالة (لازم تبقى موجودة قبل ما المحتوى يتغير). وتنقل الـ focus وتعلن في نفس الوقت فالمستخدم يسمع الكلام مرتين.`
+          },
+          lines: [
+            "hooks من React.",
+            "الـ URL الحالي من React Router (v7 بيتعمله import من react-router).",
+            "مكون بيتحط مرة واحدة في الـ layout ومبيرسمش حاجة.",
+            "المسار الحالي: بيتغير مع كل تنقل.",
+            "آخر مسار شفناه، وبيبدأ بالحالي عشان أول تحميل ميتحسبش تنقل.",
+            "بعد كل render...",
+            "...لو المسار متغيرش (أول تحميل، أو تشغيل StrictMode التاني) متعملش حاجة.",
+            "سجّل المسار الجديد.",
+            "العنوان الرئيسي للصفحة الجديدة.",
+            "مفيش؟ اخرج.",
+            "خليه يقبل focus من الكود من غير ما يدخل الـ Tab.",
+            "حط الـ focus عليه، فقارئ الشاشة يقول «المنتجات، heading level 1».",
+            "بيتنفذ لما المسار يتغير بس.",
+            "مبيرسمش حاجة.",
+            "قفلة.",
+            R`عنوان كل صفحة: React 19 بينقل [[<title>]] للـ head لوحده، فالتاب وقارئ الشاشة يعرفوا الصفحة.`
+          ],
+          sol: R`من غير RouteFocus: لما تدوس لينك في الـ nav، NVDA أو VoiceOver ممكن ميقولوش حاجة خالص، أو يقروا اللينك تاني، والـ Tab اللي بعده بيكمّل في الـ nav. مع RouteFocus: بتسمع «المنتجات، heading level 1» على طول، والـ Tab اللي بعده بيروح لأول حاجة في المحتوى الجديد، وعنوان التاب بقى «المنتجات | متجر النور».
+
+جربناه في اختبار (Vitest و React Testing Library و MemoryRouter جوه StrictMode): أول ما الصفحة تفتح الـ focus فاضل على الـ body، وبعد الضغط على «المنتجات» الـ focus على الـ h1 و [[document.title]] اتغير.
+
+في Next.js من غير title: الـ announcer بيقرا أول [[<h1>]]، ولو مفيش بيقرا المسار. ولو كل الصفحات ورثت نفس الـ title من الـ layout، هيقول نفس الاسم في كل صفحة.
+
+الغلط الشائع: تحط المكون جوه كل صفحة بدل الـ layout، فمبيحصلش أي حاجة (كل صفحة بتعمل نسخة جديدة والـ ref بيبدأ بالمسار الجديد).`
         }
       ]
     },
@@ -1904,7 +3174,12 @@ aria للحاجات اللي HTML مش بيوصفها: [[aria-label]] اسم ل�
             "لو المستخدم طالب حركة أقل من إعدادات النظام...",
             "...خلّي كل الحركات تخلص فورًا، فالعناصر تظهر في مكانها النهائي على طول.",
             "قفلة."
-          ]
+          ],
+          sol: R`الكروت الـ 6 بيطلعوا ورا بعض من تحت لفوق مع fade: الأول على طول، والتاني بعد 80ms، وهكذا لحد السادس بعد 400ms، فالكل بيخلص في حوالي 900ms. قبل ما دور الكارت ييجي بيبقى مخفي تمامًا (مش ظاهر وبعدين يختفي)، وده سبب [[both]]: بيطبّق الـ [[from]] وقت الـ delay.
+
+بعد تفعيل [[prefers-reduced-motion: reduce]] و refresh: مفيش حركة خالص، كل كارت بيظهر مرة واحدة من غير fade ولا طلوع. بس هتلاحظ إنهم لسه بيظهروا ورا بعض بفرق 80ms، لأن الـ media query صفّرت الـ duration بس، والـ [[animation-delay]] لسه شغال (بعد 200ms مثلًا: الكروت اللي الـ delay بتاعها 0 و 80 و 160 ظاهرين، والـ 3 التانيين لأ). لو عايزهم يظهروا مع بعض، ضيف [[animation-delay: 0s !important]] في نفس القاعدة.
+
+والـ hover على الكارت: بيطلع 4px لفوق وله ظل، في 200ms. مع reduced-motion بيتنقل على طول. لو الكروت فضلت مخفية للأبد، غالبًا كتبت [[animation: none]] في الـ reduce بدل تقليل الـ duration، فالعنصر فضل على [[opacity: 0]].`
         },
         {
           cmd: "motion",
@@ -1955,7 +3230,12 @@ AnimatePresence: لما ابن يختفي من الـ render، بيحتفظ بآ
             "قفلة الزرار.",
             "قفلة map.",
             "قفلة."
-          ]
+          ],
+          sol: R`مع [[AnimatePresence]]: لما تقفل، العنصر بيعمل fade وبينزل 8px في 0.2 ثانية، وبعدين بس بيتشال من الـ DOM (لو فتحت Elements هتشوفه لسه موجود لحظة الحركة). ومع الفتح بيعمل العكس: بيطلع من تحت وبيظهر.
+
+من غير [[AnimatePresence]]: الفتح لسه بيتحرك (الـ [[initial]] و [[animate]] شغالين)، بس القفل بيختفي فجأة، لأن React بيشيل العنصر على طول ومحدش بيستنى الـ [[exit]]. ده أشهر سبب إن «الـ exit مش شغال»، والسبب التاني إنك ناسي [[key]] ثابت على العنصر.
+
+في التابات: لما تدوس على تاب تاني، الخلفية الرمادي بتتزحلق من التاب القديم للجديد بدل ما تختفي وتظهر، لأن الاتنين بنفس [[layoutId]]. ولو دوست بسرعة بين تابين، الحركة بتتقطع وتغيّر اتجاهها من مكانها الحالي من غير ما تنط. ومع reduce motion من النظام، [[reducedMotion="user"]] بيلغي حركات الـ transform والـ layout ويسيب الـ opacity.`
         }
       ]
     },
@@ -2007,7 +3287,12 @@ AnimatePresence: لما ابن يختفي من الـ render، بيحتفظ بآ
             "skeleton بنفس ارتفاع المحتوى الحقيقي تقريبًا، فلما البيانات توصل مفيش نطة.",
             R`الإشعارات [[fixed]]: بتظهر فوق الصفحة من غير ما تزق حاجة.`,
             "قفلة."
-          ]
+          ],
+          sol: R`في Performance بعد record مع reload: هتلاقي track اسمه Layout shifts (أو مربعات بنفسجي) عند اللحظة اللي الصورة وصلت فيها، ولما تدوس عليه يوريك العناصر اللي اتحركت. وفي Lighthouse الرقم تحت Cumulative Layout Shift؛ الكويس أقل من 0.1.
+
+قست ده على صفحة فيها عنوان وصورة هيرو 1200×600 وكلام كتير تحتها، والصورة بتتأخر 800ms: مع [[width]] و [[height]] الـ CLS كان [[0]]، لأن المتصفح حجز مكان بنسبة 2:1 من الأول. من غيرهم الـ CLS طلع حوالي [[0.43]] (أكتر من 4 أضعاف الحد)، لأن الكلام كله نط لتحت مرة واحدة لما الصورة وصلت.
+
+لو الرقم مزدش بعد ما مسحت المقاسات: غالبًا الصورة في الكاش فبتيجي فورًا، اعمل Disable cache. أو فيه [[aspect-ratio]] في الـ CSS بيحجز المكان بدل الـ attributes. وخلي بالك إن Lighthouse بيقيس التحميل بس؛ الـ shifts اللي بتحصل بعد ما المستخدم يعمل scroll بتبان في Web Vitals الحقيقية (CrUX) مش في Lighthouse.`
         },
         {
           cmd: "critical CSS",
@@ -2046,7 +3331,12 @@ AnimatePresence: لما ابن يختفي من الـ render، بيحتفظ بآ
             R`CSS الطباعة: [[media="print"]] بيخليه يتحمّل من غير ما يوقف الرسم.`,
             R`الـ JS بـ [[defer]]: ميوقفش القراية ولا الرسم.`,
             "قفلة."
-          ]
+          ],
+          sol: R`في الـ Waterfall: ملف [[app.css]] بيتحمّل بأولوية Highest، وخط أول رسم (FCP، الخط الأخضر أو الأزرق في الـ Timeline) بيبقى بعد ما يخلص. يعني طول ما الملف ده بيتحمّل الصفحة بيضا. بطّأ النت لـ Slow 4G وهتشوف الفرق بوضوح: الصفحة البيضا بتطول قد مدة تحميل الـ CSS. أما [[print.css]] فبيتحمّل بأولوية Lowest ومش بيأخّر الرسم، لأن الـ [[media="print"]] مش متحققة على الشاشة.
+
+الـ [[<style>]] اللي في الـ head متطبّق من غير request، فالهيدر والهيرو بياخدوا مقاسهم من أول رسمة. والـ font بتاع الـ preload بيظهر في أول الـ waterfall جنب الـ HTML بدل ما يستنى الـ CSS يتقري.
+
+في Lighthouse هتلاقي «Render-blocking requests» (أو «Eliminate render-blocking resources» في النسخ الأقدم) وفيها [[app.css]] والوقت اللي ممكن توفّره. ولو لقيت ملف JavaScript فيها كمان، يبقى فيه [[<script>]] في الـ head من غير [[defer]] ولا [[async]].`
         },
         {
           cmd: "layout thrashing",
@@ -2086,7 +3376,28 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
             "القراية كلها مرة واحدة: layout واحد.",
             "الكتابة كلها بعدها: المتصفح يحسب مرة واحدة في الـ frame الجاي.",
             R`مع الـ scroll: حدّث في الـ frame الجاي بس. و [[passive]] هنا مش فارق لأن الـ scroll event مبيتلغيش أصلًا، فايدته الحقيقية مع [[wheel]] و [[touchmove]].`
-          ]
+          ],
+          sol: R`النسخة الوحشة في Performance: بلوك Scripting طويل جواه عشرات أو مئات من البلوكات البنفسجي الصغيرة [[Layout]] ورا بعض، وعلى كتير منهم مثلث أحمر وتحذير «Forced reflow is a likely performance bottleneck». النسخة الكويسة: Layout واحد بس (أو اتنين) في الآخر.
+
+قست الفرق على 500 div: الوحشة أخدت حوالي 125ms (يعني أكتر من 7 frames متعطلة، والصفحة بتهنّج)، والكويسة حوالي 4ms. أكتر من 30 مرة أسرع بنفس النتيجة بالظبط، والفرق بيزيد مع عدد العناصر. والأحسن من الاتنين [[aspect-ratio: 4 / 3]] في الـ CSS: صفر JavaScript.
+
+لو مشفتش فرق، غالبًا العناصر بعرض ثابت ومش بيتأثروا ببعض، أو الجهاز سريع جدًا: زوّد العدد أو فعّل CPU throttling ‏(4x slowdown) في Performance.`,
+          solCode: R`<style>.card { width: 30%; display: inline-block; border: 1px solid; }</style>
+<body>
+<script>
+  document.body.insertAdjacentHTML("beforeend", '<div class="card">x</div>'.repeat(500));
+  const cards = [...document.querySelectorAll(".card")];
+  let t = performance.now();
+  for (const el of cards) el.style.height = el.offsetWidth * 0.75 + "px";
+  console.log("bad", performance.now() - t); // ~125ms
+  cards.forEach((el) => (el.style.height = ""));
+  document.body.offsetHeight;
+  t = performance.now();
+  const widths = cards.map((el) => el.offsetWidth);
+  cards.forEach((el, i) => (el.style.height = widths[i] * 0.75 + "px"));
+  document.body.offsetHeight;
+  console.log("good", performance.now() - t); // ~4ms
+</script>`
         }
       ]
     },
@@ -2139,7 +3450,12 @@ window.addEventListener("scroll", () => requestAnimationFrame(updateHeader), { p
             "...الكارت يبقى flex في صف.",
             "قفلة.",
             R`[[cqi]] = 1% من عرض الـ container، فالخط بيكبر مع الكارت مش مع الشاشة.`
-          ]
+          ],
+          sol: R`على شاشة واحدة: الكارت اللي في العمود العريض بيطلع أفقي (الصورة على جنب بعرض [[w-48]] = 12rem، والعنوان جنبها وخطه أكبر)، والكارت اللي في الـ sidebar بـ 280px بيطلع رأسي (الصورة فوق بعرض الكارت والعنوان تحتها). ده لأن [[@md]] في الـ container queries معناها «الحاوية نفسها من 28rem (448px) وأكبر»، والـ sidebar أصغر من كده. و [[@lg]] (32rem = 512px) هو اللي بيكبّر العنوان.
+
+بعد ما تغيّر [[@md:]] لـ [[md:]]: الاتنين بقوا أفقي على الشاشة الكبيرة (والـ sidebar بقى محشور وشكله وحش)، والاتنين رأسي على الموبايل، لأن [[md:]] بتبص على عرض الشاشة كلها (48rem) مش على المكان.
+
+لو الكارتين طلعوا رأسي حتى في العمود العريض، غالبًا نسيت [[@container]] على الأب (من غيره [[@md:]] ملهاش حاوية تقيسها). وخلي بالك إن العنصر اللي عليه [[container-type: inline-size]] ميقدرش ياخد عرضه من محتواه، فلو هو flex item من غير عرض ممكن يتقفل لصفر.`
         },
         {
           cmd: ":has()",
@@ -2177,7 +3493,23 @@ h2:has(+ p) { margin-bottom: 0.5rem; }
             "قايمة مفيهاش ولا عنصر: اخفيها.",
             "عنوان بعده فقرة على طول: مسافة أقل.",
             R`نفس الفكرة في Tailwind: [[has-checked:]] و [[has-[...]:]].`
-          ]
+          ],
+          sol: R`لما تختار radio: الكارت بتاعه بس الـ border بتاعه بقى بلون الـ brand وخلفيته فاتحة، ولما تختار واحد تاني الأول بيرجع رمادي والتاني ياخد الستايل، من غير JavaScript خالص. ولأن الـ input جوه الـ label، الضغط في أي حتة في الكارت بيختار.
+
+مع [[<dialog>]]: قبل الفتح [[getComputedStyle(document.body).overflow]] ‏[[visible]]. بعد [[dialog.showModal()]] المتصفح بيحط [[open]] على الـ dialog، فالـ [[body:has(dialog[open])]] اتحققت والـ overflow بقى [[hidden]] والصفحة اللي ورا مبتعملش scroll. Escape بيقفل المودال والـ overflow بيرجع [[visible]] لوحده.
+
+لو الستايل مش بيتطبق على الكارت، اتأكد إن الـ input جوه الـ label فعلًا (لو بـ [[for]] بس وبرا، [[:has]] مش هتلاقيه جواه). ولو الـ radios كلهم بيتختاروا مع بعض، ناسي نفس الـ [[name]] عليهم.`,
+          solCode: R`<style>
+  label { display: block; border: 2px solid lightgray; border-radius: 0.75rem; padding: 1rem; margin-block: 0.5rem; }
+  label:has(input:checked) { border-color: oklch(0.55 0.2 265); background: oklch(0.95 0.03 265); }
+  body:has(dialog[open]) { overflow: hidden; }
+</style>
+<label><input type="radio" name="plan" value="basic"> أساسي</label>
+<label><input type="radio" name="plan" value="pro"> احترافي</label>
+<label><input type="radio" name="plan" value="team"> فريق</label>
+<button onclick="d.showModal()">افتح</button>
+<dialog id="d"><p>أهلًا</p><form method="dialog"><button>اقفل</button></form></dialog>
+<div style="height: 200vh"></div>`
         },
         {
           cmd: "CSS nesting",
@@ -2222,7 +3554,12 @@ h2:has(+ p) { margin-bottom: 0.5rem; }
             "padding أكبر على الشاشات الكبيرة.",
             "قفلة الـ media.",
             "قفلة الكارت."
-          ]
+          ],
+          sol: R`في Chrome أو Firefox أو Safari الحديثين الملف بيشتغل زي ما هو: الكارت padding بتاعه 16px، والـ h3 جواه 20px ([[1.25rem]])، والكارت اللي عليه [[is-featured]] ليه border 2px بلون الـ brand، ولو الكارت جوه عنصر عليه [[.dark]] خلفيته غامقة، ولما الشاشة تعدّي 768px الـ padding بيبقى 32px.
+
+في Styles لما تختار الـ h3: هتلاقي القاعدة معروضة بـ [[& h3]] وفوقها سطر رمادي فيه [[.card]]، يعني DevTools بيوريك الأب اللي القاعدة متداخلة جواه. والـ [[@media]] بيظهر فوق الـ padding بتاعها كـ at-rule عادي.
+
+لو مفيش حاجة اشتغلت، اتأكد إنك مش فاتح الملف بـ [[file://]] في متصفح قديم، وإن الـ [[var(--...)]] متعرّفة (المثال بيستخدم [[--radius-card]] و [[--shadow-md]] و [[--color-brand]]؛ لو مش متعرّفين القواعد دي بس هي اللي مش هتبان). وخلي بالك من المسافة: [[& h3]] معناها h3 جوه الكارت، و [[&.is-featured]] من غير مسافة معناها الكارت نفسه عليه الكلاس؛ لو كتبت [[& .is-featured]] بمسافة هتدوّر على ابن جواه وملهاش تأثير.`
         },
         {
           cmd: "meta و Open Graph",
@@ -2265,7 +3602,353 @@ Open Graph بروتوكول من فيسبوك بقى standard: أي تطبيق �
             "رابط الصفحة.",
             "نوع المحتوى.",
             "في X (تويتر): كارت بصورة كبيرة، والباقي بياخده من og لو مفيش tags خاصة بيه."
-          ]
+          ],
+          sol: R`على واتساب: اللينك بيطلع تحته كارت فيه الصورة من [[og:image]] (كبيرة بعرض الرسالة)، والعنوان «كورس React من الصفر» من [[og:title]] (مش من الـ [[<title>]])، والوصف «40 درس بالعربي بمشاريع حقيقية»، واسم الدومين. أدوات الـ preview (زي opengraph.xyz أو Facebook Sharing Debugger) بتوريك نفس الكلام وبتقولك لو فيه tag ناقص.
+
+في Next.js، [[View Source]] لصفحة عاملة [[export const metadata]] بـ [[title]] و [[description]] و [[openGraph]] و [[alternates.canonical]]: هتلاقي [[<title>]] و [[<meta name="description">]] و [[<meta property="og:title">]] وأخواتها و [[<link rel="canonical">]] متولدين في الـ HTML نفسه. (في Next 15.2 وأحدث، الصفحات الـ dynamic ممكن تبعت الـ metadata متأخرة في الـ stream للمتصفحات العادية، بس البوتات بتاخدها في الـ head، فمتقلقش لو لقيتها تحت.)
+
+لو الصورة مظهرتش: [[og:image]] لازم تبقى URL كامل بـ https مش مسار زي [[/og.png]]، ومتاحة من غير login، ومش تقيلة. ولو عدّلت الـ tags والـ preview لسه قديم، واتساب وفيسبوك بيعملوا cache؛ جرّب اللينك بـ [[?v=2]] أو استخدم «Scrape Again» في Sharing Debugger.`
+        }
+      ]
+    },
+    {
+      t: "widgets و scroll وميزات جديدة",
+      l: 3,
+      n: "accordion و tabs من غير مكتبة، و scroll مظبوط، وحركة بين الصفحات، وإزاي تعرف الميزة الجديدة تنفع ولا لسه",
+      items: [
+        {
+          cmd: "details و summary",
+          title: "accordion و FAQ من غير ولا سطر JavaScript",
+          desc: R`[[<details>]] بيتفتح ويتقفل لوحده، و [[<summary>]] جواه هو الجزء اللي بتدوس عليه. والباقي بيظهر لما يتفتح. شغال بالماوس والكيبورد (Enter و Space)، وقارئ الشاشة بيقول «collapsed» و «expanded» من غير aria.
+
+و [[open]] بيخليه مفتوح من الأول، و [[details[open] > summary]] في CSS للشكل وهو مفتوح. ولو اديت كذا details نفس [[name]]، يبقوا accordion حصري: فتح واحد بيقفل الباقي.`,
+          example: R`<section aria-labelledby="faq-title">
+  <h2 id="faq-title">أسئلة متكررة</h2>
+  <details name="faq" open>
+    <summary>التوصيل بياخد قد إيه؟</summary>
+    <p>من يومين لـ 4 أيام عمل جوه القاهرة والجيزة.</p>
+  </details>
+  <details name="faq">
+    <summary>أقدر أرجّع المنتج؟</summary>
+    <p>أيوه، خلال 14 يوم وهو في علبته.</p>
+  </details>
+</section>
+// styles.css
+details { border-block-end: 1px solid var(--color-border); padding-block: 0.75rem; }
+summary { cursor: pointer; font-weight: 600; }
+details[open] > summary { margin-block-end: 0.5rem; color: var(--color-brand); }`,
+          try: R`اعمل الـ FAQ بـ 4 أسئلة. امشي بـ Tab بس وافتح واقفل بـ Enter و Space. افتح سؤال والتاني مفتوح: حصل إيه؟ وبعدين شيل [[name]] وجرّب تاني. وأخيرًا اقفل كل الأسئلة ودوّر بـ Ctrl+F على كلمة في إجابة مقفولة.`,
+          flag: "script",
+          deep: {
+            why: R`الـ FAQ والإعدادات المتقدمة و «اعرف أكتر» في كل موقع. ناس كتير بتعملها بـ useState و div و onClick، وبتنسى الكيبورد والـ aria-expanded. details بيعمل كل ده صح ببلاش، وبيشتغل حتى لو الـ JavaScript لسه متحمّلش.`,
+            how: R`الـ summary بياخد focus لوحده، و role بتاعه عند قارئ الشاشة زرار بـ expanded أو collapsed. الـ [[open]] attribute بيتضاف ويتشال مع كل ضغطة، وفيه حدث [[toggle]] على الـ details لو محتاج تعمل حاجة (تحفظ الحالة مثلًا).
+
+الـ [[name]] (accordion حصري) بقى مدعوم في كل المتصفحات الحديثة من 2024، والمتصفح القديم بيتجاهله فكل واحد بيتفتح لوحده، يعني progressive enhancement من غير ما حاجة تبوظ.
+
+البحث في الصفحة (Ctrl+F) بيلاقي الكلام جوه details مقفول ويفتحه لوحده في Chrome ومتصفحات تانية، بعكس [[display: none]] اللي البحث مبيشوفوش.
+
+السهم اللي جنب الـ summary هو [[::marker]] (أو [[::-webkit-details-marker]] في Safari القديم). وتقدر تشيله بـ [[list-style: none]] على الـ summary وتحط أيقونة بتلف مع [[details[open] summary]]. وتحريك الفتح والقفل بقى ممكن بـ [[::details-content]] و [[interpolate-size]]، بس لسه مش في كل المتصفحات، فخليه تحسين إضافي.`,
+            when: R`FAQ، و «تفاصيل إضافية»، وفلاتر في sidebar على الموبايل، وأي محتوى بيتفتح ويتقفل وملوش علاقة بباقي الصفحة. ومش لمنيو التنقل ولا الـ dropdowns (بتتقفل لما تدوس برا، و details مبيعملش كده)، ولا للـ tabs.`,
+            mistakes: R`زرار أو لينك جوه الـ summary (عنصر تفاعلي جوه عنصر تفاعلي). تعمل details كمنيو في الـ header وتستغرب إنه مبيتقفلش. تشيل الـ marker ومتحطش أي علامة إنه بيتفتح. و [[<h3>]] جوه الـ summary: مسموح، بس قارئات شاشة كتير بتقراه زرار وخلاص فالعنوان بيضيع من لستة العناوين، فلو العناوين مهمة للتنقل حط الـ h3 قبل الـ details.`
+          },
+          lines: [
+            "الجزء كله ليه اسم من العنوان.",
+            "العنوان.",
+            R`سؤال مفتوح من الأول، و [[name="faq"]] بيربطه بالباقي.`,
+            "الجزء اللي بيتداس عليه، وبياخد focus لوحده.",
+            "الإجابة: بتبان بس وهو مفتوح.",
+            "قفلة.",
+            "سؤال تاني بنفس الـ name: فتحه بيقفل الأول.",
+            "السؤال.",
+            "الإجابة.",
+            "قفلة.",
+            "قفلة الـ section.",
+            "خط بين الأسئلة ومسافة.",
+            "السؤال شكله بيتداس.",
+            "السؤال المفتوح بلون البراند ومسافة تحته."
+          ],
+          sol: R`بالكيبورد: Tab بيقف على كل summary، و Enter أو Space بيفتحوا ويقفلوا، وقارئ الشاشة بيقول «التوصيل بياخد قد إيه؟، button، expanded».
+
+مع [[name="faq"]]: فتح السؤال التاني قفل الأول لوحده. من غير name: الاتنين يفضلوا مفتوحين.
+
+Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ details بيتفتح لوحده ويظلل الكلمة. لو متصفحك مبيعملش كده، دي ميزة لسه بتتنشر، والباقي شغال عادي.`
+        },
+        {
+          cmd: "roving tabindex",
+          title: "tabs بتتحرك بالأسهم زي البرامج الحقيقية",
+          desc: R`الـ tabs widget واحد: Tab بيدخله مرة واحدة ويطلع منه مرة واحدة، وجواه بتتحرك بالأسهم. عشان كده roving tabindex: الـ tab المختار بس عليه [[tabindex="0"]]، والباقي [[tabindex="-1"]]. ولما تدوس سهم، بتنقل الـ 0 والـ focus للي بعده.
+
+الـ roles: [[tablist]] على الحاوية، و [[tab]] على كل زرار ومعاه [[aria-selected]] و [[aria-controls]]، و [[tabpanel]] على كل محتوى ومعاه [[aria-labelledby]].
+
+وفي العربي (RTL) الأسهم بتتقلب: السهم الشمال هو «اللي بعده».`,
+          example: R`const list = document.querySelector('[role=tablist]');
+const tabs = [...list.querySelectorAll('[role=tab]')];
+function select(tab) {
+  for (const t of tabs) {
+    const on = t === tab;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  }
+  tab.focus();
+}
+list.addEventListener('keydown', (e) => {
+  const i = tabs.indexOf(document.activeElement);
+  const rtl = getComputedStyle(list).direction === 'rtl';
+  const step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
+  if (step) select(tabs[(i + step + tabs.length) % tabs.length]);
+  else if (e.key === 'Home') select(tabs[0]);
+  else if (e.key === 'End') select(tabs.at(-1));
+  else return;
+  e.preventDefault();
+});
+list.addEventListener('click', (e) => {
+  const t = e.target.closest('[role=tab]');
+  if (t) select(t);
+});`,
+          try: R`اكتب الـ HTML بتاع 3 tabs (الحساب، والأمان، والفواتير) بالـ roles والـ attributes اللي في الشرح، وحط السكربت في صفحة [[dir="rtl"]]. دوس Tab: بيقف على كام tab؟ جرّب الأسهم و Home و End، وبعدين Tab تاني: راح فين؟`,
+          flag: "script",
+          deep: {
+            why: R`لو كل tab بياخد Tab، مستخدم الكيبورد لازم يعدّي 8 tabs عشان يوصل للمحتوى. والأسهم هي اللي مستخدم قارئ الشاشة متوقعها، لأن ده سلوك الـ tabs في كل برنامج. ونفس الفكرة في toolbar، و radio group، و listbox، و menu، و grid.`,
+            how: R`[[tabindex="-1"]] بيشيل العنصر من ترتيب الـ Tab بس بيسيبه يقبل [[focus()]] من الكود. فالـ widget كله بيبان في الـ Tab كعنصر واحد (اللي عليه 0)، ولما ترجع له بتلاقي آخر tab كنت عليه.
+
+[[(i + step + tabs.length) % tabs.length]] بيلف: من الأخير للأول ومن الأول للأخير. و [[getComputedStyle(list).direction]] بيعرف الاتجاه من الـ CSS الحقيقي (موروث من [[dir]] على الـ html)، فنفس الكود يشتغل في العربي والإنجليزي.
+
+ده «automatic activation»: السهم بيختار ويعرض على طول. لو عرض المحتوى تقيل (بيجيب بيانات)، الأحسن «manual activation»: السهم بينقل الـ focus بس، و Enter أو Space بيختار.
+
+و [[hidden]] على الـ panels بيشيلهم من الشاشة وقارئ الشاشة. والـ tabpanel ممكن ياخد [[tabindex="0"]] لو مفيهوش أي عنصر بياخد focus، عشان Tab يوصل للمحتوى.
+
+الـ combobox (حقل بحث بقايمة اقتراحات) أصعب بكتير: [[aria-activedescendant]]، والكتابة، والفلترة، والإعلان عن عدد النتايج. متكتبوش بإيدك: استخدم مكتبة headless زي React Aria أو Headless UI أو Base UI، ولو الاقتراحات بسيطة فيه [[<datalist>]] الأصلي.`,
+            when: R`اكتب roving tabindex بإيدك لو مش بتستخدم مكتبة، أو عشان تفهم إيه اللي بيحصل. في مشروع React عادي استخدم Radix Tabs (أو shadcn Tabs) اللي عاملين كل ده صح، واعرف تختبرهم بالكيبورد.`,
+            mistakes: R`كل الـ tabs [[tabindex="0"]]. الأسهم في RTL بالعكس. tabs من divs من غير roles. تعمل tabs بـ [[<a href="#">]] بتغيّر المحتوى (ده تنقل لو كل tab صفحة فعلًا، فيبقى nav عادي مش tabs). تنسى [[e.preventDefault()]] فالسهم يعمل scroll للصفحة كمان. وسؤال انترفيو: «إيه roving tabindex وليه؟» والإجابة: وقفة Tab واحدة للـ widget، والأسهم جواه، زي الـ radio group.`
+          },
+          lines: [
+            "الحاوية.",
+            "كل الـ tabs في مصفوفة.",
+            "اختيار tab.",
+            "لكل tab...",
+            "...هو ده المختار؟",
+            "aria-selected بـ true أو false.",
+            "المختار بس عليه 0 والباقي -1: وقفة Tab واحدة.",
+            "المحتوى بتاعه يبان والباقي يستخبى.",
+            "قفلة الـ for.",
+            "الـ focus على الـ tab الجديد.",
+            "قفلة.",
+            "الأسهم جوه الـ tablist.",
+            "مكان الـ focus الحالي.",
+            "الاتجاه الحقيقي من الـ CSS.",
+            "في RTL اليمين = اللي قبله والشمال = اللي بعده.",
+            "سهم: روح للي بعده أو قبله ولف في الآخر.",
+            "Home: الأول.",
+            "End: الأخير.",
+            "أي زرار تاني: سيبه للمتصفح.",
+            "منع الـ scroll بالأسهم.",
+            "قفلة.",
+            "الضغط بالماوس...",
+            "...على أي tab...",
+            "...يختاره.",
+            "قفلة."
+          ],
+          sol: R`Tab من برا بيقف على «الحساب» بس (الوحيد اللي عليه 0). في [[dir="rtl"]]: السهم الشمال بيروح لـ «الأمان» والمحتوى بتاعه يظهر، والسهم اليمين يرجع (ومن الأول بيلف للأخير)، و Home و End للأول والآخر. و Tab بعد كده بيخرج من الـ tabs على طول للـ panel أو اللي بعده.
+
+جربنا الكود ده في jsdom: بعد ArrowLeft في RTL الـ focus على t2 والـ tabIndex بقوا [[-1,0,-1]] والـ panel التاني ظهر.
+
+لو كل tab واقف عليه Tab: نسيت [[tabindex="-1"]] على الباقي في الـ HTML. لو الأسهم بالعكس: الـ [[dir]] مش متحط، أو بتقرا [[document.dir]] بدل الـ CSS.`,
+          solCode: R`<div role="tablist" aria-label="الإعدادات">
+  <button type="button" role="tab" id="tab-1" aria-selected="true" aria-controls="panel-1" tabindex="0">الحساب</button>
+  <button type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1">الأمان</button>
+  <button type="button" role="tab" id="tab-3" aria-selected="false" aria-controls="panel-3" tabindex="-1">الفواتير</button>
+</div>
+<div role="tabpanel" id="panel-1" aria-labelledby="tab-1">بيانات الحساب...</div>
+<div role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>كلمة السر والـ 2FA...</div>
+<div role="tabpanel" id="panel-3" aria-labelledby="tab-3" hidden>الفواتير...</div>`
+        },
+        {
+          cmd: "scroll-snap و scroll-margin",
+          title: "carousel من CSS بس، وعنوان ميستخباش تحت الـ header",
+          desc: R`[[scroll-snap-type: x mandatory]] على الحاوية و [[scroll-snap-align: start]] على العناصر: لما المستخدم يسيب الـ scroll، بيقف على أول كارت بالظبط بدل ما يقف في النص. carousel كامل بـ swipe على الموبايل من غير مكتبة.
+
+و [[scroll-margin-top]] على العنصر بيسيب مسافة فوقه لما المتصفح يعمل scroll ليه (لينك [[#pricing]]، أو [[scrollIntoView]])، فالعنوان ميستخباش تحت الـ header الثابت. و [[scroll-padding-top]] على الـ html نفس الفكرة بس لكل العناصر مرة واحدة، وبيشمل الـ focus بالـ Tab.`,
+          example: R`<ul class="carousel" tabindex="0" aria-label="منتجات مقترحة">
+  <li><img src="/p/1.webp" alt="سماعة" width="300" height="300"></li>
+  <li><img src="/p/2.webp" alt="ماوس" width="300" height="300"></li>
+</ul>
+// styles.css
+.carousel { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scroll-padding-inline: 1rem; padding-inline: 1rem; }
+.carousel > li { flex: 0 0 80%; scroll-snap-align: start; list-style: none; }
+html { scroll-padding-top: 5rem; }
+h2[id] { scroll-margin-top: 6rem; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }`,
+          try: R`اعمل carousel بـ 6 كروت وافتحه في وضع الموبايل واسحب: بيقف فين؟ شيل [[scroll-snap-type]] واسحب تاني. وبعدين اعمل header ثابت ارتفاعه 64px ولينك لـ [[#faq]] تحت، ودوس عليه مع وبدون [[scroll-padding-top]].`,
+          flag: "script",
+          deep: {
+            why: R`الـ carousels مكتبات JavaScript تقيلة عشان حاجة الـ CSS بيعملها أحسن (الـ swipe طبيعي وبنفس إحساس النظام). والـ header الثابت اللي بياكل العنوان اللي رحتله بلينك، أو الحقل اللي عليه focus، مشكلة في كل موقع تقريبًا، ودي قاعدة 2.4.11 في WCAG 2.2.`,
+            how: R`[[mandatory]] بيجبر الوقوف على نقطة snap دايمًا، و [[proximity]] بيقف عليها بس لو قريب منها (أحسن لو العناصر أطول من الشاشة، لأن mandatory ممكن يمنعك تشوف نص عنصر طويل). و [[scroll-snap-align]] بيحدد نقطة الوقوف: [[start]] أو [[center]] أو [[end]]، وبتتقلب لوحدها في RTL لأنها logical.
+
+[[scroll-padding-inline]] على الحاوية بيخلي نقطة الوقوف بعد مسافة من الحافة، فالكارت ميلزقش في الطرف. و [[flex: 0 0 80%]] بيخلي جزء من الكارت اللي بعده باين، ودا اللي بيقول للمستخدم «فيه حاجة كمان، اسحب».
+
+[[overscroll-behavior-x: contain]] بيمنع إن الـ scroll لما يخلص يكمّل في الصفحة، أو يعمل «رجوع» في Safari و Chrome على الموبايل.
+
+[[scroll-margin-top]] على العنصر و [[scroll-padding-top]] على الـ scroll container (هنا [[html]]) الاتنين بيتجمعوا. والـ [[scroll-behavior: smooth]] جوه [[prefers-reduced-motion: no-preference]] عشان اللي طالب حركة أقل ميتعبش.
+
+و [[tabindex="0"]] على الـ carousel عشان مستخدم الكيبورد يقدر يعمل scroll بالأسهم (زي درس الجدول). ولو عايز أزرار «التالي والسابق»، [[scrollBy({ left: el.clientWidth })]] سطر واحد، والـ snap بيظبط الوقفة.`,
+            when: R`carousel منتجات أو صور أو testimonials، و galleries، و onboarding screens على الموبايل. و scroll-padding-top في أي موقع فيه header ثابت. ولو محتاج autoplay أو loop لا نهائي أو thumbnails متزامنة، ساعتها مكتبة (Embla مثلًا).`,
+            mistakes: R`[[mandatory]] مع عناصر أطول من الشاشة فالمستخدم ميعرفش يوصل لنصها. [[scroll-behavior: smooth]] من غير احترام reduced motion. carousel بيتحرك لوحده ومفيهوش إيقاف. كل الكروت بعرض 100% فالمستخدم مش عارف إن فيه غيرهم. و [[scroll-margin-top]] بقيمة ثابتة والـ header ارتفاعه بيتغير على الموبايل، فخليها CSS variable بارتفاع الـ header.`
+          },
+          lines: [
+            "القايمة الأفقية: ليها اسم وبتاخد focus للـ scroll بالكيبورد.",
+            "كارت.",
+            "كارت.",
+            "قفلة.",
+            R`flex أفقي، و scroll أفقي، والوقوف إجباري على نقط الـ snap، والـ scroll ميكمّلش للصفحة، ونقطة الوقوف بعد 1rem من الحافة.`,
+            "كل كارت 80% من العرض (فاللي بعده باين)، والوقوف على بدايته.",
+            "أي scroll لعنصر (لينك # أو focus) يسيب 5rem للـ header الثابت.",
+            "والعناوين اللي ليها id مسافة زيادة.",
+            "scroll ناعم للينكات، بس للي مش طالب حركة أقل."
+          ],
+          sol: R`مع [[scroll-snap-type]]: لما تسيب إيدك في أي مكان، الـ carousel بيكمّل لحد ما بداية كارت تبقى على الحافة (بعد 1rem). من غيره: بيقف مكان ما سبته، ممكن في نص كارتين.
+
+اللينك لـ [[#faq]] من غير scroll-padding: العنوان بيبقى تحت الـ header الثابت ومش باين. مع [[scroll-padding-top: 5rem]]: العنوان باين تحت الـ header على طول. ونفس الحكاية مع Tab على حقل تحت الـ header وانت طالع لفوق.
+
+لو الـ snap مش شغال: اتأكد إن [[overflow-x: auto]] على نفس العنصر اللي عليه [[scroll-snap-type]]، وإن [[scroll-snap-align]] على الأولاد المباشرين.`
+        },
+        {
+          cmd: "View Transitions",
+          title: "حركة ناعمة بين حالتين أو صفحتين",
+          desc: R`[[document.startViewTransition(update)]] بياخد صورة للصفحة قبل، ويشغّل الدالة اللي بتغيّر الـ DOM، وياخد صورة بعد، ويعمل crossfade بينهم. ولو عنصر ليه [[view-transition-name]] في الحالتين، بيتحرك ويكبر من مكانه القديم للجديد (صورة المنتج في اللستة بتطير لصفحة التفاصيل).
+
+وبين صفحات حقيقية (MPA): [[@view-transition { navigation: auto; }]] في CSS الصفحتين، من غير JavaScript.
+
+دي progressive enhancement: لو المتصفح مش بيدعمها، التغيير بيحصل عادي من غير حركة.`,
+          example: R`function show(view) {
+  const update = () => main.replaceChildren(view);
+  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return update();
+  document.startViewTransition(update);
+}
+// styles.css
+.product-42 .thumb { view-transition-name: product-42; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
+@view-transition { navigation: auto; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation: none; } }`,
+          try: R`اعمل لستة منتجات وصفحة تفاصيل في نفس الـ HTML، وبدّل بينهم بـ [[show()]]. جرّب من غير [[view-transition-name]]، وبعدين حطه على صورة المنتج في الحالتين بنفس الاسم. وفي DevTools › More tools › Animations بطّأ الحركة لـ 10% وشوف إيه اللي بيتحرك.`,
+          flag: "script",
+          deep: {
+            why: R`الحركة بين الحالات بتوضح للمستخدم إيه اللي حصل: الصورة اللي داس عليها بقت الصورة الكبيرة، مش صفحة جديدة ظهرت فجأة. قبل كده ده كان محتاج مكتبات animation وحسابات أماكن بإيدك. دلوقتي سطر.`,
+            how: R`المتصفح بيعمل snapshot للعناصر اللي ليها أسماء (والصفحة كلها اسمها [[root]])، ويبني شجرة pseudo-elements فوق الصفحة: [[::view-transition-group(name)]] جواه [[::view-transition-old]] و [[::view-transition-new]]. الـ group بيتحرك ويتغير مقاسه من المكان القديم للجديد، والـ old والـ new بيعملوا crossfade. وكله animations عادية تقدر تغيّرها في CSS.
+
+[[view-transition-name]] لازم يبقى فريد في الصفحة وقت الحركة: لو عنصرين بنفس الاسم الحركة بتتلغي. عشان كده في اللستات بيتحط اسم لكل عنصر (inline style بالـ id)، أو بيتحط على العنصر اللي اتداس بس قبل الحركة.
+
+الدعم: الـ same-document ([[startViewTransition]]) بقى في كل المتصفحات الأساسية من أواخر 2025. الـ cross-document ([[@view-transition]]) في Chrome و Edge و Safari، ولسه مش في كل المتصفحات وقت كتابة الدرس، فراجع caniuse. وفي الحالتين الكود بيشتغل عادي من غير الحركة لو مش مدعوم.
+
+في React و Next: فيه شغل على مكون [[<ViewTransition>]] في React و flag تجريبي في Next.js، اتأكد من حالتهم في الدوكس بتاعة النسخة اللي عندك قبل ما تعتمد عليهم.`,
+            when: R`لستة لتفاصيل، وتبديل الـ tabs أو الـ views، وتغيير ترتيب لستة، وفتح صورة كبيرة. وخليها قصيرة (200 لـ 300ms) وقليلة، واحترم reduced motion دايمًا.`,
+            mistakes: R`نفس الـ view-transition-name على كذا عنصر فمفيش حركة خالص. حركة طويلة بتخلي الموقع يحس إنه بطيء. تنسى reduced motion. تستدعي [[startViewTransition]] من غير ما تتأكد إنه موجود فالموقع يقع في المتصفحات اللي مش بتدعمه. والدالة اللي جوه async وبتجيب بيانات من السيرفر: الصفحة بتبقى متجمدة لحد ما تخلص، فهات البيانات الأول وبعدين ابدأ الحركة.`
+          },
+          lines: [
+            "بتعرض view جديد (لستة أو تفاصيل).",
+            "التغيير نفسه: بدّل محتوى الـ main.",
+            "المتصفح مش بيدعم، أو المستخدم طالب حركة أقل؟ غيّر من غير حركة.",
+            "غير كده: غيّر جوه view transition.",
+            "قفلة.",
+            "صورة المنتج ليها نفس الاسم في اللستة والتفاصيل، فبتطير من مكان للتاني.",
+            "الـ crossfade بتاع الصفحة كلها أسرع من الافتراضي.",
+            "حركة بين الصفحات الحقيقية (لازم في الصفحتين ونفس الـ origin).",
+            "اللي طالب حركة أقل: من غير animation."
+          ],
+          sol: R`من غير [[view-transition-name]]: الصفحة كلها بتعمل fade من اللستة للتفاصيل. مع الاسم على الصورة في الحالتين: الصورة بتتحرك وتكبر من مكانها في اللستة لمكانها في التفاصيل، والباقي fade. في Animations panel بـ 10% هتشوف الـ group بيتحرك والـ old والـ new بيتبدّلوا.
+
+لو مفيش أي حركة: غالبًا الاسم متكرر (كل صور اللستة عليها نفس الاسم)، أو متصفحك مش بيدعم، أو إعداد reduce motion شغال في نظامك. ولو الصفحة وقفت ثانية قبل الحركة: الـ update فيه fetch، هات البيانات قبل.`
+        },
+        {
+          cmd: "text-wrap",
+          title: "عنوان سطره الأخير كلمة لوحدها",
+          desc: R`[[text-wrap: balance]] بيوزّع كلام العنوان على السطور بالتساوي، بدل سطر مليان وسطر فيه كلمة واحدة. و [[text-wrap: pretty]] للفقرات: بيحاول ميخليش كلمة لوحدها في آخر سطر.
+
+وفي Tailwind v4: [[text-balance]] و [[text-pretty]]. ومعاهم [[line-clamp-2]] لو عايز تقطع الكلام بعد سطرين بـ «…».`,
+          example: R`h1, h2, h3 { text-wrap: balance; }
+p, li, figcaption { text-wrap: pretty; }
+.price { white-space: nowrap; }
+.card-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+<h2 className="text-balance">عرض الصيف: خصم على كل السماعات والشواحن الأصلية</h2>
+<p className="text-pretty max-w-prose">...</p>
+<h3 className="line-clamp-2">اسم منتج طويل جدًا جاي من الداتابيز ومحدش عارف طوله</h3>`,
+          try: R`اعمل عنوان طويل في كارت عرضه 20rem، وغيّر عرض الشاشة لحد ما السطر الأخير يبقى كلمة واحدة. ضيف [[text-wrap: balance]] وشوف الفرق. وبعدين في DevTools اكتب في Console [[CSS.supports('text-wrap', 'pretty')]].`,
+          flag: "script",
+          deep: {
+            why: R`العناوين في الكروت والهيرو بتتقسم وحش على بعض الشاشات، والمصممين كانوا بيحطوا [[<br>]] بإيدهم (وده بيبوظ على شاشة تانية). سطر CSS بيحلها لكل المقاسات.`,
+            how: R`[[balance]] بيجرب عروض مختلفة ويختار اللي يخلي السطور قريبة من بعض، وعشان ده مكلّف المتصفحات بتطبقه على عدد سطور محدود (في Chrome حوالي 6)، فهو للعناوين والكلام القصير بس. والصندوق نفسه عرضه مبيتغيرش، الكلام بس اللي بيتوزع جواه.
+
+[[pretty]] أرخص: بيبص على آخر كام سطر ويحاول يتجنب كلمة لوحدها. ودعمه لسه مش في كل المتصفحات وقت كتابة الدرس، واللي مش بيدعمه بيتجاهله ويكسر عادي، فحطه من غير قلق.
+
+[[white-space: nowrap]] على حاجة مينفعش تتقسم (سعر بعملته، رقم تليفون). و [[line-clamp]] بيقطع بعد عدد سطور ويحط «…»، والصيغة الـ [[-webkit-]] هي اللي شغالة في كل المتصفحات لحد دلوقتي، و Tailwind بيكتبها لك.
+
+وكل ده بيشتغل مع العربي عادي لأنه بيكسر عند المسافات.`,
+            when: R`balance: كل العناوين (ممكن في الـ base styles مرة واحدة). pretty: الفقرات والـ captions. line-clamp: عناوين الكروت ووصف المنتجات اللي طولها مش معروف.`,
+            mistakes: R`balance على فقرات طويلة (مش هيشتغل أو هيبطّأ). [[<br>]] يدوي في العناوين. line-clamp من غير [[overflow: hidden]]. تقطع الكلام بـ JavaScript (substring) فيتقطع في نص كلمة، وقارئ الشاشة يقرا نص الكلام بس، مع line-clamp الكلام كله موجود وبيتقري.`
+          },
+          lines: [
+            "كل العناوين: السطور متوازنة.",
+            "الفقرات: من غير كلمة يتيمة في الآخر (لو المتصفح بيدعم).",
+            "السعر ميتقسمش على سطرين.",
+            "العنوان سطرين بالكتير وبعدين «…».",
+            "نفس balance بـ Tailwind.",
+            R`نفس pretty، و [[max-w-prose]] عرض مريح للقراية.`,
+            "نفس القطع بعد سطرين بـ Tailwind."
+          ],
+          sol: R`من غير balance: على بعض العروض هتلاقي سطر مليان وتحته «الأصلية» لوحدها. مع balance: سطرين قريبين من بعض في الطول، وعرض الكارت زي ما هو.
+
+[[CSS.supports('text-wrap', 'pretty')]] بيرجع true في Chrome و Edge (ومتصفحات تانية حسب النسخة)، ولو رجع false ده معناه إن المتصفح هيتجاهل السطر، مش إن الصفحة هتبوظ.
+
+لو balance ملوش أي تأثير: غالبًا الكلام أطول من الحد اللي المتصفح بيطبقه عليه، أو العنصر [[display: inline]].`
+        },
+        {
+          cmd: "Baseline و @supports",
+          title: "الميزة دي أستخدمها ولا لسه؟ Baseline و caniuse و @supports",
+          desc: R`Baseline علامة بتلاقيها في MDN و caniuse: «Newly available» يعني الميزة شغالة في آخر نسخة من Chrome و Edge و Firefox و Safari (ديسكتوب وموبايل)، و «Widely available» يعني عدّى على ده 30 شهر، فأغلب الناس عندهم نسخة بتدعمها.
+
+caniuse.com بيدّيك التفاصيل: أنهي نسخة، ونسبة المستخدمين، والمشاكل المعروفة. و [[@supports]] في CSS (و [[CSS.supports()]] في JavaScript) بيسأل المتصفح نفسه: لو بتدعم الحاجة دي طبّق ده.
+
+و browserslist (في [[package.json]]) بيقول لأدوات الـ build (autoprefixer و Lightning CSS و Babel وغيرهم) إنت بتدعم أنهي متصفحات، فيضيفوا fallbacks على قدها.`,
+          example: R`.card { background: white; }
+@supports (background: color-mix(in oklch, red, blue)) {
+  .card { background: color-mix(in oklch, var(--color-brand) 8%, white); }
+}
+@supports not selector(:has(a)) {
+  .has-fallback { display: block; }
+}
+if (CSS.supports('anchor-name', '--x')) document.documentElement.classList.add('has-anchor');
+// package.json
+"browserslist": ["baseline widely available"]`,
+          try: R`في أي فولدر فيه Node شغّل [[npx browserslist "baseline widely available"]] و [[npx browserslist --coverage "baseline widely available"]] و [[npx browserslist "defaults"]]. وبعدين افتح MDN لـ [[text-wrap]] و [[:has()]] وبص على علامة Baseline فوق كل صفحة.`,
+          flag: "script",
+          deep: {
+            why: R`كل شهر فيه ميزة CSS جديدة، وسؤال «أستخدمها في الشغل؟» كان محتاج تفتح caniuse وتحسب نسب. Baseline بتدّيك إجابة سريعة، و @supports بيخليك تستخدم الجديد النهارده من غير ما تكسر القديم. ودا بيتسأل في الانترفيو: «بتتعامل إزاي مع ميزة مش مدعومة في كل المتصفحات؟»`,
+            how: R`progressive enhancement: اكتب الأساس اللي شغال في كل حتة الأول (خلفية بيضا)، وبعدين جوه [[@supports]] التحسين. المتصفح اللي مش فاهم الشرط بيتجاهل البلوك كله. و [[selector()]] جوه @supports بيسأل عن selector (زي [[:has()]]). و [[not]] للـ fallback.
+
+في CSS أصلًا المتصفح بيتجاهل أي خاصية مش فاهمها، فكتير كفاية تكتب السطرين ورا بعض: [[color: red; color: oklch(...)]] والقديم ياخد الأول والجديد ياخد التاني. @supports بتحتاجها لما التحسين محتاج أكتر من خاصية أو بيغيّر الـ layout.
+
+browserslist بيقبل queries زي [[defaults]] (أكتر من 0.5% استخدام وآخر نسختين ومتصفحات مش ميتة)، و [[baseline widely available]]، و [[baseline 2024]]. البيانات جاية من caniuse-lite، فحدّثها كل فترة بـ [[npx update-browserslist-db@latest]].
+
+و Vite من نسخة 7 الـ build target الافتراضي بتاعه [[baseline-widely-available]]. و Tailwind v4 نفسه مبني على CSS حديث (cascade layers و [[@property]] و [[color-mix]])، فمحتاج متصفحات حديثة (Safari 16.4 و Chrome 111 و Firefox 128 تقريبًا وطالع)، ولو لازم تدعم أقدم من كده خليك على v3.`,
+            when: R`قبل ما تستخدم أي ميزة CSS أو JavaScript جديدة في مشروع حقيقي: Widely available استخدمها عادي. Newly available استخدمها كتحسين مع fallback. لسه مش Baseline: @supports أو استنى. وحط browserslist في أول المشروع عشان كل الأدوات تتفق.`,
+            mistakes: R`تستخدم ميزة لأنها شغالة في Chrome عندك (نص مستخدمين الموبايل في مصر وغيرها على Safari أو متصفحات قديمة). @supports على حاجة كل المتصفحات بتدعمها (كود زيادة على الفاضي). تنسى تحدّث caniuse-lite فالـ build يستهدف متصفحات قديمة. تكتب الـ fallback بعد الجديد (الترتيب مهم: الأساس الأول). وتفتكر إن autoprefixer بيضيف الميزة نفسها: هو بيضيف prefixes بس، مش polyfills.`
+          },
+          lines: [
+            "الأساس: شغال في كل المتصفحات.",
+            R`لو المتصفح بيدعم [[color-mix]]...`,
+            "...خلفية فيها لمسة خفيفة من لون البراند.",
+            "قفلة.",
+            R`لو المتصفح مش بيدعم [[:has()]]...`,
+            "...اعرض الـ fallback.",
+            "قفلة.",
+            R`نفس السؤال من JavaScript: لو بيدعم anchor positioning علّم الـ html بكلاس.`,
+            "الأدوات كلها تستهدف المتصفحات اللي فيها الميزات المنتشرة من 30 شهر أو أكتر."
+          ],
+          sol: R`وقت كتابة الدرس (بيانات caniuse-lite في سبتمبر 2026)، [[baseline widely available]] طلّع 133 نسخة متصفح، أقدمها تقريبًا Chrome 123 و Firefox 124 و Safari 17.4، و [[--coverage]] قال إنهم حوالي 87% من المستخدمين في العالم. الأرقام عندك هتختلف حسب نسخة البيانات، ودا الطبيعي.
+
+[[defaults]] بيطلّع لستة مختلفة: فيها متصفحات أقدم بكتير (زي Chrome 109 و Opera Mini) لأنه مبني على نسبة الاستخدام مش على الميزات.
+
+في MDN: [[:has()]] عليه Baseline (متاح في كل المتصفحات الأساسية)، و [[text-wrap]] ممكن تلاقي قيمه مختلفة الحالة (balance منتشرة، و pretty لسه مش في كل حتة). ودا بالظبط المكان اللي تقرر منه: balance استخدمها عادي، و pretty كتحسين.`
         }
       ]
     },
@@ -2293,7 +3976,12 @@ Open Graph بروتوكول من فيسبوك بقى standard: أي تطبيق �
             "صندوق بعرض 200 و padding 20 و border 5.",
             "content-box: العرض الظاهر 200 + 40 + 10 = 250.",
             "border-box: العرض الظاهر 200، والمحتوى 150."
-          ]
+          ],
+          sol: R`إجابة نموذجية على [[.box]] في المثال: «الرسمة فيها 4 طبقات من جوه لبرا: content، وبعدين padding، وبعدين border، وبعدين margin. مع [[content-box]] (الافتراضي) الـ 200 دي عرض المحتوى بس، فالعنصر على الشاشة 200 + 20×2 + 5×2 = 250px. مع [[border-box]] الـ 200 هي العرض الكلي لحد الـ border، فالمحتوى بيصغر لـ 200 − 40 − 10 = 150px. الـ margin برا الحساب في الحالتين، وهو مسافة بيني وبين اللي جنبي مش جزء من العنصر.»
+
+نقط تزوّد بيها الإجابة: إن كل المشاريع الحديثة (و Tailwind في الـ preflight) بتعمل [[*, ::before, ::after { box-sizing: border-box }]] لأن الحساب بيبقى أسهل مع [[width: 50%]] و padding. وإن الـ margin الرأسي بين عنصرين block بيعمل collapse (بياخد الأكبر مش المجموع)، وده مش بيحصل جوه flex ولا grid. وإن [[offsetWidth]] بيرجع العرض لحد الـ border، و [[clientWidth]] من غير الـ border.
+
+الغلط اللي يوقعك: تقول إن الـ margin داخل في الـ width مع border-box، أو تنسى الـ border في الحساب وتقول 240.`
         },
         {
           cmd: "(id, class, type)",
@@ -2316,7 +4004,12 @@ nav .link:hover { color: navy; }
             "(0,1,0): بتغلب اللي فوق.",
             "(0,2,1): class و pseudo-class ونوع.",
             R`(0,1,0): الـ where صفر، فزي [[.link]] بالظبط، والترتيب هو اللي يحسم.`
-          ]
+          ],
+          sol: R`مثال محلول لـ 5 selectors (والأرقام دي بالظبط اللي DevTools بيظهرها لما تقف عليهم): [[nav a]] ‏(0,0,2)، و [[.link]] ‏(0,1,0)، و [[nav .link:hover]] ‏(0,2,1) لأن [[:hover]] pseudo-class بيتحسب زي الكلاس، و [[:where(nav) .link]] ‏(0,1,0) لأن [[:where]] بيصفّر اللي جواه، و [[#main .link::after]] ‏(1,1,1) لأن الـ pseudo-element بيتحسب زي الـ type.
+
+الإجابة اللي تقولها: «المتصفح بيقارن 3 خانات بالترتيب (id، class/attribute/pseudo-class، type/pseudo-element)، زي رقم من 3 خانات من غير ما واحدة تفيض على التانية؛ 11 كلاس عمرهم ما يغلبوا id واحد. لو اتعادلوا، اللي جاي آخر في الملف يكسب. والـ inline style أقوى منهم كلهم، و [[!important]] بيقلب اللعبة. وقبل الـ specificity أصلًا بيبص على الـ origin والـ [[@layer]]: القاعدة اللي برا layer بتكسب أي قاعدة جوه layer.» وزوّد: [[:is()]] و [[:not()]] بياخدوا specificity أقوى حاجة جواهم، و [[:where()]] صفر، وده بيستخدم في المكتبات عشان تسهّل عليك تغطي عليها.
+
+الغلط الشائع في الحساب: تعد [[:hover]] أو [[[type="email"]]] كـ type (هما خانة الكلاس)، أو تعد [[*]] و [[>]] (قيمتهم صفر).`
         },
         {
           cmd: "بُعد واحد وبُعدين",
@@ -2335,7 +4028,12 @@ nav .link:hover { color: navy; }
           lines: [
             "flex: عناصر في صف، والمسافة بينهم.",
             "grid: شبكة أعمدة متساوية بتتأقلم مع العرض."
-          ]
+          ],
+          sol: R`اللي هتشوفه بـ 5 كروت على شاشة تساع 4: مع [[flex-wrap]] و [[flex: 1 1 250px]] أول 4 في سطر، والخامس لوحده في السطر التاني وممطوط بعرض الشاشة كلها (قست ده على 1200px: الأربعة 288px والخامس 1200px). مع grid بـ [[repeat(auto-fit, minmax(250px, 1fr))]] الخامس بنفس عرض الباقيين وتحت الأول بالظبط، والباقي من السطر فاضي.
+
+الإجابة النموذجية: «flex بيفكّر في بُعد واحد: كل سطر بيوزّع المساحة على عناصره لوحده ومش عارف حاجة عن السطر اللي تحته، عشان كده الأخير بيتمط. grid بيفكّر في بُعدين: الأعمدة متعرّفة على الأب، فكل العناصر بترص على نفس الخطوط. بستخدم flex لما المحتوى هو اللي يحدد المقاس (nav، أزرار جنب بعض، سطر صورة واسم وزرار)، و grid لما الـ layout هو اللي يحدد (شبكة كروت، layout الصفحة، فورم بـ label وinput متراصين).»
+
+ونقطة زيادة: الاتنين مش بديل لبعض، وكتير بتلاقي grid للصفحة و flex جوه كل كارت. ولو حد قالك «flex للحاجات الصغيرة و grid للكبيرة» ده مش دقيق؛ المعيار بُعد واحد ولا اتنين.`
         },
         {
           cmd: "containing block",
@@ -2356,7 +4054,10 @@ nav .link:hover { color: navy; }
             "الأب مرجع للـ absolute.",
             "الشارة في ركن النهاية فوق.",
             "الهيدر يلزق فوق وانت نازل."
-          ]
+          ],
+          sol: R`اللي هتشوفه وانت بتعمل scroll: [[static]] بيمشي مع الصفحة، و [[top]] و [[z-index]] ملهمش أي تأثير عليه. [[relative]] بيمشي مع الصفحة برضه، بس متزحزح بالـ [[top]]/[[left]] عن مكانه الأصلي، والمكان الأصلي فاضي محجوز (اللي بعده مش بيطلع مكانه). [[absolute]] خرج من الـ flow خالص (اللي بعده طلع مكانه)، ومتحط بالنسبة لأقرب أب positioned، ولو مفيش بالنسبة لأول شاشة، وبيمشي مع الـ scroll. [[fixed]] ثابت في مكانه على الشاشة مهما عملت scroll. [[sticky]] بيمشي عادي لحد ما يوصل للـ [[top]] بتاعه، وبعدين بيلزق، ولما أبوه يخلص بيمشي معاه ويطلع.
+
+الإجابة النموذجية بتلف حوالين كلمة containing block: «لكل عنصر فيه حد بيتحسب منه. للـ absolute هو أقرب جد مش static، للـ fixed هو الـ viewport، للـ sticky هو أقرب scroll container.» والفخ اللي يفرّقك: الـ fixed بيبطّل يبقى بالنسبة للشاشة لو أي جد عليه [[transform]] أو [[filter]] أو [[contain]]، وساعتها بيتصرف زي absolute جوه الجد ده. والـ sticky بيبطّل لو فيه جد عليه [[overflow: hidden]].`
         },
         {
           cmd: "mobile-first",
@@ -2377,7 +4078,12 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
             "شبكة بتتأقلم مع أي عرض من غير breakpoints.",
             "عنوان بيكبر مع الشاشة بين حد أدنى وأقصى.",
             "breakpoint واحد للـ layout الكبير: sidebar ومحتوى."
-          ]
+          ],
+          sol: R`نموذج لنتيجة التجربة (صفحة منتجات عادية): على 320: الـ nav اللينكات طالعة برا الشاشة ← محتاج منيو burger تحت 48rem. الجدول بيعمل scroll للصفحة كلها ← wrapper بـ [[overflow-x: auto]] (مش breakpoint). الـ h1 كبير ومكسّر كلمات ← [[clamp()]]. على 768: كارتين في السطر وفيه فراغ كبير ← [[auto-fit]] يحلها من غير breakpoint. على 1440: السطور طويلة جدًا في القراية ← [[max-width: 65ch]]. والـ sidebar محتاج يظهر جنب ← breakpoint عند 64rem.
+
+الإجابة النموذجية: «ببدأ بالموبايل لأنه أصعب حالة، والـ CSS الأساسي من غير media query بيبقى للشاشة الصغيرة، وبزوّد بـ [[min-width]] لما الشكل يبوظ مش لما جهاز معين يظهر. أول ما أقدر أحلّها من غير breakpoint بعملها: [[auto-fit]] و [[clamp()]] و [[min()]] و flex-wrap. والـ breakpoints بالـ rem عشان تحترم خط المستخدم. ولو المكون بيتحط في أماكن بعروض مختلفة، container query أحسن من media query. وبختبر على جهاز حقيقي عشان dvh و الـ touch و الـ hover.»
+
+الغلط اللي يبان في الإجابة: تعد breakpoints بأسماء أجهزة (iPhone و iPad)، أو تكتب الـ desktop الأول وتصلّح بـ [[max-width]] فالموبايل ينزّل CSS مش محتاجه ويكتب فوقه.`
         },
         {
           cmd: "rem من الـ root",
@@ -2396,7 +4102,12 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
           lines: [
             "الأساس 16، أو اللي المستخدم اختاره.",
             "الخط 18، والـ padding 9 و 18 من خط الزرار، والـ border بكسل ثابت."
-          ]
+          ],
+          sol: R`اللي هتلاقيه بعد ما تخلي خط المتصفح Large (20px): الكلام اللي مكتوب بـ rem أو em كبر بنسبة 25%، واللي مكتوب بـ px فضل زي ما هو. غالبًا هتلاقي عناوين وأزرار كبرت وحاجات زي الـ footer أو badge صغيرة فضلت صغيرة، وده معناه إن فيه [[font-size: 12px]] في مكان.
+
+الإجابة النموذجية: «[[px]] ثابت ومش بيحترم إعداد خط المستخدم. [[rem]] نسبة من خط الـ [[<html>]] (16px افتراضيًا، أو اللي المستخدم اختاره)، فالصفحة كلها بتكبر مع الإعداد ده. [[em]] نسبة من خط العنصر نفسه (أو الأب لو في [[font-size]])، فبيتراكم لو متداخل: [[0.9em]] جوه [[0.9em]] = 0.81. بستخدم rem للخط والمسافات العامة، و em للحاجات اللي لازم تتناسب مع خط العنصر زي padding الزرار ([[0.5em 1em]] في المثال بيكبر لوحده مع [[.btn-lg]])، و px للـ borders والظلال اللي مش لازم تكبر.»
+
+والنقطة اللي بتفرّقك: متعملش [[html { font-size: 62.5% }]] عشان الحساب يبقى أسهل، ولو عملتها متكتبش [[font-size: 10px]] بدلها أبدًا، لأن الـ px على الـ html بيلغي إعداد المستخدم خالص. وإن الـ zoom (Ctrl +) بيكبّر px كمان، فهو مش الاختبار.`
         },
         {
           cmd: "توليد on-demand",
@@ -2413,7 +4124,12 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
           },
           lines: [
             "كل كلاس قاعدة CSS صغيرة، و Tailwind بيطلّع دول بس."
-          ]
+          ],
+          sol: R`اللي هتلاقيه: الكلاسات اللي في الـ HTML بس، زي [[.px-4]] و [[.md\:px-6]] جوه [[@media (width >= 48rem)]]، و [[.hover\:bg-brand\/90]] ملفوفة في [[@media (hover: hover)]]. لو دوّرت على [[.px-5]] أو [[.bg-red-500]] ومش مستخدمهم مش هتلاقيهم. ولما طلّعت CSS للزرار ده لوحده بـ Tailwind v4.3 الملف كله (بالـ reset والـ theme) كان حوالي 490 سطر مش آلاف، وأغلبه الـ preflight.
+
+الإجابة النموذجية: «Tailwind بيعمل scan لملفات المشروع (في v4 أوتوماتيك، مع [[@source]] لو محتاج)، وبيدوّر على أي كلمة شكلها كلاس، ويولّد CSS للكلاسات دي بس. عشان كده الـ CSS النهائي صغير ومبيكبرش مع حجم المشروع قد ما بيكبر مع عدد الكلاسات المختلفة. العيوب: الـ HTML بيبقى مليان كلاسات وبيتقري بصعوبة، ومحتاج [[cn]]/tailwind-merge عشان التعارضات، والكلاسات المتركبة بالـ string زي [[$__btbg-$__{color}-500$__bt]] مبتتولدش لأن الـ scanner مش بيشغّل الكود، ومحتاج build step، وفيه منحنى تعلم للأسماء.»
+
+والحل لمشكلة الكلاسات الديناميكية اللي تقوله: اكتب الأسماء كاملة في object ([[{ red: "bg-red-500", green: "bg-green-500" }]])، أو [[@source inline(...)]] لو لازم.`
         },
         {
           cmd: "semantic HTML أولًا",
@@ -2430,7 +4146,12 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
           },
           lines: [
             R`زرار أيقونة: اسمه من [[aria-label]]، والأيقونة زينة مخفية عن قارئ الشاشة.`
-          ]
+          ],
+          sol: R`مثال لنتيجة حقيقية بعد audit (دي أشهر 3 مشاكل بتطلع): «Buttons do not have an accessible name» على زرار أيقونة ← ضفت [[aria-label]] وحطيت [[aria-hidden="true"]] على الأيقونة زي المثال. «Background and foreground colors do not have a sufficient contrast ratio» على كلام رمادي ← غيّرت [[gray-400]] لـ [[gray-600]]. «Form elements do not have associated labels» على حقل بحث ← ضفت [[<label>]] مخفي بـ [[sr-only]]. والسكور طلع من 78 لـ 96 مثلًا.
+
+الإجابة النموذجية للسؤال: «أول حاجة HTML صح: button للزرار و a للينك و label لكل input و landmarks وعناوين بالترتيب، ودي بتحل أغلب المشاكل ببلاش. بعدها الكيبورد: كل حاجة توصلها بـ Tab، و focus ظاهر، ومودال بيحبس الـ focus ويرجّعه. بعدها الـ contrast، وبعدها alt للصور. و ARIA آخر حاجة، للحالات اللي HTML ملوش فيها زي [[aria-expanded]] و [[aria-live]]، لأن ARIA غلط أسوأ من مفيش ARIA.»
+
+وقول إن Lighthouse بيلقط حوالي ثلث المشاكل بس، فبتكمّل بتجربة بالكيبورد وقارئ الشاشة. القصة الحقيقية بأرقام قبل وبعد هي اللي بتفرّق مش الكلام العام.`
         },
         {
           cmd: "احجز المكان",
@@ -2447,7 +4168,12 @@ h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
           },
           lines: [
             "width و height بيحجزوا المكان بنسبة 2:1 قبل ما الصورة توصل."
-          ]
+          ],
+          sol: R`نموذج لنتيجة: CLS قبل حوالي 0.4 (أحمر، الحد 0.1 للكويس و 0.25 للوحش) وسببه صورة الهيرو من غير أبعاد. بعد ما ضفت [[width]] و [[height]] بقى 0 تقريبًا. (قست ده على صفحة تجربة فيها هيرو 1200×600 بيتأخر 800ms: من 0.43 لـ 0.) الأسباب التانية المعتادة: الخط لما يتبدّل، وبانر أو إعلان بيتحط فوق المحتوى بعد التحميل، و iframe من غير [[aspect-ratio]]، و skeleton مقاسه مختلف عن المحتوى الحقيقي.
+
+الإجابة النموذجية: «CLS بيقيس قد إيه المحتوى الظاهر اتحرك من غير ما المستخدم يعمل حاجة، ورقمه (مساحة اللي اتحرك × المسافة) من غير وحدة. بقلله بإني أحجز المكان قبل ما الحاجة توصل: width و height أو aspect-ratio للصور والفيديو، و min-height للإعلانات والحاجات اللي جاية من API، وخط بـ [[size-adjust]] أو next/font، وأي حاجة بتظهر فجأة تبقى fixed أو تحت المحتوى، والحركات بـ transform مش top.»
+
+وقول الفرق بين lab (Lighthouse بيقيس التحميل بس) و field (CrUX من مستخدمين حقيقيين وبيعد الـ shifts طول عمر الصفحة)، وإن الـ shift اللي بيحصل خلال 500ms من ضغطة المستخدم مش بيتحسب.`
         },
         {
           cmd: "مراحل الرسم",
@@ -2468,7 +4194,12 @@ el.style.transform = "translateX(10px)";`,
             "كتابة: بتخلي الـ layout قديم.",
             "قراية مقاس: reflow فوري (forced).",
             "transform: غالبًا composite بس."
-          ]
+          ],
+          sol: R`اللي هتشوفه في Performance: مع [[left]] كل frame فيه Recalculate Style، وبعدين Layout (بنفسجي)، وبعدين Paint (أخضر)، وبعدين Composite. مع [[transform]] هتلاقي Recalculate Style و Composite Layers بس، ومفيش Layout ولا Paint لكل frame (لو العنصر اتعمله layer، ودا بيحصل تلقائي وقت الـ animation أو بـ [[will-change: transform]]). ولو فعّلت Rendering › Paint flashing، العنصر اللي بيتحرك بـ left هيبقى متلوّن أخضر طول الوقت، واللي بـ transform لأ.
+
+الإجابة النموذجية: «المتصفح بيعمل Style، بعدين Layout (reflow: يحسب مكان ومقاس كل حاجة)، بعدين Paint (repaint: يرسم البكسلات)، بعدين Composite (يركّب الطبقات على الـ GPU). reflow بيحصل لما تغيّر حاجة ليها علاقة بالمقاس أو المكان (width و left و font-size وإضافة عنصر)، وبيجر وراه paint. repaint لوحده لما تغيّر شكل من غير مقاس (color و background). و transform و opacity بيتعملوا في الـ composite بس، وعشان كده هما اللي تحرّك بيهم.»
+
+وفي المثال: السطر التاني ([[offsetHeight]]) بيجبر المتصفح يعمل layout حالًا عشان يرجّعلك رقم صح بعد ما غيّرت الـ width، ودا forced synchronous layout. لو اتكرر في loop يبقى layout thrashing.`
         },
         {
           cmd: "stacking context",
@@ -2489,7 +4220,22 @@ el.style.transform = "translateX(10px)";`,
             "الهيدر عمل context بـ 1.",
             "9999 بس جوه الهيدر، يعني بالنسبة للصفحة «1».",
             "الهيرو 2 فبيغطّي الهيدر والقايمة."
-          ]
+          ],
+          sol: R`الطريقتين وإيه اللي هتشوفه: الأولى ترفع الهيدر: [[.header { z-index: 3 }]] (أي رقم أكبر من 2). القايمة بتظهر فوق الهيرو، بس خلي بالك إن الهيدر كله بقى فوق الهيرو، فلو الهيرو فيه حاجة المفروض تطلع فوق الهيدر (زي صورة طالعة لفوق) مش هتعرف. الطريقة التانية تطلّع القايمة من الهيدر في الـ DOM (بـ [[createPortal]] لـ [[document.body]] في React، أو تحط العنصر آخر الـ body)، وتحسب مكانها بـ JavaScript أو بـ CSS anchor positioning. ساعتها الـ 9999 بتاعتها بتتقارن مع الهيرو مباشرة وتكسب، والهيدر بيفضل 1.
+
+الشرح النموذجي: «z-index بيتقارن بس بين الإخوات جوه نفس الـ stacking context. الهيدر بـ [[position]] و [[z-index: 1]] عمل context، فكل اللي جواه، حتى لو 9999، بيترسم كوحدة واحدة على مستوى 1، والهيرو على مستوى 2. الرفع بيغيّر ترتيب الوحدة كلها، والنقل بيطلّع القايمة من الوحدة خالص.» وده السبب إن Radix و shadcn بيحطوا الـ dropdown والـ dialog في Portal.
+
+وقول إن فيه حاجات تانية بتعمل context من غير z-index: [[opacity]] أقل من 1، و [[transform]]، و [[filter]]، و [[isolation: isolate]]، و [[position: fixed]] و [[sticky]]. ولو القايمة بتتقص مش بتستخبى، يبقى ده [[overflow: hidden]] على الهيدر مش z-index، وده حلّه النقل بس.`,
+          solCode: R`/* الطريقة 1: ارفع الـ context كله */
+.header { position: relative; z-index: 3; }
+.header .menu { position: absolute; z-index: 9999; }
+.hero { position: relative; z-index: 2; }
+
+/* الطريقة 2: القايمة برا الهيدر في الـ DOM (Portal) */
+/* <body> <header class="header">...</header> <main class="hero">...</main> <div class="menu">...</div> </body> */
+.header { position: relative; z-index: 1; }
+.menu { position: fixed; top: 4rem; inset-inline-start: 1rem; z-index: 50; }
+.hero { position: relative; z-index: 2; }`
         }
       ]
     }

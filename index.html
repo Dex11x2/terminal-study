@@ -96,6 +96,13 @@
     </div>
   </section>
   <section class="sw-sec">
+    <h2 class="sw-h">التطبيق والشغل</h2>
+    <div class="switch" role="tablist" aria-label="التطبيق والشغل">
+      <button class="sw" role="tab" data-s="projects" aria-selected="false"><div class="top"><b>المشاريع</b><span>spec → build → deploy</span></div><div class="bot">٧ مشاريع متدرجة من landing page لتطبيق full-stack منشور، كل مشروع بمراحل وشروط «خلصت» وحل مرجعي</div></button>
+      <button class="sw" role="tab" data-s="career" aria-selected="false"><div class="top"><b>الشغل والكارير</b><span>portfolio · CV · offer</span></div><div class="bot">الـ portfolio والـ CV و LinkedIn، وتدوّر على شغل أو فريلانس، وتقيّم العرض، وأول ٩٠ يوم في الشغل</div></button>
+    </div>
+  </section>
+  <section class="sw-sec">
     <h2 class="sw-h">الانترفيو</h2>
     <div class="switch" role="tablist" aria-label="الانترفيو">
       <button class="sw" role="tab" data-s="dsa" aria-selected="false"><div class="top"><b>Data Structures و Algorithms</b><span>O(n) → O(log n)</span></div><div class="bot">Big-O، و arrays و hash maps و stacks و trees و graphs، والأنماط اللي بتحل مسائل الانترفيو، بالـ JavaScript</div></button>
@@ -122,6 +129,23 @@
   </div>
   <div class="path">
     <h2>ترتيب المذاكرة</h2>
+    <p class="path-note">الهدف هنا إنك تبني مواقع كاملة وتوصل لأول شغل. المدد تقريبية لحد بيذاكر ساعتين لـ ٣ في اليوم، وكل مرحلة بتخلص بمشروع من <button type="button" data-go="projects" data-lv="0">المشاريع</button>: متنقلش للمرحلة اللي بعدها غير لما مشروعها يشتغل ويتنشر. واختار <b>backend واحد</b> بس (Node أو Python أو PHP) وكمّل بيه، متذاكرش التلاتة.</p>
+    <h3 class="path-h">مسار الـ Full Stack</h3>
+    <ol class="path-full">
+      <li><b>الشهر الأول، الأساس:</b> <button type="button" data-go="start" data-lv="0">ابدأ من هنا</button>، و <button type="button" data-go="vscode" data-lv="1">VS Code ١</button> و <button type="button" data-go="os" data-lv="1">اختصارات النظام ١</button>، و <button type="button" data-go="wsl" data-lv="1">WSL</button> لو على ويندوز، و <button type="button" data-go="bash" data-lv="1">bash ١</button> و <button type="button" data-go="git" data-lv="1">Git ١</button>. وفي نفس الوقت <button type="button" data-go="js" data-lv="1">JavaScript ١</button> من أول «أساسيات البرمجة»، و <button type="button" data-go="css" data-lv="1">HTML و CSS ١</button>. المشروع: <button type="button" data-go="projects" data-lv="1">مشروع ١ و ٢</button>.</li>
+      <li><b>الشهر التاني، الويب بجد:</b> <button type="button" data-go="js" data-lv="2">JavaScript ٢</button> و <button type="button" data-go="css" data-lv="2">HTML و CSS ٢</button>، و <button type="button" data-go="web" data-lv="1">المتصفح ١ و ٢</button>، و <button type="button" data-go="git" data-lv="2">Git ٢</button>، و <button type="button" data-go="node" data-lv="1">Node و npm ١</button>. وابدأ <button type="button" data-go="dsa" data-lv="1">DSA ١</button> مسألة كل يوم. المشروع: <button type="button" data-go="projects" data-lv="1">مشروع ٣</button>.</li>
+      <li><b>الشهر ٣ و ٤، الفرونت إند:</b> <button type="button" data-go="ts" data-lv="1">TypeScript ١ و ٢</button>، و <button type="button" data-go="react" data-lv="1">React ١ و ٢</button>، و <button type="button" data-go="quality" data-lv="2">فحص الكود ٢: تكتب اختبارات</button>، و <button type="button" data-go="react" data-lv="3">React ٣: الاختبارات</button>. المشروع: <button type="button" data-go="projects" data-lv="2">مشروع ٤</button>.</li>
+      <li><b>الشهر ٤ و ٥، الباك إند (واحد بس):</b> <button type="button" data-go="api" data-lv="1">Backend بـ Node ١ و ٢</button>، أو <button type="button" data-go="pyapi" data-lv="1">Python و FastAPI</button>، أو <button type="button" data-go="php" data-lv="1">PHP و MySQL</button>. ومعاه <button type="button" data-go="data" data-lv="1">SQL و Prisma ١ و ٢</button> و <button type="button" data-go="pg" data-lv="1">PostgreSQL ١</button>، و <button type="button" data-go="sec" data-lv="1">أمان الموقع</button>، و <button type="button" data-go="api" data-lv="3">Backend ٣: الاختبارات</button>. المشروع: <button type="button" data-go="projects" data-lv="2">مشروع ٥</button>.</li>
+      <li><b>الشهر ٦، full-stack ونشر:</b> <button type="button" data-go="next" data-lv="1">Next.js ١ و ٢</button>، و <button type="button" data-go="arch" data-lv="1">بناء مشروع كامل ١ و ٢</button>، و <button type="button" data-go="vps" data-lv="1">VPS ١ و ٢</button> و <button type="button" data-go="docker" data-lv="1">Docker ١</button> و <button type="button" data-go="nginx" data-lv="1">Nginx</button> و <button type="button" data-go="gha" data-lv="1">GitHub Actions ١</button>، و <button type="button" data-go="quality" data-lv="3">Playwright</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٦</button> منشور على دومين.</li>
+      <li><b>الشهر ٧ وبعده، العمق:</b> <button type="button" data-go="arch" data-lv="3">بناء مشروع كامل ٣</button>، و <button type="button" data-go="apis" data-lv="1">APIs متقدمة</button>، و <button type="button" data-go="sweng" data-lv="1">هندسة البرمجيات</button>، و <button type="button" data-go="data" data-lv="3">SQL و Prisma ٣</button>، و <button type="button" data-go="next" data-lv="3">Next.js ٣</button>، و <button type="button" data-go="diag" data-lv="1">التشخيص</button> و <button type="button" data-go="real" data-lv="1">من مشاريعي</button>، و <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button> لما تحتاجه، و <button type="button" data-go="ai" data-lv="1">الذكاء الاصطناعي</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٧</button>. وكمّل <button type="button" data-go="dsa" data-lv="2">DSA ٢ و ٣</button>.</li>
+      <li><b>التوظيف:</b> <button type="button" data-go="career" data-lv="1">الشغل والكارير</button> من بعد مشروع ٥ (الـ portfolio والـ CV مش لازم يستنوا)، و <button type="button" data-go="interview" data-lv="1">الانترفيو</button> قبل أي انترفيو بأسبوعين، و «اختبرني» و «راجع اللي نسيته» كل يوم.</li>
+    </ol>
+    <h3 class="path-h">مسار الاختبارات</h3>
+    <p class="path-note"><button type="button" data-go="quality" data-lv="2">فحص الكود ٢: أول اختبار</button> ثم <button type="button" data-go="api" data-lv="3">Backend ٣: supertest وقاعدة اختبار</button> ثم <button type="button" data-go="react" data-lv="3">React ٣: Testing Library و MSW</button> ثم <button type="button" data-go="quality" data-lv="3">فحص الكود ٣: Playwright</button> ثم <button type="button" data-go="sweng" data-lv="3">هندسة البرمجيات ٣: TDD</button>.</p>
+    <h3 class="path-h">مش محتاجهم بعمق لهدف الويب</h3>
+    <p class="path-note"><button type="button" data-go="ps" data-lv="0">PowerShell</button> و <button type="button" data-go="cmd" data-lv="0">CMD</button> و <button type="button" data-go="zsh" data-lv="0">zsh</button>: اللي على جهازك بس، وأساسياته. <button type="button" data-go="os" data-lv="2">اختصارات النظام ٢ و ٣</button>: وقت ما تحتاجها. أجزاء AWS و Kubernetes و Terraform في <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button>: بعد أول شغل. <button type="button" data-go="flutter" data-lv="1">Flutter</button> و <button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button>: لو عايز موبايل. <button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو اخترت PostgreSQL، والباك إندات التانية غير اللي اخترته.</p>
+    <details class="path-ops">
+      <summary>ترتيب مسار السيرفرات والترمنال بالتفصيل</summary>
     <ol>
       <li><button type="button" data-go="start" data-lv="0">ابدأ من هنا</button>: المفاهيم الأساسية بالراحة. متتخطاهاش حتى لو حاسس إنك فاهم.</li>
       <li><button type="button" data-go="os" data-lv="1">اختصارات النظام</button> و <button type="button" data-go="vscode" data-lv="1">VS Code المستوى ١</button> من أول يوم: كل اختصار بيوفّر ثواني، وبتتجمع ساعات. و <button type="button" data-go="vscode" data-lv="3">VS Code ٣</button> مع أول مشروع جد.</li>
@@ -155,6 +179,7 @@
       <li><b>الهندسة:</b> <button type="button" data-go="sweng" data-lv="1">هندسة البرمجيات</button> مع أول مشروع كبير، و <button type="button" data-go="apis" data-lv="1">APIs متقدمة</button> بعد Backend المستوى ٢، و <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button> بعد VPS و Docker.</li>
       <li><button type="button" data-go="dsa" data-lv="1">DSA</button> مسألة أو اتنين كل يوم، و <button type="button" data-go="interview" data-lv="1">الانترفيو</button> قبل أي انترفيو بأسبوعين: كل يوم «اختبرني» و «راجع اللي نسيته».</li>
     </ol>
+    </details>
   </div>
 </div>
 
@@ -189,7 +214,7 @@
   </section>
 
   <section class="block" id="missions">
-    <h2>تحديات تجمع كذا أمر مع بعض</h2>
+    <h2>تحديات: أوامر ترمنال وبرمجة</h2>
     <p>حل كل تحدي بنفسك الأول، وبعدين افتح الحل وقارن. التحديات دي شبه مواقف هتقابلك فعلًا في الشغل.</p>
     <div id="mBox"></div>
   </section>
@@ -263,6 +288,8 @@
 <script src="js/tabs/sweng.js"></script>
 <script src="js/tabs/apis.js"></script>
 <script src="js/tabs/cloud.js"></script>
+<script src="js/tabs/projects.js"></script>
+<script src="js/tabs/career.js"></script>
 <script src="js/extras.js"></script>
 <script src="js/app.js"></script>
 </body>

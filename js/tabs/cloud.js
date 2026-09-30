@@ -8,6 +8,8 @@
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
+//   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
+//   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("cloud", {
@@ -17,7 +19,7 @@ TAB("cloud", {
 aws configure
 aws sts get-caller-identity`,
   labText: "افتح حساب AWS مجاني وفعّل MFA و budget alert من أول يوم (درس في المستوى ١). جرّب على منطقة واحدة وامسح كل حاجة بعد التجربة.",
-  levels: {"1":["الأساس","يعني إيه cloud، و IAM، و regions، والتكلفة، و AWS CLI"],"2":["الخدمات","EC2 و S3 و RDS و CloudFront و Lambda و Cloudflare و Vercel"],"3":["DevOps","containers في الـ cloud، و Kubernetes، و Terraform، والمراقبة، و SRE، وأسئلة الانترفيو"]},
+  levels: {"1":["الأساس","يعني إيه cloud، و IAM، و regions، والتكلفة، و AWS CLI"],"2":["الخدمات","EC2 و S3 و RDS و CloudFront و Lambda و Cloudflare (و R2 و Workers و Tunnel) و Vercel، ومنصات الباك إند: Render و Railway و Fly.io و Coolify"],"3":["DevOps","containers في الـ cloud، و Kubernetes، و Terraform، والمراقبة، و OpenTelemetry والـ tracing، و SRE، وأسئلة الانترفيو"]},
   categories: [
     {
       t: "يعني إيه cloud",
@@ -56,48 +58,80 @@ aws lambda invoke --function-name hello out.json`,
             "managed (PaaS): AWS بيشغّل ويحدّث Postgres، وانت بتسأل بس هو على أنهي نسخة.",
             "PaaS كامل: بتدّي Vercel الكود وهو يبني ويشغّل وينشر.",
             "serverless: بتنادي دالة، ومفيش سيرفر تشوفه ولا تحدّثه."
-          ]
+          ],
+          sol: R`مفيش ناتج واحد صح، بس الجدول بتاعك المفروض يطلع شبه كده: موقع static على Vercel أو Netlify = PaaS (المنصة بتحدّث كل حاجة، ومفيش قاعدة بيانات أصلًا). API على VPS من DigitalOcean أو Hetzner أو EC2 = IaaS: انت اللي كنت بتعمل [[apt upgrade]]، وانت اللي كنت المفروض تعمل [[pg_dump]] بـ cron. تطبيق على Render أو Railway مع Postgres بتاعهم = PaaS: هما بيحدّثوا النظام، والباك أب اليومي عليهم (بس على قد الخطة). دالة على Lambda أو Vercel Functions = serverless: مفيش نظام تشغيل تحدّثه خالص.
+
+السؤال التاني هو المهم: لو كتبت «محدش» قدام «مين بيعمل باك أب؟» في مشروع IaaS، يبقى ده خطر حقيقي لقيته، مش مجرد تصنيف. وخلي بالك إن Supabase أو Neon أو RDS بيعملوا باك أب، بس انت لسه مسؤول عن الداتا نفسها: لو مسحت جدول بالغلط، المنصة مش هترجّعه لوحدها إلا لو فيه PITR وانت عارف تستخدمه.
+
+الغلطة الشائعة: تكتب «Docker على VPS» على إنه PaaS. الـ Docker بيغيّر طريقة التشغيل، بس السيرفر لسه بتاعك: التحديثات والفايروول والديسك عليك، فده IaaS. ونفس الكلام لـ Coolify: شكله PaaS، بس السيرفر تحته لسه مسؤوليتك.`
         },
         {
           cmd: "VPS ولا managed ولا PaaS",
           title: "فريق صغير: يستضيف مشروعه فين؟",
           desc: R`مفيش اختيار صح دايمًا: VPS أرخص وفيه تحكم كامل بس الصيانة كلها عليك، و PaaS أسرع بداية وأغلى مع الكبر، و managed cloud مرن وقوي بس معقّد ومحتاج حد فاهم.
 
-الدالة دي مش قاعدة مقدّسة، هي طريقة تفكير: حجم الفريق، وشكل الترافيك، ومحتاج سيرفر خاص ولا لأ، والميزانية.`,
-          example: R`function pickHosting({ devs, traffic, needsServer, budgetUsd }) {
-  if (devs <= 2 && !needsServer) return "PaaS: Vercel + Neon أو Supabase";
-  if (budgetUsd < 20) return "VPS واحد + Docker Compose + باك أب برا السيرفر";
+وبين الـ frontend PaaS (Vercel) والـ VPS الخام فيه درجتين ناس كتير بتنساهم: container PaaS (Render و Railway و Fly.io) بيشغّل API و worker و Postgres من الريبو، و self-hosted PaaS (Coolify أو Dokploy على VPS بتاعك) بيدّيك نفس الراحة بسعر السيرفر.
+
+الدالة دي مش قاعدة مقدّسة، هي طريقة تفكير: حجم الفريق، وشكل الترافيك، ومحتاج سيرفر خاص ولا لأ، والميزانية، وفيه حد يعرف Linux ولا لأ.`,
+          example: R`function pickHosting({ devs, traffic, needsServer, budgetUsd, knowsLinux }) {
+  if (devs <= 2 && !needsServer) return "frontend PaaS: Vercel + Neon أو Supabase";
+  if (budgetUsd < 20 && !knowsLinux) return "container PaaS: Render أو Railway أو Fly.io";
+  if (budgetUsd < 20) return "VPS + Coolify أو Dokploy (أو Docker Compose بإيدك)";
   if (traffic === "spiky") return "serverless: Lambda أو Vercel Functions";
+  if (devs <= 5) return "container PaaS مدفوع + Postgres مُدار";
   return "managed: ECS Fargate + RDS + CloudFront";
 }
 console.log(pickHosting({ devs: 1, traffic: "steady", needsServer: false, budgetUsd: 0 }));
-console.log(pickHosting({ devs: 2, traffic: "steady", needsServer: true, budgetUsd: 10 }));
-console.log(pickHosting({ devs: 6, traffic: "steady", needsServer: true, budgetUsd: 400 }));`,
+console.log(pickHosting({ devs: 2, traffic: "steady", needsServer: true, budgetUsd: 10, knowsLinux: false }));
+console.log(pickHosting({ devs: 2, traffic: "steady", needsServer: true, budgetUsd: 10, knowsLinux: true }));
+console.log(pickHosting({ devs: 4, traffic: "steady", needsServer: true, budgetUsd: 150, knowsLinux: true }));
+console.log(pickHosting({ devs: 6, traffic: "steady", needsServer: true, budgetUsd: 400, knowsLinux: true }));`,
           try: "شغّل الدالة على ٣ مشاريع عملتها قبل كده. لو النتيجة مختلفة عن اللي عملته فعلًا، اكتب ليه، وهل اختيارك كان أحسن ولا لأ.",
           flag: "script",
           deep: {
             why: "أغلب المشاريع الصغيرة بتقع في غلطة من اتنين: Kubernetes لموقع فيه ١٠٠ زائر في اليوم، أو VPS محدش بيحدّثه ولا بيعمل له باك أب لحد ما الديسك يبوظ. الاختيار الصح بيوفر فلوس ووقت ووجع دماغ.",
             how: R`VPS (Hetzner أو DigitalOcean أو Hostinger): سعر ثابت وقليل، وبتعمل اللي انت عايزه: Docker و cron و WebSockets و workers. بس انت الـ sysadmin: تحديثات، وفايروول، وباك أب، ومراقبة. ولو السيرفر وقع الموقع كله وقع. التفاصيل في تاب VPS وتاب Docker.
 
-PaaS (Vercel و Netlify و Supabase و Neon): بتعمل push والموقع يطلع، و preview لكل branch، و SSL تلقائي. بس السعر بيقفز مع الترافيك، وفيه حدود (مدة الدالة، وحجم الطلب)، وحاجات زي WebSockets طويلة أو شغل خلفي بالساعات مش مكانها.
+frontend PaaS (Vercel و Netlify و Cloudflare Pages، ومعاهم Supabase و Neon للقاعدة): بتعمل push والموقع يطلع، و preview لكل branch، و SSL تلقائي. بس السعر بيقفز مع الترافيك، وفيه حدود (مدة الدالة، وحجم الطلب)، وحاجات زي WebSockets طويلة أو شغل خلفي بالساعات مش مكانها.
+
+container PaaS (Render و Railway و Fly.io): بتدّيله Dockerfile أو ريبو، وهو يشغّل process حقيقي شغال على طول: API و worker و cron، ومعاهم Postgres و Redis مُدارين، و SSL ولوجات. ده الاختيار الطبيعي لـ Express أو FastAPI مع worker لما محدش عايز يبقى sysadmin. العيب إن كل خدمة بتتحاسب لوحدها، فالفاتورة بتكبر مع عدد الخدمات. الدروس في فئة «منصات جاهزة للباك إند»: [[render.yaml]] و [[railway]] و [[fly launch]].
+
+self-hosted PaaS (Coolify أو Dokploy على VPS): نفس تجربة push-to-deploy و SSL والباك أب، بسعر السيرفر. بس نظام التشغيل والأمان والباك أب برا السيرفر لسه عليك. درس [[Coolify / Dokploy]]، وإمتى تنقل من ده لده في درس [[PaaS ولا VPS: الحساب]].
 
 managed cloud (ECS و RDS على AWS): تقدر تبني أي حاجة وتكبر لأي حجم، ومعاك Multi-AZ وباك أب تلقائي. بس فيه عشرات الإعدادات (VPC و IAM و security groups)، والفاتورة معقدة، ومحتاج حد يفهمها.
 
-طريق شائع ومعقول: تبدأ PaaS أو VPS، ولما الترافيك أو الفريق يكبر تنقل الأجزاء اللي محتاجة لـ AWS. وخلي التطبيق من الأول «سهل النقل»: Docker، ومتغيرات بيئة، والملفات في object storage مش على الديسك.`,
+طريق شائع ومعقول: تبدأ PaaS (frontend أو container) أو VPS بـ Coolify، ولما الترافيك أو الفريق يكبر تنقل الأجزاء اللي محتاجة لـ AWS. وخلي التطبيق من الأول «سهل النقل»: Docker، ومتغيرات بيئة، والملفات في object storage مش على الديسك.`,
             when: "في أول يوم من أي مشروع، وكل ما الفاتورة أو وقت الصيانة يزيد بشكل ملحوظ.",
-            mistakes: "تختار AWS عشان «الشركات الكبيرة بتستخدمه» وانت لوحدك، فتقضي أسبوع في VPC و IAM بدل ما تبني المنتج. وتحط موقع تجاري على خطة Hobby في Vercel وهي للاستخدام الشخصي غير التجاري بس. وتحفظ الملفات اللي المستخدمين بيرفعوها على ديسك الـ VPS، فلما تنقل أو تكبّر لازم تنقلها بإيدك."
+            mistakes: "تختار AWS عشان «الشركات الكبيرة بتستخدمه» وانت لوحدك، فتقضي أسبوع في VPC و IAM بدل ما تبني المنتج. وتحط موقع تجاري على خطة Hobby في Vercel وهي للاستخدام الشخصي غير التجاري بس. وتحفظ الملفات اللي المستخدمين بيرفعوها على ديسك الـ VPS، فلما تنقل أو تكبّر لازم تنقلها بإيدك. وتنط من Vercel لـ VPS خام لأول API عندك، وانت ممكن تشغّله على Render أو Railway في ساعة، أو على نفس الـ VPS بـ Coolify من غير ما تكتب Nginx config."
           },
           lines: [
-            "دالة بتاخد وصف المشروع.",
-            "فريق صغير ومش محتاج سيرفر خاص: منصة جاهزة.",
-            "ميزانية قليلة: سيرفر واحد وانت اللي بتديره.",
+            "دالة بتاخد وصف المشروع (وهل فيه حد يعرف Linux).",
+            "فريق صغير ومش محتاج سيرفر خاص: منصة frontend جاهزة.",
+            "ميزانية قليلة ومحدش يعرف Linux: container PaaS.",
+            "ميزانية قليلة وفيه حد يعرف Linux: VPS، والأسهل بـ Coolify أو Dokploy.",
             "ترافيك بيقفز وينزل: ادفع على الطلب.",
+            "فريق صغير لمتوسط بميزانية: container PaaS مدفوع وقاعدة مُدارة.",
             "غير كده: managed على AWS.",
             "قفلة الدالة.",
-            "مطوّر واحد ومش محتاج سيرفر: PaaS.",
-            "محتاج سيرفر وميزانيته ١٠ دولار: VPS.",
+            "مطوّر واحد ومش محتاج سيرفر: frontend PaaS.",
+            "محتاج سيرفر وميزانيته ١٠ دولار ومحدش يعرف Linux: container PaaS.",
+            "نفس المشروع بس فيه حد يعرف Linux: VPS + Coolify.",
+            "٤ مطورين وميزانية ١٥٠: container PaaS مدفوع.",
             "فريق أكبر وميزانية: managed."
-          ]
+          ],
+          sol: R`المثال نفسه بيطبع بالترتيب: [[frontend PaaS]]، و [[container PaaS: Render ...]]، و [[VPS + Coolify ...]]، و [[container PaaS مدفوع ...]]، و [[managed: ECS Fargate ...]]. ولما جرّبت ٣ مشاريع تانية (الكود تحت) طلع: موقع static لشخص واحد = [[frontend PaaS]]، و API بـ ٥ دولار وانت عارف Linux = [[VPS + Coolify]]، و API بترافيك متقطع وميزانية ١٠٠ = [[serverless]].
+
+وفيه حالة مفاجئة: فريق من ٣ بموقع static من غير سيرفر وميزانية صفر بيطلع [[container PaaS]]، لأن أول شرط فيه [[devs <= 2]]، و [[knowsLinux]] مش متبعت فبيبقى [[undefined]]. يعني الدالة بتجاوب على ترتيب الشروط مش على المنطق. ده بالظبط اللي التجربة عايزاك تلاحظه: لو النتيجة مختلفة عن اللي عملته، اسأل الأول «هل الدالة ناقصها سؤال؟» (زي: الموقع static ولا لأ؟ فيه SLA؟ فيه داتا حساسة؟) قبل ما تقول اختيارك كان غلط.
+
+الإجابة الكويسة لكل مشروع بتقول جملة زي: «اخترت VPS عشان كان رخيص، بس دفعت التمن في وقت الصيانة والباك أب اللي معملتوش، فالـ PaaS كان أحسن لحجم المشروع ده».`,
+          solCode: R`console.log(pickHosting({ devs: 1, traffic: "steady", needsServer: false, budgetUsd: 0 }));
+console.log(pickHosting({ devs: 1, traffic: "steady", needsServer: true, budgetUsd: 5, knowsLinux: true }));
+console.log(pickHosting({ devs: 3, traffic: "spiky", needsServer: true, budgetUsd: 100, knowsLinux: true }));
+console.log(pickHosting({ devs: 3, traffic: "spiky", needsServer: false, budgetUsd: 0 }));
+// frontend PaaS: Vercel + Neon أو Supabase
+// VPS + Coolify أو Dokploy (أو Docker Compose بإيدك)
+// serverless: Lambda أو Vercel Functions
+// container PaaS: Render أو Railway أو Fly.io`
         }
       ]
     },
@@ -134,7 +168,14 @@ aws account get-alternate-contact --alternate-contact-type SECURITY`,
             "اليوزرز اللي في الحساب وآخر مرة كل واحد دخل.",
             "مفاتيح يوزر معين: لو فيه مفتاح قديم مش مستخدم، امسحه.",
             "إيميل الأمان اللي AWS بيبعت عليه التنبيهات."
-          ]
+          ],
+          sol: R`أول أمر المفروض يطبع:
+
+[[{ "rootMfa": 1, "rootKeys": 0 }]]
+
+[[rootMfa: 1]] معناها إن الـ root عليه MFA، و [[rootKeys: 0]] معناها إن مفيش access keys للـ root. ولو عايز سطر واحد في سكربت ضيف [[--output text]] فيطلع [[1	0]].
+
+لو طلع [[rootMfa: 0]] يبقى الـ MFA اتضاف لـ IAM user مش للـ root (غلطة مشهورة: دخلت بيوزر وضفت MFA لنفسك). ولو [[rootKeys: 1]] امسح المفتاح فورًا من Security credentials وانت داخل بالـ root. ولو الأمر نفسه رجّع [[AccessDenied]] يبقى اليوزر اللي بتشغّل بيه ملوش صلاحية [[iam:GetAccountSummary]]، وده طبيعي لو هو يوزر محدود؛ شغّله من هوية فيها صلاحيات قراءة IAM. وأمر [[get-alternate-contact]] لو رجّع [[ResourceNotFoundException]] يبقى مفيش إيميل أمان متسجل: سجّله من Account settings.`
         },
         {
           cmd: "Budgets و free tier",
@@ -166,7 +207,20 @@ done`,
             "لف على كل region مفعّلة في الحساب.",
             "اطبع اسم الـ region والسيرفرات اللي فيها (لو فاضي يبقى مفيش).",
             "نهاية الـ loop."
-          ]
+          ],
+          sol: R`بعد ما تعمل الـ budget، أمر [[describe-budgets]] المفروض يرجّع حاجة زي [[["monthly", "5.0", "0.0"]]]: الاسم والحد (AWS بيرجّعه بعلامة عشرية) والمصروف الفعلي. وهيوصلك إيميل من AWS Budgets عند ٨٠٪ (٤ دولار). والملفين لو عايز تعمله بالترمنال تحت (نفس الـ JSON اللي في الـ deep).
+
+الـ loop المفروض يطبع كل region وجنبها فاضي، زي [[eu-central-1: ]] و [[us-east-1: ]]. أي region جنبها [[i-0...]] يبقى فيه سيرفر شغال (أو stopped، والـ stopped لسه بيتحاسب على الديسك). عشان تشوف الحالة كمان غيّر الـ query لـ [[Reservations[].Instances[].[InstanceId,State.Name]]].
+
+الأخطاء الشائعة: region طالعة [[An error occurred (AuthFailure)]] أو [[UnauthorizedOperation]]، وده غالبًا region مش مفعّلة (opt-in زي me-central-1) أو صلاحياتك ناقصة، مش سيرفر. والإيميل ميوصلش لأنك نسيت تأكد اشتراك SNS لو استخدمته بدل الإيميل المباشر.`,
+          solCode: R`cat > budget.json <<'EOF'
+{"BudgetName":"monthly","BudgetLimit":{"Amount":"5","Unit":"USD"},"BudgetType":"COST","TimeUnit":"MONTHLY"}
+EOF
+cat > notify.json <<'EOF'
+[{"Notification":{"NotificationType":"FORECASTED","ComparisonOperator":"GREATER_THAN","Threshold":80,"ThresholdType":"PERCENTAGE"},
+  "Subscribers":[{"SubscriptionType":"EMAIL","Address":"you@example.com"}]}]
+EOF
+aws budgets create-budget --account-id $(aws sts get-caller-identity --query Account --output text) --budget file://budget.json --notifications-with-subscribers file://notify.json`
         }
       ]
     },
@@ -213,7 +267,12 @@ aws logout --profile personal`,
             "كل الأوامر الجاية في الترمنال ده تروح لـ work.",
             "انت مين دلوقتي؟ رقم الحساب والـ ARN.",
             "امسح المفاتيح المؤقتة بتاعة personal."
-          ]
+          ],
+          sol: R`بعد [[aws login]] و [[aws sts get-caller-identity]] هيطلع JSON فيه ٣ حاجات: [[UserId]] و [[Account]] (رقم حسابك، ١٢ رقم) و [[Arn]]. والـ ARN بيقولك انت مين: لو دخلت بيوزر هتلاقي [[arn:aws:iam::123456789012:user/ali]]، ولو بـ SSO أو role هتلاقي [[arn:aws:sts::123456789012:assumed-role/...]]. و [[aws login]] نفسه في الآخر بيطبع سطر زي [[Updated profile default to use arn:aws:... credentials.]]
+
+وفي [[~/.aws/config]] هتلاقي section زي [[[profile personal]]] فيه [[login_session]] و [[region]]، ومفيش [[aws_access_key_id]]. و [[~/.aws/credentials]] يا إما مش موجود يا إما فاضي من الـ profile ده. ولو لقيت فيه [[aws_access_key_id = AKIA...]] يبقى ده مفتاح دايم من [[aws configure]] قديم: اتأكد إنه مش مستخدم وامسحه من IAM.
+
+الأخطاء الشائعة: [[aws: error: argument command: Invalid choice ... login]] معناها نسخة الـ CLI أقدم من 2.32، حدّثها. و [[Unable to locate credentials]] بعد الدخول معناها إنك دخلت بـ [[--profile personal]] وبتشغّل الأمر من غير [[--profile]] ولا [[AWS_PROFILE]]، فالـ CLI بيدوّر على [[default]].`
         },
         {
           cmd: "IAM users و roles",
@@ -247,7 +306,18 @@ aws sts get-caller-identity`,
             "اعمل instance profile (ده اللي بيتربط بالسيرفر فعلًا).",
             "حط الـ role جوه الـ instance profile.",
             "من جوه السيرفر: هتلاقي الهوية assumed-role/myapp-ec2 من غير أي مفتاح."
-          ]
+          ],
+          sol: R`من جوه السيرفر، [[aws sts get-caller-identity]] من غير أي configure المفروض يطلع [[Arn]] شكله [[arn:aws:sts::123456789012:assumed-role/myapp-ec2/i-0abc1234567890def]]: اسم الـ role، وبعده الـ instance id كاسم جلسة. ده دليل إن الـ CLI جاب مفاتيح مؤقتة من IMDS لوحده. وتقدر تشوف ده بنفسك بـ [[curl]] على IMDSv2 (تحت): هترجع اسم الـ role.
+
+لو طلع [[Unable to locate credentials]] يبقى الـ instance profile مش مربوط (اربطه بـ [[aws ec2 associate-iam-instance-profile]] أو من الكونسول Modify IAM role)، أو اتربط من ثواني والصلاحيات لسه مانتشرتش. ولو [[create-instance-profile]] اشتغل بس الربط رجّع [[Invalid IAM Instance Profile name]] استنى ١٠ ثواني وجرّب تاني، لأن IAM eventually consistent. ولو الـ Arn طلع [[user/...]] يبقى فيه [[~/.aws/credentials]] أو متغيرات بيئة على السيرفر بتسبق الـ role، وده بالظبط اللي الدرس بيحذّر منه.`,
+          solCode: R`cat > trust-ec2.json <<'EOF'
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"ec2.amazonaws.com"},"Action":"sts:AssumeRole"}]}
+EOF
+aws ec2 associate-iam-instance-profile --instance-id i-0abc1234567890def --iam-instance-profile Name=myapp-ec2
+# من جوه السيرفر:
+aws sts get-caller-identity --query Arn --output text
+TOKEN=$(curl -s -X PUT http://169.254.169.254/latest/api/token -H "X-aws-ec2-metadata-token-ttl-seconds: 60")
+curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/iam/security-credentials/`
         },
         {
           cmd: "IAM policy JSON",
@@ -300,7 +370,22 @@ least privilege معناها أقل صلاحية تخلي الشغل يمشي: �
             "نهاية القاعدة التانية.",
             "نهاية القايمة.",
             "نهاية الـ policy."
-          ]
+          ],
+          sol: R`التلات أسئلة ونتيجتهم (بـ [[--query]] عشان يطلع الـ decision بس):
+
+[[s3:DeleteObject]] على [[uploads/a.png]] = [[explicitDeny]]: فيه statement فيه [[Deny]] بيغطي [[myapp-assets/*]]، والـ Deny بيكسب أي Allow.
+[[s3:PutObject]] على [[uploads/a.png]] = [[allowed]].
+[[s3:PutObject]] على [[avatars/a.png]] = [[implicitDeny]]: مفيش Allow بيغطي المسار ده، ومفيش Deny كمان، فبيقع في «ممنوع افتراضي».
+
+الفرق بين الاتنين هو الدرس كله: [[implicitDeny]] بيتحل بإنك تضيف Allow، إنما [[explicitDeny]] مش هيتحل غير لو شلت الـ Deny نفسه. ولو [[PutObject]] على [[uploads/]] طلع [[implicitDeny]] عندك، غالبًا الـ policy مش مربوطة بالـ role اللي في [[--policy-source-arn]]، أو كتبت الـ Resource من غير [[/*]]. ولو الأمر رجّع [[NoSuchEntity]] يبقى الـ role مش موجودة بالاسم ده أو رقم الحساب في الـ ARN مش بتاعك (استبدل [[123456789012]] برقمك).`,
+          solCode: R`aws iam put-role-policy --role-name myapp-ec2 --policy-name s3-uploads --policy-document file://s3-uploads.json
+ROLE=arn:aws:iam::123456789012:role/myapp-ec2
+aws iam simulate-principal-policy --policy-source-arn $ROLE --action-names s3:DeleteObject --resource-arns arn:aws:s3:::myapp-assets/uploads/a.png --query "EvaluationResults[].EvalDecision" --output text
+# explicitDeny
+aws iam simulate-principal-policy --policy-source-arn $ROLE --action-names s3:PutObject --resource-arns arn:aws:s3:::myapp-assets/uploads/a.png --query "EvaluationResults[].EvalDecision" --output text
+# allowed
+aws iam simulate-principal-policy --policy-source-arn $ROLE --action-names s3:PutObject --resource-arns arn:aws:s3:::myapp-assets/avatars/a.png --query "EvaluationResults[].EvalDecision" --output text
+# implicitDeny`
         }
       ]
     },
@@ -341,7 +426,12 @@ aws ec2 describe-availability-zones --region eu-central-1 --query "AvailabilityZ
             "نهاية الـ loop.",
             "الـ regions المفعّلة في حسابك (الافتراضية واللي فعّلتها).",
             "الـ AZs اللي في فرانكفورت."
-          ]
+          ],
+          sol: R`كل سطر هيطبع اسم الـ region وجنبه وقت فتح الاتصال بالثواني، زي [[eu-central-1 0.061]]. الأرقام الحقيقية بتفرق حسب مزوّد الإنترنت، بس من مصر الشكل المتوقع: فرانكفورت وميلان (eu-central-1 و eu-south-1) غالبًا الأقرب في حدود ٥٠ لـ ٩٠ مللي، والخليج (me-central-1 في الإمارات و me-south-1 في البحرين) ممكن يطلعوا أقرب أو أبعد حسب مسار الكابلات، مش حسب المسافة على الخريطة. وده ليه بتقيس ٣ مرات: رقم واحد ممكن يكون صدفة زحمة.
+
+من VPS في أوروبا الأرقام هتبقى أصغر بكتير (١٠ لـ ٣٠ مللي لفرانكفورت)، وده بيوضّح إن اللي يهم هو مكان اليوزرز مش مكانك انت.
+
+لو سطر طلع [[0.000000]] يبقى الاتصال فشل (DNS أو region انت مش واصل لها)، مش إنه سريع جدًا. واختيار الـ region مش على الـ latency بس: الأسعار (الخليج أغلى شوية) وتوفر الخدمات وقوانين حفظ البيانات بيفرقوا كمان. وأمر [[list-regions]] ممكن ميعرضش me-central-1 لو هي opt-in ومش مفعّلة عندك.`
         },
         {
           cmd: "الخدمات الأساسية",
@@ -380,7 +470,16 @@ messaging: SQS (طابور)، و SNS (إشعارات)، و SES (إيميل)، و
             "دوال Lambda ونسخة الـ runtime بتاعة كل واحدة.",
             "الـ CDN: رقم كل distribution والدومين بتاعه.",
             "الدومينات اللي على Route 53."
-          ]
+          ],
+          sol: R`على حساب فاضي، الأوامر مش هترجّع خطأ، هترجّع فاضي: الـ table من غير صفوف، و [[aws s3 ls]] مش هيطبع حاجة، و [[route53]] يطبع [[[]]]. ده المتوقع، مش مشكلة. ولو أي أمر رجّع [[AccessDenied]] يبقى هويتك ناقصها صلاحية قراءة للخدمة دي.
+
+وأمر الـ log groups ممكن يبقى كده:
+
+[[aws logs describe-log-groups --query "logGroups[].logGroupName" --output table]]
+
+على حساب جديد غالبًا فاضي، ولو عملت Lambda قبل كده هتلاقي [[/aws/lambda/hello]]. والغلطة الشائعة هنا إن حرف الـ query بيفرق: [[logGroups]] بـ g صغيرة، مش [[LogGroups]] زي [[Reservations]] في EC2. كل خدمة ليها شكل رد مختلف، فشغّل الأمر من غير [[--query]] الأول وشوف أسماء الحقول، وبعدين اكتب الـ query. ولو الـ table طلع فاضي في حساب فيه Lambdas، اتأكد من الـ region.`,
+          solCode: R`aws logs describe-log-groups --query "logGroups[].logGroupName" --output table
+aws logs describe-log-groups --query "logGroups[].[logGroupName,retentionInDays,storedBytes]" --output table`
         }
       ]
     },
@@ -423,7 +522,12 @@ aws s3 presign s3://myapp-assets/public/logo.png --expires-in 600`,
             "اعرض كل اللي في الـ bucket بأحجام مقروءة.",
             "نزّل ملف من S3 لجهازك.",
             "رابط مؤقت لمدة ١٠ دقايق للملف ده بس، والـ bucket لسه مقفول."
-          ]
+          ],
+          sol: R`الأوامر بتطبع بالترتيب تقريبًا: [[make_bucket: myapp-assets-ali-7]]، وبعدين JSON فيه الأربع قيم [[BlockPublicAcls]] و [[IgnorePublicAcls]] و [[BlockPublicPolicy]] و [[RestrictPublicBuckets]] كلهم [[true]] (ده الافتراضي للـ buckets الجديدة)، وبعدين [[upload: ./logo.png to s3://.../public/logo.png]]، و [[ls]] بيطبع سطر فيه التاريخ والحجم زي [[4.2 KiB public/logo.png]].
+
+الرابط العادي في المتصفح هيرجّع XML فيه [[<Code>AccessDenied</Code>]]، لأن الـ bucket مقفول ومفيش توقيع. والرابط اللي [[presign]] طلّعه طويل وفيه [[X-Amz-Algorithm=AWS4-HMAC-SHA256]] و [[X-Amz-Expires=600]] و [[X-Amz-Signature=...]]، وبيفتح الصورة. وبعد ١٠ دقايق نفس الرابط بيرجّع [[Request has expired]].
+
+أخطاء شائعة: [[BucketAlreadyExists]] يعني الاسم محجوز عند حد تاني في الدنيا، زوّد اسمك أو رقم. ولو فتحت رابط المثال نفسه ([[myapp-assets]]) من غير ما تغيّر الاسم هتلاقي [[NoSuchBucket]] مش AccessDenied، لأن الـ bucket ده مش موجود أصلًا. ولو الـ presign اتعمل بمفاتيح مؤقتة (login أو SSO)، الرابط بيحتوي [[X-Amz-Security-Token]] وبيموت مع الجلسة حتى لو [[--expires-in]] أطول. ولو رجّع [[SignatureDoesNotMatch]] اتأكد إن الـ region في الأمر هي region الـ bucket.`
         },
         {
           cmd: "presigned URL",
@@ -435,7 +539,7 @@ aws s3 presign s3://myapp-assets/public/logo.png --expires-in 600`,
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "node:crypto";
 
-const s3 = new S3Client({ region: "eu-central-1" });
+const s3 = new S3Client({ region: "eu-central-1", requestChecksumCalculation: "WHEN_REQUIRED" });
 const ALLOWED = ["image/png", "image/jpeg", "application/pdf"];
 
 app.post("/uploads/sign", requireAuth, async (req, res) => {
@@ -467,7 +571,7 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
             "كلاينت S3 والأمر اللي هنوقّعه.",
             "الدالة اللي بتوقّع من غير ما تكلّم S3.",
             "عشان أسامي ملفات عشوائية مبتتكررش.",
-            "الكلاينت مرة واحدة، وبياخد صلاحياته من الـ role.",
+            "الكلاينت مرة واحدة، وبياخد صلاحياته من الـ role. و WHEN_REQUIRED عشان الـ SDK ميحطّش checksum لملف فاضي في الـ URL فالرفع يفشل.",
             "الأنواع المسموحة بس.",
             "route محمي: لازم اليوزر يبقى مسجّل دخول.",
             "نوع مش مسموح؟ ارفض.",
@@ -476,7 +580,24 @@ app.post("/uploads/sign", requireAuth, async (req, res) => {
             "وقّع لمدة ٥ دقايق، وخلّي الـ Content-Type جزء من التوقيع (SDK v3 مش بيوقّعه لوحده).",
             "رجّع الـ URL والـ key للمتصفح.",
             "قفلة الـ route."
-          ]
+          ],
+          sol: R`الـ route بيرجّع JSON فيه [[key]] زي [[uploads/42/0e2027a6-...]] و [[url]] فيه [[X-Amz-SignedHeaders=content-type%3Bhost]]، يعني الـ Content-Type داخل في التوقيع. وطلب بنوع [[image/gif]] للـ route نفسه بيرجع [[400 {"error":"type"}]] من السيرفر. والرفع بـ curl بنوع [[image/png]] يرجّع 200 من غير body، والملف يظهر في [[aws s3 ls s3://myapp-assets/uploads/42/]]. ولو غيّرت الـ header في curl لـ [[image/gif]] على نفس الـ URL، S3 يرجّع 403 [[SignatureDoesNotMatch]].
+
+مهم: نسخ SDK v3 من أول 3.729 بتحسب checksum تلقائي، ومع الـ presign مفيش body وقت التوقيع، فالـ URL بيطلع فيه [[x-amz-checksum-crc32=AAAAAA%3D%3D]] (checksum لملف فاضي)، وأي رفع لملف حقيقي عليه بيفشل برسالة checksum. جرّبتها على 3.1143 والـ URL طلع فيه السطر ده فعلًا. الحل اللي في المثال دلوقتي: [[requestChecksumCalculation: "WHEN_REQUIRED"]] في الـ [[S3Client]]، وبعدها الـ URL بيطلع من غير checksum.
+
+الـ CORS: من المتصفح من غير CORS هتشوف في الـ console [[blocked by CORS policy]] والطلب نفسه اتبعت كـ preflight [[OPTIONS]] واترفض. بعد [[put-bucket-cors]] بالملف اللي تحت، الـ fetch يعدّي. ولو حطيت [[AllowedOrigins: ["*"]]] هيشتغل برضه، بس ده بيسمح لأي موقع يستخدم روابطك.`,
+          solCode: R`cat > cors.json <<'EOF'
+{
+  "CORSRules": [{
+    "AllowedOrigins": ["https://myapp.example.com", "http://localhost:5173"],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["content-type"],
+    "MaxAgeSeconds": 3000
+  }]
+}
+EOF
+aws s3api put-bucket-cors --bucket myapp-assets --cors-configuration file://cors.json
+aws s3api get-bucket-cors --bucket myapp-assets`
         },
         {
           cmd: "S3 + CloudFront",
@@ -508,7 +629,12 @@ aws cloudfront create-invalidation --distribution-id E1ABCDEF2GHIJK --paths "/in
             "ارفع الـ assets (أسماءها فيها hash) بكاش سنة، و immutable.",
             "ارفع index.html في الآخر، من غير كاش.",
             "قول لـ CloudFront يرمي نسخته القديمة من index.html بس."
-          ]
+          ],
+          sol: R`بعد الرفع، رابط [[https://dXXXX.cloudfront.net/]] المفروض يفتح الموقع (بسبب Default root object). بس [[/about]] مباشرة هيرجّع XML فيه [[<Code>AccessDenied</Code>]] بكود 403، مش 404، لأن CloudFront بيطلب ملف اسمه [[about]] من S3، والملف مش موجود، والـ bucket مقفول ومفيش [[s3:ListBucket]]، فـ S3 بيقول 403 بدل ما يعترف إن الملف مش موجود.
+
+الحل: في الـ distribution، Error pages، اعمل custom error response لـ 403 (و 404) بـ Response page path [[/index.html]] و HTTP response code 200. بعد ما التعديل يخلص deploy، [[curl -sI https://dXXXX.cloudfront.net/about]] يرجّع [[HTTP/2 200]] والصفحة تفتح و React Router يعرض [[/about]].
+
+لو الرئيسية نفسها رجّعت AccessDenied، يبقى الـ bucket policy مش متحدّثة بالـ OAC (انسخ الـ policy اللي الكونسول بيعرضها وحطها في الـ bucket)، أو Default root object فاضي. ولو ظهرت صفحة بيضا والـ console فيه 403 على ملفات [[/assets/]]، يبقى رفعت [[dist/assets]] لمسار غلط.`
         },
         {
           cmd: "CloudFront cache",
@@ -542,7 +668,12 @@ aws cloudfront list-distributions --query "DistributionList.Items[].[Id,Origins.
             "ارمي من الكاش كل صفحات المدونة وملف index (كل واحد path).",
             "حالة الـ invalidation: InProgress ولا Completed.",
             "كل distribution والـ origin اللي بيقرا منه."
-          ]
+          ],
+          sol: R`أول طلب بيرجّع [[x-cache: Miss from cloudfront]] ومفيش [[age]]، والطلب التاني [[x-cache: Hit from cloudfront]] ومعاه [[age: 3]] مثلًا، والرقم ده بيزيد كل ما تطلب بعدها (عمر النسخة في الـ edge بالثواني). و [[cache-control]] هو اللي انت رفعت بيه: [[public,max-age=31536000,immutable]].
+
+بعد [[create-invalidation]] هتاخد [[Id]] وحالة [[InProgress]]، و [[get-invalidation]] بعد دقيقة أو اتنين يقول [[Completed]]. الطلب اللي بعدها يرجع [[Miss from cloudfront]] تاني، وبعدين Hit. ولو شفت [[RefreshHit from cloudfront]] ده معناه إن الـ edge سأل الـ origin «اتغيّر؟» ورد «لأ»، فكمّل بنفس النسخة.
+
+الغلطة الشائعة: الطلبين يرجعوا Miss على طول. ده غالبًا لأنهم راحوا لـ edge مختلفين (فيه أكتر من IP)، أو لأن الـ cache policy بتحط query string أو header في الـ key، أو لأن الملف مرفوع بـ [[no-cache]] أو [[max-age=0]]. وخد بالك إن [[age]] مش هيقل بعد invalidation في المتصفح لو المتصفح نفسه كاشه: [[curl]] مفيهوش كاش، فهو الأصدق في التجربة دي.`
         }
       ]
     },
@@ -583,7 +714,18 @@ stateful معناها: الطلب اللي دخل على 443 رده بيخرج �
             "اسمح بـ SSH من IP بيتك بس ([[/32]] يعني عنوان واحد).",
             "قاعدة البيانات تقبل 5432 من أي حاجة لابسة security group السيرفرات بس.",
             "اعرض قواعد الدخول بتاعة security group القاعدة."
-          ]
+          ],
+          sol: R`[[create-security-group]] بيرجّع [[{"GroupId": "sg-..."}]]، خزّنه في متغير بدل ما تنسخه بإيدك (تحت). و [[describe-security-groups]] على الـ db المفروض يرجّع قاعدة واحدة: [[IpProtocol: tcp]] و [[FromPort/ToPort: 5432]] و [[UserIdGroupPairs]] فيها الـ [[GroupId]] بتاع الـ web، و [[IpRanges: []]] فاضية. والـ query اللي تحت بتطلّع كل الـ CIDRs مباشرة، والناتج المتوقع للـ db [[[]]].
+
+لو لقيت [[0.0.0.0/0]] في الـ db، غالبًا عملت [[--cidr 0.0.0.0/0]] بالغلط أو الكونسول «Anywhere» وانت بتجرّب، امسحها بـ [[revoke-security-group-ingress]] بنفس البارامترات. ولو [[authorize]] رجّع [[InvalidPermission.Duplicate]] يبقى القاعدة موجودة أصلًا. ولو [[--source-group]] رجّع [[InvalidGroup.NotFound]] يبقى الـ security groups في VPCs مختلفة.
+
+وخد بالك إن الـ egress الافتراضي مفتوح لكل حاجة ([[IpPermissionsEgress]] فيها [[0.0.0.0/0]])، وده طبيعي، السؤال في الـ ingress بس.`,
+          solCode: R`VPC=vpc-0abc1234
+WEB=$(aws ec2 create-security-group --group-name myapp-web --description "web servers" --vpc-id $VPC --query GroupId --output text)
+DB=$(aws ec2 create-security-group --group-name myapp-db --description "postgres" --vpc-id $VPC --query GroupId --output text)
+aws ec2 authorize-security-group-ingress --group-id $WEB --protocol tcp --port 443 --cidr 0.0.0.0/0
+aws ec2 authorize-security-group-ingress --group-id $DB --protocol tcp --port 5432 --source-group $WEB
+aws ec2 describe-security-groups --group-ids $DB --query "SecurityGroups[].IpPermissions[].IpRanges[].CidrIp"`
         },
         {
           cmd: "aws ec2 run-instances",
@@ -620,7 +762,17 @@ user data: السيرفر فيه برنامج اسمه cloud-init بيقرا ا�
             "شغّل السيرفر: النوع، والمفتاح، والفايروول، والـ role، وسكربت أول تشغيل، و IMDSv2، واسم.",
             "هات الـ IP العام والحالة.",
             "اقرا لوج سكربت أول تشغيل: نجح ولا فشل."
-          ]
+          ],
+          sol: R`الـ [[init.sh]] تحت. بعد دقيقتين، آخر سطور [[cloud-init-output.log]] المفروض فيها ناتج سكربت Docker (سطور زي [[Client: Docker Engine - Community]] ورقم النسخة)، وفي الآخر سطر زي [[Cloud-init v. 24.x finished at ... Up 95.3 seconds]]. وبعدها [[ssh ... docker --version]] يطبع النسخة، و [[docker ps]] من اليوزر ubuntu يشتغل (في جلسة SSH جديدة، لأن الـ group بيتقري عند الدخول).
+
+وبعد [[terminate-instances]] الحالة تبقى [[shutting-down]] وبعدين [[terminated]]، والـ instance بتفضل ظاهرة في [[describe-instances]] حوالي ساعة وبعدين تختفي؛ ده طبيعي ومش بتتحاسب عليها.
+
+أخطاء شائعة: اللوج فيه [[/var/lib/cloud/instance/scripts/part-001: ... not found]] أو السكربت متنفذش أصلًا، وده لأن أول سطر مش [[#!/bin/bash]] (أو الملف مكتوب على ويندوز بـ CRLF). و [[Permission denied (publickey)]] يبقى اليوزر غلط (Ubuntu = [[ubuntu]]) أو نسيت [[chmod 400]]. و [[docker: permission denied]] وانت ubuntu يبقى محتاج تخرج وتدخل تاني بعد [[usermod]]. و [[Connection timed out]] يبقى الـ security group مفيهاش 22 من IP بتاعك.`,
+          solCode: R`#!/bin/bash
+set -euxo pipefail
+curl -fsSL https://get.docker.com | sh
+usermod -aG docker ubuntu
+systemctl enable --now docker`
         },
         {
           cmd: "EBS",
@@ -657,7 +809,22 @@ gp3 هو النوع العادي والأرخص: ٣٠٠٠ IOPS افتراضي أ
             "على السيرفر: مد الـ partition رقم 1 لآخر الديسك.",
             "مد الـ filesystem (ext4) على الـ partition.",
             "اتأكد إن المساحة زادت."
-          ]
+          ],
+          sol: R`قبل التكبير، [[lsblk]] على Ubuntu 24.04 بيوري حاجة زي [[nvme0n1 8G]] والـ root [[nvme0n1p1]] حوالي 7G (وجنبه partitions صغيرة للـ boot). بعد [[modify-volume]] بدقيقة، [[lsblk]] يقول [[nvme0n1 12G]] بس [[nvme0n1p1]] لسه زي ما هو: الديسك كبر، الـ partition لأ. [[growpart]] يطبع [[CHANGED: partition=1 ...]] وبعدها [[lsblk]] يوري الـ partition كبرت. و [[df -h /]] لسه بيقول الحجم القديم لحد [[resize2fs]]، اللي بيطبع سطر زي [[The filesystem on /dev/nvme0n1p1 is now 3112699 (4k) blocks long.]]، وبعدها [[df -h /]] يوري حوالي 11G.
+
+وكل ده والسيرفر شغال: [[uptime]] قبل وبعد نفس الرقم تقريبًا.
+
+أخطاء شائعة: [[growpart]] يقول [[NOCHANGE: partition 1 is size ... it cannot be grown]]، وده لأنك شغّلته قبل ما الديسك الجديد يظهر (شوف [[aws ec2 describe-volumes-modifications]] لحد ما الحالة تبقى [[optimizing]] أو [[completed]]). و [[resize2fs]] يرجّع [[Bad magic number]] لو الـ filesystem مش ext4: على Amazon Linux بيبقى XFS، والأمر [[sudo xfs_growfs -d /]]. ولو جيت تكبّر تاني على طول هتاخد خطأ إنك لازم تستنى (حوالي ٦ ساعات بين كل تعديل للـ volume). وخلي بالك إنك مينفعش تصغّر volume.`,
+          solCode: R`aws ec2 create-snapshot --volume-id vol-0abc1234567890def --description "before resize"
+aws ec2 modify-volume --volume-id vol-0abc1234567890def --size 12
+aws ec2 describe-volumes-modifications --volume-ids vol-0abc1234567890def --query "VolumesModifications[].[ModificationState,Progress]"
+# على السيرفر:
+lsblk
+sudo growpart /dev/nvme0n1 1
+lsblk
+df -h /
+sudo resize2fs /dev/nvme0n1p1
+df -h /`
         }
       ]
     },
@@ -709,7 +876,18 @@ parameter groups: مفيش [[postgresql.conf]] تعدّله. الإعدادات 
             "باك أب يومي، وتقدر ترجع لأي لحظة في آخر ٧ أيام.",
             "استنى لحد ما تبقى جاهزة (بتاخد دقايق).",
             "هات العنوان والنسخة ومكان الباسورد في Secrets Manager."
-          ]
+          ],
+          sol: R`أول حاجة: آخر أمر في المثال بيطلّع [[EngineVersion]]، زي [[17.6]]، والـ family لازم تطابق الرقم الكبير: 17 = [[postgres17]]، ولو طلعت 18 يبقى [[postgres18]]. [[create-db-parameter-group]] بيرجّع [[DBParameterGroupFamily: postgres17]]، و [[modify-db-parameter-group]] بيرجّع [[{"DBParameterGroupName": "myapp-pg"}]] بس.
+
+بعد [[modify-db-instance]]، الـ parameter group الجديدة بتتربط، بس [[describe-db-instances]] هيقول [[ParameterApplyStatus: pending-reboot]]: ربط group جديدة محتاج reboot مرة واحدة. بعد [[reboot-db-instance]] الحالة تبقى [[in-sync]]، ومن هنا أي query أطول من ٥٠٠ مللي هتظهر في لوج Postgres (من الكونسول Logs أو [[describe-db-log-files]]). جرّب [[SELECT pg_sleep(1);]] وشوف سطر [[duration: 1001.xxx ms statement: SELECT pg_sleep(1);]].
+
+الغلطة الشائعة: family مش مطابقة، فالـ modify يرجع [[InvalidParameterCombination]] بيقول إن الـ group دي مينفعش مع النسخة دي. وتانية: تعدّل [[default.postgres17]] مباشرة، وده مش مسموح، لأن الـ default groups مبتتعدّلش؛ عشان كده بنعمل واحدة خاصة بينا.`,
+          solCode: R`aws rds create-db-parameter-group --db-parameter-group-name myapp-pg --db-parameter-group-family postgres17 --description "myapp"
+aws rds modify-db-parameter-group --db-parameter-group-name myapp-pg --parameters "ParameterName=log_min_duration_statement,ParameterValue=500,ApplyMethod=immediate"
+aws rds modify-db-instance --db-instance-identifier myapp-db --db-parameter-group-name myapp-pg --apply-immediately
+aws rds describe-db-instances --db-instance-identifier myapp-db --query "DBInstances[0].DBParameterGroups"
+aws rds reboot-db-instance --db-instance-identifier myapp-db
+aws rds wait db-instance-available --db-instance-identifier myapp-db`
         },
         {
           cmd: "RDS snapshots و PITR",
@@ -740,7 +918,20 @@ aws rds restore-db-instance-to-point-in-time --source-db-instance-identifier mya
             "اعرض الـ snapshots ووقتها وحالتها.",
             "أقرب لحظة تقدر ترجعلها دلوقتي.",
             "رجّع القاعدة زي ما كانت ١٠ الصبح في instance جديدة، بنفس الشبكة والفايروول."
-          ]
+          ],
+          sol: R`الخطوات والنتيجة: جدول [[notes]] فيه صفين (id 1 و 2)، استنيت، ومسحت id 2 الساعة مثلًا 10:25:00 UTC. الاسترجاع لـ 10:24:00 بيعمل instance جديدة اسمها [[myapp-db-restored]] بـ endpoint جديد خالص، وبياخد من ١٠ لـ ٢٠ دقيقة أو أكتر. بعدها [[SELECT * FROM notes;]] على الـ endpoint الجديد يرجّع الصفين، والقاعدة الأصلية لسه فيها صف واحد: الاسترجاع مبيلمسش الأصلية.
+
+اتأكد الأول إن الوقت اللي اخترته أقدم من [[LatestRestorableTime]] (غالبًا بيبقى متأخر عن دلوقتي بحوالي ٥ دقايق)، وإلا هيرجّع خطأ إن الوقت برا الـ window. والوقت بـ UTC، فلو كتبت الساعة بتوقيت مصر هترجع لوقت غلط بساعتين أو تلاتة، وتلاقي الصف ممسوح أو الجدول مش موجود.
+
+وفي الآخر امسح الـ instance الجديدة ([[--skip-final-snapshot]] لأنها تجربة). الغلطة المكلفة إنك تنساها: هي instance كاملة بتتحاسب بالساعة زي الأصلية.`,
+          solCode: R`psql "$DATABASE_URL" -c "CREATE TABLE notes(id int primary key, body text); INSERT INTO notes VALUES (1,'a'),(2,'b');"
+# بعد ١٠ دقايق:
+date -u +%Y-%m-%dT%H:%M:%SZ
+psql "$DATABASE_URL" -c "DELETE FROM notes WHERE id = 2;"
+aws rds restore-db-instance-to-point-in-time --source-db-instance-identifier myapp-db --target-db-instance-identifier myapp-db-restored --restore-time 2026-09-28T10:24:00Z --db-subnet-group-name myapp-private --vpc-security-group-ids sg-0db22222 --no-publicly-accessible
+aws rds wait db-instance-available --db-instance-identifier myapp-db-restored
+aws rds describe-db-instances --db-instance-identifier myapp-db-restored --query "DBInstances[0].Endpoint.Address" --output text
+aws rds delete-db-instance --db-instance-identifier myapp-db-restored --skip-final-snapshot`
         },
         {
           cmd: "RDS من جهازك",
@@ -770,7 +961,15 @@ SSH tunnel: نفس الفكرة بس عن طريق sshd على السيرفر، 
             "Session Manager: وصّل 5433 على جهازك بـ 5432 على القاعدة عن طريق السيرفر ده، من غير بورت مفتوح.",
             "في ترمنال تاني: psql على localhost كأن القاعدة عندك، والاتصال مشفّر.",
             "البديل بـ SSH tunnel لو 22 مفتوح لـ IP بيتك."
-          ]
+          ],
+          sol: R`في الترمنال الأول، [[start-session]] يطبع [[Starting session with SessionId: ...]] وبعدين [[Port 5433 opened for sessionId ...]] و [[Waiting for connections...]]، ويفضل مفتوح. في التاني، [[psql]] يسأل عن الباسورد (من Secrets Manager لو استخدمت [[--manage-master-user-password]]) ويطبع قبل الـ prompt سطر زي:
+
+[[SSL connection (protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, compression: off)]]
+
+(psql 17 وأحدث بيزوّد [[ALPN: postgresql]]). السطر ده معناه إن الاتصال مشفّر لحد RDS نفسه. وأول ما psql يتصل، الترمنال الأول يطبع [[Connection accepted for session]].
+
+أخطاء شائعة: [[SessionManagerPlugin is not found]] يعني الـ plugin مش متسطّب. و [[TargetNotConnected]] يعني السيرفر مش ظاهر في SSM: ناقصه الـ role اللي فيها [[AmazonSSMManagedInstanceCore]] أو مش واصل للإنترنت أو لـ VPC endpoints. ولو psql فضل واقف لحد timeout، يبقى الـ security group بتاعة RDS مش بتقبل من السيرفر الوسيط. و [[no pg_hba.conf entry ... no encryption]] يعني RDS فارض SSL وانت نسيت [[sslmode=require]].`,
+          solCode: R`aws secretsmanager get-secret-value --secret-id "$(aws rds describe-db-instances --db-instance-identifier myapp-db --query 'DBInstances[0].MasterUserSecret.SecretArn' --output text)" --query SecretString --output text`
         }
       ]
     },
@@ -825,7 +1024,20 @@ export const handler = async (event) => {
             "الـ body لازم نص، فـ JSON.stringify.",
             "قفلة الرد.",
             "قفلة الـ handler."
-          ]
+          ],
+          sol: R`لو جرّبت محليًا بالكود اللي تحت (من غير رفع) هتشوف فكرة الدرس نفسها، لأن الـ module بيتحمّل مرة واحدة:
+
+[[{"hello":"Ali","invocations":1,"envAgeMs":0}]] وبعدين 2 و 3 و 4 و 5، و [[envAgeMs]] ثابت تقريبًا.
+
+وعلى Lambda فعلًا: الـ ٥ طلبات ورا بعض بيرجّعوا [[invocations]] من 1 لـ 5، و [[envAgeMs]] بيزيد بالثواني لأنها نفس البيئة. بعد ٢٠ دقيقة غالبًا يرجع [[invocations: 1]] و [[envAgeMs]] صغير، ده cold start. «غالبًا» لأن AWS مبتضمنش إمتى البيئة بتتقفل.
+
+الغلطة الشائعة في الفهم: تبعت ٥ طلبات في نفس اللحظة (مثلًا [[&]] في bash أو [[Promise.all]]) فتلاقي أرقام متكررة زي 1 و 1 و 2. ده مش bug: كل طلب متزامن بياخد بيئة لوحده، ولكل بيئة عدّاد. وده بالظبط ليه متعتمدش على متغير في الذاكرة كعدّاد أو كاش مشترك في Lambda.`,
+          solCode: R`// local.mjs جنب index.mjs
+import { handler } from "./index.mjs";
+for (let i = 0; i < 5; i++) {
+  const res = await handler({ queryStringParameters: { name: "Ali" } });
+  console.log(res.body);
+}`
         },
         {
           cmd: "Lambda deploy + API Gateway",
@@ -863,7 +1075,18 @@ HTTP API أرخص وأبسط من REST API القديم، وفيه JWT authorize
             "اعمل HTTP API بأمر واحد بيوصّل كل الطلبات للدالة.",
             "اسمح لـ API Gateway (الـ API ده بس) ينادي الدالة.",
             "تابع لوجات الدالة لايف."
-          ]
+          ],
+          sol: R`بعد [[create-function]] و [[invoke]]، [[out.json]] فيه [[{"statusCode":200,"headers":{...},"body":"{\"hello\":\"Ali\",\"invocations\":1,...}"}]]، والأمر نفسه يطبع [[{"StatusCode": 200, "ExecutedVersion": "$LATEST"}]]. و [[create-api]] يرجّع [[ApiEndpoint]] زي [[https://a1b2c3d4e5.execute-api.eu-central-1.amazonaws.com]]، وفتح [[?name=Ali]] في المتصفح يرجّع الـ JSON نفسه من غير الغلاف: [[{"hello":"Ali","invocations":2,...}]].
+
+وفي [[logs tail]] كل طلب ليه سطر [[REPORT RequestId: ... Duration: 2.1 ms Billed Duration: 3 ms Memory Size: 128 MB Max Memory Used: 70 MB]]، وأول طلب بس فيه كمان [[Init Duration: 150.3 ms]] (الرقم بيفرق)، وده الـ cold start.
+
+أخطاء شائعة: المتصفح يرجّع [[{"message":"Internal Server Error"}]] وده غالبًا لأنك نسيت [[add-permission]]، أو الـ [[--source-arn]] فيه API id مش بتاعك. و [[create-function]] يرجّع [[InvalidParameterValueException: The role defined for the function cannot be assumed by Lambda]] لو الـ trust مش لـ [[lambda.amazonaws.com]] أو لو شغّلته بعد إنشاء الـ role بثواني. و [[Runtime.ImportModuleError]] يعني الملف في الـ zip اسمه مش [[index.mjs]] أو جوه فولدر. واللوج مش بيظهر خالص يعني الـ role ناقصها [[AWSLambdaBasicExecutionRole]].`,
+          solCode: R`cat > trust-lambda.json <<'EOF'
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"},"Action":"sts:AssumeRole"}]}
+EOF
+aws iam create-role --role-name lambda-basic --assume-role-policy-document file://trust-lambda.json
+aws iam attach-role-policy --role-name lambda-basic --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+aws apigatewayv2 get-apis --query "Items[].[Name,ApiEndpoint]" --output table`
         },
         {
           cmd: "SES",
@@ -912,7 +1135,16 @@ SPF و DMARC: [[MAIL FROM]] مخصص (زي [[mail.example.com]]) بسجل MX و 
             "قفلة المحتوى.",
             "قفلة الأمر.",
             "قفلة الدالة."
-          ]
+          ],
+          sol: R`[[create-email-identity]] بيرجّع JSON فيه [[IdentityType: DOMAIN]] و [[VerifiedForSendingStatus: false]] و [[DkimAttributes.Tokens]] فيها ٣ tokens. كل token بيبقى CNAME: الاسم [[TOKEN._domainkey.example.com]] والقيمة [[TOKEN.dkim.amazonses.com]]. بعد ما الـ DNS ينتشر (دقايق لساعات)، [[get-email-identity]] يقول [[DkimAttributes.Status: SUCCESS]] و [[VerifiedForSendingStatus: true]]. وإيميلك الشخصي بيوصله رابط توثيق لازم تضغط عليه.
+
+في Gmail «Show original» المتوقع: [[DKIM: 'PASS' with domain example.com]]، و [[SPF: PASS]] بس غالبًا على دومين [[amazonses.com]] (لأن الـ MAIL FROM الافتراضي بتاع SES)، ولو عندك سجل DMARC هتلاقي [[DMARC: 'PASS']] بسبب الـ DKIM. ولو عايز الـ SPF على دومينك انت، اعمل custom MAIL FROM domain.
+
+الأخطاء الشائعة: [[MessageRejected: Email address is not verified. The following identities failed the check in region EU-CENTRAL-1: ...]] وده لأنك في الـ sandbox وبتبعت لإيميل مش موثّق، أو وثّقت في region والكود على region تانية. والإيميل يوصل Spam يبقى غالبًا الـ DKIM لسه مش SUCCESS.`,
+          solCode: R`aws sesv2 create-email-identity --email-identity example.com --query "DkimAttributes.Tokens"
+aws sesv2 create-email-identity --email-identity you@gmail.com
+aws sesv2 get-email-identity --email-identity example.com --query "[VerifiedForSendingStatus,DkimAttributes.Status]"
+aws sesv2 send-email --from-email-address "MyApp <no-reply@example.com>" --destination ToAddresses=you@gmail.com --content "Simple={Subject={Data=test},Body={Text={Data=hello}}}"`
         },
         {
           cmd: "Parameter Store و Secrets Manager",
@@ -947,7 +1179,20 @@ aws secretsmanager get-secret-value --secret-id myapp/prod/stripe --query Secret
             "اعرض أسماء كل أسرار الإنتاج تحت المسار ده.",
             "Secrets Manager: سر فيه JSON (بيتحاسب ٠.٤ دولار في الشهر).",
             "اقرا السر."
-          ]
+          ],
+          sol: R`السكربت تحت. أول تشغيل المفروض يطبع [[DATABASE_URL loaded (57 chars)]] (رقم على قد الـ URL بتاعك) وبعدين التطبيق يشتغل عادي. لاحظ إن السكربت مبيطبعش القيمة نفسها، عشان متتسربش في لوج.
+
+بعد ما تشيل [[ssm:GetParameter]] من الـ role، السكربت يقف ومش هيشغّل التطبيق، وتطلع رسالة زي:
+
+[[An error occurred (AccessDeniedException) when calling the GetParameter operation: User: arn:aws:sts::123456789012:assumed-role/myapp-ec2/i-0abc... is not authorized to perform: ssm:GetParameter on resource: arn:aws:ssm:eu-central-1:123456789012:parameter/myapp/dev/DATABASE_URL because no identity-based policy allows the ssm:GetParameter action]]
+
+الرسالة فيها كل اللي محتاجه: مين (الـ role)، وإيه (الـ action)، وعلى إيه (الـ ARN). والغلطة الشائعة إن السكربت من غير [[set -e]] يكمّل ويشغّل التطبيق بـ [[DATABASE_URL]] فاضي، فتاخد خطأ اتصال غامض من الـ ORM بدل AccessDenied الواضح. وتانية: قيمة SecureString ترجع مشفّرة (نص طويل غريب) لأنك نسيت [[--with-decryption]]، أو ترجع AccessDenied على [[kms:Decrypt]] لو المفتاح customer managed.`,
+          solCode: R`#!/bin/bash
+set -euo pipefail
+DATABASE_URL=$(aws ssm get-parameter --name /myapp/dev/DATABASE_URL --with-decryption --query Parameter.Value --output text)
+export DATABASE_URL
+echo "DATABASE_URL loaded ($(printf %s "$DATABASE_URL" | wc -c) chars)"
+exec node server.js`
         }
       ]
     },
@@ -989,7 +1234,32 @@ dig +short www.example.com`,
             "اعرض الـ records: الاسم والنوع والـ TTL.",
             "مين الـ nameservers بتوع الدومين فعلًا.",
             "www بتشاور على إيه دلوقتي."
-          ]
+          ],
+          sol: R`[[www.json]] تحت. [[change-resource-record-sets]] بيرجّع [[ChangeInfo]] فيه [[Status: PENDING]] و [[Id]]، وبعد أقل من دقيقة غالبًا [[get-change]] يقول [[INSYNC]]. بعدها [[dig +short www.example.com]] بيرجّع كذا IP (عناوين CloudFront، بتتغير)، ومش هترجّع اسم cloudfront.net زي الـ CNAME، لأن الـ alias بيتحل جوه Route 53.
+
+لو [[dig]] مرجّعش حاجة، اتأكد إن [[dig +short NS example.com]] بيرجّع nameservers بتاعة [[awsdns]] نفس اللي في الـ hosted zone؛ لو لسه nameservers المسجّل القديم يبقى الـ zone ده محدش بيسأله. ولو الـ IPs رجعت بس فتح [[https://www.example.com]] طلّع [[403 ERROR The request could not be satisfied]]، يبقى الـ distribution ناقصه Alternate domain name [[www.example.com]] وشهادة ACM ليه (والشهادة لازم تبقى في us-east-1).
+
+وأخطاء الـ JSON: [[InvalidChangeBatch]] لو كتبت [[TTL]] أو [[ResourceRecords]] مع alias (الـ alias ملوش TTL)، أو حطيت [[HostedZoneId]] بتاع الـ zone بتاعك بدل [[Z2FDTNDATAQYW2]].`,
+          solCode: R`cat > www.json <<'EOF'
+{
+  "Comment": "www -> CloudFront",
+  "Changes": [{
+    "Action": "UPSERT",
+    "ResourceRecordSet": {
+      "Name": "www.example.com",
+      "Type": "A",
+      "AliasTarget": {
+        "HostedZoneId": "Z2FDTNDATAQYW2",
+        "DNSName": "d111111abcdef8.cloudfront.net",
+        "EvaluateTargetHealth": false
+      }
+    }
+  }]
+}
+EOF
+CHANGE=$(aws route53 change-resource-record-sets --hosted-zone-id Z0123456789ABCDEFGHIJ --change-batch file://www.json --query ChangeInfo.Id --output text)
+aws route53 wait resource-record-sets-changed --id $CHANGE
+dig +short www.example.com`
         },
         {
           cmd: "Cloudflare proxy و SSL",
@@ -1023,7 +1293,12 @@ IP سيرفرك ممكن يتسرّب برضه: سجل رمادي قديم عل�
             "كلّم سيرفرك مباشرة واطبع الشهادة: مين أصدرها وبتخلص إمتى (لازم سليمة عشان strict).",
             "تابع الـ redirects: لو لفّت ٥ مرات، عندك loop.",
             "اسمح لـ 80 و 443 من IPs بتاعة Cloudflare بس (واقفل الباقي بعدها)."
-          ]
+          ],
+          sol: R`مع السحابة البرتقاني، [[dig +short myapp.example.com]] بيرجّع IPs بتاعة Cloudflare (غالبًا بتبدأ بـ [[104.21.]] أو [[172.67.]])، مش IP سيرفرك. و [[curl -sI]] بيرجّع [[server: cloudflare]] و [[cf-ray: ...-CAI]] مثلًا (آخر ٣ حروف هي الـ data center اللي رد، و CAI يعني القاهرة) و [[cf-cache-status: DYNAMIC]] للـ HTML.
+
+أمر openssl على IP السيرفر مباشرة المفروض يطبع [[subject=CN=myapp.example.com]] و [[issuer=C=US, O=Let's Encrypt, CN=...]] وتاريخ [[notAfter]] في المستقبل. لو ده سليم، Full (strict) يشتغل والموقع يفتح عادي. وأمر [[curl -sIL http://...]] المفروض يوري [[301]] لـ https وبعدين [[200]].
+
+أخطاء شائعة: بعد Full (strict) الموقع يطلع Error 526 (Invalid SSL certificate)، وده لأن الشهادة على السيرفر self-signed أو منتهية أو اسمها مختلف. و [[ERR_TOO_MANY_REDIRECTS]] بيحصل لو الـ mode لسه Flexible والسيرفر بيحوّل HTTP لـ HTTPS، فالطلب يلف ما بينهم. و 521 أو 522 يعني Cloudflare مش واصل للسيرفر، غالبًا الفايروول بيقفل IPs بتاعة Cloudflare.`
         },
         {
           cmd: "Cloudflare cache و WAF",
@@ -1057,7 +1332,285 @@ WAF: الخطة المجانية فيها Free Managed Ruleset للثغرات ا
             "امسح ملف معين من كاش Cloudflare بالـ API.",
             "token محدود بصلاحية purge، والـ body JSON.",
             "الملفات اللي عايز تمسحها."
-          ]
+          ],
+          sol: R`قبل الـ Cache Rule: ملف [[app.js]] يرجّع [[cf-cache-status: HIT]] (بعد أول طلب MISS)، لأن Cloudflare بيكاش امتدادات static افتراضيًا، و [[/api/me]] يرجّع [[DYNAMIC]] (مش متكاش أصلًا). وصفحة [[/blog/post-1]] برضه [[DYNAMIC]] لأنها HTML. بعد الـ rule: أول طلب [[MISS]]، والتاني [[HIT]]، ولو الـ origin بعت [[Cache-Control: private]] أو [[Set-Cookie]] ممكن تلاقيها [[BYPASS]] أو [[DYNAMIC]] حسب إعدادات الـ rule.
+
+الـ WAF: [[curl -sI https://myapp.example.com/wp-login.php]] يرجّع [[HTTP/2 403]] ومعاه [[cf-ray]]، والـ body صفحة Cloudflare فيها «Sorry, you have been blocked». وفي Security Events هتلاقي الطلب ده باسم الـ rule. والـ purge API يرجّع [[{"success":true,"errors":[],"messages":[],"result":{"id":"..."}}]].
+
+الغلطة الشائعة: تعمل الـ Cache Rule على [[/blog/]] وصفحات فيها حاجة لليوزر المسجّل (زي اسمه في الـ header)، فيوزر يشوف اسم يوزر تاني. ولو [[cf-cache-status]] فضل [[DYNAMIC]] بعد الـ rule، يبقى الـ rule مش بيطابق (راجع الـ expression) أو السحابة رمادي (DNS only) فمفيش Cloudflare في النص أصلًا.`,
+          solCode: R`# Cache Rule expression:
+starts_with(http.request.uri.path, "/blog/")
+# WAF custom rule expression (Action: Block):
+(http.request.uri.path contains "/wp-login.php")
+# التجربة:
+curl -sI https://myapp.example.com/blog/post-1 | grep -i cf-cache-status
+curl -sI https://myapp.example.com/blog/post-1 | grep -i cf-cache-status
+curl -s -o /dev/null -w "%{http_code}\n" https://myapp.example.com/wp-login.php`
+        }
+      ]
+    },
+    {
+      t: "Cloudflare للمطوّر: Pages و R2 و Workers و Tunnel",
+      l: 2,
+      n: "موقع Vite على الـ edge، وتخزين زي S3 من غير رسوم خروج، وكود صغير قبل سيرفرك، ومدخل للإنتاج من غير ما تفتح بورت",
+      items: [
+        {
+          cmd: "Cloudflare Pages",
+          title: "موقع Vite على Cloudflare: من git ولا من الترمنال",
+          desc: R`موقع Vite أو React بعد [[npm run build]] مجرد فولدر [[dist]] فيه HTML و JS و CSS، و Cloudflare بيخدمه من الـ CDN بتاعه في كل مكان، والطلبات على الملفات الثابتة مجانية.
+
+فيه طريقتين: Cloudflare Pages (تربط الريبو، وكل push يعمل build، وكل branch ليه preview URL، أو ترفع [[dist]] بـ [[wrangler pages deploy]])، أو Workers static assets (ملف [[wrangler.jsonc]] فيه [[assets]] وبعدين [[wrangler deploy]]). Cloudflare بقى بيقول إن المشاريع الجديدة تبدأ على Workers، و Pages لسه شغال ومدعوم للمشاريع الموجودة، والاتنين بيدّوك نفس النتيجة لموقع static.
+
+ولو الموقع SPA فيه routing (React Router)، لازم تقول لـ Cloudflare «أي مسار مش ملف رجّع index.html»، وإلا [[/dashboard]] يطلع 404 لما حد يعمل refresh.`,
+          example: R`npm create vite@latest my-site -- --template react-ts
+cd my-site && npm i && npm run build
+npx wrangler login
+npx wrangler pages deploy dist --project-name my-site --branch main
+npx wrangler pages deploy dist --project-name my-site --branch feature-x
+# أو Workers static assets: wrangler.jsonc زي الـ sol، وبعدين
+npx wrangler deploy`,
+          try: R`اعمل موقع Vite فيه React Router بصفحتين ([[/]] و [[/about]]). انشره بطريقة من الاتنين، وافتح [[/about]] مباشرة (مش من لينك جوه الموقع) واعمل refresh. لو طلع 404 صلّحه. وبعدين اربط دومين فرعي من الداشبورد ([[www.example.com]]).`,
+          deep: {
+            why: "موقع static على VPS معناه Nginx وشهادة وسيرفر لازم يفضل شغال، عشان حاجة ممكن تتخدم من CDN ببلاش تقريبًا. Cloudflare (زي Vercel و Netlify) بيخدمه من أقرب مكان لليوزر، مع HTTPS و preview لكل branch، وده مناسب جدًا لـ landing page أو dashboard بيكلّم API منفصل.",
+            how: R`Pages من git: في الداشبورد Workers & Pages ثم Create، وتختار الريبو، و build command [[npm run build]]، و output directory [[dist]]. الـ branch الأساسي production، وأي branch تاني preview على [[BRANCH.my-site.pages.dev]].
+
+Pages من الترمنال (Direct Upload): [[wrangler pages deploy dist]] بيرفع الفولدر كما هو. [[--branch main]] (أو الـ production branch بتاع المشروع) = production، وأي اسم تاني = preview. مفيد لو الـ build بيحصل في GitHub Actions.
+
+Workers static assets: ملف [[wrangler.jsonc]] فيه [[name]] و [[compatibility_date]] و [[assets.directory = "./dist"]]. وتقدر تضيف [[main]] (Worker بكود) فيبقى عندك API و frontend في deploy واحد (درس [[Workers]]). وفي نسخ wrangler الجديدة، ممكن [[pages deploy]] لمشروع جديد يقترح عليك تروح Workers.
+
+الـ SPA fallback: في Workers بتكتب [[not_found_handling: "single-page-application"]]. في Pages، لو مفيش [[404.html]] في الـ output، Pages بيعامل المشروع كـ SPA ويرجّع [[index.html]] للمسارات المش موجودة. والـ redirects والـ headers في ملفات [[_redirects]] و [[_headers]] جوه [[public/]].
+
+متغيرات البيئة: Vite بيكتب [[import.meta.env.VITE_*]] جوه الـ JS وقت الـ build، فهي مش سر، وأي حاجة سرية تروح للـ API مش للـ frontend.`,
+            when: "أي frontend static أو SPA: portfolio، landing، dashboard بيكلّم API على دومين تاني. لو محتاج SSR لـ Next.js بكل مميزاته، Vercel أو سيرفر Node أسهل (تاب Next.js).",
+            mistakes: R`SPA من غير fallback فكل refresh على صفحة داخلية يطلع 404. وتحط مفتاح API سري في [[VITE_API_KEY]] فيطلع في الـ JS لأي حد. وتنسى إن الـ output directory لـ Vite هو [[dist]] مش [[build]] (ده CRA القديم). وتربط الدومين الرئيسي بـ CNAME وهو مش على Cloudflare DNS.`
+          },
+          lines: [
+            "مشروع Vite جديد بـ React و TypeScript.",
+            "سطّب وابني: الناتج في dist.",
+            "اربط wrangler بحسابك (بيفتح المتصفح).",
+            "ارفع dist كـ production على Pages (أول مرة بيعمل المشروع).",
+            "نفس الفولدر كـ preview لـ branch تانية (URL لوحده).",
+            "أو انشر كـ Worker بـ static assets حسب wrangler.jsonc."
+          ],
+          sol: R`بعد [[pages deploy]] هتاخد URL زي [[https://my-site.pages.dev]] (أو URL فيه hash لكل deploy)، وللـ preview [[https://feature-x.my-site.pages.dev]]. ولو استخدمت Workers هتاخد [[https://my-site.YOUR-SUBDOMAIN.workers.dev]].
+
+اختبار الـ refresh: [[curl -I https://my-site.pages.dev/about]] المفروض يرجّع 200 ومحتواه هو [[index.html]]. لو رجّع 404، يبقى فيه [[404.html]] في [[dist]] (فـ Pages مبقاش يعتبره SPA)، أو في Workers ناقصك [[not_found_handling]].
+
+الغلطة الشائعة التانية: الصفحة بيضا والـ console فيه 404 على [[/assets/index-abc.js]]، وده لأنك غيّرت [[base]] في [[vite.config.ts]] أو رفعت فولدر غير [[dist]].`,
+          solCode: R`// wrangler.jsonc لطريقة Workers static assets
+{
+  "name": "my-site",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}`
+        },
+        {
+          cmd: "R2",
+          title: "R2: تخزين زي S3 بنفس الكود ومن غير رسوم خروج",
+          desc: R`R2 تخزين ملفات (object storage) من Cloudflare بيتكلم نفس API بتاع S3، فبتستخدم [[@aws-sdk/client-s3]] زي ما هو، وبتغيّر 3 حاجات بس: الـ [[endpoint]] بقى [[https://ACCOUNT_ID.r2.cloudflarestorage.com]]، والـ [[region]] بقى [[auto]]، والمفاتيح من R2 API token.
+
+الفرق الكبير في الفلوس: مفيش رسوم على الداتا اللي بتخرج (egress). في S3 كل جيجا بتنزل لليوزر بتتحاسب، وده ممكن يبقى أكبر بند في الفاتورة لموقع صور أو فيديو. وقت كتابة الدرس فيه free tier شهري (حوالي ١٠ جيجا تخزين وملايين من العمليات)، وبعدها بتدفع على التخزين والعمليات بس. راجع صفحة الأسعار.`,
+          example: R`import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+const r2 = new S3Client({
+  region: "auto",
+  endpoint: "https://" + process.env.R2_ACCOUNT_ID + ".r2.cloudflarestorage.com",
+  credentials: { accessKeyId: process.env.R2_ACCESS_KEY_ID, secretAccessKey: process.env.R2_SECRET_ACCESS_KEY },
+  requestChecksumCalculation: "WHEN_REQUIRED",
+});
+
+const put = new PutObjectCommand({ Bucket: "myapp-uploads", Key: "avatars/42.webp", ContentType: "image/webp" });
+const uploadUrl = await getSignedUrl(r2, put, { expiresIn: 300 });
+const get = new GetObjectCommand({ Bucket: "myapp-uploads", Key: "avatars/42.webp" });
+const downloadUrl = await getSignedUrl(r2, get, { expiresIn: 3600 });
+console.log(uploadUrl.split("?")[0]);
+console.log(new URL(downloadUrl).searchParams.get("X-Amz-Expires"));`,
+          try: R`من غير حساب حتى: سطّب [[@aws-sdk/client-s3]] و [[@aws-sdk/s3-request-presigner]] في فولدر تجربة، وشغّل الملف بمتغيرات وهمية ([[R2_ACCOUNT_ID=0123456789abcdef0123456789abcdef]] وأي مفاتيح). التوقيع بيتحسب على جهازك فمش محتاج نت. وبعدين لو عندك حساب: اعمل bucket و R2 API token بصلاحية Object Read & Write على الـ bucket ده بس، وارفع ملف فعلًا بـ [[curl -X PUT --upload-file]] على الـ uploadUrl.`,
+          flag: "script",
+          deep: {
+            why: "ملفات المستخدمين مكانها object storage مش ديسك السيرفر (عشان تقدر تكبّر وتنقل). و S3 هو المعيار، بس رسوم الخروج بتفاجئ الناس: موقع بيعرض صور كتير ممكن يدفع على الترافيك أكتر من التخزين. R2 بيشيل البند ده، ولأنه بيتكلم S3 API، النقل منه وإليه تغيير إعدادات مش إعادة كتابة.",
+            how: R`الكود هو هو اللي في درس [[presigned URL]]: السيرفر بيعمل رابط موقّع مؤقت، والمتصفح بيرفع عليه مباشرة بـ PUT، فالملف مبيعديش على سيرفرك. [[getSignedUrl]] بيحسب التوقيع محليًا بالمفتاح السري، ومبيكلّمش R2 خالص.
+
+المفاتيح: من R2 في الداشبورد، Manage API tokens، واعمل token بصلاحية على bucket معين. هيدّيك Access Key ID و Secret Access Key (دول اللي بيدخلوا الـ SDK). والـ Account ID موجود في الداشبورد.
+
+العرض للناس: الـ bucket خاص افتراضيًا. يا إما presigned GET زي المثال (لملفات خاصة)، يا إما تربط custom domain بالـ bucket ([[files.example.com]]) فيبقى public ومعاه كاش Cloudflare، ودي أحسن للصور العامة. وفيه [[r2.dev]] URL للتجربة بس (عليه rate limit ومفيش كاش).
+
+الـ CORS: المتصفح بيرفع على دومين R2 مش دومينك، فلازم CORS policy على الـ bucket تسمح بـ [[PUT]] من [[https://myapp.example.com]] وبالـ header [[Content-Type]].
+
+من جوه Worker مش محتاج SDK: بتعمل binding للـ bucket وتستخدم [[env.BUCKET.put()]] و [[env.BUCKET.get()]] (درس [[Workers]]).
+
+فرق عن S3: مفيش regions بالمعنى ده (فيه location hint)، وبعض مميزات S3 مش موجودة أو مختلفة (زي بعض إعدادات الـ ACL والـ events). و [[requestChecksumCalculation: "WHEN_REQUIRED"]] في المثال مهمة: نسخ SDK v3 الجديدة بتحسب checksum افتراضيًا، وفي الـ presigned PUT بتحط في الرابط [[x-amz-checksum-crc32]] محسوب على body فاضي (قيمته [[AAAAAA==]])، فأي ملف حقيقي يترفع عليه يترفض لأن الـ checksum مش مطابق.`,
+            when: "صور ومرفقات المستخدمين، والباك أب (Coolify و Dokploy بيدعموه كـ S3)، وأي ملفات بتتنزل كتير. S3 يفضل أحسن لو كل حاجة تانية على AWS ومحتاج events لـ Lambda وصلاحيات IAM.",
+            mistakes: R`endpoint غلط (بتحط bucket في الـ host بإيدك أو تنسى الـ Account ID)، أو [[region: "us-east-1"]] بدل [[auto]]. و token بصلاحية على كل الـ buckets. ومفاتيح R2 في كود الـ frontend بدل presigned URL. وتستخدم [[r2.dev]] في الإنتاج. وتنسى الـ CORS فالرفع من المتصفح يفشل برسالة CORS مع إن الـ URL سليم.`
+          },
+          lines: [
+            "الـ client والأوامر من AWS SDK زي S3 بالظبط.",
+            "دالة الروابط الموقّعة.",
+            "client جديد لـ R2.",
+            "R2 مفيهوش regions، فـ auto.",
+            "الـ endpoint بتاع حسابك على R2.",
+            "مفاتيح R2 API token من متغيرات البيئة.",
+            "من غيرها SDK v3 بيحط [[x-amz-checksum-crc32]] لجسم فاضي في رابط الـ PUT، فالرفع بملف حقيقي يفشل. كده الـ checksum بيتحسب بس لما العملية تطلبه.",
+            "قفلة.",
+            "أمر رفع لمسار معين بنوع ملف معين.",
+            "رابط رفع صالح ٥ دقايق.",
+            "أمر تنزيل لنفس الملف.",
+            "رابط تنزيل صالح ساعة.",
+            "اطبع الرابط من غير التوقيع.",
+            "اطبع مدة صلاحية رابط التنزيل من الـ query."
+          ],
+          sol: R`بالمتغيرات الوهمية الناتج:
+
+[[https://myapp-uploads.0123456789abcdef0123456789abcdef.r2.cloudflarestorage.com/avatars/42.webp]]
+[[3600]]
+
+لاحظ إن الـ SDK حط اسم الـ bucket في أول الـ host لوحده (virtual-hosted style)، ومفيش أي طلب اتبعت لـ R2: التوقيع اتحسب على جهازك، فحتى مفاتيح غلط بتطلّع رابط، بس الرفع عليه هيرجّع 403 [[SignatureDoesNotMatch]] أو [[InvalidAccessKeyId]].
+
+مع حساب حقيقي: [[curl -X PUT -H "Content-Type: image/webp" --upload-file a.webp "UPLOAD_URL"]] يرجّع 200، والملف يظهر في الـ bucket. لو رجّع 403 [[SignatureDoesNotMatch]] مع مفاتيح صح، غالبًا الـ Content-Type اللي بعته مختلف عن اللي في [[PutObjectCommand]]، لأنه جزء من التوقيع.`,
+          solCode: R`npm init -y && npm i @aws-sdk/client-s3 @aws-sdk/s3-request-presigner
+R2_ACCOUNT_ID=0123456789abcdef0123456789abcdef R2_ACCESS_KEY_ID=test R2_SECRET_ACCESS_KEY=test node r2.mjs
+curl -X PUT -H "Content-Type: image/webp" --upload-file avatar.webp "UPLOAD_URL_FROM_THE_SCRIPT"`
+        },
+        {
+          cmd: "Workers",
+          title: "Workers: كود صغير بيرد من أقرب مكان لليوزر",
+          desc: R`Worker دالة JavaScript بتاخد [[Request]] وترجّع [[Response]] (نفس Web APIs اللي في المتصفح و Node 18+)، وبتشتغل على سيرفرات Cloudflare في كل مكان، من غير cold start تقريبًا لأنها isolates مش containers.
+
+الـ [[env]] فيه المتغيرات والأسرار والـ bindings: bucket R2، أو KV، أو قاعدة D1، أو Durable Objects. والـ binding معناه إن الـ Worker بيكلّم الخدمة من غير مفاتيح ولا SDK.
+
+وقت كتابة الدرس الخطة المجانية فيها حد يومي للطلبات (حوالي ١٠٠ ألف) ووقت CPU قليل لكل طلب، والخطة المدفوعة بتبدأ بـ ٥ دولار في الشهر. راجع الأرقام قبل ما تعتمد عليها.`,
+          example: R`export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
+    if (url.pathname === "/api/hello") {
+      const country = request.cf?.country ?? "unknown";
+      return Response.json({ hello: env.GREETING, country });
+    }
+    if (url.pathname.startsWith("/files/")) {
+      const obj = await env.BUCKET.get(url.pathname.slice(7));
+      if (!obj) return new Response("not found", { status: 404 });
+      return new Response(obj.body, { headers: { "content-type": obj.httpMetadata?.contentType ?? "application/octet-stream" } });
+    }
+    return new Response("not found", { status: 404 });
+  },
+};`,
+          try: R`من غير حساب: احفظ الـ Worker في [[worker.mjs]]، واعمل [[test.mjs]] بيعمل import ليه وبينادي [[worker.fetch(new Request(...), env, {})]] بـ env وهمي فيه [[GREETING]] و [[BUCKET]] بدالة [[get]] بترجّع object لمفتاح واحد بس. جرّب ٤ مسارات. وبعدين بحساب: [[npm create cloudflare@latest]]، و [[npx wrangler dev]]، و [[npx wrangler deploy]].`,
+          flag: "script",
+          deep: {
+            why: "حاجات كتير صغيرة مش محتاجة سيرفر: redirect حسب البلد، أو API صغير بيقرا من R2 أو KV، أو webhook receiver، أو حماية endpoint بتوكن قبل ما يوصل سيرفرك. Worker بيعمل ده قريب من اليوزر، وتقريبًا ببلاش لحجم صغير، ومن غير سيرفر تحدّثه.",
+            how: R`الـ Worker ES module بيعمل [[export default]] لـ object فيه [[fetch]]. Cloudflare بيناديها مع كل طلب بـ ٣ حاجات: [[request]] (Request عادي ومعاه [[request.cf]] فيه البلد والمدينة وغيرهم)، و [[env]]، و [[ctx]] ([[ctx.waitUntil(promise)]] تكمّل شغل بعد ما الرد يتبعت، زي لوج أو analytics).
+
+الـ runtime مش Node: مفيش [[fs]] ولا process طويل، والكود بيشتغل لكل طلب لوحده وبحد CPU. وفيه [[nodejs_compat]] flag بيدّيك جزء كبير من Node APIs (زي [[Buffer]] و [[crypto]])، بس مش كل المكتبات بتشتغل.
+
+الإعداد في [[wrangler.jsonc]]: [[main]] (ملف الكود)، و [[vars]] (متغيرات عادية)، و [[r2_buckets]] بـ [[binding: "BUCKET"]] و [[bucket_name]]، والأسرار بـ [[wrangler secret put NAME]] مش في الملف.
+
+[[wrangler dev]] بيشغّل الـ Worker على جهازك بـ workerd (نفس الـ runtime) وبـ R2 و KV محليين. و [[wrangler deploy]] بينشره على [[NAME.SUBDOMAIN.workers.dev]] أو على route في دومينك. و [[wrangler tail]] لايف لوجات.
+
+ولأنه Request و Response عاديين، تقدر تختبر الـ handler في Node مباشرة زي التجربة، أو بـ Vitest ومعاه pool خاص بـ Workers.`,
+            when: "منطق خفيف قريب من اليوزر، و APIs صغيرة على R2 أو KV أو D1، وتحويلات على الطلب قبل سيرفرك، والـ webhooks. مش مكان شغل تقيل على CPU، ولا مكتبات Node بتعتمد على الديسك أو native modules.",
+            mistakes: R`تفتكر إن الـ Worker Node فتعمل [[import fs]] أو تحط connection pool لـ Postgres في متغير global وتتوقع إنه يعيش (للقواعد فيه Hyperdrive). وتحط أسرار في [[vars]] جوه [[wrangler.jsonc]] اللي على GitHub. وتنسى [[await]] لشغل مش مهم بدل [[ctx.waitUntil]] فالرد يستنى. وتقرا [[obj.body]] مرتين (stream بيتقري مرة واحدة).`
+          },
+          lines: [
+            "الـ Worker بيصدّر object فيه دوال الأحداث.",
+            "fetch: بتتنادى مع كل طلب HTTP.",
+            "اقرا المسار من الـ URL.",
+            "مسار API صغير.",
+            "البلد من بيانات Cloudflare (مش موجودة في الاختبار المحلي).",
+            "رد JSON فيه متغير من env.",
+            "قفلة.",
+            "مسار ملفات من R2.",
+            "هات الملف من الـ bucket عن طريق الـ binding بالمفتاح اللي بعد /files/.",
+            "مش موجود: 404.",
+            "رجّع الملف stream بنوعه المتخزن.",
+            "قفلة.",
+            "أي مسار تاني: 404.",
+            "قفلة fetch.",
+            "قفلة الـ object."
+          ],
+          sol: R`بـ env وهمي فيه [[GREETING: "ahlan"]] و bucket بيرجّع ملف لـ [[a.txt]] بس، الناتج:
+
+[[/api/hello 200 application/json {"hello":"ahlan","country":"unknown"}]]
+[[/files/a.txt 200 text/plain hi from r2]]
+[[/files/b.txt 404 text/plain;charset=UTF-8 not found]]
+[[/x 404 text/plain;charset=UTF-8 not found]]
+
+[[country]] بـ [[unknown]] لأن [[request.cf]] مش موجود برا Cloudflare. بعد [[wrangler deploy]] هتلاقي البلد الحقيقية (زي [[EG]]).
+
+الغلطة الشائعة: [[TypeError: Cannot read properties of undefined (reading 'get')]]، وده لأن [[env.BUCKET]] مش موجود: اسم الـ binding في [[wrangler.jsonc]] مختلف عن اللي في الكود، أو نسيت تعدّي env في الاختبار.`,
+          solCode: R`// test.mjs
+import worker from "./worker.mjs";
+const env = {
+  GREETING: "ahlan",
+  BUCKET: { get: async (k) => (k === "a.txt" ? { body: "hi from r2", httpMetadata: { contentType: "text/plain" } } : null) },
+};
+for (const p of ["/api/hello", "/files/a.txt", "/files/b.txt", "/x"]) {
+  const r = await worker.fetch(new Request("https://myapp.example.workers.dev" + p), env, {});
+  console.log(p, r.status, r.headers.get("content-type"), await r.text());
+}`
+        },
+        {
+          cmd: "Cloudflare Tunnel",
+          title: "السيرفر في الإنتاج من غير ولا بورت مفتوح",
+          desc: R`Cloudflare Tunnel بيقلب الاتجاه: بدل ما الناس توصل لسيرفرك على 80 و 443، برنامج [[cloudflared]] على السيرفر بيفتح اتصال طالع لـ Cloudflare، والطلبات بترجع عليه. فالفايروول يقفل كل البورتات الداخلة (إلا SSH، أو حتى SSH كمان)، و IP السيرفر مبيبقاش له لازمة للزائر.
+
+للتجربة على جهازك فيه درس [[cloudflared]] في «تاب Node». هنا نسخة الإنتاج: tunnel بيتدار من الداشبورد بـ token، و [[cloudflared]] شغال كـ service أو container، وكل hostname بيروح لخدمة داخلية.`,
+          example: R`# ~/.cloudflared/config.yml (لو بتدير الـ tunnel من ملف مش من الداشبورد)
+tunnel: 6ff42ae2-765d-4adf-8112-31c55c1551ef
+credentials-file: /etc/cloudflared/6ff42ae2-765d-4adf-8112-31c55c1551ef.json
+ingress:
+  - hostname: api.example.com
+    service: http://localhost:3000
+  - hostname: app.example.com
+    service: http://localhost:8080
+  - service: http_status:404`,
+          try: R`على VPS فيه API شغال على [[localhost:3000]]: من الداشبورد (Zero Trust ثم Networks ثم Tunnels) اعمل tunnel، وخد أمر التسطيب بالـ token وشغّله على السيرفر ([[sudo cloudflared service install TOKEN]]). ضيف Public hostname [[api.example.com]] على [[http://localhost:3000]]. بعدين اقفل 80 و 443 في ufw، واتأكد إن الموقع لسه شغال من برا، وإن [[curl http://SERVER_IP]] ما بيردش.`,
+          flag: "script",
+          deep: {
+            why: "كل بورت مفتوح باب بيتفحص طول اليوم. ولما السيرفر ورا Cloudflare proxy عادي، لسه ممكن حد يلاقي الـ IP ويضربه مباشرة ويعدّي WAF و rate limiting (درس [[Cloudflare proxy و SSL]]). مع Tunnel مفيش باب أصلًا. وكمان بيحل مشكلة سيرفر في البيت أو ورا NAT من غير IP ثابت.",
+            how: R`[[cloudflared]] بيفتح كذا اتصال طالع (outbound) لأقرب data centers بتوع Cloudflare. الزائر بيطلب [[api.example.com]]، الـ DNS بيشاور على [[TUNNEL_ID.cfargotunnel.com]] (CNAME برتقاني)، و Cloudflare بيبعت الطلب في الـ tunnel، و [[cloudflared]] بيوصّله لـ [[localhost:3000]].
+
+طريقتين للإدارة: remotely-managed (من الداشبورد، والسيرفر عليه token بس، وده الأسهل والمنصوح بيه) أو locally-managed (ملف [[config.yml]] زي المثال، وملف credentials JSON من [[cloudflared tunnel create]]).
+
+الـ [[ingress]] بيتقري من فوق لتحت، وأول قاعدة hostname بتطابق بتكسب، والقاعدة الأخيرة لازم تبقى catch-all من غير hostname (هنا 404)، وإلا [[cloudflared]] يرفض يشتغل. وتقدر تتحقق بـ [[cloudflared tunnel ingress validate]].
+
+التشغيل الدايم: [[cloudflared service install]] بيعمل systemd service. أو في Docker Compose: container [[cloudflare/cloudflared]] بأمر [[tunnel run]] ومتغير [[TUNNEL_TOKEN]]، وعلى نفس الشبكة فالـ service يبقى [[http://api:3000]] (اسم الـ container)، ومتعملش [[ports:]] للـ API خالص.
+
+ومع Cloudflare Access تحط تسجيل دخول (Google أو إيميل OTP) قبل hostname زي [[admin.example.com]] أو لوحة Coolify، فمحدش يوصل للصفحة أصلًا من غير ما يثبت هو مين.`,
+            when: "أي سيرفر إنتاج صغير ورا Cloudflare، ولوحات التحكم الداخلية (Grafana و Coolify و pgAdmin)، والسيرفرات اللي ورا NAT. مش مناسب لو الترافيك مش HTTP (زي UDP لألعاب) من غير إعدادات إضافية.",
+            mistakes: R`تعمل الـ tunnel وتسيب 80 و 443 مفتوحين، فالفايدة الأمنية راحت. وتنسى الـ catch-all في [[ingress]]. و [[ports: "3000:3000"]] في compose فالـ API مفتوح على الـ IP برضه. وتحط [[localhost]] في الـ service والـ cloudflared جوه container (الـ localhost بتاعه هو الـ container نفسه). وتحط الـ token في ملف على GitHub: الـ token ده يقدر يشغّل الـ tunnel من أي جهاز.`
+          },
+          lines: [
+            "رقم الـ tunnel (من cloudflared tunnel create).",
+            "ملف المفاتيح بتاعه.",
+            "قواعد التوجيه، بالترتيب.",
+            "الطلبات على api.example.com...",
+            "...تروح للـ API على البورت ٣٠٠٠ محليًا.",
+            "والـ frontend على دومين تاني...",
+            "...على ٨٠٨٠.",
+            "أي حاجة تانية: 404 (لازم تبقى آخر قاعدة)."
+          ],
+          sol: R`بعد التسطيب، [[systemctl status cloudflared]] يقول [[active (running)]]، والداشبورد يوري الـ tunnel بحالة [[HEALTHY]]. و [[dig +short api.example.com]] يرجّع IPs بتاعة Cloudflare، و [[curl -sI https://api.example.com/healthz]] يرجّع 200 ومعاه [[cf-ray]].
+
+بعد [[sudo ufw delete allow 80/tcp]] و [[sudo ufw delete allow 443/tcp]]: الموقع لسه شغال من برا (لأن الاتصال طالع من السيرفر)، و [[curl -m 5 http://SERVER_IP]] يعمل timeout.
+
+الغلطات الشائعة: [[502 Bad Gateway]] من Cloudflare، ولوج [[cloudflared]] فيه [[connection refused]]، وده لأن الـ API مش شغال أو بيسمع على بورت تاني أو cloudflared في container وانت كاتب localhost. أو [[1033]] (Argo Tunnel error)، وده معناه إن مفيش [[cloudflared]] متصل بالـ tunnel ده دلوقتي.`,
+          solCode: R`# docker-compose.yml: الـ API من غير أي ports، و cloudflared بيوصله بالاسم
+services:
+  api:
+    build: .
+    environment:
+      - PORT=3000
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=$__{TUNNEL_TOKEN}
+    restart: unless-stopped
+# وفي الداشبورد: Public hostname api.example.com على http://api:3000`
         }
       ]
     },
@@ -1102,7 +1655,12 @@ Netlify نفس الفكرة تقريبًا: deploy previews، ومتغيرات �
             "deploy كـ preview (URL لوحده).",
             "deploy للـ production.",
             "لوجات deploy معين."
-          ]
+          ],
+          sol: R`بعد ربط الريبو وفتح الـ PR، Vercel bot بيكتب تعليق على الـ PR فيه جدول بالـ Status (Building ثم Ready) ولينك Preview زي [[https://myapp-git-feature-x-yourteam.vercel.app]]، وكل push جديد على الـ branch بيعمل preview جديد ويحدّث التعليق. والـ Checks في الـ PR فيها Vercel كـ check.
+
+بعد ما تغيّر متغير بيئة للـ Preview من الداشبورد أو بـ [[vercel env]]، الـ preview القديم هيفضل بالقيمة القديمة. ده مقصود: كل deployment immutable، والمتغيرات بتتقري وقت الـ build (و [[NEXT_PUBLIC_*]] بتتكتب جوه الـ JS نفسه). عشان تاخد القيمة الجديدة لازم deployment جديد: push تاني أو Redeploy من الداشبورد.
+
+الغلطة الشائعة: تغيّر المتغير في Production بس وتستغرب إن الـ preview مش شايفه (كل environment ليه قيم لوحده). أو تنسى تعمل [[vercel env pull]] تاني فالـ [[.env.local]] على جهازك بالقيمة القديمة. وتانية: [[vercel logs]] مبيعرضش لوجات قديمة كتير على الخطة المجانية، فلو مش لاقي خطأ امبارح، ده سبب محتمل.`
         },
         {
           cmd: "Supabase / Neon",
@@ -1135,7 +1693,392 @@ Supabase المجاني: المشروع بيتوقف (pause) لو مفيش نش�
             "Supabase مباشر (5432): للـ migrations.",
             "Neon عن طريق الـ pooler: الهوست فيه -pooler.",
             "Neon مباشر: نفس الهوست من غير -pooler، للـ migrations."
-          ]
+          ],
+          sol: R`الأرقام بتفرق حسب الإعدادات، بس الشكل المتوقع: [[pg_stat_activity]] فيه أصلًا صفوف كتير من المنصة نفسها (خصوصًا Supabase: خدمات زي Auth و Realtime و PostgREST)، فقارن باتصالات يوزر التطبيق بس بالـ query اللي تحت. وانت بتضرب ٥٠ طلب: بالـ direct URL من تطبيق serverless، الرقم بيطلع مع عدد النسخ اللي اشتغلت (كل نسخة ليها pool لوحدها)، وممكن يوصل للحد وتاخد [[too many connections]] أو [[remaining connection slots are reserved]]. بالـ pooler، عدد اتصالات Postgres الحقيقية بيفضل صغير وثابت تقريبًا، لأن الـ pooler (Supavisor أو PgBouncer في Neon) بيوزّع الطلبات على عدد قليل من الاتصالات.
+
+والـ migration بالمباشر: [[prisma migrate deploy]] المفروض يعدّي على [[DIRECT_URL]] (أو [[NEON_DIRECT_URL]]). لو شغّلته على الـ pooler في transaction mode ممكن يقف أو يفشل، لأن الـ migrations محتاجة session كاملة (locks و prepared statements).
+
+الغلطة الأشهر: التطبيق بـ Prisma على بورت 6543 من غير [[?pgbouncer=true]]، فيطلع [[prepared statement "s0" already exists]] بشكل عشوائي تحت الضغط. وتانية: تحط الـ pooler URL في [[directUrl]] بالغلط فالـ migrate يفشل.`,
+          solCode: R`SELECT usename, application_name, state, count(*)
+FROM pg_stat_activity
+WHERE backend_type = 'client backend'
+GROUP BY 1, 2, 3
+ORDER BY 4 DESC;
+# في ترمنال تاني، ٥٠ طلب مع بعض:
+seq 50 | xargs -P 50 -I{} curl -s -o /dev/null https://myapp.example.com/api/items`
+        }
+      ]
+    },
+    {
+      t: "منصات جاهزة للباك إند",
+      l: 2,
+      n: "API و Postgres و worker من GitHub من غير ما تدير سيرفر: Render و Railway و Fly.io، أو PaaS على الـ VPS بتاعك، وإمتى الحساب يقلب",
+      items: [
+        {
+          cmd: "render.yaml",
+          title: "Render: API و Postgres و worker في ملف واحد",
+          desc: R`Render بيشغّل الباك إند بتاعك من الريبو: web service (API ليه URL)، و background worker (من غير بورت، بيسحب jobs)، و cron job، و Postgres و Key Value (زي Redis) مُدارين، وكل ده ممكن يتوصف في ملف [[render.yaml]] (اسمه عندهم Blueprint) في جذر الريبو.
+
+الملف بيربط الخدمات ببعض: [[fromDatabase]] بيحط connection string القاعدة في متغير البيئة لوحده، و [[preDeployCommand]] بيشغّل الـ migrations قبل ما النسخة الجديدة تستقبل ترافيك. وكل push على الـ branch بيعمل deploy.
+
+الخطة المجانية للتجربة بس (الأرقام وقت كتابة الدرس وممكن تتغير، راجع صفحة الأسعار): الـ web service المجاني بينام بعد حوالي ربع ساعة من غير ترافيك وأول طلب بعدها بياخد ثواني، و Postgres المجاني بيتمسح بعد حوالي ٣٠ يوم. والـ worker و preDeployCommand محتاجين خطة مدفوعة.`,
+          example: R`# render.yaml في جذر الريبو
+services:
+  - type: web
+    name: shop-api
+    runtime: node
+    region: frankfurt
+    plan: starter
+    buildCommand: npm ci && npm run build
+    preDeployCommand: npx prisma migrate deploy
+    startCommand: node dist/server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shop-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+  - type: worker
+    name: shop-worker
+    runtime: node
+    region: frankfurt
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/worker.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: shop-db
+          property: connectionString
+databases:
+  - name: shop-db
+    region: frankfurt
+    plan: basic-256mb`,
+          try: R`خد مشروع Express فيه [[/healthz]] وملف worker بسيط (حلقة بتطبع كل ١٠ ثواني وبتقرا من القاعدة). حط [[render.yaml]] زي المثال، وفي الداشبورد اختار New ثم Blueprint ووصّله بالريبو. بعد أول deploy: افتح لوجات الـ worker وشوف إنه وصل للقاعدة، وغيّر حاجة في الكود واعمل push وتابع الـ deploy التاني.`,
+          flag: "script",
+          deep: {
+            why: "أغلب الناس بتعرف تنشر frontend على Vercel، بس أول ما يبقى عندها Express أو FastAPI ومعاه Postgres و worker بيبعت إيميلات، بتتنقل على طول لـ VPS وتقعد أسبوع في Nginx و systemd و SSL. منصة زي Render بتديك الـ ٣ حاجات دول في ملف واحد، و SSL ودومين ولوجات وباك أب للقاعدة جاهزين.",
+            how: R`كل خدمة في [[services]] ليها [[type]]: [[web]] بياخد بورت من متغير [[PORT]] اللي Render بيحطه (فلازم تطبيقك يسمع على [[process.env.PORT]] وعلى [[0.0.0.0]])، و [[worker]] نفس الكود بس من غير بورت ولا URL، و [[cron]] بياخد [[schedule]]، و [[keyvalue]] لـ Redis-compatible.
+
+[[runtime: node]] معناها Render هيبني بنفسه ([[buildCommand]]). ولو عندك Dockerfile اكتب [[runtime: docker]] وهو يبني الـ image (تاب Docker)، ودي أحسن عشان نفس الـ image تشتغل في أي حتة لما تنقل.
+
+[[preDeployCommand]] بيشتغل بعد الـ build وقبل التبديل. لو فشل، النسخة القديمة بتفضل شغالة. ده المكان الصح لـ [[prisma migrate deploy]] (تاب «SQL و Prisma»)، مش جوه [[startCommand]]: لو عندك نسختين من الـ API، الاتنين هيحاولوا يعملوا migrate في نفس الوقت.
+
+[[healthCheckPath]]: Render مش هيبعت ترافيك للنسخة الجديدة غير لما المسار ده يرد 200، وده اللي بيدّيك deploy من غير downtime.
+
+[[fromDatabase]] بـ [[connectionString]] بيحط الـ internal URL: الخدمات والقاعدة في نفس الـ region بيتكلموا على شبكة Render الخاصة. عشان كده حط كله في نفس الـ [[region]]. و [[generateValue: true]] بيعمل سر عشوائي مرة واحدة. والأسرار اللي انت عارف قيمتها (مفتاح Stripe) اكتبها [[sync: false]] وحط قيمتها من الداشبورد، متكتبهاش في الملف.
+
+الفلوس (تقريبي ومتغير): فيه اشتراك للـ workspace، وكل خدمة ليها instance بسعر شهري ثابت، والقاعدة بسعر حسب حجمها. يعني API + worker + قاعدة = ٣ بنود، وده اللي بيخلّي الفاتورة تكبر أسرع من VPS لما الخدمات تزيد (درس [[PaaS ولا VPS: الحساب]]).`,
+            when: "باك إند Node أو Python لفريق صغير أو فريلانسر، خصوصًا لو محتاج worker و cron، ومحدش عايز يبقى sysadmin. والخطة المجانية للديمو والبورتفوليو بس.",
+            mistakes: R`تحط مشروع عميل حقيقي على Postgres المجاني وتتفاجئ إنه اتمسح بعد شهر. والتطبيق يسمع على [[localhost]] أو بورت ثابت ٣٠٠٠ فالـ deploy يفشل في health check. و [[prisma migrate deploy]] جوه [[startCommand]]. والقاعدة في [[oregon]] (الافتراضي) والـ API في فرانكفورت. والملفات اللي اليوزر بيرفعها تتحفظ على ديسك الـ instance: بتتمسح مع كل deploy، فاستخدم S3 أو R2. وفي الانترفيو: «إيه الفرق بين web service و worker؟» الـ worker مفيش حد بيكلّمه من برا، هو اللي بيسحب الشغل من queue.`
+          },
+          lines: [
+            "كل الخدمات اللي مش قواعد بيانات.",
+            "خدمة web: ليها URL وبتستقبل HTTP.",
+            "اسمها، وبيبقى جزء من الـ URL.",
+            "Render هيبني بـ Node من غير Dockerfile.",
+            "قريب من مصر وأوروبا (الافتراضي أمريكا).",
+            "خطة مدفوعة صغيرة: مبتنامش.",
+            "أمر البناء.",
+            "الـ migrations قبل ما النسخة الجديدة تاخد ترافيك.",
+            "أمر التشغيل.",
+            "مسار بيرد 200 لما التطبيق يبقى جاهز.",
+            "متغيرات البيئة.",
+            "DATABASE_URL.",
+            "جاي من القاعدة اللي تحت.",
+            "اسمها.",
+            "الـ connection string الداخلي.",
+            "سر للتوكنات.",
+            "Render بيولّده عشوائي مرة واحدة.",
+            "خدمة worker: من غير بورت ولا URL.",
+            "اسمها.",
+            "نفس الـ runtime.",
+            "نفس الـ region عشان الشبكة الداخلية.",
+            "خطة مدفوعة (الـ worker مش مجاني).",
+            "نفس البناء.",
+            "بس بيشغّل ملف الـ worker.",
+            "متغيراتها.",
+            "نفس القاعدة.",
+            "من القاعدة.",
+            "اسمها.",
+            "الـ connection string.",
+            "قواعد البيانات المُدارة.",
+            "اسم القاعدة اللي الخدمات بتشاور عليه.",
+            "نفس الـ region.",
+            "أصغر خطة مدفوعة (باك أب ومبتتمسحش)."
+          ],
+          sol: R`بعد ما الـ Blueprint يخلص هتلاقي ٣ حاجات في المشروع: [[shop-api]] بـ URL على [[onrender.com]]، و [[shop-worker]] من غير URL، و [[shop-db]]. افتح [[https://shop-api-xxxx.onrender.com/healthz]] المفروض يرد 200، ولوجات الـ worker المفروض تطبع سطرها كل ١٠ ثواني ومعاه نتيجة من القاعدة (زي عدد الطلبات).
+
+ولما تعمل push هتلاقي deploy جديد للخدمتين، وفي لوج الـ API سطر [[prisma migrate deploy]] قبل التشغيل. والموقع مش هيقع وانت بتنشر، لأن النسخة القديمة بتفضل شغالة لحد ما [[/healthz]] في الجديدة يرد.
+
+الغلطات الشائعة: الـ deploy يفضل «In progress» وبعدين يفشل بـ timeout، وده غالبًا لأن التطبيق بيسمع على بورت ثابت بدل [[process.env.PORT]]. أو الـ worker يقع بـ [[ECONNREFUSED]]، وده لأنك كاتب DATABASE_URL بإيدك من جهازك بدل [[fromDatabase]]. ولو اخترت [[plan: free]] للـ worker هتلاقي الـ Blueprint بيرفض، لأن الـ workers مش مجانية.`,
+          solCode: R`// src/server.ts
+import express from "express";
+const app = express();
+app.get("/healthz", (_req, res) => res.send("ok"));
+app.listen(Number(process.env.PORT ?? 3000), "0.0.0.0");
+
+// src/worker.ts
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+setInterval(async () => {
+  const count = await prisma.order.count();
+  console.log(JSON.stringify({ msg: "worker tick", orders: count }));
+}, 10_000);`
+        },
+        {
+          cmd: "railway",
+          title: "Railway: خدمات ومتغيرات بتشاور على بعض",
+          desc: R`Railway بيشتغل بفكرة مشروع فيه خدمات جنب بعض على canvas: خدمة من ريبو GitHub أو Docker image، وقاعدة Postgres أو Redis بزرار واحد، وكلهم على شبكة خاصة جوه المشروع.
+
+المتغيرات بتشاور على بعض بـ reference variables: [[DATABASE_URL=$__{{Postgres.DATABASE_URL}}]] معناها «خد قيمة DATABASE_URL من خدمة اسمها Postgres»، فلو القاعدة اتغيرت، المتغير يتحدّث لوحده. والـ worker مجرد خدمة تانية من نفس الريبو بـ start command مختلف.
+
+الفلوس بالاستخدام الفعلي (CPU و RAM بالثانية + الديسك + الترافيك الخارج)، مش بسعر ثابت لكل خدمة. وقت كتابة الدرس: فيه trial بكريدت صغير، وخطة Hobby بـ ٥ دولار في الشهر وجواها ٥ دولار استخدام. الأرقام بتتغير، فراجع صفحة الأسعار.`,
+          example: R`npm i -g @railway/cli
+railway login
+railway init --name shop
+railway add --database postgres
+railway add --service api --variables 'DATABASE_URL=$__{{Postgres.DATABASE_URL}}'
+railway add --service worker --variables 'DATABASE_URL=$__{{Postgres.DATABASE_URL}}'
+railway up --service api
+railway variables --service api
+railway logs --service worker
+railway run npx prisma migrate dev`,
+          try: R`اعمل مشروع على Railway فيه Postgres وخدمتين (api و worker) من نفس الريبو. في إعدادات الـ worker غيّر الـ start command لـ [[node dist/worker.js]]، وفي الـ api حط pre-deploy command بـ [[npx prisma migrate deploy]]. بعدين من إعدادات الـ api اعمل Generate Domain وافتح [[/healthz]]، وشوف في الـ Metrics أد إيه كل خدمة بتاكل RAM.`,
+          deep: {
+            why: "Railway أسرع طريقة تشغّل بيها كذا خدمة بتكلم بعض (API و worker و Postgres و Redis) من غير YAML كتير. وطريقة الفلوس بالاستخدام بتبقى أرخص لمشروع صغير فاضي معظم الوقت، وأغلى لو خدمة بتاكل RAM على طول.",
+            how: R`المشروع فيه environments (زي production و staging)، وكل environment فيه نسخة من كل الخدمات بمتغيراتها. وممكن تفعّل PR environments: نسخة كاملة لكل PR.
+
+الخدمة بتتبني بـ Railpack (البنّاء بتاعهم اللي بيعرف Node و Python وغيرهم لوحده) أو بـ Dockerfile لو موجود في الريبو. وإعداداتها (start command و pre-deploy command و health check) من الداشبورد أو من ملف [[railway.json]] أو [[railway.toml]] في الريبو.
+
+الشبكة الخاصة: كل خدمة ليها اسم داخلي زي [[api.railway.internal]]، والـ worker يقدر يكلّم الـ API عليه من غير ما يطلع على النت. والقاعدة بتدّي متغيرين: [[DATABASE_URL]] (داخلي، ببلاش ترافيك) و [[DATABASE_PUBLIC_URL]] (للوصول من جهازك، وبيتحاسب كترافيك خارج).
+
+الـ CLI: [[railway init]] مشروع جديد، [[railway link]] يربط الفولدر بمشروع موجود، [[railway add]] يضيف قاعدة أو خدمة، [[railway up]] يرفع الفولدر الحالي ويبني (من غير GitHub)، و [[railway run CMD]] بيشغّل أمر على جهازك بمتغيرات الخدمة، مفيد لـ migration أو script سريع.
+
+الخدمة مش بتنام لوحدها. فيه خيار serverless (أو «App Sleeping») بيوقّفها لو مفيش ترافيك، بس مش مناسب لـ worker.`,
+            when: "MVP أو مشروع جانبي فيه كذا خدمة، أو فريق صغير عايز staging و PR previews للباك إند من غير شغل. ولو الـ RAM بتاع الخدمات ثابت وعالي على طول، احسبها مقابل VPS.",
+            mistakes: R`تكتب connection string القاعدة كنص ثابت بدل reference variable، فلما القاعدة تتغير الخدمة تقع. وتستخدم [[DATABASE_PUBLIC_URL]] من جوه الخدمات فتدفع ترافيك على كل query وتبقى أبطأ. وتفتكر إن الـ ٥ دولار حد أقصى: لو الاستخدام عدّاها بتدفع الزيادة، فحط usage limit من الإعدادات. وتنسى إن [[railway run]] بيشغّل على جهازك بمتغيرات الإنتاج، فـ [[prisma migrate reset]] كده بيمسح قاعدة الإنتاج.`
+          },
+          lines: [
+            "سطّب الـ CLI.",
+            "سجّل دخول (بيفتح المتصفح).",
+            "مشروع جديد اسمه shop، والفولدر اتربط بيه.",
+            "ضيف Postgres مُدار (اسم الخدمة Postgres).",
+            "خدمة api، و DATABASE_URL بتشاور على القاعدة (علامات ' عشان الشل ميفسّرش $).",
+            "خدمة worker بنفس المتغير.",
+            "ارفع الكود وابنيه على خدمة api.",
+            "اعرض متغيرات الـ api بقيمها النهائية.",
+            "لوجات الـ worker.",
+            "شغّل أمر على جهازك بمتغيرات الخدمة المربوطة."
+          ],
+          sol: R`في الـ canvas هتشوف ٣ مربعات: Postgres و api و worker، وخطوط بين القاعدة والخدمتين (بسبب الـ reference variables). [[railway variables --service api]] المفروض يطلّع [[DATABASE_URL]] بقيمة فيها [[postgres.railway.internal]]، يعني الشبكة الداخلية.
+
+بعد Generate Domain، [[/healthz]] يرد 200. وفي لوجات الـ api تلاقي خطوة pre-deploy فيها [[prisma migrate deploy]] وبعدها [[All migrations have been successfully applied]] أو [[No pending migrations to apply]]. والـ Metrics المفروض توريك استهلاك صغير (عشرات الميجات RAM للـ worker)، وده اللي بتدفعه فعلًا.
+
+الغلطات الشائعة: الـ worker بيشتغل كـ API تاني ويطبع [[listening on 3000]]، لأنك مغيّرتش الـ start command فخد [[npm start]]. أو قيمة المتغير طالعة [[$__{{Postgres.DATABASE_URL}}]] كنص حرفي، لأن اسم خدمة القاعدة مش [[Postgres]] بالظبط (الاسم حساس لحالة الحروف).`,
+          solCode: R`// railway.json في جذر الريبو (إعدادات الـ api)
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "deploy": {
+    "startCommand": "node dist/server.js",
+    "preDeployCommand": ["npx prisma migrate deploy"],
+    "healthcheckPath": "/healthz"
+  }
+}`
+        },
+        {
+          cmd: "fly launch",
+          title: "Fly.io: containers قريبة من اليوزر، و volumes، و regions",
+          desc: R`Fly.io بياخد الـ Docker image بتاعتك ويشغّلها كـ Machines (VMs صغيرة بتقوم في ثواني) في أي region تختارها. [[fly launch]] بيقرا المشروع، ويعمل [[fly.toml]] و Dockerfile لو مش موجود، ويعمل الـ app.
+
+الـ Machine ديسكها بيتمسح مع كل deploy. لو محتاج داتا تعيش (SQLite مثلًا) بتعمل volume: ديسك مربوط بـ Machine واحدة في region واحدة. وبتقدر تفصل الـ web عن الـ worker بـ [[processes]] في نفس الـ app.
+
+مفيش free tier للحسابات الجديدة وقت كتابة الدرس: بتدفع بالثانية على الـ Machines الشغالة، وبالجيجا على الـ volumes حتى لو الـ Machine واقفة. الـ Machine الصغيرة جدًا بدولارات قليلة في الشهر، بس راجع صفحة الأسعار.`,
+          example: R`# fly.toml (fly launch بيعمله، وده بعد التعديل)
+app = "shop-api"
+primary_region = "fra"
+
+[build]
+
+[deploy]
+  release_command = "npx prisma migrate deploy"
+
+[processes]
+  app = "node dist/server.js"
+  worker = "node dist/worker.js"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "512mb"`,
+          try: R`اعمل [[fly launch]] على مشروع Express، واقبل الـ Dockerfile اللي بيعمله، وخلّي [[primary_region]] أقرب region ليك. ضيف [[processes]] زي المثال، وشغّل [[fly secrets set DATABASE_URL=...]] وبعدين [[fly deploy]]. بعدين: [[fly status]] (كام Machine لكل process)، و [[fly scale count app=2]]، و [[fly logs]]. وجرّب تسيب الموقع ربع ساعة من غير طلبات وشوف [[fly status]].`,
+          flag: "script",
+          deep: {
+            why: "لو المستخدمين في أكتر من قارة، أو محتاج WebSockets أو process شغال على طول، Fly بيشغّل container حقيقي قريب منهم، مش function ليها حد أقصى للوقت. والـ Machines اللي بتقف لما مفيش ترافيك بتخلي مشروع صغير يتكلف قليل.",
+            how: R`[[fly launch]] بيسألك عن الاسم والـ region، ويقترح Postgres أو Redis، ويكتب [[fly.toml]]. وبعدها [[fly deploy]] بيبني الـ image (على builder عندهم أو جهازك) ويعمل rolling update.
+
+[[release_command]] بيشتغل مرة واحدة في Machine مؤقتة قبل تحديث الباقي، ولو فشل الـ deploy بيقف. ده مكان الـ migrations.
+
+[[processes]]: كل سطر بيعمل مجموعة Machines بأمر مختلف من نفس الـ image. و [[http_service.processes = ["app"]]] معناها بس مجموعة app بتستقبل HTTP. وتكبّر كل مجموعة لوحدها: [[fly scale count worker=2]].
+
+[[auto_stop_machines = "stop"]]: الـ proxy بتاع Fly بيوقّف الـ Machines لما مفيش طلبات، ويقوّمها مع أول طلب (حوالي ثانية أو أقل). و [[min_machines_running = 1]] بيسيب واحدة صاحية في الـ primary region. ده بيأثر على الـ web بس، والـ worker مبيستقبلش HTTP فمش بيتوقف بالطريقة دي.
+
+الـ volumes: [[fly volumes create data --size 1 --region fra]] وبعدين في [[fly.toml]] قسم [[[mounts]]] فيه [[source = "data"]] و [[destination = "/data"]]. الـ volume في region واحدة ومربوط بـ Machine واحدة، ومفيش مشاركة بين Machines ولا replication تلقائي. عشان كده Machine بـ volume = حاجة واحدة لو وقعت وقعت، و Fly بيعمل snapshots يومية (والتخزين بتاعها بقى بيتحاسب). لو محتاج قاعدة بجد استخدم Postgres مُدار (من Fly أو Neon أو Supabase) بدل ما تدير Postgres على volume بنفسك.
+
+الـ regions: [[fly platform regions]] بيعرضهم. [[fly scale count 2 --region fra,ams]] بيوزّع Machines. الطلب بيروح لأقرب Machine شغالة (Anycast)، بس لو القاعدة في fra والـ Machine في سنغافورة، كل query هتعدّي نص الكرة الأرضية. فابدأ region واحدة جنب القاعدة.`,
+            when: "API أو WebSockets أو app محتاج process طويل وقريب من اليوزر، وانت مرتاح مع Docker. ولو كل اللي عندك API بسيط وقاعدة، Render أو Railway أبسط.",
+            mistakes: R`تعمل volume وتفتكر إنه باك أب أو إنه بيتشارك بين Machines. وتعمل [[fly scale count 3]] لـ app عليه volume فيتعمل ٣ volumes فاضية مختلفة، وكل Machine بداتا مختلفة. و [[min_machines_running = 0]] لـ API محتاج يرد بسرعة. وتنسى إن الـ volumes والـ IPv4 المخصص بيتحاسبوا حتى لو الـ Machines واقفة. والتطبيق يسمع على بورت غير [[internal_port]] فالـ health check يفشل.`
+          },
+          lines: [
+            "اسم الـ app (والدومين هيبقى shop-api.fly.dev).",
+            "الـ region الأساسية: فرانكفورت.",
+            "البناء: فاضي يعني استخدم الـ Dockerfile اللي في الريبو.",
+            "إعدادات الـ deploy.",
+            "Machine مؤقتة بتشغّل الـ migrations قبل التحديث.",
+            "مجموعات processes من نفس الـ image.",
+            "مجموعة app: السيرفر.",
+            "مجموعة worker: شغل الخلفية.",
+            "الـ HTTP من برا.",
+            "البورت اللي التطبيق بيسمع عليه جوه الـ container.",
+            "حوّل HTTP لـ HTTPS.",
+            "وقّف الـ Machines لما مفيش ترافيك.",
+            "قوّمها مع أول طلب.",
+            "سيب واحدة صاحية دايمًا.",
+            "بس مجموعة app بتاخد HTTP.",
+            "مقاس الـ Machine.",
+            "CPU مشترك واحد.",
+            "نص جيجا رام."
+          ],
+          sol: R`بعد [[fly deploy]] المفروض [[fly status]] يوريك Machines في مجموعتين: [[app]] و [[worker]]، كلهم في [[fra]]. و [[https://shop-api.fly.dev/healthz]] يرد 200. وفي [[fly logs]] هتلاقي سطر الـ release_command ([[prisma migrate deploy]]) قبل ما الـ Machines تتحدّث.
+
+بعد [[fly scale count app=2]] هتلاقي ٢ app و ١ worker. ولو سبت الموقع من غير طلبات ربع ساعة، [[fly status]] هيوريك Machine من الاتنين حالتها [[stopped]] والتانية [[started]] (بسبب [[min_machines_running = 1]])، والـ worker لسه [[started]].
+
+الغلطات الشائعة: الـ deploy يطلع [[instance refused connection]] أو ما يعدّيش الـ health check، لأن التطبيق بيسمع على ٣٠٠٠ والـ [[internal_port]] ٨٠٨٠: خلي التطبيق يقرا [[PORT]] أو غيّر الرقم. أو الـ worker مش ظاهر خالص، لأنك نسيت [[processes = ["app"]]] في [[http_service]] فالاتنين بقوا web.`,
+          solCode: R`fly launch --no-deploy
+fly secrets set DATABASE_URL="postgresql://app:YOUR_PASSWORD@db.example.com:5432/shop?sslmode=require"
+fly deploy
+fly status
+fly scale count app=2
+fly logs`
+        },
+        {
+          cmd: "Coolify / Dokploy",
+          title: "PaaS على الـ VPS بتاعك: تجربة Render بسعر سيرفر",
+          desc: R`Coolify و Dokploy برامج open source بتسطّبها على VPS بتاعك، فيبقى عندك داشبورد زي Render: تربط ريبو GitHub، وكل push يعمل build و deploy، و SSL تلقائي بـ Let's Encrypt، وقواعد بيانات بزرار، وباك أب للقاعدة على S3 أو R2.
+
+من جوه بيستخدموا Docker (والـ Dockerfile أو Nixpacks أو Docker Compose بتاعك)، و Traefik كـ reverse proxy بياخد الدومين ويعمل الشهادة. يعني نفس اللي بتعمله بإيدك في تاب VPS وتاب Docker وتاب Nginx، بس بداشبورد.
+
+البرنامج نفسه ببلاش، وبتدفع تمن السيرفر بس. وكل واحد ليه نسخة cloud مدفوعة لو مش عايز تدير لوحة التحكم نفسها. الحد الأدنى المكتوب في الدوكس حوالي ٢ جيجا رام و ٣٠ جيجا ديسك، والـ build نفسه بياكل رام، فسيرفر ٤ جيجا أريح.`,
+          example: R`ssh root@203.0.113.10
+curl -fsSL https://cdn.coollabs.io/coolify/install.sh | sudo bash
+curl -sSL https://dokploy.com/install.sh | sh
+docker ps --format "table {{.Names}}\t{{.Status}}"
+sudo ufw allow 22,80,443/tcp
+dig +short api.example.com`,
+          try: R`على VPS جديد فاضي (Ubuntu LTS، ٤ جيجا لو تقدر)، سطّب واحد بس من الاتنين. افتح اللوحة (Coolify على بورت 8000، و Dokploy على 3000)، واعمل حساب الأدمن فورًا. اربط GitHub، واعمل Postgres، وانشر API من ريبو فيه Dockerfile على [[api.example.com]] (سجل A بيشاور على السيرفر). وبعدين فعّل الباك أب المجدول للقاعدة على bucket في R2 أو S3.`,
+          flag: "danger",
+          deep: {
+            why: "الـ PaaS المدفوعة بتبقى غالية لما الخدمات تكتر: ٥ خدمات صغيرة = ٥ instances. على VPS بـ ١٥ دولار تقدر تشغّل الـ ٥ ومعاهم Postgres و Redis. Coolify و Dokploy بيدّوك راحة push-to-deploy و SSL والباك أب من غير ما تكتب Nginx config ولا systemd unit، وده طريق شائع جدًا للفريلانسرز والشركات الصغيرة.",
+            how: R`سكربت التسطيب بيسطّب Docker ويشغّل اللوحة نفسها كـ containers. بعد كده، أي app بتضيفه بيتبني image ويشتغل container، و Traefik بيقرا الـ labels بتاعته ويوجّه الدومين ليه ويطلب شهادة.
+
+Coolify: أقدم وأكبر، فيه كتالوج خدمات جاهزة كبير (Plausible و n8n و MinIO وغيرهم بزرار)، ويقدر يدير كذا سيرفر من لوحة واحدة عن طريق SSH. Dokploy: أخف وأحدث، ومبني على Docker Swarm فبيقدر يوزّع على كذا سيرفر، وتجربته قريبة من Vercel. الاتنين بيقروا Docker Compose بتاعك كما هو.
+
+الـ build على نفس السيرفر اللي بيخدم اليوزرز. build لـ Next.js ممكن ياخد ١.٥ جيجا رام، فعلى سيرفر ٢ جيجا الموقع يبطأ أو الـ OOM killer يقتل حاجة. الحل: سيرفر أكبر، أو swap، أو تبني الـ image في GitHub Actions وتخلي اللوحة تسحبها من registry (تاب GitHub Actions).
+
+اللي لسه عليك انت: تحديث نظام التشغيل (unattended-upgrades في تاب VPS)، والفايروول، وتحديث اللوحة نفسها، ومراقبة الديسك (الـ images القديمة بتتراكم)، وباك أب برا السيرفر. لو السيرفر الواحد وقع، كل حاجة وقعت.
+
+تحذير أمان: اللوحة فيها صلاحية root على السيرفر عمليًا. اعمل حساب الأدمن أول ما تفتحها (أول واحد يفتح الصفحة بيبقى الأدمن)، وحط لوحة التحكم على دومين بـ HTTPS، ولو تقدر اقفل بورت اللوحة إلا من IP بتاعك أو وراه Cloudflare Access.`,
+            when: "عندك كذا مشروع صغير أو عملاء، وعايز push-to-deploy بسعر VPS، وعندك حد يعرف أساسيات Linux لو حاجة باظت. مش أول اختيار لو محدش في الفريق عمره فتح ترمنال.",
+            mistakes: R`تسطّب وتسيب صفحة التسجيل مفتوحة على [[http://IP:8000]] فحد تاني يسجّل أدمن قبلك. والقاعدة على نفس السيرفر والباك أب على نفس الديسك. وسيرفر ١ جيجا وكل build يوقّع الموقع. وتنسى إن Docker بيفتح البورتات بعيد عن ufw (تاب Docker)، فقاعدة عملتلها public port تبقى مفتوحة للنت. وتفتكر إن «زي Render» معناها «مُدار»: التحديثات والأمان لسه عليك.`
+          },
+          lines: [
+            "ادخل السيرفر الجديد.",
+            "سكربت تسطيب Coolify الرسمي (Docker + اللوحة على بورت 8000).",
+            "أو سكربت Dokploy الرسمي (اللوحة على بورت 3000). اختار واحد بس.",
+            "اتأكد إن containers اللوحة شغالة.",
+            "SSH والويب بس (وافتكر إن Docker بيعدّي ufw في البورتات اللي بيفتحها).",
+            "اتأكد إن الدومين بيشاور على السيرفر قبل ما تطلب شهادة."
+          ],
+          sol: R`بعد التسطيب، [[docker ps]] المفروض يوريك containers اللوحة: في Coolify أسماء زي [[coolify]] و [[coolify-db]] و [[coolify-redis]] و [[coolify-proxy]] (ده Traefik)، وفي Dokploy أسماء زي [[dokploy]] و [[dokploy-postgres]] و [[dokploy-redis]] و [[dokploy-traefik]].
+
+بعد ما تنشر الـ API، [[curl -I https://api.example.com/healthz]] يرجّع [[HTTP/2 200]]، والشهادة من Let's Encrypt ([[openssl s_client]] زي درس [[Cloudflare proxy و SSL]]). وبعد أول باك أب مجدول هتلاقي ملف dump في الـ bucket.
+
+الغلطات الشائعة: الشهادة مش بتطلع والمتصفح بيقول [[TRAEFIK DEFAULT CERT]]، وده لأن الـ DNS لسه مش بيشاور على السيرفر، أو السجل برتقاني في Cloudflare والـ SSL mode مش Full (strict). أو الـ build بيقف في النص ولوج السيرفر فيه [[Out of memory: Killed process]]، والحل رام أكبر أو swap أو build برا السيرفر.`
+        },
+        {
+          cmd: "PaaS ولا VPS: الحساب",
+          title: "الفاتورة كبرت: تفضل على PaaS ولا تنقل؟",
+          desc: R`المقارنة الصح مش «٨٠ دولار مقابل ٢٠»، هي فلوس + وقت: الـ PaaS بتاخد فلوس أكتر ووقت أقل، والـ VPS فلوس أقل ووقت أكتر (تحديثات، وباك أب، ومشاكل الساعة ٢ بالليل). والوقت ده ليه سعر حتى لو انت اللي بتعمله.
+
+السكربت ده بيحسب التكلفة الكاملة بسعر ساعتك. الأرقام تقريبية للتوضيح بس: عدّلها بأسعار المنصات النهارده وبالوقت اللي بتصرفه فعلًا.`,
+          example: R`const HOURLY = Number(process.argv[2] ?? 15);
+const setups = {
+  "PaaS (Render/Railway)": { bill: { api: 25, worker: 25, postgres: 20, redis: 10 }, opsHours: 0.5 },
+  "VPS + Coolify": { bill: { vps: 16, backups: 3, offsite: 1 }, opsHours: 3 },
+  "VPS بإيدك": { bill: { vps: 16, backups: 3, offsite: 1 }, opsHours: 5 },
+};
+const sum = (o) => Object.values(o).reduce((a, b) => a + b, 0);
+for (const [name, s] of Object.entries(setups)) {
+  const cash = sum(s.bill);
+  const time = s.opsHours * HOURLY;
+  console.log(name.padEnd(22), "فلوس", cash, "+ وقت", time, "=", cash + time, "دولار");
+}`,
+          try: R`احفظه [[cost.mjs]] وشغّله بـ [[node cost.mjs 5]] و [[node cost.mjs 15]] و [[node cost.mjs 40]]. وبعدين حط أرقامك الحقيقية: فاتورة المنصة من آخر شهر، وسعر VPS يكفي نفس الخدمات، وكام ساعة في الشهر فعلًا بتصرفها على السيرفر. عند أنهي سعر ساعة الاختيار بيقلب؟`,
+          flag: "script",
+          deep: {
+            why: "أغلب قرارات النقل بتتاخد غلط في الاتجاهين: حد ينقل من PaaS لـ VPS عشان يوفر ٥٠ دولار ويصرف ١٠ ساعات في الشهر على الصيانة، أو شركة تفضل تدفع آلاف على منصة وكان ممكن سيرفرين يكفوا. الحساب البسيط ده بيخلّي القرار أرقام مش إحساس.",
+            how: R`ليه الـ PaaS بتغلى مع الكبر: كل خدمة instance بسعر، وكل قاعدة بسعر، والترافيك الخارج بيتحاسب. ٥ خدمات صغيرة على PaaS ممكن تكلف أضعاف سيرفر واحد يشيلهم. وعلى الناحية التانية، أول ٢-٣ خدمات على PaaS غالبًا أرخص من وقتك.
+
+إمتى الحساب بيقلب لـ VPS (أو VPS + Coolify): فاتورة المنصة بقت أكبر من سيرفرين كويسين + ساعتين شغل، والترافيك ثابت ومتوقع، وفيه حد في الفريق مرتاح مع Linux. وإمتى تفضل على PaaS: الفريق صغير ووقته أغلى من الفرق، أو محتاج previews و autoscaling و Postgres بـ PITR من غير ما تبنيهم.
+
+وفيه حل وسط كتير بيعمله الناس: الـ API والـ workers على VPS بـ Coolify، والقاعدة تفضل مُدارة (Neon أو Supabase أو RDS)، لأن القاعدة هي أصعب حاجة تديرها صح (باك أب واسترجاع مجرّب).
+
+إزاي تبقى جاهز للنقل من أول يوم: Dockerfile لكل خدمة (فتشتغل في أي حتة)، وكل الإعدادات متغيرات بيئة (مفيش حاجة في داشبورد بس)، والملفات في S3 أو R2 مش على ديسك، والـ migrations في الكود، والدومين عندك في Cloudflare مش عند المنصة.
+
+خطوات النقل نفسها: شغّل كل حاجة على الجديد جنب القديم، واعمل [[pg_dump]] من القاعدة القديمة و [[pg_restore]] على الجديدة وجرّب عليها، ونزّل الـ TTL قبلها بيوم (درس [[Route 53]])، وبعدين في وقت هادي: وقّف الكتابة (maintenance mode)، و dump أخير، و restore، وغيّر الـ DNS، وسيب القديم شغال أسبوع لو احتجت ترجع. تفاصيل الـ dump والـ restore في تاب PostgreSQL.`,
+            when: "كل ما فاتورة المنصة تزيد بشكل ملحوظ، أو تيجي تضيف خدمة جديدة، أو وقت الصيانة على VPS يبدأ ياكل من وقت المنتج.",
+            mistakes: R`تحسب الفلوس بس وتعتبر وقتك ببلاش. وتنقل القاعدة من غير ما تجرّب الـ restore قبلها. وتنقل وانت معتمد على حاجات خاصة بالمنصة (cron من الداشبورد، أو متغيرات مش مكتوبة في أي حتة، أو ملفات على ديسك الـ instance). وفي الانترفيو: «امتى تنقل من Heroku-like PaaS لـ infrastructure بتاعتك؟» الإجابة الكويسة فيها التكلفة الكاملة، ومين هيدير، وخطة نقل من غير downtime وخطة رجوع.`
+          },
+          lines: [
+            "سعر ساعتك من أول argument (الافتراضي ١٥ دولار).",
+            "٣ طرق لتشغيل نفس المشروع.",
+            "PaaS: ٤ بنود (API و worker وقاعدة و Redis)، ونص ساعة شغل في الشهر.",
+            "VPS + Coolify: سيرفر وباك أب وتخزين برا، و ٣ ساعات صيانة.",
+            "VPS بإيدك: نفس الفلوس، ووقت أكتر (Nginx و systemd بإيدك).",
+            "قفلة.",
+            "دالة بتجمع البنود.",
+            "لكل طريقة:",
+            "الفلوس اللي بتدفعها.",
+            "تمن وقتك.",
+            "اطبع الاتنين والمجموع.",
+            "قفلة الحلقة."
+          ],
+          sol: R`الناتج بسعر ساعة ٥ دولار: PaaS حوالي [[82.5]]، و VPS + Coolify [[35]]، و VPS بإيدك [[45]]. يعني السيرفر أرخص بفرق كبير.
+
+بسعر ١٥: PaaS [[87.5]]، و Coolify [[65]]، و VPS بإيدك [[95]]. هنا الـ VPS بإيدك بقى أغلى من الـ PaaS، و Coolify لسه أرخص.
+
+بسعر ٤٠: PaaS [[100]]، و Coolify [[140]]، و VPS بإيدك [[220]]. الـ PaaS بقت الأرخص فعلًا.
+
+والحل (الـ solCode) بياخد أرقامك من الـ argv: [[node break-even.mjs]] بالافتراضي بيطلّع [[PaaS: 87.5 | VPS: 80 | الـ VPS أرخص]] و [[الاختيار بيقلب عند سعر ساعة 17.1 دولار]]. ولو فاتورة الـ PaaS ١٢٠ والـ VPS ٢٠ بـ ٣ ساعات ([[node break-even.mjs 30 120 20 3]]) نقطة القلب بتبقى ٤٠ دولار.
+
+الفكرة: كل ما وقتك يغلى، الـ PaaS تكسب. وكل ما الخدمات تكتر (زوّد بنود في الـ PaaS بس وشوف)، الـ VPS يكسب. ولو لقيت إن الـ PaaS دايمًا أغلى مهما غيّرت سعر الساعة، راجع إنك حاسب ساعات صيانة الـ VPS بأمانة: تحديثات وباك أب واسترجاع مجرّب ومراقبة، مش «ولا حاجة، هو شغال لوحده».`,
+          solCode: R`// break-even.mjs: هات الفاتورة والساعات من argv بدل ما تكتبها في الكود
+const [, , hourly = "15", paasBill = "80", vpsBill = "20", vpsHours = "4"] = process.argv;
+const h = Number(hourly);
+const paas = Number(paasBill) + 0.5 * h;
+const vps = Number(vpsBill) + Number(vpsHours) * h;
+console.log("PaaS:", paas, "| VPS:", vps, "|", paas < vps ? "خليك على PaaS" : "الـ VPS أرخص");
+const breakEven = (Number(paasBill) - Number(vpsBill)) / (Number(vpsHours) - 0.5);
+console.log("الاختيار بيقلب عند سعر ساعة", breakEven.toFixed(1), "دولار");`
         }
       ]
     },
@@ -1178,7 +2121,26 @@ aws ecr describe-images --repository-name myapp-api --query "imageDetails[].[ima
             "ادّيها الاسم الكامل بتاع ECR.",
             "ارفعها.",
             "اعرض الـ images المرفوعة وحجمها."
-          ]
+          ],
+          sol: R`الـ [[keep-last-20.json]] تحت. [[put-lifecycle-policy]] بيرجّع [[registryId]] و [[repositoryName]] و [[lifecyclePolicyText]] (نفس الـ JSON). والقاعدة مش بتمسح فورًا: ECR بيطبّقها في الخلفية خلال ساعات، فلو عايز تشوف هتمسح إيه قبلها شغّل الـ preview اللي تحت.
+
+[[describe-image-scan-findings]] محتاج [[--image-id imageTag=1.4.0]]، وبيرجّع [[imageScanStatus.status: COMPLETE]] و [[findingSeverityCounts]] زي [[{"HIGH": 2, "MEDIUM": 7, "LOW": 12}]]. الأرقام بتفرق حسب الـ base image: [[node:22-alpine]] أو [[distroless]] غالبًا أقل بكتير من [[node:22]] الكامل، وده سبب كويس تصغّر الـ image.
+
+أخطاء شائعة: [[ScanNotFoundException]] يعني الـ image اترفعت قبل ما تفعّل [[scanOnPush]] أو لسه الفحص شغال (استنى أو [[aws ecr start-image-scan]]). و [[InvalidParameterException]] على الـ policy غالبًا [[countNumber]] مكتوب كنص [["20"]] بدل رقم، أو [[tagStatus]] بـ [[tagged]] من غير [[tagPrefixList]]. وخلي بالك إن [[tagStatus: any]] بيعدّ كل الـ images، فلو عندك tag اسمه [[prod]] قديم ممكن يتمسح؛ لو ده خطر اعمل قاعدة بأولوية أعلى تحميه.`,
+          solCode: R`cat > keep-last-20.json <<'EOF'
+{
+  "rules": [{
+    "rulePriority": 1,
+    "description": "keep last 20 images",
+    "selection": { "tagStatus": "any", "countType": "imageCountMoreThan", "countNumber": 20 },
+    "action": { "type": "expire" }
+  }]
+}
+EOF
+aws ecr put-lifecycle-policy --repository-name myapp-api --lifecycle-policy-text file://keep-last-20.json
+aws ecr start-lifecycle-policy-preview --repository-name myapp-api
+aws ecr get-lifecycle-policy-preview --repository-name myapp-api --query "previewResults[].[imageTags[0],action.type]" --output table
+aws ecr describe-image-scan-findings --repository-name myapp-api --image-id imageTag=1.4.0 --query "[imageScanStatus.status,imageScanFindings.findingSeverityCounts]"`
         },
         {
           cmd: "ECS Fargate",
@@ -1219,7 +2181,15 @@ VPS بـ Docker Compose أرخص بكتير لمشروع صغير. Fargate بي�
             "المسار اللي الـ load balancer بيسأله: التطبيق عايش؟",
             "من نسخة لـ ٤ حسب الضغط.",
             "اعرض الـ clusters في الـ region."
-          ]
+          ],
+          sol: R`الأمر بيرجّع [[service]] فيه [[serviceArn]] و [[status]]، والـ URL في [[activeConfigurations[0].ingressPaths[0].endpoint]] (نفس اللي بيظهر في الكونسول). أول ما الـ deployment يخلص (دقايق)، [[curl https://ENDPOINT/health]] يرجّع 200 من الـ container بتاعك. و [[list-clusters]] هيوري [[arn:aws:ecs:eu-central-1:123456789012:cluster/default]] لأن الـ express mode بيستخدم الـ cluster الافتراضي لو محددتش.
+
+في الكونسول هتلاقي الحاجات اللي اتعملت لوحدها: task definition، و service، و Application Load Balancer بـ listener على HTTPS، و target group بالـ health check على [[/health]]، و security groups (واحدة للـ ALB وواحدة للـ tasks بتقبل من الـ ALB بس)، و autoscaling بين 1 و 4 tasks، و log group في CloudWatch. ده بالظبط الشغل اللي كان محتاج عشرات الأوامر.
+
+أخطاء شائعة: الـ tasks تفضل تقوم وتقع، وفي Events [[CannotPullContainerError]] (الـ execution role ناقصها صلاحيات ECR، أو الـ image مبنية لـ arm64 والـ task على x86)، أو [[failed ELB health checks]] (الـ app مش بترد 200 على [[/health]]، أو بتسمع على [[localhost]] بدل [[0.0.0.0]]، أو البورت مش 3000). والمسح مهم: الـ ALB لوحده بيتحاسب بالساعة، فامسح بـ [[delete-express-gateway-service]] واتأكد إن الـ ALB اختفى.`,
+          solCode: R`aws ecs describe-express-gateway-service --service-arn arn:aws:ecs:eu-central-1:123456789012:service/default/myapp-api --query "service.activeConfigurations[0].ingressPaths[0].endpoint" --output text
+aws ecs delete-express-gateway-service --service-arn arn:aws:ecs:eu-central-1:123456789012:service/default/myapp-api
+aws elbv2 describe-load-balancers --query "LoadBalancers[].[LoadBalancerName,State.Code]" --output table`
         }
       ]
     },
@@ -1264,7 +2234,18 @@ kubectl rollout undo deployment/api`,
             "تابع لوجات الـ deployment اللي اسمه api.",
             "ادخل ترمنال جوه واحد من الـ pods.",
             "ارجع للنسخة اللي قبل كده."
-          ]
+          ],
+          sol: R`[[kind create cluster]] بيطبع خطوات بعلامات صح وفي الآخر [[Set kubectl context to "kind-dev"]]. و [[kubectl get nodes]] يطبع [[dev-control-plane Ready control-plane]]. بعد [[create deployment]]، [[kubectl get pods]] يوري ٣ pods أساميهم زي [[web-7c5b8d9f6-abcde]] وحالتهم [[Running]].
+
+في [[get pods -w]] بعد ما تمسح pod هتشوف في ثانية أو اتنين: الـ pod القديم [[Terminating]]، وواحد جديد باسم مختلف [[Pending]] ثم [[ContainerCreating]] ثم [[Running]]. العدد بيرجع ٣ لوحده لأن الـ ReplicaSet شايف «المطلوب ٣، والموجود ٢»، مش لأن حد عمل restart للـ pod القديم؛ ده pod جديد خالص باسم و IP جداد.
+
+أخطاء شائعة: [[kind: command not found]] أو [[Cannot connect to the Docker daemon]] (kind محتاج Docker شغال). و [[ImagePullBackOff]] لو كتبت اسم image غلط. ولو [[kubectl]] بيكلّم cluster تاني (مثلًا شغل)، شوف [[kubectl config current-context]] قبل ما تمسح أي حاجة. (ملحوظة: في بيئة التجهيز هنا kind نفسه مقدرش يقوم جوه container، فالناتج ده من الشكل المعروف لـ kind، مش من تشغيل هنا.)`,
+          solCode: R`kind create cluster --name dev
+kubectl create deployment web --image=nginx:alpine --replicas=3
+kubectl get pods -o wide
+kubectl delete pod $(kubectl get pods -l app=web -o name | head -1 | cut -d/ -f2)
+kubectl get pods -w
+kind delete cluster --name dev`
         },
         {
           cmd: "Deployment YAML",
@@ -1319,7 +2300,27 @@ spec:
             "متغيرات البيئة من ConfigMap و Secret (الدرس الجاي).",
             "متبعتش ترافيك غير لما /health يرد.",
             "احجز عُشر CPU و ١٢٨ ميجا، واقتله لو عدّى ٢٥٦ ميجا."
-          ]
+          ],
+          sol: R`الملف بعد التعديلات تحت (من غير envFrom). [[kubectl apply -f k8s/]] يطبع [[deployment.apps/api created]]، و [[kubectl get deploy api]] يوري [[READY 3/3]] بعد ما الـ readinessProbe تعدّي. [[expose]] يطبع [[service/api exposed]]، و [[port-forward]] يطبع [[Forwarding from 127.0.0.1:8080 -> 80]]، و [[http://localhost:8080]] يفتح صفحة [[Welcome to nginx!]].
+
+جرّب كمان تغيّر [[replicas]] لـ 5 وتعمل apply تاني: هيطبع [[deployment.apps/api configured]] ويقوم ٢ زيادة، لأن الـ YAML «حالة مطلوبة» مش أمر.
+
+أخطاء شائعة: [[READY 0/3]] والـ pods [[Running]] بس مش Ready، وده لأن الـ readinessProbe لسه على [[/health]] أو بورت 3000 فـ nginx بيرجّع 404 أو مفيش حد بيسمع. و [[CreateContainerConfigError]] يعني سبت [[envFrom]] والـ ConfigMap أو الـ Secret مش موجودين. و [[selector does not match template labels]] لو غيّرت الـ label في مكان واحد بس. الملف ده عدّى من [[kubeconform -strict]].`,
+          solCode: R`apiVersion: apps/v1
+kind: Deployment
+metadata: { name: api }
+spec:
+  replicas: 3
+  selector: { matchLabels: { app: api } }
+  template:
+    metadata: { labels: { app: api } }
+    spec:
+      containers:
+        - name: api
+          image: nginx:alpine
+          ports: [{ containerPort: 80 }]
+          readinessProbe: { httpGet: { path: /, port: 80 } }
+          resources: { requests: { cpu: 100m, memory: 128Mi }, limits: { memory: 256Mi } }`
         },
         {
           cmd: "ConfigMap و Secret",
@@ -1353,7 +2354,17 @@ kubectl rollout status deployment/api`,
             "حدّث الـ Secret لو موجود (بدل ما create يفشل).",
             "أعد تشغيل الـ pods تدريجي عشان ياخدوا القيم الجديدة.",
             "استنى لحد ما الـ rollout يخلص وشوف نجح ولا لأ."
-          ]
+          ],
+          sol: R`أول مرة: [[kubectl exec deploy/api -- env | grep LOG_LEVEL]] يطبع [[LOG_LEVEL=info]]. بعد ما تغيّر الـ ConfigMap لـ [[debug]] (بالأمر اللي تحت)، نفس الأمر لسه يطبع [[LOG_LEVEL=info]]: متغيرات البيئة بتتقري مرة واحدة وقت ما الـ container يبدأ، والـ pod الشغال مش هيعرف إن الـ ConfigMap اتغير. بعد [[rollout restart]]، [[rollout status]] يطبع [[deployment "api" successfully rolled out]]، والـ pods الجديدة تطبع [[LOG_LEVEL=debug]].
+
+و [[get secret ... | base64 -d]] بيطبع الـ DATABASE_URL نفسه، يعني الـ Secret مش مشفّر، ده base64 بس: أي حد عنده صلاحية [[get secrets]] يقراه. ده الفرق اللي بيتسأل عليه في الانترفيو.
+
+أخطاء شائعة: تعمل [[kubectl create configmap]] تاني عشان تغيّر القيمة فتاخد [[AlreadyExists]]؛ الطريقة هي [[--dry-run=client -o yaml | kubectl apply -f -]]. و [[.env.production]] فيه سطر بعلامات تنصيص، فالقيمة تتخزن بالتنصيص نفسه. ولو [[env]] مطبعش المتغير خالص، الـ Deployment مفيهوش [[envFrom]] أو اسم الـ ConfigMap فيه مختلف.`,
+          solCode: R`kubectl create configmap api-config --from-literal=NODE_ENV=production --from-literal=LOG_LEVEL=debug --dry-run=client -o yaml | kubectl apply -f -
+kubectl exec deploy/api -- env | grep LOG_LEVEL
+kubectl rollout restart deployment/api
+kubectl rollout status deployment/api
+kubectl exec deploy/api -- env | grep LOG_LEVEL`
         }
       ]
     },
@@ -1413,7 +2424,38 @@ resource "aws_s3_bucket_public_access_block" "assets" {
             "تجاهل أي ACL عامة موجودة.",
             "اقفل الوصول لو فيه policy عامة.",
             "قفلة."
-          ]
+          ],
+          sol: R`الملف كامل تحت. [[terraform validate]] يقول [[Success! The configuration is valid.]]، و [[terraform plan]] ينتهي بـ:
+
+[[Plan: 2 to add, 0 to change, 0 to destroy.]]
+[[Changes to Outputs: + bucket_arn = (known after apply)]]
+
+يعني resource للـ bucket (وفيه [[bucket = "myapp-assets-dev"]]) وواحد للـ public access block، والـ ARN «known after apply» لأنه مش معروف غير بعد الإنشاء. جرّب [[terraform plan -var env=prod]] وشوف الاسم يبقى [[myapp-assets-prod]]. (شغّلت ده فعلًا بـ provider 6.x والنتيجة زي ما هي.)
+
+أخطاء شائعة: [[Error: Retrieving AWS account details: validating provider credentials ... InvalidClientTokenId]] يعني الترمنال مش داخل على AWS (اعمل [[aws login]] أو حدد [[AWS_PROFILE]]). و [[Reference to undeclared input variable]] لو كتبت [[var.env]] من غير block الـ variable. ولو كتبت [["myapp-assets-var.env"]] من غير [[$__{var.env}]]، الاسم هيبقى النص ده حرفيًا.`,
+          solCode: R`provider "aws" {
+  region = "eu-central-1"
+}
+
+variable "env" {
+  default = "dev"
+}
+
+resource "aws_s3_bucket" "assets" {
+  bucket = "myapp-assets-$__{var.env}"
+}
+
+resource "aws_s3_bucket_public_access_block" "assets" {
+  bucket                  = aws_s3_bucket.assets.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+output "bucket_arn" {
+  value = aws_s3_bucket.assets.arn
+}`
         },
         {
           cmd: "terraform plan / apply",
@@ -1454,7 +2496,18 @@ terraform destroy`,
             "نفّذ الـ plan المحفوظ بالظبط.",
             "الموارد اللي Terraform بيديرها.",
             "امسح كل حاجة في الـ state (بيسألك الأول)."
-          ]
+          ],
+          sol: R`بعد [[apply]]: [[Apply complete! Resources: 2 added, 0 changed, 0 destroyed.]] و [[bucket_arn = "arn:aws:s3:::myapp-assets-dev"]]، و [[state list]] يطبع السطرين [[aws_s3_bucket.assets]] و [[aws_s3_bucket_public_access_block.assets]].
+
+لما تغيّر الاسم (مثلًا [[-var env=staging]]) الـ plan يطبع:
+
+[[# aws_s3_bucket.assets must be replaced]]
+[[~ bucket = "myapp-assets-dev" -> "myapp-assets-staging" # forces replacement]]
+[[Plan: 2 to add, 0 to change, 2 to destroy.]]
+
+يعني الاتنين هيتمسحوا ويتعملوا من جديد ([[-/+]])، لأن اسم الـ bucket مينفعش يتعدّل، والـ access block تابع له. ده اللي عايزك تلاحظه: أي ملفات جوه الـ bucket كانت هتضيع. و [[destroy]] يطبع [[Plan: 0 to add, 0 to change, 2 to destroy.]] ويستنى [[yes]].
+
+الغلطة الشائعة: [[destroy]] يفشل بـ [[BucketNotEmpty]] لأن فيه ملفات جوه الـ bucket؛ ده حماية، فاضيه بإيدك ([[aws s3 rm s3://... --recursive]]) أو استخدم [[force_destroy = true]] في بيئات التجربة بس. (الـ plan ده اتجرّب هنا على state فيه الـ bucket بـ [[-refresh=false]].)`
         },
         {
           cmd: "Terraform state",
@@ -1505,7 +2558,14 @@ terraform destroy`,
             "شفّر الملف في S3.",
             "قفلة الـ backend.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[terraform init -migrate-state]] بيسألك [[Do you want to copy existing state to the new backend?]]، تكتب [[yes]]، وبعدها [[Successfully configured the backend "s3"!]]. وفي الـ bucket هتلاقي [[prod/terraform.tfstate]]، ومع versioning كل apply بيعمل version جديدة ترجع لها لو الـ state باظ. وتقدر تمسح [[terraform.tfstate]] المحلي بعد ما تتأكد إن [[terraform plan]] بيقول [[No changes]].
+
+والـ lock: الـ plan بياخد الـ lock ثواني بس، فلو الاتنين مجوش في نفس اللحظة بالظبط ممكن الاتنين يعدّوا. الأضمن: شغّل [[terraform apply]] في ترمنال وسيبه واقف عند [[Enter a value:]] (هو ماسك الـ lock)، وشغّل [[plan]] في التاني. هتاخد:
+
+[[Error: Error acquiring the state lock]] ومعاها [[Lock Info:]] فيها [[ID]] و [[Path]] و [[Operation: OperationTypeApply]] و [[Who]] (اليوزر والجهاز). جرّبت الرسالة دي بـ local state والشكل واحد؛ مع S3 الـ Path بيبقى [[myapp-tfstate/prod/terraform.tfstate]]، وملف [[.tflock]] بيظهر جنب الـ state طول ما الـ lock ماسك.
+
+الغلطة الشائعة: تعمل [[terraform force-unlock ID]] والعملية التانية لسه شغالة فعلًا، فالاتنين يكتبوا في نفس الـ state. استخدمه بس لو متأكد إن اللي ماسك الـ lock مات (مثلًا CI اتقفل في النص). وتانية: [[Error: Failed to get existing workspaces ... NoSuchBucket]] لأنك عملت الـ backend قبل ما تعمل الـ bucket بإيدك.`
         },
         {
           cmd: "GitHub OIDC",
@@ -1556,7 +2616,32 @@ terraform destroy`,
             "قفلة الشروط.",
             "قفلة القاعدة والقايمة.",
             "قفلة الـ policy."
-          ]
+          ],
+          sol: R`الـ workflow تحت (عدّى من [[actionlint]]). على main، step الـ credentials يطبع [[Assuming role with OIDC]] وبعدها [[Authenticated as assumedRoleId AROA...:GitHubActions]]، و [[get-caller-identity]] يطلّع [[arn:aws:sts::123456789012:assumed-role/github-readonly/GitHubActions]]، و [[s3 ls]] يعرض الملفات. من branch تاني، نفس الـ step يفشل بـ [[Could not assume role with OIDC: Not authorized to perform sts:AssumeRoleWithWebIdentity]]، لأن الـ [[sub]] في التوكن بقى [[repo:myorg/myapp:ref:refs/heads/feature-x]] ومش مطابق للـ Condition.
+
+لاحظ إن [[s3:ListBucket]] بيتدّى على الـ bucket نفسه [[arn:aws:s3:::myapp-site]] مش [[/*]]. لو كتبته بـ [[/*]] هتاخد [[AccessDenied ... ListObjectsV2]] مع إن الـ role اتلبست صح.
+
+أخطاء شائعة: [[No OpenIDConnect provider found in your account]] يعني الـ provider مش معمول (أو الـ ARN في الـ trust فيه رقم حساب غلط). و [[Incorrect token audience]] يعني [[client-id-list]] مش [[sts.amazonaws.com]]. ولو الـ workflow بيشتغل على [[pull_request]] الـ sub بيبقى [[repo:myorg/myapp:pull_request]]، ولو فيه [[environment:]] بيبقى [[repo:myorg/myapp:environment:prod]]، فالـ Condition لازم تطابق الشكل ده.`,
+          solCode: R`aws iam create-open-id-connect-provider --url https://token.actions.githubusercontent.com --client-id-list sts.amazonaws.com
+# trust-github.json = الـ trust policy اللي في المثال
+aws iam create-role --role-name github-readonly --assume-role-policy-document file://trust-github.json
+aws iam put-role-policy --role-name github-readonly --policy-name list-site --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:ListBucket","Resource":"arn:aws:s3:::myapp-site"}]}'
+# .github/workflows/whoami.yml
+name: whoami
+on: [push, workflow_dispatch]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  whoami:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::123456789012:role/github-readonly
+          aws-region: eu-central-1
+      - run: aws sts get-caller-identity
+      - run: aws s3 ls s3://myapp-site`
         },
         {
           cmd: "deploy.yml إلى AWS",
@@ -1572,7 +2657,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::123456789012:role/github-deploy
@@ -1611,7 +2696,12 @@ jobs:
             "الـ region.",
             "ابني وارفع الـ assets بكاش سنة.",
             "ارفع index.html من غير كاش وامسحه من كاش CloudFront."
-          ]
+          ],
+          sol: R`الـ run المفروض يبقى أخضر، وفي step [[configure-aws-credentials]] هتلاقي [[Assuming role with OIDC]] و [[Authenticated as assumedRoleId ...]]. و step الـ sync يطبع [[upload: dist/assets/index-a1b2c3.js to s3://myapp-site/assets/index-a1b2c3.js]] لكل ملف جديد (والملفات اللي متغيرتش مش بتترفع تاني)، والأخير يطبع JSON الـ invalidation بحالة [[InProgress]].
+
+لما تشيل [[id-token: write]]: step الـ credentials يطبع [[It looks like you might be trying to authenticate with OIDC. Did you mean to set the id-token permission?]] وبعدها يفشل بـ [[Credentials could not be loaded, please check your action inputs: Could not load credentials from any providers]]. السبب: من غير الصلاحية دي GitHub مش بيدّي الـ job توكن OIDC أصلًا، فالـ action ملقاش حاجة يبدّلها بمفاتيح AWS.
+
+أخطاء شائعة: الـ run نجح والموقع لسه قديم لأن [[index.html]] اترفع بكاش طويل من deploy قديم (المتصفح نفسه كاشه). و [[AccessDenied]] على [[CreateInvalidation]] لأن الـ role ناقصها [[cloudfront:CreateInvalidation]]. ولو حطيت [[permissions]] على مستوى الـ job، اللي على مستوى الـ workflow بيتلغي للـ job ده، فلازم تكتب [[contents: read]] هناك كمان وإلا [[checkout]] يفشل في repo private.`
         }
       ]
     },
@@ -1641,7 +2731,7 @@ aws cloudwatch put-metric-alarm --alarm-name myapp-5xx --namespace AWS/Applicati
 
 الـ metrics: كل خدمة بتبعت metrics أساسية لوحدها (CPU الـ EC2، وأخطاء Lambda، و 5xx الـ ALB، واتصالات RDS). الـ alarm بيبص على metric كل [[period]] ثانية، ولو عدّى الحد لعدد [[evaluation-periods]] بيتحول ALARM ويبعت لـ SNS (إيميل أو Slack أو غيره).
 
-الـ traces: X-Ray أو OpenTelemetry. كل طلب ليه trace id بيتنقل في الهيدرز بين الخدمات، فتشوف «الطلب ده قعد ٢ ثانية منهم ١.٨ في query واحدة».
+الـ traces: X-Ray أو OpenTelemetry. كل طلب ليه trace id بيتنقل في الهيدرز بين الخدمات، فتشوف «الطلب ده قعد ٢ ثانية منهم ١.٨ في query واحدة». والتفاصيل وكود شغال في فئة «OpenTelemetry والـ tracing» تحت.
 
 وتقدر تطلّع metrics من اللوجات نفسها (metric filters)، وده مفيد لرقم زي «عدد الطلبات اللي فشلت في الدفع».`,
             when: "من أول يوم في الإنتاج: retention لكل log group، وإنذار على 5xx، وإنذار على الـ latency، وإنذار على الفاتورة.",
@@ -1653,7 +2743,31 @@ aws cloudwatch put-metric-alarm --alarm-name myapp-5xx --namespace AWS/Applicati
             "Logs Insights: عدد أخطاء 5xx لكل مسار في آخر ساعة.",
             "هات نتيجة الـ query بالرقم اللي رجع.",
             "إنذار: لو أكتر من ١٠ أخطاء 5xx في ٥ دقايق، ابعت لـ SNS."
-          ]
+          ],
+          sol: R`الـ logger تحت (جرّبته محليًا). كل طلب بيطبع سطر زي:
+
+[[{"level":"info","method":"GET","path":"/users/:id","status":200,"ms":4}]]
+
+لاحظ إن [[path]] هو الـ route pattern مش المسار الحقيقي ([[/users/:id]] مش [[/users/7]])، عشان الـ stats تجمّع كل المستخدمين في سطر واحد. Logs Insights بيقرا حقول الـ JSON لوحده، فالـ query تحت بترجع جدول: [[path]] و [[avgMs]] و [[n]]، مترتب من الأبطأ.
+
+من الترمنال: [[start-query]] بيرجّع [[queryId]]، و [[get-query-results]] بيرجّع [[status: Running]] وبعدين [[Complete]] ومعاه [[results]] كل صف فيها list من [[{field, value}]].
+
+أخطاء شائعة: الجدول فاضي لأن التطبيق بيطبع نص عادي مش JSON (أو بيطبع [[console.log(obj)]] من غير [[JSON.stringify]] فيطلع شكل Node مش JSON)، أو اختار log group غلط أو فترة زمنية مفيهاش لوجات. ولو الـ path هو المسار الحقيقي، الـ stats هتطلع آلاف الصفوف ومفيش فايدة. ولو [[sort]] على [[avg(ms)]] مباشرة مشتغلش عندك، سمّيه بـ [[as avgMs]] زي ما تحت.`,
+          solCode: R`app.use((req, res, next) => {
+  const start = performance.now();
+  res.on("finish", () => {
+    console.log(JSON.stringify({
+      level: res.statusCode >= 500 ? "error" : "info",
+      method: req.method,
+      path: req.route?.path ?? "unmatched",
+      status: res.statusCode,
+      ms: Math.round(performance.now() - start),
+    }));
+  });
+  next();
+});
+// Logs Insights:
+// fields path, ms | filter ispresent(ms) | stats avg(ms) as avgMs, count(*) as n by path | sort avgMs desc | limit 10`
         },
         {
           cmd: "Prometheus + Grafana",
@@ -1710,7 +2824,34 @@ app.get("/metrics", async (req, res) => res.type(client.register.contentType).se
             "كمّل للـ route.",
             "قفلة.",
             "endpoint بيطلّع كل الأرقام بصيغة Prometheus."
-          ]
+          ],
+          sol: R`الملفين تحت. بعد [[docker compose up -d]]: [[http://localhost:9090/targets]] المفروض يوري الـ job [[api]] بحالة [[UP]]. و [[curl localhost:3000/metrics]] يطلّع سطور زي:
+
+[[http_request_duration_seconds_bucket{le="0.3",method="GET",route="/users/:id",status="200"} 3]]
+
+جرّبت ده فعلًا: route بتاخد ١٢٠ مللي، والـ query بتاعة الـ p95 رجّعت [[0.29]] للـ route ده. مش غلط: الـ histogram عارف بس إن الطلبات بين 0.1 و 0.3 (الـ buckets)، فـ [[histogram_quantile]] بيقدّر بالـ interpolation جوه الـ bucket. عشان رقم أدق، حط buckets قريبة من الأرقام اللي تهمك. و route اسمها [[unmatched]] ممكن تطلع [[NaN]] لو مفيهاش ترافيك في آخر ٥ دقايق.
+
+أخطاء شائعة: الـ target [[DOWN]] بـ [[connection refused]] لأنك كتبت [[localhost:3000]] جوه Prometheus (ده الـ container نفسه)، الصح اسم الـ service في Compose [[api:3000]]. والـ panel فاضي في Grafana لأن الـ data source URL مكتوب [[http://localhost:9090]] بدل [[http://prometheus:9090]]. ولو شلت [[by (le, route)]] أو نسيت [[le]] الـ query بترجع فاضي أو خطأ.`,
+          solCode: R`# prometheus.yml
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: api
+    static_configs:
+      - targets: ["api:3000"]
+# compose.yaml
+services:
+  api:
+    build: .
+    ports: ["3000:3000"]
+  prometheus:
+    image: prom/prometheus
+    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+  grafana:
+    image: grafana/grafana
+    ports: ["3001:3000"]
+    depends_on: [prometheus]`
         },
         {
           cmd: "Sentry",
@@ -1725,7 +2866,7 @@ Sentry.init({
   environment: process.env.NODE_ENV,
   release: process.env.GIT_SHA,
   tracesSampleRate: 0.1,
-  sendDefaultPii: false,
+  dataCollection: { userInfo: false, cookies: false },
 });
 // app.mjs: بعد كل الـ routes وقبل أي error handler تاني
 Sentry.setupExpressErrorHandler(app);
@@ -1742,7 +2883,7 @@ Sentry.setupExpressErrorHandler(app);
 
 [[tracesSampleRate: 0.1]]: ١٠٪ من الطلبات بتتسجل كـ traces للأداء. و [[1.0]] في الإنتاج بيخلّص الـ quota بسرعة.
 
-[[sendDefaultPii: false]]: ميبعتش IPs والكوكيز وبيانات اليوزر تلقائي. بيانات العملاء لما تطلع لخدمة برا دي مسؤولية قانونية.
+[[dataCollection: { userInfo: false, cookies: false }]]: ميبعتش IPs والكوكيز وبيانات اليوزر تلقائي. ده في SDK نسخة 11 (الحالية). في نسخة 10 وقبلها كان [[sendDefaultPii: false]] وكان هو الافتراضي، إنما في 11 اتشال وبيتجاهل في صمت، والافتراضي بقى إنه يبعت الـ IP والكوكيز، فلازم تقفلهم بنفسك. بيانات العملاء لما تطلع لخدمة برا دي مسؤولية قانونية.
 
 وفي المتصفح (React أو Next.js) فيه SDK لكل framework، ولازم ترفع source maps عشان الـ stack trace يبقى على الكود الأصلي مش الـ minified.`,
             when: "أي تطبيق في الإنتاج، backend و frontend. والخطة المجانية كفاية لمشروع صغير.",
@@ -1758,7 +2899,16 @@ Sentry.setupExpressErrorHandler(app);
             "متبعتش بيانات شخصية تلقائي.",
             "قفلة.",
             "في app.mjs: ابعت أي خطأ في Express لـ Sentry."
-          ]
+          ],
+          sol: R`بعد ما تفتح الـ route، خلال ثواني هيظهر issue في Sentry عنوانه [[Error: test sentry]]، وجواه: الـ stack trace لحد السطر اللي فيه [[throw]] في ملفك، وقسم Request فيه الـ URL والـ method والـ headers (من غير IP والكوكيز لأن [[userInfo: false]] و [[cookies: false]])، و tags فيها [[environment]] و [[release]] (لو [[GIT_SHA]] متسجل). واليوزر نفسه هيشوف 500 عادي، لأن Sentry بيسجّل الخطأ وبيسيب الـ error handler التاني يرد.
+
+لو مفيش حاجة ظهرت: أول سبب إن [[SENTRY_DSN]] مش متعرّف في البيئة اللي شغّلت منها، و [[Sentry.init]] بـ dsn فاضي مبيشتكيش، بيقفل نفسه في صمت. تاني سبب: شغّلت [[node app.mjs]] من غير [[--import ./instrument.mjs]]، فالـ instrumentation متحمّلش قبل express. تالت: الـ route عامل [[try/catch]] وبيرجّع 500 بنفسه، فالخطأ موصلش للـ handler أصلًا (في الحالة دي استخدم [[Sentry.captureException(err)]]). ورابع: [[setupExpressErrorHandler]] متحط قبل الـ routes.
+
+جرّب كمان تفتح الـ route مرتين: هيبقى issue واحد عدده 2 events، مش اتنين. وبعدها امسح الـ route واعمل Resolve للـ issue.`,
+          solCode: R`app.get("/debug-sentry", () => {
+  throw new Error("test sentry");
+});
+// SENTRY_DSN=https://...ingest.sentry.io/... NODE_ENV=staging GIT_SHA=$(git rev-parse --short HEAD) node --import ./instrument.mjs app.mjs`
         },
         {
           cmd: "SLI / SLO / error budget",
@@ -1800,7 +2950,16 @@ console.log((sli * 100).toFixed(3) + "%", Math.round(budgetUsed * 100) + "% of b
             "الـ SLI: نسبة النجاح الفعلية.",
             "صرفنا كام من الميزانية.",
             "٩٩.٩٢٥٪ نجاح، وصرفنا ٧٥٪ من الميزانية."
-          ]
+          ],
+          sol: R`الحسبة لـ ٣٠ يوم (٤٣٢٠٠ دقيقة): ٩٩٪ = [[432.0]] دقيقة (٧.٢ ساعة)، و ٩٩.٩٪ = [[43.2]]، و ٩٩.٩٩٪ = [[4.3]] دقيقة بس. كل ٩ زيادة بتقسم الميزانية على ١٠، وده ليه ٩٩.٩٩٪ معناها إن deploy بايظ واحد في الشهر ممكن يخلّص الميزانية.
+
+للوجات: الـ awk تحت بيعد الطلبات والـ 5xx من لوج Nginx بالشكل الافتراضي (الحقل التاسع هو الـ status). على لوج تجربة فيه ٤ طلبات منهم 502 واحد طبع [[total=4 5xx=1 SLI=75.000%]]. على لوج حقيقي لأسبوع المفروض تلاقي رقم زي [[99.9xx%]]. وقارنه بالـ SLO: لو ٩٩.٩٥٪ والـ SLO ٩٩.٩٪، يبقى صرفت نص الميزانية.
+
+الأخطاء الشائعة: تحسب الـ 4xx كفشل (الـ 404 والـ 401 غالبًا غلطة العميل مش السيستم)، أو تعد طلبات الـ health check من الـ load balancer فتعلّي الـ SLI على الفاضي. ولو اللوج بصيغة مختلفة (JSON أو ALB)، رقم الحقل هيختلف: اطبع سطر واحد الأول وعدّ.`,
+          solCode: R`for (const slo of [0.99, 0.999, 0.9999]) console.log(slo, (30 * 24 * 60 * (1 - slo)).toFixed(1));
+// 0.99 432.0 / 0.999 43.2 / 0.9999 4.3
+# من لوجات Nginx لأسبوع:
+cat /var/log/nginx/access.log /var/log/nginx/access.log.1 | awk '{t++} $9>=500{f++} END{printf "total=%d 5xx=%d SLI=%.3f%%\n", t, f, 100*(1-f/t)}'`
         },
         {
           cmd: "incident response",
@@ -1836,7 +2995,22 @@ aws ecs wait services-stable --cluster myapp --services api`,
             "الأخطاء في آخر ربع ساعة.",
             "rollback: رجّع الـ service للـ task definition رقم 41 (آخر نسخة سليمة).",
             "استنى لحد ما النسخ ترجع healthy."
-          ]
+          ],
+          sol: R`runbook نموذجي من ٥ سطور (عدّله لمشروعك):
+
+١. الكشف: uptime check من برا على [[/health]] كل دقيقة بينبّه على Telegram أو الإيميل، أو إنذار 5xx من CloudWatch. أول خطوة أأكّد بـ [[curl -w "%{http_code}"]].
+٢. أبص فين الأول: هل فيه deploy في آخر ساعة؟ ([[describe-services]] أو تاريخ الـ releases). لو أيوه، ده المشتبه الأول.
+٣. اللوج: [[aws logs tail ... --since 15m --filter-pattern ERROR]] أو [[docker compose logs --since 15m]].
+٤. الرجوع: [[update-service]] بالـ task definition اللي قبلها (أو [[git revert]] و deploy)، ومتستناش لحد ما تفهم السبب.
+٥. أبلّغ: رسالة قصيرة للفريق أو العملاء، وبعد ما يستقر أكتب postmortem.
+
+على staging: المفروض تقيس ٣ أرقام: وقت الاكتشاف (من الـ deploy البايظ لحد الإنذار)، ووقت القرار، ووقت الرجوع ([[wait services-stable]] على ECS غالبًا دقايق). لو الرقم الكلي أكبر من ١٥ دقيقة، أكبر جزء فيه غالبًا الاكتشاف، مش الرجوع.
+
+الغلطة الشائعة: الـ rollback يرجّع الكود بس، والـ migration الجديدة اللي نزلت معاه لسه موجودة، فالنسخة القديمة تقع برضه. عشان كده الـ migrations لازم تبقى backward compatible. وتانية: تقعد تصلّح في الإنتاج قدام الناس بدل ما ترجع الأول.`,
+          solCode: R`aws ecs describe-services --cluster myapp --services api --query "services[0].deployments[].[status,taskDefinition,rolloutState]" --output table
+aws ecs list-task-definitions --family-prefix myapp-api --sort DESC --max-items 3
+aws ecs update-service --cluster myapp --service api --task-definition myapp-api:41
+aws ecs wait services-stable --cluster myapp --services api`
         },
         {
           cmd: "postmortem",
@@ -1876,7 +3050,533 @@ Action: اختبار الـ migrations على نسخة بحجم الإنتاج (
             "ليه الاختبارات مكشفتهوش.",
             "تصليح بصاحب وتاريخ.",
             "تصليح تاني يمنع النوع ده كله."
-          ]
+          ],
+          sol: R`مثال نموذجي لمشكلة بسيطة، عشان تشوف الـ «٥ ليه» بتوصل لفين:
+
+المشكلة: الموقع طلّع تحذير SSL ساعتين. ليه؟ الشهادة خلصت. ليه؟ التجديد التلقائي فشل. ليه؟ certbot كان محتاج بورت 80 وأنا قفلته في الفايروول من شهرين. ليه محدش عرف؟ مفيش إنذار على فشل التجديد ولا على تاريخ الانتهاء. ليه؟ مفيش مراقبة للشهادات أصلًا. الـ Action هنا مش «أفتكر أجدد»، دي: uptime check بيفحص تاريخ الشهادة وينبّه قبل ١٤ يوم (owner و تاريخ)، وتجديد بـ DNS challenge مش محتاج بورت 80.
+
+الـ postmortem الكويس لازم فيه: Impact بأرقام (مدة، نسبة، داتا ضاعت ولا لأ)، و Detection (عرفنا إزاي، ومن مين)، و Timeline بالدقايق، و Root cause في السيستم، و Actions كل واحدة ليها owner وتاريخ.
+
+الغلطة الشائعة: توقف عند «ليه» الأولى أو التانية وتكتب «فلان نسي» أو «هنخلّي بالنا». لو الإجابة شخص، اسأل «ليه السيستم سمح إن النسيان ده يوقّع الموقع؟». وتانية: Actions من غير owner وتاريخ، ودي عمليًا مش هتتعمل.`
+        }
+      ]
+    },
+    {
+      t: "OpenTelemetry والـ tracing",
+      l: 3,
+      n: "الطلب ده بطيء ليه؟ trace بيوريك رحلة الطلب خطوة خطوة بين الـ API والقاعدة والخدمات التانية، و OpenTelemetry الطريقة المحايدة اللي كل الأدوات بتفهمها",
+      items: [
+        {
+          cmd: "trace و span",
+          title: "trace و span و context propagation: رحلة طلب واحد",
+          desc: R`الـ trace هو رحلة طلب واحد من أوله لآخره، ومكوّن من spans: كل span خطوة ليها اسم وبداية ومدة (استقبال الطلب، query على القاعدة، طلب لخدمة تانية)، وكل span ليه parent غير أول واحد. فبتشوف شجرة زي «الطلب ١٢٠٠ مللي، منهم ٩٥٠ في query واحدة».
+
+عشان الـ trace يكمل بين خدمتين، لازم الـ trace id يتنقل معاه. ده اسمه context propagation، والمعيار W3C Trace Context: header اسمه [[traceparent]] شكله [[00-TRACE_ID-PARENT_SPAN_ID-01]]. الخدمة الأولى بتحطه في الطلب الطالع، والتانية بتقراه وتكمّل نفس الـ trace.
+
+المثال ده خدمتين في ملف واحد (A بتكلّم B)، ولما يتشغّل بـ OpenTelemetry (الدرس الجاي) هتلاقي الاتنين بنفس الـ trace id، من غير ما تكتب سطر واحد يبعت الـ header.`,
+          example: R`import http from "node:http";
+import { trace } from "@opentelemetry/api";
+
+const b = http.createServer((req, res) => {
+  console.log("B got traceparent:", req.headers.traceparent);
+  console.log("B active traceId:  ", trace.getActiveSpan()?.spanContext().traceId);
+  res.end("ok");
+});
+b.listen(4000);
+
+const a = http.createServer(async (req, res) => {
+  console.log("A active traceId:  ", trace.getActiveSpan()?.spanContext().traceId);
+  const r = await fetch("http://localhost:4000/stock");
+  res.end(await r.text());
+});
+a.listen(3000, async () => {
+  await fetch("http://localhost:3000/checkout");
+  a.close(); b.close();
+});`,
+          try: R`احفظه [[two.mjs]] في فولدر فيه [[@opentelemetry/api]] وشغّله بـ [[node two.mjs]] عادي: هتشوف إيه؟ بعدين شغّله بملف [[instrumentation.mjs]] من الدرس الجاي: [[node --import ./instrumentation.mjs two.mjs]]، وقارن. وبعدين ابعت انت الـ header بإيدك: [[curl -H "traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01" localhost:3000]] (عدّل السكربت ميقفلش نفسه) وشوف الـ trace id اللي A طبعه.`,
+          flag: "script",
+          deep: {
+            why: "اللوجات بتقولك إيه اللي حصل، والـ metrics بتقولك إن p95 عالي، بس محدش منهم بيقولك «الطلب ده بالذات بطيء عشان إيه». مع API و worker وخدمة دفع خارجية وقاعدة، الـ trace هو اللي بيوريك الوقت راح فين بالظبط، وده سؤال بيتسأل في أي incident.",
+            how: R`الـ span فيه: [[traceId]] (١٦ byte، واحد لكل الرحلة)، و [[spanId]] (٨ bytes)، و [[parentSpanId]]، والاسم، والبداية والمدة، و [[kind]] (SERVER للطلب الداخل، CLIENT للطلب الطالع، INTERNAL لخطوة جوه الكود)، و attributes (زي [[http.route]] و [[db.system]])، و events (زي exception)، و status (OK أو ERROR).
+
+الـ context propagation جوه الخدمة: OpenTelemetry بيحفظ الـ span الحالي في AsyncLocalStorage (درس [[AsyncLocalStorage]] في «تاب Backend بـ Node»)، فأي span جديد في نفس الطلب، حتى بعد await، بيعرف الـ parent بتاعه لوحده. عشان كده [[trace.getActiveSpan()]] بيشتغل في أي حتة.
+
+وبين الخدمات: الـ instrumentation بتاع HTTP client (هنا [[fetch]]) بيعمل span من نوع CLIENT ويحط [[traceparent]] في الـ headers، والـ instrumentation بتاع HTTP server في B بيقراه ويعمل span جديد parent بتاعه هو الـ CLIENT span. نفس الفكرة بتتعمل يدويًا مع queues: تحط الـ context في الـ job data وتطلعه في الـ worker.
+
+الـ [[traceparent]]: [[00]] الإصدار، وبعدين الـ trace id، وبعدين id الـ span الأب، وآخر حاجة flags ([[01]] = sampled، يعني الـ trace ده بيتسجّل). وفيه [[tracestate]] اختياري لبيانات خاصة بالـ vendor.
+
+sampling: مش لازم تسجّل كل trace. الأشهر: head sampling (تقرر في أول الطلب، مثلًا ١٠٪)، والقرار بيتنقل مع الـ flags فكل الخدمات تسجّل نفس الـ traces. و tail sampling (في الـ collector، بعد ما الـ trace يخلص: خلي كل اللي فيه error أو أبطأ من ثانية).`,
+            when: "أول ما يبقى عندك أكتر من خدمة، أو API بيكلّم APIs خارجية وقاعدة و cache، أو سؤال «ليه ده بطيء» مبيتجاوبش من اللوجات.",
+            mistakes: R`تفتكر إن الـ trace id هو الـ request id: ممكن يبقوا نفس الحاجة، بس الـ trace بيعدّي على كل الخدمات والـ request id غالبًا محلي (الدرس الجاي بيربطهم). وتعمل propagation بـ header مخترع ([[x-trace]]) فمفيش أداة تفهمه. وتنسى الـ propagation في الـ queues فالـ worker يبدأ trace جديد مقطوع. وفي الانترفيو: «إيه الفرق بين logs و metrics و traces؟» اللوج حدث واحد بالتفصيل، والـ metric رقم متجمّع على وقت، والـ trace رحلة طلب واحد بين المكونات.`
+          },
+          lines: [
+            "سيرفر HTTP من Node.",
+            "الـ API بتاع OpenTelemetry (بيرجّع no-op لو مفيش SDK).",
+            "خدمة B.",
+            "اطبع الـ header اللي وصل من A.",
+            "اطبع الـ trace id اللي B شغالة فيه.",
+            "رد.",
+            "قفلة.",
+            "B على ٤٠٠٠.",
+            "خدمة A.",
+            "اطبع الـ trace id بتاع الطلب في A.",
+            "A بتكلّم B بـ fetch (هنا الـ header بيتحط لوحده).",
+            "رجّع رد B.",
+            "قفلة.",
+            "A على ٣٠٠٠، ولما تشتغل:",
+            "ابعت طلب واحد لـ A.",
+            "واقفل الاتنين عشان السكربت يخلص.",
+            "قفلة."
+          ],
+          sol: R`بـ [[node two.mjs]] من غير SDK: التلات سطور [[undefined]]، لأن [[@opentelemetry/api]] من غيره بيرجّع no-op، ومحدش بيحط [[traceparent]].
+
+بـ [[instrumentation.mjs]] (فيه الـ loader hook، الدرس الجاي) الناتج زي:
+
+[[A active traceId:   2fa1034af6bbe4fb4302073471963f88]]
+[[B got traceparent: 00-2fa1034af6bbe4fb4302073471963f88-3f5366a1e5111f2d-01]]
+[[B active traceId:   2fa1034af6bbe4fb4302073471963f88]]
+
+(ومعاهم الـ spans نفسها مطبوعة كـ objects من الـ console exporter.) نفس الـ trace id في A و B، والجزء الأوسط في الـ header هو الـ span الـ CLIENT اللي fetch عمله في A.
+
+ولو بعت الـ header بإيدك بالـ curl، A هيطبع [[4bf92f3577b34da6a3ce929d0e0e4736]]: كمّل الـ trace اللي جاي من برا بدل ما يبدأ واحد جديد، وده بالظبط اللي بيحصل لما gateway أو frontend بيبدأ الـ trace.
+
+الغلطة الشائعة: A بيطبع [[undefined]] و B بيطبع traceparent سليم. ده معناه إن fetch اتعمله instrument بس سيرفر [[node:http]] لأ، لأن الملف ESM وشغّلته من غير الـ loader hook (الدرس الجاي).`
+        },
+        {
+          cmd: "OpenTelemetry في Node",
+          title: "auto-instrumentation في Node من غير ما تلمس الكود",
+          desc: R`OpenTelemetry (OTel) معيار مفتوح ومحايد: بتعمل instrument للكود مرة واحدة، وتبعت الـ traces لأي backend (Jaeger أو Grafana Tempo أو Honeycomb أو Datadog أو Sentry) من غير ما تغيّر الكود.
+
+في Node: ملف [[instrumentation.mjs]] بيشغّل [[NodeSDK]] مع [[getNodeAutoInstrumentations()]]، وده بيعمل patch لـ http و express و pg و redis و fetch وغيرهم، فكل طلب وكل query يطلع span لوحده. والملف لازم يتحمّل قبل أي حاجة تانية: [[node --import ./instrumentation.mjs server.mjs]].
+
+هنا بنطبع الـ spans على الشاشة بـ [[ConsoleSpanExporter]] عشان تشوفها. وفي الإنتاج بتشيله وتبعت بـ OTLP (درس [[OTLP و backend]]).`,
+          example: R`import { register } from "node:module";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { ConsoleSpanExporter, SimpleSpanProcessor } from "@opentelemetry/sdk-trace-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+
+register("@opentelemetry/instrumentation/hook.mjs", import.meta.url);
+
+const sdk = new NodeSDK({
+  resource: resourceFromAttributes({ [ATTR_SERVICE_NAME]: "orders-api" }),
+  spanProcessors: [new SimpleSpanProcessor(new ConsoleSpanExporter())],
+  instrumentations: [getNodeAutoInstrumentations({ "@opentelemetry/instrumentation-fs": { enabled: false } })],
+});
+sdk.start();
+process.on("SIGTERM", () => sdk.shutdown().finally(() => process.exit(0)));`,
+          try: R`في فولدر تجربة: [[npm i express @opentelemetry/api @opentelemetry/sdk-node @opentelemetry/sdk-trace-node @opentelemetry/auto-instrumentations-node @opentelemetry/resources @opentelemetry/semantic-conventions]]. احفظ الملف ده [[instrumentation.mjs]]، واعمل [[app.mjs]] فيه Express بـ route [[/orders/:id]]. شغّل [[node --import ./instrumentation.mjs app.mjs]] وابعت [[curl localhost:3000/orders/7]]. كام span طلعوا؟ وإيه اسم الـ span اللي [[parentSpanContext]] بتاعه [[undefined]]؟`,
+          flag: "script",
+          deep: {
+            why: "إنك تكتب span بإيدك لكل route وكل query مستحيل ومحدش هيحافظ عليه. الـ auto-instrumentation بيدّيك ٨٠٪ من القيمة من أول يوم: كل طلب HTTP وكل query وكل طلب خارجي بمدته. ولأنه معيار، لو غيّرت الـ backend من Jaeger لـ Honeycomb بتغيّر متغير بيئة بس.",
+            how: R`[[NodeSDK]] بيجمع ٣ حاجات: resource (مين أنا: [[service.name]] وهو أهم attribute، ومن غيره الخدمة بتظهر [[unknown_service:node]])، و span processor + exporter (الـ spans تروح فين)، و instrumentations (إيه اللي يتعمله patch).
+
+الـ instrumentation بيشتغل عن طريق إنه يلف الموديول لما يتحمّل. عشان كده الملف لازم يتحمّل قبل [[express]] و [[pg]]: لو عملت import لـ express الأول، هو اتحمّل من غير patch. ده سبب [[--import]] بدل ما تعمل import من جوه [[server.mjs]].
+
+ESM: الـ patch القديم بيشتغل مع [[require]] بس. لو كودك [[import]] (ملفات [[.mjs]] أو [[type: module]])، لازم loader hook. السطر [[register("@opentelemetry/instrumentation/hook.mjs", ...)]] بيسجّله من جوه الملف، وده زي إنك تكتب [[--experimental-loader=@opentelemetry/instrumentation/hook.mjs]] في أمر التشغيل. من غيره هتلاقي حاجات اتعملها instrument (زي fetch وحاجات بتتحمّل بـ require من جوه مكتبات) وحاجات لأ (زي [[node:http]] اللي انت عامله import مباشرة).
+
+[[SimpleSpanProcessor]] بيبعت كل span أول ما يخلص، ده كويس للتجربة. في الإنتاج [[BatchSpanProcessor]] (الافتراضي لو استخدمت [[traceExporter]]) بيجمّع ويبعت دفعات، أخف بكتير.
+
+[[instrumentation-fs]] بيطلّع span لكل قراية ملف، ودي ضوضاء، فأغلب الناس بتقفله. وفيه طريقة من غير ملف خالص: [[node --import @opentelemetry/auto-instrumentations-node/register app.js]] والإعدادات كلها من متغيرات البيئة ([[OTEL_SERVICE_NAME]] وغيره).
+
+[[sdk.shutdown()]] مع SIGTERM بيبعت الـ spans اللي لسه في الـ buffer قبل ما الـ process يموت، وإلا آخر ثواني قبل كل deploy تضيع.`,
+            when: "أي API في الإنتاج بيكلّم قاعدة أو خدمات تانية. ابدأ بالـ auto-instrumentation، وضيف custom spans بس في الأماكن اللي محتاج تفهمها أكتر.",
+            mistakes: R`تعمل [[import "./instrumentation.mjs"]] في أول [[server.mjs]] بدل [[--import]]: في ESM الـ imports بتتحمّل قبل ما أي كود يشتغل، فممكن express يتحمّل قبل الـ patch. وتنسى الـ loader hook مع ESM وتستغرب إن نص الـ spans ناقصة. ومن غير [[service.name]]. و [[ConsoleSpanExporter]] في الإنتاج (اللوجات هتتملي). وتسيب [[instrumentation-fs]] شغال.`
+          },
+          lines: [
+            "register عشان نسجّل loader hook لموديولات ESM.",
+            "الـ SDK اللي بيربط كل حاجة.",
+            "exporter بيطبع على الشاشة، و processor بيبعت كل span أول ما يخلص.",
+            "كل الـ instrumentations الجاهزة (http و express و pg و redis و fetch...).",
+            "عشان نعرّف الخدمة.",
+            "اسم الـ attribute القياسي service.name.",
+            "من غير الـ hook ده، الموديولات اللي بتعملها import مش هتتعمل instrument.",
+            "الإعدادات.",
+            "اسم الخدمة (أهم attribute).",
+            "الـ spans تتطبع على الشاشة فورًا.",
+            "كل الـ instrumentations ماعدا fs (ضوضاء).",
+            "قفلة.",
+            "ابدأ (قبل ما أي كود تاني يتحمّل).",
+            "مع الإيقاف: ابعت اللي فاضل وبعدين اقفل."
+          ],
+          sol: R`مع [[curl localhost:3000/orders/7]] هتلاقي كذا object مطبوعين، كلهم بنفس الـ [[traceId]]:
+
+- span اسمه [[GET /orders/:id]] من [[@opentelemetry/instrumentation-http]]، و [[kind: 1]] (SERVER)، و [[parentSpanContext: undefined]]، يعني هو الـ root. وفيه attributes زي [[http.request.method]] و [[url.path]] و [[http.response.status_code: 200]].
+- spans من [[instrumentation-express]] و [[instrumentation-router]] زي [[request handler - /orders/:id]]، وكمان span للـ middleware اللي Express بيحطه من جوه، والـ parent بتاعهم هو الـ span اللي فوقه.
+
+وكلهم فيهم [[service.name: 'orders-api']] في الـ resource. والترتيب على الشاشة بيبقى من الأصغر للأكبر، لأن كل span بيتطبع لما يخلص، والـ root بيخلص آخر واحد.
+
+الغلطة الشائعة: الـ root span اسمه [[GET]] بس من غير الـ route، ومفيش spans لـ express خالص. ده معناه إن express مكنش عليه instrument، غالبًا عشان الـ hook مش متسجّل أو الملف اتحمّل بعد express. ولو مفيش ولا span، يبقى نسيت [[--import]] أصلًا.`,
+          solCode: R`// app.mjs
+import express from "express";
+const app = express();
+app.get("/orders/:id", (req, res) => res.json({ id: req.params.id, total: 250 }));
+app.listen(3000, () => console.log("listening on 3000"));
+
+// التشغيل:
+// node --import ./instrumentation.mjs app.mjs
+// curl localhost:3000/orders/7`
+        },
+        {
+          cmd: "custom span",
+          title: "span بإيدك حوالين query أو API خارجي",
+          desc: R`الـ auto-instrumentation بيشوف الـ HTTP والـ driver بتاع القاعدة، بس مش بيعرف إن «حساب الشحن» أو «تجهيز الفاتورة» خطوة ليها معنى. هنا بتعمل span بإيدك: [[tracer.startActiveSpan(name, fn)]] بيعمل span ويخليه الـ active جوه [[fn]]، فأي span يطلع جوه (query مثلًا) بيبقى ابنه.
+
+القاعدة: [[span.end()]] في [[finally]] دايمًا، ولو حصل خطأ [[span.recordException(err)]] و [[setStatus]] بـ ERROR، عشان الـ backend يلوّن الـ span بالأحمر وتقدر تفلتر عليه.`,
+          example: R`import express from "express";
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("orders-api");
+const app = express();
+
+async function findOrder(id) {
+  return tracer.startActiveSpan("db.findOrder", async (span) => {
+    span.setAttribute("order.id", id);
+    try {
+      await new Promise((r) => setTimeout(r, 40));
+      if (id === "0") throw new Error("order not found");
+      return { id, total: 250 };
+    } catch (err) {
+      span.recordException(err);
+      span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+      throw err;
+    } finally {
+      span.end();
+    }
+  });
+}
+
+app.get("/orders/:id", async (req, res) => {
+  const traceId = trace.getActiveSpan()?.spanContext().traceId;
+  try {
+    res.json(await findOrder(req.params.id));
+  } catch {
+    res.status(404).json({ error: "not found", traceId });
+  }
+});
+app.listen(3000);`,
+          try: R`شغّل ده بـ [[instrumentation.mjs]] من الدرس اللي فات، وابعت [[curl localhost:3000/orders/7]] و [[curl localhost:3000/orders/0]]. دوّر في الناتج على [[db.findOrder]] في الحالتين: قارن [[status]] و [[events]] و [[duration]] و [[parentSpanContext]]. وبعدين ضيف span تاني اسمه [[shipping.quote]] حوالين [[fetch]] لأي API خارجي (زي [[https://httpbin.org/delay/1]]) وشوف إن الـ fetch نفسه طلع span ابن ليه.`,
+          flag: "script",
+          deep: {
+            why: "الـ auto-instrumentation هيقولك إن الطلب أخد ٢ ثانية وإن فيه ٤٠ query. الـ custom span هو اللي بيقولك إن الـ ٤٠ دول كلهم جوه «حساب الخصومات»، وإن الخطوة دي بالذات هي اللي بطيئة للطلبات اللي فيها كوبون. وده الفرق بين trace بيوريك أرقام و trace بيوريك قصة.",
+            how: R`[[trace.getTracer("orders-api")]] بيجيب tracer باسم (بيظهر كـ [[instrumentationScope]]). ولو مفيش SDK شغال، الـ tracer بيبقى no-op والكود يشتغل عادي من غير أي تكلفة تقريبًا. فالمكتبات بتعتمد على [[@opentelemetry/api]] بس، والتطبيق هو اللي بيقرر يشغّل الـ SDK.
+
+[[startActiveSpan(name, fn)]] بيعمل span ابن للـ span الحالي، ويخليه active جوه [[fn]]، ويرجّع اللي [[fn]] رجّعته (هنا Promise). فيه كمان [[startSpan]] من غير ما يبقى active، وده بتستخدمه لو مش عايز spans تانية تتعلق تحته.
+
+attributes: خليها أسماء ثابتة وقيم مفيدة للبحث ([[order.id]] و [[coupon.code]] و [[items.count]]). ولأسماء معروفة استخدم semantic conventions ([[db.system]] و [[http.request.method]]) عشان الأدوات تفهمها.
+
+[[recordException]] بيضيف event اسمه [[exception]] فيه النوع والرسالة والـ stack. و [[setStatus(ERROR)]] حاجة تانية: هو اللي بيعلّم الـ span إنه فشل. محتاج الاتنين.
+
+[[span.end()]] لازم في [[finally]]: span مبيخلصش عمره ما بيتبعت، والـ trace يبان ناقص. ولو الـ span بيلف حاجة بترجع Promise، الـ end يبقى بعد الـ await، مش قبله.
+
+الـ trace id في رد الخطأ: اليوزر أو الـ support يبعتلك الرقم، وتلاقي الـ trace كله في ثانية.`,
+            when: "حوالي أي خطوة بيزنس مهمة (checkout، حساب، توليد PDF)، وأي API خارجي أو queue مالهوش instrumentation جاهز، وأي حاجة بتشك إنها بطيئة.",
+            mistakes: R`تنسى [[span.end()]] في مسار الخطأ فالـ span ميتبعتش. و [[recordException]] من غير [[setStatus]] فالـ span يبان ناجح. و span لكل iteration في loop فيها ١٠ آلاف عنصر. و attributes فيها إيميلات أو توكنات أو الـ body كله (الـ traces بتتخزن عند طرف تالت غالبًا). وأسماء spans ديناميكية ([[db.findOrder.8812]]) بدل اسم ثابت و attribute.`
+          },
+          lines: [
+            "Express.",
+            "الـ API: جيب tracer، و SpanStatusCode للأخطاء.",
+            "tracer باسم الخدمة.",
+            "التطبيق.",
+            "دالة القاعدة (هنا مجرد تأخير يمثّل query).",
+            "span جديد اسمه db.findOrder، و active جوه الدالة.",
+            "attribute عشان تقدر تدوّر بالـ id.",
+            "حاول:",
+            "مكان الـ query الحقيقية (٤٠ مللي).",
+            "id صفر = مش موجود.",
+            "رجّع الطلب.",
+            "لو فشل:",
+            "سجّل الـ exception كـ event جوه الـ span.",
+            "وعلّم الـ span إنه ERROR.",
+            "ورجّع الخطأ لفوق.",
+            "في كل الحالات:",
+            "اقفل الـ span (من غيرها مش هيتبعت).",
+            "قفلة.",
+            "قفلة startActiveSpan.",
+            "قفلة الدالة.",
+            "الـ route.",
+            "الـ trace id بتاع الطلب ده.",
+            "حاول:",
+            "رجّع الطلب.",
+            "لو فشل:",
+            "404 ومعاه الـ trace id عشان الـ support يدوّر بيه.",
+            "قفلة.",
+            "قفلة الـ route.",
+            "شغّل."
+          ],
+          sol: R`لـ [[/orders/7]]: span اسمه [[db.findOrder]]، فيه [[attributes: { 'order.id': '7' }]] و [[status: { code: 0 }]] و [[events: []]] و [[duration]] حوالي [[40000]] (بالمايكروثانية، يعني ٤٠ مللي). و [[parentSpanContext]] بتاعه بيشاور على span الـ express [[request handler - /orders/:id]]، يعني اتعلق تحت الطلب لوحده.
+
+لـ [[/orders/0]]: الرد [[{"error":"not found","traceId":"..."}]]، و [[db.findOrder]] فيه [[status: { code: 2, message: 'order not found' }]] (2 = ERROR)، و [[events]] فيه event اسمه [[exception]] ومعاه [[exception.type: 'Error']] و [[exception.message]] و [[exception.stacktrace]]. والـ [[traceId]] اللي في الرد هو نفسه اللي في الـ spans.
+
+ولما تضيف [[shipping.quote]] حوالين fetch، هتلاقي span [[GET]] من نوع CLIENT (kind 2) من [[instrumentation-undici]] والـ parent بتاعه [[shipping.quote]]، ومدته حوالي ثانية.
+
+الغلطة الشائعة: [[db.findOrder]] ظاهر كـ root لوحده ([[parentSpanContext: undefined]]) بـ trace id مختلف عن الطلب. ده معناه إن الـ context ضاع، غالبًا لأنك استخدمت [[startSpan]] بدل [[startActiveSpan]] في مكان، أو عملت الـ span برا الطلب.`,
+          solCode: R`async function shippingQuote(city) {
+  return tracer.startActiveSpan("shipping.quote", async (span) => {
+    span.setAttribute("shipping.city", city);
+    try {
+      const r = await fetch("https://httpbin.org/delay/1");
+      span.setAttribute("http.response.status_code", r.status);
+      return 50;
+    } catch (err) {
+      span.recordException(err);
+      span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+      throw err;
+    } finally {
+      span.end();
+    }
+  });
+}`
+        },
+        {
+          cmd: "trace id في اللوج",
+          title: "trace id جنب request id في كل سطر لوج",
+          desc: R`اللوج بيقولك إيه اللي حصل، والـ trace بيقولك الوقت راح فين. لما يبقى في كل سطر لوج [[trace_id]]، تقدر من سطر خطأ تفتح الـ trace بتاعه، ومن span بطيء تجيب اللوجات بتاعته.
+
+مع pino: الـ auto-instrumentation فيه [[instrumentation-pino]] بيحط [[trace_id]] و [[span_id]] و [[trace_flags]] في كل سطر لوحده. والـ request id بتاعك (من [[x-request-id]] أو UUID) بتحطه بـ [[logger.child]] زي ما هو، وترجّعه في الـ response header. الاتنين مع بعض: الـ request id اللي العميل شايفه، والـ trace id اللي أدوات الـ tracing بتفهمه.`,
+          example: R`import express from "express";
+import pino from "pino";
+import { randomUUID } from "node:crypto";
+
+const logger = pino();
+const app = express();
+
+app.use((req, res, next) => {
+  req.id = req.get("x-request-id") ?? randomUUID();
+  res.set("x-request-id", req.id);
+  req.log = logger.child({ requestId: req.id });
+  next();
+});
+
+app.get("/orders/:id", (req, res) => {
+  req.log.info({ orderId: req.params.id }, "loading order");
+  res.json({ ok: true });
+});
+
+const server = app.listen(3000, async () => {
+  await fetch("http://localhost:3000/orders/7", { headers: { "x-request-id": "req-abc-123" } });
+  server.close();
+});`,
+          try: R`سطّب [[pino]] جنب باقي الحاجات، وشغّل الملف مرتين: [[node logs.mjs]] من غير OpenTelemetry، و [[node --import ./instrumentation.mjs logs.mjs]] معاه (غيّر الـ exporter لواحد ساكت أو سيب الـ console). قارن سطر [[loading order]] في الحالتين. وبعدين ضيف middleware بيحط الـ trace id في header اسمه [[x-trace-id]] في الرد.`,
+          flag: "script",
+          deep: {
+            why: "في incident، اليوزر بيبعتلك screenshot فيها request id أو وقت. من غير ربط، بتدوّر في اللوجات بالوقت، وبعدين تحاول تلاقي الـ trace بالوقت برضه، وممكن تلاقي ١٠٠ طلب في نفس الثانية. مع [[trace_id]] في اللوج، Grafana (Loki مع Tempo) أو Datadog أو Honeycomb بيدّوك زرار من سطر اللوج للـ trace على طول.",
+            how: R`الـ request id: درس [[AsyncLocalStorage]] في «تاب Backend بـ Node» بيشرح إزاي يوصل لكل سطر لوج من غير ما تعدّيه لكل دالة، وهنا بنستخدم أبسط طريقة: [[req.log]] child logger. وخد الـ [[x-request-id]] لو جاي من برا (من Nginx أو load balancer أو frontend) عشان تربط لحد أول نقطة.
+
+الـ trace id: [[instrumentation-pino]] بيلف pino ويضيف الحقول دي من الـ span الـ active مع كل سطر. ولو مش بتستخدم pino أو عايز تتحكم بنفسك:
+[[pino({ mixin() { const s = trace.getActiveSpan(); return s ? { trace_id: s.spanContext().traceId } : {}; } })]].
+
+الأسماء: الـ instrumentation بيكتب [[trace_id]] و [[span_id]] (بـ underscore)، ودي الأسماء اللي أغلب الأدوات بتدوّر عليها.
+
+ممكن تخلي الـ request id هو الـ trace id نفسه (ترجّع الـ trace id في [[x-request-id]])، فيبقى رقم واحد. بس لو فيه gateway قبلك بيعمل request id بصيغته، سيب الاتنين جنب بعض.
+
+و OpenTelemetry عنده logs signal كمان: تبعت اللوجات نفسها بـ OTLP لنفس الـ backend، وهي مربوطة بالـ trace لوحدها. بس JSON على stdout مع trace_id لسه أبسط وشغال مع أي حاجة.`,
+            when: "من أول يوم تشغّل فيه tracing. التكلفة سطر، والفايدة إن كل لوج بقى لينك للـ trace.",
+            mistakes: R`تعمل request id جديد في كل خدمة فمش بتقدر تربط. وتثق في [[x-request-id]] من برا من غير حد لطوله أو شكله (ممكن حد يحط فيه نص طويل أو سطر جديد يلخبط اللوج). وتلوج برا الطلب ([[setInterval]] أو worker) وتتوقع trace_id: مفيش span active هناك، فلازم تعمل span للـ job. وفي الانترفيو: «إزاي تتبع طلب واحد بين ٣ خدمات؟» الإجابة: context propagation بـ traceparent، و trace_id في كل لوج، وأداة tracing.`
+          },
+          lines: [
+            "Express.",
+            "pino: logger بيطبع JSON.",
+            "لتوليد request id.",
+            "logger واحد للتطبيق.",
+            "التطبيق.",
+            "middleware على كل طلب.",
+            "خد الـ request id من برا لو موجود، أو اعمل واحد.",
+            "رجّعه في الرد عشان العميل يقدر يبعتهولك.",
+            "child logger فيه الـ request id في كل سطر.",
+            "كمّل.",
+            "قفلة.",
+            "route.",
+            "سطر لوج (هنا الـ instrumentation بيضيف trace_id).",
+            "رد.",
+            "قفلة.",
+            "شغّل، ولما يشتغل:",
+            "ابعت طلب واحد بـ request id معروف.",
+            "واقفل.",
+            "قفلة."
+          ],
+          sol: R`من غير OpenTelemetry:
+
+[[{"level":30,...,"requestId":"req-abc-123","orderId":"7","msg":"loading order"}]]
+
+ومعاه:
+
+[[{"level":30,...,"requestId":"req-abc-123","trace_id":"c0292ceda7cb1194ca407f5b679ae214","span_id":"e81daa6cf4e50c9f","trace_flags":"01","orderId":"7","msg":"loading order"}]]
+
+نفس السطر، بس زاد عليه [[trace_id]] و [[span_id]] و [[trace_flags]] من غير ما تغيّر ولا سطر في الكود. والـ [[trace_id]] ده نفسه اللي هتلاقيه في الـ spans.
+
+للـ header: middleware بعد الـ instrumentation يكتب [[res.set("x-trace-id", trace.getActiveSpan()?.spanContext().traceId)]]، و [[curl -i]] يوريك الاتنين: [[x-request-id: req-abc-123]] و [[x-trace-id: ...]].
+
+الغلطة الشائعة: مفيش [[trace_id]] في السطر حتى مع [[--import]]. ده غالبًا لأن pino اتحمّل قبل الـ instrumentation، أو [[instrumentation-pino]] مقفول، أو اللوج بيتكتب برا أي span.`,
+          solCode: R`import { trace } from "@opentelemetry/api";
+
+app.use((req, res, next) => {
+  const traceId = trace.getActiveSpan()?.spanContext().traceId;
+  if (traceId) res.set("x-trace-id", traceId);
+  next();
+});`
+        },
+        {
+          cmd: "OTLP و backend",
+          title: "ابعت الـ traces لـ Jaeger أو Tempo أو Honeycomb بـ OTLP",
+          desc: R`OTLP هو البروتوكول بتاع OpenTelemetry لبعت الـ traces والـ metrics واللوجات، على HTTP بورت 4318 ([[/v1/traces]]) أو gRPC بورت 4317. وأي backend حديث بيستقبله: Jaeger (open source للتجربة والإنتاج الصغير)، و Grafana Tempo (مع Grafana، و Grafana Cloud فيه خطة مجانية)، و Honeycomb، و Datadog، و Sentry.
+
+الحلو إن الإعدادات كلها متغيرات بيئة، فالكود هو هو والـ backend يتغير: [[OTEL_SERVICE_NAME]] و [[OTEL_EXPORTER_OTLP_ENDPOINT]] و [[OTEL_EXPORTER_OTLP_HEADERS]] (للمفاتيح). وفي الإنتاج غالبًا بتبعت لـ OpenTelemetry Collector جنب التطبيق، وهو يبعت للـ backend.`,
+          example: R`docker run -d --name jaeger -p 16686:16686 -p 4318:4318 jaegertracing/jaeger:latest
+export OTEL_SERVICE_NAME=orders-api
+export OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+export OTEL_METRICS_EXPORTER=none
+export OTEL_TRACES_SAMPLER=parentbased_traceidratio OTEL_TRACES_SAMPLER_ARG=0.2
+node --import ./instrumentation.prod.mjs two.mjs
+curl -s localhost:16686/api/v3/services
+# Honeycomb بدل Jaeger: نفس الكود، متغيرين بس
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://api.honeycomb.io
+export OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=YOUR_API_KEY"`,
+          try: R`اعمل [[instrumentation.prod.mjs]]: نسخة من [[instrumentation.mjs]] من غير [[spanProcessors]] ولا الـ console exporter (فالـ SDK يقرا الـ exporter من البيئة ويستخدم OTLP)، وضيف سطر [[beforeExit]] (الملف كامل في الحل). شغّل Jaeger بـ Docker، ونفّذ [[two.mjs]] من أول درس بالمتغيرات دي من غير سطر الـ sampler. افتح [[http://localhost:16686]]، واختار [[orders-api]]، وافتح آخر trace: كام span؟ ومين جوه مين؟ بعدين رجّع الـ sampler بـ [[0.2]] وشغّل ١٠ مرات: كام trace ظهر؟`,
+          deep: {
+            why: "الـ console exporter للتعلم بس. القيمة الحقيقية في شاشة بتوريك الـ traces كـ waterfall، وتدوّر فيها بـ «كل الطلبات على /checkout اللي أبطأ من ثانية امبارح». ولأن OTLP معيار، مش مربوط بـ vendor: تبدأ بـ Jaeger ببلاش على جهازك أو VPS، وتنقل لـ Grafana Cloud أو Honeycomb بتغيير متغيرين.",
+            how: R`لما [[NodeSDK]] ميبقاش معاه [[traceExporter]] ولا [[spanProcessors]]، بيقرا [[OTEL_TRACES_EXPORTER]] (الافتراضي [[otlp]]) و [[OTEL_EXPORTER_OTLP_ENDPOINT]] ويبعت على [[ENDPOINT/v1/traces]] بـ [[BatchSpanProcessor]]. وفي النسخ الحالية بيبعت metrics كمان على [[/v1/metrics]] لو مقفلتهاش بـ [[OTEL_METRICS_EXPORTER=none]]، فلو الـ backend بتاعك traces بس، اقفلها عشان متبعتش ترافيك على الفاضي.
+
+الـ batch بيتبعت كل كام ثانية. سيرفر شغال على طول مش فارق معاه، بس script بيخلص في ثانية (زي [[two.mjs]]) هيقفل قبل ما يبعت، عشان كده [[beforeExit]] بيعمل [[shutdown()]] (وده بيبعت اللي في الـ buffer). والـ [[catch]] مهمة: من غيرها، لو الـ backend مش شغال، الـ shutdown بيرمي خطأ والـ process يقع بـ unhandled rejection.
+
+الـ protocol: [[OTEL_EXPORTER_OTLP_PROTOCOL]] ممكن [[http/protobuf]] (الافتراضي في Node) أو [[http/json]] أو [[grpc]] (على 4317 ومحتاج exporter تاني).
+
+الـ backends: Jaeger v2 image واحد فيه الاستقبال والتخزين في الرام والـ UI على 16686، ممتاز للتجربة وللـ dev (وللإنتاج بتوصله بـ storage). Grafana Tempo بيخزّن traces رخيص على object storage، وبيتعرض في Grafana جنب Prometheus و Loki، وفيه image اسمه [[grafana/otel-lgtm]] فيه الكل للتجربة. Honeycomb و Datadog خدمات مدفوعة (مع خطط مجانية محدودة) وبتاخد OTLP مباشرة بمفتاح في header.
+
+الـ Collector: برنامج منفصل (container) بيستقبل OTLP من كل خدماتك، ويعمل batch و retry، ويشيل بيانات حساسة، ويعمل tail sampling، ويبعت لـ backend واحد أو أكتر. التطبيق يبعت لـ [[http://otel-collector:4318]] بس، والمفاتيح في الـ collector مش في كل خدمة.
+
+الـ sampling: [[parentbased_traceidratio]] بـ [[0.2]] معناها: لو الطلب جاي بـ traceparent، اتبع قرار الأب (عشان الـ trace ميتقطعش)، ولو إنت الأول، سجّل ٢٠٪ بس. وده مهم لما الترافيك يكبر، لأن الـ backends بتحاسب بعدد الـ spans.`,
+            when: "Jaeger على جهازك أو في docker compose بتاع الـ dev من أول ما تضيف OTel. وفي الإنتاج: Grafana (Tempo) لو عندك Prometheus و Grafana أصلًا، أو SaaS لو مش عايز تدير storage.",
+            mistakes: R`[[OTEL_EXPORTER_OTLP_ENDPOINT]] فيه [[/v1/traces]] في الآخر، فالـ SDK يضيفها تاني ويبعت لـ [[/v1/traces/v1/traces]] (لو عايز مسار كامل استخدم [[OTEL_EXPORTER_OTLP_TRACES_ENDPOINT]]). وتبعت لبورت 4317 (gRPC) بـ exporter HTTP. ومفتاح Honeycomb في الكود أو في الـ frontend. و sampling ١٠٠٪ على ترافيك كبير والفاتورة تنفجر. وتنسى [[sdk.shutdown()]] فالـ batch الأخير يضيع مع كل restart.`
+          },
+          lines: [
+            "Jaeger v2: الـ UI على 16686، واستقبال OTLP HTTP على 4318.",
+            "اسم الخدمة.",
+            "ابعت الـ traces هنا (الـ SDK بيضيف /v1/traces).",
+            "متبعتش metrics (Jaeger بياخد traces بس).",
+            "سجّل ٢٠٪ من الـ traces الجديدة، واتبع قرار الأب لو جاي من خدمة تانية.",
+            "شغّل بملف الإنتاج (مفيهوش exporter في الكود، فبياخده من البيئة).",
+            "اتأكد إن Jaeger شاف الخدمة.",
+            "نفس الكلام لـ Honeycomb: الـ endpoint بتاعهم...",
+            "...والمفتاح في header."
+          ],
+          sol: R`بعد التشغيل، [[curl -s localhost:16686/api/v3/services]] يرجّع حاجة زي [[{"services":["orders-api","jaeger"]}]]. (لو رجّع فاضي على طول بعد التشغيل، استنى ثانيتين: الـ batch بيتبعت كل شوية.)
+
+في الـ UI، الـ trace بتاع [[two.mjs]] فيه ٤ spans بنفس الـ trace id، كلهم اسمهم [[GET]]: الـ fetch الأولاني (CLIENT، الـ root، مثلًا ٢٨ مللي)، وتحته A (SERVER)، وتحته الـ fetch من A لـ B (CLIENT)، وتحته B (SERVER، أقصر واحد). الـ waterfall بيوريك إن كل span جوه اللي فوقه.
+
+مع الـ sampler بـ 0.2 و ١٠ تشغيلات: هتلاقي حوالي ٢ traces (ممكن ١ أو ٤، هي احتمالات). وكل trace ظهر ظهر كامل بالـ ٤ spans، لأن الخدمات اللي بعد الأول بتتبع قراره.
+
+الغلطات الشائعة: الخدمة اسمها [[unknown_service:node]] (نسيت [[OTEL_SERVICE_NAME]] أو الـ resource). أو السكربت اشتغل ومفيش ولا trace في Jaeger، وده لأن الـ process قفل قبل ما الـ batch يتبعت (ناقصك [[beforeExit]]). أو السطر [[otel: connect ECONNREFUSED 127.0.0.1:4318]]، يعني Jaeger مش شغال أو البورت غلط.`,
+          solCode: R`// instrumentation.prod.mjs: مفيش exporter في الكود، كله من متغيرات البيئة
+import { register } from "node:module";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+
+register("@opentelemetry/instrumentation/hook.mjs", import.meta.url);
+const sdk = new NodeSDK({
+  instrumentations: [getNodeAutoInstrumentations({ "@opentelemetry/instrumentation-fs": { enabled: false } })],
+});
+sdk.start();
+process.on("SIGTERM", () => sdk.shutdown().finally(() => process.exit(0)));
+process.once("beforeExit", () => sdk.shutdown().catch((err) => console.error("otel:", err.message)));`
+        },
+        {
+          cmd: "instrumentation.ts",
+          title: "OpenTelemetry في Next.js: instrumentation.ts",
+          desc: R`Next.js عنده ملف خاص اسمه [[instrumentation.ts]] في جذر المشروع (أو جوه [[src/]] لو بتستخدمه)، فيه دالة [[register()]] بتتنادى مرة واحدة لما السيرفر يقوم قبل أي طلب. ده مكان OpenTelemetry (و Sentry وغيرهم).
+
+أسهل طريقة [[@vercel/otel]]: [[registerOTel("next-app")]] وخلاص، وبيشتغل على Node و Edge. ولو محتاج تحكم كامل، [[NodeSDK]] زي الدروس اللي فاتت، بس في ملف منفصل بيتحمّل لما [[NEXT_RUNTIME]] يبقى [[nodejs]] بس، لأن NodeSDK مش بيشتغل على Edge.
+
+Next.js نفسه بيطلّع spans جاهزة (الـ route، والـ render، و fetch في Server Components)، ولو عايز تفاصيل أكتر شغّل بـ [[NEXT_OTEL_VERBOSE=1]].`,
+          example: R`// instrumentation.ts (في جذر المشروع)
+import { registerOTel } from "@vercel/otel";
+export function register() {
+  registerOTel({ serviceName: "shop-web" });
+}
+// أو تحكم كامل: instrumentation.ts بيحمّل ملف Node بس
+export async function register() {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    await import("./instrumentation.node");
+  }
+}
+// instrumentation.node.ts
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { ATTR_SERVICE_NAME } from "@opentelemetry/semantic-conventions";
+const sdk = new NodeSDK({
+  resource: resourceFromAttributes({ [ATTR_SERVICE_NAME]: "shop-web" }),
+  traceExporter: new OTLPTraceExporter(),
+});
+sdk.start();`,
+          try: R`في مشروع Next.js: [[npm i @vercel/otel @opentelemetry/api]] واعمل [[instrumentation.ts]] بالطريقة الأولى. شغّل Jaeger (الدرس اللي فات)، وبعدين [[OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 npm run build && npm start]]. افتح صفحة Server Component بتعمل [[fetch]] لـ API خارجي، ودوّر على الـ trace في Jaeger. وبعدين ضيف custom span حوالين حاجة في Server Action.`,
+          flag: "script",
+          deep: {
+            why: "في Next.js الوقت ممكن يروح في حاجات مش باينة: fetch في Server Component، أو render تقيل، أو middleware، أو query في Route Handler. الـ traces بتوريك كل ده في waterfall واحد، ومع propagation لـ API الباك إند (لو Express عليه OTel) الـ trace بيكمل من Next لحد القاعدة.",
+            how: R`[[register]] بتتنادى مرة في كل runtime: مرة في Node، ومرة في Edge لو عندك حاجة على Edge (زي middleware في نسخ كتير). عشان كده [[process.env.NEXT_RUNTIME]] بيفرّق. والـ dynamic import جوه الشرط بيضمن إن كود NodeSDK مبيدخلش bundle بتاع Edge أصلًا.
+
+[[@vercel/otel]]: wrapper بيعمل الـ SDK والـ exporter (بيقرا [[OTEL_EXPORTER_OTLP_ENDPOINT]] زي أي SDK)، وبيدعم Edge، وعلى Vercel بيبعت للـ integrations بتاعة Vercel. مناسب لأغلب الحالات.
+
+الـ spans اللي Next بيطلّعها لوحده: span للطلب ([[GET /products/[id]]])، وللـ render، ولكل [[fetch]] في السيرفر، و [[generateMetadata]]. و [[NEXT_OTEL_VERBOSE=1]] بيطلّع أكتر. والـ custom spans بنفس [[trace.getTracer("shop-web").startActiveSpan]] من الدرس اللي فات، في أي Server Component أو Server Action أو Route Handler.
+
+الـ propagation: الـ fetch من السيرفر بيحط [[traceparent]] لوحده، فلو الـ API بتاعك عليه OTel، الـ trace بيكمل. ومن المتصفح للسيرفر ده موضوع تاني (browser instrumentation) ومش بيحصل لوحده.
+
+الملف مكانه جذر المشروع جنب [[app/]]، أو جوه [[src/]] لو المشروع بيستخدم [[src/]]. في نسخ Next القديمة (١٣ و ١٤) كان محتاج [[experimental.instrumentationHook]] في [[next.config]]، وفي النسخ الحالية مش محتاج.
+
+الاختبار الصح يبقى بـ [[next build]] و [[next start]]، لأن [[next dev]] بيطلّع spans زيادة للـ compile وأرقام مش شبه الإنتاج.`,
+            when: "أي Next.js فيه Server Components بتجيب داتا، أو Route Handlers، أو بيكلّم API باك إند منفصل وعايز trace واحد من أول الطلب لحد القاعدة.",
+            mistakes: R`تعمل import لـ NodeSDK في أول [[instrumentation.ts]] من غير شرط [[NEXT_RUNTIME]] فالـ build يقع بأخطاء modules مش موجودة في Edge. وتحط الملف جوه [[app/]] فمبيتقراش. وتفتكر إن الـ spans هتيجي من المتصفح لوحدها. وتقيس بـ [[next dev]]. وتحط مفتاح الـ backend في متغير [[NEXT_PUBLIC_]].`
+          },
+          lines: [
+            "wrapper جاهز من Vercel.",
+            "دالة بتتنادى مرة لما السيرفر يقوم.",
+            "سجّل OTel باسم الخدمة (بيشتغل على Node و Edge).",
+            "قفلة.",
+            "البديل: نفس الدالة بس بتحمّل ملف Node...",
+            "...لو الـ runtime هو Node بس.",
+            "dynamic import عشان الكود ميدخلش bundle الـ Edge.",
+            "قفلة الشرط.",
+            "قفلة.",
+            "الـ SDK.",
+            "exporter بـ OTLP HTTP (بيقرا الـ endpoint من البيئة).",
+            "الـ resource.",
+            "اسم الـ attribute القياسي.",
+            "SDK جديد.",
+            "اسم الخدمة.",
+            "ابعت بـ OTLP (مع batch).",
+            "قفلة.",
+            "ابدأ."
+          ],
+          sol: R`بعد [[npm start]] وفتح الصفحة، في Jaeger هتلاقي خدمة [[shop-web]]، و trace root اسمه زي [[GET /products/[id]]] (بالـ route مش الـ URL الحقيقي)، وتحته spans زي [[render route (app) /products/[id]]] و [[fetch GET https://api.example.com/...]] بمدة الـ fetch. الأسماء بالظبط ممكن تختلف شوية حسب نسخة Next.
+
+ولو الـ API اللي بتعمله fetch عليه OTel وبيبعت لنفس Jaeger، هتلاقي spans بتاعته في نفس الـ trace تحت الـ fetch span.
+
+الـ custom span في Server Action يظهر باسمه (مثلًا [[checkout.createOrder]]) تحت span الطلب اللي فيه الـ action.
+
+الغلطات الشائعة: مفيش خدمة في Jaeger خالص، وده غالبًا عشان الملف مش في المكان الصح (جوه [[app/]] بدل جذر المشروع أو [[src/]])، أو المتغير [[OTEL_EXPORTER_OTLP_ENDPOINT]] مش واصل لـ [[npm start]]. أو الـ build بيقع بـ [[Module not found: Can't resolve 'fs']]، ودي NodeSDK اتعملها import من غير شرط [[NEXT_RUNTIME]].`,
+          solCode: R`// app/checkout/actions.ts
+"use server";
+import { trace, SpanStatusCode } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("shop-web");
+
+export async function createOrder(formData: FormData) {
+  return tracer.startActiveSpan("checkout.createOrder", async (span) => {
+    try {
+      span.setAttribute("cart.items", Number(formData.get("items") ?? 0));
+      const res = await fetch(process.env.API_URL + "/orders", { method: "POST", body: formData });
+      span.setAttribute("http.response.status_code", res.status);
+      return await res.json();
+    } catch (err) {
+      span.recordException(err as Error);
+      span.setStatus({ code: SpanStatusCode.ERROR });
+      throw err;
+    } finally {
+      span.end();
+    }
+  });
+}`
         }
       ]
     },
@@ -1915,7 +3615,15 @@ Spot: سيرفرات AWS الفاضية بخصم لحد ٩٠٪، بس ممكن �
             "Compute Optimizer: السيرفرات اللي أكبر من احتياجها والنوع المقترح.",
             "آخر أسعار Spot لنوع معين.",
             "طريق مباشر ببلاش من الـ VPC لـ S3، من غير NAT."
-          ]
+          ],
+          sol: R`الجدول اللي هتطلع بيه شكله كده (الأرقام مثال):
+
+[[EUC1-NatGateway-Hours]] و [[NatGateway-Bytes]]: موجود لأن الـ private subnets بتطلع للإنترنت من خلاله (ونازل لـ ECR و S3 كمان). يقل بـ VPC endpoint لـ S3 (ببلاش، gateway endpoint) و ECR، أو NAT واحد بدل واحد لكل AZ في dev، أو تمسحه لو مفيش private subnets فعلًا.
+[[PublicIPv4:InUseAddress]] و [[IdleAddress]]: كل IP عام حوالي ٣.٦ دولار في الشهر. يقل بإنك تمسح Elastic IPs مش مربوطة، وتحط السيرفرات ورا load balancer واحد بدل IP لكل واحد.
+[[DataTransfer-Out-Bytes]]: ترافيك طالع للإنترنت، غالبًا صور وملفات. يقل بـ CloudFront قدام S3 (الخروج من CloudFront أرخص وليه شريحة مجانية) وضغط الصور.
+
+الغلطة الشائعة: تبص على الخدمة بس فتلاقي «EC2-Other» كبير ومش فاهم هو إيه؛ ده بالظبط ليه تقسّم بالـ usage type: جواه NAT و EBS و IPs. وخلي بالك إن أوامر [[aws ce]] نفسها بتتحاسب (حوالي سنت لكل طلب)، فمتحطهاش في loop كل دقيقة.`,
+          solCode: R`aws ce get-cost-and-usage --time-period Start=2026-07-01,End=2026-10-01 --granularity MONTHLY --metrics UnblendedCost --group-by Type=DIMENSION,Key=USAGE_TYPE --query "ResultsByTime[].Groups[].[Keys[0],Metrics.UnblendedCost.Amount]" --output text | sort -k2 -g -r | head -20`
         },
         {
           cmd: "امسح اللي مش مستخدم",
@@ -1954,7 +3662,21 @@ aws s3 rb s3://myapp-old-assets --force`,
             "رجّع الـ IP لـ AWS.",
             "امسح القاعدة بعد snapshot أخير.",
             "امسح الـ bucket وكل اللي فيه."
-          ]
+          ],
+          sol: R`السكربت تحت بيلف على كل region ويطبع بس اللي فيه حاجة. على حساب نضيف المفروض ميطبعش غير أسماء الـ regions. أي سطر تحتها زي [[volumes: vol-0abc... 8]] أو [[eips: eipalloc-...]] أو [[nat: nat-...]] ده مورد بيتحاسب. امسحه بالأوامر اللي في المثال، واستخدم [[aws ec2 delete-nat-gateway]] و [[aws elbv2 delete-load-balancer]] للباقي.
+
+وبعد المسح، شغّل السكربت تاني: الـ NAT Gateway بيفضل ظاهر بحالة [[deleted]] شوية، والـ instance بـ [[terminated]] حوالي ساعة، ودول مش بيتحاسبوا. وفي الكونسول، Resource Explorer (بعد ما تفعّله) أو Tag Editor بـ All regions و All resource types بيعرضوا نفس الصورة من غير سكربت.
+
+الغلطة الشائعة: تمسح الـ instance وتفتكر إن كده خلصت، والديسك فضل [[available]] لأن [[DeleteOnTermination]] كان false، أو الـ Elastic IP فضل محجوز. وتانية: [[delete-db-instance]] من غير snapshot نهائي لقاعدة فيها حاجة مهمة، أو بـ snapshot نهائي لقاعدة تجربة فيفضل الـ snapshot يتحاسب شهور.`,
+          solCode: R`for r in $(aws ec2 describe-regions --query "Regions[].RegionName" --output text); do
+  echo "== $r"
+  aws ec2 describe-instances --region $r --filters Name=instance-state-name,Values=pending,running,stopped --query "Reservations[].Instances[].InstanceId" --output text | sed 's/^/instances: /' | grep -v ': $'
+  aws ec2 describe-volumes --region $r --filters Name=status,Values=available --query "Volumes[].[VolumeId,Size]" --output text | sed 's/^/volumes: /' | grep -v ': $'
+  aws ec2 describe-addresses --region $r --query "Addresses[?AssociationId==null].AllocationId" --output text | sed 's/^/eips: /' | grep -v ': $'
+  aws ec2 describe-nat-gateways --region $r --filter Name=state,Values=available --query "NatGateways[].NatGatewayId" --output text | sed 's/^/nat: /' | grep -v ': $'
+  aws elbv2 describe-load-balancers --region $r --query "LoadBalancers[].LoadBalancerName" --output text | sed 's/^/lb: /' | grep -v ': $'
+  aws rds describe-db-instances --region $r --query "DBInstances[].DBInstanceIdentifier" --output text | sed 's/^/rds: /' | grep -v ': $'
+done`
         },
         {
           cmd: "HA و DR",
@@ -1989,7 +3711,20 @@ RDS Multi-AZ: نسخة standby في AZ تانية بتاخد كل كتابة ب�
             "على الأقل سيرفرين دايمًا، ولحد ٦ وقت الضغط.",
             "احتفظ بكل نسخة من كل ملف: المسح والكتابة فوق يترجعوا.",
             "انسخ snapshot لـ region تانية (أيرلندا) بمفتاح تشفير من هناك."
-          ]
+          ],
+          sol: R`السكربت تحت بيعمل اتصال جديد كل ثانية ويطبع الوقت و IP السيرفر اللي رد. قبل الـ failover هتلاقي نفس الـ IP. بعد [[--force-failover]] هتلاقي سطور [[FAIL]] (connection refused أو timeout) لفترة، والمتوقع حسب AWS حوالي دقيقة لدقيقتين في Multi-AZ instance العادي، وبعدين السطور ترجع بـ IP مختلف: ده الـ standby اللي بقى primary، والـ endpoint (الاسم) هو هو لأن DNS بتاعه اتحدّث.
+
+السكربت رجع لوحده لأنه بيفتح اتصال جديد كل مرة. التطبيق بتاعك ممكن ميرجعش: لو الـ pool ماسك اتصالات قديمة للسيرفر اللي وقع، أول طلبات بعد الـ failover هتفشل لحد ما الـ pool يكتشف إنها ميتة ويفتح جديدة، ولو المكتبة أو الـ runtime كاشين الـ DNS (زي JVM بإعدادات قديمة) ممكن تفضل تكلّم الـ IP القديم لحد restart. لو ده حصل، النتيجة اللي تكتبها: «التطبيق محتاج retry وإعدادات pool»، مش «Multi-AZ مش شغال».
+
+والغلطة الشائعة في التجربة: تنسى إن Multi-AZ بيضاعف سعر القاعدة، فتسيبه شغال على قاعدة تجربة. رجّعه بـ [[--no-multi-az]] بعد ما تخلص.`,
+          solCode: R`export PGCONNECT_TIMEOUT=2
+while true; do
+  if out=$(psql "$DATABASE_URL" -Atc "select inet_server_addr()" 2>&1); then echo "$(date +%T) OK $out"; else echo "$(date +%T) FAIL"; fi
+  sleep 1
+done
+# في ترمنال تاني:
+aws rds reboot-db-instance --db-instance-identifier myapp-db --force-failover
+aws rds describe-events --source-identifier myapp-db --source-type db-instance --duration 30 --query "Events[].[Date,Message]" --output table`
         }
       ]
     },
@@ -2012,7 +3747,12 @@ RDS Multi-AZ: نسخة standby في AZ تانية بتاخد كل كتابة ب�
 والتكلفة: IaaS سعر ثابت بالساعة سواء فيه ترافيك ولا لأ. و serverless سعر لكل طلب، أرخص جدًا للترافيك القليل أو المتقطع، وممكن يبقى أغلى من سيرفر مع ترافيك عالي ومستمر.`,
             when: "إمتى تختار serverless وإمتى لأ؟ إيه هو الـ cold start وتقلله إزاي؟ فين الـ containers (ECS و Fargate) من التقسيمة دي؟ إيه هو shared responsibility model؟",
             mistakes: "إن serverless يعني «مفيش سيرفرات» حرفيًا (فيه، بس مش بتديرها). أو إن PaaS و SaaS نفس الحاجة. أو إن managed يعني انت مش مسؤول عن الأمان."
-          }
+          },
+          sol: R`إجابة نموذجية في أقل من دقيقة: «الفرق في مين بيدير إيه. IaaS زي EC2: سيرفر، وأنا مسؤول عن النظام والتحديثات والـ runtime، وبدفع بالساعة حتى لو مفيش ترافيك. PaaS زي Vercel أو RDS أو Render: بدّي كود أو إعدادات والمنصة بتشغّل وتحدّث وتعمل باك أب. Serverless زي Lambda: دالة بتشتغل على حدث، بتكبر لوحدها، وبدفع على الطلب، وصفر لو مفيش ترافيك، بس فيه cold start وحدود مدة. كل ما أطلع لفوق بكسب سرعة وصيانة أقل وبخسر تحكم. وفي كل الحالات الكود والبيانات والصلاحيات مسؤوليتي.»
+
+النقط اللي لازم تتقال: (١) مين بيدير نظام التشغيل، (٢) طريقة الدفع (ساعة مقابل طلب)، (٣) التمن: تحكم وحدود و lock-in، (٤) shared responsibility. وتطبيقها على مشاريعك بيبقى جملة لكل واحد، زي: «API على VPS = IaaS، كنت أنا اللي بحدّث وبعمل باك أب»، «Next.js على Vercel = PaaS مع serverless functions للـ API routes».
+
+الغلطة الشائعة: تقول إن serverless «مفيهوش سيرفرات» وتقف، أو تقول إنه دايمًا أرخص. الإجابة الأقوى بتقول إمتى يبقى أغلى: ترافيك عالي ومستمر.`
         },
         {
           cmd: "CloudFront + ECS + RDS",
@@ -2039,7 +3779,18 @@ Next.js على أكتر من نسخة: [[output: 'standalone']] في الـ Dock
           lines: [
             "رحلة الطلب: DNS، ثم CDN، ثم load balancer، ثم containers، ثم القاعدة.",
             "والملفات الثابتة والمرفوعة من S3 من ورا نفس الـ CDN."
-          ]
+          ],
+          sol: R`الرسمة لمشروع متوسط (أرقام تقريبية لـ eu-central-1، بتتغير، راجعها بـ AWS Pricing Calculator):
+
+Route 53: نص دولار للـ zone + الاستعلامات. لو وقع (نادر جدًا) الدومين مش بيتحل؛ الحماية TTL معقول.
+CloudFront: على قد الترافيك، وفيه شريحة مجانية شهرية. لو وقع، ممكن تحوّل الـ DNS للـ ALB مباشرة مؤقتًا.
+ALB: حوالي ٢٠ دولار في الشهر + وحدات الاستخدام. موزّع على AZين، فوقوع مبنى مش بيوقّعه.
+ECS Fargate (نسختين web و ٢ api، صغيرين): عشرات الدولارات. لو task وقعت، ECS بيقوّم غيرها والـ ALB بيشيلها من الترافيك.
+RDS Postgres Multi-AZ صغير: تقريبًا ضعف سعر الـ single-AZ. لو الـ primary وقع، failover في دقيقة أو اتنين، والتطبيق لازم يعيد الاتصال.
+S3: سنتات للجيجا. عمليًا مش بيقع، والخطر مسح بالغلط، فالحماية versioning.
+NAT Gateway (لو الـ tasks في private subnets): حوالي ٣٥ لـ ٤٠ دولار للواحد + الجيجا، وده البند اللي ناس كتير بتنساه.
+
+الغلطة الشائعة: ترسم الرسمة وتنسى الـ NAT والـ public IPs، أو تكتب «لو وقع: مفيش مشكلة» قدام حاجة single point of failure (زي RDS من غير Multi-AZ). الإجابة القوية بتقول بصراحة: «الحاجة الوحيدة اللي وقوعها بيوقّع كل حاجة هي القاعدة، وده ليه دفعت في Multi-AZ».`
         },
         {
           cmd: "least privilege + roles",
@@ -2055,7 +3806,20 @@ Next.js على أكتر من نسخة: [[output: 'standalone']] في الـ Dock
 وفوقهم حدود: permission boundaries (أقصى حاجة role ممكن تاخدها حتى لو اتدّالها أكتر)، و SCPs على مستوى الـ Organization. الحدود دي مبتدّيش صلاحية، بتقفل بس.`,
             when: "الفرق بين user و role؟ identity-based و resource-based policy؟ إزاي تدّي حساب تاني صلاحية على bucket؟ لو فيه Allow و Deny يحصل إيه؟ إزاي الـ CI يدخل من غير مفاتيح؟",
             mistakes: "«بعمل IAM user لكل تطبيق وبحط المفتاح في .env». أو «بدّي AdministratorAccess وبعدين أضيّق» ومبيضيّقش أبدًا. أو نسيان MFA على الـ root."
-          }
+          },
+          sol: R`الجدول المتوقع لحساب شخصي جديد نسبيًا (وده غالبًا اللي هتلاقيه):
+
+الـ root عليه MFA ومفيش ليه مفاتيح: اتأكد بـ [[get-account-summary]] (درس «root + MFA»).
+البشر بيدخلوا بهوية مؤقتة (login أو Identity Center): غالبًا «لأ» لو لسه عندك access key في [[~/.aws/credentials]].
+كل workload بياخد role: «لأ» لو فيه مفتاح في .env على سيرفر.
+CI بـ OIDC: «لأ» لو فيه [[AWS_ACCESS_KEY_ID]] في GitHub Secrets.
+least privilege: ابحث عن [[AdministratorAccess]] أو [[*]] في الـ policies.
+مفاتيح ومستخدمين مش مستخدمين: [[aws iam generate-credential-report]] وبعدين [[get-credential-report]] بيدّيك CSV فيه آخر استخدام لكل باسورد ومفتاح.
+CloudTrail شغال: حساب جديد فيه Event history ٩٠ يوم ببلاش، بس trail بيحفظ في S3 لازم تعمله.
+
+الإجابة في الانترفيو بتبقى بنفس الترتيب ده: root، ثم البشر، ثم البرامج، ثم least privilege، ثم المراجعة. والغلطة الشائعة إنك تقول «بدّي كل واحد الصلاحيات اللي محتاجها» من غير ما تقول إزاي تعرف هو محتاج إيه (Access Analyzer، ورسالة AccessDenied، و [[simulate-principal-policy]]).`,
+          solCode: R`aws iam generate-credential-report
+aws iam get-credential-report --query Content --output text | base64 -d | cut -d, -f1,4,5,8,9,11 | column -t -s,`
         },
         {
           cmd: "direct-to-S3 upload",
@@ -2078,7 +3842,16 @@ await fetch(url, { method: "PUT", headers: { "Content-Type": file.type }, body: 
           lines: [
             "السيرفر: وقّع إذن رفع لملف واحد لمدة ٥ دقايق، والـ Content-Type جوه التوقيع.",
             "المتصفح: ارفع مباشرة على S3 بنفس الـ Content-Type."
-          ]
+          ],
+          sol: R`شرح في دقيقة: «المتصفح بيطلب من الـ API إذن رفع. الـ API بيتأكد من اليوزر والنوع والحجم المتوقع، ويختار الـ key، ويعمل presigned PUT URL لمدة دقايق، والتوقيع بصلاحيات الـ role بتاعة السيرفر. المتصفح بيرفع مباشرة على S3، و S3 بيتحقق من التوقيع والمدة والـ Content-Type. بعدها المتصفح يبعت الـ key للـ API، والـ API يتأكد إن الملف موجود وتبع اليوزر ده قبل ما يحفظه.»
+
+الـ sequence diagram وعلى كل سهم مين بيتحقق:
+١. Browser ← API: [[POST /uploads/sign]]. الـ API يتحقق: اليوزر مسجّل؟ النوع مسموح؟
+٢. API ← Browser: [[{url, key}]]. الـ API هو اللي اختار الـ key ([[uploads/USER_ID/uuid]]).
+٣. Browser ← S3: [[PUT url]]. S3 يتحقق: التوقيع سليم؟ المدة لسه؟ الـ Content-Type نفس اللي اتوقّع؟ الـ role اللي وقّعت ليها [[s3:PutObject]]؟ و CORS مسموح للدومين؟
+٤. Browser ← API: [[POST /files {key}]]. الـ API يتحقق: الـ key بيبدأ بـ [[uploads/USER_ID/]]؟ [[HeadObject]] بيقول إنه موجود وحجمه معقول؟
+
+نقطة تكسب بيها: مع SDK v3 الجديد، الـ presign ممكن يحط checksum لملف فاضي في الـ URL فالرفع يفشل، والحل [[requestChecksumCalculation: "WHEN_REQUIRED"]] (درس «presigned URL»). والغلطة الشائعة في الإجابة: تنسى الخطوة ٤، فأي حد يقدر يبعت key بتاع يوزر تاني.`
         },
         {
           cmd: "Cache-Control + CDN",
@@ -2103,7 +3876,14 @@ Cache-Control: private, no-store`,
             "ملف فيه hash: سنة، والمتصفح ميسألش تاني.",
             "HTML: خزّنه بس اسأل الـ origin قبل ما تستخدمه.",
             "بيانات يوزر: متتخزنش في أي مكان مشترك ولا غيره."
-          ]
+          ],
+          sol: R`اللي هتلاقيه غالبًا في أي موقع كبير:
+
+الـ HTML: [[no-cache]] أو [[max-age=0, must-revalidate]] أو [[private, max-age=0]]. ليه؟ الـ HTML هو اللي بيشاور على أسماء ملفات الـ JS الجديدة، فلازم يتجدد مع كل deploy.
+ملفات JS و CSS اللي أسماءها فيها hash (زي [[main.3f9a2c.js]]): [[public, max-age=31536000, immutable]]. ليه؟ الاسم بيتغير لو المحتوى اتغير، فالنسخة القديمة مش هتتطلب تاني أصلًا.
+طلبات API فيها بيانات يوزر: [[private, no-store]] أو [[no-cache]]، ومعاها أحيانًا [[Vary: Authorization]] أو [[Cookie]]. ليه؟ عشان CDN أو proxy ميحفظش رد يوزر ويدّيه لغيره.
+
+وفي DevTools لاحظ عمود Size: [[(memory cache)]] أو [[(disk cache)]] معناها المتصفح مطلبش أصلًا، و [[304]] معناها سأل السيرفر ورد «متغيرش». الغلطة الشائعة: تفتكر إن [[no-cache]] يعني «متكاشش»، هو معناه «كاش بس اسأل قبل ما تستخدم»، والمنع الكامل هو [[no-store]].`
         },
         {
           cmd: "scale out vs scale up",
@@ -2126,7 +3906,14 @@ aws rds modify-db-instance --db-instance-identifier myapp-db --db-instance-class
           lines: [
             "horizontal: من ٢ لـ ١٠ نسخ حسب الضغط.",
             "vertical: القاعدة على سيرفر أكبر (فيه توقف قصير، وبيتحاسب أكتر)."
-          ]
+          ],
+          sol: R`مثال لتطبيق Express عادي، التلات حاجات اللي غالبًا هتمنعه يشتغل على نسختين:
+
+١. الـ sessions في الذاكرة ([[express-session]] من غير store): اليوزر يسجّل دخول على نسخة، والطلب التاني يروح للتانية فيطلع خارج. جرّبتها بنسختين ورا Nginx والنتيجة إن طلبات راحت للنسخة التانية ورجعت [[NOT LOGGED IN]]. الحل Redis store أو JWT.
+٢. الملفات المرفوعة على الديسك ([[multer]] على [[uploads/]]): الملف موجود على نسخة واحدة، فصورة البروفايل تظهر مرة وتختفي مرة. الحل S3 أو R2.
+٣. cron جوه التطبيق ([[node-cron]]): الإيميل اليومي يتبعت مرتين. الحل scheduler واحد (EventBridge أو worker منفصل أو lock في Redis).
+
+والرابعة لو فيه: WebSockets مع Socket.IO، رسالة يوزر على نسخة مش بتوصل ليوزر على التانية من غير Redis adapter. الإجابة الكويسة في الانترفيو بتربط: «عشان كده بكبّر vertical الأول لأنه مش محتاج تغيير، بس بصمّم stateless من الأول عشان الـ horizontal يبقى متاح».`
         },
         {
           cmd: "blue-green vs canary",
@@ -2150,7 +3937,13 @@ expand/contract: عشان تمسح عمود من غير توقف، deploy أول
           lines: [
             "canary: ٩٠٪ للنسخة 6 و ١٠٪ للنسخة 7.",
             "الأرقام كويسة؟ كل الترافيك لـ 7."
-          ]
+          ],
+          sol: R`مع Lambda: الأمر الأول بيرجّع [[RoutingConfig]] فيه [[AdditionalVersionWeights: {"7": 0.1}]]. لو ناديت [[hello:live]] كذا مرة بـ [[aws lambda invoke]]، الرد فيه [[ExecutedVersion]] بـ [[6]] في حوالي ٩ من ١٠ مرات و [[7]] في الباقي (النسبة تقريبية وبتظهر مع عدد طلبات كبير). وفي CloudWatch Logs أسماء الـ log streams فيها رقم النسخة زي [[2026/09/29/[7]abc...]]، فتقدر تشوف النسبة وتفلتر أخطاء النسخة الجديدة لوحدها. الأمر التاني بيحوّل كل الترافيك لـ 7 ويفضّي الأوزان.
+
+مع Nginx: blue-green معناه upstream بيشاور على [[blue]]، تشغّل [[green]] جنبه وتجرّبه مباشرة، وتغيّر الـ upstream وتعمل [[nginx -s reload]]، فالتحويل لحظي والرجوع نفس الخطوة بالعكس.
+
+الغلطة الشائعة: تنادي [[--function-name hello]] من غير [[:live]] فكل الطلبات تروح [[$LATEST]] ومتشوفش أي تقسيم. وتانية: الـ canary من غير مراقبة ولا شرط رجوع، فبقى مجرد deploy بطيء. الإجابة القوية بتقول الشرط: «لو الأخطاء في النسخة الجديدة زادت عن كذا خلال ١٠ دقايق، رجوع أوتوماتيك».`,
+          solCode: R`for i in $(seq 1 20); do aws lambda invoke --function-name hello:live --query ExecutedVersion --output text /dev/null; done | sort | uniq -c`
         },
         {
           cmd: "orchestration",
@@ -2172,7 +3965,12 @@ kubectl rollout undo deployment/api`,
           lines: [
             "عايز ٥ نسخ: k8s يوزّعهم على السيرفرات.",
             "رجّع النسخة اللي قبلها."
-          ]
+          ],
+          sol: R`إجابة نموذجية في ٣ جمل: «الـ Pod أصغر وحدة، container أو أكتر بيشتغلوا مع بعض وليهم IP، وهو مؤقت ممكن يموت ويتعمل غيره باسم وعنوان جديد. الـ Deployment بيقول عايز كام نسخة من Pod معين وبأنهي image، ويفضل يصلّح الواقع عشان يطابق، ويعمل rolling update و rollback. الـ Service اسم وعنوان ثابت قدام مجموعة Pods بالـ labels، وبيوزّع عليهم، فالتطبيق بيكلّم [[api]] مش IP بيتغير.»
+
+وليه مش لآخر مشروع (مثال): «مشروع فيه API وقاعدة بيانات وفريق من ٢. k8s هيضيف control plane أدفع فيه أو أديره، و YAML و ingress وشهادات وتحديثات للـ cluster نفسه، عشان مشاكل أنا معنديش: خدمات كتير وفرق كتير. Docker Compose على VPS أو PaaS أو ECS Fargate كان كفاية.»
+
+الغلطة الشائعة: تقول إن الـ Service هو اللي «بيشغّل» الـ pods (ده الـ Deployment)، أو تقول إن k8s «أحسن» من غير ما تقول إمتى. الانترفيوير عايز يسمع التكلفة التشغيلية، مش قايمة مميزات.`
         },
         {
           cmd: "SLO vs SLA",
@@ -2193,7 +3991,15 @@ kubectl rollout undo deployment/api`,
           },
           lines: [
             "ميزانية ٩٩.٩٪ في ٣٠ يوم: ٤٣.٢ دقيقة."
-          ]
+          ],
+          sol: R`الحسبة لـ ٣٠ يوم: ٩٩.٥٪ = [[216.0]] دقيقة (حوالي ٣.٦ ساعة)، و ٩٩.٩٥٪ = [[21.6]] دقيقة.
+
+٩٩.٥٪: سيرفر واحد كويس مع باك أب ومراقبة ممكن يوصلها، حتى لو فيه deploy بيوقف دقيقة كل مرة، ومشكلة كبيرة واحدة في الشهر ممكن تتحل في ساعتين. ٩٩.٩٥٪: ٢١ دقيقة في الشهر كله، يعني مفيش مكان لـ downtime في الـ deploy (rolling أو blue-green)، ونسختين على الأقل في AZين، وقاعدة Multi-AZ، وإنذار أوتوماتيك وحد يرد في دقايق، و rollback في أقل من ٥ دقايق. الفرق بين الرقمين مش ٠.٤٥٪، ده ١٠ أضعاف الشغل والتكلفة تقريبًا.
+
+الغلطة الشائعة: تحسب على ٣٦٥ يوم وتقارن بأرقام على ٣٠ يوم. أو تقول SLA و SLO حاجة واحدة: الـ SLA عقد فيه تعويض، وبيبقى أقل من الـ SLO الداخلي عشان يبقى فيه هامش.`,
+          solCode: R`for (const slo of [0.995, 0.9995]) console.log(slo, (30 * 24 * 60 * (1 - slo)).toFixed(1));
+// 0.995 216.0
+// 0.9995 21.6`
         },
         {
           cmd: "rightsize + commit + clean",
@@ -2213,7 +4019,16 @@ kubectl rollout undo deployment/api`,
           },
           lines: [
             "التكلفة مقسومة بنوع الاستخدام: هنا بيبان NatGateway و DataTransfer-Out وغيرهم."
-          ]
+          ],
+          sol: R`جدول نموذجي لحساب صغير فيه تجارب (الأرقام مثال، بنودك هتختلف):
+
+١. EC2 (t3.medium شغال ٢٤ ساعة، الاستخدام ٥٪): اختاروه «احتياطي». الخطوة: t4g.small (Graviton) أو إطفاء بالليل لو dev.
+٢. NAT Gateway: private subnets من قالب جاهز. الخطوة: VPC endpoint لـ S3 و ECR، أو public subnet لبيئة dev.
+٣. RDS Multi-AZ لقاعدة staging: حد نسخ إعدادات الإنتاج. الخطوة: single-AZ لـ staging.
+٤. Public IPv4 و Elastic IPs مش مربوطة: بقايا تجارب. الخطوة: امسحها (درس «امسح اللي مش مستخدم»).
+٥. CloudWatch Logs: log groups من غير retention بقالها سنة. الخطوة: [[put-retention-policy]] بـ ٣٠ يوم.
+
+الإجابة في الانترفيو بتمشي بنفس ترتيب الجدول: أقيس (usage type، مش الخدمة بس)، أنضّف المنسي، أصغّر، وبعد ما الاستخدام يستقر Savings Plans، وفي الآخر أمنع الرجوع (budgets و anomaly detection و tags). الغلطة الشائعة: تبدأ بـ «هشتري Reserved Instances» قبل ما تعرف إن نص الفاتورة موارد منسية.`
         },
         {
           cmd: "stateless",
@@ -2234,7 +4049,27 @@ kubectl rollout undo deployment/api`,
           },
           lines: [
             "الـ sessions في Redis مش في رام السيرفر، فأي نسخة تعرف اليوزر."
-          ]
+          ],
+          sol: R`بالكود اللي تحت (sessions في الذاكرة) ونسختين ورا Nginx، جرّبتها فعلًا والناتج كان:
+
+[[logged in on 4101]]
+[[4101: ali]] (٣ مرات)
+[[4102: NOT LOGGED IN]]
+
+يعني بعد تسجيل الدخول، أي طلب راح للنسخة التانية طلع خارج. التوزيع مش شرط يبقى بالتبادل بالظبط (كل worker في Nginx ليه عدّاد round robin لوحده)، بس مع كذا refresh هيحصل. ده الإثبات إن التطبيق مش stateless.
+
+الحل: store خارجي ([[connect-redis]] مع Redis) زي سطر الدرس، وبعدها كل الطلبات ترجع [[ali]] مهما النسخة. الغلطة الشائعة: تحل المشكلة بـ [[ip_hash]] أو sticky sessions في Nginx؛ الأعراض تختفي، بس أول ما نسخة تقع أو تعمل deploy، كل اليوزرز اللي عليها يخرجوا، والتوزيع يبقى مش عادل.`,
+          solCode: R`// sess.mjs  (PORT=4101 node sess.mjs & PORT=4102 node sess.mjs &)
+import express from "express";
+import session from "express-session";
+const app = express();
+app.use(session({ secret: "dev-secret", resave: false, saveUninitialized: false }));
+app.get("/login", (req, res) => { req.session.user = "ali"; res.send("logged in on " + process.env.PORT + "\n"); });
+app.get("/me", (req, res) => res.send(process.env.PORT + ": " + (req.session.user ?? "NOT LOGGED IN") + "\n"));
+app.listen(process.env.PORT);
+# nginx: upstream app { server 127.0.0.1:4101; server 127.0.0.1:4102; }  و  location / { proxy_pass http://app; }
+curl -s -c jar -b jar localhost:8088/login
+for i in 1 2 3 4; do curl -s -c jar -b jar localhost:8088/me; done`
         },
         {
           cmd: "RPO / RTO",
@@ -2250,7 +4085,14 @@ kubectl rollout undo deployment/api`,
 والـ HA غير الـ DR: Multi-AZ بيحميك من وقوع مبنى، مش من مسح داتا ولا من region كاملة. والباك أب لازم يبقى في حساب منفصل كمان، عشان لو الحساب نفسه اتخترق.`,
             when: "الفرق بين HA و DR؟ Multi-AZ كفاية؟ بتختبر الـ DR إزاي؟ الـ DNS failover بياخد قد إيه؟",
             mistakes: "إن Multi-AZ هو الـ DR. أو باك أب في نفس الحساب ونفس الـ region. أو أرقام من غير ما تسأل البزنس."
-          }
+          },
+          sol: R`مثال لإجابة صريحة لمشروع صغير على VPS:
+
+الحالي: الباك أب [[pg_dump]] يومي الساعة ٣ الصبح على نفس السيرفر. يعني RPO الحقيقي لحد ٢٤ ساعة، ولو الديسك نفسه راح يبقى RPO لانهائي (الباك أب راح معاه). والـ RTO: عمري ما استرجعت، فمعرفوش؛ التقدير: سيرفر جديد وتسطيب وتنزيل الباك أب ٣ لـ ٤ ساعات.
+
+المفروض: RPO ساعة و RTO ساعتين مثلًا (اسأل: خسارة يوم طلبات تكلف قد إيه؟). ده محتاج: باك أب لـ مكان تاني (S3 أو R2 في حساب منفصل) كل ساعة أو WAL archiving، أو قاعدة مُدارة فيها PITR، وسكربت أو Terraform بيقوّم السيرفر، وتجربة استرجاع حقيقية كل شهر بتقيس الوقت.
+
+الغلطة الشائعة: تكتب RPO = «يوم» لأن الباك أب يومي وتنسى إن الباك أب على نفس الديسك، أو تكتب RTO رقم متخيّل من غير ما تكون جربت استرجاع ولو مرة. والفرق اللي الانترفيوير بيدوّر عليه: Multi-AZ ده HA مش DR، ومبيحميش من [[DELETE]] من غير [[WHERE]].`
         }
       ]
     }

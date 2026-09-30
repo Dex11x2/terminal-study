@@ -8,6 +8,8 @@
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
+//   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
+//   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("pyapi", {
@@ -17,7 +19,7 @@ TAB("pyapi", {
 pip install "fastapi[standard]"
 fastapi dev main.py`,
   labText: "تاب Python بيغطي venv و pip و pytest؛ هنا اللغة نفسها وبناء API. fastapi dev بيفتح docs تفاعلية على /docs.",
-  levels: {"1":["اللغة","الأنواع، و lists و dicts، والدوال، والـ classes، والـ modules"],"2":["FastAPI","routes و pydantic و dependencies و errors و async"],"3":["الإنتاج والانترفيو","قاعدة بيانات، و background tasks، و httpx، والأداء، وأسئلة الانترفيو"]},
+  levels: {"1":["اللغة","الأنواع، و if و for و match، و lists و dicts، والدوال، والـ classes، والمكتبة الأساسية، والسكربتات"],"2":["FastAPI","routes و pydantic و dependencies و errors و async"],"3":["الإنتاج والانترفيو","قاعدة بيانات، و background tasks، و httpx، والأداء، وأسئلة الانترفيو"]},
   categories: [
     {
       t: "الأسماء والأنواع",
@@ -75,7 +77,10 @@ Python dynamic: النوع بيتحدد وقت التشغيل ومرتبط با�
             R`[[n]] بيشاور على int.`,
             "نفس الاسم بقى يشاور على str: مسموح (dynamic).",
             "بس مفيش تحويل ضمني: TypeError (strong)."
-          ]
+          ],
+          sol: R`هتلاقي [[id(a)]] و [[id(b)]] نفس الرقم بالظبط، و [[id(c)]] رقم تاني. يعني [[a]] و [[b]] اسمين لنفس الـ list، و [[c]] object جديد. والأرقام نفسها هتختلف كل مرة تشغّل فيها Python (هي عنوان في الذاكرة في CPython)، المهم مين زي مين. واختصارها: [[id(a) == id(b)]] هي هي [[a is b]] وبتطلع [[True]]، و [[id(a) == id(c)]] بتطلع [[False]].
+
+ولما توصل لآخر سطر هتشوف [[TypeError: can only concatenate str (not "int") to str]]. لو اتلخبطت وتوقعت إن [[print(a)]] بعد [[c.append(5)]] هيطلع فيه 5، فده بالظبط الفرق: [[copy()]] عملت object جديد، فالتعديل عليه ميوصلش للأصل.`
         },
         {
           cmd: "mutable و immutable",
@@ -120,7 +125,21 @@ cache[[30.0, 31.2]] = "x"  # TypeError: unhashable type: 'list'`,
             "ممنوع تتعدّل.",
             "الـ tuple ينفع مفتاح في dict لأنها hashable.",
             "الـ list لأ: ممكن تتغير فمكانها في الـ hash table يبوظ."
-          ]
+          ],
+          sol: R`النسخة الأولى ([[tags.append(t)]]) بتعدّل الـ list الأصلية: لو ناديتها على [[my = ["python"]]] هتلاقي [[my]] بقت [[['python', 'api']]]، لأن الباراميتر اسم تاني لنفس الـ object و [[append]] بتعدّله مكانه.
+
+النسخة التانية ([[tags = tags + [t]]]) مش هتغيّر حاجة برّه: [[my]] هتفضل [[['python']]]. الـ [[+]] بيعمل list جديدة، والتعيين بيربط الاسم المحلي [[tags]] بيها بس. فلو عايزها تفيد لازم [[return tags]] واللي نادى ياخد الناتج. وخد بالك: [[tags += [t]]] مش زي [[tags = tags + [t]]]؛ الـ [[+=]] على list بيعدّل مكانه، فهيغيّر الأصل زي [[append]].`,
+          solCode: R`def add_tag(tags, t):
+    tags.append(t)
+my = ["python"]
+add_tag(my, "api")
+print(my)         # ['python', 'api']
+def add_tag2(tags, t):
+    tags = tags + [t]
+    return tags
+my = ["python"]
+r = add_tag2(my, "api")
+print(my, r)      # ['python'] ['python', 'api']`
         },
         {
           cmd: "type hints",
@@ -165,7 +184,10 @@ get_user("5")  # بيشتغل عادي! Python مبيفحصش، بس mypy و Pyl
             "dict مفاتيحه str وقيمه float.",
             "لازم تبقى واحدة من القيمتين (الفحص في mypy بس).",
             "Python بيشغّله عادي، والأدوات بس اللي بتعترض."
-          ]
+          ],
+          sol: R`[[mypy file.py]] هيطلّع حاجة زي: [[file.py:11: error: Argument 1 to "get_user" has incompatible type "str"; expected "int"  [arg-type]]] وبعدها [[Found 1 error in 1 file]] وكود خروج 1. لاحظ إنه كتب [[int]] مش [[UserId]]، لأن [[type UserId = int]] اسم تاني لنفس النوع (alias) مش نوع جديد.
+
+وبعدين [[python file.py]] هيشتغل ويخلص من غير أي رسالة وكود خروج 0. ودي الفكرة كلها: الـ hints للأدوات (mypy و Pylance) وPython نفسه بيتجاهلها وقت التشغيل. لو mypy مطلعش خطأ، اتأكد إنك شغّلته على الملف الصح وإن السطر [[get_user("5")]] موجود؛ ولو [[python]] رمى [[SyntaxError]] عند [[type]] أو [[first[T]]]، فإنت على Python أقدم من 3.12.`
         },
         {
           cmd: "f-strings",
@@ -208,6 +230,507 @@ path = r"C:\new\folder"`,
             R`[[join]] على الفاصل، والعناصر strings.`,
             R`[[in]] للبحث، و [[endswith]] للنهاية.`,
             "raw string: الـ backslash مش escape."
+          ],
+          sol: R`الناتج: [[3.142]] و [[25.6%]] و [[00042]].
+
+[[.3f]] يعني ٣ أرقام بعد العلامة مع تقريب (فـ 3.14159 بقت 3.142 مش 3.141). و [[.1%]] بيضرب في 100 ويحط علامة % برقم واحد بعد العلامة. و [[05d]] يعني عدد صحيح عرضه ٥ ويتملى أصفار من الشمال. الغلطة المشهورة إنك تتوقع [[0.3%]] من [[.1%]]، ناسي إنه بيضرب في 100 لوحده، فمتضربش إنت كمان.`
+        }
+      ]
+    },
+    {
+      t: "التحكم في السير",
+      l: 1,
+      n: "if و elif، و for و range، و while و break، و match-case، وتمارين تثبّت بيها الأساسيات",
+      items: [
+        {
+          cmd: "if و elif و else",
+          title: "تاخد قرار: if و elif و else",
+          desc: R`[[if]] بيشغّل البلوك لو الشرط صح، و [[elif]] (اختصار else if) بيجرّب شرط تاني لو اللي قبله غلط، و [[else]] لو ولا شرط اتحقق. البلوك بيتحدد بالمسافات (٤ مسافات)، مش بأقواس زي JS، والسطر اللي قبل البلوك بيخلص بـ [[:]].
+
+والشروط بتتركب بـ [[and]] و [[or]] و [[not]] (كلمات، مش [[&&]] و [[||]])، والمقارنات بتتسلسل: [[18 <= age < 60]]. وأي قيمة ينفع تبقى شرط: الفاضي ([[0]] و [[""]] و [[[]]] و [[{}]] و [[None]]) معناه False، وأي حاجة تانية True.`,
+          example: R`age, role = 20, "editor"
+if age < 13:
+    label = "طفل"
+elif age < 18:
+    label = "مراهق"
+else:
+    label = "بالغ"
+print(label)                              # بالغ
+if role == "admin" or (role == "editor" and age >= 18):
+    print("يقدر ينشر")
+if 18 <= age < 60:
+    print("سن الشغل")
+cart = []
+if not cart:
+    print("العربية فاضية")
+status = "active" if age >= 18 else "pending"
+if (n := len(role)) > 5:
+    print(f"اسم الدور طويل: {n} حروف")`,
+          try: R`اكتب دالة [[grade(score)]] بترجع A لو 90 وفوق، و B من 80، و C من 70، و D من 50، و F لأقل من كده، وترمي [[ValueError]] لو الدرجة برّه 0 لـ 100. جرّبها على 95 و 85 و 72 و 50 و 49 و 101.`,
+          sol: R`الناتج المتوقع: [[95 A]] و [[85 B]] و [[72 C]] و [[50 D]] و [[49 F]]، و 101 بتطلع [[score out of range: 101]]. الترتيب هو المفتاح: الشروط بتتفحص من فوق لتحت وأول واحد يتحقق بيكسب، فبتبدأ من الأعلى. لو بدأت بـ [[if score >= 50]] كل الدرجات من 50 لـ 100 هتطلع D.
+
+الفحص بتاع المدى في الأول (guard clause) بيخلي باقي الدالة تفترض إن الدرجة سليمة. و [[return "F"]] في الآخر من غير else كفاية، لأن كل الفروع اللي فوق فيها return. والغلطة التانية المشهورة: [[if score > 90]] بدل [[>=]]، فالـ 90 نفسها تطلع B. اختبر الحدود دايمًا (90 و 80 و 50) مش أرقام في النص بس.`,
+          solCode: R`def grade(score: int) -> str:
+    if not 0 <= score <= 100:
+        raise ValueError(f"score out of range: {score}")
+    if score >= 90:
+        return "A"
+    elif score >= 80:
+        return "B"
+    elif score >= 70:
+        return "C"
+    elif score >= 50:
+        return "D"
+    return "F"
+for s in [95, 85, 72, 50, 49]:
+    print(s, grade(s))
+try:
+    grade(101)
+except ValueError as e:
+    print("خطأ:", e)`,
+          flag: "script",
+          deep: {
+            why: R`أي منطق في أي برنامج قرارات: المستخدم أدمن؟ الطلب فوق حد الشحن المجاني؟ الكوبون منتهي؟ ولو فهمت الـ truthiness صح، هتكتب [[if not items]] بدل [[if len(items) == 0]]، وهتعرف إمتى ده خطر.`,
+            how: R`Python بيقيّم الشرط ويحوّله لـ bool بـ [[bool(x)]]: الأرقام صفر، والـ strings والـ collections الفاضية، و [[None]] كلهم False. وأي object تاني True إلا لو الـ class بتاعه عرّف [[__bool__]] أو [[__len__]].
+
+[[and]] و [[or]] بيقفوا بدري (short-circuit) وبيرجعوا واحدة من القيمتين مش True/False: [[name or "ضيف"]] بترجع [[name]] لو مش فاضي، وإلا "ضيف". و [[a < b < c]] معناها [[a < b and b < c]] و [[b]] بيتحسب مرة واحدة.
+
+[[x if cond else y]] (conditional expression) بتختار قيمة في سطر واحد، زي الـ ternary في JS. و [[:=]] (walrus، من 3.8) بيعيّن ويرجّع القيمة في نفس الوقت، فتقدر تحسب وتفحص في الشرط نفسه من غير ما تكرر الحسبة.
+
+المسافات جزء من اللغة: خلط tabs ومسافات أو مسافة ناقصة بيطلّع [[IndentationError]]. وفي Python مفيش [[switch]] قديم، بس فيه [[match]] (درس «match و case»).`,
+            when: R`[[if/elif/else]] لأي قرار. لو عندك سلسلة [[elif]] طويلة بتقارن نفس المتغير بقيم ثابتة، غالبًا dict (قيمة لكل مفتاح) أو [[match]] أوضح. ولو البلوك بقى متداخل ٣ مستويات، اقلب الشروط واخرج بدري بـ [[return]].`,
+            mistakes: R`[[if x = 5]] (ده SyntaxError، المقارنة [[==]]). و [[if role == "admin" or "editor"]]: دي دايمًا True لأن "editor" string مش فاضية؛ الصح [[role in ("admin", "editor")]]. و [[if count:]] لما القيمة ممكن تبقى 0 وده رقم صالح؛ اكتب [[if count is not None]]. وفي الانترفيو: «إيه ناتج [[[] or 0 or "x"]]؟» الإجابة "x"، لأن [[or]] بيرجع أول قيمة truthy.`
+          },
+          lines: [
+            "متغيرين في سطر واحد.",
+            R`أول شرط، والسطر بيخلص بـ [[:]].`,
+            "البلوك: ٤ مسافات.",
+            R`[[elif]]: بيتفحص بس لو اللي قبله طلع False.`,
+            "البلوك بتاعه.",
+            R`[[else]]: لو ولا شرط اتحقق.`,
+            "البلوك بتاعه.",
+            "بالغ: وصلنا للـ else.",
+            R`[[or]] و [[and]] كلمات، والأقواس بتوضح الترتيب.`,
+            "جوه الـ if.",
+            R`مقارنة متسلسلة: زي [[18 <= age and age < 60]].`,
+            "جوه الـ if.",
+            "list فاضية.",
+            R`الفاضي falsy، فـ [[not cart]] بقت True.`,
+            "جوه الـ if.",
+            "اختيار قيمة في سطر (زي الـ ternary في JS).",
+            R`[[:=]] بيحسب الطول ويحطه في [[n]] ويفحصه في نفس الوقت.`,
+            R`[[n]] متاحة جوه البلوك.`
+          ]
+        },
+        {
+          cmd: "for و range",
+          title: "تلف على حاجة: for و range و enumerate و zip",
+          desc: R`[[for x in something:]] بتلف على أي iterable: list أو string أو dict أو ملف. مفيش [[for (i = 0; i < n; i++)]] زي JS؛ لو محتاج أرقام: [[range(n)]] من 0 لحد قبل n، و [[range(start, stop, step)]]، والـ stop مش داخل.
+
+ولو محتاج الـ index مع العنصر: [[enumerate]]. ولو بتلف على كذا list مع بعض: [[zip]]. وعلى dict: [[.items()]] للمفتاح والقيمة.`,
+          example: R`for i in range(3):
+    print(i)                                  # 0 ثم 1 ثم 2
+print(list(range(2, 11, 2)))                  # [2, 4, 6, 8, 10]
+print(list(range(5, 0, -1)))                  # [5, 4, 3, 2, 1]
+names = ["Sara", "Omar", "Ali"]
+for name in names:
+    print(name.upper())
+for i, name in enumerate(names, start=1):
+    print(f"{i}. {name}")
+prices = [120, 80, 45]
+for name, price in zip(names, prices, strict=True):
+    print(name, price)
+stock = {"tea": 3, "coffee": 0}
+for item, qty in stock.items():
+    print(item, qty)
+for ch in "abc":
+    print(ch, end=" ")
+print()
+total = 0
+for p in prices:
+    total += p
+print(total, sum(prices))                     # 245 245`,
+          try: R`اطبع جدول ضرب ٧ من 1 لـ 10 بالشكل ده بالظبط: [[7 x  1 =  7]] (الأرقام محاذية يمين). وبعدين اطبع الأرقام الزوجية من 20 لـ 2 تنازلي بـ [[range]] واحد. وفي الآخر، بـ loop جوه loop، اطبع جدول ضرب صغير ٣×٣.`,
+          sol: R`الأعمدة بتتظبط بـ [[:>2]] في الـ f-string، فالسطر العاشر يطلع [[7 x 10 = 70]] بنفس عرض الأول. والأرقام الزوجية: [[range(20, 0, -2)]] بتطلّع [[[20, 18, ..., 2]]]؛ الـ stop هو 0 عشان 2 تبقى داخلة (لو كتبت 2 مكان 0 هتقف عند 4). وهي دي أشهر غلطة في [[range]]: الـ stop مش داخل.
+
+والجدول ٣×٣: الـ loop الخارجي للصفوف والداخلي للأعمدة، وكل صف بيتجمع في string ويتطبع مرة واحدة، فتشوف [[1 2 3]] و [[2 4 6]] و [[3 6 9]]. لو طبعت جوه الـ loop الداخلي من غير [[end=""]] هيطلع كل رقم في سطر.`,
+          solCode: R`for i in range(1, 11):
+    print(f"7 x {i:>2} = {7 * i:>2}")
+print(list(range(20, 0, -2)))
+for row in range(1, 4):
+    line = ""
+    for col in range(1, 4):
+        line += f"{row * col:>4}"
+    print(line)`,
+          flag: "script",
+          deep: {
+            why: R`اللف على داتا هو نص شغلك: صفوف من القاعدة، سطور ملف، عناصر request. ولو كتبت [[for i in range(len(items))]] وبعدين [[items[i]]] زي لغات تانية، الكود هيشتغل بس هيبان إنه مش Python، والـ reviewer هيقولك enumerate.`,
+            how: R`الـ for بتنادي [[iter()]] على الحاجة اللي بتلف عليها، وبعدين [[next()]] لحد ما يترمي [[StopIteration]]. عشان كده أي حاجة iterable بتشتغل: الـ string حرف حرف، والـ dict مفاتيحه، والملف سطر سطر، والـ generator قيمة قيمة.
+
+[[range]] مش list: object خفيف بيحسب الأرقام وقت الطلب، فـ [[range(10**9)]] مبياخدش ذاكرة. و [[list(range(...))]] لو عايز تشوفها.
+
+[[enumerate(items, start=1)]] بيرجع أزواج (index, عنصر)، و [[zip(a, b)]] أزواج من الاتنين وبيقف عند الأقصر، و [[strict=True]] (3.10+) بيرمي [[ValueError]] لو الأطوال مختلفة بدل ما يقطع في صمت.
+
+والمتغير بتاع الـ for بيفضل موجود بعد الـ loop بآخر قيمة (مفيش block scope في Python، درس «scope و LEGB»). و [[print(x, end=" ")]] بيغيّر آخر السطر من newline لمسافة.`,
+            when: R`[[for]] لما عندك حاجة تلف عليها أو عدد مرات معروف. و [[while]] لما مش عارف هتلف كام مرة (الدرس الجاي). ولو الـ loop بيبني list جديدة من list: comprehension (قسم «lists و dicts و sets»). ولو بتجمع أرقام: [[sum]] و [[max]] و [[min]] بدل loop.`,
+            mistakes: R`[[range(1, 10)]] وتستنى الـ 10 تبقى داخلة. وتعدّل الـ list وانت بتلف عليها (تمسح عناصر) فتتخطى عناصر. و [[for i in range(len(items))]] بدل [[enumerate]]. و [[zip]] على ليستتين أطوالهم مختلفة من غير [[strict=True]] فالبيانات تتقطع من غير أي خطأ.`
+          },
+          lines: [
+            R`[[range(3)]]: 0 و 1 و 2، والـ 3 مش داخلة.`,
+            "جسم الـ loop.",
+            R`بداية ونهاية وخطوة: الزوجي من 2 لـ 10.`,
+            "خطوة سالبة: عدّ تنازلي.",
+            "list أسماء.",
+            "لف على العناصر نفسها، من غير index.",
+            "جسم الـ loop.",
+            R`[[enumerate]]: الـ index مع العنصر، والعد من 1.`,
+            "جسم الـ loop.",
+            "list أسعار.",
+            R`[[zip]] بيلف على الاتنين مع بعض، و [[strict=True]] بيرمي لو الأطوال مختلفة.`,
+            "جسم الـ loop.",
+            "dict.",
+            R`[[.items()]]: المفتاح والقيمة مع بعض.`,
+            "جسم الـ loop.",
+            "الـ string كمان iterable: حرف حرف.",
+            R`[[end=" "]] بدل سطر جديد.`,
+            "سطر جديد في الآخر.",
+            "مجموع بإيدك.",
+            "لف على الأسعار.",
+            R`[[+=]] بيزوّد على المجموع.`,
+            R`نفس النتيجة بـ [[sum]]: الأقصر والأوضح.`
+          ]
+        },
+        {
+          cmd: "while و break و continue",
+          title: "تلف لحد ما شرط يتحقق: while و break و continue و else",
+          desc: R`[[while cond:]] بتلف طول ما الشرط صح، وده للحالات اللي مش عارف فيها هتلف كام مرة: محاولات، قراية input، retry. و [[break]] بيخرج من الـ loop فورًا، و [[continue]] بيسيب اللفة دي ويروح للي بعدها.
+
+وفي Python حاجة مش موجودة في لغات كتير: [[else]] بعد الـ for أو الـ while، وبتشتغل لو الـ loop خلص عادي من غير [[break]]. مفيدة جدًا في البحث: «لفّيت على الكل وملقيتش».`,
+          example: R`attempts = 0
+while attempts < 3:
+    attempts += 1
+    print("محاولة", attempts)
+nums = [4, 7, -1, 9, 0, 12]
+for n in nums:
+    if n < 0:
+        continue
+    if n == 0:
+        break
+    print(n)                                  # 4 ثم 7 ثم 9
+users = ["sara", "omar"]
+for u in users:
+    if u == "ali":
+        print("لقيته")
+        break
+else:
+    print("مش موجود")
+while True:
+    cmd = input("> ").strip()
+    if cmd == "q":
+        break
+    print("انت كتبت", cmd)`,
+          try: R`اعمل لعبة تخمين: [[random.randint(1, 20)]] رقم سري، واللاعب عنده ٥ محاولات. لو كتب حاجة مش رقم، اطبع «اكتب رقم» ومتحسبهاش محاولة ([[continue]]). لو خمّن صح، اطبع عدد المحاولات واخرج ([[break]]). ولو المحاولات خلصت، اطبع الرقم في [[else]] بتاعة الـ while.`,
+          sol: R`لو شغّلته وكتبت [[x]] الأول، هتشوف «اكتب رقم» والعداد لسه على محاولة 1، لأن الـ [[continue]] جه قبل [[tries += 1]]. وكل تخمين غلط بيطبع «أكبر» أو «أصغر». ولو خمّنت صح بيطبع [[صح! في 3 محاولات]] مثلًا ويخرج، والـ [[else]] مش بتشتغل لأن الخروج كان بـ [[break]]. ولو خلّصت الخمسة، الـ while بتخلص عادي فالـ [[else]] تشتغل وتطبع الرقم.
+
+عشان تجرّبها من غير ما تكتب بإيدك: [[printf "x\n10\n5\n15\n1\n20\n" | python3 guess.py]]. الغلطات المشهورة: [[tries += 1]] قبل فحص الرقم (فالـ input الغلط ياكل محاولة)، أو [[int(input())]] مباشرة فالـ [[x]] يوقّع البرنامج بـ [[ValueError]]، أو تنسى تزوّد العداد فتلف للأبد.`,
+          solCode: R`import random
+secret = random.randint(1, 20)
+tries = 0
+while tries < 5:
+    raw = input(f"خمّن (محاولة {tries + 1} من 5): ").strip()
+    if not raw.isdigit():
+        print("اكتب رقم")
+        continue
+    tries += 1
+    guess = int(raw)
+    if guess == secret:
+        print(f"صح! في {tries} محاولات")
+        break
+    print("أكبر" if guess < secret else "أصغر")
+else:
+    print(f"خسرت، الرقم كان {secret}")`,
+          flag: "script",
+          deep: {
+            why: R`retry لطلب شبكة لحد ٣ مرات، و polling لحد ما job تخلص، و REPL صغير بيقرا أوامر: كلها while. و [[for/else]] سؤال انترفيو محبوب لأن ناس كتير بتكتب Python سنين ومتعرفهاش.`,
+            how: R`الـ while بتفحص الشرط قبل كل لفة. لو الشرط مبيتغيرش جوه الـ loop، هتلف للأبد (Ctrl+C يوقفها). [[while True:]] مع [[break]] جوه هو الشكل المعتاد لما شرط الخروج في النص مش في الأول.
+
+[[break]] و [[continue]] بيأثروا على أقرب loop بس. لو عندك loop جوه loop وعايز تخرج من الاتنين، حط الاتنين في دالة واعمل [[return]].
+
+الـ [[else]] بتاعة الـ loop بتشتغل لما الـ loop «يخلص طبيعي»: الـ for خلصت العناصر أو شرط الـ while بقى False. لو خرجت بـ [[break]] أو [[return]] أو exception، مش بتشتغل. فكّر فيها كـ «nobreak».
+
+[[input()]] بيقرا سطر من الكيبورد (أو من pipe) من غير الـ newline، وبيرجع string دايمًا.`,
+            when: R`[[while]] لما عدد اللفات مش معروف. لو بتلف على عناصر: [[for]]. و [[for/else]] للبحث اللي محتاج تعرف فيه «ملقيتش». وفي كود الإنتاج، الـ retry والـ polling لازم يبقى ليهم حد أقصى ووقت انتظار بين المحاولات، مش [[while True]] مفتوحة.`,
+            mistakes: R`loop لانهائي لأنك نسيت تغيّر المتغير اللي في الشرط. و [[while True]] من غير [[break]] واضح. وتفتكر إن [[else]] بتاعة الـ loop بتشتغل «لو الـ loop مالفّش ولا مرة» (غلط: بتشتغل لو مفيش break). و retry من غير sleep بيضرب السيرفر ١٠٠٠ مرة في الثانية.`
+          },
+          lines: [
+            "عداد.",
+            "لف طول ما الشرط صح.",
+            "غيّر العداد، وإلا هتلف للأبد.",
+            "جسم الـ loop.",
+            "أرقام فيها سالب وصفر.",
+            "لف عليها.",
+            "لو سالب...",
+            R`...[[continue]]: سيب اللفة دي وروح للي بعدها.`,
+            "لو صفر...",
+            R`...[[break]]: اخرج من الـ loop خالص (والـ 12 مش هتتطبع).`,
+            "اللي وصل هنا بيتطبع.",
+            "ليستة مستخدمين.",
+            "دوّر على ali.",
+            "لو لقيته...",
+            "اطبع.",
+            "واخرج.",
+            R`[[else]] بتاعة الـ for: بتشتغل لو مفيش break حصل.`,
+            "ملقيناهوش.",
+            R`loop مفتوح، والخروج من جوه.`,
+            R`[[input]] بيقرا سطر ويرجّعه string، و [[strip]] بيشيل المسافات.`,
+            "أمر الخروج؟",
+            "اخرج.",
+            "غير كده اطبع اللي اتكتب."
+          ]
+        },
+        {
+          cmd: "match و case",
+          title: "match-case: switch ولا أكتر؟",
+          desc: R`[[match]] (من Python 3.10) بيقارن قيمة بـ patterns بالترتيب، وأول [[case]] يطابق بيشتغل. ممكن يبقى زي switch عادي ([[case 200 | 201:]])، بس قوته في إنه بيفك الشكل: [[case ["go", direction]:]] بتطابق list من عنصرين أولهم "go"، وبتحط التاني في [[direction]]. ونفس الكلام مع الـ dicts والـ classes.
+
+و [[case _:]] هي الـ default، و [[if]] بعد الـ pattern (guard) شرط زيادة.`,
+          example: R`def handle(cmd: str) -> str:
+    match cmd.split():
+        case ["go", direction]:
+            return f"رايح {direction}"
+        case ["take", *items] if items:
+            return f"خدت {', '.join(items)}"
+        case ["quit" | "exit"]:
+            return "باي"
+        case []:
+            return "مفيش أمر"
+        case _:
+            return f"مش فاهم: {cmd}"
+print(handle("go north"), handle("take key lamp"), handle("exit"), handle(""))
+def describe(event: dict) -> str:
+    match event:
+        case {"type": "order", "total": int(total)} if total > 1000:
+            return f"طلب كبير {total}"
+        case {"type": "order", "total": total}:
+            return f"طلب {total}"
+        case {"type": "refund", "id": str(oid)}:
+            return f"استرجاع {oid}"
+        case _:
+            return "حدث مش معروف"
+print(describe({"type": "order", "total": 1500, "user": 7}))
+status = 404
+match status:
+    case 200 | 201:
+        print("تمام")
+    case 400 | 404 as code:
+        print("غلطة من العميل", code)
+    case _:
+        print("حاجة تانية")`,
+          try: R`اكتب [[route(method, path)]] بـ [[match]] على tuple من الـ method والـ path مقسوم على [[/]]: GET على [[/users]] ترجع «list users»، و GET على [[/users/7]] ترجع «show user 7» بس لو الـ id أرقام، و POST على [[/users]] «create user»، و DELETE على [[/users/7]] «delete user 7». أي حاجة تانية تحت [[/users]] ترجع «405 or 404»، والباقي «404 not found». جرّب [[("get", "/users/7/")]] و [[("DELETE", "/users/abc")]].`,
+          sol: R`الناتج المتوقع: [[GET /users -> list users]]، و [[get /users/7/ -> show user 7]] (لأن [[method.upper()]] و [[path.strip("/")]] بيوحّدوا الشكل)، و [[POST /users -> create user]]، و [[DELETE /users/abc -> 405 or 404]] (الـ guard [[if uid.isdigit()]] رفض)، و [[GET /orders -> 404 not found]].
+
+الترتيب مهم: الـ case العام [[_, ["users", *_]]] لازم ييجي بعد كل الحالات المحددة، وإلا هيمسكها قبلهم. والحتة اللي بتلخبط: [[uid]] في الـ pattern مش مقارنة، ده اسم بيتربط بأي قيمة في المكان ده، والفحص الحقيقي في الـ guard. ولو كتبت [[case "GET", ["users", 7]]] مش هتطابق أبدًا، لأن الـ path بعد split strings مش أرقام. ده بالظبط اللي FastAPI بيعمله لك في الـ path parameters (درس «path و query»).`,
+          solCode: R`def route(method: str, path: str) -> str:
+    match method.upper(), path.strip("/").split("/"):
+        case "GET", ["users"]:
+            return "list users"
+        case "GET", ["users", uid] if uid.isdigit():
+            return f"show user {int(uid)}"
+        case "POST", ["users"]:
+            return "create user"
+        case "DELETE", ["users", uid] if uid.isdigit():
+            return f"delete user {int(uid)}"
+        case _, ["users", *_]:
+            return "405 or 404"
+        case _:
+            return "404 not found"
+for m, p in [("GET", "/users"), ("get", "/users/7/"), ("POST", "/users"),
+             ("DELETE", "/users/abc"), ("GET", "/orders")]:
+    print(m, p, "->", route(m, p))`,
+          flag: "script",
+          deep: {
+            why: R`أوامر CLI، و events من webhook بأنواع مختلفة، ورسايل JSON شكلها بيختلف حسب [[type]]: بدل [[if]] طويلة فيها [[isinstance]] و [[len]] و [[.get]]، الـ pattern بيقول الشكل اللي مستنيه ويطلّع القيم في خطوة واحدة.`,
+            how: R`أنواع الـ patterns: literal ([[200]] و [["quit"]])، و capture (اسم عادي زي [[direction]] بيتربط بأي قيمة)، و wildcard ([[_]] يطابق أي حاجة ومبيربطش)، و OR ([[|]])، و sequence ([[[a, b, *rest]]])، و mapping ([[{"type": "order", "total": t}]] وبيطابق حتى لو في الـ dict مفاتيح زيادة)، و class ([[int(total)]] أو [[Point(x=0)]] بيفحص النوع). و [[as]] بيربط اسم باللي طابق.
+
+أهم فخ: الاسم العادي في الـ case دايمًا capture، مش مقارنة بمتغير. [[case NOT_FOUND:]] بتطابق أي قيمة وتحطها في [[NOT_FOUND]]! ولو بعدها cases، Python بيرفض بـ [[SyntaxError: name capture 'NOT_FOUND' makes remaining patterns unreachable]]، ولو هي الأخيرة بتعدّي بهدوء. عشان تقارن بثابت استخدم اسم فيه نقطة: [[case Status.NOT_FOUND:]] أو [[case http.HTTPStatus.NOT_FOUND:]] (درس «Enum»).
+
+الـ string مش بتطابق sequence pattern (عشان [["go"]] متتفكّش لحروف)، و الـ match مش بيرمي لو مفيش case طابق، ببساطة مبيعملش حاجة.`,
+            when: R`لما بتفرّق على شكل الداتا مش على قيمة بس: أوامر، و events، و AST، و ردود API مختلفة. لقيمة واحدة بتقارنها بـ ٣ ثوابت، [[if/elif]] أو dict كفاية ومش محتاج match.`,
+            mistakes: R`[[case NOT_FOUND:]] بثابت من غير نقطة (capture مش مقارنة). ونسيان [[case _:]] فحالات غير متوقعة تعدّي من غير أي حاجة. وترتيب case عام قبل الخاص. وتفتكر إن mapping pattern بيشترط المفاتيح بالظبط (هو بيقبل الزيادة؛ لو عايز ترفضها: [[{"type": t, **rest}]] وافحص إن [[rest]] فاضي).`
+          },
+          lines: [
+            "دالة بتفهم أوامر نصية.",
+            "match على list الكلمات.",
+            R`list من عنصرين أولهم "go"، والتاني بيتحط في [[direction]].`,
+            "رجّع.",
+            R`"take" وبعدها أي عدد، و [[if items]] شرط زيادة (guard).`,
+            "رجّع.",
+            R`كلمة واحدة: quit أو exit ([[|]] يعني أو).`,
+            "رجّع.",
+            "list فاضية: مفيش كلام.",
+            "رجّع.",
+            R`[[_]]: أي حاجة تانية (الـ default).`,
+            "رجّع.",
+            "أربع نداءات، كل واحد بيطابق case مختلف.",
+            "دالة بتفهم events على شكل dict.",
+            "match على الـ dict.",
+            R`dict فيه type و total، و [[int(total)]] بيشترط إنه int، والـ guard فوق 1000.`,
+            "رجّع.",
+            "نفس الشكل من غير شرط: أي total.",
+            "رجّع.",
+            R`[[str(oid)]]: الـ id لازم string.`,
+            "رجّع.",
+            "أي event تاني.",
+            "رجّع.",
+            R`الـ dict فيه مفتاح زيادة (user) وبرضه طابق.`,
+            "كود HTTP.",
+            "match زي switch.",
+            "واحد من الاتنين.",
+            "جوه الـ case.",
+            R`[[as code]] بيربط القيمة اللي طابقت باسم.`,
+            "جوه الـ case.",
+            "الباقي.",
+            "جوه الـ case."
+          ]
+        },
+        {
+          cmd: "تمارين الأساسيات",
+          title: "١٠ تمارين متدرجة على الأساسيات",
+          desc: R`قبل ما تكمّل للدوال والـ classes، ثبّت الأساسيات بعشر تمارين من السهل للأصعب. كل تمرين دالة صغيرة، وتختبرها بـ [[assert]]: لو الشرط غلط البرنامج يقف بـ [[AssertionError]]، ولو كله صح يطبع رسالتك في الآخر.
+
+حاول تحل كل تمرين بنفسك الأول بـ if و for و while بس، ومتفتحش الحل غير لما الـ asserts بتاعتك تعدّي أو تقف ربع ساعة.`,
+          example: R`def sum_digits(n: int) -> int:
+    total = 0
+    for ch in str(abs(n)):
+        total += int(ch)
+    return total
+assert sum_digits(9045) == 18
+assert sum_digits(0) == 0
+assert sum_digits(-12) == 3, "السالب كمان"
+print("كل الاختبارات عدّت")`,
+          try: R`اكتب الدوال دي في ملف واحد، وتحت كل واحدة asserts زي المثال:
+
+١. [[fizzbuzz(n)]] بترجع list من 1 لـ n: "Fizz" لمضاعفات 3، و "Buzz" لمضاعفات 5، و "FizzBuzz" للاتنين، والباقي الرقم كـ string.
+٢. [[sum_digits(n)]] مجموع أرقام عدد، والسالب كمان ([[-12]] ترجع 3).
+٣. [[count_vowels(s)]] عدد الحروف المتحركة الإنجليزي (a e i o u) كبيرة وصغيرة.
+٤. [[largest(nums)]] أكبر رقم من غير [[max]]، وترمي [[ValueError]] لو الليستة فاضية.
+٥. [[is_palindrome(s)]] بتتجاهل المسافات والعلامات والحروف الكبيرة: [["Was it a car or a cat I saw?"]] ترجع True.
+٦. [[reverse_words(s)]] بتعكس ترتيب الكلمات وتشيل المسافات الزيادة.
+٧. [[second_largest(nums)]] تاني أكبر رقم مختلف: [[[5, 9, 9, 3]]] ترجع 5، و [[[7, 7]]] ترجع None، ومن غير ما ترتّب.
+٨. [[top_word(text)]] أكتر كلمة متكررة وعددها كـ tuple، بـ dict و loop.
+٩. [[is_prime(n)]]، واستخدمها تطلّع الأعداد الأولية أقل من 30.
+١٠. [[two_sum(nums, target)]] بترجع indexes رقمين مجموعهم target، في لفة واحدة (O(n)) مش loopين.`,
+          sol: R`لو كل حاجة صح هتشوف [[العشرة عدّوا]]. الحل الكامل تحت، وأهم النقط في كل تمرين:
+
+١. افحص 15 الأول، لأن لو بدأت بـ 3 مضاعفات الـ 15 هتطلع "Fizz". ٢. [[str(abs(n))]] ولف على الحروف، والغلطة إنك تنسى [[abs]] فالـ [["-"]] توقّع [[int()]]. ٣. [[s.lower()]] مرة واحدة و [[ch in "aeiou"]]. ٤. ابدأ بأول عنصر مش بـ 0، وإلا [[[-5, -2]]] ترجع 0 وهو مش في الليستة.
+
+٥. نضّف الحروف بـ [[isalnum()]] وقارن بالعكس [[[::-1]]]. ٦. [[split()]] من غير باراميتر بتشيل أي عدد مسافات، و [[split(" ")]] بتطلّع strings فاضية. ٧. متغيرين [[first]] و [[second]] بيبدأوا [[None]]، والشرط [[n != first]] هو اللي بيحل التكرار؛ [[sorted(nums)[-2]]] بيرجع 9 غلط لـ [[[5, 9, 9, 3]]].
+
+٨. [[counts.get(word, 0) + 1]] و [[max(counts, key=counts.get)]]. ٩. كفاية تقسم لحد الجذر ([[i * i <= n]])، وافتكر إن 0 و 1 مش أوليين. ١٠. dict بيحفظ كل رقم شفته ومكانه، ولكل رقم بتسأل «المكمّل بتاعه ([[target - n]]) شفته قبل كده؟»: لفة واحدة. ده سؤال انترفيو كلاسيكي، والحل بـ loopين O(n²) بيتقبل كبداية بس الـ interviewer هيسألك تحسّنه.`,
+          solCode: R`# ١. FizzBuzz
+def fizzbuzz(n: int) -> list[str]:
+    out = []
+    for i in range(1, n + 1):
+        if i % 15 == 0:
+            out.append("FizzBuzz")
+        elif i % 3 == 0:
+            out.append("Fizz")
+        elif i % 5 == 0:
+            out.append("Buzz")
+        else:
+            out.append(str(i))
+    return out
+# ٢. مجموع الأرقام
+def sum_digits(n: int) -> int:
+    total = 0
+    for ch in str(abs(n)):
+        total += int(ch)
+    return total
+# ٣. عدّ الحروف المتحركة
+def count_vowels(s: str) -> int:
+    return sum(1 for ch in s.lower() if ch in "aeiou")
+# ٤. أكبر رقم من غير max
+def largest(nums: list[int]) -> int:
+    if not nums:
+        raise ValueError("empty list")
+    best = nums[0]
+    for n in nums[1:]:
+        if n > best:
+            best = n
+    return best
+# ٥. palindrome
+def is_palindrome(s: str) -> bool:
+    clean = [ch.lower() for ch in s if ch.isalnum()]
+    return clean == clean[::-1]
+# ٦. اعكس الكلمات
+def reverse_words(s: str) -> str:
+    return " ".join(reversed(s.split()))
+# ٧. تاني أكبر رقم مختلف
+def second_largest(nums: list[int]) -> int | None:
+    first = second = None
+    for n in nums:
+        if first is None or n > first:
+            first, second = n, first
+        elif n != first and (second is None or n > second):
+            second = n
+    return second
+# ٨. أكتر كلمة متكررة
+def top_word(text: str) -> tuple[str, int]:
+    counts: dict[str, int] = {}
+    for word in text.lower().split():
+        counts[word] = counts.get(word, 0) + 1
+    best = max(counts, key=counts.get)
+    return best, counts[best]
+# ٩. الأعداد الأولية
+def is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    i = 2
+    while i * i <= n:
+        if n % i == 0:
+            return False
+        i += 1
+    return True
+# ١٠. two sum
+def two_sum(nums: list[int], target: int) -> tuple[int, int] | None:
+    seen: dict[int, int] = {}
+    for i, n in enumerate(nums):
+        if target - n in seen:
+            return seen[target - n], i
+        seen[n] = i
+    return None
+assert fizzbuzz(15)[-1] == "FizzBuzz" and fizzbuzz(5) == ["1", "2", "Fizz", "4", "Buzz"]
+assert sum_digits(9045) == 18 and sum_digits(-12) == 3
+assert count_vowels("FastAPI is fun") == 5
+assert largest([3, -1, 9, 2]) == 9 and largest([-5, -2]) == -2
+assert is_palindrome("Was it a car or a cat I saw?") and not is_palindrome("python")
+assert reverse_words("  python  is   fun ") == "fun is python"
+assert second_largest([5, 9, 9, 3]) == 5 and second_largest([7, 7]) is None
+assert top_word("the cat and the hat and the bat") == ("the", 3)
+assert [n for n in range(30) if is_prime(n)] == [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+assert two_sum([2, 7, 11, 15], 9) == (0, 1) and two_sum([3, 3], 6) == (0, 1) and two_sum([1], 5) is None
+print("العشرة عدّوا")`,
+          flag: "script",
+          deep: {
+            why: R`قراية الدروس بتدّيك إحساس إنك فاهم، والتمرين هو اللي بيكشف إذا كنت فعلًا تقدر تكتب. والتمارين دي بالظبط نوع الأسئلة اللي بتيجي في أول مرحلة في انترفيو junior أو في اختبار online.`,
+            how: R`[[assert cond, "رسالة"]] بيرمي [[AssertionError]] بالرسالة لو الشرط False. ده أبسط شكل للاختبار، وهو نفس اللي pytest بيستخدمه (تاب Python). اكتب الـ asserts قبل الدالة أو معاها: الحالة العادية، والحدود (صفر، ليستة فاضية، رقم سالب)، والحالة اللي فيها تكرار.
+
+ولو assert وقع، اطبع القيمة اللي طلعت: [[print(f"{second_largest([5, 9, 9, 3])=}")]] بيوريك الاسم والقيمة مع بعض (درس «f-strings»).
+
+ملاحظة: [[python -O]] بيشيل الـ asserts، فمتستخدمهاش لفحص input المستخدم في كود الإنتاج؛ ده شغل [[if]] و [[raise]].`,
+            when: R`دلوقتي، قبل ما تكمّل. وارجعلهم بعد أسبوع وحلهم تاني من غير ما تبص، وبعدين جرّب تحل نفس التمارين بـ built-ins ([[max]] و [[sorted]] و [[Counter]] و [[sum]]) وقارن.`,
+            mistakes: R`تبص على الحل بعد دقيقتين. وتختبر الحالة العادية بس (أغلب الـ bugs في الحدود: فاضي، سالب، تكرار). وتستخدم [[assert]] للتحقق من input في API (بيتشال بـ [[-O]]). وتحل بـ built-in وانت المطلوب منك تكتبها بإيدك: في الانترفيو [[max(nums)]] مش إجابة لـ «اكتب max».`
+          },
+          lines: [
+            "تمرين ٢ كمثال: دالة بتجمع أرقام عدد.",
+            "المجموع.",
+            R`[[abs]] عشان السالب، و [[str]] عشان نلف على الأرقام كحروف.`,
+            "كل حرف يرجع رقم ويتجمع.",
+            "رجّع.",
+            R`[[assert]]: لو الشرط غلط البرنامج يقف.`,
+            "الحد: صفر.",
+            R`السالب، والرسالة بعد الفاصلة بتظهر في الـ [[AssertionError]].`,
+            "لو وصلنا هنا، كله عدّى."
           ]
         }
       ]
@@ -262,7 +785,14 @@ chunk = users[(page - 1) * size : page * size]`,
             "جوه الـ loop.",
             "رقم الصفحة وحجمها.",
             "pagination بالـ slicing: العناصر من 20 لـ 39."
-          ]
+          ],
+          sol: R`بالاسم تنازلي: [[['Sara', 'Omar', 'Ali']]]. واللي سنهم فوق ٢٥: [[['Sara', 'Omar']]] (Ali عنده 22).
+
+[[sorted(users, key=lambda u: u["name"], reverse=True)]] بترجع list جديدة والأصل زي ما هو. لو استخدمت [[users.sort(...)]] بدلها هي بتعدّل مكانها وبترجع [[None]]، فلو كتبت [[x = users.sort(...)]] هتلاقي [[x]] فاضية، ودي أشهر غلطة. ولو نسيت [[key]] هترمي [[TypeError: '<' not supported between instances of 'dict' and 'dict']] لأن Python ميعرفش يقارن dicts ببعض.`,
+          solCode: R`users = [{"name": "Sara", "age": 27}, {"name": "Omar", "age": 31}, {"name": "Ali", "age": 22}]
+by_name_desc = sorted(users, key=lambda u: u["name"], reverse=True)
+print([u["name"] for u in by_name_desc])            # ['Sara', 'Omar', 'Ali']
+print([u["name"] for u in users if u["age"] > 25])  # ['Sara', 'Omar']`
         },
         {
           cmd: "dict",
@@ -311,7 +841,18 @@ print(Counter(item for _, item in orders).most_common(1))`,
             "لف على الطلبات.",
             R`مفيش [[if]]: الـ list بتتعمل لوحدها.`,
             "عدّ الأصناف، وهات الأكتر تكرارًا (tea مرتين)."
-          ]
+          ],
+          sol: R`على جملة زي [[the cat and the dog and the bird]]، الـ loop بيطلّع [[{'the': 3, 'cat': 1, 'and': 2, 'dog': 1, 'bird': 1}]]، و [[Counter]] بيطلّع نفس العدد: [[Counter({'the': 3, 'and': 2, 'cat': 1, 'dog': 1, 'bird': 1})]] (مترتب من الأكتر) و [[counts == c]] بتطلع [[True]]، لأن [[Counter]] أصلًا dict. وميزته إنه سطر واحد وعنده [[most_common]].
+
+و [[user["phone"]]] بيرمي [[KeyError: 'phone']]: المفتاح مش موجود. لو المفتاح ممكن ميبقاش موجود استخدم [[user.get("phone")]] (بترجع [[None]]) أو [[get("phone", "مفيش")]]. ولو كتبت [[counts[w] += 1]] من غير [[get]] هتاخد نفس الـ KeyError على أول كلمة.`,
+          solCode: R`from collections import Counter
+text = "the cat and the dog and the bird"
+counts = {}
+for w in text.split():
+    counts[w] = counts.get(w, 0) + 1
+print(counts)
+c = Counter(text.split())
+print(c, counts == c)`
         },
         {
           cmd: "set و tuple",
@@ -360,7 +901,15 @@ empty = set()`,
             "unpacking: كل قيمة في متغير.",
             R`[[*rest]] بيلم الباقي في list: 2 و 3 و 4.`,
             R`set فاضية. [[{}]] لوحدها dict.`
-          ]
+          ],
+          sol: R`لو القاعدة فيها [[[1, 2, 3, 4]]] والـ request فيه [[[3, 4, 5, 6]]]: الجديد [[{5, 6}]] واللي اتمسح [[{1, 2}]]. الفرق بين الـ sets ([[-]]) بيرجع اللي في الأولى ومش في التانية، فالترتيب مهم: [[req - db]] للجديد و [[db - req]] للممسوح.
+
+والـ set ملهاش ترتيب، فلو محتاج ترتيب ثابت (في test مثلًا) اعمل [[sorted(new)]]. ولو جربت تعملها بـ loop و [[not in]] على lists، هتشتغل بس أبطأ بكتير على ليستات كبيرة (O(n×m) بدل O(n+m)).`,
+          solCode: R`in_db = [1, 2, 3, 4]
+in_request = [3, 4, 5, 6]
+new = set(in_request) - set(in_db)
+removed = set(in_db) - set(in_request)
+print(new, removed)  # {5, 6} {1, 2}`
         },
         {
           cmd: "comprehensions",
@@ -397,7 +946,10 @@ labels = ["adult" if u["age"] >= 18 else "minor" for u in users]`,
             R`[[any]] بيقف أول ما يلاقي True.`,
             "loopين متداخلين: ٦ أزواج.",
             R`[[if/else]] في الأول بيختار قيمة لكل عنصر، مش فلتر.`
-          ]
+          ],
+          sol: R`الـ comprehension: [[result = [n * n for n in range(20) if n % 3 == 0]]] وناتجه [[[0, 9, 36, 81, 144, 225, 324]]].
+
+ولما تبدّل الأقواس المربعة بأقواس عادية مش هتاخد tuple، هتاخد generator: الطباعة هتطلع حاجة زي [[<generator object <genexpr> at 0x7f...>]]. الـ generator مبيحسبش حاجة لحد ما تلف عليه، فعشان تشوف القيم [[list(g)]]. وخد بالك إنه بيتلف عليه مرة واحدة بس: [[list(g)]] التانية بترجع [[[]]]. ولو عايز tuple فعلًا: [[tuple(n * n for n in ...)]].`
         }
       ]
     },
@@ -453,7 +1005,18 @@ print(*nums)                          # 3 1 2`,
             R`[[**]] وقت النداء بيفك الـ dict لباراميترات بالاسم.`,
             "list.",
             R`[[*]] وقت النداء بيفك الـ list لباراميترات بالمكان.`
-          ]
+          ],
+          sol: R`[[*args]] بتجمع الباراميترات بالترتيب و [[**kwargs]] بتجمع اللي بالاسم، وبعدين [[fn(*args, **kwargs)]] بتفكهم تاني زي ما جم بالظبط. فـ [[timed(sorted, words, key=len, reverse=True)]] بتنادي [[sorted(words, key=len, reverse=True)]].
+
+على [[["banana", "kiwi", "apple", "fig"]]] هتشوف سطر زي [[sorted took 0.000004s]] (الرقم هيختلف عندك) وبعده [[['banana', 'apple', 'kiwi', 'fig']]]. لو نسيت الـ [[**]] وكتبت [[fn(*args, kwargs)]] هيوصل الـ dict كـ باراميتر تاني عادي و [[sorted]] ترمي [[TypeError: sorted expected 1 argument, got 2]]. ولازم ترجّع الناتج ([[return result]]) وإلا الدالة هتبلع النتيجة وترجع [[None]].`,
+          solCode: R`import time
+def timed(fn, *args, **kwargs):
+    start = time.perf_counter()
+    result = fn(*args, **kwargs)
+    print(f"{fn.__name__} took {time.perf_counter() - start:.6f}s")
+    return result
+words = ["banana", "kiwi", "apple", "fig"]
+print(timed(sorted, words, key=len, reverse=True))`
         },
         {
           cmd: "decorators",
@@ -514,7 +1077,31 @@ decorator بباراميترات ([[@retry(3)]]) هو دالة بترجع decora
             "cache جاهز: كل n بيتحسب مرة واحدة.",
             "دالة recursive.",
             "من غير cache كانت هتعيد الحسبة ملايين المرات."
-          ]
+          ],
+          sol: R`الـ ٣ طبقات: [[retry(times)]] بترجع الـ decorator، والـ decorator بياخد الدالة ويرجع [[wrapper]]، والـ [[wrapper]] هو اللي بيتنادي فعلًا. لما تشغّله أكتر من مرة هتشوف نتايج مختلفة: ساعات [[ok]] على طول، وساعات [[attempt 1 failed: network down]] وبعدين [[ok]]، ونادرًا (احتمال 1 من 8) التلات محاولات يفشلوا والـ [[ConnectionError]] الأصلي يطلع لبرّه. ولو عايز نتيجة ثابتة وإنت بتجرب: [[random.seed(3)]].
+
+أهم نقطتين: في آخر محاولة اعمل [[raise]] عشان الخطأ ميتبلعش والدالة ترجع [[None]] في صمت. ولو كتبت [[@retry]] من غير أقواس الدالة نفسها هتتبعت مكان [[times]]، و [[flaky()]] هترمي [[TypeError: retry.<locals>.decorator() missing 1 required positional argument: 'fn']]. و [[functools.wraps]] بيخلي [[flaky.__name__]] يفضل [[flaky]] مش [[wrapper]].`,
+          solCode: R`import functools
+import random
+def retry(times: int):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            for attempt in range(1, times + 1):
+                try:
+                    return fn(*args, **kwargs)
+                except Exception as e:
+                    print(f"attempt {attempt} failed: {e}")
+                    if attempt == times:
+                        raise
+        return wrapper
+    return decorator
+@retry(times=3)
+def flaky() -> str:
+    if random.random() < 0.5:
+        raise ConnectionError("network down")
+    return "ok"
+print(flaky(), flaky.__name__)`
         },
         {
           cmd: "generators و yield",
@@ -544,7 +1131,7 @@ next(gen)`,
 
 الملف نفسه في Python iterator: [[for line in f]] بيقرا سطر سطر، مش الملف كله.
 
-[[@contextmanager]] (درس [[with]]) بياخد generator فيه [[yield]] واحد ويحوّله لـ context manager: اللي قبل الـ yield هو الدخول، واللي بعده هو الخروج. و FastAPI بيعمل نفس الحكاية مع الـ dependencies اللي فيها yield ومع الـ [[lifespan]].
+[[@contextmanager]] (درس [[with و context managers]]) بياخد generator فيه [[yield]] واحد ويحوّله لـ context manager: اللي قبل الـ yield هو الدخول، واللي بعده هو الخروج. و FastAPI بيعمل نفس الحكاية مع الـ dependencies اللي فيها yield ومع الـ [[lifespan]].
 
 و [[itertools]] فيه أدوات جاهزة: [[itertools.batched(items, 4)]] (3.12+) بيعمل نفس دالة [[batched]] اللي فوق وبيشتغل مع أي iterable، و [[islice]] بيقطع من generator.
 
@@ -567,6 +1154,120 @@ next(gen)`,
             "جوه الـ loop.",
             "النداء مبيشغّلش الدالة، بيرجع generator object.",
             R`[[next]] بتشغّله لحد أول [[yield]] وترجع أول حتة (1 و 2).`
+          ],
+          sol: R`الملف فيه ٥ مليون سطر (حوالي 39MB على الديسك). لما جربناها وجمعنا الأرقام: [[f.readlines()]] وصّلت الذاكرة لحوالي 340MB، والـ generator فضل حوالي 8MB بس، والناتج واحد في الاتنين ([[12500002500000]]). [[readlines]] بتعمل list فيها ٥ مليون string مرة واحدة، وكل string في Python ليه overhead أكبر من حجم النص نفسه، فالرقم بيطلع أضعاف حجم الملف. والـ generator بيجيب سطر، تشتغل عليه، يرميه، يجيب اللي بعده.
+
+لو ملقتش فرق في htop، غالبًا البرنامج خلص بسرعة قبل ما تلحق تشوفه، أو إنت عملت [[list(read_lines(...))]] فرجّعت كل حاجة للذاكرة تاني. الأدق إنك تقيس جوه البرنامج بـ [[resource]] زي الكود تحت (على Linux و macOS).`,
+          solCode: R`import resource
+import sys
+def peak_mb() -> float:
+    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024  # KB على Linux
+def read_lines(path: str):
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            yield line.rstrip("\n")
+if sys.argv[1] == "list":
+    with open("big.txt", encoding="utf-8") as f:
+        total = sum(int(l) for l in f.readlines())
+else:
+    total = sum(int(l) for l in read_lines("big.txt"))
+print(sys.argv[1], total, f"peak {peak_mb():.0f} MB")`
+        },
+        {
+          cmd: "scope و LEGB",
+          title: "الاسم ده جاي منين؟ LEGB و global و nonlocal",
+          desc: R`لما تكتب اسم، Python بيدوّر عليه بالترتيب ده (LEGB): Local جوه الدالة الحالية، وبعدين Enclosing في الدوال اللي حواليها، وبعدين Global على مستوى الملف (الـ module)، وبعدين Built-in زي [[len]] و [[print]].
+
+القراءة من برّه مسموحة، بس أول ما تعيّن قيمة لاسم جوه دالة ([[x = ...]] أو [[x += 1]])، الاسم ده بقى local في الدالة كلها. عشان تعدّل متغير على مستوى الملف: [[global]]، ولمتغير في دالة حواليك: [[nonlocal]]. وفي Python الـ if والـ for مبيعملوش scope، الدوال بس (والـ classes والـ comprehensions).`,
+          example: R`x = "global"
+def outer():
+    x = "enclosing"
+    def inner():
+        print(x)                              # enclosing
+    inner()
+outer()
+print(x, len(x))                              # global 6: و len جاية من الـ built-ins
+count = 0
+def bump() -> None:
+    global count
+    count += 1
+bump()
+print(count)                                  # 1
+def make_counter():
+    n = 0
+    def inc() -> int:
+        nonlocal n
+        n += 1
+        return n
+    return inc
+c = make_counter()
+print(c(), c(), c())                          # 1 2 3
+for i in range(3):
+    pass
+print(i)                                      # 2: الـ for مبتعملش scope
+total = 10
+def broken():
+    total += 1
+broken()                                      # UnboundLocalError`,
+          try: R`خمّن قبل ما تشغّل: [[name = "global"]]، و [[def a(): print(name)]]، و [[def b(): name = "local"; a()]]، و [[b()]]. هيطبع إيه؟ وبعدين اكتب [[make_accumulator(start)]] بترجع دالة [[add(amount)]] بتزوّد على مجموع جواها وترجعه، وكل accumulator ليه مجموعه لوحده.`,
+          sol: R`الأول بيطبع [[global]] مش [[local]]. الـ scope بيتحدد من مكان كتابة الدالة (lexical)، مش من مين ناداها: [[a]] مكتوبة على مستوى الملف، فبتدوّر في الـ local بتاعها وبعدين الـ global، والـ [[name]] اللي جوه [[b]] local في [[b]] ومحدش يشوفه.
+
+والـ accumulator: [[acc = make_accumulator(100)]] وبعدين [[acc(10)]] و [[acc(-30)]] و [[acc(5)]] يطبعوا [[110 80 85]]، و [[make_accumulator()]] جديدة بتبدأ من صفر ومبتأثرش على الأولى. من غير [[nonlocal total]] هتاخد [[UnboundLocalError]]، لأن [[total += amount]] تعيين، فـ Python اعتبر [[total]] local في [[add]]. والغلطة التانية إنك تحط المجموع global: ساعتها كل الـ accumulators بيشاركوا نفس الرقم.`,
+          solCode: R`def make_accumulator(start: float = 0):
+    total = start
+    def add(amount: float) -> float:
+        nonlocal total
+        total += amount
+        return total
+    return add
+acc = make_accumulator(100)
+print(acc(10), acc(-30), acc(5))
+other = make_accumulator()
+print(other(1), acc(0))`,
+          flag: "script",
+          deep: {
+            why: R`[[UnboundLocalError]] من أكتر الأخطاء اللي بتلخبط المبتدئين، لأن المتغير «موجود» فوق. والـ closures ([[nonlocal]]) هي أساس الـ decorators وأي دالة بتفتكر state. وفي الانترفيو: «اشرح LEGB» و «إيه الفرق بين global و nonlocal».`,
+            how: R`Python بيقرر وقت الـ compile (مش وقت التشغيل) إن الاسم local ولا لأ: لو فيه أي تعيين للاسم في أي حتة في الدالة، يبقى local في الدالة كلها، حتى في السطور اللي قبل التعيين. عشان كده [[total += 1]] بتقع: بيحاول يقرا [[total]] الـ local قبل ما يتعيّن.
+
+[[global x]] بيقول «[[x]] هنا يعني بتاع الـ module». و [[nonlocal x]] بيقول «[[x]] هنا بتاع أقرب دالة حواليا»، ولازم يكون موجود فعلًا هناك. التعديل في object من غير تعيين للاسم مش محتاج أي حاجة منهم: [[items.append(1)]] على list global شغال عادي، لأنك مغيّرتش الاسم بيشاور على إيه.
+
+الـ closure: الدالة الداخلية بتفتكر المتغيرات اللي حواليها حتى بعد ما الدالة الخارجية خلصت، وكل نداء لـ [[make_counter()]] بيعمل [[n]] جديدة. وده نفس اللي بيحصل في الـ [[wrapper]] بتاع الـ decorator (درس «decorators»).
+
+والـ comprehension ليه scope خاص، فالمتغير اللي جواه مبيطلعش برّه، بعكس الـ for العادية اللي متغيرها بيفضل موجود بعدها.`,
+            when: R`[[nonlocal]] في closures صغيرة (counter، cache بسيط، decorator بيعد). [[global]] نادرًا جدًا: لو محتاج state مشترك، class أو object بتبعته أوضح وأسهل في الاختبار. والثوابت على مستوى الملف ([[MAX_RETRIES = 3]]) بتتقري من غير global عادي.`,
+            mistakes: R`[[global]] في كل دالة عشان «تشتغل»: الكود بقى صعب يتختبر وأي دالة ممكن تغيّر أي حاجة. وتسمّي متغير [[list]] أو [[id]] أو [[type]] فتغطي على الـ built-in ([[list(x)]] بعدها تقع بـ [[TypeError: 'list' object is not callable]]). وتفتكر إن متغير اتعرّف جوه if مش موجود برّه (هو موجود لو الـ if اتنفّذ، ومش موجود لو لأ: [[NameError]] في حالة واحدة بس، وده أسوأ).`
+          },
+          lines: [
+            "global: على مستوى الملف.",
+            "دالة خارجية.",
+            "enclosing بالنسبة للي جواها.",
+            "دالة داخلية ملهاش x خاص بيها.",
+            "بتدوّر: local مفيش، enclosing لقت. فبتطبع enclosing.",
+            "نادي الداخلية.",
+            "نادي الخارجية.",
+            R`هنا بره: الـ global. و [[len]] مش متعرّفة في الملف، فجاية من الـ built-ins.`,
+            "متغير global.",
+            "دالة بتعدّله.",
+            R`[[global]]: [[count]] هنا هو بتاع الملف.`,
+            "تعيين: من غير global كان هيبقى UnboundLocalError.",
+            "نادي.",
+            "اتغير فعلًا.",
+            "دالة بتصنع عدّاد.",
+            "متغير في الـ enclosing.",
+            "الدالة الداخلية.",
+            R`[[nonlocal]]: [[n]] بتاع الدالة اللي حواليا.`,
+            "زوّد.",
+            "رجّع.",
+            "رجّع الدالة نفسها (closure بتفتكر n).",
+            "عدّاد جديد بـ n خاصة بيه.",
+            "كل نداء بيزوّد نفس الـ n.",
+            "for عادية.",
+            "مبتعملش حاجة.",
+            "المتغير فضل موجود بعد الـ loop بآخر قيمة.",
+            "global.",
+            "دالة بتحاول تعدّله من غير global.",
+            R`التعيين خلّى [[total]] local، فالقراية قبله بتقع.`,
+            "النداء يطلّع UnboundLocalError."
           ]
         }
       ]
@@ -641,7 +1342,10 @@ finally:
             "جوه الـ except.",
             R`[[finally]]: للتنضيف.`,
             "بيشتغل في كل الأحوال."
-          ]
+          ],
+          sol: R`مع [[from e]] هتشوف traceback لخطأين: الأول [[ValueError: invalid literal for int() with base 10: 'abc']] من [[int(raw)]]، وبعدين [[The above exception was the direct cause of the following exception:]]، وبعدين الخطأ بتاعك [[ValueError: age must be a number, got 'abc']]. يعني إنت قلت صراحة إن التاني سببه الأول.
+
+من غير [[from e]] نفس الخطأين هيظهروا، بس الجملة في النص هتبقى [[During handling of the above exception, another exception occurred:]]، ودي معناها «حصل خطأ تاني وإحنا بنعالج الأول»، كأنه bug في الـ except نفسه. فـ [[from e]] مش بتضيف معلومة جديدة، هي بتوضح إن ده مقصود. ولو عايز تخفي الأصل خالص (مثلًا عشان فيه بيانات حساسة) اكتب [[from None]].`
         },
         {
           cmd: "with و context managers",
@@ -696,82 +1400,387 @@ with timer("sum"):
             "اطبع الوقت.",
             "استخدمه.",
             "الكود اللي بيتقاس."
-          ]
+          ],
+          sol: R`الفكرة: تحفظ الفولدر الحالي بـ [[os.getcwd()]] قبل الـ [[yield]]، وترجعله في [[finally]]. لو شغّلت الكود تحت هتشوف الفولدر الأصلي، وبعدين الفولدر الفرعي جوه البلوك، وبعدين الأصلي تاني حتى بعد ما البلوك رمى [[RuntimeError]].
+
+الغلطة المشهورة إنك تكتب [[os.chdir(old)]] بعد الـ [[yield]] من غير [[try/finally]]: ساعتها لو حصل خطأ جوه الـ [[with]]، الـ generator مش هيكمّل والبرنامج هيفضل في الفولدر الغلط. وفي الكود الحقيقي على 3.11 وأحدث استخدم [[contextlib.chdir]] الجاهز، وخد بالك إن تغيير الفولدر بيأثر على البروسيس كله، فمش آمن مع threads.`,
+          solCode: R`import os
+from contextlib import contextmanager
+from pathlib import Path
+@contextmanager
+def cd(path):
+    old = os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old)
+Path("sub").mkdir(exist_ok=True)
+print(os.getcwd())
+with cd("sub"):
+    print(os.getcwd())
+try:
+    with cd("sub"):
+        raise RuntimeError("boom")
+except RuntimeError:
+    pass
+print(os.getcwd())  # رجع للأصلي رغم الخطأ`
         }
       ]
     },
     {
       t: "Classes",
       l: 1,
-      n: "class و self و property والوراثة، و dataclass بدل ما تكتب __init__ بإيدك",
+      n: "class و self و property، والوراثة و super، و dunder methods، و dataclass و Enum و Protocol",
       items: [
         {
           cmd: "class و self",
           title: "class بـ __init__ و self و @property",
           desc: R`الـ class قالب بتعمل منه objects. [[__init__]] بيتنادى أول ما الـ object يتعمل، و [[self]] هو الـ object نفسه (Python بيبعته لوحده لكل method). و [[@property]] بتخلي method تتقري كأنها خاصية: [[order.total]] من غير قوسين.
 
-والوراثة [[class Admin(User):]]، و [[super()]] بينادي نسخة الأب.`,
-          example: R`class Order:
+وفيه نوعين methods تانيين: [[@classmethod]] بتاخد الـ class نفسه ([[cls]]) بدل الـ object، وأشهر استخدام ليها طرق إنشاء بديلة ([[Order.from_dict(d)]])، و [[@staticmethod]] دالة عادية ملهاش [[self]] ولا [[cls]] بس مكانها منطقي جوه الـ class. والوراثة و [[super()]] في الدرس الجاي.`,
+          example: R`from typing import Self
+class Order:
     tax_rate = 0.14
-    def __init__(self, items: list[float], customer: str):
-        self.items = items
+    def __init__(self, customer: str, items: list[float] | None = None):
         self.customer = customer
+        self.items = items if items is not None else []
     @property
     def total(self) -> float:
         return round(sum(self.items) * (1 + self.tax_rate), 2)
     def add(self, price: float) -> None:
+        if not self.is_valid_price(price):
+            raise ValueError(f"invalid price: {price}")
         self.items.append(price)
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        return cls(data["customer"], list(data.get("items", [])))
+    @staticmethod
+    def is_valid_price(price: float) -> bool:
+        return price > 0
     def __repr__(self) -> str:
         return f"Order({self.customer!r}, total={self.total})"
-class RushOrder(Order):
-    def __init__(self, items: list[float], customer: str, fee: float = 50):
-        super().__init__(items, customer)
-        self.fee = fee
+o = Order("Sara", [100, 200])
+o.add(50)
+print(o, o.total)                             # Order('Sara', total=399.0) 399.0
+Order.add(o, 10)
+o2 = Order.from_dict({"customer": "Omar", "items": [10]})
+print(o2, Order.tax_rate, o2.tax_rate)
+o2.tax_rate = 0
+print(o2.total, Order.tax_rate)               # 10 0.14
+o.total = 5                                   # AttributeError: property 'total' of 'Order' object has no setter`,
+          try: R`ضيف method اسمها [[remove(price)]] بترمي [[ValueError]] لو السعر مش في الطلب، و [[classmethod]] اسمها [[empty(customer)]] بتعمل طلب فاضي، وخلّي [[__repr__]] يطبع عدد العناصر كمان. اعمل طلبين فاضيين، وضيف لواحد بس، واتأكد إن التاني لسه فاضي.`,
+          sol: R`المتوقع: [[Order('Sara', items=2, total=171.0)]] بعد ما شلت 200، و [[Order('Ali', items=1, total=34.2) Order('Mona', items=0, total=0.0)]]، و [[999 not in order]] لما تشيل حاجة مش موجودة.
+
+النقطة اللي التجربة معمولة عشانها: الطلب التاني لسه فاضي لأن [[__init__]] بيعمل list جديدة لكل object ([[items if items is not None else []]]). لو كنت كتبت [[def __init__(self, customer, items=[])]]، الطلبين هيشاركوا نفس الـ list، والـ 30 هتظهر في Mona كمان، ودي أشهر غلطة في Python (أسئلة الانترفيو آخر التاب). و [[empty]] بترجع [[cls(customer)]] مش [[Order(customer)]]، فلو حد ورث من [[Order]] ونادى [[RushOrder.empty(...)]] هيرجعله RushOrder.`,
+          solCode: R`from typing import Self
+class Order:
+    tax_rate = 0.14
+    def __init__(self, customer: str, items: list[float] | None = None):
+        self.customer = customer
+        self.items = items if items is not None else []
     @property
     def total(self) -> float:
-        return super().total + self.fee
-o = RushOrder([100, 200], "Sara")
-o.add(50)
-print(o, o.total)`,
-          try: R`ضيف method اسمها [[remove(price)]]، وخلّي [[__repr__]] يطبع عدد العناصر كمان. وبعدين اطبع [[RushOrder.__mro__]] وشوف Python بيدوّر على الـ methods بأنهي ترتيب.`,
+        return round(sum(self.items) * (1 + self.tax_rate), 2)
+    def add(self, price: float) -> None:
+        if not self.is_valid_price(price):
+            raise ValueError(f"invalid price: {price}")
+        self.items.append(price)
+    def remove(self, price: float) -> None:
+        if price not in self.items:
+            raise ValueError(f"{price} not in order")
+        self.items.remove(price)
+    @classmethod
+    def from_dict(cls, data: dict) -> Self:
+        return cls(data["customer"], list(data.get("items", [])))
+    @classmethod
+    def empty(cls, customer: str) -> Self:
+        return cls(customer)
+    @staticmethod
+    def is_valid_price(price: float) -> bool:
+        return price > 0
+    def __repr__(self) -> str:
+        return f"Order({self.customer!r}, items={len(self.items)}, total={self.total})"
+o = Order("Sara", [100, 200, 50])
+o.remove(200)
+print(o)
+e = Order.empty("Ali")
+e2 = Order.empty("Mona")
+e.add(30)
+print(e, e2)
+try:
+    o.remove(999)
+except ValueError as err:
+    print(err)`,
           flag: "script",
           deep: {
-            why: "الـ models والـ services والـ repositories في أي API هتبقى classes، وحتى Pydantic models و SQLAlchemy models classes بتورث. لازم تفهم self والوراثة و property عشان تقرا كود الناس.",
+            why: "الـ models والـ services والـ repositories في أي API هتبقى classes، وحتى Pydantic models و SQLAlchemy models classes. لازم تفهم self و property و classmethod عشان تقرا كود الناس وتكتب objects بتحافظ على الداتا بتاعتها سليمة.",
             how: R`[[o.add(50)]] هي بالظبط [[Order.add(o, 50)]]: عشان كده [[self]] أول باراميتر، والاسم اتفاق مش keyword.
 
-الخاصية المكتوبة في جسم الـ class ([[tax_rate]]) class attribute مشتركة بين كل الـ objects، واللي بـ [[self.x = ...]] instance attribute لكل object لوحده. وخلي بالك: class attribute نوعها mutable (list) بتتشارك بين الكل، وده غالبًا bug.
+الخاصية المكتوبة في جسم الـ class ([[tax_rate]]) class attribute مشتركة بين كل الـ objects، واللي بـ [[self.x = ...]] instance attribute لكل object لوحده. ولما تقرا [[o2.tax_rate]]، Python بيدوّر في الـ object الأول وبعدين في الـ class. فـ [[o2.tax_rate = 0]] مبتغيّرش الـ class، بتعمل instance attribute جديدة بتغطي عليها في [[o2]] بس. وخلي بالك: class attribute نوعها mutable (list) بتتشارك بين الكل، وده غالبًا bug.
 
-[[@property]] بتحسب القيمة كل ما تتقري، فمش محتاج تخزّن total وتنسى تحدّثه. و [[__repr__]] هو اللي بيظهر في الـ REPL واللوج والـ debugger؛ اكتبه دايمًا.
+[[@property]] بتحسب القيمة كل ما تتقري، فمش محتاج تخزّن total وتنسى تحدّثه، ومن غير setter مينفعش حد يكتب عليها ([[AttributeError]]). و [[__repr__]] هو اللي بيظهر في الـ REPL واللوج والـ debugger؛ اكتبه دايمًا.
 
-مفيش private حقيقي في Python: [[_name]] اتفاق معناه «داخلي، متلمسوش»، و [[__name]] بيتغير اسمه (name mangling) عشان ميتصادمش في الوراثة، مش للحماية.
-
-الـ methods اللي اسمها [[__x__]] (dunder) بتخلي الـ class بتاعك يشتغل مع أدوات اللغة: [[__eq__]] لـ [[==]]، و [[__len__]] لـ [[len()]]، و [[__iter__]] لـ for. و [[@classmethod]] لطرق إنشاء بديلة ([[Order.from_dict(d)]])، و [[@staticmethod]] لدالة ملهاش علاقة بالـ object.`,
-            when: "لما يبقى فيه داتا ومعاها سلوك بيتغير عليها. لو داتا بس: dataclass أو Pydantic (الدرس الجاي). لو سلوك بس من غير state: دوال عادية في module كفاية، Python مش Java.",
-            mistakes: R`تنسى [[self]] في تعريف method ([[takes 0 positional arguments but 1 was given]]). و [[items: list = []]] كـ class attribute فكل الطلبات تشارك نفس الليستة. و class لكل حاجة حتى لو دالة واحدة. ووراثة عميقة ٤ مستويات بدل composition.`
+[[Self]] من [[typing]] (3.11+) نوع الرجوع لـ method بترجع object من نفس الـ class، وبيفضل صح حتى في الأبناء. ومفيش private حقيقي في Python: [[_name]] اتفاق معناه «داخلي، متلمسوش»، و [[__name]] بيتغير اسمه (name mangling) عشان ميتصادمش في الوراثة، مش للحماية.`,
+            when: "لما يبقى فيه داتا ومعاها سلوك بيتغير عليها أو قواعد لازم تتحافظ (سعر لازم يبقى موجب). لو داتا بس: dataclass أو Pydantic. لو سلوك بس من غير state: دوال عادية في module كفاية، Python مش Java.",
+            mistakes: R`تنسى [[self]] في تعريف method ([[takes 0 positional arguments but 1 was given]]). و [[items=[]]] كـ default في [[__init__]] أو كـ class attribute فكل الطلبات تشارك نفس الليستة. و [[Order(...)]] جوه classmethod بدل [[cls(...)]] فالوراثة تبوظ. و class لكل حاجة حتى لو دالة واحدة. و getters و setters على طريقة Java ([[get_total()]]) بدل خاصية عادية أو [[@property]].`
           },
           lines: [
+            R`[[Self]]: نوع «object من نفس الـ class».`,
             "class جديد.",
             "class attribute: مشتركة بين كل الطلبات.",
-            R`بيتنادى وقت الإنشاء، و [[self]] الـ object الجديد.`,
+            R`بيتنادى وقت الإنشاء، و [[self]] الـ object الجديد. و [[items]] default بـ None مش [[[]]].`,
             "instance attribute: لكل طلب لوحده.",
-            "نفس الكلام.",
+            "list جديدة لكل طلب لو مفيش list اتبعتت.",
             "اللي تحت يتقري كخاصية من غير قوسين.",
             "الإجمالي بيتحسب كل مرة من العناصر.",
             "مع الضريبة، ومقرّب لقرشين.",
             "method عادية بتعدّل الـ object.",
-            "ضيف عنصر.",
+            "بتستخدم الـ staticmethod عشان تتأكد من السعر.",
+            "ارفض السعر الغلط.",
+            "ضيف العنصر.",
+            R`[[@classmethod]]: الـ method اللي تحت بتاخد الـ class نفسه.`,
+            R`طريقة إنشاء بديلة من dict، و [[cls]] هو الـ class، والنوع [[Self]].`,
+            R`[[cls(...)]] مش [[Order(...)]]، عشان لو ابن ناداها يرجعله ابن.`,
+            R`[[@staticmethod]]: ملهاش [[self]] ولا [[cls]].`,
+            "دالة فحص عادية، مكانها منطقي جوه الـ class.",
+            "فحص بسيط.",
             "الشكل اللي بيظهر في الطباعة والـ debugger.",
             R`بيستخدم [[total]] كخاصية.`,
-            "وراثة: RushOrder فيه كل حاجة في Order.",
+            "object جديد.",
+            R`[[o.add(50)]] = [[Order.add(o, 50)]].`,
+            R`بيطبع [[Order('Sara', total=399.0) 399.0]].`,
+            R`نفس النداء بالشكل الطويل: [[self]] هو [[o]].`,
+            "object من الـ classmethod.",
+            "الـ class attribute بتتقري من الـ class ومن الـ object.",
+            "دي مبتغيّرش الـ class: بتعمل instance attribute لـ o2 بس.",
+            "o2 بقى من غير ضريبة، والـ class زي ما هو.",
+            "property من غير setter: ممنوع تكتب عليها."
+          ]
+        },
+        {
+          cmd: "الوراثة و super و MRO",
+          title: "وراثة و super() و mixins: Python بيدوّر على الـ method فين؟",
+          desc: R`[[class SmsNotifier(Notifier):]] معناها إن SmsNotifier بيورث كل حاجة في Notifier، وتقدر تعيد تعريف أي method (override). و [[super().send(...)]] بينادي النسخة اللي في الأب، فتزوّد على سلوكه بدل ما تنسخه.
+
+و Python بيسمح بوراثة من أكتر من class. أشهر استخدام ليها الـ mixins: classes صغيرة بتضيف سلوك واحد (لوج، cache) وتتركّب مع غيرها. والترتيب اللي Python بيدوّر بيه على الـ methods اسمه MRO، وتشوفه بـ [[Class.__mro__]].`,
+          example: R`class Notifier:
+    def __init__(self, sender: str):
+        self.sender = sender
+    def send(self, to: str, text: str) -> str:
+        return f"[{self.sender}] -> {to}: {text}"
+class SmsNotifier(Notifier):
+    def __init__(self, sender: str, max_len: int = 160):
+        super().__init__(sender)
+        self.max_len = max_len
+    def send(self, to: str, text: str) -> str:
+        return super().send(to, text[: self.max_len])
+class LoggingMixin:
+    def send(self, to: str, text: str) -> str:
+        result = super().send(to, text)
+        print("LOG:", result)
+        return result
+class LoggedSms(LoggingMixin, SmsNotifier):
+    pass
+n = LoggedSms("shop", max_len=5)
+n.send("010", "hello world")                  # LOG: [shop] -> 010: hello
+print([c.__name__ for c in LoggedSms.__mro__])
+print(isinstance(n, Notifier), issubclass(SmsNotifier, LoggingMixin))`,
+          try: R`اطبع [[LoggedSms.__mro__]] وافهم الترتيب. وبعدين اعمل [[SignMixin]] بترجع [[super().send(...) + " (via shop)"]]، واعمل classين: [[A(LoggingMixin, SignMixin, SmsNotifier)]] و [[B(SignMixin, LoggingMixin, SmsNotifier)]]. نادي [[send]] على الاتنين وقارن سطر الـ LOG والقيمة اللي رجعت.`,
+          sol: R`الاتنين بيرجعوا [[[shop] -> 010: hello (via shop)]]، بس سطر اللوج مختلف: A بيطبع [[LOG: [shop] -> 010: hello (via shop)]] و B بيطبع [[LOG: [shop] -> 010: hello]] من غير التوقيع.
+
+السبب الـ MRO: في A الترتيب [[A, LoggingMixin, SignMixin, SmsNotifier, Notifier, object]]، فـ LoggingMixin بينادي [[super()]] اللي هو SignMixin، والتوقيع بيتضاف قبل ما اللوج يشوف النتيجة. وفي B العكس: SignMixin برّه، فاللوج بيشوف النتيجة قبل التوقيع. يعني [[super()]] مش «الأب»، هو «اللي بعدي في الـ MRO بتاع الـ object الحقيقي». الغلطة الشائعة إنك تفتكر إن ترتيب الـ mixins مش فارق، أو إن [[super()]] جوه mixin بينادي [[object]] (هو بينادي اللي بعده في السلسلة، وعشان كده الـ mixin بيشتغل أصلًا).`,
+          solCode: R`class Notifier:
+    def __init__(self, sender: str):
+        self.sender = sender
+    def send(self, to: str, text: str) -> str:
+        return f"[{self.sender}] -> {to}: {text}"
+class SmsNotifier(Notifier):
+    def __init__(self, sender: str, max_len: int = 160):
+        super().__init__(sender)
+        self.max_len = max_len
+    def send(self, to: str, text: str) -> str:
+        return super().send(to, text[: self.max_len])
+class LoggingMixin:
+    def send(self, to: str, text: str) -> str:
+        result = super().send(to, text)
+        print("LOG:", result)
+        return result
+class SignMixin:
+    def send(self, to: str, text: str) -> str:
+        return super().send(to, text) + " (via shop)"
+class A(LoggingMixin, SignMixin, SmsNotifier):
+    pass
+class B(SignMixin, LoggingMixin, SmsNotifier):
+    pass
+print("A returns:", A("shop", max_len=5).send("010", "hello world"))
+print("B returns:", B("shop", max_len=5).send("010", "hello world"))
+print([c.__name__ for c in A.__mro__])
+print([c.__name__ for c in B.__mro__])`,
+          flag: "script",
+          deep: {
+            why: R`هتقابل الوراثة في كل framework: [[BaseModel]] في Pydantic، و [[DeclarativeBase]] في SQLAlchemy، و [[Exception]] للأخطاء بتاعتك، و mixins في Django. ولو مش فاهم الـ MRO و [[super()]]، هتتلخبط في أول مرة method مبتتناداش أو بتتنادى مرتين. والـ MRO سؤال انترفيو Python متوسط/متقدم.`,
+            how: R`لما تنادي [[n.send(...)]]، Python بيدوّر على [[send]] في الـ classes بترتيب [[type(n).__mro__]] وأول واحد يلاقيها بيشغّلها. الترتيب بيتحسب بخوارزمية اسمها C3 linearization، وقواعدها العملية: الابن قبل الأب، والآباء بنفس ترتيب كتابتهم في تعريف الـ class، وكل class بيظهر مرة واحدة، و [[object]] في الآخر.
+
+[[super()]] من غير باراميترات بترجع proxy بيدوّر في الـ MRO بتاع الـ object الحالي ابتداءً من بعد الـ class اللي انت مكتوب فيه. عشان كده LoggingMixin (اللي مش وارث من حاجة غير object) بتقدر تنادي [[super().send]] وتوصل لـ SmsNotifier: ده «cooperative multiple inheritance»، وشرطه إن كل class في السلسلة ينادي [[super()]] بنفس الـ signature.
+
+لو الابن عرّف [[__init__]]، الأب مبيتناداش لوحده: لازم [[super().__init__(...)]]، وإلا الخواص بتاعة الأب مش هتتعمل ([[AttributeError: 'SmsNotifier' object has no attribute 'sender']]).
+
+[[isinstance(obj, Cls)]] بيقول الـ object من النوع ده أو من أي ابن ليه، و [[issubclass(A, B)]] نفس الكلام على الـ classes.`,
+            when: R`وراثة لعلاقة «is-a» حقيقية ومستوى أو اتنين بس، أو لما الـ framework بيطلبها (BaseModel و Exception). وmixins لسلوك صغير مستقل بيتكرر. ولأغلب الحالات التانية composition أوضح: الـ class عنده object تاني ([[self.sender = EmailSender()]]) بدل ما يورث منه. وللـ interface بين الأجزاء: Protocol (درس «Protocol و ABC»).`,
+            mistakes: R`تنسى [[super().__init__()]] في الابن. وتنادي [[Notifier.__init__(self, ...)]] بالاسم في وراثة متعددة فالـ class المشترك يتنادى مرتين. ووراثة ٤ و ٥ مستويات عشان تعيد استخدام method واحدة. و override بـ signature مختلف عن الأب (mypy بيعلّم عليه، والـ mixins بتقع). وفي الانترفيو: «إيه الـ diamond problem وPython بيحله إزاي؟» الإجابة: الـ MRO بيضمن إن كل class يظهر مرة واحدة، و [[super()]] بيمشي على السلسلة دي.`
+          },
+          lines: [
+            "الـ class الأساسي.",
+            "بياخد اسم المرسل.",
+            "خزّنه.",
+            "الـ method الأساسية.",
+            "بترجع الرسالة متنسقة.",
+            R`ابن: بيورث كل حاجة في [[Notifier]].`,
             "باراميتر زيادة.",
-            R`[[super()]] بينادي [[__init__]] بتاع الأب.`,
-            "الزيادة.",
-            "بنعيد تعريف الخاصية.",
-            "نفس الاسم.",
-            "إجمالي الأب وعليه رسوم الاستعجال.",
-            "object من الابن.",
-            "method موروثة من الأب.",
-            R`بيطبع [[Order('Sara', total=449.0)]] و [[449.0]].`
+            R`[[super().__init__]]: خلّي الأب يعمل الـ sender.`,
+            "الزيادة بتاعة الابن.",
+            "override لنفس الـ method.",
+            R`بيقص الرسالة وبينادي نسخة الأب بـ [[super()]].`,
+            "mixin: سلوك واحد، ومش وارث من حاجة.",
+            "نفس اسم الـ method.",
+            R`[[super()]] هنا بينادي اللي بعده في الـ MRO، مش object.`,
+            "سجّل.",
+            "رجّع زي ما هو.",
+            "ركّب: اللوج برّه والـ SMS جوه.",
+            "مفيش كود زيادة.",
+            "object: max_len بتوصل لـ SmsNotifier عبر السلسلة.",
+            "اللوج بيطبع الرسالة بعد القص.",
+            R`الترتيب: [[LoggedSms, LoggingMixin, SmsNotifier, Notifier, object]].`,
+            R`True: SMS نوع من Notifier. و False: SmsNotifier مش وارث من الـ mixin.`
+          ]
+        },
+        {
+          cmd: "dunder methods",
+          title: "تخلّي الـ class بتاعك يشتغل مع ==، و len، و for، و +",
+          desc: R`الـ methods اللي اسمها بين شرطتين من الناحيتين ([[__x__]]، اسمها dunder أو «magic methods») هي اللي بتخلي الـ class بتاعك يشتغل مع أدوات اللغة: [[__repr__]] و [[__str__]] للطباعة، و [[__eq__]] لـ [[==]]، و [[__lt__]] لـ [[<]] و [[sorted]]، و [[__hash__]] عشان يبقى مفتاح في dict، و [[__len__]] لـ [[len()]]، و [[__iter__]] لـ for، و [[__contains__]] لـ [[in]]، و [[__add__]] لـ [[+]].
+
+انت عمرك ما بتناديها بنفسك ([[a.__len__()]])؛ Python هو اللي بيناديها لما تكتب [[len(a)]]. وده اسمه protocols أو duck typing: أي object فيه [[__iter__]] ينفع تلف عليه، من غير ما يورث من حاجة.`,
+          example: R`from functools import total_ordering
+@total_ordering
+class Money:
+    def __init__(self, cents: int, currency: str = "EGP"):
+        self.cents, self.currency = cents, currency
+    def __repr__(self) -> str:
+        return f"Money({self.cents}, {self.currency!r})"
+    def __str__(self) -> str:
+        return f"{self.cents / 100:,.2f} {self.currency}"
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Money):
+            return NotImplemented
+        return (self.cents, self.currency) == (other.cents, other.currency)
+    def __hash__(self) -> int:
+        return hash((self.cents, self.currency))
+    def __lt__(self, other: "Money") -> bool:
+        return self.cents < other.cents
+    def __add__(self, other: "Money") -> "Money":
+        return Money(self.cents + other.cents, self.currency)
+    def __bool__(self) -> bool:
+        return self.cents != 0
+class Cart:
+    def __init__(self, *prices: Money):
+        self._prices = list(prices)
+    def __len__(self) -> int:
+        return len(self._prices)
+    def __iter__(self):
+        return iter(self._prices)
+    def __contains__(self, item: Money) -> bool:
+        return item in self._prices
+cart = Cart(Money(15000), Money(2550), Money(15000))
+print(len(cart), Money(2550) in cart)          # 3 True
+print(sum(cart, Money(0)))                     # 325.50 EGP
+print(max(cart), repr(min(cart)))              # 150.00 EGP Money(2550, 'EGP')
+print(Money(1) >= Money(1), {Money(5), Money(5)})
+print(bool(Money(0)), Money(5) == 5)           # False False`,
+          try: R`اعمل class [[Playlist(name, songs)]] بحيث: [[len(p)]] عدد الأغاني، و [[p[0]]] و [[p[-1]]] و [[p[1:]]] يشتغلوا ([[__getitem__]])، و [[for song in p]] و [["b" in p]]، و [[p1 + p2]] يرجّع playlist جديدة اسمها [["chill+gym"]]، و [[==]] بيقارن الأغاني بس. وجرّب [[p + 5]]: لازم يطلع TypeError واضح.`,
+          sol: R`المتوقع: [[Playlist('chill+gym', 3 songs) a c ['b', 'c']]] وبعدين [[['a', 'b', 'c'] True]] وبعدين [[True]] (playlist باسم مختلف ونفس الأغاني متساوية)، و [[p + 5]] بتطلّع [[TypeError: unsupported operand type(s) for +: 'Playlist' and 'int']].
+
+السر في الـ TypeError إن [[__add__]] بترجع [[NotImplemented]] (قيمة خاصة، مش exception) لما النوع مش Playlist، فـ Python بيجرّب [[int.__radd__]] وبعدين يرمي الخطأ المعتاد. لو رميت خطأ بنفسك أو رجّعت [[False]] هتبوّظ الآلية دي. و [[__getitem__]] لوحدها بتخلي الـ slicing والـ indexes السالبة تشتغل لأنك بتمرر الـ index للـ list. وخلي بالك: لما عرّفت [[__eq__]] من غير [[__hash__]]، Python خلّى الـ class unhashable، فـ [[{a}]] هيطلع [[TypeError: unhashable type]]. ده مقصود: object بيتغير مينفعش يبقى مفتاح.`,
+          solCode: R`class Playlist:
+    def __init__(self, name: str, songs: list[str] | None = None):
+        self.name = name
+        self.songs = list(songs or [])
+    def __repr__(self) -> str:
+        return f"Playlist({self.name!r}, {len(self)} songs)"
+    def __len__(self) -> int:
+        return len(self.songs)
+    def __getitem__(self, index):
+        return self.songs[index]
+    def __iter__(self):
+        return iter(self.songs)
+    def __add__(self, other: "Playlist") -> "Playlist":
+        if not isinstance(other, Playlist):
+            return NotImplemented
+        return Playlist(f"{self.name}+{other.name}", self.songs + other.songs)
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Playlist):
+            return NotImplemented
+        return self.songs == other.songs
+a = Playlist("chill", ["a", "b"])
+b = Playlist("gym", ["c"])
+mix = a + b
+print(mix, mix[0], mix[-1], mix[1:])
+print(list(mix), "b" in mix)
+print(a == Playlist("other", ["a", "b"]))
+try:
+    a + 5
+except TypeError as e:
+    print("TypeError:", e)`,
+          flag: "script",
+          deep: {
+            why: R`class من غير [[__repr__]] بيطبع [[<__main__.Money object at 0x7f...>]] في اللوج ومحدش فاهم حاجة. ومن غير [[__eq__]]، كائنين بنفس القيمة مش متساويين. والـ dunders هي اللي بتخلي الـ class بتاعك يحس إنه built-in: [[sorted(prices)]] و [[sum(cart)]] و [[max(cart)]] يشتغلوا من غير كود زيادة.`,
+            how: R`[[len(x)]] بتنادي [[type(x).__len__(x)]]، و [[a + b]] بتنادي [[a.__add__(b)]]، ولو رجعت [[NotImplemented]] بتجرّب [[b.__radd__(a)]]. و [[a == b]] نفس الفكرة، ولو الاتنين رجّعوا [[NotImplemented]] بيرجع لمقارنة الهوية ([[is]]). عشان كده [[Money(5) == 5]] بترجع [[False]] بهدوء بدل ما ترمي.
+
+[[__repr__]] للمبرمج (لازم يبقى واضح وأحسن لو شبه الكود اللي يعمل الـ object)، و [[__str__]] للمستخدم وبيستخدمه [[print]] و [[str()]]، ولو مش موجود بيستخدم [[__repr__]].
+
+[[__eq__]] و [[__hash__]] مرتبطين: objects متساوية لازم يبقى ليها نفس الـ hash، وإلا الـ dict والـ set يبوظوا. ولو عرّفت [[__eq__]] بس، Python بيحط [[__hash__ = None]].
+
+[[@total_ordering]] من [[functools]]: تكتب [[__eq__]] و [[__lt__]] بس، وهو يكمّل [[<=]] و [[>]] و [[>=]]. و [[sum(cart, Money(0))]] محتاجة قيمة بداية من نفس النوع، لأن الافتراضي 0 و [[0 + Money]] مش متعرّفة. و [[__iter__]] بترجع iterator؛ أسهل طريقة [[iter(self._prices)]] أو generator بـ [[yield]].`,
+            when: R`[[__repr__]] في كل class تقريبًا. و [[__eq__]] و [[__hash__]] للـ value objects (فلوس، إحداثيات)، وغالبًا dataclass بيولّدهم لك (الدرس الجاي). والباقي ([[__len__]] و [[__iter__]] و [[__add__]]) لما الـ class بتاعك فعلًا collection أو قيمة رياضية، مش عشان «شكله حلو».`,
+            mistakes: R`[[__eq__]] بترمي أو ترجع False بدل [[NotImplemented]] مع الأنواع التانية. و [[__eq__]] من غير [[__hash__]] وتستغرب إن الـ object مش بيدخل set. و [[__hash__]] على خواص بتتغير (الـ object يضيع جوه الـ dict). و [[__add__]] بتعدّل [[self]] بدل ما ترجع object جديد. و [[__str__]] بس من غير [[__repr__]]، فاللوج والـ debugger يطلّعوا الشكل الوحش.`
+          },
+          lines: [
+            "بيكمّل باقي المقارنات من eq و lt.",
+            "decorator على الـ class.",
+            "value object للفلوس.",
+            "بالقروش كـ int.",
+            "خزّن.",
+            "للمبرمج: REPL ولوج و debugger.",
+            "شكل زي الكود.",
+            R`للمستخدم: [[print]] و [[str()]].`,
+            "جنيهات بفواصل.",
+            R`[[==]].`,
+            "لو النوع مختلف...",
+            R`...[[NotImplemented]] مش False: خلّي Python يجرّب الناحية التانية.`,
+            "قارن القيم.",
+            "عشان يدخل set ويبقى مفتاح dict.",
+            R`hash من نفس الحاجات اللي [[__eq__]] بيقارنها.`,
+            R`[[<]]، ومنها [[sorted]] و [[max]] و [[min]].`,
+            "قارن القروش.",
+            R`[[+]]: بيرجع object جديد.`,
+            "مبيعدّلش self.",
+            R`[[bool()]] و [[if money:]].`,
+            "صفر يبقى False.",
+            "collection بتاعتك.",
+            "بتاخد أي عدد أسعار.",
+            R`[[_]] في الأول: داخلي.`,
+            R`[[len()]].`,
+            "العدد.",
+            R`[[for]] و [[sum]] و [[max]].`,
+            "iterator من الـ list.",
+            R`[[in]].`,
+            "دوّر (بيستخدم __eq__).",
+            "عربية فيها ٣ أسعار.",
+            "len و in.",
+            R`[[sum]] بقيمة بداية من نفس النوع، والطباعة بـ [[__str__]].`,
+            R`[[max]] و [[min]] بيستخدموا [[__lt__]].`,
+            R`[[>=]] جت من [[total_ordering]]، والـ set شال التكرار بفضل [[__hash__]].`,
+            R`[[__bool__]]، و [[Money(5) == 5]] رجعت False بهدوء.`
           ]
         },
         {
@@ -837,6 +1846,225 @@ Money("oops")                   # بيعدّي! dataclass مبيفحصش الأ�
             "الـ list بتاعتها لوحدها.",
             "حوّلها dict.",
             "مفيش فحص وقت التشغيل: الفحص ده شغل Pydantic."
+          ],
+          sol: R`مع [[items: list[str] = []]] الـ class مش هيتعرّف أصلًا: [[ValueError: mutable default <class 'list'> for field items is not allowed: use default_factory]]. الـ dataclass بيمنعها عشان كل الـ carts هتشارك نفس الـ list (نفس غلطة الـ default المتغير في الدوال)، و [[default_factory=list]] بيعمل list جديدة لكل object.
+
+و [[{price: "x"}]] مع [[frozen=True]] بتشتغل: [[{Money(amount=15000, currency='EGP'): 'x'}]]، لأن frozen مع [[eq]] (الافتراضي) بيعملوا [[__hash__]] من الحقول. من غير frozen هتاخد [[TypeError: unhashable type: 'Money']]: الـ dataclass عمل [[__eq__]] فشال الـ hash الافتراضي، لأن object ممكن يتغير ميبقاش آمن كمفتاح.`
+        },
+        {
+          cmd: "Enum",
+          title: "قيم محددة بالاسم بدل strings سايبة: Enum و StrEnum",
+          desc: R`لما قيمة ليها اختيارات محددة (حالة طلب، دور مستخدم، أولوية)، بدل ما تكتب [["shipped"]] كـ string في ٢٠ مكان وحد يكتب [["shiped"]]، اعمل [[Enum]]: كل اختيار اسم ثابت، والمحرر بيكمّله، والغلطة الإملائية بتطلع [[AttributeError]] فورًا.
+
+[[StrEnum]] (3.11+) أعضاؤه strings فعلًا، فبيتقارن بالـ string وبيتحوّل JSON من غير تعب، وده الأنسب مع APIs وقواعد البيانات. و [[IntEnum]] نفس الفكرة بأرقام، و [[Flag]] لصلاحيات بتتجمع بـ [[|]]. و [[auto()]] بيدّي القيمة لوحده.`,
+          example: R`from enum import Enum, Flag, IntEnum, StrEnum, auto
+class OrderStatus(StrEnum):
+    PENDING = auto()
+    PAID = auto()
+    SHIPPED = auto()
+    CANCELLED = auto()
+print(OrderStatus.PAID, OrderStatus.PAID == "paid")      # paid True
+s = OrderStatus("shipped")
+print(s.name, s.value, s is OrderStatus.SHIPPED)          # SHIPPED shipped True
+print([st.value for st in OrderStatus])
+class Priority(IntEnum):
+    LOW = 1
+    HIGH = 3
+print(Priority.HIGH > Priority.LOW, Priority(3).name)     # True HIGH
+class Perm(Flag):
+    READ = auto()
+    WRITE = auto()
+    DELETE = auto()
+editor = Perm.READ | Perm.WRITE
+print(Perm.WRITE in editor, Perm.DELETE in editor)        # True False
+class Color(Enum):
+    RED = "#f00"
+print(Color.RED == "#f00", Color("#f00"))                 # False Color.RED
+match s:
+    case OrderStatus.SHIPPED | OrderStatus.PAID:
+        print("اتدفع")
+    case OrderStatus.CANCELLED:
+        print("اتلغى")
+OrderStatus("lost")                                        # ValueError: 'lost' is not a valid OrderStatus`,
+          try: R`اعمل [[OrderStatus]] فيها PENDING و PAID و SHIPPED و DELIVERED و CANCELLED، و dict اسمه [[ALLOWED]] بيقول من كل حالة ينفع تروح لأنهي حالات (PENDING لـ PAID أو CANCELLED، و PAID لـ SHIPPED أو CANCELLED، و SHIPPED لـ DELIVERED بس)، ودالة [[can_move(current, new)]]. وضيف assert بيتأكد إن كل حالة في الـ Enum ليها سطر في [[ALLOWED]].`,
+          sol: R`المتوقع: [[can_move(PENDING, PAID)]] ترجع True، و [[can_move(SHIPPED, CANCELLED)]] ترجع False (اتشحن خلاص، مينفعش يتلغى)، و [[can_move(OrderStatus("paid"), OrderStatus("shipped"))]] True، ودي الطريقة اللي بتحوّل بيها string جاي من الـ request أو القاعدة لـ Enum.
+
+الـ assert [[set(ALLOWED) == set(OrderStatus)]] هو اللي بيحميك لما حد يضيف حالة جديدة (REFUNDED مثلًا) وينسى يحدد انتقالاتها: البرنامج يقع وقت التشغيل الأول بدل ما [[ALLOWED[new_status]]] تطلّع KeyError في نص طلب حقيقي. والحالات النهائية (DELIVERED و CANCELLED) قيمتها [[set()]] فاضية مش مش موجودة. الغلطة الشائعة: تخزّن الانتقالات كـ strings ([[{"pending": ["paid"]}]]) فالـ typo يعدّي.`,
+          solCode: R`from enum import StrEnum, auto
+class OrderStatus(StrEnum):
+    PENDING = auto()
+    PAID = auto()
+    SHIPPED = auto()
+    DELIVERED = auto()
+    CANCELLED = auto()
+ALLOWED: dict[OrderStatus, set[OrderStatus]] = {
+    OrderStatus.PENDING: {OrderStatus.PAID, OrderStatus.CANCELLED},
+    OrderStatus.PAID: {OrderStatus.SHIPPED, OrderStatus.CANCELLED},
+    OrderStatus.SHIPPED: {OrderStatus.DELIVERED},
+    OrderStatus.DELIVERED: set(),
+    OrderStatus.CANCELLED: set(),
+}
+def can_move(current: OrderStatus, new: OrderStatus) -> bool:
+    return new in ALLOWED[current]
+print(can_move(OrderStatus.PENDING, OrderStatus.PAID))
+print(can_move(OrderStatus.SHIPPED, OrderStatus.CANCELLED))
+print(can_move(OrderStatus("paid"), OrderStatus("shipped")))
+assert set(ALLOWED) == set(OrderStatus), "كل حالة لازم يبقى ليها سطر"`,
+          flag: "script",
+          deep: {
+            why: R`الـ status كـ string حر من أشهر مصادر الـ bugs: [["Paid"]] و [["paid"]] و [["PAID"]] في نفس القاعدة، و if بتقارن بقيمة اتكتبت غلط. والـ Enum بيجمع الاختيارات في مكان واحد. وفي FastAPI، باراميتر نوعه Enum بيتفحص لوحده (أي قيمة تانية 422) وبيظهر كـ dropdown في [[/docs]]، ونفس الكلام في Pydantic.`,
+            how: R`كل عضو في الـ Enum object واحد بس (singleton): [[OrderStatus("shipped") is OrderStatus.SHIPPED]] True، وليه [[.name]] (الاسم) و [[.value]] (القيمة). و [[OrderStatus("lost")]] بيرمي [[ValueError]]، فده نفسه validation. والـ Enum بيتلف عليه بالترتيب اللي اتكتب بيه.
+
+[[Enum]] العادي مش بيتساوى مع قيمته: [[Color.RED == "#f00"]] False، ولازم [[Color.RED.value]]. أما [[StrEnum]] و [[IntEnum]] فورثوا من str و int، فبيتقارنوا ويتطبعوا كقيمتهم. و [[auto()]] في [[StrEnum]] بيدّي اسم العضو بحروف صغيرة.
+
+[[Flag]]: كل عضو bit، و [[|]] بيجمعهم، و [[in]] بيسأل «الصلاحية دي موجودة؟». ومع [[match]] الأعضاء فيهم نقطة ([[OrderStatus.SHIPPED]])، فبيتقارنوا كقيم مش capture (درس «match و case»).
+
+في Postgres تقدر تخزّن الـ StrEnum كـ [[text]] مع [[CHECK]]، أو كـ enum type في القاعدة (تاب «SQL و Prisma»).`,
+            when: R`أي مجموعة قيم ثابتة ومعروفة وقت كتابة الكود: حالات، أدوار، أنواع. لو القيم بتتغير من لوحة تحكم (فئات منتجات بيضيفها الأدمن)، مكانها جدول في القاعدة مش Enum.`,
+            mistakes: R`[[Enum]] عادي وتقارنه بـ string فيطلع False دايمًا في صمت (استخدم StrEnum). وتخزّن [[.name]] في القاعدة مرة و [[.value]] مرة. وتغيّر قيمة عضو موجود وفي داتا قديمة بالقيمة القديمة. و [[case PAID:]] من غير اسم الـ Enum جوه match (capture مش مقارنة).`
+          },
+          lines: [
+            "أنواع الـ Enum.",
+            R`[[StrEnum]]: الأعضاء strings.`,
+            R`[[auto()]] بيدّي "pending".`,
+            "و paid.",
+            "و shipped.",
+            "و cancelled.",
+            "بيطبع كقيمته، وبيتساوى مع الـ string.",
+            R`من string لـ Enum: ده اللي بتعمله مع داتا جاية من برّه.`,
+            R`الاسم والقيمة، وعضو واحد بس ([[is]]).`,
+            "لف على كل الأعضاء بالترتيب.",
+            "Enum بأرقام.",
+            "قيمة.",
+            "قيمة.",
+            R`بيتقارن كأرقام، و [[Priority(3)]] بيرجع العضو.`,
+            "صلاحيات بتتجمع.",
+            "bit.",
+            "bit.",
+            "bit.",
+            R`[[|]]: قراية وكتابة.`,
+            R`[[in]]: الصلاحية موجودة؟`,
+            R`[[Enum]] عادي.`,
+            "قيمة.",
+            R`مش بيتساوى مع قيمته، و [[Color("#f00")]] بيرجع العضو.`,
+            "match على Enum.",
+            "الاسم فيه نقطة: مقارنة، مش capture.",
+            "جوه الـ case.",
+            "حالة تانية.",
+            "جوه الـ case.",
+            R`قيمة مش موجودة: [[ValueError]]. ده validation ببلاش.`
+          ]
+        },
+        {
+          cmd: "Protocol و ABC",
+          title: "interface في Python: ABC ولا Protocol؟",
+          desc: R`لما دالة محتاجة «أي حاجة بتعرف تبعت رسالة» ومش فارق معاها إيميل ولا SMS ولا fake في الاختبار، محتاج تعرّف الشكل ده. فيه طريقتين:
+
+[[ABC]] مع [[@abstractmethod]]: class أساسي لازم الأبناء يورثوا منه ويكتبوا الـ methods، ولو ابن نسي واحدة، Python يرفض يعمل object منه. و [[typing.Protocol]] (structural typing، زي interface في TypeScript): بتوصف الشكل بس، وأي class فيه نفس الـ methods يطابق من غير ما يورث من حاجة. mypy و pyright هما اللي بيفحصوا.`,
+          example: R`from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
+type Message = tuple[str, str]
+class Storage(ABC):
+    @abstractmethod
+    def save(self, key: str, data: bytes) -> None: ...
+    def save_text(self, key: str, text: str) -> None:
+        self.save(key, text.encode("utf-8"))
+class MemoryStorage(Storage):
+    def __init__(self) -> None:
+        self.files: dict[str, bytes] = {}
+    def save(self, key: str, data: bytes) -> None:
+        self.files[key] = data
+store = MemoryStorage()
+store.save_text("a.txt", "أهلًا")
+print(store.files)
+@runtime_checkable
+class Sender(Protocol):
+    def send(self, to: str, text: str) -> None: ...
+class EmailSender:
+    def send(self, to: str, text: str) -> None:
+        print("email to", to, ":", text)
+class FakeSender:
+    def __init__(self) -> None:
+        self.sent: list[Message] = []
+    def send(self, to: str, text: str) -> None:
+        self.sent.append((to, text))
+def notify_shipped(sender: Sender, to: str) -> None:
+    sender.send(to, "طلبك اتشحن")
+notify_shipped(EmailSender(), "sara@example.com")
+fake = FakeSender()
+notify_shipped(fake, "omar@example.com")
+print(fake.sent, isinstance(fake, Sender))
+Storage()                                      # TypeError: Can't instantiate abstract class Storage`,
+          try: R`اعمل Protocol اسمه [[Clock]] فيه [[now() -> datetime]]، و classين [[SystemClock]] (بيرجع [[datetime.now(UTC)]]) و [[FixedClock(at)]] (بيرجع وقت ثابت)، ودالة [[is_expired(expires_at, clock)]]. اختبر الحد: قبل الموعد بثانية، وعند الموعد بالظبط. وشغّل [[mypy --strict]] على الملف.`,
+          sol: R`المتوقع: قبل الموعد بثانية [[False]]، وعند الموعد بالظبط [[True]] (لأن الشرط [[>=]])، و [[SystemClock]] بيرجع [[False]] لحد 1 أكتوبر 2026 و [[True]] بعدها. و [[mypy --strict]] مبيطلعش أخطاء، مع إن ولا class ورث من [[Clock]].
+
+الفكرة إن الوقت بقى dependency بتتبعت، فالاختبار بيحط الوقت اللي هو عايزه بدل ما يستنى أو يعمل mock لـ [[datetime]]. ولو غيّرت [[FixedClock.now]] ترجع [[str]]، mypy هيرفض النداء ([[incompatible type "FixedClock"; expected "Clock"]]) وده الفحص اللي الـ Protocol بيدّيهولك. الغلطة الشائعة: [[datetime(2026, 10, 1)]] من غير [[tzinfo]]، فالمقارنة مع [[datetime.now(UTC)]] ترمي [[TypeError: can't compare offset-naive and offset-aware datetimes]] (درس «datetime و zoneinfo»).`,
+          solCode: R`from datetime import UTC, datetime
+from typing import Protocol
+class Clock(Protocol):
+    def now(self) -> datetime: ...
+class SystemClock:
+    def now(self) -> datetime:
+        return datetime.now(UTC)
+class FixedClock:
+    def __init__(self, at: datetime) -> None:
+        self.at = at
+    def now(self) -> datetime:
+        return self.at
+def is_expired(expires_at: datetime, clock: Clock) -> bool:
+    return clock.now() >= expires_at
+deadline = datetime(2026, 10, 1, tzinfo=UTC)
+print(is_expired(deadline, FixedClock(datetime(2026, 9, 30, 23, 59, 59, tzinfo=UTC))))
+print(is_expired(deadline, FixedClock(deadline)))
+print(is_expired(deadline, SystemClock()))`,
+          flag: "script",
+          deep: {
+            why: R`الكود اللي بيعتمد على شكل مش على class معين سهل تختبره (تبعت fake) وسهل تغيّر الـ implementation (S3 بدل ملفات محلية). وده نفس مبدأ الـ dependency injection اللي FastAPI مبني عليه ([[Depends]]، المستوى ٢)، ونفس اللي في تاب «هندسة البرمجيات».`,
+            how: R`[[ABC]]: [[class Storage(ABC)]] و [[@abstractmethod]] على الـ methods الإجبارية. محاولة [[Storage()]] أو ابن ناقص method بترمي [[TypeError: Can't instantiate abstract class]] وقت التشغيل. والـ ABC ينفع يبقى فيه methods عادية مشتركة ([[save_text]] بتستخدم [[save]])، ودي ميزته.
+
+[[Protocol]]: مفيش وراثة. الـ type checker بيقارن الـ methods والـ signatures، فـ [[SmsSender]] فيها [[send(self, phone)]] بس هيترفض: mypy بيطلّع [[Argument 1 to "notify_shipped" has incompatible type "SmsSender"; expected "Sender"]] ويوريك الـ signature المتوقع واللي لقاه. ووقت التشغيل Python مبيفحصش حاجة.
+
+[[@runtime_checkable]] بيخلي [[isinstance(x, Sender)]] يشتغل، بس بيفحص إن الـ method موجودة بالاسم بس، مش الـ signature، فمتعتمدش عليه كـ validation.
+
+[[...]] (Ellipsis) كجسم للـ method معناه «مفيش implementation هنا». وده نفس الـ duck typing اللي Python طول عمره عليه، بس بقى ليه نوع يفحصه المحرر.`,
+            when: R`Protocol للحدود بين الأجزاء (sender، storage، clock، repository)، خصوصًا لما الـ implementations في مكتبات مش بتاعتك ومش هتورث من class بتاعك. و ABC لما عايز تفرض الوراثة وقت التشغيل أو تشارك كود بين الأبناء. ومتعملش أي واحد منهم لو عندك implementation واحد ومفيش fake: دالة أو class عادي كفاية.`,
+            mistakes: R`Protocol وتفتكر إن Python هيفحصه وقت التشغيل (مش هيفحص، شغّل mypy أو pyright). و [[runtime_checkable]] كـ validation للـ signature. و interface لكل class «احتياطي» (تاب «هندسة البرمجيات» فيه درس عن ده). و ABC ترث منه وتنسى [[@abstractmethod]] فمفيش أي فحص.`
+          },
+          lines: [
+            "أدوات الـ ABC.",
+            "أدوات الـ Protocol.",
+            R`اسم لنوع (3.12+): الرسالة (لمين، النص).`,
+            "class أساسي abstract.",
+            "لازم أي ابن يكتبها.",
+            R`[[...]]: مفيش جسم.`,
+            "method عادية مشتركة بين الأبناء.",
+            "بتستخدم الـ abstract method.",
+            "ابن بيورث.",
+            "الـ init.",
+            "تخزين في الذاكرة.",
+            "كتب الـ method الإجبارية.",
+            "خزّن.",
+            "object من الابن: مسموح.",
+            "method من الأب بتنادي method الابن.",
+            "النص اتخزن bytes بـ UTF-8.",
+            R`عشان [[isinstance]] يشتغل مع الـ Protocol.`,
+            "Protocol: الشكل بس.",
+            "أي حاجة فيها send بالـ signature ده تطابق.",
+            "class عادي، مش وارث من Sender.",
+            "بس فيه send بنفس الشكل.",
+            "بيطبع.",
+            "fake للاختبار، برضه مش وارث.",
+            "الـ init.",
+            "بيحفظ اللي اتبعت بدل ما يبعته.",
+            "نفس الشكل.",
+            "سجّل.",
+            R`الدالة بتطلب [[Sender]]، مش class معين.`,
+            "بتنادي send وخلاص.",
+            "إيميل حقيقي.",
+            "fake.",
+            "نفس الدالة من غير أي تغيير.",
+            R`اللي اتبعت، و [[isinstance]] True بفضل runtime_checkable.`,
+            "abstract: TypeError."
           ]
         }
       ]
@@ -893,7 +2121,10 @@ if __name__ == "__main__":
             "الجسم.",
             R`الملف اتشغّل مباشرة ([[python -m app.routers.users]])؟`,
             "يبقى شغّل main. لو اتعمله import، ده مش هيشتغل."
-          ]
+          ],
+          sol: R`[[python a.py]] بيطبع [[__main__]]، و [[python b.py]] (اللي فيه [[import a]]) بيطبع [[a]]. الملف اللي بتشغّله مباشرة اسمه دايمًا [[__main__]]، وأي ملف بيتعمله import بياخد اسم الـ module بتاعه (ولو جوه package هيبقى [[app.routers.users]] مثلًا).
+
+ده بالظبط اللي بيخلي [[if __name__ == "__main__":]] تشتغل: الكود اللي جواها بيتنفذ لما تشغّل الملف بس، مش لما حد يعمله import. ولو عملت [[import a]] مرتين في نفس البرنامج هتلاقي الطباعة مرة واحدة بس، لأن Python بيحفظ الـ module في [[sys.modules]] وبيرجّعه من غير ما يشغّله تاني.`
         },
         {
           cmd: "uv و pyproject.toml",
@@ -933,6 +2164,791 @@ uv export --no-hashes > requirements.txt`,
             "شغّل جوه الـ venv من غير activate (بعد ما تكتب التطبيق في main.py).",
             "سطّب من الـ lock بالظبط، ويفشل لو مش متزامن: لـ CI و Docker.",
             "requirements.txt لو حاجة لسه محتاجاه."
+          ],
+          sol: R`بعد [[uv init shop-api]] و [[uv add "fastapi[standard]"]] هتلاقي في [[pyproject.toml]] قسم [[[project]]] فيه [[name]] و [[version]] و [[requires-python]] (على حسب نسخة Python اللي uv لقاها أو اللي عملتلها pin) و [[dependencies = ["fastapi[standard]>=0.1xx.x"]]]، يعني uv كتب اللي إنت طلبته بس بحد أدنى. أما [[uv.lock]] فطويل جدًا: فيه كل الـ packages (الـ dependencies وdependencies بتاعتها، حوالي ٥٠ واحدة لـ fastapi[standard])، كل واحدة بنسختها الدقيقة ورابط تحميلها و [[hash]] بتاعها.
+
+وبعد [[rm -rf .venv]] و [[uv sync]] الوقت هيبقى صغير جدًا (في تجربتنا أقل من ثانية)، لأن uv بيجيب الـ packages من الـ cache بتاعه ويعمل links بدل ما ينزّل وينسخ. الفرق ده هو سبب إن الناس نقلت من pip. ولو [[uv sync]] أخد وقت طويل، يبقى الـ cache فاضي (أول مرة على الجهاز) أو في CI من غير cache. والـ [[pyproject.toml]] بتكتبه إنت، والـ [[uv.lock]] uv بيكتبه، والاتنين يتعملهم commit.`
+        }
+      ]
+    },
+    {
+      t: "ملفات وداتا وتواريخ",
+      l: 1,
+      n: "pathlib للمسارات، و csv و json من ملف لملف، و datetime بتوقيت صح، و re للنصوص",
+      items: [
+        {
+          cmd: "pathlib",
+          title: "المسارات والملفات بـ pathlib بدل os.path",
+          desc: R`[[pathlib.Path]] بيمثّل مسار كـ object: تبنيه بـ [[/]] ([[base / "reports" / "sales.csv"]])، وتسأله [[exists()]] و [[is_file()]]، وتاخد منه [[name]] و [[stem]] و [[suffix]] و [[parent]]، وتقرا وتكتب بـ [[read_text]] و [[write_text]]، وتدوّر بـ [[glob]] و [[rglob]].
+
+وبيشتغل صح على لينكس وويندوز وماك من غير ما تفكر في [[/]] ولا [[\]]. الطريقة القديمة ([[os.path.join]] و [[os.listdir]]) لسه شغالة وهتشوفها في كود قديم، بس الجديد بيتكتب بـ pathlib.`,
+          example: R`from pathlib import Path
+base = Path("data")
+reports = base / "reports" / "2026"
+reports.mkdir(parents=True, exist_ok=True)
+f = reports / "sales.csv"
+f.write_text("id,total\n1,150\n", encoding="utf-8")
+print(f)                                        # data/reports/2026/sales.csv
+print(f.name, f.stem, f.suffix, f.parent.name)  # sales.csv sales .csv 2026
+print(f.exists(), f.is_file(), f.stat().st_size)
+print(f.read_text(encoding="utf-8").splitlines())
+for p in sorted(base.rglob("*.csv")):
+    print(p.relative_to(base))
+backup = f.with_suffix(".bak")
+f.rename(backup)
+print(Path.cwd() / "data", Path.home())
+here = Path(__file__).resolve().parent
+config = here / "config.toml"
+backup.unlink(missing_ok=True)`,
+          try: R`اعمل فولدر [[inbox]] فيه ملفات فاضية ([[touch inbox/cv.pdf inbox/photo.JPG inbox/logo.png inbox/notes.txt inbox/archive.tar.gz]]). اكتب [[organize(folder, dry_run=True)]] بتنقل كل ملف لفولدر فرعي حسب الامتداد (docs للـ pdf و txt، و images للـ jpg و png، و other للباقي)، وفي وضع الـ dry run تطبع بس هتعمل إيه. وترجع dict بعدد الملفات في كل مجموعة.`,
+          sol: R`الـ dry run بيطبع [[[dry-run] cv.pdf -> docs/]] وأخواتها ومبيحركش حاجة، والتشغيل الحقيقي بيطلّع نفس السطور من غير البادئة، والنتيجة [[{'other': 1, 'docs': 2, 'images': 2}]]، والملفات في [[docs/cv.pdf]] و [[images/photo.JPG]] و [[other/archive.tar.gz]] إلخ.
+
+٣ نقط بيقع فيها الناس: [[photo.JPG]] امتداده كبير، فلازم [[p.suffix.lower()]] وإلا هيروح other. و [[archive.tar.gz]] الـ suffix بتاعه [[.gz]] بس (لو محتاج الاتنين: [[p.suffixes]]). و [[sorted(folder.iterdir())]] مش [[folder.iterdir()]] مباشرة وانت بتنقل جوه نفس الفولدر، لأنك بتعدّل الفولدر وانت بتلف عليه، و [[if not p.is_file(): continue]] عشان متنقلش الفولدرات اللي عملتها. والـ dry run عادة لازم تبقى الافتراضي في أي سكربت بينقل أو يمسح.`,
+          solCode: R`from pathlib import Path
+GROUPS = {".pdf": "docs", ".txt": "docs", ".jpg": "images", ".png": "images"}
+def organize(folder: Path, dry_run: bool = True) -> dict[str, int]:
+    moved: dict[str, int] = {}
+    for p in sorted(folder.iterdir()):
+        if not p.is_file():
+            continue
+        group = GROUPS.get(p.suffix.lower(), "other")
+        target = folder / group / p.name
+        print(("[dry-run] " if dry_run else "") + f"{p.name} -> {group}/")
+        if not dry_run:
+            target.parent.mkdir(exist_ok=True)
+            p.rename(target)
+        moved[group] = moved.get(group, 0) + 1
+    return moved
+print(organize(Path("inbox")))
+print(organize(Path("inbox"), dry_run=False))
+print(sorted(str(p.relative_to("inbox")) for p in Path("inbox").rglob("*") if p.is_file()))`,
+          flag: "script",
+          deep: {
+            why: R`سكربتات الأتمتة كلها ملفات: نظّف فولدر، اجمع تقارير، انقل صور، اقرا إعدادات. وكود زي [[os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data")]] بقى [[Path(__file__).resolve().parent.parent / "data"]]: أقصر وأوضح وأقل غلط.`,
+            how: R`[[Path("data")]] نسبي للفولدر الحالي (اللي شغّلت منه الأمر، مش فولدر السكربت). عشان توصل لملف جنب السكربت نفسه: [[Path(__file__).resolve().parent]]. و [[Path.cwd()]] و [[Path.home()]] للفولدر الحالي والـ home.
+
+[[/]] بيبني المسار ([[Path]] عرّف [[__truediv__]]، درس «dunder methods»). و [[mkdir(parents=True, exist_ok=True)]] زي [[mkdir -p]]. و [[with_suffix]] و [[with_name]] بيرجّعوا Path جديد (الـ Path immutable). و [[rename]] بينقل، و [[unlink(missing_ok=True)]] بيمسح من غير ما يرمي لو مش موجود، و [[shutil.copy]] و [[shutil.rmtree]] للنسخ ومسح فولدر كامل.
+
+[[glob("*.csv")]] في الفولدر ده بس، و [[rglob("*.csv")]] في كل اللي تحته. والاتنين generators، فلو هتعدّل وانت بتلف، حوّلهم list الأول. و [[relative_to]] بيطلّع المسار نسبةً لفولدر.
+
+[[read_text]] و [[write_text]] للملفات الصغيرة (بيقروا الملف كله مرة واحدة). للملفات الكبيرة: [[with p.open(encoding="utf-8") as f: for line in f]] (درس «generators و yield»). و [[encoding="utf-8"]] دايمًا عشان ويندوز.`,
+            when: R`أي كود بيلمس ملفات أو فولدرات. و FastAPI نفسه بيقبل [[Path]] في [[FileResponse]] و [[StaticFiles]]. والملفات اللي المستخدم بيرفعها: اسم الملف من الـ request مينفعش يتحط في مسار مباشرة (path traversal: [[../../etc/passwd]])، اعمل اسم جديد بـ uuid.`,
+            mistakes: R`مسارات نسبية في سكربت بيتشغّل من cron أو من فولدر تاني (بيدوّر في مكان غلط). و [[str + "/" + str]] بدل [[/]]. و [[p.suffix == ".jpg"]] من غير [[lower()]]. و [[rmtree]] على متغير ممكن يبقى فاضي أو [[/]]. وتنسى [[encoding]] فالعربي يبوظ على ويندوز.`
+          },
+          lines: [
+            "import.",
+            R`مسار نسبي للفولدر الحالي.`,
+            R`[[/]] بيبني المسار: data/reports/2026.`,
+            R`زي [[mkdir -p]]: اعمل الفولدرات اللي فوقه، ومتعترضش لو موجود.`,
+            "مسار ملف.",
+            "اكتب نص في الملف (وبيتقفل لوحده).",
+            "بيطبع المسار.",
+            R`الاسم، ومن غير امتداد، والامتداد، واسم الفولدر اللي فوقه.`,
+            "موجود؟ ملف؟ والحجم بالبايت.",
+            "اقرا الملف كله وقسّمه سطور.",
+            R`[[rglob]]: كل ملفات الـ csv تحت data بأي عمق.`,
+            "المسار نسبةً لـ data.",
+            "Path جديد بامتداد تاني (الأصلي مبيتغيرش).",
+            "انقل/غيّر الاسم.",
+            "الفولدر الحالي والـ home.",
+            "الفولدر اللي فيه السكربت نفسه، مهما كان مكان التشغيل.",
+            "ملف جنب السكربت.",
+            "امسح، ومترميش لو مش موجود."
+          ]
+        },
+        {
+          cmd: "csv و json",
+          title: "من CSV لـ JSON وبالعكس: من ملف لملف",
+          desc: R`[[csv.DictReader]] بيقرا كل صف كـ dict بأسماء الأعمدة من أول سطر، و [[csv.DictWriter]] بيكتب list of dicts. وافتح ملفات الـ CSV دايمًا بـ [[newline=""]] و [[encoding="utf-8"]]. وكل القيم اللي بتيجي من CSV strings، فحوّل الأرقام بنفسك.
+
+و [[json.loads]] و [[json.dumps]] بيحوّلوا بين string و dict/list، و [[json.load]] و [[json.dump]] نفس الكلام مع ملف مفتوح. و [[ensure_ascii=False]] عشان العربي يتكتب عربي مش [[\u0633]]، و [[indent=2]] للقراية.`,
+          example: R`import csv
+import json
+from datetime import date
+from pathlib import Path
+with open("orders.csv", newline="", encoding="utf-8") as f:
+    rows = list(csv.DictReader(f))
+print(rows[2])                        # {'id': '3', 'name': 'Ali, Jr.', 'city': 'Cairo', 'total': '45'}
+for r in rows:
+    r["id"] = int(r["id"])
+    r["total"] = float(r["total"])
+Path("orders.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
+data = json.loads(Path("orders.json").read_text(encoding="utf-8"))
+cairo = [o for o in data if o["city"] == "Cairo"]
+with open("cairo.csv", "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, fieldnames=["id", "name", "total"], extrasaction="ignore")
+    writer.writeheader()
+    writer.writerows(cairo)
+with open("events.jsonl", "w", encoding="utf-8") as f:
+    for o in data:
+        f.write(json.dumps({"order": o["id"], "city": o["city"]}) + "\n")
+payload = {"day": date(2026, 9, 29), "count": len(data)}
+print(json.dumps(payload, default=str))   # {"day": "2026-09-29", "count": 3}
+json.dumps(payload)                       # TypeError: Object of type date is not JSON serializable`,
+          try: R`من نفس [[orders.csv]] (أعمدة id و name و city و total)، اعمل ملخص لكل مدينة: عدد الطلبات والإجمالي، مترتب بالإجمالي تنازلي. اكتبه في [[summary.json]] و [[summary.csv]]. خلي في الـ CSV صف فيه فاصلة جوه الاسم ([["Ali, Jr."]]) وصف المدينة فيه مسافة زيادة ([[ Cairo]]).`,
+          sol: R`مع الـ ٣ صفوف: [[[{'city': 'Cairo', 'orders': 2, 'total': 195.5}, {'city': 'Alex', 'orders': 1, 'total': 80.0}]]]، والـ [[summary.csv]] فيه [[city,orders,total]] وبعدين [[Cairo,2,195.5]] و [[Alex,1,80.0]].
+
+الاسم اللي فيه فاصلة بيتقري صح لأن CSV بيحطه بين علامات تنصيص ([["Ali, Jr."]])، ودي بالظبط اللي بتبوظ لو قسّمت السطر بـ [[line.split(",")]] بإيدك. و [[row["city"].strip()]] عشان [[" Cairo"]] و [["Cairo"]] ميبقوش مدينتين. و [[float(row["total"])]] لازم، وإلا [["150.5" + "45"]] هيبقى string. و [[round]] بعد كل جمع عشان أخطاء الـ float ([[0.1 + 0.2]])، ولو دي فلوس حقيقية استخدم [[Decimal]] أو قروش كـ int. و [[setdefault]] بيعمل الـ dict الفاضي أول مرة بس.`,
+          solCode: R`import csv
+import json
+from pathlib import Path
+def summarize(src: Path) -> list[dict]:
+    by_city: dict[str, dict] = {}
+    with src.open(newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            city = row["city"].strip()
+            s = by_city.setdefault(city, {"city": city, "orders": 0, "total": 0.0})
+            s["orders"] += 1
+            s["total"] = round(s["total"] + float(row["total"]), 2)
+    return sorted(by_city.values(), key=lambda s: s["total"], reverse=True)
+summary = summarize(Path("orders.csv"))
+Path("summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+with open("summary.csv", "w", newline="", encoding="utf-8") as f:
+    w = csv.DictWriter(f, fieldnames=["city", "orders", "total"])
+    w.writeheader()
+    w.writerows(summary)
+print(summary)
+print(Path("summary.csv").read_text(encoding="utf-8"))`,
+          flag: "script",
+          deep: {
+            why: R`«العميل بعت Excel، حمّله في النظام» و «طلّع تقرير CSV للمحاسب» و «حوّل ملف JSON من API قديم»: من أكتر المهام اللي هتتطلب منك، وأغلبها سكربت ٢٠ سطر لو عارف الـ csv و json صح، وساعات كتير ضايعة لو بتقسّم بـ split بإيدك.`,
+            how: R`[[newline=""]] لأن الـ csv module بيتعامل مع نهايات السطور بنفسه (وبيكتب [[\r\n]] افتراضيًا زي المعيار)، ومن غيره هتلاقي سطور فاضية بين الصفوف على ويندوز، والقيم اللي فيها newline تبوظ. و Excel بيحب [[encoding="utf-8-sig"]] (فيه BOM) عشان يفتح العربي صح؛ لو الملف جاي من Excel وأول عمود اسمه [[﻿id]]، ده السبب.
+
+[[DictWriter(fieldnames=...)]] بيحدد الأعمدة وترتيبها، و [[extrasaction="ignore"]] بيتجاهل المفاتيح الزيادة بدل ما يرمي [[ValueError]].
+
+JSON وأنواع Python: object ↔ dict، و array ↔ list، و string ↔ str، و number ↔ int/float، و true/false/null ↔ True/False/None. وأي حاجة تانية ([[datetime]] و [[Decimal]] و [[set]] و [[UUID]]) بترمي [[TypeError: Object of type date is not JSON serializable]]. الحل السريع [[default=str]]، والحل الصح إنك تحوّلها بنفسك أو تسيب Pydantic يعمل ده ([[model_dump(mode="json")]]، المستوى ٢).
+
+JSON Lines ([[.jsonl]]): كل سطر JSON لوحده، فتقدر تكتب وتقرا سطر سطر من غير ما تحمّل الملف كله. ده الشكل المعتاد للّوج والـ exports الكبيرة.`,
+            when: R`csv لأي داتا جدولية بتتبادل مع ناس أو Excel. json للإعدادات والـ APIs والداتا المتداخلة. jsonl للّوج والملفات الكبيرة. ولو محتاج تحليل (group by و join و pivot) على ملفات كبيرة: pandas أو polars، بس الأساس ده الأول.`,
+            mistakes: R`[[line.split(",")]] بدل الـ csv module (أي فاصلة جوه قيمة بتبوظ كل حاجة). ونسيان [[newline=""]]. ونسيان إن كل القيم strings ([["10" > "9"]] False!). و [[json.dumps]] من غير [[ensure_ascii=False]] والعربي يطلع [[\u....]]. و [[default=str]] على كل حاجة من غير ما تفكر، فـ Decimal يطلع string والطرف التاني يستنى رقم.`
+          },
+          lines: [
+            "import csv.",
+            "import json.",
+            "للتاريخ.",
+            "المسارات.",
+            R`افتح الـ CSV بـ [[newline=""]] و utf-8.`,
+            R`كل صف dict، و [[list]] عشان نقرا الكل قبل ما الملف يتقفل.`,
+            "الاسم اللي فيه فاصلة اتقري صح، وكل القيم strings.",
+            "لف على الصفوف.",
+            "حوّل id لرقم بنفسك.",
+            "والإجمالي.",
+            R`اكتب JSON: [[ensure_ascii=False]] للعربي و [[indent=2]] للقراية.`,
+            R`[[loads]]: من string لـ list of dicts.`,
+            "فلتر.",
+            "افتح ملف CSV للكتابة.",
+            R`الأعمدة وترتيبها، و [[extrasaction="ignore"]] بيتجاهل city.`,
+            "سطر العناوين.",
+            "كل الصفوف مرة واحدة.",
+            "ملف JSON Lines.",
+            "لف على الطلبات.",
+            "كل سطر JSON كامل لوحده.",
+            R`dict فيه [[date]].`,
+            R`[[default=str]]: أي نوع مش معروف يتحول string.`,
+            R`من غيره: [[TypeError]].`
+          ]
+        },
+        {
+          cmd: "datetime و zoneinfo",
+          title: "تواريخ بتوقيت صح: خزّن UTC واعرض بتوقيت القاهرة",
+          desc: R`فيه نوعين [[datetime]]: naive (ملوش timezone، [[tzinfo]] بـ None) و aware (عارف هو توقيت إيه). الـ naive هو مصدر أغلب bugs الوقت: [[datetime.now()]] بيرجع وقت السيرفر، والسيرفر ممكن يبقى UTC والمستخدم في القاهرة.
+
+القاعدة: جوه البرنامج وفي القاعدة كل حاجة aware بـ UTC ([[datetime.now(UTC)]]، و [[timestamptz]] في Postgres). وبس وقت العرض حوّل لتوقيت المستخدم بـ [[astimezone(ZoneInfo("Africa/Cairo"))]]. و [[zoneinfo]] في المكتبة الأساسية من 3.9 وبيقرا قاعدة التوقيتات بتاعة النظام، فبيعرف التوقيت الصيفي لوحده.`,
+          example: R`from datetime import UTC, date, datetime, timedelta
+from zoneinfo import ZoneInfo
+CAIRO = ZoneInfo("Africa/Cairo")
+now = datetime.now(UTC)
+print(now.isoformat())                         # 2026-09-29T09:15:00.123456+00:00
+naive = datetime.now()
+print(naive.tzinfo)                            # None: مش عارف هو توقيت إيه
+created = datetime(2026, 9, 29, 21, 30, tzinfo=UTC)
+local = created.astimezone(CAIRO)
+print(local)                                   # 2026-09-30 00:30:00+03:00: اليوم اتغير!
+print(local.strftime("%d/%m/%Y %I:%M %p"))     # 30/09/2026 12:30 AM
+winter = datetime(2026, 1, 15, 12, tzinfo=UTC).astimezone(CAIRO)
+print(winter.utcoffset())                      # 2:00:00: الشتا +2 والصيف +3
+meeting = datetime(2026, 10, 5, 10, 0, tzinfo=CAIRO)
+print(meeting.astimezone(UTC))                 # 2026-10-05 07:00:00+00:00
+parsed = datetime.fromisoformat("2026-09-29T10:00:00Z")
+print(parsed.tzinfo, parsed + timedelta(days=30))
+day_start = datetime.combine(local.date(), datetime.min.time(), tzinfo=CAIRO).astimezone(UTC)
+print(day_start)                               # 2026-09-29 21:00:00+00:00
+print(date(2026, 12, 25) - date(2026, 9, 29))  # 87 days, 0:00:00
+naive < now                                    # TypeError: can't compare offset-naive and offset-aware datetimes`,
+          try: R`عندك طلبات بأوقات UTC: [["2026-09-29T20:59:00Z"]] و [["2026-09-29T21:00:00Z"]] و [["2026-09-30T12:00:00Z"]] و [["2026-09-30T20:59:59Z"]] و [["2026-09-30T21:00:00Z"]]. اكتب [[cairo_day_range(d)]] بترجع بداية ونهاية يوم بتوقيت القاهرة كـ UTC، واستخدمها تعد «طلبات يوم 30 سبتمبر» زي ما المحل في القاهرة شايفها. وبعدين اطبع التاريخ المحلي لكل طلب.`,
+          sol: R`يوم 30 سبتمبر في القاهرة (التوقيت الصيفي، +3) من [[2026-09-29 21:00:00+00:00]] لحد [[2026-09-30 21:00:00+00:00]]، فالطلبات [[3]]: التاني والتالت والرابع. والتواريخ المحلية: [[['2026-09-29', '2026-09-30', '2026-09-30', '2026-09-30', '2026-10-01']]].
+
+الغلط المشهور إنك تعد بتاريخ UTC ([[o.startswith("2026-09-30")]])، فتطلع ٢ بس: الطلب اللي الساعة 9 بالليل UTC (12 بعد نص الليل في القاهرة) هيتحسب على اليوم اللي قبله. والفترة نصها مفتوح ([[start <= t < end]]) عشان مفيش طلب يتحسب في يومين. ومتحسبش الفرق بإيدك ([[timedelta(hours=3)]])، لأن مصر بترجع +2 في الشتا: من 2023 التوقيت الصيفي من آخر جمعة في أبريل لآخر خميس في أكتوبر (في 2026 من 24 أبريل لـ 29 أكتوبر)، و [[ZoneInfo]] بيعرف ده لوحده من قاعدة tzdata.`,
+          solCode: R`from datetime import UTC, date, datetime, time, timedelta
+from zoneinfo import ZoneInfo
+CAIRO = ZoneInfo("Africa/Cairo")
+orders = ["2026-09-29T20:59:00Z", "2026-09-29T21:00:00Z", "2026-09-30T12:00:00Z",
+          "2026-09-30T20:59:59Z", "2026-09-30T21:00:00Z"]
+def cairo_day_range(d: date) -> tuple[datetime, datetime]:
+    start = datetime.combine(d, time.min, tzinfo=CAIRO)
+    end = datetime.combine(d + timedelta(days=1), time.min, tzinfo=CAIRO)
+    return start.astimezone(UTC), end.astimezone(UTC)
+start, end = cairo_day_range(date(2026, 9, 30))
+print(start, end)
+todays = [o for o in orders if start <= datetime.fromisoformat(o) < end]
+print(len(todays), todays)
+by_local_day = [datetime.fromisoformat(o).astimezone(CAIRO).date().isoformat() for o in orders]
+print(by_local_day)`,
+          flag: "script",
+          deep: {
+            why: R`«طلبات النهارده» و «الكوبون ينتهي آخر اليوم» و «الحجز الساعة 10»: كلهم وقت، وكلهم بيبوظوا لو السيرفر في منطقة زمنية والمستخدم في منطقة تانية، أو لما التوقيت الصيفي يبدأ. والـ bugs دي بتظهر مرتين في السنة أو لعميل في بلد تاني، فبتبقى صعبة جدًا تلاقيها.`,
+            how: R`[[datetime.now(UTC)]] aware، و [[datetime.now()]] و [[datetime.utcnow()]] naive (الأخيرة deprecated من 3.12 لأنها بترجع وقت UTC من غير ما تقول إنه UTC). و [[UTC]] اختصار لـ [[timezone.utc]] من 3.11.
+
+[[astimezone(tz)]] بيحوّل نفس اللحظة لتوقيت تاني: الساعة بتتغير واللحظة زي ما هي. أما [[replace(tzinfo=tz)]] فبيلزق timezone على نفس الساعة، ودي لحظة تانية خالص، فمتستخدمهاش للتحويل. و [[datetime(..., tzinfo=CAIRO)]] صح مع ZoneInfo (بعكس pytz القديمة).
+
+[[fromisoformat]] بيقرا ISO 8601 بما فيها [[Z]] (من 3.11)، و [[isoformat()]] بيكتبها: ده الشكل اللي تبعته في JSON. و [[strftime]] للعرض ([[%d/%m/%Y %I:%M %p]])، و [[strptime]] للقراية بشكل معين.
+
+[[timedelta]] للفروق والإضافة. و [[date - date]] بيرجع timedelta. والمقارنة بين naive و aware بترمي [[TypeError]]، ودي حماية مفيدة.
+
+ZoneInfo بيقرا [[/usr/share/zoneinfo]]. في Docker images الصغيرة (slim و alpine) ممكن متكونش موجودة، فـ [[ZoneInfoNotFoundError]]: سطّب [[tzdata]] من pip أو apt. وفي ساعة التغيير فيه أوقات بتتكرر (فصل الشتا) والـ [[fold]] بيفرّق بينهم.`,
+            when: R`UTC aware في كل حتة جوه الكود والقاعدة والـ APIs. التوقيت المحلي بس في العرض، أو لما «اليوم» نفسه ليه معنى محلي (تقرير يومي، مواعيد عمل، حجز). ولو المستخدمين في أكتر من بلد، خزّن timezone كل مستخدم ([["Africa/Cairo"]]) واستخدمه في العرض. وفي JS نفس القاعدة (تاب JavaScript درس «UTC و Intl.DateTimeFormat»).`,
+            mistakes: R`[[datetime.now()]] على السيرفر. و [[+ timedelta(hours=2)]] كتوقيت مصر (بيبوظ نص السنة). و [[replace(tzinfo=...)]] للتحويل. وتقارن تاريخ UTC بتاريخ محلي. و [[timestamp]] من غير timezone في Postgres. وتخزّن الوقت كـ string بشكل محلي ([["30/09/2026 12:30 AM"]]) مش ISO.`
+          },
+          lines: [
+            R`[[UTC]] (3.11+) و [[date]] و [[timedelta]].`,
+            "قاعدة التوقيتات.",
+            "توقيت القاهرة، بالتوقيت الصيفي.",
+            "الوقت دلوقتي aware بـ UTC: ده اللي تخزّنه.",
+            R`ISO 8601 بـ [[+00:00]]: الشكل اللي تبعته في JSON.`,
+            "naive: وقت السيرفر من غير timezone.",
+            "None: مفيش حاجة تقول ده توقيت إيه.",
+            "طلب اتعمل 9:30 بالليل UTC.",
+            "نفس اللحظة بتوقيت القاهرة.",
+            "بقى 12:30 بعد نص الليل، يوم 30 مش 29.",
+            "للعرض.",
+            "تاريخ في الشتا.",
+            "الفرق +2، مش +3.",
+            "ميعاد مكتوب بتوقيت القاهرة.",
+            "حوّله لـ UTC للتخزين.",
+            R`اقرا ISO، و [[Z]] يعني UTC.`,
+            "aware، والإضافة بـ timedelta.",
+            "بداية يوم 30 في القاهرة، كـ UTC: للاستعلام من القاعدة.",
+            "9 بالليل يوم 29 UTC.",
+            "الفرق بين تاريخين.",
+            "naive و aware مينفعش يتقارنوا: TypeError."
+          ]
+        },
+        {
+          cmd: "re",
+          title: "regex في Python: search و findall و sub و groups",
+          desc: R`[[re]] مكتبة الـ regex في Python. نفس اللغة اللي اتشرحت في تاب JavaScript (درس «regex: classes و quantifiers» ودرس «groups و flags»)، والفروق في طريقة النداء: [[re.search]] أول تطابق في أي حتة، و [[re.match]] من أول الـ string بس، و [[re.fullmatch]] الـ string كلها، و [[re.findall]] كل التطابقات، و [[re.sub]] استبدال، و [[re.split]] تقسيم.
+
+واكتب الـ pattern دايمًا raw string: [[r"\d+"]]، عشان الـ backslash يوصل للـ regex زي ما هو. ولو هتستخدم نفس الـ pattern كتير: [[re.compile]] مرة واحدة.`,
+          example: R`import re
+PHONE = re.compile(r"^01[0125]\d{8}$")
+print(bool(PHONE.match("01012345678")), bool(PHONE.match("0101234567")))   # True False
+print(re.fullmatch(r"\d{4}-\d{2}-\d{2}", "2026-09-29") is not None)        # True
+line = '10.0.0.7 - - [29/Sep/2026:10:00:01 +0000] "GET /api/users HTTP/1.1" 500 12'
+m = re.search(r'"(?P<method>[A-Z]+) (?P<path>\S+) [^"]*" (?P<status>\d{3})', line)
+if m:
+    print(m["method"], m["path"], int(m["status"]))                        # GET /api/users 500
+text = "كلمني على 01012345678 أو 01298765432"
+print(re.findall(r"01\d{9}", text))
+print(re.sub(r"(01\d)\d{5}(\d{3})", r"\1*****\2", text))
+print(re.split(r"\s*[,;]\s*", "tea , coffee;juice"))                     # ['tea', 'coffee', 'juice']
+slug = re.sub(r"[^a-z0-9]+", "-", "Hello, FastAPI World!".lower()).strip("-")
+print(slug)                                                                 # hello-fastapi-world
+print(re.findall(r"<.+?>", "<b>hi</b>"), re.findall(r"<.+>", "<b>hi</b>"))
+print(re.escape("price (EGP)?"))`,
+          try: R`عندك سطور لوج بالشكل اللي في المثال (IP وبعدين التاريخ وبعدين [["GET /path HTTP/1.1"]] وبعدين الـ status). اكتب pattern بـ named groups يطلّع الـ IP والـ method والـ path (من غير query string) والـ status، وعدّ أخطاء الـ 5xx لكل path، وعدّ السطور اللي مطابقتش بدل ما توقّع البرنامج. خلي في الداتا [[/api/users?page=2]] وسطر بايظ.`,
+          sol: R`الناتج: [[{'/api/users': 2} skipped: 1]]. الطلبين على [[/api/users]] و [[/api/users?page=2]] اتحسبوا path واحد لأن الـ group بتاع الـ path [[[^ ?"]+]] بيقف عند [[?]]، والسطر البايظ اتعد في [[skipped]] بدل ما [[m["status"]]] ترمي [[TypeError: 'NoneType' object is not subscriptable]].
+
+دي أشهر غلطة مع [[re]]: [[search]] و [[match]] بيرجعوا [[None]] لو مفيش تطابق، فلازم [[if m:]] قبل ما تستخدم الـ groups. والتانية [[.*]] الطماعة: [[".*"]] على السطر كله ممكن تبلع من أول علامة تنصيص لآخر واحدة، فاستخدم [[.*?]] أو class محدد زي [[[^"]*]]. ولاحظ إن [[m["status"]]] string، فلو هتقارن بأرقام حوّلها [[int]].`,
+          solCode: R`import re
+LOG = """10.0.0.7 - - [29/Sep/2026:10:00:01 +0000] "GET /api/users HTTP/1.1" 500 12
+10.0.0.8 - - [29/Sep/2026:10:00:02 +0000] "POST /api/orders HTTP/1.1" 201 88
+10.0.0.7 - - [29/Sep/2026:10:00:03 +0000] "GET /api/users?page=2 HTTP/1.1" 502 0
+bad line here
+10.0.0.9 - - [29/Sep/2026:10:00:04 +0000] "GET /health HTTP/1.1" 200 2"""
+LINE = re.compile(r'^(?P<ip>\S+) .*?"(?P<method>[A-Z]+) (?P<path>[^ ?"]+)\S* [^"]*" (?P<status>\d{3}) ')
+errors: dict[str, int] = {}
+skipped = 0
+for line in LOG.splitlines():
+    m = LINE.match(line)
+    if not m:
+        skipped += 1
+        continue
+    if m["status"].startswith("5"):
+        errors[m["path"]] = errors.get(m["path"], 0) + 1
+print(errors, "skipped:", skipped)`,
+          flag: "script",
+          deep: {
+            why: R`تحليل لوج، وتنضيف داتا جاية من CSV، وفحص شكل رقم تليفون أو كود، و slug من عنوان: كلها regex. و Pydantic نفسه بيقبل [[pattern=]] في [[Field]] (المستوى ٢) بنفس الصيغة.`,
+            how: R`[[re.match]] بيطابق من أول الـ string بس (مش لازم لآخرها)، و [[re.fullmatch]] لازم الـ string كلها تطابق: ده اللي عايزه في الـ validation بدل [[^...$]]، لأن [[$]] في Python بيقبل newline في الآخر ([[re.match(r"^\d+$", "12\n")]] بتنجح!).
+
+الـ match object: [[m.group(1)]] أو [[m["name"]]] للـ named group [[(?P<name>...)]] (في JS الصيغة [[(?<name>...)]] من غير P، و Python بيرفضها بـ [[unknown extension]]، فافتكر الـ P). و [[m.groupdict()]] dict بكل الـ named groups.
+
+[[findall]] بيرجع list strings، ولو فيه groups بيرجع الـ groups مش التطابق كله (فخ مشهور). و [[finditer]] بيرجع match objects واحد واحد. و [[sub]] بيقبل [[\1]] في الاستبدال، أو دالة بتاخد الـ match وترجع النص.
+
+الـ flags: [[re.IGNORECASE]] و [[re.MULTILINE]] ([[^]] و [[$]] لكل سطر) و [[re.VERBOSE]] (تكتب الـ pattern على كذا سطر بتعليقات). و [[\d]] في Python بيطابق الأرقام العربية ([[٣]]) كمان لأن الـ strings Unicode؛ لو عايز 0-9 بس: [[[0-9]]] أو [[re.ASCII]].
+
+[[re.escape(s)]] لما بتحط input من المستخدم جوه pattern، عشان [[(]] و [[?]] ميتفهموش كـ regex.`,
+            when: R`نمط في نص: فحص شكل، استخراج، استبدال. لكن لو فيه أداة متخصصة استخدمها: [[str.startswith]] و [[in]] و [[split]] للحاجات البسيطة، و [[json]] و [[csv]] و [[urllib.parse]] و [[email.utils]] للصيغ المعروفة، و HTML parser للـ HTML. وتاب JavaScript فيه درس «إمتى regex غلط» بنفس الكلام.`,
+            mistakes: R`pattern من غير [[r""]] ([["\d"]] بتطلّع SyntaxWarning، و [["\b"]] بتبقى backspace مش word boundary). و [[re.match]] وانت قصدك search أو fullmatch. ونسيان [[if m:]]. و [[.*]] طماعة. و regex للإيميل طوله ٣ سطور (فحص بسيط + إيميل تأكيد أحسن). و regex متداخل زي [[(a+)+]] على input من المستخدم: ممكن ياخد وقت أُسّي (ReDoS).`
+          },
+          lines: [
+            "import.",
+            R`[[compile]] مرة واحدة: موبايل مصري ١١ رقم يبدأ بـ 010 أو 011 أو 012 أو 015.`,
+            R`[[match]] بيرجع match object أو None، و [[bool]] بيحوّله.`,
+            R`[[fullmatch]]: الـ string كلها لازم تطابق.`,
+            "سطر لوج.",
+            R`[[search]] في أي حتة، و [[(?P<name>...)]] named groups.`,
+            R`لازم [[if m]]: لو مفيش تطابق m بـ None.`,
+            R`[[m["name"]]] بيجيب الـ group، والناتج strings فحوّل الرقم.`,
+            "نص فيه رقمين.",
+            R`[[findall]]: كل التطابقات في list.`,
+            R`[[sub]] بـ groups: [[\1]] و [[\2]] بيرجّعوا اللي اتمسك، والنص بينجّم الوسط.`,
+            R`[[split]] بـ regex: فاصلة أو semicolon بمسافات أو من غير.`,
+            "slug: أي حاجة مش حرف أو رقم تبقى شرطة، وشيل الشرط من الأطراف.",
+            "hello-fastapi-world.",
+            R`[[.+?]] كسولة: أقصر تطابق. و [[.+]] طماعة: بلعت الكل.`,
+            R`[[escape]]: لما بتحط نص من المستخدم جوه pattern.`
+          ]
+        }
+      ]
+    },
+    {
+      t: "collections و itertools و functools",
+      l: 1,
+      n: "أدوات جاهزة في المكتبة الأساسية بتوفّر عليك loops و dicts بتكتبها بإيدك",
+      items: [
+        {
+          cmd: "collections",
+          title: "Counter و defaultdict و deque و namedtuple",
+          desc: R`[[collections]] فيها أنواع جاهزة لمشاكل بتتكرر: [[Counter]] للعد (dict قيمه أعداد، و [[most_common]])، و [[defaultdict]] للتجميع (المفتاح الجديد بياخد قيمة افتراضية لوحده)، و [[deque]] طابور سريع من الناحيتين وممكن يبقى بحد أقصى ([[maxlen]])، و [[namedtuple]] tuple بأسماء.
+
+درس «dict» فرّج على Counter و defaultdict بسرعة؛ هنا بالتفصيل ومعاهم deque اللي هو أساس أي طابور أو «آخر N حاجة».`,
+          example: R`from collections import Counter, defaultdict, deque, namedtuple
+words = "tea coffee tea juice tea coffee".split()
+c = Counter(words)
+print(c.most_common(2))                        # [('tea', 3), ('coffee', 2)]
+print(c["water"])                              # 0: مفيش KeyError
+c.update(["water", "tea"])
+print(c + Counter(juice=4), c.total())
+orders = [("Cairo", "sara"), ("Alex", "omar"), ("Cairo", "ali")]
+by_city = defaultdict(list)
+for city, user in orders:
+    by_city[city].append(user)
+print(dict(by_city))                           # {'Cairo': ['sara', 'ali'], 'Alex': ['omar']}
+tree = defaultdict(lambda: defaultdict(int))
+tree["Cairo"]["tea"] += 2
+recent = deque(maxlen=3)
+for page in ["/", "/a", "/b", "/c"]:
+    recent.append(page)
+print(recent)                                  # deque(['/a', '/b', '/c'], maxlen=3)
+queue = deque(["job1", "job2"])
+queue.appendleft("urgent")
+print(queue.popleft(), queue.pop())            # urgent job2
+Point = namedtuple("Point", ["lat", "lng"])
+p = Point(30.04, 31.23)
+print(p.lat, p)`,
+          try: R`(١) من list عناوين IP، طلّع أكتر اتنين بيبعتوا طلبات بسطر واحد. (٢) اكتب rate limiter بسيط: [[allow(ip, now)]] بترجع True لو الـ IP ده بعت أقل من ٣ طلبات في آخر ١٠ ثواني، بـ [[defaultdict(deque)]]. جرّبها على IP واحد في الأوقات [[0, 1, 2, 3, 9.9, 10.5, 11]].`,
+          sol: R`(١) [[Counter(ips).most_common(2)]] بترجع [[[('1.1.1.1', 3), ('2.2.2.2', 2)]]].
+
+(٢) المتوقع [[[True, True, True, False, False, True, True]]]: أول ٣ مسموحين، و 3 و 9.9 مرفوضين (لسه فيه ٣ في آخر ١٠ ثواني)، وعند 10.5 الطلب اللي كان عند 0 خرج من الشباك فيتسمح، وعند 11 اللي عند 1 خرج. و IP تاني ليه deque لوحده فأول طلب ليه True.
+
+الـ [[deque]] هنا بيدّيك [[popleft()]] بـ O(1)؛ لو استخدمت list و [[pop(0)]] كل شيل بيزق العناصر كلها. ولاحظ إن الطلب المرفوض مبيتسجّلش، وإلا الـ IP اللي بيضرب باستمرار هيفضل مقفول للأبد. والنسخة دي في الذاكرة، فمع كذا worker كل واحد شايف عدّ مختلف؛ النسخة الحقيقية في Redis (درس «redis rate limit» في المستوى ٣).`,
+          solCode: R`from collections import Counter, defaultdict, deque
+ips = ["1.1.1.1", "2.2.2.2", "1.1.1.1", "3.3.3.3", "1.1.1.1", "2.2.2.2"]
+print(Counter(ips).most_common(2))
+LIMIT, WINDOW = 3, 10.0
+hits: defaultdict[str, deque[float]] = defaultdict(deque)
+def allow(ip: str, now: float) -> bool:
+    q = hits[ip]
+    while q and q[0] <= now - WINDOW:
+        q.popleft()
+    if len(q) >= LIMIT:
+        return False
+    q.append(now)
+    return True
+print([allow("1.1.1.1", t) for t in [0, 1, 2, 3, 9.9, 10.5, 11]])
+print(allow("2.2.2.2", 3))`,
+          flag: "script",
+          deep: {
+            why: R`عدّ الكلمات، وتجميع الطلبات حسب المستخدم، و «آخر ١٠٠ سطر لوج»، و BFS في الـ graphs، و طابور jobs: كلها بتتكتب بإيدك بـ dict و if و list، وبتطلع أطول وأبطأ. وفي انترفيوهات الـ DSA، [[Counter]] و [[deque]] بيختصروا نص الحل.`,
+            how: R`[[Counter]] dict عادي بس [[c["x"]]] بترجع 0 لو مش موجود (من غير ما تضيف المفتاح). وبيتجمع ويتطرح ([[c1 + c2]] و [[c1 - c2]] وبيشيل الصفر والسالب)، و [[update]] بتزوّد، و [[total()]] (3.10+) مجموع العدّ.
+
+[[defaultdict(factory)]]: لما تطلب مفتاح مش موجود بينادي الـ factory ([[list]] أو [[int]] أو [[set]] أو lambda) ويحط الناتج. خلي بالك: مجرد القراية [[d["x"]]] بتضيف المفتاح، فلو عايز تسأل «موجود؟» استخدم [[in]]. و [[dict(d)]] قبل ما ترجعه من API عشان يبقى dict عادي.
+
+[[deque]]: [[append]] و [[appendleft]] و [[pop]] و [[popleft]] كلهم O(1)، بعكس [[list.insert(0)]] و [[list.pop(0)]] اللي O(n). و [[maxlen]] بيشيل من الناحية التانية لوحده لما يتملى. والوصول بالـ index في النص O(n)، فمش بديل للـ list في كل حاجة.
+
+[[namedtuple]] tuple immutable بأسماء، خفيف وبيتفك زي tuple. للكود الجديد غالبًا [[dataclass(frozen=True)]] أو [[typing.NamedTuple]] (نفس الفكرة بـ type hints) أوضح.`,
+            when: R`Counter لأي عدّ. defaultdict لأي «group by» في الذاكرة. deque لأي طابور، أو «آخر N»، أو BFS. وللطابور بين threads: [[queue.Queue]]، وبين coroutines: [[asyncio.Queue]].`,
+            mistakes: R`[[list.pop(0)]] في loop على list كبيرة (O(n²)). و [[defaultdict]] وتفتكر إن [[if d[k]:]] مش هتضيف مفتاح. وترجع defaultdict في JSON response وتستغرب من الـ type. و [[Counter]] بتاع حروف لما انت قصدك كلمات ([[Counter("hello world")]] بيعد الحروف؛ محتاج [[.split()]]).`
+          },
+          lines: [
+            "import الأربعة.",
+            "list كلمات.",
+            "عدّ في سطر.",
+            "أكتر اتنين.",
+            "مفتاح مش موجود: صفر، ومن غير KeyError.",
+            "زوّد عدّ.",
+            R`[[+]] بين Counters، و [[total()]] المجموع.`,
+            "أزواج (مدينة، مستخدم).",
+            "أي مدينة جديدة بتبدأ بـ list فاضية.",
+            "لف.",
+            R`من غير [[if city not in by_city]].`,
+            R`[[dict()]] عشان يتطبع ويترجع كـ dict عادي.`,
+            R`متداخل: مدينة ← صنف ← عدد.`,
+            "المفتاحين اتعملوا لوحدهم.",
+            R`طابور بحد أقصى ٣.`,
+            "٤ صفحات.",
+            "لما يتملى، الأقدم بيطلع لوحده.",
+            "آخر ٣ بس.",
+            "طابور عادي.",
+            "ضيف في الأول: O(1).",
+            R`[[popleft]] و [[pop]]: من الناحيتين O(1).`,
+            "namedtuple: tuple بأسماء.",
+            "object.",
+            "بالاسم، والطباعة واضحة."
+          ]
+        },
+        {
+          cmd: "itertools",
+          title: "itertools: chain و batched و groupby و pairwise",
+          desc: R`[[itertools]] أدوات بتشتغل على أي iterable وبترجع iterators (lazy، مبتحسبش غير لما تطلب): [[chain]] بيوصّل كذا حاجة ورا بعض، و [[batched]] (3.12+) بيقسّم لحتت بحجم ثابت، و [[pairwise]] أزواج متتالية، و [[accumulate]] مجموع متراكم، و [[product]] كل التوافيق، و [[count]] عدّاد مالوش آخر، و [[islice]] قطع من iterator، و [[groupby]] تجميع للعناصر المتجاورة.`,
+          example: R`from itertools import accumulate, batched, chain, count, groupby, islice, pairwise, product
+from operator import itemgetter
+print(list(chain([1, 2], (3, 4), range(5, 7))))       # [1, 2, 3, 4, 5, 6]
+print(list(batched(range(7), 3)))                     # [(0, 1, 2), (3, 4, 5), (6,)]
+print(list(pairwise([100, 120, 90])))                 # [(100, 120), (120, 90)]
+print(list(accumulate([100, -30, 50])))               # [100, 70, 120]: رصيد متراكم
+print(list(product(["S", "M"], ["red", "blue"])))
+ids = count(start=1000)
+print(next(ids), next(ids))                           # 1000 1001
+print(list(islice(ids, 3)))                           # [1002, 1003, 1004]
+sales = [("Alex", 80), ("Cairo", 150), ("Cairo", 45), ("Alex", 20)]
+sales.sort(key=itemgetter(0))
+for city, group in groupby(sales, key=itemgetter(0)):
+    print(city, sum(amount for _, amount in group))   # Alex 100 ثم Cairo 195`,
+          try: R`(١) عندك قراءات حرارة [[[20, 21, 25, 24, 30, 29, 29]]]: طلّع التغيير بين كل قراية واللي بعدها وأكبر زيادة بـ [[pairwise]]. (٢) [[groupby]] على تواريخ [[["2026-09-01", "2026-09-01", "2026-09-02", "2026-09-01"]]] مرة من غير ترتيب ومرة بعد [[sorted]]، وقارن. (٣) قسّم [[range(1, 11)]] لدفعات من ٤ كأنك بتعمل INSERT على دفعات.`,
+          sol: R`(١) [[[1, 4, -1, 6, -1, 0]]] وأكبر زيادة [[6]]. (٢) من غير ترتيب: [[[('2026-09-01', 2), ('2026-09-02', 1), ('2026-09-01', 1)]]]، اليوم الأول ظهر مرتين! وبعد [[sorted]]: [[[('2026-09-01', 3), ('2026-09-02', 1)]]]. (٣) [[(1, 2, 3, 4)]] و [[(5, 6, 7, 8)]] و [[(9, 10)]]: آخر دفعة أصغر، وده طبيعي.
+
+الـ groupby هو الفخ المشهور: بيجمّع العناصر المتجاورة بس (زي [[uniq]] في bash)، فلازم ترتّب بنفس الـ key الأول. ولو مش عايز ترتّب، [[defaultdict(list)]] أسهل. والـ [[g]] اللي بيرجع من groupby بيتستهلك أول ما تتحرك للمجموعة اللي بعدها، عشان كده [[len(list(g))]] جوه نفس اللفة.`,
+          solCode: R`from itertools import batched, groupby, pairwise
+readings = [20, 21, 25, 24, 30, 29, 29]
+changes = [b - a for a, b in pairwise(readings)]
+print(changes, max(changes))
+days = ["2026-09-01", "2026-09-01", "2026-09-02", "2026-09-01"]
+print([(d, len(list(g))) for d, g in groupby(days)])
+print([(d, len(list(g))) for d, g in groupby(sorted(days))])
+ids = list(range(1, 11))
+for chunk in batched(ids, 4):
+    print("INSERT batch:", chunk)`,
+          flag: "script",
+          deep: {
+            why: R`دفعات لـ API بيقبل ١٠٠ عنصر في الطلب، و «الفرق عن امبارح»، و «رصيد بعد كل عملية»، و «كل مقاسات ×كل ألوان»: كلها loops فيها indexes و off-by-one. و itertools بيقولها في كلمة، ومن غير ما يحمّل الداتا كلها في الذاكرة.`,
+            how: R`كل دوال itertools بترجع iterators: بتتلف عليها مرة واحدة ومبتحسبش حاجة غير لما تطلب. فـ [[count()]] مالوش آخر ومينفعش تعمل منه list، بس ينفع مع [[islice]] أو [[zip]] أو [[next]].
+
+[[batched(it, n)]] بيرجع tuples، ومن 3.13 فيه [[strict=True]] بيرمي لو آخر دفعة ناقصة. و [[pairwise]] (3.10+) زي [[zip(a, a[1:])]] بس لأي iterable. و [[accumulate]] الافتراضي جمع، وتقدر تديله دالة ([[accumulate(xs, max)]] أعلى قيمة لحد دلوقتي).
+
+[[groupby(it, key)]] بيرجع أزواج (المفتاح، iterator للمجموعة)، وبيعمل مجموعة جديدة كل ما الـ key يتغير عن اللي قبله. و [[operator.itemgetter(0)]] دالة جاهزة بتساوي [[lambda x: x[0]]].
+
+وفيه كمان [[combinations]] و [[permutations]] (مفيدين في DSA)، و [[zip_longest]]، و [[takewhile]]/[[dropwhile]]، و [[tee]].`,
+            when: R`لما الـ loop بتاعك بيعمل حاجة ليها اسم في itertools. بس متعملش سلسلة ٥ دوال متداخلة عشان تبان شاطر؛ لو loop عادي أوضح، اكتبه loop.`,
+            mistakes: R`[[groupby]] من غير ترتيب. وتلف على iterator مرتين (التانية فاضية). و [[list(count())]] (بيلف للأبد). وتحتفظ بمجموعة من groupby لبعدين ([[groups = list(groupby(...))]]) فتلاقي المجموعات فاضية.`
+          },
+          lines: [
+            "الأدوات.",
+            R`[[itemgetter(0)]] = [[lambda x: x[0]]].`,
+            "وصّل كذا iterable ورا بعض.",
+            "دفعات بحجم ٣، والأخيرة أصغر.",
+            "أزواج متتالية: مفيد للفروق.",
+            "مجموع متراكم.",
+            "كل التوافيق: مقاسات × ألوان.",
+            "عدّاد مالوش آخر يبدأ من 1000.",
+            R`[[next]] بتاخد القيمة الجاية.`,
+            R`[[islice]] بتاخد ٣ من iterator مالوش آخر.`,
+            "مبيعات.",
+            R`رتّب بالمدينة الأول: [[groupby]] بيجمّع المتجاور بس.`,
+            "لف على كل مجموعة.",
+            "اجمع مبيعات المجموعة."
+          ]
+        },
+        {
+          cmd: "functools",
+          title: "lru_cache و partial و cached_property و reduce",
+          desc: R`[[functools]] أدوات للدوال: [[@lru_cache]] بيحفظ ناتج الدالة لكل مجموعة باراميترات (memoization)، و [[partial]] بيثبّت باراميترات في دالة ويرجّع دالة جديدة، و [[@cached_property]] خاصية بتتحسب مرة واحدة لكل object، و [[reduce]] بيطبّق دالة على عناصر بالتراكم، و [[wraps]] اللي شفناه في درس «decorators».`,
+          example: R`import time
+from functools import cached_property, lru_cache, partial, reduce
+@lru_cache(maxsize=256)
+def exchange_rate(currency: str) -> float:
+    time.sleep(0.5)
+    return {"USD": 48.5, "EUR": 56.9}[currency]
+exchange_rate("USD")
+exchange_rate("USD")
+print(exchange_rate.cache_info())      # CacheInfo(hits=1, misses=1, maxsize=256, currsize=1)
+exchange_rate.cache_clear()
+def price_with_tax(amount: float, rate: float) -> float:
+    return round(amount * (1 + rate), 2)
+egypt_vat = partial(price_with_tax, rate=0.14)
+print(egypt_vat(100), list(map(egypt_vat, [10, 20])))   # 114.0 [11.4, 22.8]
+print_err = partial(print, "ERROR:", sep=" | ")
+print_err("disk full")                                 # ERROR: | disk full
+print(reduce(lambda acc, x: acc * x, [1, 2, 3, 4], 1))  # 24
+class Report:
+    def __init__(self, rows: list[int]):
+        self.rows = rows
+    @cached_property
+    def total(self) -> int:
+        print("بحسب...")
+        return sum(self.rows)
+r = Report([1, 2, 3])
+print(r.total, r.total)                                 # بحسب... مرة واحدة ثم 6 6
+exchange_rate(["USD"])                                  # TypeError: unhashable type: 'list'`,
+          try: R`(١) اكتب [[ways(n)]] عدد طرق طلوع سلم n درجة بخطوة أو خطوتين ([[ways(n-1) + ways(n-2)]]) بـ [[@lru_cache(maxsize=None)]] واطبع [[ways(80)]] وعدد النداءات الفعلية و [[cache_info()]]. جرّب تشيل الـ cache على [[ways(35)]] وقارن الوقت. (٢) من دالة [[fmt(amount, currency, decimals=2)]] اعمل [[egp]] و [[usd]] بـ [[partial]]، و [[usd]] من غير كسور.`,
+          sol: R`(١) [[ways(80)]] = [[37889062373143906]] في أجزاء من الثانية، والدالة اتنفّذت [[81]] مرة بس (مرة لكل n من 0 لـ 80)، و [[cache_info()]] بيقول [[hits=78, misses=81]]. من غير الـ cache، [[ways(35)]] لوحدها بتعمل حوالي ٣٠ مليون نداء وبتاخد ثواني، و [[ways(80)]] مش هتخلص. ده الفرق بين O(n) و O(2^n)، ونفس فكرة الـ dynamic programming في تاب DSA.
+
+(٢) [[egp(12500.5)]] = [[12,500.50 EGP]]، و [[usd(99.6)]] = [[100 USD]]، و [[egp(3, decimals=0)]] = [[3 EGP]]: الباراميتر اللي partial ثبّته بالاسم ينفع يتغير وقت النداء. الغلطة الشائعة: [[partial(fmt, "EGP")]] بالمكان، فالـ EGP تروح لـ [[amount]] مش [[currency]].`,
+          solCode: R`import time
+from functools import lru_cache, partial
+calls = 0
+@lru_cache(maxsize=None)
+def ways(n: int) -> int:
+    global calls
+    calls += 1
+    if n <= 1:
+        return 1
+    return ways(n - 1) + ways(n - 2)
+start = time.perf_counter()
+print(ways(80), calls, f"{time.perf_counter() - start:.4f}s")
+print(ways.cache_info())
+def fmt(amount: float, currency: str, decimals: int = 2) -> str:
+    return f"{amount:,.{decimals}f} {currency}"
+egp = partial(fmt, currency="EGP")
+usd = partial(fmt, currency="USD", decimals=0)
+print(egp(12500.5), usd(99.6), egp(3, decimals=0))`,
+          flag: "script",
+          deep: {
+            why: R`[[lru_cache]] بيحوّل حسبة متكررة غالية (إعدادات، سعر صرف، recursion) لـ lookup. و [[partial]] بتلاقيه في كود callbacks ومع [[map]] ومع [[run_in_executor]] اللي مبيقبلش keyword arguments. و [[@lru_cache]] على [[get_settings]] هو الـ pattern الرسمي في FastAPI (درس «pydantic-settings»).`,
+            how: R`[[@lru_cache(maxsize=256)]] بيعمل dict من الباراميترات للناتج، ولما يتملى بيشيل الأقدم استخدامًا (Least Recently Used). [[maxsize=None]] أو [[@cache]] (3.9+) من غير حد. والباراميترات لازم hashable (مفيش list ولا dict)، و [[f(1)]] و [[f(x=1)]] بيتخزنوا كمفتاحين مختلفين. و [[cache_info()]] و [[cache_clear()]] للمتابعة والمسح.
+
+الـ cache ده في ذاكرة الـ process: مفيش TTL (القيمة مبتنتهيش)، ومش مشترك بين الـ workers، وبيتمسح لما الـ process يقفل. للداتا اللي بتتغير: Redis (المستوى ٣). ولو الدالة async، [[lru_cache]] هيخزّن الـ coroutine نفسه مش الناتج، والنداء التاني هيقع بـ [[cannot reuse already awaited coroutine]]، فمينفعش.
+
+[[partial(f, *args, **kwargs)]] بيرجع callable لما تناديه بيضيف الباراميترات المتثبتة. و [[cached_property]] بتحسب أول مرة وتحط الناتج في [[__dict__]] بتاع الـ object، فبعد كده بتتقري كخاصية عادية (ومش شغالة مع [[slots=True]]).
+
+[[reduce(f, items, initial)]] بتطبّق [[f(acc, x)]] على كل عنصر. غالبًا [[sum]] و [[max]] و [[math.prod]] و loop أوضح منها، وده سبب إنها اتنقلت من الـ built-ins لـ functools.`,
+            when: R`[[lru_cache]] لدوال pure (نفس الباراميترات = نفس الناتج دايمًا) وغالية. [[cached_property]] لحسبة تقيلة على object مبيتغيرش. [[partial]] لما تحتاج تبعت دالة بباراميترات متثبتة لحد تاني.`,
+            mistakes: R`[[lru_cache]] على دالة بتقرا من القاعدة أو الوقت (الداتا القديمة تفضل راجعة). وعلى method ([[self]] بيبقى جزء من المفتاح والـ object مبيتمسحش من الذاكرة). وعلى دالة async. وباراميتر list: [[TypeError: unhashable type: 'list']]. و [[maxsize=None]] على دالة باراميتراتها جاية من المستخدمين (الذاكرة بتكبر من غير حد).`
+          },
+          lines: [
+            "للتأخير.",
+            "الأدوات.",
+            "cache بحد أقصى ٢٥٦ قيمة.",
+            "دالة غالية (كأنها بتنادي API).",
+            "نص ثانية.",
+            "القيمة.",
+            "أول مرة: بتتحسب (miss).",
+            "تاني مرة: من الـ cache على طول (hit).",
+            "إحصائيات الـ cache.",
+            "امسح الـ cache (لما الداتا تتغير).",
+            "دالة عامة.",
+            "الحسبة.",
+            R`[[partial]]: نسخة منها الـ rate فيها متثبت.`,
+            "بتتنادى بباراميتر واحد، وتنفع مع map.",
+            R`[[partial]] على [[print]] نفسها.`,
+            "بتطبع بالبادئة والفاصل.",
+            R`[[reduce]]: حاصل ضرب بالتراكم (وفيه [[math.prod]] أوضح).`,
+            "class.",
+            "الـ init.",
+            "خزّن.",
+            "خاصية بتتحسب أول مرة بس.",
+            "method.",
+            "علامة إن الحسبة حصلت.",
+            "الحسبة.",
+            "object.",
+            "بحسب... مرة واحدة، وبعدين 6 و 6.",
+            R`list مش hashable: [[lru_cache]] بيرمي.`
+          ]
+        }
+      ]
+    },
+    {
+      t: "سكربتات وأوامر النظام",
+      l: 1,
+      n: "سكربت بـ arguments بـ argparse أو typer، وتشغّل أوامر النظام بـ subprocess بأمان",
+      items: [
+        {
+          cmd: "argparse و typer",
+          title: "سكربت بياخد arguments و --flags و --help",
+          desc: R`بدل ما تعدّل الكود كل مرة تغيّر ملف أو رقم، خلّي السكربت ياخدهم من سطر الأوامر: [[python report.py orders.csv --top 3 -v]]. [[argparse]] في المكتبة الأساسية: بتعرّف الـ arguments، وهو بيعمل الـ parsing والتحويل للأنواع ورسايل الخطأ و [[--help]] لوحده.
+
+و [[typer]] (من نفس صاحب FastAPI) بيعمل نفس الحاجة من الـ type hints بتاعة الدالة، زي ما FastAPI بيعمل الـ API من الـ type hints. محتاج [[pip install typer]]، وبيطلّع help ملوّن.`,
+          example: R`import argparse
+import sys
+from pathlib import Path
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="تقرير مبيعات من ملف CSV")
+    parser.add_argument("src", type=Path, help="ملف الـ CSV")
+    parser.add_argument("-o", "--out", type=Path, default=Path("report.json"))
+    parser.add_argument("--city", action="append", help="فلتر، وينفع يتكرر")
+    parser.add_argument("--top", type=int, default=5, metavar="N")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    args = parser.parse_args(argv)
+    if not 1 <= args.top <= 50:
+        parser.error("--top must be between 1 and 50")
+    if not args.src.exists():
+        print(f"error: {args.src} not found", file=sys.stderr)
+        return 2
+    if args.verbose:
+        print(args)
+    print(f"reading {args.src} -> {args.out}, cities={args.city}, top={args.top}")
+    return 0
+if __name__ == "__main__":
+    sys.exit(main())`,
+          try: R`شغّل المثال بـ [[-h]]، ومن غير ملف، وبـ [[--top 99]]، وبـ [[--top abc]]، وبـ [[echo $?]] بعد كل واحدة. وبعدين اكتب نفس السكربت بـ typer ([[typer.Typer()]] و [[Annotated]] و [[typer.Option(min=1, max=50)]] و [[typer.Argument(exists=True)]]) وجرّب نفس الحالات.`,
+          sol: R`بـ argparse: [[-h]] بيطبع الـ usage والوصف ويخرج بـ 0. من غير ملف: [[error: the following arguments are required: src]] وكود 2. [[--top 99]]: [[error: --top must be between 1 and 50]] وكود 2 (من [[parser.error]]). و [[--top abc]]: [[argument --top: invalid int value: 'abc']] وكود 2، لأن [[type=int]] بيحوّل ويرفض لوحده. وملف مش موجود: الرسالة بتاعتك على stderr وكود 2 من [[return 2]].
+
+بـ typer نفس الحالات بتطلع في مربع [[Error]]، مثلًا [[Invalid value for '--top': 99 is not in the range 1<=x<=50]] و [[File 'nope.csv' does not exist]]، وكود 2 برضه، من غير ولا سطر فحص في الكود. لاحظ إن [[--city]] اللي بيتكرر بقى [[list[str] | None]]، و [[--verbose]] بقى bool flag لأن النوع bool. الغلطة الشائعة إنك تخلّي السكربت يخرج بـ 0 وهو فشل: الـ cron والـ CI والـ [[&&]] في bash بيعتمدوا على الـ exit code.`,
+          solCode: R`from pathlib import Path
+from typing import Annotated
+import typer
+app = typer.Typer(help="تقرير مبيعات من ملف CSV")
+@app.command()
+def report(
+    src: Annotated[Path, typer.Argument(exists=True, dir_okay=False, help="ملف الـ CSV")],
+    out: Annotated[Path, typer.Option("--out", "-o")] = Path("report.json"),
+    city: Annotated[list[str] | None, typer.Option(help="فلتر، وينفع يتكرر")] = None,
+    top: Annotated[int, typer.Option(min=1, max=50)] = 5,
+    verbose: Annotated[bool, typer.Option("--verbose", "-v")] = False,
+) -> None:
+    if verbose:
+        typer.echo(f"src={src} out={out} city={city} top={top}")
+    typer.echo(f"reading {src} -> {out}, cities={city}, top={top}")
+if __name__ == "__main__":
+    app()`,
+          flag: "script",
+          deep: {
+            why: R`سكربت الـ seed، و import من CSV، وتقرير شهري، و cleanup: كلها بتتشغّل من الترمنال أو cron أو CI، ومحتاجة ملفات وخيارات مختلفة كل مرة. ومن غير arguments الناس بتعدّل الكود قبل كل تشغيل، أو بتقرا [[sys.argv[1]]] من غير أي فحص فتطلع [[IndexError]] بدل رسالة مفهومة.`,
+            how: R`[[add_argument("src")]] من غير شرط positional وإجباري. و [[-o]]/[[--out]] option اختياري ليه default. و [[type=Path]] أو [[type=int]] بيحوّل ولو فشل بيطلّع رسالة ويخرج بـ 2. و [[action="store_true"]] flag من غير قيمة، و [[action="append"]] بيجمع التكرار في list، و [[choices=[...]]] قيم محددة، و [[nargs="+"]] واحد أو أكتر. والناتج [[Namespace]] بتوصل لقيمه بـ [[args.top]] (الشرطة في الاسم بتبقى underscore).
+
+[[main(argv=None)]] و [[parse_args(argv)]]: في التشغيل العادي [[argv]] بـ None فبيقرا [[sys.argv]]، وفي الاختبار تبعت list بإيدك ([[main(["orders.csv", "--top", "3"])]]). و [[sys.exit(main())]] بيخلّي الـ return هو الـ exit code. والأخطاء تتطبع على [[sys.stderr]] عشان متختلطش بالـ output لو حد عمل pipe.
+
+typer: كل باراميتر في الدالة من غير default بيبقى argument، واللي ليه default بيبقى option، والنوع بيحدد التحويل والفحص، و [[Annotated[..., typer.Option(...)]]] للتفاصيل. و [[@app.command()]] على كذا دالة بيعمل subcommands زي [[git commit]] و [[git push]].
+
+ومن الترمنال: [[uv run report.py ...]] أو تضيفه في [[[project.scripts]]] في [[pyproject.toml]] فيبقى أمر باسمه بعد التسطيب.`,
+            when: R`argparse لسكربت من غير dependencies أو هيتشغّل في مكان مفيهوش venv. typer لأدوات أكبر فيها subcommands ولو المشروع أصلًا فيه dependencies (مشروع FastAPI مثلًا). ولأي سكربت هيعيش أكتر من يوم.`,
+            mistakes: R`[[sys.argv[1]]] من غير فحص. و exit code 0 بعد فشل. وطباعة الأخطاء على stdout. وكل الكود على مستوى الملف من غير [[main()]] و [[if __name__ == "__main__"]] فمينفعش تعمله import أو تختبره. و [[type=bool]] في argparse ([[bool("False")]] بـ True! استخدم [[store_true]]).`
+          },
+          lines: [
+            "import.",
+            "للـ stderr و exit.",
+            "المسارات.",
+            R`[[argv]] بـ None في التشغيل العادي، و list في الاختبار.`,
+            R`الـ parser، والوصف بيظهر في [[--help]].`,
+            R`positional: إجباري، و [[type=Path]] بيحوّله.`,
+            "option بشكلين وقيمة افتراضية.",
+            R`[[append]]: [[--city A --city B]] بيبقوا list.`,
+            R`رقم، و [[metavar]] الاسم اللي يظهر في الـ help.`,
+            "flag: True لو موجود.",
+            R`اقرا [[sys.argv]] أو الـ list اللي اتبعتت.`,
+            "فحص زيادة...",
+            R`...[[parser.error]] بيطبع الـ usage والرسالة ويخرج بـ 2.`,
+            "الملف موجود؟",
+            "الخطأ على stderr مش stdout.",
+            "exit code غير صفر = فشل.",
+            "لو verbose...",
+            "اطبع كل الـ arguments.",
+            "الشغل الحقيقي.",
+            "نجح.",
+            "لما يتشغّل مباشرة بس.",
+            R`الـ return بتاع main بقى الـ exit code.`
+          ]
+        },
+        {
+          cmd: "subprocess",
+          title: "تشغّل أمر من Python بأمان: subprocess.run",
+          desc: R`[[subprocess.run(["git", "status"], capture_output=True, text=True)]] بيشغّل برنامج تاني ويستنى يخلص، ويرجّع object فيه [[returncode]] و [[stdout]] و [[stderr]]. و [[check=True]] بيرمي [[CalledProcessError]] لو الأمر فشل، و [[timeout=]] بيقفله لو اتأخر.
+
+القاعدة الذهبية: ابعت الأمر list، كل argument عنصر لوحده، ومن غير [[shell=True]]. كده الـ argument بيوصل للبرنامج زي ما هو حتى لو فيه مسافات أو [[;]] أو [[$]]، ومفيش shell يفسّره. [[shell=True]] مع أي قيمة جاية من برّه = command injection.`,
+          example: R`import shutil
+import subprocess
+import sys
+r = subprocess.run(["git", "--version"], capture_output=True, text=True, check=True)
+print(r.stdout.strip(), r.returncode)
+filename = "my file; rm -rf ~.txt"
+r = subprocess.run(["ls", "-l", "--", filename], capture_output=True, text=True)
+print(r.returncode, r.stderr.strip())
+try:
+    subprocess.run([sys.executable, "-c", "import sys; sys.exit(3)"], check=True)
+except subprocess.CalledProcessError as e:
+    print("فشل بكود", e.returncode)
+try:
+    subprocess.run(["sleep", "5"], timeout=1)
+except subprocess.TimeoutExpired:
+    print("اتأخر فاتقفل")
+if shutil.which("pg_dump") is None:
+    print("pg_dump مش متسطّب")
+r = subprocess.run(["git", "status", "--short"], capture_output=True, text=True, cwd=".")
+print(r.stdout if r.returncode == 0 else "الفولدر ده مش git repo")
+# subprocess.run(f"ls {filename}", shell=True)   ممنوع: الـ ; هتشغّل rm -rf`,
+          try: R`اكتب [[git_info(repo)]] بترجع dict فيه الـ branch وآخر commit وعدد الملفات المتغيرة، بـ [[git rev-parse --abbrev-ref HEAD]] و [[git log -1 --format=%h %s]] و [[git status --porcelain]]، و [[cwd=repo]] و [[timeout]]. لو git مش متسطّب أو الفولدر مش repo، السكربت يطبع الخطأ على stderr ويخرج بـ 1. جرّبه على repo وعلى [[/tmp]].`,
+          sol: R`على repo بيطبع حاجة زي [[{'branch': 'main', 'last': '87185bb آخر رسالة commit', 'dirty': 5}]]. وعلى [[/tmp]]: [[error: fatal: not a git repository (or any of the parent directories): .git]] على stderr و [[echo $?]] بيطلع 1.
+
+لاحظ إن [[--format=%h %s]] عنصر واحد في الـ list مع إن فيه مسافة: مفيش shell يقسّمه، فمش محتاج علامات تنصيص. و [[cwd=repo]] بدل [[os.chdir]] أو [[cd repo && git ...]]، فالسكربت نفسه مبيتنقلش. و [[shutil.which("git")]] قبل النداء بيدّيك رسالة واضحة بدل [[FileNotFoundError]]. والغلطة الشائعة: [[subprocess.run(f"git -C {repo} status", shell=True)]]: يشتغل لحد ما حد يبعت مسار فيه مسافة أو [[;]].`,
+          solCode: R`import shutil
+import subprocess
+import sys
+from pathlib import Path
+def git(args: list[str], repo: Path) -> str:
+    r = subprocess.run(["git", *args], capture_output=True, text=True, cwd=repo, timeout=10)
+    if r.returncode != 0:
+        raise RuntimeError(r.stderr.strip())
+    return r.stdout.strip()
+def git_info(repo: Path) -> dict[str, str | int]:
+    if shutil.which("git") is None:
+        raise RuntimeError("git مش متسطّب")
+    return {
+        "branch": git(["rev-parse", "--abbrev-ref", "HEAD"], repo),
+        "last": git(["log", "-1", "--format=%h %s"], repo),
+        "dirty": len(git(["status", "--porcelain"], repo).splitlines()),
+    }
+if __name__ == "__main__":
+    repo = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+    try:
+        print(git_info(repo))
+    except RuntimeError as e:
+        print("error:", e, file=sys.stderr)
+        sys.exit(1)`,
+          flag: "script",
+          deep: {
+            why: R`سكربتات الأتمتة كتير بتنادي أدوات: [[pg_dump]] للـ backup، و [[git]] في deploy، و [[ffmpeg]] للفيديو، و [[convert]] للصور. و command injection من [[shell=True]] مع اسم ملف أو input من المستخدم ثغرة حقيقية ومشهورة (تاب «الأمان»).`,
+            how: R`مع list، Python بينادي البرنامج مباشرة ([[execve]] على لينكس) وكل عنصر بيوصل argument منفصل. مع [[shell=True]] و string، بيشغّل [[/bin/sh -c "..."]]، فالـ shell بيفسّر [[;]] و [[&&]] و [[$()]] و [[*]] والمسافات. فـ [[filename = "x; rm -rf ~"]] في المثال وصل لـ [[ls]] كاسم ملف غريب، مش كأمر تاني.
+
+[[--]] قبل اسم الملف بيقول للبرنامج «اللي بعد كده مش options»، عشان اسم ملف بيبدأ بـ [[-]] (زي [[-rf]]) ميتفهمش flag.
+
+[[capture_output=True]] بيمسك stdout و stderr بدل ما يطبعوا، و [[text=True]] بيحوّلهم str بدل bytes (وتقدر تحدد [[encoding="utf-8"]]). و [[check=True]] بيرمي لو الكود مش صفر، وإلا لازم تفحص [[returncode]] بنفسك. و [[timeout]] بيقتل الأمر ويرمي [[TimeoutExpired]]. و [[cwd]] الفولدر اللي الأمر يتشغّل فيه، و [[env={**os.environ, "PGPASSWORD": ...}]] لمتغيرات بيئة إضافية (أحسن من تحط الباسورد في الـ args لأنها بتظهر في [[ps]]).
+
+[[sys.executable]] مسار الـ Python الحالي (نفس الـ venv)، استخدمه بدل [["python"]]. ولو محتاج pipe بين أمرين: شغّل الاتنين من Python ومرر الـ stdout، أو فكّر لو فيه مكتبة Python تعمل الشغل نفسه. وفي كود async: [[asyncio.create_subprocess_exec]] بدل [[subprocess.run]] اللي بيقفل الـ loop.`,
+            when: R`لما الأداة الخارجية هي الطريقة الصح (pg_dump، git، ffmpeg). لو فيه مكتبة Python بتعمل نفس الشغل ([[shutil.copy]] بدل [[cp]]، و [[pathlib]] بدل [[ls]]، و [[httpx]] بدل [[curl]])، استخدمها: أسرع، ومفيش parsing لـ output نصي، وبتشتغل على ويندوز.`,
+            mistakes: R`[[shell=True]] مع f-string فيها input. و [[os.system]] (نفس المشكلة، ومن غير output). ومن غير [[check]] ولا فحص [[returncode]] فالفشل يعدّي. ومن غير [[timeout]] فالسكربت يفضل مستني للأبد. و [[subprocess.run]] جوه route [[async def]] في FastAPI (بيقفل الـ event loop، درس «blocking في async»).`
+          },
+          lines: [
+            R`[[which]] للبحث عن برنامج في الـ PATH.`,
+            "import.",
+            R`[[sys.executable]].`,
+            R`list: البرنامج والـ arguments، و [[check=True]] يرمي لو فشل.`,
+            "الناتج والكود.",
+            "اسم ملف فيه ; و rm: كأنه جاي من المستخدم.",
+            R`بيوصل لـ [[ls]] كـ argument واحد، و [[--]] يمنع إنه يتفهم flag.`,
+            "ls بيقول الملف مش موجود، ومفيش حاجة اتمسحت.",
+            "try.",
+            "Python بيخرج بكود 3.",
+            R`[[check=True]] حوّل الفشل لـ exception.`,
+            "الكود.",
+            "try.",
+            "أمر بياخد ٥ ثواني.",
+            R`[[timeout=1]]: اتقفل ورمى.`,
+            "اطبع.",
+            "البرنامج متسطّب؟",
+            "رسالة واضحة بدل FileNotFoundError.",
+            R`[[cwd]]: الفولدر اللي الأمر يتشغّل فيه.`,
+            R`افحص [[returncode]] بنفسك لو مش مستخدم check.`
           ]
         }
       ]
@@ -997,7 +3013,10 @@ asyncio.run(main())`,
             R`...بيطبع [[<class 'coroutine'>]].`,
             "دلوقتي بس اشتغل.",
             "اعمل event loop وشغّل main. في FastAPI، uvicorn بيعمل ده."
-          ]
+          ],
+          sol: R`بالمثال زي ما هو: [[واحدة ورا التانية: 2.0s]] و [[مع بعض: 1.0s]] و [[<class 'coroutine'>]]. وبعد ما تحط [[time.sleep(1)]]: الاتنين بقوا [[2.0s]].
+
+السبب: [[await asyncio.sleep(1)]] بيقول للـ event loop «أنا مستني، شغّل حد تاني»، فالطلبين بيستنوا مع بعض. أما [[time.sleep(1)]] فبيوقف الـ thread كله، والـ event loop عايش في الـ thread ده، فمفيش حد تاني يشتغل، والـ gather بيبقى واحدة ورا التانية. ولاحظ إن [[fetch_user(3)]] لوحدها مبتشغلش حاجة، بترجع coroutine بس، ولو نسيت [[await]] هتاخد تحذير [[RuntimeWarning: coroutine 'fetch_user' was never awaited]].`
         },
         {
           cmd: "gather و TaskGroup",
@@ -1070,7 +3089,33 @@ asyncio.run(main())`,
             "نادي الأصلية.",
             "١٠٠ طلب، بس ١٠ بس في نفس الوقت: حوالي ٥ ثواني.",
             "شغّل."
-          ]
+          ],
+          sol: R`لما [[t2]] ينادي [[get_price("bad")]]، الـ TaskGroup بيلغي باقي الـ tasks ويرمي [[ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)]]، وجواه الـ [[ValueError: bad]] الأصلي. وبـ [[except* ValueError as eg]] بتمسكه، و [[eg.exceptions]] فيها [[(ValueError('bad'),)]]. لو كتبت [[except ValueError]] العادية مش هتمسكه، لأن اللي طلع [[ExceptionGroup]] مش [[ValueError]].
+
+والـ ١٠٠ طلب كل واحد نص ثانية: مع [[Semaphore(10)]] حوالي [[5.0s]] (١٠ دفعات × 0.5)، ومع [[Semaphore(50)]] حوالي [[1.0s]] (دفعتين). القاعدة: الوقت ≈ (عدد الطلبات ÷ الحد) × وقت الطلب. والحد مش عشان السرعة، عشان متكسرش الـ API أو قاعدة البيانات اللي بتكلمها.`,
+          solCode: R`import asyncio
+import time
+async def get_price(sku: str) -> float:
+    await asyncio.sleep(0.5)
+    if sku == "bad":
+        raise ValueError(sku)
+    return 10.0
+async def main() -> None:
+    try:
+        async with asyncio.TaskGroup() as tg:
+            t1 = tg.create_task(get_price("a"))
+            t2 = tg.create_task(get_price("bad"))
+    except* ValueError as eg:
+        print("caught:", eg.exceptions)
+    for n in (10, 50):
+        sem = asyncio.Semaphore(n)
+        async def limited(sku: str) -> float:
+            async with sem:
+                return await get_price(sku)
+        start = time.perf_counter()
+        await asyncio.gather(*(limited(f"sku{i}") for i in range(100)))
+        print(n, f"{time.perf_counter() - start:.1f}s")
+asyncio.run(main())`
         },
         {
           cmd: "blocking في async",
@@ -1133,7 +3178,10 @@ asyncio.run(register("secret"))`,
             "دالة async محتاجة تستخدمها.",
             R`[[to_thread]]: الحسبة في thread جنب الـ loop، والـ loop فاضي لغيرك.`,
             "شغّل للتجربة."
-          ]
+          ],
+          sol: R`مع [[time.sleep(5)]] جوه [[async def]]: الطلب الأول بيرجع بعد ٥ ثواني والتاني بعد ١٠، يعني الأمر كله بياخد حوالي ١٠ ثواني. الـ sleep وقّف الـ event loop، فالسيرفر مقدرش حتى يستقبل الطلب التاني لحد ما الأول يخلص. ومع [[await asyncio.sleep(5)]] الاتنين بيرجعوا مع بعض بعد ٥ ثواني.
+
+ومع [[PYTHONASYNCIODEBUG=1 fastapi dev main.py]] هتلاقي في لوج السيرفر سطر زي [[Executing <Task finished name='Task-3' coro=<RequestResponseCycle.run_asgi() ...> took 5.002 seconds]]: asyncio بيحذّرك من أي خطوة خدت أكتر من 0.1 ثانية من غير ما ترجع للـ loop. لو التاني رجع بعد ٥ ثواني بس مع [[time.sleep]]، اتأكد إن الدالة [[async def]] فعلًا: لو [[def]] عادية FastAPI بيشغّلها في threadpool ومش هتشوف المشكلة.`
         },
         {
           cmd: "def ولا async def",
@@ -1190,6 +3238,117 @@ async def broken():
             "async def...",
             "...وجواها sync: الـ loop كله وقف، وكل الطلبات التانية مستنية.",
             "رجّع."
+          ],
+          sol: R`الـ ٢٠ طلب على [[/broken]] بياخدوا حوالي ٢٠ ثانية (في تجربتنا 20.06s)، وعلى [[/sync-ok]] حوالي ثانية (1.15s). الاتنين فيهم نفس [[time.sleep(1)]]، والفرق كله في كلمة [[async]].
+
+[[/broken]] مكتوبة [[async def]]، فـ FastAPI بيشغّلها على الـ event loop مباشرة، و [[time.sleep]] بيوقفه، فالطلبات بتتنفذ واحد ورا التاني. [[/sync-ok]] مكتوبة [[def]] عادية، فـ FastAPI بيبعتها للـ threadpool (حوالي ٤٠ thread افتراضيًا)، فالعشرين بيناموا مع بعض. القاعدة: لو جوه الدالة كود blocking (مكتبة مش async) اكتبها [[def]]، ولو كل حاجة فيها [[await]] اكتبها [[async def]]. ولو لقيت [[/sync-ok]] أخدت أكتر من ثانية بكتير، اتأكد إن الطلبات فعلًا اتبعتت مع بعض ([[-P20]]).`
+        },
+        {
+          cmd: "ThreadPoolExecutor و ProcessPoolExecutor",
+          title: "threads لمكتبة sync، و processes لحسبة CPU تقيلة",
+          desc: R`[[concurrent.futures]] بيدّيك نوعين pool بنفس الواجهة: [[ThreadPoolExecutor]] لشغل بيستنى I/O بمكتبة sync (requests، SDK قديم، ملفات)، و [[ProcessPoolExecutor]] لحسابات CPU بـ Python، لأن الـ GIL بيمنع الـ threads تحسب في نفس الوقت (درس «workers و GIL»). و [[pool.map]] بترجع النتايج بالترتيب، و [[submit]] مع [[as_completed]] بترجعها أول ما كل واحدة تخلص.
+
+وجوه كود async: [[await asyncio.to_thread(fn, ...)]] بيبعت دالة sync لـ thread (درس «blocking في async»)، و [[await loop.run_in_executor(process_pool, fn, ...)]] للحسبة التقيلة.`,
+          example: R`import asyncio
+import time
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor, as_completed
+def fetch_sync(url: str) -> str:
+    time.sleep(1)
+    return f"{url}: 200"
+def count_primes(limit: int) -> int:
+    return sum(1 for n in range(2, limit) if all(n % d for d in range(2, int(n**0.5) + 1)))
+def main() -> None:
+    urls = [f"https://api.example.com/items/{i}" for i in range(8)]
+    start = time.perf_counter()
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {pool.submit(fetch_sync, u): u for u in urls}
+        for fut in as_completed(futures):
+            print(fut.result())
+    print(f"threads: {time.perf_counter() - start:.1f}s")        # ~1.0s مش 8
+    start = time.perf_counter()
+    with ProcessPoolExecutor() as pool:
+        results = list(pool.map(count_primes, [500_000] * 4))
+    print(results[0], f"processes: {time.perf_counter() - start:.1f}s")   # 41538، وأسرع ~3x على ٤ cores
+async def handler() -> list[str]:
+    one = await asyncio.to_thread(fetch_sync, "https://legacy-sdk")
+    loop = asyncio.get_running_loop()
+    with ProcessPoolExecutor(max_workers=2) as pool:
+        primes = await loop.run_in_executor(pool, count_primes, 100_000)
+    return [one, str(primes)]
+if __name__ == "__main__":
+    main()
+    print(asyncio.run(handler()))`,
+          try: R`قيس ٥ حالات بنفس الدالتين اللي في المثال، ٤ مهام كل مرة و [[max_workers=4]]: الحسبة CPU بالترتيب، وبـ threads، وبـ processes، والـ I/O بالترتيب، وبـ threads. اكتب قبل ما تشغّل توقّعك لكل رقم.`,
+          sol: R`على جهاز ٤ cores طلعت الأرقام تقريبًا: [[CPU serial 4.3s]]، و [[CPU threads 4.5s]] (مفيش أي تحسن، وأحيانًا أبطأ شوية)، و [[CPU processes 1.4s]]، و [[I/O serial 4.0s]]، و [[I/O threads 1.0s]]. أرقامك هتختلف حسب الجهاز، بس الشكل لازم يبقى كده.
+
+التفسير: الـ threads بتسيب الـ GIL وهي نايمة أو مستنية شبكة، فالـ ٤ انتظارات بيحصلوا مع بعض. لكن حسبة Python الخالصة محتاجة الـ GIL طول الوقت، فالـ threads بتستنى بعض. والـ processes كل واحدة ليها interpreter و GIL، فبتستخدم الـ ٤ cores، بس مش ×4 بالظبط بسبب تكلفة تشغيل الـ processes ونقل الداتا (pickle). ولازم [[if __name__ == "__main__":]] حوالين الكود اللي بيعمل الـ ProcessPool: على ماك وويندوز (وعلى لينكس من 3.14 كمان) الـ processes الجديدة بتعمل import للملف من الأول، ومن غير الحماية دي هتحاول تعمل pool جوه pool. وفي Python 3.14 free-threaded ([[python3.14t]]) الـ threads ممكن تسرّع الـ CPU كمان، بس ده لسه build منفصل.`,
+          solCode: R`import time
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+def count_primes(limit: int) -> int:
+    return sum(1 for n in range(2, limit) if all(n % d for d in range(2, int(n**0.5) + 1)))
+def fetch_sync(url: str) -> str:
+    time.sleep(1)
+    return f"{url}: 200"
+def bench(label, fn, jobs, executor=None):
+    start = time.perf_counter()
+    if executor is None:
+        results = [fn(j) for j in jobs]
+    else:
+        with executor(max_workers=4) as pool:
+            results = list(pool.map(fn, jobs))
+    print(f"{label:<22}{time.perf_counter() - start:5.1f}s")
+    return results
+if __name__ == "__main__":
+    cpu_jobs = [500_000] * 4
+    io_jobs = [f"https://x/{i}" for i in range(4)]
+    bench("CPU serial", count_primes, cpu_jobs)
+    bench("CPU threads", count_primes, cpu_jobs, ThreadPoolExecutor)
+    bench("CPU processes", count_primes, cpu_jobs, ProcessPoolExecutor)
+    bench("I/O serial", fetch_sync, io_jobs)
+    bench("I/O threads", fetch_sync, io_jobs, ThreadPoolExecutor)`,
+          flag: "script",
+          deep: {
+            why: R`سكربت بيجيب ٥٠٠ صفحة من API بـ requests: بالترتيب ٥٠٠ ثانية، وبـ ٢٠ thread حوالي ٢٥. وسكربت بيعمل resize لألف صورة أو يحسب تقرير: الـ threads مش هتفرق والـ processes هتقسم الوقت على عدد الـ cores. ومعرفة أنهي واحدة تستخدم إمتى سؤال انترفيو Python ثابت بعد سؤال الـ GIL.`,
+            how: R`[[with ThreadPoolExecutor(max_workers=8) as pool:]] بيعمل الـ threads، وفي آخر البلوك بيستنى كل المهام تخلص ويقفلهم. [[submit(fn, arg)]] بترجع [[Future]]، و [[fut.result()]] بتستنى الناتج وبترمي الـ exception لو الدالة رمت. و [[as_completed(futures)]] بيطلّعهم بترتيب الخلوص، مفيد لـ progress. و [[pool.map(fn, items)]] أبسط، والنتايج بترتيب الـ input، بس أول exception بيترمي وانت بتلف.
+
+الافتراضي لـ threads [[min(32, os.cpu_count() + 4)]]، وللـ processes عدد الـ cores. وللـ I/O ممكن تزوّد الـ threads (٢٠ أو ٥٠)، بس افتكر إن الطرف التاني عنده rate limit.
+
+ProcessPool بينقل الدالة والباراميترات والناتج بـ pickle، فالدالة لازم تبقى على مستوى الـ module (مش lambda ولا دالة جوه دالة)، والداتا الكبيرة بتاخد وقت في النقل. ومن 3.14 طريقة البداية الافتراضية على لينكس بقت [[forkserver]] بدل [[fork]]، فالحماية بـ [[__main__]] بقت لازمة في كل مكان.
+
+جوه async: [[asyncio.to_thread]] بيستخدم الـ thread pool الافتراضي بتاع الـ loop. و [[loop.run_in_executor(pool, fn, *args)]] لأي executor، ومبيقبلش keyword arguments، فاستخدم [[functools.partial]] (درس «functools»). وفي FastAPI اعمل الـ ProcessPool مرة واحدة في الـ lifespan (المثال في درس «workers و GIL») مش مع كل request زي المثال هنا.`,
+            when: R`ThreadPool: سكربت أو كود sync بيعمل I/O كتير بمكتبة sync. ولو الكود async أصلًا: [[asyncio.gather]] مع مكتبة async أحسن من threads. ProcessPool: حسبة Python تقيلة تتقسم لمهام مستقلة. ولو الشغل طويل أو كتير في API: queue و worker منفصل (تاب «بناء مشروع كامل»، درس «background jobs»).`,
+            mistakes: R`threads لحسبة CPU وتستغرب إنها مسرّعتش. و ProcessPool لمهام صغيرة جدًا (النقل أغلى من الحسبة). و lambda في ProcessPool ([[Can't pickle]]). ونسيان [[if __name__ == "__main__":]]. وتنسى [[fut.result()]] فالـ exceptions تضيع في صمت. و ProcessPool جديد مع كل request.`
+          },
+          lines: [
+            "asyncio.",
+            "للوقت.",
+            "الـ pools و as_completed.",
+            R`دالة sync بتستنى (زي [[requests.get]]).`,
+            "انتظار ثانية.",
+            "رجّع.",
+            "حسبة CPU خالصة بـ Python.",
+            "عدّ الأعداد الأولية لحد limit.",
+            "الدالة الرئيسية.",
+            "٨ روابط.",
+            "ابدأ العداد.",
+            "٨ threads.",
+            R`[[submit]] لكل رابط، والـ dict بيربط كل Future برابطه.`,
+            "أول ما كل واحدة تخلص.",
+            R`[[result()]] الناتج (أو الـ exception لو رمت).`,
+            "حوالي ثانية مش ٨: الانتظارات حصلت مع بعض.",
+            "عداد جديد.",
+            "processes بعدد الـ cores.",
+            R`[[map]]: ٤ حسابات موزعة على الـ processes، والنتايج بالترتيب.`,
+            "أسرع بكتير من threads أو بالترتيب.",
+            "جوه كود async.",
+            R`[[to_thread]]: الدالة الـ sync في thread، والـ loop فاضي.`,
+            "الـ loop الحالي.",
+            "pool صغير (في FastAPI يتعمل مرة في الـ lifespan).",
+            R`[[run_in_executor]]: الحسبة في process تانية من غير ما تقفل الـ loop.`,
+            "رجّع.",
+            R`لازم مع ProcessPool: الـ processes الجديدة بتعمل import للملف.`,
+            "الجزء الـ sync.",
+            "الجزء الـ async."
           ]
         }
       ]
@@ -1241,7 +3400,10 @@ async def health() -> dict[str, bool]:
             R`route تاني، و [[tags]] بتجمّعه في مجموعة في /docs.`,
             "الدالة.",
             "الرد."
-          ]
+          ],
+          sol: R`الترمنال هيطبع [[Server started at http://127.0.0.1:8000]] و [[Documentation at http://127.0.0.1:8000/docs]]. في [[/docs]] هتلاقي الـ endpoints الاتنين، و [[/health]] تحت قسم [[ops]] (من [[tags]]) والتاني تحت [[default]]. اضغط Try it out وبعدين Execute، وهتشوف [[{"message": "أهلًا"}]] و [[{"ok": true}]].
+
+[[/openapi.json]] هو الوصف الخام: فيه [[info]] بالـ [[title]] و [[version]] اللي كتبتهم، و [[paths]] فيها [[/]] و [[/health]]، وكل واحد عنده [[operationId]] و [[summary]] اتولّدوا من اسم الدالة، و schema للرد من نوع الرجوع ([[dict[str, bool]]] بقت object قيمه boolean). ولما تحفظ تعديل هتشوف [[WatchFiles detected changes in 'main.py'. Reloading...]] والرد الجديد يظهر من غير ما تعيد التشغيل. لو مفيش reload، غالبًا شغّلت [[fastapi run]] (للإنتاج، من غير reload) بدل [[dev]].`
         },
         {
           cmd: "path و query",
@@ -1310,7 +3472,10 @@ async def products(filters: Annotated[Filters, Query()]):
             "route بفلاتر كتير.",
             "الموديل كله من الـ query (FastAPI 0.115+).",
             "Pydantic model بيتحوّل JSON لوحده."
-          ]
+          ],
+          sol: R`كل الردود 422 وفيها [[detail]] بـ [[loc]] و [[msg]]: [[/items/0]] بترجع [[["path", "item_id"]]] و [[Input should be greater than or equal to 1]]، و [[/items/abc]] بترجع [[Input should be a valid integer, unable to parse string as an integer]]، و [[/items?size=500]] بترجع [[["query", "size"]]] و [[Input should be less than or equal to 100]]. وفي [[/items?tags=a&tags=b&sort=old]] الغلط في [[sort]] بس: [[Input should be 'new' or 'price']]، والـ tags سليمة، ولو شلت [[sort=old]] هترجع 200 و [[tags: ["a", "b"]]]. و [[/products?min_price=-1]] بترجع [[["query", "min_price"]]] و [[Input should be greater than or equal to 0]].
+
+أول عنصر في [[loc]] بيقولك الغلط جه منين ([[path]] ولا [[query]] ولا [[body]])، والتاني اسم الحقل. وفي [[/docs]] هتلاقي القيود ([[minimum]] و [[maximum]] و [[maxLength]] وقيم الـ enum) مكتوبة جنب كل باراميتر. ولو [[?tags=a,b]] رجعت [[["a,b"]]] فده طبيعي: الـ list في الـ query بتتكرر ([[tags=a&tags=b]]) مش بفاصلة.`
         },
         {
           cmd: "request body",
@@ -1377,7 +3542,10 @@ async def update_product(product_id: int, patch: ProductPatch):
             "path و body مع بعض.",
             "عدّل الحقول اللي اتبعتت بس.",
             "رجّع بعد التعديل."
-          ]
+          ],
+          sol: R`[[{"name": "x", "price": -5}]] بترجع 422 وفيها خطأين: [[loc: ["body", "name"]]] بـ [[String should have at least 2 characters]]، و [[loc: ["body", "price"]]] بـ [[Input should be greater than 0]]. Pydantic بيجمع كل الأخطاء مرة واحدة مش بيقف عند أول واحد، ودي ميزة للـ frontend.
+
+[[{"name": "Tea", "price": "12.5"}]] بترجع 201 و [[{"id": 1, "name": "Tea", "price": 12.5, "tags": []}]]: الـ string اتحوّل لـ float (الوضع العادي lax مش strict). والـ PATCH بـ [[{"price": 20}]] بترجع [[{"name": "Tea", "price": 20.0, "tags": []}]]: الاسم فضل زي ما هو بفضل [[exclude_unset=True]]. من غيرها [[patch.model_dump()]] كانت هترجع [[{"name": None, "price": 20.0}]] وتمسح الاسم. ولو عملت PATCH على id مش موجود هتاخد 500 من [[KeyError]]، والصح [[HTTPException(404)]].`
         },
         {
           cmd: "response model",
@@ -1438,7 +3606,10 @@ async def list_users():
             R`هنا الدالة بترجّع objects مش UserOut، فالموديل في [[response_model]].`,
             "الدالة.",
             "FastAPI بيقرا الـ attributes من كل object ويبني منها UserOut."
-          ]
+          ],
+          sol: R`[[/users/1]] بترجع [[{"id": 1, "email": "sara@example.com", "name": "Sara"}]] بس، مع إن الدالة رجّعت [[UserInDB]] فيه الـ hash. FastAPI بيعدّي الناتج على [[UserOut]] وبيشيل أي حقل مش فيه. ولما تغيّر لـ [[-> UserInDB]] هيظهر [[password_hash]] في الرد، وده بالظبط التسريب اللي الـ response model بيمنعه.
+
+ولو رجّعت [[email="x"]]: العميل بياخد [[500 Internal Server Error]]، وفي الترمنال هتشوف [[ResponseValidationError]] مع [[loc: ('response', 'email')]] و [[value is not a valid email address: An email address must have an @-sign.]]. الـ 422 معناها «العميل بعت حاجة غلط»، لكن هنا العميل مبعتش حاجة، السيرفر هو اللي طلّع بيانات مش مطابقة للعقد، فده bug عندك. ولو ظهر خطأ إن [[EmailStr]] محتاج [[email-validator]]، سطّب [[pip install "pydantic[email]"]] (بتيجي أصلًا مع [[fastapi[standard]]]).`
         },
         {
           cmd: "APIRouter",
@@ -1489,7 +3660,10 @@ app.include_router(orders.router, prefix="/api/v1")`,
             "التطبيق.",
             "ضيف routes المستخدمين.",
             R`ضيف routes الطلبات تحت [[/api/v1]]: المسار النهائي [[/api/v1/orders/]].`
-          ]
+          ],
+          sol: R`في [[/docs]] هتلاقي قسمين: [[users]] و [[orders]]، كل واحد تحت الـ tag اللي في الـ [[APIRouter]] بتاعه. والمسارات، لو الـ users router فيه [[prefix="/users"]] وعنده [[/]] و [[/{user_id}]]: [[['/users/', '/users/{user_id}', '/api/v1/orders/', '/api/v1/orders/{order_id}']]].
+
+لاحظ إن prefix الـ [[include_router]] بيتحط قبل prefix الـ router نفسه، فبقت [[/api/v1/orders/]]. ولاحظ الـ slash في الآخر: [[@router.get("/")]] مع prefix بتدّي [[/orders/]]، ولو طلبت [[/orders]] من غير slash FastAPI بيرد بـ 307 redirect. ولو ظهر [[ModuleNotFoundError: No module named 'app']]، شغّل من الفولدر اللي فوق [[app]] ([[fastapi dev app/main.py]]) ومتنساش [[__init__.py]] في [[app]] و [[app/routers]].`
         }
       ]
     },
@@ -1565,7 +3739,10 @@ except ValidationError as e:
             "امسك الخطأ.",
             "كل الأخطاء اتجمعت: 4.",
             "كل خطأ فيه مكانه ورسالته."
-          ]
+          ],
+          sol: R`[[e.errors()]] فيها ٤ أخطاء، كل واحد dict فيه [[type]] و [[loc]] و [[msg]] (و [[input]] و [[url]]): [[string_too_short ('name',)]]، و [[string_pattern_mismatch ('phone',)]]، و [[missing ('address', 'city')]] (الـ loc بيوصل لجوه الموديل المتداخل)، و [[extra_forbidden ('role',)]] (بسبب [[extra="forbid"]]). والـ [[type]] ثابت ومناسب للكود (تترجم منه الرسائل مثلًا)، والـ [[msg]] للبني آدمين.
+
+[[model_json_schema()]] بيرجع JSON Schema فيه [[required: ['name', 'phone', 'address']]]، و [[phone]] جواه [[pattern]]، و [[budget]] جواه [[exclusiveMinimum: 0]] و [[maximum: 1000000]]، و [[Address]] في [[$defs]]. و [[budget="50"]] بيعدّي ويبقى [[50.0]] (float)، لكن مع [[strict=True]] بيترفض: [[float_type]] و [[Input should be a valid number]]. الـ strict مفيد لما البيانات جاية من كود تاني مش من JSON أو فورم.`
         },
         {
           cmd: "model_dump و model_validate",
@@ -1630,7 +3807,10 @@ from_orm = Item.model_validate(Row())`,
             "object عادي زي صف من ORM.",
             "attributes.",
             R`[[from_attributes]] خلّاه يقرا الـ attributes.`
-          ]
+          ],
+          sol: R`[[model_dump()]] بيرجع [[created_at]] كـ [[datetime]] حقيقي ([[datetime.datetime(2026, 1, 10, 9, 0, tzinfo=TzInfo(0))]] ونوعه [[<class 'datetime.datetime'>]])، و [[model_dump(mode="json")]] بيرجعه string: [[2026-01-10T09:00:00Z]] ونوعه [[<class 'str'>]]. الأول لو هتكمّل شغل في Python، والتاني لو هتبعته لحاجة مبتفهمش غير JSON (Redis أو [[json.dumps]]).
+
+ومن غير [[from_attributes]]: [[Input should be a valid dictionary or instance of Item [type=model_type, input_value=<__main__.Row object at 0x...>, input_type=Row]]]. Pydantic افتراضيًا بيقبل dict أو object من نفس الموديل بس، و [[from_attributes=True]] بيخليه يقرا [[obj.id]] و [[obj.name]]، ودي اللي بتحتاجها مع صفوف SQLAlchemy.`
         },
         {
           cmd: "field_validator و model_validator",
@@ -1709,7 +3889,21 @@ print(b.model_dump())`,
             "الحسبة.",
             "الإيميل هيتنضّف، والتواريخ هتتحوّل.",
             R`فيه [[nights: 3]]، والإيميل [[sara@company.com]].`
-          ]
+          ],
+          sol: R`لما [[end]] قبل [[start]]: [[e.errors()]] فيها خطأ واحد بـ [[loc: ()]] (tuple فاضي، يعني على الموديل كله)، و [[type: 'value_error']]، و [[msg: 'Value error, end لازم بعد start']]. Pydantic بيضيف [[Value error, ]] قبل رسالتك، فخد بالك لو بتعرض الرسالة للمستخدم. ولو عايز الخطأ يتربط بحقل معين، اعمل الفحص في field validator.
+
+الـ [[@field_validator("guests")]] بيطلّع [[loc: ('guests',)]] و [[Value error, max 6 guests]]، و [[Field(le=6)]] بيطلّع [[less_than_equal]] و [[Input should be less than or equal to 6]] ومعاه [[ctx: {'le': 6}]]، وبيظهر كـ [[maximum]] في [[/docs]]. فـ [[Field(le=6)]] أقصر وأوضح وموثّق، والـ validator خليه للمنطق اللي Field ميعرفش يعبّر عنه.`,
+          solCode: R`from pydantic import BaseModel, Field, field_validator
+class WithValidator(BaseModel):
+    guests: int
+    @field_validator("guests")
+    @classmethod
+    def max_guests(cls, v: int) -> int:
+        if v > 6:
+            raise ValueError("max 6 guests")
+        return v
+class WithField(BaseModel):
+    guests: int = Field(le=6)`
         },
         {
           cmd: "pydantic-settings",
@@ -1780,7 +3974,10 @@ async def info(settings: SettingsDep):
             "route.",
             "الإعدادات جت كـ dependency: سهل تغيّرها في الاختبار.",
             "استخدمها."
-          ]
+          ],
+          sol: R`من غير [[.env]]، [[/info]] بترجع [[500 Internal Server Error]]، والترمنال فيه [[2 validation errors for Settings]] وتحتها [[database_url Field required]] و [[jwt_secret Field required]]. التطبيق قام عادي لأن [[get_settings()]] مبتتناداش غير مع أول طلب، وده سبب إنك تناديها في الـ lifespan: الأحسن السيرفر يرفض يقوم بدل ما يقوم ويقع مع أول مستخدم.
+
+بعد ما تعمل [[.env]]: [[print(settings.jwt_secret)]] بيطبع [[**********]] و [[repr]] بيطبع [[SecretStr('**********')]]، و [[get_secret_value()]] بس هي اللي بترجع القيمة الحقيقية، فلو اللوج طبع الـ settings كلها السر مش هيتسرّب. و [[CORS_ORIGINS=["https://shop.example.com"]]] بيتقري كـ JSON ويبقى list. و [[DB_POOL_SIZE=abc]] بيطلّع [[db_pool_size Input should be a valid integer, unable to parse string as an integer]]. ومتغيرات البيئة الحقيقية بتكسب على [[.env]].`
         }
       ]
     },
@@ -1854,7 +4051,10 @@ async def list_products(page: PageDep):
             "route تاني بنفس الـ pagination.",
             "سطر واحد.",
             "رجّع."
-          ]
+          ],
+          sol: R`من غير الـ header: 422 و [[{"detail": [{"type": "missing", "loc": ["header", "x-tenant-id"], "msg": "Field required", "input": null}]}]]. لاحظ إن FastAPI حوّل [[x_tenant_id]] لـ [[x-tenant-id]] لوحده (الـ underscore بقى شرطة). وبالـ header: [[{"tenant": "acme", "limit": 20, "offset": 40}]]، لأن الصفحة 3 بحجم 20 تبدأ من 40. ولو بعت [[X-Tenant-Id: ac-me]] هتاخد [[400]] و [[bad tenant]] من الـ HTTPException اللي جوه الـ dependency.
+
+وفي [[/docs]] هتلاقي على [[/orders]] تلات باراميترات: [[page]] و [[size]] (query) و [[x-tenant-id]] (header)، مع إن الـ route نفسه مكتوب فيه [[page]] و [[tenant]] بس. FastAPI بيفك الـ dependencies ويضيف باراميتراتها للـ route، وده اللي بيخلي الـ pagination تتكتب مرة وتتوثق في كل مكان.`
         },
         {
           cmd: "dependency بـ yield",
@@ -1893,7 +4093,7 @@ async def create_order(conn: Conn):
 
 ولو عملت [[try/except]] حوالين الـ yield، لازم ترمي الـ exception تاني بعد ما تتعامل معاه ([[raise]])، وإلا FastAPI ميعرفش إن حصل خطأ.
 
-والـ [[lifespan]]: [[@asynccontextmanager]] (درس [[with]]) بيتنادى مرة: اللي قبل الـ yield وقت ما التطبيق يقوم (قبل أي request)، واللي بعده وقت ما يقفل (SIGTERM من [[docker stop]]). و [[app.state]] مكان تحط فيه الحاجات المشتركة وتوصلها من [[request.app.state]]. و [[@app.on_event("startup")]] القديمة deprecated.`,
+والـ [[lifespan]]: [[@asynccontextmanager]] (درس [[with و context managers]]) بيتنادى مرة: اللي قبل الـ yield وقت ما التطبيق يقوم (قبل أي request)، واللي بعده وقت ما يقفل (SIGTERM من [[docker stop]]). و [[app.state]] مكان تحط فيه الحاجات المشتركة وتوصلها من [[request.app.state]]. و [[@app.on_event("startup")]] القديمة deprecated.`,
             when: "أي مورد ليه فتح وقفل لكل request: اتصال DB، و session، و transaction، و lock. والموارد المشتركة طول عمر التطبيق (pool، و httpx client، و Redis، وموديل AI): lifespan.",
             mistakes: R`تعمل [[asyncpg.connect()]] جديد مع كل request (بطيء، وبيخلّص اتصالات Postgres). و [[except Exception: pass]] حوالين الـ yield. وتستخدم الاتصال في BackgroundTask (بعد الرد، الاتصال ممكن يكون رجع للـ pool). و pool على مستوى الـ module بيتعمل وقت الـ import قبل ما يبقى فيه event loop.`
           },
@@ -1919,7 +4119,10 @@ async def create_order(conn: Conn):
             "INSERT ويرجّع الـ id.",
             "INSERT تاني في نفس الـ transaction: الاتنين يا يتنفذوا يا لأ.",
             "رجّع."
-          ]
+          ],
+          sol: R`مع [[raise HTTPException(400)]] بعد أول INSERT، الرد [[400]] و [[{"detail": "Bad Request"}]]، و [[SELECT * FROM orders]] مش هيلاقي الصف. الـ exception عدّى من الـ [[yield]] جوه [[conn.transaction()]] فعمل rollback. بس لاحظ إن الطلب اللي بعده هياخد [[id]] 2 مش 1: الـ sequence مبيرجعش في الـ rollback، فالفجوات في الـ ids طبيعية ومتعتمدش إنها متتالية.
+
+وعشان تشوف التوقيت، اطبع حاجة بعد الـ [[async with conn.transaction()]] واطبع حاجة في middleware بعد [[call_next]]. مع [[scope="function"]] الترتيب: [[endpoint returning]] وبعدين طباعة الـ dependency (الـ commit حصل) وبعدين [[response ready in middleware]]، يعني الـ commit خلص قبل الرد. من غير [[scope]] (الافتراضي [[request]]) الطباعة بتاعة الـ dependency بتيجي بعد ما الرد اتجهّز، يعني العميل ممكن ياخد 200 والـ commit لسه مخلصش أو يفشل. عشان كده الـ transaction مع [[scope="function"]]. ولو ظهر [[TypeError]] عند [[scope]]، نسخة FastAPI عندك قديمة (الـ scope اتضاف في 0.121)، فحدّثها.`
         },
         {
           cmd: "auth dependency",
@@ -2002,7 +4205,10 @@ async def delete_user(user_id: int):
             "للأدمن بس، والـ route مش محتاج قيمة الـ dependency.",
             "الدالة.",
             "رجّع."
-          ]
+          ],
+          sol: R`[[jwt.encode]] بيطبع توكن من ٣ أجزاء بينهم نقط، زي [[eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwicm9sZSI6ImFkbWluIn0.3au3...]]، ومعاه تحذير [[InsecureKeyLengthWarning: The HMAC key is 9 bytes long]] من نسخ PyJWT الجديدة، لأن [[change-me]] أقصر من 32 byte. في الإنتاج السر يبقى طويل وعشوائي. و [[/me]] بالتوكن ده بترجع [[{"id": 1, "role": "admin"}]].
+
+لو غيّرت حرف في الجزء التالت (التوقيع): [[401]] و [[{"detail": "invalid token"}]] ومعاها header [[WWW-Authenticate: Bearer]]. ومن غير header خالص: [[401]] و [[{"detail": "Not authenticated"}]] من [[OAuth2PasswordBearer]] نفسه قبل ما دالتك تشتغل. وتوكن من غير [[role]] على الـ DELETE: [[403]] و [[{"detail": "forbidden"}]]، وبتوكن الأدمن: [[{"deleted": 5}]]. الفرق اللي بيتسأل في الانترفيو: 401 يعني «مش عارف إنت مين»، و 403 يعني «عارفك بس مش مسموحلك». ولو غيّرت حرف في الجزء التاني (الـ payload) هتاخد 401 برضه، لأن التوقيع مبقاش مطابق.`
         },
         {
           cmd: "dependency_overrides",
@@ -2061,7 +4267,24 @@ def test_validation(client: TestClient):
             "id مش رقم.",
             "422.",
             "مكان الخطأ بالظبط."
-          ]
+          ],
+          sol: R`الاختبار بيعمل override لـ [[current_user]] بمستخدم عادي، ويتأكد من [[status_code == 403]] و [[{"detail": "forbidden"}]]. ولو [[require_role]] بيعتمد على [[current_user]] جواه، الـ override بيوصل له كمان لأن FastAPI بيستبدل الـ dependency في أي مكان في الشجرة. ولو الاختبار رجع 401 يبقى عملت override لحاجة غير اللي الـ route بيستخدمها فعلًا (مثلًا نسخة اتعملت import من مكان تاني)، لازم نفس الـ object بالظبط.
+
+ولو ضفت [[print("LIFESPAN START")]] في الـ lifespan وشغّلت بـ [[pytest -s]]: مع [[with TestClient(app) as c]] هتشوف [[LIFESPAN START]] وبعدين [[LIFESPAN STOP]]، ومن غير [[with]] مش هتشوف حاجة، والـ lifespan مش هيشتغل خالص. يعني لو الـ lifespan بيعمل pool لقاعدة البيانات، الـ endpoints هتقع بـ [[AttributeError]] على [[app.state.pool]]. ومتنساش [[dependency_overrides.clear()]] وإلا الـ override هيفضل موجود في الاختبارات اللي بعده.`,
+          solCode: R`import pytest
+from fastapi.testclient import TestClient
+from app.main import app
+from app.deps import User, current_user
+@pytest.fixture
+def as_user():
+    app.dependency_overrides[current_user] = lambda: User(id=2, role="user")
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
+def test_delete_forbidden_for_normal_user(as_user: TestClient):
+    r = as_user.delete("/users/5")
+    assert r.status_code == 403
+    assert r.json() == {"detail": "forbidden"}`
         }
       ]
     },
@@ -2129,7 +4352,10 @@ async def delete_user(user_id: int) -> None:
             "حذف، والنجاح 204 من غير body.",
             "مبترجعش حاجة.",
             "احذف لو موجود، ومتعترضش لو مش موجود (DELETE متكرر بيدّي نفس النتيجة)."
-          ]
+          ],
+          sol: R`[[/users/99]] بترجع [[404 Not Found]] و [[{"detail":"User not found"}]]: FastAPI بيحط اللي في [[detail]] جوه مفتاح اسمه [[detail]] دايمًا.
+
+و [[curl -i -X POST "localhost:8000/users?email=sara@example.com"]] بيطبع [[HTTP/1.1 409 Conflict]] والـ headers، وبعدين [[{"detail":{"code":"EMAIL_TAKEN","message":"الإيميل ده مستخدم"}}]]. الـ [[detail]] ممكن يبقى أي حاجة تتحوّل JSON، فالـ dict بيدّي الـ frontend [[code]] ثابت يعمل عليه if، ورسالة يعرضها. ولو شلت [[-i]] مش هتشوف الـ status، وده سبب إنك تستخدمه دايمًا وإنت بتجرّب. ولو كتبت [[return HTTPException(...)]] بدل [[raise]] هتاخد 200 والـ exception نفسه متحوّل JSON، ودي غلطة مشهورة.`
         },
         {
           cmd: "exception handlers",
@@ -2210,7 +4436,10 @@ handler الـ [[Exception]] بيشتغل في ServerErrorMiddleware (آخر ط�
             "route.",
             "الدالة.",
             "بترمي خطأ business، والـ handler بيحوّله 404."
-          ]
+          ],
+          sol: R`[[/orders/5]] بترجع [[404]] و [[{"error": {"code": "NOT_FOUND", "message": "order 5 not found"}}]]، و [[/orders/abc]] بترجع [[422]] و [[{"error": {"code": "VALIDATION", "fields": [{"field": "order_id", "message": "Input should be a valid integer, unable to parse string as an integer"}]}}]]. الاتنين تحت [[error.code]]، فالـ frontend يعمل parse بطريقة واحدة. و [[loc[1:]]] شالت [[path]] من أول الـ loc عشان الاسم يبقى [[order_id]] بس.
+
+والـ route اللي فيه [[1 / 0]] بيرجع [[500]] و [[{"error": {"code": "INTERNAL", "ref": "44f9e7b5"}}]] (الـ ref عشوائي)، وفي اللوج [[ERROR:app:unhandled error ref=44f9e7b5 path=/boom]] ومعاه traceback الـ [[ZeroDivisionError]]. نفس الـ ref في الاتنين، فلما مستخدم يبعتلك الـ ref تلاقي الخطأ في اللوج على طول، من غير ما تسرّب تفاصيل للعميل. وخد بالك إن تحت uvicorn هتلاقي الـ traceback مرتين: مرة من الـ [[log.exception]] بتاعك، ومرة [[Exception in ASGI application]]، لأن Starlette بيرمي الخطأ تاني للسيرفر بعد ما الـ handler بتاعك يرد. ده طبيعي ومش معناه إن الـ handler مشتغلش.`
         },
         {
           cmd: "CORS و middleware",
@@ -2277,7 +4506,10 @@ async def timing(request: Request, call_next):
             "رجّع الـ id في الرد، عشان العميل يقولهولك لما يشتكي.",
             "الوقت، وبيظهر في DevTools في تاب Timing.",
             "رجّع الرد."
-          ]
+          ],
+          sol: R`قبل ما تضيف الدومين، الـ console هيطبع حاجة زي: [[Access to fetch at 'http://localhost:8000/health' from origin 'https://example.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.]] و [[fetch]] بيرمي [[TypeError: Failed to fetch]]. والمهم: لو بصيت في لوج السيرفر هتلاقي الطلب وصل ورجع [[200]]. الـ CORS مش بيمنع الطلب، بيمنع JavaScript إنه يقرا الرد. وبعد ما تضيف الدومين، الرد بيبقى فيه [[access-control-allow-origin: https://example.com]] والـ fetch بينجح. (Chrome الجديد ممكن كمان يسألك إذن «local network access» لما صفحة من الإنترنت تكلم localhost، وده غير الـ CORS.)
+
+و [[curl -i localhost:8000/health]] هيطلع فيه [[x-request-id: 8cd8b4e4...]] (32 حرف hex عشوائي) و [[server-timing: app;dur=0.6]]. ولو بعت [[-H "X-Request-ID: abc123"]] هيرجعلك [[abc123]] نفسه، ودي الفكرة: الـ id يمشي مع الطلب من الـ frontend أو الـ proxy لحد اللوج. و [[curl]] مبيعملش CORS خالص، فلو جرّبت منه هيشتغل في كل الحالات.`
         }
       ]
     },
@@ -2341,7 +4573,10 @@ asyncpg بيستخدم البروتوكول الثنائي و prepared statement
             "نفس الأمر لكذا صف.",
             "list بتتبعت كـ Postgres array.",
             "اقفل الـ pool (في التطبيق: بعد الـ yield في الـ lifespan)."
-          ]
+          ],
+          sol: R`على جدول فيه ١٠ منتجات بأسعار من 700 لـ 7000: [[fetch]] بيرجع list من [[Record]] زي [[<Record id=1 name='p1' price_cents=700>]]، و [[fetchrow]] بيرجع Record واحد أو [[None]] لو مفيش، و [[fetchval]] قيمة واحدة ([[10]])، و [[execute]] بيرجع حالة الأمر كـ string ([[UPDATE 1]])، و [[executemany]] بيرجع [[None]]، و [[ANY($1::int[])]] مع list Python بيرجع التلاتة.
+
+والـ f-string مع [[name = "x' OR '1'='1"]] بيرجع الـ ١٠ صفوف كلهم، لأن الـ query بقت [[WHERE name = 'x' OR '1'='1']] والشرط بقى صح دايمًا (SQL injection). ونفس الكلام بـ [[$1]] بيرجع ٠ صفوف: القيمة بتتبعت لـ Postgres منفصلة عن الـ SQL، فمهما كان فيها مبتبقاش كود. ولاحظ إن asyncpg صارم في الأنواع: [[fetch("... WHERE id = $1", "7")]] بترمي [[DataError: invalid input for query argument $1: '7' ('str' object cannot be interpreted as an integer)]]، فحوّل القيم قبلها (وده دور Pydantic).`
         },
         {
           cmd: "transactions",
@@ -2406,14 +4641,19 @@ async def place_order(conn: asyncpg.Connection, user_id: int, product_id: int, q
             "الـ payload كـ JSON.",
             "قفلة.",
             "هنا الـ commit حصل."
-          ]
+          ],
+          sol: R`في الـ psql التاني، الـ UPDATE هيفضل واقف من غير ما يطبع حاجة لحد ما تعمل [[COMMIT]] (أو [[ROLLBACK]]) في الأول. Postgres عامل row lock على الصف. ولما الأول يعمل commit، التاني بيكمّل على القيمة الجديدة: لو المخزون كان 10 وكل واحد نقّص 1 هتلاقي [[8]] مش [[9]]. ده اللي بيخلي [[stock = stock - $1 WHERE stock >= $1]] آمن من غير ما تقرا الأول وتكتب بعدين.
+
+وفي Python لو رميت exception بعد أول INSERT: المخزون هيفضل زي ما هو وجدول orders مفيهوش صف، لأن [[async with conn.transaction()]] عمل rollback للـ UPDATE والـ INSERT مع بعض. الطلب اللي بعده هياخد id أكبر بواحد (الـ sequence مبترجعش). ولو لقيت المخزون نقص، غالبًا الـ UPDATE كان برّه الـ [[async with]]، أو استخدمت connection تاني غير اللي فتح الـ transaction.`
         },
         {
           cmd: "SQLAlchemy async",
           title: "ORM بـ SQLAlchemy 2 وهو async",
           desc: R`SQLAlchemy 2 بيدّيك models بـ type hints ([[Mapped[int]]] و [[mapped_column]])، و queries بـ [[select()]]، ويشتغل async فوق asyncpg: [[create_async_engine("postgresql+asyncpg://...")]] و [[AsyncSession]].
 
-الـ session بتتعمل لكل request في dependency بـ yield، والـ engine مرة واحدة. و [[expire_on_commit=False]] مهمة في async.`,
+الـ session بتتعمل لكل request في dependency بـ yield، والـ engine مرة واحدة. و [[expire_on_commit=False]] مهمة في async.
+
+التسطيب: [[pip install "sqlalchemy[asyncio]" asyncpg]]، مش [[pip install sqlalchemy]] بس. من SQLAlchemy 2.1 مكتبة [[greenlet]] مبقتش بتتسطّب لوحدها، والجزء الـ async محتاجها، فمن غير الـ extra ده أول استخدام async هيرمي [[ImportError]] إن [[greenlet]] مش متسطّبة.`,
           example: R`from datetime import datetime
 from typing import Annotated
 from fastapi import Depends
@@ -2497,7 +4737,10 @@ async def create_user(session: AsyncSession, email: str) -> User:
             "ضيفه للـ session.",
             "INSERT و COMMIT، والـ id و created_at بيرجعوا بـ RETURNING.",
             "رجّع."
-          ]
+          ],
+          sol: R`من غير [[selectinload]]، [[order.user.email]] بترمي [[MissingGreenlet: greenlet_spawn has not been called; can't call await_() here. Was IO attempted in an unexpected place?]]. الـ [[user]] متحمّلش، فـ SQLAlchemy حاول يعمل query وإنت بتقرا attribute عادي من غير [[await]]، وده مينفعش في async. الحل تحمّله مقدمًا بـ [[selectinload]]، أو [[await session.refresh(order, ["user"])]]، أو [[lazy="raise"]] على الـ relationship عشان الغلطة تبان بدري.
+
+ومع [[echo=True]] هتشوف [[SELECT orders.id, orders.user_id, orders.total_cents FROM orders WHERE orders.user_id = $1::INTEGER ORDER BY orders.id DESC LIMIT $2::INTEGER]]، وبعدها query تانية من [[selectinload]]: [[SELECT users.id, users.email, users.created_at FROM users WHERE users.id IN ($1::INTEGER)]]، يعني ٢ queries مهما كان عدد الطلبات، مش N+1. ولو ظهر [[ImportError: The SQLAlchemy asyncio module requires that the Python 'greenlet' library is installed]]، سطّب [[pip install "sqlalchemy[asyncio]" asyncpg]]: من SQLAlchemy 2.1 الـ greenlet مبقاش بيتسطّب لوحده.`
         },
         {
           cmd: "alembic",
@@ -2537,7 +4780,10 @@ autogenerate بيلقط الجداول والأعمدة والـ indexes وال�
             "السلسلة كلها بالتفصيل.",
             "ارجع خطوة (بحذر: ممكن يمسح داتا).",
             "اطبع الـ SQL من غير ما تنفّذه، للمراجعة."
-          ]
+          ],
+          sol: R`[[alembic init -t async migrations]] بيعمل [[alembic.ini]] وفولدر [[migrations/]] فيه [[env.py]] و [[versions/]]. وفي [[env.py]] بتحط [[from app.models import Base]] و [[target_metadata = Base.metadata]] و [[config.set_main_option("sqlalchemy.url", settings.database_url)]]. بعد ما تضيف [[total_cents: Mapped[int] = mapped_column(server_default="0")]]، الـ autogenerate بيطبع [[Detected added column 'orders.total_cents']] ويعمل ملف في [[versions/]] فيه [[revision]] و [[down_revision]] (اللي قبله)، و [[upgrade()]] فيها [[op.add_column('orders', sa.Column('total_cents', sa.Integer(), server_default='0', nullable=False))]]، و [[downgrade()]] فيها [[op.drop_column]]. وبعد [[upgrade head]]، [[alembic current]] بيطبع الـ revision ومعاه [[(head)]].
+
+ليه تقراه قبل [[upgrade]]؟ لو القاعدة فيها جداول مش في الـ models، الـ autogenerate هيكتب [[Detected removed table]] ويحط [[op.drop_table]] في الملف، وفي تجربتنا ده حصل فعلًا. وكمان تغيير اسم عمود بيطلع drop و add (يعني البيانات تضيع)، مش rename. ولو ضفت عمود NOT NULL من غير [[server_default]] على جدول فيه صفوف، الـ upgrade هيفشل. الملف اللي اتولّد مسودة، مش حاجة تشغّلها من غير ما تبص فيها.`
         }
       ]
     },
@@ -2637,7 +4883,10 @@ async def payment(pid: str, request: Request):
             "رجّع رد الخدمة.",
             "الخدمة فشلت.",
             "502: المشكلة في خدمة ورانا، مش عندنا ولا عند العميل."
-          ]
+          ],
+          sol: R`مع [[/status/503]] هتشوف في اللوج ٣ سطور [[INFO:httpx:HTTP Request: GET https://httpbin.org/status/503 "HTTP/1.1 503 Service Unavailable"]]، بينهم 0.2 ثانية وبعدين 0.4 (الـ backoff)، وبعد التالتة الـ [[raise]] بيطلّع [[HTTPStatusError: Server error '503 Service Unavailable']] والـ route بيحوّلها [[502]] و [[payment provider unavailable]]. وجرّب كمان [[/status/404]]: طلب واحد بس ومفيش retry، لأن 404 غلط عندك مش عند السيرفر، وإعادته مش هتغيّر حاجة.
+
+و [[/delay/10]] مع [[Timeout(5.0)]]: كل محاولة بتقف بعد ٥ ثواني بـ [[ReadTimeout]]، والـ [[ReadTimeout]] نوع من [[TransportError]] فبيتعاد، فالطلب كله بياخد حوالي ١٥.٦ ثانية (٣ × ٥ + 0.6 backoff) قبل الـ 502. خد بالك: الـ retry بيضرب الـ timeout في عدد المحاولات، فلو عندك حد أقصى لوقت الرد، احسبه على كده. ولو httpbin.org مش متاح عندك، اعمل FastAPI صغير فيه [[/status/{code}]] بيرجع [[Response(status_code=code)]] و [[/delay/{n}]] بـ [[asyncio.sleep]]، والنتيجة هتبقى هي هي.`
         },
         {
           cmd: "redis cache",
@@ -2702,7 +4951,10 @@ cache-aside يعني التطبيق هو اللي بيقرر يقرا ويكتب
             "رجّع.",
             "لما منتج يتغير.",
             "امسح المفتاح، والطلب الجاي يجيب الجديد."
-          ]
+          ],
+          sol: R`النداء الأول بيروح للقاعدة ويكتب في Redis، والتاني بيرجع من Redis. عشان الفرق يبان، خلّي [[load_products_from_db]] تعمل [[await asyncio.sleep(0.3)]] كأنها query بطيئة: في تجربتنا الأول أخد حوالي [[301ms]] والتاني [[0.3ms]]. بالـ fake اللي في المثال زي ما هو، الاتنين أقل من ملّي ثانية ومش هتحس بفرق.
+
+و [[GET products:v1:tea]] في [[redis-cli]] بيرجع [[[{"id":1,"name":"Tea","price_cents":1500}]]] (JSON مضغوط من [[dump_json]])، و [[TTL products:v1:tea]] بيبدأ من [[60]] وبعد ثانيتين [[58]]، ولما يوصل للصفر المفتاح بيتمسح و [[TTL]] بيرجع [[-2]] (مش موجود). ولو [[TTL]] رجع [[-1]] يبقى المفتاح اتكتب من غير [[ex]] وهيفضل للأبد، ودي أشهر غلطة في الـ cache. ولو الدالة رجعت [[bytes]] بدل [[str]]، انت نسيت [[decode_responses=True]].`
         },
         {
           cmd: "redis rate limit",
@@ -2761,7 +5013,10 @@ async def login():
             "٥ محاولات login في الدقيقة لكل IP.",
             "الـ route.",
             "رجّع."
-          ]
+          ],
+          sol: R`الناتج: خمس [[200]] وبعدين [[429]] و [[429]]. ولو جربت [[curl -i]] على طلب زيادة هتشوف [[HTTP/1.1 429 Too Many Requests]] و [[retry-after: 11]] مثلًا (الثواني الباقية على الدقيقة) و [[{"detail":"Too many requests"}]].
+
+و [[SCAN 0 MATCH rl:*]] بيرجع cursor ([[0]] يعني خلص) ومفتاح زي [[rl:/auth/login:127.0.0.1:29845334]]: الـ path، والـ IP، ورقم الدقيقة من أول 1970. و [[GET]] عليه بيطلّع [[7]]. لو لقيت الطلب السادس رجع 200، غالبًا الدقيقة خلصت في النص والعداد بدأ من جديد: ده عيب الـ fixed window، ممكن حد يبعت ١٠ في ثانيتين على حدود دقيقتين. ولو السيرفر ورا Nginx أو load balancer، [[request.client.host]] هيبقى IP الـ proxy للكل، فالكل هيتقفل مع بعض، لازم تقرا [[X-Forwarded-For]] من proxy بتثق فيه.`
         },
         {
           cmd: "BackgroundTasks",
@@ -2829,7 +5084,10 @@ async def signup(data: Signup, tasks: BackgroundTasks):
             "ضيف task بالباراميترات (قيم، مش objects من الـ request).",
             "تانية، بتشتغل بعد الأولى.",
             "الرد بيتبعت فورًا، والـ tasks بعده."
-          ]
+          ],
+          sol: R`[[curl]] بيطبع [[{"ok":true}]] و [[time_total]] حوالي [[0.002]] ثانية، ولوج السيرفر بيطبع [[POST /signup HTTP/1.1" 201 Created]] على طول، وبعد ٥ ثواني [[welcome sent to a@example.com]] وبعده على طول [[audit signup a@example.com]]. لاحظ إن الـ audit استنى الإيميل يخلص: الـ tasks بتشتغل ورا بعض بالترتيب، مش مع بعض.
+
+ولو بعت طلب تاني وعملت [[kill -9]] للسيرفر قبل الخمس ثواني: الـ curl خد 201، بس [[welcome sent to b@example.com]] عمرها ما هتظهر، ومفيش أي أثر إنها كانت موجودة. ده الفرق بين BackgroundTasks و queue زي arq: الـ task عايشة في ذاكرة البروسيس بس. فلو ضياعها مشكلة (فاتورة، دفع، إيميل تأكيد) لازم تتكتب في Redis أو القاعدة الأول.`
         }
       ]
     },
@@ -2898,7 +5156,10 @@ Python 3.13 جاب نسخة free-threaded تجريبية ([[python3.13t]])، و 
             "الـ loop الحالي.",
             "ابعت الحسبة لـ process تانية واستنى من غير ما تقفل حد.",
             "الـ PID بيوريك أنهي worker اللي رد."
-          ]
+          ],
+          sol: R`لما [[heavy_report]] تتنادى مباشرة جوه [[async def]] وتفتح [[/health]] في نفس الوقت: [[/health]] هتستنى لحد ما التقرير يخلص (في تجربتنا 0.45 ثانية بدل بضع ملّي ثانية)، لأن الحساب ماسك الـ event loop. ومع [[run_in_executor]] بالـ ProcessPoolExecutor، [[/health]] بترجع في حوالي [[8ms]]: الحساب بقى في بروسيس تاني والـ loop فاضي.
+
+ومع [[hey]] أو [[wrk]] على route تقيل، [[--workers 4]] المفروض يدّيك requests/sec قريبة من ٤ أضعاف [[--workers 1]] لو عندك ٤ cores فاضية. و [[os.getpid()]] في الرد هيوريك ٤ PIDs مختلفة بدل واحد. ولو الفرق طلع صغير (في container محدود عندنا الزيادة كانت من 6.4 لـ 7.4 req/s بس)، يبقى الـ cores الحقيقية أقل من اللي [[nproc]] بيقوله، أو أداة الـ load نفسها بتاكل CPU على نفس الجهاز. القاعدة: workers ≈ عدد الـ cores، ومش أكتر، لأن كل worker بروسيس ليه ذاكرته.`
         },
         {
           cmd: "logging و profiling",
@@ -2971,7 +5232,10 @@ log.info("took %.1fms", (time.perf_counter() - start) * 1000)
             "امسك.",
             "ERROR ومعاه الـ traceback كامل.",
             "الوقت بالملّي ثانية."
-          ]
+          ],
+          sol: R`هتشوف ٣ سطور JSON: [[{"ts": "2026-...", "level": "INFO", "logger": "__main__", "msg": "order created id=42 total=1500"}]]، وبعدين سطر [[ERROR]] فيه مفتاح [[exc]] جواه الـ traceback كله كـ string واحد ([[ZeroDivisionError: division by zero]] في آخره)، وبعدين [[took 3.9ms]] أو قريب منها. سطر الـ debug مش موجود. ولما تغيّر لـ [[DEBUG]] هيظهر سطر زيادة بـ [[level: DEBUG]]. الـ traceback في سطر واحد هو المطلوب: أدوات زي Loki أو CloudWatch بتعتبر كل سطر حدث لوحده.
+
+و [[py-spy top --pid]] بيعرض جدول زي [[top]] بالدوال اللي واخدة أكتر وقت، ولو بتبعت طلبات على route تقيل هتلاقي الدالة بتاعتك (مثلًا [[heavy_report (main.py:6)]]) فوق. و [[py-spy dump --pid]] بيطبع الـ stack الحالي لكل thread، ومفيد جدًا لما السيرفر معلّق ومش عارف واقف فين. ولو قالك [[Permission denied]]، شغّله بـ [[sudo]] (على Linux و macOS محتاج صلاحية تقرا ذاكرة بروسيس تاني). وخد بالك: الـ PID الصح هو بتاع الـ worker، مش بتاع الـ reloader في [[fastapi dev]].`
         }
       ]
     },
@@ -3009,7 +5273,10 @@ def add_ok(item, items: list | None = None):
             "list جديدة لكل نداء.",
             "آمن.",
             "رجّع."
-          ]
+          ],
+          sol: R`الناتج: قبل أي نداء [[([],)]]، وبعد [[add(1)]] بقت [[([1],)]]، وبعد [[add(2)]] بقت [[([1, 2],)]]. و [[add(3, [])]] مش بتغيّرها، لأن إنت بعت list بتاعتك. و [[add.__defaults__[0] is add(4)]] بترجع [[True]]: الـ list اللي بترجعلك هي نفس الـ object المتخزن جوه الدالة.
+
+الإجابة اللي بتتقال في الانترفيو: الـ default بيتحسب مرة واحدة لما سطر [[def]] يتنفّذ، ويتخزن في [[__defaults__]]، فكل النداءات بتشارك نفس الـ list. عشان كده الـ default المتغير (list أو dict أو set) بيبقى [[None]]، وتعمل الجديد جوه الدالة. ونفس الفخ مع [[datetime.now()]] كـ default: هيفضل وقت تعريف الدالة للأبد.`
         },
         {
           cmd: "الـ GIL",
@@ -3042,7 +5309,33 @@ print(f"{time.perf_counter() - start:.2f}s")  # تقريبًا نفس وقت م�
             "ابدأهم.",
             "استناهم.",
             "مفيش تسريع: واحد بس بيشتغل في كل لحظة."
-          ]
+          ],
+          sol: R`الأرقام بتختلف حسب الجهاز، بس الشكل ثابت: عدّ مرتين ورا بعض وعدّهم في threadين بياخدوا نفس الوقت تقريبًا (عندنا [[1.13s]] و [[1.14s]])، لأن الـ GIL بيسمح لـ thread واحد بس ينفّذ Python bytecode في نفس اللحظة. مع [[ProcessPoolExecutor(2)]] الوقت بيقرب من النص (عندنا [[0.77s]] على container محدود، وعلى جهاز فيه cores فاضية بيقرب أكتر من النص)، لأن كل بروسيس ليه interpreter و GIL بتوعه.
+
+وعلى [[python3.14t]] (free-threaded، و [[sys._is_gil_enabled()]] بيرجع [[False]]) الـ threads بقت أسرع من الترتيب فعلًا (عندنا [[0.41s]] مقابل [[0.65s]]). الإجابة في الانترفيو: الـ GIL بيمنع التوازي في كود CPU بـ threads، بس مش بيأثر على I/O لأن الـ thread بيسيب الـ GIL وهو مستني. فللـ CPU استخدم processes أو مكتبة بتسيب الـ GIL (زي numpy) أو free-threaded build، وللـ I/O الـ threads أو async كفاية. ولو الـ threads عندك طلعت أبطأ بشكل واضح من الترتيب، ده بسبب التبديل بين الـ threads على الـ GIL، وده طبيعي.`,
+          solCode: R`import threading
+import time
+from concurrent.futures import ProcessPoolExecutor
+def count(n: int) -> None:
+    while n:
+        n -= 1
+if __name__ == "__main__":
+    N = 20_000_000
+    start = time.perf_counter()
+    count(N)
+    count(N)
+    print(f"ورا بعض: {time.perf_counter() - start:.2f}s")
+    start = time.perf_counter()
+    threads = [threading.Thread(target=count, args=(N,)) for _ in range(2)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    print(f"threads: {time.perf_counter() - start:.2f}s")
+    start = time.perf_counter()
+    with ProcessPoolExecutor(2) as pool:
+        list(pool.map(count, [N, N]))
+    print(f"processes: {time.perf_counter() - start:.2f}s")`
         },
         {
           cmd: "list و tuple و set و dict",
@@ -3069,7 +5362,10 @@ cache = {point: "Cairo"}`,
             "بيحسب الـ hash ويروح للخانة على طول.",
             "tuple: ثابتة و hashable.",
             "فتنفع مفتاح في dict."
-          ]
+          ],
+          sol: R`عندنا: [[99999 in l]] أخدت [[461 usec per loop]]، و [[99999 in s]] أخدت [[21.7 nsec per loop]]، يعني الـ set أسرع بحوالي ٢٠ ألف مرة هنا. الأرقام عندك هتختلف بس النسبة قريبة.
+
+الـ list بتلف عنصر عنصر لحد ما تلاقيه، و 99999 آخر عنصر فده أسوأ حالة (O(n)). الـ set بتحسب الـ hash وتروح للمكان على طول (O(1) في المتوسط). ولو جربت [[0 in l]] هتلاقيها سريعة جدًا ([[12.7 nsec]])، لأنها أول عنصر، فالقياس لازم يبقى على أسوأ حالة. والخلاصة للانترفيو: لو هتسأل «موجود ولا لأ» كتير، حوّل لـ set مرة واحدة الأول. بس التحويل نفسه O(n)، فلسؤال واحد بس مش هيفرق.`
         },
         {
           cmd: "generator مقابل list",
@@ -3096,7 +5392,22 @@ print(sum(squares_gen))   # 0: اتستهلك`,
             "الفرق في الذاكرة ضخم.",
             "بيحسب ويجمع واحد واحد.",
             "المرة التانية فاضي."
-          ]
+          ],
+          sol: R`الفكرة إنك تركّب generators فوق بعض: واحد بيقرا السطور، وواحد بيفلتر، و [[islice(..., 10)]] بياخد أول ١٠ ويقف. عشان تتأكد إن الملف مش بيتقري كله، عِد السطور اللي اتقرت فعلًا. على ملف مليون سطر فيه ERROR كل ألف سطر، الناتج [[10 lines_read: 10000]]: قرا لحد الـ ERROR العاشر ووقف، مش المليون.
+
+لو [[lines_read]] طلع 1000000، يبقى في مكان حوّلت لـ list: [[f.readlines()]] أو [[list(...)]] أو [[[l for l in f if ...]]] بأقواس مربعة. وخد بالك إن الملف بيفضل مفتوح لحد ما الـ generator يتقفل أو يتمسح، فلو هتوقف بدري في كود طويل العمر، اقفله صراحة أو خلّي الـ [[with]] برّه.`,
+          solCode: R`from itertools import islice
+lines_read = 0
+def read_lines(path: str):
+    global lines_read
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            lines_read += 1
+            yield line.rstrip("\n")
+def errors(lines):
+    return (l for l in lines if "ERROR" in l)
+first10 = list(islice(errors(read_lines("app.log")), 10))
+print(len(first10), "lines_read:", lines_read)`
         },
         {
           cmd: "decorator بإيدك",
@@ -3131,7 +5442,41 @@ def timed(fn):
             "في كل الأحوال...",
             "...اطبع الوقت.",
             "رجّع الـ wrapper."
-          ]
+          ],
+          sol: R`الحل: جوه الـ decorator اسأل [[inspect.iscoroutinefunction(fn)]]، لو True رجّع wrapper [[async def]] بيعمل [[await fn(...)]]، ولو False رجّع wrapper عادي. الناتج مع الكود تحت: [[slow_sum 24.9ms]] وبعده [[499999500000]]، وبعدين [[fetch 102.0ms]] و [[done]]. و [[inspect.iscoroutinefunction(fetch)]] بعد الـ decorator لسه [[True]]، وده مهم لأن FastAPI بيسأل نفس السؤال عشان يقرر يشغّل الدالة على الـ loop ولا في threadpool.
+
+الغلطة لو استخدمت الـ async wrapper بتاع المثال على دالة sync: [[f()]] مبترجعش 1، بترجع [[<coroutine object f at 0x...>]] ومعاها [[RuntimeWarning: coroutine 'f' was never awaited]]، ولو عملتلها await هترمي [[TypeError: object int can't be used in 'await' expression]]. ولو عملت wrapper sync على دالة async، التوقيت هيطلع صفر تقريبًا لأنه بيقيس عمل الـ coroutine مش تشغيلها.`,
+          solCode: R`import asyncio
+import functools
+import inspect
+import time
+def timed(fn):
+    if inspect.iscoroutinefunction(fn):
+        @functools.wraps(fn)
+        async def async_wrapper(*args, **kwargs):
+            start = time.perf_counter()
+            try:
+                return await fn(*args, **kwargs)
+            finally:
+                print(fn.__name__, f"{(time.perf_counter() - start) * 1000:.1f}ms")
+        return async_wrapper
+    @functools.wraps(fn)
+    def sync_wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            print(fn.__name__, f"{(time.perf_counter() - start) * 1000:.1f}ms")
+    return sync_wrapper
+@timed
+def slow_sum(n: int) -> int:
+    return sum(range(n))
+@timed
+async def fetch() -> str:
+    await asyncio.sleep(0.1)
+    return "done"
+print(slow_sum(1_000_000))
+print(asyncio.run(fetch()))`
         },
         {
           cmd: "Depends بيعمل إيه",
@@ -3162,7 +5507,12 @@ app.dependency_overrides[get_db] = fake_db`,
             "بيعلن هو محتاج إيه بس.",
             "استخدمهم.",
             "في الاختبارات: بدّلها."
-          ]
+          ],
+          sol: R`إجابة نموذجية لـ route زي [[GET /orders]] فيه [[user: CurrentUser]] و [[db: DB]] و [[page: PageDep]]، و [[CurrentUser]] نفسها معتمدة على [[oauth2]] (التوكن من الـ header) و [[DB]]:
+
+الشجرة: [[list_orders]] تحتها [[current_user]] (وتحتها [[oauth2]] و [[get_db]])، و [[get_db]]، و [[pagination]] (تحتها query params). الترتيب: FastAPI بيحل الأعمق الأول، فـ [[oauth2]] بيقرا الـ header، و [[get_db]] بيعمل [[acquire]] ويوقف عند الـ [[yield]]، وبعدين [[current_user]] بيستخدمهم، و [[pagination]] في أي وقت لأنها مستقلة، والـ route في الآخر. و [[get_db]] بيتنادى مرة واحدة بس مع إن اتنين طالبينه، لأن FastAPI بيعمل cache للنتيجة جوه نفس الطلب (إلا لو [[use_cache=False]]).
+
+والقفل عكس الفتح (زي stack): اللي عمل yield الأخير بيكمّل الأول، فالـ connection بيرجع للـ pool بعد ما كل اللي فوقه خلص. ولو أي dependency رمت HTTPException (مثلًا التوكن غلط)، الـ route مش بيتنادى أصلًا، والـ dependencies اللي عملت yield بتتقفل برضه. النقطة اللي بتميزك في الانترفيو: [[dependency_overrides[get_db]]] بيبدّل العقدة دي في الشجرة كلها، فالاختبار ميلمسش قاعدة حقيقية.`
         },
         {
           cmd: "Pydantic v2 عمل إيه",
@@ -3189,7 +5539,21 @@ user.model_dump(mode="json")   # {'id': 5, 'email': 'a@example.com'}`,
             "بيفحص الإيميل.",
             R`[["5"]] اتحوّل 5 (lax mode).`,
             "dict بأنواع JSON."
-          ]
+          ],
+          sol: R`موديل v1 نموذجي فيه [[class Config: orm_mode = True]] و [[@validator("email")]] و [[User.parse_obj(...)]] و [[u.dict()]] و [[u.json()]]. ولو شغّلته على Pydantic 2 عادي هيشتغل، بس مع تحذيرات [[PydanticDeprecatedSince20]] لكل واحدة: «The parse_obj method is deprecated; use model_validate instead» ونفس الكلام لـ [[dict]] و [[json]] و [[@validator]] و [[class Config]]، و [[orm_mode]] بيطلع تحذير إنه اتسمّى [[from_attributes]]. ومع [[python -W error::DeprecationWarning]] أول واحد بيبقى exception والبرنامج يقف عنده، لأن [[PydanticDeprecatedSince20]] نوع من [[DeprecationWarning]]. فبتصلّح وتشغّل تاني لحد ما يعدّي.
+
+التحويل: [[class Config]] بقت [[model_config = ConfigDict(from_attributes=True)]]، و [[@validator]] بقت [[@field_validator]] ومعاها [[@classmethod]]، و [[parse_obj]] بقت [[model_validate]]، و [[dict()]] بقت [[model_dump()]]، و [[json()]] بقت [[model_dump_json()]]. الناتج بعد التحويل: [[{'id': 5, 'email': 'a@x.com'} {"id":5,"email":"a@x.com"}]] من غير ولا تحذير.`,
+          solCode: R`from pydantic import BaseModel, ConfigDict, field_validator
+class User(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    email: str
+    @field_validator("email")
+    @classmethod
+    def lower(cls, v: str) -> str:
+        return v.lower()
+u = User.model_validate({"id": "5", "email": "A@X.com"})
+print(u.model_dump(), u.model_dump_json())`
         },
         {
           cmd: "async مش أسرع",
@@ -3222,7 +5586,10 @@ async def c():
             "route.",
             "async...",
             "...وجواها sync: كل الطلبات هتستنى."
-          ]
+          ],
+          sol: R`النتيجة المتوقعة (جربناها بـ ٢٠٠ طلب و ٥٠ مع بعض، مع خدمة خارجية بترد في 0.2 ثانية بدل example.com): [[/a]] الأسرع (عندنا حوالي 430 req/s)، لأن الـ query بتـ await والـ loop بيخدم غيرها. [[/b]] كويسة (حوالي 160 req/s، الـ ٢٠٠ في 1.5 ثانية)، لأن [[def]] بتروح للـ threadpool (٤٠ thread افتراضيًا)، فـ ٤٠ طلب بيستنوا مع بعض. و [[/c]] كارثة: حوالي 5 req/s، والـ ٢٠٠ أخدوا ٤١ ثانية، يعني ٢٠٠ × 0.2 ورا بعض، لأن [[requests]] blocking جوه [[async def]] فبيقفل الـ loop كله.
+
+الدرس: [[async def]] مش بتخلي الكود أسرع لوحدها، بتخليه أسرع لو كل الـ I/O جواها [[await]]. [[/b]] المكتوبة [[def]] عادية أحسن من [[/c]] بـ ٣٠ مرة، مع إن الاتنين نفس الكود. ولو [[/c]] طلعت عندك قريبة من [[/b]]، اتأكد إن الـ load tool بيبعت فعلًا ٥٠ مع بعض ([[-c 50]]).`
         }
       ]
     }

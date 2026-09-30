@@ -8,6 +8,8 @@
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
+//   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
+//   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
 // ولو محتاج تكتب ${ جوه R`...` اكتبها $__{ والصفحة بترجّعها.
 
 TAB("docker", {
@@ -2042,6 +2044,97 @@ nginx-proxy بيقرا متغيرات كل container شغال، ويولّد إ�
             "خدمة nginx (باقي إعداداتها زي ما هي):",
             "loop في الخلفية يعمل reload كل ٦ ساعات عشان يقرا أي شهادة اتجددت، و nginx نفسه في المقدمة."
           ]
+        },
+        {
+          cmd: "Traefik labels",
+          title: "دومين و SSL لكل container بـ labels",
+          desc: R`Traefik بروكسي بيقرا Docker زي nginx-proxy، بس الإعداد بيتكتب كـ [[labels]] على كل container: الدومين (router)، والبورت (service)، والشهادة ([[certresolver]]). وهو نفسه بيطلّع شهادات Let's Encrypt ويجددها من غير certbot.
+
+هتقابله جاهز في Coolify و Dokploy وستاكات compose كتير. الأمثلة هنا على Traefik v3 (النسخة الحالية v3.7). شروحات v2 القديمة أغلبها لسه بتشتغل، بس فيه حاجات اتغيرت زي صيغة بعض القواعد.`,
+          example: R`docker network create proxy
+# compose.yml بتاع المشروع (Traefik نفسه شغال في compose لوحده على نفس الشبكة):
+services:
+  web:
+    build: .
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.shop.rule=Host($__btshop.example.com$__bt) || Host($__btwww.shop.example.com$__bt)
+      - traefik.http.routers.shop.entrypoints=websecure
+      - traefik.http.routers.shop.tls.certresolver=le
+      - traefik.http.services.shop.loadbalancer.server.port=3000
+    networks: [default, proxy]
+networks:
+  proxy: { external: true }`,
+          try: R`شغّل Traefik بالإعداد اللي في الحل، ومعاه [[traefik/whoami]] بـ labels على [[app.example.com]]. من غير دومين حقيقي جرّب بـ [[curl --resolve]]: HTTP لازم يحوّلك لـ HTTPS، و HTTPS يرجّع رد whoami، ودومين تاني يرجّع 404.`,
+          flag: "script",
+          deep: {
+            why: "نفس مشكلة nginx-proxy: سيرفر واحد عليه كذا مشروع، وكل واحد عايز دومين وشهادة. Traefik بيحل ده والإعداد كله جنب الخدمة في compose بتاعها، وكمان هو اللي جوه أدوات زي Coolify و Dokploy، فلو ورثت سيرفر شغال بيهم أو ستاك compose فيه labels غريبة، لازم تفهمه عشان تصلّح أي حاجة.",
+            how: R`الإعداد نوعين. static: بيتكتب مرة في أمر تشغيل Traefik (flags في [[command]] أو ملف [[traefik.yml]])، وفيه الـ entrypoints والـ providers والـ certresolvers. و dynamic: الـ routers والـ services، وبييجي من labels الـ containers وبيتحدّث لايف.
+
+في الـ static: [[entrypoints.web]] على 80 و [[entrypoints.websecure]] على 443، وسطر redirection يحوّل أي HTTP لـ HTTPS بـ 301. و [[providers.docker.exposedbydefault=false]] يعني مفيش container بيتنشر غير لو عليه [[traefik.enable=true]]، ودي أهم سطر عشان قاعدة البيانات ما تتنشرش بالغلط. و [[providers.docker.network=proxy]] يقوله يوصل للـ containers عن طريق الشبكة دي. و resolver اسمه [[le]] بـ [[acme.httpchallenge.entrypoint=web]] وإيميل وملف [[acme.json]] على volume عشان الشهادات متضيعش مع كل restart.
+
+في الـ labels: الـ router اسمه [[shop]] (أي اسم، بس فريد على السيرفر). [[rule=Host(...)]] الدومين، والدومين بين backticks جوه القاعدة. [[entrypoints=websecure]] يسمع على 443. [[tls.certresolver=le]] اطلب شهادة للدومينات اللي في الـ rule. و [[loadbalancer.server.port]] البورت جوه الـ container، ومن غيره Traefik بياخد البورت اللي في [[EXPOSE]]، ولو أكتر من واحد بياخد أصغرهم، ولو مفيش هيفشل.
+
+Traefik بيراقب Docker عن طريق [[docker.sock]]، فأول ما الـ container يقوم بيلاقيه ويطلب الشهادة، ولما يقع بيشيله. ومفيش ولا خدمة غيره محتاجة [[ports]].`,
+            when: "كذا مشروع على VPS واحد وعايز الإعداد جنب كل مشروع. أو ورثت Coolify أو Dokploy أو ستاك فيه Traefik. لو مشروع واحد وعايز أبسط حاجة، Caddy (في «تاب Nginx بعمق») أو nginx-proxy أقل تفاصيل.",
+            mistakes: R`تنسى [[exposedbydefault=false]]، فكل container بيتنشر على دومين بالاسم بتاعه، حتى الـ admin و Postgres. والـ container على شبكتين ومفيش [[providers.docker.network]]، فـ Traefik يختار IP الشبكة الغلط والموقع يرجّع 504 Gateway Timeout. و [[acme.json]] مش على volume، فمع كل restart بيطلب شهادات جديدة لحد ما يخبط في حدود Let's Encrypt. والدومين بين علامات تنصيص مفردة [[Host('shop.example.com')]] بدل backticks، فالـ router ميشتغلش واللوج يقول [[illegal rune literal]] (الـ double quotes مقبولة، بس backticks هي المعتادة). واسم router متكرر في مشروعين، فواحد منهم بيغطي على التاني. و [[api.insecure=true]] على سيرفر حقيقي بيفتح لوحة Traefik على 8080 من غير باسورد. وزي nginx-proxy: [[docker.sock]] معناه root على السيرفر، فالصورة الرسمية بنسخة محددة و [[:ro]].`
+          },
+          lines: [
+            "اعمل شبكة البروكسي مرة واحدة على السيرفر.",
+            "الخدمات.",
+            "خدمة الموقع.",
+            "بتتبني من الفولدر ده.",
+            "الإعداد اللي Traefik بيقراه:",
+            "انشر الـ container ده (لأن exposedbydefault=false).",
+            "الـ router اسمه shop، وبيستقبل الدومينين دول (بين backticks).",
+            "بيسمع على 443 بس (HTTP بيتحوّل لوحده).",
+            "اطلب شهادة Let's Encrypt من الـ resolver اللي اسمه le.",
+            "ابعت الطلبات لبورت 3000 جوه الـ container.",
+            "على شبكة المشروع وشبكة البروكسي.",
+            "تعريف الشبكات:",
+            "شبكة البروكسي موجودة بره."
+          ],
+          sol: R`HTTP: [[curl -s -o /dev/null -w "%{http_code} %{redirect_url}" -H "Host: app.example.com" http://127.0.0.1/]] بيطبع [[301 https://app.example.com/]].
+
+HTTPS: [[curl -sk --resolve app.example.com:443:127.0.0.1 https://app.example.com/]] بيرجّع رد whoami: [[Hostname]] و [[X-Forwarded-Host: app.example.com]] و [[X-Forwarded-Proto: https]]. ودومين مش معرّف (other.example.com) بيرجّع 404 من Traefik نفسه.
+
+على جهازك من غير دومين حقيقي، اللوج هيطلّع [[Unable to obtain ACME certificate for domains]] والشهادة هتبقى [[CN=TRAEFIK DEFAULT CERT]]، وده طبيعي: Let's Encrypt مش هيقدر يوصل لجهازك. على سيرفر حقيقي والدومين بيشاور عليه، [[curl -vI https://app.example.com]] بيوري issuer من Let's Encrypt.
+
+لو كله 404 حتى app: غالبًا ناسي [[traefik.enable=true]]. ولو 504 أو Bad Gateway: الـ container مش على شبكة proxy، أو البورت في الـ label غلط.`,
+          solCode: R`services:
+  traefik:
+    image: traefik:v3.7
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxy
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.le.acme.email=you@example.com
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+    ports: ["80:80", "443:443"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - letsencrypt:/letsencrypt
+    networks: [proxy]
+    restart: unless-stopped
+  app:
+    image: traefik/whoami
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app.rule=Host($__btapp.example.com$__bt)
+      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.app.tls.certresolver=le
+      - traefik.http.services.app.loadbalancer.server.port=80
+    networks: [proxy]
+volumes:
+  letsencrypt:
+networks:
+  proxy:
+    name: proxy`
         }
       ]
     }
