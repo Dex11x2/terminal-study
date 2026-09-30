@@ -62,14 +62,14 @@ body[data-shell="docker"]{--accent:var(--a-docker);--t-bg:#0b2a4a;--t-fg:#e6f0ff
 body[data-shell="start"]{--accent:var(--a-start);--t-bg:#1f2430;--t-fg:#e8eaf0;--t-pr:#ffcc66;--t-cm:#8a93a6;--t-bar:#2a3040}
 body[data-shell="zsh"]{--accent:var(--a-zsh);--t-bg:#fbfbfd;--t-fg:#1d1d1f;--t-pr:#0f766e;--t-cm:#8e8e93;--t-bar:#e6e6eb}
 body[data-shell="cmd"]{--accent:var(--a-cmd);--t-bg:#0c0c0c;--t-fg:#cccccc;--t-pr:#f2f2f2;--t-cm:#7a7a7a;--t-bar:#262626}
-.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+.wrap{max-width:min(1600px, 95vw);margin:0 auto;padding:0 24px}
 code{font-family:var(--mono);font-size:.86em;background:color-mix(in srgb,var(--accent) 12%,transparent);padding:1px 6px;border-radius:4px;unicode-bidi:isolate;direction:ltr;display:inline-block}
 a{color:var(--accent)}
 
 /* hero */
 header.hero{padding:48px 0 28px}
 .hero h1{font-size:clamp(34px,6vw,56px);line-height:1.15;margin:0 0 12px;font-weight:700;letter-spacing:-.5px}
-.hero p.lead{max-width:62ch;color:var(--muted);margin:0 0 28px;font-size:18px}
+.hero p.lead{max-width:100%;color:var(--muted);margin:0 0 28px;font-size:18px}
 .switch{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:12px}
 .sw{all:unset;cursor:pointer;display:flex;flex-direction:column;border:2px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface);transition:border-color .15s,transform .15s,box-shadow .15s}
 .sw:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.07)}
@@ -141,7 +141,7 @@ section.cat>h3 small{font-size:14px;color:var(--muted);font-weight:400}
 .lvl:first-child{margin-top:18px}
 .lvl .n{font-weight:700;color:var(--accent);font-size:15px}
 .lvl h2{font-size:32px;line-height:1.2;margin:2px 0 4px}
-.lvl p{margin:0;color:var(--muted);max-width:65ch}
+.lvl p{margin:0;color:var(--muted);max-width:100%}
 .lvls{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .lv{all:unset;cursor:pointer;font-size:14px;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
 .lv[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}
@@ -156,7 +156,7 @@ section.cat>h3 small{font-size:14px;color:var(--muted);font-weight:400}
 .path li::marker{color:var(--muted);font-weight:600}
 .path button{all:unset;cursor:pointer;color:var(--ink);border-bottom:1px dashed var(--muted)}
 .path button:hover,.path button:focus-visible{color:var(--a-vps);border-bottom-color:currentColor}
-section.cat>p.cat-note{margin:0 0 12px;color:var(--muted);max-width:70ch}
+section.cat>p.cat-note{margin:0 0 12px;color:var(--muted);max-width:100%}
 article.cmd{border-inline-start:3px solid var(--accent);background:var(--surface);padding:18px 20px 16px;margin:14px 0;border-radius:0 8px 8px 0}
 [dir="rtl"] article.cmd{border-radius:8px 0 0 8px}
 .cmd-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:6px}
@@ -167,7 +167,7 @@ article.cmd{border-inline-start:3px solid var(--accent);background:var(--surface
 .os{font-size:12.5px;padding:1px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
 .os.linux{color:var(--a-bash);border-color:var(--a-bash)}
 .os.diff{color:var(--a-zsh);border-color:var(--a-zsh)}
-.osnote{font-size:15px;margin:-4px 0 12px;padding:6px 12px;border-inline-start:3px solid var(--a-zsh);background:color-mix(in srgb,var(--a-zsh) 9%,transparent);border-radius:4px;max-width:75ch}
+.osnote{font-size:15px;margin:-4px 0 12px;padding:6px 12px;border-inline-start:3px solid var(--a-zsh);background:color-mix(in srgb,var(--a-zsh) 9%,transparent);border-radius:4px;max-width:100%}
 .osnote b{color:var(--a-zsh)}
 .cmd .desc + .desc{margin-top:-2px}
 .deep{display:grid;gap:12px;margin:4px 0 14px}
@@ -180,7 +180,7 @@ article.cmd{border-inline-start:3px solid var(--accent);background:var(--surface
 .deep section:nth-child(3) h4{color:var(--ok)}
 .deep section:nth-child(4){border-inline-start-color:var(--danger)}
 .deep section:nth-child(4) h4{color:var(--danger)}
-.deep p{margin:0 0 8px;max-width:75ch}
+.deep p{margin:0 0 8px;max-width:100%}
 .deep p:last-child{margin-bottom:0}
 .sum{font-size:15px;color:var(--muted);margin:0 0 10px}
 .sum b{color:var(--ink)}
@@ -209,7 +209,7 @@ body.quiz article.cmd:not(.shown) .try{display:none}
 body.quiz article.cmd:not(.shown) .reveal{display:inline-block}
 body.quiz article.cmd:not(.shown) .cmd-h .title{font-size:19px}
 .tag-danger{font-size:12.5px;font-weight:600;color:var(--danger);background:var(--danger-bg);padding:1px 10px;border-radius:999px}
-.cmd .desc{margin:0 0 12px;max-width:75ch}
+.cmd .desc{margin:0 0 12px;max-width:100%}
 .term{background:var(--t-bg);color:var(--t-fg);border-radius:8px;overflow:hidden;direction:ltr;text-align:left}
 .term-bar{display:flex;justify-content:space-between;align-items:center;background:var(--t-bar);padding:5px 10px 5px 14px;font-family:var(--mono);font-size:12px;opacity:.95}
 .term-bar span{opacity:.75}
@@ -235,7 +235,7 @@ article.cmd.is-done .done{color:var(--ok)}
 /* compare */
 .block{padding:40px 0 10px;border-top:1px solid var(--line);margin-top:30px}
 .block h2{font-size:28px;margin:0 0 6px}
-.block>p{color:var(--muted);margin:0 0 16px;max-width:70ch}
+.block>p{color:var(--muted);margin:0 0 16px;max-width:100%}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
 th,td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:start}
@@ -248,7 +248,7 @@ tr:last-child td{border-bottom:0}
 .mission{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:14px 0}
 .mission h3{margin:0 0 4px;font-size:19px;display:flex;gap:10px;align-items:baseline}
 .mission h3 .n{font-family:var(--mono);color:var(--muted);font-size:15px}
-.mission p{margin:0 0 10px;max-width:75ch}
+.mission p{margin:0 0 10px;max-width:100%}
 details{margin-top:6px}
 summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:15px;padding:4px 0}
 summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -498,9 +498,9 @@ body.quiz article.cmd:not(.shown) .chk{display:none}
 
 /* market, language and English tabs */
 .sw-note{margin:-2px 0 8px;font-size:14px;color:var(--muted)}
-:root{--a-english:#1d4ed8;--a-speak:#7c3aed;--a-dotnet:#6d28d9;--a-angular:#be123c;--a-spring:#15803d;--a-rn:#0369a1;--a-cpp:#00599c;--a-kotlin:#7f52ff}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a-english:#93c5fd;--a-speak:#c4b5fd;--a-dotnet:#c4b5fd;--a-angular:#fda4af;--a-spring:#86efac;--a-rn:#7dd3fc;--a-cpp:#62a0ea;--a-kotlin:#a37aff}}
-:root[data-theme="dark"]{--a-english:#93c5fd;--a-speak:#c4b5fd;--a-dotnet:#c4b5fd;--a-angular:#fda4af;--a-spring:#86efac;--a-rn:#7dd3fc;--a-cpp:#62a0ea;--a-kotlin:#a37aff}
+:root{--a-english:#1d4ed8;--a-speak:#7c3aed;--a-dotnet:#6d28d9;--a-angular:#be123c;--a-spring:#15803d;--a-rn:#0369a1;--a-cpp:#00599c;--a-kotlin:#7f52ff;--a-swift:#f05138;--a-go:#00add8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a-english:#93c5fd;--a-speak:#c4b5fd;--a-dotnet:#c4b5fd;--a-angular:#fda4af;--a-spring:#86efac;--a-rn:#7dd3fc;--a-cpp:#62a0ea;--a-kotlin:#a37aff;--a-swift:#ff755d;--a-go:#5ed6f5}}
+:root[data-theme="dark"]{--a-english:#93c5fd;--a-speak:#c4b5fd;--a-dotnet:#c4b5fd;--a-angular:#fda4af;--a-spring:#86efac;--a-rn:#7dd3fc;--a-cpp:#62a0ea;--a-kotlin:#a37aff;--a-swift:#ff755d;--a-go:#5ed6f5}
 body[data-shell="english"]{--accent:var(--a-english);--t-bg:#0b1a3a;--t-fg:#eef0f3;--t-pr:#93c5fd;--t-cm:#8b95a5;--t-bar:#0b1a3a}
 .sw[data-s="english"] .top{background:#0b1a3a;color:#eef0f3}
 .sol .term[data-k="english"]{--t-bg:#0b1a3a;--t-fg:#eef0f3;--t-pr:#93c5fd;--t-cm:#8b95a5;--t-bar:#0b1a3a}
@@ -525,6 +525,12 @@ body[data-shell="cpp"]{--accent:var(--a-cpp);--t-bg:#071d33;--t-fg:#eef0f3;--t-p
 body[data-shell="kotlin"]{--accent:var(--a-kotlin);--t-bg:#1e0f3d;--t-fg:#eef0f3;--t-pr:#a37aff;--t-cm:#8b95a5;--t-bar:#1e0f3d}
 .sw[data-s="kotlin"] .top{background:#1e0f3d;color:#eef0f3}
 .sol .term[data-k="kotlin"]{--t-bg:#1e0f3d;--t-fg:#eef0f3;--t-pr:#a37aff;--t-cm:#8b95a5;--t-bar:#1e0f3d}
+body[data-shell="swift"]{--accent:var(--a-swift);--t-bg:#260f0a;--t-fg:#eef0f3;--t-pr:#ff755d;--t-cm:#8b95a5;--t-bar:#260f0a}
+.sw[data-s="swift"] .top{background:#260f0a;color:#eef0f3}
+.sol .term[data-k="swift"]{--t-bg:#260f0a;--t-fg:#eef0f3;--t-pr:#ff755d;--t-cm:#8b95a5;--t-bar:#260f0a}
+body[data-shell="go"]{--accent:var(--a-go);--t-bg:#051e26;--t-fg:#eef0f3;--t-pr:#5ed6f5;--t-cm:#8b95a5;--t-bar:#051e26}
+.sw[data-s="go"] .top{background:#051e26;color:#eef0f3}
+.sol .term[data-k="go"]{--t-bg:#051e26;--t-fg:#eef0f3;--t-pr:#5ed6f5;--t-cm:#8b95a5;--t-bar:#051e26}
 </style>
 </head>
 <body data-shell="bash">
@@ -574,6 +580,7 @@ body[data-shell="kotlin"]{--accent:var(--a-kotlin);--t-bg:#1e0f3d;--t-fg:#eef0f3
       <button class="sw" role="tab" data-s="php" aria-selected="false"><div class="top"><b>PHP و MySQL</b><span>$stmt = $pdo-&gt;prepare(...)</span></div><div class="bot">PHP من الصفر، و PDO و prepared statements، و sessions و forms، والأمان، والاستضافة المشتركة</div></button>
       <button class="sw" role="tab" data-s="flutter" aria-selected="false"><div class="top"><b>Flutter و Dart</b><span>flutter run</span></div><div class="bot">تطبيق موبايل native من كود واحد: Dart، و widgets، و state، و http، والبناء والنشر. جديد عليك</div></button>
       <button class="sw" role="tab" data-s="cpp" aria-selected="false"><div class="top"><b>C و C++</b><span>g++ -std=c++20 main.cpp</span></div><div class="bot">أساس كل لغات البرمجة والأنظمة والألعاب: الذاكرة وإدارتها، والمؤشرات (Pointers)، والـ STL، و C++ الحديثة</div></button>
+      <button class="sw" role="tab" data-s="go" aria-selected="false"><div class="top"><b>Go (Golang)</b><span>go run main.go</span></div><div class="bot">لغة Google السحابية السريعة: خوادم REST API، وتزامن الـ Goroutines، والـ Microservices وتطبيقات السيرفرات</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -585,6 +592,7 @@ body[data-shell="kotlin"]{--accent:var(--a-kotlin);--t-bg:#1e0f3d;--t-fg:#eef0f3
       <button class="sw" role="tab" data-s="spring" aria-selected="false"><div class="top"><b>Java و Spring Boot</b><span>@GetMapping("/orders")</span></div><div class="bot">Java من TypeScript، وبرامج Desktop بـ JavaFX، و Spring Boot و JPA و Security: البنوك والاتصالات والخليج</div></button>
       <button class="sw" role="tab" data-s="rn" aria-selected="false"><div class="top"><b>React Native و Expo</b><span>npx expo start</span></div><div class="bot">تطبيقات موبايل بنفس React اللي اتعلمته، و Expo Router و EAS، والأكتر طلبًا برّه مصر</div></button>
       <button class="sw" role="tab" data-s="kotlin" aria-selected="false"><div class="top"><b>Kotlin و Android</b><span>kotlinc main.kt</span></div><div class="bot">تطبيقات Android بـ Kotlin و Compose أو Java الكلاسيكية، و Coroutines، والنشر على Play Store</div></button>
+      <button class="sw" role="tab" data-s="swift" aria-selected="false"><div class="top"><b>Swift و iOS</b><span>swift main.swift</span></div><div class="bot">اللغة الرسمية لتطبيقات iPhone و iPad: واجهات SwiftUI العصرية، والـ Async/Await، والنشر على App Store</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -670,13 +678,13 @@ body[data-shell="kotlin"]{--accent:var(--a-kotlin);--t-bg:#1e0f3d;--t-fg:#eef0f3
       <li><b>الشهر ٤ و ٥، الباك إند (واحد بس):</b> <button type="button" data-go="api" data-lv="1">Backend بـ Node ١ و ٢</button>، أو <button type="button" data-go="pyapi" data-lv="1">Python و FastAPI</button>، أو <button type="button" data-go="php" data-lv="1">PHP و MySQL</button>. ومعاه <button type="button" data-go="data" data-lv="1">SQL و Prisma ١ و ٢</button> و <button type="button" data-go="pg" data-lv="1">PostgreSQL ١</button>، و <button type="button" data-go="sec" data-lv="1">أمان الموقع</button>، و <button type="button" data-go="api" data-lv="3">Backend ٣: الاختبارات</button>. المشروع: <button type="button" data-go="projects" data-lv="2">مشروع ٥</button>.</li>
       <li><b>الشهر ٦، full-stack ونشر:</b> <button type="button" data-go="next" data-lv="1">Next.js ١ و ٢</button>، و <button type="button" data-go="arch" data-lv="1">بناء مشروع كامل ١ و ٢</button>، و <button type="button" data-go="vps" data-lv="1">VPS ١ و ٢</button> و <button type="button" data-go="docker" data-lv="1">Docker ١</button> و <button type="button" data-go="nginx" data-lv="1">Nginx</button> و <button type="button" data-go="gha" data-lv="1">GitHub Actions ١</button>، و <button type="button" data-go="quality" data-lv="3">Playwright</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٦</button> منشور على دومين.</li>
       <li><b>الشهر ٧ وبعده، العمق:</b> <button type="button" data-go="arch" data-lv="3">بناء مشروع كامل ٣</button>، و <button type="button" data-go="apis" data-lv="1">APIs متقدمة</button>، و <button type="button" data-go="sweng" data-lv="1">هندسة البرمجيات</button>، و <button type="button" data-go="data" data-lv="3">SQL و Prisma ٣</button>، و <button type="button" data-go="next" data-lv="3">Next.js ٣</button>، و <button type="button" data-go="diag" data-lv="1">التشخيص</button> و <button type="button" data-go="real" data-lv="1">من مشاريعي</button>، و <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button> لما تحتاجه، و <button type="button" data-go="ai" data-lv="1">الذكاء الاصطناعي</button>. المشروع: <button type="button" data-go="projects" data-lv="3">مشروع ٧</button>. وكمّل <button type="button" data-go="dsa" data-lv="2">DSA ٢ و ٣</button>.</li>
-      <li><b>ستاك إضافي حسب السوق (واحد بس):</b> لمصر والخليج <button type="button" data-go="dotnet" data-lv="1">C# و .NET</button> مع <button type="button" data-go="angular" data-lv="1">Angular</button>، وللبنوك <button type="button" data-go="spring" data-lv="1">Java و Spring Boot</button>، وللموبايل <button type="button" data-go="rn" data-lv="1">React Native و Expo</button> أو <button type="button" data-go="kotlin" data-lv="1">Kotlin و Android</button>، وللأنظمة ومحركات الألعاب <button type="button" data-go="cpp" data-lv="1">C و C++</button>. واختار بعد درس «تختار أنهي stack» في <button type="button" data-go="career" data-lv="1">الشغل والكارير</button>.</li>
+      <li><b>ستاك إضافي حسب السوق (واحد بس):</b> لمصر والخليج <button type="button" data-go="dotnet" data-lv="1">C# و .NET</button> مع <button type="button" data-go="angular" data-lv="1">Angular</button>، وللبنوك <button type="button" data-go="spring" data-lv="1">Java و Spring Boot</button>، وللموبايل <button type="button" data-go="rn" data-lv="1">React Native و Expo</button> أو <button type="button" data-go="kotlin" data-lv="1">Kotlin و Android</button> أو <button type="button" data-go="swift" data-lv="1">Swift و iOS</button>، وللأنظمة ومحركات الألعاب <button type="button" data-go="cpp" data-lv="1">C و C++</button>، وللسيرفرات السحابية <button type="button" data-go="go" data-lv="1">Go (Golang)</button>. واختار بعد درس «تختار أنهي stack» في <button type="button" data-go="career" data-lv="1">الشغل والكارير</button>.</li>
       <li><b>التوظيف:</b> <button type="button" data-go="career" data-lv="1">الشغل والكارير</button> من بعد مشروع ٥ (الـ portfolio والـ CV مش لازم يستنوا)، و <button type="button" data-go="interview" data-lv="1">الانترفيو</button> قبل أي انترفيو بأسبوعين، و «اختبرني» و «راجع اللي نسيته» كل يوم.</li>
     </ol>
     <h3 class="path-h">مسار الاختبارات</h3>
     <p class="path-note"><button type="button" data-go="quality" data-lv="2">فحص الكود ٢: أول اختبار</button> ثم <button type="button" data-go="api" data-lv="3">Backend ٣: supertest وقاعدة اختبار</button> ثم <button type="button" data-go="react" data-lv="3">React ٣: Testing Library و MSW</button> ثم <button type="button" data-go="quality" data-lv="3">فحص الكود ٣: Playwright</button> ثم <button type="button" data-go="sweng" data-lv="3">هندسة البرمجيات ٣: TDD</button>.</p>
     <h3 class="path-h">مش محتاجهم بعمق لهدف الويب</h3>
-    <p class="path-note"><button type="button" data-go="ps" data-lv="0">PowerShell</button> و <button type="button" data-go="cmd" data-lv="0">CMD</button> و <button type="button" data-go="zsh" data-lv="0">zsh</button>: اللي على جهازك بس، وأساسياته. <button type="button" data-go="os" data-lv="2">اختصارات النظام ٢ و ٣</button>: وقت ما تحتاجها. أجزاء AWS و Kubernetes و Terraform في <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button>: بعد أول شغل. <button type="button" data-go="flutter" data-lv="1">Flutter</button> و <button type="button" data-go="kotlin" data-lv="1">Kotlin</button> و <button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button>: لو عايز موبايل. و <button type="button" data-go="cpp" data-lv="1">C و C++</button>: للأنظمة والألعاب. <button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو اخترت PostgreSQL، والباك إندات التانية غير اللي اخترته.</p>
+    <p class="path-note"><button type="button" data-go="ps" data-lv="0">PowerShell</button> و <button type="button" data-go="cmd" data-lv="0">CMD</button> و <button type="button" data-go="zsh" data-lv="0">zsh</button>: اللي على جهازك بس، وأساسياته. <button type="button" data-go="os" data-lv="2">اختصارات النظام ٢ و ٣</button>: وقت ما تحتاجها. أجزاء AWS و Kubernetes و Terraform في <button type="button" data-go="cloud" data-lv="1">Cloud و DevOps</button>: بعد أول شغل. <button type="button" data-go="flutter" data-lv="1">Flutter</button> و <button type="button" data-go="kotlin" data-lv="1">Kotlin</button> و <button type="button" data-go="swift" data-lv="1">Swift</button> و <button type="button" data-go="apps" data-lv="1">Desktop و Mobile</button>: لو عايز موبايل. و <button type="button" data-go="cpp" data-lv="1">C و C++</button> و <button type="button" data-go="go" data-lv="1">Go</button>: للأنظمة والخدمات الموزعة. <button type="button" data-go="mongo" data-lv="1">MongoDB</button> لو اخترت PostgreSQL، والباك إندات التانية غير اللي اخترته.</p>
     <details class="path-ops">
       <summary>ترتيب مسار السيرفرات والترمنال بالتفصيل</summary>
     <ol>
@@ -152794,6 +152802,871 @@ BUILD SUCCESSFUL in 18s
 وإنشاء ملف الحزمة النهائي في:
 app/build/outputs/bundle/release/app-release.aab
 جاهز تماماً للرفع إلى لوحة تحكم Google Play Console!`
+        }
+      ]
+    }
+  ]
+});
+
+/* ===== js/tabs/swift.js ===== */
+// تاب Swift و iOS
+TAB("swift", {
+  label: "Swift و iOS",
+  prompt: "$ ",
+  lab: R`swift --version
+swift main.swift
+xcodebuild -version`,
+  labText: "Swift هي اللغة الرسمية الحديثة من Apple لتطوير تطبيقات iPhone و iPad و Mac. مع إطار SwiftUI بتبني واجهات فائقة السرعة والجمال.",
+  levels: {
+    "1": ["لغة Swift من الصفر", "المتغيرات let و var، والأمان ضد الأخطاء بـ Optionals، والدوال، و Structs vs Classes"],
+    "2": ["واجهات SwiftUI الحديثة", "المكونات الأساسية @View، و VStack و HStack، وإدارة الحالة بـ @State و @Binding"],
+    "3": ["معمارية MVVM والنشر", "الاتصال بالـ API بـ Async/Await و URLSession، والتحزيم والنشر على TestFlight و App Store"]
+  },
+  categories: [
+    {
+      t: "لغة Swift: الأساسيات والـ Optionals",
+      l: 1,
+      n: "لغة سريعة وعصرية وآمنة جداً صممتها Apple لتعويض Objective-C القديمة",
+      items: [
+        {
+          cmd: "مقدمة Swift والـ print",
+          title: "مقدمة Swift: أول كود، والفرق الجوهري بين let و var، واستنتاج الأنواع الذكي",
+          desc: R`أطلقت شركة [[Apple]] لغة [[Swift]] في عام 2014 لتكون بديلاً عصرياً وسريعاً للغة Objective-C المعقدة.
+تتميز سويفت بأنها مفتوحة المصدر، وتجمع بين سرعة لغات الأنظمة مثل C++ وبساطة قراءة لغات السكربت مثل بايثون.
+
+أهم مبادئ لغة Swift:
+1. التمييز الصارم بين الثوابت والمتغيرات:
+   • استخدم [[let]] للقيم الثابتة التي لن تتغير أبداً (وهو الخيار المفضل دائماً في سويفت لتوفير الذاكرة ومنع الأخطاء).
+   • استخدم [[var]] فقط إذا كنت متأكداً أن القيمة ستتغير لاحقاً.
+2. استنتاج الأنواع التلقائي ([[Type Inference]]):
+   • لا تحتاج لتحديد نوع المتغير يدوياً؛ سويفت تستنتج نوعه فوراً من القيمة المسندة إليه.
+3. دمج النصوص المباشر بـ [[\\()]] دون الحاجة لعلامات الجمع.`,
+          example: R`# 1. تعريف ثابت غير قابل للتغيير
+let appName = "مهامي اليومية"
+
+# 2. تعريف متغير قابل للزيادة أو التعديل
+var completedTasks = 0
+completedTasks = 1
+
+# 3. طباعة رسالة مع دمج المتغيرات بسلاسة
+print("مرحباً بك في \(appName)، أنجزت اليوم: \(completedTasks) مهمة.")`,
+          try: R`لو عندك ماك افتح تطبيق [[Xcode]] واعمل [[Playground]] جديد واكتب الكود. لو على ويندوز أو لينكس، افتح المتصفح على موقع [[swiftlang.ng]] أو أونلاين وجرّب تغير قيمة [[let]] وشوف رسالة الخطأ الصريحة من المترجم!`,
+          flag: "script",
+          deep: {
+            why: R`فلسفة سويفت الأولى هي "الأمان وقت الترجمة" (Safety by design). إجبارك على استخدام let يمنع أخطاء تغيير البيانات غير المقصودة في التطبيقات الكبيرة ويجعل الكود سريعاً جداً في الذاكرة.`,
+            how: R`مترجم سويفت مبني على تقنية [[LLVM]] العالمية. يقوم بترجمة الكود إلى كود آلة أصلي (Native ARM64) مخصص مباشرة لمعالجات Apple Silicon (A-Series في الآيفون و M-Series في الماك)، مما يمنح التطبيقات أعلى أداء وأقل استهلاك لبطارية الجهاز.`,
+            when: "الخطوة الأولى الإجبارية لأي مطور يريد دخول عالم Apple وبرمجة تطبيقات iOS و iPadOS و macOS و watchOS.",
+            mistakes: R`تستخدم [[var]] في كل مكان بداعي السهولة. مترجم سويفت سيعطيك تحذيراً أصفر (Warning) يقول لك: «المتغير لم يتم تعديله، حوله إلى let لزيادة الأمان».`
+          },
+          lines: [
+            "تعريف ثابت نصي باسم appName باستخدام let.",
+            "تعريف متغير عددي قابل للتعديل باسم completedTasks بقيمة أولية صفر.",
+            "تعديل قيمة المتغير إلى 1 بنجاح لأنه معرف بـ var.",
+            "طباعة رسالة في الكونسول ودمج الثابت والمتغير داخل النص باستخدام قوس الإدخال."
+          ],
+          sol: R`الناتج في الكونسول:
+مرحباً بك في مهامي اليومية، أنجزت اليوم: 1 مهمة.`
+        },
+        {
+          cmd: "الـ Optionals وفكها بأمان",
+          title: "الأمان في الذاكرة: المتغيرات الاختيارية Optionals، وفكها بـ if let و nil coalescing",
+          desc: R`في أغلب اللغات (زي Java الكلاسيكية أو JS)، لو حاولت تقرأ متغير قيمته فارغة (Null أو Undefined) التطبيق ينهار فوراً ويحدث Crash!
+في Swift لا يوجد متغير عادي يمكن أن يحمل قيمة فارغة ([[nil]]) إطلاقاً، إلا إذا صرحت بذلك عمداً بجعله [[Optional]] بوضع علامة استفهام [[?]] بعد نوعه.
+
+كيف تفك الصندوق الاختياري ([[Unwrapping]]) دون أن ينهار التطبيق؟
+1. طريقة [[if let]]: تفحص هل القيمة موجودة؟ إذا نعم، تضعها في متغير آمن وتنفذ الكود.
+2. طريقة القيمة الافتراضية ([[Nil Coalescing Operator ??]]): لو المتغير nil استخدم قيمة بديلة جاهزة.
+3. تحذير خطير: علامة التعجب [[!]] (Forced Unwrapping) تجبر البرنامج على الفك، ولو كانت القيمة nil سينهار التطبيق فوراً!`,
+          example: R`# 1. متغير اختياري قد يحتوي على نص أو يكون فارغاً nil
+var userBio: String? = nil
+
+# 2. توفير قيمة افتراضية في حالة كان nil بـ ??
+let displayBio = userBio ?? "لا توجد نبذة شخصية حتى الآن."
+print(displayBio)
+
+# 3. الفك الآمن المشروط بـ if let
+userBio = "مطور تطبيقات iOS محترف"
+if let safeBio = userBio {
+  print("النبذة المحدثة: \(safeBio)")
+}`,
+          try: R`جرّب تستخدم علامة التعجب مع المتغير الفارغ: [[print(userBio!)]] لما كان nil وشوف الخطأ المشهور: [[Fatal error: Unexpectedly found nil while unwrapping an Optional value]]. ده أهم سبب لتجنب علامة التعجب في كود الإنتاج!`,
+          flag: "script",
+          deep: {
+            why: R`نظام الـ Optionals هو السر الرئيسي وراء استقرار تطبيقات الآيفون وقلة انهيارها مقارنة بغيرها؛ لأن المترجم يمنعك من استخدام أي قيمة قد تكون فارغة قبل أن تكتب طريقة التعامل مع غيابها.`,
+            how: R`الـ Optional في الحقيقة هو [[Enum]] مدمج في نواة اللغة يتكون من حالتين: [[.none]] (تعني nil) أو [[.some(value)]] (تحمل القيمة الحقيقية). عندما تستخدم if let، المترجم يقوم بمطابقة النمط (Pattern Matching) واستخراج القيمة من داخل الـ Enum.`,
+            when: "البيانات القادمة من السيرفر (API)، أو مدخلات المستخدم في الخانات النصية، أو محاولة البحث عن عنصر في مصفوفة قد لا يكون موجوداً.",
+            mistakes: R`استخدام علامة التعجب [[!]] لفك المتغيرات الاختيارية (Forced Unwrapping)؛ هذه أشهر خطيئة برمجية تؤدي لرفض التطبيقات في متجر App Store عند حدوث كراش للمراجعين.`
+          },
+          lines: [
+            "تعريف متغير اختياري يقبل أن يكون String أو فارغاً nil.",
+            "استخدام مشغل ?? لتحديد نص افتراضي بديل في حالة كان المتغير فارغاً.",
+            "طباعة النص البديل في الكونسول.",
+            "إسناد قيمة نصية حقيقية للمتغير الاختياري.",
+            "استخدام if let للتأكد من وجود قيمة وفكها داخل متغير مؤقت safeBio.",
+            "طباعة القيمة المفكوكة بأمان داخل البلوك.",
+            "قفلة جملة if let."
+          ],
+          sol: R`الناتج في الكونسول:
+لا توجد نبذة شخصية حتى الآن.
+النبذة المحدثة: مطور تطبيقات iOS محترف`
+        },
+        {
+          cmd: "الـ Structs والـ Classes في Swift",
+          title: "أنواع البيانات: الفرق بين Struct و Class ولماذا تفضل Apple استخدام Struct دائماً",
+          desc: R`في لغة سويفت، يمكنك بناء نماذج البيانات إما باستخدام [[struct]] أو [[class]]، لكن هناك فرق جوهري غيّر طريقة هندسة البرمجيات:
+
+1. الـ [[struct]] هو نوع قيمي ([[Value Type]]):
+• عندما تمرره لدالة أو تسنده لمتغير آخر، يتم أخذ نسخة مستقلة تماماً منه في الذاكرة (Copy on Write).
+• تعديل النسخة لا يؤثر إطلاقاً على الأصل.
+• خفيف وسريع جداً ويعيش في ذاكرة الـ Stack.
+
+2. الـ [[class]] هو نوع مرجعي ([[Reference Type]]):
+• عند إسناده لمتغير آخر، يشير كلاهما لنفس المكان في الذاكرة (Heap).
+• تعديل أحدهما يغير في الآخر فوراً.
+• يدعم الوراثة الكلاسيكية (Inheritance).
+
+نصيحة Apple الذهبية:
+«ابدأ دائماً بـ [[struct]] لكل بياناتك وواجهاتك في SwiftUI، ولا تلجأ للـ [[class]] إلا عندما تحتاج لمشاركة حالة حية واحدة مشتركة في كامل التطبيق».`,
+          example: R`# 1. تعريف نموذج البيانات كـ struct خفيف
+struct UserProfile {
+  let id: Int
+  var name: String
+}
+
+# 2. إنشاء نسخة أولى
+var user1 = UserProfile(id: 1, name: "أحمد")
+
+# 3. نسخ الكائن وتعديل النسخة المستقلة
+var user2 = user1
+user2.name = "سارة"
+
+# 4. user1 احتفظ باسمه الأصلي دون أي تأثر!
+print("المستخدم 1: \(user1.name) | المستخدم 2: \(user2.name)")`,
+          try: R`غيّر كلمة [[struct]] إلى [[class]] فوق، وشوف النتيجة: هتلاقي اسم user1 اتغير هو كمان لـ "سارة"! لاحظ الفرق الضخم في الأمان بين الاثنين.`,
+          flag: "script",
+          deep: {
+            why: R`الـ Value Types تحميك من مشاكل التزامن وخيوط المعالجة المتعددة (Multithreading Race Conditions)؛ لأن كل خيط يمتلك نسخته الخاصة دون خوف من أن يقوم خيط آخر بتعديل البيانات من تحته.`,
+            how: R`تستخدم سويفت تقنية ذكية تسمى (Copy-on-Write - COW). النسخ لا يستهلك ذاكرة فورية مضاعفة؛ بل تشترك النسخ في نفس الذاكرة حتى اللحظة التي تحاول فيها إحدى النسخ التعديل، حينها فقط تُنشأ النسخة الجديدة تلقائياً.`,
+            when: "نماذج البيانات (Models)، وعناصر الواجهة في SwiftUI، واستقبال ردود الـ JSON من السيرفر.",
+            mistakes: R`استخدام Class لكل شيء بحكم العادة من لغات أخرى مثل Java أو C#؛ في Swift و SwiftUI أكثر من 90% من كودك يجب أن يكون Structs نظيفة.`
+          },
+          lines: [
+            "تعريف بنية بيانات UserProfile باستخدام كلمة struct.",
+            "تعريف حقل المعرف الثابت id.",
+            "تعريف حقل الاسم القابل للتعديل name.",
+            "قفلة تعريف الـ struct.",
+            "إنشاء الكائن الأول مع التمرير التلقائي للقيم (Memberwise Initializer).",
+            "نسخ الكائن إلى كائن جديد user2.",
+            "تعديل اسم النسخة الجديدة فقط إلى سارة.",
+            "طباعة الاسمين لإثبات استقلال كل نسخة تماماً في الذاكرة."
+          ],
+          sol: R`الناتج في الكونسول:
+المستخدم 1: أحمد | المستخدم 2: سارة`
+        }
+      ]
+    },
+    {
+      t: "واجهات SwiftUI: بناء واجهات الآيفون العصرية",
+      l: 2,
+      n: "إطار العمل التصريحي لبناء واجهات فائقة الجمال بأقل أسطر كود ممكنة",
+      items: [
+        {
+          cmd: "مقدمة SwiftUI والـ View Protocol",
+          title: "واجهات SwiftUI: الإعلان عن الواجهات بالكود التصريحي (Declarative UI) والـ Body",
+          desc: R`في عام 2019 أحدثت آبل ثورة في تطوير التطبيقات بإطلاق إطار عمل [[SwiftUI]]:
+بدلاً من تصميم الواجهات بالسحب والإفلات في ملفات الـ Storyboard المعقدة أو حساب الـ AutoLayout يدوياً، أصبحت تصف واجهتك بالكود المباشر مثل React و Flutter!
+
+كيف تعمل شاشة SwiftUI؟
+1. الشاشة عبارة عن [[struct]] بسيط ينفذ بروتوكول [[View]].
+2. يحتوي على خاصية واحدة إجبارية اسمها [[var body: some View]].
+3. داخل الـ body تضع المكونات: نصوص [[Text]]، أزرار [[Button]]، وصور [[Image]].
+4. التعديل على المظهر يتم عبر الدوال التراكمية ([[Modifiers]]) مثل [[.font()]] و [[.foregroundColor()]] و [[.padding()]].`,
+          example: R`import SwiftUI
+
+# 1. تعريف شاشة جديدة كـ Struct ينفذ بروتوكول View
+struct WelcomeView: View {
+  # 2. جسم الواجهة الذي يعرض العناصر
+  var body: some View {
+    VStack(spacing: 16) {
+      Text("مرحباً بك في عالم iOS!")
+        .font(.title)
+        .fontWeight(.bold)
+        .foregroundColor(.blue)
+      
+      Button("ابدأ التجربة الآن") {
+        print("تم الضغط على الزرار!")
+      }
+      .padding()
+      .background(Color.blue)
+      .foregroundColor(.white)
+      .cornerRadius(10)
+    }
+    .padding()
+  }
+}`,
+          try: R`في Xcode، أنشئ مشروعاً جديداً بنوع [[iOS App]] واختر الواجهة [[SwiftUI]]. استبدل كود ContentView بهذا الكود وشاهد المعاينة الحية (Canvas Preview) على شاشة محاكي الآيفون فوراً دون الحاجة لإعادة تشغيل التطبيق!`,
+          flag: "script",
+          deep: {
+            why: R`البرمجة التصريحية (Declarative) تعني أنك تخبر النظام: "أريد الواجهة بهذا الشكل"، والسستم يتكفل بحساب المسافات وتحديث الشاشة تلقائياً عند تغير البيانات دون الحاجة لكتابة كود تحديث يدوي معقد.`,
+            how: R`كلمة [[some View]] تعني Opaque Return Type؛ أي أن الدالة ترجع نوعاً ينفذ بروتوكول View، ولكن المترجم يقوم بحساب شجرة العناصر بدقة ويقارنها بشجرة الواجهة القديمة (Diffing) لتحديث البكسلات المعدلة فقط بسرعة 120Hz (ProMotion).`,
+            when: "بناء كافة واجهات وتطبيقات Apple الحديثة لجميع الأجهزة (iOS, iPadOS, macOS, watchOS, visionOS).",
+            mistakes: R`محاولة تحديث نصوص الواجهة يدوياً مثل أساليب UIKit القديمة (e.g. label.text = ...). في SwiftUI الواجهة مجرد انعكاس للبيانات، غير البيانات وستتغير الواجهة لوحدها!`
+          },
+          lines: [
+            "استيراد مكتبة واجهات آبل الحديثة SwiftUI.",
+            "تعريف شاشة الواجهة كـ struct ينفذ بروتوكول View.",
+            "تعريف خاصية body التي تصف شكل الواجهة ومحتواها.",
+            "حاوية رأسية تضع العناصر فوق بعضها مع مسافة 16 بكسل بينها.",
+            "عنصر نصي يحمل رسالة الترحيب.",
+            "معدل حجم الخط ليكون بحجم العنوان الرئيسي title.",
+            "معدل سمك الخط ليكون عريضاً bold.",
+            "معدل لون النص للأزرق.",
+            "زرار تفاعلي مع تحديد جملة الزر وحركة الأكشن عند النقر.",
+            "طباعة رسالة في الكونسول عند النقر.",
+            "قفلة كود الأكشن للزرار.",
+            "معدل مسافات داخلية padding للزرار.",
+            "معدل لون خلفية الزرار بالأزرق.",
+            "معدل لون نص الزرار بالأبيض.",
+            "معدل تدوير حواف الزرار لتصبح ناعمة بانحناء 10 درجات.",
+            "قفلة الحاوية الرأسية VStack.",
+            "معدل مسافة خارجية للشاشة ككل.",
+            "قفلة الـ body.",
+            "قفلة struct الشاشة."
+          ],
+          sol: R`الناتج على شاشة الآيفون:
+شاشة جميلة وأنيقة في منتصفها عنوان ترحيبي عريض بلون أزرق، وتحته زرار تفاعلي أنيق بحواف ناعمة، وعند النقر يطبع أمر الترحيب فوراً.`
+        },
+        {
+          cmd: "إدارة الحالة بـ State و Binding",
+          title: "التفاعل الحي: المتغيرات الحية @State ونقلها للشاشات الفرعية بـ @Binding",
+          desc: R`كيف تجعل الشاشة تتغير وتتحدث لحظياً عندما يقوم المستخدم بالضغط على زرار أو كتابة نص؟
+
+1. مغلف الـ [[@State]]:
+• الـ Struct في سويفت بطبيعته ثابت (Immutable) لا يسمح بتعديل المتغيرات داخله.
+• عندما تضع [[@State]] قبل المتغير، تخبر سويفت: "احتفظي بقيمة هذا المتغير في ذاكرة خاصة خارج الـ struct، وعندما تتغير قيمته، أعيدي رسم الواجهة تلقائياً ([[Re-render]]) فوراً!".
+
+2. مغلف الـ [[@Binding]]:
+• يسمح لشاشة فرعية أو عنصر منفصل بتعديل قيمة متغير موجود في الشاشة الأب والربط بينهما باتجاهين (Two-way Data Binding) باستخدام علامة [[$]].`,
+          example: R`import SwiftUI
+
+struct CounterView: View {
+  # 1. متغير حالة حي؛ تعديله يعيد رسم الواجهة تلقائياً
+  @State private var count = 0
+
+  var body: some View {
+    VStack(spacing: 20) {
+      Text("العدد الحالي: \(count)")
+        .font(.largeTitle)
+      
+      HStack(spacing: 16) {
+        Button("نقصان -") { count -= 1 }
+          .padding().background(Color.red.opacity(0.2)).cornerRadius(8)
+        
+        Button("زيادة +") { count += 1 }
+          .padding().background(Color.green.opacity(0.2)).cornerRadius(8)
+      }
+    }
+  }
+}`,
+          try: R`جرب تشغل الكود وتضغط على زراير الزيادة والنقصان؛ ستلاحظ أن رقم النص يتغير فوراً وبنعومة تامة دون أن تحتاج لكتابة سطر كود واحد للبحث عن الـ Label أو تعديل نصه يدوياً!`,
+          flag: "script",
+          deep: {
+            why: R`هذا يطبق مبدأ (Single Source of Truth)؛ هناك مصدر وحيد للحقيقة هو المتغير، والواجهة مجرد دالة تقرأ قيمته وتتحول معه تلقائياً، مما يقضي على أكثر من 80% من أخطاء عدم تطابق الواجهات مع البيانات.`,
+            how: R`مغلف @State هو Property Wrapper. يقوم بتسجيل مراقب (Observer) على المتغير، وعند حدوث أي Mutation، يُطلق إشعاراً لمحرك SwiftUI ليعيد حساب دالة body على الفور برقم جديد.`,
+            when: "القيم المحلية الخاصة بالشاشة مثل عداد، مفتاح فتح/إغلاق Toggle، أو فتح نافذة منبثقة Modal.",
+            mistakes: R`تعديل متغير عادي غير معرف بـ @State داخل دالة زرار في الواجهة؛ سويفت سترفض الترجمة فوراً وتخبرك: [[Cannot assign to property: 'self' is immutable]].`
+          },
+          lines: [
+            "استيراد SwiftUI.",
+            "تعريف شاشة العداد CounterView.",
+            "تعريف متغير حالة حي count يبدأ من صفر ومحمي بـ private.",
+            "جسم الواجهة body.",
+            "حاوية رأسية VStack بمسافة 20 بكسل.",
+            "نص يعرض القيمة الحية للمتغير count.",
+            "تحديد حجم الخط ليكون ضخماً بحجم largeTitle.",
+            "حاوية أفقية HStack تضع الزراير بجوار بعضها أفقياً.",
+            "زرار النقصان وتعديل المتغير الحي بإنقاصه بواحد.",
+            "تنسيق زرار النقصان بخلفية حمراء خفيفة.",
+            "زرار الزيادة وتعديل المتغير الحي بزيادته بواحد.",
+            "تنسيق زرار الزيادة بخلفية خضراء خفيفة.",
+            "قفلة الحاوية الأفقية.",
+            "قفلة الحاوية الرأسية.",
+            "قفلة الـ body.",
+            "قفلة الشاشة."
+          ],
+          sol: R`النتيجة على الشاشة:
+عداد تفاعلي مباشر يعرض الرقم صفر، وعند الضغط على زر الزيادة يتحول الرقم فوراً إلى 1 و 2 و 3 بنعومة وسلاسة فائقة.`
+        }
+      ]
+    },
+    {
+      t: "معمارية MVVM والنشر على App Store",
+      l: 3,
+      n: "فصل منطق البيانات، والاتصال بالـ API، وحزم التطبيق للرفع على متجر آبل",
+      items: [
+        {
+          cmd: "الاتصال بالـ API بـ Async/Await و URLSession",
+          title: "جلب بيانات السيرفر: استخدام URLSession و Codable و Async/Await الحديثة",
+          desc: R`تطبيق الموبايل الحقيقي يحتاج لجلب بيانات من السيرفر (REST API) وتحويل رد الـ JSON إلى كائنات سويفت.
+في Swift الحديثة، يتم هذا عبر أقوى توليفة:
+1. بروتوكول [[Codable]]: يقوم بتحويل الـ JSON تلقائياً وبأقصى سرعة إلى [[struct]] دون الحاجة لكتابة كود تفكيك يدوي.
+2. أداة [[URLSession]]: أداة الشبكات المعيارية المدمجة في نظام iOS.
+3. التزامن بـ [[async / await]]: كتابة العمليات غير المتزامنة التي تستغرق وقتاً بأسلوب متسلسل ونظيف دون مشاكل الـ Callbacks والـ Closures المتداخلة.`,
+          example: R`import Foundation
+
+# 1. نموذج بيانات مطابق لشكل الـ JSON
+struct Post: Codable, Identifiable {
+  let id: Int
+  let title: String
+}
+
+# 2. دالة غير متزامنة لجلب البيانات من السيرفر
+func fetchPosts() async throws -> [Post] {
+  guard let url = URL(string: "https://jsonplaceholder.typicode.com/posts") else {
+    throw URLError(.badURL)
+  }
+  
+  # 3. إرسال طلب الشبكة وانتظار الرد بـ await
+  let (data, _) = try await URLSession.shared.data(from: url)
+  
+  # 4. فك تشفير الـ JSON إلى مصفوفة من Post تلقائياً
+  let posts = try JSONDecoder().decode([Post].self, from: data)
+  return posts
+}`,
+          try: R`داخل دالة زرار أو في حدث [[.task]] للشاشة، اكتب:
+[[Task { do { let items = try await fetchPosts(); print(items.count) } catch { print(error) } }]]
+وشاهد كيف يجلب 100 منشور في ثانية واحدة من السيرفر الحقيقي!`,
+          flag: "script",
+          deep: {
+            why: R`بروتوكول Codable وفر آلاف أسطر الكود اليدوي القديم. والـ async/await في Swift مدمجة في نواة المترجم (Compiler-level)، مما يضمن عدم تجميد واجهة التطبيق أثناء انتظار استجابة السيرفر.`,
+            how: R`عند استدعاء [[await]]، يتم إيقاف الدالة الحالية مؤقتاً (Suspension) وتحرير الخيط لخدمة الشاشة وحركة اللمس، وعندما ينتهي كارت الشبكة من تحميل البيانات من السيرفر، يُستأنف تنفيذ الدالة على الفور بالبيانات المستلمة.`,
+            when: "استدعاء أي RESTful API، أو جلب منتجات المتجر، أو تسجيل دخول المستخدم والتحقق من التوكن.",
+            mistakes: R`تنسى جعل أسماء حقول הـ struct مطابقة تماماً لمفاتيح הـ JSON في السيرفر؛ لو اختلف حرف واحد سيفشل الـ Decoder. إذا أردت تسمية مختلفة، استخدم [[enum CodingKeys: String, CodingKey]].`
+          },
+          lines: [
+            "استيراد مكتبة Foundation المعيارية للتعامل مع الشبكات والـ JSON.",
+            "تعريف Struct المنشور وتنفيذ Codable للتحويل التلقائي و Identifiable لتمييز العناصر في القوائم.",
+            "حقل المعرف id كرقم صحيح.",
+            "حقل العنوان title كنص.",
+            "قفلة الـ struct.",
+            "تعريف دالة غير متزامنة async وترمي أخطاء throws وترجع مصفوفة من Post.",
+            "التحقق من صحة رابط الـ URL بأمان وتجنب الروابط التالفة.",
+            "رمي خطأ صريح في حالة كان الرابط غير سليم.",
+            "قفلة التحقق.",
+            "إرسال الطلب عبر URLSession وانتظار استلام البيانات data دون حظر المعالج.",
+            "فك تشفير مصفوفة الـ JSON مباشرة إلى مصفوفة كائنات Posts عبر JSONDecoder.",
+            "إرجاع المنشورات الجاهزة للاستخدام في الواجهة.",
+            "قفلة الدالة."
+          ],
+          sol: R`الناتج:
+جلب مصفوفة تحتوي على 100 كائن سويفت نقي جاهز للعرض المباشر داخل مكون List في SwiftUI بنقرة واحدة.`
+        },
+        {
+          cmd: "النشر على متجر App Store و TestFlight",
+          title: "دورة حياة النشر: شهادات المطورين (Signing)، والنسخ التجريبية بـ TestFlight، والاعتماد في App Store",
+          desc: R`كيف تصل بتطبيقك المكتوب بـ Swift إلى ملايين مستخدمي الآيفون حول العالم عبر متجر [[App Store]] الرسمي؟
+
+مراحل نشر أي تطبيق iOS:
+1. حساب المطورين ([[Apple Developer Program]]):
+• اشتراك سنوي رسمي من شركة Apple (99 دولار/سنة).
+2. التوقيع الرقمي والشهادات ([[Signing & Capabilities]]):
+• داخل Xcode يتم ربط تطبيقك بـ [[Bundle Identifier]] فريد (مثل com.mycompany.app) وشهادة مطور معتمدة لضمان أمان التطبيق.
+3. أرشيف الإنتاج ([[Archive]]):
+• تختار الجهاز المستهدف [[Any iOS Device (arm64)]] ومن قائمة Product تختار [[Archive]].
+4. الاختبار والتوزيع بـ [[TestFlight]]:
+• ترفع النسخة لمنصة TestFlight التابعة لآبل لإرسالها لفريق العمل أو للعملاء لتجربتها على هواتفهم الحقيقية قبل النشر العام.
+5. الإرسال للمراجعة ([[App Store Connect]]):
+• تملأ بيانات التطبيق: الصور التسويقية (Screenshots)، الوصف، سياسة الخصوصية، ثم تضغط "Submit for Review". يقوم مهندسو آبل بمراجعة تطبيقك واعتماده خلال 24 إلى 48 ساعة ليصبح متاحاً للتحميل للجميع!`,
+          example: R`# 1. فحص النسخة وسلامة التوقيع الرقمي عبر أداة xcodebuild في الترمنال
+xcodebuild -scheme MyApp -showBuildSettings | grep CODE_SIGN_IDENTITY
+
+# 2. إنشاء أرشيف التطبيق الكامل من الترمنال (أو من قائمة Product -> Archive في Xcode)
+xcodebuild -workspace MyApp.xcworkspace -scheme MyApp -configuration Release clean archive -archivePath build/MyApp.xcarchive
+
+# 3. رفع الأرشيف إلى App Store Connect للـ TestFlight بأداة altool المدمجة
+xcrun altool --upload-app -f build/MyApp.ipa -t ios -u "dev@apple.com" -p "app-specific-password"`,
+          try: R`في مشروع Xcode الخاص بك، اختر من القائمة العلوية: [[Product -> Archive]]. بعد انتهاء التجميع، ستفتح لك نافذة المنظم (Organizer). اضغط على زرار [[Distribute App]] الأزرق واختر [[App Store Connect]] لرفع أول نسخة تجريبية بنفسك!`,
+          flag: "script",
+          deep: {
+            why: R`متجر App Store يمتلك أعلى معايير أمان وخصوصية وتجربة مستخدم في العالم؛ لذلك عملية المراجعة الصارمة تضمن عدم وجود برمجيات خبيثة أو تطبيقات بطيئة ورديئة، مما يمنح التطبيقات المعتمدة ثقة مستخدمي آبل وقدرة شرائية عالية جداً للمطور.`,
+            how: R`يقوم Xcode بتجميع التطبيق في حزمة ثنائية مضغوطة بتنسيق [[.ipa]]. عند الرفع لـ App Store Connect، تقوم خوادم آبل بعمل فحص أوتوماتيكي للثغرات، ثم توزع التطبيق عبر ميزة (App Thinning) لتقليص حجمه بحيث يحمل كل هاتف فقط الملفات المتوافقة مع حجم شاشته ومعالجه.`,
+            when: "المرحلة الختامية لتحويل فكرتك البرمجية إلى منتج تجاري حقيقي منشور عالمياً ومتاح للربح والتحميل.",
+            mistakes: R`محاولة طلب صلاحيات حساسة (مثل الكاميرا أو الموقع أو الإشعارات) دون إضافة شرح واضح لسبب الاستخدام في ملف [[Info.plist]] (مثل NSCameraUsageDescription)؛ هذا سيؤدي لرفض التطبيق فوراً من مراجعي آبل (App Store Guideline Rejection).`
+          },
+          lines: [
+            "فحص شهادة التوقيع الرقمي للمشروع للتأكد من ربطها بحساب Apple Developer سليم.",
+            "أمر تجميع وإنشاء أرشيف التطبيق MyApp.xcarchive لنسخة الإنتاج Release.",
+            "أمر رفع ملف التطبيق ipa مباشرة إلى خوادم App Store Connect عبر أداة altool المعيارية."
+          ],
+          sol: R`النتيجة:
+تلقي بريد إلكتروني رسمي من شركة Apple بعنوان:
+«App Store Connect: Your build has completed processing»
+ويصبح التطبيق متاحاً للتثبيت الفوري لجميع المختبرين على TestFlight، وجاهزاً لضغطة زر الطرح في App Store!`
+        }
+      ]
+    }
+  ]
+});
+
+/* ===== js/tabs/go.js ===== */
+// تاب Go (Golang)
+TAB("go", {
+  label: "Go (Golang)",
+  prompt: "$ ",
+  lab: R`go version
+go run main.go
+go build -o server main.go && ./server`,
+  labText: "Go هي لغة Google السحابية الأولى. تجمع بين بساطة الكتابة والسرعة الخارقة والتزامن المليوني بفضل الـ Goroutines.",
+  levels: {
+    "1": ["لغة Go من الصفر", "برنامجك الأول، والمتغيرات بـ :=، والـ Slices والـ Maps، والـ Structs ومعالجة الأخطاء الصريحة if err != nil"],
+    "2": ["التزامن والويب بـ Go", "تزامن الـ Goroutines بـ go func، والقنوات Channels، وبناء سيرفر REST API بمكتبة net/http القياسية"],
+    "3": ["الإنتاج والميكروسيرفسز", "إطار عمل Gin السريع، وتحزيم التطبيق في حاوية Docker بحجم 15 ميجا بـ Scratch، والاختبارات بـ go test"]
+  },
+  categories: [
+    {
+      t: "Go من الصفر: البساطة والسرعة الصارمة",
+      l: 1,
+      n: "لغة سريعة جداً صممتها Google عام 2009 لتشغيل أضخم السيرفرات السحابية في العالم",
+      items: [
+        {
+          cmd: "مقدمة Go وكتابة أول برنامج",
+          title: "مقدمة Go: لماذا صممتها جوجل، ودالة main، والمشغل السريع := للتعريف",
+          desc: R`صممت شركة [[Google]] لغة [[Go]] (وتُعرف أيضاً بـ Golang) بقيادة رواد علوم الحاسب (كين تومسون وروب بايك) بهدف حل مشكلات السيرفرات الضخمة:
+كانت لغات مثل C++ سريعة جداً لكنها بطيئة في الترجمة ومعقدة، ولغات مثل بايثون سهلة لكنها بطيئة في الأداء وغير آمنة في استهلاك الذاكرة.
+
+أهم مميزات Go:
+1. البساطة الشديدة: تحتوي على 25 كلمة محجوزة فقط (أقل لغة في العالم، يمكنك إتقان كل قواعدها في أسبوع واحد).
+2. الترجمة البرقية السريعة ([[Compilation Speed]]): تترجم ملفات أضخم المشاريع في ثوانٍ معدودة مباشرة إلى ملف ثنائي مستقل ([[Single Binary]]) لا يحتاج لأي بيئة تشغيل أو Virtual Machine.
+3. التسمية السريعة للمتغيرات بمشغل [[:=]] الذي يعرف المتغير ويحدد نوعه تلقائياً دون كتابة كلمة [[var]].
+4. كل برنامج في Go يبدأ بحزمة [[package main]] ونقطة انطلاق دالة [[func main()]].`,
+          example: R`# 1. تعريف اسم الحزمة الرئيسية
+package main
+
+# 2. استدعاء مكتبة التنسيق والطباعة القياسية
+import "fmt"
+
+# 3. دالة البداية التي يشغلها المعالج أولاً
+func main() {
+  # 4. تعريف متغير بنوع مستنتج تلقائياً باستخدام :=
+  serverName := "سيرفر المدفوعات السريع"
+  port := 8080
+
+  # 5. طباعة الرسالة في الترمنال
+  fmt.Printf("تم تشغيل %s بنجاح على المنفذ: %d\n", serverName, port)
+}`,
+          try: R`افتح الترمنال واكتب أمر فحص النسخة: [[go version]]. أنشئ ملفاً باسم [[main.go]] والصق هذا الكود، ثم اكتب الأمر السريع للتشغيل المباشر: [[go run main.go]]. هتشوف الكود اشتغل في جزء من الثانية كأنه سكربت بايثون، ولكنه مترجم بنقاء 100%!`,
+          flag: "script",
+          deep: {
+            why: R`كل البنية التحتية السحابية للعالم اليوم (Docker, Kubernetes, Terraform, Prometheus) مكتوبة بالكامل بلغة Go. إذا أردت العمل في هندسة الأنظمة السحابية والباك إند عالي الضغط، Go هي السلاح الأول.`,
+            how: R`أمر [[go run]] يقوم بترجمة الكود في مجلد مؤقت بالذاكرة وتشغيله فوراً، بينما أمر [[go build]] يُنتج لك ملفاً تنفيذياً حقيقياً (مثل app أو app.exe) يمكنك نقله وتشغيله على أي سيرفر حتى لو لم تكن لغة Go مسطبة على ذلك السيرفر إطلاقاً!`,
+            when: "بناء الباك إند عالي الأداء (High-performance APIs)، والأنظمة السحابية الموزعة (Microservices)، وأدوات الـ DevOps والـ CLI.",
+            mistakes: R`تستورد حزمة أو تعرف متغيراً ولا تستخدمه في الكود؛ مترجم Go يرفض إكمال الترجمة ويخرج خطأ صريحاً: [[imported and not used]]! في Go لا مكان للكود المهمل أو الزائد.`
+          },
+          lines: [
+            "تحديد اسم الحزمة الرئيسية package main ليعرف المترجم أن هذا تطبيق تنفيذي مستقل.",
+            "استيراد مكتبة التنسيق والطباعة fmt المدمجة.",
+            "تعريف دالة البداية الرئيسية func main.",
+            "تعريف متغير نصي serverName وإسناد القيمة مباشرة بمشغل :=.",
+            "تعريف متغير عددي port.",
+            "طباعة النص المنسق Printf مع تعويض المتغيرات النصية بـ %s والأرقام بـ %d وسطر جديد.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+تم تشغيل سيرفر المدفوعات السريع بنجاح على المنفذ: 8080`
+        },
+        {
+          cmd: "المصفوفات والـ Slices والـ Maps في Go",
+          title: "هياكل البيانات الأساسية: الفرق بين Array و Slice، والقواميس السريعة Maps",
+          desc: R`في لغة Go، هياكل تخزين البيانات مصممة لتكون غاية في البساطة والسرعة:
+
+1. المصفوفة العادية ([[Array]]):
+• حجمها ثابت ومحدد مسبقاً (مثل [3]int).
+• نادراً ما تُستخدم مباشرة في الكود اليومي.
+
+2. المصفوفة الديناميكية ([[Slice]]):
+• هي الهيكل الأكثر استخداماً في Go (تُكتب بدون تحديد رقم: []int).
+• ديناميكية ومرنة؛ تكبر تلقائياً كلما أضفت عناصر باستخدام دالة [[append()]].
+• مبنية كواجهة خفيفة (Pointer + Length + Capacity) تشير إلى مصفوفة سفلية في الذاكرة.
+
+3. القواميس ([[Maps]]):
+• تخزين البيانات بنظام مفتاح وقيمة (Key-Value) بتعقيد زمني خارق O(1).
+• تُنشأ باستخدام دالة [[make(map[KeyType]ValueType)]].`,
+          example: R`package main
+import "fmt"
+
+func main() {
+  # 1. إنشاء Slice ديناميكي وإضافة عناصر إليه بـ append
+  servers := []string{"web-1", "web-2"}
+  servers = append(servers, "web-3")
+
+  # 2. إنشاء Map لتخزين أسعار السلع أو حالة السيرفرات
+  status := make(map[string]int)
+  status["web-1"] = 200
+  status["web-2"] = 500
+
+  # 3. فحص هل العنصر موجود في الـ Map بأمان
+  code, exists := status["web-1"]
+  if exists {
+    fmt.Printf("السيرفر الأول كوده: %d وإجمالي السيرفرات: %d\n", code, len(servers))
+  }
+}`,
+          try: R`جرّب تفحص مفتاح غير موجود في الـ Map مثل [[status["web-99"]]] وشوف قيمة [[exists]]: ستكون [[false]] والكود سيرجع [[0]] (القيمة الصفرية Default Zero-Value) بدون أي كراش أو خطأ!`,
+          flag: "script",
+          deep: {
+            why: R`فلسفة Go تعتمد على القيمة الصفرية الآمنة (Zero Value)؛ لا يوجد في Go شيء اسمه Uninitialized Garbage Memory كما في C++. المتغير العددي يبدأ دائماً بـ 0، والنص بـ ""، والـ boolean بـ false.`,
+            how: R`عندما يمتلئ الـ Slice (يتجاوز سعة الـ Capacity)، دالة append تقوم تلقائياً بمضاعفة حجم المصفوفة السفلية في الذاكرة ونقل البيانات في نانو ثانية دون تدخل يدوي منك.`,
+            when: "تخزين قوائم المستخدمين، ومعالجة دفعات الطلبات (Batches)، وتخزين الكاش السريع في الذاكرة.",
+            mistakes: R`تعديل Map فارغة تم تعريفها بـ [[var m map[string]int]] بدون استخدام دالة [[make]]؛ هذا سيؤدي لكراش وقت التشغيل [[assignment to entry in nil map]]. استخدم make دائماً لتهيئة الـ Map.`
+          },
+          lines: [
+            "تعريف حزمة main.",
+            "استيراد مكتبة الطباعة fmt.",
+            "دالة main.",
+            "تعريف Slice نصي يحتوي على عنصرين.",
+            "إضافة عنصر ثالث للـ Slice ديناميكياً بدالة append.",
+            "إنشاء Map مهيأة بمفتاح نصي وقيمة رقم صحيح باستخدام make.",
+            "إسناد قيمة 200 للمفتاح web-1.",
+            "إسناد قيمة 500 للمفتاح web-2.",
+            "قراءة القيمة وفحص الوجود معاً باسترجاع قيمتين (Idiomatic Go comma-ok idiom).",
+            "التحقق من شرط وجود المفتاح.",
+            "طباعة كود الحالة مع عدد السيرفرات باستخدام دالة الطول len.",
+            "قفلة جملة if.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+السيرفر الأول كوده: 200 وإجمالي السيرفرات: 3`
+        },
+        {
+          cmd: "معالجة الأخطاء الصريحة بـ if err != nil",
+          title: "فلسفة الأخطاء في Go: لا توجد استثناءات Exceptions؛ الأخطاء قيم عادية تُعالج صراحة",
+          desc: R`في معظم لغات البرمجة (مثل Python أو Java أو JS)، لو حدث خطأ يُرمى استثناء ([[throw / try-catch]]) يقطع تسلسل البرنامج إذا لم تنتبه له.
+في لغة Go، رفض المصممون تماماً فكرة الـ Exceptions!
+
+كيف تعالج الأخطاء في Go؟
+1. الخطأ مجرد قيمة عادية ([[Value]]) ترجعها الدالة كقيمة ثانية بجانب النتيجة: [[(result, err)]].
+2. إذا نجحت العملية، ترجع الدالة النتيجة ويكون الخطأ فارغاً ([[nil]]).
+3. إذا فشلت العملية، ترجع الدالة كائناً من نوع [[error]] يشرح سبب الفشل.
+4. السطر الأشهر في تاريخ لغة Go عالمياً هو:
+   [[if err != nil { // تعامل مع الخطأ فوراً وحافظ على استقرار البرنامج }]]
+هذا الأسلوب يجبرك على التفكير في السيناريوهات الفاشلة ومعالجتها أولاً بأول (Fail Fast).`,
+          example: R`package main
+import "errors"
+import "fmt"
+
+# 1. دالة ترجع قيمتين: الناتج والخطأ المحتمل
+func divide(a, b float64) (float64, error) {
+  if b == 0 {
+    return 0, errors.New("لا يمكن القسمة على صفر إطلاقاً")
+  }
+  return a / b, nil
+}
+
+func main() {
+  # 2. استدعاء الدالة والتحقق الصريح من الخطأ
+  result, err := divide(10, 0)
+  if err != nil {
+    fmt.Printf("حدث خطأ متوقع: %s\n", err)
+    return
+  }
+  fmt.Println("الناتج:", result)
+}`,
+          try: R`غيّر الرقم [[0]] إلى [[2]] وشغل الكود بـ [[go run main.go]]: هتشوف رسالة الخطأ اختفت وطُبع الناتج: [[الناتج: 5]] بسلاسة تامة.`,
+          flag: "script",
+          deep: {
+            why: R`الـ Exceptions تجعل الكود غير متوقع ومخفياً؛ لأنك لا تدري أي سطر قد ينفجر في وجهك. أسلوب Go الصريح يجعلك تقرأ مسار الخطأ كمسار طبيعي في الكود وتعرف بالضبط متى وكيف تنهي أو تصلح المشكلة.`,
+            how: R`نوع [[error]] في Go هو عبارة عن Interface بسيط للغاية يحتوي على دالة واحدة فقط: [[Error() string]]. هذا يعني أن أي Struct عندك ينفذ دالة Error() يُعتبر كائن خطأ شرعي تلقائياً دون أي وراثة.`,
+            when: "قراءة الملفات، والاتصال بقواعد البيانات، وإجراء اتصالات الشبكة، وتحويل النصوص لأرقام.",
+            mistakes: R`تجاهل الخطأ باستخدام الشرطة السفلية [[result, _ := divide(10, 0)]]؛ هذا يضيع الهدف الأسمى للغة Go ويعرض تطبيقك للتصرف غير المنطقي في الإنتاج.`
+          },
+          lines: [
+            "تعريف حزمة main.",
+            "استيراد مكتبة الأخطاء errors.",
+            "استيراد مكتبة الطباعة fmt.",
+            "دالة divide تستقبل رقمين وترجع ناتج وكائن خطأ error.",
+            "فحص شرط القسمة على صفر.",
+            "إرجاع صفر مع رسالة خطأ صريحة من حزمة errors.",
+            "قفلة شرط if.",
+            "إرجاع ناتج القسمة مع قيمة nil للخطأ للدلالة على النجاح.",
+            "قفلة دالة divide.",
+            "دالة main.",
+            "استدعاء القسمة واستقبال قيمتي النتيجة والخطأ في سطر واحد.",
+            "التحقق الصريح المشهور if err != nil.",
+            "طباعة رسالة الخطأ التوضيحية في الترمنال.",
+            "إنهاء الدالة بأمان ومنع استمرار الكود في مسار خاطئ.",
+            "قفلة شرط التحقق.",
+            "طباعة النتيجة في حالة النجاح.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال:
+حدث خطأ متوقع: لا يمكن القسمة على صفر إطلاقاً`
+        }
+      ]
+    },
+    {
+      t: "التزامن والويب: القوة الحقيقية لـ Go",
+      l: 2,
+      n: "تشغيل ملايين العمليات المتزامنة في نفس اللحظة عبر الـ Goroutines والقنوات",
+      items: [
+        {
+          cmd: "الـ Goroutines والتزامن الخارق",
+          title: "التزامن الخارق: تشغيل العمليات في الخلفية بكلمة go، والفرق عن Threads العادية",
+          desc: R`في اللغات التقليدية (مثل Java أو C++)، عندما تنشئ خيط معالجة جديد ([[Thread]])، فإنه يحجز حوالي 1 إلى 2 ميجابايت من ذاكرة النظام، فإذا أنشأت 10,000 خيط معالجة، سينفد رام السيرفر فوراً وينهار النظام!
+
+في لغة Go وُجد الحل العبقري المسمى [[Goroutine]]:
+• الـ Goroutine هو خيط معالجة فائق الخفة تديره لغة Go نفسها في مساحة المستخدم وليس نواة نظام التشغيل (User-space Green Thread).
+• يستهلك الـ Goroutine الواحد حوالي [[2 كيلوبايت]] فقط من الذاكرة!
+• يمكنك إطلاق 1,000,000 Goroutine على لابتوب عادي دون أن تهتز مروحة المعالج!
+• لتشغيل أي دالة في الخلفية كـ Goroutine متزامن، يكفي فقط أن تكتب قبلها كلمة: [[go]].`,
+          example: R`package main
+import "fmt"
+import "time"
+
+func sendNotification(user string) {
+  fmt.Printf("جاري إرسال إشعار للمستخدم: %s\n", user)
+  time.Sleep(100 * time.Millisecond)
+  fmt.Printf("تم استلام الإشعار بنجاح: %s\n", user)
+}
+
+func main() {
+  # 1. إطلاق 3 عمليات في الخلفية في نفس اللحظة بكلمة go
+  go sendNotification("عمر")
+  go sendNotification("سارة")
+  go sendNotification("علي")
+
+  # 2. انتظار خفيف حتى لا ينتهي برنامج main قبل انتهاء العمليات
+  time.Sleep(200 * time.Millisecond)
+  fmt.Println("انتهت جميع الإشعارات بنجاح!")
+}`,
+          try: R`شغّل الكود بـ [[go run main.go]] وكرر التشغيل مرتين: ستلاحظ أن ترتيب طباعة المستخدمين يختلف في كل مرة! لأن العمليات الثلاث تعمل بالتوازي الفعلي على أنوية المعالج معاً دون أن تنتظر أي منها الأخرى.`,
+          flag: "script",
+          deep: {
+            why: R`معمارية السيرفرات الحديثة تحتاج لخدمة مئات آلاف الاتصالات اللحظية (WebSockets, Chat, Live Streaming). بفضل الـ Goroutines، خادم Go واحد يستطيع استبدال 10 خوادم Node.js أو Python في سعة استيعاب المستخدمين المتزامنين.`,
+            how: R`مُجدول Go المدمج (Go Runtime Scheduler) يستخدم خوارزمية (M:N Work-stealing Scheduler)؛ يربط ملايين الـ Goroutines بعدد محدود جداً من خيوط المعالج الحقيقية (مطابق لعدد أنوية الـ CPU)، وإذا توقف أحدها منتظراً شبكة أو ملف، يسرق المجدول خيط المعالجة ويسلمه لـ Goroutine آخر فوراً في أجزاء من الميكروثانية.`,
+            when: "العمليات الخلفية مثل إرسال الإيميلات، ومعالجة الصور المرفوعة، والاتصال بعدة خدمات خارجية معاً بالتوازي لتقليل وقت الاستجابة.",
+            mistakes: R`أن تنسى أن دالة main() هي أيضاً Goroutine رئيسي؛ إذا انتهت دالة main() سيقوم النظام بقتل كل الـ Goroutines التابعة لها فوراً حتى لو لم تنتهِ من عملها. للتحكم الاحترافي دون وقت ثابت، نستخدم أداة [[sync.WaitGroup]].`
+          },
+          lines: [
+            "حزمة main.",
+            "استيراد مكتبة الطباعة fmt.",
+            "استيراد مكتبة الوقت time.",
+            "تعريف دالة إرسال الإشعار وتستقبل اسم المستخدم.",
+            "طباعة رسالة بدء الإرسال.",
+            "محاكاة استغراق وقت الشبكة بانتظار 100 ملي ثانية.",
+            "طباعة رسالة تأكيد الاستلام.",
+            "قفلة دالة sendNotification.",
+            "دالة main.",
+            "إطلاق إرسال إشعار لعمر في Goroutine خلفي مستقل بكلمة go.",
+            "إطلاق إرسال إشعار لسارة في Goroutine ثانٍ مستقل.",
+            "إطلاق إرسال إشعار لعلي في Goroutine ثالث مستقل.",
+            "انتظار مؤقت للسماح للعمليات بالانتهاء قبل قفل التطبيق.",
+            "طباعة اكتمال البرنامج.",
+            "قفلة دالة main."
+          ],
+          sol: R`الناتج في الترمنال (قد يختلف الترتيب بسبب التزامن):
+جاري إرسال إشعار للمستخدم: علي
+جاري إرسال إشعار للمستخدم: عمر
+جاري إرسال إشعار للمستخدم: سارة
+تم استلام الإشعار بنجاح: علي
+تم استلام الإشعار بنجاح: عمر
+تم استلام الإشعار بنجاح: سارة
+انتهت جميع الإشعارات بنجاح!`
+        },
+        {
+          cmd: "بناء خادم ويب REST API بـ net/http",
+          title: "خادم ويب كامل بدون مكاتب خارجية: بناء REST API ومسارات JSON بمكتبة net/http المعيارية",
+          desc: R`واحدة من أعظم مزايا لغة Go هي قوة المكتبة القياسية المدمجة ([[Standard Library]])؛ فلن تحتاج لتسطيب Express أو أي إطار خارجي لبناء سيرفر ويب جاهز للإنتاج عالي السرعة:
+مكتبة [[net/http]] المدمجة داخل Go تُصنف كواحدة من أسرع وأقوى خوادم الـ HTTP في العالم وتخدم ملايين الطلبات في الثانية.
+
+كيف تبني سيرفر REST API في Go؟
+1. تسجل المسار ودالة الاستجابة بـ [[http.HandleFunc("/api/...", handler)]].
+2. تقرأ الطلب وتكتب الرد في كائن [[http.ResponseWriter]].
+3. تحول البيانات إلى JSON تلقائياً بـ [[json.NewEncoder(w).Encode(data)]].
+4. تشغل السيرفر على البورت المطلوب بـ [[http.ListenAndServe(":8080", nil)]].`,
+          example: R`package main
+import "encoding/json"
+import "fmt"
+import "net/http"
+
+type HealthResponse struct {
+  Status  string ` + "`json:\"status\"`" + `
+  Version string ` + "`json:\"version\"`" + `
+}
+
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+  # 1. تحديد نوع المحتوى كـ JSON
+  w.Header().Set("Content-Type", "application/json")
+  
+  # 2. إنشاء الرد وتشفيره مباشرة في استجابة الشبكة
+  res := HealthResponse{Status: "جاهز ويعمل بأقصى سرعة", Version: "1.0"}
+  json.NewEncoder(w).Encode(res)
+}
+
+func main() {
+  http.HandleFunc("/api/health", healthHandler)
+  fmt.Println("السيرفر يعمل الآن على: http://localhost:8080/api/health")
+  # 3. تشغيل السيرفر والاستماع على المنفذ 8080
+  http.ListenAndServe(":8080", nil)
+}`,
+          try: R`شغّل الكود بـ [[go run main.go]]. افتح المتصفح أو الترمنال واكتب:
+[[curl http://localhost:8080/api/health]]
+وشاهد استجابة الـ JSON السريعة الصادرة من سيرفر مستقل بحجم أسطر لا يتعدى 25 سطراً!`,
+          flag: "script",
+          deep: {
+            why: R`في Node.js الخادم أحادي المسار (Single-threaded)، بينما في Go كل اتصال وارد (Incoming HTTP Request) يقوم السيرفر بفتحه تلقائياً داخل Goroutine مستقل خاص به، مما يمنع بطء أي مستخدم من التأثير على بقية المستخدمين الآخرين.`,
+            how: R`الـ Tags المكتوبة بجوار الحقول مثل [[` + "`json:\"status\"`" + `]] تُسمى Struct Tags. تقرأها مكتبة التشفير عبر الـ Reflection لمعرفة اسم المفتاح الذي سيظهر في الـ JSON عند تحويل الحروف الإنجليزية إلى التنسيق المطلوب.`,
+            when: "بناء الباك إند للشركات الناشئة والمشاريع الضخمة والـ Microservices المستقلة.",
+            mistakes: R`تنسى كتابة الحروف الأولى من حقول الـ Struct بحجم كبير (Capitalized: مثل Status بدلاً من status)؛ في Go الحقول الصغيرة تكون خاصة (Private) ولن تستطيع حزمة الـ JSON قراءتها وتصديرها إطلاقاً فتخرج الحقول فارغة في الرد!`
+          },
+          lines: [
+            "حزمة main.",
+            "استيراد مكتبة ترميز الـ JSON.",
+            "استيراد مكتبة الطباعة fmt.",
+            "استيراد خادم الشبكات net/http.",
+            "تعريف Struct الاستجابة HealthResponse.",
+            "حقل الحالة مع وسم التصدير لـ JSON باسم status.",
+            "حقل الإصدار مع وسم التصدير لـ JSON باسم version.",
+            "قفلة الـ Struct.",
+            "تعريف دالة المعالجة وتستقبل كاتب الاستجابة w ومؤشر الطلب r.",
+            "إضافة هيدر Content-Type ليعرف المتصفح أن الرد عبارة عن JSON.",
+            "إنشاء كائن الاستجابة بالبيانات الحية.",
+            "تحويل الكائن لـ JSON وكتابته مباشرة في دفق الشبكة عبر NewEncoder.",
+            "قفلة دالة المعالجة.",
+            "دالة main.",
+            "تسجيل المسار /api/health وربطه بدالة healthHandler.",
+            "طباعة رسالة بدء تشغيل السيرفر ورابطه المحلي.",
+            "بدء الاستماع على المنفذ 8080 وتشغيل السيرفر الدائم.",
+            "قفلة دالة main."
+          ],
+          sol: R`الرد من السيرفر بتنسيق JSON:
+{
+  "status": "جاهز ويعمل بأقصى سرعة",
+  "version": "1.0"
+}`
+        }
+      ]
+    },
+    {
+      t: "الإنتاج والميكروسيرفسز بـ Go",
+      l: 3,
+      n: "حزم التطبيق في حاويات Docker متناهية الصغر واختبار الأداء والسرعة",
+      items: [
+        {
+          cmd: "تحزيم تطبيق Go في Docker بـ Scratch بحجم 15 ميجا",
+          title: "حاويات الإنتاج متناهية الصغر: البناء متعدد المراحل Multi-stage Build بحجم لا يتجاوز 15 ميجابايت",
+          desc: R`في مشاريع Node.js أو Python، صورة الدوكر ([[Docker Image]]) غالباً ما يتجاوز حجمها 500 ميجا إلى 1 جيجابايت بسبب تسطيب بيئة التشغيل ومجلد الـ node_modules الضخم.
+في لغة Go، لأن الكود يُترجم إلى ملف تنفيذي ثنائي مستقل ([[Static Binary]])، يمكنك استخدام أعظم تقنية في عالم الـ Cloud:
+
+البناء متعدد المراحل ([[Multi-stage Dockerfile]]):
+1. مرحلة البناء الأولى ([[Build Stage]]):
+   • نستخدم صورة Go الرسمية لتجميع وترجمة الكود.
+   • نطفئ ميزة الربط بمكتبات C بتحديد المتغير: [[CGO_ENABLED=0]].
+2. مرحلة الإنتاج الصافية ([[scratch]]):
+   • نستخدم صورة [[scratch]] وهي صورة فارغة تماماً حجمها [[صفر ميجابايت]] (لا تحتوي حتى على نظام تشغيل لينكس أو Bash!).
+   • ننسخ فقط الملف التنفيذي المترجم إليها.
+النتيجة الخرافية:
+حاوية دوكر كاملة لتطبيقك بحجم [[10 إلى 15 ميجابايت فقط]]! تُرفع إلى السيرفر في ثانية واحدة، وتستهلك أقل قدر من الرام وتتمتع بأعلى أمان في العالم لأنه لا توجد فيها أي برامج أو ثغرات shell للاختراق.`,
+          example: R`# المرحلة 1: تجميع وترجمة الكود
+FROM golang:1.24-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o server .
+
+# المرحلة 2: الإنتاج الخارق بحجم صفر ميجا
+FROM scratch
+WORKDIR /
+COPY --from=builder /app/server /server
+EXPOSE 8080
+ENTRYPOINT ["/server"]`,
+          try: R`في مشروعك، احفظ هذا الكود في ملف باسم [[Dockerfile]]. وشغل أمر البناء:
+[[docker build -t my-go-api .]]
+ثم اكتب: [[docker images my-go-api]] وشوف المفاجأة بنفسك في خانة SIZE: الحجم سيكون حوالي 12MB فقط!`,
+          flag: "script",
+          deep: {
+            why: R`صغر حجم الحاوية يعني إمكانية نشر (Deploy) وتحديث مئات السيرفرات في ثوانٍ معدودة في منصات Kubernetes، كما يقلل تكلفة تخزين الصور في الـ Container Registry ويزيد من سرعة الإقلاع الذاتي عند زيادة الضغط (Autoscaling).`,
+            how: R`الأمر [[CGO_ENABLED=0]] يضمن عدم اعتماد الكود المترجم على مكتبة C القياسية (glibc)، وخيار [[-ldflags="-w -s"]] يقوم بحذف معلومات التصحيح (Debug Symbols وجداول الـ DWARF) مما يقلص حجم الملف الثنائي بمقدار 40% إضافية دون التأثير على الأداء إطلاقاً.`,
+            when: "نشر كافة خدمات الباك إند والـ Microservices في بيئات الإنتاج و Kubernetes و AWS ECS.",
+            mistakes: R`تضمين كود الـ SDK الكامل الخاص بـ Go داخل صورة الإنتاج النهائية؛ هذا يضخم حجم الصورة بلا أي داعٍ. استخدم دائماً البناء متعدد المراحل لنقل الملف التنفيذي فقط.`
+          },
+          lines: [
+            "بدء مرحلة البناء الأولى builder باستخدام صورة go-alpine الخفيفة.",
+            "تحديد مجلد العمل /app.",
+            "نسخ ملفات إدارة الحزم والاعتماديات go.mod و go.sum.",
+            "تحميل الاعتماديات وحفظها في الكاش.",
+            "نسخ باقي ملفات كود المشروع المصدرية.",
+            "ترجمة الكود لملف ثنائي ثابت server لنظام لينكس مع تقليص الحجم بـ ldflags.",
+            "بدء مرحلة الإنتاج النقي المستقلة من صورة scratch الفارغة تماماً.",
+            "تحديد مجلد الجذر للتشغيل.",
+            "نسخ الملف التنفيذي المترجم فقط من مرحلة البناء builder.",
+            "الإعلان عن فتح المنفذ الشبكي 8080.",
+            "نقطة انطلاق وتشغيل الملف التنفيذي عند إقلاع الحاوية."
+          ],
+          sol: R`الناتج عند فحص الصورة:
+REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+my-go-api    latest    7f8b91a2c3d4   10 seconds ago   14.2MB
+حاوية فائقة الخفة جاهزة للنشر السحابي والتشغيل الفوري.`
+        },
+        {
+          cmd: "الاختبارات والـ Benchmarks بـ go test",
+          title: "الجودة والأداء: كتابة اختبارات الوحدة واختبار سرعة العمليات بالنانوثانية بـ go test -bench",
+          desc: R`في لغة Go، أدوات الاختبار وقياس الأداء مدمجة في أداة الترمنال الرسمية دون الحاجة لتثبيت Jest أو PyTest:
+
+1. اختبارات الوحدة ([[Unit Tests]]):
+• تضعها في ملف ينتهي باسم [[_test.go]] (مثل math_test.go).
+• تبدأ الدالة دائماً بكلمة [[Test]] وتستقبل مؤشر [[t *testing.T]].
+• تشغل كافة الاختبارات من الترمنال بأمر: [[go test -v]].
+
+2. قياس الأداء الفائق ([[Benchmarks]]):
+• ميزة فريدة في Go؛ تتيح لك معرفة سرعة تنفيذ دالتك بالضبط، وكم نانوثانية تستغرق، وكم بايت من الذاكرة تستهلك في كل عملية!
+• تبدأ الدالة بكلمة [[Benchmark]] وتستقبل [[b *testing.B]].
+• تشغلها من الترمنال بأمر: [[go test -bench=. -benchmem]].`,
+          example: R`package main
+import "testing"
+
+# 1. اختبار صحة النتيجة
+func TestAdd(t *testing.T) {
+  result := 2 + 3
+  if result != 5 {
+    t.Errorf("خطأ: المتوقع 5 ولكن الناتج كان %d", result)
+  }
+}
+
+# 2. قياس سرعة وأداء الدالة بدقة متناهية
+func BenchmarkAdd(b *testing.B) {
+  for i := 0; i < b.N; i++ {
+    _ = 2 + 3
+  }
+}`,
+          try: R`في مجلد يحتوي على الملف، نفذ أمر قياس السرعة:
+[[go test -bench=. -benchmem]]
+وشاهد التقرير المذهل: كم مليون عملية نفذها المعالج في ثانية واحدة وكم نانوثانية استغرقت كل عملية!`,
+          flag: "script",
+          deep: {
+            why: R`قياس الأداء يمنع التخمين البشري؛ عندما تتردد بين طريقتين لكتابة كود معين، اكتب Benchmark لكل منهما ودع لغة Go تحسم لك القرار بالأرقام الدقيقة الصريحة.`,
+            how: R`يقوم الـ Benchmark بتشغيل اللوب بعدد دورات متغير ([[b.N]]) يزيد تدريجياً (من 100 إلى 1,000,000) حتى يستقر قياس الوقت، ثم يحسب المتوسط لكل تكرار.`,
+            when: "قبل نشر أي تحديث يمس كوداً حساساً للسرعة، أو عند تحسين استهلاك الذاكرة في أنظمة الدفع ومحركات البحث.",
+            mistakes: R`تسمية ملف الاختبار باسم لا ينتهي بـ [[_test.go]]؛ أداة go test ستتجاهله تماماً ولن تشغل أي اختبارات.`
+          },
+          lines: [
+            "حزمة main.",
+            "استيراد مكتبة الاختبارات القياسية testing المدمجة.",
+            "تعريف دالة اختبار صحة الجمع TestAdd مع مؤشر testing.T.",
+            "تنفيذ عملية الجمع وحفظ الناتج.",
+            "فحص النتيجة والتحقق من تطابقها مع المتوقع.",
+            "تسجيل الخطأ مع إبقاء الفحص مستمراً عبر t.Errorf.",
+            "قفلة شرط التحقق.",
+            "قفلة دالة الاختبار.",
+            "تعريف دالة قياس الأداء BenchmarkAdd مع مؤشر testing.B.",
+            "حلقة تكرار بعدد دورات b.N يحسبه محرك Go تلقائياً للاستقرار الإحصائي.",
+            "تنفيذ العملية المراد قياس سرعتها.",
+            "قفلة حلقة التكرار.",
+            "قفلة دالة الـ Benchmark."
+          ],
+          sol: R`الناتج في الترمنال:
+PASS
+BenchmarkAdd-8   1000000000   0.312 ns/op   0 B/op   0 allocs/op
+تم تنفيذ مليار تكرار في ثانية واحدة، بمتوسط 0.3 نانوثانية للعملية الواحدة مع صفر استهلاك إضافي للذاكرة!`
         }
       ]
     }
