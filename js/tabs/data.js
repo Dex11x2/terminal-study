@@ -1418,7 +1418,7 @@ UNIQUE بيسمح بكذا NULL، إلا لو كتبت [[NULLS NOT DISTINCT]] (�
 [[status = 'shiped']] (سواء UPDATE أو INSERT) هيترفض: [[new row for relation "orders" violates check constraint "status_valid"]]. من غير الـ CHECK كانت الكلمة الغلط هتتحفظ، والأوردر يختفي من أي تقرير بيدوّر على 'shipped'. لو الـ ALTER TABLE نفسه فشل، ده معناه إن فيه داتا قديمة بتكسر الشرط؛ صلّحها الأول.`,
           solCode: R`INSERT INTO users (email, name) VALUES ('YOU@example.com', 'Ali 2');
 -- ERROR:  duplicate key value violates unique constraint "users_email_lower_uq"
-UPDATE orders SET status = 'shiped' WHERE id = 2;
+UPDATE orders SET status = 'shiped' WHERE id = (SELECT min(id) FROM orders);
 -- ERROR:  new row for relation "orders" violates check constraint "status_valid"`
         },
         {
@@ -1546,7 +1546,7 @@ HAVING o.total <> sum(oi.quantity * oi.unit_price);`,
 
 الـ UPDATE الأول بيصلّح الفرق. خلي بالك إن الاستعلام ده بـ JOIN، فأوردر total بتاعه مش صفر ومفيش ولا بند مش هيظهر فيه؛ لو عايز تمسكه كمان استخدم LEFT JOIN و [[COALESCE(sum(...), 0)]]. والحل الدائم إن أي كود بيضيف بند يحدّث total في نفس الـ transaction (زي درس transaction)، أو trigger، أو إنك تبطل تخزّن total وتحسبه وقت القراية لو الأداء مسموح.`,
           solCode: R`INSERT INTO order_items (order_id, product_id, quantity, unit_price)
-SELECT 2, id, 1, price FROM products WHERE name = 'Cap';
+SELECT (SELECT max(id) FROM orders), id, 1, price FROM products WHERE name = 'Cap';
 SELECT o.id, o.total, sum(oi.quantity * oi.unit_price) AS real_total
 FROM orders o JOIN order_items oi ON oi.order_id = o.id
 GROUP BY o.id
@@ -2580,8 +2580,8 @@ FOR EACH ROW EXECUTE FUNCTION audit_row();`,
 وتجربة updated_at: القيمة المتخزنة هتبقى وقت دلوقتي مش 2020، لأن الـ BEFORE trigger بيكتب فوق أي قيمة بعتها في NEW قبل ما الصف يتحفظ. ده المقصود: محدش يقدر يزوّر وقت التعديل.
 
 لو الـ trigger مش شغال، اتأكد إنه [[FOR EACH ROW]] مش STATEMENT (الـ STATEMENT مفيهوش NEW)، وإنه BEFORE مش AFTER (تعديل NEW في AFTER ملوش تأثير).`,
-          solCode: R`UPDATE orders SET status = 'shipped' WHERE id = 1;
-DELETE FROM orders WHERE id = 2;
+          solCode: R`UPDATE orders SET status = 'shipped' WHERE id = (SELECT min(id) FROM orders);
+DELETE FROM orders WHERE id = (SELECT max(id) FROM orders);
 
 SELECT op, row_id,
        old_data->>'status' AS old_status,
@@ -2594,7 +2594,7 @@ CREATE TRIGGER orders_updated_at
 BEFORE UPDATE ON orders
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
-UPDATE orders SET status = 'paid', updated_at = '2020-01-01' WHERE id = 3 RETURNING updated_at;`,
+UPDATE orders SET status = 'paid', updated_at = '2020-01-01' WHERE id = (SELECT min(id) FROM orders) RETURNING updated_at;`,
           flag: "script",
           deep: {
             why: "لو updated_at معتمد على إن كل مطوّر يفتكر يبعته، هيتنسي في endpoint من العشرين، والـ sync والـ cache اللي معتمدين عليه هيبوظوا. والـ audit log من الكود بيفوّت أي تعديل حصل من برّه الكود: سكربت، أو migration، أو أدمن صلّح حاجة بإيده من psql، وده بالظبط التعديل اللي هتحتاج تعرفه لما فلوس تختفي.",

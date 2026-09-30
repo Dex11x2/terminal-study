@@ -15223,7 +15223,7 @@ node --inspect-brk server.js
         {
           cmd: "Lighthouse",
           title: "تقرير شامل بدرجات",
-          desc: "تاب Lighthouse بيقيس Performance و Accessibility و Best Practices و SEO، ويقولك تصلّح إيه بالظبط. شغّله في نافذة Incognito عشان الـ extensions متأثرش، وعلى Mobile. من أهم الأرقام في قسم Performance: [[LCP]] أكبر عنصر يظهر في 2.5 ثانية أو أقل، و [[CLS]] الصفحة متتنططش وهي بتحمّل (0.1 أو أقل)، و [[TBT]] (Total Blocking Time) قد إيه الـ JavaScript قفل الصفحة وهي بتحمّل. الـ Core Web Vitals التالت [[INP]] (الصفحة ترد على الضغط في 200ms أو أقل) Lighthouse مبيقيسوش، لأنه محتاج تفاعل ناس حقيقية، فـ TBT هو الرقم اللي بيدلّك عليه في المعمل. INP الحقيقي تلاقيه في PageSpeed Insights (قسم بيانات الزوار الحقيقيين من CrUX، لو موقعك عليه زيارات كفاية) أو تقيسه بنفسك بمكتبة [[web-vitals]].",
+          desc: "تاب Lighthouse بيقيس Performance و Accessibility و Best Practices و SEO، ويقولك تصلّح إيه بالظبط. شغّله في نافذة Incognito عشان الـ extensions متأثرش، وعلى Mobile. من أهم الأرقام في قسم Performance: [[LCP]] أكبر عنصر يظهر في 2.5 ثانية أو أقل، و [[CLS]] الصفحة متتنططش وهي بتحمّل (0.1 أو أقل)، و [[TBT]] (Total Blocking Time) قد إيه الـ JavaScript قفل الصفحة وهي بتحمّل. الـ Core Web Vitals التالت [[INP]] (الصفحة ترد على الضغط في 200ms أو أقل) التقرير العادي ده (وضع Navigation) مبيقيسوش، لأنه محتاج تفاعل حد مع الصفحة (وضع Timespan في DevTools بيقيسه من ضغطاتك انت بس)، فـ TBT هو الرقم اللي بيدلّك عليه في المعمل. INP الحقيقي تلاقيه في PageSpeed Insights (قسم بيانات الزوار الحقيقيين من CrUX، لو موقعك عليه زيارات كفاية) أو تقيسه بنفسك بمكتبة [[web-vitals]].",
           example: R`npx lighthouse https://example.com --view
 npx lighthouse https://example.com --preset=desktop --output=html --output-path=report.html`,
           try: "طلّع تقرير Lighthouse لموقعك على Mobile، وصلّح أول 3 حاجات قالك عليها، وقارن الدرجة.",
@@ -15234,11 +15234,11 @@ npx lighthouse https://example.com --preset=desktop --output=html --output-path=
 
 Core Web Vitals التلاتة: LCP (Largest Contentful Paint) وقت ظهور أكبر محتوى، والهدف ٢.٥ ثانية أو أقل. CLS (Cumulative Layout Shift) قد إيه عناصر بتتحرك وهي بتتحمّل، ٠.١ أو أقل. INP (Interaction to Next Paint) الوقت بين الضغط والرد، ٢٠٠ms أو أقل.
 
-Lighthouse بيقيس LCP و CLS في المعمل (lab data)، لكن مبيقيسش INP، لأن INP بيتحسب من تفاعلات الزوار الحقيقيين طول زيارتهم. بداله Lighthouse بيدّيك TBT (Total Blocking Time)، ودا مجموع الوقت اللي الـ main thread كان مقفول فيه بـ long tasks، وهو أقرب مؤشر معملي لـ INP: لو TBT عالي، غالبًا INP هيبقى وحش. الرقم الحقيقي لـ INP بييجي من field data: قسم الزوار الحقيقيين في PageSpeed Insights (من CrUX)، أو مكتبة web-vitals في موقعك بتبعت القياسات للـ analytics بتاعتك.
+تقرير Lighthouse العادي (Navigation) بيقيس LCP و CLS في المعمل (lab data)، لكن مبيقيسش INP (وضع Timespan بيقيسه من تفاعلاتك انت بس، مش من الزوار)، لأن INP بيتحسب من تفاعلات الزوار الحقيقيين طول زيارتهم. بداله Lighthouse بيدّيك TBT (Total Blocking Time)، ودا مجموع الوقت اللي الـ main thread كان مقفول فيه بـ long tasks، وهو أقرب مؤشر معملي لـ INP: لو TBT عالي، غالبًا INP هيبقى وحش. الرقم الحقيقي لـ INP بييجي من field data: قسم الزوار الحقيقيين في PageSpeed Insights (من CrUX)، أو مكتبة web-vitals في موقعك بتبعت القياسات للـ analytics بتاعتك.
 
 شغّله في Incognito عشان الـ extensions مش تأثر.`,
             when: "قبل الرفع على إنتاج. لما حد يقولك «الموقع بطيء». بانتظام كل إصدار.",
-            mistakes: "تشغّله مرة وتخليها. واجعل الموبايل هو المعيار (دايمًا أبطأ من الديسكتوب). وتفتكر إن درجة ١٠٠ في Lighthouse معناها إن INP كويس: Lighthouse مبيقيسش INP أصلًا، وسؤال انترفيو مشهور هو الفرق بين lab data (Lighthouse) و field data (CrUX و web-vitals)."
+            mistakes: "تشغّله مرة وتخليها. واجعل الموبايل هو المعيار (دايمًا أبطأ من الديسكتوب). وتفتكر إن درجة ١٠٠ في Lighthouse معناها إن INP كويس: تقرير Lighthouse العادي مبيقيسش INP أصلًا، وسؤال انترفيو مشهور هو الفرق بين lab data (Lighthouse) و field data (CrUX و web-vitals)."
           },
           lines: [
             "شغّل Lighthouse من الترمنال (npx بينزّله لو مش موجود) وافتح التقرير في المتصفح.",
@@ -16258,7 +16258,7 @@ SELECT * FROM people;`
           title: "إيه اللي القانون عايزه من كودك",
           desc: R`مش محتاج تبقى محامي، بس محتاج تعرف القوانين بتطلب إيه من الكود. وأي تفاصيل قانونية هنا (أرقام، مدد، غرامات) راجعها مع محامي ومع النص الرسمي، لأنها بتتغير وبتتفسر.
 
-في مصر: قانون حماية البيانات الشخصية رقم 151 لسنة 2020. اللائحة التنفيذية اتأخرت سنين، واتصدرت في نوفمبر 2025 (قرار رئيس الوزراء 816 لسنة 2025) ومعاها فترة توفيق أوضاع سنة تقريبًا، يعني الالتزام الفعلي بيبدأ حوالي آخر 2026. الجهة المسؤولة «مركز حماية البيانات الشخصية». بيطلب: غرض محدد وموافقة، وموافقة صريحة ومكتوبة للبيانات الحساسة وبيانات الأطفال، وحقوق لصاحب البيانات (يعرف، ويصحح، ويمسح، ويعترض)، وإبلاغ المركز عن أي تسريب خلال 72 ساعة، وشروط لنقل البيانات بره مصر، وتراخيص أو تصاريح من المركز لكتير من الشركات.
+في مصر: قانون حماية البيانات الشخصية رقم 151 لسنة 2020. اللائحة التنفيذية اتأخرت سنين، واتصدرت في نوفمبر 2025 (قرار وزير الاتصالات وتكنولوجيا المعلومات رقم 816 لسنة 2025) ومعاها فترة توفيق أوضاع سنة تقريبًا، يعني الالتزام الفعلي بيبدأ حوالي آخر 2026. الجهة المسؤولة «مركز حماية البيانات الشخصية». بيطلب: غرض محدد وموافقة، وموافقة صريحة ومكتوبة للبيانات الحساسة وبيانات الأطفال، وحقوق لصاحب البيانات (يعرف، ويصحح، ويمسح، ويعترض)، وإبلاغ المركز عن أي تسريب خلال 72 ساعة، وشروط لنقل البيانات بره مصر، وتراخيص أو تصاريح من المركز لكتير من الشركات.
 
 GDPR (الاتحاد الأوروبي): بيطبق عليك حتى لو انت في مصر، لو بتقدم خدمة لناس في أوروبا أو بتتابع سلوكهم. أهم حقوقه اللي محتاجة كود: الوصول (Art. 15)، والمسح (Art. 17)، ونقل البيانات بصيغة يقراها جهاز (Art. 20). والرد على الطلب خلال شهر، وإبلاغ الجهة الرقابية عن التسريب خلال 72 ساعة.`,
           example: R`Egypt Law 151/2020   exec. regulations Nov 2025, ~1 year to comply; regulator: PDPC
@@ -16352,10 +16352,11 @@ COMMIT;`,
 الغلط الشائع: لو [[orders.user_id]] من غير [[ON DELETE SET NULL]]، الـ DELETE هيفشل بـ foreign key violation والـ transaction كلها ترجع، ودي حاجة كويسة (أحسن من حذف نص). ولو عامل الـ FK بـ CASCADE على الطلبات، هتمسح الفواتير وده غالبًا ضد القانون المحاسبي.
 
 الـ schema والـ checks تحت، شغّلهم في database فاضية، وبعدين شغّل المثال، وبعدين الـ checks.`,
-          solCode: R`CREATE TABLE users (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, email text UNIQUE NOT NULL, name text NOT NULL, avatar_key text);
+          solCode: R`CREATE TABLE users (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, email text UNIQUE NOT NULL, name text NOT NULL, phone text, avatar_key text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE sessions (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint NOT NULL REFERENCES users ON DELETE CASCADE);
 CREATE TABLE login_events (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE CASCADE, ip inet, created_at timestamptz NOT NULL DEFAULT now());
-CREATE TABLE orders (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE SET NULL, ship_name text, ship_address text, total numeric(12,2) NOT NULL);
+CREATE TABLE password_resets (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint NOT NULL REFERENCES users ON DELETE CASCADE, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE orders (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE SET NULL, ship_name text, ship_address text, total numeric(12,2) NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE files_to_delete (key text PRIMARY KEY, queued_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE deleted_accounts (user_id bigint PRIMARY KEY, deleted_at timestamptz NOT NULL DEFAULT now());
 
@@ -16390,7 +16391,7 @@ WITH old AS (
   ORDER BY id LIMIT 5000
 )
 DELETE FROM login_events e USING old WHERE e.id = old.id;`,
-          try: R`على نفس الـ database بتاعة درس «حذف الحساب»: حط يوزر وطلبين، وشغّل الـ export بـ [[psql -At -f export.sql | python3 -m json.tool]]. بعدين املى [[login_events]] بـ 200 صف بتواريخ قديمة ([[generate_series]])، وشغّل الـ DELETE أكتر من مرة وعدّ الصفوف كل مرة. وآخر حاجة اكتب job في Node بيلف على كذا جدول ويمسح لحد ما يخلص.`,
+          try: R`على نفس الـ database بتاعة درس «حذف الحساب»: حط يوزر وطلبين، وشغّل الـ export بـ [[psql -qAt -f export.sql | python3 -m json.tool]]. بعدين املى [[login_events]] بـ 200 صف بتواريخ قديمة ([[generate_series]])، وشغّل الـ DELETE أكتر من مرة وعدّ الصفوف كل مرة. وآخر حاجة اكتب job في Node بيلف على كذا جدول ويمسح لحد ما يخلص.`,
           flag: "script",
           deep: {
             why: R`التصدير حق قانوني، والرد عليه يدوي كل مرة مش هيكمل. والـ retention بيقلل حجم أي تسريب: داتا اتمسحت من سنة مش ممكن تتسرق النهارده. وكمان بيصغّر الجداول والباك أبات.`,
@@ -66353,7 +66354,7 @@ UNIQUE بيسمح بكذا NULL، إلا لو كتبت [[NULLS NOT DISTINCT]] (�
 [[status = 'shiped']] (سواء UPDATE أو INSERT) هيترفض: [[new row for relation "orders" violates check constraint "status_valid"]]. من غير الـ CHECK كانت الكلمة الغلط هتتحفظ، والأوردر يختفي من أي تقرير بيدوّر على 'shipped'. لو الـ ALTER TABLE نفسه فشل، ده معناه إن فيه داتا قديمة بتكسر الشرط؛ صلّحها الأول.`,
           solCode: R`INSERT INTO users (email, name) VALUES ('YOU@example.com', 'Ali 2');
 -- ERROR:  duplicate key value violates unique constraint "users_email_lower_uq"
-UPDATE orders SET status = 'shiped' WHERE id = 2;
+UPDATE orders SET status = 'shiped' WHERE id = (SELECT min(id) FROM orders);
 -- ERROR:  new row for relation "orders" violates check constraint "status_valid"`
         },
         {
@@ -66481,7 +66482,7 @@ HAVING o.total <> sum(oi.quantity * oi.unit_price);`,
 
 الـ UPDATE الأول بيصلّح الفرق. خلي بالك إن الاستعلام ده بـ JOIN، فأوردر total بتاعه مش صفر ومفيش ولا بند مش هيظهر فيه؛ لو عايز تمسكه كمان استخدم LEFT JOIN و [[COALESCE(sum(...), 0)]]. والحل الدائم إن أي كود بيضيف بند يحدّث total في نفس الـ transaction (زي درس transaction)، أو trigger، أو إنك تبطل تخزّن total وتحسبه وقت القراية لو الأداء مسموح.`,
           solCode: R`INSERT INTO order_items (order_id, product_id, quantity, unit_price)
-SELECT 2, id, 1, price FROM products WHERE name = 'Cap';
+SELECT (SELECT max(id) FROM orders), id, 1, price FROM products WHERE name = 'Cap';
 SELECT o.id, o.total, sum(oi.quantity * oi.unit_price) AS real_total
 FROM orders o JOIN order_items oi ON oi.order_id = o.id
 GROUP BY o.id
@@ -67515,8 +67516,8 @@ FOR EACH ROW EXECUTE FUNCTION audit_row();`,
 وتجربة updated_at: القيمة المتخزنة هتبقى وقت دلوقتي مش 2020، لأن الـ BEFORE trigger بيكتب فوق أي قيمة بعتها في NEW قبل ما الصف يتحفظ. ده المقصود: محدش يقدر يزوّر وقت التعديل.
 
 لو الـ trigger مش شغال، اتأكد إنه [[FOR EACH ROW]] مش STATEMENT (الـ STATEMENT مفيهوش NEW)، وإنه BEFORE مش AFTER (تعديل NEW في AFTER ملوش تأثير).`,
-          solCode: R`UPDATE orders SET status = 'shipped' WHERE id = 1;
-DELETE FROM orders WHERE id = 2;
+          solCode: R`UPDATE orders SET status = 'shipped' WHERE id = (SELECT min(id) FROM orders);
+DELETE FROM orders WHERE id = (SELECT max(id) FROM orders);
 
 SELECT op, row_id,
        old_data->>'status' AS old_status,
@@ -67529,7 +67530,7 @@ CREATE TRIGGER orders_updated_at
 BEFORE UPDATE ON orders
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
-UPDATE orders SET status = 'paid', updated_at = '2020-01-01' WHERE id = 3 RETURNING updated_at;`,
+UPDATE orders SET status = 'paid', updated_at = '2020-01-01' WHERE id = (SELECT min(id) FROM orders) RETURNING updated_at;`,
           flag: "script",
           deep: {
             why: "لو updated_at معتمد على إن كل مطوّر يفتكر يبعته، هيتنسي في endpoint من العشرين، والـ sync والـ cache اللي معتمدين عليه هيبوظوا. والـ audit log من الكود بيفوّت أي تعديل حصل من برّه الكود: سكربت، أو migration، أو أدمن صلّح حاجة بإيده من psql، وده بالظبط التعديل اللي هتحتاج تعرفه لما فلوس تختفي.",

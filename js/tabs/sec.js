@@ -833,7 +833,7 @@ SELECT * FROM people;`
           title: "إيه اللي القانون عايزه من كودك",
           desc: R`مش محتاج تبقى محامي، بس محتاج تعرف القوانين بتطلب إيه من الكود. وأي تفاصيل قانونية هنا (أرقام، مدد، غرامات) راجعها مع محامي ومع النص الرسمي، لأنها بتتغير وبتتفسر.
 
-في مصر: قانون حماية البيانات الشخصية رقم 151 لسنة 2020. اللائحة التنفيذية اتأخرت سنين، واتصدرت في نوفمبر 2025 (قرار رئيس الوزراء 816 لسنة 2025) ومعاها فترة توفيق أوضاع سنة تقريبًا، يعني الالتزام الفعلي بيبدأ حوالي آخر 2026. الجهة المسؤولة «مركز حماية البيانات الشخصية». بيطلب: غرض محدد وموافقة، وموافقة صريحة ومكتوبة للبيانات الحساسة وبيانات الأطفال، وحقوق لصاحب البيانات (يعرف، ويصحح، ويمسح، ويعترض)، وإبلاغ المركز عن أي تسريب خلال 72 ساعة، وشروط لنقل البيانات بره مصر، وتراخيص أو تصاريح من المركز لكتير من الشركات.
+في مصر: قانون حماية البيانات الشخصية رقم 151 لسنة 2020. اللائحة التنفيذية اتأخرت سنين، واتصدرت في نوفمبر 2025 (قرار وزير الاتصالات وتكنولوجيا المعلومات رقم 816 لسنة 2025) ومعاها فترة توفيق أوضاع سنة تقريبًا، يعني الالتزام الفعلي بيبدأ حوالي آخر 2026. الجهة المسؤولة «مركز حماية البيانات الشخصية». بيطلب: غرض محدد وموافقة، وموافقة صريحة ومكتوبة للبيانات الحساسة وبيانات الأطفال، وحقوق لصاحب البيانات (يعرف، ويصحح، ويمسح، ويعترض)، وإبلاغ المركز عن أي تسريب خلال 72 ساعة، وشروط لنقل البيانات بره مصر، وتراخيص أو تصاريح من المركز لكتير من الشركات.
 
 GDPR (الاتحاد الأوروبي): بيطبق عليك حتى لو انت في مصر، لو بتقدم خدمة لناس في أوروبا أو بتتابع سلوكهم. أهم حقوقه اللي محتاجة كود: الوصول (Art. 15)، والمسح (Art. 17)، ونقل البيانات بصيغة يقراها جهاز (Art. 20). والرد على الطلب خلال شهر، وإبلاغ الجهة الرقابية عن التسريب خلال 72 ساعة.`,
           example: R`Egypt Law 151/2020   exec. regulations Nov 2025, ~1 year to comply; regulator: PDPC
@@ -927,10 +927,11 @@ COMMIT;`,
 الغلط الشائع: لو [[orders.user_id]] من غير [[ON DELETE SET NULL]]، الـ DELETE هيفشل بـ foreign key violation والـ transaction كلها ترجع، ودي حاجة كويسة (أحسن من حذف نص). ولو عامل الـ FK بـ CASCADE على الطلبات، هتمسح الفواتير وده غالبًا ضد القانون المحاسبي.
 
 الـ schema والـ checks تحت، شغّلهم في database فاضية، وبعدين شغّل المثال، وبعدين الـ checks.`,
-          solCode: R`CREATE TABLE users (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, email text UNIQUE NOT NULL, name text NOT NULL, avatar_key text);
+          solCode: R`CREATE TABLE users (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, email text UNIQUE NOT NULL, name text NOT NULL, phone text, avatar_key text, created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE sessions (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint NOT NULL REFERENCES users ON DELETE CASCADE);
 CREATE TABLE login_events (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE CASCADE, ip inet, created_at timestamptz NOT NULL DEFAULT now());
-CREATE TABLE orders (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE SET NULL, ship_name text, ship_address text, total numeric(12,2) NOT NULL);
+CREATE TABLE password_resets (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint NOT NULL REFERENCES users ON DELETE CASCADE, created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE orders (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE SET NULL, ship_name text, ship_address text, total numeric(12,2) NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE files_to_delete (key text PRIMARY KEY, queued_at timestamptz NOT NULL DEFAULT now());
 CREATE TABLE deleted_accounts (user_id bigint PRIMARY KEY, deleted_at timestamptz NOT NULL DEFAULT now());
 
@@ -965,7 +966,7 @@ WITH old AS (
   ORDER BY id LIMIT 5000
 )
 DELETE FROM login_events e USING old WHERE e.id = old.id;`,
-          try: R`على نفس الـ database بتاعة درس «حذف الحساب»: حط يوزر وطلبين، وشغّل الـ export بـ [[psql -At -f export.sql | python3 -m json.tool]]. بعدين املى [[login_events]] بـ 200 صف بتواريخ قديمة ([[generate_series]])، وشغّل الـ DELETE أكتر من مرة وعدّ الصفوف كل مرة. وآخر حاجة اكتب job في Node بيلف على كذا جدول ويمسح لحد ما يخلص.`,
+          try: R`على نفس الـ database بتاعة درس «حذف الحساب»: حط يوزر وطلبين، وشغّل الـ export بـ [[psql -qAt -f export.sql | python3 -m json.tool]]. بعدين املى [[login_events]] بـ 200 صف بتواريخ قديمة ([[generate_series]])، وشغّل الـ DELETE أكتر من مرة وعدّ الصفوف كل مرة. وآخر حاجة اكتب job في Node بيلف على كذا جدول ويمسح لحد ما يخلص.`,
           flag: "script",
           deep: {
             why: R`التصدير حق قانوني، والرد عليه يدوي كل مرة مش هيكمل. والـ retention بيقلل حجم أي تسريب: داتا اتمسحت من سنة مش ممكن تتسرق النهارده. وكمان بيصغّر الجداول والباك أبات.`,
