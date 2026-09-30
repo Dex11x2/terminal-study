@@ -60,7 +60,12 @@ node -p "process.versions.v8"`,
             "نسخة npm.",
             "الملف جاي منين (nvm ولا apt ولا brew).",
             "نسخة محرك V8، مفيد لو مكتبة بتشتكي من feature."
-          ]
+          ],
+          sol: R`[[node -v]] بيطبع حاجة زي [[v22.22.2]]، وفي package.json ممكن تلاقي [["engines": { "node": ">=22" }]] أو [[">=20.9"]] أو [["22.x"]]. المقارنة بسيطة: نسختك لازم تقع جوه المدى. [[v22.22.2]] مع [[>=22]] تمام، ومع [[>=24]] لأ.
+
+لو مفيش [[engines]] خالص، دوّر على [[.nvmrc]] أو [[.node-version]] في المشروع، أو على [[node-version]] في ملف الـ CI ([[.github/workflows]])؛ دي النسخة اللي المشروع فعلًا بيتختبر عليها.
+
+والمهم تعرفه: npm مش بيمنعك تسطّب لو النسخة مش مطابقة، بيطبع [[npm warn EBADENGINE Unsupported engine]] ويكمّل. ودا تحذير حقيقي، مش حاجة تتجاهلها: غالبًا هيطلعلك بعدها errors غريبة وقت التشغيل. لو عايزها تبقى error حط [[engine-strict=true]] في [[.npmrc]] بتاع المشروع.`
         },
         {
           cmd: "nvm",
@@ -94,7 +99,12 @@ nvm use`,
             "خلّيها الافتراضية لكل ترمنال جديد.",
             "سجّل نسخة المشروع في ملف.",
             "من غير رقم: اقرا .nvmrc واستخدمه."
-          ]
+          ],
+          sol: R`بعد [[nvm install 22]] و [[nvm install 24]]، [[nvm ls]] بيعرض الاتنين وسهم [[->]] قدام اللي شغالة. ومع كل [[nvm use]] الرد [[Now using node v24.x.x (npm v11.x.x)]]، و [[which node]] بيتغير لمسار جوه nvm زي [[~/.nvm/versions/node/v24.x.x/bin/node]] ثم [[~/.nvm/versions/node/v22.x.x/bin/node]]. يعني nvm مش بيغيّر node واحد، بيغيّر الـ PATH يشاور على نسخة تانية.
+
+وبـ [[.nvmrc]] فيها [[24]]، [[nvm use]] من غير رقم بيقول [[Found '.../.nvmrc' with version <24>]] ويبدّل.
+
+الأخطاء الشائعة: [[nvm: command not found]] في ترمنال جديد لأن سطور nvm مش في [[~/.bashrc]] أو [[~/.zshrc]]، أو انت في PowerShell ودا nvm-windows (برنامج تاني بأوامر شبه دي). ولو [[which node]] فضل [[/usr/bin/node]] يبقى فيه node متسطب من apt وجاي في الـ PATH قبل nvm. وافتكر إن [[nvm use]] للترمنال ده بس؛ الترمنال الجديد بياخد [[nvm alias default]].`
         },
         {
           cmd: "package.json",
@@ -122,7 +132,14 @@ npm pkg get scripts`,
             "خلّي المشروع ESM (import بدل require).",
             "سجّل إن المشروع محتاج Node 22 أو أحدث.",
             "اعرض السكربتات من غير ما تفتح الملف."
-          ]
+          ],
+          sol: R`[[npm init -y]] بيطبع [[Wrote to .../package.json:]] والملف فيه:
+
+[[name]] (اسم الفولدر)، [[version]] ([[1.0.0]])، [[description]] فاضي، [[main]] ([[index.js]]: الملف اللي بيتحمّل لو حد عمل import للباكدج)، [[scripts]] فيها [[test]] بيطبع [[Error: no test specified]] ويخرج بـ 1، [[keywords]] و [[author]] فاضيين، و [[license]] ([[ISC]]). وفي npm 11 كمان [["type": "commonjs"]] صريحة.
+
+بعد [[npm pkg set type=module]] و [[npm pkg set engines.node=">=22"]] هيتضاف [["type": "module"]] و [["engines": { "node": ">=22" }]]. و [[npm pkg get scripts]] بيطبع الـ scripts كـ JSON.
+
+الحقول اللي هتفرق معاك في مشروع تطبيق: [[scripts]] و [[dependencies]] و [[devDependencies]] و [[type]] و [[engines]]. أما [[main]] و [[keywords]] و [[license]] بيفرقوا لو هتنشر باكدج. والغلط الشائع إنك تعدّل الملف بإيدك وتسيب فاصلة زيادة، فكل أوامر npm تقع بـ [[EJSONPARSE]]؛ [[npm pkg set]] بيتجنب ده.`
         },
         {
           cmd: "npm install",
@@ -152,7 +169,14 @@ npm uninstall nodemon`,
             "ضيف أدوات تطوير لـ devDependencies.",
             "أداة عامة على الجهاز كله.",
             "شيل مكتبة من المشروع و package.json."
-          ]
+          ],
+          sol: R`بعد [[npm i express]] و [[npm i -D nodemon]]:
+
+[[dependencies: { express: "^5.2.1" }]] و [[devDependencies: { nodemon: "^3.1.14" }]] (الأرقام بتتغير مع الوقت). express في dependencies لأن التطبيق محتاجه وهو شغال، و nodemon في devDependencies لأنه أداة تطوير بس، ومش هيتسطب مع [[npm ci --omit=dev]] على السيرفر.
+
+وكمان اتعمل [[package-lock.json]] وفولدر [[node_modules]] فيه express وكل اللي هو محتاجه (عشرات الباكدجات، مش واحدة).
+
+الغلط الشائع: تسطّب أداة زي typescript أو eslint من غير [[-D]] فتروح dependencies وتتسطب في الإنتاج على الفاضي. أو العكس: مكتبة التطبيق بيحتاجها وقت التشغيل تحطها في dev، فالسيرفر يقع بـ [[Cannot find package]]. التصحيح سهل: [[npm i -D اسمها]] بتنقلها.`
         },
         {
           cmd: "^ و ~ في النسخ",
@@ -186,7 +210,12 @@ npm install express@latest`,
             "سطّب النسخة دي بالظبط.",
             "أي 4.x (بيتكتب ^4.0.0 في package.json).",
             "آخر نسخة مهما كانت (major جديد ممكن يكسر)."
-          ]
+          ],
+          sol: R`[[npm view express versions --json]] رجّع عندي ٢٨٩ نسخة، وآخرهم [[5.0.0]] و [[5.0.1]] و [[5.1.0]] و [[5.2.0]] و [[5.2.1]]. و [[npm view express dist-tags]] بيوريك [[latest: 5.2.1]] و [[latest-4: 4.22.3]]، يعني لسه فيه تحديثات لخط 4.
+
+القراية: [[^4.18.2]] معناها أي [[4.x.x]] من [[4.18.2]] وطالع، يعني [[4.22.3]] مسموحة و [[5.0.0]] لأ. و [[~4.18.2]] معناها [[4.18.x]] بس. و [[4.18.2]] من غير رمز نسخة واحدة بالظبط.
+
+وتقدر تتأكد بنفسك: [[npm view express@"^4.18.2" version]] بيطبع كل النسخ اللي بتطابق. الغلط الشائع إنك تفتكر إن [[^]] بتجيب latest؛ هي بتقف عند الـ major، ودا اللي بيحميك من breaking changes. وفي 0.x القاعدة أضيق: [[^0.3.1]] يعني [[0.3.x]] بس.`
         },
         {
           cmd: "package-lock و npm ci",
@@ -216,7 +245,12 @@ npm install --package-lock-only`,
             "نفسه من غير devDependencies (الإنتاج).",
             "إيه اللي اتغير في الـ lock (قبل commit).",
             "حدّث الـ lock من package.json من غير تسطيب."
-          ]
+          ],
+          sol: R`على مشروع صغير (express و nodemon) الفرق قليل: [[npm ci]] أخد حوالي 790ms و [[npm install]] من غير node_modules حوالي 810ms، والتاني وهو كل حاجة موجودة 490ms. على مشروع حقيقي فيه مئات الباكدجات الفرق بيبان أكتر، لأن [[npm ci]] مش بيحسب شجرة، بيقرا الـ lock وينفّذ.
+
+بس السرعة مش النقطة الأهم. [[npm ci]] بيمسح node_modules الأول، وبيقع لو package.json والـ lock مش متطابقين بـ [[npm ci can only install packages when your package.json and package-lock.json are in sync]]، ومش بيعدّل الـ lock أبدًا. [[npm install]] ممكن يعدّل الـ lock، ودا اللي تشوفه في [[git diff package-lock.json]].
+
+عشان كده: [[npm ci]] في CI والسيرفر، و [[npm install]] لما تضيف أو تحدّث مكتبة. ولو [[npm ci]] قالك [[The npm ci command can only install with an existing package-lock.json]] يبقى الـ lock مش متعمله commit.`
         },
         {
           cmd: "node --run",
@@ -232,7 +266,12 @@ node --run test -- --watch`,
             when: "dev و lint و test على جهازك.",
             mistakes: "تعتمد عليه في سكربت ليه prebuild فالـ prebuild ميتنفذش."
           },
-          lines: ["شغّل سكربت dev.", "شغّل build (من غير prebuild).", "مرر --watch للأمر اللي جوه test."]
+          lines: ["شغّل سكربت dev.", "شغّل build (من غير prebuild).", "مرر --watch للأمر اللي جوه test."],
+          sol: R`عندي على سكربت بسيط [[echo linting]]: [[npm run lint]] أخد حوالي 130ms، و [[node --run lint]] حوالي 10ms. الفرق هو وقت تشغيل npm نفسه، فبيبان في السكربتات القصيرة اللي بتتشغل كتير، ومش هيفرق في build بياخد دقيقة.
+
+الفرق التاني المهم: [[node --run]] مش بيشغّل [[pre]] و [[post]]. جرّبت سكربت [[hello]] ومعاه [[prehello]]: [[npm run hello]] طبع الاتنين، و [[node --run hello]] طبع [[hello]] بس. ومش بيطبع السطرين [[> app@1.0.0 lint]] اللي npm بيطبعهم قبل السكربت.
+
+لو [[node --run]] قالك [[bad option: --run]] يبقى نسخة Node أقدم من 22. ولو السكربت بيعتمد على متغيرات [[npm_package_*]] أو [[npm_config_*]] ممكن يتصرف مختلف، لأن node مش بيحطها كلها.`
         },
         {
           cmd: "npm scripts",
@@ -266,7 +305,17 @@ npm run lint --silent`,
             "test من غير run.",
             "مرر --watch للأمر اللي جوه السكربت (الـ -- لازمة).",
             "من غير كلام npm الزيادة."
-          ]
+          ],
+          sol: R`الحل في package.json:
+
+[["prehello": "echo before hello"]] و [["hello": "echo hello from npm"]]. و [[npm run hello]] بيطبع [[> app@1.0.0 prehello]] ثم [[before hello]] ثم [[> app@1.0.0 hello]] ثم [[hello from npm]]. ما ندهتش prehello، npm شغّله لوحده لأن الاسم [[pre]] + اسم السكربت.
+
+و [[npm run]] من غير اسم بيعرض كل السكربتات. ولو prehello فشل (exit غير صفر)، hello مش هيشتغل خالص.
+
+الغلط الشائع: [[npm hello]] من غير [[run]] بيقول [[Unknown command: "hello"]]؛ الأسماء الخاصة بس ([[start]] و [[test]] و [[stop]] و [[restart]]) بتشتغل من غير run. و [[node --run hello]] مش بيشغّل الـ prehello.`,
+          solCode: R`npm pkg set scripts.hello="echo hello from npm"
+npm pkg set scripts.prehello="echo before hello"
+npm run hello`
         },
         {
           cmd: "npx",
@@ -298,7 +347,12 @@ npx cowsay "hi"`,
             "افحص TypeScript من غير ما تطلّع ملفات.",
             "أداة صغيرة تقفل اللي ماسك بورت، و -y توافق على التنزيل.",
             "أي باكدج من npm تتنفذ مباشرة."
-          ]
+          ],
+          sol: R`[[npx cowsay "hi"]] أول مرة بيسألك [[Need to install the following packages: cowsay@... Ok to proceed? (y)]]، وبعد [[y]] بيرسم البقرة وجنبها [[< hi >]]. ومع [[npx -y]] مش بيسأل.
+
+و [[npm ls -g --depth=0]] بيعرض الحاجات المتسطبة global (npm و corepack وأي حاجة سطبتها بـ [[-g]])، ومش هتلاقي cowsay فيهم. npx نزّلها في cache ([[~/.npm/_npx]]) وشغّلها من هناك.
+
+قاعدة npx: لو الأداة موجودة في [[node_modules/.bin]] بتاع المشروع بيشغّلها منها (ودا اللي بيحصل مع [[npx tsc]] و [[npx prisma]])، ولو مش موجودة بينزّلها مؤقتًا. عشان كده [[npx prisma]] في مشروع مش متسطب فيه prisma ممكن ينزّل آخر نسخة، مش نسخة مشروعك. والغلط الشائع إنك تكتب اسم الباكدج غلط فـ npx يدوّر عليه في الـ registry ويقول [[404 Not Found]].`
         },
         {
           cmd: "npm start ولا npm run dev",
@@ -331,7 +385,12 @@ npm run build && npx vite preview --port 4173`,
             "ابني نسخة الإنتاج.",
             "شغّل النسخة المبنية (من غير run).",
             "في Vite: ابني وعاين الناتج على بورت 4173."
-          ]
+          ],
+          sol: R`في dev أول فتح للصفحة بياخد وقت (ثانية أو أكتر في Next، لأنه بيبني الصفحة وقت الطلب)، والـ Network في المتصفح بيعرض ملفات JavaScript كتير مش مضغوطة، ورسايل HMR. بعد [[npm run build]] و [[npm start]] (أو [[vite preview]]) نفس الصفحة بتفتح أسرع بكتير، والملفات قليلة ومضغوطة وأسمائها فيها hash.
+
+ودا الفرق: dev مبني للتعديل السريع، مش للسرعة ولا للأمان. عشان كده مينفعش تشغّل [[npm run dev]] على السيرفر.
+
+الأخطاء الشائعة: [[npm start]] من غير build في Next بيقول [[Could not find a production build in the '.next' directory]]. وفي Vite [[npm start]] بيقول [[Missing script: "start"]] لأن مفيش start، والمعاينة [[vite preview]] (على بورت 4173) ومش مخصصة للإنتاج؛ الإنتاج في Vite هو فولدر [[dist]] على Nginx أو أي static host.`
         }
       ]
     },
@@ -360,7 +419,25 @@ node --test --experimental-test-coverage`,
             "وأعد التشغيل مع كل تعديل.",
             "الاختبارات اللي اسمها فيه login بس.",
             "واطبع نسبة الكود اللي الاختبارات غطّته."
-          ]
+          ],
+          sol: R`الحل: [[math.js]] فيه [[sum]]، و [[math.test.js]] بـ [[node:test]] و [[node:assert/strict]]. [[node --test]] في الترمنال بيطبع [[✔ sum adds two numbers]] ومعاه الوقت، وتحت [[ℹ tests 1]] و [[ℹ pass 1]] و [[ℹ fail 0]]. (لو الناتج رايح لملف أو pipe بيطلع بشكل TAP: [[ok 1 - sum adds two numbers]].)
+
+لما تبوّظ الدالة لـ [[a - b]]: [[✖ sum adds two numbers]] وتحتها [[Expected values to be strictly equal:]] و [[-1 !== 5]]، ومكان الـ assert في الملف، و [[fail 1]]، و exit code 1.
+
+لو [[node --test]] ما لقاش الملف: الاسم لازم يطابق [[*.test.js]] أو [[*-test.js]] أو [[*_test.js]] أو يكون جوه فولدر [[test]]. ولو طلع [[Cannot use import statement outside a module]] ضيف [["type": "module"]] أو سمّي الملفات [[.mjs]].`,
+          solCode: R`// math.js
+export function sum(a, b) {
+  return a + b;
+}
+
+// math.test.js
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { sum } from "./math.js";
+
+test("sum adds two numbers", () => {
+  assert.equal(sum(2, 3), 5);
+});`
         },
         {
           cmd: "node مباشرة",
@@ -390,7 +467,12 @@ node --check server.js`,
             "نفّذ واطبع الناتج: النسخة من package.json.",
             "شغّل وأعد التشغيل مع كل تعديل (بديل nodemon).",
             "اتأكد إن الملف syntax سليم من غير تشغيل."
-          ]
+          ],
+          sol: R`[[process.env.PATH.split(':')]] بيرجّع array فيها كل فولدر في الـ PATH بالترتيب، زي [[[ '/root/.local/bin', '/usr/local/bin', '/usr/bin', ... ]]]. و [[const os = require('os')]] بيطبع [[undefined]] (ودا طبيعي في الـ REPL، الـ declarations مالهاش قيمة). و [[os.cpus().length]] بيرجّع عدد الأنوية، زي [[4]] أو [[8]].
+
+خلي بالك من الأقواس: [[os.cpus.length]] من غير [[()]] بيرجّع [[0]]، لأنه طول الدالة نفسها مش الـ array. غلطة بتحصل كتير. و [[.exit]] أو Ctrl+D مرتين للخروج.
+
+وعلى ويندوز الفاصل في PATH هو [[;]] مش [[:]]، فالـ split هيرجّع عنصر واحد طويل. الصح اللي بيشتغل في الاتنين [[process.env.PATH.split(require('path').delimiter)]].`
         },
         {
           cmd: ".env و متغيرات البيئة",
@@ -422,7 +504,20 @@ grep -v '^#' .env | cut -d= -f1`,
             "اقرا متغير من البيئة الحالية.",
             "ابدأ ملفك من النموذج.",
             "أسامي المتغيرات في .env من غير قيمها (للمقارنة أو المشاركة)."
-          ]
+          ],
+          sol: R`مع سيرفر بيقرا [[process.env.PORT || 3000]] و [[.env]] فيه [[PORT=4000]]: [[node --env-file=.env server.js]] بيطبع [[listening on 4000]]، و [[curl localhost:4000]] بيرد.
+
+لو فتح على 3000: يا الكود بيقرا اسم تاني ([[process.env.port]] بحروف صغيرة مختلف)، يا نسيت [[--env-file]]، يا فيه [[PORT]] متعرّف في الترمنال أصلًا (القيمة اللي في البيئة بتكسب على الملف؛ اتأكد بـ [[echo $PORT]]).
+
+ولو الملف مش موجود، Node بيقع على طول بـ [[node: nope.env: not found]]. لو عايز الملف يبقى اختياري استخدم [[--env-file-if-exists]] (في النسخ الحديثة). والغلط الشائع: [[PORT = 4000]] بمسافات أو في آخر السطر تعليق من غير مسافة قبله، فالقيمة تتقري غلط.`,
+          solCode: R`// server.js
+import http from "node:http";
+const port = process.env.PORT || 3000;
+http.createServer((req, res) => res.end("ok\n")).listen(port, () => console.log("listening on " + port));
+
+// الترمنال
+echo "PORT=4000" > .env
+node --env-file=.env server.js`
         },
         {
           cmd: "البورت مشغول",
@@ -452,7 +547,14 @@ PORT=3001 npm run dev`,
             "اقفله: -t يطلّع الرقم بس.",
             "نفس الحاجة بأمر واحد (وعلى ويندوز كمان).",
             "أو اشتغل على بورت تاني."
-          ]
+          ],
+          sol: R`التاني بيقع على طول:
+
+[[Error: listen EADDRINUSE: address already in use :::3000]] (أو [[0.0.0.0:3000]] حسب الإعداد) ومعاها [[code: 'EADDRINUSE']] و [[port: 3000]].
+
+[[lsof -i :3000]] بيطلّع السطر بتاع الأول: [[node 1564 you ... TCP *:3000 (LISTEN)]] والرقم التاني هو الـ PID. و [[npx -y kill-port 3000]] بيطبع [[Process on port 3000 killed]]، وبعدها [[lsof -i :3000]] مش بيطبع حاجة، وتقدر تشغّل التاني.
+
+قبل ما تقتل، بص على اسم البرنامج في lsof: ممكن يبقى حاجة تانية مش سيرفرك القديم (Docker أو مشروع تاني). ولو [[lsof]] ما طلّعش حاجة والبورت لسه مشغول، شغّله بـ [[sudo]] لأن البرنامج ممكن يكون بيوزر تاني. وعلى ويندوز: [[netstat -ano | findstr :3000]].`
         },
         {
           cmd: "outdated / update / audit",
@@ -486,7 +588,14 @@ major جديد: تسطّبه بالاسم [[react@latest]]، وتقرا changelo
             "الثغرات.",
             "صلّح في حدود semver.",
             "عدّل package.json لآخر نسخ الكل (في branch بس)."
-          ]
+          ],
+          sol: R`على مشروع فيه [[express@4.18.2]] بـ [[^]]:
+
+[[Package  Current  Wanted  Latest]] وتحتها [[express  4.18.2  4.22.3  5.2.1]]. Current المتسطب فعلًا، و Wanted أعلى نسخة يسمح بيها الـ [[^4.18.2]] في package.json، و Latest آخر نسخة منشورة. Latest أعلى من Wanted لأنها major جديدة (5)، و [[npm update]] هيوصل لـ 4.22.3 بس.
+
+والنقلة لـ 5 قرار منك: [[npm i express@latest]] واقرا دليل الترقية، لأن فيه breaking changes. و [[npm audit]] على نفس المشروع طلّع ثغرات high في [[body-parser]] و [[cookie]] و [[qs]] كلها جاية من express القديم، و [[fix available via npm audit fix]] لأن النسخة الآمنة جوه نفس الـ major.
+
+الغلط الشائع: [[npm audit fix --force]] من غير ما تقرا، وهو ممكن ينقلك major جديدة ويكسر المشروع.`
         },
         {
           cmd: "ls / why / dedupe",
@@ -518,7 +627,12 @@ du -sh node_modules`,
             "مين محتاجها وليه.",
             "قلّل النسخ المكررة.",
             "node_modules حجمه كام."
-          ]
+          ],
+          sol: R`على مشروع فيه express 4 قديم، [[npm audit]] قال إن [[cookie <0.7.0]] فيها ثغرة. و [[npm why cookie]] رد:
+
+[[cookie@0.5.0]] ← [[cookie@"0.5.0" from express@4.18.2]] ← [[express@"^4.18.2" from the root project]]. يعني انت ما سطّبتش cookie، هي جاية مع express. والحل مش إنك تسطّب cookie لوحدها، الحل تحدّث express.
+
+لو السلسلة انتهت بـ [[from the root project]] على طول تحت المكتبة نفسها، يبقى انت اللي مسطّبها في package.json. ولو [[npm why]] رجّع أكتر من مسار، يبقى مكتبات مختلفة طالباها بنسخ مختلفة، وساعتها [[npm dedupe]] ممكن يقلّل النسخ. ولو قال [[No dependencies found matching]] يبقى الاسم مكتوب غلط أو المكتبة مش متسطبة أصلًا.`
         },
         {
           cmd: "node_modules بايظ",
@@ -548,7 +662,12 @@ npm cache verify`,
             "سطّب من الأول.",
             "أعد ترجمة المكتبات native (جرّبه الأول لوحده).",
             "اتأكد إن الكاش سليم."
-          ]
+          ],
+          sol: R`[[npm rebuild]] لما ينجح بيطبع [[rebuilt dependencies successfully]]. ودي خطوة أسرع وأخف من المسح، ومش بتلمس الـ lock.
+
+الحالة اللي بيحلها: غيّرت نسخة Node بـ nvm ومكتبة native زي bcrypt أو better-sqlite3 بتقع بـ [[was compiled against a different Node.js version using NODE_MODULE_VERSION 127. This version of Node.js requires NODE_MODULE_VERSION 137]] (الأرقام حسب النسخ). الـ rebuild بيعيد ترجمتها لنسختك الحالية. ولو المكتبة محتاجة build tools ومش موجودة هتلاقي errors من [[node-gyp]] زي [[gyp ERR! find Python]]، وساعتها سطّب [[build-essential]] و python.
+
+لو [[npm rebuild]] ما حلّش، ساعتها [[rm -rf node_modules]] و [[npm install]] (من غير ما تمسح الـ lock في الأول). مسح [[package-lock.json]] آخر حل، لأنه بيحدّث كل المكتبات مرة واحدة ويخبّي السبب الحقيقي.`
         },
         {
           cmd: "ERESOLVE و legacy-peer-deps",
@@ -582,7 +701,14 @@ echo "legacy-peer-deps=true" >> .npmrc`,
             "الحل الصح غالبًا: نسخة أحدث بتدعم اللي عندك.",
             "تجاهل الـ peers (بيخبي المشكلة).",
             "لو مضطر: خليه إعداد للمشروع كله عشان الـ CI يمشي زي جهازك."
-          ]
+          ],
+          sol: R`مع [[react@19]] وبعدين [[react-day-picker@8.9.1]]:
+
+[[npm error code ERESOLVE]] و [[ERESOLVE unable to resolve dependency tree]] و [[Found: react@19.3.0]] ([[react@"^19.3.0" from the root project]]) و [[Could not resolve dependency:]] و [[peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from react-day-picker@8.9.1]].
+
+القراية: الـ Found هو اللي عندك، والـ peer هو اللي المكتبة بتقول إنها بتشتغل معاه. المكتبة دي ما اتجربتش على React 19. الحل الأول تشوف نسخة أحدث: [[npm view react-day-picker@8 peerDependencies]] بيوريك إن آخر 8.x ضافت [[^19.0.0]]، فـ [[npm i react-day-picker@8]] نجح من غير أي flag.
+
+[[--legacy-peer-deps]] بيسطّب وخلاص، والمكتبة ممكن تشتغل وممكن تقع وقت التشغيل. استخدمه لما تتأكد إن مفيش نسخة متوافقة وجرّبت بنفسك، مش كأول حل.`
         },
         {
           cmd: "pnpm و yarn",
@@ -614,7 +740,12 @@ pnpm بيحفظ كل نسخة من كل مكتبة مرة واحدة على ال
             "ضيف مكتبة (زي npm install express).",
             "زي npx.",
             "ثبّت مدير الباكدجات ونسخته للمشروع."
-          ]
+          ],
+          sol: R`الإجابة إنك تبص على ملف الـ lock قبل أي أمر:
+
+[[package-lock.json]] يبقى [[npm ci]] أو [[npm install]]. [[pnpm-lock.yaml]] يبقى [[pnpm install]]. [[yarn.lock]] يبقى [[yarn]]. و [[bun.lock]] يبقى bun. وكمان حقل [["packageManager": "pnpm@9.12.0"]] في package.json بيقولك الأداة والنسخة، ومع [[corepack enable]] الأمر [[pnpm]] بيستخدم النسخة دي بالظبط.
+
+لو غلطت وعملت [[npm install]] في مشروع pnpm: هيتعمل [[package-lock.json]] جديد جنب [[pnpm-lock.yaml]]، والنسخ ممكن تختلف عن اللي الفريق شغال بيها. امسح الملف الجديد ومتعملوش commit. ولو المشروع فيه [[workspace:*]] npm غالبًا هيقع بـ [[Unsupported URL Type "workspace:"]]، ودي علامة إنه pnpm.`
         },
         {
           cmd: "workspaces و link",
@@ -644,7 +775,20 @@ npm link ../my-lib`,
             "ابني كل الـ workspaces.",
             "شغّل dev في web بس.",
             "اربط مكتبة من فولدر جنبك للتجربة."
-          ]
+          ],
+          sol: R`بعد [[npm pkg set workspaces]] و [[npm init -w packages/shared]] و [[npm init -w apps/api]] و [[npm install -w apps/api ms]]:
+
+في الجذر [[node_modules]] واحد، وفيه [[ms]] نفسها، وفيه كمان [[api -> ../apps/api]] و [[shared -> ../packages/shared]] كـ symlinks. و [[apps/api]] فيها [[package.json]] بس، من غير node_modules. و [[package-lock.json]] واحد في الجذر.
+
+والـ [[ms]] اتكتبت في [[apps/api/package.json]] مش في package.json بتاع الجذر. أي باكدج تقدر تعمل [[import]] لـ [[shared]] باسمها كأنها متسطبة من npm.
+
+الغلط الشائع: تعمل [[npm install]] جوه [[apps/api]] نفسها، فيتعمل lock و node_modules تانيين جواها. التسطيب دايمًا من الجذر بـ [[-w]]. ولو apps/api عندها node_modules، غالبًا عشان نسخة مختلفة من مكتبة موجودة في الجذر، ودا عادي.`,
+          solCode: R`npm init -y
+npm pkg set "workspaces[0]=apps/*" "workspaces[1]=packages/*"
+npm init -y -w packages/shared
+npm init -y -w apps/api
+npm install -w apps/api ms
+ls -la node_modules | grep -E "api|shared|ms"`
         },
         {
           cmd: ".npmrc",
@@ -674,7 +818,12 @@ echo "@myorg:registry=https://npm.pkg.github.com" >> .npmrc`,
             "الـ registry الحالي.",
             "توكن GitHub Packages في ملفك الشخصي (مش المشروع).",
             "باكدجات @myorg تيجي من GitHub، ده في المشروع."
-          ]
+          ],
+          sol: R`[[npm config set save-exact true --location=project]] بيكتب [[save-exact=true]] في [[.npmrc]] جنب package.json. وبعدها [[npm i ms]] كتب [["ms": "2.1.3"]] من غير [[^]]، و [[npm config get save-exact]] بيطبع [[true]].
+
+من غير [[--location=project]]، [[npm config set]] بيكتب في [[~/.npmrc]] بتاعك، فيأثر على كل مشاريعك وزمايلك مش هياخدوه. لو عايزها قاعدة للفريق، خليها في [[.npmrc]] المشروع واعملها commit.
+
+الغلط الشائع: تفتكر إن save-exact بيثبّت المكتبات الموجودة؛ هو بيأثر على اللي هتسطبه بعد كده بس. والـ lock هو اللي فعلًا بيثبّت كل النسخ. ومتحطش توكن حقيقي في [[.npmrc]] اللي في الـ repo، استخدم [[$__{NPM_TOKEN}]] والقيمة من البيئة.`
         }
       ]
     },
@@ -720,7 +869,12 @@ nodemon لسه ليه مكان: جوه Docker على ويندوز أو WSL مع 
             "وشغّل الناتج، والمتغيرات من بيئة السيرفر.",
             "سكربت لمرة واحدة بيقرا .env برضه.",
             "قفلة."
-          ]
+          ],
+          sol: R`الحل: [["dev": "node --watch --env-file=.env src/server.js"]]، و [[npm uninstall nodemon dotenv]]، وتشيل [[import "dotenv/config"]] أو [[require("dotenv").config()]] من أول الكود.
+
+لما تشغّل [[npm run dev]] وتعدّل ملف، هتشوف في الترمنال [[Restarting 'src/server.js']] والسيرفر يقوم تاني. و [[--watch]] بيراقب الملفات اللي السيرفر عملها import بس، فتعديل في README مش هيعمل restart.
+
+لو شلت dotenv والـ متغيرات بقت [[undefined]]: نسيت [[--env-file]] في سكربت تاني زي [[db:seed]] أو [[start]]. وخلي بالك إن [[--watch]] مش بيراقب [[.env]] نفسه في كل النسخ؛ لو غيّرت .env اعمل restart بإيدك أو ضيف [[--watch-path]]. ولو السطر قال [[bad option]]، نسخة Node قديمة (محتاج 20.6+ للـ env-file و 22 عشان الاتنين يبقوا stable).`
         },
         {
           cmd: "npx tsx",
@@ -753,7 +907,20 @@ docker compose exec app npx tsx scripts/run-fix.ts`,
             "نفس الحاجة من سكربت متسجّل في package.json.",
             "قبل ما تعتمد عليه في الـ container: tsx والسكربت موجودين؟",
             "شغّل السكربت جوه container التطبيق."
-          ]
+          ],
+          sol: R`[[scripts/hello.ts]] فيه [[type User = { name: string; age: number }]] وسطر بيطبع. [[npx tsx scripts/hello.ts]] بيطبع [[hello Sara]].
+
+بعد ما تحط [[age: "28"]] (نص بدل رقم): [[tsx]] برضه بيشتغل ويطبع [[hello Sara string]] و exit 0. tsx بيشيل الأنواع ويشغّل، مش بيفحصها. نفس الملف مع [[npx tsc --noEmit --strict scripts/hello.ts]] بيقول [[error TS2322: Type 'string' is not assignable to type 'number'.]]
+
+الدرس: tsx للتشغيل السريع، و [[tsc --noEmit]] في CI أو قبل الـ commit للفحص. والغلط الشائع إنك تعتمد على إن «السكربت اشتغل» كدليل إن الأنواع صح.`,
+          solCode: R`// scripts/hello.ts
+type User = { name: string; age: number };
+const u: User = { name: "Sara", age: "28" };
+console.log("hello", u.name, typeof u.age);
+
+// الترمنال
+npx tsx scripts/hello.ts
+npx tsc --noEmit --strict scripts/hello.ts`
         },
         {
           cmd: "concurrently و wait-on",
@@ -788,7 +955,12 @@ docker compose exec app npx tsx scripts/run-fix.ts`,
             "الـ API بيعيد نفسه مع كل تعديل.",
             "استنى الـ API يفتح، وبعدين شغّل Vite بمتغير شغال على أي نظام، ومن غير ما يغيّر البورت.",
             "قفلة."
-          ]
+          ],
+          sol: R`[[npm run dev]] بيطبع سطور كل واحد بلونه واسمه: [[[api] api on 4000]] وبعدين [[[web]]] بيستنى لحد ما البورت يفتح، ويقوم Vite بـ [[VITE_API_URL]] مظبوط.
+
+Ctrl+C مرة واحدة: [[[api] npm run dev:api exited with code SIGINT]] و [[--> Sending SIGTERM to other processes..]] و [[[web] npm run dev:web exited with code SIGINT]]. وبعدها [[lsof -i :4000 -i :5173]] مش بيطبع حاجة: البورتين اتقفلوا.
+
+لو بعد Ctrl+C لقيت بورت لسه مفتوح، يبقى [[-k]] ناقصة، وبعدها [[npm run dev]] التاني هيقع بـ EADDRINUSE. ولو [[web]] فضل مستني للأبد، اتأكد إن الـ api فعلًا على [[127.0.0.1:4000]] (لو بيسمع على IPv6 بس أو بورت تاني [[wait-on]] مش هيلاقيه). و [[--strictPort]] بيخلي Vite يقع لو 5173 مشغول بدل ما يفتح على 5174 من غير ما تاخد بالك.`
         },
         {
           cmd: "--host و Network URL",
@@ -821,7 +993,12 @@ Next الجديد ممكن يحذّر أو يمنع طلبات التطوير ا
             "عنوان جهازك على الشبكة (ويندوز).",
             "عنوان جهازك على الشبكة (لينكس).",
             "اسمح بالبورت في فايروول ويندوز على الشبكة الخاصة بس."
-          ]
+          ],
+          sol: R`مع [[npm run dev -- --host]] Vite بيطبع سطرين: [[➜ Local: http://localhost:5173/]] و [[➜ Network: http://192.168.1.15:5173/]]. الموبايل على نفس الواي فاي بيفتح رابط Network، ولما تحفظ تعديل في الكود الصفحة على الموبايل بتتحدث لوحدها (HMR).
+
+لو الموبايل مش بيفتح: يا مش على نفس الشبكة (أو شبكة ضيوف معزولة)، يا فايروول ويندوز بيقفل البورت (ودا سطر [[New-NetFirewallRule]] في المثال، والشبكة لازم تكون Private مش Public). ولو بتشتغل في WSL، الـ IP اللي Vite طلّعه هو IP الـ WSL الداخلي؛ استخدم IP ويندوز من [[ipconfig]] مع [[networkingMode=mirrored]]، أو port forwarding.
+
+ولو الصفحة فتحت بس الـ API calls فشلت، يبقى الكود بيكلم [[localhost:4000]]، والـ localhost على الموبايل هو الموبايل نفسه. استخدم الـ proxy بتاع Vite أو IP الجهاز.`
         }
       ]
     },
@@ -870,7 +1047,22 @@ packages:
             "قفلة.",
             "اسم الباكدج المشتركة، وده اللي بيتستورد بيه.",
             "المسموح يتستورد، ملفات TS مباشرة من غير build."
-          ]
+          ],
+          sol: R`بعد [[pnpm install]]، [[ls -l apps/web/node_modules/@myapp]] بيطلّع:
+
+[[shared -> ../../../../packages/shared]]. دا symlink، مش نسخة. أي تعديل في [[packages/shared/src]] بيظهر في web على طول من غير install تاني. و [[workspace:*]] في package.json معناها «الباكدج اللي في الـ workspace، أيًا كانت نسختها».
+
+لو [[pnpm install]] قال [[ERR_PNPM_WORKSPACE_PKG_NOT_FOUND]] أو [[No matching version found for @myapp/shared]]: الاسم في [[dependencies]] مش مطابق للـ [[name]] في package.json بتاع shared، أو الفولدر مش داخل تحت [[packages:]] في pnpm-workspace.yaml. ولو web عمل import وقال [[Cannot find module '@myapp/shared']] رغم إن اللينك موجود، راجع [[exports]]: الـ path اللي بتعمله import لازم يكون متعرّف فيها.`,
+          solCode: R`# pnpm-workspace.yaml
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# packages/shared/package.json
+{ "name": "@myapp/shared", "version": "1.0.0", "exports": { ".": "./src/index.ts" } }
+
+# apps/web/package.json
+{ "name": "@myapp/web", "version": "1.0.0", "dependencies": { "@myapp/shared": "workspace:*" } }`
         },
         {
           cmd: "pnpm --filter",
@@ -902,7 +1094,10 @@ pnpm --filter "...[origin/main]" test`,
             "ضيف مكتبة لتطبيق web بس.",
             "ابني web ومعاها كل اللي هي معتمدة عليه.",
             "اختبر اللي اتغير من main واللي بيعتمد عليه."
-          ]
+          ],
+          sol: R`[[pnpm --filter @myapp/web add ms]] بيطبع [[+1]] وفي الآخر [[Done]]. و [[apps/web/package.json]] بقى فيه [["ms": "^2.1.3"]] جنب [["@myapp/shared": "workspace:*"]]، بينما [[apps/server/package.json]] و package.json بتاع الجذر ما اتغيروش ([[grep ms]] عليهم مش بيلاقي حاجة).
+
+الغلط الشائع: تعمل [[pnpm add ms]] في الجذر، و pnpm يرفض بـ [[ERR_PNPM_ADDING_TO_ROOT]] عشان يحميك؛ ولو فعلًا عايزها في الجذر (أداة زي prettier) استخدم [[-w]]. ولو الفلتر ما طابقش أي باكدج هيقول [[No projects matched the filters]]؛ الاسم لازم يطابق [[name]] في package.json مش اسم الفولدر، أو استخدم مسار زي [[--filter ./apps/web]].`
         },
         {
           cmd: "pnpm -r و --parallel",
@@ -934,7 +1129,12 @@ pnpm -r --workspace-concurrency=1 build`,
             "شغّل dev لكل التطبيقات في نفس اللحظة (لازم مع watch).",
             "امسح ملفات الـ build جوه كل باكدج.",
             "ابني واحدة واحدة (جهاز ضعيف أو لوج أوضح)."
-          ]
+          ],
+          sol: R`[[pnpm build]] (يعني [[pnpm -r build]]) بيطبع [[Scope: 3 of 4 workspace projects]] وبيشغّل الـ build بالترتيب الصح: [[packages/shared build]] قبل [[apps/web build]] لأن web معتمد عليه، وكل باكدج بتخلص بـ [[Done]]. اللي ملوش علاقة ببعض ممكن يشتغل في نفس الوقت.
+
+[[pnpm dev]] (يعني [[pnpm --parallel --filter "./apps/*" dev]]) بيطبع [[Scope: 2 of 4]] وبيشغّل web و server في نفس الوقت، والسطور متداخلة: [[apps/web dev: ...]] و [[apps/server dev: ...]] ورا بعض. دا اللي محتاجه لسيرفرات dev مش بتخلص أبدًا.
+
+الفرق المهم: [[-r]] بيحترم ترتيب الاعتماديات وبيستنى، و [[--parallel]] بيتجاهل الترتيب وبيشغّل الكل. لو استخدمت [[-r dev]] مع سيرفرات مش بتخلص، باكدج معتمدة على shared ممكن متبدأش لأن shared dev مش بيخلص. والعكس: [[--parallel build]] ممكن يبني web قبل shared فيقع.`
         },
         {
           cmd: "pnpm approve-builds",
@@ -966,7 +1166,14 @@ pnpm rebuild sharp`,
             "اختار اللي توافق عليه، ويتكتب في pnpm-workspace.yaml.",
             "شوف اللي اتكتب قبل ما تعمله commit.",
             "شغّل السكربت اللي كان اتمنع من غير إعادة تسطيب."
-          ]
+          ],
+          sol: R`مع [[pnpm add esbuild]] في pnpm 10 هيطلع صندوق تحذير: [[Ignored build scripts: esbuild@0.28.2.]] و [[Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.]] و [[pnpm ignored-builds]] بيقول [[Automatically ignored builds during installation: esbuild]].
+
+[[pnpm approve-builds]] بيعرض قايمة تختار منها بالمسافة وتأكد بـ Enter (أو [[--all]] من غير أسئلة). بعدها بيشغّل الـ postinstall ([[esbuild postinstall$ node install.js]] و [[Done]])، و [[git diff pnpm-workspace.yaml]] بيوريك:
+
+[[allowBuilds:]] وتحتها [[esbuild: true]]. اعمل للملف commit عشان باقي الفريق والـ CI ياخدوا نفس القرار.
+
+ملاحظة: sharp من 0.35 مبقاش عنده سكربت install (بيعتمد على binaries جاهزة كـ optional dependencies)، فتسطيبه مش هيطلّع التحذير ده. لو عايز تشوفه مع sharp نفسها جرّب [[sharp@0.34]].`
         }
       ]
     },
@@ -1948,7 +2155,19 @@ Express في الإنتاج: كاش للـ view templates، ورسايل أخط�
             "سطّب dependencies الإنتاج بس.",
             "اتأكد من القيمة.",
             "ابني وبعدين شغّل الناتج في الإنتاج."
-          ]
+          ],
+          sol: R`في Express 5 مع route بيرمي [[new Error("db password is hunter2")]]:
+
+من غير NODE_ENV: الرد 500 وصفحة HTML فيها [[<pre>Error: db password is hunter2<br> at file:///.../app.js:3:32 ...]]، يعني رسالة الخطأ والـ stack trace ومسارات الملفات على السيرفر ظاهرين لأي حد. مع [[NODE_ENV=production]]: نفس الـ 500 بس الـ body [[<pre>Internal Server Error</pre>]] بس. والتفاصيل راحت للوج السيرفر ([[Error: db password is hunter2]] في الترمنال).
+
+ودا سبب إن الإعداد ده مش اختياري. ولو لسه شايف الـ stack في production: اتأكد بـ [[node -e "console.log(process.env.NODE_ENV)"]] إن المتغير واصل فعلًا للـ process (مع pm2 أو Docker بيتحط في الـ config مش في الترمنال)، أو إن عندك error handler بتاعك بيبعت [[err.stack]] بنفسه.`,
+          solCode: R`import express from "express";
+const app = express();
+app.get("/boom", () => { throw new Error("db password is hunter2"); });
+app.listen(3000);
+
+// node app.js                      -> stack trace in the response
+// NODE_ENV=production node app.js  -> Internal Server Error only`
         },
         {
           cmd: "الذاكرة",
@@ -1978,7 +2197,14 @@ node --heapsnapshot-signal=SIGUSR2 server.js`,
             "نفس الحاجة لأي node بيتشغّل من npm script.",
             "استهلاك الذاكرة دلوقتي.",
             "اكتب heap snapshot لما تستلم إشارة، لتحليل الـ leak."
-          ]
+          ],
+          sol: R`الحالات اللي هتشوفها على سيرفر ١ جيجا:
+
+١. Node نفسه يوصل للحد: [[FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory]]. هنا [[NODE_OPTIONS=--max-old-space-size=...]] ممكن يفرق لو فيه RAM فاضية. ٢. النظام يقتل العملية: الـ build يقف بكلمة [[Killed]] بس، والـ exit code 137، و [[dmesg | grep -i oom]] يقول [[Out of memory: Killed process ... (node)]]. هنا رفع الـ heap مش هيفيد، بالعكس: [[--max-old-space-size=4096]] على جهاز فيه ١ جيجا بيخلي Node يطلب أكتر، فالـ OOM killer يقتله أسرع.
+
+عشان تعرف الحد الحالي: [[node -e "console.log(require('v8').getHeapStatistics().heap_size_limit / 1024 / 1024)"]]. عندي على جهاز ١٦ جيجا طلع 8240، ومع [[--max-old-space-size=4096]] بقى 4144. على سيرفر صغير الرقم الافتراضي بيبقى أقل.
+
+الخلاصة الصح: لو اتقتل بـ Killed، الحل swap ([[fallocate -l 2G /swapfile]] ...) أو إنك تبني في CI وتنقل النتيجة (image جاهز أو standalone)، مش إنك ترفع الرقم.`
         },
         {
           cmd: "الإغلاق النضيف",
@@ -2021,7 +2247,24 @@ process.on("unhandledRejection", (err) => {
             "سجّل الخطأ بوضوح.",
             "اخرج بفشل عشان pm2 أو Docker يرجّعوك نضيف.",
             "قفلة."
-          ]
+          ],
+          sol: R`لما تبعت [[kill -TERM PID]] من ترمنال تاني، السيرفر بيطبع [[SIGTERM: closing]] وبعدها بيخرج بـ 0، لأن [[server.close]] استنى الطلبات المفتوحة وخلص. والـ timer بتاع ١٠ ثواني بـ [[unref()]] فمش بيأخر الخروج لو كله خلص بدري.
+
+قارن من غير الـ handler: نفس الأمر بيقفل السيرفر فورًا من غير أي رسالة، والـ exit code 143 (128 + 15)، وأي طلب كان في النص بيتقطع. ودا اللي بيحصل في كل deploy بـ Docker أو pm2 لو ما عملتش الـ handler.
+
+لو ما طبعش الرسالة: غالبًا بتبعت الـ signal لـ [[npm]] مش لـ [[node]] (لو شغال بـ [[npm start]] الـ PID اللي في [[ps]] لـ npm ممكن ما يوصلش الإشارة صح)، فشغّل [[node server.js]] مباشرة أو خد PID الـ node. و [[kill -9]] مش بيتمسك خالص، مفيش handler بيشتغل معاه.`,
+          solCode: R`import express from "express";
+const app = express();
+app.get("/", (req, res) => res.send("ok"));
+const server = app.listen(3000, () => console.log("pid", process.pid));
+
+process.on("SIGTERM", () => {
+  console.log("SIGTERM: closing");
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(1), 10000).unref();
+});
+
+// ترمنال تاني:  kill -TERM <pid>`
         },
         {
           cmd: "الـ debugger",
@@ -2053,7 +2296,12 @@ node --stack-trace-limit=50 server.js`,
             "اسمع على كل الكروت (جوه Docker).",
             "اطبع مصدر التحذيرات.",
             "stack trace أطول."
-          ]
+          ],
+          sol: R`[[node --inspect server.js]] بيطبع [[Debugger listening on ws://127.0.0.1:9229/...]] و [[For help, see: https://nodejs.org/en/docs/inspector]]. في [[chrome://inspect]] تحت Remote Target هيظهر [[server.js]] وجنبه [[inspect]]. تدوس عليه تفتح DevTools.
+
+لما تطلب الـ route من المتصفح أو curl، التنفيذ بيقف على سطر [[debugger;]] والطلب نفسه بيفضل مستني. في DevTools تقدر تشوف [[req.params]] و [[req.body]] في Scope، وتحط mouse على أي متغير، وتكمّل بـ F8. وفي الترمنال هيبان [[Debugger attached.]].
+
+لو الكود ما وقفش: DevTools مش مفتوح (الـ [[debugger;]] بيتجاهل من غير debugger متوصل)، أو السيرفر ما اتعملوش restart بعد ما ضفت السطر. ولو [[chrome://inspect]] مش شايف حاجة، دوس Configure واتأكد إن [[localhost:9229]] موجود. ومتشغّلش [[--inspect=0.0.0.0]] على سيرفر مفتوح؛ أي حد يوصل للبورت يقدر ينفذ كود.`
         },
         {
           cmd: "سكربت Node كأداة",
@@ -2100,7 +2348,14 @@ console.log("updated", file);`,
             "عدّل المفتاح (null لو مفيش قيمة).",
             "اكتبه منسّق بمسافتين وسطر جديد في الآخر.",
             "اطبع."
-          ]
+          ],
+          sol: R`من غير [[chmod +x]]: [[./setkey.mjs ...]] بيقول [[Permission denied]] (exit 126). بعده:
+
+[[./setkey.mjs package.json description "my api"]] بيطبع [[updated package.json]]، و [[npm pkg get description]] بيطبع [["my api"]]. والسطر الأول [[#!/usr/bin/env node]] هو اللي خلّى الـ shell يشغّله بـ node.
+
+من غير arguments: [[Usage: setkey <file.json> <key> <value>]] و exit 1. ولو نسيت علامات التنصيص: [[./setkey.mjs package.json description my api]] حط [["my"]] بس، لأن الـ shell قسم الكلام لـ arguments منفصلة وال script بياخد التالت بس.
+
+الأخطاء التانية: [[env: 'node\r': No such file or directory]] لو الملف اتحفظ بـ CRLF من ويندوز (غيّره لـ LF). و [[SyntaxError: Unexpected token]] لو الملف JSON مش سليم؛ ضيف try/catch حوالين الـ parse لو عايز رسالة أوضح.`
         },
         {
           cmd: "Next.js CLI",
@@ -2132,7 +2387,12 @@ node .next/standalone/server.js`,
             "شغّل الناتج.",
             "Lint: من Next 16 [[next lint]] اتشال، فبتشغّل ESLint مباشرة.",
             "شغّل نسخة standalone مباشرة (اللي بتتحط في Docker)."
-          ]
+          ],
+          sol: R`آخر [[next build]] جدول [[Route (app)]] فيه كل صفحة وقدامها رمز، وتحت الجدول شرح الرموز: [[○ (Static) prerendered as static content]] و [[ƒ (Dynamic) server-rendered on demand]]، وأحيانًا [[● (SSG)]] لصفحات [[generateStaticParams]].
+
+مثلًا [[○ /]] و [[○ /about]] static، و [[ƒ /api/orders]] و [[ƒ /dashboard]] dynamic. الـ static اتعملت HTML وقت الـ build وبتتبعت زي ما هي (سريعة جدًا)، والـ dynamic بتشتغل مع كل طلب.
+
+المفاجأة الشائعة: صفحة كنت فاكرها static طلعت [[ƒ]] لأنها بتقرا [[cookies()]] أو [[headers()]] أو [[searchParams]]، أو بتعمل fetch من غير cache. والعكس: صفحة بتعرض داتا متغيرة طلعت [[○]] فبتعرض نفس الداتا القديمة للكل لحد build جديد. الجدول ده أسرع طريقة تمسك الاتنين قبل الإنتاج.`
         },
         {
           cmd: "Next.js standalone",
@@ -2169,7 +2429,14 @@ cd .next/standalone && HOSTNAME=0.0.0.0 PORT=3000 node server.js`,
             "وانسخ ملفات static (CSS و JS المبنية).",
             "قارن الحجمين: node_modules كاملة ضد الفولدر اللي هيتنشر.",
             "ادخل الفولدر وشغّل السيرفر يسمع على كل الكروت."
-          ]
+          ],
+          sol: R`بعد [[npm run build]] بـ [[output: "standalone"]] هيتعمل [[.next/standalone]] فيه [[server.js]] و [[node_modules]] صغير.
+
+من غير نسخ static: [[node server.js]] بيطبع [[✓ Ready]] والصفحة بتفتح بـ HTML، بس من غير CSS والتفاعل مش شغال، والـ Network في المتصفح مليان 404 على [[/_next/static/...]]، والصور اللي في [[public]] مش ظاهرة. بعد ما تنسخ [[public]] و [[.next/static]] وتعيد التشغيل: كل حاجة ظاهرة.
+
+والحجم: [[du -sh node_modules .next/standalone]] على مشروع عادي بيطلّع node_modules بمئات الميجات والـ standalone بعشرات بس، لأنه فيه الملفات اللي السيرفر فعلًا بيحتاجها. ودا اللي بيخلي الـ Docker image صغيرة.
+
+لو [[.next/standalone]] مطلعش خالص: الـ config مش متقري (اسم الملف غلط، أو [[output]] جوه حاجة تانية)، أو الـ build فشل. ولو السيرفر فتح بس مش قادر توصله من بره الـ container، دا سبب [[HOSTNAME=0.0.0.0]].`
         },
         {
           cmd: "npm publish",
@@ -2201,7 +2468,12 @@ npm version patch && npm publish`,
             "اعرض إيه اللي هيترفع.",
             "انشر، و public لازمة للـ scoped أول مرة.",
             "ارفع رقم patch (مع commit و tag) وانشر."
-          ]
+          ],
+          sol: R`[[npm pack]] بيطبع [[Tarball Contents]] فيها كل ملف وحجمه، و [[Tarball Details]] ([[name]] و [[version]] و [[package size]] و [[total files]])، وبيعمل ملف زي [[myapp-1.0.0.tgz]]. [[tar tzf myapp-1.0.0.tgz]] بيعرض الملفات تحت [[package/]].
+
+في تجربة على فولدر فيه [[.env]] ومفيش [[.gitignore]] ولا [[files]]: الـ tgz كان فيه [[package/.env]] وملفات لوج كمان. يعني لو عملت publish كان الـ secret هيبقى على npm لأي حد. npm بيستخدم [[.gitignore]] لو مفيش [[.npmignore]]، ولو الاتنين مش موجودين بياخد تقريبًا كل حاجة.
+
+الحل الأأمن: حقل [["files": ["dist"]]] في package.json، فالـ tarball يبقى فيه dist و package.json و README و LICENSE بس. واعمل [[npm pack]] أو [[npm publish --dry-run]] قبل كل نشر.`
         }
       ]
     },
@@ -2240,7 +2512,12 @@ npm pkg set scripts.postinstall="prisma generate"`,
             "ولّد الكلاينت من الـ schema.",
             "نفس الحاجة في مشروع pnpm.",
             "خليه يتولّد لوحده بعد كل install."
-          ]
+          ],
+          sol: R`لو ضفت [[phone String?]] في [[model User]] وكتبت [[user.phone]] في الكود قبل generate، الـ editor و [[tsc --noEmit]] بيقولوا [[error TS2339: Property 'phone' does not exist on type '{ name: string; id: number; email: string; role: string; }'.]]، ولو استخدمته في [[create]] أو [[where]]: [[Object literal may only specify known properties, and 'phone' does not exist in type ...]].
+
+بعد [[npx prisma generate]] (بيطبع [[✔ Generated Prisma Client (7.10.0) to ./generated/prisma]] أو المسار عندك) الخطأ بيختفي، لأن الأنواع اتولّدت من الـ schema الجديدة. أحيانًا VS Code محتاج [[TypeScript: Restart TS Server]] عشان ياخد باله.
+
+خلي بالك إن generate بيحدّث الكود بس، مش القاعدة: لو شغّلت الكود هتاخد error إن العمود مش موجود لحد ما تعمل migration. والغلط الشائع إنك تنسى generate بعد [[git pull]] فيه تغيير في الـ schema، ودا اللي [[postinstall]] في المثال بيحله.`
         },
         {
           cmd: "prisma db push",
@@ -2271,7 +2548,14 @@ npx prisma db push --accept-data-loss
           lines: [
             "طابق القاعدة مع الـ schema، ويسأل لو فيه مسح.",
             "نفسه، ويوافق على المسح من غير سؤال (تجربة بس)."
-          ]
+          ],
+          sol: R`مع model فيه [[name String]] وصفّين، ولما تغيّره لـ [[fullName String]] (مطلوب):
+
+[[⚠️ We found changes that cannot be executed:]] و [[Added the required column fullName to the User table without a default value. There are 2 rows in this table, it is not possible to execute this step.]] يعني مينفعش أصلًا، و [[--accept-data-loss]] مش هيحلها (الـ CLI بيقترح [[--force-reset]] اللي بيمسح القاعدة كلها).
+
+لو خليته [[fullName String?]]: [[⚠️ There might be data loss when applying the changes:]] و [[You are about to drop the column name on the User table, which still contains 2 non-null values.]] و [[Use the --accept-data-loss flag to ignore the data loss warnings]]. مع [[--accept-data-loss]]: عمود [[name]] اتمسح بالداتا، و [[fullName]] اتعمل فاضي ([[null]] في الصفين). الداتا راحت، مش اتنقلت، لأن db push مش بيعرف إن دا rename.
+
+ودا سبب إنه مينفعش في الإنتاج: rename بسيط بقى مسح. الصح migration بـ [[RENAME COLUMN]]. ولاحظ إن نسخ Prisma الجديدة ممكن ترفض الـ flag ده لو حسّت إنها شغالة من agent آلي، وتطلب موافقة صريحة من الإنسان.`
         },
         {
           cmd: "migrate deploy قبل السيرفر",
@@ -2303,7 +2587,12 @@ docker compose logs --tail 50 app
             "طبّق في container مؤقت من نفس الـ image، ويتمسح بعدها.",
             "وبعد ما نجح بس، شغّل النسخة الجديدة.",
             "اتأكد إنه قام من غير أخطاء قاعدة."
-          ]
+          ],
+          sol: R`[[docker compose run --rm app npx prisma migrate deploy]] بيطبع اسم كل migration جديدة و [[All migrations have been successfully applied.]] (ولو مفيش جديد: [[No pending migrations to apply.]]). وبعد [[up -d]]، [[npx prisma migrate status]] بيقول [[Database schema is up to date!]]، واللوج بتاع app مفيهوش errors عن أعمدة ناقصة.
+
+ليه [[run --rm]] الأول: لو الـ migration فشلت، السيرفر القديم لسه شغال على الـ schema القديمة، والجديد ما اتشغلش على schema ناقصة. [[--rm]] بيمسح الـ container المؤقت بعد ما يخلص.
+
+الأخطاء الشائعة: [[P3009 migrate found failed migrations in the target database]] يعني migration سابقة وقعت في النص؛ اقرا الـ error، صلّح القاعدة، و [[prisma migrate resolve]]. و [[P1001 Can't reach database server]] يعني الـ app مش شايف الـ db (اسم الـ service في DATABASE_URL أو الـ db لسه مقامتش). ولو [[migrate status]] قال فيه migrations مش متطبقة، يبقى الـ image اللي عملت منها run قديمة ومفيهاش ملفات الـ migrations الجديدة: اعمل build الأول.`
         },
         {
           cmd: "prisma db seed و studio",
@@ -2335,7 +2624,27 @@ ssh -L 5555:localhost:5555 deploy@203.0.113.10`,
             "افتح الواجهة على localhost:5555.",
             "على بورت تاني ومن غير ما يفتح متصفح.",
             "من جهازك: وصّل 5555 على السيرفر لجهازك عبر SSH بدل ما تفتحه للنت."
-          ]
+          ],
+          sol: R`الحل: [[upsert]] بالـ email كـ where (والعمود لازم يكون [[@unique]]). أول مرة بيعمل الأدمن ويطبع [[admin id 1]] و [[🌱  The seed command has been executed.]]، والتانية بيلاقيه فبيعمل update (هنا فاضي فمبيغيرش حاجة). بعد تشغيلين [[SELECT count(*) FROM "User" WHERE email = 'admin@example.com']] بيرجّع [[1]]، و Studio على [[http://localhost:5555]] بيعرض صف واحد.
+
+لو استخدمت [[create]] بدل upsert: التشغيل التاني يقع بـ [[Unique constraint failed on the fields: (email)]] (P2002)، ولو email مش unique، هيعمل أدمن تاني بصمت، ودا الأسوأ.
+
+وفي Prisma 7 أمر الـ seed بيتكتب في [[prisma.config.ts]] ([[migrations: { seed: "node prisma/seed.js" }]])، لو [[npx prisma db seed]] قال إنه مش لاقي seed command يبقى الإعداد ناقص، شغّله مباشرة بـ [[node --env-file=.env prisma/seed.js]].`,
+          solCode: R`// prisma/seed.ts (Prisma 7: generator "prisma-client" بـ output = "../generated/prisma")
+import { PrismaClient } from "../generated/prisma/client.ts";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }) });
+
+const admin = await prisma.user.upsert({
+  where: { email: "admin@example.com" },
+  update: {},
+  create: { email: "admin@example.com", name: "Admin", role: "ADMIN" },
+});
+console.log("admin id", admin.id);
+await prisma.$disconnect();
+
+// prisma.config.ts: migrations: { seed: "node --env-file=.env prisma/seed.ts" }`
         }
       ]
     },
@@ -2362,7 +2671,22 @@ ssh -L 5555:localhost:5555 deploy@203.0.113.10`,
             when: "أول ما تبدأ تطوير أي integration فيه callback: دفع، أو WhatsApp API، أو GitHub webhooks.",
             mistakes: "تسجّل http://localhost في لوحة البوابة وتستنى. وتختبر بالـ tunnel قبل ما الـ route يشتغل مع curl."
           },
-          lines: ["حاكي webhook من Paymob على جهازك: POST بـ JSON بنفس شكل اللي بيبعتوه."]
+          lines: ["حاكي webhook من Paymob على جهازك: POST بـ JSON بنفس شكل اللي بيبعتوه."],
+          sol: R`الـ route البسيط: [[app.post("/webhooks/paymob", (req, res) => { console.log(req.body); res.sendStatus(200); })]] مع [[app.use(express.json())]]. الـ curl بيرجّع [[OK]]، والترمنال بتاع السيرفر بيطبع:
+
+[[{ type: 'TRANSACTION', obj: { success: true, amount_cents: 10000 } }]].
+
+لو طبع [[undefined]]: نسيت [[express.json()]]، أو الـ middleware متسجل بعد الـ route. ولو الـ curl رجّع [[Cannot POST /webhooks/paymob]] (404)، المسار أو الـ method مختلف. ولو [[Connection refused]] السيرفر مش شغال أو على بورت تاني.
+
+النقطة: لما دا يشتغل محليًا بـ curl، أي مشكلة بعد ما تحط ngrok تبقى في الـ tunnel أو إعدادات Paymob، مش في الكود. مش هتحتاج تعمل دفعة حقيقية عشان تختبر كل تعديل.`,
+          solCode: R`import express from "express";
+const app = express();
+app.use(express.json());
+app.post("/webhooks/paymob", (req, res) => {
+  console.log(req.body);
+  res.sendStatus(200);
+});
+app.listen(3000);`
         },
         {
           cmd: "ngrok",
@@ -2392,7 +2716,12 @@ curl -s localhost:4040/api/requests/http | jq '.requests[0].request.uri'`,
             "افتح tunnel لبورت 3000، وخد الـ URL اللي يطلع.",
             "بدومين ثابت من ngrok بدل العشوائي.",
             "من API اللوحة: مسار آخر طلب وصل."
-          ]
+          ],
+          sol: R`[[ngrok http 3000]] بيفتح شاشة فيها [[Forwarding https://xxxx.ngrok-free.app -> http://localhost:3000]] (الدومين ممكن يبقى ngrok-free.app أو ngrok-free.dev حسب الحساب)، و [[Web Interface http://127.0.0.1:4040]].
+
+من الموبايل على الداتا: أول مرة في الخطة المجانية بتظهر صفحة تحذير من ngrok إنك رايح لموقع حد تاني، وزرار [[Visit Site]]. بعده بتشوف رد سيرفرك، وفي شاشة ngrok في الترمنال السطر [[GET / 200 OK]]. الداتا مش الواي فاي عشان تتأكد إن الطلب فعلًا جاي من الإنترنت، مش من شبكتك.
+
+لو [[ERR_NGROK_4018]] يبقى محتاج [[ngrok config add-authtoken]]. ولو الموبايل شاف [[502 Bad Gateway]] أو صفحة ngrok بتقول مش قادر يوصل لـ localhost:3000، سيرفرك مش شغال أو على بورت تاني. والـ webhooks من Paymob مش بتتأثر بصفحة التحذير لأنها مش متصفح.`
         },
         {
           cmd: "cloudflared",
@@ -2424,7 +2753,19 @@ cloudflared tunnel run dev`,
             "اعمل tunnel اسمه dev.",
             "اعمل سجل DNS يشاور عليه.",
             "شغّله (بعد ملف config فيه ingress)."
-          ]
+          ],
+          sol: R`الخطوات: [[cloudflared tunnel login]] (بتختار الدومين من المتصفح)، [[cloudflared tunnel create dev]] بيطبع [[Created tunnel dev with id <uuid>]] وبيعمل ملف credentials [[~/.cloudflared/<uuid>.json]]، و [[cloudflared tunnel route dns dev dev.example.com]] بيعمل CNAME في Cloudflare. وبعدين [[~/.cloudflared/config.yml]]:
+
+[[tunnel: <uuid>]] و [[credentials-file: /home/you/.cloudflared/<uuid>.json]] و [[ingress]] فيها [[hostname: dev.example.com]] و [[service: http://localhost:3000]] وآخر قاعدة [[service: http_status:404]]. [[cloudflared tunnel run dev]] بيطبع [[Registered tunnel connection]] (عادة ٤ اتصالات)، و [[https://dev.example.com]] بيفتح سيرفرك. حط الرابط ده في Paymob مرة واحدة.
+
+لو فتح 404 من Cloudflare: الـ ingress ناقصة أو الـ hostname فيها مختلف. ولو DNS مش بيتحل، الدومين مش على nameservers بتاعة Cloudflare.`,
+          solCode: R`# ~/.cloudflared/config.yml
+tunnel: <TUNNEL-UUID>
+credentials-file: /home/you/.cloudflared/<TUNNEL-UUID>.json
+ingress:
+  - hostname: dev.example.com
+    service: http://localhost:3000
+  - service: http_status:404`
         },
         {
           cmd: "التحقق من التوقيع",
@@ -2466,7 +2807,26 @@ Tabby و Tamara بيبعتوا التوقيع في header وبيحسبوه عل�
             "لو الـ hmac مش موجود أو طوله غلط ارفض على طول، لأن timingSafeEqual بيضرب error لو الطولين مختلفين.",
             "قارن بطريقة بتاخد وقت ثابت (مش ===).",
             "قفلة."
-          ]
+          ],
+          sol: R`جرّبتها على route فيه [[verifyPaymob]] والـ secret [[test-secret]]، وحسبت الـ hmac الصح بنفس الدالة للـ body ده. النتيجة بالترتيب: من غير [[?hmac]] [[401]]، بـ [[?hmac=abc]] [[401]]، بالـ hmac الصح [[200]] وطبع [[activate order 777]].
+
+من غير hmac الدالة بترجع false قبل ما تحسب حاجة ([[typeof receivedHmac !== "string"]])، و [[abc]] بترجع false من فحص الطول قبل [[timingSafeEqual]] (اللي بيرمي error لو الأطوال مختلفة). والمهم إن الـ route بيرجع 401 وبيخرج قبل أي تعديل في القاعدة.
+
+الأخطاء الشائعة: تستخدم الـ API key بدل الـ HMAC secret من لوحة Paymob فكل الطلبات الحقيقية تطلع 401. أو تغيّر ترتيب الحقول أو تنسى [[order.id]] المتداخل. أو تقارن بـ [[===]] وتنسى إن الرد 200 لازم ميبقاش قبل التحقق.`,
+          solCode: R`// sign.js: يحسب الـ hmac الصح لـ body تجربة (نفس خوارزمية verifyPaymob)
+import { readFileSync } from "node:fs";
+import crypto from "node:crypto";
+const tx = JSON.parse(readFileSync(0, "utf8")).obj;
+const fields = ["amount_cents","created_at","currency","error_occured","has_parent_transaction","id","integration_id","is_3d_secure","is_auth","is_capture","is_refunded","is_standalone_payment","is_voided","order.id","owner","pending","source_data.pan","source_data.sub_type","source_data.type","success"];
+const get = (o, p) => p.split(".").reduce((a, k) => (a == null ? a : a[k]), o);
+console.log(crypto.createHmac("sha512", process.env.PAYMOB_HMAC).update(fields.map((f) => String(get(tx, f))).join("")).digest("hex"));
+
+// الترمنال
+BODY='{"type":"TRANSACTION","obj":{"id":12345,"success":true,"amount_cents":10000,"order":{"id":777}}}'
+H=$(echo "$BODY" | PAYMOB_HMAC=test-secret node sign.js)
+curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:3000/webhooks/paymob" -H "Content-Type: application/json" -d "$BODY"
+curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:3000/webhooks/paymob?hmac=abc" -H "Content-Type: application/json" -d "$BODY"
+curl -s -o /dev/null -w "%{http_code}\n" -X POST "http://localhost:3000/webhooks/paymob?hmac=$H" -H "Content-Type: application/json" -d "$BODY"`
         },
         {
           cmd: "إعادة الإرسال والتكرار",
@@ -2511,7 +2871,12 @@ Tabby و Tamara بيبعتوا التوقيع في header وبيحسبوه عل�
             "سجّلها (gatewayId لازم unique في الـ schema).",
             "لو نجحت، فعّل الطلب.",
             "قفلة."
-          ]
+          ],
+          sol: R`بعد الطلب الأصلي و ٣ Replay من [[localhost:4040]]: كلهم بيرجعوا [[200]] (ودا المطلوب، عشان Paymob يبطّل يعيد)، بس التفعيل حصل مرة واحدة. في تجربتي بنفس الـ id طبع [[activate order 777]] أول مرة، وبعدين [[duplicate 12345]] في كل مرة بعدها، وجدول [[payment]] فيه صف واحد بـ [[gatewayId = "12345"]].
+
+لو الطلب اتفعّل كذا مرة: الـ [[findUnique]] بيدوّر على حقل تاني، أو [[gatewayId]] مش متخزن كنص فالمقارنة فشلت. ولو Replay رجّع 401: ngrok بيعيد نفس الـ URL بالـ query، فغالبًا الـ secret اتغير أو الطلب الأصلي كان 401 أصلًا.
+
+وفيه حالة الـ Replay مش بتمسكها: طلبين في نفس اللحظة، الاتنين يعملوا findUnique قبل ما أي واحد يعمل create. الحماية الحقيقية [[@unique]] على [[gatewayId]] في الـ schema، فالتاني يقع بـ P2002 وتتجاهله.`
         },
         {
           cmd: "لوج الـ webhooks",
@@ -2537,7 +2902,24 @@ curl -s localhost:4040/api/requests/http | jq '.requests[] | {uri, status: .resp
             "تابع اللوج لايف منسّق.",
             "لاقي دفعة بالـ id.",
             "من لوحة ngrok: كل الطلبات ومساراتها والرد اللي رجّعته."
-          ]
+          ],
+          sol: R`الحل: سطر [[appendFile("logs/webhooks.log", JSON.stringify({...}) + "\n")]] في أول الـ route قبل أي تحقق، فكل طلب، حتى المرفوض، بيتسجل. في تجربتي ٥ طلبات بنفس الـ id طلّعوا ٥ سطور، و [[grep '"id":12345' logs/webhooks.log | jq .]] بيعرضهم كـ JSON منسّق:
+
+[[{ "at": "2026-09-30T07:55:59.070Z", "id": 12345, "success": true, "hmacOk": false }]] (الأولين كانوا من غير hmac صح) وبعدهم [[hmacOk: true]].
+
+خلي بالك: [[grep '"id":12345']] بيعتمد على إن [[JSON.stringify]] بيكتب من غير مسافات؛ لو كتبت اللوج بإيدك بشكل تاني الـ grep مش هيلاقي. الأدق [[jq 'select(.id == 12345)' logs/webhooks.log]]. ومتسجلش بيانات كارت أو الـ hmac الكامل في اللوج، وحط اللوج في [[.gitignore]].`,
+          solCode: R`import { appendFile } from "node:fs/promises";
+
+app.post("/webhooks/paymob", async (req, res) => {
+  const tx = req.body.obj;
+  const hmacOk = verifyPaymob(tx, req.query.hmac, process.env.PAYMOB_HMAC);
+  await appendFile("logs/webhooks.log",
+    JSON.stringify({ at: new Date().toISOString(), id: tx?.id, success: tx?.success, hmacOk }) + "\n");
+  if (!hmacOk) return res.status(401).end();
+  res.status(200).end();
+});
+
+// jq 'select(.id == 12345)' logs/webhooks.log`
         },
         {
           cmd: "webhook تيليجرام",
@@ -2567,7 +2949,12 @@ curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/deleteWebhook?drop_pen
             "سجّل الـ URL والسر اللي هيرجع في header مع كل طلب.",
             "الحالة: الـ URL، والرسايل المتراكمة، وآخر خطأ.",
             "شيل الـ webhook (ارجع لـ polling) وارمي الرسايل القديمة."
-          ]
+          ],
+          sol: R`[[setWebhook]] بيرد [[{"ok":true,"result":true,"description":"Webhook was set"}]]. ولما تبعت رسالة للبوت، سيرفرك بيستقبل POST فيه [[message.text]]، وتيليجرام بيبعت header [[X-Telegram-Bot-Api-Secret-Token]] بنفس الـ [[secret_token]].
+
+[[getWebhookInfo | jq .result]] لو كله تمام: [[url]] بالرابط بتاعك، و [[pending_update_count: 0]]، ومفيش [[last_error_message]]. لو سيرفرك واقع أو رجّع حاجة غير 200: الرقم بيزيد مع كل رسالة، ويظهر [[last_error_date]] و [[last_error_message]] زي [[Wrong response from the webhook: 401 Unauthorized]] أو [[Connection refused]] أو [[502 Bad Gateway]] (لو ngrok وقف).
+
+وخلي بالك إن ngrok المجاني بيغيّر الـ URL كل مرة، فلازم [[setWebhook]] تاني. و [[deleteWebhook?drop_pending_updates=true]] بيمسح الرسايل المتراكمة عشان البوت ما يرّدش على كل حاجة قديمة مرة واحدة.`
         }
       ]
     }
