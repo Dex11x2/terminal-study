@@ -568,9 +568,9 @@ body[data-shell="rn"]{--accent:var(--a-rn);--t-bg:#062033;--t-fg:#eef0f3;--t-pr:
     <div class="switch" role="tablist" aria-label="مطلوب في السوق">
       <button class="sw" role="tab" data-s="dotnet" aria-selected="false"><div class="top"><b>C# و .NET</b><span>app.MapGet("/orders", ...)</span></div><div class="bot">ASP.NET Core و EF Core: أكتر backend مطلوب في شركات مصر والبنوك والخليج، وغالبًا مع Angular</div></button>
       <button class="sw" role="tab" data-s="angular" aria-selected="false"><div class="top"><b>Angular</b><span>@for (item of items(); track item.id)</span></div><div class="bot">signals و routing و forms و RxJS، ومطلوب جدًا في الشركات الكبيرة، وقراية الكود القديم بـ NgModule</div></button>
-      <button class="sw" role="tab" data-s="spring" aria-selected="false"><div class="top"><b>Java و Spring Boot</b><span>@GetMapping("/orders")</span></div><div class="bot">Java من TypeScript، و Spring Boot و JPA و Security: البنوك والاتصالات والخليج، بس فرص الـ junior أقل</div></button>
+      <button class="sw" role="tab" data-s="spring" aria-selected="false"><div class="top"><b>Java و Spring Boot</b><span>@GetMapping("/orders")</span></div><div class="bot">Java من TypeScript، وبرامج Desktop بـ JavaFX، و Spring Boot و JPA و Security: البنوك والاتصالات والخليج</div></button>
       <button class="sw" role="tab" data-s="rn" aria-selected="false"><div class="top"><b>React Native و Expo</b><span>npx expo start</span></div><div class="bot">تطبيقات موبايل بنفس React اللي اتعلمته، و Expo Router و EAS، والأكتر طلبًا برّه مصر</div></button>
-      <button class="sw" role="tab" data-s="kotlin" aria-selected="false"><div class="top"><b>Kotlin و Android</b><span>kotlinc main.kt</span></div><div class="bot">اللغة الرسمية الأولى من Google لتطبيقات Android: Jetpack Compose، و Coroutines، والنشر على Play Store</div></button>
+      <button class="sw" role="tab" data-s="kotlin" aria-selected="false"><div class="top"><b>Kotlin و Android</b><span>kotlinc main.kt</span></div><div class="bot">تطبيقات Android بـ Kotlin و Compose أو Java الكلاسيكية، و Coroutines، والنشر على Play Store</div></button>
     </div>
   </section>
   <section class="sw-sec">
@@ -143972,7 +143972,7 @@ java Hello.java
 ./mvnw spring-boot:run
 ./mvnw test`,
   labText: "محتاج JDK 25 (آخر LTS) بس عشان تجرّب دروس Java: أي ملف .java بيشتغل بـ java File.java من غير build. لمشروع Spring Boot اعمل مشروع من start.spring.io، وفيه Maven wrapper (mvnw) جاهز، و PostgreSQL شغال (محلي أو بـ Docker).",
-  levels: {"1":["Java من TypeScript","الأنواع والكلاسات و records و generics و collections و streams والأخطاء، مقارنة بـ TS"],"2":["API بـ Spring Boot","Maven و Gradle، والـ DI، و REST والـ validation والأخطاء، والإعدادات، و JPA مع PostgreSQL و Flyway"],"3":["الإنتاج والانترفيو","Spring Security بـ JWT، والاختبارات بـ Testcontainers، و Actuator و Docker، وأسئلة Java و Spring في الانترفيو"]},
+  levels: {"1":["Java وتطبيقات Desktop","الأنواع والكلاسات و records و collections و streams، وبرامج سطح المكتب بـ JavaFX و jpackage"],"2":["API بـ Spring Boot","Maven و Gradle، والـ DI، و REST والـ validation والأخطاء، والإعدادات، و JPA مع PostgreSQL و Flyway"],"3":["الإنتاج والانترفيو","Spring Security بـ JWT، والاختبارات بـ Testcontainers، و Actuator و Docker، وأسئلة Java و Spring في الانترفيو"]},
   categories: [
     {
       t: "Java والـ JVM",
@@ -145610,6 +145610,134 @@ void main() {
         IO.println("finally");
     }
 }`
+        }
+      ]
+    },
+    {
+      t: "تطبيقات ديسكتوب بـ Java (JavaFX و Swing)",
+      l: 1,
+      n: "بناء برامج شباك كاملة لسطح المكتب بواجهات رسومية وتحزيمها كملف .exe أو .jar",
+      items: [
+        {
+          cmd: "تطبيقات ديسكتوب: واجهات JavaFX و Swing",
+          title: "برامج سطح المكتب بـ Java: بناء شباك وواجهة تفاعلية بـ JavaFX و Swing ومقارنتهما",
+          desc: R`لغة [[Java]] ليست مخصصة فقط للسيرفرات والبنوك؛ بل بُنيت بها أشهر وأقوى برامج الديسكتوب في العالم:
+بيئة [[IntelliJ IDEA]] بالكامل، وبرنامج [[NetBeans]]، ونظام [[Apache JMeter]]، وحتى لعبة [[Minecraft]] الأصلية!
+
+المكتبات الرسومية في Java:
+1. مكتبة [[Swing]]: مدمجة في صلب الـ JDK منذ التسعينات ([[javax.swing.*]]). لا تحتاج لتثبيت أي مكتبات إضافية وتعمل على أي نظام، وممتازة لبناء أدوات داخلية سريعة.
+2. منصة [[JavaFX]]: الإطار العصري المتطور لواجهات سطح المكتب. يدعم التصميم بـ CSS، والحركات السلسة (Animations)، والتوافق مع شاشات اللمس ودقة 4K، وفصل التصميم عبر ملفات FXML.
+
+هيكل كود JavaFX:
+• الكلاس يرث من [[Application]].
+• نقطة الانطلاق: دالة [[start(Stage stage)]].
+• الـ [[Stage]]: النافذة أو الشباك الخارجي للنظام.
+• الـ [[Scene]]: اللوحة أو المحتوى الداخلي للنافذة ويضم شجرة العناصر ([[Button]], [[Label]], [[VBox]]).`,
+          example: R`# 1. استيراد عناصر واجهة JavaFX الحديثة
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+# 2. الكلاس الأساسي للتطبيق يرث من Application
+public class DesktopApp extends Application {
+  @Override
+  public void start(Stage stage) {
+    # 3. إنشاء العناصر التفاعلية والحاوية العمودية
+    Label lblMsg = new Label("مرحبًا بك في برنامج ديسكتوب بـ Java!");
+    Button btnAction = new Button("اضغط هنا");
+    btnAction.setOnAction(e -> lblMsg.setText("تم التفاعل بنجاح!"));
+
+    VBox root = new VBox(15, lblMsg, btnAction);
+    Scene scene = new Scene(root, 360, 200);
+
+    # 4. ضبط عنوان النافذة وعرضها على الشاشة
+    stage.setTitle("تطبيقي الأول بـ JavaFX");
+    stage.setScene(scene);
+    stage.show();
+  }
+}`,
+          try: R`في IntelliJ IDEA، أنشئ مشروعاً جديداً باختيار قالب [[JavaFX]]. ضع هذا الكود في كلاس البداية واضغط زر Run الأخضر. ستشاهد نافذة ديسكتوب حقيقية مستقلة تظهر أمامك على شاشة جهازك وتستجيب لنقرات الماوس فوراً!`,
+          flag: "script",
+          deep: {
+            why: R`برامج الديسكتوب المكتوبة بـ Java تتميز بأنها (Write Once, Run Anywhere)؛ كود الواجهة الذي تكتبه على ويندوز سيعمل بنفس المظهر الجميل على أجهزة macOS و Linux دون أي تعديل.`,
+            how: R`محرك JavaFX مبني على منصة Prism الرسومية التي تستفيد من بطاقة الشاشة (Hardware Acceleration عبر DirectX و OpenGL) لرسم النوافذ بسلاسة 60 إطاراً في الثانية. وتفصل الواجهة عبر معمارية الـ Scene Graph الشجرية.`,
+            when: "بناء أدوات سطح مكتب للشركات، أو برامج نقاط البيع (POS Systems)، أو تطبيقات المحاكاة والهندسة وألعاب الـ 2D.",
+            mistakes: R`تحديث عناصر الواجهة من خيط غير خيط الـ UI الأساسي (JavaFX Application Thread): سيؤدي لخطأ [[IllegalStateException]]. لتحديث أي زر أو نص من عملية خلفية استخدم دائماً [[Platform.runLater(() -> ...)]].`
+          },
+          lines: [
+            "استيراد كلاس Application الأساسي لتطبيقات JavaFX.",
+            "استيراد حاوية المشهد Scene.",
+            "استيراد عنصر الزرار Button.",
+            "استيراد عنصر النص التوضيحي Label.",
+            "استيراد الحاوية العمودية VBox لترتيب العناصر تلقائياً.",
+            "استيراد نافذة العرض الأساسية Stage.",
+            "تعريف كلاس التطبيق DesktopApp ويرث من Application.",
+            "إعلان إعادة تعريف دالة البداية @Override.",
+            "دالة start وتستقبل نافذة النظام الأساسية stage.",
+            "إنشاء عنصر نصي ترحيبي مع جملة البداية.",
+            "إنشاء زرار قابل للنقر.",
+            "ربط حدث النقر بتغيير محتوى النص بواسطة lambda expression.",
+            "وضع العناصر في حاوية رأسية مع مسافة 15 بكسل بينها.",
+            "إنشاء المشهد بأبعاد 360 بكسل عرضاً و 200 ارتفاعاً.",
+            "تحديد عنوان النافذة الذي يظهر في شريط المهام بالأعلى.",
+            "ربط المشهد بنافذة النظام.",
+            "أمر إظهار النافذة للمستخدم على شاشة الكمبيوتر.",
+            "قفلة دالة start.",
+            "قفلة كلاس DesktopApp."
+          ],
+          sol: R`النتيجة على شاشة الكمبيوتر:
+تفتح نافذة برمجية مستقلة جديدة تحمل العنوان «تطبيقي الأول بـ JavaFX» وبداخلها رسالة نصية وزرار، وعند الضغط عليه تتغير الرسالة فوراً إلى:
+«تم التفاعل بنجاح!»`
+        },
+        {
+          cmd: "تحزيم ونشر برنامج ديسكتوب بـ jpackage",
+          title: "توزيع برامج Java للديسكتوب: إنشاء ملف JAR تنفيذي وبرنامج تثبيت .exe مستقل بأداة jpackage",
+          desc: R`كيف تُسلّم برنامج جافا لمستخدم عادي على جهاز كمبيوتر دون أن تطلب منه تثبيت Java أو JDK مسبقاً؟
+
+1. الطريقة الكلاسيكية (ملف [[JAR]] القابل للتشغيل):
+• تقوم بتجميع كودك وحزمه في ملف مضغوط بامتداد [[.jar]].
+• يعمل عند العميل بضغطة زر (Double-click) لو جهازه يحتوي على Java، أو من الترمنال بـ [[java -jar app.jar]].
+
+2. الطريقة الاحترافية الحديثة (أداة [[jpackage]] المدمجة في JDK):
+منذ إصدار Java 14، وفرت أوراكل أداة ثورية اسمها [[jpackage]]:
+• تقوم بأخذ ملف الـ JAR الخاص ببرنامجك، وتدمج معه نسخة مصغرة خاصة من الـ Java Runtime (باستخدام أداة [[jlink]] لتحتفظ فقط بالـ modules التي يحتاجها برنامجك، فيصبح حجم بيئة التشغيل حوالي 30 ميجا فقط بدل 300 ميجا!).
+• تُخرج للمستخدم ملف تثبيت احترافي مستقل بنقرة واحدة:
+  - ملف [[.exe]] أو [[.msi]] على نظام Windows مع أيقونة على الديسكتوب.
+  - ملف [[.dmg]] أو [[.pkg]] على نظام macOS.
+  - ملف [[.deb]] أو [[.rpm]] على توزيعات Linux.
+المستخدم يقوم بتثبيت واستخدام برنامجك كأي برنامج تجاري دون أن يعرف ما هي لغة جافا من الأساس!`,
+          example: R`# 1. تجميع ملفات كود جافا إلى مجلد bin
+javac -d bin src/*.java
+
+# 2. حزم الكود في ملف JAR تنفيذي وتحديد كلاس البداية
+jar --create --file app.jar --main-class com.example.DesktopApp -C bin .
+
+# 3. تشغيل ملف الـ JAR للتجربة المحلية
+java -jar app.jar
+
+# 4. إنتاج برنامج تثبيت .exe مستقل لويندوز بأداة jpackage
+jpackage --input . --name "MyDesktopApp" --main-jar app.jar --main-class com.example.DesktopApp --type exe --win-dir-chooser --win-shortcut`,
+          try: R`في مشروع جافا بسيط، نفذ أول أمرين لإنشاء ملف [[app.jar]]. بعد ذلك شغل أمر [[java -jar app.jar]] وتأكد أنه يعمل بنجاح. إذا كنت تستخدم Windows ولديك أداة WiX Toolset مسطبة، شغل أمر [[jpackage]] وشاهد كيف يُنتج لك ملف تثبيت .exe حقيقي جاهز للبيع أو التوزيع!`,
+          flag: "script",
+          deep: {
+            why: R`في الماضي، كانت أكبر مشكلة لبرامج جافا هي اشتراط تسطيب JRE عند العميل وما يتبعه من مشاكل تعارض الإصدارات. أداة jpackage حلت هذه المعضلة تماماً وجعلت برامج جافا تضاهي برامج C++ و Go في سهولة التوزيع.`,
+            how: R`أداة jpackage تستدعي أداة jlink في الخلفية لفحص كود البايت كود لمعرفة المكتبات المعيارية المستخدمة، وتجمع معها مشغل تشغيل أصلي أصغر حجماً وتغلفهما في حزمة تثبيت النظام القياسية.`,
+            when: "الخطوة النهائية عند تسليم برامج الديسكتوب المحاسبية، أو برامج إدارة العيادات والشركات، أو الألعاب المصممة بلغة Java.",
+            mistakes: R`توزيع ملف الـ .class الفردي للمستخدم العادي؛ في جافا يجب دائماً تجميع الكود في ملف [[.jar]] موحد أو حزمة تثبيت [[jpackage]].`
+          },
+          lines: [
+            "ترجمة جميع ملفات جافا المصدرية وحفظ الـ bytecode داخل مجلد bin.",
+            "إنشاء ملف JAR تنفيذي وتحديد كلاس نقطة البداية com.example.DesktopApp.",
+            "تشغيل ملف الـ JAR مباشرة عبر محرك JVM لاختبار عمله قبل النشر.",
+            "استدعاء jpackage لإنتاج ملف exe مستقل مع اختصار على سطح المكتب وخيار تحديد مجلد التثبيت."
+          ],
+          sol: R`الناتج في الترمنال:
+إنشاء ملف تثبيت مستقل في نفس المجلد:
+MyDesktopApp-1.0.exe
+يمكنك نقله إلى أي جهاز كمبيوتر يعمل بنظام Windows وتثبيته مباشرة دون اشتراط وجود جافا على الجهاز إطلاقاً!`
         }
       ]
     },
@@ -152164,7 +152292,7 @@ kotlinc main.kt -include-runtime -d app.jar && java -jar app.jar
   labText: "Kotlin هي اللغة الرسمية الأولى المعتمدة من Google لتطوير تطبيقات الأندرويد. مع Jetpack Compose بتصمم واجهات عصرية بكود نقي.",
   levels: {
     "1": ["لغة Kotlin من الصفر", "المتغيرات val و var، و Null Safety، والدوال، و data classes"],
-    "2": ["واجهات Jetpack Compose", "المكونات الأساسية @Composable، و Row و Column، والـ State بـ remember، و LazyColumn"],
+    "2": ["واجهات Compose وتطبيقات Java", "المكونات الأساسية @Composable، وتطبيقات Java بـ Activity و XML، والتكامل بين اللغتين"],
     "3": ["معمارية التطبيقات والنشر", "ViewModel، و Coroutines للعمليات الخلفية، وبناء ونشر ملف الـ APK و AAB"]
   },
   categories: [
@@ -152444,6 +152572,114 @@ fun ProductCard(title: String, price: Double) {
           ],
           sol: R`النتيجة على الشاشة:
 بطاقة جميلة ذات حواف منحنية وظل خفيف (Card) تحتوي على عنوان السلعة بخط عريض، وتحته مسافة مريحة وسعر السلعة بلون أندرويد البنفسجي الأساسي.`
+        }
+      ]
+    },
+    {
+      t: "Java في أندرويد والتكامل مع Kotlin",
+      l: 2,
+      n: "فهم كود أندرويد الكلاسيكي بـ Java، والـ Activity، وربط عناصر XML، والعمل المشترك بين اللغتين في نفس التطبيق",
+      items: [
+        {
+          cmd: "Android بـ Java: كلاس Activity و XML",
+          title: "برمجة أندرويد الكلاسيكية بـ Java: دورة حياة الـ Activity، وتصميم واجهات XML، و findViewById",
+          desc: R`لغة [[Java]] هي التي بُني عليها نظام أندرويد منذ انطلاقه عام 2008، وملايين التطبيقات والشركات الكبرى لا تزال تحتوي على كود Java كلاسيكي قوي وفعال.
+
+كيف كان يُبنى تطبيق أندرويد بـ Java؟
+1. الشاشة ([[Activity]]): كل شاشة في التطبيق تمثل كلاس يرث من [[AppCompatActivity]].
+2. دورة الحياة ([[Lifecycle]]): دالة [[onCreate()]] هي نقطة البداية الإجبارية التي تُستدعى عندما يقوم النظام بإنشاء الشاشة في الذاكرة.
+3. تصميم الواجهة بـ [[XML]]: في مجلد [[res/layout/activity_main.xml]]، تُكتب واجهات المستخدم بلغة XML مع إعطاء كل عنصر معرّفاً فريداً ([[android:id="@+id/btnSubmit"]]).
+4. ربط الكود بالواجهة: يتم ربط ملف التصميم بالشاشة عبر دالة [[setContentView(R.layout.activity_main)]]، ثم استدعاء العناصر بواسطة دالة [[findViewById()]].
+5. التفاعل والأحداث: إضافة مستمع للنقر بـ [[setOnClickListener]].`,
+          example: R`# 1. استيراد كلاسات أندرويد الأساسية
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+# 2. كلاس الشاشة يرث من AppCompatActivity
+public class MainActivity extends AppCompatActivity {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    # 3. جلب عناصر الـ XML بالـ ID وربط حدث الضغط
+    TextView txtTitle = findViewById(R.id.txtTitle);
+    Button btnClick = findViewById(R.id.btnClick);
+    btnClick.setOnClickListener(v -> txtTitle.setText("أهلًا بك من Java!"));
+  }
+}`,
+          try: R`في Android Studio، يمكنك إنشاء كلاس Java عادي داخل نفس مجلد كوتلن واختيار Activity. افتح ملف [[activity_main.xml]]، أضف زراً بمعرف [[@+id/btnClick]] وحقل نصي [[@+id/txtTitle]]، وشغّل التطبيق على المحاكي لتشاهد كود جافا يعمل بكفاءة تامة على هاتفك!`,
+          flag: "script",
+          deep: {
+            why: R`معظم مكتبات أندرويد الشهيرة ومشاريع الشركات القائمة تحتوي على أجزاء مكتوبة بجافا. قراءة وفهم كود Java في أندرويد مهارة أساسية لأي مطور أندرويد محترف للتعامل مع المشاريع القديمة وإصلاح الأخطاء.`,
+            how: R`نظام أندرويد يقوم بتوليد كلاس داخلي اسمه [[R.java]] أثناء عملية الـ Build يحتوي على أرقام تعريف سداسية عشرية لكل الموارد (Layouts, Strings, Drawables, IDs). دالة [[findViewById]] تستخدم هذا الرقم للبحث في شجرة الـ View Hierarchy وإرجاع العنصر المطلوب.`,
+            when: "صيانة تطبيقات أندرويد القديمة (Legacy Codebases) أو عند استخدام مكتبات Java مفتوحة المصدر لم تُحوّل إلى كوتلن بعد.",
+            mistakes: R`استدعاء دالة [[findViewById]] قبل استدعاء [[setContentView]]: سيؤدي إلى انهيار التطبيق فوراً بـ [[NullPointerException]] لأن شجرة الواجهة لم تكن قد بُنيت في الذاكرة بعد!`
+          },
+          lines: [
+            "استيراد كائن حزمة حفظ الحالة Bundle لنظام أندرويد.",
+            "استيراد عنصر زرار الواجهة Button.",
+            "استيراد عنصر عرض النصوص TextView.",
+            "استيراد كلاس النشاط المتوافق AppCompatActivity.",
+            "تعريف كلاس شاشة MainActivity ويرث من AppCompatActivity.",
+            "إعلان إعادة تعريف دالة دورة الحياة @Override.",
+            "دالة onCreate الإجبارية التي يستدعيها نظام أندرويد عند فتح الشاشة.",
+            "استدعاء دالة الكلاس الأساسي super مع حالة الشاشة السابقة.",
+            "ربط وتضخيم ملف تصميم الواجهة XML بالشاشة الحالية.",
+            "الوصول لعنصر النص في واجهة XML بواسطة معرفه الفريد R.id.",
+            "الوصول لعنصر الزرار بواسطة معرفه.",
+            "إضافة مستمع لحدث النقر وتغيير نص الشاشة فور الضغط.",
+            "قفلة دالة onCreate.",
+            "قفلة كلاس MainActivity."
+          ],
+          sol: R`النتيجة على شاشة الهاتف:
+ظهور واجهة أندرويد مصممة بـ XML تحتوي على نص وزرار، وعند النقر على الزرار يتغير النص في نفس اللحظة إلى:
+«أهلًا بك من Java!»`
+        },
+        {
+          cmd: "التكامل بين Java و Kotlin في أندرويد",
+          title: "العمل المشترك (Interoperability): استدعاء كود Java من Kotlin والعكس في نفس تطبيق أندرويد",
+          desc: R`من أروع مزايا نظام أندرويد والـ JVM أنك لست مجبراً على كتابة التطبيق بالكامل بلغة واحدة!
+لغة [[Kotlin]] ولغة [[Java]] تعملان جنباً إلى جنب بنسبة توافق 100% ([[100% Interoperable]]) لأنهما في النهاية تُترجمان لنفس الـ Bytecode.
+
+كيف تستفيد من الجمع بينهما في مشاريع الشركات؟
+1. الترحيل التدريجي ([[Gradual Migration]]): الشركات التي تمتلك ملايين أسطر كود جافا لا تعيد كتابتها، بل تضيف الشاشات والميزات الجديدة بـ Kotlin، وتستدعي كود جافا القديم كأنه كود كوتلن عادي.
+2. استدعاء Java من Kotlin: يتم مباشرة دون أي وسيط أو تحويل (زي [[PriceFormatter.formatEGP(150.0)]]).
+3. أمان الـ Null في جافا: كود جافا لا يحتوي على Null Safety مدمج، لذلك نستخدم علامات [[@NonNull]] و [[@Nullable]] في جافا حتى يعرف مترجم كوتلن هل يمكن للقيمة أن تكون فارغة أم لا ويحميك من الكراش.
+4. استدعاء Kotlin من Java: استخدم [[@JvmStatic]] للدوال و [[@JvmOverloads]] لدوال كوتلن ذات القيم الافتراضية حتى تتمكن جافا من رؤيتها واستدعائها بسلاسة.`,
+          example: R`# 1. كلاس مساعد مكتوب بـ Java في مشروع أندرويد
+package com.example.utils;
+import androidx.annotation.NonNull;
+
+public class PriceFormatter {
+  # 2. دالة ثابتة بـ Java تقبل قيمة وترجع نصاً منسقاً
+  @NonNull
+  public static String formatEGP(double amount) {
+    return String.format("%.2f جنيه مصري", amount);
+  }
+}`,
+          try: R`في مشروع أندرويد مكتوب بـ Kotlin، أنشئ ملف جافا جديداً اسمه [[PriceFormatter.java]] وضع فيه هذا الكود. بعد ذلك، افتح أي ملف كوتلن لديك واكتب: [[val priceText = PriceFormatter.formatEGP(99.5)]]؛ ستلاحظ أن كوتلن تستدعي كود جافا وتكمله تلقائياً كأنه كود كوتلن أصيل!`,
+          flag: "script",
+          deep: {
+            why: R`هذه الميزة هي السبب الأول الذي جعل جوجل وجميع الشركات العالمية تتبنى كوتلن بسرعة قياسية؛ لم تكن هناك أي مخاطرة أو حاجة للتوقف عن العمل وإعادة بناء التطبيقات من الصفر.`,
+            how: R`أداة البناء Gradle تقوم بتمرير ملفات Java إلى مترجم [[javac]] وملفات Kotlin إلى مترجم [[kotlinc]]، وكلاهما ينتج ملفات .class متطابقة تماماً تعمل على نفس آلة الـ ART (Android Runtime).`,
+            when: "العمل في أي شركة تمتلك تطبيق أندرويد تم إنشاؤه قبل 2019، أو عند الاستفادة من مكتبات Java العملاقة داخل مشروع Kotlin حديث.",
+            mistakes: R`نسيان كتابة [[@NonNull]] أو [[@Nullable]] في كود جافا؛ بدون هذه العلامات، تعامل كوتلن نوع البيانات كـ Platform Type ([[String!]]) مما قد يسبب انهياراً وقت التشغيل لو رجعت الدالة null بشكل غير متوقع.`
+          },
+          lines: [
+            "تحديد اسم الحزمة البرمجية للكلاس في مجلد المشروع.",
+            "استيراد تعليق NonNull للتأكيد على أن الناتج لن يكون فارغاً أبداً.",
+            "تعريف كلاس منسق الأسعار PriceFormatter بلغة Java.",
+            "تعليق أمان يمنع الـ Null ويساعد مترجم كوتلن على فهم النوع بدقة.",
+            "تعريف دالة عامة ثابتة static تستقبل السعر كرقم عشري double.",
+            "تنسيق الرقم العشري برقمين بعد الفاصلة ودمجه مع العملة.",
+            "قفلة دالة formatEGP.",
+            "قفلة كلاس PriceFormatter."
+          ],
+          sol: R`الناتج عند استدعاء الدالة من كود Kotlin:
+النص المرجع: «99.50 جنيه مصري» بأمان تام للأنواع وتوافق مثالي بين اللغتين في نفس ملف الـ APK النهائي.`
         }
       ]
     },

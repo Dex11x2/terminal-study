@@ -8,7 +8,7 @@ kotlinc main.kt -include-runtime -d app.jar && java -jar app.jar
   labText: "Kotlin هي اللغة الرسمية الأولى المعتمدة من Google لتطوير تطبيقات الأندرويد. مع Jetpack Compose بتصمم واجهات عصرية بكود نقي.",
   levels: {
     "1": ["لغة Kotlin من الصفر", "المتغيرات val و var، و Null Safety، والدوال، و data classes"],
-    "2": ["واجهات Jetpack Compose", "المكونات الأساسية @Composable، و Row و Column، والـ State بـ remember، و LazyColumn"],
+    "2": ["واجهات Compose وتطبيقات Java", "المكونات الأساسية @Composable، وتطبيقات Java بـ Activity و XML، والتكامل بين اللغتين"],
     "3": ["معمارية التطبيقات والنشر", "ViewModel، و Coroutines للعمليات الخلفية، وبناء ونشر ملف الـ APK و AAB"]
   },
   categories: [
@@ -288,6 +288,114 @@ fun ProductCard(title: String, price: Double) {
           ],
           sol: R`النتيجة على الشاشة:
 بطاقة جميلة ذات حواف منحنية وظل خفيف (Card) تحتوي على عنوان السلعة بخط عريض، وتحته مسافة مريحة وسعر السلعة بلون أندرويد البنفسجي الأساسي.`
+        }
+      ]
+    },
+    {
+      t: "Java في أندرويد والتكامل مع Kotlin",
+      l: 2,
+      n: "فهم كود أندرويد الكلاسيكي بـ Java، والـ Activity، وربط عناصر XML، والعمل المشترك بين اللغتين في نفس التطبيق",
+      items: [
+        {
+          cmd: "Android بـ Java: كلاس Activity و XML",
+          title: "برمجة أندرويد الكلاسيكية بـ Java: دورة حياة الـ Activity، وتصميم واجهات XML، و findViewById",
+          desc: R`لغة [[Java]] هي التي بُني عليها نظام أندرويد منذ انطلاقه عام 2008، وملايين التطبيقات والشركات الكبرى لا تزال تحتوي على كود Java كلاسيكي قوي وفعال.
+
+كيف كان يُبنى تطبيق أندرويد بـ Java؟
+1. الشاشة ([[Activity]]): كل شاشة في التطبيق تمثل كلاس يرث من [[AppCompatActivity]].
+2. دورة الحياة ([[Lifecycle]]): دالة [[onCreate()]] هي نقطة البداية الإجبارية التي تُستدعى عندما يقوم النظام بإنشاء الشاشة في الذاكرة.
+3. تصميم الواجهة بـ [[XML]]: في مجلد [[res/layout/activity_main.xml]]، تُكتب واجهات المستخدم بلغة XML مع إعطاء كل عنصر معرّفاً فريداً ([[android:id="@+id/btnSubmit"]]).
+4. ربط الكود بالواجهة: يتم ربط ملف التصميم بالشاشة عبر دالة [[setContentView(R.layout.activity_main)]]، ثم استدعاء العناصر بواسطة دالة [[findViewById()]].
+5. التفاعل والأحداث: إضافة مستمع للنقر بـ [[setOnClickListener]].`,
+          example: R`# 1. استيراد كلاسات أندرويد الأساسية
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+# 2. كلاس الشاشة يرث من AppCompatActivity
+public class MainActivity extends AppCompatActivity {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    # 3. جلب عناصر الـ XML بالـ ID وربط حدث الضغط
+    TextView txtTitle = findViewById(R.id.txtTitle);
+    Button btnClick = findViewById(R.id.btnClick);
+    btnClick.setOnClickListener(v -> txtTitle.setText("أهلًا بك من Java!"));
+  }
+}`,
+          try: R`في Android Studio، يمكنك إنشاء كلاس Java عادي داخل نفس مجلد كوتلن واختيار Activity. افتح ملف [[activity_main.xml]]، أضف زراً بمعرف [[@+id/btnClick]] وحقل نصي [[@+id/txtTitle]]، وشغّل التطبيق على المحاكي لتشاهد كود جافا يعمل بكفاءة تامة على هاتفك!`,
+          flag: "script",
+          deep: {
+            why: R`معظم مكتبات أندرويد الشهيرة ومشاريع الشركات القائمة تحتوي على أجزاء مكتوبة بجافا. قراءة وفهم كود Java في أندرويد مهارة أساسية لأي مطور أندرويد محترف للتعامل مع المشاريع القديمة وإصلاح الأخطاء.`,
+            how: R`نظام أندرويد يقوم بتوليد كلاس داخلي اسمه [[R.java]] أثناء عملية الـ Build يحتوي على أرقام تعريف سداسية عشرية لكل الموارد (Layouts, Strings, Drawables, IDs). دالة [[findViewById]] تستخدم هذا الرقم للبحث في شجرة الـ View Hierarchy وإرجاع العنصر المطلوب.`,
+            when: "صيانة تطبيقات أندرويد القديمة (Legacy Codebases) أو عند استخدام مكتبات Java مفتوحة المصدر لم تُحوّل إلى كوتلن بعد.",
+            mistakes: R`استدعاء دالة [[findViewById]] قبل استدعاء [[setContentView]]: سيؤدي إلى انهيار التطبيق فوراً بـ [[NullPointerException]] لأن شجرة الواجهة لم تكن قد بُنيت في الذاكرة بعد!`
+          },
+          lines: [
+            "استيراد كائن حزمة حفظ الحالة Bundle لنظام أندرويد.",
+            "استيراد عنصر زرار الواجهة Button.",
+            "استيراد عنصر عرض النصوص TextView.",
+            "استيراد كلاس النشاط المتوافق AppCompatActivity.",
+            "تعريف كلاس شاشة MainActivity ويرث من AppCompatActivity.",
+            "إعلان إعادة تعريف دالة دورة الحياة @Override.",
+            "دالة onCreate الإجبارية التي يستدعيها نظام أندرويد عند فتح الشاشة.",
+            "استدعاء دالة الكلاس الأساسي super مع حالة الشاشة السابقة.",
+            "ربط وتضخيم ملف تصميم الواجهة XML بالشاشة الحالية.",
+            "الوصول لعنصر النص في واجهة XML بواسطة معرفه الفريد R.id.",
+            "الوصول لعنصر الزرار بواسطة معرفه.",
+            "إضافة مستمع لحدث النقر وتغيير نص الشاشة فور الضغط.",
+            "قفلة دالة onCreate.",
+            "قفلة كلاس MainActivity."
+          ],
+          sol: R`النتيجة على شاشة الهاتف:
+ظهور واجهة أندرويد مصممة بـ XML تحتوي على نص وزرار، وعند النقر على الزرار يتغير النص في نفس اللحظة إلى:
+«أهلًا بك من Java!»`
+        },
+        {
+          cmd: "التكامل بين Java و Kotlin في أندرويد",
+          title: "العمل المشترك (Interoperability): استدعاء كود Java من Kotlin والعكس في نفس تطبيق أندرويد",
+          desc: R`من أروع مزايا نظام أندرويد والـ JVM أنك لست مجبراً على كتابة التطبيق بالكامل بلغة واحدة!
+لغة [[Kotlin]] ولغة [[Java]] تعملان جنباً إلى جنب بنسبة توافق 100% ([[100% Interoperable]]) لأنهما في النهاية تُترجمان لنفس الـ Bytecode.
+
+كيف تستفيد من الجمع بينهما في مشاريع الشركات؟
+1. الترحيل التدريجي ([[Gradual Migration]]): الشركات التي تمتلك ملايين أسطر كود جافا لا تعيد كتابتها، بل تضيف الشاشات والميزات الجديدة بـ Kotlin، وتستدعي كود جافا القديم كأنه كود كوتلن عادي.
+2. استدعاء Java من Kotlin: يتم مباشرة دون أي وسيط أو تحويل (زي [[PriceFormatter.formatEGP(150.0)]]).
+3. أمان الـ Null في جافا: كود جافا لا يحتوي على Null Safety مدمج، لذلك نستخدم علامات [[@NonNull]] و [[@Nullable]] في جافا حتى يعرف مترجم كوتلن هل يمكن للقيمة أن تكون فارغة أم لا ويحميك من الكراش.
+4. استدعاء Kotlin من Java: استخدم [[@JvmStatic]] للدوال و [[@JvmOverloads]] لدوال كوتلن ذات القيم الافتراضية حتى تتمكن جافا من رؤيتها واستدعائها بسلاسة.`,
+          example: R`# 1. كلاس مساعد مكتوب بـ Java في مشروع أندرويد
+package com.example.utils;
+import androidx.annotation.NonNull;
+
+public class PriceFormatter {
+  # 2. دالة ثابتة بـ Java تقبل قيمة وترجع نصاً منسقاً
+  @NonNull
+  public static String formatEGP(double amount) {
+    return String.format("%.2f جنيه مصري", amount);
+  }
+}`,
+          try: R`في مشروع أندرويد مكتوب بـ Kotlin، أنشئ ملف جافا جديداً اسمه [[PriceFormatter.java]] وضع فيه هذا الكود. بعد ذلك، افتح أي ملف كوتلن لديك واكتب: [[val priceText = PriceFormatter.formatEGP(99.5)]]؛ ستلاحظ أن كوتلن تستدعي كود جافا وتكمله تلقائياً كأنه كود كوتلن أصيل!`,
+          flag: "script",
+          deep: {
+            why: R`هذه الميزة هي السبب الأول الذي جعل جوجل وجميع الشركات العالمية تتبنى كوتلن بسرعة قياسية؛ لم تكن هناك أي مخاطرة أو حاجة للتوقف عن العمل وإعادة بناء التطبيقات من الصفر.`,
+            how: R`أداة البناء Gradle تقوم بتمرير ملفات Java إلى مترجم [[javac]] وملفات Kotlin إلى مترجم [[kotlinc]]، وكلاهما ينتج ملفات .class متطابقة تماماً تعمل على نفس آلة الـ ART (Android Runtime).`,
+            when: "العمل في أي شركة تمتلك تطبيق أندرويد تم إنشاؤه قبل 2019، أو عند الاستفادة من مكتبات Java العملاقة داخل مشروع Kotlin حديث.",
+            mistakes: R`نسيان كتابة [[@NonNull]] أو [[@Nullable]] في كود جافا؛ بدون هذه العلامات، تعامل كوتلن نوع البيانات كـ Platform Type ([[String!]]) مما قد يسبب انهياراً وقت التشغيل لو رجعت الدالة null بشكل غير متوقع.`
+          },
+          lines: [
+            "تحديد اسم الحزمة البرمجية للكلاس في مجلد المشروع.",
+            "استيراد تعليق NonNull للتأكيد على أن الناتج لن يكون فارغاً أبداً.",
+            "تعريف كلاس منسق الأسعار PriceFormatter بلغة Java.",
+            "تعليق أمان يمنع الـ Null ويساعد مترجم كوتلن على فهم النوع بدقة.",
+            "تعريف دالة عامة ثابتة static تستقبل السعر كرقم عشري double.",
+            "تنسيق الرقم العشري برقمين بعد الفاصلة ودمجه مع العملة.",
+            "قفلة دالة formatEGP.",
+            "قفلة كلاس PriceFormatter."
+          ],
+          sol: R`الناتج عند استدعاء الدالة من كود Kotlin:
+النص المرجع: «99.50 جنيه مصري» بأمان تام للأنواع وتوافق مثالي بين اللغتين في نفس ملف الـ APK النهائي.`
         }
       ]
     },
