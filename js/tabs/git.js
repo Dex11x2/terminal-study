@@ -35,50 +35,64 @@ git init`,
       items: [
         {
           cmd: "مقدمة Git و GitHub",
-          title: "مقدمة Git: يعني إيه نظام تتبع التغييرات (Version Control)، والفرق بين Git و GitHub",
-          desc: R`قبل Git، كان المبرمج لما يعدّل مشروعه يعمل فولدرات زي:
-[[project_final]] ثم [[project_final_v2]] ثم [[project_really_final_last_edit]]. ولو حب يرجع لكود كتبه الأسبوع اللي فات بيتوه، ولو شغال مع زميله بيبعتوا ملفات بالـ zip والتعديلات بتضيع على بعض!
+          title: "Git بيعمل إيه، وإيه الفرق بينه وبين GitHub؟",
+          desc: R`من غير Git، الواحد بيحفظ نسخ مشروعه كده: [[project_final]] وبعدين [[project_final_v2]] وبعدين [[project_final_really]]. ولو عايز يرجع لكود الأسبوع اللي فات مش عارف أنهي نسخة، ولو شغال مع حد بيبعتوا zip لبعض والتعديلات بتضيع.
 
-[[Git]] هو نظام تتبع التغييرات ([[Version Control System - VCS]]):
-برنامج شغال على جهازك زي "آلة زمن"، بياخد لقطة ([[Commit]]) من كل تعديل في ملفاتك، وتقدر ترجع لأي دقيقة في تاريخ مشروعك، أو تشوف مين غيّر سطر كود بالتحديد وليه.
+[[Git]] برنامج على جهازك اسمه version control: كل ما توصل لنقطة كويسة، بتاخد «لقطة» من المشروع اسمها [[commit]]، معاها رسالة بتقول عملت إيه. وبعدين تقدر ترجع لأي commit، أو تقارن بين اتنين، أو تعرف مين غيّر سطر معين وإمتى.
 
-والفرق بين Git و GitHub:
-• [[Git]]: البرنامج اللي متثبت على جهازك في الترمنال وبيسجل التاريخ محلياً.
-• [[GitHub]]: موقع على النت بيستضيف نفس المشروع ده في السحاب عشان تشاركه مع فريقك أو تعرضه للشركات كـ Portfolio.
+[[GitHub]] حاجة تانية: موقع بيستضيف نسخة من الـ repository بتاعك على النت، عشان تشاركه مع فريقك، أو تعمل Pull Request، أو تعرضه في الـ portfolio. Git شغال على جهازك من غير نت خالص، و GitHub (أو GitLab أو Bitbucket) مجرد مكان بترفع عليه.
 
-مراحل حفظ الملفات في Git (المناطق التلاتة):
-1. مساحة العمل ([[Working Directory]]): الملفات اللي انت بتعدلها حالياً في VS Code.
-2. منطقة التجهيز ([[Staging Area]]): المكان اللي بتحدد فيه الملفات اللي جاهزة للحفظ بأمر [[git add]].
-3. الأرشيف الدائم ([[Repository / Commit]]): نقطة الحفظ الرسمية اللي اتسجلت في التاريخ بأمر [[git commit]].`,
-          example: R`# 1. اتأكد إن Git متسطب عندك واعرف نسخته
+الملف بيعدّي بـ ٣ أماكن قبل ما يتحفظ:
+• الـ working directory: الملفات اللي بتعدّلها في VS Code.
+• الـ staging area: بتختار فيها اللي هيدخل في الـ commit الجاي، بـ [[git add]].
+• الـ repository: الـ commits اللي اتسجلت فعلًا، بـ [[git commit]].
+
+الدرس ده جولة سريعة. كل أمر ليه درس لوحده في القسم ده بالترتيب: «git config» (تعرّف نفسك)، و «git init / clone»، و «git status»، و «git add / commit»، و «git log»، و «git diff» (الفرق قبل الحفظ)، و «.gitignore» (ملفات Git ميشوفهاش). والـ branches والرفع على GitHub بـ push و pull في المستوى اللي بعده.`,
+          example: R`# اتأكد إن Git متسطّب
 git --version
 
-# 2. شوف حالة الملفات دلوقتي (مين اتغير ومين اتجهز)
-git status
+# هات نسخة من repo صغير على GitHub وادخل الفولدر بتاعه
+git clone https://github.com/octocat/Hello-World
+cd Hello-World
 
-# 3. اعرض تاريخ نقاط الحفظ السابقة (الـ commits) في سطر واحد
+# الحالة دلوقتي، وآخر ٣ commits
+git status
 git log --oneline -n 3`,
-          try: R`افتح الترمنال في فولدر المشروع ده واكتب [[git status]]. اقرا اللي طلعهولك: هيقولك اسم الفرع [[On branch main]] وهيقولك إيه الملفات المتعدلة. بعدين اكتب [[git log --oneline -n 5]] وشوف تاريخ آخر ٥ تعديلات اتعملت في المشروع ده مع رسائل الشرح بتاعتها.`,
+          try: R`افتح الترمنال في أي فولدر مش مشروع (زي Desktop) واكتب [[git status]] الأول، واقرا الرسالة. بعدين نفّذ أوامر المثال بالترتيب. وفي الآخر افتح [[https://github.com/octocat/Hello-World/commits]] في المتصفح وقارن الـ commits اللي هناك باللي طلعلك في الترمنال.`,
           deep: {
-            why: R`في أي شغل برمجة حقيقي مع شركة، 100% من الكود بيتم إدارته بـ Git. مستحيل تشتغل كـ Software Engineer من غير ما تتقن Git و GitHub: بيه بتعمل branches لكل ميزة، وتطلب مراجعة كودك بـ Pull Request (PR)، وترجع لأي نسخة سابقة لو حصل bug في الإنتاج.`,
-            how: R`لما بتعمل [[git init]] في أي فولدر، Git بيعمل فولدر مخفي اسمه [[.git]]. الفولدر ده هو المخزن اللي بيحتوي على كل تاريخ وتغييرات كل ملف كـ Objects ومضغوطة بصيغة SHA-1 hash.
-أي ملف في جهازك بيمر بحالات:
-• [[Untracked]]: ملف جديد Git ميعرفوش.
-• [[Modified]]: ملف كان محفوظ وتعدل وماتسجلش لسه.
-• [[Staged]]: ملف حطيته في صندوق الحفظ بـ [[git add]].
-• [[Committed]]: ملف اتحفظ رسمياً في قاعدة بيانات Git بـ [[git commit]].`,
-            when: "من أول يوم بتكتب فيه كود: ابدأ كل مشروع جديد بـ git init، ومع كل إنجاز صغير (عملت صفحة، صلحت زرار) اعمل commit مع رسالة معبرة.",
-            mistakes: R`تفتكر إن Git هو نفسه GitHub: Git مش محتاج إنترنت خالص وبيشتغل أوفلاين على جهازك، بينما GitHub مجرد سيرفر خارجي بترفع عليه كود الـ Git. وتعمل commit واحد ضخم بعد شهر فيه 200 ملف ورسالة "updates": خلي كل commit صغير ومحدد بمهمة واحدة.`
+            why: R`تقريبًا كل شركة برمجة بتستخدم Git. كل feature بتتعمل في branch، والكود بيتراجع في Pull Request قبل ما يدخل، ولو حصل bug بعد نزول نسخة بترجع للـ commit اللي قبله. ولوحدك كمان: Git هو اللي بيخليك تجرّب بجرأة، لأنك دايمًا تقدر ترجع.`,
+            how: R`أول ما تعمل [[git init]] أو [[git clone]]، Git بيعمل فولدر مخفي اسمه [[.git]] جوه المشروع. ده فيه كل التاريخ: كل commit محفوظ بمحتوى الملفات وقتها، واسمه hash (زي [[7fd1a60]]، ودي أول ٧ حروف من الاسم الكامل). لو مسحت [[.git]]، الملفات بتفضل بس التاريخ كله بيروح.
+
+عشان كده [[git status]] برا أي repo بيقولك [[not a git repository]]: Git بيدوّر على [[.git]] في الفولدر الحالي واللي فوقه، ومش لاقيه.
+
+الملف بيبقى في حالة من دول: [[untracked]] (جديد و Git مش متابعه)، أو [[modified]] (اتعدل بعد آخر commit)، أو [[staged]] (اتعمله add ومستني الـ commit)، أو متحفظ في commit ومتغيرش.`,
+            when: "من أول يوم في أي مشروع، حتى لو لوحدك. اعمل commit مع كل خطوة صغيرة خلصت (صفحة اشتغلت، bug اتصلح)، مش مرة واحدة في آخر الأسبوع.",
+            mistakes: R`تفتكر Git و GitHub حاجة واحدة، فتفتكر إنك محتاج نت عشان تعمل commit. تكتب أوامر Git في فولدر غير فولدر المشروع فيطلعلك [[not a git repository]]. وتعمل commit واحد كبير فيه ٢٠٠ ملف ورسالته [[updates]]: بعدين مش هتعرف ترجع لحاجة بعينها.`
           },
           lines: [
-            R`بيطبع نسخة Git المثبتة على جهازك عشان تتأكد إنه جاهز.`,
-            R`أهم أمر في Git: بيقولك انت على أي فرع (branch) وإيه الملفات اللي اتعدلت.`,
-            R`بيعرض آخر ٣ نقاط حفظ (commits) باختصار: كود الـ commit ورسالة الشرح.`
+            R`بيطبع نسخة Git. لو طلعلك [[command not found]] يبقى Git مش متسطّب.`,
+            R`بينزّل الـ repo كله بتاريخه في فولدر جديد اسمه [[Hello-World]] (تفاصيله في درس «git init / clone»).`,
+            R`تدخل الفولدر، لأن أوامر Git بتشتغل على الـ repo اللي انت واقف فيه.`,
+            R`انت على أنهي branch، وفيه ملفات اتغيرت ولا لأ.`,
+            R`آخر ٣ commits، كل واحد في سطر: الـ hash المختصر والرسالة.`
           ],
-          sol: R`الناتج في الترمنال:
-[[git --version]] هيطبع نسخة Git عندك، مثلاً: [[git version 2.45.0]].
-[[git status]] هيطبع اسم الفرع الحالي (غالباً [[main]]) وقائمة الملفات المعدلة باللون الأحمر أو الأخضر.
-و [[git log --oneline -n 3]] هيعرض آخر ٣ نقاط حفظ، كل سطر يبدأ برمز قصير للـ commit (مثلاً [[a931a25]]) وبعده وصف التعديل اللي المبرمج كتبه.`
+          sol: R`[[git status]] برا أي repo بيطبع:
+[[fatal: not a git repository (or any of the parent directories): .git]]
+
+وبعدين أوامر المثال:
+[[git version 2.43.0]] (رقمك ممكن يختلف)
+[[git status]] جوه Hello-World:
+[[On branch master]]
+[[Your branch is up to date with 'origin/master'.]]
+[[nothing to commit, working tree clean]]
+
+الـ branch هنا اسمه [[master]] لأن الـ repo ده قديم. المشاريع الجديدة غالبًا [[main]]. و [[working tree clean]] معناها مفيش ولا ملف متغير عن آخر commit.
+
+[[git log --oneline -n 3]]:
+[[7fd1a60 Merge pull request #6 from Spaceghost/patch-1]]
+[[7629413 New line at end of file. --Signed off by Spaceghost]]
+[[553c207 first commit]]
+الأحدث فوق. ونفس الـ hashes دي هتلاقيها على صفحة الـ commits في GitHub، لأنها نفس الـ commits بالظبط.`
         },
         {
           cmd: "git config",
@@ -125,7 +139,11 @@ git config --list --show-origin`
         {
           cmd: "git init / clone",
           title: "ابدأ repo",
-          desc: "[[init]] بيحوّل الفولدر الحالي لـ repo. [[clone]] بينزّل repo موجود بكل تاريخه.",
+          desc: R`الـ repo (اختصار repository) هو مشروع Git متابعه. فيه طريقتين تبدأ بيهم: [[git init]] بيحوّل الفولدر اللي انت واقف فيه لـ repo جديد فاضي، وده بيعمل جواه فولدر مخفي اسمه [[.git]] هيتحفظ فيه التاريخ كله، ومش بيلمس ملفاتك. [[git clone]] وبعده رابط بينزّل repo موجود على GitHub بكل تاريخه في فولدر جديد بنفس اسمه، ويربطه بالمكان اللي نزل منه تحت اسم [[origin]].
+
+في المثال [[&&]] معناها «نفّذ التاني بس لو الأول نجح». الرابط اللي بيبدأ بـ [[https://]] بيطلب تسجيل دخول لو الـ repo خاص، واللي بيبدأ بـ [[git@github.com:]] بيستخدم مفتاح SSH. [[USER/REPO]] اسم الحساب واسم المشروع، والرابط كله بتنسخه من زرار Code الأخضر في صفحة الـ repo.
+
+متعملش clone جوه repo تاني، ومتعملش init في الـ home كله. اتأكد انت فين بـ [[pwd]] الأول.`,
           example: R`mkdir myapp && cd myapp
 git init
 # أو بدل init: نزّل repo موجود (من بره أي repo، مش جوه myapp)
@@ -270,7 +288,11 @@ git show a1b2c3d`,
         {
           cmd: "git diff",
           title: "الفرق بالظبط",
-          desc: "[[git diff]] التعديلات اللي لسه متجهزتش، و [[--staged]] اللي اتجهزت وهتدخل الـ commit الجاي. بصلها دايمًا قبل أي commit.",
+          desc: R`[[git diff]] بيوريك الفرق سطر بسطر: السطور اللي قدامها [[+]] اتضافت، واللي قدامها [[-]] اتشالت، والسطور اللي حواليهم من غير علامة عشان تعرف المكان. السطر اللي شكله [[@@ -4,3 +4,4 @@]] فوق كل حتة بيقولك أرقام السطور دي في النسخة القديمة والجديدة.
+
+من غير حاجة بعده، بيقارن ملفاتك بمنطقة التحضير، يعني التعديلات اللي لسه معملتلهاش [[add]]. [[--staged]] بيقارن منطقة التحضير بآخر commit، يعني بالظبط اللي هيدخل الـ commit لو عملته دلوقتي. عشان كده بعد [[git add]] الأمر العادي بيطلع فاضي، والتعديل بيبان في [[--staged]]. ولو كتبت اسمين branches بعده، بيقارن بينهم.
+
+عوّد نفسك على [[git diff --staged]] قبل كل commit وتقرا كل سطر: هتمسك console.log نسيته، أو باسورد في ملف. ولو الناتج طويل بيفتح في less، و q للخروج.`,
           example: R`git diff
 git diff --staged
 git diff main feature/login`,
@@ -349,7 +371,11 @@ git check-ignore -v .env app.log`
         {
           cmd: "git switch / branch",
           title: "اشتغل على فرع منفصل",
-          desc: "كل feature في branch لوحدها عشان main يفضل شغال. [[switch -c]] يعمل branch جديدة ويروح لها، و [[branch -d]] يمسح branch اتعملها merge.",
+          desc: R`الـ branch خط شغل موازي: بتعمل فيه commits من غير ما تلمس main، ولما الشغل يخلص ويشتغل بتدمجه. كده main بيفضل دايمًا شغال، وكل ميزة أو إصلاح في branch باسمها، زي [[feature/login]] (الـ [[/]] جزء من الاسم، للتنظيم بس).
+
+[[git branch]] لوحدها بتعرض الـ branches اللي عندك، والنجمة [[*]] جنب اللي انت عليها. [[git switch -c feature/login]] بتعمل branch جديدة من مكانك الحالي وتنقلك لها ([[-c]] يعني create)، و [[git switch main]] بترجّعك، وملفاتك بتتغير لنسخة الـ branch دي. [[-a]] بتعرض كمان الـ branches اللي على GitHub (بتبدأ بـ [[remotes/origin/]]). و [[branch -d]] بتمسح branch اتدمجت خلاص، وبترفض لو لسه متدمجتش.
+
+قبل ما تعمل switch اعمل commit أو stash للتعديلات، وإلا هتمشي معاك أو Git هيرفض. وهتلاقي في شروحات قديمة [[git checkout]] بنفس المعنى.`,
           example: R`git branch
 git switch -c feature/login
 git switch main
@@ -389,7 +415,11 @@ git branch`
         {
           cmd: "git merge",
           title: "ادمج الـ branch",
-          desc: "بتقف على الـ branch اللي عايز تدمج فيها (غالبًا main) وتعمل merge للتانية.",
+          desc: R`الـ merge بياخد الـ commits اللي في branch ويدخّلها في branch تانية. القاعدة: تقف على الـ branch اللي هتستقبل (غالبًا main) بـ [[git switch main]]، وبعدين [[git merge feature/login]] يعني «هات اللي في feature/login هنا».
+
+لو main متحركتش من ساعة ما عملت الـ branch، Git بيحرّك main لقدام بس، ودي اسمها fast-forward ومش بتعمل commit جديد. لو main اتغيرت هي كمان، Git بيعمل merge commit بيجمع الاتنين. ولو الاتنين عدّلوا نفس السطر بشكل مختلف، بيوقف بـ conflict (الدرس الجاي). و [[git log --oneline --graph]] بيرسم التاريخ بخطوط، فتشوف الدمج حصل إزاي.
+
+بعد الدمج الـ branch القديمة ملهاش لازمة: [[git branch -d feature/login]]. وفي الفرق اللي بتشتغل على GitHub، الدمج غالبًا بيحصل من Pull Request مش من الترمنال، بس اللي بيحصل جوه هو هو.`,
           example: R`git switch main
 git merge feature/login
 git log --oneline --graph`,
@@ -579,7 +609,11 @@ git pull`,
         {
           cmd: "git stash",
           title: "شيل التعديلات على جنب",
-          desc: "لما تكون في نص شغل ومحتاج تنقل branch بسرعة. [[pop]] بيرجّعها ويمسحها من الـ stash، و [[apply]] بيرجّعها ويسيبها.",
+          desc: R`[[git stash]] بياخد التعديلات اللي لسه متعملهاش commit ويشيلها على جنب في «رف»، ويرجّع ملفاتك نضيفة زي آخر commit. ده مفيد لما تكون في نص حاجة ومحتاج تنقل branch بسرعة تصلّح حاجة عاجلة، ومش عايز تعمل commit لكود نص نص.
+
+[[push -m "..."]] بيشيل التعديلات باسم تفتكرها بيه. [[list]] بتعرض اللي على الرف، والأحدث اسمه [[stash@{0}]]. [[pop]] بيرجّع آخر حاجة اتشالت على ملفاتك ويمسحها من الرف، و [[apply]] بيرجّعها ويسيبها على الرف، لو عايز تطبّقها في أكتر من branch.
+
+خد بالك: الملفات الجديدة اللي Git مش متابعها (untracked) مش بتتشال من غير [[-u]]. والـ stash محلي على جهازك بس، مش بيترفع مع push.`,
           example: R`git stash push -m "half-done header"
 git stash list
 git switch main
@@ -911,7 +945,11 @@ ls vendor/lib && git submodule status`
         {
           cmd: "git restore",
           title: "ارجع ملف لآخر commit",
-          desc: "[[restore file]] بيمسح تعديلاتك اللي لسه متعملهاش commit على الملف ده، ودي مالهاش رجوع. [[restore --staged]] بيشيل الملف من التجهيز بس ويسيب التعديل.",
+          desc: R`[[git restore]] بيرجّع ملف لنسخة محفوظة. من غير فلاجات ([[git restore index.js]]) بيكتب فوق ملفك آخر نسخة متحفظة (من منطقة التحضير، أو من آخر commit لو مفيش حاجة متجهزة)، يعني أي تعديل عملته ولسه معملتلوش add بيتمسح. التعديل ده عمره ما دخل Git، فمالوش رجوع من أي حتة.
+
+[[--staged]] حاجة تانية خالص: بتلغي الـ [[add]] بس، يعني بتشيل الملف من منطقة التحضير والتعديل نفسه بيفضل في ملفك. دي آمنة تمامًا. و [[--source a1b2c3d]] بتجيب الملف زي ما كان في commit معين (الرقم ده الـ hash من [[git log --oneline]])، والملفات التانية مش بتتأثر.
+
+قبل أي restore من غير [[--staged]] بص على [[git diff index.js]]: اللي هيظهر ده بالظبط اللي هيضيع.`,
           example: R`git restore index.js
 git restore --staged index.js
 git restore --source a1b2c3d index.js`,
@@ -980,7 +1018,9 @@ git clean -ndx`
         {
           cmd: "git commit --amend",
           title: "صلّح آخر commit",
-          desc: "نسيت ملف أو الرسالة فيها غلطة؟ amend بيعدّل آخر commit بدل ما يعمل واحد جديد. استخدمه بس لو لسه معملتش push.",
+          desc: R`[[--amend]] بيصلّح آخر commit بدل ما تعمل commit جديد اسمه «forgot file». لو نسيت ملف: [[git add]] للملف، وبعدين [[git commit --amend --no-edit]]، فالملف يدخل في آخر commit، و [[--no-edit]] معناها سيب الرسالة زي ما هي. ولو الرسالة نفسها فيها غلطة: [[git commit --amend -m "better message"]].
+
+Git مش بيعدّل commits أبدًا: amend بيعمل commit جديد برقم (hash) جديد ويحطه مكان القديم. عشان كده استخدمه بس على commit لسه معملتلوش push. لو القديم اترفع، الـ push الجاي هيترفض، ولو أجبرته بـ force هتبوّظ تاريخ أي حد سحبه.`,
           example: R`git add forgotten.js
 git commit --amend --no-edit
 git commit --amend -m "better message"`,
@@ -1054,7 +1094,11 @@ git log --oneline -1`
         {
           cmd: "git revert",
           title: "الغي commit اتعمله push",
-          desc: "بيعمل commit جديد عكس القديم بالظبط، فالتاريخ ميتغيرش وماحدش من فريقك هيتلخبط. ده الطريق الآمن على main.",
+          desc: R`[[git revert]] بيلغي commit قديم بإنه يعمل commit جديد فيه العكس بالظبط: السطور اللي القديم ضافها تتشال، واللي شالها ترجع. الـ commit الأصلي بيفضل في التاريخ، وفوقه commit اسمه [[Revert "..."]].
+
+ليه ده مهم؟ لأن التاريخ مش بيتمسح ولا بيتغير، فتعمل [[git push]] عادي، وأي حد في الفريق يعمل pull من غير مشاكل. ده عكس [[reset]] اللي بيشيل commits من التاريخ ومحتاج force push. عشان كده revert هو الطريق الآمن لأي commit اترفع على main.
+
+في المثال: [[git log --oneline]] تجيب منه رقم الـ commit (الـ hash)، و [[git revert a1b2c3d]] بيفتح المحرر برسالة جاهزة، تقفله فيتعمل الـ commit، وبعدين [[git push]]. لو مش عايز المحرر يفتح: [[--no-edit]].`,
           example: R`git log --oneline
 git revert a1b2c3d
 git push`,
@@ -1155,7 +1199,9 @@ git log --oneline -3`
         {
           cmd: "git log -S / blame",
           title: "مين كتب ده وإمتى",
-          desc: "[[blame]] بيوريك مين عدّل كل سطر وفي أنهي commit. و [[log -S]] بيدوّر على الـ commit اللي ضاف أو شال نص معين، ودي أسرع طريقة تعرف إمتى bug دخل.",
+          desc: R`لما تلاقي سطر غريب أو bug، أول سؤال: السطر ده دخل إمتى وليه؟ [[git blame index.js]] بيعرض الملف، وقدام كل سطر رقم آخر commit عدّله ومين وإمتى. [[-L 10,20]] بيحصر الناتج في السطور من 10 لـ 20. بعدها خد الرقم واعمل عليه [[git show]] تشوف رسالة الـ commit وباقي التعديلات اللي معاه، وده اللي بيفهّمك السبب.
+
+[[git log -S "calculateTotal"]] بيدوّر في التاريخ كله على الـ commits اللي ضافت النص ده أو شالته، حتى لو مبقاش موجود في الكود دلوقتي، و [[--oneline]] سطر لكل commit. ده أسرع طريقة تعرف إمتى فانكشن اتعملت أو اتمسحت، أو إمتى bug دخل. البحث بيفرّق بين الحروف الكابيتال والسمول.`,
           example: R`git blame index.js
 git blame -L 10,20 index.js
 git log -S "calculateTotal" --oneline`,
@@ -1296,7 +1342,11 @@ git worktree remove ../myapp-hotfix`,
         {
           cmd: "git alias",
           title: "اختصاراتك",
-          desc: "أوامر طويلة بتكتبها كتير؟ اعملها alias في Git نفسه، فتشتغل في أي شيل.",
+          desc: R`لو فيه أمر Git طويل بتكتبه كل شوية، زي [[git log --oneline --graph --all]]، تقدر تدّيله اسم قصير جوه Git نفسه. [[git config --global alias.lg "..."]] بيكتب في ملف [[~/.gitconfig]] إن [[git lg]] معناها الأمر اللي بين علامات التنصيص، و [[--global]] معناها لكل مشاريعك.
+
+الأمر بيتكتب من غير كلمة [[git]] في أوله. وأي حاجة تكتبها بعد الاختصار بتتحط في الآخر: [[git lg -5]] تبقى [[git log --oneline --graph --all -5]].
+
+الفرق عن alias الشيل: ده جوه Git، فبيشتغل بنفس الشكل في bash و zsh و PowerShell و CMD، وبينتقل معاك لو نسخت [[~/.gitconfig]] لجهاز تاني.`,
           example: R`git config --global alias.lg "log --oneline --graph --all"
 git config --global alias.st "status -s"
 git lg`,

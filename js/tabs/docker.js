@@ -138,7 +138,11 @@ docker container prune`,
         {
           cmd: "docker logs",
           title: "اللي التطبيق بيطبعه",
-          desc: "أي حاجة التطبيق بيكتبها على stdout و stderr، Docker بيحفظها. ده لوج الـ container. [[-f]] يتابع، و [[--tail]] آخر كام سطر، و [[--since]] من وقت معين.",
+          desc: R`Docker بيمسك أي حاجة التطبيق بيطبعها على الشاشة (stdout للعادي و stderr للأخطاء) ويحفظها، ودي لوجات الـ container. [[docker logs web]] بيطبع كل اللي اتحفظ للـ container اللي اسمه web من ساعة ما اشتغل. عشان كده التطبيق جوه Docker لازم يطبع على الشاشة مش يكتب في ملف لوج جواه، وإلا الأمر ده مش هيلاقي حاجة.
+
+[[-f]] (follow) بيفضل مفتوح ويطبع أي سطر جديد لايف، و Ctrl+C للخروج. [[--tail 100]] آخر 100 سطر بس بدل التاريخ كله. [[--since 10m]] اللي اتكتب في آخر 10 دقايق (و [[h]] ساعات). وعشان تفلتر بـ grep: الأخطاء طالعة على stderr والـ pipe بياخد stdout بس، فـ [[2>&1]] بتضم الاتنين الأول، و [[grep -i]] بيدوّر من غير فرق بين كابيتال وسمول.
+
+خد بالك: ملف اللوج بيكبر من غير حد لو مضبطتلوش [[max-size]]، وممكن يملى الديسك.`,
           example: R`docker logs web
 docker logs -f --tail 100 web
 docker logs --since 10m web
@@ -314,7 +318,11 @@ docker run --rm -i alpine wc -l < notes.txt`,
         {
           cmd: "Dockerfile",
           title: "أول Dockerfile لتطبيق Node",
-          desc: "الملف اللي Docker بيبني منه الـ image. كل تعليمة سطر: تبدأ من image جاهزة، تحدد فولدر الشغل، تنسخ الملفات، تسطّب، وتقول إيه اللي يتشغّل.",
+          desc: R`الـ Dockerfile ملف نصي فيه وصفة بناء الـ image: كل سطر تعليمة، و Docker بينفّذهم بالترتيب ويطلّع image تقدر تشغّلها في أي حتة. [[FROM node:22-alpine]] لازم أول سطر: بتبدأ من image جاهزة فيها Node على Alpine (لينكس صغير). [[WORKDIR /app]] بيعمل فولدر app ويدخله، فكل اللي بعده بيحصل جواه.
+
+[[COPY package*.json ./]] بينسخ package.json و package-lock.json بس الأول (النجمة يعني أي حاجة)، عشان خطوة التسطيب تتحفظ في الكاش ومتتعادش كل ما تعدّل الكود. [[RUN]] بينفّذ أمر وقت البناء: [[npm ci]] بيسطّب بالظبط اللي في package-lock، و [[--omit=dev]] من غير devDependencies. [[COPY . .]] بينسخ باقي المشروع. [[EXPOSE 3000]] توثيق بس إن التطبيق بيسمع على 3000، والفتح الحقيقي بـ [[-p]] وقت التشغيل.
+
+[[CMD ["node", "server.js"]]] الأمر اللي بيشتغل لما الـ container يقوم، والأقواس المربعة مهمة عشان node يستلم إشارة الإيقاف ويقفل بهدوء.`,
           example: R`FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
@@ -1003,7 +1011,11 @@ docker exec db psql -U postgres -c "select * from t"`
         {
           cmd: "bind mount",
           title: "فولدر من جهازك جوه الـ container",
-          desc: "بدل volume، بتربط فولدر حقيقي من جهازك. أي تعديل في الكود بيظهر جوه الـ container فورًا، وده أساس الـ hot reload في التطوير. الـ [[:ro]] للقراءة بس.",
+          desc: R`الـ bind mount بيربط فولدر حقيقي من جهازك بمسار جوه الـ container، فالاتنين بيشوفوا نفس الملفات لايف: تعدّل على جهازك يظهر جوه فورًا من غير build، وده أساس الـ hot reload في التطوير. الفرق عن الـ volume إن الـ volume Docker هو اللي بيديره وبيخزنه في مكانه، أما هنا انت اللي بتحدد الفولدر.
+
+الشكل [[-v مسار_عندك:مسار_جوه]]. [[$(pwd)]] بيطلّع المسار الكامل للفولدر الحالي، لأن [[-v]] محتاج مسار كامل مش نسبي. في الأول nginx بيعرض فولدر site بتاعك، و [[:ro]] (read only) بتمنع الـ container يكتب فيه. في التاني [[-it]] تفاعلي، و [[--rm]] امسح الـ container لما يخلص، و [[-w /app]] اشتغل من الفولدر ده، فبتشغّل [[npm test]] على كودك من غير ما يكون Node متسطب عندك.
+
+على ويندوز مع WSL خلّي المشروع جوه ملفات لينكس مش [[/mnt/c]]، وإلا هيبقى بطيء جدًا.`,
           example: R`docker run -d -p 8080:80 -v $(pwd)/site:/usr/share/nginx/html:ro nginx:alpine
 docker run -it --rm -v $(pwd):/app -w /app node:22-alpine npm test`,
           try: "اربط فولدر فيه index.html بـ nginx، وعدّل الملف من جهازك، واعمل ريفريش: التغيير ظهر من غير build.",
@@ -1069,7 +1081,11 @@ docker run --rm alpine ping -c1 db`
         {
           cmd: "env file",
           title: "المتغيرات من ملف",
-          desc: "بدل ٢٠ [[-e]]، حط المتغيرات في ملف ومرّره. الملف ده مش جزء من الـ image، فالأسرار متتحطش جوه الصورة. و [[-e]] بيغطي على قيمة من الملف.",
+          desc: R`بدل ما تكتب [[-e KEY=value]] عشرين مرة، [[--env-file .env]] بيقرا ملف فيه سطر لكل متغير بالشكل [[KEY=value]] ويبعتهم كلهم للـ container. الملف بيفضل على السيرفر ومش بيدخل جوه الـ image، فالأسرار متتحطش في صورة ممكن تترفع لأي registry.
+
+[[-e PORT=4000]] بعد الـ env-file بيغطي على قيمة PORT اللي في الملف، فتغيّر متغير واحد من غير ما تعدّل الملف. و [[docker exec api env]] بيشغّل [[env]] جوه الـ container اللي اسمه api ويطبع كل متغيراته، و [[| sort]] يرتّبهم أبجديًا عشان تلاقي اللي بتدوّر عليه.
+
+خد بالك إن [[docker run]] بياخد القيمة زي ما هي حرفيًا: [[A="hi"]] بتوصل بعلامات التنصيص جواها، عكس مكتبة dotenv. وخلي [[.env]] في [[.dockerignore]] و [[.gitignore]].`,
           example: R`docker run -d --name api --env-file .env -p 3000:3000 myapi
 docker run -d --env-file .env -e PORT=4000 myapi
 docker exec api env | sort`,

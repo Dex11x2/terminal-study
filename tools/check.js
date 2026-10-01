@@ -20,6 +20,18 @@ const err = (where, msg) => errors.push(where + ': ' + msg);
 const warn = (where, msg) => warnings.push(where + ': ' + msg);
 const FLAGS = [undefined, 'danger', 'script', 'keys', 'term', 'console'];
 const exampleLines = ex => ex.split('\n').filter(l => l.trim() && !/^\s*(#(?!(?:include|define|pragma|ifdef|ifndef|endif)\b|[A-Za-z_$][\w$]*\s*[=;(])|\/\/|REM\b)/.test(l)); // #name = ... is a JS private field, not a comment
+// في اللغات دي # مش تعليق (في C و C++ بيبقى أمر preprocessor)، فلو المثال فيه «# 1. شرح» الطالب هينسخ كود مش بيتعمله compile
+const HASH_FREE = ['cpp', 'go', 'kotlin', 'swift', 'js', 'ts', 'react', 'next', 'angular', 'spring', 'dotnet', 'rn', 'flutter', 'php', 'css'];
+const HASH_STRICT = ['cpp', 'go', 'kotlin', 'swift'];
+const hashComment = (tab, ex, flag) => {
+  if (!ex || !HASH_FREE.includes(tab) || !/\bscript\b/.test(flag || '')) return null;
+  const numbered = ex.split('\n').find(l => /^\s*#\s*\d+[.)]\s/.test(l));
+  if (numbered) return numbered.trim();
+  // Dockerfile و shell و YAML و Python و .env بيستخدموا # بجد
+  if (!HASH_STRICT.includes(tab) || /^\s*(FROM|RUN|COPY|CMD|ENTRYPOINT|def |\$ |[\w.-]+:(\s|$)|[A-Z_]+=)/m.test(ex)) return null;
+  const l = ex.split('\n').find(l => /^\s*#\s/.test(l));
+  return l ? l.trim() : null;
+};
 const brackets = (where, s) => {
   if (typeof s !== 'string') return;
   const o = (s.match(/\[\[/g) || []).length, c = (s.match(/\]\]/g) || []).length;
@@ -44,6 +56,8 @@ for (const tab in DATA) {
       if (!tr) warn(w, 'مفيش try');
       if (flag !== undefined && !String(flag).split(' ').every(f => FLAGS.includes(f))) err(w, `flag غير معروف: ${flag}`);
       [title, desc, ex, tr].forEach(s => brackets(w, s));
+      const hc = hashComment(tab, ex, flag) || hashComment(tab, (SOL[tab + '|' + cmd] || {}).code, 'script');
+      if (hc) err(w, `تعليق بـ # في كود مش بيفهمه: «${hc.slice(0, 50)}». استخدم // (الطالب هينسخ المثال ويشغّله)`);
       const d = DEEP[tab + '|' + cmd];
       if (d) ['why', 'how', 'when', 'mistakes'].forEach(k => { if (!d[k]) warn(w, `deep ناقصه ${k}`); brackets(w + ' (deep)', d[k]); });
       const sol = SOL[tab + '|' + cmd];
@@ -60,7 +74,7 @@ for (const tab in DATA) {
 }
 
 // روابط القاموس: «bash المستوى ٢: [[grep]]» لازم تشاور على درس موجود
-const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real', 'اختصارات النظام': 'os', 'VS Code': 'vscode', 'JavaScript': 'js', 'TypeScript': 'ts', 'HTML و CSS': 'css', 'React': 'react', 'Next.js': 'next', 'Backend بـ Node': 'api', 'SQL و Prisma': 'data', 'Python و FastAPI': 'pyapi', 'PHP و MySQL': 'php', 'Flutter و Dart': 'flutter', 'الذكاء الاصطناعي': 'ai', 'بناء مشروع كامل': 'arch', 'الانترفيو': 'interview', 'DSA': 'dsa', 'هندسة البرمجيات': 'sweng', 'APIs متقدمة': 'apis', 'Cloud و DevOps': 'cloud', 'المشاريع': 'projects', 'الشغل والكارير': 'career', 'إنجليزي للمبرمج: قراية وكتابة': 'english', 'إنجليزي للمبرمج: كلام وانترفيو': 'speak', 'C# و .NET': 'dotnet', 'Angular': 'angular', 'Java و Spring Boot': 'spring', 'React Native و Expo': 'rn', 'C و C++': 'cpp', 'Kotlin و Android': 'kotlin', 'Swift و iOS': 'swift', 'Go (Golang)': 'go' };
+const TAB_NAMES = { 'bash': 'bash', 'VPS': 'vps', 'Git': 'git', 'Node': 'node', 'PostgreSQL': 'pg', 'Docker': 'docker', 'GitHub Actions': 'gha', 'Nginx': 'nginx', 'التشخيص': 'diag', 'المتصفح': 'web', 'الأمان': 'sec', 'WSL': 'wsl', 'ابدأ من هنا': 'start', 'PowerShell': 'ps', 'CMD': 'cmd', 'zsh': 'zsh', 'ssh config': 'sshc', 'فحص الكود': 'quality', 'MongoDB': 'mongo', 'Python': 'python', 'Desktop و Mobile': 'apps', 'من مشاريعي': 'real', 'اختصارات النظام': 'os', 'VS Code': 'vscode', 'JavaScript': 'js', 'TypeScript': 'ts', 'HTML و CSS': 'css', 'React': 'react', 'Next.js': 'next', 'Backend بـ Node': 'api', 'SQL و Prisma': 'data', 'Python و FastAPI': 'pyapi', 'PHP و MySQL': 'php', 'Flutter و Dart': 'flutter', 'الذكاء الاصطناعي': 'ai', 'بناء مشروع كامل': 'arch', 'الانترفيو': 'interview', 'DSA': 'dsa', 'هندسة البرمجيات': 'sweng', 'APIs متقدمة': 'apis', 'Cloud و DevOps': 'cloud', 'المشاريع': 'projects', 'الشغل والكارير': 'career', 'إنجليزي للمبرمج: قراية وكتابة': 'english', 'إنجليزي للمبرمج: كلام وانترفيو': 'speak', 'C# و .NET': 'dotnet', 'Angular': 'angular', 'Java و Spring Boot': 'spring', 'React Native و Expo': 'rn', 'C و C++': 'cpp', 'Kotlin و Android': 'kotlin', 'Swift و iOS': 'swift', 'Go (Golang)': 'go', 'الرموز': 'symbols', 'الملفات وامتداداتها': 'files' };
 if (DATA.glossary) DATA.glossary.forEach(cat => cat.items.forEach(it => {
   const ref = it[4] || '', m = ref.match(/^(.*?)(?: المستوى [١٢٣123])?(?:: \[\[(.+)\]\])?$/);
   const tab = m && TAB_NAMES[m[1]];

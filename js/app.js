@@ -27,7 +27,7 @@ function termHTML(code, shell, script, label, prOverride){
 
 let shell = 'bash';
 const lvInfo = l => (LEVEL_TAB[shell] && LEVEL_TAB[shell][l]) || LEVEL_INFO[l];
-const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud','projects','career','english','dotnet','angular','spring','rn','speak','cpp','kotlin'];
+const LESSON_TABS = ['start','web','sec','glossary','real','os','vscode','js','ts','css','react','next','api','data','pyapi','php','flutter','ai','arch','interview','dsa','sweng','apis','cloud','projects','career','english','dotnet','angular','spring','rn','speak','cpp','kotlin','swift','go','symbols','files'];
 function countLabel(n){
   const lesson = LESSON_TABS.includes(shell);
   if (shell==='glossary') return n + ' مصطلح';
@@ -35,8 +35,9 @@ function countLabel(n){
   if (n===2) return lesson ? 'درسين' : 'أمرين';
   return n + ' ' + (lesson ? (n>10?'درس':'دروس') : (n>10?'أمر':'أوامر'));
 }
+/* every paragraph of desc is shown; after the first they get .more, which the brief mode hides */
 function descHTML(d){
-  return d.split(/\n\s*\n/).map(p => '<p class="desc">'+fmt(p.trim())+'</p>').join('');
+  return d.split(/\n\s*\n/).map((p, i) => '<p class="desc'+(i?' more':'')+'">'+fmt(p.trim())+'</p>').join('');
 }
 function deepHTML(c){
   const d = DEEP[shell+'|'+c];
@@ -120,7 +121,7 @@ function render(){
       const done = store.get(key)==='1';
       html += '<article class="cmd'+(done?' is-done':'')+'">'+
         '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
-        (DEEP[shell+'|'+c] ? deepHTML(c)+(d?'<p class="sum"><b>الخلاصة:</b> '+fmt(d.split(/\n\s*\n/)[0])+'</p>':'') : (d?descHTML(d):''))+osNote(c)+
+        (d?descHTML(d):'')+deepHTML(c)+osNote(c)+
         (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
         '<button type="button" class="reveal">اكشف الإجابة</button>'+
         '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+
@@ -163,7 +164,7 @@ function updateProgress(){
   DATA[shell].filter(c => !level || c.l === level).forEach(c => c.items.forEach(it => { total++; if (store.get('done:'+shell+':'+it[0])==='1') done++; }));
   $('#doneN').textContent = AR(done);
   $('#allN').textContent = AR(total);
-  $('#shellName').textContent = ({web:'المتصفح', sec:'أمان الموقع', start:'ابدأ من هنا', docker:'Docker', node:'Node و npm', pg:'PostgreSQL', diag:'التشخيص', gha:'GitHub Actions', wsl:'WSL', nginx:'Nginx', sshc:'ssh config', glossary:'القاموس'}[shell] || SHELLS[shell].label) + (level ? ' المستوى '+AR(level) : '');
+  $('#shellName').textContent = ({web:'المتصفح', sec:'أمان الموقع', start:'ابدأ من هنا', docker:'Docker', node:'Node و npm', pg:'PostgreSQL', diag:'التشخيص', gha:'GitHub Actions', wsl:'WSL', nginx:'Nginx', sshc:'ssh config', glossary:'القاموس', symbols:'الرموز', files:'الملفات وامتداداتها'}[shell] || SHELLS[shell].label) + (level ? ' المستوى '+AR(level) : '');
   $('#meter').style.width = (total ? done/total*100 : 0)+'%';
 }
 

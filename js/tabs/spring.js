@@ -20,7 +20,7 @@ java Hello.java
 ./mvnw spring-boot:run
 ./mvnw test`,
   labText: "محتاج JDK 25 (آخر LTS) بس عشان تجرّب دروس Java: أي ملف .java بيشتغل بـ java File.java من غير build. لمشروع Spring Boot اعمل مشروع من start.spring.io، وفيه Maven wrapper (mvnw) جاهز، و PostgreSQL شغال (محلي أو بـ Docker).",
-  levels: {"1":["Java وتطبيقات Desktop","الأنواع والكلاسات و records و collections و streams، وبرامج سطح المكتب بـ JavaFX و jpackage"],"2":["API بـ Spring Boot","Maven و Gradle، والـ DI، و REST والـ validation والأخطاء، والإعدادات، و JPA مع PostgreSQL و Flyway"],"3":["الإنتاج والانترفيو","Spring Security بـ JWT، والاختبارات بـ Testcontainers، و Actuator و Docker، وأسئلة Java و Spring في الانترفيو"]},
+  levels: {"1":["Java وتطبيقات Desktop","الأنواع والكلاسات و records و generics و collections و streams والأخطاء، مقارنة بـ TS، وبرامج ديسكتوب بـ JavaFX و Swing و jpackage"],"2":["API بـ Spring Boot","Maven و Gradle، والـ DI، و REST والـ validation والأخطاء، والإعدادات، و JPA مع PostgreSQL و Flyway"],"3":["الإنتاج والانترفيو","Spring Security بـ JWT، والاختبارات بـ Testcontainers، و Actuator و Docker، وأسئلة Java و Spring في الانترفيو"]},
   categories: [
     {
       t: "Java والـ JVM",
@@ -1664,128 +1664,173 @@ void main() {
     {
       t: "تطبيقات ديسكتوب بـ Java (JavaFX و Swing)",
       l: 1,
-      n: "بناء برامج شباك كاملة لسطح المكتب بواجهات رسومية وتحزيمها كملف .exe أو .jar",
+      n: "برنامج ليه شباك وزراير على الكمبيوتر، وبعدين jar أو installer يتسطّب من غير ما اليوزر يكون عنده Java",
       items: [
         {
           cmd: "تطبيقات ديسكتوب: واجهات JavaFX و Swing",
-          title: "برامج سطح المكتب بـ Java: بناء شباك وواجهة تفاعلية بـ JavaFX و Swing ومقارنتهما",
-          desc: R`لغة [[Java]] ليست مخصصة فقط للسيرفرات والبنوك؛ بل بُنيت بها أشهر وأقوى برامج الديسكتوب في العالم:
-بيئة [[IntelliJ IDEA]] بالكامل، وبرنامج [[NetBeans]]، ونظام [[Apache JMeter]]، وحتى لعبة [[Minecraft]] الأصلية!
+          title: "تعمل برنامج ديسكتوب بشباك وزرار بـ Java إزاي، وتختار JavaFX ولا Swing؟",
+          desc: R`Java مش للسيرفرات بس: تقدر تعمل بيها برنامج ليه شباك وزراير يشتغل على Windows و macOS و Linux. IntelliJ IDEA نفسه و NetBeans و Apache JMeter برامج ديسكتوب مكتوبة بـ Java.
 
-المكتبات الرسومية في Java:
-1. مكتبة [[Swing]]: مدمجة في صلب الـ JDK منذ التسعينات ([[javax.swing.*]]). لا تحتاج لتثبيت أي مكتبات إضافية وتعمل على أي نظام، وممتازة لبناء أدوات داخلية سريعة.
-2. منصة [[JavaFX]]: الإطار العصري المتطور لواجهات سطح المكتب. يدعم التصميم بـ CSS، والحركات السلسة (Animations)، والتوافق مع شاشات اللمس ودقة 4K، وفصل التصميم عبر ملفات FXML.
+عندك مكتبتين:
+• [[Swing]]: جوه الـ JDK من زمان ([[javax.swing]])، فمش محتاج تنزّل أي حاجة. شكلها الافتراضي قديم شوية، بس ثابتة ومستخدمة في برامج كبيرة وأدوات داخلية كتير.
+• [[JavaFX]]: أحدث، وفيها تنسيق بـ CSS، وتصميم الشاشات في ملفات FXML، و animations. بس من Java 11 مبقتش جوه الـ JDK: بتضيفها كمكتبة اسمها OpenJFX (من Maven أو Gradle، أو SDK بتنزّله من openjfx.io).
+لو هتبدأ برنامج جديد، JavaFX غالبًا الاختيار الأريح. ولو بتعدّل برنامج قديم، غالبًا هتلاقيه Swing.
 
-هيكل كود JavaFX:
-• الكلاس يرث من [[Application]].
-• نقطة الانطلاق: دالة [[start(Stage stage)]].
-• الـ [[Stage]]: النافذة أو الشباك الخارجي للنظام.
-• الـ [[Scene]]: اللوحة أو المحتوى الداخلي للنافذة ويضم شجرة العناصر ([[Button]], [[Label]], [[VBox]]).`,
-          example: R`# 1. استيراد عناصر واجهة JavaFX الحديثة
-import javafx.application.Application;
+برنامج JavaFX شكله ثابت:
+• الكلاس بيورث من [[Application]] ([[extends]] من درس «extends و abstract»).
+• JavaFX بينادي دالة [[start]] وبيديك [[Stage]]: ده الشباك نفسه (العنوان وزراير القفل).
+• جوه الشباك [[Scene]]: المحتوى كله، ومقاسه.
+• والمحتوى عناصر (اسمها nodes) زي [[Label]] (كلام) و [[Button]] (زرار)، جوه layout زي [[VBox]] اللي بيرصهم تحت بعض.
+• [[main]] بتنادي [[launch]]، و launch هي اللي بتجهّز JavaFX وتنادي start.
+
+[[e -> message.setText(...)]] ده lambda (درس «lambdas»): الكود اللي يتنفذ لما الزرار يتضغط. و [[@Override]] بتقول إن start دي بتاعة Application وانت بتكتب نسختك منها.
+
+الدرس الجاي بيحوّل البرنامج لملف تقدر تديه لحد يسطّبه.`,
+          example: R`import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-# 2. الكلاس الأساسي للتطبيق يرث من Application
+// البرنامج بيورث من Application
 public class DesktopApp extends Application {
+  // JavaFX بينادي start وبيديك الشباك (Stage)
   @Override
   public void start(Stage stage) {
-    # 3. إنشاء العناصر التفاعلية والحاوية العمودية
-    Label lblMsg = new Label("مرحبًا بك في برنامج ديسكتوب بـ Java!");
-    Button btnAction = new Button("اضغط هنا");
-    btnAction.setOnAction(e -> lblMsg.setText("تم التفاعل بنجاح!"));
+    Label message = new Label("Hello from JavaFX!");
+    Button button = new Button("Click me");
+    button.setOnAction(e -> message.setText("Button clicked!"));
 
-    VBox root = new VBox(15, lblMsg, btnAction);
+    // VBox بيرص العناصر تحت بعض بمسافة 15 بيكسل
+    VBox root = new VBox(15, message, button);
     Scene scene = new Scene(root, 360, 200);
 
-    # 4. ضبط عنوان النافذة وعرضها على الشاشة
-    stage.setTitle("تطبيقي الأول بـ JavaFX");
+    stage.setTitle("My first JavaFX app");
     stage.setScene(scene);
     stage.show();
   }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
 }`,
-          try: R`في IntelliJ IDEA، أنشئ مشروعاً جديداً باختيار قالب [[JavaFX]]. ضع هذا الكود في كلاس البداية واضغط زر Run الأخضر. ستشاهد نافذة ديسكتوب حقيقية مستقلة تظهر أمامك على شاشة جهازك وتستجيب لنقرات الماوس فوراً!`,
+          try: R`أسهل طريق: في IntelliJ IDEA اعمل New Project واختار JavaFX من القايمة الشمال (بيعمل مشروع Maven فيه JavaFX جاهزة). اعمل class جديدة اسمها [[DesktopApp]] جنب الكلاس اللي اتعمل، والصق الكود تحت سطر الـ [[package]]، واضغط Run الأخضر جنب [[main]]. اضغط الزرار وشوف الكلام بيتغير. ولو مش عايز تنزّل JavaFX دلوقتي، جرّب نسخة Swing اللي تحت في الحل: بتشتغل بـ [[java SwingApp.java]] على طول.`,
           flag: "script",
           deep: {
-            why: R`برامج الديسكتوب المكتوبة بـ Java تتميز بأنها (Write Once, Run Anywhere)؛ كود الواجهة الذي تكتبه على ويندوز سيعمل بنفس المظهر الجميل على أجهزة macOS و Linux دون أي تعديل.`,
-            how: R`محرك JavaFX مبني على منصة Prism الرسومية التي تستفيد من بطاقة الشاشة (Hardware Acceleration عبر DirectX و OpenGL) لرسم النوافذ بسلاسة 60 إطاراً في الثانية. وتفصل الواجهة عبر معمارية الـ Scene Graph الشجرية.`,
-            when: "بناء أدوات سطح مكتب للشركات، أو برامج نقاط البيع (POS Systems)، أو تطبيقات المحاكاة والهندسة وألعاب الـ 2D.",
-            mistakes: R`تحديث عناصر الواجهة من خيط غير خيط الـ UI الأساسي (JavaFX Application Thread): سيؤدي لخطأ [[IllegalStateException]]. لتحديث أي زر أو نص من عملية خلفية استخدم دائماً [[Platform.runLater(() -> ...)]].`
+            why: R`فيه برامج مكانها الكمبيوتر مش المتصفح: برنامج كاشير في محل، أو أداة بتشتغل على ملفات كتير على الجهاز، أو برنامج لازم يشتغل من غير نت. ولو انت عارف Java أصلًا، تقدر تعملها من غير ما تتعلم لغة تانية، ونفس الكود يشتغل على الأنظمة التلاتة.`,
+            how: R`JavaFX بيبني الشاشة شجرة: الـ Stage جواه Scene، والـ Scene جواها root (هنا VBox)، والـ root جواه الـ Label والـ Button. لما تغيّر حاجة في الشجرة (زي [[setText]]) JavaFX بيرسم التغيير في الفريم الجاي، وبيستخدم كارت الشاشة في الرسم لما يقدر.
+
+كل حاجة ليها علاقة بالواجهة لازم تحصل على thread واحد اسمه JavaFX Application Thread. [[start]] والـ lambda بتاعة الزرار بيشتغلوا عليه أصلًا، فمفيش مشكلة هنا. بس لو عملت شغل تقيل (تحميل ملف كبير) على thread تاني وعايز تحدّث الواجهة بعده، استخدم [[Platform.runLater(() -> ...)]].
+
+ليه مش [[java DesktopApp.java]] على طول زي باقي دروس Java؟ لأن JavaFX مش جوه الـ JDK. لو نزّلت الـ SDK من openjfx.io بتترجم وتشغّل كده:
+[[javac --module-path PATH_TO_FX/lib --add-modules javafx.controls -d out DesktopApp.java]]
+[[java --module-path PATH_TO_FX/lib --add-modules javafx.controls -cp out DesktopApp]]
+وطريقة الملف الواحد ([[java DesktopApp.java]]) مع JavaFX بتفشل بـ [[ClassNotFoundException: DesktopApp]] حتى لو ضفت الـ module-path، عشان كده بنترجم الأول.`,
+            when: "أدوات داخلية لشركة، أو برامج نقاط بيع، أو برامج لازم تشتغل offline أو تتعامل مع ملفات وأجهزة متوصلة بالكمبيوتر. لو البرنامج محتاج يتفتح من أي مكان ومن الموبايل، غالبًا موقع ويب أنسب.",
+            mistakes: R`تحاول [[java DesktopApp.java]] من غير JavaFX فيطلعلك [[package javafx.application does not exist]]. تحدّث الواجهة من thread تاني فيطلعلك [[IllegalStateException: Not on FX application thread]] أو الواجهة تتصرف غلط: استخدم [[Platform.runLater]]. وتعمل شغل تقيل جوه الـ lambda بتاعة الزرار، فالشباك كله يهنّج لحد ما يخلص.`
           },
           lines: [
-            "استيراد كلاس Application الأساسي لتطبيقات JavaFX.",
-            "استيراد حاوية المشهد Scene.",
-            "استيراد عنصر الزرار Button.",
-            "استيراد عنصر النص التوضيحي Label.",
-            "استيراد الحاوية العمودية VBox لترتيب العناصر تلقائياً.",
-            "استيراد نافذة العرض الأساسية Stage.",
-            "تعريف كلاس التطبيق DesktopApp ويرث من Application.",
-            "إعلان إعادة تعريف دالة البداية @Override.",
-            "دالة start وتستقبل نافذة النظام الأساسية stage.",
-            "إنشاء عنصر نصي ترحيبي مع جملة البداية.",
-            "إنشاء زرار قابل للنقر.",
-            "ربط حدث النقر بتغيير محتوى النص بواسطة lambda expression.",
-            "وضع العناصر في حاوية رأسية مع مسافة 15 بكسل بينها.",
-            "إنشاء المشهد بأبعاد 360 بكسل عرضاً و 200 ارتفاعاً.",
-            "تحديد عنوان النافذة الذي يظهر في شريط المهام بالأعلى.",
-            "ربط المشهد بنافذة النظام.",
-            "أمر إظهار النافذة للمستخدم على شاشة الكمبيوتر.",
-            "قفلة دالة start.",
-            "قفلة كلاس DesktopApp."
+            R`[[Application]]: الأساس اللي أي برنامج JavaFX بيورث منه.`,
+            R`[[Scene]]: المحتوى اللي جوه الشباك.`,
+            R`[[Button]]: زرار.`,
+            R`[[Label]]: كلام بيتعرض.`,
+            R`[[VBox]]: layout بيرص العناصر تحت بعض.`,
+            R`[[Stage]]: الشباك نفسه.`,
+            R`الكلاس بيورث من Application.`,
+            R`[[@Override]]: هنكتب نسختنا من start.`,
+            R`JavaFX بينادي start ويديك الشباك في [[stage]].`,
+            R`[[new Label(...)]]: كلام أوله «Hello from JavaFX!».`,
+            R`زرار مكتوب عليه «Click me».`,
+            R`لما الزرار يتضغط، غيّر كلام الـ Label. [[e]] هو الـ event (مش مستخدم هنا).`,
+            R`VBox: مسافة 15 بين العناصر، وجواه الكلام والزرار.`,
+            R`المحتوى بمقاس 360 عرض × 200 طول.`,
+            R`العنوان اللي فوق في شريط الشباك.`,
+            R`حط المحتوى في الشباك.`,
+            R`اعرض الشباك.`,
+            R`آخر start.`,
+            R`[[main]] نقطة البداية.`,
+            R`[[launch]] بيجهّز JavaFX وينادي start.`,
+            R`آخر main.`,
+            R`آخر الكلاس.`
           ],
-          sol: R`النتيجة على شاشة الكمبيوتر:
-تفتح نافذة برمجية مستقلة جديدة تحمل العنوان «تطبيقي الأول بـ JavaFX» وبداخلها رسالة نصية وزرار، وعند الضغط عليه تتغير الرسالة فوراً إلى:
-«تم التفاعل بنجاح!»`
+          sol: R`بيفتح شباك صغير عنوانه «My first JavaFX app»، فيه فوق «Hello from JavaFX!» وتحته زرار «Click me»، الاتنين على الشمال لأن VBox بيرص من فوق ومن الشمال افتراضيًا. لما تضغط الزرار الكلام بيبقى «Button clicked!». والبرنامج بيقفل لما تقفل الشباك.
+
+لو طلعلك [[package javafx.application does not exist]] أو [[JavaFX runtime components are missing]]، يبقى JavaFX مش متضافة للمشروع: استخدم مشروع IntelliJ بتاع JavaFX أو أوامر [[--module-path]] اللي في «إزاي».
+
+نسخة Swing من نفس البرنامج (احفظها [[SwingApp.java]] وشغّلها بـ [[java SwingApp.java]]، مش محتاجة أي حاجة غير الـ JDK): بتفتح شباك فيه الكلام والزرار جنب بعض في سطر واحد في نص الشباك من فوق، لأن [[JPanel]] بيرص العناصر جنب بعض افتراضيًا. نفس الفكرة بالظبط: شباك ([[JFrame]])، وعناصر، و lambda للزرار. و [[SwingUtilities.invokeLater]] هي اللي بتخلي الواجهة تتعمل على الـ thread بتاعها، زي [[Platform.runLater]] في JavaFX.`,
+          solCode: R`import javax.swing.*;
+
+public class SwingApp {
+  public static void main(String[] args) {
+    SwingUtilities.invokeLater(() -> {
+      JFrame frame = new JFrame("My first Swing app");
+      JLabel message = new JLabel("Hello from Swing!");
+      JButton button = new JButton("Click me");
+      button.addActionListener(e -> message.setText("Button clicked!"));
+      JPanel panel = new JPanel();
+      panel.add(message);
+      panel.add(button);
+      frame.add(panel);
+      frame.setSize(360, 200);
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.setVisible(true);
+    });
+  }
+}`
         },
         {
           cmd: "تحزيم ونشر برنامج ديسكتوب بـ jpackage",
-          title: "توزيع برامج Java للديسكتوب: إنشاء ملف JAR تنفيذي وبرنامج تثبيت .exe مستقل بأداة jpackage",
-          desc: R`كيف تُسلّم برنامج جافا لمستخدم عادي على جهاز كمبيوتر دون أن تطلب منه تثبيت Java أو JDK مسبقاً؟
+          title: "تدّي برنامج Java لحد يسطّبه من غير ما يكون عنده Java إزاي؟ (jar و jpackage)",
+          desc: R`لما البرنامج يخلص، مش هتبعت للناس ملفات [[.java]] ولا [[.class]]. عندك خطوتين:
 
-1. الطريقة الكلاسيكية (ملف [[JAR]] القابل للتشغيل):
-• تقوم بتجميع كودك وحزمه في ملف مضغوط بامتداد [[.jar]].
-• يعمل عند العميل بضغطة زر (Double-click) لو جهازه يحتوي على Java، أو من الترمنال بـ [[java -jar app.jar]].
+١) ملف [[jar]]: كل الـ [[.class]] بتوع البرنامج متجمعين في ملف واحد (هو zip في الحقيقة)، وجواه سطر بيقول أنهي class فيها [[main]]. بيشتغل بـ [[java -jar app.jar]]، أو بدبل كليك عند ناس كتير. بس لازم الجهاز يكون عليه Java بنسخة مناسبة.
 
-2. الطريقة الاحترافية الحديثة (أداة [[jpackage]] المدمجة في JDK):
-منذ إصدار Java 14، وفرت أوراكل أداة ثورية اسمها [[jpackage]]:
-• تقوم بأخذ ملف الـ JAR الخاص ببرنامجك، وتدمج معه نسخة مصغرة خاصة من الـ Java Runtime (باستخدام أداة [[jlink]] لتحتفظ فقط بالـ modules التي يحتاجها برنامجك، فيصبح حجم بيئة التشغيل حوالي 30 ميجا فقط بدل 300 ميجا!).
-• تُخرج للمستخدم ملف تثبيت احترافي مستقل بنقرة واحدة:
-  - ملف [[.exe]] أو [[.msi]] على نظام Windows مع أيقونة على الديسكتوب.
-  - ملف [[.dmg]] أو [[.pkg]] على نظام macOS.
-  - ملف [[.deb]] أو [[.rpm]] على توزيعات Linux.
-المستخدم يقوم بتثبيت واستخدام برنامجك كأي برنامج تجاري دون أن يعرف ما هي لغة جافا من الأساس!`,
-          example: R`# 1. تجميع ملفات كود جافا إلى مجلد bin
-javac -d bin src/*.java
+٢) [[jpackage]]: أداة جوه الـ JDK (من Java 16). بتاخد الـ jar، وتحط جنبه Java runtime خاص بالبرنامج (معمول بأداة اسمها [[jlink]])، وتطلّع installer عادي للنظام:
+• Windows: [[.exe]] أو [[.msi]]. محتاج WiX Toolset متسطّب.
+• macOS: [[.dmg]] أو [[.pkg]].
+• Linux: [[.deb]] أو [[.rpm]].
+اللي هيسطّب البرنامج مش محتاج يعرف إن فيه Java أصلًا.
 
-# 2. حزم الكود في ملف JAR تنفيذي وتحديد كلاس البداية
-jar --create --file app.jar --main-class com.example.DesktopApp -C bin .
+حاجتين لازم تعرفهم قبل ما تبدأ:
+• jpackage بيعمل installer للنظام اللي شغال عليه بس: الـ [[.exe]] لازم يتعمل على Windows، والـ [[.dmg]] على Mac. عشان كده الفرق بتعمل الـ installers على CI فيه أجهزة من الأنظمة التلاتة.
+• الحجم: لأن جوه البرنامج Java runtime، حتى برنامج صغير بيطلع عشرات الميجات. تقدر تصغّره بإنك تحدد الـ modules اللي محتاجها بـ [[--add-modules]].
 
-# 3. تشغيل ملف الـ JAR للتجربة المحلية
-java -jar app.jar
+المثال بيحزّم نسخة Swing من الدرس اللي فات ([[SwingApp.java]] اللي في الحل هناك)، لأنها مش محتاجة أي مكتبة برا الـ JDK. برنامج JavaFX نفس الخطوات، بس بتزوّد لـ jpackage مكان JavaFX ([[--module-path]] لفولدر الـ jmods بتاعها) و [[--add-modules javafx.controls]].`,
+          example: R`# ترجم الكود لـ bytecode في فولدر bin
+javac -d bin SwingApp.java
 
-# 4. إنتاج برنامج تثبيت .exe مستقل لويندوز بأداة jpackage
-jpackage --input . --name "MyDesktopApp" --main-jar app.jar --main-class com.example.DesktopApp --type exe --win-dir-chooser --win-shortcut`,
-          try: R`في مشروع جافا بسيط، نفذ أول أمرين لإنشاء ملف [[app.jar]]. بعد ذلك شغل أمر [[java -jar app.jar]] وتأكد أنه يعمل بنجاح. إذا كنت تستخدم Windows ولديك أداة WiX Toolset مسطبة، شغل أمر [[jpackage]] وشاهد كيف يُنتج لك ملف تثبيت .exe حقيقي جاهز للبيع أو التوزيع!`,
+# اجمعه في jar في فولدر dist، وقول فيه مين الكلاس اللي فيها main
+jar --create --file dist/app.jar --main-class SwingApp -C bin .
+
+# جرّب الـ jar
+java -jar dist/app.jar
+
+# installer لويندوز (على Windows، و WiX متسطّب)
+jpackage --input dist --main-jar app.jar --name MyDesktopApp --type exe --win-shortcut --win-dir-chooser`,
+          try: R`في فولدر فيه [[SwingApp.java]] نفّذ أول ٣ أوامر، واتأكد إن الشباك فتح من الـ jar. بعدين جرّب jpackage من غير installer خالص، وده بيشتغل على أي نظام ومش محتاج WiX: [[jpackage --input dist --main-jar app.jar --name MyDesktopApp --type app-image]]، وشغّل البرنامج من الفولدر اللي اتعمل، وشوف حجمه. ولو على Windows ومسطّب WiX، جرّب الأمر الرابع.`,
           flag: "script",
           deep: {
-            why: R`في الماضي، كانت أكبر مشكلة لبرامج جافا هي اشتراط تسطيب JRE عند العميل وما يتبعه من مشاكل تعارض الإصدارات. أداة jpackage حلت هذه المعضلة تماماً وجعلت برامج جافا تضاهي برامج C++ و Go في سهولة التوزيع.`,
-            how: R`أداة jpackage تستدعي أداة jlink في الخلفية لفحص كود البايت كود لمعرفة المكتبات المعيارية المستخدمة، وتجمع معها مشغل تشغيل أصلي أصغر حجماً وتغلفهما في حزمة تثبيت النظام القياسية.`,
-            when: "الخطوة النهائية عند تسليم برامج الديسكتوب المحاسبية، أو برامج إدارة العيادات والشركات، أو الألعاب المصممة بلغة Java.",
-            mistakes: R`توزيع ملف الـ .class الفردي للمستخدم العادي؛ في جافا يجب دائماً تجميع الكود في ملف [[.jar]] موحد أو حزمة تثبيت [[jpackage]].`
+            why: R`أكبر مشكلة كانت في برامج Java الديسكتوب إن اليوزر لازم يسطّب Java الأول، وبالنسخة الصح. jpackage بيحل ده: كل برنامج معاه الـ runtime بتاعه، فمش فارق إيه اللي متسطّب على الجهاز، والبرنامج بيتسطّب ويتشال زي أي برنامج تاني.`,
+            how: R`[[javac -d bin]] بيحط الـ [[.class]] في فولدر bin. [[jar --create]] بيجمعهم، و [[--main-class]] بيكتب في ملف جوه الـ jar اسمه [[MANIFEST.MF]] سطر [[Main-Class: SwingApp]]، ودا اللي بيخلي [[java -jar]] يعرف يبدأ منين. و [[-C bin .]] معناها «خش فولدر bin وخد كل اللي فيه».
+
+jpackage بياخد كل اللي في فولدر [[--input]] (عشان كده بنحط الـ jar لوحده في dist، مش في فولدر فيه الكود كله)، ويعمل runtime بـ jlink، ويحطهم مع launcher (البرنامج اللي اليوزر بيدوس عليه) في installer. [[--win-shortcut]] بيعمل اختصار على الديسكتوب، و [[--win-dir-chooser]] بيخلي اليوزر يختار مكان التسطيب.
+
+ومن غير ما تحدد modules، jpackage بيحط runtime كبير فيه modules كتير. لو شغّلت [[jdeps --print-module-deps dist/app.jar]] هيقولك البرنامج محتاج إيه بالظبط (هنا [[java.base,java.desktop]])، وتبعتهم لـ jpackage بـ [[--add-modules java.desktop]]. في تجربة على Linux بـ JDK 21، فولدر app-image لنسخة Swing دي طلع حوالي 160 ميجا من غير تحديد، وحوالي 90 ميجا مع [[--add-modules java.desktop]]، والـ installer بيبقى أصغر لأنه مضغوط.`,
+            when: "لما تسلّم برنامج ديسكتوب لناس مش مبرمجين: عميل، أو موظفين في شركة. للتجربة بينك وبين مبرمجين تانيين الـ jar كفاية.",
+            mistakes: R`تبعت ملفات [[.class]] أو الكود نفسه لليوزر. تشغّل jpackage بـ [[--input .]] فيتحط في البرنامج كل اللي في الفولدر (الكود والـ bin وأي حاجة تانية). تحاول تعمل [[.exe]] من Linux أو Mac، أو من غير WiX فيطلعلك error إنه مش لاقي الأدوات. وتنسى [[--main-class]] في الـ jar فيطلعلك [[no main manifest attribute, in dist/app.jar]].`
           },
           lines: [
-            "ترجمة جميع ملفات جافا المصدرية وحفظ الـ bytecode داخل مجلد bin.",
-            "إنشاء ملف JAR تنفيذي وتحديد كلاس نقطة البداية com.example.DesktopApp.",
-            "تشغيل ملف الـ JAR مباشرة عبر محرك JVM لاختبار عمله قبل النشر.",
-            "استدعاء jpackage لإنتاج ملف exe مستقل مع اختصار على سطح المكتب وخيار تحديد مجلد التثبيت."
+            R`ترجم [[SwingApp.java]]، و [[-d bin]] معناها حط الـ [[.class]] في فولدر bin.`,
+            R`اعمل [[dist/app.jar]] من محتوى bin، واكتب فيه إن البداية من [[SwingApp]].`,
+            R`شغّل الـ jar زي ما اليوزر هيشغّله لو عنده Java.`,
+            R`اعمل installer اسمه MyDesktopApp من الـ jar اللي في dist، مع اختصار على الديسكتوب واختيار مكان التسطيب.`
           ],
-          sol: R`الناتج في الترمنال:
-إنشاء ملف تثبيت مستقل في نفس المجلد:
-MyDesktopApp-1.0.exe
-يمكنك نقله إلى أي جهاز كمبيوتر يعمل بنظام Windows وتثبيته مباشرة دون اشتراط وجود جافا على الجهاز إطلاقاً!`
+          sol: R`بعد أول أمرين هتلاقي [[bin/SwingApp.class]] و [[dist/app.jar]] (حجمه أقل من 2 كيلو). [[java -jar dist/app.jar]] بيفتح نفس شباك Swing.
+
+[[--type app-image]] بيعمل فولدر اسمه [[MyDesktopApp]]، والبرنامج جواه: على Windows [[MyDesktopApp\MyDesktopApp.exe]]، وعلى Linux [[MyDesktopApp/bin/MyDesktopApp]]، وعلى Mac [[MyDesktopApp.app]]. دوس عليه: نفس الشباك، من غير ما يستخدم Java اللي على جهازك. حجم الفولدر حوالي 160 ميجا لأن جواه runtime كامل تقريبًا. أعد الأمر وزوّد [[--add-modules java.desktop]] (بعد ما تمسح الفولدر القديم) وهتلاقيه حوالي 90 ميجا.
+
+والأمر الرابع على Windows بيطلّع [[MyDesktopApp-1.0.exe]] (1.0 هي النسخة الافتراضية، وتغيّرها بـ [[--app-version]]). لو طلعلك إنه مش لاقي WiX، سطّبه وزوّده للـ PATH وجرّب تاني.`
         }
       ]
     },

@@ -368,7 +368,11 @@ psql بيطبع [[UPDATE 3]]، يعني ٣ صفوف: لو متوقع واحد و
         {
           cmd: "يوزرز وصلاحيات",
           title: "يوزر للتطبيق بأقل صلاحيات",
-          desc: "التطبيق مش المفروض يتصل بيوزر postgres (superuser). يوزر خاص بيه بيقدر يقرا ويكتب في جداوله بس. لو الكود اتخترق، الضرر محدود.",
+          desc: R`اليوزر [[postgres]] superuser: يقدر يمسح أي قاعدة ويقرا أي حاجة. لو تطبيقك متصل بيه والكود اتخترق (SQL injection مثلًا)، المهاجم ماسك كل حاجة. الحل يوزر خاص بالتطبيق، يقرا ويكتب في جداوله وبس. في Postgres اليوزر اسمه role، و [[CREATE ROLE ... LOGIN PASSWORD]] بيعمله ويسمحله يدخل بباسورد.
+
+الصلاحيات طبقات لازم كلها: [[GRANT CONNECT ON DATABASE]] يدخل القاعدة، و [[USAGE ON SCHEMA public]] يشوف اللي جوه الـ schema، و [[SELECT, INSERT, UPDATE, DELETE ON ALL TABLES]] يقرا ويضيف ويعدّل ويمسح صفوف (من غير ما يقدر يمسح الجدول نفسه). و [[SEQUENCES]] لازمة عشان الـ id اللي بيزيد لوحده يشتغل مع INSERT.
+
+[[GRANT ... ON ALL TABLES]] بيطبّق على الجداول الموجودة دلوقتي بس، فـ [[ALTER DEFAULT PRIVILEGES]] بيدّي نفس الصلاحيات لأي جدول جديد هيتعمل بعدين. و [[readonly]] في الآخر يوزر للتقارير، [[SELECT]] بس. حط باسورد طويل عشوائي حقيقي مكان المثال.`,
           example: R`CREATE ROLE app_user LOGIN PASSWORD 'strong-random-password';
 GRANT CONNECT ON DATABASE app TO app_user;
 GRANT USAGE ON SCHEMA public TO app_user;
@@ -542,7 +546,11 @@ FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_p
         {
           cmd: "الحجم",
           title: "إيه اللي واكل المساحة",
-          desc: "القاعدة كبرت ومش عارف ليه. الدوال دي بتقولك حجم كل قاعدة وجدول و index بشكل مقروء.",
+          desc: R`لما الديسك يتملى أو القاعدة تبطأ، أول سؤال: مين واكل المساحة؟ [[pg_database_size('app')]] بيرجع حجم القاعدة كلها بالبايت، و [[pg_size_pretty]] بتحوّله لشكل مقروء زي [[245 MB]].
+
+السطر التاني بيجيب أكبر 10 جداول: [[pg_total_relation_size]] حجم الجدول بكل حاجته (البيانات والـ indexes والأعمدة الكبيرة)، و [[pg_statio_user_tables]] جدول نظام فيه جداولك انت بس، و [[ORDER BY ... DESC LIMIT 10]] رتّب من الأكبر وخد 10. التالت نفس الفكرة للـ indexes بـ [[pg_relation_size]] و [[pg_stat_user_indexes]]. و [[\dt+]] اختصار في psql بيعرض كل الجداول وحجمها في عمود Size.
+
+خد بالك: [[DELETE]] مش بيصغّر الملف على الديسك على طول؛ الصفوف بتتعلّم ميتة، و VACUUM بيخلي مكانها يتعاد استخدامه.`,
           example: R`SELECT pg_size_pretty(pg_database_size('app'));
 SELECT relname, pg_size_pretty(pg_total_relation_size(relid)) AS size FROM pg_catalog.pg_statio_user_tables ORDER BY pg_total_relation_size(relid) DESC LIMIT 10;
 SELECT indexrelname, pg_size_pretty(pg_relation_size(indexrelid)) FROM pg_stat_user_indexes ORDER BY pg_relation_size(indexrelid) DESC LIMIT 10;
@@ -617,7 +625,11 @@ SELECT count(*) FROM big WHERE user_id = 4242;`
         {
           cmd: "EXPLAIN ANALYZE",
           title: "اقرا خطة الاستعلام",
-          desc: "بيوريك Postgres هينفّذ الاستعلام إزاي: هيقرا الجدول كله (Seq Scan) ولا هيستخدم index (Index Scan)، وكل خطوة أخدت قد إيه. أهم أداة لتشخيص البطء.",
+          desc: R`لما استعلام يبقى بطيء، [[EXPLAIN]] بيوريك Postgres ناوي ينفّذه إزاي (الخطة) من غير ما ينفّذه: هيقرا الجدول كله صف صف ([[Seq Scan]]) ولا هيستخدم index ويروح للصفوف المطلوبة على طول ([[Index Scan]]). الأرقام هنا تقديرات: [[cost]] رقم نسبي مش وقت، و [[rows]] عدد الصفوف المتوقع.
+
+[[EXPLAIN ANALYZE]] بينفّذ الاستعلام فعلًا ويضيف الأرقام الحقيقية: [[actual time]] بالمللي ثانية وعدد الصفوف الفعلي، وفي الآخر [[Execution Time]]. و [[(ANALYZE, BUFFERS, FORMAT TEXT)]] بيضيف كمان كام صفحة اتقرت من الذاكرة وكام من الديسك. الخطة شجرة: السطور اللي داخلة لجوه أكتر بتتنفّذ الأول.
+
+أشهر اكتشاف: [[Seq Scan]] على جدول كبير في عمود بتفلتر بيه، يعني ناقصه index. وخد بالك: ANALYZE بينفّذ بجد، فمع [[UPDATE]] أو [[DELETE]] لفّه في [[BEGIN]] و [[ROLLBACK]].`,
           example: R`EXPLAIN SELECT * FROM orders WHERE user_id = 42;
 EXPLAIN ANALYZE SELECT * FROM orders WHERE user_id = 42;
 EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) SELECT o.*, u.email FROM orders o JOIN users u ON u.id = o.user_id WHERE o.status = 'paid';`,
@@ -844,7 +856,11 @@ psql -U postgres -d app_copy -c "SELECT count(*) FROM users" -c "\d users"`
         {
           cmd: "ترجيع الباك أب",
           title: "جرّبه قبل ما تحتاجه",
-          desc: "الخطوة اللي الكل بينساها. قاعدة جديدة فاضية، ترجّع فيها، وتعدّ الصفوف وتقارن بالأصل. لو مجرّبتش، يوم الكارثة هتكتشف إن الباك أب ناقص أو مكسور.",
+          desc: R`باك أب عمرك ما رجّعته مش مضمون: ممكن يكون ناقص أو مكسور، وهتكتشف ده يوم ما تحتاجه. الاختبار: قاعدة جديدة فاضية، ترجّع فيها الباك أب، وتقارن بالأصل.
+
+[[createdb -U postgres app_restore_test]] بيعمل قاعدة فاضية جديدة ([[-U]] اليوزر اللي بيتصل). [[pg_restore -d app_restore_test]] بيرجّع ملف الـ dump (المعمول بـ [[-Fc]]) جواها، و [[--no-owner]] بيتجاهل مين كان صاحب الجداول في الأصل، فميطلعش error لو اليوزر ده مش موجود هنا. بعدين [[psql -c]] بينفّذ استعلام واحد ويخرج: [[count(*)]] على جدول مهم في النسخة وفي الأصل، ولو الأرقام قريبة (بفرق الصفوف اللي اتضافت بعد الباك أب) يبقى سليم. و [[dropdb]] بيمسح قاعدة التجربة في الآخر.
+
+خد بالك تكتب اسم قاعدة التجربة صح في [[dropdb]] و [[pg_restore]]: لو كتبت [[app]] بالغلط هتلمس قاعدة الإنتاج.`,
           example: R`createdb -U postgres app_restore_test
 pg_restore -U postgres -d app_restore_test --no-owner app.dump
 psql -U postgres -d app_restore_test -c "SELECT count(*) FROM users;"
@@ -1436,7 +1452,11 @@ SELECT policyname, cmd, qual FROM pg_policies WHERE tablename = 'todos';`,
         {
           cmd: "pgcli",
           title: "psql بإكمال تلقائي",
-          desc: "نفس psql بس بإكمال لأسامي الجداول والأعمدة وألوان. بيتسطب بـ pip. مفيد على جهازك، وعلى السيرفر psql العادي كفاية.",
+          desc: R`[[pgcli]] بديل لـ [[psql]] بيكمّلك أسامي الجداول والأعمدة وانت بتكتب، وبيلوّن الـ SQL، فالكتابة أسرع وأقل غلط. بيتصل بـ Postgres بنفس الطريقة وبيفهم أوامر الـ backslash الأساسية زي [[\dt]].
+
+هو أداة Python، و [[pipx install pgcli]] بيسطّبها في بيئة لوحدها فمتلخبطش مكتبات Python التانية عندك. الاتصال بطريقتين: connection string زي [[postgres://app_user:secret@localhost/app]] (اليوزر:الباسورد@الجهاز/القاعدة)، أو فلاجات: [[-h]] الجهاز، و [[-p]] البورت (هنا 5433)، و [[-U]] اليوزر، وبعدهم اسم القاعدة.
+
+مفيد على جهازك، وعلى السيرفر psql العادي كفاية. وخد بالك إن الباسورد في الـ connection string بيتحفظ في الـ history، فالأحسن ملف [[~/.pgpass]].`,
           example: R`pipx install pgcli
 pgcli postgres://app_user:secret@localhost/app
 pgcli -h localhost -p 5433 -U app_user app`,

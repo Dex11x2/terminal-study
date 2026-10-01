@@ -240,7 +240,11 @@ jobs:
         {
           cmd: "gh CLI",
           title: "Actions من الترمنال",
-          desc: "بدل ما تفتح المتصفح كل مرة: [[gh]] أداة GitHub الرسمية. تشوف الـ runs، وتقرا لوج run فاشل، وتشغّل workflow، وتعيد تشغيل فاشل.",
+          desc: R`[[gh]] أداة GitHub الرسمية للترمنال، وبيها تتابع GitHub Actions من غير ما تفتح المتصفح. [[gh auth login]] مرة واحدة بتربطها بحسابك، وبعدها بتعرف الـ repo من الفولدر اللي انت واقف فيه.
+
+[[run list --limit 5]] آخر 5 تشغيلات (runs) بحالتها: نجحت ولا فشلت. [[run view --log-failed]] بيطبع لوج الـ steps اللي فشلت بس، وده غالبًا كل اللي محتاجه. [[run watch]] بيتابع run شغال لايف لحد ما يخلص. [[workflow run deploy.yml]] بيشغّل workflow يدوي (اللي فيه [[workflow_dispatch]])، و [[-f env=staging]] بيدّي قيمة لـ input اسمه env. و [[run rerun 1234567890 --failed]] بيعيد الـ jobs اللي فشلت بس في الـ run ده، والرقم ده الـ run ID اللي بيظهر في [[run list]].
+
+لو شغلته بره فولدر الـ repo، حدد الـ repo بـ [[-R user/repo]].`,
           example: R`gh auth login
 gh run list --limit 5
 gh run view --log-failed
@@ -460,7 +464,11 @@ jobs:
         {
           cmd: "matrix",
           title: "نفس الاختبار على كذا نسخة",
-          desc: "مكتبة أو تطبيق لازم يشتغل على Node 22 و 24؟ الـ matrix بيعمل job لكل قيمة بالتوازي. و [[fail-fast: false]] بيخلي الباقي يكمّل لو واحد فشل.",
+          desc: R`الـ matrix بيخلي job واحد يتكرر تلقائي على كذا قيمة بالتوازي، بدل ما تكتبه كذا مرة. هنا [[matrix]] فيه قايمتين: [[node: [22, 24]]] و [[os: [ubuntu-latest, windows-latest]]]، و GitHub بيعمل job لكل تركيبة، يعني 4 jobs.
+
+جوه الـ job بتوصل للقيمة الحالية بـ [[matrix.node]] و [[matrix.os]] جوه [[$__{{ }}]]: [[runs-on]] بياخد نظام التشغيل، و [[node-version]] في setup-node بياخد نسخة Node. [[strategy]] هو المكان اللي بيتكتب فيه الـ matrix. و [[fail-fast]] افتراضيًا true، يعني أول job يفشل الباقي يتلغي؛ [[false]] بتخلي الكل يكمّل فتعرف الفشل في نسخة واحدة ولا في كله.
+
+خد بالك إن كل job بياكل من دقايق الـ CI بتاعتك: 4 jobs في 3 دقايق يبقوا 12 دقيقة. ده مهم لمكتبة لازم تشتغل في كل مكان، أما تطبيق بيشتغل على نسخة واحدة في الإنتاج فاختبار واحد كفاية.`,
           example: R`jobs:
   test:
     runs-on: $__{{ matrix.os }}
@@ -1356,7 +1364,11 @@ jobs:
         {
           cmd: "rollback من Actions",
           title: "ارجع لنسخة بضغطة",
-          desc: "workflow بيتشغّل بإيدك بـ workflow_dispatch، وبياخد رقم النسخة كـ input، ويدخل السيرفر يشغّلها. الرجوع بيبقى دقيقة من الموبايل، من غير ترمنال.",
+          desc: R`لما نسخة جديدة تبوّظ الموقع، عايز ترجع للي قبلها في دقيقة من غير ما تفتح ترمنال. الـ workflow ده بيشتغل بإيدك من زرار Run workflow ([[workflow_dispatch]])، وبيطلب منك [[tag]]: رقم النسخة (زي [[v1.1.0]] أو commit sha) اللي عايز ترجعلها، و [[required: true]] يعني مش هيشتغل من غيره.
+
+الـ job بيحمّل مفتاح SSH من الـ secrets بـ [[webfactory/ssh-agent]]، ويضيف بصمة السيرفر لـ [[known_hosts]] عشان SSH يثق فيه، وبعدين يدخل السيرفر وينفّذ [[docker compose up -d --no-build]] مع [[IMAGE_TAG]] بالنسخة اللي اخترتها. [[--no-build]] عشان يستخدم الصورة الجاهزة من الـ registry ومايبنيش. و [[environment: production]] بيطبّق قواعد الحماية بتاعة بيئة الإنتاج (زي موافقة حد قبل التشغيل).
+
+شرطه إن compose على السيرفر يكون مكتوب فيه [[image: ...:$__{IMAGE_TAG:-latest}]]. والـ rollback بيرجّع الكود بس: لو آخر deploy غيّر في قاعدة البيانات بشكل كاسر، الكود القديم ممكن ميشتغلش.`,
           example: R`name: Rollback
 on:
   workflow_dispatch:
