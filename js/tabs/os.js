@@ -1450,6 +1450,224 @@ Defender بيفضل شغال على الـ Dev Drive، بس في performance mod
       ]
     },
     {
+      t: "ويندوز: شكّل Windows Terminal",
+      l: 3,
+      n: "خط فيه أيقونات، وملف الإعدادات، وترمنال بينزل من فوق الشاشة بزرار واحد",
+      items: [
+        {
+          cmd: "Nerd Font",
+          title: "خط فيه أيقونات للترمنال",
+          desc: R`Nerd Font مش خط واحد: ده خطوط برمجة معروفة (زي Meslo و JetBrains Mono و Cascadia) اتضاف عليها آلاف الأيقونات: فرع git، وفولدر، ولوجو Node و Python، وأسهم Powerline. أدوات تجميل الترمنال زي Oh My Posh و Starship و Powerlevel10k و Terminal-Icons بتطبع الأيقونات دي، ولو الترمنال مش على Nerd Font هتظهر مكانها مربعات فاضية أو علامات استفهام.
+
+التسطيب على ويندوز، أي طريقة من دول:
+• من [[nerdfonts.com/font-downloads]] (أو صفحة Releases في repo اسمه ryanoasis/nerd-fonts على GitHub): نزّل zip الخط، وفكّه، وحدد ملفات [[.ttf]] كلها، وكليك يمين ثم Install (ليك انت بس) أو Install for all users (محتاج أدمن). في ويندوز 11 ممكن تلاقيهم تحت Show more options.
+• لو Oh My Posh متسطب عندك: [[oh-my-posh font install meslo]] بينزّل Meslo ويسطّبه لليوزر بتاعك، ولو الترمنال شغال كأدمن بيسطّبه لكل اليوزرز.
+• winget فيه package واحدة بس عاملها حد من المجتمع لخط JetBrainsMono: [[winget install DEVCOM.JetBrainsMonoNerdFont]]. مش من فريق Nerd Fonts نفسه، فاعرف انت بتسطّب من مين.
+
+اسم الخط اللي هتكتبه في الإعدادات هو اسم العيلة مش اسم الملف: من zip بتاع Nerd Fonts أو من Oh My Posh هيبقى زي [[MesloLGM Nerd Font]]، ولو سطّبت نسخة Powerlevel10k هيبقى [[MesloLGS NF]]. وكل خط بييجي بـ 3 أشكال: [[Nerd Font]] الأيقونات فيه أعرض شوية (حوالي حرف ونص) ومناسب لأغلب الترمنالات، و [[Nerd Font Mono]] كل أيقونة بعرض حرف واحد فبتبان أصغر، و [[Nerd Font Propo]] للبرامج العادية مش الترمنال.
+
+بعد التسطيب اقفل البرنامج كله وافتحه عشان يشوف الخط الجديد، وبعدين:
+• Windows Terminal: [[Ctrl+,]] ثم Profiles ثم Defaults ثم Appearance ثم Font face، فيتطبق على كل البروفايلات. أو [[font.face]] جوه [[profiles.defaults]] في settings.json (الدرس الجاي).
+• VS Code: الترمنال اللي جواه ليه إعداد لوحده، [[terminal.integrated.fontFamily]] في settings.json بتاع VS Code (Ctrl+Shift+P ثم [[Preferences: Open User Settings (JSON)]]).
+
+الاختبار: آخر سطر في المثال بيطبع ٣ أيقونات في PowerShell بأرقامها في Unicode. [[0xf07b]] رقم مكتوب hex ([[0x]] معناها إن اللي بعدها hex)، و [[[char]0xf07b]] بتحوّل الرقم للحرف اللي رقمه كده، و [[$(...)]] جوه النص بتحط الناتج مكانها. لو الخط شغال هتشوف فولدر، وفرع git، ولوجو GitHub. لو شفت مربعات، الخط مش متطبق.`,
+          example: R`nerdfonts.com/font-downloads → Meslo → Download          zip with every weight
+Extract → select all .ttf → right-click → Install        per user (Install for all users = admin)
+oh-my-posh font install meslo                            same, from the terminal (needs Oh My Posh)
+winget install DEVCOM.JetBrainsMonoNerdFont              community package, JetBrainsMono only
+Windows Terminal → Ctrl+, → Defaults → Appearance → Font face → MesloLGM Nerd Font
+VS Code settings.json → "terminal.integrated.fontFamily": "MesloLGM Nerd Font"
+"$([char]0xf07b) $([char]0xf418) $([char]0xf09b)"       (PowerShell) folder, git branch, GitHub`,
+          try: "سطّب Meslo Nerd Font، وخليه خط Windows Terminal والترمنال بتاع VS Code، واطبع سطر الأيقونات (آخر سطر في المثال) في الاتنين.",
+          flag: "keys",
+          deep: {
+            why: "ثيمات الترمنال بتعرض الـ branch وحالة git ونسخة Node بأيقونات صغيرة بتوفّر مساحة وبتتقري بسرعة. من غير الخط اللي فيه الأيقونات دي، الـ prompt بيطلع مليان مربعات، وناس كتير تفتكر إن الثيم بايظ والمشكلة في الخط.",
+            how: R`الأيقونات دي مكانها في Unicode منطقة اسمها Private Use Area (من [[U+E000]] لـ [[U+F8FF]]، وفيه مناطق تانية بعد كده). الأرقام دي مالهاش شكل رسمي، وكل خط بيحط فيها اللي هو عايزه. Nerd Fonts بياخد أيقونات من مجموعات زي Font Awesome و Devicons و Octicons و Powerline ويحطها في أرقام ثابتة، فأي برنامج يطبع [[U+F418]] عارف إنها هتطلع فرع git لو الخط Nerd Font.
+
+Install العادية بتحط الخط في فولدر خطوط اليوزر ([[%LOCALAPPDATA%\Microsoft\Windows\Fonts]])، و Install for all users في [[C:\Windows\Fonts]]. والترمنال بيرسم بالخط اللي في إعداداته بس، فالتسطيب لوحده مش كفاية: لازم تختاره.
+
+ولو بتستخدم WSL أو ssh لسيرفر: الخط بيتسطب على ويندوز بس، مش جوه لينكس، لأن Windows Terminal هو اللي بيرسم الحروف. الـ prompt اللي على السيرفر بيبعت رقم الأيقونة، والترمنال اللي على جهازك هو اللي بيرسمها.`,
+            when: "قبل ما تسطّب أي ثيم للترمنال (Oh My Posh أو Starship أو Powerlevel10k) أو Terminal-Icons. ومرة واحدة على كل جهاز جديد.",
+            mistakes: R`تغيّر الخط في Windows Terminal بس، وتفتح الترمنال بتاع VS Code تلاقي مربعات: ليه إعداد لوحده. أو تكتب اسم الملف ([[MesloLGMNerdFont-Regular]]) بدل اسم العيلة ([[MesloLGM Nerd Font]]). أو تسطّب ملف Regular بس، فالكلام العريض والمايل بيترسم بشكل تقريبي: سطّب كل الملفات. أو تسطّب الخط جوه WSL وتستنى Windows Terminal يشوفه.`
+          },
+          lines: [
+            "الموقع الرسمي: اختار Meslo (أو أي خط) ونزّل الـ zip، وفيه كل الأوزان: عادي وعريض ومايل.",
+            "فك الـ zip وسطّب ملفات [[.ttf]] كلها مرة واحدة. Install لوحدها لليوزر بتاعك بس ومش محتاجة أدمن.",
+            "نفس الخطوتين بأمر واحد، لو Oh My Posh متسطب.",
+            "الـ package الوحيدة في winget: من حد في المجتمع، ولخط واحد بس.",
+            "خليه خط كل البروفايلات في Windows Terminal. اختاره من القايمة بدل ما تكتبه، عشان الاسم يبقى مظبوط.",
+            "الترمنال اللي جوه VS Code ليه خط لوحده، مش بياخد من Windows Terminal.",
+            "اختبار في PowerShell: ٣ أيقونات بأرقامها. فولدر وفرع git ولوجو GitHub يبقى تمام، ومربعات يبقى الخط مش متطبق."
+          ],
+          sol: R`في Windows Terminal: [[Ctrl+,]] ثم Defaults تحت Profiles ثم Appearance، ومن Font face اختار [[MesloLGM Nerd Font]] ودوس Save. في VS Code: Ctrl+Shift+P ثم [[Preferences: Open User Settings (JSON)]]، وضيف [["terminal.integrated.fontFamily": "MesloLGM Nerd Font"]] واحفظ. سطر الاختبار في الاتنين بيطبع ٣ أيقونات جنب بعض: فولدر، وفرع git، ولوجو GitHub.
+
+اتأكدت من الأسامي من الملفات نفسها: [[MesloLGMNerdFont-Regular.ttf]] من الـ repo الرسمي اسم العيلة جواه [[MesloLGM Nerd Font]]، ونسخة Mono [[MesloLGM Nerd Font Mono]]، وملف Powerlevel10k [[MesloLGS NF]]. واتأكدت إن الأيقونات التلاتة موجودة في الخطين دول، ومش موجودة في Cascadia Mono (خط Windows Terminal الافتراضي) ولا في خطوط الأيقونات اللي جاية مع ويندوز، فلو ظهرت يبقى الخط اشتغل فعلًا.
+
+لو ظهرت مربعات: الخط مش متختار، أو البرنامج كان مفتوح وانت بتسطّب (اقفل كل نوافذه وافتحه). لو Windows Terminal طلّع تحذير [[Unable to find the following fonts]] وبعده الاسم، يبقى الاسم مكتوب غلط أو الخط مش متسطب. ولو الأيقونات راكبة على الحرف اللي بعدها أو مقطوعة، جرّب نسخة [[Mono]].`
+        },
+        {
+          cmd: "Windows Terminal settings.json",
+          title: "شكّل Windows Terminal من ملف الإعدادات",
+          desc: R`كل إعدادات Windows Terminal (الخط والألوان والشفافية والبروفايل اللي بيفتح الأول) متخزنة في ملف JSON واحد اسمه [[settings.json]]. [[Ctrl+Shift+,]] بيفتحه في محرر النصوص بتاعك، و [[Ctrl+,]] بيفتح نفس الإعدادات بواجهة.
+
+مكانه:
+• النسخة العادية (من Store أو winget): [[%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json]].
+• Preview: نفس المسار بس الفولدر اسمه [[Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe]].
+• لو متسطب بـ Scoop أو Chocolatey: [[%LOCALAPPDATA%\Microsoft\Windows Terminal\settings.json]].
+و [[Ctrl+Alt+,]] بيفتح [[defaults.json]]: كل القيم الافتراضية، للقراية بس، وأي تعديل فيه بيتجاهل.
+
+JSON بسرعة: [[{ }]] object فيه مفاتيح وقيم، و [[[ ]]] لستة، و [[:]] بين المفتاح وقيمته، و [[,]] بين كل عنصر واللي بعده، ومفيش فاصلة بعد آخر عنصر. والنصوص والمفاتيح بين علامات تنصيص مزدوجة، و [[\]] جوه نص بتتكتب [[\\]].
+
+[[profiles]] جواه [[defaults]] (إعدادات بتسري على كل البروفايلات) و [[list]] (البروفايلات نفسها: PowerShell و Command Prompt و Ubuntu...). أي مفتاح في [[defaults]] كل البروفايلات بتاخده، إلا لو بروفايل كاتب نفس المفتاح جواه في [[list]]، فبتاعه هو اللي يكسب.
+
+مفاتيح [[defaults]] في المثال:
+• [[font]]: جواه [[face]] اسم الخط (زي [[MesloLGM Nerd Font]] من درس Nerd Font) و [[size]] الحجم بالـ points (الافتراضي 12).
+• [[colorScheme]]: اسم مجموعة الألوان. فيه جاهز زي [[Campbell]] (الافتراضي) و [[One Half Dark]] و [[Tango Dark]]، أو اسم scheme عملتها في [[schemes]].
+• [[opacity]]: الشفافية من 0 لـ 100 (100 = مش شفاف خالص). و [[useAcrylic]] بـ [[true]] بيخلي الجزء الشفاف مضبب (acrylic)، و [[false]] شفاف من غير تضبيب، ودي على ويندوز 11 بس.
+• [[backgroundImage]]: مسار صورة خلفية، و [[backgroundImageOpacity]] شفافيتها من 0 لـ 1 (0.15 يعني باهتة جدًا فالكلام يتقري).
+• [[cursorShape]]: شكل المؤشر: [[bar]] (الافتراضي) أو [[underscore]] أو [[filledBox]] أو [[emptyBox]] أو [[vintage]] أو [[doubleUnderscore]].
+• [[padding]]: المسافة بين الكلام وحرف النافذة: رقم واحد لكل الجهات، أو أربعة بالترتيب شمال وفوق ويمين وتحت ([["12, 8, 12, 8"]]).
+• [[startingDirectory]]: الفولدر اللي التاب الجديد بيفتح فيه. [[%USERPROFILE%]] متغير بيئة ويندوز بيتبدّل بمسار الـ home بتاعك، وده الافتراضي.
+
+وفي أول مستوى (برّه [[profiles]]):
+• [[defaultProfile]]: البروفايل اللي بيفتح مع Ctrl+Shift+T أو [[wt]]، باسمه ([["PowerShell"]] ده PowerShell 7) أو بالـ GUID بتاعه.
+• [[copyOnSelect]]: [[true]] يعني أي كلام تحدده بالماوس بيتنسخ على طول، وكليك يمين بيلزق.
+• [[schemes]]: لستة الـ color schemes بتاعتك. كل واحدة ليها [[name]] (اللي بتكتبه في colorScheme)، و [[background]] و [[foreground]] (لون الكلام)، و [[cursorColor]] و [[selectionBackground]] (اختياريين)، و 16 لون الترمنال: 8 عادية ([[black]] و [[red]] و [[green]] و [[yellow]] و [[blue]] و [[purple]] و [[cyan]] و [[white]]) و 8 فاتحة بنفس الأسامي وقبلها [[bright]] ([[brightRed]] مثلًا). كل لون بالشكل [[#RRGGBB]]: أحمر وأخضر وأزرق، كل واحد رقمين hex.
+
+لو فيه غلطة: الترمنال بيقرا الملف أول ما تحفظ. غلطة في شكل الـ JSON (فاصلة ناقصة أو زيادة) بتطلّع تحذير [[Failed to reload settings]] والترمنال يفضل على الإعدادات اللي قبلها، ولو فتحته والملف بايظ بيقول [[Temporarily using the Windows Terminal default settings.]] ويشتغل بالافتراضي لحد ما تصلّحه. ولو الـ JSON سليم بس فيه قيمة غلط (زي colorScheme مش موجودة)، بيطلع تحذير بالمشكلة دي بس ويتجاهل القيمة.
+
+من الواجهة ([[Ctrl+,]]): Startup فيها Default profile، و Profiles ثم Defaults ثم Appearance فيها الخط والألوان والشفافية والخلفية والمؤشر والـ padding، و Color schemes تعمل فيها scheme جديدة أو تعدّل نسخة من واحدة جاهزة، و Interaction فيها Automatically copy selection to clipboard (ده copyOnSelect). وتحت على الشمال Open JSON file بيفتح نفس الملف.`,
+          example: R`{
+  "defaultProfile": "PowerShell",
+  "copyOnSelect": true,
+  "profiles": {
+    "defaults": {
+      "font": { "face": "MesloLGM Nerd Font", "size": 12 },
+      "colorScheme": "My Dark",
+      "opacity": 90,
+      "useAcrylic": true,
+      "backgroundImage": "C:\\Users\\you\\Pictures\\terminal-bg.png",
+      "backgroundImageOpacity": 0.15,
+      "cursorShape": "filledBox",
+      "padding": "12, 8, 12, 8",
+      "startingDirectory": "%USERPROFILE%\\projects"
+    }
+  },
+  "schemes": [
+    {
+      "name": "My Dark",
+      "background": "#1E1E2E", "foreground": "#CDD6F4",
+      "cursorColor": "#F5E0DC", "selectionBackground": "#585B70",
+      "black": "#45475A", "red": "#F38BA8", "green": "#A6E3A1", "yellow": "#F9E2AF",
+      "blue": "#89B4FA", "purple": "#F5C2E7", "cyan": "#94E2D5", "white": "#BAC2DE",
+      "brightBlack": "#585B70", "brightRed": "#F38BA8", "brightGreen": "#A6E3A1", "brightYellow": "#F9E2AF",
+      "brightBlue": "#89B4FA", "brightPurple": "#F5C2E7", "brightCyan": "#94E2D5", "brightWhite": "#A6ADC8"
+    }
+  ]
+}`,
+          try: R`افتح الملف بـ [[Ctrl+Shift+,]] وجوه [[profiles]] ثم [[defaults]] ضيف [["colorScheme": "One Half Dark"]] و [["opacity": 85]] واحفظ، وشوف الترمنال اتغير من غير ما تقفله. وبعدين امسح فاصلة عمدًا واحفظ وشوف التحذير، ورجّعها.`,
+          flag: "script",
+          deep: {
+            why: "الواجهة كويسة لتعديل واحد، لكن الملف بيخليك تشوف كل إعداداتك في مكان واحد، وتنسخها لجهاز جديد في ثانية، وتحطها مع الـ dotfiles بتاعتك على GitHub.",
+            how: R`الإعدادات طبقات: [[defaults.json]] اللي جاي مع البرنامج، وفوقه [[profiles.defaults]] بتاعتك، وفوقه كل بروفايل في [[list]]، والطبقة الأقرب للبروفايل تكسب. البروفايلات اللي بتتعمل لوحدها (PowerShell 7 و WSL و Git Bash) ليها [["source"]]، وكل بروفايل ليه [["guid"]] رقم ثابت بيتعرف بيه.
+
+البرنامج بيراقب الملف، فأي حفظ بيتطبق على النوافذ المفتوحة على طول. ولو حفظت من الواجهة، البرنامج بيكتب الملف من جديد بترتيبه هو. وأول الملف فيه [["$schema"]]، وده بيخلي VS Code يعرف المفاتيح المسموحة فيكمّلها لك ويعلّم على الغلط وانت بتكتب.
+
+[[colorScheme]] تقدر تديله اتنين: [[{ "light": "One Half Light", "dark": "One Half Dark" }]] فيتغير مع ثيم الترمنال. ولو عايز ترجّع كل حاجة للأصل: اقفل الترمنال، وامسح [[settings.json]] و [[state.json]] اللي جنبه، وافتحه يعمل ملف جديد.`,
+            when: "أول ما تجهّز جهاز ويندوز للشغل، وكل ما تسطّب خط أو ثيم جديد. ولما تنقل إعداداتك لجهاز تاني: انسخ الملف.",
+            mistakes: R`تلزق مسار فيه [[\]] واحدة فالـ JSON يبوظ: لازم [[\\]] أو [[/]]. وتسيب فاصلة بعد آخر عنصر في object أو لستة. وتلزق المثال مكان الملف كله فتضيّع [["list"]] وتعديلاتك على البروفايلات: عدّل المفاتيح جوه ملفك. وتحط الإعداد في بروفايل واحد جوه [[list]] وتستغرب ليه التاني متغيرش: الإعدادات العامة مكانها [[defaults]]. وتكتب [[opacity]] بالشكل القديم [[0.8]]: القيمة دلوقتي من 0 لـ 100 (المفتاح القديم [[acrylicOpacity]] كان من 0 لـ 1).`
+          },
+          lines: [
+            "بداية الملف.",
+            "البروفايل اللي بيفتح الأول: PowerShell 7. لو مش متسطب عندك اكتب [[Windows PowerShell]].",
+            "التحديد بالماوس بينسخ على طول، وكليك يمين بيلزق.",
+            "بداية البروفايلات.",
+            "الإعدادات اللي كل البروفايلات بتاخدها.",
+            "الخط (Nerd Font) وحجمه.",
+            "مجموعة الألوان اللي معرّفة تحت في schemes.",
+            "شفافية: 90 من 100 (100 = مش شفاف).",
+            "الجزء الشفاف يبقى مضبب.",
+            R`صورة خلفية. كل [[\]] في المسار متكتبة [[\\]].`,
+            "الصورة باهتة جدًا عشان الكلام يتقري فوقها.",
+            "مؤشر مربع مليان بدل الخط الرفيع.",
+            "مسافة 12 شمال ويمين، و 8 فوق وتحت.",
+            "التاب الجديد يفتح في فولدر projects جوه الـ home (لازم يكون موجود).",
+            "قفلة defaults.",
+            "قفلة profiles. الـ list بتاعتك مش في المثال: سيبها في ملفك زي ما هي.",
+            "بداية لستة الـ color schemes.",
+            "بداية scheme واحدة.",
+            "اسمها، وده اللي مكتوب في colorScheme فوق.",
+            "لون الخلفية ولون الكلام.",
+            "لون المؤشر ولون خلفية الكلام المتحدد.",
+            "أول 4 ألوان من الـ 8 العادية.",
+            "الـ 4 التانيين.",
+            "أول 4 من الفاتحة (bright).",
+            "آخر 4.",
+            "قفلة الـ scheme.",
+            "قفلة اللستة.",
+            "آخر الملف."
+          ],
+          sol: R`أول ما تحفظ (Ctrl+S) الترمنال المفتوح بيتغير من غير restart: الألوان بقت One Half Dark والنافذة شفافة شوية. لما تمسح الفاصلة وتحفظ: بيطلع تحذير [[Failed to reload settings]] وتحته [[Settings could not be reloaded from file. Check for syntax errors, including trailing commas.]]، والترمنال يفضل بالإعدادات اللي كانت قبل الغلطة. رجّع الفاصلة واحفظ، التحذير يروح والتعديل يتطبق.
+
+نصوص التحذيرات دي من ملفات الترجمة بتاعة Windows Terminal نفسه على GitHub، وأسامي المفاتيح ومكان الملف طابقتها مع Microsoft Learn ومع ملف حقيقي على جهاز عليه Windows Terminal 1.24، والمثال اتأكدت إنه JSON سليم. لو كتبت اسم scheme مش موجودة، هيطلع تحذير فيه [[Found a profile with an invalid "colorScheme"]] والبروفايل يرجع للألوان الافتراضية. ولو [[startingDirectory]] لفولدر مش موجود، التاب هيطبع [[Could not access starting directory]] ويفتح في مكان تاني. ولو صورة الخلفية مش موجودة: [[One or more resources (such as icon or backgroundImage) specified in your settings could not be found.]]`
+        },
+        {
+          cmd: "Win+`",
+          title: "ترمنال بينزل من فوق الشاشة بزرار (Quake mode)",
+          desc: R`[[Win+$__bt]] (الزرار اللي فوق Tab وشمال 1) بيطلّع نافذة Windows Terminal بتنزل من فوق الشاشة وانت في أي برنامج، ونفس الزرار بيخبّيها. الفكرة جاية من كونسول لعبة Quake، وعشان كده اسمها quake mode.
+
+النافذة دي اسمها [[_quake]] وليها قواعد:
+• بتلزق في النص اللي فوق من الشاشة، وبتكبّرها أو تصغّرها من الحرف اللي تحت بس.
+• مفيهاش شريط تابات ولا title bar (ده اسمه focus mode)، بس جواها تابات و panes عادي: Ctrl+Shift+T تاب جديد، و Ctrl+Tab تتنقل بينهم.
+• لما تتخبّى مش بتظهر في الـ taskbar ولا في Alt+Tab، واللي شغال جواها بيفضل شغال.
+• نافذة واحدة بس تبقى quake في نفس الوقت.
+
+الاختصار بيشغّل action اسمها [[quakeMode]]، ودي نسخة جاهزة من action تانية اسمها [[globalSummon]] (استدعاء من أي مكان) بالاسم [[_quake]]. «global» يعني الزرار شغال وانت في المتصفح أو VS Code، مش جوه الترمنال بس. وهو متسجّل في الإعدادات الافتراضية كـ [[win+sc(41)]]: [[sc(41)]] يعني scan code رقم 41، يعني مكان الزرار على الكيبورد مش الحرف المكتوب عليه، فبيشتغل حتى والكيبورد عربي (الزرار ده عليه «ذ»).
+
+شرط مهم: الاختصار بيشتغل بس لو فيه نسخة من Windows Terminal شغالة، لأن البرنامج هو اللي بيسجّل الزرار عند ويندوز. لو قفلت كل نوافذه، [[Win+$__bt]] مش هيعمل حاجة. الحل: [[Ctrl+,]] ثم Startup ثم Launch on machine startup، فيقوم مع ويندوز. (في شروحات قديمة هتلاقي مفتاح [[startOnUserLogin]] في الـ JSON: اتشال من نسخة 1.22، وبقى الزرار اللي في الواجهة بيتحكم مباشرة في Startup apps بتاعة ويندوز.)
+
+[[wt -w _quake]] بيفتح نفس النافذة من Win+R أو من أي ترمنال: [[-w]] معناها «اشتغل في النافذة اللي اسمها كده»، ولو موجودة بيفتح فيها تاب جديد.
+
+ولو عايز زرار تاني أو من غير حركة النزول، اعمل action بنفسك في [[settings.json]]: [[globalSummon]] بالاسم [[_quake]]، و [[dropdownDuration]] مدة حركة النزول بالـ milliseconds (0 = تظهر على طول، و quakeMode بيستخدم 200)، و [[toggleVisibility]] بـ [[true]] يخلي نفس الزرار يخبّيها. وبعدين في لستة [[keybindings]] اربط الزرار بالـ [[id]] بتاع الـ action. ومن غير [[name]]، [[globalSummon]] بيجيب آخر نافذة ترمنال عادية استخدمتها، ودي مفيدة لو عايز زرار يجيب الترمنال العادي من أي حتة.`,
+          example: R`Win+$__bt                  show / hide the quake window, from any app
+wt -w _quake           open the same window from Win+R or a terminal
+Ctrl+Shift+T           new tab inside it (tab bar is hidden, Ctrl+Tab switches)
+Drag the bottom edge   taller or shorter (width is fixed)
+Ctrl+, → Startup → Launch on machine startup → On   so Win+$__bt works right after login
+Ctrl+Shift+, → "actions" + "keybindings"           your own globalSummon key (solution below)`,
+          try: R`دوس [[Win+$__bt]] وانت في المتصفح، واكتب أمر، ودوسه تاني تختفي. وبعدين اعمل اختصار Ctrl+Alt+T (زي أوبونتو) يجيب نفس النافذة من غير حركة النزول.`,
+          flag: "keys",
+          deep: {
+            why: "بتحتاج ترمنال لأمر سريع ([[git status]]، أو [[ping]]، أو تشوف مين ماسك بورت) وانت في المتصفح أو VS Code. بدل ما تدوّر على نافذة الترمنال وسط عشر نوافذ، زرار واحد ينزّلها فوق اللي انت فيه، ونفس الزرار يرجّعك مكانك.",
+            how: R`Windows Terminal بيسجّل الاختصار عند ويندوز بـ [[RegisterHotKey]]، فويندوز بيبعتله الزرار حتى لو برنامج تاني هو اللي قدامك. عشان كده لازم يكون شغال، ولو برنامج تاني سجّل نفس الزرار قبله، الترمنال مش هيقدر ياخده. ولو عندك نسخة أدمن ونسخة عادية (أو Stable و Preview) شغالين، أول واحدة فتحت هي اللي بتاخد الزرار.
+
+[[quakeMode]] نفسها مجرد [[globalSummon]] بالقيم دي: [[name]] = [[_quake]]، و [[dropdownDuration]] = 200، و [[toggleVisibility]] = [[true]]، و [[monitor]] = [[toMouse]] (تنزل على الشاشة اللي فيها الماوس)، و [[desktop]] = [[toCurrent]] (تيجي على الـ virtual desktop اللي انت عليه). والاسم [[_quake]] محجوز: أي نافذة بالاسم ده بتاخد سلوك الـ quake.`,
+            when: "لو بتفتح الترمنال عشرين مرة في اليوم لأوامر قصيرة. ولو بتشتغل على أكتر من شاشة: النافذة بتنزل على الشاشة اللي فيها الماوس.",
+            mistakes: R`تقفل كل نوافذ Windows Terminal وتستغرب إن [[Win+$__bt]] مبيعملش حاجة. أو تفتح نافذة [[_quake]] بـ [[wt -w _quake]] وانت شايل الاختصار، وبعدين تصغّرها: مش هتلاقيها في الـ taskbar ولا Alt+Tab، والحل Task Manager. أو تدوّر على [[startOnUserLogin]] في الـ JSON زي الشروحات القديمة: اتشال، والإعداد بقى في الواجهة بس. أو تختار لـ globalSummon زرار بتستخدمه في برنامج تاني: طول ما الترمنال شغال، الزرار ده مش هيوصل للبرنامج التاني.`
+          },
+          lines: [
+            "اطلّع النافذة من أي برنامج، ودوسه تاني يخبّيها. لازم Windows Terminal يكون شغال.",
+            R`نفس النافذة بأمر: [[-w _quake]] يعني «في النافذة اللي اسمها _quake»، ولو موجودة بيفتح فيها تاب جديد.`,
+            "تاب جديد جواها. شريط التابات مخفي، فبتتنقل بـ Ctrl+Tab.",
+            "الحرف اللي تحت بس هو اللي بيتسحب، والعرض ثابت على عرض الشاشة.",
+            "خلّي الترمنال يقوم مع ويندوز، فالاختصار يشتغل من أول ما تفتح الجهاز.",
+            "زرار تاني أو من غير حركة: action من نوع globalSummon في settings.json (الحل تحت)."
+          ],
+          sol: R`[[Win+$__bt]] من المتصفح: النافذة بتنزل من فوق وبتاخد نص الشاشة اللي فوق، وفيها البروفايل الافتراضي. اكتب [[git status]] مثلًا، ودوس [[Win+$__bt]] تاني: بتطلع لفوق وتختفي، ومش هتلاقيها في الـ taskbar. ودوسه تاني هترجع بنفس اللي كان فيها.
+
+للاختصار الجديد: [[Ctrl+Shift+,]] وضيف العنصر اللي جوه [["actions"]] تحت للستة [["actions"]] اللي في ملفك، واللي جوه [["keybindings"]] للستة [["keybindings"]] (بفاصلة بينه وبين اللي قبله لو اللستة مش فاضية)، واحفظ. بعدها Ctrl+Alt+T من أي برنامج يجيب نفس النافذة على طول من غير حركة. لو مشتغلش، اقفل الترمنال كله وافتحه، ولو برضه لأ جرّب زرار تاني: ممكن برنامج تاني ماسكه.
+
+أسامي الـ actions والخصائص من صفحة Actions على Microsoft Learn، والاختصار الافتراضي [[win+sc(41)]] لقيته في [[defaults.json]] بتاع Windows Terminal 1.24، وإن [[startOnUserLogin]] اتشال لقيته في كود Windows Terminal على GitHub (موجود في 1.21 ومش موجود من 1.22). مجربتش الضغط على الاختصار نفسه هنا. لو [[Win+$__bt]] معملش حاجة: Windows Terminal مش شغال، أو برنامج تاني ماسك الزرار، أو فيه نسخة أدمن شغالة خدت الزرار قبل العادية.`,
+          solCode: R`"actions": [
+    { "command": { "action": "globalSummon", "name": "_quake", "dropdownDuration": 0 }, "id": "User.QuakeNoAnim" }
+],
+"keybindings": [
+    { "keys": "ctrl+alt+t", "id": "User.QuakeNoAnim" }
+]`
+        }
+      ]
+    },
+    {
       t: "أوبونتو: تخصيص",
       l: 3,
       n: "اختصاراتك انت، وإعدادات GNOME من الترمنال عشان تجهز أي جهاز في دقيقة",

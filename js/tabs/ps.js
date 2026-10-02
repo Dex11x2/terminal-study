@@ -1598,6 +1598,301 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`,
       ]
     },
     {
+      t: "شكّل PowerShell بتاعك",
+      l: 2,
+      n: R`ألوان، و prompt بيوريك الفولدر والـ branch، واقتراحات من أوامرك القديمة، وأيقونات للملفات: الترمنال اللي قاعد قدامه كل يوم يبقى مريح ويديك المعلومة من غير ما تسأل عليها`,
+      items: [
+        {
+          cmd: "$PSStyle",
+          title: "لوّن الكلام والملفات",
+          desc: R`[[$PSStyle]] متغير جاهز في PowerShell 7.2 وأحدث، فيه أكواد الألوان والتنسيق بأسامي مفهومة، فتلوّن أي نص بتطبعه، وتغيّر ألوان رسايل الـ error وأسامي الفولدرات والملفات في [[ls]].
+
+الترمنال بيفهم الألوان من «أكواد ANSI»: حروف بتبدأ بحرف خاص اسمه ESC (رقمه 27) وبعده كود زي [[[32m]] (أخضر) أو [[[0m]] (رجّع كل حاجة عادي). [[$PSStyle.Foreground.Green]] هو الكود ده جاهز، و [[$PSStyle.Reset]] بيقفل التلوين، ولو نسيته كل اللي بعده هيفضل ملوّن. و [[$( )]] جوه نص بين double quotes بتحط قيمة جوه النص (درس النصوص). و [[$PSStyle.Foreground.FromRgb(0xFF8800)]] أي لون بالـ hex ([[0x]] قبل الرقم معناها إنه hex)، و [[$PSStyle.Bold]] خط عريض.
+
+[[$PSStyle.Formatting.Error]] لون رسايل الـ error (وجنبه [[Warning]] و [[Verbose]] و [[TableHeader]] لعناوين الجداول). و [[$PSStyle.FileInfo.Directory]] لون الفولدرات في [[Get-ChildItem]]، و [[+]] بين كودين بيجمعهم (لون + bold). و [[$PSStyle.FileInfo.Extension[".md"]]] لون امتداد معين، والقوسين المربعين هنا بيختاروا المفتاح من لستة الامتدادات. و [[$PSStyle.OutputRendering]] بيقرر الألوان تطلع إمتى: [[Host]] (الافتراضي) ملوّن على الشاشة، و [[PlainText]] من غير ألوان خالص، و [[Ansi]] الأكواد دايمًا حتى لو الناتج رايح لملف.
+
+التغيير ده للنافذة دي بس؛ عشان يفضل حطه في [[$PROFILE]] (درس «$PROFILE»). وفي Windows PowerShell 5.1 مفيش [[$PSStyle]] أصلًا، فبتكتب الكود بإيدك: [[$e = [char]27]] وبعدين [["$e[32mOK$e[0m"]]. والألوان شغالة في Windows Terminal و VS Code؛ في الكونسول القديم (conhost) مع 5.1 ممكن تشوف حروف زي [[←[32m]] بدل اللون.`,
+          example: R`"$($PSStyle.Foreground.Green)OK$($PSStyle.Reset) build passed"
+"$($PSStyle.Bold)$($PSStyle.Foreground.FromRgb(0xFF8800))3 warnings$($PSStyle.Reset)"
+$PSStyle.Formatting.Error = $PSStyle.Foreground.BrightRed
+$PSStyle.FileInfo.Directory = $PSStyle.Foreground.BrightBlue + $PSStyle.Bold
+$PSStyle.FileInfo.Extension[".md"] = $PSStyle.Foreground.Magenta
+Get-ChildItem
+$PSStyle.OutputRendering`,
+          try: R`خلّي ملفات [[.json]] تظهر أصفر في [[ls]]، واطبع [[$PSStyle.FileInfo.Extension.Keys]] عشان تشوف الامتدادات اللي ليها لون من الأول.`,
+          deep: {
+            why: R`الألوان مش زينة وبس: سطر [[OK]] أخضر وسطر [[FAIL]] أحمر بتلاحظهم من غير ما تقرا، والفولدرات بلون مختلف بتفرّقها عن الملفات بنظرة. وقبل 7.2 كنت لازم تحفظ أكواد زي [[[32m]] أو تستخدم [[Write-Host -ForegroundColor]] اللي مش بيدخل الـ pipeline.`,
+            how: R`كل قيمة في [[$PSStyle]] نص عادي فيه كود ANSI، فتقدر تطبعه أو تلزقه في أي نص أو ترجعه من فانكشن. جرّب [[$PSStyle.Foreground.Red -replace [char]27, 'ESC']] هتشوف [[ESC[31m]]: الـ [[-replace]] بدّل حرف ESC (اللي مش بيتطبع) بكلمة عشان تشوفه.
+
+الفرق عن [[Write-Host -ForegroundColor Green]]: Write-Host بيكتب على الشاشة بس (درس «Write-Host والـ output»)، لكن النص الملوّن بـ $PSStyle قيمة عادية تتخزن في متغير أو تبقى جزء من الـ prompt (الدرس الجاي). وكمان [[FromRgb]] بيديك أي لون من 16 مليون، و Write-Host مفيهوش غير الـ 16 لون بتوع الكونسول.
+
+[[$PSStyle.Foreground]] فيه 16 لون: [[Black]] و [[Red]] و [[Green]] و [[Yellow]] و [[Blue]] و [[Magenta]] و [[Cyan]] و [[White]]، ولكل واحد نسخة [[Bright]] (و [[BrightBlack]] هو الرمادي). و [[$PSStyle.Background]] نفس الأسامي للخلفية. وفيه كمان [[Italic]] و [[Underline]] و [[Strikethrough]]، و [[Dim]] من 7.4. و [[$PSStyle.Progress.View]] شكل شريط التقدم: [[Minimal]] (الافتراضي، سطر واحد) أو [[Classic]] (المربع القديم فوق).
+
+[[OutputRendering]] بـ [[Host]] بيشيل الأكواد من ناتج الـ formatting (الجداول و [[ls]] والـ errors) لما يروح لملف، فاللوج ميتملاش حروف غريبة. لكن النص اللي انت لازق فيه الأكواد بإيدك بيتكتب زي ما هو: جربت [[Get-ChildItem > ls.txt]] فالملف طلع من غير ESC، و [["$($PSStyle.Foreground.Green)hi" > s.txt]] الملف طلع فيه ESC. ولو متغير البيئة [[NO_COLOR]] موجود، PowerShell بيخلي OutputRendering بـ [[PlainText]] لوحده.`,
+            when: R`في سكربتاتك عشان تلوّن النتايج المهمة (نجح، فشل، تحذير)، وفي الـ [[$PROFILE]] عشان تظبط ألوان الـ errors والملفات على ذوقك أو على خلفية الترمنال (الألوان الافتراضية معمولة لخلفية غامقة، فعلى خلفية فاتحة ممكن تحتاج تغيّرها).`,
+            mistakes: R`تنسى [[$PSStyle.Reset]] في آخر النص فالسطر اللي بعده والـ prompt يتلوّنوا. أو تستخدم [[$PSStyle]] في سكربت هيشتغل على 5.1 فالألوان تبقى فاضية من غير أي error (المتغير مش موجود فقيمته [[$null]]). أو تحط ألوان في نص هيتكتب في ملف CSV أو JSON فتلاقي الأكواد جوه الداتا. أو تحط [[$PSStyle.OutputRendering = "PlainText"]] وتنسى، وبعدين تستغرب الألوان راحت فين.`
+          },
+          lines: [
+            "نص فيه كلمة OK بالأخضر، و Reset بعدها عشان الباقي يرجع عادي.",
+            "خط عريض ولون برتقالي بالـ hex ([[0xFF8800]]).",
+            "رسايل الـ error تبقى أحمر فاتح.",
+            "الفولدرات في ls أزرق فاتح وعريض (لونين مجموعين بـ [[+]]).",
+            "ملفات .md بلون Magenta.",
+            "اعرض الفولدر وشوف الألوان الجديدة.",
+            "الألوان بتطلع إمتى؟ الافتراضي Host."
+          ],
+          sol: R`[[$PSStyle.FileInfo.Extension[".json"] = $PSStyle.Foreground.Yellow]] وبعدين [[Get-ChildItem]]: أسامي ملفات .json هتطلع صفرا والفولدرات بلونها. جربت المثال على PowerShell 7.6 وطلّعت الناتج بالأكواد بدل الألوان: الفولدر [[src]] طلع قبله [[ESC[94mESC[1m]] (أزرق فاتح + bold) وبعده [[ESC[0m]]، و [[notes.md]] قبله [[ESC[35m]] (Magenta)، و [[build.ps1]] قبله [[ESC[33;1m]] (لون جاهز لملفات PowerShell).
+
+[[$PSStyle.FileInfo.Extension.Keys]] طلّع الامتدادات كل واحد في سطر: أول 11 جاهزين من الأول ([[.zip]] و [[.tgz]] و [[.gz]] و [[.tar]] و [[.nupkg]] و [[.cab]] و [[.7z]] و [[.ps1]] و [[.psd1]] و [[.psm1]] و [[.ps1xml]]، يعني ملفات الضغط وملفات PowerShell)، وبعدهم اللي انت زوّدته ([[.md]] و [[.json]]). وملحوظة: [[app.js]] طلع أخضر عريض من غير ما أحدد له لون، لأن [[.js]] موجود في متغير [[PATHEXT]] بتاع ويندوز فـ PowerShell بيعتبره ملف تنفيذي ويلوّنه بـ [[$PSStyle.FileInfo.Executable]]. ولو الألوان مش ظاهرة خالص، اطبع [[$PSStyle.OutputRendering]]: لو [[PlainText]] يبقى حد غيّره أو متغير [[NO_COLOR]] موجود (لقيته موجود في البيئة اللي جربت فيها، وأول ما شلته رجعت [[Host]]).`,
+          solCode: R`$PSStyle.FileInfo.Extension[".json"] = $PSStyle.Foreground.Yellow
+Get-ChildItem
+$PSStyle.FileInfo.Extension.Keys`
+        },
+        {
+          cmd: "function prompt",
+          title: "اعمل الـ prompt بتاعك",
+          desc: R`الـ prompt (الكلام اللي قبل المكان اللي بتكتب فيه، زي [[PS C:\Users\ali\projects\shop>]]) هو ناتج فانكشن اسمها [[prompt]]، و PowerShell بينادي عليها قبل كل أمر. لو عرّفت فانكشن بنفس الاسم، الـ prompt بتاعك هو اللي هيظهر: هنا الوقت، واسم الفولدر الحالي بس بدل المسار كله، والـ git branch، و [[[admin]]] لو النافذة أدمن، وسهم أخضر أو أحمر حسب آخر أمر نجح ولا لأ، وكمان اسم الفولدر في عنوان النافذة.
+
+القاعدة الأساسية: الفانكشن لازم ترجع نص، والنص ده هو الـ prompt (عشان كده آخر سطر نص لوحده من غير [[Write-Host]]). لو مرجعتش حاجة أو حصل فيها error، PowerShell بيعرض [[PS>]] وخلاص.
+
+السطرين اللي بره الفانكشن بيتحسبوا مرة واحدة بس: [[$IsAdmin]] بيسأل ويندوز «اليوزر الحالي ليه دور Administrator؟» ([[[Security.Principal.WindowsPrincipal]]] نوع من .NET، و [[::GetCurrent()]] بيجيب اليوزر الحالي)، و [[$HasGit]] هل git متسطب (و [[[bool]]] بيحوّل النتيجة لـ True أو False).
+
+جوه الفانكشن: [[$ok = $?]] لازم أول سطر، لأن [[$?]] فيها True لو آخر أمر نجح، وأي سطر قبلها هيغيّرها. و [[$code = $LASTEXITCODE]] بيحفظ exit code آخر برنامج، لأن [[git]] جوه الـ prompt هيكتب فوقه، وفي الآخر [[$global:LASTEXITCODE = $code]] بيرجّعه ([[$global:]] يعني المتغير اللي بره الفانكشن، مش نسخة جواها). و [[Split-Path -Leaf $PWD.Path]] آخر جزء من المسار، و [[$PWD]] متغير جاهز فيه الفولدر الحالي. و [[git branch --show-current]] اسم الـ branch، و [[2>$null]] بيرمي رسالة الـ error لو انت مش جوه repo. و [[$Host.UI.RawUI.WindowTitle]] عنوان النافذة أو التاب. و [[+=]] بتزوّد على النص اللي في المتغير، والألوان من [[$PSStyle]] (الدرس اللي فات).
+
+الكود ده بيفضل للنافذة دي بس. عشان يبقى دايم، الصقه في [[$PROFILE]] (افتحه بـ [[code $PROFILE]] أو [[notepad $PROFILE]]، والخطوات في درس «$PROFILE» في «البيئة والإعدادات») وبعدين [[. $PROFILE]].`,
+          example: R`$IsAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+$HasGit = [bool](Get-Command git -ErrorAction SilentlyContinue)
+
+function prompt {
+    $ok = $?
+    $code = $LASTEXITCODE
+    $folder = Split-Path -Leaf $PWD.Path
+    $branch = if ($HasGit) { git branch --show-current 2>$null }
+    $Host.UI.RawUI.WindowTitle = "$folder - PowerShell"
+    $p = "$($PSStyle.Foreground.BrightBlack)$(Get-Date -Format HH:mm) $($PSStyle.Foreground.Cyan)$folder"
+    if ($branch) { $p += " $($PSStyle.Foreground.Green)($branch)" }
+    if ($IsAdmin) { $p += " $($PSStyle.Foreground.Red)[admin]" }
+    $arrow = if ($ok) { $PSStyle.Foreground.Green } else { $PSStyle.Foreground.Red }
+    $global:LASTEXITCODE = $code
+    "$p$arrow > $($PSStyle.Reset)"
+}`,
+          try: R`الصق الكود في النافذة، وادخل فولدر فيه git repo وفولدر مفيهوش، واكتب [[Get-Item nosuchfile]] وشوف السهم بقى أحمر. وبعدين احفظه في [[$PROFILE]].`,
+          flag: "script",
+          deep: {
+            why: R`الـ prompt الافتراضي بيكتب المسار كله، فلما تبقى في [[C:\Users\ali\Documents\projects\shop\frontend\src]] نص الشاشة بيروح عليه. وأهم معلومة وانت شغال بـ git (انت على أنهي branch) مش ظاهرة، فتعمل commit على main بالغلط. prompt بيوريك اللي محتاجه بس بيوفّر عليك [[git status]] و [[pwd]] كل شوية.`,
+            how: R`PowerShell بينادي [[prompt]] بعد كل أمر ويطبع اللي رجع. ولو PSReadLine شغال (وهو شغال افتراضيًا)، بيلوّن آخر [[> ]] في الـ prompt بالأحمر لو السطر اللي بتكتبه فيه غلطة syntax، ولو الحتة دي اتلخبطت مع الـ prompt بتاعك فيه [[Set-PSReadLineOption -PromptText "> "]].
+
+الفانكشن بتتنفذ قبل كل أمر، فلازم تبقى سريعة: [[git branch --show-current]] بياخد ملّي ثواني، لكن [[git status]] على repo كبير ممكن ياخد ثانية كل مرة. وعشان كده [[$IsAdmin]] و [[$HasGit]] بره الفانكشن: بيتحسبوا مرة لما الـ profile يتحمّل، مش مع كل أمر.
+
+[[(Get-Command prompt).ScriptBlock]] بيوريك كود الـ prompt الحالي. والافتراضي بتاع PowerShell هو [["PS $($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "]]. ولو عايز ترجع له، افتح نافذة جديدة (أو امسح الكود من الـ profile).
+
+[[git branch --show-current]] محتاج git 2.22 أو أحدث، وفي حالة detached HEAD بيرجع فاضي فالـ branch مش هيظهر، وده مقصود. ولو git مش متسطب، [[2>$null]] لوحدها مش بتخفي error «is not recognized»، وعشان كده [[$HasGit]].
+
+في 5.1 لو عايز ألوان، بدّل [[$PSStyle.Foreground.Green]] بـ [["$([char]27)[32m"]] و [[$PSStyle.Reset]] بـ [["$([char]27)[0m"]]. ولو عايز prompt جاهز بأيقونات من غير ما تكتب كود، ده oh-my-posh (آخر درس في الجزء ده)، بس هو بيعرّف [[prompt]] بتاعته، فاللي يتحمّل الأخير في الـ profile هو اللي بيكسب.`,
+            when: R`أول ما تبدأ تشتغل في الترمنال يوميًا، وخصوصًا مع git ومع نوافذ أدمن ([[[admin]]] الأحمر بينبّهك قبل ما تمسح حاجة وانت بصلاحيات عالية). وعنوان النافذة مفيد لما يبقى عندك تابات كتير في Windows Terminal.`,
+            mistakes: R`[[$ok = $?]] مش أول سطر، فبتقرا نتيجة سطر جوه الفانكشن مش آخر أمر انت كتبته، والسهم يفضل أخضر دايمًا. أو تطبع الـ prompt بـ [[Write-Host]] من غير ما ترجع نص، فيظهر جنبه [[PS>]]. أو تنسى ترجّع [[$LASTEXITCODE]] فسكربتاتك تقرا 128 بتاعة git. أو تحط أمر بطيء (زي [[git status]] أو طلب من النت) فكل Enter تستنى. أو تحط الكود في profile بتاع 5.1 وانت شغال على 7 (كل نسخة ليها [[$PROFILE]] منفصل).`
+          },
+          lines: [
+            "مرة واحدة: اليوزر الحالي ليه دور Administrator؟ (يعني النافذة أدمن).",
+            "مرة واحدة: git متسطب؟ [[[bool]]] بيحوّل الناتج لـ True أو False.",
+            "فانكشن اسمها prompt بالظبط، فـ PowerShell يستخدمها بدل الافتراضية.",
+            "أول سطر لازم: آخر أمر نجح؟ أي سطر قبله هيغيّر [[$?]].",
+            "احفظ exit code آخر برنامج قبل ما git يكتب فوقه.",
+            "اسم الفولدر الحالي بس، مش المسار كله.",
+            "اسم الـ branch لو git موجود، و [[2>$null]] يخفي الـ error بره أي repo.",
+            "اكتب اسم الفولدر في عنوان النافذة أو التاب.",
+            "ابدأ النص: الوقت رمادي، واسم الفولدر cyan.",
+            "لو فيه branch زوّدها بالأخضر بين قوسين.",
+            "لو أدمن زوّد [[[admin]]] بالأحمر.",
+            "لون السهم: أخضر لو آخر أمر نجح، أحمر لو فشل.",
+            "رجّع الـ exit code زي ما كان للمتغير العام.",
+            "النص اللي بيرجع هو الـ prompt، وفي آخره Reset عشان كلامك ميتلوّنش.",
+            "قفلة الفانكشن."
+          ],
+          sol: R`جربته على PowerShell 7.6 (وشلت أكواد الألوان من الناتج عشان يتقري): في فولدر مشروع فيه git طلع [[13:20 full stack road map (main) > ]]، وفي [[$HOME]] طلع [[13:20 ali > ]] من غير branch، وعنوان النافذة بقى [[ali - PowerShell]]. وبعد [[Get-Item nosuchfile]] السهم بقى أحمر ([[ESC[31m]]) لأن [[$?]] بقت False، وأول أمر ناجح بعدها رجّعه أخضر.
+
+وجربت ليه [[$global:LASTEXITCODE = $code]] مهم: من غيره، بعد [[cmd /c exit 3]] والـ prompt، [[$LASTEXITCODE]] بقى [[128]] (الـ exit code بتاع git لما يقول «not a git repository») بدل [[3]]، فأي سكربت بيفحصه بعدها هيتلخبط. ومعاه فضل [[3]].
+
+وعلى Windows PowerShell 5.1 نفس الكود اشتغل وطلع نفس الكلام بس من غير ألوان، لأن [[$PSStyle]] مش موجود فكل الألوان بقت نص فاضي. ولما عملت [[$HasGit]] بـ False، الـ branch اختفى ومفيش error. ولو شلت الشرط ده وgit مش متسطب، [[2>$null]] مش بتخفي [[The term 'git' is not recognized]]، فكان هيطلع قبل كل prompt.`,
+          solCode: R`if (-not (Test-Path $PROFILE)) { New-Item $PROFILE -Force }
+code $PROFILE
+. $PROFILE`
+        },
+        {
+          cmd: "Set-PSReadLineOption -Colors",
+          title: "ألوان الكلام وانت بتكتبه",
+          desc: R`وانت بتكتب أمر، PSReadLine (الموديول اللي بيدير سطر الكتابة) بيلوّن كل حتة حسب نوعها: اسم الأمر لون، والـ parameters لون، والنصوص لون. [[Set-PSReadLineOption -Colors]] بيغيّر الألوان دي، و [[Get-PSReadLineOption]] بيعرض الإعدادات الحالية كلها ومنها الألوان.
+
+[[-Colors]] بياخد hashtable ([[@{ }]]): كل مفتاح اسم حاجة، وقيمته اللون، وبينهم [[;]]. أهم المفاتيح: [[Command]] اسم الأمر، و [[Parameter]] اللي بيبدأ بشرطة زي [[-Recurse]]، و [[String]] النصوص بين علامات تنصيص، و [[Variable]] المتغيرات، و [[Comment]] التعليقات بعد [[#]]، و [[Number]] الأرقام، و [[Operator]] زي [[-eq]] و [[|]]، و [[Keyword]] زي [[if]] و [[foreach]]، و [[Error]] لون الغلطة (زي الـ [[>]] اللي بيحمر لما السطر فيه غلطة syntax)، و [[InlinePrediction]] لون الاقتراح الباهت (الدرس الجاي).
+
+اللون ممكن يبقى بـ 3 طرق: اسم من ألوان الكونسول الـ 16 زي [["DarkGray"]] و [["Cyan"]]، أو hex زي المواقع [["#FFD700"]]، أو كود ANSI جاهز زي [[$PSStyle.Foreground.BrightRed]] أو [["$([char]27)[38;5;244m"]] (اللون رقم 244 من 256 لون). و [[(Get-PSReadLineOption).CommandColor]] بيرجع الكود الحالي، و [[-replace [char]27, 'ESC']] بيبدّل حرف ESC المخفي بكلمة عشان تشوفه.
+
+الإعداد للنافذة دي بس؛ عشان يفضل حطه في [[$PROFILE]]. وده شغال في 5.1 كمان (PSReadLine 2.0 اللي جاي معاها بيقبل hex)، ماعدا [[InlinePrediction]] لأن الاقتراحات مش موجودة هناك.`,
+          example: R`Get-PSReadLineOption
+Set-PSReadLineOption -Colors @{ Command = "#FFD700"; Parameter = "DarkGray"; String = "#CE9178"; Variable = "Cyan"; Comment = "#6A9955" }
+Set-PSReadLineOption -Colors @{ Error = $PSStyle.Foreground.BrightRed; InlinePrediction = "$([char]27)[38;5;244m" }
+(Get-PSReadLineOption).CommandColor -replace [char]27, 'ESC'`,
+          try: R`لوّن الأوامر بلون VS Code ([["#DCDCAA"]]) والـ parameters رمادي، واكتب [[Get-ChildItem -Path . -Filter "*.json" # test]] من غير Enter وشوف كل حتة بلونها.`,
+          deep: {
+            why: R`الألوان الافتراضية معمولة لخلفية سودا، فعلى ثيم فاتح ممكن الـ parameters الرمادي متتقريش. ولما ألوان الترمنال تبقى زي ألوان الـ editor بتاعك، عينك بتتعود على نفس المعنى في المكانين. والتلوين نفسه بيكشف الغلط بدري: لو النص فضل بلون الـ String لآخر السطر، يبقى نسيت تقفل علامة التنصيص.`,
+            how: R`PSReadLine بيعمل parse للسطر مع كل حرف بتكتبه، ويلوّن كل token حسب نوعه. فالتلوين «فاهم» الكود: [[ls]] لوحدها بلون Command، لكن [["ls"]] بين علامات تنصيص بلون String.
+
+[[Get-PSReadLineOption]] بيعرض كل لون باسم المفتاح + [[Color]] ([[CommandColor]] و [[StringColor]] ...)، والقيمة نفسها كود ANSI فبتظهر ملوّنة مش مقروءة، وعشان كده [[-replace]]. وفيه كمان [[Selection]] لون الكلام اللي محدده، و [[Emphasis]] لون الكلمة اللي بتدوّر عليها في Ctrl+R، و [[ContinuationPrompt]] لون [[>>]] في الأوامر اللي على كذا سطر، و [[ListPrediction]] و [[ListPredictionSelected]] ألوان قايمة الاقتراحات.
+
+الألوان بالاسم (الـ 16) بتتغير حسب ثيم الترمنال: «Cyan» في ثيم Campbell غير «Cyan» في ثيم One Half Dark، أما hex بيطلع نفس اللون في أي ثيم. فلو عايز تغيّر شكل الترمنال كله، غيّر ثيم Windows Terminal نفسه (شوف درس الثيمات في تاب «اختصارات النظام») والـ 16 لون هيتغيروا مع بعض، واستخدم hex للحاجات اللي عايزها ثابتة.
+
+ملحوظة على الأسامي: [["Cyan"]] بيطلع [[ESC[96m]] (الـ cyan الفاتح)، و [["DarkCyan"]] هو العادي [[ESC[36m]]. يعني أسامي الكونسول من غير Dark هي النسخ الفاتحة.`,
+            when: R`مرة واحدة لما تظبط الترمنال بتاعك، أو لما تغيّر ثيم الترمنال لفاتح أو غامق وتلاقي حاجة مش مقروءة.`,
+            mistakes: R`تكتب المفتاح زي اسم الخاصية في Get-PSReadLineOption ([[CommandColor]] بدل [[Command]]) أو تزوّد حرف ([[Commands]]) فيطلع «is not a valid color property». أو تغيّر الألوان وتستغرب إنها راحت لما فتحت نافذة جديدة (لازم [[$PROFILE]]). أو تختار لون للـ Parameter قريب من الخلفية فمتشوفوش. أو تحط [[InlinePrediction]] في profile بتاع 5.1: PSReadLine 2.0 مفيهوش المفتاح ده فبيطلع [['InlinePrediction' is not a valid color property]].`
+          },
+          lines: [
+            "اعرض الإعدادات الحالية كلها، ومنها لون كل نوع.",
+            "غيّر ٥ ألوان مرة واحدة: hex زي المواقع، أو اسم لون من الـ 16.",
+            "لون الغلطة من [[$PSStyle]]، ولون الاقتراح بكود ANSI (اللون 244 من 256).",
+            "اقرا لون الأوامر الحالي، و [[-replace]] يبدّل حرف ESC المخفي بكلمة تتقري."
+          ],
+          sol: R`[[Set-PSReadLineOption -Colors @{ Command = "#DCDCAA"; Parameter = "DarkGray" }]] وبعدين اكتب السطر: [[Get-ChildItem]] هيبان أصفر فاتح، و [[-Path]] و [[-Filter]] رمادي، و [["*.json"]] بلون الـ String، و [[# test]] بلون الـ Comment. التغيير بيبان على طول على اللي بتكتبه، مش محتاج Enter.
+
+جربت المثال على PSReadLine 2.4.5 (اللي جاي مع PowerShell 7.6) وطلّعت الأكواد: [["#FFD700"]] بقت [[ESC[38;2;255;215;0m]] (لون 24-bit: أحمر 255 وأخضر 215 وأزرق 0)، و [["DarkGray"]] بقت [[ESC[90m]]، و [["Cyan"]] بقت [[ESC[96m]]، و [[InlinePrediction]] بقت [[ESC[38;5;244m]]. ولو كتبت مفتاح غلط زي [[Commands]] بيطلع [['Commands' is not a valid color property]]، ولو لون غلط زي [["Reddish"]] بيطلع [['Reddish' is not a valid color value. It must be a ConsoleColor, ANSI escape sequence, or RGB value with optional leading '#'.]]`,
+          solCode: R`Set-PSReadLineOption -Colors @{ Command = "#DCDCAA"; Parameter = "DarkGray" }
+(Get-PSReadLineOption).CommandColor -replace [char]27, 'ESC'`
+        },
+        {
+          cmd: "PredictionViewStyle",
+          title: "اقتراحات من أوامرك القديمة و Tab بقايمة",
+          desc: R`PSReadLine في PowerShell 7 بيقترح عليك أمر كامل من اللي كتبته قبل كده وانت لسه بتكتب أول حروفه (اسمها Predictive IntelliSense): الاقتراح بيظهر باهت بعد المؤشر، والسهم يمين يقبله. ومعاه شوية اختصارات بتخلي Tab والأسهم أذكى.
+
+[[-PredictionSource]] الاقتراحات جاية منين: [[History]] من تاريخ أوامرك بس، و [[HistoryAndPlugin]] التاريخ + أي plugin متسطب (محتاج PowerShell 7.2 أو أحدث)، و [[None]] تقفلها. و [[-PredictionViewStyle]] شكلها: [[InlineView]] سطر باهت بعد المؤشر (الافتراضي)، و [[ListView]] قايمة تحت السطر تختار منها بالأسهم وجنب كل اقتراح مصدره زي [[[History]]]. و F2 بيبدّل بين الشكلين وانت بتكتب.
+
+[[Set-PSReadLineKeyHandler]] بيربط زرار بوظيفة: [[-Key Tab -Function MenuComplete]] يخلي Tab يعرض قايمة بكل الاختيارات تتحرك فيها بالأسهم، بدل ما يلف عليهم واحد واحد (نفس Ctrl+Space). و [[HistorySearchBackward]] على السهم فوق: لو كتبت [[git]] وضغطت فوق، يجيبلك آخر أوامر كانت بتبدأ بـ git بس، ولو السطر فاضي بيشتغل عادي. و [[HistorySearchForward]] نفس الحكاية للسهم تحت. و [[(Get-Module PSReadLine).Version]] بيقولك نسخة PSReadLine.
+
+النسخ مهمة هنا: الاقتراحات ظهرت في PSReadLine 2.1، و [[ListView]] و [[HistoryAndPlugin]] في 2.2، وبقت شغالة لوحدها من 2.2.6. و PowerShell 7.6.6 كان معاه 2.4.5، لكن Windows PowerShell 5.1 جاي بـ 2.0.0 اللي مفيهوش اقتراحات خالص و [[-PredictionSource]] بيطلع فيه error. وكل ده للنافذة دي بس، فحطه في [[$PROFILE]].`,
+          example: R`Get-PSReadLineOption | Select-Object PredictionSource, PredictionViewStyle
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin
+Set-PSReadLineOption -PredictionViewStyle ListView
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+(Get-Module PSReadLine).Version`,
+          try: R`شغّل السطور، واكتب [[git]] بس وشوف القايمة واتحرك فيها بالأسهم. وبعدين اضغط F2 وارجع للشكل الـ Inline واقبل الاقتراح بالسهم يمين. وبعدين جرّب Tab بعد [[Get-Net]].`,
+          deep: {
+            why: R`أغلب اللي بتكتبه في الترمنال كتبته قبل كده: [[npm run dev]] و [[git push origin main]] و [[docker compose up -d]]. الاقتراحات بتكمّلهولك من أول حرفين، والـ ListView بيوريك كذا أمر قديم مرة واحدة بدل ما تفضل تضغط فوق عشرين مرة. و Tab بالقايمة بيوريك كل الاختيارات بدل ما تخمّن.`,
+            how: R`اقتراحات History جاية من ملف التاريخ الدائم بتاع PSReadLine (مكانه في [[(Get-PSReadLineOption).HistorySavePath]]، درس «History والاختصارات»)، مش من [[Get-History]] بتاع الجلسة، فبتلاقي أوامر من أيام فاتت.
+
+الـ plugins موديولات بتضيف مصادر اقتراحات، زي [[CompletionPredictor]] اللي بيقترح من الحاجات اللي Tab بيكمّلها، و [[Az.Tools.Predictor]] لأوامر Azure. بتشتغل مع [[HistoryAndPlugin]] أو [[Plugin]] وفي 7.2 وأحدث بس.
+
+السهم يمين بيقبل الاقتراح كله (الوظيفة [[ForwardChar]] بتقبله لما المؤشر يبقى في آخر السطر). ولو عايز كلمة كلمة، توثيق Microsoft بيقترح تربط زرار بـ [[ForwardWord]]: [[Set-PSReadLineKeyHandler -Chord "Ctrl+f" -Function ForwardWord]].
+
+[[Get-PSReadLineKeyHandler]] بيعرض كل الاختصارات المربوطة، و Ctrl+Alt+? بيعرضها وانت بتكتب. و [[Set-PSReadLineOption -EditMode Emacs]] بيخلي الاختصارات زي bash (Ctrl+A أول السطر و Ctrl+E آخره)، بس بيمسح أي ربط عملته قبله، فحطه الأول في الـ profile.
+
+في 5.1 تقدر تحدّث PSReadLine بـ [[Install-Module PSReadLine -Scope CurrentUser -Force]] (ولو طلع error حدّث PowerShellGet الأول)، فتاخد اقتراحات History بس، من غير plugins. والأسهل تستخدم PowerShell 7.`,
+            when: R`أول ما تسطّب PowerShell 7 وتبدأ تستخدمه يوميًا. والـ ListView مفيد في أول أسابيع لما بتنسى الأوامر، وبعد ما تحفظها ممكن ترجع للـ Inline لأنه أهدى.`,
+            mistakes: R`تحط [[-PredictionSource]] في profile بيتشغّل كمان لما برنامج يشغّل pwsh والناتج رايح لملف، فيطلع error «console output doesn't support virtual terminal processing» كل مرة، و [[-ErrorAction SilentlyContinue]] مش بيخفيه؛ حطه جوه [[try { } catch { }]] (الـ solCode). أو تنقل نفس الـ profile لـ 5.1 فيطلع «A parameter cannot be found». أو تستغرب إن الاقتراحات مش بتظهر في PowerShell ISE (مفيهوش PSReadLine). أو تنسى إن الاقتراحات من تاريخك، فلو كتبت باسورد في أمر قبل كده ممكن يظهر مقترح قدام حد؛ امسحه من ملف التاريخ.`
+          },
+          lines: [
+            "الإعداد الحالي: مصدر الاقتراحات وشكلها.",
+            "اقترح من تاريخ أوامرك ومن أي plugin متسطب (7.2 وأحدث).",
+            "اعرض الاقتراحات قايمة تحت السطر بدل سطر باهت (F2 بيبدّل).",
+            "Tab يعرض قايمة بكل الاختيارات بدل ما يلف عليهم واحد واحد.",
+            "السهم فوق يدوّر في التاريخ على الأوامر اللي بتبدأ باللي كتبته.",
+            "السهم تحت نفس الحكاية للأحدث.",
+            "نسخة PSReadLine: الاقتراحات محتاجة 2.1 والقايمة 2.2."
+          ],
+          sol: R`بعد [[ListView]]، كتابة [[git]] بتطلّع تحت السطر قايمة بأوامر git اللي كتبتها قبل كده وجنب كل واحد [[[History]]]، والأسهم بتتحرك فيها، و Enter بينفّذ المختار. و F2 بيرجّعها سطر واحد باهت، والسهم يمين يحط الاقتراح كله في السطر تعدّله أو تنفّذه. و Tab بعد [[Get-Net]] بقى يعرض كل الأوامر (Get-NetAdapter و Get-NetIPAddress ...) تختار منها بالأسهم.
+
+جربت السطور على PowerShell 7.6.6 فـ [[Get-PSReadLineKeyHandler -Bound]] أكد [[Tab MenuComplete]] و [[UpArrow HistorySearchBackward]] و [[DownArrow HistorySearchForward]] و [[F2 SwitchPredictionView]]، و [[(Get-Module PSReadLine).Version]] طلع [[2.4.5]]. ولما شغّلت نفس الأوامر من سكربت الناتج بتاعه رايح لملف، [[-PredictionSource]] طلع [[The predictive suggestion feature cannot be enabled because the console output doesn't support virtual terminal processing or it's redirected.]] (في نافذة عادية مفيش المشكلة دي)، و [[try/catch]] مسكه. وعلى 5.1 بـ PSReadLine 2.0.0 طلع [[A parameter cannot be found that matches parameter name 'PredictionSource'.]]`,
+          solCode: R`try { Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView } catch { }
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward`
+        },
+        {
+          cmd: "Terminal-Icons",
+          title: "أيقونات وألوان للملفات في ls",
+          desc: R`[[Terminal-Icons]] موديول بيحط أيقونة جنب كل ملف وفولدر في [[Get-ChildItem]] (فولدر، JavaScript، صورة، zip...) ويلوّنهم حسب النوع، زي اللي بتشوفه في VS Code. الأيقونات دي حروف من خطوط Nerd Font، فلازم الترمنال يبقى شغال بخط منهم وإلا هتشوف مربعات أو علامات استفهام (شوف درس «Nerd Font» في تاب «اختصارات النظام»).
+
+[[Install-Module]] بينزّل موديول من PowerShell Gallery (المخزن الرسمي للموديولات)، و [[-Repository PSGallery]] اسم المخزن، و [[-Scope CurrentUser]] يسطّبه ليك بس فمش محتاج أدمن. أول مرة هيسألك «Untrusted repository ... Are you sure?» فاكتب [[Y]]. و [[Import-Module]] بيحمّله في النافذة دي، وبعدها [[Get-ChildItem]] (أو [[ls]]) هيطلع بالأيقونات.
+
+التحميل بياخد وقت مع كل نافذة جديدة، فالسطر الرابع بيقيسه: [[Measure-Command]] بيرجع الوقت اللي الكود اللي بين [[{ }]] خده (درس Measure-Command في المستوى التالت)، و [[-Force]] يحمّل الموديول من جديد حتى لو متحمّل. وبعدين [[Add-Content $PROFILE]] بيزوّد سطر الـ Import في آخر الـ profile عشان يتحمّل مع كل نافذة (لو الملف مش موجود اعمله الأول، درس «$PROFILE»). و [[Show-TerminalIconsTheme]] بيعرضلك الأيقونات والألوان اللي في الثيم الحالي.
+
+الموديول شغال على 5.1 و 7، وآخر نسخة منه على PowerShell Gallery هي [[0.11.0]] من يوليو 2023، فاعتبره «شغال وثابت» مش «بيتطور».`,
+          example: R`Install-Module Terminal-Icons -Repository PSGallery -Scope CurrentUser
+Import-Module Terminal-Icons
+Get-ChildItem
+Measure-Command { Import-Module Terminal-Icons -Force }
+Add-Content $PROFILE "Import-Module Terminal-Icons"
+Show-TerminalIconsTheme`,
+          try: R`سطّبه، واعرض فولدر مشروع فيه ملفات js و json و md، وقيس وقت التحميل. لو أكتر من نص ثانية فكّر يستاهل ولا لأ.`,
+          deep: {
+            why: R`في فولدر فيه 40 ملف، الأيقونة واللون بيخلوك تلاقي الـ [[.env]] أو الـ [[Dockerfile]] أو الصور بنظرة من غير ما تقرا كل اسم. نفس فكرة الأيقونات في VS Code، وفي [[lsd]] و [[eza]] على لينكس.`,
+            how: R`PowerShell بيعرض أي object حسب «format view» مكتوب له. Terminal-Icons بيضيف view جديد للملفات والفولدرات (الأنواع اللي Get-ChildItem بيرجعها) بيحط في عمود Name الأيقونة والاسم بلون. والأيقونة بتتختار من اسم الملف أو امتداده، فـ [[package.json]] ليه أيقونة غير أي [[.json]] تاني.
+
+ده عرض بس: الـ objects نفسها متغيرتش، فـ [[Get-ChildItem | Select-Object Name]] و [[Where-Object]] و [[Export-Csv]] شغالين عادي من غير أيقونات. وعشان الموديول بيعرض عمود الاسم بطريقته، ألوانه بتيجي من ثيم Terminal-Icons، فلو لقيت ألوان [[$PSStyle.FileInfo]] (أول درس هنا) اختفت من الأسامي بعد ما حمّلته، ده السبب. [[Get-TerminalIconsColorTheme]] و [[Get-TerminalIconsIconTheme]] بيعرضوا الثيمات، و [[Set-TerminalIconsTheme]] بيغيّر.
+
+لو التحميل بطيء: في issue «Slow import» على GitHub الناس قاسوا من حوالي نص ثانية لـ ٢ ثانية حسب الجهاز والنسخة. فيه طريقة منتشرة (مجرّبتهاش هنا) إنك تأجّل التحميل لحد ما الترمنال يفضى: [[Register-EngineEvent PowerShell.OnIdle -MaxTriggerCount 1 -Action { Import-Module Terminal-Icons -Global }]] في الـ profile بدل Import-Module العادي، فالنافذة تفتح على طول والأيقونات تظهر بعدها بشوية. أو ببساطة متحطوش في الـ profile واكتب Import-Module لما تحتاجه.`,
+            when: R`على جهازك الشخصي لو بتقضي وقت كتير في الترمنال بتتنقل بين فولدرات. مش على سيرفر، ومش في سكربتات (مالهاش لازمة هناك).`,
+            mistakes: R`تسطّبه وتنسى الـ Nerd Font فتلاقي مربعات وتفتكر الموديول بايظ. أو تسطّبه بـ [[-Scope AllUsers]] من نافذة مش أدمن فيطلع error. أو تحط الـ Import في profile بتاع 5.1 وانت شغال على 7 (كل واحد ليه [[$PROFILE]]). أو تكتب [[Install-Module]] في الـ profile نفسه بدل [[Import-Module]]، فكل نافذة تحاول تسطّبه من النت.`
+          },
+          lines: [
+            "نزّل الموديول من PowerShell Gallery ليك بس (من غير أدمن).",
+            "حمّله في النافذة دي.",
+            "اعرض الفولدر: كل اسم جنبه أيقونة ولون.",
+            "قيس وقت التحميل ([[-Force]] يحمّله من جديد).",
+            "زوّد سطر التحميل في آخر الـ profile عشان يشتغل مع كل نافذة.",
+            "اعرض أيقونات وألوان الثيم الحالي."
+          ],
+          sol: R`(مسطّبتش الموديول على الجهاز اللي كتبت عليه الدرس عشان مسطّبش حاجة عليه، فده من صفحة الموديول على GitHub و PowerShell Gallery؛ اتأكدت من هناك إن آخر نسخة 0.11.0 وإن أوامره فيها Show-TerminalIconsTheme و Set-TerminalIconsTheme.) بعد [[Import-Module]]، [[Get-ChildItem]] بيطلع نفس الجدول بس جنب كل اسم أيقونة: فولدر لـ [[src]]، وشعار JavaScript لـ [[app.js]]، وأقواس لـ [[package.json]]، وكل نوع بلون. لو شايف مربعات فاضية أو [[?]] بدل الأيقونات، الخط مش Nerd Font: غيّره من إعدادات الترمنال (Windows Terminal: Settings ثم الـ Profile ثم Appearance ثم Font face، و VS Code من [[terminal.integrated.fontFamily]]).
+
+[[Measure-Command]] هيرجع TimeSpan، بص على [[TotalMilliseconds]]. الرقم ده بيتضاف على كل نافذة تفتحها. لو كبير ومضايقك، شيل السطر من الـ profile واكتب [[Import-Module Terminal-Icons]] بس لما تحتاجه، أو قارن وقت فتح الترمنال كله قبل وبعد (درس Measure-Command).`
+        },
+        {
+          cmd: "oh-my-posh",
+          title: "prompt جاهز بثيمات",
+          desc: R`[[oh-my-posh]] برنامج بيرسم الـ prompt بثيمات جاهزة: الفولدر، والـ git branch وحالته، ونسخة node أو python في المشروع، ووقت تنفيذ آخر أمر، بأيقونات وألوان. بيشتغل مع PowerShell و bash و zsh، فلو بتشتغل على أكتر من شيل يبقى نفس الشكل في الكل.
+
+محتاج خط Nerd Font زي Terminal-Icons (الثيمات اللي في اسمها [[minimal]] بس مش محتاجاه). السطر الأول بيسطّبه بـ winget، و [[--source winget]] يعني من مخزن winget مش Microsoft Store، وبعدها افتح نافذة جديدة عشان الـ PATH يتحدّث. والتاني [[oh-my-posh font install meslo]] بينزّل خط Meslo Nerd Font ويسطّبه (من غير أدمن بيتسطب لليوزر بتاعك بس)، وبعدها اختار [[MesloLGM Nerd Font]] في إعدادات خط الترمنال.
+
+[[oh-my-posh init pwsh]] بيطبع كود PowerShell بيعرّف فانكشن [[prompt]] جديدة، و [[| Invoke-Expression]] بينفّذ النص ده كأنه كود. و [[--config]] الثيم: اسم ثيم جاهز زي [['atomic']] أو [['jandedobbeleer']] (بيتنزّل من النت أول مرة ويتخزن)، أو مسار ملف عندك، أو لينك. تشغيل السطر ده في النافذة بيغيّر شكلها هي بس، فدي طريقتك تجرّب كذا ثيم من غير ما تلمس الـ profile. وكل الثيمات بصورها في صفحة [[ohmyposh.dev/docs/themes]].
+
+لما تختار: [[oh-my-posh config export]] بينسخ الثيم لملف عندك ([[--output]] مكانه)، فالترمنال يفتح من غير نت وتقدر تعدّل فيه. وسطر [[Add-Content]] بيحط الـ init بمسار الملف ده في آخر الـ [[$PROFILE]]: علامات التنصيص الفردية بره بتخلي [[$HOME]] يتكتب في الملف زي ما هو ويتحسب لما الـ profile يشتغل. وآخر سطر بيحدّث البرنامج.
+
+لو لقيت شرح قديم بيقول [[Install-Module oh-my-posh]] أو [[Set-PoshPrompt]] أو مسار جوه [[$env:POSH_THEMES_PATH]]: ده كان زمان. الموديول القديم اتوقف، والدوكيومنتيشن الحالي بيستخدم اسم الثيم على طول. ونفس الطريقة شغالة في 5.1 كمان، بس ليها [[$PROFILE]] منفصل.`,
+          example: R`winget install JanDeDobbeleer.OhMyPosh --source winget
+oh-my-posh font install meslo
+oh-my-posh init pwsh --config 'atomic' | Invoke-Expression
+oh-my-posh init pwsh --config 'jandedobbeleer' | Invoke-Expression
+oh-my-posh config export --config 'jandedobbeleer' --output "$HOME\.mytheme.omp.json"
+Add-Content $PROFILE 'oh-my-posh init pwsh --config "$HOME\.mytheme.omp.json" | Invoke-Expression'
+winget upgrade JanDeDobbeleer.OhMyPosh --source winget`,
+          try: R`جرّب 3 ثيمات في نفس النافذة بالسطر التالت (غيّر الاسم بس)، واختار واحد واحفظه، وقيس وقت فتح الترمنال قبل وبعد بـ [[Measure-Command { pwsh -c exit }]].`,
+          deep: {
+            why: R`كتابة prompt بإيدك (درس «function prompt») بتعلّمك الفكرة، لكن oh-my-posh بيديك من غير مجهود حاجات صعب تعملها بنفسك: حالة الـ git كاملة (ملفات متعدلة، commits مستنية push)، ونسخة اللغة حسب المشروع، ووقت تنفيذ آخر أمر، والـ exit code، وبنفس الشكل في PowerShell و bash على WSL.`,
+            how: R`[[oh-my-posh]] برنامج exe عادي مش موديول PowerShell. سطر الـ init بيعرّف [[prompt]] بتنادي البرنامج ده قبل كل أمر، والبرنامج يقرا ملف الثيم (JSON أو YAML أو TOML) ويرجّع الـ prompt بالأكواد والألوان. فأي فانكشن [[prompt]] كتبتها بنفسك هتتلغي لو سطر oh-my-posh جه بعدها في الـ profile: اللي في الآخر هو اللي بيكسب.
+
+[[Invoke-Expression]] بينفّذ أي نص كأنه كود، فمتستخدمهوش مع نص جاي من مصدر مش واثق فيه؛ هنا النص جاي من البرنامج اللي انت مسطّبه. ولو الـ ExecutionPolicy مانعة حاجة، الدوكيومنتيشن بيقترح [[oh-my-posh init pwsh --eval | Invoke-Expression]] وبيقول إنها أبطأ.
+
+ملف الثيم مقسوم «segments»: كل segment حاجة بتتعرض (path و git و node و time ...)، وتقدر تشيل أو تزوّد وتغيّر ألوانها بتعديل الملف اللي عملته بـ [[config export]]. و [[oh-my-posh print preview]] بيطبع شكل الـ prompt من غير ما تغيّر حاجة.
+
+الوقت: كل نافذة بتشغّل oh-my-posh للـ init، وكل prompt بيشغّله تاني. الثيم بالاسم أو اللينك بيتنزل من النت أول مرة وبيتخزن، والملف المحلي أسرع وبيشتغل من غير نت. وكل ده شغال مع Terminal-Icons و PSReadLine في نفس الـ profile، لأن كل واحد بيشتغل في حتة مختلفة (الـ prompt، والكتابة، وعرض الملفات).`,
+            when: R`لو عايز prompt غني من غير ما تكتب كود، أو بتشتغل على PowerShell و bash في WSL وعايز نفس الشكل. ولو الترمنال بقى بطيء في الفتح على جهاز ضعيف، الـ prompt المكتوب بإيدك أخف.`,
+            mistakes: R`تسطّبه وتنسى الـ Nerd Font. أو تحط الـ init قبل function prompt بتاعتك في الـ profile وتستغرب إن الشكل مش بتاعه (أو العكس). أو تمشي على شرح قديم بـ [[Install-Module oh-my-posh]] و [[Set-PoshPrompt]] أو مسار جوه [[$env:POSH_THEMES_PATH]] مش موجود عندك. أو تستخدم ثيم بالاسم والجهاز من غير نت أول مرة. أو تجرّب في نافذة كانت مفتوحة قبل التسطيب فتلاقي «oh-my-posh is not recognized».`
+          },
+          lines: [
+            "سطّب oh-my-posh من مخزن winget، وافتح نافذة جديدة بعدها.",
+            "نزّل خط Meslo Nerd Font وسطّبه لليوزر بتاعك.",
+            "جرّب ثيم atomic في النافذة دي بس ([[Invoke-Expression]] بينفّذ الكود اللي init طبعه).",
+            "جرّب ثيم تاني في نفس النافذة.",
+            "انسخ الثيم اللي اخترته لملف عندك.",
+            "زوّد سطر الـ init بالملف ده في آخر الـ profile.",
+            "حدّث oh-my-posh لآخر نسخة."
+          ],
+          sol: R`(مسطّبتش oh-my-posh على الجهاز اللي كتبت عليه الدرس؛ الأوامر من الدوكيومنتيشن الرسمي على ohmyposh.dev وقت كتابة الدرس، صفحات Windows و Prompt و Customize و Fonts.) بعد سطر الـ init، الـ prompt بيتغيّر على طول في نفس النافذة: [[atomic]] مثلًا بيطلع سطر بخلفيات ملونة فيه اسم اليوزر والفولدر والـ branch، وبعدها سطر جديد بتكتب فيه. ولو شايف مربعات أو [[?]]، الخط مش Nerd Font: اختار [[MesloLGM Nerd Font]] في إعدادات الترمنال (Windows Terminal: Settings ثم Defaults ثم Appearance ثم Font face، أو في settings.json تحت [[profiles.defaults.font.face]]).
+
+لو [[oh-my-posh]] نفسه طلع [[is not recognized]] بعد التسطيب، اقفل الترمنال كله وافتحه تاني (وفي VS Code اعمل Restart). ولو الـ profile طلع [[running scripts is disabled]]، ده الـ ExecutionPolicy (درس ExecutionPolicy). وللقياس: [[(Measure-Command { pwsh -c exit }).TotalMilliseconds]] قبل وبعد، وقارنه بـ [[pwsh -NoProfile -c exit]]؛ عندي من غير profile الاتنين كانوا حوالي 300 ملّي ثانية، والفرق بعد أي إضافة هو اللي الـ profile بيضيفه على كل نافذة.`
+        }
+      ]
+    },
+    {
       t: "ضغط وهاش",
       l: 2,
       n: "",
@@ -3080,6 +3375,692 @@ Unregister-ScheduledTask -TaskName "DailyBackup" -Confirm:$false`,
           sol: R`[[Register-ScheduledTask]] بيطبع جدول فيه [[TaskPath]] بـ [[\]] و [[TaskName]] بـ DailyBackup و [[State]] بـ Ready. وبعد [[Start-ScheduledTask]] بثواني، [[Get-ScheduledTaskInfo]] المفروض يطلع LastRunTime بوقت دلوقتي و LastTaskResult بـ [[0]] و NextRunTime بكرة الساعة 9، والـ zip الجديد موجود في فولدر backups.
 
 لو LastTaskResult [[267011]] يبقى لسه مشتغلتش، استنى شوية. ولو [[1]] أو أي رقم صغير، السكربت نفسه فشل، فشغّله بنفس السطر من الترمنال ([[pwsh -NoProfile -File "C:\scripts\backup.ps1"]]) عشان تشوف الـ error، أو اقرا اللوج لو عامل transcript. ولو الـ zip اتعمل في System32 بدل backups، يبقى السكربت بيستخدم مسار نسبي من غير [[$PSScriptRoot]] ولا [[-WorkingDirectory]]. (مقدرتش أجرّب Task Scheduler هنا على لينكس؛ الأسامي والأرقام دي من توثيق Microsoft لموديول ScheduledTasks.)`
+        }
+      ]
+    },
+    {
+      t: "تحكّم في جهازك من الترمنال",
+      l: 3,
+      n: R`مواصفات الجهاز، والحافظة، والتحميل، وتحديث البرامج، والشغل في الخلفية، ومراقبة الفولدرات، والتنبيهات، والقفل والإطفاء في معاد: حاجات بتعملها بالماوس كل يوم وتقدر تعملها بسطر أو تحطها في سكربت`,
+      items: [
+        {
+          cmd: "Get-CimInstance",
+          title: "مواصفات جهازك وحالته",
+          desc: R`[[Get-CimInstance]] بيسأل ويندوز عن أي معلومة عن الجهاز: نسخة الويندوز، وآخر مرة اشتغل، والبروسيسور، والرام، والبطارية، وكارت الشاشة. ويندوز بيعرض المعلومات دي في «classes» أساميها بتبدأ بـ [[Win32_]]، وكل class بيرجع object بخصائص تختار منها بـ [[Select-Object]].
+
+[[Win32_OperatingSystem]] فيه [[Caption]] اسم الويندوز، و [[Version]]، و [[LastBootUpTime]] آخر تشغيل، و [[TotalVisibleMemorySize]] و [[FreePhysicalMemory]] الرام الكلية والفاضية بالكيلوبايت. الجيجا = 1048576 كيلوبايت، وده نفس رقم [[1MB]] في PowerShell، فالقسمة على [[1MB]] بتطلّعهم جيجا. والطرح [[(Get-Date) - ...]] بين تاريخين بيرجع مدة (TimeSpan)، فده الـ uptime: الجهاز شغال بقاله قد إيه. و [[Win32_Processor]] البروسيسور وعدد الـ cores، و [[Win32_Battery]] نسبة الشحن وحالة البطارية.
+
+[[@{ n = "RAM_GB"; e = { ... } }]] اسمها calculated property: عمود جديد [[n]] اسمه و [[e]] كود بيحسب قيمته، و [[$_]] جواه هو الـ object الحالي. و [[[math]::Round(x, 1)]] تقريب لرقم واحد بعد العلامة. وآخر سطرين: [[powercfg /batteryreport]] بيعمل تقرير HTML عن البطارية (السعة الأصلية والسعة دلوقتي وتاريخ الاستخدام)، و [[/output]] مكان الملف، و [[ii]] بيفتحه في المتصفح.
+
+ده ويندوز بس، وشغال في 5.1 و 7. ولو شفت في شرح قديم [[Get-WmiObject]]، ده الأمر القديم اللي اتشال من PowerShell 7، و [[Get-CimInstance]] بديله في الاتنين.`,
+          example: R`Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, LastBootUpTime
+(Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors
+Get-CimInstance Win32_OperatingSystem | Select-Object @{ n = "RAM_GB"; e = { [math]::Round($_.TotalVisibleMemorySize / 1MB, 1) } }, @{ n = "FreeGB"; e = { [math]::Round($_.FreePhysicalMemory / 1MB, 1) } }
+Get-CimInstance Win32_Battery | Select-Object EstimatedChargeRemaining, BatteryStatus
+powercfg /batteryreport /output "$env:TEMP\battery.html"
+ii "$env:TEMP\battery.html"`,
+          try: R`اعرف الجهاز شغال بقاله كام يوم من غير restart، وطلّع تقرير البطارية وقارن DESIGN CAPACITY بـ FULL CHARGE CAPACITY.`,
+          deep: {
+            why: R`«الجهاز ده فيه رام كام؟ البروسيسور إيه؟ البطارية حالتها إيه؟ آخر restart إمتى؟» أسئلة بتتسأل في الدعم الفني، وقبل ما تسطّب برنامج تقيل، ولما تشتري لابتوب مستعمل. بدل ما تلف في Settings و Task Manager و Device Manager، كله من مكان واحد وتقدر تحفظه في ملف أو تبعته.`,
+            how: R`CIM (و WMI قبله) نظام في ويندوز بيعرض كل حاجة عن الجهاز كـ classes. [[Get-CimClass Win32_*]] بيعرض الأسامي (مئات)، وأشهرها: [[Win32_ComputerSystem]] (الشركة والموديل والرام الكلية بالبايت)، و [[Win32_LogicalDisk]] (الديسكات، شوف disk-report.ps1)، و [[Win32_VideoController]] (كارت الشاشة ونسخة الدرايفر)، و [[Win32_BIOS]] (نسخة الـ BIOS والـ serial number).
+
+[[Get-CimInstance Win32_Processor | Select-Object *]] بيعرض كل الخصائص لو مش عارف اسم اللي عايزه. و [[-Filter "DriveType=3"]] بيفلتر عند ويندوز نفسه قبل ما الناتج يوصلك، وده أسرع من [[Where-Object]] بعدها.
+
+الوحدات بتختلف من class للتاني، وده أكتر حاجة بتلخبط: [[Win32_OperatingSystem]] الرام فيه بالكيلوبايت، و [[TotalPhysicalMemory]] في [[Win32_ComputerSystem]] بالبايت (فتقسم على [[1GB]]). والرقمين ممكن يختلفوا شوية، لأن الأول الرام اللي ويندوز شايفها بعد ما كارت الشاشة المدمج ياخد نصيبه.
+
+[[BatteryStatus]] أرقام: [[1]] شغال على البطارية، و [[2]] على الكهربا (مش لازم بيشحن)، و [[6]] بيشحن. و [[Get-ComputerInfo]] بيرجع حاجات كتير مرة واحدة بس بياخد ثواني، فاستخدمه لما تحتاج صورة كاملة.`,
+            when: R`لما تحتاج مواصفات الجهاز بسرعة أو تحطها في تقرير، أو قبل ما تشتري لابتوب مستعمل (تقرير البطارية بيقولك فاضل فيها كام في المية من سعتها)، أو في سكربت بيقرر حاجة حسب الرام أو نوع الجهاز.`,
+            mistakes: R`تقسم [[TotalVisibleMemorySize]] على [[1GB]] فيطلع رقم صغير جدًا، لأنه أصلًا بالكيلوبايت. أو تستخدم [[Get-WmiObject]] من شرح قديم في PowerShell 7 فيطلع «is not recognized». أو تصدّق [[EstimatedRunTime]] والجهاز على الشاحن (بيطلع رقم ضخم معناه «مش معروف»). أو تبعت ناتج [[Win32_BIOS]] لحد وفيه الـ serial number بتاع جهازك.`
+          },
+          lines: [
+            "اسم الويندوز ونسخته وآخر مرة اشتغل.",
+            "الـ uptime: دلوقتي ناقص وقت التشغيل = مدة (TimeSpan).",
+            "اسم البروسيسور، وعدد الـ cores الحقيقية، وعدد الـ threads.",
+            "الرام الكلية والفاضية بالجيجا في عمودين محسوبين (الأصل بالكيلوبايت).",
+            "نسبة شحن البطارية وحالتها (2 = على الكهربا).",
+            "اعمل تقرير HTML عن البطارية في فولدر TEMP.",
+            "افتح التقرير في المتصفح."
+          ],
+          sol: R`[[(Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime]] بيطلع TimeSpan: جربتها فطلع [[Days : 1]] و [[Hours : 16]] و [[Minutes : 47]] وتحتهم خصائص Total كتير. ولو عايزه سطر واحد: [[((Get-Date) - $os.LastBootUpTime).ToString("d\.hh\:mm")]] طلع [[1.16:47]] (يوم و 16 ساعة و 47 دقيقة). ولو الرقم أيام كتير والجهاز تقيل، restart ساعات بيحل.
+
+و [[Win32_Battery]] طلع [[EstimatedChargeRemaining : 61]] و [[BatteryStatus : 2]] (على الكهربا)، و [[EstimatedRunTime]] طلع [[71582788]] وده معناه «مش معروف» مش دقايق بجد. على جهاز ديسكتوب مفيش بطارية فمش هيطلع حاجة خالص. وتقرير البطارية اتعمل من غير أدمن وطبع [[Battery life report saved to file path ...battery.html.]]، وجواه [[DESIGN CAPACITY 90,005 mWh]] و [[FULL CHARGE CAPACITY 51,291 mWh]]، يعني البطارية دي بتشيل حوالي 57% من سعتها الأصلية.`,
+          solCode: R`$os = Get-CimInstance Win32_OperatingSystem
+((Get-Date) - $os.LastBootUpTime).ToString("d\.hh\:mm")
+powercfg /batteryreport /output "$env:TEMP\battery.html"
+ii "$env:TEMP\battery.html"`
+        },
+        {
+          cmd: "Set-Clipboard / Get-Clipboard",
+          title: "انسخ ناتج أي أمر للحافظة",
+          desc: R`[[Set-Clipboard]] بيحط أي نص في الحافظة (clipboard) كأنك عملت Ctrl+C، و [[Get-Clipboard]] بيقرا اللي فيها كأنك عملت Ctrl+V، فتنقل ناتج أمر لإيميل أو شات أو ملف من غير ما تحدده بالماوس. زي [[pbcopy]] و [[pbpaste]] في الماك و [[clip]] في CMD، واختصاراتهم في PowerShell 7 [[scb]] و [[gcb]].
+
+[[(Get-Location).Path]] مسار الفولدر الحالي كنص. و [[Get-Content $HOME\.ssh\id_ed25519.pub]] بيقرا الـ SSH public key بتاعك عشان تلزقه في GitHub. ولما تبعت objects (جدول) لازم [[Out-String]] الأول: بيحوّل الجدول لنفس النص اللي بتشوفه على الشاشة، ومن غيره الحافظة هيتحط فيها حاجة زي [[@{Name=chrome; Id=1234}]]. و [[WS]] اختصار [[WorkingSet]] (الرام اللي العملية ماسكاها).
+
+[[Get-Clipboard]] بيرجع كل سطر لوحده (array)، و [[-Raw]] بيرجع النص كله حتة واحدة، وده اللي محتاجه مع [[Measure-Object -Line -Word -Character]] (عدد السطور والكلمات والحروف). وآخر سطر بيقرا اللي في الحافظة، ويرتبه ويشيل المكرر بـ [[Sort-Object -Unique]]، ويرجّعه الحافظة: انسخ لستة إيميلات أو أسامي من أي مكان، شغّل السطر، والصق.
+
+في PowerShell 7 الأوامر دي نص بس، و [[-Append]] بيزوّد سطر على اللي موجود بدل ما يمسحه. و Windows PowerShell 5.1 فيه [[Get-Clipboard -Format Image]] و [[FileDropList]] (صور وملفات منسوخة)، ودول اتشالوا في 7.`,
+          example: R`(Get-Location).Path | Set-Clipboard
+Get-Content $HOME\.ssh\id_ed25519.pub | Set-Clipboard
+Get-Process | Sort-Object WS -Descending | Select-Object -First 5 Name, Id | Out-String | Set-Clipboard
+Get-Clipboard
+Get-Clipboard -Raw | Measure-Object -Line -Word -Character
+Get-Clipboard | Sort-Object -Unique | Set-Clipboard`,
+          try: R`انسخ من أي مكان كذا سطر فيهم تكرار (مثلًا banana و apple و banana و cherry و apple كل واحد في سطر)، وشغّل آخر سطر، والصق في Notepad.`,
+          deep: {
+            why: R`شغل كتير في الترمنال بيخلص بإنك تنقل حاجة لمكان تاني: مسار تبعته لزميل، أو هاش ملف، أو الـ public key لـ GitHub، أو جدول في issue. التحديد بالماوس في الترمنال بيلخبط السطور الطويلة وبيزوّد مسافات، و [[Set-Clipboard]] بينقل النص بالظبط.`,
+            how: R`[[Set-Clipboard]] بياخد من الـ pipeline أو من [[-Value]]، ولو جاله كذا عنصر بيحط كل واحد في سطر. وأي object مش نص بيتحوّل بالـ ToString بتاعه، وده سبب [[@{Name=...}]] الغريبة، فـ [[Out-String]] أو [[ConvertTo-Csv]] (لو هتلزقه في Excel) أو [[ConvertTo-Json]] قبله. و [[Out-String]] بيحط سطر فاضي فوق وتحت، فلو مضايقك: [[(... | Out-String).Trim() | Set-Clipboard]].
+
+[[clip.exe]] القديم (من CMD) شغال برضه: [[Get-Content file.txt | clip]]، بس بيزوّد سطر جديد في آخر النص (جربتها)، و [[Set-Clipboard]] لأ.
+
+في PowerShell 7.4 وأحدث فيه [[Set-Clipboard -AsOSC52]]: لو انت داخل على سيرفر بـ SSH، بيبعت النص للترمنال اللي على جهازك (Windows Terminal بيدعمه)، فيتنسخ في حافظة جهازك انت مش حافظة السيرفر.
+
+وحافظة ويندوز بتحفظ تاريخ لو مفعّل (Win+V)، فأي باسورد أو توكن نسخته بـ Set-Clipboard هيفضل في التاريخ ده.`,
+            when: R`كل ما تحتاج تنقل ناتج من الترمنال لأي مكان، أو العكس (تنسخ لستة من صفحة وتعالجها في PowerShell وترجعها). وفي السكربتات: سكربت يعمل باسورد عشوائي أو لينك ويحطه في الحافظة على طول.`,
+            mistakes: R`تبعت جدول من غير [[Out-String]] فتلزق [[@{Name=...}]]. أو تنسى الفرق بين [[(Get-Clipboard).Count]] (عدد السطور) و [[(Get-Clipboard -Raw).Length]] (عدد الحروف). أو تنسى إن Set-Clipboard بيمسح اللي كان في الحافظة. أو تنسخ توكن وتنسى إنه في تاريخ Win+V.`
+          },
+          lines: [
+            "انسخ مسار الفولدر الحالي.",
+            "انسخ الـ SSH public key عشان تلزقه في GitHub.",
+            "أكبر ٥ عمليات في الرام كجدول نصي ([[Out-String]] قبل الحافظة).",
+            "اقرا اللي في الحافظة، سطر سطر.",
+            "عدّ السطور والكلمات والحروف في النص كله ([[-Raw]]).",
+            "رتّب اللي في الحافظة واشيل المكرر ورجّعه الحافظة."
+          ],
+          sol: R`جربتها: حطيت في الحافظة [[banana]] و [[apple]] و [[banana]] و [[cherry]] و [[apple]]، و [[Get-Clipboard -Raw | Measure-Object -Line -Word -Character]] طلع [[Lines 5]] و [[Words 5]] و [[Characters 36]] (الحروف بتعدّ نهاية كل سطر كمان). وبعد آخر سطر، [[Get-Clipboard]] رجّع [[apple]] و [[banana]] و [[cherry]] بس، مترتبين، والـ paste في Notepad طلع نفس التلات سطور.
+
+وجربت الغلطة المشهورة: [[Get-Process | Sort-Object WS -Descending | Select-Object -First 3 Name, Id | Set-Clipboard]] من غير Out-String حط في الحافظة سطور زي [[@{Name=vmmemWSL; Id=18940}]]، ومع [[| Out-String]] اتحط الجدول بالعناوين زي ما بيظهر، بس معاه سطر فاضي فوق وتحت. والعربي اتنقل سليم ([[Set-Clipboard "مرحبا يا عالم"]] ورجع زي ما هو). (رجّعت اللي كان في الحافظة بعد كل تجربة.)`,
+          solCode: R`Set-Clipboard -Value "banana", "apple", "banana", "cherry", "apple"
+Get-Clipboard -Raw | Measure-Object -Line -Word -Character
+Get-Clipboard | Sort-Object -Unique | Set-Clipboard
+Get-Clipboard`
+        },
+        {
+          cmd: "Invoke-WebRequest -OutFile",
+          title: "نزّل ملف واتأكد إنه سليم",
+          desc: R`[[Invoke-WebRequest]] (اختصاره [[iwr]]) بيطلب لينك، و [[-OutFile]] بيحفظ الرد في ملف بدل ما يعرضه، فده المقابل لـ [[wget]] و [[curl -o]]. والمثال بينزّل [[jq]] (أداة JSON صغيرة، حوالي ميجا) من GitHub ويتأكد إن الملف هو هو اللي المشروع نشره.
+
+[[$ProgressPreference = 'SilentlyContinue']] بيقفل شريط التقدم: في Windows PowerShell 5.1 الشريط ده بيبطّأ تحميل الملفات الكبيرة جدًا، فلازم السطر ده هناك، وفي 7 مش بيضر. و [[Join-Path $env:TEMP "jq.exe"]] بيبني المسار في فولدر الـ TEMP.
+
+التحقق: مشاريع كتير بتنشر ملف فيه الـ SHA256 لكل ملف (هنا [[sha256sum.txt]]). [[Invoke-RestMethod]] بيجيبه كنص، و [[-split '\n']] بيقطّعه سطور، و [[Where-Object { $_ -like '*jq-windows-amd64.exe' }]] بيختار سطر الملف بتاعنا، و [[($line -split '\s+')[0]]] أول كلمة فيه (الهاش)، و [[\s+]] يعني «مسافة أو أكتر»، و [[[0]]] أول عنصر. وبعدين [[Get-FileHash]] (درس Get-FileHash) بيحسب هاش الملف اللي نزل، و [[-eq]] بيقارن من غير ما يفرّق بين الكابيتال والسمول. لو [[True]] الملف سليم ومحدش عدّل فيه.
+
+[[-Resume]] (PowerShell 7 بس) بيكمّل تحميل اتقطع من مكان ما وقف بدل ما يبدأ من الأول. و [[curl.exe]] موجود في ويندوز 10 و 11: [[-L]] يمشي ورا الـ redirects (GitHub بيعمل redirect لكل تحميل)، و [[-o]] اسم الملف. اكتب [[curl.exe]] مش [[curl]]، لأن [[curl]] في 5.1 اختصار لـ Invoke-WebRequest.`,
+          example: R`$ProgressPreference = 'SilentlyContinue'
+$url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe"
+$out = Join-Path $env:TEMP "jq.exe"
+Invoke-WebRequest $url -OutFile $out
+$sums = Invoke-RestMethod "https://github.com/jqlang/jq/releases/download/jq-1.8.2/sha256sum.txt"
+$line = $sums -split '\n' | Where-Object { $_ -like '*jq-windows-amd64.exe' }
+(Get-FileHash $out).Hash -eq ($line -split '\s+')[0]
+Invoke-WebRequest $url -OutFile $out -Resume
+curl.exe -L -o jq.exe $url`,
+          try: R`نزّل الملف وقارن الهاش، وبعدين غيّر حرف في الهاش المتوقع وشوف False. وجرّب [[curl.exe -o test.exe $url]] من غير [[-L]] وشوف حجم الملف.`,
+          deep: {
+            why: R`تسطيب أداة على سيرفر أو جهاز جديد من غير متصفح، أو سكربت setup بينزّل اللي محتاجه، أو تحميل backup من رابط. والتحقق بالهاش مش رفاهية: لو التحميل اتقطع، أو حد عدّل الملف في السكة، أو نزلت من mirror مضروب، الهاش بيكشفه قبل ما تشغّل حاجة.`,
+            how: R`[[Invoke-WebRequest]] من غير [[-OutFile]] بيرجع object فيه [[StatusCode]] و [[Headers]] و [[Content]]. ولو عايز حجم الملف قبل ما تنزّله: [[(Invoke-WebRequest $url -Method Head).Headers['Content-Length']]] (طلع [[1035264]] للملف ده). ومع [[-OutFile]] مش بيرجع حاجة إلا لو زوّدت [[-PassThru]]. وبيمشي ورا الـ redirects لوحده، على عكس curl.
+
+[[-Resume]] بيقول للسيرفر «ابعتلي من البايت رقم كذا» (Range request)، فلازم السيرفر يدعمها، و GitHub بيدعمها.
+
+الهاش لازم يبقى من مصدر رسمي (صفحة الـ release نفسها)، لأن لو حد قدر يغيّر الملف ممكن يغيّر ملف الهاش اللي جنبه. ومشاريع كتير بتنشر توقيع (signature) كمان، وده أقوى.
+
+في 5.1 ضيف [[-UseBasicParsing]] لـ Invoke-WebRequest (من غيره ممكن يحاول يستخدم Internet Explorer ويطلع error)، وعلى ويندوز قديم ممكن تحتاج تفعّل TLS 1.2 (شوف check-site.ps1). ولو ملف كبير والنت بيقطع كتير، [[Start-BitsTransfer]] (الدرس الجاي) بيكمّل لوحده.`,
+            when: R`أي تحميل من سكربت أو من سيرفر مفيهوش متصفح، وأي ملف تنفيذي (exe أو msi أو zip فيه برامج) نزّلته من النت قبل ما تشغّله.`,
+            mistakes: R`تنسى [[$ProgressPreference]] في 5.1 فملف كبير ياخد أضعاف وقته. أو تكتب [[curl -o]] في 5.1 فيطلع error غريب لأنه Invoke-WebRequest مش curl. أو [[curl.exe]] من غير [[-L]] مع GitHub فتلاقي ملف 0 بايت. أو تقارن الهاش بـ [[-ceq]] (بيفرّق بين الكابيتال والسمول) فيطلع False والملف سليم. أو تحفظ في فولدر مش موجود: [[-OutFile]] مش بيعمل الفولدرات، وبيطلع [[Could not find a part of the path]].`
+          },
+          lines: [
+            "اقفل شريط التقدم (في 5.1 بيبطّأ التحميل جدًا).",
+            "لينك الملف من صفحة الـ releases.",
+            "المكان اللي هيتحفظ فيه، في TEMP.",
+            "نزّل واحفظ في الملف (زي wget).",
+            "هات ملف الهاشات اللي المشروع نشره، كنص.",
+            "قطّعه سطور وخد سطر الملف بتاعنا.",
+            "احسب هاش الملف اللي نزل وقارنه بأول كلمة في السطر: True يعني سليم.",
+            "كمّل تحميل اتقطع من مكان ما وقف (7 بس).",
+            "نفس التحميل بـ curl الحقيقي: [[-L]] يمشي ورا الـ redirect و [[-o]] اسم الملف."
+          ],
+          sol: R`جربت المثال على PowerShell 7.6: التحميل خد حوالي ثانيتين، و [[jq.exe]] حجمه [[1035264]] بايت، والسطر اللي اتلقط من sha256sum.txt كان [[a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627  jq-windows-amd64.exe]]، و [[Get-FileHash]] طلع نفس الرقم بحروف كابيتال، والمقارنة رجعت [[True]]. و [[& $out --version]] طبع [[jq-1.8.2]]. ولو غيّرت حرف في الهاش المتوقع بترجع [[False]].
+
+[[-Resume]] على ملف كامل مش بيغيّر فيه حاجة، بس بيطبع رد السيرفر: [[StatusCode : 416]] و [[StatusDescription : RequestedRangeNotSatisfiable]]، يعني «مفيش حاجة فاضلة تتنزل». وعلى ملف ناقص (قصّيته لـ 500000 بايت) كمّل الباقي بـ [[206]] (Partial Content) والهاش طلع مطابق. و [[curl.exe -o test.exe $url]] من غير [[-L]] عمل ملف حجمه [[0]] بايت من غير أي error، لأن GitHub رد بـ redirect و curl حفظ الرد ده بس؛ ومع [[-L]] نزل الملف كامل [[1035264]] بايت. الأرقام دي لنسخة 1.8.2، ولو نزّلت نسخة تانية هات لينكها وهاشها من صفحة الـ releases.`,
+          solCode: R`(Get-Item $out).Length
+& $out --version
+curl.exe -o test.exe $url
+(Get-Item test.exe).Length`
+        },
+        {
+          cmd: "Start-BitsTransfer",
+          title: "تحميل في الخلفية بيكمّل لوحده",
+          desc: R`[[Start-BitsTransfer]] بينزّل ملفات عن طريق BITS: خدمة في ويندوز (هي اللي Windows Update بيستخدمها) بتنزّل في الخلفية، وتكمّل لوحدها لو النت قطع أو الجهاز اتعمله restart. شغال في PowerShell 7 على ويندوز كمان (جربته على 7.6)، بس مش موجود على لينكس والماك.
+
+[[-Source]] اللينك و [[-Destination]] مكان الحفظ. من غير حاجة زيادة الأمر بيستنى لحد ما يخلص (وبيعرض شريط تقدم). و [[-Asynchronous]] بيرجعلك على طول ويسيب التحميل شغال، ويرجّع «job» تحفظه في متغير، و [[-DisplayName]] اسم يبان في الليستة.
+
+[[Get-BitsTransfer]] بيعرض تحميلاتك: [[JobState]] الحالة ([[Connecting]] بيتصل و [[Transferring]] بينزّل و [[Transferred]] خلص و [[Error]] فشل و [[TransientError]] مشكلة مؤقتة وهيحاول تاني لوحده)، و [[BytesTransferred]] و [[BytesTotal]]. والمهم: مع [[-Asynchronous]] الملف مش بيظهر في مكانه غير بعد [[Complete-BitsTransfer]]، لحد كده بيبقى ملف مؤقت مخفي. و [[Suspend-BitsTransfer]] و [[Resume-BitsTransfer]] وقّف وكمّل، و [[Remove-BitsTransfer]] إلغاء.
+
+الـ [[while]] في المثال بيستنى طول ما الحالة لسه في التحميل ([[-in]] بيشوف القيمة موجودة في اللستة ولا لأ)، و [[Start-Sleep -Seconds 1]] بين كل فحص والتاني.`,
+          example: R`$url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe"
+Start-BitsTransfer -Source $url -Destination "$env:TEMP\jq-bits.exe"
+$job = Start-BitsTransfer -Source $url -Destination "$env:TEMP\jq-async.exe" -Asynchronous -DisplayName "jq"
+Get-BitsTransfer | Select-Object DisplayName, JobState, BytesTransferred, BytesTotal
+while ($job.JobState -in "Queued", "Connecting", "Transferring") { Start-Sleep -Seconds 1 }
+Complete-BitsTransfer $job
+Get-Item "$env:TEMP\jq-async.exe"`,
+          try: R`ابدأ تحميل ملف كبير (installer أو ISO) بـ [[-Asynchronous]]، واقفل PowerShell، وافتح نافذة جديدة واكتب [[Get-BitsTransfer]].`,
+          deep: {
+            why: R`ملف كبير على نت بيقطع: Invoke-WebRequest لو اتقطع بيفشل (إلا لو انت على 7 واستخدمت [[-Resume]] بنفسك). BITS بيكمّل لوحده من مكان ما وقف، حتى بعد restart، وتقدر تخليه يستخدم النت الفاضي بس عشان ميبطّأش شغلك.`,
+            how: R`BITS (Background Intelligent Transfer Service) خدمة في ويندوز، والتحميلات محفوظة فيها مش في PowerShell، وكل يوزر بيشوف تحميلاته بس ([[-AllUsers]] للأدمن). و [[-Priority]] فيه [[Foreground]] (الافتراضي، الأسرع) و [[High]] و [[Normal]] و [[Low]] (بيستخدم النت الفاضي بس).
+
+[[Complete-BitsTransfer]] خطوة لازمة مع [[-Asynchronous]]، لأن BITS بيكتب في ملف مؤقت ويستنى تأكيدك، عشان محدش يستخدم ملف لسه نازل نصه. والـ jobs اللي ملهاش Complete بتفضل في الليستة لحد ما BITS يلغيها لوحده بعد مدة. ولو حصل Error، [[$job.ErrorDescription]] فيها السبب.
+
+BITS محتاج السيرفر يقول حجم الملف ويقبل يبعته حتت (Range requests)، فمش كل لينك هينفع (لينكات بتتولد وقت الطلب ممكن تفشل). و [[Start-BitsTransfer]] بيقبل كذا ملف مرة واحدة: [[-Source]] و [[-Destination]] كل واحد array بنفس الترتيب.
+
+الموديول [[BitsTransfer]] جاي مع ويندوز في فولدر موديولات 5.1، و PowerShell 7 بيحمّله عادي من هناك (جربتها).`,
+            when: R`ملفات كبيرة، أو نت ضعيف، أو تحميل عايزه يكمّل وانت قافل الترمنال، أو سكربت على جهاز بيدخل sleep. للملفات الصغيرة والسريعة Invoke-WebRequest أبسط.`,
+            mistakes: R`تنسى [[Complete-BitsTransfer]] وتدوّر على الملف ومتلاقيهوش. أو تعمل Complete والحالة [[Error]] فيطلع error، اقرا [[$job.ErrorDescription]] الأول. أو تشغّله من SSH أو جلسة remote فممكن يفشل لأن BITS محتاج يوزر داخل على الجهاز. أو تفتكره شغال على لينكس: الموديول ويندوز بس.`
+          },
+          lines: [
+            "اللينك.",
+            "تحميل عادي: الأمر بيستنى لحد ما يخلص.",
+            "تحميل في الخلفية: يرجّع job على طول والتحميل يكمّل.",
+            "اعرض تحميلاتك وحالة كل واحد.",
+            "استنى طول ما الحالة في الطابور أو بيتصل أو بينزّل، وافحص كل ثانية.",
+            "أكّد إنه خلص: دلوقتي بس الملف بيظهر في مكانه.",
+            "اتأكد إن الملف موجود وشوف حجمه."
+          ],
+          sol: R`جربت المثال على PowerShell 7.6.6: التحميل العادي خلص والملف [[1035264]] بايت. ومع [[-Asynchronous]]، أول ما رجع كان [[JobState : Connecting]] و [[BytesTotal : 18446744073709551615]] (ده أكبر رقم ممكن، ومعناه «الحجم لسه مش معروف»)، وبعد ثواني [[Get-BitsTransfer]] طلع [[jq  Transferred  1035264  1035264]]. و [[Test-Path]] على الملف قبل [[Complete-BitsTransfer]] رجع [[False]]، وبعده الملف ظهر بحجمه، و [[Get-BitsTransfer]] بقى فاضي.
+
+في تجربتك: التحميل بيفضل في [[Get-BitsTransfer]] حتى بعد ما تقفل النافذة، لأن BITS خدمة في ويندوز مش جزء من PowerShell. امسكه تاني بالـ DisplayName بتاعه: [[$job = Get-BitsTransfer -Name "later"]] (الـ solCode)، ولما يبقى [[Transferred]] اعمل [[Complete-BitsTransfer $job]].`,
+          solCode: R`$job = Start-BitsTransfer -Source $url -Destination "$env:TEMP\jq-later.exe" -Asynchronous -DisplayName "later"
+# اقفل النافذة وافتح واحدة جديدة
+$job = Get-BitsTransfer -Name "later"
+$job | Select-Object JobState, BytesTransferred, BytesTotal
+Complete-BitsTransfer $job`
+        },
+        {
+          cmd: "winget upgrade / export / import",
+          title: "حدّث كل برامجك وانقلها لجهاز جديد",
+          desc: R`[[winget]] (مدير البرامج اللي سطّبت بيه PowerShell 7 في أول درس) بيعمل حاجتين بيوفروا ساعات: يحدّث كل البرامج المتسطبة بأمر واحد، ويكتب لستة برامجك في ملف JSON تسطّبها كلها على جهاز جديد بأمر واحد.
+
+[[winget upgrade]] لوحده بيعرض البرامج اللي ليها نسخة أحدث من غير ما يحدّث حاجة: الاسم، و [[Id]] (الاسم الفريد للباكدج)، و [[Version]] اللي عندك، و [[Available]] الجديدة، و [[Source]] جاية منين ([[winget]] أو [[msstore]]). و [[--id Git.Git -e]] برنامج واحد بالـ Id بتاعه بالظبط. و [[--all]] بيحدّثهم كلهم، و [[--silent]] من غير نوافذ تسطيب (لو البرنامج بيدعم)، و [[--accept-package-agreements]] و [[--accept-source-agreements]] يوافقوا على الشروط من غير ما يسألوك.
+
+[[winget pin add]] بيثبّت برنامج على نسخته فـ [[--all]] ميلمسوش (مفيد لبرنامج نسخته الجديدة فيها مشكلة، أو SDK شغلك محتاج نسخة معينة منه). و [[winget export -o]] بيكتب البرامج اللي winget يعرفها في ملف، و [[winget import -i]] على الجهاز الجديد بيسطّبهم كلهم، و [[--ignore-unavailable]] يكمّل لو برنامج مش موجود.
+
+التحديث والتسطيب بيحتاجوا أدمن لبرامج كتير (هيطلع سؤال UAC لكل واحد، أو شغّل الترمنال كأدمن مرة). وبعض البرامج لازم تبقى مقفولة وانت بتحدّثها، وإلا التسطيب يفشل أو يطلب restart.`,
+          example: R`winget upgrade
+winget upgrade --id Git.Git -e
+winget upgrade --all --silent --accept-package-agreements --accept-source-agreements
+winget pin add --id Microsoft.DotNet.Runtime.8
+winget export -o "$HOME\apps.json"
+winget import -i "$HOME\apps.json" --accept-package-agreements --ignore-unavailable`,
+          try: R`اعرض البرامج اللي محتاجة تحديث، وطلّع لستة برامجك في ملف وافتحه. (متشغّلش [[--all]] غير وانت فاضي ومقفّل برامجك.)`,
+          flag: "danger",
+          deep: {
+            why: R`كل برنامج بيحدّث نفسه بطريقته (أو مبيحدّثش)، فبتلاقي نسخ قديمة فيها ثغرات. وجهاز جديد أو فورمات معناه يوم كامل تنزّل برامجك واحد واحد وتنسى نصهم. winget بيخلي الاتنين أمر واحد، وملف الـ JSON تحطه في OneDrive أو في repo الـ dotfiles بتاعك.`,
+            how: R`winget بيعرف البرامج اللي عندك من «Installed apps» في ويندوز ويطابقها مع مخازنه. اللي متسطب من خارج winget (من موقع البرنامج) بيظهر برضه لو winget لقاه في المخزن، فتقدر تحدّثه من هنا.
+
+[[winget upgrade --all]] بيسطّب النسخ الجديدة واحد ورا التاني، كل برنامج بالـ installer بتاعه، فممكن واحد يطلب restart أو يفتح نافذة رغم [[--silent]]. و [[--include-unknown]] بيضيف البرامج اللي winget مش عارف نسختها.
+
+[[winget pin add --id X]] بيمنع X من [[--all]] بس، ولسه تقدر تحدّثه بإيدك بذكر اسمه ([[--blocking]] بيمنعه خالص). و [[winget pin list]] بيعرض المثبّتين، و [[winget pin remove --id X]] بيشيل.
+
+الـ export بيكتب البرامج اللي ليها مصدر بس، ومن غير [[--include-versions]] مفيهوش أرقام نسخ فالـ import بيسطّب الأحدث. وبرامج msstore محتاجة تبقى داخل بحساب Microsoft. وفيه [[winget list]] كل المتسطب، و [[winget search name]] تدوّر على برنامج، و [[winget show --id X]] تفاصيله.
+
+ولو عايز التحديث يحصل لوحده كل أسبوع: سكربت فيه [[winget upgrade --all ...]] و Register-ScheduledTask (درس لوحده)، بس الأحسن تشوف اللي هيتحدّث الأول.`,
+            when: R`مرة كل أسبوع أو اتنين للتحديث، ومرة بعد ما تظبط جهازك للـ export (وكل ما تسطّب حاجة مهمة جديدة). والـ import أول حاجة على أي جهاز جديد.`,
+            mistakes: R`تشغّل [[upgrade --all]] وانت في نص شغل فبرنامج مفتوح يتقفل أو يطلب restart. أو تفتكر الـ export بينقل الإعدادات والملفات: هو بينقل أسامي البرامج بس. أو تنسى [[--accept-source-agreements]] في سكربت فيقف مستني «Y». أو تحدّث Node أو Python أو SDK مشروعك محتاج نسخة معينة منه فالمشروع يقع؛ ثبّته بـ [[winget pin add]].`
+          },
+          lines: [
+            "اعرض البرامج اللي ليها تحديث، من غير ما يحدّث حاجة.",
+            "حدّث برنامج واحد بالـ Id بتاعه بالظبط.",
+            "حدّث كله من غير نوافذ ومن غير أسئلة الموافقة.",
+            "ثبّت برنامج على نسخته عشان [[--all]] ميلمسوش.",
+            "اكتب لستة برامجك في ملف JSON.",
+            "على الجهاز الجديد: سطّب كل اللي في الملف، وكمّل لو حاجة مش موجودة."
+          ],
+          sol: R`جربت [[winget upgrade]] (winget v1.29) على جهازي فطلع جدول فيه سطور زي [[GitHub CLI  GitHub.cli  2.97.0  2.102.0  winget]] و [[Windows Subsystem for Linux  Microsoft.WSL  2.6.3.0  2.7.13  winget]]، وفي الآخر [[16 upgrades available.]] و [[2 package(s) have version numbers that cannot be determined. Use --include-unknown to see all results.]]
+
+و [[winget export -o apps.json]] طبع سطور كتير زي [[Installed package is not available from any source: ...]] للبرامج اللي مش في أي مخزن (درايفرات وبرامج متسطبة يدوي)، ودي مش هتتنقل. والملف طلع JSON فيه [["Sources"]]، وتحت كل مصدر لستة [["PackageIdentifier"]]: عندي 46 من [[winget]] (زي [[Git.Git]] و [[VideoLAN.VLC]]) و 7 من [[msstore]] بأكواد زي [[XP89DCGQ3K6VLD]]. (مشغّلتش [[upgrade --all]] ولا [[import]] ولا [[pin add]] عشان مغيّرش حاجة على الجهاز.)`,
+          solCode: R`winget upgrade
+winget export -o "$HOME\apps.json"
+Get-Content "$HOME\apps.json" -TotalCount 20`
+        },
+        {
+          cmd: "Measure-Command",
+          title: "الأمر ده بياخد قد إيه؟",
+          desc: R`[[Measure-Command]] بيشغّل الكود اللي بين [[{ }]] ويرجّع خد وقت قد إيه، زي [[time]] في bash.
+
+الناتج object نوعه TimeSpan، فيه [[TotalSeconds]] و [[TotalMilliseconds]] (الوقت كله بالثواني أو بالملّي)، و [[Seconds]] و [[Milliseconds]] (جزء من الوقت بس: 1.5 ثانية الـ [[Seconds]] بتاعتها 1 والـ [[Milliseconds]] 500). استخدم الـ Total دايمًا.
+
+خلي بالك: Measure-Command بيرمي الـ output بتاع الكود، فمش هتشوف ناتج الأمر اللي بتقيسه، إلا لو حطيت [[| Out-Default]] جواه (بيبعته للشاشة مباشرة). والأقواس [[( ).TotalMilliseconds]] بتشغّل الأمر وتاخد خاصية من الناتج.
+
+السطر التاني بيقيس وقت فتح PowerShell من غير profile، والتالت بالـ profile بتاعك: الفرق هو اللي الإضافات (oh-my-posh و Terminal-Icons ...) بتضيفه على كل نافذة. وآخر 3 سطور بيقارنوا طريقتين بيعملوا نفس الحاجة: array بـ [[+=]] (بتعمل array جديدة وتنسخ اللي فات مع كل عنصر) قصاد إنك تخزّن ناتج الـ [[foreach]] كله مرة واحدة. و [[1..20000]] الأرقام من 1 لـ 20000، و [[-f]] بيحط القيم مكان [[{0}]] و [[{1}]] في النص (درس النصوص)، و [[:N2]] يعني رقم برقمين بعد العلامة.`,
+          example: R`Measure-Command { Start-Sleep -Milliseconds 300 }
+(Measure-Command { pwsh -NoProfile -c exit }).TotalMilliseconds
+(Measure-Command { pwsh -c exit }).TotalMilliseconds
+$a = Measure-Command { $arr = @(); foreach ($i in 1..20000) { $arr += $i } }
+$b = Measure-Command { $arr = foreach ($i in 1..20000) { $i } }
+"+= : {0:N2}s   foreach = : {1:N2}s" -f $a.TotalSeconds, $b.TotalSeconds`,
+          try: R`قارن [[1..100000 | ForEach-Object { $_ * 2 }]] بـ [[foreach ($n in 1..100000) { $n * 2 }]] بـ Measure-Command، وشغّل كل واحد مرتين.`,
+          deep: {
+            why: R`«ده بطيء» إحساس، و Measure-Command بيحوّله رقم. قبل ما تعدّل سكربت عشان تسرّعه، قيس: يمكن البطء في حتة تانية خالص. وبعد التعديل قيس تاني عشان تتأكد إنه اتحسّن فعلًا. ونفس الحكاية للـ profile: كل إضافة شكلها حلو بس بتاخد من وقت فتح كل نافذة.`,
+            how: R`[[Measure-Command]] بيشغّل الكود في نفس الـ scope بتاعك، فأي متغير اتعمل جواه ([[$arr]] مثلًا) بيفضل موجود بعدها (جربتها في 5.1 و 7). والـ output بيترمي، لكن [[Write-Host]] بيبان لأنه مش output (درس «Write-Host والـ output»).
+
+القياس مرة واحدة مش دقيق: أول تشغيل بيبقى أبطأ (تحميل موديولات وتجهيز الكود)، والجهاز بيعمل حاجات تانية في نفس الوقت. اعمله كذا مرة وخد المتوسط: [[1..5 | ForEach-Object { (Measure-Command { ... }).TotalMilliseconds } | Measure-Object -Average]].
+
+للأوامر الخارجية نفس الفكرة: [[(Measure-Command { npm run build | Out-Default }).TotalSeconds]] بيوريك ناتج الـ build وبيقيسه. وفي PowerShell 7، [[Get-History]] فيه [[Duration]] لكل أمر شغّلته، فـ [[Get-History | Select-Object -Last 1 CommandLine, Duration]] بيقولك آخر أمر خد قد إيه من غير ما تعيده (في 5.1 الخاصية دي مش موجودة).
+
+ولو عايز تقيس حتت جوه سكربت: [[$sw = [System.Diagnostics.Stopwatch]::StartNew()]] في الأول و [[$sw.Elapsed]] عند أي نقطة (زي check-site.ps1).`,
+            when: R`لما سكربت أو build حاسس إنه بطيء، أو بتختار بين طريقتين، أو بعد ما تزوّد حاجة في الـ profile، أو عايز تثبت لحد إن التعديل سرّع فعلًا.`,
+            mistakes: R`تقرا [[.Seconds]] أو [[.Milliseconds]] بدل [[.TotalSeconds]]، فـ 2.4 ثانية تطلع «400 ملّي». أو تقيس مرة واحدة وتحكم. أو تستغرب إن الأمر «مطبعش حاجة» (Measure-Command بيرمي الـ output). أو تقارن حاجة نزلت من النت أول مرة بنفس الحاجة وهي جاية من الكاش.`
+          },
+          lines: [
+            "قيس أمر بسيط: الناتج TimeSpan بكل الوحدات.",
+            "وقت فتح PowerShell من غير profile بالملّي ثانية.",
+            "وقت فتحه بالـ profile بتاعك: الفرق هو تمن إضافاتك.",
+            "الطريقة الأولى: array و [[+=]] لعشرين ألف رقم.",
+            "الطريقة التانية: خزّن ناتج اللوب كله مرة واحدة.",
+            "اطبع الوقتين برقمين بعد العلامة ([[-f]] و [[:N2]])."
+          ],
+          sol: R`جربتها على PowerShell 7.6.6: [[ForEach-Object]] (الـ pipeline) خد [[0.49]] ثانية، و [[foreach]] (اللوب) خد [[0.10]]، يعني اللوب أسرع حوالي 5 مرات، لأن الـ pipeline بيعدّي كل عنصر على أمر لوحده. وعلى 5.1 كانوا [[0.44]] و [[0.06]]. أرقامك هتختلف حسب الجهاز، المهم النسبة. والمرة التانية غالبًا أسرع شوية من الأولى، فقيس أكتر من مرة.
+
+ومثال الـ array: على PowerShell 7.6 الـ [[+=]] لـ 20000 عنصر خد حوالي ثانية، وتخزين ناتج الـ foreach مرة واحدة خد حوالي [[0.01]] ثانية. وعلى Windows PowerShell 5.1 الـ [[+=]] خد [[11.7]] ثانية (PowerShell 7.5 حسّن [[+=]] كتير، بس لسه أبطأ بفرق كبير). و [[Measure-Command { Start-Sleep -Milliseconds 300 }]] رجّع [[TotalMilliseconds : 325.0354]]: الـ 25 الزيادة وقت تشغيل الأمر نفسه. وفتح PowerShell 7 من غير profile خد حوالي 300 ملّي ثانية.`,
+          solCode: R`(Measure-Command { 1..100000 | ForEach-Object { $_ * 2 } }).TotalSeconds
+(Measure-Command { foreach ($n in 1..100000) { $n * 2 } }).TotalSeconds`
+        },
+        {
+          cmd: "Start-Job",
+          title: "شغّل حاجة في الخلفية وكمّل شغلك",
+          desc: R`[[Start-Job]] بيشغّل كود في الخلفية في PowerShell تاني مستقل، والترمنال يرجعلك على طول تكمّل شغلك، وبعدين تجيب الناتج لما يخلص. زي [[&]] في آخر الأمر في bash و [[jobs]] هناك.
+
+كل شغلانة اسمها job ليها رقم واسم وحالة. و [[-Name size]] اسم تنادي بيه الـ job بدل الرقم. والكود بين [[{ }]] بيشتغل في عملية تانية مش شايفة متغيراتك، فـ [[$using:folder]] بتبعتله قيمة المتغير [[$folder]] من عندك. و [[Get-Job]] بيعرض كل الـ jobs: [[State]] ([[Running]] شغالة و [[Completed]] خلصت و [[Failed]] فشلت) و [[HasMoreData]] (فيه ناتج لسه مقريتهوش).
+
+[[Receive-Job]] بيجيب الناتج: [[-Wait]] يستنى لو لسه شغالة، و [[-AutoRemoveJob]] يمسحها من الليستة بعد ما يجيب ناتجها (من غيره بتفضل في [[Get-Job]]). و [[Remove-Job]] بيمسح job (ولو لسه شغالة محتاج [[-Force]]).
+
+في PowerShell 7 فيه اختصار: [[&]] في آخر أي أمر بيعمله job على طول زي bash، فـ [[$j = ping -n 4 github.com &]] بيحط الـ job في [[$j]]. و [[Start-ThreadJob]] (موجود في 7 من غير تسطيب) نفس الفكرة بس في thread جوه نفس العملية، فبيبدأ أسرع بكتير وأخف على الرام.`,
+          example: R`$folder = "$HOME\Downloads"
+Start-Job -Name size { [math]::Round((Get-ChildItem $using:folder -Recurse -File | Measure-Object Length -Sum).Sum / 1GB, 2) }
+Get-Job
+Receive-Job -Name size -Wait -AutoRemoveJob
+$j = ping -n 4 github.com &
+$j | Receive-Job -Wait -AutoRemoveJob
+Start-ThreadJob { Invoke-RestMethod https://api.github.com/zen } | Receive-Job -Wait -AutoRemoveJob`,
+          try: R`ابدأ job بيحسب حجم فولدر كبير (زي [[C:\Windows]] مع [[-ErrorAction SilentlyContinue]])، وفي نفس الوقت اشتغل عادي في الترمنال، وبعدين هات الناتج.`,
+          deep: {
+            why: R`حاجات بتاخد وقت ومش محتاج تتفرج عليها: حساب حجم فولدرات، أو ping طويل، أو تحميل، أو build. بدل ما تفتح تاب تاني وتنسى فيه إيه، Start-Job بيشغّلها في الخلفية وتجيب النتيجة لما تحتاجها. وفي سكربت تقدر تشغّل كذا حاجة مع بعض وتستناهم كلهم بـ [[Wait-Job]].`,
+            how: R`[[Start-Job]] بيفتح عملية [[pwsh]] جديدة لكل job، وده بياخد وقت ورام، والناتج بيرجعلك نسخة من البيانات (serialized) مش الـ object الأصلي بالـ methods بتاعته. [[Start-ThreadJob]] بيشتغل في thread جوه نفس العملية، فأسرع وأخف، و [[-ThrottleLimit]] بيحدد كام واحد يشتغل مع بعض. ودا نفس اللي [[ForEach-Object -Parallel]] بيستخدمه.
+
+الفولدر اللي الـ job بيبدأ فيه: في PowerShell 7 الفولدر الحالي بتاعك، وفي 5.1 فولدر Documents (جربتها في الاتنين)، فاستخدم مسارات كاملة أو [[$using:PWD]]. و [[&]] في آخر الأمر مش موجود في 5.1 (بيطلع [[The ampersand (&) character is not allowed]]).
+
+الـ jobs عايشة طول ما النافذة مفتوحة: لو قفلت PowerShell كل الـ jobs بتتقفل. لو عايز حاجة تكمّل بعد ما تقفل، ده Start-Process (برنامج منفصل) أو Task Scheduler أو BITS للتحميل.
+
+[[Wait-Job -Timeout 60]] بيستنى لحد 60 ثانية بس، و [[Stop-Job]] بيوقف واحدة شغالة. ولو job فشلت، [[Receive-Job]] بيطبع الـ error بتاعها.`,
+            when: R`أي أمر بياخد أكتر من كام ثانية ومش محتاج تتفرج عليه، أو سكربت عايز يعمل كذا حاجة مستقلة مع بعض (يكلّم كذا API أو يفحص كذا سيرفر) بدل واحدة ورا التانية.`,
+            mistakes: R`تستخدم متغير من بره جوه الـ job من غير [[$using:]] فيبقى فاضي. أو تعمل [[Start-Job]] لـ 100 حاجة صغيرة فكل واحدة تفتح pwsh جديد وتبقى أبطأ من إنك تعملهم ورا بعض ([[Start-ThreadJob]] أو [[-Parallel]] أحسن). أو تنسى [[Receive-Job]] وتسيب jobs خلصت مالية [[Get-Job]]. أو تشغّل في job حاجة بتسأل سؤال (Read-Host أو تأكيد) فتفضل مستنية للأبد. أو تقفل النافذة وتفتكر الـ job كمّل.`
+          },
+          lines: [
+            "الفولدر اللي هنحسب حجمه.",
+            "ابدأ job اسمها size في الخلفية، و [[$using:folder]] بيبعتلها قيمة المتغير.",
+            "اعرض الـ jobs وحالتها.",
+            "استنى لحد ما تخلص، وهات الناتج، وامسحها من الليستة.",
+            "PowerShell 7: [[&]] في آخر أي أمر بيشغّله job.",
+            "هات ناتج الـ ping لما يخلص.",
+            "thread job (أخف وأسرع) بيكلّم API، وهات الناتج على طول."
+          ],
+          sol: R`جربت المثال على PowerShell 7.6: [[Start-Job]] طبع سطر الـ job على طول ([[1  size  BackgroundJob  Running]]) والترمنال رجعلي، و [[Get-Job]] طلع نفس السطر و [[HasMoreData True]]، و [[Receive-Job -Wait]] استنى ثواني وطلع [[5.32]] (حجم Downloads عندي بالجيجا). و [[ping ... &]] رجّع job، و [[Receive-Job]] طبع ناتج ping كامل، و [[Start-ThreadJob]] رجّع جملة من GitHub زي [[Accessible for all.]] (بتتغير كل مرة). وفي الآخر [[Get-Job]] بقى فاضي بسبب [[-AutoRemoveJob]].
+
+في تجربتك: الـ job بتاع [[C:\Windows]] بياخد دقيقة أو أكتر وانت شغال عادي، و [[Get-Job win]] هتلاقيه Running، ولما يبقى Completed هات الناتج. ولو نسيت [[$using:]] مع متغير من بره، الـ job هيشوفه فاضي: جربت [[$outer = "hello"]] وجوه الـ job [[$outer]] طلع فاضي و [[$using:outer]] طلع [[hello]].`,
+          solCode: R`Start-Job -Name win { (Get-ChildItem C:\Windows -Recurse -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum / 1GB }
+Get-Job win
+Receive-Job -Name win -Wait -AutoRemoveJob`
+        },
+        {
+          cmd: "Out-GridView",
+          title: "جدول تفاعلي تفلتر وتختار منه",
+          desc: R`[[Out-GridView]] (اختصاره [[ogv]]) بيعرض أي ناتج في نافذة جدول: ترتب بالضغط على العمود، وتكتب في خانة Filter اللي فوق تفلتر الصفوف، وتضيف شروط بـ «Add criteria». ومع [[-PassThru]] بيبقى أداة اختيار: تحدد صفوف (Ctrl أو Shift مع الكليك) وتدوس OK فيرجعوا للـ pipeline ويكمّلوا للأمر اللي بعده.
+
+[[-Title]] عنوان النافذة. والسطر التاني بيعرض العمليات بعمود محسوب [[@{ n = "RAM_MB"; e = { ... } }]] (زي درس Get-CimInstance) فيه الرام بالميجا، وبعد ما تختار وتدوس OK بيروحوا لـ [[Stop-Process]] بـ [[-WhatIf]] (يقولك هيقفل إيه من غير ما يقفل). و Stop-Process بيعرف يقرا الـ [[Id]] من أي object جاله. و [[-OutputMode Single]] بيسمح باختيار صف واحد بس، و [[Invoke-Item]] بيفتح الملف المختار. و [[-Wait]] بيخلي الأمر يستنى لحد ما تقفل النافذة، وده لازم لو بتشغّله من سكربت بـ [[pwsh -File]]، وإلا السكربت يخلص والنافذة تتقفل معاه.
+
+ويندوز بس، ومحتاج واجهة رسومية (مش هيشتغل في SSH ولا على Windows Server Core). كان موجود في 5.1، واختفى في PowerShell 6، ورجع في PowerShell 7 على ويندوز.`,
+          example: R`Get-Service | Out-GridView
+Get-Process | Select-Object Name, Id, @{ n = "RAM_MB"; e = { [math]::Round($_.WorkingSet64 / 1MB) } } | Out-GridView -Title "Pick processes to stop" -PassThru | Stop-Process -WhatIf
+Get-ChildItem $HOME\Downloads -File | Sort-Object LastWriteTime -Descending | Out-GridView -Title "Open a file" -OutputMode Single | Invoke-Item
+Import-Csv .\disk-report.csv | Out-GridView -Title "Disk report" -Wait`,
+          try: R`اعرض العمليات، وفلتر بكلمة [[chrome]] أو [[code]]، ورتّب بـ RAM_MB، واختار اتنين ودوس OK، وشوف سطور What if.`,
+          deep: {
+            why: R`ساعات عايز تبص على بيانات كتير وتدوّر فيها بإيدك: مئات العمليات أو الخدمات أو صفوف CSV. الجدول في الترمنال بيتقطع وصعب تفلتره، و Excel كتير عليه. و [[-PassThru]] بيحل مشكلة «عايز أختار كام حاجة من لستة وأعمل فيهم حاجة» من غير ما تكتب [[Where-Object]] بشروط.`,
+            how: R`[[Out-GridView]] بيعرض الخصائص اللي الـ object بيعرضها افتراضيًا، فاعمل [[Select-Object]] قبله بالأعمدة اللي عايزها بالظبط. والفلتر والترتيب جوه النافذة عرض بس؛ اللي بيرجع مع [[-PassThru]] هو الـ objects اللي اخترتها بكل خصائصها.
+
+[[-OutputMode]] ليه 3 قيم: [[None]] (الافتراضي، عرض بس)، و [[Single]] (صف واحد)، و [[Multiple]] (أكتر من صف، وده نفس [[-PassThru]]).
+
+في PowerShell 7 الأمر جاي في موديول Microsoft.PowerShell.Utility على ويندوز بس. على لينكس والماك أو في SSH فيه بديل جوه الترمنال نفسه: موديول [[Microsoft.PowerShell.ConsoleGuiTools]] وأمره [[Out-ConsoleGridView]] (اختصاره [[ocgv]])، بنفس الفكرة ونفس [[-OutputMode]].
+
+مع [[-PassThru]] أو [[-OutputMode]] أو [[-Wait]] الترمنال بيستنى لحد ما تقفل النافذة، ومن غيرهم بيرجعلك على طول والنافذة فاضلة مفتوحة.`,
+            when: R`استكشاف بيانات بسرعة، أو أداة صغيرة لنفسك («اختار الخدمات اللي تتقفل»، «اختار الفولدرات اللي تتضغط»)، أو تعرض نتيجة سكربت لحد مش بيحب الترمنال.`,
+            mistakes: R`تشغّله في SSH أو على Server Core فيطلع error لأن مفيش شاشة. أو تحطه في سكربت بيشتغل لوحده (Task Scheduler) فيفضل مستني حد يدوس OK. أو تنسى [[-PassThru]] وتستغرب إن OK مش بيعمل حاجة. أو تبعت الاختيار لأمر خطير (Stop-Process أو Remove-Item) من غير [[-WhatIf]] الأول.`
+          },
+          lines: [
+            "اعرض الخدمات في جدول تفاعلي تفلتر وترتب فيه.",
+            "العمليات بعمود رام بالميجا: اختار منهم ودوس OK فيروحوا لـ Stop-Process (بـ [[-WhatIf]] للتجربة).",
+            "أحدث ملفات Downloads: اختار ملف واحد ([[-OutputMode Single]]) ويتفتح.",
+            "اعرض CSV في جدول، واستنى لحد ما النافذة تتقفل ([[-Wait]])."
+          ],
+          sol: R`(مشغّلتهوش وأنا بكتب الدرس لأنه بيفتح نافذة بتستنى إيدك؛ اللي تحت من تجربة نفس الأوامر من غير النافذة ومن توثيق Microsoft.) النافذة بتفتح بأعمدة Name و Id و RAM_MB، والكتابة في Filter بتفلتر وانت بتكتب في كل الأعمدة. وبعد OK، [[Stop-Process -WhatIf]] بيطبع سطر لكل اختيار ومش بيقفل حاجة. جربت إن الـ object اللي طالع من [[Select-Object]] بالأعمدة دي بيوصل لـ Stop-Process صح على عملية ping شغّلتها للتجربة: طلع [[What if: Performing the operation "Stop-Process" on target "PING (36240)".]]، ولما شلت [[-WhatIf]] العملية اتقفلت فعلًا.
+
+لو دوست Cancel أو قفلت النافذة، مفيش حاجة بتعدّي للأمر اللي بعده. ولو نسيت [[-PassThru]]، OK مش هيرجع حاجة. وشيل [[-WhatIf]] بس لما تبقى متأكد من اختيارك.`
+        },
+        {
+          cmd: "FileSystemWatcher",
+          title: "راقب فولدر واعمل حاجة لما ملف يوصل",
+          desc: R`[[System.IO.FileSystemWatcher]] class من .NET بيراقب فولدر ويقولك لما ملف يتعمل أو يتعدّل أو يتمسح أو يتغير اسمه. المثال بيراقب Downloads، وكل ما PDF جديد يوصل يطبع اسمه ويعمل صوت، لحد ما تدوس Ctrl+C.
+
+[[::new($folder, "*.pdf")]] بيعمل watcher على الفولدر ده، والـ filter التاني بيحدد أنهي ملفات ([[*]] أي حروف). و [[[System.IO.WatcherChangeTypes]'Created, Renamed']] الأحداث اللي تهمنا: النص اللي فيه أسامي مفصولة بفاصلة بيتحوّل لقيمة واحدة فيها الاتنين. و Renamed مهمة هنا: المتصفح بينزّل الملف باسم مؤقت زي [[report.pdf.crdownload]] وفي الآخر بيغيّر اسمه، فلو راقبت Created بس مش هتشوفه.
+
+[[while ($true)]] لوب مالوش نهاية. جواه [[WaitForChanged($events, 1000)]] بيستنى حدث لحد ثانية (1000 ملّي)، وبيرجع object فيه [[TimedOut]] (True لو الثانية عدّت من غير حاجة) و [[Name]] اسم الملف و [[ChangeType]] نوع الحدث. لو مفيش حاجة، [[continue]] ترجع لأول اللوب. والثانية دي مهمة: من غيرها الأمر بيستنى للأبد و Ctrl+C مش هيوقفه غير لما ملف يوصل. و [[[console]::Beep(1000, 150)]] صوت 1000 هرتز لمدة 150 ملّي ثانية.`,
+          example: R`$folder = Join-Path $HOME "Downloads"
+$watcher = [System.IO.FileSystemWatcher]::new($folder, "*.pdf")
+$events = [System.IO.WatcherChangeTypes]'Created, Renamed'
+Write-Host "Watching $folder for PDFs... Ctrl+C to stop"
+while ($true) {
+    $c = $watcher.WaitForChanged($events, 1000)
+    if ($c.TimedOut) { continue }
+    Write-Host "$(Get-Date -Format HH:mm:ss) $($c.ChangeType): $($c.Name)" -ForegroundColor Green
+    [console]::Beep(1000, 150)
+}`,
+          try: R`شغّله، ومن نافذة تانية اعمل [[New-Item "$HOME\Downloads\test.pdf"]]، وبعدين نزّل أي PDF من المتصفح. وبعدين خليه ينقل كل PDF جديد لفولدر [[Documents\PDFs]].`,
+          flag: "script",
+          deep: {
+            why: R`حاجات كتير بتستنى «لما ملف يوصل»: فاتورة نزلت تتنقل لفولدرها، صورة اتحفظت تتصغّر، CSV وصل من نظام تاني يتعالج، أو build يتعمل لما ملف يتغير. بدل ما تفحص الفولدر كل شوية، ويندوز نفسه بيبلّغ الـ watcher أول ما حاجة تحصل.`,
+            how: R`فيه طريقتين. [[WaitForChanged]] (المثال) بسيطة: بتستنى حدث واحد وترجع. عيبها إن الأحداث اللي بتحصل وانت بتعالج الحدث اللي فات (بتنقل ملف مثلًا) بتضيع، لأنها مش بتسمع غير وهي مستنية. [[Register-ObjectEvent]] (الـ solCode) بيسجّل الأحداث في طابور: [[-SourceIdentifier]] اسم للتسجيل، و [[$watcher.EnableRaisingEvents = $true]] يبدأ الإرسال، و [[Wait-Event -Timeout 1]] ياخد أقدم حدث في الطابور، و [[Remove-Event]] يشيله منه، و [[$e.SourceEventArgs.Name]] اسم الملف، و [[Unregister-Event]] في الآخر يلغي التسجيل.
+
+الأحداث: [[Created]] و [[Changed]] و [[Deleted]] و [[Renamed]]. و [[Changed]] بيتكرر: كتابة واحدة في ملف ممكن تطلّع أكتر من حدث (جربت كتابة 100 ألف حرف وطلعت حدثين)، فلو بتعالج Changed استنى شوية واتجاهل التكرار. و [[$watcher.IncludeSubdirectories = $true]] يراقب الفولدرات اللي جوه كمان.
+
+الـ Created بيوصلك أول ما الملف يتعمل، مش لما يخلص كتابة. ملف كبير بيتنسخ هيفضل مقفول ثواني، و [[Move-Item]] هيفشل بـ «being used by another process». عشان كده [[Start-Sleep]] قبل النقل و [[try/catch]] حواليه.
+
+الـ watcher عايش طول ما النافذة مفتوحة. عشان يشتغل دايمًا: سكربت + Register-ScheduledTask بـ [[-AtLogOn]] (درس Register-ScheduledTask).`,
+            when: R`أتمتة فولدر Downloads أو فولدر «inbox» بيوصلّه ملفات من برنامج تاني، أو تشغيل أمر لما ملف config يتغير، أو تسجيل مين بيعدّل في فولدر مشترك.`,
+            mistakes: R`تراقب [[Created]] بس وتستغرب إن تحميلات المتصفح مش بتظهر (هي Renamed). أو [[WaitForChanged]] من غير timeout فـ Ctrl+C ميوقفوش. أو تعالج الملف قبل ما البرنامج اللي بيكتبه يخلص. أو تعمل حاجة بطيئة جوه لوب [[WaitForChanged]] فملفات توصل وانت مشغول وتضيع. أو تنقل الملفات لفولدر جوه نفس الفولدر اللي بتراقبه مع [[IncludeSubdirectories]] فتعمل أحداث جديدة من نفسك.`
+          },
+          lines: [
+            "الفولدر اللي هنراقبه.",
+            "watcher على الفولدر ده، لملفات PDF بس.",
+            "الأحداث اللي تهمنا: ملف اتعمل، أو اسمه اتغير (زي تحميلات المتصفح).",
+            "رسالة إنه بدأ.",
+            "لوب مالوش نهاية، بيقف بـ Ctrl+C.",
+            "استنى حدث لحد ثانية بالكتير.",
+            "لو الثانية عدّت من غير حاجة، ارجع لأول اللوب.",
+            "اطبع الوقت ونوع الحدث واسم الملف بالأخضر.",
+            "صوت قصير.",
+            "قفلة اللوب."
+          ],
+          sol: R`جربت نفس الـ watcher على فولدر في TEMP مع thread job بيعمل ملفات: [[a.txt]] و [[b.txt]] اتطبعوا [[13:09:38 new file: a.txt (Created)]] و [[13:09:39 new file: b.txt (Created)]]، و [[ignored.log]] متطبعش عشان الـ filter كان [[*.txt]]. وقلّدت المتصفح: [[report.pdf.crdownload]] واتغير اسمه لـ [[report.pdf]]: مع [[Created, Renamed]] طلع [[Renamed: report.pdf (old: report.pdf.crdownload)]]، ومع [[Created]] بس فضل [[TimedOut]] ومشافهوش.
+
+النقل: أول ما جربت [[Move-Item]] جوه نفس لوب [[WaitForChanged]] مع [[Start-Sleep -Seconds 1]]، ملف [[test.pdf]] اتعمل وأنا في الثانية دي فضاع، لأن [[WaitForChanged]] بيشوف الأحداث وهو مستني بس. الحل في الـ solCode: [[Register-ObjectEvent]] بيحط كل حدث في طابور، و [[Wait-Event -Timeout 1]] بياخدهم واحد واحد، فمفيش حاجة بتضيع وانت مشغول. جربته على فولدر في TEMP ونقل الملفين ([[Moved doc...pdf]] و [[Moved test.pdf]]) والفولدر فضي. و [[finally]] بيلغي التسجيل ويقفل الـ watcher حتى لو وقفته بـ Ctrl+C.`,
+          solCode: R`$folder = Join-Path $HOME "Downloads"
+$dest = Join-Path $HOME "Documents\PDFs"
+New-Item -ItemType Directory -Force $dest | Out-Null
+$watcher = [System.IO.FileSystemWatcher]::new($folder, "*.pdf")
+Register-ObjectEvent $watcher Created -SourceIdentifier PdfNew | Out-Null
+Register-ObjectEvent $watcher Renamed -SourceIdentifier PdfRenamed | Out-Null
+$watcher.EnableRaisingEvents = $true
+try {
+    while ($true) {
+        $e = Wait-Event -Timeout 1
+        if (-not $e) { continue }
+        $e | Remove-Event
+        Start-Sleep -Seconds 1
+        $name = $e.SourceEventArgs.Name
+        try {
+            Move-Item (Join-Path $folder $name) $dest -ErrorAction Stop
+            Write-Host "Moved $name" -ForegroundColor Green
+        } catch {
+            Write-Warning "Could not move $name - $($_.Exception.Message)"
+        }
+    }
+} finally {
+    Unregister-Event PdfNew
+    Unregister-Event PdfRenamed
+    $watcher.Dispose()
+}`
+        },
+        {
+          cmd: "Write-Progress",
+          title: "عداد تنازلي وبومودورو بشريط تقدم",
+          desc: R`[[Write-Progress]] بيرسم شريط تقدم في الترمنال (زي اللي بيظهر وانت بتنزّل حاجة)، و [[Start-Sleep]] بيوقف السكربت مدة معينة. مع بعض بيعملوا عداد تنازلي: السكربت ده بومودورو (25 دقيقة شغل) بيوريك الوقت الفاضل ويعمل صوت في الآخر.
+
+[[param( )]] بتعرّف الـ parameters (درس «param()»): [[[double]$Minutes = 25]] رقم ممكن يبقى فيه كسور (فـ [[-Minutes 0.1]] تبقى 6 ثواني للتجربة)، و [[$Label]] اسم الجلسة. و [[$end]] وقت النهاية: دلوقتي + عدد الثواني بـ [[.AddSeconds()]]. واللوب بيلف طول ما الساعة لسه موصلتش [[$end]]، وكل لفة بيحسب الفاضل: [[$end - (Get-Date)]] مدة، و [[.TotalSeconds]] بالثواني.
+
+[[-Activity]] العنوان الكبير للشريط، و [[-Status]] السطر اللي تحته، و [[-PercentComplete]] النسبة من 0 لـ 100. و [[[timespan]::FromSeconds($left)]] بيحوّل الثواني لمدة، و [["{0:mm\:ss}" -f ...]] بيكتبها دقايق:ثواني، والـ [[\]] قبل النقطتين لازم لأن النقطتين في تنسيق المدة لازم يتعملهم escape. و [[-Completed]] بيشيل الشريط في الآخر. و [[[console]::Beep(880, 300)]] صوت تردده 880 هرتز لمدة 300 ملّي ثانية.
+
+في PowerShell 7.2 وأحدث الشريط سطر واحد بسيط ([[$PSStyle.Progress.View]] بـ [[Minimal]])، وفي 5.1 أو مع [[Classic]] بيبقى مربع فوق النافذة.`,
+          example: R`param(
+    [double]$Minutes = 25,
+    [string]$Label = "Focus"
+)
+
+$total = $Minutes * 60
+$end = (Get-Date).AddSeconds($total)
+while ((Get-Date) -lt $end) {
+    $left = ($end - (Get-Date)).TotalSeconds
+    $pct = 100 - [math]::Round($left / $total * 100)
+    $status = "{0:mm\:ss} left" -f [timespan]::FromSeconds($left)
+    Write-Progress -Activity $Label -Status $status -PercentComplete $pct
+    Start-Sleep -Seconds 1
+}
+Write-Progress -Activity $Label -Completed
+[console]::Beep(880, 300)
+[console]::Beep(660, 300)
+Write-Host "$Label done at $(Get-Date -Format HH:mm)" -ForegroundColor Green`,
+          try: R`احفظه [[timer.ps1]] وشغّله بـ [[-Minutes 0.1 -Label Test]]، وبعدين اعمل سكربت جنبه بيشغّل 4 جلسات 25 دقيقة وبينهم راحة 5 دقايق.`,
+          flag: "script",
+          deep: {
+            why: R`عداد في الترمنال اللي انت فاتحه أصلًا: بومودورو، أو «فكّرني بعد 40 دقيقة»، أو تستنى قبل ما تعيد محاولة. ونفس [[Write-Progress]] ده هو اللي بتحطه في أي سكربت طويل (نسخ ملفات كتير، معالجة صور) عشان اللي بيشغّله يعرف فاضل قد إيه بدل ما يفتكر إنه علّق.`,
+            how: R`الحساب من وقت النهاية ([[$end]]) مش بعدّ الثواني: لو كتبت لوب بيعمل [[Start-Sleep 1]] 1500 مرة، كل لفة بتاخد ثانية + وقت الكود نفسه، فالـ 25 دقيقة تبقى أكتر. لما تحسب من الساعة كل مرة، الغلط مش بيتجمّع.
+
+في سكربت حقيقي بتعدّ عناصر: [[Write-Progress -Activity "Copying" -Status "$i of $($files.Count)" -PercentComplete ($i / $files.Count * 100)]]. و [[-Id]] و [[-ParentId]] بيعملوا شريط جوه شريط (فولدرات وجواها ملفات). و [[-SecondsRemaining]] بيعرض الوقت الفاضل جاهز.
+
+[[$ProgressPreference = 'SilentlyContinue']] بيخفي كل الشرايط (بتاعة السكربت وبتاعة أوامر زي Invoke-WebRequest). والشريط مش بيبان لو الناتج رايح لملف أو السكربت شغال من Task Scheduler، فمش بيضر.
+
+[[[console]::Beep(freq, ms)]] بيطلع الصوت من كارت الصوت في ويندوز 10 و 11، والتردد لازم بين 37 و 32767 وإلا بيطلع [[The frequency must be between 37 and 32767.]] (جربتها بـ 20). والسكربت بيقف لحد ما الصوت يخلص.`,
+            when: R`بومودورو وتنبيهات بسيطة، وأي سكربت بيلف على أكتر من كام عنصر وبياخد أكتر من كام ثانية.`,
+            mistakes: R`تحسب الوقت بعدّ لفات [[Start-Sleep]] فيتأخر. أو تنسى [[-Completed]] فالشريط يفضل معلّق. أو [[-PercentComplete]] يعدّي 100 فيطلع [[The 150 argument is greater than the maximum allowed range of 100.]] (جربتها). أو تحدّث الشريط آلاف المرات في لوب سريع فالسكربت يبطأ جدًا؛ حدّثه كل 100 عنصر مثلًا. أو تكتب [[{0:mm:ss}]] من غير [[\]] فيطلع [[Error formatting a string: Input string was not in a correct format.]]`
+          },
+          lines: [
+            "بداية الـ parameters.",
+            "عدد الدقايق، والافتراضي 25، وممكن كسور.",
+            "اسم الجلسة اللي هيظهر على الشريط.",
+            "قفلة.",
+            "المدة بالثواني.",
+            "وقت النهاية = دلوقتي + المدة.",
+            "طول ما الساعة لسه موصلتش للنهاية...",
+            "...الثواني الفاضلة (النهاية ناقص دلوقتي)...",
+            "...النسبة اللي خلصت من 100...",
+            "...الفاضل بالشكل دقايق:ثواني...",
+            "...ارسم الشريط بالعنوان والوقت والنسبة...",
+            "...واستنى ثانية.",
+            "قفلة اللوب.",
+            "شيل الشريط.",
+            "صوت 880 هرتز لمدة 300 ملّي ثانية...",
+            "...وبعده صوت أوطى.",
+            "اطبع إن الجلسة خلصت والساعة كام."
+          ],
+          sol: R`[[.\timer.ps1 -Minutes 0.05 -Label Test]] اشتغل حوالي 4 ثواني (3 ثواني العداد + الصوتين)، وفي الآخر سطر أخضر [[Test done at 13:17]]. وجربت التنسيق لوحده: 1499.6 ثانية طلعت [[24:59 left]]، و 59.2 طلعت [[00:59 left]] (الكسور بتتشال مش بتتقرّب).
+
+الـ 4 جلسات في الـ solCode: احفظه [[pomodoro.ps1]] جنب [[timer.ps1]]. [[1..4]] الأرقام من 1 لـ 4، و [[&]] بيشغّل ملف السكربت (درس «& (call operator)»)، و [[$PSScriptRoot]] فولدر السكربت (درس $PSScriptRoot)، والراحة بتتعمل بعد كل جلسة ماعدا الأخيرة. جربته بمدد صغيرة وطلع [[Focus 1/4 done]] ثم [[Break done]] ... لحد [[Focus 4/4 done]]. ولو المدة ساعة أو أكتر غيّر التنسيق لـ [["{0:hh\:mm\:ss}"]] وإلا الساعات مش هتبان: 3725 ثانية طلعت بيه [[01:02:05]].`,
+          solCode: R`foreach ($round in 1..4) {
+    & "$PSScriptRoot\timer.ps1" -Minutes 25 -Label "Focus $round/4"
+    if ($round -lt 4) { & "$PSScriptRoot\timer.ps1" -Minutes 5 -Label "Break" }
+}`
+        },
+        {
+          cmd: "SAPI.SpVoice",
+          title: "خلّي الجهاز يتكلم ويعمل صوت",
+          desc: R`ويندوز فيه محرك نطق (text-to-speech)، و [[New-Object -ComObject SAPI.SpVoice]] بيوصلك له: [[.Speak("...")]] بيقرا النص بصوت. ومعاه [[[console]::Beep(تردد, مدة)]] صوت تنبيه. الفكرة العملية: تشغّل build أو تست طويل وتروح تعمل حاجة، والجهاز يقولك «Build passed» أو يعمل صوت فشل.
+
+[[-ComObject]] بيعمل object من COM (طريقة قديمة في ويندوز البرامج بتعرض بيها خدماتها، و SAPI يعني Speech API). و [[.Speak()]] بترجع رقم ([[1]]) فبنرميه بـ [[| Out-Null]] عشان ميتطبعش. و [[.GetVoices()]] الأصوات المتسطبة، و [[.GetDescription()]] اسم كل صوت. و [[.Rate]] السرعة من -10 لـ 10 (الافتراضي 0)، و [[.Volume]] من 0 لـ 100.
+
+آخر سطر: [[npm run build]] وبعدين [[;]] (أمر تاني على نفس السطر)، و [[$LASTEXITCODE]] الـ exit code بتاع npm (درس $LASTEXITCODE): صفر يعني نجح فيقول «Build passed»، وغير كده صوت واطي طويل و «Build failed».
+
+العربي: SAPI.SpVoice بيشوف الأصوات القديمة بس (على ويندوز إنجليزي: David و Zira). لو ضفت صوت عربي من Settings ثم Time & language ثم Speech ثم Add voices، هتلاقي صوت زي «Microsoft Hoda» (عربي مصري)، و PowerShell 7 بيقدر يستخدمه عن طريق [[System.Speech]] (الـ solCode). جربتها على PowerShell 7.6 واتكلم عربي، أما 5.1 فمشافش غير David و Zira.`,
+          example: R`$voice = New-Object -ComObject SAPI.SpVoice
+$voice.Speak("Build finished") | Out-Null
+foreach ($v in $voice.GetVoices()) { $v.GetDescription() }
+$voice.Rate = 2
+[console]::Beep(880, 300)
+npm run build; if ($LASTEXITCODE -eq 0) { $voice.Speak("Build passed") | Out-Null } else { [console]::Beep(300, 800); $voice.Speak("Build failed") | Out-Null }`,
+          try: R`اعرض الأصوات اللي عندك، وخلّي الجهاز يقول جملة عربي لو عندك صوت عربي.`,
+          deep: {
+            why: R`build أو تست أو تحميل بياخد 10 دقايق، فبتروح تعمل حاجة وترجع كل شوية تبص، أو تنساه خالص. صوت أو جملة مسموعة بتقولك النتيجة وانت بعيد عن الشاشة. ونفس الفكرة في آخر أي سكربت طويل: «Backup done».`,
+            how: R`[[SAPI.SpVoice]] بيستخدم أصوات «SAPI 5» القديمة المسجلة في ويندوز (اللي في اسمها Desktop). ويندوز 10 و 11 فيهم أصوات أحدث (OneCore)، وأي لغة بتضيف صوتها من Settings بتيجي من النوع ده. [[System.Speech.Synthesis.SpeechSynthesizer]] في PowerShell 7 شاف النوعين لما جربت، و [[GetInstalledVoices().VoiceInfo]] بيرجع الاسم واللغة ([[Culture]]) والنوع.
+
+[[.Speak()]] بيستنى لحد ما الكلام يخلص قبل ما السكربت يكمّل. ولو عايز السكربت يكمّل والكلام شغال: في System.Speech [[$tts.SpeakAsync("text")]]، بس لو السكربت خلص قبل الكلام، الكلام بيتقطع.
+
+[[[console]::Beep]] من .NET، والتردد بين 37 و 32767 هرتز. وأصوات ويندوز الجاهزة: [[[System.Media.SystemSounds]::Asterisk.Play()]] (وفيه [[Exclamation]] و [[Hand]] و [[Question]] و [[Beep]]) بتشغّل صوت التنبيه اللي في إعدادات الصوت.
+
+تقدر تعمل فانكشن في الـ [[$PROFILE]]: [[function done { if ($?) { [console]::Beep(880, 200) } else { [console]::Beep(300, 600) } }]] وتكتب [[npm test; done]]. [[$?]] جوه الفانكشن لسه شايلة نتيجة الأمر اللي قبلها (جربتها: بعد [[cmd /c exit 1]] طلعت fail وبعد [[cmd /c exit 0]] طلعت ok).`,
+            when: R`أي حاجة بتاخد أكتر من دقيقة وانت مش هتتفرج عليها: build، tests، تحميل، باك أب.`,
+            mistakes: R`تنسى [[| Out-Null]] فيتطبع [[1]] في نص الناتج. أو تكتب اسم الصوت ناقص في [[SelectVoice]]. أو تحط الكلام في سكربت بيشتغل من Task Scheduler والجهاز مقفول، فمحدش هيسمع. أو تستغرب إن الكلام العربي طالع بنطق غريب أو مش طالع: الصوت المختار إنجليزي، ولازم صوت لغته [[ar-EG]] أو [[ar-SA]].`
+          },
+          lines: [
+            "اعمل object للنطق من COM.",
+            "قول الجملة، وارمي الرقم اللي بيرجع.",
+            "اطبع اسم كل صوت متسطب.",
+            "سرّع الكلام شوية (من -10 لـ 10).",
+            "صوت 880 هرتز لمدة 300 ملّي ثانية.",
+            "شغّل الـ build: لو نجح قول كده، ولو فشل صوت واطي طويل وقول إنه فشل."
+          ],
+          sol: R`[[foreach ($v in $voice.GetVoices()) { $v.GetDescription() }]] على جهازي طلع: [[Microsoft David Desktop - English (United States)]] و [[Microsoft Zira Desktop - English (United States)]]. وفي PowerShell 7.6، [[System.Speech]] (الـ solCode) شاف أكتر: [[Microsoft David Desktop  en-US]] و [[Microsoft Zira Desktop  en-US]] و [[Microsoft David  en-US]] و [[Microsoft Hoda  ar-EG]] و [[Microsoft Mark  en-US]] و [[Microsoft Zira  en-US]]، و [[SelectVoice("Microsoft Hoda")]] اشتغل وقال «البيلد خلص». وفي Windows PowerShell 5.1 نفس الكود شاف David و Zira Desktop بس.
+
+لو [[SelectVoice]] طلع [[Cannot set voice. No matching voice is installed or the voice was disabled.]] يبقى الاسم غلط أو الصوت مش متسطب: انسخ الاسم بالظبط من عمود Name. و [[.Speak()]] بتاعة SAPI لو مرميتش ناتجها هتلاقي [[1]] متطبع بعد الكلام. (جربت الكلام بـ Volume على 0 عشان مزعجش حد، و Beep بصوت عادي.)`,
+          solCode: R`Add-Type -AssemblyName System.Speech
+$tts = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$tts.GetInstalledVoices().VoiceInfo | Select-Object Name, Culture, Gender
+$tts.SelectVoice("Microsoft Hoda")
+$tts.Speak("البيلد خلص")`
+        },
+        {
+          cmd: "MessageBox / BurntToast",
+          title: "رسالة تأكيد أو إشعار ويندوز",
+          desc: R`سكربت شغال ومحتاج يسألك «أكمّل؟» أو يقولك «خلصت» حتى لو الترمنال مش قدامك: [[[System.Windows.MessageBox]::Show()]] بيطلع نافذة رسالة بأزرار ويرجّع الزرار اللي دوسته، و [[New-BurntToastNotification]] من موديول BurntToast بيطلع إشعار ويندوز (toast) في ركن الشاشة زي إشعارات البرامج.
+
+[[Add-Type -AssemblyName PresentationFramework]] بيحمّل مكتبة WPF من .NET اللي فيها MessageBox (لازم في 5.1، و PowerShell 7 بيلاقيها لوحده بس السطر مش بيضر). و [[Show]] بتاخد: النص، والعنوان، والأزرار ([[OK]] و [[OKCancel]] و [[YesNo]] و [[YesNoCancel]])، والأيقونة ([[Information]] و [[Question]] و [[Warning]] و [[Error]]). وبترجع اختيارك ([[Yes]] أو [[No]] أو [[OK]] أو [[Cancel]])، فتقارنه بـ [[-eq "Yes"]]. والسكربت بيقف لحد ما تدوس زرار.
+
+[[Install-Module BurntToast -Scope CurrentUser]] بيسطّب الموديول ليك (مرة واحدة)، و [[-Text]] بياخد لحد 3 نصوص: أولهم العنوان والباقي تحته. الإشعار مش بيوقف السكربت، ولو مشفتوش بيفضل في Notification Center.
+
+الاتنين ويندوز بس وشغالين في 5.1 و 7. و BurntToast محتاج ويندوز 10 أو أحدث، وآخر نسخة 1.1.0 (أغسطس 2025)، والـ repo بتاعه على GitHub اتعمله archive في سبتمبر 2026، يعني شغال بس مفيش تحديثات جاية.`,
+          example: R`Add-Type -AssemblyName PresentationFramework
+$answer = [System.Windows.MessageBox]::Show("Delete logs older than 30 days?", "Cleanup", "YesNo", "Question")
+if ($answer -eq "Yes") { Get-ChildItem .\logs -Filter *.log | Where-Object LastWriteTime -lt (Get-Date).AddDays(-30) | Remove-Item -WhatIf }
+[System.Windows.MessageBox]::Show("Backup finished", "Backup", "OK", "Information") | Out-Null
+Install-Module BurntToast -Scope CurrentUser
+New-BurntToastNotification -Text "Build finished", "All tests passed"`,
+          try: R`اعمل سؤال YesNo: لو دوست Yes اطبع [[OK]] بالأخضر، ولو No اطبع [[Cancelled]] بالأصفر. وبعدين ابعت إشعار بعد [[Start-Sleep 5]] وانت في برنامج تاني.`,
+          deep: {
+            why: R`السكربت ساعات بيشتغل والترمنال متصغّر أو ورا برامج تانية، فمحدش بيشوف سؤال [[Read-Host]] ولا رسالة «خلصت». النافذة بتطلع قدام كل حاجة، والإشعار بيوصلك وانت في المتصفح. ومفيد كمان لسكربت بتعمله لحد مش بيستخدم الترمنال (يدبل كليك على shortcut فيطلعله سؤال بسيط).`,
+            how: R`[[MessageBox]] نافذة «modal»: الكود اللي بعدها مش بيتنفّذ لحد ما تتقفل، وده المطلوب في سؤال تأكيد. والبديل من WinForms: [[Add-Type -AssemblyName System.Windows.Forms]] وبعدين [[[System.Windows.Forms.MessageBox]::Show(...)]] بنفس الفكرة. و PowerShell بيحوّل النص [["YesNo"]] للنوع المطلوب لوحده، فمش محتاج تكتب [[[System.Windows.MessageBoxButton]::YesNo]].
+
+مع [[YesNo]] مفيش زرار X شغال، لازم تختار؛ مع [[YesNoCancel]] الـ X بترجع [[Cancel]].
+
+BurntToast بيستخدم نظام الإشعارات بتاع ويندوز، فالإشعار بيتبع إعداداتك (Do not disturb و Notification Center). وفيه [[New-BTButton]] زرار في الإشعار يفتح لينك، و [[-AppLogo]] صورة، و [[-Silent]] من غير صوت، و [[-Urgent]] بيعدّي الـ Focus Assist. وفي PowerShell 7.4 وأحدث تقدر تسطّبه كمان بـ [[Install-PSResource BurntToast]].
+
+الاتنين محتاجين يوزر داخل على الجهاز وشايف الشاشة: لو السكربت شغال من Task Scheduler بـ «Run whether user is logged on or not» أو كـ SYSTEM، النافذة مش هتظهر لحد، و MessageBox هيفضل مستني للأبد.`,
+            when: R`سؤال تأكيد قبل حاجة مهمة في سكربت بتشغّله بدبل كليك، وإشعار في آخر أي سكربت طويل (باك أب، build، تحميل). وللسكربتات اللي بتشتغل لوحدها من غير حد قدام الجهاز، استخدم لوج أو إيميل بدلهم.`,
+            mistakes: R`تحط MessageBox في سكربت مجدول فيعلّق ومحدش يشوفه. أو تنسى [[Add-Type]] في 5.1 فيطلع [[Unable to find type [System.Windows.MessageBox].]] (جربتها). أو تنسى [[| Out-Null]] مع رسالة OK فيتطبع [[OK]] في الناتج. أو تكتب [[Install-Module]] جوه السكربت نفسه فكل تشغيلة تحاول تسطّب. أو تبعت حاجة خطيرة بعد Yes من غير ما تجرّبها بـ [[-WhatIf]] الأول.`
+          },
+          lines: [
+            "حمّل مكتبة WPF اللي فيها MessageBox (لازمة في 5.1).",
+            "اسأل سؤال بزرارين Yes و No وأيقونة استفهام، والسكربت يستنى الإجابة.",
+            "لو Yes امسح اللوجات الأقدم من 30 يوم (بـ [[-WhatIf]] للتجربة).",
+            "رسالة بزرار OK بس، و [[Out-Null]] يرمي النتيجة.",
+            "سطّب موديول BurntToast ليك (مرة واحدة).",
+            "إشعار ويندوز بعنوان وسطر تحته."
+          ],
+          sol: R`(مشغّلتش النوافذ دي وأنا بكتب الدرس لأنها بتستنى حد يدوس عليها، ومسطّبتش BurntToast؛ جربت الأجزاء اللي مش بتفتح نوافذ، والباقي من صفحة الموديول.) [[Add-Type -AssemblyName PresentationFramework]] اشتغل في PowerShell 7.6 و 5.1، والأزرار المتاحة فعلًا [[OK, OKCancel, AbortRetryIgnore, YesNoCancel, YesNo, RetryCancel, CancelTryContinue]]، والنتايج الممكنة [[None, OK, Cancel, Abort, Retry, Ignore, Yes, No, TryAgain, Continue]]. والمقارنة [[[System.Windows.MessageBoxResult]::Yes -eq "Yes"]] رجعت [[True]]، فـ [[$answer -eq "Yes"]] شغالة.
+
+لما تشغّل الحل: النافذة بتظهر بعلامة استفهام وزرارين Yes و No، والسكربت واقف لحد ما تدوس، وبعدها يطبع السطر المناسب باللون. والإشعار بيظهر في ركن الشاشة بعنوان «Done» وتحته السطر التاني، ولو Do not disturb شغال مش هيظهر قدامك بس هيتحفظ في Notification Center.`,
+          solCode: R`Add-Type -AssemblyName PresentationFramework
+$answer = [System.Windows.MessageBox]::Show("Continue?", "Question", "YesNo", "Question")
+if ($answer -eq "Yes") { Write-Host "OK" -ForegroundColor Green } else { Write-Host "Cancelled" -ForegroundColor Yellow }
+Start-Sleep 5; New-BurntToastNotification -Text "Done", "Your script finished"`
+        },
+        {
+          cmd: "shutdown /s /t",
+          title: "اقفل الجهاز أو اعمله restart في ساعة معينة",
+          desc: R`[[shutdown]] برنامج في ويندوز بيقفل الجهاز أو يعمله restart بعد عدد ثواني تحدده، و [[shutdown /a]] بيلغي ده طول ما الوقت لسه معدّاش. المثال بيحسب الثواني لحد ساعة معينة (11:30 بالليل)، عشان تسيب تحميل أو build شغال وتنام والجهاز يقفل لوحده.
+
+[[Get-Date "23:30"]] بيعمل تاريخ النهارده الساعة 11:30 بالليل. ولو الساعة دي عدّت النهارده (بتشغّله 11:45 مثلًا)، [[.AddDays(1)]] بيخليها بكرة، وإلا الحساب هيطلع بالسالب. و [[New-TimeSpan -End $target]] المدة من دلوقتي لحد الوقت ده، و [[.TotalSeconds]] بالثواني، و [[[int]]] بيحوّلها لرقم صحيح.
+
+[[/s]] اقفل (shutdown)، و [[/r]] restart، و [[/t]] بعد كام ثانية (من 0 لـ 10 سنين، والافتراضي 30)، و [[/c "..."]] رسالة بتظهر في التنبيه (لحد 512 حرف). و [[/f]] يقفل البرامج غصب من غير ما يسألها تحفظ، وخلي بالك: لو [[/t]] أكبر من صفر، [[/f]] بتتحط لوحدها، يعني أي شغل مش محفوظ وقت المعاد هيضيع.
+
+ومن PowerShell نفسه: [[Stop-Computer]] بيقفل و [[Restart-Computer]] بيعمل restart، على طول من غير مهلة (و [[-Force]] يجبره حتى لو فيه برامج مانعة). مفيهمش معاد، فللمعاد استخدم [[shutdown /t]].`,
+          example: R`$target = Get-Date "23:30"
+if ($target -lt (Get-Date)) { $target = $target.AddDays(1) }
+$seconds = [int](New-TimeSpan -End $target).TotalSeconds
+shutdown /s /t $seconds /c "The PC will shut down at 23:30. Save your work."
+shutdown /a
+shutdown /r /t 600 /c "Restarting in 10 minutes for updates"
+shutdown /a`,
+          try: R`اعمل shutdown بعد ساعة بـ [[/t 3600]]، وشوف التنبيه اللي بيظهر، وبعدين الغيه بـ [[shutdown /a]] (واتأكد إنك لغيته!).`,
+          flag: "danger",
+          deep: {
+            why: R`تحميل كبير أو build أو render هيخلص بعد ساعتين وانت عايز تنام، أو عايز الجهاز يعمل restart بالليل بعد التحديثات مش وانت شغال، أو بتحدد لنفسك «الجهاز يقفل الساعة 12». وقايمة Start مفيهاش «اقفل الساعة كذا».`,
+            how: R`[[shutdown /t]] بيسجّل المعاد في ويندوز نفسه، فمش محتاج الترمنال يفضل مفتوح. وفيه معاد واحد بس في نفس الوقت: لو فيه واحد متجدول، أي [[shutdown /s /t]] تاني بيرفض بـ error رقم 1190 («A system shutdown has already been scheduled.»)، فالغي بـ [[/a]] الأول.
+
+ولو عايز «بعد ساعة ونص» مش ساعة معينة: [[shutdown /s /t (90 * 60)]]، والأقواس بتحسب الرقم قبل ما يتبعت. ولو عايز «لما البرنامج يخلص»: [[Wait-Process -Name ...]] بيستنى البرنامج يقفل، وبعده [[Stop-Computer]].
+
+[[/h]] hibernate (الدرس الجاي)، و [[/l]] تسجيل خروج، و [[/sg]] و [[/g]] زي [[/s]] و [[/r]] بس بيفتحوا البرامج المسجلة تاني بعد الدخول. و [[/r /o]] restart على قايمة Advanced startup (للـ Safe Mode). و [[shutdown /?]] بيعرض كل ده.
+
+[[Stop-Computer]] و [[Restart-Computer]] بيدعموا [[-WhatIf]] (يقولك هيعمل إيه من غير ما يعمله) و [[-ComputerName]] لأجهزة تانية على الشبكة لو عندك صلاحية.`,
+            when: R`لما تسيب الجهاز يكمّل شغل وتمشي، أو تجدول restart بعد تحديثات في وقت مش بتشتغل فيه، أو في آخر سكربت بيخلص شغلانة طويلة.`,
+            mistakes: R`تجدول shutdown وتنسى، فالجهاز يقفل وانت في نص شغل والبرامج تتقفل غصب ([[/f]] بتتحط لوحدها مع [[/t]]). أو تكتب [[/t]] بالدقايق بدل الثواني. أو تحسب ساعة عدّت النهارده فيطلع رقم سالب. أو تفتكر [[shutdown /a]] بيلغي [[Stop-Computer]]: Stop-Computer بيقفل على طول ومفيش مهلة تلغي فيها.`
+          },
+          lines: [
+            "الساعة 11:30 بالليل النهارده.",
+            "لو الساعة دي عدّت، خليها بكرة.",
+            "عدد الثواني من دلوقتي لحد الوقت ده، كرقم صحيح.",
+            "اقفل الجهاز بعد الثواني دي، برسالة تظهر في التنبيه.",
+            "الغي المعاد (طول ما الوقت لسه معدّاش).",
+            "restart بعد 10 دقايق (600 ثانية) برسالة.",
+            "الغيه برضه."
+          ],
+          sol: R`(مشغّلتش shutdown ولا restart فعلًا وأنا بكتب الدرس؛ جربت الحساب و [[shutdown /a]] و [[shutdown /?]].) الحساب: شغّلته الساعة 13:13، فـ [["23:30"]] فضلت النهارده بـ [[36988]] ثانية (10 ساعات و 16 دقيقة)، و [["08:00"]] اتنقلت لبكرة بـ [[67588]] ثانية.
+
+[[shutdown /s /t 3600]] مش بيطبع حاجة في الترمنال، وويندوز بيعرض تنبيه إن الجهاز هيتقفل ومعاه رسالة [[/c]] لو كتبتها. و [[shutdown /a]] بيلغيه. ولو شغّلت [[shutdown /a]] ومفيش حاجة متجدولة بيطلع [[Unable to abort the system shutdown because no shutdown was in progress.(1116)]] والـ exit code [[1116]]، وده اللي حصل عندي. فلو عايز تتأكد إنك لغيته، شغّل [[shutdown /a]] تاني: لو طلعت الرسالة دي يبقى مفيش حاجة متجدولة.`
+        },
+        {
+          cmd: "LockWorkStation",
+          title: "اقفل الشاشة أو نيّم الجهاز",
+          desc: R`[[rundll32.exe user32.dll,LockWorkStation]] بيقفل الشاشة زي Win+L بالظبط: البرامج شغالة وكل حاجة زي ما هي، بس لازم الباسورد أو الـ PIN عشان ترجع. و [[rundll32.exe]] برنامج في ويندوز بيشغّل function من جوه ملف DLL، و [[user32.dll,LockWorkStation]] اسم الملف والـ function وبينهم فاصلة من غير مسافة.
+
+[[shutdown /h]] بيعمل hibernate: بيحفظ كل اللي في الرام على الديسك ويطفي الجهاز خالص، ولما تفتحه ترجع لنفس المكان. لازم الـ hibernate يكون متفعّل ([[powercfg /hibernate on]] من PowerShell أدمن).
+
+[[powercfg /a]] بيقولك جهازك بيدعم أنهي أنواع نوم. والنوم (sleep) أصعب واحد من الترمنال: الأمر المشهور [[rundll32.exe powrprof.dll,SetSuspendState 0,1,0]] بيعمل hibernate مش sleep لو الـ hibernate متفعّل، لأن rundll32 مش بيبعت الأرقام دي للـ function صح. ولو جهازك لابتوب حديث و [[powercfg /a]] بيقول [[Standby (S0 Low Power Idle)]] (اسمها Modern Standby)، الأمر ده مش هيديك sleep خالص. في الحالة دي الأضمن تقفل الشاشة وتسيب الجهاز ينام لوحده حسب إعدادات الـ Power، أو زرار الـ power.
+
+في المثال: [[powercfg /a]] الأول تعرف جهازك، وبعدين القفل، وبعدين [[Start-Sleep -Seconds 300]] يستنى 5 دقايق ويقفل (و [[;]] بتشغّل أمرين ورا بعض على نفس السطر). وأمرين الـ hibernate والـ sleep متعلّق عليهم بـ [[#]] عشان لو نسخت المثال كله ميطفّيش الجهاز؛ شيل الـ [[#]] من قدام اللي عايزه بس.`,
+          example: R`powercfg /a
+rundll32.exe user32.dll,LockWorkStation
+Start-Sleep -Seconds 300; rundll32.exe user32.dll,LockWorkStation
+# السطرين دول بيطفّوا الجهاز، شيل الـ # من قدام واحد بس لما تكون عايزه فعلًا:
+# shutdown /h
+# rundll32.exe powrprof.dll,SetSuspendState 0,1,0`,
+          try: R`شغّل [[powercfg /a]] واعرف جهازك بيدعم إيه، وبعدين جرّب القفل بعد 10 ثواني: [[Start-Sleep 10; rundll32.exe user32.dll,LockWorkStation]].`,
+          flag: "danger",
+          deep: {
+            why: R`القفل قبل ما تقوم من على الجهاز عادة أمان أساسية في أي مكتب، والأمر ده بيخليك تقفل من سكربت أو بعد وقت أو من shortcut. والـ hibernate مفيد لو هتشيل اللابتوب ساعات ومش عايز البطارية تخلص في الـ sleep، وترجع لنفس الشغل.`,
+            how: R`القفل مش بيوقف أي حاجة: التحميلات والـ builds والسيرفرات المحلية بتكمّل. الـ sleep بيوقف الشغل والجهاز بيفضل بأقل طاقة والرام شغالة، والـ hibernate بيكتب الرام في ملف [[hiberfil.sys]] على الديسك ويطفي خالص.
+
+Modern Standby (S0) معناه إن الجهاز وهو «نايم» بيفضل صاحي جزئيًا زي الموبايل، وده اللي في أغلب اللابتوبات الجديدة بدل S3 القديم. والـ API القديم [[SetSuspendState]] معمول لـ S3، فمش بيعرف ينوّم جهاز S0.
+
+ليه rundll32 مع SetSuspendState بيعمل hibernate؟ rundll32 بيبعت للـ function parameters بشكل معمول لنوع تاني من الـ functions، فالأرقام [[0,1,0]] مش بتوصل زي ما انت فاكر، والـ function بتفهم أول قيمة على إنها «hibernate = نعم». عشان كده لو الـ hibernate متفعّل بيعمل hibernate.
+
+[[powercfg]] فيه حاجات تانية مفيدة: [[powercfg /batteryreport]] (درس Get-CimInstance)، و [[powercfg /requests]] (مين مانع الجهاز ينام، محتاج أدمن)، و [[powercfg /change standby-timeout-ac 30]] (ينام بعد 30 دقيقة على الشاحن).`,
+            when: R`القفل: كل ما تقوم، أو في آخر سكربت بتسيبه شغال. الـ hibernate: قبل ما تشيل اللابتوب مدة طويلة. والـ sleep من الترمنال: نادرًا، والأسهل من Start أو زرار الـ power.`,
+            mistakes: R`تستخدم [[SetSuspendState]] وتستغرب إن الجهاز عمل hibernate أو معملش حاجة. أو تعمل [[shutdown /h]] والـ hibernate مقفول. أو تفتكر القفل بيوفّر بطارية زي الـ sleep: البرامج لسه شغالة. أو تقفل جلسة Remote Desktop على جهاز تاني وانت محتاجها.`
+          },
+          lines: [
+            "أنواع النوم اللي جهازك بيدعمها.",
+            "اقفل الشاشة زي Win+L.",
+            "استنى 5 دقايق وبعدين اقفل الشاشة ([[;]] أمرين ورا بعض على نفس السطر)."
+          ],
+          sol: R`(مقفلتش الجهاز ولا نيّمته وأنا بكتب الدرس؛ شغّلت [[powercfg /a]] بس.) على لابتوب حديث طلع [[The following sleep states are available on this system:]] وتحته [[Standby (S0 Low Power Idle) Network Connected]] و [[Hibernate]] و [[Fast Startup]]، وتحت «not available» لقيت [[Standby (S3)]] وجنبه [[This standby state is disabled when S0 low power idle is supported.]]. يعني الجهاز ده Modern Standby، فـ SetSuspendState مش هيديك sleep.
+
+القفل بعد 10 ثواني: الترمنال هيستنى، وبعدين الشاشة تقفل على شاشة الدخول، ولما تدخل تلاقي كل حاجة زي ما هي والأمر خلص من غير ما يطبع حاجة. ولو [[shutdown /h]] مشتغلش، اتأكد إن [[Hibernate]] موجود في [[powercfg /a]]، ولو مش موجود فعّله من PowerShell أدمن بـ [[powercfg /hibernate on]].`
         }
       ]
     },

@@ -206,6 +206,128 @@ source ~/.zshrc`,
       ]
     },
     {
+      t: "شكّل zsh بتاعك",
+      l: 2,
+      n: "الـ prompt بإيدك من غير إضافات، وبعدين ثيمات جاهزة من Oh My Zsh و Powerlevel10k",
+      items: [
+        {
+          cmd: "PROMPT",
+          title: "اكتب الـ prompt بتاعك بإيدك",
+          desc: R`الـ prompt هو النص اللي zsh بيطبعه قبل كل أمر (زي [[sara shop %]])، وشكله متخزن في متغير اسمه [[PROMPT]] (نفس دور [[PS1]] في bash). بتكتب فيه نص عادي ورموز بتبدأ بـ [[%]]، و zsh بيبدّل كل رمز بقيمته كل مرة يطبع السطر: اسمك، والفولدر، والساعة، وكمان اسم الـ git branch.
+
+الرموز الأساسية:
+• [[%n]] اسم اليوزر، و [[%m]] اسم الجهاز لحد أول نقطة (على الماك حاجة زي [[Saras-MacBook-Pro]])، و [[%M]] الاسم كامل.
+• [[%~]] الفولدر الحالي بمساره، والـ home بيتكتب [[~]]. و [[%1~]] آخر جزء بس (اسم الفولدر)، و [[%2~]] آخر جزئين.
+• [[%#]] بتطلع [[%]] لو انت يوزر عادي و [[#]] لو انت root، فتعرف من شكل السطر إنك شغال بصلاحيات كاملة.
+• [[%T]] الساعة بنظام 24 ([[14:05]])، و [[%*]] نفس الساعة بالثواني، و [[%D]] التاريخ بشكل سنة-شهر-يوم ([[26-10-02]]).
+
+الألوان: [[%F{green}]] بتبدأ لون للكلام اللي بعدها، و [[%f]] بترجّع اللون العادي. اللون بالاسم ([[black]] و [[red]] و [[green]] و [[yellow]] و [[blue]] و [[magenta]] و [[cyan]] و [[white]]) أو برقم من 0 لـ 255 لو الترمنال بيدعم 256 لون، زي [[%F{240}]] رمادي. و [[%B]] بتبدأ خط عريض و [[%b]] بتقفله. لو نسيت [[%f]] أو [[%b]] اللون هيكمّل على الأمر اللي بتكتبه.
+
+[[RPROMPT]] prompt تاني بيظهر على يمين نفس السطر، وبيختفي لوحده لو الأمر اللي بتكتبه طوّل ووصل له. مكان مناسب للساعة.
+
+اسم الـ branch: zsh جاي معاه أداة اسمها [[vcs_info]] بتعرف انت جوه repo ولا لأ. [[autoload -Uz vcs_info]] بتحمّلها (شرح autoload في مستوى ٣). [[precmd() { vcs_info }]] بتعرّف function اسمها [[precmd]]: الاسم وبعده [[()]]، والجسم بين [[{ }]]. والاسم ده خاص: zsh بيشغّلها قبل ما يطبع كل prompt، فاسم الـ branch بيتحدّث بعد كل أمر. [[zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f ']] بتحدد شكل الناتج: [[':vcs_info:git:*']] معناها «الإعداد ده لـ vcs_info جوه repo بتاع git»، و [[%b]] جوه formats معناها اسم الـ branch (مش bold هنا، دي رموز vcs_info نفسها). والناتج بيتحط في متغير اسمه [[vcs_info_msg_0_]]، وبيبقى فاضي برّه أي repo.
+
+[[setopt prompt_subst]] بتخلي zsh يفك المتغيرات جوه الـ PROMPT كل مرة يطبعه، زي [[$__{vcs_info_msg_0_}]] ([[$__{...}]] قيمة المتغير، زي [[$name]] بس بأقواس). وعشان كده الـ PROMPT بين علامات تنصيص مفردة [['...']]: المتغير بيتحفظ زي ما هو ويتفك وقت الطباعة. بعلامات مزدوجة [["..."]] الشيل بيفكه مرة واحدة وقت التعريف، والـ branch يفضل متجمّد على القديم.
+
+[[print -P]] بتطبع نص وهي بتفك رموز الـ prompt ([[-P]] = prompt)، فتجرّب بيها أي رمز من غير ما تغيّر حاجة. وكل اللي بتكتبه في الترمنال بيروح لما تقفله: عشان يفضل، حط السطور في [[~/.zshrc]]. ولو عندك Oh My Zsh، حطها بعد سطر [[source $ZSH/oh-my-zsh.sh]] أو خلي [[ZSH_THEME=""]]، وإلا الثيم هيكتب فوق الـ PROMPT بتاعك.`,
+          example: R`print -P '%n %m %~ %1~ %# %T %*'
+PROMPT='%B%F{green}%n%f%b %F{blue}%1~%f %# '
+RPROMPT='%F{240}%*%f'
+autoload -Uz vcs_info
+precmd() { vcs_info }
+setopt prompt_subst
+zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
+PROMPT='%B%F{green}%n%f%b %F{blue}%1~%f $__{vcs_info_msg_0_}%# '`,
+          try: R`اعمل prompt فيه اسم الفولدر بالأزرق واسم الـ branch بالأصفر، وادخل repo واعمل [[git switch -c test]] وشوف الـ branch اتغير لوحده، واخرج لفولدر عادي وشوف القوسين اختفوا. وبعدين خليه دايم في [[~/.zshrc]].`,
+          deep: {
+            why: "الـ prompt بتشوفه قبل كل أمر، فلو فيه الفولدر والـ branch هتبطّل تكتب [[pwd]] و [[git status]] كل شوية عشان تعرف انت فين. ولما تكتبه بإيدك من غير إضافات، الترمنال بيفتح بسرعة وانت فاهم كل حرف فيه وتعرف تصلّحه.",
+            how: R`قبل كل سطر zsh بيشغّل [[precmd]]، وبعدين يقرا [[PROMPT]] ويبدّل كل رمز [[%]] بقيمته، ولو [[prompt_subst]] شغالة بيفك كمان [[$...]] و [[$(...)]] جواه. عشان كده vcs_info بيلحق يحط اسم الـ branch في [[vcs_info_msg_0_]] قبل الطباعة.
+
+رموز تانية مفيدة: [[%?]] الـ exit code بتاع آخر أمر، و [[%(?.ok.fail)]] شرط: لو آخر أمر نجح اطبع [[ok]] وإلا [[fail]]. فـ [[%(?.%F{green}.%F{red})%#%f]] بتخلي علامة [[%]] خضرا وتقلب حمرا لما أمر يفشل. و [[%K{blue}]] لون خلفية و [[%k]] بتقفله. و [[setopt transient_rprompt]] بتشيل الـ RPROMPT من السطور القديمة بعد Enter، فالنسخ من الترمنال يبقى أنضف.
+
+جوه formats بتاع vcs_info: [[%b]] الـ branch، و [[%r]] اسم الـ repo، و [[%s]] نوع الـ VCS ([[git]]). ولو عايزه يعلّم على التعديلات: [[zstyle ':vcs_info:*' check-for-changes true]] وبعدها [[%u]] بتطلع [[U]] لو فيه تعديلات مش staged و [[%c]] بتطلع [[S]] لو فيه staged. ده بيخلي الـ prompt أبطأ في repo ضخم.`,
+            when: "أول ما تتعود على الترمنال وتعرف انت عايز تشوف إيه قدامك. ولو عايز شكل جاهز بأيقونات وألوان كتير من غير ما تكتب حاجة، شوف الدرس الجاي.",
+            mistakes: R`تكتب الـ PROMPT بعلامات تنصيص مزدوجة فالـ branch يتجمّد على اللي كان وقت التعريف، أو تنسى [[setopt prompt_subst]] فيظهر [[$__{vcs_info_msg_0_}]] مكتوب بالنص. وتنسى [[%f]] أو [[%b]] فاللون يسيح على كل اللي بتكتبه. وتحط الـ PROMPT في [[~/.zshrc]] قبل سطر Oh My Zsh فالثيم يمسحه. ولو أداة تانية معرّفة [[precmd]] قبلك، تعريف جديد بنفس الاسم بيمسح بتاعها: الأأمن [[autoload -Uz add-zsh-hook]] وبعدها [[add-zsh-hook precmd vcs_info]]، دي بتضيف من غير ما تمسح.`
+          },
+          lines: [
+            "جرّب الرموز من غير ما تغيّر حاجة: اسمك، والجهاز، والمسار، واسم الفولدر، و [[%]]، والساعة مرتين (من غير وبالثواني).",
+            "prompt جديد: اسمك عريض بالأخضر، واسم الفولدر بالأزرق، وبعدين [[%]] ومسافة. بيتطبق من السطر الجاي على طول.",
+            "الساعة بالثواني على يمين السطر بلون رمادي (240 من الـ 256 لون).",
+            "حمّل vcs_info اللي جاي مع zsh.",
+            "function بتشتغل قبل كل prompt وبتحدّث معلومات الـ repo.",
+            "اسمح بفك المتغيرات جوه الـ PROMPT كل مرة يتطبع.",
+            "شكل معلومة git: اسم الـ branch بين قوسين بالأصفر وبعده مسافة.",
+            "الـ prompt النهائي ومعاه الـ branch. العلامات المفردة هي اللي بتخلي الـ branch يتحدّث."
+          ],
+          sol: R`جربت المثال ده بالحرف في zsh 5.9 على لينكس (الرموز نفسها على الماك)، كيوزر اسمه sara والجهاز اسمه [[sara-mbp.local]]: أول سطر طبع [[sara sara-mbp ~/projects/shop shop % 10:26 10:26:47]]. جوه repo على main الـ prompt بقى [[sara shop (main) %]] بالألوان، وعلى اليمين الساعة بالثواني. بعد [[git switch -c test]] الأمر اللي بعده طلع [[sara shop (test) %]] لوحده، وفي فولدر مش repo طلع [[sara Downloads %]] من غير قوسين.
+
+لو شفت [[$__{vcs_info_msg_0_}]] مكتوبة بالنص في الـ prompt، يبقى ناقص [[setopt prompt_subst]]. ولو الـ branch مش بيتغير بعد switch، يبقى الـ PROMPT متعرّف بعلامات مزدوجة أو [[precmd]] مش متعرّفة. (جربت الغلطتين في نفس الاختبار: من غير prompt_subst طلع النص زي ما هو، وبالعلامات المزدوجة فضل [[(main)]] بعد ما الـ branch اتغير.) ولما تحطهم في [[~/.zshrc]] اعمل [[source ~/.zshrc]] أو افتح ترمنال جديد.`,
+          solCode: R`# في آخر ~/.zshrc (بعد سطر oh-my-zsh لو موجود)
+autoload -Uz vcs_info
+precmd() { vcs_info }
+setopt prompt_subst
+zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
+PROMPT='%B%F{green}%n%f%b %F{blue}%1~%f $__{vcs_info_msg_0_}%# '
+RPROMPT='%F{240}%*%f'
+# وبعدين في الترمنال
+source ~/.zshrc
+cd ~/projects/shop && git switch -c test`
+        },
+        {
+          cmd: "ZSH_THEME و Powerlevel10k",
+          title: "ثيمات جاهزة للـ prompt",
+          desc: R`لو مش عايز تكتب الـ prompt بإيدك، Oh My Zsh جاي معاه أكتر من 140 ثيم جاهز بتختار منهم بسطر [[ZSH_THEME]] في [[~/.zshrc]]. و Powerlevel10k ثيم مشهور من برّه بيسألك كام سؤال ويبنيلك prompt فيه الـ branch وحالة git ومدة آخر أمر وأيقونات.
+
+تسطيب Oh My Zsh نفسه في درس «Oh My Zsh» في المستوى الأول. ثيماته في [[~/.oh-my-zsh/themes]]، كل ثيم ملف اسمه [[name.zsh-theme]]، واللي بتكتبه في [[ZSH_THEME]] هو الاسم من غير الامتداد، والافتراضي [[robbyrussell]]. وفيه قيم وأوامر خاصة:
+• [[ZSH_THEME="random"]] ثيم عشوائي مع كل ترمنال وبيطبع اسمه، و [[echo $RANDOM_THEME]] بتقولك هو مين.
+• [[ZSH_THEME=""]] من غير ثيم خالص، لو هتكتب [[PROMPT]] بإيدك (الدرس اللي فات).
+• [[omz theme use agnoster]] بتجرّب ثيم في الترمنال ده بس، و [[omz theme set agnoster]] بتكتبه في [[~/.zshrc]] بدالك وبتعمل نسخة احتياطي باسم [[~/.zshrc.bck]].
+
+في المثال [[^]] جوه grep معناها «أول السطر»، و [[|]] بتبعت ناتج ls لـ [[wc -l]] اللي بتعد السطور، يعني عدد ملفات الثيمات.
+
+Powerlevel10k بيتسطب كإضافة لـ Oh My Zsh: [[git clone --depth=1]] بينزّل آخر نسخة بس من غير تاريخ الـ commits كله. [[$__{ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}]] معناها «قيمة [[ZSH_CUSTOM]]، ولو مش متعرّف خد [[~/.oh-my-zsh/custom]]»، و [[:-]] هي اللي بتعمل «ولو فاضي خد دي». ده فولدر إضافاتك اللي Oh My Zsh مش بيلمسه وهو بيتحدّث. والقيمة [["powerlevel10k/powerlevel10k"]] معناها فولدر اسمه powerlevel10k وجواه ملف ثيم بنفس الاسم.
+
+[[exec zsh]] بتبدّل الشيل الحالي بواحد جديد بيقرا [[~/.zshrc]] من الأول. أول مرة Powerlevel10k بيفتح wizard اسمه [[p10k configure]] (وتشغّله تاني في أي وقت): يسألك شايف رموز معينة ولا لأ عشان يعرف الخط بتاعك، وبعدين تختار الشكل، ويحفظ اختياراتك في [[~/.p10k.zsh]] ويضيف سطر يقراه في آخر [[~/.zshrc]].
+
+Instant prompt من ضمن أسئلة الـ wizard: بيطبع الـ prompt فورًا وباقي [[~/.zshrc]] بيكمّل تحميل، وعشان كده بيحط block في أول الملف. أي حاجة في الـ zshrc بتسأل (باسورد أو [[y/n]]) لازم تتنقل فوق الـ block ده، لأن الإدخال تحته مقفول لحد ما التحميل يخلص.
+
+الأيقونات محتاجة خط فيه الرموز دي (Nerd Font). Powerlevel10k بيرشّح [[MesloLGS NF]]: ٤ ملفات (Regular و Bold و Italic و Bold Italic) من صفحته على GitHub، تسطّبهم بدبل كليك وتختار الخط في إعدادات الترمنال (Terminal أو iTerm2 أو VS Code). في iTerm2، [[p10k configure]] بيعرض يسطّبه لوحده. ومن غيره هتشوف مربعات مكان الأيقونات (درس «Nerd Font» في تاب اختصارات النظام بيشرح الخطوط دي).
+
+خد بالك: صفحة Powerlevel10k على GitHub مكتوب في أولها إن دعم المشروع محدود جدًا: مفيش features جديدة، ومعظم الـ bugs مش هتتصلح، وأسئلة المساعدة مش هيترد عليها. لسه شغال وناس كتير بتستخدمه، بس انت بتعتمد على حاجة مش بتتطور.`,
+          example: R`grep '^ZSH_THEME' ~/.zshrc
+ls ~/.oh-my-zsh/themes | wc -l
+omz theme use agnoster
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$__{ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+omz theme set powerlevel10k/powerlevel10k
+exec zsh
+p10k configure`,
+          try: R`جرّب ٣ ثيمات بـ [[omz theme use]] (مثلًا agnoster و af-magic و ys) وشوف الفرق. وبعدين سطّب MesloLGS NF وظبطه في الترمنال، وسطّب Powerlevel10k وكمّل [[p10k configure]] لحد الآخر.`,
+          deep: {
+            why: "الثيم بيوفّرلك وقت تظبيط: الـ branch وحالة git ونسخة Node أو Python والوقت بشكل مقروء من أول يوم. و Powerlevel10k بيجيب حالة git ببرنامج صغير شغال في الخلفية (gitstatus)، فالـ prompt بيفضل سريع حتى في repo كبير.",
+            how: R`Oh My Zsh وهو بيحمّل بيدوّر على الثيم في [[$ZSH_CUSTOM/themes]] الأول وبعدين في [[~/.oh-my-zsh/themes]]. فلو نسخت ثيم جاهز لـ custom وعدّلته، نسختك هي اللي بتتحمل ومش بتتمسح مع التحديث. وملف الثيم نفسه zsh عادي بيعرّف [[PROMPT]] و [[RPROMPT]] بنفس الرموز اللي في الدرس اللي فات.
+
+Powerlevel10k بيكتب كل إعداداته في [[~/.p10k.zsh]] (ملف طويل وفيه شرح لكل جزء)، فتقدر تعدّل بإيدك: مثلًا تدوّر على [[POWERLEVEL9K_LEFT_PROMPT_ELEMENTS]] وتشيل أو تضيف عناصر. ونفس الملف فيه [[POWERLEVEL9K_INSTANT_PROMPT]]: [[verbose]] بيحذرك لو حاجة طبعت وقت التحميل، و [[quiet]] بيسكت التحذير، و [[off]] بيقفل الـ instant prompt خالص.
+
+ولو عايز بديل مش مربوط بـ zsh: Starship، prompt واحد بيشتغل في zsh و bash و PowerShell بنفس ملف الإعدادات، ومحتاج Nerd Font برضه.`,
+            when: "لو عايز prompt مرتب بسرعة ومش فارق معاك تفهم كل رمز. ولو بتحب تتحكم في كل حرف، الدرس اللي فات أخف وأسرع.",
+            mistakes: R`تسطّب Powerlevel10k والخط مش متظبط في الترمنال، فالـ wizard يعرض رموز مكسورة وتختار إجابات غلط: ظبط الخط الأول. وتكتب [[PROMPT]] بتاعك في [[~/.zshrc]] وفيه ثيم شغال، فواحد يكتب فوق التاني. وتسيب سطر بيسأل باسورد تحت block الـ instant prompt، فالترمنال يبان واقف. وتكتب [[ZSH_THEME="powerlevel10k"]] من غير [[/powerlevel10k]] فيطلع [[[oh-my-zsh] theme 'powerlevel10k' not found]].`
+          },
+          lines: [
+            "اعرف الثيم الحالي: السطر اللي بيبدأ بـ ZSH_THEME.",
+            "عدد ملفات الثيمات اللي جاية مع Oh My Zsh.",
+            "جرّب agnoster في الترمنال ده بس. محتاج خط فيه رموز Powerline أو Nerd Font.",
+            "نزّل Powerlevel10k في فولدر الثيمات بتاعك (custom).",
+            R`اكتب [[ZSH_THEME="powerlevel10k/powerlevel10k"]] في [[~/.zshrc]] مكان القيمة القديمة.`,
+            "شيل جديد بيقرا الإعداد. أول مرة الـ wizard بيفتح لوحده.",
+            "افتح الـ wizard تاني في أي وقت عشان تغيّر الشكل."
+          ],
+          sol: R`جربت الخطوات دي في zsh 5.9 على لينكس (Docker) بنفس Oh My Zsh اللي على الماك: [[grep '^ZSH_THEME' ~/.zshrc]] طبع [[ZSH_THEME="robbyrussell"]]، و [[ls ~/.oh-my-zsh/themes | wc -l]] طبع 143 (منهم [[example.zsh-theme]]). اسم غلط في [[omz theme use]] بيطبع [[nosuchtheme theme not found]]. وبعد الـ clone، [[omz theme set powerlevel10k/powerlevel10k]] طبع [['powerlevel10k/powerlevel10k' theme set correctly.]] وغيّر السطر لـ [[ZSH_THEME="powerlevel10k/powerlevel10k" # set by $__btomz$__bt]]، و [[type p10k]] قال إنها function جاية من [[custom/themes/powerlevel10k]]، يعني الثيم اتحمّل. ومع [[ZSH_THEME="random"]] كل ترمنال جديد طبع سطر زي [[[oh-my-zsh] Random theme 'awesomepanda' loaded]].
+
+الـ wizard نفسه تفاعلي ومكمّلتوش هنا. حسب صفحة المشروع والكود بتاعه: أول سؤال [[Does this look like a diamond (rotated square)?]] وتحته رمز. لو شايف مربع فاضي أو علامة استفهام، الخط مش متظبط: دوس [[q]] تخرج من غير ما يغيّر حاجة، وظبط MesloLGS NF في الترمنال، وارجع [[p10k configure]]. وفي الآخر بيسألك [[Apply changes to ~/.zshrc?]] وبعدها بيكتب [[~/.p10k.zsh]].`
+        }
+      ]
+    },
+    {
       t: "Homebrew",
       l: 1,
       n: "مدير البرامج بتاع الماك، زي apt في أوبونتو",
@@ -493,6 +615,68 @@ caffeinate -t 3600`,
 عشان تتأكد وهو شغال، افتح ترمنال تاني واكتب [[pmset -g assertions]]، هتلاقي caffeinate في اللستة. وخد بالك إن [[-t]] لوحدها بتمنع نوم النظام بس وقفل الشاشة ممكن يحصل عادي، لو عايز الشاشة تفضل صاحية ضيف [[-d]]. وقفل غطا اللابتوب بيخليه ينام برضه.`
         },
         {
+          cmd: "pmset",
+          title: "نيّم أو اطفي الماك في ميعاد",
+          desc: R`[[pmset]] أداة الطاقة في الماك: بتنيّم الجهاز دلوقتي، أو تسجّل ميعاد يصحى أو يقفل فيه، أو تعرض حالة البطارية. ومعاها [[shutdown]] اللي بيقفل الجهاز أو يعمل restart بعد مدة.
+
+[[shutdown]]: [[sudo]] لازمة لأن القفل محتاج صلاحية root، ومن غيرها هيقولك [[NOT super-user]]. [[-h]] اقفل الجهاز خالص، و [[-r]] اعمل restart، و [[-s]] نيّمه. بعدها الميعاد: [[now]] دلوقتي، أو [[+60]] بعد 60 دقيقة (وينفع [[+2h]] ساعتين أو [[+30s]] ثانية)، أو ساعة بعينها زي [[2230]] يعني 10:30 بالليل النهارده، ولو الساعة دي عدّت يبقى بكرة. الأمر بيطبع ميعاد القفل ورقم العملية (PID) اللي هتستنى، ويرجّعلك الـ prompt.
+
+الإلغاء على الماك مش [[shutdown -c]] زي لينكس: القفل المتجدول عبارة عن عملية [[shutdown]] قاعدة مستنية، فبتلغيه بإنك تقفلها: [[sudo killall shutdown]] ([[killall]] بيقفل كل العمليات اللي بالاسم ده).
+
+[[pmset]]:
+• [[pmset sleepnow]] ينيّم الجهاز حالًا.
+• [[-g]] (get) للعرض ومش محتاج sudo: [[pmset -g batt]] البطارية (النسبة وبيشحن ولا لأ والوقت الباقي)، و [[pmset -g sched]] المواعيد المتسجلة.
+• [[sudo pmset schedule shutdown "10/03/26 23:00:00"]] ميعاد مرة واحدة. التاريخ بالترتيب الأمريكي [[MM/dd/yy HH:mm:ss]]: شهر/يوم/سنة وبعدين الساعة بنظام 24، وبين علامات تنصيص لأن فيه مسافة. النوع واحد من [[sleep]] و [[wake]] و [[poweron]] و [[shutdown]] و [[wakeorpoweron]] (يصحى لو نايم أو يشتغل لو مقفول). و [[sudo pmset schedule cancelall]] بيلغي المواعيد اللي من النوع ده كلها.
+• [[sudo pmset repeat wakeorpoweron MTWRF 08:00:00]] ميعاد بيتكرر كل أسبوع. الأيام حروف من [[MTWRFSU]]: M الاتنين، و T التلات، و W الأربع، و R الخميس، و F الجمعة، و S السبت، و U الحد، فـ MTWRF يعني من الاتنين للجمعة. مسموح بزوج واحد بس من المواعيد المتكررة (ميعاد تشغيل وميعاد قفل أو نوم)، فاكتبهم الاتنين في نفس الأمر زي المثال. و [[sudo pmset repeat cancel]] بيلغيهم.
+
+من macOS Ventura (13)، Apple شالت شاشة Schedule من الإعدادات، وصفحة الدعم بتاعتها بقت بتشرح pmset. وحسب نفس الصفحة: القفل في ميعاد بيحصل بس لو الماك صاحي وانت عامل login، وأي ملف مش متحفظ في برنامج مفتوح ممكن يمنعه.
+
+خطر: الأوامر دي بتقفل الجهاز أو تنيّمه فعلًا، وأي شغل مش متحفظ أو build أو download شغال هيقف.`,
+          example: R`pmset -g batt
+pmset -g sched
+sudo shutdown -h +60
+sudo killall shutdown
+sudo pmset schedule shutdown "10/03/26 23:00:00"
+sudo pmset schedule cancelall
+sudo pmset repeat wakeorpoweron MTWRF 08:00:00 shutdown MTWRF 23:00:00
+sudo pmset repeat cancel
+pmset sleepnow
+sudo shutdown -r now`,
+          try: "اعرض حالة البطارية والمواعيد المتسجلة. وبعدين جدول قفل بعد ساعتين بـ shutdown، واتأكد إن العملية مستنية، والغيه.",
+          flag: "danger",
+          deep: {
+            why: "build أو تحميل كبير هيخلص بالليل وعايز الجهاز يقفل بعده، أو عايز الماك يكون صاحي وجاهز الساعة 8 كل يوم شغل. ومن غير شاشة Schedule في الإعدادات، الترمنال بقى الطريقة الرسمية.",
+            how: R`[[shutdown]] بيعمل fork: عملية في الخلفية بتستنى لحد الميعاد، وقبله بخمس دقايق بيمنع أي login جديد. عشان كده الإلغاء = قفل العملية دي. و [[pmset -g sched]] مش بيعرض القفل ده، لأنه مش متسجل في pmset: اعرفه بـ [[pgrep -l shutdown]].
+
+[[pmset schedule]] و [[pmset repeat]] بيسجلوا الميعاد في نظام الطاقة نفسه، فالجهاز يقدر يصحى من النوم أو يشتغل وهو مقفول (لو الجهاز بيدعم ده). و [[-g sched]] بيعرض الاتنين: جزء [[Scheduled power events]] للمرة الواحدة، وجزء [[Repeating power events]] للمتكرر، وممكن تلاقي فيه مواعيد مسجلها النظام نفسه (زي restart لتحديث).
+
+لو عايز تمنع النوم مش تجدوله، ده [[caffeinate]] (الدرس اللي فات). و [[pmset -g assertions]] بتعرض مين مانع الجهاز ينام دلوقتي.`,
+            when: "تقفل الجهاز بعد شغل طويل وانت مش جنبه. وجدول ثابت للجهاز (يصحى الصبح ويقفل بالليل) على ماك شغال كسيرفر صغير أو جهاز مكتب.",
+            mistakes: R`تكتب [[shutdown -c]] من عادة لينكس عشان تلغي، والماك مش بيعرفها: الإلغاء [[sudo killall shutdown]]. وتكتب التاريخ يوم/شهر زي ما احنا متعودين ([[03/10/26]])، فيتسجل 10 مارس. وتسجّل [[pmset repeat]] للتشغيل لوحده وبعدين للقفل لوحده، والمسموح زوج واحد بس: اكتبهم في أمر واحد واتأكد بـ [[pmset -g sched]]. وتعتمد على القفل المتجدول وانت سايب ملف مش متحفظ، فالجهاز يفضل مستني تدوس Save.`
+          },
+          lines: [
+            "حالة البطارية: النسبة وبيشحن ولا لأ والوقت الباقي. مش محتاج sudo.",
+            "المواعيد المتسجلة في pmset (مرة واحدة ومتكررة).",
+            "اقفل الجهاز بعد ساعة. بيطبع الميعاد والـ PID ويرجّعلك الترمنال.",
+            "الغي القفل المتجدول: اقفل عملية shutdown اللي مستنية.",
+            "اقفل الجهاز مرة واحدة يوم 3 أكتوبر 2026 الساعة 11 بالليل (شهر/يوم/سنة).",
+            "امسح كل المواعيد اللي مرة واحدة.",
+            "من الاتنين للجمعة: يصحى أو يشتغل 8 الصبح، ويقفل 11 بالليل.",
+            "امسح المواعيد المتكررة.",
+            "نيّم الجهاز دلوقتي.",
+            "restart دلوقتي حالًا. احفظ شغلك الأول."
+          ],
+          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man pmset]] و [[man shutdown]] والكود المفتوح بتاع أمر shutdown من Apple. [[pmset -g batt]] بيطبع سطر زي [[Now drawing from 'AC Power']] وتحته سطر البطارية فيه حاجة زي [[81%; charging; 1:19 remaining]]، وعلى البطارية بيبقى [[Battery Power]] و [[discharging]]. ولو فيه مواعيد متكررة، [[pmset -g sched]] بيعرضها تحت [[Repeating power events]] بشكل زي [[wakepoweron at 8:00AM]] وبعده الأيام.
+
+[[sudo shutdown -h +2h]] بيطبع [[Shutdown at]] وبعدها التاريخ والساعة بعد ساعتين، وسطر فيه كلمة [[pid]] ورقم العملية، ويرجّعلك الـ prompt. [[pgrep -l shutdown]] بيطبع نفس الرقم وجنبه [[shutdown]]، يعني القفل مستني. [[sudo killall shutdown]] مش بيطبع حاجة، و [[pgrep -l shutdown]] بعدها مش بيطبع حاجة، يعني القفل اتلغى. لو نسيت [[sudo]] هيطلع [[NOT super-user]] ومفيش حاجة هتتجدول.`,
+          solCode: R`pmset -g batt
+pmset -g sched
+sudo shutdown -h +2h
+pgrep -l shutdown
+sudo killall shutdown
+pgrep -l shutdown`
+        },
+        {
           cmd: "defaults",
           title: "إعدادات مخفية",
           desc: R`كل تطبيق على الماك بيحفظ إعداداته في ملف plist، و [[defaults]] بيقرا ويكتب الإعدادات دي من الترمنال، ومنها إعدادات مش موجودة في أي شاشة Settings.
@@ -546,6 +730,97 @@ system_profiler SPHardwareDataType`,
           sol: R`[[sw_vers]] بيطبع 3 سطور: [[ProductName: macOS]] و [[ProductVersion: 15.6]] (الرقم حسب جهازك) و [[BuildVersion]]. و [[uname -m]] بيطبع [[arm64]] (Apple Silicon: M1 وما بعده) أو [[x86_64]] (Intel). و [[system_profiler SPHardwareDataType]] يطلع اسم الشريحة (زي [[Chip: Apple M2]]) والرام.
 
 فخ مهم: لو الترمنال نفسه شغال بـ Rosetta، [[uname -m]] هيطبع [[x86_64]] حتى على جهاز M. اتأكد من [[sysctl -n machdep.cpu.brand_string]] أو من سطر Chip في system_profiler.`
+        },
+        {
+          cmd: "say",
+          title: "خلّي الماك يتكلم",
+          desc: R`[[say]] أمر ماك بيحوّل أي نص لصوت. أشهر استخدام للمبرمج: تشغّل build أو تيستات طويلة وتسيبها، والماك يقولك بصوت أول ما تخلص.
+
+[[say "Build done"]] بيقول الجملة بالصوت الافتراضي اللي في إعدادات الجهاز. علامات التنصيص مش شرط، بس أأمن لو الجملة فيها رموز الشيل ممكن يفهمها. [[-v]] بتختار صوت باسمه، و [[say -v '?']] بتطبع الأصوات المتسطبة: كل سطر فيه اسم الصوت، واللغة ([[en_US]] مثلًا، أو [[ar_001]] للعربي)، وبعد [[#]] جملة تجربة. علامات التنصيص حوالين [[?]] عشان zsh ميعاملهاش كـ glob (درس «no matches found»).
+
+العربي: الصوت العربي اسمه [[Majed]]، فـ [[say -v Majed "الـ build خلص"]]. لو مش ظاهر في اللستة، نزّله من System Settings ثم Accessibility ثم Read & Speak (في النسخ الأقدم اسمها Spoken Content) ثم علامة (i) جنب System voice.
+
+[[-r 250]] السرعة بالكلمات في الدقيقة، ورقم أكبر = أسرع. [[-o build-done.aiff]] بيحفظ الصوت في ملف بدل ما يقوله، ونوع الملف الافتراضي AIFF. و [[-f notes.txt]] بيقرا النص من ملف.
+
+وعشان تسمع النتيجة بعد أمر: [[;]] معناها «نفّذ اللي بعدي بعد ما اللي قبلي يخلص، نجح أو فشل». و [[&&]] «لو نجح بس»، و [[||]] «لو فشل». فـ [[npm test && say "tests passed" || say "tests failed"]] بتقول جملة مختلفة حسب النتيجة.`,
+          example: R`say "Build done"
+say -v '?'
+say -v '?' | grep ar_
+say -v Majed "الـ build خلص"
+say -r 250 "faster than normal"
+say -o build-done.aiff "Build done"
+npm run build; say "build finished"
+npm test && say "tests passed" || say "tests failed"`,
+          try: R`شغّل [[sleep 5; say "time is up"]] وسيب الترمنال. وبعدين اعرف الأصوات العربي اللي عندك، وخلّي Majed يقول جملة.`,
+          deep: {
+            why: "مش هتفضل باصص للترمنال ١٠ دقايق مستني build أو [[docker build]]. صوت بيقولك خلص فتكمّل شغلك التاني وترجع في الوقت الصح. ومفيد كمان تسمع نص كتبته (رسالة أو README) فتلاقي الأخطاء اللي عينك بتعدّيها.",
+            how: R`say بيستخدم محرك الكلام بتاع macOS نفسه، والأصوات اللي [[-v '?']] بتعرضها هي المتنزّلة على جهازك بس. بيرجع exit code 0 لو اتكلم بنجاح وغيره لو فشل، والأخطاء بتتطبع على stderr، فينفع جوه سكربتات.
+
+لو كتبت [[say]] لوحدها من غير نص، بتقرا اللي بتكتبه سطر سطر لحد Ctrl+D. ولو بعتلها نص بـ pipe بتقراه: [[git log -1 --format=%s | say]] بتقرا رسالة آخر commit. و [[man say]] فيها إزاي تحفظ بأنواع ملفات تانية غير AIFF.`,
+            when: "build أو تيستات أو [[npm install]] أو نقل ملفات بياخد أكتر من دقيقة. ولما تجرّب سكربت طويل على جهازك. على السيرفر مفيش سماعات، استخدم إشعار أو رسالة.",
+            mistakes: R`تكتب [[say -v ?]] من غير علامات تنصيص فـ zsh يحاول يفكها كـ glob ويطلع [[no matches found]]. أو تستخدم [[&&]] لوحدها، فلما الـ build يفشل مش بتسمع حاجة وتفضل مستني: استخدم [[;]] أو [[&& ... || ...]]. أو تحط say في سكربت هيشتغل على لينكس أو CI: الأمر ده ماك بس.`
+          },
+          lines: [
+            "قول الجملة بالصوت الافتراضي.",
+            "اطبع الأصوات المتسطبة: الاسم واللغة وجملة تجربة.",
+            "الأصوات العربي بس: [[ar_]] في عمود اللغة.",
+            "قول جملة عربي بصوت Majed.",
+            "أسرع: 250 كلمة في الدقيقة.",
+            "احفظ الصوت في ملف AIFF بدل ما يتقال (شغّله بـ [[open build-done.aiff]]).",
+            "بعد ما الـ build يخلص، نجح أو فشل، قول build finished.",
+            "جملة حسب نتيجة التيستات: [[&&]] لو نجحت و [[||]] لو فشلت."
+          ],
+          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man say]] وصفحات دعم Apple: [[sleep 5; say "time is up"]] بيستنى ٥ ثواني وبعدين تسمع الجملة، ومش بيطبع حاجة، والـ prompt بيرجع بعد ما الكلام يخلص. [[say -v '?' | grep ar_]] بيطبع سطر فيه [[Majed]] و [[ar_001]] وبعد [[#]] جملة التجربة [[مرحبًا! اسمي ماجد.]]، و [[say -v Majed "إزيك"]] بيقرا العربي.
+
+لو grep مطلعش حاجة، الصوت العربي مش متنزّل عندك: نزّله من System Settings ثم Accessibility ثم Read & Speak (أو Spoken Content في النسخ الأقدم) ثم System voice. ولو مسمعتش حاجة خالص، شوف الصوت مش Mute وإن السماعة اللي متوصلة هي اللي مختارة.`
+        },
+        {
+          cmd: "osascript display notification",
+          title: "إشعار ونافذة سؤال من الترمنال",
+          desc: R`[[osascript]] بيشغّل AppleScript من الترمنال، وأشهر سطرين فيه: [[display notification]] يطلّع إشعار في ركن الشاشة زي إشعارات أي تطبيق، و [[display dialog]] يطلّع نافذة فيها زراير ويرجّعلك الزرار اللي اتداس.
+
+[[-e]] بعدها سطر AppleScript. AppleScript بيستخدم علامات التنصيص المزدوجة للنصوص، فلف السطر كله بعلامات مفردة [['...']] عشان الشيل يسيبه زي ما هو. في [[display notification "All 42 tests passed" with title "shop" subtitle "npm test" sound name "Glass"]]: أول نص هو الرسالة، و [[with title]] العنوان العريض، و [[subtitle]] سطر تحته، و [[sound name]] صوت من أصوات النظام (أي ملف في فولدرات [[Library/Sounds]]، زي Basso و Glass و Ping و Submarine اللي في [[/System/Library/Sounds]]).
+
+[[display dialog "Deploy to production?" buttons {"Cancel", "Deploy"} default button "Deploy" cancel button "Cancel"]]:
+• [[buttons]] لستة لحد ٣ زراير بين [[{ }]] ومفصولة بفاصلة.
+• [[default button]] الزرار اللي بيتداس لو دوست Enter، و [[cancel button]] اللي بيتداس بـ Esc. لو حددت buttons بنفسك ومكتبتش دول، مفيش default ولا cancel.
+• osascript بيطبع النتيجة [[button returned:Deploy]]. ولو اتداس زرار الـ cancel، AppleScript بيعتبرها error رقم -128 ([[User canceled.]])، و osascript بيخرج بـ exit code 1، وده اللي يخلي [[&&]] أو [[|| exit 1]] يوقفوا السكربت.
+• [[button returned of (...)]] بتاخد اسم الزرار بس من الناتج ([[of]] يعني «الجزء ده من»)، والأقواس بتخلي الـ dialog يتنفذ الأول. و [[default answer ""]] بتضيف خانة كتابة، و [[text returned]] هو اللي اتكتب فيها.
+
+الإذن: في نسخ macOS الحديثة الإشعار بيظهر باسم وأيقونة Script Editor مش Terminal. لو الأمر خلص من غير error ومفيش إشعار ظهر، افتح System Settings ثم Notifications واسمح لـ Script Editor. لو مش موجود في اللستة، افتح Script Editor (في Applications ثم Utilities) وشغّل نفس السطر منه مرة فيسألك. ولو Focus (زي Do Not Disturb) شغال، الإشعارات مش هتظهر برضه.`,
+          example: R`osascript -e 'display notification "Build done" with title "shop"'
+osascript -e 'display notification "All 42 tests passed" with title "shop" subtitle "npm test" sound name "Glass"'
+npm run build && osascript -e 'display notification "Build OK" with title "shop" sound name "Glass"'
+osascript -e 'display dialog "Deploy to production?" buttons {"Cancel", "Deploy"} default button "Deploy" cancel button "Cancel"'
+osascript -e 'button returned of (display dialog "Run migrations?" buttons {"Skip", "Run"} default button "Run")'
+osascript -e 'text returned of (display dialog "Commit message:" default answer "")'`,
+          try: R`اعمل function اسمها [[notify]] بتطلّع إشعار بصوت بالرسالة اللي تديهالها، وجرّبها بعد [[sleep 3]]. وبعدين اكتب سكربت صغير بيسألك «Deploy?»، ولو دوست Deploy يطبع [[deploying...]]، ولو Cancel يقف.`,
+          deep: {
+            why: "انت سايب build أو تيستات شغالة وفاتح المتصفح. الإشعار بيوصلك وانت في أي برنامج، وبيفضل في Notification Center لو كنت بعيد. والـ dialog بيدّي سكربتاتك خطوة تأكيد حقيقية قبل حاجة خطيرة زي deploy أو مسح.",
+            how: R`[[display notification]] و [[display dialog]] من «Standard Additions»، أوامر جاهزة لأي AppleScript. شكل الإشعار نفسه (banner بيختفي ولا alert بيفضل، وبصوت ولا لأ) بيتحدد من إعدادات Notifications بتاعة التطبيق اللي الإشعار ظاهر باسمه، مش من السكربت.
+
+osascript بيطبع نتيجة آخر سطر بشكل مقروء: الـ record [[{button returned:"Deploy"}]] بيتطبع [[button returned:Deploy]] من غير أقواس ولا علامات تنصيص. [[giving up after 10]] بيقفل النافذة لوحده بعد 10 ثواني ويرجّع [[gave up:true]]، فالسكربت ميفضلش مستني للأبد. وتقدر تكتب أكتر من [[-e]]، كل واحد سطر، أو تكتب السكربت بـ JavaScript بـ [[-l JavaScript]].`,
+            when: "آخر خطوة في أي أمر طويل على الماك، وقبل أي خطوة في سكربت محتاجة موافقتك. على سيرفر أو CI مفيش حد قاعد قدام الشاشة، استخدم لوج أو رسالة.",
+            mistakes: R`تلف السطر بعلامات مزدوجة فالشيل ياكل علامات AppleScript اللي جوه: خلي المفردة برّه. وتستنى الإشعار ومش بيظهر ومفيش error: ده إذن الإشعارات أو Focus، مش الأمر. وتحط [[display dialog]] في سكربت شغال من ssh أو في وقت انت مش قاعد فيه، فيفضل مستني حد يدوس: ضيف [[giving up after]]. ولو الرسالة نفسها فيها علامة تنصيص مزدوجة من متغير، هتكسر السطر.`
+          },
+          lines: [
+            "إشعار بسيط: رسالة وعنوان.",
+            "إشعار كامل: عنوان وسطر تحته وصوت Glass.",
+            "الإشعار يظهر بس لو الـ build نجح ([[&&]]).",
+            "نافذة بزرارين: Enter = Deploy و Esc = Cancel. بتطبع [[button returned:Deploy]]، و Cancel بيخرج بـ error.",
+            "اسم الزرار بس: بيطبع [[Run]] أو [[Skip]]. مفيش cancel button هنا، فمفيش error.",
+            "نافذة فيها خانة كتابة فاضية، وبتطبع اللي اتكتب. زرارين افتراضيين: Cancel (بـ error) و OK."
+          ],
+          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من دليل AppleScript بتاع Apple و [[man osascript]]. الـ function (حطها في [[~/.zshrc]]) بتاخد الرسالة في [[$1]]، وعلامات التنصيص المزدوجة اللي جوه السطر مسبوقة بـ [[\]] عشان تعدّي للـ AppleScript. [[sleep 3; notify "Done"]] بيطلّع بعد ٣ ثواني إشعار عنوانه Terminal ورسالته Done بصوت Glass، والأمر نفسه مش بيطبع حاجة.
+
+في السكربت ([[zsh deploy.zsh]]، مش تلزقه في الترمنال لأن [[exit]] هتقفل الترمنال نفسه): Deploy (أو Enter) يكمّل ويطبع [[deploying...]]. Cancel (أو Esc) يخلّي osascript يطبع رسالة آخرها [[User canceled. (-128)]] ويخرج بـ 1، فـ [[|| exit 1]] توقف السكربت قبل echo. ولو الإشعار مظهرش خالص والأمر خلص من غير error، اسمح لـ Script Editor من System Settings ثم Notifications.`,
+          solCode: R`# في ~/.zshrc
+notify() { osascript -e "display notification \"$1\" with title \"Terminal\" sound name \"Glass\"" }
+# في الترمنال
+sleep 3; notify "Done"
+# ملف deploy.zsh، وشغّله بـ zsh deploy.zsh
+osascript -e 'display dialog "Deploy?" buttons {"Cancel", "Deploy"} default button "Deploy" cancel button "Cancel"' >/dev/null || exit 1
+echo "deploying..."`
         }
       ]
     },
