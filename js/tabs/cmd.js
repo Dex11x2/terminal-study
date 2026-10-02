@@ -119,7 +119,7 @@ tree /f lab`,
             mistakes: "tree على فولدر كبير فيه node_modules أو .git بيطبع آلاف السطور. محدودش بـ /f."
           },
           lines: ["شجرة الفولدرات.", "فولدر lab بالملفات كمان ([[/f]])."],
-          sol: R`[[tree /f lab]] بيطبع في الأول سطر [[Folder PATH listing for volume ...]] وبعده رقم الـ volume ومسار lab، وبعدين الشجرة: الملفات تحت كل فولدر بمسافة، والفولدرات الفرعية بخطوط زي [[├───src]] و [[└───public]].
+          sol: R`[[tree /f lab]] بيطبع في الأول سطر [[Folder PATH listing]] (ولو الدرايف ليه اسم: [[Folder PATH listing for volume اسمه]])، وبعده [[Volume serial number is ...]]، ومسار lab بحروف كابيتال كله، وبعدين الشجرة: الملفات تحت كل فولدر بمسافة، والفولدرات الفرعية بخطوط زي [[├───src]] و [[└───public]].
 
 من غير [[/f]] هتشوف الفولدرات بس، وده أكتر غلطة بتخلي الناس تفتكر إن الملفات مش موجودة. ولو الخطوط طلعت رموز غريبة (بيحصل مع بعض صفحات الترميز) استخدم [[tree /f /a lab]] يرسمها بـ [[+---]] و [[\---]] العادية.`
         },
@@ -168,7 +168,7 @@ second part`,
             why: R`أي سطر batch من النت فيه [[%~dp0]] و [[%%f]] و [[^]] و [[2>nul]] و [[&&]]. والرموز دي معناها في CMD مختلف عن bash و PowerShell، ونفس الرمز ([[%]]) معناه بيتغيّر بين الشاشة والملف. لو مش فاهمها، أي تعديل صغير بيبوّظ السكربت.`,
             how: R`النسبة المئوية: CMD بيبدّل [[%NAME%]] بالقيمة قبل ما ينفّذ السطر، كأنك كتبت القيمة بإيدك. عشان كده لو القيمة فيها [[&]] أو [[>]] بيتنفذوا. وده بيحصل للسطر كله أو للبلوك كله بين أقواس مرة واحدة، وده سبب مشكلة delayed expansion (درس for و delayed expansion).
 
-متغير مش موجود: في الشاشة [[echo %NOPE%]] بيطبع [[%NOPE%]] زي ما هي، وجوه ملف bat بيطبع فاضي. و [[%%]] في ملف بتبقى [[%]] واحدة، وفي الشاشة بتفضل اتنين.
+متغير مش موجود: في الشاشة [[echo %NOPE%]] بيطبع [[%NOPE%]] زي ما هي، وجوه ملف bat بيتبدّل بفاضي: [[echo [%NOPE%]]] بتطبع [[[]]]، و [[echo %NOPE%]] لوحدها بتبقى [[echo]] من غير كلام فتطبع [[ECHO is off.]]. و [[%%]] في ملف بتبقى [[%]] واحدة، وفي الشاشة بتفضل اتنين.
 
 متغيرات جاهزة مفيدة: [[%CD%]] الفولدر الحالي، و [[%~dp0]] فولدر السكربت (درس %~dp0)، و [[%DATE%]] و [[%TIME%]]، و [[%RANDOM%]] رقم عشوائي، و [[%ERRORLEVEL%]] نتيجة آخر أمر، و [[%COMPUTERNAME%]].
 
@@ -192,7 +192,7 @@ second part`,
           ],
           sol: R`المتوقع على ويندوز: سطر فيه اسمك والفولدر، و [["Tom & Jerry"]] بعلامات التنصيص، و [[Tom & Jerry]]، و [[5 > 3 and 100% done]]، ورقم (عدد ملفات bat)، و [[copy failed]] (الملف مش موجود)، و [[first part second part]] في سطر واحد.
 
-لما غيّرته لـ [[echo %MSG%]]: هيطبع [[Tom]] وبعدها error إن [[Jerry]] مش أمر معروف ([['Jerry' is not recognized as an internal or external command]])، لأن CMD فك المتغير الأول فبقى السطر [[echo Tom & Jerry]]. و [[echo 100%%]] في الشاشة مباشرة بيطبع [[100%%]] زي ما هي، لأن الـ [[%%]] بتتحول لواحدة في ملفات bat بس. جربت الملف على Wine (نسخة لينكس من cmd) والسطور طلعت زي كده، ما عدا [[find /c]] (Wine مش بيدعمه) وسطر [[&& ||]] (Wine بيطبع الاتنين، وده bug في Wine مش سلوك ويندوز).`
+لما غيّرته لـ [[echo %MSG%]]: هيطبع [[Tom]] وبعدها error إن [[Jerry]] مش أمر معروف ([['Jerry' is not recognized as an internal or external command]])، لأن CMD فك المتغير الأول فبقى السطر [[echo Tom & Jerry]]. و [[echo 100%%]] في الشاشة مباشرة بيطبع [[100%%]] زي ما هي، لأن الـ [[%%]] بتتحول لواحدة في ملفات bat بس. جربت الملف على ويندوز 11 والسطور طلعت زي كده بالظبط (والرقم كان 2 لأن الفولدر كان فيه ملفين bat).`
         }
       ]
     },
@@ -225,7 +225,7 @@ mkdir app\public app\logs`,
           lines: ["اعمل الفولدرات التلاتة ورا بعض. CMD بيعمل الوسيط لوحده من غير -p.", "فولدرين في أمر واحد."],
           sol: R`[[mkdir app\src app\public app\logs]] مش بيطبع حاجة لو نجح، وبيعمل [[app]] نفسه في السكة. [[dir app]] هيعرض [[<DIR>]] جنب logs و public و src.
 
-لو شغلته مرة تانية هيطبع [[A subdirectory or file app\src already exists.]] لكل فولدر موجود، وده مش ضرر، مفيش حاجة اتمسحت. ولو كتبت [[mkdir app/src]] بـ slash بدل backslash هيطلع error في CMD، لأن [[/]] بتتقري option.`
+لو شغلته مرة تانية هيطبع لكل فولدر موجود سطرين: [[A subdirectory or file app\src already exists.]] وتحته [[Error occurred while processing: app\src.]] (السطر التاني بيظهر بس لما تكتب أكتر من مسار في نفس الأمر)، وده مش ضرر، مفيش حاجة اتمسحت. ولو كتبت [[mkdir app/src]] بـ slash بدل backslash هيطلع error في CMD، لأن [[/]] بتتقري option.`
         },
         {
           cmd: "type nul / echo >",
@@ -289,7 +289,7 @@ xcopy src src_backup /E /I`,
           ],
           sol: R`[[xcopy app app_copy /E /I]] هيطبع مسار كل ملف بيتنسخ زي [[app\src\server.js]]، وفي الآخر [[3 File(s) copied]] (الرقم حسب ملفاتك). [[dir /s /b app_copy]] يأكدلك إن كل حاجة اتنسخت.
 
-لو نسيت [[/I]] و app_copy مش موجود، xcopy هيسألك [[Does app_copy specify a file name or directory name on the target (F = file, D = directory)?]]، والإجابة D. ولو نسيت [[/E]]، الفولدرات الفاضية (زي public لو فاضي) مش هتتنسخ. ولو استخدمت [[copy app app_copy]] هينسخ الملفات اللي في أول مستوى بس من غير الفولدرات اللي جوه.`
+لو نسيت [[/I]] و app_copy مش موجود، xcopy هيسألك [[Does app_copy specify a file name or directory name on the target (F = file, D = directory)?]]، والإجابة D. ولو نسيت [[/E]]، الفولدرات الفاضية (زي public لو فاضي) مش هتتنسخ. ولو استخدمت [[copy app app_copy]] و app_copy مش موجود، copy مش بيعمل فولدر: بيلزق ملفات أول مستوى كلها ورا بعض في ملف واحد اسمه app_copy ويقول [[1 file(s) copied.]] (جربتها). ولو app_copy فولدر موجود، بينسخ ملفات أول مستوى بس من غير الفولدرات اللي جوه.`
         },
         {
           cmd: "robocopy",
@@ -307,14 +307,14 @@ robocopy src D:\backup\src /MIR /XD node_modules`,
             why: "أقوى أداة نسخ في ويندوز. بتدعم retry، ومسح المحذوف في الهدف، وresume لو قُطع.",
             how: R`[[robocopy source dest /mir]] الأقوى: بيعمل mirror. يعني إيه أضفته في الـ source بيتضاف، وإيه مسحته بيتمسح من الـ dest. مفيد للـ backup والـ sync.
 
-[[ /e]] ينسخ الفولدرات الفاضية كمان. [[/xo]] بيعدّي الملفات الأقدم في الـ dest (مش بيكتب فوقيهم). [[/log:log.txt]] يحفظ report.
+[[ /e]] ينسخ الفولدرات الفاضية كمان. [[/xo]] (exclude older) ميكتبش فوق ملف في الـ dest لو هو أحدث من اللي في المصدر؛ من غيره robocopy بيكتب فوقه بالقديم. [[/log:log.txt]] يحفظ report.
 
 بيشتغل بدون صلاحيات Admin في معظم الحالات، وبيعيد المحاولة لو الملف مشغول.`,
             when: "backup يومي أو أسبوعي. نقل مشروع كبير. sync بين فولدرين.",
             mistakes: "[[/mir]] بيمسح من الـ dest أي حاجة مش في الـ source. متستخدمهوش لو الـ dest فيه ملفات زيادة عن قصد."
           },
           lines: [
-            "انسخ الفولدر بكل اللي جواه (بيكمّل من مكان ما وقف لو الاتصال قطع).",
+            "انسخ الفولدر بكل اللي جواه (لو اتقطع، شغّله تاني وهو بيعدّي اللي اتنسخ ويكمّل الباقي).",
             "اعمل مرآة: الهدف يبقى نسخة طبق الأصل، حتى المحذوف يتمسح ([[/MIR]])، ومن غير node_modules ([[/XD]] استثني فولدر)."
           ],
           sol: R`[[robocopy app D:\backup\app /E /XD node_modules]] بيطبع هيدر [[ROBOCOPY :: Robust File Copy for Windows]] فيه Source و Dest و Options، وبعدين كل ملف جديد جنبه [[New File]]، وفي الآخر جدول ملخص فيه صفوف Dirs و Files و Bytes وأعمدة Total و Copied و Skipped و FAILED. لو شغلته تاني من غير تغيير هتلاقي Copied بـ 0 والكل Skipped، وده معناه إنه بينسخ المتغير بس.
@@ -384,7 +384,7 @@ rd /s /q app_copy`,
           ],
           sol: R`[[dir]] الأول هيبان فيه [[<DIR>  app_copy]]. [[rd /s /q app_copy]] مش بيطبع حاجة، و [[dir]] بعدها مش هتلاقي app_copy.
 
-من غير [[/q]] هيسألك [[app_copy, Are you sure (Y/N)?]]. ولو قالك [[The process cannot access the file because it is being used by another process.]] يبقى فيه برنامج (VS Code أو سيرفر شغال أو انت نفسك واقف جوه الفولدر بـ cd) ماسك ملف جواه، اقفله أو اطلع بره بـ [[cd ..]] وجرب تاني. و [[del app_copy]] بيمسح الملفات اللي جوه بس بعد سؤال، والفولدر نفسه بيفضل.`
+من غير [[/q]] هيسألك [[app_copy, Are you sure (Y/N)?]]. ولو قالك [[The process cannot access the file because it is being used by another process.]] يبقى فيه برنامج (VS Code أو سيرفر شغال أو انت نفسك واقف جوه الفولدر بـ cd) ماسك ملف جواه، اقفله أو اطلع بره بـ [[cd ..]] وجرب تاني. (لما جربتها وانا واقف جوه الفولدر، rd مسح كل اللي جواه وساب الفولدر نفسه فاضي.) و [[del app_copy]] بيمسح الملفات اللي جوه بس بعد سؤال، والفولدر نفسه بيفضل.`
         },
         {
           cmd: "attrib",
@@ -443,7 +443,7 @@ type app.log | more`,
             mistakes: "[[type]] على ملف binary بيلخبط الشاشة وممكن يعمل صوت beep. قفله بـ Ctrl+C."
           },
           lines: ["اطبع الملف كله (زي cat).", "صفحة صفحة، Space للي بعدها و q للخروج (زي less)."],
-          sol: R`[[type package-lock.json | more]] بيعرض صفحة واحدة وفي آخر الشاشة [[-- More (12%) --]] (النسبة بتزيد وانت ماشي). Space يجيب الصفحة اللي بعدها، Enter سطر واحد، و q يخرجك على طول للـ prompt من غير ما يكمل الملف.
+          sol: R`[[type package-lock.json | more]] بيعرض صفحة واحدة وفي آخر الشاشة [[-- More --]]. لو كتبت [[more package-lock.json]] على طول من غير type، هيبان كمان قد إيه فاضل: [[-- More (12%) --]] والنسبة بتزيد وانت ماشي، لأن more ساعتها عارف حجم الملف. Space يجيب الصفحة اللي بعدها، Enter سطر واحد، و q يخرجك على طول للـ prompt من غير ما يكمل الملف.
 
 لو الملف كله نزل مرة واحدة من غير توقف، يبقى نسيت [[| more]] أو الملف أصغر من الشاشة. و [[more]] في CMD مش بيرجع لورا، لو محتاج تتحرك فوق وتحت افتح الملف في محرر أو استخدم [[less]] من Git Bash.`
         },
@@ -502,7 +502,7 @@ where git`,
             mistakes: "[[where]] في PowerShell اختصار لـ Where-Object فمش هيطبع حاجة. استخدم [[where.exe]] أو [[Get-Command]]."
           },
           lines: ["node جاي منين (زي which).", "وgit."],
-          sol: R`[[where python]] بيطبع كل مسار في سطر، زي [[C:\Users\ali\AppData\Local\Programs\Python\Python313\python.exe]]، وممكن تحته [[C:\Users\ali\AppData\Local\Microsoft\WindowsApps\python.exe]]. التاني ده مش Python حقيقي، ده اختصار بيفتح Microsoft Store، ولو هو الأول في الترتيب [[python]] هيفتحلك الـ Store بدل ما يشتغل.
+          sol: R`[[where python]] بيطبع كل مسار في سطر، زي [[C:\Users\ali\AppData\Local\Programs\Python\Python313\python.exe]]، وممكن تحته [[C:\Users\ali\AppData\Local\Microsoft\WindowsApps\python.exe]]. لو سطّبت Python من python.org بالـ installer العادي، التاني ده مش Python حقيقي، ده اختصار بيفتح Microsoft Store، ولو هو الأول في الترتيب [[python]] هيفتحلك الـ Store بدل ما يشتغل. أما لو سطّبته من الـ Store أو بالـ Python install manager الجديد، فالاختصار ده هو Python الحقيقي: عندي طلع الأول، و [[python --version]] منه طبع [[Python 3.14.3]].
 
 الحل إنك تقفل الاختصار من Settings، App execution aliases، أو تنزل مسار Python الحقيقي فوقه في الـ PATH. ولو طلع [[INFO: Could not find files for the given pattern(s).]] يبقى python مش في الـ PATH خالص، جرب [[where py]] (الـ launcher الرسمي).`
         }
@@ -541,7 +541,7 @@ ipconfig | clip`,
           lines: [
             "فلتر ناتج dir على .env (زي grep).",
             "احفظ ناتج الـ build وأخطاءه في ملف.",
-            "ارمي رسالة الـ error ([[nul]] هو /dev/null بتاع ويندوز).",
+            "ارمي رسالة الـ error ([[nul]] هو /dev/null بتاع ويندوز). هيختفي [[File Not Found]] بس، وهيدر dir هيفضل لأنه ناتج عادي مش error.",
             "انسخ الناتج للكليب بورد (clip زي pbcopy)."
           ],
           sol: R`[[ipconfig | clip]] مش بيطبع حاجة على الشاشة، ده الطبيعي لأن الناتج راح للكليب بورد. افتح notepad واعمل Ctrl+V، هتلاقي ناتج ipconfig كامل بـ [[Windows IP Configuration]] وكل الكروت.
@@ -579,7 +579,7 @@ cd lab & dir`,
           ],
           sol: R`أول مرة [[mkdir app && echo done]] بيطبع [[done]]. تاني مرة بيطبع [[A subdirectory or file app already exists.]] ومش بيطبع done، لأن mkdir فشل (errorlevel 1) و [[&&]] بتنفذ اللي بعدها بس لو اللي قبلها نجح.
 
-لو استخدمت [[&]] بدل [[&&]]، done هتطلع في المرتين حتى مع الـ error. ولو كتبت [[;]] زي bash، CMD هيعتبرها جزء من الأمر مش فاصل.`
+لو استخدمت [[&]] بدل [[&&]]، done هتطلع في المرتين حتى مع الـ error. ولو كتبت [[;]] زي bash، CMD هيعتبرها جزء من الأمر مش فاصل: [[mkdir x ; echo done]] عمل عندي ٣ فولدرات اسمهم x و echo و done.`
         },
         {
           cmd: "clip",
@@ -766,7 +766,7 @@ ipconfig /flushdns`,
           lines: ["عناوين الشبكة (زي ip a).", "كل التفاصيل: MAC والـ DNS والـ DHCP.", "امسح كاش الـ DNS."],
           sol: R`[[ipconfig]] بيطبع قسم لكل كارت، دوّر على الكارت اللي انت متوصل بيه ([[Wireless LAN adapter Wi-Fi]] أو [[Ethernet adapter Ethernet]]). تحته [[IPv4 Address. . . : 192.168.1.15]] ده الـ IP المحلي، و [[Default Gateway . . . : 192.168.1.1]] ده الراوتر.
 
-اتجاهل كروت زي [[vEthernet (WSL)]] أو [[Media disconnected]]، دي مش اتصالك الحقيقي. ولو الـ IPv4 بيبدأ بـ [[169.254]] يبقى الجهاز مخدش IP من الراوتر (مشكلة DHCP أو الكابل). والـ IP ده مش اللي الناس بتشوفه على النت، ده جوه شبكة البيت بس.`
+اتجاهل كروت زي [[vEthernet (WSL)]] (في النسخ الجديدة اسمه [[vEthernet (WSL (Hyper-V firewall))]]) أو اللي تحتها [[Media disconnected]]، دي مش اتصالك الحقيقي. ولو الـ IPv4 بيبدأ بـ [[169.254]] يبقى الجهاز مخدش IP من الراوتر (مشكلة DHCP أو الكابل). والـ IP ده مش اللي الناس بتشوفه على النت، ده جوه شبكة البيت بس.`
         },
         {
           cmd: "ping / tracert / nslookup",
@@ -797,7 +797,7 @@ nslookup example.com`,
             "الطريق لحد جوجل (زي traceroute).",
             "الدومين بيشاور على أنهي IP (زي dig)."
           ],
-          sol: R`[[nslookup yourdomain.com]] بيطبع الأول [[Server:]] و [[Address:]] بتوع الـ DNS اللي سألته (غالبًا الراوتر)، وبعدين [[Non-authoritative answer:]] وتحته [[Name:]] و [[Address:]]. الـ Address الأخيرة لازم تبقى IP السيرفر بتاعك.
+          sol: R`[[nslookup yourdomain.com]] بيطبع الأول [[Server:]] و [[Address:]] بتوع الـ DNS اللي سألته (غالبًا الراوتر، ولو اسمه طلع [[UnKnown]] ده عادي: معناه إن الراوتر ملوش اسم في الـ DNS)، وبعدين [[Non-authoritative answer:]] وتحته [[Name:]] و [[Address:]] (أو [[Addresses:]] لو الدومين ليه أكتر من IP). الـ Address الأخيرة لازم تبقى IP السيرفر بتاعك.
 
 لو IP تاني: إما الـ A record غلط، أو غيّرته قريب والكاش لسه قديم (استنى أو [[ipconfig /flushdns]])، أو الدومين ورا Cloudflare بالسحابة البرتقالي، فهتشوف IPs بتوع Cloudflare وده طبيعي. ولو [[Non-existent domain]] يبقى الـ record مش موجود أصلًا.`
         },
@@ -860,7 +860,7 @@ ipconfig /displaydns`,
           lines: ["سيب عنوان الـ IP الحالي.", "اطلب عنوان جديد من الراوتر.", "اعرض كاش الـ DNS."],
           sol: R`[[ipconfig /displaydns]] هيطبع لكل دومين زرته قريب بلوك فيه [[Record Name]] و [[Record Type]] و [[Time To Live]] و [[A (Host) Record . . . : IP]]. بعد [[ipconfig /flushdns]] هيطبع [[Successfully flushed the DNS Resolver Cache.]]، و [[/displaydns]] تاني هيطلع شبه فاضي.
 
-لو لقيت كام entry لسه موجودين بعد الـ flush، غالبًا دول من ملف hosts (بيتحمّلوا دايمًا)، أو برنامج في الخلفية سأل تاني في الثواني اللي فاتت. [[/release]] و [[/renew]] مش جزء من التجربة دي، دول بيقطعوا النت ثواني.`
+لو لقيت كام entry لسه موجودين بعد الـ flush، غالبًا دول من ملف hosts (بيتحمّلوا دايمًا)، أو برنامج في الخلفية سأل تاني في الثواني اللي فاتت. [[/release]] و [[/renew]] مش جزء من التجربة دي، دول بيقطعوا النت ثواني، ومجربتهمش هنا؛ اللي مكتوب عنهم من توثيق ipconfig على Microsoft Learn.`
         },
         {
           cmd: "nslookup",
@@ -917,7 +917,7 @@ route print`,
           ],
           sol: R`في [[route print]] روح لقسم [[IPv4 Route Table]] تحت [[Active Routes:]]، ودوّر على السطر اللي Network Destination و Netmask فيه [[0.0.0.0]] و [[0.0.0.0]]. عمود [[Gateway]] في السطر ده هو IP الراوتر، زي [[192.168.1.1]]، وعمود Interface هو الـ IP بتاعك.
 
-لو فيه أكتر من سطر 0.0.0.0 (مثلًا واي فاي وكابل أو VPN)، اللي Metric بتاعه أصغر هو اللي بيتستخدم. ولو عايز تختصر [[route print -4]] يعرض IPv4 بس. والـ IP ده نفسه اللي هتلاقيه في [[Default Gateway]] بتاع ipconfig.`
+لو فيه أكتر من سطر 0.0.0.0 (مثلًا واي فاي وكابل أو VPN)، اللي Metric بتاعه أصغر هو اللي بيتستخدم. ولو عايز تختصر [[route print -4]] يعرض IPv4 بس. والـ IP ده نفسه اللي هتلاقيه في [[Default Gateway]] بتاع ipconfig. (أوامر التعديل [[route add]] و [[route delete]] و [[arp -d]] مجربتهاش هنا لأنها بتغيّر الشبكة؛ اللي مكتوب عنها من توثيق Microsoft Learn.)`
         },
         {
           cmd: "pathping",
@@ -975,7 +975,9 @@ netsh wlan show profile name="MyWiFi" key=clear`,
           ],
           sol: R`[[netsh wlan show profiles]] الأول عشان تعرف الاسم بالظبط (بيظهر بعد [[All User Profile :]]). بعدين [[netsh wlan show profile name="اسم الشبكة" key=clear]]، ودوّر تحت [[Security settings]] على سطر [[Key Content : ...]]، ده الباسورد.
 
-لو سطر Key Content مش ظاهر، افتح CMD كأدمن. ولو [[Profile "..." is not found on the system.]] يبقى الاسم مش مطابق (مسافة أو حرف كابيتال)، انسخه من ناتج show profiles. وده بيشتغل بس على شبكة الجهاز ده اتوصل بيها قبل كده.`
+لو سطر Key Content مش ظاهر، افتح CMD كأدمن. ولو [[Profile "..." is not found on the system.]] يبقى الاسم مش مطابق (مسافة أو حرف كابيتال)، انسخه من ناتج show profiles. وده بيشتغل بس على شبكة الجهاز ده اتوصل بيها قبل كده.
+
+جربت هنا [[show config]] و [[show profiles]] ورسالة الشبكة اللي مش موجودة. أما [[key=clear]] مشغلتهوش عشان بيطبع باسورد حقيقي؛ سطر Key Content ومسألة الأدمن من توثيق netsh wlan على Microsoft Learn.`
         },
         {
           cmd: "hosts",
@@ -1003,7 +1005,7 @@ notepad C:\Windows\System32\drivers\etc\hosts`,
           lines: ["اعرض ملف hosts.", "افتحه في Notepad (لازم CMD يكون مفتوح كمدير عشان تقدر تحفظ)."],
           sol: R`[[type C:\Windows\System32\drivers\etc\hosts]] على ويندوز جديد هيطبع سطور كلها بتبدأ بـ [[#]]: حقوق Microsoft، وشرح للصيغة، وسطرين معلقين [[# 127.0.0.1 localhost]] و [[# ::1 localhost]]. يعني الملف فعليًا مفيهوش حاجة شغالة، والـ [[#]] معناها تعليق.
 
-لو عندك Docker Desktop هتلاقي قسم [[# Added by Docker Desktop]] فيه [[host.docker.internal]] و [[kubernetes.docker.internal]]، وده طبيعي. أما لو لقيت سطور بدومينات معروفة (بنوك أو جوجل) شاورة على IP غريب وانت محطتهاش، ده ممكن يكون برنامج خبيث، راجعه.`
+لو عندك Docker Desktop هتلاقي قسم [[# Added by Docker Desktop]] فيه [[host.docker.internal]] و [[kubernetes.docker.internal]]، وده طبيعي. أما لو لقيت سطور بدومينات معروفة (بنوك أو جوجل) شاورة على IP غريب وانت محطتهاش، ده ممكن يكون برنامج خبيث، راجعه. (الحفظ من notepad من غير أدمن مجربتهوش هنا عشان مش بنعدّل hosts؛ ده من توثيق Microsoft.)`
         }
       ]
     },
@@ -1465,7 +1467,7 @@ setx API_URL "http://localhost:3000"`,
           ],
           sol: R`[[set PORT=3000]] وبعدين [[echo %PORT%]] بيطبع [[3000]]. افتح نافذة CMD جديدة واكتب [[echo %PORT%]]: هيطبع [[%PORT%]] زي ما هي، لأن CMD لما المتغير مش موجود بيسيب الكلام زي ما هو بدل ما يطبع فاضي.
 
-لو عايزه يفضل استخدم [[setx PORT 3000]]، هيقولك [[SUCCESS: Specified value was saved.]]، بس في النافذة الحالية [[echo %PORT%]] مش هتتأثر، النوافذ الجديدة بس. وخد بالك من [[set PORT = 3000]] بمسافات، ده بيعمل متغير اسمه [["PORT "]] بمسافة وقيمته [[" 3000"]].`
+لو عايزه يفضل استخدم [[setx PORT 3000]]، هيقولك [[SUCCESS: Specified value was saved.]]، بس في النافذة الحالية [[echo %PORT%]] مش هتتأثر، النوافذ الجديدة بس. (setx مجربتهوش هنا لأنه بيكتب في الـ registry بشكل دائم؛ الرسالة من توثيق setx على Microsoft Learn، وإنه بيأثر على النوافذ الجديدة بس مكتوب في [[setx /?]].) وخد بالك من [[set PORT = 3000]] بمسافات، ده بيعمل متغير اسمه [["PORT "]] بمسافة وقيمته [[" 3000"]]: جربتها و [[echo [%PORT %]]] طبع [[[ 3000]]].`
         },
         {
           cmd: "doskey",
@@ -2645,7 +2647,7 @@ pause`,
             why: "ملف bat أبسط أتمتة في ويندوز: مش محتاج تسطيب، ولا ExecutionPolicy، وأي حد يقدر يشغّله بدبل كليك. ممتاز لأوامر قليلة بتتكرر (افتح المشروع وشغّل السيرفر، اعمل باك أب، شغّل سكربت PowerShell)، وأي مشروع ويندوز قديم هتلاقي فيه ملفات زي دي.",
             how: R`[[.bat]] و [[.cmd]] الاتنين بيتشغّلوا بـ cmd.exe. الفرق الوحيد تقريبًا في تفاصيل errorlevel مع أوامر قليلة، فاستخدم .bat عادي.
 
-الترميز: احفظ الملف ANSI أو UTF-8 من غير BOM. لو فيه عربي، شوف درس [[chcp 65001]]، و «UTF-8 with BOM» بيبوّظ أول سطر.
+الترميز: احفظ الملف ANSI أو UTF-8 من غير BOM. لو فيه عربي، شوف درس [[chcp 65001]]. و «UTF-8 with BOM» بيبوّظ أول سطر لما النافذة على 65001 (أو 850 و 1252): جربتها و [[@echo off]] اتقري بحروف زيادة قبله، فطلع [['@echo' is not recognized]] والأوامر اتطبعت. على 437 و 720 عدّت، بس متعتمدش على ده.
 
 [[@echo off]]: [[echo off]] بيقفل طباعة الأوامر من السطر اللي بعده، و [[@]] قبلها بتخفي السطر ده نفسه. ولو عايز تشوف كل أمر وهو بيتنفذ وانت بتدوّر على غلطة، اكتب [[echo on]] أو امسح السطر مؤقتًا، ده المقابل لـ [[bash -x]].
 
@@ -2673,19 +2675,19 @@ pause`,
           ],
           sol: R`بدبل كليك: نافذة سودا عنوانها [[My first script]]، فيها [[Hello, ali!]] وسطر التاريخ والوقت (زي [[Today is Thu 10/01/2026 and the time is 16:45:12.34]]، والشكل بيختلف حسب إعدادات اللغة)، وسطر فاضي، و [[Files here:]] وتحتها الأسامي، وفي الآخر [[Press any key to continue . . .]].
 
-من غير [[@echo off]]: هتشوف كل أمر مطبوع قبل ناتجه بالـ prompt بتاعه، زي [[C:\lab>echo Hello, %USERNAME%!]] وتحته الناتج، والشاشة تبقى زحمة. ومن غير [[pause]]: النافذة بتفتح وتقفل في أقل من ثانية. جربت الملف على Wine (cmd بتاع لينكس) وطلع نفس السطور، والدبل كليك سلوك ويندوز من التوثيق.`
+من غير [[@echo off]]: هتشوف كل أمر مطبوع قبل ناتجه بالـ prompt بتاعه، والمتغيرات متبدّلة فيه بالفعل، زي [[C:\lab>echo Hello, ali!]] وتحته [[Hello, ali!]]، وحتى سطر الـ REM بيتطبع، والشاشة تبقى زحمة. ومن غير [[pause]]: النافذة بتفتح وتقفل في أقل من ثانية. جربت الملف على ويندوز 11 من CMD والسطور طلعت كده (التاريخ عندي [[Fri 10/02/2026]])، أما الدبل كليك فسلوكه من توثيق ويندوز.`
         },
         {
           cmd: "set و %1",
           title: "المتغيرات والـ arguments",
           desc: R`[[set NAME=value]] بيعمل متغير، ومن غير مسافات حوالين [[=]]: [[set NAME = value]] بيعمل متغير اسمه [["NAME "]] بمسافة. وبتقرا القيمة بـ [[%NAME%]]. و [[%1]] أول كلمة اتكتبت بعد اسم السكربت، و [[%2]] التانية، لحد [[%9]]، و [[%*]] كلهم، و [[%0]] السكربت نفسه.
 
-في المثال: [[if "%NAME%"==""]] بيسأل «المتغير فاضي؟» (علامات التنصيص من الناحيتين عشان المقارنة متبوظش لو فاضي فعلًا)، ولو فاضي [[set /p]] بيسأل المستخدم يكتبه (درس set /p و choice). و [[set /a]] للحسابات (درس set /a). و [[%~dp0]] فولدر السكربت نفسه، عشان السكربت يلاقي ملفاته مهما اتشغّل منين (درس %~dp0 و %~nx1).
+في المثال: [[set "NAME=%~1"]] بياخد أول argument من غير علامات التنصيص، وعلامات التنصيص حوالين [[NAME=...]] كلها عشان مفيش مسافة مستخبية في آخر السطر تدخل في القيمة. و [[if "%NAME%"==""]] بيسأل «المتغير فاضي؟» (علامات التنصيص من الناحيتين عشان المقارنة متبوظش لو فاضي فعلًا)، ولو فاضي [[set /p]] بيسأل المستخدم يكتبه (درس set /p و choice). و [[set /a]] للحسابات (درس set /a). و [[%~dp0]] فولدر السكربت نفسه، عشان السكربت يلاقي ملفاته مهما اتشغّل منين (درس %~dp0 و %~nx1).
 
 خلي بالك: المتغيرات اللي السكربت بيعملها بتفضل في نافذة CMD بعد ما يخلص، و [[setlocal]] في أوله بيمنع ده (درس setlocal / endlocal). والـ argument اللي فيه مسافات بيتكتب بين علامات تنصيص ([[test.bat "my app"]]) وبيوصل [[%1]] بعلاماته، و [[%~1]] من غيرها.`,
           example: R`@echo off
-set NAME=%1
-if "%NAME%"=="" set /p NAME=Project name: 
+set "NAME=%~1"
+if "%NAME%"=="" set /p "NAME=Project name: "
 set /a COUNT=5*2
 echo Name: %NAME%, count: %COUNT%
 echo Script folder: %~dp0`,
@@ -2701,19 +2703,21 @@ echo Script folder: %~dp0`,
 
 [[if defined VAR]] بيشيك لو المتغير معرّف (مش فاضي).`,
             when: "أي سكربت batch بياخد arguments.",
-            mistakes: "نسيان [[%]] من الطرفين في الاستخدام: [[set VAR=value]] صح، [[echo VAR]] بيطبع النص «VAR» مش القيمة. لازم [[echo %VAR%]]."
+            mistakes: R`نسيان [[%]] من الطرفين في الاستخدام: [[set VAR=value]] صح، [[echo VAR]] بيطبع النص «VAR» مش القيمة. لازم [[echo %VAR%]]. أو [[set NAME=%1]] بدل [[set "NAME=%~1"]]: أول ما حد يبعت argument فيه مسافة بين علامات تنصيص، علامات التنصيص بتتكرر في [[if "%NAME%"==""]] والسكربت يقع.`
           },
           lines: [
             "متطبعش الأوامر وهي بتتنفذ.",
-            "خزّن أول argument في NAME.",
-            "لو فاضي، اسأل اليوزر يكتبه ([[set /p]] زي read).",
+            "خزّن أول argument في NAME من غير علامات التنصيص ([[%~1]]).",
+            "لو فاضي، اسأل اليوزر يكتبه ([[set /p]] زي read). علامات التنصيص بتحافظ على المسافة اللي بعد [[:]].",
             "حسبة رقمية ([[/a]]).",
             "اطبع المتغيرين.",
             "مسار الفولدر اللي السكربت فيه. [[%~dp0]]: drive وpath للسكربت نفسه."
           ],
           sol: R`احفظه [[test.bat]]. [[test.bat myapp]] يطبع [[Name: myapp, count: 10]] و [[Script folder: C:\Users\ali\lab\]] (بـ backslash في الآخر). من غير argument هيوقف ويسألك [[Project name:]] وياخد اللي تكتبه. شغّله من فولدر تاني بالمسار الكامل وهتلاقي Script folder لسه فولدر السكربت، وده الغرض من [[%~dp0]].
 
-لو دوست Enter من غير ما تكتب اسم، [[NAME]] هيفضل فاضي و الناتج [[Name: , count: 10]]. ولو كتبت [[set /a COUNT = 5*2]] بمسافات بتشتغل عادي لأن [[/a]] بيتجاهلها، بس [[set NAME = %1]] لأ. (ملاحظة: مقدرتش أشغّل CMD هنا، السلوك ده من توثيق Microsoft لـ set و call.)`
+و [[test.bat "my app"]] بيطبع [[Name: my app, count: 10]]. لو السطر التاني كان [[set NAME=%1]]، نفس الأمر بيقع بـ [[app""=="" was unexpected at this time.]]، لأن [[%1]] بييجي بعلامات التنصيص، فالـ if بتبقى [[if ""my app""==""]].
+
+لو دوست Enter من غير ما تكتب اسم، [[NAME]] هيفضل فاضي و الناتج [[Name: , count: 10]]. ولو كتبت [[set /a COUNT = 5*2]] بمسافات بتشتغل عادي لأن [[/a]] بيتجاهلها، بس [[set NAME = x]] بيعمل متغير اسمه [["NAME "]] و [[%NAME%]] بيفضل فاضي. جربت كل ده على ويندوز 11، من فولدر فيه مسافات ومن فولدر تاني بالمسار الكامل.`
         },
         {
           cmd: "set /a",
@@ -2769,9 +2773,9 @@ set /a N=08`,
             "...فيطبع 8.",
             "و 08 مش رقم octal صالح: error."
           ],
-          sol: R`المثال (جربته على Wine): [[20]]، و [[total=21 half=10 left=1]]، و [[2]]، و [[8]]، وفي الآخر رسالة error عن الأرقام. على ويندوز نصها [[Invalid number. Numeric constants are either decimal (17), hexadecimal (0x11), or octal (021).]]، و Wine بيكتبها بصياغة تانية.
+          sol: R`المثال (جربته على ويندوز 11): [[20]]، و [[total=21 half=10 left=1]]، و [[2]]، و [[8]]، وفي الآخر رسالة الـ error على سطرين: [[Invalid number.  Numeric constants are either decimal (17),]] و [[hexadecimal (0x11), or octal (021).]]. وجربت كمان [[set /a X=2147483647+1]] وطلع [[-2147483648]].
 
-الحل في الـ solCode. [[minutes.bat 3]] بيطبع [[3 days = 4320 minutes]]، و [[7 / 2 = 3 remainder 1]]. لو نسيت تكتب الأيام [[%1]] فاضي، و [[set /a]] بيحسبه صفر من غير error، عشان كده فيه فحص في الأول.`,
+الحل في الـ solCode. [[minutes.bat 3]] بيطبع [[3 days = 4320 minutes]]، و [[7 / 2 = 3 remainder 1]]. لو نسيت تكتب الأيام من غير الفحص اللي في الأول، السطر بيبقى [[set /a MIN=*24*60]] ويطلع [[Missing operand.]] و MIN فاضي. ولو كتبت كلمة مش رقم زي [[minutes.bat abc]]، set /a بيعتبرها اسم متغير مش موجود فيحسبها صفر من غير error: [[abc days = 0 minutes]].`,
           solCode: R`@echo off
 REM minutes.bat
 if "%~1"=="" (echo Usage: minutes.bat DAYS & exit /b 1)
@@ -2783,13 +2787,13 @@ echo 7 / 2 = %Q% remainder %R%`
         {
           cmd: "set /p و choice",
           title: "اسأل المستخدم: كتابة حرة أو اختيار",
-          desc: R`[[set /p NAME=Your name: ]] بيطبع الرسالة اللي بعد [[=]] ويستنى المستخدم يكتب ويدوس Enter، وبيحط اللي اتكتب في NAME (زي [[read]] في bash). لو داس Enter من غير ما يكتب، المتغير بيفضل زي ما كان (فاضي لو مكانش موجود)، عشان كده السطر اللي بعده بيحط قيمة افتراضية لو فاضي. وحط مسافة بعد [[:]] عشان الكتابة متلزقش في السؤال.
+          desc: R`[[set /p "NAME=Your name: "]] بيطبع الرسالة اللي بعد [[=]] ويستنى المستخدم يكتب ويدوس Enter، وبيحط اللي اتكتب في NAME (زي [[read]] في bash). لو داس Enter من غير ما يكتب، المتغير بيفضل زي ما كان (فاضي لو مكانش موجود)، عشان كده السطر اللي بعده بيحط قيمة افتراضية لو فاضي. وعلامات التنصيص حوالين [[NAME=...]] بتحافظ على المسافة اللي بعد [[:]]: من غيرها المسافة دي بتبقى في آخر السطر ومش باينة، وبتضيع بسهولة لما تنسخ، فالكتابة تلزق في السؤال ([[Your name:Sara]]).
 
 [[choice]] أحسن لما الإجابة من اختيارات محددة: [[/c YNC]] الحروف المسموحة (Y و N و C)، و [[/m "..."]] الرسالة. بيقبل حرف واحد من دول بس، من غير Enter، وبيحط رقم الاختيار في errorlevel: أول حرف 1، والتاني 2، والتالت 3.
 
 وهنا الفخ: [[if errorlevel 2]] معناها «2 أو أكتر» مش «يساوي 2». عشان كده بتفحص من الأكبر للأصغر: 3 الأول، وبعدين 2، واللي يفضل يبقى 1. و [[goto :eof]] بيخرج من السكربت (أو من الـ subroutine)، و [[:eof]] label جاهز مش محتاج تكتبه. و [[/t 10 /d N]] بيختار N لوحده بعد 10 ثواني لو محدش داس.`,
           example: R`@echo off
-set /p NAME=Your name:
+set /p "NAME=Your name: "
 if "%NAME%"=="" set NAME=guest
 echo Hi %NAME%
 choice /c YNC /m "Deploy to production? (Yes/No/Cancel)"
@@ -2815,7 +2819,7 @@ echo Cancelled.`,
 [[/n]] ميطبعش الحروف [[[Y,N]?]] بعد الرسالة.
 [[/cs]] يفرّق كابيتال وسمول.
 [[/t 10 /d N]] بعد 10 ثواني يختار N. الاتنين لازم مع بعض.
-لو المستخدم داس Ctrl+C أو حصل error، errorlevel بيبقى 0 أو 255.
+لو المستخدم داس Ctrl+C أو حصل error، errorlevel بيبقى 0 أو 255. الـ 255 أكبر من 3 فالمثال بيعتبرها Cancel، بس الـ 0 بتعدّي من الفحصين وتوصل لـ Deploying، فلو الخطوة خطيرة ضيف [[if not errorlevel 1 goto :cancel]] قبلهم.
 
 ممكن كمان تقرا الرقم مباشرة: [[if %errorlevel%==2 goto :no]]، ودي مقارنة بالظبط مش «أكبر من أو يساوي»، فالترتيب مش هيفرق.
 
@@ -2825,7 +2829,7 @@ choice و set /p الاتنين بيستنوا حد يكتب، فلو السكر
           },
           lines: [
             "متطبعش الأوامر.",
-            "اطبع السؤال واستنى سطر من المستخدم في NAME (فيه مسافة بعد : في آخر السطر).",
+            "اطبع السؤال واستنى سطر من المستخدم في NAME (علامات التنصيص بتحافظ على المسافة اللي بعد :).",
             "لو فاضي حط قيمة افتراضية.",
             "اطبع.",
             "اختيار من Y أو N أو C، والرقم بيروح errorlevel (1 أو 2 أو 3).",
@@ -2839,9 +2843,11 @@ choice و set /p الاتنين بيستنوا حد يكتب، فلو السكر
             "label الـ Cancel.",
             "اطبع."
           ],
-          sol: R`المتوقع على ويندوز: [[Your name:]] ولو دست Enter بس هيطبع [[Hi guest]]. وبعدين [[Deploy to production? (Yes/No/Cancel) [Y,N,C]?]]، والحرف اللي تدوسه بيتطبع بعدها. Y تطبع [[Deploying...]]، و N تطبع [[Skipped.]]، و C تطبع [[Cancelled.]]، وأي حرف تاني بيعمل صوت ومش بيتقبل.
+          sol: R`جربته على ويندوز 11 بضغطات كيبورد: [[Your name:]] ولو دست Enter بس هيطبع [[Hi guest]]. وبعدين [[Deploy to production? (Yes/No/Cancel) [Y,N,C]?]]، والحرف اللي تدوسه بيتطبع بعدها بالكابيتال زي ما هو في [[/c]] (دست n فظهر N). Y تطبع [[Deploying...]]، و N تطبع [[Skipped.]]، و C تطبع [[Cancelled.]]، وأي حرف تاني بيعمل صوت ومش بيتقبل، و choice بيفضل مستني.
 
-لما تبدّل السطرين ([[if errorlevel 2]] الأول): C بتدّي errorlevel 3، و 3 أكبر من أو يساوي 2، فهتطبع [[Skipped.]] بدل Cancelled. ده بالظبط سبب الترتيب من الأكبر. (مقدرتش أجرّب choice بالكيبورد هنا؛ السلوك ده من توثيق choice على Microsoft Learn.)`
+لما تبدّل السطرين ([[if errorlevel 2]] الأول): C بتدّي errorlevel 3، و 3 أكبر من أو يساوي 2، فهتطبع [[Skipped.]] بدل Cancelled. ده بالظبط سبب الترتيب من الأكبر.
+
+ولو حاولت تجرّبه من غير كيبورد: من ملف ([[ask.bat < answers.txt]] وفيه سطر الاسم وتحته y) اشتغل صح. أما بـ pipe ([[(echo Sara& echo n) | ask.bat]]) فـ set /p بياكل الـ input كله، و choice بيطلع [[ERROR: The file is either empty or does not contain the valid choices.]] ويرجّع 255، فالمثال طبع [[Cancelled.]].`
         },
         {
           cmd: "if و errorlevel",
@@ -2849,6 +2855,8 @@ choice و set /p الاتنين بيستنوا حد يكتب، فلو السكر
           desc: R`[[if]] في batch ليه ٣ أشكال: [[if exist file]] (الملف موجود؟)، و [[if "%A%"=="%B%"]] (نصين زي بعض؟ و [[/i]] بعد if من غير فرق كابيتال وسمول)، و [[if errorlevel 1]] (آخر أمر فشل؟). و [[not]] بعد if بيعكس. ولو أكتر من سطر: أقواس، و [[) else (]] لازم على نفس السطر بالظبط زي المثال.
 
 كل برنامج بيخلص برقم: 0 نجح، وغيره فشل، والرقم بيتحفظ في errorlevel. [[if errorlevel 1]] معناها «الرقم 1 أو أكتر» مش «يساوي 1». ولمقارنة بالظبط: [[if %errorlevel% equ 1]] (والأنماط والفخاخ في درس %errorlevel% و !errorlevel!).
+
+وفيه فخ اتمسك في المثال ده بالذات: بعض البرامج بترجع رقم سالب لما تفشل. npm على ويندوز بيرجّع [[-4058]] لما package.json مش موجود، و -4058 مش «1 أو أكتر»، فـ [[if errorlevel 1]] بتعتبره نجاح وتطبع Build OK. عشان كده المثال بيستخدم [[if %errorlevel% neq 0]] ([[neq]] يعني «مش بيساوي»)، ودي بتمسك أي رقم غير الصفر.
 
 ليه [[call]] قبل npm؟ لأن npm على ويندوز نفسه ملف [[npm.cmd]]، وتشغيل bat من جوه bat من غير call بيسلّمه التحكم ومش بيرجع، فالسطور اللي بعده متتنفذش. نفس الحكاية مع yarn و pnpm و أي [[.cmd]] أو [[.bat]]. و [[exit /b 1]] بيخرج من السكربت برقم فشل، و [[exit 1]] من غير [[/b]] بيقفل نافذة CMD كلها.`,
           example: R`@echo off
@@ -2859,7 +2867,7 @@ if exist package.json (
 )
 
 call npm run build
-if errorlevel 1 (
+if %errorlevel% neq 0 (
     echo Build failed
     exit /b 1
 )
@@ -2880,7 +2888,7 @@ Labels في batch: [[:LABEL]] سطر بيبدأ بـ :، و[[goto LABEL]] بين
 
 وعلامات التنصيص مهمة حول القيم لو فيها مسافات: [[if "%1"=="value"]].`,
             when: "التحقق من arguments. التعامل مع errors. شروط في الـ automation.",
-            mistakes: "[[if errorlevel 1]] معناها «الـ errorlevel يساوي 1 أو أكبر». للتساوي بالظبط: [[if errorlevel 1 if not errorlevel 2]]."
+            mistakes: R`[[if errorlevel 1]] معناها «الـ errorlevel يساوي 1 أو أكبر». للتساوي بالظبط: [[if errorlevel 1 if not errorlevel 2]]. ومش بتمسك الأرقام السالبة، فبرنامج رجّع -4058 بيعدّي كأنه نجح؛ لفحص «فشل ولا لأ» [[if %errorlevel% neq 0]] أضمن.`
           },
           lines: [
             "متطبعش الأوامر.",
@@ -2890,13 +2898,15 @@ Labels في batch: [[:LABEL]] سطر بيبدأ بـ :، و[[goto LABEL]] بين
             "اطبع.",
             "قفلة.",
             "شغّل npm. [[call]] لازمة مع أوامر .bat/.cmd زي npm وإلا السكربت يقف بعدها.",
-            "لو الـ exit code واحد أو أكتر (يعني فشل).",
+            "لو الـ exit code مش صفر (يعني فشل، حتى لو رقم سالب).",
             "اطبع.",
             "اخرج من السكربت برقم فشل.",
             "قفلة.",
             "اطبع."
           ],
-          sol: R`في فولدر من غير package.json هيطبع [[Not a Node project]]، وبعدين npm يطلع [[npm error code ENOENT]] و [[Could not read package.json]]، وبعدين [[Build failed]]، والسكربت يخرج بـ 1 ([[echo %errorlevel%]] بعدها يطبع 1).
+          sol: R`جربته على ويندوز 11 (npm 11). في فولدر من غير package.json هيطبع [[Not a Node project]]، وبعدين npm يطلع كذا سطر أولهم [[npm error code ENOENT]] وفيهم [[npm error errno -4058]] و [[Could not read package.json]]، وبعدين [[Build failed]]، والسكربت يخرج بـ 1 ([[echo %errorlevel%]] بعدها يطبع 1).
+
+ولو رجّعت الفحص لـ [[if errorlevel 1 (]]: هتلاقي [[Build OK]] بعد كلام npm الأحمر، والسكربت يخرج بـ 0، لأن npm رجّع -4058. ده سبب [[neq 0]].
 
 جرب تشيل [[call]]: هتلاقي كلام npm ظهر وبعدها السكربت خلص على طول من غير Build failed ولا Build OK، لأن npm نفسه ملف [[npm.cmd]]، وتشغيل bat من bat من غير call بيسلّمه التحكم ومش بيرجع. ولو استخدمت [[exit 1]] من غير [[/b]] هتتقفل نافذة CMD كلها.`
         },
@@ -2929,7 +2939,7 @@ exit /b %1`,
           flag: "script",
           deep: {
             why: "سكربت batch بيكمّل بعد ما خطوة فشلت ممكن يرفع build بايظ أو يمسح الأصل بعد نسخة فاشلة. والـ errorlevel في CMD فيه مفاجآت كتير: قيمته قديمة جوه الأقواس، وأوامر بتسيبه زي ما هو، و if errorlevel معناها «أكبر من أو يساوي».",
-            how: R`[[if errorlevel N]]: صح لو الرقم N أو أكتر. قديمة بس بتشتغل جوه الأقواس من غير delayed expansion، لأنها بتقرا القيمة وقت التنفيذ. [[if not errorlevel 1]] يعني نجح.
+            how: R`[[if errorlevel N]]: صح لو الرقم N أو أكتر. قديمة بس بتشتغل جوه الأقواس من غير delayed expansion، لأنها بتقرا القيمة وقت التنفيذ. [[if not errorlevel 1]] يعني نجح، بس خلي بالك من الأرقام السالبة: npm بيرجّع -4058 لما package.json مش موجود، و -4058 مش «1 أو أكتر»، فـ [[if errorlevel 1]] بتعديه كأنه نجاح (جربتها). [[neq 0]] و [[||]] بيمسكوه.
 
 [[%errorlevel%]]: الرقم وقت قراية السطر. ممتاز بره الأقواس. جوه [[( )]] أو for استخدم [[!errorlevel!]].
 
@@ -2943,7 +2953,7 @@ exit /b %1`,
 
 البرامج الخارجية بتحط exit code بتاعها: [[node -e "process.exit(4)"]] وبعدين [[echo %errorlevel%]] بيطبع 4.`,
             when: "بعد كل أمر مهم في أي سكربت: build، نسخ، git push، تسطيب.",
-            mistakes: R`[[%errorlevel%]] جوه if أو for بقيمته القديمة. أو [[set errorlevel=...]]. أو [[if errorlevel 0]] (دايمًا صح، لأن كل رقم أكبر من أو يساوي 0). أو تفحص بعد [[echo]] أو أمر تاني اتنفذ بعد الأمر اللي يهمك. أو [[robocopy ... || goto :fail]] فينط للفشل وهو ناجح.`
+            mistakes: R`[[%errorlevel%]] جوه if أو for بقيمته القديمة. أو [[set errorlevel=...]]. أو [[if errorlevel 0]] (صح مع أي رقم مش سالب، فمش بتفرّق بين النجاح والفشل). أو تفحص بعد [[echo]] أو أمر تاني اتنفذ بعد الأمر اللي يهمك. أو [[robocopy ... || goto :fail]] فينط للفشل وهو ناجح.`
           },
           lines: [
             "متطبعش الأوامر.",
@@ -2964,9 +2974,9 @@ exit /b %1`,
             "الـ subroutine.",
             "ارجع بالرقم اللي اتبعت لها."
           ],
-          sol: R`جربته على Wine: [[errorlevel is 1]] و [[Failed with code 1]] و [[inside block: 1 vs 0]] و [[check returned 5]] و [[created]] (أول مرة) و [[after cmd /c exit 3: 3]]، و [[echo %errorlevel%]] بعد السكربت [[3]]. في التشغيلة التانية [[already there]] بدل created، لأن الفولدر demo موجود. (Wine بيطبع الاتنين في سطر [[&& ||]]، وده bug في Wine؛ على ويندوز بيطبع واحد بس.)
+          sol: R`جربته على ويندوز 11: [[errorlevel is 1]] و [[Failed with code 1]] و [[inside block: 1 vs 0]] و [[check returned 5]] و [[created]] (أول مرة) و [[after cmd /c exit 3: 3]]، و [[echo %errorlevel%]] بعد السكربت [[3]]. في التشغيلة التانية [[already there]] بدل created، لأن الفولدر demo موجود.
 
-مع [[set errorlevel=0]]: كل [[%errorlevel%]] بعدها بقى 0 حتى بعد [[call :check 5]] و [[cmd /c exit 3]]، لأن المتغير اللي انت عملته بقى بيغطي على القيمة الحقيقية. [[if errorlevel]] (من غير علامات النسبة) هي اللي لسه بتقرا الحقيقي. امسح السطر ده، أو [[set errorlevel=]] من غير قيمة تشيله.`
+مع [[set errorlevel=0]]: سطر [[Failed with code]] اختفى، وكل [[%errorlevel%]] بعدها بقى 0 حتى بعد [[call :check 5]] و [[cmd /c exit 3]]، وحتى [[!errorlevel!]] طبع 0 ([[inside block: 0 vs 0]])، والسكربت خرج بـ 0 بدل 3، لأن المتغير اللي انت عملته بقى بيغطي على القيمة الحقيقية. [[if errorlevel]] (من غير علامات النسبة) هي اللي لسه بتقرا الحقيقي. امسح السطر ده، أو [[set errorlevel=]] من غير قيمة تشيله.`
         },
         {
           cmd: "setlocal / endlocal",
@@ -3018,24 +3028,24 @@ echo kept: %RESULT%`,
             "السطر كله بيتفك الأول (42)، وبعدين endlocal، وبعدين set بالقيمة.",
             "اطبع: 42."
           ],
-          sol: R`جربته على Wine: [[inside: red 123]] و [[outside: blue []]] و [[kept: 42]]. وبعد ما خلص، [[echo %COLOR% %TEMPVAR% %RESULT%]] في نفس النافذة طبع [[blue %TEMPVAR% 42]]: COLOR فاضل blue لأن السطر التاني كان قبل أي setlocal، و TEMPVAR مش موجود (فالشاشة بتطبعه زي ما هو)، و RESULT عدّى بالحيلة.
+          sol: R`جربته على ويندوز 11 من CMD مفتوح: [[inside: red 123]] و [[outside: blue []]] و [[kept: 42]]. وبعد ما خلص، [[echo %COLOR% %TEMPVAR% %RESULT%]] في نفس النافذة طبع [[blue %TEMPVAR% 42]]: COLOR فاضل blue لأن السطر التاني كان قبل أي setlocal، و TEMPVAR مش موجود (فالشاشة بتطبعه زي ما هو)، و RESULT عدّى بالحيلة.
 
-لما شلت أول [[setlocal]]: [[outside: red [123]]]، وفي النافذة بعدها [[red 123 42]]. كل حاجة السكربت عملها فضلت في النافذة.`
+لما شلت أول [[setlocal]]: [[outside: red [123]]]، وفي النافذة بعدها [[red 123 42]]. كل حاجة السكربت عملها فضلت في النافذة. وجربت كمان [[endlocal]] و [[set RESULT=%RESULT%]] في سطرين: RESULT طلع فاضي.`
         },
         {
           cmd: "build.bat",
           title: "goto و labels",
           desc: R`ملف bat كامل بيشغّل build لمشروع ويقول نجح ولا فشل. الجديد فيه الـ labels: سطر بيبدأ بـ [[:]] زي [[:error]] اسمه label، علامة في الملف، و [[goto :error]] بينقل التنفيذ للسطر ده على طول. وده الـ «if/else» والـ «دالة» بتاعة batch.
 
-السطر المهم [[call npm run build || goto :error]]: [[call]] لازمة قبل npm لأنه نفسه ملف npm.cmd، ومن غيرها السكربت بيتسلّم لـ npm ومش بيرجع (درس if و errorlevel). و [[||]] لو فشل روح للـ label. و [[%1]] أول argument، و [[if "%TARGET%"==""]] بيشيك لو فاضي (علامات التنصيص عشان المقارنة متبوظش لو فاضي فعلًا).
+السطر المهم [[call npm run build || goto :error]]: [[call]] لازمة قبل npm لأنه نفسه ملف npm.cmd، ومن غيرها السكربت بيتسلّم لـ npm ومش بيرجع (درس if و errorlevel). و [[||]] لو فشل روح للـ label. و [[set "TARGET=%~1"]] أول argument من غير علامات التنصيص (درس set و %1)، و [[if "%TARGET%"==""]] بيشيك لو فاضي (علامات التنصيص عشان المقارنة متبوظش لو فاضي فعلًا). و [["%TARGET%"]] بين علامات تنصيص في mkdir عشان اسم فولدر فيه مسافة ([[build.bat "my out"]]) يشتغل.
 
 و [[exit /b 0]] قبل الـ label مهم جدًا: من غيره، بعد ما الـ build ينجح، التنفيذ هيكمّل لتحت ويعدّي على [[:error]] ويطبع Build failed، لأن الـ label مجرد علامة مش حاجز. و [[exit /b 1]] بيخرج برقم فشل تقدر تقراه من [[%errorlevel%]] أو من سكربت تاني.`,
           example: R`@echo off
 REM build.bat
-set TARGET=%1
-if "%TARGET%"=="" set TARGET=dist
+set "TARGET=%~1"
+if "%TARGET%"=="" set "TARGET=dist"
 
-if not exist %TARGET% mkdir %TARGET%
+if not exist "%TARGET%" mkdir "%TARGET%"
 
 call npm run build || goto :error
 
@@ -3061,13 +3071,13 @@ exit /b 1`,
 
 [[pause]] بيوقف ويستنى أي ضغطة زرار، مفيد في آخر سكربت بيشغّله المستخدم عشان يقرا النتيجة.`,
             when: "أتمتة build على ويندوز. سكربت setup بسيط.",
-            mistakes: R`نسيان [[exit /b 0]] قبل [[:error]] فالسكربت يطبع Build failed حتى لو نجح. أو نسيان [[call]] قبل npm فالسطر اللي فيه [[||]] مبيوصلوش الدور. أو غلطة إملائية في اسم الـ label فيطلع [[The system cannot find the batch label specified - eror]] والسكربت يقف (الكابيتال والسمول مش فارقين، الحروف نفسها فارقة). أو نسيان @echo off فالشاشة تتشوّش.`
+            mistakes: R`نسيان [[exit /b 0]] قبل [[:error]] فالسكربت يطبع Build failed حتى لو نجح. أو نسيان [[call]] قبل npm، فالسكربت كله يخلص مع npm ومفيش لا Build done ولا Build failed. أو [[set TARGET=%1]] من غير [[~]] وعلامات تنصيص، فـ [[build.bat "my out"]] يقع بـ [[out""=="" was unexpected at this time.]]. أو غلطة إملائية في اسم الـ label فيطلع [[The system cannot find the batch label specified - eror]] والسكربت يقف (الكابيتال والسمول مش فارقين، الحروف نفسها فارقة). أو نسيان @echo off فالشاشة تتشوّش.`
           },
           lines: [
             "متطبعش الأوامر.",
-            "الهدف من أول argument.",
+            "الهدف من أول argument، من غير علامات التنصيص ([[%~1]]).",
             "لو فاضي، الافتراضي dist.",
-            "اعمل الفولدر لو مش موجود.",
+            "اعمل الفولدر لو مش موجود (بين علامات تنصيص عشان المسافات).",
             "شغّل الـ build، ولو فشل روح لـ label اسمه error.",
             "اطبع النجاح.",
             "اخرج بنجاح.",
@@ -3077,7 +3087,9 @@ exit /b 1`,
           ],
           sol: R`في مشروع فيه script اسمه build: [[build.bat]] هيعمل فولدر dist لو مش موجود، ويشغّل الـ build، وفي الآخر [[Build done in dist]]. لو الـ build فشل (أو مفيش package.json) هتشوف error npm وبعده [[Build failed!]]، و [[echo %errorlevel%]] يطبع 1.
 
-خد بالك إن [[%1]] (TARGET) هنا بيعمل الفولدر ويطبع اسمه بس، مش بيغيّر مكان ناتج npm؛ الـ build بيطلع في المكان المظبوط في الـ config (vite مثلًا dist). ولو شلت [[call]] قبل npm، السطر [[|| goto :error]] مش هيوصله الدور. وفولدر dist بيتعمل حتى لو الـ build فشل، لأن mkdir قبله.`
+خد بالك إن [[%~1]] (TARGET) هنا بيعمل الفولدر ويطبع اسمه بس، مش بيغيّر مكان ناتج npm؛ الـ build بيطلع في المكان المظبوط في الـ config (vite مثلًا dist). و [[build.bat "my out"]] عمل فولدر [[my out]] وطبع [[Build done in my out]]. وفولدر dist بيتعمل حتى لو الـ build فشل، لأن mkdir قبله.
+
+ولو شلت [[call]] قبل npm: جربتها، وكلام npm ظهر وبعده ولا [[Build done]] ولا [[Build failed!]]. الـ [[||]] نفسه بيتنفذ بعد npm، بس [[goto :error]] مبقاش ليه سكربت يرجعله، لأن build.bat سلّم التحكم لـ npm.cmd وخلص.`
         }
       ]
     },
@@ -3178,9 +3190,9 @@ for %%x in (dev staging prod) do echo deploying to %%x`,
             "[[/l]]: من 1 لـ 3 بخطوة 1، واعمل فولدر لكل رقم.",
             "لستة كلمات ثابتة."
           ],
-          sol: R`جربت الملف على Wine في فولدر فيه a.txt و b.txt و p1.jpg و sub\x.log و logs\y.log: طبع [[text file: a.txt]] و [[text file: b.txt]] و [[image: p1 (4 bytes)]] وسطرين log بالمسار الكامل (زي [[log: C:\lab\logs\y.log]]) و [[folder: logs]] و [[folder: sub]]، وعمل day1 و day2 و day3، وطبع deploying تلات مرات.
+          sol: R`جربت الملف على ويندوز 11 في فولدر فيه a.txt و [[b c.txt]] و p1.jpg (4 بايت) و [[my pic.png]] و sub\x.log و logs\y.log: طبع [[text file: a.txt]] و [[text file: b c.txt]] و [[image: p1 (4 bytes)]] و [[image: my pic (2 bytes)]] وسطرين log بالمسار الكامل (زي [[log: C:\lab\logs\y.log]]) و [[folder: logs]] و [[folder: sub]]، وعمل day1 و day2 و day3، وطبع deploying تلات مرات. الأسامي اللي فيها مسافات جت كاملة.
 
-في الشاشة [[for %f in (*.txt) do @echo %f]] طبع الأسامي. نفس السطر جوه ملف bat على ويندوز بيطلع [[f was unexpected at this time.]]، لأن [[%f]] اتحولت في الملف لحاجة تانية؛ الحل [[%%f]] في المكانين.`
+في الشاشة [[for %f in (*.txt) do @echo %f]] طبع الأسامي. نفس السطر جوه ملف bat طلّع [[f was unexpected at this time.]]، لأن CMD وهو بيقرا الملف شاف [[%f in (*.txt) do @echo %]] على إنها متغير اسمه غريب وشالها؛ الحل [[%%f]] في المكانين.`
         },
         {
           cmd: "for /f",
@@ -3236,9 +3248,9 @@ CSV: for /f بيقطّع عند كل فاصلة، فالقيم اللي فيها
             "اسم الـ branch، و [[2^>nul]] بالـ caret عشان التوجيه يبقى جوه الأمر.",
             "اطبعه."
           ],
-          sol: R`المتوقع على ويندوز: [[server: web01]] و [[server: api01]] بس (السطر الفاضي و [[;old-server]] اتشالوا لأن ; هو حرف التعليق الافتراضي)، و [[Ali is 31]] و [[Sara is 24]]، و [[git version 2.47.0.windows.1]] (حسب نسختك)، و [[just the number: 2.47.0.windows.1]]، و [[[line with spaces]]]، و [[branch: main]].
+          sol: R`جربته على ويندوز 11 في ريبو git: [[server: web01]] و [[server: api01]] بس (السطر الفاضي و [[;old-server]] اتشالوا لأن ; هو حرف التعليق الافتراضي)، و [[Ali is 31]] و [[Sara is 24]]، و [[git version 2.56.0.windows.1]] (حسب نسختك)، و [[just the number: 2.56.0.windows.1]]، و [[[line with spaces]]]، و [[branch: main]]. وبره أي ريبو، [[2^>nul]] خبّت رسالة git و [[branch:]] طلعت فاضية.
 
-لما شلت [[delims=]] وزودت [[db 01]]: طبع [[server: db]] بس، لأن الفاصل الافتراضي المسافة و tokens الافتراضي 1. جربت الملف على Wine: سطور الملفات والـ CSV و usebackq طلعت زي كده، بس Wine مش بيشيل سطر [[;old-server]] (ويندوز بيشيله) ومش بيقدر يشغّل git الويندوز، فسطور git من التوثيق.`
+لما شلت [[delims=]] وزودت [[db 01]]: طبع [[server: db]] بس، لأن الفاصل الافتراضي المسافة و tokens الافتراضي 1.`
         },
         {
           cmd: "call :label",
@@ -3286,7 +3298,7 @@ if exist "%~1" (exit /b 0) else (exit /b 1)`,
 
 وفيه حيلة: [[call echo %%VAR%%]] بتخلي CMD يفك المتغير مرتين، بتتشاف في أكواد قديمة بدل delayed expansion.`,
             when: "أي حاجة بتتكرر في السكربت أكتر من مرة، أو جزء عايز تديله اسم واضح (log، check، backup).",
-            mistakes: R`نسيان [[exit /b]] قبل أول label. أو [[call greet]] من غير [[:]]. أو [[goto :greet]] بدل call فمش بيرجع. أو تعتمد على [[call :sub || echo failed]]: الـ [[||]] بعد call فيها تفاصيل بتلخبط (و Wine مثلًا مش بيعاملها زي ويندوز)، والأوضح والأضمن [[if errorlevel 1]] في السطر اللي بعده. أو [[set %3=%R%]] من غير علامات تنصيص والقيمة فيها رموز.`
+            mistakes: R`نسيان [[exit /b]] قبل أول label. أو [[call greet]] من غير [[:]]. أو [[goto :greet]] بدل call فمش بيرجع. أو [[set %3=%R%]] من غير علامات تنصيص والقيمة فيها رموز.`
           },
           lines: [
             "متطبعش الأوامر.",
@@ -3307,9 +3319,9 @@ if exist "%~1" (exit /b 0) else (exit /b 1)`,
             "subroutine الفحص.",
             "لو الملف موجود ارجع 0، وإلا 1."
           ],
-          sol: R`جربته على Wine: [[Hello, Sara and Ahmed Ali]] (من غير علامات التنصيص)، و [[7 + 5 = 12]]، و [[package.json is missing]] في الفولدر اللي مفيهوش، وفي اللي فيه السطر ده مش بيظهر.
+          sol: R`جربته على ويندوز 11: [[Hello, Sara and Ahmed Ali]] (من غير علامات التنصيص)، و [[7 + 5 = 12]]، و [[package.json is missing]] في الفولدر اللي مفيهوش، وفي اللي فيه السطر ده مش بيظهر.
 
-لما مسحت [[exit /b 0]] بتاع السطر السابع (جربتها على Wine): بعد [[package.json is missing]] الكود كمّل لتحت ودخل [[:greet]] من غير arguments فطبع [[Hello,  and]]، وبعدين [[exit /b 0]] اللي جوه greet خرّج من السكربت كله، لأن مفيش call يرجعله. في سكربت أطول ممكن الكود يكمّل يدخل subroutines تانية ويعمل حاجات ملهاش لازمة، وده اللي الـ exit بيمنعه.`
+لما مسحت [[exit /b 0]] بتاع السطر السابع: بعد [[package.json is missing]] الكود كمّل لتحت ودخل [[:greet]] من غير arguments فطبع [[Hello,  and]]، وبعدين [[exit /b 0]] اللي جوه greet خرّج من السكربت كله، لأن مفيش call يرجعله. في سكربت أطول ممكن الكود يكمّل يدخل subroutines تانية ويعمل حاجات ملهاش لازمة، وده اللي الـ exit بيمنعه.`
         },
         {
           cmd: "%~dp0 و %~nx1",
@@ -3363,16 +3375,18 @@ echo After shift, arg1 is: %1`,
             "زحلق الـ arguments.",
             "التاني بقى الأول."
           ],
-          sol: R`جربته على Wine بملف [[My Files\report.pdf]] حجمه 6 بايت: [[Script: info.bat]]، و [[Script folder: ...\bat\]]، و [[All args: "My Files\report.pdf" second]]، و [[Arg1 raw: "My Files\report.pdf"]]، و [[Arg1 no quotes: My Files\report.pdf]]، و Full path بالمسار الكامل، و [[Drive: Z:]] (على ويندوز C:) والـ Path، و [[Name: report  Ext: .pdf]]، و [[Size: 6 bytes]] والتاريخ، وفي الآخر [[After shift, arg1 is: second]].
+          sol: R`جربته على ويندوز 11، والسكربت نفسه في فولدر فيه مسافة ([[C:\Users\you\scripts dir]]) وشغّلته من فولدر تاني، بملف [[C:\Users\you\My Files\report.pdf]] حجمه 6 بايت: [[Script: info.bat]]، و [[Script folder: C:\Users\you\scripts dir\]]، و [[All args: "C:\Users\you\My Files\report.pdf" second]]، و [[Arg1 raw: "C:\Users\you\My Files\report.pdf"]]، و [[Arg1 no quotes: C:\Users\you\My Files\report.pdf]]، و Full path نفس المسار، و [[Drive: C:  Path: \Users\you\My Files\]]، و [[Name: report  Ext: .pdf]]، و [[Size: 6 bytes  Modified: 10/02/2026 08:47 PM]] (شكل التاريخ حسب إعدادات ويندوز)، وفي الآخر [[After shift, arg1 is: second]].
 
-بالسحب والإفلات: الملف اللي رميته بيوصل [[%1]] بمساره الكامل وبعلامات تنصيص لو فيه مسافات، و Script folder بيفضل فولدر السكربت. لو النافذة قفلت بسرعة، يبقى نسيت [[pause]].`
+وبملف مش موجود ([[info.bat nothere.txt]]): Full path اتحسب عادي من الفولدر الحالي، بس Size و Modified طلعوا فاضيين.
+
+بالسحب والإفلات: الملف اللي رميته بيوصل [[%1]] بمساره الكامل وبعلامات تنصيص لو فيه مسافات، و Script folder بيفضل فولدر السكربت. لو النافذة قفلت بسرعة، يبقى نسيت [[pause]]. (السحب والإفلات مجربتهوش هنا لأنه محتاج Explorer بالماوس؛ ده من توثيق ويندوز.)`
         },
         {
           cmd: "timeout و ping",
           title: "استنى ثواني، أو استنى لحد ما حاجة تجهز",
           desc: R`[[timeout /t 5]] بيستنى ٥ ثواني وبيعد تنازلي على الشاشة، وأي زرار بيوقف الانتظار بدري. [[/nobreak]] بيخلي الزراير متقطعهوش (Ctrl+C بس)، و [[>nul]] بيخفي العداد. ده المقابل لـ [[sleep 5]] في bash.
 
-[[ping -n 3 127.0.0.1 >nul]] الطريقة القديمة: بيبعت 3 pings لجهازك نفسه بينهم ثانية، فبيستنى حوالي ثانيتين (العدد ناقص واحد). مفيدة لأن timeout بيرفض يشتغل لو الـ input متوجّه (زي بعض أدوات CI أو لما السكربت بيتشغّل بـ [[< nul]]) ويطبع [[ERROR: Input redirection is not supported]] ويكمّل على طول.
+[[ping -n 3 127.0.0.1 >nul]] الطريقة القديمة: بيبعت 3 pings لجهازك نفسه بينهم ثانية، فبيستنى حوالي ثانيتين (العدد ناقص واحد). مفيدة لأن timeout بيرفض يشتغل لو الـ input متوجّه (زي بعض أدوات CI أو لما السكربت بيتشغّل بـ [[< nul]]) ويطبع [[ERROR: Input redirection is not supported, exiting the process immediately.]] ويكمّل على طول من غير ما يستنى.
 
 بس الانتظار بعدد ثابت تخمين: السيرفر ممكن يقوم في ثانية أو في عشرين. الأحسن تستنى «لحد ما يجهز» بلوب: الجزء من [[:wait]] لـ [[goto :wait]] بيجرّب [[curl -s -o nul]] على السيرفر (curl موجود في ويندوز 10 و 11؛ [[-s]] من غير رسايل و [[-o nul]] ارمي الصفحة)، ولو اتصل [[&& goto :ready]]، وإلا يستنى ثانيتين ويجرّب تاني، وبعد 15 محاولة يستسلم بـ [[exit /b 1]]. و [[start "server" /min cmd /c "npm run dev"]] بيشغّل السيرفر في نافذة متصغّرة لوحدها عشان السكربت يكمّل.`,
           example: R`@echo off
@@ -3434,9 +3448,9 @@ start http://localhost:3000`,
             "اطبع عدد المحاولات.",
             "افتح المتصفح."
           ],
-          sol: R`المتوقع على ويندوز في مشروع Vite أو Next: نافذة متصغّرة فيها السيرفر، وبعد حوالي 7 ثواني (5 و 2) أول محاولة غالبًا بتنجح فيطبع [[Server is up after 1 tries]] ويفتح المتصفح. لو المشروع تقيل هتلاقي الرقم 2 أو 3.
+          sol: R`جربته على ويندوز 11 بسيرفر node بيقوم بعد 3 ثواني على 3000: بعد حوالي 7 ثواني (5 و 2) أول محاولة نجحت وطبع [[Server is up after 1 tries]]. في مشروع Vite أو Next تقيل ممكن تلاقي الرقم 2 أو 3.
 
-على بورت مفيش عليه حاجة: 15 محاولة كل واحدة ثانيتين، يعني حوالي 30 ثانية بعد الانتظار الأولاني، وبعدين [[Server did not start in time]] و errorlevel 1. (مقدرتش أشغّل timeout و curl الويندوز هنا؛ السلوك ده من توثيق timeout و curl. اللوب نفسه بـ goto و set /a جربته على Wine.)`
+على بورت مفيش عليه حاجة: [[Server did not start in time]] و errorlevel 1، بس بعد حوالي دقيقة (66 ثانية عندي من أول السكربت) مش 30 ثانية. السبب إن curl على ويندوز بياخد حوالي ثانيتين لوحده عشان يقول إن البورت مقفول (exit code 7)، فكل محاولة بقت حوالي 4 ثواني. ولو السكربت اتشغّل و الـ input متوجّه، timeout بيطلع رسالة الـ error ومش بيستنى خالص.`
         },
         {
           cmd: "chcp 65001",
@@ -3468,7 +3482,7 @@ echo تم.`,
           ],
           sol: R`من غير [[chcp]]: الـ echo العربي هيطلع رموز غريبة زي [[╪¼╪º╪▒┘è]] أو حروف عربي ملخبطة، لأن CMD قرا بايتات UTF-8 بصفحة ترميز قديمة. بعد ما تضيف [[chcp 65001 >nul]]: الجمل هتظهر عربي صح (في Windows Terminal، الكونسول القديم ممكن يعرض الحروف مفصولة أو مقلوبة).
 
-ولو حفظته UTF-8 with BOM، أول سطر هيبوظ: هتشوف حاجة زي [['ï»¿@echo' is not recognized as an internal or external command]]، لأن 3 بايتات الـ BOM اتلزقوا في أول [[@echo]] قبل ما chcp يشتغل، وبما إن [[echo off]] مشتغلش هتلاقي كل أمر بيتطبع قبل تنفيذه. رجّعه UTF-8 عادي من شريط VS Code تحت.`
+ولو حفظته UTF-8 with BOM، أول سطر غالبًا هيبوظ: هتشوف حاجة زي [['ï»¿@echo' is not recognized as an internal or external command]]، لأن 3 بايتات الـ BOM اتلزقوا في أول [[@echo]] قبل ما chcp يشتغل، وبما إن [[echo off]] مشتغلش هتلاقي كل أمر بيتطبع قبل تنفيذه. جربتها على ويندوز 11: ده حصل لما الـ code page كانت 720 (ويندوز عربي) و 850 و 1252 و 65001، ولما كانت 437 الملف اشتغل عادي. يعني ممكن يشتغل عندك ويبوظ عند غيرك، فمتحفظش ملف bat بـ BOM أصلًا: رجّعه UTF-8 عادي من شريط VS Code تحت.`
         }
       ]
     },
@@ -3596,9 +3610,9 @@ echo Renamed %N% files`,
             "قفلة.",
             "اطبع العدد."
           ],
-          sol: R`جربته على Wine بـ [[IMG 1.jpg]] و [[IMG 2.jpg]] و [[z.jpg]] بتواريخ مختلفة و [[note.txt]]: بـ echo قبل ren طبع ٣ أوامر زي [[ren "z.jpg" "trip_001.jpg"]] (الأقدم الأول)، ومن غيرها الفولدر بقى [[trip_001.jpg]] و [[trip_002.jpg]] و [[trip_003.jpg]] و note.txt زي ما هو، و [[Renamed 3 files]].
+          sol: R`جربته على ويندوز 11 في فولدر فيه مسافة، بـ [[IMG 1.jpg]] و [[IMG 2.jpg]] و [[z.jpg]] بتواريخ مختلفة و [[note.txt]]: بـ echo قبل ren طبع ٣ أوامر زي [[ren "IMG 2.jpg" "trip_001.jpg"]] (الأقدم الأول)، ومن غيرها الفولدر بقى [[trip_001.jpg]] و [[trip_002.jpg]] و [[trip_003.jpg]] و note.txt زي ما هو، و [[Renamed 3 files]].
 
-لو شغلته تاني بنفس البادئة، الملفات اسمها صح أصلًا بس ترتيبها ممكن يتغير، فهتلاقي errors [[A duplicate file name exists]] لبعضها. ولو مفيش jpg خالص هيطبع [[Renamed 0 files]] من غير أي error بفضل [[2^>nul]].`
+لو شغلته تاني بنفس البادئة ونفس الصور، كل ملف بياخد نفس اسمه ومفيش errors. بس لو ضفت صورة أقدم منهم وشغلته بنفس البادئة، الترقيم بيتزحلق: طلع [[A duplicate file name exists, or the file cannot be found.]] ٣ مرات، والصورة الجديدة فضلت باسمها، و trip_003 بقى trip_004، والسطر الأخير قال [[Renamed 4 files]] لأنه بيعدّ المحاولات مش اللي نجح. فشغّله ببادئة جديدة. ولو مفيش jpg خالص هيطبع [[Renamed 0 files]] من غير أي error بفضل [[2^>nul]]. وصورة اسمها [[wow!.jpg]] طلّعت [[The syntax of the command is incorrect.]] وفضلت زي ما هي، بسبب الـ [[!]] مع delayed expansion.`
         },
         {
           cmd: "clean-temp.bat",
@@ -3664,9 +3678,9 @@ pause`,
             "اطبع.",
             "استنى زرار (للدبل كليك)."
           ],
-          sol: R`المتوقع على ويندوز مع [[/dry]]: سطرين الخطوات، وتحت التانية سطر لكل ملف قديم زي [[would delete "C:\Users\ali\Downloads\setup.tmp"]]، ومفيش حاجة اتمسحت. من غير /dry مفيش سطور ملفات (المسح ساكت)، و TEMP بيصغر؛ تقدر تقارن الحجم قبل وبعد من Properties الفولدر.
+          sol: R`جربته على ويندوز 11 على نسخة من السكربت، بعد ما خلّيت TEMP و Downloads فولدرات تجربة فيها مسافات (مش الحقيقيين). مع [[/dry]]: سطرين الخطوات، وتحت التانية سطر لكل ملف قديم زي [[would delete "C:\Users\ali\Downloads\setup.tmp"]] (وحتى اللي في فولدر جوه Downloads)، و forfiles بيطبع سطر فاضي قبل أول نتيجة في كل مرة، ومفيش حاجة اتمسحت. من غير /dry مفيش سطور ملفات (المسح ساكت): الملفات والفولدرات اللي جوه TEMP اتمسحت ما عدا ملف كان مفتوح في برنامج فاتعدّى بصمت، والـ tmp و log القديمة اتمسحت، والـ tmp الجديد وملف txt قديم فضلوا.
 
-لو مطلعش ولا سطر في الخطوة التانية، يبقى مفيش ملفات أقدم من 30 يوم بالامتدادات دي، أو المسار غلط. جرّب [[forfiles /p "%USERPROFILE%\Downloads" /m *.* /d -30]] لوحده تشوف بيلاقي إيه. (مقدرتش أشغّل forfiles هنا؛ الإعدادات من توثيقه على Microsoft Learn، والجزء بتاع if و for جربته على Wine.)`
+لو مطلعش ولا سطر في الخطوة التانية، يبقى مفيش ملفات أقدم من 30 يوم بالامتدادات دي، أو المسار غلط. جرّب [[forfiles /p "%USERPROFILE%\Downloads" /m *.* /d -30]] لوحده تشوف بيلاقي إيه، ولو مفيش هيقول [[ERROR: No files found with the specified search criteria.]].`
         },
         {
           cmd: "backup-date.bat",
@@ -3695,7 +3709,7 @@ if errorlevel 1 (
     exit /b 1
 )
 echo Saved %DEST%\%NAME%_%STAMP%.zip
-forfiles /p "%DEST%" /m %NAME%_*.zip /d -14 /c "cmd /c del @path" 2>nul
+forfiles /p "%DEST%" /m "%NAME%_*.zip" /d -14 /c "cmd /c del @path" 2>nul
 exit /b 0`,
           try: R`شغّله على فولدر عندك: [[backup-date.bat "C:\Users\you\Documents\notes"]]، وافتح الـ zip واتأكد إن الملفات جواه على طول. واطبع [[echo %date%]] على جهازك وجهاز تاني لو تقدر وقارن. وبعدين خليه يشتغل كل يوم بـ [[schtasks]] (في الشرح المفصّل).`,
           flag: "script",
@@ -3711,7 +3725,7 @@ exit /b 0`,
 
 الباك أب على نفس الديسك مش باك أب حقيقي: خلي DEST على درايف تاني أو فولدر OneDrive أو ارفعه (درس git-backup.bat).`,
             when: "باك أب يومي لفولدر شغل، أو قبل تعديل كبير، أو أي سكربت محتاج تاريخ في اسم ملف أو لوج.",
-            mistakes: R`تقطيع [[%date%]] بأرقام ثابتة. أو [[%time%]] في الاسم بمسافة أو [[:]]. أو [[if exist "%SRC%"]] من غير [[\]] فيعدّي لو فيه ملف بنفس الاسم. أو مفيش فحص بعد tar فيطبع Saved حتى لو فشل. أو [[forfiles /m *.zip]] على فولدر فيه zips تانية مهمة (عشان كده [[%NAME%_*.zip]]).`
+            mistakes: R`تقطيع [[%date%]] بأرقام ثابتة. أو [[%time%]] في الاسم بمسافة أو [[:]]. أو [[if exist "%SRC%"]] من غير [[\]] فيعدّي لو فيه ملف بنفس الاسم. أو مفيش فحص بعد tar فيطبع Saved حتى لو فشل. أو [[forfiles /m *.zip]] على فولدر فيه zips تانية مهمة (عشان كده [["%NAME%_*.zip"]]). أو الـ [[/m]] من غير علامات تنصيص واسم الفولدر فيه مسافة: forfiles بيطلع [[ERROR: Invalid argument/option]]، و [[2>nul]] بتخبيها، فالباك أب القديم مبيتمسحش أبدًا من غير ما تعرف.`
           },
           lines: [
             "متطبعش الأوامر.",
@@ -3736,9 +3750,11 @@ exit /b 0`,
             "امسح باك أب نفس الفولدر الأقدم من 14 يوم.",
             "اخرج بنجاح."
           ],
-          sol: R`المتوقع على ويندوز: سطر [[date=[Thu 10/01/2026] time=[21:30:12.45]]] (الشكل حسب جهازك)، وبعدين [[Saved C:\Users\you\backups\notes_2026-10-01_21-30.zip]]. والـ zip فيه ملفات الفولدر على طول (من غير فولدر notes فوقها) بسبب [[-C]] و [[.]].
+          sol: R`جربته على ويندوز 11 (والـ backups في فولدر تجربة): سطر [[date=[Fri 10/02/2026] time=[20:54:46.89]]] (ده شكله على ويندوز إنجليزي بإعدادات أمريكا، وعلى جهازك ممكن يختلف)، وبعدين [[Saved C:\Users\you\backups\notes_2026-10-02_20-54.zip]]. والـ zip فيه ملفات الفولدر على طول من غير فولدر notes فوقها ([[tar -tf]] طلّع [[./notes.txt]] و [[./sub/in.txt]]) بسبب [[-C]] و [[.]]. والسكربت كله خلص في أقل من ثانية.
 
-لو المسار غلط: [[Source folder not found]] و errorlevel 1، ومفيش zip. جربت على Wine أجزاء الاسم والفحص: [[%%~nxF]] طلّع [[work dir]] من المسار، والمسار الغلط طلع الرسالة و exit 1، و [[%date%]] على Wine طلع [[10/1/2026]]، يعني شكل تالت مختلف عن ويندوز، وده بالظبط سبب إننا مش بنعتمد عليه. (tar و PowerShell و forfiles مش موجودين في Wine، فدول من التوثيق.)`
+بفولدر اسمه فيه مسافة ([[work dir]]): الـ zip اتعمل [[work dir_2026-10-02_20-54.zip]]، وباك أب قديم بنفس الاسم عمره 20 يوم اتمسح، و zip تاني في نفس الفولدر فضل. ولما جربت [[/m]] من غير علامات تنصيص، forfiles قال [[ERROR: Invalid argument/option - 'dir_*.zip'.]] والقديم متمسحش.
+
+لو المسار غلط، أو ملف مش فولدر: [[Source folder not found]] و errorlevel 1، ومفيش zip.`
         },
         {
           cmd: "batch ولا PowerShell؟",
@@ -3796,7 +3812,9 @@ exit code بتاع PowerShell: [[exit 2]] في الـ ps1 بيرجع 2 لـ [[%e
           ],
           sol: R`المتوقع على ويندوز: الدبل كليك بيفتح نافذة فيها [[Hello from PowerShell]] و [[tool.ps1 failed with exit code 2]] و [[Press any key to continue . . .]]. بعد ما تغيّر لـ [[exit 0]]: النافذة بتطبع Hello وتقفل على طول.
 
-لو طلع [[The argument '...tool.ps1' to the -File parameter does not exist]] يبقى الـ ps1 مش جنب الـ bat أو اسمه مختلف. ولو [[pwsh]] اتلقى بس الويندوز بيقولك إنه مش موجود، يبقى PATH اتغيّر ومحتاج تفتح نافذة جديدة. (مقدرتش أشغّل PowerShell الويندوز من Wine هنا؛ السكربت ده مبني على توثيق pwsh و powershell.exe، وجزء where و errorlevel جربته.)`
+جربته على ويندوز 11، والـ bat و ps1 في فولدر فيه مسافة وشغّلته من فولدر تاني: الناتج طلع كده بالظبط مع pwsh 7.6، و [[run.bat -Name Sara]] وصّل Sara للـ ps1. ولما شلت pwsh من الـ PATH اشتغل بـ powershell 5.1 عادي. ولو الـ ps1 عمل [[throw]] من غير exit، الـ exit code طلع 1.
+
+لو الـ ps1 مش جنب الـ bat أو اسمه مختلف: مع pwsh هتشوف [[The argument '...\tool.ps1' is not recognized as the name of a script file.]] و exit code 64، ومع powershell 5.1 [[The argument '...\tool.ps1' to the -File parameter does not exist.]] ورقم سالب غريب، والـ bat بيمسك الاتنين لأنه بيقارن بـ [["0"]].`
         }
       ]
     }

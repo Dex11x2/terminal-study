@@ -85,7 +85,7 @@ Aliases موجودة لكل ده: [[cd]] = Set-Location، [[ls]] = Get-ChildItem
             "[[ls]] اختصار لإيه؟ هيقولك Get-ChildItem.",
             "العكس: إيه الاختصارات اللي بتشاور على Get-ChildItem؟"
           ],
-          sol: R`[[Get-Alias -Definition Get-Content]] على ويندوز بيطلع 3 سطور: [[cat -> Get-Content]] و [[gc -> Get-Content]] و [[type -> Get-Content]]. [[type]] جاية من أيام CMD، و [[cat]] عشان اللي جاي من لينكس، و [[gc]] الاختصار الرسمي من أول حروف الفعل والاسم.
+          sol: R`[[Get-Alias -Definition Get-Content]] على ويندوز بيطلع 3 سطور: [[cat -> Get-Content]] و [[gc -> Get-Content]] و [[type -> Get-Content]] (جربتها في PowerShell 7.6 و 5.1 ونفس الناتج). [[type]] جاية من أيام CMD، و [[cat]] عشان اللي جاي من لينكس، و [[gc]] الاختصار الرسمي من أول حروف الفعل والاسم.
 
 جربتها على PowerShell 7 على لينكس فطلع [[gc]] و [[type]] بس، لأن على لينكس والماك PowerShell بيشيل الـ aliases اللي ليها نفس اسم أمر حقيقي في النظام زي [[cat]] و [[ls]]. عشان كده في سكربت هيشتغل على أكتر من نظام اكتب الاسم الكامل [[Get-Content]]. ولو كتبت [[Get-Alias Get-Content]] من غير [[-Definition]] هيطلعلك error، لأنه بيدوّر على alias اسمه Get-Content مش على aliases بتشاور عليه.`
         },
@@ -96,7 +96,7 @@ Aliases موجودة لكل ده: [[cd]] = Set-Location، [[ls]] = Get-ChildItem
 
 فيه كمان [[-Full]] للشرح كامل، و [[-Parameter Recurse]] لشرح parameter واحد بس. واختصارات سريعة: [[help Copy-Item]] (بيعرض صفحة صفحة) أو [[Copy-Item -?]].
 
-أول مرة غالبًا هتلاقي فوق الشرح جملة «It is displaying only partial help»، لأن ملفات المساعدة الكاملة مش بتيجي مع ويندوز. شغّل [[Update-Help]] مرة واحدة (في PowerShell 7 مش محتاج أدمن، في 5.1 محتاج PowerShell كأدمن). ولو مستعجل، [[-Online]] شغالة من غير أي تحميل.`,
+أول مرة غالبًا هتلاقي الاسم والـ aliases بس، وتحتهم تحت [[REMARKS]] جملة «It is displaying only partial help» (في 7.6 و 5.1)، لأن ملفات المساعدة الكاملة مش بتيجي مع ويندوز. شغّل [[Update-Help]] مرة واحدة (في PowerShell 7 مش محتاج أدمن، في 5.1 محتاج PowerShell كأدمن). ولو مستعجل، [[-Online]] شغالة من غير أي تحميل.`,
           example: R`Get-Help Copy-Item -Examples
 Get-Help Get-ChildItem -Online`,
           try: "اقرا أمثلة [[Remove-Item]] قبل ما تستخدمه.",
@@ -142,7 +142,7 @@ Get-Command -Verb Get -Noun *Item*`,
             mistakes: "تكتب [[Get-Command]] بدون parameters وتغرق في آلاف الأوامر."
           },
           lines: ["أي أمر اسمه فيه process.", "الأوامر اللي فعلها Get واسمها فيه Item."],
-          sol: R`[[Get-Command *service*]] على ويندوز هيطلع جدول [[CommandType  Name]] فيه الـ cmdlets: [[Get-Service]] و [[New-Service]] و [[Remove-Service]] و [[Restart-Service]] و [[Resume-Service]] و [[Set-Service]] و [[Start-Service]] و [[Stop-Service]] و [[Suspend-Service]]، وممكن معاهم برامج (Application) من الـ PATH اسمها فيه service.
+          sol: R`[[Get-Command *service*]] على ويندوز هيطلع جدول [[CommandType  Name]] فيه الـ cmdlets: [[Get-Service]] و [[New-Service]] و [[Remove-Service]] و [[Restart-Service]] و [[Resume-Service]] و [[Set-Service]] و [[Start-Service]] و [[Stop-Service]] و [[Suspend-Service]] (ده في PowerShell 7.6؛ في 5.1 مفيش [[Remove-Service]] وبداله [[New-WebServiceProxy]])، ومعاهم functions زي [[Get-NetFirewallServiceFilter]]، وبرامج (Application) من الـ PATH اسمها فيه service زي [[services.msc]].
 
 الأدق [[Get-Command -Noun Service]] لأنه بيجيب الأوامر اللي الاسم بتاعها Service بالظبط من غير البرامج الخارجية. لاحظ إن كل الأسامي بنفس نمط Verb-Noun، فلو عرفت [[Get-Service]] تقدر تخمّن [[Stop-Service]] من غير ما تدوّر. ولو [[*service*]] رجع حاجات غريبة من برامج متسطبة، دي مش cmdlets، بص على عمود CommandType.`
         },
@@ -228,7 +228,7 @@ Get-ChildItem -Path . $__bt
           ],
           sol: R`[[Get-ChildItem | ? Length -gt 1KB | % Name]] طبع أسامي الملفات اللي أكبر من 1024 بايت، كل اسم في سطر (عندي طبع [[big.bin]] بس). والنسخة الكاملة [[Get-ChildItem | Where-Object Length -gt 1KB | ForEach-Object Name]] طبعت نفس الحاجة بالظبط. وفي المثال نفسه [[[int]"41" + 1]] طبع [[42]] و [[(Get-Date).Year]] طبع السنة.
 
-[["5" + 1]] طبع [[51]]: الشمال نص فالـ [[+]] لزق. و [[[int]"5" + 1]] طبع [[6]]. القاعدة دي (نوع الشمال هو اللي بيحدد) مشروحة في «عوامل المقارنة». جربت كل ده على PowerShell 7.`
+[["5" + 1]] طبع [[51]]: الشمال نص فالـ [[+]] لزق. و [[[int]"5" + 1]] طبع [[6]]. القاعدة دي (نوع الشمال هو اللي بيحدد) مشروحة في «عوامل المقارنة». جربت كل ده على PowerShell 7.6 و 5.1 والناتج واحد.`
         }
       ]
     },
@@ -325,7 +325,7 @@ Pop-Location`,
             mistakes: R`تعمل Push في سكربت والسكربت يقع في النص قبل الـ Pop، فالترمنال يفضل واقف في فولدر غريب. حط الـ Pop جوه [[finally]]: [[Push-Location app; try { npm run build } finally { Pop-Location }]]. أو تعمل pop أكتر من الـ push وتستغرب إن مفيش حاجة حصلت.`
           },
           lines: ["احفظ مكاني وروح لـ Windows.", "ارجعني للمكان المحفوظ."],
-          sol: R`جربتها: [[Push-Location /tmp]] وبعدين [[Push-Location /usr]] (على ويندوز استخدم [[C:\Windows]] و [[C:\Users]] مثلًا). [[Get-Location -Stack]] بيوريك المكانين المحفوظين، وأول [[Pop-Location]] رجعني [[/tmp]] (المكان اللي كنت فيه قبل آخر push)، والتاني رجعني للفولدر اللي بدأت منه.
+          sol: R`جربتها في PowerShell 7.6 و 5.1: [[Push-Location C:\Windows]] وبعدين [[Push-Location C:\Users]]. [[Get-Location -Stack]] وراني المكانين المحفوظين ([[C:\Windows]] وتحته الفولدر اللي بدأت منه)، وأول [[Pop-Location]] رجعني [[C:\Windows]] (المكان اللي كنت فيه قبل آخر push)، والتاني رجعني للفولدر اللي بدأت منه.
 
 يعني الـ stack بيرجعك بالعكس: آخر حاجة اتحفظت أول حاجة ترجعلها. [[pushd]] نفسه مش بيطبع حاجة، وده طبيعي. ولو عملت [[popd]] زيادة مرة تالتة مش هيحصل حاجة (مفيش error، مفيش مكان يرجعله)، ففي السكربت اعمل pop بعدد الـ push بالظبط.`
         }
@@ -404,6 +404,8 @@ Copy-Item src src_backup -Recurse`,
           title: "انقل وغيّر الاسم",
           desc: R`[[Move-Item]] (اختصاره [[mv]] و [[move]]) بينقل ملف أو فولدر لمكان تاني، و [[Rename-Item]] (اختصاره [[ren]]) بيغيّر الاسم بس في نفس المكان. الفرق المهم: Rename-Item بياخد الاسم الجديد لوحده من غير مسار، و Move-Item بياخد مسار كامل. في bash الاتنين أمر واحد [[mv]].
 
+وفي السطر الأول فولدر [[logs]] لازم يكون موجود قبلها: جربتها من غيره في 7 و 5.1، فأول ملف log اتنقل وبقى ملف اسمه [[logs]] (مش فولدر)، والتاني طلع [[Cannot create a file when that file already exists.]]. فاعمله الأول بـ [[New-Item -ItemType Directory logs -Force]].
+
 السطر التالت هو القوة الحقيقية: [[Get-ChildItem *.txt]] بيجيب كل ملفات txt، والـ [[|]] بيبعتهم واحد واحد لـ Rename-Item. الأقواس المعقوفة [[{ }]] بعد [[-NewName]] اسمها script block، ودي كود صغير بيتنفذ لكل ملف لوحده. وجوّاه [[$_]] معناها «العنصر الحالي اللي جاي في الـ pipe»، يعني الملف ده بالذات، و [[$_.Name]] اسمه.
 
 و [[-replace '\.txt$', '.md']] بيدوّر بـ regex ويبدّل: [[\.]] نقطة حقيقية (لأن النقطة لوحدها في regex معناها أي حرف)، و [[$]] يعني آخر الاسم. ولو الاسم الجديد موجود قبل كده هيطلع error للملف ده بس، فجرّب الأول بـ [[-WhatIf]].`,
@@ -422,7 +424,7 @@ Get-ChildItem *.txt | Rename-Item -NewName { $_.Name -replace '\.txt$', '.md' }`
             mistakes: "Rename-Item بتاخد الاسم الجديد بس مش المسار كامل. Move-Item بتاخد المسار كامل."
           },
           lines: [
-            "انقل كل .log لفولدر logs.",
+            "انقل كل .log لفولدر logs (لازم يكون موجود، وإلا أول ملف هيبقى ملف اسمه logs).",
             "غيّر اسم ملف.",
             "لكل ملف .txt: غيّر امتداده لـ .md. الـ [[-replace]] بتاخد regex، والدولار في الآخر يعني «نهاية الاسم»."
           ],
@@ -594,7 +596,7 @@ Get-Process | Out-File procs.txt -Encoding utf8`,
           title: "اقرا JSON كـ object",
           desc: R`JSON نص، و [[ConvertFrom-Json]] بيحوّله لـ object تقدر تقرا منه بالنقطة: [[$pkg.version]] و [[$pkg.scripts.dev]]. مفيد مع package.json وملفات الإعدادات وردود الـ APIs. في bash محتاج أداة زي [[jq]]، هنا مبني جوه.
 
-في السطر الأول [[$pkg]] متغير (أي اسم بيبدأ بـ [[$]])، و [[=]] بتحط فيه الناتج. [[-Raw]] بتقرا الملف كله نص واحد (من غيرها Get-Content بيرجع سطور منفصلة، و ConvertFrom-Json في 5.1 ممكن يتلخبط منها). والـ [[|]] بتبعت النص لـ ConvertFrom-Json.
+في السطر الأول [[$pkg]] متغير (أي اسم بيبدأ بـ [[$]])، و [[=]] بتحط فيه الناتج. [[-Raw]] بتقرا الملف كله نص واحد (من غيرها Get-Content بيرجع سطور منفصلة. ConvertFrom-Json في 7.6 و 5.1 لمّ السطور واشتغل في تجربتي، بس [[-Raw]] أسرع وأوضح). والـ [[|]] بتبعت النص لـ ConvertFrom-Json.
 
 بعد كده [[$pkg.dependencies]] نفسه object جواه حقول، فبيتطبع كجدول بأسامي المكتبات ونسخها. ولو كتبت اسم حقل مش موجود مش هيطلع error، هيرجع فاضي ([[$null]])، فلو حاجة رجعت فاضية راجع الاسم والكابيتال. ولو عايز تعدّل وتكتب الملف تاني، ده درس «عدّل ملف JSON واكتبه» في المستوى التالت.`,
           example: R`$pkg = Get-Content package.json -Raw | ConvertFrom-Json
@@ -618,7 +620,7 @@ $pkg.dependencies`,
           ],
           sol: R`في فولدر مشروع Node: [[$pkg = Get-Content package.json -Raw | ConvertFrom-Json]] وبعدين [[$pkg.name]] و [[$pkg.version]]. جربتها على package.json فيه name بـ myapp و version بـ 1.2.0، وسطر [["$($pkg.name)@$($pkg.version)"]] طبع [[myapp@1.2.0]]. و [[$pkg.dependencies]] بيطبع جدول فيه اسم كل مكتبة ونسختها.
 
-[[-Raw]] بيقرا الملف كله كنص واحد بدل array سطور. في PowerShell 7 الأمر اشتغل معايا من غيرها برضه، لكن في 5.1 ممكن يطلع error، فخليها عادة. ولو [[$pkg.name]] رجع فاضي، يبقى انت مش في فولدر المشروع أو كتبت الاسم غلط؛ PowerShell مش بيطلع error لما property مش موجودة، بيرجع null بس.`
+[[-Raw]] بيقرا الملف كله كنص واحد بدل array سطور. الأمر اشتغل معايا من غيرها برضه في PowerShell 7.6 و 5.1، بس خليها عادة: أسرع، وأي أمر تاني بعد Get-Content (زي [[-replace]] على الملف كله) محتاج النص كله مرة واحدة. ولو [[$pkg.name]] رجع فاضي، يبقى انت مش في فولدر المشروع أو كتبت الاسم غلط؛ PowerShell مش بيطلع error لما property مش موجودة، بيرجع null بس.`
         }
       ]
     },
@@ -805,7 +807,7 @@ Get-ChildItem -Recurse -File | Measure-Object Length -Sum`,
           lines: ["عدد الملفات (الأقواس تجمع الناتج الأول وبعدين .Count).", "مجموع أحجام كل الملفات."],
           sol: R`[[Get-ChildItem node_modules -Recurse -File | Measure-Object Length -Sum]] بيطبع [[Count]] (عدد الملفات) و [[Sum]] (الحجم بالبايت)، وبعدين تقسم على [[1MB]]. جربتها على فولدر node_modules فيه 8463 ملف فطلع Sum بـ 229935708 والقسمة طلعت [[219.28]] ميجا.
 
-الرقم ممكن يختلف شوية عن «Size on disk» في Explorer، لأن Explorer بيحسب حجم الـ clusters على الديسك. وعلى لينكس والماك ضيف [[-Force]] عشان الملفات اللي بتبدأ بنقطة متتشالش من الحساب. ولو كتبت [[Measure-Object -Sum]] من غير [[Length]] هيطلع error أو يحاول يجمع الـ objects نفسها.`,
+الرقم ممكن يختلف شوية عن «Size on disk» في Explorer، لأن Explorer بيحسب حجم الـ clusters على الديسك. وعلى لينكس والماك ضيف [[-Force]] عشان الملفات اللي بتبدأ بنقطة متتشالش من الحساب. ولو كتبت [[Measure-Object -Sum]] من غير [[Length]] بيحاول يجمع الملفات نفسها فيطلع [[Input object "..." is not numeric.]] (جربتها في 7.6 و 5.1).`,
           solCode: R`$m = Get-ChildItem .\node_modules -Recurse -File -Force | Measure-Object Length -Sum
 $m.Count
 [math]::Round($m.Sum / 1MB, 2)`
@@ -829,7 +831,7 @@ Get-ChildItem *.log | ForEach-Object { $_.Name.ToUpper() }`,
 
 وفيه [[-Begin]] و [[-End]]: كود بيتنفذ مرة قبل أول عنصر ومرة بعد آخر عنصر، زي [[1..3 | ForEach-Object -Begin { $sum = 0 } -Process { $sum += $_ } -End { $sum }]].
 
-في PowerShell 7: [[-Parallel { ... } -ThrottleLimit 5]] بيشغّل لحد ٥ عناصر في نفس الوقت، مفيد مع طلبات شبكة كتير. جوه الـ Parallel المتغيرات اللي بره مش بتتشاف إلا بـ [[$using:name]].`,
+في PowerShell 7: [[-Parallel { ... } -ThrottleLimit 5]] بيشغّل لحد ٥ عناصر في نفس الوقت، مفيد مع طلبات شبكة كتير. جوه الـ Parallel المتغيرات اللي بره مش بتتشاف إلا بـ [[$using:name]]. والترتيب مش مضمون: [[1..3 | ForEach-Object -Parallel { $_ * $using:n }]] مع [[$n = 5]] طلّع 10 و 5 و 15 في تجربتي. وفي 5.1 مفيش [[-Parallel]] خالص: بيطلع [[Parameter set cannot be resolved using the specified named parameters.]]`,
             when: "تعمل حاجة على كل ملف. تبعت طلب API لكل record.",
             mistakes: "استخدامه لحاجات موجودة كـ methods في الـ objects. لو Process عنده Kill() method، استخدمه مباشرة."
           },
@@ -885,6 +887,8 @@ Get-Service | Select-Object Name, Status -First 3 | ConvertTo-Json`,
             how: R`[[Export-Csv -Path out.csv -NoTypeInformation]] يحفظ مباشرة. [[-NoTypeInformation]] مهمة عشان تشيل السطر الأول الغريب اللي بيبقى اسم النوع في PowerShell.
 
 [[ConvertTo-Json -Depth 5]] يحوّل لـ JSON. [[-Depth]] مهمة عشان الـ objects المتداخلة.
+
+وخلي بالك في السطر التالت: [[Status]] نوعه enum، فبيتكتب في الـ JSON رقم ([["Status": 4]] يعني Running و 1 يعني Stopped) مش كلمة. في PowerShell 7 ضيف [[-EnumsAsStrings]] فيطلع [["Status": "Running"]]، وفي 5.1 مش موجودة.
 
 [[Import-Csv]] لاستيراد CSV. [[ConvertFrom-Json]] لـ JSON. الاتنين بيتعاملوا بـ objects مش نص.`,
             when: "تصدير بيانات لـ Excel. حفظ نتايج تحليل. كتابة config جديد.",
@@ -972,7 +976,7 @@ Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProc
           ],
           sol: R`في نافذة: [[npx http-server -p 3000]]. في التانية [[Get-NetTCPConnection -LocalPort 3000 -State Listen]] هيطلع سطر أو اتنين (IPv4 و IPv6) فيهم [[LocalPort 3000]] و [[State Listen]] و [[OwningProcess]] رقم زي 12345، وبعدين [[Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000 -State Listen).OwningProcess -Force]]. النافذة الأولى هترجع للـ prompt والسيرفر وقف.
 
-لو ملقاش حاجة هيقولك [[No MSFT_NetTCPConnection objects found with property 'LocalPort' equal to '3000']]، يعني مفيش حد بيسمع على البورت (أو السيرفر لسه بيقوم). و Get-NetTCPConnection موجود على ويندوز بس (جوه PowerShell 5.1 و 7)، على لينكس والماك استخدم [[ss -tlnp]] أو [[lsof -i :3000]].`
+لو ملقاش حاجة هيقولك (مع [[-State Listen]]) [[No matching MSFT_NetTCPConnection objects found by CIM query ... WHERE ((LocalPort = 3000)) AND ((State = 2))]]، ومن غير [[-State]] [[No MSFT_NetTCPConnection objects found with property 'LocalPort' equal to '3000']]، والاتنين معناهم مفيش حد بيسمع على البورت (أو السيرفر لسه بيقوم). جربت ده في 7.6 و 5.1 بسيرفر Node على 127.0.0.1 فطلع سطر واحد بس (IPv4)، والسطرين بيطلعوا لو السيرفر سامع على IPv4 و IPv6 الاتنين. و Get-NetTCPConnection موجود على ويندوز بس (جوه PowerShell 5.1 و 7)، على لينكس والماك استخدم [[ss -tlnp]] أو [[lsof -i :3000]].`
         },
         {
           cmd: "Start-Process",
@@ -1257,7 +1261,7 @@ scp .\dist.zip root@203.0.113.10:/var/www/`,
 
 [[Get-NetIPAddress -AddressFamily IPv4]] العناوين بس من نوع IPv4 (من غير IPv6 الطويلة)، و [[Select-Object InterfaceAlias, IPAddress]] بيعرض اسم الكارت والعنوان بس. و [[Get-NetRoute -DestinationPrefix 0.0.0.0/0]] بيجيب الـ default route، يعني «أي حاجة رايحة للنت بتعدّي منين»، وعمود NextHop فيه IP الراوتر.
 
-السطر الأخير بيسأل موقع خارجي «انا جايلك من أنهي IP؟» فيرجعلك الـ IP العام، و [[.Trim()]] بتشيل سطر جديد في الآخر. المحلي (زي 192.168.1.15) والعام مختلفين لأن الراوتر بيخبّي كل أجهزة البيت ورا IP واحد. والأوامر دي ويندوز بس، وهتلاقي كروت افتراضية كتير زي vEthernet (WSL)، دي مش اتصالك الحقيقي.`,
+السطر الأخير بيسأل موقع خارجي «انا جايلك من أنهي IP؟» فيرجعلك الـ IP العام، و [[.Trim()]] بتشيل سطر جديد في الآخر. المحلي (زي 192.168.1.15) والعام مختلفين لأن الراوتر بيخبّي كل أجهزة البيت ورا IP واحد. والأوامر دي ويندوز بس، وهتلاقي كروت افتراضية كتير زي [[vEthernet (WSL (Hyper-V firewall))]] و [[Loopback Pseudo-Interface 1]] وكروت VPN، دي مش اتصالك الحقيقي.`,
           example: R`Get-NetIPConfiguration
 Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias, IPAddress
 Get-NetRoute -DestinationPrefix 0.0.0.0/0
@@ -1290,7 +1294,7 @@ Get-NetRoute -DestinationPrefix 0.0.0.0/0
 
 [[-Server 1.1.1.1]] بيسأل سيرفر DNS معين (1.1.1.1 بتاع Cloudflare و 8.8.8.8 بتاع Google) بدل اللي جهازك بيستخدمه، فتعرف المشكلة عندك ولا في الدومين نفسه. و [[-Type MX]] بيجيب نوع سجل تاني: MX سيرفرات الإيميل، و TXT للتحقق (SPF وغيره)، و CNAME للاسم البديل.
 
-[[Clear-DnsClientCache]] بيمسح الردود اللي ويندوز حافظها، زي [[ipconfig /flushdns]]، ودي أول حاجة لو غيّرت الـ DNS بتاع دومين ولسه بيفتح القديم. محتاج أدمن، والأوامر دي ويندوز بس.`,
+[[Clear-DnsClientCache]] بيمسح الردود اللي ويندوز حافظها، زي [[ipconfig /flushdns]]، ودي أول حاجة لو غيّرت الـ DNS بتاع دومين ولسه بيفتح القديم. ومش محتاج أدمن (جربته من PowerShell عادي في 7.6 و 5.1 واشتغل)، والأوامر دي ويندوز بس.`,
           example: R`Resolve-DnsName example.com
 Resolve-DnsName example.com -Server 1.1.1.1
 Resolve-DnsName example.com -Type MX
@@ -1349,7 +1353,7 @@ Start-Process notepad C:\Windows\System32\drivers\etc\hosts -Verb RunAs`,
 
 السطر التاني للسكربتات: [[-Port 443]] يجرّب البورت، و [[-InformationLevel Quiet]] بيخلّي الناتج [[True]] أو [[False]] بس بدل تقرير كامل. فتقدر تحطه جوه [[if]] على طول.
 
-خلي بالك: hop بيظهر فيه timeout أو نجوم مش معناه مشكلة، راوترات كتير مبترودش على الـ trace وبتعدّي الترافيك عادي. المشكلة الحقيقية لما كل اللي بعده يفشل. والأمر ده ويندوز بس.`,
+الناتج بيبقى [[TraceRoute : {192.168.1.1, 10.45.18.141, ...}]]: لستة IPs، أولها الراوتر بتاعك. والـ hop اللي مردش بيظهر هنا [[0.0.0.0]] (وفي [[tracert]] نجوم [[*]]). ومش معناه مشكلة: جربت trace لـ 1.1.1.1 والـ hop العاشر طلع 0.0.0.0 واللي بعده وصل عادي، لأن راوترات كتير مبترودش على الـ trace وبتعدّي الترافيك. المشكلة الحقيقية لما كل اللي بعده يفشل، وساعتها بيطلع [[WARNING: Trace route to destination ... did not complete]]. و [[-Hops 12]] بيحدد أقصى عدد hops. والأمر ده ويندوز بس.`,
           example: R`Test-NetConnection google.com -TraceRoute
 Test-NetConnection 203.0.113.10 -Port 443 -InformationLevel Quiet`,
           try: "اعمل سكربت بيجرب 3 بورتات على سيرفرك ويطبع المقفول بس.",
@@ -1726,7 +1730,7 @@ $user.name`,
             "hashtable: مفاتيح وقيم.",
             "اقرا قيمة بالنقطة."
           ],
-          sol: R`[[$p = Get-Process]] وبعدين [[$p.Count]] بيرجع رقم زي [[250]] (عندي على لينكس طلع [[147]]). و [[$p.GetType().Name]] بيرجع Object[] (array)، يعني المتغير شايل array من objects كاملة، مش نص.
+          sol: R`[[$p = Get-Process]] وبعدين [[$p.Count]] بيرجع رقم زي [[250]] (عندي على ويندوز 11 طلع [[489]] في 7.6 و 5.1، والرقم بيختلف حسب البرامج المفتوحة). و [[$p.GetType().Name]] بيرجع Object[] (array)، يعني المتغير شايل array من objects كاملة، مش نص.
 
 الرقم بيتغير كل شوية لأن العمليات بتفتح وتقفل، و [[$p]] صورة ثابتة من لحظة ما خزنته. لو عايز أحدث رقم لازم تشغّل Get-Process تاني. ولو عملت [[$p.Count]] على حاجة رجعت object واحد بس، PowerShell 7 برضه هيرجع 1، مش فاضي.`
         },
@@ -2196,9 +2200,9 @@ Get-ChildItem out -Recurse -Name`
           title: "اكتب أول سكربت وشغّله من الصفر",
           desc: R`السكربت ملف نصي امتداده [[.ps1]] فيه أوامر PowerShell ورا بعض، بتشغّله بأمر واحد بدل ما تكتبهم كل مرة. الخطوات: اعمل فولدر للسكربتات وادخله، وافتح ملف جديد في VS Code بـ [[code hello.ps1]] (أو [[notepad hello.ps1]] لو مفيش VS Code). اكتب جواه الكود اللي في «الحل» تحت واحفظ. وسطّب extension اسمه PowerShell في VS Code: بيلوّن ويكمّل ويطلّعلك التحذيرات وانت بتكتب، و F5 بيشغّل الملف و F8 بيشغّل السطور اللي معلّم عليها بس.
 
-أول حاجز: Windows PowerShell 5.1 بيمنع السكربتات خالص افتراضيًا (درس ExecutionPolicy). [[Get-ExecutionPolicy]] يقولك الحالي، و [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]] مرة واحدة على الجهاز بتسمح بسكربتاتك انت. والحاجز التاني: أي ملف نزل من النت أو من إيميل ويندوز بيعلّم عليه، و RemoteSigned بيرفضه لحد ما تقراه وتعمله [[Unblock-File]].
+أول حاجز: Windows PowerShell 5.1 بيمنع السكربتات خالص افتراضيًا على ويندوز 10 و 11 (درس ExecutionPolicy)، أما PowerShell 7 على ويندوز فجاي RemoteSigned من الأول. [[Get-ExecutionPolicy]] يقولك الحالي، و [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]] مرة واحدة من غير أدمن بتسمح بسكربتاتك انت. وكل نسخة ليها الإعداد بتاعها: اللي تعمله في 5.1 مش بيأثر على 7 والعكس. والحاجز التاني: أي ملف نزل من النت أو من إيميل ويندوز بيعلّم عليه، و RemoteSigned بيرفضه لحد ما تقراه وتعمله [[Unblock-File]].
 
-التشغيل: [[.\hello.ps1]]. الـ [[.\]] (يعني «من الفولدر ده») لازمة: PowerShell مش بيشغّل ملف من الفولدر الحالي بالاسم بس، عشان محدش يحطلك ملف اسمه زي أمر مشهور فيتشغّل بداله. والـ arguments بعد الاسم زي أي أمر: [[-Name Sara]]. ومن بره PowerShell (CMD أو اختصار على الديسكتوب أو Task Scheduler) استخدم [[pwsh -File]]، و [[-NoProfile]] بيخليه ميحمّلش البروفايل بتاعك، فيبقى أسرع ويشتغل نفس الشغل على أي جهاز.`,
+التشغيل: [[.\hello.ps1]]. الـ [[.\]] (يعني «من الفولدر ده») لازمة: PowerShell مش بيشغّل ملف من الفولدر الحالي بالاسم بس، عشان محدش يحطلك ملف اسمه زي أمر مشهور فيتشغّل بداله. والـ arguments بعد الاسم زي أي أمر: [[-Name Sara]]. ومن بره PowerShell (CMD أو اختصار على الديسكتوب أو Task Scheduler) استخدم [[pwsh -File]]، و [[-NoProfile]] بيخليه ميحمّلش البروفايل بتاعك، فيبقى أسرع ويشتغل نفس الشغل على أي جهاز. وأي option لـ pwsh نفسه يتكتب قبل [[-File]]، لأن كل اللي بعد اسم السكربت بيروح للسكربت.`,
           example: R`New-Item -ItemType Directory $HOME\scripts -Force
 Set-Location $HOME\scripts
 code hello.ps1
@@ -2213,19 +2217,19 @@ pwsh -NoProfile -File .\hello.ps1 -Name Sara`,
             why: "كل اللي فات كنت بتكتبه سطر سطر. أول ما تلاقي نفسك بتكتب نفس الخمس أوامر كل يوم، حطهم في ملف. بس أول سكربت على ويندوز بيقابله ٣ حواجز ملهمش علاقة بالكود: الـ ExecutionPolicy، وعلامة «الملف ده جاي من النت»، وإن اسم الملف لوحده مش بيشغّله. الدرس ده بيعدّيك منهم مرة واحدة.",
             how: R`الملف نص عادي، أي محرر ينفع، بس لازم الامتداد يبقى [[.ps1]] بالظبط. Notepad ساعات بيحفظه [[hello.ps1.txt]] من غير ما تاخد بالك، فشغّل إظهار الامتدادات في Explorer (View، Show، File name extensions)، وشوف تاب «الملفات وامتداداتها».
 
-الترميز: PowerShell 7 بيقرا UTF-8 عادي. Windows PowerShell 5.1 بيقرا الملف اللي من غير BOM على إنه ANSI، فالعربي اللي جوه [[Write-Host]] يطلع رموز. لو هتكتب عربي وهتشغّل بـ 5.1، احفظ الملف «UTF-8 with BOM» من شريط VS Code تحت على اليمين.
+الترميز: PowerShell 7 بيقرا UTF-8 عادي. Windows PowerShell 5.1 بيقرا الملف اللي من غير BOM على إنه ANSI (ترميز لغة ويندوز)، فالعربي اللي جوه [[Write-Host]] يطلع رموز. لو هتكتب عربي وهتشغّل بـ 5.1، احفظ الملف «UTF-8 with BOM» من شريط VS Code تحت على اليمين. (الاستثناء: لو مفعّل «Beta: Use Unicode UTF-8 for worldwide language support» في إعدادات اللغة، الـ ANSI نفسه بيبقى UTF-8 فبيشتغل. ده كان مفعّل على الجهاز اللي جربت عليه، فمتعتمدش عليه.)
 
 [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]]: السكربتات اللي اتكتبت على جهازك تشتغل، واللي جاية من النت لازم تبقى موقّعة أو تعملها Unblock. ويندوز بيعرف إن الملف من النت من علامة مخفية اسمها Zone.Identifier بيحطها المتصفح، و [[Unblock-File]] بيشيلها. ومن Explorer نفس الحكاية: Properties، وعلّم على Unblock.
 
 طرق التشغيل:
 [[.\hello.ps1]] من جوه PowerShell، في نفس النافذة، والمتغيرات اللي السكربت بيعملها بتروح لما يخلص.
-[[pwsh -File .\hello.ps1 -Name Sara]] من أي مكان (CMD، اختصار، Task Scheduler). ولو عايز النافذة تفضل مفتوحة بعد ما يخلص ضيف [[-NoExit]]. و [[-ExecutionPolicy Bypass]] بتعدّي الـ policy للتشغيلة دي بس من غير ما تغيّر إعدادات الجهاز.
-كليك يمين، Run with PowerShell: بيشغّله بـ Windows PowerShell 5.1 في نافذة بتتقفل أول ما يخلص.
+[[pwsh -File .\hello.ps1 -Name Sara]] من أي مكان (CMD، اختصار، Task Scheduler). ولو عايز النافذة تفضل مفتوحة بعد ما يخلص ضيف [[-NoExit]]. و [[-ExecutionPolicy Bypass]] بتعدّي الـ policy للتشغيلة دي بس من غير ما تغيّر إعدادات الجهاز. والاتنين قبل [[-File]]: [[pwsh -NoExit -File .\hello.ps1]]. لو كتبتهم بعد اسم السكربت بيروحوا للسكربت كـ arguments وبيتجاهلوا.
+كليك يمين، Run with PowerShell: بيشغّله بـ Windows PowerShell 5.1 ([[powershell.exe -file]]) في نافذة بتتقفل أول ما يخلص.
 الدبل كليك على .ps1 بيفتحه في Notepad مش بيشغّله، وده مقصود عشان محدش يشغّل سكربت بالغلط.
 
 وفي VS Code: F5 بيشغّل الملف كله في الترمنال اللي تحت، و F8 بيشغّل السطر أو السطور اللي معلّم عليها بس، ودي أحسن طريقة تجرّب سطر سطر.`,
             when: "أول ما تكرر نفس الأوامر أكتر من مرتين. وكل سكربت في الدروس اللي جاية بيتعمل بنفس الطريقة دي: ملف، وحفظ، و .\ قبل الاسم.",
-            mistakes: R`تعمل [[Set-ExecutionPolicy Unrestricted]] أو Bypass على الجهاز كله عشان «يشتغل وخلاص»، و RemoteSigned كفاية وأأمن. أو تكتب [[hello.ps1]] من غير [[.\]] وتفتكر الملف مش موجود. أو تشغّل بكليك يمين وتستغرب إن النافذة اتقفلت قبل ما تقرا حاجة: ضيف في آخر السكربت [[Read-Host "Press Enter to exit"]] لو هيتشغّل بالطريقة دي. أو تحفظ الملف في OneDrive وتلاقيه متعلّم «من النت» على جهاز تاني.`
+            mistakes: R`تعمل [[Set-ExecutionPolicy Unrestricted]] أو Bypass على الجهاز كله عشان «يشتغل وخلاص»، و RemoteSigned كفاية وأأمن. أو تكتب [[hello.ps1]] من غير [[.\]] وتفتكر الملف مش موجود. أو تشغّل بكليك يمين وتستغرب إن النافذة اتقفلت قبل ما تقرا حاجة: ضيف في آخر السكربت [[Read-Host "Press Enter to exit"]] لو هيتشغّل بالطريقة دي. أو تعمل [[Unblock-File]] لسكربت نازل من النت من غير ما تقراه: العلامة دي موجودة عشان تقراه الأول.`
           },
           lines: [
             "اعمل فولدر للسكربتات في فولدرك الشخصي ([[-Force]] متطلعش error لو موجود).",
@@ -2238,9 +2242,11 @@ pwsh -NoProfile -File .\hello.ps1 -Name Sara`,
             "ملف نزل من النت: شيل علامة «من النت» بعد ما تقراه وتتأكد منه.",
             "شغّله من بره PowerShell (CMD أو اختصار): [[-File]] اسم السكربت وبعده الـ arguments، و [[-NoProfile]] من غير البروفايل بتاعك."
           ],
-          sol: R`[[hello.ps1]] من غير [[.\]] بيطلع [[The term 'hello.ps1' is not recognized as a name of a cmdlet, function, script file, or executable program.]]، وعلى ويندوز تحته اقتراح «The command hello.ps1 was not found, but does exist in the current location... type: ".\hello.ps1"». بعدين [[.\hello.ps1]] طبع [[Hello, World! It's 16:11]] (بالساعة بتاعتك)، و [[.\hello.ps1 -Name Sara]] طبع [[Hello, Sara! It's 16:11]]، و [[.\hello.ps1 Omar]] من غير كلمة [[-Name]] اشتغل برضه لأن Name أول parameter. جربت ده كله على PowerShell 7.
+          sol: R`[[hello.ps1]] من غير [[.\]] بيطلع في PowerShell 7: [[hello.ps1: The term 'hello.ps1' is not recognized as a name of a cmdlet, function, script file, or executable program.]]، وفي 5.1 نفس المعنى بكلمة [[operable program]] بدل [[executable program]]. ولو كاتبه بإيدك في نافذة مفتوحة، بيظهر تحته اقتراح: في 7 [[The command "hello.ps1" was not found, but does exist in the current location.]] وتحته الأمر الصح [[.\hello.ps1]]، وفي 5.1 سطر بيبدأ بـ [[Suggestion [3,General]:]] وآخره [[instead type: ".\hello.ps1"]]. (الاقتراح ده مبيظهرش لما الأمر جاي من [[-Command]] أو من سكربت.)
 
-لو طلعلك [[running scripts is disabled on this system]] يبقى لسه مظبطتش الـ ExecutionPolicy، ولو [[is not digitally signed]] يبقى الملف متعلّم إنه من النت، اعمله [[Unblock-File]]. و Run with PowerShell بيفتح نافذة زرقا ويطبع السطر ويقفل في أقل من ثانية، فمش هتلحق تقرا. (الـ ExecutionPolicy و Explorer حاجات ويندوز، مقدرتش أجربهم هنا على لينكس، والكلام عنهم من توثيق Microsoft.)`,
+بعدين [[.\hello.ps1]] طبع [[Hello, World! It's 20:31]] (بالساعة بتاعتك)، و [[.\hello.ps1 -Name Sara]] طبع [[Hello, Sara! It's 20:31]]، و [[.\hello.ps1 Omar]] من غير كلمة [[-Name]] اشتغل برضه لأن Name أول parameter. نفس الناتج في PowerShell 7.6 و 5.1، ومن CMD بـ [[pwsh -NoProfile -File .\hello.ps1 -Name Sara]].
+
+لو طلعلك [[cannot be loaded because running scripts is disabled on this system]] يبقى الـ policy لسه Restricted (جربتها بـ [[powershell -ExecutionPolicy Restricted]])، ولو [[is not digitally signed. You cannot run this script on the current system]] يبقى الملف متعلّم إنه من النت والـ policy بتاعتك RemoteSigned: علّمت ملف بإيدي بنفس العلامة اللي المتصفح بيحطها (stream اسمه Zone.Identifier) فطلع الـ error ده في 7 و 5.1، وبعد [[Unblock-File]] اشتغل. و Run with PowerShell على ويندوز 11 أمره في الـ registry [[powershell.exe -file]]، يعني 5.1 ونفس الـ policy، وبيقفل النافذة أول ما السكربت يخلص فمش هتلحق تقرا.`,
           solCode: R`# hello.ps1
 param([string]$Name = "World")
 $now = Get-Date -Format "HH:mm"
@@ -2332,13 +2338,13 @@ $msg
 
 الـ escape بالـ backtick جوه [["..."]] بس: [[$__btn]] سطر، و [[$__btt]] tab، و [[$__bt$]] دولار حرفي، و [[$__bt"]] علامة تنصيص. وجوه [['...']] مفيش escape خالص، وعشان تكتب [[']] جواها اكتبها مرتين: [['it''s']].
 
-[[-f]] بيستخدم إعدادات اللغة بتاعة الجهاز: على ويندوز إنجليزي [[{0:N1}]] لـ 3.14159 بتطلع 3.1، وعلى جهاز لغته عربي ممكن تطلع بعلامة عشرية عربي (جربتها على لينكس لغته ar_EG فطلعت ٣٫١ بالفاصلة العربي). لو النص ده رايح ملف أو API، استخدم [[.ToString("F1", [cultureinfo]::InvariantCulture)]].
+[[-f]] بيستخدم إعدادات اللغة بتاعة الجهاز: على ويندوز إنجليزي [[{0:N1}]] لـ 3.14159 بتطلع 3.1، وعلى جهاز لغته عربي ممكن تطلع بعلامة عشرية عربي (جربتها بلغة ar-EG: PowerShell 7 طلّع [[3٫1]] بالفاصلة العربي، و 5.1 طلّع [[3.1]]، لأن كل نسخة بتجيب إعدادات اللغة من مكان مختلف). لو النص ده رايح ملف أو API، استخدم [[.ToString("F1", [cultureinfo]::InvariantCulture)]].
 
 [[-replace]] و [[-split]] بياخدوا regex. فـ [[-split '.']] هيقطّع عند كل حرف (النقطة يعني أي حرف) ويرجع فاضي. الصح [[-split '\.']]، أو [[.Split('.')]] (الـ method بتاخد نص عادي مش regex). وفي [[-replace]] تقدر ترجّع جزء من اللي لقيته: [['v2.15.0' -replace '^v(\d+)\.(\d+).*', '$2']] بيرجع 15، و [['$2']] لازم بين single quotes عشان PowerShell ميفكهاش كمتغير.
 
 و [[-join]] من غير حاجة على الشمال ([[-join $list]]) بيلزقهم من غير فاصل. و [[-split]] على سطور ملف: [[(Get-Content f.txt -Raw) -split "$__btr?$__btn"]].`,
             when: "أسامي ملفات بالتاريخ، رسايل للمستخدم، تقطيع CSV بسيط أو سطور لوج، تجهيز JSON صغير، ومقارنة أرقام نسخ.",
-            mistakes: R`[["$obj.Property"]] من غير [[$( )]] فيطبع [[System.Collections.Hashtable.port]] أو اسم النوع. و [[\n]] زي bash بدل [[$__btn]] فيتطبع حرفيًا. و [[-split '.']] أو [[-replace '.', '']] ناسي إنها regex. ومسافة بعد [[@"]] في أول سطر الـ here-string أو مسافة قبل [["@]] في آخره، فيطلع ParserError. وخلي بالك إن الـ backtick جوه مسار بين double quotes بيبوّظه: [["C:$__btnew"]] بقت C: وسطر جديد و ew.`
+            mistakes: R`[["$obj.Property"]] من غير [[$( )]] فيطبع [[System.Collections.Hashtable.port]] أو اسم النوع. و [[\n]] زي bash بدل [[$__btn]] فيتطبع حرفيًا. و [[-split '.']] أو [[-replace '.', '']] ناسي إنها regex. وكلام بعد [[@"]] على نفس السطر ([[No characters are allowed after a here-string header]])، أو مسافة قبل [["@]] اللي بيقفل ([[White space is not allowed before the string terminator]]): الاتنين ParserError. وخلي بالك إن الـ backtick جوه مسار بين double quotes بيبوّظه: [["C:$__btnew"]] بقت C: وسطر جديد و ew.`
           },
           lines: [
             "متغير نصي.",
@@ -2361,7 +2367,7 @@ $msg
             "كله كابيتال.",
             "بيخلص بـ .gz؟ True."
           ],
-          sol: R`الناتج كله (جربته على PowerShell 7 بلغة إنجليزي): [[Hello Sara]] و [[Hello $name]] و [[Count: 2, first: a.txt]] و [[Total: 12 files, 3.1 MB]] وسطر فيه Path و tab والمسار وتحته Done، وبعدين سطرين [[User: Sara]] و [[Date: 2026-10-01]]، و [[report_2026.md]]، وبعدين a و b وسطر فاضي و c، و [[web | api | db]] و [[hello]] و [[Power]] و [[POWERSHELL]] و [[True]].
+          sol: R`الناتج كله (جربته على PowerShell 7.6 و 5.1 بلغة إنجليزي، ونفس الناتج في الاتنين): [[Hello Sara]] و [[Hello $name]] و [[Count: 2, first: a.txt]] و [[Total: 12 files, 3.1 MB]] وسطر فيه Path و tab والمسار وتحته Done، وبعدين سطرين [[User: Sara]] و [[Date: 2026-10-01]]، و [[report_2026.md]]، وبعدين a و b وسطر فاضي و c، و [[web | api | db]] و [[hello]] و [[Power]] و [[POWERSHELL]] و [[True]].
 
 الحل في الـ solCode: [[($v -split '\.')[1]]] بيقطّع عند النقطة وياخد العنصر التاني (العد من صفر) فيطلع [[15]]، والـ [[\.]] لازمة لأن [[-split]] بياخد regex. و [[-replace]] بيمسك الأرقام في مجموعات بالأقواس ويرجّع التانية [['$2']] فيطلع [[15]] برضه. و [["{0:D3}" -f 7]] طبع [[007]]. لو كتبت [[-split '.']] هيرجعلك عناصر فاضية بس، لأن كل حرف بقى فاصل.`,
           solCode: R`$v = "v2.15.0"
@@ -2402,11 +2408,11 @@ $rows | Format-Table`,
 
 الـ array جوه الـ array: [[$matrix = @(@(1,2), @(3,4))]] و [[$matrix[1][0]]] بترجع 3. وتقطيع جزء: [[$services[0..1]]] أول عنصرين.
 
-hashtable: [[.ContainsKey("db")]] موجود ولا لأ، و [[.Remove("db")]] تشيله، و [[.Count]] عدد المفاتيح. المفاتيح مش بتفرّق بين الكابيتال والسمول افتراضيًا. ولما تلف عليه بـ [[foreach ($k in $h.Keys)]] متعدّلش فيه جوه اللوب، هيطلع error.
+hashtable: [[.ContainsKey("db")]] موجود ولا لأ، و [[.Remove("db")]] تشيله، و [[.Count]] عدد المفاتيح. بس الـ [[[ordered]]] نوعه تاني (OrderedDictionary) ومفيهوش ContainsKey: [[$ports.ContainsKey("db")]] طلع [[Method invocation failed ... does not contain a method named 'ContainsKey']]، والصح معاه [[$ports.Contains("db")]]. المفاتيح مش بتفرّق بين الكابيتال والسمول افتراضيًا. ولما تلف عليه بـ [[foreach ($k in $h.Keys)]] متعدّلش فيه جوه اللوب، هيطلع error.
 
 [[[PSCustomObject]]] بيحافظ على ترتيب الأعمدة زي ما كتبتها، وتقدر تزوّد عمود بعدين بـ [[Add-Member]] أو تعمل objects جديدة من القديمة بـ [[Select-Object]].`,
             when: "Hashtable لإعدادات السكربت والـ splatting (درس splatting). PSCustomObject لأي تقرير أو ناتج هيتعرض أو يتصدّر. Array لأي لستة بتلف عليها.",
-            mistakes: R`تبني نتيجة كبيرة بـ [[$result += ...]] جوه لوب فالسكربت يبطأ جدًا. أو تنسى [[[ordered]]] وتستغرب إن الأعمدة طالعة بترتيب عشوائي. أو تطبع hashtable جوه نص [["$ports"]] فيطلع [[System.Collections.Specialized.OrderedDictionary]]. أو تعمل [[Export-Csv]] لـ hashtable مباشرة فيطلع أعمدة غريبة زي Keys و Values، حوّله لـ PSCustomObject الأول.`
+            mistakes: R`تبني نتيجة كبيرة بـ [[$result += ...]] جوه لوب فالسكربت يبطأ جدًا. أو تنسى [[[ordered]]] وتستغرب إن الأعمدة طالعة بترتيب عشوائي. أو تطبع hashtable جوه نص [["$ports"]] فيطلع [[System.Collections.Specialized.OrderedDictionary]]. أو تعمل [[Export-Csv]] لـ hashtable مباشرة: في 5.1 بيطلع أعمدة ملهاش علاقة ببياناتك زي Count و Keys و Values، وفي 7 بيطلع صف واحد المفاتيح فيه أعمدة. لو عايز صف لكل حاجة، حوّلها لـ PSCustomObject الأول.`
           },
           lines: [
             "array بعنصرين.",
@@ -2427,7 +2433,9 @@ hashtable: [[.ContainsKey("db")]] موجود ولا لأ، و [[.Remove("db")]] 
           ],
           sol: R`الناتج: [[3]] و [[web]] و [[db]] و [[True]] و [[8000]]، وبعدين web و api و db كل واحد في سطر، و [[web -> 3000]] و [[api -> 8000]] و [[db -> 5432]]، و [[8000]]، وفي الآخر جدول بعمودين Service و Port فيه التلات خدمات.
 
-لما شلت [[[ordered]]] و جربت hashtable عادي بمفاتيح b و a و c، الترتيب طلع b و c و a: مش ترتيب الإدخال ولا أبجدي. والتصدير في الـ solCode: [[$rows | Export-Csv services.csv -NoTypeInformation]] عمل ملف أوله [["Service","Port"]] وبعدين [["web","3000"]] وهكذا. ولو جربت تصدّر [[$ports]] نفسه (hashtable) هيطلع أعمدة ملهاش علاقة ببياناتك.`,
+لما شلت [[[ordered]]]، [[$ports.Keys]] طلعت web و db و api في PowerShell 7.6، و db و api و web في 5.1: مش ترتيب الإدخال ولا أبجدي، وبيختلف من نسخة للتانية، فمتعتمدش عليه. (نفس الجدول في الآخر طلع مترتب برضه، لأن [[$rows]] اتبنت باللف على [[$services]] مش على الـ hashtable.)
+
+والتصدير في الـ solCode: [[$rows | Export-Csv services.csv -NoTypeInformation]] عمل ملف أوله [["Service","Port"]] وبعدين [["web","3000"]] و [["api","8000"]] و [["db","5432"]]، نفس الملف في 7 و 5.1. ولو صدّرت [[$ports]] نفسه (hashtable): 5.1 طلّع أعمدة [["Count","IsReadOnly","Keys","Values",...]] ملهاش علاقة ببياناتك، و 7 طلّع صف واحد [["web","api","db"]] وتحته [["3000","8000","5432"]].`,
           solCode: R`$rows | Export-Csv services.csv -NoTypeInformation
 Get-Content services.csv`
         },
@@ -2484,7 +2492,7 @@ $null -eq $x
             "الشمال نص: لزق نصوص، 82.",
             "الشمال رقم: جمع، 10."
           ],
-          sol: R`جربت المثال على PowerShell 7 فطلع بالترتيب: [[True]] و [[True]] و [[False]] و [[True]] و [[False]] و [[True]] و [[True]] و [[2]] و [[True]] و [[True]]، وبعدين 5 و 8 و 12 كل واحد في سطر، و [[True]] و [[82]] و [[10]].
+          sol: R`جربت المثال على PowerShell 7.6 و 5.1 وطلع نفس الناتج بالترتيب: [[True]] و [[True]] و [[False]] و [[True]] و [[False]] و [[True]] و [[True]] و [[2]] و [[True]] و [[True]]، وبعدين 5 و 8 و 12 كل واحد في سطر، و [[True]] و [[82]] و [[10]].
 
 الحل في الـ solCode، والاتنين طلعوا [[True]] مع [[.JPG]] لأن [[-in]] و [[-match]] مش بيفرّقوا كابيتال وسمول. في الـ regex [[\.]] نقطة حقيقية و [[(jpe?g|png)]] يعني jpg أو jpeg أو png و [[$]] آخر النص. لو كتبت [[$ext -contains ".jpg"]] هتلاقيها شغالة صدفة (لأن النص عنصر واحد بيساوي)، بس دي مش وظيفتها، ومع [[".jpeg"]] مش هتلاقي jpg.`,
           solCode: R`$ext = ".JPG"
@@ -2549,9 +2557,9 @@ switch ($args[0]) {
             "أي حاجة تانية.",
             "قفلة."
           ],
-          sol: R`[[if (5 > 3) { "yes" }]] مطبعش [[yes]]، ولو عملت [[Get-ChildItem]] هتلاقي ملف جديد اسمه [[3]]، وجواه [[5]]. جربتها بالظبط كده. [[>]] في PowerShell redirect زي bash، فالشرط بقى «اكتب 5 في ملف اسمه 3»، والشرط نفسه ملوش output فاتحسب False.
+          sol: R`[[if (5 > 3) { "yes" }]] مطبعش [[yes]]، ولو عملت [[Get-ChildItem]] هتلاقي ملف جديد اسمه [[3]]، وجواه [[5]]. جربتها بالظبط كده في 7.6 و 5.1. [[>]] في PowerShell redirect زي bash، فالشرط بقى «اكتب 5 في ملف اسمه 3»، والشرط نفسه ملوش output فاتحسب False. (حجم الملف 3 bytes في 7، و 8 في 5.1، لأن [[>]] في 5.1 بيكتب UTF-16.)
 
-الصح [[if (5 -gt 3) { "yes" }]] وده طبع [[yes]]. امسح الملف بـ [[Remove-Item 3]]. والغلطة دي مبتطلعش أي error، عشان كده خطيرة في السكربتات: الشرط دايمًا False وملفات بأرقام بتظهر في الفولدر.`
+الصح [[if (5 -gt 3) { "yes" }]] وده طبع [[yes]]. امسح الملف بـ [[Remove-Item 3]]. ولو جربت [[==]] بيطلع ParserError: [[The assignment expression is not valid]]. والغلطة دي مبتطلعش أي error، عشان كده خطيرة في السكربتات: الشرط دايمًا False وملفات بأرقام بتظهر في الفولدر.`
         },
         {
           cmd: "foreach / for / while",
@@ -2746,9 +2754,9 @@ if ($Force) { "Skipping checks" }`,
 
 و [[$PSBoundParameters]] hashtable فيه الـ parameters اللي اتبعتت فعلًا بس (من غير الافتراضي)، مفيد مع splatting (درس splatting).
 
-لو بتشغّل من بره بـ [[pwsh -File]]: الـ arguments بتوصل نصوص، فلستة زي [[-Urls a, b]] مش بتتفهم array (بتوصل [["a,"]] و [["b"]])، و [[[switch]]] يتبعت [[-Force]] عادي. لو محتاج لستة من بره استخدم [[pwsh -Command]].`,
+لو بتشغّل من بره بـ [[pwsh -File]]: الـ arguments بتوصل نصوص، فلستة مش بتتفهم array: [[-Urls a,b]] وصلت نص واحد [["a,b"]]، و [[-Urls a, b]] وصلت [["a,"]] بس و [["b"]] راحت argument لوحدها (جربتها في 7 و 5.1). و [[[switch]]] يتبعت [[-Force]] عادي. لو محتاج لستة من بره استخدم [[pwsh -Command]].`,
             when: "أي سكربت هيتشغّل أكتر من مرة بقيم مختلفة، أو هيشغّله حد غيرك، أو هيتحط في Task Scheduler.",
-            mistakes: R`تحط [[param()]] بعد أي سطر تاني في الملف (حتى [[$ErrorActionPreference]])، فـ PowerShell مش بيعتبرها تعريف parameters. أول حاجة في الملف لازم تبقى param (التعليقات و [[[CmdletBinding()]]] بس مسموح قبلها). أو تسمّي parameter باسم متغير محجوز زي [[$args]] أو [[$input]] أو [[$Host]]. أو تنسى الفاصلة بين الـ parameters فيطلع ParserError. أو تعمل الـ parameter إجباري وتشغّل السكربت في Task Scheduler من غيره، فيفضل مستني حد يكتب.`
+            mistakes: R`تحط [[param()]] بعد أي سطر تاني في الملف (حتى [[$ErrorActionPreference]])، فـ PowerShell مش بيعتبرها تعريف parameters ويفتكرها أمر اسمه param: [[The term 'param' is not recognized]]. أول حاجة في الملف لازم تبقى param (التعليقات و [[[CmdletBinding()]]] بس مسموح قبلها). أو تسمّي parameter باسم متغير محجوز زي [[$args]] أو [[$input]] أو [[$Host]]. أو تنسى الفاصلة بين الـ parameters فيطلع ParserError. أو تعمل الـ parameter إجباري وتشغّل السكربت في Task Scheduler من غيره، فيفضل مستني حد يكتب.`
           },
           lines: [
             "بداية تعريف الـ arguments، ولازم تبقى أول حاجة في الملف.",
@@ -2763,9 +2771,9 @@ if ($Force) { "Skipping checks" }`,
             "اطبع القيم اللي وصلت.",
             "الـ switch بيتقري زي أي True أو False."
           ],
-          sol: R`جربتهم على PowerShell 7: من غير حاجة بيسألك [[Project:]] في الترمنال (ولو التشغيل non-interactive بيطلع [[Cannot process command because of one or more missing mandatory parameters: Project.]]). [[-Project shop]] طبع [[Project: shop | Stage: dev | Port: 3000 | Force: False]]. [[-Stage live]] طلع [[Cannot validate argument on parameter 'Stage'. The argument "live" does not belong to the set "dev,staging,prod"...]] من غير ما ولا سطر في السكربت يشتغل. [[-Port 70000]] طلع [[The 70000 argument is greater than the maximum allowed range of 65535.]].
+          sol: R`جربتهم على PowerShell 7.6 و 5.1 وطلعت نفس الرسايل: من غير حاجة بيسألك [[Project:]] في الترمنال (ولو التشغيل non-interactive بيطلع [[Cannot process command because of one or more missing mandatory parameters: Project.]]). [[-Project shop]] طبع [[Project: shop | Stage: dev | Port: 3000 | Force: False]]. [[-Stage live]] طلع [[Cannot validate argument on parameter 'Stage'. The argument "live" does not belong to the set "dev,staging,prod"...]] من غير ما ولا سطر في السكربت يشتغل. [[-Port 70000]] طلع [[The 70000 argument is greater than the maximum allowed range of 65535.]].
 
-و [[-Project shop -Stage prod -Force]] طبع [[Project: shop | Stage: prod | Port: 3000 | Force: True]] وتحته [[Skipping checks]]. وكمان [[.\deploy.ps1 shop prod]] من غير أسامي اشتغلت بالترتيب. جرّب تكتب [[.\deploy.ps1 -Stage ]] وتدوس Tab: هيلف على dev و staging و prod.`
+و [[-Project shop -Stage prod -Force]] طبع [[Project: shop | Stage: prod | Port: 3000 | Force: True]] وتحته [[Skipping checks]]. وكمان [[.\deploy.ps1 shop prod]] من غير أسامي اشتغلت بالترتيب، و [[-Proj shop -St staging]] المختصرة اشتغلت. و [[-Port abc]] طلع [[Cannot convert value "abc" to type "System.Int32"]]. جرّب تكتب [[.\deploy.ps1 -Stage ]] وتدوس Tab: هيلف على dev و staging و prod.`
         },
         {
           cmd: "[CmdletBinding()]",
@@ -2819,9 +2827,9 @@ foreach ($f in $files) {
             "قفلة الـ if.",
             "قفلة اللوب."
           ],
-          sol: R`جربته بملفين a.log و b.log: [[-WhatIf]] طبع [[What if: Performing the operation "Delete log" on target "a.log".]] ونفس السطر لـ b.log، و [[Get-ChildItem logs]] بعدها لسه فيه الملفين. بعدين [[-Verbose]] طبع بالأصفر [[VERBOSE: Found 2 log files in .\logs]] و [[VERBOSE: Performing the operation "Delete log" on target "a.log".]] لكل ملف، والفولدر فضي. ومن غير [[-Verbose]] ولا [[-WhatIf]] بيمسح من غير ما يطبع حاجة.
+          sol: R`جربته بملفين a.log و b.log في PowerShell 7.6 و 5.1 والناتج واحد: [[-WhatIf]] طبع [[What if: Performing the operation "Delete log" on target "a.log".]] ونفس السطر لـ b.log، و [[Get-ChildItem logs]] بعدها لسه فيه الملفين. بعدين [[-Verbose]] طبع بالأصفر [[VERBOSE: Found 2 log files in .\logs]] و [[VERBOSE: Performing the operation "Delete log" on target "a.log".]] لكل ملف، والفولدر فضي. ومن غير [[-Verbose]] ولا [[-WhatIf]] بيمسح من غير ما يطبع حاجة.
 
-لو شغلته تاني والفولدر فاضي هيطبع (مع Verbose) [[Found 0 log files]] ويخلص من غير error. وجرّب [[-Confirm]]: هيسألك قبل كل ملف [[Are you sure you want to perform this action?]] و Y أو A.`
+لو شغلته تاني والفولدر فاضي هيطبع (مع Verbose) [[Found 0 log files]] ويخلص من غير error. وجرّب [[-Confirm]]: هيسألك قبل كل ملف [[Are you sure you want to perform this action?]] و Y أو A (جاوبت N للأول و Y للتاني، فاتمسح b.log بس). ولو شلت [[param()]] وسبت [[[CmdletBinding()]]] لوحدها طلع [[Unexpected attribute 'CmdletBinding'.]]، ولو بعت argument مش متعرّف زي [[-Extra b]] طلع [[A parameter cannot be found that matches parameter name 'Extra'.]] (من غير CmdletBinding كان هيتحط في [[$args]] بسكات).`
         },
         {
           cmd: "splatting",
@@ -2879,9 +2887,9 @@ Get-ChildItem -Path . $__bt
             "...ولازم يبقى آخر حرف بالظبط من غير مسافة بعده...",
             "...وآخر سطر من غيره."
           ],
-          sol: R`المثال اتجرب في فولدر فيه [[src\a.txt]] وريبو git: [[Copy-Item @copy]] عمل [[src_copy]] بالملف، و [[(Get-ChildItem @params).Count]] طبع عدد الملفات في الفولدر واللي تحته، و [[git @gitArgs]] طبع آخر commits، وآخر أمر طبع ملفات txt.
+          sol: R`المثال اتجرب في PowerShell 7.6 و 5.1 في فولدر فيه [[src\a.txt]] و [[src\sub\b.txt]] وريبو git: [[Copy-Item @copy]] عمل [[src_copy]] بالملفين، و [[(Get-ChildItem @params).Count]] طبع عدد الملفات في الفولدر واللي تحته، و [[git @gitArgs]] طبع آخر 3 commits، وآخر أمر طبع ملفات txt.
 
-الحل في الـ solCode: [[Compress-Archive @zip]] عمل [[src.zip]]. ولما كتبت [[Copy-Item $copy]] بدل [[@copy]] طلع error [[Cannot find path]] فيه [[System.Collections.Hashtable]]، لأن الـ hashtable كله اتبعت كأنه Path.`,
+الحل في الـ solCode: [[Compress-Archive @zip]] عمل [[src.zip]]. ولما كتبت [[Copy-Item $copy]] بدل [[@copy]] طلع error [[Cannot find path '...\System.Collections.Hashtable' because it does not exist.]]، لأن الـ hashtable كله اتبعت كأنه Path. ولما حطيت مسافة بعد الـ backtick، الأمر اتنفذ من غير [[-Recurse]]، والسطر اللي تحته طلع [[The term '-Recurse' is not recognized]].`,
           solCode: R`$zip = @{
     Path            = ".\src\*"
     DestinationPath = ".\src.zip"
@@ -2895,7 +2903,7 @@ Get-Item .\src.zip | Select-Object Name, Length`
           title: "فانكشن بتستقبل من الـ pipe: begin و process و end",
           desc: R`الفانكشن العادية بتاخد قيمها كـ parameters. عشان تستقبل objects من [[|]] زي الأوامر الأصلية ([[Get-ChildItem | Get-FileReport]])، محتاج حاجتين. الأولى: تعلّم على parameter إنه بيستقبل من الـ pipe بـ [[[Parameter(ValueFromPipeline)]]]، فكل object جاي بيتحط فيه. والتانية: الكود يتقسم ٣ بلوكات: [[begin { }]] بيتنفذ مرة واحدة قبل أول object (تجهيز، زي تصفير عدّاد)، و [[process { }]] بيتنفذ مرة لكل object جاي، و [[end { }]] مرة واحدة بعد آخر واحد (ملخص).
 
-النوع [[[System.IO.FileInfo]]] معناه «ملف» بالظبط، فلو حد بعت فولدر أو نص الفانكشن هترفضه برسالة واضحة. وجوه process، كل [[[PSCustomObject]]] بيطلع على طول للي بعدها في الـ pipe، من غير ما يستنى الباقي، وده بيوفّر رام مع آلاف الملفات.
+النوع [[[System.IO.FileInfo]]] معناه «ملف» بالظبط، فلو حد بعت فولدر الفانكشن هترفضه ([[The input object cannot be bound to any parameters for the command...]]). بس خلي بالك: النص بيتحوّل لوحده لـ FileInfo بالاسم ده حتى لو مفيش ملف بالاسم ده ([["abc" | Get-FileReport]] طلّعت صف abc بحجم 0)، فلو ممكن يوصلك نصوص اتأكد بـ [[Test-Path]]. وجوه process، كل [[[PSCustomObject]]] بيطلع على طول للي بعدها في الـ pipe، من غير ما يستنى الباقي، وده بيوفّر رام مع آلاف الملفات.
 
 لو نسيت [[process]] وكتبت الكود من غير بلوكات، هيتنفذ مرة واحدة على آخر object بس، ودي أشهر غلطة. ونفس الفانكشن تقدر تناديها عادي من غير pipe: [[Get-FileReport -File (Get-Item .\notes.txt)]]. المقابل في bash إنك تكتب [[while read line]] جوه سكربت.`,
           example: R`function Get-FileReport {
@@ -2928,7 +2936,7 @@ Get-FileReport -File (Get-Item .\notes.txt)`,
 
 [[$input]] متغير أوتوماتيك فيه كل اللي جاي من الـ pipe لو عايز تاخدهم مرة واحدة في end، بس process أوضح وأوفر.`,
             when: "أي فانكشن هتشتغل على لستة حاجات (ملفات، سيرفرات، يوزرز من CSV) وعايز تركّبها في pipeline مع Where-Object و Sort-Object و Export-Csv.",
-            mistakes: R`تكتب الكود من غير process فتشتغل على آخر عنصر بس. أو تعمل [[$results += ...]] جوه process وترجّعهم في end، فتضيّع ميزة الـ streaming وتبطّأ. أو تحط النوع [[[string]]] لـ parameter بيستقبل ملفات، فـ PowerShell يحوّل كل ملف لنص اسمه بس. أو تحط [[Mandatory]] ومتتعاملش مع الحالة اللي حد ينادي الفانكشن من غير pipe.`
+            mistakes: R`تكتب الكود من غير process فتشتغل على آخر عنصر بس. أو تعمل [[$results += ...]] جوه process وترجّعهم في end، فتضيّع ميزة الـ streaming وتبطّأ. أو تحط النوع [[[string]]] لـ parameter بيستقبل ملفات، فـ PowerShell يحوّل كل ملف لنص وتضيع باقي خصايصه، والنص نفسه بيختلف: في 7 المسار الكامل، وفي 5.1 الاسم بس (جربتها). أو تحط [[Mandatory]] ومتتعاملش مع الحالة اللي حد ينادي الفانكشن من غير pipe.`
           },
           lines: [
             "فانكشن باسم Verb-Noun.",
@@ -2947,7 +2955,7 @@ Get-FileReport -File (Get-Item .\notes.txt)`,
             "استخدمها في pipeline زي أي أمر.",
             "أو عادي بالـ parameter."
           ],
-          sol: R`جربته في فولدر فيه ملف 3 ميجا وكام ملف صغير: طلع جدول Name و KB بصف لكل ملف، وفوقه [[VERBOSE: Total: 2.86 MB]] (ظهر قبل الجدول لأن الجدول بيستنى يحسب عرض الأعمدة)، وفي الآخر صف لوحده للنداء التاني.
+          sol: R`جربته في PowerShell 7.6 و 5.1 في فولدر فيه ملف 3 ميجا وملفين صغيرين (منهم notes.txt): طلع جدول Name و KB بصف لكل ملف ([[big.bin 3072]] و [[small.txt 2]]...)، وفوقه [[VERBOSE: Total: 3 MB]] (ظهر قبل الجدول لأن الجدول بيستنى يحسب عرض الأعمدة)، وفي الآخر صف notes.txt تاني للنداء التاني. (7 بيعرض عمود KB بـ [[3072.00]] و 5.1 بـ [[3072]]، نفس الرقم بس العرض مختلف.)
 
 لما شلت [[process]]: الجدول طلع صف واحد بس، لآخر ملف في اللستة. لأن الكود اللي بره البلوكات بيتعامل كأنه end، فبيتنفذ مرة واحدة بعد ما كل الملفات عدّت، و [[$File]] ساعتها شايل آخر واحد. رجّع process.`
         },
@@ -3006,7 +3014,7 @@ Get-AppName`,
             "dot-source: شغّل الملف ده جوه السكربت، فالمتغير والفانكشن يفضلوا.",
             "استخدم الفانكشن اللي جت منه."
           ],
-          sol: R`جربتها على PowerShell 7: backup.ps1 طبع [[[2026-10-01_16-19] Backup started]]، وجدول فيه Function [[Get-Stamp]] و [[Write-Log]] بس، وفي الآخر [[shop]].
+          sol: R`جربتها على PowerShell 7.6 و 5.1 والناتج واحد: backup.ps1 طبع [[[2026-10-02_20-39] Backup started]]، وجدول فيه Function [[Get-Stamp]] و [[Write-Log]] بس، وفي الآخر [[shop]].
 
 [[Get-Secret]] بعد Import-Module طلع [[The term 'Get-Secret' is not recognized]]، لأنه مش في Export-ModuleMember. و [[& .\tools\helpers.ps1]] من غير نقطة اشتغل من غير error، بس بعدها [[Get-AppName]] طلع نفس الـ error و [[$AppName]] كان فاضي: الملف اشتغل في scope لوحده واختفى. بالنقطة [[. .\tools\helpers.ps1]] الاتنين فضلوا.`
         },
@@ -3062,7 +3070,7 @@ PowerShell فيه نوعين errors: Terminating (بيوقف) وNon-Terminating 
             "اقفل السكربت برقم فشل.",
             "قفلة."
           ],
-          sol: R`في فولدر فاضي السكربت هيطبع: [[Error: Cannot find path '...\missing.txt' because it does not exist.]] بالأحمر، وبعدها [[Done either way]]، وبعدين npm يطلع [[npm error code ENOENT]] و [[Could not read package.json]]، وفي الآخر [[Build failed]]. و [[$LASTEXITCODE]] رقم غير صفر (على لينكس طلع [[254]]).
+          sol: R`في فولدر فاضي السكربت طبع (في PowerShell 7.6 و 5.1): [[Error: Cannot find path '...\missing.txt' because it does not exist.]] بالأحمر، وبعدها [[Done either way]]، وبعدين npm طلّع [[npm error code ENOENT]] و [[Could not read package.json]]، وفي الآخر [[Build failed]]. و [[$LASTEXITCODE]] بعد npm كان [[-4058]] على ويندوز (على لينكس بيطلع [[254]])، والمهم إنه مش صفر. وبعد السكربت [[$LASTEXITCODE]] بقى [[1]] من [[exit 1]].
 
 لاحظ إن الـ catch مسك غلطة Copy-Item بس، أما npm فمحدش مسكه غير سطر [[$LASTEXITCODE]]. ولو شفت [[npm.ps1 cannot be loaded because running scripts is disabled]]، ده مش من السكربت، ده الـ ExecutionPolicy مانع npm.ps1 نفسه، ظبطها أو شغّل [[npm.cmd run build]].`
         },
@@ -3130,7 +3138,7 @@ exit 2`,
             "نادِها، ولو رمت اطبع الرسالة ([[$_]] هو الـ error).",
             "اقفل السكربت برقم 2، فاللي شغّله يعرف إنه فشل."
           ],
-          sol: R`جربته على PowerShell 7: أول سطر مطبعش حاجة، والتاني طبع محتوى src (جدول فيه [[a.txt]]) وكمّل من غير ما يشتكي من nope، و [[problems: 1]]، و [[Not found: ...\nope.txt]] من الـ catch المتخصص، و [[3]] لـ [[$Error.Count]] (الاتنين اللي اتخبوا والتالت بتاع Stop)، و [[Cannot find path '...\nope.txt' because it does not exist.]]، و [[Failed: Config file '.\config.json' is missing]]. و [[$LASTEXITCODE]] بعد السكربت [[2]].
+          sol: R`جربته على PowerShell 7.6 و 5.1 والناتج واحد: أول سطر مطبعش حاجة، والتاني طبع محتوى src (جدول فيه [[a.txt]]) وكمّل من غير ما يشتكي من nope، و [[problems: 1]]، و [[Not found: ...\nope.txt]] من الـ catch المتخصص، و [[3]] لـ [[$Error.Count]] (الاتنين اللي اتخبوا والتالت بتاع Stop)، و [[Cannot find path '...\nope.txt' because it does not exist.]]، و [[Failed: Config file '.\config.json' is missing]]. و [[$LASTEXITCODE]] بعد السكربت [[2]].
 
 مع [[-ErrorAction Ignore]] في أول سطر، [[$Error.Count]] بقى [[2]] بدل 3: Ignore مش بيسجّل. (شغّله بـ [[pwsh -File .\err.ps1]] أو في نافذة جديدة، لأن [[$Error]] بيتراكم في نفس الجلسة: لما شغلتهم ورا بعض في نفس النافذة التاني طلع 6.) ولو شغلت السكربت بالـ copy والـ paste في الترمنال بدل ما تحفظه، [[exit 2]] هيقفل النافذة نفسها، عشان كده لازم يبقى ملف.`
         },
@@ -3252,7 +3260,7 @@ Get-Content dev-log.txt -Wait -Tail 20`,
           ],
           sol: R`الملف [[a.txt]] Notepad هيكتب تحت [[UTF-16 LE]]، وجواه سطور زي [[npm : npm error ...]] و [[+ CategoryInfo : NotSpecified]] و [[NativeCommandError]]، لأن 5.1 حوّل كل سطر stderr لـ error record وكتبه بترميز UTF-16. أما [[b.txt]] فمكتوب [[UTF-8]]، وجواه كلام npm زي ما هو من غير أي زيادات.
 
-لو فتحت a.txt في أداة زي VS Code أو [[grep]] في Git Bash وشفت مسافات بين كل حرف، ده UTF-16. ودي حاجة ويندوز 5.1 بس، مقدرتش أجربها هنا على لينكس، الكلام ده من توثيق Microsoft عن الـ redirection والـ encoding في 5.1. في PowerShell 7 الاتنين هيطلعوا UTF-8.`
+لو فتحت a.txt في أداة زي VS Code أو [[grep]] في Git Bash وشفت مسافات بين كل حرف، ده UTF-16. ودي حاجة Windows PowerShell 5.1 بس: جربتها فيه، والملف اللي طلع من [[cmd /c "echo hello" > log 2>&1]] أول بايتات فيه [[FF FE 68 00 65 00]]، يعني UTF-16 LE (كل حرف إنجليزي بايتين، والتاني صفر). في PowerShell 7 الاتنين بيطلعوا UTF-8.`
         },
         {
           cmd: "Start-Transcript",
@@ -3289,7 +3297,7 @@ exit $code`,
             why: "الصبح تلاقي الباك أب ماتعملش، ومفيش أي أثر ليه. أو زميل بيقولك «السكربت طلع error» ومش فاكر قال إيه. الـ transcript بيخلي كل تشغيلة ليها سجل تقراه بعدين، من غير ما تغيّر ولا سطر في باقي السكربت.",
             how: R`الملف بيبدأ بهيدر فيه وقت البداية واليوزر واسم الجهاز ونسخة PowerShell والأمر اللي شغّل السكربت، وبيخلص بـ «PowerShell transcript end» ووقت النهاية. وده مفيد لما تشغيلات كتير تبقى في نفس الملف بـ [[-Append]].
 
-بيسجّل اللي بيظهر على الشاشة: output و Write-Host و Write-Warning و Write-Error و Write-Verbose (لو ظاهر). وفي PowerShell 7 ناتج البرامج الخارجية زي git اتسجّل عادي في تجربتي. في Windows PowerShell 5.1 ناتج البرامج الخارجية ساعات ميتسجلش لأنه بيتكتب على الكونسول مباشرة؛ لو حصل كده ضيف بعد الأمر [[| Out-Host]].
+بيسجّل اللي بيظهر على الشاشة: output و Write-Host و Write-Warning و Write-Error و Write-Verbose (لو ظاهر). أما ناتج البرامج الخارجية زي git فبيتكتب على الكونسول مباشرة من غير ما يعدّي على PowerShell: في نافذة عادية اتسجّل في تجربتي (7.6 و 5.1)، بس لما ناتج pwsh نفسه كان متحوّل لملف أو pipe ([[pwsh -File job.ps1 > out.txt]]، أو أداة بتشغّله وتقرا ناتجه)، سطر git طلع فاضي في اللوج في الاتنين. الحل: ضيف بعد الأمر [[| Out-Host]]، فالناتج يعدّي على PowerShell ويتسجّل في كل الحالات.
 
 [[-Path]] لو مكتبتهوش بيعمل ملف باسم عشوائي في Documents. و [[-UseMinimalHeader]] (في 7) هيدر أقصر. و [[-IncludeInvocationHeader]] بيكتب كل أمر قبل ناتجه.
 
@@ -3322,9 +3330,9 @@ exit $code`,
             "امسح اللوجات اللي أقدم من ٣٠ يوم.",
             "اخرج بالرقم، فـ Task Scheduler يعرف نجح ولا فشل."
           ],
-          sol: R`جربته على PowerShell 7 على لينكس: الشاشة طبعت [[Starting job]] وعدد الملفات و [[git version 2.43.0]] و [[WARNING: Disk almost full]]. وملف [[logs\run_2026-10-01.log]] فيه هيدر بين سطور نجوم ([[PowerShell transcript start]] و [[Start time]] و [[Username]] و [[PSVersion: 7.6.5]] ...)، وبعدين نفس الأربع سطور، وفي الآخر [[PowerShell transcript end]]. التشغيلة التانية اتضافت تحت الأولى بهيدر جديد.
+          sol: R`جربته على ويندوز بـ PowerShell 7.6 و 5.1: الشاشة طبعت [[Starting job]] وعدد الملفات و [[git version 2.56.0.windows.1]] و [[WARNING: Disk almost full]]. وملف [[logs\run_2026-10-02.log]] فيه هيدر بين سطور نجوم ([[PowerShell transcript start]] و [[Start time]] و [[Username]] و [[PSVersion: 7.6.6]] ...، وفي 5.1 أوله [[Windows PowerShell transcript start]])، وبعدين نفس الأربع سطور، وفي الآخر [[PowerShell transcript end]]. التشغيلة التانية اتضافت تحت الأولى بهيدر جديد. (لما شغّلته وناتجه متحوّل لملف، سطر git طلع فاضي في اللوج لحد ما ضفت [[| Out-Host]]، الشرح في deep.)
 
-مع [[throw "boom"]] مكان التحذير: الشاشة طبعت [[FAILED: boom]] بالأحمر، والسطر ده موجود في اللوج قبل [[PowerShell transcript end]]، و [[$LASTEXITCODE]] بقى [[1]]. وجربت كمان من غير الـ catch (try و finally بس): الـ error اتطبع على الشاشة، بس [[boom]] مكانتش في اللوج خالص، لأن PowerShell بيطبع الـ error بعد ما الـ finally يخلص، يعني بعد ما التسجيل اتقفل. عشان كده الـ catch اللي بيطبع الرسالة مهم.`
+مع [[throw "boom"]] مكان التحذير: الشاشة طبعت [[FAILED: boom]] بالأحمر، والسطر ده موجود في اللوج قبل [[PowerShell transcript end]]، و [[$LASTEXITCODE]] بقى [[1]]. وجربت كمان من غير الـ catch (try و finally بس): الـ error اتطبع على الشاشة، بس [[boom]] مكانتش في اللوج خالص (في 7 و 5.1)، لأن PowerShell بيطبع الـ error بعد ما الـ finally يخلص، يعني بعد ما التسجيل اتقفل. عشان كده الـ catch اللي بيطبع الرسالة مهم.`
         },
         {
           cmd: "PSScriptAnalyzer",
@@ -3357,9 +3365,11 @@ Set-PSDebug -Off`,
             "شغّل السكربت وشوف التتبع.",
             "اقفل التتبع."
           ],
-          sol: R`الـ Install-Module بيحمّل من PowerShell Gallery (ممكن يسألك إنك تثق في PSGallery، اكتب Y). بعدين [[Invoke-ScriptAnalyzer .\backup.ps1]]. جربته على backup.ps1 بتاع الدرس اللي تحت بالظبط، فطلع تحذير واحد: [[PSAvoidUsingWriteHost]] بـ Severity Warning على [[Line 16]]، عشان Write-Host مش بيدخل الـ pipeline.
+          sol: R`الـ Install-Module بيحمّل من PowerShell Gallery (هيسألك إنك تثق في PSGallery لأنها [[Untrusted]] افتراضيًا، اكتب Y؛ وفي 5.1 على جهاز جديد ممكن يسألك قبلها يسطّب NuGet provider، اكتب Y برضه). بعدين [[Invoke-ScriptAnalyzer .\backup.ps1]] على backup.ps1 بتاع الدرس اللي تحت بيطلّع تحذير واحد: [[PSAvoidUsingWriteHost]] بـ Severity Warning على [[Line 16]] (سطر Write-Host)، عشان Write-Host مش بيدخل الـ pipeline. (الجزء ده اتجرّب على لينكس بـ PowerShell 7؛ الجهاز اللي راجعت عليه مفيهوش PSScriptAnalyzer فمعدتوش هنا، ورقم السطر اتأكدت منه في الملف.)
 
-ده مش error والسكربت شغال، بس لو هتستخدم الناتج في سكربت تاني استخدم Write-Output. ولو عندك aliases زي [[gci]] و [[%]] في السكربت هيطلع [[PSAvoidUsingCmdletAliases]]، ولو متغير متعرفش وما استخدمتوش [[PSUseDeclaredVarsMoreThanAssignment]]. و [[Set-PSDebug -Trace 1]] بيطبع [[DEBUG:]] قبل كل سطر برقمه، وهتلاقيه بيدخل جوه Compress-Archive نفسه ويطبع مئات السطور، فمتتخضش، دور على أرقام سطور سكربتك.`
+ده مش error والسكربت شغال، بس لو هتستخدم الناتج في سكربت تاني استخدم Write-Output. ولو عندك aliases زي [[gci]] و [[%]] في السكربت هيطلع [[PSAvoidUsingCmdletAliases]]، ولو متغير متعرفش وما استخدمتوش [[PSUseDeclaredVarsMoreThanAssignment]].
+
+و [[Set-PSDebug -Trace 1]] اتجرّب على ويندوز في 7.6 و 5.1: بيطبع سطور زي [[DEBUG:   12+  >>>> $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"]] (رقم السطر والأمر)، ولما وصل Compress-Archive دخل جواه وطبع حوالي 270 سطر من كود الموديول نفسه، وبعدين رجع لسطر 16 بتاعك. فمتتخضش، دور على أرقام سطور سكربتك.`
         }
       ]
     },
@@ -3426,7 +3436,7 @@ Get-Content domains.csv`,
             "...وصدّر الكل CSV جديد.",
             "اعرض الملف الجديد."
           ],
-          sol: R`المثال على PowerShell 7 طبع: [[3]] و [[ali@example.com]] و [[Ali]] و [[Omar]] و [[31.6666666666667]]، وبعدين محتوى domains.csv: [["Name","Domain"]] و [["Ali","example.com"]] وهكذا.
+          sol: R`المثال على PowerShell 7.6 و 5.1 طبع نفس الناتج: [[3]] و [[ali@example.com]] و [[Ali]] و [[Omar]] و [[31.6666666666667]]، وبعدين محتوى domains.csv: [["Name","Domain"]] و [["Ali","example.com"]] وهكذا.
 
 الحل في الـ solCode: ضفت Active للهيدر و yes أو no لكل صف، والفلتر [[$_.Active -eq "yes"]] (من غير تحويل، لأنها نص أصلًا، و [[-eq]] مش بيفرّق كابيتال وسمول فـ Yes تعدّي كمان). الملف طلع [["Name","Email"]] وتحته Ali و Omar بس. لو نسيت تزوّد Active في الهيدر، Import-Csv هيتجاهل القيمة الزيادة في كل صف والفلتر مش هيرجع حاجة.`,
           solCode: R`@"
@@ -3474,7 +3484,7 @@ ConvertTo-Json الافتراضي [[-Depth 2]]، والحد الأقصى 100. ا
 
 package.json بالذات: لو هتعدّله من سكربت، [[npm pkg set version=1.2.0]] أضمن لأنه بيحافظ على الترتيب والتنسيق اللي npm متعود عليه.`,
             when: "ملفات إعدادات (appsettings.json، config.json، settings.json بتاع VS Code)، وردود APIs عايز تعدّلها وتبعتها تاني.",
-            mistakes: R`تنسى [[-Depth]] فالـ arrays اللي جوه objects تتحول لنص [[System.Object[]]] وتكتب فوق الملف الأصلي، فتضيع الإعدادات. خد نسخة قبل أول تجربة. أو تقرا من غير [[-Raw]] في 5.1. أو تحاول [[$cfg.newKey = 1]] على مفتاح مش موجود فيطلع error إن الخاصية مش موجودة. أو تكتب بـ [[Set-Content]] في 5.1 من غير [[-Encoding]] فالعربي يضيع.`
+            mistakes: R`تنسى [[-Depth]] فالـ arrays اللي جوه objects تتحول لنص [[System.Object[]]] وتكتب فوق الملف الأصلي، فتضيع الإعدادات. خد نسخة قبل أول تجربة. أو تحاول [[$cfg.newKey = 1]] على مفتاح مش موجود فيطلع [[The property 'newKey' cannot be found on this object]]. أو تكتب بـ [[Set-Content]] في 5.1 من غير [[-Encoding]] فالعربي يضيع.`
           },
           lines: [
             "مسار الملف.",
@@ -3487,9 +3497,9 @@ package.json بالذات: لو هتعدّله من سكربت، [[npm pkg set v
             "اعرض الملف بعد التعديل.",
             "نفس الـ object بعمق 1 بس: شوف اللي اتقطع."
           ],
-          sol: R`جربته على PowerShell 7 بالملف اللي في الـ solCode: الملف بقى فيه [["port": 8080]] و origins فيها الرابطين و features فيها auth و cart و orders وفي الآخر [["version": "1.1.0"]]. وآخر سطر طلع [[WARNING: Resulting JSON is truncated as serialization has exceeded the set depth of 1.]] وجواه [["cors": "@{origins=System.Object[]}"]]: الـ array اتحولت لنص.
+          sol: R`جربته على PowerShell 7.6 و 5.1 بالملف اللي في الـ solCode: الملف بقى فيه [["port": 8080]] و origins فيها الرابطين و features فيها auth و cart و orders وفي الآخر [["version": "1.1.0"]]. وآخر سطر في 7 طلع [[WARNING: Resulting JSON is truncated as serialization has exceeded the set depth of 1.]] وجواه [["cors": "@{origins=System.Object[]}"]]: الـ array اتحولت لنص. و 5.1 طلع نفس القطع من غير أي تحذير، وبمسافات كتير بعد كل [[:]]. وأول 3 بايتات في الملف: في 7 [[{]] على طول، وفي 5.1 BOM ([[EF BB BF]]) من [[-Encoding utf8]].
 
-مع [[-Depth 2]] في سطر الكتابة (جربتها): server و cors اتكتبوا عادي، لكن origins اللي جوه cors اتحوّلت من array لنص واحد: [["origins": "http://localhost:5173 https://shop.example.com"]]، الرابطين لازقين بمسافة. الملف لسه JSON سليم، فمفيش أي error، بس أي برنامج بيقرا origins كلستة هيبوظ. ولو ده حصل على ملف حقيقي اتكتب فوق الأصل، فخد نسخة الأول.`,
+مع [[-Depth 2]] في سطر الكتابة (جربتها): server و cors اتكتبوا عادي، لكن origins اللي جوه cors اتحوّلت من array لنص واحد: [["origins": "http://localhost:5173 https://shop.example.com"]]، الرابطين لازقين بمسافة. الملف لسه JSON سليم، فمفيش أي error (7 طلّع WARNING بس، و 5.1 ولا كلمة)، بس أي برنامج بيقرا origins كلستة هيبوظ. ولو ده حصل على ملف حقيقي اتكتب فوق الأصل، فخد نسخة الأول.`,
           solCode: R`@"
 {
   "name": "shop",
@@ -3529,7 +3539,7 @@ XPath أدق: [[SelectNodes("//add")]] كلهم، و [[SelectSingleNode("//add[@
 
 الحفظ: [[Save()]] بيكتب بالترميز اللي في أول سطر ([[encoding="utf-8"]])، وفي تجربتي حط BOM في أول الملف. أغلب الأدوات (IIS و .NET و VS) مش فارق معاها، بس خليك عارف. و [[[Environment]::CurrentDirectory]] هو الفولدر اللي .NET بيحسب منه المسارات النسبية، ومش بيتغيّر لما تعمل cd في PowerShell.`,
             when: "web.config و app.config قبل الديبلوي، قراية النسخة من .csproj أو pom.xml، أو أي أداة قديمة إعداداتها XML.",
-            mistakes: R`تدّي [[Save()]] مسار نسبي فالملف يتكتب في فولدر تاني خالص (جربتها: [[$d.Save("rel.xml")]] بعد [[Set-Location /tmp]] كتب الملف في الفولدر اللي pwsh اتفتح فيه مش في /tmp). أو تكتب [[$xml = Get-Content file.xml]] من غير [[[xml]]] فتشتغل على نص. أو تنسى إن XPath بيفرّق بين الكابيتال والسمول ([[@Key]] غير [[@key]]).`
+            mistakes: R`تدّي [[Save()]] مسار نسبي فالملف يتكتب في فولدر تاني خالص (جربتها في 7.6 و 5.1: [[$doc.Save("rel.xml")]] بعد [[Set-Location sub]] كتب الملف في الفولدر اللي PowerShell اتفتح فيه مش في sub). أو تكتب [[$xml = Get-Content file.xml]] من غير [[[xml]]] فتشتغل على نص. أو تنسى إن XPath بيفرّق بين الكابيتال والسمول ([[@Key]] غير [[@key]]).`
           },
           lines: [
             "المسار الكامل للملف من فولدر السكربت (Save محتاج مسار كامل).",
@@ -3540,7 +3550,7 @@ XPath أدق: [[SelectNodes("//add")]] كلهم، و [[SelectSingleNode("//add[@
             "احفظ الملف.",
             "اتأكد إن التعديل اتكتب."
           ],
-          sol: R`جربته على PowerShell 7: الجدول طلع [[ApiUrl  http://localhost:8000]] و [[Debug  true]]، وبعدين [[web.config:5:    <add key="Debug" value="false" />]]. والملف اتحفظ بنفس التنسيق، بس في أوله BOM (3 بايتات مخفية) لأن أول سطر فيه encoding="utf-8".
+          sol: R`جربته على PowerShell 7.6 و 5.1 ونفس الناتج: الجدول طلع [[ApiUrl http://localhost:8000]] و [[Debug  true]]، وبعدين [[web.config:5:    <add key="Debug" value="false" />]] (لو انت واقف في فولدر تاني، Select-String بيكتب المسار قبل اسم الملف). والملف اتحفظ بنفس التنسيق، بس في أوله BOM (3 بايتات مخفية: [[EF BB BF]]) لأن أول سطر فيه encoding="utf-8".
 
 لتغيير ApiUrl: نفس السطرين بـ [[//add[@key='ApiUrl']]] و [[.value = "https://api.example.com"]] قبل [[Save]]. لو SelectSingleNode رجّع فاضي ([[$null]]) يبقى الـ XPath مش لاقي حاجة: راجع الكابيتال في key، وإن الملف مفيهوش xmlns.`,
           solCode: R`@"
@@ -3581,7 +3591,7 @@ Unregister-ScheduledTask -TaskName "DailyBackup" -Confirm:$false`,
 مفيش حد قدام الشاشة، فأي [[Read-Host]] أو parameter إجباري ناقص أو سؤال تأكيد هيعلّق المهمة.
 الـ output مش ظاهر لحد، فسجّل بـ Start-Transcript (درس Start-Transcript) واخرج بـ [[exit 1]] لو فشل، فيظهر في [[LastTaskResult]].
 
-[[(Get-Command pwsh).Source]] بيجيب المسار الكامل زي [[C:\Program Files\PowerShell\7\pwsh.exe]]، وده أضمن من الاسم لوحده. لو PowerShell 7 مش متسطب استخدم [[powershell.exe]] (5.1) في [[-Execute]]. ولو متسطب من Microsoft Store المسار هيبقى جوه WindowsApps، والأضمن تسطّبه بـ winget (أول درس في التاب).
+[[(Get-Command pwsh).Source]] بيجيب المسار الكامل زي [[C:\Program Files\PowerShell\7\pwsh.exe]]، وده أضمن من الاسم لوحده. لو PowerShell 7 مش متسطب استخدم [[powershell.exe]] (5.1) في [[-Execute]]. ولو متسطب من Microsoft Store المسار هيبقى جوه WindowsApps وفيه رقم النسخة (زي [[Microsoft.PowerShell_7.6.6.0_x64...]])، فاشتغل في تجربتي بس هيتغيّر مع أول تحديث والمهمة تبوظ. ساعتها حط في [[-Execute]] الاختصار الثابت [[$env:LOCALAPPDATA\Microsoft\WindowsApps\pwsh.exe]] (جربته واشتغل)، أو سطّبه بـ winget (أول درس في التاب).
 
 الصلاحيات: من غير [[-User]] المهمة بتتسجّل باسمك وبتشتغل وانت داخل على الجهاز بس، وده غالبًا مش محتاج PowerShell أدمن. لو طلعلك Access is denied، افتح PowerShell كأدمن. ولو عايزها تشتغل حتى وانت مش داخل، أو بصلاحيات أعلى ([[-RunLevel Highest]])، محتاج أدمن ومعلومات اليوزر، وده أسهل من واجهة Task Scheduler نفسها (Run whether user is logged on or not).
 
@@ -3602,9 +3612,9 @@ Unregister-ScheduledTask -TaskName "DailyBackup" -Confirm:$false`,
             "آخر مرة اشتغلت، ونتيجتها (0 نجح)، والمعاد الجاي.",
             "امسح المهمة من غير سؤال تأكيد."
           ],
-          sol: R`[[Register-ScheduledTask]] بيطبع جدول فيه [[TaskPath]] بـ [[\]] و [[TaskName]] بـ DailyBackup و [[State]] بـ Ready. وبعد [[Start-ScheduledTask]] بثواني، [[Get-ScheduledTaskInfo]] المفروض يطلع LastRunTime بوقت دلوقتي و LastTaskResult بـ [[0]] و NextRunTime بكرة الساعة 9، والـ zip الجديد موجود في فولدر backups.
+          sol: R`جربتها على ويندوز 11 من PowerShell عادي (مش أدمن)، بمهمة تجربة سكربتها في فولدر اسمه فيه مسافة ([[sched dir]])، ومسحتها في الآخر. [[Register-ScheduledTask]] طبع جدول فيه [[TaskPath]] بـ [[\]] و [[TaskName]] باسمها و [[State]] بـ Ready. وقبل التشغيل [[Get-ScheduledTaskInfo]] طلّع [[LastRunTime]] بـ [[11/30/1999]] و [[LastTaskResult]] بـ [[267011]] (لسه ماشتغلتش). وبعد [[Start-ScheduledTask]]: وهي شغالة [[267009]]، ولما خلصت (ثانية أو اتنين) [[0]]، و [[NextRunTime]] بكرة الساعة 9:00 AM، والـ zip اتعمل في backups جنب السكربت، والفولدر الحالي جوه السكربت كان فولدر السكربت (بفضل [[-WorkingDirectory]]). نفس النتيجة لما [[-Execute]] كان pwsh من Microsoft Store أو [[powershell.exe]].
 
-لو LastTaskResult [[267011]] يبقى لسه مشتغلتش، استنى شوية. ولو [[1]] أو أي رقم صغير، السكربت نفسه فشل، فشغّله بنفس السطر من الترمنال ([[pwsh -NoProfile -File "C:\scripts\backup.ps1"]]) عشان تشوف الـ error، أو اقرا اللوج لو عامل transcript. ولو الـ zip اتعمل في System32 بدل backups، يبقى السكربت بيستخدم مسار نسبي من غير [[$PSScriptRoot]] ولا [[-WorkingDirectory]]. (مقدرتش أجرّب Task Scheduler هنا على لينكس؛ الأسامي والأرقام دي من توثيق Microsoft لموديول ScheduledTasks.)`
+خلي بالك: أول مرة المهمة فضلت [[Queued]] حوالي 10 ثواني قبل ما تبدأ، و [[LastTaskResult]] كان بيقول [[0]] وهي لسه مبدأتش. فبص على [[(Get-ScheduledTask -TaskName "DailyBackup").State]] كمان، واستنى لما تبقى Ready. ولو [[1]] أو أي رقم صغير، السكربت نفسه فشل، فشغّله بنفس السطر من الترمنال ([[pwsh -NoProfile -File "C:\scripts\backup.ps1"]]) عشان تشوف الـ error، أو اقرا اللوج لو عامل transcript. ولو الـ zip اتعمل في System32 بدل backups، يبقى السكربت بيستخدم مسار نسبي من غير [[$PSScriptRoot]] ولا [[-WorkingDirectory]].`
         }
       ]
     },
@@ -5308,15 +5318,13 @@ Write-Host "Saved $zip" -ForegroundColor Green`,
           flag: "script",
           deep: {
             why: "سكربت PowerShell حقيقي بيجمع كل اللي اتعلمناه. نفس فكرة backup.sh بس لـ ويندوز.",
-            how: R`[[param()]] في الأول عشان السكربت ياخد arguments. [[CmdletBinding()]] بيضيف -Verbose و-WhatIf أوتوماتيك.
+            how: R`[[param()]] في الأول عشان السكربت ياخد arguments. ولو حطيت فوقها [[[CmdletBinding(SupportsShouldProcess)]]] السكربت ياخد [[-Verbose]] و [[-WhatIf]] (درس [CmdletBinding()])، و [[CmdletBinding()]] لوحدها بتدّي [[-Verbose]] من غير [[-WhatIf]].
 
-[[Write-Verbose]] بيطبع فقط لو شغّلت السكربت بـ -Verbose. ده أحسن من Write-Host لرسايل التفاصيل.
+[[Get-Date -Format]] بياخد format string. [[yyyy-MM-dd_HH-mm]] بيطلع format مناسب لأسامي الملفات، ومترتب صح لما تعمل sort بالاسم.
 
-[[try/finally]]: الـ finally بيشتغل حتى لو حصل error، مثالي للتنضيف.
+[[Compress-Archive]] بيعمل zip. و [[-Path "$Source\*"]] بالنجمة بيحط محتوى الفولدر في الـ zip، من غيرها الـ zip هيبقى جواه فولدر باسم المصدر (جربتها: [[app/a.txt]] بدل [[a.txt]]). وفي 5.1 المسارات جوه الـ zip بتتكتب بـ [[\]] ([[app\a.txt]]) بدل [[/]]، فلو الـ zip رايح لينكس أو ماك، اعمله بـ PowerShell 7.
 
-[[Get-Date -Format]] بياخد format string. [[yyyy-MM-dd_HH-mm]] بيطلع format مناسب لأسامي الملفات.
-
-[[Compress-Archive]] عمل zip. [[Get-ChildItem | Sort LastWriteTime | Select -SkipLast 7]] بياخد كل الملفات عدا آخر ٧.`,
+وبديل «امسح الأقدم من ٧ أيام» اللي في الحل: «سيب آخر ٧ نسخ بس»: [[Get-ChildItem $Dest -Filter backup_*.zip | Sort-Object LastWriteTime | Select-Object -SkipLast 7 | Remove-Item]].`,
             when: "أتمتة باك أب على ويندوز. المهمة دي في Task Scheduler بتشغّلها يوميًا.",
             mistakes: "Task Scheduler بيشغّل بـ System account أو user مش logged in. اتأكد من الصلاحيات وإن المسارات كاملة."
           },
@@ -5334,9 +5342,11 @@ Write-Host "Saved $zip" -ForegroundColor Green`,
             "اضغط محتوى المصدر.",
             "اطبع النتيجة بالأخضر."
           ],
-          sol: R`[[.\backup.ps1 -Source .\app -Dest .\bk]] طبع [[Saved .\bk\backup_2026-09-30_05-12.zip]] بالأخضر. والحل الكامل في الـ solCode: آخر 3 سطور بيمسحوا أي باك أب أقدم من [[KeepDays]] أيام. جربته بملف قديم معمول بتاريخ من 10 أيام فطلع [[VERBOSE: Performing the operation "Remove File" on target "...backup_2020-01-01_00-00.zip"]]، والجديد فضل.
+          sol: R`جربته على PowerShell 7.6 و 5.1 في فولدر اسمه فيه مسافة ([[my lab]]) وجوه app ملف اسمه فيه مسافة: [[.\backup.ps1 -Source .\app -Dest .\bk]] طبع [[Saved .\bk\backup_2026-10-02_20-45.zip]] بالأخضر. والحل الكامل في الـ solCode: آخر 3 سطور بيمسحوا أي باك أب أقدم من [[KeepDays]] أيام. جربته بملف قديم آخر تعديل عليه من 10 أيام فطلع [[VERBOSE: Performing the operation "Remove File" on target "...\bk\backup_2020-01-01_00-00.zip".]]، والجديد فضل.
 
-لو شغلته مرتين في نفس الدقيقة هيطلع [[The archive file ... already exists]]، لأن الاسم بالدقيقة؛ ضيف ثواني للـ format ([[yyyy-MM-dd_HH-mm-ss]]) لو محتاج. واتأكد إن [[Where-Object]] قبل [[Remove-Item]] دايمًا، وجرب الأول بـ [[-WhatIf]] بدل [[-Verbose]].`,
+لو شغلته مرتين في نفس الدقيقة هيطلع [[The archive file ... already exists. Use the -Update parameter...]]، لأن الاسم بالدقيقة؛ ضيف ثواني للـ format ([[yyyy-MM-dd_HH-mm-ss]]) لو محتاج. ولو المصدر مش موجود: [[The path '.\nope\*' either does not exist or is not a valid file system path.]]
+
+وفيه غلطة لقيتها وانا بجرّب: لو فولدر المصدر فاضي، [[Compress-Archive]] مبيعملش zip ومبيطلعش error (في 7 و 5.1)، والسكربت يطبع Saved كأن كله تمام. عشان كده الـ solCode فيه سطر بعد Compress-Archive بيتأكد إن الملف اتعمل، وإلا [[throw]]. واتأكد إن [[Where-Object]] قبل [[Remove-Item]] دايمًا، وجرب الأول بـ [[-WhatIf]] بدل [[-Verbose]].`,
           solCode: R`param(
     [string]$Source = ".\src",
     [string]$Dest = ".\backups",
@@ -5353,6 +5363,7 @@ $stamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
 $zip = Join-Path $Dest "backup_$stamp.zip"
 
 Compress-Archive -Path "$Source\*" -DestinationPath $zip
+if (-not (Test-Path $zip)) { throw "Nothing to back up in $Source" }
 Write-Host "Saved $zip" -ForegroundColor Green
 
 Get-ChildItem $Dest -Filter "backup_*.zip" |
@@ -5442,7 +5453,7 @@ $i = 1
 foreach ($p in $photos) {
     $newName = "{0}_{1:D3}{2}" -f $Prefix, $i, $p.Extension.ToLower()
     if ($p.Name -ne $newName) {
-        Rename-Item $p.FullName -NewName $newName
+        Rename-Item -LiteralPath $p.FullName -NewName $newName
     }
     $i++
 }
@@ -5459,9 +5470,11 @@ Write-Host "Renamed $($photos.Count) files"`,
 
 الـ WhatIf: السكربت مفيهوش [[ShouldProcess]] بإيده، بس [[SupportsShouldProcess]] بيخلي [[-WhatIf]] يوصل لـ [[Rename-Item]] لوحده، فبيطبع «What if: Performing the operation "Rename File"...» لكل ملف.
 
+[[-LiteralPath]] بدل [[-Path]]: في [[-Path]] الأقواس المربعة معناها wildcard، فصورة اسمها [[[1] beach.jpg]] في 5.1 طلّعت [[Cannot rename because item at '...' does not exist.]] وفضلت باسمها. بـ [[-LiteralPath]] الاسم بيتاخد حرف حرف، واشتغلت في 7 و 5.1.
+
 لو عايز الترتيب بتاريخ التصوير الحقيقي: [[System.Drawing]] أو أداة زي exiftool بتقرا EXIF، وده أعقد من الدرس ده.`,
             when: "صور رحلة، سكرينشوتات لمشروع، فواتير PDF عايزها مترقمة، أي فولدر أسامي ملفاته عشوائية.",
-            mistakes: R`تشغّله من غير [[-WhatIf]] على الفولدر الغلط. أو تغيّر الترتيب بين تشغيلتين بنفس البادئة: لو trip_002 موجود وملف تاني محتاج ياخد نفس الاسم، Rename-Item هيطلع error للملف ده ويكمّل؛ الحل تشغّله ببادئة جديدة. أو تنسى [[-File]] فيحاول يغيّر أسامي فولدرات.`
+            mistakes: R`تشغّله من غير [[-WhatIf]] على الفولدر الغلط. أو تزوّد صور بين تشغيلتين وتشغّله بنفس البادئة: جربتها بصورة جديدة أقدم من الباقي، فطلع [[Cannot create a file when that file already exists.]] مرتين، والصورة الجديدة فضلت باسمها، و beach_002 اختفى والباقي اتزحزح رقم. الحل تشغّله ببادئة جديدة. أو تنسى [[-File]] فيحاول يغيّر أسامي فولدرات.`
           },
           lines: [
             "advanced script، و [[-WhatIf]] يوصل لـ Rename-Item لوحده.",
@@ -5476,13 +5489,13 @@ Write-Host "Renamed $($photos.Count) files"`,
             "لكل صورة...",
             "...ابني الاسم: البادئة و _ والرقم ٣ خانات والامتداد بحروف صغيرة.",
             "...لو اسمها مش هو الاسم الجديد أصلًا...",
-            "...غيّره.",
+            "...غيّره. [[-LiteralPath]] عشان الاسم يتاخد زي ما هو حتى لو فيه أقواس مربعة.",
             "قفلة الـ if.",
             "زوّد العدّاد.",
             "قفلة اللوب.",
             "اطبع العدد."
           ],
-          sol: R`جربته على ٣ ملفات [[IMG 001.JPG]] و [[IMG 002.jpg]] و [[holiday pic.jpeg]] بتواريخ مختلفة و [[notes.txt]]. مع [[-WhatIf]] طبع ٣ سطور زي [[What if: Performing the operation "Rename File" on target "Item: ...\IMG 002.jpg Destination: ...\trip_001.jpg".]] بالترتيب من الأقدم، و [[Renamed 3 files]] (العدد حتى مع WhatIf، لأنه عدد اللستة). من غير WhatIf بقوا [[trip_001.jpg]] و [[trip_002.jpg]] و [[trip_003.jpeg]]، و notes.txt متلمسش. لاحظ إن [[.JPG]] بقت [[.jpg]].
+          sol: R`جربته على PowerShell 7.6 و 5.1 في فولدر اسمه [[my photos]] فيه ٣ ملفات [[IMG 001.JPG]] و [[IMG 002.jpg]] و [[holiday pic.jpeg]] بتواريخ مختلفة و [[notes.txt]]. مع [[-WhatIf]] طبع ٣ سطور زي [[What if: Performing the operation "Rename File" on target "Item: ...\IMG 002.jpg Destination: ...\trip_001.jpg".]] بالترتيب من الأقدم، و [[Renamed 3 files]] (العدد حتى مع WhatIf، لأنه عدد اللستة). من غير WhatIf بقوا [[trip_001.jpg]] و [[trip_002.jpg]] و [[trip_003.jpeg]]، و notes.txt متلمسش. لاحظ إن [[.JPG]] بقت [[.jpg]].
 
 بـ [[-Prefix beach]] بقوا beach_001 لـ beach_003. ولو شغلت بنفس البادئة مرة تانية ومفيش جديد، الـ if بيعدّي كل الملفات من غير أي error.`
         },
@@ -5516,11 +5529,11 @@ foreach ($file in Get-ChildItem $Path -File) {
 
     $dest = Join-Path $destDir $file.Name
     $n = 1
-    while (Test-Path $dest) {
+    while (Test-Path -LiteralPath $dest) {
         $dest = Join-Path $destDir ("{0} ({1}){2}" -f $file.BaseName, $n, $file.Extension)
         $n++
     }
-    Move-Item $file.FullName $dest
+    Move-Item -LiteralPath $file.FullName -Destination $dest
 }`,
           try: R`اعمل فولدر تجربة فيه a.pdf و b.PNG و c.zip و d.exe و e.xyz و g.jpg، وجواه فولدر Images فيه g.jpg تاني. شغّله بـ [[-Path]] الفولدر ده و [[-WhatIf]]، وبعدين من غيرها، واعرض النتيجة بـ [[Get-ChildItem -Recurse -Name]].`,
           flag: "script",
@@ -5533,6 +5546,8 @@ foreach ($file in Get-ChildItem $Path -File) {
 الفلتر [[-File]] مهم: من غيره الفولدرات اللي السكربت لسه عاملها (Images و Documents) هتتنقل جوه Other في التشغيلة الجاية.
 
 الاسم المكرر: [[Test-Path $dest]] لو الاسم موجود، يجرّب [[name (1).ext]] وبعدين [[(2)]] لحد ما يلاقي اسم فاضي. و [[$file.Extension]] بيرجع الامتداد بالنقطة زي ما هو، فالملف [[b.PNG]] بيفضل PNG.
+
+ليه [[-LiteralPath]]؟ في [[-Path]] الأقواس المربعة wildcard، و Downloads مليانة أسامي زي [[[Book] guide.pdf]]. جربت النسخة اللي من غيرها: الملف ده فضل مكانه من غير أي error في 7 و 5.1، و Test-Path مشافش النسخة اللي في Documents. بـ [[-LiteralPath]] اتنقل وبقى [[[Book] guide (1).pdf]].
 
 مع [[-WhatIf]]: الفولدرات مش بتتعمل فعلًا، فـ Test-Path بيرجع False كل مرة، وهتشوف «Create Directory» مكرر لنفس الفولدر. ده طبيعي في التجربة.
 
@@ -5560,14 +5575,14 @@ foreach ($file in Get-ChildItem $Path -File) {
             "...اعمله لو مش موجود.",
             "...المسار اللي الملف هيروحله...",
             "...عدّاد للأسامي المكررة...",
-            "...طول ما فيه ملف بنفس الاسم...",
+            "...طول ما فيه ملف بنفس الاسم ([[-LiteralPath]]: الاسم زي ما هو حتى لو فيه أقواس مربعة)...",
             "...جرّب الاسم مع (1) أو (2)...",
             "...وزوّد.",
             "...قفلة.",
-            "...انقل الملف.",
+            "...انقل الملف (برضه بـ [[-LiteralPath]]).",
             "قفلة."
           ],
-          sol: R`جربته على الفولدر ده بالظبط. مع [[-WhatIf]] طلع سطر [[Create Directory]] و [[Move File]] لكل ملف، وآخرهم [[Destination: ...\Images\g (1).jpg]] لأن g.jpg موجود في Images. وبعد التشغيل الحقيقي [[Get-ChildItem -Recurse -Name]] طلع: [[Archives\c.zip]] و [[Documents\a.pdf]] و [[Images\b.PNG]] و [[Images\g.jpg]] (القديم) و [[Images\g (1).jpg]] (الجديد) و [[Installers\d.exe]] و [[Other\e.xyz]].
+          sol: R`جربته على الفولدر ده بالظبط (اسمه [[dl test]] بمسافة) في PowerShell 7.6 و 5.1 والناتج واحد. مع [[-WhatIf]] طلع سطر [[Create Directory]] لكل فولدر مش موجود و [[Move File]] لكل ملف، وآخرهم [[Destination: ...\Images\g (1).jpg]] لأن g.jpg موجود في Images. وبعد التشغيل الحقيقي [[Get-ChildItem -Recurse -Name]] طلع: [[Archives\c.zip]] و [[Documents\a.pdf]] و [[Images\b.PNG]] و [[Images\g.jpg]] (القديم) و [[Images\g (1).jpg]] (الجديد) و [[Installers\d.exe]] و [[Other\e.xyz]].
 
 لو شغلته تاني مش هيحصل حاجة، لأن مفيش ملفات بره الفولدرات. ولو الملف مفتوح في برنامج (PDF مفتوح مثلًا) Move-Item هيطلع error للملف ده بس ويكمّل الباقي.`
         },
@@ -5627,7 +5642,7 @@ $old | Remove-Item -Verbose`,
             "اطبع العدد والحجم قبل أي مسح.",
             "امسحهم، واطبع اسم كل واحد."
           ],
-          sol: R`جربته بالظبط كده: [[-WhatIf]] طبع [[2 files older than 14 days (0 MB)]] وبعدين [[What if: Performing the operation "Remove File" on target "...\old1.log".]] ونفس السطر لـ [[sub\old2.log]]، والملفات لسه موجودة. من غير WhatIf طبع نفس الملخص وبعدين [[VERBOSE: Performing the operation "Remove File" on target ...]] للملفين، وفضل [[new.log]] (جديد) و [[keep.txt]] (قديم بس مش log). والتشغيلة التالتة طبعت [[0 files older than 14 days (0 MB)]] من غير error.
+          sol: R`جربته بالظبط كده في PowerShell 7.6 و 5.1، في فولدر اسمه فيه مسافة ([[clean dir]]): [[-WhatIf]] طبع [[2 files older than 14 days (0 MB)]] وبعدين [[What if: Performing the operation "Remove File" on target "...\old1.log".]] ونفس السطر لـ [[sub\old2.log]]، والملفات لسه موجودة. من غير WhatIf طبع نفس الملخص وبعدين [[VERBOSE: Performing the operation "Remove File" on target ...]] للملفين، وفضل [[new.log]] (جديد) و [[keep.txt]] (قديم بس مش log). والتشغيلة التالتة طبعت [[0 files older than 14 days (0 MB)]] من غير error.
 
 لو شغلته من غير [[-Path]] هيسألك عليه، ولو التشغيل non-interactive (Task Scheduler) هيفشل برسالة missing mandatory parameters بدل ما يمسح في المكان الغلط، وده المطلوب.`,
           solCode: R`# شغّله من الفولدر اللي فيه clean-old-files.ps1
@@ -5674,7 +5689,7 @@ foreach ($d in $report | Where-Object FreePct -lt $WarnPercent) {
           flag: "script",
           deep: {
             why: "الديسك بيتملي بالراحة لحد ما في يوم Docker أو Windows Update أو الـ build يفشل برسالة مش واضحة. تقرير بيشتغل كل يوم ويحذرك تحت ١٥٪ بيوفّر عليك اليوم ده، ونفس السكربت بيشتغل على سيرفرات ويندوز.",
-            how: R`ليه [[Get-PSDrive]] ومش [[Get-Volume]] أو [[Get-CimInstance Win32_LogicalDisk]]؟ الاتنين دول ويندوز بس، و Get-PSDrive شغال في 5.1 و 7 وعلى لينكس كمان (جربت السكربت هنا وطلع درايف [[/]]). لو محتاج تفاصيل زي نوع الديسك أو اسم الـ volume: [[Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3"]] بيرجع الديسكات المحلية بس، وفيه [[Size]] و [[FreeSpace]] و [[VolumeName]].
+            how: R`ليه [[Get-PSDrive]] ومش [[Get-Volume]] أو [[Get-CimInstance Win32_LogicalDisk]]؟ الاتنين دول ويندوز بس، و Get-PSDrive شغال في 5.1 و 7 وعلى لينكس كمان (هناك بيطلع درايف واحد اسمه [[/]]). لو محتاج تفاصيل زي نوع الديسك أو اسم الـ volume: [[Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3"]] بيرجع الديسكات المحلية بس، وفيه [[Size]] و [[FreeSpace]] و [[VolumeName]].
 
 [[Used]] بيبقى فاضي ([[$null]]) لدرايفات زي DVD من غير CD أو درايف شبكة مش متوصل، و [[$null + $null]] بيطلع [[$null]] و [[$null -gt 0]] False، فالفلتر بيشيلهم.
 
@@ -5708,7 +5723,7 @@ foreach ($d in $report | Where-Object FreePct -lt $WarnPercent) {
             "...طلّع تحذير بالأصفر.",
             "قفلة."
           ],
-          sol: R`جربته على لينكس بـ [[-WarnPercent 50]]: الجدول طلع درايف واحد [[/]] (على ويندوز هتشوف C و D) بـ TotalGB و FreeGB و FreePct، وتحته [[WARNING: Drive / has only 30% free]]. والـ CSV فيه [["Drive","TotalGB","FreeGB","FreePct"]] و [["/","232.6","69","30"]]. من غير [[-WarnPercent]] مفيش تحذير لأن 30 أكبر من 15.
+          sol: R`جربته على ويندوز فيه 3 ديسكات بـ [[-WarnPercent 50]]، في PowerShell 7.6 و 5.1: الجدول طلع C و D و E بـ TotalGB و FreeGB و FreePct (أول صف [[C 301.3 47.7 16]])، وتحته [[WARNING: Drive C has only 16% free]] وسطر لكل درايف. والـ CSV نفسه في الاتنين: [["Drive","TotalGB","FreeGB","FreePct"]] وبعدين [["C","301.3","47.7","16"]] وهكذا. الفرق الوحيد في العرض: 7 بيكتب [[301.30]] و [[16.00]] في الجدول، و 5.1 بيكتب [[301.3]] و [[16]]. ودرايف Temp ظهر في [[Get-PSDrive]] بتاع 7 بس، والفلتر شاله. من غير [[-WarnPercent]] التحذير بيطلع بس للدرايفات اللي تحت 15%.
 
 UsedGB: زوّد سطر [[UsedGB = [math]::Round($_.Used / 1GB, 1)]] جوه الـ PSCustomObject. ولو عايزه في نص الأعمدة حطه في المكان ده بالظبط، لأن PSCustomObject بيحافظ على الترتيب.`
         },
@@ -5808,16 +5823,18 @@ TLS في 5.1: على ويندوز قديم ممكن [[Invoke-WebRequest]] يفش
             "قفلة.",
             "لو فيه حاجة واقعة، اخرج بـ 1."
           ],
-          sol: R`جربته بسيرفر Python على بورت محلي: [[UP    200  http://127.0.0.1:8765/  288 ms]]، و [[DOWN  404  http://127.0.0.1:8765/missing  Response status code does not indicate success: 404 (File not found).]] بالأحمر، و [[UP    port 127.0.0.1:8765]]، و [[DOWN  port 127.0.0.1:9]]، و [[$LASTEXITCODE]] بعدها [[1]]. ولينك على بورت مقفول طلع [[DOWN]] من غير رقم وبعده [[Connection refused]].
+          sol: R`جربته على ويندوز بسيرفر Node صغير على بورت 3765 (بيرد 200 على [[/]] و 404 على أي حاجة تانية). في PowerShell 7.6: [[UP    200  http://localhost:3765/  2220 ms]]، و [[DOWN  404  http://localhost:3765/missing  Response status code does not indicate success: 404 (Not Found).]] بالأحمر، ولينك على بورت مقفول [[DOWN    http://localhost:3999/  No connection could be made because the target machine actively refused it. (localhost:3999)]] من غير رقم، و [[UP    port localhost:3765]]، و [[DOWN  port localhost:9]]، و [[$LASTEXITCODE]] بعدها [[1]].
 
-الرسايل دي من PowerShell 7 على لينكس، وفي 5.1 على ويندوز نص الـ error مختلف (زي [[The remote server returned an error: (404) Not Found.]]) بس الأرقام والنتيجة نفسها. ولما جربت [[pwsh -File .\check-site.ps1 -Urls a, b]] من bash طلع error تحويل غريب، لأن الفواصل مش بتعمل array في [[-File]].`
+في 5.1 نفس الأرقام والنتيجة، بس نص الأخطاء مختلف: [[The remote server returned an error: (404) Not Found.]] و [[Unable to connect to the remote server]]. والـ 2220 ms دي مش بطء السيرفر: [[localhost]] جرّب IPv6 ([[::1]]) الأول والسيرفر كان سامع على IPv4 بس، فلو شايف أول طلب بياخد حوالي ثانيتين، جرّب [[127.0.0.1]] بدل localhost.
+
+ولما شغلته من بره بـ [[pwsh -File .\check-site.ps1 -Urls http://localhost:3765/, http://localhost:3765/missing -Ports localhost:3765]] طلع [[Cannot process argument transformation on parameter 'TimeoutSec'. Cannot convert value "..." to type "System.Int32"]] في 7 و 5.1: الفواصل مش بتعمل array في [[-File]]، فاللينك التاني راح لأول parameter فاضي بالترتيب.`
         },
         {
           cmd: "zip-folders.ps1",
           title: "اضغط كل فولدر في zip لوحده بالتاريخ",
           desc: R`سكربت بياخد فولدر فيه مشاريع أو أقسام، ويعمل لكل فولدر فرعي zip لوحده باسمه وتاريخ النهارده ([[shop_2026-10-01.zip]])، في فولدر واحد. مفيد للأرشفة أو قبل ما تمسح مشاريع قديمة أو تبعتها.
 
-[[Get-ChildItem $Source -Directory]] الفولدرات اللي في أول مستوى بس. وقبل الضغط بيتأكد إن الفولدر فيه ملف واحد على الأقل: [[Get-ChildItem -Recurse -File | Select-Object -First 1]] بيقف أول ما يلاقي ملف (سريع حتى مع فولدر كبير)، ولو مفيش، [[continue]] بيعدّي للفولدر اللي بعده، لأن Compress-Archive بيطلع error على فولدر فاضي.
+[[Get-ChildItem $Source -Directory]] الفولدرات اللي في أول مستوى بس. وقبل الضغط بيتأكد إن الفولدر فيه ملف واحد على الأقل: [[Get-ChildItem -Recurse -File | Select-Object -First 1]] بيقف أول ما يلاقي ملف (سريع حتى مع فولدر كبير)، ولو مفيش، [[continue]] بيعدّي للفولدر اللي بعده. ليه؟ Compress-Archive على فولدر فاضي مبيعملش zip ومبيطلعش error (جربتها في 7 و 5.1)، فـ [[Get-Item $zip]] اللي بعده كان هيفشل ويوقف السكربت كله.
 
 [[Join-Path $dir.FullName "*"]] يعني «اللي جوه الفولدر» فالـ zip ميبقاش جواه فولدر زيادة (درس Compress-Archive)، و [[-Force]] يكتب فوق zip النهارده لو شغلته مرتين. وبعد كل zip بيطبع حجمه بالكيلو. و [[$ErrorActionPreference = "Stop"]] يوقف لو حاجة فشلت بدل ما يطبع OK كذب.`,
           example: R`param(
@@ -5876,7 +5893,9 @@ foreach ($dir in Get-ChildItem $Source -Directory) {
             "...اطبع النتيجة.",
             "قفلة."
           ],
-          sol: R`جربته بالظبط كده: طبع [[OK    blog -> .\out\blog_2026-10-01.zip (0.1 KB)]] و [[SKIP  empty (empty)]] بالأصفر و [[OK    shop -> ...shop_2026-10-01.zip (0.1 KB)]]، وفولدر out فيه zipين. ولما فتحت blog.zip كان جواه [[posts\b.md]] على طول من غير فولدر blog فوقه.
+          sol: R`جربته بالظبط كده في PowerShell 7.6 و 5.1، والفولدر اسمه فيه مسافة ([[-Source ".\my projects"]]): طبع [[OK    blog -> .\out\blog_2026-10-02.zip (0.1 KB)]] و [[SKIP  empty (empty)]] بالأصفر و [[OK    shop -> .\out\shop_2026-10-02.zip (0.1 KB)]]، وفولدر out فيه zipين. ولما فتحت blog.zip كان جواه [[posts/b.md]] على طول من غير فولدر blog فوقه (5.1 كتبها [[posts\b.md]] بالـ backslash).
+
+وجربت كلام deep: ملف مخفي اتساب برا الـ zip في 7 و 5.1، و [[Get-ChildItem -Exclude node_modules | Compress-Archive]] طلّع zip من غير node_modules، و [[tar -a -cf t.zip -C folder .]] عمل zip فعلًا (و tar بياخد المخفي كمان).
 
 لو شغلته تاني في نفس اليوم، [[-Force]] بيكتب فوق الـ zips. ولو شلت [[-Force]] هيطلع error إن الملف موجود، ومع [[$ErrorActionPreference = "Stop"]] السكربت هيقف عند أول واحد.`
         },
@@ -5933,7 +5952,7 @@ if (Get-Command code -ErrorAction SilentlyContinue) { code . }`,
           flag: "script",
           deep: {
             why: "كل مرة تبدأ مشروع بتنسى حاجة: .gitignore قبل أول commit فـ node_modules تدخل git، أو .env.example، أو README. سكربت bootstrap بيخلي كل مشاريعك بادية بنفس الشكل الصح، وبيوفّر الـ ١٠ دقايق دول كل مرة.",
-            how: R`[[ValidatePattern]] مش بيفرّق بين الكابيتال والسمول افتراضيًا (جربت [[MyShop]] وعدّت). لو عايز حروف صغيرة بس اكتبها [[(?-i)^[a-z0-9-]+$]] جوه الـ pattern. والمسافة مرفوضة في الحالتين.
+            how: R`[[ValidatePattern]] مش بيفرّق بين الكابيتال والسمول افتراضيًا (جربت [[MyShop]] وعدّت في 7 و 5.1). لو عايز حروف صغيرة بس اكتبها [[(?-i)^[a-z0-9-]+$]] جوه الـ pattern (جربتها و MyShop اترفضت). والمسافة مرفوضة في الحالتين.
 
 الـ here-string متبعت كـ argument تاني لـ Set-Content، و [[-Encoding]] بعده عادي. وخلي بالك إن [["@]] لازم في أول السطر.
 
@@ -5982,7 +6001,9 @@ if (Get-Command code -ErrorAction SilentlyContinue) { code . }`,
             "اطبع النجاح بالأخضر.",
             "لو VS Code موجود افتحه هنا."
           ],
-          sol: R`جربته على PowerShell 7 (من غير سطر [[code .]]): [[-Name my-shop -Root .]] طبع [[Created .\my-shop]] بالأخضر، والفولدر فيه [[.git]] و [[src]] و [[.env.example]] و [[.gitignore]] و [[package.json]] و [[README.md]]، و [[git log --oneline]] فيه commit واحد [[chore: initial project structure]].
+          sol: R`جربته على PowerShell 7.6 و 5.1 (من غير سطر [[code .]])، في فولدر تجربة اسمه فيه مسافة: [[-Name my-shop -Root .]] طبع [[Created .\my-shop]] بالأخضر (وقبلها git طبع [[warning: in the working copy of '.gitignore', LF will be replaced by CRLF...]]، ده عادي على ويندوز)، والفولدر فيه [[.git]] و [[src]] و [[.env.example]] و [[.gitignore]] و [[package.json]] و [[README.md]]، و [[git log --oneline]] فيه commit واحد [[chore: initial project structure]]. ولما عملت node_modules و .env جواه، [[git status]] مشافهمش.
+
+الفرق في 5.1: [[-Encoding utf8]] حط BOM في أول README و .gitignore و .env.example. git عدّاها عادي، بس لو أداة بتقرا .env بتتلخبط من الـ BOM، شغّل السكربت بـ PowerShell 7 (هناك [[utf8]] من غير BOM).
 
 [[-Name "My Shop"]] طلع [[Cannot validate argument on parameter 'Name'. The argument "My Shop" does not match the "^[a-z0-9-]+$" pattern.]] قبل ما أي حاجة تتعمل. ونفس الاسم تاني طلع [[Folder already exists: ...my-shop]]. و [[-Type static]] عمل [[src\index.html]] من غير package.json. والـ .editorconfig: سطر [[Set-Content]] زيادة بـ here-string فيه [[root = true]] وقواعد المسافات، قبل [[git add]].`
         }

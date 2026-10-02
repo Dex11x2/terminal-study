@@ -1,6 +1,6 @@
 # الخطة: وصلنا لفين وفاضل إيه
 
-آخر تحديث: ٢ أكتوبر ٢٠٢٦ (بعد commit `8ee9a35`).
+آخر تحديث: ٢ أكتوبر ٢٠٢٦ (بعد مراجعة السكربتات و Python).
 
 أي جلسة جديدة تقرا الملف ده الأول، وبعد أي دفعة شغل تحدّثه: تشيل اللي خلص من «الشغل الجاي» وتضيفه في «اتعمل»، وتكتب أي حاجة ناقصة اكتشفتها.
 
@@ -12,6 +12,24 @@
 
 ## اتعمل (الأحدث فوق)
 
+- **(٢ أكتوبر) مراجعة دروس السكربتات و Python اللي جت من `b346cf4`.** كل أمر اتشغّل: لينكس في Ubuntu 24.04، وويندوز في PowerShell 7.6 و 5.1 و CMD و Python 3.14.
+  - **bash:** اتراجع 118 درس واتصلح 14. أشهرهم:
+    - رسالة CRLF الحقيقية على Ubuntu 24.04 هي `cannot execute: required file not found`، مش «bad interpreter».
+    - `$(( ))`.
+    - `disk-alert.sh` في WSL.
+    - `convert-all.sh` اتشغّل بـ ImageMagick بجد.
+  - **PowerShell و CMD:** اتراجع 125 درس، واتصلحت bugs حقيقية:
+    - `organize-downloads.ps1` و `rename-photos.ps1` كانوا بيتجاهلوا الملفات اللي في اسمها `[ ]`.
+    - `backup.ps1` كان بيقول «Saved» من غير ما يعمل zip.
+    - `set NAME=%1` كان بيقع مع اسم فيه مسافة.
+    - `if errorlevel 1` كان بيعدّي أخطاء npm (اللي كود الخروج بتاعها سالب).
+    - `forfiles` مكانش بيمسح النسخ القديمة.
+  - **Python:** اتراجع الـ 59 درس كلهم:
+    - `organize_downloads.py` كان هينقل `desktop.ini` المخفي من فولدر Downloads.
+    - تست كان بيمسح ملف حقيقي على ويندوز، لأن `HOME` مبيغيّرش `Path.home()` هناك.
+    - أمر `where` و `diff` في PowerShell مش زي لينكس.
+    - Python 3.12 بيرمي خطأ لما تكتب `fake.called_once_with` غلط بدل ما يعدّيها في صمت.
+  - **zsh:** دروس الماك اللي متجرّبتش بقت تقول مصدرها من الـ docs.
 - **`8ee9a35` (٢ أكتوبر): كل أمر مكتوب بيشتغل فين.**
   - شريط صندوق الكود بقى يقول المكان: «bash على لينكس والماك و WSL»، و «PowerShell على ويندوز»، و «CMD على ويندوز»، و «zsh على الماك».
   - المثال اللي فيه أكتر من نظام بيتقسم صناديق، كل نظام بلونه والـ prompt بتاعه.
@@ -34,21 +52,33 @@
 ### ١. مراجعة الدروس اللي اتكتبت من غير ما تتجرّب
 
 نفس طريقة مراجعة «ابدأ من هنا»:
+
 - كل أمر يتشغّل فعلًا: لينكس في `docker run --rm ubuntu:24.04`، وويندوز في PowerShell 7 و 5.1 و CMD.
 - أي أمر مش شغال على ويندوز يتقال صراحة، ويتحط مكانه أمر ويندوز اتجرّب.
 - أي ناتج في `sol` يبقى الناتج الحقيقي.
 
 الترتيب:
-- [ ] دروس السكربتات في bash و PowerShell و CMD و zsh (من `b346cf4`).
-- [ ] Python (59 درس، منهم 36 أتمتة).
+
+- [x] دروس السكربتات في bash و PowerShell و CMD و zsh (من `b346cf4`).
+- [x] Python (59 درس، منهم 36 أتمتة).
 - [ ] Go و C++ و Kotlin و Swift. الـ commit بيقول الأمثلة اتشغّلت في Docker، بس محدش راجعها هنا.
+- [ ] درس `git-backup.bat` في تاب CMD لسه متراجعش.
 - [ ] الشرح المختصر اللي اتعاد كتابته في: vps، و git، و pg، و sec، و docker، و node، و gha، و wsl.
 - [ ] باقي التابات القديمة، تاب تاب.
 
 ### ٢. دروس مكتوبة من الـ docs لأنها متجرّبتش
 
 كل `sol` في الدروس دي بيقول إنه من الـ docs. نجرّبها لما يبقى فيه الجهاز المناسب.
-- [ ] **محتاجة ماك:** دروس zsh: `pmset` و `say` و `osascript` و `dscl و sysadminctl` و `dseditgroup` و `chmod +a` و `xattr و quarantine` و `socketfilterfw` و `fdesetup و profiles` و `networksetup` و `dns-sd و arp -a` و `Remote Login و Screen Sharing` و `diskutil` و `softwareupdate` و `tmutil` و `system_profiler و ioreg`.
+
+- [ ] **محتاجة ماك:** دروس zsh:
+  - `pmset` و `say` و `osascript`.
+  - `dscl و sysadminctl` و `dseditgroup` و `chmod +a` و `xattr و quarantine` و `socketfilterfw` و `fdesetup و profiles`.
+  - `networksetup` و `dns-sd و arp -a` و `Remote Login و Screen Sharing`.
+  - `diskutil` و `softwareupdate` و `tmutil` و `system_profiler و ioreg`.
+  - دروس Homebrew، و `open`، و `pbcopy`، و `mdfind`، و `caffeinate`، و `defaults`، و `networkQuality`، و `launchd plist` و `launchctl`.
+- [ ] **محتاجة ويندوز بإعدادات عادية:** الجهاز اللي اتجرّب عليه مفعّل «Beta: UTF-8» (الـ code page 65001)، فأي كلام عن الترميز (العربي في ملفات من غير BOM في 5.1، و cp1252/cp1256 في Python) محتاج يتجرّب على ويندوز من غير الإعداد ده.
+- [ ] `netsh wlan show profile ... key=clear` متشغّلش (بيطبع باسوردات الواي فاي).
+- [ ] شاشات الـ debugger في VS Code في درس `debugpy و launch.json` من الـ docs.
 - [ ] **محتاجة Admin أو بتغيّر الجهاز (ويندوز):**
   - إضافة يوزر أو مسحه (`net user /add` و `New-LocalUser`).
   - الفايروول، و IP ثابت، و DNS.

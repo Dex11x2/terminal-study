@@ -25,7 +25,8 @@ const OS_BOX = [
   [/#\s*windows/i, 'ps', 'PowerShell: ويندوز', 'PS> ']
 ];
 const PLACE_LABELS = new Set([...Object.values(RUNS_IN), ...OS_BOX.map(b => b[2])]);
-function osBoxes(ex){
+// scriptName: set for solution code, which shows without prompts (code before the first OS header is labelled with the lesson name, like any script box)
+function osBoxes(ex, scriptName){
   const src = ex.split('\n');
   if (!src.some(l => OS_HEAD.test(l))) return '';
   const boxes = [];
@@ -38,7 +39,7 @@ function osBoxes(ex){
     cur = {k, label, pr, lines: []};
   });
   push();
-  return boxes.map(b => termHTML(b.lines.join('\n').replace(/^\n+|\n+$/g, ''), b.k, false, b.label, b.pr).replace('class="term"', 'class="term os"')).join('');
+  return boxes.map(b => termHTML(b.lines.join('\n').replace(/^\n+|\n+$/g, ''), b.k, !!scriptName, b.label || scriptName || '', b.pr).replace('class="term"', 'class="term os"')).join('');
 }
 
 function termHTML(code, shell, script, label, prOverride){
@@ -81,7 +82,7 @@ function deepHTML(c){
 function solHTML(c){
   const s = SOL[shell+'|'+c];
   if (!s) return '';
-  return '<details class="trysol"><summary>الحل والناتج المتوقع (افتحه بعد ما تجرب)</summary>'+descHTML(s.text)+(s.code ? termBlock(s.code, c, 'script') : '')+'</details>';
+  return '<details class="trysol"><summary>الحل والناتج المتوقع (افتحه بعد ما تجرب)</summary>'+descHTML(s.text)+(s.code ? osBoxes(s.code, c) || termBlock(s.code, c, 'script') : '')+'</details>';
 }
 function breakHTML(c, ex){
   const b = BREAK[shell+'|'+c];

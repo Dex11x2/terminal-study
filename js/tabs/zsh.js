@@ -54,7 +54,7 @@ bash على الماك قديم (bash 3.2 من 2007) بسبب قضية ترخي�
           ],
           sol: R`على ماك جديد [[echo $SHELL]] بيطبع [[/bin/zsh]]، و [[zsh --version]] حاجة زي [[zsh 5.9 (arm64-apple-darwin24.0)]]، و [[bash --version]] أول سطر فيه [[GNU bash, version 3.2.57]]. اكتب [[bash]]: الماك هيطبع رسالة [[The default interactive shell is now zsh.]] والـ prompt يتغير لشكل bash ([[bash-3.2$]])، و [[exit]] يرجعك للـ prompt بتاع zsh.
 
-خد بالك إن [[$SHELL]] هو الشيل الافتراضي بتاع اليوزر، مش الشيل اللي انت فيه دلوقتي: جوه bash هيفضل يطبع [[/bin/zsh]]. عشان تعرف انت فين فعلًا [[echo $0]]. (جربتها على لينكس: zsh 5.9 و bash 5.2، النسخ على الماك مختلفة زي ما فوق.)`
+خد بالك إن [[$SHELL]] هو الشيل الافتراضي بتاع اليوزر، مش الشيل اللي انت فيه دلوقتي: جوه bash هيفضل يطبع [[/bin/zsh]]. عشان تعرف انت فين فعلًا [[echo $0]]. (جربتها على أوبونتو 24.04: zsh 5.9 و bash 5.2.21. سطور الماك اللي فوق، نسخة bash 3.2.57 ورسالة The default interactive shell، من توثيق Apple ومش متجربة هنا.)`
         },
         {
           cmd: "~/.zshrc",
@@ -359,7 +359,9 @@ Homebrew بيحط كل شئ في مسار واحد ([[/opt/homebrew]] على App
           ],
           sol: R`بعد [[brew install tree htop]]، [[tree -L 2]] في فولدر مشروع بيطبع الفولدرات ومستوى واحد جواها، وفي الآخر سطر زي [[5 directories, 12 files]]. و [[htop]] بيفتح شاشة ملونة بالعمليات، q للخروج.
 
-لو [[brew]] نفسه قال [[command not found]] بعد التسطيب، يبقى مشغّلتش السطرين اللي طبعهم في الآخر ([[eval "$(/opt/homebrew/bin/brew shellenv)"]] على Apple Silicon)، ودول بيضيفوا brew للـ PATH. على ماك Intel مكانه [[/usr/local/bin]] ومفيش المشكلة دي غالبًا. ولو [[tree]] طبع آلاف السطور، ضيف [[-I node_modules]].`
+لو [[brew]] نفسه قال [[command not found]] بعد التسطيب، يبقى مشغّلتش السطرين اللي طبعهم في الآخر ([[eval "$(/opt/homebrew/bin/brew shellenv)"]] على Apple Silicon)، ودول بيضيفوا brew للـ PATH. على ماك Intel مكانه [[/usr/local/bin]] ومفيش المشكلة دي غالبًا. ولو [[tree]] طبع آلاف السطور، ضيف [[-I node_modules]].
+
+(ده ماك بس: أمر التسطيب و Next steps من موقع brew.sh وتوثيق Homebrew، والناتج ده مش متجرب هنا.)`
         },
         {
           cmd: "brew --cask",
@@ -385,7 +387,9 @@ brew install --cask docker-desktop`,
           lines: ["برنامج بواجهة (GUI) بيتسطب بـ [[--cask]].", "Docker Desktop."],
           sol: R`[[brew search --cask chrome]] مثلًا بيطبع تحت [[==> Casks]] أسامي زي [[google-chrome]] و [[google-chrome@beta]]. الاسم ده اللي تكتبه في [[brew install --cask google-chrome]]. و [[brew info --cask google-chrome]] يوريك النسخة والموقع الرسمي قبل ما تسطب.
 
-الاسم في brew مش دايمًا زي اسم التطبيق: VS Code اسمه [[visual-studio-code]]. ولو التطبيق متسطب قبل كده من dmg، brew هيقولك إن فيه app موجود بالفعل في Applications، إما امسحه الأول أو استخدم [[--force]] وانت عارف انت بتعمل إيه.`
+الاسم في brew مش دايمًا زي اسم التطبيق: VS Code اسمه [[visual-studio-code]]. ولو التطبيق متسطب قبل كده من dmg، brew هيقولك إن فيه app موجود بالفعل في Applications، إما امسحه الأول أو استخدم [[--force]] وانت عارف انت بتعمل إيه.
+
+(ده ماك بس: الأسماء ورسالة التطبيق الموجود من توثيق Homebrew، مش متجربة هنا.)`
         },
         {
           cmd: "brew upgrade",
@@ -420,7 +424,9 @@ brew cleanup`,
           ],
           sol: R`[[brew outdated]] بيطبع سطر لكل حاجة قديمة زي [[node (24.1.0) < 24.8.0]]، ولو كله محدث مش بيطبع أي حاجة، وده معناه إنك تمام.
 
-اعمل [[brew update]] الأول، وإلا الأداة هتقارن بلستة قديمة ومش هتشوف التحديثات الجديدة. وخد بالك إن الـ casks اللي بتحدث نفسها (زي Chrome) ممكن متظهرش هنا، [[brew outdated --greedy]] بيعرضها. وقبل [[brew upgrade]] في يوم شغل مهم، فكّر إن ترقية postgresql أو node ممكن تغيّر سلوك مشروعك.`
+اعمل [[brew update]] الأول، وإلا الأداة هتقارن بلستة قديمة ومش هتشوف التحديثات الجديدة. وخد بالك إن الـ casks اللي بتحدث نفسها (زي Chrome) ممكن متظهرش هنا، [[brew outdated --greedy]] بيعرضها. وقبل [[brew upgrade]] في يوم شغل مهم، فكّر إن ترقية postgresql أو node ممكن تغيّر سلوك مشروعك.
+
+(ده ماك بس: شكل [[brew outdated]] و [[--greedy]] و [[brew pin]] من توثيق Homebrew (بيطبع النسخ لما يكون في ترمنال، وبيطبع الأسامي بس لما الناتج رايح pipe)، مش متجرب هنا.)`
         },
         {
           cmd: "brew list / info",
@@ -448,7 +454,9 @@ brew uninstall wget`,
           lines: ["المسطّب.", "دوّر على باكدج.", "تفاصيل باكدج ونسخته ومتسطب ولا لأ.", "شيل باكدج."],
           sol: R`[[brew info tree]] (أو أي حاجة من [[brew list]]) بيطبع أول سطر زي [[==> tree: stable 2.2.1 (bottled)]]، ووصف والموقع الرسمي، ومكان التسطيب زي [[/opt/homebrew/Cellar/tree/2.2.1]] وحجمه، وقسم Dependencies لو ليها اعتمادات.
 
-لو قالك [[Not installed]] يبقى الأداة مش متسطبة لسه، والمعلومات اللي فوق عن النسخة المتاحة. ولو كتبت اسم غلط هيقولك [[No available formula with the name]]، دوّر الأول بـ [[brew search]].`
+لو قالك [[Not installed]] يبقى الأداة مش متسطبة لسه، والمعلومات اللي فوق عن النسخة المتاحة. ولو كتبت اسم غلط هيقولك [[No available formula with the name]]، دوّر الأول بـ [[brew search]].
+
+(ده ماك بس: شكل [[brew info]] من توثيق Homebrew، والأرقام هتختلف عندك. مش متجرب هنا.)`
         },
         {
           cmd: "brew services",
@@ -481,7 +489,9 @@ brew services stop postgresql@16`,
           ],
           sol: R`[[brew install redis]] وبعدين [[brew services start redis]] يطبع [[==> Successfully started redis (label: homebrew.mxcl.redis)]]. [[brew services list]] يوريك redis بحالة [[started]]. و [[redis-cli ping]] يرد [[PONG]].
 
-لو ping قالت [[Could not connect to Redis at 127.0.0.1:6379: Connection refused]]، بص في [[brew services list]]: لو الحالة [[error]] يبقى فيه حاجة تانية ماسكة بورت 6379 (زي Redis في Docker)، اعرفها بـ [[lsof -i :6379]]. وخد بالك إن start بيخليها تقوم مع كل boot، ولو عايزها تشتغل دلوقتي بس استخدم [[brew services run redis]].`
+لو ping قالت [[Could not connect to Redis at 127.0.0.1:6379: Connection refused]]، بص في [[brew services list]]: لو الحالة [[error]] يبقى فيه حاجة تانية ماسكة بورت 6379 (زي Redis في Docker)، اعرفها بـ [[lsof -i :6379]]. وخد بالك إن start بيخليها تقوم مع كل boot، ولو عايزها تشتغل دلوقتي بس استخدم [[brew services run redis]].
+
+(ده ماك بس: [[start]] و [[run]] و [[list]] وحالاتها من توثيق [[brew services]]، مش متجربة هنا. [[redis-cli ping]] و [[PONG]] نفس الكلام على أي نظام.)`
         }
       ]
     },
@@ -523,7 +533,9 @@ open https://github.com`,
           ],
           sol: R`في فولدر المشروع: [[open -a "Visual Studio Code" .]] يفتح VS Code على الفولدر، ومش بيطبع حاجة. أو ثبت أمر [[code]] من VS Code نفسه (Cmd+Shift+P ثم Shell Command: Install 'code' command in PATH) وبعدها [[code .]].
 
-لو ظهر [[Unable to find application named 'Visual Studio Code']] يبقى الاسم مختلف عندك (زي [[Visual Studio Code - Insiders]]) أو التطبيق مش في Applications. الاسم لازم بين علامات تنصيص لأن فيه مسافات. و [[open]] أمر ماك بس، على أوبونتو [[xdg-open]].`
+لو ظهر [[Unable to find application named 'Visual Studio Code']] يبقى الاسم مختلف عندك (زي [[Visual Studio Code - Insiders]]) أو التطبيق مش في Applications. الاسم لازم بين علامات تنصيص لأن فيه مسافات. و [[open]] أمر ماك بس، على أوبونتو [[xdg-open]].
+
+(ده ماك بس: من صفحة [[man open]] بتاعة Apple، مش متجرب هنا.)`
         },
         {
           cmd: "pbcopy / pbpaste",
@@ -556,7 +568,9 @@ pbpaste > notes.txt`,
           ],
           sol: R`[[ls -la | pbcopy]] مش بيطبع حاجة في الترمنال، الناتج راح للكليب بورد. Cmd+V في أي مكان (Notes أو المتصفح) هيلزق الناتج كامل. و [[pbpaste]] في الترمنال يطبعه تاني.
 
-لو لزقت ولقيت حاجة قديمة، يبقى الـ pipe مش متكتب صح. و pbcopy بيشيل الألوان (مش بيحافظ عليها) وده كويس. ودي أوامر ماك بس، على لينكس فيه [[xclip]] أو [[wl-copy]]، وفي WSL [[clip.exe]].`
+لو لزقت ولقيت حاجة قديمة، يبقى الـ pipe مش متكتب صح. و pbcopy بيشيل الألوان (مش بيحافظ عليها) وده كويس. ودي أوامر ماك بس، على لينكس فيه [[xclip]] أو [[wl-copy]]، وفي WSL [[clip.exe]].
+
+(ده ماك بس: من صفحة [[man pbcopy]] بتاعة Apple، مش متجرب هنا.)`
         },
         {
           cmd: "mdfind",
@@ -586,7 +600,9 @@ mdfind -onlyin ~/projects "TODO"`,
           lines: ["دوّر على ملف بالاسم في الجهاز كله بـ Spotlight (لحظي).", "دوّر على كلمة جوه ملفات فولدر معين."],
           sol: R`[[mdfind -name docker-compose.yml]] بيطبع مسار كامل لكل ملف في سطر، زي [[/Users/ali/projects/shop/docker-compose.yml]]، في ثانية تقريبًا لأنه بيسأل فهرس Spotlight مش بيلف على الديسك.
 
-[[-name]] بيطابق أي اسم فيه الكلمة، فممكن يطلع [[docker-compose.yml.bak]] كمان. ولو مطلعش حاجة وانت متأكد إن الملف موجود، يبقى الفولدر ده مستبعد من Spotlight (Privacy في إعدادات Spotlight) أو لسه متفهرسش، استخدم [[find ~ -name docker-compose.yml]] بدله. و mdfind ماك بس.`
+[[-name]] بيطابق أي اسم فيه الكلمة، فممكن يطلع [[docker-compose.yml.bak]] كمان. ولو مطلعش حاجة وانت متأكد إن الملف موجود، يبقى الفولدر ده مستبعد من Spotlight (Privacy في إعدادات Spotlight) أو لسه متفهرسش، استخدم [[find ~ -name docker-compose.yml]] بدله. و mdfind ماك بس.
+
+(ده ماك بس: [[-name]] و [[-onlyin]] من صفحة [[man mdfind]] بتاعة Apple، مش متجرب هنا.)`
         },
         {
           cmd: "caffeinate",
@@ -612,7 +628,9 @@ caffeinate -t 3600`,
           lines: ["شغّل الـ build وامنع الماك ينام لحد ما يخلص ([[-i]] idle).", "امنع النوم لساعة (٣٦٠٠ ثانية)."],
           sol: R`[[caffeinate -t 60]] مش بيطبع حاجة وبيفضل شغال دقيقة ويرجعلك الـ prompt لوحده. في الدقيقة دي الجهاز مش هينام حتى لو إعدادات النوم أقل. Ctrl+C يوقفه قبل كده.
 
-عشان تتأكد وهو شغال، افتح ترمنال تاني واكتب [[pmset -g assertions]]، هتلاقي caffeinate في اللستة. وخد بالك إن [[-t]] لوحدها بتمنع نوم النظام بس وقفل الشاشة ممكن يحصل عادي، لو عايز الشاشة تفضل صاحية ضيف [[-d]]. وقفل غطا اللابتوب بيخليه ينام برضه.`
+عشان تتأكد وهو شغال، افتح ترمنال تاني واكتب [[pmset -g assertions]]، هتلاقي caffeinate في اللستة. وخد بالك إن [[-t]] لوحدها بتمنع نوم النظام بس وقفل الشاشة ممكن يحصل عادي، لو عايز الشاشة تفضل صاحية ضيف [[-d]]. وقفل غطا اللابتوب بيخليه ينام برضه.
+
+(ده ماك بس، ومش متجرب هنا. اتأكدت من صفحة [[man caffeinate]]: من غير أي flag بيمنع idle sleep بس، و [[-d]] للشاشة، و [[-s]] بيشتغل على الشاحن بس، و [[-t]] بالثواني.)`
         },
         {
           cmd: "pmset",
@@ -702,7 +720,9 @@ killall Finder`,
           lines: ["خلّي Finder يعرض الملفات المخفية.", "اقفل Finder وافتحه عشان يطبّق."],
           sol: R`جوه أي نافذة Finder دوس Cmd+Shift+. (نقطة): هتظهر الملفات والفولدرات اللي بتبدأ بنقطة زي [[.git]] و [[.env]] باهتة شوية. دوسها تاني ترجع مخفية. التغيير ده بيفضل حتى بعد ما تقفل Finder.
 
-الفرق عن أمر [[defaults write]] إن الاختصار سريع ومش محتاج [[killall Finder]]. لو مفيش حاجة ظهرت، يبقى الفولدر ده مفيهوش ملفات مخفية أصلًا، جرب الـ home بتاعك. ولو استخدمت الأمر ونسيت [[killall Finder]] مش هيبان تغيير لحد ما Finder يعيد التشغيل.`
+الفرق عن أمر [[defaults write]] إن الاختصار سريع ومش محتاج [[killall Finder]]. لو مفيش حاجة ظهرت، يبقى الفولدر ده مفيهوش ملفات مخفية أصلًا، جرب الـ home بتاعك. ولو استخدمت الأمر ونسيت [[killall Finder]] مش هيبان تغيير لحد ما Finder يعيد التشغيل.
+
+(ده ماك بس: من صفحة [[man defaults]] وتوثيق Apple، مش متجرب هنا.)`
         },
         {
           cmd: "sw_vers",
@@ -729,7 +749,9 @@ system_profiler SPHardwareDataType`,
           lines: ["نسخة macOS.", "المعالج: arm64 يعني Apple Silicon، و x86_64 يعني Intel.", "كل تفاصيل الجهاز."],
           sol: R`[[sw_vers]] بيطبع 3 سطور: [[ProductName: macOS]] و [[ProductVersion: 15.6]] (الرقم حسب جهازك) و [[BuildVersion]]. و [[uname -m]] بيطبع [[arm64]] (Apple Silicon: M1 وما بعده) أو [[x86_64]] (Intel). و [[system_profiler SPHardwareDataType]] يطلع اسم الشريحة (زي [[Chip: Apple M2]]) والرام.
 
-فخ مهم: لو الترمنال نفسه شغال بـ Rosetta، [[uname -m]] هيطبع [[x86_64]] حتى على جهاز M. اتأكد من [[sysctl -n machdep.cpu.brand_string]] أو من سطر Chip في system_profiler.`
+فخ مهم: لو الترمنال نفسه شغال بـ Rosetta، [[uname -m]] هيطبع [[x86_64]] حتى على جهاز M. اتأكد من [[sysctl -n machdep.cpu.brand_string]] أو من سطر Chip في system_profiler.
+
+(ده ماك بس: شكل الناتج من صفحة [[man sw_vers]] بتاعة Apple، والأرقام عندك هتختلف. مش متجرب هنا. ([[uname -m]] بس جربته على لينكس وطبع [[x86_64]].))`
         },
         {
           cmd: "say",
@@ -858,7 +880,9 @@ sed -i '.bak' 's/3000/4000/g' .env`,
           ],
           sol: R`[[sed -i '' 's/3000/4000/g' .env]] مش بيطبع حاجة، و [[cat .env]] هيوريك [[PORT=4000]]. التانية [[sed -i '.bak' ...]] بتعدّل .env وبتعمل [[.env.bak]] فيه القديم. [[ls -a]] هيوريك الاتنين.
 
-لو شغلت أمر لينكس [[sed -i 's/3000/4000/g' .env]] على الماك هيطلع error زي [[sed: 1: ".env": invalid command code .]]، لأن sed الماك اعتبر السكربت امتداد الباك أب واعتبر [[.env]] هو الأوامر. والعكس: أمر الماك على لينكس (GNU sed) بيفشل؛ جربته فطلع [[sed: can't read s/3000/4000/g: No such file or directory]] والملف متغيرش. عشان سكربت يشتغل على الاتنين استخدم [[-i.bak]] لازقة من غير مسافة.`
+لو شغلت أمر لينكس [[sed -i 's/3000/4000/g' .env]] على الماك هيطلع error زي [[sed: 1: ".env": invalid command code .]]، لأن sed الماك اعتبر السكربت امتداد الباك أب واعتبر [[.env]] هو الأوامر. والعكس: أمر الماك على لينكس (GNU sed) بيفشل؛ جربته فطلع [[sed: can't read s/3000/4000/g: No such file or directory]] والملف متغيرش. عشان سكربت يشتغل على الاتنين استخدم [[-i.bak]] لازقة من غير مسافة.
+
+(الجزء بتاع الماك (رسالة [[invalid command code]]) من صفحة [[man sed]] بتاعة BSD ومن تجارب معروفة، مش متجرب هنا. جربت بس ناحية لينكس: [[sed -i '' ...]] فشل بالرسالة اللي فوق، و [[sed -i.bak ...]] اشتغل وعمل [[.env.bak]].)`
         },
         {
           cmd: "lsof -i",
@@ -892,7 +916,9 @@ kill -9 $(lsof -t -i :3000)`,
           ],
           sol: R`في ترمنال: [[python3 -m http.server 3000]] يطبع [[Serving HTTP on :: port 3000]]. في التاني [[lsof -i :3000]] يطبع سطر فيه [[COMMAND Python]] و الـ PID و [[TCP *:hbci (LISTEN)]]. hbci هو اسم بورت 3000 في ملف services، و [[-P]] بتخليه يكتب 3000. بعدين [[kill -9 $(lsof -t -i :3000)]]، والترمنال الأول هيطبع [[zsh: killed     python3 -m http.server 3000]].
 
-لو السيرفر مش شغال، [[lsof -t]] مش هيطبع حاجة و kill يقول [[kill: not enough arguments]] (جربتها في zsh وطلعت كده). ولو [[lsof -i :3000]] مطبعش حاجة والبرنامج شغال، يبقى البرنامج بتاع يوزر تاني، جرب [[sudo lsof -i :3000]]. وابدأ بـ [[kill]] من غير [[-9]] عشان البرنامج يقفل بهدوء.`
+لو السيرفر مش شغال، [[lsof -t]] مش هيطبع حاجة و kill يقول [[kill: not enough arguments]] (جربتها في zsh وطلعت كده). ولو [[lsof -i :3000]] مطبعش حاجة والبرنامج شغال، يبقى البرنامج بتاع يوزر تاني، جرب [[sudo lsof -i :3000]]. وابدأ بـ [[kill]] من غير [[-9]] عشان البرنامج يقفل بهدوء.
+
+(جربت الأوامر على أوبونتو (lsof موجود هناك كمان): [[lsof -i :3000]] طلّع [[TCP *:3000 (LISTEN)]] برقم البورت، لأن ملف services على أوبونتو مفيهوش اسم لبورت 3000. اسم [[hbci]] ده من ملف [[/etc/services]] على الماك، مش متجرب هنا.)`
         },
         {
           cmd: "top -o mem",
@@ -925,7 +951,9 @@ Activity Monitor أسهل للاستخدام اليومي: Cmd+Space ثم «Acti
           ],
           sol: R`[[top -o mem]] بيرتب العمليات بعمود MEM من الأكبر، فأول سطر تحت الهيدر هو أكتر حاجة بتاكل رام (غالبًا Chrome Helper أو Safari أو Docker أو WindowServer). q يخرجك.
 
-لو بتدور على «التطبيق» كله مش عملية واحدة، Activity Monitor أوضح لأن Chrome مثلًا متقسم لعشرات العمليات. و [[vm_stat]] بيطبع أرقام بالـ pages مش بالبايت (الـ page على Apple Silicon 16KB)، فمتقارنش الأرقام دي مباشرة بالجيجا. ولو [[top -o mem]] قال illegal option، يبقى انت على لينكس، هناك [[top]] ثم Shift+M.`
+لو بتدور على «التطبيق» كله مش عملية واحدة، Activity Monitor أوضح لأن Chrome مثلًا متقسم لعشرات العمليات. و [[vm_stat]] بيطبع أرقام بالـ pages مش بالبايت (الـ page على Apple Silicon 16KB)، فمتقارنش الأرقام دي مباشرة بالجيجا. ولو [[top -o mem]] قال illegal option، يبقى انت على لينكس، هناك [[top]] ثم Shift+M.
+
+(ده ماك بس: [[-o mem]] وحجم الصفحة 16KB (أول سطر في [[vm_stat]] بيقوله) من صفحات [[man top]] و [[man vm_stat]] بتاعة Apple، مش متجرب هنا.)`
         },
         {
           cmd: "date -v",
@@ -954,7 +982,9 @@ date -v+7d +%F`,
           lines: ["تاريخ النهارده.", "امبارح: [[-v-1d]] (على لينكس كانت [[-d yesterday]]).", "بعد أسبوع."],
           sol: R`على الماك: [[date +%F]] بيطبع زي [[2026-09-30]]، و [[date -v-1d +%F]] بيطبع [[2026-09-29]]، و [[date -v+7d +%F]] بيطبع [[2026-10-07]].
 
-لو جربت [[date -v-1d]] على لينكس هيطلع [[date: invalid option -- 'v']] (جربتها فعلًا)، والعكس [[date -d yesterday]] على الماك بيطلع [[illegal option -- d]]. و [[-v]] بتتعامل مع آخر الشهر صح، يعني [[date -v+1d]] من 30 سبتمبر يطلع 1 أكتوبر. ولو محتاج نفس الأمر على الاتنين، سطب coreutils واستخدم [[gdate]] (درس coreutils).`
+لو جربت [[date -v-1d]] على لينكس هيطلع [[date: invalid option -- 'v']] (جربتها فعلًا)، والعكس [[date -d yesterday]] على الماك بيطلع [[illegal option -- d]]. و [[-v]] بتتعامل مع آخر الشهر صح، يعني [[date -v+1d]] من 30 سبتمبر يطلع 1 أكتوبر. ولو محتاج نفس الأمر على الاتنين، سطب coreutils واستخدم [[gdate]] (درس coreutils).
+
+(الـ [[-v]] من صفحة [[man date]] بتاعة BSD: الماك مفيهوش [[-d]] أصلًا (الصفحة بتقول إن [[-d]] القديم اتشال). جربت ناحية لينكس بس.)`
         },
         {
           cmd: "shasum",
@@ -1014,7 +1044,9 @@ gdate -d yesterday +%F`,
           ],
           sol: R`بعد [[brew install coreutils gnu-sed]]، [[gsed -i 's/3000/4000/g' .env]] يشتغل زي لينكس بالظبط من غير [['']]، و [[gdate -d yesterday +%F]] يطبع تاريخ إمبارح. و [[gsed --version]] أول سطر [[sed (GNU sed) 4.9]].
 
-لو [[gsed]] قالت command not found يبقى brew مش في الـ PATH أو التسطيب لسه مخلصش. والأوامر الأصلية ([[sed]] و [[date]]) لسه هي بتاعة الماك، ومتغيرش أسماءها في النظام؛ ده مقصود عشان متبوظش سكربتات الماك نفسه.`
+لو [[gsed]] قالت command not found يبقى brew مش في الـ PATH أو التسطيب لسه مخلصش. والأوامر الأصلية ([[sed]] و [[date]]) لسه هي بتاعة الماك، ومتغيرش أسماءها في النظام؛ ده مقصود عشان متبوظش سكربتات الماك نفسه.
+
+(ده ماك بس: أسامي الأوامر بحرف g وفولدر [[gnubin]] من توثيق Homebrew لـ coreutils و gnu-sed، مش متجربة هنا.)`
         },
         {
           cmd: "man بدل --help",
@@ -1047,7 +1079,9 @@ tldr find`,
           ],
           sol: R`على الماك [[ls --help]] بيطبع error زي [[ls: unrecognized option]] وتحته سطر [[usage: ls ...]] فيه لستة حروف الـ options بس، لأن ls بتاع BSD مش بيعرف [[--help]]. على أوبونتو نفس الأمر بيطبع شرح طويل لكل option بالإنجليزي.
 
-ده مش معناه إن ls على الماك ناقص، الشرح في [[man ls]]. وخد بالك إن الـ options نفسها ممكن تختلف بين الاتنين، فأمر نقلته من شرح لينكس ممكن يطلع [[illegal option]]، وساعتها بص في man على الماك أو استخدم نسخة GNU من coreutils.`
+ده مش معناه إن ls على الماك ناقص، الشرح في [[man ls]]. وخد بالك إن الـ options نفسها ممكن تختلف بين الاتنين، فأمر نقلته من شرح لينكس ممكن يطلع [[illegal option]]، وساعتها بص في man على الماك أو استخدم نسخة GNU من coreutils.
+
+(رسالة ls بتاعة الماك من سلوك ls بتاع BSD المعروف، مش متجربة هنا. ناحية أوبونتو جربتها: [[ls --help]] طبع الشرح الطويل.)`
         }
       ]
     },
@@ -1079,7 +1113,9 @@ tldr find`,
           lines: ["قياس سرعة النت والاستجابة، مبني في الماك."],
           sol: R`[[networkQuality]] بياخد حوالي 20 ثانية وبعدين يطبع [[Uplink capacity]] و [[Downlink capacity]] بالـ Mbps، و [[Responsiveness]] بالـ RPM مع تقييم زي High أو Medium أو Low، وقيمة Idle Latency.
 
-المتوقع إن الكابل يطلع Responsiveness أعلى وسرعة أثبت من الواي فاي، خصوصًا لو بعيد عن الراوتر. لو الواي فاي أقل بكتير، المشكلة غالبًا في الإشارة مش الخط. و Responsiveness واطية مع سرعة عالية معناها إن النت بيعلق لما حد تاني بيحمّل. ولو قالك command not found يبقى نسختك أقدم من Monterey.`
+المتوقع إن الكابل يطلع Responsiveness أعلى وسرعة أثبت من الواي فاي، خصوصًا لو بعيد عن الراوتر. لو الواي فاي أقل بكتير، المشكلة غالبًا في الإشارة مش الخط. و Responsiveness واطية مع سرعة عالية معناها إن النت بيعلق لما حد تاني بيحمّل. ولو قالك command not found يبقى نسختك أقدم من Monterey.
+
+(ده ماك بس، ومش متجرب هنا. اتأكدت من صفحة [[man networkQuality]]: [[-v]] تفاصيل أكتر، و [[-s]] الرفع والتحميل ورا بعض بدل مع بعض، وإنه بيستهلك من باقة النت.)`
         },
         {
           cmd: "ifconfig / route",
@@ -1114,7 +1150,9 @@ sudo nano /etc/hosts`,
           ],
           sol: R`[[ifconfig en0]] دوّر فيه على سطر [[inet 192.168.1.15 netmask 0xffffff00 broadcast 192.168.1.255]]: الرقم بعد inet هو IP جهازك. و [[route -n get default]] هيطبع سطر [[gateway: 192.168.1.1]]، ده الراوتر، ومعاه [[interface: en0]].
 
-لو [[ifconfig en0]] مفيهوش سطر inet، يبقى en0 مش الكارت اللي انت متوصل بيه (مثلًا على Mac بكابل أو بعض الموديلات الواي فاي بيبقى en1)؛ [[route -n get default]] بيقولك الـ interface الصح في سطر interface، و [[networksetup -listallhardwareports]] يوريك أنهي en هو Wi-Fi. سطر [[inet6]] ده IPv6 مش هو المطلوب.`
+لو [[ifconfig en0]] مفيهوش سطر inet، يبقى en0 مش الكارت اللي انت متوصل بيه (مثلًا على Mac بكابل أو بعض الموديلات الواي فاي بيبقى en1)؛ [[route -n get default]] بيقولك الـ interface الصح في سطر interface، و [[networksetup -listallhardwareports]] يوريك أنهي en هو Wi-Fi. سطر [[inet6]] ده IPv6 مش هو المطلوب.
+
+(ده ماك بس: من صفحات [[man ifconfig]] و [[man route]] و [[man networksetup]] بتاعة Apple، والأرقام مثال. مش متجرب هنا.)`
         },
         {
           cmd: "ipconfig getifaddr",
@@ -1140,7 +1178,9 @@ curl ifconfig.me`,
           lines: ["عنوانك على الواي فاي في سطر واحد.", "عنوانك العام على النت."],
           sol: R`[[ipconfig getifaddr en0]] بيطبع الـ IP المحلي بس، زي [[192.168.1.15]]. و [[curl ifconfig.me]] بيطبع الـ IP العام زي [[41.x.x.x]]، ومن غير سطر جديد في الآخر فالـ prompt بيلزق جنبه، ده طبيعي.
 
-الاتنين مختلفين لأن الراوتر بيعمل NAT. لو [[getifaddr en0]] مطبعش حاجة، يبقى الكارت ده مش متوصل، جرب [[en1]]. ولو [[curl ifconfig.me]] طبع IP غريب مش بتاع مزود النت، يبقى انت على VPN.`
+الاتنين مختلفين لأن الراوتر بيعمل NAT. لو [[getifaddr en0]] مطبعش حاجة، يبقى الكارت ده مش متوصل، جرب [[en1]]. ولو [[curl ifconfig.me]] طبع IP غريب مش بتاع مزود النت، يبقى انت على VPN.
+
+(جربت [[curl ifconfig.me]] على لينكس: طبع الـ IP من غير سطر جديد في الآخر فعلًا. [[ipconfig getifaddr]] ماك بس، من صفحة [[man ipconfig]] بتاعة Apple، مش متجرب هنا.)`
         },
         {
           cmd: "flush DNS",
@@ -1167,7 +1207,9 @@ curl ifconfig.me`,
           lines: ["امسح كاش الـ DNS وأعد تحميل خدمة الـ DNS. الاتنين لازمين، وبـ sudo."],
           sol: R`الأمر هيطلب باسورد الماك (عشان sudo)، وبعدها مش بيطبع أي حاجة، وده معناه إنه نجح. بعدها [[dscacheutil -q host -a name yourdomain.com]] أو افتح الموقع، المفروض ياخد الـ IP الجديد.
 
-لو لسه بيفتح القديم: المتصفح نفسه عنده كاش (Chrome: chrome://net-internals/#dns ثم Clear host cache)، أو راوتر البيت عامل كاش، أو الـ TTL القديم عند الـ DNS بتاعك لسه مخلصش؛ اتأكد إن السجل اتغير فعلًا بـ [[dig @1.1.1.1 yourdomain.com]]. ولو ملف [[/etc/hosts]] فيه سطر للدومين ده، هو اللي بيكسب على أي DNS.`
+لو لسه بيفتح القديم: المتصفح نفسه عنده كاش (Chrome: chrome://net-internals/#dns ثم Clear host cache)، أو راوتر البيت عامل كاش، أو الـ TTL القديم عند الـ DNS بتاعك لسه مخلصش؛ اتأكد إن السجل اتغير فعلًا بـ [[dig @1.1.1.1 yourdomain.com]]. ولو ملف [[/etc/hosts]] فيه سطر للدومين ده، هو اللي بيكسب على أي DNS.
+
+(ده ماك بس: الأمر من صفحة دعم Apple عن مسح كاش الـ DNS، مش متجرب هنا.)`
         },
         {
           cmd: "ssh-add",
@@ -2177,7 +2219,7 @@ err_exit مش بيمسك كل حاجة: أمر جوه شرط [[if]] أو قبل 
             "اضغط الفولدر: [[-C]] ادخل الفولدر اللي فوقه ([[:h]]) وخد اسمه بس.",
             "اطبع مكان الأرشيف وحجمه."
           ],
-          sol: R`جربته في zsh 5.9. من غير argument طبع [[backup.zsh:4: 1: usage: backup.zsh <folder>]] و [[$?]] بقت 1. بفولدر مش موجود ([[nope]]) طبع [[not a folder: nope]] و 1. بفولدر حقيقي طبع زي [[saved /root/backups/api-2026-10-01.tar.gz (4.0K)]] و 0 (عندك المسار هيبقى في الـ home بتاعك وتاريخ يومك). و [[tar -tzf]] على الأرشيف طلّع [[api/]] و [[api/a.txt]]، يعني المسارات جوه قصيرة بفضل [[-C]].
+          sol: R`جربته في zsh 5.9 على أوبونتو. من غير argument طبع [[./backup.zsh:4: 1: usage: backup.zsh <folder>]] و [[$?]] بقت 1. بفولدر مش موجود ([[nope]]) طبع [[not a folder: nope]] و 1. بفولدر حقيقي طبع زي [[saved /home/sara/backups/api-2026-10-02.tar.gz (4.0K)]] و 0 (عندك المسار هيبقى في الـ home بتاعك وتاريخ يومك). و [[tar -tzf]] على الأرشيف طلّع [[api/]] و [[api/a.txt]]، يعني المسارات جوه قصيرة بفضل [[-C]].
 
 لو مرة نسيت [[err_exit]] وكان [[mkdir]] فشل (مثلًا مفيش صلاحية)، كان tar هيحاول يكتب برضه ويطلع غلطة تانية، وكان آخر سطر هيطبع saved كأن كله تمام.`
         },
@@ -2288,7 +2330,7 @@ print "done: $dir"`,
             "قفلة اللفة.",
             "اطبع إنه خلص."
           ],
-          sol: R`جربته في zsh 5.9 على فولدر فيه [[a.pdf]] و [[b.JPG]] و [[c.zip]] و [[README]]. مع DRY=1 طبع [[would move a.pdf -> Docs/]] و [[would move b.JPG -> Images/]] و [[would move c.zip -> Archives/]] و [[would move README -> Other/]] (الترتيب عندك ممكن يختلف) وبعدها [[done]]، و [[ls]] أكّد إن مفيش حاجة اتنقلت. من غير DRY الملفات راحت فعلًا: [[Docs/a.pdf]] و [[Images/b.JPG]] و [[Archives/c.zip]] و [[Other/README]].
+          sol: R`جربته في zsh 5.9 على فولدر فيه [[a.pdf]] و [[b.JPG]] و [[c.zip]] و [[README]]. مع DRY=1 طبع [[would move a.pdf -> Docs/]] و [[would move b.JPG -> Images/]] و [[would move c.zip -> Archives/]] و [[would move README -> Other/]] (الترتيب عندك ممكن يختلف) وبعدها [[done: /home/sara/lab/dl]]، و [[ls]] أكّد إن مفيش حاجة اتنقلت. من غير DRY الملفات راحت فعلًا: [[Docs/a.pdf]] و [[Images/b.JPG]] و [[Archives/c.zip]] و [[Other/README]].
 
 لاحظ إن [[b.JPG]] راح Images رغم إن الامتداد كابيتال، ده شغل [[(L)]]. وتشغيله تاني على نفس الفولدر طبع done بس، لأن [[*(.)]] مش بتمسك الفولدرات. وبفولدر مش موجود طبع [[no such folder]] وخرج بـ 1.`,
           solCode: R`mkdir -p ~/lab/dl && cd ~/lab/dl
@@ -2369,7 +2411,9 @@ find ~/lab/dl -type f`
           ],
           sol: R`[[plutil -lint ~/Library/LaunchAgents/com.me.tidy.plist]] بيطبع المسار وبعده [[OK]] لو الملف سليم. لو نسيت تقفل tag أو كتبت [[<integer>]] بغلطة، بيطبع رسالة فيها رقم السطر اللي فيه المشكلة. (اتأكدت إن الملف ده بالظبط بيتقري كـ plist سليم بـ [[plistlib]] بتاع Python، و plutil نفسه موجود على الماك بس.)
 
-خد بالك إن [[/tmp]] على الماك بتتمسح مع الـ restart، فلو عايز اللوج يفضل، خليه في [[/Users/sara/Library/Logs/tidy.log]] مثلًا، بمسار كامل برضه.`,
+خد بالك إن [[/tmp]] مكان مؤقت والماك بينضّفه لوحده، فلو عايز اللوج يفضل، خليه في [[/Users/sara/Library/Logs/tidy.log]] مثلًا، بمسار كامل برضه.
+
+والمفاتيح نفسها (Label و ProgramArguments و StartCalendarInterval وإن المفتاح الناقص معناه «أي قيمة»، وإن launchd بيشغّل المهمة اللي فاتت أول ما الجهاز يصحى من النوم عكس cron) من صفحة [[man launchd.plist]] بتاعة Apple.`,
           solCode: R`whoami
 nano ~/Library/LaunchAgents/com.me.tidy.plist
 plutil -lint ~/Library/LaunchAgents/com.me.tidy.plist`
@@ -2407,7 +2451,7 @@ launchctl bootout gui/$(id -u)/com.me.tidy`,
             "اقرا الناتج والأخطاء من الملفات اللي حددتها في الـ plist.",
             "شيل المهمة من launchd (الملف نفسه بيفضل مكانه)."
           ],
-          sol: R`ده على الماك بس، مجربتوش على لينكس. المتوقع: [[bootstrap]] مش بيطبع حاجة لو نجح. [[launchctl list | grep com.me]] بيطبع سطر فيه [[-]] (مش شغالة دلوقتي) وبعده [[0]] بعد ما تشتغل مرة بنجاح وبعدهم [[com.me.tidy]]. بعد [[kickstart]] بثانية، [[/tmp/tidy.log]] هيبقى فيه ناتج السكربت زي [[done: /Users/sara/Downloads]].
+          sol: R`ده على الماك بس، مجربتوش هنا. الأوامر وشكلها من صفحة [[man launchctl]] بتاعة Apple (وهي بتحط [[list]] و [[load]] و [[unload]] تحت «LEGACY SUBCOMMANDS»: لسه شغالين، بس bootstrap و bootout و kickstart و print هما الحاليين). المتوقع: [[bootstrap]] مش بيطبع حاجة لو نجح. [[launchctl list | grep com.me]] بيطبع سطر فيه [[-]] (مش شغالة دلوقتي) وبعده [[0]] بعد ما تشتغل مرة بنجاح وبعدهم [[com.me.tidy]]. بعد [[kickstart]] بثانية، [[/tmp/tidy.log]] هيبقى فيه ناتج السكربت زي [[done: /Users/sara/Downloads]].
 
 لو الرقم التاني في list مش 0، بص في [[/tmp/tidy.err]]: [[Operation not permitted]] يبقى إذن الخصوصية (درس الـ plist)، و [[no such file]] يبقى مسار غلط في ProgramArguments. ولو bootstrap قال [[Input/output error]] يبقى المهمة محمّلة قبل كده، اعمل bootout الأول.`
         }

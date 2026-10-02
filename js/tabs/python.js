@@ -36,15 +36,22 @@ source .venv/bin/activate`,
           desc: R`الـ venv فولدر جوه المشروع فيه Python ومكتبات خاصة بالمشروع ده بس. فمشروع محتاج FastAPI نسخة قديمة ومشروع تاني محتاج الجديدة، كل واحد في حاله.
 
 [[activate]] بيخلي [[python]] و [[pip]] في الترمنال ده يشاوروا على الـ venv، وبيظهر [[(.venv)]] في أول السطر. و [[deactivate]] يرجّعك.`,
-          example: R`python3 -m venv .venv
+          example: R`# Linux و Mac:
+python3 -m venv .venv
 source .venv/bin/activate
 which python
 deactivate
-# ويندوز PowerShell:
+# Windows (PowerShell):
+py -m venv .venv
 .venv\Scripts\Activate.ps1
-# ويندوز CMD:
-.venv\Scripts\activate.bat`,
-          try: "اعمل venv في فولدر تجربة، وفعّله، وشوف [[which python]] (أو [[where python]] على ويندوز) بيشاور على جوه .venv.",
+(Get-Command python).Source
+deactivate
+# Windows (CMD):
+py -m venv .venv
+.venv\Scripts\activate.bat
+where python
+deactivate`,
+          try: "اعمل venv في فولدر تجربة، وفعّله، وشوف [[which python]] بيشاور على جوه .venv. على ويندوز: [[(Get-Command python).Source]] في PowerShell، أو [[where python]] في CMD.",
           deep: {
             why: "من غير venv كل المكتبات بتتسطّب في Python بتاع النظام: المشاريع بتدوس على بعض، وعلى أوبونتو الجديد pip أصلًا بيرفض.",
             how: R`[[python3 -m venv .venv]] بيعمل فولدر [[.venv]] فيه لينك لـ Python، و pip، وفولدر site-packages فاضي للمكتبات.
@@ -53,7 +60,9 @@ deactivate
 
 مش لازم تفعّل أصلًا: [[.venv/bin/python app.py]] بيشتغل بمكتبات الـ venv على طول. ودي الطريقة الصح في cron و systemd.
 
-على ويندوز [[py -m venv .venv]] لو [[python3]] فتح Microsoft Store. ولو PowerShell رفض يشغّل Activate.ps1 بسبب execution policy: [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]] مرة واحدة.
+على ويندوز [[py]] هو الـ launcher اللي بييجي مع Python من python.org، ولو مش موجود عندك اكتب [[python -m venv .venv]]. ولو PowerShell رفض يشغّل Activate.ps1 بسبب execution policy: [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]] مرة واحدة.
+
+ومتكتبش [[where python]] في PowerShell: [[where]] هناك اختصار لـ [[Where-Object]]، فمش بيطبع حاجة ولا بيطلع error. استخدم [[(Get-Command python).Source]] أو [[where.exe python]].
 
 على أوبونتو لو طلع [[ensurepip is not available]]: [[sudo apt install python3-venv]].
 
@@ -66,12 +75,18 @@ deactivate
             "فعّله (لينكس وماك).",
             "اتأكد إن python بقى اللي جوه .venv.",
             "ارجع للـ Python العادي.",
+            "نفس الحاجة على ويندوز بالـ launcher [[py]].",
             "التفعيل في PowerShell.",
-            "التفعيل في CMD."
+            "مسار python اللي هيشتغل (بديل which في PowerShell).",
+            "ارجع للـ Python العادي.",
+            "نفس الحاجة في CMD.",
+            "التفعيل في CMD.",
+            "كل python في الـ PATH، والأول هو اللي هيشتغل.",
+            "ارجع."
           ],
-          sol: R`بعد [[source .venv/bin/activate]] الـ prompt بيبدأ بـ [[(.venv)]]، و [[which python]] بيرجع مسار جوه الفولدر، عندي طلع [[/tmp/claude-0/python-sol/.venv/bin/python]]. على ويندوز [[where python]] بيطبع أكتر من سطر، وأولهم لازم يبقى [[...\.venv\Scripts\python.exe]].
+          sol: R`جربتها على أوبونتو 24.04: بعد [[source .venv/bin/activate]] الـ prompt بقى يبدأ بـ [[(.venv)]]، و [[which python]] طبع [[/home/sara/lab/.venv/bin/python]]. وبعد [[deactivate]] الـ [[(.venv)]] اختفى، و [[which python]] مطبعش حاجة خالص، لأن على أوبونتو مفيش [[python]] بره الـ venv (اسمه [[python3]] بس).
 
-بعد [[deactivate]] الـ [[(.venv)]] بيختفي و [[which python]] يرجع لـ [[/usr/bin/python3]] أو مايلاقيش [[python]] خالص على أوبونتو (هناك اسمه [[python3]] بس).
+وعلى ويندوز 11 بـ Python 3.14: [[(Get-Command python).Source]] طبع [[...\lab\.venv\Scripts\python.exe]]، و [[where python]] في CMD طبع 3 سطور أولهم [[...\.venv\Scripts\python.exe]]. و [[where python]] في PowerShell مطبعش أي حاجة (ده Where-Object).
 
 لو [[which python]] لسه بيشاور بره .venv بعد التفعيل، يبقى انت شغّلت [[bash activate]] أو [[./activate]] بدل [[source]] (دي بتفعّل في shell فرعي وتقفل). وعلى PowerShell لو طلع [[running scripts is disabled on this system]] شغّل [[Set-ExecutionPolicy -Scope CurrentUser RemoteSigned]] مرة واحدة.`
         },
@@ -108,7 +123,7 @@ pip uninstall -y httpx`,
           ],
           sol: R`جربتها في venv جديد: [[pip install -r requirements.txt]] سطّب requests ومعاها ٤ مكتبات بتعتمد عليها. و [[pip show requests]] طلّع (أهم السطور):
 
-[[Name: requests]] و [[Version: 2.32.3]] و [[Location: .../.venv/lib/python3.11/site-packages]] و [[Requires: certifi, charset-normalizer, idna, urllib3]] و [[Required-by:]] فاضية.
+[[Name: requests]] و [[Version: 2.32.3]] و [[Location: /home/sara/lab/.venv/lib/python3.12/site-packages]] (ده على أوبونتو 24.04، وعلى ويندوز بيبقى [[...\.venv\Lib\site-packages]]) و [[Requires: certifi, charset-normalizer, idna, urllib3]] و [[Required-by:]] فاضية.
 
 الـ Location هو اللي يأكدلك إنها اتسطبت جوه الـ venv مش على النظام. و Requires بتقولك ليه [[pip list]] طلّع مكتبات انت ماكتبتهاش. لو الـ Location طلع بره .venv (زي [[/usr/lib/python3/dist-packages]] أو [[~/.local]]) يبقى نسيت تفعّل الـ venv.`
         },
@@ -118,8 +133,11 @@ pip uninstall -y httpx`,
           desc: "[[pip freeze]] بيطبع كل المكتبات المتسطّبة بنسخها بالظبط ([[name==1.2.3]]). النسخ الثابتة في requirements.txt بتضمن إن السيرفر يسطّب نفس اللي اتجرّب عندك، مش نسخة نزلت امبارح وكسرت حاجة.",
           example: R`pip freeze
 pip freeze > requirements-new.txt
+pip list --outdated
+# Linux و Mac:
 diff requirements.txt requirements-new.txt
-pip list --outdated`,
+# Windows (PowerShell):
+Compare-Object (Get-Content requirements.txt) (Get-Content requirements-new.txt)`,
           try: "في venv فيه مكتبة واحدة زي fastapi، شغّل [[pip freeze]] وشوف كام مكتبة طلعت (هي والمكتبات اللي بتعتمد عليها).",
           deep: {
             why: "requirements فيها [[fastapi]] من غير نسخة: النهارده تسطّب نسخة، وبعد شهر على السيرفر تسطّب أحدث فيها تغيير كاسر. الـ build نفسه بقى مختلف من غير ما تغيّر سطر.",
@@ -131,25 +149,31 @@ pip list --outdated`,
 
 [[pip list --outdated]] بيوريك اللي ليه نسخ أحدث. التحديث قرار: تزوّد النسخة، تشغّل الاختبارات، و commit.`,
             when: "أي مشروع هيشتغل على سيرفر أو عند حد تاني.",
-            mistakes: R`[[pip freeze]] من غير venv فيطلع مئات مكتبات النظام. و freeze فيه مكتبات جرّبتها ومش محتاجها (ipython مثلًا) فالـ image تتقل. و freeze على ويندوز فيه مكتبة ويندوز بس (زي pywin32) فالتسطيب يفشل على لينكس: شيلها أو اكتب [[; sys_platform == "win32"]] جنبها.`
+            mistakes: R`[[pip freeze]] من غير venv فيطلع مئات مكتبات النظام. و freeze فيه مكتبات جرّبتها ومش محتاجها (ipython مثلًا) فالـ image تتقل. و freeze على ويندوز فيه مكتبة ويندوز بس (زي pywin32) فالتسطيب يفشل على لينكس: شيلها أو اكتب [[; sys_platform == "win32"]] جنبها. وفي Windows PowerShell 5.1 الـ [[>]] بيكتب الملف UTF-16: pip بيقراه عادي (جربتها)، بس git بيعتبره ملف binary والـ diff بتاعه مش بيتقري، فاعمله من PowerShell 7 أو CMD.`
           },
           lines: [
             "كل المكتبات بنسخها بالظبط.",
             "احفظها في ملف جديد.",
+            "المكتبات اللي ليها نسخ أحدث.",
             "قارن بالقديم قبل ما تستبدل.",
-            "المكتبات اللي ليها نسخ أحدث."
+            "نفس المقارنة في PowerShell. [[diff]] هناك اختصار لـ Compare-Object، ولو اديته اسمين ملفات بيقارن الاسمين نفسهم مش اللي جواهم، عشان كده Get-Content. وفي CMD: [[fc requirements.txt requirements-new.txt]]."
           ],
           sol: R`في venv نضيف سطّبت فيه [[fastapi]] بس، [[pip freeze]] طلّع ١١ سطر، كلهم بالشكل [[name==version]]: [[fastapi==...]] و [[starlette]] و [[pydantic]] و [[pydantic_core]] و [[anyio]] و [[idna]] و [[typing_extensions]] وغيرهم. الرقم بالظبط بيتغير مع نسخة fastapi، المهم إنه أكتر بكتير من واحد.
 
-ده الفرق بين freeze و requirements اللي كتبتها بإيدك: freeze بيثبّت كل شجرة المكتبات بنسخها الحالية، فلما حد تاني يسطّب ياخد نفس الحاجات بالظبط. ولو لقيت فيه عشرات المكتبات اللي مالهاش علاقة (jupyter وغيره)، يبقى انت شغّلته على Python النظام أو venv قديم مش على venv المشروع.`
+ده الفرق بين freeze و requirements اللي كتبتها بإيدك: freeze بيثبّت كل شجرة المكتبات بنسخها الحالية، فلما حد تاني يسطّب ياخد نفس الحاجات بالظبط. ولو لقيت فيه عشرات المكتبات اللي مالهاش علاقة (jupyter وغيره)، يبقى انت شغّلته على Python النظام أو venv قديم مش على venv المشروع.
+
+وعلى ويندوز جربت [[diff req.txt req-new.txt]] في PowerShell: طبع [[req-new.txt =>]] و [[req.txt <=]]، يعني قارن الأسماء بس. بـ [[Compare-Object (Get-Content ...) (Get-Content ...)]] طلّع السطور المختلفة فعلًا.`
         },
         {
           cmd: "externally-managed-environment",
           title: "pip رافض يسطّب على أوبونتو",
           desc: R`على أوبونتو 24.04 (ودبيان 12) [[pip install]] بره venv بيقولك [[error: externally-managed-environment]]. ده مش عطل: Python بتاع النظام بيعتمد عليه apt، و pip ممنوع يلعب فيه.
 
-الحل: مكتبات المشروع في venv. وأدوات الترمنال اللي عايزها في كل حتة (httpie و yt-dlp و ruff) بـ [[pipx]].`,
-          example: R`pip install requests
+الحل: مكتبات المشروع في venv. وأدوات الترمنال اللي عايزها في كل حتة (httpie و yt-dlp و ruff) بـ [[pipx]].
+
+على ويندوز مش هتقابل الرسالة دي: Python بتاع python.org مفيهوش الملف اللي بيعمل الحماية دي (اتأكدت على Python 3.14)، فـ pip بره venv بيسطّب على Python بتاع الجهاز كله من غير ما يعترض. ده مش معناه إنه صح: برضه venv لكل مشروع.`,
+          example: R`# Linux (and WSL):
+pip install requests
 # error: externally-managed-environment
 sudo apt install python3-venv pipx
 python3 -m venv .venv && . .venv/bin/activate && pip install requests
@@ -187,9 +211,9 @@ pipx list`,
 [[× This environment is externally managed]]
 [[╰─> To install Python packages system-wide, try apt install python3-xyz ...]]
 
-وكمل بيقترح venv أو pipx. ده مش bug: أوبونتو بيحمي Python بتاع النظام من إنك تكسر أدوات زي apt. (جربتها على python3.12 بتاع النظام وطلعت نفس الرسالة.)
+وكمل بيقترح venv أو pipx. ده مش bug: أوبونتو بيحمي Python بتاع النظام من إنك تكسر أدوات زي apt. (جربتها على python3.12 بتاع أوبونتو 24.04 وطلعت نفس الرسالة بالظبط. ولو pip نفسه مش متسطب، سطّبه الأول بـ [[sudo apt install python3-pip]].)
 
-بعد [[pipx install httpie]] و [[pipx ensurepath]] (وافتح ترمنال جديد)، [[pipx list]] هيوريك [[package httpie ...]] والأوامر [[http]] و [[https]]. و [[http example.com]] هيطبع [[HTTP/1.1 200 OK]] والـ headers ملونة وبعدها الـ HTML. لو طلع [[http: command not found]] يبقى الـ PATH لسه ما اتحدّثش. والغلط اللي متعملوش: [[--break-system-packages]] أو [[sudo pip install]].`
+بعد [[pipx install httpie]] و [[pipx ensurepath]] (وافتح ترمنال جديد)، [[pipx list]] طبع [[package httpie 3.2.4, installed using Python 3.12.3]] والأوامر [[http]] و [[httpie]] و [[https]]. و [[http example.com]] طبع [[HTTP/1.1 200 OK]] والـ headers ملونة وبعدها الـ HTML. لو طلع [[http: command not found]] يبقى الـ PATH لسه ما اتحدّثش. والغلط اللي متعملوش: [[--break-system-packages]] أو [[sudo pip install]].`
         }
       ]
     },
@@ -216,7 +240,7 @@ npx playwright screenshot --viewport-size "390,844" --full-page http://localhost
 
 PWA: المتصفح بيسمح بالـ service worker على https أو على localhost بس. فالسيرفر ده على localhost كفاية للتجربة: DevTools ثم Application تشوف الـ Manifest والـ Service Workers وزرار التثبيت.
 
-[[playwright screenshot]] من ترمنال تاني بياخد صورة للصفحة بمقاس موبايل أو ديسكتوب ([[--viewport-size "1440,900"]])، فتقارن المقاسات من غير ما تكبّر وتصغّر المتصفح بإيدك.
+[[playwright screenshot]] من ترمنال تاني بياخد صورة للصفحة بمقاس موبايل أو ديسكتوب ([[--viewport-size "1440,900"]])، فتقارن المقاسات من غير ما تكبّر وتصغّر المتصفح بإيدك. أول مرة بيطلب منك تنزّل المتصفح نفسه: [[npx playwright install chromium]].
 
 ده للتجربة بس. مش سيرفر إنتاج: بطيء ومفيهوش أي حماية.`,
             when: "تجربة موقع static أو build أو PWA بسرعة. أو تنقل ملف لجهاز على نفس الشبكة.",
@@ -228,19 +252,21 @@ PWA: المتصفح بيسمح بالـ service worker على https أو على 
             "قدّم فولدر dist من غير ما تدخله.",
             "صورة للصفحة بمقاس موبايل، بطولها كلها."
           ],
-          sol: R`السيرفر بيطبع [[Serving HTTP on 127.0.0.1 port 8000 (http://127.0.0.1:8000/) ...]] ومع كل طلب سطر زي [[127.0.0.1 - - [30/Sep/2026 05:09:02] "GET / HTTP/1.1" 200 -]].
+          sol: R`السيرفر بيطبع [[Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...]]، ومع [[--bind 127.0.0.1]] [[Serving HTTP on 127.0.0.1 port 8000 (http://127.0.0.1:8000/) ...]]، ومع كل طلب سطر زي [[127.0.0.1 - - [02/Oct/2026 17:42:23] "GET / HTTP/1.1" 200 -]]. (جربتها على لينكس وويندوز بـ [[--bind 127.0.0.1]].)
 
 لو الـ index.html عادي خالص (HTML و CSS بس) مش هتلاقي فرق في Console بين الاتنين. الفرق بيظهر أول ما تستخدم [[<script type="module">]] أو fetch. جربت صفحة بتعمل [[import]] من [[./m.js]]: بالدبل كليك Console طلّع [[Access to script at 'file:///.../m.js' from origin 'null' has been blocked by CORS policy]]، ومن [[http://localhost:8000]] اشتغلت عادي.
 
-لو طلع [[OSError: [Errno 98] Address already in use]] غيّر البورت. ولو فتحت [[http://0.0.0.0:8000]] وما اشتغلش على ويندوز، استخدم [[localhost]].`
+على لينكس لو البورت مشغول بيطلع [[OSError: [Errno 98] Address already in use]]، غيّر البورت. على ويندوز مفيش الـ error ده: شغّلت سيرفرين على نفس البورت والتاني قال [[Serving HTTP]] عادي، فلو الصفحة مش بتتحدّث اتأكد إن مفيش سيرفر قديم شغال في ترمنال تاني. و [[0.0.0.0]] اللي بيطبعه معناها «كل الواجهات» مش عنوان تفتحه، افتح [[localhost]].
+
+و [[npx playwright screenshot ...]] جربته على السيرفر ده: طبع [[Navigating to ...]] و [[Capturing screenshot into shot-mobile.png]]. ولو طلع [[Executable doesn't exist]] يبقى لسه منزّلتش المتصفح ([[npx playwright install chromium]]).`
         },
         {
           cmd: "python -m",
           title: "شغّل موديول كأمر",
           desc: "[[python -m name]] بيشغّل موديول باسمه مش بمسار ملف. Python فيه موديولات جاهزة بتشتغل كأوامر (json.tool و http.server و venv و pip). وكود مشروعك نفسه: [[python -m app.seed]] بيشغّل [[app/seed.py]] كجزء من الباكدج، فالـ imports بتشتغل صح.",
-          example: R`curl -sS https://api.example.com/health | python3 -m json.tool
+          example: R`curl -sS https://api.github.com/users/octocat | python3 -m json.tool
 python3 -m json.tool --no-ensure-ascii data.json
-python -m app.seed data/foods.csv --dry-run
+python -m app.seed
 python -m pip --version
 python -c "import sys; print(sys.version)"`,
           try: "اعمل فولدر app فيه [[__init__.py]] فاضي و seed.py بيعمل [[from app import config]]. شغّله بـ [[python app/seed.py]] (هيفشل) وبعدين بـ [[python -m app.seed]] (هيشتغل).",
@@ -261,21 +287,29 @@ python -c "import sys; print(sys.version)"`,
             mistakes: "ملف في مشروعك اسمه [[json.py]] أو [[http.py]] أو [[email.py]]: بيغطي على موديول Python الأصلي وتطلع errors ملهاش معنى. و [[python -m app/seed.py]] بمسار: -m بياخد اسم بنقط ومن غير .py."
           },
           lines: [
-            "نسّق JSON جاي من API.",
+            "نسّق JSON جاي من API. (في Windows PowerShell 5.1 اكتب [[curl.exe]]، لأن [[curl]] هناك اختصار لأمر تاني.)",
             "نسّق ملف، والعربي يفضل عربي.",
-            "شغّل ملف من مشروعك كجزء من الباكدج (عرض بس).",
+            "شغّل app/seed.py كجزء من الباكدج، من الفولدر اللي فيه app/ (زي التجربة).",
             "pip بتاع الـ python ده بالظبط.",
             "سطر Python من الترمنال."
           ],
-          sol: R`جربتها بالظبط: [[python app/seed.py]] فشل بـ [[ModuleNotFoundError: No module named 'app']]، و [[python -m app.seed]] من نفس الفولدر (اللي فيه [[app/]]) اشتغل وطبع [[seed ok: demo]].
+          sol: R`جربتها بالظبط على أوبونتو وعلى ويندوز (PowerShell): [[python app/seed.py]] فشل بـ [[ModuleNotFoundError: No module named 'app']]، و [[python -m app.seed]] من نفس الفولدر (اللي فيه [[app/]]) اشتغل وطبع [[seed ok: demo]].
 
 السبب: لما تشغّل ملف بمساره، Python بيحط فولدر الملف نفسه ([[app/]]) في [[sys.path]]، فمش شايف حاجة اسمها [[app]] جواه. مع [[-m]] بيحط الفولدر الحالي، فـ [[app]] بقى package يتعمله import.
 
 لو [[-m]] كمان فشل بنفس الغلطة، يبقى انت واقف جوه [[app/]] نفسه مش في الفولدر اللي فوقه، أو ناسي [[__init__.py]] أحيانًا، أو كتبت [[app/seed]] أو [[app.seed.py]] بدل [[app.seed]].`,
-          solCode: R`mkdir -p app && touch app/__init__.py
+          solCode: R`# Linux و Mac:
+mkdir -p app && touch app/__init__.py
 echo 'NAME = "demo"' > app/config.py
 printf 'from app import config\nprint("seed ok:", config.NAME)\n' > app/seed.py
 python app/seed.py     # ModuleNotFoundError: No module named 'app'
+python -m app.seed     # seed ok: demo
+# Windows (PowerShell):
+mkdir app
+New-Item app\__init__.py
+'NAME = "demo"' | Set-Content app\config.py
+"from app import config$__btnprint('seed ok:', config.NAME)" | Set-Content app\seed.py
+python app\seed.py     # ModuleNotFoundError: No module named 'app'
 python -m app.seed     # seed ok: demo`
         }
       ]
@@ -293,14 +327,16 @@ python -m app.seed     # seed ok: demo`
 اسم الأمر بيختلف حسب النظام: على لينكس وماك [[python3]] (و [[python]] ساعات مش موجود خالص). على ويندوز [[python]] أو [[py]]، و [[py]] ده launcher بيختار النسخة لو عندك أكتر من واحدة.
 
 اللغة نفسها (المتغيرات و if و loops والدوال و classes) في تاب «Python و FastAPI». هنا بنركّز على إزاي تكتب سكربت بيعمل شغل حقيقي على جهازك أو على السيرفر.`,
-          example: R`python3 --version
+          example: R`# Linux و Mac:
+python3 --version
 python3 hello.py
 python3 hello.py Sara
-# ويندوز:
+python3 -i hello.py
+# Windows (PowerShell):
 py --version
 py --list
-py -3.12 hello.py
-python3 -i hello.py`,
+py hello.py Sara
+py -3.14 hello.py`,
           try: R`اعمل [[hello.py]] فيه 4 سطور: [[import sys]]، و [[name = sys.argv[1] if len(sys.argv) > 1 else "world"]]، و [[print(f"hello {name}")]]، و [[print("python", sys.version.split()[0], "from", sys.executable)]]. شغّله من غير اسم وباسم، وبعدين بـ [[python3 -i hello.py]] واكتب [[name]] بعد ما يخلص. وجرّب تشغّله وانت واقف في فولدر تاني.`,
           deep: {
             why: "أي حاجة بتعملها بإيدك أكتر من مرتين (تنقل ملفات، تجمع أرقام من شيتات، تشيّك على موقع) تتكتب سكربت مرة وتتشغّل بأمر واحد. والسكربت بيتحفظ في git، ويتجدول، وحد تاني يقدر يشغّله.",
@@ -308,7 +344,7 @@ python3 -i hello.py`,
 
 [[sys.executable]] بيقولك أنهي Python بالظبط اللي شغّال. لو الـ venv متفعّل هتلاقيه جوه [[.venv]]، ودي أسرع طريقة تعرف المكتبات هتيجي منين.
 
-ويندوز: الـ installer بتاع python.org بيسطّب [[py]]. [[py]] لوحده بيشغّل أحدث نسخة، و [[py -3.12]] نسخة معيّنة، و [[py --list]] بيعرض النسخ المتسطّبة. ولو كتبت [[python]] واتفتح Microsoft Store، ده alias من ويندوز نفسه: يا تسطّب Python من python.org، يا تقفل الـ alias من Settings ثم Apps ثم App execution aliases.
+ويندوز: Python من python.org بيسطّب [[py]] (الـ installer العادي، و «Python install manager» اللي python.org بيرشّحه من 3.14). [[py]] لوحده بيشغّل أحدث نسخة، و [[py -3.14]] نسخة معيّنة لو متسطبة، و [[py --list]] بيعرض النسخ المتسطّبة. ولو الـ venv متفعّل، [[py]] بيشغّل Python بتاع الـ venv. ولو كتبت [[python]] واتفتح Microsoft Store أو طلع [[Python was not found]]، ده alias من ويندوز نفسه ومعناه إن Python مش متسطب: يا تسطّبه من python.org، يا تقفل الـ alias من Settings ثم Apps ثم Advanced app settings ثم App execution aliases.
 
 [[python3 -i hello.py]] بيشغّل السكربت وبعدين يفتح الـ REPL ومعاك كل المتغيرات اللي اتعملت. مفيد تبص على النتيجة أو تجرّب دالة من غير ما تعدّل الملف.`,
             when: "أي مهمة بتتكرر. ولو المهمة سطر واحد بيوصّل أوامر موجودة، bash أو PowerShell ممكن يبقوا أقصر (درس «bash ولا Python ولا PowerShell» في المستوى ٣).",
@@ -318,16 +354,19 @@ python3 -i hello.py`,
             "نسخة Python.",
             "شغّل السكربت.",
             "شغّله وابعتله كلمة توصل في sys.argv.",
-            "الـ launcher بتاع ويندوز.",
+            "شغّله، وبعد ما يخلص افتح REPL ومعاك متغيراته.",
+            "الـ launcher بتاع ويندوز ونسخة Python اللي هيشغّلها.",
             "النسخ المتسطّبة على الجهاز.",
-            "شغّل بنسخة معيّنة.",
-            "شغّله، وبعد ما يخلص افتح REPL ومعاك متغيراته."
+            "نفس التشغيل بالـ launcher.",
+            "شغّل بنسخة معيّنة (لازم تكون متسطبة، و [[py --list]] بيقولك عندك إيه)."
           ],
-          sol: R`الناتج عندي:
+          sol: R`الناتج عندي على أوبونتو 24.04:
 
 [[python3 hello.py]] طبع [[hello world]] وتحتها [[python 3.12.3 from /usr/bin/python3]].
 [[python3 hello.py Sara]] طبع [[hello Sara]].
 [[python3 -i hello.py]] طبع نفس السطرين وبعدين [[>>>]]، و [[name]] رجّع [['world']]. اخرج بـ [[exit()]] أو Ctrl+D.
+
+وعلى ويندوز 11: [[py --list]] طبع [[-V:3.14[-64] *   Python 3.14.3]]، و [[py hello.py Sara]] طبع [[hello Sara]] وتحتها [[python 3.14.3 from C:\Users\...\python.exe]]. ولما فعّلت venv وشغّلت [[py hello.py]]، المسار بقى [[...\.venv\Scripts\python.exe]].
 
 ولما شغّلته من فولدر تاني بنفس الاسم طلع [[can't open file ... No such file or directory]]: يا تدخل الفولدر بـ cd، يا تكتب المسار كامل.
 
@@ -345,14 +384,17 @@ print("python", sys.version.split()[0], "from", sys.executable)`
 ولو حطيته من غير [[.py]] في فولدر موجود في الـ PATH (زي [[~/.local/bin]]) يبقى أمر تكتبه من أي مكان، زي [[ls]] و [[git]].
 
 على ويندوز النظام مبيقراش السطر ده، بس الـ launcher [[py]] بيقراه، و Python نفسه بيعتبره تعليق عادي.`,
-          example: R`head -1 hello.py
+          example: R`# Linux و Mac:
+head -1 hello.py
 chmod +x hello.py
 ./hello.py Sara
 mkdir -p ~/.local/bin
 cp hello.py ~/.local/bin/hello
 hello Ali
 # لو طلع command not found:
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc`,
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+# Windows (PowerShell):
+py hello.py Sara`,
           try: R`حط [[#!/usr/bin/env python3]] أول سطر في [[hello.py]]. شغّله بـ [[./hello.py]] قبل [[chmod +x]] وبعدها. وبعدين اعمل نسخة بنهايات سطور ويندوز: [[printf '#!/usr/bin/env python3\r\nprint("hi")\r\n' > crlf.py]] و [[chmod +x crlf.py]] وشغّلها واقرا الرسالة.`,
           deep: {
             why: "الأدوات اللي بتستخدمها كل يوم (backup، تنضيف، تقرير) أسهل لما تبقى أوامر باسمها، من غير ما تفتكر السكربت في أنهي فولدر.",
@@ -362,7 +404,7 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc`,
 
 [[chmod +x]] بيدّي صلاحية التنفيذ. و [[~/.local/bin]] على أوبونتو بيتضاف للـ PATH لوحده من [[~/.profile]] لو الفولدر موجود ساعة الـ login، فلو لسه عامله افتح session جديدة أو ضيفه بإيدك زي آخر سطر في المثال. وعلى ماك الشيل zsh، فالسطر يروح [[~/.zshrc]].
 
-ويندوز: ملفات [[.py]] مربوطة بالـ launcher، فـ [[hello.py Sara]] بيشتغل في CMD لو الامتداد في [[PATHEXT]]. والـ launcher بيفهم [[#!/usr/bin/env python3]] كـ «أحدث Python 3».`,
+ويندوز: مفيش chmod ولا [[./hello.py]]. [[py hello.py]] بيقرا الـ shebang ويفهم [[#!/usr/bin/env python3]] كـ «أحدث Python 3» (جربتها بـ Python 3.14). ولو الـ installer ربط ملفات [[.py]] بالـ launcher (الـ installer القديم من python.org بيعمل كده)، [[hello.py Sara]] بيشتغل في CMD لوحده. على جهازي «Python install manager» و [[assoc .py]] قال [[File association not found for extension .py]]، فالأضمن [[py hello.py]].`,
             when: "سكربت بتستخدمه كتير على لينكس أو ماك أو سيرفر. ولو ليه مكتبات خارجية، الأحسن تسطّبه كأمر بجد (درس «[project.scripts] و pipx» في المستوى ٣).",
             mistakes: R`ملف متكتب على ويندوز بنهايات CRLF: الـ shebang بيبقى [[python3\r]] والنظام مش لاقيه. وأي حاجة قبل [[#!]] (حتى سطر فاضي أو BOM) بتلغيه. و [[#!/usr/bin/python]] على أوبونتو الجديد مفيش [[python]] أصلًا. ونسيان chmod بيطلع [[Permission denied]]، ومن غير shebang خالص bash بيحاول يقرا الملف كأنه سكربت bash.`
           },
@@ -373,17 +415,19 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc`,
             "فولدر للأوامر بتاعتك.",
             "انسخه هناك من غير .py.",
             "بقى أمر من أي مكان.",
-            "ضيف الفولدر للـ PATH لو مش موجود (وافتح ترمنال جديد)."
+            "ضيف الفولدر للـ PATH لو مش موجود (وافتح ترمنال جديد).",
+            "على ويندوز: [[py]] بيقرا الـ shebang ويشغّل بيه، و chmod مالوش لازمة هناك."
           ],
-          sol: R`قبل [[chmod +x]]: [[bash: ./hello.py: Permission denied]]. وبعدها [[./hello.py Sara]] طبع [[hello Sara]]، و [[hello Ali]] من [[~/.local/bin]] طبع [[hello Ali]].
+          sol: R`جربتها على أوبونتو 24.04. قبل [[chmod +x]]: [[bash: ./hello.py: Permission denied]] (exit 126). وبعدها [[./hello.py Sara]] طبع [[hello Sara]]، و [[hello Ali]] من [[~/.local/bin]] طبع [[hello Ali]].
 
-ملف الـ CRLF طلّع:
+ملف الـ CRLF طلّع سطرين:
 
 [[/usr/bin/env: ‘python3\r’: No such file or directory]]
+[[/usr/bin/env: use -[v]S to pass options in shebang lines]]
 
-والـ exit code كان 127. الـ [[\r]] اللي في الآخر بقى جزء من اسم البرنامج. الحل: [[sed -i 's/\r$//' crlf.py]] أو [[dos2unix crlf.py]]، أو في VS Code دوس على [[CRLF]] تحت على اليمين وخليها [[LF]] واحفظ.
+والـ exit code كان 127. السطر التاني تخمين من env وملوش علاقة بمشكلتنا. الـ [[\r]] اللي في الآخر بقى جزء من اسم البرنامج. الحل: [[sed -i 's/\r$//' crlf.py]] أو [[dos2unix crlf.py]]، أو في VS Code دوس على [[CRLF]] تحت على اليمين وخليها [[LF]] واحفظ.
 
-وجرّبت ملف من غير shebang فيه [[print(1)]] بس: bash حاول يقراه وطلع [[syntax error near unexpected token $__bt1'$__bt]].`
+وجرّبت ملف من غير shebang فيه [[print(1)]] بس: bash حاول يقراه وطلع [[./nosb: line 1: syntax error near unexpected token $__bt1']].`
         },
         {
           cmd: "if __name__ == \"__main__\":",
@@ -416,7 +460,7 @@ def main(argv: list[str]) -> int:
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))`,
-          try: R`اعمل [[a.txt]] فيه 3 سطور و [[b.txt]] فيه سطرين. شغّل [[python3 count_lines.py a.txt b.txt]]، ومن غير ملفات، وعلى ملف مش موجود، وبعد كل واحدة [[echo $?]]. وبعدين [[python3 -c "import count_lines; print(count_lines.count_lines(__import__('pathlib').Path('a.txt')))"]]. وفي الآخر عدّله: الملف المش موجود يطبع رسالة على stderr والسكربت يكمّل الباقي، ويخرج بـ 1 لو أي ملف فشل.`,
+          try: R`اعمل [[a.txt]] فيه 3 سطور و [[b.txt]] فيه سطرين. شغّل [[python3 count_lines.py a.txt b.txt]]، ومن غير ملفات، وعلى ملف مش موجود، وبعد كل واحدة [[echo $?]] (في PowerShell [[$LASTEXITCODE]]، لأن [[$?]] هناك True أو False بس). وبعدين [[python3 -c "import count_lines; print(count_lines.count_lines(__import__('pathlib').Path('a.txt')))"]]. وفي الآخر عدّله: الملف المش موجود يطبع رسالة على stderr والسكربت يكمّل الباقي، ويخرج بـ 1 لو أي ملف فشل.`,
           flag: "script",
           deep: {
             why: "سكربت مكتوب كله على مستوى الملف بيشتغل أول ما حد يعمله import، فمينفعش تستخدم دالة منه في سكربت تاني ولا تختبره بـ pytest. ومن غير exit code صح، cron و CI و && في bash فاكرين إنه نجح وهو فشل.",
@@ -462,7 +506,7 @@ if __name__ == "__main__":
 [[     2  b.txt]]
 [[     5  total]]
 
-و exit 1. وجرّبت فولدر بدل ملف: [[skip .: [Errno 21] Is a directory: '.']]، وملف binary: [[skip bin.dat: 'utf-8' codec can't decode byte 0xbb in position 0: invalid start byte]]. عشان كده الـ except فيه التلاتة.`,
+و exit 1. وجرّبت فولدر بدل ملف: على لينكس [[skip .: [Errno 21] Is a directory: '.']]، وعلى ويندوز [[skip .: [Errno 13] Permission denied: '.']]، يعني exception مختلف خالص (PermissionError). وملف binary: [[skip bin.dat: 'utf-8' codec can't decode byte 0xbb in position 0: invalid start byte]]. عشان كده الـ except بيمسك [[OSError]]، ودي أبو FileNotFoundError و IsADirectoryError و PermissionError، ومعاها UnicodeDecodeError. لو كتبت الأسماء واحد واحد ونسيت PermissionError، السكربت هيقع على ويندوز بس.`,
           solCode: R`def main(argv: list[str]) -> int:
     if not argv:
         print("usage: count_lines.py FILE...", file=sys.stderr)
@@ -471,7 +515,7 @@ if __name__ == "__main__":
     for name in argv:
         try:
             n = count_lines(Path(name))
-        except (FileNotFoundError, IsADirectoryError, UnicodeDecodeError) as e:
+        except (OSError, UnicodeDecodeError) as e:
             print(f"skip {name}: {e}", file=sys.stderr)
             failed += 1
             continue
@@ -502,11 +546,11 @@ answer = input(f"delete files older than {days} days in {folder}? [y/N] ")
 if answer.strip().lower() not in ("y", "yes"):
     sys.exit("cancelled")
 print(f"ok: cleaning {folder}, days={days}")`,
-          try: R`شغّله بـ [[python3 ask.py ~/Downloads "two words"]]، ومن غير arguments، واكتب [[ten]] بدل رقم. وبعدين من غير terminal خالص: [[python3 ask.py lab < /dev/null]]. وفي فولدر فيه ملفات txt جرّب [[python3 ask.py lab *.txt]] وبص على أول سطر.`,
+          try: R`شغّله بـ [[python3 ask.py ~/Downloads "two words"]]، ومن غير arguments، واكتب [[ten]] بدل رقم. وبعدين من غير terminal خالص: [[python3 ask.py lab < /dev/null]] (على ويندوز PowerShell مفيش [[<]]، اكتب [[$null | python ask.py lab]]، وفي CMD [[python ask.py lab < NUL]]). وفي فولدر فيه ملفات txt جرّب [[python3 ask.py lab *.txt]] وبص على أول سطر.`,
           flag: "script",
           deep: {
             why: R`سكربت فيه المسار مكتوب جوه الكود لازم تعدّله قبل كل تشغيل. و [[sys.argv[1] ]] من غير فحص بيطلع [[IndexError]] للي بيستخدمه. والسؤال قبل المسح بيحميك من غلطة إيد.`,
-            how: R`[[sys.argv[0] ]] اسم السكربت، والباقي الكلمات بالترتيب. اللي بيقسّم الكلام ويفك [[~]] و [[*]] هو الشيل مش Python: [["two words"]] وصلت عنصر واحد، و [[~/Downloads]] وصلت [[/home/sara/Downloads]]، و [[*.txt]] وصلت أسماء الملفات. على ويندوز CMD و PowerShell مبيفكوش [[*]]، فالسكربت بيستلم [[*.txt]] زي ما هي، والحل [[Path(".").glob(pattern)]] جوه Python.
+            how: R`[[sys.argv[0] ]] اسم السكربت، والباقي الكلمات بالترتيب. اللي بيقسّم الكلام ويفك [[~]] و [[*]] هو الشيل مش Python: [["two words"]] وصلت عنصر واحد، و [[~/Downloads]] وصلت [[/home/sara/Downloads]]، و [[*.txt]] وصلت أسماء الملفات. على ويندوز CMD و PowerShell مبيفكوش [[*]]، فالسكربت بيستلم [[*.txt]] زي ما هي، والحل [[Path(".").glob(pattern)]] جوه Python. و [[~]]: PowerShell 7 بيفكها ([[C:\Users\sara/Downloads]] بشرطة مايلة لقدام في الآخر)، و PowerShell 5.1 و CMD بيبعتوها زي ما هي، فلو السكربت بياخد مسار اعمل [[expanduser()]] جواه.
 
 [[input()]] بيرجّع السطر من غير الـ Enter، و [[or "30"]] بتدّي قيمة افتراضية لو داس Enter على طول. و [[sys.exit("msg")]] بيطبع الرسالة على stderr ويخرج بـ 1.
 
@@ -536,7 +580,9 @@ print(f"ok: cleaning {folder}, days={days}")`,
 
 [[< /dev/null]]: السؤال اتطبع، وبعدين [[EOFError: EOF when reading a line]] و exit 1. ده بالظبط اللي هيحصل لو السكربت اتشغّل من cron.
 
-و [[python3 ask.py lab *.txt]] في فولدر فيه [[a.txt]] و [[b.txt]]: [[['ask.py', 'lab', 'a.txt', 'b.txt']]]، يعني Python عمره ما شاف النجمة. ولو حطيتها بين quotes ([["*.txt"]]) هتوصل [['*.txt']] زي ما هي.`
+و [[python3 ask.py lab *.txt]] في فولدر فيه [[a.txt]] و [[b.txt]]: [[['ask.py', 'lab', 'a.txt', 'b.txt']]]، يعني Python عمره ما شاف النجمة. ولو حطيتها بين quotes ([["*.txt"]]) هتوصل [['*.txt']] زي ما هي.
+
+وعلى ويندوز PowerShell 7: [[~/Downloads]] وصلت [['C:\\Users\\sara/Downloads']] (الـ [[\\]] ده شكل الطباعة بس، المسار فيه شرطة واحدة)، و [[*.txt]] وصلت [['*.txt']] زي ما هي. و [[$null | python ask.py lab]] وقع بنفس [[EOFError: EOF when reading a line]].`
         },
         {
           cmd: "sys.exit و exit codes",
@@ -561,19 +607,19 @@ missing = [k for k in ("db_url", "backup_dir") if k not in config]
 if missing:
     sys.exit(f"error: missing keys: {', '.join(missing)}")
 print("config ok")`,
-          try: R`سمّيه [[check_config.py]] وشغّله في ٤ حالات وبعد كل واحدة [[echo $?]]: من غير config.json، وبـ [[{"db_url": "x",}]] (فاصلة زيادة)، وبـ [[{"db_url": "x"}]]، وبـ [[{"db_url": "x", "backup_dir": "/b"}]]. وفي الأخيرة جرّب [[python3 check_config.py && echo deploying]]. وجرّب [[python3 check_config.py nope.json > out.txt 2> err.txt]] وشوف كل ملف فيه إيه.`,
+          try: R`سمّيه [[check_config.py]] وشغّله في ٤ حالات وبعد كل واحدة [[echo $?]]: من غير config.json، وبـ [[{"db_url": "x",}]] (فاصلة زيادة)، وبـ [[{"db_url": "x"}]]، وبـ [[{"db_url": "x", "backup_dir": "/b"}]]. وفي الأخيرة جرّب [[python3 check_config.py && echo deploying]] (الـ [[&&]] شغالة في bash و PowerShell 7، مش في 5.1). وجرّب [[python3 check_config.py nope.json > out.txt 2> err.txt]] وشوف كل ملف فيه إيه.`,
           flag: "script",
           deep: {
             why: R`سكربت backup فشل وطبع error بس خرج بـ 0: cron مش هيبعتلك حاجة، و [[backup.py && upload.py]] هيرفع نسخة بايظة، و CI هيبقى أخضر. الـ exit code هو الطريقة الوحيدة اللي البرامج التانية بتفهم بيها اللي حصل.`,
             how: R`[[sys.exit(n)]] بيرمي [[SystemExit]]، و Python وهو بيقفل بياخد الرقم منه. عشان كده [[finally]] و [[with]] بيكمّلوا شغلهم قبل الخروج.
 
-القيم: [[sys.exit()]] أو [[sys.exit(None)]] = 0. رقم = الرقم ده (بس النظام بياخد آخر 8 bits، فـ [[sys.exit(256)]] بيطلع 0!). نص = يتطبع على stderr والكود 1. و [[sys.exit(True)]] = 1.
+القيم: [[sys.exit()]] أو [[sys.exit(None)]] = 0. رقم = الرقم ده (على لينكس وماك النظام بياخد آخر 8 bits بس، فـ [[sys.exit(256)]] بيطلع 0! وعلى ويندوز بيفضل 256). نص = يتطبع على stderr والكود 1. و [[sys.exit(True)]] = 1.
 
-العرف: 0 نجاح، 1 فشل عام، 2 استخدام غلط (argparse بيخرج بيه)، و 130 لو اتقفل بـ Ctrl+C (Python بيعمل كده لوحده لو [[KeyboardInterrupt]] ماتمسكش).
+العرف: 0 نجاح، 1 فشل عام، 2 استخدام غلط (argparse بيخرج بيه)، و 130 لو اتقفل بـ Ctrl+C على لينكس وماك (Python بيعمل كده لوحده لو [[KeyboardInterrupt]] ماتمسكش). على ويندوز Ctrl+C بيدّي رقم ويندوز خاص: [[-1073741510]] (يعني [[0xC000013A]]).
 
-تقرا الكود: bash [[echo $?]]، و PowerShell [[$LASTEXITCODE]]، و CMD [[echo %ERRORLEVEL%]].
+تقرا الكود: bash [[echo $?]]، و PowerShell [[$LASTEXITCODE]] (مش [[$?]]، دي هناك True أو False بس)، و CMD [[echo %ERRORLEVEL%]].
 
-[[f"{', '.join(missing)}"]]: علامات تنصيص مختلفة جوه الـ f-string عشان متقفلهاش.`,
+[[f"{', '.join(missing)}"]]: علامات تنصيص مختلفة جوه الـ f-string. قبل Python 3.12 كان لازم، لأن نفس النوع كان بيقفل الـ f-string. من 3.12 مسموح، بس المختلف أوضح وبيشتغل على أي نسخة.`,
             when: "كل سكربت. وخصوصًا اللي بيتجدول، أو بيتنادى من سكربت تاني، أو بيتحط في CI أو pre-commit.",
             mistakes: R`[[except Exception: print(e)]] من غير خروج بكود غلط: الفشل بقى نجاح. و [[exit()]] بدل [[sys.exit()]]: دي معمولة للـ REPL ومش مضمونة تبقى موجودة (مع [[python -S]] مثلًا). والرسايل كلها على stdout فتبوظ أي pipe أو ملف.`
           },
@@ -597,13 +643,13 @@ print("config ok")`,
           sol: R`النتايج بالترتيب:
 
 من غير ملف: [[error: config.json not found]] و [[$?]] = 2.
-الفاصلة الزيادة: [[error: config.json is not valid JSON: Expecting property name enclosed in double quotes: line 1 column 16 (char 15)]] و 1.
+الفاصلة الزيادة على Python 3.13 وأحدث: [[error: config.json is not valid JSON: Illegal trailing comma before end of object: line 1 column 15 (char 14)]] و 1. وعلى 3.12 (اللي على أوبونتو 24.04) نفس الحالة طلّعت رسالة أقل وضوحًا: [[Expecting property name enclosed in double quotes: line 1 column 16 (char 15)]].
 مفتاح ناقص: [[error: missing keys: backup_dir]] و 1.
-سليم: [[config ok]] وبعدها [[deploying...]] و 0.
+سليم: [[config ok]] وبعدها [[deploying]] و 0.
 
 ومع [[> out.txt 2> err.txt]] على ملف مش موجود: الشاشة فاضية، و [[out.txt]] فاضي، و [[err.txt]] فيه سطر الخطأ. لو كنت طبعت الخطأ بـ print عادي كان راح في out.txt.
 
-وجربت كمان: Ctrl+C (أو [[kill -INT]]) على سكربت شغال خرج بـ 130، و [[sys.exit(256)]] خرج بـ 0 مش 256.`
+وجربت كمان على لينكس: Ctrl+C على سكربت شغال خرج بـ 130، و [[sys.exit(256)]] خرج بـ 0 مش 256. وعلى ويندوز [[sys.exit(256)]] طلّع [[$LASTEXITCODE]] = 256، و KeyboardInterrupt طلّع [[-1073741510]].`
         },
         {
           cmd: "print و f-strings للتقارير",
@@ -734,7 +780,7 @@ text = " ".join(sys.argv[1:]) or "(empty)"
 with today.open("a", encoding="utf-8") as f:
     f.write(f"- {datetime.now():%H:%M} {text}\n")
 print(f"{today} ({len(today.read_text(encoding='utf-8').splitlines())} lines)")`,
-          try: R`حط السكربت في فولدر [[scripts]] وجنبه [[template.md]] فيه [[# يوميات]] وسطر فاضي. شغّله مرة من جوه الفولدر بـ [[python3 note.py خلصت درس pathlib]]، ومرة من [[/tmp]] بالمسار الكامل. وبعدين اعمل سكربت فيه [[print(Path("template.md").exists(), Path.cwd())]] وشغّله من [[/tmp]].`,
+          try: R`حط السكربت في فولدر [[scripts]] وجنبه [[template.md]] فيه [[# يوميات]] وسطر فاضي. شغّله مرة من جوه الفولدر بـ [[python3 note.py خلصت درس pathlib]]، ومرة من [[/tmp]] بالمسار الكامل (على ويندوز من أي فولدر تاني، زي [[cd $env:TEMP]]). وبعدين اعمل سكربت فيه [[print(Path("template.md").exists(), Path.cwd())]] وشغّله من [[/tmp]].`,
           flag: "script",
           deep: {
             why: R`أول ما السكربت يتشغّل من cron أو Task Scheduler أو من فولدر تاني، كل المسارات النسبية بتشاور على مكان غلط: cron بيبدأ في الـ home، و Task Scheduler ممكن يبدأ في [[C:\Windows\System32]]. والنتيجة [[FileNotFoundError]] أو، أسوأ، ملفات بتتكتب في مكان محدش بيبص فيه.`,
@@ -776,7 +822,9 @@ print(f"{today} ({len(today.read_text(encoding='utf-8').splitlines())} lines)")`
 
 يعني الـ template اتقرا صح حتى من [[/tmp]] لأن [[HERE]] مبني من [[__file__]].
 
-والسكربت التاني من [[/tmp]] طبع [[False /tmp]]: [[Path("template.md")]] دوّر في [[/tmp]] مش جنب السكربت. وده نفس اللي هيحصل في cron.`
+والسكربت التاني من [[/tmp]] طبع [[False /tmp]]: [[Path("template.md")]] دوّر في [[/tmp]] مش جنب السكربت. وده نفس اللي هيحصل في cron.
+
+وجربته على ويندوز كمان، من جوه الفولدر ومن [[$env:TEMP]]: نفس النتيجة، والملف اتعمل في [[C:\Users\...\notes\2026-10-02.md]] بالعربي سليم.`
         },
         {
           cmd: "glob و rglob",
@@ -804,7 +852,9 @@ print(sorted(p.name for p in root.rglob("*.md")))
 print(sorted(p.name for p in root.iterdir()))
 p = root / "img" / "x.PNG"
 print(p.name, p.stem, p.suffix, p.parent.name, p.suffix.lower() == ".png")`,
-          try: R`اعمل مشروع تجربة: [[mkdir -p proj/src proj/docs proj/img proj/.git]] و [[touch proj/src/a.py proj/src/b.py proj/src/c.py proj/docs/README.md proj/NOTES.md proj/img/x.PNG proj/img/y.png proj/img/z.jpg proj/Makefile]] وشغّل السكربت عليه. وبعدين اكتب سكربت يطبع الملفات اللي اتعدلت في آخر 24 ساعة بس، من غير ما يدخل [[.git]] و [[node_modules]] و [[.venv]] أصلًا.`,
+          try: R`اعمل مشروع تجربة: [[mkdir -p proj/src proj/docs proj/img proj/.git]] و [[touch proj/src/a.py proj/src/b.py proj/src/c.py proj/docs/README.md proj/NOTES.md proj/img/x.PNG proj/img/y.png proj/img/z.jpg proj/Makefile]] وشغّل السكربت عليه. وبعدين اكتب سكربت يطبع الملفات اللي اتعدلت في آخر 24 ساعة بس، من غير ما يدخل [[.git]] و [[node_modules]] و [[.venv]] أصلًا.
+
+على ويندوز PowerShell: [[mkdir proj/src, proj/docs, proj/img, proj/.git]]، و [[New-Item]] بنفس أسماء الملفات مفصولة بفواصل بدل touch، وبدل [[touch -d "3 days ago" f]]: [[(Get-Item f).LastWriteTime = (Get-Date).AddDays(-3)]].`,
           flag: "script",
           deep: {
             why: "«انقل كل الصور»، «امسح الـ logs القديمة»، «اعد ملفات كل نوع»، «هات أكبر ١٠ ملفات»: كلها بتبدأ بلفة على فولدر واختيار ملفات.",
@@ -846,7 +896,9 @@ pathlib مش زي الشيل: [[glob("*")]] بيجيب الملفات المخف
 [[['.git', 'Makefile', 'NOTES.md', 'docs', 'img', 'src'] ]] من iterdir، لاحظ [[.git]] ظاهر.
 [[x.PNG x .PNG img True]]
 
-وحل التمرين تحت بـ [[Path.walk()]]. على نفس المشروع ومعاه [[node_modules]] و [[.venv]] (فيهم ملفات جديدة) وملفات اتعدلت من 3 أيام بـ [[touch -d "3 days ago"]]، طبع [[src/a.py]] و [[img/z.jpg]] و [[img/x.PNG]] و [[NOTES.md]] و [[img/y.png]] وبعدين [[5 files changed in the last 24h]]، ومادخلش node_modules ولا .venv خالص. لو عندك Python أقدم من 3.12: [[os.walk(root)]] بنفس الشكل بس [[dirpath]] بيبقى string.`,
+وحل التمرين تحت بـ [[Path.walk()]]. على نفس المشروع ومعاه [[node_modules]] و [[.venv]] (فيهم ملفات جديدة) وملفات اتعدلت من 3 أيام بـ [[touch -d "3 days ago"]]، طبع الخمسة دول: [[img/x.PNG]] و [[img/z.jpg]] و [[NOTES.md]] و [[img/y.png]] و [[src/a.py]] (مترتبين بوقت التعديل، والملفات اتعملت في نفس الثانية تقريبًا، فالترتيب عندك ممكن يختلف) وبعدين [[5 files changed in the last 24h]]، ومادخلش node_modules ولا .venv خالص. لو عندك Python أقدم من 3.12: [[os.walk(root)]] بنفس الشكل بس [[dirpath]] بيبقى string.
+
+وعلى ويندوز نفس الأرقام، بس المسارات بـ [[\]] ([[img\z.jpg]])، و [[rglob("*.MD")]] لقى [[NOTES.md]] و [[README.md]] لأن ويندوز مش حساس لحالة الحروف، وعلى لينكس نفس السطر رجّع لستة فاضية.`,
           solCode: R`import sys
 import time
 from pathlib import Path
@@ -869,7 +921,7 @@ print(f"{len(recent)} files changed in the last 24h")`
           title: "اقرا واكتب ملفات نصية والعربي ميبوظش",
           desc: R`[[with open(path, "w", encoding="utf-8") as f:]] بيفتح الملف، و [[with]] بيقفله لوحده حتى لو حصل error. الـ mode: [["r"]] قراية (الافتراضي)، و [["w"]] كتابة بتمسح القديم، و [["a"]] إضافة في الآخر، و [["x"]] كتابة بس لو الملف مش موجود، و [["rb"]] و [["wb"]] للملفات الـ binary.
 
-وأهم حاجة في الدرس: [[encoding="utf-8"]] دايمًا. من غيرها Python بيستخدم encoding الجهاز، وده utf-8 على لينكس وماك بس ممكن يبقى [[cp1256]] على ويندوز عربي، فنفس السكربت يكتب عربي سليم عندك ويطلّع رموز غريبة عند زميلك.`,
+وأهم حاجة في الدرس: [[encoding="utf-8"]] دايمًا. من غيرها Python بيستخدم encoding الجهاز، وده utf-8 على لينكس وماك، بس على ويندوز بيبقى الـ code page بتاع الجهاز: [[cp1256]] على ويندوز عربي، و [[cp1252]] على ويندوز إنجليزي (وده مبيعرفش يكتب عربي أصلًا). فنفس السكربت يكتب عربي سليم عندك ويطلّع رموز غريبة أو يقع عند زميلك.`,
           example: R`from pathlib import Path
 p = Path("ar.txt")
 with open(p, "w", encoding="utf-8") as f:
@@ -884,7 +936,7 @@ print(p.read_bytes()[:8])
 print(p.read_text(encoding="cp1256")[:12])
 with open("once.txt", "x", encoding="utf-8") as f:
     f.write("created once\n")`,
-          try: R`شغّله مرتين وشوف الفرق. وبعدين جرّب اللي بيحصل على ويندوز قديم لما تعمل redirect لملف: [[PYTHONIOENCODING=cp1252 python3 -c 'print("سلام")']]. وفي الآخر اعمل ملف فيه BOM زي اللي Notepad و Excel بيعملوه: [[printf '\xef\xbb\xbfname\n' > bom.txt]] واقراه بـ [[encoding="utf-8"]] وبـ [[encoding="utf-8-sig"]] واطبع [[repr]].`,
+          try: R`شغّله مرتين وشوف الفرق. وبعدين جرّب اللي بيحصل لما الناتج يتكتب بـ encoding مش UTF-8 (ده اللي بيحصل على ويندوز لما تعمل redirect لملف): [[PYTHONIOENCODING=cp1252 python3 -c 'print("سلام")']]. في PowerShell: [[$env:PYTHONIOENCODING="cp1252"; python -c "print('سلام')"]] وبعدها [[Remove-Item Env:PYTHONIOENCODING]]. وفي الآخر اعمل ملف فيه BOM زي اللي Notepad و Excel بيعملوه: [[python -c "open('bom.txt','wb').write(b'\xef\xbb\xbfname\n')"]] (نفس السطر شغال في bash و PowerShell) واقراه بـ [[encoding="utf-8"]] وبـ [[encoding="utf-8-sig"]] واطبع [[repr]].`,
           flag: "script",
           deep: {
             why: R`أشهر مشكلة في سكربتات بتتعامل مع عربي: ملف بيتفتح فيطلع [[ط§ظ„ط³ظ„ط§ظ…]] بدل «السلام»، أو السكربت يقع بـ [[UnicodeDecodeError]] أو [[UnicodeEncodeError]] على جهاز ويندوز. والسبب دايمًا ملف اتكتب بـ encoding واتقرا بـ encoding تاني.`,
@@ -892,7 +944,9 @@ with open("once.txt", "x", encoding="utf-8") as f:
 
 لو قريت bytes الـ utf-8 بـ [[cp1256]] (encoding ويندوز العربي القديم) مفيش error، بس كل حرف بيتقري حرفين غلط: [[ط§ظ„ط³ظ„ط§ظ…]]. لو شفت الشكل ده في أي مكان، اعرف إن utf-8 اتقرا كـ cp1256.
 
-الافتراضي من غير encoding هو [[locale.getpreferredencoding()]]. والحلول على ويندوز: اكتب encoding في كل open، أو شغّل بـ [[python -X utf8]]، أو اعمل متغير البيئة [[PYTHONUTF8=1]]. و PEP 686 بيخلي UTF-8 هو الافتراضي من Python 3.15، بس متعتمدش على ده واكتبها.
+الافتراضي من غير encoding هو [[locale.getpreferredencoding()]]. والحلول على ويندوز: اكتب encoding في كل open، أو شغّل بـ [[python -X utf8]]، أو اعمل متغير البيئة [[PYTHONUTF8=1]]. و PEP 686 بيخلي UTF-8 mode هو الافتراضي من Python 3.15 (اتأكدت على 3.15 RC: [[sys.flags.utf8_mode]] بقى 1 لوحده، وعلى 3.13 كان 0)، بس النسخة اللي على أجهزة الناس غالبًا أقدم، فاكتبها.
+
+ولو ويندوز عندك مفعّل فيه «Beta: Use Unicode UTF-8 for worldwide language support» من إعدادات اللغة، الافتراضي بيبقى UTF-8 من غير حاجة. جهازي كده: [[python -X utf8=0 -c "import locale; print(locale.getencoding())"]] طبع [[cp65001]] (يعني UTF-8). متعتمدش على ده برضه: جهاز زميلك غالبًا مش كده.
 
 [[utf-8-sig]]: Notepad القديم و Excel بيحطوا 3 bytes في أول الملف (BOM). [[utf-8]] بيقراهم حرف [[\ufeff]] فأول كلمة في الملف تبقى [['\ufeffname']] مش [['name']]، و [[utf-8-sig]] بيشيلهم.
 
@@ -900,7 +954,7 @@ with open("once.txt", "x", encoding="utf-8") as f:
 
 وضع النص بيحوّل [[\r\n]] لـ [[\n]] وانت بتقرا، وعلى ويندوز بيكتب [[\n]] كـ [[\r\n]]. والملفات الكبيرة: لف على [[f]] سطر سطر زي المثال بدل [[read()]].`,
             when: "كل open وكل read_text و write_text. مفيش استثناء.",
-            mistakes: R`[["w"]] على ملف موجود بيمسح محتواه من غير ما يسأل، فلو قصدك تضيف استخدم [["a"]]، ولو مش عايز تدوس على حاجة استخدم [["x"]]. و [[f.write]] مش بيحط سطر جديد لوحده. وتقرا ملف 2GB بـ [[read_text()]] فالذاكرة تخلص. ومتنساش إن [[print]] للترمنال ليه encoding هو كمان: من غير UTF-8 mode على ويندوز قديم، [[python script.py > out.txt]] فيه عربي ممكن يقع.`
+            mistakes: R`[["w"]] على ملف موجود بيمسح محتواه من غير ما يسأل، فلو قصدك تضيف استخدم [["a"]]، ولو مش عايز تدوس على حاجة استخدم [["x"]]. و [[f.write]] مش بيحط سطر جديد لوحده. وتقرا ملف 2GB بـ [[read_text()]] فالذاكرة تخلص. ومتنساش إن [[print]] ليه encoding هو كمان: على ويندوز الكونسول نفسه UTF-8، بس لما تعمل [[python script.py > out.txt]] الناتج بيتكتب بالـ code page بتاع الجهاز، فسكربت بيطبع عربي ممكن يقع بـ UnicodeEncodeError (زي اللي في «جرّب»). الحل [[PYTHONUTF8=1]] أو [[python -X utf8]].`
           },
           lines: [
             "Path.",
@@ -914,11 +968,11 @@ with open("once.txt", "x", encoding="utf-8") as f:
             "لف سطر سطر ومعاه رقمه من 1.",
             "اطبع من غير الـ \\n اللي في آخر السطر.",
             "أول 8 bytes زي ما هي على الديسك.",
-            "نفس الملف لو اتقرا بـ encoding ويندوز العربي القديم.",
+            "نفس الملف لو اتقرا بـ cp1256 (encoding ويندوز العربي).",
             "x: اكتب بس لو الملف مش موجود.",
             "اكتب."
           ],
-          sol: R`أول مرة:
+          sol: R`أول مرة (نفس الناتج بالظبط على أوبونتو وعلى ويندوز بـ Python 3.14):
 
 [[1 السلام عليكم]] و [[2 سطر تاني]] و [[3 سطر بـ print]]
 [[b'\xd8\xa7\xd9\x84\xd8\xb3\xd9\x84']]
@@ -953,7 +1007,7 @@ def safe_rmtree(target: Path, base: Path) -> None:
 safe_rmtree(Path("backup/project"), Path("backup"))
 print(f"{shutil.disk_usage('.').free / 2**30:.1f} GB free")
 safe_rmtree(Path("backup/../.."), Path("backup"))`,
-          try: R`جهّز: [[mkdir -p project/__pycache__ project/.venv/lib && echo 'print(1)' > project/app.py]]. شغّل السكربت. وبعدين اكتب [[echo NEW > project/app.py]] وشغّله تاني وبص على [[backup/app.py.bak]]. وجرّب في Python: [[Path("")]] بيطلع إيه، و [[Path("").resolve()]].`,
+          try: R`جهّز: [[mkdir -p project/__pycache__ project/.venv/lib && echo 'print(1)' > project/app.py]] (في PowerShell: [[mkdir project/__pycache__, project/.venv/lib]] وبعدين [['print(1)' | Set-Content project/app.py]]). شغّل السكربت. وبعدين اكتب [[echo NEW > project/app.py]] وشغّله تاني وبص على [[backup/app.py.bak]]. وجرّب في Python: [[Path("")]] بيطلع إيه، و [[Path("").resolve()]].`,
           flag: "script danger",
           deep: {
             why: "سكربت backup أو تنضيف فيه rmtree على متغير غلط ممكن يمسح مشروعك أو الـ home كله في ثانية، ومفيش undo. الحماية لازم تبقى في الكود نفسه، مش في إنك «هتاخد بالك».",
@@ -990,16 +1044,18 @@ safe_rmtree(Path("backup/../.."), Path("backup"))`,
             "المساحة الفاضية بالـ GB.",
             "مسح مرفوض: المسار ده فوق backup."
           ],
-          sol: R`أول تشغيل:
+          sol: R`أول تشغيل، وانا واقف في [[/home/sara/lab]] (الفولدر اللي فيه [[project]]):
 
 [[['backup/app.py.bak', 'backup/project', 'backup/project/app.py'] ]]: من غير .venv ولا __pycache__.
 [[deleted backup/project]]
 [[69.3 GB free]] (الرقم على حسب جهازك)
-[[refusing to delete /home/sara/project: not inside /home/sara/project/backup]] و exit 1.
+[[refusing to delete /home/sara: not inside /home/sara/lab/backup]] و exit 1. [[backup/../..]] طلعت الفولدر اللي فوق lab نفسه، والفحص مسكها.
+
+وعلى ويندوز نفس النتيجة بـ [[\]]: [[['backup\\app.py.bak', 'backup\\project', ...] ]] و [[deleted backup\project]] و [[refusing to delete C:\Users\sara: not inside C:\Users\sara\lab\backup]].
 
 بعد [[echo NEW > project/app.py]] والتشغيل التاني: [[cat backup/app.py.bak]] طلع [[NEW]]. الـ move كتب فوق النسخة القديمة من غير ولا كلمة. لو النسخ القديمة مهمة، حط تاريخ في الاسم (درس «datetime وأسماء الملفات» في المستوى ٢) أو افحص [[exists()]] الأول.
 
-و [[Path("")]] طلع [[PosixPath('.')]]، و [[Path("").resolve() == Path.cwd()]] طلع [[True]]. يعني [[rmtree(Path(""))]] بيمسح الفولدر اللي انت فيه. عشان كده الفحص بيتعمل على المسار بعد resolve.`
+و [[Path("")]] طلع [[PosixPath('.')]] (وعلى ويندوز [[WindowsPath('.')]])، و [[Path("").resolve() == Path.cwd()]] طلع [[True]]. يعني [[rmtree(Path(""))]] بيمسح الفولدر اللي انت فيه. عشان كده الفحص بيتعمل على المسار بعد resolve.`
         }
       ]
     },
@@ -1136,7 +1192,9 @@ curl -s localhost:8000/health
 [[WARNING:  WatchFiles detected changes in 'app/main.py'. Reloading...]]
 وبعدها [[Started server process [...]]] و [[Application startup complete.]]
 
-والـ curl التاني بيرجع الرد الجديد. جربتها وده اللي حصل بالظبط.
+والـ curl التاني بيرجع الرد الجديد. جربتها على لينكس بالنسخ المثبّتة دي وبآخر نسخة (uvicorn 0.54) وده اللي حصل بالظبط.
+
+وعلى ويندوز (Python 3.14 في PowerShell 7) نفس الكلام، والنسخ المثبّتة اتسطبت عادي. الفرق إن اللوج بيكتب المسار [['app\main.py']]. وفي Windows PowerShell 5.1 اكتب [[curl.exe -s localhost:8000/health]]، لأن [[curl]] هناك اختصار لـ Invoke-WebRequest وبيطلع [[Cannot process command because of one or more missing mandatory parameters: Uri]].
 
 لو ما عملش reload: انت شغّله من غير [[--reload]]، أو الملف بره الفولدر اللي بيراقبه (أول سطر في اللوج [[Will watch for changes in these directories]]). ولو طلع [[Error loading ASGI app. Could not import module "app.main"]] يبقى انت مش واقف في الفولدر اللي فيه [[app/]]. وافتح [[/docs]] هتلاقي [[/health]] ظاهر لوحده.`,
           solCode: R`# app/main.py  (plus an empty app/__init__.py)
@@ -1151,14 +1209,14 @@ def health():
         {
           cmd: "python3 - <<'PY'",
           title: "Python جوه سكربت bash",
-          desc: "في سكربت bash محتاج تكتب JSON من متغيرات بيئة. بـ echo هيبوظ مع أول علامة تنصيص في القيمة. [[python3 -]] بيقرا البرنامج من الـ stdin، والـ heredoc بيدّيهوله، و [[json.dump]] بيعمل JSON سليم دايمًا.",
+          desc: "في سكربت bash محتاج تكتب JSON من متغيرات بيئة. بـ echo هيبوظ مع أول علامة تنصيص في القيمة. [[python3 -]] بيقرا البرنامج من الـ stdin، والـ heredoc بيدّيهوله، و [[json.dump]] بيعمل JSON سليم دايمًا.\n\nالـ heredoc ده bash (لينكس وماك و WSL و Git Bash). في PowerShell نفس الفكرة بـ here-string: النص بين [[@'...'@]] بيتبعت لـ [[python -]] بـ pipe، والنسخة الكاملة في الحل.",
           example: R`OUT=creds.json
 python3 - "$OUT" <<'PY'
 import json, os, sys
 creds = [{"name": "internal", "value": "Bearer " + os.environ["INTERNAL_TOKEN"]}]
 json.dump(creds, open(sys.argv[1], "w"), indent=2)
 PY`,
-          try: "اعمل [[export INTERNAL_TOKEN='ab\"c']] (فيها علامة تنصيص) وشغّل السكربت، وشوف الـ JSON سليم. وجرّب تعمله بـ echo وشوف الفرق.",
+          try: "اعمل [[export INTERNAL_TOKEN='ab\"c']] (فيها علامة تنصيص) وشغّل السكربت، وشوف الـ JSON سليم. وجرّب تعمله بـ echo وشوف الفرق. ولو على ويندوز، جرّب نسخة PowerShell اللي في الحل.",
           flag: "script",
           deep: {
             why: "JSON بـ [[echo \"{\\\"token\\\": \\\"$TOKEN\\\"}\"]] بيبوظ لو التوكن فيه علامة تنصيص أو backslash أو سطر جديد. Python بيعمل escape صح لوحده.",
@@ -1190,9 +1248,19 @@ PY`,
 
 [[echo "[{\"name\":\"internal\",\"value\":\"Bearer $INTERNAL_TOKEN\"}]" > bad.json]]
 
-طلع [[[{"name":"internal","value":"Bearer ab"c"}]]] وده JSON مكسور، و json.tool قال [[Expecting ',' delimiter: line 1 column 40]].
+طلع [[[{"name":"internal","value":"Bearer ab"c"}]]] وده JSON مكسور، و json.tool قال [[Expecting ',' delimiter: line 1 column 40 (char 39)]].
 
-وعلامات التنصيص حوالين [[<<'PY']] مهمة: بتمنع bash إنه يغيّر [[$]] أو [[$__bt]] جوه كود Python. ولو نسيت تعمل [[export]] هيطلع [[KeyError: 'INTERNAL_TOKEN']].`
+وعلامات التنصيص حوالين [[<<'PY']] مهمة: بتمنع bash إنه يغيّر [[$]] أو [[$__bt]] جوه كود Python. ولو نسيت تعمل [[export]] هيطلع [[KeyError: 'INTERNAL_TOKEN']].
+
+ونسخة PowerShell (تحت) جربتها في PowerShell 7 و 5.1 وطلّعت نفس [[creds.json]] بالظبط. الـ here-string بعلامة تنصيص مفردة [[@'...'@]] زي [[<<'PY']]: PowerShell مش بيفك أي [[$]] جواه. وسطر [['@]] اللي بيقفله لازم يبقى في أول السطر.`,
+          solCode: R`# Windows (PowerShell):
+$env:INTERNAL_TOKEN = 'ab"c'
+@'
+import json, os, sys
+creds = [{"name": "internal", "value": "Bearer " + os.environ["INTERNAL_TOKEN"]}]
+json.dump(creds, open(sys.argv[1], "w"), indent=2)
+'@ | python - creds.json
+Get-Content creds.json`
         }
       ]
     },
@@ -1398,7 +1466,7 @@ fixtures جاهزة قريبة: [[capsys]] بيمسك الـ print ([[capsys.rea
             "اختبار تاني بفولدر مؤقت تاني.",
             "ملف مش موجود: يرجع الافتراضي من غير ما يقع."
           ],
-          sol: R`الاختبار بيعدّي، و [[-s]] بيطبع مسار زي [[/tmp/pytest-of-USER/pytest-6/test_save_report0]]. افتحه بعد التشغيل هتلاقي report.csv لسه موجود (pytest بيسيب آخر ٣ تشغيلات).
+          sol: R`الاختبار بيعدّي، و [[-s]] بيطبع مسار زي [[/tmp/pytest-of-USER/pytest-6/test_save_report0]] على لينكس، و [[C:\Users\USER\AppData\Local\Temp\pytest-of-USER\pytest-0\test_save_report0]] على ويندوز (جربت الاتنين). افتحه بعد التشغيل هتلاقي report.csv لسه موجود (pytest بيسيب آخر ٣ تشغيلات).
 
 الـ CSV المتوقع بالظبط: [[name,price]] ثم [[pen,5]] ثم [[cup,12]]. ولاحظ إن [[csv.DictReader]] بيرجّع كل القيم strings ([["12"]] مش [[12]])، فلو قارنت بـ int هيقع.
 
@@ -1542,7 +1610,7 @@ def test_timeout_bubbles_up():
 
 وفيه plugin اسمه pytest-mock بيدّيك fixture [[mocker]]: [[mocker.patch("app.report.fetch_temp", return_value=40)]] من غير with، وبيترجع لوحده بعد الاختبار.`,
             when: R`حدود النظام بس: HTTP لخدمات تانية، إيميل و SMS، بوابات دفع، الوقت. متعملش mock لكودك الداخلي كله، ولا للقاعدة بتاعتك: اختبر الـ SQL على Postgres حقيقي في Docker. ولـ HTTP كتير فيه كمان مكتبة respx اللي بتزيّف httpx على مستوى الطلبات.`,
-            mistakes: R`patch في مكان التعريف بدل مكان الاستخدام: الـ mock مبيتناداش والكود الحقيقي يشتغل (وده أشهر سؤال عن mock في الانترفيو). و [[fake.called_once_with("Aswan")]] من غير assert في الأول: ده مجرد attribute على الـ Mock بيرجّع Mock تاني، فالسطر بيعدّي دايمًا ومش بيختبر حاجة. (Python بيرمي AttributeError لو الاسم بيبدأ بـ assert ومكتوب غلط زي [[assert_called_once_wiht]]، بس مش لو نسيت assert خالص.) واختبارات كلها mocks بتختبر إن الكود بينادي الـ mocks بس، فتعدّي والكود بايظ.`
+            mistakes: R`patch في مكان التعريف بدل مكان الاستخدام: الـ mock مبيتناداش والكود الحقيقي يشتغل (وده أشهر سؤال عن mock في الانترفيو). و [[fake.called_once_with("Aswan")]] من غير assert في الأول: لحد Python 3.11 ده كان مجرد attribute على الـ Mock بيرجّع Mock تاني، فالسطر بيعدّي دايمًا ومش بيختبر حاجة. من 3.12 Python بيمسك الغلطة دي بالذات ([[AttributeError: 'called_once_with' is not a valid assertion]])، وكمان [[assert_called_once_wiht]] بإملاء غلط. بس أي اسم تاني غلط زي [[fake.was_called_with("Aswan")]] لسه بيرجّع Mock ويعدّي بهدوء (جربت الاتنين على 3.11 و 3.13). واختبارات كلها mocks بتختبر إن الكود بينادي الـ mocks بس، فتعدّي والكود بايظ.`
           },
           lines: [
             "Mock و patch من المكتبة الجاهزة.",
@@ -1567,7 +1635,7 @@ def test_timeout_bubbles_up():
           ],
           sol: R`بالمسار الصح التلاتة بيعدّوا.
 
-بـ [["app.weather.fetch_temp"]]: [[daily_report]] لسه بتنادي الدالة الأصلية لأن [[app.report]] عنده اسم خاص بيه اتربط وقت الـ import. فالنتيجة واحدة من اتنين: لو عندك fixture منع الشبكة من درس monkeypatch، الاختبار بيقع بـ [[RuntimeError: network call in a test!]]. ومن غيره، بيحاول يكلّم [[api.example.com]] بجد ويقع بـ [[httpx.ConnectError]] أو 404، أو أسوأ: يعدّي لو الـ API الحقيقي رجّع رقم.
+بـ [["app.weather.fetch_temp"]]: [[daily_report]] لسه بتنادي الدالة الأصلية لأن [[app.report]] عنده اسم خاص بيه اتربط وقت الـ import. فالدالة الحقيقية بتحاول تكلّم [[api.example.com]] بجد. جربتها: [[test_report_hot]] وقع بـ [[httpx.ConnectError: [Errno -2] Name or service not known]] على لينكس، و [[httpx.ConnectError: [Errno 11001] getaddrinfo failed]] على ويندوز، لأن الدومين ده مالوش عنوان أصلًا. وحتى مع fixture منع الشبكة من درس monkeypatch طلع نفس الـ ConnectError، لأن البحث عن الدومين (DNS) بيفشل قبل ما يوصل لـ connect. ومع API حقيقي الوضع أسوأ: الاختبار ممكن يعدّي لو الـ API رجّع رقم، وانت فاكر إن الـ mock شغال.
 
 القاعدة: شوف الملف اللي فيه الكود اللي بتختبره، والاسم مكتوب فيه إزاي. [[from x import f]] يبقى patch لـ [[yourmodule.f]]. و [[import x]] ثم [[x.f()]] يبقى patch لـ [[x.f]].
 
@@ -1660,7 +1728,11 @@ async def test_health_async():
           ],
           sol: R`الاختبارين الجداد بيعدّوا: [[price: "abc"]] بيرجّع 422 و [[detail[0]["loc"] ]] = [[["body", "price"] ]]، والـ store فاضل [[{}]] لأن FastAPI رفض قبل ما الدالة تتنادى. و [[/items/99]] بيرجّع 404.
 
-من غير override الـ store: الاختبارات بتكتب في الـ dict العالمي. لو شغّلت [[test_create_then_get]] لوحده بيعدّي، ومع اختبار تاني بيضيف عنصر قبله، الـ id بيبقى 2 مش 1 و [[store == {1: ...}]] بيقع. نتيجة بتعتمد على الترتيب: رجّع الـ override.
+من غير override الـ store جربت الحالتين:
+
+[[test_create_then_get]] وقع حتى لوحده بـ [[assert {} == {1: {'name': ..., 'price': 5}}]]: الـ route كتب في [[_STORE]] العالمي، والـ [[store]] اللي الاختبار بيبص فيه dict تاني فاضي ملوش علاقة بيه.
+
+ولما شلت سطر [[assert store == ...]]، عدّى لوحده، ووقع لما اختبار تاني عمل POST قبله: [[assert {'name': 'x', 'price': 1} == {'name': 'pen', 'price': 5}]]، لأن العنصر رقم 1 بقى بتاع الاختبار اللي قبله. نتيجة بتعتمد على الترتيب: رجّع الـ override.
 
 لو الاختبار async قال [[async def functions are not natively supported]]: pytest-asyncio مش متسطّب أو الـ mark ناقص.`,
           solCode: R`# tests/test_items_errors.py
@@ -1704,14 +1776,21 @@ def get_item(item_id: int, store: dict = Depends(get_store)):
           title: "أنهي سطور الاختبارات مش بتعدّي عليها",
           desc: R`[[pytest-cov]] بيشغّل الاختبارات ويقيس كل سطر في الكود اتنفذ ولا لأ. [[--cov-report=term-missing]] بيطبع النسبة لكل ملف وأرقام السطور اللي محدش جربها. و [[--cov-fail-under]] بيفشّل التشغيل لو النسبة قلّت عن رقم، فتحطه في CI.
 
-ولو بتستخدم uv: [[uv add --dev pytest pytest-cov]] و [[uv run pytest]] (uv نفسه في درس [[uv و pyproject.toml]] في «تاب Python و FastAPI»).`,
+ولو بتستخدم uv: [[uv add --dev pytest pytest-cov]] و [[uv run pytest]] (uv نفسه في درس [[uv و pyproject.toml]] في «تاب Python و FastAPI»).
+
+الأوامر دي بتكتب [[pytest]] لوحده، فبتفترض إن [[pytest.ini]] فيه [[pythonpath = .]] (درس «pytest.ini»). من غيره [[uv run pytest]] وقع عندي بـ [[ModuleNotFoundError: No module named 'app']]، والحل يا السطر ده يا [[python -m pytest]].`,
           example: R`pip install pytest-cov
 pytest --cov=app --cov-report=term-missing
 pytest --cov=app --cov-branch --cov-fail-under=90
 pytest --cov=app --cov-report=html
-xdg-open htmlcov/index.html
 uv add --dev pytest pytest-cov
-uv run pytest --cov=app --cov-report=term-missing`,
+uv run pytest --cov=app --cov-report=term-missing
+# Linux (and WSL):
+xdg-open htmlcov/index.html
+# Mac:
+open htmlcov/index.html
+# Windows (PowerShell):
+start htmlcov/index.html`,
           try: R`شغّل [[pytest --cov=app --cov-branch --cov-report=term-missing]] على المشروع، وشوف الأرقام في عمود Missing. اكتب اختبارات للسطور دي لحد ما [[--cov-fail-under=100]] تعدّي. وبعدين اسأل نفسك: أنهي اختبار منهم فعلًا بيحمي من bug؟`,
           deep: {
             why: "بتفتكر إن الاختبارات مغطية الكود، وبعدين bug يطلع في فرع else محدش جربه قبل كده. التقرير بيوريك بالأرقام فين المناطق اللي محدش بيختبرها، خصوصًا مسارات الأخطاء.",
@@ -1734,13 +1813,15 @@ pytest-cov بيستخدم مكتبة coverage تحت. من pytest-cov 7 قياس
             "النسبة لكل ملف وأرقام السطور الناقصة.",
             "قيس الفروع كمان، وافشل لو أقل من ٩٠٪.",
             "تقرير HTML ملوّن.",
-            "افتحه (على ماك open، وعلى ويندوز start).",
             "نفس الكلام بـ uv: مكتبات dev.",
-            "وتشغيلها جوه الـ venv بتاع uv."
+            "وتشغيلها جوه الـ venv بتاع uv.",
+            "افتح التقرير في المتصفح.",
+            "نفس الحاجة على الماك.",
+            "وعلى ويندوز ([[start]] في PowerShell اختصار لـ Start-Process)."
           ],
-          sol: R`على مشروع الدروس اللي فاتت، الجدول بيطلع حاجة زي: [[app/clock.py 80% Missing 4]] (الـ [[current_hour]] الحقيقية، لأن كل الاختبارات مزيّفاها)، و [[app/main.py 95% Missing 8]] (الـ [[get_store]] الحقيقية، لأن الـ override بيبدّلها دايمًا). ومع [[--cov-branch]] ممكن يظهر فرع [[مساء الخير]] في greeting مش متجرب.
+          sol: R`جربتها على مشروع الدروس اللي فاتت (pytest 9.1 و pytest-cov 7.1)، والجدول طلع: [[app/clock.py 80% Missing 4]] (الـ [[current_hour]] الحقيقية، لأن كل الاختبارات مزيّفاها)، و [[app/main.py 95% Missing 8]] (الـ [[get_store]] الحقيقية، لأن الـ override بيبدّلها دايمًا). ومع [[--cov-branch]] ممكن يظهر فرع [[مساء الخير]] في greeting مش متجرب، لو greeting مكتوبة بـ if و else. عندي كانت سطر واحد بـ [[... if ... else ...]] جوه return، و coverage مش بيعد ده فرعين، فمظهرش.
 
-بعد الاختبارات اللي في الحل: [[Required test coverage of 100% reached]].
+و [[--cov-fail-under=99]] قبل الحل طلّع [[FAIL Required test coverage of 99% not reached. Total coverage: 96.67%]]. وبعد الاختبارات اللي في الحل: [[Required test coverage of 100% reached. Total coverage: 100.00%]].
 
 والإجابة على السؤال: اختبار [[greeting]] بالليل مفيد فعلًا (فرع حقيقي في المنطق). اختبار إن [[get_store()]] بترجّع dict مش بيحمي من حاجة تقريبًا، كتبناه عشان الرقم بس. في مشروع حقيقي الأحسن تستثني السطر ده، أو تغطيه باختبار integration حقيقي من غير override.`,
           solCode: R`# tests/test_cov_gaps.py
@@ -1912,7 +1993,7 @@ print(len(rows), "rows")
             why: "pdb في الترمنال كويس، بس لما تبقى الدوال كتير والـ objects كبيرة، إنك تشوف كل المتغيرات مفتوحة قدامك وتدوس على أي frame في الـ stack أسرع بكتير. والأهم: التطبيق جوه Docker مفيهوش ترمنال تكتب فيه لـ pdb، و debugpy بيخليك تتصل بيه من VS Code.",
             how: R`[[type: "debugpy"]] هو النوع الحالي (الإعدادات القديمة كانت [["python"]] وبقى deprecated). [[request: "launch"]] يعني VS Code هو اللي يشغّل البرنامج، و [[module]] زي [[python -m uvicorn]]. و [[args]] بيتبعتوا بعده. وبيستخدم الـ interpreter اللي اخترته، فلازم يبقى بتاع الـ venv.
 
-[[--reload]] بيشغّل السيرفر في subprocess، و debugpy بيتصل بالـ subprocesses لوحده (الإعداد [[subProcess]] افتراضيًا true)، فالـ breakpoints شغالة حتى بعد reload.
+[[--reload]] بيشغّل السيرفر في subprocess، و debugpy بيتصل بالـ subprocesses لوحده، فالـ breakpoints شغالة حتى بعد reload. الإعداد اسمه [[subProcess]]، وافتراضيه في كود debugpy نفسه true (صفحة VS Code مكتوب فيها false، بس الكود هو اللي بيتنفّذ). لو حصل ومبقتش بتقف بعد reload، حط [["subProcess": true]] صريحة.
 
 [[justMyCode: true]] (الافتراضي) بيخلي F11 مبيدخلش جوه كود FastAPI و Starlette، وبيوقف بس على breakpoints في كودك. خليه false لو عايز تفهم المكتبة من جوه.
 
@@ -1951,7 +2032,9 @@ Docker: التطبيق جوه container بيشتغل بـ [[python -m debugpy --
             "نهاية اللستة.",
             "نهاية الملف."
           ],
-          sol: R`لما تبعت POST من [[/docs]]، VS Code بيقف على السطر وبيعلّمه أصفر، وصفحة الـ docs تفضل «Loading» لحد ما تكمّل (F5). في Variables هتلاقي [[item]] من نوع [[Item]] بالقيم اللي بعتها، و [[store]]. و F10 بيمشي سطر سطر، و Call Stack بيوريك كود Starlette و FastAPI اللي نادى الدالة (باهت لأن justMyCode).
+          sol: R`الجزء بتاع VS Code (الشاشات والـ F5 و F10) من توثيق VS Code، ماجربتهوش هنا. اللي جربته: [[python -m debugpy --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080]] شغّل التطبيق عادي ورد على [[/health]]، وطبع تحذير [[Debugger warning: It seems that frozen modules are being used]].
+
+المتوقع: لما تبعت POST من [[/docs]]، VS Code بيقف على السطر وبيعلّمه أصفر، وصفحة الـ docs تفضل «Loading» لحد ما تكمّل (F5). في Variables هتلاقي [[item]] من نوع [[Item]] بالقيم اللي بعتها، و [[store]]. و F10 بيمشي سطر سطر، و Call Stack بيوريك كود Starlette و FastAPI اللي نادى الدالة (باهت لأن justMyCode).
 
 مع «pytest: this file» الـ breakpoint جوه الاختبار أو جوه الكود اللي الاختبار بيناديه بيقف بنفس الشكل.
 
@@ -2004,7 +2087,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 args = parse_args()
 print(args)
 print("APPLY" if args.apply else "DRY RUN", args.folder.expanduser(), args.days, args.ext, args.verbose)`,
-          try: R`سمّيه [[cli.py]] وجرّب: [[-h]]، و [[~/Downloads]] لوحده، و [[lab --ext .log .tmp -vv --apply]]، و [[lab --dry-run --apply]]، ومن غير فولدر، و [[lab --app]]. وبعد كل واحدة [[echo $?]]. وبعدين شيل سطر [[allow_abbrev=False]] وجرّب [[lab --app]] تاني.`,
+          try: R`سمّيه [[cli.py]] وجرّب: [[-h]]، و [[~/Downloads]] لوحده، و [[lab --ext .log .tmp -vv --apply]]، و [[lab --dry-run --apply]]، ومن غير فولدر، و [[lab --app]]. وبعد كل واحدة [[echo $?]] (في PowerShell [[$LASTEXITCODE]]). وبعدين شيل سطر [[allow_abbrev=False]] وجرّب [[lab --app]] تاني.`,
           flag: "script",
           deep: {
             why: R`سكربت بيمسح ومفيش فيه dry run: أول تجربة على فولدر غلط هي آخر تجربة. ومن غير [[--help]] محدش (ولا انت بعد شهر) فاكر السكربت بياخد إيه.`,
@@ -2117,7 +2200,7 @@ JSON مفيهوش تعليقات ولا فاصلة بعد آخر عنصر، فل
 
 بالفاصلة الزيادة: [[error: config.json: Expecting property name enclosed in double quotes (line 3, column 19)]] و exit 1 (عندي الملف كان متقسم على سطور، فالسطر والعمود بيشاوروا على الفاصلة التانية).
 
-[[json.dumps({"o": "سارة"})]] من غير ensure_ascii طلع [[{"o": "سارة"}]]: صح و JSON سليم، بس مش مقروء في الملف.
+[[json.dumps({"o": "سارة"})]] من غير ensure_ascii طلع [[{"o": "\u0633\u0627\u0631\u0629"}]]: صح و JSON سليم، بس مش مقروء في الملف.
 
 و [[json.loads(json.dumps({1: "a"}))]] رجّع [[{'1': 'a'}]]: المفتاح بقى نص. لاحظ إن [["~/Downloads"]] فضلت زي ما هي، فاعمل [[Path(f).expanduser()]] قبل ما تستخدمها.`
         },
@@ -2148,13 +2231,13 @@ with open("excel_export.csv", newline="", encoding="utf-8-sig") as f:
     f.seek(0)
     for row in csv.DictReader(f, dialect=dialect):
         print(dialect.delimiter, row["name"], float(row["total"].replace(",", ".")))`,
-          try: R`اعمل ملف زي اللي Excel بيصدّره: [[printf '\xef\xbb\xbfname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n' > excel_export.csv]] وشغّل السكربت. وبعدين [[xxd report.csv | head -2]] وشوف أول 3 bytes. ولو عندك Excel أو LibreOffice، افتح report.csv، وبعدين اكتبه بـ [[utf-8]] بدل [[utf-8-sig]] وافتحه تاني.`,
+          try: R`اعمل ملف زي اللي Excel بيصدّره: [[printf '\xef\xbb\xbfname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n' > excel_export.csv]] وشغّل السكربت. وبعدين [[xxd report.csv | head -2]] وشوف أول 3 bytes. على ويندوز PowerShell مفيش printf ولا xxd: اعمل الملف بـ [[python -c "open('excel_export.csv','wb').write('\ufeffname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n'.encode())"]]، وبص على الـ bytes بـ [[Format-Hex report.csv | Select-Object -First 2]]. ولو عندك Excel أو LibreOffice، افتح report.csv، وبعدين اكتبه بـ [[utf-8]] بدل [[utf-8-sig]] وافتحه تاني.`,
           flag: "script",
           deep: {
             why: "أغلب الناس اللي هيستلموا تقرير السكربت هيفتحوه في Excel. لو العربي طلع رموز أو كل الأعمدة في عمود واحد، التقرير ملوش لازمة مهما كانت الأرقام صح.",
             how: R`الـ BOM هو الحرف [[U+FEFF]] ومكتوب utf-8 كـ [[EF BB BF]]. Excel على ويندوز بيشوفه فيقرا الملف utf-8، ومن غيره بيقرا بـ encoding ويندوز فيطلع العربي [[Ø³Ø§Ø±Ø©]] وما شابه. باقي البرامج (Python و LibreOffice و Google Sheets) بتفهم الاتنين.
 
-لما تقرا ملف فيه BOM بـ [[utf-8]] بس، أول عمود اسمه بيبقى [['﻿name']]، و [[row["name"] ]] يطلع KeyError وانت شايف الاسم صح بعينك. [[utf-8-sig]] في القراية بيشيل الـ BOM لو موجود ومش بيعمل حاجة لو مش موجود، فاستخدمه دايمًا للقراية.
+لما تقرا ملف فيه BOM بـ [[utf-8]] بس، أول عمود اسمه بيبقى [['\ufeffname']] (الحرف ده مش بيبان لما تطبعه عادي، بيبان في repr)، و [[row["name"] ]] يطلع KeyError وانت شايف الاسم صح بعينك. [[utf-8-sig]] في القراية بيشيل الـ BOM لو موجود ومش بيعمل حاجة لو مش موجود، فاستخدمه دايمًا للقراية.
 
 [[newline=""]]: الـ csv بيكتب [[\r\n]] في آخر كل صف (ده المعيار)، ومن غير [[newline=""]] على ويندوز بيبقى [[\r\r\n]] فيظهر سطر فاضي بين كل صفين.
 
@@ -2187,11 +2270,11 @@ with open("excel_export.csv", newline="", encoding="utf-8-sig") as f:
           ],
           sol: R`الناتج:
 
-[[['﻿name', 'city', 'total'] ]]: ده اللي بيحصل لو قريت بـ utf-8 بس.
+[[['\ufeffname', 'city', 'total'] ]]: ده اللي بيحصل لو قريت بـ utf-8 بس.
 [[سارة 150.5]] و [[Ali, Jr. 80.0]]: بـ utf-8-sig كله تمام.
 [[; سارة 150.5]] و [[; Omar 80.0]]: الـ Sniffer عرف إن الفاصل [[;]].
 
-و [[xxd]] بيبدأ بـ [[efbb bf6e 616d 65]] يعني BOM وبعده [[name]]. وآخر الصفوف [[0d0a]] يعني [[\r\n]].
+و [[xxd]] بيبدأ بـ [[efbb bf6e 616d 65]] يعني BOM وبعده [[name]]. وآخر الصفوف [[0d0a]] يعني [[\r\n]]. وعلى ويندوز [[Format-Hex]] طلّع نفس الـ bytes: [[EF BB BF 6E 61 6D 65]]، والسكربت طبع نفس السطور بالظبط.
 
 الملف بـ BOM بيتفتح في Excel على ويندوز والعربي سليم والأعمدة متقسمة. من غير BOM، Excel بيقراه بـ encoding ويندوز فالعربي يطلع رموز. (ده سلوك Excel المعروف، وأنا جربت هنا الـ bytes والقراية بـ Python بس.)`
         },
@@ -2215,7 +2298,7 @@ print(root.tag)
 for url in root.findall("sm:url", NS):
     print(url.findtext("sm:loc", namespaces=NS), url.findtext("sm:lastmod", default="-", namespaces=NS))
 print(len(root.findall("url")))`,
-          try: R`اعمل الملفين بالأوامر اللي في أول الحل (فيهم [[country: NO]] و [[version: 1.10]] قصد)، وسطّب [[pyyaml]] في venv، وشغّل السكربت. وبعدين جرّب [[yaml.safe_load("on: yes\nzip: 012\n")]] وصلّح [[country]] و [[version]] في الملف عشان يطلعوا نصوص.`,
+          try: R`اعمل الملفين بالأوامر اللي في أول الحل (فيهم [[country: NO]] و [[version: 1.10]] قصد)، وسطّب [[pyyaml]] في venv، وشغّل السكربت. وبعدين جرّب [[yaml.safe_load("on: yes\nzip: 012\n")]] وصلّح [[country]] و [[version]] في الملف عشان يطلعوا نصوص. أوامر الحل bash ([[cat > file <<'EOF']])، فعلى ويندوز اعمل الملفين في VS Code والصق اللي بين سطر [[cat]] وسطر [[EOF]].`,
           flag: "script",
           deep: {
             why: R`إعدادات السكربت لما بتكبر (مواقع، جداول، مستخدمين) بتبقى أسهل في YAML. و XML بيقابلك لما تسحب sitemap موقع عشان تشيّك على روابطه، أو تقرا export من نظام قديم.`,
@@ -2301,7 +2384,7 @@ print(sorted(names))
 day = datetime.strptime("log_2026-09-30.txt", "log_%Y-%m-%d.txt").date()
 print(day, day.strftime("%A"), (now.date() - day).days)
 print(sorted(["5-10-2026", "30-9-2026", "1-1-2027"]))`,
-          try: R`اعمل ملف قديم بـ [[touch -d "45 days ago" old_report.csv]] وشغّل السكربت. وبعدين اكتب دالة [[latest_backup(folder)]] بترجّع أحدث [[backup_*.zip]] من الاسم نفسه (مش من وقت التعديل)، وجرّبها على [[backup_2026-09-29.zip]] و [[backup_2026-10-01.zip]] و [[backup_2026-09-30.zip]].`,
+          try: R`اعمل ملف قديم بـ [[touch -d "45 days ago" old_report.csv]] (في PowerShell: [[New-Item old_report.csv]] وبعدين [[(Get-Item old_report.csv).LastWriteTime = (Get-Date).AddDays(-45)]]) وشغّل السكربت. وبعدين اكتب دالة [[latest_backup(folder)]] بترجّع أحدث [[backup_*.zip]] من الاسم نفسه (مش من وقت التعديل)، وجرّبها على [[backup_2026-09-29.zip]] و [[backup_2026-10-01.zip]] و [[backup_2026-09-30.zip]].`,
           flag: "script",
           deep: {
             why: R`backup باسم ثابت بيدوس على اللي قبله. واسم زي [[30-9-2026]] مبيترتبش صح. و «أقدم من 30 يوم» محتاجة تاريخ الملف مش تاريخ النهارده بس.`,
@@ -2382,7 +2465,9 @@ try:
 except ZeroDivisionError:
     log.exception("failed to compute the ratio")
 print("done")`,
-          try: R`شغّله بـ [[python3 logs.py 2>/dev/null]] وشوف إيه اللي فضل. وبعدين [[python3 logs.py -v 2>&1 >/dev/null]]. وبعدين [[wc -l cleaner.log]] و [[head -3 cleaner.log]]. شغّله كمان مرة وشوف الملف كبر ولا اتمسح.`,
+          try: R`شغّله بـ [[python3 logs.py 2>/dev/null]] وشوف إيه اللي فضل. وبعدين [[python3 logs.py -v 2>&1 >/dev/null]]. وبعدين [[wc -l cleaner.log]] و [[head -3 cleaner.log]]. شغّله كمان مرة وشوف الملف كبر ولا اتمسح.
+
+في PowerShell: [[python logs.py 2>$null]]، وبعدين [[python logs.py -v > $null]] (الـ stderr بيفضل على الشاشة لوحده)، وبعدين [[(Get-Content cleaner.log).Count]] و [[Get-Content cleaner.log -TotalCount 3]].`,
           flag: "script",
           deep: {
             why: R`سكربت متجدول بيشتغل الساعة 2 بالليل وانت نايم. لما يفشل، مفيش غير الـ log تعرف منه حصل إيه وإمتى. و print من غير وقت ولا مستوى، ومتلخبط مع النتيجة، ولازم تمسحه قبل ما تسلّم.`,
@@ -2510,11 +2595,15 @@ stdout و stderr منفصلين: git بيكتب الأخطاء على stderr، �
 [[api       SKIP    1 uncommitted changes]]
 [[shop      FAILED  fatal: Not possible to fast-forward, aborting.]]
 
-و [[git log]] في api اتأكدت إنه ماتحدّثش.`,
+و [[git log]] في api اتأكدت إنه ماتحدّثش. (جربته على لينكس بـ git 2.47، وعلى ويندوز بالتجهيز بتاع PowerShell اللي في الحل وطلع نفس السطور.)`,
           solCode: R`# setup (في فولدر تجربة):
 #   for r in api shop; do git init -q -b main origin/$r && git -C origin/$r commit -q --allow-empty -m init && git clone -q origin/$r code/$r; done
 #   git -C origin/api commit -q --allow-empty -m "fix login"
 #   git -C origin/shop commit -q --allow-empty -m new && git -C code/shop commit -q --allow-empty -m local
+# نفس التجهيز في PowerShell:
+#   foreach ($r in "api", "shop") { git init -q -b main origin/$r; git -C origin/$r commit -q --allow-empty -m init; git clone -q origin/$r code/$r }
+#   git -C origin/api commit -q --allow-empty -m "fix login"
+#   git -C origin/shop commit -q --allow-empty -m new; git -C code/shop commit -q --allow-empty -m local
 import shutil
 import subprocess
 import sys
@@ -2555,7 +2644,9 @@ token = os.environ.get("API_TOKEN")
 if not token:
     sys.exit("error: API_TOKEN is not set (put it in .env or export it)")
 print(API_URL, DEBUG, TIMEOUT, token[:4] + "...")`,
-          try: R`[[pip install python-dotenv]] في venv، واعمل [[.env]] فيه [[API_URL=https://api.example.com]] و [[API_TOKEN=sk_live_abc123]] و [[DEBUG=true]]. شغّل السكربت. وبعدين [[API_URL=http://staging DEBUG=0 python envs.py]]. وبعدين غيّر اسم [[.env]] وشغّله. ورجّعه وشغّل السكربت من فولدر تاني بمساره الكامل. وفي الآخر [[DEBUG=false python3 -c 'import os; print(bool(os.environ["DEBUG"]))']].`,
+          try: R`[[pip install python-dotenv]] في venv، واعمل [[.env]] فيه [[API_URL=https://api.example.com]] و [[API_TOKEN=sk_live_abc123]] و [[DEBUG=true]]. شغّل السكربت. وبعدين [[API_URL=http://staging DEBUG=0 python envs.py]]. وبعدين غيّر اسم [[.env]] وشغّله. ورجّعه وشغّل السكربت من فولدر تاني بمساره الكامل. وفي الآخر [[DEBUG=false python3 -c 'import os; print(bool(os.environ["DEBUG"]))']].
+
+الـ [[NAME=value command]] ده شكل bash. في PowerShell مفيش متغير لأمر واحد: [[$env:API_URL="http://staging"; $env:DEBUG="0"; python envs.py]]، وبعدها [[Remove-Item Env:API_URL, Env:DEBUG]] عشان ميفضلوش في الترمنال ده.`,
           flag: "script",
           deep: {
             why: R`نفس السكربت بيشتغل على جهازك (API تجربة) وعلى السيرفر (API حقيقي) من غير ما تعدّل سطر، والأسرار عمرها ما تدخل git. وأي حد بيقرا الكود يعرف السكربت محتاج إيه من الأسماء.`,
@@ -2635,7 +2726,9 @@ try:
     requests.get("http://10.255.255.1", timeout=2)
 except requests.RequestException as e:
     print("failed:", type(e).__name__)`,
-          try: R`جهّز سيرفر محلي: [[mkdir www && echo '{"name": "terminal-study", "version": 3}' > www/data.json && head -c 3000000 /dev/urandom > www/big.bin]] وبعدين [[python3 -m http.server 8000 --directory www]] في ترمنال تاني (درس «python -m http.server»). سطّب requests في venv وشغّل السكربت، وقيس وقته بـ [[time]].`,
+          try: R`جهّز سيرفر محلي: [[mkdir www && echo '{"name": "terminal-study", "version": 3}' > www/data.json && head -c 3000000 /dev/urandom > www/big.bin]] وبعدين [[python3 -m http.server 8000 --directory www]] في ترمنال تاني (درس «python -m http.server»). سطّب requests في venv وشغّل السكربت، وقيس وقته بـ [[time]].
+
+على ويندوز PowerShell: [[mkdir www]]، و [['{"name": "terminal-study", "version": 3}' | Set-Content www/data.json]]، و [[python -c "open('www/big.bin','wb').write(bytes(3000000))"]] (3 مليون byte أصفار)، والوقت بـ [[Measure-Command { python fetch.py }]] (fetch.py اسم السكربت عندك).`,
           flag: "script",
           deep: {
             why: R`سكربت بيسحب أسعار أو بيانات كل ساعة، وفي مرة السيرفر التاني علّق: من غير timeout السكربت بيفضل مستني، والتشغيلة اللي بعدها بتبدأ جنبه، وبعد يومين عندك ٤٨ نسخة معلّقة.`,
@@ -2651,7 +2744,7 @@ requests: مش بيرمي على 404 لوحده. [[r.ok]] و [[r.status_code]] �
 
 ولو هتبعت طلبات كتير لنفس الموقع: [[requests.Session()]] بيعيد استخدام الاتصال وبيحط headers مشتركة. ولو محتاج async أو HTTP/2، [[httpx]] (درس «httpx.AsyncClient» في تاب «Python و FastAPI»). والمحاولات التانية لما الطلب يفشل في درس «retry و backoff» في المستوى ٣.`,
             when: "urllib لسكربت صغير على سيرفر من غير venv. requests لأي حاجة أكبر من طلب أو اتنين.",
-            mistakes: R`من غير timeout. و [[r.json()]] من غير ما تشيّك الـ status. و [[r.content]] لملف كبير فالذاكرة تخلص. ومواقع بترفض User-Agent بتاع urllib الافتراضي ([[Python-urllib/3.12]]) بـ 403، فحط User-Agent واضح باسم السكربت.`
+            mistakes: R`من غير timeout. و [[r.json()]] من غير ما تشيّك الـ status. و [[r.content]] لملف كبير فالذاكرة تخلص. ومواقع بترفض User-Agent بتاع urllib الافتراضي ([[Python-urllib/3.12]]) بـ 403، فحط User-Agent واضح باسم السكربت. وعلى ويندوز: سيرفر سامع على [[127.0.0.1]] بس (زي [[--bind 127.0.0.1]]) وانت بتكلّم [[localhost]]، ويندوز بيجرب [[::1]] الأول ويستنى ثانيتين قبل ما يرجع لـ 127.0.0.1، في كل طلب.`
           },
           lines: [
             "json.",
@@ -2692,6 +2785,8 @@ requests: مش بيرمي على 404 لوحده. [[r.ok]] و [[r.status_code]] �
 [[failed: ConnectTimeout]]
 
 و [[time]] قال حوالي 2.2 ثانية، تقريبًا كلهم الـ timeout بتاع آخر طلب. من غير [[timeout=2]] كان هيستنى لحد ما النظام نفسه يستسلم (دقيقتين أو أكتر على لينكس).
+
+وعلى ويندوز نفس الست سطور بالظبط في 2.3 ثانية والسيرفر سامع على IPv6 ([[--bind ::1]]). بس لما شغّلته بـ [[--bind 127.0.0.1]] والسكربت بيكلّم [[localhost]]، الوقت بقى 12.5 ثانية: كل طلب من الخمسة خد ثانيتين زيادة (شوف «غلطات شائعة»).
 
 لو طلع [[ConnectionError]] أو [[Connection refused]] في أول طلب، السيرفر المحلي مش شغال أو على بورت تاني. ولو [[ModuleNotFoundError: No module named 'requests']] يبقى الـ venv مش متفعّل.`
         },
@@ -2838,7 +2933,7 @@ def main() -> None:
     folder = Path(args.folder).expanduser()
     count = 0
     for p in sorted(folder.iterdir()):
-        if not p.is_file() or p.name.startswith(".") or p.suffix.lower() in SKIP:
+        if not p.is_file() or p.name.startswith(".") or p.name.lower() in ("desktop.ini", "thumbs.db") or p.suffix.lower() in SKIP:
             continue
         target = free_name(folder / group_of(p) / p.name)
         print(f"{'move' if args.apply else 'would move'}: {p.name} -> {target.relative_to(folder)}")
@@ -2849,7 +2944,7 @@ def main() -> None:
     print(f"{count} files" + ("" if args.apply else " (dry run, add --apply to move them)"))
 if __name__ == "__main__":
     main()`,
-          try: R`متجربش على Downloads الحقيقي الأول. اعمل فولدر تجربة: [[mkdir -p dl/Images && cd dl && touch cv.pdf "Photo 1.JPG" logo.png setup.exe movie.mkv data.tar.gz notes.TXT song.mp3 big.iso.part .hidden Images/logo.png && cd ..]]. شغّل [[python3 organize_downloads.py dl]]، وبعدين بـ [[--apply]]، وبعدين من غير [[--apply]] تاني. وبعدين ضيف [[.mp3]] لمجموعة جديدة [[Music]].`,
+          try: R`متجربش على Downloads الحقيقي الأول. اعمل فولدر تجربة: [[mkdir -p dl/Images && cd dl && touch cv.pdf "Photo 1.JPG" logo.png setup.exe movie.mkv data.tar.gz notes.TXT song.mp3 big.iso.part .hidden Images/logo.png && cd ..]]. شغّل [[python3 organize_downloads.py dl]]، وبعدين بـ [[--apply]]، وبعدين من غير [[--apply]] تاني. وبعدين ضيف [[.mp3]] لمجموعة جديدة [[Music]]. على ويندوز PowerShell: [[mkdir dl/Images]]، وبعدين جوه dl [[New-Item cv.pdf, "Photo 1.JPG", logo.png, ...]] بنفس الأسماء مفصولة بفواصل.`,
           flag: "script",
           deep: {
             why: "Downloads بيتملي من غير ما تحس، وتدوّر على PDF وسط ٤٠٠ ملف. السكربت ده بيترتب في ثانية، ولو اتجدول (المستوى ٣) يفضل مترتب لوحده.",
@@ -2865,7 +2960,7 @@ if __name__ == "__main__":
 
 [[shutil.move]] مش [[rename]]: لو الفولدر الهدف على disk تاني، rename بيفشل و move بينسخ ويمسح. وفي الـ dry run الأسماء محسوبة على الموجود فعلًا، فملفين بنفس الاسم في الفولدر الأصلي مش هيوضحوا هناك (مش ممكن أصلًا في نفس الفولدر).`,
             when: "Downloads و Desktop وفولدر الـ screenshots، وأي فولدر بيستقبل ملفات من برّه.",
-            mistakes: R`تشغيله بالـ apply على طول على Downloads الحقيقي. ونقل ملف لسه بيتحمّل فالتحميل يفشل. وتنسى الملفات المخفية ([[.DS_Store]] و [[desktop.ini]]). والمقارنة بـ [[p.suffix]] من غير [[lower()]].`
+            mistakes: R`تشغيله بالـ apply على طول على Downloads الحقيقي. ونقل ملف لسه بيتحمّل فالتحميل يفشل. وتنسى الملفات المخفية: على الماك ولينكس اسمها بيبدأ بنقطة ([[.DS_Store]])، فـ [[startswith(".")]] كفاية. بس على ويندوز «مخفي» ده خاصية في الملف مش نقطة في الاسم، و Downloads فيه [[desktop.ini]] مخفي (اتأكدت على ويندوز 11)، ومن غير سطر الفحص بتاعه كان السكربت هينقله لـ Other ويبوّظ شكل الفولدر في Explorer. والمقارنة بـ [[p.suffix]] من غير [[lower()]].`
           },
           lines: [
             "الوصف، وبيبقى الـ help.",
@@ -2897,7 +2992,7 @@ if __name__ == "__main__":
             "فك ~.",
             "عداد.",
             "لكل حاجة في الفولدر، مترتبة:",
-            "سيب الفولدرات والمخفي والتحميلات الناقصة.",
+            "سيب الفولدرات، والمخفي (النقطة على لينكس وماك، و desktop.ini و thumbs.db بتوع ويندوز)، والتحميلات الناقصة.",
             "كمّل.",
             "المكان الجديد باسم مش مستخدم.",
             "اطبع هيعمل إيه أو عمل إيه.",
@@ -2921,7 +3016,9 @@ if __name__ == "__main__":
 [[would move: song.mp3 -> Other/song.mp3]]
 [[8 files (dry run, add --apply to move them)]]
 
-ومحدش اتحرك. بعد [[--apply]] نفس السطور بـ [[move:]]، و [[big.iso.part]] و [[.hidden]] فضلوا مكانهم، و [[Images]] فيه [[logo.png]] و [[logo (1).png]] و [[Photo 1.JPG]]. والتشغيل التالت: [[0 files]].
+ومحدش اتحرك. بعد [[--apply]] نفس السطور بـ [[move:]] و [[8 files]]، و [[big.iso.part]] و [[.hidden]] فضلوا مكانهم، و [[Images]] فيه [[logo.png]] و [[logo (1).png]] و [[Photo 1.JPG]]. والتشغيل التالت: [[0 files (dry run, add --apply to move them)]].
+
+وعلى ويندوز نفس الـ 8، بس بترتيب تاني: [[cv.pdf]] الأول و [[Photo 1.JPG]] بعد [[notes.TXT]]، لأن ترتيب المسارات على ويندوز مش حساس لحالة الحروف (على لينكس الحروف الكابيتال قبل الصغيرة). والمسارات بـ [[\]]: [[Images\logo (1).png]]. وحطيت [[desktop.ini]] في فولدر التجربة: اتساب.
 
 [[Music]]: سطر [["Music": {".mp3", ".m4a", ".wav", ".flac"},]] في GROUPS، و song.mp3 بقت [[Music/song.mp3]].`
         },
@@ -2973,7 +3070,7 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 if __name__ == "__main__":
     sys.exit(main())`,
-          try: R`[[mkdir trip && touch trip/IMG_20260915_143210.JPG trip/IMG_20260915_150001.jpg "trip/WhatsApp Image 2026-09-16 at 10.15.jpeg" trip/notes.txt]]. شغّل [[python3 batch_rename.py trip --prefix trip --glob "*.[jJ]*" --dry-run]]، وبعدين من غير --dry-run، وبعدين تاني. وبعدين حالة صعبة: [[mkdir sw && echo A > sw/a.jpg && echo B > sw/photo_001.jpg]] و [[python3 batch_rename.py sw]] واقرا محتوى الملفين بعدها.`,
+          try: R`[[mkdir trip && touch trip/IMG_20260915_143210.JPG trip/IMG_20260915_150001.jpg "trip/WhatsApp Image 2026-09-16 at 10.15.jpeg" trip/notes.txt]]. شغّل [[python3 batch_rename.py trip --prefix trip --glob "*.[jJ]*" --dry-run]]، وبعدين من غير --dry-run، وبعدين تاني. وبعدين حالة صعبة: [[mkdir sw && echo A > sw/a.jpg && echo B > sw/photo_001.jpg]] و [[python3 batch_rename.py sw]] واقرا محتوى الملفين بعدها. على ويندوز سطور التجهيز دي شغّلها في Git Bash، أو في PowerShell بـ [[New-Item]] و [[Set-Content]]. جربت السكربت على ويندوز وطلع نفس الخطة ونفس النتيجة في الحالة الصعبة.`,
           flag: "script",
           deep: {
             why: R`تغيير أسماء بالجملة من أخطر الحاجات: اسمين بقوا واحد = ملف اتمسح من غير ولا رسالة، لأن [[rename]] على لينكس وماك بيكتب فوق الموجود. وبعد ما تغيّر ٣٠٠ اسم مفيش undo.`,
@@ -3089,7 +3186,7 @@ def main(root: Path) -> int:
     return 0
 if __name__ == "__main__":
     sys.exit(main(Path(sys.argv[1] if len(sys.argv) > 1 else ".")))`,
-          try: R`جهّز: [[mkdir -p pics/2025 pics/backup && head -c 2000000 /dev/urandom > pics/2025/beach.jpg && cp pics/2025/beach.jpg "pics/backup/beach (copy).jpg" && cp pics/2025/beach.jpg pics/IMG_0001.jpg && head -c 2000000 /dev/urandom > pics/2025/other.jpg && echo hello > pics/a.txt && echo hello > pics/backup/a-old.txt && echo world > pics/b.txt && touch pics/empty1 pics/empty2]]. شغّل السكربت على [[pics]]. ليه [[b.txt]] ماظهرش مع إن حجمه زي [[a.txt]]؟ وليه [[empty1]] و [[empty2]] ماظهروش؟`,
+          try: R`جهّز: [[mkdir -p pics/2025 pics/backup && head -c 2000000 /dev/urandom > pics/2025/beach.jpg && cp pics/2025/beach.jpg "pics/backup/beach (copy).jpg" && cp pics/2025/beach.jpg pics/IMG_0001.jpg && head -c 2000000 /dev/urandom > pics/2025/other.jpg && echo hello > pics/a.txt && echo hello > pics/backup/a-old.txt && echo world > pics/b.txt && touch pics/empty1 pics/empty2]]. شغّل السكربت على [[pics]]. ليه [[b.txt]] ماظهرش مع إن حجمه زي [[a.txt]]؟ وليه [[empty1]] و [[empty2]] ماظهروش؟ أوامر التجهيز دي bash: على ويندوز شغّلها في Git Bash (فيه head و cp و touch و /dev/urandom)، والسكربت نفسه من أي ترمنال.`,
           flag: "script",
           deep: {
             why: "الصور والفيديوهات المتكررة بتاكل جيجات: backup فوق backup، وتحميل نفس الملف مرتين، ونسخ من الموبايل كذا مرة. والسكربت بيوريك فين وقد إيه قبل ما تمسح بإيدك.",
@@ -3154,7 +3251,9 @@ if __name__ == "__main__":
 
 [[b.txt]] فيه [[world]] و a.txt فيه [[hello]]، الاتنين 6 bytes، فدخلوا مرحلة الـ hash مع بعض وطلعوا مختلفين. ده بالظبط سبب إن الحجم لوحده مش كفاية. و [[other.jpg]] نفس حجم beach.jpg بالظبط بس محتوى تاني، فبرضه ماظهرش. والملفات الفاضية اتشالت بـ [[size == 0]].
 
-الوقت على الفولدر ده 0.06 ثانية. ولو [[b.txt]] كان حجمه مختلف ماكانش اتعمله hash أصلًا.`
+الوقت على الفولدر ده 0.04 ثانية. ولو [[b.txt]] كان حجمه مختلف ماكانش اتعمله hash أصلًا.
+
+وعلى ويندوز (التجهيز في Git Bash) نفس المجموعتين ونفس الأرقام، بس الترتيب جوه أول مجموعة [[2025\beach.jpg]] ثم [[backup\beach (copy).jpg]] ثم [[IMG_0001.jpg]]: الترتيب هناك مش حساس لحالة الحروف، فـ backup قبل IMG.`
         },
         {
           cmd: "clean_old_files.py",
@@ -3198,7 +3297,7 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 if __name__ == "__main__":
     raise SystemExit(main())`,
-          try: R`جهّز ملفات بأعمار مختلفة: [[mkdir -p logs/old && head -c 4096 /dev/urandom > logs/app-2026-08-01.log && touch -d "61 days ago" logs/app-2026-08-01.log && head -c 2048 /dev/urandom > logs/old/worker.log && touch -d "40 days ago" logs/old/worker.log && echo x > logs/app.log && touch -d "40 days ago" logs/keep.txt]]. شغّل [[python3 clean_old_files.py logs --days 30 --pattern "*.log"]]، وبعدين بـ [[--apply]]. وجرّب على [[~]]، ومن غير [[--days]].`,
+          try: R`جهّز ملفات بأعمار مختلفة: [[mkdir -p logs/old && head -c 4096 /dev/urandom > logs/app-2026-08-01.log && touch -d "61 days ago" logs/app-2026-08-01.log && head -c 2048 /dev/urandom > logs/old/worker.log && touch -d "40 days ago" logs/old/worker.log && echo x > logs/app.log && touch -d "40 days ago" logs/keep.txt]]. شغّل [[python3 clean_old_files.py logs --days 30 --pattern "*.log"]]، وبعدين بـ [[--apply]]. وجرّب على [[~]]، ومن غير [[--days]]. على ويندوز شغّل أوامر التجهيز في Git Bash ([[touch -d]] هناك شغال)، وجربتها كده ونفس النتيجة، والمسار بيتطبع [[old\worker.log]] و [[refusing to clean C:\Users\...]].`,
           flag: "script",
           deep: {
             why: R`فولدر logs على السيرفر بيكبر لحد ما الـ disk يتملي والتطبيق يقف ([[No space left on device]]). سكربت متجدول كل ليلة بيمنع ده. وأي غلطة فيه بتمسح حاجات مهمة، فالحماية مش رفاهية.`,
@@ -3371,6 +3470,8 @@ if __name__ == "__main__":
 
 الطلب 1003 من غير city و items فاضية طلع صف عادي بدل ما يوقّع السكربت. و [[1001]] = [[120.5 × 2 + 35]].
 
+أوامر الحل شغالة زي ما هي في PowerShell 7 كمان (جربتها وطلع نفس الناتج). بس في Windows PowerShell 5.1 الـ [[>]] بيكتب الملفات UTF-16، فالسكربت هيقول [[skip 1001.json: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte]] لكل ملف: اعملها من PowerShell 7 أو Git Bash.
+
 [[top_sku]]: ضيفه لـ FIELDS، وفي الـ dict: [["top_sku": max(items, key=lambda i: i["price"])["sku"] if items else ""]]. للطلب 1001 بيطلع [[A1]].`,
           solCode: R`mkdir orders
 echo '{"id": 1001, "customer": {"name": "سارة", "city": "القاهرة"}, "items": [{"sku": "A1", "price": 120.5, "qty": 2}, {"sku": "B7", "price": 35}]}' > orders/1001.json
@@ -3414,7 +3515,7 @@ def main(path: Path) -> int:
     return 1 if down else 0
 if __name__ == "__main__":
     sys.exit(main(Path(sys.argv[1] if len(sys.argv) > 1 else "urls.txt")))`,
-          try: R`اعمل [[urls.txt]] فيه [[https://example.com]] و [[https://www.python.org/]] و [[https://pypi.org/nope-404]] وسطر [[http://127.0.0.1:1/]] (بورت مقفول) و [[http://no-such-host.invalid/]]، وسطر بيبدأ بـ [[#]]. شغّله و [[echo $?]]. ولو عندك سيرفر محلي بيتأخر، جرّب رابط بيرد بعد 7 ثواني.`,
+          try: R`اعمل [[urls.txt]] فيه [[https://example.com]] و [[https://www.python.org/]] و [[https://pypi.org/nope-404]] وسطر [[http://127.0.0.1:1/]] (بورت مقفول) و [[http://no-such-host.invalid/]]، وسطر بيبدأ بـ [[#]]. شغّله و [[echo $?]] (في PowerShell [[$LASTEXITCODE]]). ولو عندك سيرفر محلي بيتأخر، جرّب رابط بيرد بعد 7 ثواني.`,
           flag: "script",
           deep: {
             why: "تعرف إن موقعك واقع من سكربت قبل ما تعرف من عميل زعلان. ومش محتاج خدمة مدفوعة لمشروع صغير: سكربت ٣٠ سطر و cron كل ٥ دقايق.",
@@ -3461,20 +3562,17 @@ if __name__ == "__main__":
             "لو اتشغّل مباشرة:",
             "الملف من الـ argument أو urls.txt."
           ],
-          sol: R`على النت الحقيقي:
+          sol: R`جربته على لينكس بالروابط اللي في «جرّب»، ومعاهم سيرفر محلي فيه رابط بيرد 500 ورابط بيتأخر 7 ثواني:
 
-[[UP    https://example.com                      200 in 184 ms]]
-[[UP    https://www.python.org/                  200 in 217 ms]]
+[[UP    https://example.com                      200 in 244 ms]]
+[[UP    https://www.python.org/                  200 in 297 ms]]
 [[DOWN  https://pypi.org/nope-404                HTTP 404]]
-
-ومع سيرفر محلي فيه رابط بيرد 500 ورابط بيتأخر 7 ثواني:
-
 [[DOWN  http://127.0.0.1:18732/boom              HTTP 500]]
 [[DOWN  http://127.0.0.1:18732/slow?s=7          error: timed out]]
 [[DOWN  http://127.0.0.1:1/                      error: [Errno 111] Connection refused]]
 [[DOWN  http://no-such-host.invalid/             error: [Errno -2] Name or service not known]]
 
-وآخر سطر [[1/6 up]] و [[echo $?]] بـ 1. كل نوع فشل ليه رسالة مختلفة، ودي اللي بتقولك تبدأ تدوّر فين: DNS ولا السيرفر واقف ولا التطبيق بيرمي errors.`
+وآخر سطر [[2/7 up]] و [[echo $?]] بـ 1. وعلى ويندوز الرسايل نفسها مختلفة: [[error: [WinError 10061] No connection could be made because the target machine actively refused it]] للبورت المقفول، و [[error: [Errno 11001] getaddrinfo failed]] للدومين اللي مش موجود. كل نوع فشل ليه رسالة مختلفة، ودي اللي بتقولك تبدأ تدوّر فين: DNS ولا السيرفر واقف ولا التطبيق بيرمي errors.`
         },
         {
           cmd: "backup_zip.py",
@@ -3518,7 +3616,7 @@ def main() -> int:
     return 0
 if __name__ == "__main__":
     sys.exit(main())`,
-          try: R`[[mkdir -p project/src && echo 'print("hi")' > project/src/app.py && head -c 50000 /dev/urandom > project/data.bin]]. شغّل [[python3 backup_zip.py project backups --keep 2]] تلات مرات بينهم ثانية، وبعدين [[ls backups]] و [[python3 -m zipfile -l]] على آخر واحد. وجرّب [[python3 backup_zip.py project project/backups]].`,
+          try: R`[[mkdir -p project/src && echo 'print("hi")' > project/src/app.py && head -c 50000 /dev/urandom > project/data.bin]]. شغّل [[python3 backup_zip.py project backups --keep 2]] تلات مرات بينهم ثانية، وبعدين [[ls backups]] و [[python3 -m zipfile -l]] على آخر واحد. وجرّب [[python3 backup_zip.py project project/backups]]. على ويندوز سطر التجهيز ده bash، شغّله في Git Bash (جربته كده وطلع نفس الناتج).`,
           flag: "script",
           deep: {
             why: R`أول مرة الـ disk يبوظ أو حد يمسح فولدر غلط، الـ backup هو الفرق بين «رجّعته في دقيقة» و «ضاع». و backup باسم ثابت بيدوس على اللي قبله، و backups من غير تنضيف بتملا الـ disk في شهر.`,
@@ -3732,7 +3830,9 @@ if __name__ == "__main__":
     except (smtplib.SMTPException, OSError) as e:
         sys.exit(f"error: could not send: {e}")
     print("sent")`,
-          try: R`جرّب من غير ما تبعت إيميل حقيقي: [[pip install aiosmtpd]] وفي ترمنال تاني [[python -m aiosmtpd -n -l localhost:8025]] (سيرفر بيطبع أي إيميل يوصله). وبعدين [[SMTP_HOST=localhost SMTP_PORT=8025 SMTP_TLS=0 SMTP_USER=bot@example.com MAIL_TO=you@example.com python3 notify.py "Backup ok: 3 files" "النسخة الاحتياطية خلصت" report.csv]]. وجرّب من غير [[SMTP_USER]]، وبـ [[SMTP_TLS=1]] على نفس السيرفر.`,
+          try: R`جرّب من غير ما تبعت إيميل حقيقي: [[pip install aiosmtpd]] وفي ترمنال تاني [[python -m aiosmtpd -n -l localhost:8025]] (سيرفر بيطبع أي إيميل يوصله). وبعدين [[SMTP_HOST=localhost SMTP_PORT=8025 SMTP_TLS=0 SMTP_USER=bot@example.com MAIL_TO=you@example.com python3 notify.py "Backup ok: 3 files" "النسخة الاحتياطية خلصت" report.csv]]. وجرّب من غير [[SMTP_USER]]، وبـ [[SMTP_TLS=1]] على نفس السيرفر.
+
+في PowerShell المتغيرات بتتكتب قبلها: [[$env:SMTP_HOST="localhost"; $env:SMTP_PORT="8025"; $env:SMTP_TLS="0"; $env:SMTP_USER="bot@example.com"; $env:MAIL_TO="you@example.com"]] وبعدين [[python notify.py "Backup ok: 3 files" "النسخة الاحتياطية خلصت" report.csv]].`,
           flag: "script",
           deep: {
             why: R`cron بيشغّل الـ backup الساعة 2 بالليل وبيفشل، ومحدش بيعرف لحد ما تحتاج الـ backup. إيميل «فشل» (أو تقرير كل يوم) بيقفل الدايرة.`,
@@ -3790,13 +3890,13 @@ if __name__ == "__main__":
 
 [[Subject: Backup ok: 3 files]]
 [[From: bot@example.com]]
-[[To: sara@example.com]]
+[[To: you@example.com]]
 [[Content-Type: multipart/mixed; ...]]
 وجواه جزء [[Content-Type: text/plain; charset="utf-8"]] فيه [[النسخة الاحتياطية خلصت]]، وجزء [[Content-Type: text/csv]] و [[Content-Disposition: attachment; filename="report.csv"]].
 
 من غير [[SMTP_USER]]: [[error: environment variable 'SMTP_USER' is not set]] و exit 1.
 بـ TLS على السيرفر المحلي: [[error: could not send: STARTTLS extension not supported by server.]]
-وبورت مقفول: [[error: could not send: [Errno 111] Connection refused]].
+وبورت مقفول: [[error: could not send: [Errno 111] Connection refused]]، وعلى ويندوز [[error: could not send: [WinError 10061] No connection could be made because the target machine actively refused it]]. (جربت الأربع حالات على لينكس، والإرسال والبورت المقفول على ويندوز كمان.)
 
 كل فشل رسالة سطر واحد و exit 1، فالسكربت اللي بينادي notify.py يقدر يعرف.`
         }
@@ -3813,7 +3913,10 @@ if __name__ == "__main__":
           desc: "في الإنتاج uvicorn بيشتغل جوه container ورا nginx. [[--host 0.0.0.0]] عشان يبقى باين بره الـ container، و [[--proxy-headers]] (شغال افتراضيًا، وكتابته توضيح) مع [[--forwarded-allow-ips]] عشان يصدّق الـ headers اللي nginx بيبعتها ويعرف IP المستخدم الحقيقي وإن الطلب كان https. ومن غير [[--reload]].",
           example: R`uvicorn app.main:app --host 0.0.0.0 --port 8080 --proxy-headers --forwarded-allow-ips "*"
 uvicorn app.main:app --host 0.0.0.0 --port 8080 --workers 2 --proxy-headers --forwarded-allow-ips "*"
-ss -tlnp | grep 8080`,
+# Linux (and WSL):
+ss -tlnp | grep 8080
+# Windows (PowerShell):
+Get-NetTCPConnection -LocalPort 8080 -State Listen`,
           try: "اعمل endpoint بيرجّع [[request.client.host]] و [[request.url.scheme]]، واطلبه من ورا nginx مرة بـ [[--forwarded-allow-ips \"*\"]] ومرة من غيرها وقارن.",
           deep: {
             why: "من غير الإعدادات دي: كل الطلبات شكلها جاية من IP بتاع nginx (فالـ rate limit بيقفل على الكل مرة واحدة)، والـ redirects بتطلع [[http://]] والموقع https.",
@@ -3832,12 +3935,15 @@ nginx بيبعت [[X-Forwarded-For]] (IP المستخدم) و [[X-Forwarded-Prot
           lines: [
             "شغّل على كل الواجهات، وصدّق headers الـ proxy.",
             "نفس الكلام بعمليتين.",
-            "اتأكد إنه سامع على 0.0.0.0."
+            "اتأكد إنه سامع على 0.0.0.0.",
+            "نفس السؤال على ويندوز: مين سامع على 8080 وعلى أنهي عنوان."
           ],
-          sol: R`جربتها بـ endpoint بيرجّع [[{"client": ..., "scheme": ...}]] وبعت الطلب بـ [[X-Forwarded-For: 203.0.113.7]] و [[X-Forwarded-Proto: https]] زي ما nginx بيعمل:
+          sol: R`جربتها في container بـ endpoint بيرجّع [[{"client": ..., "scheme": ...}]] وبعت الطلب بـ [[X-Forwarded-For: 203.0.113.7]] و [[X-Forwarded-Proto: https]] زي ما nginx بيعمل:
 
 مع [[--forwarded-allow-ips "*"]]: [[{"client":"203.0.113.7","scheme":"https"}]]، يعني IP المستخدم الحقيقي و https.
-من غيرها، والطلب جاي من IP غير 127.0.0.1 (زي nginx في container تاني): [[{"client":"192.0.2.2","scheme":"http"}]]، يعني IP البروكسي و http، و uvicorn تجاهل الـ headers.
+من غيرها، والطلب جاي من IP الـ container نفسه على شبكة Docker مش من 127.0.0.1 (زي nginx في container تاني): [[{"client":"172.17.0.3","scheme":"http"}]]، يعني IP البروكسي و http، و uvicorn تجاهل الـ headers.
+
+و [[ss -tlnp | grep 8080]] بيطبع سطر زي [[LISTEN 0  5  0.0.0.0:8080  0.0.0.0:*  users:(("python3",pid=5145,fd=3))]].
 
 المفاجأة: لو nginx على نفس الجهاز وبيكلّم [[127.0.0.1:8080]] مش هتلاقي فرق، لأن uvicorn بيثق في [[127.0.0.1]] افتراضيًا. وده خطر لو البورت مفتوح للنت ومعاك [[*]]: أي حد يقدر يزوّر [[X-Forwarded-For]]، فخلي البورت على 127.0.0.1 أو شبكة Docker داخلية.`,
           solCode: R`from fastapi import FastAPI, Request
@@ -3900,11 +4006,11 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--proxy-
             "فحص صحة كل ٣٠ ثانية.",
             "شغّل uvicorn للإنتاج."
           ],
-          sol: R`[[docker images]] المفروض يوريك الصورة بحجم في حدود ٢٠٠ لـ ٣٠٠ ميجا حسب المكتبات (الـ base [[python:3.12-slim]] لوحدها حوالي ١٢٠ ميجا على الديسك). لو طلعت قرب الجيجا، غالبًا نسيت [[.dockerignore]] فـ [[.venv]] و [[.git]] اتنسخوا جوه الصورة، أو استخدمت [[python:3.12]] مش slim.
+          sol: R`بنيتها بـ requirements فيه [[fastapi==0.115.5]] و [[uvicorn[standard]==0.32.1]] و app فيه [[/health]]: [[docker images]] طلّع الصورة [[262MB]]، والـ base [[python:3.12-slim]] لوحدها [[191MB]] (ده رقم Docker Desktop، وبيعد الطبقات المضغوطة والمفكوكة مع بعض؛ المضغوط اللي بينزل من النت حوالي 46 ميجا بس). لو طلعت قرب الجيجا، غالبًا نسيت [[.dockerignore]] فـ [[.venv]] و [[.git]] اتنسخوا جوه الصورة، أو استخدمت [[python:3.12]] مش slim.
 
-[[docker compose exec app whoami]] المفروض يطبع [[app]]. لو طبع [[root]] يبقى سطر [[USER app]] مش موجود أو الـ service بيستخدم صورة قديمة (اعمل [[docker compose up -d --build]]). وبعد دقيقة [[docker ps]] يوريك [[(healthy)]]. لو [[(unhealthy)]] شوف [[docker inspect --format '{{json .State.Health}}' <id>]]: غالبًا مفيش route اسمه [[/health]].
+[[docker compose exec app whoami]] طبع [[app]]. لو طبع [[root]] يبقى سطر [[USER app]] مش موجود أو الـ service بيستخدم صورة قديمة (اعمل [[docker compose up -d --build]]). وبعد حوالي 40 ثانية [[docker ps]] ورّاني [[Up 49 seconds (healthy)]]. لو [[(unhealthy)]] شوف [[docker inspect --format '{{json .State.Health}}' <id>]]: غالبًا مفيش route اسمه [[/health]].
 
-(مقدرتش أبني الصورة هنا لأن الشبكة جوه docker build مقفولة، فالأرقام دي تقريبية.)`
+وخد بالك: [[WORKDIR /app]] بيعمل الفولدر ملك root، و [[COPY --chown]] بيغيّر الملفات اللي جواه بس، فالتطبيق مايقدرش يعمل ملف جديد في [[/app]] نفسه. اللي يكتب ملفات يكتبها في volume أو فولدر انت عامله وعامل له chown.`
         },
         {
           cmd: "docker compose run --rm --no-deps",
@@ -3935,15 +4041,17 @@ docker compose run --rm -e LOG_LEVEL=debug app python -m app.check`,
           lines: [
             "الاختبارات في container مؤقت، من غير ما تقوّم القاعدة.",
             "الاختبارات مع القاعدة والخدمات التانية.",
-            "شغّل سكربت جوه الـ container الشغال (من غير terminal).",
+            "شغّل سكربت جوه الـ container الشغال (من غير terminal). app.seed هنا اسم موديول في مشروعك.",
             "سكربت تاني في وضع العرض بس.",
             "تشغيل بمتغير بيئة إضافي."
           ],
-          sol: R`الأمر الأول بيطبع ناتج pytest العادي، حاجة زي [[..... [100%]]] و [[5 passed in 0.40s]]، والـ exit code بتاعه هو بتاع pytest (0 لو كله نجح). [[--no-deps]] معناها إنه مابيشغّلش الـ db ولا أي service في [[depends_on]]، فلو اختباراتك محتاجة قاعدة بيانات هتفشل بـ connection refused، وساعتها شيل [[--no-deps]].
+          sol: R`جربتها على الصورة بتاعة درس Dockerfile، ومعاها service اسمها db (postgres) في [[depends_on]]، وفولدر tests فيه اختبار لـ [[/health]]. الأمر الأول طبع ناتج pytest العادي، [[1 passed]]، والـ exit code بتاعه هو بتاع pytest (0 لو كله نجح). [[--no-deps]] معناها إنه مابيشغّلش الـ db ولا أي service في [[depends_on]]، فلو اختباراتك محتاجة قاعدة بيانات هتفشل بـ connection refused، وساعتها شيل [[--no-deps]].
 
-[[docker ps -a]] بعدها مش المفروض يوريك container اسمه زي [[project-app-run-a1b2c3]]، لأن [[--rm]] مسحه. لو لقيت واحد [[Exited]] يبقى شغّلت مرة من غير [[--rm]]، امسحه بـ [[docker rm]] أو [[docker container prune]].
+ومع الـ Dockerfile ده طلع تحذير [[PytestCacheWarning: could not create cache path /app/.pytest_cache ... Permission denied]]: الاختبارات عدّت، بس pytest مش قادر يكتب الكاش لأن [[/app]] ملك root والتطبيق شغال بيوزر app. [[python -m pytest -q -p no:cacheprovider]] بيشيله.
 
-(ما قدرتش أشغّلها هنا لأن بناء الصورة محتاج نت جوه docker build.)`
+و [[exec -T app python -m app.seed data/foods.csv]] و [[-e LOG_LEVEL=debug]] اشتغلوا على موديولات تجربة عملتها بنفس الأسماء: الأول وصّل [[data/foods.csv]] للسكربت، والتاني السكربت شاف [[LOG_LEVEL = debug]]. [[--no-deps]] معناها إنه مابيشغّلش الـ db ولا أي service في [[depends_on]]، فلو اختباراتك محتاجة قاعدة بيانات هتفشل بـ connection refused، وساعتها شيل [[--no-deps]].
+
+[[docker ps -a]] بعدها مورّانيش أي container من نوع [[project-app-run-a1b2c3]]، لأن [[--rm]] مسحه، ومورّانيش الـ db كمان بسبب [[--no-deps]]. لو لقيت واحد [[Exited]] يبقى شغّلت مرة من غير [[--rm]]، امسحه بـ [[docker rm]] أو [[docker container prune]].`
         }
       ]
     },
@@ -4002,14 +4110,16 @@ build-backend = "setuptools.build_meta"`,
             "setuptools.",
             "الـ backend بتاعه."
           ],
-          sol: R`بعد [[pip install -e ./tidy-tools]] في venv، فولدر [[venv/bin]] بقى فيه [[tidy]] و [[dupes]]، و [[tidy --help]] طبع [[usage: tidy [-h] [--apply] [folder]]]، و [[dupes /tmp]] طبع [[scanning /tmp]] و exit 0. والملف [[venv/bin/tidy]] نفسه 6 سطور: [[from tidy_tools.organize import main]] و [[sys.exit(main())]].
+          sol: R`جربته على أوبونتو 24.04. بعد [[pip install -e ./tidy-tools]] في venv، فولدر [[venv/bin]] بقى فيه [[tidy]] و [[dupes]]، و [[tidy --help]] طبع [[usage: tidy [-h] [--apply] [folder]]]، و [[dupes /tmp]] طبع [[scanning /tmp]] و exit 0. والملف [[venv/bin/tidy]] نفسه 8 سطور، أهمهم [[from tidy_tools.organize import main]] و [[sys.exit(main())]].
 
 [[pipx install ./tidy-tools]]:
 
 [[installed package tidy-tools 0.1.0, installed using Python 3.12.3]]
-[[These apps are now available]] و [[- dupes]] و [[- tidy]]
+[[These apps are now globally available]] و [[- dupes]] و [[- tidy]]
 
-و [[uv tool install ./tidy-tools]] طلّع [[Installed 2 executables: dupes, tidy]]، وحذّرني إن الفولدر مش في الـ PATH ([[uv tool update-shell]] بيحلها).
+و [[uv tool install ./tidy-tools]] طلّع [[Installed 2 executables: dupes, tidy]]. ولما [[~/.local/bin]] مكانش في الـ PATH حذّرني: [[warning: ... is not on your PATH ... or uv tool update-shell]]، و [[uv tool update-shell]] بيحلها.
+
+وعلى ويندوز [[pip install -e]] عمل [[tidy.exe]] و [[dupes.exe]] في [[venv\Scripts]] وشغالين. بس مع Python 3.14 سطر الـ usage بقى [[usage: python.exe C:\...\venv\Scripts\tidy [-h] [--apply] [folder]]]: argparse في 3.14 بقى يكتب إزاي البرنامج اتشغّل. الأمر شغال عادي، ولو عايز الاسم ثابت اكتب [[argparse.ArgumentParser(prog="tidy", ...)]].
 
 والأمر [[hi]] بـ click (الكود تحت): [[hi Sara --shout]] طبع [[HELLO SARA]]، و [[hi]] من غير اسم: [[Error: Missing argument 'NAME'.]] و exit 2. و click اتسطّب لوحده لأنه في dependencies.`,
           solCode: R`# src/tidy_tools/hello.py
@@ -4060,7 +4170,7 @@ Console().print(table)`,
             why: R`السكربت الصغير اللي محتاج مكتبة واحدة كان بيعمل واحدة من اتنين: يا تسطّب المكتبة على النظام (ممنوع على أوبونتو الجديد، درس «externally-managed-environment»)، يا venv لكل سكربت. PEP 723 بيخلي السكربت مكتفي بنفسه.`,
             how: R`البلوك لازم يبدأ بـ [[# /// script]] بالظبط وينتهي بـ [[# ///]]، وكل سطر بينهم بيبدأ بـ [[#]]. اللي جواه TOML: [[requires-python]] و [[dependencies]] بنفس شكل pyproject.toml. ولأنهم تعليقات، Python العادي بيتجاهلهم.
 
-[[uv run]] أول مرة بيحمّل المكتبات (عندي 7 ثواني) وبيحفظها في cache، والمرات اللي بعدها أقل من ثانية. ولو [[requires-python]] أحدث من الموجود عندك، uv ممكن يحمّل Python نفسه.
+[[uv run]] أول مرة بيحمّل المكتبات وبيحفظها في cache، والمرات اللي بعدها مش بتحمّل حاجة (الوقت الباقي هو طلبات السكربت نفسه). ولو [[requires-python]] أحدث من الموجود عندك، uv ممكن يحمّل Python نفسه.
 
 [[#!/usr/bin/env -S uv run --script]]: [[-S]] بيخلي env يقسم الكلام لأكتر من argument (من غيرها env بيدوّر على برنامج اسمه [["uv run --script"]] كله). بعد chmod، [[./pypi_versions.py]] بيشتغل كأي أمر.
 
@@ -4084,19 +4194,21 @@ Console().print(table)`,
             "النسخة، أو الـ status لو مش موجودة.",
             "اطبع الجدول."
           ],
-          sol: R`أول [[uv run]] كتب [[Downloading pygments (1.2MiB)]] و [[Installed 9 packages in 8ms]] وبعدين الجدول:
+          sol: R`جربته بـ uv 0.12 على لينكس بعد [[uv cache clean]]. أول [[uv run]] كتب [[Downloading pygments (1.2MiB)]] و [[Installed 9 packages in 33ms]] وبعدين الجدول:
 
 [[│ requests │  2.34.2 │]]
 [[│ fastapi  │ 0.142.2 │]]
 [[│ pytest   │   9.1.1 │]]
 
-في 7.3 ثانية. التانية 0.7 ثانية من الـ cache. (النسخ هتبقى أحدث عندك.)
+في 4.6 ثانية. التانية 1.6 ثانية، ومحمّلتش حاجة؛ الباقي هو التلات طلبات لـ PyPI. (النسخ هتبقى أحدث عندك.)
 
 [[./pypi_versions.py typer no-such-pkg-xyz-123]] اشتغل من الـ shebang وطلع [[typer 0.27.2]] و [[no-such-pkg-xyz-123  HTTP 404]].
 
-[[uv init --script new_tool.py]] عمل ملف أوله [[# /// script]] و [[# requires-python = ">=3.12"]] و [[# dependencies = []]] ودالة main. وبعد [[uv add --script new_tool.py httpx]] بقى [[#     "httpx>=0.28.1",]] جوه dependencies.
+[[uv init --script new_tool.py]] عمل ملف أوله [[# /// script]] و [[# requires-python = ">=3.13"]] (نسخة Python اللي عندي، عندك هتبقى نسختك) و [[# dependencies = []]] ودالة main. وبعد [[uv add --script new_tool.py httpx]] بقى [[#     "httpx>=0.28.1",]] جوه dependencies.
 
-و [[python3 pypi_versions.py]] اشتغل عندي بس لأن requests و rich كانوا متسطبين على النظام بالصدفة. على جهاز نضيف هيقع بـ ModuleNotFoundError.`
+و [[pipx run pypi_versions.py requests]] على أوبونتو 24.04 (pipx 1.4.3) فهم البلوك وطبع الجدول. أما [[python3 pypi_versions.py]] على نفس الجهاز النضيف فوقع بـ [[ModuleNotFoundError: No module named 'requests']]: Python العادي مبيقراش البلوك.
+
+على ويندوز الـ shebang و chmod مالهمش لازمة: [[uv run pypi_versions.py]] بس.`
         },
         {
           cmd: "cron و Task Scheduler",
@@ -4104,18 +4216,19 @@ Console().print(table)`,
           desc: R`على لينكس (والسيرفرات) [[cron]]: سطر في [[crontab -e]] فيه الميعاد (دقيقة، ساعة، يوم في الشهر، شهر، يوم في الأسبوع) والأمر. على ويندوز Task Scheduler، ومن الترمنال [[schtasks]]. على ماك cron شغال، والطريقة الرسمية launchd.
 
 وأهم حاجة: البيئة اللي cron بيشغّل فيها فقيرة جدًا. مفيش venv متفعّل، والـ PATH قصير، ومفيش [[~/.bashrc]]، والفولدر الحالي هو الـ home. فكل حاجة بمسار كامل، والناتج والأخطاء يتكتبوا في ملف.`,
-          example: R`crontab -e
+          example: R`# Linux (and WSL):
+crontab -e
 # كل يوم الساعة 2 بالليل:
 0 2 * * * cd /home/sara/scripts && .venv/bin/python backup_zip.py /home/sara/projects /home/sara/backups >> logs/backup.log 2>&1
 # كل 5 دقايق، ومتبدأش نسخة تانية لو اللي قبلها لسه شغالة:
 */5 * * * * /usr/bin/flock -n /tmp/uptime.lock /usr/bin/python3 /home/sara/scripts/uptime_check.py /home/sara/scripts/urls.txt >> /home/sara/scripts/logs/uptime.log 2>&1
 crontab -l
 journalctl -u cron -n 20
-# ويندوز (CMD أو PowerShell):
+# Windows (PowerShell):
 schtasks /Create /TN "Backup" /SC DAILY /ST 02:00 /TR "C:\Users\sara\scripts\.venv\Scripts\python.exe C:\Users\sara\scripts\backup_zip.py C:\Users\sara\Documents D:\backups"
 schtasks /Query /TN "Backup" /V /FO LIST
 schtasks /Run /TN "Backup"`,
-          try: R`حاكي بيئة cron من غير ما تستنى: من الـ home شغّل [[env -i HOME=$HOME PATH=/usr/bin:/bin /bin/sh -c "python3 uptime_check.py urls.txt"]] وشوف الرسالة. وبعدين نفس الأمر بـ [[cd /full/path && ...]]. وجرّب الـ lock: [[flock -n /tmp/u.lock sleep 30 &]] وبعدها على طول [[flock -n /tmp/u.lock echo second; echo $?]]. ولو عايز cron بجد: سطر [[* * * * * date >> /tmp/cron-test.txt]] واستنى دقيقتين.`,
+          try: R`حاكي بيئة cron من غير ما تستنى: من الـ home شغّل [[env -i HOME=$HOME PATH=/usr/bin:/bin /bin/sh -c "python3 uptime_check.py urls.txt"]] وشوف الرسالة. وبعدين نفس الأمر بـ [[cd /full/path && ...]]. وجرّب الـ lock: [[flock -n /tmp/u.lock sleep 30 &]] وبعدها على طول [[flock -n /tmp/u.lock echo second; echo $?]]. ولو عايز cron بجد: سطر [[* * * * * date >> /tmp/cron-test.txt]] واستنى دقيقتين. ده كله لينكس (و WSL)؛ على ويندوز جرّب أوامر schtasks اللي في المثال على سكربت تجربة، وامسح الـ task بعدها بـ [[schtasks /Delete /TN "Backup" /F]].`,
           deep: {
             why: R`سكربت الـ backup والتنضيف ومراقبة المواقع فايدتهم إنهم يشتغلوا من غير ما تفتكر. وأغلب مشاكل «السكربت شغال لما أشغّله وبيفشل في cron» سببها واحد: البيئة مختلفة.`,
             how: R`الميعاد: [[0 2 * * *]] الدقيقة 0 الساعة 2 كل يوم. [[*/5 * * * *]] كل 5 دقايق. [[0 9 * * 1-5]] 9 الصبح من الاتنين للجمعة. [[0 3 1 * *]] أول كل شهر. الموقع crontab.guru بيشرح أي سطر.
@@ -4154,9 +4267,11 @@ schtasks /Run /TN "Backup"`,
 
 الـ lock: التاني خرج على طول، ومطبعش [[second]]، و [[$?]] بـ 1.
 
-و [[journalctl -u cron -n 20]] على أوبونتو بيطلّع سطور زي [[CRON[489168]: (sara) CMD (/usr/bin/python3 /home/sara/scripts/uptime_check.py ...)]]: يعني cron شغّل الأمر فعلًا، وأي مشكلة بعد كده هتلاقيها في الـ log بتاع السكربت نفسه.
+وجربت cron بجد في container أوبونتو 24.04: سطر [[* * * * * date >> /tmp/cron-test.txt]] كتب التاريخ بعد أقل من دقيقة. وسطر فيه [[date +%Y >> /tmp/c1.txt]] مكتبش أي ملف خالص (الـ [[%]] قطع السطر)، و [[date +\%Y >> /tmp/c2.txt]] كتب [[2026]].
 
-(schtasks ماجربتهوش هنا لأني على لينكس. الشكل ده هو المعتاد، ولو حصل خطأ في الأمر، Task Scheduler من الواجهة فيه نفس الخيارات.)`
+[[journalctl -u cron -n 20]] على سيرفر أوبونتو بيطلّع سطور زي [[CRON[489168]: (sara) CMD (/usr/bin/python3 /home/sara/scripts/uptime_check.py ...)]]: يعني cron شغّل الأمر فعلًا، وأي مشكلة بعد كده هتلاقيها في الـ log بتاع السكربت نفسه. (ده ماتجربش هنا: الـ container مفيهوش systemd.)
+
+و schtasks جربته على ويندوز 11 من غير Admin، بـ task اسمها تجربة ومسحتها بعدها بـ [[schtasks /Delete /TN "..." /F]]. [[/Create]] طبع [[SUCCESS: The scheduled task "..." has successfully been created.]]. [[/Query /V /FO LIST]] طبع [[Next Run Time]] بكرة الساعة 2:00، و [[Last Result: 267011]] (يعني لسه مااشتغلتش). [[/Run]] شغّلها، والـ zip اتعمل في فولدر الـ backups، و [[Last Result]] بقى [[0]].`
         },
         {
           cmd: "retry و backoff",
@@ -4207,7 +4322,7 @@ def main() -> int:
     return 0
 if __name__ == "__main__":
     sys.exit(main())`,
-          try: R`محتاج سيرفر بيفشل ساعات. اعمل [[flaky.py]] بـ [[http.server]] بيرجّع 503 لأول طلبين و 200 للتالت، و 404 على [[/missing]] و 500 دايمًا على [[/boom]] (الكود في الحل). شغّل [[python3 fetch_retry.py http://localhost:8001/flaky]]، وبعدين على [[/missing]] و [[/boom]]، وبعد كل واحدة [[echo $?]].`,
+          try: R`محتاج سيرفر بيفشل ساعات. اعمل [[flaky.py]] بـ [[http.server]] بيرجّع 503 لأول طلبين و 200 للتالت، و 404 على [[/missing]] و 500 دايمًا على [[/boom]] (الكود في الحل). شغّل [[python3 fetch_retry.py http://localhost:8001/flaky]]، وبعدين على [[/missing]] و [[/boom]]، وبعد كل واحدة [[echo $?]] (في PowerShell [[$LASTEXITCODE]]). على ويندوز اكتب [[127.0.0.1]] بدل [[localhost]]: السيرفر سامع على 127.0.0.1 بس، وويندوز بيجرب [[::1]] الأول، فكل طلب لـ localhost كان بياخد ثانيتين زيادة (قستها: 2.3 ثانية بدل 0.3).`,
           flag: "script",
           deep: {
             why: "سكربت بيقع كل ما الـ API يتأخر ثانية بيصحّيك بالليل على الفاضي. وسكربت بيعيد للأبد على 404 بيضيّع وقت ويضايق السيرفر. والتوازن بينهم بيتكتب مرة واحدة ويتستخدم في كل سكربت.",
@@ -4330,7 +4445,7 @@ results = [check(u) for u in urls]
 print(f"one by one: {time.perf_counter() - start:.2f}s")
 with ThreadPoolExecutor(max_workers=10) as pool:
     print([status for _, status in pool.map(check, urls)][:4])`,
-          try: R`محتاج روابط بطيئة: سيرفر محلي فيه [[/slow]] بيستنى ثانية قبل ما يرد (عدّل [[flaky.py]] من الدرس اللي فات: [[time.sleep(1)]] لو المسار بيبدأ بـ [[/slow]]). اعمل urls.txt فيه 10 روابط [[/slow?n=1]] لـ [[/slow?n=10]] ورابط 404 ورابط على بورت مقفول. شغّل وقارن الوقتين. وبعدين غيّر [[max_workers]] لـ 2 وشوف.`,
+          try: R`محتاج روابط بطيئة: سيرفر محلي فيه [[/slow]] بيستنى ثانية قبل ما يرد (عدّل [[flaky.py]] من الدرس اللي فات: [[import time]] في أوله، و [[time.sleep(1)]] لو [[self.path.startswith("/slow")]]). اعمل urls.txt فيه 10 روابط [[http://127.0.0.1:8001/slow?n=1]] لـ [[/slow?n=10]] ورابط 404 ([[/missing]]) ورابط على بورت مقفول ([[http://127.0.0.1:1/]]). شغّل وقارن الوقتين. وبعدين غيّر [[max_workers]] لـ 2 وشوف.`,
           flag: "script",
           deep: {
             why: "مراقبة ٢٠٠ موقع، أو تحميل ٥٠٠ صورة، أو تشيّك على ١٠٠٠ رابط في sitemap: نفس الكود بالـ threads بيخلص في جزء من الوقت.",
@@ -4375,15 +4490,17 @@ with ThreadPoolExecutor(max_workers=10) as pool:
             "map: نفس الترتيب.",
             "أول 4 نتايج."
           ],
-          sol: R`على 10 روابط كل واحد بياخد ثانية، ورابط 404، ورابط على بورت مقفول:
+          sol: R`جربته على لينكس: 10 روابط كل واحد بياخد ثانية، ورابط 404، ورابط على بورت مقفول.
 
-النتايج طلعت بترتيب الخلصان: [[error: HTTPError]] و [[error: URLError]] طلعوا في الأول أو في النص مش في الآخر، و [[n=10]] ممكن يطلع قبل [[n=1]]. والترتيب بيتغير من تشغيل للتاني.
+النتايج طلعت بترتيب الخلصان: [[error: URLError]] و [[error: HTTPError]] طلعوا في النص مش في الآخر، و [[n=4]] طلع قبل [[n=1]]. والترتيب بيتغير من تشغيل للتاني.
 
-[[threads: 12 urls in 1.18s]]
+[[threads: 12 urls in 1.04s]]
 [[one by one: 10.02s]]
 [[['200', '200', '200', '200'] ]] من map بنفس ترتيب الملف.
 
-بـ [[max_workers=2]] الوقت بيبقى حوالي 5 ثواني: 10 روابط على 2 في نفس الوقت. يعني الوقت تقريبًا (عدد الروابط البطيئة ÷ workers) × مدة الواحد.`
+بـ [[max_workers=2]] الوقت بقى 5.03 ثانية: 10 روابط على 2 في نفس الوقت. يعني الوقت تقريبًا (عدد الروابط البطيئة ÷ workers) × مدة الواحد.
+
+وعلى ويندوز: [[threads: 12 urls in 3.17s]] و [[one by one: 12.03s]]. الفرق كله من البورت المقفول: ويندوز بيستنى حوالي ثانيتين قبل ما يقول [[WinError 10061]] (لينكس بيرد في لحظة)، فالرابط ده لوحده بقى أبطأ من أي رابط slow.`
         },
         {
           cmd: "pytest لسكربت",
@@ -4417,7 +4534,7 @@ def test_apply_deletes_only_old(tmp_path):
     assert not old.exists()
     assert new.exists()
 def test_refuses_home(tmp_path, monkeypatch):
-    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setattr(Path, "home", lambda: tmp_path)
     make(tmp_path / "old.log", 40)
     assert main([str(tmp_path), "--days", "1", "--apply"]) == 2
     assert (tmp_path / "old.log").exists()
@@ -4436,7 +4553,7 @@ def test_days_must_be_a_number(capsys):
 
 [[caplog]] بيمسك رسايل الـ logging. ليه [[set_level]]؟ السكربت بيعمل [[basicConfig(level=INFO)]]، بس pytest بيكون حاط handler على الـ root logger قبلها، و basicConfig مبيعملش حاجة لو فيه handlers. فالمستوى بيفضل WARNING والـ INFO مبيوصلش. [[caplog.set_level(logging.INFO)]] بيحل ده.
 
-[[monkeypatch.setenv("HOME", ...)]]: [[Path.home()]] بيقرا HOME على لينكس وماك، فالـ tmp_path بقى «الـ home» والسكربت لازم يرفض (درس «monkeypatch»).
+[[monkeypatch.setattr(Path, "home", lambda: tmp_path)]]: بدّلنا [[Path.home]] نفسها للاختبار ده، فالـ tmp_path بقى «الـ home» والسكربت لازم يرفض (درس «monkeypatch»). ليه مش [[monkeypatch.setenv("HOME", ...)]]؟ [[Path.home()]] بيقرا HOME على لينكس وماك بس، وعلى ويندوز بيقرا USERPROFILE. جربت نسخة HOME على ويندوز: الاختبار وقع بـ [[assert 0 == 2]] والسكربت مسح الملف اللي في tmp_path فعلًا. تبديل الدالة نفسها شغال على الاتنين.
 
 [[pytest.raises(SystemExit)]]: argparse بيعمل [[sys.exit(2)]] على أي غلط، ده بيرمي SystemExit و [[exc.value.code]] هو الرقم. و [[capsys]] بيمسك stdout و stderr.
 
@@ -4470,7 +4587,7 @@ def test_days_must_be_a_number(capsys):
             "القديم اتمسح.",
             "الجديد فضل.",
             "بيرفض الـ home:",
-            "خلّي tmp_path هو الـ home.",
+            "خلّي Path.home() ترجّع tmp_path (على كل الأنظمة).",
             "ملف قديم.",
             "لازم يرجع 2...",
             "...ومحدش اتمسح.",
@@ -4480,7 +4597,7 @@ def test_days_must_be_a_number(capsys):
             "بكود 2.",
             "والرسالة على stderr."
           ],
-          sol: R`[[python -m pytest -q]]: [[....]] و [[4 passed in 0.05s]].
+          sol: R`[[python -m pytest -q]]: [[....]] و [[4 passed in 0.05s]]. جربته على أوبونتو (Python 3.12) وفي Python 3.13 وعلى ويندوز (3.14)، والأربعة عدّوا على التلاتة.
 
 [[pytest -q]] لوحده: [[ModuleNotFoundError: No module named 'clean_old_files']] و [[Interrupted: 1 error during collection]]. pytest حط فولدر tests في sys.path مش الفولدر اللي فوقه.
 
@@ -4501,9 +4618,11 @@ bash لما المهمة توصيل أوامر موجودة ببعض في سطو
 PowerShell لما الشغل على ويندوز نفسه: الـ registry والخدمات والمستخدمين و Office و Active Directory. وبيرجّع objects مش نص.
 
 Python لما فيه منطق (شروط وحسابات وبيانات JSON أو CSV أو API)، أو لازم يشتغل على ويندوز ولينكس وماك من نفس الكود، أو السكربت هيكبر ويتختبر.`,
-          example: R`find . -type f -name '*.*' -not -path './.git/*' | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -5
-Get-ChildItem -Recurse -File | Group-Object Extension | Sort-Object Count -Descending | Select-Object -First 5 Count, Name
-python3 -c "import collections, pathlib; print(collections.Counter(p.suffix.lower() for p in pathlib.Path('.').rglob('*.*') if p.is_file() and '.git' not in p.parts).most_common(5))"`,
+          example: R`python -c "import collections, pathlib; print(collections.Counter(p.suffix.lower() for p in pathlib.Path('.').rglob('*.*') if p.is_file() and '.git' not in p.parts).most_common(5))"
+# Linux و Mac:
+find . -type f -name '*.*' -not -path './.git/*' | sed 's/.*\.//' | sort | uniq -c | sort -rn | head -5
+# Windows (PowerShell):
+Get-ChildItem -Recurse -File | Group-Object Extension | Sort-Object Count -Descending | Select-Object -First 5 Count, Name`,
           try: R`شغّل التلاتة على نفس الفولدر (الـ proj بتاع درس «glob و rglob»، وفيه [[x.PNG]] و [[y.png]] و Makefile و .git). PowerShell على لينكس وماك اسمه [[pwsh]]. قارن النتايج: مين عدّ PNG و png مع بعض؟ ومين دخل .git؟ ومين عدّ Makefile؟`,
           deep: {
             why: "كل لغة فيها حاجات سهلة جدًا وحاجات مؤلمة. سكربت bash فيه JSON و if متداخلة و arrays بيبقى صعب يتقري ويتصلّح. وسكربت Python بيعمل pipe بين ٤ أوامر نظام بيبقى أطول من اللازم.",
@@ -4520,15 +4639,15 @@ Python: نفس الكود على أي نظام، ومكتبات لكل حاجة 
             mistakes: R`bash لـ JSON معقد (استخدم [[jq]] على الأقل، أو Python). وPython عشان تعمل [[ls | grep]]. و PowerShell على سيرفر لينكس عشان «متعود عليه» فكل اللي بعدك يحتاجوا يسطّبوه. وتنسى إن [[sed -i]] على ماك غير لينكس (درس bash).`
           },
           lines: [
+            "Python (على أي نظام): Counter على امتداد كل ملف (بحروف صغيرة) بره .git، أكتر 5.",
             "bash: الملفات اللي ليها امتداد بره .git، خد الامتداد، عد، رتّب، أول 5.",
-            "PowerShell: كل الملفات، جمّع بالامتداد، رتّب بالعدد، أول 5.",
-            "Python: Counter على امتداد كل ملف (بحروف صغيرة) بره .git، أكتر 5."
+            "PowerShell: كل الملفات، جمّع بالامتداد، رتّب بالعدد، أول 5."
           ],
-          sol: R`على نفس الفولدر:
+          sol: R`على نفس الفولدر، وفيه ملف [[.git/config]]:
 
-bash: [[3 py]] و [[2 md]] و [[1 PNG]] و [[1 png]] و [[1 jpg]]: حساس لحالة الحروف، فـ PNG و png اتعدوا لوحدهم. والـ Makefile مالوش امتداد فماتعدّش.
+bash (لينكس): [[3 py]] و [[2 md]] و [[1 png]] و [[1 jpg]] و [[1 PNG]]: حساس لحالة الحروف، فـ PNG و png اتعدوا لوحدهم. والـ Makefile مالوش امتداد فماتعدّش.
 
-PowerShell: [[3 .py]] و [[2 .md]] و [[2 .PNG]] و [[1]] (اسم فاضي = Makefile) و [[1 .jpg]]. [[Group-Object]] مش حساس لحالة الحروف فجمع PNG و png، وعدّ Makefile بامتداد فاضي. وماحتاجش أقوله يسيب [[.git]]: [[Get-ChildItem]] من غير [[-Force]] مبيدخلش الحاجات المخفية.
+PowerShell (ويندوز): [[3 .py]] و [[2 .md]] و [[2 .PNG]] و [[1]] (اسم فاضي = Makefile) و [[1 .jpg]]. [[Group-Object]] مش حساس لحالة الحروف فجمع PNG و png، وعدّ Makefile بامتداد فاضي. وساب [[.git]] لأن [[Get-ChildItem]] من غير [[-Force]] مبيدخلش الحاجات المخفية. بس خد بالك: على ويندوز «مخفي» خاصية في الفولدر مش نقطة في الاسم. [[.git]] اللي [[git init]] بيعمله مخفي (اتأكدت)، أما اللي عملته بـ [[mkdir]] في درس glob مش مخفي، و Get-ChildItem دخله وعدّ [[config]] كملف من غير امتداد، فالسطر الفاضي بقى [[2]]. على لينكس وماك ([[pwsh]]) أي اسم بيبدأ بنقطة مخفي.
 
 Python: [[[('.py', 3), ('.md', 2), ('.png', 2), ('.jpg', 1)] ]]: الـ [[lower()]] جمع الاتنين، و [[rglob('*.*')]] ساب Makefile، و [[.git]] اتشال بالشرط.
 
