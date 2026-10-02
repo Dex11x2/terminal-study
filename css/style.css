@@ -192,6 +192,13 @@ body.quiz article.cmd:not(.shown) .cmd-h .title{font-size:19px}
 .term{background:var(--t-bg);color:var(--t-fg);border-radius:8px;overflow:hidden;direction:ltr;text-align:left}
 .term-bar{display:flex;justify-content:space-between;align-items:center;background:var(--t-bar);padding:5px 10px 5px 14px;font-family:var(--mono);font-size:12px;opacity:.95}
 .term-bar span{opacity:.75}
+.term-bar .runs{font-family:var(--sans);font-weight:500;font-size:12.5px;margin-inline-start:4px}
+/* one box per system inside a lesson: each keeps its own terminal's colors, whatever tab it's in */
+.term.os + .term.os{margin-top:8px}
+.term.os[data-k="bash"]{--t-bg:#2a1f14;--t-fg:#f3e4c8;--t-pr:#e3a54e;--t-cm:#a08c6c;--t-bar:#3a2c1d}
+.term.os[data-k="ps"]{--t-bg:#012456;--t-fg:#eef3ff;--t-pr:#9fc3ff;--t-cm:#8398bd;--t-bar:#0a3470}
+.term.os[data-k="cmd"]{--t-bg:#0c0c0c;--t-fg:#cccccc;--t-pr:#f2f2f2;--t-cm:#7a7a7a;--t-bar:#262626}
+.term.os[data-k="zsh"]{--t-bg:#fbfbfd;--t-fg:#1d1d1f;--t-pr:#0f766e;--t-cm:#8e8e93;--t-bar:#e6e6eb;border:1px solid #e6e6eb}
 .copy{all:unset;cursor:pointer;font-family:var(--sans);font-size:12.5px;padding:2px 10px;border-radius:4px;border:1px solid color-mix(in srgb,var(--t-fg) 30%,transparent)}
 .copy:hover,.copy:focus-visible{background:color-mix(in srgb,var(--t-fg) 15%,transparent)}
 .term pre{margin:0;padding:12px 16px 14px;font-family:var(--mono);font-size:14px;line-height:1.7;overflow-x:auto;white-space:pre}

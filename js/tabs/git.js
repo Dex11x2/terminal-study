@@ -244,7 +244,7 @@ git commit -m "add login validation"`,
 
 المقصود من التمرين إن كل commit يبقى فيه حاجة واحدة، فلو حبيت ترجّع واحد منهم بعدين ترجّعه لوحده. استخدم [[git add ملف]] أو [[git add -p]] عشان تختار، مش [[git add .]] على كل حاجة.
 
-الغلط الشائع: [[git commit -m "..."]] يطبع [[nothing added to commit]]: يعني نسيت الـ add. ولو [[git log]] وراك commit فيه ٣ ملفات مالهمش علاقة ببعض، يبقى عملت add لكله مرة واحدة.`,
+الغلط الشائع: تنسى الـ add. لو كنت عدّلت ملف git متابعه أصلًا، [[git commit -m "..."]] هيطبع [[no changes added to commit (use "git add" and/or "git commit -a")]]. ولو الملف جديد خالص، هيطبع [[nothing added to commit but untracked files present (use "git add" to track)]]. الاتنين معناهم: اعمل [[git add]] الأول. ولو [[git log]] وراك commit فيه ٣ ملفات مالهمش علاقة ببعض، يبقى عملت add لكله مرة واحدة.`,
           solCode: R`echo a > a.txt && git add a.txt && git commit -m "add a"
 echo b > b.txt && git add b.txt && git commit -m "add b"
 echo a2 >> a.txt && git add a.txt && git commit -m "update a"

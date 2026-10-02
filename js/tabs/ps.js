@@ -104,9 +104,9 @@ Get-Help Get-ChildItem -Online`,
             why: "أي أمر محتاج تعرف parameters بتاعه أو مثال عليه. Get-Help هو man في PowerShell.",
             how: R`[[Get-Help Get-ChildItem]] بيعرض المساعدة. [[-Examples]] بيوريك أمثلة فقط. [[-Online]] بيفتح الصفحة الرسمية في المتصفح، وده دايمًا الأشمل.
 
-أول مرة ممكن المساعدة تكون فاضية أو قديمة، عمل [[Update-Help]] (بصلاحيات) يحمّل المساعدة الكاملة.
+على جهاز جديد ملفات المساعدة مش متحمّلة، فـ [[-Examples]] مش هيطلع أي أمثلة لحد ما تشغّل [[Update-Help]] مرة. في PowerShell 7 بيحمّلها لليوزر الحالي ومش محتاج أدمن، وفي 5.1 محتاج PowerShell كأدمن.
 
-وتقدر تكتب اسم أمر وبعده [[?]] علامة استفهام في بعض الإصدارات.`,
+واختصار سريع: اسم الأمر وبعده [[-?]] (شرطة وعلامة استفهام)، زي [[Copy-Item -?]]، بيعرض نفس المساعدة المختصرة.`,
             when: "مش فاكر الـ parameter الصح. أو عايز مثال على استخدام معين.",
             mistakes: "إنك تدوّر في جوجل وتنسى إن المساعدة موجودة جوه PowerShell نفسه."
           },
@@ -114,9 +114,13 @@ Get-Help Get-ChildItem -Online`,
             "أمثلة استخدام Copy-Item بس، من غير باقي الشرح.",
             "افتح الصفحة الرسمية في المتصفح، ودي دايمًا أحدث وأشمل."
           ],
-          sol: R`[[Get-Help Remove-Item -Examples]] المفروض يطلع أمثلة مترقمة زي [[Example 1: Delete files that have any file name extension]] وتحت كل واحد الأمر وشرحه، ومنها أمثلة فيها [[-Include]] و [[-Exclude]] و [[-Recurse]] و [[-Force]] للملفات المخفية أو read-only. لاحظ إن كل أمثلة المسح الخطيرة ممكن تجربها الأول بـ [[-WhatIf]].
+          sol: R`على جهاز جديد (جربته على PowerShell 7.6 من غير ما أشغّل [[Update-Help]]) [[Get-Help Remove-Item -Examples]] مش بيطلع أي أمثلة. بيطلع الاسم والـ aliases بس ([[ri]] و [[rm]] و [[rmdir]] و [[del]] و [[erase]] و [[rd]])، وتحت [[REMARKS]] الجملة دي: [[Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.]]
 
-لو طلعلك [[Get-Help cannot find the Help files for this cmdlet on this computer. It is displaying only partial help.]] ومعاه الاسم والـ aliases بس ([[ri]] و [[del]] و [[rd]] و [[erase]])، يبقى الـ help مش متحمّل. شغّل [[Update-Help]] (في PowerShell 7 بيتحمّل للمستخدم الحالي ومش محتاج أدمن، في 5.1 محتاج أدمن)، أو استخدم [[Get-Help Remove-Item -Online]] يفتحلك صفحة Microsoft Learn.`
+يبقى الـ help مش متحمّل. عندك حلّين:
+1. شغّل [[Update-Help]] مرة واحدة (في PowerShell 7 بيتحمّل لليوزر الحالي ومش محتاج أدمن، وفي 5.1 محتاج PowerShell كأدمن)، وبعدها [[-Examples]] هيطلع أمثلة مترقمة زي [[Example 1: Delete files that have any file name extension]]، وتحت كل مثال الأمر وشرحه، ومنها أمثلة فيها [[-Include]] و [[-Exclude]] و [[-Recurse]] و [[-Force]].
+2. أو [[Get-Help Remove-Item -Online]] بيفتحلك نفس الأمثلة على Microsoft Learn من غير تحميل.
+
+ولاحظ إن أي أمثلة مسح تقدر تجربها الأول بـ [[-WhatIf]]: بيقولك هيمسح إيه من غير ما يمسح.`
         },
         {
           cmd: "Get-Command",

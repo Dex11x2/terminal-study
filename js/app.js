@@ -11,6 +11,35 @@ const store = {
   keys(){ try{ return Object.keys(localStorage); }catch(e){ return []; } }
 };
 const isComment = l => /^\s*(#(?![A-Za-z_$][\w$]*\s*[=;(])|REM\b|\/\/)/.test(l);
+// the box bar says where the code runs, not just the shell's name ("bash" alone tells a beginner nothing)
+const RUNS_IN = {bash:'bash: لينكس والماك و WSL', start:'bash: لينكس والماك و WSL', glossary:'bash: لينكس والماك و WSL', zsh:'zsh: الماك', ps:'PowerShell: ويندوز', cmd:'CMD: ويندوز'};
+// a comment line that is only an OS name, like "# Windows (PowerShell):", starts a separate box with that system's name and prompt
+const OS_HEAD = /^\s*#\s*(Linux|Ubuntu|WSL|Git Bash|Windows|Mac|macOS)\b[^:\n]*:\s*$/i;
+const OS_BOX = [
+  [/powershell/i, 'ps', 'PowerShell: ويندوز', 'PS> '],
+  [/\bcmd\b/i, 'cmd', 'CMD: ويندوز', 'C:\\> '],
+  [/git bash/i, 'bash', 'Git Bash: ويندوز', '$ '],
+  [/#\s*(linux|ubuntu)\b.*\bmac/i, 'bash', 'bash: لينكس والماك و WSL', '$ '],
+  [/#\s*mac/i, 'zsh', 'zsh: الماك', '% '],
+  [/#\s*(linux|ubuntu|wsl)/i, 'bash', 'bash: لينكس و WSL', '$ '],
+  [/#\s*windows/i, 'ps', 'PowerShell: ويندوز', 'PS> ']
+];
+const PLACE_LABELS = new Set([...Object.values(RUNS_IN), ...OS_BOX.map(b => b[2])]);
+function osBoxes(ex){
+  const src = ex.split('\n');
+  if (!src.some(l => OS_HEAD.test(l))) return '';
+  const boxes = [];
+  let cur = {k: shell, label: '', pr: undefined, lines: []};
+  const push = () => { if (cur.lines.some(l => l.trim())) boxes.push(cur); };
+  src.forEach(l => {
+    if (!OS_HEAD.test(l)) return cur.lines.push(l);
+    push();
+    const [, k, label, pr] = OS_BOX.find(([re]) => re.test(l));
+    cur = {k, label, pr, lines: []};
+  });
+  push();
+  return boxes.map(b => termHTML(b.lines.join('\n').replace(/^\n+|\n+$/g, ''), b.k, false, b.label, b.pr).replace('class="term"', 'class="term os"')).join('');
+}
 
 function termHTML(code, shell, script, label, prOverride){
   const pr = prOverride || SHELLS[shell].prompt;
@@ -22,7 +51,10 @@ function termHTML(code, shell, script, label, prOverride){
     const p = shell==='pg' && !prOverride && /^\s*[a-z]/.test(l) ? '$ ' : pr;
     return '<span class="pr">'+esc(p)+'</span>'+esc(l);
   }).join('\n');
-  return '<div class="term" data-k="'+shell+'"><div class="term-bar"><span>'+esc(label || (script?'script':SHELLS[shell].label))+'</span><button class="copy" type="button">نسخ</button></div><pre>'+lines+'</pre></div>';
+  // "PowerShell: ويندوز" → the shell name in the code font, where it runs in the page font (Arabic in a monospace font looks broken)
+  const full = label || (script?'script':(RUNS_IN[shell] || SHELLS[shell].label));
+  const [name, where] = PLACE_LABELS.has(full) ? full.split(': ') : [full];
+  return '<div class="term" data-k="'+shell+'"><div class="term-bar"><span>'+esc(name)+(where ? ' <b class="runs">على '+esc(where)+'</b>' : '')+'</span><button class="copy" type="button">نسخ</button></div><pre>'+lines+'</pre></div>';
 }
 
 let shell = 'bash';
@@ -66,7 +98,7 @@ function termBlock(ex, c, flag){
   if (flag==='keys') return termHTML(ex, shell, true, 'اختصارات');
   if (flag==='console') return termHTML(ex, shell, true, 'Console');
   if (flag==='term') return termHTML(ex, shell, false, 'Terminal', '$ ');
-  return termHTML(ex, shell, false, '');
+  return osBoxes(ex) || termHTML(ex, shell, false, '');
 }
 let level = 0;
 function osBadge(c){
