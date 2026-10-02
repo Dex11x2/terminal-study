@@ -1081,7 +1081,7 @@ ii $outDir`,
 
 [[Start-Process -Wait]] بيستنى Chrome يقفل قبل ما يكمّل، فالفحص بعده دقيق. وفي الآخر [[ii]] بيفتح فولدر الصور.`,
             when: "قبل ما ترفع تعديل في التصميم، أو تعمل صور للـ README أو لعرض، أو تقارن شكل صفحة قبل وبعد تعديل.",
-            mistakes: R`في مشروع حقيقي السكربت كان فيه مسارات كاملة فيها اسم اليوزر على الجهاز، فمش هيشتغل عند حد تاني، و [[$env:TEMP]] بتحل ده. وكان بيسمّي الـ array [[$args]] وده متغير محجوز. ومكانش بيمسح الصورة القديمة، فالـ OK كان ممكن يكذب. وخلي بالك إن [[-ArgumentList]] في PowerShell 5.1 بيلزق العناصر بمسافات من غير علامات تنصيص، فأي مسار فيه مسافة (زي اسم يوزر فيه مسافة) لازم تحطله علامات تنصيص بنفسك جوه العنصر.`
+            mistakes: R`في مشروع حقيقي السكربت كان فيه مسارات كاملة فيها اسم اليوزر على الجهاز، فمش هيشتغل عند حد تاني، و [[$env:TEMP]] بتحل ده. وكان بيسمّي الـ array [[$args]] وده متغير محجوز. ومكانش بيمسح الصورة القديمة، فالـ OK كان ممكن يكذب. وخلي بالك إن [[-ArgumentList]] في PowerShell 5.1 و 7 (جربته على 7.6) بيلزق العناصر بمسافات من غير علامات تنصيص، فأي مسار فيه مسافة (زي اسم يوزر فيه مسافة) لازم تحطله علامات تنصيص بنفسك جوه العنصر.`
           },
           lines: [
             "فولدر الصور في الـ TEMP بدل مسار ثابت من جهازك.",
@@ -1263,7 +1263,7 @@ Get-NetRoute -DestinationPrefix 0.0.0.0/0
             why: R`عايز تفتح موقعك من الموبايل على نفس الواي فاي (محتاج IP جهازك)، أو تتأكد إن الجهاز واخد IP من الراوتر، أو تعرف الـ IP العام عشان تحطه في firewall سيرفر. زي [[ip a]] و [[ip route]] في لينكس.`,
             how: R`[[Get-NetIPAddress]] بيعرض كل عناوين IPv4 وIPv6. [[-AddressFamily IPv4]] بس IPv4. [[-InterfaceAlias "Wi-Fi"]] لكارت معين.
 
-[[Get-NetAdapter]] بيعرض الكروت نفسها: حالتها وسرعتها والـ MAC.
+[[Get-NetAdapter]] بيعرض الكروت نفسها: حالتها وسرعتها والـ MAC (درس Get-NetAdapter في «تحكّم في الشبكة من PowerShell»).
 
 والعنوان الخاص: [[Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.IPAddress -like "192.168.*"}]].`,
             when: "تعرف عنوانك على الشبكة. تتأكد إن كارت معين شغال.",
@@ -1420,6 +1420,232 @@ Get-NetTCPConnection -State Listen | ForEach-Object { [pscustomobject]@{ Port = 
           sol: R`الأمر مش بيطبع حاجة بعد ما تدخل، والنافذة بتفضل واقفة، وده معناه إن الـ tunnel شغال ([[-N]] يعني من غير shell). في DBeaver اعمل connection جديد: Host [[localhost]] و Port [[5433]] واسم الداتابيز واليوزر والباسورد بتوع Postgres اللي على السيرفر، و Test Connection هيقول Connected.
 
 لو قفلت نافذة الـ ssh الاتصال هيقع. لو ظهر [[bind [127.0.0.1]:5433: Address already in use]] يبقى 5433 مستخدم عندك، غيّر الرقم. ولو DBeaver قال connection refused والـ ssh طبع [[channel ... open failed: connect failed: Connection refused]]، يبقى Postgres على السيرفر مش بيسمع على 127.0.0.1:5432 (مثلًا شغال في Docker على بورت تاني).`
+        }
+      ]
+    },
+    {
+      t: "تحكّم في الشبكة من PowerShell",
+      l: 2,
+      n: R`كروت الشبكة، والـ IP الثابت، والـ DNS، والفايروول، ونوع الشبكة Public ولا Private: اللي بتغيّره من Settings و Control Panel بأمر واحد. العرض من غير أدمن، والتغيير محتاج Terminal أدمن، وكله ويندوز بس`,
+      items: [
+        {
+          cmd: "Get-NetAdapter",
+          title: "كروت الشبكة: اعرضها ووقّفها وشغّلها",
+          desc: R`[[Get-NetAdapter]] بيعرض كروت الشبكة اللي في جهازك (Wi-Fi و Ethernet والكروت الافتراضية)، وحالة كل واحد وسرعته والـ MAC بتاعه. و [[Restart-NetAdapter]] بيطفي الكارت ويشغّله تاني، ودي أسرع حاجة تجربها لما النت واقف والواي فاي مكتوب Connected.
+
+الأعمدة: [[Name]] اسم الكارت اللي هتستخدمه في باقي الأوامر (زي [[Wi-Fi]] و [[Ethernet]])، و [[Status]] الحالة ([[Up]] شغال ومتوصل، و [[Disconnected]] مفيش كابل أو مش متوصل بشبكة، و [[Disabled]] متقفل)، و [[LinkSpeed]] السرعة بينك وبين الراوتر (مش سرعة النت)، و [[MacAddress]] العنوان الفيزيائي للكارت. و [[-Physical]] بيعرض الكروت الحقيقية بس، من غير الافتراضية بتاعة WSL و VPN و Hyper-V.
+
+[[Get-NetAdapterStatistics]] بيعرض البايتات اللي اتبعتت واتستقبلت من ساعة ما الكارت اشتغل، و [[-Name "Wi-Fi"]] الكارت ده بس (علامات التنصيص لازمة لو الاسم فيه مسافة زي [["Ethernet 2"]]). [[Disable-NetAdapter]] بيقفل الكارت و [[Enable-NetAdapter]] بيرجّعه، والاتنين بيسألوك «Are you sure» افتراضيًا، و [[-Confirm:$false]] بيلغي السؤال.
+
+العرض شغال من غير أدمن، لكن Disable و Enable و Restart محتاجين Terminal أدمن (Win+X وبعدين Terminal (Admin)). وتحذير: لو انت داخل على الجهاز من بعيد (Remote Desktop أو SSH أو PowerShell remoting)، قفل الكارت اللي انت داخل منه بيقطعك، ومش هيرجع غير لو حد قدام الجهاز. الموديول [[NetAdapter]] جاي مع ويندوز في فولدر موديولات 5.1، و PowerShell 7 بيحمّله عادي (جربته على 7.6).`,
+          example: R`Get-NetAdapter
+Get-NetAdapter -Physical | Select-Object Name, Status, LinkSpeed, MacAddress
+Get-NetAdapterStatistics -Name "Wi-Fi" | Select-Object Name, ReceivedBytes, SentBytes
+Restart-NetAdapter -Name "Wi-Fi"
+Disable-NetAdapter -Name "Ethernet" -Confirm:$false
+Enable-NetAdapter -Name "Ethernet"`,
+          try: R`اعرف الكارت اللي انت متوصل بيه فعلًا وسرعته، وكام جيجا نزلت عليه من ساعة ما الجهاز فتح (اقسم [[ReceivedBytes]] على [[1GB]]).`,
+          flag: "danger",
+          deep: {
+            why: R`النت واقف والواي فاي مكتوب Connected، أو كارت الـ Ethernet مش شايف الكابل، أو محتاج الـ MAC بتاع جهازك عشان تحطه في الراوتر (حجز IP أو فلترة أجهزة). بدل ما تلف في Control Panel ← Network Connections، الأمر بيوريك كل الكروت في جدول، و [[Restart-NetAdapter]] بيعمل نفس «Disable وبعدين Enable» اللي بتعمله بالماوس.`,
+            how: R`الكروت الافتراضية كتير: [[vEthernet (WSL)]] و TAP بتاع الـ VPN و Bluetooth Network Connection، وكل واحد ليه IP خاص بيه، وده سبب إن [[Get-NetIPAddress]] (درس «Get-NetIPAddress») بيطلع زحمة. [[-Physical]] أو [[Where-Object Status -eq Up]] بيوصلك للحقيقي بسرعة.
+
+[[LinkSpeed]] في الواي فاي بيتغير كل شوية حسب الإشارة (ابعد عن الراوتر وشغّل الأمر تاني)، وفي الكابل غالبًا 1 Gbps. لو كابل بيقول 100 Mbps وانت متوقع 1 Gbps، غالبًا الكابل أو بورت الراوتر قديم.
+
+[[Get-NetAdapterAdvancedProperty -Name "Wi-Fi"]] بيعرض إعدادات الدرايفر المتقدمة (نفس اللي في Device Manager ← Advanced)، زي Wake on Magic Packet (درس Wake-on-LAN). و [[Get-NetAdapter -Name "Wi-Fi" | Format-List *]] بيعرض كل الخصائص، منها [[InterfaceDescription]] (اسم الكارت الحقيقي، زي Intel Wi-Fi 6 AX200) و [[DriverVersion]].
+
+[[Restart-NetAdapter]] بيقطع النت ثواني ويرجع لوحده، ولو المشكلة في الراوتر نفسه مش هيحل حاجة. الخطوة الأقوى «Network reset» من Settings، اللي بتمسح إعدادات كل الكروت وترجّعها، والمقابل من CMD في درس «netsh winsock reset» في تاب «CMD».`,
+            when: R`النت مقطوع والكارت شكله متوصل، أو بعد ما الجهاز يصحى من sleep والواي فاي مش راجع، أو محتاج الـ MAC والسرعة، أو سكربت بيقفل الواي فاي لما الكابل يتوصل.`,
+            mistakes: R`تقفل الكارت الوحيد وانت داخل على الجهاز من بعيد. أو تكتب اسم الكارت غلط ([[Wi-Fi]] غير [[WiFi]]، و [[Ethernet 2]] غير [[Ethernet]]، وفي ويندوز بلغة تانية الأسامي ممكن تبقى مترجمة)، فانسخ الاسم من عمود Name. أو تفتكر [[LinkSpeed]] هي سرعة النت. أو تشوف [[Disconnected]] على الـ Ethernet وانت شغال واي فاي وتفتكرها مشكلة.`
+          },
+          lines: [
+            "كل الكروت: الاسم والوصف والحالة والسرعة والـ MAC.",
+            "الكروت الحقيقية بس، بالأعمدة المهمة.",
+            "البايتات اللي اتستقبلت واتبعتت على الواي فاي.",
+            "اطفي الواي فاي وشغّله تاني (أدمن). النت هيقطع ثواني.",
+            "اقفل كارت الـ Ethernet من غير سؤال تأكيد (أدمن).",
+            "شغّله تاني."
+          ],
+          sol: R`جربت أوامر العرض على لابتوب ويندوز 11 Home من غير أدمن. [[Get-NetAdapter]] طلع 6 كروت: [[Ethernet]] حالته [[Disconnected]] و [[0 bps]]، و [[Wi-Fi]] حالته [[Up]] و [[130 Mbps]]، وكروت افتراضية زي [[vEthernet (WSL (Hyper-V firewall))]] بـ [[10 Gbps]] واتنين TAP بتوع VPN و [[Bluetooth Network Connection]]. و [[-Physical]] قصّرهم لاتنين بس: Ethernet و Wi-Fi. والـ MAC بيظهر بالشكل [[84-1B-77-XX-XX-XX]] (خبّيت آخر 3 بايتات).
+
+والحل في الـ solCode: [[Where-Object Status -eq Up]] طلع [[Wi-Fi]] و [[vEthernet (WSL (Hyper-V firewall))]]، والتاني ده افتراضي فالحقيقي هو الواي فاي. والقسمة طلعت [[4.96]] يعني حوالي 5 جيجا نزلت من ساعة ما الكارت اشتغل. (مقفلتش ولا عملت restart لأي كارت وأنا بكتب الدرس، عشان كان هيقطع النت.)`,
+          solCode: R`Get-NetAdapter | Where-Object Status -eq Up | Select-Object Name, LinkSpeed
+[math]::Round((Get-NetAdapterStatistics -Name "Wi-Fi").ReceivedBytes / 1GB, 2)`
+        },
+        {
+          cmd: "New-NetIPAddress (static IP)",
+          title: "IP ثابت لجهازك (والرجوع لـ DHCP)",
+          desc: R`الراوتر بيدّي كل جهاز IP أوتوماتيك بالـ DHCP، والـ IP ده ممكن يتغير. [[New-NetIPAddress]] بيحط IP ثابت على كارت معين، فجهاز زي سيرفر في البيت أو جهاز بتوصل له من بعيد يفضل على نفس العنوان. والجزء التاني من المثال بيرجّع الكارت لـ DHCP.
+
+[[$if = "Ethernet"]] اسم الكارت (من درس Get-NetAdapter). [[Set-NetIPInterface -Dhcp Disabled]] بيقفل الـ DHCP على الكارت ده. وبعدين [[Remove-NetIPAddress]] و [[Remove-NetRoute]] بيشيلوا أي عنوان و gateway قديم فاضلين من الـ DHCP، عشان New-NetIPAddress ميرفضش ويقولك إنهم موجودين: [[-AddressFamily IPv4]] عشان ميلمسش IPv6، و [[-DestinationPrefix 0.0.0.0/0]] الـ default route (الطريق لأي حاجة بره الشبكة)، و [[-Confirm:$false]] من غير أسئلة، و [[-ErrorAction SilentlyContinue]] متطلّعش error لو مفيش حاجة تتمسح.
+
+[[-IPAddress 192.168.1.50]] العنوان الجديد، و [[-PrefixLength 24]] حجم الشبكة: 24 يعني الـ subnet mask هو 255.255.255.0، يعني أول 3 أرقام للشبكة والرقم الأخير للجهاز. و [[-DefaultGateway 192.168.1.1]] الراوتر، ولازم يبقى في نفس الشبكة. و [[Set-DnsClientServerAddress]] بيحدد الـ DNS (الدرس الجاي)، لأن من غير DHCP محدش هيدّيك DNS. وفي الرجوع: نفس المسح، وبعدين [[-Dhcp Enabled]] و [[-ResetServerAddresses]] يرجّعوا العنوان والـ DNS من الراوتر.
+
+اختار العنوان صح: في نفس الشبكة (لو الراوتر 192.168.1.1 يبقى 192.168.1.x)، وبره المدى اللي الراوتر بيوزّع منه (بتلاقيه في صفحة الراوتر تحت DHCP، زي 192.168.1.100 لـ 192.168.1.199)، وإلا الراوتر ممكن يدّي نفس العنوان لموبايل ويحصل «IP conflict». والأحسن من ده كله غالبًا «DHCP reservation» من صفحة الراوتر: بتربط الـ MAC بتاع الجهاز بعنوان ثابت، والجهاز نفسه يفضل DHCP.
+
+كله محتاج Terminal أدمن، والأوامر ويندوز بس (5.1 و 7). وتحذير: لو بتغيّر الكارت اللي انت داخل منه من بعيد، الاتصال هيتقطع، ولو العنوان غلط مش هتعرف ترجع. والمقابل من CMD في درس «netsh interface ip set address» في تاب «CMD».`,
+          example: R`$if = "Ethernet"
+Set-NetIPInterface -InterfaceAlias $if -Dhcp Disabled
+Remove-NetIPAddress -InterfaceAlias $if -AddressFamily IPv4 -Confirm:$false -ErrorAction SilentlyContinue
+Remove-NetRoute -InterfaceAlias $if -AddressFamily IPv4 -DestinationPrefix 0.0.0.0/0 -Confirm:$false -ErrorAction SilentlyContinue
+New-NetIPAddress -InterfaceAlias $if -IPAddress 192.168.1.50 -PrefixLength 24 -DefaultGateway 192.168.1.1
+Set-DnsClientServerAddress -InterfaceAlias $if -ServerAddresses 1.1.1.1, 8.8.8.8
+Get-NetIPConfiguration -InterfaceAlias $if
+# الرجوع لـ DHCP:
+Remove-NetIPAddress -InterfaceAlias $if -AddressFamily IPv4 -Confirm:$false
+Remove-NetRoute -InterfaceAlias $if -AddressFamily IPv4 -DestinationPrefix 0.0.0.0/0 -Confirm:$false
+Set-NetIPInterface -InterfaceAlias $if -Dhcp Enabled
+Set-DnsClientServerAddress -InterfaceAlias $if -ResetServerAddresses`,
+          try: R`قبل ما تغيّر أي حاجة: اعرف عنوانك الحالي جاي منين ([[Get-NetIPAddress -InterfaceAlias "Wi-Fi" -AddressFamily IPv4]] وبص على [[PrefixOrigin]])، والـ DHCP شغال ولا لأ، واتأكد إن العنوان اللي ناوي عليه محدش واخده بـ [[Test-Connection 192.168.1.50 -Count 1 -Quiet]].`,
+          flag: "danger",
+          deep: {
+            why: R`جهاز في البيت شغال سيرفر (ملفات، أو Home Assistant، أو جهاز بتعمله Remote)، أو طابعة، أو جهاز بتحطه في port forwarding: لازم عنوانه ميتغيرش، وإلا كل حاجة بتشاور عليه تقع لما الراوتر يدّيه عنوان جديد بعد restart.`,
+            how: R`[[New-NetIPAddress]] بيكتب العنوان في مكانين: الإعدادات اللي شغالة دلوقتي، والإعدادات المحفوظة اللي بترجع بعد الـ restart. والتوثيق بيقول إنه لو الكارت عليه DHCP بيقفله لوحده، بس لو فيه gateway قديم موجود بيطلع error إن الـ gateway موجود، وعشان كده المسح الأول.
+
+الإعداد ده على الكارت نفسه مش على شبكة واي فاي معينة. فلو حطيت IP ثابت على الواي فاي في لابتوب، وروحت الشغل أو كافيه شبكته 10.0.0.x، النت مش هيشتغل لحد ما ترجّع DHCP. عشان كده الـ IP الثابت مناسب لجهاز ثابت على الكابل، واللابتوب الأحسن له DHCP reservation.
+
+[[-PrefixLength]] أرقام تانية: 16 يعني 255.255.0.0 (أول رقمين للشبكة)، و 8 يعني 255.0.0.0. شوف رقم شبكتك الحالي من [[Get-NetIPAddress]] (عمود PrefixLength) وحط زيه.
+
+[[Get-NetIPInterface]] بيعرض حالة الـ DHCP لكل كارت ([[Dhcp Enabled]] أو [[Disabled]])، و [[PrefixOrigin]] في Get-NetIPAddress بيقولك العنوان جاي منين: [[Dhcp]] أو [[Manual]]. ولو العنوان بيبدأ بـ 169.254 يبقى الجهاز مخدش عنوان من DHCP ولا عنده ثابت.`,
+            when: R`جهاز ثابت في البيت أو المكتب لازم عنوانه ميتغيرش ومينفعش تعمله reservation في الراوتر، أو شبكة صغيرة من غير راوتر (جهازين متوصلين بكابل مباشرة)، أو بتجرب حاجة في lab.`,
+            mistakes: R`تختار عنوان جوه مدى الـ DHCP فيحصل conflict بعد أيام. أو تنسى الـ DNS فالـ ping على IP شغال والمواقع مش بتفتح. أو تكتب gateway في شبكة تانية فيطلع error. أو تحط IP ثابت على واي فاي لابتوب وتنساه. أو تشغّله من SSH على الكارت اللي انت داخل منه. أو في الرجوع تعمل [[-Dhcp Enabled]] بس من غير ما تمسح العنوان والـ gateway الثابتين، فيفضلوا جنب اللي جاي من الـ DHCP.`
+          },
+          lines: [
+            "اسم الكارت في متغير.",
+            "اقفل الـ DHCP على الكارت ده.",
+            "امسح أي عنوان IPv4 قديم عليه، ومن غير error لو مفيش.",
+            "امسح الـ gateway القديم (الـ default route).",
+            "حط العنوان الثابت، و 24 يعني 255.255.255.0، والراوتر gateway.",
+            "حدد الـ DNS بنفسك، لأن مفيش DHCP يدّيه.",
+            "اتأكد: العنوان والـ gateway والـ DNS.",
+            "الرجوع: امسح العنوان الثابت.",
+            "وامسح الـ gateway الثابت.",
+            "شغّل الـ DHCP تاني.",
+            "ورجّع الـ DNS اللي جاي من الراوتر."
+          ],
+          sol: R`جربت أوامر العرض بس. [[Get-NetIPAddress -InterfaceAlias "Wi-Fi" -AddressFamily IPv4]] طلع [[IPAddress 192.168.1.2]] و [[PrefixLength 24]] و [[PrefixOrigin Dhcp]]، يعني العنوان جاي من الراوتر. و [[Get-NetIPInterface -InterfaceAlias "Wi-Fi" -AddressFamily IPv4]] طلع [[Dhcp Enabled]]. و [[Test-Connection 192.168.1.50 -Count 1 -Quiet]] رجع [[False]]، يعني محدش رد على العنوان ده (بس ممكن جهاز موجود ومقفول أو بيتجاهل الـ ping، فبص كمان على قايمة الأجهزة في صفحة الراوتر).
+
+مغيّرتش العنوان على الجهاز وأنا بكتب الدرس، عشان ده كان هيقطع النت. شكل الأوامر من توثيق Microsoft لموديول NetTCPIP، وبعد New-NetIPAddress المفروض [[Get-NetIPConfiguration]] يطلع العنوان الجديد و [[IPv4DefaultGateway]] بالراوتر، و [[Get-NetIPAddress]] يطلع [[PrefixOrigin Manual]].`
+        },
+        {
+          cmd: "Set-DnsClientServerAddress",
+          title: "غيّر الـ DNS لـ 1.1.1.1 أو 8.8.8.8",
+          desc: R`الـ DNS هو اللي بيحوّل أسامي المواقع لعناوين (درس Resolve-DnsName)، وجهازك بياخده من الراوتر، وغالبًا ده DNS مزوّد النت. [[Set-DnsClientServerAddress]] بيغيّره لسيرفرات انت تختارها على كارت معين، زي 1.1.1.1 (Cloudflare) أو 8.8.8.8 (Google)، و [[-ResetServerAddresses]] بيرجّعه للي جاي من الراوتر.
+
+[[Get-DnsClientServerAddress]] بيعرض الـ DNS الحالي لكل كارت، و [[-AddressFamily IPv4]] من غير IPv6. و [[-InterfaceAlias "Wi-Fi"]] الكارت اللي هتغيّره. و [[-ServerAddresses]] لستة عناوين مفصولة بفاصلة: الأول الأساسي واللي بعده احتياطي، وينفع تحط IPv4 و IPv6 في نفس اللستة: [[2606:4700:4700::1111]] هو 1.1.1.1 بتاع IPv6، و [[2001:4860:4860::8888]] بتاع Google. لو شبكتك فيها IPv6 ومحطتلوش DNS، الجهاز ممكن يكمّل يسأل الراوتر عن طريق IPv6.
+
+[[Clear-DnsClientCache]] بيمسح الردود القديمة المحفوظة عشان التغيير يبان على طول، و [[Resolve-DnsName example.com -Type A]] بيتأكد إن الأسامي لسه بتتحل. و [[Get-DnsClientDohServerAddress -ServerAddress 1.1.1.1]] بيوريك إن ويندوز يعرف عنوان DNS over HTTPS للسيرفر ده (تحت).
+
+DNS over HTTPS (DoH): الـ DNS العادي بيمشي على الشبكة مكشوف، فأي حد في السكة (زي مزوّد النت) يشوف انت بتسأل عن أنهي مواقع. DoH بيشفّر السؤال، وويندوز 11 بيدعمه للسيرفرات المعروفة زي 1.1.1.1 و 8.8.8.8 و 9.9.9.9. أسهل تفعيل من Settings ← Network & internet ← الكارت ← DNS server assignment ← Edit ← DNS over HTTPS. والمتصفحات زي Chrome و Firefox فيها DoH خاص بيها كمان.
+
+التغيير محتاج Terminal أدمن والعرض لأ، والأوامر ويندوز بس (5.1 و 7). ولو حطيت IP ثابت (الدرس اللي فات) لازم تحدد DNS بنفسك.`,
+          example: R`Get-DnsClientServerAddress -AddressFamily IPv4
+Set-DnsClientServerAddress -InterfaceAlias "Wi-Fi" -ServerAddresses 1.1.1.1, 8.8.8.8, 2606:4700:4700::1111, 2001:4860:4860::8888
+Clear-DnsClientCache
+Resolve-DnsName example.com -Type A
+Get-DnsClientDohServerAddress -ServerAddress 1.1.1.1
+Set-DnsClientServerAddress -InterfaceAlias "Wi-Fi" -ResetServerAddresses`,
+          try: R`اعرف الـ DNS اللي جهازك بيستخدمه دلوقتي على IPv4 و IPv6 ([[Get-DnsClientServerAddress -InterfaceAlias "Wi-Fi"]])، وهل هو عنوان الراوتر ولا سيرفر عام.`,
+          flag: "danger",
+          deep: {
+            why: R`DNS مزوّد النت ممكن يبقى بطيء أو بيقع، أو بيحجب مواقع، أو عايز DNS بيفلتر الإعلانات أو المواقع المؤذية لجهاز في البيت (Cloudflare فيه 1.1.1.3 بيمنع المحتوى اللي مش للأطفال). وأحيانًا بتشخّص «الموقع مش بيفتح» وعايز تشيل الراوتر من الحسبة.`,
+            how: R`الـ DNS اللي بتحطه بالأمر ده ثابت (static): بيكسب على اللي جاي من الـ DHCP لحد ما تعمل Reset. ومحفوظ على الكارت، فاللابتوب هيفضل بنفس الـ DNS في أي شبكة يتوصل بيها. ده غالبًا كويس، بس شبكات الفنادق والمطارات اللي بتطلب «صفحة تسجيل دخول» ساعات بتعتمد على الـ DNS بتاعها، فالصفحة دي ممكن متظهرش.
+
+ويندوز بيسأل أول سيرفر في اللستة، ولو مردش في وقت معين بيروح للي بعده. و [[-Validate]] بيتأكد إن العناوين بترد كـ DNS قبل ما يحطها. و [[Get-DnsClientCache]] بيعرض الردود اللي ويندوز حافظها.
+
+التغيير بيأثر على كل البرامج، ما عدا اللي عاملة DNS خاص بيها: متصفح فيه DoH مفعّل، أو VPN بيحط DNS بتاعه وهو شغال.`,
+            when: R`المواقع بطيئة في الفتح أو بتفشل أحيانًا والنت نفسه شغال، أو عايز فلترة على جهاز واحد، أو بتشخّص مشكلة DNS، أو حطيت IP ثابت.`,
+            mistakes: R`تحط DNS لـ IPv4 بس وتنسى IPv6، فالجهاز يكمّل يسأل الراوتر. أو تختبر من غير [[Clear-DnsClientCache]] فتشوف الرد القديم وتفتكر التغيير مشتغلش. أو تحط DNS داخلي بتاع شغل أو VPN وتنساه، فلما تتنقل شبكة المواقع تقف. أو تغيّر الكارت الغلط (الـ DNS بيتحط لكل كارت لوحده).`
+          },
+          lines: [
+            "الـ DNS الحالي لكل كارت (IPv4 بس).",
+            "حط Cloudflare و Google، بعناوين IPv4 و IPv6 (أدمن).",
+            "امسح الردود القديمة المحفوظة (أدمن).",
+            "اتأكد إن الأسامي بتتحل.",
+            "ويندوز يعرف عنوان DoH للسيرفر ده؟",
+            "رجّع الـ DNS اللي جاي من الراوتر."
+          ],
+          sol: R`جربت العرض: [[Get-DnsClientServerAddress -InterfaceAlias "Wi-Fi"]] طلع سطرين: [[IPv4 {94.140.14.15, 94.140.15.16}]] ودي مش الراوتر، دي سيرفرات AdGuard DNS متحطوطة يدوي على الكارت، و [[IPv6 {fe80::1}]] وده عنوان الراوتر على IPv6. يعني بالظبط الغلطة اللي في «غلطات شائعة»: IPv4 بيروح لـ AdGuard، بس أي سؤال بيطلع على IPv6 بيروح للراوتر. وكارت [[Ethernet 2]] (VPN) كان عليه [[{8.8.8.8, 8.8.4.4}]].
+
+و [[Resolve-DnsName example.com -Type A]] طلع سطرين [[A 300 Answer]] بعنوانين، و [[Get-DnsClientDohServerAddress -ServerAddress 1.1.1.1]] طلع [[DohTemplate : https://cloudflare-dns.com/dns-query]]، يعني ويندوز جاهز يكلّم 1.1.1.1 بالـ DoH لو فعّلته. (مغيّرتش الـ DNS على الجهاز وأنا بكتب الدرس.)`
+        },
+        {
+          cmd: "New-NetFirewallRule",
+          title: "افتح بورت في الفايروول (أو امنع برنامج من النت)",
+          desc: R`فايروول ويندوز بيقفل أي اتصال جاي من بره لجهازك، إلا اللي ليه rule بتسمح بيه. [[New-NetFirewallRule]] بيعمل rule جديدة: تفتح بورت عشان موبايلك يفتح سيرفر التطوير (Vite على 5173 أو Next على 3000)، أو تمنع برنامج إنه يكلّم النت خالص.
+
+[[-DisplayName]] اسم يظهر في القايمة، فاختار اسم واضح عشان تلاقيه وتمسحه بعدين. [[-Direction Inbound]] اتصالات داخلة لجهازك و [[Outbound]] خارجة منه. [[-Protocol TCP]] والبورتات على جهازك في [[-LocalPort 5173, 3000]] (فاصلة بين أكتر من واحد). [[-Action Allow]] اسمح و [[Block]] امنع. و [[-Profile Private]] الـ rule تشتغل بس لما الشبكة متعلّمة Private (البيت)، مش Public (الكافيه)، ودي أهم حتة. و [[-Program]] بدل البورت: الـ rule تمسك البرنامج ده بمساره الكامل.
+
+[[Get-NetFirewallProfile]] بيعرض البروفايلات التلاتة (Domain و Private و Public) والفايروول شغال في كل واحد ولا لأ. و [[Get-NetFirewallRule -DisplayName "dev*"]] الـ rules اللي اسمها بيبدأ بـ dev (النجمة wildcard)، و [[Get-NetFirewallPortFilter]] بيطلّع البورتات اللي فيها. [[Disable-NetFirewallRule]] بيوقفها من غير ما يمسحها، و [[Remove-NetFirewallRule]] بيمسحها.
+
+الإنشاء والتعديل محتاج Terminal أدمن والعرض لأ. الموديول [[NetSecurity]] جاي مع ويندوز وشغال في 5.1 و 7 (جربت العرض على 7.6). الشكل بالماوس في درس «wf.msc» في تاب «اختصارات النظام»، ومن CMD في درس «netsh advfirewall firewall» في تاب «CMD». وقبل الفايروول، السيرفر نفسه لازم يسمع على الشبكة مش على localhost بس (درس «--host و Network URL» في تاب «Node»).`,
+          example: R`Get-NetFirewallProfile | Select-Object Name, Enabled
+New-NetFirewallRule -DisplayName "dev server" -Direction Inbound -Protocol TCP -LocalPort 5173, 3000 -Action Allow -Profile Private
+New-NetFirewallRule -DisplayName "block someapp" -Direction Outbound -Program "C:\Program Files\SomeApp\app.exe" -Action Block
+Get-NetFirewallRule -DisplayName "dev*" | Get-NetFirewallPortFilter | Select-Object Protocol, LocalPort
+Disable-NetFirewallRule -DisplayName "dev server"
+Remove-NetFirewallRule -DisplayName "dev server"`,
+          try: R`اعرف كام rule بتسمح بالدخول لجهازك وانت على شبكة عامة ([[Public]] أو [[Any]])، ودوّر فيهم على node و python.`,
+          flag: "danger",
+          deep: {
+            why: R`الموبايل على نفس الواي فاي ومش بيفتح [[http://192.168.1.2:5173]]، أو بتشغّل API أو سيرفر لعبة على جهازك وعايز جهاز تاني يوصله، أو برنامج بيبعت بيانات وانت عايز تمنعه. بالماوس دي 7 شاشات في wf.msc، وبالأمر سطر تقدر تحطه في سكربت تجهيز الجهاز.`,
+            how: R`الفايروول بيبص على كل اتصال: لو فيه rule [[Block]] بتنطبق عليه بيتمنع (الـ Block بتكسب على الـ Allow)، ولو فيه [[Allow]] بيعدّي، ولو مفيش بيطبّق الافتراضي: Block للداخل و Allow للخارج ([[Get-NetFirewallProfile -PolicyStore ActiveStore]] بيوريك [[DefaultInboundAction Block]] و [[DefaultOutboundAction Allow]]). عشان كده منع برنامج من النت محتاج rule [[Outbound]] Block صريحة.
+
+أول مرة برنامج يسمع على بورت، ويندوز بيطلّع نافذة «Allow access» وبيعمل rule باسم البرنامج على نوع الشبكة اللي وافقت عليه. عندي لقيت rules اسمها [[Node.js JavaScript Runtime]] و [[python.exe]] بـ [[Allow]] على [[Public]]، يعني أي سيرفر node أو python بيسمع على 0.0.0.0 مفتوح لأي حد معاك في الكافيه. [[Set-NetFirewallRule -DisplayName "Node.js JavaScript Runtime" -Profile Private]] بيقصرها على البيت.
+
+[[-RemoteAddress LocalSubnet]] بيخلي الـ rule للأجهزة اللي في نفس الشبكة بس، ودي طبقة أمان زيادة. و [[-Protocol UDP]] للبورتات اللي بتستخدم UDP (ألعاب، أو DNS). والـ rule بالـ [[-Program]] بتمسك المسار ده بالظبط، فلو البرنامج اتحدّث واتسطب في فولدر جديد فيه رقم النسخة، الـ rule مبقتش بتمسكه.`,
+            when: R`تجرب موقعك من الموبايل، أو تفتح بورت لـ SSH أو مشاركة ملفات على جهاز في البيت، أو تمنع برنامج من النت، أو تراجع إيه المفتوح على الشبكات العامة.`,
+            mistakes: R`تفتح البورت من غير [[-Profile Private]] فيفضل مفتوح على أي واي فاي عام. أو تعمل rule لـ Private والشبكة نفسها متعلّمة Public (الدرس الجاي) فمتشتغلش. أو تقفل الفايروول كله ([[Set-NetFirewallProfile -Enabled False]]) «للتجربة» وتنسى. أو تعمل كذا rule بنفس الـ DisplayName، فـ Remove بالاسم بيمسحهم كلهم. أو تفتكر rule الـ Outbound بتمنع البرنامج لو بيكلّم النت عن طريق برنامج تاني (updater منفصل بمسار تاني مثلًا).`
+          },
+          lines: [
+            "الفايروول شغال في أنهي بروفايل؟",
+            "اسمح بالدخول على 5173 و 3000 TCP، على الشبكات الـ Private بس (أدمن).",
+            "امنع برنامج يكلّم النت: rule خارجة Block بمساره (أدمن).",
+            "الـ rules اللي اسمها بيبدأ بـ dev، والبورتات اللي فيها.",
+            "وقّف الـ rule من غير ما تمسحها.",
+            "امسحها."
+          ],
+          sol: R`الحل في الـ solCode، وجربته من غير أدمن (العرض مش محتاج). [[Get-NetFirewallProfile]] طلع التلاتة [[Enabled True]]. والعد طلع [[158]] rule بتسمح بالدخول وهي شغالة على Public أو Any، وأغلبها بتاعة ويندوز نفسه (Core Networking و Cast to Device). والسطر التاني طلع [[Node.js JavaScript Runtime  Inbound  Public  Allow]] مرتين (واحدة TCP وواحدة UDP)، و [[python.exe  Inbound  Public  Allow]] مرتين، ودول اتعملوا من نافذة «Allow access» أول مرة شغّلت سيرفر.
+
+[[-match "Public|Any"]] بيمسك القيم زي [[Public]] و [[Any]] و [[Private, Public]]، لأن Profile ممكن يبقى أكتر من نوع. ولو عايز تقصر rule node على البيت: [[Set-NetFirewallRule -DisplayName "Node.js JavaScript Runtime" -Profile Private]] من Terminal أدمن (معملتهاش هنا).`,
+          solCode: R`(Get-NetFirewallRule -Direction Inbound -Action Allow -Enabled True | Where-Object { $_.Profile -match "Public|Any" }).Count
+Get-NetFirewallRule -DisplayName "Node.js*", "Python*" | Select-Object DisplayName, Direction, Profile, Action`
+        },
+        {
+          cmd: "Set-NetConnectionProfile",
+          title: "الشبكة Public ولا Private؟",
+          desc: R`ويندوز بيعلّم كل شبكة بتتوصل بيها يا [[Public]] (مكان عام: الجهاز مستخبّي ومش بيشارك حاجة) يا [[Private]] (البيت أو الشغل: الجهاز بيظهر للأجهزة التانية وينفع يشارك ملفات وطابعات لو فعّلت ده). [[Get-NetConnectionProfile]] بيقولك الشبكة الحالية نوعها إيه، و [[Set-NetConnectionProfile]] بيغيّره.
+
+أعمدة Get-NetConnectionProfile: [[Name]] اسم الشبكة (غالبًا اسم الواي فاي)، و [[InterfaceAlias]] الكارت، و [[NetworkCategory]] النوع، و [[IPv4Connectivity]] ([[Internet]] فيه نت، و [[LocalNetwork]] شبكة من غير نت). في Set: [[-InterfaceAlias "Wi-Fi"]] الشبكة اللي على الكارت ده، و [[-NetworkCategory Private]] النوع الجديد، أو [[-Name]] اسم الشبكة بدل الكارت. والنوع التالت [[DomainAuthenticated]] بيتحط لوحده لما الجهاز يبقى في domain شركة، ومينفعش تحطه بالأمر ده.
+
+ليه مهم: الفايروول ليه 3 بروفايلات بنفس الأسامي، وكل rule بتشتغل على بروفايل (الدرس اللي فات). فلو شبكة البيت متعلّمة Public: الموبايل مش هيوصل لسيرفر التطوير حتى لو عملت rule بـ [[-Profile Private]]، ومشاركة الملفات (درس New-SmbShare) مش هتشتغل، و [[Enable-PSRemoting]] هيرفض. والعكس أخطر: شبكة كافيه متعلّمة Private يعني جهازك بيعلن عن نفسه لأي حد قاعد هناك.
+
+التغيير محتاج Terminal أدمن، وبيتحفظ للشبكة دي بالاسم، فالمرة الجاية لما تتوصل بيها هتبقى Private. وبالماوس: Settings ← Network & internet ← Wi-Fi ← اسم الشبكة ← Network profile type. والأوامر ويندوز بس (5.1 و 7).`,
+          example: R`Get-NetConnectionProfile
+Get-NetConnectionProfile | Select-Object Name, InterfaceAlias, NetworkCategory
+Set-NetConnectionProfile -InterfaceAlias "Wi-Fi" -NetworkCategory Private
+Set-NetConnectionProfile -Name "Cafe WiFi" -NetworkCategory Public`,
+          try: R`اعرف شبكتك الحالية Public ولا Private. ولو دي شبكة بيتك وعايز تفتح موقعك من الموبايل، غيّرها لـ Private من Terminal أدمن.`,
+          flag: "danger",
+          deep: {
+            why: R`من أشهر أسباب «الموبايل مش بيفتح سيرفر التطوير» و «مش شايف الجهاز التاني على الشبكة»: ويندوز معلّم شبكة البيت Public، لأن أول مرة اتوصلت بيها اخترت (أو اتختار لك) إن الجهاز ميبانش. والأمر ده بيصلّحها في سطر.`,
+            how: R`كل شبكة بتتوصل بيها ويندوز بيعملها profile محفوظ باسمها. [[Get-NetConnectionProfile]] بيعرض الشبكات المتوصلة دلوقتي بس، مش القديمة. وويندوز 11 بيخلي أي شبكة جديدة Public افتراضيًا، وده الأأمن.
+
+لما النوع يتغير، الفايروول بيبدأ يطبّق بروفايل النوع الجديد على الكارت ده على طول، فالـ rules بتاعة Private تبدأ تشتغل. وظهور جهازك في Network في Explorer (Network discovery) ليه rules في الفايروول في جروب اسمه [[Network Discovery]]، وبيتفعّل للـ Private من Settings ← Network & internet ← Advanced network settings ← Advanced sharing settings.
+
+لو الشبكة مش راضية تتغير، ممكن تكون Group Policy (جهاز شغل) أو برنامج VPN أو antivirus بيتحكم فيها.`,
+            when: R`أول ما تتوصل بشبكة البيت أو الشغل وعايز تشارك ملفات أو توصل لجهازك من جهاز تاني، وكل ما تقعد على شبكة عامة اتأكد إنها Public.`,
+            mistakes: R`تخلي كل الشبكات Private عشان «الحاجات تشتغل»، فجهازك يبقى مكشوف في أي مكان عام. أو تغيّر الكارت الغلط لو عندك Ethernet و Wi-Fi متوصلين. أو تفتكر Private معناها إن الشبكة آمنة أو متشفّرة: دي بس بتقول للفايروول يسمح بحاجات أكتر. أو تستغرب إن الإعداد «رجع»: شبكة الـ 5GHz من نفس الراوتر اسمها مختلف، فليها profile لوحدها.`
+          },
+          lines: [
+            "الشبكة المتوصلة دلوقتي وكل تفاصيلها.",
+            "الاسم والكارت والنوع بس.",
+            "خلي شبكة الواي فاي الحالية Private (أدمن).",
+            "خلي شبكة باسمها Public (أدمن)."
+          ],
+          sol: R`جربت العرض: [[Get-NetConnectionProfile]] طلع [[InterfaceAlias : Wi-Fi]] و [[NetworkCategory : Public]] و [[IPv4Connectivity : Internet]] و [[IPv6Connectivity : NoTraffic]] (والـ Name اسم الواي فاي). يعني رغم إنها شبكة البيت، ويندوز معتبرها Public، فأي rule معمولة بـ [[-Profile Private]] مش بتشتغل عليها لحد ما تتغير. وغالبًا ده كمان سبب إن rules زي node اللي في الدرس اللي فات اتعملت على Public: نافذة «Allow access» بتعمل الـ rule لنوع الشبكة اللي انت عليه.
+
+مغيّرتش النوع وأنا بكتب الدرس. بعد [[Set-NetConnectionProfile -InterfaceAlias "Wi-Fi" -NetworkCategory Private]] من Terminal أدمن، [[Get-NetConnectionProfile]] المفروض يطلع [[NetworkCategory : Private]] على طول من غير restart.`
         }
       ]
     },
@@ -4061,6 +4287,987 @@ Modern Standby (S0) معناه إن الجهاز وهو «نايم» بيفضل 
           sol: R`(مقفلتش الجهاز ولا نيّمته وأنا بكتب الدرس؛ شغّلت [[powercfg /a]] بس.) على لابتوب حديث طلع [[The following sleep states are available on this system:]] وتحته [[Standby (S0 Low Power Idle) Network Connected]] و [[Hibernate]] و [[Fast Startup]]، وتحت «not available» لقيت [[Standby (S3)]] وجنبه [[This standby state is disabled when S0 low power idle is supported.]]. يعني الجهاز ده Modern Standby، فـ SetSuspendState مش هيديك sleep.
 
 القفل بعد 10 ثواني: الترمنال هيستنى، وبعدين الشاشة تقفل على شاشة الدخول، ولما تدخل تلاقي كل حاجة زي ما هي والأمر خلص من غير ما يطبع حاجة. ولو [[shutdown /h]] مشتغلش، اتأكد إن [[Hibernate]] موجود في [[powercfg /a]]، ولو مش موجود فعّله من PowerShell أدمن بـ [[powercfg /hibernate on]].`
+        }
+      ]
+    },
+    {
+      t: "اليوزرز والصلاحيات في ويندوز",
+      l: 3,
+      n: R`مين بيستخدم الجهاز وبأنهي صلاحيات: تعمل يوزر لحد من العيلة أو للتجارب، وتخلي حد أدمن أو تشيله، وتعرف السكربت شغال أدمن ولا لأ، وتتحكم مين يفتح فولدر. العرض من غير أدمن، والتعديل محتاج Terminal أدمن`,
+      items: [
+        {
+          cmd: "Get-LocalUser / New-LocalUser",
+          title: "اعرض اليوزرز واعمل يوزر جديد",
+          desc: R`[[Get-LocalUser]] بيعرض حسابات اليوزرز اللي على الجهاز، و [[New-LocalUser]] بيعمل حساب local جديد (موجود على الجهاز ده بس): لحد من العيلة، أو حساب منفصل تجرب عليه برامج، أو يوزر عادي من غير صلاحيات أدمن تستخدمه كل يوم.
+
+أعمدة Get-LocalUser: [[Name]] اسم الدخول، و [[Enabled]] الحساب شغال ولا متقفل، و [[LastLogon]] آخر دخول، و [[PrincipalSource]] نوع الحساب: [[Local]] حساب على الجهاز ده بس، و [[MicrosoftAccount]] حساب داخل بإيميل Microsoft. وهتلاقي حسابات ويندوز نفسه متقفلة زي [[Administrator]] و [[Guest]] و [[DefaultAccount]]، سيبها متقفلة.
+
+[[Read-Host -AsSecureString]] بيسألك على الباسورد، وانت بتكتبه بيظهر نجوم، وبيرجّعه [[SecureString]] (نص متشفّر في الرام) مش نص عادي، وده النوع اللي [[-Password]] عايزه، فالباسورد مبيتكتبش في المثال ولا في الـ History. و [[@{ ... }]] مع [[@params]] هو splatting (درس «splatting»): الـ parameters في hashtable بدل سطر طويل. [[Name]] اسم الدخول (لحد 20 حرف، ومن غير رموز زي [[\ / : * ? @]])، و [[FullName]] الاسم اللي بيظهر في شاشة الدخول، و [[Description]] وصف (لحد 48 حرف)، و [[PasswordNeverExpires]] الباسورد ميخلصش. و [[-NoPassword]] حساب من غير باسورد خالص، ودي تنفع لحساب ألعاب أطفال على جهاز في البيت بس.
+
+[[New-LocalUser]] مش بيحط الحساب في أي جروب (على عكس Settings و [[net user /add]])، فـ [[Add-LocalGroupMember -SID S-1-5-32-545]] بيضيفه لجروب Users عشان يبقى يوزر عادي ويعرف يدخل (الجروبات والـ SID في درس Add-LocalGroupMember).
+
+الإنشاء محتاج Terminal أدمن: Win+X وبعدين Terminal (Admin)، أو [[Start-Process pwsh -Verb RunAs]] (درس Start-Process). الموديول [[Microsoft.PowerShell.LocalAccounts]] جاي مع ويندوز وشغال في 5.1 و 7 (جربته على 7.6)، بس مش في PowerShell 32 بت على ويندوز 64 بت. وفي ويندوز Home أداة [[lusrmgr.msc]] (Local Users and Groups) مش شغالة، فالأوامر دي أو Settings ← Accounts ← Other users هم الطريقة. والمقابل من CMD في درس «net user» في تاب «CMD».`,
+          example: R`Get-LocalUser
+Get-LocalUser | Select-Object Name, Enabled, LastLogon, PrincipalSource
+$password = Read-Host "Password for sara" -AsSecureString
+$params = @{ Name = "sara"; FullName = "Sara"; Password = $password; Description = "Family account"; PasswordNeverExpires = $true }
+New-LocalUser @params
+Add-LocalGroupMember -SID S-1-5-32-545 -Member "sara"
+New-LocalUser -Name "kids" -NoPassword -Description "Kids games"
+Get-LocalUser "sara" | Select-Object Name, Enabled, PasswordExpires`,
+          try: R`اعرض كل الحسابات اللي على جهازك ونوع كل واحد، واعرف الحساب اللي انت شغال بيه Local ولا Microsoft. ولو عايز تجرب الإنشاء من غير ما تعمل حساب فعلًا، زوّد [[-WhatIf]].`,
+          flag: "danger",
+          deep: {
+            why: R`حد من العيلة محتاج يستخدم الجهاز من غير ما يشوف ملفاتك ولا يسطّب حاجات، أو عايز حساب نضيف تجرب عليه برنامج مشكوك فيه أو إعدادات جديدة، أو حساب Standard تشتغل بيه كل يوم وحساب أدمن للتسطيب بس. ومن الأوامر تقدر تعمل كذا حساب في سكربت (معمل كمبيوتر مثلًا) بدل الضغط في Settings.`,
+            how: R`حساب Microsoft: بتدخل بإيميل، والإعدادات والباسوردات بتتزامن، والباسورد بيتغير أو يترجع من النت، ومفتاح «Device encryption» بيتحفظ فيه (درس Get-BitLockerVolume). حساب Local: موجود على الجهاز ده بس ومش محتاج نت، ولو نسيت الباسورد مفيش استرجاع من النت (غير أسئلة الأمان لو حطيتها). [[New-LocalUser]] بيعمل local بس، وحساب Microsoft بيتضاف من Settings ← Accounts ← Other users ← Add account.
+
+[[SecureString]]: Read-Host بيرجّع object مش نص، فلو طبعته يظهر [[System.Security.SecureString]] مش الباسورد. ولو حطيت الباسورد نص صريح في سكربت ([[ConvertTo-SecureString "123" -AsPlainText -Force]]) هيفضل مكتوب في الملف وفي الـ History، فده للمعامل والتجارب بس.
+
+[[LastLogon]] ممكن يطلع فاضي حتى للحساب اللي شغال بيه كل يوم: عندي حساب Microsoft بدخل بيه بالـ PIN كل يوم وطلع فاضي، و [[net user]] قال [[Never]]. فمتعتمدش عليه لوحده.
+
+[[New-LocalUser]] بيعمل الحساب بس، وفولدر C:\Users\sara مش بيتعمل غير أول ما الحساب يسجّل دخول.`,
+            when: R`حساب لحد تاني على نفس الجهاز، أو حساب للتجارب، أو فصل حسابك اليومي عن حساب الأدمن، أو تجهيز كذا جهاز بنفس الحسابات بسكربت.`,
+            mistakes: R`تعمل الحساب وتنسى تضيفه لجروب Users. أو تكتب الباسورد نص صريح في السكربت. أو تستخدم [[-NoPassword]] على لابتوب بيخرج من البيت. أو تحاول تعمل حساب بإيميل Microsoft بـ New-LocalUser (ده local بس). أو تشغّله من غير أدمن فيطلع Access denied. أو تختار اسم أطول من 20 حرف أو فيه [[@]].`
+          },
+          lines: [
+            "كل الحسابات اللي على الجهاز.",
+            "الاسم، وشغال ولا متقفل، وآخر دخول، ونوع الحساب.",
+            "اسأل على الباسورد وهو بيظهر نجوم، ورجّعه SecureString.",
+            "بيانات الحساب في hashtable، و [[$true]] للـ switch.",
+            "اعمل الحساب بالبيانات دي (splatting، أدمن).",
+            "حطه في جروب Users بالـ SID عشان يعرف يدخل.",
+            "حساب من غير باسورد (لجهاز في البيت بس). محتاج برضه يتحط في Users.",
+            "اتأكد إنه اتعمل وشغال."
+          ],
+          sol: R`جربت العرض على ويندوز 11 Home من غير أدمن. [[Get-LocalUser]] طلع 5 حسابات: الحساب اللي شغال بيه [[True]] و [[MicrosoftAccount]]، و [[Administrator]] و [[DefaultAccount]] و [[Guest]] و [[WDAGUtilityAccount]] كلهم [[False]] و [[Local]]. و [[LastLogon]] كان فاضي لكل الحسابات، حتى بتاعي.
+
+وجربت الإنشاء بـ [[-WhatIf]] بس: [[New-LocalUser -Name "sara" -NoPassword -Description "Kids account" -WhatIf]] طبع [[What if: Performing the operation "Create new local user" on target "sara".]] من غير ما يعمل حاجة. ومن غير WhatIf في Terminal أدمن، التوثيق بيقول إنه بيطبع جدول فيه [[Name]] و [[Enabled]] بـ True و [[Description]]. (معملتش حسابات حقيقية على الجهاز وأنا بكتب الدرس.)`
+        },
+        {
+          cmd: "Set-LocalUser / Remove-LocalUser",
+          title: "غيّر الباسورد، اقفل الحساب، امسحه صح",
+          desc: R`[[Set-LocalUser]] بيغيّر حاجات في حساب local موجود (الباسورد والوصف وانتهاء الباسورد)، و [[Disable-LocalUser]] بيقفل الحساب من غير ما يمسحه، و [[Remove-LocalUser]] بيمسحه خالص. القاعدة: اقفل الأول، وامسح بعدين لما تتأكد إن محدش محتاج حاجة منه.
+
+[[-Password $new]] باسورد جديد من [[Read-Host -AsSecureString]] (الدرس اللي فات). و [[-PasswordNeverExpires $true]] هنا بياخد قيمة True أو False، مش switch زي New-LocalUser. و [[Enable-LocalUser]] بيرجّع الحساب المقفول. و [[Rename-LocalUser -NewName]] بيغيّر اسم الدخول بس: الـ SID (رقم الحساب الحقيقي اللي الصلاحيات مربوطة بيه) بيفضل زي ما هو، وفولدر البروفايل في C:\Users بيفضل بالاسم القديم.
+
+المسح: [[Remove-LocalUser]] بيمسح الحساب بس، وفولدر البروفايل (C:\Users\sara بالـ Desktop والـ Documents وكل حاجة) بيفضل على الديسك. [[Get-CimInstance Win32_UserProfile]] بيعرض البروفايلات الحقيقية: [[LocalPath]] مكان الفولدر، و [[SID]] الحساب، و [[Loaded]] حد داخل بيه دلوقتي، و [[-Filter "Special = false"]] من غير بروفايلات النظام. و [[$sid = (Get-LocalUser "sara.m").SID.Value]] رقم الحساب كنص، و [[Where-Object SID -eq $sid]] البروفايل بتاعه، و [[Remove-CimInstance]] بيمسح البروفايل صح (الفولدر وبياناته في الـ registry) وده لازم قبل مسح الحساب، لأن بعده مش هتعرف الـ SID بسهولة. أو من Settings ← Accounts ← Other users ← الحساب ← Remove، ودي بتمسح الاتنين.
+
+كل أوامر التعديل محتاجة Terminal أدمن، والحساب لازم ميكونش داخل ([[Loaded]] False). وحساب Microsoft باسورده مش بيتغير من هنا: التوثيق بيقول متحطش [[-Password]] لحساب مربوط بحساب Microsoft، باسورده من account.microsoft.com. والمقابل من CMD في درس «net user» في تاب «CMD».`,
+          example: R`$new = Read-Host "New password" -AsSecureString
+Set-LocalUser -Name "sara" -Password $new -PasswordNeverExpires $true
+Disable-LocalUser -Name "sara"
+Enable-LocalUser -Name "sara"
+Rename-LocalUser -Name "sara" -NewName "sara.m"
+Get-CimInstance Win32_UserProfile -Filter "Special = false" | Select-Object LocalPath, SID, Loaded, LastUseTime
+$sid = (Get-LocalUser "sara.m").SID.Value
+Get-CimInstance Win32_UserProfile | Where-Object SID -eq $sid | Remove-CimInstance
+Remove-LocalUser -Name "sara.m"`,
+          try: R`اعرض البروفايلات الحقيقية على جهازك، وقارنها بالفولدرات اللي في [[C:\Users]]. فيه فولدرات ملهاش بروفايل؟`,
+          flag: "danger",
+          deep: {
+            why: R`حد نسي الباسورد، أو حد ساب البيت أو الشغل ومحتاج تقفل حسابه بس تحتفظ بملفاته، أو حساب تجارب خلص دوره. والمسح الغلط (تمسح الحساب وتسيب الفولدر، أو تمسح الفولدر بإيدك) بيسيب ملفات تقيلة محدش عارف بتاعة مين، أو بروفايل مكسور في الـ registry.`,
+            how: R`ويندوز بيعرف الحساب بالـ SID مش بالاسم، زي [[S-1-5-21-...-1001]]. الصلاحيات على الملفات (درس Get-Acl / Set-Acl) والبروفايل مربوطين بالـ SID، عشان كده Rename ميبوّظش حاجة، ومسح الحساب بيخلي أي صلاحية كانت ليه تظهر كـ SID غريب من غير اسم.
+
+[[Disable-LocalUser]] بيمنع الدخول بس: الملفات والصلاحيات والمهام المجدولة بتاعة الحساب كلها موجودة، وتقدر ترجّعه في ثانية. عشان كده أأمن خطوة أولى.
+
+[[Win32_UserProfile]] هو اللي ويندوز بيستخدمه في System Properties ← User Profiles. [[Remove-CimInstance]] عليه بيمسح فولدر البروفايل ومفتاحه في [[HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ProfileList]]. أما [[Remove-Item C:\Users\sara -Recurse]] بيمسح الفولدر بس، ولو الحساب لسه موجود ودخل تاني، ويندوز بيعمله بروفايل مؤقت (TEMP) لأن المفتاح بيشاور على فولدر مش موجود.`,
+            when: R`تغيير باسورد حساب local من غير ما تدخل بيه، أو قفل حساب مؤقتًا، أو تنضيف حسابات قديمة والمساحة اللي واخدينها.`,
+            mistakes: R`تمسح الحساب الأول وبعدين تدوّر على البروفايل بتاعه. أو تمسح فولدر C:\Users بإيدك. أو تمسح من غير ما تاخد نسخة من ملفاته. أو تحاول تغيّر باسورد حساب Microsoft بـ Set-LocalUser. أو تقفل آخر حساب أدمن على الجهاز (افضل سايب حساب أدمن واحد على الأقل شغال). أو تفتكر [[-WhatIf]] مع Remove-LocalUser بيتأكد إن الحساب موجود: جربت [[Remove-LocalUser -Name "nosuchuser" -WhatIf]] وطبع «What if» عادي لحساب مش موجود.`
+          },
+          lines: [
+            "اسأل على الباسورد الجديد (نجوم).",
+            "حطه، وخلي الباسورد ميخلصش (هنا True/False مش switch).",
+            "اقفل الحساب من غير ما تمسحه.",
+            "رجّعه.",
+            "غيّر اسم الدخول بس (الـ SID والفولدر زي ما هم).",
+            "البروفايلات الحقيقية: الفولدر والـ SID وحد داخل بيه ولا لأ وآخر استخدام.",
+            "رقم الحساب (SID) كنص.",
+            "امسح البروفايل بتاعه صح: الفولدر وبياناته (لازم ميكونش داخل).",
+            "وبعدين امسح الحساب نفسه."
+          ],
+          sol: R`جربت العرض بس. [[Get-CimInstance Win32_UserProfile -Filter "Special = false"]] طلع بروفايل واحد: [[C:\Users\me]] (غيّرت الاسم) و [[Loaded True]] و SID بيبدأ بـ [[S-1-5-21-]] وبيخلص بـ [[-1001]]. لكن [[Get-ChildItem C:\Users -Directory]] طلع فولدرات كتير غيره: [[Public]] (مشترك لكل اليوزرز) وفولدرات زي [[TEMP]] و [[UMFD-0]] و [[TEMP.Font Driver Host.000]]، ودي فاضلة من بروفايلات مؤقتة قديمة وملهاش أي بروفايل حقيقي. يعني وجود فولدر في C:\Users مش معناه إن فيه حساب.
+
+وجربت [[Disable-LocalUser -Name Guest -WhatIf]] فطبع [[What if: Performing the operation "Disable local user" on target "Guest".]]. (مغيّرتش ولا مسحت أي حساب وأنا بكتب الدرس.)`,
+          solCode: R`Get-CimInstance Win32_UserProfile -Filter "Special = false" | Select-Object LocalPath, Loaded
+Get-ChildItem C:\Users -Directory | Select-Object Name`
+        },
+        {
+          cmd: "Add-LocalGroupMember",
+          title: "خلي حد أدمن (أو شيله)",
+          desc: R`الصلاحيات في ويندوز بتيجي من الجروبات: اللي في جروب [[Administrators]] أدمن، واللي في [[Users]] يوزر عادي. [[Add-LocalGroupMember]] بيضيف حساب لجروب، و [[Remove-LocalGroupMember]] بيشيله، و [[Get-LocalGroupMember]] بيعرض مين في الجروب.
+
+[[-Group "Administrators"]] اسم الجروب، و [[-Member "sara"]] الحساب بالاسم اللي بيظهر في Get-LocalUser. ونتيجة Get-LocalGroupMember فيها [[ObjectClass]] (User أو Group، لأن جروب ممكن يبقى جوه جروب)، و [[Name]] بالشكل [[PC\name]]، و [[PrincipalSource]] نوع الحساب.
+
+أسامي الجروبات بتتترجم: على ويندوز بلغة تانية «Administrators» اسمها حاجة تانية، فسكربت فيه الاسم الإنجليزي هيقول [[Group Administrators was not found]]. الحل [[-SID S-1-5-32-544]] بدل الاسم، والرقم ده ثابت في كل ويندوز، و [[S-1-5-32-545]] هو Users. و [[Get-LocalGroup | Select-Object Name, SID]] بيعرض كل الجروبات بأرقامها.
+
+[[Remote Desktop Users]] الجروب اللي بيسمح لحد يدخل الجهاز بـ Remote Desktop، وده مش موجود في ويندوز Home خالص (جربت، السطر الأخير بيفشل)، لأن Home مينفعش يستقبل Remote Desktop، يقدر بس يتصل بأجهزة تانية (درس «mstsc» في تاب «CMD»). فعلى Home الدخول من بعيد بيبقى بـ SSH (درس OpenSSH Server) أو PowerShell remoting (درس Enter-PSSession).
+
+نصيحة: اشتغل يوميًا بحساب Standard، وخلي حساب أدمن منفصل للتسطيب والإعدادات: لو برنامج خبيث اشتغل وانت Standard، مش هيقدر يغيّر في النظام من غير باسورد الأدمن. والإضافة والشيل محتاجين Terminal أدمن والعرض لأ، والموديول شغال في 5.1 و 7. والمقابل من CMD في درس «net localgroup» في تاب «CMD».`,
+          example: R`Get-LocalGroupMember -Group "Administrators"
+Get-LocalGroupMember -SID S-1-5-32-544
+Get-LocalGroup | Select-Object Name, SID
+Add-LocalGroupMember -SID S-1-5-32-544 -Member "sara"
+Remove-LocalGroupMember -SID S-1-5-32-544 -Member "sara"
+Add-LocalGroupMember -Group "Remote Desktop Users" -Member "sara"`,
+          try: R`اعرف مين أدمن على جهازك، وهل الحساب اللي انت شغال بيه منهم. واعرض الجروبات اللي على جهازك ودوّر على Remote Desktop Users.`,
+          flag: "danger",
+          deep: {
+            why: R`عايز تدّي حد صلاحية يسطّب برامج، أو تشيلها من حد ماكانش المفروض ياخدها، أو تراجع مين أدمن على جهاز (أول حاجة تبص عليها لو شاكك إن حد عبث في الجهاز). ومن غير الأوامر دي على Home مفيش أداة رسومية كاملة للجروبات.`,
+            how: R`الجروبات اللي أرقامها بتبدأ بـ [[S-1-5-32-]] «built-in» جاية مع ويندوز: 544 Administrators، و 545 Users، و 546 Guests. وجروبات زي [[docker-users]] بتتعمل لما تسطّب برنامج، ورقمها بيبدأ بـ [[S-1-5-21-]] لأنها خاصة بالجهاز ده.
+
+الإضافة لـ Administrators بتبان من أول دخول جديد: لو الحساب داخل دلوقتي، لازم يعمل Sign out ويدخل تاني عشان الصلاحية الجديدة تظهر، لأن ويندوز بيحسب جروبات الحساب لحظة الدخول.
+
+[[Get-LocalGroupMember]] ليه bug معروف: لو الجروب فيه حساب اتمسح (بيظهر كـ SID من غير اسم)، ممكن يطلع error زي [[Failed to compare two elements in the array]]. ساعتها [[net localgroup administrators]] بيعرض عادي، وشيل الـ SID اليتيم ده.`,
+            when: R`تدّي أو تشيل صلاحية أدمن، أو تراجع الأدمنز على جهاز، أو تحط حساب في جروب لازم لبرنامج (زي docker-users أو OpenSSH Users)، أو سكربت تجهيز بيشتغل على ويندوز بأي لغة (بالـ SID).`,
+            mistakes: R`تشيل نفسك من Administrators وانت آخر أدمن. أو تكتب اسم الجروب بالإنجليزي في سكربت هيشتغل على ويندوز مترجم. أو تستنى الصلاحية تبان من غير Sign out. أو تدوّر على Remote Desktop Users على Home. أو تخلي كل أهل البيت أدمن عشان «ميسألوكش».`
+          },
+          lines: [
+            "مين في جروب الأدمنز (بالاسم الإنجليزي).",
+            "نفس الحاجة بالـ SID، وده شغال على ويندوز بأي لغة.",
+            "كل الجروبات وأرقامها.",
+            "خلي sara أدمن (أدمن). الصلاحية بتبان بعد ما تعمل Sign out وتدخل.",
+            "شيلها من الأدمنز.",
+            "اسمح لها بـ Remote Desktop. على ويندوز Home بيفشل لأن الجروب مش موجود."
+          ],
+          sol: R`جربت العرض على ويندوز 11 Home من غير أدمن. [[Get-LocalGroupMember -SID S-1-5-32-544]] طلع اتنين: الحساب اللي شغال بيه ([[User]] و [[MicrosoftAccount]]) و [[Administrator]] المدمج ([[Local]]، وهو متقفل). يعني الحساب اليومي أدمن. وجروب Users ([[S-1-5-32-545]]) طلع فيه حسابي و [[NT AUTHORITY\Authenticated Users]] و [[NT AUTHORITY\INTERACTIVE]] كـ Group.
+
+و [[Get-LocalGroup]] طلع 15 جروب، منهم [[Administrators S-1-5-32-544]] و [[Users S-1-5-32-545]] و [[OpenSSH Users S-1-5-32-585]] و [[docker-users]] برقم بيبدأ بـ [[S-1-5-21-]]، ومفيش Remote Desktop Users، و [[Get-LocalGroup "Remote Desktop Users"]] طلع [[Group Remote Desktop Users was not found.]]. وجربت [[Add-LocalGroupMember -SID S-1-5-32-544 -Member "sara" -WhatIf]] فطلع [[Principal sara was not found.]] لأن الحساب مش موجود، يعني الأمر بيتأكد من الحساب حتى مع WhatIf.`
+        },
+        {
+          cmd: "IsInRole (Admin check)",
+          title: "السكربت شغال أدمن؟ ولو لأ، اطلب الصلاحية",
+          desc: R`سكربتات كتير (تعديل hosts، فايروول، يوزرز) محتاجة أدمن، ولو اشتغلت من غيره بتفشل في النص وتسيب الشغل نصه معمول. أول سطرين في المثال بيسألوا ويندوز «النافذة دي شغالة أدمن؟»، ولو لأ السكربت بيفتح نفسه تاني كأدمن بـ [[Start-Process -Verb RunAs]] (درس Start-Process) ويقفل النسخة العادية.
+
+[[[Security.Principal.WindowsIdentity]::GetCurrent()]] بيجيب هوية اليوزر اللي شغّل PowerShell، و [[[Security.Principal.WindowsPrincipal]::new($id)]] بيعمل منها object تسأله، و [[.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)]] بيرجع True لو النافذة نفسها مرفوعة كأدمن (elevated). و [[$PSCommandPath]] متغير جاهز فيه المسار الكامل للسكربت اللي شغال (فاضي لو لصقت الكود في الترمنال بدل ما تشغّله من ملف).
+
+الإعادة: [[-Verb RunAs]] بيطلّع سؤال UAC، و [[('"{0}"' -f $PSCommandPath)]] بيحط المسار بين علامات تنصيص، لأن [[-ArgumentList]] بيلزق العناصر بمسافات ومش بيحط علامات تنصيص لوحده (جربتها على 7.6)، فمسار فيه مسافة هيتقطع. و [[exit]] بيقفل النسخة العادية. ولو السكربت بيشتغل بـ 5.1، اكتب [[powershell]] مكان [[pwsh]]. وتشغيل برنامج بحساب تاني (مش أدمن نفس الحساب) ده شغل [[runas]] (درس «runas» في تاب «CMD»).
+
+أبسط من كده: سطر [[#Requires -RunAsAdministrator]] في أول ملف .ps1 بيخلي PowerShell يرفض يشغّل السكربت أصلًا لو مش أدمن، برسالة واضحة، من غير ما يفتحه تاني. السطر ده بيبدأ بـ [[#]] بس PowerShell بيقراه، ولازم يبقى في ملف سكربت.
+
+UAC (User Account Control): حتى لو حسابك في جروب Administrators، البرامج اللي بتفتحها بتشتغل بصلاحيات يوزر عادي، والأدمن بيتفعّل بس للبرنامج اللي توافق له على سؤال UAC. عشان كده IsInRole بيرجع False في نافذة عادية وانت أدمن. و [[whoami /groups]] (درس «whoami /groups /priv» في تاب «CMD») بيوريك ده: Administrators جنبها [[Group used for deny only]]، والمستوى [[Medium Mandatory Level]]، وفي نافذة أدمن [[High Mandatory Level]].`,
+          example: R`$id = [Security.Principal.WindowsIdentity]::GetCurrent()
+$isAdmin = [Security.Principal.WindowsPrincipal]::new($id).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "Not admin, asking for elevation..." -ForegroundColor Yellow
+    Start-Process pwsh -Verb RunAs -ArgumentList @("-NoProfile", "-File", ('"{0}"' -f $PSCommandPath))
+    exit
+}
+Write-Host "Running as admin" -ForegroundColor Green`,
+          try: R`احفظ المثال في ملف [[admin-check.ps1]] في فولدر اسمه فيه مسافة، وشغّله من نافذة عادية ووافق على UAC. وبعدين جرب ملف تاني أول سطر فيه [[#Requires -RunAsAdministrator]] بس.`,
+          flag: "script",
+          deep: {
+            why: R`سكربت بيعدّل الفايروول ويعمل يوزر ويغيّر hosts، شغّلته من نافذة عادية: أول خطوة فشلت بـ Access denied، والتانية نجحت لأنها مش محتاجة أدمن، والتالتة فشلت. النتيجة جهاز نص متظبط. الفحص في أول السكربت بيخلي الحكاية كلها تتعمل أو متتعملش.`,
+            how: R`لما تدخل بحساب أدمن، ويندوز بيدّيك «token» مزدوج: واحد عادي بيستخدمه لكل البرامج، وواحد كامل بيستخدمه بس لما توافق على UAC. [[IsInRole]] بيبص على الـ token اللي البرنامج شغال بيه دلوقتي، فبيقولك «النافذة دي» أدمن ولا لأ، مش «الحساب» أدمن ولا لأ. ولو عايز تعرف الحساب نفسه في الجروب: [[Get-LocalGroupMember -SID S-1-5-32-544]] (درس Add-LocalGroupMember).
+
+[[Start-Process -Verb RunAs]] بيشغّل نسخة جديدة في نافذة جديدة، والنسخة القديمة مش بتستنى ولا بتشوف ناتجها. فلو السكربت بياخد parameters لازم تبعتها بنفسك في [[-ArgumentList]]، وكل قيمة فيها مسافة تتحط بين علامات تنصيص بنفس الطريقة. ولو اليوزر رفض UAC، [[Start-Process]] بيطلع error إن العملية اتلغت، فممكن تحطه في [[try/catch]].
+
+في Windows Terminal: Win+X وبعدين Terminal (Admin)، أو Ctrl+Shift+Click على البروفايل بيفتحه أدمن. والنافذة الأدمن عنوانها بيبدأ بـ Administrator، ولو عامل prompt (درس «function prompt») بيبان [[[admin]]].
+
+[[#Requires]] ليه أشكال تانية مفيدة: [[#Requires -Version 7]] و [[#Requires -Modules NetSecurity]] و [[#Requires -PSEdition Core]].`,
+            when: R`أي سكربت بيعدّل حاجة في النظام: يوزرز، فايروول، خدمات، hosts، registry تحت HKLM، Defender، ديسكات. [[#Requires]] لما تكون انت اللي بتشغّله، والإعادة الأوتوماتيك لما تبعته لحد مش هيعرف يفتح Terminal أدمن.`,
+            mistakes: R`تبعت المسار من غير علامات تنصيص فالسكربت مش بيلاقي نفسه لو المسار فيه مسافة (جربت: [[The argument 'C:\...\dir' is not recognized as the name of a script file]]). أو تنسى [[exit]] فالنسخة العادية تكمّل وتفشل. أو تلصق الكود في الترمنال فـ [[$PSCommandPath]] يبقى فاضي. أو تفتكر إنك عشان أدمن يبقى النافذة أدمن. أو تشغّل pwsh من سكربت 5.1 والجهاز معندوش PowerShell 7.`
+          },
+          lines: [
+            "هوية اليوزر اللي شغّل PowerShell.",
+            "النافذة دي مرفوعة كأدمن؟ True أو False.",
+            "لو لأ...",
+            "...اطبع رسالة...",
+            "...وشغّل نفس السكربت تاني كأدمن (سؤال UAC)، والمسار بين علامات تنصيص.",
+            "...واقفل النسخة العادية.",
+            "قفلة الـ if.",
+            "هنا السكربت شغال أدمن، كمّل شغلك."
+          ],
+          sol: R`جربتها من نافذة عادية والحساب أدمن: [[$isAdmin]] طلع [[False]] في 7.6 و 5.1. و [[whoami /groups]] طلع [[BUILTIN\Administrators]] وجنبها [[Group used for deny only]]، و [[Mandatory Label\Medium Mandatory Level]]، ودي بالظبط حكاية UAC: الحساب في الجروب بس النافذة مش مرفوعة. (مفتحتش سؤال UAC وأنا بكتب الدرس.)
+
+وملف أوله [[#Requires -RunAsAdministrator]] (الـ solCode) رفض يشتغل في 7.6 برسالة [[The script 'needadmin.ps1' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator.]]، ونفس الرسالة تقريبًا في 5.1 ومعاها [[ScriptRequiresElevation]]. وجربت ليه علامات التنصيص مهمة: [[Start-Process pwsh -ArgumentList]] لسكربت جوه فولدر اسمه [[dir with space]] من غير علامات تنصيص طلع [[The argument '...\dir' is not recognized as the name of a script file]]، ومعاها اشتغل وطبع ناتج السكربت.`,
+          solCode: R`#Requires -RunAsAdministrator
+Write-Host "Running as admin" -ForegroundColor Green`
+        },
+        {
+          cmd: "Get-Acl / Set-Acl",
+          title: "مين يقدر يفتح الفولدر ده؟",
+          desc: R`كل ملف وفولدر على NTFS ليه لستة صلاحيات اسمها ACL: مين يقرا، ومين يكتب، ومين ممنوع. [[Get-Acl]] بيقراها و [[Set-Acl]] بيكتبها، وبينهم بتعدّل الـ object في PowerShell: تضيف rule أو تشيلها. المثال كله على فولدر تجربة في TEMP وبيمسحه في الآخر.
+
+[[(Get-Acl $folder).Access]] لستة الصلاحيات، وكل سطر فيه: [[IdentityReference]] مين (يوزر أو جروب)، و [[FileSystemRights]] إيه: [[FullControl]] كله، و [[Modify]] قراية وكتابة ومسح، و [[ReadAndExecute]] قراية وتشغيل، و [[Read]] قراية بس. و [[AccessControlType]] Allow أو Deny، و [[IsInherited]] True لو الصلاحية جاية وراثة من الفولدر الأب. و [[.Owner]] صاحب الفولدر.
+
+إضافة rule: [[[System.Security.Principal.SecurityIdentifier]::new("S-1-5-32-545")]] جروب Users بالـ SID (عشان يشتغل على ويندوز بأي لغة، زي درس Add-LocalGroupMember)، وينفع تكتب اسم يوزر بداله زي [["PC\sara"]]. و [[[System.Security.AccessControl.FileSystemAccessRule]::new(...)]] بياخد 5 حاجات بالترتيب: مين، والصلاحية، و [["ContainerInherit, ObjectInherit"]] يعني الفولدرات والملفات اللي جوه تورثها، و [["None"]] الوراثة عادية، و [["Allow"]]. و [[$acl.AddAccessRule($rule)]] بيضيفها للـ object بس، و [[Set-Acl -AclObject $acl]] هو اللي بيكتبها على الفولدر فعلًا. و [[RemoveAccessRule]] بيشيلها وبيرجّع True لو لقاها، و [[Out-Null]] يخفي الـ True ده.
+
+[[Where-Object { -not $_.IsInherited }]] الصلاحيات اللي اتحطت على الفولدر ده بس، من غير الموروثة. الأوامر دي في 5.1 و 7 على ويندوز. على فولدر انت صاحبه مش محتاج أدمن، وعلى فولدرات النظام أو فولدرات يوزر تاني محتاج. ولحاجات زي «رجّع الصلاحيات الافتراضية لكل اللي جوه» أو «خد ملكية فولدر»، [[icacls]] و [[takeown]] أسهل (درس «icacls» ودرس «takeown» في تاب «CMD»).`,
+          example: R`$folder = Join-Path $env:TEMP "acl-lab"
+New-Item -ItemType Directory -Force $folder | Out-Null
+(Get-Acl $folder).Access | Format-Table IdentityReference, FileSystemRights, AccessControlType, IsInherited
+$acl = Get-Acl $folder
+$who = [System.Security.Principal.SecurityIdentifier]::new("S-1-5-32-545")
+$rule = [System.Security.AccessControl.FileSystemAccessRule]::new($who, "ReadAndExecute", "ContainerInherit, ObjectInherit", "None", "Allow")
+$acl.AddAccessRule($rule)
+Set-Acl -Path $folder -AclObject $acl
+(Get-Acl $folder).Access | Where-Object { -not $_.IsInherited } | Format-Table IdentityReference, FileSystemRights, InheritanceFlags
+$acl = Get-Acl $folder
+$acl.RemoveAccessRule($rule) | Out-Null
+Set-Acl -Path $folder -AclObject $acl
+Remove-Item $folder -Recurse -Force`,
+          try: R`شوف صلاحيات فولدر الـ SSH بتاعك ([[(Get-Acl $HOME\.ssh).Access]]): مين غيرك يقدر يقراه؟ وبعدين شغّل المثال كله على فولدر التجربة.`,
+          flag: "danger",
+          deep: {
+            why: R`فولدر مشترك بين يوزرين على نفس الجهاز، أو فولدر فيه أسرار (مفاتيح، ملفات .env) عايز تتأكد إن محدش غيرك يقراه، أو سيرفر شغال بحساب تاني ومحتاج يكتب في فولدر، أو SSH بيرفض المفتاح لأن صلاحيات الملف مفتوحة زيادة (درس ssh / scp).`,
+            how: R`الوراثة: معظم الصلاحيات [[IsInherited True]] جاية من الفولدر الأب، و C:\Users\اسمك بيدّي SYSTEM و Administrators وصاحب الحساب FullControl. الـ rule اللي بتضيفها بتبقى «explicit» على الفولدر ده، ومع ContainerInherit و ObjectInherit بتنزل لكل اللي جواه: جربت أعمل ملف جوه الفولدر بعد الإضافة، ولقيت عليه [[BUILTIN\Users  ReadAndExecute, Synchronize  True]]. و [[Synchronize]] بتتزوّد لوحدها مع أي صلاحية، عادي.
+
+[[Deny]] بيكسب على [[Allow]]، فاستخدمه نادرًا: Deny على جروب Users مثلًا بيمنعك انت كمان لأنك فيه.
+
+[[$acl.SetAccessRuleProtection($true, $false)]] بيقطع الوراثة من الأب، والـ false التانية معناها متنسخش الصلاحيات الموروثة. ده اللي بتعمله لفولدر سري، بس لو قطعتها من غير ما تضيف نفسك ممكن تقفل الفولدر على نفسك.
+
+[[Set-Acl -Path $other -AclObject (Get-Acl $folder)]] بينسخ صلاحيات فولدر لفولدر تاني. و [[(Get-Acl $folder).Sddl]] نفس الصلاحيات في نص مضغوط اسمه SDDL.`,
+            when: R`تقفل فولدر على يوزر واحد، أو تدّي حساب خدمة صلاحية كتابة، أو تراجع مين يقدر يقرا فولدر فيه بيانات حساسة، أو سكربت تجهيز بيعمل فولدرات بصلاحيات معينة.`,
+            mistakes: R`تعدّل الـ object وتنسى [[Set-Acl]]، فمحصلش حاجة. أو تحط Deny لجروب انت فيه. أو تقطع الوراثة من غير ما تسيب لنفسك صلاحية. أو تكتب اسم جروب بالإنجليزي على ويندوز مترجم (استخدم الـ SID). أو تجرب على فولدر مهم بدل فولدر تجربة. أو تكتب صلاحيات فولدر كبير بـ Set-Acl ومش فاهم هتنزل على إيه، وده مكان icacls أوضح.`
+          },
+          lines: [
+            "مسار فولدر التجربة في TEMP.",
+            "اعمله، و [[Out-Null]] يخفي الناتج.",
+            "الصلاحيات الحالية: مين، وإيه، وسماح ولا منع، وموروثة ولا لأ.",
+            "هات الـ ACL كـ object تعدّل فيه.",
+            "جروب Users بالـ SID (شغال بأي لغة).",
+            "الـ rule: Users يقرا ويشغّل، والفولدرات والملفات اللي جوه تورثها.",
+            "ضيفها للـ object (لسه متكتبتش).",
+            "اكتب الـ ACL على الفولدر فعلًا.",
+            "الصلاحيات اللي اتحطت على الفولدر ده بس.",
+            "هات الـ ACL تاني.",
+            "شيل الـ rule، و Out-Null يخفي الـ True.",
+            "اكتبها.",
+            "امسح فولدر التجربة."
+          ],
+          sol: R`شغّلت المثال كله على 7.6 و 5.1 من غير أدمن. الجدول الأول طلع 3 صلاحيات موروثة: [[NT AUTHORITY\SYSTEM  FullControl  Allow  True]] و [[BUILTIN\Administrators  FullControl  Allow  True]] وحسابي [[FullControl]] (موروثة كلها من فولدر TEMP). وبعد Set-Acl، الجدول التاني طلع سطر واحد: [[BUILTIN\Users  ReadAndExecute, Synchronize  ContainerInherit, ObjectInherit]]. وبعد الشيل، عدد الصلاحيات غير الموروثة بقى [[0]]، والفولدر اتمسح.
+
+وجربت كمان [[icacls]] على نفس الفولدر: طلع [[NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)]]، و [[(I)]] يعني موروثة، و [[(OI)(CI)]] هي ObjectInherit و ContainerInherit، و [[(F)]] FullControl. نفس المعلومة بشكل أقصر. وفي التجربة: فولدر [[.ssh]] غالبًا هتلاقي عليه نفس التلاتة بس (SYSTEM و Administrators وانت)، وده كويس.`
+        }
+      ]
+    },
+    {
+      t: "الأجهزة اللي معاك على الشبكة",
+      l: 3,
+      n: R`تعرف مين متوصل على شبكة بيتك، وتصحّي جهاز مقفول، وتشارك فولدر، وتشغّل أوامر على جهاز تاني أو تدخله بـ SSH أو تعمله restart. كله على شبكتك انت أو بإذن صاحبها، وأغلبه محتاج أدمن على الجهازين`,
+      items: [
+        {
+          cmd: "Get-NetNeighbor + ping sweep",
+          title: "مين متوصل معاك على الشبكة؟",
+          desc: R`عايز تعرف الأجهزة اللي على شبكة البيت (الراوتر، والموبايلات، والطابعة، والتليفزيون)؟ المثال بيعمل «ping sweep»: بيبعت ping لكل العناوين من .1 لـ .254 في نفس الوقت واللي يرد يبقى موجود، وبعدين جدول الـ neighbors بيدّيك الـ MAC بتاع كل جهاز، و DNS بيحاول يجيب اسمه. استخدمه على شبكتك انت بس، أو بإذن صاحب الشبكة: فحص شبكة حد تاني من غير إذن ممكن يتعتبر تعدّي، وفي شبكات الشغل والجامعة غالبًا ممنوع.
+
+[[Get-NetIPConfiguration | Where-Object IPv4DefaultGateway]] الكارت اللي عليه gateway (اتصالك الحقيقي)، و [[.IPv4Address.IPAddress]] عنوانك. و [[-replace '\.\d+$', '']] بيشيل آخر رقم: [[\.]] نقطة، و [[\d+]] رقم أو أكتر، و [[$]] آخر النص، فـ 192.168.1.2 تبقى 192.168.1. وده بيفترض إن الشبكة /24 زي أغلب شبكات البيوت (درس «New-NetIPAddress (static IP)»).
+
+[[ForEach-Object -Parallel { ... } -ThrottleLimit 64]] بيشغّل البلوك على 64 عنوان في نفس الوقت بدل واحد ورا التاني، وده في PowerShell 7 بس. جوه البلوك المتغيرات اللي بره مش ظاهرة، و [[$using:prefix]] بيجيب قيمتها. و [[Test-Connection -Count 1 -TimeoutSeconds 1 -Quiet]] ping واحد بيستنى ثانية بالكتير ويرجّع True أو False بس. و [[Sort-Object { [version]$_ }]] بيرتّب العناوين كأرقام، ومن غيره 192.168.1.10 تيجي قبل 192.168.1.2.
+
+[[Get-NetNeighbor]] هو جدول الـ ARP، زي [[arp -a]] (درس «arp / route» في تاب «CMD»): الأجهزة اللي جهازك كلّمها قريب، و [[LinkLayerAddress]] الـ MAC بتاعها. و [[-State Reachable, Stale, Delay, Probe]] الحالات اللي وراها جهاز حقيقي، و [[Where-Object IPAddress -like "$prefix.*"]] شبكتك بس من غير شبكة WSL. و [[[System.Net.Dns]::GetHostEntry($ip).HostName]] بيسأل عن اسم الجهاز، و [[try { } catch { "?" }]] بيحط علامة استفهام لو ملوش اسم. و [[-f]] بيكتب السطر بتنسيق (درس «النصوص (strings)»)، و [[{0,-15}]] يعني القيمة الأولى في 15 خانة عشان العمود يتظبط.
+
+في 5.1 مفيش [[-Parallel]] ولا [[-TimeoutSeconds]]، والبديل اللي اشتغل معايا في الـ solCode. ودرس «ping -a و nbtstat -A» في تاب «CMD» بيكمّل الحكاية بأدوات ويندوز القديمة.`,
+          example: R`$myIp = (Get-NetIPConfiguration | Where-Object IPv4DefaultGateway | Select-Object -First 1).IPv4Address.IPAddress
+$prefix = $myIp -replace '\.\d+$', ''
+$alive = 1..254 | ForEach-Object -Parallel { $ip = "$using:prefix.$_"; if (Test-Connection $ip -Count 1 -TimeoutSeconds 1 -Quiet) { $ip } } -ThrottleLimit 64
+$alive = $alive | Sort-Object { [version]$_ }
+$alive
+Get-NetNeighbor -AddressFamily IPv4 -State Reachable, Stale, Delay, Probe | Where-Object IPAddress -like "$prefix.*" | Select-Object IPAddress, LinkLayerAddress, State
+foreach ($ip in $alive) { $name = try { [System.Net.Dns]::GetHostEntry($ip).HostName } catch { "?" }; "{0,-15} {1}" -f $ip, $name }`,
+          try: R`شغّل المثال على شبكة بيتك، وطابق كل عنوان على جهاز تعرفه (موبايلك، التليفزيون، الطابعة). في جهاز مش عارفه؟ قارن الـ MAC بقايمة الأجهزة في صفحة الراوتر.`,
+          deep: {
+            why: R`عايز تعرف IP الطابعة أو الـ Raspberry Pi أو التليفزيون عشان توصل له، أو شاكك إن حد غريب على الواي فاي، أو بتتأكد إن جهاز اتوصل بالشبكة بعد ما شغّلته. ومن غير ما تسطّب برامج مسح شبكات.`,
+            how: R`الـ ping مش دليل كامل: أجهزة كتير (ويندوز بفايروول على Public، وموبايلات نايمة) مش بترد على ping. بس أي جهاز بيرد أو حتى بيتكلم بعد ما بعتّله، جهازك بيعرف الـ MAC بتاعه وبيحطه في جدول الـ neighbors، فالجدول بيلقط أجهزة أحيانًا الـ ping مقالش عليها.
+
+أول 3 بايتات في الـ MAC اسمها OUI وبتقول الشركة المصنّعة للكارت. مواقع زي macvendors بتترجمها: جربت [[Invoke-RestMethod https://api.macvendors.com/00-15-5D]] فرد [[Microsoft Corporation]] (ده prefix الكروت الافتراضية بتاعة Hyper-V). وخلي بالك إنك كده بتبعت أول 3 بايتات لموقع بره. لكن الموبايلات الحديثة بتستخدم MAC عشوائي لكل شبكة (Private Wi-Fi address): لو تاني حرف في الـ MAC واحد من 2 أو 6 أو A أو E، يبقى عشوائي ومش هيترجم لشركة.
+
+الأسامي: [[GetHostEntry]] بيسأل DNS الراوتر (كتير من الراوترات بتسجّل أسامي الأجهزة اللي أخدت منه IP، وبتزوّد لاحقة زي .home أو .lan)، وكمان بيبص في ملف [[hosts]] (درس hosts). عشان كده ممكن يطلع اسم غلط، شوف الـ sol.
+
+الـ sweep بيبعت 254 ping في ثواني، وده عادي على شبكة البيت. أدوات المسح الحقيقية (زي nmap) بتفحص بورتات كمان، ودي اللي محتاجة إذن صريح أكتر.`,
+            when: R`تدوّر على IP جهاز في البيت، أو تراجع مين على الواي فاي، أو تتأكد إن جهاز جديد اتوصل، أو قبل ما تختار IP ثابت (عشان تعرف المستخدم).`,
+            mistakes: R`تشغّله على شبكة مش بتاعتك. أو تفتكر إن الجهاز اللي مردش على ping مش موجود. أو تستخدم [[$_]] جوه [[catch]]: هناك [[$_]] بيبقى الـ error نفسه مش العنوان (عشان كده المثال بيلف بـ [[foreach ($ip in $alive)]]). أو تشغّل [[-Parallel]] على 5.1. أو تنسى [[$using:]] فالمتغير جوه البلوك يبقى فاضي ويعمل ping على «.1». أو تصدّق الاسم اللي جاي من reverse DNS من غير ما تتأكد.`
+          },
+          lines: [
+            "عنوانك على الكارت اللي عليه gateway.",
+            "شيل آخر رقم: 192.168.1.2 تبقى 192.168.1.",
+            "ping لكل العناوين من 1 لـ 254، كل 64 مع بعض، واللي يرد يرجع في [[$alive]] (PowerShell 7).",
+            "رتّبهم كأرقام مش كنصوص.",
+            "اطبعهم.",
+            "جدول الـ neighbors (ARP) لشبكتك بس: العنوان والـ MAC والحالة.",
+            "لكل عنوان حي: هات اسمه من DNS أو «?»، واطبعه في عمودين."
+          ],
+          sol: R`جربته على شبكة بيتي بـ PowerShell 7.6: الـ sweep خد [[4.5]] ثانية وطلع 3 عناوين: [[192.168.1.1]] (الراوتر) و [[192.168.1.2]] (جهازي) و [[192.168.1.4]]. جدول الـ neighbors طلع الراوتر بـ MAC بيبدأ بـ [[D8-29-18]] والتالت بـ MAC بيبدأ بـ [[46-D5-D9]] وحالتهم [[Reachable]] (خبّيت باقي الـ MAC). و [[46]] تاني حرف فيها 6، يعني MAC عشوائي، غالبًا موبايل، و macvendors رد عليه [[Not Found]]. ومن غير فلتر [[$prefix]] الجدول كان طلع كمان جهاز [[172.29.x.x]] على شبكة WSL.
+
+الأسامي فيها مفاجأة: الراوتر [[?]] (ملوش اسم)، وجهازي [[MYPC.home]] (اسم الجهاز ومعاه لاحقة الراوتر)، و [[192.168.1.4]] طلع [[host.docker.internal]]! ده مش اسم الموبايل: Docker Desktop كاتب في ملف hosts سطر [[192.168.1.4 host.docker.internal]] من وقت ما كان ده عنوان جهازي، والراوتر بعدين ادّى العنوان ده لموبايل. يعني اسم الـ reverse DNS ممكن ييجي من hosts ويكذب.
+
+وفي 5.1 جربت الـ solCode: خلص في [[1.2]] ثانية وطلع نفس الـ 3 عناوين.`,
+          solCode: R`$prefix = "192.168.1"
+$tasks = 1..254 | ForEach-Object { [System.Net.NetworkInformation.Ping]::new().SendPingAsync("$prefix.$_", 1000) }
+[System.Threading.Tasks.Task]::WaitAll($tasks)
+$tasks | Where-Object { $_.Result.Status -eq "Success" } | ForEach-Object { $_.Result.Address.ToString() }`
+        },
+        {
+          cmd: "Wake-on-LAN",
+          title: "شغّل جهاز مقفول من على الشبكة",
+          desc: R`Wake-on-LAN بيخليك تشغّل جهاز مقفول أو نايم من جهاز تاني على نفس الشبكة، عن طريق «magic packet»: رسالة صغيرة فيها الـ MAC بتاع الجهاز اللي عايز تصحّيه. كارت الشبكة بيفضل صاحي بطاقة قليلة، ولما يشوف الرسالة دي بيشغّل الجهاز. مفيش أمر جاهز في PowerShell، بس كام سطر .NET بيعملوها، وشغالين في 5.1 و 7 من غير أدمن.
+
+[[$mac]] الـ MAC بتاع الجهاز اللي هيصحى (من [[Get-NetAdapter]] عليه، أو من صفحة الراوتر، أو من [[Get-NetNeighbor]] وهو شغال). [[-split '[-:]']] بيقطّعه عند الشرطة أو النقطتين، و [[[Convert]::ToByte($_, 16)]] بيحوّل كل جزء من hex (زي 5D) لرقم بايت.
+
+الـ magic packet: [[@(0xFF) * 6]] ست بايتات كلها 255 ([[0xFF]] يعني 255 بالـ hex، و [[@( )]] بتعمله array، وضرب الـ array في رقم بيكرر عناصرها)، وبعدهم [[$macBytes * 16]] الـ MAC متكرر 16 مرة، و [[+]] بيلزق الاتنين، والمجموع 102 عنصر. اللستة نوعها [[Object[]]] مش bytes، بس PowerShell بيحوّلها لـ bytes لوحده وهو بيبعتها لـ [[.Send()]] (جربتها على 5.1 و 7).
+
+[[System.Net.Sockets.UdpClient]] بيبعت رسالة UDP، و [[EnableBroadcast = $true]] بيسمح يبعت لكل الشبكة، و [[[System.Net.IPEndPoint]::new(...)]] العنوان والبورت: [[[System.Net.IPAddress]::Broadcast]] هو 255.255.255.255 (كل أجهزة الشبكة المحلية)، و 9 البورت المعتاد للـ WoL (أجهزة قليلة بتستخدم 7). و [[.Send()]] بيرجّع عدد البايتات اللي اتبعتت، و [[.Close()]] بيقفل. والسطر الأخير بيتشغّل على الجهاز اللي هيصحى عشان تتأكد إن الكارت مستعد.
+
+لازم الجهاز اللي هيصحى يبقى جاهز: «Wake on LAN» أو «Power On by PCI-E» مفعّل في الـ BIOS، و «Wake on Magic Packet» مفعّل في إعدادات الكارت (Device Manager ← الكارت ← Advanced)، و «Allow this device to wake the computer» في تاب Power Management. و Fast Startup في ويندوز ممكن يمنع الصحيان بعد Shut down (من sleep و hibernate غالبًا شغال)، فلو مشتغلش اقفله من Control Panel ← Power Options ← Choose what the power buttons do. وعلى الكابل أضمن بكتير من الواي فاي، وعلى نفس الشبكة المحلية بس، لأن الراوتر مش بيعدّي broadcast جاي من النت.`,
+          example: R`$mac = "00-11-22-33-44-55"
+$macBytes = $mac -split '[-:]' | ForEach-Object { [Convert]::ToByte($_, 16) }
+$packet = @(0xFF) * 6 + $macBytes * 16
+$udp = [System.Net.Sockets.UdpClient]::new()
+$udp.EnableBroadcast = $true
+$udp.Send($packet, $packet.Count, [System.Net.IPEndPoint]::new([System.Net.IPAddress]::Broadcast, 9))
+$udp.Close()
+Get-NetAdapterAdvancedProperty -Name "Ethernet" | Where-Object DisplayName -like "*Wake*" | Select-Object DisplayName, DisplayValue`,
+          try: R`على الجهاز اللي عايز تصحّيه: هات الـ MAC بتاع كارت الـ Ethernet واتأكد من إعدادات Wake. اقفله (Sleep الأول)، وابعتله الـ packet من جهاز تاني على نفس الشبكة. ولو لسه مش جاهز، جرّب الكود بـ MAC وهمي وشوف إنه بيبعت 102 بايت.`,
+          deep: {
+            why: R`جهاز مكتب أو سيرفر في البيت عايز توصله بـ SSH أو مشاركة ملفات، بس مش عايزه شغال 24 ساعة. أو جهاز في أوضة تانية. بالـ WoL تسيبه مقفول، وتصحّيه لما تحتاجه من لابتوبك أو من سكربت.`,
+            how: R`الـ magic packet مش بيتبعت لجهاز بعينه، لأن الجهاز المقفول ملوش IP. بيتبعت broadcast لكل الشبكة، وكل كارت بيبص جواه: لو لقى الـ MAC بتاعه متكرر 16 مرة بعد الستة FF، بيصحّي الجهاز. عشان كده لازم الـ MAC مش الـ IP.
+
+[[$udp.Send]] بيرجّع 102 حتى لو مفيش جهاز بالـ MAC ده خالص، لأن UDP مش بيستنى رد: نجاح الإرسال مش معناه إن جهاز صحي. اتأكد بـ ping بعد دقيقة.
+
+لو الجهاز ورا Wi-Fi extender أو شبكة ضيوف معزولة، الـ broadcast ممكن ميوصلش. ساعتها ابعته لعنوان broadcast الشبكة بالظبط بدل 255.255.255.255، زي [[[System.Net.IPAddress]::Parse("192.168.1.255")]].
+
+وفيه راوترات فيها زرار WoL جاهز في صفحتها، وده بيحل مشكلة «انا مش في البيت»: تدخل على الراوتر (بـ VPN مثلًا) وهو يبعت الـ packet جوه الشبكة.`,
+            when: R`سيرفر أو جهاز ديسكتوب في البيت بتصحّيه وقت الحاجة، أو سكربت الصبح بيشغّل أجهزة معمل، مع درس Restart-Computer -ComputerName لما تخلص.`,
+            mistakes: R`تكتب الـ MAC بتاع كارت الواي فاي والجهاز متوصل بكابل (أو العكس). أو تنسى الإعداد في الـ BIOS وتفتكر الكود غلط. أو Fast Startup شغال فالجهاز ميصحاش بعد Shut down. أو تحاول تبعته من النت لـ IP البيت. أو تفتكر إن [[.Send()]] رجّع 102 يبقى الجهاز صحي.`
+          },
+          lines: [
+            "الـ MAC بتاع الجهاز اللي هيصحى (ده وهمي).",
+            "قطّعه وحوّل كل جزء من hex لبايت.",
+            "6 بايتات FF وبعدهم الـ MAC متكرر 16 مرة = 102 بايت.",
+            "اعمل UDP client.",
+            "اسمح بالـ broadcast.",
+            "ابعت الـ packet لكل الشبكة على بورت 9، والناتج عدد البايتات.",
+            "اقفل.",
+            "على الجهاز اللي هيصحى: إعدادات الـ Wake في الكارت."
+          ],
+          sol: R`جربت الكود بالـ MAC الوهمي [[00-11-22-33-44-55]] على 7.6.6 و 5.1: [[.Send()]] رجّع [[102]] في الاتنين، وأول 12 بايت في الـ packet كانوا [[FF FF FF FF FF FF 00 11 22 33 44 55]]. ومفيش حاجة صحيت طبعًا، لأن مفيش جهاز بالـ MAC ده، ومفيش error برضه، لأن UDP مش بيستنى رد.
+
+وعلى لابتوبي السطر الأخير طلع [[Wake on Magic Packet  Enabled]] و [[Wake on pattern match  Enabled]] و [[Wake on magic packet when system is in the S0ix power state  Disabled]] (يعني من Modern Standby مش هيصحى بالـ packet)، والواي فاي برضه [[Wake on Magic Packet Enabled]]. و Fast Startup كان شغال ([[HiberbootEnabled]] بـ 1 في [[HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power]])، فلو عايز تصحّيه بعد Shut down محتاج تقفله.`
+        },
+        {
+          cmd: "New-SmbShare",
+          title: "شارك فولدر على الشبكة",
+          desc: R`[[New-SmbShare]] بيشارك فولدر على الشبكة، فأي جهاز ويندوز (أو ماك أو لينكس أو موبايل فيه تطبيق ملفات) يفتحه بالعنوان [[\\PC\Shared]]. ويندوز Home يقدر يشارك فولدرات عادي.
+
+[[Get-SmbShare]] بيعرض الشيرات اللي على جهازك. و [[-Name "Shared"]] اسم الشير اللي هيظهر على الشبكة، و [[-Path]] الفولدر الحقيقي، و [[-FullAccess]] مين يقرا ويكتب ويمسح، و [[-ReadAccess]] مين يقرا بس (حسابات على الجهاز ده، بالشكل [[PC\name]]). و [[Enable-NetFirewallRule -Group "@FirewallAPI.dll,-28502"]] بيفتح قواعد «File and Printer Sharing» في الفايروول، والاسم الغريب ده هو اسم الجروب الثابت اللي بيشتغل على ويندوز بأي لغة (الاسم الإنجليزي بيتترجم).
+
+من الجهاز التاني: [[Test-NetConnection PC -Port 445]] بيتأكد إن بورت المشاركة (SMB على 445) واصل. و [[New-SmbMapping -LocalPath S: -RemotePath \\PC\Shared -Persistent $true]] بيعمل drive اسمه S: بيفضل بعد الـ restart. أو بداله [[New-PSDrive -Persist]] بنفس الفكرة، و [[-PSProvider FileSystem]] نوع الـ drive، و [[-Credential (Get-Credential)]] بيسألك على يوزر وباسورد الجهاز اللي عليه الفولدر. و [[Remove-SmbShare -Force]] بيوقف المشاركة من غير سؤال، والفولدر وملفاته بيفضلوا.
+
+الصلاحية الفعلية هي الأضيق من صلاحيات الشير وصلاحيات NTFS على الفولدر (درس Get-Acl / Set-Acl): لو الشير FullAccess والـ NTFS Read، اللي بيوصل Read. وعشان المشاركة تشتغل: الشبكة Private (درس Set-NetConnectionProfile) وقواعد الفايروول مفتوحة. ولو حساب الجهاز اللي عليه الفولدر Microsoft، بتدخل بالإيميل وباسورد الحساب (مش الـ PIN)، ولو الحساب من غير باسورد خالص الأسهل تعمل حساب local للمشاركة (درس Get-LocalUser / New-LocalUser).
+
+الإنشاء والفايروول محتاجين Terminal أدمن. الموديول [[SmbShare]] جاي مع ويندوز وشغال في 5.1 و 7. والمقابل من CMD في درس «net share / net use» في تاب «CMD».`,
+          example: R`Get-SmbShare
+New-SmbShare -Name "Shared" -Path "D:\Shared" -FullAccess "PC\ali" -ReadAccess "PC\sara"
+Enable-NetFirewallRule -Group "@FirewallAPI.dll,-28502"
+# من الجهاز التاني:
+Test-NetConnection PC -Port 445
+New-SmbMapping -LocalPath S: -RemotePath \\PC\Shared -Persistent $true
+New-PSDrive -Name S -PSProvider FileSystem -Root \\PC\Shared -Persist -Credential (Get-Credential)
+# لما تخلص، على الجهاز اللي عليه الفولدر:
+Remove-SmbShare -Name "Shared" -Force`,
+          try: R`اعرض الشيرات اللي على جهازك دلوقتي (حتى لو عمرك ما شاركت حاجة)، واعرف قواعد File and Printer Sharing في الفايروول شغالة ولا لأ.`,
+          flag: "danger",
+          deep: {
+            why: R`تنقل ملفات كبيرة بين جهازين في البيت من غير فلاشة ولا رفع على النت، أو فولدر مشترك للعيلة (صور، أفلام)، أو جهاز قديم بقى «سيرفر ملفات»، أو تسيب فولدر للبرامج على جهاز تاني يقرا منه.`,
+            how: R`SMB هو البروتوكول اللي ويندوز بيشارك بيه الملفات والطابعات، على بورت 445. ويندوز بيعمل لوحده شيرات مخفية للإدارة: [[C$]] و [[D$]] (الديسكات كلها) و [[ADMIN$]] (فولدر ويندوز) و [[IPC$]]، والـ [[$]] في الآخر بتخفيها من القايمة، ومحدش يقدر يفتحها غير بحساب أدمن على الجهاز.
+
+النسخة القديمة SMB1 فيها ثغرات اتستغلت في هجمات كبيرة، وهي مقفولة في ويندوز الحديث ([[Get-SmbServerConfiguration]] بيوريك [[EnableSMB1Protocol False]])، ومتفعّلهاش عشان جهاز قديم.
+
+[[New-SmbMapping]] بيعمل الـ drive للجلسة اللي انت فيها. ولو عملته من Terminal أدمن، Explorer العادي مش هيشوفه، لأن ويندوز بيفصل الـ drives بين الجلسة الأدمن والعادية. فاعمل الـ mapping من Terminal عادي. وعلى ويندوز client الشير بيقبل عدد محدود من الاتصالات في نفس الوقت (حوالي 20)، كفاية للبيت.`,
+            when: R`نقل ملفات بين أجهزة البيت، أو فولدر مشترك، أو backup من جهاز على جهاز تاني (robocopy في تاب CMD شغال على [[\\PC\Shared]] عادي).`,
+            mistakes: R`تشارك الفولدر بـ [[Everyone]] و FullAccess. أو تشارك فولدر كبير زي C:\Users كله. أو تنسى إن الشبكة Public فمحدش يشوف حاجة. أو تعمل الـ mapping من Terminal أدمن وتدوّر عليه في Explorer. أو تفعّل SMB1 عشان جهاز قديم. أو تفتكر إن مسح الشير بيمسح الفولدر (مش بيمسحه).`
+          },
+          lines: [
+            "الشيرات اللي على جهازك.",
+            "شارك D:\\Shared: ali يقرا ويكتب، و sara تقرا بس (أدمن).",
+            "افتح قواعد File and Printer Sharing في الفايروول (أدمن، الاسم ده شغال بأي لغة).",
+            "بورت المشاركة واصل للجهاز التاني؟",
+            "اعمل drive اسمه S: للشير، يفضل بعد الـ restart.",
+            "أو بداله: نفس الـ drive بـ New-PSDrive وبيوزر وباسورد الجهاز التاني.",
+            "وقّف المشاركة (الفولدر بيفضل)."
+          ],
+          sol: R`جربت العرض بس. [[Get-SmbShare]] طلع 5 شيرات من غير ما أشارك أي حاجة: [[ADMIN$  C:\WINDOWS  Remote Admin]] و [[C$]] و [[D$]] و [[E$]] بوصف [[Default share]] و [[IPC$  Remote IPC]]، ودول شيرات الإدارة المخفية. و قواعد الفايروول: [[Get-NetFirewallRule -Group "@FirewallAPI.dll,-28502"]] طلع 32 rule، كلهم [[Enabled False]]، يعني لو شاركت فولدر دلوقتي محدش هيوصله لحد ما تفتحهم. و [[Get-SmbServerConfiguration]] طلع [[EnableSMB1Protocol False]] و [[EnableSMB2Protocol True]].
+
+(مشاركتش فولدر ولا فتحت الفايروول وأنا بكتب الدرس.) بعد [[New-SmbShare]] من Terminal أدمن، التوثيق بيقول إنه بيطبع الشير الجديد بـ Name و ScopeName و Path و Description، و [[Get-SmbShareAccess -Name "Shared"]] بيوريك مين ليه Full ومين Read.`,
+          solCode: R`Get-SmbShare
+Get-NetFirewallRule -Group "@FirewallAPI.dll,-28502" | Group-Object Enabled | Select-Object Name, Count`
+        },
+        {
+          cmd: "Enter-PSSession / Invoke-Command",
+          title: "شغّل أوامر على جهاز تاني (PowerShell remoting)",
+          desc: R`PowerShell remoting بيخليك تفتح PowerShell على جهاز تاني على الشبكة كأنك قاعد قدامه ([[Enter-PSSession]])، أو تبعت أوامر لكذا جهاز مرة واحدة وترجعلك النتايج ([[Invoke-Command]]). في ويندوز ده بيمشي على خدمة WinRM (بورت 5985)، وفي PowerShell 7 كمان على SSH.
+
+على الجهاز اللي هيستقبل، مرة واحدة من Terminal أدمن: [[Enable-PSRemoting -Force]] بيشغّل خدمة WinRM ويخليها تقوم مع ويندوز، ويعمل listener، ويفتح الفايروول للشبكات الـ Private، و [[-Force]] من غير أسئلة. ولو الشبكة Public بيرفض (درس Set-NetConnectionProfile). لو شغّلته من pwsh بيعمل endpoint اسمه [[PowerShell.7]]، ومن 5.1 بيفعّل [[Microsoft.PowerShell]] الافتراضي اللي بيشتغل بـ 5.1. والاتصال من غير ما تحدد بيروح للافتراضي، فلو فعّلت من pwsh بس، زوّد [[-ConfigurationName PowerShell.7]] على Enter-PSSession و Invoke-Command (أو شغّل Enable-PSRemoting من 5.1 كمان).
+
+أجهزة البيت مش في domain، فلازم الجهاز اللي بيبعت يثق في الجهاز التاني بالاسم أو العنوان: [[Set-Item WSMan:\localhost\Client\TrustedHosts -Value "192.168.1.20" -Concatenate -Force]] (Terminal أدمن، على الجهاز اللي بيبعت)، و [[-Concatenate]] بيزوّد على اللستة بدل ما يمسحها، و [[-Force]] من غير سؤال. تحذير: [[-Value *]] (أي جهاز) اللي في شروحات كتير معناه إن جهازك هيبعت اليوزر والباسورد لأي جهاز بيدّعي إنه العنوان ده، فحط عناوين بعينها.
+
+[[$cred = Get-Credential]] بيسألك على يوزر وباسورد أدمن على الجهاز التاني (زي [[PC2\admin]])، و [[Enter-PSSession -ComputerName 192.168.1.20 -Credential $cred]] بيقلب الـ prompt لـ [[[192.168.1.20]: PS C:\Users\admin\Documents>]] وأي أمر بيتنفذ هناك، و [[Exit-PSSession]] يرجعك. و [[Invoke-Command -ComputerName ... -ScriptBlock { ... }]] بيشغّل البلوك على كل الأجهزة مع بعض، والنتايج فيها عمود [[PSComputerName]] بيقولك جت منين.
+
+PowerShell 7 كمان بيعمل remoting على SSH: [[Enter-PSSession -HostName 192.168.1.20 -UserName admin]] من غير WinRM ولا TrustedHosts، ومع لينكس والماك كمان، بس محتاج OpenSSH Server على الجهاز التاني (الدرس الجاي). وويندوز Home بيستقبل remoting عادي، لأن خدمة WinRM موجودة فيه (عندي موجودة وحالتها Stopped و Manual).`,
+          example: R`# على الجهاز اللي هيستقبل (Terminal أدمن):
+Enable-PSRemoting -Force
+# على جهازك (Terminal أدمن):
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value "192.168.1.20" -Concatenate -Force
+$cred = Get-Credential
+Enter-PSSession -ComputerName 192.168.1.20 -Credential $cred
+Exit-PSSession
+Invoke-Command -ComputerName 192.168.1.20, 192.168.1.21 -Credential $cred -ScriptBlock { Get-CimInstance Win32_OperatingSystem | Select-Object Caption, LastBootUpTime }
+Enter-PSSession -HostName 192.168.1.20 -UserName admin`,
+          try: R`على جهازك من غير ما تغيّر حاجة: اعرف خدمة WinRM شغالة ولا لأ ([[Get-Service WinRM]])، وقواعد WINRM في الفايروول ([[Get-NetFirewallRule -Name "WINRM*"]])، وجرب [[Invoke-Command -ComputerName localhost -ScriptBlock { hostname }]] وشوف الـ error.`,
+          flag: "danger",
+          deep: {
+            why: R`عندك جهازين أو تلاتة في البيت أو مكتب صغير، وعايز تعرف مساحة الديسك أو تسطّب تحديث أو تقرا لوج على كلهم من مكانك. Remote Desktop بياخد الشاشة كلها ومش موجود في Home، والـ remoting سطر واحد ونتيجته objects تقدر ترتبها وتصدّرها.`,
+            how: R`[[Invoke-Command]] بيبعت البلوك للجهاز التاني، هو بيشغّله ويرجّع النتايج مترجمة (deserialized): نفس الخصائص بس من غير methods، عشان كده [[Get-Process]] اللي راجع من بعيد مينفعش تعمله [[.Kill()]].
+
+الجلسة بتشتغل بحساب الـ credential اللي بعته وصلاحياته على الجهاز التاني، ومن غير UAC prompt. والـ endpoints الافتراضية بتسمح بس لـ Administrators و Remote Management Users على الجهاز التاني.
+
+على جهاز مش في domain، [[Enable-PSRemoting]] بيظبط كمان إعداد اسمه LocalAccountTokenFilterPolicy، اللي بيخلي حسابات الأدمن الـ local تاخد صلاحيات كاملة من الشبكة. ده لازم للـ remoting، بس معناه إن أي حد معاه باسورد أدمن local يقدر يدخل من بعيد بصلاحيات كاملة، فالحساب ده لازم باسورد قوي (درس «RandomNumberGenerator (password)»).
+
+WinRM على 5985 بيستخدم HTTP، بس محتوى الجلسة متشفّر بمفتاح بيتعمل بين الجهازين (NTLM أو Kerberos). و [[Disable-PSRemoting]] بيقفل الـ endpoints، و [[Stop-Service WinRM]] و [[Set-Service WinRM -StartupType Manual]] بيرجّعوا الخدمة زي ما كانت.`,
+            when: R`إدارة كذا جهاز ويندوز من مكان واحد، أو سكربت بيجمع معلومات من أجهزة المكتب، أو تشغّل أمر على سيرفر ويندوز. ولو فيه لينكس أو ماك في الحسبة، أو مش عايز WinRM، استخدم SSH.`,
+            mistakes: R`تحط [[TrustedHosts *]] وتنسى. أو تنسى إن الشبكة Public فـ Enable-PSRemoting يرفض. أو تستخدم حساب Microsoft من غير باسورد أو بالـ PIN (الأسهل حساب local أدمن بباسورد قوي على الجهاز التاني). أو تستنى [[Enter-PSSession]] يشغّل برامج بواجهة (مش بيعرض شاشات). أو تكتب [[TrustedHosts]] بالاسم وتتصل بالـ IP (لازم نفس الشكل). أو تفعّل remoting على أجهزة مش محتاجاه.`
+          },
+          lines: [
+            "شغّل WinRM وافتح الفايروول للشبكات الـ Private، من غير أسئلة.",
+            "ثق في الجهاز ده بالعنوان، وزوّده على اللستة بدل ما تمسحها.",
+            "يوزر وباسورد أدمن على الجهاز التاني.",
+            "افتح جلسة هناك: كل أمر بعد كده بيتنفذ على الجهاز التاني.",
+            "ارجع لجهازك.",
+            "شغّل البلوك ده على جهازين مع بعض، والنتايج فيها PSComputerName.",
+            "PowerShell 7: نفس الجلسة على SSH، من غير WinRM ولا TrustedHosts."
+          ],
+          sol: R`جربت الحاجات اللي مش بتغيّر حاجة على ويندوز 11 Home. [[Get-Service WinRM]] طلع [[Stopped]] و [[Manual]]، و [[Get-NetFirewallRule -Name "WINRM*"]] طلع 4 rules ([[WINRM-HTTP-In-TCP]] للـ Public و [[WINRM-HTTP-In-TCP-NoScope]] للـ Domain و Private وغيرهم)، كلهم [[Enabled False]]. و [[Invoke-Command -ComputerName localhost -ScriptBlock { hostname }]] طلع [[Connecting to remote server localhost failed with the following error message : The client cannot connect to the destination specified in the request. Verify that the service on the destination is running and is accepting requests.]]، ومعاه نصيحة [[winrm quickconfig]]. وقراية [[WSMan:\localhost\Client\TrustedHosts]] من غير أدمن والخدمة واقفة طلعت [[Cannot find path ... because it does not exist.]].
+
+(مفعّلتش remoting وأنا بكتب الدرس.) حسب توثيق Microsoft، [[Enable-PSRemoting]] من pwsh بيطبع تحذير إنه فعّل الـ remoting لـ PowerShell 7 بس ومش لـ Windows PowerShell، وبعدها [[Get-PSSessionConfiguration]] بيعرض [[PowerShell.7]].`
+        },
+        {
+          cmd: "OpenSSH Server",
+          title: "خلي ويندوز سيرفر SSH",
+          desc: R`ويندوز 10 و 11 فيهم OpenSSH Client جاهز (درس «ssh / scp»)، والـ Server متاح كـ «Optional feature» بتسطّبه بأمر. بعدها تدخل على جهازك من أي جهاز تاني بـ [[ssh user@pc]] (لابتوب، موبايل، لينكس)، وتنقل ملفات بـ scp، وتعمل PowerShell remoting على SSH (الدرس اللي فات). ودي أسهل طريقة توصل بيها لجهاز ويندوز Home من بعيد، لأن Home مفيهوش Remote Desktop server.
+
+[[Get-WindowsCapability -Online -Name OpenSSH*]] بيعرض حالة الـ Client والـ Server ([[Installed]] أو [[NotPresent]])، و [[-Online]] يعني الويندوز الشغال دلوقتي. و [[Add-WindowsCapability -Name OpenSSH.Server~~~~0.0.1.0]] بيسطّب السيرفر، والاسم بالـ [[~~~~]] ده بالظبط زي ما بيطلع في الأمر اللي قبله. و [[Start-Service sshd]] بيشغّل الخدمة، و [[Set-Service -StartupType Automatic]] بيخليها تقوم مع ويندوز. والتسطيب بيعمل rule في الفايروول اسمها [[OpenSSH-Server-In-TCP]] على بورت 22، و [[Get-NetFirewallRule -Name]] بيتأكد منها.
+
+الـ shell الافتراضي لما تدخل هو CMD، وبيتغيّر من الـ registry: [[HKLM:\SOFTWARE\OpenSSH]] قيمة اسمها [[DefaultShell]] فيها المسار الكامل للـ shell. والـ parameters في hashtable وبعدين [[New-ItemProperty @shell]] (splatting): [[Path]] المفتاح، و [[Name]] اسم القيمة، و [[Value]] مسار pwsh.exe، و [[PropertyType String]] نوعها، و [[Force]] يكتب فوقها لو موجودة. ولو pwsh متسطب من Microsoft Store مساره بيبقى جوه WindowsApps، والأضمن نسخة winget (أول درس في التاب) في [[C:\Program Files\PowerShell\7]].
+
+المفاتيح: لليوزر العادي المفتاح العام بيتحط في [[C:\Users\name\.ssh\authorized_keys]] زي لينكس. لكن لو الحساب في جروب Administrators، sshd بيتجاهل الملف ده وبيقرا [[C:\ProgramData\ssh\administrators_authorized_keys]] بس، وده لازم صلاحياته تبقى للأدمنز و SYSTEM بس: [[icacls]] و [[/inheritance:r]] يشيل الصلاحيات الموروثة، و [[/grant "*S-1-5-32-544:F"]] جروب Administrators بالـ SID (النجمة قبل الـ SID بتقول لـ icacls إن ده SID مش اسم) Full، و [[SYSTEM:F]]. ودي أشهر مشكلة: «حطيت المفتاح ولسه بيسألني على الباسورد». ولو حسابك Microsoft، اسم اليوزر في ssh هو اسم فولدر البروفايل والباسورد بتاع حساب Microsoft مش الـ PIN.
+
+كله محتاج Terminal أدمن (من غير أدمن [[Get-WindowsCapability]] نفسه بيرفض)، وشغال من 5.1 و 7 (موديول [[Dism]] بيتحمّل في 7 عادي). الأوامر من توثيق Microsoft لـ OpenSSH على ويندوز.`,
+          example: R`Get-WindowsCapability -Online -Name OpenSSH*
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Start-Service sshd
+Set-Service -Name sshd -StartupType Automatic
+Get-NetFirewallRule -Name "OpenSSH-Server-In-TCP" | Select-Object Name, Enabled, Profile
+$shell = @{ Path = "HKLM:\SOFTWARE\OpenSSH"; Name = "DefaultShell"; Value = "C:\Program Files\PowerShell\7\pwsh.exe"; PropertyType = "String"; Force = $true }
+New-ItemProperty @shell
+Add-Content C:\ProgramData\ssh\administrators_authorized_keys "ssh-ed25519 AAAA...paste-your-laptop-public-key"
+icacls.exe C:\ProgramData\ssh\administrators_authorized_keys /inheritance:r /grant "*S-1-5-32-544:F" /grant "SYSTEM:F"`,
+          try: R`من غير أدمن: اعرف OpenSSH Server متسطب عندك ولا لأ ([[Get-Service sshd]]، وشوف فيه [[sshd.exe]] في [[C:\Windows\System32\OpenSSH]] ولا لأ). ولو قررت تسطّبه: من Terminal أدمن، وبعدها ادخل على جهازك من الموبايل أو لابتوب تاني بـ ssh.`,
+          flag: "danger",
+          deep: {
+            why: R`عايز توصل لجهاز البيت (ويندوز Home) من اللابتوب، أو تشغّل أوامر عليه من الموبايل، أو تنقل ملفات بـ scp و rsync من لينكس، أو تستخدم VS Code Remote-SSH على جهاز ويندوز. SSH بروتوكول واحد بيشتغل مع كل الأنظمة.`,
+            how: R`السيرفر بيتسطب في [[C:\Windows\System32\OpenSSH]] جنب الـ client، وإعداداته في [[C:\ProgramData\ssh\sshd_config]]، ومفاتيح الجهاز نفسه (host keys) بتتعمل أول ما الخدمة تشتغل في نفس الفولدر. أي تعديل في sshd_config محتاج [[Restart-Service sshd]].
+
+الفايروول: الـ rule اللي التسطيب بيعملها بتفتح 22 للدخول. راجع الـ Profile بتاعها بالسطر الخامس، ولو مش عايز الجهاز يقبل SSH على الشبكات العامة: [[Set-NetFirewallRule -Name "OpenSSH-Server-In-TCP" -Profile Private]].
+
+بعد ما المفاتيح تشتغل، اقفل الدخول بالباسورد: في sshd_config خلي [[PasswordAuthentication no]] واعمل restart للخدمة، فمحدش يقدر يجرب باسوردات. ولو هتفتح SSH من النت (port forwarding في الراوتر)، ده لازم، والأحسن VPN بدل فتح البورت.
+
+حسابات Microsoft Entra (حسابات الشغل) مش بتدعم الدخول بالمفاتيح حسب التوثيق. و [[Remove-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0]] بيشيل السيرفر.`,
+            when: R`جهاز ويندوز في البيت عايز تدخله من بعيد، أو عايز ترفع ملفات عليه بـ scp، أو VS Code Remote-SSH، أو PowerShell remoting من لينكس والماك.`,
+            mistakes: R`تحط مفتاح حساب أدمن في [[authorized_keys]] العادي فيفضل يسألك على الباسورد. أو تنسى صلاحيات [[administrators_authorized_keys]] فـ sshd يتجاهله. أو تسيب الدخول بالباسورد مفتوح وتعمل port forwarding لـ 22 من النت. أو تحط DefaultShell لمسار مش موجود فالدخول يفشل. أو تكتب اسم الـ capability بإيدك وتغلط في عدد الـ [[~]].`
+          },
+          lines: [
+            "حالة الـ Client والـ Server (أدمن).",
+            "سطّب السيرفر.",
+            "شغّل الخدمة.",
+            "خليها تقوم مع ويندوز.",
+            "اتأكد من الـ rule بتاعة بورت 22 وعلى أنهي شبكات.",
+            "بيانات قيمة الـ registry: الـ shell الافتراضي يبقى pwsh.",
+            "اكتبها (splatting).",
+            "حط المفتاح العام بتاع اللابتوب لحسابات الأدمن (محتوى id_ed25519.pub).",
+            "صلاحيات الملف: الأدمنز (بالـ SID) و SYSTEM بس، من غير وراثة."
+          ],
+          sol: R`جربت الفحص من غير أدمن: [[Get-WindowsCapability -Online -Name OpenSSH*]] رفض بـ [[The requested operation requires elevation.]]. و [[Get-Service sshd]] طلع [[Cannot find any service with service name 'sshd'.]]، و [[ssh-agent]] طلع [[Stopped]] و [[Disabled]]. وفولدر [[C:\Windows\System32\OpenSSH]] فيه [[ssh.exe]] و [[scp.exe]] و [[ssh-keygen.exe]] ومفيهوش [[sshd.exe]]، يعني الـ Client متسطب والـ Server لأ. والسطر الخامس (مش محتاج أدمن) طلع [[No MSFT_NetFirewallRule objects found with property 'InstanceID' equal to 'OpenSSH-Server-In-TCP'.]]، لأن الـ rule بتتعمل مع التسطيب.
+
+(مسطّبتش السيرفر وأنا بكتب الدرس.) حسب توثيق Microsoft، [[Get-WindowsCapability]] قبل التسطيب بيطلع [[Name : OpenSSH.Server~~~~0.0.1.0]] و [[State : NotPresent]]، و [[Add-WindowsCapability]] بيطلع [[Online : True]] و [[RestartNeeded : False]]، وأول [[ssh user@IP]] من جهاز تاني بيسألك تثق في الـ fingerprint، وبعد الباسورد بتلاقي الـ shell بتاع ويندوز.`
+        },
+        {
+          cmd: "Restart-Computer -ComputerName",
+          title: "اعمل restart أو اقفل جهاز تاني على الشبكة",
+          desc: R`[[Restart-Computer]] و [[Stop-Computer]] (اللي في درس «shutdown /s /t» على جهازك) بياخدوا [[-ComputerName]]، فيعملوا restart أو يقفلوا جهاز تاني على الشبكة، أو كذا جهاز مرة واحدة: جهاز في أوضة تانية، أو أجهزة معمل بعد تحديث.
+
+[[-ComputerName]] اسم الجهاز أو الـ IP، وأكتر من واحد بفاصلة. و [[-Credential $cred]] يوزر أدمن على الجهاز التاني (من [[Get-Credential]]). و [[-WhatIf]] يقولك هيعمل إيه من غير ما يعمله. و [[-Force]] يقفل حتى لو فيه برامج مفتوحة أو حد داخل. و [[-Wait -For PowerShell]] الأمر يستنى لحد ما الجهاز يقوم ويبقى PowerShell remoting عليه جاهز، و [[-Timeout 300]] بالكتير 5 دقايق، و [[-Delay 5]] يسأل كل 5 ثواني. و [[-Wait]] مينفعش مع جهازك انت.
+
+السطر الأخير ألطف: [[Invoke-Command]] (درس Enter-PSSession / Invoke-Command) بيشغّل [[shutdown /r /t 300 /c "..."]] على الجهاز التاني، فاللي قاعد قدامه يشوف تنبيه ويبقى عنده 5 دقايق يحفظ.
+
+المتطلبات: حساب أدمن على الجهاز التاني. وفي PowerShell 7 الأمرين بيكلّموا الجهاز التاني عن طريق WinRM بس، فلازم يكون عليه [[Enable-PSRemoting]] وعندك TrustedHosts لو مش domain (الدرس قبل اللي فات). في 5.1 فيه [[-Protocol DCOM]] (الافتراضي هناك) بيكلّم WMI بدل WinRM، ومحتاج قواعد WMI في فايروول الجهاز التاني. والبديل القديم من CMD: [[shutdown /r /m \\PC2]] في درس «shutdown /m» في تاب «CMD».
+
+تحذير: الـ restart من بعيد مش بيسأل اللي قاعد قدام الجهاز، فأي شغل مش محفوظ عنده بيضيع، خصوصًا مع [[-Force]].`,
+          example: R`$cred = Get-Credential
+Restart-Computer -ComputerName 192.168.1.20 -Credential $cred -WhatIf
+Restart-Computer -ComputerName 192.168.1.20 -Credential $cred -Force
+Restart-Computer -ComputerName 192.168.1.20 -Credential $cred -Wait -For PowerShell -Timeout 300 -Delay 5
+Stop-Computer -ComputerName 192.168.1.20, 192.168.1.21 -Credential $cred -Force
+Invoke-Command -ComputerName 192.168.1.20 -Credential $cred -ScriptBlock { shutdown /r /t 300 /c "Restart in 5 minutes, save your work" }`,
+          try: R`من غير ما تقفل أي حاجة: جرّب [[Stop-Computer -ComputerName PC-OFFICE -WhatIf]] و [[Restart-Computer -ComputerName PC-OFFICE -WhatIf]] بجهاز مش موجود، وقارن الاتنين.`,
+          flag: "danger",
+          deep: {
+            why: R`سطّبت تحديث على 5 أجهزة ومحتاجين restart، أو جهاز في أوضة تانية معلّق ومش عايز تقوم، أو سكربت آخر اليوم بيقفل أجهزة المكتب. ومع [[-Wait]] تقدر تكمّل السكربت على الجهاز بعد ما يقوم.`,
+            how: R`الأمرين بيستخدموا [[Win32Shutdown]] في [[Win32_OperatingSystem]] على الجهاز التاني (نفس CIM اللي في درس Get-CimInstance)، والحساب لازم يبقى عنده صلاحية الـ shutdown هناك، والأدمن عنده.
+
+جربت أقارن الـ parameters في النسختين على نفس الجهاز: في 7.6 [[Restart-Computer]] فيه [[WsmanAuthentication]] بس كطريقة اتصال، وفي 5.1 فيه كمان [[Protocol]] و [[DcomAuthentication]] و [[Impersonation]] و [[AsJob]] و [[ThrottleLimit]]. فسكربت قديم فيه [[-Protocol WSMan]] هيفشل على 7.
+
+[[-For]] بياخد [[Wmi]] (الجهاز بيرد على CIM) أو [[WinRM]] أو [[PowerShell]] (جلسة remoting تشتغل)، والأخير الأضمن لو هتشغّل أوامر بعده.
+
+ويندوز Home مينفعش يتعمله remote desktop، بس ينفع يتعمله restart من بعيد بالطريقة دي، طول ما WinRM مفعّل عليه وانت أدمن هناك.`,
+            when: R`restart بعد تحديثات على كذا جهاز، أو جهاز بعيد معلّق، أو جدولة قفل أجهزة بالليل مع Register-ScheduledTask، أو بعد Wake-on-LAN لما تخلص شغلك على الجهاز.`,
+            mistakes: R`تنسى إن حد قاعد على الجهاز التاني. أو تكتب [[localhost]] في لستة أجهزة مع [[-Force]] فجهازك يقفل. أو تستخدم [[-Wait]] من غير [[-Timeout]] فلو الجهاز مقامش السكربت يفضل مستني. أو تفتكر [[-WhatIf]] بيتأكد إن الجهاز موجود ولا لأ (Restart بيتأكد و Stop لأ، شوف الـ sol). أو تجرب على 7 والجهاز التاني معندوش WinRM.`
+          },
+          lines: [
+            "يوزر وباسورد أدمن على الجهاز التاني.",
+            "اعرف هيعمل إيه من غير ما يعمل حاجة.",
+            "restart على طول، حتى لو فيه برامج مفتوحة.",
+            "restart واستنى لحد ما PowerShell remoting يشتغل عليه، 5 دقايق بالكتير، واسأل كل 5 ثواني.",
+            "اقفل جهازين مرة واحدة.",
+            "ألطف: restart بعد 5 دقايق برسالة للي قاعد قدامه (عن طريق remoting)."
+          ],
+          sol: R`جربت [[-WhatIf]] بس، بجهاز مش موجود. [[Stop-Computer -ComputerName PC-OFFICE -WhatIf]] طبع [[What if: Performing the operation "Stop-Computer" on target " (PC-OFFICE)".]] عادي. لكن [[Restart-Computer -ComputerName PC-OFFICE -WhatIf]] طلع error: [[Computer name PC-OFFICE cannot be resolved with the exception: One or more errors occurred. (No such host is known.).]]، يعني Restart-Computer بيدوّر على الجهاز قبل الـ WhatIf، و Stop-Computer لأ. فـ WhatIf مش اختبار إن الجهاز موجود.
+
+(معملتش restart ولا قفلت أي جهاز وأنا بكتب الدرس.) لو الجهاز موجود و WinRM مش مفعّل عليه، هتشوف error اتصال زي اللي في درس Enter-PSSession / Invoke-Command. ولو مفعّل وانت أدمن هناك، الأمر مش بيطبع حاجة، والجهاز بيعمل restart.`
+        }
+      ]
+    },
+    {
+      t: "صيانة وأمان الجهاز",
+      l: 3,
+      n: R`صحة الهارد، وفرمتة فلاشة، والتشفير، و Defender، ونقطة استرجاع قبل أي تغيير، والبرامج اللي بتقوم مع ويندوز، والأجهزة اللي فيها مشكلة، واستهلاك المعالج، وسجل الأحداث، وباسورد قوي: صيانة الجهاز من الترمنال. العرض غالبًا من غير أدمن، وأي تغيير محتاج Terminal أدمن`,
+      items: [
+        {
+          cmd: "Get-PhysicalDisk",
+          title: "صحة الهارد ونوعه (SSD ولا HDD)",
+          desc: R`[[Get-PhysicalDisk]] بيعرض الديسكات الحقيقية في الجهاز: نوعها (SSD ولا HDD)، وبتتوصل إزاي (NVMe أو SATA أو USB)، وحالتها الصحية حسب الديسك نفسه. و [[Get-StorageReliabilityCounter]] بيطلّع أرقام أعمق: الحرارة، ونسبة استهلاك الـ SSD، والأخطاء، وساعات التشغيل.
+
+الأعمدة: [[FriendlyName]] الموديل، و [[MediaType]] ([[SSD]] أو [[HDD]] أو [[Unspecified]] لو ويندوز مش عارف)، و [[BusType]] ([[NVMe]] الأسرع، و [[SATA]]، و [[USB]] للخارجي)، و [[HealthStatus]] ([[Healthy]] أو [[Warning]] أو [[Unhealthy]]). و [[@{ n = "GB"; e = { [int]($_.Size / 1GB) } }]] عمود محسوب (درس Get-CimInstance) بالحجم بالجيجا، و [[[int]]] بيقرّب لرقم صحيح.
+
+[[Get-StorageReliabilityCounter]] بياخد الديسكات من الـ pipeline: [[Temperature]] بالسيلزيوس، و [[Wear]] نسبة ما اتصرف من عمر الـ SSD المتوقع (0 جديد، و 100 خلص عمره المتوقع)، و [[ReadErrorsTotal]] و [[WriteErrorsTotal]] أخطاء، و [[PowerOnHours]] ساعات التشغيل. ده محتاج Terminal أدمن، وبعض الديسكات (خصوصًا USB) مش بتدّي الأرقام دي فبتطلع فاضية.
+
+[[Get-Disk]] الديسكات بالـ [[Number]] اللي بتستخدمه في الأوامر، و [[PartitionStyle]] ([[GPT]] الحديث أو [[MBR]] القديم). و [[Get-Partition]] التقسيمات اللي على كل ديسك وحرف كل واحدة ونوعها، و [[Get-Volume]] الـ volumes بالمساحة الفاضية، و [[Where-Object DriveLetter]] اللي ليها حرف بس (تقرير المساحة بطريقة شغالة على كل الأنظمة في درس disk-report.ps1). الموديول [[Storage]] جاي مع ويندوز وشغال في 5.1 و 7 (جربته على 7.6)، والعرض من غير أدمن ما عدا الـ reliability. وأداة الديسكات الكاملة من CMD في درس «diskpart» في تاب «CMD»، وفحص نظام الملفات في درس «chkdsk» هناك.`,
+          example: R`Get-PhysicalDisk | Select-Object FriendlyName, MediaType, BusType, HealthStatus, @{ n = "GB"; e = { [int]($_.Size / 1GB) } }
+Get-PhysicalDisk | Get-StorageReliabilityCounter | Select-Object DeviceId, Temperature, Wear, ReadErrorsTotal, WriteErrorsTotal, PowerOnHours
+Get-Disk | Select-Object Number, FriendlyName, BusType, PartitionStyle, HealthStatus
+Get-Partition | Select-Object DiskNumber, PartitionNumber, DriveLetter, Type, @{ n = "GB"; e = { [math]::Round($_.Size / 1GB, 1) } }
+Get-Volume | Where-Object DriveLetter | Select-Object DriveLetter, FileSystem, HealthStatus, @{ n = "FreeGB"; e = { [int]($_.SizeRemaining / 1GB) } }, @{ n = "GB"; e = { [int]($_.Size / 1GB) } }`,
+          try: R`اعرف الهارد اللي عندك SSD ولا HDD وصحته، وأنهي ديسك عليه C:، ولو تقدر تفتح Terminal أدمن شوف الحرارة والـ Wear.`,
+          deep: {
+            why: R`الجهاز بقى بطيء جدًا أو بيهنّج، أو لابتوب مستعمل عايز تعرف حالة الهارد فيه، أو قبل ما تشتري SSD تعرف الجهاز فيه NVMe ولا SATA، أو بتقرر تحط الـ backup فين. الأرقام دي بتقولك الديسك نفسه شايف إيه قبل ما يقع.`,
+            how: R`[[HealthStatus]] جاي من تقييم الديسك نفسه (SMART)، وغالبًا مش بيتغير لـ Warning غير لما المشكلة تبقى قربت، فمتعتمدش عليه لوحده. [[Wear]] و [[ReadErrorsTotal]] بيدّوك صورة أبكر: Wear بيزيد ببطء مع الكتابة، ولو عدّى 80 أو 90 ابدأ جهّز البديل، وأخطاء قراية بتزيد معناها خلي الـ backup بتاعك جاهز.
+
+[[Get-PhysicalDisk]] بيعرض الديسك الحقيقي، و [[Get-Disk]] بيعرضه كما ويندوز بيشوفه بالرقم اللي بتستخدمه في [[Clear-Disk]] و [[Initialize-Disk]] (الدرس الجاي)، و [[Get-Partition]] و [[Get-Volume]] اللي فوقيه. الحرف C: ممكن يبقى على ديسك، والـ System partition اللي بيبوّت منها على ديسك تاني (شوف الـ sol)، وده مهم قبل ما تشيل ديسك أو تمسحه.
+
+[[MediaType Unspecified]] بيحصل مع بعض الكروت أو داخل الأجهزة الافتراضية، وساعتها [[BusType NVMe]] غالبًا يعني SSD.`,
+            when: R`فحص دوري لصحة الهارد، أو قبل وبعد ما تنقل ويندوز لديسك جديد، أو لما الجهاز يبطّأ فجأة، أو لما تختار أنهي ديسك تمسح أو تفرمت.`,
+            mistakes: R`تفتكر [[Healthy]] يعني الديسك هيعيش للأبد وتتجاهل الـ backup. أو تقرا [[Wear]] بالعكس (0 جديد). أو تخلط بين رقم الـ partition ورقم الديسك. أو تقسم [[Size]] على 1000 مرة تلات تقسيمات فتلاقي رقم مختلف عن ويندوز: ويندوز بيعرض بالـ 1024 ([[1GB]] في PowerShell). أو تستنى الـ reliability تشتغل من غير أدمن.`
+          },
+          lines: [
+            "الديسكات الحقيقية: الموديل والنوع والتوصيلة والصحة والحجم بالجيجا.",
+            "الحرارة والاستهلاك والأخطاء وساعات التشغيل (أدمن).",
+            "الديسكات بالأرقام اللي بتستخدمها في الأوامر، و GPT ولا MBR.",
+            "التقسيمات على كل ديسك: رقمها وحرفها ونوعها وحجمها.",
+            "الـ volumes اللي ليها حرف: نظام الملفات والصحة والمساحة الفاضية من الكلية."
+          ],
+          sol: R`جربتها على لابتوب فيه ديسكين NVMe. [[Get-PhysicalDisk]] طلع [[HFM001TD3JX013N  SSD  NVMe  Healthy  954]] و [[CT1000P3SSD8  SSD  NVMe  Healthy  932]]. و [[Get-StorageReliabilityCounter]] من غير أدمن رفض بـ [[Access to a CIM resource was not available to the client.]]، فالحرارة والـ Wear محتاجين Terminal أدمن.
+
+و [[Get-Partition]] كشف حاجة مهمة: ديسك 0 عليه [[C]] (حوالي 301 جيجا) و [[D]] (حوالي 629) وتقسيمة [[Recovery]] و [[Reserved]]، لكن تقسيمة [[System]] (اللي ويندوز بيبوّت منها، حوالي 0.3 جيجا) على ديسك 1 جنب [[E]]. يعني لو شلت ديسك 1 أو مسحته، الجهاز غالبًا مش هيبوّت رغم إن ويندوز نفسه على ديسك 0. و [[Get-Volume]] طلع المساحة الفاضية: C فاضي فيه 48 من 301، و D فاضي 59 من 629، و E فاضي 49 من 954.`
+        },
+        {
+          cmd: "Format-Volume / Clear-Disk",
+          title: "امسح فلاشة USB وفرمتها من الترمنال",
+          desc: R`الأوامر دي بتمسح فلاشة USB بالكامل (كل التقسيمات اللي عليها)، وتعمل عليها تقسيمة واحدة، وتفرمتها. مفيدة لما الفلاشة «بايظة»: حجمها ظاهر أصغر من الحقيقي، أو عليها تقسيمات من ISO لينكس قديم، أو Explorer مش راضي يفرمتها. والخطر حقيقي: رقم ديسك غلط = مسح الهارد بتاعك، فالمثال بيختار الديسك اللي على USB بس، ويوقف لو لقى أكتر من واحد، ويسألك قبل المسح.
+
+[[Get-Disk | Where-Object BusType -eq USB]] الديسكات المتوصلة USB بس، و [[@( )]] حواليه بيخلي النتيجة array حتى لو عنصر واحد، فـ [[.Count]] تبقى صح. والسطر التاني بيعرض الرقم والاسم والحجم عشان تتأكد بعينك. و [[throw]] بيوقف السكربت برسالة لو مفيش فلاشة أو فيه أكتر من واحدة. و [[Read-Host]] بيسألك، ولو مكتبتش [[YES]] بالظبط، [[return]] بيخرج من غير ما يلمس حاجة.
+
+[[Clear-Disk -RemoveData -RemoveOEM]] بيمسح كل التقسيمات ويرجّع الديسك «مش متهيأ» (RAW): [[-RemoveData]] لازم لو عليه بيانات، و [[-RemoveOEM]] لو عليه تقسيمات recovery من الشركة، و [[-Confirm:$false]] من غير سؤال تاني (احنا سألنا خلاص). [[Initialize-Disk -PartitionStyle MBR]] بيجهّزه تاني، و MBR أكتر توافق مع الأجهزة القديمة والتليفزيونات والعربيات (GPT للديسكات الأكبر من 2 تيرا). و [[New-Partition -UseMaximumSize -AssignDriveLetter]] تقسيمة واحدة بالمساحة كلها وحرف أوتوماتيك، والـ pipe لـ [[Format-Volume -FileSystem exFAT -NewFileSystemLabel "USB"]] بيفرمتها باسم يظهر في Explorer.
+
+نظام الملفات: [[FAT32]] بيشتغل في كل حتة تقريبًا، بس مفيش ملف أكبر من 4 جيجا، وأدوات ويندوز تاريخيًا مش بتعمله على مساحة أكبر من 32 جيجا. [[exFAT]] من غير حد الـ 4 جيجا، ومقروء في ويندوز والماك ومعظم الأجهزة الحديثة، وده الأنسب لفلاشة. [[NTFS]] بتاع ويندوز (صلاحيات وملفات ضخمة)، والماك بيقراه من غير ما يكتب عليه.
+
+كله محتاج Terminal أدمن، والموديول Storage شغال في 5.1 و 7. وملاحظة من التوثيق: [[-WhatIf]] مش بيشتغل مع [[Format-Volume]]، فمتعتمدش عليه للتجربة. ومن CMD نفس الشغل بـ [[diskpart]] (درس «diskpart» في تاب «CMD»)، وبالماوس من Disk Management ([[diskmgmt.msc]]).`,
+          example: R`$usb = @(Get-Disk | Where-Object BusType -eq USB)
+$usb | Select-Object Number, FriendlyName, @{ n = "GB"; e = { [math]::Round($_.Size / 1GB, 1) } }
+if ($usb.Count -ne 1) { throw "Expected exactly one USB disk, found $($usb.Count)" }
+$n = $usb[0].Number
+if ((Read-Host "Wipe disk $n ($($usb[0].FriendlyName))? Type YES") -cne "YES") { return }
+Clear-Disk -Number $n -RemoveData -RemoveOEM -Confirm:$false
+Initialize-Disk -Number $n -PartitionStyle MBR
+New-Partition -DiskNumber $n -UseMaximumSize -AssignDriveLetter | Format-Volume -FileSystem exFAT -NewFileSystemLabel "USB"`,
+          try: R`من غير فلاشة متوصلة، شغّل أول 3 سطور بس وشوف رسالة الـ throw. وبعدين وصّل فلاشة مفيهاش حاجة مهمة، وشغّل أول سطرين واتأكد إن الاسم والحجم بتوعها هي، قبل ما تفكر تكمّل.`,
+          flag: "script danger",
+          deep: {
+            why: R`فلاشة كانت عليها ISO لينكس أو ويندوز (bootable) فبقت ظاهرة 2 ميجا بس، أو اتعملها partition غريب، أو عايز تمسحها قبل ما تديها لحد، أو تفرمتها exFAT عشان تحط عليها ملف أكبر من 4 جيجا. والطريقة دي بتنضّفها من الصفر أحسن من Format العادي في Explorer اللي بيفرمت تقسيمة واحدة وبيسيب الباقي.`,
+            how: R`الفرق بين الأوامر: [[Clear-Disk]] بيمسح جدول التقسيمات كله، و [[Initialize-Disk]] بيكتب جدول جديد فاضي (MBR أو GPT)، و [[New-Partition]] بيعمل تقسيمة، و [[Format-Volume]] بيكتب نظام ملفات عليها. Explorer بيعمل الخطوة الأخيرة بس.
+
+المسح ده «سريع»: الملفات القديمة مش بتتكتب فوقها، فبرامج الاسترجاع ممكن ترجّع حاجات منها. لو هتدّي الفلاشة لحد وفيها حاجات حساسة، [[Format-Volume -Full]] بيكتب على كل الفلاشة (أبطأ بكتير).
+
+[[-cne]] يعني «لا يساوي» مع مراعاة الكابيتال والسمول (درس «عوامل المقارنة»)، فـ yes بالسمول مش هتعدّي. و [[return]] في سكربت بيخرج منه. و [[$usb[0]]] أول (والوحيد) عنصر في الـ array.
+
+بعض كروت الـ SD والفلاشات الرخيصة بتظهر [[BusType]] بقيمة [[SD]] أو [[SCSI]] بدل USB، فالفلتر مش هيلاقيها، وده أأمن من إنه يلاقي حاجة غلط: ساعتها اختار الرقم بإيدك من [[Get-Disk]] بعد ما تقارن الحجم.`,
+            when: R`تنضيف فلاشة bootable قديمة، أو تجهيز فلاشة لتليفزيون أو عربية، أو exFAT لملفات كبيرة، أو قبل ما تدّي فلاشة لحد.`,
+            mistakes: R`تكتب رقم ديسك من الذاكرة بدل ما تبص على [[Get-Disk]]. أو تشيل فلتر الـ USB «عشان مش لاقي الفلاشة». أو تفرمت FAT32 وبعدين ملف 5 جيجا يرفض يتنسخ. أو تفتكر [[-WhatIf]] بيحميك مع Format-Volume. أو تفصل الفلاشة في نص العملية. أو تختار GPT لفلاشة رايحة لجهاز قديم.`
+          },
+          lines: [
+            "كل الديسكات المتوصلة USB، في array دايمًا.",
+            "اعرض رقمها واسمها وحجمها عشان تتأكد بعينك.",
+            "لو مش فلاشة واحدة بالظبط، وقّف برسالة.",
+            "رقم الديسك.",
+            "اسأل، ولو مكتبتش YES كابيتال اخرج من غير ما تلمس حاجة.",
+            "امسح كل التقسيمات والبيانات (أدمن).",
+            "جهّزه تاني بجدول MBR.",
+            "تقسيمة واحدة بالمساحة كلها وحرف، وفرمتها exFAT باسم USB."
+          ],
+          sol: R`مشغّلتش المسح ولا الفرمتة وأنا بكتب الدرس (ولا تشغّلهم غير على فلاشة انت متأكد منها). شغّلت أول 3 سطور بس ومفيش فلاشة متوصلة: [[Get-Disk | Where-Object BusType -eq USB]] مطلّعش حاجة، والـ throw وقّف السكربت برسالة [[Expected exactly one USB disk, found 0]]، وده بالظبط اللي المفروض يحصل. وعلى نفس الجهاز [[Get-Disk]] من غير فلتر طلع ديسكين NVMe بس، رقم 0 و 1.
+
+حسب توثيق Microsoft لموديول Storage: [[Clear-Disk]] مش بيطبع حاجة إلا مع [[-PassThru]]، و [[Format-Volume]] بيطبع الـ volume الجديد بـ DriveLetter و FileSystemLabel و FileSystem [[exFAT]] و HealthStatus [[Healthy]] والحجم.`
+        },
+        {
+          cmd: "Get-BitLockerVolume",
+          title: "التشفير شغال؟ ومفتاح الاسترجاع فين؟",
+          desc: R`BitLocker بيشفّر الديسك كله، فلو اللابتوب اتسرق محدش يقدر يقرا الملفات من غير ما يدخل ويندوز. لكن ساعات بعد تحديث BIOS أو تغيير هاردوير، ويندوز بيطلب «Recovery key» (48 رقم)، ومن غيره الملفات راحت. [[Get-BitLockerVolume]] بيعرض حالة التشفير، والمثال بيوريك مفتاح الاسترجاع عشان تتأكد إنه محفوظ في مكان بره الجهاز.
+
+الأعمدة: [[MountPoint]] حرف الديسك، و [[VolumeStatus]] ([[FullyEncrypted]] أو [[FullyDecrypted]] أو [[EncryptionInProgress]])، و [[ProtectionStatus]] ([[On]] الحماية شغالة، و [[Off]] مش شغالة حتى لو الديسك متشفّر، زي وقت تحديث الـ BIOS لما بتتعلّق مؤقتًا)، و [[EncryptionPercentage]]. و [[.KeyProtector]] الطرق اللي تفتح الديسك: [[Tpm]] (شريحة الأمان في الجهاز، بتفتحه لوحدها لما الجهاز سليم) و [[RecoveryPassword]] (المفتاح اللي بيتكتب بإيدك)، و [[Where-Object KeyProtectorType -eq RecoveryPassword]] بيجيبه، و [[KeyProtectorId]] رقمه اللي بيظهر في شاشة الاسترجاع عشان تعرف أنهي مفتاح تكتب.
+
+[[manage-bde -status C:]] نفس المعلومات من أداة CMD القديمة، و [[-protectors -get C:]] المفاتيح. والاتنين محتاجين Terminal أدمن، والموديول [[BitLocker]] بيتحمّل في PowerShell 7 عادي (جربت).
+
+ويندوز Home مفيهوش BitLocker الكامل (لوحة التحكم بتاعته، وتشفير الفلاشات). فيه «Device encryption»: نفس التشفير على ديسك ويندوز والديسكات الثابتة، وبيتفعّل لوحده لو الجهاز فيه TPM و Secure Boot ودخلت بحساب Microsoft، والمفتاح بيتحفظ في حسابك. تشوفه من Settings ← Privacy & security ← Device encryption، والمفتاح على [[https://aka.ms/myrecoverykey]] من موبايلك أو أي جهاز. و Pro فيه كمان BitLocker للفلاشات (BitLocker To Go) وإدارة كاملة.
+
+المفتاح ده سر: أي حد معاه المفتاح والديسك يقرا كل حاجة. متبعتهوش في شات ولا تحطه في screenshot، وخزّنه في مدير باسوردات أو اطبعه.`,
+          example: R`Get-BitLockerVolume | Select-Object MountPoint, VolumeStatus, ProtectionStatus, EncryptionPercentage
+(Get-BitLockerVolume -MountPoint C:).KeyProtector | Select-Object KeyProtectorType, KeyProtectorId
+(Get-BitLockerVolume -MountPoint C:).KeyProtector | Where-Object KeyProtectorType -eq RecoveryPassword | Select-Object KeyProtectorId, RecoveryPassword
+manage-bde -status C:
+manage-bde -protectors -get C:`,
+          try: R`افتح Settings ← Privacy & security ← Device encryption واعرف التشفير شغال ولا لأ. ولو شغال، افتح [[https://aka.ms/myrecoverykey]] من موبايلك واتأكد إن المفتاح موجود، وقارن الـ Key ID بالناتج من Terminal أدمن.`,
+          deep: {
+            why: R`ناس كتير بتكتشف إن الديسك متشفّر يوم ما شاشة BitLocker recovery تظهر بعد تحديث، ومعندهمش المفتاح. خمس دقايق تتأكد فيها إن المفتاح محفوظ في حسابك أو مطبوع بتوفّر عليك ضياع كل الملفات. وكمان لو هتبيع جهاز أو تبعته صيانة، تعرف الديسك متشفّر ولا لأ.`,
+            how: R`الـ TPM بيفتح الديسك أوتوماتيك طول ما «القياسات» بتاعة الـ boot زي ما هي (BIOS، و Secure Boot، و boot loader). تحديث BIOS، أو تغيير إعداد Secure Boot، أو نقل الديسك لجهاز تاني، بيغيّر القياسات، فالـ TPM يرفض وويندوز يطلب الـ Recovery key. عشان كده تحديثات BIOS الرسمية بتعلّق BitLocker مؤقتًا الأول (ProtectionStatus Off لحد الـ restart الجاي).
+
+Device encryption على Home هو نفس محرك BitLocker، فـ [[Get-BitLockerVolume]] و [[manage-bde]] بيعرضوه عادي من Terminal أدمن. لو دخلت بحساب local بس، المفتاح مش بيتحفظ في أي حتة أوتوماتيك، وفي الحالة دي التشفير غالبًا مش بيكمّل لحد ما تدخل بحساب Microsoft.
+
+[[manage-bde -status]] بيطلع سطور زي [[Conversion Status]] و [[Percentage Encrypted]] و [[Encryption Method]] (زي XTS-AES 128) و [[Protection Status]] و [[Key Protectors]]. و [[manage-bde -protectors -get C:]] بيطبع [[Numerical Password]] ومعاه الـ ID والـ Password.`,
+            when: R`مرة دلوقتي تتأكد من المفتاح، وقبل أي تحديث BIOS أو تغيير هاردوير، وقبل ما تبيع الجهاز أو تبعته صيانة، ولما تشتري جهاز مستعمل.`,
+            mistakes: R`تفتكر إن «مفيش BitLocker على Home» يعني الديسك مش متشفّر. أو تحدّث BIOS من غير ما تتأكد من المفتاح. أو تحفظ المفتاح في ملف على نفس الديسك المتشفّر. أو تبعت الـ RecoveryPassword في شات أو screenshot. أو تدخل بحساب local وتفتكر المفتاح في حسابك.`
+          },
+          lines: [
+            "حالة التشفير والحماية لكل ديسك (أدمن).",
+            "الطرق اللي بتفتح C: وأرقامها.",
+            "مفتاح الاسترجاع نفسه (سر، متعرضهوش لحد).",
+            "نفس الحالة من أداة CMD القديمة (أدمن).",
+            "مفاتيح C: من نفس الأداة."
+          ],
+          sol: R`جربت من غير أدمن على ويندوز 11 Home: [[Get-BitLockerVolume]] رفض بـ [[Access to a CIM resource was not available to the client.]]، و [[manage-bde -status C:]] طبع [[ERROR: An attempt to access a required resource was denied.]] و [[Check that you have administrative rights on the computer.]] وخرج بـ exit code 3. يعني حتى معرفة «التشفير شغال ولا لأ» محتاجة Terminal أدمن، أو Settings ← Privacy & security ← Device encryption من غير أدمن.
+
+(مقدرتش أشغّلهم كأدمن وأنا بكتب الدرس.) من Terminal أدمن على ديسك متشفّر، المفروض تشوف [[VolumeStatus FullyEncrypted]] و [[ProtectionStatus On]] و [[EncryptionPercentage 100]]، وفي KeyProtector سطرين: [[Tpm]] و [[RecoveryPassword]]. والـ KeyProtectorId اللي بيظهر بين أقواس معقوفة هو نفسه اللي هتلاقيه جنب المفتاح على aka.ms/myrecoverykey.`
+        },
+        {
+          cmd: "Get-MpComputerStatus",
+          title: "Windows Defender من الترمنال",
+          desc: R`[[Get-MpComputerStatus]] بيعرض حالة Microsoft Defender (الأنتي فيرس اللي جاي مع ويندوز): شغال ولا لأ، والحماية الفورية، وآخر تحديث للتعريفات، وآخر فحص. ومعاه أوامر تحدّث وتفحص وتشوف اللي اتمسك وتستثني فولدرات.
+
+[[AMRunningMode]] ([[Normal]] شغال كأنتي فيرس أساسي، و [[Passive Mode]] لو فيه أنتي فيرس تاني متسطب)، و [[RealTimeProtectionEnabled]] الفحص الفوري لأي ملف بيتفتح أو بيتكتب، و [[AntivirusSignatureLastUpdated]] آخر تحديث للتعريفات، و [[QuickScanAge]] أيام من آخر فحص سريع، و [[IsTamperProtected]] حماية Defender من إن برنامج يقفله (Tamper Protection).
+
+[[Update-MpSignature]] بيحدّث التعريفات دلوقتي. و [[Start-MpScan -ScanType QuickScan]] فحص سريع للأماكن اللي البرامج الخبيثة بتستخبى فيها، و [[-ScanType CustomScan -ScanPath]] فولدر معين (زي Downloads أو مشروع نزّلته). و [[Get-MpThreatDetection]] اللي Defender مسكه قبل كده: [[InitialDetectionTime]] إمتى، و [[ThreatID]] رقم التهديد، و [[Resources]] الملفات. و [[Add-MpPreference -ExclusionPath]] بيستثني فولدر من الفحص، و [[(Get-MpPreference).ExclusionPath]] الاستثناءات الحالية، و [[Remove-MpPreference -ExclusionPath]] بيشيل استثناء.
+
+الاستثناء والأمان: فولدر زي [[node_modules]] فيه عشرات الآلاف من الملفات الصغيرة، و Defender بيفحص كل ملف وهو بيتكتب، فـ [[npm install]] والـ build بيبطّأوا. الاستثناء بيسرّع، بس أي حاجة خبيثة جوه الفولدر ده (باكدج npm ملغومة مثلًا) مش هتتفحص. فلو استثنيت، استثني فولدر مشاريعك بالظبط، مش [[C:\Users]] ولا Downloads. والأحسن غالبًا Dev Drive (درس «Dev Drive» في تاب «اختصارات النظام»): Defender بيفضل يفحص فيه بس بوضع أسرع (performance mode).
+
+العرض من غير أدمن، ما عدا لستة الاستثناءات. والتحديث والفحص والاستثناء من Terminal أدمن. في PowerShell 7 الموديول ([[ConfigDefender]]) بيتحمّل عن طريق Windows PowerShell 5.1 في الخلفية (Windows compatibility، اسم الجلسة [[WinPSCompatSession]])، والأوامر شغالة عادي (جربت). ولو عندك أنتي فيرس تاني، Defender بيبقى Passive والأوامر دي مش هتفرق كتير.`,
+          example: R`Get-MpComputerStatus | Select-Object AMRunningMode, RealTimeProtectionEnabled, AntivirusSignatureLastUpdated, QuickScanAge, IsTamperProtected
+Update-MpSignature
+Start-MpScan -ScanType QuickScan
+Start-MpScan -ScanType CustomScan -ScanPath "$HOME\Downloads"
+Get-MpThreatDetection | Select-Object InitialDetectionTime, ThreatID, Resources
+Add-MpPreference -ExclusionPath "D:\projects"
+(Get-MpPreference).ExclusionPath`,
+          try: R`اعرف حالة Defender عندك، وآخر تحديث للتعريفات، وهل Tamper Protection شغال. ولو مقفول، شغّله من Windows Security ← Virus & threat protection ← Manage settings.`,
+          flag: "danger",
+          deep: {
+            why: R`تتأكد إن الحماية شغالة (برامج كتير بتقفلها من غير ما تقول)، أو تفحص فولدر مشروع أو ملف نزّلته قبل ما تشغّله، أو تفهم ليه npm install بطيء، أو تشوف Defender مسك إيه وإمتى. ومن الترمنال تقدر تحطها في سكربت صيانة.`,
+            how: R`Defender بيشتغل كخدمة ([[WinDefend]]) وعملية اسمها [[MsMpEng]]، وده اللي بتلاقيه بياكل معالج وقت الـ build أو الفحص (درس Get-Counter). والأوامر دي بتكلّمه عن طريق CIM، والنتيجة object ليه خصائص كتير: [[Get-MpComputerStatus | Format-List *]] بيعرضها كلها.
+
+Tamper Protection بيمنع أي برنامج (حتى سكربت أدمن) من إنه يقفل الحماية الفورية أو يغيّر إعدادات مهمة. لو شغال، [[Set-MpPreference -DisableRealtimeMonitoring $true]] مش هيأثر، وده المقصود. التعديل بيتعمل من واجهة Windows Security بس.
+
+الاستثناءات محتاجة أدمن حتى عشان تتقري، عشان برنامج خبيث شغال كيوزر عادي ميعرفش يستخبى فين. ومع Dev Drive، Defender بيفحص بعد ما الملف يتفتح بدل ما يوقف البرنامج لحد ما يخلص، فالفرق في السرعة كبير والحماية لسه موجودة.
+
+[[MpCmdRun.exe]] في [[C:\Program Files\Windows Defender]] هو أداة CMD لنفس الحاجات، وبتلاقيها في شروحات قديمة.`,
+            when: R`فحص دوري سريع، أو قبل ما تشغّل ملف نزّلته، أو لما البيلد بطيء وعايز تقرر في الاستثناءات، أو لما تشك إن الحماية اتقفلت.`,
+            mistakes: R`تستثني [[C:\]] أو فولدر الـ Downloads كله «عشان السرعة». أو تقفل الحماية الفورية للتجربة وتنسى. أو تفتكر إن الفحص اليدوي بيغني عن الحماية الفورية. أو تستغرب إن [[(Get-MpPreference).ExclusionPath]] بيقول «Must be an administrator» (ده مقصود). أو تشغّل Start-MpScan في سكربت من غير ما تعرف إنه بيستنى لحد ما الفحص يخلص.`
+          },
+          lines: [
+            "الحالة: الوضع، والحماية الفورية، وآخر تحديث، وأيام من آخر فحص، و Tamper Protection.",
+            "حدّث التعريفات دلوقتي (أدمن).",
+            "فحص سريع (دقايق، والأمر بيستنى لحد ما يخلص).",
+            "افحص فولدر معين.",
+            "اللي Defender مسكه قبل كده.",
+            "استثني فولدر المشاريع من الفحص (أدمن، وفكّر قبلها).",
+            "الاستثناءات الحالية (بتظهر لأدمن بس)."
+          ],
+          sol: R`جربت العرض بس على PowerShell 7.6 من غير أدمن. [[Get-MpComputerStatus]] طلع [[AMRunningMode : Normal]] و [[RealTimeProtectionEnabled : True]] و [[AntivirusSignatureLastUpdated]] بتاريخ النهارده الصبح، و [[QuickScanAge : 0]] (فيه quick scan اتعمل امبارح بالليل لوحده)، و [[IsTamperProtected : False]]. يعني Tamper Protection مقفول على الجهاز ده، والأحسن تشغّله من Windows Security.
+
+[[Get-MpThreatDetection]] مطلّعش حاجة (مفيش حاجة اتمسكت). و [[(Get-MpPreference).ExclusionPath]] من غير أدمن طلع [[N/A: Must be an administrator to view exclusions]]. و [[Get-Module ConfigDefender]] بعد ما الأمر اشتغل طلع مساره جوه TEMP في فولدر اسمه بيبدأ بـ [[remoteIpMoProxy_ConfigDefender]]، و [[Get-PSSession]] طلع [[WinPSCompatSession]]، يعني فعلًا بيشتغل عن طريق 5.1. (محدّثتش ولا فحصت ولا استثنيت حاجة وأنا بكتب الدرس.)`
+        },
+        {
+          cmd: "Checkpoint-Computer",
+          title: "نقطة استرجاع قبل أي تغيير خطير",
+          desc: R`نقطة الاسترجاع (restore point) صورة من ملفات النظام والـ registry والدرايفرات في لحظة معينة. لو عملت واحدة قبل تغيير خطير (درايفر، برنامج بيعدّل في النظام، registry، سكربت من النت) والجهاز باظ بعدها، ترجّع النظام للنقطة دي. ملفاتك الشخصية مش بتتلمس، لا بتتحفظ ولا بترجع، فدي مش backup.
+
+[[Enable-ComputerRestore -Drive "C:\"]] بيشغّل System Protection على ديسك ويندوز (على أجهزة كتير بيبقى مقفول من الأول). و [[Checkpoint-Computer -Description]] بيعمل نقطة باسم يفهّمك اتعملت ليه، و [[-RestorePointType]] نوعها: الافتراضي [[APPLICATION_INSTALL]]، وفيه [[MODIFY_SETTINGS]] و [[DEVICE_DRIVER_INSTALL]] و [[APPLICATION_UNINSTALL]]. و [[Get-ComputerRestorePoint]] بيعرض النقط اللي موجودة بالوقت والوصف والرقم. و [[rstrui]] بيفتح شاشة System Restore اللي بترجّع منها.
+
+حد اليوم: الأوامر دي مش بتعمل أكتر من نقطة كل 24 ساعة. لو فيه نقطة اتعملت من أقل من 24 ساعة، بيطلع [[A new system restore point cannot be created because one has already been created within the past 24 hours.]] ومش بيعمل حاجة. الحد ده بيتحكم فيه قيمة [[SystemRestorePointCreationFrequency]] (DWORD بالدقايق) في [[HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore]]: 0 يعني مفيش حد، ولو القيمة مش موجودة يبقى 24 ساعة. والسطر الأخير بيقراها.
+
+النسخة: الأوامر دي جزء من Windows PowerShell 5.1، ومش جوه PowerShell 7 نفسه. لكن 7 على ويندوز بيشغّلها عن طريق 5.1 في الخلفية لوحده (Windows compatibility): جربت [[Get-Command Checkpoint-Computer]] في 7.6 ولقيته جاي من موديول بيتعمل في TEMP، والجلسة [[WinPSCompatSession]]. ولو عايز تضمن، شغّلها من 5.1 مباشرة: [[powershell -NoProfile -Command "..."]] (السطر الرابع، والنص جوه علامات تنصيص مفردة جوه المزدوجة). والكل محتاج Terminal أدمن، والنقط موجودة في ويندوز 10 و 11 بس (مش Server).`,
+          example: R`Enable-ComputerRestore -Drive "C:\"
+Checkpoint-Computer -Description "Before GPU driver update" -RestorePointType MODIFY_SETTINGS
+Get-ComputerRestorePoint
+powershell -NoProfile -Command "Checkpoint-Computer -Description 'Before registry tweak'"
+rstrui
+Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SystemRestore" -Name SystemRestorePointCreationFrequency -ErrorAction SilentlyContinue`,
+          try: R`من Terminal أدمن: اعرض النقط الموجودة، ولو مفيش، شغّل System Protection واعمل نقطة باسم واضح قبل ما تسطّب الدرايفر أو البرنامج الجاي.`,
+          flag: "danger",
+          deep: {
+            why: R`تحديث درايفر كارت الشاشة خلى الشاشة سودا، أو برنامج «تنضيف» عبث في الـ registry، أو سكربت tweaks من النت بوّظ حاجة. من غير نقطة استرجاع الحل غالبًا Reset أو تسطيب من جديد. مع نقطة، ترجع في ربع ساعة.`,
+            how: R`النقطة بتحفظ ملفات النظام (System32 والدرايفرات والبرامج المتسطبة) والـ registry باستخدام Volume Shadow Copy، ومش بتلمس Documents ولا Desktop ولا Downloads. الرجوع بيلغي البرامج والدرايفرات اللي اتسطبت بعدها، ويرجّع اللي اتمسح من النوع ده.
+
+System Protection بياخد نسبة من الديسك للنقط (بتظبطها من System Properties ← System Protection ← Configure)، ولما تتملى بيمسح الأقدم. وويندوز نفسه بيعمل نقط لوحده قبل تحديثات معينة وتسطيب درايفرات، بس مش دايمًا.
+
+لو ويندوز مش بيفتح خالص، [[rstrui]] مش هيفيد. ساعتها من شاشة الاسترجاع (Advanced startup ← Troubleshoot ← Advanced options ← System Restore)، وبتوصلها لو ويندوز فشل يبوّت كذا مرة، أو من [[shutdown /r /o]] (درس «shutdown /s /t»).
+
+قيمة [[SystemRestorePointCreationFrequency]] بتتغير بـ [[Set-ItemProperty]] (أدمن)، وبرامج و scripts كتير بتحطها 0 أو رقم صغير. ده مفيد لو بتعمل نقط كتير في يوم تجارب، بس كتر النقط بيمسح القديم أسرع.`,
+            when: R`قبل أي درايفر، أو برنامج بيعدّل في النظام، أو تعديل registry، أو سكربت إعدادات من النت، أو تجارب على إعدادات النظام.`,
+            mistakes: R`تفتكرها backup لملفاتك. أو تعمل نقطة وتلاقيها مش موجودة لأن System Protection مقفول أصلًا. أو تعمل نقطتين ورا بعض في نفس اليوم والتانية متتعملش (حد الـ 24 ساعة). أو تشغّلها من Terminal عادي فيطلع Access denied. أو تعتمد عليها لو الديسك نفسه باظ أو اتشفّر من ransomware (النقط على نفس الديسك).`
+          },
+          lines: [
+            "شغّل System Protection على ديسك C (أدمن).",
+            "اعمل نقطة باسم واضح، ونوعها تعديل إعدادات (أدمن).",
+            "النقط الموجودة بالوقت والوصف والرقم (أدمن).",
+            "نفس الحاجة من Windows PowerShell 5.1 مباشرة، لو عايز تضمن.",
+            "افتح شاشة System Restore عشان ترجع لنقطة.",
+            "حد النقط بالدقايق (مش موجودة = 24 ساعة، و 0 = من غير حد)."
+          ],
+          sol: R`جربت القراية بس من غير أدمن. [[Get-ComputerRestorePoint]] في 7.6 وفي 5.1 الاتنين طلعوا [[Access denied]]، يعني حتى عرض النقط محتاج أدمن. و [[Get-Command Checkpoint-Computer]] في 7.6 طلع [[Function]] من موديول [[Microsoft.PowerShell.Management]] بس مساره في TEMP في فولدر اسمه بيبدأ بـ [[remoteIpMoProxy_MicrosoftPowerShellManagement]]، و [[Get-PSSession]] طلع [[WinPSCompatSession]]، يعني 7 بيشغّله فعلًا عن طريق 5.1.
+
+وقراية الـ registry (مش محتاجة أدمن) طلعت [[SystemRestorePointCreationFrequency : 1]]، يعني على الجهاز ده حد أو برنامج غيّر الحد لدقيقة واحدة بدل 24 ساعة. (معملتش نقطة ولا شغّلت System Protection وأنا بكتب الدرس.) حسب التوثيق Checkpoint-Computer مش بيطبع حاجة لو نجح، فاتأكد بـ [[Get-ComputerRestorePoint]].`
+        },
+        {
+          cmd: "Win32_StartupCommand",
+          title: "إيه اللي بيشتغل مع ويندوز؟",
+          desc: R`كل برنامج بيقوم لوحده مع ويندوز بياخد وقت في الـ boot ورام طول اليوم. [[Get-CimInstance Win32_StartupCommand]] بيلم البرامج دي من أشهر مكانين: مفاتيح [[Run]] في الـ registry وفولدرات Startup. والمثال كمان بيقرا مفتاح Run بنفسه، وفولدر Startup، والمهام المجدولة اللي بتشتغل عند الدخول. كله قراية بس ومن غير أدمن.
+
+أعمدة Win32_StartupCommand: [[Name]] الاسم، و [[Command]] الأمر اللي بيتشغّل، و [[Location]] جاي منين: [[Startup]] الفولدر، أو مفتاح [[Run]] تحت [[HKU\...]] لليوزر ده، أو تحت [[HKLM\...]] لكل اليوزرز، و [[User]] لمين ([[Public]] يعني الكل).
+
+[[HKCU:\Software\Microsoft\Windows\CurrentVersion\Run]] مفتاح الـ registry لليوزر الحالي، و [[Get-ItemProperty]] بيقرا القيم اللي فيه: كل قيمة اسم البرنامج وجنبها الأمر، و [[Select-Object * -ExcludeProperty PS*]] بيشيل الخصائص اللي PowerShell بيزوّدها زي [[PSPath]]. و [[[Environment]::GetFolderPath("Startup")]] مسار فولدر Startup بتاعك، نفس اللي بيفتحه [[shell:startup]] (درس «shell:startup» في تاب «اختصارات النظام»). و [[Get-ScheduledTask]] مع الفلتر بيدوّر على المهام المتشغّلة اللي trigger بتاعها [[MSFT_TaskLogonTrigger]] (عند الدخول)، من غير مهام ويندوز اللي تحت [[\Microsoft\]] (درس Register-ScheduledTask). و [[-and]] يعني الشروط التلاتة لازم يتحققوا.
+
+القفل بأمان: من Task Manager ← Startup apps، أو Settings ← Apps ← Startup. ده بيعلّم البرنامج Disabled من غير ما يمسح حاجة، فتقدر ترجّعه. متمسحش قيم من مفتاح Run بإيدك غير لو عارف هي بتاعة إيه. وخلي بالك: Win32_StartupCommand بيعرض البرامج حتى لو انت قافلها من Task Manager، لأن القفل بيتسجّل في مكان تاني (الـ solCode بيقراه). كله شغال في 5.1 و 7.`,
+          example: R`Get-CimInstance Win32_StartupCommand | Select-Object Name, Location, User
+Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run" | Select-Object * -ExcludeProperty PS*
+Get-ChildItem ([Environment]::GetFolderPath("Startup"))
+Get-ScheduledTask | Where-Object { $_.State -ne "Disabled" -and $_.TaskPath -notlike "\Microsoft\*" -and $_.Triggers.CimClass.CimClassName -contains "MSFT_TaskLogonTrigger" } | Select-Object TaskName, TaskPath, State`,
+          try: R`اعرف كام برنامج بيقوم مع ويندوز عندك، وأنهي واحد منهم انت مش محتاجه، واقفله من Task Manager ← Startup apps. وبعدين شغّل الـ solCode وشوف علامة Disabled.`,
+          deep: {
+            why: R`الجهاز بياخد دقايق بعد الدخول لحد ما يبقى سريع، أو الرام مليانة من غير ما تفتح حاجة، أو أيقونات كتير جنب الساعة. أغلب البرامج بتحط نفسها في الـ startup وقت التسطيب من غير ما تسأل. والأوامر دي بتوريك القايمة كاملة، بما فيها المهام المجدولة اللي Task Manager مش بيعرضها في Startup apps.`,
+            how: R`أماكن الـ startup كتير، وأشهرها: مفتاح Run لليوزر (HKCU) ولكل اليوزرز (HKLM)، و RunOnce (مرة واحدة)، وفولدر Startup لليوزر ولكل اليوزرز، والمهام المجدولة بـ trigger عند الدخول أو عند التشغيل، والخدمات اللي StartupType بتاعها Automatic (درس Get-Service). أداة Autoruns من Sysinternals بتعرض كل الأماكن دي لو عايز الصورة الكاملة.
+
+Task Manager لما بيقفل برنامج من Startup apps بيكتب علامة في [[HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run]]: قيمة باسم البرنامج أول بايت فيها 2 لو شغال و 3 لو متقفل (ده اللي لاحظته، ومش موثّق رسمي). الـ solCode بيقرا البايت ده: [[% 2]] باقي القسمة على 2، فـ 3 يدّي 1 (Disabled) و 2 يدّي 0.
+
+المهام المجدولة اللي في المثال ممكن تبقى updaters (Google وغيرها) أو برامج الشركة المصنّعة للجهاز. اقفلها بـ [[Disable-ScheduledTask]] لو متأكد، مش بالمسح.`,
+            when: R`الجهاز بطيء بعد الدخول، أو بعد ما تسطّب برامج كتير، أو بتراجع جهاز حد تاني، أو بتدوّر على برنامج غريب بيقوم لوحده.`,
+            mistakes: R`تمسح قيم من الـ registry بدل ما تقفل من Task Manager. أو تقفل حاجات بتاعة الكارت الصوت أو التاتش باد أو الأنتي فيرس ([[SecurityHealth]] ده Windows Security نفسه). أو تفتكر إن Win32_StartupCommand بيعرض الحالة: بيعرض البرامج المتسجلة حتى المقفولة. أو تنسى المهام المجدولة والخدمات.`
+          },
+          lines: [
+            "البرامج اللي بتقوم مع ويندوز، وجاية منين، ولمين.",
+            "اقرا مفتاح Run بتاع يوزرك بنفسك: اسم البرنامج والأمر.",
+            "فولدر Startup بتاعك (shell:startup).",
+            "المهام المجدولة المتشغّلة اللي بتقوم عند الدخول، من غير مهام ويندوز."
+          ],
+          sol: R`جربتها على لابتوبي. [[Win32_StartupCommand]] طلع 14 برنامج: [[DeepL auto-start]] من [[Startup]] (الفولدر)، وحاجات زي [[Discord]] و [[Docker Desktop]] و [[Grammarly]] و [[IDMan]] و [[GoogleChromeAutoLaunch_...]] من مفتاح Run بتاع اليوزر، و [[SecurityHealth]] و [[PenTablet]] من [[HKLM]] ولـ [[Public]]. وفولدر Startup كان فيه [[DeepL auto-start.lnk]] بس.
+
+المفاجأة في الـ solCode: [[Docker Desktop]] و [[Discord]] و [[GoogleChromeAutoLaunch_...]] و [[AMDNoiseSuppression]] طلعوا [[Disabled True]] لأني قافلهم من Task Manager، ومع ذلك Win32_StartupCommand عرضهم عادي. يعني القايمة الأولى «المتسجّل» مش «اللي بيشتغل فعلًا». والمهام المجدولة اللي بتقوم عند الدخول طلعت 14 مهمة مش بتاعة ويندوز، منها updaters وأدوات الشركة المصنّعة (ASUS) و PowerToys، ودول مش ظاهرين في Startup apps خالص.`,
+          solCode: R`$approved = Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run"
+$approved.PSObject.Properties | Where-Object Name -notlike "PS*" | ForEach-Object { [pscustomobject]@{ Name = $_.Name; Disabled = [bool]($_.Value[0] % 2) } }`
+        },
+        {
+          cmd: "Get-PnpDevice",
+          title: "الأجهزة اللي فيها مشكلة والدرايفرات",
+          desc: R`[[Get-PnpDevice]] بيعرض كل الأجهزة اللي ويندوز شايفها، نفس قايمة Device Manager: كروت الشبكة والصوت والكاميرا والـ USB والبلوتوث. و [[-Status ERROR]] الأجهزة اللي فيها مشكلة بس، يعني اللي عليها علامة تعجب صفرا أو سهم لتحت في Device Manager.
+
+[[-PresentOnly]] الأجهزة المتوصلة دلوقتي بس (من غيره بيعرض كمان أجهزة اتوصلت قبل كده واتشالت)، و [[Group-Object Status]] بيعدّ الأجهزة حسب الحالة ([[OK]] و [[Error]] و [[Degraded]] و [[Unknown]]). و [[-Class Net]] نوع معين (وفيه [[Camera]] و [[Media]] و [[USB]] و [[Bluetooth]] و [[Display]]). و [[InstanceId]] الاسم الثابت للجهاز (زي [[USB\VID_046D&PID_0825\...]])، ده اللي بتستخدمه في باقي الأوامر.
+
+[[Get-PnpDeviceProperty -InstanceId -KeyName]] بيجيب معلومة معينة: [[DEVPKEY_Device_DriverVersion]] نسخة الدرايفر، و [[DEVPKEY_Device_DriverProvider]] مين عامله، و [[DEVPKEY_Device_DriverDate]] تاريخه. و [[(Get-NetAdapter -Name "Wi-Fi").PnPDeviceID]] بيجيب الـ InstanceId بتاع كارت الواي فاي من درس Get-NetAdapter. و [[Win32_PnPEntity]] مع [[ConfigManagerErrorCode]] بيقولك سبب المشكلة، نفس «Device status» في Device Manager: 22 يعني متقفل بإيدك، و 28 يعني مفيش درايفر، و 10 الجهاز مش راضي يشتغل.
+
+[[Disable-PnpDevice]] بيقفل الجهاز (زي Disable في Device Manager) و [[Enable-PnpDevice]] بيرجّعه، و [[-Confirm:$false]] من غير سؤال، والاتنين محتاجين Terminal أدمن. خطر: قفل كارت الشبكة أو الكيبورد أو الماوس أو كارت الشاشة ممكن يسيبك من غير نت أو من غير طريقة تكتب بيها، فانسخ الـ InstanceId صح واتأكد من الاسم.
+
+الموديول [[PnpDevice]] جاي مع ويندوز وشغال في 5.1 و 7، والعرض من غير أدمن. ونسخ الدرايفرات (backup) وتسطيبها من CMD في درس «pnputil و driverquery» في تاب «CMD»، و Device Manager في درس «devmgmt.msc» في تاب «اختصارات النظام».`,
+          example: R`Get-PnpDevice -PresentOnly | Group-Object Status | Select-Object Name, Count
+Get-PnpDevice -Status ERROR | Select-Object Status, Class, FriendlyName, InstanceId
+Get-PnpDevice -Class Net -PresentOnly | Select-Object Status, FriendlyName
+Get-PnpDeviceProperty -InstanceId (Get-NetAdapter -Name "Wi-Fi").PnPDeviceID -KeyName DEVPKEY_Device_DriverVersion, DEVPKEY_Device_DriverProvider, DEVPKEY_Device_DriverDate | Select-Object KeyName, Data
+Get-CimInstance Win32_PnPEntity -Filter "ConfigManagerErrorCode <> 0" | Select-Object Name, ConfigManagerErrorCode
+Disable-PnpDevice -InstanceId "USB\VID_046D&PID_0825\12345678" -Confirm:$false
+Enable-PnpDevice -InstanceId "USB\VID_046D&PID_0825\12345678" -Confirm:$false`,
+          try: R`اعرف عندك كام جهاز فيه مشكلة وإيه سببها، ونسخة درايفر كارت الواي فاي وتاريخها.`,
+          flag: "danger",
+          deep: {
+            why: R`الصوت اختفى، أو الكاميرا مش شغالة في الميتنج، أو البلوتوث مش ظاهر، أو بعد تسطيب ويندوز جديد فيه أجهزة من غير درايفر. بدل ما تفتح Device Manager وتدوّر على علامة صفرا، سطر واحد بيقولك مين وليه، وتقدر تجمعه من كذا جهاز.`,
+            how: R`[[Status]] بيلخّص [[ConfigManagerErrorCode]]: أي كود غير صفر بيطلع Error. عشان كده جهاز انت قافله بإيدك (كود 22) بيظهر في [[-Status ERROR]] زيه زي جهاز بايظ (شوف الـ sol). فبص على الكود قبل ما تقلق.
+
+[[Disable-PnpDevice]] ثم [[Enable-PnpDevice]] بيعملوا «إعادة تشغيل» للجهاز، وده بيحل مشاكل كتير في الكاميرا والبلوتوث والـ USB من غير restart للجهاز كله.
+
+[[Get-PnpDevice]] من غير [[-PresentOnly]] بيعرض أجهزة «ghost»: فلاشات اتوصلت مرة، وكروت شبكة VPN قديمة. وجودها عادي، وتنضيفها من Device Manager ← View ← Show hidden devices.
+
+في 7.6 [[ConfigManagerErrorCode]] بيظهر بالاسم زي [[CM_PROB_DISABLED]]، وفي 5.1 بيظهر رقم زي 22، والاتنين نفس المعنى.`,
+            when: R`جهاز مش شغال، أو بعد تسطيب ويندوز أو تحديث كبير، أو قبل ما تحدّث درايفر (تعرف نسختك الحالية)، أو تعمل restart لكاميرا أو بلوتوث معلّق.`,
+            mistakes: R`تقفل كارت الشبكة وانت داخل من بعيد، أو الكيبورد وانت معندكش غيره. أو تقلق من كل Error وهي أجهزة انت قافلها. أو تنسخ InstanceId ناقص (فيه [[\]] و [[&]] لازم بالظبط وبين علامات تنصيص). أو تدوّر من غير [[-PresentOnly]] فتلاقي أجهزة قديمة وتفتكرها موجودة.`
+          },
+          lines: [
+            "كام جهاز في كل حالة (المتوصل بس).",
+            "الأجهزة اللي فيها مشكلة، ونوعها، واسمها، والـ InstanceId.",
+            "كروت الشبكة بس.",
+            "نسخة درايفر الواي فاي ومين عامله وتاريخه، عن طريق الـ PnPDeviceID من Get-NetAdapter.",
+            "سبب المشكلة لكل جهاز فيه مشكلة.",
+            "اقفل جهاز بالـ InstanceId بتاعه (أدمن، ده مثال).",
+            "رجّعه."
+          ],
+          sol: R`جربت العرض على لابتوبي من غير أدمن. العد طلع [[OK 246]] و [[Error 1]] و [[Degraded 1]]. الـ Error كان [[Camera  Iriun Webcam]] (برنامج بيخلي الموبايل webcam)، و [[Win32_PnPEntity]] قال السبب [[CM_PROB_DISABLED]]، يعني أنا قافله، مش بايظ. والـ Degraded كان [[AMDRyzenMaster Device]].
+
+وكروت الشبكة طلعت 17 كلهم [[OK]]: الحقيقيين ([[Intel(R) Wi-Fi 6 AX200 160MHz]] و [[Realtek PCIe GbE Family Controller]]) ومعاهم كروت افتراضية كتير ([[WAN Miniport]] و TAP بتوع VPN و [[Microsoft Wi-Fi Direct Virtual Adapter]]). ودرايفر الواي فاي طلع [[DriverVersion 23.130.1.1]] و [[DriverProvider Intel]] و [[DriverDate 4/7/2025]]. (مقفلتش أي جهاز وأنا بكتب الدرس.)`,
+          solCode: R`Get-PnpDevice -Status ERROR | Select-Object Class, FriendlyName
+Get-CimInstance Win32_PnPEntity -Filter "ConfigManagerErrorCode <> 0" | Select-Object Name, ConfigManagerErrorCode
+Get-PnpDeviceProperty -InstanceId (Get-NetAdapter -Name "Wi-Fi").PnPDeviceID -KeyName DEVPKEY_Device_DriverVersion, DEVPKEY_Device_DriverDate | Select-Object KeyName, Data`
+        },
+        {
+          cmd: "Get-Counter",
+          title: "استهلاك المعالج والرام والديسك لايف",
+          desc: R`[[Get-Counter]] بيقرا «performance counters»: أرقام ويندوز بيحدّثها باستمرار عن المعالج والرام والديسك والشبكة، نفس اللي Task Manager بيرسمها. وبيه تعرف «مين واكل المعالج» من الترمنال، أو تسجّل الاستهلاك كل ثانية.
+
+اسم الـ counter مسار: [[\Processor(_Total)\% Processor Time]] يعني الكائن [[Processor]]، والـ instance [[_Total]] (كل الـ cores مع بعض)، والرقم [[% Processor Time]] نسبة الاستخدام. و [[\Memory\Available MBytes]] الرام الفاضية بالميجا، و [[\Memory\% Committed Bytes In Use]] نسبة الرام المحجوزة، و [[\PhysicalDisk(_Total)\% Disk Time]] قد إيه الديسك مشغول. و [[-SampleInterval 1]] كل ثانية، و [[-MaxSamples 5]] خمس قراءات وخلاص، و [[-Continuous]] لحد ما تدوس Ctrl+C.
+
+الناتج فيه [[CounterSamples]]، وكل sample فيه [[Path]] و [[CookedValue]] (الرقم النهائي)، و [[[math]::Round(x, 1)]] بيقرّبه. و [[\Process(*)\% Processor Time]] كل عملية لوحدها ([[*]] كل الـ instances)، والرقم ده محسوب على core واحد، فعملية واخدة 2 cores كاملين تطلع 200. القسمة على [[[Environment]::ProcessorCount]] (عدد الـ cores المنطقية) بتحوّله لنسبة من الجهاز كله زي Task Manager. و [[-notin "_total", "idle"]] بيشيل السطرين دول لأنهم مش عمليات. و [[-ErrorAction SilentlyContinue]] لأن عملية بتقفل وقت القراية بتطلّع error.
+
+[[Get-Process | Sort-Object CPU -Descending]] (درس Get-Process / Stop-Process) شبهه بس مختلف: [[CPU]] هناك إجمالي ثواني المعالج من ساعة ما البرنامج اشتغل، فبرنامج فاتح من أسبوع هيطلع فوق حتى لو نايم دلوقتي. الـ counter بيقولك مين بياكل دلوقتي.
+
+أسامي الـ counters بتتترجم: على ويندوز بلغة تانية [[\Processor(_Total)\% Processor Time]] بيطلع [[The specified counter could not be found]]. البديل اللي مش بيتترجم: [[Get-CimInstance Win32_PerfFormattedData_PerfOS_Processor]] (السطر الأخير). و [[Get-Counter]] شغال في 5.1 و 7 على ويندوز ومن غير أدمن، و [[Get-Counter -ListSet Processor]] بيعرض الـ counters اللي في كائن معين.`,
+          example: R`Get-Counter "\Processor(_Total)\% Processor Time" -SampleInterval 1 -MaxSamples 5
+(Get-Counter "\Processor(_Total)\% Processor Time", "\Memory\Available MBytes", "\Memory\% Committed Bytes In Use", "\PhysicalDisk(_Total)\% Disk Time").CounterSamples | Select-Object Path, @{ n = "Value"; e = { [math]::Round($_.CookedValue, 1) } }
+(Get-Counter "\Process(*)\% Processor Time" -ErrorAction SilentlyContinue).CounterSamples | Where-Object InstanceName -notin "_total", "idle" | Sort-Object CookedValue -Descending | Select-Object -First 5 InstanceName, @{ n = "CPU%"; e = { [math]::Round($_.CookedValue / [Environment]::ProcessorCount, 1) } }
+Get-Process | Sort-Object CPU -Descending | Select-Object -First 5 Name, Id, CPU
+Get-Counter "\Memory\Available MBytes" -Continuous
+Get-CimInstance Win32_PerfFormattedData_PerfOS_Processor -Filter "Name='_Total'" | Select-Object PercentProcessorTime`,
+          try: R`افتح حاجة تقيلة (build أو فيديو في المتصفح)، وشغّل السطر التالت، وقارن الأسامي بالسطر الرابع.`,
+          deep: {
+            why: R`المروحة شغالة على الآخر والجهاز بطيء، وعايز تعرف مين السبب من غير ما تفتح Task Manager، أو عايز تسجّل الاستهلاك وقت build أو test عشان تقارن قبل وبعد تعديل، أو سكربت يحذّرك لو الرام قربت تخلص.`,
+            how: R`الـ % Processor Time محتاج قرايتين: [[Get-Counter]] بياخد قراية، ويستنى [[SampleInterval]] (افتراضي ثانية)، وياخد التانية، ويحسب الفرق. عشان كده أول قراية بتاخد ثانية، والرقم متوسط الثانية دي مش لحظة.
+
+[[InstanceName]] في [[\Process(*)]] اسم العملية من غير .exe وبحروف صغيرة، ولو فيه أكتر من نسخة (chrome مثلًا) بيطلع [[chrome]] و [[chrome#1]] و [[chrome#2]]، فممكن تجمعهم بـ [[Group-Object]]. وعشان تربطه بـ PID: [[\Process(*)\ID Process]].
+
+لتسجيل طويل: [[Get-Counter ... -SampleInterval 5 -MaxSamples 720 | Export-Counter -Path cpu.blg]] بيسجّل ساعة في ملف تفتحه في Performance Monitor ([[perfmon]])، أو حوّل لـ CSV بـ [[Export-Csv]] (درس Export-Csv / ConvertTo-Json).
+
+[[MsMpEng]] اللي بيظهر كتير وقت الـ builds هو Defender بيفحص الملفات اللي بتتكتب (درس Get-MpComputerStatus).`,
+            when: R`الجهاز بطيء فجأة، أو مقارنة أداء قبل وبعد، أو مراقبة سيرفر ويندوز، أو سكربت تنبيه لو الرام الفاضية قلّت عن حد.`,
+            mistakes: R`تفتكر عمود [[CPU]] في Get-Process نسبة مئوية. أو تنسى القسمة على عدد الـ cores فتلاقي 400%. أو تكتب أسامي counters إنجليزي على ويندوز مترجم. أو تستخدم [[-Continuous]] في سكربت من غير ما تعرف إنه مش هيخلص لوحده. أو تتجاهل error «The data in one of the performance counter samples is not valid» وهو مجرد عملية قفلت وقت القراية.`
+          },
+          lines: [
+            "نسبة استخدام المعالج كل ثانية، 5 مرات.",
+            "المعالج والرام الفاضية ونسبة الرام المحجوزة وانشغال الديسك، مقرّبين لرقم واحد بعد العلامة.",
+            "أكتر 5 عمليات بتاكل معالج دلوقتي، كنسبة من الجهاز كله.",
+            "أكتر 5 في إجمالي ثواني المعالج من ساعة ما اشتغلوا (مش دلوقتي).",
+            "الرام الفاضية كل ثانية لحد Ctrl+C.",
+            "نسبة المعالج من CIM، ودي مش بتتترجم."
+          ],
+          sol: R`جربتهم على لابتوب بـ 16 core منطقي. السطر الأول طلع 3 قرايات وأنا بشغّله ([[57.88]] و [[37.45]] و [[36.20]] تقريبًا) بالشكل [[\\pc\processor(_total)\% processor time :]] وتحته الرقم. والتاني طلع [[% processor time 18.8]] و [[available mbytes 8707]] و [[% committed bytes in use 72.3]] و [[% disk time 0.4]].
+
+والتالت طلع [[msmpeng 18.3]] (Defender) و [[discord 9.2]] وأدوات تانية بنسب أقل، ومعاه طلع error [[The data in one of the performance counter samples is not valid]] قبل ما أزوّد [[-ErrorAction SilentlyContinue]]. أما [[Get-Process | Sort-Object CPU]] فطلع [[chrome]] و [[Code]] و [[audiodg]] فوق، بأرقام زي [[940]] ثانية: دول اللي اشتغلوا كتير من الصبح، مش اللي بياكلوا دلوقتي. والسطر الأخير طلع [[PercentProcessorTime 65]] (قراية لحظة تانية).`
+        },
+        {
+          cmd: "Get-WinEvent",
+          title: "ليه الجهاز عمل restart أو قفل لوحده؟",
+          desc: R`ويندوز بيسجّل كل حاجة مهمة في Event Log: مين قفل الجهاز وإمتى، والانقطاع المفاجئ، وأخطاء الدرايفرات والخدمات. [[Get-WinEvent]] بيقرا السجلات دي من الترمنال، ودي أول حاجة تبص فيها لو الجهاز قفل أو عمل restart لوحده بالليل.
+
+[[-FilterHashtable @{ ... }]] الفلتر: [[LogName = "System"]] سجل النظام (فيه الـ shutdown والدرايفرات والخدمات)، و [[Id = 1074, 41, 6008]] أرقام الأحداث: [[1074]] برنامج أو يوزر طلب shutdown أو restart (والرسالة بتقول مين وليه، منها Windows Update)، و [[41]] (من Kernel-Power) الجهاز قام من غير ما يتقفل صح: فصل كهربا، أو علّق، أو زرار الباور، و [[6008]] نفس الحكاية بصياغة تانية. و [[-MaxEvents 10]] آخر 10 (الأحدث الأول)، و [[TimeCreated]] الوقت، و [[ProviderName]] مين سجّله.
+
+[[(...).Message]] نص الحدث كامل. و [[Level = 1, 2]] الأخطاء بس (1 Critical و 2 Error، و 3 Warning)، و [[StartTime = (Get-Date).AddDays(-1)]] من امبارح لحد دلوقتي، و [[Group-Object ProviderName]] بيعدّ الأخطاء حسب مصدرها، فتعرف أنهي درايفر أو خدمة عامل مشاكل. و [[-ErrorAction SilentlyContinue]] لأن لو مفيش أحداث بالفلتر ده [[Get-WinEvent]] بيطلع error بدل نتيجة فاضية.
+
+سجلات [[System]] و [[Application]] بتتقري من غير أدمن، لكن [[Security]] (الدخول والخروج) محتاج Terminal أدمن (السطر الأخير). و [[Get-WinEvent]] شغال في 5.1 و 7 على ويندوز. و [[Get-EventLog]] القديم مش موجود في PowerShell 7، فلو لقيته في شرح قديم استخدم [[Get-WinEvent]]. والشكل بالماوس في درس «eventvwr.msc» في تاب «اختصارات النظام».`,
+          example: R`Get-WinEvent -FilterHashtable @{ LogName = "System"; Id = 1074, 41, 6008 } -MaxEvents 10 | Select-Object TimeCreated, Id, ProviderName
+(Get-WinEvent -FilterHashtable @{ LogName = "System"; Id = 1074 } -MaxEvents 1).Message
+(Get-WinEvent -FilterHashtable @{ LogName = "System"; Id = 41 } -MaxEvents 1).Message
+Get-WinEvent -FilterHashtable @{ LogName = "System"; Level = 1, 2; StartTime = (Get-Date).AddDays(-1) } -ErrorAction SilentlyContinue | Group-Object ProviderName | Sort-Object Count -Descending | Select-Object Count, Name
+Get-WinEvent -LogName Security -MaxEvents 5`,
+          try: R`اعرف آخر مرة جهازك اتقفل وليه (1074)، وآخر مرة قفل فجأة (41)، وإيه أكتر حاجة بتطلّع أخطاء من امبارح.`,
+          deep: {
+            why: R`صحيت لقيت الجهاز عامل restart والشغل اللي كان مفتوح راح، أو الجهاز بيقفل فجأة كل كام يوم، أو برنامج بيقع ومش عارف ليه. Event Log فيه الإجابة غالبًا، بس Event Viewer تقيل وصعب تدوّر فيه، والفلتر بالأرقام بيوصلك في ثانية.`,
+            how: R`[[-FilterHashtable]] بيبعت الفلتر لخدمة الـ Event Log نفسها، فبترجع الأحداث المطلوبة بس، وده أسرع بكتير من [[Get-WinEvent -LogName System | Where-Object Id -eq 41]] اللي بيقرا السجل كله (عشرات الآلاف من الأحداث) وبعدين يفلتر.
+
+سجل System له حجم محدود (عندي 20 ميجا فيهم حوالي 34 ألف حدث)، ولما يتملى القديم بيتمسح، فأحداث من شهور ممكن متلاقيهاش.
+
+أحداث مفيدة تانية: [[6005]] و [[6006]] (خدمة الـ Event Log بدأت ووقفت، يعني الجهاز قام واتقفل)، و [[19]] و [[20]] من WindowsUpdateClient (تحديث نجح أو فشل)، و [[7036]] خدمة بدأت أو وقفت. و [[-ListLog *]] بيعرض كل السجلات، وفيه سجلات تفصيلية كتير تحت [[Microsoft-Windows-*]].`,
+            when: R`restart أو shutdown مش مفهوم، أو شاشة زرقا، أو جهاز بيهنّج، أو درايفر بيعمل مشاكل، أو تتأكد إن تحديث اتسطب.`,
+            mistakes: R`تقرا السجل كله وتفلتر بـ [[Where-Object]] فالأمر ياخد دقايق. أو تفتكر إن «No events were found» error حقيقي (معناه مفيش أحداث بالفلتر ده). أو تقلق من كل Error في السجل: ويندوز بيسجّل أخطاء كتير عادية. أو تحاول تقرا Security من غير أدمن. أو تستخدم [[Get-EventLog]] في PowerShell 7.`
+          },
+          lines: [
+            "آخر 10 أحداث shutdown مطلوب أو قفل مفاجئ: الوقت والرقم والمصدر.",
+            "رسالة آخر shutdown مطلوب: مين وليه.",
+            "رسالة آخر قفل مفاجئ.",
+            "الأخطاء من امبارح، متجمعة حسب المصدر، الأكتر الأول.",
+            "سجل الأمان (محتاج أدمن)."
+          ],
+          sol: R`جربتهم على لابتوبي من غير أدمن. السطر الأول طلع 10 أحداث كلهم [[1074]] من [[User32]] على كذا يوم، يعني كل القفل الأخير كان مطلوب. ورسالة آخر واحد: [[The process C:\Windows\SystemApps\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\StartMenuExperienceHost.exe (PC) has initiated the power off of computer PC on behalf of user PC\me for the following reason: Other (Unplanned)]] و [[Shutdown Type: power off]]، يعني أنا قفلته من قايمة Start (غيّرت أسامي الجهاز واليوزر).
+
+و [[41]] لقيته بس لما بحثت عنه لوحده، آخره من كذا شهر من [[Microsoft-Windows-Kernel-Power]]، ورسالته [[The system has rebooted without cleanly shutting down first. This error could be caused if the system stopped responding, crashed, or lost power unexpectedly.]]. والأخطاء من امبارح طلعت [[2 Microsoft-Windows-NDIS]] (كارت الشبكة) و [[1 Microsoft-Windows-DeviceAssociationService]]. و [[Get-WinEvent -LogName Security]] من غير أدمن طلع [[Attempted to perform an unauthorized operation.]].`
+        },
+        {
+          cmd: "RandomNumberGenerator (password)",
+          title: "اعمل باسورد قوي عشوائي",
+          desc: R`الباسورد القوي طويل وعشوائي بجد. المثال بيعمل باسورد 20 حرف من لستة حروف ورموز، وكل حرف بيتختار بـ [[RandomNumberGenerator]]: مولّد أرقام عشوائية معمول للتشفير في .NET، وبعدين بيحطه في الحافظة على طول من غير ما يتطبع.
+
+[[$chars]] الحروف المسموحة: كابيتال وسمول وأرقام ورموز، ومن غير الحروف اللي بتتلخبط في القراية زي [[O]] و [[0]] و [[I]] و [[l]] و [[1]]. و [[1..$length]] بيلف 20 مرة، وكل مرة [[[System.Security.Cryptography.RandomNumberGenerator]::GetInt32($chars.Length)]] رقم عشوائي من 0 لحد طول اللستة ناقص 1 بيتحط في [[$i]]، و [[$chars[$i]]] الحرف اللي في المكان ده، و [[;]] بتفصل بين الأمرين جوه البلوك. و [[-join]] بيلزق الحروف في نص واحد. و [[Set-Clipboard]] بيحطه في الحافظة (درس Set-Clipboard / Get-Clipboard).
+
+ليه مش [[Get-Random]]؟ توثيق Microsoft بيقول صريح إن Get-Random «doesn't ensure cryptographically secure randomness»: مولّد عادي، كويس للألعاب والعينات العشوائية، بس مش للباسوردات والتوكنز. و [[-SetSeed]] بيخليه يكرر نفس الأرقام بالظبط. و PowerShell 7.4 وأحدث فيه [[Get-SecureRandom]] بنفس شكل Get-Random بس آمن (السطر الخامس)، و [[ToCharArray()]] بيقطّع النص لحروف عشان يختار منها.
+
+[[GetInt32]] موجود في .NET الحديث بس، يعني PowerShell 7. في 5.1 بيطلع error إن مفيش method بالاسم ده، والبديل في الـ solCode. وقوة الباسورد بتتحسب: الطول × log2(عدد الحروف المتاحة)، و [[[math]::Log($chars.Length, 2)]] بيحسب log2 (السطر الأخير)، فـ 20 حرف من 68 تقريبًا 122 bit، وده أكتر من كفاية.
+
+أمان: الحافظة ممكن تحفظ تاريخ (Win+V)، فبعد ما تلزق الباسورد في مدير الباسوردات انسخ أي حاجة تانية فوقه، ولو تاريخ الحافظة شغال امسحه من القايمة. ومتطبعش الباسورد في الترمنال لو بتعمل [[Start-Transcript]] أو بتشارك الشاشة.`,
+          example: R`$chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%^*-_=+?"
+$length = 20
+$password = -join (1..$length | ForEach-Object { $i = [System.Security.Cryptography.RandomNumberGenerator]::GetInt32($chars.Length); $chars[$i] })
+$password | Set-Clipboard
+-join (1..20 | ForEach-Object { $chars.ToCharArray() | Get-SecureRandom })
+[math]::Round($length * [math]::Log($chars.Length, 2), 1)`,
+          try: R`اعمل باسورد 24 حرف وحطه في الحافظة، والصقه في Notepad واتأكد من طوله. وجرب [[Get-Random -Maximum 100 -SetSeed 23]] تلات مرات.`,
+          deep: {
+            why: R`باسورد لحساب أدمن local (درس Get-LocalUser / New-LocalUser)، أو لقاعدة بيانات أو API key في ملف .env، أو لواي فاي الضيوف. الباسوردات اللي البني آدم بيختارها بتتخمّن، والمولّدات العادية ممكن تتوقع. ده بيدّيك باسورد عشوائي بجد من غير ما تفتح موقع.`,
+            how: R`[[Get-Random]] بيستخدم مولّد pseudo-random: أرقام شكلها عشوائي بس جاية من معادلة وحالة داخلية، ولو حد عرف الحالة (أو الـ seed) يقدر يطلّع نفس الأرقام. [[RandomNumberGenerator]] بياخد عشوائيته من نظام التشغيل نفسه (CSPRNG)، ودي المعمولة للمفاتيح والتوكنز.
+
+[[GetInt32(n)]] بيرجّع رقم من 0 لـ n-1 وكل رقم ليه نفس الفرصة بالظبط. البديل الساذج [[byte % n]] بيدّي أفضلية لأول الحروف (لأن 256 مش بتتقسم على 68)، وعشان كده الـ solCode بتاع 5.1 بيرمي البايتات اللي أكبر من آخر مضاعف كامل (204) ويسحب تاني.
+
+[[Get-SecureRandom -InputObject $list -Count 20]] زي Get-Random: كل عنصر بيتختار مرة واحدة بس، يعني مفيش حرف بيتكرر، وده بيقلل العشوائية شوية. عشان كده المثال بيختار حرف واحد 20 مرة.`,
+            when: R`أي باسورد أو secret بتعمله في سكربت، أو توكن عشوائي للتجارب، أو لما مدير الباسوردات مش قدامك.`,
+            mistakes: R`تستخدم [[Get-Random]] لباسوردات أو توكنز. أو تستخدم [[-Count 20]] على لستة الحروف فمتلاقيش أي حرف متكرر. أو تطبع الباسورد في الترمنال وانت بتسجّل transcript. أو تشغّل [[GetInt32]] على 5.1. أو تشيل الرموز كلها عشان «موقع مش بيقبلها» من غير ما تطوّل الباسورد بدالها.`
+          },
+          lines: [
+            "الحروف المسموحة، من غير اللي بتتلخبط في القراية (68 حرف).",
+            "الطول.",
+            "اختار حرف عشوائي آمن 20 مرة، والزقهم في نص واحد (PowerShell 7).",
+            "حطه في الحافظة من غير ما يتطبع.",
+            "نفس الفكرة بـ Get-SecureRandom (PowerShell 7.4 وأحدث)، حرف حرف.",
+            "قوة الباسورد بالـ bits: الطول × log2(عدد الحروف)."
+          ],
+          sol: R`جربت التوليد على 7.6.6 (من غير Set-Clipboard عشان مغيّرش الحافظة): طلع باسورد زي [[Q+h3!gmzhhFy5oDwGHD6]] طوله [[20]]، ونسخة Get-SecureRandom طلعت [[U8+^r7D?txfbcx?Jn?kd]] (لاحظ [[x]] و [[?]] متكررين، عادي)، والقوة طلعت [[121.7]] bit. وفي التجربة: باسورد 24 حرف قوته حوالي 146 bit.
+
+و [[Get-Random -Maximum 100 -SetSeed 23]] طلع [[32]] كل مرة، وده اللي بيخليه مش آمن للأسرار. وعلى 5.1 السطر التالت طلع [[Method invocation failed because [System.Security.Cryptography.RandomNumberGenerator] does not contain a method named 'GetInt32'.]]، والـ solCode اشتغل عليها وطلع باسورد 20 حرف زي [[CktJfi9Hdj6ko73b7=Xy]].`,
+          solCode: R`$chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#%^*-_=+?"
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$bytes = New-Object byte[] 1
+$out = ""
+while ($out.Length -lt 20) {
+    $rng.GetBytes($bytes)
+    if ($bytes[0] -lt 256 - (256 % $chars.Length)) { $out += $chars[$bytes[0] % $chars.Length] }
+}
+$out | Set-Clipboard`
         }
       ]
     },

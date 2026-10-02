@@ -1008,6 +1008,424 @@ notepad C:\Windows\System32\drivers\etc\hosts`,
       ]
     },
     {
+      t: "تحكّم في الشبكة والأجهزة اللي معاك",
+      l: 2,
+      n: R`فايروول و IP ثابت وواي فاي وتصليح النت وشير و Remote Desktop وأجهزة تانية على شبكتك. أغلب التغيير محتاج CMD كأدمن والخطير عليه علامة، واللي بيدوّر على أجهزة: على شبكتك انت بس أو بإذن صاحبها`,
+      items: [
+        {
+          cmd: "netsh advfirewall firewall",
+          title: "افتح بورت أو امنع برنامج في الفايروول",
+          desc: R`[[netsh advfirewall firewall]] بيعرض قواعد Windows Firewall ويضيف قواعد جديدة ويمسحها، و [[netsh advfirewall]] لوحده بيعرض حالة الفايروول نفسه. أشهر استخدام: «الموبايل مش شايف السيرفر اللي شغال على جهازي»، فتفتح بورت واحد على الشبكات الخاصة بس.
+
+العرض:
+[[show currentprofile]] أنهي profile شغال دلوقتي (Domain أو Private أو Public) والفايروول شغال فيه ولا لأ، و [[show allprofiles state]] الحالة في التلاتة.
+[[show rule name=all dir=in]] كل القواعد الداخلة (incoming)، وهي مئات، فاستخدم معاها [[| findstr]]. و [[name="..."]] قاعدة واحدة، و [[verbose]] تفاصيل زيادة زي البرنامج.
+
+[[add rule]] قاعدة جديدة، وجواها:
+[[name="Dev 5173"]] اسمها، وبيه بتمسحها بعدين.
+[[dir=in]] داخل لجهازك، أو [[dir=out]] خارج منه.
+[[action=allow]] اسمح، أو [[action=block]] امنع.
+[[protocol=TCP]] و [[localport=5173]] البورت على جهازك (5173 بورت Vite).
+[[profile=private]] على الشبكات الخاصة بس (البيت)، مش [[public]] (كافيه أو مطار). دي أهم حتة.
+[[program="C:\Tools\myapp.exe"]] القاعدة على برنامج معين بدل بورت.
+[[delete rule name="Dev 5173"]] امسح القاعدة (وأي قاعدة تانية بنفس الاسم).
+
+الخطيرين: [[netsh advfirewall set allprofiles state off]] بيقفل الفايروول كله، متعملهاش. و [[netsh advfirewall reset]] بيرجّع الفايروول لإعدادات ويندوز الأصلية ويمسح كل قواعدك وقواعد البرامج.
+
+العرض مش محتاج أدمن. الإضافة والمسح والتغيير محتاجين CMD كأدمن، ومن غيره: [[The requested operation requires elevation (Run as administrator).]].`,
+          example: R`netsh advfirewall show currentprofile
+netsh advfirewall firewall show rule name=all dir=in | findstr /c:"Rule Name:"
+netsh advfirewall firewall add rule name="Dev 5173" dir=in action=allow protocol=TCP localport=5173 profile=private
+netsh advfirewall firewall show rule name="Dev 5173"
+netsh advfirewall firewall add rule name="Block MyApp" dir=out action=block program="C:\Tools\myapp.exe"
+netsh advfirewall firewall delete rule name="Dev 5173"
+netsh advfirewall firewall delete rule name="Block MyApp"`,
+          try: R`شغّل سيرفر على بورت (مثلًا [[python -m http.server 8000]])، وافتحه من الموبايل على نفس الواي فاي بـ IP جهازك. لو مفتحش: ضيف قاعدة للبورت ده بـ [[profile=private]] من CMD أدمن وجرّب تاني، وبعدين امسحها.`,
+          flag: "danger",
+          deep: {
+            why: R`لما تشغّل سيرفر تطوير (Vite أو Node أو Python) وتحاول تفتحه من الموبايل أو جهاز تاني، الفايروول بيمنع الاتصال الداخل. ويندوز ساعات بيطلّع نافذة «Allow access» أول مرة، ولو دوست Cancel أو اخترت غلط بتفضل القاعدة دي تمنع وانت مش واخد بالك. وفي الناحية التانية، أحيانًا عايز تمنع برنامج يكلم النت (برنامج مش واثق فيه، أو تحديث تلقائي بيبوّظ نسخة شغال عليها).`,
+            how: R`فيه 3 profiles: Domain (جهاز شركة على دومين)، و Private (شبكة انت واثق فيها)، و Public (أي شبكة تانية، وده الافتراضي لأي واي فاي جديد). كل profile ليه حالته وقواعده، والافتراضي «امنع أي داخل مفيش قاعدة بتسمحه، واسمح بأي خارج» ([[Firewall Policy BlockInbound,AllowOutbound]]). عشان كده [[dir=out action=allow]] ملهاش لازمة غالبًا، و [[dir=out action=block]] هي اللي بتعمل فرق.
+
+جرّبت [[show currentprofile]] على اللابتوب ده وطلع [[Public Profile Settings]]: واي فاي البيت متسجل Public، فقاعدة بـ [[profile=private]] مش هتشتغل عليه. الحل إنك تخلّي الشبكة Private (Settings ثم Network & internet ثم Wi-Fi ثم اسم الشبكة ثم Network profile type، أو [[Set-NetConnectionProfile]] في تاب «PowerShell»)، مش إنك تفتح البورت على Public.
+
+البرامج اللي ويندوز سألك عليها بتعمل قواعد باسمها. عندي لقيت قاعدتين [[Node.js JavaScript Runtime]] (واحدة TCP وواحدة UDP) فيهم [[Program: C:\program files\nodejs\node.exe]] و [[Profiles: Public]] و [[Action: Allow]]، يعني node مسموحله يستقبل اتصالات على الشبكات العامة، وده أوسع من اللازم. تقدر تضيّقها: [[netsh advfirewall firewall set rule name="Node.js JavaScript Runtime" new profile=private]].
+
+netsh بيسمح بقاعدتين بنفس الاسم، فلو شغّلت add مرتين هيبقى عندك اتنين. [[show rule name="..."]] على اسم مش موجود بيطبع [[No rules match the specified criteria.]] ويرجّع errorlevel 1، فتقدر في سكربت تضيف بس لو مش موجودة: [[netsh advfirewall firewall show rule name="Dev 5173" >nul || netsh advfirewall firewall add rule ...]]. و [[remoteip=localsubnet]] بيقصر القاعدة على أجهزة شبكتك بس. والمقابل في PowerShell: [[New-NetFirewallRule]] (في تاب «PowerShell»)، والواجهة [[wf.msc]].`,
+            when: R`سيرفر تطوير عايز تفتحه من الموبايل، أو Docker أو WSL أو VM محتاجين يوصلوا لجهازك، أو تمنع برنامج يكلم النت، أو تراجع البرامج المسموحلها تستقبل اتصالات على الشبكات العامة.`,
+            mistakes: R`تقفل الفايروول كله ([[state off]]) عشان «السيرفر يشتغل» وتنسى ترجّعه. أو تفتح البورت بـ [[profile=any]] أو public فيبقى مفتوح في أي كافيه. أو تضيف القاعدة والشبكة نفسها Public فمتشتغلش. أو [[findstr "Rule Name"]] من غير [[/c:]]: المسافة بتخليها «Rule أو Name». أو [[netsh advfirewall reset]] وانت فاكره بيصلّح قاعدة واحدة، وهو بيمسح كل القواعد. أو تفتكر إن القاعدة دي بتفتح البورت للنت: النت محتاج port forwarding في الراوتر، ومتعملوش لسيرفر تطوير.`
+          },
+          lines: [
+            R`أنهي profile شغال دلوقتي، والفايروول شغال فيه ولا لأ.`,
+            R`أسامي كل القواعد الداخلة ([[/c:]] عشان المسافة تتقري كجزء من الكلام).`,
+            R`افتح بورت 5173 للداخل على الشبكات الخاصة بس (أدمن).`,
+            R`اتأكد إنها اتعملت.`,
+            R`امنع برنامج يكلم النت.`,
+            R`امسح قاعدة البورت.`,
+            R`وقاعدة البرنامج.`
+          ],
+          sol: R`[[netsh advfirewall show currentprofile]] طلّع عندي [[Public Profile Settings:]] وتحتها [[State ON]] و [[Firewall Policy BlockInbound,AllowOutbound]]، و [[show allprofiles state]] طلّع [[State ON]] تحت Domain و Private و Public. و [[show rule name=all dir=in | find /c "Rule Name:"]] عدّ 365 قاعدة داخلة (أغلبها بتاعة ويندوز و Docker و WSL)، و [[show rule name="Dev 5173"]] قبل ما تتعمل طلّع [[No rules match the specified criteria.]].
+
+(الإضافة والمسح مشغّلتهمش هنا عشان ميغيّروش فايروول الجهاز؛ ده من توثيق Microsoft.) من CMD أدمن [[add rule]] بيطبع [[Ok.]]، و [[delete rule]] بيطبع [[Deleted 1 rule(s).]] و [[Ok.]]. بعد ما تضيف القاعدة، السيرفر نفسه لازم يكون سامع على كل الكروت مش localhost بس: [[python -m http.server]] سامع على الكل افتراضيًا، و Vite محتاج [[npm run dev -- --host]]. وافتح من الموبايل [[http://IP-جهازك:8000]] (الـ IP من ipconfig). ولو لسه مش بيفتح والشبكة Public، القاعدة بـ [[profile=private]] مش شغالة عليها: خلّي الشبكة Private.`,
+          solCode: R`netsh advfirewall firewall add rule name="Dev 8000" dir=in action=allow protocol=TCP localport=8000 profile=private
+python -m http.server 8000
+REM open http://YOUR-IP:8000 on the phone, then Ctrl+C
+netsh advfirewall firewall delete rule name="Dev 8000"`
+        },
+        {
+          cmd: "netsh interface ip set address",
+          title: "IP ثابت و DNS من سطر الأوامر",
+          desc: R`[[netsh interface ip set address]] بيدّي كارت الشبكة IP ثابت بدل اللي الراوتر بيوزّعه، و [[set dns]] بيغيّر سيرفر الـ DNS، و [[dhcp]] بيرجّع الاتنين أوتوماتيك. مفيد لجهاز شغال كسيرفر في البيت (NAS أو جهاز بتعمله SSH أو طابعة) عشان عنوانه ميتغيّرش.
+
+[[netsh interface show interface]] أسامي الكروت بالظبط (عمود [[Interface Name]]) وأنهي واحد [[Connected]]. الاسم بين علامات تنصيص لو فيه مسافة أو شرطة: [[name="Wi-Fi"]].
+[[netsh interface ipv4 show config]] الإعدادات الحالية لكل كارت: [[DHCP enabled]] و [[IP Address]] و [[Default Gateway]] والـ DNS. ([[ip]] و [[ipv4]] هنا نفس الحاجة.)
+[[set address name="Wi-Fi" static 192.168.1.50 255.255.255.0 192.168.1.1]] IP ثابت: العنوان، وبعده الـ mask ([[255.255.255.0]] يعني أول 3 أرقام هي الشبكة)، وبعده الـ gateway (الراوتر).
+[[set dns name="Wi-Fi" static 1.1.1.1]] أول DNS، و [[add dns name="Wi-Fi" 8.8.8.8 index=2]] التاني ([[index]] ترتيبه).
+[[set address name="Wi-Fi" dhcp]] و [[set dns name="Wi-Fi" dhcp]] رجّعهم أوتوماتيك من الراوتر.
+
+كل [[set]] و [[add]] محتاج CMD كأدمن وبيقطع الاتصال ثانية أو اتنين. واختار IP برا مدى الـ DHCP بتاع الراوتر (من صفحة الراوتر، غالبًا من [[.100]] لـ [[.200]] أو حاجة زي كده)، وإلا الراوتر ممكن يدّي نفس العنوان لجهاز تاني.`,
+          example: R`netsh interface show interface
+netsh interface ipv4 show config name="Wi-Fi"
+netsh interface ip set address name="Wi-Fi" static 192.168.1.50 255.255.255.0 192.168.1.1
+netsh interface ip set dns name="Wi-Fi" static 1.1.1.1
+netsh interface ip add dns name="Wi-Fi" 8.8.8.8 index=2
+ping -n 2 192.168.1.1
+netsh interface ip set address name="Wi-Fi" dhcp
+netsh interface ip set dns name="Wi-Fi" dhcp`,
+          try: R`اعرف اسم الكارت اللي انت متوصل بيه، والـ IP والـ gateway والـ DNS بتوعه من show config، واكتبهم. لو هتجرّب IP ثابت: جرّب وانت قدام الجهاز مش من Remote Desktop، ورجّع DHCP في الآخر.`,
+          flag: "danger",
+          deep: {
+            why: R`جهاز في البيت عامل سيرفر عنوانه بيتغيّر كل كام يوم، فالـ bookmarks و ssh config بيبوظوا. أو عايز DNS تاني غير بتاع مزوّد الخدمة (أسرع، أو بيحجب الإعلانات). أو لابتوب اتساب عليه IP ثابت من شبكة شغل قديمة فمش بيتصل بأي حاجة في البيت. وكل ده سطر واحد ينفع يتحط في سكربت.`,
+            how: R`DHCP: الجهاز لما يتصل بيطلب من الراوتر «ادّيني عنوان»، والراوتر بيدّيه واحد من مدى (pool) لمدة (lease) ومعاه الـ gateway والـ DNS. [[static]] بيخلّي الجهاز يستخدم اللي انت كتبته من غير ما يسأل. الأحسن غالبًا «DHCP reservation» من صفحة الراوتر: الراوتر يدّي نفس الـ IP دايمًا لنفس الـ MAC والجهاز يفضل DHCP، فلو نقلته لشبكة تانية يشتغل عادي.
+
+الـ mask: [[255.255.255.0]] (أو [[/24]]) معناها أول 3 أرقام هي الشبكة والأخير للجهاز، فالأجهزة من [[.1]] لـ [[.254]] في نفس الشبكة، والـ IP والـ gateway لازم يبقوا فيها.
+
+الـ DNS مستقل عن الـ IP: ينفع تسيب الـ IP أوتوماتيك وتغيّر الـ DNS بس، وأي DNS ثابت على كارت بيخلّيه يتجاهل الـ DNS اللي جاي من الراوتر. عندي [[show config]] طلّع كارت قديم [[Ethernet 2]] عليه [[DHCP enabled: No]] و [[Statically Configured DNS Servers: 8.8.8.8]] و [[8.8.4.4]]: إعداد ثابت اتعمل زمان، ولو الكابل ده اتوصل هيستخدمه. والواي فاي عليه [[DNS servers configured through DHCP]] يعني جاي من الراوتر.
+
+بعد ما تغيّر الـ DNS اعمل [[ipconfig /flushdns]] (درس ipconfig). ولو بتغيّر الـ IP لجهاز بتكلمه عن بعد، الاتصال هيقطع ومش هترجع غير على العنوان الجديد. والمقابل في PowerShell: [[New-NetIPAddress]] و [[Set-DnsClientServerAddress]] (في تاب «PowerShell»)، والواجهة: Settings ثم Network & internet ثم الكارت ثم IP assignment و DNS server assignment.`,
+            when: R`جهاز بيقدّم خدمة على شبكة البيت، تجربة DNS تاني (1.1.1.1 أو 8.8.8.8 أو DNS بيحجب إعلانات)، كارت عليه IP ثابت قديم ومحتاج يرجع أوتوماتيك، أو معمل أو شبكة صغيرة محتاجة عناوين معروفة.`,
+            mistakes: R`IP ثابت جوه مدى الـ DHCP فجهازين ياخدوا نفس العنوان (ويندوز بيقول IP address conflict). أو gateway غلط: الشبكة المحلية شغالة والنت لأ. أو اسم الكارت مش مطابق: جرّبت [[show config name="NoSuchAdapter"]] وطلّع [[The filename, directory name, or volume label syntax is incorrect.]] مع إن الغلطة في الاسم مش في ملف، فانسخ الاسم من show interface. أو تنسى ترجّع DHCP على لابتوب فيروح شبكة تانية وميتصلش. أو تغيّر من Remote Desktop فتقفل الباب على نفسك.`
+          },
+          lines: [
+            R`أسامي الكروت، وأنهي واحد متوصل.`,
+            R`إعدادات الـ IP والـ DNS بتاعة الواي فاي دلوقتي (اكتبها قبل أي تغيير).`,
+            R`IP ثابت: العنوان والـ mask والراوتر (أدمن، وبيقطع ثانية).`,
+            R`أول DNS.`,
+            R`DNS تاني كاحتياطي.`,
+            R`اتأكد إن الراوتر لسه بيرد.`,
+            R`رجّع الـ IP أوتوماتيك من الراوتر.`,
+            R`ورجّع الـ DNS أوتوماتيك.`
+          ],
+          sol: R`[[netsh interface show interface]] طلّع عندي جدول [[Admin State  State  Type  Interface Name]]، وفيه [[Enabled  Connected  Dedicated  Wi-Fi]]، وكروت تانية [[Disconnected]] ([[Ethernet]] و [[Ethernet 2]] وكارت VPN). و [[netsh interface ipv4 show config name="Wi-Fi"]] طلّع:
+[[DHCP enabled: Yes]]
+[[IP Address: 192.168.1.2]]
+[[Subnet Prefix: 192.168.1.0/24 (mask 255.255.255.0)]]
+[[Default Gateway: 192.168.1.1]]
+[[DNS servers configured through DHCP: 94.140.14.15]] و [[94.140.15.16]] (الراوتر بيوزّع DNS بتاع AdGuard).
+دول اللي ترجعلهم لو حاجة باظت.
+
+(الـ set والـ add مشغّلتهمش هنا عشان ميقطعوش نت الجهاز؛ ده من توثيق netsh.) من CMD عادي بيطلّعوا [[The requested operation requires elevation (Run as administrator).]]. ومن أدمن النت بيقطع لحظة، وبعدها show config بيوريك [[DHCP enabled: No]] و [[IP Address: 192.168.1.50]] و [[Statically Configured DNS Servers: 1.1.1.1]] وتحتها [[8.8.8.8]]. وبعد سطري [[dhcp]] بيرجع [[DHCP enabled: Yes]] والـ DNS [[configured through DHCP]].`
+        },
+        {
+          cmd: "netsh wlan connect",
+          title: "الواي فاي من الترمنال: الإشارة والقنوات والاتصال",
+          desc: R`[[netsh wlan]] بيتحكم في الواي فاي من سطر الأوامر: بيعرض قوة الإشارة والقناة اللي انت عليها، والشبكات اللي حواليك وقنواتها، ويتصل ويفصل، وينقل الشبكات المحفوظة لجهاز جديد. (عرض باسورد شبكة محفوظة في درس netsh.)
+
+[[show interfaces]] الاتصال الحالي: [[SSID]] اسم الشبكة، و [[Signal]] الإشارة بالنسبة المئوية، و [[Channel]] و [[Band]] (2.4 أو 5 GHz)، و [[Radio type]] (زي [[802.11ac]]، أو [[802.11ax]] اللي هو Wi-Fi 6)، و [[Receive rate (Mbps)]] سرعة الوصلة بين الجهاز والراوتر (مش سرعة النت).
+[[show networks mode=bssid]] كل الشبكات اللي حواليك، ولكل راوتر ([[BSSID]]) إشارته وقناته. من هنا تعرف القنوات الزحمة وتختار لراوترك قناة أفضى.
+[[connect name="HomeNet"]] اتصل بشبكة محفوظة (الاسم من [[show profiles]])، و [[disconnect]] افصل.
+[[export profile key=clear folder=D:\wifi]] احفظ كل الشبكات المحفوظة كملفات XML ومعاها الباسوردات، و [[add profile filename="..."]] ضيف واحدة منهم على جهاز تاني.
+[[delete profile name="OldCafe"]] انسى شبكة.
+[[show wlanreport]] تقرير HTML عن الاتصالات والفصل والأخطاء آخر 3 أيام (CMD كأدمن).
+
+على ويندوز 11 الحديث، [[show networks]] و [[show interfaces]] محتاجين إذن الموقع (Location)، لأن أسامي الشبكات اللي حواليك بتكشف انت فين. من غيره هتشوف [[Network shell commands need location permission to access WLAN information.]]، والحل: Settings ثم Privacy & security ثم Location، وشغّل Location services و Let desktop apps access your location ([[start ms-settings:privacy-location]] بيفتح الصفحة دي).`,
+          example: R`netsh wlan show interfaces
+netsh wlan show networks mode=bssid
+netsh wlan show profiles
+netsh wlan connect name="HomeNet"
+mkdir D:\wifi
+netsh wlan export profile key=clear folder=D:\wifi
+netsh wlan add profile filename="D:\wifi\Wi-Fi-HomeNet.xml"
+netsh wlan delete profile name="OldCafe"
+netsh wlan show wlanreport`,
+          try: R`اعرف إشارتك وقناتك من show interfaces، وبعدين show networks mode=bssid واكتب كل شبكة على أنهي قناة. لو راوترك على 2.4 GHz: أنهي قناة من 1 و 6 و 11 أفضى عندك؟`,
+          flag: "danger",
+          deep: {
+            why: R`«النت بطيء» ساعات مش من مزوّد الخدمة: إشارة ضعيفة، أو راوترك على نفس قناة جيران كتير، أو الجهاز على 2.4 GHz وهو يقدر على 5. الأرقام دي بتطلع في ثانية من الترمنال. وكمان جهاز جديد: بدل ما تكتب باسورد كل شبكة (البيت والشغل والأهل) بتنقلهم كلهم بأمرين.`,
+            how: R`2.4 GHz فيها 13 قناة متداخلة، والقنوات اللي مش بتتداخل مع بعض 1 و 6 و 11 بس، فراوتر على 7 بيتأثر بأي شبكة من 3 لـ 11 تقريبًا. 5 GHz قنواتها أكتر ومش متداخلة ومداها أقصر، فلو الراوتر والجهاز بيدعموها استخدمها وانت في نفس الأوضة أو قريب. والقناة بتتغيّر من صفحة الراوتر مش من ويندوز.
+
+الإشارة: 70% وطالع كويسة، وتحت 40% هتلاقي بطء وقطع. و [[Rssi]] نفس المعلومة بالـ dBm: [[-42]] ممتازة و [[-70]] ضعيفة. و [[Receive rate]] و [[Transmit rate]] سرعة الوصلة اللاسلكية، والنت الحقيقي أقل منها دايمًا.
+
+[[export]] بيعمل ملف لكل شبكة اسمه [[Wi-Fi-اسم الشبكة.xml]] ([[Wi-Fi]] اسم الكارت)، والفولدر لازم يكون موجود. مع [[key=clear]] من CMD أدمن الباسورد بيتكتب واضح جوه [[keyMaterial]]، ومن غير أدمن بيتكتب مشفّر ومينفعش يتنقل لجهاز تاني (حسب توثيق Microsoft). الملفات دي فيها باسوردات كل شبكاتك، فامسحها بعد ما تضيفها.
+
+[[connect]] بيشتغل بس على شبكة ليها profile محفوظ، و «اتصل» معناها إن الطلب اتبعت، فاتأكد بـ show interfaces. و [[show wlanreport]] بيحفظ التقرير في [[C:\ProgramData\Microsoft\Windows\WlanReport\wlan-report-latest.html]]، افتحه بـ [[start ""]] والمسار (درس start).`,
+            when: R`الواي فاي بطيء أو بيقطع، اختيار قناة للراوتر، جهاز جديد أو بعد فرمتة، لابتوب عليه شبكات قديمة كتير محتاج تنضيف، أو سكربت بيتصل بشبكة معينة.`,
+            mistakes: R`تسيب ملفات export بالباسوردات على الديسكتوب أو ترفعها في ريبو. أو تحكم على سرعة النت من Receive rate. أو تغيّر قناة الراوتر لـ 4 أو 9 (متداخلة مع الكل) بدل 1 و 6 و 11. أو [[connect]] على شبكة مش محفوظة قبل كده. أو تقفل Location وتستغرب إن show networks بقى بيقول Access is denied.`
+          },
+          lines: [
+            R`الاتصال الحالي: الشبكة والإشارة والقناة والسرعة.`,
+            R`الشبكات اللي حواليك، ولكل راوتر قناته وإشارته.`,
+            R`الشبكات المحفوظة على الجهاز.`,
+            R`اتصل بشبكة محفوظة.`,
+            R`فولدر للتصدير.`,
+            R`صدّر كل الشبكات ومعاها الباسوردات (أدمن عشان الباسورد يطلع واضح).`,
+            R`على الجهاز الجديد: ضيف شبكة من الملف.`,
+            R`انسى شبكة مش محتاجها.`,
+            R`تقرير HTML عن آخر 3 أيام (أدمن).`
+          ],
+          sol: R`[[netsh wlan show interfaces]] طلّع عندي (غيّرت اسم الشبكة): [[Description : Intel(R) Wi-Fi 6 AX200 160MHz]] و [[SSID : HomeNet]] و [[Band : 2.4 GHz]] و [[Channel : 7]] و [[Radio type : 802.11n]] و [[Receive rate (Mbps) : 130]] و [[Signal : 94%]] و [[Rssi : -42]]. الإشارة ممتازة، بس الكارت Wi-Fi 6 ([[show drivers]] قال [[Radio types supported : 802.11b 802.11g 802.11n 802.11a 802.11ac 802.11ax]]) وشغال 802.11n على 2.4 GHz، يعني الراوتر هو اللي محدد السرعة مش اللابتوب.
+
+[[show networks mode=bssid]] طلّع [[There are 10 networks currently visible.]]، كلهم 2.4 GHz على القنوات 1 و 4 و 5 و 7 و 8 و 9 و 10 و 11، وواحدة منهم على قناتي 7، وشبكة مخفية (من غير اسم) [[Authentication : Open]] و [[Encryption : None]]. أفضى قناة هنا 11: عليها 3 شبكات إشاراتهم ضعيفة (من 18% لـ 35%)، و 1 عليها شبكة واحدة بس قوية (70%). و [[show wlanreport]] من CMD عادي طلّع [[You must run this command from a command prompt with administrator privilege.]]. (الموقع كان مسموح على الجهاز ده، فـ show networks اشتغل.)
+
+(الاتصال والتصدير والإضافة والمسح مشغّلتهمش عشان ميغيّروش شبكات الجهاز.) [[connect]] لو اتقبل بيطبع [[Connection request was completed successfully.]]، و [[export]] بيطبع لكل شبكة [[Interface profile "HomeNet" is saved in file "D:\wifi\Wi-Fi-HomeNet.xml" successfully.]].`
+        },
+        {
+          cmd: "netsh winsock reset",
+          title: "النت بايظ على جهاز واحد: التصليح بالترتيب",
+          desc: R`لما النت مش شغال على جهازك بس (الموبايل على نفس الواي فاي شغال)، فيه ترتيب أوامر بيصلّح أغلب الحالات من الأخف للأتقل. [[netsh winsock reset]] و [[netsh int ip reset]] هما الأتقل: بيرجّعوا إعدادات الشبكة في ويندوز لأصلها ومحتاجين restart.
+
+بالترتيب، من CMD كأدمن، وقف عند أول خطوة تحل المشكلة:
+1. [[ipconfig /release]] و [[ipconfig /renew]]: سيب الـ IP واطلب جديد من الراوتر (درس ipconfig /release /renew).
+2. [[ipconfig /flushdns]]: امسح كاش الـ DNS.
+3. [[netsh winsock reset]]: رجّع Winsock لحالته الأصلية. Winsock هو الطبقة اللي البرامج بتكلم بيها الشبكة، والـ reset بيشيل أي LSP: إضافات برامج (VPN قديمة أو antivirus) بتحشر نفسها في الطريق، ولما تتشال غلط بتقطع النت عن كل البرامج.
+4. [[netsh int ip reset]]: رجّع إعدادات TCP/IP في الريجستري لأصلها، كأنك شيلت TCP/IP وسطّبته تاني. أي IP أو DNS ثابت بيروح والكروت ترجع DHCP. و [[int]] اختصار [[interface]]، والملف اللي بعده ([[C:\resetlog.txt]]) لوج بكل اللي اتغيّر.
+5. restart، ودي جزء من الحل مش اختياري.
+
+الأتقل من ده كله: Settings ثم Network & internet ثم Advanced network settings ثم Network reset. بيشيل كل كروت الشبكة ويسطّبها تاني بإعداداتها الأصلية، وبعده ممكن تحتاج تسطّب أو تظبط تاني برامج VPN والـ virtual switches (Hyper-V وغيره)، والجهاز بيعمل restart لوحده بعد دقايق.`,
+          example: R`netsh winsock show catalog | findstr /c:"Description:"
+ipconfig /release
+ipconfig /renew
+ipconfig /flushdns
+netsh winsock reset
+netsh int ip reset C:\resetlog.txt
+shutdown /r /t 0`,
+          try: R`من غير ما تصلّح حاجة: اعرض الـ Winsock catalog بالسطر الأول، وشوف فيه أي اسم غير MSAFD و RSVP و Hyper-V و Bluetooth و AF_UNIX. ولو النت بايظ عندك فعلًا، امشي بالترتيب ووقف عند أول خطوة تحل المشكلة.`,
+          flag: "danger",
+          deep: {
+            why: R`فيه مشاكل نت سببها الجهاز نفسه مش الراوتر: برنامج VPN أو antivirus اتشال وساب وراه إعدادات، أو IP ثابت قديم، أو كاش DNS فيه ردود غلط. الأعراض: الموبايل شغال والجهاز لأ، أو [[ping]] شغال والمتصفح لأ، أو «No internet» والواي فاي متصل. الخطوات دي بتصلّح ده من غير فرمتة، وبالترتيب عشان متعملش الأتقل وهو مش محتاج.`,
+            how: R`كل خطوة بتصلّح طبقة: release و renew العنوان نفسه (والـ gateway والـ DNS اللي جايين معاه). و flushdns الكاش اللي ويندوز حافظه عن الدومينات. و winsock reset الـ catalog اللي بيقول مين بيتعامل مع اتصالات البرامج: البرامج بتنادي Winsock، و Winsock بيعدّي على أي LSP متسجل قبل ما يوصل لـ TCP/IP، فلو LSP بايظ كل البرامج بتقع. و int ip reset بيكتب فوق مفاتيح الريجستري [[SYSTEM\CurrentControlSet\Services\Tcpip\Parameters]] و [[SYSTEM\CurrentControlSet\Services\DHCP\Parameters]]، واللوج بيقولك كل مفتاح اتغيّر وقيمته القديمة.
+
+قبل ما توصل للخطوات دي، اتأكد إن المشكلة في الجهاز وعند أنهي طبقة (درس ping / tracert / nslookup): [[ping 192.168.1.1]] (الراوتر) شغال؟ [[ping 1.1.1.1]] (IP على النت من غير DNS) شغال؟ [[nslookup google.com]] بيرد؟ لو الأولاني بس اللي واقع المشكلة في الواي فاي أو الكابل، ولو التالت بس يبقى DNS.
+
+LSPs بقت نادرة في ويندوز الحديث (أغلب البرامج بقت تستخدم طرق تانية)، فـ winsock reset بقى بيفرق أقل من زمان. و [[netsh winsock show catalog]] بيوريك هل فيه حاجة غريبة قبل ما تمسح. و [[netsh int ipv6 reset]] نفس فكرة int ip reset لـ IPv6.`,
+            when: R`الجهاز ده بس اللي مفيهوش نت، بعد ما شلت VPN أو antivirus، بعد ما رجعت من شبكة كان عليها IP ثابت، أو «No internet» والواي فاي متصل.`,
+            mistakes: R`تبدأ بـ Network reset أو int ip reset على طول قبل الخطوات الخفيفة. أو int ip reset على جهاز عليه IP ثابت مقصود (سيرفر في البيت) فيروح (هتلاقيه في اللوج). أو تنسى الـ restart وتقول «مفيش فايدة». أو [[/release]] من Remote Desktop فتفصل نفسك. أو تصلّح الجهاز والمشكلة أصلًا في الراوتر أو عند مزوّد الخدمة (الموبايل كمان مفيهوش نت).`
+          },
+          lines: [
+            R`شوف مين متسجل في Winsock قبل ما تمسح (عرض بس).`,
+            R`سيب الـ IP (النت بيقطع).`,
+            R`اطلب IP جديد من الراوتر.`,
+            R`امسح كاش الـ DNS.`,
+            R`رجّع Winsock لأصله (أدمن، ومحتاج restart).`,
+            R`رجّع إعدادات TCP/IP لأصلها، والـ IP الثابت بيروح، واللوج في الملف ده.`,
+            R`restart دلوقتي عشان التصليح يكمل.`
+          ],
+          sol: R`السطر الأول طلّع عندي [[Description: MSAFD Tcpip [TCP/IP]]] و [[MSAFD Tcpip [UDP/IPv6]]] و [[RSVP TCP Service Provider]] و [[Hyper-V RAW]] و [[AF_UNIX]] و [[MSAFD L2CAP [Bluetooth]]] وفي الآخر [[E-mail Naming Shim Provider]] و [[Tcpip]] (دول namespace providers، والـ reset مش بيلمسهم). كله بتاع ويندوز، فـ winsock reset مش هيفرق على الجهاز ده. لو لقيت اسم برنامج (VPN أو antivirus أو «proxy» أو حاجة مش عارفها)، ده LSP وهو المشتبه فيه الأول.
+
+(الخطوات نفسها مشغّلتهاش لأنها بتقطع النت وبتغيّر إعدادات الشبكة؛ ده من توثيق Microsoft.) [[netsh winsock reset]] بيطبع [[Successfully reset the Winsock Catalog.]] و [[You must restart the computer in order to complete the reset.]]. و [[netsh int ip reset C:\resetlog.txt]] بيطبع سطر [[Resetting ..., OK!]] لكل جزء، وفي الآخر [[Restart the computer to complete this action.]]. ومن CMD عادي الاتنين بيرفضوا ويطلبوا أدمن. واللوج فيه سطور زي [[reset ...\EnableDhcp]] وتحتها [[old REG_DWORD = 0]]، فلو كان عندك IP ثابت هتلاقيه هناك عشان ترجّعه.`
+        },
+        {
+          cmd: "net share / net use",
+          title: "شير فولدر ووصّل درايف شبكة",
+          desc: R`[[net share]] بيعرض الفولدرات اللي جهازك عاملها شير على الشبكة، وبيعمل شير جديد أو يشيله. و [[net use]] الناحية التانية: بيوصّل فولدر متشير على جهاز تاني كدرايف بحرف (زي Z:)، ويعرض الدرايفات دي ويفصلها.
+
+على الجهاز اللي فيه الملفات (CMD كأدمن):
+[[net share Docs=D:\Docs /grant:Everyone,READ]] شير الفولدر D:\Docs باسم Docs. [[/grant:]] مين وإيه: [[READ]] قراية، و [[CHANGE]] قراية وكتابة، و [[FULL]] كل حاجة. وصلاحيات NTFS على الفولدر نفسه (درس icacls) لازم تسمح كمان، والأضيق من الاتنين هو اللي بيكسب. و [[/remark:"..."]] وصف.
+[[net share]] لوحده: كل الشيرات. هتلاقي [[C$]] و [[ADMIN$]] و [[IPC$]]: شيرات إدارية ويندوز بيعملها لوحده، والـ [[$]] في آخر الاسم بتخفي الشير من لستة الأجهزة التانية.
+[[net share Docs /delete]] شيل الشير (الفولدر نفسه مش بيتمسح).
+
+على الجهاز التاني (مش محتاج أدمن):
+[[net use Z: \\PC\Docs]] وصّل الشير كدرايف Z. و [[\\PC\Docs]] اسمه UNC path: اسم الجهاز (أو الـ IP) وبعده اسم الشير.
+[[/user:PC\sara]] ادخل بيوزر من الجهاز التاني بدل يوزرك، و [[*]] بعد المسار يسألك على الباسورد.
+[[/persistent:yes]] الدرايف يرجع لوحده بعد الـ restart.
+[[net use]] لوحده: الدرايفات المتوصلة وحالتها، و [[net use Z: /delete]] افصل.
+
+الشبكة لازم تبقى Private، و File and printer sharing مفعّل (Settings ثم Network & internet ثم Advanced network settings ثم Advanced sharing settings). و [[Everyone]] اسمه متترجم على ويندوز بلغة تانية زي Administrators (درس net localgroup).`,
+          example: R`net share
+net share Docs=D:\Docs /grant:Everyone,READ /remark:"Shared docs"
+net use
+net use Z: \\PC\Docs /persistent:yes
+net use Y: \\192.168.1.50\Docs * /user:PC\sara
+dir Z:\
+net use Z: /delete
+net use Y: /delete
+net share Docs /delete`,
+          try: R`اعرض الشيرات اللي على جهازك والدرايفات المتوصلة. ولو عندك جهازين على شبكة Private: شير فولدر قراية بس من واحد، ووصّله كدرايف على التاني، وبعدين شيل الاتنين.`,
+          flag: "danger",
+          deep: {
+            why: R`تنقل ملفات بين جهازين في البيت أو المكتب من غير فلاشة ولا رفع على النت، أو فولدر مشترك لفريق صغير، أو سكربت باك أب بيكتب على جهاز تاني أو NAS. و [[net use]] كمان بيفتح جلسة ببيانات يوزر معين قبل أي أمر إدارة على الجهاز ده (درس shutdown /m).`,
+            how: R`الشير بيشتغل ببروتوكول SMB على بورت 445. على الجهاز اللي عامل الشير، قواعد الفايروول «File and Printer Sharing» لازم تكون مفعّلة على الـ profile الحالي، وده بيحصل لوحده لما تشغّل File and printer sharing للشبكات الـ Private. لو الشبكة Public الشير مش هيبان، وده مقصود.
+
+مين بيدخل؟ لما تفتح [[\\PC\Docs]]، الجهاز التاني بيطلب يوزر وباسورد موجودين عليه هو. لو نفس اسم اليوزر ونفس الباسورد على الجهازين بيدخل لوحده، غير كده [[/user:]]. لو اليوزر هناك حساب Microsoft اكتب الإيميل وباسورد الحساب (مش الـ PIN). ويوزر من غير باسورد مش بيدخل من الشبكة أصلًا.
+
+الشيرات الإدارية ([[\\PC\C$]]) الدرايف كله، للأدمنز بس. وعلى أجهزة البيت (مش على دومين) فيه قيد اسمه UAC remote restrictions: يوزر محلي أدمن داخل من الشبكة بياخد توكن عادي، فـ [[C$]] بيطلع [[Access is denied]] حتى بباسورد صح. الحل اللي هتلاقيه على النت (قيمة [[LocalAccountTokenFilterPolicy]] في الريجستري) بيشيل الحماية دي خالص (التفاصيل في درس shutdown /m)، فاعمل شير عادي للفولدر اللي محتاجه بدل كده.
+
+ويندوز 11 24H2 بقى بيطلب SMB signing افتراضيًا، و Pro (مش Home) قفل الدخول كـ guest من غير باسورد، فأجهزة NAS أو راوترات فيها USB ممكن متفتحش لحد ما تعمل عليها يوزر وباسورد. والمقابل في PowerShell: [[New-SmbShare]] و [[New-PSDrive]] (في تاب «PowerShell»).`,
+            when: R`نقل ملفات في البيت أو المكتب، فولدر مشترك، درايف شبكة ثابت لسكربت باك أب، الوصول لـ NAS، أو جلسة بيوزر معين على [[IPC$]] قبل أوامر إدارة عن بعد.`,
+            mistakes: R`شير بـ [[Everyone,FULL]] على فولدر فيه حاجات مهمة. أو شير على شبكة Public. أو [[net use]] من CMD أدمن ومتلاقيش الدرايف في Explorer: نافذة الأدمن ونافذتك العادية جلستين منفصلتين، فاعمله من CMD عادي. أو تتوصل لنفس الجهاز بيوزرين مختلفين فيطلع [[System error 1219]] ([[Multiple connections to a server or shared resource by the same user, using more than one user name, are not allowed.]])، والحل [[net use \\PC\IPC$ /delete]] أو [[net use * /delete]]. أو حرف الدرايف مستخدم ([[System error 85]]: [[The local device name is already in use.]]).`
+          },
+          lines: [
+            R`الشيرات اللي جهازك عاملها، ومنها الإدارية C$ و ADMIN$ و IPC$.`,
+            R`على جهاز الملفات: شير D:\Docs قراية بس للكل (أدمن).`,
+            R`على الجهاز التاني: الدرايفات المتوصلة.`,
+            R`وصّل الشير كدرايف Z، ويرجع بعد الـ restart.`,
+            R`وصّل بالـ IP وبيوزر من الجهاز التاني، والـ [[*]] تسأل على الباسورد.`,
+            R`افتحه زي أي درايف.`,
+            R`افصل Z.`,
+            R`وافصل Y.`,
+            R`على جهاز الملفات: شيل الشير (الفولدر باقي).`
+          ],
+          sol: R`[[net share]] على جهاز مش عامل أي شير طلّع:
+[[Share name   Resource   Remark]]
+[[C$   C:\   Default share]] وكمان [[D$]] و [[E$]] لكل درايف
+[[IPC$      Remote IPC]]
+[[ADMIN$   C:\WINDOWS   Remote Admin]]
+و [[net use]] طلّع [[New connections will be remembered.]] و [[There are no entries in the list.]]. الشيرات اللي بـ [[$]] ويندوز بيعملها لوحده، ومش بتبان في Network على الأجهزة التانية.
+
+(الإنشاء والتوصيل والمسح مشغّلتهمش عشان ميغيّروش شيرات الجهاز.) من CMD أدمن [[net share Docs=D:\Docs /grant:Everyone,READ]] بيطبع [[Docs was shared successfully.]]، و [[net use Z: \\PC\Docs]] بيطبع [[The command completed successfully.]]، و [[net use Z: /delete]] بيطبع [[Z: was deleted successfully.]]. ولو الجهاز التاني مش باين: [[System error 53 has occurred.]] و [[The network path was not found.]] (طلّعها عندي [[net view \\IP]] على موبايل على الشبكة)، ولو الباسورد غلط: [[System error 1326 has occurred.]] و [[The user name or password is incorrect.]].`
+        },
+        {
+          cmd: "ping -a و nbtstat -A",
+          title: "مين الأجهزة دي؟ اسم الجهاز من الـ IP",
+          desc: R`بعد ما [[arp -a]] يوريك IPs الأجهزة اللي على شبكتك (درس arp / route)، الأوامر دي بتحاول تعرف اسم كل جهاز: [[ping -a]] و [[nbtstat -A]] و [[nslookup]]. كل واحد بيسأل بطريقة مختلفة وكتير منهم مش هيلاقي، فجرّب التلاتة. واستخدمهم على شبكتك انت أو بإذن صاحبها بس.
+
+[[ping -a 192.168.1.20]] الـ [[-a]] بتخلّي ping يحوّل الـ IP لاسم قبل ما يبدأ، والاسم بيظهر في أول سطر: [[Pinging NAME [192.168.1.20]]]. لو ملقاش اسم بيكتب الـ IP بس. بيدوّر في ملف hosts الأول، وبعدين بكل الطرق اللي ويندوز يعرفها (DNS و mDNS و LLMNR و NetBIOS).
+[[nbtstat -A 192.168.1.20]] (A كابيتال: بالـ IP) بيسأل الجهاز نفسه بـ NetBIOS عن اسمه، ويرد بجدول فيه اسم الجهاز ([[<00> UNIQUE]]) والـ workgroup ([[<00> GROUP]]) و [[<20>]] لو بيعمل شير، والـ MAC. بيشتغل بس لو الجهاز التاني ويندوز (أو Samba) و NetBIOS over TCP/IP شغال عليه وفايروله سامح. و [[nbtstat -a NAME]] (a صغيرة) العكس، بالاسم. و [[nbtstat -n]] الأسامي اللي جهازك نفسه معلنها.
+[[nslookup 192.168.1.20]] بيسأل سيرفر الـ DNS (غالبًا الراوتر) عن اسم الـ IP (reverse lookup). راوترات بتسجّل أسامي الأجهزة اللي أخدت منها IP، وراوترات لأ.
+
+[[net view]] زمان كان بيعرض كل الأجهزة اللي على الشبكة. على ويندوز 10 و 11 غالبًا بيطلّع [[System error 6118 has occurred.]] و [[The list of servers for this workgroup is not currently available]]، لأن الخدمة اللي كانت بتعمل اللستة دي (Computer Browser) اتشالت مع SMB1. و [[net view \\PC]] لسه بيعرض شيرات جهاز معين.`,
+          example: R`arp -a
+ping -a -n 1 192.168.1.1
+nbtstat -A 192.168.1.20
+nslookup 192.168.1.20
+nbtstat -n
+net view
+net view \\192.168.1.20`,
+          try: R`على شبكة بيتك: [[arp -a]]، وخد IP جهاز تاني (موبايل أو تليفزيون أو لابتوب)، وجرّب عليه الأوامر التلاتة وشوف أنهي واحد عرف اسمه. وقارن بلستة الأجهزة في صفحة الراوتر.`,
+          deep: {
+            why: R`عايز توصل لطابعة أو Raspberry Pi أو جهاز تاني في البيت ومش عارف عنوانه، أو بتراجع مين متوصل بالواي فاي بتاعك (جهاز غريب في arp يبقى حد معاه الباسورد). الـ IP لوحده مش بيقول حاجة، الاسم أو الـ MAC هما اللي بيقولوا.`,
+            how: R`الأجهزة بتعلن أسماءها بأكتر من طريقة: NetBIOS (ويندوز تقريبًا بس، وقديم)، و LLMNR و mDNS (أجهزة أبل وطابعات وأجهزة كتير، وأسماء بتخلص بـ [[.local]])، والراوتر نفسه لو بيسجّل الأسماء في الـ DNS بتاعه. [[ping -a]] بيستخدم الـ resolver بتاع ويندوز اللي بيجرّب كل ده، و [[nslookup]] بيسأل DNS بس، و [[nbtstat]] NetBIOS بس.
+
+الـ MAC: أول 3 أجزاء منه بتقول الشركة المصنّعة (دوّر عليها في أي موقع «MAC vendor lookup»). بس لو الحرف التاني في الـ MAC [[2]] أو [[6]] أو [[A]] أو [[E]]، ده MAC عشوائي (locally administered): موبايلات ولابتوبات حديثة بتعمل MAC مختلف لكل شبكة عشان الخصوصية، فالبحث مش هيفيد. و [[TTL]] في رد ping بيدّي فكرة: 128 غالبًا ويندوز، و 64 غالبًا لينكس أو أندرويد أو أجهزة أبل أو راوتر.
+
+[[arp -a]] بيعرض بس الأجهزة اللي جهازك كلّمها قريب. عشان يبقى فيه كل اللي على الشبكة لازم تكلمهم الأول، مثلًا loop بيعمل ping لكل عنوان (درس for و delayed expansion):
+[[for /l %i in (1,1,254) do @ping -n 1 -w 200 192.168.1.%i | find "TTL="]]
+بيطبع اللي رد بس، وبعدها [[arp -a]] يبقى فيه الكل (حتى الأجهزة اللي فايرولها بيمنع ping بتبان في arp غالبًا). جوه ملف bat اكتب [[%%i]] بدل [[%i]]. وفي PowerShell نفس الفكرة أسرع بالتوازي، و [[Get-NetNeighbor]] بدل arp (في تاب «PowerShell»). وده على شبكتك بس: اللف على شبكة مش بتاعتك (الشغل أو كافيه) ممكن يتعتبر فحص غير مصرّح بيه.`,
+            when: R`بتدوّر على IP طابعة أو Raspberry Pi أو جهاز في البيت، بتراجع مين على الواي فاي بتاعك، أو قبل SSH أو Remote Desktop لجهاز مش فاكر عنوانه.`,
+            mistakes: R`[[nbtstat -a]] بالـ IP (الصغيرة للاسم والكابيتال للـ IP). أو تفتكر إن مفيش اسم يبقى الجهاز مش موجود (موجود بس مش معلن اسمه، أو فايروله بيمنع). أو تصدّق اسم [[ping -a]] من غير ما تبص على ملف hosts (الحل تحت). أو تعتمد على [[net view]]. أو تلف على شبكة مش بتاعتك.`
+          },
+          lines: [
+            R`الـ IPs والـ MACs اللي جهازك يعرفها على الشبكة.`,
+            R`IP لاسم: الاسم بيظهر في أول سطر لو اتعرف.`,
+            R`اسأل الجهاز بـ NetBIOS عن اسمه وجروبه والـ MAC.`,
+            R`اسأل DNS الراوتر عن اسم الـ IP.`,
+            R`الأسامي اللي جهازك نفسه معلنها.`,
+            R`زمان كانت لستة الأجهزة، دلوقتي غالبًا error 6118.`,
+            R`شيرات جهاز معين (لو SMB مفتوح عليه).`
+          ],
+          sol: R`جرّبت على شبكة بيتي. [[arp -a]] كان فيه الراوتر بس ([[192.168.1.1]])، وبعد loop صغير على 4 عناوين رد [[192.168.1.4]] بـ [[TTL=64]]، و arp بقى فيه [[192.168.1.4  46-d5-d9-xx-xx-xx  dynamic]]. الحرف التاني [[6]]: MAC عشوائي، يعني موبايل غالبًا.
+
+[[ping -a 192.168.1.4]] طبع [[Pinging host.docker.internal [192.168.1.4]]]! الاسم ده من ملف hosts: Docker Desktop كتب فيه عنوان اللابتوب لما كان [[.4]] ([[192.168.1.4 host.docker.internal]])، وبعدين الراوتر ادّى نفس العنوان للموبايل. يعني [[ping -a]] ممكن يدّيك اسم غلط تمامًا (درس hosts). و [[nbtstat -A 192.168.1.4]] طبع [[Host not found.]] تحت كل كارت، و [[nslookup 192.168.1.4]] طبع [[*** UnKnown can't find 192.168.1.4: Non-existent domain]] و [[Server: UnKnown]] و [[Address: fe80::1]] (الراوتر نفسه هو الـ DNS، بعنوان IPv6)، و [[net view \\192.168.1.4]] طبع [[System error 53 has occurred.]]. وعلى الراوتر نفس النتيجة: [[ping -a 192.168.1.1]] من غير اسم.
+
+اللي اشتغل: [[ping -a 192.168.1.2]] (اللابتوب نفسه) طبع [[Pinging ALI-PC.home [192.168.1.2]]] ([[.home]] الدومين اللي الراوتر بيوزّعه)، و [[nbtstat -n]] طبع [[ALI-PC <00> UNIQUE Registered]] و [[ALI-PC <20> UNIQUE Registered]] و [[WORKGROUP <00> GROUP Registered]]. و [[net view]] لوحده طبع [[System error 6118 has occurred.]]. الخلاصة: على شبكات البيت الحديثة غالبًا مش هتلاقي أسماء بالأوامر دي، وصفحة الراوتر (Connected devices أو DHCP clients) هي اللي فيها اسم كل جهاز والـ MAC.`
+        },
+        {
+          cmd: "mstsc",
+          title: "Remote Desktop: افتح جهاز ويندوز تاني",
+          desc: R`[[mstsc]] هو برنامج Remote Desktop Connection: بيفتح شاشة جهاز ويندوز تاني في نافذة عندك، وتشتغل عليه كأنك قدامه. الإضافات بتتكتب بـ [[/]] وبعدها [[:]] والقيمة.
+
+[[/v:PC]] الجهاز (اسم أو IP)، و [[/v:PC:3390]] لو بورت غير الافتراضي 3389.
+[[/f]] full screen (و Ctrl+Alt+Break بيبدّل بين full screen والنافذة).
+[[/w:1600 /h:900]] حجم النافذة.
+[[/multimon]] استخدم كل شاشاتك زي ما هي متركبة عندك، و [[/span]] شاشة واحدة كبيرة على شاشات جنب بعض بنفس الدقة.
+[[/admin]] جلسة الإدارة على Windows Server.
+[[/prompt]] اسأل على اليوزر والباسورد حتى لو محفوظين.
+[[/public]] متحفظش الباسورد ولا صور الشاشة على الجهاز ده (لما تكون على جهاز مش بتاعك).
+[[/edit file.rdp]] افتح ملف اتصال للتعديل. أي إعدادات بتظبطها من Show Options وتحفظها بـ Save As بتبقى ملف [[.rdp]]، ودبل كليك عليه بيتصل على طول.
+
+العميل (اللي بيفتح جهاز تاني) شغال في أي نسخة ويندوز. لكن الجهاز اللي هيتفتح لازم يبقى Pro أو أعلى: Home مينفعش يستقبل Remote Desktop خالص. لو جهازك Home وعايز حد يساعدك عليه عن بعد، فيه Quick Assist جاي مع ويندوز، أو برامج زي Chrome Remote Desktop.`,
+          example: R`mstsc /v:192.168.1.50
+mstsc /v:office-pc:3390 /f
+mstsc /v:192.168.1.50 /w:1600 /h:900 /prompt
+mstsc /v:192.168.1.50 /multimon
+mstsc /edit "%USERPROFILE%\Documents\office.rdp"
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+netsh advfirewall firewall set rule group="remote desktop" new enable=Yes`,
+          try: R`لو عندك جهاز Pro في البيت: فعّل Remote Desktop عليه من Settings، وافتحه من جهازك بـ [[mstsc /v:]] والـ IP، وجرّب [[/w /h]] و [[/f]]. لو الاتنين Home: افتح [[mstsc]] لوحده، واتفرج على Show Options، واحفظ ملف rdp وافتحه بـ [[/edit]].`,
+          flag: "danger",
+          deep: {
+            why: R`تشتغل على جهاز البيت من اللابتوب، أو على سيرفر ويندوز (VPS ويندوز أو جهاز في الشغل)، أو تساعد حد في البيت من أوضة تانية. Remote Desktop مدمج في ويندوز، وبينقل الكليبورد، وبيدعم أكتر من شاشة، وبيقدر يوصّل درايفاتك جوه الجلسة (Show Options ثم Local Resources).`,
+            how: R`البروتوكول اسمه RDP على بورت 3389. على الجهاز اللي هيتفتح (Pro): Settings ثم System ثم Remote Desktop، أو من CMD أدمن السطرين الأخيرين في المثال: قيمة الريجستري [[fDenyTSConnections]] = 0 معناها «متمنعش اتصالات Remote Desktop»، و [[set rule group="remote desktop" new enable=Yes]] بيفعّل كل قواعد الفايروول اللي في الجروب ده. اسم الجروب بيتترجم على ويندوز بلغة تانية، فالـ Settings أضمن.
+
+مين يدخل: الأدمنز وأعضاء [[Remote Desktop Users]] (درس net localgroup)، ولازم اليوزر عنده باسورد. الدخول بيعمل sign out للي قاعد قدام الجهاز، لأن ويندوز العادي جلسة واحدة بس في المرة. و Network Level Authentication (مفعّل افتراضيًا) بيخلّي الجهاز يطلب اليوزر والباسورد قبل ما يفتح أي حاجة.
+
+الأمان: متفتحش 3389 على النت (port forwarding في الراوتر). فيه بوتات بتلف على النت كله طول اليوم تجرّب باسوردات على أي 3389 مفتوح، وثغرات في RDP اتستغلت قبل كده. لو محتاج توصل من برا البيت: VPN أو Tailscale (شبكة خاصة بين أجهزتك)، وبعدين mstsc على عنوان الجهاز جوه الشبكة دي. ولتشغيل أوامر على جهاز تاني من غير شاشة: OpenSSH Server أو [[Enter-PSSession]] (في تاب «PowerShell»).`,
+            when: R`جهاز Pro في البيت أو الشغل، سيرفر ويندوز، مساعدة حد على شبكتك، أو اختصارات بملفات rdp جاهزة لكذا جهاز.`,
+            mistakes: R`تحاول تفعّله على Home. أو تفتح 3389 في الراوتر للنت. أو يوزر من غير باسورد. أو تنسى إن الدخول بيقفل جلسة اللي قاعد على الجهاز. أو تحفظ الباسورد في ملف rdp على جهاز مش بتاعك (استخدم [[/public]]). أو تفعّل الريجستري وتنسى الفايروول أو العكس، فيطلع «Remote Desktop can't connect to the remote computer».`
+          },
+          lines: [
+            R`افتح جهاز بالـ IP على البورت الافتراضي 3389.`,
+            R`جهاز بالاسم على بورت 3390، و full screen.`,
+            R`نافذة 1600 في 900، واسألني على اليوزر والباسورد.`,
+            R`استخدم كل الشاشات اللي عندي.`,
+            R`عدّل ملف اتصال محفوظ.`,
+            R`على الجهاز اللي هيتفتح (Pro، أدمن): اسمح بـ Remote Desktop.`,
+            R`وفعّل قواعده في الفايروول.`
+          ],
+          sol: R`(مشغّلتش mstsc لأنه برنامج بواجهة بيتصل بجهاز تاني، والجهاز ده Home؛ اللي جاي من توثيق Microsoft ومن أوامر عرض بس.) [[mstsc /?]] نفسه مش بيطبع في CMD، بيفتح نافذة فيها الإضافات. [[mstsc /v:IP]] بيفتح نافذة الاتصال، ولو الجهاز مش بيرد بتطلع رسالة «Remote Desktop can't connect to the remote computer» وفيها 3 أسباب: Remote access مش مفعّل، أو الجهاز مقفول، أو مش على الشبكة.
+
+على جهازي (Home): [[netsh advfirewall firewall show rule name=all dir=in | findstr /i /c:"Remote Desktop"]] مطلّعش ولا سطر، و [[net localgroup "Remote Desktop Users"]] طلّع [[System error 1376 has occurred.]]، و [[sc query TermService]] طلّع [[STATE : 1 STOPPED]] و [[sc qc TermService]] فيه [[DISPLAY_NAME : Remote Desktop Services]]. يعني Home فيه الخدمة بس من غير الباقي، ومفيش طريقة رسمية تخلّيه يستقبل. على Pro بعد ما تفعّله، نفس أمر الفايروول بيطلّع قواعد زي [[Remote Desktop - User Mode (TCP-In)]].`
+        },
+        {
+          cmd: "shutdown /m",
+          title: "restart أو إيقاف لجهاز تاني على الشبكة",
+          desc: R`[[shutdown /m \\PC]] بيبعت أمر الإيقاف أو الـ restart لجهاز تاني على شبكتك بدل جهازك، بنفس إضافات درس shutdown. و [[shutdown /i]] بيفتح نافذة Remote Shutdown تختار منها أكتر من جهاز.
+
+[[/m \\PC]] الجهاز التاني، باسمه أو الـ IP، والـ [[\\]] لازمة.
+[[/r]] restart، أو [[/s]] إيقاف.
+[[/t 60]] بعد دقيقة، واللي قاعد قدام الجهاز بيشوف إشعار، و [[/c "..."]] رسالة بتظهر فيه.
+[[/a /m \\PC]] الغي إيقاف متجدول على الجهاز ده.
+[[/d p:4:1]] سبب، و [[p]] يعني planned، بيتسجل في Event Log على الجهاز التاني.
+[[/i]] النافذة الرسومية، ولازم تبقى أول إضافة.
+
+الشروط على الجهاز التاني، ومن غيرها هتشوف [[Access is denied.(5)]] أو [[The network path was not found.(53)]]:
+لازم تكون أدمن عليه، والأدمن ده يقدر يدخل من الشبكة. الأسهل تفتح جلسة بيوزره الأول: [[net use \\PC\IPC$ /user:PC\admin *]] (درس net share / net use)، وبعدها shutdown بيستخدمها.
+الشبكة Private و File and printer sharing مفعّل، لأن shutdown بيكلم الجهاز على SMB (بورت 445).
+على أجهزة البيت (مش على دومين)، أدمن محلي داخل من الشبكة بيتشال منه الأدمن (UAC remote restrictions، تحت)، فممكن تاخد Access is denied حتى بباسورد صح.`,
+          example: R`net use \\192.168.1.50\IPC$ /user:OFFICE-PC\admin *
+shutdown /r /m \\192.168.1.50 /t 60 /c "Restarting for updates in 1 minute"
+shutdown /a /m \\192.168.1.50
+shutdown /s /m \\192.168.1.50 /t 0 /d p:0:0
+net use \\192.168.1.50\IPC$ /delete
+shutdown /i`,
+          try: R`لو عندك جهازين في البيت وانت أدمن على التاني: جدول restart عليه بعد 10 دقايق برسالة، واتأكد إن الإشعار ظهر هناك، وبعدين الغيه بـ [[/a /m]]. ومن غير جهاز تاني: اقرا الشروط وخمّن هتقابل أنهي error ولّا لأ.`,
+          flag: "danger",
+          deep: {
+            why: R`جهاز في أوضة تانية أو مكتب تاني محتاج restart بعد تحديث، أو أجهزة معمل عايز تقفلها آخر اليوم بسكربت واحد بدل ما تقوم لكل واحد. وكمان بتفهم من الدرس ده ليه أي أمر إدارة عن بعد على أجهزة البيت بيقول Access denied.`,
+            how: R`shutdown بيكلم الجهاز التاني بـ RPC جوه SMB (بروتوكول Remote Shutdown)، فالمحتاج هو نفس اللي الشير محتاجه: بورت 445 مفتوح في الفايروول، ويوزر من الجهاز التاني يدخل من الشبكة. والجهاز التاني بيتأكد إن اليوزر عنده صلاحية «Force shutdown from a remote system» ([[SeRemoteShutdownPrivilege]])، ودي افتراضيًا للأدمنز بس.
+
+القيد الكبير: UAC remote restrictions. على جهاز مش على دومين، أي يوزر محلي في Administrators (غير الأدمن المدمج) لما يدخل من الشبكة بيتشال منه الأدمن، زي سطر [[Group used for deny only]] اللي في النافذة العادية (درس whoami /groups /priv). Microsoft بتوثّق إن قيمة [[LocalAccountTokenFilterPolicy]] = 1 في [[HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System]] بتشيل القيد ده، بس ده بيخلّي أي حد معاه باسورد (أو hash) أي أدمن محلي يتحكم في الجهاز كله من الشبكة، وده طريق مشهور لهجمات بتنتشر من جهاز لجهاز. استخدمها على أجهزتك بس ولو فاهم ده، والأحسن OpenSSH Server أو PowerShell Remoting ([[Restart-Computer -ComputerName]] في تاب «PowerShell»).
+
+Remote Registry متقفل افتراضيًا على ويندوز 11 (جرّبت [[sc qc RemoteRegistry]] وطلع [[START_TYPE : 4 DISABLED]]). shutdown.exe الحديث مش محتاجه غالبًا، لكن أدوات تانية زي [[net rpc shutdown]] من لينكس (اللي Home Assistant بيستخدمه مثلًا) بتعدّي عليه، فساعتها لازم يشتغل على الجهاز التاني.
+
+[[shutdown /i]] بيفتح نافذة: Add تضيف أسامي أجهزة، وتختار Restart أو Shutdown والرسالة والسبب. وأرقام الأسباب ([[p:4:1]] يعني Application: Maintenance (Planned)) كلها في [[shutdown /?]].`,
+            when: R`restart لجهاز تاني بعد تحديث أو تسطيب، إيقاف أجهزة معمل أو مكتب صغير آخر اليوم، أو جهاز شغال سيرفر في البيت محتاج restart من اللابتوب.`,
+            mistakes: R`[[/t 0]] على جهاز حد شغال عليه فيضيع شغله، و [[/t]] أكبر من صفر معناها [[/f]] (البرامج بتتقفل غصب). أو تنسى [[\\]] قبل الاسم. أو تشغّل [[LocalAccountTokenFilterPolicy]] على كل الأجهزة «عشان تمشي». أو تفتح 445 على Public. أو تغلط في الـ IP فتقفل جهاز حد تاني. أو تنسى [[net use ... /delete]] فالجلسة بباسورد الأدمن تفضل مفتوحة.`
+          },
+          lines: [
+            R`افتح جلسة بيوزر أدمن من الجهاز التاني (هيسأل على الباسورد).`,
+            R`restart بعد دقيقة، والرسالة بتظهر للي قدامه.`,
+            R`الغيه.`,
+            R`إيقاف فوري بسبب مخطط.`,
+            R`اقفل الجلسة.`,
+            R`النافذة الرسومية لأكتر من جهاز.`
+          ],
+          sol: R`(مشغّلتهوش لأنه بيقفل جهاز تاني؛ ده من توثيق shutdown و UAC.) لو كل حاجة مظبوطة: [[shutdown /r /m \\192.168.1.50 /t 600 /c "Test"]] مش بيطبع حاجة عندك، والجهاز التاني بيطلّع إشعار إنه هيعمل restart وفيه الرسالة، و [[shutdown /a /m \\192.168.1.50]] بيلغيه.
+
+الأخطاء بتطلع بالشكل [[192.168.1.50: Access is denied.(5)]]: اليوزر مش أدمن هناك، أو أدمن محلي اتشالت صلاحياته على الشبكة، أو جلسة [[IPC$]] مفتوحة بيوزر تاني. و [[The network path was not found.(53)]]: الجهاز مقفول، أو الاسم غلط، أو File and printer sharing مقفول، أو الشبكة Public. و [[net use \\PC\IPC$]] بباسورد غلط: [[System error 1326 has occurred.]] و [[The user name or password is incorrect.]] (النصوص دي طلّعتها بـ [[net helpmsg 53]] و [[net helpmsg 1326]]).`
+        }
+      ]
+    },
+    {
       t: "المتغيرات والاختصارات",
       l: 2,
       n: "",
@@ -1228,7 +1646,7 @@ echo Welcome %USERNAME%, today is %DATE%`
     {
       t: "تحكّم في الجهاز وصيانته",
       l: 2,
-      n: R`إيقاف ومهام مجدولة وطاقة وتحميل وتحديث وصيانة. كتير منها محتاج CMD كأدمن، والخطير عليه علامة`,
+      n: R`إيقاف ومهام مجدولة وطاقة وتحميل وتحديث وصيانة وفلاشات ودرايفرات وخدمات ووقت. كتير منها محتاج CMD كأدمن، والخطير عليه علامة`,
       items: [
         {
           cmd: "shutdown",
@@ -1634,6 +2052,568 @@ SSD: [[/r]] بيقرا كل حتة في الـ SSD، فمش خطير بس ملو
           sol: R`(chkdsk محتاج أدمن وبيلمس الديسك فمشغّلتهوش هنا؛ اللي جاي من توثيقه على Microsoft Learn والرسايل المعروفة.) [[chkdsk C: /scan]] بيطبع [[The type of the file system is NTFS.]] واسم الدرايف، وبعدين المراحل، ولو سليم [[Windows has scanned the file system and found no problems.]] و [[No further action is required.]] وتحتها أرقام المساحة. من CMD مش أدمن هيقولك [[Access Denied as you do not have sufficient privileges or the disk may be locked by another process.]]، وحتى [[chkntfs C:]] من غير أدمن طلّع عندي [[Cannot query state of drive C:]].
 
 على فلاشة: [[chkdsk E: /f]] بيقفل الدرايف ويفحص ويطبع النتيجة على طول. ولو ملف مفتوح من الفلاشة هيقولك [[Chkdsk cannot run because the volume is in use by another process.]] ويعرض يفصل الدرايف غصب (dismount) قبل ما يكمّل، فاقفل الملف الأول بدل ما توافق.`
+        },
+        {
+          cmd: "diskpart",
+          title: "صلّح فلاشة: حجم غلط أو write protected أو RAW",
+          desc: R`[[diskpart]] أداة الديسكات والبارتيشنات في ويندوز، وبتشتغل في نافذة لوحدها بـ prompt [[DISKPART>]] ومحتاجة أدمن. أشهر استخدام: فلاشة بتقول حجمها 32 ميجا وهي 32 جيجا، أو «The disk is write protected»، أو ويندوز بيقولك «You need to format the disk» (RAW)، فتمسح جدولها خالص وتعملها من الأول.
+
+الخطوات جوه diskpart:
+[[list disk]] كل الديسكات بأرقامها وأحجامها، و [[Disk 0]] غالبًا ديسك ويندوز.
+[[select disk 2]] اختار الفلاشة. دي أخطر خطوة في الدرس: كل اللي بعدها بيتنفذ على الديسك ده، ولو اخترت رقم ديسكك هتمسحه.
+[[detail disk]] اتأكد إنها هي: الموديل و [[Type : USB]] والفوليومات اللي عليها بحروفها.
+[[attributes disk clear readonly]] شيل علامة «قراية بس» (لو write protected من ويندوز).
+[[clean]] امسح جدول البارتيشنات كله، فالديسك يبقى فاضي من غير ولا بارتيشن. و [[clean all]] بيكتب أصفار على الديسك كله (ممكن ساعات).
+[[create partition primary]] بارتيشن واحد بكل المساحة.
+[[format fs=exfat quick label=USB]] فرمتة: [[fs=]] نظام الملفات ([[exfat]] للفلاشات، بيشتغل على ويندوز وماك وأجهزة كتير وبيقبل ملفات أكبر من 4 جيجا، و [[ntfs]] لويندوز، و [[fat32]] للأجهزة القديمة)، و [[quick]] من غير ما يقرا كل sector، و [[label=]] الاسم.
+[[assign]] ادّيها حرف درايف عشان تظهر في Explorer.
+[[exit]] اخرج.
+
+و [[diskpart /s file.txt]] بينفّذ الأوامر من ملف من غير ما يسأل، وده أخطر لأن مفيش لحظة تبص فيها على الرقم.`,
+          example: R`diskpart
+list disk
+select disk 2
+detail disk
+attributes disk clear readonly
+clean
+create partition primary
+format fs=exfat quick label=USB
+assign
+exit`,
+          try: R`من CMD أدمن: افتح diskpart واكتب [[list disk]] و [[list volume]] بس، واعرف رقم كل ديسك وحجمه، وبعدين [[exit]]. select و clean على فلاشة متأكد إن مفيهاش حاجة بس، وبعد ما تفصل أي هارد خارجي تاني.`,
+          flag: "danger",
+          deep: {
+            why: R`فلاشة اتكتب عليها ISO (لينكس أو ويندوز بـ Rufus أو dd) بقت بتظهر بحجم صغير أو مش بتظهر خالص، أو كارت ميموري من كاميرا بقى RAW، أو الفرمتة من Explorer بتفشل. Explorer بيفرمت البارتيشن الموجود بس، و diskpart بيمسح الجدول نفسه ويبدأ من الصفر.`,
+            how: R`الديسك عليه جدول بارتيشنات (MBR أو GPT) بيقول فين كل بارتيشن، وكل بارتيشن عليه نظام ملفات. صور الـ ISO بتكتب جدول غريب أو بارتيشنات مخفية، فويندوز يشوف جزء صغير بس. [[clean]] بيكتب فوق الجدول بس (على MBR جدول البارتيشنات والـ sectors المخفية، وعلى GPT الجدول والـ protective MBR)، فبيخلص في ثانية والبيانات نفسها لسه على الديسك نظريًا، و [[clean all]] هو اللي بيمسحها فعلًا.
+
+إزاي تعرف الفلاشة؟ الحجم أهم حاجة: فلاشة 32 جيجا بتظهر حوالي [[28 GB]] أو [[29 GB]] (الشركة بتحسب الجيجا ألف ميجا وويندوز بيحسبها 1024)، وديسكك الأساسي مئات الجيجات. لو عندك ديسكين قريبين في الحجم: افصل الفلاشة واعمل [[list disk]]، ووصّلها واعمله تاني، والرقم اللي ظهر هو هي. و [[list disk]] بيحط [[*]] جنب الديسك المختار، و [[detail disk]] آخر تأكيد قبل clean.
+
+write protected: [[attributes disk clear readonly]] بيشيل العلامة اللي ويندوز حاططها بس. لو الكارت فيه زرار Lock (كروت SD)، أو الفلاشة قفلت نفسها لأنها خلص عمرها (بيحصل كتير مع الفلاشات الرخيصة)، مفيش أمر هيصلّحها.
+
+و FAT32 أدوات ويندوز تاريخيًا مش بترضى تعمله على بارتيشن أكبر من 32 جيجا، فاستخدم exfat. وفي سكربت [[/s]] أي error بيوقف diskpart بـ exit code غير صفر، إلا لو الأمر فيه [[noerr]]. والمقابل في PowerShell: [[Get-Disk]] و [[Clear-Disk]] و [[New-Partition]] و [[Format-Volume]] (في تاب «PowerShell»)، والواجهة [[diskmgmt.msc]] بتعمل أغلب ده ماعدا clean.`,
+            when: R`فلاشة بعد ISO، كارت ميموري RAW، فلاشة write protected، هارد خارجي جديد عايز تبدأه نضيف، أو قبل ما تبيع أو تدّي حد فلاشة ([[clean all]]).`,
+            mistakes: R`[[select disk]] بالرقم الغلط، ودي الغلطة اللي بتمسح ويندوز أو هارد الباك أب، فاعمل [[detail disk]] كل مرة. أو تكتب الخطوات من الذاكرة ورا بعض بسرعة. أو تسيب هارد الباك أب متوصل وانت بتعمل ده. أو تفتكر [[clean]] بيمسح البيانات بأمان (هو بيمسح الجدول بس). أو تنسى [[assign]] فالفلاشة متظهرش في Explorer. أو تحاول تصلّح فلاشة قفلت نفسها هاردوير.`
+          },
+          lines: [
+            R`افتح diskpart (أدمن، وبيفتح prompt [[DISKPART>]]).`,
+            R`كل الديسكات بأرقامها وأحجامها: اعرف الفلاشة من الحجم.`,
+            R`اختار الفلاشة. الخطوة الخطيرة: اتأكد من الرقم.`,
+            R`اتأكد إنها هي: الموديل و Type USB والحروف.`,
+            R`شيل علامة «قراية بس» (لو write protected).`,
+            R`امسح جدول البارتيشنات كله.`,
+            R`بارتيشن واحد بكل المساحة.`,
+            R`فرمتة سريعة exFAT باسم USB.`,
+            R`ادّيها حرف درايف.`,
+            R`اخرج من diskpart.`
+          ],
+          sol: R`(diskpart مشغّلتهوش خالص: محتاج أدمن، وغلطة رقم واحدة بتمسح ديسك. اللي جاي من توثيق Microsoft ورسايل diskpart المعروفة.) من CMD عادي [[diskpart]] بيطلّع UAC ويفتح نافذة لوحده. [[list disk]] بيطبع جدول [[Disk ###  Status  Size  Free  Dyn  Gpt]]، زي [[Disk 0  Online  953 GB  1024 KB  *]] (النجمة تحت Gpt) و [[Disk 2  Online  28 GB  0 B]] (الفلاشة). بعد [[select disk 2]]: [[Disk 2 is now the selected disk.]]، و [[detail disk]] فيه اسم الفلاشة و [[Type   : USB]].
+
+بعدها بالترتيب: [[Disk attributes cleared successfully.]]، و [[DiskPart succeeded in cleaning the disk.]]، و [[DiskPart succeeded in creating the specified partition.]]، و [[100 percent completed]] و [[DiskPart successfully formatted the volume.]]، و [[DiskPart successfully assigned the drive letter or mount point.]]. ولو الفلاشة مقفولة هاردوير: [[attributes disk]] يقول [[Current Read-only State : Yes]]، و clean يفشل بـ [[Virtual Disk Service error:]] و [[The media is write protected.]]، وده مفيش منه رجوع.`
+        },
+        {
+          cmd: "pnputil و driverquery",
+          title: "الدرايفرات: اعرضها واعملها باك أب قبل الفرمتة",
+          desc: R`[[driverquery]] بيعرض كل الدرايفرات المسجلة على الجهاز، و [[pnputil]] بيدير «مخزن الدرايفرات» (driver store): يعرض الدرايفرات اللي اتسطبت من برا ويندوز، ويصدّرها لفولدر، ويسطّبها من فولدر. أهم استخدام: قبل ما تفرمت خد نسخة من كل درايفرات جهازك، وبعد الفرمتة سطّبها بأمر واحد.
+
+[[driverquery]] جدول: [[Module Name]] و [[Display Name]] و [[Driver Type]] (Kernel أو File System) و [[Link Date]]. و [[/v]] تفاصيل زيادة منها الحالة (Running أو Stopped) والمسار، و [[/fo]] الشكل ([[table]] أو [[list]] أو [[csv]])، و [[/si]] موقّع ولا لأ.
+[[pnputil /enum-drivers]] الدرايفرات اللي جت من برا ويندوز (كارت الشاشة والصوت والواي فاي والتاتش باد)، ولكل واحد [[Published Name]] اسمه في المخزن (زي [[oem54.inf]]) و [[Original Name]] و [[Provider Name]] و [[Driver Version]]. و [[/class Display]] نوع واحد.
+[[pnputil /enum-devices /class Display]] الأجهزة من نوع معين ودرايفر كل واحد، و [[/problem]] الأجهزة اللي فيها مشكلة (اللي عليها علامة صفرا في Device Manager).
+[[pnputil /export-driver * D:\DriversBackup]] صدّر كل الدرايفرات اللي من برا ([[*]] يعني كلهم) لفولدر موجود (أدمن). احفظه على درايف غير C أو فلاشة.
+[[pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install]] على الويندوز الجديد: ضيف كل ملفات [[.inf]] في الفولدر والفولدرات اللي جواه ([[/subdirs]])، وسطّبها على الأجهزة اللي محتاجاها ([[/install]]). أدمن.
+
+العرض ([[driverquery]] و [[/enum-drivers]] و [[/enum-devices]]) اشتغل عندي من CMD عادي، والتصدير والإضافة محتاجين أدمن.`,
+          example: R`driverquery
+driverquery /v /fo list | more
+driverquery /si /fo csv | findstr /i "FALSE"
+pnputil /enum-drivers
+pnputil /enum-devices /class Display
+pnputil /enum-devices /problem
+mkdir D:\DriversBackup
+pnputil /export-driver * D:\DriversBackup
+pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install`,
+          try: R`اعرض الدرايفرات اللي من برا ويندوز وعدّهم ([[pnputil /enum-drivers | find /c "Published Name"]])، واعرف درايفر كارت الشاشة من [[/enum-devices /class Display]]. ولو هتفرمت قريب: اعمل الـ export على فلاشة.`,
+          flag: "danger",
+          deep: {
+            why: R`بعد الفرمتة ويندوز بيلاقي أغلب الدرايفرات لوحده بس مش كلها: التاتش باد، أو كارت واي فاي معين (فمفيش نت أصلًا عشان تنزّل الدرايفر)، أو أزرار اللابتوب، أو الصوت. لو معاك فولدر الباك أب، أمر واحد بيرجّعهم. وكمان العرض بيوريك درايفر مش موقّع أو جهاز من غير درايفر قبل ما يعمل مشكلة.`,
+            how: R`ويندوز بيحتفظ بكل الدرايفرات المتسطبة في الـ driver store ([[C:\Windows\System32\DriverStore\FileRepository]]). اللي جت من برا بتتسجل بأسماء [[oem0.inf]] و [[oem1.inf]] وهكذا، ودول اللي [[/export-driver *]] بيصدّرهم: فولدر لكل درايفر فيه الـ [[.inf]] وملفاته، من غير درايفرات ويندوز نفسها (ودي الويندوز الجديد هيجيبها).
+
+جرّبت على لابتوب: [[pnputil /enum-drivers]] طلّع 123 درايفر من برا. و [[driverquery]] عدّ 465، لأنه بيعرض كل الدرايفرات المسجلة (ويندوز ومن برا، شغالة ومتوقفة). و [[driverquery /si]] بيطلّع [[FALSE]] لحاجات كتير ملهاش ملف inf أصلًا (عندي [[NearbySharing]] و [[Bluetooth Peripheral Device]] وجنبهم [[N/A]])، فالـ FALSE اللي تهمك هي اللي ليها inf وشركة، زي [[TAP-Windows Adapter V9]] (كارت VPN قديم) اللي طلع عندي بـ [[oem56.inf]].
+
+الباك أب ممكن يبقى كبير (درايفرات كارت الشاشة لوحدها جيجات)، ولكارت الشاشة الأحسن تنزّل آخر نسخة من موقع الشركة بدل القديمة. و [[pnputil /delete-driver oem12.inf /uninstall]] بيشيل درايفر من المخزن (أدمن، وبحذر). والمقابل في PowerShell: [[Get-PnpDevice]] (في تاب «PowerShell») و [[Export-WindowsDriver]].`,
+            when: R`قبل فرمتة أو تغيير ويندوز، جهاز عليه علامة صفرا في Device Manager، بعد تحديث درايفر بوّظ حاجة (تعرف النسخة القديمة كانت إيه)، أو تجهيز فلاشة درايفرات لأجهزة كتير من نفس الموديل.`,
+            mistakes: R`تصدّر على C نفسه وتفرمته. أو [[/export-driver]] لفولدر مش موجود. أو تفتكر الباك أب فيه البرامج (لوحة تحكم كارت الشاشة أو برنامج الصوت): ده الدرايفر بس. أو [[/add-driver]] من غير [[/subdirs]] فيدوّر في الفولدر الرئيسي بس ومش هيلاقي حاجة (كل درايفر في فولدر). أو تمسح درايفر شغال على جهاز مهم (كيبورد أو تاتش باد). أو تنقل درايفرات لجهاز موديل تاني.`
+          },
+          lines: [
+            R`كل الدرايفرات: الاسم والنوع والتاريخ.`,
+            R`تفاصيل كل واحد (شغال ولا لأ، ومساره)، صفحة صفحة.`,
+            R`الدرايفرات اللي مش موقّعة.`,
+            R`الدرايفرات اللي من برا ويندوز (oem*.inf).`,
+            R`كروت الشاشة ودرايفر كل واحد.`,
+            R`الأجهزة اللي فيها مشكلة.`,
+            R`فولدر الباك أب (على درايف غير C).`,
+            R`صدّر كل الدرايفرات اللي من برا (أدمن).`,
+            R`على الويندوز الجديد: سطّبهم كلهم (أدمن).`
+          ],
+          sol: R`[[pnputil /enum-drivers | find /c "Published Name"]] طلّع 123، وأول درايفر:
+[[Published Name: oem86.inf]]
+[[Original Name: amdacpbus.inf]]
+[[Provider Name: AMD]]
+[[Class Name: System]]
+[[Driver Version: 08/01/2024 6.0.0.79]]
+[[Signer Name: Microsoft Windows Hardware Compatibility Publisher]]
+و [[/enum-devices /class Display]] عرض [[AMD Radeon(TM) Graphics]] بـ [[Driver Name: oem54.inf]] و [[NVIDIA GeForce RTX 3070 Laptop GPU]] بـ [[oem71.inf]]، والاتنين [[Status: Started]]. و [[/enum-devices /problem]] طلّع [[No devices were found on the system.]] (مفيش جهاز فيه مشكلة). و [[driverquery]] أول سطوره [[Module Name  Display Name  Driver Type  Link Date]] وتحتها [[1394ohci  1394 OHCI Compliant Ho  Kernel]] (العمود بيقص الاسم الطويل، و [[/fo list]] بيعرضه كامل).
+
+(الـ export والـ add مشغّلتهمش هنا: محتاجين أدمن، والـ add بيسطّب درايفرات.) الـ export بيعمل فولدر لكل درايفر وبيطبع سطر لكل واحد وهو بيصدّره، وبعد الفرمتة الـ add بيطبع كل inf اتضاف وهل اتسطب على جهاز.`
+        },
+        {
+          cmd: "sc و net start",
+          title: "الخدمات: اعرض وشغّل ووقّف",
+          desc: R`الخدمات (services) برامج بتشتغل في الخلفية من غير نافذة: Windows Update، والطباعة، و Docker، وقواعد البيانات اللي بتسطّبها. [[sc]] و [[net start]] بيعرضوها ويشغّلوها ويوقفوها، وبيغيّروا هل تشتغل لوحدها مع الجهاز.
+
+[[net start]] لوحده: أسامي الخدمات الشغالة دلوقتي. و [[net start Spooler]] شغّل خدمة، و [[net stop Spooler]] وقّفها.
+[[sc query Spooler]] حالة خدمة: [[STATE]] (RUNNING أو STOPPED). و [[Spooler]] اسمها القصير (service name)، و [[Print Spooler]] اسمها الظاهر (display name)، و [[sc getkeyname "Print Spooler"]] بيجيب القصير من الظاهر.
+[[sc queryex]] نفس الحالة ومعاها [[PID]]، فتقدر تقفلها بـ taskkill لو علّقت (درس tasklist / taskkill).
+[[sc qc Spooler]] إعداداتها: [[START_TYPE]] ([[AUTO_START]] مع الجهاز، أو [[DEMAND_START]] لما حاجة تطلبها، أو [[DISABLED]] مقفولة)، و [[BINARY_PATH_NAME]] البرنامج نفسه، و [[SERVICE_START_NAME]] شغالة بأنهي حساب.
+[[sc config Spooler start= demand]] غيّر نوع التشغيل: [[auto]] أو [[demand]] أو [[disabled]] أو [[delayed-auto]]. المسافة بعد [[=]] لازمة ومفيش مسافة قبلها، ودي غرابة في sc.
+[[sc query state= all type= service]] كل الخدمات حتى المتوقفة.
+
+العرض مش محتاج أدمن، والتشغيل والإيقاف والتغيير محتاجين CMD كأدمن. وفي PowerShell [[sc]] اسم مختصر لـ Set-Content، فاكتب [[sc.exe]] هناك أو استخدم [[Get-Service]] (في تاب «PowerShell»).`,
+          example: R`net start
+sc query Spooler
+sc queryex Spooler
+sc qc Spooler
+sc getkeyname "Print Spooler"
+net stop Spooler
+net start Spooler
+sc config Spooler start= demand
+sc query state= all type= service | find /c "SERVICE_NAME"`,
+          try: R`اعرض الخدمات الشغالة، واعرف حالة وإعدادات Windows Update ([[wuauserv]]) و Remote Registry ([[RemoteRegistry]]) بـ query و qc. ولو الطباعة معلّقة عندك: من CMD أدمن وقّف Spooler وشغّله تاني.`,
+          flag: "danger",
+          deep: {
+            why: R`خدمة معلّقة (الطباعة واقفة، أو Docker مش بيقوم، أو Windows Update واقف على نسبة)، أو قاعدة بيانات متسطبة (MySQL أو PostgreSQL أو SQL Server) شغالة على طول وبتاكل رام وانت محتاجها وقت الشغل بس، أو تتأكد إن خدمة زي Remote Registry متقفلة. من الترمنال أسرع من [[services.msc]]، وبيتحط في سكربت.`,
+            how: R`الخدمات بيديرها Service Control Manager. كل خدمة ليها اسم قصير ثابت (اللي بتستخدمه في الأوامر) واسم ظاهر ممكن يتترجم. وخدمات كتير بتشتغل جوه [[svchost.exe]] مشترك ([[TYPE : 20 WIN32_SHARE_PROCESS]])، عشان كده بتلاقي svchost كتير في tasklist.
+
+جرّبت: [[net start]] عرض حوالي 149 خدمة شغالة، و [[sc query state= all type= service]] لقى 308 كلهم. و [[sc qc RemoteRegistry]] طلّع [[START_TYPE : 4 DISABLED]] و [[DEPENDENCIES : RPCSS]] و [[SERVICE_START_NAME : NT AUTHORITY\LocalService]]. و [[sc qc wuauserv]] (Windows Update) طلّع [[DEMAND_START]]: بتشتغل لما ويندوز يحتاجها، فـ STOPPED ساعات يبقى طبيعي. و [[sc query NoSuchSvc]] طلّع [[[SC] EnumQueryServicesStatus:OpenService FAILED 1060:]] و [[The specified service does not exist as an installed service.]] و errorlevel 1060.
+
+الطباعة المعلّقة: [[net stop Spooler]]، وامسح اللي جوه [[C:\Windows\System32\spool\PRINTERS]]، و [[net start Spooler]]. والخدمات بتعتمد على بعض: [[net stop]] على خدمة فيه خدمات تانية محتاجاها بيسألك يوقفهم معاها. ولو عايز برنامجك يشتغل كخدمة: [[sc create]] موجود بس محتاج برنامج مكتوب كخدمة، وأغلب الناس بيستخدموا أداة زي NSSM أو مهمة مجدولة (درس schtasks).`,
+            when: R`الطباعة معلّقة، خدمة قاعدة بيانات أو Docker عايز تشغّلها وتقفلها بإيدك، مراجعة إيه اللي بيشتغل مع الجهاز، أو سكربت بيتأكد إن خدمة شغالة قبل ما يكمّل.`,
+            mistakes: R`[[start=demand]] من غير مسافة بعد [[=]]: sc بيطبع المساعدة بدل ما ينفّذ. أو [[sc]] في PowerShell فيكتب ملف بدل ما يكلم الخدمات. أو تعمل disabled لخدمات ويندوز من لستة «سرّع جهازك» على النت، فحاجات تبوظ بعدين ومتعرفش ليه (Windows Update و Defender و Spooler وغيرهم). أو الاسم الظاهر مع [[sc query]] (عايز القصير). أو تفتكر STOPPED مع DEMAND_START مشكلة.`
+          },
+          lines: [
+            R`الخدمات الشغالة دلوقتي.`,
+            R`حالة خدمة الطباعة (بالاسم القصير).`,
+            R`الحالة ومعاها الـ PID.`,
+            R`إعداداتها: بتشتغل إمتى، وبأنهي حساب، والبرنامج.`,
+            R`الاسم القصير من الاسم الظاهر.`,
+            R`وقّفها (أدمن).`,
+            R`شغّلها تاني.`,
+            R`خلّيها تشتغل لما حاجة تطلبها بس (المسافة بعد = لازمة).`,
+            R`عدد كل الخدمات حتى المتوقفة.`
+          ],
+          sol: R`[[sc queryex Spooler]] طلّع [[SERVICE_NAME: Spooler]] و [[STATE : 4 RUNNING]] و [[(STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)]] و [[PID : 4608]]. و [[sc getkeyname "Print Spooler"]] طلّع [[[SC] GetServiceKeyName SUCCESS]] و [[Name = Spooler]]. و [[sc qc wuauserv]] طلّع [[START_TYPE : 3 DEMAND_START]] و [[DISPLAY_NAME : Windows Update]] و [[SERVICE_START_NAME : LocalSystem]]، و [[sc qc RemoteRegistry]] [[START_TYPE : 4 DISABLED]] (وده الكويس). والسطر الأخير طلّع 308.
+
+(الإيقاف والتشغيل والتغيير مشغّلتهمش هنا عشان ميأثروش على الجهاز.) من CMD أدمن [[net stop Spooler]] بيطبع [[The Print Spooler service is stopping.]] و [[The Print Spooler service was stopped successfully.]]، و [[net start Spooler]] نفس الكلام بـ starting و started، و [[sc config]] بيطبع [[[SC] ChangeServiceConfig SUCCESS]]. ومن CMD عادي: [[System error 5 has occurred.]] و [[Access is denied.]]، و sc بيقول [[[SC] OpenService FAILED 5:]] و [[Access is denied.]].`
+        },
+        {
+          cmd: "w32tm",
+          title: "ساعة الجهاز غلط؟ اعرف وزامن",
+          desc: R`[[w32tm]] أداة خدمة الوقت في ويندوز (Windows Time): بتقولك آخر مرة الساعة اتزامنت إمتى ومن أنهي سيرفر، وتقيس الفرق بين ساعتك وسيرفر وقت، وتطلب مزامنة دلوقتي.
+
+[[/query /status]] الحالة: [[Source]] الجهاز بياخد الوقت منين، و [[Last Successful Sync Time]] آخر مزامنة نجحت، و [[Leap Indicator]] و [[Stratum]] (لو [[not synchronized]] و 0 يبقى لسه متزامنش).
+[[/query /source]] السيرفر بس (عندي طلب أدمن).
+[[/query /peers]] السيرفرات المتظبطة وحالة كل واحد.
+[[/stripchart /computer:time.windows.com /samples:3 /dataonly]] قيس الفرق بينك وبين سيرفر: [[/samples:3]] 3 قياسات وبعدين يقف (من غيرها بيفضل لحد Ctrl+C)، و [[/dataonly]] أرقام من غير رسم. ده مش بيغيّر حاجة، فجرّبه براحتك.
+[[/resync]] زامن دلوقتي (CMD كأدمن، والخدمة لازم تكون شغالة)، و [[/rediscover]] معاه بيدوّر على السيرفرات من الأول.
+[[/tz]] المنطقة الزمنية والتوقيت الصيفي.
+
+ليه ده يهمك كمبرمج؟ لو الساعة غلط كام دقيقة: شهادات HTTPS بتبان «لسه مبدأتش» أو «خلصت» فالمواقع و git و npm و curl يفشلوا بـ certificate errors، وتوكنات JWT تتشاف منتهية أو لسه مش صالحة، وأكواد 2FA (TOTP، بتتغيّر كل 30 ثانية) اللي بيولّدها برنامج على الجهاز تطلع غلط، و commits بتتسجل بوقت غلط.`,
+          example: R`w32tm /query /status
+w32tm /query /peers
+w32tm /stripchart /computer:time.windows.com /samples:3 /dataonly
+w32tm /tz
+net start w32time
+w32tm /resync
+w32tm /config /manualpeerlist:"time.windows.com,0x9 pool.ntp.org,0x9" /syncfromflags:manual /update`,
+          try: R`قيس الفرق بين ساعتك و time.windows.com بالـ stripchart، وشوف آخر مزامنة من [[/query /status]]. لو الفرق أكتر من ثانيتين أو [[Last Successful Sync Time: unspecified]]: من CMD أدمن اعمل [[/resync]] وقيس تاني.`,
+          deep: {
+            why: R`لابتوب كان مقفول فترة طويلة أو بطارية الـ BIOS (CMOS) بتاعته ضعفت، أو جهاز dual boot مع لينكس (لينكس بيعتبر ساعة الـ BIOS بتوقيت UTC وويندوز بيعتبرها محلي، فكل ما تبدّل الساعة تتزحلق ساعتين أو تلاتة)، أو VM اتعملها pause. الأعراض: «Your clock is ahead» في المتصفح، أو [[certificate is not yet valid]] في git أو curl، أو أكواد 2FA مش راضية.`,
+            how: R`الخدمة [[W32Time]] بتسأل سيرفر NTP (بروتوكول الوقت، UDP بورت 123)، وعلى أجهزة البيت السيرفر الافتراضي [[time.windows.com]]. Microsoft بتوثّق إن الجهاز اللي مش على دومين بيزامن افتراضيًا كل 604,800 ثانية (أسبوع)، ولو الفرق صغير بيعدّل الساعة بالتدريج مش مرة واحدة. وكمان ويندوز بيظبط الساعة لو بعيدة جدًا من أوقات الشهادات في اتصالات HTTPS (اسمها Secure Time Seeding).
+
+جرّبت على لابتوب: [[/query /status]] طلّع [[Leap Indicator: 3(not synchronized)]] و [[Stratum: 0 (unspecified)]] و [[Last Successful Sync Time: unspecified]] و [[Source: Local CMOS Clock]]: من ساعة ما الجهاز فتح (من حوالي يومين) لسه متزامنش، وماشي بساعة الـ BIOS. و [[/query /peers]] طلّع [[Peer: time.windows.com,0x9]] و [[State: Pending]]. ومع ذلك الـ stripchart قاس فرق حوالي عُشر ثانية بس، فالساعة كويسة. والرقم الموجب في الـ stripchart، حسب حسبة NTP، معناه إن السيرفر سابقك بالقيمة دي.
+
+[[0x9]] جنب السيرفر أعلام: [[0x1]] (زامن كل فترة ثابتة) + [[0x8]] (client). و [[/config ... /update]] بيغيّر السيرفرات (أدمن). والأسهل لأغلب الناس: Settings ثم Time & language ثم Date & time ثم Sync now، ودي نفس [[/resync]].
+
+لو [[/resync]] قال [[The following error occurred: The service has not been started. (0x80070426)]] شغّل الخدمة الأول ([[net start w32time]]، درس sc و net start). ولو قال [[The computer did not resync because no time data was available.]] يبقى السيرفر مش بيرد: نت أو فايروول أو شبكة قافلة UDP 123. و Kerberos (دومين الشركة) بيرفض الدخول لو الفرق أكتر من 5 دقايق.`,
+            when: R`المتصفح أو git أو curl بيقولوا certificate not yet valid أو expired، أكواد 2FA غلط، dual boot مع لينكس، أو سيرفر ويندوز محتاج ساعته مظبوطة (لوجات ومهام مجدولة ودومين).`,
+            mistakes: R`تغيّر الساعة بإيدك بدل ما تصلّح المزامنة فترجع تغلط. أو الساعة متأخرة ساعة بالظبط فتغيّر الوقت، والغلط في المنطقة الزمنية أو التوقيت الصيفي (شوف [[/tz]]). أو [[/resync]] من CMD عادي. أو تفتكر stripchart بيصلّح حاجة. أو dual boot وتعدّل ويندوز كل مرة بدل ما تخلّي لينكس يستخدم الوقت المحلي ([[timedatectl set-local-rtc 1]]).`
+          },
+          lines: [
+            R`الحالة: المصدر وآخر مزامنة ناجحة.`,
+            R`السيرفرات المتظبطة وحالتها.`,
+            R`قيس الفرق مع سيرفر Microsoft 3 مرات (مش بيغيّر حاجة).`,
+            R`المنطقة الزمنية والتوقيت الصيفي.`,
+            R`شغّل خدمة الوقت لو متوقفة (أدمن).`,
+            R`زامن دلوقتي (أدمن).`,
+            R`غيّر السيرفرات لاتنين وطبّق على طول (أدمن).`
+          ],
+          sol: R`جرّبت من CMD عادي. [[w32tm /query /status]]:
+[[Leap Indicator: 3(not synchronized)]]
+[[Stratum: 0 (unspecified)]]
+[[Last Successful Sync Time: unspecified]]
+[[Source: Local CMOS Clock]]
+[[Poll Interval: 10 (1024s)]]
+و [[/query /peers]]: [[#Peers: 1]] و [[Peer: time.windows.com,0x9]] و [[State: Pending]]. و [[/stripchart /computer:time.windows.com /samples:3 /dataonly]]:
+[[Tracking time.windows.com [20.101.57.9:123].]]
+[[Collecting 3 samples.]]
+[[The current time is 10/2/2026 2:22:58 PM.]]
+[[14:22:58, +00.1439319s]]
+[[14:23:00, +00.1189082s]]
+[[14:23:02, +00.0932805s]]
+الفرق عُشر ثانية تقريبًا، يعني الساعة كويسة رغم إن المزامنة لسه Pending. و [[/tz]] طلّع [[Egypt Standard Time]] و [[Egypt Daylight Time]]، و [[/query /source]] من غير أدمن: [[The following error occurred: Access is denied. (0x80070005)]].
+
+([[/resync]] و [[/config]] مشغّلتهمش لأنهم محتاجين أدمن وبيغيّروا الساعة والإعدادات.) [[/resync]] لو نجح بيطبع [[Sending resync command to local computer]] و [[The command completed successfully.]]، وبعدها [[/query /status]] بيبقى فيه [[Last Successful Sync Time]] بتاريخ النهارده و [[Source: time.windows.com,0x9]].`
+        },
+        {
+          cmd: "wmic",
+          title: "wmic اتشال: البديل من CMD",
+          desc: R`[[wmic]] كان أمر في CMD بيجيب معلومات الجهاز (البروسيسور والديسكات والـ BIOS والعمليات)، وهتلاقيه في إجابات وسكربتات قديمة كتير. Microsoft شالته: من ويندوز 11 22H2 بقى ميزة اختيارية (Feature on Demand)، ومش موجود في التسطيبات الجديدة من 24H2، وبيتشال مع الترقية لـ 25H2. البديل [[Get-CimInstance]] في PowerShell، وبيتشغّل من CMD بسطر واحد.
+
+على ويندوز حديث [[wmic cpu get name]] بيطلّع [['wmic' is not recognized as an internal or external command,]] و errorlevel 9009.
+[[powershell -NoProfile -Command "..."]] شغّل أمر PowerShell واحد من CMD ورجّع. [[-NoProfile]] متحمّلش ملف الـ profile، فأسرع ومن غير رسايل زيادة. وعلامات التنصيص حوالين الأمر كله لازمة.
+[[Get-CimInstance Win32_Processor]] نفس [[wmic cpu]]: الأسامي في wmic كانت اختصارات (alias) لـ classes في WMI، و Get-CimInstance بياخد اسم الـ class نفسه.
+[[| Select-Object Name, NumberOfCores]] الأعمدة اللي عايزها، زي [[get name,numberofcores]] في wmic.
+الأشهر: [[Win32_BIOS]] (الـ serial)، و [[Win32_DiskDrive]] (الديسكات)، و [[Win32_OperatingSystem]] (نسخة ويندوز وآخر boot)، و [[Win32_Process]] (العمليات ومعاها الـ command line). و [[Win32_Product]] (البرامج المتسطبة) بطيء جدًا وبيخلّي ويندوز يعمل فحص وتصليح لبرامج MSI، فبدله [[winget list]].
+
+WMI نفسه (اللي wmic كان واجهة ليه) لسه موجود، اللي اتشال الأداة بس.`,
+          example: R`wmic cpu get name
+powershell -NoProfile -Command "Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors"
+powershell -NoProfile -Command "Get-CimInstance Win32_DiskDrive | Select-Object Model, Size, Status"
+powershell -NoProfile -Command "Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, LastBootUpTime"
+powershell -NoProfile -Command "(Get-CimInstance Win32_BIOS).SerialNumber"`,
+          try: R`لو لقيت سطر wmic في إجابة قديمة (زي [[wmic diskdrive get model,size]])، اكتب بديله بـ Get-CimInstance وشغّله من CMD.`,
+          deep: {
+            why: R`سكربتات bat قديمة وإجابات Stack Overflow بتستخدم wmic، وعلى جهاز جديد بتقع بـ «not recognized»، فلازم تعرف تترجمها. وكمان wmic كان من أشهر الأدوات اللي البرامج الخبيثة بتستخدمها (مسح نسخ Shadow Copy وتعطيل الحماية)، وده من أسباب شيله.`,
+            how: R`WMI قاعدة معلومات جوه ويندوز عن كل حاجة في الجهاز، متقسمة لـ classes. wmic كان بيكلمها بأسماء مختصرة ([[cpu]] و [[diskdrive]] و [[bios]] و [[os]] و [[process]])، و PowerShell بيكلمها بـ [[Get-CimInstance]] واسم الـ class، والناتج objects تقدر تفلترها وترتبها (درس «Get-CimInstance» في تاب «PowerShell»).
+
+جرّبت على ويندوز 11 (build 26300): wmic مش موجود خالص، و [[where wmic]] طلّع [[INFO: Could not find files for the given pattern(s).]].
+
+لو سكربت قديم مش هتقدر تعدّله ولازم wmic: Settings ثم System ثم Optional features، ودوّر على WMIC لو لسه متاحة لنسختك. ده حل مؤقت. وجوه ملف bat خد الناتج في متغير بـ [[for /f]] (درس for /f)، وأي [[%]] في أمر PowerShell اكتبها [[%%]].`,
+            when: R`ترجمة سكربت أو إجابة قديمة، أو معلومة سريعة عن الجهاز (serial للضمان، موديل الديسك، آخر restart) من CMD أو bat.`,
+            mistakes: R`تفضل تدوّر إزاي «تسطّب wmic» بدل ما تستخدم البديل. أو [[Get-WmiObject]] (القديم، ومش موجود في PowerShell 7). أو [[Win32_Product]] عشان تعرف البرامج. أو تنسى علامات التنصيص حوالين أمر PowerShell، فـ CMD ياخد الـ [[|]] على إنها pipe بتاعته (التفاصيل تحت).`
+          },
+          lines: [
+            R`على ويندوز حديث: not recognized.`,
+            R`البديل: اسم البروسيسور وعدد الـ cores.`,
+            R`الديسكات: الموديل والحجم بالبايت والحالة.`,
+            R`نسخة ويندوز وآخر مرة الجهاز فتح.`,
+            R`الـ serial بتاع الجهاز (للضمان).`
+          ],
+          sol: R`على ويندوز 11 (build 26300): [[wmic cpu get name]] طلّع [['wmic' is not recognized as an internal or external command,]] و errorlevel 9009. والبدايل اشتغلت من CMD:
+البروسيسور: [[AMD Ryzen 9 5900HX with Radeon Graphics]] و [[8]] cores و [[16]] logical processors (في شكل جدول).
+الديسكات: [[HFM001TD3JX013N  1024203640320  OK]] و [[CT1000P3SSD8  1000202273280  OK]] (الحجم بالبايت: حوالي 1 تيرا بحساب الشركات).
+ويندوز: [[Microsoft Windows 11 Home Single Language]] و [[10.0.26300]] ووقت آخر boot.
+والـ serial سطر واحد (مش هكتبه هنا).
+
+ولو شلت علامات التنصيص: [[powershell -NoProfile -Command Get-CimInstance Win32_Processor | Select-Object Name]] طلّع [['Select-Object' is not recognized as an internal or external command,]]، لأن CMD أخد الـ [[|]] وحاول يشغّل Select-Object كأمر بتاعه.`
+        }
+      ]
+    },
+    {
+      t: "اليوزرز والصلاحيات",
+      l: 2,
+      n: R`مين على الجهاز وبصلاحيات إيه: اليوزرز والجروبات و UAC وصلاحيات الملفات والتشغيل كيوزر تاني. العرض من CMD عادي، والتغيير محتاج CMD كأدمن والخطير عليه علامة`,
+      items: [
+        {
+          cmd: "net user",
+          title: "اليوزرز: اعرض واعمل وعطّل وامسح",
+          desc: R`[[net user]] بيعرض اليوزرز اللي على الجهاز وتفاصيل كل واحد، وبيعمل يوزر جديد أو يعطّله أو يمسحه. شغال في Home و Pro، وده مهم لأن [[lusrmgr.msc]] (الواجهة الرسومية لليوزرز والجروبات) مش موجودة في Home.
+
+[[net user]] لوحده: لستة اليوزرز (العرض مش محتاج أدمن). جنب يوزرك هتلاقي حسابات ويندوز نفسه: [[Administrator]] (الأدمن المدمج، مقفول افتراضيًا)، و [[Guest]]، و [[DefaultAccount]]، و [[WDAGUtilityAccount]]، متلمسهمش.
+[[net user ali]] تفاصيل يوزر: [[Account active]] شغال ولا متعطل، و [[Password expires]]، و [[Logon hours allowed]]، وتحت [[Local Group Memberships]] جروباته (لو فيها [[*Administrators]] يبقى أدمن). و [[%USERNAME%]] اسم يوزرك الحالي.
+
+التعديل كله محتاج CMD كأدمن (من غيره: [[System error 5 has occurred.]] و [[Access is denied.]]):
+[[net user sara * /add]] يوزر جديد اسمه sara. الـ [[*]] مكان الباسورد معناها «اسألني»: بيطلبه مرتين ومش بيظهر وانت بتكتبه. متكتبش الباسورد نفسه في الأمر، لأنه بيفضل في history النافذة (سهم لفوق و [[doskey /history]]) وفي أي سكربت أو لوج.
+[[/active:no]] عطّل اليوزر من غير ما تمسحه (ملفاته باقية)، و [[/active:yes]] رجّعه.
+[[/expires:12/31/2026]] اليوزر يقف لوحده من أول اليوم ده (بصيغة تاريخ جهازك)، و [[/expires:never]] من غير نهاية.
+[[/times:M-F,8AM-6PM]] يدخل في الأوقات دي بس: الأيام ([[M]] و [[T]] و [[W]] و [[Th]] و [[F]] و [[Sa]] و [[Su]]) وبعدها فاصلة والساعات، بالساعة الكاملة، و [[;]] بين أكتر من فترة، ومن غير مسافات. و [[/times:all]] أي وقت.
+[[/passwordchg:no]] اليوزر ميقدرش يغيّر الباسورد بتاعه.
+[[/delete]] امسح اليوزر. فولدره في [[C:\Users]] بيفضل، فامسحه بإيدك لو مش محتاجه.
+
+الاسم لحد 20 حرف، والباسورد لحد 127.`,
+          example: R`net user
+net user %USERNAME%
+net user sara * /add
+net user sara /expires:12/31/2026 /times:M-F,8AM-6PM
+net user sara /active:no
+net user sara /delete
+net user Administrator /active:yes
+net user Administrator /active:no`,
+          try: R`اعرض اليوزرز وتفاصيل يوزرك: انت في Administrators؟ وباسوردك بينتهي إمتى؟ ولو معاك CMD أدمن: اعمل يوزر تجربة بالـ [[*]]، واعرض تفاصيله، وعطّله، وامسحه.`,
+          flag: "danger",
+          deep: {
+            why: R`جهاز في البيت عليه أكتر من حد، أو لابتوب هتسلّمه لحد يشتغل عليه فترة، أو جهاز اختبار محتاج يوزر عادي (مش أدمن) تجرّب عليه برنامجك زي ما المستخدم الحقيقي هيشوفه. وفي Home مفيش [[lusrmgr.msc]]، فالأمر ده (أو Settings) هو الطريق. وكمان أول حاجة تبص عليها لو شاكك إن حد عمل يوزر على جهازك.`,
+            how: R`اليوزرز المحليين متخزنين في قاعدة على الجهاز اسمها SAM، و [[net user]] بيقرا ويكتب فيها. اليوزر اللي داخل بحساب Microsoft (إيميل) ليه برضه يوزر محلي مربوط بيه، اسمه غالبًا أول حروف الإيميل، وباسورده هو باسورد حساب Microsoft. جرّبت [[net user]] على يوزر من النوع ده وطلع [[Last logon Never]] مع إن اليوزر داخل كل يوم، لأن الدخول بيتسجل على حساب Microsoft مش العداد المحلي، فمتعتمدش على السطر ده.
+
+اليوزر الجديد بيدخل جروب [[Users]] بس (يوزر عادي)، ولو عايزه أدمن [[net localgroup Administrators sara /add]] (الدرس الجاي). وأول مرة يدخل ويندوز بيتعمله فولدر [[C:\Users\sara]].
+
+[[net accounts]] بيعرض سياسة الباسوردات والقفل. على ويندوز 11 Home عندي: [[Minimum password length: 0]] و [[Maximum password age (days): 42]] و [[Lockout threshold: 10]] و [[Lockout duration (minutes): 10]]، يعني 10 محاولات غلط ورا بعض بتقفل اليوزر 10 دقايق. والـ 42 يوم دي ممكن تتطبق على يوزر عملته بـ [[net user]]، فبص على [[Password expires]] في تفاصيله؛ لو فيها تاريخ هيطلب منه يغيّر الباسورد ساعتها.
+
+الأدمن المدمج ([[Administrator]]): [[net user Administrator /active:yes]] بيفعّله. ده خطر لأنه افتراضيًا مش بيعدّي على UAC (كل حاجة بتشتغل بصلاحيات كاملة من غير ما تسأل)، واسمه معروف فأي هجوم بيجرّبه الأول، ومستثنى من قيود UAC على الشبكة (درس shutdown /m). استخدامه المعقول الوحيد: يوزرك الأدمن باظ ومحتاج تدخل تصلّحه. حطله باسورد قوي ([[net user Administrator *]])، واقفله بـ [[/active:no]] أول ما تخلص. وفي بعض لغات ويندوز اسمه متترجم، فشوف اسمه من [[net user]] الأول.
+
+المقابل في PowerShell: [[Get-LocalUser]] و [[New-LocalUser]] و [[Disable-LocalUser]] (في تاب «PowerShell»).`,
+            when: R`جهاز مشترك في البيت، يوزر عادي للتجربة أو لطفل، يوزر مؤقت لحد بـ [[/expires]]، ساعات استخدام بـ [[/times]]، أو مراجعة أمنية: مين اليوزرز اللي على الجهاز ومين فيهم أدمن.`,
+            mistakes: R`تكتب الباسورد في الأمر نفسه فيفضل في الـ history والسكربتات. أو تمسح يوزر وتفتكر ملفاته راحت (فولدره في C:\Users لسه موجود). أو تفعّل Administrator وتسيبه شغال أو من غير باسورد. أو تعطّل يوزرك الأدمن الوحيد ([[/active:no]]) فمتلاقيش حد يصلّح. أو صيغة تاريخ [[/expires]] غير صيغة جهازك (شوفها بـ [[echo %date%]]). أو [[/times]] فيها مسافات. أو تجرّب من CMD عادي وتستغرب [[Access is denied]].`
+          },
+          lines: [
+            R`لستة اليوزرز على الجهاز (مش محتاج أدمن).`,
+            R`تفاصيل يوزرك: شغال ولا لأ، والباسورد، والجروبات.`,
+            R`يوزر جديد، والـ [[*]] بتسأل على الباسورد مخفي بدل ما يتكتب في الأمر (أدمن).`,
+            R`ينتهي آخر السنة، ويدخل من الاتنين للجمعة من 8 الصبح لـ 6 بالليل بس.`,
+            R`عطّله من غير ما تمسحه.`,
+            R`امسح اليوزر (فولدره في C:\Users بيفضل).`,
+            R`فعّل الأدمن المدمج (للطوارئ بس).`,
+            R`واقفله تاني أول ما تخلص.`
+          ],
+          sol: R`[[net user]] طلّع عندي:
+[[User accounts for \\ALI-PC]]
+[[ali  Administrator  DefaultAccount  Guest  WDAGUtilityAccount]]
+[[The command completed successfully.]]
+و [[net user %USERNAME%]] طلّع [[Account active Yes]] و [[Password expires Never]] و [[Logon hours allowed All]]، وتحت [[Local Group Memberships]]: [[*Administrators]] و [[*docker-users]] و [[*Performance Log Users]] و [[*Users]]، يعني اليوزر ده أدمن. و [[Last logon Never]] مع إني داخل بيه، لأنه حساب Microsoft. و [[net user Administrator]] طلّع [[Account active No]] و [[Comment Built-in account for administering the computer/domain]]: الأدمن المدمج موجود بس مقفول، وده الصح.
+
+(الإنشاء والتعديل والمسح مشغّلتهمش هنا عشان ميغيّروش يوزرز الجهاز؛ ده من توثيق Microsoft.) من CMD أدمن [[net user sara * /add]] بيسأل [[Type a password for the user:]] وبعدين [[Retype the password to confirm:]] ومش بيظهر اللي بتكتبه، وبعدها [[The command completed successfully.]]، وكذلك [[/active:no]] و [[/delete]]. ومن CMD عادي: [[System error 5 has occurred.]] و [[Access is denied.]].`
+        },
+        {
+          cmd: "net localgroup",
+          title: "الجروبات: مين أدمن ومين لأ",
+          desc: R`[[net localgroup]] بيعرض الجروبات المحلية ومين جوه كل جروب، وبيضيف يوزر لجروب أو يشيله منه. الجروب هو اللي بيحدد الصلاحيات: اللي في [[Administrators]] أدمن، واللي في [[Users]] بس يوزر عادي.
+
+[[net localgroup]] لوحده: كل الجروبات (كل اسم قبله [[*]]). [[net localgroup Administrators]] مين الأدمنز. والعرض مش محتاج أدمن.
+[[net localgroup Administrators sara /add]] خلّي sara أدمن، و [[/delete]] شيلها من الجروب (اليوزر نفسه بيفضل). الاتنين محتاجين CMD كأدمن.
+[[net localgroup "Remote Desktop Users" sara /add]] تقدر تدخل الجهاز ده بـ Remote Desktop من غير ما تبقى أدمن، وعلامات التنصيص عشان الاسم فيه مسافات. الجروب ده مش موجود في Home أصلًا: جرّبته وطلع [[System error 1376 has occurred.]] و [[The specified local group does not exist.]]، لأن Home مينفعش يستقبل Remote Desktop (درس mstsc).
+
+أسماء الجروبات متترجمة: على ويندوز بلغة تانية [[Administrators]] اسمه مختلف، فالأمر بالإنجليزي هيطلّع نفس error 1376. شوف الاسم الصح من [[net localgroup]] على الجهاز نفسه. وفي السكربتات استخدم الـ SID الثابت (رقم مش بيتترجم): [[S-1-5-32-544]] هو Administrators في أي لغة، و [[S-1-5-32-545]] هو Users.`,
+          example: R`net localgroup
+net localgroup Administrators
+net localgroup Administrators sara /add
+net localgroup Administrators sara /delete
+net localgroup "Remote Desktop Users" sara /add
+net localgroup Users`,
+          try: R`اعرف مين الأدمنز على جهازك. لو لقيت يوزر مش عارفه، اعرف تفاصيله بـ [[net user]] قبل ما تعمل أي حاجة.`,
+          flag: "danger",
+          deep: {
+            why: R`أي برنامج بتشغّله بياخد صلاحيات اليوزر اللي شغّله. لو انت أدمن طول اليوم، أي برنامج خبيث يوصلك يقدر ياخد صلاحيات كاملة بدوسة «Yes» واحدة على UAC. والجروبات هي اللي بتقرر مين أدمن، فلازم تعرف تشوفها وتظبطها، خصوصًا على جهاز مشترك أو جهاز حد طلب منك تراجعه.`,
+            how: R`كل يوزر ليه SID (رقم ثابت)، وكل جروب كمان. لما يوزر يدخل، ويندوز بيعمله «توكن» فيه SID بتاعه و SIDs كل جروباته، وكل ملف أو إعداد بيتقارن بالتوكن ده. عشان كده إضافة يوزر لجروب مبتسريش غير لما يعمل sign out ويدخل تاني (توكن جديد).
+
+الجروبات المدمجة ليها SIDs ثابتة: Administrators [[S-1-5-32-544]]، و Users [[S-1-5-32-545]]، و Remote Desktop Users [[S-1-5-32-555]]. [[net localgroup]] مبيقبلش SID، فالسكربت اللي هيشتغل على أجهزة بلغات مختلفة يستخدم PowerShell: [[Add-LocalGroupMember -SID S-1-5-32-544 -Member sara]] (في تاب «PowerShell»)، و [[icacls]] بيقبل SID بالشكل [[*S-1-5-32-545]] (درس icacls).
+
+جروبات هتشوفها: [[docker-users]] (Docker Desktop بيعمله، ومن غيره Docker مش هيشتغل لليوزر)، و [[Hyper-V Administrators]]، و [[OpenSSH Users]]، و [[Remote Management Users]] (PowerShell Remoting). وفي [[Users]] هتلاقي [[NT AUTHORITY\Authenticated Users]] و [[NT AUTHORITY\INTERACTIVE]]: أي حد داخل الجهاز يوزر عادي تلقائيًا.
+
+النصيحة اليومية: اعمل يوزر أدمن منفصل للتسطيب والإعدادات، واشتغل يوميًا بيوزر عادي (Standard). لما حاجة تحتاج أدمن، UAC هيطلب باسورد الأدمن بدل «Yes» بس، وده بيوقف أغلب البرامج الخبيثة. ومتشيلش نفسك من Administrators إلا لما تتأكد إن فيه أدمن تاني شغال وعارف باسورده.`,
+            when: R`مراجعة مين أدمن على جهاز، تحويل يوزر لعادي أو أدمن، إضافة حد لـ docker-users أو Remote Desktop Users من غير ما يبقى أدمن، أو سكربت تجهيز أجهزة.`,
+            mistakes: R`تشيل يوزرك الأدمن الوحيد من Administrators فتقفل على نفسك (الحل ساعتها من أدمن تاني أو Safe Mode). أو تستغرب إن الصلاحية الجديدة مسرتش (لازم sign out ودخول تاني). أو تكتب [[Administrators]] بالإنجليزي على ويندوز بلغة تانية. أو تنسى علامات التنصيص حوالين اسم فيه مسافات. أو تدوّر على Remote Desktop Users في Home.`
+          },
+          lines: [
+            R`كل الجروبات على الجهاز.`,
+            R`مين الأدمنز (مش محتاج أدمن).`,
+            R`خلّي sara أدمن (أدمن، وبيسري بعد ما تدخل تاني).`,
+            R`شيلها من الأدمنز (اليوزر نفسه بيفضل).`,
+            R`تدخل بـ Remote Desktop من غير ما تبقى أدمن (Pro بس).`,
+            R`مين في جروب اليوزرز العاديين.`
+          ],
+          sol: R`[[net localgroup Administrators]] طلّع عندي:
+[[Alias name     Administrators]]
+[[Comment        Administrators have complete and unrestricted access to the computer/domain]]
+وتحت [[Members]] اسمين: [[ali]] و [[Administrator]] (الأدمن المدمج دايمًا عضو حتى وهو مقفول). و [[net localgroup]] عرض 15 جروب منهم [[*Administrators]] و [[*Users]] و [[*Guests]] و [[*docker-users]] و [[*OpenSSH Users]] و [[*Remote Management Users]] و [[*Device Owners]]، ومفيش [[Remote Desktop Users]] لأن الجهاز Home. و [[net localgroup Users]] فيه [[ali]] و [[NT AUTHORITY\Authenticated Users]] و [[NT AUTHORITY\INTERACTIVE]].
+
+لو لقيت يوزر مش عارفه في Administrators: [[net user الاسم]] وبص على [[Account active]] و [[Password last set]] و [[Last logon]]. ولو مش بتاعك عطّله الأول بـ [[net user الاسم /active:no]] (أضمن من المسح، لو طلع برنامج محتاجه). (الإضافة والشيل مشغّلتهمش هنا: بيطبعوا [[The command completed successfully.]] من CMD أدمن، و [[System error 5 has occurred.]] من غيره.)`
+        },
+        {
+          cmd: "whoami /groups /priv",
+          title: "النافذة دي أدمن ولا لأ؟ (integrity level)",
+          desc: R`[[whoami /groups]] بيعرض الجروبات اللي في «التوكن» بتاع النافذة دي، ومنها سطر [[Mandatory Label]] اللي بيقولك هي شغالة بصلاحيات أدمن فعلًا ولا لأ. و [[whoami /priv]] بيعرض الـ privileges: صلاحيات خاصة زي «اقفل الجهاز» و «غيّر المنطقة الزمنية».
+
+ليه انت في Administrators ومع ذلك [[Access is denied]]؟ بسبب UAC: الأدمن لما يدخل بياخد توكنين، واحد عادي بيشتغل بيه كل حاجة، وواحد كامل بيتستخدم بس لما توافق على UAC (Run as administrator). سطر [[Mandatory Label]] بيفرّق:
+[[Medium Mandatory Level]] نافذة عادية، حتى لو انت أدمن.
+[[High Mandatory Level]] نافذة أدمن (elevated).
+[[System Mandatory Level]] شغال كـ SYSTEM (خدمة، أو مهمة مجدولة بـ [[/ru SYSTEM]]).
+
+وفي النافذة العادية بتاعة أدمن، سطر [[BUILTIN\Administrators]] جنبه [[Group used for deny only]]: الجروب موجود في التوكن بس مبيدّيش أي سماح. وفي نافذة الأدمن بيبقى [[Enabled group]].
+
+[[/fo list]] (أو [[table]] أو [[csv]]) شكل الناتج، و [[/all]] كل حاجة مرة واحدة (اليوزر والـ SID والجروبات والـ privileges). وفي [[/priv]] عمود [[State]]: [[Disabled]] مش معناها ممنوع، معناها موجودة في التوكن والبرنامج يفعّلها وقت ما يحتاجها. اللي مش في اللستة خالص هو اللي مش عندك.`,
+          example: R`whoami /groups /fo list | findstr /c:"Mandatory Label"
+whoami /groups | findstr /i "Administrators"
+whoami /priv
+whoami /groups | find "S-1-16-12288" >nul || echo NOT-ELEVATED
+whoami /all`,
+          try: R`افتح نافذة CMD عادية ونافذة أدمن (Win+X ثم Terminal (Admin))، وشغّل أول سطرين في الاتنين وقارن.`,
+          deep: {
+            why: R`أغلب «Access is denied» على جهازك الشخصي مش لأنك مش أدمن، لكن لأن النافذة نفسها مش elevated. السطر الأول بيقولك ده في ثانية بدل التخمين، والسطر الرابع بيخلّي سكربت bat يتأكد إنه شغال كأدمن قبل ما يبدأ، بدل ما يفشل في النص.`,
+            how: R`كل process ليه token فيه: اليوزر، والجروبات، والـ privileges، والـ integrity level. ويندوز بيقارن التوكن ده بصلاحيات كل ملف أو مفتاح ريجستري (درس icacls). والـ integrity level طبقة زيادة: process بـ Medium ميقدرش يكتب في حاجة متعلّمة High حتى لو الصلاحيات بتسمح.
+
+الـ SIDs بتوع المستويات ثابتة ومش بتتترجم: [[S-1-16-8192]] Medium، و [[S-1-16-12288]] High، و [[S-1-16-16384]] System. عشان كده السطر الرابع بيدوّر على SID مش على كلمة High، فبيشتغل على أي لغة ويندوز. [[>nul]] بيخفي ناتج find، و [[||]] بينفّذ اللي بعده لو find ملقاش (درس && و || و &). وفي سكربت حقيقي: [[whoami /groups | find "S-1-16-12288" >nul || (echo Run this as administrator & exit /b 1)]].
+
+سطر [[NT AUTHORITY\Local account and member of Administrators group]] ([[S-1-5-114]]) بيظهر لأي يوزر محلي أدمن، وهو اللي بيمنع حسابات محلية أدمن من الإدارة عن بعد (UAC remote restrictions، درس shutdown /m).
+
+و [[whoami /priv]] في نافذة عادية بيطلّع حوالي 5 privileges، وفي نافذة أدمن أكتر من 20، منها [[SeTakeOwnershipPrivilege]] (اللي takeown بيستخدمها) و [[SeBackupPrivilege]] و [[SeDebugPrivilege]] و [[SeRemoteShutdownPrivilege]].`,
+            when: R`قبل أي أمر محتاج أدمن (sfc و chkdsk و netsh set و icacls على ملفات النظام)، في أول سكربت bat لازم يشتغل كأدمن، أو لما برنامج يقول Access denied وانت متأكد إنك أدمن.`,
+            mistakes: R`تفتكر إن وجودك في Administrators معناه إن كل نافذة أدمن. أو تقرا [[Disabled]] في /priv على إنها «ممنوع». أو تتأكد من الأدمن في سكربت بـ findstr على [[High Mandatory Level]] فيبوظ على ويندوز بلغة تانية (استخدم الـ SID). أو تخلط بين [[whoami]] (انت مين) و [[whoami /groups]] (انت بصلاحيات إيه دلوقتي).`
+          },
+          lines: [
+            R`النافذة دي Medium (عادية) ولا High (أدمن)؟`,
+            R`جروب Administrators: [[deny only]] في نافذة عادية، و [[Enabled group]] في نافذة أدمن.`,
+            R`الـ privileges اللي في التوكن وحالتها.`,
+            R`فحص للسكربتات: بيطبع NOT-ELEVATED لو النافذة مش أدمن، على أي لغة.`,
+            R`كل حاجة: اليوزر والـ SID والجروبات والـ privileges.`
+          ],
+          sol: R`في نافذة CMD عادية وأنا أدمن: السطر الأول طبع [[Group Name: Mandatory Label\Medium Mandatory Level]]. والتاني طبع سطرين: [[NT AUTHORITY\Local account and member of Administrators group ... Group used for deny only]] و [[BUILTIN\Administrators  Alias  S-1-5-32-544  Group used for deny only]]: اليوزر أدمن بس النافذة لأ. و [[whoami /priv]] طلّع 5 بس: [[SeShutdownPrivilege]] (Disabled) و [[SeChangeNotifyPrivilege]] (Enabled) و [[SeUndockPrivilege]] و [[SeIncreaseWorkingSetPrivilege]] و [[SeTimeZonePrivilege]]. والسطر الرابع طبع [[NOT-ELEVATED]].
+
+في نافذة الأدمن (Terminal (Admin)) السطر الأول بيطبع [[High Mandatory Level]]، والتاني بيبقى جنب Administrators [[Mandatory group, Enabled by default, Enabled group, Group owner]] بدل deny only، والرابع مبيطبعش حاجة، و [[/priv]] أكتر من 20 سطر. (نافذة الأدمن مقدرتش أفتحها هنا، فده من توثيق UAC و whoami.)`
+        },
+        {
+          cmd: "icacls",
+          title: "صلاحيات الملفات والفولدرات",
+          desc: R`[[icacls]] بيعرض صلاحيات ملف أو فولدر (الـ ACL: مين يقدر يعمل إيه) ويغيّرها: يدّي صلاحية، أو يمنع، أو يشيل، أو يرجّعها للموروث، أو ياخد منها نسخة احتياطي. ده المقابل لـ [[chmod]] و [[chown]] في لينكس، بس أدق بكتير.
+
+[[icacls folder]] لوحده بيعرض سطر لكل يوزر أو جروب: الاسم، وبعده [[:]] والصلاحيات بين أقواس.
+الصلاحيات الأساسية: [[F]] كل حاجة (Full، ومنها تغيير الصلاحيات نفسها)، و [[M]] تعديل (قراية وكتابة ومسح)، و [[RX]] قراية وتشغيل، و [[R]] قراية بس، و [[W]] كتابة بس، و [[D]] مسح.
+الوراثة (inheritance)، وبتتكتب قبل الصلاحية: [[(OI)]] الملفات اللي جوه الفولدر تورثها (object inherit)، و [[(CI)]] الفولدرات اللي جوه تورثها (container inherit)، و [[(IO)]] للي جوه بس مش الفولدر نفسه (inherit only)، و [[(NP)]] المستوى اللي تحته بس (no propagate). و [[(I)]] في العرض معناها «الصلاحية دي جاية بالوراثة من الفولدر اللي فوق».
+
+التعديل:
+[[/grant Users:(OI)(CI)M]] ادّي جروب Users تعديل على الفولدر وكل اللي جواه. لو كتبتها تاني بصلاحية مختلفة بتتضاف جنب القديمة، و [[/grant:r]] بتستبدل القديمة (replace).
+[[/deny Users:W]] امنع الكتابة. المنع بيكسب أي سماح، فاستخدمه نادرًا.
+[[/remove Users]] شيل الصلاحيات المكتوبة صريح لـ Users (مش الموروثة).
+[[/inheritance:d]] اقطع الوراثة وانسخ الموروث كصلاحيات صريحة، و [[/inheritance:r]] اقطعها وشيل الموروث خالص، و [[/inheritance:e]] رجّعها.
+[[/reset]] امسح الصريح وارجع للموروث بس.
+[[/t]] على كل اللي جوه، و [[/c]] كمّل لو حاجة فشلت، و [[/q]] متطبعش سطر لكل ملف.
+[[/save file /t]] احفظ الصلاحيات في ملف، و [[/restore file]] رجّعها منه.
+
+القراية مش محتاجة أدمن، والتعديل على ملفاتك (اللي انت صاحبها) برضه لأ. ملفات يوزرز تانيين أو النظام محتاجة CMD كأدمن. ولو الأسماء متترجمة على جهازك، [[*S-1-5-32-545]] (بالنجمة) يعني Users في أي لغة.`,
+          example: R`mkdir shared\sub
+icacls shared
+icacls shared /grant Users:(OI)(CI)M
+icacls shared\sub
+icacls shared /grant:r Users:(OI)(CI)RX
+icacls shared /save shared-acl.txt /t
+icacls shared /remove Users
+icacls shared /reset /t /c /q`,
+          try: R`في lab: اعمل فولدر، ادّي Users صلاحية RX عليه، واعرض صلاحيات فولدر جواه وشوف [[(I)]]، وبعدين رجّع كل حاجة بـ [[/reset /t]] وامسح الفولدر.`,
+          flag: "danger",
+          deep: {
+            why: R`مشروع على D مش راضي يتمسح، أو برنامج شغال كخدمة مش قادر يكتب في فولدر اللوج، أو فولدر مشترك على الشبكة عايز الناس تقرا منه بس، أو مفتاح SSH ويندوز رافضه لأن صلاحياته «too open» (OpenSSH على ويندوز بيشترط إن محدش غيرك يقرا المفتاح). كل ده صلاحيات NTFS، والواجهة (Properties ثم Security) بطيئة ومش بتتحط في سكربت.`,
+            how: R`كل ملف وفولدر على NTFS ليه صاحب (owner) وقايمة ACL، وكل سطر فيها: يوزر أو جروب، وسماح أو منع، وصلاحيات، وأعلام وراثة. ويندوز بيقرا القايمة بترتيب: المنع الصريح الأول، وبعدين السماح، والصريح قبل الموروث.
+
+الحروف [[F]] و [[M]] و [[RX]] اختصارات لمجموعات، وفيه صلاحيات دقيقة بتتكتب بفواصل، زي [[(RX,WD,AD)]] اللي على [[C:\Users\Public]]، و [[(GR,GE)]] (generic read و execute) مع [[(IO)]] اللي على [[C:\Program Files]]. و [[C:\Windows\notepad.exe]] عليه [[NT SERVICE\TrustedInstaller:(F)]] و [[BUILTIN\Administrators:(RX)]]: حتى الأدمنز قراية وتشغيل بس (درس takeown).
+
+جرّبت على فولدر في TEMP: بعد [[/grant Users:(OI)(CI)M]] الفولدر عرض [[BUILTIN\Users:(OI)(CI)(M)]] (صريح)، والفولدر اللي جواه [[BUILTIN\Users:(I)(OI)(CI)(M)]]، والملف جواه [[BUILTIN\Users:(I)(M)]]: الملف مبيبقاش عليه OI و CI لأن مفيش حاجة جواه تورث. و [[/grant Users:RX]] على ملف عنده M موروثة ضافت سطر جديد جنب الموروث مش مكانه، و [[/deny Users:W]] ظهرت [[BUILTIN\Users:(DENY)(W)]] أول سطر.
+
+[[/save]] بيكتب الصلاحيات بصيغة SDDL (نص زي [[D:AI(A;OICIID;FA;;;SY)]])، والأسامي جواه نسبية للفولدر اللي فوق: [[icacls D:\Projects\app /save acl.txt /t]] بيكتب [[app]] و [[app\file.txt]]، فالـ restore بيكون على الأب: [[icacls D:\Projects /restore acl.txt]]. والملف UTF-16 من غير BOM، فـ [[type]] بيطبعه بمسافات بين الحروف، افتحه في notepad. و [[/restore]] محتاج CMD كأدمن حتى على ملفاتك: جرّبته من غير أدمن وطلع [[Not all privileges or groups referenced are assigned to the caller.]].
+
+errorlevel: [[0]] نجح، و [[1332]] الاسم مش موجود ([[No mapping between account names and security IDs was done.]])، و [[2]] الملف مش موجود. وصاحب الملف دايمًا يقدر يعدّل صلاحياته حتى لو شال كل حاجة، وده اللي بيخلّي الغلطة الأولى في mistakes تتصلّح. والمقابل في PowerShell: [[Get-Acl]] و [[Set-Acl]] (في تاب «PowerShell»).`,
+            when: R`فولدر مشترك (قراية بس للناس)، فولدر لوج أو uploads لخدمة أو IIS، مشروع اتنقل من جهاز تاني وبقى مش بيتمسح (مع takeown)، مفتاح SSH، أو باك أب للصلاحيات قبل تعديل كبير.`,
+            mistakes: R`[[/inheritance:r]] على فولدر كل صلاحياته موروثة: بيبقى من غير أي صلاحية خالص. جرّبتها على فولدر تجربة: [[icacls sub]] طبع الاسم من غير ولا سطر، والملف اللي جواه طلّع [[Access is denied.]] لصاحبه نفسه، ورجع بـ [[/inheritance:e]]. الصح [[/inheritance:d]] (بينسخ الموروث قبل ما يقطع)، أو [[/grant]] صريح الأول وبعدين [[:r]]. أو [[/deny]] على Everyone أو Users فتمنع نفسك (انت جوه Users). أو تنسى [[/t]] فالتعديل يبقى على الفولدر بس. أو [[/reset /t]] أو أي تعديل على [[C:\]] أو [[C:\Windows]] أو [[Program Files]]: بيبوّظ صلاحيات النظام ومحدش يقدر يرجّعها بسهولة. أو مسافات جوه [[Users:(OI)(CI)M]].`
+          },
+          lines: [
+            R`فولدر للتجربة وفولدر جواه.`,
+            R`اعرض صلاحياته.`,
+            R`ادّي Users تعديل على الفولدر وكل اللي جواه.`,
+            R`اللي جوه ورثها: هتلاقي [[(I)]] جنبها.`,
+            R`بدّل صلاحية Users بقراية وتشغيل بس ([[:r]] تستبدل بدل ما تضيف).`,
+            R`احفظ صلاحيات الفولدر وكل اللي جواه في ملف.`,
+            R`شيل صلاحية Users الصريحة.`,
+            R`رجّع كل حاجة للموروث بس، على كل اللي جوه ومن غير سطر لكل ملف.`
+          ],
+          sol: R`شغّلت الكود اللي تحت بالظبط في TEMP (والفولدر اتمسح بعدها). [[/grant Users:(OI)(CI)RX]] طبع [[processed file: test-acl]] و [[Successfully processed 1 files; Failed processing 0 files]]. و [[icacls test-acl\inside]] طبع:
+[[test-acl\inside BUILTIN\Users:(I)(OI)(CI)(RX)]]
+[[NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)]]
+[[BUILTIN\Administrators:(I)(OI)(CI)(F)]]
+[[ALI-PC\ali:(I)(OI)(CI)(F)]]
+يعني الفولدر اللي جوه ورث RX، و Users مكانش موجود أصلًا قبلها: فولدرك الشخصي مقفول على SYSTEM والأدمنز وانت بس. و [[/reset /t /c /q]] طبع [[Successfully processed 2 files; Failed processing 0 files]] بس (الـ [[/q]] خبّت سطور processed file)، وبعدها الاتنين رجعوا التلات سطور الموروثة [[(I)]] من غير Users.
+
+حاجة شفتها على الجهاز ده: أول [[icacls test-acl]] قبل أي تعديل طلّع التلات سطور من غير [[(I)]]، وبعد الـ grant ظهروا مرتين (مرة صريح ومرة [[(I)]]). ده لأن فولدرات البروفايل هنا صلاحياتها صريحة، والـ [[/reset]] رجّعها موروثة بس. و [[/grant *S-1-5-32-545:(OI)(CI)RX]] بالـ SID عمل نفس الحاجة وظهر [[BUILTIN\Users]]، واسم غلط ([[/grant NoSuchUser:R]]) طلّع [[NoSuchUser: No mapping between account names and security IDs was done.]] و errorlevel 1332.`,
+          solCode: R`mkdir test-acl\inside
+icacls test-acl /grant Users:(OI)(CI)RX
+icacls test-acl\inside
+icacls test-acl /reset /t /c /q
+icacls test-acl
+rmdir /s /q test-acl`
+        },
+        {
+          cmd: "takeown",
+          title: "خد ملكية فولدر مش راضي يتمسح",
+          desc: R`[[takeown]] بيخلّيك صاحب (owner) ملف أو فولدر، وصاحب الحاجة يقدر يغيّر صلاحياتها دايمًا. فلما فولدر يقولك [[Access is denied]] وانت أدمن (جاي من هارد قديم، أو من يوزر اتمسح، أو من ويندوز تاني)، الحل خطوتين: خد الملكية، وبعدين ادّي نفسك صلاحية بـ icacls.
+
+[[/f path]] الملف أو الفولدر (ينفع [[*]]).
+[[/r]] على كل اللي جوه (recursive).
+[[/d y]] لو فولدر جوه مش مسموحلك تشوف اللي فيه، خد ملكيته برضه من غير ما تسأل. من غيرها بيسألك عند كل واحد، و [[/d n]] عدّيه.
+[[/a]] الملكية تروح لجروب Administrators بدل يوزرك.
+
+الخطوة التانية: [[icacls folder /grant %USERNAME%:F /t]] (درس icacls). والاتنين محتاجين CMD كأدمن، لأن ملكية ملف مش بتاعك محتاجة privilege الأدمن [[SeTakeOwnershipPrivilege]]. و [[dir /q]] بيعرض صاحب كل ملف، فتعرف المشكلة قبل ما تبدأ.
+
+ممنوع على [[C:\Windows]] و [[C:\Program Files]] وملفات النظام: صاحبهم [[NT SERVICE\TrustedInstaller]]، ودي الخدمة اللي بتسطّب تحديثات ويندوز. لو أخدت ملكيتهم، التحديثات ممكن تفشل، و sfc يلاقيهم «متغيرين»، وأي برنامج خبيث شغال باسمك يقدر يعدّل فيهم.`,
+          example: R`dir /q "D:\OldPC"
+takeown /f "D:\OldPC" /r /d y
+icacls "D:\OldPC" /grant %USERNAME%:F /t /c /q
+rd /s /q "D:\OldPC"
+takeown /f "D:\Shared" /r /d y /a`,
+          try: R`اعرض صاحب الملفات في فولدر عندك بـ [[dir /q]]، وقارنه بـ [[dir /q C:\Windows\notepad.exe]]. والـ takeown نفسه جرّبه بس على حاجة متأكد إنها بتاعتك ومش من النظام.`,
+          flag: "danger",
+          deep: {
+            why: R`ركّبت هارد من جهاز قديم، أو نسخت فولدر من ويندوز تاني، والملفات صلاحياتها لسه باسم يوزرز الجهاز القديم (SIDs مش موجودة عندك، فبتظهر في icacls كأرقام [[S-1-5-21-...]]). النتيجة: Access is denied حتى وانت أدمن. takeown و icacls بيصلّحوا ده من غير برامج «unlocker» من النت.`,
+            how: R`الصلاحيات (ACL) بتقول مين يعمل إيه، لكن صاحب الحاجة دايمًا يقدر يقرا ويغيّر الـ ACL نفسه حتى لو مش مكتوب فيه. والأدمن عنده privilege «Take ownership» اللي بتخلّيه صاحب أي حاجة من غير ما يكون عنده أي صلاحية عليها. takeown بيستخدم الـ privilege دي، وبعدها icacls (انت دلوقتي الصاحب) يكتب صلاحية جديدة. الملكية لوحدها مش صلاحية قراية، عشان كده الخطوة التانية لازمة.
+
+[[dir /q]] بيضيف عمود الصاحب، بس العمود بيقص الأسامي الطويلة. ولو الرسالة إن الملف مستخدم (in use) مش Access denied، المشكلة برنامج فاتح الملف مش صلاحيات (درس tasklist / taskkill).
+
+takeown بيطبع سطر لكل ملف، و [[/r]] على فولدر كبير بيطبع آلاف السطور، فممكن تحوّلها لملف: [[> takeown.log]]. وفيه حاجات تانية في ويندوز ملكيتها لازم تفضل زي ما هي: [[C:\Program Files\WindowsApps]] (برامج الـ Store) و [[C:\System Volume Information]].`,
+            when: R`هارد أو فلاشة من جهاز تاني، فولدر يوزر اتمسح، باك أب اتنقل بصلاحياته، أو فولدر في D مش بيتمسح ولا بيتنقل.`,
+            mistakes: R`takeown على [[C:\Windows]] أو [[Program Files]] أو [[C:\]] كله «عشان أخلص»، فتحديثات ويندوز تبوظ. أو تاخد الملكية وتنسى خطوة icacls وتستغرب إنه لسه Access denied. أو تنسى [[/d y]] فيقف يسألك عند كل فولدر. أو تشغّله من CMD عادي. أو تعمل كده على فولدر مشترك لناس تانيين فتشيل صلاحياتهم.`
+          },
+          lines: [
+            R`مين صاحب الملفات؟ (dir بعمود الصاحب).`,
+            R`خد ملكية الفولدر وكل اللي جواه، ومتسألش (أدمن).`,
+            R`ادّي يوزرك Full على كل حاجة جواه، وكمّل لو حاجة فشلت.`,
+            R`دلوقتي تقدر تمسحه.`,
+            R`الملكية لجروب Administrators بدل يوزرك ([[/a]]).`
+          ],
+          sol: R`[[dir /q]] على فولدر تجربة طلّع عمود الصاحب: [[10/02/2026  02:32 PM    3 ALI-PC\ali    a.txt]]. و [[dir /q C:\Windows\notepad.exe]] طلّع [[NT SERVICE\TrustedInstanotepad.exe]]: العمود قص الاسم ولزقه في اسم الملف، والاسم الكامل [[NT SERVICE\TrustedInstaller]]، و [[icacls C:\Windows\notepad.exe]] أكده: [[NT SERVICE\TrustedInstaller:(F)]] و [[BUILTIN\Administrators:(RX)]].
+
+(takeown نفسه مشغّلتهوش لأنه بيغيّر ملكية ملفات ومحتاج أدمن؛ ده من [[takeown /?]] اللي شغّلته ومن التوثيق.) من CMD أدمن بيطبع لكل حاجة [[SUCCESS: The file (or folder): "D:\OldPC\..." now owned by user "ALI-PC\ali".]]، ومع [[/a]] [[now owned by the administrators group.]]. ومن CMD عادي على حاجة مش بتاعتك: [[ERROR: The current logged on user does not have ownership privileges on the file (or folder) "..."]].`
+        },
+        {
+          cmd: "runas",
+          title: "شغّل برنامج كيوزر تاني",
+          desc: R`[[runas]] بيشغّل برنامج باسم يوزر تاني وبصلاحياته، وانت فاضل داخل بيوزرك. بيسألك على باسورد اليوزر ده في نفس النافذة، ومش بيظهر وانت بتكتبه.
+
+[[/user:PC\sara]] اليوزر: اسم الجهاز وبعده [[\]] واسم اليوزر (أو [[sara@PC]])، ولجهاز شركة اسم الدومين بدل اسم الجهاز. واسم جهازك في [[%COMPUTERNAME%]].
+بعده البرنامج، ولو فيه مسافات أو arguments حطه كله بين علامات تنصيص: [[runas /user:PC\sara "notepad C:\notes.txt"]].
+[[/netonly]] البرنامج يشتغل باسمك على الجهاز، لكن أي اتصال على الشبكة (SQL Server أو شير أو Active Directory) يروح بيوزر وباسورد تانيين. مفيد من لابتوب مش على دومين الشركة: كل حاجة بتفتحها من النافذة دي بتكلم سيرفرات الشركة بحسابك هناك. والباسورد مع [[/netonly]] مش بيتأكد منه غير لما البرنامج يتصل فعلًا.
+[[/savecred]] احفظ الباسورد في Credential Manager ومتسألش تاني. خطير: أي حد قاعد على يوزرك (أو أي برنامج) يقدر يشغّل أي حاجة باسم اليوزر ده من غير باسورد، فلو ده أدمن يبقى إديت يوزرك صلاحيات أدمن دايمة. وتوثيق Microsoft بيقول إنه مش متاح في نسخ Home القديمة.
+[[/noprofile]] متحمّلش بروفايل اليوزر: أسرع، بس برامج ممكن تبوظ من غيره.
+
+مهم: [[runas]] مش بيعمل elevation. [[runas /user:PC\admin cmd]] بيوزر أدمن بيفتح نافذة Medium (درس whoami /groups /priv)، لأن UAC بيدّي الأدمن توكن عادي هنا كمان (إلا الأدمن المدمج). عشان تفتح حاجة كأدمن من CMD: [[powershell -Command "Start-Process cmd -Verb RunAs"]]، وده بيطلّع UAC (درس «Start-Process» في تاب «PowerShell»).`,
+          example: R`runas /user:%COMPUTERNAME%\sara cmd
+runas /user:%COMPUTERNAME%\sara "notepad C:\Users\Public\test.txt"
+runas /netonly /user:CORP\ali cmd
+powershell -Command "Start-Process cmd -Verb RunAs"`,
+          try: R`لو عندك يوزر تاني على الجهاز (أو يوزر تجربة من درس net user): افتح cmd بيه بـ runas واكتب [[whoami]] جواه. وجرّب السطر الأخير، واكتب في النافذة اللي هتفتح [[whoami /groups | findstr /c:"Mandatory Level"]].`,
+          deep: {
+            why: R`تجرّب برنامجك وهو شغال بيوزر عادي من غير ما تعمل sign out، أو تفتح أداة إدارة بحساب أدمن منفصل وانت داخل بيوزر عادي (النصيحة اللي في درس net localgroup)، أو تتصل بقاعدة SQL Server أو شير في الشركة بحساب الدومين من لابتوب شخصي.`,
+            how: R`runas بيطلب من خدمة اسمها Secondary Logon ([[seclogon]]) تعمل logon جديد باليوزر والباسورد، وتشغّل البرنامج بالتوكن ده على نفس الشاشة. لو الخدمة دي متوقفة أو disabled هيفشل (درس sc و net start).
+
+[[/netonly]] بيعمل logon من نوع «NewCredentials»: التوكن المحلي هو توكنك بالظبط ([[whoami]] جوه النافذة بيطبع اسمك انت)، والبيانات التانية بتتبعت بس لما البرنامج يطلب حاجة من جهاز تاني. عشان كده الباسورد الغلط مش بيبان غير وقت الاتصال.
+
+runas بيقرا الباسورد من الكيبورد بس، ومفيش طريقة تكتبه في الأمر، وده مقصود. لو محتاج تشغيل تلقائي بيوزر تاني، المكان الصح مهمة مجدولة بـ [[/ru]] و [[/rp]] (درس schtasks) أو خدمة، مش [[/savecred]]. واليوزر لازم يكون عنده باسورد، ولو حساب Microsoft فالباسورد بتاع الحساب مش الـ PIN.`,
+            when: R`اختبار برنامج بيوزر عادي، أدوات إدارة بحساب أدمن منفصل، أو أدوات الشركة (SQL Server Management Studio أو أدوات Active Directory أو شيرات) من جهاز مش على الدومين بـ [[/netonly]].`,
+            mistakes: R`تفتكر runas بيعمل Run as administrator فتستغرب إن النافذة لسه Access denied. أو [[/savecred]] مع حساب أدمن. أو تنسى علامات التنصيص حوالين البرنامج و arguments بتاعته. أو اسم اليوزر من غير اسم الجهاز فيدوّر عليه في مكان غلط. أو تحاول تحط الباسورد في سكربت.`
+          },
+          lines: [
+            R`cmd جديد باسم sara (هيسألك على باسوردها).`,
+            R`برنامج ومعاه argument: كله بين علامات تنصيص.`,
+            R`cmd باسمك، بس أي اتصال شبكة بيروح بحساب الشركة.`,
+            R`ده اللي بيفتح CMD كأدمن فعلًا (بيطلّع UAC).`
+          ],
+          sol: R`(runas مشغّلتهوش هنا لأنه بيسأل على باسورد يوزر تاني من الكيبورد؛ ده من توثيق Microsoft، ونصوص الأخطاء من [[net helpmsg 1326]] و [[net helpmsg 1327]].) [[runas /user:PC\sara cmd]] بيطبع [[Enter the password for PC\sara:]]، وبعد الباسورد [[Attempting to start cmd as user "PC\sara" ...]] ونافذة جديدة عنوانها فيه [[(running as PC\sara)]]. جواها [[whoami]] بيطبع [[pc\sara]]، ولو sara أدمن [[whoami /groups]] بيوريك [[Medium Mandatory Level]] برضه.
+
+باسورد غلط: [[RUNAS ERROR: Unable to run - cmd]] و [[1326: The user name or password is incorrect.]]. يوزر من غير باسورد: [[1327: Account restrictions are preventing this user from signing in. For example: blank passwords aren't allowed, sign-in times are limited, or a policy restriction has been enforced.]] (ودي نفس الرسالة لو برا الأوقات اللي حددتها بـ [[/times]] في درس net user). ومع [[/netonly]]، [[whoami]] جوه النافذة بيطبع اسمك انت، وده الطبيعي. والسطر الأخير بيطلّع UAC، وفي النافذة الجديدة [[High Mandatory Level]].`
         }
       ]
     },

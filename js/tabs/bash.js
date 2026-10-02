@@ -1066,6 +1066,602 @@ sudo !!`,
       ]
     },
     {
+      t: "اليوزرز والجروبات والصلاحيات بعمق",
+      l: 3,
+      n: "يوزرز وجروبات بالأوامر الأصلية، و sudo لأمر واحد بس، وصلاحيات أدق من rwx: setgid و umask و ACL و chattr",
+      items: [
+        {
+          cmd: "useradd و usermod",
+          title: "اعمل يوزر وعدّل جروباته",
+          desc: R`[[useradd]] بيعمل يوزر جديد، و [[usermod]] بيعدّل يوزر موجود: يضيفه لجروب، أو يقفله، أو يغيّر الشيل بتاعه. دول الأوامر الأصلية اللي موجودة على كل توزيعات لينكس، و [[adduser]] بتاع ديبيان وأوبونتو واجهة ودودة فوقهم بتسألك أسئلة (شوف درس «adduser» في تاب «VPS»). في السكربتات والسيرفرات اللي مش أوبونتو هتحتاج الأصلية.
+
+flags بتاعة [[useradd]]:
+• [[-m]] (create home) بيعمل [[/home/sara]] وينسخ فيه ملفات [[/etc/skel]] زي [[.bashrc]]. من غيرها على أوبونتو وديبيان مفيش home خالص.
+• [[-s /bin/bash]] الشيل. الافتراضي على أوبونتو وديبيان [[/bin/sh]]، فاليوزر هيلاقي prompt فقير من غير أسهم للـ history ولا Tab.
+• [[-G sudo]] جروبات إضافية، ولو أكتر من واحد مفصولين بفاصلة من غير مسافات: [[-G sudo,docker]].
+• [[-r]] حساب نظام (رقمه أقل من 1000) لخدمة مش لبني آدم، و [[-M]] من غير home.
+وكل يوزر ليه جروب «أساسي» واحد، و useradd بيعمله جروب بنفس اسمه.
+
+flags بتاعة [[usermod]]:
+• [[-aG docker]]: [[-G]] لوحدها معناها «جروباته الإضافية هي دي بس»، فبتشيله من أي جروب مش مكتوب. [[-a]] (append) معناها «ضيف على اللي عنده». النسيان ده من أشهر الغلطات، والمثال بيوريك بيحصل إيه.
+• [[-L]] (lock) يقفل الباسورد بإنه يحط [[!]] قدام الـ hash، و [[-U]] (unlock) يشيلها.
+• [[-s /usr/sbin/nologin]] اليوزر مايقدرش يفتح شيل، ودي للخدمات.
+• [[-e 2026-12-31]] (expire) الحساب كله يقفل في التاريخ ده.
+
+الجروب الجديد مش بيظهر في الجلسة المفتوحة: الجروبات بتتحدد لحظة الـ login. فبعد [[usermod -aG docker sara]] سارة لازم تخرج وتدخل تاني (تقفل ssh وتفتحه)، أو تكتب [[newgrp docker]] اللي بيفتح شيل جديد الجروب ده فيه. و [[id sara]] بيقرا من الملفات فهيقولك docker موجود، لكن [[id]] من غير اسم جوه جلستها القديمة لأ.
+
+و [[userdel -r]] بيمسح اليوزر وفولدر الـ home بتاعه كله. وعلى فيدورا و RHEL [[useradd]] بيعمل home لوحده والشيل bash، وجروب المديرين اسمه [[wheel]] مش [[sudo]]، و [[adduser]] هناك مجرد اسم تاني لـ useradd.`,
+          example: R`sudo useradd -m -s /bin/bash -G sudo sara
+sudo passwd sara
+id sara
+sudo usermod -aG docker sara
+# الغلطة: من غير -a بيشيلها من sudo و docker
+sudo usermod -G devs sara
+id sara
+sudo usermod -aG sudo,docker sara
+sudo useradd -r -M -s /usr/sbin/nologin myapp
+sudo usermod -L sara
+sudo usermod -U sara
+sudo userdel -r olduser`,
+          try: R`اعمل يوزر sara بالأمر الأول، وضيفها لجروب docker (لو الجروب مش موجود: [[sudo groupadd docker]]). اعمل جروب devs، وجرّب [[usermod -G devs]] من غير [[-a]] وقارن [[id sara]] قبل وبعد، ورجّع جروباتها. وفي الآخر امسحها بـ [[userdel -r]].`,
+          flag: "danger",
+          mac: ["linux", R`على الماك اليوزرز في Directory Services مش في [[/etc/passwd]]: [[sudo sysadminctl -addUser sara -fullName "Sara" -password -]] (الشرطة يعني اسألني الباسورد)، و [[sudo dseditgroup -o edit -a sara -t user admin]] بدل [[usermod -aG sudo]]، و [[sudo sysadminctl -deleteUser sara]] للمسح.`],
+          deep: {
+            why: R`على أي سيرفر بيشتغل عليه أكتر من حد أو أكتر من خدمة، كل واحد لازم يبقى ليه يوزر: عشان الصلاحيات تتفصل، واللوج يقولك مين عمل إيه، ولو حد ساب تقفل حسابه هو بس. والخدمات (تطبيقك، قاعدة البيانات) بتشتغل بيوزرز من غير شيل ولا باسورد، عشان لو اتخترقت متبقاش root.`,
+            how: R`اليوزر في الحقيقة سطر في [[/etc/passwd]] (الاسم والرقم والـ home والشيل)، وسطر في [[/etc/shadow]] (الباسورد)، وسطر جروب في [[/etc/group]]، و [[useradd]] بيكتب السطور دي وبيعمل الفولدر. والنظام نفسه مبيعرفش أسامي: بيتعامل بالأرقام (UID و GID)، والاسم للبني آدمين.
+
+والجروبات الإضافية مكتوبة في آخر سطر الجروب في [[/etc/group]]: [[docker:x:1001:sara]]. [[usermod -G devs]] بيعيد كتابة السطور دي كلها بحيث sara تبقى في devs بس، و [[-a]] بيضيف اسمها لسطر جديد بس.
+
+ولما تعمل login، البرنامج اللي دخّلك (sshd أو login) بيقرا جروباتك ويحطها في العملية بتاعتك، وكل أمر بتشغّله بيورثها. عشان كده التعديل مبيظهرش غير في جلسة جديدة. و [[newgrp]] بيفتح شيل جديد بجروب أساسي مختلف.
+
+وقيم افتراضية زي الشيل وإن الـ home يتعمل ولا لأ موجودة في [[/etc/default/useradd]] و [[/etc/login.defs]]، وده سبب إن أوبونتو وفيدورا بيتصرفوا مختلف بنفس الأمر.`,
+            when: R`سكربت بيجهّز سيرفر (cloud-init أو Ansible) ومحتاج أوامر من غير أسئلة: useradd. يوزر محتاج Docker من غير sudo: [[usermod -aG docker]]. خدمة جديدة: [[useradd -r -M -s /usr/sbin/nologin]]. موظف في إجازة: [[usermod -L]] (أو أحسن، درس «passwd -l و chage»).`,
+            mistakes: R`[[usermod -G]] من غير [[-a]]، فاليوزر يتشال من sudo ويتقفل برّه صلاحيات المدير؛ ولو ده يوزرك الوحيد على السيرفر هتحتاج console الاستضافة. و [[useradd]] من غير [[-m]] و [[-s]] على أوبونتو، فتلاقي يوزر من غير home وشيله sh. ونسيان إن الجروب الجديد محتاج login جديد، فتفضل تقول «ضفته ولسه docker بيقول permission denied». وإن جروب [[docker]] بيدّي صلاحيات root فعليًا (أي حد فيه يقدر يشغّل container بيركّب [[/]]).`
+          },
+          lines: [
+            R`اعمل يوزر sara بـ home ([[-m]]) وشيل bash ([[-s]])، وفي جروب sudo ([[-G]]).`,
+            R`ادّيها باسورد (useradd مبيسألش). من غيره الحساب مقفول.`,
+            R`اعرض رقمها وجروباتها.`,
+            R`ضيفها لجروب docker من غير ما تشيلها من الباقي ([[-a]] append).`,
+            R`[[-G]] لوحدها: جروباتها الإضافية بقت devs بس، و sudo و docker اتشالوا.`,
+            R`اتأكد: هتلاقي devs بس.`,
+            R`رجّعها لـ sudo و docker (و devs فاضلة لأن [[-a]] بيضيف).`,
+            R`يوزر لخدمة: حساب نظام ([[-r]])، من غير home ([[-M]])، ومن غير شيل.`,
+            R`اقفل باسوردها ([[!]] قدام الـ hash).`,
+            R`افتحه تاني.`,
+            R`امسح يوزر وفولدر الـ home بتاعه ([[-r]]).`
+          ],
+          sol: R`ده ناتج حقيقي من container أوبونتو 24.04 (الأرقام عندك هتختلف). بعد الإنشاء: [[uid=1001(sara) gid=1002(sara) groups=1002(sara),27(sudo)]]. بعد [[-aG docker]]: [[groups=1002(sara),27(sudo),1001(docker)]]. وبعد [[usermod -G devs sara]] من غير [[-a]]: [[groups=1002(sara),1004(devs)]]، يعني sudo و docker راحوا. وبعد [[-aG sudo,docker]] رجعوا التلاتة.
+
+وجربت الجلسة القديمة: عملية كانت شغالة كـ sara قبل [[usermod -aG video2 sara]] طبعت [[sara sudo docker devs]] من غير video2، وجلسة جديدة بعدها طبعت video2. و [[usermod -U]] على يوزر لسه ملوش باسورد بيرفض: [[usermod: unlocking the user's password would result in a passwordless account.]] (حماية: مش هيسيب حساب من غير باسورد). و [[su - myapp]] بيرد [[This account is currently not available.]] لأن شيله nologin. و [[userdel -r olduser]] ممكن يطبع [[userdel: olduser mail spool (/var/mail/olduser) not found]]، ودي مجرد ملاحظة إن مفيش صندوق بريد يتمسح.
+
+ولو عملت [[useradd bare]] من غير flags على أوبونتو: السطر في [[/etc/passwd]] بيبقى [[bare:x:1002:1003::/home/bare:/bin/sh]]، و [[ls /home/bare]] بيقول No such file or directory.`
+        },
+        {
+          cmd: "id و groups و getent",
+          title: "مين اليوزر ده وفي أنهي جروبات",
+          desc: R`[[id]] و [[groups]] بيقولولك اليوزر رقمه إيه وفي أنهي جروبات، و [[getent]] بيجيب سطر أي يوزر أو جروب من «قاعدة بيانات» النظام. والقاعدة دي على أي جهاز عادي ٣ ملفات نصية: [[/etc/passwd]] و [[/etc/group]] و [[/etc/shadow]]، والدرس بيعلّمك تقراهم.
+
+[[id sara]]: [[uid]] رقم اليوزر، و [[gid]] الجروب الأساسي، و [[groups=]] كل الجروبات بأرقامها. [[-u]] الرقم بس، و [[-gn]] اسم الجروب الأساسي، و [[-nG]] أسامي كل الجروبات. و [[id]] من غير اسم بيقرا جروبات الجلسة الحالية، و [[id sara]] بيقرا من الملفات، فلو اختلفوا يبقى في جروب اتضاف بعد ما دخلت (درس «useradd و usermod»). و [[groups sara]] الأسامي بس: [[sara : sara sudo docker]].
+
+[[getent passwd sara]] (get entries) بيطبع سطر اليوزر، و [[getent group sudo]] سطر الجروب وفي آخره الأعضاء. ليه مش [[grep sara /etc/passwd]]؟ لأن getent بيسأل نفس المصادر اللي النظام بيسألها (مكتوبة في [[/etc/nsswitch.conf]])، فلو الشركة عندها يوزرز في LDAP أو Active Directory هيظهروا، و grep لأ. ولو اليوزر مش موجود مبيطبعش حاجة وبيرجع exit code 2.
+
+[[/etc/passwd]] سطر لكل يوزر، ٧ حقول بينهم [[:]]، زي [[sara:x:1001:1002::/home/sara:/bin/bash]]:
+1. الاسم.
+2. [[x]]: الباسورد مش هنا، في [[/etc/shadow]].
+3. UID. و 0 دايمًا root، وأقل من 1000 حسابات نظام (زي www-data = 33)، و 1000 وطالع ناس حقيقيين، و 65534 هو nobody.
+4. GID الجروب الأساسي.
+5. وصف أو اسم كامل (اسمه GECOS)، وغالبًا فاضي.
+6. فولدر الـ home.
+7. الشيل. [[/usr/sbin/nologin]] أو [[/bin/false]] يعني ممنوع يفتح شيل.
+
+[[/etc/group]]: [[sudo:x:27:ubuntu,sara]] = الاسم، و x، والرقم، والأعضاء. والأعضاء هنا هما اللي الجروب ده «إضافي» ليهم؛ اللي جروبه الأساسي sudo مش بيتكتب في السطر.
+
+[[/etc/shadow]] (root بس يقراه، صلاحياته [[640]] وجروبه [[shadow]]): ٩ حقول: الاسم، والـ hash، وتاريخ آخر تغيير (بعدد الأيام من 1970-01-01)، و min و max و warn و inactive و expire (درس «passwd -l و chage»)، وواحد محجوز. والـ hash بيبدأ بنوعه: [[$y$]] يعني yescrypt، وده الافتراضي في أوبونتو 22.04 وأحدث وديبيان 12 وفيدورا. و [[$6$]] يعني SHA-512، الأقدم ولسه شغال. و [[$1$]] يعني MD5، قديم وضعيف. و [[!]] قدام الـ hash يعني الباسورد مقفول، و [[!]] لوحدها أو [[*]] يعني مفيش باسورد يتدخل بيه أصلًا، زي حسابات النظام و root على أوبونتو.`,
+          example: R`id sara
+id -nG
+groups sara
+getent passwd sara
+getent group sudo
+getent passwd nosuchuser; echo "exit: $?"
+awk -F: '$3 >= 1000 && $3 < 60000 {print $1, $3, $7}' /etc/passwd
+sudo grep -E '^(root|sara):' /etc/shadow`,
+          try: R`اعرف جروباتك انت بـ [[id]]، وبعدين اطبع كل اليوزرز «الحقيقيين» على جهازك بالـ awk، وفك سطرك في [[/etc/passwd]] و [[/etc/shadow]] حقل حقل: الـ hash بتاعك نوعه إيه، وآخر مرة غيّرت الباسورد إمتى؟`,
+          mac: ["diff", R`[[id]] و [[groups]] موجودين، بس مفيش [[getent]] ولا [[/etc/shadow]]: اليوزرز في Directory Services. [[dscl . -read /Users/ali]] بيانات يوزر، و [[dscl . -list /Users UniqueID]] كل اليوزرز وأرقامهم، و [[dscacheutil -q group -a name admin]] أعضاء جروب. ويوزرز الماك بيبدأوا من 501 مش 1000.`],
+          deep: {
+            why: R`نص مشاكل الصلاحيات سؤالها «اليوزر ده في الجروب ده ولا لأ؟»: Nginx بيقرا ملفات الموقع؟ اليوزر يقدر يستخدم docker؟ و Permission denied على ملف جروبه www-data. ولما تفهم الملفات التلاتة دول، هتفهم إيه اللي useradd و usermod و passwd بيعملوه بالظبط، وتعرف تكتشف حساب غريب اتضاف لسيرفرك.`,
+            how: R`لما برنامج يحتاج يحوّل اسم يوزر لرقم أو العكس (زي [[ls -l]] وهو بيكتب اسم صاحب الملف)، بيسأل مكتبة النظام، وهي بتشوف [[/etc/nsswitch.conf]]: [[passwd: files]] يعني دوّر في [[/etc/passwd]]، ولو مكتوب [[files sss]] أو [[files ldap]] بتسأل كمان سيرفر الشركة. [[getent]] بيسأل نفس السؤال، فبيوريك اللي النظام شايفه فعلًا.
+
+والباسوردات كانت زمان في [[/etc/passwd]] نفسه، واللي كل الناس تقدر تقراه (لازم، عشان ls وغيره يعرفوا الأسامي)، فأي حد كان يقدر ياخد الـ hashes ويحاول يكسرها. عشان كده اتنقلت لـ [[/etc/shadow]] اللي root بس يقراه، وفضل مكانها [[x]].
+
+والـ hash مش تشفير يتفك: النظام لما تكتب الباسورد بيعمله hash بنفس الطريقة والـ salt (الجزء العشوائي بين علامات [[$]]) ويقارن. و yescrypt متعمّل مخصوص يبقى بطيء وياكل رام، عشان تجربة ملايين الباسوردات تبقى مكلفة.`,
+            when: R`قبل ما تدّي حد صلاحية: [[getent group sudo]] و [[getent group docker]] مين فيهم دلوقتي. بعد ما تعمل يوزر: [[id اسمه]]. مراجعة أمنية لسيرفر: [[awk]] على [[/etc/passwd]] تشوف مين عنده شيل حقيقي، وأي UID تاني بـ 0 غير root مصيبة. ولما دخول بيفشل: [[passwd -S]] أو الحقل التاني في shadow تشوفه مقفول ولا لأ.`,
+            mistakes: R`إنك تعدّل [[/etc/passwd]] أو [[/etc/shadow]] بإيدك بمحرر: غلطة في سطر ممكن تقفل الكل برّه. استخدم useradd و usermod و passwd، ولو مضطر [[sudo vipw]] و [[sudo vigr]] (بيقفلوا الملف ويفحصوه). و [[grep]] على passwd على جهاز داخل على LDAP، فتفتكر اليوزر مش موجود. وإنك تقرا [[id]] في جلسة قديمة وتفتكر الجروب متضافش.`
+          },
+          lines: [
+            R`رقم sara وجروبها الأساسي وكل جروباتها، من الملفات.`,
+            R`أسامي جروبات «جلستك» انت دلوقتي ([[-n]] أسامي و [[-G]] كل الجروبات).`,
+            R`جروبات sara بالأسامي.`,
+            R`سطرها في قاعدة اليوزرز (٧ حقول).`,
+            R`سطر جروب sudo، وآخره الأعضاء.`,
+            R`يوزر مش موجود: مفيش ناتج، والـ exit code بيبان 2.`,
+            R`[[-F:]] افصل بالنقطتين: اطبع الاسم والـ UID والشيل لكل يوزر رقمه بين 1000 و 60000 (الناس الحقيقيين).`,
+            R`سطر root و sara في shadow (محتاج sudo): هتشوف الـ hash أو [[*]] أو [[!]].`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04: [[getent passwd sara]] طبع [[sara:x:1001:1002::/home/sara:/bin/bash]]، و [[getent group sudo]] طبع [[sudo:x:27:ubuntu,sara]]، و [[groups sara]] طبع [[sara : sara sudo docker devs]]، و [[getent passwd nosuchuser; echo "exit: $?"]] طبع [[exit: 2]] بس. والـ awk طبع [[ubuntu 1000 /bin/bash]] و [[sara 1001 /bin/bash]] (على جهازك هتلاقي يوزرك).
+
+وسطور shadow:
+[[root:*:20713:0:99999:7:::]]: [[*]] يعني root ملوش باسورد يتدخل بيه (أوبونتو بيخليك تستخدم sudo).
+[[sara:$y$j9T$0YoYg/3WqWk7mpX9kwPFL0$k/dcsl9...:20728:0:99999:7:::]]: [[$y$]] يعني yescrypt، وبعده الإعدادات ([[j9T]]) والـ salt والـ hash، و 20728 يوم من 1970 = 2026-10-02 (تاريخ آخر تغيير)، و 0 min، و 99999 max (يعني مفيش انتهاء)، و 7 warn.
+وبعد [[usermod -L sara]] الحقل بقى يبدأ بـ [[!$y$]].
+
+وكمان: [[ls -l /etc/shadow]] بيطبع [[-rw-r----- 1 root shadow]]، ولو حاولت تقراه من غير sudo: [[cat: /etc/shadow: Permission denied]]. ولو لقيت [[ENCRYPT_METHOD SHA512]] في [[/etc/login.defs]] بس الـ hashes الجديدة [[$y$]]، ده طبيعي: [[passwd]] على أوبونتو ماشي بإعداد PAM ([[pam_unix.so obscure yescrypt]] في [[/etc/pam.d/common-password]]) مش بـ login.defs.`
+        },
+        {
+          cmd: "groupadd و gpasswd",
+          title: "جروب لفريق وفولدر مشترك",
+          desc: R`[[groupadd]] بيعمل جروب جديد، و [[gpasswd]] بيضيف ويشيل أعضاء منه واحد واحد. والاستخدام الأشهر: فريق (ali و mona) شغالين على فولدر واحد على السيرفر، وكل واحد لازم يقدر يعدّل ملفات التاني من غير [[chmod 777]].
+
+[[groupadd webteam]] بياخد أول رقم فاضي من 1000، و [[-g 2001]] رقم بإيدك (مفيد لو عايز نفس الرقم على كذا سيرفر، لأن الملفات بتتخزن بالرقم مش الاسم). و [[gpasswd]]:
+• [[-a ali]] (add) يضيف عضو، ومالهوش فخ [[-a]] بتاع usermod: بيضيف لجروب واحد بس ومبيلمسش الباقي.
+• [[-d mona]] (delete) يشيل عضو.
+• [[-M ali,mona]] (members) يحدد اللستة كلها مرة واحدة (اللي مش مكتوب يتشال).
+• [[-A ali]] (administrator) يخلّي ali مدير الجروب، فيقدر يضيف ويشيل من غير sudo.
+و [[groupmod -n newname]] بيغيّر الاسم، و [[groupdel]] بيمسح الجروب، ومينفعش يمسح الجروب الأساسي ليوزر موجود.
+
+الفولدر المشترك: [[chgrp webteam]] (change group) يخلي الفولدر ملك الجروب، و [[chmod 2775]]: الـ 2 في الأول اسمها setgid (شرحها في درس «setuid و setgid و sticky bit»)، و 775 = صاحبه والجروب rwx، والباقي r-x. والـ setgid على فولدر معناها: أي ملف يتعمل جواه ياخد جروب الفولدر (webteam) مش جروب اللي عمله. من غيرها ملف ali هيتعمل وجروبه ali، و mona مش هتقدر تعدّل فيه.
+
+وعشان mona «تكتب» في ملف ali، الملف نفسه لازم يتعمل والجروب عنده w ([[rw-rw-r--]])، ودي بيحددها الـ umask بتاع ali (درس umask). على أوبونتو لما تدخل بـ ssh أو [[su -]]، الـ umask بيبقى 002 لليوزرز العاديين، فبيشتغل لوحده. ولو حد الـ umask عنده 022، ملفاته هتطلع [[rw-r--r--]] وزمايله يقروا بس؛ والحل default ACL (درس «setfacl و getfacl»).`,
+          example: R`sudo groupadd webteam
+sudo gpasswd -a ali webteam
+sudo gpasswd -a mona webteam
+getent group webteam
+sudo mkdir -p /srv/webteam
+sudo chgrp webteam /srv/webteam
+sudo chmod 2775 /srv/webteam
+ls -ld /srv/webteam
+sudo gpasswd -d mona webteam`,
+          try: R`اعمل اليوزرين ali و mona (درس «useradd و usermod») والجروب والفولدر. ادخل كـ ali بـ [[sudo su - ali]] واعمل [[echo v1 > /srv/webteam/plan.txt]] واخرج، وبعدين ادخل كـ mona وزوّد سطر بـ [[>>]]. وبعدين كرر نفس الكلام في فولدر تاني [[chmod 775]] من غير الـ 2 وقارن.`,
+          mac: ["linux", R`على الماك: [[sudo dseditgroup -o create webteam]] و [[sudo dseditgroup -o edit -a ali -t user webteam]]. والـ setgid على الفولدرات مش محتاجينه هناك: الماك (زي BSD) بيدّي الملف الجديد جروب الفولدر اللي هو فيه دايمًا.`],
+          deep: {
+            why: R`الحل السهل الغلط لمشكلة «اتنين محتاجين يعدّلوا نفس الملفات» هو [[chmod 777]]، وده بيفتح الملفات لأي يوزر وأي خدمة على الجهاز. الجروب بيقول «الناس دول بس»، والـ setgid بيخلي الملفات الجديدة تفضل تبع الجروب لوحدها، فمحدش يحتاج يفتكر يعمل chgrp.`,
+            how: R`الجروب سطر في [[/etc/group]]، وأعضاؤه آخر السطر: [[webteam:x:1007:ali,mona]]. و [[gpasswd]] بيعدّل السطر ده وسطره في [[/etc/gshadow]] (اللي فيه مديري الجروب: [[webteam:!:ali:ali,mona]]).
+
+ولما ali تعمل ملف، الـ kernel بيدّيه صاحب = ali، وجروب = جروب ali الأساسي، إلا لو الفولدر عليه setgid، فياخد جروب الفولدر. وصلاحيات الملف = اللي البرنامج طلبه (غالبًا 666) ناقص الـ umask. فالتلاتة مع بعض: الجروب، والـ setgid، و umask 002، هما اللي بيعملوا فولدر مشترك شغال.
+
+والعضوية الجديدة محتاجة login جديد زي أي جروب (درس «useradd و usermod»).`,
+            when: R`فولدر موقع بيعدّل فيه أكتر من مطوّر، فولدر رفع ملفات بين يوزر الـ deploy وخدمة التطبيق، فولدر باك أب بيكتب فيه أكتر من سكربت. وأي حد محتاج «يقرا» اللوجات من غير sudo: [[gpasswd -a ali adm]] (جروب adm في أوبونتو بيقرا [[/var/log]]).`,
+            mistakes: R`[[chmod 775]] من غير الـ 2، فالملفات الجديدة تتعمل بجروب صاحبها والفريق ميقدرش يعدّلها. وإنك تعمل [[chown -R]] أو [[chmod -R 775]] كل شوية تصلّح، بدل ما تحط setgid مرة. ونسيان إن [[gpasswd -M]] بيستبدل اللستة كلها. وإن العضو الجديد لازم يعمل login من جديد.`
+          },
+          lines: [
+            R`اعمل جروب webteam.`,
+            R`ضيف ali للجروب ([[-a]] add).`,
+            R`ضيف mona.`,
+            R`اتأكد: آخر السطر فيه الأعضاء.`,
+            R`اعمل الفولدر المشترك.`,
+            R`خلّي جروب الفولدر webteam.`,
+            R`2 = setgid (الملفات الجديدة تاخد جروب الفولدر)، و 775 = الصاحب والجروب rwx، والباقي r-x.`,
+            R`اتأكد: [[s]] مكان x الجروب.`,
+            R`شيل mona من الجروب ([[-d]] delete).`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04: [[gpasswd -a]] بيطبع [[Adding user ali to group webteam]]، و [[getent group webteam]] بيطبع [[webteam:x:1007:ali,mona]]، و [[ls -ld]] بيطبع [[drwxrwsr-x 2 root webteam 4096 Oct  2 11:19 /srv/webteam]]: لاحظ [[s]] مكان x بتاعة الجروب.
+
+ملف ali طلع [[-rw-rw-r-- 1 ali webteam]] (جروب الفولدر مش ali، والجروب يكتب لأن umask ali كان 0002)، و mona زوّدت فيه سطر من غير مشاكل. وفي الفولدر التاني ([[775]] من غير setgid) نفس الملف طلع [[-rw-rw-r-- 1 ali ali]]، و mona خدت [[-bash: line 1: /srv/nosgid/plan.txt: Permission denied]]: هي في webteam بس الملف جروبه ali. وجربت كمان ali بـ [[umask 022]] جوه الفولدر الصح: الملف طلع [[-rw-r--r-- 1 ali webteam]] و mona برضه Permission denied، وده سبب إن الـ umask جزء من الحل.
+
+و [[gpasswd -d mona webteam]] بيطبع [[Removing user mona from group webteam]]. ولو [[groupdel sara]] وهو الجروب الأساسي ليوزر: [[groupdel: cannot remove the primary group of user 'sara']].`
+        },
+        {
+          cmd: "passwd -l و chage",
+          title: "اقفل حساب أو اجبره يغيّر الباسورد",
+          desc: R`[[passwd -l]] بيقفل باسورد يوزر من غير ما تمسحه، و [[chage]] (change age) بيتحكم في عمر الباسورد والحساب: لازم يتغيّر كل كام يوم، ويتنبّه قبلها بقد إيه، والحساب كله يقفل إمتى. مفيدين لموظف في إجازة طويلة، أو متدرب حسابه لازم يقفل في ميعاد، أو يوزر جديد لازم يغيّر الباسورد المؤقت أول ما يدخل.
+
+[[passwd]]:
+• [[-l]] (lock) بيحط [[!]] قدام الـ hash في [[/etc/shadow]]، فمفيش باسورد هيطابقه. و [[-u]] (unlock) بيشيلها والباسورد القديم يرجع يشتغل.
+• [[-e]] (expire) الباسورد يعتبر منتهي، فأول login يقوله «غيّره دلوقتي».
+• [[-S]] (status) سطر حالة: الاسم، وبعده [[P]] فيه باسورد، أو [[L]] مقفول، أو [[NP]] من غير باسورد خالص (وده خطر)، وبعدين تاريخ آخر تغيير، و min و max و warn و inactive. و [[-S -a]] لكل اليوزرز.
+
+[[chage]]:
+• [[-l]] (list) كل المواعيد بكلام مقروء.
+• [[-M 90]] (max) لازم يغيّره كل 90 يوم، و [[-m 1]] (min) مايغيّرهوش تاني قبل يوم (عشان ميرجعش للقديم على طول).
+• [[-W 7]] (warn) يتنبّه قبل الانتهاء بأسبوع.
+• [[-E 2026-12-31]] (expire) الحساب كله يقفل في التاريخ ده، و [[-E -1]] يلغي التاريخ.
+• [[-d 0]] زي [[passwd -e]].
+
+مهم: [[passwd -l]] بيقفل الباسورد بس، مش الحساب. لو اليوزر عنده مفتاح SSH، هيفضل يدخل عادي، والـ man page بتاعة passwd بتقول كده صريح. جربتها: بعد [[passwd -l ali]]، [[ssh localhost whoami]] بمفتاح ali طبع [[ali]]. عشان تقفل الحساب كله: [[usermod -e 1]] (تاريخ انتهاء في 1970، ودي الطريقة اللي الـ man page بتقترحها)، ومعاها لو عايز [[usermod -s /usr/sbin/nologin]]. بعدها نفس الـ ssh رد [[Your account has expired; please contact your system administrator.]]`,
+          example: R`sudo passwd -S ali
+sudo passwd -l ali
+sudo passwd -u ali
+sudo passwd -e ali
+sudo chage -M 90 -m 1 -W 7 -E 2026-12-31 ali
+sudo chage -l ali
+sudo usermod -e 1 ali
+sudo usermod -e "" ali`,
+          try: R`على يوزر تجربة: اقفله وشوف [[passwd -S]]، وافتحه. وبعدين [[passwd -e]] وادخل بيه من ترمنال تاني ([[su - ali]] من يوزر عادي، أو ssh) وشوف بيطلب منك إيه. وفي الآخر حط تاريخ انتهاء للحساب واقرا [[chage -l]].`,
+          flag: "danger",
+          mac: ["linux", R`مفيش [[chage]] ولا [[passwd -l]] على الماك. سياسات الباسورد بـ [[pwpolicy]]، وتعطيل حساب: [[sudo pwpolicy -u ali disableuser]]، والأسهل من System Settings ← Users & Groups.`],
+          deep: {
+            why: R`مسح يوزر بيمسح أثره (وأحيانًا ملفاته)، وساعات محتاج بس «توقفه»: حد في إجازة، أو متعاقد خلّص، أو حساب شكله اتسرق ولسه بتحقق. والباسورد المؤقت اللي بتبعته لحد جديد لازم ميعيشش: [[passwd -e]] بيخليه أول حاجة يعملها يغيّره.`,
+            how: R`كل ده أرقام في سطر اليوزر في [[/etc/shadow]]: [[ali:$y$...:20728:1:90:7::20818:]]. الحقل التالت تاريخ آخر تغيير بالأيام من 1970، و [[passwd -e]] بيخليه 0 (يعني «اتغيّر سنة 1970» فهو منتهي). والرابع والخامس والسادس min و max و warn. والثامن تاريخ انتهاء الحساب كله (20818 = 2026-12-31).
+
+ولما حد يحاول يدخل، PAM (المكتبة اللي بتتحقق من الدخول) بتشيك الحاجات دي. والباسورد نفسه بيتشيك بس لو الدخول بالباسورد؛ الدخول بمفتاح SSH مبيقارنش hash، فـ [[!]] مبتفرقش معاه. لكن «الحساب منتهي» PAM بتشيكه مع أي طريقة دخول، حتى مع [[su]] من root.`,
+            when: R`موظف ساب ولسه هتراجع ملفاته: [[usermod -e 1]] و [[-L]]. يوزر جديد بباسورد مؤقت: [[passwd -e]]. سياسة شركة «غيّر كل 90 يوم»: [[chage -M 90 -W 7]]. حساب متدرب لحد آخر السنة: [[chage -E 2026-12-31]]. وتشوف حالة الكل بسرعة: [[sudo passwd -S -a]].`,
+            mistakes: R`الاعتماد على [[passwd -l]] لوحده لقفل حساب بيدخل بمفتاح SSH. و [[chage -E 0]]: الـ man page بتاعة shadow بتقول القيمة 0 ممكن تتفهم «من غير انتهاء»، فاستخدم 1 أو تاريخ. و [[-M 90]] على حساب خدمة أو حساب بتدخل بيه سكربتات، فيوم 91 يقف. ونسيان [[-m]] مع [[-M]]، فاليوزر يغيّر الباسورد مرتين ورا بعض ويرجع للقديم.`
+          },
+          lines: [
+            R`حالة الباسورد: P أو L أو NP، وتاريخ آخر تغيير.`,
+            R`اقفل الباسورد ([[!]] قدام الـ hash). الدخول بالمفتاح لسه شغال.`,
+            R`افتحه، والباسورد القديم يرجع.`,
+            R`الباسورد منتهي: أول دخول لازم يغيّره.`,
+            R`يتغيّر كل 90 يوم، ومش قبل يوم، وتنبيه قبلها بأسبوع، والحساب كله يقفل آخر السنة.`,
+            R`اعرض المواعيد دي بكلام مقروء.`,
+            R`اقفل الحساب كله (تاريخ انتهاء في 1970): مفيش دخول بأي طريقة.`,
+            R`شيل تاريخ الانتهاء ورجّع الحساب.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04: [[passwd -S ali]] طبع [[ali P 2026-10-02 0 99999 7 -1]]، وبعد [[-l]]: [[ali L 2026-10-02 0 99999 7 -1]] والـ hash بقى يبدأ بـ [[!$y$]]. و [[-l]] و [[-u]] بيطبعوا [[passwd: password changed.]] (رسالة عامة، مش معناها الباسورد اتغيّر).
+
+بعد [[passwd -e ali]]، الدخول بيطبع:
+[[You are required to change your password immediately (administrator enforced).]]
+[[Changing password for ali.]]
+وبعدين [[Current password:]] و [[New password:]] و [[Retype new password:]]، وبعدها بيكمّل عادي.
+
+[[chage -l ali]] بعد سطر الـ chage:
+[[Password expires : Dec 31, 2026]]
+[[Account expires : Dec 31, 2026]]
+[[Maximum number of days between password change : 90]]
+[[Number of days of warning before password expires : 7]]
+
+وبعد [[usermod -e 1 ali]]: [[Account expires : Jan 02, 1970]]، والدخول بمفتاح SSH رد [[Your account has expired; please contact your system administrator.]]، وحتى root لما عمل [[su - ali]] خد [[su: Authentication failure]].`
+        },
+        {
+          cmd: "su - و sudo -i",
+          title: "تبقى يوزر تاني أو root",
+          desc: R`[[su]] و [[sudo]] الاتنين بيخلّوك تشتغل كيوزر تاني، والفرق في باسورد مين بتكتب، وفي «البيئة» اللي بتاخدها: الفولدر والمتغيرات والـ PATH. [[su]] (switch user) بيطلب باسورد اليوزر اللي رايحله، و [[sudo]] بيطلب باسوردك انت وبيشوف القواعد في [[/etc/sudoers]] (الدرس الجاي).
+
+• [[su sara]]: بقيت sara، بس لسه في نفس الفولدر ومعاك متغيراتك انت.
+• [[su - sara]]: الشرطة معناها login shell، يعني كأنها لسه داخلة: فولدرها ومتغيراتها و [[.profile]] بتاعها. ده الشكل الآمن.
+• [[su -]] من غير اسم: root، ومحتاج باسورد root.
+• [[sudo -i]] (login): شيل root كامل بباسوردك انت، بيروح [[/root]] وبيقرا إعدادات root. زي [[su -]] من غير ما تحتاج باسورد root.
+• [[sudo -s]] (shell): شيل root بس فاضل في نفس الفولدر.
+• [[sudo -u sara أمر]]: شغّل أمر واحد كيوزر تاني (مش root)، زي [[sudo -u postgres psql]] تدخل قاعدة البيانات بيوزر postgres.
+• [[sudo -l]] (list): أنا مسموحلي بإيه؟ و [[sudo -l -U deploy]] لحد تاني (محتاج root).
+• [[exit]] أو Ctrl+D يرجّعك لنفسك.
+
+على أوبونتو باسورد root مقفول من التسطيب ([[sudo passwd -S root]] بيقول [[L]])، فـ [[su -]] هيرد [[su: Authentication failure]] مهما كتبت. ده مقصود: الكل يستخدم sudo، وكل أمر بيتسجّل باسم اللي عمله في [[/var/log/auth.log]] (أو بـ journalctl، شوف درس «journalctl» في تاب «VPS»). لو محتاج شيل root استخدم [[sudo -i]]. على فيدورا، وعلى ديبيان لو اديت root باسورد وقت التسطيب، [[su -]] بيشتغل.
+
+وخلي بالك: [[sudo]] بيمسح معظم متغيراتك (إعداد اسمه [[env_reset]]) وبيستخدم PATH ثابت ([[secure_path]])، عشان كده أمر اتسطب في [[~/.local/bin]] ممكن يقول command not found مع sudo بس.`,
+          example: R`su - sara
+whoami; pwd
+exit
+sudo -i
+exit
+sudo -s
+exit
+sudo -u sara whoami
+sudo -l
+sudo passwd -S root`,
+          try: R`من فولدر زي [[/tmp]] اعمل [[export MYVAR=hello]]، وبعدين قارن: [[su sara]] و [[su - sara]] و [[sudo -i]] و [[sudo -s]]، وفي كل واحد اكتب [[whoami; pwd; echo $MYVAR]] وبعدين [[exit]].`,
+          mac: ["both", R`نفس الأوامر على الماك، و root مقفول هناك كمان، فـ [[sudo -i]] هو الطريق. والفرق إن جروب المديرين اسمه [[admin]].`],
+          deep: {
+            why: R`محتاج تجرّب حاجة كيوزر تاني (هل deploy يقدر يقرا الملف ده؟)، أو تعمل كذا أمر ورا بعض كـ root من غير ما تكتب sudo كل مرة، أو تشغّل أداة بيوزر خدمتها (postgres، www-data). والاختيار الغلط بين الأشكال دي بيعمل مشاكل غريبة: أمر بيشتغل مع [[sudo -i]] وبيفشل مع [[sudo]]، أو ملفات بتتعمل ملك root في فولدر يوزر.`,
+            how: R`[[su]] برنامج setuid (درس «setuid و setgid و sticky bit»)، فبيشتغل كـ root، ويسأل PAM: الباسورد ده بتاع اليوزر المطلوب؟ ولو أيوه، يغيّر الـ UID ويشغّل الشيل بتاعه. والـ [[-]] بتقوله: امسح المتغيرات، واعمل [[cd]] للـ home، وشغّل الشيل كـ login shell فيقرا [[.profile]].
+
+[[sudo]] برضه setuid، بس بيسأل عن باسوردك انت، ويشيك القواعد، ويسجّل الأمر، ويشغّله. و [[-i]] بيعمل نفس اللي [[su -]] بيعمله، و [[-s]] بيشغّل شيل من غير login. وبعد ما تكتب الباسورد، sudo بيفتكره حوالي ربع ساعة للترمنال ده بس.`,
+            when: R`تجرّب صلاحيات يوزر: [[sudo -u www-data cat /var/www/app/.env]]. شغل كتير كـ root ورا بعض (تسطيب وتعديل إعدادات): [[sudo -i]] وبعدين [[exit]] أول ما تخلص. أداة خدمة: [[sudo -u postgres psql]]. يوزر جديد عايز تعرف يقدر يعمل إيه: [[sudo -l -U deploy]].`,
+            mistakes: R`[[su sara]] من غير شرطة، فتفضل بالـ PATH والمتغيرات بتوعك وتحصل حاجات مش منطقية. وإنك تفضل في [[sudo -i]] وتنسى، فتعمل [[git clone]] أو [[npm install]] كـ root. وإنك تحاول تدّي root باسورد على أوبونتو «عشان su يشتغل»، وده باب زيادة. و [[sudo su -]]: بيشتغل، بس [[sudo -i]] نفس الحاجة وأوضح.`
+          },
+          lines: [
+            R`بقيت sara بكامل بيئتها (login shell). هيسألك باسورد sara.`,
+            R`اتأكد: انت sara وفي فولدرها.`,
+            R`ارجع ليوزرك.`,
+            R`شيل root كامل بباسوردك انت، وبيبدأ من [[/root]].`,
+            R`اخرج من root.`,
+            R`شيل root وانت فاضل في نفس الفولدر.`,
+            R`اخرج.`,
+            R`أمر واحد كيوزر sara (مش root).`,
+            R`أنا مسموحلي أعمل إيه بـ sudo؟`,
+            R`حالة باسورد root: [[L]] يعني مقفول.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04، كل الأوامر اتعملت من [[/srv]] بعد [[export MYVAR=hello]]:
+[[su sara]]: [[whoami=sara pwd=/srv HOME=/home/sara]] و [[MYVAR=hello]] (فضلت).
+[[su - sara]]: [[pwd=/home/sara]] و [[MYVAR=]] فاضي.
+[[sudo -i]]: [[user=root pwd=/root HOME=/root]].
+[[sudo -s]]: [[user=root pwd=/srv HOME=/root]].
+[[sudo -u ali]]: [[user=ali pwd=/srv HOME=/home/ali]].
+و [[MYVAR]] كان فاضي في كل أشكال sudo، بسبب [[env_reset]].
+
+و [[sudo -l]] لـ sara (اللي في جروب sudo) طبع [[User sara may run the following commands on server:]] وتحته [[(ALL : ALL) ALL]]. ويوزر مش في sudo خد [[Sorry, user ali may not run sudo on server.]]، ولو حاول يشغّل أمر: [[ali is not in the sudoers file.]]. و [[passwd -S root]] طبع [[root L 2026-09-17 0 99999 7 -1]]، و [[su -]] بأي باسورد: [[su: Authentication failure]].`
+        },
+        {
+          cmd: "visudo و sudoers.d",
+          title: "صلاحية sudo لأمر واحد بس",
+          desc: R`[[visudo]] بيعدّل قواعد sudo بأمان: بيفتح نسخة، ولما تحفظ بيفحص الـ syntax، ولو فيه غلطة بيرفض يطبّق. غلطة في [[/etc/sudoers]] متحفظة من nano عادي ممكن تكسر sudo كله، وعلى أوبونتو (root مقفول) ساعتها مش هتعرف تصلّح غير من recovery mode أو console الاستضافة.
+
+القاعدة: [[deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart myapp]]:
+• [[deploy]] مين. و [[%webteam]] جروب (الـ [[%]] معناها جروب).
+• [[ALL]] على أنهي جهاز (hostname). دايمًا ALL إلا لو نفس الملف متوزّع على سيرفرات كتير.
+• [[(root)]] يقدر يشغّل الأوامر كمين. و [[(ALL:ALL)]] أي يوزر وأي جروب.
+• [[NOPASSWD:]] من غير ما يسأل باسورد (للسكربتات و CI). من غيرها بيسأل.
+• وبعدها الأوامر بالمسار الكامل ومفصولة بفاصلة. ولو كتبت arguments، يبقى دي بالظبط بس المسموحة.
+و [[Cmnd_Alias MYAPP = ...]] اسم لمجموعة أوامر تستخدمه في كذا قاعدة. والسطر الموجود في أوبونتو [[%sudo ALL=(ALL:ALL) ALL]] هو اللي بيدّي جروب sudo كل حاجة.
+
+مكان القواعد: متعدّلش [[/etc/sudoers]] نفسه. حط ملف في [[/etc/sudoers.d/]]، والسطر [[@includedir /etc/sudoers.d]] في آخر الملف الأساسي بيقرا الفولدر ده. و [[visudo -f /etc/sudoers.d/deploy]] (file) يعدّل الملف ده بنفس الأمان، و [[visudo -c]] (check) يفحص كل الملفات، و [[visudo -cf ملف]] يفحص ملف قبل ما تحطه. والصلاحيات لازم [[0440]] (root وجروب root يقروا بس)، ولو الملف حد يقدر يكتب فيه sudo بيتجاهله. واسم الملف مينفعش فيه نقطة ولا يخلص بـ [[~]]: [[deploy.conf]] بيتجاهل من غير أي رسالة (جربتها).
+
+الخطر: [[NOPASSWD: ALL]] معناها اللي يسرق حساب اليوزر ده (أو مفتاحه أو توكن الـ CI) بقى root من غير ولا سؤال. وفيه أوامر شكلها بريء بس بتدّي root كامل: [[vim]] و [[less]] (منهم تكتب [[:!bash]] فيفتح شيل root)، و [[find]] بـ [[-exec]]، و [[cp]] و [[tee]] (يكتبوا فوق [[/etc/sudoers]] نفسه)، و [[systemctl]] من غير arguments محددة. اديه أمر محدد بـ arguments محددة، ولو محتاج يعدّل ملف معين استخدم [[sudoedit]].`,
+          example: R`sudo visudo -f /etc/sudoers.d/deploy
+# اكتب جوه الملف السطرين دول واحفظ:
+# Cmnd_Alias MYAPP = /usr/bin/systemctl restart myapp, /usr/bin/systemctl status myapp
+# deploy ALL=(root) NOPASSWD: MYAPP
+sudo visudo -c
+ls -l /etc/sudoers.d/
+sudo -l -U deploy
+sudo -u deploy sudo -n systemctl restart myapp
+sudo -u deploy sudo -n whoami`,
+          try: R`على جهاز تجربة: اعمل يوزر deploy، وادّيله بالقاعدة دي صلاحية [[systemctl restart]] لخدمة واحدة بس من غير باسورد. اتأكد بـ [[sudo -l -U deploy]]، وجرّب كـ deploy أمر مسموح وأمر مش مسموح. وجرّب تحفظ قاعدة غلط (امسح النقطتين بعد NOPASSWD) وشوف visudo بيعمل إيه.`,
+          flag: "danger",
+          mac: ["diff", R`[[visudo]] موجود على الماك ونفس الـ syntax، والفولدر [[/private/etc/sudoers.d]] (و [[/etc]] على الماك اختصار لـ [[/private/etc]]). وجروب المديرين [[%admin]] مش [[%sudo]].`],
+          deep: {
+            why: R`السكربتات و CI (زي GitHub Actions بيعمل deploy) محتاجين يعملوا حاجة واحدة بصلاحية root، زي restart لتطبيقك، ومينفعش يسألوا باسورد. الحل الغلط إن يوزر الـ deploy ياخد sudo كامل من غير باسورد. الحل الصح قاعدة لأمر واحد، فلو المفتاح اتسرق، أقصى حاجة المهاجم يعملها restart.`,
+            how: R`sudo بيقرا [[/etc/sudoers]] والملفات اللي في [[/etc/sudoers.d]] بالترتيب الأبجدي، ولو أكتر من قاعدة طابقت، آخر واحدة هي اللي بتكسب. عشان كده الملفات بيتسمّوا ساعات بأرقام في الأول.
+
+ولما deploy يكتب [[sudo systemctl restart myapp]]، sudo بيدوّر على [[systemctl]] في [[secure_path]] فيلاقيه [[/usr/bin/systemctl]]، ويقارن الأمر كامل بالـ arguments باللي في القاعدة. [[restart myapp]] مطابق؛ [[stop myapp]] لأ، فبيسأل باسورد (ولو بـ [[-n]]، non-interactive، بيفشل على طول).
+
+و visudo بيقفل الملف عشان اتنين ميعدّلوش مع بعض، ويكتب في نسخة مؤقتة، ويفحصها بنفس الـ parser اللي sudo بيستخدمه، وينقلها مكان الأصل لو سليمة بس.`,
+            when: R`يوزر deploy بيعمل restart لخدمة: القاعدة اللي فوق. فريق محتاج reload لـ Nginx بس: [[%webteam ALL=(root) /usr/bin/systemctl reload nginx]]. سكربت monitoring بيقرا لوج محمي: أمر [[cat]] لملف محدد. وبعد أي تعديل: [[sudo visudo -c]] و [[sudo -l -U اليوزر]].`,
+            mistakes: R`[[sudo nano /etc/sudoers]] بدل visudo. و [[NOPASSWD: ALL]] لأي يوزر بيدخل من سكربت أو CI. وأمر من غير مسار كامل، أو بـ [[*]] في الـ arguments (بتطابق أي حاجة، حتى arguments خطيرة). واسم ملف فيه نقطة فيتجاهل وتقعد تدوّر ليه مش شغال. وإنك تختار (Q) في سؤال visudo بعد غلطة: بيحفظ الملف الغلط.`
+          },
+          lines: [
+            R`افتح ملف القواعد الخاص بـ deploy بأمان (هيتفحص لما تحفظ).`,
+            R`افحص كل ملفات sudoers.`,
+            R`اتأكد إن الملف [[-r--r-----]] (0440).`,
+            R`deploy مسموحله بإيه؟`,
+            R`جرّب كـ deploy الأمر المسموح ([[-n]]: متسألش باسورد، افشل لو محتاج).`,
+            R`وأمر مش مسموح: هيفشل.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04 (مع [[systemctl]] وهمي لأن مفيش systemd في الـ container): [[visudo -c]] طبع [[/etc/sudoers: parsed OK]] و [[/etc/sudoers.d/README: parsed OK]] و [[/etc/sudoers.d/deploy: parsed OK]]. و [[ls -l]] بيوري [[-r--r----- 1 root root 190 Oct  2 11:20 deploy]]. و [[sudo -l -U deploy]] طبع:
+[[User deploy may run the following commands on server:]]
+[[(root) NOPASSWD: /usr/bin/systemctl restart myapp, /usr/bin/systemctl status myapp]]
+والأمر المسموح اشتغل من غير باسورد، و [[sudo -n whoami]] و [[sudo -n systemctl stop myapp]] ردّوا [[sudo: a password is required]].
+
+ولو حفظت قاعدة غلط ([[NOPASSWD]] من غير [[:]]):
+[[/etc/sudoers.d/test:1:46: syntax error]]
+والسطر وتحته [[^]] عند الغلطة، وبعدين [[What now?]]، ولو كتبت [[?]]: [[(e)dit sudoers file again]] و [[e(x)it without saving changes to sudoers file]] و [[(Q)uit and save changes to sudoers file (DANGER!)]]. اختار e تصلّح أو x تخرج. (x ساب ملف فاضي، وده مش بيضر.)
+
+وجربت الفخاخ: صلاحيات 0644 خلّت [[visudo -c]] يقول [[bad permissions, should be mode 0440]]، وصلاحيات 0666 خلّت sudo نفسه يقول [[sudo: /etc/sudoers.d/deploy is world writable]] ويتجاهله. وتغيير الاسم لـ [[deploy.conf]] خلّى [[sudo -l -U deploy]] يقول [[User deploy is not allowed to run sudo on server.]]. والطريقة اللي من غير محرر (للسكربتات) تحت.`,
+          solCode: R`echo 'deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart myapp' > /tmp/deploy
+sudo visudo -cf /tmp/deploy && sudo install -m 0440 -o root -g root /tmp/deploy /etc/sudoers.d/deploy
+sudo -l -U deploy`
+        },
+        {
+          cmd: "setuid و setgid و sticky bit",
+          title: "الـ s والـ t في الصلاحيات",
+          desc: R`فوق الـ rwx فيه ٣ صلاحيات خاصة بتظهر مكان الـ x في [[ls -l]]: setuid ([[s]] في خانة صاحب الملف)، و setgid ([[s]] في خانة الجروب)، و sticky ([[t]] في خانة الباقي). وفي الأرقام بتبقى رقم رابع قدام: 4 setuid، و 2 setgid، و 1 sticky، فـ [[chmod 2775]] يعني setgid + 775، و [[1777]] يعني sticky + 777.
+
+setuid على برنامج ([[chmod u+s]] أو [[4755]]): البرنامج بيشتغل بصلاحيات صاحبه (root غالبًا) مهما مين شغّله. ده اللي بيخلّي [[passwd]] يقدر يكتب في [[/etc/shadow]] وانت يوزر عادي: [[ls -l /usr/bin/passwd]] بيوري [[-rwsr-xr-x 1 root root]]، وكمان [[sudo]] و [[su]] و [[mount]]. ولينكس بيتجاهل setuid على السكربتات (جربت سكربت bash ملك root عليه s، وطبع اسم اليوزر العادي مش root)، فهي بتأثر في البرامج المترجمة بس.
+
+setgid على فولدر ([[chmod g+s]] أو [[2775]]): الملفات الجديدة جواه بتاخد جروب الفولدر، والفولدرات الجديدة بتورث الـ setgid نفسه. ده أساس الفولدر المشترك (درس «groupadd و gpasswd»). وعلى برنامج: بيشتغل بصلاحيات جروبه، زي [[chage]] اللي جروبه [[shadow]] عشان يقرا shadow.
+
+sticky على فولدر ([[chmod +t]] أو [[1777]]): في فولدر الكل بيكتب فيه، كل واحد يمسح أو يغيّر اسم ملفاته هو بس. ده [[/tmp]]: [[drwxrwxrwt]]. من غيره أي يوزر يقدر يمسح ملفات غيره المؤقتة.
+
+الكابيتال: [[S]] أو [[T]] يعني البت الخاص موجود بس الـ x اللي تحته مش موجود، وده غالبًا غلطة: [[chmod u+s]] على ملف 644 بيطلّع [[-rwSr--r--]].
+
+وفخ في GNU chmod: [[chmod 755]] على فولدر عليه setgid مبيشيلوش (بيحافظ عليه عمدًا عشان متبوّظش فولدر مشترك). عشان تشيله: [[chmod g-s]]، أو ٥ أرقام [[chmod 00755]]. على الملفات العادية الأرقام الأربعة بتمسحه عادي.
+
+فحص أمني: [[find / -xdev -perm -4000 -type f]]: [[-perm -4000]] يعني «البت ده موجود ومعاه أي حاجة»، و [[-xdev]] متدخلش ديسكات تانية (زي [[/proc]] والديسكات المتركّبة)، و [[2>/dev/null]] يخبي رسايل Permission denied. على أوبونتو 24.04 النضيف هتلاقي حوالي ١٠ ملفات معروفة. أي حاجة غريبة، زي نسخة من [[bash]] أو [[find]] عليها s في [[/tmp]] أو home، علامة اختراق كلاسيكية: المخترق بيسيبها عشان يرجع root بعدين.`,
+          example: R`ls -l /usr/bin/passwd /usr/bin/sudo
+ls -ld /tmp
+sudo mkdir -p /srv/shared
+sudo chmod 2775 /srv/shared
+sudo chmod +t /srv/shared
+stat -c '%a %A %n' /srv/shared /tmp /usr/bin/passwd
+sudo chmod g-s,-t /srv/shared
+sudo find / -xdev -perm -4000 -type f 2>/dev/null
+sudo find / -xdev -perm -2000 -type f 2>/dev/null`,
+          try: R`اعمل الفولدر وحط عليه setgid و sticky واقرا الأرقام بـ [[stat]]. وبعدين جرّب [[chmod 755]] عليه وشوف الـ s اتشالت ولا لأ، وجرّب [[chmod 00755]]. وفي الآخر اعمل الـ find على جهازك وقارن باللستة اللي في الحل.`,
+          mac: ["both", R`نفس الفكرة والحروف على الماك، و [[find / -perm -4000 -type f 2>/dev/null]] شغال (من غير [[-xdev]] هياخد وقت). و [[/tmp]] هناك اختصار لـ [[/private/tmp]] وعليه t.`],
+          deep: {
+            why: R`فيه حاجات اليوزر العادي لازم يعملها بس محتاجة root: يغيّر باسورده (يكتب في shadow)، يستخدم sudo، يركّب فلاشة. setuid بيحلها من غير ما تدّيه root. والـ setgid والـ sticky بيحلوا مشكلتين في الفولدرات المشتركة: الجروب، ومين يمسح إيه. ونفس القوة دي هي اللي بتخلي setuid على البرنامج الغلط ثغرة.`,
+            how: R`كل ملف ليه ١٢ bit صلاحيات مش ٩: التلاتة الزيادة هما الـ 4 و 2 و 1 اللي قدام. ولما تشغّل برنامج عليه setuid، الـ kernel بيدّي العملية «effective UID» = صاحب الملف بدل UID بتاعك، فكل الملفات بتتفتح بصلاحياته. عشان كده البرامج دي مكتوبة بحذر شديد ([[passwd]] بيسيبك تغيّر باسورد نفسك بس).
+
+والسكربت بيتجاهل لأن اللي بيشتغل فعلًا هو [[bash]] بيقرا الملف، والـ kernel شايل الدعم ده من زمان عشان ثغرات قديمة.
+
+والـ setgid على الفولدر قاعدة في الـ kernel وقت إنشاء الملف: «جروب الملف الجديد = جروب الفولدر». والـ sticky قاعدة وقت المسح والنقل: «لازم تكون صاحب الملف أو صاحب الفولدر أو root».`,
+            when: R`فولدر فريق: [[2775]]. فولدر الكل بيرمي فيه ملفات (uploads مؤقتة): [[1777]] زي [[/tmp]]. مراجعة أمنية دورية لسيرفر: الـ find وتقارنه بنسخة قديمة ([[> suid-list.txt]] وبعدين [[diff]]). و setuid بتاعك انت: تقريبًا أبدًا، استخدم sudo بقاعدة محددة.`,
+            mistakes: R`[[chmod 777]] على فولدر مشترك من غير t، فأي حد يمسح شغل أي حد. و [[chmod u+s]] على سكربت وتستغرب إنه مش شغال كـ root. و [[chmod -R 755]] تفتكره شال الـ setgid من الفولدرات وهو مشالوش. و [[find / -perm 4000]] من غير الشرطة: بيدوّر على الصلاحيات دي «بالظبط» (4000 لوحدها)، فمش هيلاقي [[4755]].`
+          },
+          lines: [
+            R`[[s]] مكان x الصاحب: البرنامجين بيشتغلوا كـ root.`,
+            R`[[t]] في الآخر: sticky، كل واحد يمسح ملفاته بس.`,
+            R`اعمل فولدر تجربة.`,
+            R`setgid (2) + 775.`,
+            R`زوّد sticky ([[+t]]) فوقها.`,
+            R`اطبع الصلاحيات رقم ([[%a]]) وحروف ([[%A]]) واسم ([[%n]]).`,
+            R`شيل الاتنين بالحروف (الطريقة المضمونة على الفولدرات).`,
+            R`كل البرامج اللي عليها setuid على الديسك ده.`,
+            R`وكل اللي عليها setgid.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04: [[-rwsr-xr-x 1 root root 64152 May 30 2024 /usr/bin/passwd]] و [[-rwsr-xr-x 1 root root 282032 ... /usr/bin/sudo]]، و [[drwxrwxrwt ... /tmp]]. و [[stat]] طبع:
+[[3775 drwxrwsr-t /srv/shared]]
+[[1777 drwxrwxrwt /tmp]]
+[[4755 -rwsr-xr-x /usr/bin/passwd]]
+وبعد [[chmod g-s,-t]]: [[775 drwxrwxr-x]].
+
+الـ find للـ setuid طلّع: [[/usr/bin/mount]] و [[/usr/bin/chsh]] و [[/usr/bin/gpasswd]] و [[/usr/bin/passwd]] و [[/usr/bin/umount]] و [[/usr/bin/newgrp]] و [[/usr/bin/su]] و [[/usr/bin/chfn]] و [[/usr/bin/sudo]]. وللـ setgid: [[/usr/bin/expiry]] و [[/usr/bin/chage]] و [[/usr/sbin/unix_chkpwd]] و [[/usr/sbin/pam_extrausers_chkpwd]]. على Desktop هتلاقي أكتر (زي [[fusermount3]] و [[pkexec]] وحاجات snap).
+
+وفي الـ sticky: mona حاولت تمسح ملف ali في [[/tmp]]: [[rm: cannot remove '/tmp/ali.txt': Operation not permitted]]. والفخ: على فولدر عليه s، [[chmod 0755]] سابه [[drwxr-sr-x]]، و [[chmod 00755]] بس اللي شاله. و [[chmod u+s]] على ملف من غير x طلّع [[-rwSr--r--]].`
+        },
+        {
+          cmd: "umask",
+          title: "الصلاحيات الافتراضية للملفات الجديدة",
+          desc: R`[[umask]] بيحدد صلاحيات أي ملف أو فولدر جديد بتعمله. البرامج بتطلب 666 (rw للكل) للملفات و 777 للفولدرات، والـ umask بيشيل منهم الصلاحيات اللي فيه: [[umask 022]] بيطلّع ملفات 644 وفولدرات 755.
+
+كل رقم في الـ umask = الصلاحيات اللي «تتشال» من المجموعة دي (الصاحب، الجروب، الباقي): 0 متشيلش حاجة، و 2 شيل الكتابة، و 7 شيل كله.
+• [[022]]: الكل يقرا وانت بس تكتب (ملفات 644 وفولدرات 755). الافتراضي لـ root ولكتير من التوزيعات.
+• [[002]]: جروبك كمان يكتب (664 و 775). الافتراضي لليوزرز العاديين في أوبونتو، لأن كل يوزر في جروب لوحده باسمه، فمفيش حد تاني فيه.
+• [[027]]: الجروب يقرا، والباقي ولا حاجة (640 و 750). كويس للسيرفرات.
+• [[077]]: انت بس (600 و 700). للأسرار والمفاتيح.
+
+[[umask]] لوحده بيطبع القيمة الحالية بـ ٤ أرقام ([[0022]]، الأول للبتات الخاصة)، و [[-S]] (symbolic) بيطبع اللي «فاضل» مش اللي بيتشال: [[u=rwx,g=rx,o=rx]]. وتقدر تكتبها كده كمان: [[umask u=rwx,g=rx,o=]] هي نفسها 027.
+
+«طرح» ده تبسيط: الحقيقة إنها بتشيل bits. [[umask 033]] مش بيطلّع 633: الملف بيطلع 644 والفولدر 744 (جربتها). وكمان الـ umask عمره ما بيضيف x: الملف العادي بيتعمل من غير تشغيل مهما كانت، فـ [[chmod +x]] لازم للسكربتات.
+
+مكانها: [[umask 027]] في الترمنال بتأثر على الشيل ده واللي بيتفتح منه بس. عشان تثبتها ليوزرك: آخر [[~/.bashrc]]. للجهاز كله: [[UMASK]] في [[/etc/login.defs]] (أوبونتو بيطبقها عن طريق pam_umask، ومع [[USERGROUPS_ENAB yes]] بتبقى 002 لليوزر اللي جروبه باسمه). وللخدمات: [[UMask=0027]] في ملف الخدمة بتاع systemd (شوف درس «/etc/systemd/system/myapp.service» في تاب «VPS»)، لأن الخدمة مبتقراش .bashrc.`,
+          example: R`umask
+umask -S
+umask 027
+touch secret.txt && mkdir private
+ls -ld secret.txt private
+umask 077
+touch key.txt && ls -l key.txt
+umask 022
+echo 'umask 027' >> ~/.bashrc`,
+          try: R`في [[~/lab]] جرّب ٤ قيم (022 و 002 و 027 و 077)، وفي كل مرة اعمل ملف وفولدر واقرا صلاحياتهم. وبعدين جرّب [[umask 033]] وتوقّع النتيجة قبل ما تشوفها.`,
+          mac: ["both", R`نفس الكلام، والافتراضي على الماك [[0022]]. ولو عايزها ثابتة لكل البرامج مش الترمنال بس: [[sudo launchctl config user umask 027]] وبعدين ريستارت.`],
+          deep: {
+            why: R`كل ملف بيتعمل على السيرفر (لوج، أو باك أب، أو ملف رفعه يوزر) بياخد صلاحياته من الـ umask بتاع البرنامج اللي عمله. umask 022 معناه أي يوزر على الجهاز يقدر يقرا الباك أب بتاع قاعدة البيانات. والعكس: umask 077 في فولدر مشترك معناه زمايلك مش هيشوفوا ملفاتك.`,
+            how: R`الـ umask قيمة في كل عملية (زي الفولدر الحالي)، وبتتورث للعمليات اللي بتطلع منها. ولما برنامج يعمل ملف، بيطلب صلاحيات (غالبًا 0666، وللفولدر 0777)، والـ kernel بيعمل: المطلوب AND (NOT umask). يعني أي bit موجود في الـ umask بيتشال. عشان كده [[033]] بتشيل wx من الجروب والباقي، والملف أصلًا معندوش x، فيفضل 644.
+
+و [[umask]] أمر جوه الشيل نفسه (builtin)، لأن برنامج منفصل مش هيقدر يغيّر قيمة الشيل اللي شغّله.`,
+            when: R`سيرفر فيه أسرار: [[027]] أو [[077]] لليوزر اللي بيعمل الباك أب. فولدر مشترك: [[002]]. خدمة بتكتب ملفات المفروض Nginx يقراها: [[UMask=0022]] أو [[0027]] مع جروب مشترك. سكربت بيعمل مفتاح أو ملف .env: [[umask 077]] في أوله (أو [[install -m 600]]).`,
+            mistakes: R`إنك تحسبها طرح فتتوقع أرقام غلط. وإنك تحط umask في [[.bashrc]] وتستغرب إن الخدمة مش متأثرة. وإنك تفتكر الـ umask بيغيّر صلاحيات الملفات الموجودة، هو للجديدة بس. و [[umask 000]] «عشان المشاكل تخلص»: زي [[chmod 777]] لكل حاجة هتتعمل.`
+          },
+          lines: [
+            R`القيمة الحالية بالأرقام.`,
+            R`نفس القيمة بالحروف: الصلاحيات اللي فاضلة.`,
+            R`من هنا ورايح: الجروب يقرا بس، والباقي ولا حاجة.`,
+            R`اعمل ملف وفولدر جداد.`,
+            R`اقرا صلاحياتهم: [[-rw-r-----]] و [[drwxr-x---]].`,
+            R`انت بس.`,
+            R`ملف جديد: [[-rw-------]].`,
+            R`رجّعها للعادي.`,
+            R`ثبّت 027 ليوزرك في كل ترمنال جديد.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04: كـ root [[umask]] طبع [[0022]] و [[-S]] طبع [[u=rwx,g=rx,o=rx]]. وكـ يوزر عادي داخل بـ [[su -]] طبع [[0002]] (بسبب USERGROUPS_ENAB). والنتايج:
+[[-rw-r--r-- f022]] و [[drwxr-xr-x d022]]
+[[-rw-rw-r-- f002]] و [[drwxrwxr-x d002]]
+[[-rw-r----- f027]] و [[drwxr-x--- d027]]
+[[-rw------- f077]] و [[drwx------ d077]]
+و [[umask 033]] طلّع [[-rw-r--r--]] للملف و [[drwxr--r--]] للفولدر، مش 633.
+
+و [[umask u=rwx,g=rx,o=]] وبعدين [[umask]] طبع [[0027]]. ولاحظ إن [[touch new.sh]] مع أي umask طلع من غير x، ولازم [[chmod +x]].`
+        },
+        {
+          cmd: "setfacl و getfacl",
+          title: "ادّي يوزر واحد زيادة صلاحية على فولدر",
+          desc: R`الـ ACL (Access Control List) بتخليك تدّي يوزر أو جروب معين صلاحيات على ملف أو فولدر، من غير ما تغيّر صاحبه ولا جروبه. مفيدة لما التلات خانات (صاحب، جروب، باقي) مش كفاية: «الفولدر ده بتاع mona، وعايز ali بس يقدر يكتب فيه، من غير ما أعمل جروب».
+
+[[setfacl]]:
+• [[-m]] (modify) يضيف أو يعدّل قاعدة: [[u:ali:rwx]] يوزر ali ياخد rwx، و [[g:webteam:rX]] جروب، و [[X]] الكابيتال تشغيل للفولدرات بس (زي chmod).
+• [[-R]] على الفولدر وكل اللي جواه دلوقتي.
+• [[-d]] (default) القاعدة تتطبّق على أي ملف أو فولدر «هيتعمل» جوه بعد كده، وده اللي بيتنسى: من غيرها الملفات الجديدة مش هتبقى لـ ali صلاحية عليها.
+• [[-x u:ali]] يشيل قاعدة واحدة، و [[-b]] يشيل كل الـ ACL ويرجع rwx عادي.
+
+[[getfacl]] بيعرض القواعد: [[user::rwx]] صاحب الملف، و [[user:ali:rwx]] القاعدة اللي ضفناها، و [[group::r-x]] الجروب، و [[mask::rwx]] أقصى صلاحية لأي قاعدة غير صاحب الملف و other، و [[other::---]] الباقي، والسطور اللي بتبدأ بـ [[default:]] القواعد اللي هتتورث. و [[-c]] من غير التعليقات اللي فوق. و [[ls -l]] بيعلّم أي ملف عليه ACL بـ [[+]] في آخر الصلاحيات: [[drwxrwx---+]].
+
+الـ mask: بيتحسب لوحده لما تضيف قواعد، وأي قاعدة صلاحيتها أكبر منه بتتقص، و getfacl بيكتب جنبها [[#effective:r-x]]. والفخ: لما يبقى فيه ACL، خانة الجروب في [[ls -l]] بتعرض الـ mask مش الجروب، و [[chmod 750]] على الفولدر بتغيّر الـ mask لـ r-x، فـ ali يفقد الكتابة من غير ما تاخد بالك (جربتها).
+
+الدعم: ext4 و xfs و btrfs بيدعموها افتراضيًا على أي لينكس حديث (زمان كان لازم تكتب [[acl]] في fstab). الأوامر نفسها في باكدج [[acl]] (مش موجود في أوبونتو minimal ولا Docker). ومش مدعومة على FAT و exFAT. ومبتنتقلش مع [[cp]] العادي ولا [[tar]] إلا بـ [[cp -a]] و [[tar --acls]] و [[rsync -A]]. وللاحتياطي: [[getfacl -R dir > acl.txt]] وترجّعها بـ [[setfacl --restore=acl.txt]].`,
+          example: R`sudo apt install acl
+sudo setfacl -m u:ali:rwx /srv/reports
+sudo setfacl -m u:ali:rw /srv/reports/q3.txt
+ls -ld /srv/reports
+getfacl /srv/reports
+sudo setfacl -d -m u:ali:rwx /srv/reports
+sudo setfacl -R -m g:webteam:rX /srv/reports
+sudo setfacl -x u:ali /srv/reports/q3.txt
+sudo setfacl -b /srv/reports`,
+          try: R`اعمل [[/srv/reports]] ملك mona بـ [[chmod 750]] واتأكد إن ali مش قادر يعمل [[ls]] فيه. ادّيله ACL واتأكد إنه بقى يقدر. وبعدين خلّي mona تعمل ملف جديد جوه وشوف ali عنده صلاحية عليه ولا لأ، قبل [[-d]] وبعدها. وفي الآخر اعمل [[chmod 750]] تاني على الفولدر واقرا [[getfacl]].`,
+          mac: ["diff", R`الماك عنده ACL بشكل تاني ومفيش setfacl: [[chmod +a "ali allow read,write,execute" dir]] يضيف، و [[ls -le]] يعرضها، و [[chmod -a "ali allow read,write,execute" dir]] يشيل.`],
+          deep: {
+            why: R`أحيانًا الحل بجروب تقيل: تعمل جروب جديد عشان يوزر واحد، وتغيّر جروب الفولدر فتبوّظ الصلاحيات اللي كانت شغالة. الـ ACL بيضيف استثناء من غير ما يلمس الموجود: يوزر الـ backup يقرا فولدر التطبيق، أو Nginx ([[www-data]]) يقرا فولدر جوه home يوزر، أو زميل يكتب في فولدر واحد بس.`,
+            how: R`الـ ACL بيتخزن مع الملف نفسه كـ «extended attribute» على الـ filesystem. ولما حد يفتح الملف، الـ kernel بيشيك بالترتيب: صاحب الملف؟ يطبّق [[user::]]. قاعدة باسمه ([[user:ali:]])؟ يطبّقها مقصوصة بالـ mask. في جروب الملف أو جروب ليه قاعدة؟ أي واحدة فيهم بتسمح، مقصوصة بالـ mask. غير كده other.
+
+والـ default ACL على الفولدر مش بيأثر على الفولدر نفسه، دي «وصفة» بتتنسخ لأي حاجة جديدة جواه، ولما بتكون موجودة الـ umask بيتجاهل والـ mask الجديد بيتحسب من الوصفة والصلاحيات اللي البرنامج طلبها.`,
+            when: R`يوزر واحد زيادة على فولدر: [[setfacl -m u:اسمه:rwX]] ومعاه [[-d -m]]. سكربت باك أب بيوزر لوحده محتاج يقرا [[/var/www]]: [[setfacl -R -m u:backup:rX]] و [[-d]]. فولدر مشترك ليوزرز الـ umask بتاعهم 022: default ACL للجروب بيخلي الملفات الجديدة قابلة للكتابة للجروب مهما كان الـ umask.`,
+            mistakes: R`ACL على الموجود ونسيان [[-d]] للجديد. و [[chmod]] على ملف عليه ACL فتقص الـ mask وتقفل الناس من غير ما تعرف ليه (بص على [[#effective]]). ونسخ الملفات بـ [[cp]] عادي لمكان تاني والـ ACL تضيع. وإنك متاخدش بالك من الـ [[+]] في [[ls -l]] وانت بتحقق ليه حد عنده صلاحية مش باينة.`
+          },
+          lines: [
+            R`سطّب أوامر الـ ACL لو مش موجودة.`,
+            R`ادّي ali (يوزر، [[u:]]) rwx على الفولدر، من غير ما تغيّر صاحبه ولا جروبه.`,
+            R`وادّيه قراية وكتابة على ملف جواه.`,
+            R`هتلاقي [[+]] في آخر الصلاحيات: عليه ACL.`,
+            R`اعرض كل القواعد والـ mask.`,
+            R`default ([[-d]]): أي حاجة هتتعمل جوه بعد كده ياخد ali عليها rwx.`,
+            R`جروب webteam يقرا الفولدر وكل اللي جواه ([[-R]])، و [[X]] تدخل الفولدرات بس.`,
+            R`شيل قاعدة ali بس من الملف ([[-x]]).`,
+            R`شيل كل الـ ACL من الفولدر ([[-b]]).`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04: قبل الـ ACL، ali خد [[ls: cannot open directory '/srv/reports': Permission denied]]. بعدها [[ls -ld]] طبع [[drwxrwx---+ 2 mona mona 4096 Oct  2 11:20 /srv/reports]]، و [[getfacl]] طبع:
+[[# file: srv/reports]] و [[# owner: mona]] و [[# group: mona]]
+[[user::rwx]]
+[[user:ali:rwx]]
+[[group::r-x]]
+[[mask::rwx]]
+[[other::---]]
+وفوقهم [[getfacl: Removing leading '/' from absolute path names]]، دي مجرد ملاحظة. و ali قدر يعمل ls ويكتب في q3.txt.
+
+ملف جديد عملته mona بعد [[-d]] (بـ umask 027) طلع [[-rw-rw----+]] وفيه [[user:ali:rwx #effective:rw-]]: الـ default اشتغل والـ umask اتجاهل. وبعد [[chmod 750]] على الفولدر: [[mask::r-x]] و [[user:ali:rwx #effective:r-x]]، يعني ali فقد الكتابة. و [[setfacl -b]] رجّع [[drwxr-x---]] من غير [[+]].`
+        },
+        {
+          cmd: "chattr و lsattr",
+          title: "ملف محدش يقدر يمسحه، حتى root",
+          desc: R`[[chattr]] (change attributes) بيحط على الملف خصائص على مستوى الـ filesystem أقوى من الصلاحيات: [[+i]] (immutable) يخلّي الملف مايتعدّلش ولا يتمسح ولا يتغيّر اسمه، حتى من root، لحد ما حد يشيلها. و [[lsattr]] بيعرض الخصائص دي.
+
+[[+i]]: كل حاجة بترفض بـ [[Operation not permitted]]: الكتابة، و [[rm]]، و [[mv]]، و [[chmod]]، و [[ln]]، وحتى [[touch]]. وعلى فولدر: مينفعش تعمل أو تمسح حاجة جواه. و [[-i]] يشيلها. و [[+a]] (append only): مسموح الإضافة في الآخر بس ([[>>]] و [[tee -a]])، والكتابة فوقه ([[>]]) والمسح و [[sed -i]] بيترفضوا؛ مناسب لملفات اللوج، عشان اللي يخترق ميعرفش يمسح أثره بسهولة. والاتنين محتاجين root (تحديدًا صلاحية اسمها CAP_LINUX_IMMUTABLE)، واليوزر العادي بياخد Operation not permitted حتى على ملفه.
+
+[[lsattr]] سطر حروف لكل ملف: [[----i---------e-------]]: الـ [[i]] immutable، والـ [[a]] append، والـ [[e]] (extents) طريقة تخزين ext4 العادية وموجودة على كل ملف تقريبًا، متقلقش منها. و [[-d]] للفولدر نفسه مش اللي جواه، و [[-R]] لكل اللي جوه.
+
+ليه الدرس عليه علامة خطر: root نفسه هيتلخبط («انا root ومش قادر أمسح الملف!»)، وأي برنامج بيحدّث الملف هيفشل: [[apt]] لو حطيتها على ملف سيستم، أو certbot على شهادة، أو تطبيقك على .env بيتعدّل. وفيه حركة مشهورة للمخترقين إنهم يعملوا [[+i]] على ملفاتهم أو على [[authorized_keys]] عشان متتمسحش، فلو ملف مش راضي يتمسح كـ root، [[lsattr]] أول حاجة.
+
+الدعم: ext4 و xfs و btrfs، وعلى الـ kernel الحديث tmpfs كمان. مش شغالة على FAT ولا NTFS ولا NFS. وفي Docker محتاج [[--cap-add LINUX_IMMUTABLE]] (أو [[--privileged]])، من غيرها حتى root بياخد [[chattr: Operation not permitted while setting flags on f]] (جربت الاتنين). والخصائص دي بتاعة الملف ده بس: [[cp]] بيطلّع نسخة من غيرها.`,
+          example: R`echo "DB_PASS=secret" > .env
+sudo chattr +i .env
+lsattr .env
+sudo rm -f .env
+echo "x" >> .env
+sudo chattr -i .env
+sudo touch /var/log/myapp.log
+sudo chattr +a /var/log/myapp.log
+echo "started" | sudo tee -a /var/log/myapp.log
+echo "wipe" | sudo tee /var/log/myapp.log
+sudo chattr -a /var/log/myapp.log`,
+          try: R`في [[~/lab]]: اعمل ملف وحط عليه [[+i]]، وجرّب تمسحه وتعدّله وتغيّر اسمه وتعمله chmod، حتى بـ sudo. شيلها وامسحه. وبعدين جرّب [[+a]] على ملف لوج: ضيف سطر بـ [[>>]] واكتب فوقه بـ [[>]]. ومتنساش [[-a]] في الآخر.`,
+          flag: "danger",
+          mac: ["diff", R`الماك مفيهوش chattr: [[sudo chflags schg file]] (system immutable، زي [[+i]]) و [[chflags uchg file]] (صاحبه يقدر يشيلها)، و [[ls -lO]] بيعرض الـ flags، و [[chflags noschg]] تشيلها. و [[schg]] في الوضع العادي محتاجة sudo بس، أما لو الجهاز في securelevel أعلى فمش هتتشال غير من recovery.`],
+          deep: {
+            why: R`الصلاحيات بتحمي من اليوزرز التانيين، بس root بيعدّي منها. [[+i]] بيحمي ملف من «الغلطة» حتى لو انت root: سكربت بيمسح بالغلط، أو حد بيعمل [[rm -rf]] في المكان الغلط. و [[+a]] بيخلي اللوج «يتكتب بس»، وده مهم لما تحتاج تعرف حصل إيه بعد اختراق.`,
+            how: R`الخصائص دي flags متخزنة في الـ inode بتاع الملف على الـ filesystem، مش في bits الصلاحيات. والـ kernel بيشيكها قبل أي عملية تعديل، وقبل ما يشيك إنت مين. فحتى root بيترفض. والطريقة الوحيدة إن عملية عندها CAP_LINUX_IMMUTABLE (root عادي عنده) تشيل الـ flag الأول.
+
+و [[sed -i]] بيفشل على [[+a]] لأنه مش بيعدّل الملف، بيكتب ملف جديد وبيغيّر اسمه مكان القديم، والاسم الجديد مش مسموح. ونفس السبب إن محررات كتير مش هتقدر تحفظ ملف عليه [[+i]].`,
+            when: R`ملف إعدادات حساس مش المفروض يتغيّر غير وانت قاصد ([[/etc/resolv.conf]] لو برنامج كل شوية بيكتب فوقه، وانت عارف بتعمل إيه). لوج مهم: [[+a]] (بس logrotate هيفشل يلف الملف، فاعمل له استثناء أو متستخدمهاش على لوجات بتتلف). وفي التحقيق بعد اختراق: [[lsattr -R]] على [[/etc]] و [[~/.ssh]].`,
+            mistakes: R`[[+i]] على ملف بيتحدّث لوحده (شهادة، .env، ملف apt) وتنسى، فتحديث يفشل بعد شهور ومحدش فاكر. و [[+a]] على لوج بيعمل له logrotate. وإنك تفتكر الـ flag بيتنقل مع الباك أب، ومش بيتنقل. و [[rm -rf]] بيفشل كـ root وتفضل تزوّد sudo، والحل [[lsattr]].`
+          },
+          lines: [
+            R`اعمل ملف تجربة.`,
+            R`immutable: محدش يغيّره ولا يمسحه، حتى root.`,
+            R`اعرض الخصائص: هتلاقي [[i]].`,
+            R`المسح بيترفض حتى بـ sudo.`,
+            R`والإضافة كمان.`,
+            R`شيل الحماية.`,
+            R`اعمل ملف لوج.`,
+            R`append only: إضافة في الآخر بس.`,
+            R`[[tee -a]] بيضيف: مسموح.`,
+            R`[[tee]] من غير [[-a]] بيكتب فوقه: مرفوض.`,
+            R`شيل الـ append only في الآخر.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04 بـ [[--privileged]]، على ext4 متركّب من ملف (loop): [[lsattr .env]] طبع [[----i---------e------- .env]]، وكل حاجة اترفضت:
+[[rm: cannot remove '.env': Operation not permitted]]
+[[bash: line 7: .env: Operation not permitted]] (للـ >>)
+[[mv: cannot move '.env' to 'x': Operation not permitted]]
+[[chmod: changing permissions of '.env': Operation not permitted]]
+[[ln: failed to create hard link 'hard' => '.env': Operation not permitted]]
+[[touch: cannot touch '.env': Operation not permitted]]
+وبعد [[chattr -i]] الملف اتمسح عادي.
+
+ومع [[+a]]: [[tee -a]] نجح، و [[tee]] من غير [[-a]] طبع [[wipe]] على الشاشة بس (لأن tee بيطبع دايمًا) وبعدها [[tee: myapp.log: Operation not permitted]]، والملف فضل فيه [[started]] بس. و [[rm]] اترفض، و [[sed -i]] قال [[sed: cannot rename logs/sedpdpoyK: Operation not permitted]] (وساب ملف مؤقت جنبه). ويوزر عادي على ملفه هو: [[chattr: Operation not permitted while setting flags on /tmp/ali2]]. ولو شغّال في Docker من غير الصلاحية، حتى root بياخد نفس الرسالة.`
+        }
+      ]
+    },
+    {
       t: "العمليات والخدمات",
       l: 2,
       n: "إيه اللي شغال، وازاي توقفه",
@@ -1865,6 +2461,367 @@ unzip site.zip -d out/`,
           sol: R`[[zip -r site.zip app/]] بيطبع [[adding: app/ (stored 0%)]] لكل ملف، و [[unzip site.zip -d out/]] بيعمل [[out/]] لو مش موجود ويطبع [[creating: out/app/]] و [[extracting: out/app/src/s.js]]. [[ls out]] هيوريك [[app]] جواه.
 
 لو نسيت [[-r]]، الـ zip هيبقى فيه الفولدر فاضي من غير اللي جواه. ولو عايز تشوف اللي جوه الـ zip من غير ما تفكه: [[unzip -l site.zip]].`
+        }
+      ]
+    },
+    {
+      t: "الهاردوير والأداء",
+      l: 2,
+      n: "لينكس شايف الجهاز ده ولا لأ، والبطء من المعالج ولا الرام ولا الديسك، وشغلانة تقيلة من غير ما الجهاز يهنّج، وتحويل الفيديو، وفلاشة bootable",
+      items: [
+        {
+          cmd: "lsusb و lspci و lshw",
+          title: "جهازك فيه إيه ولينكس شايفه ولا لأ",
+          desc: R`[[lsusb]] بيعرض كل حاجة متوصلة USB، و [[lspci]] الكروت اللي جوه الجهاز (الشاشة والواي فاي والصوت والـ SSD)، و [[lshw]] ملخص كل الهاردوير. أول سؤال لما حاجة مش شغالة (واي فاي، أو طابعة USB، أو كارت شاشة): «لينكس شايفها أصلًا؟ وبيستخدم أنهي driver؟».
+
+[[lsusb]] سطر لكل جهاز: [[Bus 001 Device 004: ID 046d:c52b Logitech, Inc. Unifying Receiver]]. والـ [[ID]] رقمين: الشركة (vendor) والمنتج (product)، ودول اللي تدوّر بيهم لو الاسم مش ظاهر. و [[-t]] شجرة مين متوصل في مين (والسرعة: 480M يعني USB 2، و 5000M أو أكتر USB 3)، و [[-v]] كل التفاصيل. افصل الجهاز ووصّله وقارن: لو السطر ظهر، لينكس شايفه والمشكلة في driver أو إعداد؛ لو مظهرش، المشكلة في الكابل أو المنفذ أو الجهاز. و [[sudo dmesg -w]] بيوريك رسايل الـ kernel لايف وانت بتوصّل.
+
+[[lspci]] سطر لكل كارت: [[00:14.3 Network controller: Intel Corporation Wi-Fi 6 AX201]]. و [[-k]] (kernel) بيزوّد تحت كل كارت [[Kernel driver in use:]] (الـ driver الشغال فعلًا) و [[Kernel modules:]] (اللي ينفع). لو كارت الواي فاي أو الشاشة مفيش تحته [[driver in use]]، ده سبب المشكلة. و [[-nn]] بيطبع الأرقام بين أقواس زي [[[8086:a0f0]]] عشان تدوّر بيها.
+
+[[sudo lshw -short]] جدول: [[H/W path]] و [[Device]] و [[Class]] (memory و processor و display و network و disk) و [[Description]]. و [[-C network]] (class) نوع واحد، و sudo لازم عشان التفاصيل تبقى كاملة. و [[inxi -Fxz]] ملخص أجمل: [[-F]] (full) كل الأقسام، و [[-x]] تفاصيل زيادة، و [[-z]] يخبي الـ MAC والـ IP والأرقام التسلسلية (مهم قبل ما تلزق الناتج في فوروم أو issue)، و [[-c0]] من غير ألوان.
+
+الحرارة: [[sudo apt install lm-sensors]]، وبعدين [[sudo sensors-detect]] مرة واحدة (بيسأل أسئلة، و Enter على الإجابة الافتراضية آمن)، وبعدها [[sensors]] بيطبع حرارة المعالج ([[Tctl]] في AMD و [[Package id 0]] في Intel) والـ SSD ([[nvme]]) والمراوح. و [[watch -n 2 sensors]] (درس watch) وانت بتشغّل حاجة تقيلة. والديسكات: [[lsblk]] (شوف درس «lsblk / mount» في تاب «VPS»).
+
+وجوه VM أو container أو WSL هتشوف الهاردوير «الافتراضي» مش جهازك. جربت الأوامر دي جوه container على Docker Desktop (WSL2): [[lsusb]] مطلعش ولا سطر، و [[lspci]] طلّع كروت Virtio و [[Microsoft Corporation Basic Render Driver]]، و [[sensors]] قال [[No sensors found!]]. بس [[lshw]] طلّع المعالج الحقيقي، لأنه بيقرا [[/proc/cpuinfo]].`,
+          example: R`sudo apt install usbutils pciutils lshw inxi lm-sensors
+lsusb
+lsusb -t
+lspci -k
+lspci -nn | grep -i -E 'vga|network|audio'
+sudo lshw -short
+sudo lshw -C network -short
+inxi -Fxz
+sudo sensors-detect
+sensors`,
+          try: R`على جهازك الحقيقي (مش VM): اعمل [[lsusb]]، ووصّل فلاشة أو ماوس، واعمله تاني وشوف السطر الجديد. واعرف كارت الواي فاي بتاعك والـ driver بتاعه من [[lspci -k]]، وحرارة المعالج دلوقتي.`,
+          mac: ["diff", R`مفيش الأوامر دي على الماك: [[system_profiler SPHardwareDataType]] ملخص الجهاز، و [[system_profiler SPDisplaysDataType]] الشاشة، و [[ioreg -p IOUSB]] أجهزة الـ USB. والحرارة مش متاحة من غير برامج إضافية.`],
+          deep: {
+            why: R`«الواي فاي مش ظاهر بعد ما سطّبت لينكس»، «الطابعة USB مش بتطبع»، «الجهاز سخن وبطيء». قبل ما تسطّب drivers عشوائي من شروحات، لازم تعرف الجهاز إيه بالظبط (الشركة والموديل والأرقام) ولينكس شايفه ولا لأ. والأرقام [[vendor:product]] هي اللي بتلاقي بيها الحل الصح.`,
+            how: R`الأوامر دي بتقرا اللي الـ kernel اكتشفه: lsusb و lspci بيقروا من [[/sys/bus/usb]] و [[/sys/bus/pci]]، ويترجموا الأرقام لأسامي من قاعدة بيانات جاية معاهم ([[usb.ids]] و [[pci.ids]]). عشان كده جهاز جديد جدًا ممكن يظهر برقمه من غير اسم، بس لسه «لينكس شايفه».
+
+والـ driver حاجة تانية: الـ kernel بيحاول يربط كل جهاز بـ module بيعرف يكلّمه. [[lspci -k]] بيوريك نجح ولا لأ. و [[sensors]] بيقرا حساسات الماذربورد والمعالج من [[/sys/class/hwmon]]، و [[sensors-detect]] بيدوّر على أنهي module محتاج يتحمّل عشان الحساسات تظهر.`,
+            when: R`بعد تسطيب لينكس على جهاز جديد: [[lspci -k]] واتأكد كل حاجة ليها driver. جهاز USB مش شغال: [[lsusb]] قبل وبعد التوصيل و [[dmesg -w]]. بتكتب issue أو بتسأل في فوروم: [[inxi -Fxz]]. والجهاز سخن أو بيهدّي السرعة: [[sensors]].`,
+            mistakes: R`تصدّق ناتج VM أو WSL وتفتكره جهازك. وتلزق [[inxi -F]] من غير [[-z]] فتنشر الـ MAC والسيريال. وتسطّب driver من شرح لموديل تاني من غير ما تقارن الأرقام [[vendor:product]]. وتنسى [[sudo]] مع lshw فتطلع بيانات ناقصة.`
+          },
+          lines: [
+            R`سطّب الأدوات (الأسامي: usbutils فيها lsusb، و pciutils فيها lspci).`,
+            R`كل أجهزة الـ USB.`,
+            R`نفس الكلام كشجرة بالسرعات.`,
+            R`كروت PCI، وتحت كل واحد الـ driver الشغال ([[-k]]).`,
+            R`كارت الشاشة والشبكة والصوت بأرقامهم ([[-nn]]).`,
+            R`جدول بكل الهاردوير.`,
+            R`كروت الشبكة بس ([[-C]] class).`,
+            R`ملخص كامل ([[-F]]) بتفاصيل ([[-x]]) ومن غير بيانات شخصية ([[-z]]).`,
+            R`دوّر على حساسات الحرارة (مرة واحدة).`,
+            R`اطبع الحرارة والمراوح.`
+          ],
+          sol: R`ده ناتج حقيقي من container أوبونتو 24.04 بـ [[--privileged]] على Docker Desktop (VM بتاعة WSL2)، فالهاردوير افتراضي:
+[[lsusb]]: مفيش أي سطر.
+[[lspci -k]]: [[5582:00:00.0 SCSI storage controller: Red Hat, Inc. Virtio 1.0 console (rev 01)]] وتحته [[Kernel driver in use: virtio-pci]]، و [[7ce6:00:00.0 3D controller: Microsoft Corporation Basic Render Driver]] وتحته [[Kernel driver in use: dxgkrnl]].
+[[sudo lshw -short]]:
+[[/0/0                  memory     15GiB System memory]]
+[[/0/1                  processor  AMD Ryzen 9 5900HX with Radeon Graphics]]
+[[/0/7/0.0.3  /dev/sdd  volume     1TiB Virtual Disk]]
+[[inxi -Fxz]]: [[Kernel 6.6.87.2-microsoft-standard-WSL2]] و [[Info 8-core model AMD Ryzen 9 5900HX]] و [[Message No machine data: try newer kernel. Is dmidecode installed?]]، ومن غير [[-c0]] الناتج كان فيه أكواد ألوان لأنه مش رايح لترمنال.
+[[sensors]]: [[No sensors found!]] و [[Try sensors-detect to find out which these are.]]
+
+على لابتوب حقيقي، [[lsusb]] بيطلّع سطور زي [[Bus 003 Device 002: ID 0bda:5634 Realtek Semiconductor Corp. Integrated_Webcam_HD]] (الكاميرا الداخلية غالبًا USB)، و [[sensors]] بيطلّع [[Tctl: +52.0°C]] أو [[Package id 0: +48.0°C]].`
+        },
+        {
+          cmd: "nice و renice و ionice",
+          title: "شغلانة تقيلة من غير ما الجهاز يهنّج",
+          desc: R`[[nice]] بيشغّل أمر بأولوية أقل على المعالج، و [[renice]] بيغيّر أولوية عملية شغالة، و [[ionice]] نفس الفكرة للديسك. فتعمل ضغط أو build أو باك أب كبير، والجهاز أو السيرفر يفضل بيرد على الناس كويس.
+
+الـ niceness من [[-20]] (أعلى أولوية) لـ [[19]] (أقل)، والافتراضي 0. والاسم جاي من إن العملية «لطيفة» مع غيرها: كل ما الرقم يكبر بتسيب المعالج للباقي. [[nice -n 19 tar ...]] يشغّل الأمر بـ 19، و [[nice]] لوحده بيطبع الـ niceness الحالي. وفي [[top]] (درس «top / htop») عمود [[NI]] هو الرقم ده، و [[PR]] = 20 + NI.
+
+الأثر بيبان لما المعالج مشغول: جربت عمليتين بياكلوا CPU على نفس الـ core، واحدة 0 وواحدة 19: الأولى خدت حوالي 98% والتانية 1.3%. ولو المعالج فاضي، الـ 19 بتاخد كل اللي محتاجاه، يعني nice مبيبطّأش الشغلانة غير لما فيه زحمة.
+
+[[renice +10 -p PID]] (أو [[renice -n 10 -p PID]]) يغيّر عملية شغالة، والـ PID تجيبه من [[ps]] أو [[pgrep]]، و [[-u ali]] كل عمليات يوزر. وقاعدة مهمة: اليوزر العادي يقدر «ينزّل» أولوية عملياته بس (يكبّر الرقم)، ومينفعش يرجّعها ولا يدّي رقم سالب: [[renice: failed to set priority for 1044 (process ID): Permission denied]]. root بس يقدر يرفع.
+
+[[ionice]]: الديسك ليه طابور لوحده، و nice مش بيأثر عليه كتير. [[ionice -c3]] (class 3 = idle): العملية تقرا وتكتب على الديسك بس لما محدش تاني محتاجه. و [[-c2 -n7]] (best-effort، والأولوية من 0 لـ 7، و 7 الأقل) الوسط. و [[ionice -p PID]] يعرض الحالة. والاتنين مع بعض: [[ionice -c3 nice -n 19 أمر]]. والـ classes دي بتتطبّق كاملة مع scheduler اسمه BFQ، وجزئيًا مع [[mq-deadline]]، ومع [[none]] (الافتراضي على أغلب الـ NVMe) أثرها قليل. و [[cat /sys/block/sda/queue/scheduler]] بيقولك المستخدم بين أقواس.`,
+          example: R`nice -n 19 tar -czf backup.tar.gz ~/projects
+nice
+ps -o pid,ni,cmd -p 1234
+sudo renice +10 -p 1234
+renice -n 15 -u $USER
+ionice -c3 -p 1234
+ionice -c3 nice -n 19 rsync -a ~/projects /mnt/backup/
+cat /sys/block/sda/queue/scheduler`,
+          try: R`شغّل في ترمنال [[sh -c 'while :; do :; done' &]] مرتين، واحدة عادي وواحدة بـ [[nice -n 19]]، وقيّدهم على core واحد بـ [[taskset -c 0]] قدام كل واحد. افتح [[top]] وقارن عمودي NI و %CPU. وبعدين [[renice]] العادية لـ 19 وشوف اتغيّر إيه، وفي الآخر [[kill %1 %2]].`,
+          mac: ["diff", R`[[nice]] و [[renice]] موجودين بنفس الشكل، ومفيش [[ionice]]: [[taskpolicy -b أمر]] بيشغّله في الخلفية بأقل أولوية للمعالج والديسك.`],
+          deep: {
+            why: R`على سيرفر عليه موقع، باك أب أو ضغط لوجات أو build بياكل المعالج والديسك فالموقع يبطّأ للزوار. وعلى جهازك، ترجمة مشروع كبير بتخلّي الماوس يتقّل. nice و ionice بيقولوا للـ kernel «الشغلانة دي مش مستعجلة»، فتخلص برضه، بس في الوقت الفاضي.`,
+            how: R`الـ scheduler بتاع لينكس (EEVDF في الـ kernels الحديثة، و CFS قبله) بيوزّع وقت المعالج بالأوزان: كل niceness ليها وزن، والفرق بين كل رقم والتاني حوالي 10% من الوقت. فعمليتين 0 و 19 على نفس الـ core النسبة بينهم حوالي 70 لـ 1، وده اللي طلع في التجربة.
+
+والـ niceness بتتورث: [[nice -n 19 bash]] وأي حاجة تشغّلها جواه بـ 19. وللديسك، ionice بيحط class وأولوية على العملية، والـ I/O scheduler بتاع الديسك هو اللي بيقرر يحترمها قد إيه.`,
+            when: R`سكربت باك أب في cron: [[nice -n 19 ionice -c3]] قدامه. build تقيل وانت شغال على نفس الجهاز. عملية شغالة بالفعل وبتاكل الجهاز ومش عايز توقفها: [[renice +15]]. وقاعدة بيانات أو موقع لازم ياخدوا الأولوية: متلمسهمش، وقلّل أولوية الحاجات التانية.`,
+            mistakes: R`إنك تتوقع nice يخلّي الشغلانة تخلص أسرع، هو بيخليها «أبطأ وألطف». وإنك تعمل [[renice]] لرقم أقل كيوزر عادي وتستغرب Permission denied. و [[nice -n -10]] لحاجة مش مهمة كـ root. وإنك تعتمد على nice لوحده لشغلانة ديسك (باك أب، find كبير) فالبطء يفضل.`
+          },
+          lines: [
+            R`اضغط المشروع بأقل أولوية على المعالج.`,
+            R`اطبع الـ niceness الحالي (غالبًا 0).`,
+            R`بص على الـ NI بتاع العملية 1234.`,
+            R`قلّل أولويتها (رقم أكبر). الرفع محتاج root.`,
+            R`قلّل أولوية كل عمليات يوزرك ([[-u]]).`,
+            R`العملية 1234 تستخدم الديسك لما يكون فاضي بس (class 3 = idle).`,
+            R`باك أب بأقل أولوية للديسك والمعالج مع بعض.`,
+            R`الـ I/O scheduler بتاع الديسك (اللي بين الأقواس).`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04 على جهاز فيه 16 core، والعمليتين مقيّدين على core 0 بـ [[taskset -c 0]]. [[top]] بعد ٥ ثواني:
+[[  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND]]
+[[ 1070 root      20   0    2804   1792   1792 R 100.0   0.0   0:05.12 sh]]
+[[ 1071 root      39  19    2804   1536   1536 R   0.0   0.0   0:00.07 sh]]
+و [[ps -o pid,ni,pcpu,cmd]] قال 98.2% و 1.3%.
+
+[[renice +15 -p 1034]] طبع [[1034 (process ID) old priority 10, new priority 15]]. وكيوزر عادي: [[renice -n 19]] على عمليته نجح، و [[renice -n 5]] (رجوع) طبع [[renice: failed to set priority for 1044 (process ID): Permission denied]]، و [[nice -n -5 true]] طبع [[nice: cannot set niceness: Permission denied]].
+
+[[ionice -p]] قبل: [[none: prio 0]]، وبعد [[-c3]]: [[idle]]، وبعد [[-c2 -n7]]: [[best-effort: prio 7]]. و [[cat /sys/block/sda/queue/scheduler]] طبع [[[none] mq-deadline kyber]] (none هو المستخدم).`
+        },
+        {
+          cmd: "free -h",
+          title: "الرام: مستخدمة ولا كاش",
+          desc: R`[[free -h]] بيعرض الرام والـ swap: قد إيه موجود، وقد إيه مستخدم، وقد إيه «متاح» فعلًا. و [[-h]] (human) بالـ Gi و Mi. وأهم عمود فيه [[available]] مش [[free]]، ودي أشهر لخبطة في لينكس.
+
+الأعمدة:
+• [[total]] الرام كلها.
+• [[used]] اللي البرامج حاجزاها فعلًا.
+• [[free]] اللي محدش لامسه خالص.
+• [[shared]] رام مشتركة (غالبًا tmpfs).
+• [[buff/cache]] رام لينكس مستخدمها كاش للملفات اللي اتقرت أو اتكتبت مؤخرًا، عشان تتفتح أسرع المرة الجاية.
+• [[available]] قد إيه برنامج جديد يقدر ياخد من غير swap: الفاضي + الكاش اللي ينفع يتشال.
+وسطر [[Swap]]: جزء من الديسك بيتستخدم رام احتياطي (شوف درس «swap» في تاب «VPS»).
+
+ليه free قليل والجهاز تمام؟ لينكس شايف إن الرام الفاضية رام ضايعة، فبيملاها كاش، وأول ما برنامج يحتاج بيرجّع منها على طول. جربت: كتبت ملف 1.5 جيجا، فـ [[buff/cache]] طلع من 597Mi لـ 2.1Gi و [[free]] نزل من 14Gi لـ 12Gi، و [[available]] فضل 14Gi. ولما مسحت الملف الكاش رجع.
+
+إمتى تقلق فعلًا: [[available]] صغير (أقل من 10% مثلًا)، أو [[used]] في سطر Swap بيزيد باستمرار، أو [[vmstat]] بيوري [[si]] و [[so]] مش صفر (الدرس الجاي). وأقصى حالة: الـ kernel بيقتل أكبر برنامج (OOM killer)، و [[sudo dmesg | grep -i oom]] أو [[journalctl -k | grep -i oom]] بيقولك قتل مين.
+
+[[-m]] بالميجا بالظبط (للسكربتات)، و [[-w]] (wide) يفصل buffers عن cache، و [[-s 2]] يعيد كل ثانيتين، و [[-c 3]] عدد المرات. والأرقام دي جاية من [[/proc/meminfo]] ([[MemAvailable]] هو [[available]]).`,
+          example: R`free -h
+free -m
+free -h -s 2 -c 3
+grep -E 'MemTotal|MemAvailable|SwapFree' /proc/meminfo
+ps -eo pid,rss,cmd --sort=-rss | head -6
+sudo dmesg | grep -i 'out of memory'`,
+          try: R`اعرض [[free -h]] واكتب رقم [[buff/cache]] و [[available]]. اقرا ملف كبير ([[cat bigfile > /dev/null]] أو أي فيديو) واعرضه تاني: مين اتغيّر ومين لأ؟ وبعدين اعرف أكبر ٥ برامج بتاكل رام.`,
+          mac: ["diff", R`مفيش [[free]] على الماك: [[vm_stat]] (بالـ pages، كل page 16384 byte على Apple Silicon)، و [[top -l 1 | grep PhysMem]] سطر ملخص، و Activity Monitor ← Memory فيه «Memory Pressure» وده الأوضح.`],
+          deep: {
+            why: R`أول حاجة بتبص عليها لما الجهاز أو السيرفر بطيء أو برنامج بيقع. وأول ما الناس تفتح free على لينكس بيتخضّوا: «16 جيجا والفاضي 500 ميجا!» وده غالبًا كاش طبيعي. الفرق بين free و available هو الفرق بين «محتاج رام أكتر» و «كله تمام».`,
+            how: R`الـ kernel بيحتفظ بنسخة من أي جزء من ملف اتقرا أو اتكتب (page cache). القراية التانية من الرام بدل الديسك، فده بيسرّع كل حاجة. ولما برنامج يطلب رام والفاضي مش كفاية، الـ kernel بيرمي من الكاش اللي محدش بيستخدمه (اللي اتكتب على الديسك خلاص) ويدّيه.
+
+و [[available]] تقدير الـ kernel نفسه ([[MemAvailable]] في [[/proc/meminfo]]) للي ينفع يتدّي من غير swap. ولو الرام خلصت فعلًا، بيبدأ ينقل صفحات قديمة للـ swap، ولو ده كمان مكفاش، الـ OOM killer بيختار عملية ويقتلها.`,
+            when: R`السيرفر بطيء: [[free -h]] قبل أي حاجة. build أو container بيقع من غير سبب واضح: [[dmesg]] على OOM. قبل ما تزوّد رام لـ VPS: [[available]] بيقول محتاج ولا لأ. ومراقبة سريعة: [[watch -n 2 free -h]].`,
+            mistakes: R`تحكم من عمود [[free]] وتعمل [[echo 3 > /proc/sys/vm/drop_caches]] «عشان تفضّي رام»: بتمسح الكاش والجهاز يبقى أبطأ. وتتجاهل [[Swap used]] اللي بيكبر. وتجمع أرقام RSS لكل البرامج وتلاقيها أكبر من الرام (الرام المشتركة بتتحسب أكتر من مرة).`
+          },
+          lines: [
+            R`الرام والـ swap بأرقام مقروءة.`,
+            R`نفس الكلام بالميجا بالظبط.`,
+            R`كل ثانيتين، ٣ مرات.`,
+            R`نفس الأرقام من مصدرها في الـ kernel.`,
+            R`أكبر ٥ برامج في الرام ([[rss]] بالـ KB) مترتبين بالأكبر.`,
+            R`هل الـ kernel قتل برنامج عشان الرام خلصت؟`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04 (بيشوف رام الـ VM كلها):
+[[               total        used        free      shared  buff/cache   available]]
+[[Mem:            15Gi       1.0Gi        14Gi        16Mi       597Mi        14Gi]]
+[[Swap:          4.0Gi       3.4Mi       4.0Gi]]
+وبعد ما كتبت ملف 1.5 جيجا:
+[[Mem:            15Gi       999Mi        12Gi        16Mi       2.1Gi        14Gi]]
+يعني الكاش كبر والفاضي قل، و [[available]] متحركش. وبعد مسح الملف رجع [[598Mi]] و [[14Gi]].
+
+و [[grep]] على meminfo طبع [[MemTotal: 16074948 kB]] و [[MemAvailable: 15053316 kB]] و [[SwapFree: 4190812 kB]]. وفي container محدود بـ 200 ميجا رام واتملى، [[free -m]] بيّن [[Swap: 4096 327 3768]] (الـ swap اتستخدم) مع إن الـ VM كلها فيها 12 جيجا فاضيين: الحدود كانت على الـ container. ولو [[dmesg]] قالك [[dmesg: read kernel buffer failed: Operation not permitted]]، استخدم sudo.`
+        },
+        {
+          cmd: "vmstat و iostat",
+          title: "الجهاز بطيء: المعالج ولا الرام ولا الديسك؟",
+          desc: R`[[vmstat]] بيطبع كل ثانية سطر فيه حالة المعالج والرام والـ swap والديسك مع بعض، و [[iostat]] بيفصّل الديسك: كل ديسك مشغول قد إيه، وكل عملية بتستنى قد إيه. مع بعض بيجاوبوا أول سؤال في أي بطء: الزنقة فين؟
+
+[[vmstat 1 5]]: سطر كل ثانية، ٥ مرات. وأول سطر متوسط من ساعة ما الجهاز قام، فتجاهله. الأعمدة:
+• [[r]] عمليات مستنية المعالج. لو أكبر من عدد الـ cores ([[nproc]]) باستمرار، المعالج هو الزنقة.
+• [[b]] عمليات مستنية الديسك (blocked). لو مش صفر باستمرار، الديسك.
+• [[swpd]] كام KB في الـ swap، و [[free]] الرام الفاضية، و [[buff]] و [[cache]] الكاش (درس «free -h»).
+• [[si]] و [[so]] (swap in و out) KB في الثانية بتتنقل من وإلى الـ swap. أي رقم مستمر هنا = الرام مش مكفية، وده أوحش أنواع البطء.
+• [[bi]] و [[bo]] (blocks in و out) KB في الثانية بتتقري وتتكتب على الديسك.
+• [[in]] و [[cs]] الـ interrupts والـ context switches في الثانية.
+• [[us]] نسبة وقت المعالج في برامجك، و [[sy]] في الـ kernel، و [[id]] فاضي، و [[wa]] مستني الديسك، و [[st]] (steal) وقت اتاخد منك لـ VM تانية على نفس الـ host؛ لو عالي على VPS، المشكلة عند الاستضافة مش عندك. و [[gu]] (في النسخ الجديدة زي أوبونتو 24.04) وقت VMs شغالة جوه جهازك انت.
+و [[-S M]] الرام بالميجا بدل KB.
+
+[[iostat]] من باكدج [[sysstat]]: [[-x]] (extended) الأعمدة المهمة، و [[-z]] يخبي الديسكات الواقفة، و [[1]] كل ثانية. وأول تقرير برضه متوسط من البداية. أهم الأعمدة:
+• [[r/s]] و [[w/s]] عمليات قراية وكتابة في الثانية، و [[rkB/s]] و [[wkB/s]] الكمية.
+• [[r_await]] و [[w_await]] متوسط وقت العملية بالمللي ثانية (على SSD المفروض أقل من ملي لحد كام ملي، وعلى HDD عشرات).
+• [[aqu-sz]] طول الطابور.
+• [[%util]] نسبة الوقت اللي الديسك كان مشغول فيه. قريبة من 100% على HDD يعني متشبّع، أما الـ NVMe فبيعمل حاجات كتير مع بعض، فممكن يبقى 100% ولسه عنده مساحة، فبص على await.
+
+القرار:
+• [[us]] + [[sy]] قريبين من 100 و [[r]] كبير: المعالج. [[top]] ورتّب بالـ CPU.
+• [[si]] و [[so]] مش صفر و [[free]] صغير: الرام. [[free -h]] ودوّر مين بياكلها، أو زوّد swap أو رام.
+• [[wa]] عالي، و [[b]] مش صفر، و [[%util]] أو [[await]] عاليين: الديسك. [[sudo iotop]] يقولك مين.
+• كله هادي والبطء مستمر: الشبكة ([[nethogs]]) أو التطبيق نفسه مستني حاجة برّه (قاعدة بيانات أو API).`,
+          example: R`nproc
+vmstat 1 5
+vmstat -S M 1 5
+sudo apt install sysstat
+iostat -xz 1 3
+iostat -xz -d 2 3 nvme0n1`,
+          try: R`افتح ترمنالين. في الأول [[vmstat 1]]. وفي التاني: مرة شغّل حمل على المعالج ([[sh -c 'while :; do :; done' &]] كذا مرة)، ومرة حمل على الديسك ([[dd if=/dev/zero of=big.bin bs=1M count=2000 oflag=direct]]). شوف أنهي أعمدة اتحركت في كل مرة، وامسح [[big.bin]] واقفل اللوب بـ [[kill]].`,
+          mac: ["diff", R`على الماك [[vm_stat 1]] (بالـ pages مش KB، وأعمدة تانية) و [[iostat -w 1]] (نسخة BSD، أعمدة أقل)، و [[top -o cpu]]. والأوضح Activity Monitor.`],
+          deep: {
+            why: R`«السيرفر بطيء» ممكن يكون ١٠ أسباب، و top لوحده بيوريك البرامج مش نوع الزنقة. vmstat بيدّيك الصورة كلها في سطر كل ثانية، فتعرف تدوّر فين بدل ما تجرّب حلول عشوائية (تزوّد رام والمشكلة ديسك).`,
+            how: R`الاتنين بيقروا عدّادات الـ kernel من [[/proc/stat]] و [[/proc/vmstat]] و [[/proc/diskstats]]: أرقام بتزيد من ساعة ما الجهاز قام. وكل ثانية بيطرحوا القراية القديمة من الجديدة ويقسموا على الوقت، فيطلع «في الثانية». عشان كده أول سطر (من غير قراية قبله) هو المتوسط من البداية.
+
+و [[wa]] مش وقت «ضايع» بالظبط: معناه المعالج كان فاضي وفي نفس الوقت فيه عملية مستنية ديسك. ولو المعالج مشغول بحاجة تانية، wa ممكن يبقى صغير والديسك برضه زحمة، عشان كده بص على [[b]] و [[await]] كمان.`,
+            when: R`أول دقيقة في أي «الموقع بطيء»: [[vmstat 1]] وانت بتعمل الطلب. VPS بطيء من غير سبب جوه: [[st]]. قاعدة بيانات بطيئة: [[iostat -xz 1]] على ديسكها. وقبل ما تكبّر السيرفر: تعرف تكبّر إيه بالظبط.`,
+            mistakes: R`تقرا أول سطر وتبني عليه. وتفتكر [[free]] صغير يعني الرام خلصانة (بص على si و so و available). وتحكم على NVMe من [[%util]] لوحده. وتنسى [[-z]] فتغرق في ديسكات و loop devices واقفة.`
+          },
+          lines: [
+            R`عدد الـ cores، عشان تقارن بيه عمود r.`,
+            R`سطر كل ثانية، ٥ مرات (تجاهل الأول).`,
+            R`نفس الكلام والرام بالميجا.`,
+            R`سطّب iostat.`,
+            R`تفاصيل كل ديسك شغال ([[-x]] و [[-z]]) كل ثانية، ٣ مرات.`,
+            R`ديسك واحد بس ([[-d]] من غير جزء المعالج)، كل ثانيتين.`
+          ],
+          sol: R`ناتج حقيقي من containers على VM بتاعة Docker (16 core):
+هادي: [[r 0 b 0 ... si 0 so 0 bi 0 bo 0 ... us 0 sy 0 id 100 wa 0]].
+٤ عمليات بتاكل CPU: [[r]] بقى 4 و [[us 25 sy 1 id 74]] (4 من 16 core = 25%).
+حمل ديسك (fio بيقرا ويكتب عشوائي): [[b]] بقى 1 و 2، و [[bi 29196 bo 30420]]، و [[wa 10]]. و [[iostat -xz 1]] على الديسك ده: [[r/s 7227.00]] و [[w/s 7131.00]] و [[r_await 0.15]] و [[w_await 0.10]] و [[aqu-sz 1.74]] و [[%util 86.80]]: الديسك مشغول بس كل عملية بتخلص في أقل من ملي (SSD)، و [[avg-cpu]] فيه [[%iowait 10.58]].
+رام مش مكفية (container محدود بـ 200 ميجا وبرنامج عايز 500): [[si 116672 so 50052]] و [[swpd 424340]]، والـ swap بيتقرا ويتكتب بأكتر من 100 ميجا في الثانية، وده بطء كبير مع إن [[us]] صفر تقريبًا.
+
+ولو [[iostat]] قالك command not found، سطّب [[sysstat]]. ولو اسم الديسك مش [[nvme0n1]] عندك، [[lsblk]] يقولك اسمه.`
+        },
+        {
+          cmd: "ffmpeg",
+          title: "حوّل وصغّر وقص الفيديو والصوت",
+          desc: R`[[ffmpeg]] بيعمل أي حاجة تقريبًا في الفيديو والصوت من الترمنال: يحوّل من صيغة لصيغة، ويصغّر الحجم، ويطلّع الصوت، ويقص جزء، ويغيّر المقاس، ويعمل GIF. ومعاه [[ffprobe]] اللي بيقولك الملف جواه إيه. وبرامج فيديو كتير بتستخدمه من جوه.
+
+التسطيب: أوبونتو وديبيان [[sudo apt install ffmpeg]]. فيدورا: [[sudo dnf install ffmpeg]] بعد ما تفعّل RPM Fusion (اللي في repo فيدورا الرسمي اسمه [[ffmpeg-free]] ومن غير بعض الـ codecs زي H.264). الماك [[brew install ffmpeg]]، وويندوز [[winget install Gyan.FFmpeg]].
+
+الشكل: [[-i]] الملف الداخل، وآخر حاجة الملف الخارج، وامتداده بيحدد النوع. وفي النص الإعدادات: [[-c:v]] الـ codec بتاع الفيديو و [[-c:a]] بتاع الصوت، و [[copy]] يعني انسخه زي ما هو من غير ما تعيد ضغطه (لحظي ومن غير ما الجودة تقل). و [[-y]] يكتب فوق الملف الخارج من غير سؤال، ومن غيرها بيسأل [[Overwrite? [y/N]]]. و [[-hide_banner]] يخبي معلومات النسخة الطويلة.
+
+التحويل والضغط: [[ffmpeg -i in.mov out.mp4]] بيختار H.264 و AAC لوحده. وللضغط: [[-c:v libx264 -crf 28 -preset slow]]:
+• [[-crf]] الجودة من 0 (من غير فقد) لـ 51، والافتراضي 23. وكل +6 تقريبًا نص الحجم، و 18 قريب من الأصل للعين، و 28 كويس للواتساب والإيميل.
+• [[-preset]] من [[ultrafast]] لـ [[veryslow]]: الأبطأ بيطلّع ملف أصغر بنفس الجودة.
+• [[-b:a 128k]] جودة الصوت.
+جربت على فيديو تجربة 1080p عشر ثواني: الأصل 117 ميجا، والتحويل العادي 8.6 ميجا، و [[crf 28 slow]] طلع 3.6 ميجا.
+
+الصوت: [[-vn]] (no video) شيل الفيديو. و [[-c:a copy audio.m4a]] بيطلّعه زي ما هو (AAC جوه m4a)، و [[-c:a libmp3lame -q:a 2]] يحوّله mp3 بجودة عالية ([[-q:a]] من 0 الأحسن لـ 9).
+
+القص: [[-ss 00:01:30 -to 00:02:00]] من دقيقة ونص لدقيقتين، و [[-c copy]] من غير إعادة ضغط. المشكلة: الفيديو المضغوط فيه «keyframes» كل كام ثانية، وباقي الفريمات مجرد فروق عنها، فالنسخ من غير ضغط لازم يبدأ من keyframe. جربت قص من 2.5 لـ 6 ثواني بـ [[-c copy]] وأقرب keyframe قبله كان عند الصفر، فالملف طلع فيه 182 فريم بدل 105، والمشغّل يا إما بيخفي الزيادة يا إما بيعرض صورة واقفة في الأول. لو محتاج دقة: شيل [[-c copy]] وسيبه يعيد الضغط (أبطأ بس مظبوط على الفريم).
+
+المقاس: [[-vf scale=1280:-2]]: [[-vf]] (video filter)، و 1280 العرض، و [[-2]] الطول يتحسب بنفس النسبة ويتقرّب لرقم زوجي، لأن H.264 لازم أبعاده زوجية. و [[-1]] ممكن يطلّع رقم فردي ويفشل بـ [[width not divisible by 2]] (جربتها بعرض 1001).
+
+الـ GIF: [[fps=10]] فريمات أقل، و [[palettegen]] و [[paletteuse]] بيعملوا ألوان مخصوصة للفيديو ده (الـ GIF فيه 256 لون بس) فيطلع أنضف بكتير، و [[split]] بيعمل نسختين من الفيديو للخطوتين، و [[-loop 0]] يتكرر على طول، و [[-t 3]] مدة 3 ثواني.
+
+[[ffprobe in.mov]] بيطبع المدة والـ bitrate وكل stream: [[Video: h264 ... 1920x1080 ... 30 fps]] و [[Audio: aac ...]]. و [[-v error -show_entries format=duration,size -of default=nw=1]] قيم بس للسكربتات. ولو هتحوّل فولدر كامل، نفس فكرة لوب «convert-all.sh».`,
+          example: R`sudo apt install ffmpeg
+ffprobe -hide_banner in.mov
+ffmpeg -i in.mov out.mp4
+ffmpeg -i in.mov -c:v libx264 -crf 28 -preset slow -c:a aac -b:a 128k small.mp4
+ffmpeg -i out.mp4 -vn -c:a copy audio.m4a
+ffmpeg -i out.mp4 -vn -c:a libmp3lame -q:a 2 audio.mp3
+ffmpeg -ss 00:01:30 -to 00:02:00 -i out.mp4 -c copy clip.mp4
+ffmpeg -i out.mp4 -vf scale=1280:-2 -c:a copy out-720p.mp4
+ffmpeg -ss 5 -t 3 -i out.mp4 -vf "fps=10,scale=480:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" -loop 0 clip.gif
+ffprobe -v error -show_entries format=duration,size -of default=nw=1 small.mp4`,
+          try: R`لو معندكش فيديو، اعمل واحد تجربة: [[ffmpeg -f lavfi -i testsrc2=duration=10:size=1920x1080:rate=30 -f lavfi -i sine=frequency=440:duration=10 -c:v libx264 -c:a aac -shortest in.mov]]. بعدين جرّب كل سطر في المثال وقارن الأحجام بـ [[ls -lh]]، وشغّل الـ GIF في المتصفح.`,
+          mac: ["both", R`[[brew install ffmpeg]] ونفس الأوامر بالظبط. وعلى ويندوز [[winget install Gyan.FFmpeg]] وبعدين افتح ترمنال جديد عشان الـ PATH يتحدّث.`],
+          deep: {
+            why: R`فيديو من الموبايل حجمه 500 ميجا ومحتاج تبعته، أو شرح متسجّل محتاج تقص أوله، أو فيديو لموقعك محتاج نسخة 720p أصغر، أو صوت محاضرة من فيديو. برامج الواجهة بتعمل ده بس ببطء وواحد واحد، و ffmpeg بيعمله بأمر واحد تقدر تحطه في سكربت على فولدر كامل أو على السيرفر.`,
+            how: R`ملف الفيديو «container» (mp4 أو mov أو mkv) جواه streams: فيديو مضغوط بـ codec (H.264 أو H.265 أو VP9) وصوت (AAC أو MP3 أو Opus). ffmpeg بيفك الـ container، ويفك ضغط كل stream (decode)، ويعدّي الفريمات على الفلاتر (scale و fps)، ويضغطها تاني (encode)، ويحطها في container جديد. و [[copy]] بيتخطى الفك والضغط: بينقل البيانات المضغوطة زي ما هي، عشان كده سريع جدًا بس مينفعش معاه فلاتر ولا قص على فريم مش keyframe.
+
+و [[-crf]] بيقول للـ encoder «حافظ على جودة ثابتة» بدل «حجم ثابت»، فالمشاهد البسيطة تاخد بيانات أقل والمعقدة أكتر.`,
+            when: R`تصغير فيديو قبل ما تبعته أو ترفعه. قص من غير إعادة ضغط لتسجيل طويل. استخراج صوت لـ podcast أو تفريغ. نسخ بأحجام مختلفة لموقع. GIF لـ README أو issue. و [[ffprobe]] في سكربت يتأكد إن الملف المرفوع فيديو فعلًا ومدته أقل من حد معين.`,
+            mistakes: R`[[-c copy]] مع [[-vf]] (الفلتر محتاج re-encode، فهيقولك error). والقص بـ copy وتستغرب البداية الواقفة. و [[scale=1280:-1]] فيطلع رقم فردي ويفشل. وترتيب الـ options: اللي قبل [[-i]] بيخص الملف الداخل واللي بعده للخارج. و ffmpeg جوه لوب [[while read]]: بياكل الـ stdin، فاستخدم [[-nostdin]].`
+          },
+          lines: [
+            R`سطّب ffmpeg (و ffprobe معاه).`,
+            R`الملف جواه إيه: المدة والـ codecs والمقاس.`,
+            R`حوّله mp4 بالإعدادات الافتراضية (H.264 و AAC).`,
+            R`صغّره: جودة 28، وضغط أبطأ وأصغر، وصوت 128k.`,
+            R`طلّع الصوت زي ما هو من غير فيديو ([[-vn]]).`,
+            R`طلّع الصوت mp3 بجودة عالية.`,
+            R`قص من 1:30 لـ 2:00 من غير إعادة ضغط (بيبدأ من أقرب keyframe).`,
+            R`صغّر المقاس لعرض 1280، والطول بالنسبة ورقم زوجي.`,
+            R`GIF لـ 3 ثواني من الثانية 5: 10 فريمات في الثانية، وعرض 480، وألوان مخصوصة، ويتكرر.`,
+            R`المدة والحجم بس، سطر لكل قيمة.`
+          ],
+          sol: R`ناتج حقيقي من ffmpeg 6.1.1 على container أوبونتو 24.04، على فيديو تجربة 1920x1080 عشر ثواني:
+[[ffprobe]]: [[Duration: 00:00:10.00, start: 0.000000, bitrate: 98189 kb/s]] و [[Stream #0:0[0x1]: Video: h264 (High) ... 1920x1080 ... 30 fps]] و [[Stream #0:1[0x2]: Audio: pcm_s16le ... 44100 Hz, mono]].
+الأحجام: [[in.mov]] = 122736332 byte (117 ميجا)، و [[out.mp4]] = 8988849 (8.6 ميجا) في 5.4 ثانية، و [[small.mp4]] = 3728889 (3.6 ميجا) في 5.1 ثانية. وآخر سطر في التحويل: [[frame=  300 fps= 63 q=-1.0 Lsize=    8778kB time=00:00:09.98 bitrate=7202.2kbits/s speed=2.08x]].
+الصوت: [[audio.m4a]] 89303 byte و [[audio.mp3]] 49866.
+القص بـ copy (2.5 لـ 6): [[duration=3.633984]] و [[nb_frames=182]]، ونفس القص بإعادة ضغط: [[duration=3.500000]] و [[nb_frames=105]]. والـ keyframes كانت عند 0 و 4.57 و 8.63 ثانية.
+[[scale=1280:-2]] طلّع [[1280,720]] و 2.5 ميجا، و [[scale=1001:-1]] فشل بـ [[width not divisible by 2 (1001x563)]]. والـ GIF طلع [[480x270]] و 30 فريم و 1.4 ميجا. ولو الملف الخارج موجود من غير [[-y]]: [[File 'out2.mp4' already exists. Overwrite? [y/N]]].`
+        },
+        {
+          cmd: "fdisk و mkfs و dd",
+          title: "فرمت فلاشة أو اعملها bootable",
+          desc: R`[[fdisk]] بيقسّم الديسك أو الفلاشة لـ partitions، و [[mkfs]] بيعمل filesystem على partition (يعني «فرمتة»)، و [[dd]] بينسخ بايتات خام من ملف لجهاز، وبيه بتكتب ISO على فلاشة عشان تبوّت منها وتسطّب لينكس. التلاتة بيكتبوا على الجهاز مباشرة، ومفيش سلة مهملات ولا «متأكد؟».
+
+تحذير كبير: لو كتبت اسم الجهاز غلط ([[/dev/sdX]])، هتمسح الديسك اللي عليه نظامك أو ملفاتك في ثانية، ومفيش رجوع. [[sda]] غالبًا الديسك الأساسي (و [[nvme0n1]] على اللابتوبات الحديثة)، والفلاشة غالبًا [[sdb]] أو [[sdc]]، بس «غالبًا» مش كفاية: اتأكد كل مرة، وفي كل الأوامر تحت [[sdX]] لازم تستبدله باسم فلاشتك.
+
+تعرف الفلاشة: [[lsblk -o NAME,SIZE,TYPE,TRAN,RM,MODEL,MOUNTPOINTS]]: [[TRAN]] (transport) بيقول [[usb]] للفلاشة، و [[RM]] (removable) 1، و [[SIZE]] و [[MODEL]] بيطابقوا اللي مكتوب عليها (29.3G و SanDisk مثلًا). وأضمن طريقة: [[lsblk]] قبل ما توصّلها وبعدها، والاسم الجديد هو هي. ولو متركّبة (عمود MOUNTPOINTS فيه حاجة): [[sudo umount /dev/sdX1]] الأول.
+
+[[sudo wipefs -a /dev/sdX]] (all) يمسح علامات الـ filesystem وجدول الـ partitions القديم وبيطبع كل اللي مسحه. وده أنضف من [[dd]] بأصفار على أول ميجا: جدول GPT ليه نسخة احتياطية في آخر الديسك، و dd على الأول بيسيبها (جربتها: wipefs لسه لقى [[gpt]] في الآخر).
+
+الـ partitions: [[sudo fdisk /dev/sdX]] ويفتح [[Command (m for help):]]: [[g]] جدول GPT جديد (أو [[o]] جدول MBR للأجهزة القديمة)، و [[n]] partition جديد (Enter على كل سؤال = الديسك كله)، و [[t]] النوع (لفلاشة هتفتح على ويندوز: Microsoft basic data، واكتب [[L]] للستة)، و [[p]] اعرض، و [[w]] اكتب واخرج. ولحد [[w]] مفيش حاجة اتكتبت، و [[q]] يخرج من غير حفظ. أو بأمر واحد من غير أسئلة: [[sudo parted -s /dev/sdX mklabel gpt mkpart usb 1MiB 100%]]: [[-s]] (script) من غير أسئلة، و [[mklabel gpt]] جدول جديد، و [[mkpart usb 1MiB 100%]] partition اسمه usb من أول ميجا لآخر الديسك.
+
+الـ filesystem (على الـ partition [[sdX1]] مش الجهاز كله [[sdX]]):
+• [[sudo mkfs.exfat -L MYUSB /dev/sdX1]]: exFAT بيفتح على ويندوز والماك ولينكس وبيقبل ملفات أكبر من 4 جيجا، فده الأنسب لفلاشة نقل (من باكدج [[exfatprogs]]).
+• [[mkfs.vfat -F 32]] FAT32: للأجهزة القديمة والتلفزيونات، بس الملف الواحد ميعدّيش 4 جيجا.
+• [[mkfs.ext4]] لو هتستخدمها على لينكس بس (باك أب مثلًا).
+و [[-L]] (label) الاسم اللي بيظهر. و [[sudo blkid /dev/sdX1]] يأكد النوع والاسم والـ UUID.
+
+فلاشة bootable: [[sudo dd if=ubuntu.iso of=/dev/sdX bs=4M status=progress conv=fsync]]:
+• [[if]] (input file) الـ ISO، و [[of]] (output file) الفلاشة كلها [[sdX]] مش [[sdX1]]، لأن الـ ISO جواه جدول partitions بتاعه.
+• [[bs=4M]] يقرا ويكتب ٤ ميجا في المرة (أسرع بكتير من الافتراضي 512 byte).
+• [[status=progress]] يطبع التقدم وانت مستني.
+• [[conv=fsync]] ميخلصش غير لما الداتا تتكتب فعلًا على الفلاشة مش في كاش الرام، فلما الـ prompt يرجع تقدر تشيلها.
+والـ ISO اتأكد منه الأول بـ [[sha256sum]] (درس «sha256sum» في تاب «VPS»). ولو مش مرتاح لـ dd: «Startup Disk Creator» في أوبونتو أو balenaEtcher بيعملوا نفس الحاجة وبيخفوا ديسك النظام من الاختيارات.
+
+وجربت كل ده على «فلاشة وهمية»، مش ديسك حقيقي: ملف 2 جيجا اتحوّل لجهاز بـ [[losetup]] جوه container. وتقدر تتدرّب بنفس الطريقة من غير أي خطر: [[truncate -s 2G usb.img]] و [[sudo losetup -fP --show usb.img]] بيطلّعلك [[/dev/loopN]] تجرّب عليه بدل sdX، و [[sudo losetup -d /dev/loopN]] لما تخلص.`,
+          example: R`# بص مرتين: الاسم اللي هتكتبه بدل sdX بيتمسح كله
+lsblk -o NAME,SIZE,TYPE,TRAN,RM,MODEL,MOUNTPOINTS
+sudo umount /dev/sdX1
+sudo wipefs -a /dev/sdX
+sudo parted -s /dev/sdX mklabel gpt mkpart usb 1MiB 100%
+sudo mkfs.exfat -L MYUSB /dev/sdX1
+sudo blkid /dev/sdX1
+# أو فلاشة bootable من ISO (بتمسح اللي فوق ده كله)
+sha256sum ubuntu.iso
+sudo dd if=ubuntu.iso of=/dev/sdX bs=4M status=progress conv=fsync
+sync`,
+          try: R`من غير فلاشة حقيقية: [[truncate -s 2G usb.img]] و [[sudo losetup -fP --show usb.img]]، واستخدم الـ [[/dev/loopN]] اللي طلع مكان sdX في كل الأوامر: امسحه، واعمل partition بـ fdisk بإيدك (g و n و w)، وفرمته exFAT، واقرا [[blkid]]. وفي الآخر [[sudo losetup -d]] وامسح [[usb.img]].`,
+          flag: "danger",
+          mac: ["diff", R`على الماك الأسامي [[/dev/disk4]] مثلًا: [[diskutil list]] تعرف الفلاشة، و [[diskutil eraseDisk ExFAT MYUSB GPT /dev/disk4]] تفرمتها. وللـ ISO: [[diskutil unmountDisk /dev/disk4]] وبعدين [[sudo dd if=ubuntu.iso of=/dev/rdisk4 bs=4m]] ([[rdisk]] أسرع، و [[m]] صغيرة، و Ctrl+T يوريك التقدم).`],
+          deep: {
+            why: R`فلاشة اتبوّظت أو مش بتفتح على جهاز، أو محتاج فلاشة exFAT تنقل بيها ملف 8 جيجا، أو بتسطّب لينكس على جهاز جديد ومحتاج فلاشة bootable. وعلى سيرفر الأوامر دي نفسها هي اللي بتجهّز ديسك جديد. والفرق بين إنك تعرفها وإنك تنسخها من شرح هو الفرق بين فلاشة متفرمتة وديسك ضاع.`,
+            how: R`في لينكس كل ديسك ملف في [[/dev]]: [[sdb]] الجهاز كله، و [[sdb1]] أول partition. أول حتة في الجهاز فيها جدول الـ partitions (MBR أو GPT): «partition 1 من هنا لهنا». fdisk و parted بيكتبوا الجدول ده بس. و mkfs بيكتب جوه partition البنية اللي بتنظّم الملفات (filesystem). و wipefs بيمسح «التوقيعات» اللي البرامج بتعرف منها نوع اللي موجود.
+
+و dd مبيفهمش ملفات ولا partitions: بيقرا bytes من [[if]] ويكتبها في [[of]] بالترتيب. عشان كده ISO على الجهاز كله بيطلع نسخة طبق الأصل (جدول partitions وكل حاجة)، وعشان كده الغلطة في [[of]] بتكتب فوق أي حاجة من غير ما يسأل.`,
+            when: R`فلاشة نقل بين ويندوز وماك ولينكس: exFAT. فلاشة لتلفزيون قديم: FAT32. تسطيب لينكس: dd أو Startup Disk Creator. ديسك جديد على سيرفر: نفس الخطوات بـ ext4 (وبعدها fstab، درس «lsblk / mount» في تاب «VPS»). وفلاشة bootable عايز ترجّعها عادية: wipefs وبعدين partition و mkfs.`,
+            mistakes: R`الاسم الغلط في [[of=]] أو [[wipefs]] أو [[mkfs]]: أخطر غلطة في الدرس كله. و [[of=/dev/sdX1]] للـ ISO فالفلاشة متبوّتش. ونسيان [[conv=fsync]] أو [[sync]] وتشيل الفلاشة والكتابة لسه في الرام. و mkfs على [[sdX]] بدل [[sdX1]]. وإنك تنسخ [[sdb]] من شرح وانت عندك sdb هو ديسك الداتا.`
+          },
+          lines: [
+            R`كل الديسكات: الحجم والنوع، و usb و RM=1 للفلاشة، والموديل، ومتركّبة فين.`,
+            R`فك تركيب الفلاشة لو متركّبة.`,
+            R`امسح علامات الـ filesystem والجدول القديم من الفلاشة كلها.`,
+            R`جدول GPT جديد و partition واحد على كل المساحة، من غير أسئلة.`,
+            R`exFAT على الـ partition الأول باسم MYUSB.`,
+            R`اتأكد: النوع exfat والاسم MYUSB.`,
+            R`اتأكد إن الـ ISO سليم (قارن بالرقم اللي على موقع التحميل).`,
+            R`اكتب الـ ISO على الفلاشة كلها، ٤ ميجا في المرة، بالتقدم، ومتخلصش غير لما يتكتب فعلًا.`,
+            R`اتأكد إن مفيش حاجة لسه في الكاش قبل ما تشيلها.`
+          ],
+          sol: R`ناتج حقيقي على ملف 2 جيجا متحوّل لـ [[/dev/loop3]] بـ losetup جوه container أوبونتو 24.04 بـ [[--privileged]] (مش فلاشة حقيقية). [[wipefs -a]] طبع:
+[[/dev/loop3: 8 bytes were erased at offset 0x00000200 (gpt): 45 46 49 20 50 41 52 54]]
+[[/dev/loop3: 8 bytes were erased at offset 0x7ffffe00 (gpt): 45 46 49 20 50 41 52 54]]
+[[/dev/loop3: 2 bytes were erased at offset 0x000001fe (PMBR): 55 aa]]
+(الأرقام [[45 46 49 20 50 41 52 54]] هي «EFI PART»، والسطر التاني نسخة GPT اللي في آخر الديسك).
+
+fdisk بالحروف g و n و t و p و w طبع [[Created a new GPT disklabel]] و [[Created a new partition 1 of type 'Linux filesystem' and of size 2 GiB.]] و [[Changed type of partition 'Linux filesystem' to 'Microsoft basic data'.]] و [[The partition table has been altered.]]. و [[parted -s ... print]]: [[1 1049kB 2146MB 2145MB data]].
+
+[[mkfs.exfat -L MYUSB]] خلص بـ [[exFAT format complete!]]، و [[blkid]]: [[/dev/loop3p1: LABEL="MYUSB" UUID="EEFF-B927" BLOCK_SIZE="512" TYPE="exfat" PARTLABEL="data"]]. والـ dd لـ ISO تجربة 300 ميجا: [[314949632 bytes (315 MB, 300 MiB) copied, 1.1086 s, 284 MB/s]] (فلاشة USB حقيقية أبطأ بكتير، 10 لـ 40 ميجا في الثانية غالبًا)، و [[blkid /dev/loop3]] بقى [[TYPE="iso9660" LABEL="UBUNTU_TEST"]]، و [[cmp]] أكّد إن البايتات زي الـ ISO بالظبط.
+
+ملاحظات: [[lsblk -f]] في الـ container مطلّعش النوع لأن مفيش udev، و [[blkid]] قراه صح. و [[mount]] لـ exFAT قال [[unknown filesystem type 'exfat']] لأن kernel الـ WSL مفيهوش exFAT؛ على أوبونتو عادي بيتركّب لوحده.`
         }
       ]
     },
@@ -3024,6 +3981,509 @@ sudo nethogs`,
           sol: R`[[sudo nethogs]] بيفتح جدول لايف فيه [[PID USER PROGRAM DEV SENT RECEIVED]]. وانت بتعمل [[docker compose pull]] هتلاقي [[dockerd]] (أو [[containerd]]، حسب إعداد Docker) طالع فوق وعمود RECEIVED فيه أرقام كبيرة بالـ KB/sec، لأن الـ daemon هو اللي بيحمّل الـ layers مش أمر docker اللي كتبته. [[m]] بيبدّل بين السرعة والإجمالي، و [[q]] بيخرج.
 
 لو ظهر [[unknown TCP]] كتير، دي اتصالات nethogs مش قادر يربطها ببرنامج (غالبًا من جوه containers). ولو الجدول فاضي خالص، اتأكد إنك شغّلته بـ sudo. وعلى الماك مفيش nethogs، استخدم تاب Network في Activity Monitor.`
+        }
+      ]
+    },
+    {
+      t: "تحكّم في الشبكة",
+      l: 3,
+      n: "الواي فاي و IP ثابت، والـ DNS اللي جهازك بيستخدمه فعلًا، وتشغيل الكارت وإطفاؤه، وقراية الفايروول وكتابته",
+      items: [
+        {
+          cmd: "nmcli",
+          title: "الواي فاي و IP ثابت من الترمنال",
+          desc: R`[[nmcli]] هو الترمنال بتاع NetworkManager، البرنامج اللي بيدير الشبكة في أوبونتو Desktop وفيدورا ومعظم توزيعات الـ desktop (وهو اللي ورا أيقونة الواي فاي فوق). أي حاجة بتعملها من الإعدادات بالماوس تقدر تعملها بيه: تشوف الشبكات حواليك، وتدخل واي فاي، وتحط IP ثابت، وترجع لـ DHCP.
+
+مصطلحين: الـ device هو الكارت نفسه ([[wlp2s0]] واي فاي، و [[enp3s0]] أو [[eth0]] سلك)، والـ connection (أو profile) إعدادات محفوظة باسم: الواي فاي بيتسمّى باسم الشبكة، والسلك غالبًا [[Wired connection 1]]. والـ IP الثابت بيتحط على الـ connection مش على الـ device، فممكن يبقى عندك IP ثابت في شبكة البيت و DHCP في الشغل على نفس الكارت.
+
+• [[nmcli device status]]: كل كارت، ونوعه، وحالته ([[connected]] أو [[disconnected]] أو [[unmanaged]] يعني NetworkManager مش ماسكه)، ومتوصل بأنهي connection.
+• [[nmcli dev wifi list]]: الشبكات اللي حواليك: [[SSID]] الاسم، و [[CHAN]] القناة، و [[SIGNAL]] قوة الإشارة من 100، و [[BARS]] نفس الكلام كأعمدة، و [[SECURITY]] (WPA2 أو WPA3 أو [[--]] مفتوحة)، و [[*]] في أول السطر جنب اللي انت عليها. و [[--rescan yes]] يعمل scan جديد دلوقتي.
+• [[nmcli --ask dev wifi connect "HomeWiFi"]]: يدخل الشبكة ويسألك الباسورد. [[--ask]] option عام لـ nmcli، فمكانه قبل [[dev]]. وفيه شكل تاني [[password "..."]] في آخر الأمر، بس كده الباسورد هيتسجّل في الـ history.
+• [[nmcli con show]]: الـ connections المحفوظة، و [[--active]] اللي شغالة بس.
+
+IP ثابت: [[nmcli con mod "Wired connection 1"]] (modify) وبعده الإعدادات:
+• [[ipv4.method manual]] يعني من غير DHCP.
+• [[ipv4.addresses 192.168.1.50/24]]: الـ [[/24]] معناها أول ٢٤ bit (أول ٣ أرقام) هما الشبكة، يعني الجهاز ده بيكلّم من 192.168.1.1 لـ 192.168.1.254 مباشرة، وده نفس الـ subnet mask القديم [[255.255.255.0]].
+• [[ipv4.gateway 192.168.1.1]] الراوتر، و [[ipv4.dns "1.1.1.1 8.8.8.8"]] الـ DNS.
+والإعدادات مبتتطبّقش غير لما تعمل [[nmcli con up "الاسم"]]، وبتتحفظ وتفضل بعد الريستارت. والرجوع: [[ipv4.method auto]] وتفضّي الباقي بـ [[""]]. واختار IP برّه مدى الـ DHCP بتاع الراوتر (من صفحة إعداداته) عشان جهاز تاني مياخدش نفس الرقم. وعلى Desktop وانت قاعد قدام الجهاز nmcli بيشتغل من غير sudo، أما بـ ssh فمحتاجه.
+
+أوبونتو Server غالبًا مفيهوش NetworkManager: الشبكة مكتوبة YAML في [[/etc/netplan/*.yaml]]، و netplan بيحوّلها لإعدادات systemd-networkd. و [[sudo netplan try]] بيطبّق ويستناك ١٢٠ ثانية تدوس Enter، ولو اتقطعت ومعرفتش تأكّد بيرجّع القديم لوحده، وده بالظبط اللي محتاجه على سيرفر بعيد. و [[sudo netplan apply]] يطبّق على طول. و [[gateway4:]] اللي في شروحات قديمة بقت deprecated، والصح [[routes:]] زي الحل تحت. ومن أوبونتو 23.10 حتى NetworkManager على الـ desktop بيحفظ الـ connections كـ YAML في [[/etc/netplan/90-NM-*.yaml]] (جربتها: [[nmcli con mod]] عمل الملف ده). وعلى فيدورا وديبيان الملفات في [[/etc/NetworkManager/system-connections/]].`,
+          example: R`nmcli device status
+nmcli dev wifi list
+nmcli --ask dev wifi connect "HomeWiFi"
+nmcli con show
+sudo nmcli con mod "Wired connection 1" ipv4.method manual ipv4.addresses 192.168.1.50/24 ipv4.gateway 192.168.1.1 ipv4.dns "1.1.1.1 8.8.8.8"
+sudo nmcli con up "Wired connection 1"
+ip -br a
+sudo nmcli con mod "Wired connection 1" ipv4.method auto ipv4.addresses "" ipv4.gateway "" ipv4.dns ""
+sudo nmcli con up "Wired connection 1"`,
+          try: R`على جهازك (مش سيرفر بتدخله بـ ssh): اعرض الكروت والشبكات اللي حواليك. اعرف اسم الـ connection اللي انت عليه، وحط IP ثابت في نفس شبكتك (برّه مدى الـ DHCP)، واتأكد بـ [[ip -br a]] و [[ping 1.1.1.1]]، ورجّعه DHCP.`,
+          mac: ["diff", R`مفيش nmcli على الماك: [[networksetup -listallhardwareports]] الكروت، و [[networksetup -setmanual "Wi-Fi" 192.168.1.50 255.255.255.0 192.168.1.1]] IP ثابت، و [[networksetup -setdhcp "Wi-Fi"]] رجوع، و [[networksetup -setdnsservers "Wi-Fi" 1.1.1.1]] الـ DNS، و [[networksetup -setairportnetwork en0 HomeWiFi]] يدخل واي فاي.`],
+          deep: {
+            why: R`سيرفر في البيت أو المكتب (Raspberry Pi، NAS، جهاز Home Assistant) لازم IP بتاعه ميتغيّرش عشان تعمله ssh أو port forwarding. وجهاز من غير واجهة أو بتدخله بـ ssh مفيهوش أيقونة واي فاي تدوس عليها. ولما الشبكة «مش شغالة»، [[nmcli device status]] أسرع تشخيص: الكارت شايف السلك؟ متوصل بأنهي profile؟`,
+            how: R`NetworkManager خدمة شغالة طول الوقت، وهي اللي بتكلّم الـ kernel: تشغّل الكارت، وتطلب IP بـ DHCP أو تحط الثابت، وتضيف الـ route، وتقول لـ systemd-resolved على الـ DNS (الدرس الجاي). و nmcli بيكلّمها على D-Bus، فلو الخدمة مش شغالة nmcli مش هيعمل حاجة.
+
+والـ profile ملف محفوظ، و [[con mod]] بيعدّل الملف بس، و [[con up]] بيطبّقه على الكارت. ولما الجهاز يقوم، NetworkManager بيدوّر على أنسب profile لكل كارت ويشغّله لوحده.
+
+وعلى أوبونتو 24.04 بالتحديد، NetworkManager بيكتب الـ profile لـ netplan، و netplan بيولّد ملف [[.nmconnection]] في [[/run]] اللي NetworkManager بيقراه. ودي تفصيلة مهمة لو دوّرت على الملف ومش لاقيه في المكان القديم.`,
+            when: R`IP ثابت لجهاز في البيت أو المعمل. تبديل واي فاي من ترمنال ssh على جهاز من غير شاشة (بحذر: لو الواي فاي هو اللي انت داخل منه، هتتقطع). سكربت بيجهّز laptop جديد. وتشخيص «النت مش شغال» قبل ما تدخل في [[ip]] و [[dig]].`,
+            mistakes: R`IP ثابت جوه مدى الـ DHCP، فيوم ما الراوتر يدّيه لجهاز تاني يحصل تعارض والاتنين يقطعوا. ونسيان [[/24]]. ونسيان [[con up]] وتفتكر التغيير متطبقش. وتعديل الـ IP على جهاز داخله بـ ssh من غير ما تكون حافظ العنوان الجديد. وعلى سيرفر: [[netplan apply]] بدل [[netplan try]]، أو ملف YAML بمسافات غلط (لازم مسافات مش Tab).`
+          },
+          lines: [
+            R`كل كارت وحالته والـ connection اللي عليه.`,
+            R`شبكات الواي فاي اللي حواليك وقوة إشارتها.`,
+            R`ادخل شبكة HomeWiFi، والباسورد هيتسأل ([[--ask]]) ومش هيتسجّل في الـ history.`,
+            R`الـ connections المحفوظة.`,
+            R`IP ثابت على connection السلك: من غير DHCP، والعنوان، والراوتر، والـ DNS.`,
+            R`طبّق الإعدادات.`,
+            R`اتأكد إن العنوان الجديد ظهر.`,
+            R`رجّعه DHCP وفضّي الإعدادات اليدوية.`,
+            R`طبّق تاني.`
+          ],
+          sol: R`ده ناتج حقيقي من NetworkManager 1.46 شغال جوه container أوبونتو 24.04 (مع D-Bus و udev) على شبكة Docker [[172.30.0.0/24]] بدل [[192.168.1.0/24]]. [[nmcli device status]] قبل وبعد:
+[[DEVICE  TYPE      STATE                   CONNECTION]]
+[[eth0    ethernet  connected (externally)  eth0]]
+و [[con mod]] لـ [[172.30.0.50/24]] وبعدين [[con up]] طبع [[Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/3)]]، و [[ip -br a show eth0]] بقى [[172.30.0.50/24]]، و [[ip route]] بقى [[default via 172.30.0.1 dev eth0 proto static metric 100]]. و [[nmcli -g ipv4.method,ipv4.addresses con show "Wired connection 1"]] طبع [[manual]] و [[172.30.0.50/24]]، واتعمل ملف [[/etc/netplan/90-NM-2fa0a0de-....yaml]] فيه العنوان والـ DNS.
+
+والرجوع لـ [[auto]] على شبكة مفيهاش DHCP (زي شبكة Docker) فضل [[connecting (getting IP configuration)]] و [[--wait 12]] خلص بـ [[Error: Timeout expired (12 seconds)]]؛ على شبكة بيت عادية بياخد IP في ثانية. والواي فاي مش موجود في container: [[nmcli dev wifi connect]] رد [[Error: No Wi-Fi device found.]]، فشكل [[wifi list]] و [[--ask]] من الـ man page بتاعة nmcli. ولو جهاز ظهر [[unmanaged]]: على أوبونتو Server ده متعمّد (netplan ماسكه).
+
+وعلى أوبونتو Server نفس الـ IP الثابت بـ netplan (الملف ده عدّى [[netplan generate]] عندي):`,
+          solCode: R`sudo tee /etc/netplan/50-static.yaml >/dev/null <<'EOF'
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: false
+      addresses: [192.168.1.50/24]
+      routes:
+        - to: default
+          via: 192.168.1.1
+      nameservers:
+        addresses: [1.1.1.1, 8.8.8.8]
+EOF
+sudo chmod 600 /etc/netplan/50-static.yaml
+sudo netplan try`
+        },
+        {
+          cmd: "resolvectl",
+          title: "الـ DNS اللي جهازك بيستخدمه فعلًا",
+          desc: R`[[resolvectl]] بيكلّم systemd-resolved، الخدمة اللي بتحوّل الأسماء لـ IPs على أوبونتو وفيدورا وأغلب التوزيعات الحديثة. بيقولك انت بتسأل أنهي DNS على كل كارت، ويسأل عن اسم زي ما البرامج بتسأل، ويمسح الكاش، ويغيّر الـ DNS مؤقتًا.
+
+ليه [[cat /etc/resolv.conf]] مش كفاية: على أوبونتو هتلاقي فيه [[nameserver 127.0.0.53]]، وده مش الـ DNS بتاعك، ده systemd-resolved نفسه سامع على الجهاز (اسمه stub). كل البرامج بتسأله، وهو بيسأل السيرفرات الحقيقية ويحفظ الردود. و [[/etc/resolv.conf]] هناك symlink لـ [[/run/systemd/resolve/stub-resolv.conf]]، والسيرفرات الحقيقية في [[resolvectl status]]. ومتعدّلش [[/etc/resolv.conf]] بإيدك: بيتكتب فوقه.
+
+• [[resolvectl status]]: جزء [[Global]] وجزء لكل [[Link]] (كارت): [[Current DNS Server]] اللي بيسأله دلوقتي، و [[DNS Servers]] كلهم، و [[DNS Domain]] (في الـ VPN بيحدد أنهي أسماء تروح لـ DNS الشركة)، و [[resolv.conf mode: stub]]. و [[resolvectl dns]] الملخص بس.
+• [[resolvectl query example.com]]: الـ IPs، ومن أنهي كارت، و [[Data from: network]] أو [[cache]]، والوقت. و [[-t MX]] نوع سجل تاني (سيرفرات الإيميل). وفرقه عن [[dig]] (درس dig): dig بيسأل سيرفر DNS مباشرة وبيتخطّى اللي النظام بيعمله، و resolvectl بيوريك اللي البرامج بتشوفه فعلًا.
+• [[resolvectl flush-caches]]: يمسح الكاش، بعد ما تغيّر سجل DNS ومستعجل تشوف الجديد.
+• [[resolvectl statistics]]: أرقام الكاش: [[Current Cache Size]] و [[Cache Hits]] و [[Cache Misses]].
+• [[resolvectl dns eth0 9.9.9.9]]: يحط DNS للكارت ده لحد الريستارت أو لحد ما NetworkManager يعيد ضبطه. و [[resolvectl revert eth0]] يشيل كل إعدادات الكارت ده، حتى اللي NetworkManager حاطها، لحد ما الاتصال يقوم تاني.
+
+ولتغيير دايم: [[ipv4.dns]] في nmcli (الدرس اللي فات)، أو [[nameservers]] في netplan، أو [[DNS=]] في [[/etc/systemd/resolved.conf]] للجهاز كله.
+
+فروق التوزيعات: ديبيان مش بيستخدم systemd-resolved افتراضيًا، و [[/etc/resolv.conf]] هناك ملف حقيقي فيه السيرفرات. وعلى أوبونتو 24.04 الخدمة باكدج لوحدها اسمها [[systemd-resolved]]. والأمر القديم [[systemd-resolve --status]] اللي في شروحات كتير مش موجود في أوبونتو 22.04 ولا 24.04 (اتأكدت من الباكدجات)، استخدم resolvectl.`,
+          example: R`cat /etc/resolv.conf
+resolvectl status
+resolvectl dns
+resolvectl query example.com
+resolvectl query -t MX gmail.com
+resolvectl statistics
+sudo resolvectl flush-caches
+sudo resolvectl dns eth0 9.9.9.9
+sudo resolvectl revert eth0`,
+          try: R`اعرف جهازك بيسأل أنهي DNS على الواي فاي. اسأل عن [[example.com]] مرتين ورا بعض وقارن [[Data from]] والوقت. امسح الكاش واتأكد من [[resolvectl statistics]] إن [[Current Cache Size]] بقى صفر. (استبدل [[eth0]] باسم كارتك من [[ip -br a]].)`,
+          mac: ["diff", R`مفيش resolvectl على الماك: [[scutil --dns]] بيعرض الـ DNS لكل كارت، و [[dscacheutil -q host -a name example.com]] بيسأل زي البرامج، والكاش: [[sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder]].`],
+          deep: {
+            why: R`«الموقع بيفتح من الموبايل ومش من اللابتوب»، «غيّرت الـ DNS ولسه الدومين بيروح للسيرفر القديم»، «شغّلت VPN وبطّلت أوصل للمواقع الداخلية». كل دول أسئلة: جهازي بيسأل مين؟ والرد جاي من كاش ولا لأ؟ resolvectl بيجاوبهم من غير تخمين.`,
+            how: R`أي برنامج عايز يحوّل اسم لـ IP بيسأل مكتبة النظام، وهي بتشوف [[/etc/nsswitch.conf]]: [[/etc/hosts]] الأول، وبعدين (على أوبونتو) [[resolve]] أو [[dns]]، واللي بيروح لـ [[127.0.0.53]]. و systemd-resolved عنده لستة سيرفرات لكل كارت (NetworkManager أو netplan بيبعتهاله)، فبيسأل أنسب واحد، ويحفظ الرد مدة الـ TTL اللي في السجل.
+
+عشان كده ممكن يبقى عندك DNS مختلف على الواي فاي وعلى الـ VPN في نفس الوقت، وكل اسم يروح للصح حسب [[DNS Domain]]. و [[flush-caches]] بيمسح الكاش ده بس؛ المتصفح عنده كاش لوحده.`,
+            when: R`بعد ما تغيّر سجل DNS لدومينك: [[flush-caches]] وبعدين [[query]]. VPN وأسماء داخلية مش بتتحل: [[resolvectl status]] وبص على DNS Domain بتاع كارت الـ VPN. شبكة عامة الـ DNS بتاعها بطيء أو بيحجب: [[resolvectl dns wlan0 1.1.1.1]] مؤقتًا. وتأكيد إن [[/etc/hosts]] شغال: [[resolvectl query]] بيرد منه كمان.`,
+            mistakes: R`تعدّل [[/etc/resolv.conf]] بإيدك وتلاقيه رجع. وتفتكر [[127.0.0.53]] هو الـ DNS بتاعك. و [[dig]] يرد صح والمتصفح لأ، فتفتكر الـ DNS سليم وهو الكاش أو hosts. و [[resolvectl revert]] على سيرفر بعيد بيعتمد على DNS، فيفقد الـ DNS لحد ما الشبكة تتعمل up.`
+          },
+          lines: [
+            R`على أوبونتو: [[127.0.0.53]] يعني systemd-resolved، مش الـ DNS الحقيقي.`,
+            R`السيرفرات الحقيقية لكل كارت وإعداداتها.`,
+            R`السيرفرات بس، سطر لكل كارت.`,
+            R`اسأل زي البرامج: الـ IPs، ومن الشبكة ولا الكاش.`,
+            R`سجلات MX (سيرفرات الإيميل) بدل A.`,
+            R`أرقام الكاش: حجمه و hits و misses.`,
+            R`امسح الكاش.`,
+            R`DNS مؤقت لكارت eth0.`,
+            R`شيل إعدادات eth0 اللي اتحطت يدوي.`
+          ],
+          sol: R`ناتج حقيقي من systemd-resolved شغال جوه container أوبونتو 24.04، والـ DNS الأساسي جاي من Docker ([[127.0.0.11]]) و NetworkManager حاطط [[1.1.1.1 8.8.8.8]] على eth0. [[resolvectl dns]] طبع:
+[[Global: 127.0.0.11]]
+[[Link 2 (eth0): 1.1.1.1 8.8.8.8]]
+و [[resolvectl query example.com]] أول مرة: ٤ عناوين ([[104.20.23.154]] و [[172.66.147.243]] واتنين IPv6) كل واحد جنبه [[-- link: eth0]]، وتحتهم [[-- Information acquired via protocol DNS in 45.2ms.]] و [[-- Data from: network]]. وتاني مرة: [[in 1.0ms]] و [[Data from: cache]]. و [[-t MX gmail.com]] طبع [[gmail.com IN MX 5 gmail-smtp-in.l.google.com]] وأربعة تانيين.
+
+[[resolvectl statistics]] طبع [[Current Cache Size: 3]] و [[Cache Hits: 2]] و [[Cache Misses: 9]]، وبعد [[flush-caches]] الحجم بقى [[0]]. و [[resolvectl dns eth0 9.9.9.9 149.112.112.112]] غيّر سطر eth0، و [[revert]] فضّاه خالص. وملف الـ stub ([[/run/systemd/resolve/stub-resolv.conf]]) فيه [[nameserver 127.0.0.53]] و [[options edns0 trust-ad]]. وفي الـ container [[resolv.conf mode]] طلع [[foreign]] لأن Docker ماسك [[/etc/resolv.conf]]؛ على أوبونتو Desktop بيبقى [[stub]].`
+        },
+        {
+          cmd: "ip link و ip addr add",
+          title: "شغّل وطفّي كارت وزوّد IP مؤقت",
+          desc: R`[[ip link]] بيتحكم في الكارت نفسه (شغال ولا مطفي، والـ MTU، والعدّادات)، و [[ip addr]] في العناوين اللي عليه. درس «ip a / ip route» كان للقراية، وده للتغيير، وكل التغييرات دي مؤقتة: بتروح مع الريستارت أو لما NetworkManager أو netplan يعيد ضبط الكارت.
+
+[[ip -br a]] (brief) سطر لكل كارت: الاسم، و [[UP]] أو [[DOWN]]، والعناوين. و [[ip -br link]] نفس الكلام بالـ MAC والـ flags: [[UP]] الكارت متشغّل، و [[LOWER_UP]] السلك متوصل فعلًا (أو الواي فاي مربوط). ولو [[UP]] من غير [[LOWER_UP]]، الكارت شغال بس مفيش كابل. و [[eth0@if76]] جوه Docker معناها إن الطرف التاني للكارت ده هو الكارت رقم 76 عند الـ host.
+
+[[sudo ip link set dev eth0 down]] يطفي الكارت و [[up]] يشغّله. خطر: لو داخل بـ ssh على نفس الكارت، الاتصال هيتقطع ومش هتعرف تكتب [[up]]. وحاجة اكتشفتها وانا بجرّب: بعد down و up، الـ default route اتمسح ومرجعش لوحده ([[ip route]] بقى فيه سطر الشبكة المحلية بس)، فالجهاز بيكلّم اللي جنبه بس ومفيش نت، لحد ما NetworkManager يرجّعه أو تكتبه انت: [[sudo ip route add default via 192.168.1.1]]. فعلى سيرفر بعيد متطفيش الكارت اللي داخل منه؛ ولو محتاج تعيد ضبطه، [[sudo netplan apply]] أو [[sudo nmcli con up "الاسم"]].
+
+[[sudo ip addr add 10.0.0.5/24 dev eth0]] يضيف عنوان تاني على نفس الكارت من غير ما يشيل الأول. و [[/24]] لازم: من غيره بيتحسب [[/32]] (عنوان لوحده من غير شبكة)، فالجهاز ميعرفش إن 10.0.0.x جنبه. و [[label eth0:lab]] اسم للعنوان (شكل قديم من أيام ifconfig). و [[ip addr del]] بنفس الكتابة بالظبط يشيله، ولو العنوان موجود قبل كده: [[Error: ipv4: Address already assigned.]] الاستخدام: توصل لجهاز إعداداته الافتراضية على شبكة تانية (راوتر أو كاميرا جديدة على [[192.168.0.1]] وانت على [[192.168.1.x]])، أو تجرّب سيرفر بيسمع على IP معين.
+
+[[ip -s link show eth0]] (statistics): [[RX]] اللي استقبله و [[TX]] اللي بعته: bytes و packets، و [[errors]] و [[dropped]]. لو بيزيدوا باستمرار فيه مشكلة في السلك أو الكارت أو الـ driver. و [[-h]] (human) الأرقام بـ k و M. و [[ip link set eth0 mtu 1400]] يغيّر أكبر packet الكارت بيبعته (بيحتاجه أحيانًا مع VPN)، و [[ip -c]] بالألوان، و [[ip -j]] بـ JSON للسكربتات.
+
+وعشان أي حاجة من دول تبقى دايمة: nmcli أو netplan (درس nmcli).`,
+          example: R`ip -br a
+ip -br link
+sudo ip addr add 10.0.0.5/24 dev eth0
+ip -br a show eth0
+sudo ip addr del 10.0.0.5/24 dev eth0
+ip -s -h link show eth0
+# متعملش السطور دي على جهاز داخله بـ ssh على نفس الكارت
+sudo ip link set dev eth0 down
+sudo ip link set dev eth0 up
+ip route`,
+          try: R`على جهازك (استبدل eth0 باسم كارتك من [[ip -br a]]): زوّد عنوان [[10.0.0.5/24]] واتأكد إنه ظهر جنب الأصلي، وشيله. واقرا عدّادات الكارت مرتين بينهم [[curl]] لملف كبير وقارن RX.`,
+          mac: ["diff", R`مفيش ip على الماك: [[sudo ifconfig en0 alias 10.0.0.5 255.255.255.0]] يضيف عنوان، و [[sudo ifconfig en0 -alias 10.0.0.5]] يشيله، و [[sudo ifconfig en0 down]] و [[up]]، والعدّادات [[netstat -ibn]].`],
+          deep: {
+            why: R`ساعات محتاج تغيير سريع للتجربة من غير ما تلمس الإعدادات المحفوظة: توصل لجهاز جديد على شبكة تانية، أو تعيد تشغيل كارت معلّق، أو تتأكد إن السلك نفسه فيه errors. و [[ip]] بيعمل ده فورًا، والريستارت بيرجّع كل حاجة زي ما كانت، وده أمان في التجارب.`,
+            how: R`[[ip]] بيكلّم الـ kernel مباشرة (عن طريق netlink)، فالتغيير بيحصل لحظتها، بس مفيش حاجة بتتكتب على الديسك. وعشان كده NetworkManager أو systemd-networkd (اللي بيمسكوا الكارت) ممكن يرجّعوا إعداداتهم فوق تغييرك في أي لحظة (لما الـ DHCP يتجدّد مثلًا).
+
+ولما الكارت يقع (down)، الـ kernel بيمسح كل الـ routes اللي بتعدّي عليه، ولما يقوم (up) بيرجّع بس الـ route للشبكة المحلية اللي محسوبة من العنوان، أما الـ default route فكان حد حطه (DHCP أو NetworkManager)، فلازم حد يحطه تاني.
+
+والعنوان التاني على نفس الشبكة بيتعلّم [[secondary]]، ولو مسحت العنوان الأساسي الـ kernel ممكن يمسح الـ secondary معاه.`,
+            when: R`جهاز جديد على شبكة تانية: [[ip addr add 192.168.0.50/24 dev eth0]] وتفتح صفحته وتغيّر إعداداته وتشيل العنوان. كارت معلّق: down و up (من console مش ssh). مشكلة سرعة أو انقطاع: [[ip -s link]] مرتين وتشوف errors بتزيد. واختبار تطبيق بيسمع على IP معين في جهاز عليه أكتر من عنوان.`,
+            mistakes: R`[[ip link set eth0 down]] على السيرفر من ssh. والعنوان من غير [[/24]] فيبقى [[/32]] ومحدش يوصله. وإنك تعتمد على تغيير بـ [[ip]] وتنساه، وبعد الريستارت تستغرب. وإنك تمسح العنوان الأساسي بالغلط بدل التاني (اكتب العنوان كامل في [[del]]).`
+          },
+          lines: [
+            R`العناوين: سطر لكل كارت.`,
+            R`الكروت: الحالة والـ MAC والـ flags.`,
+            R`زوّد عنوان تاني (مؤقت) على eth0، والـ [[/24]] بتعرّفه الشبكة.`,
+            R`اتأكد: العنوانين جنب بعض.`,
+            R`شيل العنوان التاني بنفس الكتابة.`,
+            R`عدّادات الكارت ([[-s]]) بأرقام مقروءة ([[-h]]): RX و TX و errors و dropped.`,
+            R`اطفي الكارت.`,
+            R`شغّله.`,
+            R`بص على الـ routes: الـ default ممكن يكون اتمسح.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04 بـ [[--cap-add NET_ADMIN]] على شبكة Docker. [[ip -br link]]: [[eth0@if76 UP da:58:98:f5:39:3f <BROADCAST,MULTICAST,UP,LOWER_UP>]]. بعد [[ip addr add 172.30.0.25/24 dev eth0]]، [[ip -br a show eth0]] بقى [[eth0@if76 UP 172.30.0.20/24 172.30.0.25/24]]، و [[ip a]] كتب جنب التاني [[scope global secondary eth0]]. وإضافة نفس العنوان تاني: [[Error: ipv4: Address already assigned.]].
+
+[[ip -s -h link show eth0]]:
+[[RX:  bytes packets errors dropped  missed   mcast]]
+[[41.8M   29.7k      0       0       0       0]]
+[[TX:  bytes packets errors dropped carrier collsns]]
+[[1.37M   19.9k      0       0       0       0]]
+
+وبعد [[down]]: [[eth0@if76 DOWN ... <BROADCAST,MULTICAST>]] و [[ping]] قال [[ping: connect: Network is unreachable]]. وبعد [[up]] الكارت رجع [[LOWER_UP]]، بس [[ip route]] كان فيه سطر واحد [[172.30.0.0/24 dev eth0 proto kernel scope link src 172.30.0.20]] من غير default، ورجع لما كتبت [[ip route add default via 172.30.0.1]].`
+        },
+        {
+          cmd: "nft و iptables -L",
+          title: "اقرا الفايروول وابني واحد بسيط",
+          desc: R`الفايروول في لينكس جوه الـ kernel نفسه (اسمه netfilter)، و [[nft]] (nftables) هي الأداة الحالية اللي بتقراه وتكتبه، و [[iptables]] الأداة القديمة اللي لسه موجودة. و [[ufw]] (شوف درس «ufw» في تاب «VPS») و firewalld في فيدورا واجهات أسهل بتكتب نفس القواعد من تحت. الدرس ده عشان «تقرا» اللي موجود فعلًا، وتعمل فايروول صغير بإيدك لو محتاج.
+
+القراية: [[sudo nft list ruleset]] بيطبع كل حاجة:
+• [[table]] مجموعة قواعد ليها عيلة: [[ip]] لـ IPv4، و [[ip6]]، و [[inet]] للاتنين مع بعض.
+• جوه الجدول [[chain]] وفيها [[hook]] بيقول إمتى تشتغل: [[input]] اللي داخل للجهاز، و [[output]] اللي خارج منه، و [[forward]] اللي معدّي (Docker والراوتر).
+• [[policy drop]] يعني اللي ميطابقش أي قاعدة يترمي، و [[policy accept]] يعدّي.
+• كل قاعدة شرط وبعده [[accept]] أو [[drop]]، و [[counter]] بيعد الـ packets اللي طابقتها.
+و [[sudo nft list tables]] أسامي الجداول بس.
+
+[[sudo iptables -L -n -v]]: [[-L]] (list) و [[-n]] أرقام من غير أسامي (أسرع) و [[-v]] العدّادات والكارت. على أوبونتو 22.04 و 24.04 وديبيان 11+ وفيدورا، [[iptables]] نفسه بقى [[iptables-nft]]: بيكتب في nftables بشكل iptables، و [[iptables -V]] بيقول [[(nf_tables)]]. عشان كده جداول ufw و Docker بتظهر في [[nft list ruleset]] مع سطر [[# Warning: table ip nat is managed by iptables-nft, do not touch!]] (يعني عدّلها بـ iptables مش nft). والعكس مش صحيح: قواعد اتكتبت بـ [[nft]] مباشرة مبتظهرش في [[iptables -L]] خالص، فـ [[iptables -L]] فاضي مش معناه مفيش فايروول (جربتها). ولو شفت [[# Warning: iptables-legacy tables present]]، فيه برنامج بيستخدم الطريقة القديمة، و [[sudo iptables-legacy -L]] يوريهم.
+
+الفايروول الصغير اللي في المثال: جدول باسمنا [[myfw]] فيه chain على [[input]] بـ [[policy drop]]، و:
+• [[ct state established,related accept]]: اقبل الردود على اتصالات الجهاز بدأها. من غيرها هتقطع النت عن نفسك ([[apt]] و [[curl]] مش هيوصلهم رد).
+• [[ct state invalid drop]]: ارمي الـ packets اللي ملهاش معنى.
+• [[iif "lo" accept]]: الجهاز يكلّم نفسه (127.0.0.1).
+• [[icmp]] و [[ipv6-icmp]]: الـ ping، و IPv6 مبيشتغلش من غير icmpv6.
+• [[tcp dport 22 accept]] الـ SSH، و [[{ 80, 443 }]] لستة بورتات.
+وأول سطرين [[table inet myfw]] و [[delete table inet myfw]] بيمسحوا نسختنا القديمة بس، عشان تعيد التحميل كذا مرة من غير ما تلمس جداول Docker و ufw. أما [[flush ruleset]] اللي في [[/etc/nftables.conf]] الافتراضي فبيمسح كل حاجة، بما فيها قواعد Docker، فالـ containers تفقد النت لحد ما Docker يعمل ريستارت.
+
+متقفلش على نفسك: [[sudo nft -c -f]] (check) يفحص الملف من غير ما يطبّقه. وقبل ما تطبّق على سيرفر بعيد، شغّل «زرار رجوع» في الخلفية: [[sudo sh -c 'sleep 120; nft delete table inet myfw' &]]، وطبّق، وجرّب تفتح ssh جديد من جهازك. لو نجح الغي الرجوع بـ [[kill %1]]، ولو اتقفلت برّه هيترجع لوحده بعد دقيقتين. وعشان يفضل بعد الريستارت: حط الملف في [[/etc/nftables.conf]] (أو [[include]] منه) و [[sudo systemctl enable nftables]]. ومتشغّلش ufw و nftables.conf بتاعك مع بعض على نفس الجهاز: اختار واحد.`,
+          example: R`sudo nft list ruleset
+sudo nft list tables
+iptables -V
+sudo iptables -L -n -v
+# فايروول صغير: SSH و 80 و 443 بس
+cat > myfw.nft <<'EOF'
+table inet myfw
+delete table inet myfw
+table inet myfw {
+  chain input {
+    type filter hook input priority 0; policy drop;
+    ct state established,related accept
+    ct state invalid drop
+    iif "lo" accept
+    meta l4proto { icmp, ipv6-icmp } accept
+    tcp dport 22 counter accept
+    tcp dport { 80, 443 } counter accept
+  }
+}
+EOF
+sudo nft -c -f myfw.nft
+sudo sh -c 'sleep 120; nft delete table inet myfw' &
+sudo nft -f myfw.nft
+sudo nft list table inet myfw
+kill %1`,
+          try: R`في VM أو container بـ [[--privileged]] (مش السيرفر الحقيقي ولا جهازك): اقرا الجداول الموجودة. اعمل الملف وطبّقه، وشغّل برنامج بيسمع على بورت مش في اللستة ([[nc -lk -p 8080]]) وجرّب توصله من جهاز تاني، وقارن بـ 22. واقرا الـ counters بعدها.`,
+          flag: "script danger",
+          mac: ["diff", R`الماك فايروول تاني اسمه pf: [[sudo pfctl -s rules]] القواعد و [[sudo pfctl -s info]] الحالة. وفايروول الإعدادات (Application Firewall): [[/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate]].`],
+          deep: {
+            why: R`ufw كفاية في أغلب الوقت، بس هتقابل سيرفرات فيها قواعد من Docker و fail2ban و ufw و حاجات حد كتبها زمان، ومحتاج تعرف «إيه اللي بيرمي الـ packet بتاعتي؟». ده مش هيبان غير من [[nft list ruleset]]. وأحيانًا محتاج قاعدة ufw مبيعرفهاش، أو جهاز من غير ufw خالص.`,
+            how: R`كل packet داخلة للجهاز بتعدّي على كل الـ chains اللي متعلّقة على hook [[input]]، بالترتيب حسب الـ [[priority]]، وجوه كل chain القواعد من فوق لتحت. أول قاعدة تقول accept أو drop بتحسم الـ chain دي. ولو packet اتعمل لها drop في أي chain، خلاص. عشان كده جدولنا وجدول ufw لو الاتنين شغالين، الـ packet لازم تعدّي من الاتنين.
+
+و [[ct state]] بييجي من connection tracking: الـ kernel فاكر كل اتصال بدأ، فالرد عليه بيتعلّم [[established]]، وده اللي بيخلي [[policy drop]] على input متقطعش اتصالاتك الخارجة.
+
+و [[nft -f]] بيطبّق الملف كله كعملية واحدة (atomic): يا كله يتطبّق يا ولا حاجة، فمفيش لحظة الفايروول فيها نصه متطبّق.`,
+            when: R`تشخيص: البورت فاتح في البرنامج ([[ss -tlnp]]) بس مش واصل من بره: [[nft list ruleset]] وبص على الـ counters. جهاز من غير ufw (فيدورا أو ديبيان minimal) ومحتاج فايروول بسيط. ومراجعة إيه اللي Docker فاتحه فعلًا.`,
+            mistakes: R`[[policy drop]] من غير [[established,related]]، فتقطع ردود كل حاجة. ومن غير قاعدة 22 على سيرفر بعيد، فتقفل على نفسك (ومن غير زرار الرجوع). و [[flush ruleset]] على جهاز عليه Docker. وإنك تتطمّن لأن [[iptables -L]] فاضي. وتعديل جداول ufw أو Docker بـ nft مباشرة: هيترجعوا لوحدهم أو يبوّظوا.`
+          },
+          lines: [
+            R`كل الجداول والقواعد على الجهاز.`,
+            R`أسامي الجداول بس.`,
+            R`نسخة iptables، و [[(nf_tables)]] يعني بيكتب في nftables.`,
+            R`قواعد iptables بالأرقام والعدّادات (اللي اتكتبت بـ nft مباشرة مش هتظهر هنا).`,
+            R`اكتب ملف القواعد (الـ heredoc لحد EOF).`,
+            R`اعمل الجدول لو مش موجود...`,
+            R`...وامسحه: كده النسخة القديمة بتاعتنا اتشالت من غير ما نلمس جداول تانية.`,
+            R`جدول جديد اسمه myfw لـ IPv4 و IPv6 ([[inet]]).`,
+            R`chain اسمها input...`,
+            R`...متعلّقة على الـ packets الداخلة، واللي ميطابقش يترمي.`,
+            R`اقبل الردود على اتصالات بدأناها.`,
+            R`ارمي الـ packets الغلط.`,
+            R`اقبل اللي من الجهاز لنفسه.`,
+            R`اقبل الـ ping بنوعيه.`,
+            R`اقبل SSH، وعد الـ packets.`,
+            R`اقبل 80 و 443.`,
+            R`نهاية الـ chain.`,
+            R`نهاية الجدول.`,
+            R`نهاية الملف.`,
+            R`افحص الملف من غير ما تطبّقه ([[-c]]).`,
+            R`زرار الرجوع: بعد دقيقتين امسح الجدول، في الخلفية ([[&]]).`,
+            R`طبّق الملف (كله مرة واحدة).`,
+            R`اعرض الجدول والـ counters.`,
+            R`كله تمام وقدرت تدخل ssh جديد؟ الغي زرار الرجوع.`
+          ],
+          sol: R`ناتج حقيقي من container أوبونتو 24.04 بـ [[--privileged]] على شبكة Docker: [[iptables -V]] طبع [[iptables v1.8.10 (nf_tables)]]. و [[nft list ruleset]] قبل أي حاجة كان فيه جدول Docker للـ DNS الداخلي: [[table ip nat {]] وجواه [[chain DOCKER_OUTPUT]] و [[dnat to 127.0.0.11:54652]]، ومعاه [[# Warning: table ip nat is managed by iptables-nft, do not touch!]].
+
+[[nft -c -f]] مطبعش حاجة (سليم). وبعد التطبيق، من container تاني على نفس الشبكة: [[nc -zv 172.30.0.30 22]] طبع [[Connection to 172.30.0.30 22 port [tcp/ssh] succeeded!]]، و 8080: [[nc: connect to 172.30.0.30 port 8080 (tcp) timed out: Operation now in progress]] (drop يعني مفيش رد خالص، مش رفض). والـ counter بقى [[tcp dport 22 counter packets 1 bytes 60 accept]]، و [[curl https://example.com]] من نفس الجهاز اشتغل بسبب [[established,related]]. وفي نفس الوقت [[iptables -L]] كان فاضي: [[Chain INPUT (policy ACCEPT 0 packets, 0 bytes)]].
+
+وجربت زرار الرجوع: الجدول اتمسح لوحده بعد المدة، ومع [[kill %1]] فضل. ولما شغّلت ufw، [[nft list tables]] بقى فيه [[table ip filter]] و [[table ip6 filter]]، و [[iptables -L INPUT]] بقى [[policy DROP]] وفيه chains زي [[ufw-before-input]]، وقاعدة [[ufw allow 22/tcp]] ظهرت في [[chain ufw-user-input]] كـ [[tcp dport 22 counter packets 0 bytes 0 accept]].`
+        }
+      ]
+    },
+    {
+      t: "الأجهزة اللي معاك على الشبكة",
+      l: 2,
+      n: "مين متوصل على الواي فاي، والطابعة اسمها إيه، وفولدر مشترك من ويندوز، وتشغيل جهاز مطفي. كل ده على شبكتك انت أو بإذن صاحبها بس",
+      items: [
+        {
+          cmd: "nmap -sn و arp-scan",
+          title: "مين متوصل على شبكتك",
+          desc: R`[[nmap -sn]] و [[arp-scan]] بيلفّوا على كل العناوين في شبكتك المحلية ويقولولك مين موجود: IP كل جهاز، والـ MAC، والشركة اللي عاملة الكارت (Apple و Samsung و TP-Link...). فتعرف IP الطابعة أو الـ Raspberry Pi أو التلفزيون، أو تكتشف جهاز غريب داخل على الواي فاي. استخدمهم على شبكتك انت أو بإذن صاحبها بس: الـ scan على شبكة شغل أو كافيه أو جيران من غير إذن ممكن يبقى مخالف لسياسة المكان أو للقانون.
+
+أول خطوة تعرف شبكتك: [[ip -br a]] هيطلّع حاجة زي [[wlan0 UP 192.168.1.23/24]]. الـ [[/24]] معناها أول ٣ أرقام ثابتين، فالشبكة [[192.168.1.0/24]] = من 192.168.1.1 لـ 192.168.1.254. و [[ip route]] بيقولك الراوتر ([[default via 192.168.1.1]]).
+
+[[sudo nmap -sn 192.168.1.0/24]]: [[-sn]] (no port scan) بيسأل «انت موجود؟» بس، من غير ما يفحص بورتات (البورتات في درس nmap). مع sudo وعلى نفس الشبكة بيستخدم ARP، وده السؤال اللي الأجهزة بتسأله لبعض «مين صاحب IP كذا؟»، فسريع ومفيش جهاز يقدر يتجاهله حتى لو الفايروول بتاعه قافل الـ ping، وبيطلّع الـ MAC والشركة. من غير sudo بيجرّب يتصل ببورتات 80 و 443 بس، فأجهزة كتير مش هتظهر ومفيش MAC (جربت الاتنين). و [[-n]] متدوّرش على الأسامي (أسرع)، و [[-oG -]] شكل سطر لكل جهاز ينفع مع grep.
+
+[[sudo arp-scan --localnet]]: بيبعت ARP لكل الشبكة بتاعة الكارت ([[-I wlan0]] لو عندك أكتر من كارت) ويطبع سطر لكل جهاز: IP و MAC والشركة، من ملف [[ieee-oui.txt]] اللي جاي معاه. و [[(Unknown: locally administered)]] معناها الـ MAC عشوائي: الموبايلات والأجهزة الحديثة (iOS و Android و Windows) بتعمل MAC عشوائي لكل شبكة واي فاي (Private Wi-Fi Address)، فمش هتعرف الشركة منه، ودي حماية خصوصية مش جهاز مريب.
+
+[[ip neigh]] (neighbor) جدول الـ kernel: الأجهزة اللي جهازك كلّمها فعلًا مؤخرًا وعارف الـ MAC بتاعها: [[REACHABLE]] لسه متأكد منه، و [[STALE]] من شوية، و [[FAILED]] أو [[INCOMPLETE]] سأل ومحدش رد. مش بيعمل scan، فمش هتلاقي فيه غير الراوتر واللي اتكلمت معاه (حتى بعد nmap، لأن nmap بيبعت الـ ARP بنفسه من غير ما يعدّي على الجدول ده). وده البديل الحديث لـ [[arp -a]].`,
+          example: R`ip -br a
+ip route
+sudo apt install nmap arp-scan
+sudo nmap -sn 192.168.1.0/24
+sudo arp-scan --localnet
+ip neigh`,
+          try: R`على شبكة بيتك: اعرف الـ subnet بتاعتك، وطلّع لستة الأجهزة بالاتنين وقارنهم. حاول تعرف كل جهاز مين (الشركة، أو افصل جهاز وشوف مين اختفى). كام واحد طلع MAC عشوائي؟`,
+          mac: ["diff", R`[[brew install nmap arp-scan]] ونفس الأوامر، و [[sudo arp-scan -I en0 --localnet]]. ومفيش [[ip]]: [[ipconfig getifaddr en0]] للـ IP، و [[arp -a]] بدل [[ip neigh]].`],
+          deep: {
+            why: R`عايز توصل لجهاز ومش عارف الـ IP بتاعه (طابعة، Raspberry Pi لسه متسطب، كاميرا). أو النت بطيء وعايز تعرف مين على الواي فاي. أو بتراجع أمان شبكة البيت أو المكتب الصغير: فيه أجهزة مش معروفة؟`,
+            how: R`جوه شبكة واحدة الأجهزة بتتكلم بالـ MAC مش الـ IP. فقبل ما جهازك يبعت لـ 192.168.1.40، بيبعت broadcast «مين عنده 192.168.1.40؟» والجهاز ده بيرد بالـ MAC بتاعه. arp-scan و nmap بيبعتوا السؤال ده لكل العناوين ورا بعض ويسجّلوا مين رد. ولأن أي جهاز عايز يتكلم على الشبكة لازم يرد على ARP، الطريقة دي بتلاقي حتى الأجهزة اللي قافلة ping.
+
+والـ ARP مبيعدّيش الراوتر، فده بيشتغل على الشبكة المحلية بس. ولشبكة تانية، nmap بيستخدم ping وبورتات، والنتيجة أقل دقة. وأول ٣ bytes من الـ MAC (اسمها OUI) متسجّلة باسم الشركة المصنّعة، ومن هنا اسم الشركة.`,
+            when: R`Raspberry Pi جديد ومش عارف عنوانه. جهاز غريب عايز تعرف هو إيه. قبل ما تختار IP ثابت لجهاز (تتأكد إنه فاضي). وبعد ما الراوتر يعيد توزيع العناوين وتطبعتك «اختفت».`,
+            mistakes: R`تعمل scan على شبكة مش بتاعتك (شغل، جامعة، كافيه) من غير إذن: ممكن يتعمل لك حظر أو مشكلة. وتشغّل nmap من غير sudo وتفتكر الأجهزة اللي مظهرتش مش موجودة. وتفتكر MAC عشوائي يعني جهاز مخترق. وتدوّر بـ [[ip neigh]] بس فتفتكر الشبكة فيها جهازين.`
+          },
+          lines: [
+            R`عنوانك والـ [[/24]] بيقولك الشبكة.`,
+            R`الراوتر (default via).`,
+            R`سطّب الأداتين.`,
+            R`مين موجود على الـ 254 عنوان، من غير فحص بورتات.`,
+            R`نفس الكلام بـ ARP، ومعاه اسم الشركة.`,
+            R`الأجهزة اللي جهازك كلّمها فعلًا مؤخرًا.`
+          ],
+          sol: R`ناتج حقيقي من شبكة Docker عملتها فيها ٤ containers وراوتر ([[172.30.0.0/24]] بدل 192.168.1.0/24)، من container بـ NET_ADMIN و NET_RAW. [[sudo nmap -sn 172.30.0.0/24]]:
+[[Nmap scan report for bl-nm.bl-lan (172.30.0.10)]]
+[[Host is up (0.000026s latency).]]
+[[MAC Address: 02:4F:4A:14:65:AC (Unknown)]]
+... ونفس الكلام لـ 172.30.0.1 و .40 و .41، وفي الآخر [[Nmap done: 256 IP addresses (5 hosts up) scanned in 2.11 seconds]] (الخامس هو جهازي). والأسامي جاية من DNS بتاع Docker؛ في البيت هتلاقي أسامي من الراوتر أو من غير اسم.
+
+[[sudo arp-scan --localnet]]:
+[[Interface: eth0, type: EN10MB, MAC: b6:e9:5f:a9:3a:92, IPv4: 172.30.0.5]]
+[[172.30.0.40	6e:db:2b:c1:d3:88	(Unknown: locally administered)]]
+... و [[256 hosts scanned in 1.999 seconds (128.06 hosts/sec). 4 responded]]. هنا كلهم [[locally administered]] لأن Docker بيعمل MACs عشوائية؛ في البيت هتلاقي [[(Apple, Inc.)]] أو [[(TP-LINK TECHNOLOGIES CO.,LTD.)]] لأجهزة كتير.
+
+و [[ip neigh]] بعد الـ scan كان فيه سطر واحد: [[172.30.0.1 dev eth0 lladdr 9a:bb:c3:01:61:60 REACHABLE]]، وبعد [[ping]] لـ .40 ولعنوان مش موجود زاد [[172.30.0.40 ... REACHABLE]] و [[172.30.0.99 dev eth0 INCOMPLETE]]. ومن غير sudo، [[nmap -sn]] لقى ٣ من ٥ ومن غير MAC.`
+        },
+        {
+          cmd: "avahi-browse و .local",
+          title: "الطابعة والأجهزة اللي بتعلن عن نفسها",
+          desc: R`أجهزة كتير على الشبكة بتعلن عن اسمها والخدمات اللي عندها من غير DNS ولا إعداد: الطابعات، والـ Chromecast والتلفزيونات، والماك، والـ NAS، وأي لينكس عليه Avahi. الطريقة اسمها mDNS (multicast DNS) ومعاها DNS-SD (اكتشاف الخدمات)، وأبل بتسميها Bonjour. و Avahi هو اللي بيعملها على لينكس: [[ping printer.local]] بيوصل من غير ما تعرف الـ IP، و [[avahi-browse]] بيوريك كل اللي بيعلن.
+
+الأسماء اللي بتخلص بـ [[.local]] مش بتروح لسيرفر DNS: جهازك بيسأل الشبكة كلها «مين اسمه printer.local؟» (على العنوان 224.0.0.251 بورت 5353 UDP) والجهاز نفسه بيرد بالـ IP. على أوبونتو Desktop شغال من الأول (باكدج [[avahi-daemon]] و [[libnss-mdns]])، وسطر [[hosts:]] في [[/etc/nsswitch.conf]] فيه [[mdns4_minimal]] قبل [[dns]]، فـ [[ping]] و [[ssh pi@raspberrypi.local]] وأي برنامج بيفهموها. وعلى سيرفر: [[sudo apt install avahi-daemon avahi-utils libnss-mdns]]، وجهازك نفسه هيبقى اسمه [[hostname.local]].
+
+[[avahi-browse]]: [[-a]] (all) كل أنواع الخدمات، و [[-r]] (resolve) هات الاسم والـ IP والبورت لكل خدمة، و [[-t]] (terminate) اطبع اللي لقيته واخرج بدل ما يفضل يتابع، و [[-p]] (parsable) سطور مفصولة بـ [[;]] للسكربتات. وفي الناتج: [[+]] خدمة ظهرت، و [[=]] تفاصيلها بعد الـ resolve، و [[-]] خدمة اختفت. وأنواع مشهورة: [[_ipp._tcp]] طابعة (Internet Printer)، و [[_smb._tcp]] فولدر مشترك (Microsoft Windows Network)، و [[_googlecast._tcp]] Chromecast، و [[_ssh._tcp]]، و [[_airplay._tcp]]. و [[avahi-browse -rt _ipp._tcp]] للطابعات بس. وسطر [[txt]] فيه تفاصيل زيادة زي موديل الطابعة.
+
+[[avahi-resolve -n printer.local]] (name) يحوّل اسم لـ IP عن طريق Avahi مباشرة، مفيد لما تشك في nsswitch. ولو الاسم مش موجود بيطبع [[Timeout reached]] بعد ثواني.
+
+مع الأجهزة التانية: الماك بيعلن عن نفسه ويرد على [[اسمه.local]] من غير أي إعداد. وويندوز 10 و 11 بيقدروا يحلّوا أسماء [[.local]]، فـ [[ping laptop.local]] من ويندوز بيوصل لجهاز لينكس عليه Avahi، لكن الفولدرات المشتركة في ويندوز ممكن متظهرش في avahi-browse (الدرس الجاي بيوصلها بالـ IP). ولو مفيش حاجة بتظهر: فايروول بيمنع UDP 5353 ([[sudo ufw allow 5353/udp]])، أو شبكة الضيوف في الراوتر بتعزل الأجهزة عن بعض، أو الأجهزة على شبكات مختلفة؛ mDNS مبيعدّيش الراوتر.`,
+          example: R`sudo apt install avahi-daemon avahi-utils libnss-mdns
+grep hosts /etc/nsswitch.conf
+ping -c 2 printer.local
+avahi-resolve -n printer.local
+avahi-browse -art
+avahi-browse -rt _ipp._tcp`,
+          try: R`على شبكة بيتك: [[avahi-browse -art]] وشوف مين بيعلن (طابعة؟ تلفزيون؟ ماك؟). وبعدين جرّب [[ping اسم-جهازك.local]] من موبايل أو جهاز تاني على نفس الواي فاي.`,
+          mac: ["diff", R`Bonjour جوه الماك من الأول: [[ping printer.local]] شغال، والتصفح بـ [[dns-sd -B _services._dns-sd._udp]] (أنواع الخدمات الموجودة) و [[dns-sd -B _ipp._tcp]] (الطابعات)، و [[dns-sd -G v4 printer.local]] بدل avahi-resolve. و dns-sd مبيخلصش لوحده: Ctrl+C.`],
+          deep: {
+            why: R`في البيت أو مكتب صغير مفيش DNS داخلي، والراوتر بيدّي عناوين بتتغير. فبدل ما تحفظ إن الطابعة 192.168.1.37 النهارده، تكتب [[printer.local]]. وبرامج الطباعة والـ Chromecast والـ AirPlay كلها بتلاقي الأجهزة بالطريقة دي، فلما «الطابعة مش ظاهرة»، avahi-browse بيقولك المشكلة في الإعلان ولا في الطباعة.`,
+            how: R`كل جهاز عليه mDNS بيسمع على 224.0.0.251:5353. لما برنامج يسأل عن اسم بيخلص بـ [[.local]]، Avahi بيبعت السؤال multicast للشبكة كلها، واللي اسمه كده بيرد بالـ IP. ونفس الفكرة للخدمات: «مين عنده [[_ipp._tcp]]؟» وكل طابعة بترد باسمها والبورت والتفاصيل.
+
+و [[mdns4_minimal [NOTFOUND=return]]] في nsswitch معناها: الاسم بيخلص بـ .local؟ اسأل mDNS، ولو ملقتش متكمّلش لـ DNS العادي. وأي جهاز بيعلن خدماته من ملفات في [[/etc/avahi/services/]]، وبرامج زي Samba و CUPS بتعلن لوحدها.`,
+            when: R`[[ssh pi@raspberrypi.local]] أول مرة بعد تسطيب Raspberry Pi OS. تلاقي IP الطابعة عشان تضيفها يدوي. تتأكد إن الـ NAS بيعلن. وتشغّل Avahi على سيرفر البيت عشان تدخله بالاسم بدل الـ IP.`,
+            mistakes: R`تفتكر [[.local]] بيشتغل من برّه البيت أو عبر VPN، وهو على الشبكة المحلية بس. وتسمّي دومين داخلي في شركتك [[.local]] فيتعارض مع mDNS. ونسيان [[libnss-mdns]] على سيرفر، فـ avahi-browse يلاقي الأجهزة بس ping مش عارف الاسم. وفايروول قافل 5353.`
+          },
+          lines: [
+            R`سطّب Avahi والأدوات ومكتبة حل الأسماء (موجودين على Desktop).`,
+            R`اتأكد إن [[mdns4_minimal]] موجود قبل [[dns]].`,
+            R`[[ping]] بالاسم: جهازك هيسأل الشبكة عن printer.local.`,
+            R`اسم لـ IP عن طريق Avahi مباشرة.`,
+            R`كل الخدمات ([[-a]])، بالتفاصيل ([[-r]])، واخرج ([[-t]]).`,
+            R`الطابعات بس.`
+          ],
+          sol: R`ناتج حقيقي من ٣ containers أوبونتو 24.04 على شبكة Docker واحدة، عليهم avahi-daemon 0.8: واحد اسمه printer بيعلن [[_ipp._tcp]] بملف في [[/etc/avahi/services]]، وواحد اسمه nas عليه Samba، وجهازي. [[avahi-browse -art]]:
+[[+   eth0 IPv4 NAS                                           Device Info          local]]
+[[+   eth0 IPv4 NAS                                           Microsoft Windows Network local]]
+[[+   eth0 IPv4 Office LaserJet                               Internet Printer     local]]
+[[=   eth0 IPv4 Office LaserJet                               Internet Printer     local]]
+[[   hostname = [printer.local]]]
+[[   address = [172.30.0.40]]]
+[[   port = [631]]]
+[[   txt = ["ty=HP LaserJet Pro" "rp=printers/office"]]]
+ولاحظ إن Samba أعلن عن [[_smb._tcp]] لوحده (بالـ port 445). و [[ping -c 2 printer.local]] طبع [[PING printer.local (172.30.0.40) 56(84) bytes of data.]] ورد مرتين، و [[avahi-resolve -n printer.local]] طبع [[printer.local	172.30.0.40]]، و [[getent hosts nas.local]] طبع [[172.30.0.41     nas.local]]. واسم مش موجود: [[Failed to resolve host name 'nothere.local': Timeout reached]]. وسطر nsswitch: [[hosts:          files mdns4_minimal [NOTFOUND=return] dns]].`
+        },
+        {
+          cmd: "smbclient و mount -t cifs",
+          title: "افتح فولدر مشترك من ويندوز",
+          desc: R`الفولدرات المشتركة في ويندوز (و NAS زي Synology، و Samba على لينكس) بتشتغل ببروتوكول اسمه SMB (أو CIFS، اسمه القديم). [[smbclient]] بيدخلها من الترمنال زي FTP: تشوف وتنزّل وترفع، و [[mount -t cifs]] بيركّبها كفولدر عادي جوه لينكس، فأي برنامج يفتح ملفاتها كأنها على جهازك.
+
+التسطيب: [[sudo apt install smbclient cifs-utils]]؛ الأولى للتصفح، والتانية فيها [[mount.cifs]] اللي mount بيحتاجه. [[smbclient -L //192.168.1.20 -U ali]] (list) يعرض الفولدرات المشتركة على الجهاز ده، و [[-U ali]] اليوزر وهيسألك الباسورد. وتعرف IP جهاز الويندوز من [[ipconfig]] عليه أو من [[arp-scan]]؛ الـ IP أضمن من الاسم. وفي آخر الناتج سطر [[SMB1 disabled -- no workgroup available]]، وده عادي: SMB1 القديم مقفول لأسباب أمنية، فـ smbclient مش بيعرض لستة الـ workgroup.
+
+[[smbclient //192.168.1.20/Docs -U ali]] يدخل الفولدر Docs ويفتحلك [[smb: \>]]، وجواه: [[ls]] و [[cd]]، و [[get ملف]] تنزيل، و [[put ملف]] رفع، و [[mget *.pdf]] كذا ملف، و [[lcd]] يغيّر فولدرك المحلي، و [[exit]]. و [[-c "ls; get file"]] ينفّذ أوامر ويخرج من غير prompt.
+
+mount: [[sudo mount -t cifs //192.168.1.20/Docs /mnt/docs -o username=ali,uid=$(id -u),gid=$(id -g),vers=3.0]]:
+• [[-t cifs]] النوع، و [[-o]] الإعدادات مفصولة بفواصل.
+• [[username=ali]] وهيسأل الباسورد.
+• [[uid]] و [[gid]]: الملفات تبان ملكك انت. من غيرهم بتبان ملك root ومش هتعرف تكتب. و [[$(id -u)]] بيتحسب في الشيل بتاعك قبل sudo، فبيبقى رقمك انت.
+• [[vers=3.0]] نسخة SMB. من غيرها بيتفاوض على الأعلى (عندي طلعت 3.1.1). و [[vers=1.0]] اترفض في الـ kernel الحديث، ولو جهاز قديم جدًا محتاجها الأحسن تحدّثه.
+
+ثابت بعد الريستارت: الباسورد في ملف credentials مش في [[/etc/fstab]] (لأن fstab أي يوزر يقراه): ملف فيه [[username=]] و [[password=]] بـ [[chmod 600]]. وسطر fstab فيه [[_netdev]] (ده محتاج شبكة، استنى لما تقوم)، و [[nofail]] (لو الجهاز التاني مقفول، كمّل الـ boot عادي)، و [[mount -a]] يجرّب السطر قبل الريستارت (شوف درس «lsblk / mount» في تاب «VPS»).
+
+من ناحية ويندوز: على الفولدر Properties ← Sharing ← Share. واليوزر هو يوزر ويندوز؛ ولو داخل بحساب مايكروسوفت، غالبًا الإيميل وباسورده (مش الـ PIN). والشبكة لازم متعرّفة Private مش Public عشان File and Printer Sharing (بورت 445) يبقى مفتوح في الفايروول. والأخطاء: [[NT_STATUS_LOGON_FAILURE]] يوزر أو باسورد غلط، و [[NT_STATUS_BAD_NETWORK_NAME]] اسم الفولدر غلط، و [[mount error(13): Permission denied]] نفس الأولى من mount، و [[mount error(22): Invalid argument]] غالبًا [[vers]] مش مدعوم (و [[sudo dmesg | tail]] بيقول السبب).`,
+          example: R`sudo apt install smbclient cifs-utils
+smbclient -L //192.168.1.20 -U ali
+smbclient //192.168.1.20/Docs -U ali
+sudo mkdir -p /mnt/docs
+sudo mount -t cifs //192.168.1.20/Docs /mnt/docs -o username=ali,uid=$(id -u),gid=$(id -g),vers=3.0
+df -hT /mnt/docs
+sudo umount /mnt/docs`,
+          try: R`شيّر فولدر من جهاز ويندوز في البيت (أو استخدم NAS). اعرض الفولدرات بـ [[-L]]، وادخل نزّل ملف وارفع ملف بـ smbclient. وبعدين ركّبه على [[/mnt/docs]] واعمل ملف جواه من لينكس وشوفه ظهر على ويندوز. وفي الآخر خليه ثابت بالـ credentials و fstab.`,
+          mac: ["diff", R`على الماك Finder: Cmd+K واكتب [[smb://192.168.1.20/Docs]]. ومن الترمنال: [[smbutil view //ali@192.168.1.20]] الفولدرات المشتركة، و [[mkdir ~/docs && mount_smbfs //ali@192.168.1.20/Docs ~/docs]] يركّب من غير sudo.`],
+          deep: {
+            why: R`ملفات على جهاز ويندوز أو NAS في البيت أو المكتب ومحتاجها على لينكس: باك أب بيتكتب على الـ NAS، أو سكربت بيعالج ملفات على فولدر مشترك، أو بس تنقل ملفات من غير فلاشة. ومن الترمنال بالذات على سيرفر من غير واجهة.`,
+            how: R`SMB بروتوكول على بورت 445 TCP: العميل يتصل، ويتفاوض على النسخة (SMB 2 أو 3)، ويسجّل دخول بيوزر وباسورد (NTLM غالبًا)، ويفتح «share». و smbclient برنامج عادي بيعمل ده بنفسه (مكتبة Samba). أما [[mount -t cifs]] فالـ kernel نفسه هو اللي بيكلّم السيرفر، و [[mount.cifs]] بس بيجهّز الإعدادات ويدّيها للـ kernel.
+
+ولأن الملفات على ويندوز ملهاش UID و GID لينكس، الـ kernel بيعرضها كلها بصاحب واحد: اللي في [[uid=]] (من غيره root)، وصلاحيات واحدة ([[file_mode]] و [[dir_mode]]، والافتراضي 0755). عشان كده الصلاحيات الحقيقية بيحددها ويندوز، مش [[chmod]].`,
+            when: R`نقل ملفات بين ويندوز ولينكس على نفس الشبكة. باك أب من سيرفر البيت على NAS: mount ثابت في fstab وسكربت [[rsync]]. سكربت بياخد ملفات من فولدر مشترك في الشغل (بإذن). و smbclient لو محتاج ملف واحد ومش عايز تركّب حاجة.`,
+            mistakes: R`الباسورد في fstab نفسه أو في الـ history ([[password=]] في الأمر). ونسيان [[uid]] فتلاقي الملفات ملك root. ونسيان [[nofail]] و [[_netdev]] فالجهاز يعلّق في الـ boot لو الويندوز مقفول. وشبكة ويندوز Public فالفايروول قافل 445. و [[vers=1.0]] من شرح قديم.`
+          },
+          lines: [
+            R`سطّب أداة التصفح وأداة الـ mount.`,
+            R`اعرض الفولدرات المشتركة على الجهاز ده ([[-L]]) بيوزر ali.`,
+            R`ادخل فولدر Docs بـ prompt زي FTP: ls و get و put و exit.`,
+            R`اعمل فولدر تركّب عليه.`,
+            R`ركّب Docs هنا، والملفات تبان ملكك انت، بـ SMB 3.0.`,
+            R`اتأكد: النوع cifs والمساحة اللي على الجهاز التاني.`,
+            R`فك التركيب.`
+          ],
+          sol: R`ناتج حقيقي: Samba 4.19 على container أوبونتو 24.04 اسمه nas (بدل ويندوز)، والعميل container تاني. [[smbclient -L //nas.local -U ali]]:
+[[Sharename       Type      Comment]]
+[[print$          Disk      Printer Drivers]]
+[[Docs            Disk]]
+[[IPC$            IPC       IPC Service (nas server (Samba, Ubuntu))]]
+[[SMB1 disabled -- no workgroup available]]
+وجوه Docs: [[ls]] طبع [[readme.txt N 15]] و [[reports D 0]]، و [[get q3.csv]] طبع [[getting file \reports\q3.csv of size 11 as q3.csv (10.7 KiloBytes/sec)]]، و [[put upload.txt]] طبع [[putting file upload.txt as \reports\upload.txt]]. وباسورد غلط: [[session setup failed: NT_STATUS_LOGON_FAILURE]]، و share مش موجود: [[tree connect failed: NT_STATUS_BAD_NETWORK_NAME]].
+
+الـ mount (في container بـ [[--privileged]]): [[df -hT /mnt/docs]] طبع [[//nas.local/Docs cifs 1007G 66G 942G 7% /mnt/docs]]، و [[ls -l]] بيّن الملفات [[sara sara]] بسبب [[uid]] و [[gid]]، وسارة كتبت ملف جواه عادي. ومن غير uid الملفات بانت [[uid=0]]. و [[vers=1.0]]: [[mount error(22): Invalid argument]] و dmesg قال [[CIFS: VFS: vers=1.0 (cifs) mount not permitted when legacy dialects disabled]]. وسطر fstab اللي تحت اتجرّب بـ [[mount -a]] و [[findmnt]] بيّن [[vers=3.0]] و [[uid=1001]].`,
+          solCode: R`sudo tee /root/.smb-pc >/dev/null <<'EOF'
+username=ali
+password=PASSWORD_HERE
+EOF
+sudo chmod 600 /root/.smb-pc
+echo "//192.168.1.20/Docs /mnt/docs cifs credentials=/root/.smb-pc,uid=$(id -u),gid=$(id -g),vers=3.0,_netdev,nofail 0 0" | sudo tee -a /etc/fstab
+sudo mount -a
+findmnt /mnt/docs`
+        },
+        {
+          cmd: "wakeonlan و ethtool",
+          title: "شغّل جهاز مطفي من على الشبكة",
+          desc: R`Wake-on-LAN بيخليك تشغّل جهاز مطفي (أو نايم) بإنك تبعتله packet مخصوص اسمه magic packet من أي جهاز على نفس الشبكة. مفيد لسيرفر في البيت أو جهاز المكتب: تصحّيه وتدخله بـ ssh من غير ما تقوم تدوس الزرار.
+
+الـ magic packet: ٦ bytes [[FF]] وبعدهم الـ MAC بتاع الجهاز اللي عايز تصحّيه متكرر ١٦ مرة (102 byte)، وبيتبعت broadcast للشبكة كلها لأن الجهاز المطفي ملوش IP. وكارت الشبكة نفسه بيفضل صاحي على كهربا قليلة مستني الشكل ده.
+
+الإرسال (من أي جهاز صاحي):
+• [[wakeonlan AA:BB:CC:DD:EE:FF]] بيبعته UDP على بورت 9 للعنوان [[255.255.255.255]]، و [[-i 192.168.1.255]] على broadcast شبكتك بس (لو عندك أكتر من كارت أو الأول مش بيوصل).
+• [[sudo etherwake -i eth0 AA:BB:CC:DD:EE:FF]] بيبعته Ethernet خام من غير IP، ومحتاج sudo و [[-i]] الكارت.
+والـ MAC تجيبه من الجهاز نفسه وهو شغال ([[ip link]]) أو من [[arp-scan]] (درس «nmap -sn و arp-scan»).
+
+الجهاز اللي هيصحى (لينكس):
+1. الـ BIOS أو UEFI: اختيار بأسامي زي «Wake on LAN» أو «Power On By PCI-E» أو «Resume by LAN» لازم Enabled، وأحيانًا «ErP» لازم Disabled (لأنها بتقطع الكهربا عن الكارت وهو مطفي).
+2. الكارت: [[sudo ethtool eth0 | grep Wake-on]] بيطبع سطرين: [[Supports Wake-on: pumbg]] (اللي الكارت يقدر عليه) و [[Wake-on: d]] (المفعّل دلوقتي، و [[d]] يعني disabled). و [[sudo ethtool -s eth0 wol g]] يفعّل [[g]]. والحروف من الـ man page: [[p]] أي نشاط على السلك، و [[u]] unicast، و [[m]] multicast، و [[b]] broadcast، و [[a]] ARP، و [[g]] magic packet، و [[d]] مقفول.
+3. إعداد ethtool بيروح مع الريستارت، فثبّته: NetworkManager: [[nmcli con mod "Wired connection 1" 802-3-ethernet.wake-on-lan magic]]، أو netplan على السيرفر: [[wakeonlan: true]] تحت الكارت.
+4. الواي فاي غالبًا مبيدعمش ده، فخلي الجهاز على سلك.
+
+وبيشتغل جوه نفس الشبكة بس، لأن الراوتر مبيعدّيش broadcast من النت. من برّه البيت: ادخل الشبكة بـ VPN (زي WireGuard) وابعت من جهاز صاحي جوه، أو من تطبيق الراوتر لو بيدعمها.`,
+          example: R`sudo apt install wakeonlan etherwake ethtool
+# على الجهاز اللي هيصحى (وهو شغال):
+ip link show eth0
+sudo ethtool eth0 | grep Wake-on
+sudo ethtool -s eth0 wol g
+sudo nmcli con mod "Wired connection 1" 802-3-ethernet.wake-on-lan magic
+# من أي جهاز تاني على الشبكة، بعد ما تطفيه:
+wakeonlan AA:BB:CC:DD:EE:FF
+wakeonlan -i 192.168.1.255 AA:BB:CC:DD:EE:FF
+sudo etherwake -i eth0 AA:BB:CC:DD:EE:FF`,
+          try: R`لو عندك جهاز ديسكتوب على سلك: فعّل WoL في الـ BIOS وبـ ethtool، واكتب الـ MAC، واطفيه، وصحّيه من اللابتوب. ولو مفيش، شغّل [[sudo tcpdump -i any -n udp port 9 -X]] في ترمنال وابعت magic packet من ترمنال تاني وعِد الـ FF والـ MAC.`,
+          mac: ["diff", R`الإرسال: [[brew install wakeonlan]] ونفس الأمر. وعشان الماك نفسه يصحى: System Settings ← Energy (أو Battery ← Options) ← «Wake for network access»، أو [[sudo pmset -a womp 1]].`],
+          deep: {
+            why: R`سيرفر في البيت (NAS، جهاز ألعاب بتعمله stream، جهاز builds) مش لازم يفضل شغال ٢٤ ساعة ياكل كهربا. WoL بيخليه يطفي ويصحى لما تحتاجه، حتى من الموبايل جوه البيت أو من بره بـ VPN.`,
+            how: R`لما الجهاز يطفي وفيه WoL مفعّل، الماذربورد بتسيب كهربا قليلة للكارت، والكارت بيبص على كل packet داخلة من غير ما يحتاج نظام تشغيل. أول ما يلاقي الشكل (FF ستة مرات وبعده الـ MAC بتاعه ١٦ مرة) في أي مكان في الـ packet، يبعت إشارة للماذربورد تشغّل الجهاز.
+
+عشان كده بورت 9 أو أي بورت مش فارق، ومش لازم IP صح: المهم الـ packet توصل لسلك الكارت ده، و broadcast بيضمن ده جوه الشبكة. و [[ethtool -s wol g]] بيقول للـ driver يسيب الكارت في الوضع ده وهو بيطفي.`,
+            when: R`جهاز في البيت بتدخله بـ ssh أو Remote Desktop أحيانًا. NAS بيصحى قبل الباك أب بسكربت cron على جهاز تاني صاحي (Raspberry Pi مثلًا). ومعمل فيه أجهزة كتير بتصحّيهم كلهم بـ [[wakeonlan -f macs.txt]].`,
+            mistakes: R`تفعّله بـ ethtool وتنسى تثبّته، فيشتغل مرة ويقف بعد الريستارت. ونسيان إعداد الـ BIOS أو ErP. ومحاولة WoL على الواي فاي. وتبعته من شبكة تانية أو من النت مباشرة. وتكتب MAC كارت تاني (الواي فاي بدل السلك).`
+          },
+          lines: [
+            R`سطّب أدوات الإرسال وأداة إعداد الكارت.`,
+            R`اكتب الـ MAC بتاع الكارت (بعد [[link/ether]]).`,
+            R`الكارت بيدعم إيه ([[Supports Wake-on]]) والمفعّل دلوقتي ([[Wake-on]]).`,
+            R`فعّل الصحيان بالـ magic packet ([[g]]) لحد الريستارت.`,
+            R`ثبّته في NetworkManager عشان يفضل بعد الريستارت.`,
+            R`ابعت magic packet لكل الشبكة (255.255.255.255:9).`,
+            R`نفس الكلام على broadcast شبكتك بس.`,
+            R`ابعته Ethernet خام من كارت eth0 (محتاج sudo).`
+          ],
+          sol: R`ناتج حقيقي من containers على شبكة Docker. [[wakeonlan 6e:db:2b:c1:d3:88]] طبع [[Sending magic packet to 255.255.255.255:9 with 6e:db:2b:c1:d3:88]]، و [[-i 172.30.0.255]] طبع [[Sending magic packet to 172.30.0.255:9 with ...]]، و tcpdump مسكه: [[IP 172.30.0.5.33534 > 255.255.255.255.9: UDP, length 102]] وفي البايتات [[ffff ffff ffff]] وبعدها [[6edb 2bc1 d388]] متكررة.
+
+أما ethtool فكارت الـ container (veth، مش كارت حقيقي): [[ethtool eth0]] طبع [[Speed: 10000Mb/s]] و [[Link detected: yes]] ومفيش سطور Wake-on، و [[ethtool -s eth0 wol g]] رد [[netlink error: Operation not supported]]. على كارت حقيقي هتلاقي [[Supports Wake-on: pumbg]] و [[Wake-on: d]]، وبعد [[wol g]] يبقى [[Wake-on: g]] (الحروف من [[man ethtool]]). و [[nmcli -g 802-3-ethernet.wake-on-lan con show "Wired connection 1"]] كان [[default]] وبعد الأمر بقى [[magic]]، ودي اتكتبت في ملف netplan بتاع الـ connection.`
         }
       ]
     },
