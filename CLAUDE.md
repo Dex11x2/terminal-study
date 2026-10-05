@@ -12,7 +12,7 @@ Read `PLAN.md` first: current state, ordered remaining work, agreed rules. Updat
 
 ## Lesson format (details: README.md «شكل الدرس» and «قواعد كتابة الدروس»)
 
-`cmd` (never rename: progress key), `title`, `desc` (first paragraph = summary), `example`, `try`, `deep{why,how,when,mistakes}`, `lines` (one per non-empty non-comment example line), `sol`/`solCode`, `flag`, bash-only `mac`. Inside R`...`: `${` → `$__{`, backtick → `$__bt`. `[[code]]` single-line, balanced. Egyptian dialect, terms in English.
+`cmd` (never rename: progress key), `title`, `desc` (first paragraph = summary), `teach` (the full step-by-step explanation: mini-markdown with `~~~lang` fences; style rules in README «الشرح خطوة بخطوة», reference lesson start «CPU و RAM والديسك»), `example`, `try`, `deep{why,how,when,mistakes}`, `lines` (one per non-empty non-comment example line), `sol`/`solCode`, `flag`, bash-only `mac`. Inside R`...`: `${` → `$__{`, backtick → `$__bt`. `[[code]]` single-line, balanced. Egyptian dialect, terms in English.
 
 ## Rules
 

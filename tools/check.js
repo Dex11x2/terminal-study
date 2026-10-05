@@ -13,7 +13,7 @@ for (const f of files) {
   try { vm.runInContext(code, ctx, { filename: f }); }
   catch (e) { console.error('✗ ' + f + ': الملف فيه غلطة JavaScript ومش هيتقري:\n  ' + e.message); process.exit(1); }
 }
-const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK})', ctx);
+const { DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH } = vm.runInContext('({DATA, DEEP, BREAK, SOL, CMP, MISSIONS, CHECK, TEACH})', ctx);
 
 const errors = [], warnings = [];
 const err = (where, msg) => errors.push(where + ': ' + msg);
@@ -61,6 +61,9 @@ for (const tab in DATA) {
       const d = DEEP[tab + '|' + cmd];
       if (d) ['why', 'how', 'when', 'mistakes'].forEach(k => { if (!d[k]) warn(w, `deep ناقصه ${k}`); brackets(w + ' (deep)', d[k]); });
       const sol = SOL[tab + '|' + cmd];
+      const te = TEACH[tab + '|' + cmd];
+      // code inside ~~~ fences is shown as is, so only the prose around it is checked for [[ ]]
+      if (te !== undefined) { if (typeof te !== 'string' || !te.trim()) err(w, 'teach لازم يبقى نص'); else { brackets(w + ' (teach)', te.replace(/^~~~[^\n]*\n[\s\S]*?^~~~\s*$/gm, '')); if ((te.match(/^~~~/gm) || []).length % 2) err(w, 'teach: ~~~ مش مقفول'); } }
       if (sol) { if (typeof sol.text !== 'string' || !sol.text.trim()) err(w, 'sol لازم يبقى نص'); brackets(w + ' (sol)', sol.text); if (sol.code !== undefined && typeof sol.code !== 'string') err(w, 'solCode لازم يبقى نص'); }
       const b = BREAK[tab + '|' + cmd];
       if (b) {

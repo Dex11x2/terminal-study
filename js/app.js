@@ -72,6 +72,49 @@ function countLabel(n){
 function descHTML(d){
   return d.split(/\n\s*\n/).map((p, i) => '<p class="desc'+(i?' more':'')+'">'+fmt(p.trim())+'</p>').join('');
 }
+/* the long step-by-step explanation (lesson field teach), written in a small markdown:
+   ## and ### headings, ~~~lang label fences (~~~ because lesson text can't hold backticks), - and 1. lists, | tables |, > notes, --- separators, **bold**, [[code]] */
+const FENCE = {powershell:['ps','PowerShell'], ps:['ps','PowerShell'], bash:['bash','bash'], sh:['bash','bash'], cmd:['cmd','CMD'], zsh:['zsh','zsh']};
+function teachHTML(c){
+  const t = TEACH[shell+'|'+c];
+  if (!t) return '';
+  const inl = s => fmt(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  const src = t.split('\n'), out = [];
+  for (let i = 0; i < src.length; i++){
+    const l = src[i];
+    if (!l.trim()) continue;
+    let m;
+    if ((m = l.match(/^~~~(\w*)\s*(.*)$/))){
+      const code = [];
+      for (i++; i < src.length && !/^~~~\s*$/.test(src[i]); i++) code.push(src[i]);
+      const [k, name] = FENCE[m[1]] || [shell, m[1] === 'text' || !m[1] ? '' : m[1]];
+      let box = termHTML(code.join('\n'), k, true, m[2] || name || 'الناتج').replace('class="term"', 'class="term os tcode"');
+      // diagrams and outputs: every piece between 2+ spaces keeps its column (an Arabic run would otherwise flip the order of the pieces),
+      // and Arabic gets the page font, since the code font has no Arabic letters
+      if (!FENCE[m[1]]) box = box.replace(/<pre>[\s\S]*<\/pre>/, () => '<pre>'+code.map(l => l.split(/(\s{2,})/).map((s, j) => j % 2 || !s ? s : '<bdi'+(/[؀-ۿ]/.test(s) ? ' class="ar"' : '')+'>'+esc(s)+'</bdi>').join('')).join('\n')+'</pre>');
+      out.push(box);
+    } else if ((m = l.match(/^(#{2,3}) (.+)/))) out.push(m[1].length === 2 ? '<h4>'+inl(m[2])+'</h4>' : '<h5>'+inl(m[2])+'</h5>');
+    else if (/^---+\s*$/.test(l)) out.push('<hr>');
+    else if (l.startsWith('> ')){
+      const q = [];
+      for (; i < src.length && src[i].startsWith('> '); i++) q.push(inl(src[i].slice(2)));
+      i--; out.push('<blockquote>'+q.join('<br>')+'</blockquote>');
+    } else if (/^(- |\d+\. )/.test(l)){
+      const ol = /^\d/.test(l), items = [];
+      for (; i < src.length && (ol ? /^\d+\. /.test(src[i]) : src[i].startsWith('- ')); i++) items.push('<li>'+inl(src[i].replace(/^(- |\d+\. )/, ''))+'</li>');
+      i--; out.push((ol?'<ol>':'<ul>')+items.join('')+(ol?'</ol>':'</ul>'));
+    } else if (l.startsWith('|')){
+      const rows = [];
+      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split('|').map(x => inl(x.trim())));
+      i--; out.push('<div class="tbl"><table>'+rows.map((r, j) => '<tr>'+r.map(x => j ? '<td>'+x+'</td>' : '<th>'+x+'</th>').join('')+'</tr>').join('')+'</table></div>');
+    } else {
+      const p = [];
+      for (; i < src.length && src[i].trim() && !/^(~~~|#{2,3} |---+\s*$|> |- |\d+\. |\|)/.test(src[i]); i++) p.push(inl(src[i]));
+      i--; out.push('<p>'+p.join('<br>')+'</p>');
+    }
+  }
+  return '<details class="teach" open><summary>الشرح خطوة بخطوة</summary>'+out.join('')+'</details>';
+}
 function deepHTML(c){
   const d = DEEP[shell+'|'+c];
   if (!d) return '';
@@ -154,7 +197,7 @@ function render(){
       const done = store.get(key)==='1';
       html += '<article class="cmd'+(done?' is-done':'')+'">'+
         '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
-        (d?descHTML(d):'')+deepHTML(c)+osNote(c)+
+        (d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+osNote(c)+
         (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
         '<button type="button" class="reveal">اكشف الإجابة</button>'+
         '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+

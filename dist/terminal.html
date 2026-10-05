@@ -193,7 +193,23 @@ article.cmd{border-inline-start:3px solid var(--accent);background:var(--surface
 .quiz-btn{all:unset;cursor:pointer;font-size:14px;padding:5px 12px;border-radius:6px;border:1px dashed var(--accent);color:var(--accent);background:var(--surface)}
 #fcBtn{margin-inline-start:auto}
 .quiz-btn[aria-pressed="true"]{background:var(--accent);color:#fff;border-style:solid}
-body.brief .deep,body.brief .cmd .desc.more{display:none}
+body.brief .deep,body.brief .cmd .desc.more,body.brief .teach{display:none}
+/* the step-by-step explanation (lesson field teach) */
+.teach{margin:6px 0 16px;padding:4px 16px 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.teach>summary{font-size:16px}
+.teach h4{margin:18px 0 6px;font-size:18px;color:var(--accent)}
+.teach h5{margin:14px 0 4px;font-size:16px}
+.teach p{margin:6px 0}
+.teach hr{border:0;border-top:1px dashed var(--line);margin:16px 0}
+.teach blockquote{margin:8px 0;padding:6px 14px;border-inline-start:3.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent);border-radius:0 6px 6px 0}
+.teach ul,.teach ol{margin:6px 0;padding-inline-start:24px}
+.teach .tcode{margin:8px 0}
+.teach .tcode bdi.ar,.teach .tcode .term-bar span{font-family:var(--sans);font-size:.95em}
+.teach .tbl{overflow-x:auto;margin:8px 0}
+.teach table{border-collapse:collapse;width:100%}
+.teach td code{white-space:normal;overflow-wrap:anywhere}
+.teach th,.teach td{border:1px solid var(--line);padding:6px 10px;text-align:start;vertical-align:top}
+.teach th{background:color-mix(in srgb,var(--accent) 9%,transparent)}
 .quiz-btn[aria-pressed="true"]{background:var(--accent);color:var(--surface);border-style:solid;font-weight:600}
 .quiz-btn:focus-visible,.reveal:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .reveal{all:unset;display:none;cursor:pointer;margin-top:10px;font-size:14.5px;font-weight:600;color:var(--accent);padding:6px 14px;border:1px solid var(--accent);border-radius:6px}
@@ -809,7 +825,7 @@ body[data-shell="files"]{--accent:var(--a-files);--t-bg:#042f2e;--t-fg:#f0fdfa;-
 /* ===== js/core.js ===== */
 // الأساس المشترك: كل ملف في tabs/ بينادي TAB() فيتسجّل في الأماكن اللي الصفحة بتقرا منها
 const R = String.raw;
-const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, SOL = {}, BASH_OS = {}, CHECK = {};
+const SHELLS = {}, LAB = {}, LABTXT = {}, LEVEL_TAB = {}, DATA = {}, DEEP = {}, BREAK = {}, SOL = {}, BASH_OS = {}, CHECK = {}, TEACH = {};
 const LEVEL_INFO = {
   "1": ["البداية", "تتحرك بين الفولدرات وتتعامل مع الملفات وتقراها بثقة"],
   "2": ["المتوسط", "توصّل الأوامر ببعض، وتدير الصلاحيات والعمليات والشبكة"],
@@ -843,6 +859,7 @@ function cats(key, list){
     cat.items = c.items.map(it => {
       const id = key+'|'+it.cmd;
       if (it.deep) DEEP[id] = it.deep;
+      if (it.teach) TEACH[id] = it.teach;
       if (it.lines) BREAK[id] = it.lines;
       if (it.sol) SOL[id] = {text: it.sol, code: it.solCode};
       if (it.mac) BASH_OS[it.cmd] = it.mac;
@@ -929,6 +946,7 @@ function sqlDiff(got, exp, ordered){
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -1015,6 +1033,221 @@ Weekly   download a copy of your progress (bottom of the page)`,
             when: R`قبل ما تشتري جهاز للبرمجة (8GB RAM أقل حاجة مريحة، و 16GB أحسن لو هتشغّل Docker أو محاكي Android، و SSD مش HDD). ولما الجهاز يقيل: افتح مدير المهام وشوف مين واكل الـ RAM أو الـ CPU. ولما تختار VPS: الخطط بتتباع بالـ CPU والـ RAM والديسك بالأسامي دي بالظبط.`,
             mistakes: R`إنك تخلط بين «الذاكرة» و «المساحة»: لما حد يقولك «موبايلي ذاكرته 128 جيجا» يقصد التخزين (الديسك) مش الـ RAM. وإنك تفتكر إن مسح ملفات هيسرّع جهاز بطيء والسبب الحقيقي ٤٠ تاب مفتوحين في المتصفح واكلين الـ RAM. وإنك تقلق لما تلاقي الـ RAM «مستخدمة» كتير: الأنظمة الحديثة بتستخدم الـ RAM الفاضية كـ cache عشان تسرّع، وده طبيعي. في لينكس بص على [[available]] مش [[free]].`
           },
+          teach: R`## الأول: إحنا بنسأل الجهاز ٣ أسئلة
+
+الأوامر في المثال مش حاجة تتحفظ. كل أمر منهم سؤال بتسأله للجهاز:
+
+~~~text الفكرة
+                 الجهاز
+                    │
+       ┌────────────┼────────────┐
+       ▼            ▼            ▼
+      CPU          RAM          Disk
+       │            │            │
+       ▼            ▼            ▼
+  كام معالج؟    كام جيجا؟    فاضي قد إيه؟
+~~~
+
+وكل نظام بيسأل بطريقته. هنبدأ بويندوز (PowerShell)، لأنه الأصعب في الشكل، وبعده لينكس والماك.
+
+---
+
+## ١. عدد المعالجات: [[$env:NUMBER_OF_PROCESSORS]]
+
+### أولًا: يعني إيه [[$env:]]؟
+
+[[env]] اختصار Environment Variables، يعني **متغيرات البيئة**. ويندوز شايل معلومات كتير جاهزة في متغيرات ليها أسامي، زي:
+
+~~~text أمثلة على متغيرات البيئة
+USERNAME              اسم اليوزر
+COMPUTERNAME          اسم الجهاز
+TEMP                  فولدر الملفات المؤقتة
+PATH                  الأماكن اللي الأوامر بتتدوّر فيها
+NUMBER_OF_PROCESSORS  عدد المعالجات
+~~~
+
+ولما تكتب في PowerShell [[$env:]] وبعدها اسم متغير، انت بتقوله:
+
+> «هاتلي قيمة متغير البيئة اللي اسمه كذا.»
+
+جرّب:
+
+~~~powershell
+$env:NUMBER_OF_PROCESSORS
+~~~
+
+على جهاز معالجه AMD Ryzen 9 5900HX طلع:
+
+~~~text الناتج
+16
+~~~
+
+### ثانيًا: ١٦ دول إيه بالظبط؟
+
+الرقم ده عدد الـ **logical processors**، ودول **مش** بالضرورة عدد الـ cores الحقيقية. معالجات كتير فيها تقنية اسمها Hyper-Threading (في Intel) أو SMT (في AMD)، وبيها الـ core الواحد بيشتغل كأنه اتنين:
+
+~~~text core واحد بيبان كأنه اتنين
+CPU
+├── Core 1 ──┬── Thread 1
+│            └── Thread 2
+├── Core 2 ──┬── Thread 1
+│            └── Thread 2
+│   ...
+└── Core 8 ──┬── Thread 1
+             └── Thread 2
+
+8 cores × 2 = 16 logical processors
+~~~
+
+ولو عايز تشوف الرقمين جنب بعض:
+
+~~~powershell
+Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors
+~~~
+
+~~~text الناتج على نفس الجهاز
+Name                      : AMD Ryzen 9 5900HX with Radeon Graphics
+NumberOfCores             : 8
+NumberOfLogicalProcessors : 16
+~~~
+
+يعني ٨ cores حقيقية، وويندوز شايفهم ١٦.
+
+---
+
+## ٢. الـ RAM: الأمر الطويل
+
+~~~powershell
+[math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 1)
+~~~
+
+شكله مخيف، بس هو ٤ خطوات صغيرة جوه بعض. هنفكّه **من جوه لبرة**، زي ما PowerShell بينفّذه.
+
+### الخطوة ١: [[Get-CimInstance Win32_ComputerSystem]]
+
+[[Get-CimInstance]] أمر بيسأل ويندوز عن معلومات النظام. و [[Win32_ComputerSystem]] اسم «الكتالوج» اللي فيه معلومات الجهاز نفسه: اسمه، والشركة المصنّعة، والـ RAM، وحاجات تانية. جرّبه لوحده وهتشوف قايمة طويلة.
+
+### الخطوة ٢: [[.TotalPhysicalMemory]]
+
+احنا مش عايزين القايمة كلها، عايزين خانة واحدة منها. الأقواس حوالين الأمر معناها «نفّذ ده الأول»، والنقطة بعدها معناها «هات منه الخانة اللي اسمها كذا»:
+
+~~~powershell
+(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory
+~~~
+
+~~~text الناتج
+33737830400
+~~~
+
+رقم ضخم كده ليه؟ لأنه بالـ **byte**، وهي أصغر وحدة تقريبًا.
+
+### الخطوة ٣: [[/ 1GB]]
+
+الوحدات بتكبر كده، وكل واحدة ١٠٢٤ من اللي قبلها:
+
+~~~text الوحدات
+1 KB = 1024 byte
+1 MB = 1024 KB
+1 GB = 1024 MB = 1,073,741,824 byte
+~~~
+
+و PowerShell فاهم [[1KB]] و [[1MB]] و [[1GB]] و [[1TB]] كأرقام جاهزة، فلو قسمت على [[1GB]] الرقم بيتحوّل جيجا:
+
+~~~text الناتج
+33737830400 / 1GB  =  31.4208030700684
+~~~
+
+### الخطوة ٤: [[[math]::Round(..., 1)]]
+
+الرقم فيه كسور كتير ملهاش لازمة. [[[math]::Round]] بيقرّب، والرقم [[1]] في الآخر معناه «سيب رقم واحد بعد العلامة العشرية»:
+
+~~~powershell
+[math]::Round(15.67891, 1)
+~~~
+
+~~~text الناتج
+15.7
+~~~
+
+### الأمر كله مرة واحدة
+
+| الخطوة | الجزء | بيعمل إيه |
+|---|---|---|
+| ١ | [[Get-CimInstance Win32_ComputerSystem]] | هات معلومات الجهاز |
+| ٢ | [[.TotalPhysicalMemory]] | خد منها الـ RAM بالـ byte |
+| ٣ | [[/ 1GB]] | حوّلها جيجا |
+| ٤ | [[[math]::Round(..., 1)]] | قرّبها لرقم عشري واحد |
+
+والنتيجة على الجهاز ده [[31.4]]. ليه مش ٣٢؟ لأن جزء صغير من الـ RAM بيتحجز لكارت الشاشة اللي جوه المعالج، فويندوز بيعدّ اللي فاضل له بس.
+
+---
+
+## ٣. الديسك: [[Get-PSDrive C]]
+
+### يعني إيه PSDrive؟
+
+PowerShell بيتعامل مع حاجات كتير كأنها «درايف» تقدر تدخلها وتلف فيها، مش الديسكات بس. [[Get-PSDrive]] من غير حاجة بيعرضهم كلهم، ومنهم [[Env:]] (متغيرات البيئة اللي شفناها فوق) و [[HKCU:]] (الـ registry). لكن لما تكتب [[C]] انت بتطلب درايف C بس، اللي عليه ويندوز:
+
+~~~powershell
+Get-PSDrive C
+~~~
+
+~~~text الناتج
+Name Used (GB) Free (GB) Provider   Root
+---- --------- --------- --------   ----
+C       255.53     45.78 FileSystem C:\
+~~~
+
+### نقرا الأعمدة
+
+| العمود | معناه |
+|---|---|
+| [[Name]] | اسم الدرايف |
+| [[Used (GB)]] | المستخدم بالجيجا |
+| [[Free (GB)]] | **الفاضي**، وده الرقم اللي يهمك |
+| [[Provider]] | نوعه. [[FileSystem]] يعني ملفات وفولدرات عادية |
+| [[Root]] | أوله فين: [[C:\]] |
+
+> لو [[Free]] قرّب يخلص (أقل من ١٠٪ تقريبًا)، ويندوز والبرامج بيبطّأوا، وتحديثات ويندوز ممكن تفشل.
+
+---
+
+## ٤. نفس الأسئلة على لينكس والماك
+
+على لينكس كل سؤال ليه أمر قصير:
+
+| السؤال | لينكس | الماك |
+|---|---|---|
+| كام معالج؟ | [[nproc]] | [[sysctl -n hw.ncpu]] |
+| كام RAM؟ | [[free -h]] | [[sysctl -n hw.memsize]] (بالـ byte) |
+| الديسك فاضي قد إيه؟ | [[df -h /]] | [[df -h /]] |
+
+و [[-h]] في [[free]] و [[df]] معناها human: اكتب الأرقام بالجيجا والميجا بدل الـ byte، يعني نفس الشغلانة اللي [[/ 1GB]] كانت بتعملها في ويندوز. ده ناتج [[free -h]] على أوبونتو 24.04 (شغال جوه Docker، فشايف الـ RAM اللي مدياها الماكينة الافتراضية بس):
+
+~~~bash
+free -h
+~~~
+
+~~~text الناتج
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       804Mi        13Gi        15Mi       1.1Gi        14Gi
+Swap:          4.0Gi          0B       4.0Gi
+~~~
+
+بص على [[total]] (الإجمالي) و [[available]] (المتاح فعلًا لبرنامج جديد)، مش [[free]]. لينكس بيستخدم الـ RAM الفاضية كـ cache يسرّع بيه، وبيرجّعها أول ما برنامج يحتاجها.
+
+وأوامر الماك مكتوبة من دليل Apple (مفيش ماك هنا نجرّب عليه).
+
+---
+
+## الخلاصة: ٤ حاجات متتلخبطش بينهم
+
+~~~text
+CPU       المعالج: عدد الـ cores والـ logical processors
+RAM       الذاكرة اللي البرامج شغالة فيها دلوقتي، وبتتمسح لما الجهاز يقفل
+Storage   الهارد أو الـ SSD: الملفات المحفوظة
+C:        جزء (partition) من الـ Storage ويندوز شايفه درايف
+~~~`,
           example: R`# Linux (and WSL):
 nproc
 free -h
@@ -8801,6 +9034,7 @@ XML: كل حاجة نصوص ([[port]] = [['3000']])، والـ tags محتاجة
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -10608,6 +10842,7 @@ KeyRepeat هو السرعة (رقم أصغر = أسرع)، و InitialKeyRepeat �
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -12456,6 +12691,7 @@ Disable (Workspace) بيتحفظ لكل مشروع، فمشروع Python ميش�
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -20235,6 +20471,7 @@ migrate: ## طبّق الـ migrations بالترتيب
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -26275,6 +26512,7 @@ if (Get-Command code -ErrorAction SilentlyContinue) { code . }`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -30114,6 +30352,7 @@ exit code بتاع PowerShell: [[exit 2]] في الـ ps1 بيرجع 2 لـ [[%e
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -32587,6 +32826,7 @@ launchctl bootout gui/$(id -u)/com.me.tidy`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -35132,6 +35372,7 @@ crontab -e`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -36792,6 +37033,7 @@ GIT_EDITOR=true git rebase --continue`
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -37814,6 +38056,7 @@ Rich Results Test: لو فيه structured data (JSON-LD)، بيتحقق إنه �
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -39581,6 +39824,7 @@ updates:
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -42918,6 +43162,7 @@ docker compose up -d`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -45453,6 +45698,7 @@ networks:
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -50134,6 +50380,7 @@ Python: [[[('.py', 3), ('.md', 2), ('.png', 2), ('.jpg', 1)] ]]: الـ [[lower(
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -50932,6 +51179,7 @@ jobs:
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -53961,6 +54209,7 @@ curl -sS "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/deleteWebhook?drop_pen
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -56216,6 +56465,7 @@ upload: [[temporary-public-storage]] بيرفع التقرير لرابط مؤق
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -57709,6 +57959,7 @@ pgcli بيقبل نفس أوامر الـ backslash زي [[\dt]] و [[\d users]]
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -59022,6 +59273,7 @@ docker exec mongo2 mongosh myapp -u admin -p secret2 --authenticationDatabase ad
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -60232,6 +60484,7 @@ wc -l /tmp/diag.txt && head -40 /tmp/diag.txt`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -61780,6 +62033,7 @@ tmate: step [[mxschmitt/action-tmate]] بتوقف الـ run وتطبع أمر s
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -62344,6 +62598,7 @@ Optimize-VHD -Path "$env:LOCALAPPDATA\Packages\CanonicalGroupLimited.Ubuntu24.04
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -63840,6 +64095,7 @@ admin.example.com {
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -64290,6 +64546,7 @@ ssh-keygen -R 203.0.113.10`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -68734,6 +68991,7 @@ ssh deploy@203.0.113.10`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -76710,6 +76968,7 @@ console.log("S");
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -80193,6 +80452,7 @@ const c = {} as Cfg;`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -84570,6 +84830,7 @@ el.style.transform = "translateX(10px)";`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -90199,6 +90460,7 @@ function ProfileFixed({ userId }: { userId?: string }) {
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -94587,6 +94849,7 @@ npx next experimental-analyze`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -99179,6 +99442,7 @@ process.on("SIGTERM", async () => {
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -105072,6 +105336,7 @@ ORDER BY created_at DESC LIMIT 20;`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -110770,6 +111035,7 @@ async def c():
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -115455,6 +115721,7 @@ JIT: بيفرق في الحسابات التقيلة، ونادرًا في مو�
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -120558,6 +120825,7 @@ class AddButton extends StatelessWidget {
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -122960,6 +123228,7 @@ for (const model of ["claude-haiku-4-5", "claude-sonnet-5-5", "claude-opus-5-5"]
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -128439,6 +128708,7 @@ if (!r.ok) throw new AppError(502, "GATEWAY_DOWN", "بوابة الدفع مش �
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -131039,6 +131309,7 @@ Email: "Thank you for your time today. If possible, I'd appreciate any feedback 
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -140410,6 +140681,7 @@ console.log(main(["Coin Change", "ok"], "2026-09-30")); // Coin Change -> next r
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -143164,6 +143436,7 @@ Requirements: Node 22 (see .nvmrc)، و Docker.
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -146460,6 +146733,7 @@ server.bindAsync("127.0.0.1:50051", grpc.ServerCredentials.createInsecure(), () 
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -150580,6 +150854,7 @@ for i in 1 2 3 4; do curl -s -c jar -b jar localhost:8088/me; done`
 //   try      التجربة اللي تعملها بإيدك
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -156747,6 +157022,7 @@ for i in $(seq 31); do curl -s -o /dev/null -w "%{http_code} " -b cookies.txt -X
 //   try      التجربة اللي تعملها بإيدك
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -158342,6 +158618,7 @@ Weekly check (Sunday, 5 min): slept well? worked late more than twice? still cur
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -161720,6 +161997,7 @@ retro:
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -164817,6 +165095,7 @@ Safety:  AI feedback on pronunciation and technical facts can be wrong. Double-c
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -168491,6 +168770,7 @@ Console.WriteLine($"{a == b} {ReferenceEquals(a, b)} {ReferenceEquals(a, c)}");`
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -171832,6 +172112,7 @@ cart = inject(Cart);`,
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -175978,6 +176259,7 @@ open-in-view (OSIV): Spring Boot افتراضيًا بيفتح session من أو
 //   flag     اختياري: "danger" أو "script" (من غير prompt) أو "keys" أو "term" أو "console"
 //   mac      اختياري (bash بس): ["both"|"diff"|"linux", ملاحظة الماك]
 //   deep     اختياري: why / how / when / mistakes
+//   teach    اختياري: «الشرح خطوة بخطوة»: markdown صغير (## و ### و ~~~lang عنوان ... ~~~ و جداول | و - و 1. و > و ---). القواعد في README
 //   lines    اختياري: شرح لكل سطر في المثال بالترتيب، من غير السطور الفاضية والتعليقات
 //   sol      اختياري: حل التجربة والناتج المتوقع (بيظهر مقفول تحت «جرّب»)
 //   solCode  اختياري: كود الحل، بيتعرض كـ مثال تحت الـ sol
@@ -203240,6 +203522,49 @@ function countLabel(n){
 function descHTML(d){
   return d.split(/\n\s*\n/).map((p, i) => '<p class="desc'+(i?' more':'')+'">'+fmt(p.trim())+'</p>').join('');
 }
+/* the long step-by-step explanation (lesson field teach), written in a small markdown:
+   ## and ### headings, ~~~lang label fences (~~~ because lesson text can't hold backticks), - and 1. lists, | tables |, > notes, --- separators, **bold**, [[code]] */
+const FENCE = {powershell:['ps','PowerShell'], ps:['ps','PowerShell'], bash:['bash','bash'], sh:['bash','bash'], cmd:['cmd','CMD'], zsh:['zsh','zsh']};
+function teachHTML(c){
+  const t = TEACH[shell+'|'+c];
+  if (!t) return '';
+  const inl = s => fmt(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  const src = t.split('\n'), out = [];
+  for (let i = 0; i < src.length; i++){
+    const l = src[i];
+    if (!l.trim()) continue;
+    let m;
+    if ((m = l.match(/^~~~(\w*)\s*(.*)$/))){
+      const code = [];
+      for (i++; i < src.length && !/^~~~\s*$/.test(src[i]); i++) code.push(src[i]);
+      const [k, name] = FENCE[m[1]] || [shell, m[1] === 'text' || !m[1] ? '' : m[1]];
+      let box = termHTML(code.join('\n'), k, true, m[2] || name || 'الناتج').replace('class="term"', 'class="term os tcode"');
+      // diagrams and outputs: every piece between 2+ spaces keeps its column (an Arabic run would otherwise flip the order of the pieces),
+      // and Arabic gets the page font, since the code font has no Arabic letters
+      if (!FENCE[m[1]]) box = box.replace(/<pre>[\s\S]*<\/pre>/, () => '<pre>'+code.map(l => l.split(/(\s{2,})/).map((s, j) => j % 2 || !s ? s : '<bdi'+(/[؀-ۿ]/.test(s) ? ' class="ar"' : '')+'>'+esc(s)+'</bdi>').join('')).join('\n')+'</pre>');
+      out.push(box);
+    } else if ((m = l.match(/^(#{2,3}) (.+)/))) out.push(m[1].length === 2 ? '<h4>'+inl(m[2])+'</h4>' : '<h5>'+inl(m[2])+'</h5>');
+    else if (/^---+\s*$/.test(l)) out.push('<hr>');
+    else if (l.startsWith('> ')){
+      const q = [];
+      for (; i < src.length && src[i].startsWith('> '); i++) q.push(inl(src[i].slice(2)));
+      i--; out.push('<blockquote>'+q.join('<br>')+'</blockquote>');
+    } else if (/^(- |\d+\. )/.test(l)){
+      const ol = /^\d/.test(l), items = [];
+      for (; i < src.length && (ol ? /^\d+\. /.test(src[i]) : src[i].startsWith('- ')); i++) items.push('<li>'+inl(src[i].replace(/^(- |\d+\. )/, ''))+'</li>');
+      i--; out.push((ol?'<ol>':'<ul>')+items.join('')+(ol?'</ol>':'</ul>'));
+    } else if (l.startsWith('|')){
+      const rows = [];
+      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split('|').map(x => inl(x.trim())));
+      i--; out.push('<div class="tbl"><table>'+rows.map((r, j) => '<tr>'+r.map(x => j ? '<td>'+x+'</td>' : '<th>'+x+'</th>').join('')+'</tr>').join('')+'</table></div>');
+    } else {
+      const p = [];
+      for (; i < src.length && src[i].trim() && !/^(~~~|#{2,3} |---+\s*$|> |- |\d+\. |\|)/.test(src[i]); i++) p.push(inl(src[i]));
+      i--; out.push('<p>'+p.join('<br>')+'</p>');
+    }
+  }
+  return '<details class="teach" open><summary>الشرح خطوة بخطوة</summary>'+out.join('')+'</details>';
+}
 function deepHTML(c){
   const d = DEEP[shell+'|'+c];
   if (!d) return '';
@@ -203322,7 +203647,7 @@ function render(){
       const done = store.get(key)==='1';
       html += '<article class="cmd'+(done?' is-done':'')+'">'+
         '<div class="cmd-h"><span class="name">'+esc(c)+'</span>'+(t?'<span class="title">'+esc(t)+'</span>':'')+(/\bdanger\b/.test(flag||'')?'<span class="tag-danger">خطر: اقرا الشرح قبل ما تنفّذ</span>':'')+osBadge(c)+'</div>'+
-        (d?descHTML(d):'')+deepHTML(c)+osNote(c)+
+        (d?descHTML(d):'')+teachHTML(c)+deepHTML(c)+osNote(c)+
         (ex ? termBlock(ex, c, flag) : '')+breakHTML(c, ex)+
         '<button type="button" class="reveal">اكشف الإجابة</button>'+
         '<div class="try"><span class="lbl">'+(shell==='glossary'?'الشرح الكامل في':'جرّب')+'</span><p>'+fmt(tr)+'</p><label class="done"><input type="checkbox" data-k="'+esc(key)+'"'+(done?' checked':'')+'> جربتها</label></div>'+

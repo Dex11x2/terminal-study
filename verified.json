@@ -2025,9 +2025,9 @@
   "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
  },
  "start|CPU و RAM والديسك": {
-  "hash": "0cc7f51c17f6",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "d5bb290ec3fc",
+  "date": "2026-10-05",
+  "on": "pwsh-7.6 (windows 11), ubuntu-24.04, docs: macOS"
  },
  "start|Git ببساطة": {
   "hash": "b6673417118b",
