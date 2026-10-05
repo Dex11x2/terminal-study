@@ -1,0 +1,2512 @@
+{
+ "bash|$( )": {
+  "hash": "865d23209739",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|$(( ))": {
+  "hash": "ec2135f5bda4",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|$1 و $# و $@": {
+  "hash": "747a1aaf73d9",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|$?": {
+  "hash": "65e664b61a0c",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|$__{#VAR} و $__{VAR:0:3}": {
+  "hash": "fa89c8451870",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|$__{VAR%.*} و $__{VAR##*.}": {
+  "hash": "466d3728c850",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|$__{VAR/old/new} و $__{VAR,,}": {
+  "hash": "2f36d126ab35",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|& و jobs و fg": {
+  "hash": "921574317674",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|&& و || و ;": {
+  "hash": "a43959252a89",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|2>&1": {
+  "hash": "90bd234f06b8",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|=~ و BASH_REMATCH": {
+  "hash": "b61420d04b68",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|> و >>": {
+  "hash": "c2313fc3f1da",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|LS_COLORS و --color": {
+  "hash": "c9309b480fd5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|PS1": {
+  "hash": "5bca59dcb3e0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|alias و .bashrc": {
+  "hash": "3b375ce65503",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|arrays": {
+  "hash": "7f5212e444be",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|at": {
+  "hash": "58b81459b3a5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|avahi-browse و .local": {
+  "hash": "c7a261bc7de7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|awk": {
+  "hash": "cbc291de39bc",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|backup.sh": {
+  "hash": "100f504c089b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|bat و eza": {
+  "hash": "869ce5134dbd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|case": {
+  "hash": "1fd4bb131458",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|cat": {
+  "hash": "a7b6094dfb8f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|cd": {
+  "hash": "b496b6cab6ac",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|chattr و lsattr": {
+  "hash": "4fe7082f265f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|chmod": {
+  "hash": "3af6416be1d2",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|chmod +x و ./": {
+  "hash": "053a58cfc7f1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|chown": {
+  "hash": "47ecb52b428b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|cleanup-old.sh": {
+  "hash": "c7d68a2b52d6",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|convert-all.sh": {
+  "hash": "7bf820290908",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|cp": {
+  "hash": "82dd2301cf10",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|cron للسكربت": {
+  "hash": "16be0e827813",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|curl": {
+  "hash": "c45a4cde8658",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|cut": {
+  "hash": "79967f72d64d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|date +%F": {
+  "hash": "88414815db7a",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|declare -A": {
+  "hash": "80c247c99802",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|df / du": {
+  "hash": "669f33c1b3da",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|diff": {
+  "hash": "6fed429e60e8",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|disk-alert.sh": {
+  "hash": "e9f6a5c3ff62",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|echo": {
+  "hash": "9bcecaead55d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|exit 0 و 1 و 2": {
+  "hash": "feff5beda20e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|export و env": {
+  "hash": "124696e0f147",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|fastfetch": {
+  "hash": "adc09dffcd1d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|fdisk و mkfs و dd": {
+  "hash": "9db6b10f642e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ffmpeg": {
+  "hash": "bdb8fe746ddc",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|file / stat": {
+  "hash": "5a750e679c47",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|find": {
+  "hash": "c52159c94c2e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|find -print0 | while read": {
+  "hash": "3403b495aa0c",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|for": {
+  "hash": "ce008a3059de",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|free -h": {
+  "hash": "effeb84b3341",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|function": {
+  "hash": "7fbbe4e3d196",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|fzf": {
+  "hash": "31529d3941bf",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|getopts": {
+  "hash": "61fa086658e0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|grep": {
+  "hash": "3c0a72399cf0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|groupadd و gpasswd": {
+  "hash": "2a7ea7dd9db5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|head / tail": {
+  "hash": "9168ae3e43f2",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|history": {
+  "hash": "d2fcf57af509",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|id و groups و getent": {
+  "hash": "92144aaf0d73",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|if": {
+  "hash": "f216f7c259bb",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|inotifywait": {
+  "hash": "08ea80125ff8",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ip link و ip addr add": {
+  "hash": "d50cf7ea1edb",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|kill": {
+  "hash": "13703a36d3ca",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|less": {
+  "hash": "ac7acc41a702",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ln -s": {
+  "hash": "67f1ee1cda71",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|log() والألوان": {
+  "hash": "0a63255c249f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|log-cleanup.sh": {
+  "hash": "eafd6ffbb224",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ls": {
+  "hash": "3a509afacef0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ls -l": {
+  "hash": "c3f366b50012",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|lsusb و lspci و lshw": {
+  "hash": "eaee899ef2bf",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|man / --help": {
+  "hash": "11e313eb09dc",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|mkdir": {
+  "hash": "f8e4b1157c62",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|mktemp": {
+  "hash": "7333f64dbc81",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|mv": {
+  "hash": "39558a6f55b9",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|nano": {
+  "hash": "23fea085792b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|nethogs": {
+  "hash": "916a5ef159f1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|new-project.sh": {
+  "hash": "f7909de7273b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|nft و iptables -L": {
+  "hash": "fe2d8ed495a1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|nice و renice و ionice": {
+  "hash": "cec07f76fa42",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|nmap -sn و arp-scan": {
+  "hash": "90ddad539256",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|nmcli": {
+  "hash": "a73ad6095cac",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|nohup": {
+  "hash": "220c98f75361",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|notify-send و spd-say": {
+  "hash": "84a11d929be1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|openssl s_client": {
+  "hash": "7d5002b00d1a",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|organize.sh": {
+  "hash": "8612f0589776",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|passwd -l و chage": {
+  "hash": "a861a56335bb",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ping": {
+  "hash": "0cce3ac61538",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|printf": {
+  "hash": "1f7aad9776d9",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ps": {
+  "hash": "6409a6a770a0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|pwd": {
+  "hash": "98f963ef8340",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|read": {
+  "hash": "bbb6cc9459de",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|rename.sh": {
+  "hash": "e4bec0bb06bf",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|resolvectl": {
+  "hash": "8b4463f3fa53",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|rm": {
+  "hash": "1b82f493b7d4",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|scp / rsync": {
+  "hash": "0d5fa96715e2",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|sed": {
+  "hash": "6fe6ac599fe1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|select و confirm": {
+  "hash": "738aa6029f47",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|set -a و .env": {
+  "hash": "70c7c2902d51",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|set -x و PS4": {
+  "hash": "89ea164c8bbe",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|setfacl و getfacl": {
+  "hash": "fb0d75fd3323",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|setuid و setgid و sticky bit": {
+  "hash": "1d278fc8dc60",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|shift و --help": {
+  "hash": "725424ad24e1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|shopt -s nullglob": {
+  "hash": "c7c9fa347e00",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|shutdown": {
+  "hash": "fb3ef72a4931",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|site-check.sh": {
+  "hash": "caed464ccca0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|smbclient و mount -t cifs": {
+  "hash": "bfd91469bd84",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|sort و uniq": {
+  "hash": "62f1e816e13d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|source lib.sh": {
+  "hash": "c9d920a85c27",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ss / lsof": {
+  "hash": "16873fda9f05",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|ssh": {
+  "hash": "6494ac69c59e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|starship": {
+  "hash": "b066bcde10ad",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|su - و sudo -i": {
+  "hash": "8c54a11f0cc4",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|sudo": {
+  "hash": "52ddb85065af",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|systemctl": {
+  "hash": "1fdd789d3179",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|tar": {
+  "hash": "335c27163b50",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|top / htop": {
+  "hash": "9f35a18b9ed7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|touch": {
+  "hash": "1f276a64745d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|tr": {
+  "hash": "f44c0ca39f4b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|trap": {
+  "hash": "ac37c6c8108d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|tree": {
+  "hash": "967d44494277",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|umask": {
+  "hash": "008071aa9400",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|useradd و usermod": {
+  "hash": "415bb393684e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|visudo و sudoers.d": {
+  "hash": "a821923acb09",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|vmstat و iostat": {
+  "hash": "6f8c4dfe0ed0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|wakeonlan و ethtool": {
+  "hash": "6d9b3c1d16fd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|watch": {
+  "hash": "380c95df601c",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|wc": {
+  "hash": "274616cf8ef1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|wget": {
+  "hash": "6f0a46dd27de",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|wget -i و --limit-rate": {
+  "hash": "e0c937e1c45b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|which / type": {
+  "hash": "db536050a498",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|while read": {
+  "hash": "90dc692e4ac7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|xargs": {
+  "hash": "da64b331a485",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|zgrep / zcat": {
+  "hash": "34ce1e8981c1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|zip / unzip": {
+  "hash": "c3914242a157",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|zoxide": {
+  "hash": "9a3c80948a6d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash||": {
+  "hash": "28773b517790",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "bash|أول سكربت": {
+  "hash": "c06d1320f77c",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+ },
+ "cmd|%errorlevel% و !errorlevel!": {
+  "hash": "dbfed2a6c924",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|%~dp0 و %~nx1": {
+  "hash": "8c8f47650710",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|&& و || و &": {
+  "hash": "25e121aeec0b",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|arp / route": {
+  "hash": "650a2c30443d",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|attrib": {
+  "hash": "3c07f908de5b",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|backup-date.bat": {
+  "hash": "20fd14e1860e",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|batch ولا PowerShell؟": {
+  "hash": "93ce660cc08d",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|build.bat": {
+  "hash": "9d629f8a6baf",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|call :label": {
+  "hash": "c21f9cc411f3",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|cd": {
+  "hash": "95628ec70557",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|chcp 65001": {
+  "hash": "79c3323a8160",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|chkdsk": {
+  "hash": "b7387f07b528",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|clean-temp.bat": {
+  "hash": "d6ae6c1c742c",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|clip": {
+  "hash": "1baf1a5f3a50",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|cls": {
+  "hash": "569f1592b1f3",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|color": {
+  "hash": "26fe98230a27",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|copy / xcopy": {
+  "hash": "e6e7287f2d1c",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|curl.exe": {
+  "hash": "b4fad43d7d83",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|del / rd": {
+  "hash": "949ac5460afc",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|dir": {
+  "hash": "8ef672d594f6",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|diskpart": {
+  "hash": "adaa7149eb46",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|doskey": {
+  "hash": "9c90bfa141ae",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|findstr": {
+  "hash": "8cf0b0f71d7f",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|for /f": {
+  "hash": "a00d8fa9e42b",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|for على الملفات": {
+  "hash": "3b7d36b84d2c",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|for و delayed expansion": {
+  "hash": "771c5404cf8c",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|hosts": {
+  "hash": "59ada36c2c38",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|icacls": {
+  "hash": "b308d3487a82",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|if و errorlevel": {
+  "hash": "1e58176f75f8",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|ipconfig": {
+  "hash": "295a746e9721",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|ipconfig /release /renew": {
+  "hash": "106c58a069a3",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|mkdir": {
+  "hash": "39a008c801ef",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|mklink": {
+  "hash": "2c53d44bad6c",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|move / ren": {
+  "hash": "c406d57c9d51",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|mstsc": {
+  "hash": "baa30ecc36ae",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|net localgroup": {
+  "hash": "1e5fec80d9d1",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|net share / net use": {
+  "hash": "5f36063c55f1",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|net user": {
+  "hash": "c676a871cbb2",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|netsh": {
+  "hash": "45e14347b7bf",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|netsh advfirewall firewall": {
+  "hash": "84fcd0e8786b",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|netsh interface ip set address": {
+  "hash": "96ad38c0e016",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|netsh winsock reset": {
+  "hash": "d1390d8cad8f",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|netsh wlan connect": {
+  "hash": "771cc0407515",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|netstat -ano": {
+  "hash": "2329693722d4",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|nslookup": {
+  "hash": "bd33350827bb",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|pathping": {
+  "hash": "40b407ccdaf9",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|ping -a و nbtstat -A": {
+  "hash": "70a61630741a",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|ping / tracert / nslookup": {
+  "hash": "6e9e78f00d31",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|pnputil و driverquery": {
+  "hash": "7233a1803fa0",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|powercfg": {
+  "hash": "bea07eeacbfb",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|prompt": {
+  "hash": "7f47d2609b85",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|rename-files.bat": {
+  "hash": "38b000a3c5ec",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|robocopy": {
+  "hash": "02168a30500f",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|runas": {
+  "hash": "a2a2e9555ac3",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|sc و net start": {
+  "hash": "7676603299f8",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|schtasks": {
+  "hash": "f1aeef9e8707",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|set / setx": {
+  "hash": "738bf12374c6",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|set /a": {
+  "hash": "2fbcb66556ce",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|set /p و choice": {
+  "hash": "29119a67b4fe",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|set و %1": {
+  "hash": "361f8934d826",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|setlocal / endlocal": {
+  "hash": "362af740b575",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|sfc و DISM": {
+  "hash": "23fd38303596",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|shutdown": {
+  "hash": "8ed2dd1dfedf",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|shutdown /m": {
+  "hash": "b17312f90b47",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|start": {
+  "hash": "226d3b1f4ac7",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|systeminfo / whoami": {
+  "hash": "e35b3d166f08",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|takeown": {
+  "hash": "b86d2eae4481",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|tasklist / taskkill": {
+  "hash": "48ae043ffd7e",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|timeout و ping": {
+  "hash": "56c7c3ef22ed",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|title و mode con": {
+  "hash": "fe6eb7cfd8c9",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|tree": {
+  "hash": "da3c32208323",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|type / more": {
+  "hash": "4b1a64d23afd",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|type nul / echo >": {
+  "hash": "e6bb0d3201a4",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|w32tm": {
+  "hash": "f605c2f72115",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|where": {
+  "hash": "b115f5331bac",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|whoami /groups /priv": {
+  "hash": "2ef67b48b269",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|winget upgrade": {
+  "hash": "b8c158bac17a",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|wmic": {
+  "hash": "a400065c03ff",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|| > >> 2>&1": {
+  "hash": "de2b1512f220",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|أول ملف .bat": {
+  "hash": "a52d30da80c8",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "cmd|رموز CMD": {
+  "hash": "134d2094ba84",
+  "date": "2026-10-02",
+  "on": "cmd.exe (windows 11)"
+ },
+ "os|Nerd Font": {
+  "hash": "2c0e0cceda87",
+  "date": "2026-10-02",
+  "on": "windows 11 (read-only), docs: Windows Terminal"
+ },
+ "os|Win+`": {
+  "hash": "5a6de46fcdd9",
+  "date": "2026-10-02",
+  "on": "windows 11 (read-only), docs: Windows Terminal"
+ },
+ "os|Windows Terminal settings.json": {
+  "hash": "22844aa7ce95",
+  "date": "2026-10-02",
+  "on": "windows 11 (read-only), docs: Windows Terminal"
+ },
+ "ps|$PSStyle": {
+  "hash": "7661c0ed2e76",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|$env:": {
+  "hash": "6a8a9dfc8eb6",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|-ErrorAction و $Error": {
+  "hash": "0e58c5f7c628",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Add-LocalGroupMember": {
+  "hash": "d63bad029793",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Checkpoint-Computer": {
+  "hash": "3ab8560e7449",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Compress-Archive": {
+  "hash": "77a1a7f2f39c",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|ConvertFrom-Json": {
+  "hash": "5c43d57a88b6",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|ConvertTo-Json -Depth": {
+  "hash": "42d2c68729a1",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Copy-Item": {
+  "hash": "bd121b96309a",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Enter-PSSession / Invoke-Command": {
+  "hash": "a51318ede25c",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|ExecutionPolicy": {
+  "hash": "322cd64f5517",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Export-Csv / ConvertTo-Json": {
+  "hash": "7d641b4e392c",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|FileSystemWatcher": {
+  "hash": "c1497b5211fa",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|ForEach-Object": {
+  "hash": "06e42b2f43b3",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Format-Volume / Clear-Disk": {
+  "hash": "ca5a561e24b4",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Acl / Set-Acl": {
+  "hash": "4106322dfde0",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-BitLockerVolume": {
+  "hash": "d8853864d53d",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-ChildItem": {
+  "hash": "7f9dcf27ca08",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-CimInstance": {
+  "hash": "b079341efe45",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Command": {
+  "hash": "59ad31707a29",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Command (which)": {
+  "hash": "98bb5238de51",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Content": {
+  "hash": "df55d27d9814",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Counter": {
+  "hash": "be14b6e02255",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-FileHash": {
+  "hash": "e53eef73ab24",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Help": {
+  "hash": "6ac6dadea742",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Item": {
+  "hash": "d37a88a2bc84",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-LocalUser / New-LocalUser": {
+  "hash": "fe59787753ec",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Member": {
+  "hash": "0604dc70f988",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-MpComputerStatus": {
+  "hash": "353a358a0b3e",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-NetAdapter": {
+  "hash": "5fa93bb39619",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-NetIPAddress": {
+  "hash": "7ee7e1620475",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-NetNeighbor + ping sweep": {
+  "hash": "ef9a9c0613a9",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-NetTCPConnection": {
+  "hash": "aa103e89d244",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-NetTCPConnection -State Listen": {
+  "hash": "e5c4b1c822bd",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-PhysicalDisk": {
+  "hash": "689b0cd6255a",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-PnpDevice": {
+  "hash": "1e8dd922f923",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Process / Stop-Process": {
+  "hash": "778e7a398eee",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-Service": {
+  "hash": "5045c9868fa0",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Get-WinEvent": {
+  "hash": "1c4fc17c991d",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Group-Object": {
+  "hash": "a9798eb29980",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|History والاختصارات": {
+  "hash": "5b299e4c5493",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Import-Csv": {
+  "hash": "516d95459e45",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Import-Module و dot-sourcing": {
+  "hash": "72da57888f1d",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Invoke-RestMethod": {
+  "hash": "5129afe49c5b",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Invoke-WebRequest -OutFile": {
+  "hash": "04dbeffca9ef",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|IsInRole (Admin check)": {
+  "hash": "dcddb518ca94",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|LockWorkStation": {
+  "hash": "3bf1bc7db960",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Measure-Command": {
+  "hash": "5438b2f031fb",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Measure-Object": {
+  "hash": "785ace2d4b1a",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|MessageBox / BurntToast": {
+  "hash": "0a93724890b9",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Move-Item / Rename-Item": {
+  "hash": "e765aad7f610",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|New-Item": {
+  "hash": "f9777852a9dd",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|New-NetFirewallRule": {
+  "hash": "422f3a109b04",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|New-NetIPAddress (static IP)": {
+  "hash": "9dc66e1082f0",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|New-SmbShare": {
+  "hash": "42a418fb6c7a",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|OpenSSH Server": {
+  "hash": "d873b56973b7",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Out-GridView": {
+  "hash": "9cde94ce04c6",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|PSScriptAnalyzer": {
+  "hash": "5b74cd7804df",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|PredictionViewStyle": {
+  "hash": "a2b70f206c2a",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Push-Location": {
+  "hash": "4764090e1a03",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|RandomNumberGenerator (password)": {
+  "hash": "3f4398dca9e0",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Register-ScheduledTask": {
+  "hash": "c8753381470b",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Remove-Item": {
+  "hash": "6f4c4b414e97",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Resolve-DnsName": {
+  "hash": "272bd1d7dde3",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Restart-Computer -ComputerName": {
+  "hash": "d0ed2bf42559",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|SAPI.SpVoice": {
+  "hash": "81cc2f772893",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Select-Object": {
+  "hash": "8d3750b49046",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Select-String": {
+  "hash": "efd7488b9182",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Set-Clipboard / Get-Clipboard": {
+  "hash": "9d07f9c15323",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Set-Content / Add-Content": {
+  "hash": "2803824d01b6",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Set-DnsClientServerAddress": {
+  "hash": "2b298957c17b",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Set-LocalUser / Remove-LocalUser": {
+  "hash": "f83aab99a966",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Set-Location": {
+  "hash": "8de464d3f687",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Set-NetConnectionProfile": {
+  "hash": "6dc22330e0cd",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Set-PSReadLineOption -Colors": {
+  "hash": "d07af2d3c92b",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Sort-Object": {
+  "hash": "4f025bd17d12",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Start-BitsTransfer": {
+  "hash": "c9b58c6ab4f8",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Start-Job": {
+  "hash": "a78b45f406d9",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Start-Process": {
+  "hash": "63e7e7e03eda",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Start-Transcript": {
+  "hash": "d613558eec79",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Terminal-Icons": {
+  "hash": "a8f9b778fa91",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Test-NetConnection": {
+  "hash": "5743393f7b3d",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Test-NetConnection -TraceRoute": {
+  "hash": "b5956dc2d869",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Test-Path": {
+  "hash": "8026a5ada9b0",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Verb-Noun": {
+  "hash": "00c780fb8d77",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Wake-on-LAN": {
+  "hash": "9fbe8933a780",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Where-Object": {
+  "hash": "78dff82a3341",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Win32_StartupCommand": {
+  "hash": "481969bba5ae",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Write-Host والـ output": {
+  "hash": "0545d83c8d07",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|Write-Progress": {
+  "hash": "5101db754d42",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|[CmdletBinding()]": {
+  "hash": "6adf526f8b33",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|[xml]": {
+  "hash": "bae23caef706",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|array و hashtable": {
+  "hash": "51075f98bf74",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|backup.ps1": {
+  "hash": "f74e708de462",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|check-site.ps1": {
+  "hash": "aa5aefa9ed34",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|clean-old-files.ps1": {
+  "hash": "5dd91c3ddc27",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|cmd /c ... > log 2>&1": {
+  "hash": "85a7ec11ece3",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|disk-report.ps1": {
+  "hash": "c6a4ac87448f",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|foreach / for / while": {
+  "hash": "aa1e20bb928d",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|function": {
+  "hash": "599dd93efabb",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|function prompt": {
+  "hash": "4e6e45a9d68b",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|hosts": {
+  "hash": "c6212a03f655",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|if / switch": {
+  "hash": "8d9a08e90979",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|new-project.ps1": {
+  "hash": "91753587e428",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|oh-my-posh": {
+  "hash": "d8aba398f590",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|organize-downloads.ps1": {
+  "hash": "a5b9018fd158",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|param()": {
+  "hash": "e78eb73b643f",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|pipeline function": {
+  "hash": "87785ea1cd44",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|pwsh": {
+  "hash": "3a96b20bb7a6",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|rename-photos.ps1": {
+  "hash": "61e5d6fb15a9",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|screenshots.ps1": {
+  "hash": "a097a9b03a4b",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|shutdown /s /t": {
+  "hash": "e80ca9d86a36",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|splatting": {
+  "hash": "40f806b59fa8",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|ssh -L": {
+  "hash": "5226928c2186",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|ssh / scp": {
+  "hash": "90b89c6a839f",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|try / catch": {
+  "hash": "fad3438cdbd2",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|winget upgrade / export / import": {
+  "hash": "d63897b5df9e",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|zip-folders.ps1": {
+  "hash": "e08ef5001aa5",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|أول سكربت .ps1": {
+  "hash": "19968d0ac469",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|المتغيرات": {
+  "hash": "e9828a59778c",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|المتغيرات والأنواع": {
+  "hash": "9b4331a05861",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|النصوص (strings)": {
+  "hash": "981a1a3fb65c",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|رموز PowerShell": {
+  "hash": "a26e328981ea",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "ps|عوامل المقارنة": {
+  "hash": "5560bc4cba43",
+  "date": "2026-10-02",
+  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+ },
+ "python|# /// script": {
+  "hash": "171236d8957e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|#!/usr/bin/env python3": {
+  "hash": "7754f07d4bd7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|@pytest.fixture": {
+  "hash": "f747cbcfcedc",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|@pytest.mark.parametrize": {
+  "hash": "b6ceb7314666",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|Dockerfile": {
+  "hash": "588adbd6ae7e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|Path(__file__).parent": {
+  "hash": "1a0c106dbc7a",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|TestClient و conftest": {
+  "hash": "0648082afeb6",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|[project.scripts] و pipx": {
+  "hash": "6994420494a3",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|argparse --dry-run": {
+  "hash": "118de0607b11",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|backup_zip.py": {
+  "hash": "2ef8bb0a86bf",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|bash ولا Python ولا PowerShell": {
+  "hash": "7ce2b1ade37a",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|batch_rename.py": {
+  "hash": "8e139b2057b3",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|breakpoint()": {
+  "hash": "b4cc8ef76918",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|clean_old_files.py": {
+  "hash": "83ce63978840",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|concurrent.futures": {
+  "hash": "d81f01564f2c",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|cron و Task Scheduler": {
+  "hash": "8551d743bbd7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|csv و utf-8-sig": {
+  "hash": "ae81e12fefb5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|datetime وأسماء الملفات": {
+  "hash": "1212d7774c10",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|debugpy و launch.json": {
+  "hash": "f58a5c3af339",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|docker compose run --rm --no-deps": {
+  "hash": "44f79f050a95",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|externally-managed-environment": {
+  "hash": "277173681442",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|find_duplicates.py": {
+  "hash": "ecc3e07e09c2",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|glob و rglob": {
+  "hash": "85c6760b9fc1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|if __name__ == \"__main__\":": {
+  "hash": "1ea50851c3d9",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|input() و sys.argv": {
+  "hash": "fbb8c5641fbd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|json.load و json.dump": {
+  "hash": "8b4b2411f864",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|json_to_csv.py": {
+  "hash": "6cecb823c78e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|logging بدل print": {
+  "hash": "b745f9ce5eee",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|monkeypatch": {
+  "hash": "492777a0b96f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|notify.py": {
+  "hash": "ac5aa1385798",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|open() و encoding=\"utf-8\"": {
+  "hash": "0c7f9acad314",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|organize_downloads.py": {
+  "hash": "dbbf5d6d1fc1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|os.environ و .env": {
+  "hash": "5f4ead05f20f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|pip freeze": {
+  "hash": "2982c315d038",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|pip install -r requirements.txt": {
+  "hash": "92ec2c1c291a",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|print و f-strings للتقارير": {
+  "hash": "c8c3efd1dc90",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|pytest": {
+  "hash": "bfbd6a28055b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|pytest --cov": {
+  "hash": "d783992fa3f1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|pytest لسكربت": {
+  "hash": "e84b9eb063f9",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|pytest.ini": {
+  "hash": "a3d9b3d9dc09",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|python -m": {
+  "hash": "6b4463202daf",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|python -m http.server": {
+  "hash": "e013fb674bb6",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|python -m pdb": {
+  "hash": "4d4ec9eeae7b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|python3 - <<'PY'": {
+  "hash": "894b7a3ba3a5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|python3 -m venv .venv": {
+  "hash": "3519097476ba",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|python3 script.py": {
+  "hash": "edda995e8305",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|re في السكربتات": {
+  "hash": "7f653bbfa5dd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|requests و urllib مع timeout": {
+  "hash": "ce40088e77ae",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|resize_images.py": {
+  "hash": "7ec9110c7931",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|retry و backoff": {
+  "hash": "fc83f07b3f87",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|shutil copy و move و rmtree": {
+  "hash": "126a9b484ebe",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|subprocess.run في سكربت": {
+  "hash": "0c3e501e48ac",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|sys.exit و exit codes": {
+  "hash": "4f6e1605dceb",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|tmp_path": {
+  "hash": "790316fc414e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|unittest.mock.patch": {
+  "hash": "853bf7dece57",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|uptime_check.py": {
+  "hash": "e576dc279502",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|uvicorn --proxy-headers": {
+  "hash": "cf1e9ec0cccc",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|uvicorn --reload": {
+  "hash": "5912ed32623f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "python|yaml.safe_load و ElementTree": {
+  "hash": "075c48790493",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "start|--help و man": {
+  "hash": "a46f2b49543b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|64-bit و ARM": {
+  "hash": "e06a48dcba25",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|CPU و RAM والديسك": {
+  "hash": "0cc7f51c17f6",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|Git ببساطة": {
+  "hash": "b6673417118b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|HTTP: الطلب والرد": {
+  "hash": "52e733ed77e4",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|IP و الدومين و DNS": {
+  "hash": "5bb567bacccd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|PATH": {
+  "hash": "1681ee5bc1ba",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|VS Code": {
+  "hash": "4581f222b73f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|compiler و interpreter": {
+  "hash": "9ffe85fa077c",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|file.txt.txt": {
+  "hash": "cb91dee7d55d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|root و sudo": {
+  "hash": "19222390dbfe",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|أسامي الملفات": {
+  "hash": "eb696f472784",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|أوامر متشغّلهاش": {
+  "hash": "684c5aac889e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|إزاي تذاكر الصفحة دي": {
+  "hash": "e69f4afdf942",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|اختصارات هتنقذك": {
+  "hash": "08de7fdf5ab1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الأسرار": {
+  "hash": "f78fe1e37492",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الباك أب": {
+  "hash": "4c5a94e42dc5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|البرنامج والعملية": {
+  "hash": "f9b00e29006d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|البورت (port)": {
+  "hash": "2b5181cdd27d",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الترمنال والشيل": {
+  "hash": "d1552eedb94b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الدوكيومنتيشن": {
+  "hash": "69b2fb917523",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|السكربت": {
+  "hash": "9169d42746ab",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|السيرفر والـ VPS": {
+  "hash": "1442d31f78a6",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الصلاحيات rwx": {
+  "hash": "16670de22605",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الـ API": {
+  "hash": "90945dcb81d5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الـ pipe والتوجيه": {
+  "hash": "2dd8e6bcd3f0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الـ prompt": {
+  "hash": "bc1350bbb49c",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الـ stack trace": {
+  "hash": "0dba2e07f866",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الكود واللغة": {
+  "hash": "662235e8cf9a",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الكيبورد للمبرمج": {
+  "hash": "16d111149cd4",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|المسار (path)": {
+  "hash": "76306e3af45f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|المكتبة والفريمورك": {
+  "hash": "a0d601b7c460",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الملف والامتداد": {
+  "hash": "01a2577c262f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|الملفات المخفية": {
+  "hash": "2664186c2068",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|تدوّر على الخطأ": {
+  "hash": "c265230d6ce1",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|تسأل سؤال كويس": {
+  "hash": "66b11d2ae143",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|تشريح الأمر": {
+  "hash": "42d89e3a581f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|خريطة أي موقع": {
+  "hash": "fd680ee6fea0",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|شجرة الفولدرات": {
+  "hash": "e1a8cb3274f2",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|فولدرك الحقيقي": {
+  "hash": "2525fa2a05e7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|لما حاجة تغلط": {
+  "hash": "804106599481",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|متغيرات البيئة": {
+  "hash": "13b032519a95",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|محرر النصوص": {
+  "hash": "2b3c526728b3",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|مدير الحزم": {
+  "hash": "85cbf41bf09f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|مسارات ويندوز": {
+  "hash": "09b33f3141b2",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|مساعد AI": {
+  "hash": "47e69706aecc",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|ملاحظاتك": {
+  "hash": "b648d3ad79dd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "start|نظام التشغيل": {
+  "hash": "ccb64607ddb3",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+ },
+ "zsh|*(.om[1,5])": {
+  "hash": "4ae718cd94d7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|**/*.js": {
+  "hash": "e22947c2ec5a",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|PROMPT": {
+  "hash": "917b77980e8b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|Remote Login و Screen Sharing": {
+  "hash": "ac0ee36dadb8",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|ZSH_THEME و Powerlevel10k": {
+  "hash": "b8bbef337ce5",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|alias vs function": {
+  "hash": "3e636c9aafc7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|autoload -Uz": {
+  "hash": "385b190be71f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|brew --cask": {
+  "hash": "fa5d752123d4",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|brew install": {
+  "hash": "15f19bc92992",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|brew list / info": {
+  "hash": "510199184d90",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|brew services": {
+  "hash": "3dce2006577f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|brew upgrade": {
+  "hash": "044ed3ed9843",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|caffeinate": {
+  "hash": "48331503a432",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|chmod +a": {
+  "hash": "d6a33b546f79",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|coreutils": {
+  "hash": "c85e7f9d15fd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|date -v": {
+  "hash": "9a421067dccd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|defaults": {
+  "hash": "73f5810ac4aa",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|diskutil": {
+  "hash": "7485d6ab4357",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|dns-sd و arp -a": {
+  "hash": "05bcd20c0725",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|dscl و sysadminctl": {
+  "hash": "cb7e994611de",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|dseditgroup": {
+  "hash": "bb50b892ea32",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|echo $SHELL": {
+  "hash": "f1470ce27d73",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|fdesetup و profiles": {
+  "hash": "499f3843d83f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|flush DNS": {
+  "hash": "2d136f4f7286",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|hello.zsh": {
+  "hash": "ec0b51db81be",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|ifconfig / route": {
+  "hash": "f547c248a961",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|ipconfig getifaddr": {
+  "hash": "96961cca9dce",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|launchctl": {
+  "hash": "39274e239b74",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|launchd plist": {
+  "hash": "fffc4395fa80",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|lsof -i": {
+  "hash": "8363378292e7",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|man بدل --help": {
+  "hash": "26a7caf03b71",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|mdfind": {
+  "hash": "a7c8e7febe85",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|networkQuality": {
+  "hash": "3310c4d5115f",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|networksetup": {
+  "hash": "1cee1292b391",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|open": {
+  "hash": "db47d4f87ea9",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|osascript display notification": {
+  "hash": "50abd55c4d1b",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|pbcopy / pbpaste": {
+  "hash": "9795dd23ac53",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|pmset": {
+  "hash": "a1c76273d613",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|say": {
+  "hash": "cf23bc82f0f4",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|sed -i ''": {
+  "hash": "38330dbc9623",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|setopt err_exit": {
+  "hash": "6e3f8abd57ba",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|socketfilterfw": {
+  "hash": "d072abf4c428",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|softwareupdate": {
+  "hash": "c0f473011099",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|sw_vers": {
+  "hash": "f92ef3836fee",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|system_profiler و ioreg": {
+  "hash": "20e79000b35e",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|tidy-downloads.zsh": {
+  "hash": "8c6bf462bccd",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|tmutil": {
+  "hash": "fe52d0a77197",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|top -o mem": {
+  "hash": "ca8366700c04",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|xattr و quarantine": {
+  "hash": "d0d9cbd139ef",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|zsh arrays": {
+  "hash": "96e762bd7248",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ },
+ "zsh|~/.zshrc": {
+  "hash": "3caeac1dd0ce",
+  "date": "2026-10-02",
+  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+ }
+}

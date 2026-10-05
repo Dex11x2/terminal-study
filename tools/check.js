@@ -163,5 +163,9 @@ process.on('unhandledRejection', e => { console.error('✗ promise اترفض م
   warnings.forEach(x => console.log('! ' + x));
   errors.forEach(x => console.log('✗ ' + x));
   console.log(`\n${Object.keys(DATA).length} تاب، ${total} درس، ${MISSIONS.length} تحدي، ${checks.length} تمرين بيتصحح لوحده | ${errors.length} خطأ، ${warnings.length} تنبيه${sqlNote}`);
+  // review log (verified.json): informational only, never fails the check
+  const rv = {ok: 0, stale: 0, never: 0};
+  Object.values(require('./verify.js').status()).forEach(list => list.forEach(l => rv[l.state]++));
+  console.log(`المراجعة: ${rv.ok} درس اتجرّب، ${rv.stale} اتعدّل بعد ما اتراجع، ${rv.never} لسه (التفاصيل: node tools/verify.js)`);
   process.exit(errors.length || process.exitCode ? 1 : 0);
 })();

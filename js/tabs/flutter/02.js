@@ -1,0 +1,1074 @@
+// تكملة تاب flutter: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/flutter/01.js (شرح حقول الدرس في أوله)
+MORE("flutter", [
+    {
+      t: "Dart: الأخطاء والأنواع المتقدمة",
+      l: 1,
+      n: "exceptions صح، و generics، و mixins، و extensions، و enums فيها بيانات: الحاجات اللي هتقابلها في كود أي package",
+      items: [
+        {
+          cmd: "try و on و rethrow",
+          title: "تمسك نوع الخطأ اللي تعرف تتعامل معاه بس",
+          desc: R`في Dart فيه نوعين حاجات بتترمي: [[Exception]] يعني حاجة متوقعة ممكن تحصل (النت فاصل، JSON بايظ، السيرفر رجّع 404)، و [[Error]] يعني غلطة في الكود نفسه (index بره الـ list، [[!]] على null، cast غلط). الأولى بتمسكها وتتعامل معاها، والتانية بتصلّحها في الكود.
+
+[[on FormatException catch (e)]] بيمسك نوع معين بس، و [[catch (e, st)]] بيدّيك الـ stack trace كمان. و [[rethrow]] بيرمي نفس الخطأ تاني بعد ما تسجّله مثلًا، و [[finally]] بيتنفذ في كل الأحوال. وتعمل exception خاص بيك بـ class بيعمل [[implements Exception]].`,
+          example: R`class ApiException implements Exception {
+  ApiException(this.statusCode, this.message);
+  final int statusCode;
+  final String message;
+  @override
+  String toString() => 'ApiException($statusCode): $message';
+}
+
+int parseAge(String raw) {
+  final age = int.parse(raw);
+  if (age < 0) throw ApiException(422, 'age must be positive');
+  return age;
+}
+
+int saveAge(String raw) {
+  try {
+    return parseAge(raw);
+  } on ApiException {
+    print('log: rejected $raw');
+    rethrow;
+  }
+}
+
+void main() {
+  for (final raw in ['30', 'abc', '-5']) {
+    try {
+      print('age $__{saveAge(raw)}');
+    } on FormatException catch (e) {
+      print('not a number: $__{e.source}');
+    } on ApiException catch (e, st) {
+      print('invalid: $__{e.message} $__{e.statusCode}');
+      print(st.toString().split('\n').first);
+    } finally {
+      print('checked $raw');
+    }
+  }
+}`,
+          try: "شغّل المثال بـ [[dart run]] واقرا الناتج. بعدين امسح سطر [[rethrow;]] من [[saveAge]] وشوف الـ compiler بيقول إيه، وحط مكانه [[return -1;]] وشغّل تاني: إيه اللي اتغير في ناتج [['-5']]؟ وآخر حاجة: ضيف [['']] (نص فاضي) للـ list وقول هيطبع إيه قبل ما تشغّل.",
+          flag: "script",
+          deep: {
+            why: "لو مسكت كل حاجة بـ [[catch (e)]] هتبلع الأخطاء اللي المفروض تكسّر التطبيق وانت بتطوّر، زي null أو index غلط، وتفضل الشاشة فاضية من غير ما تعرف ليه. ولو مسكتش حاجة خالص، أول مرة النت يقطع التطبيق هيقع. الحل في النص: امسك الأنواع اللي تعرف تعمل معاها حاجة مفيدة (تعرض رسالة، تعيد المحاولة)، وسيب الباقي يطلع.",
+            how: R`[[throw]] في Dart بيرمي أي object، حتى String ([[throw 'oops']])، بس دا ممنوع عرفًا والـ lint [[only_throw_errors]] بيمسكه. ارمي حاجة بتعمل implements لـ Exception أو extends لـ Error.
+
+ترتيب الـ [[on]] مهم: أول واحد يطابق يكسب، فالأنواع المحددة الأول والعامة ([[on Exception]]) في الآخر. و [[catch (e)]] من غير [[on]] بيمسك أي حاجة، حتى الـ Errors.
+
+الفرق في الـ stack trace: [[rethrow]] بيحافظ على الـ stack trace الأصلي (من [[parseAge]] زي ما بيطبع المثال). إنما [[throw e]] جوه الـ catch بيبدأ trace جديد من السطر ده، فتضيع مكان المشكلة الحقيقي. ولو عايز ترمي نوع تاني وتحافظ على الـ trace: [[Error.throwWithStackTrace(MyException(), st)]].
+
+الـ exceptions الجاهزة اللي هتقابلها: [[FormatException]] (من [[int.parse]] و [[jsonDecode]] و [[DateTime.parse]])، و [[TimeoutException]] (من [[.timeout()]])، و [[SocketException]] و [[HttpException]] من dart:io، و [[ClientException]] من package http. والـ Errors: [[RangeError]] و [[TypeError]] و [[StateError]] و [[ArgumentError]] و [[UnimplementedError]].
+
+وفي async نفس الكلام بالظبط: [[try]] حوالين [[await]]، والـ Future الفاشل بيتمسك بـ [[on]] زي أي exception عادي (درس async و await).
+
+جوه Flutter: أي exception مش ممسوك في build أو في callback بيوصل لـ [[FlutterError.onError]]، وفي debug بيطلع الشاشة الحمرا. والأخطاء اللي بره الـ framework (Futures مش ممسوكة) بتروح لـ [[PlatformDispatcher.instance.onError]]. الاتنين دول اللي بتوصّل فيهم Sentry أو Crashlytics.`,
+            when: "أي كود بيكلم حاجة بره تطبيقك: شبكة، ملفات، parsing، تخزين. وعرّف exception خاص (ApiException، NotFoundException) لما الطبقة اللي فوق محتاجة تفرّق بين الحالات وتعرض رسالة مختلفة لكل واحدة.",
+            mistakes: R`[[catch (e) {}]] فاضي: الخطأ اختفى ومحدش هيعرف. على الأقل سجّله. وتمسك [[Error]] (زي [[on TypeError]]) عشان تخبّي bug بدل ما تصلّحه. و [[throw e]] بدل [[rethrow]] فيضيع الـ stack trace. وتعمل [[class MyError extends Error]] لحاجة متوقعة زي «المستخدم مش موجود»: دي Exception مش Error. وسؤال انترفيو: «إيه الفرق بين Exception و Error في Dart؟» Exception حالة متوقعة المفروض تتمسك، و Error غلطة برمجية المفروض تتصلّح، والـ linter والـ packages (زي Riverpod اللي مبيعملش retry لو الخطأ Error) بيعتمدوا على الفرق ده.`
+          },
+          lines: [
+            "exception خاص بيك: [[implements Exception]] يعني «حالة متوقعة».",
+            "constructor بيحط الكود والرسالة.",
+            "كود HTTP زي 404 أو 422.",
+            "رسالة تتعرض أو تتسجل.",
+            "بتعيد تعريف toString...",
+            "...عشان لما يتطبع يبقى مفهوم.",
+            "قفلة الـ class.",
+            "دالة ممكن ترمي نوعين أخطاء.",
+            "[[int.parse]] بيرمي [[FormatException]] لو النص مش رقم.",
+            "[[throw]]: ارمي الـ exception بتاعك لو الرقم سالب.",
+            "رجّع السن.",
+            "قفلة.",
+            "دالة في النص بين الـ UI والـ parsing.",
+            "جرّب.",
+            "نادي الدالة اللي ممكن ترمي.",
+            "[[on ApiException]] من غير catch: مش محتاج المتغير هنا.",
+            "سجّل...",
+            "...وارمي نفس الخطأ تاني لفوق بنفس الـ stack trace.",
+            "قفلة الـ on.",
+            "قفلة الدالة.",
+            "البداية.",
+            "جرّب ٣ قيم: سليمة، ومش رقم، وسالبة.",
+            "try لكل قيمة لوحدها.",
+            "age 30 للأولى.",
+            "[[on FormatException]]: يمسك النوع ده بس، و [[e.source]] النص اللي فشل.",
+            "not a number: abc.",
+            "النوع التاني. [[st]] الـ stack trace.",
+            "invalid: age must be positive 422.",
+            "أول سطر في الـ trace: بيشاور على [[parseAge]] مش [[saveAge]]، بفضل rethrow.",
+            "[[finally]]: بيتنفذ سواء نجح أو فشل.",
+            "checked مع كل قيمة.",
+            "قفلة try.",
+            "قفلة الـ loop.",
+            "قفلة main."
+          ],
+          sol: R`الناتج بالترتيب: [[age 30]] ثم [[checked 30]]، وبعدين [[not a number: abc]] ثم [[checked abc]]، وبعدين [[log: rejected -5]] ثم [[invalid: age must be positive 422]] ثم سطر [[#0      parseAge (...)]] ثم [[checked -5]]. لاحظ إن finally بيتنفذ في التلات حالات.
+
+لما تمسح [[rethrow;]] الـ compiler بيرفض: [[The body might complete normally, causing 'null' to be returned, but the return type, 'int', is a potentially non-nullable type]]. لأن الدالة وعدت ترجّع int، والـ catch بيخلص من غير return. ولما تحط [[return -1;]] الكود يترجم، بس [['-5']] بقت تطبع [[log: rejected -5]] ثم [[age -1]]: الخطأ اتبلع والـ UI فاكر إن كله تمام. دا بالظبط ليه rethrow موجود.
+
+والنص الفاضي [['']]: [[int.parse('')]] بيرمي FormatException، فهيطبع [[not a number: ]] (فاضي بعد النقطتين) ثم [[checked ]].`,
+          solCode: R`// saveAge بعد استبدال rethrow (مثال على الغلط):
+int saveAge(String raw) {
+  try {
+    return parseAge(raw);
+  } on ApiException {
+    print('log: rejected $raw');
+    return -1; // الخطأ اتبلع: اللي فوق مش هيعرف إن فيه مشكلة
+  }
+}`
+        },
+        {
+          cmd: "generics",
+          title: "كود واحد يشتغل مع أي نوع ويفضل type-safe",
+          desc: R`[[List<String>]] و [[Future<User>]] دي generics: الـ class مكتوب مرة، والنوع اللي جواه بيتحدد وقت الاستخدام. وتقدر تعمل بتوعك: [[class Page<T>]] لرد API فيه لستة من أي حاجة، أو دالة [[T? findById<T extends Entity>(...)]].
+
+[[extends]] جوه الـ generic بيحط شرط: [[T extends Entity]] يعني «أي نوع، بشرط يبقى فيه id». فجوه الدالة تقدر تكتب [[item.id]] والـ compiler مطمن.`,
+          example: R`class Page<T> {
+  const Page(this.items, this.total);
+  final List<T> items;
+  final int total;
+
+  Page<R> map<R>(R Function(T item) convert) =>
+      Page(items.map(convert).toList(), total);
+}
+
+abstract class Entity {
+  int get id;
+}
+
+class Todo implements Entity {
+  Todo(this.id, this.title);
+  @override
+  final int id;
+  final String title;
+}
+
+T? findById<T extends Entity>(List<T> list, int id) {
+  for (final item in list) {
+    if (item.id == id) return item;
+  }
+  return null;
+}
+
+void main() {
+  final todos = [Todo(1, 'buy milk'), Todo(2, 'call mom')];
+  final page = Page(todos, 40);
+  final titles = page.map((t) => t.title.toUpperCase());
+  print('$__{titles.items} of $__{titles.total}');
+  final found = findById(todos, 2);
+  print(found?.title);
+  print(titles.runtimeType);
+}`,
+          try: "نادي [[findById([1, 2], 1)]] وشوف الـ error. وبعدين جرّب الفخ ده: [[final List<Object> objs = <String>['a']; objs.add(1);]]. هل الـ compiler مسكه؟ وإيه اللي حصل وقت التشغيل؟",
+          flag: "script",
+          deep: {
+            why: "من غير generics يا تكتب [[TodoPage]] و [[UserPage]] و [[OrderPage]] نفس الكود ٣ مرات، يا تكتب [[Page]] واحد فيه [[List<dynamic>]] وتخسر فحص الأنواع وتعمل cast في كل حتة. الـ generics بتدّيك الاتنين: كود واحد، والـ compiler عارف إن [[page.items.first]] نوعه Todo.",
+            how: R`Dart بيستنتج النوع من القيم: [[Page(todos, 40)]] بقت [[Page<Todo>]] من غير ما تكتبها، و [[page.map((t) => t.title)]] بقت [[Page<String>]] لأن الدالة بترجّع String.
+
+الـ generics في Dart «reified»: النوع بيفضل موجود وقت التشغيل، مش بيتمسح زي Java أو TypeScript. عشان كده [[titles.runtimeType]] بيطبع [[Page<String>]]، و [[x is List<int>]] بيشتغل فعلًا.
+
+الـ generics في Dart covariant: [[List<String>]] ينفع تتحط في متغير [[List<Object>]]. دا مريح، بس معناه إن فحص الـ [[add]] بيتأجل لوقت التشغيل: لو حطيت int في list هي في الحقيقة [[List<String>]] هيضرب [[type 'int' is not a subtype of type 'String']]. ودا من الحاجات القليلة اللي الـ compiler مش بيمسكها.
+
+الأماكن اللي هتشوف فيها generics في Flutter كل يوم: [[State<Counter>]]، و [[FutureBuilder<List<Todo>>]]، و [[ValueNotifier<int>]]، و [[Provider<ApiClient>]] و [[AsyncNotifier<List<Todo>>]] في Riverpod، و [[Navigator.push<bool>]] لما الشاشة ترجّع نتيجة.
+
+الـ typedef بيدّي اسم لنوع طويل: [[typedef Json = Map<String, dynamic>;]] ودي بتتكتب في معظم المشاريع.`,
+            when: "أي class أو دالة بتشيل أو بتلف على بيانات من غير ما يهمها نوعها بالظبط: رد API فيه pagination، و cache، و Result<T> فيه نجاح أو فشل، و repository أساسي. ومتعملهاش لو هتستخدم نوع واحد بس.",
+            mistakes: R`تسيب الـ generic من غير نوع ([[final list = [];]]) فيبقى [[List<dynamic>]] وتخسر الفحص كله: اكتب [[<String>[]]]. وتعمل [[as List<String>]] على list جاية من [[jsonDecode]]: هيضرب لأنها في الحقيقة [[List<dynamic>]]، والصح [[(json['tags'] as List).cast<String>()]] (درس null safety بعمق). وتكتب generics معقدة ٣ مستويات عشان «يبقى reusable» ومحدش يعرف يقرا الكود.`
+          },
+          lines: [
+            "class بـ generic اسمه T: النوع بيتحدد لما حد يستخدمه.",
+            "constructor.",
+            "لستة من T، أيًا كان T.",
+            "العدد الكلي (للـ pagination).",
+            "دالة بـ generic تاني R: بتحوّل [[Page<T>]] لـ [[Page<R>]] بدالة تحويل.",
+            "بتطبّق التحويل على كل عنصر وتحافظ على total.",
+            "قفلة.",
+            "class مجرد: أي حاجة ليها id.",
+            "getter لازم أي class يطبّقه.",
+            "قفلة.",
+            "Todo بيحقق شرط Entity.",
+            "constructor.",
+            "بيعيد تعريف getter الـ id...",
+            "...بـ field عادي.",
+            "العنوان.",
+            "قفلة.",
+            "[[T extends Entity]]: أي نوع بشرط يبقى فيه id، والنتيجة [[T?]] لأن ممكن ميلاقيش.",
+            "لف على اللستة.",
+            "[[item.id]] مسموح لأن T أكيد Entity.",
+            "قفلة الـ loop.",
+            "ملقاش.",
+            "قفلة.",
+            "البداية.",
+            "[[List<Todo>]] من القيم.",
+            "[[Page<Todo>]] من غير ما تكتب النوع.",
+            "[[Page<String>]]: R اتستنتجت من الدالة.",
+            "[BUY MILK, CALL MOM] of 40.",
+            "[[findById]] رجّعت [[Todo?]] مش Entity: الـ generic حافظ على النوع.",
+            "call mom.",
+            "Page<String>: النوع موجود وقت التشغيل.",
+            "قفلة."
+          ],
+          sol: R`الناتج: [[[BUY MILK, CALL MOM] of 40]] ثم [[call mom]] ثم [[Page<String>]].
+
+[[findById([1, 2], 1)]] مش هيترجم: [[The argument type 'List<int>' can't be assigned to the parameter type 'List<Entity>']]. الـ compiler عرف إن int مش Entity، ودا لازمة [[extends]] في الـ generic.
+
+والفخ: الـ compiler سكت خالص، لأن [[List<String>]] يعتبر [[List<Object>]] (covariance). بس وقت التشغيل ضرب: [[type 'int' is not a subtype of type 'String' of 'value']]. الـ list في الحقيقة لسه List<String> والـ runtime فحصها عند الـ add. الغلط الشائع إنك تفتكر إن النوع المكتوب على المتغير هو اللي بيتحكم، والصح إن نوع الـ object الحقيقي هو اللي بيتفحص.`
+        },
+        {
+          cmd: "mixin",
+          title: "تضيف قدرات جاهزة لكذا class من غير وراثة",
+          desc: R`الـ class في Dart بيورث من أب واحد بس ([[extends]]). إنما [[mixin]] حتة كود (fields و methods) تقدر تحطها في أي عدد classes بـ [[with]]: [[class ProductRepo extends Repository with Logger, Cache]].
+
+و [[mixin Cache on Repository]] معناها إن الـ mixin ده يتحط بس على classes بتورث Repository، فيقدر ينادي دوالها. وانت بتستخدم mixins من Flutter من أول يوم: [[with SingleTickerProviderStateMixin]] في أي animation.`,
+          example: R`mixin Logger {
+  final logs = <String>[];
+  void log(String msg) => logs.add('[$runtimeType] $msg');
+}
+
+abstract class Repository {
+  Future<List<String>> fetchAll();
+}
+
+mixin Cache on Repository {
+  List<String>? _cached;
+  Future<List<String>> cachedFetch() async => _cached ??= await fetchAll();
+}
+
+class ProductRepo extends Repository with Logger, Cache {
+  int calls = 0;
+  @override
+  Future<List<String>> fetchAll() async {
+    calls++;
+    log('network call $calls');
+    return ['tea', 'coffee'];
+  }
+}
+
+Future<void> main() async {
+  final repo = ProductRepo();
+  await repo.cachedFetch();
+  final items = await repo.cachedFetch();
+  print('$items calls=$__{repo.calls}');
+  print(repo.logs);
+  final Logger logger = repo;
+  logger.log('done');
+  print(repo.logs.length);
+}`,
+          try: "اعمل [[class Settings with Cache {}]] (من غير extends Repository) وشوف الـ error. وبعدين اعمل mixin تاني اسمه [[Timestamps]] فيه [[DateTime? updatedAt]] و [[void touch()]]، وضيفه على ProductRepo ونادي [[touch()]] جوه fetchAll.",
+          flag: "script",
+          deep: {
+            why: "فيه قدرات بتتكرر في classes ملهاش أب مشترك: logging، و cache، و validation. لو حطيتها في أب واحد، كل class لازم يورث منه حتى لو مش محتاجها، ولو عايز قدرتين من أبين مختلفين مش هينفع لأن الوراثة واحدة بس. الـ mixin بيخليك تركّب القدرات زي قطع ليجو.",
+            how: R`[[with A, B]] بيتقري من الشمال لليمين كأنه سلسلة: [[Repository]] ثم [[Repository+Logger]] ثم [[Repository+Logger+Cache]] ثم ProductRepo. ولو اتنين mixins فيهم method بنفس الاسم، اللي على اليمين (الأخير) هو اللي بيكسب، و [[super.method()]] جواه بينادي اللي قبله في السلسلة. عشان كده الترتيب مهم.
+
+[[on Repository]] بيعمل حاجتين: بيسمح للـ mixin ينادي [[fetchAll()]] كأنه موجود، وبيمنع أي حد يحطه على class مش Repository (الـ error اللي في التجربة).
+
+من Dart 3 فيه فرق واضح: [[mixin]] للـ mixins بس (مينفعش تعمل منه object)، و [[class]] عادي مينفعش يتحط بعد with إلا لو كتبته [[mixin class]]. قبل Dart 3 أي class من غير constructor كان ينفع يبقى mixin، ودا اتقفل.
+
+الفرق بين الـ ٣ كلمات:
+- [[extends]]: وراثة، أب واحد، بتاخد الكود والنوع.
+- [[implements]]: عقد، أي عدد، بتاخد النوع بس ولازم تكتب كل method بنفسك.
+- [[with]]: mixin، أي عدد، بتاخد الكود جاهز.
+
+في Flutter: [[SingleTickerProviderStateMixin]] بيضيف للـ State القدرة إنه يبقى [[vsync]] لـ AnimationController، و [[AutomaticKeepAliveClientMixin]] بيخلي عنصر في ListView ميتشالش لما يخرج من الشاشة، و [[WidgetsBindingObserver]] بيسمع لحالة التطبيق (background و foreground).`,
+            when: "قدرة صغيرة مستقلة بتتكرر في classes مختلفة. ولو العلاقة «هو نوع من» (Circle هو Shape) استخدم extends. ولو محتاج تبدّل التنفيذ في الاختبارات (repository حقيقي و fake) استخدم implements على abstract interface.",
+            mistakes: R`تعمل mixin فيه state كتير ودوال بتعتمد على بعض، فيبقى أب مستخبي بس أصعب في القراية. وتنسى إن الترتيب في with بيفرق لما فيه method بنفس الاسم. وتعمل [[with SingleTickerProviderStateMixin]] وعندك اتنين AnimationControllers: هيضرب، والصح [[TickerProviderStateMixin]]. وسؤال انترفيو: «إيه الفرق بين extends و implements و with؟» (فوق)، و«ليه Dart معندهاش multiple inheritance؟» لأن mixins بتحل المشكلة من غير diamond problem، بسبب الترتيب الخطي.`
+          },
+          lines: [
+            "[[mixin]]: حتة كود تتحط في أي class.",
+            "field جوه الـ mixin: كل class بياخد نسخة خاصة بيه.",
+            "method بتستخدم [[runtimeType]] بتاع الـ class اللي اتحطت فيه.",
+            "قفلة.",
+            "class مجرد فيه عقد واحد.",
+            "أي repository لازم يعرف يجيب البيانات.",
+            "قفلة.",
+            "[[on Repository]]: الـ mixin ده يتحط بس على Repository.",
+            "cache خاص بالـ mixin.",
+            "[[??=]]: لو الـ cache فاضي نادي fetchAll (موجودة بفضل on) وخزّن.",
+            "قفلة.",
+            "وراثة واحدة + اتنين mixins.",
+            "عدّاد للنداءات الحقيقية.",
+            "بيطبّق العقد.",
+            "الدالة الحقيقية (زي طلب شبكة).",
+            "زوّد العدّاد.",
+            "[[log]] جاية من Logger.",
+            "النتيجة.",
+            "قفلة.",
+            "قفلة الـ class.",
+            "البداية.",
+            "object.",
+            "أول مرة: بيروح للـ «شبكة».",
+            "تاني مرة: من الـ cache.",
+            "[tea, coffee] calls=1: اتنادت مرة واحدة بس.",
+            "لستة فيها سطر واحد: اسم الـ class بين أقواس مربعة ثم network call 1.",
+            "الـ mixin نوع كمان: ProductRepo يتحط في متغير Logger.",
+            "نادي من خلاله.",
+            "2.",
+            "قفلة."
+          ],
+          sol: R`الناتج: [[[tea, coffee] calls=1]] ثم لستة فيها سطر log واحد (ProductRepo بين أقواس مربعة ثم network call 1) ثم [[2]].
+
+[[class Settings with Cache {}]] مش هيترجم: [['Cache' can't be mixed onto 'Object' because 'Object' doesn't implement 'Repository']]. الـ [[on]] شرط والـ compiler بيطبّقه.
+
+الـ Timestamps: بعد ما تضيفه ([[with Logger, Cache, Timestamps]]) وتنادي [[touch()]] جوه fetchAll، [[repo.updatedAt]] هيبقى فيه وقت أول نداء، ومش هيتغير في النداء التاني لأن التاني جه من الـ cache ومعدّاش على fetchAll. لو اتغير يبقى الـ cache مش شغال.`,
+          solCode: R`mixin Timestamps {
+  DateTime? updatedAt;
+  void touch() => updatedAt = DateTime.now();
+}
+
+class ProductRepo extends Repository with Logger, Cache, Timestamps {
+  int calls = 0;
+  @override
+  Future<List<String>> fetchAll() async {
+    calls++;
+    touch();
+    log('network call $calls');
+    return ['tea', 'coffee'];
+  }
+}`
+        },
+        {
+          cmd: "extension",
+          title: "تضيف دوال لـ String أو أي نوع مش بتاعك",
+          desc: R`[[extension StringX on String]] بيضيف methods و getters لنوع موجود من غير ما تعدّل فيه ولا تورث منه: [['ali'.capitalized]] بدل [[capitalize('ali')]]. بتشتغل على أي نوع: String و num و List و DateTime و BuildContext.
+
+و [[extension type]] (من Dart 3.3) حاجة مختلفة: نوع جديد وقت الترجمة بس فوق نوع موجود. [[UserId(42)]] وقت التشغيل هو int عادي، بس الـ compiler مش هيسيبك تبعت int مكان UserId بالغلط.`,
+          example: R`extension StringX on String {
+  String get capitalized => isEmpty ? this : this[0].toUpperCase() + substring(1);
+  bool get isValidEmail => RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(this);
+}
+
+extension PriceFormat on num {
+  String get egp => '$__{toStringAsFixed(2)} EGP';
+}
+
+extension ListSum<T extends num> on Iterable<T> {
+  num get sum => fold<num>(0, (a, b) => a + b);
+}
+
+extension type UserId(int value) {
+  bool get isValid => value > 0;
+}
+
+void main() {
+  print('ali'.capitalized);
+  print('ali@mail.com'.isValidEmail);
+  print(450.egp);
+  print([10, 25, 15].sum.egp);
+  final id = UserId(42);
+  print('$__{id.value} $__{id.isValid}');
+}`,
+          try: "اعمل [[extension on DateTime]] فيها getter اسمه [[ago]] بيرجّع «من X دقيقة» أو «من X ساعة». وبعدين جرّب تبعت [[42]] لدالة parameter بتاعها [[UserId]]: الـ compiler هيقول إيه؟ وجرّب [[final dynamic s = 'ali'; print(s.capitalized);]].",
+          flag: "script",
+          deep: {
+            why: "كل مشروع فيه دوال صغيرة بتتكرر: تنسيق سعر، و validation لإيميل، و «من ٥ دقايق». لو عملتها دوال عادية هتتوه في ملف utils ومحدش هيلاقيها. الـ extension بيحطها على النوع نفسه، فالـ autocomplete بيقترحها أول ما تكتب نقطة بعد String.",
+            how: R`الـ extension مش بيعدّل الـ class فعلًا: الـ compiler بيحوّل [['ali'.capitalized]] لنداء دالة static وقت الترجمة. عشان كده:
+- بتشتغل على النوع المعروف وقت الترجمة بس. متغير [[dynamic]] مش هيشوفها وهيضرب [[NoSuchMethodError]].
+- مينفعش تضيف fields (state) جوه extension، getters و methods بس.
+- لو الـ class نفسه فيه method بنفس الاسم، بتاعة الـ class هي اللي بتكسب.
+- لازم تعمل import للملف اللي فيه الـ extension عشان تبان.
+
+[[extension ListSum<T extends num> on Iterable<T>]] extension بـ generic: بتشتغل على [[List<int>]] و [[Set<double>]] وأي Iterable أرقام.
+
+في Flutter هتلاقي extensions كتير على [[BuildContext]]: [[context.go('/home')]] في go_router و [[context.mounted]] نفسها. ومشاريع كتير بتعمل [[extension on BuildContext { ThemeData get theme => Theme.of(this); }]] عشان تكتب [[context.theme]].
+
+[[extension type UserId(int value)]]: zero-cost wrapper. وقت التشغيل مفيش object جديد، هو int. بس وقت الترجمة [[UserId]] نوع مختلف، فدالة [[deleteUser(UserId id)]] مش هتقبل [[productId]] بالغلط. و [[package:web]] كله مبني بيها عشان JS interop.`,
+            when: "دوال مساعدة صغيرة مرتبطة بنوع واحد (تنسيق، تحويل، validation). و extension type لـ ids ومبالغ من نفس النوع الأساسي عايز تمنع الخلط بينها.",
+            mistakes: R`تحط business logic كبير في extension على String، فيبقى [['...'.saveToDatabase()]]: دي مكانها class. وتعمل extension باسم مستخدم في package تانية فيحصل تعارض ([[ambiguous extension member]]): اديها اسم مميز أو استخدم [[hide]] في الـ import. وتفتكر إنها هتشتغل على dynamic.`
+          },
+          lines: [
+            "extension على String، واسمها StringX.",
+            "getter: أول حرف كابيتال. [[this]] هو النص نفسه.",
+            "getter بيتأكد من شكل الإيميل بـ regex بسيط.",
+            "قفلة.",
+            "extension على num (يعني int و double).",
+            "السعر بجنيه ورقمين عشري.",
+            "قفلة.",
+            "extension بـ generic على أي Iterable أرقام.",
+            "المجموع بـ fold.",
+            "قفلة.",
+            "[[extension type]]: نوع جديد فوق int، من غير تكلفة وقت التشغيل.",
+            "getter خاص بالنوع ده.",
+            "قفلة.",
+            "البداية.",
+            "Ali.",
+            "true.",
+            "450.00 EGP.",
+            "50.00 EGP: extensionين ورا بعض.",
+            "[[UserId]] بيتعمل زي class.",
+            "42 true.",
+            "قفلة."
+          ],
+          sol: R`الـ extension على DateTime: بتحسب [[DateTime.now().difference(this)]]، ولو أقل من ساعة ترجّع الدقايق، وإلا الساعات، وإلا الأيام. [[DateTime.now().subtract(const Duration(minutes: 5)).ago]] لازم تطبع «من 5 دقيقة».
+
+بعت [[42]] مكان [[UserId]]: [[The argument type 'int' can't be assigned to the parameter type 'UserId']]. دا الهدف من extension type. والصح [[deleteUser(UserId(42))]].
+
+والـ dynamic: بيترجم عادي، وبيضرب وقت التشغيل بـ [[NoSuchMethodError: Class 'String' has no instance getter 'capitalized']]. لأن الـ extension بتتحل وقت الترجمة من النوع المكتوب، والنوع هنا dynamic.`,
+          solCode: R`extension Ago on DateTime {
+  String get ago {
+    final diff = DateTime.now().difference(this);
+    if (diff.inMinutes < 60) return 'من $__{diff.inMinutes} دقيقة';
+    if (diff.inHours < 24) return 'من $__{diff.inHours} ساعة';
+    return 'من $__{diff.inDays} يوم';
+  }
+}
+
+void main() {
+  print(DateTime.now().subtract(const Duration(minutes: 5)).ago);
+  print(DateTime.now().subtract(const Duration(hours: 3)).ago);
+}`
+        },
+        {
+          cmd: "enhanced enum",
+          title: "enum فيه بيانات ودوال بدل switch في كل حتة",
+          desc: R`[[enum OrderStatus { pending, shipped }]] العادي قايمة أسماء. ومن Dart 2.17 الـ enum ينفع يبقى فيه fields و constructor و methods: كل حالة ليها label بالعربي ولون، و [[isFinal]] getter، و [[fromApi]] بتحوّل النص الجاي من السيرفر.
+
+وكل enum فيه جاهز: [[.name]] (الاسم كنص)، و [[.index]]، و [[values]] (كل الحالات). و [[switch]] على enum لازم يغطي كل الحالات، فلو ضفت حالة جديدة الـ compiler يوريك كل الأماكن اللي محتاجة تتعدل.`,
+          example: R`enum OrderStatus {
+  pending('في الانتظار', 0xFFFFA000),
+  shipped('اتشحن', 0xFF1976D2),
+  delivered('وصل', 0xFF388E3C),
+  cancelled('اتلغى', 0xFFD32F2F);
+
+  const OrderStatus(this.label, this.color);
+  final String label;
+  final int color;
+
+  bool get isFinal => this == delivered || this == cancelled;
+
+  static OrderStatus fromApi(String raw) =>
+      values.asNameMap()[raw] ?? OrderStatus.pending;
+}
+
+String nextStep(OrderStatus s) => switch (s) {
+  OrderStatus.pending => 'جهّز الطلب',
+  OrderStatus.shipped => 'تابع الشحنة',
+  OrderStatus.delivered || OrderStatus.cancelled => 'مفيش',
+};
+
+void main() {
+  final s = OrderStatus.fromApi('shipped');
+  print('$__{s.name} $__{s.index} $__{s.label} $__{s.isFinal}');
+  print(OrderStatus.fromApi('lost'));
+  print(nextStep(OrderStatus.cancelled));
+  print(OrderStatus.values.where((x) => !x.isFinal).map((x) => x.label).toList());
+}`,
+          try: "ضيف حالة [[returned('مرتجع', 0xFF6D4C41)]] وشغّل: الـ compiler هيقف فين؟ صلّحه. وبعدين في Flutter اعرض badge لكل حالة بـ [[Chip(label: Text(s.label), backgroundColor: Color(s.color))]].",
+          flag: "script",
+          deep: {
+            why: "الحالة (pending و shipped) بتيجي معاها بيانات: النص اللي يتعرض، واللون، وهل ينفع يتلغى. من غير enhanced enum بتكتب switch للنص في مكان، و switch للون في مكان تاني، وأول حالة جديدة تنسى تضيفها في واحد منهم. هنا كل حاجة عن الحالة في مكان واحد.",
+            how: R`كل قيمة في الـ enum object ثابت (const) بيتعمل مرة واحدة، عشان كده الـ constructor لازم [[const]] وكل الـ fields لازم [[final]]. والقيم بتتكتب الأول، وبعد آخر واحدة [[;]] مش [[,]].
+
+[[values.asNameMap()]] بترجّع [[Map<String, OrderStatus>]] من الاسم للقيمة، فـ [[['shipped']]] بترجّع القيمة أو null لو السيرفر بعت حاجة مش معروفة. وفيه كمان [[OrderStatus.values.byName('shipped')]] بس دي بترمي [[ArgumentError]] لو الاسم مش موجود، ودا مش اللي عايزه مع بيانات جاية من بره.
+
+switch على enum exhaustive: لو نسيت حالة، الـ compiler بيرفض الـ switch expression. و [[||]] في الـ pattern بيجمع أكتر من حالة في سطر.
+
+الـ enum ينفع يعمل [[implements]] و [[with]] (mixin)، بس مينفعش [[extends]] ولا تعمل منه object جديد.
+
+وخلي بالك من [[.index]]: بيتغير لو رتّبت الحالات، فمتخزّنهوش في قاعدة بيانات ولا تبعته للسيرفر. خزّن [[.name]].`,
+            when: "أي مجموعة حالات ثابتة معروفة: حالة طلب، ونوع مستخدم، وثيم، ولغة، وأنواع إشعارات. ولو الحالات بتيجي من السيرفر وممكن تزيد من غير تحديث التطبيق، خلي فيه قيمة احتياطية (زي pending أو unknown).",
+            mistakes: R`تخزّن [[.index]] في shared_preferences أو ترسله للـ API، وبعدين ترتّب القيم فكل البيانات القديمة تتقري غلط. وتستخدم [[byName]] على نص من السيرفر فيقع التطبيق أول ما الـ backend يضيف حالة. وتكتب [[default:]] أو [[_]] في switch على enum فتقفل فحص الحالات الناقصة بإيدك.`
+          },
+          lines: [
+            "enum فيه بيانات.",
+            "كل قيمة بتنادي الـ constructor: نص ولون (ARGB).",
+            "قيمة.",
+            "قيمة.",
+            "آخر قيمة وبعدها [[;]].",
+            "constructor لازم const.",
+            "field لازم final.",
+            "اللون كرقم (في Flutter: [[Color(color)]]).",
+            "getter: هل الحالة نهائية؟",
+            "دالة static بتحوّل نص السيرفر لقيمة...",
+            "...ولو مش معروف ترجع pending بدل ما تضرب.",
+            "قفلة الـ enum.",
+            "switch expression على الـ enum.",
+            "حالة.",
+            "حالة.",
+            "[[||]]: حالتين نفس النتيجة.",
+            "قفلة الـ switch.",
+            "البداية.",
+            "من نص جاي من API.",
+            "shipped 1 اتشحن false.",
+            "نص مش معروف: OrderStatus.pending.",
+            "مفيش.",
+            "[في الانتظار, اتشحن]: الحالات اللي لسه مخلصتش.",
+            "قفلة."
+          ],
+          sol: R`بعد ما تضيف [[returned]] (وتنقل الـ [[;]] لآخرها)، الـ compiler بيقف عند [[nextStep]]: [[The type 'OrderStatus' isn't exhaustively matched by the switch cases since it doesn't match the pattern 'OrderStatus.returned']]. تصلّحه بإنك تضيف [[OrderStatus.returned => 'استلم المرتجع',]] أو تضمها لسطر مفيش. ولو عايزها حالة نهائية زوّدها في [[isFinal]] كمان، ودي الحاجة اللي الـ compiler مش هيفكّرك بيها لأنها مش switch.
+
+ولو كنت كاتب [[_ => 'مفيش']] بدل الحالتين، الكود كان هيترجم عادي والحالة الجديدة كانت هتقع في «مفيش» من غير ما تاخد بالك.`
+        }
+      ]
+    },
+    {
+      t: "كل حاجة widget",
+      l: 1,
+      n: "الشاشة شجرة widgets، والـ widget وصف بيتعمل من جديد كل ما حاجة تتغير، زي component في React",
+      items: [
+        {
+          cmd: "runApp",
+          title: "أول تطبيق: شجرة widgets من main للشاشة",
+          desc: R`في Flutter كل حاجة widget: النص، والمسافة، والتوسيط، والشاشة كلها. والتطبيق شجرة: widget جوه widget. [[runApp]] بياخد الـ widget اللي فوق خالص ويخليه يملى الشاشة.
+
+الشكل المعتاد: [[MaterialApp]] (الثيم والتنقل)، وجواه [[Scaffold]] (هيكل الشاشة: appBar و body و زرار عايم)، وجواه المحتوى. زي JSX بالظبط، بس بـ constructors بدل tags.`,
+          example: R`import 'package:flutter/material.dart';
+
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('My first app')),
+        body: const Center(child: Text('Hello Flutter')),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => debugPrint('tapped'),
+          child: const Icon(Icons.add),
+        ),
+      ),
+    ),
+  );
+}`,
+          try: "امسح محتوى [[lib/main.dart]] وحط المثال ده، وشغّل. بعدين شيل الـ [[Scaffold]] وخلي [[home: const Text('Hello')]] بس، وشوف شكل النص.",
+          flag: "script",
+          deep: {
+            why: "في Android أو iOS القديم فيه XML للشكل وكود منفصل للسلوك، ولازم تعدّل الشاشة بإيدك ([[textView.setText]]). Flutter زي React: بتوصف الشاشة لازم تبان إزاي حسب البيانات، و Flutter يتصرف.",
+            how: R`الـ widget في Flutter object خفيف immutable: وصف للشكل، مش الحاجة المرسومة نفسها. بيتعمل ويترمي آلاف المرات في الثانية من غير مشكلة، زي React elements.
+
+Flutter مبيستخدمش أزرار أو نصوص النظام (مش زي React Native اللي بيحوّل لـ views native). هو بيرسم كل بكسل بنفسه بمحرك الرسم Impeller. عشان كده الشكل واحد بالظبط على Android و iOS، وعشان كده الـ layout كله widgets: [[Center]] و [[Padding]] و [[Row]]، مش properties على العنصر زي CSS.
+
+الـ widgets نوعين: فيه اللي بيرسم أو بيرتّب فعلًا (RichText و Padding و Row، ليهم RenderObject)، وفيه اللي بيجمّع widgets تانية (Text و Scaffold و MaterialApp وأي حاجة هتكتبها؛ Text مثلًا جواه RichText). والتطبيق كله بيبقى شجرة كبيرة، و Flutter بيحوّلها لشجرة elements ثم render objects (سؤال انترفيو في آخر التاب).
+
+[[MaterialApp]] بيحط فوق الشجرة حاجات كتير: Theme و Navigator و Localizations و MediaQuery. أي widget تحته بيوصلها بـ [[Theme.of(context)]] وأخواتها. وفيه [[CupertinoApp]] لشكل iOS، بس معظم التطبيقات Material وبتظبط الشكل بالثيم.
+
+وخلي بالك من الـ trailing commas: من Dart 3.7 الـ [[dart format]] هو اللي بيقرر يكسّر الشجرة سطور حسب طول السطر، وبيضيف أو يشيل الفاصلة الأخيرة بنفسه، فمتتعبش نفسك فيها. ولو عايز السلوك القديم (الفاصلة تجبره يكسّر)، حط [[trailing_commas: preserve]] تحت [[formatter:]] في [[analysis_options.yaml]].`,
+            when: "كل تطبيق. MaterialApp مرة واحدة فوق خالص، و Scaffold لكل شاشة.",
+            mistakes: R`تحط [[MaterialApp]] جوه كل شاشة: كده كل شاشة ليها Navigator وثيم منفصل، والتنقل والثيم يبوظوا. واحد بس فوق. وتنسى الـ Scaffold فالنص يطلع أحمر وتحته خطين أصفر: دا معناه مفيش Material فوقه يدّيله style.`
+          },
+          lines: [
+            "مكتبة Material: فيها كل الـ widgets الجاهزة.",
+            "نقطة البداية.",
+            "اعرض الـ widget ده على الشاشة كلها.",
+            "الـ root: بيدّي ثيم وتنقل ولغة لكل اللي تحته.",
+            "[[home]]: أول شاشة. و Scaffold هيكل شاشة Material.",
+            "الشريط اللي فوق وفيه العنوان.",
+            "المحتوى: نص في النص بالظبط.",
+            "زرار عايم تحت في الركن.",
+            "الدالة اللي تتنفذ لما تدوس. [[debugPrint]] بيطبع في الترمنال.",
+            "الأيقونة جوه الزرار.",
+            "قفلة الزرار.",
+            "قفلة الـ Scaffold.",
+            "قفلة الـ MaterialApp.",
+            "قفلة runApp.",
+            "قفلة main."
+          ],
+          sol: R`المثال زي ما هو: شريط فوق مكتوب فيه [[My first app]]، و [[Hello Flutter]] في نص الشاشة بالظبط، وزرار + تحت في الركن. لما تدوس عليه الترمنال اللي فيه [[flutter run]] يطبع [[tapped]] (مش على الشاشة).
+
+لما تخلي [[home: const Text('Hello')]] بس: كلمة Hello بتظهر لازقة في الركن اللي فوق خالص (ممكن تحت الـ status bar بتاع الموبايل)، بلون أحمر وتحتها خطين أصفر. دا مش error بيوقّف التطبيق، دا الـ style الاحتياطي اللي Flutter بيحطه لأي نص مفيش فوقه Material (Scaffold أو Material widget) عشان يلفت نظرك. ومفيش خلفية بيضا كمان، لأن الـ Scaffold هو اللي كان بيرسمها.
+
+الغلط الشائع إنك تصلّح الشكل ده بإنك تحط [[TextStyle(color: ..., decoration: TextDecoration.none)]] على النص. الحل الصح إنك ترجّع الـ Scaffold (أو تلف المحتوى في [[Material]])، فالنص ياخد الخط والألوان من الثيم.`
+        },
+        {
+          cmd: "StatelessWidget",
+          title: "widget بتاعك بياخد بيانات ويرسمها ومفيش حاجة جواه بتتغير",
+          desc: R`لما الشجرة تكبر بتقسّمها لـ widgets بتاعتك. [[StatelessWidget]] class فيه دالة [[build]] بترجّع شجرة widgets، والبيانات بتيجي من الـ constructor. زي function component في React من غير state، والـ fields هي الـ props.
+
+كل الـ fields لازم [[final]]: الـ widget مبيتغيرش، ولو البيانات اتغيرت الأب بيعمل widget جديد بالقيم الجديدة.`,
+          example: R`import 'package:flutter/material.dart';
+
+class ProductTile extends StatelessWidget {
+  const ProductTile({super.key, required this.name, required this.price, this.onTap});
+
+  final String name;
+  final double price;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(name),
+      subtitle: Text('$__{price.toStringAsFixed(2)} EGP'),
+      onTap: onTap,
+    );
+  }
+}`,
+          try: R`استخدمه في body: [[Column(children: [ProductTile(name: 'Tea', price: 10, onTap: () => debugPrint('tea')), const ProductTile(name: 'Coffee', price: 25)])]]. لاحظ إن التاني ينفع const والأول لأ (بسبب الدالة).`,
+          flag: "script",
+          deep: {
+            why: "لو كتبت الشاشة كلها في build واحدة هتبقى ٣٠٠ سطر متداخلين. الـ widgets الصغيرة بتتقرا، وتتعاد في أكتر من مكان، وكمان أسرع: Flutter بيقدر يتخطى rebuild لـ widget مبيتغيرش.",
+            how: R`[[build]] بتتنادى كل مرة Flutter محتاج يعرف شكل الـ widget: أول مرة يتحط في الشجرة، ولما الأب يعيد البناء ويبعت widget جديد، ولما حاجة الـ widget معتمد عليها تتغير (زي [[Theme.of(context)]] أو [[MediaQuery]]). ممكن تتنادى ٦٠ مرة في الثانية أثناء animation، فلازم تبقى سريعة ومن غير side effects: متعملش فيها طلب API ولا تكتب في ملف.
+
+[[super.key]] اختصار لإنك تاخد [[Key? key]] وتبعته للأب. الـ key بيساعد Flutter يعرف مين مين لما widgets من نفس النوع تتحرك (درس ValueKey في المستوى ٣).
+
+[[const]] constructor: لو كل الـ arguments ثابتة، اللي بيستخدمه يكتب [[const ProductTile(name: 'Tea', price: 10)]] والـ object يتعمل مرة واحدة بس. ولما الأب يعيد البناء، Flutter بيلاقي نفس الـ object بالظبط فبيتخطاه كله.
+
+[[BuildContext]] هو مكان الـ widget في الشجرة. من خلاله بتوصل للحاجات اللي فوقك: الثيم، وحجم الشاشة، والـ Navigator.
+
+المقارنة بـ React: [[function ProductTile({ name, price, onTap })]] بترجّع JSX. هنا class و build، والـ props fields final. وليه class مش دالة؟ عشان Flutter بيقارن نوع الـ widget ومكانه، وبيقدر يعمله const، ودا أسهل بالـ classes.`,
+            when: "أي جزء في الشاشة بيعرض بيانات جاية من بره ومفيش حاجة جواه بتتغير لوحدها: كارت منتج، هيدر، زرار مخصوص، صف في لستة.",
+            mistakes: R`تقسّم الشاشة لدوال زي [[Widget _buildHeader()]] بدل widgets: الدالة بتتنفذ مع كل rebuild للأب ومبتقدرش تبقى const ولا ليها context خاص بيها، و docs Flutter نفسها بتفضّل الـ widget. وتحط field مش final في StatelessWidget وتغيّره وتستنى الشاشة تتحدث: مش هتتحدث، دا مكانه StatefulWidget.`
+          },
+          lines: [
+            "مكتبة Material.",
+            "widget بتاعك: class بيورث StatelessWidget.",
+            "constructor [[const]] بـ named parameters، و [[super.key]] بيبعت الـ key للأب.",
+            "البيانات: final كلها.",
+            "السعر.",
+            "دالة الضغط، ممكن متتبعتش ([[VoidCallback]] = دالة من غير arguments ولا return).",
+            "بتعيد تعريف build من الأب.",
+            "build بتاخد context وبترجّع الشكل.",
+            "ListTile: سطر جاهز فيه عنوان وتحته عنوان فرعي.",
+            "العنوان.",
+            "السعر برقمين بعد العلامة.",
+            "وصّل الضغط للي بعت الدالة (زي onClick في props).",
+            "قفلة ListTile.",
+            "قفلة build.",
+            "قفلة الـ class."
+          ],
+          sol: R`هتشوف سطرين تحت بعض: [[Tea]] وتحته [[10.00 EGP]]، و [[Coffee]] وتحته [[25.00 EGP]] (السعر برقمين بعد العلامة حتى لو بعته 10 بس، بسبب [[toStringAsFixed(2)]]). لما تدوس على Tea الترمنال يطبع [[tea]] وفيه تأثير ضغط، و Coffee مش بيعمل حاجة ولا حتى تأثير ضغط، لأن onTap بتاعها null.
+
+ولو حاولت تكتب [[const]] قدام Tea: [[Invalid constant value]] على الـ [[() => debugPrint('tea')]]. الـ closure بيتعمل وقت التشغيل، فمستحيل الـ widget كله يبقى const. Coffee كل قيمه ثابتة (نص ورقم) فـ const تمام.
+
+وملحوظة: [[price: 10]] من غير [[.0]] بيترجم عادي مع إن النوع double، لأن Dart بيحوّل الرقم الصحيح المكتوب في الكود لـ double لوحده.`
+        },
+        {
+          cmd: "setState",
+          title: "شاشة بتتغير لما المستخدم يدوس",
+          desc: R`لما حاجة جوه الـ widget نفسه بتتغير (عدّاد، checkbox، تاب مختار)، بتستخدم [[StatefulWidget]]. هو class صغير بيعمل [[State]]، والـ State هو اللي فيه المتغيرات و build.
+
+وعشان الشاشة تتحدث، بتغيّر المتغير جوه [[setState(() { ... })]]. دي بتقول لـ Flutter «الـ state اتغيرت، ابني الـ widget ده تاني». زي [[setCount]] في [[useState]]، بس هنا بتعدّل المتغير بنفسك جوه الدالة.`,
+          example: R`import 'package:flutter/material.dart';
+
+class Counter extends StatefulWidget {
+  const Counter({super.key, this.start = 0});
+  final int start;
+  @override
+  State<Counter> createState() => _CounterState();
+}
+
+class _CounterState extends State<Counter> {
+  late int _count = widget.start;
+  @override
+  Widget build(BuildContext context) => TextButton(
+        onPressed: () => setState(() => _count++),
+        child: Text('Tapped $_count times'),
+      );
+}`,
+          try: "شيل [[setState]] وخلي [[onPressed: () => _count++]] ودوس كام مرة: الرقم مش بيتغير. اعمل hot reload: فجأة يظهر الرقم الصح. دا معناه إن المتغير اتغير بس محدش قال لـ Flutter يرسم.",
+          flag: "script",
+          deep: {
+            why: "الـ widget نفسه immutable، يعني مينفعش يغيّر نفسه. فالـ state اللي بتعيش أطول من widget واحد لازم تتحط في حتة تانية: الـ State object، اللي Flutter بيحتفظ بيه بين كل rebuild والتاني.",
+            how: R`ليه classين؟ الـ [[Counter]] widget بيتعمل من جديد كل ما الأب يعيد البناء (ممكن كل frame). لو الـ count جواه كان هيرجع للصفر كل مرة. فـ Flutter بيعمل الـ [[_CounterState]] مرة واحدة ويربطه بمكان الـ widget في الشجرة (الـ element)، ولما widget جديد من نفس النوع ييجي في نفس المكان، بيحدّث [[widget]] جوه الـ State ويسيب المتغيرات زي ما هي.
+
+[[setState]] مش بيعيد البناء على طول. بيعلّم الـ element إنه dirty، وفي الـ frame الجاي Flutter بيعيد build لكل الـ dirty elements مرة واحدة. فلو ناديت setState ٥ مرات ورا بعض، build بيحصل مرة.
+
+الـ callback بتاع setState لازم يبقى sync ويغيّر الـ state بس. ينفع تغيّر المتغير قبلها وتنادي [[setState(() {})]] فاضية وهتشتغل، بس اكتب التغيير جواها عشان اللي يقرا يعرف إيه اللي اتغير.
+
+الـ rebuild بيشمل الـ widget ده وكل اللي تحته، مش الشاشة كلها. عشان كده حط الـ state في أصغر widget محتاجها.
+
+والفرق عن React: [[useState]] بيرجّع قيمة جديدة ومبتعدّلش القديمة. هنا بتعدّل الـ field نفسه ([[_count++]]) والـ setState بتقول «ابني تاني» بس. فلو عندك list، [[_items.add(x)]] جوه setState تمام، مش لازم list جديدة.`,
+            when: "state محلية تخص widget واحد: حقل مفتوح ولا مقفول، التاب المختار، قيمة slider، animation. لو أكتر من شاشة محتاجة نفس البيانات، ارفعها لفوق أو استخدم Riverpod (المستوى ٢).",
+            mistakes: R`تغيّر المتغير من غير setState فالشاشة متتحدثش، وتلاقيها اتحدثت فجأة بعد hot reload. وتنادي setState بعد await والشاشة اتقفلت، فيضرب [[setState() called after dispose()]]: اسأل [[if (!mounted) return;]] قبلها. وتحط async جوه setState ([[setState(() async {...})]]): Flutter بيرفضها، اعمل await الأول وبعدين setState بالنتيجة.`
+          },
+          lines: [
+            "مكتبة Material.",
+            "الجزء الثابت: StatefulWidget، وفيه الإعدادات اللي جاية من بره بس.",
+            "constructor، و start ليها قيمة افتراضية.",
+            "قيمة البداية (زي prop).",
+            "بتعيد تعريف دالة من الأب.",
+            "بيعمل الـ State. Flutter بيناديها مرة لما الـ widget يدخل الشجرة.",
+            "قفلة.",
+            "الـ State: هنا المتغيرات اللي بتتغير، و [[_]] عشان محدش بره الملف يحتاجها.",
+            "[[widget.start]] بيقرا الـ props. و [[late]] عشان [[widget]] مش متاح غير بعد الإنشاء.",
+            "بتعيد تعريف build.",
+            "build هنا في الـ State مش في الـ widget.",
+            "غيّر المتغير جوه setState، فـ Flutter يعيد build.",
+            "النص بالقيمة الحالية.",
+            "قفلة الزرار.",
+            "قفلة الـ State."
+          ],
+          sol: R`مع [[setState]]: كل ضغطة النص يزيد [[Tapped 1 times]] ثم [[Tapped 2 times]]. من غيرها: دوس ٣ مرات والشاشة لسه [[Tapped 0 times]]، ومفيش أي error ولا warning. واعمل hot reload (r): الشاشة تقول [[Tapped 3 times]] مرة واحدة. (جرّبت ده في widget test: قبل الـ reload الـ Text كان 0، وبعد reassemble بقى 3.)
+
+التفسير: [[_count++]] اشتغلت فعلًا ٣ مرات والـ field فيه 3، بس محدش علّم الـ element إنه dirty، فـ build متنادتش. الـ hot reload بيعمل rebuild للشجرة كلها، فـ build اتنادت وقرت القيمة الحالية. ودا بيثبت إن الـ State فاضلة بعد reload.
+
+الغلط الشائع في التفسير: «الضغط مش شغال» أو «المتغير مش بيتغير». الاتنين غلط: المتغير بيتغير، اللي ناقص هو طلب إعادة الرسم. ونفس العَرَض هتشوفه لما تعدّل list أو object جوه State من غير setState.`
+        },
+        {
+          cmd: "initState و dispose",
+          title: "كود يشتغل مرة لما الشاشة تفتح ومرة لما تتقفل",
+          desc: R`[[initState]] بيتنادى مرة واحدة لما الـ State يتعمل، قبل أول build: هنا تعمل controllers، وتبدأ تحميل البيانات، وتعمل listen. و [[dispose]] بيتنادى مرة لما الـ widget يتشال من الشجرة نهائيًا: هنا تقفل كل اللي فتحته.
+
+زي [[useEffect]] بـ dependency array فاضية ومعاه cleanup في React، بس متقسّم على دالتين واضحين. وفيه [[didUpdateWidget]] لما الأب يبعت props جديدة.`,
+          example: R`// imports: dart:async و material. و Clock نفسه StatefulWidget عادي زي Counter.
+class _ClockState extends State<Clock> {
+  late final Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Text(DateTime.now().toString().substring(11, 19));
+}`,
+          try: "حط الساعة في شاشة تانية بتفتحها بـ Navigator، وضيف [[debugPrint('tick')]] جوه الـ timer. ارجع من الشاشة: الـ tick وقف. امسح [[_timer.cancel()]] وجرّب تاني: الـ tick شغال والشاشة مقفولة، ومعاه error.",
+          flag: "script",
+          deep: {
+            why: "فيه حاجات لازم تتعمل مرة واحدة مش مع كل build: تبدأ timer، تفتح اتصال، تعمل controller، تطلب بيانات. ولو فتحتها لازم تقفلها لما الشاشة تمشي، وإلا هتفضل شغالة في الخلفية تاكل بطارية وذاكرة وتنادي setState على شاشة مش موجودة.",
+            how: R`دورة حياة الـ State بالترتيب:
+- [[createState]]: الـ widget بيعمل الـ State.
+- [[initState]]: مرة واحدة. و [[mounted]] بقت true. و [[context]] موجود، بس متستخدموش في حاجات بتعتمد على inherited widgets (زي Theme و MediaQuery)، ودي مكانها didChangeDependencies أو build.
+- [[didChangeDependencies]]: بعد initState، وكل ما inherited widget انت معتمد عليه يتغير.
+- [[build]]: كتير.
+- [[didUpdateWidget(oldWidget)]]: الأب بعت widget جديد من نفس النوع في نفس المكان. هنا تقارن [[oldWidget.userId != widget.userId]] وتعيد التحميل لو لازم.
+- [[deactivate]] ثم [[dispose]]: الـ widget اتشال. بعد dispose [[mounted]] بقت false، وأي setState هيضرب.
+
+ترتيب [[super]]: في initState نادي [[super.initState()]] الأول، وفي dispose [[super.dispose()]] في الآخر. زي ما بتبني من الأساس وتهد من فوق.
+
+الحاجات اللي لازم تتقفل في dispose: [[Timer]]، و [[StreamSubscription]]، و [[TextEditingController]] و [[ScrollController]] و [[AnimationController]] و [[FocusNode]]، وأي listener ضفته بـ [[addListener]].
+
+initState مينفعش تبقى async (Flutter بيرمي error لو رجّعت Future). ابدأ العملية جواها من غير [[await]] وخزّن الـ Future في متغير (درس FutureBuilder في المستوى ٢).`,
+            when: "أي controller، أو timer، أو subscription، أو تحميل بيانات أول ما الشاشة تفتح.",
+            mistakes: R`تكتب [[void initState() async]]. وتنسى dispose لـ controller فيبقى memory leak. وتعمل الـ controller جوه build: كل rebuild يعمل واحد جديد والنص اللي المستخدم كتبه يروح. وتستخدم [[Theme.of(context)]] جوه initState فيطلع error، حطه في build.`
+          },
+          lines: [
+            "الـ State بتاع widget اسمه Clock.",
+            "الـ timer هيتعمل في initState، فـ [[late]].",
+            "بتعيد تعريف دالة من الأب.",
+            "مرة واحدة لما الـ State يتعمل.",
+            "لازم الأول.",
+            "ابدأ timer كل ثانية يعمل rebuild.",
+            "قفلة initState.",
+            "بتعيد تعريف دالة من الأب.",
+            "مرة واحدة لما الـ widget يتشال نهائيًا.",
+            "اقفل الـ timer. من غير السطر ده هيفضل شغال بعد ما الشاشة تتقفل.",
+            "لازم في الآخر.",
+            "قفلة dispose.",
+            "بتعيد تعريف build.",
+            "الساعة دلوقتي بالشكل HH:mm:ss.",
+            "قفلة."
+          ],
+          sol: R`وانت في شاشة الساعة الترمنال يطبع [[tick]] كل ثانية. لما ترجع، الـ tick بيقف (ممكن tick واحد زيادة أثناء animation الرجوع، لأن الشاشة لسه في الشجرة لحد ما الـ animation يخلص). دا dispose اشتغل و [[cancel]] وقّف الـ timer.
+
+من غير [[_timer.cancel()]]: بعد ما ترجع الـ tick مكمّل كل ثانية، ومع كل واحد error في الترمنال: [[setState() called after dispose(): _ClockState#... (lifecycle state: defunct, not mounted)]]، ومعاها شرح إن الحل تلغي الـ timer في dispose أو تسأل [[mounted]]، وإن دا ممكن يكون memory leak. الـ timer ماسك reference للـ State فمش هيتمسح من الذاكرة، ولو فتحت الشاشة ٥ مرات هيبقى عندك ٥ timers شغالين.
+
+الغلط الشائع إنك تحل الـ error بـ [[if (mounted) setState(...)]] جوه الـ timer وتسيب الـ cancel: الـ error اختفى بس الـ timer لسه شغال في الخلفية للأبد. mounted مكانها بعد await، إنما أي حاجة انت فتحتها (timer، subscription، controller) مكان قفلها dispose.`,
+          solCode: R`import 'dart:async';
+import 'package:flutter/material.dart';
+
+void main() => runApp(MaterialApp(home: Builder(
+      builder: (context) => Scaffold(
+        body: Center(
+          child: FilledButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => Scaffold(appBar: AppBar(), body: const Center(child: Clock()))),
+            ),
+            child: const Text('open clock'),
+          ),
+        ),
+      ),
+    )));
+
+class Clock extends StatefulWidget {
+  const Clock({super.key});
+  @override
+  State<Clock> createState() => _ClockState();
+}
+
+class _ClockState extends State<Clock> {
+  late final Timer _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      debugPrint('tick');
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // امسح السطر ده عشان تشوف الـ error
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Text(DateTime.now().toString().substring(11, 19));
+}`
+        }
+      ]
+    },
+    {
+      t: "الـ layout",
+      l: 1,
+      n: "مفيش CSS: المسافات والترتيب والتوسيط كلها widgets، والقاعدة: الحدود بتنزل والأحجام بتطلع",
+      items: [
+        {
+          cmd: "Row و Column",
+          title: "رص العناصر جنب بعض أو تحت بعض",
+          desc: R`[[Column]] بيرص الـ children تحت بعض، و [[Row]] جنب بعض. زي flexbox بـ [[flex-direction: column]] و [[row]].
+
+[[mainAxisAlignment]] الترتيب على الاتجاه الأساسي (زي justify-content)، و [[crossAxisAlignment]] على الاتجاه التاني (زي align-items). و [[spacing]] مسافة ثابتة بين العناصر (زي gap).`,
+          example: R`// في body بتاع Scaffold:
+Row(
+  spacing: 12,
+  children: [
+    const CircleAvatar(radius: 28, child: Icon(Icons.person)),
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: const [Text('Ali Hassan'), Text('Flutter developer')],
+    ),
+    const Spacer(),
+    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+  ],
+)`,
+          try: "غيّر [[crossAxisAlignment]] لـ [[center]] وبعدين [[end]] وشوف النصين بيتحركوا إزاي. وشيل الـ [[Spacer]] وحط [[mainAxisAlignment: MainAxisAlignment.spaceBetween]] على الـ Row.",
+          flag: "script",
+          deep: {
+            why: "كل شاشة عبارة عن صفوف وأعمدة جوه بعض: هيدر فيه صورة واسم، وكارت فيه عنوان وسعر، وفورم حقول تحت بعض. Row و Column هم الـ flexbox بتاع Flutter، وهتكتبهم في كل ملف.",
+            how: R`قاعدة الـ layout في Flutter: «constraints go down, sizes go up, parent sets position». الأب بيقول للابن «عرضك من كذا لكذا»، والابن بيختار حجمه جوه الحدود دي ويرجّعه، والأب يقرر مكانه.
+
+Column بيدّي كل ابن ارتفاع غير محدود (unbounded) على الاتجاه الأساسي، ويقيسهم واحد واحد، وبعدين يوزعهم حسب [[mainAxisAlignment]]: [[start]] و [[center]] و [[end]] و [[spaceBetween]] و [[spaceAround]] و [[spaceEvenly]]. و [[crossAxisAlignment]] على العرض: [[start]] و [[center]] و [[stretch]] (يمط الابن على العرض كله).
+
+[[mainAxisSize]]: الافتراضي [[max]] يعني Column بياخد كل الارتفاع المتاح. [[min]] ياخد على قد العيال بس، ودا المهم لما Column جوه Row أو جوه Dialog.
+
+الاتجاهات بتفهم RTL: [[start]] في العربي يعني اليمين. عشان كده استخدم start و end مش left و right.
+
+ومن Dart 3.10 تقدر تختصر: [[mainAxisAlignment: .center]] بدل [[MainAxisAlignment.center]] (dot shorthands)، لأن النوع معروف من الـ parameter.`,
+            when: "دايمًا. Row لحاجات جنب بعض (أيقونة ونص، أزرار)، و Column لحاجات تحت بعض (فورم، كارت). ولو المحتوى أطول من الشاشة: ListView مش Column.",
+            mistakes: R`نص طويل في Row فيطلع الشريط الأصفر والأسود و [[A RenderFlex overflowed by 42 pixels on the right]]: الـ Row مدّي النص عرض غير محدود، فالنص مش عارف يلف. الحل تحطه في [[Expanded]] (الدرس الجاي). و Column فيه عناصر أطول من الشاشة: نفس الـ overflow تحت، والحل ListView أو [[SingleChildScrollView]].`
+          },
+          lines: [
+            "صف: العناصر جنب بعض (في RTL بيبدأ من اليمين).",
+            "١٢ بين كل عنصر والتاني.",
+            "العناصر.",
+            "صورة دايرية، وجواها أيقونة لحد ما يبقى فيه صورة.",
+            "عمود جوه الصف: الاسم وتحته الوصف.",
+            "رصّهم من أول السطر (start) بدل التوسيط.",
+            "العمود ياخد أقل ارتفاع محتاجه بس.",
+            "النصين.",
+            "قفلة العمود.",
+            "[[Spacer]] ياخد كل المساحة الفاضية، فيزق اللي بعده للآخر.",
+            "زرار أيقونة في آخر الصف.",
+            "قفلة الـ children.",
+            "قفلة الصف."
+          ],
+          sol: R`[[crossAxisAlignment]] هنا بيحرّك النصين بالنسبة لبعض، مش بالنسبة للشاشة. [[Flutter developer]] أطول، فهو اللي بيحدد عرض الـ Column ومش بيتحرك خالص. اللي بيتحرك [[Ali Hassan]]: مع [[start]] بدايته على بداية التاني، ومع [[center]] بيبقى في نص عرض التاني، ومع [[end]] آخره على آخر التاني. (قست ده في widget test: [[Ali Hassan]] اتنقل مسافة متساوية مع كل خطوة، و [[Flutter developer]] فضل مكانه.) لو الاسم كان أطول من الوصف كان الوصف هو اللي هيتحرك.
+
+ولما تشيل الـ Spacer وتحط [[spaceBetween]]: الصورة في الأول والقلم في الآخر زي ما هم، بس الاسم والوصف راحوا في نص الصف بدل ما يفضلوا لازقين في الصورة. لأن spaceBetween بيوزّع المساحة الفاضية بالتساوي بين كل عنصرين، مش بيحطها كلها قبل آخر عنصر. دا الفرق بين Spacer (المساحة كلها في مكان واحد انت اخترته) و spaceBetween (مقسومة على كل الفواصل).
+
+ولو سبت الـ Spacer وحطيت spaceBetween كمان، مش هتلاقي أي فرق: Spacer أكل المساحة الفاضية كلها، فمفيش حاجة فاضلة يوزّعها spaceBetween.`
+        },
+        {
+          cmd: "Expanded",
+          title: "عنصر ياخد المساحة الفاضية كلها أو نسبة منها",
+          desc: R`جوه Row أو Column، [[Expanded]] بيخلي الابن ياخد كل المساحة الفاضية على الاتجاه الأساسي. ولو أكتر من واحد، [[flex]] بيقسم بينهم بالنسبة: flex 3 و flex 1 يعني ٣ أرباع وربع. زي [[flex: 1]] في CSS.
+
+و [[Flexible]] نفس الفكرة بس الابن مش مجبر يملى نصيبه: ياخد على قده لحد الحد ده.`,
+          example: R`Row(
+  children: [
+    const Icon(Icons.description),
+    const Expanded(
+      flex: 3,
+      child: Text('a_very_long_file_name_that_would_overflow.pdf', overflow: TextOverflow.ellipsis),
+    ),
+    Expanded(
+      child: FilledButton(onPressed: () {}, child: const Text('Open')),
+    ),
+  ],
+)`,
+          try: "شيل الـ Expanded من حوالين النص وشوف الشريط الأصفر والأسود. وبعدين غيّر flex لـ 1 وشوف الزرار والنص بياخدوا قد إيه.",
+          flag: "script",
+          deep: {
+            why: "أشهر error في Flutter للمبتدئين هو الشريط الأصفر والأسود بتاع overflow، وغالبًا سببه نص أو صورة في Row من غير Expanded. وأي تقسيم بالنسبة (قايمة جانبية وتلتين محتوى) بيتعمل بيه.",
+            how: R`Row بيعمل layout على مرحلتين. الأول يقيس العيال اللي مش flex (الأيقونة والأزرار العادية) ويدّيهم عرض غير محدود، فكل واحد ياخد عرضه الطبيعي. بعدين ياخد المساحة اللي فضلت ويقسمها على الـ Expanded و Flexible حسب الـ flex، ويدّي كل واحد حد محدود.
+
+عشان كده نص من غير Expanded بياخد عرض غير محدود: مش عارف إن الشاشة خلصت، فبيطلب عرض النص كله في سطر واحد ويعمل overflow. جوه Expanded بياخد عرض محدد، فيلف لسطور أو يعمل ellipsis.
+
+[[Expanded]] هو في الحقيقة [[Flexible(fit: FlexFit.tight)]]: الابن لازم يملى نصيبه. و [[Flexible]] العادي [[FlexFit.loose]]: الابن ياخد لحد نصيبه، ولو محتاج أقل ياخد أقل.
+
+[[Spacer]] هو Expanded فاضي، بيزق اللي بعده.
+
+والـ Expanded لازم يبقى ابن مباشر لـ Row أو Column أو Flex. لو حطيته جوه Padding جوه Row، هيطلع error [[Incorrect use of ParentDataWidget]]. الصح: Expanded بره والـ Padding جواه.`,
+            when: "نص ممكن يطول في صف. تقسيم نسب (٢:١). عنصر يملى الباقي من الشاشة في Column (زي ListView تحت هيدر).",
+            mistakes: R`ListView جوه Column من غير Expanded: الـ ListView عايز ارتفاع محدود والـ Column بيدّيه غير محدود، فيطلع [[Vertical viewport was given unbounded height]]. حطه في Expanded. و Expanded جوه حاجة مش Row ولا Column. و Expanded جوه Row جوه SingleChildScrollView أفقي: مفيش «مساحة فاضية» أصلًا لأن العرض غير محدود، فيضرب.`
+          },
+          lines: [
+            "صف.",
+            "العناصر.",
+            "أيقونة بحجمها الطبيعي.",
+            "النص ياخد من المساحة الفاضية...",
+            "...٣ أجزاء من ٤.",
+            "ومعاه عرض محدود، فيقدر يقص نفسه ويحط ... في الآخر.",
+            "قفلة.",
+            "الزرار ياخد الجزء الرابع (flex الافتراضي 1)...",
+            "...ويتمط على عرض نصيبه.",
+            "قفلة.",
+            "قفلة الـ children.",
+            "قفلة الصف."
+          ],
+          sol: R`لما تشيل الـ Expanded من حوالين النص: شريط أصفر وأسود مخطط على الحافة اليمين (أو الشمال في RTL)، ومكتوب عليه الرقم، وفي الترمنال رسالة زي [[A RenderFlex overflowed by 254 pixels on the right.]] (الرقم ده من widget test، وعندك هيختلف حسب عرض الشاشة والخط). لاحظ إن [[TextOverflow.ellipsis]] مبقاش بيعمل حاجة: النص خد عرض غير محدود، فشايف إن فيه مكان لكل الحروف ومش محتاج يقص. والزرار اختفى: الـ Expanded بتاعه خد عرض صفر، لأن مفيش مساحة فاضلة أصلًا يتقسم عليها.
+
+ولما ترجّع الـ Expanded وتخلي flex بتاع النص 1: النص والزرار بياخدوا نفس العرض بالظبط (نص المساحة بعد الأيقونة لكل واحد؛ على شاشة عرضها 411 كانوا 193.7 و 193.7). ومع flex 3 كانوا 290.6 للنص و 96.9 للزرار، يعني ٣ لـ ١ بالظبط. الأيقونة مش داخلة في القسمة لأنها اتقاست الأول بحجمها الطبيعي.
+
+الغلط الشائع إنك تحل الـ overflow بإنك تحط [[width]] ثابت أو تصغّر الخط: هيشتغل على موبايلك ويبوظ على شاشة أصغر. Expanded (أو Flexible) هو الحل لأنه بيدّي النص «الباقي» مهما كان.`
+        },
+        {
+          cmd: "Container و Padding",
+          title: "مسافات وخلفية وحدود وحجم ثابت حوالين أي عنصر",
+          desc: R`[[Padding]] مسافة جوه حوالين الابن. و [[SizedBox]] حجم ثابت أو مسافة فاضية بين عنصرين ([[SizedBox(height: 16)]]). و [[Container]] الـ div بتاع Flutter: padding و margin ولون وحدود وزوايا مدورة وحجم في widget واحد.
+
+القاعدة: لو محتاج حاجة واحدة استخدم الـ widget بتاعها (Padding أو SizedBox أو ColoredBox). و Container لما تحتاج كذا حاجة مع بعض.`,
+          example: R`Container(
+  width: double.infinity,
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+  padding: const EdgeInsets.all(16),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+    border: Border.all(color: Colors.black12),
+    boxShadow: const [BoxShadow(blurRadius: 8, color: Colors.black26)],
+  ),
+  child: const Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [Text('Order #1042'), SizedBox(height: 8), Text('3 items, 450 EGP')],
+  ),
+)`,
+          try: "ضيف [[color: Colors.red]] على الـ Container نفسه (جنب decoration) وشوف الـ error. وبعدين غيّر الـ margin لـ [[EdgeInsetsDirectional.only(start: 32)]] وشغّل التطبيق بالعربي.",
+          flag: "script",
+          deep: {
+            why: "مفيش CSS في Flutter، فمفيش [[margin: 16px]] تحطها على أي عنصر. كل مسافة ولون وحدود widget بيلف العنصر. Container و Padding و SizedBox هم الأدوات اللي هتبني بيها أي كارت.",
+            how: R`Container مش render object لوحده: هو widget مجمّع، build بتاعه بيرجّع Padding و DecoratedBox و ConstrainedBox وغيرهم حسب اللي انت حاطه. عشان كده [[Padding]] لوحده أخف وأوضح لما مش محتاج غيره.
+
+[[EdgeInsets.all(16)]] من كل ناحية، و [[symmetric(horizontal:, vertical:)]]، و [[only(left: 8)]]. وفي تطبيق عربي استخدم [[EdgeInsetsDirectional.only(start: 8)]] عشان تتقلب مع RTL.
+
+حجم Container من غير ابن ومن غير width و height: بياخد أكبر مساحة متاحة. ومعاه ابن: بياخد على قد الابن. ولو حطيت width وهو جوه حاجة بتفرض حجم (زي ابن مباشر للشاشة كلها)، حدود الأب بتكسب، ودا سبب «حطيت width: 100 ومش بيسمع».
+
+[[color]] و [[decoration]] مع بعض error: [[Cannot provide both a color and a decoration]]. حط اللون جوه BoxDecoration.
+
+و [[SizedBox]] بقيمة ثابتة widget const رخيص جدًا، ودا الأحسن للمسافات بين العناصر (أو [[spacing]] في Row و Column).`,
+            when: "كارت، أو badge، أو خلفية ملونة بحدود. و Padding لوحده للمسافات. و SizedBox للفراغات والأحجام الثابتة.",
+            mistakes: R`Container في كل حتة حتى لو محتاج padding بس. و [[color]] مع [[decoration]] في نفس الوقت. و [[EdgeInsets.only(left: ...)]] في تطبيق عربي فالمسافة تطلع في الناحية الغلط.`
+          },
+          lines: [
+            "صندوق: زي div عليه style.",
+            "ياخد العرض كله المتاح.",
+            "مسافة بره الصندوق: ١٦ يمين وشمال و٨ فوق وتحت.",
+            "مسافة جوه الصندوق حوالين المحتوى.",
+            "الشكل: لما تستخدم decoration، اللون بيتحط جواها مش على Container.",
+            "خلفية بيضا.",
+            "زوايا مدورة.",
+            "حدود رفيعة.",
+            "ضل خفيف.",
+            "قفلة الـ decoration.",
+            "المحتوى: عمود.",
+            "النصوص من البداية.",
+            "عنوان، ومسافة ٨ فاضية، وتفاصيل.",
+            "قفلة العمود.",
+            "قفلة الصندوق."
+          ],
+          sol: R`مع [[color: Colors.red]] جنب decoration الكود بيترجم عادي (مفيش compile error)، بس أول ما الشاشة تتبني في debug بتطلع الشاشة الحمرا ومعاها في الترمنال: [[Failed assertion: ... 'color == null || decoration == null': Cannot provide both a color and a decoration.]] وبعدها [[The color argument is just a shorthand for "decoration: BoxDecoration(color: color)".]]. يعني color نفسها بتتحول لـ BoxDecoration، فمينفعش اتنين. الحل: اللون جوه الـ BoxDecoration (وهو أصلًا هناك: [[Colors.white]]). وفي release الـ asserts مش بتشتغل، فمتعتمدش إن حد هيشوفها غيرك.
+
+و [[EdgeInsetsDirectional.only(start: 32)]]: في تطبيق إنجليزي الكارت بيبعد 32 من الشمال، وفي العربي بيبعد 32 من اليمين وبيلزق في الشمال (في widget test بـ [[TextDirection.rtl]] الكارت كان من 0 لـ 768 على شاشة عرضها 800، وفي ltr من 32 لـ 800). عشان تشوف ده في تطبيقك: [[locale: const Locale('ar')]] مع [[flutter_localizations]] في MaterialApp، أو للتجربة السريعة لف الـ Scaffold في [[Directionality(textDirection: TextDirection.rtl, child: ...)]].
+
+الغلط الشائع إنك تستخدم [[EdgeInsets.only(left: 32)]] وتجرّب بالإنجليزي بس، فالمسافة تطلع في الناحية الغلط عند المستخدم العربي.`
+        },
+        {
+          cmd: "Stack",
+          title: "عناصر فوق بعض: badge على أيقونة أو نص على صورة",
+          desc: R`[[Stack]] بيحط الـ children فوق بعض، أول واحد تحت وآخر واحد فوق. و [[Positioned]] بيثبت ابن في مكان من حواف الـ Stack ([[top]] و [[bottom]] و [[left]] و [[right]]). زي [[position: relative]] على الأب و [[absolute]] على الابن في CSS.
+
+اللي من غير Positioned بيتحط حسب [[alignment]] بتاع الـ Stack (الافتراضي أول الزاوية اللي فوق). و [[PositionedDirectional]] بـ start و end عشان RTL.`,
+          example: R`Stack(
+  clipBehavior: Clip.none,
+  children: [
+    const Icon(Icons.shopping_cart, size: 32),
+    PositionedDirectional(
+      top: -4,
+      end: -6,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+        child: const Text('3', style: TextStyle(color: Colors.white, fontSize: 10)),
+      ),
+    ),
+  ],
+)`,
+          try: "شيل [[clipBehavior: Clip.none]] وشوف الـ badge اتقص. وبعدين اعمل صورة وتحتها نص أبيض على شريط أسود نص شفاف بـ [[Positioned(left: 0, right: 0, bottom: 0, child: ...)]].",
+          flag: "script",
+          deep: {
+            why: "Row و Column بيرصوا جنب بعض، مش فوق بعض. أي تصميم فيه طبقات (رقم على أيقونة السلة، نص فوق صورة، زرار عايم فوق خريطة) محتاج Stack.",
+            how: R`حجم الـ Stack بيتحدد من العيال اللي مش Positioned: بياخد حجم أكبر واحد فيهم. الـ Positioned مش بيأثر على الحجم، عشان كده لو كل العيال Positioned الـ Stack بياخد أكبر مساحة متاحة.
+
+[[Positioned(top: 0, left: 0, right: 0)]] يعني لازق فوق وعلى العرض كله. و [[Positioned.fill]] يملى الـ Stack كله (مفيد لطبقة تدرج فوق صورة). و [[PositionedDirectional]] بيستخدم start و end عشان RTL.
+
+[[clipBehavior]] الافتراضي [[Clip.hardEdge]]: أي حاجة طالعة بره حدود الـ Stack بتتقص. و [[Clip.none]] بيسيبها تبان، بس اللمس عليها بره الحدود مش هيوصل (الـ hit testing بيقف عند حدود الأب).
+
+و [[IndexedStack]] بيعرض ابن واحد بس من العيال بس بيحتفظ بالـ state بتاع الكل، ودا اللي بيتعمل بيه bottom navigation من غير ما كل تاب يرجع من الأول.`,
+            when: "badge، ونص على صورة، و loading overlay فوق الشاشة، وعناصر عايمة. لو الحاجات جنب بعض: Row و Column مش Stack.",
+            mistakes: R`تبني layout كامل بـ Stack و Positioned بأرقام ثابتة زي CSS absolute: هيبوظ على أي شاشة بحجم مختلف. وتحط Positioned جوه حاجة مش Stack فيطلع error. وزرار طالع بره الـ Stack بـ Clip.none ومش بيستجيب للمس.`
+          },
+          lines: [
+            "طبقات فوق بعض.",
+            "متقصّش اللي طالع بره حدود الـ Stack (الـ badge طالع شوية).",
+            "الطبقات من تحت لفوق.",
+            "الأيقونة: أول طبقة، وهي اللي بتحدد حجم الـ Stack.",
+            "الـ badge مثبّت، و Directional عشان يتقلب في RTL.",
+            "٤ فوق الحافة.",
+            "وطالع شوية من ناحية النهاية (يمين في الإنجليزي، شمال في العربي).",
+            "الدايرة الحمرا.",
+            "مسافة جواها.",
+            "شكل دايرة بلون أحمر.",
+            "الرقم بخط صغير أبيض.",
+            "قفلة الـ Container.",
+            "قفلة الـ Positioned.",
+            "قفلة الطبقات.",
+            "قفلة الـ Stack."
+          ],
+          sol: R`لما تشيل [[clipBehavior: Clip.none]]: الدايرة الحمرا بتتقص من فوق ومن الجنب، وتبان كأنها ربع أو نص دايرة لازقة في ركن الأيقونة. لأن الـ Stack حجمه على قد الأيقونة بس (32×32)، والـ badge بـ [[top: -4]] و [[end: -6]] طالع بره الحدود دي، والافتراضي [[Clip.hardEdge]] بيقص أي حاجة بره. مفيش error ولا warning، الشكل بس اللي بيبوظ، ودا اللي بيخلي الغلطة دي تعدّي كتير.
+
+الصورة بالشريط: الـ Stack فيه الصورة كأول طبقة (ودي اللي بتحدد حجمه)، وفوقها Positioned بـ [[left: 0, right: 0, bottom: 0]] من غير top. كده الشريط لازق تحت، وعرضه قد الصورة بالظبط، وارتفاعه على قد النص والـ padding. واللون [[Colors.black54]] أسود بشفافية حوالي ٥٤٪. (في widget test الصورة كانت 800×200 والشريط من y=164 لـ 200 بعرض 800.)
+
+الغلط الشائع: تنسى [[left: 0, right: 0]] وتكتب [[bottom: 0]] بس، فالشريط ياخد عرض النص بس ويلزق في الركن. أو تحط [[top: 0]] كمان فالشريط يتمط على الصورة كلها.`,
+          solCode: R`import 'package:flutter/material.dart';
+
+class CaptionedImage extends StatelessWidget {
+  const CaptionedImage({super.key, required this.image, required this.caption});
+
+  final ImageProvider image;
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Image(image: image, width: double.infinity, height: 200, fit: BoxFit.cover),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: Container(
+            color: Colors.black54,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Text(caption, style: const TextStyle(color: Colors.white)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// الاستخدام:
+// const CaptionedImage(image: NetworkImage('https://picsum.photos/600/400'), caption: 'Cairo, Egypt')`
+        }
+      ]
+    }
+]);

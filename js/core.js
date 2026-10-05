@@ -20,7 +20,15 @@ function TAB(key, def){
   if (def.lab !== undefined) LAB[key] = def.lab;
   if (def.labText !== undefined) LABTXT[key] = def.labText;
   if (def.levels) LEVEL_TAB[key] = def.levels;
-  DATA[key] = def.categories.map(c => {
+  DATA[key] = cats(key, def.categories);
+}
+/* a big tab is split over several files in js/tabs/<tab>/: the first calls TAB(), the rest add their categories with MORE() */
+function MORE(key, categories){
+  if (!DATA[key]) throw new Error('MORE("'+key+'") قبل TAB("'+key+'"): ترتيب الملفات في index.html غلط');
+  DATA[key].push(...cats(key, fixDollar(categories)));
+}
+function cats(key, list){
+  return list.map(c => {
     const cat = {t:c.t, l:c.l};
     if (c.n !== undefined) cat.n = c.n;
     cat.items = c.items.map(it => {
