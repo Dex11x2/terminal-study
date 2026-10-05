@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./dist/**)",
+      "Read(./vendor/**)",
+      "Read(./.playwright-mcp/**)"
+    ]
+  }
+}
