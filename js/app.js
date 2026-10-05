@@ -105,7 +105,7 @@ function teachHTML(c){
       i--; out.push((ol?'<ol>':'<ul>')+items.join('')+(ol?'</ol>':'</ul>'));
     } else if (l.startsWith('|')){
       const rows = [];
-      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split('|').map(x => inl(x.trim())));
+      for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split(/\|(?![^[]*\]\])/).map(x => inl(x.trim()))); // a | inside [[code]] isn't a cell border
       i--; out.push('<div class="tbl"><table>'+rows.map((r, j) => '<tr>'+r.map(x => j ? '<td>'+x+'</td>' : '<th>'+x+'</th>').join('')+'</tr>').join('')+'</table></div>');
     } else {
       const p = [];

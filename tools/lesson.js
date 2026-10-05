@@ -1,5 +1,5 @@
 // اقرا درس واحد من غير ما تفتح ملفات التاب كلها:
-//   node tools/lesson.js                      كل التابات: عدد الدروس والملفات
+//   node tools/lesson.js                      كل التابات: عدد الدروس والملفات وكام درس فيه «الشرح خطوة بخطوة»
 //   node tools/lesson.js bash                 أقسام التاب، وكل درس في أنهي ملف وسطر
 //   node tools/lesson.js bash "PS1"           الدرس نفسه (الكود زي ما هو مكتوب) ومكانه بالظبط
 //   node tools/lesson.js bash "PS1" --where   المكان بس (ملف:من-لحد)
@@ -13,7 +13,11 @@ const die = m => { console.error(m); process.exit(1); };
 const lineOf = (src, i) => src.slice(0, i).split('\n').length;
 
 if (!a){
-  for (const [k, fs_] of Object.entries(files)) console.log(k.padEnd(10), String(L.lessonsIn(fs_).length).padStart(4), 'درس في', fs_.length, 'ملف:', path.dirname(fs_[0]) + '/');
+  const raw = L.loadRaw(files);
+  for (const [k, fs_] of Object.entries(files)){
+    const n = raw[k].length, t = raw[k].filter(x => x.item.teach).length;
+    console.log(k.padEnd(10), String(n).padStart(4), 'درس في', String(fs_.length).padStart(2), 'ملف', ('   شرح خطوة بخطوة: ' + t + '/' + n).padEnd(26), path.dirname(fs_[0]) + '/');
+  }
 } else if (a === 'find'){
   if (!b) die('اكتب الكلمة: node tools/lesson.js find "shutdown"');
   const q = b.toLowerCase();

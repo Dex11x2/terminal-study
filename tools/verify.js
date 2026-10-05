@@ -45,7 +45,8 @@ if (require.main === module){
   } else if (cmd === 'mark'){
     const on = args.includes('--on') ? args[args.indexOf('--on') + 1] : null;
     if (!on) die('لازم --on: اتجرّب فين؟ مثلًا --on "ubuntu-24.04, pwsh-7.6"');
-    const names = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--on');
+    // only --on and --all are options: a lesson can be named «--help و man»
+    const names = args.filter((a, i) => a !== '--on' && a !== '--all' && args[i - 1] !== '--on');
     const st = status();
     if (!st[tab]) die('مفيش تاب اسمه ' + tab);
     const pick = args.includes('--all') ? st[tab] : names.map(n => st[tab].find(l => l.cmd === n) || die('مفيش درس اسمه «' + n + '» في ' + tab));

@@ -2015,244 +2015,244 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "start|--help و man": {
-  "hash": "a46f2b49543b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "90e4519d8edd",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1, cmd; docs: whatis/man output"
  },
  "start|64-bit و ARM": {
-  "hash": "e06a48dcba25",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "04598ee5a7ee",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1, cmd; docs: macOS arm64"
  },
  "start|CPU و RAM والديسك": {
-  "hash": "d5bb290ec3fc",
+  "hash": "a309f055d943",
   "date": "2026-10-05",
   "on": "pwsh-7.6 (windows 11), ubuntu-24.04, docs: macOS"
  },
  "start|Git ببساطة": {
-  "hash": "b6673417118b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "0288156e8d86",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7"
  },
  "start|HTTP: الطلب والرد": {
-  "hash": "52e733ed77e4",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "1fc1fbbcab1f",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 curl.exe"
  },
  "start|IP و الدومين و DNS": {
-  "hash": "5bb567bacccd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "894bcd09f1d5",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7"
  },
  "start|PATH": {
-  "hash": "1681ee5bc1ba",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "0982c61fa5bb",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|VS Code": {
-  "hash": "4581f222b73f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "2e1b8743f1fb",
+  "date": "2026-10-05",
+  "on": "windows code --version; docs: winget install, brew --cask, snap"
  },
  "start|compiler و interpreter": {
-  "hash": "9ffe85fa077c",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "fa1f0e69efe7",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 python3, node 18, gcc 13.3"
  },
  "start|file.txt.txt": {
-  "hash": "cb91dee7d55d",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "96900f675fe1",
+  "date": "2026-10-05",
+  "on": "pwsh 7.6, powershell 5.1; docs: File Explorer behavior"
  },
  "start|root و sudo": {
-  "hash": "19222390dbfe",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "51cac2eb938b",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 (sudo user), pwsh 7.6, powershell 5.1"
  },
  "start|أسامي الملفات": {
-  "hash": "eb696f472784",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "c4acf2627d77",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|أوامر متشغّلهاش": {
-  "hash": "684c5aac889e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "1dd1045020a9",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1; docs: -Confirm prompt text"
  },
  "start|إزاي تذاكر الصفحة دي": {
-  "hash": "e69f4afdf942",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "a45b549bbcfc",
+  "date": "2026-10-05",
+  "on": "docs: concept lesson, nothing to run"
  },
  "start|اختصارات هتنقذك": {
-  "hash": "08de7fdf5ab1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "866b834b42cf",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 (ping + interrupt); docs: key behavior in terminals"
  },
  "start|الأسرار": {
-  "hash": "f78fe1e37492",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "0c0a8adc52d5",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|الباك أب": {
-  "hash": "4c5a94e42dc5",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "ec81b742043d",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|البرنامج والعملية": {
-  "hash": "f9b00e29006d",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "fc526447d3b3",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|البورت (port)": {
-  "hash": "2b5181cdd27d",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "9f163455c905",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7"
  },
  "start|الترمنال والشيل": {
-  "hash": "d1552eedb94b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "ed19a1b3db46",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1, cmd"
  },
  "start|الدوكيومنتيشن": {
-  "hash": "69b2fb917523",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "2db2d1fc071a",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 node24; docs: MDN page structure"
  },
  "start|السكربت": {
-  "hash": "9169d42746ab",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "5281da29e34c",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|السيرفر والـ VPS": {
-  "hash": "1442d31f78a6",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "18f18e7df850",
+  "date": "2026-10-05",
+  "on": "win11 pwsh7 (ssh -V, hostname, ssh timeout); ubuntu-24.04; docs: OpenSSH login prompt/exit message"
  },
  "start|الصلاحيات rwx": {
-  "hash": "16670de22605",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "9fa1c5c46051",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|الـ API": {
-  "hash": "90945dcb81d5",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "7f5845b1b9de",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 curl, pwsh 7.6 curl.exe, powershell 5.1"
  },
  "start|الـ pipe والتوجيه": {
-  "hash": "2dd8e6bcd3f0",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "a785ebb097f3",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|الـ prompt": {
-  "hash": "bc1350bbb49c",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "a3a76e0b6f96",
+  "date": "2026-10-05",
+  "on": "pwsh 7.6, powershell 5.1; docs: bash/zsh prompt shapes"
  },
  "start|الـ stack trace": {
-  "hash": "0dba2e07f866",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "d8c0bb55d2bb",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 python3.12; win11 python3.14; win11 node24"
  },
  "start|الكود واللغة": {
-  "hash": "662235e8cf9a",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "08be064a6fb8",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 python3 + node"
  },
  "start|الكيبورد للمبرمج": {
-  "hash": "16d111149cd4",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "21fd2749cb56",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 (ping); docs: key layouts"
  },
  "start|المسار (path)": {
-  "hash": "76306e3af45f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "50266b583052",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|المكتبة والفريمورك": {
-  "hash": "a0d601b7c460",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "18e168f46e17",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 node 18 / npm 9.2"
  },
  "start|الملف والامتداد": {
-  "hash": "01a2577c262f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "50ed48b1cbdf",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|الملفات المخفية": {
-  "hash": "2664186c2068",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "2f47d9288d23",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|تدوّر على الخطأ": {
-  "hash": "c265230d6ce1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "5bdeb8eb58dc",
+  "date": "2026-10-05",
+  "on": "win11 node24; docs: Google search operators"
  },
  "start|تسأل سؤال كويس": {
-  "hash": "66b11d2ae143",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "1430298e6e5c",
+  "date": "2026-10-05",
+  "on": "win11 node24 + pwsh7; ubuntu-24.04"
  },
  "start|تشريح الأمر": {
-  "hash": "42d89e3a581f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "7a5adeee8e1c",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|خريطة أي موقع": {
-  "hash": "fd680ee6fea0",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "918fa5c7ae7c",
+  "date": "2026-10-05",
+  "on": "docs: concept only, no runnable code"
  },
  "start|شجرة الفولدرات": {
-  "hash": "e1a8cb3274f2",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "2f2bacb6e33c",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|فولدرك الحقيقي": {
-  "hash": "2525fa2a05e7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "996c017a1f65",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: xdg-open, open, explorer"
  },
  "start|لما حاجة تغلط": {
-  "hash": "804106599481",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "f54dc46f2732",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|متغيرات البيئة": {
-  "hash": "13b032519a95",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "407e1a3e9e24",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
  },
  "start|محرر النصوص": {
-  "hash": "2b3c526728b3",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "8cbaa901df3d",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 (docx via python-docx), pwsh 7.6, powershell 5.1; docs: tar -tf on Windows"
  },
  "start|مدير الحزم": {
-  "hash": "85cbf41bf09f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "da502e95866b",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 apt, windows winget search; docs: brew, winget install"
  },
  "start|مسارات ويندوز": {
-  "hash": "09b33f3141b2",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "bb01efe5eea5",
+  "date": "2026-10-05",
+  "on": "pwsh 7.6, powershell 5.1; docs: \\wsl.localhost, /mnt/c"
  },
  "start|مساعد AI": {
-  "hash": "47e69706aecc",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "c45f76bac107",
+  "date": "2026-10-05",
+  "on": "docs: concept only, prompts not runnable"
  },
  "start|ملاحظاتك": {
-  "hash": "b648d3ad79dd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "58e5fc06557b",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04 (echo ~ $HOME); rest concept"
  },
  "start|نظام التشغيل": {
-  "hash": "ccb64607ddb3",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04, pwsh-7.6, pwsh-5.1, git-bash"
+  "hash": "a2b52e665efe",
+  "date": "2026-10-05",
+  "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
  },
  "zsh|*(.om[1,5])": {
   "hash": "4ae718cd94d7",

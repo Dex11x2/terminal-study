@@ -166,6 +166,8 @@ process.on('unhandledRejection', e => { console.error('✗ promise اترفض م
   warnings.forEach(x => console.log('! ' + x));
   errors.forEach(x => console.log('✗ ' + x));
   console.log(`\n${Object.keys(DATA).length} تاب، ${total} درس، ${MISSIONS.length} تحدي، ${checks.length} تمرين بيتصحح لوحده | ${errors.length} خطأ، ${warnings.length} تنبيه${sqlNote}`);
+  const teachN = Object.keys(TEACH).length;
+  console.log(`الشرح خطوة بخطوة: ${teachN} من ${total} درس (${Math.round(teachN * 100 / total)}٪). التفاصيل لكل تاب: node tools/lesson.js`);
   // review log (verified.json): informational only, never fails the check
   const rv = {ok: 0, stale: 0, never: 0};
   Object.values(require('./verify.js').status()).forEach(list => list.forEach(l => rv[l.state]++));
