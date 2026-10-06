@@ -47,6 +47,219 @@ netsh بيسمح بقاعدتين بنفس الاسم، فلو شغّلت add م
             when: R`سيرفر تطوير عايز تفتحه من الموبايل، أو Docker أو WSL أو VM محتاجين يوصلوا لجهازك، أو تمنع برنامج يكلم النت، أو تراجع البرامج المسموحلها تستقبل اتصالات على الشبكات العامة.`,
             mistakes: R`تقفل الفايروول كله ([[state off]]) عشان «السيرفر يشتغل» وتنسى ترجّعه. أو تفتح البورت بـ [[profile=any]] أو public فيبقى مفتوح في أي كافيه. أو تضيف القاعدة والشبكة نفسها Public فمتشتغلش. أو [[findstr "Rule Name"]] من غير [[/c:]]: المسافة بتخليها «Rule أو Name». أو [[netsh advfirewall reset]] وانت فاكره بيصلّح قاعدة واحدة، وهو بيمسح كل القواعد. أو تفتكر إن القاعدة دي بتفتح البورت للنت: النت محتاج port forwarding في الراوتر، ومتعملوش لسيرفر تطوير.`
           },
+          teach: R`## الأول: الأمر ده كلمات بتنزل بيك قسم ورا قسم
+
+[[netsh]] اختصار network shell: برنامج واحد جواه «أقسام» (contexts)، كل قسم بيتحكم في حاجة في الشبكة. الكلمات اللي بعده بتدخّلك قسم جوه قسم زي الفولدرات، وآخر كلمة هي الفعل:
+
+| الكلمة | معناها |
+|---|---|
+| [[netsh]] | البرنامج نفسه (network shell) |
+| [[advfirewall]] | قسم الفايروول (Windows Defender Firewall with Advanced Security) |
+| [[firewall]] | جوه القسم ده: القواعد (rules) |
+| [[show]] و [[add]] و [[delete]] | الفعل: اعرض، ضيف، امسح |
+
+فـ [[netsh advfirewall show ...]] بيكلم الفايروول كله، و [[netsh advfirewall firewall show rule ...]] بيكلم القواعد. كل الأوامر تحت اتشغّلت في CMD على ويندوز 11 (من غير أدمن)، إلا الإضافة والمسح.
+
+---
+
+## ١. الفايروول شغال؟ [[netsh advfirewall show currentprofile]]
+
+[[show]] اعرض، و [[currentprofile]] الـ profile اللي شغال دلوقتي. ويندوز بيقسم الشبكات ٣ أنواع (profiles): Domain لجهاز شركة، و Private لشبكة انت واثق فيها، و Public لأي شبكة تانية. وكل نوع ليه إعداداته وقواعده.
+
+~~~cmd
+netsh advfirewall show currentprofile
+~~~
+
+~~~text الناتج (أول جزء)
+Public Profile Settings:
+----------------------------------------------------------------------
+State                                 ON
+Firewall Policy                       BlockInbound,AllowOutbound
+LocalFirewallRules                    N/A (GPO-store only)
+LocalConSecRules                      N/A (GPO-store only)
+InboundUserNotification               Enable
+RemoteManagement                      Disable
+UnicastResponseToMulticast            Enable
+...
+Ok.
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Public Profile Settings]] | الشبكة اللي انت عليها متسجلة Public |
+| [[State ON]] | الفايروول شغال |
+| [[BlockInbound,AllowOutbound]] | امنع أي اتصال **داخل** مفيش قاعدة بتسمحه، واسمح بأي اتصال **خارج** |
+| [[InboundUserNotification Enable]] | لما برنامج يحاول يستقبل اتصال، اسألني (دي نافذة «Allow access») |
+| [[Ok.]] | netsh بيختم بيها أي أمر نجح |
+
+وعشان تشوف التلاتة مرة واحدة: [[netsh advfirewall show allprofiles state]]، و [[state]] معناها «الحالة بس من غير باقي الإعدادات». طلّع هنا [[State ON]] تحت Domain و Private و Public.
+
+> لاحظ إن واي فاي البيت هنا متسجل Public. ده هيفرق جدًا في الخطوة ٣.
+
+---
+
+## ٢. أسامي القواعد: [[show rule]] و [[findstr]]
+
+~~~cmd
+netsh advfirewall firewall show rule name=all dir=in | findstr /c:"Rule Name:"
+~~~
+
+نفكّه بالترتيب:
+
+### [[show rule name=all dir=in]]
+
+- [[show rule]] اعرض قواعد.
+- [[name=all]] كل القواعد مش قاعدة باسم معين. والإعدادات في netsh كلها بالشكل ده: [[اسم=قيمة]] من غير مسافات حوالين [[=]].
+- [[dir=in]] (dir = direction) القواعد الداخلة بس (incoming).
+
+الأمر ده لوحده بيطبع لكل قاعدة ١٣ سطر تقريبًا، ومئات القواعد. فبنفلتره.
+
+### [[| findstr /c:"Rule Name:"]]
+
+- [[|]] (pipe) خد ناتج اللي على الشمال ودخّله للي على اليمين (درس | > >> 2>&1).
+- [[findstr]] بيطبع السطور اللي فيها كلام معين بس (درس findstr).
+- [[/c:"Rule Name:"]] دوّر على الكلام ده **كجملة واحدة بالمسافة**. من غير [[/c:]]، [[findstr "Rule Name:"]] بيعتبر المسافة فاصل ويطبع أي سطر فيه Rule **أو** Name:.
+
+~~~text الناتج (أول ٥ سطور من مئات)
+Rule Name:                            HNS Container Networking - DNS (UDP-In) - 790E58B4-...
+Rule Name:                            HNS Container Networking - ICS DNS (TCP-In) - 790E58B4-...
+Rule Name:                            Google Chrome (mDNS-In)
+Rule Name:                            ARMOURY CRATE Service
+Rule Name:                            AnyDesk
+~~~
+
+ولو عايز العدد بس: [[netsh advfirewall firewall show rule name=all dir=in | find /c "Rule Name:"]]. [[find /c]] (c = count) بيعدّ السطور اللي فيها الكلام بدل ما يطبعها، وطلّع هنا [[367]]: قواعد ويندوز والبرامج اللي اتسطبت (Docker و WSL و Chrome وغيرهم).
+
+### قراية قاعدة واحدة
+
+[[name="..."]] بدل [[all]] بيطبع قاعدة واحدة بكل تفاصيلها، والاسم بين علامات تنصيص عشان فيه مسافات:
+
+~~~cmd
+netsh advfirewall firewall show rule name="Google Chrome (mDNS-In)"
+~~~
+
+~~~text الناتج
+Rule Name:                            Google Chrome (mDNS-In)
+----------------------------------------------------------------------
+Enabled:                              Yes
+Direction:                            In
+Profiles:                             Domain,Private,Public
+Grouping:                             Google Chrome
+LocalIP:                              Any
+RemoteIP:                             Any
+Protocol:                             UDP
+LocalPort:                            5353
+RemotePort:                           Any
+Edge traversal:                       No
+Action:                               Allow
+Ok.
+~~~
+
+| الخانة | معناها |
+|---|---|
+| [[Enabled]] | القاعدة شغالة |
+| [[Direction: In]] | على الاتصالات الداخلة |
+| [[Profiles]] | على أنهي نوع شبكة. هنا التلاتة |
+| [[Grouping]] | جروب القاعدة (البرامج بتحط قواعدها في جروب باسمها) |
+| [[LocalIP]] و [[RemoteIP]] | عنوان جهازك والعنوان اللي جاي منه. [[Any]] يعني أي عنوان |
+| [[Protocol]] و [[LocalPort]] | البروتوكول والبورت على جهازك (5353 بورت mDNS) |
+| [[Action: Allow]] | اسمح |
+
+ولو زودت [[verbose]] في آخر الأمر هتلاقي سطور زيادة، أهمها [[Program: C:\Program Files\Google\Chrome\Application\chrome.exe]]: القاعدة دي على برنامج Chrome بس.
+
+---
+
+## ٣. ضيف قاعدة: [[add rule]]
+
+~~~cmd
+netsh advfirewall firewall add rule name="Dev 5173" dir=in action=allow protocol=TCP localport=5173 profile=private
+~~~
+
+كل حتة [[اسم=قيمة]]:
+
+| الحتة | معناها |
+|---|---|
+| [[add rule]] | ضيف قاعدة جديدة |
+| [[name="Dev 5173"]] | اسمها، وبيه هتعرضها وتمسحها بعدين. اختار اسم يقولك هي إيه |
+| [[dir=in]] | على الاتصالات الداخلة (الموبايل اللي بيكلم جهازك) |
+| [[action=allow]] | اسمح بيها |
+| [[protocol=TCP]] | بروتوكول TCP، اللي أي سيرفر ويب بيستخدمه |
+| [[localport=5173]] | البورت على **جهازك** (5173 بورت Vite الافتراضي) |
+| [[profile=private]] | على الشبكات الـ Private بس |
+
+[[profile=private]] أهم حتة: البورت يتفتح في البيت بس، ولو اللابتوب راح كافيه (شبكة Public) يفضل مقفول. بس افتكر الخطوة ١: لو شبكة البيت نفسها متسجلة Public (زي الجهاز ده)، القاعدة دي مش هتشتغل عليها. الحل إنك تخلّي الشبكة Private من Settings، مش إنك تفتح البورت على Public.
+
+الإضافة محتاجة CMD كأدمن، ومشغّلتهاش هنا عشان متغيّرش فايروول الجهاز. حسب توثيق Microsoft بتطبع [[Ok.]]، ومن CMD عادي بترفض بـ [[The requested operation requires elevation (Run as administrator).]].
+
+---
+
+## ٤. اتأكد: [[show rule name="Dev 5173"]]
+
+نفس أمر العرض بتاع الخطوة ٢ على الاسم الجديد. بعد الإضافة بيطبع القاعدة بنفس شكل جدول Chrome اللي فوق. وقبلها (جرّبته هنا):
+
+~~~text الناتج
+No rules match the specified criteria.
+~~~
+
+والأمر في الحالة دي بيرجّع errorlevel بـ [[1]] (جرّبته)، يعني «ملقتش». فده ينفع في سكربت كسؤال «القاعدة موجودة؟» قبل ما تضيفها تاني (netsh بيقبل قاعدتين بنفس الاسم).
+
+---
+
+## ٥. امنع برنامج يكلم النت
+
+~~~cmd
+netsh advfirewall firewall add rule name="Block MyApp" dir=out action=block program="C:\Tools\myapp.exe"
+~~~
+
+الجديد هنا:
+
+- [[dir=out]] الاتصالات **الخارجة** من جهازك. ليه؟ لأن الافتراضي [[AllowOutbound]] (من الخطوة ١): أي برنامج مسموحله يطلع. فالقاعدة الخارجة المفيدة هي اللي بتمنع.
+- [[action=block]] امنع.
+- [[program="..."]] بدل البورت: القاعدة على ملف البرنامج نفسه (المسار الكامل لملف الـ exe)، أيًا كان البورت اللي بيستخدمه.
+
+ومفيش [[profile]] هنا، فالقاعدة بتشتغل على التلاتة (الافتراضي [[profile=any]]).
+
+---
+
+## ٦. امسح: [[delete rule]]
+
+~~~cmd
+netsh advfirewall firewall delete rule name="Dev 5173"
+netsh advfirewall firewall delete rule name="Block MyApp"
+~~~
+
+بيمسح **كل** القواعد اللي بالاسم ده. حسب التوثيق بيطبع [[Deleted 1 rule(s).]] و [[Ok.]] (والرقم بيبقى ٢ لو كنت ضفتها مرتين). وزي الإضافة، محتاج أدمن.
+
+---
+
+## ٧. كود الحل: سيرفر من الموبايل
+
+~~~cmd
+netsh advfirewall firewall add rule name="Dev 8000" dir=in action=allow protocol=TCP localport=8000 profile=private
+python -m http.server 8000
+REM open http://YOUR-IP:8000 on the phone, then Ctrl+C
+netsh advfirewall firewall delete rule name="Dev 8000"
+~~~
+
+1. نفس قاعدة الخطوة ٣ على بورت 8000.
+2. [[python -m http.server 8000]] سيرفر ملفات بسيط جاي مع Python: [[-m]] يعني «شغّل module»، و [[http.server]] اسمه، و [[8000]] البورت. بيفضل شغال لحد Ctrl+C.
+3. [[REM]] (من remark) سطر تعليق في CMD، مش بيتنفذ. بيقولك تفتح من الموبايل [[http://IP-جهازك:8000]] (الـ IP من [[ipconfig]]).
+4. امسح القاعدة لما تخلص، عشان البورت ميفضلش مفتوح.
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| الفايروول شغال؟ وأنهي شبكة؟ | [[netsh advfirewall show currentprofile]] |
+| أسامي القواعد | [[show rule name=all dir=in]] مع [[findstr /c:"Rule Name:"]] |
+| قاعدة واحدة بالتفاصيل | [[show rule name="..." verbose]] |
+| افتح بورت في البيت بس | [[add rule ... dir=in action=allow ... profile=private]] |
+| امنع برنامج | [[add rule ... dir=out action=block program="..."]] |
+| امسح | [[delete rule name="..."]] |
+
+> الداخل ممنوع افتراضيًا والخارج مسموح. افتح أقل حاجة (بورت واحد، Private بس)، وامسحها لما تخلص، ومتقفلش الفايروول كله أبدًا.`,
           lines: [
             R`أنهي profile شغال دلوقتي، والفايروول شغال فيه ولا لأ.`,
             R`أسامي كل القواعد الداخلة ([[/c:]] عشان المسافة تتقري كجزء من الكلام).`,
@@ -98,6 +311,165 @@ netsh interface ip set dns name="Wi-Fi" dhcp`,
             when: R`جهاز بيقدّم خدمة على شبكة البيت، تجربة DNS تاني (1.1.1.1 أو 8.8.8.8 أو DNS بيحجب إعلانات)، كارت عليه IP ثابت قديم ومحتاج يرجع أوتوماتيك، أو معمل أو شبكة صغيرة محتاجة عناوين معروفة.`,
             mistakes: R`IP ثابت جوه مدى الـ DHCP فجهازين ياخدوا نفس العنوان (ويندوز بيقول IP address conflict). أو gateway غلط: الشبكة المحلية شغالة والنت لأ. أو اسم الكارت مش مطابق: جرّبت [[show config name="NoSuchAdapter"]] وطلّع [[The filename, directory name, or volume label syntax is incorrect.]] مع إن الغلطة في الاسم مش في ملف، فانسخ الاسم من show interface. أو تنسى ترجّع DHCP على لابتوب فيروح شبكة تانية وميتصلش. أو تغيّر من Remote Desktop فتقفل الباب على نفسك.`
           },
+          teach: R`## الأول: إحنا بنعمل إيه
+
+لما جهازك يتصل بالواي فاي، بيسأل الراوتر: «ادّيني عنوان»، والراوتر بيدّيله IP و gateway و DNS. ده اسمه DHCP. الأوامر دي بتخلّيك تكتب الحاجات دي بإيدك (static) بدل ما الراوتر يقررها، وترجّعها أوتوماتيك تاني. ودايمًا بنفس الترتيب: **اعرف الأول، غيّر، اتأكد، رجّع**.
+
+[[netsh]] هو network shell (درس netsh advfirewall firewall)، و [[interface]] قسم كروت الشبكة، و [[ip]] أو [[ipv4]] (هنا نفس الحاجة) جواه إعدادات IPv4. العرض اتشغّل هنا في CMD على ويندوز 11، والتغيير لأ (تحت ليه).
+
+---
+
+## ١. اسم الكارت: [[netsh interface show interface]]
+
+كل أوامر التغيير محتاجة **اسم الكارت بالظبط**، فأول حاجة نعرفه:
+
+~~~cmd
+netsh interface show interface
+~~~
+
+~~~text الناتج
+Admin State    State          Type             Interface Name
+-------------------------------------------------------------------------
+Enabled        Disconnected   Dedicated        Ethernet
+Enabled        Disconnected   Dedicated        HotspotShield Network Adapter
+Enabled        Disconnected   Dedicated        Ethernet 2
+Enabled        Connected      Dedicated        Wi-Fi
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[Admin State]] | الكارت متفعّل في ويندوز ولا انت قافله |
+| [[State]] | متوصل بشبكة دلوقتي ولا لأ |
+| [[Type]] | [[Dedicated]] كارت عادي |
+| [[Interface Name]] | الاسم اللي هتكتبه في كل الأوامر |
+
+الكارت اللي [[Connected]] هنا هو [[Wi-Fi]]. والاسم فيه شرطة، وفيه كروت بمسافات ([[Ethernet 2]])، فدايمًا اكتبه بين علامات تنصيص: [[name="Wi-Fi"]].
+
+---
+
+## ٢. الإعدادات الحالية: [[show config]]
+
+~~~cmd
+netsh interface ipv4 show config name="Wi-Fi"
+~~~
+
+~~~text الناتج
+Configuration for interface "Wi-Fi"
+    DHCP enabled:                         Yes
+    IP Address:                           192.168.1.65
+    Subnet Prefix:                        192.168.1.0/24 (mask 255.255.255.0)
+    Default Gateway:                      192.168.1.1
+    Gateway Metric:                       0
+    InterfaceMetric:                      40
+    DNS servers configured through DHCP:  8.8.8.8
+                                          8.8.4.4
+                                          192.168.1.1
+    Register with which suffix:           Primary only
+    WINS servers configured through DHCP: None
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[DHCP enabled: Yes]] | العنوان جاي أوتوماتيك من الراوتر |
+| [[IP Address]] | عنوان جهازك على الشبكة |
+| [[Subnet Prefix ... /24 (mask 255.255.255.0)]] | حدود الشبكة (تحت) |
+| [[Default Gateway]] | الراوتر: أي حاجة برا الشبكة (النت) بتروحله |
+| [[DNS servers configured through DHCP]] | سيرفرات الـ DNS، وجاية من الراوتر بردو |
+| [[InterfaceMetric]] | أولوية الكارت لو متوصل بأكتر من كارت (الأقل يكسب) |
+
+اكتب الأرقام دي قبل أي تغيير، عشان ترجعلها لو حاجة باظت. ولاحظ إن الأرقام دي بتتغيّر: في تجربة قبل كده على نفس الجهاز كان العنوان [[192.168.1.2]] والـ DNS غير ده (اللي في الحل تحت). ده بالظبط معنى DHCP: الراوتر بيدّيك اللي فاضي وقتها.
+
+ولو الاسم غلط: جرّبت [[name="NoSuchAdapter"]] وطلع [[The filename, directory name, or volume label syntax is incorrect.]]. الرسالة بتتكلم عن ملف بس الغلطة في اسم الكارت، فانسخه من الخطوة ١.
+
+---
+
+## ٣. IP ثابت: [[set address ... static]]
+
+~~~cmd
+netsh interface ip set address name="Wi-Fi" static 192.168.1.50 255.255.255.0 192.168.1.1
+~~~
+
+هنا الترتيب هو اللي بيفرق، مش أسامي:
+
+| الحتة | معناها |
+|---|---|
+| [[set address]] | غيّر العنوان |
+| [[name="Wi-Fi"]] | على الكارت ده |
+| [[static]] | بإيدي، مش من الراوتر |
+| [[192.168.1.50]] | العنوان الجديد |
+| [[255.255.255.0]] | الـ mask |
+| [[192.168.1.1]] | الـ gateway (الراوتر) |
+
+### الـ mask يعني إيه؟
+
+العنوان ٤ أرقام. الـ mask بيقول أنهي جزء منهم «اسم الشبكة» وأنهي جزء «رقم الجهاز»: [[255]] يعني الرقم ده ثابت للشبكة كلها، و [[0]] يعني الرقم ده بيتغيّر من جهاز للتاني.
+
+~~~text 255.255.255.0
+192.168.1   .50
+الشبكة       الجهاز
+~~~
+
+فكل الأجهزة من [[192.168.1.1]] لـ [[192.168.1.254]] في نفس الشبكة، و [[/24]] نفس المعنى بشكل تاني (أول ٢٤ bit، يعني أول ٣ أرقام × ٨). عشان كده العنوان والـ gateway لازم يبدأوا بنفس الـ [[192.168.1]].
+
+### ليه 50 بالذات؟
+
+لأي رقم برا المدى اللي الراوتر بيوزّع منه (من صفحة الراوتر، إعدادات DHCP). لو اخترت رقم جوه المدى، الراوتر ممكن يدّيه لجهاز تاني فيحصل IP address conflict.
+
+---
+
+## ٤. الـ DNS: [[set dns]] و [[add dns]]
+
+~~~cmd
+netsh interface ip set dns name="Wi-Fi" static 1.1.1.1
+netsh interface ip add dns name="Wi-Fi" 8.8.8.8 index=2
+~~~
+
+الـ DNS هو اللي بيحوّل [[google.com]] لعنوان IP. السطر الأول [[set]] بيمسح أي DNS موجود ويحط [[1.1.1.1]] (بتاع Cloudflare) لوحده. السطر التاني [[add]] بيزوّد واحد من غير ما يمسح، و [[index=2]] ترتيبه: يتسأل لو الأول مردّش. [[8.8.8.8]] بتاع Google.
+
+---
+
+## ٥. اتأكد: [[ping -n 2 192.168.1.1]]
+
+[[ping]] بيبعت رسالة صغيرة ويستنى الرد، و [[-n 2]] مرتين بس (درس ping / tracert / nslookup). لو الراوتر رد، يبقى العنوان والـ mask مظبوطين. على الجهاز ده (بالإعدادات الأوتوماتيك):
+
+~~~text الناتج
+Pinging 192.168.1.1 with 32 bytes of data:
+Reply from 192.168.1.1: bytes=32 time=167ms TTL=64
+Reply from 192.168.1.1: bytes=32 time=1ms TTL=64
+
+Ping statistics for 192.168.1.1:
+    Packets: Sent = 2, Received = 2, Lost = 0 (0% loss),
+~~~
+
+المهم [[Received = 2]] و [[0% loss]]. والـ [[time]] الوقت رايح جاي بالمللي ثانية: أول رد ممكن ياخد وقت أطول، والتاني (1ms) هو الطبيعي لراوتر في نفس البيت. وبعدها جرّب موقع ([[ping google.com]]) عشان تتأكد من الـ gateway والـ DNS مع بعض.
+
+---
+
+## ٦. رجّع أوتوماتيك: [[dhcp]]
+
+~~~cmd
+netsh interface ip set address name="Wi-Fi" dhcp
+netsh interface ip set dns name="Wi-Fi" dhcp
+~~~
+
+[[dhcp]] مكان [[static]] والأرقام معناها «اسأل الراوتر تاني». ولازم السطرين: الـ IP والـ DNS إعدادين منفصلين، فلو رجّعت الأول بس هيفضل الـ DNS الثابت.
+
+> كل [[set]] و [[add]] هنا محتاجين CMD كأدمن وبيقطعوا النت ثانية، فمشغّلتهمش على الجهاز ده؛ الكلام عنهم من توثيق netsh. ومن CMD عادي بيرفضوا بـ [[The requested operation requires elevation (Run as administrator).]].
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| ١. اسم الكارت | [[netsh interface show interface]] |
+| ٢. اكتب الإعدادات الحالية | [[netsh interface ipv4 show config name="..."]] |
+| ٣. IP ثابت | [[set address name="..." static IP MASK GATEWAY]] |
+| ٤. DNS | [[set dns ... static]] وبعده [[add dns ... index=2]] |
+| ٥. اتأكد | [[ping]] على الراوتر وبعدين على موقع |
+| ٦. رجّع | [[set address ... dhcp]] و [[set dns ... dhcp]] |
+
+> الـ IP والـ DNS حاجتين منفصلتين. والـ IP الثابت لازم يبقى في نفس الشبكة (أول ٣ أرقام مع mask 255.255.255.0) وبرا مدى الراوتر.`,
           lines: [
             R`أسامي الكروت، وأنهي واحد متوصل.`,
             R`إعدادات الـ IP والـ DNS بتاعة الواي فاي دلوقتي (اكتبها قبل أي تغيير).`,
@@ -154,6 +526,173 @@ netsh wlan show wlanreport`,
             when: R`الواي فاي بطيء أو بيقطع، اختيار قناة للراوتر، جهاز جديد أو بعد فرمتة، لابتوب عليه شبكات قديمة كتير محتاج تنضيف، أو سكربت بيتصل بشبكة معينة.`,
             mistakes: R`تسيب ملفات export بالباسوردات على الديسكتوب أو ترفعها في ريبو. أو تحكم على سرعة النت من Receive rate. أو تغيّر قناة الراوتر لـ 4 أو 9 (متداخلة مع الكل) بدل 1 و 6 و 11. أو [[connect]] على شبكة مش محفوظة قبل كده. أو تقفل Location وتستغرب إن show networks بقى بيقول Access is denied.`
           },
+          teach: R`## الأول: [[wlan]] قسم الواي فاي في netsh
+
+[[netsh wlan]] (wlan = wireless LAN، يعني شبكة محلية لاسلكية) قسم في netsh خاص بالواي فاي. نصه عرض (إشارتك، والشبكات اللي حواليك، والمحفوظ عندك)، ونصه تغيير (اتصل، صدّر، ضيف، امسح). العرض اتشغّل هنا في CMD على لابتوب ويندوز 11 فيه كارت Intel AX200، وغيّرت اسم الشبكة لـ HomeNet وخبّيت الـ MAC.
+
+---
+
+## ١. اتصالك دلوقتي: [[show interfaces]]
+
+~~~cmd
+netsh wlan show interfaces
+~~~
+
+~~~text الناتج (أهم السطور)
+    Name                   : Wi-Fi
+    Description            : Intel(R) Wi-Fi 6 AX200 160MHz
+    Physical address       : 84:1b:77:xx:xx:xx
+    State                  : connected
+    SSID                   : HomeNet
+    AP BSSID               : dc:51:93:xx:xx:xx
+    Band                   : 2.4 GHz
+    Channel                : 11
+    Radio type             : 802.11n
+    Authentication         : WPA2-Personal
+    Receive rate (Mbps)    : 300
+    Transmit rate (Mbps)   : 300
+    Signal                 : 87%
+    Rssi                   : -58
+    Profile                : HomeNet
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Name]] و [[Description]] | اسم الكارت في ويندوز ونوعه |
+| [[Physical address]] | الـ MAC بتاع الكارت بتاعك |
+| [[SSID]] | اسم الشبكة اللي بتشوفه في قايمة الواي فاي |
+| [[AP BSSID]] | الـ MAC بتاع الراوتر نفسه (AP = Access Point). شبكة واحدة ممكن يبقى ليها أكتر من BSSID |
+| [[Band]] و [[Channel]] | الترددات: 2.4 أو 5 GHz، ورقم القناة جواها |
+| [[Radio type]] | نسخة الواي فاي المستخدمة: [[802.11n]] (Wi-Fi 4)، [[802.11ac]] (Wi-Fi 5)، [[802.11ax]] (Wi-Fi 6) |
+| [[Authentication]] | نوع الحماية. [[WPA2-Personal]] يعني باسورد واحد للكل |
+| [[Receive rate]] و [[Transmit rate]] | سرعة الوصلة بين اللابتوب والراوتر بالـ Mbps، **مش** سرعة النت |
+| [[Signal]] و [[Rssi]] | قوة الإشارة بالنسبة المئوية، ونفس المعلومة بالـ dBm |
+
+### نقرا الأرقام
+
+- [[Signal 87%]] كويسة (٧٠٪ وطالع كويس، وتحت ٤٠٪ هتلاحظ بطء). و [[Rssi -58]] رقم سالب: كل ما يقرّب من صفر الإشارة أقوى، فـ [[-42]] أحسن من [[-58]]، و [[-70]] ضعيفة.
+- الكارت Wi-Fi 6، بس الاتصال [[802.11n]] على 2.4 GHz. يعني الحد هنا من الشبكة اللي انت عليها مش من اللابتوب (هنشوف ليه في الخطوة الجاية).
+- [[300 Mbps]] سرعة الوصلة. النت الحقيقي أقل منها دايمًا.
+
+> على ويندوز 11 الحديث، الأمر ده و [[show networks]] محتاجين إذن Location. من غيره بيطلع [[Network shell commands need location permission to access WLAN information.]].
+
+---
+
+## ٢. الشبكات اللي حواليك: [[show networks mode=bssid]]
+
+[[show networks]] لوحده بيطبع أسامي الشبكات بس. و [[mode=bssid]] بيطبع كل راوتر (BSSID) لوحده بإشارته وقناته. الناتج طويل، فده لكل شبكة السطور المهمة بس (فلترتها بـ [[findstr]]):
+
+~~~text الناتج (ملخّص)
+There are 12 networks currently visible.
+
+SSID 1 : WE_DF1A30_EXT      Signal 29%   2.4 GHz   Channel 7
+SSID 2 :                    Signal 62%   2.4 GHz   Channel 5   (+ BSSID تاني على 5 GHz قناة 36)
+SSID 3 : Home               Signal 46%   2.4 GHz   Channel 1
+SSID 7 : HomeNet 5G         Signal 85%   5 GHz     Channel 52
+SSID 9 : HomeNet            Signal 85%   2.4 GHz   Channel 11
+SSID 10 : ...               Signal 60%   2.4 GHz   Channel 7
+SSID 12 : ...               Signal 81%   2.4 GHz   Channel 1
+...
+~~~
+
+وكل شبكة في الناتج الحقيقي شكلها كده:
+
+~~~text شبكة واحدة كاملة
+SSID 1 : WE_DF1A30_EXT
+    Network type            : Infrastructure
+    Authentication          : WPA2-Personal
+    Encryption              : CCMP
+    BSSID 1                 : 40:ed:00:xx:xx:xx
+         Signal             : 29%
+         Radio type         : 802.11n
+         Band               : 2.4 GHz
+         Channel            : 7
+         Bss Load:
+             Connected Stations:         3
+             Channel Utilization:        70 (27 %)
+~~~
+
+- [[SSID 2 :]] من غير اسم: شبكة مخفية (hidden)، بتبعت إشارة بس مش بتعلن اسمها.
+- [[BSSID 1]] و [[BSSID 2]] تحت نفس الـ SSID: نفس الشبكة من أكتر من راديو (2.4 و 5) أو أكتر من جهاز.
+- [[Connected Stations]] عدد الأجهزة المتوصلة بالراوتر ده، و [[Channel Utilization]] القناة مشغولة قد إيه من وقتها (هنا ٢٧٪). مش كل الراوترات بتبعت السطور دي.
+
+### نستفيد إيه؟
+
+على 2.4 GHz القنوات اللي مش بتتداخل مع بعض هي [[1]] و [[6]] و [[11]] بس. هنا فيه ٣ شبكات على 7 و ٣ على 5، وكلهم بيضايقوا 6 و 11 شوية. والأهم: الراوتر نفسه عامل شبكة **5 GHz** ([[HomeNet 5G]]) بنفس الإشارة 85٪ على قناة 52 مفيش عليها حد، واللابتوب متوصل بالـ 2.4. فالحل الأسهل هنا مش تغيير قناة، الحل إنك تتصل بالـ 5G.
+
+---
+
+## ٣. المحفوظ عندك: [[show profiles]]
+
+~~~cmd
+netsh wlan show profiles
+~~~
+
+~~~text الناتج (الأسامي متغيّرة)
+Profiles on interface Wi-Fi:
+
+Group policy profiles (read only)
+---------------------------------
+    <None>
+
+User profiles
+-------------
+    All User Profile     : HomeNet
+    All User Profile     : Office
+    All User Profile     : Cafe
+    ...
+~~~
+
+كل شبكة اتصلت بيها قبل كده وحفظت باسوردها ليها profile. [[All User Profile]] يعني محفوظة لكل اليوزرز على الجهاز. وعلى الجهاز ده كان فيه ٢٤ profile، أغلبهم شبكات قديمة مش هيرجعلها تاني. الاسم اللي هنا هو اللي بتكتبه في [[connect]] و [[delete]].
+
+---
+
+## ٤. اتصل: [[connect name="HomeNet"]]
+
+[[connect]] بيطلب من الكارت يتصل، و [[name=]] اسم الـ profile من الخطوة ٣ (لازم يكون محفوظ قبل كده، عشان الباسورد جواه). حسب التوثيق بيطبع [[Connection request was completed successfully.]]، وده معناه إن الطلب اتبعت مش إن الاتصال نجح، فاتأكد بـ [[show interfaces]]. مشغّلتهوش هنا عشان ميقطعش اتصال الجهاز.
+
+---
+
+## ٥. انقل الشبكات لجهاز تاني: [[export]] و [[add profile]]
+
+~~~cmd
+mkdir D:\wifi
+netsh wlan export profile key=clear folder=D:\wifi
+netsh wlan add profile filename="D:\wifi\Wi-Fi-HomeNet.xml"
+~~~
+
+1. [[mkdir D:\wifi]] اعمل فولدر (درس mkdir)، لأن export مش بيعمله لوحده.
+2. [[export profile]] من غير [[name=]] بيصدّر **كل** الشبكات، ملف XML لكل واحدة اسمه [[Wi-Fi-اسم الشبكة.xml]] (أول جزء اسم الكارت). و [[key=clear]] اكتب الباسورد واضح جوه الملف (في خانة [[keyMaterial]])، وده محتاج CMD أدمن؛ من غيره الباسورد بيتكتب مشفّر ومينفعش يتنقل لجهاز تاني. و [[folder=]] فين.
+3. على الجهاز الجديد: [[add profile filename="..."]] ضيف الشبكة من الملف، والمسار بين علامات تنصيص.
+
+حسب التوثيق، export بيطبع لكل شبكة [[Interface profile "HomeNet" is saved in file "D:\wifi\Wi-Fi-HomeNet.xml" successfully.]]. الملفات دي فيها باسوردات كل شبكاتك: امسحها بعد ما تخلص.
+
+---
+
+## ٦. انسى شبكة وتقرير: [[delete]] و [[wlanreport]]
+
+[[netsh wlan delete profile name="OldCafe"]] بيمسح الـ profile (الجهاز مش هيتصل بيها لوحده تاني). و [[show wlanreport]] بيعمل تقرير HTML عن الاتصالات والفصل آخر ٣ أيام. من CMD عادي هنا طلّع:
+
+~~~text الناتج
+You must run this command from a command prompt with administrator privilege.
+~~~
+
+ومن أدمن بيحفظه في [[C:\ProgramData\Microsoft\Windows\WlanReport\wlan-report-latest.html]].
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| إشارتي وقناتي وسرعة الوصلة | [[show interfaces]] |
+| الشبكات اللي حواليا وقنواتها | [[show networks mode=bssid]] |
+| الشبكات المحفوظة | [[show profiles]] |
+| اتصل بواحدة محفوظة | [[connect name="..."]] |
+| انقلهم لجهاز جديد | [[export profile key=clear folder=...]] ثم [[add profile filename=...]] |
+| انسى شبكة | [[delete profile name="..."]] |
+
+> [[Receive rate]] مش سرعة النت. والإشارة الكويسة على 2.4 GHz مش أحسن حاجة: لو الراوتر عنده 5 GHz وانت قريب، اتصل بيها.`,
           lines: [
             R`الاتصال الحالي: الشبكة والإشارة والقناة والسرعة.`,
             R`الشبكات اللي حواليك، ولكل راوتر قناته وإشارته.`,
@@ -203,6 +742,132 @@ LSPs بقت نادرة في ويندوز الحديث (أغلب البرامج �
             when: R`الجهاز ده بس اللي مفيهوش نت، بعد ما شلت VPN أو antivirus، بعد ما رجعت من شبكة كان عليها IP ثابت، أو «No internet» والواي فاي متصل.`,
             mistakes: R`تبدأ بـ Network reset أو int ip reset على طول قبل الخطوات الخفيفة. أو int ip reset على جهاز عليه IP ثابت مقصود (سيرفر في البيت) فيروح (هتلاقيه في اللوج). أو تنسى الـ restart وتقول «مفيش فايدة». أو [[/release]] من Remote Desktop فتفصل نفسك. أو تصلّح الجهاز والمشكلة أصلًا في الراوتر أو عند مزوّد الخدمة (الموبايل كمان مفيهوش نت).`
           },
+          teach: R`## الأول: الفكرة طبقات
+
+النت بيوصل لبرامجك على طبقات: الكارت ياخد عنوان من الراوتر، وويندوز يحوّل أسامي المواقع لعناوين (DNS)، والبرامج تكلم الشبكة من خلال Winsock، و Winsock يسلّم لـ TCP/IP. أي طبقة ممكن تبوظ، والأوامر في المثال كل واحد بيصلّح طبقة، **مرتبين من الأخف للأتقل**. فبتمشي واحد واحد وتوقف أول ما النت يرجع.
+
+أول سطر بس عرض، والباقي بيغيّر إعدادات الشبكة أو بيقطع النت، فمشغّلتهوش على الجهاز ده (الكلام عنه من توثيق Microsoft). كله في CMD كأدمن.
+
+---
+
+## ٠. قبل ما تصلّح: [[netsh winsock show catalog]]
+
+~~~cmd
+netsh winsock show catalog | findstr /c:"Description:"
+~~~
+
+### يعني إيه catalog؟
+
+Winsock (من Windows Sockets) هو الطبقة اللي أي برنامج بيكلم بيها الشبكة. و الـ catalog لستة «المزوّدين» (providers) اللي Winsock بيعدّي عليهم. ويندوز بيحط فيها مزوّدينه، وبرامج زي VPN قديمة أو antivirus كانت بتحشر نفسها فيها كـ LSP (Layered Service Provider): طبقة في النص كل اتصالات البرامج بتعدّي عليها. لو البرنامج ده اتشال غلط، الطبقة بتفضل في السكة وتقطع النت عن كل البرامج.
+
+### الأمر
+
+- [[show catalog]] اعرض اللستة. الناتج طويل (حوالي ١٥ سطر لكل مزوّد).
+- [[| findstr /c:"Description:"]] خد سطر الاسم بس من كل واحد (درس findstr).
+
+~~~text الناتج على ويندوز 11 هنا
+Description:                        Hyper-V RAW
+Description:                        AF_UNIX
+Description:                        MSAFD Tcpip [TCP/IPv6]
+Description:                        MSAFD Tcpip [UDP/IPv6]
+Description:                        MSAFD Tcpip [RAW/IPv6]
+Description:                        MSAFD Tcpip [TCP/IP]
+Description:                        MSAFD Tcpip [UDP/IP]
+Description:                        MSAFD Tcpip [RAW/IP]
+Description:                        RSVP TCPv6 Service Provider
+Description:                        RSVP TCP Service Provider
+Description:                        RSVP UDPv6 Service Provider
+Description:                        RSVP UDP Service Provider
+Description:                        MSAFD L2CAP [Bluetooth]
+Description:                        MSAFD RfComm [Bluetooth]
+... (نفس الـ ١٤ تاني)
+Description:                        E-mail Naming Shim Provider
+Description:                        Tcpip
+Description:                        NTDS
+Description:                        @%SystemRoot%\system32\nlasvc.dll,-1000
+Description:                        Bluetooth Namespace
+... (ونفس الخمسة تاني)
+~~~
+
+### نقراه
+
+| الاسم | ده إيه |
+|---|---|
+| [[MSAFD Tcpip [...]]] | مزوّد ويندوز لـ TCP و UDP، على IPv4 و IPv6 |
+| [[RSVP ...]] | مزوّد ويندوز قديم لحجز جودة الاتصال |
+| [[Hyper-V RAW]] و [[AF_UNIX]] | بتوع ويندوز (الأجهزة الافتراضية، و Unix sockets) |
+| [[MSAFD L2CAP]] و [[RfComm [Bluetooth]]] | بتوع البلوتوث |
+| الخمسة الأخيرين | namespace providers: بيحوّلوا الأسامي لعناوين، والـ reset مش بيلمسهم |
+
+اللستة متكررة مرتين لأن ويندوز 64-bit عنده catalog للبرامج الـ 64-bit وواحد للـ 32-bit. وكل حاجة هنا بتاعة ويندوز، فـ winsock reset مش هيفرق على الجهاز ده. ولو شفت اسم برنامج (VPN، antivirus، كلمة proxy، أو حاجة مش عارفها)، ده المشتبه فيه. ومن غير [[findstr]] هتلاقي لكل مزوّد [[Entry Type: Base Service Provider]] (مزوّد أساسي)، والـ LSP بيبان مكتوب عليه Layered.
+
+---
+
+## ١. عنوان جديد: [[ipconfig /release]] و [[/renew]]
+
+~~~cmd
+ipconfig /release
+ipconfig /renew
+~~~
+
+[[ipconfig]] (IP configuration) بيعرض ويغيّر عنوان الكروت (درس ipconfig /release /renew). [[/release]] سيب العنوان اللي معاك (النت بيقطع هنا)، و [[/renew]] اطلب عنوان جديد من الراوتر بالـ DHCP. ده بيصلّح عنوان غلط أو منتهي، ومعاه الـ gateway والـ DNS اللي جايين من الراوتر.
+
+---
+
+## ٢. كاش الأسامي: [[ipconfig /flushdns]]
+
+ويندوز بيحفظ ردود DNS (اسم الموقع وعنوانه) فترة عشان ميسألش كل مرة. لو اتحفظ رد غلط، الموقع ده بس يفضل مبيفتحش. [[/flushdns]] بيمسح الكاش ده. جرّبته هنا من CMD عادي وطلّع:
+
+~~~text الناتج
+The requested operation requires elevation.
+~~~
+
+يعني على ويندوز ده حتى الخطوة دي محتاجة أدمن. ومن أدمن بيطبع [[Successfully flushed the DNS Resolver Cache.]] (حسب التوثيق).
+
+---
+
+## ٣. Winsock لأصله: [[netsh winsock reset]]
+
+[[netsh]] هو network shell، و [[winsock]] القسم، و [[reset]] رجّعه لحالته الأصلية: catalog فيه مزوّدين ويندوز بس، وأي LSP بيتشال. حسب التوثيق بيطبع:
+
+~~~text الناتج
+Successfully reset the Winsock Catalog.
+You must restart the computer in order to complete the reset.
+~~~
+
+---
+
+## ٤. TCP/IP لأصله: [[netsh int ip reset C:\resetlog.txt]]
+
+| الحتة | معناها |
+|---|---|
+| [[int]] | اختصار [[interface]]، netsh بيقبل أول حروف الكلمة لو مش ملخبطة مع غيرها |
+| [[ip]] | إعدادات IPv4 |
+| [[reset]] | رجّعها لأصلها في الريجستري، كأنك شيلت TCP/IP وسطّبته تاني |
+| [[C:\resetlog.txt]] | ملف لوج بيتكتب فيه كل مفتاح اتغيّر وقيمته القديمة |
+
+ده الأتقل: أي IP أو DNS ثابت عملته (درس netsh interface ip set address) بيروح والكروت ترجع DHCP. واللوج هو اللي هيقولك كان إيه عشان ترجّعه. حسب التوثيق بيطبع سطر [[Resetting ..., OK!]] لكل جزء، وفي الآخر [[Restart the computer to complete this action.]]. و [[netsh int ipv6 reset]] نفس الفكرة لـ IPv6.
+
+---
+
+## ٥. [[shutdown /r /t 0]]
+
+[[shutdown]] (درس shutdown) و [[/r]] restart و [[/t 0]] بعد صفر ثانية. الـ restart هنا جزء من التصليح: الرسالتين اللي فوق بيقولوا إن التغيير مش بيكمل غير بيه. احفظ شغلك الأول.
+
+---
+
+## الخلاصة: بالترتيب، ووقف عند أول خطوة تحل
+
+| # | الأمر | بيصلّح | الثمن |
+|---|---|---|---|
+| ٠ | [[netsh winsock show catalog]] | ولا حاجة، بيوريك بس | مفيش |
+| ١ | [[ipconfig /release]] و [[/renew]] | العنوان والـ gateway | النت يقطع ثواني |
+| ٢ | [[ipconfig /flushdns]] | ردود DNS غلط | مفيش |
+| ٣ | [[netsh winsock reset]] | LSP بايظ | restart |
+| ٤ | [[netsh int ip reset]] | إعدادات TCP/IP بايظة | الـ IP الثابت يروح، و restart |
+| ٥ | [[shutdown /r /t 0]] | بيكمّل ٣ و ٤ | — |
+
+> قبل أي خطوة اتأكد إن المشكلة في الجهاز ده: لو الموبايل كمان مفيهوش نت، المشكلة في الراوتر أو عند مزوّد الخدمة.`,
           lines: [
             R`شوف مين متسجل في Winsock قبل ما تمسح (عرض بس).`,
             R`سيب الـ IP (النت بيقطع).`,
@@ -256,6 +921,147 @@ net share Docs /delete`,
             when: R`نقل ملفات في البيت أو المكتب، فولدر مشترك، درايف شبكة ثابت لسكربت باك أب، الوصول لـ NAS، أو جلسة بيوزر معين على [[IPC$]] قبل أوامر إدارة عن بعد.`,
             mistakes: R`شير بـ [[Everyone,FULL]] على فولدر فيه حاجات مهمة. أو شير على شبكة Public. أو [[net use]] من CMD أدمن ومتلاقيش الدرايف في Explorer: نافذة الأدمن ونافذتك العادية جلستين منفصلتين، فاعمله من CMD عادي. أو تتوصل لنفس الجهاز بيوزرين مختلفين فيطلع [[System error 1219]] ([[Multiple connections to a server or shared resource by the same user, using more than one user name, are not allowed.]])، والحل [[net use \\PC\IPC$ /delete]] أو [[net use * /delete]]. أو حرف الدرايف مستخدم ([[System error 85]]: [[The local device name is already in use.]]).`
           },
+          teach: R`## الأول: جهازين، وكل واحد ليه أمر
+
+فيه جهاز **فيه الملفات** وده بيستخدم [[net share]] («شيّر الفولدر ده»)، وجهاز **عايز الملفات** وده بيستخدم [[net use]] («وصّلني بالفولدر ده»). [[net]] نفسه برنامج قديم في ويندوز جواه أوامر كتير للشبكة واليوزرز ([[net user]] و [[net localgroup]] و [[net start]] وغيرهم)، والكلمة اللي بعده بتحدد الأمر.
+
+العرض اتشغّل هنا في CMD على ويندوز 11. الإنشاء والتوصيل والمسح لأ، عشان ميغيّروش شيرات الجهاز (الكلام عنهم من التوثيق ومن الحل تحت).
+
+---
+
+## ١. الشيرات اللي على جهازك: [[net share]]
+
+~~~cmd
+net share
+~~~
+
+~~~text الناتج
+Share name   Resource                        Remark
+
+-------------------------------------------------------------------------------
+C$           C:\                             Default share
+D$           D:\                             Default share
+E$           E:\                             Default share
+IPC$                                         Remote IPC
+ADMIN$       C:\WINDOWS                      Remote Admin
+The command completed successfully.
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[Share name]] | الاسم اللي الأجهزة التانية بتطلبه |
+| [[Resource]] | الفولدر الحقيقي على جهازك |
+| [[Remark]] | وصف |
+
+الجهاز ده مش عامل أي شير، ومع ذلك فيه ٥. دول شيرات **إدارية** ويندوز بيعملها لوحده:
+
+- [[C$]] و [[D$]] و [[E$]] كل درايف كله، للأدمنز بس.
+- [[ADMIN$]] فولدر ويندوز، برامج الإدارة عن بعد بتستخدمه.
+- [[IPC$]] (Inter-Process Communication) مش فولدر خالص: «باب» بتفتح عليه جلسة بيوزر وباسورد قبل أوامر الإدارة عن بعد (درس shutdown /m).
+
+والـ [[$]] في آخر الاسم معناها «شير مخفي»: مش بيظهر في لستة الشيرات لما جهاز تاني يبص على جهازك، بس اللي يعرف اسمه يقدر يطلبه.
+
+---
+
+## ٢. اعمل شير: [[net share Docs=D:\Docs ...]]
+
+~~~cmd
+net share Docs=D:\Docs /grant:Everyone,READ /remark:"Shared docs"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Docs=D:\Docs]] | الاسم على الشبكة [[=]] الفولدر على جهازك. ينفع الاتنين يختلفوا |
+| [[/grant:Everyone,READ]] | ادّي صلاحية: مين، وبعد الفاصلة إيه |
+| [[Everyone]] | أي يوزر بيدخل |
+| [[READ]] | قراية بس. أو [[CHANGE]] قراية وكتابة ومسح، أو [[FULL]] كل حاجة ومعاها تغيير الصلاحيات |
+| [[/remark:"..."]] | الوصف اللي بيظهر في عمود Remark |
+
+وفيه طبقتين صلاحيات: صلاحيات الشير دي، وصلاحيات NTFS على الفولدر نفسه (درس icacls). اللي داخل من الشبكة بياخد **الأضيق** من الاتنين. محتاج CMD كأدمن، وحسب التوثيق بيطبع [[Docs was shared successfully.]].
+
+---
+
+## ٣. الناحية التانية: [[net use]]
+
+~~~cmd
+net use
+~~~
+
+~~~text الناتج
+New connections will be remembered.
+
+There are no entries in the list.
+~~~
+
+لوحده بيعرض الدرايفات والجلسات اللي جهازك متوصل بيها على أجهزة تانية. السطر الأول معناه إن الإعداد الحالي «افتكر الاتصالات الجديدة بعد الـ restart» (ده اللي [[/persistent]] بيغيّره)، والتاني إن مفيش أي اتصال دلوقتي.
+
+---
+
+## ٤. وصّل درايف: [[net use Z: \\PC\Docs]]
+
+~~~cmd
+net use Z: \\PC\Docs /persistent:yes
+~~~
+
+- [[Z:]] حرف الدرايف اللي هيظهر عندك في Explorer. اختار حرف مش مستخدم.
+- [[\\PC\Docs]] اسمه **UNC path** (Universal Naming Convention): [[\\]] في الأول معناها «جهاز على الشبكة»، وبعدها اسم الجهاز (أو الـ IP)، وبعدها [[\]] واسم الشير (اللي قبل [[=]] في الخطوة ٢، مش مسار الفولدر).
+- [[/persistent:yes]] رجّع الدرايف ده لوحده بعد كل restart.
+
+حسب التوثيق بيطبع [[The command completed successfully.]]، ومش محتاج أدمن. بالعكس: اعمله من CMD **عادي**، لأن نافذة الأدمن جلسة منفصلة والدرايف مش هيظهر في Explorer بتاعك.
+
+### بيوزر من الجهاز التاني
+
+~~~cmd
+net use Y: \\192.168.1.50\Docs * /user:PC\sara
+~~~
+
+- [[\\192.168.1.50\Docs]] نفس الفكرة بالـ IP بدل الاسم (مفيد لما الاسم مش بيتعرف).
+- [[*]] مكان الباسورد: «اسألني عليه». بيتكتب ومش بيظهر، وأحسن من إنك تكتبه في الأمر فيفضل في التاريخ.
+- [[/user:PC\sara]] ادخل باليوزر [[sara]] اللي على الجهاز [[PC]]. الجهاز التاني بيتأكد من يوزر **موجود عنده هو**، مش يوزرك.
+
+---
+
+## ٥. استخدمه وافصل
+
+~~~cmd
+dir Z:\
+net use Z: /delete
+net use Y: /delete
+net share Docs /delete
+~~~
+
+1. [[dir Z:\]] اعرض اللي في الدرايف زي أي درايف (درس dir).
+2. [[net use Z: /delete]] افصل الدرايف من عندك. حسب التوثيق: [[Z: was deleted successfully.]].
+3. نفس الحاجة لـ Y.
+4. على جهاز الملفات: [[net share Docs /delete]] شيل الشير. الفولدر نفسه وملفاته مش بيتمسحوا، بس مبقاش متشير.
+
+---
+
+## ٦. الأخطاء اللي هتقابلها
+
+كل خطأ في [[net]] بيطلع برقم: [[System error 53 has occurred.]]. و [[net helpmsg]] والرقم بيطبع معناه. طلّعتهم هنا:
+
+| الرقم | [[net helpmsg]] بيقول | يعني |
+|---|---|---|
+| 53 | [[The network path was not found.]] | الجهاز مش باين: مقفول، أو الاسم غلط، أو الشبكة Public، أو File sharing مقفول |
+| 1326 | [[The user name or password is incorrect.]] | يوزر أو باسورد غلط (على الجهاز التاني) |
+| 85 | [[The local device name is already in use.]] | الحرف ده مستخدم عندك |
+| 1219 | [[Multiple connections to a server or shared resource by the same user, using more than one user name, are not allowed. ...]] | متوصل بنفس الجهاز بيوزر تاني. افصل الأول ([[net use * /delete]]) |
+
+---
+
+## الخلاصة
+
+| على أنهي جهاز | عايز | الأمر |
+|---|---|---|
+| اللي فيه الملفات | الشيرات | [[net share]] |
+| اللي فيه الملفات | شير قراية بس | [[net share اسم=فولدر /grant:Everyone,READ]] (أدمن) |
+| التاني | وصّل درايف | [[net use Z: \\جهاز\شير]] |
+| التاني | بيوزر وباسورد | [[... * /user:جهاز\يوزر]] |
+| التاني | افصل | [[net use Z: /delete]] |
+| اللي فيه الملفات | شيل الشير | [[net share اسم /delete]] |
+
+> الشيرات اللي بـ [[$]] ويندوز عاملها لوحده متقلقش منها. والشبكة لازم تبقى Private عشان أي ده يشتغل.`,
           lines: [
             R`الشيرات اللي جهازك عاملها، ومنها الإدارية C$ و ADMIN$ و IPC$.`,
             R`على جهاز الملفات: شير D:\Docs قراية بس للكل (أدمن).`,
@@ -306,6 +1112,134 @@ net view \\192.168.1.20`,
             when: R`بتدوّر على IP طابعة أو Raspberry Pi أو جهاز في البيت، بتراجع مين على الواي فاي بتاعك، أو قبل SSH أو Remote Desktop لجهاز مش فاكر عنوانه.`,
             mistakes: R`[[nbtstat -a]] بالـ IP (الصغيرة للاسم والكابيتال للـ IP). أو تفتكر إن مفيش اسم يبقى الجهاز مش موجود (موجود بس مش معلن اسمه، أو فايروله بيمنع). أو تصدّق اسم [[ping -a]] من غير ما تبص على ملف hosts (الحل تحت). أو تعتمد على [[net view]]. أو تلف على شبكة مش بتاعتك.`
           },
+          teach: R`## الأول: عندنا IP وعايزين اسم
+
+الأجهزة على الشبكة بتتعرف بالـ IP، بس الـ IP مش بيقولك ده موبايل ولا طابعة ولا لابتوب أخوك. فيه ٣ طرق تسأل بيها «ده مين؟»، وكل طريقة بتسأل حد مختلف، فكل أمر من التلاتة ممكن ينجح أو يفشل لوحده. هنبدأ بلستة الأجهزة، وبعدين نسأل عن كل واحد.
+
+الأوامر اتشغّلت هنا في CMD على ويندوز 11 على شبكة البيت (والأسامي والـ MACs متغيّرة أو متخبية جزئيًا). اسأل عن أجهزة شبكتك انت بس.
+
+---
+
+## ١. مين على الشبكة: [[arp -a]]
+
+[[arp]] (Address Resolution Protocol) هو اللي بيحوّل IP لـ MAC جوه الشبكة المحلية، وويندوز بيحفظ اللي عرفه في جدول. [[-a]] (all) اعرض الجدول ده (التفاصيل في درس arp / route).
+
+~~~text الناتج (مختصر)
+Interface: 192.168.1.65 --- 0xd
+  Internet Address      Physical Address      Type
+  192.168.1.1           dc-51-93-xx-xx-xx     dynamic
+  192.168.1.3           d8-32-14-xx-xx-xx     dynamic
+  192.168.1.5           1e-0b-c2-xx-xx-xx     dynamic
+  192.168.1.6           4a-5b-18-xx-xx-xx     dynamic
+  ...
+  192.168.1.255         ff-ff-ff-ff-ff-ff     static
+  224.0.0.251           01-00-5e-00-00-fb     static
+  239.255.255.250       01-00-5e-7f-ff-fa     static
+
+Interface: 172.29.160.1 --- 0x35
+  172.29.173.165        00-15-5d-xx-xx-xx     dynamic
+  ...
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Interface: 192.168.1.65]] | الجدول ده بتاع الكارت اللي عنوانه كده (الواي فاي). و [[0xd]] رقم الكارت جوه ويندوز بالـ hex |
+| [[Internet Address]] | الـ IP |
+| [[Physical Address]] | الـ MAC |
+| [[dynamic]] | اتعرف من الشبكة وهيتمسح لوحده بعد شوية |
+| [[static]] | ثابت. هنا كله عناوين خاصة: [[.255]] (broadcast: كل الشبكة) و [[224...]] و [[239...]] (multicast: جروبات) |
+
+والجدول التاني ([[172.29.160.1]]) كارت افتراضي بتاع WSL جوه الجهاز نفسه، مش شبكة البيت.
+
+على الشبكة دي كان فيه ٢٧ جهاز غير الراوتر. وبص على **الحرف التاني** في الـ MAC: لو [[2]] أو [[6]] أو [[A]] أو [[E]] يبقى MAC عشوائي (موبايل أو لابتوب حديث بيغيّر الـ MAC لكل شبكة عشان الخصوصية)، زي [[1e-...]] و [[4a-...]]. ١٥ جهاز من الـ ٢٧ هنا كانوا كده. الباقي ([[d8-...]] و [[dc-...]]) MAC حقيقي، وأول ٣ أجزاء منه بتقول الشركة المصنّعة.
+
+---
+
+## ٢. [[ping -a -n 1 192.168.1.1]]
+
+[[ping]] عادي بيبعت رسالة ويستنى رد (درس ping / tracert / nslookup). الإضافات:
+
+- [[-a]] (address to name) قبل ما تبدأ، حاول تحوّل الـ IP لاسم.
+- [[-n 1]] مرة واحدة بس بدل ٤.
+
+~~~text الناتج
+Pinging 192.168.1.1 [192.168.1.1] with 32 bytes of data:
+Reply from 192.168.1.1: bytes=32 time=1ms TTL=64
+~~~
+
+بص على **أول سطر**: لو اتعرف اسم، بيتكتب [[Pinging الاسم [IP]]]. هنا الاتنين IP، يعني ملقاش اسم للراوتر. و [[TTL=64]] بيدّي فكرة عن النظام: ٦٤ غالبًا لينكس (الراوترات أغلبها لينكس) أو أندرويد أو أبل، و ١٢٨ غالبًا ويندوز.
+
+[[ping -a]] بيسأل بكل الطرق اللي ويندوز يعرفها: ملف hosts الأول (درس hosts)، وبعدين DNS، و mDNS و LLMNR (الأجهزة بتعلن أسماءها على الشبكة)، و NetBIOS. وفي تجربة اللي في الحل تحت، رجّع اسم **غلط** من ملف hosts، فمتصدّقش أول اسم.
+
+---
+
+## ٣. [[nbtstat -A 192.168.1.20]]
+
+[[nbtstat]] (NetBIOS over TCP/IP statistics) بيكلم NetBIOS بس: نظام أسامي قديم من أيام شبكات ويندوز الأولى. و [[-A]] كابيتال يعني «بالـ IP»: ابعت للجهاز ده نفسه واسأله عن أسماءه. ([[-a]] صغيرة نفس الحاجة بس بالاسم.)
+
+لو الجهاز ويندوز و NetBIOS شغال عليه بيرد بجدول زي اللي في الخطوة ٥. لو لأ (موبايل، تليفزيون، أغلب الأجهزة الحديثة)، بيطبع [[Host not found.]] تحت كل كارت عندك، وده اللي حصل في تجربة الحل تحت.
+
+---
+
+## ٤. [[nslookup 192.168.1.20]]
+
+[[nslookup]] (name server lookup) بيسأل سيرفر الـ DNS بس، وهنا السؤال بالعكس (reverse lookup): «مين صاحب الـ IP ده؟». الـ DNS في البيت غالبًا الراوتر، وفيه راوترات بتسجّل اسم كل جهاز أخد منها عنوان وفيه لأ. لو ملقاش بيطبع [[Non-existent domain]] (درس nslookup).
+
+---
+
+## ٥. أسامي جهازك انت: [[nbtstat -n]]
+
+[[-n]] (names) الأسامي اللي جهازك **نفسه** معلنها في NetBIOS. ده على الجهاز هنا (غيّرت الاسم لـ MYPC):
+
+~~~text الناتج (الكارت المتوصل بس)
+Wi-Fi:
+Node IpAddress: [192.168.1.65] Scope Id: []
+
+                NetBIOS Local Name Table
+
+       Name               Type         Status
+    ---------------------------------------------
+    MYPC           <20>  UNIQUE      Registered
+    WORKGROUP      <00>  GROUP       Registered
+    MYPC           <00>  UNIQUE      Registered
+~~~
+
+| الاسم | النوع | معناه |
+|---|---|---|
+| [[MYPC <00>]] | [[UNIQUE]] | اسم الجهاز، ومحدش غيره ياخده |
+| [[MYPC <20>]] | [[UNIQUE]] | نفس الاسم كخدمة «File Server»: الجهاز يقدر يعمل شير |
+| [[WORKGROUP <00>]] | [[GROUP]] | اسم الجروب، وأجهزة كتير بتشترك فيه |
+
+والرقم بين [[< >]] نوع الخدمة بالـ hex. والكروت اللي مش متوصلة بيطبع تحتها [[No names in cache]].
+
+---
+
+## ٦. [[net view]] و [[net view \\IP]]
+
+[[net view]] لوحده كان زمان بيعرض كل أجهزة الشبكة. جرّبته:
+
+~~~text الناتج
+System error 6118 has occurred.
+
+The list of servers for this workgroup is not currently available
+~~~
+
+الخدمة اللي كانت بتجمع اللستة دي (Computer Browser) اتشالت من ويندوز 10 و 11، فده الطبيعي دلوقتي. لكن [[net view \\192.168.1.20]] (بالـ [[\\]] قبل العنوان) لسه بيعرض شيرات جهاز **معين** لو SMB شغال عليه، ولو مش شغال بيطلع [[System error 53 has occurred.]] (درس net share / net use).
+
+---
+
+## الخلاصة
+
+| الأمر | بيسأل مين | بينجح إمتى |
+|---|---|---|
+| [[arp -a]] | جدول جهازك | دايمًا، بس الأجهزة اللي كلمتها قريب |
+| [[ping -a IP]] | hosts ثم DNS و mDNS و LLMNR و NetBIOS | أحسن فرصة، بس ممكن يجيب اسم غلط من hosts |
+| [[nbtstat -A IP]] | الجهاز نفسه بـ NetBIOS | أجهزة ويندوز قديمة الإعدادات |
+| [[nslookup IP]] | DNS الراوتر | لو الراوتر بيسجّل الأسامي |
+| [[nbtstat -n]] | جهازك | أسامي جهازك انت |
+| [[net view \\IP]] | الجهاز بـ SMB | أجهزة عاملة شير |
+
+> على شبكات البيت الحديثة غالبًا مش هتلاقي أسامي كتير بالأوامر دي. صفحة الراوتر (Connected devices) هي اللي فيها اسم كل جهاز.`,
           lines: [
             R`الـ IPs والـ MACs اللي جهازك يعرفها على الشبكة.`,
             R`IP لاسم: الاسم بيظهر في أول سطر لو اتعرف.`,
@@ -355,6 +1289,121 @@ netsh advfirewall firewall set rule group="remote desktop" new enable=Yes`,
             when: R`جهاز Pro في البيت أو الشغل، سيرفر ويندوز، مساعدة حد على شبكتك، أو اختصارات بملفات rdp جاهزة لكذا جهاز.`,
             mistakes: R`تحاول تفعّله على Home. أو تفتح 3389 في الراوتر للنت. أو يوزر من غير باسورد. أو تنسى إن الدخول بيقفل جلسة اللي قاعد على الجهاز. أو تحفظ الباسورد في ملف rdp على جهاز مش بتاعك (استخدم [[/public]]). أو تفعّل الريجستري وتنسى الفايروول أو العكس، فيطلع «Remote Desktop can't connect to the remote computer».`
           },
+          teach: R`## الأول: برنامج بواجهة، والإضافات بتقوله يفتح إيه
+
+[[mstsc]] اختصار قديم لـ Microsoft Terminal Services Client، وده الاسم القديم لـ Remote Desktop Connection. لما تكتبه بيفتح **نافذة**، مش بيطبع حاجة في CMD. والإضافات بتملا النافذة دي بدل ما تكتب بإيدك، وكلها بالشكل [[/اسم:قيمة]].
+
+فيه جهازين: **العميل** (اللي انت قاعد عليه وبيفتح الشاشة) و**الجهاز البعيد** (اللي شاشته هتظهر). أول ٥ سطور على العميل، وآخر سطرين على الجهاز البعيد.
+
+> الأوامر دي مشغّلتهاش هنا: mstsc بيفتح نافذة وبيتصل بجهاز تاني، والجهاز ده Windows Home، وآخر سطرين بيغيّروا إعدادات النظام. الشرح من توثيق Microsoft، ومعاه أوامر عرض بس اتشغّلت (تحت).
+
+---
+
+## ١. [[mstsc /v:192.168.1.50]]
+
+[[/v:]] (v = server، الجهاز البعيد) وبعد النقطتين اسمه أو الـ IP. ده أقل أمر مفيد: بيفتح نافذة الاتصال على الجهاز ده على البورت الافتراضي **3389**، ويسألك على اليوزر والباسورد بتوع الجهاز البعيد.
+
+---
+
+## ٢. [[mstsc /v:office-pc:3390 /f]]
+
+- [[office-pc]] اسم الجهاز بدل الـ IP.
+- [[:3390]] بعد الاسم: البورت. محتاجه بس لو الجهاز البعيد متظبط على بورت غير 3389.
+- [[/f]] (full screen) الشاشة كلها. و Ctrl+Alt+Break بيبدّل بين full screen والنافذة.
+
+يعني أول [[:]] بعد [[/v]] فاصل الإضافة عن قيمتها، والتانية فاصل الاسم عن البورت.
+
+---
+
+## ٣. [[mstsc /v:192.168.1.50 /w:1600 /h:900 /prompt]]
+
+- [[/w:1600]] (width) العرض بالبكسل، و [[/h:900]] (height) الطول. نافذة بحجم ثابت بدل full screen.
+- [[/prompt]] اسألني على اليوزر والباسورد حتى لو محفوظين. مفيد لو عايز تدخل بيوزر تاني.
+
+---
+
+## ٤. [[mstsc /v:192.168.1.50 /multimon]]
+
+[[/multimon]] (multiple monitors) لو عندك أكتر من شاشة، الجلسة تستخدمهم كلهم بنفس ترتيبهم عندك. والمختلف عنه [[/span]]: بيعمل من الشاشات صورة واحدة عريضة (لازم يكونوا جنب بعض وبنفس الدقة).
+
+---
+
+## ٥. [[mstsc /edit "%USERPROFILE%\Documents\office.rdp"]]
+
+أي إعدادات بتظبطها في النافذة (Show Options) تقدر تحفظها بـ Save As في ملف [[.rdp]]: ملف نص فيه اسم الجهاز والحجم والإعدادات. و [[/edit]] افتح الملف ده للتعديل بدل ما يتصل على طول.
+
+و [[%USERPROFILE%]] متغير بيئة فيه فولدر اليوزر بتاعك ([[C:\Users\ali]] مثلًا)، و CMD بيبدّله بقيمته قبل التنفيذ (درس set / setx). والمسار كله بين علامات تنصيص لأنه ممكن يبقى فيه مسافات.
+
+---
+
+## ٦. على الجهاز البعيد: [[reg add ... fDenyTSConnections ...]]
+
+~~~cmd
+reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+~~~
+
+[[reg]] برنامج بيقرا ويكتب في الريجستري (قاعدة إعدادات ويندوز)، و [[add]] اكتب قيمة. نفكّه:
+
+| الحتة | معناها |
+|---|---|
+| [[HKLM\SYSTEM\...\Terminal Server]] | المفتاح (زي الفولدر). [[HKLM]] = HKEY_LOCAL_MACHINE: إعدادات الجهاز كله، فمحتاج أدمن |
+| [[/v fDenyTSConnections]] | (v = value) اسم القيمة: «امنع اتصالات Terminal Services» |
+| [[/t REG_DWORD]] | (t = type) نوعها: رقم 32-bit |
+| [[/d 0]] | (d = data) القيمة: 0 يعني **متمنعش**، و 1 يعني امنع |
+| [[/f]] | (force) اكتب فوق القديمة من غير ما تسألني |
+
+الاسم بالنفي: «Deny = 0» يعني «مسموح». عشان تشوف القيمة من غير ما تغيّرها: [[reg query]] بنفس المفتاح و [[/v]]. جرّبته على الجهاز هنا:
+
+~~~text الناتج
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server
+    fDenyTSConnections    REG_DWORD    0x1
+~~~
+
+[[0x1]] (يعني 1 بالـ hex): Remote Desktop ممنوع، وده الافتراضي.
+
+---
+
+## ٧. على الجهاز البعيد: الفايروول
+
+~~~cmd
+netsh advfirewall firewall set rule group="remote desktop" new enable=Yes
+~~~
+
+- [[set rule]] غيّر قواعد موجودة (درس netsh advfirewall firewall).
+- [[group="remote desktop"]] كل القواعد اللي في الجروب ده، بدل قاعدة قاعدة.
+- [[new]] الكلمة اللي بتفصل «أنهي قواعد» عن «التغيير». وبعدها [[enable=Yes]] فعّلها.
+
+الريجستري بيخلّي ويندوز يقبل، والفايروول بيخلّي الاتصال يوصل. لو عملت واحد بس هيطلع «Remote Desktop can't connect to the remote computer». واسم الجروب بيتترجم لو ويندوز بلغة تانية، فـ Settings ثم System ثم Remote Desktop أضمن، وبتعمل الاتنين مرة واحدة.
+
+---
+
+## ليه مينفعش على Home؟
+
+جرّبت على الجهاز هنا (Home): [[sc query TermService]] (الخدمة اللي بتستقبل Remote Desktop) طلّع:
+
+~~~text الناتج
+SERVICE_NAME: TermService
+        TYPE               : 20  WIN32_SHARE_PROCESS
+        STATE              : 1  STOPPED
+~~~
+
+الخدمة موجودة بس مقفولة، و Home مفيهوش قواعد الفايروول ولا جروب Remote Desktop Users (التفاصيل في الحل). يعني Home يقدر يفتح أجهزة تانية (العميل)، بس ميستقبلش.
+
+---
+
+## الخلاصة
+
+| السطر | فين | بيعمل إيه |
+|---|---|---|
+| [[mstsc /v:IP]] | العميل | افتح الجهاز ده على 3389 |
+| [[/v:اسم:بورت /f]] | العميل | بورت تاني، و full screen |
+| [[/w: /h: /prompt]] | العميل | حجم ثابت، واسألني على اليوزر |
+| [[/multimon]] | العميل | كل شاشاتي |
+| [[/edit ملف.rdp]] | العميل | عدّل اتصال محفوظ |
+| [[reg add ... fDenyTSConnections ... /d 0]] | البعيد (Pro، أدمن) | اسمح بـ Remote Desktop |
+| [[netsh ... group="remote desktop" new enable=Yes]] | البعيد (أدمن) | افتحله الفايروول |
+
+> متفتحش 3389 للنت من الراوتر. من برا البيت: VPN أو Tailscale الأول، وبعدين mstsc.`,
           lines: [
             R`افتح جهاز بالـ IP على البورت الافتراضي 3389.`,
             R`جهاز بالاسم على بورت 3390، و full screen.`,
@@ -404,6 +1453,107 @@ Remote Registry متقفل افتراضيًا على ويندوز 11 (جرّبت
             when: R`restart لجهاز تاني بعد تحديث أو تسطيب، إيقاف أجهزة معمل أو مكتب صغير آخر اليوم، أو جهاز شغال سيرفر في البيت محتاج restart من اللابتوب.`,
             mistakes: R`[[/t 0]] على جهاز حد شغال عليه فيضيع شغله، و [[/t]] أكبر من صفر معناها [[/f]] (البرامج بتتقفل غصب). أو تنسى [[\\]] قبل الاسم. أو تشغّل [[LocalAccountTokenFilterPolicy]] على كل الأجهزة «عشان تمشي». أو تفتح 445 على Public. أو تغلط في الـ IP فتقفل جهاز حد تاني. أو تنسى [[net use ... /delete]] فالجلسة بباسورد الأدمن تفضل مفتوحة.`
           },
+          teach: R`## الأول: نفس shutdown، بس على جهاز تاني
+
+الأمر هو [[shutdown]] اللي في درس shutdown، بنفس [[/r]] و [[/s]] و [[/t]]. الجديد [[/m]] اللي بيقوله «مش الجهاز ده، الجهاز ده». والمثال ٣ مراحل: **افتح جلسة بيوزر أدمن هناك**، ابعت الأوامر، **اقفل الجلسة**.
+
+> مشغّلتش أي سطر من دول، لأنهم بيقفلوا جهاز تاني أو بيفتحوا جلسة أدمن عليه. اللي اتشغّل هنا: [[shutdown /?]] (عشان أرقام الأسباب) و [[net helpmsg]] (عشان نصوص الأخطاء). الباقي من التوثيق.
+
+---
+
+## ١. افتح جلسة: [[net use \\192.168.1.50\IPC$ /user:OFFICE-PC\admin *]]
+
+shutdown مش بيسألك على باسورد، بيستخدم أي جلسة مفتوحة مع الجهاز ده. فبنفتحها الأول بـ [[net use]] (درس net share / net use):
+
+| الحتة | معناها |
+|---|---|
+| [[\\192.168.1.50]] | الجهاز التاني |
+| [[\IPC$]] | مش فولدر: شير مخفي ويندوز عامله عشان تفتح عليه جلسة بس |
+| [[/user:OFFICE-PC\admin]] | اليوزر [[admin]] اللي على الجهاز [[OFFICE-PC]]، ولازم يكون أدمن هناك |
+| [[*]] | اسألني على الباسورد (بيتكتب ومش بيظهر) |
+
+---
+
+## ٢. restart بعد دقيقة برسالة
+
+~~~cmd
+shutdown /r /m \\192.168.1.50 /t 60 /c "Restarting for updates in 1 minute"
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[/r]] | restart (إيقاف وتشغيل تاني) |
+| [[/m \\192.168.1.50]] | على الجهاز ده. الـ [[\\]] قبل الاسم أو الـ IP لازمة |
+| [[/t 60]] | بعد ٦٠ ثانية. اللي قاعد قدام الجهاز بيشوف إشعار |
+| [[/c "..."]] | (comment) الرسالة اللي في الإشعار، بين علامات تنصيص عشان فيها مسافات |
+
+ولو كله مظبوط مش بيطبع حاجة عندك. خد بالك: [[shutdown /?]] بيقول إن أي [[/t]] أكبر من صفر معناه [[/f]] كمان، يعني البرامج المفتوحة هناك هتتقفل غصب لما الوقت يخلص. فالـ ٦٠ ثانية دي فرصة اللي هناك يحفظ.
+
+---
+
+## ٣. الغيه: [[shutdown /a /m \\192.168.1.50]]
+
+[[/a]] (abort) الغي إيقاف متجدول. بيشتغل بس جوه وقت الـ [[/t]]، فده السبب إنك دايمًا تدّي وقت.
+
+---
+
+## ٤. إيقاف فوري بسبب: [[shutdown /s /m \\192.168.1.50 /t 0 /d p:0:0]]
+
+- [[/s]] (shutdown) إيقاف مش restart.
+- [[/t 0]] دلوقتي، من غير فرصة إلغاء.
+- [[/d p:0:0]] (d = reason) السبب، وبيتسجل في Event Log على الجهاز التاني: [[p]] يعني planned (متخطط)، والرقمين بعده نوع السبب وتفصيله.
+
+الأرقام كلها في [[shutdown /?]]. ده جزء منها من الجهاز هنا:
+
+~~~text من ناتج shutdown /?
+E P     0       0       Other (Planned)
+E P     1       1       Hardware: Maintenance (Planned)
+E P     2       4       Operating System: Reconfiguration (Planned)
+E P     4       1       Application: Maintenance (Planned)
+E P     4       2       Application: Installation (Planned)
+E P     5       19      Security issue (Planned)
+~~~
+
+فـ [[p:0:0]] «Other (Planned)» و [[p:4:1]] «Application: Maintenance (Planned)». والحروف في الأول (زي ما المساعدة بتشرحها): [[E]] = Expected يعني إيقاف متوقع، و [[U]] = Unexpected يعني الجهاز وقع لوحده، و [[P]] = planned يعني متخطط. وفيه أسطر Unplanned من غير P.
+
+---
+
+## ٥. اقفل الجلسة: [[net use \\192.168.1.50\IPC$ /delete]]
+
+[[/delete]] بيقفل الجلسة اللي فتحتها في الخطوة ١. من غيرها الجلسة دي (بصلاحيات أدمن) بتفضل مفتوحة لحد ما تعمل sign out.
+
+---
+
+## ٦. [[shutdown /i]]
+
+[[/i]] (interface) بيفتح نافذة Remote Shutdown: تضيف فيها أسامي أجهزة، وتختار restart أو إيقاف والرسالة والسبب، لكذا جهاز مرة واحدة. ولازم تبقى أول إضافة في الأمر.
+
+---
+
+## لما يفشل: الأرقام
+
+الأخطاء بتطلع بالشكل [[192.168.1.50: Access is denied.(5)]]: الجهاز، والرسالة، ورقمها بين قوسين. و [[net helpmsg]] والرقم بيطبع الرسالة، طلّعتهم هنا:
+
+| الرقم | الرسالة | السبب الغالب |
+|---|---|---|
+| 5 | [[Access is denied.]] | مش أدمن هناك، أو أدمن محلي اتشالت صلاحياته على الشبكة (UAC remote restrictions)، أو جلسة بيوزر تاني |
+| 53 | [[The network path was not found.]] | الجهاز مقفول، أو اسم غلط، أو الشبكة Public، أو File and printer sharing مقفول |
+| 1326 | [[The user name or password is incorrect.]] | من خطوة [[net use]]: باسورد أو يوزر غلط |
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| ١. جلسة أدمن | [[net use \\IP\IPC$ /user:PC\admin *]] |
+| ٢. restart بمهلة ورسالة | [[shutdown /r /m \\IP /t 60 /c "..."]] |
+| ٣. الغي | [[shutdown /a /m \\IP]] |
+| ٤. إيقاف فوري بسبب | [[shutdown /s /m \\IP /t 0 /d p:0:0]] |
+| ٥. اقفل الجلسة | [[net use \\IP\IPC$ /delete]] |
+| نافذة لكذا جهاز | [[shutdown /i]] |
+
+> دايمًا [[/t]] أكبر من صفر على جهاز حد شغال عليه، عشان يلحق يحفظ وعشان تلحق تلغي لو غلطت في الـ IP.`,
           lines: [
             R`افتح جلسة بيوزر أدمن من الجهاز التاني (هيسأل على الباسورد).`,
             R`restart بعد دقيقة، والرسالة بتظهر للي قدامه.`,
@@ -449,6 +1599,113 @@ setx API_URL "http://localhost:3000"`,
             when: "تضبط JAVA_HOME أو NODE_ENV. (الـ PATH عدّله من System Properties مش بـ setx.)",
             mistakes: "set بيضيف المسافات لو كتبت [[set VAR = value]] (مسافة قبل وبعد =). اكتب [[set VAR=value]] بدون مسافات."
           },
+          teach: R`## الأول: متغير البيئة يعني إيه؟
+
+متغير البيئة (environment variable) اسم وجنبه قيمة، شايلهم ويندوز لكل برنامج شغال. ولما برنامج يشغّل برنامج تاني، التاني بياخد **نسخة** منهم. فـ Node و Python و git كلهم يقدروا يقروا [[PATH]] و [[USERPROFILE]] واللي انت تعمله. الأوامر اتشغّلت هنا في CMD على ويندوز 11، إلا [[setx]] (تحت ليه)، والأسامي في الناتج متغيّرة.
+
+---
+
+## ١. [[set]] لوحده: كله
+
+~~~cmd
+set
+~~~
+
+بيطبع كل المتغيرات بالشكل [[اسم=قيمة]]، مترتبين أبجديًا، وهما كتير. سطرين منهم:
+
+~~~text الناتج (جزء)
+ALLUSERSPROFILE=C:\ProgramData
+APPDATA=C:\Users\ali\AppData\Roaming
+...
+~~~
+
+ولو كتبت بعده بداية اسم بيطبع اللي بيبدأوا بيها بس. [[set USER]]:
+
+~~~text الناتج
+USERDOMAIN=MYPC
+USERDOMAIN_ROAMINGPROFILE=MYPC
+USERNAME=ali
+USERPROFILE=C:\Users\ali
+~~~
+
+ولو مفيش ولا واحد: [[set NOPE]] طبع [[Environment variable NOPE not defined]].
+
+---
+
+## ٢. اعمل متغير: [[set PORT=3000]]
+
+- [[set]] الأمر.
+- [[PORT]] الاسم. الكابيتال عادة مش شرط: CMD مش بيفرق بين [[PORT]] و [[port]].
+- [[=3000]] القيمة. كل حاجة بعد [[=]] لحد آخر السطر.
+
+مش بيطبع حاجة. والمتغير ده موجود في **النافذة دي بس** (والبرامج اللي هتشغّلها منها)، ولما تقفلها يروح.
+
+### المسافات حوالين [[=]]
+
+في CMD المسافة جزء من الاسم والقيمة. جرّبت [[set PORT = 3000]] وبعدها [[set PORT]]:
+
+~~~text الناتج
+PORT = 3000
+~~~
+
+شكله صح، بس اللي اتعمل متغير اسمه [[PORT ]] (بمسافة في الآخر) وقيمته [[ 3000]] (بمسافة في الأول). و [[echo [%PORT %]]] طبع [[[ 3000]]]. فاكتبها لازقة: [[set PORT=3000]].
+
+---
+
+## ٣. اقراه: [[echo %PORT%]]
+
+[[%PORT%]]: الاسم بين علامتين [[%]] معناه «حط القيمة هنا». CMD بيبدّل [[%PORT%]] بـ [[3000]] **قبل** ما ينفّذ السطر، فـ [[echo]] بيشوف [[echo 3000]]:
+
+~~~text الناتج
+3000
+~~~
+
+ولو المتغير مش موجود (افتح نافذة جديدة وجرّب)، CMD بيسيب الكلام زي ما هو:
+
+~~~text الناتج في نافذة جديدة
+%PORT%
+~~~
+
+> «قبل ما ينفّذ السطر» دي مهمة: جرّبت [[set PORT=3000& echo %PORT%]] **في سطر واحد** وطبع [[%PORT%]]، لأن CMD بدّل [[%PORT%]] في السطر كله قبل ما [[set]] يشتغل. لما تكتبهم في سطرين بيشتغل عادي. وده بالظبط موضوع درس «%errorlevel% و !errorlevel!».
+
+---
+
+## ٤. [[echo %PATH%]]
+
+[[PATH]] أهم متغير: لستة فولدرات مفصولة بـ [[;]]، ولما تكتب اسم برنامج ([[git]] مثلًا)، CMD بيدوّر عليه فيهم بالترتيب (درس where). الناتج سطر واحد طويل جدًا، أوله هنا:
+
+~~~text الناتج (أول ٦٠ حرف)
+C:\Program Files\WindowsApps\Microsoft.PowerShell_7.6.6.0_x6
+~~~
+
+(طلّعت أول ٦٠ حرف بـ [[%PATH:~0,60%]]: [[:~0,60]] بعد الاسم معناها «من الحرف رقم 0، خد 60 حرف».)
+
+---
+
+## ٥. احفظه دايمًا: [[setx API_URL "http://localhost:3000"]]
+
+[[setx]] (set extended) برنامج منفصل مش جزء من CMD، وبيكتب المتغير في إعدادات اليوزر في الريجستري:
+
+- [[API_URL]] الاسم، **من غير [[=]]**: في setx الاسم والقيمة مفصولين بمسافة.
+- [[" "]] حوالين القيمة عشان فيها رموز زي [[:]] و [[/]]، وأي قيمة فيها مسافة لازم كده.
+
+حسب توثيق setx بيطبع [[SUCCESS: Specified value was saved.]]. بس النافذة اللي انت فيها **مش بتتغيّر**: [[echo %API_URL%]] فيها هيطبع [[%API_URL%]]. النوافذ اللي هتفتحها بعد كده بس هي اللي هتلاقيه، لأن كل نافذة بتاخد نسختها من المتغيرات وهي بتفتح. ومشغّلتهوش هنا لأنه بيغيّر إعدادات اليوزر بشكل دايم.
+
+و [[setx ... /m]] (machine) لكل اليوزرز، ومحتاج أدمن.
+
+---
+
+## الخلاصة
+
+| عايز | الأمر | بيعيش قد إيه |
+|---|---|---|
+| كل المتغيرات | [[set]] | — |
+| اللي بيبدأوا بكذا | [[set USER]] | — |
+| متغير مؤقت | [[set PORT=3000]] (من غير مسافات) | النافذة دي |
+| اقرا قيمة | [[echo %PORT%]] | — |
+| متغير دايم | [[setx NAME "value"]] (من غير [[=]]) | النوافذ الجديدة |
+
+> [[set]] بـ [[=]] ومن غير مسافات، و [[setx]] بمسافة ومن غير [[=]]. ومتعملش [[setx PATH "%PATH%;..."]] أبدًا: عدّل الـ PATH من شاشة Environment Variables.`,
           lines: [
             "كل المتغيرات.",
             "متغير للجلسة دي بس. من غير مسافات حوالين =.",
@@ -481,6 +1738,79 @@ doskey gs=git status`,
             when: "اختصارات للأوامر الطويلة في CMD.",
             mistakes: R`تفتكر الاختصار هيشتغل جوه ملف bat (مش هيشتغل، الـ bat بيشوف الأوامر الحقيقية بس). أو تسمّي اختصار باسم أمر موجود فيغطّي عليه. أو تتعب في الـ registry (AutoRun) وتنسى إنه بيشتغل مع كل cmd بيتفتح حتى جوه سكربتات وبرامج تانية.`
           },
+          teach: R`## الأول: اختصار بيتبدّل وانت بتكتب
+
+[[doskey]] برنامج قديم من أيام DOS (الاسم منه)، شغلته إنه يمسك اللي بتكتبه في نافذة CMD **قبل** ما CMD يشوفه. فلو عملت اختصار (macro) اسمه [[gs]]، وكتبت [[gs]] وضغطت Enter، doskey بيبدّله بـ [[git status]] و CMD بيستلم الأمر الحقيقي. زي [[alias]] في bash.
+
+اتشغّل هنا في CMD على ويندوز 11.
+
+---
+
+## ١. [[doskey ll=dir /a $*]]
+
+| الحتة | معناها |
+|---|---|
+| [[doskey]] | البرنامج |
+| [[ll]] | اسم الاختصار اللي هتكتبه |
+| [[=]] | الفاصل: اللي على الشمال الاختصار، واللي على اليمين بيتبدّل بيه |
+| [[dir /a]] | الأمر الحقيقي: [[dir]] بكل الملفات حتى المخفية ([[/a]] = all attributes، درس dir) |
+| [[$*]] | «أي حاجة اتكتبت بعد [[ll]]» |
+
+### [[$*]] بالظبط بتعمل إيه؟
+
+من غيرها، [[ll src]] هيتبدّل بـ [[dir /a]] بس وكلمة [[src]] تضيع. معاها:
+
+~~~text اللي بتكتبه ← اللي CMD بيستلمه
+ll           ←  dir /a
+ll src       ←  dir /a src
+ll src /s    ←  dir /a src /s
+~~~
+
+وفيه [[$1]] و [[$2]] لحد [[$9]] لو عايز كل كلمة في مكان معين، و [[$T]] بتفصل أمرين جوه اختصار واحد ([[doskey up=cd .. $T dir]]).
+
+---
+
+## ٢. [[doskey gs=git status]]
+
+نفس الشكل، من غير [[$*]] لأن [[git status]] مش محتاج حاجة بعده. الاتنين مش بيطبعوا حاجة.
+
+---
+
+## ٣. اتأكد: [[doskey /macros]]
+
+[[/macros]] اعرض الاختصارات اللي عملتها. جرّبته بعد السطرين:
+
+~~~text الناتج
+ll=dir /a $*
+gs=git status
+~~~
+
+---
+
+## إمتى بيشتغل وإمتى لأ
+
+الاختصار بيتبدّل بس لما **انت** تكتبه بالكيبورد في نافذة CMD، لأن doskey قاعد على الكيبورد مش جوه CMD. جرّبت أبعت نفس الأوامر لـ CMD من غير كيبورد (بـ pipe من برنامج تاني): [[doskey /macros]] عرضهم، بس [[ll]] طلّع:
+
+~~~text الناتج
+'ll' is not recognized as an internal or external command,
+operable program or batch file.
+~~~
+
+ونفس السبب بيخلّيه مش شغال جوه ملفات bat ولا في PowerShell. والاختصارات بتروح لما تقفل النافذة. عشان تفضل: حطهم في ملف نص (كل سطر [[gs=git status]]) وحمّلهم بـ [[doskey /macrofile=macros.txt]]، أو في ملف بيشتغل مع كل نافذة (درس title و mode con).
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| اختصار ثابت | [[doskey gs=git status]] |
+| اختصار بياخد كلام بعده | [[doskey ll=dir /a $*]] |
+| أمرين في اختصار | [[... $T ...]] |
+| اعرض اختصاراتك | [[doskey /macros]] |
+| حمّل من ملف | [[doskey /macrofile=macros.txt]] |
+
+> doskey بيبدّل اللي بتكتبه بإيدك في CMD بس. مش في bat، ومش في PowerShell، ومش بعد ما تقفل النافذة.`,
           lines: ["اختصار: [[ll]] تبقى dir /a، و [[$*]] بيمرر أي arguments.", "اختصار لـ git status."],
           sol: R`[[doskey ll=dir /a $*]] مش بيطبع حاجة. [[ll]] بعدها بيطبع dir بالملفات المخفية، و [[ll src]] بيعرض src لأن [[$*]] بتاخد أي حاجة بعد ll.
 
@@ -530,6 +1860,91 @@ Windows Terminal: [[color]] شغال فيه، بس فيه نسخ كان فيها
             when: R`نافذة شغال فيها سيرفر أو متوصلة بـ production وعايزها تبان مختلفة، أو سكربت bat بيقلب أحمر لو حصل خطأ ([[color 4F]] قبل رسالة الفشل)، أو نافذة أدمن تميّزها من أول نظرة.`,
             mistakes: R`[[color 77]] أو أي رقمين زي بعض وتستغرب إن مفيش حاجة حصلت. أو تفتكر إن color بيلوّن اللي جاي بس، وهو بيلوّن الشاشة كلها. أو [[color green]] (لازم أرقام). أو خلفية فاتحة وكلام فاتح ([[color EF]]) فمتقراش حاجة. أو تشغّل سكربت فيه color من CMD مفتوح وتنسى إن اللون هيفضل في النافذة بعد ما السكربت يخلص.`
           },
+          teach: R`## الأول: رقمين، واحد للخلفية وواحد للكلام
+
+[[color]] أمر جوه CMD نفسه (مش برنامج منفصل)، بياخد خانتين لازقين: **الأولى الخلفية والتانية الكلام**. وبيلوّن النافذة كلها مرة واحدة.
+
+---
+
+## ١. [[color /?]]: الجدول
+
+[[/?]] مع أي أمر في CMD معناها «اعرض المساعدة». ودي اللي اتطبعت هنا:
+
+~~~text الناتج (جزء)
+Color attributes are specified by TWO hex digits -- the first
+corresponds to the background; the second the foreground.  Each digit
+can be any of the following values:
+
+    0 = Black       8 = Gray
+    1 = Blue        9 = Light Blue
+    2 = Green       A = Light Green
+    3 = Aqua        B = Light Aqua
+    4 = Red         C = Light Red
+    5 = Purple      D = Light Purple
+    6 = Yellow      E = Light Yellow
+    7 = White       F = Bright White
+~~~
+
+### يعني إيه hex؟
+
+العد العادي بيخلص عند 9 (خانة واحدة، ١٠ أرقام). الـ hex (hexadecimal، ستة عشري) بيكمّل بحروف عشان الخانة الواحدة تشيل ١٦ قيمة: [[A]] = 10، [[B]] = 11، لحد [[F]] = 15. فعندك ١٦ لون، وكل لون ليه خانة واحدة.
+
+ولاحظ الترتيب: العمود اليمين هو نفس العمود الشمال **زائد 8** وأفتح. [[2]] أخضر و [[A]] (يعني 10 = 2 + 8) أخضر فاتح. و [[background]] الخلفية و [[foreground]] الكلام.
+
+---
+
+## ٢. [[color 0A]]
+
+- [[0]] الخلفية: أسود.
+- [[A]] الكلام: أخضر فاتح.
+
+الشاشة كلها بتتلوّن، حتى الكلام اللي كان مكتوب فوق. [[color 0a]] نفس الحاجة: الحروف كابيتال أو سمول زي بعض.
+
+## ٣. [[color 1F]]
+
+[[1]] خلفية زرقا، و [[F]] كلام أبيض ساطع.
+
+---
+
+## ٤. [[color 77]] و [[echo %errorlevel%]]
+
+الرقمين زي بعض يعني الكلام هيبقى بنفس لون الخلفية ومش هيتقري. فـ [[color]] بيرفض ومش بيغيّر حاجة، والمساعدة نفسها بتقول كده:
+
+~~~text من color /?
+The COLOR command sets ERRORLEVEL to 1 if an attempt is made to execute
+the COLOR command with a foreground and background color that are the
+same.
+~~~
+
+[[errorlevel]] متغير CMD بيحط فيه كل أمر «خلصت إزاي»: [[0]] تمام، وأي رقم تاني مشكلة (درس if و errorlevel). و [[echo %errorlevel%]] بيطبعه، فهنا بيطبع:
+
+~~~text الناتج
+1
+~~~
+
+وده متجرّب في نافذة conhost (نافذة CMD العادية) زي ما في الحل: [[color 0A]] رجّع 0، و [[color 77]] رجّع 1 والألوان فضلت زي ما هي.
+
+> جرّبت كمان هنا في كونسول مستخبي من غير نافذة حقيقية، وهناك [[color]] رجّع 1 لكل حاجة حتى [[0A]]، لأن مفيش نافذة يلوّنها. فلو بتجرّب، جرّب في نافذة CMD حقيقية.
+
+---
+
+## ٥. [[color]] لوحدها
+
+من غير أرقام: رجّع الألوان اللي النافذة فتحت بيها. والمساعدة بتقول إن «اللي فتحت بيها» ده جاي من واحد من تلاتة: ألوان النافذة نفسها، أو [[/T]] لو اتفتحت بـ [[cmd /t:0A]]، أو قيمة [[DefaultColor]] في الريجستري. وجوه سكربت bat اكتب اللون صريح ([[color 07]]) بدل [[color]] لوحدها، لأنها في سكربت متشغّل بـ [[cmd /c]] مش بترجّع حاجة (التفاصيل في «إزاي»).
+
+---
+
+## الخلاصة
+
+| الأمر | النتيجة |
+|---|---|
+| [[color /?]] | جدول الـ ١٦ لون |
+| [[color 0A]] | خلفية سودا، كلام أخضر فاتح |
+| [[color 1F]] | خلفية زرقا، كلام أبيض ساطع |
+| [[color 77]] | مش بيتنفذ، و errorlevel = 1 |
+| [[color]] | ألوان النافذة الأصلية |
+
+> أول خانة الخلفية وتاني خانة الكلام، وأي رقم + 8 = نفس اللون فاتح. واللون بيفضل في النافذة لحد ما تقفلها.`,
           lines: [
             R`جدول الـ 16 لون والشرح.`,
             R`خلفية سودا ([[0]]) وكلام أخضر فاتح ([[A]]).`,
@@ -574,6 +1989,143 @@ setx PROMPT "$E[32m$P$E[0m$_$G$S"`,
             when: R`أول ما تجهز جهازك، أو لما تشتغل في مشروع مساره طويل، أو عايز نوافذ (أدمن، سيرفر) يبان الفرق بينها من الـ prompt.`,
             mistakes: R`تنسى [[$E[0m]] فكل حاجة بعد الـ prompt تتلوّن. أو تكتب [[>]] أو [[|]] أو [[&]] على طول بدل [[$G]] و [[$B]] و [[$A]]، فـ CMD يفهمها توجيه ويعمل ملف أو يشغّل أمر تاني. أو تشغّل [[setx PROMPT "$P$G"]] من PowerShell: جوه علامات التنصيص المزدوجة PowerShell بيعتبر [[$P]] و [[$G]] متغيرات (فاضية) ويحفظ كلام ناقص، فمن PowerShell استخدم علامات تنصيص مفردة. أو تستنى setx يغيّر النافذة الحالية (النوافذ الجديدة بس). أو تشوف [[←[32m]] بدل الألوان: يبقى ويندوز أقدم من 10، أو مفعّل «Use legacy console» في خصائص النافذة القديمة.`
           },
+          teach: R`## الأول: الـ prompt نص فيه «خانات» بتتملا كل مرة
+
+الـ prompt هو اللي CMD بيكتبه قبل ما تكتب أي أمر، والافتراضي [[C:\Windows>]]: المسار وبعده [[>]]. [[prompt]] بياخد نص، وجواه أكواد بتبدأ بـ [[$]]، و CMD بيبدّل كل كود بقيمته **كل مرة** بيطبع الـ prompt. فالمسار والوقت بيتحدّثوا لوحدهم.
+
+جرّبت كل سطر هنا في CMD على ويندوز 11، بإني ببعت الأوامر لـ CMD وبقرا اللي بيطبعه. وكل الأمثلة بدأت من [[C:\Windows]].
+
+---
+
+## ١. [[prompt [$T]$S$P$G]]
+
+نقراه حرف حرف من الشمال:
+
+| الحتة | بتطبع |
+|---|---|
+| أول حرف | قوس مربع مفتوح زي ما هو (أي حرف مش كود بيتطبع زي ما هو) |
+| [[$T]] | الوقت (Time) |
+| الحرف بعد [[$T]] | قوس مربع مقفول |
+| [[$S]] | مسافة (Space) |
+| [[$P]] | الدرايف والمسار (Path) |
+| [[$G]] | علامة [[>]] (Greater than) |
+
+~~~text الناتج: الـ prompt قبل وبعد cd ..
+[10:26:23.93] C:\Windows>
+[10:26:23.93] C:\>
+~~~
+
+الوقت ساعات:دقايق:ثواني وبعد النقطة أجزاء من مية من الثانية، وده وقت **طباعة الـ prompt**، مش وقت تنفيذ الأمر اللي بعده. وبعد [[cd ..]] المسار اتحدّث لوحده لـ [[C:\]].
+
+### ليه [[$G]] مش [[>]] على طول؟
+
+لأن [[>]] في CMD معناها «ابعت الناتج لملف» (درس | > >> 2>&1). لو كتبت [[prompt C:>]] هيفهمها توجيه. فعشان كده كل رمز ليه معنى في CMD ليه كود. جرّبتهم كلهم مرة واحدة: [[prompt $N$Q$B$A$C$F$L$$$G]] طبع:
+
+~~~text الناتج
+C=|&()<$>
+~~~
+
+| الكود | الرمز | الكود | الرمز |
+|---|---|---|---|
+| [[$N]] | حرف الدرايف ([[C]]) | [[$C]] و [[$F]] | [[(]] و [[)]] |
+| [[$Q]] | [[=]] | [[$L]] | [[<]] |
+| [[$B]] | الخط الرأسي بتاع الـ pipe | [[$$]] | [[$]] نفسها |
+| [[$A]] | [[&]] | [[$G]] | [[>]] |
+
+وكمان [[$D]] التاريخ و [[$V]] نسخة ويندوز: [[prompt $D $V$G]] طبع [[Tue 10/06/2026 Microsoft Windows [Version 10.0.26300.9550]>]]. وشكل التاريخ حسب إعدادات المنطقة عندك.
+
+---
+
+## ٢. [[prompt $P$_$G$S]]
+
+[[$_]] سطر جديد. فالمسار في سطر، و [[> ]] في السطر اللي تحته، وانت بتكتب بعدها:
+
+~~~text الناتج
+C:\
+>
+~~~
+
+مهما المسار طال، الأمر اللي بتكتبه بيبدأ من أول السطر.
+
+---
+
+## ٣. [[prompt $E[32m$P$E[0m$G]]: ألوان
+
+[[$E]] بيطبع حرف اسمه Escape، رقمه 27. الترمنال لما يشوف Escape وبعده قوس مربع وأرقام وحرف [[m]] مش بيطبعهم، بيفهمهم «غيّر اللون». ودي اسمها ANSI codes.
+
+| الحتة | معناها |
+|---|---|
+| [[$E[32m]] | من هنا ورايح أخضر |
+| [[$P]] | المسار (بالأخضر) |
+| [[$E[0m]] | رجّع اللون العادي |
+| [[$G]] | [[>]] باللون العادي |
+
+عشان أتأكد إن [[$E]] بيطبع حرف حقيقي، بصيت على البايتات اللي CMD طبعها:
+
+~~~text البايتات بالـ hex
+1B 5B 33 32 6D 43 3A 5C ...      ESC [ 3 2 m C : \ ...
+~~~
+
+[[1B]] بالـ hex هو 27 (درس color لو الـ hex جديد عليك): ده الـ Escape. والأرقام: [[31]] أحمر، [[32]] أخضر، [[33]] أصفر، [[34]] أزرق، [[36]] تركواز، [[90]] رمادي، و [[0]] رجّع العادي.
+
+> اقفل أي لون فتحته بـ [[$E[0m]]، وإلا الأمر اللي بتكتبه وناتجه هيتلوّنوا كمان.
+
+---
+
+## ٤. السطر الطويل: شكل لينكس
+
+~~~cmd
+prompt $E[1;36m%USERNAME%$E[0m@%COMPUTERNAME% $E[33m$P$E[0m$_$$$S
+~~~
+
+بالترتيب:
+
+1. [[$E[1;36m]] تركواز ([[36]]) وعريض أو فاتح ([[1;]] قبله، والـ [[;]] بتفصل أكتر من كود).
+2. [[%USERNAME%]] اسم اليوزر. ده مش كود prompt، ده متغير بيئة (درس set / setx): CMD بيبدّله **مرة واحدة وانت بتكتب الأمر**، فالـ prompt بيتحفظ فيه الاسم نفسه. ده تمام لأن اسمك مش بيتغيّر، لكن متستخدمش [[%CD%]] للمسار، هيفضل المسار القديم للأبد. المسار دايمًا [[$P]].
+3. [[$E[0m]] رجّع العادي، و [[@]] زي ما هي، و [[%COMPUTERNAME%]] اسم الجهاز، ومسافة.
+4. [[$E[33m$P$E[0m]] المسار بالأصفر.
+5. [[$_]] سطر جديد، و [[$$]] علامة [[$]]، و [[$S]] مسافة.
+
+النتيجة شبه لينكس: [[ali@MYPC C:\Windows]] بالألوان، وتحته [[$ ]].
+
+---
+
+## ٥. [[prompt]] لوحدها
+
+بترجّع الافتراضي [[$P$G]]. ليه؟ لأن [[prompt]] بيحط النص في متغير بيئة اسمه [[PROMPT]]، و [[prompt]] لوحدها بتمسحه. جرّبت [[set PROMPT]] بعد ما عملت prompt:
+
+~~~text الناتج
+PROMPT=$N$Q$B$A$C$F$L$$$G
+~~~
+
+وبعد [[prompt]] لوحدها:
+
+~~~text الناتج
+Environment variable PROMPT not defined
+~~~
+
+ومن غير المتغير، CMD بيستخدم [[$P$G]].
+
+---
+
+## ٦. احفظه: [[setx PROMPT "$E[32m$P$E[0m$_$G$S"]]
+
+بما إن الـ prompt مجرد متغير بيئة، [[setx]] بيحفظه لليوزر، وأي CMD جديد بيفتح بيه (درس set / setx). علامات التنصيص عشان النص فيه رموز. والنافذة الحالية مش بتتغيّر. مشغّلتهوش هنا عشان ميغيّرش إعدادات الجهاز، بس جرّبت إن CMD اللي بيتفتح وفيه [[PROMPT]] جاي من برة بيستخدمه على طول (الحل والدرس اللي بعده).
+
+---
+
+## الخلاصة
+
+| الكود | بيطبع |
+|---|---|
+| [[$P]] | المسار |
+| [[$G]] | [[>]] |
+| [[$T]] و [[$D]] | الوقت والتاريخ |
+| [[$S]] و [[$_]] | مسافة وسطر جديد |
+| [[$E[32m]] ... [[$E[0m]] | لون وبعدين رجّع العادي |
+| [[$$]] | [[$]] |
+
+> كل حاجة مش كود بتتطبع زي ما هي، والرموز اللي ليها معنى في CMD ([[>]] و [[|]] و [[&]]) اكتبها بأكوادها. و [[prompt]] لوحدها بترجّعك للأصل.`,
           lines: [
             R`الوقت بين قوسين مربعين، ومسافة، والمسار، و [[>]]: زي [[[13:15:14.55] C:\lab>]].`,
             R`المسار لوحده في سطر ([[$_]] سطر جديد)، وتكتب في السطر اللي تحته بعد [[> ]].`,
@@ -615,6 +2167,145 @@ Windows Terminal بيرسم النافذة بنفسه والـ shell اللي ج
             when: R`كذا نافذة مفتوحة مع بعض، أو سكربت bat طويل عايز تعرف هو في أنهي خطوة من العنوان ([[title Step 2 of 5: building]])، أو أوامر بتطبع جداول عريضة.`,
             mistakes: R`[[title "My Server"]] بعلامات تنصيص فتظهر في العنوان. أو [[mode con lines=40]] في conhost وتستغرب إن الـ scroll لفوق اختفى. أو تجرّب mode con في Windows Terminal وتفتكر الأمر بايظ. أو تحط رسالة ترحيب بـ echo في AutoRun، فتظهر في ناتج أي سكربت أو برنامج بيستخدم cmd وتبوّظه.`
           },
+          teach: R`## الأول: أمرين صغيرين للنافذة نفسها
+
+[[title]] بيغيّر الكلام اللي فوق النافذة، و [[mode con]] بيعرض حجمها ويغيّره. وفي الآخر سطر بيجمع حاجات كتير في نافذة جديدة، وده اللي بيوصلك لملف «إعدادات CMD» بتاعك في الحل. اتجرّب هنا في CMD على ويندوز 11، والأسامي والمسارات في الناتج متغيّرة.
+
+---
+
+## ١. [[title Dev Server]]
+
+[[title]] وبعده العنوان. **كل** الكلام اللي بعد [[title]] لحد آخر السطر بيبقى العنوان، بمسافاته، فمش محتاج علامات تنصيص. ولو كتبتها ([[title "Dev Server"]]) هتظهر في العنوان نفسه.
+
+مش بيطبع حاجة. اللي بيتغيّر هو عنوان النافذة فوق (أو اسم التاب في Windows Terminal)، وده اللي بتشوفه في Alt+Tab وفي شريط المهام.
+
+---
+
+## ٢. [[mode con]]: الحجم الحالي
+
+[[mode]] أمر من أيام DOS بيظبط «أجهزة»، و [[con]] (console) اسم الشاشة والكيبورد عند ويندوز. فـ [[mode con]] = «إعدادات الكونسول إيه؟»:
+
+~~~cmd
+mode con
+~~~
+
+~~~text الناتج
+Status for device CON:
+----------------------
+    Lines:          9001
+    Columns:        120
+    Keyboard rate:  31
+    Keyboard delay: 1
+    Code page:      65001
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Lines: 9001]] | عدد السطور في الـ **buffer**: كل الكلام اللي تقدر تعمله scroll لفوق، مش اللي باين على الشاشة |
+| [[Columns: 120]] | العرض بالحروف: كام حرف في السطر |
+| [[Keyboard rate]] و [[Keyboard delay]] | سرعة تكرار الحرف لما تفضل دايس على زرار، وقد إيه يستنى قبل ما يبدأ يكرر |
+| [[Code page: 65001]] | الترميز: 65001 يعني UTF-8 (درس chcp 65001). عندك ممكن يبقى 437 أو 720 |
+
+الـ 9001 دي هي اللي بتخلّيك تعمل scroll لفوق وتلاقي ناتج أوامر قديمة.
+
+---
+
+## ٣. [[mode con: cols=120 lines=40]]
+
+- [[con:]] النقطتين اختيارية ([[con]] و [[con:]] زي بعض).
+- [[cols=120]] العرض ١٢٠ حرف.
+- [[lines=40]] الطول ٤٠ سطر.
+
+في نافذة CMD القديمة (conhost) ده بيغيّر النافذة **والـ buffer** مع بعض: بعد [[cols=100 lines=30]]، [[mode con]] بقى بيقول [[Lines: 30]] و [[Columns: 100]] (التجربة في الحل). يعني الـ 9001 سطر بقوا 30، والـ scroll لفوق راح.
+
+وفي كونسول مش بيقدر يتغيّر حجمه، الأمر بيرفض. جرّبته هنا في كونسول مستخبي من غير نافذة حقيقية وطلع:
+
+~~~text الناتج
+The screen cannot be set to the number of lines and columns specified.
+~~~
+
+وفي Windows Terminal الحجم مش بيتغيّر من الأمر ده أصلًا. هناك من الإعدادات (Startup ثم Launch size) أو [[wt --size 120,40]].
+
+---
+
+## ٤. [[cmd /k "title Dev & color 0A & echo Welcome %USERNAME%"]]
+
+ده بيفتح CMD **جديد** جوه اللي انت فيه، وبينفّذ فيه أوامر الأول. نفكّه:
+
+| الحتة | معناها |
+|---|---|
+| [[cmd]] | شغّل نسخة جديدة من CMD |
+| [[/k]] | (keep) نفّذ اللي بعدي وخلّيك مفتوح. عكسها [[/c]] (close): نفّذ واقفل |
+| [[" "]] | الأوامر كلها بين علامات تنصيص عشان تتبعت لـ CMD الجديد كحتة واحدة |
+| [[title Dev]] | عنوان (الخطوة ١) |
+| [[&]] | نفّذ اللي بعدي بعد اللي قبلي (درس «اربط أوامر») |
+| [[color 0A]] | أخضر على أسود (درس color) |
+| [[echo Welcome %USERNAME%]] | رسالة فيها اسم اليوزر (متغير بيئة، درس set / setx) |
+
+جرّبته، وطبع:
+
+~~~text الناتج
+Welcome ali
+
+C:\Windows>
+~~~
+
+وبعدها CMD الجديد مستني أوامرك. [[exit]] بيقفله ويرجّعك للي قبله.
+
+---
+
+## ٥. كود الحل: [[cmdrc.bat]]
+
+نفس فكرة الخطوة ٤، بس الأوامر في ملف بدل سطر واحد، و Windows Terminal يشغّله مع كل تاب CMD:
+
+~~~cmd
+@echo off
+REM cmdrc.bat: runs at the start of every CMD tab
+title Dev - %USERNAME%
+prompt $E[32m$P$E[0m$_$G$S
+doskey ll=dir /a $*
+doskey gs=git status
+echo Welcome %USERNAME%, today is %DATE%
+~~~
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[@echo off]] | متطبعش كل أمر قبل ما تنفّذه. و [[@]] متطبعش السطر ده نفسه (درس أول ملف .bat) |
+| [[REM ...]] | تعليق، مش بيتنفذ |
+| [[title Dev - %USERNAME%]] | العنوان فيه اسمك |
+| [[prompt ...]] | المسار أخضر، و [[> ]] في سطر تحته (درس prompt) |
+| [[doskey ...]] | الاختصارات (درس doskey) |
+| [[echo Welcome ...%DATE%]] | رسالة ترحيب، و [[%DATE%]] متغير فيه تاريخ النهارده |
+
+جرّبته بـ [[cmd /k]] والملف، وبعدين كتبت [[doskey /macros]] و [[set PROMPT]]:
+
+~~~text الناتج
+Welcome ali, today is Tue 10/06/2026
+C:\lab
+> doskey /macros
+ll=dir /a $*
+gs=git status
+
+C:\lab
+> set PROMPT
+PROMPT=$E[32m$P$E[0m$_$G$S
+~~~
+
+(المسار بالأخضر في نافذة حقيقية.) يعني الاختصارات والـ prompt اتعملوا، و [[@echo off]] اللي في الملف مأثّرش على الـ prompt بعد ما الملف خلص.
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| عنوان للنافذة | [[title اسم]] (من غير علامات تنصيص) |
+| الحجم الحالي | [[mode con]] |
+| حجم جديد (conhost بس) | [[mode con: cols=120 lines=40]] |
+| CMD جديد يبدأ بأوامر ويفضل مفتوح | [[cmd /k "أمر & أمر"]] |
+| نفس الأوامر كل مرة | ملف [[cmdrc.bat]] و [[cmd.exe /k]] في بروفايل Windows Terminal |
+
+> [[Lines]] في [[mode con]] هو الـ buffer مش الشاشة، و [[lines=]] بيقصّره. وفي Windows Terminal الحجم من الإعدادات مش من mode.`,
           lines: [
             R`عنوان النافذة (أو التاب) يبقى Dev Server.`,
             R`اعرض الحجم: Lines و Columns وصفحة الترميز.`,

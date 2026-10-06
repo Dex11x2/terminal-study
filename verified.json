@@ -690,19 +690,19 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|&& و || و &": {
-  "hash": "25e121aeec0b",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "525c9ddf0ac7",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|arp / route": {
-  "hash": "650a2c30443d",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "f86d1487f986",
+  "date": "2026-10-06",
+  "on": "win11 cmd; docs: route add/delete, arp -d"
  },
  "cmd|attrib": {
-  "hash": "3c07f908de5b",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "f235f81789a2",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|backup-date.bat": {
   "hash": "20fd14e1860e",
@@ -725,9 +725,9 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|cd": {
-  "hash": "95628ec70557",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "5a4ac6e993a7",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|chcp 65001": {
   "hash": "79c3323a8160",
@@ -735,9 +735,9 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|chkdsk": {
-  "hash": "b7387f07b528",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "c3ad0b984c78",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin refusals; docs: /scan /f /r"
  },
  "cmd|clean-temp.bat": {
   "hash": "d6ae6c1c742c",
@@ -745,54 +745,54 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|clip": {
-  "hash": "1baf1a5f3a50",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "9859de3b2ad1",
+  "date": "2026-10-06",
+  "on": "win11 cmd (clipboard restored)"
  },
  "cmd|cls": {
-  "hash": "569f1592b1f3",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "318f0daf4890",
+  "date": "2026-10-06",
+  "on": "win11 cmd; docs: screen clear itself"
  },
  "cmd|color": {
-  "hash": "26fe98230a27",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "107443977664",
+  "date": "2026-10-06",
+  "on": "win11 cmd color /?; earlier conhost run in sol"
  },
  "cmd|copy / xcopy": {
-  "hash": "e6e7287f2d1c",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "b36758211992",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|curl.exe": {
-  "hash": "b4fad43d7d83",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "2617efef6922",
+  "date": "2026-10-06",
+  "on": "win11 cmd (System32 curl 8.21.0) + certutil"
  },
  "cmd|del / rd": {
-  "hash": "949ac5460afc",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "b96ac0aa84d5",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|dir": {
-  "hash": "8ef672d594f6",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "673920635f83",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|diskpart": {
-  "hash": "adaa7149eb46",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "6db1bb8c1047",
+  "date": "2026-10-06",
+  "on": "docs: all (not run)"
  },
  "cmd|doskey": {
-  "hash": "9c90bfa141ae",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "716ae8d0c2cd",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|findstr": {
-  "hash": "8cf0b0f71d7f",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "bb8f38fd8d2d",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|for /f": {
   "hash": "a00d8fa9e42b",
@@ -810,14 +810,14 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|hosts": {
-  "hash": "59ada36c2c38",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "fe80c7ed00f0",
+  "date": "2026-10-06",
+  "on": "win11 cmd type; docs: editing as admin"
  },
  "cmd|icacls": {
-  "hash": "b308d3487a82",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "9d0be013b022",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin (scratch folder)"
  },
  "cmd|if و errorlevel": {
   "hash": "1e58176f75f8",
@@ -825,114 +825,114 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|ipconfig": {
-  "hash": "295a746e9721",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "af9aca24bf29",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin (flushdns needs elevation here)"
  },
  "cmd|ipconfig /release /renew": {
-  "hash": "106c58a069a3",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "8ab9d9de754d",
+  "date": "2026-10-06",
+  "on": "win11 cmd /displaydns (elevation); docs: /release /renew"
  },
  "cmd|mkdir": {
-  "hash": "39a008c801ef",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "36ea2e96f91a",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|mklink": {
-  "hash": "2c53d44bad6c",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "e2898b1b5aae",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin"
  },
  "cmd|move / ren": {
-  "hash": "c406d57c9d51",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "dffc65777a9e",
+  "date": "2026-10-06",
+  "on": "win11 cmd; docs: interactive overwrite prompt"
  },
  "cmd|mstsc": {
-  "hash": "baa30ecc36ae",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "94af5625ec03",
+  "date": "2026-10-06",
+  "on": "win11 cmd: reg query, sc query TermService; docs: mstsc switches, enabling RDP"
  },
  "cmd|net localgroup": {
-  "hash": "1e5fec80d9d1",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "54f977bf4fa9",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin"
  },
  "cmd|net share / net use": {
-  "hash": "5f36063c55f1",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "e5688af37a54",
+  "date": "2026-10-06",
+  "on": "win11 cmd: net share, net use, helpmsg; docs: create/connect/delete"
  },
  "cmd|net user": {
-  "hash": "c676a871cbb2",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "f60d791f79ea",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin; docs: expires/times/active/delete"
  },
  "cmd|netsh": {
-  "hash": "45e14347b7bf",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "fcd56f8b214f",
+  "date": "2026-10-06",
+  "on": "win11 cmd; docs: key=clear"
  },
  "cmd|netsh advfirewall firewall": {
-  "hash": "84fcd0e8786b",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "39bc3fee587c",
+  "date": "2026-10-06",
+  "on": "win11 cmd: show profiles/rules; docs: add/delete rule"
  },
  "cmd|netsh interface ip set address": {
-  "hash": "96ad38c0e016",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "a4bb3aa2a430",
+  "date": "2026-10-06",
+  "on": "win11 cmd: show interface/config; docs: set address/dns/dhcp"
  },
  "cmd|netsh winsock reset": {
-  "hash": "d1390d8cad8f",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "13e44c3554cd",
+  "date": "2026-10-06",
+  "on": "win11 cmd: winsock show catalog, flushdns (non-admin); docs: release/renew/reset"
  },
  "cmd|netsh wlan connect": {
-  "hash": "771cc0407515",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "91876ec8a7dc",
+  "date": "2026-10-06",
+  "on": "win11 cmd: show interfaces/networks/profiles; docs: connect/export/add/delete"
  },
  "cmd|netstat -ano": {
-  "hash": "2329693722d4",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "0e50fdd90d4d",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|nslookup": {
-  "hash": "bd33350827bb",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "b5262653339d",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|pathping": {
-  "hash": "40b407ccdaf9",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "f3bc91729c83",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|ping -a و nbtstat -A": {
-  "hash": "70a61630741a",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "9c62ab027548",
+  "date": "2026-10-06",
+  "on": "win11 cmd: arp -a, ping -a gateway, nbtstat -n, net view; earlier run: nbtstat -A, nslookup"
  },
  "cmd|ping / tracert / nslookup": {
-  "hash": "6e9e78f00d31",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "abceb6aa389d",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|pnputil و driverquery": {
-  "hash": "7233a1803fa0",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "148721e1065e",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin incl. one-driver export; docs: export *, add-driver"
  },
  "cmd|powercfg": {
-  "hash": "bea07eeacbfb",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "dd2c38f5f4b1",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin: /a, /batteryreport, /getactivescheme, admin refusals; docs: /change"
  },
  "cmd|prompt": {
-  "hash": "7f47d2609b85",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "2ce457093f26",
+  "date": "2026-10-06",
+  "on": "win11 cmd; docs: setx PROMPT"
  },
  "cmd|rename-files.bat": {
   "hash": "38b000a3c5ec",
@@ -940,29 +940,29 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|robocopy": {
-  "hash": "02168a30500f",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "29beee2610e7",
+  "date": "2026-10-06",
+  "on": "win11 cmd (local target)"
  },
  "cmd|runas": {
-  "hash": "a2a2e9555ac3",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "87440cbd5ab6",
+  "date": "2026-10-06",
+  "on": "docs: runas (needs another password); win11 cmd: sc qc seclogon"
  },
  "cmd|sc و net start": {
-  "hash": "7676603299f8",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "46abde0df7d8",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin"
  },
  "cmd|schtasks": {
-  "hash": "f1aeef9e8707",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "779aff790724",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin: create daily, query; docs: run/change/delete"
  },
  "cmd|set / setx": {
-  "hash": "738bf12374c6",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "9f4e28b438ba",
+  "date": "2026-10-06",
+  "on": "win11 cmd; docs: setx"
  },
  "cmd|set /a": {
   "hash": "2fbcb66556ce",
@@ -985,39 +985,39 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|sfc و DISM": {
-  "hash": "23fd38303596",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "780886988178",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin refusals; docs: real scans"
  },
  "cmd|shutdown": {
-  "hash": "8ed2dd1dfedf",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "b5005a55344c",
+  "date": "2026-10-06",
+  "on": "win11 cmd: /?, /a; docs: /s /r /h /fw"
  },
  "cmd|shutdown /m": {
-  "hash": "b17312f90b47",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "08116e0bffc3",
+  "date": "2026-10-06",
+  "on": "win11 cmd: shutdown /?, helpmsg; docs: remote shutdown"
  },
  "cmd|start": {
-  "hash": "226d3b1f4ac7",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "9a525b0fb8b7",
+  "date": "2026-10-06",
+  "on": "win11 cmd /b and /wait; docs: GUI forms"
  },
  "cmd|systeminfo / whoami": {
-  "hash": "e35b3d166f08",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "4c7d8860795d",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|takeown": {
-  "hash": "b86d2eae4481",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "c60f9c68d892",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin; docs: admin runs"
  },
  "cmd|tasklist / taskkill": {
-  "hash": "48ae043ffd7e",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "395569d253cf",
+  "date": "2026-10-06",
+  "on": "win11 cmd (own processes); docs: /IM node.exe"
  },
  "cmd|timeout و ping": {
   "hash": "56c7c3ef22ed",
@@ -1025,54 +1025,54 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|title و mode con": {
-  "hash": "fe6eb7cfd8c9",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "24dbefbdd5b9",
+  "date": "2026-10-06",
+  "on": "win11 cmd; earlier conhost run for resize"
  },
  "cmd|tree": {
-  "hash": "da3c32208323",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "fd382db35b5d",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|type / more": {
-  "hash": "4b1a64d23afd",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "df4627769706",
+  "date": "2026-10-06",
+  "on": "win11 cmd; docs: more paging keys"
  },
  "cmd|type nul / echo >": {
-  "hash": "e6bb0d3201a4",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "5cdb80985887",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|w32tm": {
-  "hash": "f605c2f72115",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "1c3f533031ed",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin; docs: /config"
  },
  "cmd|where": {
-  "hash": "b115f5331bac",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "7ceb2de15881",
+  "date": "2026-10-06",
+  "on": "win11 cmd + ps 5.1"
  },
  "cmd|whoami /groups /priv": {
-  "hash": "2ef67b48b269",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "b5c932fccfb1",
+  "date": "2026-10-06",
+  "on": "win11 cmd non-admin; docs: elevated output"
  },
  "cmd|winget upgrade": {
-  "hash": "b8c158bac17a",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "154440395a4d",
+  "date": "2026-10-06",
+  "on": "win11 cmd: upgrade list, export; docs: --id/--all, import"
  },
  "cmd|wmic": {
-  "hash": "a400065c03ff",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "ca04e5ea32ad",
+  "date": "2026-10-06",
+  "on": "win11 cmd (wmic missing) + PowerShell replacements"
  },
  "cmd|| > >> 2>&1": {
-  "hash": "de2b1512f220",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "9f9461e9bf72",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "cmd|أول ملف .bat": {
   "hash": "a52d30da80c8",
@@ -1080,9 +1080,9 @@
   "on": "cmd.exe (windows 11)"
  },
  "cmd|رموز CMD": {
-  "hash": "134d2094ba84",
-  "date": "2026-10-02",
-  "on": "cmd.exe (windows 11)"
+  "hash": "f49879550b02",
+  "date": "2026-10-06",
+  "on": "win11 cmd"
  },
  "os|Nerd Font": {
   "hash": "2c0e0cceda87",

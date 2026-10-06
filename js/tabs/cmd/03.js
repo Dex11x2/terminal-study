@@ -46,6 +46,128 @@ Fast Startup: لما تدوس Shut down من Start، ويندوز بيعمل sig
             when: R`«اقفل بعد ما التحميل يخلص»، أو restart نضيف بعد درايفر أو تحديث، أو دخول UEFI لتفعيل الـ virtualization (محتاجه لـ WSL و Docker)، أو سكربت صيانة بيخلص بـ restart، أو مهمة مجدولة بتقفل الجهاز بالليل.`,
             mistakes: R`[[/t]] طويل ونسيت إنه بيقفل البرامج غصب، فشغلك اللي مش محفوظ يضيع. أو [[shutdown /s /t 0]] في سكربت بتجرّبه فالجهاز يقفل في وشك. أو [[shutdown /h]] والـ hibernate مقفول ([[powercfg /h off]]) فيطلع error. أو [[/fw]] من CMD عادي أو على جهاز Legacy BIOS. أو [[/a]] بعد ما الإيقاف بدأ فعلًا (فات الأوان).`
           },
+          teach: R`## الفكرة: عملية واحدة + توقيت + إضافات
+
+كل سطر في المثال مبني بنفس الشكل: [[shutdown]] وبعده **عملية واحدة** (اقفل، أو restart، أو الغي، أو hibernate)، وبعدها إضافات اختيارية (بعد كام ثانية، ورسالة، ورايح فين بعد الـ restart). الإضافات في ويندوز بتبدأ بـ [[/]] مش [[-]] زي لينكس.
+
+> مشغّلتش أي سطر بيقفل الجهاز هنا عشان الجهاز ميقفلش. اللي شغّلته: [[shutdown /?]] (المساعدة، ومنها الأرقام اللي تحت) و [[shutdown /a]] من غير حاجة متجدولة، في CMD على ويندوز 11.
+
+---
+
+## ١. [[shutdown /s /t 3600]]
+
+~~~cmd
+shutdown /s /t 3600
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[shutdown]] | البرنامج نفسه، [[C:\Windows\System32\shutdown.exe]] |
+| [[/s]] | العملية: shutdown، اقفل الجهاز |
+| [[/t 3600]] | استنى 3600 ثانية قبل ما تنفّذ. 3600 = 60 × 60 = ساعة |
+
+السطر ده مش بيطبع حاجة في CMD لو نجح، وويندوز بيطلّع إشعار إن الجهاز هيقفل. والمهم اللي مكتوب في [[shutdown /?]]:
+
+~~~text من shutdown /?
+/t xxx     Set the time-out period before shutdown to xxx seconds.
+           The valid range is 0-315360000 (10 years), with a default of 30.
+           If the timeout period is greater than 0, the /f parameter is
+           implied.
+~~~
+
+يعني:
+- أكبر رقم 315360000 ثانية = 10 سنين، ومن غير [[/t]] الافتراضي 30 ثانية.
+- **أي [[/t]] أكبر من صفر معناها [[/f]] لوحدها**: بعد الساعة، البرامج المفتوحة هتتقفل غصب، وأي شغل مش محفوظ بيضيع.
+
+---
+
+## ٢. [[shutdown /a]]
+
+~~~cmd
+shutdown /a
+~~~
+
+[[/a]] من abort: الغي. بيلغي الإيقاف المتجدول من أي نافذة، بس لازم قبل ما الوقت يخلص. لو مفيش حاجة متجدولة (جرّبته كده):
+
+~~~text الناتج
+Unable to abort the system shutdown because no shutdown was in progress.(1116)
+~~~
+
+والرقم [[1116]] هو كود الخطأ، وبيرجع كمان في [[%errorlevel%]] (طلع عندي [[1116]])، فتقدر تشيّك عليه في سكربت.
+
+---
+
+## ٣. [[shutdown /r /t 60 /c "..."]]
+
+~~~cmd
+shutdown /r /t 60 /c "Restarting to finish updates, save your work"
+~~~
+
+- [[/r]] العملية: restart (اقفل وافتح تاني). والـ restart دايمًا «كامل» من غير Fast Startup.
+- [[/t 60]] بعد دقيقة.
+- [[/c "..."]] من comment: رسالة بتظهر في الإشعار وبتتسجل في لوج النظام، لحد 512 حرف. علامات التنصيص لازمة لأن الرسالة فيها مسافات؛ من غيرها CMD هيعتبر كل كلمة إضافة لوحدها.
+
+---
+
+## ٤. [[shutdown /s /t 0]]
+
+~~~cmd
+shutdown /s /t 0
+~~~
+
+[[/t 0]] يعني دلوقتي حالًا. ولأن الوقت صفر، [[/f]] **مش** متضمنة هنا: لو برنامج فيه شغل مش محفوظ، ويندوز هيطلّع شاشة «This app is preventing shutdown» ويستناك.
+
+وليه ده مختلف عن زرار Shut down في Start؟ الزرار بيستخدم **Fast Startup**: بيحفظ الـ kernel والدرايفرات في ملف عشان الفتح الجاي يبقى أسرع. [[shutdown /s]] من CMD بيعمل قفلة كاملة إلا لو كتبت [[/hybrid]]:
+
+~~~text من shutdown /?
+/hybrid    Performs a shutdown of the computer and prepares it for fast startup.
+           Must be used with /s option.
+~~~
+
+---
+
+## ٥. [[shutdown /h]]
+
+~~~cmd
+shutdown /h
+~~~
+
+[[/h]] = hibernate: كل اللي مفتوح بيتحفظ من الـ RAM على الديسك والجهاز يقفل، ولما يفتح يرجع زي ما سبته. بيشتغل بس لو الـ hibernate متاح؛ اعرف ده من [[powercfg /a]] (الدرس اللي بعد الجاي). على الجهاز اللي جرّبت عليه [[Hibernate]] كان في لستة المتاح.
+
+---
+
+## ٦. [[shutdown /r /fw /t 0]]
+
+~~~cmd
+shutdown /r /fw /t 0
+~~~
+
+- [[/fw]] من firmware: الـ boot الجاي يدخل على شاشة إعدادات الـ UEFI (اللي الناس بتسميها BIOS) على طول.
+- لازم مع عملية زي [[/r]]، ومحتاج CMD كأدمن، وجهاز UEFI مش Legacy BIOS.
+
+---
+
+## العمليات والإضافات في جدول
+
+| | معناها | ملاحظة |
+|---|---|---|
+| [[/s]] | اقفل | كامل، من غير Fast Startup |
+| [[/r]] | restart | دايمًا كامل |
+| [[/h]] | hibernate | لو متاح |
+| [[/l]] | sign out | من غير أي إضافة تانية |
+| [[/a]] | الغي | قبل ما الوقت يخلص |
+| [[/t N]] | بعد N ثانية | أكبر من 0 = [[/f]] |
+| [[/f]] | اقفل البرامج غصب | الشغل المش محفوظ بيضيع |
+| [[/c "..."]] | رسالة | لحد 512 حرف |
+| [[/fw]] | ادخل UEFI | مع [[/r]]، أدمن |
+
+---
+
+## الخلاصة
+
+- [[shutdown]] لوحده من غير أي حاجة بيطبع المساعدة بس، مش بيقفل.
+- [[/t]] أكبر من صفر = قفل غصب للبرامج. احفظ شغلك قبل ما تجدول.
+- [[shutdown /a]] هو زرار الطوارئ، ولازم قبل ما الوقت يخلص.`,
           lines: [
             R`اقفل الجهاز بعد ساعة (3600 ثانية)، و [[/f]] متضمنة لأن الوقت أكبر من صفر.`,
             R`الغي الإيقاف المتجدول، من أي نافذة، قبل ما الوقت يخلص.`,
@@ -97,6 +219,152 @@ Last Result: [[0]] نجح، و [[267011]] لسه مشتغلتش ولا مرة، 
             when: R`باك أب يومي، أو تنضيف أسبوعي، أو قفل الجهاز بالليل، أو سكربت يشغّل أدوات التطوير بعد الدخول، أو تذكير. ولو المهمة لازم تشتغل وانت مش داخل (جهاز شغال كسيرفر في البيت مثلًا) [[/ru SYSTEM]] من CMD أدمن.`,
             mistakes: R`تجرّب المثال وتنسى تمسح NightShutdown، فالجهاز يقفل الساعة 11:30 كل يوم (لو حصل: [[shutdown /a]] خلال الدقيقة، وبعدين [[schtasks /delete /tn "NightShutdown" /f]]). أو [[/sd]] بصيغة غير صيغة جهازك. أو سكربت فيه [[pause]] أو [[set /p]] فالمهمة تفضل مستنية للأبد (درس clean-temp.bat). أو مسار نسبي في [[/tr]]، أو سكربت من غير [[cd /d "%~dp0"]]. أو مهمة على لابتوب مش بتشتغل ومش عارف ليه: شرط البطارية. أو [[/ru SYSTEM]] من CMD عادي.`
           },
+          teach: R`## الفكرة: كل أوامر schtasks شكلها واحد
+
+[[schtasks]] وبعده **عملية** ([[/create]] أو [[/query]] أو [[/run]] أو [[/change]] أو [[/delete]])، وبعدها [[/tn "الاسم"]] عشان تقوله أنهي مهمة. [[/create]] بس هو اللي محتاج إضافات زيادة (تشغّل إيه وإمتى). جرّبت من CMD عادي على ويندوز 11، بمهمة بتعمل [[echo]] بدل shutdown عشان الجهاز ميقفلش.
+
+---
+
+## ١. اعمل مهمة يومية
+
+~~~cmd
+schtasks /create /tn "NightShutdown" /tr "shutdown /s /t 60" /sc daily /st 23:30
+~~~
+
+نفكّها حتة حتة:
+
+| الحتة | اختصار إيه | معناها هنا |
+|---|---|---|
+| [[/create]] | | مهمة جديدة |
+| [[/tn "NightShutdown"]] | task name | اسمها، وبيه هتكلمها بعد كده |
+| [[/tr "shutdown /s /t 60"]] | task run | الأمر اللي هيتنفذ، كله بين علامات تنصيص لأن فيه مسافات |
+| [[/sc daily]] | schedule | كل يوم |
+| [[/st 23:30]] | start time | الساعة 11:30 بالليل، بنظام 24 ساعة |
+
+والأمر جواها [[shutdown /s /t 60]] (الدرس اللي فات): اقفل بعد دقيقة، فعندك دقيقة تلغي فيها بـ [[shutdown /a]].
+
+~~~text الناتج
+SUCCESS: The scheduled task "NightShutdown" has successfully been created.
+~~~
+
+و [[%errorlevel%]] بعدها [[0]].
+
+---
+
+## ٢. اعرضها
+
+~~~cmd
+schtasks /query /tn "NightShutdown"
+~~~
+
+~~~text الناتج
+Folder: \
+TaskName                                 Next Run Time          Status
+======================================== ====================== ===============
+NightShutdown                            10/6/2026 11:30:00 PM  Ready
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[Folder: \]] | المهمة في الفولدر الرئيسي بتاع Task Scheduler |
+| [[Next Run Time]] | هتشتغل إمتى المرة الجاية (بصيغة تاريخ جهازك) |
+| [[Status]] | [[Ready]] جاهزة، و [[Running]] شغالة دلوقتي، و [[Disabled]] متعطلة |
+
+---
+
+## ٣. مهمة مرة واحدة في تاريخ معين
+
+~~~cmd
+schtasks /create /tn "HelloOnce" /tr "cmd /c echo hi & pause" /sc once /sd 12/31/2030 /st 18:00 /f
+~~~
+
+- [[/sc once]] مرة واحدة بس.
+- [[/sd 12/31/2030]] start date. **بصيغة تاريخ جهازك**: جهازي إعداداته أمريكاني ([[echo %date%]] طبع [[Tue 10/06/2026]]، يعني شهر/يوم/سنة)، فالتاريخ بيتكتب [[12/31/2030]].
+- [[/tr "cmd /c echo hi & pause"]]: [[cmd /c]] افتح CMD نفّذ الأمر واقفل، و [[&]] نفّذ اللي بعدها كمان (درس && و || و &)، و [[pause]] استنى زرار عشان تلحق تشوف hi.
+- [[/f]] من force: لو فيه مهمة بنفس الاسم اكتب فوقها.
+
+ليه [[/f]] مهمة؟ جرّبت أعمل نفس المهمة تاني من غيرها، فوقف يسأل:
+
+~~~text الناتج
+WARNING: The task name "HelloOnce" already exists. Do you want to replace it (Y/N)?
+~~~
+
+وده في سكربت معناه إنه هيفضل مستني للأبد.
+
+---
+
+## ٤. شغّلها دلوقتي
+
+~~~cmd
+schtasks /run /tn "HelloOnce"
+~~~
+
+[[/run]] بيشغّل المهمة حالًا من غير ما يستنى ميعادها، وده أحسن طريقة تتأكد إن [[/tr]] مكتوب صح. هتفتح نافذة فيها [[hi]].
+
+---
+
+## ٥. عطّلها من غير ما تمسحها
+
+~~~cmd
+schtasks /change /tn "NightShutdown" /disable
+~~~
+
+[[/change]] بيعدّل مهمة موجودة، و [[/disable]] بيوقفها (و [[/enable]] بيرجّعها). بعدها [[/query]] بيبقى فيه [[Disabled]] تحت Status، و [[/run]] عليها بيطلّع [[ERROR: The scheduled task "..." could not run because it is disabled.]] (من التجربة اللي في الحل).
+
+---
+
+## ٦. كل التفاصيل
+
+~~~cmd
+schtasks /query /tn "NightShutdown" /v /fo list
+~~~
+
+- [[/v]] من verbose: كل الخانات مش التلاتة بس.
+- [[/fo list]] من format: كل خانة في سطر لوحدها بدل جدول عريض جدًا.
+
+أهم السطور (من التجربة اللي في الحل):
+
+~~~text سطور من الناتج
+Last Run Time:     10/2/2026 2:32:00 PM
+Last Result:       0
+Logon Mode:        Interactive only
+Power Management:  Stop On Battery Mode, No Start On Batteries
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Last Result]] | [[0]] نجحت، و [[267011]] لسه مشتغلتش، وأي رقم تاني exit code الأمر |
+| [[Logon Mode]] | [[Interactive only]]: بتشتغل بس وانت داخل على الجهاز |
+| [[Power Management]] | مش بتبدأ على البطارية، وبتقف لو الشاحن اتشال |
+
+---
+
+## ٧ و ٨. امسحهم
+
+~~~cmd
+schtasks /delete /tn "HelloOnce" /f
+schtasks /delete /tn "NightShutdown" /f
+~~~
+
+[[/delete]] امسح، و [[/f]] هنا معناها متسألنيش «Are you sure». **متنساش السطر الأخير**، وإلا الجهاز هيقفل الساعة 11:30 كل يوم.
+
+~~~text الناتج
+SUCCESS: The scheduled task "HelloOnce" was successfully deleted.
+~~~
+
+---
+
+## الخلاصة
+
+| العملية | الشكل |
+|---|---|
+| اعمل | [[/create /tn الاسم /tr "الأمر" /sc النوع /st الساعة]] |
+| اعرض | [[/query /tn الاسم]] (و [[/v /fo list]] للتفاصيل) |
+| شغّل دلوقتي | [[/run /tn الاسم]] |
+| عطّل / رجّع | [[/change /tn الاسم /disable]] أو [[/enable]] |
+| امسح | [[/delete /tn الاسم /f]] |
+
+و [[/f]] في [[/create]] = اكتب فوق الموجود، وفي [[/delete]] = متسألش. الاتنين بيمنعوا السكربت إنه يقف يستنى إجابة.`,
           lines: [
             R`كل يوم الساعة 11:30 بالليل: shutdown بعد إنذار دقيقة (تقدر تلغيه بـ [[shutdown /a]]).`,
             R`اعرضها: الاسم و Next Run Time و Status.`,
@@ -143,6 +411,150 @@ powercfg /change standby-timeout-ac 0`,
             when: R`قبل ما تشتري لابتوب مستعمل (اطلب تقرير البطارية)، أو لما البطارية تقل فجأة، أو الجهاز مش بينام أو بيصحى لوحده، أو سكربت setup بيظبط الشاشة والنوم على أي جهاز جديد.`,
             mistakes: R`تشغّل [[/batteryreport]] من غير [[/output]] من CMD أدمن، فتدوّر على الملف وهو في System32. أو تحكم على البطارية من رقم Design لوحده من غير ما تقارنه بـ Full Charge. أو [[/energy]] وانت شغال على الجهاز، فالتقرير يتملي حاجات انت السبب فيها. أو [[standby-timeout-dc 0]] على لابتوب فالبطارية تخلص في الشنطة. أو [[/requests]] من CMD عادي.`
           },
+          teach: R`## الفكرة: أداة واحدة، وكل إضافة سؤال مختلف
+
+[[powercfg]] لوحده مبيعملش حاجة مفيدة؛ الإضافة اللي بعده هي اللي بتحدد السؤال: أنواع النوم؟ صحة البطارية؟ مين مانع النوم؟ أو «غيّر ميعاد قفل الشاشة». جرّبت السطور اللي بتقرا بس من CMD عادي على لابتوب بويندوز 11، والسطور اللي بتغيّر إعدادات مشغّلتهاش.
+
+---
+
+## ١. أنواع النوم: [[powercfg /a]]
+
+~~~cmd
+powercfg /a
+~~~
+
+[[/a]] اختصار [[/availablesleepstates]]. الناتج على اللابتوب ده (مختصر):
+
+~~~text الناتج
+The following sleep states are available on this system:
+    Standby (S0 Low Power Idle) Network Connected
+    Hibernate
+    Fast Startup
+
+The following sleep states are not available on this system:
+    Standby (S3)
+	The system firmware does not support this standby state.
+	This standby state is disabled when S0 low power idle is supported.
+~~~
+
+الأسامي دي إيه؟
+
+| الاسم | معناه |
+|---|---|
+| [[S3]] | النوم القديم: كل حاجة تقف ماعدا الـ RAM |
+| [[S0 Low Power Idle]] | Modern Standby: الجهاز «صاحي بالعافية»، و [[Network Connected]] يعني فاضل متصل بالنت |
+| [[Hibernate]] | الـ RAM بتتحفظ على الديسك والجهاز يقفل خالص |
+| [[Fast Startup]] | hibernate صغير لويندوز بس، عشان الفتح يبقى أسرع |
+
+الجهاز ده Modern Standby (S3 مش مدعوم من الـ firmware)، وده سبب إن لابتوبات بتسخن في الشنطة: هي مش نايمة نوم كامل.
+
+---
+
+## ٢. تقرير البطارية
+
+~~~cmd
+powercfg /batteryreport /output "%USERPROFILE%\battery.html"
+~~~
+
+- [[/batteryreport]] اعمل تقرير HTML عن البطارية.
+- [[/output "..."]] احفظه هنا. و [[%USERPROFILE%]] متغير فيه فولدر يوزرك ([[C:\Users\الاسم]])، فالملف هيبقى في مكان تعرفه.
+
+~~~text الناتج
+Battery life report saved to file path C:\Users\ali\battery.html.
+~~~
+
+---
+
+## ٣. افتحه
+
+~~~cmd
+start "" "%USERPROFILE%\battery.html"
+~~~
+
+[[start]] بيفتح الملف بالبرنامج المرتبط بيه (المتصفح). و [[""]] الأولى عنوان النافذة؛ لازمة لأن [[start]] بيعتبر أول حاجة بين علامات تنصيص عنوان (درس start).
+
+### نقرا الأرقام المهمة
+
+ده اللي في قسم Installed batteries على اللابتوب ده:
+
+~~~text من التقرير
+DESIGN CAPACITY        90,005 mWh
+FULL CHARGE CAPACITY   51,354 mWh
+CYCLE COUNT            -
+~~~
+
+- [[mWh]] (milliwatt-hour) وحدة الطاقة اللي البطارية بتشيلها.
+- [[DESIGN CAPACITY]] سعتها وهي جديدة، و [[FULL CHARGE CAPACITY]] سعتها دلوقتي لما تتشحن 100%.
+- الصحة = 51354 ÷ 90005 = **حوالي 57%**: البطارية بتشيل أكتر من نص اللي كانت بتشيله بشوية.
+- [[CYCLE COUNT]] طلع [[-]] لأن الشركة المصنعة مش بتبعت الرقم ده.
+
+---
+
+## ٤. مين مانع النوم: [[/requests]]
+
+~~~cmd
+powercfg /requests
+~~~
+
+بيعرض أقسام ([[DISPLAY]] و [[SYSTEM]] و [[AWAYMODE]] و [[EXECUTION]]...) وتحت كل واحد البرنامج اللي طالب «متناموش»، أو [[None.]]. من CMD عادي:
+
+~~~text الناتج
+This command requires administrator privileges and must be executed from an elevated command prompt.
+~~~
+
+و [[%errorlevel%]] طلع [[1]]. يعني لازم Terminal (Admin).
+
+---
+
+## ٥. تقرير الطاقة: [[/energy]]
+
+~~~cmd
+powercfg /energy /output "%USERPROFILE%\energy.html"
+~~~
+
+بيراقب الجهاز 60 ثانية ويكتب تقرير بالمشاكل. برضه محتاج أدمن (نفس الرسالة اللي فوق)، وسيب الجهاز في حاله وهو شغال.
+
+---
+
+## ٦ و ٧. غيّر المواعيد: [[/change]]
+
+~~~cmd
+powercfg /change monitor-timeout-ac 10
+powercfg /change standby-timeout-ac 0
+~~~
+
+اسم الإعداد متركّب من حتتين:
+
+| الحتة | المعنى |
+|---|---|
+| [[monitor]] | الشاشة تقفل |
+| [[standby]] | الجهاز ينام |
+| [[hibernate]] | الجهاز يعمل hibernate |
+| [[-timeout-]] | بعد كام دقيقة |
+| [[ac]] | وهو على الشاحن (AC = التيار) |
+| [[dc]] | وهو على البطارية (DC = تيار البطارية) |
+
+والرقم بالدقايق، و [[0]] يعني «أبدًا». فالسطرين: على الشاحن، الشاشة تقفل بعد 10 دقايق، والجهاز مينامش أبدًا. التغيير بيتطبق على خطة الطاقة الشغالة بس؛ اعرفها بـ [[powercfg /getactivescheme]]، وعندي طلّع:
+
+~~~text الناتج
+Power Scheme GUID: 27fa6203-3987-4dcc-918d-748559d549ec  (Performance)
+~~~
+
+([[GUID]] رقم تعريف ثابت للخطة، والاسم بين القوسين.)
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر | أدمن؟ |
+|---|---|---|
+| أنواع النوم | [[powercfg /a]] | لأ |
+| صحة البطارية | [[powercfg /batteryreport /output ...]] | لأ |
+| مين مانع النوم | [[powercfg /requests]] | أيوه |
+| مشاكل الطاقة | [[powercfg /energy]] | أيوه |
+| مواعيد الشاشة والنوم | [[powercfg /change ...]] | مشغّلتهوش هنا لأنه بيغيّر الإعدادات |
+
+ودايمًا اكتب [[/output]] بمسار كامل، عشان من CMD أدمن الفولدر الحالي بيبقى System32.`,
           lines: [
             R`أنواع النوم المتاحة والمش متاحة وسبب كل واحد.`,
             R`تقرير البطارية في ملف HTML في فولدرك.`,
@@ -192,6 +604,172 @@ exit code بتاع curl مفيد في سكربتات bat: 0 نجح، و 6 الد
             when: R`تنزيل installers أو أدوات في سكربت setup، أو ملف كبير على نت بيقطع، أو أي ملف تنفيذي (exe أو zip أو iso) قبل ما تفتحه، خصوصًا لو مش من الموقع الرسمي مباشرة.`,
             mistakes: R`تنسى [[-L]] مع لينك فيه redirect فتنزّل ملف صغير فيه HTML. أو تنسى [[-f]] فتحفظ صفحة 404 باسم الملف وتكتشف بعدين إنه «مش بيتفك». أو [[-o]] و [[-O]] مع بعض. أو [[curl]] في Windows PowerShell 5.1 فيشتغل Invoke-WebRequest ويرفض الإضافات. أو تقارن أول وآخر كام حرف من البصمة بس. أو تاخد البصمة من نفس المكان المشكوك فيه اللي جه منه الملف (لو الموقع اتخترق الاتنين هيتغيروا مع بعض)، فخدها من الصفحة الرسمية.`
           },
+          teach: R`## الفكرة: نزّل، وبعدين اتأكد
+
+المثال خطوتين: [[curl]] بينزّل الملف، و [[certutil -hashfile]] بيحسب «بصمته» عشان تقارنها بالبصمة اللي صاحب الملف نشرها. جرّبت كل سطر في CMD على ويندوز 11، في فولدر تجربة.
+
+> على الجهاز ده Git متسطب، وفيه curl تاني. [[where curl]] بيوريك مين بيشتغل: في CMD عادي أول سطر [[C:\Windows\System32\curl.exe]]، وده اللي الناتج تحت منه.
+
+---
+
+## ١. [[curl --version]]
+
+~~~cmd
+curl --version
+~~~
+
+~~~text الناتج (أول سطر)
+curl 8.21.0 (Windows) libcurl/8.21.0 Schannel zlib/1.3.2 WinIDN WinLDAP
+~~~
+
+- [[8.21.0]] النسخة، و [[(Windows)]] يعني دي النسخة اللي جاية مع ويندوز.
+- [[Schannel]] مكتبة التشفير بتاعة ويندوز: curl بيثق في نفس الشهادات اللي ويندوز بيثق فيها.
+
+---
+
+## ٢. نزّل الملف: [[-L -o]]
+
+~~~cmd
+curl -L -o cacert.pem https://curl.se/ca/cacert.pem
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[-L]] | لو السيرفر قال «الملف اتنقل» (redirect) روح وراه |
+| [[-o cacert.pem]] | احفظ في ملف بالاسم ده (o = output) |
+| اللينك | الملف اللي عايزه: ملف شهادات بيوزعه موقع curl |
+
+من غير [[-o]] curl بيطبع الملف نفسه على الشاشة. وبيطبع جدول تقدم (مختصر):
+
+~~~text الناتج
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+100 184.4k 100 184.4k   0      0  98149      0   00:01   00:01
+~~~
+
+[[184.4k]] حجم الملف (حوالي 184 كيلوبايت)، و [[Dload]] سرعة التحميل بالبايت في الثانية.
+
+### ليه [[-L]] مهمة؟
+
+جرّبت نفس الملف بـ [[http://]] (مش https) ومن غير [[-L]]، وطلبت من curl يطبع كود الرد والحجم:
+
+~~~text الناتج
+301 0
+~~~
+
+[[301]] معناها «اتنقل لمكان تاني» (هنا للنسخة الـ https)، والـ [[0]] إن مفيش ولا بايت من الملف نزل. مع [[-L]] curl بيروح للمكان الجديد ويجيب الملف.
+
+---
+
+## ٣. نزّل البصمة: [[-fLO]]
+
+~~~cmd
+curl -fLO https://curl.se/ca/cacert.pem.sha256
+~~~
+
+[[-fLO]] تلات إضافات لازقين في بعض، زي [[-f -L -O]]:
+- [[-f]] (fail): لو السيرفر رد بخطأ زي 404 اعتبره فشل.
+- [[-L]] زي فوق.
+- [[-O]] (كابيتال): احفظ بنفس الاسم اللي في آخر اللينك، يعني [[cacert.pem.sha256]].
+
+### من غير [[-f]] بيحصل إيه؟
+
+جرّبت لينك مش موجود بالطريقتين:
+
+~~~text مع -f
+curl: (22) The requested URL returned error: 404
+~~~
+
+و [[%errorlevel%]] طلع [[22]] ومفيش ملف. من غير [[-f]]: errorlevel [[0]] (كأنه نجح!) واتحفظ ملف [[nosuchfile.pem]] حجمه 8,017 بايت، وهو صفحة الـ 404 نفسها. عشان كده [[-f]] مهمة في السكربتات.
+
+---
+
+## ٤. اطبع البصمة المنشورة
+
+~~~cmd
+type cacert.pem.sha256
+~~~
+
+~~~text الناتج
+a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505  cacert.pem
+~~~
+
+الرقم الطويل ده بصمة SHA256 (64 حرف من 0-9 و a-f)، وبعده اسم الملف اللي البصمة بتاعته. البصمة دي بتتغيّر كل ما الملف بيتحدّث، فلو جرّبت بعدين هتلاقي رقم تاني.
+
+---
+
+## ٥. احسب بصمة الملف اللي نزل
+
+~~~cmd
+certutil -hashfile cacert.pem SHA256
+~~~
+
+- [[certutil]] أداة شهادات في ويندوز، و [[-hashfile]] واحد من أوامرها: احسب بصمة ملف.
+- [[SHA256]] الخوارزمية. من غيرها بيحسب SHA1 (جرّبت: طلع [[SHA1 hash of cacert.pem:]] وبصمة 40 حرف بس).
+
+~~~text الناتج
+SHA256 hash of cacert.pem:
+a41b5d356aea97a529fe27e0f7316d2f9d946d75927476cf9cf1b90637d00505
+CertUtil: -hashfile command completed successfully.
+~~~
+
+قارن السطر التاني بالبصمة اللي في الخطوة ٤: **نفس الحروف بالظبط**، يعني الملف وصل كامل ومحدش عدّل فيه. لو حرف واحد اختلف، امسح الملف.
+
+---
+
+## ٦. ملف كبير يكمّل لو اتقطع
+
+~~~cmd
+curl -fL -C - -O --progress-bar https://nodejs.org/dist/v22.20.0/node-v22.20.0-win-x64.zip
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[-fL]] | زي فوق |
+| [[-C -]] | كمّل (Continue). الـ [[-]] معناها «احسب انت من فين»: من حجم الملف الموجود |
+| [[-O]] | بنفس اسم الملف اللي في اللينك |
+| [[--progress-bar]] | شريط [[####]] بنسبة مئوية بدل الجدول |
+
+جرّبت الكمّلة على cacert.pem: قصّيته لأول 100000 بايت وشغّلت [[curl -L -C - -o part.pem --progress-bar ...]]، فالشريط وصل [[100.0%]] والبصمة طلعت زي المنشورة بالظبط. ولما شغّلت نفس الأمر تاني والملف كامل:
+
+~~~text الناتج
+** Resuming transfer from byte position 188900
+~~~
+
+يعني لقى الملف 188,900 بايت (كامل) ومنزّلش حاجة، و errorlevel [[0]].
+
+---
+
+## كود الحل: بصمة من ملف فيه بصمات كتير
+
+Node بينشر ملف واحد [[SHASUMS256.txt]] فيه بصمة كل ملف في الفولدر، سطر لكل ملف:
+
+~~~cmd
+curl -fsSLO https://nodejs.org/dist/v22.20.0/SHASUMS256.txt
+findstr win-x64.zip SHASUMS256.txt
+certutil -hashfile node-v22.20.0-win-x64.zip SHA256
+~~~
+
+- [[REM]] في أول سطر في كود الحل معناها «تعليق»: CMD بيتجاهل السطر.
+- [[-s]] (silent) خبّي جدول التقدم، و [[-S]] بس اظهر الأخطاء لو حصلت.
+- [[findstr win-x64.zip SHASUMS256.txt]] اطبع السطور اللي فيها الكلام ده بس، فيطلع سطر الملف اللي نزّلته من وسط عشرات السطور (درس findstr).
+
+والسطرين التانيين لازم يطلّعوا نفس البصمة، زي الخطوتين ٤ و ٥.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| احفظ باسم معين | [[-o name]] |
+| احفظ بنفس اسمه | [[-O]] |
+| تابع الـ redirect | [[-L]] |
+| افشل لو 404 | [[-f]] |
+| كمّل التحميل | [[-C -]] |
+| بصمة الملف | [[certutil -hashfile file SHA256]] |
+
+وفي Windows PowerShell 5.1 اكتب [[curl.exe]] مش [[curl]].`,
           lines: [
             R`اتأكد إن curl موجود وشوف نسخته.`,
             R`نزّل ملف شهادات curl، وتابع أي redirect ([[-L]])، واحفظه بالاسم ده ([[-o]]).`,
@@ -248,6 +826,123 @@ winget import -i "%USERPROFILE%\apps.json" --accept-package-agreements`,
             when: R`مرة في الأسبوع أو الشهر كصيانة، أو بعد ما تسمع عن ثغرة في برنامج عندك، أو قبل ما تفرمت الجهاز (export) وبعدها (import)، أو تجهيز جهاز لحد جديد في الفريق بنفس الأدوات.`,
             mistakes: R`تشغّل [[--all]] وانت في نص شغل فيقفل VS Code أو Docker أو المتصفح عشان يحدّثهم. أو تفتكر export بينقل الإعدادات والملفات (هو أسامي البرامج بس). أو [[--accept-package-agreements]] على برامج مش عارف شروطها. أو تعتمد على [[--all]] مع برامج نسختها مهمة لمشروعك (Node أو Python) فتتحدّث وتكسر الـ build؛ استخدم pin أو مدير نسخ زي nvm. أو تنسى إن برامج الـ Store بتتحدّث من الـ Store كمان.`
           },
+          teach: R`## الفكرة: اعرض الأول، وبعدين حدّث
+
+[[winget]] هو مدير البرامج بتاع ويندوز، و [[upgrade]] الأمر الفرعي اللي بيقارن اللي عندك بآخر نسخة. من غير ما تقوله «حدّث مين» بيعرض بس، ومع [[--id]] أو [[--all]] بيحدّث. جرّبت العرض والـ export من CMD عادي على ويندوز 11 ([[winget --version]] طلع [[v1.29.380]])؛ التحديث والـ import مشغّلتهمش عشان ميغيّروش برامج الجهاز.
+
+---
+
+## ١. اعرض اللي ليه تحديث
+
+~~~cmd
+winget upgrade
+~~~
+
+~~~text الناتج (سطور منه)
+Name                Id                         Version   Available  Source
+--------------------------------------------------------------------------
+Docker Desktop      XP8CBJ40XLBWKX             4.82.0    4.93.0     msstore
+GitHub CLI          GitHub.cli                 2.97.0    2.102.0    winget
+Windows Terminal    Microsoft.WindowsTerminal  1.24.12741.0  1.25.2733.0  winget
+17 upgrades available.
+2 package(s) have version numbers that cannot be determined. Use --include-unknown to see all results.
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[Name]] | الاسم زي ما بيظهر في Installed apps |
+| [[Id]] | الاسم الثابت اللي بتكتبه في الأوامر |
+| [[Version]] | النسخة اللي عندك |
+| [[Available]] | النسخة الجديدة |
+| [[Source]] | جاي منين: [[winget]] الريبو المفتوح، أو [[msstore]] Microsoft Store |
+
+لاحظ إن Id برامج الـ Store حروف وأرقام ([[XP8CBJ40XLBWKX]]) مش اسم. والسطر الأخير بيقول إن فيه برنامجين winget مش عارف نسختهم، فمش ظاهرين إلا بـ [[--include-unknown]].
+
+> أول مرة تشغّل winget ممكن يسألك توافق على شروط المصادر (Y/N). في سكربت ضيف [[--accept-source-agreements]].
+
+---
+
+## ٢. حدّث برنامج واحد
+
+~~~cmd
+winget upgrade --id Git.Git -e
+~~~
+
+- [[--id Git.Git]] البرنامج ده بالـ Id بتاعه.
+- [[-e]] (exact): الـ Id ده بالظبط. من غيرها winget بيدوّر على أي حاجة شبهه، وممكن يلاقي أكتر من واحد ويقف يسألك.
+
+---
+
+## ٣. حدّث كل حاجة
+
+~~~cmd
+winget upgrade --all --silent --accept-package-agreements
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[--all]] | كل اللي في الجدول اللي فوق، واحد ورا التاني |
+| [[--silent]] | من غير نوافذ التسطيب (لو الـ installer بيدعم ده) |
+| [[--accept-package-agreements]] | وافق على شروط البرامج من غير ما تسأل |
+
+[[--silent]] مش بيمنع UAC: برامج كتير هتطلب صلاحيات أدمن، إلا لو CMD نفسه أدمن. واقفل البرامج اللي هتتحدّث الأول.
+
+---
+
+## ٤. احفظ لستة برامجك
+
+~~~cmd
+winget export -o "%USERPROFILE%\apps.json"
+~~~
+
+[[export]] اكتب البرامج المتسطبة في ملف، و [[-o]] (output) مكانه، و [[%USERPROFILE%]] فولدر يوزرك. وهو شغال بيطبع سطور زي:
+
+~~~text الناتج (سطور منه)
+Installed package is not available from any source: WinRAR
+Exported package requires license agreement to install: Docker Desktop
+~~~
+
+السطر الأول يعني البرنامج ده winget مش لاقيه في أي مصدر بالشكل اللي متسطب بيه، **فمش هيتكتب في الملف**. والتاني اتكتب، بس هيطلب موافقة على شروطه وقت التسطيب. والملف نفسه JSON:
+
+~~~text أول الملف
+{
+	"$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
+	"CreationDate" : "2026-10-06T10:28:58.329-00:00",
+	"Sources" :
+	[
+		{
+			"Packages" :
+			[
+				{
+					"PackageIdentifier" : "XP8CBJ40XLBWKX"
+				},
+~~~
+
+يعني لستة Ids متقسمة حسب المصدر (عندي [[msstore]] و [[winget]]، 53 برنامج في الاتنين)، من غير نسخ ولا إعدادات.
+
+---
+
+## ٥. على الجهاز الجديد
+
+~~~cmd
+winget import -i "%USERPROFILE%\apps.json" --accept-package-agreements
+~~~
+
+[[import]] سطّب كل اللي في الملف، و [[-i]] (input) الملف. البرنامج اللي متسطب أصلًا بيتحدّث لو فيه أحدث، إلا لو كتبت [[--no-upgrade]]. (من توثيق winget، مشغّلتهوش.)
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| اعرض اللي ليه تحديث | [[winget upgrade]] |
+| حدّث واحد | [[winget upgrade --id الـId -e]] |
+| حدّث الكل | [[winget upgrade --all]] |
+| لستة برامجك | [[winget export -o file.json]] |
+| سطّبها في جهاز تاني | [[winget import -i file.json]] |
+
+والـ export بيشيل أسامي البرامج بس، مش إعداداتها ولا ملفاتك.`,
           lines: [
             R`اعرض البرامج اللي ليها تحديث (من غير ما يحدّث حاجة).`,
             R`حدّث Git بس.`,
@@ -299,6 +994,136 @@ junction ولا symlink؟ junction للفولدرات على نفس الجهاز
             when: R`C قرّب يتملي وفيه فولدرات كاش أو SDK كبيرة، أو برنامج مُصر يحفظ في مكان معين، أو كذا مشروع محتاجين نفس الفولدر، أو ريبو فيه symlinks.`,
             mistakes: R`تمسح اللينك بـ [[del]] فتمسح ملفات الأصل (جرّبتها: [[del /q link]] مسح الملفات من الفولدر الأصلي واللينك فضل)؛ امسحه بـ [[rmdir link]] من غير [[/s]]. أو تقلب الترتيب وتكتب الأصل الأول. أو تعمل junction والفولدر القديم لسه موجود مكانه. أو تنقل الأصل بعد كده فاللينك يتقطع. أو تنقل فولدرات نظام (Windows أو Program Files) بالطريقة دي، ده بيبوّظ تحديثات ويندوز.`
           },
+          teach: R`## الفكرة: اسم بيشاور على فولدر تاني
+
+المثال بيعمل فولدر حقيقي، وجنبه «لينك» اسمه shortcut، ويثبت إن اللي بتكتبه في اللينك بيروح في الأصل، وبعدين يمسح اللينك بالطريقة الآمنة. جرّبته كله في CMD عادي على ويندوز 11، في فولدر تجربة.
+
+> [[mklink]] أمر جوه CMD نفسه (internal)، مش برنامج: [[where mklink]] طلّع [[INFO: Could not find files for the given pattern(s).]]. عشان كده مش هتلاقيه في PowerShell؛ هناك [[New-Item -ItemType Junction]].
+
+---
+
+## ١. الأصل
+
+~~~cmd
+mkdir real
+~~~
+
+فولدر عادي جدًا. ده المكان اللي الملفات هتتخزن فيه فعلًا.
+
+---
+
+## ٢. اللينك
+
+~~~cmd
+mklink /J shortcut real
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[mklink]] | make link: اعمل لينك |
+| [[/J]] | النوع: junction، لينك لفولدر من غير أدمن |
+| [[shortcut]] | **اسم اللينك الجديد** (أول حاجة) |
+| [[real]] | **الأصل** اللي بيشاور عليه (تاني حاجة) |
+
+الترتيب ده عكس [[ln -s]] في لينكس (هناك الأصل الأول). اتعوّد تقراه «اعمل shortcut يشاور على real».
+
+~~~text الناتج
+Junction created for shortcut <<===>> real
+~~~
+
+السهم [[<<===>>]] معناه إن الاتنين بقوا نفس المكان.
+
+---
+
+## ٣ و ٤. اكتب في اللينك، تلاقيه في الأصل
+
+~~~cmd
+echo hi> shortcut\note.txt
+dir /b real
+~~~
+
+- [[echo hi> shortcut\note.txt]] اكتب [[hi]] في ملف جوه اللينك ([[>]] بيحوّل الناتج لملف، درس | > >> 2>&1).
+- [[dir /b real]] اعرض اللي جوه **الأصل**، و [[/b]] (bare) الأسامي بس.
+
+~~~text الناتج
+note.txt
+~~~
+
+الملف اتكتب مرة واحدة بس، في real، واللينك مجرد باب ليه.
+
+---
+
+## ٥. [[dir]] بيفرّق بينهم
+
+~~~cmd
+dir
+~~~
+
+~~~text الناتج (السطور المهمة)
+10/06/2026  10:28 AM    <DIR>          real
+10/06/2026  10:28 AM    <JUNCTION>     shortcut [C:\Users\...\lk\real]
+~~~
+
+- [[<DIR>]] فولدر عادي.
+- [[<JUNCTION>]] لينك، وبين القوسين المربعين المسار **الكامل** للأصل، مع إني كتبت [[real]] بس. الـ junction بيتسجل بمسار كامل دايمًا، فلو نقلت real اللينك هيتقطع.
+
+و [[dir /al]] بيعرض اللينكات بس ([[/a]] attributes، و [[l]] reparse points يعني لينكات)، وعندي طلّع سطر shortcut لوحده.
+
+### أخطاء جرّبتها
+
+~~~text mklink /J shortcut real  (تاني مرة، والاسم موجود)
+Cannot create a file when that file already exists.
+~~~
+
+~~~text mklink /D sym real  (symlink من CMD عادي ومن غير Developer Mode)
+You do not have sufficient privilege to perform this operation.
+~~~
+
+يعني [[/D]] (symbolic link) محتاج أدمن أو Developer Mode، و [[/J]] لأ.
+
+---
+
+## ٦. امسح اللينك بس
+
+~~~cmd
+rmdir shortcut
+~~~
+
+[[rmdir]] من غير [[/s]] بيشيل اللينك نفسه. بعده [[dir /b]] طلّع [[real]] بس، و [[dir /b real]] لسه فيه [[note.txt]]: الأصل سليم.
+
+> **متمسحش اللينك بـ [[del]].** [[del shortcut]] بيدخل جوه اللينك ويمسح ملفات الأصل نفسه، واللينك بيفضل (مجرّب في الدرس، في desc).
+
+---
+
+## الأنواع في جدول
+
+| النوع | الأمر | لـ | أدمن؟ |
+|---|---|---|---|
+| junction | [[mklink /J link real]] | فولدر، نفس الجهاز | لأ |
+| symlink فولدر | [[mklink /D link real]] | فولدر، وبيقبل مسار نسبي وشبكة | أيوه أو Developer Mode |
+| symlink ملف | [[mklink link file]] | ملف | زي اللي فوقه |
+| hard link | [[mklink /H link file]] | ملف، نفس الدرايف | لأ |
+
+---
+
+## كود الحل: نقل فولدر تقيل
+
+~~~cmd
+robocopy big D:\moved\big /E /MOVE
+mklink /J big D:\moved\big
+~~~
+
+- [[robocopy ... /E /MOVE]] انسخ big بكل الفولدرات اللي جواه ([[/E]]) وامسح الأصل بعد النسخ ([[/MOVE]])، درس robocopy.
+- [[mklink /J big D:\moved\big]] اعمل في المكان القديم junction بنفس الاسم، فأي برنامج بيدوّر على big يلاقيه.
+- [[dir big]] بيعرض الملفات كأنها في مكانها، و [[dir /al]] بيأكد إن big بقى [[<JUNCTION>]].
+
+---
+
+## الخلاصة
+
+- الترتيب: **اسم اللينك الأول، وبعدين الأصل**.
+- [[/J]] للفولدرات من غير أدمن، وده اللي هتستخدمه أغلب الوقت.
+- امسح اللينك بـ [[rmdir link]]، مش [[del]] ولا [[rmdir /s]].`,
           lines: [
             R`فولدر عادي، ده الأصل.`,
             R`اعمل junction اسمه shortcut بيشاور على real (اسم اللينك الأول وبعدين الأصل).`,
@@ -351,6 +1176,122 @@ findstr /c:"[SR]" %windir%\Logs\CBS\CBS.log > "%USERPROFILE%\sfcdetails.txt"`,
             when: R`بعد crash أو شاشة زرقا متكررة، أو update بيفشل، أو مكونات ويندوز (Start و Settings و Explorer) بتعلّق، أو قبل ما تقرر تفرمت. ومش «صيانة دورية»: لو الجهاز سليم مش هيفيد بحاجة.`,
             mistakes: R`تشغّل sfc لوحده وتقف عند «unable to fix» من غير DISM. أو تشغّلهم من CMD مش أدمن. أو تقفل النافذة لأن DISM «واقف» على نسبة (ده طبيعي). أو تفتكر إنهم بيصلّحوا برامجك أو الدرايفرات أو الديسك نفسه: دول ملفات ويندوز بس، والديسك ليه chkdsk (الدرس اللي بعده). أو تحفظ sfcdetails على [[%USERPROFILE%\Desktop]] والديسكتوب متنقّل لـ OneDrive، فيطلع [[The system cannot find the path specified.]].`
           },
+          teach: R`## الفكرة: صلّح المخزن الأول، وبعدين الملفات
+
+ويندوز شايل نسخة سليمة من ملفاته في مخزن (component store). [[DISM]] بيفحص المخزن ده ويصلّحه، و [[sfc]] بيقارن ملفات النظام بالمخزن ويرجّع أي ملف بايظ. عشان كده الترتيب: DISM الأول (٣ سطور من الخفيف للتقيل)، وبعده sfc، وفي الآخر تقرا اللوج.
+
+> الاتنين محتاجين CMD كأدمن وبيعدّلوا ملفات النظام، فمشغّلتهمش بجد هنا. اللي جرّبته: رسايل الرفض من CMD عادي، وسطر findstr على ملف عيّنة. نواتج النجاح من توثيق Microsoft.
+
+---
+
+## ١. DISM: نفك الاسم
+
+~~~cmd
+DISM /Online /Cleanup-Image /CheckHealth
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[DISM]] | Deployment Image Servicing and Management: أداة صيانة «صورة» ويندوز |
+| [[/Online]] | الويندوز الشغال دلوقتي، مش ملف صورة على الديسك |
+| [[/Cleanup-Image]] | قسم الصيانة والتصليح |
+| [[/CheckHealth]] | بصة سريعة (ثواني): هل اتسجل قبل كده إن فيه بوظان؟ |
+
+على جهاز سليم آخره [[No component store corruption detected.]] و [[The operation completed successfully.]] (من التوثيق). ومن CMD عادي جرّبته وطلع:
+
+~~~text الناتج
+Error: 740
+
+Elevated permissions are required to run DISM.
+Use an elevated command prompt to complete these tasks.
+~~~
+
+و [[%errorlevel%]] طلع [[740]]. افتح Terminal (Admin) من Win+X.
+
+---
+
+## ٢ و ٣. فحص كامل، وبعدين تصليح
+
+~~~cmd
+DISM /Online /Cleanup-Image /ScanHealth
+DISM /Online /Cleanup-Image /RestoreHealth
+~~~
+
+نفس الأول بالظبط، الفرق في الكلمة الأخيرة بس:
+
+| | بيعمل إيه | المدة |
+|---|---|---|
+| [[/CheckHealth]] | يقرا اللي متسجل بس | ثواني |
+| [[/ScanHealth]] | يفحص المخزن كله، من غير تصليح | دقايق |
+| [[/RestoreHealth]] | يفحص ويصلّح، والنسخ السليمة من Windows Update (محتاج نت) | ممكن نص ساعة |
+
+[[/RestoreHealth]] كتير بيقف على نسبة واحدة دقايق، ده طبيعي فمتقفلش النافذة.
+
+---
+
+## ٤. [[sfc /scannow]]
+
+~~~cmd
+sfc /scannow
+~~~
+
+[[sfc]] = System File Checker، و [[/scannow]] افحص كل ملفات النظام المحمية دلوقتي وصلّح. بيطبع [[Verification]] بنسبة لحد 100%، وبعدين رسالة من أربعة (في desc). من CMD عادي:
+
+~~~text الناتج
+You must be an administrator running a console session in order to use the sfc utility.
+~~~
+
+(الرسالة طلعت عندي بمسافة بين كل حرف والتاني لما حوّلتها لملف، لأن sfc بيكتب UTF-16، بس على الشاشة بتظهر عادي.)
+
+---
+
+## ٥. طلّع سطور sfc من اللوج
+
+~~~cmd
+findstr /c:"[SR]" %windir%\Logs\CBS\CBS.log > "%USERPROFILE%\sfcdetails.txt"
+~~~
+
+من جوه لبرة:
+
+### [[%windir%\Logs\CBS\CBS.log]]
+
+[[%windir%]] متغير فيه فولدر ويندوز (عندي طبع [[C:\WINDOWS]])، و [[CBS.log]] لوج ضخم لكل عمليات الصيانة، و sfc بيكتب سطوره فيه وقبلها [[[SR]]].
+
+### [[findstr /c:"[SR]"]]
+
+[[findstr]] بيدوّر على كلام جوه ملف ويطبع السطور اللي فيها. و [[/c:]] معناها «الكلام ده بالظبط كجملة واحدة». ليه مهمة هنا؟ لأن findstr من غيرها بيعتبر [[[SR]]] **regex**: الأقواس المربعة يعني «حرف S أو حرف R». جرّبت الاتنين على ملف عيّنة فيه ٤ سطور:
+
+~~~text findstr /c:"[SR]" sample.log
+2026-10-06 10:00:02, Info CSI 00000001 [SR] Verifying 100 components
+2026-10-06 10:00:04, Info CSI 00000003 [SR] Repairing 0 components
+~~~
+
+~~~text findstr "[SR]" sample.log
+2026-10-06 10:00:01, Info CBS Loaded Servicing Stack
+2026-10-06 10:00:02, Info CSI 00000001 [SR] Verifying 100 components
+2026-10-06 10:00:03, Info CSI 00000002 SR is not this line
+2026-10-06 10:00:04, Info CSI 00000003 [SR] Repairing 0 components
+~~~
+
+من غير [[/c:]] طلعت الأربعة، لأن كل سطر فيه S أو R في أي حتة.
+
+### [[> "%USERPROFILE%\sfcdetails.txt"]]
+
+[[>]] ودّي الناتج لملف بدل الشاشة، في فولدر يوزرك. علامات التنصيص عشان المسار ممكن يبقى فيه مسافات. ولو فيه ملف sfc مقدرش يصلّحه، هتلاقي في الملف سطر فيه [[Cannot repair member file]].
+
+---
+
+## الخلاصة
+
+| الترتيب | الأمر | ليه |
+|---|---|---|
+| ١ | [[DISM ... /CheckHealth]] | بصة سريعة |
+| ٢ | [[DISM ... /ScanHealth]] | فحص كامل للمخزن |
+| ٣ | [[DISM ... /RestoreHealth]] | صلّح المخزن |
+| ٤ | [[sfc /scannow]] | صلّح ملفات النظام من المخزن |
+| ٥ | [[findstr /c:"[SR]" ...]] | اقرا اللي sfc عمله |
+
+كله من CMD **كأدمن**، وده بيصلّح ملفات ويندوز بس، مش برامجك ولا الديسك.`,
           lines: [
             R`بصة سريعة: فيه بوظان متسجل قبل كده؟ (ثواني).`,
             R`فحص كامل للمخزن من غير تصليح (دقايق).`,
@@ -398,6 +1339,125 @@ SSD: [[/r]] بيقرا كل حتة في الـ SSD، فمش خطير بس ملو
             when: R`بعد قفلة مفاجئة أو قطع كهربا، أو فلاشة أو هارد خارجي ويندوز بيقولك عليه «Scan and fix»، أو رسالة corrupted and unreadable، أو قبل ما تنسخ بيانات مهمة من هارد شاكك فيه.`,
             mistakes: R`[[chkdsk C: /r]] على هارد قديم كبير وانت مستعجل، فالجهاز يفضل ساعات قبل ما يفتح. أو تقفل الجهاز في نص الفحص. أو [[/f]] أو [[/r]] على هارد بيموت (بيطلّع أصوات أو بيفصل): انسخ بياناتك الأول، لأن الفحص التقيل ممكن يخلّص عليه. أو تتخض من أخطاء [[chkdsk C:]] من غير [[/f]] على درايف شغال: توثيق Microsoft بيقول إنه ممكن يطلّع أخطاء مش حقيقية لأنه مش قادر يقفل الدرايف، فاتأكد بـ [[/scan]]. أو [[/x]] على درايف عليه شغل مفتوح فيضيع.`
           },
+          teach: R`## الفكرة: درايف + قد إيه تتعمق
+
+كل سطر في المثال: [[chkdsk]] وبعده **حرف الدرايف** بنقطتين ([[C:]] أو [[D:]])، وبعده إضافة بتحدد العمق: فحص بس، أو فحص وتصليح والدرايف شغال، أو تصليح كامل، أو تصليح وقراية كل حتة في الديسك.
+
+> chkdsk محتاج أدمن في كل حالاته، وبيلمس نظام الملفات، فمشغّلتهوش بجد. جرّبت من CMD عادي عشان أشوف الرفض، والباقي من توثيق Microsoft Learn. ونظام الملفات هنا NTFS (اللي على C في أي ويندوز حديث).
+
+---
+
+## ١. فحص بس: [[chkdsk C:]]
+
+~~~cmd
+chkdsk C:
+~~~
+
+من غير أي إضافة: **read-only**، بيفحص ومش بيغيّر حاجة. على جهاز سليم (من التوثيق) بيطبع:
+
+~~~text الناتج (من التوثيق)
+The type of the file system is NTFS.
+WARNING! /F parameter not specified.
+Running CHKDSK in read-only mode.
+Stage 1: Examining basic file system structure ...
+Stage 2: Examining file name linkage ...
+Stage 3: Examining security descriptors ...
+Windows has scanned the file system and found no problems.
+No further action is required.
+~~~
+
+| المرحلة | بتفحص إيه |
+|---|---|
+| [[Stage 1]] | الملفات نفسها (سجلاتها في جدول NTFS) |
+| [[Stage 2]] | الفولدرات: كل اسم بيشاور على ملف موجود؟ |
+| [[Stage 3]] | الصلاحيات (security descriptors) |
+
+ومن CMD عادي جرّبته:
+
+~~~text الناتج
+Access Denied as you do not have sufficient privileges or
+the disk may be locked by another process.
+You have to invoke this utility running in elevated mode
+and make sure the disk is unlocked.
+~~~
+
+و [[%errorlevel%]] طلع [[3]] (يعني «مقدرش يفحص»).
+
+---
+
+## ٢. [[chkdsk C: /scan]]
+
+~~~cmd
+chkdsk C: /scan
+~~~
+
+[[/scan]] (NTFS بس، من ويندوز 8): فحص **والدرايف شغال**، ويصلّح اللي يقدر عليه من غير ما يوقف حاجة، واللي محتاج الدرايف يقف بيسجله لبعدين. ابدأ دايمًا بيه.
+
+---
+
+## ٣. [[chkdsk D: /f]] على درايف تاني
+
+~~~cmd
+chkdsk D: /f
+~~~
+
+[[/f]] (fix): صلّح أخطاء نظام الملفات. عشان يصلّح لازم **يقفل** الدرايف (lock) ومحدش يكتب عليه. على D (مش درايف ويندوز) بيقفله ويصلّح على طول. لو فيه ملف مفتوح منه، هيقولك [[Chkdsk cannot run because the volume is in use by another process.]] ويعرض يفصل الدرايف غصب؛ اقفل الملف الأول.
+
+---
+
+## ٤. [[chkdsk C: /f]] على درايف ويندوز
+
+~~~cmd
+chkdsk C: /f
+~~~
+
+نفس الأمر، بس ويندوز نفسه شغال من C، فمستحيل يتقفل. فبيسألك:
+
+~~~text الناتج (من التوثيق)
+Would you like to schedule this volume to be checked the next time the system restarts? (Y/N)
+~~~
+
+لو قلت [[Y]]، مع الـ restart الجاي برنامج اسمه autochk بيشتغل **قبل** ما ويندوز يفتح ويصلّح، وبتشوف شاشة Scanning and repairing drive. متقفلش الجهاز في النص.
+
+---
+
+## ٥. [[chkdsk C: /r]]
+
+~~~cmd
+chkdsk C: /r
+~~~
+
+[[/r]] (recover) = كل اللي [[/f]] بيعمله، **وكمان** بيقرا كل sector في الديسك (أصغر حتة الديسك بيقرا ويكتب بيها) يدوّر على أماكن تالفة وينقذ اللي عليها. على C برضه مع الـ restart، وعلى هارد كبير HDD ممكن ياخد ساعات.
+
+---
+
+## ٦. [[chkntfs C:]]
+
+~~~cmd
+chkntfs C:
+~~~
+
+بيسأل: هل الدرايف متعلّم «dirty» (ويندوز حاسس إن فيه مشكلة وهيفحصه في الـ boot الجاي)؟ ولا لأ. ده كمان من CMD عادي طلّع:
+
+~~~text الناتج
+Cannot query state of drive C:
+~~~
+
+و errorlevel [[2]]. من CMD أدمن بيقول الدرايف dirty ولا لأ.
+
+---
+
+## الخلاصة
+
+| الإضافة | بتعمل إيه | الدرايف بيقف؟ |
+|---|---|---|
+| (ولا حاجة) | فحص بس | لأ |
+| [[/scan]] | فحص وتصليح خفيف | لأ |
+| [[/f]] | تصليح نظام الملفات | أيوه (C = مع الـ restart) |
+| [[/r]] | [[/f]] + قراية كل sector | أيوه، وممكن ساعات |
+| [[/x]] | [[/f]] وافصل الدرايف غصب | أيوه، والمفتوح بيضيع |
+
+والترتيب العاقل: [[/scan]] الأول، و [[/f]] لو لقى حاجة، و [[/r]] بس لو شاكك في الديسك نفسه. وكله من CMD **كأدمن**.`,
           lines: [
             R`فحص بس، من غير أي تصليح (read-only).`,
             R`فحص وتصليح والدرايف شغال عادي (NTFS).`,
@@ -451,6 +1511,158 @@ write protected: [[attributes disk clear readonly]] بيشيل العلامة ا
             when: R`فلاشة بعد ISO، كارت ميموري RAW، فلاشة write protected، هارد خارجي جديد عايز تبدأه نضيف، أو قبل ما تبيع أو تدّي حد فلاشة ([[clean all]]).`,
             mistakes: R`[[select disk]] بالرقم الغلط، ودي الغلطة اللي بتمسح ويندوز أو هارد الباك أب، فاعمل [[detail disk]] كل مرة. أو تكتب الخطوات من الذاكرة ورا بعض بسرعة. أو تسيب هارد الباك أب متوصل وانت بتعمل ده. أو تفتكر [[clean]] بيمسح البيانات بأمان (هو بيمسح الجدول بس). أو تنسى [[assign]] فالفلاشة متظهرش في Explorer. أو تحاول تصلّح فلاشة قفلت نفسها هاردوير.`
           },
+          teach: R`## الفكرة: اختار، اتأكد، امسح، ابني من جديد
+
+المثال مش أوامر CMD عادية: أول سطر بيفتح diskpart، وكل اللي بعده بيتكتب **جوه** diskpart عند [[DISKPART>]]. والمنطق: كل الأوامر بتشتغل على «الحاجة المختارة» (focus)، فبتختار الديسك مرة واحدة وكل اللي بعده بيتنفذ عليه.
+
+> diskpart مشغّلتهوش خالص: محتاج أدمن، وبيفتح نافذة لوحده، ورقم غلط واحد بيمسح ديسك. كل الناتج تحت من توثيق Microsoft ورسايل diskpart المعروفة.
+
+---
+
+## ١. [[diskpart]]
+
+~~~cmd
+diskpart
+~~~
+
+بيطلّع UAC، وبيفتح نافذة جديدة فيها:
+
+~~~text
+DISKPART>
+~~~
+
+من هنا ورايح انت جوه diskpart، والأوامر بتاعة CMD (زي [[dir]]) مش شغالة.
+
+---
+
+## ٢. [[list disk]]
+
+~~~text
+DISKPART> list disk
+
+  Disk ###  Status         Size     Free     Dyn  Gpt
+  --------  -------------  -------  -------  ---  ---
+  Disk 0    Online          953 GB  1024 KB        *
+  Disk 2    Online           28 GB      0 B
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[Disk ###]] | رقم الديسك، وده اللي هتختار بيه |
+| [[Size]] | الحجم، **وبيه بتعرف الفلاشة** |
+| [[Free]] | مساحة مش متقسمة لبارتيشنات |
+| [[Gpt]] | [[*]] يعني جدول البارتيشنات نوعه GPT، وفاضي يعني MBR |
+
+ليه الفلاشة 32 جيجا بتظهر 28؟ الشركة بتحسب الجيجا 1000 × 1000 × 1000 بايت، وويندوز بيحسبها 1024 × 1024 × 1024، فالرقم بيقل حوالي 7%، وكمان الفلاشات بتحجز جزء لنفسها.
+
+---
+
+## ٣. [[select disk 2]]
+
+~~~text
+DISKPART> select disk 2
+
+Disk 2 is now the selected disk.
+~~~
+
+**أخطر سطر في الدرس.** من دلوقتي أي [[clean]] أو [[format]] بيتنفذ على ديسك 2. لو كتبت 0 هتمسح ويندوز. لو مش متأكد: افصل الفلاشة واعمل [[list disk]]، ووصّلها واعمله تاني؛ الرقم اللي ظهر هو هي.
+
+---
+
+## ٤. [[detail disk]]
+
+~~~text
+DISKPART> detail disk
+
+SanDisk Ultra USB Device
+Type   : USB
+...
+~~~
+
+آخر تأكيد: اسم الموديل، و [[Type : USB]]، وتحت لستة الفوليومات بحروفها. لو شفت [[Type : NVMe]] أو [[SATA]] وحرف [[C]]، **اقف**: ده مش الفلاشة.
+
+---
+
+## ٥. [[attributes disk clear readonly]]
+
+~~~text
+DISKPART> attributes disk clear readonly
+
+Disk attributes cleared successfully.
+~~~
+
+- [[attributes disk]] صفات الديسك المختار، و [[clear readonly]] شيل صفة «قراية بس».
+- ده بيشيل العلامة اللي ويندوز حاططها بس. لو الفلاشة مقفولة هاردوير، [[attributes disk]] لوحده هيفضل يقول [[Current Read-only State : Yes]].
+
+---
+
+## ٦. [[clean]]
+
+~~~text
+DISKPART> clean
+
+DiskPart succeeded in cleaning the disk.
+~~~
+
+بيمسح **جدول البارتيشنات** (MBR أو GPT) في ثانية، فالديسك يبقى من غير ولا بارتيشن. البيانات نفسها لسه على الديسك نظريًا؛ [[clean all]] هو اللي بيكتب أصفار على كل حاجة (ممكن ساعات).
+
+---
+
+## ٧. [[create partition primary]]
+
+~~~text
+DISKPART> create partition primary
+
+DiskPart succeeded in creating the specified partition.
+~~~
+
+بارتيشن واحد من النوع الأساسي ([[primary]]) بكل المساحة، لأننا محددناش [[size=]]. و diskpart بيختار البارتيشن الجديد لوحده، فالسطر الجاي بيشتغل عليه.
+
+---
+
+## ٨. [[format fs=exfat quick label=USB]]
+
+~~~text
+DISKPART> format fs=exfat quick label=USB
+
+  100 percent completed
+
+DiskPart successfully formatted the volume.
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[fs=exfat]] | نظام الملفات: exFAT، بيشتغل على ويندوز وماك وبيقبل ملفات أكبر من 4 جيجا |
+| [[quick]] | سريع: من غير ما يقرا كل sector |
+| [[label=USB]] | الاسم اللي هيظهر في Explorer |
+
+---
+
+## ٩ و ١٠. [[assign]] و [[exit]]
+
+~~~text
+DISKPART> assign
+
+DiskPart successfully assigned the drive letter or mount point.
+
+DISKPART> exit
+~~~
+
+[[assign]] من غير حرف بيدّي أول حرف فاضي، والفلاشة تظهر في Explorer. و [[exit]] يخرج ويقفل النافذة.
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر | خطر؟ |
+|---|---|---|
+| شوف | [[list disk]] | لأ |
+| اختار | [[select disk N]] | **الرقم هو كل حاجة** |
+| اتأكد | [[detail disk]] | لأ، ومتسيبهاش |
+| امسح | [[clean]] | بيمسح الجدول |
+| ابني | [[create partition primary]] ثم [[format ...]] ثم [[assign]] | |
+
+قبل ما تبدأ: افصل أي هارد خارجي تاني، واعمل [[detail disk]] كل مرة قبل [[clean]].`,
           lines: [
             R`افتح diskpart (أدمن، وبيفتح prompt [[DISKPART>]]).`,
             R`كل الديسكات بأرقامها وأحجامها: اعرف الفلاشة من الحجم.`,
@@ -475,10 +1687,10 @@ write protected: [[attributes disk clear readonly]] بيشيل العلامة ا
 [[driverquery]] جدول: [[Module Name]] و [[Display Name]] و [[Driver Type]] (Kernel أو File System) و [[Link Date]]. و [[/v]] تفاصيل زيادة منها الحالة (Running أو Stopped) والمسار، و [[/fo]] الشكل ([[table]] أو [[list]] أو [[csv]])، و [[/si]] موقّع ولا لأ.
 [[pnputil /enum-drivers]] الدرايفرات اللي جت من برا ويندوز (كارت الشاشة والصوت والواي فاي والتاتش باد)، ولكل واحد [[Published Name]] اسمه في المخزن (زي [[oem54.inf]]) و [[Original Name]] و [[Provider Name]] و [[Driver Version]]. و [[/class Display]] نوع واحد.
 [[pnputil /enum-devices /class Display]] الأجهزة من نوع معين ودرايفر كل واحد، و [[/problem]] الأجهزة اللي فيها مشكلة (اللي عليها علامة صفرا في Device Manager).
-[[pnputil /export-driver * D:\DriversBackup]] صدّر كل الدرايفرات اللي من برا ([[*]] يعني كلهم) لفولدر موجود (أدمن). احفظه على درايف غير C أو فلاشة.
+[[pnputil /export-driver * D:\DriversBackup]] صدّر كل الدرايفرات اللي من برا ([[*]] يعني كلهم) لفولدر موجود (تصدير درايفر واحد اشتغل عندي من CMD عادي). احفظه على درايف غير C أو فلاشة.
 [[pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install]] على الويندوز الجديد: ضيف كل ملفات [[.inf]] في الفولدر والفولدرات اللي جواه ([[/subdirs]])، وسطّبها على الأجهزة اللي محتاجاها ([[/install]]). أدمن.
 
-العرض ([[driverquery]] و [[/enum-drivers]] و [[/enum-devices]]) اشتغل عندي من CMD عادي، والتصدير والإضافة محتاجين أدمن.`,
+العرض ([[driverquery]] و [[/enum-drivers]] و [[/enum-devices]]) اشتغل عندي من CMD عادي، وكمان تصدير درايفر واحد، والإضافة محتاجة أدمن.`,
           example: R`driverquery
 driverquery /v /fo list | more
 driverquery /si /fo csv | findstr /i "FALSE"
@@ -500,6 +1712,180 @@ pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install`,
             when: R`قبل فرمتة أو تغيير ويندوز، جهاز عليه علامة صفرا في Device Manager، بعد تحديث درايفر بوّظ حاجة (تعرف النسخة القديمة كانت إيه)، أو تجهيز فلاشة درايفرات لأجهزة كتير من نفس الموديل.`,
             mistakes: R`تصدّر على C نفسه وتفرمته. أو [[/export-driver]] لفولدر مش موجود. أو تفتكر الباك أب فيه البرامج (لوحة تحكم كارت الشاشة أو برنامج الصوت): ده الدرايفر بس. أو [[/add-driver]] من غير [[/subdirs]] فيدوّر في الفولدر الرئيسي بس ومش هيلاقي حاجة (كل درايفر في فولدر). أو تمسح درايفر شغال على جهاز مهم (كيبورد أو تاتش باد). أو تنقل درايفرات لجهاز موديل تاني.`
           },
+          teach: R`## الفكرة: أداتين، واحدة بتعرض والتانية بتنقل
+
+[[driverquery]] بيعرض كل الدرايفرات المسجلة (ويندوز ومن برا)، و [[pnputil]] (Plug and Play utility) بيتعامل مع «مخزن الدرايفرات»: يعرض اللي جه من برا، ويصدّرهم، ويسطّبهم. جرّبت العرض كله وتصدير درايفر واحد لفولدر تجربة من CMD عادي على لابتوب ويندوز 11؛ تصدير الكل والإضافة مشغّلتهمش.
+
+---
+
+## ١. [[driverquery]]
+
+~~~cmd
+driverquery
+~~~
+
+~~~text الناتج (أول سطور)
+Module Name  Display Name           Driver Type   Link Date
+============ ====================== ============= ======================
+1394ohci     1394 OHCI Compliant Ho Kernel
+3ware        3ware                  Kernel        5/19/2015 1:28:03 AM
+ACPI         Microsoft ACPI Driver  Kernel
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[Module Name]] | الاسم القصير للدرايفر |
+| [[Display Name]] | الاسم الظاهر، والعمود بيقصه لو طويل ([[Compliant Ho]]) |
+| [[Driver Type]] | [[Kernel]] درايفر عادي، أو [[File System]] لأنظمة الملفات |
+| [[Link Date]] | تاريخ بناء الملف، وكتير بيبقى فاضي |
+
+الملف كان 469 سطر، يعني حوالي 467 درايفر بعد سطرين العناوين.
+
+---
+
+## ٢. التفاصيل صفحة صفحة
+
+~~~cmd
+driverquery /v /fo list | more
+~~~
+
+- [[/v]] (verbose) أعمدة زيادة، و [[/fo list]] (format) كل خانة في سطر.
+- [[| more]] اعرض صفحة واحدة واستنى Space (درس type / more).
+
+~~~text أول درايفر
+Module Name:       1394ohci
+Display Name:      1394 OHCI Compliant Host Controller
+Driver Type:       Kernel
+Start Mode:        Manual
+State:             Stopped
+Status:            OK
+Path:              C:\WINDOWS\system32\drivers\1394ohci.sys
+~~~
+
+[[Start Mode: Manual]] بيشتغل لما جهاز محتاجه، و [[State: Stopped]] مش شغال دلوقتي (اللابتوب مفيهوش منفذ 1394 أصلًا)، و [[Path]] ملف الدرايفر نفسه ([[.sys]]).
+
+---
+
+## ٣. الدرايفرات اللي مش موقّعة
+
+~~~cmd
+driverquery /si /fo csv | findstr /i "FALSE"
+~~~
+
+- [[/si]] (signed info) معلومات التوقيع، و [[/fo csv]] كل سطر قيم بفواصل.
+- [[findstr /i "FALSE"]] السطور اللي فيها FALSE، و [[/i]] من غير فرق بين كابيتال وسمول.
+
+~~~text الناتج (سطور منه)
+"NearbySharing","N/A","FALSE","N/A"
+"Bluetooth Peripheral Device","N/A","FALSE","N/A"
+"TAP-Windows Adapter V9","oem56.inf","FALSE","TAP-Windows Provider V9"
+~~~
+
+الأعمدة: [[DeviceName]] و [[InfName]] و [[IsSigned]] و [[Manufacturer]]. اللي جنبه [[N/A]] ملوش ملف inf أصلًا، فمتقلقش منه. اللي يهمك اللي ليه inf وشركة، زي آخر سطر (كارت VPN قديم).
+
+---
+
+## ٤. اللي جه من برا: [[pnputil /enum-drivers]]
+
+~~~cmd
+pnputil /enum-drivers
+~~~
+
+[[/enum]] من enumerate: اعرض واحد واحد.
+
+~~~text أول درايفر
+Published Name:     oem86.inf
+Original Name:      amdacpbus.inf
+Provider Name:      AMD
+Class Name:         System
+Driver Version:     08/01/2024 6.0.0.79
+Signer Name:        Microsoft Windows Hardware Compatibility Publisher
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Published Name]] | اسمه جوه المخزن: [[oem]] ورقم |
+| [[Original Name]] | اسم ملف الـ inf الأصلي من الشركة |
+| [[Class Name]] | نوع الجهاز (System، Display، Net...) |
+| [[Signer Name]] | مين وقّعه |
+
+و [[| find /c "Published Name"]] بيعدّهم: طلع عندي 125.
+
+---
+
+## ٥ و ٦. الأجهزة
+
+~~~cmd
+pnputil /enum-devices /class Display
+pnputil /enum-devices /problem
+~~~
+
+[[/enum-devices]] الأجهزة نفسها مش الدرايفرات، و [[/class Display]] كروت الشاشة بس.
+
+~~~text الناتج (مختصر)
+Device Description:         AMD Radeon(TM) Graphics
+Status:                     Started
+Driver Name:                oem54.inf
+
+Device Description:         NVIDIA GeForce RTX 3070 Laptop GPU
+Status:                     Started
+Driver Name:                oem71.inf
+~~~
+
+يعني اللابتوب فيه كارتين، والاتنين شغالين ([[Started]])، وكل واحد بدرايفر من المخزن. و [[/problem]] الأجهزة اللي فيها مشكلة (العلامة الصفرا في Device Manager)، وعندي طلّع [[No devices were found on the system.]].
+
+---
+
+## ٧ و ٨. الباك أب
+
+~~~cmd
+mkdir D:\DriversBackup
+pnputil /export-driver * D:\DriversBackup
+~~~
+
+- [[mkdir]] لازم الفولدر يبقى موجود قبل الـ export. وخليه على درايف غير C أو فلاشة، عشان الفرمتة هتمسح C.
+- [[/export-driver *]] صدّر كل درايفرات [[oem*.inf]]، والنجمة يعني «كلهم».
+
+جرّبت أصدّر درايفر واحد بس لفولدر تجربة من CMD عادي ([[pnputil /export-driver oem86.inf exp]]):
+
+~~~text الناتج
+Exporting driver package:   oem86.inf (amdacpbus.inf)
+Driver package exported successfully.
+
+Total driver packages:      1
+Exported driver packages:   1
+~~~
+
+والفولدر اتعمل فيه ملفات الدرايفر ([[amdacpbus.inf]] و [[.sys]] و [[.cat]] وغيرهم)، حوالي 24 ميجا لدرايفر واحد. فالكل ممكن يوصل جيجات.
+
+---
+
+## ٩. على الويندوز الجديد
+
+~~~cmd
+pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[/add-driver]] | ضيف للمخزن |
+| [[D:\DriversBackup\*.inf]] | كل ملفات الـ inf |
+| [[/subdirs]] | ودوّر في الفولدرات اللي جوه، لأن الـ export بيعمل فولدر لكل درايفر |
+| [[/install]] | وسطّبها على الأجهزة اللي محتاجاها |
+
+ده محتاج CMD كأدمن (من توثيق pnputil، مشغّلتهوش لأنه بيسطّب درايفرات).
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| كل الدرايفرات | [[driverquery]] |
+| اللي جه من برا | [[pnputil /enum-drivers]] |
+| أجهزة فيها مشكلة | [[pnputil /enum-devices /problem]] |
+| باك أب | [[pnputil /export-driver * فولدر]] |
+| رجّعهم | [[pnputil /add-driver فولدر\*.inf /subdirs /install]] |`,
           lines: [
             R`كل الدرايفرات: الاسم والنوع والتاريخ.`,
             R`تفاصيل كل واحد (شغال ولا لأ، ومساره)، صفحة صفحة.`,
@@ -508,7 +1894,7 @@ pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install`,
             R`كروت الشاشة ودرايفر كل واحد.`,
             R`الأجهزة اللي فيها مشكلة.`,
             R`فولدر الباك أب (على درايف غير C).`,
-            R`صدّر كل الدرايفرات اللي من برا (أدمن).`,
+            R`صدّر كل الدرايفرات اللي من برا لفولدر الباك أب.`,
             R`على الويندوز الجديد: سطّبهم كلهم (أدمن).`
           ],
           sol: R`[[pnputil /enum-drivers | find /c "Published Name"]] طلّع 123، وأول درايفر:
@@ -520,7 +1906,7 @@ pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install`,
 [[Signer Name: Microsoft Windows Hardware Compatibility Publisher]]
 و [[/enum-devices /class Display]] عرض [[AMD Radeon(TM) Graphics]] بـ [[Driver Name: oem54.inf]] و [[NVIDIA GeForce RTX 3070 Laptop GPU]] بـ [[oem71.inf]]، والاتنين [[Status: Started]]. و [[/enum-devices /problem]] طلّع [[No devices were found on the system.]] (مفيش جهاز فيه مشكلة). و [[driverquery]] أول سطوره [[Module Name  Display Name  Driver Type  Link Date]] وتحتها [[1394ohci  1394 OHCI Compliant Ho  Kernel]] (العمود بيقص الاسم الطويل، و [[/fo list]] بيعرضه كامل).
 
-(الـ export والـ add مشغّلتهمش هنا: محتاجين أدمن، والـ add بيسطّب درايفرات.) الـ export بيعمل فولدر لكل درايفر وبيطبع سطر لكل واحد وهو بيصدّره، وبعد الفرمتة الـ add بيطبع كل inf اتضاف وهل اتسطب على جهاز.`
+(تصدير الكل والـ add مشغّلتهمش هنا: الـ add محتاج أدمن وبيسطّب درايفرات. جرّبت تصدير درايفر واحد بس من CMD عادي، وطبع [[Driver package exported successfully.]].) الـ export بيعمل فولدر لكل درايفر وبيطبع سطر لكل واحد وهو بيصدّره، وبعد الفرمتة الـ add بيطبع كل inf اتضاف وهل اتسطب على جهاز.`
         },
         {
           cmd: "sc و net start",
@@ -531,7 +1917,7 @@ pnputil /add-driver D:\DriversBackup\*.inf /subdirs /install`,
 [[sc query Spooler]] حالة خدمة: [[STATE]] (RUNNING أو STOPPED). و [[Spooler]] اسمها القصير (service name)، و [[Print Spooler]] اسمها الظاهر (display name)، و [[sc getkeyname "Print Spooler"]] بيجيب القصير من الظاهر.
 [[sc queryex]] نفس الحالة ومعاها [[PID]]، فتقدر تقفلها بـ taskkill لو علّقت (درس tasklist / taskkill).
 [[sc qc Spooler]] إعداداتها: [[START_TYPE]] ([[AUTO_START]] مع الجهاز، أو [[DEMAND_START]] لما حاجة تطلبها، أو [[DISABLED]] مقفولة)، و [[BINARY_PATH_NAME]] البرنامج نفسه، و [[SERVICE_START_NAME]] شغالة بأنهي حساب.
-[[sc config Spooler start= demand]] غيّر نوع التشغيل: [[auto]] أو [[demand]] أو [[disabled]] أو [[delayed-auto]]. المسافة بعد [[=]] لازمة ومفيش مسافة قبلها، ودي غرابة في sc.
+[[sc config Spooler start= demand]] غيّر نوع التشغيل: [[auto]] أو [[demand]] أو [[disabled]] أو [[delayed-auto]]. مساعدة sc نفسها بتقول المسافة بعد [[=]] لازمة ومفيش مسافة قبلها (دي غرابة في sc)، ونسخ ويندوز القديمة كانت بترفض من غيرها. على ويندوز 11 جرّبت [[start=demand]] لازقة واتقبلت، بس اكتب المسافة عشان السكربت يشتغل في كل حتة.
 [[sc query state= all type= service]] كل الخدمات حتى المتوقفة.
 
 العرض مش محتاج أدمن، والتشغيل والإيقاف والتغيير محتاجين CMD كأدمن. وفي PowerShell [[sc]] اسم مختصر لـ Set-Content، فاكتب [[sc.exe]] هناك أو استخدم [[Get-Service]] (في تاب «PowerShell»).`,
@@ -554,8 +1940,187 @@ sc query state= all type= service | find /c "SERVICE_NAME"`,
 
 الطباعة المعلّقة: [[net stop Spooler]]، وامسح اللي جوه [[C:\Windows\System32\spool\PRINTERS]]، و [[net start Spooler]]. والخدمات بتعتمد على بعض: [[net stop]] على خدمة فيه خدمات تانية محتاجاها بيسألك يوقفهم معاها. ولو عايز برنامجك يشتغل كخدمة: [[sc create]] موجود بس محتاج برنامج مكتوب كخدمة، وأغلب الناس بيستخدموا أداة زي NSSM أو مهمة مجدولة (درس schtasks).`,
             when: R`الطباعة معلّقة، خدمة قاعدة بيانات أو Docker عايز تشغّلها وتقفلها بإيدك، مراجعة إيه اللي بيشتغل مع الجهاز، أو سكربت بيتأكد إن خدمة شغالة قبل ما يكمّل.`,
-            mistakes: R`[[start=demand]] من غير مسافة بعد [[=]]: sc بيطبع المساعدة بدل ما ينفّذ. أو [[sc]] في PowerShell فيكتب ملف بدل ما يكلم الخدمات. أو تعمل disabled لخدمات ويندوز من لستة «سرّع جهازك» على النت، فحاجات تبوظ بعدين ومتعرفش ليه (Windows Update و Defender و Spooler وغيرهم). أو الاسم الظاهر مع [[sc query]] (عايز القصير). أو تفتكر STOPPED مع DEMAND_START مشكلة.`
+            mistakes: R`[[start=demand]] من غير مسافة بعد [[=]] على ويندوز قديم (ويندوز 11 بيقبلها، بس المساعدة بتقول المسافة لازمة)، أو قيمة غلط زي [[start=bogus]] فيطبع [[ERROR: Invalid start= field]] والمساعدة. أو [[sc]] في PowerShell فيكتب ملف بدل ما يكلم الخدمات. أو تعمل disabled لخدمات ويندوز من لستة «سرّع جهازك» على النت، فحاجات تبوظ بعدين ومتعرفش ليه (Windows Update و Defender و Spooler وغيرهم). أو الاسم الظاهر مع [[sc query]] (عايز القصير). أو تفتكر STOPPED مع DEMAND_START مشكلة.`
           },
+          teach: R`## الفكرة: اعرض، وبعدين شغّل ووقّف وغيّر
+
+أداتين لنفس الحاجة: [[net start]] و [[net stop]] قصيرين وسهلين، و [[sc]] (Service Control) أدق وبيعرض تفاصيل أكتر وبيغيّر الإعدادات. والخدمة اللي في المثال [[Spooler]]: خدمة الطباعة، موجودة على كل ويندوز. جرّبت كل السطور من CMD عادي على ويندوز 11؛ العرض اشتغل، والإيقاف والتغيير اترفضوا (محتاجين أدمن) فمغيّروش حاجة.
+
+---
+
+## ١. [[net start]]
+
+~~~cmd
+net start
+~~~
+
+~~~text الناتج (أوله)
+These Windows services are started:
+
+   AMD Crash Defender Service
+   AMD External Events Utility
+   AMD User Experience Program Data Uploader
+~~~
+
+لستة بالأسامي **الظاهرة** للخدمات الشغالة بس، وعندي كانت 149.
+
+---
+
+## ٢. [[sc query Spooler]]
+
+~~~cmd
+sc query Spooler
+~~~
+
+~~~text الناتج
+SERVICE_NAME: Spooler
+        TYPE               : 110  WIN32_OWN_PROCESS  (interactive)
+        STATE              : 4  RUNNING
+                                (STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[SERVICE_NAME]] | الاسم القصير، وده اللي الأوامر بتاخده |
+| [[TYPE]] | [[OWN_PROCESS]] ليها process لوحدها، و [[SHARE_PROCESS]] جوه svchost مع غيرها |
+| [[STATE]] | [[4 RUNNING]] شغالة، و [[1 STOPPED]] واقفة. الرقم كود الحالة |
+| السطر اللي تحته | [[STOPPABLE]] ينفع توقفها، و [[NOT_PAUSABLE]] مينفعش pause |
+| [[WIN32_EXIT_CODE]] | آخر كود خروج، و [[0]] تمام |
+
+---
+
+## ٣. [[sc queryex Spooler]]
+
+~~~cmd
+sc queryex Spooler
+~~~
+
+[[ex]] من extended: نفس اللي فوق وزيادة سطرين:
+
+~~~text الناتج (الزيادة)
+        PID                : 5964
+        FLAGS              :
+~~~
+
+[[PID]] رقم الـ process. لو الخدمة علّقت ومش راضية تقف، ده الرقم اللي تقفله بـ [[taskkill /pid 5964 /f]] من CMD أدمن (درس tasklist / taskkill).
+
+---
+
+## ٤. [[sc qc Spooler]]
+
+~~~cmd
+sc qc Spooler
+~~~
+
+[[qc]] = query config: الإعدادات مش الحالة.
+
+~~~text الناتج
+[SC] QueryServiceConfig SUCCESS
+
+SERVICE_NAME: Spooler
+        START_TYPE         : 2   AUTO_START
+        BINARY_PATH_NAME   : C:\WINDOWS\System32\spoolsv.exe
+        DISPLAY_NAME       : Print Spooler
+        DEPENDENCIES       : RPCSS
+                           : http
+        SERVICE_START_NAME : LocalSystem
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[START_TYPE]] | [[AUTO_START]] بتقوم مع الجهاز، [[DEMAND_START]] لما حاجة تطلبها، [[DISABLED]] مقفولة |
+| [[BINARY_PATH_NAME]] | البرنامج نفسه |
+| [[DISPLAY_NAME]] | الاسم الظاهر |
+| [[DEPENDENCIES]] | خدمات لازم تكون شغالة الأول |
+| [[SERVICE_START_NAME]] | الحساب اللي شغالة بيه ([[LocalSystem]] أعلى صلاحيات) |
+
+ولـ Windows Update ([[sc qc wuauserv]]) طلع [[DEMAND_START]]، فلو لقيتها STOPPED ده طبيعي.
+
+---
+
+## ٥. [[sc getkeyname "Print Spooler"]]
+
+~~~cmd
+sc getkeyname "Print Spooler"
+~~~
+
+~~~text الناتج
+[SC] GetServiceKeyName SUCCESS
+Name = Spooler
+~~~
+
+بتديله الاسم اللي شفته في [[net start]] أو [[services.msc]]، ويرجّعلك القصير. علامات التنصيص عشان الاسم فيه مسافة.
+
+---
+
+## ٦ و ٧. وقّف وشغّل
+
+~~~cmd
+net stop Spooler
+net start Spooler
+~~~
+
+من CMD أدمن بيطبعوا [[The Print Spooler service is stopping.]] ثم [[...was stopped successfully.]] وبالعكس (من التوثيق). من CMD عادي جرّبت:
+
+~~~text الناتج
+System error 5 has occurred.
+
+Access is denied.
+~~~
+
+[[5]] هو كود Access is denied في ويندوز كله، و [[%errorlevel%]] بعد [[net]] بيطلع [[2]].
+
+---
+
+## ٨. [[sc config Spooler start= demand]]
+
+~~~cmd
+sc config Spooler start= demand
+~~~
+
+- [[config]] غيّر الإعدادات، و [[start=]] نوع التشغيل، و [[demand]] لما حاجة تطلبها.
+- مساعدة sc بتقول: [[A space is required between the equal sign and the value.]] يعني مسافة **بعد** [[=]] ومفيش قبلها. على ويندوز 11 جرّبت [[start=demand]] لازقة على خدمة مش موجودة ووصل لـ [[FAILED 1060]] (يعني قبل الصيغة)، بس قيمة غلط زي [[start=bogus]] طبعت [[ERROR: Invalid start= field]] والمساعدة كلها.
+
+من CMD عادي:
+
+~~~text الناتج
+[SC] OpenService FAILED 5:
+
+Access is denied.
+~~~
+
+---
+
+## ٩. عدّ كل الخدمات
+
+~~~cmd
+sc query state= all type= service | find /c "SERVICE_NAME"
+~~~
+
+- [[sc query]] من غير اسم بيعرض الشغالة بس، و [[state= all]] كمان المتوقفة، و [[type= service]] خدمات بس من غير الدرايفرات.
+- [[| find /c "SERVICE_NAME"]] عدّ السطور اللي فيها الكلمة دي، وكل خدمة ليها سطر واحد منها.
+
+~~~text الناتج
+308
+~~~
+
+308 خدمة متسطبة، منهم 149 شغالين.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | أدمن؟ |
+|---|---|---|
+| الشغالة | [[net start]] | لأ |
+| حالة خدمة | [[sc query الاسم]] (و [[queryex]] للـ PID) | لأ |
+| إعداداتها | [[sc qc الاسم]] | لأ |
+| الاسم القصير | [[sc getkeyname "الظاهر"]] | لأ |
+| وقّف / شغّل | [[net stop]] / [[net start]] الاسم | أيوه |
+| نوع التشغيل | [[sc config الاسم start= demand]] | أيوه |
+
+وفي PowerShell اكتب [[sc.exe]] مش [[sc]].`,
           lines: [
             R`الخدمات الشغالة دلوقتي.`,
             R`حالة خدمة الطباعة (بالاسم القصير).`,
@@ -564,7 +2129,7 @@ sc query state= all type= service | find /c "SERVICE_NAME"`,
             R`الاسم القصير من الاسم الظاهر.`,
             R`وقّفها (أدمن).`,
             R`شغّلها تاني.`,
-            R`خلّيها تشتغل لما حاجة تطلبها بس (المسافة بعد = لازمة).`,
+            R`خلّيها تشتغل لما حاجة تطلبها بس (اكتب مسافة بعد = زي ما مساعدة sc بتقول).`,
             R`عدد كل الخدمات حتى المتوقفة.`
           ],
           sol: R`[[sc queryex Spooler]] طلّع [[SERVICE_NAME: Spooler]] و [[STATE : 4 RUNNING]] و [[(STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)]] و [[PID : 4608]]. و [[sc getkeyname "Print Spooler"]] طلّع [[[SC] GetServiceKeyName SUCCESS]] و [[Name = Spooler]]. و [[sc qc wuauserv]] طلّع [[START_TYPE : 3 DEMAND_START]] و [[DISPLAY_NAME : Windows Update]] و [[SERVICE_START_NAME : LocalSystem]]، و [[sc qc RemoteRegistry]] [[START_TYPE : 4 DISABLED]] (وده الكويس). والسطر الأخير طلّع 308.
@@ -604,6 +2169,157 @@ w32tm /config /manualpeerlist:"time.windows.com,0x9 pool.ntp.org,0x9" /syncfromf
             when: R`المتصفح أو git أو curl بيقولوا certificate not yet valid أو expired، أكواد 2FA غلط، dual boot مع لينكس، أو سيرفر ويندوز محتاج ساعته مظبوطة (لوجات ومهام مجدولة ودومين).`,
             mistakes: R`تغيّر الساعة بإيدك بدل ما تصلّح المزامنة فترجع تغلط. أو الساعة متأخرة ساعة بالظبط فتغيّر الوقت، والغلط في المنطقة الزمنية أو التوقيت الصيفي (شوف [[/tz]]). أو [[/resync]] من CMD عادي. أو تفتكر stripchart بيصلّح حاجة. أو dual boot وتعدّل ويندوز كل مرة بدل ما تخلّي لينكس يستخدم الوقت المحلي ([[timedatectl set-local-rtc 1]]).`
           },
+          teach: R`## الفكرة: ٤ أسئلة وبعدها ٣ تصليحات
+
+أول ٤ سطور بتسأل بس ومش بتغيّر حاجة: إيه الحالة؟ مين السيرفرات؟ ساعتي بعيدة قد إيه؟ المنطقة الزمنية إيه؟ وآخر ٣ بيصلّحوا (محتاجين أدمن). [[w32tm]] اسم أداة خدمة Windows Time. جرّبت الأربعة الأولانيين والتلاتة التانيين من CMD عادي على ويندوز 11، والتصليح اترفض (مش أدمن) فمتغيّرش حاجة.
+
+---
+
+## ١. الحالة: [[/query /status]]
+
+~~~cmd
+w32tm /query /status
+~~~
+
+~~~text الناتج
+Leap Indicator: 3(not synchronized)
+Stratum: 0 (unspecified)
+Precision: -23 (119.209ns per tick)
+Last Successful Sync Time: unspecified
+Source: Local CMOS Clock
+Poll Interval: 10 (1024s)
+~~~
+
+| السطر | معناه هنا |
+|---|---|
+| [[Leap Indicator: 3]] | [[3]] معناها «مش متزامن»، و [[0]] كله تمام |
+| [[Stratum]] | بُعدك عن الساعة الأصلية: 1 سيرفر جنب ساعة ذرية، وكل خطوة +1. و [[0]] هنا يعني مش معروف |
+| [[Last Successful Sync Time]] | آخر مزامنة نجحت: [[unspecified]] يعني لسه ولا مرة من ساعة ما الجهاز فتح |
+| [[Source]] | ماشي على ساعة الـ BIOS ([[Local CMOS Clock]])، مش سيرفر |
+| [[Poll Interval: 10 (1024s)]] | بيسأل كل 2 أُس 10 = 1024 ثانية |
+
+---
+
+## ٢. السيرفرات: [[/query /peers]]
+
+~~~cmd
+w32tm /query /peers
+~~~
+
+~~~text الناتج
+#Peers: 1
+
+Peer: time.windows.com,0x9
+State: Pending
+Time Remaining: 14369.9324478s
+~~~
+
+سيرفر واحد ([[time.windows.com]])، وحالته [[Pending]] (مستني)، وفاضل حوالي 4 ساعات على المحاولة الجاية. و [[0x9]] أعلام: [[0x1]] زامن كل فترة ثابتة + [[0x8]] اشتغل كـ client.
+
+---
+
+## ٣. قيس الفرق: [[/stripchart]]
+
+~~~cmd
+w32tm /stripchart /computer:time.windows.com /samples:3 /dataonly
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[/stripchart]] | قيس الفرق بين ساعتك وسيرفر كذا مرة |
+| [[/computer:time.windows.com]] | السيرفر |
+| [[/samples:3]] | 3 قياسات وبس، ومن غيرها بيفضل لحد Ctrl+C |
+| [[/dataonly]] | أرقام بس من غير رسم |
+
+~~~text الناتج
+Tracking time.windows.com [20.101.57.9:123].
+Collecting 3 samples.
+The current time is 10/6/2026 10:30:06 AM.
+10:30:06, +00.0832942s
+10:30:08, +00.0598801s
+10:30:10, +00.0853034s
+~~~
+
+- [[20.101.57.9:123]] عنوان السيرفر، و [[123]] بورت NTP (بروتوكول الوقت).
+- كل سطر قياس، كل ثانيتين تقريبًا. [[+00.0832942s]] = 0.08 ثانية. والرقم الموجب حسب حسبة NTP معناه إن السيرفر سابقك بالقيمة دي.
+
+يعني الساعة كويسة جدًا (أقل من عُشر ثانية) **رغم** إن المزامنة لسه Pending. الحالة لوحدها مش كفاية، القياس هو اللي بيقول.
+
+---
+
+## ٤. المنطقة الزمنية: [[/tz]]
+
+~~~cmd
+w32tm /tz
+~~~
+
+~~~text الناتج
+Time zone: Current:TIME_ZONE_ID_DAYLIGHT Bias: -120min (UTC=LocalTime+Bias)
+  [Standard Name:"Egypt Standard Time" Bias:0min Date:(M:10 D:5 DoW:4)]
+  [Daylight Name:"Egypt Daylight Time" Bias:-60min Date:(M:4 D:5 DoW:5)]
+~~~
+
+- [[TIME_ZONE_ID_DAYLIGHT]] التوقيت الصيفي شغال دلوقتي.
+- [[Bias: -120min]] فرق المنطقة الأساسي، والمعادلة مكتوبة جنبه: [[UTC=LocalTime+Bias]]، يعني UTC = الوقت المحلي ناقص 120 دقيقة، فالمنطقة UTC+2.
+- في الشتا بيتضاف [[Bias:0min]] بتاع سطر Standard، فتفضل UTC+2. وفي الصيفي بيتضاف [[-60min]] بتاع سطر Daylight: ‎-120 + -60 = ‎-180، يعني UTC+3.
+- [[Date:(M:4 D:5 DoW:5)]] الصيفي بيبدأ شهر 4 ([[M]] month)، و [[D:5]] يعني الأسبوع الخامس (الأخير)، و [[DoW:5]] يوم الجمعة (day of week، الأحد = 0).
+
+لو ساعتك متأخرة ساعة بالظبط، المشكلة غالبًا هنا مش في المزامنة.
+
+---
+
+## ٥. شغّل الخدمة
+
+~~~cmd
+net start w32time
+~~~
+
+[[w32time]] الاسم القصير للخدمة (درس sc و net start). من CMD عادي طلّع [[System error 5 has occurred.]] و [[Access is denied.]]. و [[sc query w32time]] قال إنها [[RUNNING]] أصلًا.
+
+---
+
+## ٦. زامن دلوقتي: [[/resync]]
+
+~~~cmd
+w32tm /resync
+~~~
+
+~~~text الناتج من CMD عادي
+Sending resync command to local computer
+The following error occurred: Access is denied. (0x80070005)
+~~~
+
+[[0x80070005]] هو نفس error 5 (Access is denied) مكتوب بصيغة hex. من CMD أدمن آخر سطر بيبقى [[The command completed successfully.]] (من التوثيق).
+
+---
+
+## ٧. غيّر السيرفرات
+
+~~~cmd
+w32tm /config /manualpeerlist:"time.windows.com,0x9 pool.ntp.org,0x9" /syncfromflags:manual /update
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[/config]] | غيّر الإعدادات |
+| [[/manualpeerlist:"..."]] | لستة السيرفرات، مفصولة بمسافة، وكل واحد بأعلامه |
+| [[/syncfromflags:manual]] | خد الوقت من اللستة دي (مش من الدومين) |
+| [[/update]] | قول للخدمة تقرا الإعدادات الجديدة دلوقتي |
+
+أدمن، ومشغّلتهوش لأنه بيغيّر الإعدادات.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | أدمن؟ |
+|---|---|---|
+| آخر مزامنة | [[w32tm /query /status]] | لأ |
+| الفرق الحقيقي | [[w32tm /stripchart /computer:... /samples:3 /dataonly]] | لأ |
+| المنطقة الزمنية | [[w32tm /tz]] | لأ |
+| زامن | [[w32tm /resync]] | أيوه |
+
+قيس بالـ stripchart الأول: لو الفرق صغير، مفيش حاجة تتصلّح.`,
           lines: [
             R`الحالة: المصدر وآخر مزامنة ناجحة.`,
             R`السيرفرات المتظبطة وحالتها.`,
@@ -658,6 +2374,129 @@ powershell -NoProfile -Command "(Get-CimInstance Win32_BIOS).SerialNumber"`,
             when: R`ترجمة سكربت أو إجابة قديمة، أو معلومة سريعة عن الجهاز (serial للضمان، موديل الديسك، آخر restart) من CMD أو bat.`,
             mistakes: R`تفضل تدوّر إزاي «تسطّب wmic» بدل ما تستخدم البديل. أو [[Get-WmiObject]] (القديم، ومش موجود في PowerShell 7). أو [[Win32_Product]] عشان تعرف البرامج. أو تنسى علامات التنصيص حوالين أمر PowerShell، فـ CMD ياخد الـ [[|]] على إنها pipe بتاعته (التفاصيل تحت).`
           },
+          teach: R`## الفكرة: نفس السؤال، من غير wmic
+
+أول سطر بيوريك إن [[wmic]] مبقاش موجود، وكل سطر بعده بيجيب معلومة كان wmic بيجيبها، بس عن طريق PowerShell وانت لسه في CMD. جرّبت كل السطور في CMD على ويندوز 11 (build 26300).
+
+---
+
+## ١. [[wmic cpu get name]]
+
+~~~cmd
+wmic cpu get name
+~~~
+
+~~~text الناتج
+'wmic' is not recognized as an internal or external command,
+operable program or batch file.
+~~~
+
+و [[%errorlevel%]] طلع [[9009]]، وده الكود اللي CMD بيرجّعه لما ميلاقيش الأمر. و [[where wmic]] قال [[INFO: Could not find files for the given pattern(s).]]: الملف مش على الجهاز أصلًا.
+
+---
+
+## ٢. البروسيسور: السطر من جوه لبرة
+
+~~~cmd
+powershell -NoProfile -Command "Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors"
+~~~
+
+### الغلاف: [[powershell -NoProfile -Command "..."]]
+
+| الحتة | معناها |
+|---|---|
+| [[powershell]] | شغّل Windows PowerShell 5.1 (موجود في كل ويندوز 10 و 11) |
+| [[-NoProfile]] | متحمّلش ملف الـ profile: أسرع ومن غير رسايل زيادة |
+| [[-Command "..."]] | نفّذ الأمر ده وارجع لـ CMD |
+
+علامات التنصيص حوالين الأمر كله **لازمة**. جرّبت من غيرها:
+
+~~~cmd
+powershell -NoProfile -Command Get-CimInstance Win32_Processor | Select-Object Name
+~~~
+
+~~~text الناتج
+'Select-Object' is not recognized as an internal or external command,
+operable program or batch file.
+~~~
+
+CMD شاف [[|]] الأول، فاعتبرها pipe بتاعته وحاول يشغّل [[Select-Object]] كأمر CMD. مع التنصيص، الـ [[|]] بتوصل لـ PowerShell سليمة.
+
+### جوه: [[Get-CimInstance Win32_Processor]]
+
+[[Get-CimInstance]] بيسأل WMI (قاعدة معلومات ويندوز عن الجهاز)، و [[Win32_Processor]] اسم الـ class اللي فيه البروسيسور. ده نفس اللي [[wmic cpu]] كان بيعمله؛ [[cpu]] كان اسم مختصر (alias) للـ class ده.
+
+### [[| Select-Object Name, NumberOfCores, NumberOfLogicalProcessors]]
+
+خد الأعمدة دي بس، زي [[get name,numberofcores]] في wmic.
+
+~~~text الناتج
+Name                                    NumberOfCores NumberOfLogicalProcessors
+----                                    ------------- -------------------------
+AMD Ryzen 9 5900HX with Radeon Graphics             8                        16
+~~~
+
+8 cores حقيقية، وكل واحد بيشغّل اتنين في نفس الوقت (SMT)، فويندوز شايف 16.
+
+---
+
+## ٣. الديسكات
+
+~~~cmd
+powershell -NoProfile -Command "Get-CimInstance Win32_DiskDrive | Select-Object Model, Size, Status"
+~~~
+
+~~~text الناتج
+Model                    Size Status
+-----                    ---- ------
+HFM001TD3JX013N 1024203640320 OK
+CT1000P3SSD8    1000202273280 OK
+~~~
+
+[[Size]] بالبايت: 1,000,202,273,280 تقريبًا 1000 مليار = 1 تيرا بحساب الشركات (اللي بتعدّ بالألف)، وويندوز هيقول حوالي 931 GB. و [[Status OK]] الديسك مش بيبلّغ عن مشكلة.
+
+---
+
+## ٤. ويندوز وآخر boot
+
+~~~cmd
+powershell -NoProfile -Command "Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version, LastBootUpTime"
+~~~
+
+~~~text الناتج
+Caption                                   Version    LastBootUpTime
+-------                                   -------    --------------
+Microsoft Windows 11 Home Single Language 10.0.26300 10/6/2026 9:23:44 AM
+~~~
+
+[[Caption]] اسم النسخة، و [[Version]] رقمها (ويندوز 11 لسه رقمه 10.0، والـ build بعده)، و [[LastBootUpTime]] آخر مرة الجهاز فتح؛ لو تاريخ قديم، الجهاز معملش restart من زمان.
+
+---
+
+## ٥. الـ serial
+
+~~~cmd
+powershell -NoProfile -Command "(Get-CimInstance Win32_BIOS).SerialNumber"
+~~~
+
+هنا شكل تاني: [[( ... )]] نفّذ الأمر الأول، و [[.SerialNumber]] هات الخانة دي بس، فيطبع سطر واحد فيه الـ serial (بتحتاجه للضمان). (طلع عندي، ومش هكتبه.)
+
+---
+
+## ترجمة wmic القديم
+
+| wmic | البديل |
+|---|---|
+| [[wmic cpu get name]] | [[Get-CimInstance Win32_Processor]] |
+| [[wmic diskdrive get model,size]] | [[Get-CimInstance Win32_DiskDrive]] |
+| [[wmic os get caption]] | [[Get-CimInstance Win32_OperatingSystem]] |
+| [[wmic bios get serialnumber]] | [[(Get-CimInstance Win32_BIOS).SerialNumber]] |
+| [[wmic process list]] | [[Get-CimInstance Win32_Process]] |
+
+## الخلاصة
+
+- الشكل من CMD: [[powershell -NoProfile -Command "Get-CimInstance الـclass | Select-Object الأعمدة"]].
+- التنصيص حوالين الأمر كله، وإلا CMD ياكل الـ [[|]].`,
           lines: [
             R`على ويندوز حديث: not recognized.`,
             R`البديل: اسم البروسيسور وعدد الـ cores.`,
@@ -721,6 +2560,154 @@ net user Administrator /active:no`,
             when: R`جهاز مشترك في البيت، يوزر عادي للتجربة أو لطفل، يوزر مؤقت لحد بـ [[/expires]]، ساعات استخدام بـ [[/times]]، أو مراجعة أمنية: مين اليوزرز اللي على الجهاز ومين فيهم أدمن.`,
             mistakes: R`تكتب الباسورد في الأمر نفسه فيفضل في الـ history والسكربتات. أو تمسح يوزر وتفتكر ملفاته راحت (فولدره في C:\Users لسه موجود). أو تفعّل Administrator وتسيبه شغال أو من غير باسورد. أو تعطّل يوزرك الأدمن الوحيد ([[/active:no]]) فمتلاقيش حد يصلّح. أو صيغة تاريخ [[/expires]] غير صيغة جهازك (شوفها بـ [[echo %date%]]). أو [[/times]] فيها مسافات. أو تجرّب من CMD عادي وتستغرب [[Access is denied]].`
           },
+          teach: R`## الفكرة: [[net user]] + اسم + اللي عايز تعمله
+
+من غير اسم: لستة اليوزرز. باسم بس: تفاصيله. باسم وإضافة: عدّل ([[/add]] أو [[/active:no]] أو [[/delete]]...). العرض جرّبته من CMD عادي على ويندوز 11 Home، والتعديل محتاج أدمن ومشغّلتهوش عشان ميغيّرش يوزرز الجهاز (جرّبت [[/add]] من CMD عادي بس، واترفض). اسم الجهاز واليوزر في الناتج غيّرتهم لـ [[ALI-PC]] و [[ali]].
+
+---
+
+## ١. [[net user]]
+
+~~~cmd
+net user
+~~~
+
+~~~text الناتج
+User accounts for \\ALI-PC
+
+-------------------------------------------------------------------------------
+ali                      Administrator            DefaultAccount
+Guest                    WDAGUtilityAccount
+The command completed successfully.
+~~~
+
+- [[\\ALI-PC]] اسم الجهاز، و [[\\]] قبله طريقة ويندوز لكتابة اسم جهاز.
+- [[ali]] اليوزر الحقيقي. الباقي حسابات ويندوز نفسه، متلمسهاش:
+
+| الحساب | إيه هو |
+|---|---|
+| [[Administrator]] | الأدمن المدمج، مقفول افتراضيًا |
+| [[Guest]] | ضيف، مقفول |
+| [[DefaultAccount]] | حساب داخلي بيستخدمه النظام |
+| [[WDAGUtilityAccount]] | بتاع Microsoft Defender Application Guard |
+
+---
+
+## ٢. [[net user %USERNAME%]]
+
+~~~cmd
+net user %USERNAME%
+~~~
+
+[[%USERNAME%]] متغير CMD فيه اسم يوزرك، فـ CMD بيبدّله بـ [[ali]] قبل ما ينفّذ.
+
+~~~text الناتج (السطور المهمة)
+Account active               Yes
+Account expires              Never
+Password last set            2/27/2026 4:59:35 PM
+Password expires             Never
+Last logon                   Never
+Logon hours allowed          All
+Local Group Memberships      *Administrators       *docker-users
+                             *Performance Log Users*Users
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Account active]] | شغال ولا متعطل |
+| [[Password expires]] | الباسورد بينتهي إمتى ([[Never]] أبدًا) |
+| [[Last logon]] | [[Never]] رغم إني داخل! لأنه حساب Microsoft، والدخول بيتسجل هناك |
+| [[Logon hours allowed]] | [[All]] أي وقت |
+| [[Local Group Memberships]] | الجروبات، وكل اسم قبله [[*]]. [[*Administrators]] يعني أدمن |
+
+([[*Performance Log Users*Users]] لازقين لأن العمود ضيق؛ دول جروبين.)
+
+---
+
+## ٣. يوزر جديد
+
+~~~cmd
+net user sara * /add
+~~~
+
+- [[sara]] الاسم (لحد 20 حرف).
+- [[*]] مكان الباسورد: «اسألني عليه». بيطلبه مرتين ومش بيظهر وانت بتكتب، ومش بيتسجل في الـ history.
+- [[/add]] اعمل اليوزر.
+
+من CMD عادي جرّبته: سأل الباسورد مرتين عادي، وبعدين:
+
+~~~text الناتج
+Type a password for the user: Retype the password to confirm: System error 5 has occurred.
+
+Access is denied.
+~~~
+
+يعني الفحص على الصلاحية بييجي **بعد** ما تكتب الباسورد. من CMD أدمن: [[The command completed successfully.]] (من التوثيق).
+
+---
+
+## ٤. ميعاد انتهاء وساعات دخول
+
+~~~cmd
+net user sara /expires:12/31/2026 /times:M-F,8AM-6PM
+~~~
+
+- [[/expires:12/31/2026]] اليوزر يقف من أول اليوم ده، بصيغة تاريخ جهازك (عندي شهر/يوم/سنة).
+- [[/times:M-F,8AM-6PM]]: [[M-F]] من الاتنين (Monday) للجمعة (Friday)، وبعد الفاصلة الساعات. من غير مسافات خالص.
+
+---
+
+## ٥ و ٦. عطّل وامسح
+
+~~~cmd
+net user sara /active:no
+net user sara /delete
+~~~
+
+[[/active:no]] اليوزر ميقدرش يدخل بس ملفاته باقية (و [[/active:yes]] يرجّعه)، و [[/delete]] يمسحه، بس فولدره في [[C:\Users\sara]] بيفضل.
+
+---
+
+## ٧ و ٨. الأدمن المدمج
+
+~~~cmd
+net user Administrator /active:yes
+net user Administrator /active:no
+~~~
+
+الأول بيفعّله للطوارئ، والتاني بيقفله تاني. ده حساب مش بيعدّي على UAC، فمتسيبهوش شغال. وحالته عندي ([[net user Administrator]]):
+
+~~~text الناتج
+Comment                      Built-in account for administering the computer/domain
+Account active               No
+~~~
+
+---
+
+## سياسة الباسوردات: [[net accounts]]
+
+~~~text الناتج (سطور منه)
+Maximum password age (days):                          42
+Minimum password length:                              0
+Lockout threshold:                                    10
+Lockout duration (minutes):                           10
+~~~
+
+يعني 10 محاولات غلط ورا بعض بتقفل اليوزر 10 دقايق، والباسورد ممكن يطلب يتغيّر كل 42 يوم لليوزر اللي [[Password expires]] بتاعه مش Never.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | أدمن؟ |
+|---|---|---|
+| اليوزرز | [[net user]] | لأ |
+| تفاصيل | [[net user الاسم]] | لأ |
+| جديد | [[net user الاسم * /add]] | أيوه |
+| عطّل / رجّع | [[/active:no]] / [[/active:yes]] | أيوه |
+| امسح | [[/delete]] | أيوه |
+
+والباسورد دايمًا [[*]]، مش مكتوب في الأمر.`,
           lines: [
             R`لستة اليوزرز على الجهاز (مش محتاج أدمن).`,
             R`تفاصيل يوزرك: شغال ولا لأ، والباسورد، والجروبات.`,
@@ -769,6 +2756,129 @@ net localgroup Users`,
             when: R`مراجعة مين أدمن على جهاز، تحويل يوزر لعادي أو أدمن، إضافة حد لـ docker-users أو Remote Desktop Users من غير ما يبقى أدمن، أو سكربت تجهيز أجهزة.`,
             mistakes: R`تشيل يوزرك الأدمن الوحيد من Administrators فتقفل على نفسك (الحل ساعتها من أدمن تاني أو Safe Mode). أو تستغرب إن الصلاحية الجديدة مسرتش (لازم sign out ودخول تاني). أو تكتب [[Administrators]] بالإنجليزي على ويندوز بلغة تانية. أو تنسى علامات التنصيص حوالين اسم فيه مسافات. أو تدوّر على Remote Desktop Users في Home.`
           },
+          teach: R`## الفكرة: [[net localgroup]] + جروب + يوزر + إضافة
+
+نفس شكل [[net user]]: من غير حاجة لستة الجروبات، وباسم جروب أعضاءه، وباسم جروب واسم يوزر و [[/add]] أو [[/delete]] تضيفه أو تشيله. جرّبت العرض من CMD عادي على ويندوز 11 Home، والإضافة جرّبتها من CMD عادي واترفضت فمتغيّرش حاجة. الأسامي في الناتج: [[ali]] و [[ALI-PC]].
+
+---
+
+## ١. [[net localgroup]]
+
+~~~cmd
+net localgroup
+~~~
+
+~~~text الناتج (سطور منه)
+Aliases for \\ALI-PC
+
+-------------------------------------------------------------------------------
+*Administrators
+*docker-users
+*Guests
+*Hyper-V Administrators
+*OpenSSH Users
+*Remote Management Users
+*Users
+The command completed successfully.
+~~~
+
+[[Aliases]] هو اسم ويندوز الرسمي للجروبات المحلية، وكل اسم قبله [[*]]. عندي كانوا 15، ومفيش [[Remote Desktop Users]] لأن الجهاز Home.
+
+---
+
+## ٢. مين الأدمنز
+
+~~~cmd
+net localgroup Administrators
+~~~
+
+~~~text الناتج
+Alias name     Administrators
+Comment        Administrators have complete and unrestricted access to the computer/domain
+
+Members
+
+-------------------------------------------------------------------------------
+ali
+Administrator
+The command completed successfully.
+~~~
+
+[[Members]] الأعضاء: [[ali]] (أنا) و [[Administrator]] (الأدمن المدمج، عضو دايمًا حتى وهو مقفول).
+
+---
+
+## ٣ و ٤. ضيف وشيل
+
+~~~cmd
+net localgroup Administrators sara /add
+net localgroup Administrators sara /delete
+~~~
+
+الترتيب: **الجروب الأول، وبعدين اليوزر**. [[/add]] تبقى sara أدمن، و [[/delete]] تتشال من الجروب بس (اليوزر نفسه بيفضل). من CMD عادي:
+
+~~~text الناتج
+System error 5 has occurred.
+
+Access is denied.
+~~~
+
+ومن CMD أدمن: [[The command completed successfully.]]. والتغيير مش بيسري غير لما sara تعمل sign out وتدخل تاني.
+
+---
+
+## ٥. Remote Desktop من غير أدمن
+
+~~~cmd
+net localgroup "Remote Desktop Users" sara /add
+~~~
+
+علامات التنصيص لأن اسم الجروب فيه مسافات؛ من غيرها CMD هيفتكر إن اسم الجروب [[Remote]] بس. على Home الجروب مش موجود، وحتى العرض بيقول:
+
+~~~text الناتج (net localgroup "Remote Desktop Users")
+System error 1376 has occurred.
+
+The specified local group does not exist.
+~~~
+
+[[1376]] = الجروب ده مش موجود. ونفس الخطأ هيطلع لو كتبت [[Administrators]] على ويندوز بلغة تانية الجروب فيها متترجم.
+
+---
+
+## ٦. اليوزرز العاديين
+
+~~~cmd
+net localgroup Users
+~~~
+
+~~~text الناتج
+Alias name     Users
+Comment        Users are prevented from making accidental or intentional system-wide changes and can run most applications
+
+Members
+
+-------------------------------------------------------------------------------
+ali
+NT AUTHORITY\Authenticated Users
+NT AUTHORITY\INTERACTIVE
+The command completed successfully.
+~~~
+
+[[NT AUTHORITY\Authenticated Users]] أي حد دخل بيوزر وباسورد، و [[NT AUTHORITY\INTERACTIVE]] أي حد قاعد على الجهاز نفسه. يعني كل يوزر تلقائيًا في Users.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | أدمن؟ |
+|---|---|---|
+| كل الجروبات | [[net localgroup]] | لأ |
+| أعضاء جروب | [[net localgroup الجروب]] | لأ |
+| ضيف | [[net localgroup الجروب اليوزر /add]] | أيوه |
+| شيل | [[net localgroup الجروب اليوزر /delete]] | أيوه |
+
+- الجروب الأول وبعده اليوزر، والاسم اللي فيه مسافات بين علامات تنصيص.
+- التغيير بيسري بعد sign out ودخول تاني.`,
           lines: [
             R`كل الجروبات على الجهاز.`,
             R`مين الأدمنز (مش محتاج أدمن).`,
@@ -815,6 +2925,127 @@ whoami /all`,
             when: R`قبل أي أمر محتاج أدمن (sfc و chkdsk و netsh set و icacls على ملفات النظام)، في أول سكربت bat لازم يشتغل كأدمن، أو لما برنامج يقول Access denied وانت متأكد إنك أدمن.`,
             mistakes: R`تفتكر إن وجودك في Administrators معناه إن كل نافذة أدمن. أو تقرا [[Disabled]] في /priv على إنها «ممنوع». أو تتأكد من الأدمن في سكربت بـ findstr على [[High Mandatory Level]] فيبوظ على ويندوز بلغة تانية (استخدم الـ SID). أو تخلط بين [[whoami]] (انت مين) و [[whoami /groups]] (انت بصلاحيات إيه دلوقتي).`
           },
+          teach: R`## الفكرة: اسأل النافذة دي نفسها
+
+[[whoami]] لوحده بيقول انت مين. لكن [[/groups]] و [[/priv]] بيقروا **التوكن** بتاع النافذة دي: الجروبات والصلاحيات اللي معاها فعلًا دلوقتي. جرّبت كل السطور في نافذة CMD عادية (مش أدمن) على ويندوز 11، واليوزر أدمن.
+
+> لو Git متسطب، فيه [[whoami]] تاني بتاع Git. [[where whoami]] عندي طلّع الاتنين، وفي CMD عادي اللي بيشتغل [[C:\Windows\System32\whoami.exe]]. لو شفت [[Invalid argument]] مع [[/groups]]، يبقى اشتغل التاني.
+
+---
+
+## ١. النافذة دي أدمن ولا لأ؟
+
+~~~cmd
+whoami /groups /fo list | findstr /c:"Mandatory Label"
+~~~
+
+- [[/groups]] الجروبات اللي في التوكن.
+- [[/fo list]] (format) كل جروب في كذا سطر، وأول سطر فيهم [[Group Name: ...]].
+- [[| findstr /c:"Mandatory Label"]] خلّي السطر اللي فيه الكلام ده بس. و [[/c:]] عشان الكلام فيه مسافة: من غيرها findstr هيدوّر على [[Mandatory]] **أو** [[Label]].
+
+~~~text الناتج
+Group Name: Mandatory Label\Medium Mandatory Level
+~~~
+
+[[Medium]] = نافذة عادية، حتى لو انت أدمن. في نافذة أدمن بيبقى [[High Mandatory Level]] (من توثيق UAC؛ نافذة أدمن مقدرتش أفتحها هنا).
+
+---
+
+## ٢. جروب Administrators في التوكن
+
+~~~cmd
+whoami /groups | findstr /i "Administrators"
+~~~
+
+[[/i]] من غير فرق بين كابيتال وسمول. والشكل الافتراضي جدول، سطر لكل جروب:
+
+~~~text الناتج (مختصر)
+NT AUTHORITY\Local account and member of Administrators group  S-1-5-114     Group used for deny only
+BUILTIN\Administrators                                         S-1-5-32-544  Group used for deny only
+~~~
+
+[[Group used for deny only]] يعني: الجروب موجود في التوكن، **بس مبيدّيش أي سماح**؛ بيتستخدم بس لو فيه منع على الجروب ده. ده اللي UAC بيعمله: الأدمن بياخد توكن عادي، والكامل بس لما توافق على Run as administrator. في نافذة الأدمن نفس السطر بيبقى [[Enabled group]].
+
+---
+
+## ٣. [[whoami /priv]]
+
+~~~cmd
+whoami /priv
+~~~
+
+~~~text الناتج
+Privilege Name                Description                          State
+============================= ==================================== ========
+SeShutdownPrivilege           Shut down the system                 Disabled
+SeChangeNotifyPrivilege       Bypass traverse checking             Enabled
+SeUndockPrivilege             Remove computer from docking station Disabled
+SeIncreaseWorkingSetPrivilege Increase a process working set       Disabled
+SeTimeZonePrivilege           Change the time zone                 Disabled
+~~~
+
+- [[Privilege Name]] اسم الصلاحية الخاصة ([[Se]] من security)، و [[Description]] شرحها.
+- [[State Disabled]] **مش** معناها ممنوع: الصلاحية موجودة في التوكن، والبرنامج يفعّلها وقت ما يحتاجها (زي [[shutdown]] لما يقفل الجهاز).
+- 5 بس في النافذة العادية. في نافذة الأدمن أكتر من 20، منهم [[SeTakeOwnershipPrivilege]] اللي takeown محتاجها.
+
+---
+
+## ٤. فحص للسكربتات
+
+~~~cmd
+whoami /groups | find "S-1-16-12288" >nul || echo NOT-ELEVATED
+~~~
+
+من جوه لبرة:
+
+| الحتة | معناها |
+|---|---|
+| [[S-1-16-12288]] | الـ SID الثابت بتاع High Mandatory Level، نفسه في أي لغة ويندوز |
+| [[find "..."]] | دوّر عليه، ولو ملقاهوش errorlevel بيبقى 1 |
+| [[>nul]] | خبّي ناتج find، مش محتاجينه |
+| [[echo NOT-ELEVATED]] | اطبع التحذير |
+
+والعلامتين [[||]] في النص معناهم: لو اللي قبلهم فشل (find ملقاش)، نفّذ اللي بعدهم (درس && و || و &).
+
+~~~text الناتج في النافذة العادية
+NOT-ELEVATED
+~~~
+
+وفي نافذة أدمن find بيلاقي الـ SID فمبيطبعش حاجة. ليه SID مش كلمة High؟ لأن الكلام بيتترجم على ويندوز بلغة تانية، والرقم لأ. الـ SIDs: [[S-1-16-8192]] Medium، و [[S-1-16-12288]] High، و [[S-1-16-16384]] System.
+
+---
+
+## ٥. [[whoami /all]]
+
+~~~cmd
+whoami /all
+~~~
+
+كل حاجة مرة واحدة. أوله:
+
+~~~text الناتج (أوله)
+USER INFORMATION
+----------------
+
+User Name    SID
+============ ==============================================
+ali-pc\ali   S-1-5-21-...-1001
+~~~
+
+وبعده قسم [[GROUP INFORMATION]] (زي [[/groups]]) و [[PRIVILEGES INFORMATION]] (زي [[/priv]]). والـ SID بتاع اليوزر بيخلص بـ [[1001]]: أول يوزر اتعمل على الجهاز.
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر | الإجابة في نافذة عادية |
+|---|---|---|
+| النافذة أدمن؟ | [[whoami /groups]] + Mandatory Label | [[Medium]] |
+| Administrators شغال؟ | [[whoami /groups]] + Administrators | [[deny only]] |
+| الـ privileges | [[whoami /priv]] | 5 |
+| في سكربت | [[find "S-1-16-12288"]] | [[NOT-ELEVATED]] |
+
+إنك في Administrators مش معناه إن النافذة أدمن.`,
           lines: [
             R`النافذة دي Medium (عادية) ولا High (أدمن)؟`,
             R`جروب Administrators: [[deny only]] في نافذة عادية، و [[Enabled group]] في نافذة أدمن.`,
@@ -869,6 +3100,180 @@ errorlevel: [[0]] نجح، و [[1332]] الاسم مش موجود ([[No mapping 
             when: R`فولدر مشترك (قراية بس للناس)، فولدر لوج أو uploads لخدمة أو IIS، مشروع اتنقل من جهاز تاني وبقى مش بيتمسح (مع takeown)، مفتاح SSH، أو باك أب للصلاحيات قبل تعديل كبير.`,
             mistakes: R`[[/inheritance:r]] على فولدر كل صلاحياته موروثة: بيبقى من غير أي صلاحية خالص. جرّبتها على فولدر تجربة: [[icacls sub]] طبع الاسم من غير ولا سطر، والملف اللي جواه طلّع [[Access is denied.]] لصاحبه نفسه، ورجع بـ [[/inheritance:e]]. الصح [[/inheritance:d]] (بينسخ الموروث قبل ما يقطع)، أو [[/grant]] صريح الأول وبعدين [[:r]]. أو [[/deny]] على Everyone أو Users فتمنع نفسك (انت جوه Users). أو تنسى [[/t]] فالتعديل يبقى على الفولدر بس. أو [[/reset /t]] أو أي تعديل على [[C:\]] أو [[C:\Windows]] أو [[Program Files]]: بيبوّظ صلاحيات النظام ومحدش يقدر يرجّعها بسهولة. أو مسافات جوه [[Users:(OI)(CI)M]].`
           },
+          teach: R`## الفكرة: مين : (وراثة)(صلاحية)
+
+كل تعديل في icacls بيتكتب بنفس الشكل: **مين**، وبعده [[:]]، وبعده أعلام الوراثة بين أقواس، وفي الآخر الصلاحية. زي [[Users:(OI)(CI)M]]. والعرض بيطلع بنفس الشكل بالظبط. شغّلت المثال كله بالترتيب في CMD عادي على ويندوز 11، في فولدر تجربة جوه TEMP واتمسح في الآخر. اسم الجهاز واليوزر في الناتج [[ALI-PC\ali]].
+
+---
+
+## ١. فولدر التجربة
+
+~~~cmd
+mkdir shared\sub
+~~~
+
+[[mkdir]] بيعمل [[shared]] و [[sub]] جواه مرة واحدة. وعشان نشوف الوراثة على ملف كمان، عملت ملف جوه sub ([[echo x> shared\sub\f.txt]]).
+
+---
+
+## ٢. اعرض الصلاحيات
+
+~~~cmd
+icacls shared
+~~~
+
+~~~text الناتج
+shared NT AUTHORITY\SYSTEM:(OI)(CI)(F)
+       BUILTIN\Administrators:(OI)(CI)(F)
+       ALI-PC\ali:(OI)(CI)(F)
+
+Successfully processed 1 files; Failed processing 0 files
+~~~
+
+نقرا سطر [[ALI-PC\ali:(OI)(CI)(F)]]:
+
+| الحتة | معناها |
+|---|---|
+| [[ALI-PC\ali]] | مين: اليوزر ali على الجهاز ALI-PC |
+| [[(OI)]] | object inherit: الملفات اللي جوه تورثها |
+| [[(CI)]] | container inherit: الفولدرات اللي جوه تورثها |
+| [[(F)]] | Full: كل حاجة |
+
+يعني SYSTEM والأدمنز وانت بس ليكم صلاحيات، وكلها Full. (على الجهاز ده فولدرات البروفايل صلاحياتها صريحة، عشان كده مفيش [[(I)]] هنا.)
+
+---
+
+## ٣. ادّي Users تعديل
+
+~~~cmd
+icacls shared /grant Users:(OI)(CI)M
+~~~
+
+- [[/grant]] ادّي صلاحية (وبتتضاف جنب الموجود).
+- [[Users]] جروب كل اليوزرز العاديين.
+- [[M]] Modify: قراية وكتابة ومسح، بس مش تغيير الصلاحيات.
+
+~~~text الناتج
+processed file: shared
+Successfully processed 1 files; Failed processing 0 files
+~~~
+
+وبعدها [[icacls shared]] أول سطر بقى [[BUILTIN\Users:(OI)(CI)(M)]]. ([[BUILTIN]] معناها جروب جاي مع ويندوز.)
+
+---
+
+## ٤. اللي جوه ورثها
+
+~~~cmd
+icacls shared\sub
+~~~
+
+~~~text الناتج
+shared\sub BUILTIN\Users:(I)(OI)(CI)(M)
+           NT AUTHORITY\SYSTEM:(I)(OI)(CI)(F)
+           BUILTIN\Administrators:(I)(OI)(CI)(F)
+           ALI-PC\ali:(I)(OI)(CI)(F)
+~~~
+
+[[(I)]] = inherited: الصلاحية دي جاية من الفولدر اللي فوق، محدش كتبها هنا. والملف اللي جوه ([[icacls shared\sub\f.txt]]) طلع [[BUILTIN\Users:(I)(M)]] من غير OI و CI، لأن الملف مفيش حاجة جواه تورث.
+
+---
+
+## ٥. بدّل بدل ما تضيف: [[/grant:r]]
+
+~~~cmd
+icacls shared /grant:r Users:(OI)(CI)RX
+~~~
+
+[[:r]] = replace: شيل صلاحية Users القديمة (M) وحط دي مكانها. [[RX]] Read & Execute: قراية وتشغيل بس. بعدها أول سطر:
+
+~~~text الناتج
+shared BUILTIN\Users:(OI)(CI)(RX)
+~~~
+
+من غير [[:r]] كان هيبقى فيه سطرين لـ Users.
+
+---
+
+## ٦. باك أب للصلاحيات
+
+~~~cmd
+icacls shared /save shared-acl.txt /t
+~~~
+
+[[/save]] اكتب الصلاحيات في ملف، و [[/t]] للفولدر وكل اللي جواه:
+
+~~~text الناتج
+processed file: shared
+processed file: shared\sub
+processed file: shared\sub\f.txt
+Successfully processed 3 files; Failed processing 0 files
+~~~
+
+والملف نفسه بصيغة اسمها SDDL، وكل اسم وتحته سطر زي:
+
+~~~text من shared-acl.txt
+shared
+D:AI(A;OICI;0x1200a9;;;BU)(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)...
+~~~
+
+[[A]] Allow، و [[OICI]] الوراثة، و [[0x1200a9]] هو RX بالأرقام، و [[FA]] Full، و [[BU]] Users، و [[SY]] SYSTEM، و [[BA]] Administrators. والملف UTF-16، فـ [[type]] بيطبعه بمسافة بين كل حرف؛ افتحه في notepad.
+
+---
+
+## ٧. شيل Users
+
+~~~cmd
+icacls shared /remove Users
+~~~
+
+[[/remove]] بيشيل الصلاحيات **الصريحة** لـ Users على الفولدر ده. بعدها [[icacls shared]] رجع من غير سطر Users.
+
+---
+
+## ٨. رجّع كل حاجة للموروث
+
+~~~cmd
+icacls shared /reset /t /c /q
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[/reset]] | امسح الصريح، وخلّي الموروث بس |
+| [[/t]] | على الفولدر وكل اللي جواه |
+| [[/c]] | كمّل لو ملف فشل |
+| [[/q]] | quiet: متطبعش سطر لكل ملف |
+
+~~~text الناتج
+Successfully processed 3 files; Failed processing 0 files
+~~~
+
+وبعدها shared و sub الاتنين عرضوا التلات سطور بـ [[(I)]] بس.
+
+---
+
+## أخطاء جرّبتها
+
+~~~text icacls shared /grant NoSuchUser:R
+NoSuchUser: No mapping between account names and security IDs was done.
+Successfully processed 0 files; Failed processing 1 files
+~~~
+
+errorlevel [[1332]]: الاسم مش موجود. و [[icacls shared /grant Users: (OI)(CI)M]] (بمسافة بعد النقطتين) طلّع [[Invalid parameter "Users:"]] و errorlevel [[87]]: الصلاحية لازم تبقى لازقة.
+
+---
+
+## الخلاصة
+
+| الحرف | معناه |
+|---|---|
+| [[F]] / [[M]] / [[RX]] / [[R]] / [[W]] | كل حاجة / تعديل / قراية وتشغيل / قراية / كتابة |
+| [[(OI)]] / [[(CI)]] | تورثها الملفات / الفولدرات اللي جوه |
+| [[(I)]] | في العرض: موروثة |
+| [[/grant]] / [[/grant:r]] | ضيف / بدّل |
+| [[/remove]] / [[/reset]] | شيل الصريح / ارجع للموروث |
+
+وكله على فولدراتك بس، مش [[C:\Windows]] ولا [[Program Files]].`,
           lines: [
             R`فولدر للتجربة وفولدر جواه.`,
             R`اعرض صلاحياته.`,
@@ -924,6 +3329,101 @@ takeown بيطبع سطر لكل ملف، و [[/r]] على فولدر كبير �
             when: R`هارد أو فلاشة من جهاز تاني، فولدر يوزر اتمسح، باك أب اتنقل بصلاحياته، أو فولدر في D مش بيتمسح ولا بيتنقل.`,
             mistakes: R`takeown على [[C:\Windows]] أو [[Program Files]] أو [[C:\]] كله «عشان أخلص»، فتحديثات ويندوز تبوظ. أو تاخد الملكية وتنسى خطوة icacls وتستغرب إنه لسه Access denied. أو تنسى [[/d y]] فيقف يسألك عند كل فولدر. أو تشغّله من CMD عادي. أو تعمل كده على فولدر مشترك لناس تانيين فتشيل صلاحياتهم.`
           },
+          teach: R`## الفكرة: شوف المالك، خد الملكية، ادّي نفسك صلاحية، امسح
+
+المثال سلسلة: [[dir /q]] يوريك المشكلة، و [[takeown]] يخلّيك المالك، و [[icacls]] يدّيك صلاحية، وبعدها [[rd]] يقدر يمسح. والسطر الأخير شكل تاني لـ takeown. [[D:\OldPC]] هنا فولدر جاي من جهاز قديم، فمشغّلتش السطور على فولدر زيه؛ جرّبت [[dir /q]] و takeown من CMD عادي على ملف بتاعي وعلى ملف نظام (واترفض)، على ويندوز 11.
+
+---
+
+## ١. مين المالك؟
+
+~~~cmd
+dir /q "D:\OldPC"
+~~~
+
+[[/q]] بيضيف عمود المالك (owner) قبل اسم الملف. على فولدر تجربة:
+
+~~~text الناتج
+10/06/2026  10:30 AM                 5 ALI-PC\ali           a.txt
+~~~
+
+وعلى ملف نظام ([[dir /q C:\Windows\notepad.exe]]):
+
+~~~text الناتج
+08/28/2026  12:46 AM           360,448 NT SERVICE\TrustedInstanotepad.exe
+~~~
+
+العمود ضيق فقص [[NT SERVICE\TrustedInstaller]] ولزقه في اسم الملف. على فولدر من جهاز قديم هتلاقي يوزر مش موجود عندك أو رقم SID طويل.
+
+---
+
+## ٢. خد الملكية
+
+~~~cmd
+takeown /f "D:\OldPC" /r /d y
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[takeown]] | take ownership: خد الملكية |
+| [[/f "..."]] | الملف أو الفولدر (file) |
+| [[/r]] | وكل اللي جواه (recursive) |
+| [[/d y]] | لو فولدر مش مسموحلك تشوف جواه، خد ملكيته برضه من غير ما تسأل |
+
+من CMD أدمن بيطبع لكل حاجة سطر [[SUCCESS: The file (or folder): "..." now owned by user "ALI-PC\ali".]]. جرّبت على ملف بتاعي أصلًا من CMD عادي واشتغل (لأنه بتاعي)، وعلى ملف نظام اترفض:
+
+~~~text takeown /f C:\Windows\notepad.exe  (CMD عادي)
+ERROR: The current logged on user does not have ownership privileges on
+       the file (or folder) "C:\Windows\notepad.exe".
+~~~
+
+والرفض ده كويس: ملفات النظام ملكيتها لازم تفضل لـ TrustedInstaller. على ملف مش بتاعك محتاج CMD أدمن، لأن الأدمن بس عنده [[SeTakeOwnershipPrivilege]] (درس whoami /groups /priv).
+
+---
+
+## ٣. ادّي نفسك صلاحية
+
+~~~cmd
+icacls "D:\OldPC" /grant %USERNAME%:F /t /c /q
+~~~
+
+الملكية لوحدها مش صلاحية قراية ولا مسح؛ هي بس بتسمحلك تغيّر الصلاحيات. فالخطوة دي لازمة:
+
+- [[%USERNAME%:F]] يوزرك ([[%USERNAME%]] بيتبدّل باسمك) ياخد Full.
+- [[/t]] على كل اللي جوه، و [[/c]] كمّل لو حاجة فشلت، و [[/q]] من غير سطر لكل ملف (درس icacls).
+
+---
+
+## ٤. امسح
+
+~~~cmd
+rd /s /q "D:\OldPC"
+~~~
+
+[[rd]] = rmdir، و [[/s]] بكل اللي جواه، و [[/q]] من غير «Are you sure». دلوقتي بيشتغل لأنك المالك وعندك Full (درس del / rd).
+
+---
+
+## ٥. الملكية لجروب الأدمنز
+
+~~~cmd
+takeown /f "D:\Shared" /r /d y /a
+~~~
+
+[[/a]] الملكية تروح لجروب Administrators مش ليوزرك، فأي أدمن على الجهاز يقدر يدير الفولدر. الرسالة بتبقى [[now owned by the administrators group.]] (من [[takeown /?]] والتوثيق).
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر | ليه |
+|---|---|---|
+| ١ | [[dir /q]] | اعرف المالك |
+| ٢ | [[takeown /f ... /r /d y]] | بقيت المالك |
+| ٣ | [[icacls ... /grant %USERNAME%:F /t /c /q]] | بقى عندك صلاحية |
+| ٤ | [[rd /s /q ...]] | امسح أو انقل |
+
+من CMD **أدمن**، وعلى فولدرات بياناتك بس، مش [[C:\Windows]] ولا [[Program Files]].`,
           lines: [
             R`مين صاحب الملفات؟ (dir بعمود الصاحب).`,
             R`خد ملكية الفولدر وكل اللي جواه، ومتسألش (أدمن).`,
@@ -962,6 +3462,94 @@ runas بيقرا الباسورد من الكيبورد بس، ومفيش طري
             when: R`اختبار برنامج بيوزر عادي، أدوات إدارة بحساب أدمن منفصل، أو أدوات الشركة (SQL Server Management Studio أو أدوات Active Directory أو شيرات) من جهاز مش على الدومين بـ [[/netonly]].`,
             mistakes: R`تفتكر runas بيعمل Run as administrator فتستغرب إن النافذة لسه Access denied. أو [[/savecred]] مع حساب أدمن. أو تنسى علامات التنصيص حوالين البرنامج و arguments بتاعته. أو اسم اليوزر من غير اسم الجهاز فيدوّر عليه في مكان غلط. أو تحاول تحط الباسورد في سكربت.`
           },
+          teach: R`## الفكرة: [[runas /user:مين البرنامج]]
+
+[[runas]] بياخد حاجتين: اليوزر بعد [[/user:]]، والبرنامج. وبيسألك على باسورد اليوزر ده في نفس النافذة. أول سطرين تشغيل بيوزر تاني، والتالت حالة خاصة للشبكة، والرابع **مش** runas خالص: ده الطريقة الصح تفتح CMD كأدمن.
+
+> runas مشغّلتهوش لأنه بيسأل على باسورد يوزر تاني من الكيبورد، والجهاز مفيهوش يوزر تاني. الناتج تحت من توثيق Microsoft. اللي جرّبته: [[%COMPUTERNAME%]] وحالة الخدمة اللي runas بيعتمد عليها.
+
+---
+
+## ١. cmd باسم sara
+
+~~~cmd
+runas /user:%COMPUTERNAME%\sara cmd
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[runas]] | run as: شغّل باسم |
+| [[/user:]] | اليوزر، لازقة في اللي بعدها |
+| [[%COMPUTERNAME%]] | متغير فيه اسم جهازك؛ عندي [[echo %COMPUTERNAME%]] طبع اسم الجهاز بالكابيتال |
+| [[\sara]] | اليوزر sara على الجهاز ده |
+| [[cmd]] | البرنامج اللي هيتشغّل |
+
+ليه اسم الجهاز قبل اليوزر؟ عشان runas يعرف يدوّر على sara فين: على الجهاز ده، مش على دومين. والناتج (من التوثيق):
+
+~~~text الناتج
+Enter the password for ALI-PC\sara:
+Attempting to start cmd as user "ALI-PC\sara" ...
+~~~
+
+والباسورد مش بيظهر وانت بتكتبه. ونافذة جديدة بتفتح عنوانها فيه [[(running as ALI-PC\sara)]]، و [[whoami]] جواها بيطبع [[ali-pc\sara]].
+
+لو الباسورد غلط: [[1326: The user name or password is incorrect.]]. ولو sara من غير باسورد: [[1327: Account restrictions are preventing this user from signing in...]]، لأن ويندوز مش بيسمح بالدخول بباسورد فاضي من هنا.
+
+---
+
+## ٢. برنامج ومعاه argument
+
+~~~cmd
+runas /user:%COMPUTERNAME%\sara "notepad C:\Users\Public\test.txt"
+~~~
+
+البرنامج ([[notepad]]) والملف اللي يفتحه بين علامات تنصيص **مع بعض**. من غيرها runas هياخد [[notepad]] بس ويعتبر المسار حاجة تانية. واخترت [[C:\Users\Public]] لأنه فولدر كل اليوزرز يقدروا يكتبوا فيه، فـ sara هتقدر تحفظ.
+
+---
+
+## ٣. [[/netonly]]
+
+~~~cmd
+runas /netonly /user:CORP\ali cmd
+~~~
+
+- [[CORP]] اسم دومين الشركة بدل اسم الجهاز، و [[ali]] حسابك هناك.
+- [[/netonly]]: النافذة شغالة **باسمك انت** على جهازك، بس أي اتصال بجهاز تاني على الشبكة (SQL Server أو شير) بيروح بحساب CORP\ali.
+
+عشان كده [[whoami]] جوه النافذة دي بيطبع اسمك انت مش ali بتاع الشركة، وده الطبيعي. والباسورد الغلط مش بيبان غير لما البرنامج يتصل فعلًا.
+
+---
+
+## ٤. افتح CMD كأدمن بجد
+
+~~~cmd
+powershell -Command "Start-Process cmd -Verb RunAs"
+~~~
+
+- [[powershell -Command "..."]] نفّذ أمر PowerShell من CMD (درس wmic).
+- [[Start-Process cmd]] شغّل cmd.
+- [[-Verb RunAs]] بالفعل «Run as administrator»، زي كليك يمين. ده اللي بيطلّع UAC.
+
+ليه مش runas؟ لأن runas بيوزر أدمن بيفتح نافذة **Medium** (درس whoami /groups /priv): UAC بيدّي الأدمن توكن عادي هنا كمان. فـ runas = «يوزر تاني»، و [[-Verb RunAs]] = «صلاحيات أدمن».
+
+---
+
+## الخدمة اللي ورا runas
+
+runas بيطلب من خدمة اسمها [[seclogon]] (Secondary Logon) تعمل الدخول التاني. عندي [[sc qc seclogon]] طلّع [[START_TYPE : 3 DEMAND_START]] و [[sc query seclogon]] طلّع [[STOPPED]]: ده طبيعي، بتقوم لوحدها أول ما runas يطلبها. لو حد عملها disabled، runas هيفشل.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| برنامج بيوزر تاني | [[runas /user:%COMPUTERNAME%\الاسم البرنامج]] |
+| برنامج + arguments | [[runas /user:... "البرنامج والملف"]] |
+| حساب الشركة للشبكة بس | [[runas /netonly /user:الدومين\الاسم cmd]] |
+| CMD كأدمن | [[powershell -Command "Start-Process cmd -Verb RunAs"]] |
+
+runas يعني يوزر تاني، مش أدمن.`,
           lines: [
             R`cmd جديد باسم sara (هيسألك على باسوردها).`,
             R`برنامج ومعاه argument: كله بين علامات تنصيص.`,
