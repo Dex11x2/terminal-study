@@ -1,840 +1,949 @@
 // تكملة تاب css: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/css/01.js (شرح حقول الدرس في أوله)
 MORE("css", [
     {
-      t: "CSS الحديث و SEO",
-      l: 3,
-      n: "مكونات بتتأقلم مع مكانها، و selectors بتبص لتحت، و HTML جوجل وواتساب فاهمينه",
+      t: "CSS: مين بيكسب ومساحة كل عنصر",
+      l: 1,
+      n: "الـ selector بيختار، والـ cascade بيقرر مين يكسب، والـ box model بيحسب المساحة",
       items: [
         {
-          cmd: "container queries",
-          title: "مكون يغيّر شكله حسب المكان اللي هو فيه",
-          desc: R`الـ media query بتسأل عن عرض الشاشة، والـ container query بتسأل عن عرض الأب. فكارت واحد يبقى أفقي لما يتحط في main عريض، ورأسي لما يتحط في sidebar ضيق، على نفس الشاشة.
+          cmd: "مقدمة CSS وتنسيق العناصر",
+          title: "CSS بيتربط بالصفحة إزاي، والقاعدة بتتكتب إزاي؟",
+          desc: R`[[CSS]] اختصار Cascading Style Sheets. الـ HTML بيقول «ده عنوان»، والـ CSS بيقول «العنوان ده لونه أزرق وحجمه كذا ومكانه فين». الألوان والخطوط والمسافات وترتيب العناصر على الشاشة كلها CSS. من غيره المتصفح بيعرض الصفحة بتنسيقه الافتراضي: خط أسود على خلفية بيضا ولينكات زرقا.
 
-بتعلّم الأب بـ [[container-type: inline-size]]، وبعدين [[@container (width > 28rem) { ... }]]. وفي Tailwind v4 جاهزة: [[@container]] على الأب و [[@md:flex-row]] على الابن.`,
-          example: R`<div className="@container">
-  <article className="flex flex-col gap-4 @md:flex-row">
-    <img className="w-full @md:w-48" src="/p.webp" alt="" width="400" height="300" />
-    <h3 className="text-lg @lg:text-2xl">اسم المنتج</h3>
-  </article>
-</div>
-// نفس الفكرة بـ CSS عادي
-.card-wrap { container-type: inline-size; container-name: card; }
-@container card (width > 28rem) {
-  .card { display: flex; flex-direction: row; }
+فيه ٣ طرق تحط بيها CSS على صفحة:
+• ملف لوحده (الأحسن): تعمل [[style.css]] وتربطه من الـ HTML بـ [[<link rel="stylesheet" href="style.css">]]. نفس الملف ينفع لكل صفحات الموقع، والمتصفح بيحفظه (cache) فمش بيحمّله تاني مع كل صفحة.
+• جوه الصفحة: بين [[<style>]] و [[</style>]]. مناسب لتجربة سريعة أو صفحة واحدة.
+• على العنصر نفسه: [[style="color: red"]]. اتجنبه غير لو مضطر، لأنه بيغلب أغلب القواعد التانية وصعب تلاقيه بعدين.
+
+القاعدة (rule) شكلها كده: [[h1 { color: blue; }]]
+• الـ selector: الجزء اللي قبل القوس، وبيقول القاعدة دي على مين. [[h1]] معناها كل عناصر h1، و [[.btn]] (بنقطة في الأول) معناها أي عنصر عليه [[class="btn"]].
+• القوسين [[{ }]]: جواهم التنسيق كله.
+• كل سطر جوه اسمه declaration: اسم الخاصية، وبعده [[:]]، وبعده القيمة، وبعده [[;]] تقفل السطر.
+
+الدروس الجاية في القسم ده بتكمّل: «selectors» (كل طرق الاختيار)، و «specificity» و «cascade» (لو قاعدتين على نفس العنصر مين يكسب)، و «box model» (المسافات بتتحسب إزاي).`,
+          example: R`h1 {
+  color: #2563eb;
+  font-size: 28px;
+  text-align: center;
 }
-.card h3 { font-size: clamp(1rem, 4cqi, 1.5rem); }`,
-          try: R`حط نفس الكارت مرتين: مرة في عمود عريض ومرة في sidebar عرضه 280px. على نفس الشاشة هتلاقي شكلين. غيّر [[@md:]] لـ [[md:]] وشوفهم بقوا نفس الشكل.`,
-          flag: "script",
-          deep: {
-            why: R`مع المكونات (React و shadcn)، نفس الكارت بيتحط في أماكن كتير: صفحة، ومودال، و sidebar، و grid بـ 4 أعمدة. الـ media query مش عارفة هو فين، فكنت بتعمل variants أو props زي [[compact]]. الـ container query بتخلي المكون يتأقلم لوحده.`,
-            how: R`[[container-type: inline-size]] بيقول للمتصفح «أولادي ممكن يسألوا عن عرضي». وفي المقابل العنصر ده عرضه مينفعش يعتمد على أولاده (وإلا حلقة: الابن بيغيّر شكله حسب عرض الأب، والأب عرضه حسب الابن). عشان كده الـ container محتاج عرض جاي من برا (block عادي أو خانة grid)، ولو هو inline أو flex item ملوش عرض ممكن يقع لصفر.
-
-[[@container (width > 28rem)]] بتدوّر على أقرب جد container. ولو فيه containers جوه بعض، [[container-name]] بيحدد مين. وفي Tailwind: [[@container/sidebar]] و [[@md/sidebar:]].
-
-وحدات جديدة: [[cqi]] و [[cqw]] (1% من عرض الـ container)، و [[cqb]] و [[cqh]] للارتفاع (محتاجين [[container-type: size]]، وفي Tailwind v4.3 [[@container-size]]).
-
-المتصفحات كلها بتدعمها من 2023. و Tailwind v4 فيه مقاسات جاهزة من [[@3xs]] لـ [[@7xl]]، و [[@max-md:]] للأصغر.`,
-            when: "مكونات بتتحط في أماكن بعروض مختلفة: كروت، و widgets في داشبورد، و sidebar بيتفتح ويتقفل. والـ layout العام للصفحة لسه media queries.",
-            mistakes: R`تنسى [[@container]] على الأب فمفيش حاجة بتحصل ومفيش error. تحط container-type على عنصر عرضه جاي من محتواه فيقع. وتستخدمها لكل حاجة حتى الـ layout الأساسي اللي فعلًا بيعتمد على الشاشة.`
-          },
-          lines: [
-            "الأب بقى container: أولاده يقدروا يسألوا عن عرضه.",
-            R`الكارت: عمود، ولما الأب يبقى عريض كفاية ([[@md]]) يبقى صف.`,
-            "الصورة عرضها كامل، وفي الوضع الأفقي 192px.",
-            "العنوان يكبر لما الـ container يبقى أعرض.",
-            "قفلة.",
-            "قفلة.",
-            "CSS: الأب container اسمه card.",
-            "لما عرض الـ container ده (مش الشاشة) يعدّي 28rem...",
-            "...الكارت يبقى flex في صف.",
-            "قفلة.",
-            R`[[cqi]] = 1% من عرض الـ container، فالخط بيكبر مع الكارت مش مع الشاشة.`
-          ],
-          sol: R`على شاشة واحدة: الكارت اللي في العمود العريض بيطلع أفقي (الصورة على جنب بعرض [[w-48]] = 12rem، والعنوان جنبها وخطه أكبر)، والكارت اللي في الـ sidebar بـ 280px بيطلع رأسي (الصورة فوق بعرض الكارت والعنوان تحتها). ده لأن [[@md]] في الـ container queries معناها «الحاوية نفسها من 28rem (448px) وأكبر»، والـ sidebar أصغر من كده. و [[@lg]] (32rem = 512px) هو اللي بيكبّر العنوان.
-
-بعد ما تغيّر [[@md:]] لـ [[md:]]: الاتنين بقوا أفقي على الشاشة الكبيرة (والـ sidebar بقى محشور وشكله وحش)، والاتنين رأسي على الموبايل، لأن [[md:]] بتبص على عرض الشاشة كلها (48rem) مش على المكان.
-
-لو الكارتين طلعوا رأسي حتى في العمود العريض، غالبًا نسيت [[@container]] على الأب (من غيره [[@md:]] ملهاش حاوية تقيسها). وخلي بالك إن العنصر اللي عليه [[container-type: inline-size]] ميقدرش ياخد عرضه من محتواه، فلو هو flex item من غير عرض ممكن يتقفل لصفر.`
-        },
-        {
-          cmd: ":has()",
-          title: "نسّق الأب حسب اللي جواه",
-          desc: R`[[:has()]] أول selector في CSS بيبص لتحت: [[.card:has(img)]] = الكارت اللي جواه صورة، و [[form:has(:user-invalid)]] = الفورم اللي فيه حقل غلط، و [[label:has(input:checked)]] = الـ label اللي الـ checkbox بتاعه متعلّم.
-
-حاجات كانت محتاجة JavaScript أو class تتحط بإيدك بقت CSS بس.`,
-          example: R`.card:has(img) { padding-top: 0; }
-.field:has(input:user-invalid) label { color: var(--color-red-600); }
-label:has(input:checked) { border-color: var(--color-brand); background: var(--color-brand-soft); }
-body:has(dialog[open]) { overflow: hidden; }
-.list:not(:has(li)) { display: none; }
-h2:has(+ p) { margin-bottom: 0.5rem; }
-// في Tailwind
-<label className="rounded-lg border p-4 has-checked:border-brand has-[input:focus-visible]:ring-2">...</label>`,
-          try: R`اعمل 3 كروت اختيار بـ radio جواهم، ونسّقهم بـ [[label:has(input:checked)]] من غير ولا سطر JavaScript. وبعدين جرّب [[body:has(dialog[open])]] مع [[<dialog>]] بتفتحه بـ [[showModal()]].`,
-          flag: "script",
-          deep: {
-            why: R`CSS طول عمره بيبص من الأب للابن بس. فأي تنسيق للأب حسب حالة ابن (كارت متعلّم، أو فورم فيه غلط، أو صفحة فيها مودال) كان محتاج JavaScript يحط class. [[:has()]] هو الـ «parent selector» اللي الناس كانت مستنياه سنين.`,
-            how: R`[[A:has(B)]] = A اللي جواه B (أي عمق). و [[A:has(> B)]] = ابن مباشر. و [[A:has(+ B)]] = A اللي بعده على طول B، فهي كمان «previous sibling selector». وتقدر تحط جواها أي selector: حالات ([[:checked]] و [[:focus-visible]] و [[:user-invalid]])، و [[:not()]].
-
-الـ specificity بتاعتها = أتقل selector جواها. ومينفعش [[:has()]] جوه [[:has()]]، ولا pseudo-elements جواها.
-
-الأداء: المتصفح لازم يعيد التقييم لما أي حاجة جوه العنصر تتغير. المتصفحات فيها تحسينات كتير، بس selectors واسعة زي [[body:has(...)]] أو [[:has()]] من غير حاجة قبلها بتخلي تغييرات كتير تعيد حساب الـ style. خلي الـ anchor ضيق ([[.card:has()]]).
-
-مدعومة في كل المتصفحات من ديسمبر 2023. وفي Tailwind: [[has-checked:]] و [[has-[img]:pt-0]] و [[group-has-[...]:]] و [[peer-has-[...]:]].`,
-            when: R`حالات مبنية على المحتوى أو التفاعل من غير state: كروت اختيار، و validation الفورم، و layout يتغير لو فيه sidebar ولا لأ ([[.layout:has(aside)]]).`,
-            mistakes: R`تستخدمها بدل state محتاجه أصلًا في المنطق (هتحتاجه في JavaScript على أي حال). [[:has()]] على selectors واسعة جدًا في صفحة ضخمة بتتغير كتير. وتنسى إن [[body:has(dialog[open])]] مش هيشتغل مع مودال div معمول بإيدك (لازم [[<dialog>]] أو attribute انت عارفه).`
-          },
-          lines: [
-            "كارت فيه صورة: شيل الـ padding اللي فوق عشان الصورة تلزق في الحافة.",
-            "الحقل غلط بعد ما المستخدم كتب: الـ label اللي قبله يحمر (ودا peer مكانش يعرف يعمله).",
-            "كارت اختيار متعلّم: حدود وخلفية بلون البراند.",
-            "لو فيه dialog مفتوح في الصفحة: امنع الـ scroll.",
-            "قايمة مفيهاش ولا عنصر: اخفيها.",
-            "عنوان بعده فقرة على طول: مسافة أقل.",
-            R`نفس الفكرة في Tailwind: [[has-checked:]] و [[has-[...]:]].`
-          ],
-          sol: R`لما تختار radio: الكارت بتاعه بس الـ border بتاعه بقى بلون الـ brand وخلفيته فاتحة، ولما تختار واحد تاني الأول بيرجع رمادي والتاني ياخد الستايل، من غير JavaScript خالص. ولأن الـ input جوه الـ label، الضغط في أي حتة في الكارت بيختار.
-
-مع [[<dialog>]]: قبل الفتح [[getComputedStyle(document.body).overflow]] ‏[[visible]]. بعد [[dialog.showModal()]] المتصفح بيحط [[open]] على الـ dialog، فالـ [[body:has(dialog[open])]] اتحققت والـ overflow بقى [[hidden]] والصفحة اللي ورا مبتعملش scroll. Escape بيقفل المودال والـ overflow بيرجع [[visible]] لوحده.
-
-لو الستايل مش بيتطبق على الكارت، اتأكد إن الـ input جوه الـ label فعلًا (لو بـ [[for]] بس وبرا، [[:has]] مش هتلاقيه جواه). ولو الـ radios كلهم بيتختاروا مع بعض، ناسي نفس الـ [[name]] عليهم.`,
-          solCode: R`<style>
-  label { display: block; border: 2px solid lightgray; border-radius: 0.75rem; padding: 1rem; margin-block: 0.5rem; }
-  label:has(input:checked) { border-color: oklch(0.55 0.2 265); background: oklch(0.95 0.03 265); }
-  body:has(dialog[open]) { overflow: hidden; }
-</style>
-<label><input type="radio" name="plan" value="basic"> أساسي</label>
-<label><input type="radio" name="plan" value="pro"> احترافي</label>
-<label><input type="radio" name="plan" value="team"> فريق</label>
-<button onclick="d.showModal()">افتح</button>
-<dialog id="d"><p>أهلًا</p><form method="dialog"><button>اقفل</button></form></dialog>
-<div style="height: 200vh"></div>`
-        },
-        {
-          cmd: "CSS nesting",
-          title: "قواعد جوه قواعد من غير Sass",
-          desc: R`المتصفحات بقت بتفهم الـ nesting: بتكتب قواعد الأولاد والحالات جوه قاعدة الأب. و [[&]] = الأب نفسه: [[&:hover]] و [[&.active]] و [[.dark &]].
-
-ومفيد مع Tailwind لما تكتب CSS مخصص في [[@utility]] أو [[@layer components]].`,
-          example: R`.card {
-  padding: 1rem;
-  border-radius: var(--radius-card);
-  & h3 { font-size: 1.25rem; }
-  &:hover { box-shadow: var(--shadow-md); }
-  &.is-featured { border: 2px solid var(--color-brand); }
-  .dark & { background: var(--color-gray-900); }
-  @media (width >= 48rem) {
-    padding: 2rem;
-  }
+p {
+  color: #374151;
+  font-size: 16px;
+  line-height: 1.6;
+}
+.btn {
+  background-color: #10b981;
+  color: white;
+  border-radius: 6px;
 }`,
-          try: R`انسخ الكود ده في ملف CSS عادي من غير أي أداة وافتحه في المتصفح: هيشتغل. وبعدين في DevTools › Styles شوف القاعدة المتداخلة ظاهرة إزاي.`,
+          try: R`في نفس الفولدر بتاع [[index.html]] (من درس «مقدمة HTML والـ Tags») اعمل ملف [[style.css]] وحط فيه القواعد دي. في [[index.html]] ضيف السطر ده تحت سطر الـ meta: [[<link rel="stylesheet" href="style.css">]]، وغيّر الزرار لـ [[<button type="button" class="btn">بحث</button>]]. احفظ الاتنين واعمل refresh. بعدين امسح الـ [[;]] من آخر سطر [[color: #2563eb;]] واعمل refresh تاني، وشوف إيه اللي اتغير في العنوان.`,
           flag: "script",
           deep: {
-            why: R`من غير nesting، كل حالة وكل ابن سطر منفصل بيكرر [[.card]]، والملف بيطول وبيبعد اللي مرتبط ببعض. Sass كان بيحل ده بس محتاج build. دلوقتي المتصفح نفسه بيفهمه.`,
-            how: R`القاعدة المتداخلة بتتفهم كأنها [[:is(parent) child]]. [[& h3]] (أو [[h3]] لوحدها في المتصفحات الحديثة) = أي h3 جوه. و [[&:hover]] من غير مسافة = نفس العنصر. و [[.dark &]] = الـ & في الآخر، فالأب هو اللي جوه [[.dark]].
+            why: R`فصل الهيكل (HTML) عن الشكل (CSS) معناه إنك تقدر تغيّر شكل الموقع كله من ملف واحد من غير ما تلمس ولا صفحة HTML. وأي أداة هتشتغل بيها بعد كده (Tailwind أو CSS Modules أو shadcn) في الآخر بتطلّع قواعد CSS بنفس الشكل ده.`,
+            how: R`المتصفح بيبني شجرة الـ DOM من الـ HTML، ويقرا الـ CSS، ويشوف كل قاعدة بتنطبق على أنهي عناصر. بعدين يحسب مكان ومقاس كل عنصر (layout)، وبعدين يرسم الألوان والخطوط (paint).
 
-الفرق عن Sass: مينفعش تلزق كلام في [[&]] زي [[&__title]] (بتاعة BEM)، لأن المتصفح بيعامل & كـ selector كامل مش string. وبما إنها [[:is()]]، لو الأب فيه أكتر من selector ([[.a, #b { & p {} }]]) الـ specificity بتبقى بتاعة أتقلهم (الـ id هنا).
+الألوان هنا مكتوبة hex: [[#]] وبعدها ٦ حروف/أرقام، كل اتنين منهم كمية أحمر وأخضر وأزرق. تقدر تكتب أسامي ألوان زي [[white]] كمان. و [[px]] وحدة بيكسل، و [[line-height: 1.6]] من غير وحدة معناها «١.٦ ضعف حجم الخط».
 
-الـ media queries و [[@container]] و [[@supports]] ينفع يتحطوا جوه القاعدة ويتطبّقوا عليها. وتقدر تتداخل أكتر من مستوى، بس أكتر من 3 بيرجّعك لمشكلة الـ selectors الطويلة (درس specificity).
-
-مدعومة في كل المتصفحات الحديثة من أواخر 2023. و Tailwind v4 بيدعمها في ملفات الـ CSS، وحتى جوه [[@utility]] (زي [[@media]] جوه [[container-app]] في مشروع حقيقي)، وبيفكّها وقت الـ build (بـ Lightning CSS) للمتصفحات الأقدم.`,
-            when: R`CSS مخصص برا Tailwind: مكون معقد، أو [[@utility]] فيها حالات، أو CSS Modules. متعملش nesting عميق عشان «شكله منظم».`,
-            mistakes: R`[[&-title]] أو [[&__title]] زي Sass ومش بيشتغل. تداخل 5 مستويات فالـ specificity تعلى من غير ما تاخد بالك. و [[.dark &]] وانت فاكرها [[&.dark]] (الأولى الكارت جوه dark، والتانية الكارت نفسه عليه dark).`
+كلمة Cascading معناها إن فيه قواعد كتير ممكن تنطبق على نفس العنصر (منك، ومن مكتبة، ومن تنسيق المتصفح الافتراضي)، والمتصفح عنده ترتيب ثابت يحدد مين يكسب. ده موضوع درسي «specificity» و «cascade».`,
+            when: "أي صفحة محتاجة شكل. ابدأ بملف CSS منفصل، ولما تدخل React هتقابل Tailwind (المستوى التاني)، بس فهم القاعدة دي هو اللي هيخليك تعرف Tailwind بيعمل إيه.",
+            mistakes: R`تنسى [[;]] في آخر السطر: المتصفح بيقرا السطر ده واللي بعده كأنهم قيمة واحدة غلط، فبيتجاهل الاتنين ويكمل عادي بعدهم. وتنسى النقطة قبل اسم الـ class ([[btn]] بدل [[.btn]]) فالقاعدة تدوّر على عنصر اسمه btn مش موجود. وتحط كل التنسيق في [[style=""]] جوه الـ HTML فيبقى صعب تعدّله.`
           },
-          lines: [
-            "القاعدة الأب.",
-            "خصائص الكارت نفسه.",
-            "تدوير من توكن.",
-            R`أي h3 جوه الكارت = [[.card h3]].`,
-            R`[[&]] لازقة = الكارت نفسه وقت الـ hover = [[.card:hover]].`,
-            R`الكارت اللي عليه كمان [[is-featured]] = [[.card.is-featured]].`,
-            R`[[&]] في الآخر: الكارت جوه [[.dark]] = [[.dark .card]].`,
-            "media query جوه القاعدة: بتتطبق على الكارت نفسه.",
-            "padding أكبر على الشاشات الكبيرة.",
-            "قفلة الـ media.",
-            "قفلة الكارت."
-          ],
-          sol: R`في Chrome أو Firefox أو Safari الحديثين الملف بيشتغل زي ما هو: الكارت padding بتاعه 16px، والـ h3 جواه 20px ([[1.25rem]])، والكارت اللي عليه [[is-featured]] ليه border 2px بلون الـ brand، ولو الكارت جوه عنصر عليه [[.dark]] خلفيته غامقة، ولما الشاشة تعدّي 768px الـ padding بيبقى 32px.
+          teach: R`## الفكرة في سطرين
 
-في Styles لما تختار الـ h3: هتلاقي القاعدة معروضة بـ [[& h3]] وفوقها سطر رمادي فيه [[.card]]، يعني DevTools بيوريك الأب اللي القاعدة متداخلة جواه. والـ [[@media]] بيظهر فوق الـ padding بتاعها كـ at-rule عادي.
+3 قواعد: واحدة للعناوين، وواحدة للفقرات، وواحدة لأي عنصر عليه [[class="btn"]]. ربطتهم بصفحة درس «مقدمة HTML والـ Tags» (بعد ما زوّدت [[class="btn"]] على الزرار) وفتحتها في Chrome (headless)، وقريت التنسيق النهائي لكل عنصر بـ [[getComputedStyle()]]:
 
-لو مفيش حاجة اشتغلت، اتأكد إنك مش فاتح الملف بـ [[file://]] في متصفح قديم، وإن الـ [[var(--...)]] متعرّفة (المثال بيستخدم [[--radius-card]] و [[--shadow-md]] و [[--color-brand]]؛ لو مش متعرّفين القواعد دي بس هي اللي مش هتبان). وخلي بالك من المسافة: [[& h3]] معناها h3 جوه الكارت، و [[&.is-featured]] من غير مسافة معناها الكارت نفسه عليه الكلاس؛ لو كتبت [[& .is-featured]] بمسافة هتدوّر على ابن جواه وملهاش تأثير.`
-        },
-        {
-          cmd: "meta و Open Graph",
-          title: "شكل صفحتك في جوجل وفي واتساب",
-          desc: R`[[<title>]] و [[<meta name="description">]] هما اللي بيظهروا في نتيجة جوجل. و [[<link rel="canonical">]] بيقول مين النسخة الأصلية من الصفحة. و Open Graph ([[og:title]] و [[og:image]]...) هو شكل الكارت لما حد يبعت اللينك على واتساب أو فيسبوك أو لينكدإن.
+~~~text index.html
+<meta charset="utf-8">
+<link rel="stylesheet" href="style.css">
+<h1>متجري</h1>
+...
+<button type="button" class="btn">بحث</button>
+~~~
 
-ومع ده الـ HTML نفسه: [[h1]] واحد واضح، وعناوين بالترتيب، و [[alt]] للصور، ولينكات حقيقية ([[<a href>]]) عشان جوجل يمشي فيها.`,
-          example: R`<title>كورس React من الصفر | myapp</title>
-<meta name="description" content="اتعلم React بمشاريع حقيقية: hooks و state و Next.js. 40 درس بالعربي.">
-<link rel="canonical" href="https://example.com/courses/react">
-<link rel="alternate" hreflang="en" href="https://example.com/en/courses/react">
-<meta property="og:title" content="كورس React من الصفر">
-<meta property="og:description" content="40 درس بالعربي بمشاريع حقيقية.">
-<meta property="og:image" content="https://example.com/og/react.png">
-<meta property="og:url" content="https://example.com/courses/react">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">`,
-          try: R`اعمل deploy لصفحة فيها الـ tags دي وابعت اللينك لنفسك على واتساب، أو جرّبها في أي أداة OG preview. وفي Next.js افتح View Source وشوف الـ tags اللي اتولدت من [[metadata]].`,
-          flag: "script",
-          deep: {
-            why: "جوجل بيقرا الـ HTML، مش بيشوف التصميم. والعنوان والوصف هما إعلانك المجاني في نتايج البحث. ومواقع كتير أغلب زوارها جايين من لينكات بتتبعت في واتساب والجروبات: لينك من غير صورة وعنوان شكله spam ومحدش بيدوس عليه.",
-            how: R`جوجل بيعمل crawl: بيجيب الـ HTML (وبيشغّل JavaScript بس متأخر وبموارد محدودة)، فأهم حاجة المحتوى والـ meta يبقوا في الـ HTML الجاي من السيرفر، ودي ميزة الـ SSR والـ SSG في Next. وبيفهم الصفحة من الـ title والعناوين والكلام واللينكات الداخلية. و [[<a href>]] هو الطريقة المضمونة إنه يلاقي صفحاتك، مش [[onClick={() => router.push(...)}]].
+---
 
-الـ canonical بيحل مشكلة المحتوى المكرر: نفس الصفحة على [[/products?sort=price]] و [[/products]]. و [[hreflang]] بيربط نسخ اللغات ببعض، فكل مستخدم يشوف لغته في النتايج.
+## ١. تشريح قاعدة
 
-Open Graph بروتوكول من فيسبوك بقى standard: أي تطبيق بيعمل preview للينك (واتساب، وتليجرام، وسلاك، ولينكدإن) بيجيب الصفحة ويقرا [[og:*]]. الصورة لازم URL كامل (https)، ومقاسها حوالي 1200×630، وحجمها صغير. والتطبيقات بتعمل cache، فلو غيّرت الصورة ممكن تستنى أو تعيد الـ scrape.
-
-في Next.js App Router مش بتكتب الـ tags دي بإيدك: [[export const metadata]] فيه [[title]] و [[description]] و [[openGraph]] و [[alternates]] (للـ canonical والـ languages)، أو [[generateMetadata]] للصفحات الديناميكية، وملف [[opengraph-image.tsx]] بيولّد الصورة بالكود. التفاصيل في تاب Next.js.`,
-            when: R`كل صفحة عامة: الرئيسية، والمنتجات، والمقالات. صفحات الداشبورد والحساب مش محتاجاها، وبتاخد [[noindex]].`,
-            mistakes: R`نفس الـ title والـ description في كل الصفحات. [[og:image]] بمسار نسبي ([[/og.png]]) فمش بتظهر. محتوى مهم بيتحمّل بـ JavaScript بس بعد الـ render. و h1 للوجو في كل صفحة والعنوان الحقيقي h2. وفي مشروع حقيقي الموقع كان بلغتين والـ metadata بتتجاب من ملفات الترجمة لكل locale، ودا صح، بس كان ناقصه [[alternates.languages]] (الـ hreflang) و [[openGraph]]، فجوجل مش رابط النسختين واللينك على واتساب من غير صورة.`
-          },
-          lines: [
-            "العنوان في التاب وفي جوجل: الكلمة المهمة الأول، وحوالي 60 حرف عشان ميتقصّش.",
-            "الوصف تحت العنوان في جوجل: مش بيأثر على الترتيب مباشرة، بس بيأثر على الضغط. حوالي 150 حرف.",
-            R`الـ URL الأصلي: لو الصفحة ليها أكتر من رابط ([[?utm=...]] مثلًا)، جوجل يحسبهم صفحة واحدة.`,
-            "النسخة الإنجليزي من نفس الصفحة، لموقع بلغتين.",
-            "عنوان الكارت في واتساب وفيسبوك.",
-            "وصف الكارت.",
-            "صورة الكارت: حوالي 1200×630، و URL كامل مش نسبي.",
-            "رابط الصفحة.",
-            "نوع المحتوى.",
-            "في X (تويتر): كارت بصورة كبيرة، والباقي بياخده من og لو مفيش tags خاصة بيه."
-          ],
-          sol: R`على واتساب: اللينك بيطلع تحته كارت فيه الصورة من [[og:image]] (كبيرة بعرض الرسالة)، والعنوان «كورس React من الصفر» من [[og:title]] (مش من الـ [[<title>]])، والوصف «40 درس بالعربي بمشاريع حقيقية»، واسم الدومين. أدوات الـ preview (زي opengraph.xyz أو Facebook Sharing Debugger) بتوريك نفس الكلام وبتقولك لو فيه tag ناقص.
-
-في Next.js، [[View Source]] لصفحة عاملة [[export const metadata]] بـ [[title]] و [[description]] و [[openGraph]] و [[alternates.canonical]]: هتلاقي [[<title>]] و [[<meta name="description">]] و [[<meta property="og:title">]] وأخواتها و [[<link rel="canonical">]] متولدين في الـ HTML نفسه. (في Next 15.2 وأحدث، الصفحات الـ dynamic ممكن تبعت الـ metadata متأخرة في الـ stream للمتصفحات العادية، بس البوتات بتاخدها في الـ head، فمتقلقش لو لقيتها تحت.)
-
-لو الصورة مظهرتش: [[og:image]] لازم تبقى URL كامل بـ https مش مسار زي [[/og.png]]، ومتاحة من غير login، ومش تقيلة. ولو عدّلت الـ tags والـ preview لسه قديم، واتساب وفيسبوك بيعملوا cache؛ جرّب اللينك بـ [[?v=2]] أو استخدم «Scrape Again» في Sharing Debugger.`
-        }
-      ]
-    },
-    {
-      t: "widgets و scroll وميزات جديدة",
-      l: 3,
-      n: "accordion و tabs من غير مكتبة، و scroll مظبوط، وحركة بين الصفحات، وإزاي تعرف الميزة الجديدة تنفع ولا لسه",
-      items: [
-        {
-          cmd: "details و summary",
-          title: "accordion و FAQ من غير ولا سطر JavaScript",
-          desc: R`[[<details>]] بيتفتح ويتقفل لوحده، و [[<summary>]] جواه هو الجزء اللي بتدوس عليه. والباقي بيظهر لما يتفتح. شغال بالماوس والكيبورد (Enter و Space)، وقارئ الشاشة بيقول «collapsed» و «expanded» من غير aria.
-
-و [[open]] بيخليه مفتوح من الأول، و [[details[open] > summary]] في CSS للشكل وهو مفتوح. ولو اديت كذا details نفس [[name]]، يبقوا accordion حصري: فتح واحد بيقفل الباقي.`,
-          example: R`<section aria-labelledby="faq-title">
-  <h2 id="faq-title">أسئلة متكررة</h2>
-  <details name="faq" open>
-    <summary>التوصيل بياخد قد إيه؟</summary>
-    <p>من يومين لـ 4 أيام عمل جوه القاهرة والجيزة.</p>
-  </details>
-  <details name="faq">
-    <summary>أقدر أرجّع المنتج؟</summary>
-    <p>أيوه، خلال 14 يوم وهو في علبته.</p>
-  </details>
-</section>
-// styles.css
-details { border-block-end: 1px solid var(--color-border); padding-block: 0.75rem; }
-summary { cursor: pointer; font-weight: 600; }
-details[open] > summary { margin-block-end: 0.5rem; color: var(--color-brand); }`,
-          try: R`اعمل الـ FAQ بـ 4 أسئلة. امشي بـ Tab بس وافتح واقفل بـ Enter و Space. افتح سؤال والتاني مفتوح: حصل إيه؟ وبعدين شيل [[name]] وجرّب تاني. وأخيرًا اقفل كل الأسئلة ودوّر بـ Ctrl+F على كلمة في إجابة مقفولة.`,
-          flag: "script",
-          deep: {
-            why: R`الـ FAQ والإعدادات المتقدمة و «اعرف أكتر» في كل موقع. ناس كتير بتعملها بـ useState و div و onClick، وبتنسى الكيبورد والـ aria-expanded. details بيعمل كل ده صح ببلاش، وبيشتغل حتى لو الـ JavaScript لسه متحمّلش.`,
-            how: R`الـ summary بياخد focus لوحده، و role بتاعه عند قارئ الشاشة زرار بـ expanded أو collapsed. الـ [[open]] attribute بيتضاف ويتشال مع كل ضغطة، وفيه حدث [[toggle]] على الـ details لو محتاج تعمل حاجة (تحفظ الحالة مثلًا).
-
-الـ [[name]] (accordion حصري) بقى مدعوم في كل المتصفحات الحديثة من 2024، والمتصفح القديم بيتجاهله فكل واحد بيتفتح لوحده، يعني progressive enhancement من غير ما حاجة تبوظ.
-
-البحث في الصفحة (Ctrl+F) بيلاقي الكلام جوه details مقفول ويفتحه لوحده في Chrome ومتصفحات تانية، بعكس [[display: none]] اللي البحث مبيشوفوش.
-
-السهم اللي جنب الـ summary هو [[::marker]] (أو [[::-webkit-details-marker]] في Safari القديم). وتقدر تشيله بـ [[list-style: none]] على الـ summary وتحط أيقونة بتلف مع [[details[open] summary]]. وتحريك الفتح والقفل بقى ممكن بـ [[::details-content]] و [[interpolate-size]]، بس لسه مش في كل المتصفحات، فخليه تحسين إضافي.`,
-            when: R`FAQ، و «تفاصيل إضافية»، وفلاتر في sidebar على الموبايل، وأي محتوى بيتفتح ويتقفل وملوش علاقة بباقي الصفحة. ومش لمنيو التنقل ولا الـ dropdowns (بتتقفل لما تدوس برا، و details مبيعملش كده)، ولا للـ tabs.`,
-            mistakes: R`زرار أو لينك جوه الـ summary (عنصر تفاعلي جوه عنصر تفاعلي). تعمل details كمنيو في الـ header وتستغرب إنه مبيتقفلش. تشيل الـ marker ومتحطش أي علامة إنه بيتفتح. و [[<h3>]] جوه الـ summary: مسموح، بس قارئات شاشة كتير بتقراه زرار وخلاص فالعنوان بيضيع من لستة العناوين، فلو العناوين مهمة للتنقل حط الـ h3 قبل الـ details.`
-          },
-          lines: [
-            "الجزء كله ليه اسم من العنوان.",
-            "العنوان.",
-            R`سؤال مفتوح من الأول، و [[name="faq"]] بيربطه بالباقي.`,
-            "الجزء اللي بيتداس عليه، وبياخد focus لوحده.",
-            "الإجابة: بتبان بس وهو مفتوح.",
-            "قفلة.",
-            "سؤال تاني بنفس الـ name: فتحه بيقفل الأول.",
-            "السؤال.",
-            "الإجابة.",
-            "قفلة.",
-            "قفلة الـ section.",
-            "خط بين الأسئلة ومسافة.",
-            "السؤال شكله بيتداس.",
-            "السؤال المفتوح بلون البراند ومسافة تحته."
-          ],
-          sol: R`بالكيبورد: Tab بيقف على كل summary، و Enter أو Space بيفتحوا ويقفلوا، وقارئ الشاشة بيقول «التوصيل بياخد قد إيه؟، button، expanded».
-
-مع [[name="faq"]]: فتح السؤال التاني قفل الأول لوحده. من غير name: الاتنين يفضلوا مفتوحين.
-
-Ctrl+F على كلمة في إجابة مقفولة: في Chrome و Edge الـ details بيتفتح لوحده ويظلل الكلمة. لو متصفحك مبيعملش كده، دي ميزة لسه بتتنشر، والباقي شغال عادي.`
-        },
-        {
-          cmd: "roving tabindex",
-          title: "tabs بتتحرك بالأسهم زي البرامج الحقيقية",
-          desc: R`الـ tabs widget واحد: Tab بيدخله مرة واحدة ويطلع منه مرة واحدة، وجواه بتتحرك بالأسهم. عشان كده roving tabindex: الـ tab المختار بس عليه [[tabindex="0"]]، والباقي [[tabindex="-1"]]. ولما تدوس سهم، بتنقل الـ 0 والـ focus للي بعده.
-
-الـ roles: [[tablist]] على الحاوية، و [[tab]] على كل زرار ومعاه [[aria-selected]] و [[aria-controls]]، و [[tabpanel]] على كل محتوى ومعاه [[aria-labelledby]].
-
-وفي العربي (RTL) الأسهم بتتقلب: السهم الشمال هو «اللي بعده».`,
-          example: R`const list = document.querySelector('[role=tablist]');
-const tabs = [...list.querySelectorAll('[role=tab]')];
-function select(tab) {
-  for (const t of tabs) {
-    const on = t === tab;
-    t.setAttribute('aria-selected', String(on));
-    t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-  }
-  tab.focus();
+~~~text style.css
+h1 {
+  color: #2563eb;
 }
-list.addEventListener('keydown', (e) => {
-  const i = tabs.indexOf(document.activeElement);
-  const rtl = getComputedStyle(list).direction === 'rtl';
-  const step = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1 }[e.key];
-  if (step) select(tabs[(i + step + tabs.length) % tabs.length]);
-  else if (e.key === 'Home') select(tabs[0]);
-  else if (e.key === 'End') select(tabs.at(-1));
-  else return;
-  e.preventDefault();
-});
-list.addEventListener('click', (e) => {
-  const t = e.target.closest('[role=tab]');
-  if (t) select(t);
-});`,
-          try: R`اكتب الـ HTML بتاع 3 tabs (الحساب، والأمان، والفواتير) بالـ roles والـ attributes اللي في الشرح، وحط السكربت في صفحة [[dir="rtl"]]. دوس Tab: بيقف على كام tab؟ جرّب الأسهم و Home و End، وبعدين Tab تاني: راح فين؟`,
+~~~
+
+~~~text الأجزاء
+h1        { color  :  #2563eb  ;  }
+│         │ │      │  │        │  │
+│         │ │      │  │        │  └─ قفلة القاعدة
+│         │ │      │  │        └──── آخر الـ declaration
+│         │ │      │  └───────────── القيمة
+│         │ │      └──────────────── بين الخاصية والقيمة
+│         │ └─────────────────────── الخاصية (property)
+│         └───────────────────────── بداية التنسيق
+└─────────────────────────────────── الـ selector: على مين
+~~~
+
+السطر [[color: #2563eb;]] كله اسمه declaration (خاصية وقيمة).
+
+---
+
+## ٢. قاعدة الـ [[h1]]
+
+| السطر | معناه | اتقاس |
+|---|---|---|
+| [[color: #2563eb;]] | لون الكلام | [[rgb(37, 99, 235)]] |
+| [[font-size: 28px;]] | حجم الخط | [[28px]] (كان 32 من غيرها) |
+| [[text-align: center;]] | الكلام في نص السطر | [[center]] |
+
+### الـ hex بيتقري إزاي؟
+
+[[#2563eb]] بعد الـ [[#]] 6 خانات، كل اتنين منهم رقم بالنظام الست عشري (hexadecimal: أرقام من 0 لـ 9 وبعدها a لـ f، يعني 16 رمز):
+
+| الخانتين | اللون | بالعشري |
+|---|---|---|
+| [[25]] | أحمر | 2×16 + 5 = 37 |
+| [[63]] | أخضر | 6×16 + 3 = 99 |
+| [[eb]] | أزرق | 14×16 + 11 = 235 |
+
+وده بالظبط اللي المتصفح رجّعه: [[rgb(37, 99, 235)]]. كل لون من 0 لـ 255، والأزرق هنا أكترهم فاللون أزرق.
+
+---
+
+## ٣. قاعدة الـ [[p]]
+
+| السطر | اتقاس |
+|---|---|
+| [[color: #374151;]] | [[rgb(55, 65, 81)]]: رمادي غامق (الـ 3 قريبين من بعض وصغيرين) |
+| [[font-size: 16px;]] | [[16px]] |
+| [[line-height: 1.6;]] | [[25.6px]] |
+
+[[line-height]] هو ارتفاع السطر. الرقم من غير وحدة معناه «مضروب في حجم الخط»: 16 × 1.6 = 25.6.
+
+---
+
+## ٤. قاعدة الـ [[.btn]]
+
+النقطة قبل الاسم = class. فدي بتمسك أي عنصر عليه [[class="btn"]]، مهما كان نوعه.
+
+| السطر | اتقاس | من غير القاعدة |
+|---|---|---|
+| [[background-color: #10b981;]] | [[rgb(16, 185, 129)]] أخضر | [[rgb(240, 240, 240)]] رمادي فاتح |
+| [[color: white;]] | [[rgb(255, 255, 255)]] | أسود |
+| [[border-radius: 6px;]] | [[6px]] | [[0px]] |
+
+[[white]] اسم لون جاهز. و [[border-radius]] نص قطر الزوايا المدورة.
+
+اللينك محدش لمسه: لونه فضل [[rgb(0, 0, 238)]] الأزرق الافتراضي.
+
+---
+
+## ٥. لو نسيت [[;]]
+
+مسحت الـ [[;]] بعد [[#2563eb]]. المتصفح بيعرض القاعدة اللي فهمها في [[document.styleSheets]]:
+
+~~~text القاعدة زي ما المتصفح فهمها
+قبل:  h1 { color: rgb(37, 99, 235); font-size: 28px; text-align: center; }
+بعد:  h1 { text-align: center; }
+~~~
+
+اللون والحجم الاتنين اختفوا. المتصفح قرا [[color: #2563eb font-size: 28px]] كقيمة واحدة للـ color، ودي قيمة مش مفهومة، فرماها كلها لحد الـ [[;]] اللي بعدها. والنتيجة: الـ h1 بقى أسود و 32px، والـ [[text-align]] اشتغل عادي. يعني الغلطة بتبوّظ سطرين مش واحد، والباقي بيكمّل.
+
+---
+
+## ٦. لو اسم الملف غلط
+
+كتبت [[href="styles.css"]] (بـ s زيادة): السيرفر رد 404، والـ Console فيه «Failed to load resource: the server responded with a status of 404»، وكل العناصر رجعت لتنسيق المتصفح: الـ h1 أسود و 32 ومش في النص، والـ p [[line-height: normal]]، والزرار رمادي.
+
+---
+
+## الخلاصة
+
+| الحتة | مثال |
+|---|---|
+| selector بالنوع | [[h1]] |
+| selector بالـ class | [[.btn]] |
+| declaration | [[color: #2563eb;]] |
+| hex | [[#RRGGBB]]، كل خانتين لون من 0 لـ 255 |
+| رقم من غير وحدة في [[line-height]] | مضروب في حجم الخط |
+
+- الملف بيتربط بـ [[<link rel="stylesheet" href="style.css">]].
+- [[;]] ناقصة = السطر ده واللي بعده بيضيعوا.`,
+          lines: [
+            R`القاعدة دي على كل عناصر [[h1]]، وبعدها [[{]] بداية التنسيق.`,
+            R`لون الكلام: أزرق، مكتوب hex.`,
+            R`حجم الخط ٢٨ بيكسل.`,
+            R`الكلام في نص السطر.`,
+            R`[[}]] قفلة قاعدة الـ h1.`,
+            R`قاعدة لكل الفقرات [[p]].`,
+            R`رمادي غامق بدل الأسود.`,
+            R`حجم الخط ١٦ بيكسل (ده حجم المتصفح الافتراضي أصلًا).`,
+            R`المسافة بين السطور ١.٦ ضعف حجم الخط، فالكلام أريح في القراية.`,
+            R`قفلة قاعدة الـ p.`,
+            R`النقطة معناها class: أي عنصر عليه [[class="btn"]].`,
+            R`لون الخلفية أخضر.`,
+            R`لون الكلام أبيض.`,
+            R`زوايا مدورة بنص قطر ٦ بيكسل.`,
+            R`قفلة قاعدة الـ btn.`
+          ],
+          sol: R`بعد الـ refresh: «متجري» بقى أزرق وفي نص الصفحة وحجمه 28px (أصغر شوية من حجم h1 الافتراضي اللي هو 32px). الفقرة بقت رمادي غامق والسطور فيها مسافة أوسع. الزرار بقى خلفيته خضرا وكلامه أبيض وزواياه مدورة. اللينك والحقل محدش لمسهم فهيفضلوا زي ما هم.
+
+لو مفيش أي حاجة اتغيرت: غالبًا اسم الملف في [[href]] مش مطابق لاسمه الحقيقي، أو الملفين مش في نفس الفولدر. افتح DevTools › Console هتلاقي غلطة 404 أو [[ERR_FILE_NOT_FOUND]].
+
+ولما تمسح [[;]] بعد اللون: العنوان بيرجع أسود وبحجم الـ h1 الافتراضي، بس لسه في النص. السبب إن المتصفح قرا [[color: #2563eb font-size: 28px]] كقيمة واحدة للـ color، ودي قيمة غلط فاتجاهلها، فضاع اللون والحجم مع بعض، و [[text-align]] اللي بعدهم اشتغل عادي. في DevTools › Styles هتلاقي السطر متشطّب وجنبه علامة تحذير.`
+        },
+        {
+          cmd: "selectors",
+          title: "تختار العناصر اللي عايز تنسّقها",
+          desc: R`الـ selector هو الجزء اللي قبل [[{]]: بيقول القاعدة دي على مين. بالنوع [[p]]، أو بالـ class [[.card]]، أو بالـ attribute [[[type="email"]]]، أو بالمكان: [[.card p]] (أي p جوه card) و [[.menu > li]] (الأولاد المباشرين بس).
+
+وفيه pseudo-classes لحالة العنصر: [[:hover]] و [[:focus-visible]] و [[:first-child]] و [[:nth-child(odd)]]، و pseudo-elements بتعمل حتة مش موجودة في الـ HTML: [[::before]] و [[::after]] و [[::placeholder]].`,
+          example: R`p { line-height: 1.7; }
+.card { padding: 1rem; }
+.card p { color: gray; }
+.menu > li { display: inline-block; }
+input[type="email"] { direction: ltr; }
+a:hover { text-decoration: underline; }
+button:focus-visible { outline: 2px solid blue; }
+li:nth-child(odd) { background: whitesmoke; }
+.required::after { content: " *"; color: red; }`,
+          try: R`في DevTools › Console جرّب [[document.querySelectorAll(".card p")]] بنفس الـ selectors، وشوف رجّعلك كام عنصر. نفس اللغة بالظبط بتاعة الـ CSS.`,
           flag: "script",
           deep: {
-            why: R`لو كل tab بياخد Tab، مستخدم الكيبورد لازم يعدّي 8 tabs عشان يوصل للمحتوى. والأسهم هي اللي مستخدم قارئ الشاشة متوقعها، لأن ده سلوك الـ tabs في كل برنامج. ونفس الفكرة في toolbar، و radio group، و listbox، و menu، و grid.`,
-            how: R`[[tabindex="-1"]] بيشيل العنصر من ترتيب الـ Tab بس بيسيبه يقبل [[focus()]] من الكود. فالـ widget كله بيبان في الـ Tab كعنصر واحد (اللي عليه 0)، ولما ترجع له بتلاقي آخر tab كنت عليه.
+            why: R`كل CSS بيبدأ بسؤال: القاعدة دي على مين؟ لو الـ selector واسع قوي هتبوّظ حاجات مش قصدك، ولو ضيق قوي هتكتب نفس القاعدة عشر مرات. ونفس اللغة دي بتستخدمها في JavaScript ([[querySelector]]) وفي اختبارات المتصفح (Playwright).`,
+            how: R`المتصفح بيقرا الـ selector من اليمين للشمال. [[.card p]] معناها: هات كل p، وبعدين شوف مين فيهم ليه جد عليه card. عشان كده الجزء اللي على اليمين هو اللي بيحدد التكلفة. في الواقع المتصفحات سريعة جدًا والفرق مش محسوس غير في صفحات ضخمة.
 
-[[(i + step + tabs.length) % tabs.length]] بيلف: من الأخير للأول ومن الأول للأخير. و [[getComputedStyle(list).direction]] بيعرف الاتجاه من الـ CSS الحقيقي (موروث من [[dir]] على الـ html)، فنفس الكود يشتغل في العربي والإنجليزي.
+الـ combinators: المسافة (أي حفيد)، و [[>]] (ابن مباشر)، و [[+]] (الأخ اللي بعده على طول)، و [[~]] (أي أخ بعده).
 
-ده «automatic activation»: السهم بيختار ويعرض على طول. لو عرض المحتوى تقيل (بيجيب بيانات)، الأحسن «manual activation»: السهم بينقل الـ focus بس، و Enter أو Space بيختار.
+[[:hover]] و [[:focus]] حالات. [[:focus-visible]] ذكية: بتظهر لما المستخدم بيستخدم الكيبورد، ومش بتظهر لما يضغط بالماوس، فتقدر تحط outline واضح من غير ما يضايق حد.
 
-و [[hidden]] على الـ panels بيشيلهم من الشاشة وقارئ الشاشة. والـ tabpanel ممكن ياخد [[tabindex="0"]] لو مفيهوش أي عنصر بياخد focus، عشان Tab يوصل للمحتوى.
-
-الـ combobox (حقل بحث بقايمة اقتراحات) أصعب بكتير: [[aria-activedescendant]]، والكتابة، والفلترة، والإعلان عن عدد النتايج. متكتبوش بإيدك: استخدم مكتبة headless زي React Aria أو Headless UI أو Base UI، ولو الاقتراحات بسيطة فيه [[<datalist>]] الأصلي.`,
-            when: R`اكتب roving tabindex بإيدك لو مش بتستخدم مكتبة، أو عشان تفهم إيه اللي بيحصل. في مشروع React عادي استخدم Radix Tabs (أو shadcn Tabs) اللي عاملين كل ده صح، واعرف تختبرهم بالكيبورد.`,
-            mistakes: R`كل الـ tabs [[tabindex="0"]]. الأسهم في RTL بالعكس. tabs من divs من غير roles. تعمل tabs بـ [[<a href="#">]] بتغيّر المحتوى (ده تنقل لو كل tab صفحة فعلًا، فيبقى nav عادي مش tabs). تنسى [[e.preventDefault()]] فالسهم يعمل scroll للصفحة كمان. وسؤال انترفيو: «إيه roving tabindex وليه؟» والإجابة: وقفة Tab واحدة للـ widget، والأسهم جواه، زي الـ radio group.`
+[[::before]] و [[::after]] محتاجين [[content]] (حتى لو فاضي [[""]]) وإلا مش بيظهروا. وبيتحطوا كأنهم أول وآخر ابن جوه العنصر، عشان كده مش بيشتغلوا على [[<img>]] و [[<input>]] (ملهمش أولاد).`,
+            when: R`class لكل حاجة بتنسّقها (أسهل في الـ specificity). والـ attributes والـ pseudo-classes للحالات. ومع Tailwind أغلب الكلام ده بيبقى variants زي [[hover:]] و [[focus-visible:]] (المستوى التاني).`,
+            mistakes: R`selectors طويلة زي [[.page .main .content .card .title]] بتربط التنسيق بشكل الـ HTML، وأول ما الهيكل يتغير يبوظ. و id في الـ CSS بيعمل specificity عالية صعب تغلبها (الدرس الجاي). و [[::after]] من غير [[content]].`
           },
+          teach: R`## الفكرة في سطرين
+
+9 قواعد، كل واحدة بتختار عناصر بطريقة مختلفة: بالنوع، بالـ class، بالمكان، بالـ attribute، بالحالة، أو حتة مش موجودة في الـ HTML. حطيتهم على صفحة الحل (كارتين، وفقرة برا، ومنيو جواها منيو، وحقلين) وزوّدت لينك وزرار، وفتحتها في Chrome (headless). عدّيت كل selector بـ [[querySelectorAll]] وقريت التنسيق اللي اتطبق:
+
+~~~text index.html
+<div class="card"><p>وصف</p><p class="required">الاسم</p></div>
+<div class="card"><h3>عنوان</h3><div><p>جوه div جوه الكارت</p></div></div>
+<p>برا أي كارت</p>
+<ul class="menu"><li>أ</li><li>ب<ul><li>ج</li></ul></li><li>د</li></ul>
+<input type="email"><input type="text">
+~~~
+
+---
+
+## ١. بالنوع وبالـ class
+
+| السطر | بيختار | عدد | اتقاس |
+|---|---|---|---|
+| [[p { line-height: 1.7; }]] | كل [[<p>]] | 4 | [[line-height]] = 27.2px (16 × 1.7) |
+| [[.card { padding: 1rem; }]] | كل عنصر عليه [[class="card"]] | 2 | [[padding]] = 16px |
+
+[[1rem]] = حجم خط الصفحة، 16px افتراضيًا.
+
+---
+
+## ٢. بالمكان: المسافة و [[>]]
+
+الرموز اللي بين الـ selectors اسمها combinators:
+
+| الـ selector | معناه | عدد | مين |
+|---|---|---|---|
+| [[.card p]] | أي p **جوه** card مهما كان عميق | 3 | وصف، الاسم، جوه div جوه الكارت |
+| [[.card > p]] | p ابن **مباشر** لـ card | 2 | وصف، الاسم |
+| [[.menu > li]] | li ابن مباشر لـ menu | 3 | أ، ب، د |
+| [[.menu li]] | أي li جوه menu | 4 | أ، ب، ج، د |
+
+- المسافة = descendant (أي حفيد). الفقرة «جوه div جوه الكارت» حفيدة، فـ [[.card p]] مسكها و [[.card > p]] لأ.
+- [[>]] = child (ابن مباشر بس). الـ «ج» جوه [[ul]] تاني، فهي حفيدة لـ menu مش ابنها.
+
+واتقاس أثرهم: [[.card p]] لونها [[rgb(128, 128, 128)]] (ده [[gray]])، والفقرة اللي برا [[rgb(0, 0, 0)]]. و [[.menu > li { display: inline-block; }]]: أ و ب و د بقوا [[inline-block]]، و «ج» فضلت [[list-item]] (عرض الـ li الافتراضي).
+
+---
+
+## ٣. بالـ attribute: [[input[type="email"]]]
+
+الأقواس المربعة [[[ ]]] = attribute بقيمة معيّنة. ولزقها في [[input]] من غير مسافة يعني «input **و** عليه الـ attribute ده». عدد: 1. واتقاس: حقل الإيميل [[direction: ltr]]، وحقل الـ text فضل [[rtl]] زي الصفحة.
+
+---
+
+## ٤. بالحالة: pseudo-classes
+
+بتبدأ بـ [[:]] واحدة، وبتوصف حالة العنصر دلوقتي.
+
+### [[a:hover]]
+
+الماوس فوق اللينك. في الـ Console طلعت 0 (مفيش ماوس فوق حاجة). حرّكت الماوس المتقلّد فوق اللينك فبقت 1. واللينك أصلًا عليه خط من المتصفح، فالقاعدة دي بتفرق لو انت شايل الخط في مكان تاني.
+
+### [[button:focus-visible]]
+
+الزرار واخد focus والمتصفح شايف إن المستخدم محتاج يشوفه:
+
+| إزاي الزرار اخد الـ focus | [[:focus]] | [[:focus-visible]] | الـ outline |
+|---|---|---|---|
+| ضغطة ماوس | أيوه | لأ | [[none]] |
+| Tab من الكيبورد | أيوه | أيوه | [[rgb(0, 0, 255) solid 2px]] |
+
+ده بالظبط الفرق بينها وبين [[:focus]]: الحلقة الزرقا بتظهر للي بيستخدم الكيبورد بس.
+
+### [[li:nth-child(odd)]]
+
+[[nth-child]] = العنصر رقم كذا بين إخواته، و [[odd]] = الفردي (1، 3، 5...). عدد: 3، وهم أ و ج و د. ليه «ج»؟ لأنها الابن **الأول** في الـ ul بتاعها، فهي فردية بين إخواتها. والـ «ب» التاني فخلفيتها فضلت شفافة، والباقي [[rgb(245, 245, 245)]] ([[whitesmoke]]).
+
+---
+
+## ٥. حتة مش موجودة: [[::before]] و [[::after]]
+
+بتبدأ بـ [[::]] اتنين، واسمها pseudo-elements.
+
+~~~text style.css
+.required::after { content: " *"; color: red; }
+~~~
+
+- [[::after]]: حتة جديدة كأنها آخر ابن جوه العنصر.
+- [[content: " *"]]: الكلام اللي فيها. من غير [[content]] مش بتظهر خالص.
+
+[[querySelectorAll(".required::after")]] رجعت 0، لأن الحتة دي مش عنصر في الـ DOM. بس [[getComputedStyle(el, "::after")]] بيقراها: [[content]] = [[" *"]] واللون [[rgb(255, 0, 0)]].
+
+---
+
+## الخلاصة
+
+| النوع | مثال | معناه |
+|---|---|---|
+| type | [[p]] | كل p |
+| class | [[.card]] | عليه [[class="card"]] |
+| descendant | [[.card p]] | أي حفيد |
+| child | [[.menu > li]] | ابن مباشر |
+| attribute | [[[type="email"]]] | attribute بقيمة |
+| pseudo-class | [[:hover]] و [[:focus-visible]] و [[:nth-child(odd)]] | حالة |
+| pseudo-element | [[::after]] | حتة جديدة، محتاجة [[content]] |`,
           lines: [
-            "الحاوية.",
-            "كل الـ tabs في مصفوفة.",
-            "اختيار tab.",
-            "لكل tab...",
-            "...هو ده المختار؟",
-            "aria-selected بـ true أو false.",
-            "المختار بس عليه 0 والباقي -1: وقفة Tab واحدة.",
-            "المحتوى بتاعه يبان والباقي يستخبى.",
-            "قفلة الـ for.",
-            "الـ focus على الـ tab الجديد.",
+            R`كل [[<p>]] في الصفحة.`,
+            R`أي عنصر عليه [[class="card"]].`,
+            "أي p جوه card مهما كان عميق (المسافة = أي حفيد).",
+            "الـ li اللي أولاد مباشرين لـ menu بس، مش الأحفاد.",
+            "بالـ attribute: حقول الإيميل بس.",
+            "لما الماوس ييجي على اللينك.",
+            "لما الزرار ياخد focus من الكيبورد (مش من ضغطة ماوس).",
+            "الصفوف الفردية: 1 و 3 و 5...",
+            "حتة مش موجودة في الـ HTML بتتضاف بعد الكلام: نجمة الحقل المطلوب."
+          ],
+          sol: R`على الصفحة اللي في الحل تحت (كارتين وفقرة برا ومنيو فيها منيو جوه منيو)، الـ Console بيرجع: [[querySelectorAll("p")]] ‏4، و [[".card p"]] ‏3 (بما فيهم الـ p اللي جوه div جوه الكارت، لأن المسافة معناها «أي حفيد»)، و [[".card > p"]] ‏2 بس (أولاد مباشرين). و [[".menu > li"]] ‏3 بينما [[".menu li"]] ‏4 لأن الـ li اللي في المنيو الداخلية حفيد مش ابن. و [[li:nth-child(odd)]] ‏3، و [[input[type="email"]]] ‏1.
+
+فيه اتنين هيطلعولك 0 وده صح: [[a:hover]] لأن مفيش حاجة الماوس واقف عليها وانت بتكتب في الـ Console، و [[.required::after]] لأن الـ pseudo-element مش عنصر في الـ DOM أصلًا، بيتشاف بس في Styles. لو رقم طلع أكبر من المتوقع، غالبًا نسيت الفرق بين المسافة و [[>]].`,
+          solCode: R`<div class="card"><p>وصف</p><p class="required">الاسم</p></div>
+<div class="card"><h3>عنوان</h3><div><p>جوه div جوه الكارت</p></div></div>
+<p>برا أي كارت</p>
+<ul class="menu"><li>أ</li><li>ب<ul><li>ج</li></ul></li><li>د</li></ul>
+<input type="email"><input type="text">
+<!-- في الـ Console -->
+document.querySelectorAll(".card p").length   // 3
+document.querySelectorAll(".card > p").length // 2
+document.querySelectorAll(".menu > li").length // 3
+document.querySelectorAll(".menu li").length   // 4`
+        },
+        {
+          cmd: "specificity",
+          title: "ليه القاعدة بتاعتي مش بتتطبق؟",
+          desc: R`لما قاعدتين بيختاروا نفس العنصر ويغيّروا نفس الخاصية، المتصفح بيدّي كل selector وزن من 3 خانات: (id، class، نوع). الأعلى يكسب، ولو اتساووا اللي مكتوب آخر يكسب.
+
+id واحد أقوى من أي عدد classes. و [[style=""]] في الـ HTML أقوى منهم كلهم، و [[!important]] بيقلب اللعبة كلها (ودا سبب إنه مشكلة).`,
+          example: R`button { color: black; }
+.btn { color: blue; }
+.nav .btn { color: green; }
+nav .btn:hover { color: orange; }
+.btn.primary { color: white; }
+:where(.nav) .btn { color: purple; }
+nav#main .btn { color: red; }`,
+          try: R`اعمل زرار عليه [[class="btn primary"]] جوه [[<nav class="nav" id="main">]] وحط القواعد دي. افتح DevTools › Elements › Styles: هتلاقي القواعد اللي خسرت متشطّب عليها. وقف بالماوس على أي selector وهيقولك الـ specificity بتاعته.`,
+          flag: "script",
+          deep: {
+            why: R`أشهر مشكلة CSS: كتبت قاعدة ومش بتتطبق، فتحط [[!important]]، وبعدين قاعدة تانية محتاجة تغلبها فتحط [[!important]] تاني، لحد ما الملف يبقى حرب. لو فهمت الوزن هتعرف ليه قاعدة خسرت وتصلّحها صح.`,
+            how: R`الوزن بيتحسب كده: A = عدد الـ ids. B = عدد الـ classes والـ attributes ([[[type]]]) والـ pseudo-classes ([[:hover]]). C = عدد أنواع العناصر ([[div]]) والـ pseudo-elements ([[::before]]). المقارنة خانة خانة من الشمال: A الأول، ولو اتساوت B، ولو اتساوت C. عشان كده 11 class مش بيغلبوا id واحد، مفيش «تحويل» بين الخانات.
+
+حاجات ملهاش وزن: [[*]]، والـ combinators ([[>]] و [[+]] والمسافة)، و [[:where()]]. و [[:is()]] و [[:not()]] و [[:has()]] وزنهم = وزن أتقل حاجة جواهم.
+
+الـ specificity بتتقارن بس بين قواعد في نفس المستوى من الـ cascade. قبلها فيه حاجات أهم: [[!important]] والـ cascade layers (الدرس الجاي). والوراثة ملهاش specificity خالص: أي قاعدة مباشرة على العنصر، حتى [[*]]، بتغلب قيمة جاية بالوراثة من الأب.
+
+[[style="..."]] في الـ HTML بيكسب أي selector، و [[!important]] في ملف CSS بيكسب الـ inline.`,
+            when: "كل مرة قاعدة مش بتتطبق: افتح Styles في DevTools وشوف مين كسب وليه، قبل ما تلمس !important.",
+            mistakes: R`تحل كل حاجة بـ [[!important]]. تستخدم id في التنسيق. وفي مشروع حقيقي كان فيه قواعد للعربي مكتوبة [[html[lang="ar"] .hero-title { font-size: ... !important }]] عشان تغلب utility بتاعة Tailwind: الأنضف إنها تبقى variant زي [[rtl:]]، أو CSS variable قيمته بتتغير حسب اللغة.`
+          },
+          teach: R`## الفكرة في سطرين
+
+7 قواعد كلهم بيمسكوا نفس الزرار وكلهم بيغيّروا [[color]]. واحدة بس هتكسب، والمتصفح بيقرر بالـ specificity (وزن الـ selector). جرّبتهم في Chrome (headless) على [[<nav class="nav" id="main"><button class="btn primary">]]، وخدت الوزن اللي Chrome نفسه حسبه لكل selector (من [[CSS.getMatchedStylesForNode]] في DevTools Protocol، نفس الرقم اللي بيظهر لما تقف على الـ selector في Styles).
+
+---
+
+## ١. الوزن 3 خانات (A, B, C)
+
+| الخانة | بتعد إيه |
+|---|---|
+| A | الـ ids: [[#main]] |
+| B | الـ classes [[.btn]]، والـ attributes [[[type]]]، والـ pseudo-classes [[:hover]] |
+| C | أنواع العناصر [[button]]، والـ pseudo-elements [[::after]] |
+
+المقارنة خانة خانة من الشمال، زي ما بتقارن أرقام تليفون: اللي A بتاعه أكبر كسب على طول، ولو اتساووا بص على B، وبعدين C.
+
+---
+
+## ٢. السطور واحد واحد
+
+ده اللي Chrome حسبه (كل الـ 7 بيمسكوا الزرار، و [[:hover]] بس لما الماوس عليه):
+
+| السطر | الحسبة | الوزن |
+|---|---|---|
+| [[button]] | نوع واحد | (0,0,1) |
+| [[.btn]] | class واحدة | (0,1,0) |
+| [[.nav .btn]] | 2 class، والمسافة ملهاش وزن | (0,2,0) |
+| [[nav .btn:hover]] | نوع + class + pseudo-class | (0,2,1) |
+| [[.btn.primary]] | 2 class لازقين = عنصر عليه الاتنين | (0,2,0) |
+| [[:where(.nav) .btn]] | [[:where()]] وزنها صفر مهما كان جواها، فاللي فاضل [[.btn]] | (0,1,0) |
+| [[nav#main .btn]] | نوع + id + class | (1,1,1) |
+
+Chrome فك [[:where(.nav) .btn]] وحسب حتة واحدة بس: [[.btn]].
+
+---
+
+## ٣. مين كسب؟
+
+| الحالة | اللون اللي اتقاس | الكسبان |
+|---|---|---|
+| الكود زي ما هو | [[rgb(255, 0, 0)]] أحمر | [[nav#main .btn]] (1,1,1) |
+| نفس الكلام والماوس عليه | [[rgb(255, 0, 0)]] أحمر | لسه هو: (0,2,1) أقل من (1,1,1) |
+| شلت سطر الـ id | [[rgb(255, 255, 255)]] أبيض | [[.btn.primary]] |
+| من غير الـ id والماوس عليه | [[rgb(255, 165, 0)]] برتقاني | [[nav .btn:hover]] (0,2,1) |
+
+### ليه الأبيض كسب الأخضر؟
+
+[[.nav .btn]] و [[.btn.primary]] الاتنين (0,2,0). لما الوزن يتساوى، اللي **مكتوب آخر** في الملف يكسب، و [[.btn.primary]] بعدها.
+
+---
+
+## ٤. تجارب زيادة
+
+| التجربة | اللون | ليه |
+|---|---|---|
+| [[.a.a.a.a.a.a.a.a.a.a.a]] (11 class) ضد [[#x]] | أحمر بتاع الـ id | (0,11,0) ضد (1,0,0): A الأول، ومفيش «تحويل» بين الخانات |
+| [[style="color:green"]] ضد [[#x]] | أخضر | الـ inline style أقوى من أي selector |
+| [[p { color: blue !important }]] ضد inline و id | أزرق | [[!important]] بيقلب الترتيب كله |
+
+---
+
+## الخلاصة
+
+- الوزن (ids، classes، types) والمقارنة من الشمال.
+- id واحد أقوى من أي عدد classes.
+- [[:where()]] وزنها صفر، والمسافة و [[>]] ملهمش وزن.
+- لو اتساووا: الأخير في الملف يكسب.
+- [[style=""]] أقوى من الـ selectors، و [[!important]] أقوى من الكل. استخدم classes بس، وارجع لـ DevTools › Styles تشوف مين كسب قبل ما تفكر في [[!important]].`,
+          lines: [
+            "(0,0,1): نوع عنصر بس. أضعف حاجة.",
+            "(0,1,0): class واحدة تغلب أي عدد أنواع.",
+            "(0,2,0): اتنين class.",
+            R`(0,2,1): class و pseudo-class ([[:hover]] وزنها زي class) ونوع.`,
+            R`(0,2,0): زي [[.nav .btn]] بالظبط، فاللي مكتوبة آخر تكسب، ودي هي.`,
+            R`(0,1,0): [[:where()]] وزنها صفر مهما كان جواها، فدي وزنها وزن [[.btn]] بس.`,
+            "(1,1,1): فيها id، فتغلب كل اللي فوق حتى لو فيهم عشر classes."
+          ],
+          sol: R`الزرار هيطلع أحمر، وهيفضل أحمر حتى لما تقف عليه بالماوس. في Styles هتلاقي [[nav#main .btn]] فوق ومش متشطّب، وكل اللي تحته ([[.btn.primary]] و [[.nav .btn]] و [[:where(.nav) .btn]] و [[.btn]] و [[button]]) الـ color بتاعهم متشطّب.
+
+الأرقام اللي هتظهر لما تقف على كل selector: [[nav#main .btn]] ‏(1,1,1)، و [[nav .btn:hover]] ‏(0,2,1)، و [[.nav .btn]] و [[.btn.primary]] ‏(0,2,0) (متعادلين، والأخير في الملف كسب بينهم)، و [[:where(.nav) .btn]] ‏(0,1,0) لأن [[:where]] بيصفّر اللي جواه، و [[.btn]] ‏(0,1,0)، و [[button]] ‏(0,0,1). الـ id لوحده بيغلب أي عدد من الكلاسات.
+
+الغلط الشائع: تتوقع الـ hover يطلّع برتقاني لأنه «أحدث». (0,2,1) أقل من (1,1,1) فبيخسر. ولو امسحت سطر [[nav#main .btn]] هيبقى أبيض، ومع الـ hover برتقاني لأن (0,2,1) أكبر من (0,2,0).`
+        },
+        {
+          cmd: "cascade",
+          title: "قاعدتين بيتخانقوا: الترتيب الكامل للي بيكسب",
+          desc: R`الـ cascade هو الخوارزمية اللي بتقرر القيمة النهائية لكل خاصية. بالترتيب: [[!important]] الأول، وبعدين الـ inline style، وبعدين الـ layer ([[@layer]])، وبعدين الـ specificity، وآخر حاجة الترتيب في الملف (الآخر يكسب).
+
+ولو مفيش ولا قاعدة على العنصر، بعض الخصائص بتتورث من الأب (زي [[color]] و [[font-family]] و [[line-height]])، وبعضها لأ (زي [[padding]] و [[border]] و [[background]]).`,
+          example: R`@layer base, components;
+@layer base {
+  a { color: blue; }
+}
+@layer components {
+  .link { color: green; }
+}
+a { color: red; }
+body { color: black; font-family: system-ui; }
+.card { border: inherit; }`,
+          try: R`حط الكود ده في صفحة فيها [[<a class="link">]] وشوف لونه أحمر. امسح سطر [[a { color: red; }]] يبقى أخضر. وبعدين في DevTools › Elements › Computed دوّر على color واضغط على السهم يوديك للقاعدة اللي كسبت.`,
+          flag: "script",
+          deep: {
+            why: "الـ CSS اسمه Cascading Style Sheets، والـ cascade هو قلبه. أي تنسيق فيه أكتر من مصدر (ملفك، ومكتبة، و Tailwind، والمتصفح نفسه) هيبقى فيه تعارض، ولازم قاعدة واضحة تحسمه.",
+            how: R`الترتيب الكامل من الأقوى: 1) الـ origin والـ importance: [[!important]] بتاعة المستخدم والمتصفح، وبعدين [[!important]] بتاعتك، وبعدين العادي بتاعك، وبعدين تنسيق المتصفح الافتراضي. 2) الـ inline style. 3) الـ layers: في الكلام العادي اللي برا أي layer أقوى، وبين الـ layers اللي اتعلنت آخر أقوى (وفي [[!important]] الترتيب بيتعكس). 4) الـ specificity. 5) الترتيب في الكود.
+
+ودا مهم جدًا مع Tailwind v4: هو بيحط كل حاجة في layers حقيقية ([[theme]] و [[base]] و [[components]] و [[utilities]]). فأي CSS تكتبه في globals.css برا layer بيغلب كل الـ utilities، حتى لو الـ specificity بتاعته أقل. عايز قاعدة تتغلب بـ utility؟ حطها في [[@layer base]] أو [[@layer components]].
+
+الوراثة: خصائص الكلام (color و font و line-height و direction و visibility) بتتورث، لأن منطقي إن الكلام جوه كارت ياخد خط الكارت. خصائص الصندوق (margin و padding و border و background و width) مش بتتورث. وعندك كلمات خاصة لأي خاصية: [[inherit]] (خد من الأب)، و [[initial]] (القيمة الافتراضية للخاصية)، و [[unset]] (inherit لو بتتورث و initial لو لأ).`,
+            when: "لما تكتب CSS جنب مكتبة (Tailwind أو Bootstrap)، وعايز تتحكم مين يغلب مين من غير !important.",
+            mistakes: R`تكتب CSS عادي في globals.css جنب Tailwind v4 وتستغرب إن [[p-4]] مش شغال على العنصر: قاعدتك برا layer فبتكسب. وتفتكر إن [[!important]] حل: بيحل مرة ويعمل مشكلة كل مرة بعدها. وتستنى إن [[padding]] يتورث من الأب.`
+          },
+          teach: R`## الفكرة في سطرين
+
+3 قواعد بيلوّنوا اللينك بـ 3 ألوان، والـ cascade هو اللي بيقرر مين يكسب. والفكرة الجديدة هنا الـ layers ([[@layer]]): طبقات بتحدد الأولوية **قبل** ما الـ specificity تتحسب أصلًا. وآخر سطرين عن الوراثة. جرّبت الكود في Chrome (headless) على الصفحة دي، وقريت [[getComputedStyle]]:
+
+~~~text index.html
+<a class="link" href="#">لينك</a>
+<a href="#">لينك عادي</a>
+<section style="border: 3px dashed green; padding: 4px">
+  <div class="card">كارت</div>
+  <div class="plain">عادي</div>
+</section>
+~~~
+
+---
+
+## ١. [[@layer base, components;]]
+
+[[@]] في CSS معناها at-rule: أمر للمتصفح مش قاعدة تنسيق. السطر ده بيعلن أسامي الطبقات **وترتيبها**: اللي مكتوبة آخر أقوى. فـ [[components]] أقوى من [[base]].
+
+---
+
+## ٢. القواعد جوه الطبقات
+
+~~~text style.css
+@layer base {
+  a { color: blue; }
+}
+@layer components {
+  .link { color: green; }
+}
+~~~
+
+[[@layer base { ... }]] = القواعد اللي جوه القوسين دول تبع طبقة base. لاحظ إن [[a]] وزنه (0,0,1) و [[.link]] وزنه (0,1,0)، بس ده مش هيفرق، الطبقة هي اللي بتحسم.
+
+---
+
+## ٣. قاعدة برا أي طبقة
+
+~~~text style.css
+a { color: red; }
+~~~
+
+القواعد اللي برا الطبقات أقوى من أي طبقة. والنتايج:
+
+| الكود | [[.link]] | اللينك العادي |
+|---|---|---|
+| زي ما هو | [[rgb(255, 0, 0)]] أحمر | أحمر |
+| من غير [[a { color: red; }]] | [[rgb(0, 128, 0)]] أخضر | [[rgb(0, 0, 255)]] أزرق |
+| ومعاه قلبت الترتيب لـ [[@layer components, base;]] | [[rgb(0, 0, 255)]] أزرق | أزرق |
+| من غير أي CSS | [[rgb(0, 0, 238)]] | [[rgb(0, 0, 238)]] |
+
+اقرا الجدول:
+
+1. السطر الأول: [[a]] (أضعف selector) غلب [[.link]] لأنه برا الطبقات.
+2. التاني: [[.link]] أخضر لأن components بعد base. واللينك العادي أزرق لأن [[.link]] مش بتمسكه.
+3. التالت: لما base بقت الأخيرة، [[a]] كسب [[.link]] رغم إن وزنه أقل. ده الدليل إن الطبقة بتتحسب قبل الـ specificity.
+4. الرابع: [[rgb(0, 0, 238)]] لون اللينك من تنسيق المتصفح نفسه.
+
+### و [[!important]]؟
+
+جرّبت نفس الـ 3 قواعد بس كلهم [[!important]]: اللون بقى **أزرق** (بتاع base). مع [[!important]] الترتيب بيتعكس: الطبقة الأولى أقوى، والقواعد اللي برا الطبقات أضعف.
+
+---
+
+## ٤. الوراثة: [[body { color: black; font-family: system-ui; }]]
+
+- [[font-family]]: الخط. [[system-ui]] = خط نظام التشغيل.
+- لو عنصر ملوش قاعدة لخاصية بتتورث، بياخد قيمة أبوه.
+
+اللي اتقاس على اللينك:
+
+| الخاصية | قيمتها على اللينك | ليه |
+|---|---|---|
+| [[font-family]] | [[system-ui]] | بتتورث، واللينك ملوش قاعدة font. (من غير CSS كانت [[Times New Roman]]) |
+| [[color]] | أحمر مش أسود | الـ color بيتورث، بس اللينك عليه قاعدة مباشرة (منك أو من المتصفح نفسه) والوراثة بتخسر قدام أي قاعدة مباشرة |
+| [[padding]] | [[0px]] | مش بيتورث أصلًا |
+
+حتى في حالة «من غير أي CSS» الـ body أسود واللينك فضل [[rgb(0, 0, 238)]]: قاعدة المتصفح للينكات مباشرة على الـ a، فغلبت الوراثة.
+
+---
+
+## ٥. [[.card { border: inherit; }]]
+
+[[border]] مش بيتورث لوحده. [[inherit]] كلمة بتجبر الخاصية تاخد قيمة الأب:
+
+| العنصر | [[border]] |
+|---|---|
+| [[.card]] | [[3px dashed rgb(0, 128, 0)]] (نفس الـ section) |
+| [[.plain]] | [[0px none]] |
+
+[[dashed]] = خط متقطّع.
+
+---
+
+## الخلاصة
+
+الترتيب من الأقوى للأضعف (للقواعد العادية من غير [[!important]]):
+
+| الخطوة | السؤال |
+|---|---|
+| ١ | inline style؟ |
+| ٢ | برا الطبقات ولا جوه؟ (برا أقوى، وبين الطبقات الأخيرة أقوى) |
+| ٣ | الـ specificity |
+| ٤ | الأخير في الملف |
+| ٥ | مفيش ولا قاعدة؟ وراثة من الأب (لو الخاصية بتتورث) |
+
+- Tailwind v4 بيحط الـ utilities في طبقة، فأي CSS برا الطبقات بيغلبها.
+- خصائص الكلام بتتورث (color و font)، وخصائص الصندوق لأ (padding و border و background).`,
+          lines: [
+            "بنعلن ترتيب الـ layers: اللي بعد أقوى. components تغلب base مهما كانت الـ specificity.",
+            "بداية layer اسمها base.",
+            "كل اللينكات أزرق.",
+            "قفلة الـ layer.",
+            "layer تانية أقوى.",
+            R`[[.link]] أخضر، وبتغلب اللي في base.`,
             "قفلة.",
-            "الأسهم جوه الـ tablist.",
-            "مكان الـ focus الحالي.",
-            "الاتجاه الحقيقي من الـ CSS.",
-            "في RTL اليمين = اللي قبله والشمال = اللي بعده.",
-            "سهم: روح للي بعده أو قبله ولف في الآخر.",
-            "Home: الأول.",
-            "End: الأخير.",
-            "أي زرار تاني: سيبه للمتصفح.",
-            "منع الـ scroll بالأسهم.",
+            R`قاعدة برا أي layer: بتغلب كل الـ layers، فكل اللينكات هتبقى حمرا حتى [[.link]].`,
+            R`[[color]] و [[font-family]] بيتورّثوا: كل اللي جوه body هياخدهم لو ملوش قاعدة.`,
+            R`[[border]] مش بيتورّث، بس [[inherit]] بيجبره ياخد قيمة الأب.`
+          ],
+          sol: R`بالكود زي ما هو: اللينك أحمر. الـ [[a { color: red; }]] برا أي layer، والقواعد اللي برا الـ layers بتكسب أي قاعدة جوه layer مهما كانت الـ specificity، فحتى [[.link]] (كلاس) خسر قدام [[a]] (عنصر).
+
+بعد ما تمسح السطر: أخضر، لأن [[components]] متعرّف بعد [[base]] في أول سطر، فهو الأقوى بين الطبقتين، مش عشان [[.link]] specificity أعلى. (لو قلبت الترتيب لـ [[@layer components, base;]] هيبقى أزرق رغم إن [[a]] أضعف.) في Computed › color السهم بيوديك لـ [[.link]] جوه [[@layer components]]، وتحتها القواعد اللي خسرت.
+
+والـ [[font-family]] اللي على body هتلاقيها في Computed على اللينك كمان لأنها بتتورث، لكن [[border]] مش بيتورث لوحده، عشان كده محتاج [[inherit]] صريح. لو اللينك طلع أزرق من الأول يبقى غالبًا الـ CSS متحطّش خالص وده لون المتصفح الافتراضي للينكات.`
+        },
+        {
+          cmd: "box model",
+          title: "كل عنصر صندوق: المساحة بتتحسب إزاي",
+          desc: R`كل عنصر في الصفحة صندوق من 4 طبقات من جوه لبرا: [[content]] (المحتوى)، و [[padding]] (مسافة جوه الحدود)، و [[border]] (الحدود)، و [[margin]] (مسافة برا بينه وبين اللي جنبه).
+
+الافتراضي [[box-sizing: content-box]]: الـ [[width]] للمحتوى بس، والـ padding والـ border بيتزودوا عليه. عشان كده كل مشروع بيبدأ بـ [[box-sizing: border-box]]، فالـ width يبقى العرض الكامل شامل الـ padding والـ border.`,
+          example: R`*, *::before, *::after {
+  box-sizing: border-box;
+}
+.card {
+  width: 300px;
+  padding: 16px;
+  border: 1px solid lightgray;
+  margin: 0 auto 24px;
+}
+.stack > * + * {
+  margin-top: 16px;
+}`,
+          try: R`اعمل div بـ [[width: 300px; padding: 20px; border: 5px solid]] وافتح DevTools › Computed: هتلاقي رسمة الصندوق بالأرقام، والعرض 350. ضيف [[box-sizing: border-box]] وشوفه بقى 300 والمحتوى صغر لـ 250.`,
+          flag: "script",
+          deep: {
+            why: "لو مش فاهم الصندوق، كل تصميم هيطلع بكسلات زيادة: عمودين كل واحد 50% ومعاهم padding مش هيقفوا جنب بعض. و border-box بيخلي الحساب زي ما دماغك بتفكر: العرض اللي كتبته هو العرض اللي هتشوفه.",
+            how: R`مع [[content-box]]: العرض الظاهر = width + الـ padding يمين وشمال + الـ border يمين وشمال. مع [[border-box]]: العرض الظاهر = width، والمحتوى هو اللي بيصغر. والـ margin برا الحساب في الحالتين.
+
+Margin collapse: الـ margin الرأسي بين عنصرين block فوق بعض مش بيتجمع، الأكبر بس اللي بيفضل. فقرة تحتها 24 واللي بعدها فوقها 16، المسافة 24 مش 40. وكمان الـ margin-top بتاع أول ابن ممكن «يخرج» من الأب لو الأب ملوش padding ولا border. ده مش بيحصل جوه flex أو grid، ولا في الـ margin الأفقي.
+
+[[margin: auto]] الأفقي على عنصر block ليه عرض بيقسّم المساحة الفاضية بالتساوي، فيتوسّط. و [[padding]] بالنسبة المئوية بيتحسب من عرض الأب، حتى الـ padding الرأسي.
+
+Tailwind بيحط [[box-sizing: border-box]] على كل حاجة في الـ Preflight بتاعه، عشان كده مش بتفكر فيه. و [[space-y-4]] في Tailwind نفس فكرة [[.stack]]، و [[gap]] في flex و grid أحسن من الاتنين.`,
+            when: "أول سطر في أي CSS بتكتبه من الصفر. وكل ما تلاقي حاجة أعرض من المتوقع أو مسافة غريبة، افتح رسمة الصندوق في DevTools.",
+            mistakes: R`تنسى إن الـ margin الرأسي بيعمل collapse فتفضل تزوّده وهو مش بيتغير. تحط [[width: 100%]] مع padding من غير border-box فيظهر scroll أفقي. وتستخدم margin للمسافات بين عناصر flex أو grid بدل [[gap]].`
+          },
+          teach: R`## الفكرة في سطرين
+
+كل عنصر صندوق من 4 طبقات، والـ CSS ده بيقول 3 حاجات: احسب العرض شامل الحشو والحدود، واعمل كارت عرضه 300 في النص، وحط مسافة 16 بين العناصر اللي جوه [[.stack]]. جرّبته في Chrome (headless) في نافذة عرضها 800 (والـ body من غير margin عشان الأرقام تبقى سهلة) على كارتين و 3 عناصر جوه stack.
+
+---
+
+## ١. الطبقات الأربعة
+
+~~~text الصندوق من برا لجوه
+┌──────────── margin ────────────┐
+│ ┌────────── border ──────────┐ │
+│ │ ┌──────── padding ───────┐ │ │
+│ │ │        content         │ │ │
+│ │ └────────────────────────┘ │ │
+│ └────────────────────────────┘ │
+└────────────────────────────────┘
+~~~
+
+| الطبقة | معناها | بتاخد لون الخلفية؟ |
+|---|---|---|
+| content | الكلام أو الأولاد | أيوه |
+| padding | مسافة جوه الحدود | أيوه |
+| border | الحدود نفسها | لونها هي |
+| margin | مسافة برا، بينه وبين اللي جنبه | لأ، شفافة دايمًا |
+
+---
+
+## ٢. [[*, *::before, *::after { box-sizing: border-box; }]]
+
+- [[*]]: كل العناصر. والفاصلة: «و». فالقاعدة على كل عنصر وكل [[::before]] و [[::after]].
+- [[box-sizing]]: الـ [[width]] بيقيس إيه بالظبط.
+
+قست الكارت (عرضه 300 و padding 16 و border 1):
+
+| | [[box-sizing]] | العرض على الشاشة | عرض المحتوى |
+|---|---|---|---|
+| مع السطر ده | [[border-box]] | 300 | 266 |
+| من غيره | [[content-box]] (الافتراضي) | 334 | 300 |
+
+- [[content-box]]: الـ 300 للمحتوى بس، والباقي بيتزوّد: 300 + 16×2 + 1×2 = 334.
+- [[border-box]]: الـ 300 هي العرض كله، والمحتوى بيصغر: 300 − 32 − 2 = 266.
+
+---
+
+## ٣. الكارت
+
+~~~text style.css
+.card {
+  width: 300px;
+  padding: 16px;
+  border: 1px solid lightgray;
+  margin: 0 auto 24px;
+}
+~~~
+
+### [[border: 1px solid lightgray]]
+
+اختصار لـ 3 قيم: التخانة، والشكل ([[solid]] خط متصل)، واللون.
+
+### [[margin: 0 auto 24px]]
+
+3 قيم معناها: فوق، والجنبين، وتحت.
+
+| الجزء | القيمة | اتقاس |
+|---|---|---|
+| فوق | 0 | الكارت الأول عند y = 0 |
+| يمين وشمال | [[auto]] | [[250px]] من كل ناحية |
+| تحت | 24px | المسافة بين الكارتين 24 |
+
+[[auto]] في الـ margin الأفقي بيقسم الفاضي بالتساوي: (800 − 300) ÷ 2 = 250، فالكارت بقى في النص. ومن غير border-box الكارت 334، فالـ margin بقى 233 من كل ناحية.
+
+---
+
+## ٤. [[.stack > * + *]]
+
+اقراه من اليمين للشمال:
+
+1. [[*]] الأخيرة: أي عنصر...
+2. [[+ *]]: ...قبله على طول أخ (عنصر تاني على نفس المستوى)...
+3. [[.stack >]]: ...وهو ابن مباشر لـ stack.
+
+يعني كل الأولاد **ما عدا الأول**. حطيت 3 divs جوه stack:
+
+| | margin-top للأولاد | المسافات بينهم |
+|---|---|---|
+| مع القاعدة | 0، 16، 16 | 16، 16 |
+| من غيرها | 0، 0، 0 | 0، 0 |
+
+الأول مخدش margin، فمفيش مسافة زيادة فوق الـ stack.
+
+---
+
+## ٥. الـ margin الرأسي بيتداخل (margin collapse)
+
+جرّبت عنصرين فوق بعض: الأول [[margin-bottom: 24px]] والتاني [[margin-top: 16px]]:
+
+| المكان | المسافة اللي اتقاست |
+|---|---|
+| جوه block عادي | 24 (الأكبر بس، مش 40) |
+| جوه [[display: flex]] | 40 (اتجمعوا) |
+
+وجرّبت [[<p style="margin-top: 30px">]] أول ابن جوه div ملوش padding ولا border: الـ p طلع لازق في أول الـ div (المسافة 0)، والـ 30 «خرجت» وبقت فوق الـ div نفسه. ده برضه margin collapse.
+
+---
+
+## ٦. التجربة اللي في «جرّب»
+
+[[width: 300px; padding: 20px; border: 5px solid]]:
+
+| [[box-sizing]] | [[offsetWidth]] | المحتوى |
+|---|---|---|
+| [[content-box]] | 350 | 300 |
+| [[border-box]] | 300 | 250 |
+
+[[offsetWidth]] = العرض شامل الـ padding والـ border (من غير الـ margin).
+
+---
+
+## الخلاصة
+
+| | العرض الظاهر |
+|---|---|
+| [[content-box]] | width + padding × 2 + border × 2 |
+| [[border-box]] | width بالظبط |
+
+- الـ margin برا الحساب دايمًا.
+- [[margin: 0 auto]] بيوسّط عنصر block ليه عرض.
+- الـ margin الرأسي بين عنصرين block بياخد الأكبر، وجوه flex أو grid بيتجمع. وفي flex و grid استخدم [[gap]].`,
+          lines: [
+            "على كل العناصر وكل before و after.",
+            "الـ width والـ height يشملوا الـ padding والـ border.",
             "قفلة.",
-            "الضغط بالماوس...",
-            "...على أي tab...",
-            "...يختاره.",
+            "كارت.",
+            "العرض الكلي 300 بالظبط (بسبب border-box). من غيرها كان هيبقى 334.",
+            "مسافة جوه الكارت من الـ 4 نواحي.",
+            "حدود 1 بكسل.",
+            R`فوق صفر، والجنبين [[auto]] (يتوسّط أفقي)، وتحت 24.`,
+            "قفلة.",
+            "أي عنصر جوه stack وقبله أخ: المسافة بين العناصر بس، مش قبل الأول.",
+            "16 بكسل فوق كل عنصر من التاني ورايح.",
             "قفلة."
           ],
-          sol: R`Tab من برا بيقف على «الحساب» بس (الوحيد اللي عليه 0). في [[dir="rtl"]]: السهم الشمال بيروح لـ «الأمان» والمحتوى بتاعه يظهر، والسهم اليمين يرجع (ومن الأول بيلف للأخير)، و Home و End للأول والآخر. و Tab بعد كده بيخرج من الـ tabs على طول للـ panel أو اللي بعده.
+          sol: R`في Computed هتلاقي رسمة الصندوق: المحتوى 300 × (ارتفاع السطر)، والـ padding 20 من كل ناحية، والـ border 5، والـ margin 0. العرض اللي بيتشاف على الشاشة ([[offsetWidth]]) = 300 + 20×2 + 5×2 = [[350]].
 
-جربنا الكود ده في jsdom: بعد ArrowLeft في RTL الـ focus على t2 والـ tabIndex بقوا [[-1,0,-1]] والـ panel التاني ظهر.
+بعد [[box-sizing: border-box]]: [[offsetWidth]] بقى [[300]]، والمحتوى جوه الرسمة بقى 250 (300 − 40 − 10). يعني الـ width بقت تحسب الـ padding والـ border جواها بدل ما تزودهم.
 
-لو كل tab واقف عليه Tab: نسيت [[tabindex="-1"]] على الباقي في الـ HTML. لو الأسهم بالعكس: الـ [[dir]] مش متحط، أو بتقرا [[document.dir]] بدل الـ CSS.`,
-          solCode: R`<div role="tablist" aria-label="الإعدادات">
-  <button type="button" role="tab" id="tab-1" aria-selected="true" aria-controls="panel-1" tabindex="0">الحساب</button>
-  <button type="button" role="tab" id="tab-2" aria-selected="false" aria-controls="panel-2" tabindex="-1">الأمان</button>
-  <button type="button" role="tab" id="tab-3" aria-selected="false" aria-controls="panel-3" tabindex="-1">الفواتير</button>
-</div>
-<div role="tabpanel" id="panel-1" aria-labelledby="tab-1">بيانات الحساب...</div>
-<div role="tabpanel" id="panel-2" aria-labelledby="tab-2" hidden>كلمة السر والـ 2FA...</div>
-<div role="tabpanel" id="panel-3" aria-labelledby="tab-3" hidden>الفواتير...</div>`
+لو مشفتش فرق، اتأكد إن مفيش reset عندك (زي Tailwind أو الكود اللي في المثال) عامل border-box على كل حاجة أصلًا، فانت كده شايف 300 من الأول. ولو العرض طلع أكبر من 350، يبقى فيه scrollbar أو margin داخل في حسابك؛ الـ margin برا الصندوق ومش بيتحسب في العرض.`
         },
         {
-          cmd: "scroll-snap و scroll-margin",
-          title: "carousel من CSS بس، وعنوان ميستخباش تحت الـ header",
-          desc: R`[[scroll-snap-type: x mandatory]] على الحاوية و [[scroll-snap-align: start]] على العناصر: لما المستخدم يسيب الـ scroll، بيقف على أول كارت بالظبط بدل ما يقف في النص. carousel كامل بـ swipe على الموبايل من غير مكتبة.
+          cmd: "display",
+          title: "بلوك ولا جوه السطر؟ وإخفاء العناصر",
+          desc: R`[[block]] بياخد سطر كامل وتقدر تحدد عرضه وطوله ([[div]] و [[p]] و [[h1]]). [[inline]] بيمشي جوه السطر مع الكلام وبيتجاهل [[width]] و [[height]] والـ margin الرأسي ([[span]] و [[a]] و [[strong]]). [[inline-block]] في النص: جوه السطر بس بيقبل مقاسات.
 
-و [[scroll-margin-top]] على العنصر بيسيب مسافة فوقه لما المتصفح يعمل scroll ليه (لينك [[#pricing]]، أو [[scrollIntoView]])، فالعنوان ميستخباش تحت الـ header الثابت. و [[scroll-padding-top]] على الـ html نفس الفكرة بس لكل العناصر مرة واحدة، وبيشمل الـ focus بالـ Tab.`,
-          example: R`<ul class="carousel" tabindex="0" aria-label="منتجات مقترحة">
-  <li><img src="/p/1.webp" alt="سماعة" width="300" height="300"></li>
-  <li><img src="/p/2.webp" alt="ماوس" width="300" height="300"></li>
-</ul>
-// styles.css
-.carousel { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scroll-padding-inline: 1rem; padding-inline: 1rem; }
-.carousel > li { flex: 0 0 80%; scroll-snap-align: start; list-style: none; }
-html { scroll-padding-top: 5rem; }
-h2[id] { scroll-margin-top: 6rem; }
-@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }`,
-          try: R`اعمل carousel بـ 6 كروت وافتحه في وضع الموبايل واسحب: بيقف فين؟ شيل [[scroll-snap-type]] واسحب تاني. وبعدين اعمل header ثابت ارتفاعه 64px ولينك لـ [[#faq]] تحت، ودوس عليه مع وبدون [[scroll-padding-top]].`,
+و [[display: none]] بيشيل العنصر خالص من الصفحة، و [[visibility: hidden]] بيخفيه ومكانه يفضل فاضي، و [[opacity: 0]] بيخفيه وهو لسه بيتضغط.`,
+          example: R`.badge { display: inline-block; padding: 2px 8px; }
+.menu a { display: block; }
+.modal[hidden] { display: none; }
+.ghost { visibility: hidden; }
+.fade { opacity: 0; pointer-events: none; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}`,
+          try: R`اعمل 3 [[<span>]] وادّيهم width و height: مش هيتأثروا. غيّر لـ [[inline-block]] وبعدين [[block]] وشوف الفرق. وجرّب none و visibility و opacity على زرار، وحاول توصله بـ Tab في كل حالة.`,
           flag: "script",
           deep: {
-            why: R`الـ carousels مكتبات JavaScript تقيلة عشان حاجة الـ CSS بيعملها أحسن (الـ swipe طبيعي وبنفس إحساس النظام). والـ header الثابت اللي بياكل العنوان اللي رحتله بلينك، أو الحقل اللي عليه focus، مشكلة في كل موقع تقريبًا، ودي قاعدة 2.4.11 في WCAG 2.2.`,
-            how: R`[[mandatory]] بيجبر الوقوف على نقطة snap دايمًا، و [[proximity]] بيقف عليها بس لو قريب منها (أحسن لو العناصر أطول من الشاشة، لأن mandatory ممكن يمنعك تشوف نص عنصر طويل). و [[scroll-snap-align]] بيحدد نقطة الوقوف: [[start]] أو [[center]] أو [[end]]، وبتتقلب لوحدها في RTL لأنها logical.
+            why: R`نص مشاكل التنسيق للمبتدئ من هنا: «ليه الـ width مش شغال على الـ span؟» و «ليه اللينك مش واخد السطر؟». وكمان الإخفاء: فيه فرق كبير بين إنك تخفي حاجة عن العين بس، أو عن الكل، أو تسيبها بتتضغط وهي مش باينة.`,
+            how: R`[[display]] ليه وشّين: برّاني بيحدد العنصر نفسه بيتصرف إزاي مع اللي جنبه (block أو inline)، وجوّاني بيحدد أولاده بيترصّوا إزاي (عادي، أو flex، أو grid). [[display: flex]] = block من برا و flex من جوه، و [[inline-flex]] = inline من برا و flex من جوه.
 
-[[scroll-padding-inline]] على الحاوية بيخلي نقطة الوقوف بعد مسافة من الحافة، فالكارت ميلزقش في الطرف. و [[flex: 0 0 80%]] بيخلي جزء من الكارت اللي بعده باين، ودا اللي بيقول للمستخدم «فيه حاجة كمان، اسحب».
+العناصر الـ inline بتتحط على سطر كلام، وارتفاعها من [[line-height]] والخط، مش من [[height]]. عشان كده الـ padding الرأسي على [[<a>]] بيترسم بس مش بيزق السطور اللي فوق وتحت. و [[<img>]] أصلًا inline، ودا سبب المسافة الصغيرة الغريبة تحت الصور (مكان ديل حروف زي g و y). الحل [[display: block]] للصورة، و Preflight بتاع Tailwind بيعملها لوحده.
 
-[[overscroll-behavior-x: contain]] بيمنع إن الـ scroll لما يخلص يكمّل في الصفحة، أو يعمل «رجوع» في Safari و Chrome على الموبايل.
-
-[[scroll-margin-top]] على العنصر و [[scroll-padding-top]] على الـ scroll container (هنا [[html]]) الاتنين بيتجمعوا. والـ [[scroll-behavior: smooth]] جوه [[prefers-reduced-motion: no-preference]] عشان اللي طالب حركة أقل ميتعبش.
-
-و [[tabindex="0"]] على الـ carousel عشان مستخدم الكيبورد يقدر يعمل scroll بالأسهم (زي درس الجدول). ولو عايز أزرار «التالي والسابق»، [[scrollBy({ left: el.clientWidth })]] سطر واحد، والـ snap بيظبط الوقفة.`,
-            when: R`carousel منتجات أو صور أو testimonials، و galleries، و onboarding screens على الموبايل. و scroll-padding-top في أي موقع فيه header ثابت. ولو محتاج autoplay أو loop لا نهائي أو thumbnails متزامنة، ساعتها مكتبة (Embla مثلًا).`,
-            mistakes: R`[[mandatory]] مع عناصر أطول من الشاشة فالمستخدم ميعرفش يوصل لنصها. [[scroll-behavior: smooth]] من غير احترام reduced motion. carousel بيتحرك لوحده ومفيهوش إيقاف. كل الكروت بعرض 100% فالمستخدم مش عارف إن فيه غيرهم. و [[scroll-margin-top]] بقيمة ثابتة والـ header ارتفاعه بيتغير على الموبايل، فخليها CSS variable بارتفاع الـ header.`
+الإخفاء: [[display: none]] بيشيله من الـ layout ومن شجرة الـ accessibility. [[visibility: hidden]] بيسيب المكان ويشيله من الـ accessibility. [[opacity: 0]] بيسيبه في كل حاجة: مكانه، وبيتضغط، وبياخد focus، وقارئ الشاشة بيقراه. و [[.sr-only]] (موجودة في Tailwind بنفس الاسم) العكس: مخفي عن العين ومقروء لقارئ الشاشة، مثالية لـ label حقل بحث أو اسم زرار أيقونة.`,
+            when: R`[[hidden]] أو display none للحاجات المقفولة (مودال، منيو). visibility لو عايز المكان يفضل ثابت. opacity للحركة (بتتعمل لها transition، و display لأ). و sr-only للكلام اللي لازم يتقري ومش لازم يظهر.`,
+            mistakes: R`تخفي منيو بـ [[opacity: 0]] بس، فاللينكات اللي جواها لسه بتاخد focus بـ Tab وبتتضغط وهي مش باينة. مسافة تحت الصورة ومش عارف منين (هي inline). وتحط width على span وتستغرب.`
           },
-          lines: [
-            "القايمة الأفقية: ليها اسم وبتاخد focus للـ scroll بالكيبورد.",
-            "كارت.",
-            "كارت.",
-            "قفلة.",
-            R`flex أفقي، و scroll أفقي، والوقوف إجباري على نقط الـ snap، والـ scroll ميكمّلش للصفحة، ونقطة الوقوف بعد 1rem من الحافة.`,
-            "كل كارت 80% من العرض (فاللي بعده باين)، والوقوف على بدايته.",
-            "أي scroll لعنصر (لينك # أو focus) يسيب 5rem للـ header الثابت.",
-            "والعناوين اللي ليها id مسافة زيادة.",
-            "scroll ناعم للينكات، بس للي مش طالب حركة أقل."
-          ],
-          sol: R`مع [[scroll-snap-type]]: لما تسيب إيدك في أي مكان، الـ carousel بيكمّل لحد ما بداية كارت تبقى على الحافة (بعد 1rem). من غيره: بيقف مكان ما سبته، ممكن في نص كارتين.
+          teach: R`## الفكرة في سطرين
 
-اللينك لـ [[#faq]] من غير scroll-padding: العنوان بيبقى تحت الـ header الثابت ومش باين. مع [[scroll-padding-top: 5rem]]: العنوان باين تحت الـ header على طول. ونفس الحكاية مع Tab على حقل تحت الـ header وانت طالع لفوق.
+[[display]] بيقول العنصر بيقف لوحده في سطر ولا جوه السطر مع الكلام، والسطور الباقية 4 طرق مختلفة لإخفاء حاجة. جرّبت كل سطر في Chrome (headless): قست المقاسات بـ [[getBoundingClientRect()]]، ودوست Tab و Enter، وطلّعت شجرة الـ accessibility.
 
-لو الـ snap مش شغال: اتأكد إن [[overflow-x: auto]] على نفس العنصر اللي عليه [[scroll-snap-type]]، وإن [[scroll-snap-align]] على الأولاد المباشرين.`
-        },
-        {
-          cmd: "View Transitions",
-          title: "حركة ناعمة بين حالتين أو صفحتين",
-          desc: R`[[document.startViewTransition(update)]] بياخد صورة للصفحة قبل، ويشغّل الدالة اللي بتغيّر الـ DOM، وياخد صورة بعد، ويعمل crossfade بينهم. ولو عنصر ليه [[view-transition-name]] في الحالتين، بيتحرك ويكبر من مكانه القديم للجديد (صورة المنتج في اللستة بتطير لصفحة التفاصيل).
+---
 
-وبين صفحات حقيقية (MPA): [[@view-transition { navigation: auto; }]] في CSS الصفحتين، من غير JavaScript.
+## ١. block و inline و inline-block
 
-دي progressive enhancement: لو المتصفح مش بيدعمها، التغيير بيحصل عادي من غير حركة.`,
-          example: R`function show(view) {
-  const update = () => main.replaceChildren(view);
-  if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) return update();
-  document.startViewTransition(update);
+حطيت 3 [[<span>]] عليهم [[width: 100px; height: 50px]] وغيّرت الـ display:
+
+| [[display]] | مقاس كل span | مكانهم |
+|---|---|---|
+| [[inline]] (الافتراضي للـ span) | على قد الحرف: عرض 3 لـ 11، وارتفاع 17 | جنب بعض |
+| [[inline-block]] | 100 × 50 | جنب بعض، وبين كل واحد والتاني 4px |
+| [[block]] | 100 × 50 | تحت بعض: y = 0 ثم 50 ثم 100 |
+
+- [[inline]] تجاهل الـ width والـ height خالص، وارتفاعه جه من الخط.
+- [[inline-block]] قبل المقاسات وفضل في السطر. والـ 4px دي مش margin: دي المسافة (الـ Enter بين الـ tags في الـ HTML) اللي بتتعرض كمسافة كلام.
+- [[block]] قبل المقاسات وكل واحد خد سطر.
+
+---
+
+## ٢. السطور الأولى في المثال
+
+| السطر | اتقاس |
+|---|---|
+| [[.badge { display: inline-block; padding: 2px 8px; }]] | الشارة جوه الفقرة في نفس السطر، و 39 × 22 بالـ padding |
+| [[.menu a { display: block; }]] | اللينك عرضه 784 (السطر كله)، فالضغط شغال على العرض كله مش على الكلمة بس |
+
+و [[padding: 2px 8px]] قيمتين: فوق وتحت 2، والجنبين 8.
+
+---
+
+## ٣. 4 طرق إخفاء
+
+حطيت 5 أزرار: «قبل»، وبعده واحد بكل طريقة، وبعدهم «بعد».
+
+### [[.modal[hidden] { display: none; }]]
+
+[[.modal[hidden]]]: عنصر عليه class [[modal]] **و** عليه attribute [[hidden]]. و [[display: none]] بيشيله من الصفحة خالص: المقاس اتقاس 0 × 0.
+
+### [[.ghost { visibility: hidden; }]]
+
+مستخبي بس مكانه محجوز: اتقاس 62 × 21 في مكانه.
+
+### [[.fade { opacity: 0; pointer-events: none; }]]
+
+[[opacity]] الشفافية من 0 (مش باين) لـ 1. و [[pointer-events: none]] يعني الماوس بيعدّي من خلاله. اتقاس 58 × 21 في مكانه، ولما ضغطت بالماوس على مكانه الضغطة راحت للي وراه.
+
+### اللي حصل بالكيبورد وقارئ الشاشة
+
+~~~text Tab من زرار «قبل»
+قبل  →  opacity  →  بعد
+~~~
+
+| الطريقة | مكانه | Tab بيوصله | في شجرة الـ accessibility | الماوس |
+|---|---|---|---|---|
+| [[display: none]] | لأ | لأ | لأ | لأ |
+| [[visibility: hidden]] | أيوه | لأ | لأ | لأ |
+| [[opacity: 0]] + [[pointer-events: none]] | أيوه | **أيوه** | **أيوه** ([[button "opacity"]]) | لأ |
+
+والأخطر: وقفت على زرار الـ opacity (مش باين) ودوست Enter، والـ [[onclick]] بتاعه اشتغل. [[pointer-events]] بيمنع الماوس بس، مش الكيبورد.
+
+---
+
+## ٤. [[.sr-only]]: مخفي عن العين بس
+
+~~~text style.css
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
-// styles.css
-.product-42 .thumb { view-transition-name: product-42; }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
-@view-transition { navigation: auto; }
-@media (prefers-reduced-motion: reduce) { ::view-transition-group(*) { animation: none; } }`,
-          try: R`اعمل لستة منتجات وصفحة تفاصيل في نفس الـ HTML، وبدّل بينهم بـ [[show()]]. جرّب من غير [[view-transition-name]]، وبعدين حطه على صورة المنتج في الحالتين بنفس الاسم. وفي DevTools › More tools › Animations بطّأ الحركة لـ 10% وشوف إيه اللي بيتحرك.`,
-          flag: "script",
-          deep: {
-            why: R`الحركة بين الحالات بتوضح للمستخدم إيه اللي حصل: الصورة اللي داس عليها بقت الصورة الكبيرة، مش صفحة جديدة ظهرت فجأة. قبل كده ده كان محتاج مكتبات animation وحسابات أماكن بإيدك. دلوقتي سطر.`,
-            how: R`المتصفح بيعمل snapshot للعناصر اللي ليها أسماء (والصفحة كلها اسمها [[root]])، ويبني شجرة pseudo-elements فوق الصفحة: [[::view-transition-group(name)]] جواه [[::view-transition-old]] و [[::view-transition-new]]. الـ group بيتحرك ويتغير مقاسه من المكان القديم للجديد، والـ old والـ new بيعملوا crossfade. وكله animations عادية تقدر تغيّرها في CSS.
+~~~
 
-[[view-transition-name]] لازم يبقى فريد في الصفحة وقت الحركة: لو عنصرين بنفس الاسم الحركة بتتلغي. عشان كده في اللستات بيتحط اسم لكل عنصر (inline style بالـ id)، أو بيتحط على العنصر اللي اتداس بس قبل الحركة.
+[[sr]] اختصار screen reader. كل سطر:
 
-الدعم: الـ same-document ([[startViewTransition]]) بقى في كل المتصفحات الأساسية من أواخر 2025. الـ cross-document ([[@view-transition]]) في Chrome و Edge و Safari، ولسه مش في كل المتصفحات وقت كتابة الدرس، فراجع caniuse. وفي الحالتين الكود بيشتغل عادي من غير الحركة لو مش مدعوم.
+| الخاصية | بتعمل إيه |
+|---|---|
+| [[position: absolute]] | تطلّعه من ترتيب الصفحة فميزقّش حاجة |
+| [[width: 1px; height: 1px]] | يصغر لبكسل (مش 0، عشان بعض قارئات الشاشة بتتجاهل الصفر) |
+| [[overflow: hidden]] | أي حاجة أكبر من البكسل متتعرضش |
+| [[clip-path: inset(50%)]] | يقص من كل ناحية 50%، فمفيش ولا بكسل باين |
+| [[white-space: nowrap]] | الكلام ميتكسرش لسطور (قارئ الشاشة كان ممكن يقرا الكلمات لازقة) |
 
-في React و Next: فيه شغل على مكون [[<ViewTransition>]] في React و flag تجريبي في Next.js، اتأكد من حالتهم في الدوكس بتاعة النسخة اللي عندك قبل ما تعتمد عليهم.`,
-            when: R`لستة لتفاصيل، وتبديل الـ tabs أو الـ views، وتغيير ترتيب لستة، وفتح صورة كبيرة. وخليها قصيرة (200 لـ 300ms) وقليلة، واحترم reduced motion دايمًا.`,
-            mistakes: R`نفس الـ view-transition-name على كذا عنصر فمفيش حركة خالص. حركة طويلة بتخلي الموقع يحس إنه بطيء. تنسى reduced motion. تستدعي [[startViewTransition]] من غير ما تتأكد إنه موجود فالموقع يقع في المتصفحات اللي مش بتدعمه. والدالة اللي جوه async وبتجيب بيانات من السيرفر: الصفحة بتبقى متجمدة لحد ما تخلص، فهات البيانات الأول وبعدين ابدأ الحركة.`
-          },
+جرّبته على زرار فيه أيقونة SVG بس و [[<span class="sr-only">بحث</span>]]: الـ span اتقاس 1 × 1، والزرار في شجرة الـ accessibility اسمه [[button "بحث"]].
+
+---
+
+## ٥. المسافة اللي تحت الصورة
+
+[[<img>]] أصلًا inline، فبيقف على خط الكلام، وتحته مكان لديل الحروف (زي g و y). صورة 100 × 100 جوه div:
+
+| | ارتفاع الـ div |
+|---|---|
+| الصورة inline (الافتراضي) | 104 |
+| [[img { display: block; }]] | 100 |
+
+---
+
+## الخلاصة
+
+| | سطر لوحده | بيقبل width و height |
+|---|---|---|
+| [[block]] | أيوه | أيوه |
+| [[inline]] | لأ | لأ |
+| [[inline-block]] | لأ | أيوه |
+
+| الإخفاء | المكان | الكيبورد وقارئ الشاشة |
+|---|---|---|
+| [[display: none]] / [[hidden]] | بيتشال | مش شايفينه |
+| [[visibility: hidden]] | محجوز | مش شايفينه |
+| [[opacity: 0]] | محجوز | **لسه شايفينه** |
+| [[.sr-only]] | بكسل | شايفينه، والعين لأ |`,
           lines: [
-            "بتعرض view جديد (لستة أو تفاصيل).",
-            "التغيير نفسه: بدّل محتوى الـ main.",
-            "المتصفح مش بيدعم، أو المستخدم طالب حركة أقل؟ غيّر من غير حركة.",
-            "غير كده: غيّر جوه view transition.",
-            "قفلة.",
-            "صورة المنتج ليها نفس الاسم في اللستة والتفاصيل، فبتطير من مكان للتاني.",
-            "الـ crossfade بتاع الصفحة كلها أسرع من الافتراضي.",
-            "حركة بين الصفحات الحقيقية (لازم في الصفحتين ونفس الـ origin).",
-            "اللي طالب حركة أقل: من غير animation."
+            "شارة جوه السطر، بس الـ padding بتاعها بيحجز مكان.",
+            "لينكات المنيو تاخد السطر كله، فالضغط يشتغل على العرض كله.",
+            R`العنصر اللي عليه [[hidden]]: شيله خالص، مش بياخد مكان ولا بيتقري.`,
+            "مستخبي بس مكانه محجوز، ومش بيتضغط ولا بيتقري.",
+            R`شفاف: مكانه محجوز وهيفضل بيتضغط، عشان كده [[pointer-events: none]] معاه.`,
+            "كلاس لإخفاء حاجة عن العين بس، وقارئ الشاشة لسه بيقراها.",
+            "بيطلّعه من الترتيب العادي ويصغّره لبكسل.",
+            "بيقصّ أي حاجة ظاهرة وميكسرش السطر.",
+            "قفلة."
           ],
-          sol: R`من غير [[view-transition-name]]: الصفحة كلها بتعمل fade من اللستة للتفاصيل. مع الاسم على الصورة في الحالتين: الصورة بتتحرك وتكبر من مكانها في اللستة لمكانها في التفاصيل، والباقي fade. في Animations panel بـ 10% هتشوف الـ group بيتحرك والـ old والـ new بيتبدّلوا.
+          sol: R`الـ [[<span>]] العادي ([[inline]]): الـ width و الـ height ملهمش أي تأثير، والصندوق على قد الكلام بس. [[inline-block]]: بياخدوا 100×50 وبيفضلوا جنب بعض في نفس السطر (وهتلاقي فراغ صغير بينهم حوالي 4px سببه الـ enter أو المسافة اللي بينهم في الـ HTML). [[block]]: نفس المقاس بس كل واحد في سطر لوحده تحت اللي قبله.
 
-لو مفيش أي حركة: غالبًا الاسم متكرر (كل صور اللستة عليها نفس الاسم)، أو متصفحك مش بيدعم، أو إعداد reduce motion شغال في نظامك. ولو الصفحة وقفت ثانية قبل الحركة: الـ update فيه fetch، هات البيانات قبل.`
-        },
-        {
-          cmd: "text-wrap",
-          title: "عنوان سطره الأخير كلمة لوحدها",
-          desc: R`[[text-wrap: balance]] بيوزّع كلام العنوان على السطور بالتساوي، بدل سطر مليان وسطر فيه كلمة واحدة. و [[text-wrap: pretty]] للفقرات: بيحاول ميخليش كلمة لوحدها في آخر سطر.
+مع Tab على الزرار: [[display: none]] و [[visibility: hidden]] الـ focus بيعدّي من فوقهم للعنصر اللي بعدهم، لأنهم مش موجودين بالنسبة للكيبورد وقارئ الشاشة. أما [[opacity: 0]] مع [[pointer-events: none]]: الـ focus بيقف على زرار مش باين، ولو دوست Enter هيشتغل. الـ [[pointer-events]] بيمنع الماوس بس.
 
-وفي Tailwind v4: [[text-balance]] و [[text-pretty]]. ومعاهم [[line-clamp-2]] لو عايز تقطع الكلام بعد سطرين بـ «…».`,
-          example: R`h1, h2, h3 { text-wrap: balance; }
-p, li, figcaption { text-wrap: pretty; }
-.price { white-space: nowrap; }
-.card-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-<h2 className="text-balance">عرض الصيف: خصم على كل السماعات والشواحن الأصلية</h2>
-<p className="text-pretty max-w-prose">...</p>
-<h3 className="line-clamp-2">اسم منتج طويل جدًا جاي من الداتابيز ومحدش عارف طوله</h3>`,
-          try: R`اعمل عنوان طويل في كارت عرضه 20rem، وغيّر عرض الشاشة لحد ما السطر الأخير يبقى كلمة واحدة. ضيف [[text-wrap: balance]] وشوف الفرق. وبعدين في DevTools اكتب في Console [[CSS.supports('text-wrap', 'pretty')]].`,
-          flag: "script",
-          deep: {
-            why: R`العناوين في الكروت والهيرو بتتقسم وحش على بعض الشاشات، والمصممين كانوا بيحطوا [[<br>]] بإيدهم (وده بيبوظ على شاشة تانية). سطر CSS بيحلها لكل المقاسات.`,
-            how: R`[[balance]] بيجرب عروض مختلفة ويختار اللي يخلي السطور قريبة من بعض، وعشان ده مكلّف المتصفحات بتطبقه على عدد سطور محدود (في Chrome حوالي 6)، فهو للعناوين والكلام القصير بس. والصندوق نفسه عرضه مبيتغيرش، الكلام بس اللي بيتوزع جواه.
-
-[[pretty]] أرخص: بيبص على آخر كام سطر ويحاول يتجنب كلمة لوحدها. ودعمه لسه مش في كل المتصفحات وقت كتابة الدرس، واللي مش بيدعمه بيتجاهله ويكسر عادي، فحطه من غير قلق.
-
-[[white-space: nowrap]] على حاجة مينفعش تتقسم (سعر بعملته، رقم تليفون). و [[line-clamp]] بيقطع بعد عدد سطور ويحط «…»، والصيغة الـ [[-webkit-]] هي اللي شغالة في كل المتصفحات لحد دلوقتي، و Tailwind بيكتبها لك.
-
-وكل ده بيشتغل مع العربي عادي لأنه بيكسر عند المسافات.`,
-            when: R`balance: كل العناوين (ممكن في الـ base styles مرة واحدة). pretty: الفقرات والـ captions. line-clamp: عناوين الكروت ووصف المنتجات اللي طولها مش معروف.`,
-            mistakes: R`balance على فقرات طويلة (مش هيشتغل أو هيبطّأ). [[<br>]] يدوي في العناوين. line-clamp من غير [[overflow: hidden]]. تقطع الكلام بـ JavaScript (substring) فيتقطع في نص كلمة، وقارئ الشاشة يقرا نص الكلام بس، مع line-clamp الكلام كله موجود وبيتقري.`
-          },
-          lines: [
-            "كل العناوين: السطور متوازنة.",
-            "الفقرات: من غير كلمة يتيمة في الآخر (لو المتصفح بيدعم).",
-            "السعر ميتقسمش على سطرين.",
-            "العنوان سطرين بالكتير وبعدين «…».",
-            "نفس balance بـ Tailwind.",
-            R`نفس pretty، و [[max-w-prose]] عرض مريح للقراية.`,
-            "نفس القطع بعد سطرين بـ Tailwind."
-          ],
-          sol: R`من غير balance: على بعض العروض هتلاقي سطر مليان وتحته «الأصلية» لوحدها. مع balance: سطرين قريبين من بعض في الطول، وعرض الكارت زي ما هو.
-
-[[CSS.supports('text-wrap', 'pretty')]] بيرجع true في Chrome و Edge (ومتصفحات تانية حسب النسخة)، ولو رجع false ده معناه إن المتصفح هيتجاهل السطر، مش إن الصفحة هتبوظ.
-
-لو balance ملوش أي تأثير: غالبًا الكلام أطول من الحد اللي المتصفح بيطبقه عليه، أو العنصر [[display: inline]].`
-        },
-        {
-          cmd: "Baseline و @supports",
-          title: "الميزة دي أستخدمها ولا لسه؟ Baseline و caniuse و @supports",
-          desc: R`Baseline علامة بتلاقيها في MDN و caniuse: «Newly available» يعني الميزة شغالة في آخر نسخة من Chrome و Edge و Firefox و Safari (ديسكتوب وموبايل)، و «Widely available» يعني عدّى على ده 30 شهر، فأغلب الناس عندهم نسخة بتدعمها.
-
-caniuse.com بيدّيك التفاصيل: أنهي نسخة، ونسبة المستخدمين، والمشاكل المعروفة. و [[@supports]] في CSS (و [[CSS.supports()]] في JavaScript) بيسأل المتصفح نفسه: لو بتدعم الحاجة دي طبّق ده.
-
-و browserslist (في [[package.json]]) بيقول لأدوات الـ build (autoprefixer و Lightning CSS و Babel وغيرهم) إنت بتدعم أنهي متصفحات، فيضيفوا fallbacks على قدها.`,
-          example: R`.card { background: white; }
-@supports (background: color-mix(in oklch, red, blue)) {
-  .card { background: color-mix(in oklch, var(--color-brand) 8%, white); }
-}
-@supports not selector(:has(a)) {
-  .has-fallback { display: block; }
-}
-if (CSS.supports('anchor-name', '--x')) document.documentElement.classList.add('has-anchor');
-// package.json
-"browserslist": ["baseline widely available"]`,
-          try: R`في أي فولدر فيه Node شغّل [[npx browserslist "baseline widely available"]] و [[npx browserslist --coverage "baseline widely available"]] و [[npx browserslist "defaults"]]. وبعدين افتح MDN لـ [[text-wrap]] و [[:has()]] وبص على علامة Baseline فوق كل صفحة.`,
-          flag: "script",
-          deep: {
-            why: R`كل شهر فيه ميزة CSS جديدة، وسؤال «أستخدمها في الشغل؟» كان محتاج تفتح caniuse وتحسب نسب. Baseline بتدّيك إجابة سريعة، و @supports بيخليك تستخدم الجديد النهارده من غير ما تكسر القديم. ودا بيتسأل في الانترفيو: «بتتعامل إزاي مع ميزة مش مدعومة في كل المتصفحات؟»`,
-            how: R`progressive enhancement: اكتب الأساس اللي شغال في كل حتة الأول (خلفية بيضا)، وبعدين جوه [[@supports]] التحسين. المتصفح اللي مش فاهم الشرط بيتجاهل البلوك كله. و [[selector()]] جوه @supports بيسأل عن selector (زي [[:has()]]). و [[not]] للـ fallback.
-
-في CSS أصلًا المتصفح بيتجاهل أي خاصية مش فاهمها، فكتير كفاية تكتب السطرين ورا بعض: [[color: red; color: oklch(...)]] والقديم ياخد الأول والجديد ياخد التاني. @supports بتحتاجها لما التحسين محتاج أكتر من خاصية أو بيغيّر الـ layout.
-
-browserslist بيقبل queries زي [[defaults]] (أكتر من 0.5% استخدام وآخر نسختين ومتصفحات مش ميتة)، و [[baseline widely available]]، و [[baseline 2024]]. البيانات جاية من caniuse-lite، فحدّثها كل فترة بـ [[npx update-browserslist-db@latest]].
-
-و Vite من نسخة 7 الـ build target الافتراضي بتاعه [[baseline-widely-available]]. و Tailwind v4 نفسه مبني على CSS حديث (cascade layers و [[@property]] و [[color-mix]])، فمحتاج متصفحات حديثة (Safari 16.4 و Chrome 111 و Firefox 128 تقريبًا وطالع)، ولو لازم تدعم أقدم من كده خليك على v3.`,
-            when: R`قبل ما تستخدم أي ميزة CSS أو JavaScript جديدة في مشروع حقيقي: Widely available استخدمها عادي. Newly available استخدمها كتحسين مع fallback. لسه مش Baseline: @supports أو استنى. وحط browserslist في أول المشروع عشان كل الأدوات تتفق.`,
-            mistakes: R`تستخدم ميزة لأنها شغالة في Chrome عندك (نص مستخدمين الموبايل في مصر وغيرها على Safari أو متصفحات قديمة). @supports على حاجة كل المتصفحات بتدعمها (كود زيادة على الفاضي). تنسى تحدّث caniuse-lite فالـ build يستهدف متصفحات قديمة. تكتب الـ fallback بعد الجديد (الترتيب مهم: الأساس الأول). وتفتكر إن autoprefixer بيضيف الميزة نفسها: هو بيضيف prefixes بس، مش polyfills.`
-          },
-          lines: [
-            "الأساس: شغال في كل المتصفحات.",
-            R`لو المتصفح بيدعم [[color-mix]]...`,
-            "...خلفية فيها لمسة خفيفة من لون البراند.",
-            "قفلة.",
-            R`لو المتصفح مش بيدعم [[:has()]]...`,
-            "...اعرض الـ fallback.",
-            "قفلة.",
-            R`نفس السؤال من JavaScript: لو بيدعم anchor positioning علّم الـ html بكلاس.`,
-            "الأدوات كلها تستهدف المتصفحات اللي فيها الميزات المنتشرة من 30 شهر أو أكتر."
-          ],
-          sol: R`وقت كتابة الدرس (بيانات caniuse-lite في سبتمبر 2026)، [[baseline widely available]] طلّع 133 نسخة متصفح، أقدمها تقريبًا Chrome 123 و Firefox 124 و Safari 17.4، و [[--coverage]] قال إنهم حوالي 87% من المستخدمين في العالم. الأرقام عندك هتختلف حسب نسخة البيانات، ودا الطبيعي.
-
-[[defaults]] بيطلّع لستة مختلفة: فيها متصفحات أقدم بكتير (زي Chrome 109 و Opera Mini) لأنه مبني على نسبة الاستخدام مش على الميزات.
-
-في MDN: [[:has()]] عليه Baseline (متاح في كل المتصفحات الأساسية)، و [[text-wrap]] ممكن تلاقي قيمه مختلفة الحالة (balance منتشرة، و pretty لسه مش في كل حتة). ودا بالظبط المكان اللي تقرر منه: balance استخدمها عادي، و pretty كتحسين.`
-        }
-      ]
-    },
-    {
-      t: "أسئلة انترفيو",
-      l: 3,
-      n: "الأسئلة اللي بتتسأل في أي انترفيو frontend، بإجابة تقولها بصوتك في دقيقة",
-      items: [
-        {
-          cmd: "4 طبقات و box-sizing",
-          title: "اشرح الـ box model (Explain the CSS box model)",
-          desc: R`كل عنصر صندوق من 4 طبقات من جوه لبرا: content و padding و border و margin. الـ width الافتراضي (content-box) بيحدد المحتوى بس، فالـ padding والـ border بيتزودوا عليه. مع [[border-box]] الـ width بيبقى العرض الكامل شامل الـ padding والـ border، ودا اللي بنحطه على كل حاجة في أي مشروع (و Tailwind بيعمله في الـ Preflight). الـ margin برا الحساب في الحالتين، والـ margin الرأسي بين عنصرين block بيعمل collapse: الأكبر بس اللي بيفضل.`,
-          example: R`.box { width: 200px; padding: 20px; border: 5px solid; }
-.box { box-sizing: content-box; }
-.box { box-sizing: border-box; }`,
-          try: R`افتح DevTools › Computed على أي عنصر، واشرح الأرقام اللي في رسمة الصندوق بصوت عالي كأنك في انترفيو.`,
-          flag: "script",
-          deep: {
-            why: "سؤال أساسي بيختبر إنك فاهم ليه الحاجات بتطلع أعرض من المتوقع، وإنك مش بتحل كل حاجة بالتجربة.",
-            how: "لو عايز تتميز: margin collapse مش بيحصل جوه flex و grid ولا في الاتجاه الأفقي، والـ padding بالنسبة المئوية بيتحسب من عرض الأب حتى الرأسي، والعناصر الـ inline بتتجاهل width و height والـ margin الرأسي.",
-            when: R`أسئلة المتابعة: «إيه الـ margin collapse وإمتى مبيحصلش؟» و «inline و block و inline-block الفرق؟» و «[[width: 100%]] مع padding ليه بيعمل scroll أفقي؟».`,
-            mistakes: "«الـ margin جزء من العرض». أو «border-box بيشيل الـ padding». أو نسيان إن الافتراضي content-box مش border-box."
-          },
-          lines: [
-            "صندوق بعرض 200 و padding 20 و border 5.",
-            "content-box: العرض الظاهر 200 + 40 + 10 = 250.",
-            "border-box: العرض الظاهر 200، والمحتوى 150."
-          ],
-          sol: R`إجابة نموذجية على [[.box]] في المثال: «الرسمة فيها 4 طبقات من جوه لبرا: content، وبعدين padding، وبعدين border، وبعدين margin. مع [[content-box]] (الافتراضي) الـ 200 دي عرض المحتوى بس، فالعنصر على الشاشة 200 + 20×2 + 5×2 = 250px. مع [[border-box]] الـ 200 هي العرض الكلي لحد الـ border، فالمحتوى بيصغر لـ 200 − 40 − 10 = 150px. الـ margin برا الحساب في الحالتين، وهو مسافة بيني وبين اللي جنبي مش جزء من العنصر.»
-
-نقط تزوّد بيها الإجابة: إن كل المشاريع الحديثة (و Tailwind في الـ preflight) بتعمل [[*, ::before, ::after { box-sizing: border-box }]] لأن الحساب بيبقى أسهل مع [[width: 50%]] و padding. وإن الـ margin الرأسي بين عنصرين block بيعمل collapse (بياخد الأكبر مش المجموع)، وده مش بيحصل جوه flex ولا grid. وإن [[offsetWidth]] بيرجع العرض لحد الـ border، و [[clientWidth]] من غير الـ border.
-
-الغلط اللي يوقعك: تقول إن الـ margin داخل في الـ width مع border-box، أو تنسى الـ border في الحساب وتقول 240.`
-        },
-        {
-          cmd: "(id, class, type)",
-          title: "إزاي المتصفح بيقرر أنهي قاعدة تكسب؟ (How does CSS specificity work?)",
-          desc: R`لما قاعدتين بيغيّروا نفس الخاصية على نفس العنصر، المتصفح بيبص الأول على [[!important]]، وبعدين الـ inline style، وبعدين الـ cascade layers، وبعدين الـ specificity، وآخر حاجة الترتيب في الكود. الـ specificity تلات خانات: عدد الـ ids، وبعدين الـ classes والـ attributes والـ pseudo-classes، وبعدين أنواع العناصر والـ pseudo-elements. بتتقارن خانة خانة، فـ id واحد يغلب أي عدد classes. و [[:where()]] وزنها صفر، والوراثة ملهاش وزن خالص.`,
-          example: R`nav a { color: gray; }
-.link { color: blue; }
-nav .link:hover { color: navy; }
-:where(nav) .link { color: teal; }`,
-          try: R`اكتب 5 selectors على ورقة واحسب الـ specificity بتاعتهم، وبعدين اتأكد بإنك تقف عليهم في DevTools › Styles.`,
-          flag: "script",
-          deep: {
-            why: "بيتسأل عشان يعرف هل بتفهم ليه CSS بيتصرف كده، ولا بتحط !important لحد ما يشتغل.",
-            how: R`لو عايز تتميز: اذكر إن Tailwind v4 بيستخدم cascade layers، وإن أي CSS برا layer بيغلب الـ utilities مهما كانت الـ specificity. واذكر إن [[:is()]] و [[:not()]] و [[:has()]] وزنهم = أتقل حاجة جواهم.`,
-            when: R`أسئلة المتابعة: «!important بيتعامل إزاي؟» و «إيه الـ cascade layers؟» و «[[:is()]] وزنها كام؟» و «إزاي تتجنب حروب الـ specificity في مشروع كبير؟» (BEM، أو utility-first، أو layers).`,
-            mistakes: "«اللي مكتوب آخر بيكسب» على طول (ده آخر معيار بس). «11 class تغلب id» (لأ، الخانات مش بتتحوّل). «الـ inline style مينفعش يتغلب» (!important بيغلبه)."
-          },
-          lines: [
-            "(0,0,2).",
-            "(0,1,0): بتغلب اللي فوق.",
-            "(0,2,1): class و pseudo-class ونوع.",
-            R`(0,1,0): الـ where صفر، فزي [[.link]] بالظبط، والترتيب هو اللي يحسم.`
-          ],
-          sol: R`مثال محلول لـ 5 selectors (والأرقام دي بالظبط اللي DevTools بيظهرها لما تقف عليهم): [[nav a]] ‏(0,0,2)، و [[.link]] ‏(0,1,0)، و [[nav .link:hover]] ‏(0,2,1) لأن [[:hover]] pseudo-class بيتحسب زي الكلاس، و [[:where(nav) .link]] ‏(0,1,0) لأن [[:where]] بيصفّر اللي جواه، و [[#main .link::after]] ‏(1,1,1) لأن الـ pseudo-element بيتحسب زي الـ type.
-
-الإجابة اللي تقولها: «المتصفح بيقارن 3 خانات بالترتيب (id، class/attribute/pseudo-class، type/pseudo-element)، زي رقم من 3 خانات من غير ما واحدة تفيض على التانية؛ 11 كلاس عمرهم ما يغلبوا id واحد. لو اتعادلوا، اللي جاي آخر في الملف يكسب. والـ inline style أقوى منهم كلهم، و [[!important]] بيقلب اللعبة. وقبل الـ specificity أصلًا بيبص على الـ origin والـ [[@layer]]: القاعدة اللي برا layer بتكسب أي قاعدة جوه layer.» وزوّد: [[:is()]] و [[:not()]] بياخدوا specificity أقوى حاجة جواهم، و [[:where()]] صفر، وده بيستخدم في المكتبات عشان تسهّل عليك تغطي عليها.
-
-الغلط الشائع في الحساب: تعد [[:hover]] أو [[[type="email"]]] كـ type (هما خانة الكلاس)، أو تعد [[*]] و [[>]] (قيمتهم صفر).`
-        },
-        {
-          cmd: "بُعد واحد وبُعدين",
-          title: "إمتى تستخدم flex وإمتى grid؟ (Flexbox vs Grid)",
-          desc: R`Flexbox للـ layout في بُعد واحد: صف أو عمود، والعناصر نفسها بتحدد حجمها، والمساحة بتتوزع حسب محتواها. Grid للـ layout في بُعدين: بتعرّف الصفوف والأعمدة من الأب، والعناصر بتتحط في الخانات، فالأعمدة بتفضل متصفة في كل الصفوف. عمليًا: flex للمكونات (navbar، وأيقونة جنب كلام، وزراير)، و grid للـ layout (الصفحة، وشبكة كروت، وفورم بعمودين). وغالبًا بستخدمهم مع بعض: grid للهيكل و flex جوه كل خانة.`,
-          example: R`.nav { display: flex; justify-content: space-between; align-items: center; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }`,
-          try: R`اعمل نفس شبكة الكروت مرة بـ [[flex-wrap]] ومرة بـ grid بـ 5 كروت، وشوف الفرق في الكارت الأخير. دي أحسن إجابة عملية تقولها.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إنك بتختار الأداة حسب المشكلة، مش حسب العادة.",
-            how: R`لو عايز تتميز: flex «content-out» (المحتوى بيحدد المقاسات)، و grid «layout-in» (الأب بيحدد والمحتوى بيتحط). واذكر [[subgrid]] لما عايز كروت جوه grid عناوينها وأزرارها متصفة.`,
-            when: R`أسئلة المتابعة: «ليه آخر سطر في كروت flex-wrap شكله غريب؟» و «إيه الفرق بين auto-fit و auto-fill؟» و «ليه [[flex: 1]] مش بيوزّع بالتساوي ساعات؟» (المحتوى و min-width: auto).`,
-            mistakes: "«grid أحدث فهو أحسن»، أو «flex للموبايل و grid للديسكتوب». الاتنين مش بديل لبعض، والإجابة لازم تبقى عن الأبعاد ومين بيتحكم في المقاسات: المحتوى ولا الأب."
-          },
-          lines: [
-            "flex: عناصر في صف، والمسافة بينهم.",
-            "grid: شبكة أعمدة متساوية بتتأقلم مع العرض."
-          ],
-          sol: R`اللي هتشوفه بـ 5 كروت على شاشة تساع 4: مع [[flex-wrap]] و [[flex: 1 1 250px]] أول 4 في سطر، والخامس لوحده في السطر التاني وممطوط بعرض الشاشة كلها (قست ده على 1200px: الأربعة 288px والخامس 1200px). مع grid بـ [[repeat(auto-fit, minmax(250px, 1fr))]] الخامس بنفس عرض الباقيين وتحت الأول بالظبط، والباقي من السطر فاضي.
-
-الإجابة النموذجية: «flex بيفكّر في بُعد واحد: كل سطر بيوزّع المساحة على عناصره لوحده ومش عارف حاجة عن السطر اللي تحته، عشان كده الأخير بيتمط. grid بيفكّر في بُعدين: الأعمدة متعرّفة على الأب، فكل العناصر بترص على نفس الخطوط. بستخدم flex لما المحتوى هو اللي يحدد المقاس (nav، أزرار جنب بعض، سطر صورة واسم وزرار)، و grid لما الـ layout هو اللي يحدد (شبكة كروت، layout الصفحة، فورم بـ label وinput متراصين).»
-
-ونقطة زيادة: الاتنين مش بديل لبعض، وكتير بتلاقي grid للصفحة و flex جوه كل كارت. ولو حد قالك «flex للحاجات الصغيرة و grid للكبيرة» ده مش دقيق؛ المعيار بُعد واحد ولا اتنين.`
-        },
-        {
-          cmd: "containing block",
-          title: "إيه الفرق بين قيم position الخمسة؟",
-          desc: R`[[static]] الافتراضي: العنصر في الـ flow و top و left ملهمش تأثير. [[relative]] في الـ flow ومكانه محجوز، وبيتزق بصريًا بس، وبيبقى مرجع لأولاده الـ absolute. [[absolute]] بيطلع من الـ flow ومكانه بيتحسب من أقرب جد positioned. [[fixed]] بيطلع من الـ flow ومكانه من الشاشة، فبيفضل ثابت مع الـ scroll. [[sticky]] بيتصرف relative لحد ما يوصل للحد اللي حددته ([[top: 0]]) وبعدين يلزق، جوه حدود أبوه بس.`,
-          example: R`.parent { position: relative; }
-.badge { position: absolute; top: 0; inset-inline-end: 0; }
-.header { position: sticky; top: 0; }`,
-          try: R`اعمل الـ 5 قيم على 5 مربعات في صفحة طويلة واعمل scroll، واشرح اللي بيحصل لكل واحد.`,
-          flag: "script",
-          deep: {
-            why: "أغلب مشاكل «العنصر راح فين؟» و «ليه الهيدر مش ثابت؟» سببها position، فبيتسأل كتير.",
-            how: R`لو عايز تتميز: الـ containing block بتاع absolute هو أقرب جد positioned، بس [[transform]] أو [[filter]] على أي جد بيعمل containing block برضه، حتى للـ fixed. ودا سبب إن مودال fixed جوه عنصر متحرك بيتحبس، والحل portal.`,
-            when: R`أسئلة المتابعة: «ليه الـ sticky مش شغال؟» (overflow على جد، أو مفيش top، أو الأب قد العنصر بالظبط). «ليه fixed جوه عنصر عليه transform بيتصرف غلط؟» و «z-index بيشتغل على مين؟».`,
-            mistakes: "«absolute بيتحسب من الأب» (من أقرب جد positioned، مش الأب المباشر بالضرورة). «fixed دايمًا من الشاشة» (إلا لو جد عليه transform أو filter). ونسيان sticky خالص."
-          },
-          lines: [
-            "الأب مرجع للـ absolute.",
-            "الشارة في ركن النهاية فوق.",
-            "الهيدر يلزق فوق وانت نازل."
-          ],
-          sol: R`اللي هتشوفه وانت بتعمل scroll: [[static]] بيمشي مع الصفحة، و [[top]] و [[z-index]] ملهمش أي تأثير عليه. [[relative]] بيمشي مع الصفحة برضه، بس متزحزح بالـ [[top]]/[[left]] عن مكانه الأصلي، والمكان الأصلي فاضي محجوز (اللي بعده مش بيطلع مكانه). [[absolute]] خرج من الـ flow خالص (اللي بعده طلع مكانه)، ومتحط بالنسبة لأقرب أب positioned، ولو مفيش بالنسبة لأول شاشة، وبيمشي مع الـ scroll. [[fixed]] ثابت في مكانه على الشاشة مهما عملت scroll. [[sticky]] بيمشي عادي لحد ما يوصل للـ [[top]] بتاعه، وبعدين بيلزق، ولما أبوه يخلص بيمشي معاه ويطلع.
-
-الإجابة النموذجية بتلف حوالين كلمة containing block: «لكل عنصر فيه حد بيتحسب منه. للـ absolute هو أقرب جد مش static، للـ fixed هو الـ viewport، للـ sticky هو أقرب scroll container.» والفخ اللي يفرّقك: الـ fixed بيبطّل يبقى بالنسبة للشاشة لو أي جد عليه [[transform]] أو [[filter]] أو [[contain]]، وساعتها بيتصرف زي absolute جوه الجد ده. والـ sticky بيبطّل لو فيه جد عليه [[overflow: hidden]].`
-        },
-        {
-          cmd: "mobile-first",
-          title: "هتعمل الموقع responsive إزاي؟ (Responsive strategy)",
-          desc: R`أبدأ بـ meta viewport، وبعدين أكتب الـ CSS الأساسي لأصغر شاشة، وأضيف بـ [[min-width]] media queries للأكبر، والـ breakpoints حسب المحتوى (لما الشكل يبوظ) مش حسب أجهزة. وبعتمد على layouts مرنة من نفسها: flex-wrap، و grid بـ auto-fit و minmax، ووحدات مرنة: rem و % و clamp للخطوط والمسافات، وصور بـ [[max-width: 100%]] و srcset. وللمكونات اللي بتتحط في أماكن مختلفة container queries. وبختبر على أجهزة حقيقية مش DevTools بس، وبتأكد من أهداف اللمس (حوالي 44px، وأقل حاجة 24 في WCAG 2.2) ومن إن مفيش حاجة مهمة معتمدة على hover.`,
-          example: R`.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); }
-h1 { font-size: clamp(1.75rem, 1rem + 3vw, 3rem); }
-@media (width >= 64rem) { .layout { grid-template-columns: 16rem 1fr; } }`,
-          try: R`خد صفحة من مشروع ليك، وافتحها على 320px و 768px و 1440px، واكتب كل مكان بيبوظ والـ breakpoint اللي هيحله.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إن عندك منهج، مش «بظبط لحد ما يبان كويس».",
-            how: "لو عايز تتميز: اذكر إن breakpoints بـ rem بتحترم إعداد خط المستخدم، وإن Tailwind v4 بيلف hover في (hover: hover)، وإنك بتعمل intrinsic layouts (auto-fit و clamp و container queries) فالـ media queries بتقل.",
-            when: "أسئلة المتابعة: «الفرق بين mobile-first و desktop-first؟» و «إيه الـ breakpoints اللي بتستخدمها وليه؟» و «container queries ولا media queries؟» و «بتتعامل مع الصور إزاي؟».",
-            mistakes: "«بستخدم Bootstrap أو Tailwind فهو responsive لوحده». أو إجابة كلها breakpoints لأجهزة معينة من غير layouts مرنة. أو نسيان الـ viewport meta."
-          },
-          lines: [
-            "شبكة بتتأقلم مع أي عرض من غير breakpoints.",
-            "عنوان بيكبر مع الشاشة بين حد أدنى وأقصى.",
-            "breakpoint واحد للـ layout الكبير: sidebar ومحتوى."
-          ],
-          sol: R`نموذج لنتيجة التجربة (صفحة منتجات عادية): على 320: الـ nav اللينكات طالعة برا الشاشة ← محتاج منيو burger تحت 48rem. الجدول بيعمل scroll للصفحة كلها ← wrapper بـ [[overflow-x: auto]] (مش breakpoint). الـ h1 كبير ومكسّر كلمات ← [[clamp()]]. على 768: كارتين في السطر وفيه فراغ كبير ← [[auto-fit]] يحلها من غير breakpoint. على 1440: السطور طويلة جدًا في القراية ← [[max-width: 65ch]]. والـ sidebar محتاج يظهر جنب ← breakpoint عند 64rem.
-
-الإجابة النموذجية: «ببدأ بالموبايل لأنه أصعب حالة، والـ CSS الأساسي من غير media query بيبقى للشاشة الصغيرة، وبزوّد بـ [[min-width]] لما الشكل يبوظ مش لما جهاز معين يظهر. أول ما أقدر أحلّها من غير breakpoint بعملها: [[auto-fit]] و [[clamp()]] و [[min()]] و flex-wrap. والـ breakpoints بالـ rem عشان تحترم خط المستخدم. ولو المكون بيتحط في أماكن بعروض مختلفة، container query أحسن من media query. وبختبر على جهاز حقيقي عشان dvh و الـ touch و الـ hover.»
-
-الغلط اللي يبان في الإجابة: تعد breakpoints بأسماء أجهزة (iPhone و iPad)، أو تكتب الـ desktop الأول وتصلّح بـ [[max-width]] فالموبايل ينزّل CSS مش محتاجه ويكتب فوقه.`
-        },
-        {
-          cmd: "rem من الـ root",
-          title: "إيه الفرق بين px و em و rem؟ (px vs em vs rem)",
-          desc: R`[[px]] وحدة ثابتة. [[rem]] مضروبة في font-size بتاع الـ root (html)، والافتراضي 16px، وبتتغير لو المستخدم كبّر الخط من إعدادات المتصفح. [[em]] مضروبة في font-size بتاع العنصر نفسه، وفي خاصية font-size نفسها بتاعة الأب، فبتتراكم لو العناصر جوه بعض. أنا بستخدم rem للخطوط والمسافات عشان تحترم إعدادات المستخدم وتفضل متناسقة، و em للحاجات اللي لازم تتناسب مع خط المكون نفسه زي padding الزرار أو أيقونة جنب كلام، و px للحاجات اللي لازم تفضل رفيعة زي الـ border.`,
-          example: R`html { font-size: 100%; }
-.btn { font-size: 1.125rem; padding: 0.5em 1em; border: 1px solid; }`,
-          try: R`كبّر خط المتصفح من الإعدادات وافتح موقع ليك: اللي مكبرش مكتوب بـ px. دي إجابة عملية قوية في الانترفيو.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إنك فاهم الوحدات، وبيفتح باب الـ accessibility.",
-            how: R`لو عايز تتميز: Tailwind كله rem ([[--spacing: 0.25rem]])، والـ media queries بـ rem أو em بتتحسب من خط المتصفح الافتراضي مش من خط الـ html، و clamp بـ rem + vw عشان الـ zoom يفضل شغال.`,
-            when: R`أسئلة المتابعة: «إيه مشكلة [[html { font-size: 62.5% }]]؟» و «الـ media queries بـ em بتتحسب من إيه؟» و «vw في الخطوط؟».`,
-            mistakes: "«rem من الأب» (ده em). «px أسهل ومفيش فرق» (بيكسر تكبير الخط). «em دايمًا من الأب» (بس في font-size، وفي باقي الخصائص من العنصر نفسه)."
-          },
-          lines: [
-            "الأساس 16، أو اللي المستخدم اختاره.",
-            "الخط 18، والـ padding 9 و 18 من خط الزرار، والـ border بكسل ثابت."
-          ],
-          sol: R`اللي هتلاقيه بعد ما تخلي خط المتصفح Large (20px): الكلام اللي مكتوب بـ rem أو em كبر بنسبة 25%، واللي مكتوب بـ px فضل زي ما هو. غالبًا هتلاقي عناوين وأزرار كبرت وحاجات زي الـ footer أو badge صغيرة فضلت صغيرة، وده معناه إن فيه [[font-size: 12px]] في مكان.
-
-الإجابة النموذجية: «[[px]] ثابت ومش بيحترم إعداد خط المستخدم. [[rem]] نسبة من خط الـ [[<html>]] (16px افتراضيًا، أو اللي المستخدم اختاره)، فالصفحة كلها بتكبر مع الإعداد ده. [[em]] نسبة من خط العنصر نفسه (أو الأب لو في [[font-size]])، فبيتراكم لو متداخل: [[0.9em]] جوه [[0.9em]] = 0.81. بستخدم rem للخط والمسافات العامة، و em للحاجات اللي لازم تتناسب مع خط العنصر زي padding الزرار ([[0.5em 1em]] في المثال بيكبر لوحده مع [[.btn-lg]])، و px للـ borders والظلال اللي مش لازم تكبر.»
-
-والنقطة اللي بتفرّقك: متعملش [[html { font-size: 62.5% }]] عشان الحساب يبقى أسهل، ولو عملتها متكتبش [[font-size: 10px]] بدلها أبدًا، لأن الـ px على الـ html بيلغي إعداد المستخدم خالص. وإن الـ zoom (Ctrl +) بيكبّر px كمان، فهو مش الاختبار.`
-        },
-        {
-          cmd: "توليد on-demand",
-          title: "Tailwind بيشتغل إزاي من جوه؟ وإيه عيوبه؟",
-          desc: R`Tailwind أداة build مش مكتبة runtime. بيعمل scan لملفات المشروع ويدوّر على أسماء كلاسات بيعرفها، ويطلّع CSS للي اتكتب بس، فالملف النهائي صغير مهما المشروع كبر. في v4 الإعداد في CSS: [[@import "tailwindcss"]] و [[@theme]] للتوكنز، والقيم متغيرات CSS، والناتج في cascade layers. والـ variants زي [[hover:]] و [[md:]] بتلف الكلاس في selector أو media query. العيوب: الـ HTML بيبقى مزحوم، والكلاسات لازم تتكتب كاملة (مينفعش تبنيها بـ string)، والتعارض بين الكلاسات محتاج tailwind-merge، والفريق محتاج يتفق على التوكنز عشان ميبقاش كله arbitrary values.`,
-          example: R`<button className="rounded-lg bg-brand px-4 py-2 text-white hover:bg-brand/90 md:px-6">حفظ</button>`,
-          try: R`افتح CSS الناتج لمشروع Tailwind ودوّر على كلاس مش مستخدم: مش هتلاقيه. ودي الـ «on-demand» اللي تشرحها.`,
-          flag: "script",
-          deep: {
-            why: "بيتسأل لأنه في كل مشروع حديث، والإجابة بتفرق بين اللي بيستخدمه واللي فاهمه.",
-            how: R`لو عايز تتميز: الـ scan نصي مش بيفهم JavaScript، ودا سبب إن [[bg-$__{color}-500]] مش شغال. والـ utilities جوه [[@layer utilities]]، فأي CSS عادي برا layer بيغلبها. وإعادة الاستخدام بتبقى بمكونات React و cva، مش بـ [[@apply]] في كل حتة.`,
-            when: R`أسئلة المتابعة: «بتعمل dark mode إزاي؟» و «إيه الفرق بين v3 و v4؟» و «إزاي بتعيد استخدام الستايلات؟» و «ليه مش CSS Modules؟».`,
-            mistakes: "«Tailwind زي الـ inline styles» (لأ: فيه variants و media queries وتوكنز، والـ CSS بيتعمله cache). «بيطلّع كل الكلاسات وبعدين يمسح اللي مش مستخدم» (ده شكل قديم؛ دلوقتي بيولّد اللي محتاجه بس). و @apply في كل حتة فترجع لـ CSS عادي."
-          },
-          lines: [
-            "كل كلاس قاعدة CSS صغيرة، و Tailwind بيطلّع دول بس."
-          ],
-          sol: R`اللي هتلاقيه: الكلاسات اللي في الـ HTML بس، زي [[.px-4]] و [[.md\:px-6]] جوه [[@media (width >= 48rem)]]، و [[.hover\:bg-brand\/90]] ملفوفة في [[@media (hover: hover)]]. لو دوّرت على [[.px-5]] أو [[.bg-red-500]] ومش مستخدمهم مش هتلاقيهم. ولما طلّعت CSS للزرار ده لوحده بـ Tailwind v4.3 الملف كله (بالـ reset والـ theme) كان حوالي 490 سطر مش آلاف، وأغلبه الـ preflight.
-
-الإجابة النموذجية: «Tailwind بيعمل scan لملفات المشروع (في v4 أوتوماتيك، مع [[@source]] لو محتاج)، وبيدوّر على أي كلمة شكلها كلاس، ويولّد CSS للكلاسات دي بس. عشان كده الـ CSS النهائي صغير ومبيكبرش مع حجم المشروع قد ما بيكبر مع عدد الكلاسات المختلفة. العيوب: الـ HTML بيبقى مليان كلاسات وبيتقري بصعوبة، ومحتاج [[cn]]/tailwind-merge عشان التعارضات، والكلاسات المتركبة بالـ string زي [[$__btbg-$__{color}-500$__bt]] مبتتولدش لأن الـ scanner مش بيشغّل الكود، ومحتاج build step، وفيه منحنى تعلم للأسماء.»
-
-والحل لمشكلة الكلاسات الديناميكية اللي تقوله: اكتب الأسماء كاملة في object ([[{ red: "bg-red-500", green: "bg-green-500" }]])، أو [[@source inline(...)]] لو لازم.`
-        },
-        {
-          cmd: "semantic HTML أولًا",
-          title: "إيه أهم حاجات الـ accessibility في الفرونت إند؟",
-          desc: R`أبدأ بـ HTML صح: عناصر semantic، و button للأفعال و a للتنقل، و label لكل حقل، و alt للصور، وعناوين بالترتيب. ده بيدّي نص الـ accessibility ببلاش. بعدين الكيبورد: كل حاجة بتتوصل بـ Tab، والـ focus باين بـ focus-visible، والمودالات بتحبس الـ focus وبترجّعه. بعدين التباين: 4.5:1 للكلام العادي. و aria بس للحاجات اللي HTML مش بيوصفها: aria-expanded و aria-live و aria-label لأزرار الأيقونات. واحترام prefers-reduced-motion. وبختبر بالكيبورد وبـ Lighthouse أو axe، وأحيانًا بقارئ شاشة حقيقي.`,
-          example: R`<button aria-label="إغلاق" onClick={close}><X aria-hidden="true" /></button>`,
-          try: R`اعمل audit لصفحة من مشروعك بـ Lighthouse › Accessibility، وصلّح أول 3 مشاكل، واحكي عنهم في الانترفيو كمثال حقيقي.`,
-          flag: "script",
-          deep: {
-            why: "شركات كتير عندها التزامات قانونية بالـ accessibility، والسؤال بيفرق بين اللي بيبني UI للماوس بس واللي بيبني لكل الناس.",
-            how: "لو عايز تتميز: اذكر الـ accessibility tree والـ role/name/state، وإن primitives زي Radix بتحل focus trap و Escape والـ aria، وإن WCAG 2.2 AA هو المعيار المعتاد.",
-            when: "أسئلة المتابعة: «الفرق بين aria-label و aria-labelledby؟» و «إزاي تعمل مودال accessible؟» و «إيه WCAG AA؟» و «بتختبر إزاي؟».",
-            mistakes: R`«بحط aria على كل حاجة» (no ARIA is better than bad ARIA). «[[role="button"]] على div كفاية». «الـ accessibility للمكفوفين بس» (كيبورد، ونظر ضعيف، وعمى ألوان، وحساسية للحركة، وموبايل في الشمس).`
-          },
-          lines: [
-            R`زرار أيقونة: اسمه من [[aria-label]]، والأيقونة زينة مخفية عن قارئ الشاشة.`
-          ],
-          sol: R`مثال لنتيجة حقيقية بعد audit (دي أشهر 3 مشاكل بتطلع): «Buttons do not have an accessible name» على زرار أيقونة ← ضفت [[aria-label]] وحطيت [[aria-hidden="true"]] على الأيقونة زي المثال. «Background and foreground colors do not have a sufficient contrast ratio» على كلام رمادي ← غيّرت [[gray-400]] لـ [[gray-600]]. «Form elements do not have associated labels» على حقل بحث ← ضفت [[<label>]] مخفي بـ [[sr-only]]. والسكور طلع من 78 لـ 96 مثلًا.
-
-الإجابة النموذجية للسؤال: «أول حاجة HTML صح: button للزرار و a للينك و label لكل input و landmarks وعناوين بالترتيب، ودي بتحل أغلب المشاكل ببلاش. بعدها الكيبورد: كل حاجة توصلها بـ Tab، و focus ظاهر، ومودال بيحبس الـ focus ويرجّعه. بعدها الـ contrast، وبعدها alt للصور. و ARIA آخر حاجة، للحالات اللي HTML ملوش فيها زي [[aria-expanded]] و [[aria-live]]، لأن ARIA غلط أسوأ من مفيش ARIA.»
-
-وقول إن Lighthouse بيلقط حوالي ثلث المشاكل بس، فبتكمّل بتجربة بالكيبورد وقارئ الشاشة. القصة الحقيقية بأرقام قبل وبعد هي اللي بتفرّق مش الكلام العام.`
-        },
-        {
-          cmd: "احجز المكان",
-          title: "إيه هو CLS وإزاي تقلله؟",
-          desc: R`CLS مقياس من Core Web Vitals لحركة المحتوى المفاجئة وانت بتتفرج على الصفحة، والمطلوب 0.1 أو أقل. أشهر أسبابه صور و iframes من غير مقاسات، وخطوط بتتبدّل بمقاسات مختلفة، ومحتوى بيتحط فوق محتوى موجود زي البانرات والإعلانات. الحل في كلمة: احجز المكان قبل ما المحتوى يوصل: width و height أو aspect-ratio للصور والفيديو، و min-height أو skeleton للمحتوى الديناميكي، و size-adjust أو next/font للخطوط، والإشعارات fixed بدل ما تزق الصفحة. والحركة بـ transform مش بتتحسب، والتغيير اللي بيحصل بعد ضغطة المستخدم على طول مش بيتحسب.`,
-          example: R`<img src="/hero.webp" width="1200" height="600" alt="...">`,
-          try: R`شغّل Lighthouse على صفحة ليك واكتب الـ CLS، وصلّح سبب واحد، وقيس تاني. رقم قبل وبعد في الانترفيو بيفرق جدًا.`,
-          flag: "script",
-          deep: {
-            why: "Core Web Vitals بتأثر على ترتيب جوجل وعلى تجربة المستخدم، فبتتسأل في أي انترفيو frontend.",
-            how: "لو عايز تتميز: CLS = أكبر مجموعة shifts متقاربة (session window)، وكل shift = المساحة المتأثرة × المسافة. واذكر الفرق بين lab data (Lighthouse) و field data (Search Console و web-vitals).",
-            when: "أسئلة المتابعة: «إيه باقي Core Web Vitals؟» (LCP أقل من 2.5 ثانية، و INP أقل من 200ms). «بتقيس في الحقيقة إزاي مش في المعمل؟» و «ليه CLS عالي عند المستخدمين وواطي عندك؟».",
-            mistakes: "«CLS يعني الصفحة بطيئة» (ده LCP). «lazy loading بيقلل CLS» (لوحده لأ، وممكن يزوّده لو مفيش مقاسات). وتخلط INP مع FID القديم (FID اتشال سنة 2024 و INP بقى مكانه)."
-          },
-          lines: [
-            "width و height بيحجزوا المكان بنسبة 2:1 قبل ما الصورة توصل."
-          ],
-          sol: R`نموذج لنتيجة: CLS قبل حوالي 0.4 (أحمر، الحد 0.1 للكويس و 0.25 للوحش) وسببه صورة الهيرو من غير أبعاد. بعد ما ضفت [[width]] و [[height]] بقى 0 تقريبًا. (قست ده على صفحة تجربة فيها هيرو 1200×600 بيتأخر 800ms: من 0.43 لـ 0.) الأسباب التانية المعتادة: الخط لما يتبدّل، وبانر أو إعلان بيتحط فوق المحتوى بعد التحميل، و iframe من غير [[aspect-ratio]]، و skeleton مقاسه مختلف عن المحتوى الحقيقي.
-
-الإجابة النموذجية: «CLS بيقيس قد إيه المحتوى الظاهر اتحرك من غير ما المستخدم يعمل حاجة، ورقمه (مساحة اللي اتحرك × المسافة) من غير وحدة. بقلله بإني أحجز المكان قبل ما الحاجة توصل: width و height أو aspect-ratio للصور والفيديو، و min-height للإعلانات والحاجات اللي جاية من API، وخط بـ [[size-adjust]] أو next/font، وأي حاجة بتظهر فجأة تبقى fixed أو تحت المحتوى، والحركات بـ transform مش top.»
-
-وقول الفرق بين lab (Lighthouse بيقيس التحميل بس) و field (CrUX من مستخدمين حقيقيين وبيعد الـ shifts طول عمر الصفحة)، وإن الـ shift اللي بيحصل خلال 500ms من ضغطة المستخدم مش بيتحسب.`
-        },
-        {
-          cmd: "مراحل الرسم",
-          title: "إيه الفرق بين reflow و repaint؟",
-          desc: R`المتصفح بيرسم على مراحل: يحسب الـ styles، وبعدين layout (أو reflow): أماكن ومقاسات كل العناصر، وبعدين paint (أو repaint): يلوّن البكسلات، وبعدين composite: يركّب الطبقات. تغيير width أو margin أو إضافة عنصر بيعمل reflow، وممكن يأثر على الصفحة كلها، وبعده repaint. تغيير color أو background بيعمل repaint بس. و transform و opacity غالبًا composite بس، ودا ليه الحركات بتتعمل بيهم. والأخطر layout thrashing: قراية مقاس زي offsetHeight بعد كتابة style، فالمتصفح يعمل reflow فوري، ولو في loop بيتكرر مية مرة. الحل: اقرا الكل الأول وبعدين اكتب، أو requestAnimationFrame.`,
-          example: R`el.style.width = "200px";
-const h = el.offsetHeight;
-el.style.transform = "translateX(10px)";`,
-          try: R`سجّل في DevTools › Performance وانت بتحرّك عنصر بـ [[left]] مرة وبـ [[transform]] مرة، وقارن الـ Layout والـ Paint في كل حالة.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إنك فاهم ليه الموقع بيقطّع، مش بس إنه بيقطّع.",
-            how: R`لو عايز تتميز: الخصائص اللي بتعمل forced reflow (offsetWidth و getBoundingClientRect و scrollTop و getComputedStyle)، و [[will-change]] بيرقّي العنصر لطبقة لوحده بس بياكل ذاكرة، و ResizeObserver و IntersectionObserver بدل القراية في loop.`,
-            when: R`أسئلة المتابعة: «إزاي تكتشف ده في DevTools؟» (Performance وتحذير Forced reflow). «إيه [[will-change]] وإمتى تستخدمه؟» و «ليه animation لـ top أبطأ من translate؟».`,
-            mistakes: "«repaint أغلى من reflow» (العكس، والـ reflow غالبًا بيجيب repaint معاه). «transform ببلاش» (على عناصر كتير أو كبيرة بياكل ذاكرة GPU). و will-change على كل حاجة."
-          },
-          lines: [
-            "كتابة: بتخلي الـ layout قديم.",
-            "قراية مقاس: reflow فوري (forced).",
-            "transform: غالبًا composite بس."
-          ],
-          sol: R`اللي هتشوفه في Performance: مع [[left]] كل frame فيه Recalculate Style، وبعدين Layout (بنفسجي)، وبعدين Paint (أخضر)، وبعدين Composite. مع [[transform]] هتلاقي Recalculate Style و Composite Layers بس، ومفيش Layout ولا Paint لكل frame (لو العنصر اتعمله layer، ودا بيحصل تلقائي وقت الـ animation أو بـ [[will-change: transform]]). ولو فعّلت Rendering › Paint flashing، العنصر اللي بيتحرك بـ left هيبقى متلوّن أخضر طول الوقت، واللي بـ transform لأ.
-
-الإجابة النموذجية: «المتصفح بيعمل Style، بعدين Layout (reflow: يحسب مكان ومقاس كل حاجة)، بعدين Paint (repaint: يرسم البكسلات)، بعدين Composite (يركّب الطبقات على الـ GPU). reflow بيحصل لما تغيّر حاجة ليها علاقة بالمقاس أو المكان (width و left و font-size وإضافة عنصر)، وبيجر وراه paint. repaint لوحده لما تغيّر شكل من غير مقاس (color و background). و transform و opacity بيتعملوا في الـ composite بس، وعشان كده هما اللي تحرّك بيهم.»
-
-وفي المثال: السطر التاني ([[offsetHeight]]) بيجبر المتصفح يعمل layout حالًا عشان يرجّعلك رقم صح بعد ما غيّرت الـ width، ودا forced synchronous layout. لو اتكرر في loop يبقى layout thrashing.`
-        },
-        {
-          cmd: "stacking context",
-          title: "ليه z-index: 9999 مش بيطلّع العنصر فوق؟",
-          desc: R`z-index بيتقارن بس بين عناصر في نفس الـ stacking context. أي عنصر positioned عليه z-index، أو عليه opacity أقل من 1، أو transform، أو filter، أو [[isolation: isolate]]، بيعمل context جديد، وكل اللي جواه بيترتب جواه، وبعدين الـ context كله بيتعامل كوحدة واحدة مع اللي برا. فابن عليه 9999 جوه أب عليه [[z-index: 1]] عمره ما هيطلع فوق أخو الأب اللي عليه 2. الحل إني أرفع العنصر اللي عامل الـ context، أو أطلّع العنصر برا خالص بـ portal، ودا اللي Radix بيعمله للمودالات والـ dropdowns.`,
-          example: R`.header { position: relative; z-index: 1; }
-.header .menu { position: absolute; z-index: 9999; }
-.hero { position: relative; z-index: 2; }`,
-          try: R`اعمل المثال ده وصلّحه بطريقتين: مرة برفع الـ header، ومرة بنقل القايمة برا الـ header. اشرح الفرق.`,
-          flag: "script",
-          deep: {
-            why: "مشكلة بتحصل في كل مشروع، والسؤال بيفرق بين اللي بيزوّد أصفار واللي فاهم الطبقات.",
-            how: R`لو عايز تتميز: اذكر إن animation بـ transform (framer-motion مثلًا) بتعمل context جديد فجأة، وإن [[isolation: isolate]] بيعمل context مقصود من غير z-index، وإن مشروع كبير محتاج scale ثابت للـ z-index.`,
-            when: "أسئلة المتابعة: «إيه الحاجات اللي بتعمل stacking context؟» و «إيه isolation: isolate؟» و «إزاي تنظّم z-index في مشروع كبير؟».",
-            mistakes: "«اللي رقمه أكبر فوق دايمًا». «z-index بيشتغل على أي عنصر» (محتاج positioned أو ابن flex أو grid)."
-          },
-          lines: [
-            "الهيدر عمل context بـ 1.",
-            "9999 بس جوه الهيدر، يعني بالنسبة للصفحة «1».",
-            "الهيرو 2 فبيغطّي الهيدر والقايمة."
-          ],
-          sol: R`الطريقتين وإيه اللي هتشوفه: الأولى ترفع الهيدر: [[.header { z-index: 3 }]] (أي رقم أكبر من 2). القايمة بتظهر فوق الهيرو، بس خلي بالك إن الهيدر كله بقى فوق الهيرو، فلو الهيرو فيه حاجة المفروض تطلع فوق الهيدر (زي صورة طالعة لفوق) مش هتعرف. الطريقة التانية تطلّع القايمة من الهيدر في الـ DOM (بـ [[createPortal]] لـ [[document.body]] في React، أو تحط العنصر آخر الـ body)، وتحسب مكانها بـ JavaScript أو بـ CSS anchor positioning. ساعتها الـ 9999 بتاعتها بتتقارن مع الهيرو مباشرة وتكسب، والهيدر بيفضل 1.
-
-الشرح النموذجي: «z-index بيتقارن بس بين الإخوات جوه نفس الـ stacking context. الهيدر بـ [[position]] و [[z-index: 1]] عمل context، فكل اللي جواه، حتى لو 9999، بيترسم كوحدة واحدة على مستوى 1، والهيرو على مستوى 2. الرفع بيغيّر ترتيب الوحدة كلها، والنقل بيطلّع القايمة من الوحدة خالص.» وده السبب إن Radix و shadcn بيحطوا الـ dropdown والـ dialog في Portal.
-
-وقول إن فيه حاجات تانية بتعمل context من غير z-index: [[opacity]] أقل من 1، و [[transform]]، و [[filter]]، و [[isolation: isolate]]، و [[position: fixed]] و [[sticky]]. ولو القايمة بتتقص مش بتستخبى، يبقى ده [[overflow: hidden]] على الهيدر مش z-index، وده حلّه النقل بس.`,
-          solCode: R`/* الطريقة 1: ارفع الـ context كله */
-.header { position: relative; z-index: 3; }
-.header .menu { position: absolute; z-index: 9999; }
-.hero { position: relative; z-index: 2; }
-
-/* الطريقة 2: القايمة برا الهيدر في الـ DOM (Portal) */
-/* <body> <header class="header">...</header> <main class="hero">...</main> <div class="menu">...</div> </body> */
-.header { position: relative; z-index: 1; }
-.menu { position: fixed; top: 4rem; inset-inline-start: 1rem; z-index: 50; }
-.hero { position: relative; z-index: 2; }`
+دي أخطر نتيجة في التجربة: مودال أو منيو مخفي بـ opacity بيفضل ياخد Tab ويتقري لقارئ الشاشة. لو عايز تخفيه بحركة fade، ضيف [[visibility: hidden]] أو [[inert]] بعد ما الحركة تخلص.`
         }
       ]
     }

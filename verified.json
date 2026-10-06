@@ -1239,6 +1239,216 @@
   "date": "2026-10-06",
   "on": "win11 cmd (username masked later)"
  },
+ "css|<!doctype html>": {
+  "hash": "7bb7dc6df1f4",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core, mobile emulation for the viewport part), Windows 11"
+ },
+ "css|@theme": {
+  "hash": "a4651ef5caa6",
+  "date": "2026-10-06",
+  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11"
+ },
+ "css|CSS variables": {
+  "hash": "dfc37c6658f0",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11"
+ },
+ "css|Constraint Validation API": {
+  "hash": "2c52ff8cd0f3",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), example + solCode, Windows 11"
+ },
+ "css|SVG": {
+  "hash": "212268b62e7e",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 + svgo 4.1.0"
+ },
+ "css|Tailwind v4": {
+  "hash": "5c4a048e8655",
+  "date": "2026-10-06",
+  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11; docs: Next.js PostCSS setup"
+ },
+ "css|a و button": {
+  "hash": "417cd065d484",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core, keyboard emulation), Windows 11"
+ },
+ "css|arbitrary values": {
+  "hash": "b0279120c26d",
+  "date": "2026-10-06",
+  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11"
+ },
+ "css|auto-fit و minmax": {
+  "hash": "ef055d37a83c",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11"
+ },
+ "css|box model": {
+  "hash": "cce89bd4b505",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|cascade": {
+  "hash": "28fe7982249d",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|clamp()": {
+  "hash": "1ed779063da7",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (widths 320-1600, zoom via deviceScaleFactor)"
+ },
+ "css|display": {
+  "hash": "0d4010420ee0",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core + CDP accessibility tree), Windows 11"
+ },
+ "css|dvh": {
+  "hash": "4c176a471d6f",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (desktop 1200x800 + real-scrollbar run for 100vw); docs: mobile URL-bar behaviour"
+ },
+ "css|fieldset و radio": {
+  "hash": "a41b35583a54",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|flex: 1": {
+  "hash": "16a0a1f36a44",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (360/600/1200)"
+ },
+ "css|flexbox": {
+  "hash": "db98422b2a86",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (ltr and rtl)"
+ },
+ "css|form و label": {
+  "hash": "6a4a2026d73d",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core); docs: mobile keyboards"
+ },
+ "css|grid": {
+  "hash": "9577cd3ba7f4",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (ltr and rtl)"
+ },
+ "css|grid-template-areas": {
+  "hash": "0cb2d50898cc",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11"
+ },
+ "css|group و peer": {
+  "hash": "ca98f3ee3412",
+  "date": "2026-10-06",
+  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11 (ArrowLeft replaced by an equivalent SVG component)"
+ },
+ "css|img": {
+  "hash": "050559e7b523",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core, DPR 1/2/3 and 375/1440/1920 viewports), Windows 11"
+ },
+ "css|lang و dir": {
+  "hash": "67897a6274dc",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|media queries": {
+  "hash": "438c4a4dd40f",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (widths, touch emulation, prefers-color-scheme)"
+ },
+ "css|object-fit": {
+  "hash": "276e748c6991",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (pixel sampling); docs: Next.js Image fill"
+ },
+ "css|picture": {
+  "hash": "ae902d7704d3",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 with sharp-generated avif/webp/jpg"
+ },
+ "css|position: absolute": {
+  "hash": "8fa99a52d3b3",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 (ltr and rtl)"
+ },
+ "css|rem و em": {
+  "hash": "b6d699d19802",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright) on Windows 11, including a profile with default font size 20"
+ },
+ "css|selectors": {
+  "hash": "5984b9a73520",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|semantic HTML": {
+  "hash": "1dbd5360cfac",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core + CDP accessibility tree), Windows 11"
+ },
+ "css|specificity": {
+  "hash": "3238b94b5e45",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core + CDP CSS specificity), Windows 11"
+ },
+ "css|sticky و fixed": {
+  "hash": "750aa2d5f10e",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11"
+ },
+ "css|table": {
+  "hash": "ab84e0efc116",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core + CDP accessibility tree), Windows 11"
+ },
+ "css|textarea و date و number": {
+  "hash": "25f17f778fdd",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core, Cairo and New York timezones); docs: mobile keyboards"
+ },
+ "css|variants": {
+  "hash": "6febf5faae09",
+  "date": "2026-10-06",
+  "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11 (keyboard/mouse, light/dark)"
+ },
+ "css|video و iframe": {
+  "hash": "4bd684336b11",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11 with ffmpeg videos, real YouTube iframe + facade solCode; docs: iOS playsinline"
+ },
+ "css|z-index": {
+  "hash": "8e8fe8c771b4",
+  "date": "2026-10-06",
+  "on": "Chrome headless on Windows 11"
+ },
+ "css|ترتيب وصفحات في الـ URL": {
+  "hash": "d6a2bb715dc0",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + Node 24 (readState/view solCode), Windows 11"
+ },
+ "css|جدول responsive": {
+  "hash": "5e0d53d6645d",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core, 375px mobile), Windows 11"
+ },
+ "css|مقدمة CSS وتنسيق العناصر": {
+  "hash": "e514e23464fb",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|مقدمة HTML والـ Tags": {
+  "hash": "60c63f3f7bab",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|ملخص الأخطاء": {
+  "hash": "40075ee4265a",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), example + solCode HTML, Windows 11"
+ },
  "diag|500 من التطبيق": {
   "hash": "620aa28e5e51",
   "date": "2026-10-06",
@@ -5133,6 +5343,331 @@
   "hash": "a2b52e665efe",
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
+ },
+ "ts|! (non-null)": {
+  "hash": "548b6a281bb5",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|.d.ts و @types": {
+  "hash": "115ec8d6dcdc",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|? و readonly": {
+  "hash": "a8aeb8bc45db",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|Express + Zod": {
+  "hash": "4c3af01dedb3",
+  "date": "2026-10-06",
+  "on": "Windows 11 (Express 5.2.1 server via tsx + curl, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|Partial و Required و Readonly": {
+  "hash": "763e70d05c9d",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|Pick و Omit و Record": {
+  "hash": "c37ec905b4e7",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|Prisma types": {
+  "hash": "681314325dff",
+  "date": "2026-10-06",
+  "on": "Windows 11 (Prisma 7.10 + SQLite adapter, tsx, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|ReturnType و Parameters و Awaited": {
+  "hash": "ddaab1116ff2",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|abstract و implements": {
+  "hash": "8d9a3334694b",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|any و unknown و never": {
+  "hash": "e8fa55c0a679",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|arrays و tuples": {
+  "hash": "f707f1b0f955",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (example + solCode); Linux: Docker node:22-slim"
+ },
+ "ts|as": {
+  "hash": "8e440f8e3416",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|as const": {
+  "hash": "0cd30429014a",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|branded types": {
+  "hash": "674398be5bdf",
+  "date": "2026-10-06",
+  "on": "Windows 11 (tsx, Zod 4.6.5 solCode, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|conditional types": {
+  "hash": "32aabcc09a6b",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|control flow analysis": {
+  "hash": "943f67796e84",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, tsx)"
+ },
+ "ts|declare global": {
+  "hash": "9bcbde9a605c",
+  "date": "2026-10-06",
+  "on": "Windows 11 (Express 5.2.1 server via tsx + curl, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|decorators": {
+  "hash": "ab0592b5a43d",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|discriminated unions": {
+  "hash": "f621396a58b3",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|enum ولا union": {
+  "hash": "49028b7d01df",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx + node 24.19 (strip-only error); Linux: Docker node:22-slim"
+ },
+ "ts|env بـ Zod": {
+  "hash": "1a68943c830b",
+  "date": "2026-10-06",
+  "on": "Windows 11 (Zod 4.6.5, tsx with env vars, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|exhaustive check": {
+  "hash": "8fcb22e4d6af",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|experimentalDecorators و NestJS": {
+  "hash": "2024a70793d2",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|function types": {
+  "hash": "8b61c2f9c94a",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (example + solCode); Linux: Docker node:22-slim"
+ },
+ "ts|generic classes": {
+  "hash": "6858c02b78dd",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|generic constraints": {
+  "hash": "e914069c735e",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (example + solCode); Linux: Docker node:22-slim"
+ },
+ "ts|generic types و defaults": {
+  "hash": "c79d406da0f3",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (example + solCode); Linux: Docker node:22-slim"
+ },
+ "ts|generics": {
+  "hash": "f897a1c1c26d",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (example + solCode); Linux: Docker node:22-slim"
+ },
+ "ts|interface بيتدمج و type أوسع": {
+  "hash": "8f14a41f2b22",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, tsx)"
+ },
+ "ts|keyof و typeof و T[K]": {
+  "hash": "2ce68b6fe9ee",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|literal types": {
+  "hash": "23e540cde5b2",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (types only; fetch to a relative URL needs a browser); Linux: Docker node:22-slim; docs: editor autocomplete"
+ },
+ "ts|mapped types": {
+  "hash": "25a43ce5e2c4",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|module و moduleResolution": {
+  "hash": "24a448f48713",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2 tsc build, node dist on Node 24)"
+ },
+ "ts|narrowing": {
+  "hash": "101a105d7ef6",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|null و undefined": {
+  "hash": "a4ad36127810",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (non-DOM part); Linux: Docker node:22-slim; docs: DOM part runs only in a browser (types from tsc with lib dom)"
+ },
+ "ts|object types": {
+  "hash": "fd82797ea41f",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|override": {
+  "hash": "93f2132d4a29",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|parameter properties و readonly": {
+  "hash": "9d1c12898c44",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|paths": {
+  "hash": "9b2948eb8bab",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, node + tsx, subpath imports solCode)"
+ },
+ "ts|props و ComponentProps": {
+  "hash": "afc2492625d5",
+  "date": "2026-10-06",
+  "on": "Windows 11 (React 19.3, react-dom/server render, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|public و private و protected": {
+  "hash": "2177d59bcdef",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|safeParse": {
+  "hash": "7cecc83af693",
+  "date": "2026-10-06",
+  "on": "Windows 11 (Zod 4.6.5, tsx, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|satisfies": {
+  "hash": "06922cefb718",
+  "date": "2026-10-06",
+  "on": "win11 tsc 6.0.3 + 7.0.2, tsx/node 24"
+ },
+ "ts|strict أولًا": {
+  "hash": "eb8d16077340",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, --showConfig)"
+ },
+ "ts|strict و noUncheckedIndexedAccess": {
+  "hash": "73a392f24c69",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, Node 24)"
+ },
+ "ts|tsc و tsx": {
+  "hash": "82b972e020fe",
+  "date": "2026-10-06",
+  "on": "Windows: npm/npx tsc 6.0.3 + 7.0.2, tsx, node 24.19 (Git Bash); Linux: Docker node:22-slim (Node 22.23)"
+ },
+ "ts|type annotations": {
+  "hash": "23d862c50baf",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|type erasure": {
+  "hash": "97585f5a8852",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 (emit, --noEmitOnError) + node; Linux: Docker node:22-slim; docs: Playground UI"
+ },
+ "ts|type inference": {
+  "hash": "417ea62ee960",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|type predicates (is)": {
+  "hash": "e9f69a3d1725",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (example + solCode); Linux: Docker node:22-slim"
+ },
+ "ts|type و interface": {
+  "hash": "c04a7df7848e",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|typed fetch": {
+  "hash": "bdebabde54f8",
+  "date": "2026-10-06",
+  "on": "Windows 11 (real GitHub API, Zod 4.6.5, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|union types": {
+  "hash": "7d6e5befcd7d",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx; Linux: Docker node:22-slim"
+ },
+ "ts|unknown بيجبرك تفحص": {
+  "hash": "f7d029f63032",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, tsx)"
+ },
+ "ts|useState و events": {
+  "hash": "965ac992a62e",
+  "date": "2026-10-06",
+  "on": "Windows 11 (React 19.3, @types/react 19.3, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|z.object و z.infer": {
+  "hash": "272638804942",
+  "date": "2026-10-06",
+  "on": "Windows 11 (Zod 4.6.5, tsx, TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|أنواع مشتقة من نوع واحد": {
+  "hash": "86634ecd019c",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2)"
+ },
+ "ts|افحص عند الحدود": {
+  "hash": "17842c90a953",
+  "date": "2026-10-06",
+  "on": "Windows 11 (Zod 4.6.5, TS 6.0.3 + TS 7.0.2; fetch ran against a local mock of the documented jsonplaceholder /todos/1 response); docs: real jsonplaceholder response"
+ },
+ "ts|الأنواع بتتمسح": {
+  "hash": "9d6048bc1517",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2 emit, tsx, node strip-types on Node 24)"
+ },
+ "ts|الشكل مش الاسم": {
+  "hash": "aa6be86f2bf6",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, tsx)"
+ },
+ "ts|النوع كباراميتر": {
+  "hash": "c412316ca103",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, tsx)"
+ },
+ "ts|بيطلّع كود runtime": {
+  "hash": "a0644d3fc5b6",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, tsx, node on Node 24)"
+ },
+ "ts|فحص، تصديق، فحص بنوع دقيق": {
+  "hash": "cbabe5608c84",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2, tsx)"
+ },
+ "ts|مقدمة TypeScript والفرق عن JS": {
+  "hash": "224e2de9aae3",
+  "date": "2026-10-06",
+  "on": "Windows: tsc 6.0.3/7.0.2 + tsx (Node 24.19); Linux: Docker node:22-slim (tsc 6.0.3 + tsx); docs: Playground UI"
+ },
+ "ts|نوع مفيهوش قيم": {
+  "hash": "1a34bf516585",
+  "date": "2026-10-06",
+  "on": "Windows 11 (TS 6.0.3 + TS 7.0.2)"
  },
  "vps|.htaccess": {
   "hash": "ca9a531e2090",
