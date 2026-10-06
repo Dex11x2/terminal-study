@@ -1239,6 +1239,196 @@
   "date": "2026-10-06",
   "on": "win11 cmd (username masked later)"
  },
+ "git|.gitattributes": {
+  "hash": "66cc3a1d3eb9",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04"
+ },
+ "git|.gitignore": {
+  "hash": "1394a834b5c0",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + ps 5.1"
+ },
+ "git|Closes #12": {
+  "hash": "7ddca861ce92",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56); docs: gh issue, closing keywords"
+ },
+ "git|fork و upstream": {
+  "hash": "0fbe84d2f32a",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local repos; docs: gh repo fork"
+ },
+ "git|gh pr": {
+  "hash": "01e81faf35c6",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + gh --version; docs: gh auth/pr"
+ },
+ "git|git add / commit": {
+  "hash": "895146ce3afb",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + pwsh 7 + ps 5.1"
+ },
+ "git|git alias": {
+  "hash": "055910d0d873",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) via -c + pwsh 7 + ubuntu-24.04; docs: --global write"
+ },
+ "git|git bisect": {
+  "hash": "bcd82b6117e5",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + pwsh 7 + ubuntu-24.04"
+ },
+ "git|git clean": {
+  "hash": "c030d060de0b",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 + pwsh 7"
+ },
+ "git|git commit --amend": {
+  "hash": "b1944600678a",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote"
+ },
+ "git|git config": {
+  "hash": "aa2d0d5c4c0c",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) isolated global + ubuntu-24.04"
+ },
+ "git|git diff": {
+  "hash": "e69e62a9844b",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|git diff --quiet": {
+  "hash": "20e5b4a42067",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + pwsh 7 + ps 5.1"
+ },
+ "git|git init / clone": {
+  "hash": "145a518cee16",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04; docs: SSH clone"
+ },
+ "git|git log": {
+  "hash": "e5a6c2475000",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|git log -S / blame": {
+  "hash": "28987bf431de",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|git merge": {
+  "hash": "c139f6e32de2",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|git pull --rebase": {
+  "hash": "43ede58131ce",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote; docs: --global writes"
+ },
+ "git|git rebase": {
+  "hash": "714843fe2f9c",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote"
+ },
+ "git|git reflog": {
+  "hash": "97c76e528411",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + pwsh 7 + ps 5.1"
+ },
+ "git|git remote / push / pull": {
+  "hash": "245c847276c3",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote + ubuntu-24.04"
+ },
+ "git|git rerere": {
+  "hash": "9bc92ff2aa8b",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) repo-local config; docs: --global writes"
+ },
+ "git|git reset": {
+  "hash": "631a4fa41cc5",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + cmd caret"
+ },
+ "git|git restore": {
+  "hash": "96688e8db10a",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|git revert": {
+  "hash": "ec2e0d964a31",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote"
+ },
+ "git|git stash": {
+  "hash": "004f82628358",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|git status": {
+  "hash": "7b3a2a907a01",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|git switch / branch": {
+  "hash": "35d2d975317c",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote"
+ },
+ "git|git tag / cherry-pick": {
+  "hash": "6ee72d79d3c4",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote"
+ },
+ "git|git worktree": {
+  "hash": "e2ec9d4d671b",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + cmd"
+ },
+ "git|ours و theirs في rebase": {
+  "hash": "932555dfa5c2",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|rebase --continue / --abort": {
+  "hash": "d72d2cc2d521",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + pwsh 7"
+ },
+ "git|safe.directory": {
+  "hash": "ef7f510da826",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 (Git 2.43); docs: Windows variant"
+ },
+ "git|ssh key لـ GitHub": {
+  "hash": "fbf04e599c8c",
+  "date": "2026-10-06",
+  "on": "win11 ssh-keygen temp + unregistered key; docs: success reply"
+ },
+ "git|submodule و lfs": {
+  "hash": "4a2fd46658c5",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56), git-lfs 3.8"
+ },
+ "git|الـ conflicts": {
+  "hash": "723651aa3309",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56)"
+ },
+ "git|تحديث PR قديم": {
+  "hash": "1323e13fc26e",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) local bare remote; docs: GitHub PR page"
+ },
+ "git|مقدمة Git و GitHub": {
+  "hash": "813e9ccb1874",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 (Git 2.43)"
+ },
  "os|%localappdata%": {
   "hash": "4bdefc3b131d",
   "date": "2026-10-06",

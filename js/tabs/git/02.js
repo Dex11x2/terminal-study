@@ -1,714 +1,1102 @@
 // تكملة تاب git: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/git/01.js (شرح حقول الدرس في أوله)
 MORE("git", [
     {
-      t: "تصليح الأخطاء",
-      l: 3,
-      n: "أهم قسم: Git نادرًا ما بيمسح حاجة بجد، ومعظم الغلطات ليها رجوع",
+      t: "Branches والـ remote",
+      l: 2,
+      n: "",
       items: [
         {
-          cmd: "git restore",
-          title: "ارجع ملف لآخر commit",
-          desc: R`[[git restore]] بيرجّع ملف لنسخة محفوظة. من غير فلاجات ([[git restore index.js]]) بيكتب فوق ملفك آخر نسخة متحفظة (من منطقة التحضير، أو من آخر commit لو مفيش حاجة متجهزة)، يعني أي تعديل عملته ولسه معملتلوش add بيتمسح. التعديل ده عمره ما دخل Git، فمالوش رجوع من أي حتة.
-
-[[--staged]] حاجة تانية خالص: بتلغي الـ [[add]] بس، يعني بتشيل الملف من منطقة التحضير والتعديل نفسه بيفضل في ملفك. دي آمنة تمامًا. و [[--source a1b2c3d]] بتجيب الملف زي ما كان في commit معين (الرقم ده الـ hash من [[git log --oneline]])، والملفات التانية مش بتتأثر.
-
-قبل أي restore من غير [[--staged]] بص على [[git diff index.js]]: اللي هيظهر ده بالظبط اللي هيضيع.`,
-          example: R`git restore index.js
-git restore --staged index.js
-git restore --source a1b2c3d index.js`,
-          try: "بوّظ ملف عمدًا، ورجّعه بـ restore.",
-          flag: "danger",
-          deep: {
-            why: "عدّلت ملف وبوّظته، وعايز ترجّعه زي ما كان في آخر commit. أو عملت add لملف بالغلط وعايز تشيله من التحضير.",
-            how: R`افتكر التلات أماكن (ملفاتك، ومنطقة التحضير، والـ commits). [[restore]] بياخد نسخة من مكان ويحطها في مكان تاني:
-
-[[git restore file]] بياخد النسخة اللي في منطقة التحضير (أو آخر commit لو مفيش حاجة متحضرة) ويكتبها فوق ملفك. يعني تعديلاتك اللي معملتلهاش add بتتمسح. وده من الحاجات القليلة في Git اللي مالهاش رجوع، لأن التعديلات دي عمرها ما اتحفظت في Git.
-
-[[git restore --staged file]] العكس: بيشيل الملف من منطقة التحضير (يعني يلغي الـ add)، والتعديل نفسه بيفضل في ملفك. آمن تمامًا.
-
-و [[--source a1b2c3d]] بيجيب الملف زي ما كان في commit معين قديم، والباقي ميتأثرش.`,
-            when: "جرّبت حاجة ومنفعتش: ارجع لآخر commit. عملت [[add .]] ودخل ملف مش عايزه: [[--staged]]. ملف اتبوّظ من كام commit: [[--source]].",
-            mistakes: "[[restore]] من غير [[--staged]] وانت كنت عايز تلغي الـ add بس، فتمسح شغلك. اقرا الأمر كويس."
-          },
-          lines: [
-            "رجّع الملف زي آخر نسخة محفوظة، وتعديلاتك عليه تضيع.",
-            "شيل الملف من التحضير (الغي الـ add)، والتعديل يفضل.",
-            "هات الملف زي ما كان في commit معين قديم."
-          ],
-          sol: R`بعد ما تبوّظ الملف: [[git status -s]] بيوري [[ M index.js]]. بعد [[git restore index.js]]: [[git status -s]] مش بيطلّع حاجة، و [[cat]] بيوري المحتوى زي آخر commit.
-
-[[restore]] مش بيطبع أي رسالة لو نجح، والسكوت هنا معناه إنه اشتغل.
-
-الغلط الشائع: تبوّظ الملف وتعمل [[git add]] وبعدين [[git restore index.js]] فمايرجعش. الـ restore العادي بيرجّع من الـ staging، واللي في الـ staging هو البوظان. اعمل [[git restore --staged index.js]] الأول وبعدين [[git restore index.js]]. وخلّي بالك: التعديل اللي بيضيع بـ restore مش بيرجع من أي حتة.`
-        },
-        {
-          cmd: "git clean",
-          title: "امسح الملفات اللي Git مش متابعها",
-          desc: "[[restore]] و [[reset --hard]] بيرجّعوا الملفات المتابعة بس، والملفات الجديدة (untracked) بيسيبوها. [[clean]] هو اللي بيمسحها. ابدأ دايمًا بـ [[-n]] يوريك هيمسح إيه من غير ما يمسح. [[-d]] الفولدرات كمان، و [[-x]] حتى اللي في .gitignore زي node_modules و .env. واللي بيتمسح بـ clean مالوش رجوع، ولا حتى من reflog.",
-          example: R`git clean -n
-git clean -nd
-git clean -fd
-git clean -ndx`,
-          try: "اعمل ملفين جداد وفولدر، شوفهم بـ [[-n]]، وبعدين امسحهم بـ [[-fd]].",
-          flag: "danger",
-          deep: {
-            why: "بعد تجربة أو build أو merge فاشل، الفولدر بيتملى ملفات جديدة مش عايزها، و [[restore]] مش بيشيلها.",
-            how: R`Git بيقسم الملفات لمتابعة وغير متابعة. [[clean]] بيشتغل على غير المتابعة بس: أي ملف عمره ما اتعمله add.
-
-وعشان خطير، Git مش هيمسح حاجة من غير [[-f]] (force). و [[-n]] بيعرض القايمة بس، و [[-d]] بيضيف الفولدرات، و [[-x]] بيضيف كمان الملفات اللي في [[.gitignore]].
-
-ولأن الملفات دي عمرها ما دخلت Git، مفيش نسخة منها في أي مكان.`,
-            when: "عايز الفولدر يرجع نضيف زي ما clone لسه نازل. وقبلها [[git status]] و [[-n]].",
-            mistakes: "[[-fdx]] على طول، فيمسح .env ومعاه كل الـ secrets المحلية. دايمًا [[-n]] الأول."
-          },
-          lines: [
-            "وريني الملفات الجديدة اللي هتتمسح ([[-n]] dry run). مفيش حاجة بتتمسح.",
-            "نفسه والفولدرات الجديدة كمان ([[-d]]).",
-            "امسحهم فعلًا. [[-f]] لازمة، من غيرها Git بيرفض.",
-            "وريني اللي هيتمسح لو ضفت [[-x]]: هتلاقي node_modules و .env. متشيلش [[-n]] من ده غير لو متأكد."
-          ],
-          sol: R`[[git clean -n]] بيطبع [[Would remove a.tmp]] و [[Would remove b.tmp]] بس، من غير الفولدر. و [[-nd]] بيزوّد [[Would remove build/]]. و [[-fd]] بيمسحهم فعلًا ويطبع [[Removing a.tmp]]، و [[Removing b.tmp]]، و [[Removing build/]].
-
-و [[-ndx]] بعدها بيوري الملفات المتجاهلة زي [[.env]] و [[app.log]]، ودي اللي [[-x]] كان هيمسحها. عشان كده [[-x]] خطير: ممكن يمسح [[.env]] بتاعك.
-
-الغلط الشائع: [[git clean]] من غير [[-n]] ولا [[-f]] يرفض ويقول [[clean.requireForce defaults to true]]، وده مقصود. والملفات اللي clean مسحها مش في سلة المهملات ولا في reflog.`,
-          solCode: R`touch a.tmp b.tmp && mkdir build && touch build/x
-git clean -n
-git clean -nd
-git clean -fd
-git clean -ndx`
-        },
-        {
-          cmd: "git commit --amend",
-          title: "صلّح آخر commit",
-          desc: R`[[--amend]] بيصلّح آخر commit بدل ما تعمل commit جديد اسمه «forgot file». لو نسيت ملف: [[git add]] للملف، وبعدين [[git commit --amend --no-edit]]، فالملف يدخل في آخر commit، و [[--no-edit]] معناها سيب الرسالة زي ما هي. ولو الرسالة نفسها فيها غلطة: [[git commit --amend -m "better message"]].
-
-Git مش بيعدّل commits أبدًا: amend بيعمل commit جديد برقم (hash) جديد ويحطه مكان القديم. عشان كده استخدمه بس على commit لسه معملتلوش push. لو القديم اترفع، الـ push الجاي هيترفض، ولو أجبرته بـ force هتبوّظ تاريخ أي حد سحبه.`,
-          example: R`git add forgotten.js
-git commit --amend --no-edit
-git commit --amend -m "better message"`,
-          try: "اعمل commit، وبعدين ضيف له ملف بـ amend.",
-          deep: {
-            why: "لسه عامل commit، ولاحظت إنك نسيت ملف، أو الرسالة فيها غلطة. بدل commit جديد اسمه «forgot file»، صلّح الأخير.",
-            how: R`[[--amend]] مش بيعدّل الـ commit القديم، لأن Git مش بيعدّل commits أبدًا. هو بيعمل commit جديد فيه كل حاجة كانت في القديم زائد اللي ضفته، ويخلي الـ branch تشاور عليه بدل القديم. والقديم بيفضل موجود في reflog.
-
-فلو عملت [[add]] لملف وبعدين [[commit --amend --no-edit]]، الملف بيدخل في الـ commit الأخير وبنفس الرسالة. و [[-m]] بيغيّر الرسالة.
-
-ولأن ده commit جديد برقم جديد، لو كان القديم اترفع على GitHub، دلوقتي عندك تاريخ مختلف عن GitHub.`,
-            when: "بعد commit على طول، قبل ما تعمل push.",
-            mistakes: "amend لـ commit اترفع وحد تاني سحبه. هتضطر تعمل force push، وتبوّظ تاريخ اللي معاك. القاعدة: amend للحاجات اللي على جهازك بس."
-          },
-          lines: [
-            "جهّز الملف اللي نسيته.",
-            "ضيفه لآخر commit، بنفس الرسالة ([[--no-edit]]).",
-            "أو غيّر رسالة آخر commit."
-          ],
-          sol: R`[[git commit --amend --no-edit]] بيطبع نفس رسالة الـ commit القديم بس برقم جديد (زي [[[main 095033e] feat x]])، وتحته [[create mode 100644 forgotten.js]].
-
-[[git log --oneline]] لسه فيه commit واحد بالرسالة دي مش اتنين، و [[git show --stat HEAD]] بيوري الملف الجديد جواه. الرقم اتغير لأن amend بيعمل commit جديد مكان القديم.
-
-الغلط الشائع: تعمل amend لـ commit اتعمله push، وبعدين [[git push]] يترفض بـ [[rejected (non-fast-forward)]]. على branch لوحدك استخدم [[--force-with-lease]]، لكن على main المشترك متعملش amend، اعمل commit جديد.`,
-          solCode: R`echo x > main.js && git add main.js && git commit -m "feat x"
-echo f > forgotten.js && git add forgotten.js
-git commit --amend --no-edit
-git log --oneline -2
-git show --stat HEAD`
-        },
-        {
-          cmd: "git reset",
-          title: "ارجع لورا",
-          desc: "[[--soft HEAD~1]] بيلغي آخر commit ويسيب التعديلات متجهزة، وده أمان. [[--hard]] بيمسح التعديلات خالص. متعملش reset لـ commits اتعملها push واتشاركت، استخدم revert بدلها.",
-          example: R`git reset --soft HEAD~1
-git reset HEAD~1
-git reset --hard HEAD~1`,
-          try: "اعمل commit والغيه بـ [[--soft]]، ولاحظ إن التعديلات لسه موجودة.",
-          flag: "danger",
-          deep: {
-            why: "عايز «تلغي» commit أو كذا commit، وترجع لنقطة قبلهم.",
-            how: R`[[HEAD~1]] معناها «الـ commit اللي قبل الحالي بواحد»، و [[HEAD~3]] قبله بتلاتة.
-
-[[reset]] بيحرّك الـ branch لورا، تشاور على commit أقدم. والفرق بين الأنواع التلاتة هو إيه اللي بيحصل للتعديلات اللي كانت في الـ commits اللي «اتشالت»:
-
-[[--soft]]: الـ commits بتتشال، بس التعديلات بتاعتها بتفضل في منطقة التحضير، جاهزة تعمل commit تاني. كأنك رجعت للحظة قبل [[git commit]] بالظبط. آمن تمامًا.
-
-من غير حاجة (اسمه mixed): الـ commits بتتشال، والتعديلات بتفضل في ملفاتك بس مش متحضرة. كأنك رجعت لقبل [[git add]].
-
-[[--hard]]: الـ commits بتتشال والتعديلات كمان، وملفاتك بترجع زي الـ commit القديم بالظبط. أي حاجة مش متحفظة بتضيع.
-
-والـ commits اللي اتشالت مش بتتمسح فورًا، بتفضل في reflog حوالي شهر، فتقدر ترجعها.`,
-            when: "[[--soft HEAD~1]]: عملت commit بدري أو عايز تقسمه. [[--hard]]: عايز ترمي كل حاجة من ساعة commit معين وتبدأ من الأول.",
-            mistakes: "reset لـ commits اترفعت على GitHub واتشاركت، فتاريخك يختلف عن الفريق. استخدم revert. و [[--hard]] وعندك تعديلات مش متحفظة في أي commit، دي بتضيع ومالهاش رجوع."
-          },
-          lines: [
-            "الغي آخر commit، والتعديلات تفضل متجهزة.",
-            "الغي آخر commit، والتعديلات تفضل في ملفاتك بس.",
-            "الغي آخر commit وامسح تعديلاته من ملفاتك. خطر."
-          ],
-          sol: R`بعد [[git reset --soft HEAD~1]]: [[git log --oneline -1]] بيوري الـ commit اللي قبله (بتاعك اختفى من التاريخ)، بس [[git status -s]] بيوري [[A  r.txt]]، يعني التعديل موجود و staged وجاهز تعمل له commit تاني.
-
-الفرق: [[--soft]] بيسيب التعديل staged، والـ reset العادي بيسيبه في الملفات بس مش staged ([[?? r.txt]] أو [[ M]])، و [[--hard]] بيمسحه خالص.
-
-الغلط الشائع: [[--hard]] بدل [[--soft]] فالتعديل يختفي. لو كان متعمله commit ترجّعه من [[git reflog]]. ولو عملت reset لـ commit اتعمله push، الـ push الجاي هيترفض، وده معناه إنك كان المفروض تستخدم revert.`,
-          solCode: R`echo r > r.txt && git add r.txt && git commit -m "rtest"
-git reset --soft HEAD~1
-git status -s
-git log --oneline -1`
-        },
-        {
-          cmd: "git revert",
-          title: "الغي commit اتعمله push",
-          desc: R`[[git revert]] بيلغي commit قديم بإنه يعمل commit جديد فيه العكس بالظبط: السطور اللي القديم ضافها تتشال، واللي شالها ترجع. الـ commit الأصلي بيفضل في التاريخ، وفوقه commit اسمه [[Revert "..."]].
-
-ليه ده مهم؟ لأن التاريخ مش بيتمسح ولا بيتغير، فتعمل [[git push]] عادي، وأي حد في الفريق يعمل pull من غير مشاكل. ده عكس [[reset]] اللي بيشيل commits من التاريخ ومحتاج force push. عشان كده revert هو الطريق الآمن لأي commit اترفع على main.
-
-في المثال: [[git log --oneline]] تجيب منه رقم الـ commit (الـ hash)، و [[git revert a1b2c3d]] بيفتح المحرر برسالة جاهزة، تقفله فيتعمل الـ commit، وبعدين [[git push]]. لو مش عايز المحرر يفتح: [[--no-edit]].`,
-          example: R`git log --oneline
-git revert a1b2c3d
-git push`,
-          try: "اعمل revert لـ commit قديم وبص على log.",
-          deep: {
-            why: "commit اترفع على main وعمل مشكلة في الإنتاج. مينفعش تمسحه بـ reset لأن الفريق عنده. محتاج تلغيه بطريقة آمنة.",
-            how: R`[[revert]] مش بيمسح الـ commit. بيبص على التعديلات اللي عملها، ويعمل commit جديد بعكسها بالظبط: كل سطر اتضاف يتشال، وكل سطر اتشال يرجع.
-
-النتيجة: التاريخ فيه الـ commit الأصلي، وبعده commit اسمه «Revert ...». محدش تاريخه اتغير، فكله يعمل pull عادي. ولو بعدين عايز الميزة ترجع، تعمل revert للـ revert.
-
-والفرق مع reset: reset بيعيد كتابة التاريخ (زي ما تقطع صفحة من الكشكول)، revert بيضيف للتاريخ (زي ما تكتب «السطر اللي فوق غلط، الصح كذا»).`,
-            when: "أي تصليح لحاجة اترفعت ومتشاركة، خصوصًا على main.",
-            mistakes: "استخدام reset و force push على main المشتركة بدل revert."
-          },
-          lines: ["لاقي رقم الـ commit اللي عايز تلغيه.", "اعمل commit جديد بعكسه.", "ارفع، ومحدش تاريخه هيتلخبط."],
-          sol: R`[[git revert]] بيفتح المحرر برسالة جاهزة [[Revert "feat x"]]، ولما تقفله بيطبع [[[main f9fca78] Revert "feat x"]] والملفات اللي اتعكست (لو الـ commit كان ضاف ملف هتلاقي [[delete mode]]).
-
-[[git log --oneline]] بيوري الـ commit الأصلي زي ما هو، وفوقه commit جديد بيلغيه. ده الفرق عن reset: التاريخ مااتمسحش، فتقدر تعمل push عادي من غير force.
-
-الغلط الشائع: revert لـ merge commit بيطلع [[is a merge but no -m option was given]]، وساعتها لازم [[-m 1]]. ولو التعديل ده اتعدّل بعده، ممكن يطلع conflict زي الـ merge: صلّح و [[git revert --continue]].`
-        },
-        {
-          cmd: "git reflog",
-          title: "طوق النجاة",
-          desc: "كل مكان HEAD كان فيه في آخر 90 يوم تقريبًا. والـ commits اللي «مسحتها» بـ reset --hard بتفضل موجودة حوالي 30 يوم بس. خد الـ hash من هنا وارجعله. في PowerShell لازم [[HEAD@{2}]] بين علامات تنصيص، فاكتبها كده في كل الشيلات.",
-          example: R`git reflog
-git reset --hard "HEAD@{2}"
-git branch rescue a1b2c3d`,
-          try: "اعمل [[reset --hard]] يمسح commit، وبعدين رجّعه من reflog.",
-          deep: {
-            why: "عملت [[reset --hard]] بالغلط، أو مسحت branch، وحسيت إن شغلك راح. غالبًا مراحش.",
-            how: R`Git بيسجّل في دفتر خاص كل مرة [[HEAD]] بيتحرك: كل commit، وكل switch، وكل reset، وكل merge. الدفتر ده هو [[reflog]] (من reference log).
-
-فحتى لو الـ commit مبقاش ليه branch بتشاور عليه، واتشال من [[git log]]، هو لسه موجود في Git، ورقمه متسجّل في الـ reflog.
-
-[[git reflog]] بيعرض الدفتر: كل سطر فيه رقم الـ commit، و [[HEAD@{n}]] (يعني «HEAD كان هنا من n خطوات»)، واللي حصل. بتلاقي السطر اللي قبل الغلطة، وترجع له: إما [[reset --hard HEAD@{2}]] ترجّع الـ branch كلها، أو [[git branch rescue رقم]] تعمل branch جديدة على الـ commit ده وتنقذه من غير ما تلمس حاجة.
-
-والـ commits اللي مالهاش branch بتتمسح نهائي بعد حوالي ٣٠ يوم.
-
-والـ reflog على جهازك بس، مش على GitHub.`,
-            when: "بعد أي غلطة كبيرة في Git. قبل ما تيأس، شوف الـ reflog.",
-            mistakes: "إنك متعرفش إنه موجود وتعيد الشغل من الأول. وإنك تستنى أكتر من شهر."
-          },
-          lines: [
-            "اعرض كل الأماكن اللي HEAD كان فيها.",
-            "ارجع بالـ branch لمكانها من خطوتين.",
-            "أو اعمل branch جديدة على الـ commit ده تنقذه بيها."
-          ],
-          sol: R`بعد [[git reset --hard HEAD~1]]، [[git reflog]] بيوري حاجة زي:
-
-[[f9fca78 HEAD@{0}: reset: moving to HEAD~1]] و [[7fb1381 HEAD@{1}: commit: precious]]. الـ commit اللي اتمسح موجود في [[HEAD@{1}]] (مش لازم [[{2}]] زي المثال، الرقم بيعتمد على عملت كام حاجة بعده)، فـ [[git reset --hard "HEAD@{1}"]] بيطبع [[HEAD is now at 7fb1381 precious]] و [[git log]] بيرجع زي ما كان.
-
-الغلط الشائع: تعمل reset على رقم reflog غلط. عشان كده الأضمن [[git branch rescue 7fb1381]]: بيحفظ الـ commit في branch من غير ما يلمس اللي انت فيه. والتعديلات اللي عمرها ما اتعملها commit مش في reflog.`,
-          solCode: R`git commit --allow-empty -m "precious"
-git reset --hard HEAD~1
-git reflog | head -3
-git reset --hard "HEAD@{1}"
-git log --oneline -1`
-        },
-        {
-          cmd: "git rebase",
-          title: "خلّي التاريخ نضيف",
-          desc: "[[rebase main]] بيحط commits الـ branch بتاعتك فوق آخر main كأنك لسه بادئ. و [[-i HEAD~3]] بيفتح آخر 3 commits تدمجهم (squash) أو تعدّل رسايلهم. القاعدة: متعملش rebase لحاجة حد تاني شغال عليها، ولو اضطريت تعمل push بعده استخدم [[--force-with-lease]] مش [[--force]].",
-          example: R`git switch feature/login
-git rebase main
-git rebase -i HEAD~3
-git push --force-with-lease`,
-          try: "اعمل 3 commits صغيرة وادمجهم في واحد بـ rebase -i.",
-          flag: "danger",
-          deep: {
-            why: "branch بتاعتك بدأت من main من أسبوع، وmain اتقدمت. عايز شغلك يبقى مبني على آخر main، والتاريخ يبقى خط مستقيم نضيف من غير merge commits كتير.",
-            how: R`[[git rebase main]] وانت على الـ feature بيعمل التالي: يشيل الـ commits بتاعتك مؤقتًا، ويحرّك الـ branch لآخر commit في main، وبعدين يعيد تطبيق الـ commits بتاعتك واحد واحد فوقه. كأنك لسه بادئ النهارده من آخر main.
-
-بس خد بالك: الـ commits اللي بتتعاد دي commits جديدة بأرقام جديدة، حتى لو محتواها نفسه. يعني rebase بيعيد كتابة التاريخ.
-
-و [[rebase -i HEAD~3]] (interactive) بيفتحلك محرر فيه آخر ٣ commits، وقدام كل واحد كلمة [[pick]]. تغيّرها لـ [[squash]] تدمجه في اللي قبله، أو [[reword]] تغيّر رسالته، أو تمسح السطر تشيله. مفيد تنضّف commits زي «wip» و «fix typo» قبل ما ترفع.
-
-وبعد rebase لـ branch كانت مرفوعة، GitHub عنده النسخة القديمة، و push عادي هيترفض. [[--force-with-lease]] بيرفع غصب، بس بيتأكد الأول إن محدش رفع حاجة جديدة في الوقت ده، فلو حد رفع يرفض. أأمن بكتير من [[--force]].`,
-            when: "تحدّث branch بتاعتك من main قبل ما تعمل PR. تنضّف commits صغيرة قبل ما تشاركها.",
-            mistakes: "القاعدة الذهبية: متعملش rebase لـ branch حد تاني شغال عليها، أو لـ main. هتعيد كتابة تاريخ هو عنده. و [[--force]] بدل [[--force-with-lease]]."
-          },
-          lines: [
-            "روح لـ branch بتاعتك.",
-            "حط الـ commits بتاعتك فوق آخر main.",
-            "افتح آخر ٣ commits عشان تدمجهم أو تعدّل رسايلهم.",
-            "ارفع غصب، بس بعد ما تتأكد إن محدش رفع حاجة جديدة."
-          ],
-          sol: R`[[git rebase -i HEAD~3]] بيفتح ملف فيه تلات سطور [[pick]]، الأقدم فوق. سيب الأول [[pick]] وغيّر التانيين لـ [[squash]] (أو [[s]])، واحفظ. هيفتح محرر تاني بالرسايل التلاتة مع بعض، اكتب رسالة واحدة واحفظ.
-
-في الآخر هيطبع [[Successfully rebased and updated refs/heads/main.]]، و [[git log --oneline]] هيوري commit واحد مكان التلاتة، برقم جديد، و [[git show]] بيوري التعديلات التلاتة جواه.
-
-الغلط الشائع: تحط [[squash]] على السطر الأول، فيقول [[cannot 'squash' without a previous commit]]. ولو اتلخبطت في النص [[git rebase --abort]] بيرجّع كل حاجة. ولو الـ commits دي اتعملها push قبل كده، هتحتاج [[git push --force-with-lease]].`,
-          solCode: R`for i in 1 2 3; do echo $i >> sq.txt; git add sq.txt; git commit -m "wip $i"; done
-git rebase -i HEAD~3
-# في المحرر: pick, squash, squash
-git log --oneline -3`
-        },
-        {
-          cmd: "git log -S / blame",
-          title: "مين كتب ده وإمتى",
-          desc: R`لما تلاقي سطر غريب أو bug، أول سؤال: السطر ده دخل إمتى وليه؟ [[git blame index.js]] بيعرض الملف، وقدام كل سطر رقم آخر commit عدّله ومين وإمتى. [[-L 10,20]] بيحصر الناتج في السطور من 10 لـ 20. بعدها خد الرقم واعمل عليه [[git show]] تشوف رسالة الـ commit وباقي التعديلات اللي معاه، وده اللي بيفهّمك السبب.
-
-[[git log -S "calculateTotal"]] بيدوّر في التاريخ كله على الـ commits اللي ضافت النص ده أو شالته، حتى لو مبقاش موجود في الكود دلوقتي، و [[--oneline]] سطر لكل commit. ده أسرع طريقة تعرف إمتى فانكشن اتعملت أو اتمسحت، أو إمتى bug دخل. البحث بيفرّق بين الحروف الكابيتال والسمول.`,
-          example: R`git blame index.js
-git blame -L 10,20 index.js
-git log -S "calculateTotal" --oneline`,
-          try: "دوّر على أول commit ظهر فيه اسم فانكشن عندك.",
-          deep: {
-            why: "لاقيت سطر كود غريب، أو bug. مين كتبه؟ إمتى؟ وفي أنهي commit، ومع أنهي تعديلات تانية؟ عشان تفهم «ليه» اتكتب كده.",
-            how: R`[[git blame file]] بيعرض الملف، وقدام كل سطر: رقم آخر commit عدّل السطر ده، ومين، وإمتى. و [[-L 10,20]] سطور معينة بس. الاسم «blame» (لوم) مضلل شوية، الفايدة الحقيقية إنك تاخد رقم الـ commit وتعمله [[git show]] فتشوف الرسالة والتعديلات اللي معاه، وتفهم السياق.
-
-[[git log -S "text"]] بيعمل حاجة مختلفة: بيدوّر في التاريخ كله على الـ commits اللي «عدد مرات» ظهور النص ده اتغير فيها، يعني commits ضافته أو شالته. فتلاقي الـ commit اللي الفانكشن دي اتعملت فيه، أو اتمسحت فيه، حتى لو مش موجودة دلوقتي.
-
-وده أداة قوية في الـ debugging: «الحاجة دي كانت شغالة الشهر اللي فات»، تلاقي إمتى اتغيرت.`,
-            when: "كود مش فاهم سببه. bug ظهر فجأة وعايز تعرف أنهي commit جابه. VS Code فيه extension اسمها GitLens بتعرض blame جنب كل سطر.",
-            mistakes: "إنك تستخدم blame تلوم حد. الهدف الفهم. وأحيانًا السطر اتعدّل في commit فورمات (مسافات بس)، فـ blame يوريك الـ commit ده، فارجع لورا منه."
-          },
-          lines: [
-            "قدام كل سطر: مين آخر حد عدّله وفي أنهي commit.",
-            "نفسه للسطور من ١٠ لـ ٢٠ بس.",
-            "هات الـ commits اللي ضافت أو شالت النص ده."
-          ],
-          sol: R`[[git log -S "calculateTotal" --oneline]] بيطلّع الـ commits اللي زوّدت أو شالت الكلمة دي بس، مش كل commit لمس الملف. أقدم واحد فيهم (الأخير في القايمة) هو اللي الفانكشن ظهرت فيه أول مرة، زي [[b51ccba add calc]].
-
-ولو عدّلت سطر تاني في نفس الملف بعد كده، commit التعديل ده مش هيظهر، لأن عدد مرات ظهور الكلمة مااتغيرش. و [[git blame calc.js]] بيوري جنب كل سطر رقم الـ commit واسمك والتاريخ.
-
-الغلط الشائع: [[-S]] مايطلّعش حاجة لأن الاسم مكتوب بحروف مختلفة (case-sensitive). ولو عايز كل commit غيّر سطر فيه الاسم حتى لو العدد مااتغيرش، استخدم [[-G]].`
-        },
-        {
-          cmd: "git bisect",
-          title: "لاقي الـ commit اللي جاب الـ bug",
-          desc: "بتقول لـ Git commit فيه الـ bug وcommit كان سليم، وهو بيقسم اللي بينهم نصين كل مرة. في 1000 commit هتلاقيه في حوالي 10 خطوات. و [[bisect run]] بيعمل الاختبار لوحده بأي أمر بيفشل لما الـ bug يظهر. و [[reset]] يرجّعك مكانك.",
-          example: R`git bisect start
-git bisect bad
-git bisect good v1.0.0
-# جرّب النسخة اللي Git وقف عليها، وقوله good أو bad، وكرر
-git bisect good
-git bisect reset
-# أو خلّيه يجرّب لوحده:
-git bisect start HEAD v1.0.0
-git bisect run npm test
-git bisect reset`,
-          try: "اعمل 8 commits، ودخّل غلطة في الخامس، ولاقيه بـ bisect.",
-          deep: {
-            why: "حاجة كانت شغالة الشهر اللي فات ودلوقتي بايظة، وفي النص 200 commit. بدل ما تجرّبهم واحد واحد، bisect بيلاقي المسئول في دقايق.",
-            how: R`ده binary search: Git بيوقفك على commit في النص بالظبط، تجرّب، وتقول [[good]] أو [[bad]]. كل إجابة بتشيل نص الاحتمالات، فـ 200 commit محتاجين حوالي 8 خطوات بس.
-
-وفي الآخر Git بيطبع «is the first bad commit» ومعاه الـ commit. تعمله [[git show]] وتفهم إيه اللي اتغير.
-
-و [[bisect run]] بياخد أي أمر بيرجع exit code: 0 يعني good، وغيره يعني bad. فلو عندك تست بيكشف الـ bug، Git بيخلّص البحث كله لوحده.`,
-            when: "bug ظهر ومش عارف إمتى دخل، و [[log -S]] مش كفاية لأن مفيش نص معين تدوّر عليه.",
-            mistakes: "تنسى [[bisect reset]]، فتفضل واقف على commit قديم (detached HEAD). وتقول good لنسخة مجرّبتهاش كويس، فالنتيجة تطلع غلط."
-          },
-          lines: [
-            "ابدأ البحث.",
-            "النسخة الحالية فيها الـ bug.",
-            "النسخة v1.0.0 كانت سليمة. Git هينقلك لـ commit في النص.",
-            "النسخة دي سليمة، فالـ bug بعدها. Git ينقلك للنص اللي بعده.",
-            "خلصت: ارجع للـ branch اللي كنت عليها.",
-            "ابدأ من تاني، والسيئ HEAD والسليم v1.0.0 في سطر واحد.",
-            "خلّي Git يشغّل الاختبار على كل خطوة لوحده: لو نجح يبقى good، ولو فشل يبقى bad.",
-            "ارجع مكانك."
-          ],
-          sol: R`[[git bisect start HEAD v1.0.0]] و [[git bisect run]] بيجرّب نص المسافة كل مرة، ولـ 8 commits بيوصل في حوالي ٣ خطوات. وفي الآخر بيطبع:
-
-[[cfd341e... is the first bad commit]] وتحته تفاصيل commit رقم 5 ([[c5]]) والملفات اللي اتغيرت فيه، و [[bisect found first bad commit]].
-
-[[git bisect reset]] بيرجّعك للـ branch بتاعك ([[Switched to branch 'main']]). الغلط الشائع: تحدد good على commit فيه الـ bug أصلًا، فيطلّعلك commit غلط. واختبار [[bisect run]] لازم يرجع 0 للسليم وأي رقم من 1 لـ 127 للمكسور (ماعدا 125 اللي معناها skip).`,
-          solCode: R`git init bis && cd bis
-for i in 1 2 3 4 5 6 7 8; do
-  if [ $i -ge 5 ]; then echo "exit 1" > test.sh; else echo "exit 0" > test.sh; fi
-  echo $i > v.txt; git add .; git commit -m "c$i"
-  [ $i = 1 ] && git tag v1.0.0
-done
-git bisect start HEAD v1.0.0
-git bisect run sh test.sh
-git bisect reset`
-        },
-        {
-          cmd: "git tag / cherry-pick",
-          title: "نسخ وتصليحات سريعة",
-          desc: "[[tag]] بيعلّم commit كنسخة (v1.0.0)، و [[-a]] بيعمله برسالة ومين عمله وإمتى، ودي اللي تعلّم بيها كل نسخة قبل الديبلوي. و [[cherry-pick]] بياخد commit واحد بعينه من branch تانية، زي تصليح عاجل محتاجه على main دلوقتي.",
-          example: R`git tag -a v1.0.0 -m "Release v1.0.0"
-git push origin --tags
-git cherry-pick a1b2c3d`,
-          try: "اعمل tag لآخر commit وارفعه.",
-          deep: {
-            why: "[[tag]]: تعلّم نسخة مهمة (v1.0.0 اللي نزلت للعملاء) عشان ترجعلها بسهولة. و [[cherry-pick]]: محتاج تصليح واحد من branch تانية دلوقتي، من غير باقي شغلها.",
-            how: R`الـ tag زي الـ branch: اسم بيشاور على commit. الفرق إن الـ branch بتتحرك لقدام مع كل commit جديد، والـ tag ثابت للأبد على نفس الـ commit. فـ [[v1.0.0]] دايمًا بتشاور على نفس النسخة.
-
-وفيه نوعين: [[git tag v1.0.0]] لوحده «lightweight»، مجرد اسم. و [[git tag -a v1.0.0 -m "..."]] «annotated»: object في Git فيه رسالة ومين عمله وإمتى، و [[git show v1.0.0]] بيعرضهم. للنسخ اللي بتنزل استخدم [[-a]]، و [[git describe]] وأدوات الـ release بتعتمد عليه.
-
-والـ tags مش بتترفع مع [[git push]] العادي، محتاجة [[--tags]]. وعلى GitHub بتقدر تعمل منها «Release».
-
-[[cherry-pick hash]] بياخد التعديلات اللي في commit واحد بس، ويطبّقها كـ commit جديد على الـ branch اللي انت عليها. مثال: صلّحت bug في feature branch لسه مخلصتش، والتصليح محتاجه في الإنتاج دلوقتي. تروح main، وتعمل cherry-pick للتصليح بس.`,
-            when: "tag مع كل نسخة بتنزل. cherry-pick لإصلاحات عاجلة (hotfix).",
-            mistakes: "استخدام cherry-pick بدل merge بشكل متكرر، فنفس التعديلات تبقى موجودة بأرقام مختلفة في branches مختلفة، وده بيعمل conflicts بعدين."
-          },
-          lines: [
-            "علّم الـ commit الحالي بنسخة v1.0.0، برسالة ([[-a]] annotated و [[-m]] الرسالة).",
-            "ارفع الـ tags لـ GitHub (مش بتترفع لوحدها).",
-            "خد commit واحد بس من أي branch وطبّقه هنا."
-          ],
-          sol: R`[[git tag]] بيوري [[v1.0.0]] في القايمة، و [[git show v1.0.0]] بيبدأ بـ [[tag v1.0.0]] و [[Tagger:]] و [[Release v1.0.0]] وبعدين الـ commit. ده لأن [[-a]] بيعمل annotated tag فيه اسمك وتاريخ ورسالة.
-
-[[git push origin --tags]] بيطبع [[* [new tag] v1.0.0 -> v1.0.0]]، والـ tag بيظهر في GitHub تحت Tags وتقدر تعمل منه Release.
-
-الغلط الشائع: [[git push]] العادي لوحده مش بيرفع الـ tags، فتلاقيها مش على GitHub. ولو قال [[tag 'v1.0.0' already exists]] يبقى الاسم مستخدم؛ متمسحش tag اترفع وناس نزّلته، اعمل واحد برقم أكبر.`
-        },
-        {
-          cmd: "git worktree",
-          title: "branch تانية في فولدر تاني",
-          desc: "محتاج تصلّح حاجة عاجلة وانت في نص شغل؟ بدل stash، [[worktree add]] يفتح branch تانية في فولدر منفصل من نفس الـ repo، فشغلك الحالي ميتلمسش. و [[remove]] يشيله لما تخلص.",
-          example: R`git worktree add -b hotfix/cart ../myapp-hotfix main
-cd ../myapp-hotfix
-git worktree list
-cd ../myapp
-git worktree remove ../myapp-hotfix`,
-          try: "افتح worktree لـ branch جديدة، اعمل فيها commit، وارجع لفولدرك الأصلي ولاحظ إن تعديلاتك زي ما هي.",
-          deep: {
-            why: "stash بيلخبط لو عندك تعديلات كتير أو build شغال. worktree بيدّيك نسخة تانية من المشروع على branch تانية، في نفس اللحظة.",
-            how: R`الـ repo واحد (فولدر [[.git]] واحد)، بس ليه كذا working directory، كل واحد على branch. أي commit في واحد بيبان في التاني فورًا لأن التاريخ مشترك.
-
-والفولدر الجديد مفيهوش node_modules ولا .env، لأنهم مش في Git، فهتحتاج [[npm install]] هناك.`,
-            when: "hotfix عاجل وانت في نص ميزة. مراجعة PR وانت مش عايز تقفل شغلك.",
-            mistakes: "تمسح الفولدر بـ [[rm -rf]] بدل [[worktree remove]]، فيفضل متسجّل (صلّحها بـ [[git worktree prune]]). ومينفعش نفس الـ branch تتفتح في worktreeين."
-          },
-          lines: [
-            "اعمل branch جديدة hotfix/cart من main ([[-b]])، وافتحها في فولدر جنب المشروع.",
-            "ادخل الفولدر الجديد واشتغل عادي.",
-            "اعرض كل الفولدرات المربوطة بالـ repo ده.",
-            "ارجع لمشروعك الأصلي، وشغلك زي ما سبته.",
-            "امسح فولدر الـ worktree (الـ branch والـ commits بيفضلوا)."
-          ],
-          sol: R`[[git worktree list]] بيوري فولدرين، كل واحد جنبه الـ branch بتاعته: [[.../myapp 815e63b [main]]] و [[.../myapp-hotfix 815e63b [hotfix/cart]]].
-
-بعد الـ commit في myapp-hotfix والرجوع لـ myapp: [[git status -s]] لسه بيوري تعديلاتك زي ما هي ([[ M old.txt]])، والملف الجديد مش موجود هنا. لكن [[git log --oneline -1 hotfix/cart]] بيوري commit الـ hotfix، لأن الفولدرين شايفين نفس الـ repo.
-
-الغلط الشائع: تعمل [[git switch hotfix/cart]] في الفولدر الأصلي وهي مفتوحة في worktree، فيرفض بـ [[already used by worktree]]. و [[worktree remove]] بيرفض لو فيه تعديلات مش متسجلة في الفولدر ده، وده بيحميك.`
-        },
-        {
-          cmd: "git alias",
-          title: "اختصاراتك",
-          desc: R`لو فيه أمر Git طويل بتكتبه كل شوية، زي [[git log --oneline --graph --all]]، تقدر تدّيله اسم قصير جوه Git نفسه. [[git config --global alias.lg "..."]] بيكتب في ملف [[~/.gitconfig]] إن [[git lg]] معناها الأمر اللي بين علامات التنصيص، و [[--global]] معناها لكل مشاريعك.
-
-الأمر بيتكتب من غير كلمة [[git]] في أوله. وأي حاجة تكتبها بعد الاختصار بتتحط في الآخر: [[git lg -5]] تبقى [[git log --oneline --graph --all -5]].
-
-الفرق عن alias الشيل: ده جوه Git، فبيشتغل بنفس الشكل في bash و zsh و PowerShell و CMD، وبينتقل معاك لو نسخت [[~/.gitconfig]] لجهاز تاني.`,
-          example: R`git config --global alias.lg "log --oneline --graph --all"
-git config --global alias.st "status -s"
-git lg`,
-          try: "اعمل alias لأكتر أمر بتكتبه.",
-          deep: {
-            why: "فيه أوامر Git طويلة بتكتبها عشرين مرة في اليوم، زي [[git log --oneline --graph --all]].",
-            how: R`[[git config --global alias.lg "..."]] بيضيف في ملف [[~/.gitconfig]] إن [[git lg]] معناها الأمر الطويل ده. وبعد كده Git بيبدّل الاختصار قبل ما ينفّذ.
-
-والفرق بينه وبين alias الـ bash: ده جوه Git نفسه، فبيشتغل في أي شيل (bash و zsh و PowerShell و CMD) ومع أي حد بيستخدم نفس الـ gitconfig. وتقدر تكمّل بعده arguments عادي: [[git lg -5]].`,
-            when: "أكتر ٣ أو ٤ أوامر بتكتبها.",
-            mistakes: "اختصارات كتير أوي فتنسى الأوامر الأصلية، ولما تشتغل على جهاز حد تاني تتلخبط. خليهم قليلين."
-          },
-          lines: ["اعمل اختصار lg لعرض التاريخ مرسوم.", "اختصار st لـ status المختصر.", "استخدم الاختصار."],
-          sol: R`[[git config --global --get-regexp '^alias\.']] بيوري الاختصارات بتاعتك، زي [[alias.lg log --oneline --graph --all]] و [[alias.st status -s]]. و [[git st]] بيطلّع نفس ناتج [[git status -s]] بالظبط، و [[git lg]] نفس الـ graph.
-
-اختار أمر بتكتبه كتير فعلًا (زي [[switch]] أو [[log --oneline -10]])، والاختصار يبقى قصير ومايتلخبطش مع أمر Git موجود.
-
-الغلط الشائع: تكتب [[git config --global alias.lg "git log --oneline"]] بكلمة git جوه، فيطلع [[git: 'git' is not a git command]]. الـ alias بيتكتب من غير git. ولو عايز alias يشغّل أمر shell حطه بعلامة [[!]] في الأول.`
-        }
-      ]
-    },
-    {
-      t: "rebase مع فريق: التعارضات وتحديث الـ PR",
-      l: 3,
-      n: "rebase وقف في النص، و ours و theirs المقلوبين، و pull --rebase، وتحديث PR قديم من main",
-      items: [
-        {
-          cmd: "rebase --continue / --abort",
-          title: "الـ rebase وقف في النص بـ conflict",
-          desc: R`في الـ merge الـ conflict بيحصل مرة واحدة. في الـ rebase ممكن يحصل مع كل commit من بتوعك، لأن Git بيعيد تطبيقهم واحد واحد فوق main.
-
-فبيوقف عند الـ commit اللي فيه تعارض. بتصلّح الملف، و [[git add]]، وبعدين [[git rebase --continue]] (مش [[git commit]]). و [[--skip]] بيرمي الـ commit ده خالص، و [[--abort]] بيرجّعك لقبل الـ rebase بالظبط.`,
-          example: R`git switch feature/header
-git rebase main
-git status
-code app.txt
-git add app.txt
-git rebase --continue
-# لو الـ commit ده ملوش لازمة خلاص (نفس التعديل دخل main بشكل تاني):
-git rebase --skip
-# أو ارجع لقبل الـ rebase كله:
-git rebase --abort`,
-          try: R`في repo التجربة: غيّر نفس السطر في main وفي أول commit من ٢ على feature، واعمل [[git rebase main]]. صلّح، وكمّل بـ [[--continue]]، واتأكد إن الـ commit التاني اتطبّق لوحده. وبعدين كرر التجربة وجرّب [[--abort]].`,
-          flag: "danger",
-          deep: {
-            why: "على فريق بيعمل rebase قبل الـ PR، ده بيحصل كل أسبوع. واللي ميعرفش هو فين بالظبط بيعمل commit وسط الـ rebase، أو يعمل merge بدل ما يكمّل، والتاريخ يتلخبط. لو فهمت إن الـ rebase مجرد «طابور commits» بيتطبّق واحد واحد، كل الأوامر دي هتبقى منطقية.",
-            how: R`[[git rebase main]] بيعمل قايمة بالـ commits بتاعتك اللي مش في main (الـ todo)، ويقف على آخر main (HEAD بيبقى detached)، ويبدأ يطبّقهم بالترتيب. كل واحد بينجح بيبقى commit جديد.
-
-لو واحد فيهم عارض تعديل في main، Git بيوقف ويطبع [[could not apply a1b2c3d... header red]]. [[git status]] بيقولك «interactive rebase in progress» وانت في commit رقم كام من كام، وأنهي ملفات فيها تعارض.
-
-بتصلّح زي أي conflict، و [[git add]] للملف. و [[git rebase --continue]] بيعمل الـ commit نفسه برسالته الأصلية (ممكن يفتح المحرر تأكدها)، ويكمّل على اللي بعده، وممكن يوقف تاني.
-
-[[--skip]] بيرمي الـ commit الحالي من الطابور، وتعديلاته مش هتبقى في الـ branch. استخدمه لما التعديل ده دخل main خلاص بشكل تاني (حد عمله squash و merge مثلًا). ولو الـ commit مطابق بالظبط لحاجة في main، Git بيشيله لوحده ويقولك «skipped previously applied commit».
-
-[[--abort]] بيرجّع الـ branch لمكانها قبل الـ rebase، كأن مفيش حاجة حصلت. ولو فات الأوان وكمّلت، الـ reflog لسه فيه المكان القديم ([[ORIG_HEAD]] كمان بيشاور عليه بعد الـ rebase على طول).`,
-            when: "كل مرة rebase يوقف. قاعدة: لو الـ conflicts كتير ومش فاهم الكود التاني، [[--abort]] واعمل merge بدل rebase، أو اسأل صاحب التعديل.",
-            mistakes: R`[[git commit]] بعد ما تصلّح بدل [[--continue]]: بيعمل commit زيادة، والـ rebase لسه مستني. و [[--skip]] وانت فاكره «عدّي التعارض»، فتعديلاتك في الـ commit ده تضيع (ارجعلها من reflog). وتنسى إنك في نص rebase وتكمّل شغل عادي على detached HEAD، فالـ prompt أو [[git status]] بيقولك. وفي الانترفيو: «إيه الفرق بين conflict في merge و rebase؟» في merge مرة واحدة على النتيجة النهائية، في rebase ممكن مرة لكل commit، بس كل واحد أصغر وأوضح.`
-          },
-          lines: [
-            "روح للـ branch بتاعتك.",
-            "حط commits بتاعتك فوق آخر main، ويوقف عند أول تعارض.",
-            "انت في commit رقم كام من كام، وأنهي ملف فيه تعارض.",
-            "افتح الملف وصلّحه وامسح العلامات.",
-            "قول لـ Git إنك صلّحته.",
-            "اعمل الـ commit ده وكمّل على اللي بعده.",
-            "أو ارمي الـ commit الحالي من الطابور وكمّل.",
-            "أو الغي الـ rebase كله وارجع الـ branch زي ما كانت."
-          ],
-          sol: R`[[git rebase main]] بيطبع [[CONFLICT (content): Merge conflict in app.txt]] و [[could not apply ... header red]]، ومعاه تلميحات بالتلات أوامر.
-
-[[git status]] بيقول [[interactive rebase in progress]]، و [[Last command done (1 command done)]]، و [[Next command to do (1 remaining command)]] والـ commit التاني، و [[Unmerged paths]] فيها app.txt.
-
-بعد [[git add app.txt]] و [[git rebase --continue]]: [[Successfully rebased and updated refs/heads/feature/header]]، و [[git log --oneline]] بيوري commitين بتوعك فوق commit الـ main، بأرقام جديدة غير الأصلية.
-
-ومع [[--abort]]، [[git log --oneline]] بيرجع زي ما كان بالظبط، بنفس الأرقام القديمة.
-
-الغلط الشائع: تكتب [[git commit]] بدل [[--continue]]، فتلاقي commit زيادة، و [[git status]] لسه بيقول rebase in progress.`,
-          solCode: R`mkdir -p ~/lab/rb && cd ~/lab/rb && git init -b main
-printf 'title = "Shop"\ncolor = "blue"\n' > app.txt
-git add . && git commit -m init
-git switch -c feature/header
-sed -i 's/blue/red/' app.txt && git commit -am "header red"
-echo footer > f.txt && git add f.txt && git commit -m "add footer"
+          cmd: "git switch / branch",
+          title: "اشتغل على فرع منفصل",
+          desc: R`الـ branch خط شغل موازي: بتعمل فيه commits من غير ما تلمس main، ولما الشغل يخلص ويشتغل بتدمجه. كده main بيفضل دايمًا شغال، وكل ميزة أو إصلاح في branch باسمها، زي [[feature/login]] (الـ [[/]] جزء من الاسم، للتنظيم بس).
+
+[[git branch]] لوحدها بتعرض الـ branches اللي عندك، والنجمة [[*]] جنب اللي انت عليها. [[git switch -c feature/login]] بتعمل branch جديدة من مكانك الحالي وتنقلك لها ([[-c]] يعني create)، و [[git switch main]] بترجّعك، وملفاتك بتتغير لنسخة الـ branch دي. [[-a]] بتعرض كمان الـ branches اللي على GitHub (بتبدأ بـ [[remotes/origin/]]). و [[branch -d]] بتمسح branch اتدمجت خلاص، وبترفض لو لسه متدمجتش.
+
+قبل ما تعمل switch اعمل commit أو stash للتعديلات، وإلا هتمشي معاك أو Git هيرفض. وهتلاقي في شروحات قديمة [[git checkout]] بنفس المعنى.`,
+          example: R`git branch
+git switch -c feature/login
 git switch main
-sed -i 's/blue/green/' app.txt && git commit -am "main green"
-git switch feature/header
-git rebase main
+git branch -a
+git branch -d feature/login`,
+          try: "اعمل branch، اعمل فيها commit، ارجع main ولاحظ إن التعديل مش موجود.",
+          deep: {
+            why: "عايز تشتغل على ميزة جديدة من غير ما تبوّظ النسخة الشغالة. الـ branch نسخة موازية من المشروع، تجرّب فيها براحتك، ولما تخلص تدمجها.",
+            how: R`الـ branch في Git أبسط بكتير مما تتخيل: هو مجرد «اسم» بيشاور على commit معين. زي ورقة ملزوقة على صفحة في كتاب. مفيش نسخ ملفات ولا حاجة، عشان كده عمل branch بياخد جزء من الثانية.
+
+وفيه مؤشر خاص اسمه [[HEAD]]، وده بيقول انت واقف فين دلوقتي. لما تعمل commit جديد، الـ branch اللي انت عليها بتتحرك لقدام وتشاور على الـ commit الجديد، والـ branches التانية بتفضل مكانها.
+
+[[git switch branch]] بيحرّك [[HEAD]] للـ branch دي، ويغيّر ملفاتك على الجهاز عشان تبقى زي آخر commit فيها. و [[switch -c]] بيعمل branch جديدة من مكانك الحالي ويروح لها.
+
+هتلاقي في شروحات قديمة [[git checkout]] بيعمل نفس الحاجة، بس [[switch]] أحدث وأوضح.`,
+            when: "كل ميزة أو إصلاح في branch لوحدها: [[feature/login]] أو [[fix/cart-total]]. و main تفضل دايمًا شغالة وجاهزة تترفع.",
+            mistakes: "تنقل branch وعندك تعديلات مش محفوظة: Git ممكن يرفض، أو ياخد التعديلات معاك للـ branch التانية وتتلخبط. اعمل commit أو stash الأول. ومسح branch معملتهاش merge: [[-d]] هيرفض ويحميك، إنما [[-D]] الكابيتال هيمسح غصب."
+          },
+          teach: R`## الأول: الـ branch مجرد اسم بيشاور على commit
+
+الـ branch مش نسخة من الملفات. هي ورقة صغيرة جوه [[.git/refs/heads/]] مكتوب فيها hash آخر commit فيها. ومعاها [[HEAD]]: مؤشر بيقول انت واقف على أنهي branch. لما تعمل commit، الـ branch اللي عليها [[HEAD]] بتتحرك للـ commit الجديد، والباقي بيفضل مكانه. الناتج تحت من repo تجربة على ويندوز (Git 2.56)، ونفس الأوامر في أي ترمنال وعلى لينكس.
+
+---
+
+## ١. [[git branch]]
+
+~~~text الناتج في repo فيه commit واحد
+* main
+~~~
+
+قايمة الـ branches، و [[*]] جنب اللي انت عليها.
+
+---
+
+## ٢. [[git switch -c feature/login]]
+
+| الحتة | معناها |
+|---|---|
+| [[switch]] | انقل لـ branch |
+| [[-c]] | create: اعملها الأول، من المكان اللي انت فيه دلوقتي |
+| [[feature/login]] | الاسم. الـ [[/]] جزء من الاسم للتنظيم بس |
+
+~~~text الناتج
+Switched to a new branch 'feature/login'
+~~~
+
+وبعدين commit عليها:
+
+~~~text echo login > login.js && git add login.js && git commit -m "add login"
+[feature/login 29e0271] add login
+ 1 file changed, 1 insertion(+)
+ create mode 100644 login.js
+~~~
+
+لاحظ أول الناتج بقى [[feature/login]] مش [[main]].
+
+---
+
+## ٣. [[git switch main]]
+
+~~~text الناتج
+Switched to branch 'main'
+~~~
+
+~~~text ls
+index.js
+~~~
+
+~~~text git branch
+  feature/login
+* main
+~~~
+
+[[login.js]] اختفى من الفولدر! مااتمسحش: Git غيّر ملفاتك لشكل آخر commit في main، و main عمرها ما شافت [[login.js]]. ارجع لـ feature/login هتلاقيه.
+
+### لو عندك تعديلات مش محفوظة
+
+جرّبت الحالتين:
+
+~~~text تعديل في ملف مش مختلف بين الـ branchين
+Switched to branch 'feature/login'
+M	index.js
+~~~
+
+التعديل **مشي معاك** للـ branch التانية ([[M]] = modified)، لأنه مش متسجل في أي branch لسه.
+
+~~~text تعديل في ملف مختلف بين الـ branchين
+error: Your local changes to the following files would be overwritten by checkout:
+	login.js
+Please commit your changes or stash them before you switch branches.
+Aborting
+~~~
+
+هنا Git رفض عشان ميضيّعش شغلك. الحل commit أو [[git stash]].
+
+---
+
+## ٤. [[git branch -a]]
+
+[[-a]] (all): كمان الـ branches اللي على الـ remote. جرّبته بـ remote محلي اسمه origin (بدل GitHub):
+
+~~~text الناتج
+  feature/login
+* main
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/feature/login
+  remotes/origin/main
+~~~
+
+اللي بيبدأ بـ [[remotes/origin/]] نسخة Git فاكرها من آخر مرة كلّم الـ remote، مش branch تشتغل عليها مباشرة. و [[origin/HEAD -> origin/main]] يعني الـ branch الأساسية هناك main.
+
+---
+
+## ٥. [[git branch -d feature/login]]
+
+[[-d]] (delete) بيمسح الاسم بس، والـ commits بتفضل لو branch تانية فيها. قبل الدمج:
+
+~~~text الناتج
+error: the branch 'feature/login' is not fully merged
+hint: If you are sure you want to delete it, run 'git branch -D feature/login'
+~~~
+
+Git رافض لأن [[add login]] مش موجود في أي branch تانية، فلو مسحتها هيتوه. بعد [[git merge feature/login]] على main:
+
+~~~text الناتج
+Deleted branch feature/login (was 29e0271).
+~~~
+
+و [[-D]] الكابيتال بيمسح غصب من غير ما يسأل، فاستخدمه بس لو متأكد إنك مش عايز الشغل ده.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[git branch]] | يعرض، و [[*]] انت فين |
+| [[git switch -c NAME]] | يعمل branch من مكانك ويروح لها |
+| [[git switch NAME]] | يروح لـ branch موجودة ويغيّر الملفات لشكلها |
+| [[git branch -a]] | ومعاهم اللي على الـ remote |
+| [[git branch -d NAME]] | يمسح branch اتدمجت (و [[-D]] غصب) |
+
+في الشروحات القديمة: [[git checkout -b NAME]] = [[git switch -c NAME]].`,
+          lines: [
+            "اعرض الـ branches، واللي عليها [[*]] انت فيها.",
+            "اعمل branch جديدة ([[-c]] create) وروح لها.",
+            "ارجع لـ main.",
+            "اعرض كل الـ branches حتى اللي على GitHub ([[-a]] all).",
+            "امسح branch خلصت ([[-d]] delete)."
+          ],
+          sol: R`[[git switch -c feature/login]] بيطبع [[Switched to a new branch 'feature/login']]. بعد الـ commit والرجوع بـ [[git switch main]]، [[ls]] مش هيوري الملف الجديد، و [[git branch]] بيوري الاتنين والنجمة جنب [[* main]].
+
+الملف مااتمسحش: هو موجود في commit على الـ branch التاني بس. ارجع لها وهتلاقيه.
+
+الغلط الشائع: تعدّل من غير commit وتعمل switch، فالتعديل يمشي معاك لـ main لأنه لسه مش متسجل في أي branch. أو Git يرفض بـ [[Your local changes ... would be overwritten]]: اعمل commit أو stash الأول.`,
+          solCode: R`git switch -c feature/login
+echo login > login.js && git add login.js && git commit -m "add login"
+git switch main
+ls
+git branch`
+        },
+        {
+          cmd: "git merge",
+          title: "ادمج الـ branch",
+          desc: R`الـ merge بياخد الـ commits اللي في branch ويدخّلها في branch تانية. القاعدة: تقف على الـ branch اللي هتستقبل (غالبًا main) بـ [[git switch main]]، وبعدين [[git merge feature/login]] يعني «هات اللي في feature/login هنا».
+
+لو main متحركتش من ساعة ما عملت الـ branch، Git بيحرّك main لقدام بس، ودي اسمها fast-forward ومش بتعمل commit جديد. لو main اتغيرت هي كمان، Git بيعمل merge commit بيجمع الاتنين. ولو الاتنين عدّلوا نفس السطر بشكل مختلف، بيوقف بـ conflict (الدرس الجاي). و [[git log --oneline --graph]] بيرسم التاريخ بخطوط، فتشوف الدمج حصل إزاي.
+
+بعد الدمج الـ branch القديمة ملهاش لازمة: [[git branch -d feature/login]]. وفي الفرق اللي بتشتغل على GitHub، الدمج غالبًا بيحصل من Pull Request مش من الترمنال، بس اللي بيحصل جوه هو هو.`,
+          example: R`git switch main
+git merge feature/login
+git log --oneline --graph`,
+          try: "ادمج الـ branch اللي عملتها في main.",
+          deep: {
+            why: "خلّصت الميزة في الـ branch بتاعتها، ودلوقتي عايزها في main.",
+            how: R`بتقف على الـ branch اللي هتستقبل التعديلات (غالبًا main)، وبتقول [[git merge feature/login]].
+
+وفيه حالتين:
+
+لو main متغيرتش من ساعة ما عملت الـ branch، Git مش محتاج يعمل حاجة غير إنه يحرّك main لقدام تشاور على آخر commit في الـ feature. دي اسمها fast-forward، ومش بتعمل commit جديد.
+
+لو main اتغيرت هي كمان (حد عمل فيها commits)، Git بيعمل commit جديد اسمه merge commit، ليه «أبّين»: آخر commit في main، وآخر commit في الـ feature، وبيجمع التعديلات من الاتنين.
+
+ولو التعديلات في أماكن مختلفة من الملفات، Git بيجمعهم لوحده. لو الاتنين عدّلوا نفس السطور، Git مش هيعرف يختار، وده الـ conflict (الأمر اللي بعده).`,
+            when: "كل ما تخلّص ميزة. وعلى GitHub غالبًا بتعمل ده من Pull Request بدل الترمنال، بس الفكرة هي هي.",
+            mistakes: "إنك تعمل merge وانت واقف على الـ branch الغلط، فتدمج main جوه الـ feature بدل العكس. اتأكد بـ [[git status]] انت فين قبل الـ merge."
+          },
+          teach: R`## الأول: merge بيجيب شغل branch جوه branch تانية
+
+القاعدة: تقف على الـ branch اللي **هتستقبل**، وتكتب اسم اللي **هتجيب منها**. والنتيجة واحدة من اتنين حسب main اتحركت ولا لأ. الناتج تحت من repo تجربة على ويندوز (Git 2.56)، ونفسه في أي ترمنال وعلى لينكس.
+
+---
+
+## ١. [[git switch main]]
+
+تقف على main، لأنها اللي هتستقبل. لو نسيت الخطوة دي، هتدمج في المكان الغلط (تحت).
+
+## ٢. [[git merge feature/login]]
+
+«هات الـ commits اللي في feature/login ومش في main».
+
+### الحالة الأولى: main متحركتش (fast-forward)
+
+عملت feature/login من main، وعملت فيها commit، و main فضلت زي ما هي:
+
+~~~text الناتج
+Updating c7934ee..1cd77e1
+Fast-forward
+ login.js | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 login.js
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Updating c7934ee..1cd77e1]] | main كانت على [[c7934ee]] وهتبقى على [[1cd77e1]] |
+| [[Fast-forward]] | مفيش دمج حقيقي: main اتنقلت لقدام بس |
+| الباقي | الملفات اللي اتغيرت |
+
+مفيش commit جديد اتعمل. main بقت بتشاور على نفس آخر commit في الـ feature.
+
+### الحالة التانية: الاتنين اتحركوا (merge commit)
+
+عملت feature/cart وفيها [[add cart]]، وفي نفس الوقت main خدت [[add readme]]:
+
+~~~text git merge feature/cart --no-edit
+Merge made by the 'ort' strategy.
+ cart.js | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 cart.js
+~~~
+
+[[ort]] اسم الطريقة اللي Git بيدمج بيها (الافتراضية في Git الحديث)، مش حاجة تختارها. وهنا Git عمل commit جديد اسمه merge commit. و [[--no-edit]] معناها «خد رسالة الدمج الجاهزة». من غيره Git بيفتح المحرر برسالة [[Merge branch 'feature/cart']]: احفظ واقفل.
+
+---
+
+## ٣. [[git log --oneline --graph]]
+
+~~~text بعد الحالة الأولى
+* 1cd77e1 add login
+* c7934ee init
+~~~
+
+خط مستقيم، كأن الشغل اتعمل على main من الأول.
+
+~~~text بعد الحالة التانية
+*   4873318 Merge branch 'feature/cart'
+|\  
+| * 175145c add cart
+* | 9ebfe23 add readme
+|/  
+* 1cd77e1 add login
+* c7934ee init
+~~~
+
+من تحت لفوق: الخط اتفرّع بعد [[1cd77e1]] ([[|/]])، وكل فرع فيه commit، وبعدين اتقابلوا في [[4873318]] ([[|\]]). الـ merge commit ليه أبّين بدل واحد:
+
+~~~text git log -1 --format='%H%n%P'
+48733181f9017d0f4385d8b6311166b18e6e5269
+9ebfe236ccc71fbc0747398f41393e8978deaa95 175145c3ad147b174eb8fca0dc2e9eac8a14dff0
+~~~
+
+[[%H]] الـ hash، و [[%n]] سطر جديد، و [[%P]] الأبهات (parents): آخر commit في main وآخر commit في feature/cart.
+
+---
+
+## ٤. الغلطة المشهورة: الـ branch الغلط
+
+لو انت واقف على feature/cart وكتبت [[git merge feature/cart]]:
+
+~~~text الناتج
+Already up to date.
+~~~
+
+دمجت الـ branch في نفسها. ولو كتبت [[git merge main]] وانت عليها، Git هيدخل main **جوه** الـ feature (العكس). عشان كده [[git status]] أو [[git branch]] قبل أي merge.
+
+---
+
+## الخلاصة
+
+| | fast-forward | merge commit |
+|---|---|---|
+| إمتى | main متحركتش من ساعة التفرّع | الاتنين فيهم commits جديدة |
+| commit جديد؟ | لأ | آه، بأبّين |
+| الـ graph | خط مستقيم | فرعين بيتقابلوا |
+
+وبعد الدمج: [[git branch -d feature/login]]، لأنها خلاص جوه main.`,
+          lines: [
+            "روح لـ main الأول، ده المكان اللي هتدمج فيه.",
+            "هات تعديلات feature/login وادمجها هنا.",
+            "اعرض التاريخ مرسوم وشوف الدمج."
+          ],
+          sol: R`لو main متحركش من ساعة ما عملت الـ branch، هيطبع [[Updating b5f32ec..6de874a]] و [[Fast-forward]] وأسماء الملفات. ده معناه إن Git نقل main لقدام بس من غير commit دمج، و [[git log --oneline --graph]] هيبان خط مستقيم.
+
+لو main كان عليه commits جديدة، هيعمل commit دمج ويطبع [[Merge made by the 'ort' strategy.]]، والـ graph هيبان فيه فرعين بيتقابلوا.
+
+الغلط الشائع: تعمل [[git merge feature/login]] وانت واقف على الـ feature نفسها، فيقول [[Already up to date.]]. لازم تقف على الفرع اللي عايز تدمج فيه (main) الأول.`
+        },
+        {
+          cmd: "الـ conflicts",
+          title: "لما اتنين يعدّلوا نفس السطر",
+          desc: "Git بيوقف ويحط الجزئين في الملف بين علامات [[<<<<<<<]] و [[=======]] و [[>>>>>>>]]. بتفتح الملف، تسيب الصح، تمسح العلامات، وبعدين add و commit. و [[merge --abort]] بيرجعك لقبل الـ merge لو اتلخبطت.",
+          example: R`git merge feature/header
 git status
-printf 'title = "Shop"\ncolor = "red"\n' > app.txt
-git add app.txt
-GIT_EDITOR=true git rebase --continue
-git log --oneline`
-        },
-        {
-          cmd: "ours و theirs في rebase",
-          title: "ليه ours بقت main وقت الـ rebase",
-          desc: R`في merge: [[--ours]] نسختك (الـ branch اللي انت واقف عليها)، و [[--theirs]] الـ branch اللي بتدمجها.
-
-في rebase بيتقلبوا: [[--ours]] بقت main (أو اللي بتعمل rebase عليه)، و [[--theirs]] بقت الـ commit بتاعك. ونفس الكلام في علامات الملف: الجزء تحت [[<<<<<<< HEAD]] هو main.`,
-          example: R`git rebase main
-git diff --name-only --diff-filter=U
-git checkout --ours package-lock.json
-git checkout --theirs src/cart.js
-git add package-lock.json src/cart.js
-git rebase --continue
-# وفي merge العادي العكس:
-git merge main
-git checkout --ours src/cart.js`,
-          try: R`اعمل conflict في rebase، وجرّب [[git checkout --ours]] واعرض الملف، وبعدين [[--theirs]] واعرضه. قول لنفسك قبل ما تشغّل كل واحد: هيطلّع نسخة مين؟`,
-          flag: "danger",
-          deep: {
-            why: "ده من أكتر الحاجات اللي بتخلي حد «يختار نسختي» في rebase، فيطلع شايل تعديلاته هو وسايب نسخة main. ومحدش بياخد باله غير لما الميزة تختفي بعد الدمج.",
-            how: R`القاعدة ثابتة في الاتنين: ours هي HEAD، يعني المكان اللي انت واقف عليه، و theirs هي اللي بيتطبّق عليه.
-
-في [[git merge main]] وانت على feature: HEAD هو feature، وبتجيب main عليه. فـ ours هي feature (بتاعتك) و theirs هي main.
-
-في [[git rebase main]]: Git بيقف على main الأول (HEAD بقى main)، ويطبّق commits بتاعتك عليه واحد واحد، كأنه بيعمل cherry-pick لكل واحد. فـ ours هي main (واللي اتطبّق عليه لحد دلوقتي)، و theirs هي الـ commit بتاعك.
-
-فعلامة [[<<<<<<< HEAD]] في rebase فوقها كود main، و [[>>>>>>> a1b2c3d (header red)]] تحتها كود الـ commit بتاعك باسمه. ونفس الكلام لأزرار VS Code: «Current» في rebase هو main، و «Incoming» هو بتاعك.
-
-[[git diff --name-only --diff-filter=U]] بيطبع أسماء الملفات اللي لسه فيها تعارض بس ([[U]] من unmerged)، مفيد لو كتير. و [[checkout --ours/--theirs]] بيكتب نسخة كاملة للملف مكان التعارض، مفيد لملفات زي [[package-lock.json]] اللي ملهاش معنى تصلّحها سطر سطر. الأحسن فيها: خد نسخة main، وبعدين [[npm install]] يضيف اللي ناقص من الـ package.json بتاعك.`,
-            when: "أي conflict في rebase هتحلّه بنسخة كاملة، أو بأزرار المحرر. و [[-X ours]] أو [[-X theirs]] مع merge أو rebase نفسه بيتقلبوا بنفس القاعدة.",
-            mistakes: R`تعمل [[git checkout --ours]] في rebase وانت فاكرها نسختك، فتمسح شغلك من الـ commit ده. اعرض الملف بعد الأمر قبل الـ add دايمًا. و [[--theirs]] على package-lock.json بتاعك، فتضيع أي dependency حد ضافها في main. وفي الانترفيو: «في rebase، ours بتشاور على إيه؟» على الـ upstream (main)، لأن الـ rebase بيبدأ منها ويطبّق commits بتاعتك عليها.`
-          },
-          lines: [
-            "ابدأ الـ rebase، ويوقف عند تعارض.",
-            "اعرض الملفات اللي لسه فيها تعارض بس.",
-            "في rebase: [[--ours]] نسخة main، مناسبة لملف lock تعيد توليده.",
-            "و [[--theirs]] نسخة الـ commit بتاعك.",
-            "علّم الملفين إنهم اتحلّوا.",
-            "كمّل الـ rebase.",
-            "في merge وانت على feature:",
-            "هنا [[--ours]] نسختك انت (feature)."
-          ],
-          sol: R`وقت الـ rebase، الملف فيه:
-
-[[<<<<<<< HEAD]] وتحتها [[color = "green"]] (main)، و [[=======]]، و [[color = "red"]] وبعدها [[>>>>>>> a1b2c3d (header red)]] (الـ commit بتاعك).
-
-[[git checkout --ours app.txt]] وبعدين [[cat app.txt]]: [[color = "green"]]، يعني main. و [[--theirs]]: [[color = "red"]]، يعني تعديلك.
-
-لو كنت متوقع العكس، ده بالظبط الفخ اللي الدرس بيتكلم عنه. وفي merge من نفس الحالة (وانت على feature و [[git merge main]])، [[--ours]] بيطلّع red.`
-        },
-        {
-          cmd: "git pull --rebase",
-          title: "هات شغل الفريق من غير merge commits",
-          desc: R`الـ push اترفض لأن حد رفع قبلك. [[git pull]] العادي بيعمل merge commit «Merge branch main of github.com/...» كل مرة، والتاريخ يتملي بيهم. [[git pull --rebase]] بيحط commits بتاعتك فوق اللي نزل، والتاريخ يفضل خط واحد.
-
-[[pull.rebase true]] بيخليه الافتراضي. والدرس الأول في التاب ظبط [[pull.rebase false]] (merge)، والاتنين صح: اختار واحد، والفريق كله يمشي عليه.`,
-          example: R`git push
-# ! [rejected]  main -> main (fetch first)
-git pull --rebase
-git push
-git config --global pull.rebase true
-git config --global rebase.autoStash true
-git pull`,
-          try: R`اعمل clone تاني لـ repo التجربة في فولدر تاني. اعمل commit في كل واحد، وارفع من الأول، وبعدين [[git pull --rebase]] في التاني وارفع. قارن [[git log --graph --oneline]] بنفس التجربة مع [[pull]] العادي.`,
-          deep: {
-            why: "انت وزميلك على نفس الـ branch، وكل واحد عمل commit. العادي إنك تعمل pull فيعمل merge commit مالوش أي معنى غير «اتنين اشتغلوا في نفس الوقت». بعد شهر التاريخ نصه merge commits، و [[git log]] و [[bisect]] بيبقوا أصعب.",
-            how: R`[[git pull]] = [[git fetch]] وبعده حاجة تجمع شغلك مع اللي نزل. العادي merge. و [[--rebase]] بيخليها [[git rebase origin/main]]: يشيل commits بتاعتك اللي لسه مترفعتش، ويحط اللي نزل، ويعيد تطبيق بتوعك فوقه.
-
-ده آمن رغم إن rebase «بيعيد كتابة التاريخ»، لأنه بيعيد كتابة commits لسه مترفعتش، يعني محدش عنده نسخة منها.
-
-ولو فيه conflict، هو rebase عادي: تصلّح و [[git add]] و [[git rebase --continue]]، أو [[--abort]].
-
-[[rebase.autoStash true]]: من غيره، pull بـ rebase بيرفض لو عندك تعديلات مش محفوظة ([[cannot pull with rebase: You have unstaged changes]]). معاه بيعمل stash قبل وبيرجّعه بعد لوحده ([[Applied autostash]]).
-
-Git من 2.27 بيطبع تحذير، ومن 2.33 تقريبًا بيوقف بـ «divergent branches» لو مظبطش pull.rebase ولا pull.ff والفرعين اتفرّعوا. عشان كده لازم تختار: [[false]] يدمج، و [[true]] يعمل rebase، و [[pull.ff only]] يرفض أي حاجة غير fast-forward ويسيبك تختار كل مرة.`,
-            when: "على أي branch بيشتغل عليها أكتر من حد، والـ commits بتاعتك لسه مترفعتش. كتير من الفرق بتظبط pull.rebase true على الكل.",
-            mistakes: R`تعمل [[git pull --rebase]] على branch فيها merge commit عملته بإيدك ومترفعش: rebase بيفرده (بيشيل الـ merge commit). لو محتاجه: [[--rebase=merges]]. والفريق نصه merge ونصه rebase، فالتاريخ خليط. و [[git push --force]] بدل pull لما الـ push يترفض، ودي بتمسح شغل زميلك.`
-          },
-          lines: [
-            "ارفع، وهيترفض لأن GitHub عليه commits مش عندك.",
-            "نزّل اللي فاتك، وحط commits بتاعتك فوقه بدل merge commit.",
-            "ارفع دلوقتي، وهيقبل.",
-            "خلي pull يعمل rebase دايمًا من غير ما تكتب [[--rebase]].",
-            "ولو عندك تعديلات مش محفوظة، اعمل لها stash قبل وارجّعها بعد لوحدك.",
-            "من هنا ورايح: pull بقى rebase."
-          ],
-          sol: R`مع [[pull]] العادي (merge)، [[git log --graph --oneline]] بيرسم فرع ويرجع يتجمّع، وفوقهم [[Merge branch 'main' of ...]].
-
-مع [[git pull --rebase]]: [[Successfully rebased and updated refs/heads/main]]، والـ graph خط واحد: commit زميلك، وفوقه commit بتاعك برقم جديد. و [[git push]] بعدها بيعدّي من غير force، لأن الـ branch بقت قدام GitHub مش متفرّعة عنه.
-
-ولو عندك ملف متعدّل ومش محفوظ ومفيش autoStash: [[error: cannot pull with rebase: You have unstaged changes.]]. مع [[rebase.autoStash true]] بيطبع [[Applied autostash.]] والتعديل بيفضل زي ما هو.`,
-          solCode: R`mkdir -p ~/lab/pr && cd ~/lab/pr
-git init --bare -b main origin.git
-git clone origin.git a && git clone origin.git b
-cd a && echo 1 > x && git add x && git commit -m one && git push origin main && cd ..
-cd b && git pull && echo y > y && git add y && git commit -m "b: add y" && cd ..
-cd a && echo 2 >> x && git commit -am "a: two" && git push && cd ..
-cd b
-git push
-git pull --rebase
-git log --graph --oneline
-git push`
-        },
-        {
-          cmd: "تحديث PR قديم",
-          title: "الـ PR بقاله أسبوعين و main اتقدمت",
-          desc: R`GitHub بيقولك «This branch is out-of-date» أو «has conflicts». عندك طريقتين:
-
-[[git merge origin/main]] جوه الـ branch: آمن، مفيش force push، والمراجع مش بيتلخبط. بس بيضيف merge commit.
-
-[[git rebase origin/main]]: تاريخ نضيف، بس الـ commits بتتغير أرقامها فلازم [[--force-with-lease]]، وأي حد نزّل الـ branch دي هيتلخبط. لو الـ PR هيتعمله squash في الآخر، merge كفاية.`,
-          example: R`git fetch origin
-# الطريقة ١: merge (آمنة، من غير force)
-git switch feature/login
-git merge origin/main
-git push
-# الطريقة ٢: rebase (تاريخ نضيف، وبعده force)
-git rebase origin/main
-git push --force-with-lease`,
-          try: "اعمل PR على repo التجربة، وبعدين اعمل commit على main يلمس نفس الملف، وحدّث الـ PR مرة بـ merge. وبعدين افتح PR تاني وحدّثه بـ rebase، وقارن صفحة الـ commits في الاتنين.",
-          flag: "danger",
-          deep: {
-            why: "الـ PR مش هيتدمج وهو out-of-date أو فيه conflicts (لو الـ repo عامل قاعدة «Require branches to be up to date»). و الـ CI لازم يتشغّل على الكود مع آخر main، مش مع main من أسبوعين، عشان تتأكد إن الاتنين شغالين مع بعض.",
-            how: R`[[git fetch origin]] الأول، والمقارنة بـ [[origin/main]] مش بـ main بتاعك (اللي ممكن يكون قديم). كده مش محتاج تروح main وتعمل pull وترجع.
-
-merge: بيعمل commit واحد فيه تعديلات main، والـ commits بتاعتك زي ما هي بنفس أرقامها. تعليقات المراجعة على الـ commits بتفضل في مكانها، و push عادي. ولو الـ PR هيتعمله squash merge، الـ merge commit ده هيختفي في الآخر أصلًا.
-
-rebase: كل commit بتاعك بيتعاد فوق آخر main، فالتاريخ خط مستقيم. بس GitHub عنده النسخة القديمة، و push عادي هيترفض. [[--force-with-lease]] بيرفع غصب بشرط إن origin لسه زي آخر مرة شفته، فلو زميلك رفع حاجة على الـ branch في النص، هيرفض بدل ما يمسحها.
-
-وفي GitHub زرار «Update branch» على صفحة الـ PR بيعمل الـ merge ده من الموقع، وبعض الـ repos بتظهر معاه اختيار rebase. بعدها لازم [[git pull]] على جهازك قبل ما تكمّل.
-
-قاعدة عملية: الـ branch بتاعتك لوحدك ومحدش راجعها لسه: rebase براحتك. حد تاني شغال عليها أو المراجعة شغالة: merge.`,
-            when: "كل ما GitHub يقول out-of-date أو conflicts، وقبل ما تطلب مراجعة تانية. وكل ما تحدّث بدري، الـ conflicts تبقى أصغر.",
-            mistakes: R`[[git rebase main]] بدل [[origin/main]] وانت عمرك ما عملت pull على main، فتعمل rebase على نسخة قديمة وتستغرب إن GitHub لسه بيقول out-of-date. و [[--force]] بدل [[--force-with-lease]]. و rebase على branch زميلك نزّلها، فيعمل pull ويلاقي نفس الـ commits مرتين بأرقام مختلفة. وفي الانترفيو: «merge ولا rebase؟» الإجابة الكويسة مش واحد منهم، هي القاعدة: rebase للي محدش شافه، و merge لأي حاجة متشاركة، ووضّح إن التمن في rebase هو force push.`
-          },
-          lines: [
-            "نزّل آخر حاجة من GitHub من غير ما تلمس ملفاتك.",
-            "روح للـ branch بتاعة الـ PR.",
-            "ادمج آخر main اللي على GitHub جواها.",
-            "ارفع عادي، والـ PR يتحدّث.",
-            "أو بدل الـ merge: حط commits بتاعتك فوق آخر main.",
-            "ارفع غصب، بس لو محدش رفع حاجة على الـ branch في النص."
-          ],
-          sol: R`بعد الـ merge: صفحة الـ PR بتعرض commit جديد اسمه [[Merge remote-tracking branch 'origin/main' into feature/login]]، والـ commits القديمة بنفس أرقامها، وتعليقات المراجعة في مكانها، والتحذير out-of-date اختفى.
-
-بعد الـ rebase: [[git push]] العادي بيترفض بـ [[! [rejected] ... (non-fast-forward)]]، و [[--force-with-lease]] بيعدّي. صفحة الـ PR بتقول «force-pushed the feature/login branch from a1b2c3d to e4f5a6b»، والـ commits بأرقام جديدة، ومفيش merge commit.
-
-لو [[--force-with-lease]] رفض بـ [[stale info]]: حد رفع على الـ branch بعد آخر fetch. اعمل [[git fetch]] وبص على اللي نزل قبل ما تقرر.`
-        },
-        {
-          cmd: "git rerere",
-          title: "حل الـ conflict مرة واحدة بس",
-          desc: R`rerere يعني reuse recorded resolution. لما تفعّله، Git بيسجّل كل conflict وحليته. ولو نفس الـ conflict رجع تاني (rebase بعد merge، أو rebase على main كل يوم لـ branch طويلة)، بيطبّق نفس الحل لوحده.
-
-[[rerere.autoUpdate true]] بيعمل add للملف كمان، فانت بتراجع بس وتعمل [[--continue]].`,
-          example: R`git config --global rerere.enabled true
-git config --global rerere.autoUpdate true
-git merge main
-git add app.txt
+code index.html
+git add index.html
 git commit
-git reset --hard HEAD~1
-git rebase main
-git diff --staged
-git rebase --continue
-git rerere forget app.txt`,
-          try: "فعّل rerere، واعمل conflict وحلّه في merge، وبعدين الغي الـ merge واعمل rebase على نفس الحاجة، وشوف Git حلّه لوحده.",
+# أو قبل الـ commit، لو اتلخبطت، الغي الدمج كله:
+git merge --abort`,
+          try: "اعمل conflict بإيدك: عدّل نفس السطر في branchين مختلفين وادمجهم.",
           deep: {
-            why: R`branch طويلة بتعمل عليها rebase على main كل يومين، ونفس الـ conflict بيرجع كل مرة لأن كل rebase بيعيد تطبيق نفس الـ commits. أو جرّبت merge عشان تشوف الـ conflicts، وقررت تعمل rebase بدله، فتحل كل حاجة من الأول.`,
-            how: R`لما conflict يحصل و rerere مفعّل، Git بيحفظ شكل التعارض (preimage) في [[.git/rr-cache]]، ويطبع [[Recorded preimage]]. ولما تحلّه وتعمل commit، بيحفظ الحل ويطبع [[Recorded resolution]].
+            why: "لما اتنين (أو انت في branchين) يعدّلوا نفس السطر بطريقتين مختلفتين، Git مش هيقدر يعرف أنهي الصح. فبيوقف ويسيبلك القرار.",
+            how: R`Git مبيبوّظش حاجة ولا بيضيّع شغل. بيوقف الـ merge في النص، ويحط الجزئين الاتنين جوه الملف، بين علامات:
 
-المرة الجاية اللي نفس التعارض بالظبط يظهر، بيطبع [[Resolved 'app.txt' using previous resolution]] ويكتب الحل في الملف. من غير autoUpdate الملف لسه unmerged في status لحد ما تعمل add. ومع autoUpdate بيطبع [[Staged 'app.txt' using previous resolution]].
+[[<<<<<<< HEAD]] وبعدها نسختك (الـ branch اللي انت عليها). وبعدين [[=======]] كفاصل. وبعدها النسخة التانية، وفي الآخر [[>>>>>>> feature/header]].
 
-الـ rebase أو الـ merge لسه بيوقف، مش بيكمّل لوحده. دي فرصتك تراجع بـ [[git diff --staged]] إن الحل القديم لسه صح.
+دورك: تفتح الملف، وتقرر: تسيب نسختك، ولا التانية، ولا تجمع الاتنين بطريقة جديدة. وتمسح العلامات التلاتة كلها. VS Code بيسهّل ده جدًا، وبيحط زراير فوق كل conflict: Accept Current، أو Accept Incoming، أو Accept Both.
 
-ولو سجّلت حل غلط، [[git rerere forget file]] وانت في نص الـ conflict بيمسحه، وترجع تحل من جديد. والتسجيلات على جهازك بس، وبتتمسح لوحدها بعد فترة.`,
-            when: "مفيش سبب ميبقاش مفعّل على جهازك. بيفرق جدًا في branches طويلة، و «اختبر merge وارجع».",
-            mistakes: R`تعتمد عليه من غير ما تراجع: التعارض ممكن يبقى نفس الشكل، بس الكود حواليه اتغير والحل القديم مبقاش صح. و [[--continue]] على طول بعد «Staged using previous resolution» من غير تست. وتفتكره بيحل conflicts جديدة: هو بيكرر حل انت عملته قبل كده بس.`
+بعد ما تخلص كل الملفات، [[git add]] عشان تقول لـ Git «صلّحته»، وبعدين [[git commit]] يكمّل الـ merge.
+
+ولو اتلخبطت ومش عارف تعمل إيه، [[git merge --abort]] بيرجّعك لقبل الـ merge بالظبط، كأن مفيش حاجة حصلت.`,
+            when: "بيحصل كتير لما تشتغل مع فريق، أو لما branch تطوّل من غير ما تتدمج. وعشان تقلله: اعمل merge بدري وكتير، ومتسيبش branch أسابيع.",
+            mistakes: R`إنك تنسى تمسح علامات [[<<<<<<<]] وتعمل commit، فالكود يبوظ. دوّر عليهم قبل الـ commit: [[grep -rn "<<<<<<<" .]]. والذعر: الـ conflict عادي جدًا، و [[--abort]] دايمًا موجود.`
           },
+          teach: R`## الأول: conflict يعني Git مش عارف يختار
+
+لو الـ branchين عدّلوا **نفس السطر** بشكلين مختلفين، Git مبيخمّنش. بيوقف الدمج في النص، ويكتب النسختين جوه الملف، ويستناك. محدش خسر حاجة. هنعمل conflict بإيدينا بالـ solCode، والناتج كله من ويندوز (Git 2.56)، ونفسه على لينكس.
+
+---
+
+## ١. نجهّز الـ conflict
+
+~~~bash
+echo '<h1>Shop</h1>' > index.html && git add . && git commit -m idx
+git switch -c feature/header
+echo '<h1>Shop Red</h1>' > index.html && git commit -am red
+git switch main
+echo '<h1>Shop Green</h1>' > index.html && git commit -am green
+~~~
+
+- العلامات [[' ']] حوالين الـ HTML عشان [[<]] و [[>]] ليهم معنى في الترمنال (توجيه)، وجوه علامات التنصيص بيبقوا كلام عادي.
+- [[commit -am]]: [[-a]] اعمل add لكل ملف Git متابعه، و [[-m]] الرسالة. ينفع هنا لأن [[index.html]] متابع.
+
+دلوقتي السطر الأول في main [[Shop Green]] وفي feature/header [[Shop Red]].
+
+---
+
+## ٢. [[git merge feature/header]]
+
+~~~text الناتج
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.
+~~~
+
+[[CONFLICT (content)]] يعني التعارض في محتوى الملف. والأمر رجع exit code [[1]].
+
+## ٣. [[git status]]
+
+~~~text الناتج
+On branch main
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+	both modified:   index.html
+~~~
+
+[[Unmerged paths]] الملفات اللي فيها تعارض، و [[both modified]] يعني الـ branchين الاتنين عدّلوه. ولاحظ إن Git بيقولك الخطوتين: صلّح وبعدين commit، أو [[--abort]].
+
+---
+
+## ٤. [[code index.html]]: جوه الملف
+
+[[code]] بيفتح الملف في VS Code. وده اللي هتلاقيه (بـ [[cat index.html]]):
+
+~~~text index.html
+<<<<<<< HEAD
+<h1>Shop Green</h1>
+=======
+<h1>Shop Red</h1>
+>>>>>>> feature/header
+~~~
+
+| العلامة | معناها |
+|---|---|
+| [[<<<<<<< HEAD]] | من هنا نسختك: الـ branch اللي انت واقف عليها (main) |
+| [[=======]] | الفاصل |
+| [[>>>>>>> feature/header]] | لحد هنا النسخة اللي جاية من الـ branch التانية |
+
+مهمتك: تكتب الشكل النهائي اللي عايزه، وتمسح التلات علامات. ممكن تختار واحدة، أو تجمع، زي:
+
+~~~text index.html بعد التصليح
+<h1>Shop Red Green</h1>
+~~~
+
+في VS Code هتلاقي فوق التعارض زراير Accept Current Change (بتاعتك) و Accept Incoming Change (الجاية) و Accept Both Changes.
+
+### اتأكد إنك مسحت كل العلامات
+
+[[git diff --check]] بيدوّر على علامات منسية. جرّبته وأنا سايب [[=======]] بالغلط:
+
+~~~text الناتج
+index.html:2: leftover conflict marker
+~~~
+
+ورجع exit code [[2]]. ولما الملف نضيف مبيطبعش حاجة.
+
+---
+
+## ٥. [[git add index.html]] و [[git commit]]
+
+[[add]] هنا معناها «صلّحت الملف ده». وبعدين [[git commit]] من غير رسالة بيفتح المحرر برسالة جاهزة؛ في الـ solCode استخدمنا [[--no-edit]] عشان ياخدها على طول:
+
+~~~text git commit --no-edit
+[main 923cac2] Merge branch 'feature/header'
+~~~
+
+~~~text git log --oneline --graph
+*   923cac2 Merge branch 'feature/header'
+|\  
+| * c3c2eb1 red
+* | 8030f3b green
+|/  
+* 5b5c3d0 idx
+~~~
+
+---
+
+## ٦. [[git merge --abort]]: ارجع كأن مفيش حاجة حصلت
+
+لو اتلخبطت، قبل الـ commit:
+
+~~~text git merge --abort ثم cat index.html
+<h1>Shop Green</h1>
+~~~
+
+الملف رجع نسخة main، و [[git status -s]] فاضي. وتقدر تعيد المحاولة وقت ما تحب.
+
+---
+
+## الخلاصة
+
+1. [[git merge X]] يقول CONFLICT.
+2. [[git status]]: مين الملفات.
+3. افتح كل ملف، اكتب الصح، وامسح [[<<<<<<<]] و [[=======]] و [[>>>>>>>]].
+4. [[git diff --check]]: مفيش علامة منسية.
+5. [[git add FILE]] لكل ملف، وبعدين [[git commit]].
+
+أو في أي لحظة قبل الـ commit: [[git merge --abort]].`,
           lines: [
-            "فعّل تسجيل الحلول.",
-            "ولما يطبّق حل قديم، يعمله add كمان.",
-            "merge يعمل conflict، و rerere يسجّل شكله.",
-            "بعد ما تحلّه: add.",
-            "commit، و rerere يسجّل الحل.",
-            "غيّرت رأيك: الغي الـ merge.",
-            "rebase على نفس الحاجة: نفس الـ conflict، و rerere يحلّه لوحده.",
-            "راجع الحل اللي اتطبّق.",
-            "كمّل.",
-            "ولو الحل المسجّل غلط: امسحه (وانت في نص الـ conflict)."
+            "جرب تدمج، و Git يوقف لو فيه تعارض.",
+            "اعرف أنهي ملفات فيها تعارض.",
+            "افتح الملف في VS Code وصلّحه.",
+            "قول لـ Git إنك صلّحته.",
+            "كمّل الدمج.",
+            "أو الغي الدمج كله وارجع زي ما كنت."
           ],
-          sol: R`في الـ merge الأول: [[Recorded preimage for 'app.txt']]، وبعد الـ commit: [[Recorded resolution for 'app.txt']].
+          sol: R`الـ merge بيطبع [[CONFLICT (content): Merge conflict in index.html]] و [[Automatic merge failed]]. و [[git status]] بيوري [[both modified: index.html]] تحت [[Unmerged paths]]. والملف فيه:
 
-في الـ rebase: [[CONFLICT (content): Merge conflict in app.txt]] زي العادي، وبعده على طول [[Staged 'app.txt' using previous resolution.]] (أو [[Resolved ...]] من غير autoUpdate). [[cat app.txt]] بيوري نفس الحل اللي كتبته في الـ merge من غير علامات، و [[git status -s]] بيطلّع [[M  app.txt]] متجهز.
+[[<<<<<<< HEAD]] وتحتها سطر main، و [[=======]]، وتحتها سطر الـ branch، و [[>>>>>>> feature/header]].
 
-لو ظهرت العلامات عادي ومفيش سطر rerere: اتأكد بـ [[git config rerere.enabled]] إنه true في نفس الـ repo، وإنك عملت commit للحل في المرة الأولى (الحل بيتسجّل مع الـ commit).`,
-          solCode: R`mkdir -p ~/lab/rr && cd ~/lab/rr && git init -b main
-git config rerere.enabled true && git config rerere.autoUpdate true
-echo 'color = "blue"' > app.txt && git add . && git commit -m init
-git switch -c feature && sed -i 's/blue/red/' app.txt && git commit -am red
-git switch main && sed -i 's/blue/green/' app.txt && git commit -am green
-git switch feature
-git merge main
-echo 'color = "teal"' > app.txt && git add app.txt && git commit -m "merge main"
-git reset --hard HEAD~1
-git rebase main
-cat app.txt && git status -s
-GIT_EDITOR=true git rebase --continue`
+الحل: اكتب السطر اللي عايزه وامسح التلات علامات، وبعدين [[git add index.html]] و [[git commit --no-edit]]، والـ graph هيوري الفرعين اتقابلوا في [[Merge branch 'feature/header']]. الغلط الشائع: تنسى علامة زي [[=======]] جوه الملف وتعمل commit، فالموقع يبوظ. [[git diff --check]] قبل الـ add بيمسك العلامات المنسية.`,
+          solCode: R`echo '<h1>Shop</h1>' > index.html && git add . && git commit -m idx
+git switch -c feature/header
+echo '<h1>Shop Red</h1>' > index.html && git commit -am red
+git switch main
+echo '<h1>Shop Green</h1>' > index.html && git commit -am green
+git merge feature/header
+cat index.html
+echo '<h1>Shop Red Green</h1>' > index.html
+git add index.html && git commit --no-edit
+git log --oneline --graph`
+        },
+        {
+          cmd: "git remote / push / pull",
+          title: "اربط بـ GitHub",
+          desc: "[[origin]] الاسم المتعارف عليه للـ remote. [[push -u]] أول مرة بتربط الـ branch بالـ remote، وبعد كده [[git push]] بس. [[fetch]] بينزّل التغييرات من غير ما يدمجها، و [[pull]] بينزّل ويدمج.",
+          example: R`git remote add origin git@github.com:USER/REPO.git
+git remote -v
+git push -u origin main
+git fetch origin
+git pull`,
+          try: "اعمل repo فاضي على GitHub وارفعله الـ repo بتاع lab.",
+          deep: {
+            why: "الـ repo على جهازك بس. عشان تحفظه في مكان آمن، أو تشتغل مع فريق، أو تنزّله على السيرفر، محتاج نسخة على GitHub، وتزامن بينهم.",
+            how: R`الـ remote اسم مختصر لعنوان repo تاني على النت، والاسم المتعارف عليه [[origin]].
+
+[[git push]] بيرفع الـ commits الجديدة اللي عندك ومش على GitHub. و [[-u origin main]] أول مرة بيربط main عندك بـ main على GitHub، فبعد كده [[git push]] بس بتكفي.
+
+[[git fetch]] بينزّل الـ commits الجديدة من GitHub، بس مش بيلمس ملفاتك ولا بيدمج. بيحطها جنب شغلك تبص عليها. و [[git pull]] بيعمل fetch وبعده merge على طول.
+
+وحاجة مهمة: Git مش هيسمحلك تعمل push لو GitHub عليه commits انت معندكش (حد تاني رفع قبلك). هيقولك «rejected». الحل: [[git pull]] الأول تجيب اللي فاتك، وبعدين push.`,
+            when: "push في آخر كل جلسة شغل على الأقل، عشان شغلك يبقى محفوظ بره جهازك. pull أول ما تبدأ تشتغل، خصوصًا مع فريق. وعلى السيرفر: pull عشان تجيب آخر نسخة من الموقع.",
+            mistakes: "إنك تحل الـ «rejected» بـ [[git push --force]]. ده بيمسح شغل الناس التانية من GitHub. اعمل pull. ونسيان إن push بيرفع الـ commits بس، مش التعديلات اللي لسه معملتلهاش commit."
+          },
+          teach: R`## الأول: الـ remote = repo تاني بتزامن معاه
+
+الـ remote عنوان repo تاني (غالبًا على GitHub) ليه اسم مختصر، والمتعارف عليه [[origin]]. عشان أجرّب كل الحالات من غير حساب GitHub، عملت repo «bare» على الجهاز يلعب دور GitHub: [[git init --bare server.git]]. الـ bare repo يعني repo من غير ملفات شغل، فيه التاريخ بس، وده بالظبط اللي GitHub شايله. وعملت clone تاني منه اسمه [[other]] يلعب دور زميلك. كل الناتج من ويندوز (Git 2.56) إلا اللي مكتوب عليه لينكس، والأوامر نفسها مع GitHub، الفرق إن الرابط هيبقى [[git@github.com:USER/REPO.git]].
+
+---
+
+## ١. [[git remote add origin URL]]
+
+| الحتة | معناها |
+|---|---|
+| [[remote add]] | سجّل remote جديد |
+| [[origin]] | الاسم اللي هتناديه بيه |
+| [[URL]] | العنوان. في التجربة [[../server.git]] |
+
+مبيطبعش حاجة، ومبيتصلش بأي حاجة لسه: بيكتب الاسم والعنوان في [[.git/config]] بس.
+
+## ٢. [[git remote -v]]
+
+[[-v]] (verbose) يوري العناوين:
+
+~~~text الناتج
+origin	../server.git (fetch)
+origin	../server.git (push)
+~~~
+
+سطرين لأن ممكن (نادرًا) يبقى عنوان الجلب غير عنوان الرفع.
+
+---
+
+## ٣. [[git push -u origin main]]
+
+| الحتة | معناها |
+|---|---|
+| [[push]] | ارفع الـ commits اللي عندي ومش هناك |
+| [[origin]] | لفين |
+| [[main]] | أنهي branch |
+| [[-u]] | [[--set-upstream]]: افتكر إن main عندي مربوطة بـ main هناك |
+
+~~~text الناتج
+To ../server.git
+ * [new branch]      main -> main
+branch 'main' set up to track 'origin/main'.
+~~~
+
+[[main -> main]] يعني main عندي بقت main هناك. والسطر الأخير هو أثر [[-u]]: من هنا ورايح [[git push]] و [[git pull]] من غير أي حاجة بعدهم بيعرفوا يروحوا فين. و [[git status]] بقى يقول:
+
+~~~text الناتج
+On branch main
+Your branch is up to date with 'origin/main'.
+~~~
+
+---
+
+## ٤. [[git fetch origin]]
+
+الزميل ([[other]]) رفع commit. [[fetch]] بيجيبه، بس **ميلمسش ملفاتك**:
+
+~~~text الناتج
+From ../server
+   e482975..68f337e  main       -> origin/main
+~~~
+
+[[origin/main]] (نسخة Git من main اللي هناك) اتحركت من [[e482975]] لـ [[68f337e]]. و main بتاعتك لسه مكانها:
+
+~~~text git status
+On branch main
+Your branch is behind 'origin/main' by 1 commit, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+~~~
+
+[[behind by 1 commit]] يعني ناقصك commit واحد، و [[can be fast-forwarded]] يعني مفيش تعارض، هتتحرك لقدام بس.
+
+## ٥. [[git pull]]
+
+[[pull]] = [[fetch]] وبعده دمج:
+
+~~~text الناتج
+Updating e482975..68f337e
+Fast-forward
+ b.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 b.txt
+~~~
+
+ولو مفيش جديد: [[Already up to date.]]
+
+---
+
+## ٦. لما الـ push يترفض
+
+الزميل رفع commit، وانت عملت commit عندك من غير pull:
+
+~~~text git push
+To ../server.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to '../server.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
+~~~
+
+[[(fetch first)]] يعني هات اللي فاتك الأول. Git رافض لأن الـ push كان هيمسح commit الزميل. الحل [[git pull]]، وهنا الاتنين اتفرّعوا فبيعمل merge commit:
+
+~~~text git pull --no-edit
+From ../server
+   68f337e..ec00f00  main       -> origin/main
+Merge made by the 'ort' strategy.
+ c.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 c.txt
+~~~
+
+~~~text git push
+To ../server.git
+   ec00f00..52f1bae  main -> main
+~~~
+
+(من غير [[--no-edit]] Git بيفتح المحرر لرسالة الدمج.) ده شغال لأن [[pull.rebase false]] متظبط (Git for Windows بيحطه لوحده). على أوبونتو من غير الإعداد ده، نفس الموقف بيوقف:
+
+~~~text الناتج على لينكس
+hint: You have divergent branches and need to specify how to reconcile them.
+...
+fatal: Need to specify how to reconcile divergent branches.
+~~~
+
+الحل في درس git config: [[git config --global pull.rebase false]].
+
+---
+
+## ٧. أغلاط الـ remote
+
+~~~text git remote add origin تاني
+error: remote origin already exists.
+~~~
+
+لو عايز تغيّر العنوان: [[git remote set-url origin URL_الجديد]].
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه | بيلمس ملفاتك؟ |
+|---|---|---|
+| [[git remote add origin URL]] | يسجّل العنوان | لأ |
+| [[git push -u origin main]] | أول رفع، ويربط | لأ |
+| [[git push]] | يرفع الجديد | لأ |
+| [[git fetch]] | يجيب ويحدّث [[origin/main]] بس | لأ |
+| [[git pull]] | fetch ودمج | آه |
+
+[[rejected]] = اعمل [[git pull]] الأول، مش [[--force]].`,
+          lines: [
+            "اربط المشروع بـ repo على GitHub وسمّيه origin.",
+            "اعرض الـ remotes المربوطة ([[-v]] verbose).",
+            "ارفع main أول مرة، و [[-u]] يفتكر الربط عشان بعد كده تكتب [[git push]] بس.",
+            "نزّل التعديلات الجديدة من غير ما تدمجها.",
+            "نزّل وادمج على طول."
+          ],
+          sol: R`[[git remote -v]] بيطبع سطرين: [[origin git@github.com:USER/REPO.git (fetch)]] و [[(push)]]. وأول [[git push -u origin main]] بيطبع [[* [new branch] main -> main]] و [[branch 'main' set up to track 'origin/main']]. بعدها صفحة الـ repo على GitHub بتوري ملفاتك.
+
+و [[git status]] بعد كده بيقول [[Your branch is up to date with 'origin/main']]، و [[git pull]] بيقول [[Already up to date.]].
+
+الأغلاط الشائعة: [[Permission denied (publickey)]] يعني الـ ssh key مش متضاف (الدرس الجاي). و [[rejected ... (fetch first)]] يعني عملت الـ repo على GitHub ومعاه README، فاعمل [[git pull]] الأول وبعدين push. و [[error: remote origin already exists]] صلّحه بـ [[git remote set-url origin]].`
+        },
+        {
+          cmd: "ssh key لـ GitHub",
+          title: "من غير باسورد كل مرة",
+          desc: "بتضيف المفتاح العام في GitHub من Settings ثم SSH and GPG keys. و [[ssh -T]] بيختبر الاتصال. على السيرفر اعمل مفتاح مختلف، أو استخدم deploy key خاص بالـ repo ده بس.",
+          example: R`ssh-keygen -t ed25519 -C "you@example.com"
+cat ~/.ssh/id_ed25519.pub
+ssh -T git@github.com`,
+          try: "ضيف المفتاح لحسابك، ولازم ssh -T يرد عليك باسم الحساب.",
+          deep: {
+            why: "عشان GitHub يعرف إنك انت من غير ما تكتب باسورد أو توكن كل مرة تعمل push.",
+            how: R`نفس فكرة مفاتيح SSH للسيرفر بالظبط (شرحناها في bash المستوى ٢): مفتاح خاص على جهازك، ومفتاح عام بتديه لـ GitHub.
+
+بتعمل الزوج بـ [[ssh-keygen]]، وبتنسخ المفتاح العام (الملف اللي آخره [[.pub]]) وتحطه في GitHub من Settings ثم SSH and GPG keys. من ساعتها، أي عملية بعنوان [[git@github.com:]] بتستخدم المفتاح.
+
+و [[ssh -T git@github.com]] بيختبر: لو كله تمام، GitHub هيرد برسالة فيها اسم حسابك.
+
+وعلى السيرفر، بدل ما تحط مفتاحك الشخصي اللي بيفتح كل حاجاتك، الأحسن تعمل «deploy key»: مفتاح مخصوص للسيرفر ده، ومسموح له بـ repo واحد بس. لو السيرفر اتخترق، المهاجم مش هيوصل لباقي مشاريعك.`,
+            when: "مرة واحدة على كل جهاز بتشتغل عليه. وعلى كل سيرفر محتاج يعمل pull من repo خاص.",
+            mistakes: "نسخ المفتاح الخاص بدل العام وحطه في GitHub. المفتاح العام دايمًا اللي آخره [[.pub]]. واستخدام عنوان [[https://]] وتستغرب إنه لسه بيسأل على باسورد، لأن المفتاح بيشتغل مع عنوان [[git@github.com:]] بس."
+          },
+          teach: R`## الأول: مفتاحين، واحد معاك وواحد مع GitHub
+
+SSH بيستخدم زوج مفاتيح: **خاص** بيفضل على جهازك ومحدش يشوفه، و**عام** بتديه لأي حد عايز يتأكد إنك انت. GitHub بيبعتلك تحدّي، وجهازك بيرد عليه بالمفتاح الخاص، و GitHub بيتأكد من الرد بالعام. الباسورد مبيتبعتش خالص.
+
+> عملت مفتاح تجربة في فولدر مؤقت (مش في [[~/.ssh]]) على ويندوز عشان أوريك الناتج الحقيقي. على جهازك اعمله في المكان الافتراضي.
+
+---
+
+## ١. [[ssh-keygen -t ed25519 -C "you@example.com"]]
+
+| الحتة | معناها |
+|---|---|
+| [[ssh-keygen]] | برنامج عمل المفاتيح (key generator) |
+| [[-t ed25519]] | type: نوع المفتاح. ed25519 الحديث، أقصر وأأمن من rsa القديم |
+| [[-C "..."]] | comment: كلام بيتكتب في آخر المفتاح العام عشان تعرفه، غالبًا إيميلك |
+
+الأمر بيسألك سؤالين:
+
+1. **فين أحفظه؟** اضغط Enter للمكان الافتراضي: [[~/.ssh/id_ed25519]] (على ويندوز [[C:\Users\ali\.ssh\id_ed25519]]).
+2. **passphrase؟** باسورد بيحمي المفتاح الخاص لو جهازك اتسرق. ممكن تسيبه فاضي بـ Enter، بس الأحسن تحطه.
+
+والناتج (المفتاح اتعمل بـ [[-f]] لمكان التجربة و [[-N ""]] من غير passphrase عشان ميسألش):
+
+~~~text الناتج
+Generating public/private ed25519 key pair.
+Your identification has been saved in .\id_ed25519
+Your public key has been saved in .\id_ed25519.pub
+The key fingerprint is:
+SHA256:fNfcaI8S4tx0YVjZ/0v6fZRAM9xU9G+e2nOKZcB1igE you@example.com
+The key's randomart image is:
++--[ED25519 256]--+
+|          E . +=+|
+...
++----[SHA256]-----+
+~~~
+
+| الجزء | معناه |
+|---|---|
+| [[identification ... id_ed25519]] | المفتاح **الخاص**. ده ميطلعش من جهازك أبدًا |
+| [[public key ... id_ed25519.pub]] | المفتاح **العام**، [[.pub]] = public |
+| [[fingerprint]] | بصمة قصيرة للمفتاح، GitHub بيعرضها جنب كل مفتاح عندك عشان تقارن |
+| randomart | نفس البصمة كرسمة، ملهاش استخدام عملي |
+
+---
+
+## ٢. [[cat ~/.ssh/id_ed25519.pub]]
+
+[[cat]] يطبع الملف. شغال في bash، وفي PowerShell كمان لأنه اسم تاني لـ [[Get-Content]]:
+
+~~~text الناتج
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHmJ3CiJ0AtH5VTbbPeD4EeHfE5xndbuF+uzHkY9mcHM you@example.com
+~~~
+
+سطر واحد، ٣ حتت: النوع، والمفتاح نفسه، والتعليق. انسخ السطر كله وحطه في GitHub: Settings ثم SSH and GPG keys ثم New SSH key.
+
+> لو الملف اللي هتفتحه مش آخره [[.pub]] وأوله [[-----BEGIN OPENSSH PRIVATE KEY-----]]، ده الخاص. اقفله ومتلزقهوش في أي حتة.
+
+---
+
+## ٣. [[ssh -T git@github.com]]
+
+| الحتة | معناها |
+|---|---|
+| [[-T]] | متطلبش terminal، GitHub مش هيدّيك shell أصلًا |
+| [[git]] | اليوزر. كل الناس بتدخل بيوزر اسمه git، و GitHub بيعرفك من المفتاح |
+| [[github.com]] | السيرفر |
+
+أول مرة بيسألك [[Are you sure you want to continue connecting (yes/no)?]] عشان لسه مشفش السيرفر ده. اكتب [[yes]]، وبيتحفظ في [[~/.ssh/known_hosts]].
+
+جرّبته بمفتاح التجربة اللي **مش** متضاف لأي حساب:
+
+~~~text الناتج
+Warning: Permanently added 'github.com' (ED25519) to the list of known hosts.
+git@github.com: Permission denied (publickey).
+~~~
+
+والـ exit code [[255]]. ده نفس اللي هتشوفه لو نسيت تضيف المفتاح، أو حطيت مفتاح غلط. ولما المفتاح يبقى متضاف، الرد حسب docs بتوع GitHub:
+
+~~~text الناتج لما ينجح (من docs بتوع GitHub)
+Hi USER! You've successfully authenticated, but GitHub does not provide shell access.
+~~~
+
+ساعتها الـ exit code [[1]] لأن مفيش shell، وده طبيعي.
+
+---
+
+## ٤. بعدها استخدم عنوان SSH
+
+المفتاح بيشتغل مع العناوين اللي شكلها [[git@github.com:USER/REPO.git]] بس. لو الـ repo عندك متربط بـ [[https://]]:
+
+~~~bash
+git remote set-url origin git@github.com:USER/REPO.git
+~~~
+
+---
+
+## الخلاصة
+
+| الملف | بيروح فين |
+|---|---|
+| [[id_ed25519]] | يفضل على جهازك بس |
+| [[id_ed25519.pub]] | GitHub (أو سيرفر) |
+| [[known_hosts]] | السيرفرات اللي وثقت فيها |
+
+[[Permission denied (publickey)]] = المفتاح مش متضاف، أو العنوان https، أو مفتاح غلط.`,
+          lines: [
+            "اعمل مفتاح جديد، و [[-C]] تعليق (إيميلك) عشان تعرفه.",
+            "اطبع المفتاح العام، انسخه وحطه في GitHub.",
+            "اختبر: GitHub المفروض يرد باسم حسابك."
+          ],
+          sol: R`بعد ما تحط محتوى [[id_ed25519.pub]] في GitHub › Settings › SSH and GPG keys، الأمر [[ssh -T git@github.com]] المفروض يرد:
+
+[[Hi USER! You've successfully authenticated, but GitHub does not provide shell access.]] بـ USER اسم حسابك. ولو أول مرة هيسألك [[Are you sure you want to continue connecting]]، اكتب yes.
+
+متقلقش من إن الـ exit code بيطلع 1، ده طبيعي لأن GitHub مش بيدّيك shell. الغلط الشائع: [[Permission denied (publickey)]] يعني حطيت المفتاح الخاص بدل الـ [[.pub]]، أو المفتاح مش متحمّل (جرّب [[ssh -vT git@github.com]] وشوف أنهي ملف بيجرّبه). ولو رد باسم حساب تاني يبقى المفتاح ده متضاف لحساب غير اللي قاصده.`
+        },
+        {
+          cmd: "gh pr",
+          title: "Pull Request من الترمنال",
+          desc: "[[gh]] أداة GitHub الرسمية (winget install GitHub.cli أو sudo apt install gh أو brew install gh). بدل ما تروح للموقع: [[pr create --fill]] يعمل PR بعنوان ووصف من الـ commits، و [[pr checkout]] ينزّل PR حد تاني تجرّبه عندك، و [[pr merge --squash]] يدمجه commit واحد ويمسح الـ branch.",
+          example: R`gh auth login
+git switch -c feature/login
+git push -u origin feature/login
+gh pr create --fill
+gh pr list
+gh pr checkout 42
+gh pr merge 42 --squash --delete-branch
+git switch main
+git pull`,
+          try: "اعمل branch وPR لنفسك على repo التجربة، وادمجه من الترمنال.",
+          deep: {
+            why: "في أي فريق، الكود مش بيدخل main مباشرة. بيدخل بـ Pull Request: حد يراجعه، والـ CI يشغّل التستات، وبعدين يتدمج.",
+            how: R`الـ PR طلب «ادمجوا الـ branch دي في main». الشغل في Git عادي (branch وcommits وpush)، والـ PR نفسه حاجة على GitHub.
+
+[[gh]] بيكلّم GitHub من الترمنال، فتعمل الدورة كلها من غير ما تسيبه. و [[pr checkout]] مفيد جدًا في المراجعة: بينزّل branch الـ PR حتى لو من fork، فتشغّله وتجرّبه بجد مش تقرا الـ diff بس.
+
+و [[--squash]] بيحط كل commits الـ PR في commit واحد على main، فالتاريخ يفضل نضيف.`,
+            when: "كل ميزة أو إصلاح في مشروع عليه أكتر من شخص، أو عليه CI.",
+            mistakes: "تنسى [[git pull]] على main بعد الدمج، فالـ branch الجاية تبدأ من نسخة قديمة. وPR ضخم فيه أسبوع شغل، ومحدش يقدر يراجعه."
+          },
+          teach: R`## الأول: نصّ الأوامر Git ونصّها gh
+
+المثال دورة PR كاملة. السطور اللي بتبدأ بـ [[git]] شغل عادي على جهازك (branch وpush)، والسطور اللي بتبدأ بـ [[gh]] بتكلّم موقع GitHub نفسه: تعمل PR، وتعرضه، وتدمجه. [[gh]] اختصار GitHub، وهو برنامج منفصل عن Git لازم تسطّبه.
+
+> سطور [[git]] اتشغّلت فعلًا على ويندوز (Git 2.56) مع repo «bare» على الجهاز بدل GitHub. سطور [[gh]] محتاجة حساب GitHub حقيقي، فاللي اتشغّل منها هو [[gh --version]] ورسالة «مش مسجّل»، والباقي من docs بتوع [[gh]] (وتقدر تشوفها بنفسك بـ [[gh pr create --help]]).
+
+~~~text gh --version
+gh version 2.97.0 (2026-07-31)
+~~~
+
+---
+
+## ١. [[gh auth login]]
+
+بيربط [[gh]] بحسابك مرة واحدة على الجهاز. بيسألك كام سؤال بالأسهم (GitHub.com ولا سيرفر شركة، HTTPS ولا SSH)، وبعدين بيفتح المتصفح تسجّل دخول. التوكن بيتحفظ في خزنة الباسوردات بتاعة النظام. من غيره، أي أمر [[gh]] بيقف كده:
+
+~~~text gh pr list من غير تسجيل دخول
+To get started with GitHub CLI, please run:  gh auth login
+Alternatively, populate the GH_TOKEN environment variable with a GitHub API authentication token.
+~~~
+
+والـ exit code [[4]]، وده رقم [[gh]] المخصوص لـ «محتاج تسجيل دخول».
+
+---
+
+## ٢. [[git switch -c feature/login]] و [[git push -u origin feature/login]]
+
+الـ PR طلب بين **branchين على GitHub**: «ادمجوا feature/login في main». فلازم الـ branch تبقى مرفوعة الأول:
+
+~~~text git push -u origin feature/login
+To .../pr-server.git
+ * [new branch]      feature/login -> feature/login
+branch 'feature/login' set up to track 'origin/feature/login'.
+~~~
+
+[[[new branch]]] يعني الـ branch اتعملت هناك لأول مرة، و [[-u]] ربطها، فبعد كده أي commit جديد تكفيه [[git push]] والـ PR بيتحدّث لوحده.
+
+---
+
+## ٣. [[gh pr create --fill]]
+
+| الحتة | معناها |
+|---|---|
+| [[pr create]] | اعمل Pull Request من الـ branch اللي انت عليها |
+| [[--fill]] | خد العنوان والوصف من الـ commits بدل ما تسألني |
+
+الـ branch الهدف (base) بتبقى الـ default branch بتاعة الـ repo، غالبًا main، ولو عايز غيرها [[-B develop]]. ولو commit واحد: عنوانه بيبقى عنوان الـ PR. ولو أكتر: اسم الـ branch عنوان، والرسايل كلها في الوصف. وفي الآخر بيطبع رابط الـ PR، زي [[https://github.com/USER/REPO/pull/1]]. وفيه [[--web]] لو عايز تكمّل في المتصفح، و [[--draft]] لـ PR لسه مش جاهز للمراجعة.
+
+## ٤. [[gh pr list]]
+
+الـ PRs المفتوحة في الـ repo: الرقم والعنوان واسم الـ branch. الرقم ده ([[42]] في المثال) هو اللي بتستخدمه في باقي الأوامر.
+
+## ٥. [[gh pr checkout 42]]
+
+بينزّل branch الـ PR رقم 42 على جهازك ويعمل لها switch، حتى لو صاحبها رافعها على fork بتاعه. كده تشغّل الكود وتجرّبه بجد قبل ما توافق، مش تقرا الـ diff بس.
+
+---
+
+## ٦. [[gh pr merge 42 --squash --delete-branch]]
+
+| الحتة | معناها |
+|---|---|
+| [[pr merge 42]] | ادمج PR رقم 42 على GitHub |
+| [[--squash]] | كل commits الـ PR تتلم في commit واحد على main |
+| [[--delete-branch]] | امسح الـ branch من GitHub ومن جهازك بعد الدمج |
+
+والبدايل: [[--merge]] (merge commit عادي، والـ commits كلها تفضل)، و [[--rebase]] (الـ commits تتحط واحدة واحدة فوق main).
+
+### الـ squash بيعمل إيه بالظبط؟
+
+عملته محليًا بـ [[git merge --squash]] عشان تشوف الشكل. الـ branch فيها commitين:
+
+~~~text git log --oneline --graph --all بعد الـ squash
+* 194908b Add login page (#1)
+| * d4ccee4 validate login form
+| * 97f6c39 add login page
+|/  
+* 72d17c8 init
+~~~
+
+main خدت commit **واحد جديد** فيه شغل الاتنين، والـ commits الأصلية فضلت في الـ branch لوحدها. عشان كده [[git branch -d]] بعدها بيرفض:
+
+~~~text git branch -d feature/login
+error: the branch 'feature/login' is not fully merged
+~~~
+
+لأن Git مش لاقي الـ commits دي نفسها في main (اللي في main commit تاني بمحتوى نفس الشغل). وده سبب [[--delete-branch]]: [[gh]] عارف إن الـ PR اندمج فبيمسحها هو.
+
+---
+
+## ٧. [[git switch main]] و [[git pull]]
+
+الدمج حصل على GitHub، فـ main على جهازك لسه قديمة. [[git pull]] بيجيب الـ commit الجديد ([[Add login page (#1)]])، وأي branch جاية تعملها من main تبدأ من آخر نسخة.
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر | فين بيحصل |
+|---|---|---|
+| مرة واحدة | [[gh auth login]] | جهازك + GitHub |
+| branch | [[git switch -c NAME]] | جهازك |
+| رفع | [[git push -u origin NAME]] | GitHub |
+| PR | [[gh pr create --fill]] | GitHub |
+| مراجعة | [[gh pr list]] و [[gh pr checkout N]] | الاتنين |
+| دمج | [[gh pr merge N --squash --delete-branch]] | GitHub |
+| تحديث | [[git switch main]] و [[git pull]] | جهازك |`,
+          lines: [
+            "سجّل دخول gh بحسابك مرة واحدة.",
+            "اعمل branch للميزة.",
+            "ارفعها لـ GitHub واربطها ([[-u]]).",
+            "اعمل Pull Request، والعنوان والوصف من الـ commits ([[--fill]]).",
+            "اعرض الـ PRs المفتوحة.",
+            "نزّل PR رقم 42 على جهازك تجرّبه.",
+            "ادمجه كـ commit واحد ([[--squash]]) وامسح الـ branch.",
+            "ارجع لـ main.",
+            "هات الدمج الجديد."
+          ],
+          sol: R`[[gh pr create --fill]] بياخد العنوان والوصف من الـ commits ويطبع رابط زي [[https://github.com/USER/REPO/pull/1]]. و [[gh pr list]] بيوريه بالرقم والعنوان واسم الـ branch.
+
+[[gh pr merge 1 --squash --delete-branch]] بيطبع حاجة زي [[✓ Squashed and merged pull request USER/REPO#1]] و [[✓ Deleted branch feature/login]]. وبعد [[git switch main]] و [[git pull]] بتلاقي commit واحد جديد على main فيه كل شغل الـ PR.
+
+الغلط الشائع: [[gh pr create]] يقول [[you must first push the current branch]]: نسيت [[git push -u]]. أو [[gh]] يقول إنك مش مسجّل: [[gh auth login]] الأول. ولو الـ merge اترفض بسبب checks أو branch protection، الرسالة بتقولك إيه الناقص.`
+        },
+        {
+          cmd: "git stash",
+          title: "شيل التعديلات على جنب",
+          desc: R`[[git stash]] بياخد التعديلات اللي لسه متعملهاش commit ويشيلها على جنب في «رف»، ويرجّع ملفاتك نضيفة زي آخر commit. ده مفيد لما تكون في نص حاجة ومحتاج تنقل branch بسرعة تصلّح حاجة عاجلة، ومش عايز تعمل commit لكود نص نص.
+
+[[push -m "..."]] بيشيل التعديلات باسم تفتكرها بيه. [[list]] بتعرض اللي على الرف، والأحدث اسمه [[stash@{0}]]. [[pop]] بيرجّع آخر حاجة اتشالت على ملفاتك ويمسحها من الرف، و [[apply]] بيرجّعها ويسيبها على الرف، لو عايز تطبّقها في أكتر من branch.
+
+خد بالك: الملفات الجديدة اللي Git مش متابعها (untracked) مش بتتشال من غير [[-u]]. والـ stash محلي على جهازك بس، مش بيترفع مع push.`,
+          example: R`git stash push -m "half-done header"
+git stash list
+git switch main
+git stash pop`,
+          try: "عدّل ملف، اعمل stash، اتأكد إن التعديل اختفى، وبعدين pop.",
+          deep: {
+            why: "انت في نص حاجة مش خلصانة، وفجأة لازم تصلّح حاجة عاجلة في branch تانية. مش عايز تعمل commit لكود نص نص، ومش عايز تضيّعه.",
+            how: R`[[git stash]] بياخد كل التعديلات اللي لسه متعملهاش commit، ويشيلها في «رف» جنب، ويرجّع ملفاتك نضيفة زي آخر commit. فتقدر تنقل branch وانت مطمّن.
+
+الرف ده عبارة عن «stack»: آخر حاجة بتحطها فوق. [[git stash list]] بيعرض اللي على الرف.
+
+[[git stash pop]] بياخد آخر حاجة اتشالت ويرجّعها على ملفاتك، ويشيلها من الرف. و [[git stash apply]] نفس الحاجة بس بيسيبها على الرف كمان، لو عايز تطبّقها على كذا branch.
+
+و [[-m]] بيدّيها اسم، مفيد لو عندك أكتر من حاجة متشالة.`,
+            when: "حاجة عاجلة وسط شغلك. عملت تعديلات على branch غلط: stash، وبعدين switch للصح، وبعدين pop.",
+            mistakes: "إنك تنسى إن عندك حاجات متشالة، وتتراكم. شوف [[git stash list]] كل فترة. والملفات الجديدة خالص (untracked) الـ stash العادي مش بياخدها، محتاج [[-u]]."
+          },
+          teach: R`## الأول: رف جنب الـ repo
+
+[[git stash]] بياخد التعديلات اللي لسه متعملهاش commit، ويشيلها على «رف» جوه [[.git]]، ويرجّع ملفاتك زي آخر commit. وبعدين ترجّعها وقت ما تحب، على نفس الـ branch أو غيرها. الناتج تحت من repo تجربة على ويندوز (Git 2.56): على branch اسمها [[feature/header]]، عدّلت [[header.html]] وعملت ملف جديد [[menu.js]]:
+
+~~~text git status -s
+ M header.html
+?? menu.js
+~~~
+
+---
+
+## ١. [[git stash push -m "half-done header"]]
+
+| الحتة | معناها |
+|---|---|
+| [[stash push]] | شيل التعديلات على الرف ([[git stash]] لوحدها نفس الحاجة) |
+| [[-m "..."]] | message: اسم تفتكرها بيه |
+
+~~~text الناتج
+Saved working directory and index state On feature/header: half-done header
+~~~
+
+[[working directory and index]] يعني شال التعديلات اللي في ملفاتك واللي في منطقة التحضير (الـ index) الاتنين. و [[On feature/header]] الـ branch اللي اتشالت منها.
+
+~~~text git status -s بعدها
+?? menu.js
+~~~
+
+[[header.html]] رجع نضيف، بس [[menu.js]] **لسه موجود**: الـ stash العادي مبياخدش الملفات الجديدة اللي Git مش متابعها (untracked). لو عايزها معاه: [[git stash push -u]] ([[-u]] = [[--include-untracked]])، وبعدها [[git status -s]] بيطلع فاضي خالص.
+
+ومن غير [[-m]]، الاسم بيبقى آلي: [[WIP on feature/header: ec96f40 init]]. [[WIP]] اختصار work in progress، وبعدها آخر commit كان موجود. بعد كام stash كده مش هتعرف مين فيهم إيه، عشان كده [[-m]].
+
+---
+
+## ٢. [[git stash list]]
+
+~~~text الناتج
+stash@{0}: On feature/header: half-done header
+~~~
+
+[[stash@{0}]] اسم الحاجة دي على الرف. الرف stack: آخر حاجة اتحطت رقمها [[0]]، واللي قبلها [[stash@{1}]]، وهكذا. وكل ما تشيل حاجة جديدة الأرقام القديمة بتزيد واحد.
+
+---
+
+## ٣. [[git switch main]]
+
+~~~text الناتج
+Switched to branch 'main'
+~~~
+
+الـ switch عدّى من غير مشاكل لأن ملفاتك نضيفة. ده الهدف من الـ stash: تتنقل وانت مطمّن.
+
+---
+
+## ٤. [[git stash pop]]
+
+[[pop]] بياخد [[stash@{0}]]، يطبّقه على ملفاتك **في المكان اللي انت فيه دلوقتي**، ويمسحه من الرف:
+
+~~~text الناتج (آخره)
+	modified:   header.html
+...
+Dropped refs/stash@{0} (ad9c1e478b75f1355e29e2182764759ab8016942)
+~~~
+
+لاحظ: إحنا عملنا pop وإحنا على **main**، فالتعديل نزل على main مش على feature/header. وده استخدام مقصود ساعات: بدأت تعدّل وانت على branch غلط؟ [[stash]]، ثم [[switch]] للصح، ثم [[pop]]. لو عايزه يرجع مكانه، اعمل switch لـ feature/header الأول وبعدين pop.
+
+[[Dropped]] يعني اتشال من الرف، والرقم الطويل hash الـ stash (هو commit مخفي جوه Git).
+
+### [[pop]] ولا [[apply]]؟
+
+| | [[git stash pop]] | [[git stash apply]] |
+|---|---|---|
+| بيطبّق التعديل | آه | آه |
+| بيمسحه من الرف | آه (لو نجح) | لأ، تمسحه بـ [[git stash drop]] |
+
+### لو الـ pop عمل conflict
+
+جرّبت: شلت تعديل على سطر، وبعدين عملت commit غيّر نفس المكان، وعملت pop:
+
+~~~text الناتج
+Auto-merging header.html
+CONFLICT (content): Merge conflict in header.html
+...
+The stash entry is kept in case you need it again.
+~~~
+
+نفس علامات الـ conflict اللي في درس «الـ conflicts»، و Git **ساب** الـ stash على الرف عشان متخسرش حاجة. صلّح الملف، وبعدين [[git stash drop]] بإيدك.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[git stash push -m "NAME"]] | شيل التعديلات (المتابعة بس) باسم |
+| [[git stash push -u]] | ومعاها الملفات الجديدة |
+| [[git stash list]] | اعرض الرف، [[stash@{0}]] الأحدث |
+| [[git stash pop]] | طبّق الأحدث هنا وامسحه |
+| [[git stash apply]] | طبّق وسيبه |
+| [[git stash drop]] | امسح الأحدث من غير ما تطبّقه |
+
+الـ stash محلي على جهازك بس، مش بيترفع مع [[push]]. فمتسيبش شغل مهم عليه أيام.`,
+          lines: [
+            "شيل التعديلات على جنب برسالة تفتكرها بيها.",
+            "اعرض كل اللي متشال.",
+            "روح branch تانية وانت مطمّن.",
+            "رجّع آخر حاجة شيلتها ([[pop]])."
+          ],
+          sol: R`[[git stash push -m "half-done header"]] بيطبع [[Saved working directory and index state On main: half-done header]]. و [[git stash list]] بيوري [[stash@{0}: On main: half-done header]]، و [[git status]] بيبقى نضيف كأنك معدّلتش حاجة.
+
+[[git stash pop]] بيرجّع التعديل ([[git status]] يوريه modified تاني) ويطبع [[Dropped refs/stash@{0}]]، يعني اتشال من القايمة.
+
+الغلط الشائع: ملف جديد (untracked) مش بيتعمله stash من غير [[-u]]، فتلاقيه لسه موجود. ولو pop عمل conflict، الـ stash مش بيتمسح؛ صلّح وبعدين [[git stash drop]].`
         }
       ]
     }
