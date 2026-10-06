@@ -1239,6 +1239,181 @@
   "date": "2026-10-06",
   "on": "win11 cmd (username masked later)"
  },
+ "docker|-f و -p": {
+  "hash": "5b93b216c9fe",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|0.0.0.0 جوه الـ container": {
+  "hash": "16ae5cdff76f",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11); docs: Vite flags"
+ },
+ "docker|Traefik labels": {
+  "hash": "51b9d694e052",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash), traefik v3.7 + whoami; docs: real Let's Encrypt"
+ },
+ "docker|bind mount": {
+  "hash": "67fd507a73e8",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11) (Git Bash + pwsh)"
+ },
+ "docker|bind mount لملف واحد": {
+  "hash": "7e5b3ac1339a",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11) + ubuntu-24.04 mount --bind"
+ },
+ "docker|certbot في compose": {
+  "hash": "0007cb3e5da5",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) (renew --dry-run); docs: real certificates"
+ },
+ "docker|compose run": {
+  "hash": "c8f5ad75ab42",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0; docs: pytest, prisma"
+ },
+ "docker|compose up / down": {
+  "hash": "5d4bffe3ae8d",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|compose watch": {
+  "hash": "2c4a6d082648",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0; docs: docker init"
+ },
+ "docker|compose.yml": {
+  "hash": "16b8947f6561",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|dev و prod": {
+  "hash": "b5e362068bda",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|docker compose ولا docker-compose": {
+  "hash": "877c0990acda",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + ubuntu-24.04"
+ },
+ "docker|env file": {
+  "hash": "970f5ced49f4",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11)"
+ },
+ "docker|exec -T": {
+  "hash": "97643636c834",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0; docs: TTY error, n8n import"
+ },
+ "docker|healthchecks جاهزة": {
+  "hash": "8224040c01ba",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|hot reload على ويندوز": {
+  "hash": "bdebaeb20cbb",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11); docs: WATCHPACK_POLLING"
+ },
+ "docker|networks": {
+  "hash": "e79e4d4ed1f6",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11)"
+ },
+ "docker|nginx-proxy": {
+  "hash": "68a5a6323d3c",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) (routing, no SSL); docs: acme-companion"
+ },
+ "docker|profiles و scale": {
+  "hash": "5696bd86c801",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|restart policies": {
+  "hash": "78337838eb5d",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash); docs: after server reboot"
+ },
+ "docker|volume external": {
+  "hash": "cb45ea049a38",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|volumes": {
+  "hash": "4ce20c72adba",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), postgres:16-alpine"
+ },
+ "docker|x- و anchors": {
+  "hash": "12d1938289d1",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|أوامر مفيدة": {
+  "hash": "8546ca5aeda3",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|الأمان": {
+  "hash": "40ff14b82b65",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash), trivy 0.75.0; docs: ufw/iptables bypass"
+ },
+ "docker|البورت متاخد": {
+  "hash": "6c10c76a1ab2",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11) + pwsh"
+ },
+ "docker|التشخيص من جوه": {
+  "hash": "c6c2ed048fd1",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|التعديل مش ظاهر": {
+  "hash": "f3370cc971eb",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|الديبلوي": {
+  "hash": "41da8702553a",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash), Compose v5.3.0, local bare git remote; docs: unfiltered prune"
+ },
+ "docker|تنضيف": {
+  "hash": "38da5a5bd2aa",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) system df; prune only with N or label filters"
+ },
+ "docker|حدود الموارد": {
+  "hash": "816fe398ec98",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|شبكة مشتركة": {
+  "hash": "74ba85f1caab",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|ليه الـ container وقع": {
+  "hash": "66f4caad9feb",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|متغيرات في compose.yml": {
+  "hash": "d0dd2bc5946f",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|نسخ وباك أب": {
+  "hash": "e9756b43f3a6",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
+ },
  "git|.gitattributes": {
   "hash": "66cc3a1d3eb9",
   "date": "2026-10-06",
@@ -2948,6 +3123,306 @@
   "hash": "a2b52e665efe",
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
+ },
+ "vps|.htaccess": {
+  "hash": "ca9a531e2090",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker, Apache 2.4.58 + mod_php"
+ },
+ "vps|.user.ini": {
+  "hash": "d4ce32a3c11d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker, Apache 2.4.58 + PHP 8.3-FPM"
+ },
+ "vps|/etc/nginx/sites-available/myapp": {
+  "hash": "d05abc001f2f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS), nginx 1.24"
+ },
+ "vps|/etc/systemd/system/myapp.service": {
+  "hash": "80e94214a16a",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (systemd 255), node 18"
+ },
+ "vps|Grafana alert rules": {
+  "hash": "b17f8cb34ce4",
+  "date": "2026-10-06",
+  "on": "PromQL on Prometheus 3.13; docs: Grafana UI"
+ },
+ "vps|NodeSource": {
+  "hash": "7d64900497d3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "vps|adduser": {
+  "hash": "3a7982ad6745",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS)"
+ },
+ "vps|apt install / remove": {
+  "hash": "741d20a2f4fa",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "vps|apt update / upgrade": {
+  "hash": "f37ea3217d87",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "vps|certbot": {
+  "hash": "2361f7f043c9",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + Pebble test CA"
+ },
+ "vps|certbot --standalone": {
+  "hash": "c9a71dab9b50",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + Pebble"
+ },
+ "vps|certbot --webroot": {
+  "hash": "b99796e11b40",
+  "date": "2026-10-06",
+  "on": "docker compose nginx + certbot + Pebble"
+ },
+ "vps|config.sample.php": {
+  "hash": "dad3a88330ff",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker git 2.43"
+ },
+ "vps|cron PHP": {
+  "hash": "ff69ed652c45",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker, Apache 2.4.58 + PHP 8.3; docs: fpm-fcgi name"
+ },
+ "vps|crontab": {
+  "hash": "32d27a3e0a97",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (systemd 255) + cron; docs: crontab.guru wording"
+ },
+ "vps|crontab -e": {
+  "hash": "5de42f675494",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (systemd 255) + cron"
+ },
+ "vps|curl -I .git/config": {
+  "hash": "efaa5d34d0b1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker, Apache 2.4.58"
+ },
+ "vps|daemon-reload": {
+  "hash": "371ca8982d66",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (systemd 255)"
+ },
+ "vps|dig / curl -v": {
+  "hash": "de0e382c0260",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "vps|docker compose": {
+  "hash": "68f1e9583f50",
+  "date": "2026-10-06",
+  "on": "Docker 29.8.2 / Compose v5.6.0 in container"
+ },
+ "vps|docker ps / logs / exec": {
+  "hash": "c5f566949f49",
+  "date": "2026-10-06",
+  "on": "Docker 29.8.2 in ubuntu-24.04 container"
+ },
+ "vps|fail2ban": {
+  "hash": "3e5ae42b1f45",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + client"
+ },
+ "vps|hostnamectl": {
+  "hash": "b68c800df967",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS)"
+ },
+ "vps|journalctl": {
+  "hash": "a4a43b3cadd5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (systemd 255)"
+ },
+ "vps|list-timers": {
+  "hash": "76fafbd5d8bd",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (systemd 255)"
+ },
+ "vps|lsblk / mount": {
+  "hash": "4da645a813bf",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker loop device; docs: real volume"
+ },
+ "vps|ncdu": {
+  "hash": "fa99453f6b6f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "vps|node_exporter و Grafana": {
+  "hash": "3ee2ad681687",
+  "date": "2026-10-06",
+  "on": "Docker Desktop prometheus/node-exporter; docs: cAdvisor, Grafana"
+ },
+ "vps|passwd / deluser": {
+  "hash": "11bc40f5921d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS)"
+ },
+ "vps|pg_dump": {
+  "hash": "93f1b0fe082e",
+  "date": "2026-10-06",
+  "on": "postgres:16-alpine + ubuntu pg_dump 16; docs: version mismatch"
+ },
+ "vps|php -l": {
+  "hash": "eaf777030b31",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker PHP 8.3"
+ },
+ "vps|pm2": {
+  "hash": "d675a493ada1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS), Node 24.21, pm2 7.0.4"
+ },
+ "vps|reboot": {
+  "hash": "04f1dc6bfe4f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) (restart as reboot)"
+ },
+ "vps|sha256sum": {
+  "hash": "a77435e5c168",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker + pwsh 7 / ps 5.1 Get-FileHash"
+ },
+ "vps|ssh 'git pull'": {
+  "hash": "a65f4fd08274",
+  "date": "2026-10-06",
+  "on": "two ubuntu-24.04 docker containers, throwaway key"
+ },
+ "vps|ssh / exit": {
+  "hash": "8345e9acdefb",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (sshd server + client)"
+ },
+ "vps|sshd_config": {
+  "hash": "dfd51e16ae07",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + client; docs: ssh.socket Port"
+ },
+ "vps|swap": {
+  "hash": "dc66acc1c7d2",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker up to mkswap; docs: swapon"
+ },
+ "vps|systemd timer": {
+  "hash": "df4e2749626a",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (systemd 255)"
+ },
+ "vps|timedatectl": {
+  "hash": "6d7f607cfe76",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS)"
+ },
+ "vps|tmux": {
+  "hash": "6f5ffd65487a",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (sshd server + client)"
+ },
+ "vps|ufw": {
+  "hash": "0ba1346af379",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + client; docs: Docker bypassing ufw"
+ },
+ "vps|unattended-upgrades": {
+  "hash": "75ff0891e3ce",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS)"
+ },
+ "vps|vim": {
+  "hash": "75e4f93526de",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 vim 9.1"
+ },
+ "vps|watch": {
+  "hash": "9612d111b032",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker + docker ps"
+ },
+ "vps|أعراض مش أسباب": {
+  "hash": "4886c88f94c1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "vps|تسطيب Docker": {
+  "hash": "3e9ea4a23f05",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) DinD"
+ },
+ "vps|تفعيل الموقع": {
+  "hash": "94c871e1cecd",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS), nginx 1.24"
+ },
+ "vps|تنبيه Telegram": {
+  "hash": "758db63999a1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker stub curl + real 401; docs: real bot"
+ },
+ "vps|تنضيف Docker": {
+  "hash": "d64198b93dee",
+  "date": "2026-10-06",
+  "on": "isolated Docker daemon in container"
+ },
+ "vps|خطوة 1": {
+  "hash": "0f414a07289c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS); docs: first-login prompt"
+ },
+ "vps|خطوة 2": {
+  "hash": "c81c2b286ddd",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + sshd"
+ },
+ "vps|خطوة 3": {
+  "hash": "b99c09abc2fc",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + sshd"
+ },
+ "vps|خطوة 4": {
+  "hash": "3131e006d809",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) privileged, ufw, fail2ban"
+ },
+ "vps|خطوة 5": {
+  "hash": "56c6ba4fb210",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) privileged, Docker-in-Docker"
+ },
+ "vps|خطوة 6": {
+  "hash": "a455037fc4e9",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) DinD, local repo"
+ },
+ "vps|خطوة 7": {
+  "hash": "2126279fada3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) nginx"
+ },
+ "vps|خطوة 8": {
+  "hash": "1626ecd951ce",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) certbot install, cron, restart; docs: certificate issuance, HTTPS check"
+ },
+ "vps|لوجات Nginx": {
+  "hash": "170c5401571d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container (simulated VPS) + client"
+ },
+ "vps|نقل مفتاح SSH": {
+  "hash": "a942628aaed6",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (sshd server + client)"
  },
  "vscode|.code-snippets": {
   "hash": "1c77fd50a248",
