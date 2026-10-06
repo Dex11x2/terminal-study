@@ -1,998 +1,1364 @@
 // تكملة تاب python: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/python/01.js (شرح حقول الدرس في أوله)
 MORE("python", [
     {
-      t: "الاختبارات و FastAPI",
-      l: 2,
-      n: "pytest للاختبارات، و uvicorn يشغّل API وانت بتطوّر، و Python جوه سكربتات bash",
+      t: "أول سكربت Python",
+      l: 1,
+      n: "تكتب ملف .py وتشغّله على أي نظام، ياخد arguments أو يسأل، يطبع تقرير مترتب، ويرجّع exit code صح",
       items: [
         {
-          cmd: "pytest",
-          title: "شغّل الاختبارات",
-          desc: "[[pytest]] بيدوّر على ملفات [[test_*.py]] والدوال اللي بتبدأ بـ [[test_]] ويشغّلها. [[-q]] ناتج مختصر، و [[-x]] يقف عند أول فشل، و [[-k]] يختار اختبارات بالاسم.",
-          example: R`pip install pytest
-pytest -q
-pytest -x
-pytest -k "login and not slow"
-pytest tests/test_api.py::test_health -v
-python -m pytest -q --lf`,
-          try: "اكتب [[def test_add(): assert 1 + 1 == 3]] في [[tests/test_math.py]] وشغّل pytest، وشوف إزاي بيوريك القيمتين. وبعدين صلّحه.",
+          cmd: "python3 script.py",
+          title: "شغّل أول سكربت",
+          desc: R`السكربت ملف نصي عادي امتداده [[.py]] فيه أوامر Python، بيتنفّذ من أول سطر لآخر سطر. بتكتبه في أي editor وتشغّله من الترمنال بـ [[python3 hello.py]]، وأي كلام بعد اسم الملف بيوصل للسكربت في [[sys.argv]].
+
+اسم الأمر بيختلف حسب النظام: على لينكس وماك [[python3]] (و [[python]] ساعات مش موجود خالص). على ويندوز [[python]] أو [[py]]، و [[py]] ده launcher بيختار النسخة لو عندك أكتر من واحدة.
+
+اللغة نفسها (المتغيرات و if و loops والدوال و classes) في تاب «Python و FastAPI». هنا بنركّز على إزاي تكتب سكربت بيعمل شغل حقيقي على جهازك أو على السيرفر.`,
+          example: R`# Linux و Mac:
+python3 --version
+python3 hello.py
+python3 hello.py Sara
+python3 -i hello.py
+# Windows (PowerShell):
+py --version
+py --list
+py hello.py Sara
+py -3.14 hello.py`,
+          try: R`اعمل [[hello.py]] فيه 4 سطور: [[import sys]]، و [[name = sys.argv[1] if len(sys.argv) > 1 else "world"]]، و [[print(f"hello {name}")]]، و [[print("python", sys.version.split()[0], "from", sys.executable)]]. شغّله من غير اسم وباسم، وبعدين بـ [[python3 -i hello.py]] واكتب [[name]] بعد ما يخلص. وجرّب تشغّله وانت واقف في فولدر تاني.`,
           deep: {
-            why: "بتعدّل دالة وعايز تعرف إنك مكسرتش حاجة تانية. pytest بيشغّل كل الاختبارات في ثواني ويقولك بالظبط إيه اللي وقع.",
-            how: R`الاختبار دالة عادية فيها [[assert]]. لو الشرط غلط، pytest بيعرض القيمتين والفرق بينهم، من غير ما تكتب رسايل.
+            why: "أي حاجة بتعملها بإيدك أكتر من مرتين (تنقل ملفات، تجمع أرقام من شيتات، تشيّك على موقع) تتكتب سكربت مرة وتتشغّل بأمر واحد. والسكربت بيتحفظ في git، ويتجدول، وحد تاني يقدر يشغّله.",
+            how: R`[[python3 hello.py]]: Python بيقرا الملف كله، يحوّله bytecode، وينفّذه من فوق لتحت. مفيش دالة main إجبارية زي C أو Java، أول سطر على مستوى الملف هو أول حاجة بتتنفّذ.
 
-[[-q]] سطر واحد بالنقط والنتيجة. [[-v]] اسم كل اختبار. [[-x]] أول فشل يوقف (مفيد لما فيه ٥٠ فشل من نفس السبب). [[-s]] يطبع الـ print.
+[[sys.executable]] بيقولك أنهي Python بالظبط اللي شغّال. لو الـ venv متفعّل هتلاقيه جوه [[.venv]]، ودي أسرع طريقة تعرف المكتبات هتيجي منين.
 
-[[-k]] تعبير على أسماء الاختبارات: [["login and not slow"]]. والـ node id [[file::function]] يشغّل اختبار واحد بعينه.
+ويندوز: Python من python.org بيسطّب [[py]] (الـ installer العادي، و «Python install manager» اللي python.org بيرشّحه من 3.14). [[py]] لوحده بيشغّل أحدث نسخة، و [[py -3.14]] نسخة معيّنة لو متسطبة، و [[py --list]] بيعرض النسخ المتسطّبة. ولو الـ venv متفعّل، [[py]] بيشغّل Python بتاع الـ venv. ولو كتبت [[python]] واتفتح Microsoft Store أو طلع [[Python was not found]]، ده alias من ويندوز نفسه ومعناه إن Python مش متسطب: يا تسطّبه من python.org، يا تقفل الـ alias من Settings ثم Apps ثم Advanced app settings ثم App execution aliases.
 
-[[--lf]] (last failed) يشغّل اللي فشل المرة اللي فاتت بس. وانت بتصلّح، دي بتوفّر وقت كتير.
-
-[[python -m pytest]] بدل [[pytest]]: بيحط الفولدر الحالي في sys.path، فـ [[from app.main import app]] بيشتغل من غير إعدادات. في مشروع حقيقي أمر الاختبار كان [[cd app && python -m pytest tests -q]].
-
-الـ exit code مش صفر لو أي اختبار فشل، فـ CI بيتعلّم أحمر لوحده. و [[conftest.py]] فيه الـ fixtures اللي بتتشارك بين الملفات (قاعدة بيانات تجربة، client للـ API).`,
-            when: "قبل كل commit. وفي CI.",
-            mistakes: "pytest من Python بره الـ venv فيطلع [[No module named fastapi]]. واختبارات بتعتمد على بعض أو على بيانات فضلت من run قبلها، فبتنجح مع بعض وتفشل لوحدها."
+[[python3 -i hello.py]] بيشغّل السكربت وبعدين يفتح الـ REPL ومعاك كل المتغيرات اللي اتعملت. مفيد تبص على النتيجة أو تجرّب دالة من غير ما تعدّل الملف.`,
+            when: "أي مهمة بتتكرر. ولو المهمة سطر واحد بيوصّل أوامر موجودة، bash أو PowerShell ممكن يبقوا أقصر (درس «bash ولا Python ولا PowerShell» في المستوى ٣).",
+            mistakes: R`تكتب [[hello.py]] لوحده في الترمنال فيطلع [[command not found]] (محتاج [[python3 hello.py]] أو shebang، الدرس الجاي). وتشغّله من فولدر تاني فيطلع [[python3: can't open file '/tmp/hello.py': [Errno 2] No such file or directory]]: المسار نسبي للفولدر اللي انت واقف فيه. وتسمّي السكربت [[random.py]] أو [[email.py]] أو [[csv.py]] فيغطّي على موديول Python الأصلي (درس «python -m»).`
           },
+          teach: R`## المثال بيعمل إيه؟
+
+بيشغّل سكربت صغير اسمه [[hello.py]] بأكتر من طريقة: من غير كلام بعده، وبكلمة، وبعدين يفتح Python تفاعلي بعده. والنص التاني نفس الكلام على ويندوز بالـ launcher [[py]]. الأوامر محتاجة ملف [[hello.py]]، وده محتواه (نفس اللي في «جرّب» وفي الحل):
+
+~~~python hello.py
+import sys
+name = sys.argv[1] if len(sys.argv) > 1 else "world"
+print(f"hello {name}")
+print("python", sys.version.split()[0], "from", sys.executable)
+~~~
+
+اتشغّل على أوبونتو 24.04 ([[docker run --rm ubuntu:24.04]] و Python من apt) وعلى ويندوز 11 بـ Python 3.14 في PowerShell 7.
+
+---
+
+## ١. السكربت نفسه، سطر سطر
+
+### [[import sys]]
+
+[[sys]] موديول في المكتبة الأساسية فيه معلومات عن Python اللي شغال: الـ arguments ونسخته ومكانه. [[import]] بيجيبه عشان تستخدمه.
+
+### [[name = sys.argv[1] if len(sys.argv) > 1 else "world"]]
+
+نقراه من جوه:
+
+| الحتة | معناها |
+|---|---|
+| [[sys.argv]] | list (لستة) فيها اسم السكربت وبعده كل كلمة اتكتبت بعده في الأمر. **argv** = argument vector |
+| [[len(sys.argv)]] | عدد العناصر |
+| [[> 1]] | فيه حاجة غير اسم السكربت؟ |
+| [[sys.argv[1] ]] | العنصر رقم 1، يعني أول كلمة بعد الاسم (العد بيبدأ من 0، و 0 هو اسم السكربت) |
+| [[A if COND else B]] | لو الشرط صح خد A، غير كده B |
+
+يعني: «لو فيه كلمة خدها، لو مفيش خد [["world"]]». الشرط ده بيمنع [[IndexError]] لما تشغّله من غير كلام.
+
+### [[print(f"hello {name}")]]
+
+[[f]] قبل الـ quote يعني f-string: أي حاجة بين [[{}]] بتتبدل بقيمتها.
+
+### [[print("python", sys.version.split()[0], "from", sys.executable)]]
+
+[[print]] لما تديله كذا حاجة مفصولة بفواصل بيطبعهم بمسافة بينهم.
+
+- [[sys.version]] نص طويل: [[3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0] ]].
+- [[.split()]] بيقسّمه عند المسافات لـ list: [[['3.12.3', '(main,', 'Aug', ...] ]].
+- [[[0] ]] أول عنصر: [[3.12.3]] بس.
+- [[sys.executable]] المسار الكامل لبرنامج Python اللي شغّال دلوقتي.
+
+---
+
+## ٢. لينكس وماك
+
+### [[python3 --version]]
+
+~~~text الناتج
+Python 3.12.3
+~~~
+
+### [[python3 hello.py]] و [[python3 hello.py Sara]]
+
+~~~text الناتج
+hello world
+python 3.12.3 from /usr/bin/python3
+hello Sara
+python 3.12.3 from /usr/bin/python3
+~~~
+
+الأولى [[sys.argv]] كانت [[['hello.py'] ]] فخد [["world"]]، والتانية [[['hello.py', 'Sara'] ]]. و [[/usr/bin/python3]] يعني Python بتاع النظام، مش venv.
+
+الشيل هو اللي بيقسّم الكلام عند المسافات: [[python3 hello.py two words]] طبع [[hello two]] (كلمتين وصلوا عنصرين)، و [[python3 hello.py "two words"]] طبع [[hello two words]] (الـ quotes خلّتهم عنصر واحد).
+
+### [[python3 -i hello.py]]
+
+[[-i]] من **interactive**: شغّل السكربت، وبعد ما يخلص **متقفلش**، افتح الـ REPL (السطر اللي بيبدأ بـ [[>>>]] وبتكتب فيه Python سطر سطر) ومعاك كل المتغيرات اللي اتعملت:
+
+~~~text الناتج (بعد سطري السكربت)
+>>> name
+'world'
+>>> sys.argv
+['hello.py']
+~~~
+
+تخرج بـ [[exit()]] أو Ctrl+D (على ويندوز Ctrl+Z وبعدها Enter).
+
+### من فولدر تاني
+
+~~~text الناتج: cd /tmp && python3 hello.py
+python3: can't open file '/tmp/hello.py': [Errno 2] No such file or directory
+~~~
+
+والـ exit code كان 2. [[hello.py]] اسم نسبي، يعني «في الفولدر اللي أنا فيه دلوقتي». ادخل الفولدر بـ [[cd]] أو اكتب المسار كامل.
+
+---
+
+## ٣. ويندوز: [[py]]
+
+### [[py --version]] و [[py --list]]
+
+~~~text الناتج
+Python 3.14.3
+ -V:3.14[-64] *   Python 3.14.3
+~~~
+
+[[--list]] بيعرض النسخ المتسطّبة. [[-V:3.14]] اسم النسخة اللي تكتبه بعد [[py]]، و [[[-64] ]] يعني 64-bit، و [[*]] يعني «دي الافتراضية».
+
+### [[py hello.py Sara]]
+
+~~~text الناتج
+hello Sara
+python 3.14.3 from C:\Users\ali\AppData\Local\Python\pythoncore-3.14-64\python.exe
+~~~
+
+نفس السكربت من غير تعديل. المسار ده مكان Python لما يتسطّب بـ «Python install manager».
+
+### [[py -3.14 hello.py]]
+
+[[-3.14]] يعني «شغّل بالنسخة دي بالظبط». ولو طلبت نسخة مش متسطّبة:
+
+~~~text الناتج: py -3.12 hello.py
+[ERROR] No runtime installed that matches 3.12. Try running "py install 3.12".
+~~~
+
+---
+
+## المقارنة
+
+| عايز | لينكس وماك | ويندوز |
+|---|---|---|
+| النسخة | [[python3 --version]] | [[py --version]] |
+| النسخ المتسطّبة | [[ls /usr/bin/python3*]] (طلّع [[python3]] و [[python3.12]]) | [[py --list]] |
+| شغّل | [[python3 hello.py Sara]] | [[py hello.py Sara]] أو [[python hello.py Sara]] |
+| نسخة معيّنة | [[python3.12 hello.py]] | [[py -3.14 hello.py]] |
+| شغّل وافتح REPL | [[python3 -i hello.py]] | [[py -i hello.py]] |
+
+## الخلاصة
+
+- السكربت بيتنفّذ من أول سطر لآخر سطر، ومفيش main إجباري.
+- الكلام اللي بعد اسم الملف بيوصل في [[sys.argv]]، والشيل هو اللي بيقسّمه.
+- [[sys.executable]] بيقولك أنهي Python شغّال، فبيقولك المكتبات هتيجي منين.
+- المسار النسبي نسبةً للفولدر اللي انت واقف فيه.`,
           lines: [
-            "سطّب pytest في الـ venv.",
-            "شغّل الكل بناتج مختصر.",
-            "وقّف عند أول فشل.",
-            "الاختبارات اللي اسمها فيه login ومش slow.",
-            "اختبار واحد بعينه بالتفصيل.",
-            "اللي فشل المرة اللي فاتت بس."
+            "نسخة Python.",
+            "شغّل السكربت.",
+            "شغّله وابعتله كلمة توصل في sys.argv.",
+            "شغّله، وبعد ما يخلص افتح REPL ومعاك متغيراته.",
+            "الـ launcher بتاع ويندوز ونسخة Python اللي هيشغّلها.",
+            "النسخ المتسطّبة على الجهاز.",
+            "نفس التشغيل بالـ launcher.",
+            "شغّل بنسخة معيّنة (لازم تكون متسطبة، و [[py --list]] بيقولك عندك إيه)."
           ],
-          sol: R`[[pytest]] بيطبع [[F]] وتحته حاجة زي:
+          sol: R`الناتج عندي على أوبونتو 24.04:
 
-[[>   def test_add(): assert 1 + 1 == 3]]
-[[E   assert (1 + 1) == 3]]
-[[FAILED tests/test_math.py::test_add - assert (1 + 1) == 3]]
-[[1 failed in 0.02s]]
+[[python3 hello.py]] طبع [[hello world]] وتحتها [[python 3.12.3 from /usr/bin/python3]].
+[[python3 hello.py Sara]] طبع [[hello Sara]].
+[[python3 -i hello.py]] طبع نفس السطرين وبعدين [[>>>]]، و [[name]] رجّع [['world']]. اخرج بـ [[exit()]] أو Ctrl+D.
 
-السطر اللي بيبدأ بـ [[E]] هو المفيد: pytest بيعيد كتابة الـ [[assert]] العادي عشان يوريك الطرفين. مع متغيرات بيكتبلك قيمهم، زي [[assert 2 == 3]] ومعاها [[where 2 = add(1, 1)]]. بعد ما تصلّحه لـ [[== 2]] هتلاقي [[.]] و [[1 passed]].
+وعلى ويندوز 11: [[py --list]] طبع [[-V:3.14[-64] *   Python 3.14.3]]، و [[py hello.py Sara]] طبع [[hello Sara]] وتحتها [[python 3.14.3 from C:\Users\...\python.exe]]. ولما فعّلت venv وشغّلت [[py hello.py]]، المسار بقى [[...\.venv\Scripts\python.exe]].
 
-لو طلع [[no tests ran]] يبقى اسم الملف أو الدالة مش بيبدأ بـ [[test_]]. ولو [[pytest: command not found]] يبقى الـ venv مش متفعل، استخدم [[python -m pytest]].`
+ولما شغّلته من فولدر تاني بنفس الاسم طلع [[can't open file ... No such file or directory]]: يا تدخل الفولدر بـ cd، يا تكتب المسار كامل.
+
+لو [[sys.executable]] طلع بره الـ venv وانت فاكره متفعّل، يبقى التفعيل اتعمل في ترمنال تاني.`,
+          solCode: R`import sys
+name = sys.argv[1] if len(sys.argv) > 1 else "world"
+print(f"hello {name}")
+print("python", sys.version.split()[0], "from", sys.executable)`
         },
         {
-          cmd: "pytest.ini",
-          title: "إعدادات pytest في ملف",
-          desc: "بدل ما تكتب نفس الفلاجات كل مرة: [[pytest.ini]] في جذر المشروع. بيقول فين الاختبارات، ويحط المشروع في مسار الاستيراد، ويشغّل الدوال async، ويسجّل الـ markers.",
-          example: R`[pytest]
-pythonpath = .
-testpaths = tests
-addopts = -q --strict-markers
-asyncio_mode = auto
-markers =
-    slow: tests that take more than a second`,
-          try: "حط الملف ده، وعلّم اختبار بـ [[@pytest.mark.slow]]، وشغّل [[pytest -m \"not slow\"]]. وبعدين اكتب [[@pytest.mark.slwo]] غلط وشوف --strict-markers بيمسكها.",
-          flag: "script",
+          cmd: "#!/usr/bin/env python3",
+          title: "سكربت يتشغّل باسمه زي أي أمر",
+          desc: R`على لينكس وماك تقدر تشغّل السكربت بـ [[./hello.py]] من غير ما تكتب python3، بشرطين: أول سطر فيه shebang [[#!/usr/bin/env python3]] بيقول للنظام يشغّل الملف بإيه، والملف عليه صلاحية تنفيذ بـ [[chmod +x]].
+
+ولو حطيته من غير [[.py]] في فولدر موجود في الـ PATH (زي [[~/.local/bin]]) يبقى أمر تكتبه من أي مكان، زي [[ls]] و [[git]].
+
+على ويندوز النظام مبيقراش السطر ده، بس الـ launcher [[py]] بيقراه، و Python نفسه بيعتبره تعليق عادي.`,
+          example: R`# Linux و Mac:
+head -1 hello.py
+chmod +x hello.py
+./hello.py Sara
+mkdir -p ~/.local/bin
+cp hello.py ~/.local/bin/hello
+hello Ali
+# لو طلع command not found:
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+# Windows (PowerShell):
+py hello.py Sara`,
+          try: R`حط [[#!/usr/bin/env python3]] أول سطر في [[hello.py]]. شغّله بـ [[./hello.py]] قبل [[chmod +x]] وبعدها. وبعدين اعمل نسخة بنهايات سطور ويندوز: [[printf '#!/usr/bin/env python3\r\nprint("hi")\r\n' > crlf.py]] و [[chmod +x crlf.py]] وشغّلها واقرا الرسالة.`,
           deep: {
-            why: "ImportError في الاختبارات لأن pytest مش شايف الباكدج، واختبارات async مش بتشتغل، وكل واحد في الفريق بيشغّل بفلاجات مختلفة. ملف واحد بيحل التلاتة.",
-            how: R`pytest بيدوّر على pytest.ini في الفولدر الحالي واللي فوقه، والفولدر اللي فيه الملف بيبقى الـ rootdir.
+            why: "الأدوات اللي بتستخدمها كل يوم (backup، تنضيف، تقرير) أسهل لما تبقى أوامر باسمها، من غير ما تفتكر السكربت في أنهي فولدر.",
+            how: R`لما تكتب [[./hello.py Sara]]، الـ kernel بيقرا أول حرفين في الملف، يلاقيهم [[#!]]، فبيشغّل [[/usr/bin/env python3 ./hello.py Sara]]. و [[env]] بيدوّر على [[python3]] في الـ PATH، فلو الـ venv متفعّل هياخد Python بتاع الـ venv.
 
-[[pythonpath = .]] بيضيف جذر المشروع لـ sys.path، فـ [[from app.main import app]] يشتغل مهما شغّلت pytest منين.
+ولو عايز السكربت يستخدم venv معيّن دايمًا (عشان مكتباته)، اكتب المسار كامل: [[#!/home/sara/tools/.venv/bin/python]]. ده أضمن من env في cron، لأن cron مش بيفعّل حاجة.
 
-[[testpaths = tests]] بيدوّر في tests بس، مش في .venv و node_modules.
+[[chmod +x]] بيدّي صلاحية التنفيذ. و [[~/.local/bin]] على أوبونتو بيتضاف للـ PATH لوحده من [[~/.profile]] لو الفولدر موجود ساعة الـ login، فلو لسه عامله افتح session جديدة أو ضيفه بإيدك زي آخر سطر في المثال. وعلى ماك الشيل zsh، فالسطر يروح [[~/.zshrc]].
 
-[[addopts]] فلاجات بتتضاف لكل تشغيل. [[--strict-markers]] أي marker مش متسجّل يبقى error بدل ما يتجاهل بهدوء.
-
-[[asyncio_mode = auto]] (من مكتبة pytest-asyncio) بيخلي [[async def test_...]] تشتغل من غير decorator على كل واحدة. مفيد مع FastAPI و asyncpg.
-
-[[markers]] تسجيل للعلامات، وبعدين [[pytest -m "not slow"]] يشغّل السريع بس.
-
-نفس الإعدادات ممكن تتحط في [[pyproject.toml]] تحت [[[tool.pytest.ini_options] ]].`,
-            when: "أول ما يبقى عندك فولدر tests.",
-            mistakes: "asyncio_mode من غير ما تسطّب pytest-asyncio: pytest بيحذّر بـ Unknown config option، والاختبارات async بتفشل (في النسخ قبل pytest 8.4 كانت بتتخطى بتحذير بس). وإعدادات في pytest.ini و pyproject.toml الاتنين: pytest.ini بيكسب والتاني بيتجاهل من غير ما يقولك."
+ويندوز: مفيش chmod ولا [[./hello.py]]. [[py hello.py]] بيقرا الـ shebang ويفهم [[#!/usr/bin/env python3]] كـ «أحدث Python 3» (جربتها بـ Python 3.14). ولو الـ installer ربط ملفات [[.py]] بالـ launcher (الـ installer القديم من python.org بيعمل كده)، [[hello.py Sara]] بيشتغل في CMD لوحده. على جهازي «Python install manager» و [[assoc .py]] قال [[File association not found for extension .py]]، فالأضمن [[py hello.py]].`,
+            when: "سكربت بتستخدمه كتير على لينكس أو ماك أو سيرفر. ولو ليه مكتبات خارجية، الأحسن تسطّبه كأمر بجد (درس «[project.scripts] و pipx» في المستوى ٣).",
+            mistakes: R`ملف متكتب على ويندوز بنهايات CRLF: الـ shebang بيبقى [[python3\r]] والنظام مش لاقيه. وأي حاجة قبل [[#!]] (حتى سطر فاضي أو BOM) بتلغيه. و [[#!/usr/bin/python]] على أوبونتو الجديد مفيش [[python]] أصلًا. ونسيان chmod بيطلع [[Permission denied]]، ومن غير shebang خالص bash بيحاول يقرا الملف كأنه سكربت bash.`
           },
+          teach: R`## المثال بيعمل إيه؟
+
+بياخد نفس [[hello.py]] بتاع الدرس اللي فات، ويضيفله سطر في أوله، ويخليه يتشغّل بـ [[./hello.py]]، وبعدين يخليه أمر اسمه [[hello]] تكتبه من أي فولدر. اتجرب على أوبونتو 24.04 ([[docker run --rm ubuntu:24.04]]) بيوزر عادي اسمه sara، والسطر الأخير على ويندوز بـ Python 3.14.
+
+---
+
+## ١. [[head -1 hello.py]]: الـ shebang
+
+[[head]] بيطبع أول سطور ملف، و [[-1]] يعني سطر واحد:
+
+~~~text الناتج
+#!/usr/bin/env python3
+~~~
+
+ده الـ **shebang** (الاسم من [[#]] اللي بتتقري sharp أو hash و [[!]] اللي بتتقري bang). لازم يكون **أول حاجة** في الملف، أول حرفين بالظبط. معناه:
+
+| الحتة | معناها |
+|---|---|
+| [[#!]] | علامة للنظام: «السطر ده بيقول الملف يتشغّل بإيه» |
+| [[/usr/bin/env]] | برنامج بيدوّر على أمر في الـ PATH ويشغّله |
+| [[python3]] | الأمر اللي env هيدوّر عليه |
+
+فلما تكتب [[./hello.py Sara]]، الـ kernel بيشغّل فعليًا:
+
+~~~text اللي بيحصل من ورا
+/usr/bin/env python3 ./hello.py Sara
+~~~
+
+ليه [[env]] مش [[/usr/bin/python3]] على طول؟ لأن [[env]] بياخد أول python3 في الـ PATH، فلو venv متفعّل هيشغّل Python بتاع الـ venv. وبالنسبة لـ Python نفسه السطر ده بيبدأ بـ [[#]] فهو تعليق عادي.
+
+---
+
+## ٢. [[chmod +x hello.py]]: صلاحية التنفيذ
+
+قبل الـ chmod:
+
+~~~text الناتج
+-rw-rw-r-- 1 sara sara 174 Oct  6 17:53 hello.py
+-sh: 4: ./hello.py: Permission denied
+~~~
+
+والـ exit code كان 126 (يعني «لقيت الملف بس مش قادر أشغّله»). أول عمود في [[ls -l]] هو الصلاحيات: [[rw-]] للصاحب، و [[rw-]] للجروب، و [[r--]] للباقي. [[r]] قراية، و [[w]] كتابة، و [[x]] تنفيذ، ومفيش [[x]] خالص.
+
+[[chmod]] من **change mode**، و [[+x]] «ضيف صلاحية التنفيذ»:
+
+~~~text الناتج: ls -l hello.py بعد chmod
+-rwxrwxr-x 1 sara sara 174 Oct  6 17:53 hello.py
+~~~
+
+---
+
+## ٣. [[./hello.py Sara]]
+
+~~~text الناتج
+hello Sara
+python 3.12.3 from /usr/bin/python3
+~~~
+
+ليه [[./]]؟ لأن الشيل مبيدوّرش على الأوامر في الفولدر الحالي، بيدوّر في فولدرات الـ PATH بس. [[./]] معناها «الفولدر اللي أنا فيه»، فبتديله المسار صريح.
+
+---
+
+## ٤. خليه أمر: [[~/.local/bin]]
+
+### [[mkdir -p ~/.local/bin]]
+
+[[~]] هو الـ home ([[/home/sara]])، و [[-p]] يعمل الفولدرات اللي فوقه لو مش موجودة ومايعترضش لو موجود. و [[~/.local/bin]] هو المكان المتعارف عليه لأوامر اليوزر بتاعته.
+
+### [[cp hello.py ~/.local/bin/hello]]
+
+انسخه هناك **من غير [[.py]]**، عشان الأمر يبقى اسمه [[hello]]. الـ shebang هو اللي بيقول للنظام يشغّله بـ Python، مش الامتداد. و [[cp]] بيحتفظ بصلاحية [[x]].
+
+### [[hello Ali]]
+
+في نفس الـ session اللي عملت فيها الفولدر:
+
+~~~text الناتج
+-sh: 10: hello: not found
+~~~
+
+exit 127 (يعني «مش لاقي الأمر»). السبب في [[~/.profile]] بتاع أوبونتو:
+
+~~~text ~/.profile (سطور 24-27)
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+~~~
+
+يعني «لو الفولدر **موجود** ساعة الـ login ضيفه للـ PATH». ساعة الـ login مكانش موجود. بعد login جديد ([[su - sara]] تاني):
+
+~~~text الناتج
+hello Ali
+python 3.12.3 from /usr/bin/python3
+~~~
+
+و [[which hello]] طبع [[/home/sara/.local/bin/hello]].
+
+### [[echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc]]
+
+لو الطريقة اللي فوق مش موجودة عندك (توزيعة تانية، أو root في Docker)، ضيفه بإيدك:
+
+- [[export PATH="..."]]: غيّر الـ PATH وخليه يوصل للبرامج اللي هتتشغّل من الشيل.
+- [[$HOME/.local/bin:$PATH]]: الفولدر بتاعك وبعده الـ PATH القديم كله. [[:]] بتفصل بين الفولدرات.
+- الـ single quotes حوالين السطر كله: عشان [[$HOME]] و [[$PATH]] يتكتبوا في الملف زي ما هم ويتفكّوا كل مرة الشيل يفتح، مش دلوقتي.
+- [[>>]] يضيف في آخر الملف (و [[>]] كان هيمسحه).
+- [[~/.bashrc]] بيتقري مع كل ترمنال bash جديد. على الماك الشيل zsh فاكتبه في [[~/.zshrc]].
+
+---
+
+## ٥. ويندوز: [[py hello.py Sara]]
+
+مفيش chmod ولا [[./]] بالمعنى ده. الـ launcher [[py]] بيقرا الـ shebang، ولما يلاقي [[/usr/bin/env python3]] بيفهمها «أحدث Python 3»:
+
+~~~text الناتج
+hello Sara
+python 3.14.3 from C:\Users\ali\AppData\Local\Python\pythoncore-3.14-64\python.exe
+~~~
+
+---
+
+## فخ: ملف بنهايات سطور ويندوز
+
+ويندوز بيختم كل سطر بحرفين [[\r\n]] (CRLF)، ولينكس بحرف واحد [[\n]] (LF). عملت ملف بـ CRLF وشغّلته:
+
+~~~text الناتج
+/usr/bin/env: ‘python3\r’: No such file or directory
+/usr/bin/env: use -[v]S to pass options in shebang lines
+~~~
+
+و [[od -c]] (بيطبع كل حرف لوحده) أكّد إن السطر الأول آخره [[3  \r  \n]]: الـ [[\r]] بقى جزء من اسم البرنامج. الحل [[sed -i 's/\r$//' crlf.py]] أو تغيّر [[CRLF]] لـ [[LF]] في VS Code.
+
+---
+
+## الخطوات كلها
+
+| الخطوة | الأمر | من غيرها |
+|---|---|---|
+| shebang | [[#!/usr/bin/env python3]] أول سطر | bash يحاول يقرا الملف كسكربت bash |
+| تنفيذ | [[chmod +x hello.py]] | [[Permission denied]] (126) |
+| تشغيل | [[./hello.py]] | [[command not found]] |
+| أمر من أي حتة | [[~/.local/bin/hello]] + الـ PATH | [[not found]] (127) |
+
+## الخلاصة
+
+- الـ shebang للنظام، و Python شايفه تعليق.
+- [[x]] صلاحية، و [[./]] مسار، و PATH مكان الأوامر: ٣ حاجات مختلفة.
+- بعد أي تغيير في الـ PATH افتح ترمنال (أو login) جديد.
+- على ويندوز [[py hello.py]] وخلاص.`,
           lines: [
-            "قسم إعدادات pytest.",
-            "جذر المشروع في مسار الاستيراد.",
-            "دوّر على الاختبارات في tests بس.",
-            "فلاجات لكل تشغيل: مختصر، و markers متسجّلة بس.",
-            "الدوال async تشتغل لوحدها (pytest-asyncio).",
-            "العلامات المسموحة:",
-            "slow للاختبارات البطيئة."
+            "اتأكد إن أول سطر هو الـ shebang.",
+            "صلاحية تنفيذ.",
+            "شغّله باسمه من الفولدر الحالي.",
+            "فولدر للأوامر بتاعتك.",
+            "انسخه هناك من غير .py.",
+            "بقى أمر من أي مكان.",
+            "ضيف الفولدر للـ PATH لو مش موجود (وافتح ترمنال جديد).",
+            "على ويندوز: [[py]] بيقرا الـ shebang ويشغّل بيه، و chmod مالوش لازمة هناك."
           ],
-          sol: R`مع اختبارين واحد منهم [[@pytest.mark.slow]]، [[pytest -m "not slow"]] بيطلّع [[1 passed, 1 deselected]]. ولما كتبت [[@pytest.mark.slwo]] وقفت الـ collection كلها بـ:
+          sol: R`جربتها على أوبونتو 24.04. قبل [[chmod +x]]: [[bash: ./hello.py: Permission denied]] (exit 126). وبعدها [[./hello.py Sara]] طبع [[hello Sara]]، و [[hello Ali]] من [[~/.local/bin]] طبع [[hello Ali]].
 
-[[ERROR tests/test_math.py - Failed: 'slwo' not found in $__btmarkers$__bt configuration option]]
-[[Interrupted: 1 error during collection]]
+ملف الـ CRLF طلّع سطرين:
 
-من غير [[--strict-markers]] كان هيعدّي بـ warning بس، والاختبار «البطيء» هيفضل شغال في كل مرة من غير ما تاخد بالك. وخد بالك من حاجتين: سطر [[asyncio_mode = auto]] بيطلّع [[PytestConfigWarning: Unknown config option: asyncio_mode]] لو [[pytest-asyncio]] مش متسطبة. ولو عدّلت ملف الاختبار وشغّلت pytest على طول والنتيجة ما اتغيرتش، امسح [[__pycache__]] وجرّب تاني.`
+[[/usr/bin/env: ‘python3\r’: No such file or directory]]
+[[/usr/bin/env: use -[v]S to pass options in shebang lines]]
+
+والـ exit code كان 127. السطر التاني تخمين من env وملوش علاقة بمشكلتنا. الـ [[\r]] اللي في الآخر بقى جزء من اسم البرنامج. الحل: [[sed -i 's/\r$//' crlf.py]] أو [[dos2unix crlf.py]]، أو في VS Code دوس على [[CRLF]] تحت على اليمين وخليها [[LF]] واحفظ.
+
+وجرّبت ملف من غير shebang فيه [[print(1)]] بس: bash حاول يقراه وطلع [[./nosb: line 1: syntax error near unexpected token $__bt1']].`
         },
         {
-          cmd: "uvicorn --reload",
-          title: "شغّل FastAPI وانت بتطوّر",
-          desc: "FastAPI مكتبة بتكتب بيها الـ API، و [[uvicorn]] السيرفر اللي بيشغّلها. [[uvicorn app.main:app --reload]] يعني: في ملف [[app/main.py]] فيه متغير اسمه [[app]]، شغّله، وأعد التشغيل لوحدك مع كل حفظ.",
-          example: R`pip install "fastapi==0.115.5" "uvicorn[standard]==0.32.1"
-uvicorn app.main:app --reload
-uvicorn app.main:app --reload --port 8001
-curl -s localhost:8000/health
-# التوثيق التفاعلي: http://localhost:8000/docs`,
-          try: "اعمل [[app/main.py]] فيه [[app = FastAPI()]] و endpoint [[/health]] بيرجّع [[{\"ok\": True}]]. شغّله، وعدّل الرد واحفظ، وشوف uvicorn بيعيد لوحده.",
-          deep: {
-            why: "كل تعديل تقفل السيرفر وتفتحه تاني: بطيء ومملّ. و --reload بيعمل ده لوحده، و FastAPI بيديك صفحة تجرّب فيها الـ API من غير Postman.",
-            how: R`أصغر تطبيق: [[from fastapi import FastAPI]] وبعدين [[app = FastAPI()]] وبعدين دالة فوقها [[@app.get("/health")]] بترجّع dict، و FastAPI بيحوّله JSON.
+          cmd: "if __name__ == \"__main__\":",
+          title: "هيكل كل سكربت: main و __name__",
+          desc: R`بدل ما تكتب الكود كله على مستوى الملف، حطه في دوال، ودالة [[main]] بترجّع رقم، وفي الآخر:
 
-[[app.main:app]]: قبل النقطتين مسار الموديول بنقط (app/main.py)، وبعدها اسم المتغير جوه الملف.
+[[if __name__ == "__main__":]] وتحتها [[sys.exit(main(sys.argv[1:]))]]
 
-[[--reload]] بيراقب ملفات .py، وأول ما تحفظ بيعيد تشغيل السيرفر. [[uvicorn[standard] ]] بيجيب معاه watchfiles (مراقبة أسرع) و uvloop و httptools (أداء أحسن).
-
-الافتراضي [[127.0.0.1:8000]]: جهازك بس. من موبايل أو من ويندوز لـ WSL محتاج [[--host 0.0.0.0]].
-
-[[/docs]] صفحة Swagger بتتولد لوحدها من الكود: كل endpoint وبياناته وزرار Try it out.`,
-            when: "وانت بتطوّر API بـ FastAPI.",
-            mistakes: "[[--reload]] في الإنتاج: بيراقب الملفات على الفاضي وبيعيد التشغيل لو حاجة اتغيرت. وتشغّله من فولدر غلط فيطلع [[Could not import module \"app.main\"]]: شغّله من جذر المشروع. والبورت مشغول بسيرفر قديم فيطلع [[Address already in use]]."
-          },
-          lines: [
-            "سطّب FastAPI و uvicorn بنسخ ثابتة.",
-            "شغّل مع إعادة تشغيل تلقائية مع كل حفظ.",
-            "على بورت تاني.",
-            "جرّب endpoint."
-          ],
-          sol: R`[[curl -s localhost:8000/health]] بيرجع [[{"ok":true}]] (JSON بيكتب [[true]] مش [[True]]). لما تعدّل الرد وتحفظ، اللوج بيطبع:
-
-[[WARNING:  WatchFiles detected changes in 'app/main.py'. Reloading...]]
-وبعدها [[Started server process [...]]] و [[Application startup complete.]]
-
-والـ curl التاني بيرجع الرد الجديد. جربتها على لينكس بالنسخ المثبّتة دي وبآخر نسخة (uvicorn 0.54) وده اللي حصل بالظبط.
-
-وعلى ويندوز (Python 3.14 في PowerShell 7) نفس الكلام، والنسخ المثبّتة اتسطبت عادي. الفرق إن اللوج بيكتب المسار [['app\main.py']]. وفي Windows PowerShell 5.1 اكتب [[curl.exe -s localhost:8000/health]]، لأن [[curl]] هناك اختصار لـ Invoke-WebRequest وبيطلع [[Cannot process command because of one or more missing mandatory parameters: Uri]].
-
-لو ما عملش reload: انت شغّله من غير [[--reload]]، أو الملف بره الفولدر اللي بيراقبه (أول سطر في اللوج [[Will watch for changes in these directories]]). ولو طلع [[Error loading ASGI app. Could not import module "app.main"]] يبقى انت مش واقف في الفولدر اللي فيه [[app/]]. وافتح [[/docs]] هتلاقي [[/health]] ظاهر لوحده.`,
-          solCode: R`# app/main.py  (plus an empty app/__init__.py)
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/health")
-def health():
-    return {"ok": True}`
-        },
-        {
-          cmd: "python3 - <<'PY'",
-          title: "Python جوه سكربت bash",
-          desc: "في سكربت bash محتاج تكتب JSON من متغيرات بيئة. بـ echo هيبوظ مع أول علامة تنصيص في القيمة. [[python3 -]] بيقرا البرنامج من الـ stdin، والـ heredoc بيدّيهوله، و [[json.dump]] بيعمل JSON سليم دايمًا.\n\nالـ heredoc ده bash (لينكس وماك و WSL و Git Bash). في PowerShell نفس الفكرة بـ here-string: النص بين [[@'...'@]] بيتبعت لـ [[python -]] بـ pipe، والنسخة الكاملة في الحل.",
-          example: R`OUT=creds.json
-python3 - "$OUT" <<'PY'
-import json, os, sys
-creds = [{"name": "internal", "value": "Bearer " + os.environ["INTERNAL_TOKEN"]}]
-json.dump(creds, open(sys.argv[1], "w"), indent=2)
-PY`,
-          try: "اعمل [[export INTERNAL_TOKEN='ab\"c']] (فيها علامة تنصيص) وشغّل السكربت، وشوف الـ JSON سليم. وجرّب تعمله بـ echo وشوف الفرق. ولو على ويندوز، جرّب نسخة PowerShell اللي في الحل.",
-          flag: "script",
-          deep: {
-            why: "JSON بـ [[echo \"{\\\"token\\\": \\\"$TOKEN\\\"}\"]] بيبوظ لو التوكن فيه علامة تنصيص أو backslash أو سطر جديد. Python بيعمل escape صح لوحده.",
-            how: R`[[python3 -]]: الشرطة معناها «اقرا الكود من الـ stdin». وأي حاجة بعدها ([["$OUT"]]) بتوصل لـ [[sys.argv[1] ]].
-
-[[<<'PY']] heredoc: كل السطور لحد سطر [[PY]] بتروح للـ stdin. علامات التنصيص حوالين PY مهمة: الشيل مش هيفك أي [[$]] جوه، فالكود بيوصل Python زي ما كتبته بالظبط.
-
-المتغيرات بتعدّي بطريقتين: argument ([[sys.argv]]) أو متغير بيئة ([[os.environ]]). المتغير لازم يبقى [[export]]، وإلا Python مش هيشوفه.
-
-[[json.dump(..., indent=2)]] بيكتب JSON منسّق وبيعمل escape لأي حرف محتاجه.
-
-البديل من غير Python: [[jq -n --arg t "$TOKEN" '{value: $t}']]، بس Python غالبًا موجود على أي سيرفر.`,
-            when: "سكربت bash محتاج يبني JSON أو يعمل حسبة أو يقرا YAML، والـ bash لوحده هيبقى معقد.",
-            mistakes: R`[[<<PY]] من غير علامات تنصيص: الشيل بيفك [[$]] جوه كود Python ويبوّظه. والمتغير مش متعمله export فيطلع [[KeyError: 'INTERNAL_TOKEN']]. وسطور الكود جوه الـ heredoc متزاحة بمسافات عشان «شكلها أحلى» فيطلع [[IndentationError]]: Python محتاج الكود يبدأ من أول السطر.`
-          },
-          lines: [
-            "اسم الملف اللي هيتكتب.",
-            "شغّل Python من الـ stdin، وادّيله اسم الملف كـ argument.",
-            "المكتبات.",
-            "البيانات، والتوكن من متغير بيئة.",
-            "اكتبها JSON سليم في الملف.",
-            "نهاية كود Python."
-          ],
-          sol: R`جربتها بـ [[INTERNAL_TOKEN='ab"c']] والـ [[creds.json]] طلع سليم، و [[json.dump]] هرّب علامة التنصيص لوحده:
-
-[[    "value": "Bearer ab\"c"]]
-
-و [[python3 -m json.tool creds.json]] قراه من غير مشاكل. أما بـ echo:
-
-[[echo "[{\"name\":\"internal\",\"value\":\"Bearer $INTERNAL_TOKEN\"}]" > bad.json]]
-
-طلع [[[{"name":"internal","value":"Bearer ab"c"}]]] وده JSON مكسور، و json.tool قال [[Expecting ',' delimiter: line 1 column 40 (char 39)]].
-
-وعلامات التنصيص حوالين [[<<'PY']] مهمة: بتمنع bash إنه يغيّر [[$]] أو [[$__bt]] جوه كود Python. ولو نسيت تعمل [[export]] هيطلع [[KeyError: 'INTERNAL_TOKEN']].
-
-ونسخة PowerShell (تحت) جربتها في PowerShell 7 و 5.1 وطلّعت نفس [[creds.json]] بالظبط. الـ here-string بعلامة تنصيص مفردة [[@'...'@]] زي [[<<'PY']]: PowerShell مش بيفك أي [[$]] جواه. وسطر [['@]] اللي بيقفله لازم يبقى في أول السطر.`,
-          solCode: R`# Windows (PowerShell):
-$env:INTERNAL_TOKEN = 'ab"c'
-@'
-import json, os, sys
-creds = [{"name": "internal", "value": "Bearer " + os.environ["INTERNAL_TOKEN"]}]
-json.dump(creds, open(sys.argv[1], "w"), indent=2)
-'@ | python - creds.json
-Get-Content creds.json`
-        }
-      ]
-    },
-    {
-      t: "pytest بالتفصيل",
-      l: 2,
-      n: "fixtures و conftest.py، و parametrize، و tmp_path، و monkeypatch و mock، واختبار FastAPI، و coverage",
-      items: [
-        {
-          cmd: "@pytest.fixture",
-          title: "تجهيز وتنضيف مشترك بين الاختبارات",
-          desc: R`الـ fixture دالة عليها [[@pytest.fixture]] بتجهّز حاجة الاختبار محتاجها (اتصال بقاعدة، client، ملف). الاختبار بيطلبها بإنه يكتب اسمها كباراميتر، و pytest بيناديها ويدّيله الناتج.
-
-لو فيها [[yield]]: اللي قبله تجهيز، واللي بعده تنضيف بيشتغل بعد الاختبار حتى لو وقع. و [[scope]] بيحدد بتتعمل كام مرة: لكل اختبار (الافتراضي)، ولا مرة للملف، ولا مرة للتشغيل كله. والـ fixtures المشتركة بتتحط في [[conftest.py]] فكل ملفات الاختبار تشوفها من غير import.`,
-          example: R`# tests/conftest.py
-import sqlite3
-import pytest
-@pytest.fixture(scope="session")
-def db_url(tmp_path_factory):
-    return str(tmp_path_factory.mktemp("data") / "test.db")
-@pytest.fixture
-def db(db_url):
-    conn = sqlite3.connect(db_url)
-    conn.execute("CREATE TABLE IF NOT EXISTS users (name TEXT)")
-    yield conn
-    conn.execute("DELETE FROM users")
-    conn.commit()
-    conn.close()
-# tests/test_users.py
-def test_add_user(db):
-    db.execute("INSERT INTO users VALUES ('sara')")
-    assert db.execute("SELECT count(*) FROM users").fetchone()[0] == 1
-def test_starts_empty(db):
-    assert db.execute("SELECT count(*) FROM users").fetchone()[0] == 0`,
-          try: R`حط الملفين وشغّل [[pytest tests/test_users.py --setup-show]] وشوف امتى كل fixture بيتعمل ويتقفل. وبعدين غيّر [[@pytest.fixture]] اللي فوق [[db]] لـ [[@pytest.fixture(scope="module")]] وشغّل تاني: اختبار واحد هيقع. ليه؟`,
-          flag: "script",
-          deep: {
-            why: "من غير fixtures كل اختبار بيبدأ بعشر سطور تجهيز متكررة، وبينسى يقفل الاتصال أو يمسح البيانات، فالاختبار التاني بيلاقي زبالة الأول. الـ fixture بيحط التجهيز والتنضيف في مكان واحد، والاختبار يفضل فيه السطرين اللي بيختبروا بس.",
-            how: R`pytest بيقرا أسماء باراميترات الاختبار، ولكل اسم بيدوّر على fixture بنفس الاسم: في نفس الملف، وبعدين في [[conftest.py]] في نفس الفولدر، وبعدين في conftest.py في الفولدرات اللي فوقه، وبعدين الـ fixtures الجاهزة (زي [[tmp_path]] و [[monkeypatch]] و [[capsys]]) واللي جاية من plugins. والـ fixture نفسه ممكن يطلب fixtures تانية بنفس الطريقة: [[db]] هنا طالب [[db_url]].
-
-[[yield]] بيقسم الدالة نصين: الجزء اللي قبله setup، والقيمة اللي بعد yield هي اللي بتوصل للاختبار، والجزء اللي بعده teardown. الـ teardown بيشتغل حتى لو الاختبار فشل، زي finally.
-
-[[scope]]: [[function]] (الافتراضي) نسخة جديدة لكل اختبار. [[module]] مرة لكل ملف. [[session]] مرة للتشغيل كله: مناسب للحاجات الغالية اللي مبتتغيرش (مسار القاعدة، container Postgres، الـ app). القاعدة: fixture ممكن يطلب fixture في نفس الـ scope أو أوسع، مش أضيق. session مينفعش يطلب fixture بـ function scope، و pytest بيقولك [[ScopeMismatch]].
-
-[[autouse=True]] بيخلي الـ fixture يشتغل لكل اختبار من غير ما حد يطلبه (هتشوفه في درس monkeypatch بيمنع الشبكة).
-
-[[--setup-show]] بيطبع كل SETUP و TEARDOWN والحرف جنبه ([[S]] session و [[F]] function). و [[pytest --fixtures]] بيطبع كل الـ fixtures المتاحة ومكانها.`,
-            when: "أي تجهيز بيتكرر في أكتر من اختبار: قاعدة، client للـ API، ملفات، مستخدم جاهز. وكل حاجة محتاجة تتقفل أو تتمسح بعد الاختبار.",
-            mistakes: R`scope أوسع من اللازم لحاجة بتتغير: الاختبارات بتنجح لوحدها وتفشل مع بعض أو بالعكس، حسب الترتيب. و [[return]] بدل [[yield]] فالتنضيف اللي بعده مبيتنفذش أصلًا. ونداء الـ fixture كدالة عادية [[db()]] من جوه الاختبار: pytest بيرفض ويقولك fixtures مش معمولة تتنادى مباشرة. وفي الانترفيو: «إيه الفرق بين fixture و setUp في unittest؟» الإجابة: الـ fixture بيتطلب بالاسم فكل اختبار ياخد اللي محتاجه بس، وبيتركّب (fixture يطلب fixture)، وليه scope، والتنضيف جنب التجهيز بـ yield.`
-          },
-          lines: [
-            "SQLite جاية مع Python، مناسبة للمثال.",
-            "pytest.",
-            "fixture بيتعمل مرة واحدة للتشغيل كله.",
-            R`بيطلب [[tmp_path_factory]] (fixture جاهز للـ session scope).`,
-            "مسار ملف القاعدة في فولدر مؤقت.",
-            "fixture لكل اختبار (الافتراضي).",
-            "بيطلب db_url، فـ pytest بيجهّزه الأول.",
-            "افتح اتصال.",
-            "اعمل الجدول لو مش موجود.",
-            "ادّي الاتصال للاختبار، واستنى لحد ما يخلص.",
-            "بعد الاختبار: امسح اللي اتكتب...",
-            "...واحفظ المسح...",
-            "...واقفل الاتصال.",
-            "اختبار بيطلب db بالاسم.",
-            "ضيف صف.",
-            "في صف واحد.",
-            "اختبار تاني بيطلب db.",
-            "المفروض يبدأ فاضي لأن التنضيف اشتغل."
-          ],
-          sol: R`[[--setup-show]] بيطبع حاجة زي: [[SETUP S db_url]] مرة واحدة في الأول، وبعدين لكل اختبار [[SETUP F db]] ثم الاختبار ثم [[TEARDOWN F db]]، وفي الآخر [[TEARDOWN S db_url]]. يعني db اتعمل واتقفل مرتين، و db_url مرة. (لو عندك plugins زي pytest-asyncio هتلاقي fixtures زيادة في الناتج، عادي.)
-
-بـ [[scope="module"]]: [[test_starts_empty]] بيقع بـ [[assert 1 == 0]]. الـ fixture بقى بيتعمل مرة واحدة للملف، فالتنضيف (DELETE) مش بيشتغل غير بعد آخر اختبار في الملف، والتاني شايف الصف اللي الأول ضافه. ولو غيّرت ترتيب الاختبارين الاتنين هينجحوا، ودي أخطر حاجة: اختبارات نتيجتها بتعتمد على الترتيب.
-
-الحل: ارجع للـ function scope للحاجة اللي بتتغير. ولو التجهيز غالي فعلًا، خلّي الغالي (الاتصال نفسه) session، وخلّي التنضيف (rollback أو DELETE) في fixture تاني بـ function scope، زي ما db_url و db متقسمين هنا.`,
-          solCode: R`# tests/conftest.py: الغالي مرة واحدة، والتنضيف لكل اختبار
-import sqlite3
-import pytest
-
-@pytest.fixture(scope="session")
-def conn(tmp_path_factory):
-    c = sqlite3.connect(tmp_path_factory.mktemp("data") / "test.db")
-    c.execute("CREATE TABLE IF NOT EXISTS users (name TEXT)")
-    yield c
-    c.close()
-
-@pytest.fixture
-def db(conn):
-    yield conn
-    conn.rollback()
-    conn.execute("DELETE FROM users")
-    conn.commit()`
-        },
-        {
-          cmd: "@pytest.mark.parametrize",
-          title: "اختبار واحد على جدول حالات",
-          desc: R`بدل ما تكتب نفس الاختبار خمس مرات بأرقام مختلفة: [[@pytest.mark.parametrize]] بياخد أسماء الباراميترات ولستة حالات، و pytest بيشغّل الاختبار مرة لكل حالة، وكل مرة بتظهر كاختبار منفصل باسم الحالة.
-
-و [[pytest.raises]] بيختبر إن الكود رمى exception معيّن، و [[match]] بيتأكد من الرسالة.`,
-          example: R`import pytest
-from app.pricing import final_price
-@pytest.mark.parametrize(
-    ("price", "coupon", "expected"),
-    [
-        (200, None, 200),
-        (200, "SAVE10", 180),
-        (0, "SAVE10", 0),
-        pytest.param(200, "save10", 180, id="lowercase-coupon"),
-    ],
-)
-def test_final_price(price, coupon, expected):
-    assert final_price(price, coupon) == expected
-@pytest.mark.parametrize("price", [-1, -100])
-def test_negative_price_rejected(price):
-    with pytest.raises(ValueError, match="negative"):
-        final_price(price, None)`,
-          try: R`اكتب [[app/pricing.py]] فيه [[final_price]] بتقارن [[coupon == "SAVE10"]] بس، وشغّل [[pytest -v]]. شوف مين وقع واسمه إيه. صلّح الدالة، وضيف حالة [[(99, "SAVE10", 89)]] وتأكد إنها بتعدّي.`,
-          flag: "script",
-          deep: {
-            why: "الأخطاء بتستخبى في الحالات الطرفية: صفر، سالب، حروف صغيرة، قيمة فاضية. لو كل حالة محتاجة اختبار كامل هتكتب اتنين وتزهق. الجدول بيخلي إضافة حالة سطر واحد، وبيوريك في النتيجة أنهي حالة بالظبط وقعت.",
-            how: R`أول argument أسماء الباراميترات (tuple أو string فيه أسماء مفصولة بفاصلة)، والتاني لستة، كل عنصر فيها tuple بنفس الترتيب. pytest بيعمل اختبار لكل عنصر، والـ id التلقائي من القيم: [[test_final_price[200-SAVE10-180] ]].
-
-[[pytest.param(..., id="...")]] بيدّي الحالة اسم مقروء، وتقدر تضيف [[marks=pytest.mark.xfail]] لحالة معروف إنها بايظة لسه. و [[pytest -k lowercase]] يشغّل الحالة دي لوحدها.
-
-لو حطيت أكتر من parametrize فوق بعض، pytest بيعمل كل التوافيق (2 × 3 = 6 اختبارات).
-
-[[with pytest.raises(ValueError, match="negative")]]: لو الكود جوه الـ with مرماش ValueError، الاختبار بيفشل بـ [[DID NOT RAISE]]. و [[match]] regex بيتدوّر عليه في رسالة الـ exception. ولو محتاج الـ exception نفسه: [[with pytest.raises(ValueError) as exc:]] وبعدين [[exc.value]].
-
-وتقدر تعمل parametrize لـ fixture كمان: [[@pytest.fixture(params=["sqlite", "postgres"])]] وجواه [[request.param]]، فكل الاختبارات اللي بتطلبه تتشغّل مرتين.`,
-            when: "أي دالة ليها مدخلات ومخرجات واضحة: حسابات، validation، parsing، تحويل تواريخ. وأي bug اتصلّح: ضيفه كحالة في الجدول عشان ميرجعش.",
-            mistakes: R`اختبار فيه [[for]] على الحالات بدل parametrize: أول حالة تقع بتوقف الباقي، ومش هتعرف غير أول غلطة. وحساب الـ expected بنفس المعادلة اللي في الكود ([[price * 0.9]]): لو المعادلة غلط الاختبار هيعدّي. اكتب الرقم بإيدك. و [[pytest.raises(Exception)]] عام أوي: هيعدّي حتى لو الكود وقع بـ TypeError من غلطة تانية خالص.`
-          },
-          lines: [
-            "pytest.",
-            "الدالة اللي بنختبرها.",
-            "اختبار واحد على جدول حالات:",
-            "أسماء الباراميترات.",
-            "الحالات:",
-            "من غير كوبون.",
-            "كوبون صح: خصم ١٠٪.",
-            "حالة طرفية: سعر صفر.",
-            "حالة ليها اسم مقروء في الناتج.",
-            "نهاية اللستة.",
-            "نهاية الـ decorator.",
-            "الاختبار بياخد الباراميترات.",
-            "المقارنة.",
-            "جدول بباراميتر واحد.",
-            "اختبار إن السعر السالب مرفوض.",
-            "لازم يرمي ValueError ورسالتها فيها negative.",
-            "النداء اللي المفروض يرمي."
-          ],
-          sol: R`بالمقارنة الحرفية، [[pytest -v]] بيطلّع خمسة PASSED وواحد [[FAILED tests/test_pricing.py::test_final_price[lowercase-coupon] ]]، والرسالة [[assert 200 == 180]]. الاسم اللي انت ادّيته للحالة هو اللي باين، فعرفت المشكلة من غير ما تفتح الكود: الكوبون بحروف صغيرة مش متعرف عليه.
-
-التصليح: قارن بعد [[.upper()]]، ومن غير ما تقع لو الكوبون [[None]]. بعدها الستة PASSED، والحالة الجديدة [[99]] تطلع [[89]] (لأن [[round(89.1)]] = 89).
-
-لو ضفت الحالة الجديدة وكتبت expected [[89.1]] هتقع: الدالة بتقرّب لرقم صحيح. وده بالظبط اللي الجدول بيكشفه: قرار (نقرّب ولا لأ) لازم يبقى مكتوب في اختبار.`,
-          solCode: R`# app/pricing.py
-def final_price(price: int, coupon: str | None) -> int:
-    if price < 0:
-        raise ValueError("price can't be negative")
-    if coupon and coupon.upper() == "SAVE10":
-        return round(price * 0.9)
-    return price
-
-# في tests/test_pricing.py ضيف للّستة:
-#     (99, "SAVE10", 89),`
-        },
-        {
-          cmd: "tmp_path",
-          title: "اختبار بيكتب ويقرا ملفات",
-          desc: R`[[tmp_path]] fixture جاهز في pytest: بيدّيك فولدر فاضي جديد (كـ [[pathlib.Path]]) لكل اختبار. تكتب فيه وتقرا منه براحتك، ومش هتلمس ملفات المشروع الحقيقية ولا اختبار يشوف ملفات التاني.
-
-ولو محتاج فولدر واحد مشترك لكذا اختبار (session scope)، في [[tmp_path_factory]].`,
-          example: R`import json
-from app.config import load_config
-def test_reads_config(tmp_path):
-    cfg = tmp_path / "config.json"
-    cfg.write_text(json.dumps({"port": 9000}), encoding="utf-8")
-    assert load_config(cfg) == {"port": 9000, "debug": False}
-def test_missing_file_uses_defaults(tmp_path):
-    assert load_config(tmp_path / "nope.json") == {"port": 8000, "debug": False}`,
-          try: R`اكتب [[save_report(rows, out_dir)]] بتكتب [[report.csv]] فيه [[name,price]] وصف لكل عنصر وترجّع مسار الملف. اختبرها بـ tmp_path، واطبع [[tmp_path]] وشغّل بـ [[pytest -s]] عشان تشوف الفولدر ده فين.`,
-          flag: "script",
-          deep: {
-            why: R`اختبار بيكتب في [[./output]] أو [[/tmp/report.csv]]: اختبارين بيكتبوا نفس الملف في نفس الوقت (مع pytest-xdist) فيبوظوا بعض، وملف فاضل من run قديم بيخلي الاختبار يعدّي غلط، وممكن تمسح ملف حقيقي بالغلط. tmp_path بيحل التلاتة.`,
-            how: R`pytest بيعمل فولدر أساسي ([[/tmp/pytest-of-USER/pytest-N/]] على لينكس)، وجواه فولدر لكل اختبار باسمه ([[test_reads_config0]]). وبيحتفظ بآخر ٣ تشغيلات بس ويمسح الأقدم، فلو اختبار وقع تقدر تفتح الفولدر وتشوف الملفات اللي كان كاتبها.
-
-[[tmp_path]] من نوع [[pathlib.Path]]: [[/]] بيركّب المسارات، و [[write_text]] و [[read_text]] و [[mkdir]] و [[exists]] جاهزين. ادّي الدالة بتاعتك [[Path]] مش string متركّب، وخلّيها تقبل المسار كباراميتر بدل ما تكون مثبتاه جواها: ده اللي بيخليها قابلة للاختبار أصلًا.
-
-[[--basetemp=DIR]] بيغيّر المكان (وبيمسحه في أول كل تشغيل، فمتدّيهوش فولدر فيه حاجة مهمة).
-
-fixtures جاهزة قريبة: [[capsys]] بيمسك الـ print ([[capsys.readouterr().out]])، و [[caplog]] بيمسك رسايل logging، و [[monkeypatch.chdir(tmp_path)]] لو الكود بيكتب في الفولدر الحالي.`,
-            when: "أي كود بيقرا أو يكتب ملفات: config، تقارير CSV، رفع صور، cache على الديسك.",
-            mistakes: R`دالة بتكتب في مسار ثابت جواها ([[open("report.csv", "w")]]) فمتقدرش تختبرها غير بإنك تكتب في فولدر المشروع. و [[open()]] من غير [[encoding="utf-8"]]: بيعدّي على لينكس ويقع على ويندوز مع العربي. واستخدام الـ [[tempfile]] بإيدك من غير تنضيف.`
-          },
-          lines: [
-            "json.",
-            "الدالة اللي بتقرا ملف الإعدادات.",
-            "الاختبار بيطلب tmp_path.",
-            "مسار ملف جوه الفولدر المؤقت.",
-            "اكتب فيه JSON.",
-            "القيم اللي في الملف غطّت الافتراضي، والباقي افتراضي.",
-            "اختبار تاني بفولدر مؤقت تاني.",
-            "ملف مش موجود: يرجع الافتراضي من غير ما يقع."
-          ],
-          sol: R`الاختبار بيعدّي، و [[-s]] بيطبع مسار زي [[/tmp/pytest-of-USER/pytest-6/test_save_report0]] على لينكس، و [[C:\Users\USER\AppData\Local\Temp\pytest-of-USER\pytest-0\test_save_report0]] على ويندوز (جربت الاتنين). افتحه بعد التشغيل هتلاقي report.csv لسه موجود (pytest بيسيب آخر ٣ تشغيلات).
-
-الـ CSV المتوقع بالظبط: [[name,price]] ثم [[pen,5]] ثم [[cup,12]]. ولاحظ إن [[csv.DictReader]] بيرجّع كل القيم strings ([["12"]] مش [[12]])، فلو قارنت بـ int هيقع.
-
-الغلطة الشائعة: [[open(out, "w")]] من غير [[newline=""]]: على ويندوز بيطلع سطر فاضي بين كل صف والتاني ([[\r\r\n]]). والتانية: الدالة بتكتب في [["report.csv"]] ثابت، فالاختبار مبيلاقيش الملف في tmp_path.`,
-          solCode: R`# app/report_csv.py
-import csv
+كده الملف بيشتغل لما تشغّله مباشرة، ولما ملف تاني (أو اختبار) يعمله import ياخد الدوال من غير ما يشغّل حاجة. والرقم اللي main بترجّعه بيبقى الـ exit code. ده نفس الهيكل في كل سكربت في باقي الدروس.`,
+          example: R`#!/usr/bin/env python3
+"""Count lines in text files: python3 count_lines.py FILE..."""
+import sys
 from pathlib import Path
 
-def save_report(rows: list[dict], out_dir: Path) -> Path:
-    out = out_dir / "report.csv"
-    with out.open("w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=["name", "price"])
-        w.writeheader()
-        w.writerows(rows)
-    return out
+def count_lines(path: Path) -> int:
+    with path.open(encoding="utf-8") as f:
+        return sum(1 for _ in f)
 
-# tests/test_report_csv.py
-import csv
-from app.report_csv import save_report
-
-def test_save_report(tmp_path):
-    print(tmp_path)
-    out = save_report([{"name": "pen", "price": 5}, {"name": "cup", "price": 12}], tmp_path)
-    assert out == tmp_path / "report.csv"
-    assert out.read_text(encoding="utf-8").splitlines() == ["name,price", "pen,5", "cup,12"]
-    with out.open(encoding="utf-8") as f:
-        assert list(csv.DictReader(f))[1] == {"name": "cup", "price": "12"}`
-        },
-        {
-          cmd: "monkeypatch",
-          title: "تغيّر متغير بيئة أو دالة للاختبار ده بس",
-          desc: R`[[monkeypatch]] fixture جاهز بيغيّر حاجات مؤقتًا: [[setenv]] و [[delenv]] لمتغيرات البيئة، و [[setattr]] يبدّل دالة أو قيمة في module أو object، و [[chdir]] يغيّر الفولدر الحالي. وبعد الاختبار كل حاجة بترجع زي ما كانت لوحدها، حتى لو الاختبار وقع.
-
-بيه تعزل الحاجات اللي بتتغير لوحدها: الوقت، والبيئة، والشبكة.`,
-          example: R`# tests/conftest.py
-import pytest
-@pytest.fixture(autouse=True)
-def no_network(monkeypatch):
-    def guard(*args, **kwargs):
-        raise RuntimeError("network call in a test!")
-    monkeypatch.setattr("socket.socket.connect", guard)
-# tests/test_env_time.py
-from app import clock, settings
-def test_debug_from_env(monkeypatch):
-    monkeypatch.setenv("APP_DEBUG", "1")
-    assert settings.is_debug() is True
-def test_debug_off_by_default(monkeypatch):
-    monkeypatch.delenv("APP_DEBUG", raising=False)
-    assert settings.is_debug() is False
-def test_greeting_morning(monkeypatch):
-    monkeypatch.setattr(clock, "current_hour", lambda: 9)
-    assert clock.greeting() == "صباح الخير"`,
-          try: R`اعمل [[app/settings.py]] بيقرا [[APP_DEBUG]] جوه [[is_debug()]] والاختبارات تعدّي. وبعدين غيّره يقرا المتغير مرة واحدة في أول الملف ([[DEBUG = os.environ.get("APP_DEBUG") == "1"]]) و [[is_debug]] ترجّع [[DEBUG]]، وشغّل تاني. مين وقع وليه؟ وصلّح الاختبار من غير ما ترجّع الكود.`,
-          flag: "script",
-          deep: {
-            why: R`الكود اللي بيعتمد على [[datetime.now()]] أو [[os.environ]] أو API خارجي نتيجته بتتغير: الاختبار يعدّي الصبح ويقع بالليل، أو يعدّي عندك ويقع في CI عشان متغير مش موجود هناك. ولو غيّرت [[os.environ]] بإيدك من غير ترجيع، الاختبارات اللي بعده بتتأثر.`,
-            how: R`كل عملية في monkeypatch بتتسجّل، وبعد الاختبار بيعمل undo بالعكس. [[setenv("APP_DEBUG", "1")]] بيحط القيمة (لازم string)، و [[delenv(..., raising=False)]] بيشيله ومش بيقع لو مش موجود أصلًا.
-
-[[setattr(clock, "current_hour", lambda: 9)]] بيبدّل الاسم [[current_hour]] جوه الـ module [[clock]]. ولأن [[greeting()]] بتدوّر على [[current_hour]] في الـ module بتاعها وقت ما تتنادى، هتلاقي النسخة المزيّفة. ده أبسط وأأمن من إنك تزيّف [[datetime]] نفسه: خلّي الوقت ييجي من دالة صغيرة بتاعتك، وزيّفها هي. (وفيه مكتبات زي time-machine و freezegun لو محتاج توقّف الساعة للكود كله.)
-
-والصيغة بـ string: [[setattr("socket.socket.connect", guard)]] بيعمل import للمسار ويبدّل آخر اسم. هنا بتبدّل [[connect]] لكل socket، فأي اختبار بيحاول يكلّم الشبكة (httpx أو requests أو asyncpg) بيقع فورًا برسالة واضحة. و [[autouse=True]] بيطبّقه على كل الاختبارات من غير ما حد يطلبه. [[TestClient]] بتاع FastAPI مش بيفتح socket، فمش بيتأثر. (ولو عايز ده جاهز بإعدادات أكتر، فيه plugin اسمه pytest-socket.)
-
-[[monkeypatch.chdir(tmp_path)]] لكود بيكتب في الفولدر الحالي، و [[monkeypatch.setitem(d, key, value)]] لـ dict زي الإعدادات.`,
-            when: "متغيرات البيئة، والوقت، والفولدر الحالي، ومنع الشبكة في كل الاختبارات. ولتبديل دالة بسيطة بقيمة ثابتة. ولو محتاج تتأكد الدالة اتنادت بإيه، استخدم mock (الدرس الجاي).",
-            mistakes: R`قيمة بتتقري وقت الـ import (ثابت في أول الملف): [[setenv]] بعد كده مبيأثرش لأن القيمة اتحسبت خلاص، وده السؤال اللي في «جرّب». و [[setattr]] على المكان الغلط (نفس فكرة «patch في المكان اللي بيتقري منه» في الدرس الجاي). و [[os.environ["X"] = "1"]] بإيدك في اختبار: بيفضل لكل الاختبارات اللي بعده. و [[setenv("PORT", 8000)]] برقم مش string.`
-          },
-          lines: [
-            "pytest.",
-            "fixture بيشتغل لكل اختبار لوحده.",
-            "بيطلب monkeypatch.",
-            "دالة بدل connect...",
-            "...بتقع برسالة واضحة.",
-            "أي اتصال شبكة في أي اختبار هيقع.",
-            "الموديولات اللي بنختبرها.",
-            "اختبار متغير البيئة.",
-            "APP_DEBUG=1 للاختبار ده بس.",
-            "الكود شايفه.",
-            "الحالة العكسية.",
-            "اتأكد إن المتغير مش موجود حتى لو موجود عندك.",
-            "الافتراضي False.",
-            "اختبار بيعتمد على الساعة.",
-            "الساعة ٩ الصبح دايمًا في الاختبار ده.",
-            "النتيجة ثابتة مهما شغّلته امتى."
-          ],
-          sol: R`بعد التغيير: [[test_debug_from_env]] بيقع بـ [[assert False is True]]. الـ [[DEBUG]] اتحسب مرة واحدة لما pytest عمل import لـ settings (قبل أي اختبار)، والمتغير ساعتها مكانش موجود. [[setenv]] بعد كده غيّر [[os.environ]] بس، والثابت فضل False.
-
-التصليح من غير ما ترجّع الكود: بدّل الثابت نفسه بـ [[monkeypatch.setattr(settings, "DEBUG", True)]].
-
-وده درس تصميم: الكود اللي بيقرا البيئة وقت ما يتنادى (أو من object إعدادات بيتعمل بدالة، زي pydantic-settings مع [[get_settings]] في «تاب Python و FastAPI») أسهل بكتير في الاختبار من ثوابت وقت الـ import.`,
-          solCode: R`# app/settings.py (القراية وقت الـ import)
-import os
-
-DEBUG = os.environ.get("APP_DEBUG") == "1"
-
-def is_debug() -> bool:
-    return DEBUG
-
-# tests/test_settings.py
-from app import settings
-
-def test_debug_on(monkeypatch):
-    monkeypatch.setattr(settings, "DEBUG", True)
-    assert settings.is_debug() is True`
-        },
-        {
-          cmd: "unittest.mock.patch",
-          title: "تزيّف API خارجي وتتأكد اتنادى بإيه",
-          desc: R`[[unittest.mock]] جاية مع Python. [[Mock]] object بيقبل أي نداء ويسجّله، وتحدد هو يرجّع إيه ([[return_value]]) أو يرمي إيه ([[side_effect]]). و [[patch("module.name")]] بيبدّل اسم بـ Mock جوه with، وبعدها بيرجّعه.
-
-القاعدة الأهم: اعمل patch في المكان اللي الاسم بيتقري منه، مش المكان اللي اتعرّف فيه. لو [[app/report.py]] فيه [[from app.weather import fetch_temp]]، يبقى تعمل patch لـ [[app.report.fetch_temp]].`,
-          example: R`from unittest.mock import Mock, patch
-import httpx
-import pytest
-from app.report import daily_report
-from app.weather import fetch_temp
-def test_report_hot():
-    with patch("app.report.fetch_temp", return_value=40) as fake:
-        assert daily_report("Aswan") == "Aswan: 40°C حر"
-    fake.assert_called_once_with("Aswan")
-def test_fetch_temp_parses_json():
-    resp = Mock(spec=httpx.Response)
-    resp.json.return_value = {"temp": 22.5}
-    with patch("app.weather.httpx.get", return_value=resp) as get:
-        assert fetch_temp("Cairo") == 22.5
-    get.assert_called_once_with("https://api.example.com/weather/Cairo", timeout=5)
-def test_timeout_bubbles_up():
-    with patch("app.report.fetch_temp", side_effect=httpx.ReadTimeout("slow")):
-        with pytest.raises(httpx.ReadTimeout):
-            daily_report("Cairo")`,
-          try: R`اعمل [[app/weather.py]] فيه [[fetch_temp]] بتنادي [[httpx.get]]، و [[app/report.py]] فيه [[from app.weather import fetch_temp]] و [[daily_report]]. شغّل الاختبارات. وبعدين في [[test_report_hot]] غيّر المسار لـ [["app.weather.fetch_temp"]] وشغّل تاني. إيه اللي حصل وليه؟`,
-          flag: "script",
-          deep: {
-            why: "اختبار بيكلّم API حقيقي: بطيء، وبيقع لما النت يقطع أو الـ API يغيّر بياناته، وممكن يبعت SMS أو يخصم فلوس بجد. والحالات المهمة (timeout، 500، رد غريب) صعب تخلّي الـ API الحقيقي يعملها وقت ما انت عايز. الـ mock بيخليك تتحكم في الرد، وتتأكد إن الكود بتاعك بعت الطلب الصح.",
-            how: R`[[from app.weather import fetch_temp]] جوه report.py بيعمل اسم جديد [[fetch_temp]] في الـ namespace بتاع [[app.report]] بيشاور على نفس الدالة. [[patch("app.weather.fetch_temp")]] بيغيّر الاسم في weather بس، و report لسه ماسك الدالة الأصلية. عشان كده بتعمل patch لـ [[app.report.fetch_temp]]: الاسم اللي daily_report بتدوّر عليه فعلًا. ولو report كان كاتب [[import app.weather]] وبينادي [[app.weather.fetch_temp()]]، ساعتها الـ patch يبقى في [[app.weather]]. ونفس الفكرة في [[app.weather.httpx.get]]: الاسم httpx جوه weather.
-
-[[return_value]] القيمة اللي النداء بيرجّعها. [[side_effect]] لو exception بيترمي، ولو لستة بيرجّع عنصر مع كل نداء (مفيد لـ retry: أول مرة timeout وتاني مرة نجاح)، ولو دالة بتتنادى بنفس الباراميترات.
-
-[[Mock(spec=httpx.Response)]] بيسمح بس بالأسماء اللي موجودة فعلًا في Response، فلو كتبت [[resp.jsn()]] غلط هيقع بدل ما يرجّع Mock تاني بهدوء. وفي patch نفس الفكرة بـ [[autospec=True]]: بيتأكد كمان من عدد الباراميترات. وفيه [[patch.object(report, "fetch_temp", ...)]] لو عندك الـ module نفسه.
-
-التأكيدات: [[assert_called_once_with(...)]]، و [[assert_not_called()]]، و [[call_args]] و [[call_count]] لو عايز تبص بنفسك. ولدوال async فيه [[AsyncMock]] (و patch بيستخدمه لوحده لو الدالة الأصلية async).
-
-وفيه plugin اسمه pytest-mock بيدّيك fixture [[mocker]]: [[mocker.patch("app.report.fetch_temp", return_value=40)]] من غير with، وبيترجع لوحده بعد الاختبار.`,
-            when: R`حدود النظام بس: HTTP لخدمات تانية، إيميل و SMS، بوابات دفع، الوقت. متعملش mock لكودك الداخلي كله، ولا للقاعدة بتاعتك: اختبر الـ SQL على Postgres حقيقي في Docker. ولـ HTTP كتير فيه كمان مكتبة respx اللي بتزيّف httpx على مستوى الطلبات.`,
-            mistakes: R`patch في مكان التعريف بدل مكان الاستخدام: الـ mock مبيتناداش والكود الحقيقي يشتغل (وده أشهر سؤال عن mock في الانترفيو). و [[fake.called_once_with("Aswan")]] من غير assert في الأول: لحد Python 3.11 ده كان مجرد attribute على الـ Mock بيرجّع Mock تاني، فالسطر بيعدّي دايمًا ومش بيختبر حاجة. من 3.12 Python بيمسك الغلطة دي بالذات ([[AttributeError: 'called_once_with' is not a valid assertion]])، وكمان [[assert_called_once_wiht]] بإملاء غلط. بس أي اسم تاني غلط زي [[fake.was_called_with("Aswan")]] لسه بيرجّع Mock ويعدّي بهدوء (جربت الاتنين على 3.11 و 3.13). واختبارات كلها mocks بتختبر إن الكود بينادي الـ mocks بس، فتعدّي والكود بايظ.`
-          },
-          lines: [
-            "Mock و patch من المكتبة الجاهزة.",
-            "httpx (عشان نوع الـ Response والـ exceptions).",
-            "pytest.",
-            "الدالة اللي بتستخدم fetch_temp.",
-            "الدالة اللي بتكلّم الـ API.",
-            "اختبار التقرير من غير شبكة.",
-            R`بدّل [[fetch_temp]] في المكان اللي report بيقراه منه، وخلّيها ترجّع 40.`,
-            "40 أكبر من 35 فلازم يقول حر.",
-            "واتنادت مرة واحدة بالمدينة الصح.",
-            "اختبار الـ parsing نفسه.",
-            "رد وهمي بنفس شكل httpx.Response.",
-            "الـ json بتاعه يرجّع ده.",
-            "بدّل httpx.get زي ما weather شايفه.",
-            "الدالة استخرجت الرقم صح.",
-            "والطلب اتبعت على الـ URL الصح وبـ timeout.",
-            "اختبار الخطأ.",
-            "الـ API بيعمل timeout.",
-            "التقرير مش بيبلع الخطأ...",
-            "...بيطلّعه للي فوقه."
-          ],
-          sol: R`بالمسار الصح التلاتة بيعدّوا.
-
-بـ [["app.weather.fetch_temp"]]: [[daily_report]] لسه بتنادي الدالة الأصلية لأن [[app.report]] عنده اسم خاص بيه اتربط وقت الـ import. فالدالة الحقيقية بتحاول تكلّم [[api.example.com]] بجد. جربتها: [[test_report_hot]] وقع بـ [[httpx.ConnectError: [Errno -2] Name or service not known]] على لينكس، و [[httpx.ConnectError: [Errno 11001] getaddrinfo failed]] على ويندوز، لأن الدومين ده مالوش عنوان أصلًا. وحتى مع fixture منع الشبكة من درس monkeypatch طلع نفس الـ ConnectError، لأن البحث عن الدومين (DNS) بيفشل قبل ما يوصل لـ connect. ومع API حقيقي الوضع أسوأ: الاختبار ممكن يعدّي لو الـ API رجّع رقم، وانت فاكر إن الـ mock شغال.
-
-القاعدة: شوف الملف اللي فيه الكود اللي بتختبره، والاسم مكتوب فيه إزاي. [[from x import f]] يبقى patch لـ [[yourmodule.f]]. و [[import x]] ثم [[x.f()]] يبقى patch لـ [[x.f]].
-
-و [[patch.object]] مع [[autospec=True]] بيعمل نفس الحاجة وبيتأكد كمان إن النداء بعدد باراميترات صح.`,
-          solCode: R`from unittest.mock import patch
-from app import report
-
-def test_report_hot():
-    with patch.object(report, "fetch_temp", return_value=40, autospec=True) as fake:
-        assert report.daily_report("Aswan") == "Aswan: 40°C حر"
-    fake.assert_called_once_with("Aswan")`
-        },
-        {
-          cmd: "TestClient و conftest",
-          title: "اختبارات FastAPI من غير سيرفر ولا قاعدة حقيقية",
-          desc: R`كل اللي فات بيتجمع هنا: fixture في [[conftest.py]] بيبدّل الـ dependency بتاعة التخزين بـ dict فاضي لكل اختبار عن طريق [[app.dependency_overrides]]، ويفتح [[TestClient]] بـ with، ويشيل الـ overrides في التنضيف. والاختبار يطلب [[client]] و [[store]] ويشتغل.
-
-وللاختبارات async: [[httpx.AsyncClient]] مع [[ASGITransport]]. شرح TestClient و dependency_overrides نفسهم في درس [[dependency_overrides]] في «تاب Python و FastAPI». هنا إزاي تنظّمهم كـ fixtures.`,
-          example: R`# tests/conftest.py
-import pytest
-from fastapi.testclient import TestClient
-from app.main import app, get_store
-@pytest.fixture
-def store():
-    return {}
-@pytest.fixture
-def client(store):
-    app.dependency_overrides[get_store] = lambda: store
-    with TestClient(app) as c:
-        yield c
-    app.dependency_overrides.clear()
-# tests/test_items.py
-import httpx
-import pytest
-from app.main import app
-def test_create_then_get(client, store):
-    r = client.post("/items", json={"name": "pen", "price": 5})
-    assert r.status_code == 201
-    assert store == {1: {"name": "pen", "price": 5}}
-    assert client.get("/items/1").json() == {"name": "pen", "price": 5}
-@pytest.mark.asyncio
-async def test_health_async():
-    transport = httpx.ASGITransport(app=app)
-    async with httpx.AsyncClient(transport=transport, base_url="http://test") as ac:
-        r = await ac.get("/health")
-    assert r.json() == {"ok": True}`,
-          try: R`اعمل [[app/main.py]] فيه [[get_store()]] بترجّع dict عالمي، و [[POST /items]] و [[GET /items/{item_id}]] بيستخدموها بـ Depends. سطّب [[pytest-asyncio]]. ضيف اختبار إن [[price: "abc"]] بيرجّع 422 والـ store فاضل فاضي، واختبار إن [[GET /items/99]] بيرجّع 404. وبعدين شيل override الـ store وشغّل [[pytest -k create_then_get]] لوحده، وبعدين الملف كله بعد ما تضيف اختبار تاني بيعمل POST قبله.`,
-          flag: "script",
-          deep: {
-            why: "لو كل اختبار بيعمل TestClient ويبدّل الـ dependencies بإيده، هتنسى clear مرة، والـ override يفضل لباقي الاختبارات ويعدّيها غلط. الـ fixtures بتخلي ده مكتوب مرة واحدة وصح. ولو الـ store عالمي من غير override، اختبار بيسيب بيانات للي بعده.",
-            how: R`[[store]] fixture بيرجّع dict جديد لكل اختبار. و [[client]] بيطلبه، ويحط [[lambda: store]] مكان [[get_store]]، فكل route بياخد الـ dict ده. والاختبار بيطلب الاتنين، فيقدر يبص جوه [[store]] بعد الـ request ويتأكد الـ route كتب إيه بالظبط، مش بس الرد.
-
-[[with TestClient(app)]] بيشغّل الـ lifespan (startup و shutdown)، والـ yield جوه with يعني الـ client مفتوح طول الاختبار. بعد الاختبار: with بتقفل، وبعدين [[clear()]].
-
-[[TestClient]] متزامن: بيشغّل التطبيق في thread بـ event loop خاص بيه، فالاختبار نفسه [[def]] عادي. لما الاختبار نفسه محتاج [[await]] (يكلّم قاعدة async مثلًا)، استخدم [[httpx.AsyncClient]] بـ [[ASGITransport(app=app)]]: بيكلّم التطبيق مباشرة من غير شبكة، و [[base_url]] أي حاجة. والاختبار async محتاج plugin: [[@pytest.mark.asyncio]] من pytest-asyncio (أو [[asyncio_mode = auto]] في pytest.ini من غير الـ decorator)، أو [[@pytest.mark.anyio]] من anyio اللي جاي مع FastAPI. و ASGITransport مش بيشغّل الـ lifespan.
-
-في نسخ Starlette الحديثة ممكن تشوف تحذير إن TestClient عايز [[httpx2]] بدل httpx. الاختبارات شغالة، والتحذير بيروح لو سطّبته.
-
-والقاعدة الحقيقية: fixture بـ session scope بيعمل الـ pool على Postgres اختبار، وfixture لكل اختبار بيفتح transaction ويعمل rollback في الآخر.`,
-            when: "أي مشروع FastAPI، من أول endpoint. الـ fixtures دي بتتنسخ من مشروع للتاني تقريبًا زي ما هي.",
-            mistakes: R`fixture الـ client بـ session scope والـ store بـ function: pytest يقولك ScopeMismatch، ولو خلّيت الاتنين session الاختبارات تشوف بيانات بعض. و [[return TestClient(app)]] بدل [[with ... yield]] فالـ lifespan مبيشتغلش والـ clear مالهاش مكان. واختبار async من غير plugin: pytest بيقولك [[async def functions are not natively supported]] ويفشله. واختبار بيتأكد من status_code بس: 201 بيطلع حتى لو اتكتب في الـ store حاجة غلط.`
-          },
-          lines: [
-            "pytest.",
-            "client بيكلّم التطبيق من غير سيرفر.",
-            "التطبيق والـ dependency اللي هنبدّلها.",
-            "fixture...",
-            "...للتخزين:",
-            "dict جديد فاضي لكل اختبار.",
-            "fixture للـ client...",
-            "...بيطلب store.",
-            "أي route محتاج get_store ياخد الـ dict ده.",
-            "افتح الـ client (والـ lifespan يشتغل).",
-            "ادّيه للاختبار.",
-            "بعد الاختبار: شيل التبديل.",
-            "httpx للنسخة async.",
-            "pytest.",
-            "التطبيق.",
-            "الاختبار بيطلب الاتنين بالاسم.",
-            "اعمل عنصر.",
-            "اتعمل.",
-            "واتكتب في الـ store بالظبط كده.",
-            "واترجع صح.",
-            "اختبار async (pytest-asyncio).",
-            "دالة الاختبار async.",
-            "transport بيكلّم التطبيق مباشرة.",
-            "client async.",
-            "await على الطلب.",
-            "الرد."
-          ],
-          sol: R`الاختبارين الجداد بيعدّوا: [[price: "abc"]] بيرجّع 422 و [[detail[0]["loc"] ]] = [[["body", "price"] ]]، والـ store فاضل [[{}]] لأن FastAPI رفض قبل ما الدالة تتنادى. و [[/items/99]] بيرجّع 404.
-
-من غير override الـ store جربت الحالتين:
-
-[[test_create_then_get]] وقع حتى لوحده بـ [[assert {} == {1: {'name': ..., 'price': 5}}]]: الـ route كتب في [[_STORE]] العالمي، والـ [[store]] اللي الاختبار بيبص فيه dict تاني فاضي ملوش علاقة بيه.
-
-ولما شلت سطر [[assert store == ...]]، عدّى لوحده، ووقع لما اختبار تاني عمل POST قبله: [[assert {'name': 'x', 'price': 1} == {'name': 'pen', 'price': 5}]]، لأن العنصر رقم 1 بقى بتاع الاختبار اللي قبله. نتيجة بتعتمد على الترتيب: رجّع الـ override.
-
-لو الاختبار async قال [[async def functions are not natively supported]]: pytest-asyncio مش متسطّب أو الـ mark ناقص.`,
-          solCode: R`# tests/test_items_errors.py
-def test_invalid_price_422(client, store):
-    r = client.post("/items", json={"name": "pen", "price": "abc"})
-    assert r.status_code == 422
-    assert r.json()["detail"][0]["loc"] == ["body", "price"]
-    assert store == {}
-
-def test_missing_item_404(client):
-    assert client.get("/items/99").status_code == 404
-
-# app/main.py (الأجزاء المهمة)
-from fastapi import Depends, FastAPI, HTTPException
-from pydantic import BaseModel
-
-app = FastAPI()
-_STORE: dict[int, dict] = {}
-
-def get_store() -> dict[int, dict]:
-    return _STORE
-
-class Item(BaseModel):
-    name: str
-    price: int
-
-@app.post("/items", status_code=201)
-def create_item(item: Item, store: dict = Depends(get_store)):
-    new_id = len(store) + 1
-    store[new_id] = item.model_dump()
-    return {"id": new_id, **store[new_id]}
-
-@app.get("/items/{item_id}")
-def get_item(item_id: int, store: dict = Depends(get_store)):
-    if item_id not in store:
-        raise HTTPException(404, "item not found")
-    return store[item_id]`
-        },
-        {
-          cmd: "pytest --cov",
-          title: "أنهي سطور الاختبارات مش بتعدّي عليها",
-          desc: R`[[pytest-cov]] بيشغّل الاختبارات ويقيس كل سطر في الكود اتنفذ ولا لأ. [[--cov-report=term-missing]] بيطبع النسبة لكل ملف وأرقام السطور اللي محدش جربها. و [[--cov-fail-under]] بيفشّل التشغيل لو النسبة قلّت عن رقم، فتحطه في CI.
-
-ولو بتستخدم uv: [[uv add --dev pytest pytest-cov]] و [[uv run pytest]] (uv نفسه في درس [[uv و pyproject.toml]] في «تاب Python و FastAPI»).
-
-الأوامر دي بتكتب [[pytest]] لوحده، فبتفترض إن [[pytest.ini]] فيه [[pythonpath = .]] (درس «pytest.ini»). من غيره [[uv run pytest]] وقع عندي بـ [[ModuleNotFoundError: No module named 'app']]، والحل يا السطر ده يا [[python -m pytest]].`,
-          example: R`pip install pytest-cov
-pytest --cov=app --cov-report=term-missing
-pytest --cov=app --cov-branch --cov-fail-under=90
-pytest --cov=app --cov-report=html
-uv add --dev pytest pytest-cov
-uv run pytest --cov=app --cov-report=term-missing
-# Linux (and WSL):
-xdg-open htmlcov/index.html
-# Mac:
-open htmlcov/index.html
-# Windows (PowerShell):
-start htmlcov/index.html`,
-          try: R`شغّل [[pytest --cov=app --cov-branch --cov-report=term-missing]] على المشروع، وشوف الأرقام في عمود Missing. اكتب اختبارات للسطور دي لحد ما [[--cov-fail-under=100]] تعدّي. وبعدين اسأل نفسك: أنهي اختبار منهم فعلًا بيحمي من bug؟`,
-          deep: {
-            why: "بتفتكر إن الاختبارات مغطية الكود، وبعدين bug يطلع في فرع else محدش جربه قبل كده. التقرير بيوريك بالأرقام فين المناطق اللي محدش بيختبرها، خصوصًا مسارات الأخطاء.",
-            how: R`[[--cov=app]] بيقيس الباكدج app بس، مش الاختبارات ولا المكتبات. الجدول فيه لكل ملف: Stmts (السطور)، و Miss (اللي متنفذتش)، و Cover، و Missing (أرقامها).
-
-[[--cov-branch]] بيقيس الفروع كمان: [[if x:]] من غير else اتجرب لما x صح بس؟ السطر متغطي بس الفرع التاني لأ. بيزوّد عمودين Branch و BrPart، و [[4->6]] في Missing يعني النط من سطر 4 لـ 6 مجاش أبدًا.
-
-[[--cov-fail-under=90]] لو المجموع أقل من 90٪: رسالة [[FAIL Required test coverage of 90% not reached]] والـ exit code مش صفر، فـ CI يبقى أحمر.
-
-[[--cov-report=html]] بيعمل [[htmlcov/]] فيه كل ملف ملوّن: أخضر اتنفذ وأحمر لأ. أسهل بكتير من أرقام السطور. ضيف htmlcov و [[.coverage]] لـ .gitignore.
-
-الإعدادات تتحط في [[pyproject.toml]] تحت [[[tool.coverage.run] ]] ([[branch = true]] و [[source = ["app"] ]]) و [[[tool.coverage.report] ]] ([[fail_under]] و [[show_missing]] و [[exclude_also]] لسطور زي [[if TYPE_CHECKING:]]). و [[# pragma: no cover]] جنب سطر بيستبعده.
-
-pytest-cov بيستخدم مكتبة coverage تحت. من pytest-cov 7 قياس الـ subprocesses محتاج إعداد في coverage نفسها ([[patch = ["subprocess"] ]] تحت [[[tool.coverage.run] ]]) بدل ما كان تلقائي.`,
-            when: "في CI على كل PR، بحد أدنى معقول ميقلّش. ومحليًا بـ html لما تكتب اختبارات لجزء جديد وعايز تعرف نسيت إيه.",
-            mistakes: R`تطارد ١٠٠٪: تكتب اختبارات بتنادي الكود من غير assert حقيقي عشان الرقم يطلع. التغطية بتقولك السطر اتنفذ، مش إن نتيجته اتفحصت. رقم عالي مش معناه اختبارات كويسة، ورقم واطي معناه أكيد في حاجات مش مختبرة. و [[--cov]] من غير اسم الباكدج فيقيس كل حاجة ويطلع رقم مضلل. وفي الانترفيو: «الـ coverage ٩٥٪ يبقى الكود سليم؟» لأ، ووضّح ليه (branch coverage، وجودة الـ asserts، والحالات الطرفية، وmutation testing كفكرة).`
-          },
-          lines: [
-            "سطّب الـ plugin.",
-            "النسبة لكل ملف وأرقام السطور الناقصة.",
-            "قيس الفروع كمان، وافشل لو أقل من ٩٠٪.",
-            "تقرير HTML ملوّن.",
-            "نفس الكلام بـ uv: مكتبات dev.",
-            "وتشغيلها جوه الـ venv بتاع uv.",
-            "افتح التقرير في المتصفح.",
-            "نفس الحاجة على الماك.",
-            "وعلى ويندوز ([[start]] في PowerShell اختصار لـ Start-Process)."
-          ],
-          sol: R`جربتها على مشروع الدروس اللي فاتت (pytest 9.1 و pytest-cov 7.1)، والجدول طلع: [[app/clock.py 80% Missing 4]] (الـ [[current_hour]] الحقيقية، لأن كل الاختبارات مزيّفاها)، و [[app/main.py 95% Missing 8]] (الـ [[get_store]] الحقيقية، لأن الـ override بيبدّلها دايمًا). ومع [[--cov-branch]] ممكن يظهر فرع [[مساء الخير]] في greeting مش متجرب، لو greeting مكتوبة بـ if و else. عندي كانت سطر واحد بـ [[... if ... else ...]] جوه return، و coverage مش بيعد ده فرعين، فمظهرش.
-
-و [[--cov-fail-under=99]] قبل الحل طلّع [[FAIL Required test coverage of 99% not reached. Total coverage: 96.67%]]. وبعد الاختبارات اللي في الحل: [[Required test coverage of 100% reached. Total coverage: 100.00%]].
-
-والإجابة على السؤال: اختبار [[greeting]] بالليل مفيد فعلًا (فرع حقيقي في المنطق). اختبار إن [[get_store()]] بترجّع dict مش بيحمي من حاجة تقريبًا، كتبناه عشان الرقم بس. في مشروع حقيقي الأحسن تستثني السطر ده، أو تغطيه باختبار integration حقيقي من غير override.`,
-          solCode: R`# tests/test_cov_gaps.py
-from datetime import datetime
-from app import clock
-from app.main import get_store
-
-def test_current_hour_is_real_hour():
-    assert clock.current_hour() == datetime.now().hour
-
-def test_greeting_evening(monkeypatch):
-    monkeypatch.setattr(clock, "current_hour", lambda: 20)
-    assert clock.greeting() == "مساء الخير"
-
-def test_real_store_is_a_dict():
-    assert isinstance(get_store(), dict)`
-        }
-      ]
-    },
-    {
-      t: "الـ debugging في Python",
-      l: 2,
-      n: "breakpoint() و أوامر pdb، و post-mortem بعد الـ exception، و debugpy في VS Code و Docker",
-      items: [
-        {
-          cmd: "breakpoint()",
-          title: "توقّف البرنامج وتبص جواه",
-          desc: R`[[breakpoint()]] في أي سطر بيوقّف البرنامج هناك ويفتح [[pdb]] في الترمنال: تطبع أي متغير، وتمشي سطر سطر، وتدخل جوه الدوال. أسرع من print في كل حتة لأنك بتسأل البرنامج وهو واقف بدل ما تخمّن تطبع إيه وتعيد التشغيل.
-
-الأوامر الأساسية: [[p x]] اطبع، و [[n]] السطر اللي بعده، و [[s]] ادخل جوه الدالة، و [[c]] كمّل، و [[ll]] اعرض الدالة، و [[q]] اخرج.`,
-          example: R`def average(nums):
+def main(argv: list[str]) -> int:
+    if not argv:
+        print("usage: count_lines.py FILE...", file=sys.stderr)
+        return 2
     total = 0
-    for i in range(1, len(nums)):
-        total += nums[i]
-    breakpoint()
-    return total / len(nums)
-print(average([10, 20, 30]))`,
-          try: R`احفظ الكود في [[average.py]] وشغّله بـ [[python average.py]]. المفروض المتوسط 20. لما يقف عند [[(Pdb)]] اكتب [[p total, len(nums)]] و [[ll]]، ولاقي الغلطة. وبعدين شيل الـ breakpoint وحط واحد جوه الـ for، واستخدم [[n]] و [[p i, nums[i] ]] كذا مرة و [[c]].`,
+    for name in argv:
+        n = count_lines(Path(name))
+        print(f"{n:>6}  {name}")
+        total += n
+    print(f"{total:>6}  total")
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))`,
+          try: R`اعمل [[a.txt]] فيه 3 سطور و [[b.txt]] فيه سطرين. شغّل [[python3 count_lines.py a.txt b.txt]]، ومن غير ملفات، وعلى ملف مش موجود، وبعد كل واحدة [[echo $?]] (في PowerShell [[$LASTEXITCODE]]، لأن [[$?]] هناك True أو False بس). وبعدين [[python3 -c "import count_lines; print(count_lines.count_lines(__import__('pathlib').Path('a.txt')))"]]. وفي الآخر عدّله: الملف المش موجود يطبع رسالة على stderr والسكربت يكمّل الباقي، ويخرج بـ 1 لو أي ملف فشل.`,
           flag: "script",
           deep: {
-            why: "print debugging بيتحول لعشرين print، تشيلهم وتنسى واحد في الكود اللي نزل. والـ debugger بيوريك كل حاجة في اللحظة دي: كل المتغيرات، ومين نادى مين، وتقدر تجرّب تعبير على القيم الحقيقية قبل ما تعدّل الكود.",
-            how: R`[[breakpoint()]] (من Python 3.7) بتنادي [[pdb.set_trace()]] بشكل افتراضي. من Python 3.13 البرنامج بيقف عند سطر الـ [[breakpoint()]] نفسه، وبيطبع [[> file.py(5)average()]] و [[-> breakpoint()]] (السهم هو السطر الحالي). في النسخ الأقدم كان بيقف على السطر اللي بعدها ([[-> return ...]]).
+            why: "سكربت مكتوب كله على مستوى الملف بيشتغل أول ما حد يعمله import، فمينفعش تستخدم دالة منه في سكربت تاني ولا تختبره بـ pytest. ومن غير exit code صح، cron و CI و && في bash فاكرين إنه نجح وهو فشل.",
+            how: R`كل ملف Python ليه متغير [[__name__]]. الملف اللي بتشغّله مباشرة اسمه [["__main__"]]، والملف اللي بيتعمله import اسمه هو اسم الموديول ([["count_lines"]]). فالـ if دي معناها «اشتغل بس لو أنا البرنامج الرئيسي». (التفاصيل في درس «import و packages» في تاب «Python و FastAPI».)
 
-الأوامر:
+[[main(argv)]] بتاخد الـ arguments كـ list بدل ما تقرا [[sys.argv]] جوه، فالاختبار يقدر يبعت [[main(["a.txt"])]] بإيده. و [[sys.argv[1:] ]] بيشيل اسم السكربت نفسه.
 
-[[p expr]] و [[pp expr]] (منسّق للـ dict الكبيرة). وأي تعبير Python بتكتبه مباشرة بيتنفذ، بس لو اسم المتغير زي أمر (زي [[n]] أو [[c]]) اكتب [[p n]] أو [[!n]].
+[[sys.exit(main(...))]]: الرقم اللي main رجّعته بقى exit code البرنامج. 0 نجاح، و 2 العرف بتاعه «استخدام غلط» (argparse بيستخدمه)، و 1 أي فشل تاني.
 
-[[n]] (next) نفّذ السطر وروح اللي بعده من غير ما تدخل الدوال. [[s]] (step) ادخل جوه الدالة اللي في السطر. [[r]] (return) كمّل لحد ما الدالة الحالية ترجع. [[c]] (continue) كمّل لحد breakpoint تاني أو النهاية. [[unt N]] كمّل لحد سطر N (مفيد تخرج من loop).
-
-[[l]] و [[ll]] اعرض الكود (ll الدالة كلها). [[w]] (where) الـ stack: مين نادى مين. [[u]] و [[d]] اطلع وانزل في الـ stack تبص على متغيرات الدالة اللي نادت.
-
-[[b file.py:20]] breakpoint جديد من غير ما تعدّل الكود، و [[b 20, x > 100]] مشروط. [[display expr]] يطبع التعبير كل ما يتغير. [[interact]] يفتح REPL كامل بالمتغيرات. [[q]] يخرج (والبرنامج بيقف).
-
-[[PYTHONBREAKPOINT=0]] بيعطّل كل الـ breakpoint() من غير ما تمسحهم، و [[PYTHONBREAKPOINT=ipdb.set_trace]] يستخدم debugger تاني.
-
-مع pytest: [[breakpoint()]] جوه اختبار شغالة عادي (pytest بيقفل الـ capture لوحده). ومع uvicorn: بتقف في الترمنال اللي شغّال فيه السيرفر والـ request مستني.`,
-            when: "لما النتيجة غلط ومش عارف ليه، وعدد القيم اللي محتاج تشوفها أكتر من print أو اتنين. أو عايز تفهم كود مش بتاعك بتتبعه سطر سطر.",
-            mistakes: R`تنسى [[breakpoint()]] في الكود وتعمل commit: السيرفر أو الـ CI يقف مستني input للأبد. (ruff بيمسكها بقاعدة T100.) و breakpoint جوه container شغال في الخلفية: مفيش ترمنال تكتب فيه، استخدم debugpy. ومتغير اسمه [[c]] أو [[n]] وتكتب اسمه فـ pdb ينفّذ الأمر بدل ما يطبعه.`
+الـ docstring في أول الملف بيوصف السكربت، وبيبقى في [[__doc__]] فتقدر تطبعه كـ usage. و [[sum(1 for _ in f)]] بيعد السطور من غير ما يحمّل الملف كله في الذاكرة.`,
+            when: "أي سكربت أطول من ١٠ سطور، أو هيتجدول، أو هيتختبر.",
+            mistakes: R`[[main()]] لوحدها من غير [[sys.exit]]: الـ exit code بيبقى 0 دايمًا مهما main رجّعت. و [[if __name__ == "main":]] من غير الـ underscores: مفيش error، والسكربت مش بيعمل أي حاجة خالص. ومتغيرات بتتعمل جوه الـ if وبتستخدمها الدوال: بتشتغل لما تشغّله، وتقع بـ [[NameError]] لما تعمله import.`
           },
-          lines: [
-            "دالة المتوسط (فيها غلطة).",
-            "المجموع يبدأ صفر.",
-            "لف على العناصر...",
-            "...وجمّعها.",
-            "وقّف هنا وافتح pdb.",
-            "رجّع المتوسط.",
-            "شغّل على [10, 20, 30]."
-          ],
-          sol: R`البرنامج بيطبع [[16.666666666666668]] مش 20. عند [[(Pdb)]]، [[p total, len(nums)]] بيطبع [[(50, 3)]]: المجموع 50 مش 60، فالقسمة سليمة والجمع هو الغلط. [[ll]] بيعرض الدالة وسهم [[->]] عند سطر الـ [[breakpoint()]] (في Python 3.13 وأحدث؛ الأقدم كان بيوقف السهم عند الـ return).
+          teach: R`## السكربت ده بيعمل إيه؟
 
-وبالـ breakpoint جوه الـ for: أول وقفة [[p i, nums[i] ]] بيطبع [[(1, 20)]]، يعني أول عنصر (10) اتفوّت خالص. الغلطة [[range(1, len(nums))]]، وصحها [[range(len(nums))]]، والأحسن من غير index أصلًا: [[sum(nums)]].
+بيعد سطور ملف أو أكتر ويطبع جدول صغير ومجموع، زي [[wc -l]]. بس الهدف الحقيقي **الهيكل**: دوال، و [[main]] بترجّع رقم، وسطرين في الآخر بيشغّلوها. ده الهيكل اللي هتلاقيه في كل سكربت بعد كده. اتشغّل على لينكس ([[docker run --rm python:3.13]]) وعلى ويندوز في PowerShell 7 (Python 3.14)، على [[a.txt]] فيه ٣ سطور و [[b.txt]] فيه سطرين.
 
-لو كتبت [[n]] عشان تطبع متغير اسمه n، pdb بينفّذ next. اكتب [[p n]].`,
-          solCode: R`def average(nums):
-    if not nums:
-        raise ValueError("empty list")
-    return sum(nums) / len(nums)
+---
 
-print(average([10, 20, 30]))  # 20.0`
-        },
-        {
-          cmd: "python -m pdb",
-          title: "تفتح الـ debugger مكان الـ exception بعد ما يقع",
-          desc: R`post-mortem: البرنامج وقع بـ exception، وعايز تبص على المتغيرات في اللحظة اللي وقع فيها بالظبط من غير ما تعرف تحط breakpoint فين. [[python -m pdb -c continue]] بيشغّل السكربت، ولو وقع بيفتح pdb في السطر اللي رمى الـ exception.
+## ١. أول الملف
 
-ومع pytest: [[--pdb]] بيفتح pdb عند أول اختبار يفشل، و [[--trace]] بيوقف في أول كل اختبار.`,
-          example: R`python -m pdb -c continue seed.py data.csv
-pytest -x --pdb
-pytest --trace tests/test_pricing.py::test_negative_price_rejected
-python -i seed.py data.csv
-PYTHONBREAKPOINT=0 python seed.py data.csv`,
-          try: R`اعمل [[data.csv]] فيه [[pen,5]] و [[book,12]] و [[cup,ten]]، و [[seed.py]] بيقرا الملف بـ [[csv.reader]] ويحوّل العمود التاني بـ [[int()]]. شغّله عادي وشوف الـ traceback، وبعدين بـ [[python -m pdb -c continue]]، واكتب [[p row]] و [[w]]. وصلّح الـ seed يقول رقم السطر البايظ بدل ما يقع.`,
-          deep: {
-            why: "الـ traceback بيقولك السطر، بس مش بيقولك القيم: أنهي صف من ١٠ آلاف صف في الـ CSV كان بايظ؟ post-mortem بيوقّفك في اللحظة دي بالظبط، بكل المتغيرات زي ما هي.",
-            how: R`[[python -m pdb script.py args]] بيوقف قبل أول سطر. و [[-c continue]] بيدّيله أمر [[c]] أول ما يفتح، فالبرنامج يمشي عادي، ولو حصل exception مش متمسك بيطبعه ويقولك [[Entering post mortem debugging]] ويفتح pdb عند السطر اللي رماه. من هناك [[p]] و [[w]] و [[u]] و [[d]] زي الدرس اللي فات. ([[c]] أو [[s]] بعدها بيعيد تشغيل البرنامج من الأول، و [[q]] يخرج.)
-
-[[python -i script.py]]: بعد ما السكربت يخلص أو يقع، بيفتح Python REPL بكل المتغيرات العالمية. ولو وقع، اكتب [[import pdb; pdb.pm()]] يفتح post-mortem على آخر exception.
-
-[[pytest --pdb]] بيفتح pdb عند أي فشل (assert أو exception) جوه الاختبار نفسه، و [[-x]] معاه عشان يقف عند أول واحد بدل ما يفتح pdb لكل فشل. [[--trace]] بيوقف في أول كل اختبار مختار، كأنك حاطط breakpoint() في أوله.
-
-[[PYTHONBREAKPOINT=0]] بيعطّل الـ breakpoint() اللي في الكود للتشغيل ده، مفيد لو نسيت واحد وعايز تشغّل بسرعة.
-
-وفي كود: [[pdb.post_mortem(exc.__traceback__)]] جوه except بيفتح pdb على exception مسكته. ومن Python 3.14 فيه [[python -m pdb -p PID]] يتصل ببرنامج شغال فعلًا (لسه جديد، اتأكد من نسختك).`,
-            when: "سكربت أو job وقع وعايز تعرف ليه في دقيقة. واختبار بيفشل ورسالة الـ assert مش كفاية.",
-            mistakes: R`[[--pdb]] في CI أو مع [[-n auto]] (pytest-xdist): مفيش ترمنال تفاعلي، فبيعلّق أو يتجاهل. و [[c]] بعد post-mortem وتستغرب إن البرنامج بدأ من الأول. وتصلّح بإنك تحط try/except بيبلع الخطأ ويكمّل بهدوء: الأحسن تقول الصف البايظ فين وتقرر (تتخطاه وتسجّله، أو توقف).`
-          },
-          lines: [
-            "شغّل، ولو وقع افتح pdb مكان الـ exception.",
-            "افتح pdb عند أول اختبار يفشل.",
-            "وقّف في أول الاختبار ده وامشي سطر سطر.",
-            R`بعد ما يقع افتح REPL، واكتب [[import pdb; pdb.pm()]].`,
-            "شغّل من غير ما يقف عند أي breakpoint() في الكود."
-          ],
-          sol: R`التشغيل العادي بيقع بـ [[ValueError: invalid literal for int() with base 10: 'ten']] وسطر [[int(row[1])]]، من غير ما يقولك أنهي صف.
-
-بـ pdb: بيطبع نفس الـ traceback وبعده [[Uncaught exception. Entering post mortem debugging]] و [[> seed.py(3)parse()]]. [[p row]] بيطبع [[['cup', 'ten'] ]]، و [[w]] بيوريك الـ stack: الـ module (سطر الـ list comprehension) نادى parse. (من Python 3.12 الـ comprehension مبقاش ليه frame لوحده في الـ stack.)
-
-التصليح: [[enumerate(..., start=1)]] عشان رقم السطر، وتمسك [[ValueError]] وترمي رسالة واضحة فيها السطر والقيمة (أو تسجّل الصف وتكمّل لو ده المطلوب). من غير ما تبلع الخطأ بصمت.`,
-          solCode: R`import csv
+~~~python count_lines.py
+#!/usr/bin/env python3
+"""Count lines in text files: python3 count_lines.py FILE..."""
 import sys
+from pathlib import Path
+~~~
 
-def parse(row: list[str], line: int) -> dict:
-    try:
-        return {"name": row[0], "price": int(row[1])}
-    except (ValueError, IndexError) as e:
-        raise ValueError(f"line {line}: bad row {row!r}") from e
+- [[#!/usr/bin/env python3]]: الـ shebang (الدرس اللي فات).
+- [[""" ... """]]: نص بين ٣ quotes في أول الملف اسمه **docstring**. مش تعليق، ده قيمة Python بتتحفظ في [[__doc__]]:
 
-with open(sys.argv[1], newline="", encoding="utf-8") as f:
-    rows = [parse(r, n) for n, r in enumerate(csv.reader(f), start=1)]
-print(len(rows), "rows")
-# ValueError: line 3: bad row ['cup', 'ten']`
+~~~text الناتج: python3 -c "import count_lines; print(count_lines.__doc__)"
+Count lines in text files: python3 count_lines.py FILE...
+~~~
+
+- [[import sys]]: هنحتاج منه [[argv]] و [[stderr]] و [[exit]].
+- [[from pathlib import Path]]: هات [[Path]] بس من موديول [[pathlib]]، نوع بيمثّل مسار ملف.
+
+---
+
+## ٢. [[count_lines]]: دالة بتعمل حاجة واحدة
+
+~~~python count_lines.py
+def count_lines(path: Path) -> int:
+    with path.open(encoding="utf-8") as f:
+        return sum(1 for _ in f)
+~~~
+
+- [[def]] بيعرّف دالة. و [[path: Path]] و [[-> int]] اسمهم **type hints**: توضيح إن الدالة بتاخد Path وبترجّع رقم صحيح (int). Python مش بيفرضهم، بيساعدوا اللي بيقرا والـ editor.
+- [[path.open(encoding="utf-8")]]: افتح الملف للقراية، و [[utf-8]] عشان العربي (درس «open() و encoding»).
+- [[with ... as f:]]: افتح وسمّيه [[f]]، وأول ما البلوك يخلص اقفله لوحده حتى لو حصل error.
+- [[sum(1 for _ in f)]]: نقراها من جوه. [[for _ in f]] بيلف على الملف سطر سطر، و [[_]] اسم متغير معناه «مش محتاج القيمة». ولكل سطر بنطلّع [[1]]، و [[sum]] بيجمعهم. يعني عدد السطور، من غير ما الملف كله يتحمّل في الذاكرة مرة واحدة.
+
+---
+
+## ٣. [[main]]: البرنامج نفسه
+
+~~~python count_lines.py
+def main(argv: list[str]) -> int:
+    if not argv:
+        print("usage: count_lines.py FILE...", file=sys.stderr)
+        return 2
+~~~
+
+- [[argv: list[str] ]]: main بتاخد الـ arguments **كـ parameter**، list من النصوص. مبتقراش [[sys.argv]] بنفسها، فالاختبار يقدر يناديها [[main(["a.txt"])]].
+- [[if not argv:]]: list فاضية تعتبر False، فـ [[not argv]] يعني «مفيش ملفات».
+- [[file=sys.stderr]]: اطبع على قناة الأخطاء مش الناتج العادي (درس «sys.exit و exit codes»).
+- [[return 2]]: 2 هو العرف لـ «استخدام غلط».
+
+~~~text الناتج: python3 count_lines.py
+usage: count_lines.py FILE...
+~~~
+
+و exit 2.
+
+~~~python count_lines.py
+    total = 0
+    for name in argv:
+        n = count_lines(Path(name))
+        print(f"{n:>6}  {name}")
+        total += n
+    print(f"{total:>6}  total")
+    return 0
+~~~
+
+- [[for name in argv:]]: لكل اسم ملف.
+- [[Path(name)]]: حوّل النص لـ Path وابعته للدالة.
+- [[f"{n:>6}  {name}"]]: [[:>6]] يعني «على اليمين في عرض ٦ خانات»، فالأرقام تيجي تحت بعض. [[f"[{3:>6}]"]] طلّع [[[     3] ]]: ٥ مسافات وبعدها 3.
+- [[total += n]]: زوّد المجموع، اختصار [[total = total + n]].
+- [[return 0]]: نجاح.
+
+~~~text الناتج: python3 count_lines.py a.txt b.txt
+     3  a.txt
+     2  b.txt
+     5  total
+~~~
+
+---
+
+## ٤. السطرين اللي في الآخر
+
+~~~python count_lines.py
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
+~~~
+
+### [[__name__]]
+
+كل ملف Python ليه متغير اسمه [[__name__]] (الشرطتين اللي قبل وبعد معناهم «اسم خاص بـ Python»). قيمته بتتحدد من **طريقة تحميل الملف**:
+
+~~~text الناتج
+python3 -c "print(__name__)"                                  →  __main__
+python3 -c "import count_lines; print(count_lines.__name__)"  →  count_lines
+~~~
+
+الملف اللي انت شغّلته مباشرة اسمه [["__main__"]]، وأي ملف اتعمله import اسمه هو اسم الموديول. فالـ if معناها «نفّذ ده **بس** لو أنا البرنامج اللي اتشغّل».
+
+### [[sys.argv[1:] ]]
+
+[[[1:] ]] اسمه slice: «من العنصر 1 لحد الآخر»، يعني شيل [[sys.argv[0] ]] (اسم السكربت). فـ main بتستلم [[['a.txt', 'b.txt'] ]].
+
+### [[sys.exit(...)]]
+
+الرقم اللي main رجّعته بيبقى الـ **exit code** بتاع البرنامج كله. من غير [[sys.exit]] البرنامج بيخرج بـ 0 دايمًا مهما main رجّعت.
+
+### الإثبات: import من غير تشغيل
+
+~~~bash
+python3 -c "import count_lines; print(count_lines.count_lines(__import__('pathlib').Path('a.txt')))"
+~~~
+
+~~~text الناتج
+3
+~~~
+
+الدالة اشتغلت وطبعت 3 بس، ومفيش جدول ولا usage: main ماتشغّلتش لأن [[__name__]] كان [["count_lines"]]. ([[__import__('pathlib')]] طريقة تعمل import جوه تعبير، عشان السطر يفضل سطر واحد.)
+
+---
+
+## ٥. ملف مش موجود
+
+~~~text الناتج: python3 count_lines.py nope.txt (آخر سطور)
+  File "/w/count_lines.py", line 7, in count_lines
+    with path.open(encoding="utf-8") as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'nope.txt'
+~~~
+
+ده **traceback**: سلسلة النداءات من main لحد السطر اللي وقع، وآخر سطر هو الـ exception. وأي exception محدش مسكه بيخرج بـ 1.
+
+---
+
+## ٦. الحل: يكمّل بعد الملف البايظ
+
+الجزء اللي اتغير في main:
+
+~~~python solCode
+    total, failed = 0, 0
+    for name in argv:
+        try:
+            n = count_lines(Path(name))
+        except (OSError, UnicodeDecodeError) as e:
+            print(f"skip {name}: {e}", file=sys.stderr)
+            failed += 1
+            continue
+~~~
+
+- [[total, failed = 0, 0]]: اتنين في سطر واحد.
+- [[try:]] جرّب، ولو حصل exception من الأنواع اللي في [[except]] روح هناك بدل ما البرنامج يقع.
+- [[(OSError, UnicodeDecodeError)]]: tuple يعني «أي واحد من دول». [[OSError]] هو الأب بتاع [[FileNotFoundError]] و [[IsADirectoryError]] و [[PermissionError]].
+- [[as e]]: الـ exception نفسه في [[e]]، وطباعته بتدّي الرسالة.
+- [[continue]]: سيب باقي اللفة دي وروح للملف اللي بعده.
+- وفي الآخر [[return 1 if failed else 0]]: لو أي ملف فشل اخرج بـ 1.
+
+~~~text الناتج: python3 count_lines.py a.txt nope.txt b.txt
+skip nope.txt: [Errno 2] No such file or directory: 'nope.txt'
+     3  a.txt
+     2  b.txt
+     5  total
+~~~
+
+و exit 1. (سطر الـ skip ظهر الأول لأن stderr بيظهر فورًا و stdout بيتجمّع لما مش متوصّل بترمنال، فالترتيب على الشاشة ممكن يختلف.) ولما اديته فولدر [[.]]: لينكس قال [[[Errno 21] Is a directory]] وويندوز قال [[[Errno 13] Permission denied]]، والاتنين اتمسكوا لأنهم تحت [[OSError]].
+
+---
+
+## الخلاصة
+
+| الجزء | ليه |
+|---|---|
+| docstring | وصف السكربت، في [[__doc__]] |
+| دوال صغيرة | تتختبر وتتعمل import لوحدها |
+| [[main(argv) -> int]] | بتاخد الـ arguments وبترجّع exit code |
+| [[if __name__ == "__main__":]] | شغّل main بس لما الملف يتشغّل مباشرة |
+| [[sys.exit(main(sys.argv[1:]))]] | رقم main يبقى exit code البرنامج |
+
+- 0 نجاح، و 1 فشل، و 2 استخدام غلط.
+- الأخطاء على stderr.`,
+          lines: [
+            "وصف السكربت (docstring).",
+            "sys للـ argv و stderr و exit.",
+            "Path للملفات.",
+            "دالة بتعد سطور ملف واحد.",
+            "افتح الملف بـ utf-8.",
+            "عد السطور واحد واحد من غير ما تحمّل الملف كله.",
+            "main بتاخد الـ arguments كـ list وبترجّع exit code.",
+            "مفيش ملفات؟",
+            "رسالة الاستخدام على stderr.",
+            "2 = استخدام غلط.",
+            "المجموع.",
+            "لكل ملف:",
+            "عد سطوره.",
+            "اطبع العدد بعرض 6 على اليمين.",
+            "زوّد المجموع.",
+            "سطر المجموع.",
+            "نجح.",
+            "لو الملف ده اتشغّل مباشرة (مش import):",
+            "شغّل main ورجّع رقمها كـ exit code."
+          ],
+          sol: R`[[python3 count_lines.py a.txt b.txt]] طبع [[     3  a.txt]] و [[     2  b.txt]] و [[     5  total]]، و [[echo $?]] طلع 0. من غير ملفات: [[usage: count_lines.py FILE...]] و exit 2. وعلى [[nope.txt]]: traceback آخره [[FileNotFoundError: [Errno 2] No such file or directory: 'nope.txt']] و exit 1 (أي exception محدش مسكه بيخرج بـ 1).
+
+والـ import طبع [[3]] بس: الدالة اشتغلت، و main ماتشغّلتش لأن [[__name__]] كان [["count_lines"]].
+
+بعد التعديل (تحت)، [[python3 count_lines.py a.txt nope.txt b.txt]] طبع:
+
+[[     3  a.txt]]
+[[skip nope.txt: [Errno 2] No such file or directory: 'nope.txt']]
+[[     2  b.txt]]
+[[     5  total]]
+
+و exit 1. وجرّبت فولدر بدل ملف: على لينكس [[skip .: [Errno 21] Is a directory: '.']]، وعلى ويندوز [[skip .: [Errno 13] Permission denied: '.']]، يعني exception مختلف خالص (PermissionError). وملف binary: [[skip bin.dat: 'utf-8' codec can't decode byte 0xbb in position 0: invalid start byte]]. عشان كده الـ except بيمسك [[OSError]]، ودي أبو FileNotFoundError و IsADirectoryError و PermissionError، ومعاها UnicodeDecodeError. لو كتبت الأسماء واحد واحد ونسيت PermissionError، السكربت هيقع على ويندوز بس.`,
+          solCode: R`def main(argv: list[str]) -> int:
+    if not argv:
+        print("usage: count_lines.py FILE...", file=sys.stderr)
+        return 2
+    total, failed = 0, 0
+    for name in argv:
+        try:
+            n = count_lines(Path(name))
+        except (OSError, UnicodeDecodeError) as e:
+            print(f"skip {name}: {e}", file=sys.stderr)
+            failed += 1
+            continue
+        print(f"{n:>6}  {name}")
+        total += n
+    print(f"{total:>6}  total")
+    return 1 if failed else 0`
         },
         {
-          cmd: "debugpy و launch.json",
-          title: "breakpoints في VS Code لـ FastAPI والاختبارات و Docker",
-          desc: R`[[debugpy]] هو الـ debugger اللي VS Code بيستخدمه لـ Python (من خلال إضافة Python Debugger). بتحط نقطة حمرا جنب السطر (F9)، وتشغّل من Run and Debug (F5)، والبرنامج يقف هناك وتشوف Variables و Call Stack و Watch.
+          cmd: "input() و sys.argv",
+          title: "السكربت ياخد بيانات: arguments ولا سؤال",
+          desc: R`طريقتين يوصل بيهم كلام للسكربت:
 
-[[.vscode/launch.json]] بيحدد إزاي يشغّل: uvicorn كـ module، أو pytest على الملف المفتوح، أو يتصل (attach) بـ debugpy شغال جوه container.`,
-          example: R`{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "FastAPI",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "uvicorn",
-      "args": ["app.main:app", "--reload", "--port", "8000"],
-      "justMyCode": true
-    },
-    {
-      "name": "pytest: this file",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "pytest",
-      "args": ["$__{file}", "-x", "-q"]
-    },
-    {
-      "name": "Attach to Docker",
-      "type": "debugpy",
-      "request": "attach",
-      "connect": { "host": "localhost", "port": 5678 },
-      "pathMappings": [{ "localRoot": "$__{workspaceFolder}", "remoteRoot": "/app" }]
-    }
-  ]
-}`,
-          try: R`حط الملف في [[.vscode/launch.json]]، واختار الـ interpreter بتاع الـ venv (Ctrl+Shift+P ثم Python: Select Interpreter). حط breakpoint في [[create_item]] وشغّل «FastAPI» بـ F5، وابعت POST من [[/docs]]. الـ request هيفضل مستني: بص على [[item]] في Variables واضغط F10 كذا مرة. وبعدين شغّل «pytest: this file» وانت فاتح ملف اختبار فيه breakpoint.`,
+[[sys.argv]]: list فيها اسم السكربت وبعده كل كلمة كتبتها في الأمر، كلهم strings. ده اللي بيشتغل في cron والأتمتة لأن مفيش حد يرد.
+
+[[input("سؤال: ")]]: بيطبع السؤال ويستنى المستخدم يكتب ويدوس Enter، وبيرجّع اللي اتكتب string. مناسب لسكربت بيشغّله إنسان، خصوصًا سؤال تأكيد قبل حاجة خطيرة.
+
+والأرقام بتيجي نصوص في الحالتين، فلازم [[int()]] وتمسك الغلط.`,
+          example: R`import sys
+print(sys.argv)
+args = sys.argv[1:]
+folder = args[0] if args else input("folder: ").strip() or "."
+try:
+    days = int(input("older than how many days? [30] ") or "30")
+except ValueError:
+    sys.exit("error: days must be a number")
+answer = input(f"delete files older than {days} days in {folder}? [y/N] ")
+if answer.strip().lower() not in ("y", "yes"):
+    sys.exit("cancelled")
+print(f"ok: cleaning {folder}, days={days}")`,
+          try: R`شغّله بـ [[python3 ask.py ~/Downloads "two words"]]، ومن غير arguments، واكتب [[ten]] بدل رقم. وبعدين من غير terminal خالص: [[python3 ask.py lab < /dev/null]] (على ويندوز PowerShell مفيش [[<]]، اكتب [[$null | python ask.py lab]]، وفي CMD [[python ask.py lab < NUL]]). وفي فولدر فيه ملفات txt جرّب [[python3 ask.py lab *.txt]] وبص على أول سطر.`,
           flag: "script",
           deep: {
-            why: "pdb في الترمنال كويس، بس لما تبقى الدوال كتير والـ objects كبيرة، إنك تشوف كل المتغيرات مفتوحة قدامك وتدوس على أي frame في الـ stack أسرع بكتير. والأهم: التطبيق جوه Docker مفيهوش ترمنال تكتب فيه لـ pdb، و debugpy بيخليك تتصل بيه من VS Code.",
-            how: R`[[type: "debugpy"]] هو النوع الحالي (الإعدادات القديمة كانت [["python"]] وبقى deprecated). [[request: "launch"]] يعني VS Code هو اللي يشغّل البرنامج، و [[module]] زي [[python -m uvicorn]]. و [[args]] بيتبعتوا بعده. وبيستخدم الـ interpreter اللي اخترته، فلازم يبقى بتاع الـ venv.
+            why: R`سكربت فيه المسار مكتوب جوه الكود لازم تعدّله قبل كل تشغيل. و [[sys.argv[1] ]] من غير فحص بيطلع [[IndexError]] للي بيستخدمه. والسؤال قبل المسح بيحميك من غلطة إيد.`,
+            how: R`[[sys.argv[0] ]] اسم السكربت، والباقي الكلمات بالترتيب. اللي بيقسّم الكلام ويفك [[~]] و [[*]] هو الشيل مش Python: [["two words"]] وصلت عنصر واحد، و [[~/Downloads]] وصلت [[/home/sara/Downloads]]، و [[*.txt]] وصلت أسماء الملفات. على ويندوز CMD و PowerShell مبيفكوش [[*]]، فالسكربت بيستلم [[*.txt]] زي ما هي، والحل [[Path(".").glob(pattern)]] جوه Python. و [[~]]: PowerShell 7 بيفكها ([[C:\Users\sara/Downloads]] بشرطة مايلة لقدام في الآخر)، و PowerShell 5.1 و CMD بيبعتوها زي ما هي، فلو السكربت بياخد مسار اعمل [[expanduser()]] جواه.
 
-[[--reload]] بيشغّل السيرفر في subprocess، و debugpy بيتصل بالـ subprocesses لوحده، فالـ breakpoints شغالة حتى بعد reload. الإعداد اسمه [[subProcess]]، وافتراضيه في كود debugpy نفسه true (صفحة VS Code مكتوب فيها false، بس الكود هو اللي بيتنفّذ). لو حصل ومبقتش بتقف بعد reload، حط [["subProcess": true]] صريحة.
+[[input()]] بيرجّع السطر من غير الـ Enter، و [[or "30"]] بتدّي قيمة افتراضية لو داس Enter على طول. و [[sys.exit("msg")]] بيطبع الرسالة على stderr ويخرج بـ 1.
 
-[[justMyCode: true]] (الافتراضي) بيخلي F11 مبيدخلش جوه كود FastAPI و Starlette، وبيوقف بس على breakpoints في كودك. خليه false لو عايز تفهم المكتبة من جوه.
+لو مفيش حد يرد (cron، أو [[< /dev/null]]، أو pipe خلص) [[input()]] بيرمي [[EOFError]]. وللباسوردات [[getpass.getpass()]] بدل input عشان متظهرش على الشاشة.
 
-[[$__{file}]] الملف المفتوح دلوقتي، و [[$__{workspaceFolder}]] فولدر المشروع. وتقدر تضيف [["env": {"APP_DEBUG": "1"}]] أو [["envFile": "$__{workspaceFolder}/.env"]]. (وتبويب Testing في VS Code فيه زرار Debug Test جنب كل اختبار من غير launch.json أصلًا.)
-
-Docker: التطبيق جوه container بيشتغل بـ [[python -m debugpy --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080]]، والبورت [[127.0.0.1:5678:5678]] في compose. [[--wait-for-client]] يخليه ميبدأش لحد ما تتصل (لو محتاج توقف على كود الـ startup). و [[request: "attach"]] بيتصل بيه. [[pathMappings]] بيقول إن [[/app]] جوه الـ container هو فولدر المشروع عندك، وإلا الـ breakpoints مش هتقف لأن المسارات مختلفة.`,
-            when: "bug في FastAPI بيعدّي على كذا dependency ودالة. وأي تطبيق جوه Docker أو على سيرفر تاني (عن طريق SSH tunnel). وأول مرة تقرا كود مشروع وعايز تمشي ورا request من أوله لآخره.",
-            mistakes: R`[[--listen 0.0.0.0:5678]] والبورت منشور على [[0.0.0.0]] في compose أو على سيرفر: أي حد يوصل للبورت ده يقدر ينفّذ كود على التطبيق. خليه [[127.0.0.1:5678:5678]] وللسيرفر استخدم SSH tunnel، ومتسيبوش في إعدادات الإنتاج أبدًا. و pathMappings غلط أو ناقص: VS Code يقول متصل والـ breakpoints رمادي ومبتقفش. والـ interpreter مش بتاع الـ venv فيطلع [[No module named uvicorn]].`
+ولو الـ arguments بقت أكتر من واحد أو اتنين، أو فيها options، استخدم argparse (درس «argparse --dry-run» في المستوى ٢).`,
+            when: "sys.argv لأي سكربت هيتشغّل من سكربت تاني أو cron. و input لسؤال تأكيد أو قيمة ناسيها المستخدم، ومش في سكربت هيتجدول.",
+            mistakes: R`[[input]] في سكربت متجدول فيقع بـ [[EOFError]] كل ليلة. و [[days = input(...)]] وبعدين [[days * 86400]] فيطلع النص متكرر 86400 مرة بدل رقم. والتأكيد الافتراضي بيبقى «أيوه» ([[Y/n]]) لحاجة بتمسح: خلّي Enter معناه لأ.`
           },
+          teach: R`## السكربت ده بيعمل إيه؟
+
+بيجمع ٣ معلومات قبل ما «ينضّف» فولدر: الفولدر (من الأمر نفسه، ولو مش موجود يسأل)، وعدد الأيام (يسأل، و Enter يعني 30)، وتأكيد (Enter يعني لأ). مفيش مسح حقيقي، آخره سطر [[ok: ...]]. الردود اتبعتت بـ [[printf "...\n" | python3 ask.py]] عشان التجربة تتكرر بالظبط. اتشغّل على لينكس ([[docker run --rm python:3.13]] و HOME هو [[/home/sara]]) وعلى ويندوز في PowerShell 7 و 5.1 و CMD.
+
+---
+
+## ١. اللي وصل فعلًا
+
+~~~python ask.py
+import sys
+print(sys.argv)
+args = sys.argv[1:]
+~~~
+
+[[print(sys.argv)]] بيوريك اللستة زي ما Python استلمها، وده أحسن debug لأي مشكلة arguments. و [[[1:] ]] بيشيل اسم السكربت.
+
+~~~text الناتج: python3 ask.py ~/Downloads "two words"
+['ask.py', '/home/sara/Downloads', 'two words']
+~~~
+
+لاحظ حاجتين عملهم **الشيل** قبل ما Python يشوف حاجة: [[~]] اتفكت لـ [[/home/sara]]، والـ quotes خلّت [["two words"]] عنصر واحد. ونفس الكلام للنجمة: في فولدر فيه [[a.txt]] و [[b.txt]]:
+
+~~~text الناتج
+python3 ask.py lab *.txt     →  ['ask.py', 'lab', 'a.txt', 'b.txt']
+python3 ask.py lab "*.txt"   →  ['ask.py', 'lab', '*.txt']
+~~~
+
+وعلى ويندوز الشيل مبيفكش النجمة:
+
+| الشيل | [[~/Downloads]] وصلت | [[*.txt]] وصلت |
+|---|---|---|
+| bash (لينكس وماك) | [['/home/sara/Downloads']] | أسماء الملفات |
+| PowerShell 7 | [['C:\\Users\\ali/Downloads']] | [['*.txt']] زي ما هي |
+| Windows PowerShell 5.1 | [['~/Downloads']] زي ما هي | [['*.txt']] زي ما هي |
+
+([[\\]] ده شكل الطباعة بس لما Python يطبع list، المسار نفسه فيه [[\]] واحدة.)
+
+---
+
+## ٢. الفولدر: argument ولا سؤال
+
+~~~python ask.py
+folder = args[0] if args else input("folder: ").strip() or "."
+~~~
+
+نقراه بالترتيب اللي Python بيقيّمه:
+
+1. [[args[0] if args else ...]]: لو فيه arguments خد أولهم، وخلاص.
+2. لو مفيش: [[input("folder: ")]] بيطبع [[folder: ]] **ويستنى** لحد ما المستخدم يكتب ويدوس Enter، ويرجّع اللي اتكتب كنص (من غير الـ Enter).
+3. [[.strip()]] بيشيل المسافات من الأول والآخر: [["  x "]] بقت [['x']].
+4. [[or "."]]: النص الفاضي يعتبر False، فلو داس Enter بس (أو كتب مسافات) خد [["."]] (الفولدر الحالي).
+
+جربت [[python3 -c 'print(int("" or "30"), repr("  x ".strip()), "".strip() or ".")']] فطلّع [[30 'x' .]] ([[repr]] بيطبع النص بالـ quotes عشان تشوف المسافات لو فيه).
+
+---
+
+## ٣. الأيام: رقم ولا غلط
+
+~~~python ask.py
+try:
+    days = int(input("older than how many days? [30] ") or "30")
+except ValueError:
+    sys.exit("error: days must be a number")
+~~~
+
+- [[input(...)]] بيرجّع **نص** دايمًا، حتى لو كتبت 7.
+- [[or "30"]]: Enter لوحده = [["30"]]. و [[[30] ]] في السؤال عرف بيقول «دي القيمة الافتراضية».
+- [[int(...)]] بيحوّل النص لرقم. ولو النص مش رقم ([["ten"]]) بيرمي [[ValueError]].
+- [[try / except ValueError]]: امسك الغلطة دي بالذات.
+- [[sys.exit("رسالة")]]: اطبع الرسالة على stderr واخرج بـ 1.
+
+~~~text الناتج: الرد ten
+['ask.py', 'lab']
+older than how many days? [30] error: days must be a number
+~~~
+
+و exit 1. (الرسالة لزقت في السؤال لأن الرد جاي من pipe مش من كيبورد، فمفيش Enter ظاهر على الشاشة.)
+
+---
+
+## ٤. التأكيد: Enter يعني لأ
+
+~~~python ask.py
+answer = input(f"delete files older than {days} days in {folder}? [y/N] ")
+if answer.strip().lower() not in ("y", "yes"):
+    sys.exit("cancelled")
+print(f"ok: cleaning {folder}, days={days}")
+~~~
+
+- السؤال f-string فيه الفولدر والأيام، فالمستخدم يشوف هو بيوافق على إيه بالظبط.
+- [[[y/N] ]]: الحرف الكبير هو الافتراضي، يعني Enter = No.
+- [[.lower()]]: حروف صغيرة، فـ [[YES]] و [[Yes]] و [[y]] كلهم واحد.
+- [[not in ("y", "yes")]]: أي رد **غير** دول (حتى Enter أو [[yep]]) يبقى إلغاء.
+
+~~~text الناتج: الردود Enter ثم y
+['ask.py', '/home/sara/Downloads', 'two words']
+older than how many days? [30] delete files older than 30 days in /home/sara/Downloads? [y/N] ok: cleaning /home/sara/Downloads, days=30
+~~~
+
+~~~text الناتج: python3 ask.py والردود مسافات ثم Enter ثم YES
+['ask.py']
+folder: older than how many days? [30] delete files older than 30 days in .? [y/N] ok: cleaning ., days=30
+~~~
+
+~~~text الناتج: الردود 7 ثم Enter
+older than how many days? [30] delete files older than 7 days in lab? [y/N] cancelled
+~~~
+
+و exit 1.
+
+---
+
+## ٥. مفيش حد يرد: [[EOFError]]
+
+[[< /dev/null]] يعني «الـ input جاي من ملف فاضي»، وده نفس اللي بيحصل في cron:
+
+~~~text الناتج: python3 ask.py lab < /dev/null
+['ask.py', 'lab']
+older than how many days? [30] Traceback (most recent call last):
+  File "/tmp/ask.py", line 6, in <module>
+    days = int(input("older than how many days? [30] ") or "30")
+EOFError: EOF when reading a line
+~~~
+
+**EOF** = End Of File: [[input()]] كان مستني سطر ولقى الـ input خلص. exit 1. ونفس الـ EOFError بالظبط طلع على ويندوز بـ [[$null | python ask.py lab]] في PowerShell، وبـ [[python ask.py lab < NUL]] في CMD ([[NUL]] هو [[/dev/null]] بتاع ويندوز).
+
+---
+
+## الخلاصة
+
+| | [[sys.argv]] | [[input()]] |
+|---|---|---|
+| بيجي منين | الأمر نفسه | المستخدم وهو السكربت شغال |
+| النوع | list نصوص | نص |
+| في cron | تمام | [[EOFError]] |
+| مناسب لـ | الأتمتة والمسارات | سؤال تأكيد أو قيمة ناقصة |
+
+- الأرقام بتيجي نصوص: [[int()]] جوه [[try]].
+- الشيل هو اللي بيفك [[~]] و [[*]] والـ quotes، وويندوز مختلف.
+- التأكيد قبل حاجة خطيرة: Enter = لأ.`,
           lines: [
-            "بداية الملف.",
-            "نسخة صيغة الملف.",
-            "لستة طرق التشغيل (بتظهر في Run and Debug).",
-            "الأولى:",
-            "اسمها في القايمة.",
-            "debugger بتاع Python.",
-            "VS Code يشغّل البرنامج بنفسه.",
-            "زي python -m uvicorn.",
-            "مسار التطبيق وإعادة التشغيل مع الحفظ.",
-            "وقّف في كودك بس، مش في المكتبات.",
-            "نهايتها.",
-            "التانية:",
-            "الاسم.",
-            "نفس الـ debugger.",
-            "تشغيل.",
-            "زي python -m pytest.",
-            "على الملف المفتوح، ووقف عند أول فشل.",
-            "نهايتها.",
-            "التالتة:",
-            "الاسم.",
-            "نفس الـ debugger.",
-            "اتصل ببرنامج شغال بالفعل بدل ما تشغّله.",
-            "debugpy سامع على البورت ده (منشور من الـ container).",
-            "فولدر المشروع عندك = /app جوه الـ container.",
-            "نهايتها.",
-            "نهاية اللستة.",
-            "نهاية الملف."
+            "sys.",
+            "اطبع اللي وصل فعلًا.",
+            "من غير اسم السكربت.",
+            "أول argument، ولو مفيش اسأل، ولو داس Enter خليه الفولدر الحالي.",
+            "حاول...",
+            "...تحوّل الرد لرقم، و Enter لوحده = 30.",
+            "مكتوب كلام مش رقم:",
+            "اخرج برسالة على stderr وكود 1.",
+            "سؤال تأكيد.",
+            "أي رد غير y أو yes يبقى لأ.",
+            "اخرج من غير ما تعمل حاجة.",
+            "كمّل."
           ],
-          sol: R`الجزء بتاع VS Code (الشاشات والـ F5 و F10) من توثيق VS Code، ماجربتهوش هنا. اللي جربته: [[python -m debugpy --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080]] شغّل التطبيق عادي ورد على [[/health]]، وطبع تحذير [[Debugger warning: It seems that frozen modules are being used]].
+          sol: R`[[python3 ask.py ~/Downloads "two words"]] طبع حاجة زي [[['ask.py', '/home/sara/Downloads', 'two words']]] (الشيل فك [[~]] والـ quotes خلّت الكلمتين عنصر واحد)، وبعدين سأل عن الأيام والتأكيد.
 
-المتوقع: لما تبعت POST من [[/docs]]، VS Code بيقف على السطر وبيعلّمه أصفر، وصفحة الـ docs تفضل «Loading» لحد ما تكمّل (F5). في Variables هتلاقي [[item]] من نوع [[Item]] بالقيم اللي بعتها، و [[store]]. و F10 بيمشي سطر سطر، و Call Stack بيوريك كود Starlette و FastAPI اللي نادى الدالة (باهت لأن justMyCode).
+[[ten]] مكان الرقم: [[error: days must be a number]] و exit 1.
 
-مع «pytest: this file» الـ breakpoint جوه الاختبار أو جوه الكود اللي الاختبار بيناديه بيقف بنفس الشكل.
+[[< /dev/null]]: السؤال اتطبع، وبعدين [[EOFError: EOF when reading a line]] و exit 1. ده بالظبط اللي هيحصل لو السكربت اتشغّل من cron.
 
-لو الـ breakpoint رمادي ومبيقفش: الـ interpreter مش بتاع الـ venv، أو الملف اللي حاطط فيه النقطة مش هو اللي بيتنفذ. ولـ Docker الغلطة المعتادة pathMappings. وتحذير [[frozen modules]] اللي ممكن يطلع في الترمنال مش مشكلة في الغالب.
+و [[python3 ask.py lab *.txt]] في فولدر فيه [[a.txt]] و [[b.txt]]: [[['ask.py', 'lab', 'a.txt', 'b.txt']]]، يعني Python عمره ما شاف النجمة. ولو حطيتها بين quotes ([["*.txt"]]) هتوصل [['*.txt']] زي ما هي.
 
-الحل تحت: الـ compose اللي بيشغّل التطبيق بـ debugpy للتطوير بس، ويتصل بيه «Attach to Docker».`,
-          solCode: R`# compose.debug.yaml (للتطوير بس)
-# docker compose -f compose.yaml -f compose.debug.yaml up
-services:
-  app:
-# debugpy لازم يبقى متسطّب في الصورة (requirements-dev.txt مثلًا)
-    command: ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678",
-              "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
-    ports:
-      - "127.0.0.1:5678:5678"
-    volumes:
-      - ./:/app`
+وعلى ويندوز PowerShell 7: [[~/Downloads]] وصلت [['C:\\Users\\sara/Downloads']] (الـ [[\\]] ده شكل الطباعة بس، المسار فيه شرطة واحدة)، و [[*.txt]] وصلت [['*.txt']] زي ما هي. و [[$null | python ask.py lab]] وقع بنفس [[EOFError: EOF when reading a line]].`
+        },
+        {
+          cmd: "sys.exit و exit codes",
+          title: "السكربت يقول نجح ولا فشل",
+          desc: R`كل برنامج بيخلص بيرجّع رقم: 0 يعني نجح، وأي رقم تاني يعني فشل. الشيل بيحطه في [[$?]]، و [[&&]] بيكمّل بس لو 0، و cron و CI و Task Scheduler بيعتمدوا عليه.
+
+[[sys.exit(2)]] بيخرج بالرقم ده. و [[sys.exit("رسالة")]] بيطبع الرسالة على stderr ويخرج بـ 1. وأي exception محدش مسكه بيخرج بـ 1 كمان.
+
+والأخطاء تتطبع على stderr ([[print(..., file=sys.stderr)]]) مش stdout، عشان لو حد عمل [[> out.txt]] ميلاقيش رسالة الخطأ وسط البيانات.`,
+          example: R`import json
+import sys
+from pathlib import Path
+path = Path(sys.argv[1] if len(sys.argv) > 1 else "config.json")
+if not path.exists():
+    print(f"error: {path} not found", file=sys.stderr)
+    sys.exit(2)
+try:
+    config = json.loads(path.read_text(encoding="utf-8"))
+except json.JSONDecodeError as e:
+    sys.exit(f"error: {path} is not valid JSON: {e}")
+missing = [k for k in ("db_url", "backup_dir") if k not in config]
+if missing:
+    sys.exit(f"error: missing keys: {', '.join(missing)}")
+print("config ok")`,
+          try: R`سمّيه [[check_config.py]] وشغّله في ٤ حالات وبعد كل واحدة [[echo $?]]: من غير config.json، وبـ [[{"db_url": "x",}]] (فاصلة زيادة)، وبـ [[{"db_url": "x"}]]، وبـ [[{"db_url": "x", "backup_dir": "/b"}]]. وفي الأخيرة جرّب [[python3 check_config.py && echo deploying]] (الـ [[&&]] شغالة في bash و PowerShell 7، مش في 5.1). وجرّب [[python3 check_config.py nope.json > out.txt 2> err.txt]] وشوف كل ملف فيه إيه.`,
+          flag: "script",
+          deep: {
+            why: R`سكربت backup فشل وطبع error بس خرج بـ 0: cron مش هيبعتلك حاجة، و [[backup.py && upload.py]] هيرفع نسخة بايظة، و CI هيبقى أخضر. الـ exit code هو الطريقة الوحيدة اللي البرامج التانية بتفهم بيها اللي حصل.`,
+            how: R`[[sys.exit(n)]] بيرمي [[SystemExit]]، و Python وهو بيقفل بياخد الرقم منه. عشان كده [[finally]] و [[with]] بيكمّلوا شغلهم قبل الخروج.
+
+القيم: [[sys.exit()]] أو [[sys.exit(None)]] = 0. رقم = الرقم ده (على لينكس وماك النظام بياخد آخر 8 bits بس، فـ [[sys.exit(256)]] بيطلع 0! وعلى ويندوز بيفضل 256). نص = يتطبع على stderr والكود 1. و [[sys.exit(True)]] = 1.
+
+العرف: 0 نجاح، 1 فشل عام، 2 استخدام غلط (argparse بيخرج بيه)، و 130 لو اتقفل بـ Ctrl+C على لينكس وماك (Python بيعمل كده لوحده لو [[KeyboardInterrupt]] ماتمسكش). على ويندوز Ctrl+C بيدّي رقم ويندوز خاص: [[-1073741510]] (يعني [[0xC000013A]]).
+
+تقرا الكود: bash [[echo $?]]، و PowerShell [[$LASTEXITCODE]] (مش [[$?]]، دي هناك True أو False بس)، و CMD [[echo %ERRORLEVEL%]].
+
+[[f"{', '.join(missing)}"]]: علامات تنصيص مختلفة جوه الـ f-string. قبل Python 3.12 كان لازم، لأن نفس النوع كان بيقفل الـ f-string. من 3.12 مسموح، بس المختلف أوضح وبيشتغل على أي نسخة.`,
+            when: "كل سكربت. وخصوصًا اللي بيتجدول، أو بيتنادى من سكربت تاني، أو بيتحط في CI أو pre-commit.",
+            mistakes: R`[[except Exception: print(e)]] من غير خروج بكود غلط: الفشل بقى نجاح. و [[exit()]] بدل [[sys.exit()]]: دي معمولة للـ REPL ومش مضمونة تبقى موجودة (مع [[python -S]] مثلًا). والرسايل كلها على stdout فتبوظ أي pipe أو ملف.`
+          },
+          teach: R`## السكربت ده بيعمل إيه؟
+
+بيفحص ملف إعدادات JSON قبل ما حاجة تانية تستخدمه: موجود؟ JSON سليم؟ فيه المفتاحين المطلوبين؟ ولكل غلطة رسالة على stderr و exit code مختلف، فأي برنامج تاني (bash أو CI أو cron) يعرف حصل إيه من غير ما يقرا الكلام. اتشغّل على لينكس ([[docker run --rm python:3.13]]) وعلى ويندوز في PowerShell 7 و 5.1 و CMD.
+
+---
+
+## ١. الملف منين
+
+~~~python check_config.py
+import json
+import sys
+from pathlib import Path
+path = Path(sys.argv[1] if len(sys.argv) > 1 else "config.json")
+~~~
+
+[[json]] موديول قراية وكتابة JSON. والسطر الأخير: لو فيه argument خده، غير كده [["config.json"]]، وحوّله [[Path]].
+
+---
+
+## ٢. مش موجود: stderr و 2
+
+~~~python check_config.py
+if not path.exists():
+    print(f"error: {path} not found", file=sys.stderr)
+    sys.exit(2)
+~~~
+
+- [[path.exists()]]: True لو فيه ملف أو فولدر بالاسم ده.
+- [[file=sys.stderr]]: كل برنامج ليه قناتين للكتابة: **stdout** (الناتج العادي، رقم 1) و **stderr** (الأخطاء والتحذيرات، رقم 2). الاتنين بيظهروا على الشاشة، بس الـ redirect بيفصلهم.
+- [[sys.exit(2)]]: اخرج حالًا بالرقم 2.
+
+~~~text الناتج: python3 check_config.py ثم echo $?
+error: config.json not found
+2
+~~~
+
+[[$?]] في bash = exit code آخر أمر. الأرقام في الدرس كله:
+
+| الرقم | معناه بالعرف |
+|---|---|
+| 0 | نجح |
+| 1 | فشل عام |
+| 2 | استخدام غلط أو حاجة ناقصة في المدخلات |
+
+---
+
+## ٣. JSON بايظ: رسالة و 1 في سطر واحد
+
+~~~python check_config.py
+try:
+    config = json.loads(path.read_text(encoding="utf-8"))
+except json.JSONDecodeError as e:
+    sys.exit(f"error: {path} is not valid JSON: {e}")
+~~~
+
+- [[path.read_text(encoding="utf-8")]]: اقرا الملف كله نص.
+- [[json.loads(...)]]: **load s**tring: حوّل نص JSON لـ dict في Python.
+- [[json.JSONDecodeError]]: الـ exception اللي loads بيرميه لو النص مش JSON سليم، و [[e]] فيه السبب والمكان.
+- [[sys.exit("نص")]]: لما تدّيه نص بدل رقم، بيطبعه على stderr ويخرج بـ 1. يعني سطر واحد بدل [[print(..., file=sys.stderr)]] و [[sys.exit(1)]].
+
+بـ [[{"db_url": "x",}]] (فاصلة زيادة):
+
+~~~text الناتج
+error: config.json is not valid JSON: Illegal trailing comma before end of object: line 1 column 15 (char 14)
+1
+~~~
+
+[[line 1 column 15]] بيقولك مكان الغلطة بالظبط. (Python 3.12 بتاع أوبونتو 24.04 بيطلّع رسالة تانية لنفس الغلطة: [[Expecting property name enclosed in double quotes]].)
+
+---
+
+## ٤. مفاتيح ناقصة
+
+~~~python check_config.py
+missing = [k for k in ("db_url", "backup_dir") if k not in config]
+if missing:
+    sys.exit(f"error: missing keys: {', '.join(missing)}")
+print("config ok")
+~~~
+
+- [[[k for k in (...) if k not in config] ]]: list comprehension: «لكل مفتاح مطلوب، خده لو مش موجود في config». النتيجة لستة الناقص.
+- [[if missing:]]: لستة فيها حاجة = True.
+- [[', '.join(missing)]]: اربط العناصر بـ [[, ]] بينهم. والـ quotes الـ single جوه f-string بـ double عشان الاتنين ميتلخبطوش (لازم قبل Python 3.12).
+- [[print("config ok")]] وبعدها الملف بيخلص، فالـ exit code بيبقى 0 لوحده.
+
+~~~text الناتج
+{"db_url": "x"}                       →  error: missing keys: backup_dir       (1)
+{"db_url": "x", "backup_dir": "/b"}   →  config ok                             (0)
+~~~
+
+---
+
+## ٥. ليه الـ exit code مهم
+
+### [[&&]]
+
+~~~text الناتج: python3 check_config.py && echo deploying
+config ok
+deploying
+~~~
+
+[[&&]] معناها «شغّل اللي بعدي **بس** لو اللي قبلي خرج بـ 0». لو الإعدادات ناقصة، [[deploying]] مش هيتطبع. واتجرب في PowerShell 7 بنفس النتيجة (Windows PowerShell 5.1 مفيهوش [[&&]]).
+
+### الـ redirect بيفصل القناتين
+
+~~~bash
+python3 check_config.py nope.json > out.txt 2> err.txt
+~~~
+
+[[>]] بيحوّل stdout لملف، و [[2>]] بيحوّل stderr (القناة رقم 2) لملف تاني:
+
+~~~text الناتج
+out.txt:  (فاضي)
+err.txt:  error: nope.json not found
+~~~
+
+لو الرسالة كانت بـ [[print]] عادي كانت هتروح في out.txt وسط «البيانات».
+
+---
+
+## ٦. تفاصيل [[sys.exit]] اتجربت
+
+| الكود | لينكس | ويندوز |
+|---|---|---|
+| [[sys.exit()]] | 0 | 0 |
+| [[sys.exit(True)]] | 1 | 1 |
+| [[sys.exit(256)]] | **0** (النظام بياخد آخر 8 bits بس) | 256 |
+| [[KeyboardInterrupt]] (Ctrl+C) | 130 | [[-1073741510]] |
+
+و [[sys.exit]] مش بيقفل البرنامج على طول، ده بيرمي exception اسمه [[SystemExit]]. عشان كده [[finally]] بيلحق يشتغل:
+
+~~~python
+try:
+    sys.exit(3)
+finally:
+    print("finally ran")
+~~~
+
+~~~text الناتج
+finally ran
+~~~
+
+والـ exit code كان 3.
+
+---
+
+## ٧. تقرا الـ exit code منين
+
+| الشيل | الأمر | ملاحظة |
+|---|---|---|
+| bash و zsh | [[echo $?]] | |
+| PowerShell | [[$LASTEXITCODE]] | [[$?]] هناك True أو False بس: طلع [[2 False]] |
+| CMD | [[echo %ERRORLEVEL%]] | جربته من ملف [[.bat]] وطبع 2 |
+
+## الخلاصة
+
+- [[sys.exit(رقم)]] للكود، و [[sys.exit("نص")]] رسالة على stderr + 1.
+- الأخطاء على stderr، والبيانات على stdout.
+- 0 بس معناه نجاح، وده اللي [[&&]] و cron و CI بيبصوا عليه.`,
+          lines: [
+            "json.",
+            "sys.",
+            "Path.",
+            "الملف من الـ argument أو config.json.",
+            "مش موجود؟",
+            "الرسالة على stderr...",
+            "...واخرج بـ 2.",
+            "حاول...",
+            "...تقرا الملف كـ JSON.",
+            "لو JSON بايظ:",
+            "اطبع السبب واخرج بـ 1 في سطر واحد.",
+            "المفاتيح الناقصة.",
+            "لو فيه ناقص:",
+            "اخرج بـ 1 وقول إيه الناقص.",
+            "كله تمام، والخروج 0 لوحده."
+          ],
+          sol: R`النتايج بالترتيب:
+
+من غير ملف: [[error: config.json not found]] و [[$?]] = 2.
+الفاصلة الزيادة على Python 3.13 وأحدث: [[error: config.json is not valid JSON: Illegal trailing comma before end of object: line 1 column 15 (char 14)]] و 1. وعلى 3.12 (اللي على أوبونتو 24.04) نفس الحالة طلّعت رسالة أقل وضوحًا: [[Expecting property name enclosed in double quotes: line 1 column 16 (char 15)]].
+مفتاح ناقص: [[error: missing keys: backup_dir]] و 1.
+سليم: [[config ok]] وبعدها [[deploying]] و 0.
+
+ومع [[> out.txt 2> err.txt]] على ملف مش موجود: الشاشة فاضية، و [[out.txt]] فاضي، و [[err.txt]] فيه سطر الخطأ. لو كنت طبعت الخطأ بـ print عادي كان راح في out.txt.
+
+وجربت كمان على لينكس: Ctrl+C على سكربت شغال خرج بـ 130، و [[sys.exit(256)]] خرج بـ 0 مش 256. وعلى ويندوز [[sys.exit(256)]] طلّع [[$LASTEXITCODE]] = 256، و KeyboardInterrupt طلّع [[-1073741510]].`
+        },
+        {
+          cmd: "print و f-strings للتقارير",
+          title: "تقرير مترتب في الترمنال",
+          desc: R`أغلب السكربتات آخرها تقرير: عدد الملفات، المساحة، اللي نجح واللي فشل. الـ f-string بيظبط العرض والمحاذاة: [[{name:<26}]] على الشمال بعرض 26، و [[{size:>10}]] على اليمين، و [[{n:,}]] بفواصل الآلاف، و [[{ratio:.1%}]] كنسبة مئوية.
+
+وأي حاجة مش جزء من التقرير نفسه (debug، تحذيرات) تروح stderr، فلو حد عمل [[> report.txt]] ياخد التقرير نضيف. أساسيات الـ f-strings في درس «f-strings» في تاب «Python و FastAPI».`,
+          example: R`import sys
+from pathlib import Path
+def human(n: float) -> str:
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1024:
+            return f"{n:.0f} {unit}" if unit == "B" else f"{n:.1f} {unit}"
+        n /= 1024
+    return f"{n:.1f} TB"
+folder = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+rows = sorted(((p.name, p.stat().st_size) for p in folder.iterdir() if p.is_file()), key=lambda r: r[1], reverse=True)
+total = sum(size for _, size in rows)
+print(f"{'file':<26}{'size':>10}{'share':>8}")
+print("-" * 44)
+for name, size in rows[:5]:
+    short = name if len(name) <= 24 else name[:21] + "..."
+    print(f"{short:<26}{human(size):>10}{(size / total if total else 0):>8.1%}")
+print("-" * 44)
+print(f"{len(rows)} files, {total:,} bytes ({human(total)})")
+print(f"{total=} {len(rows)=}", file=sys.stderr)`,
+          try: R`شغّله على فولدر فيه ملفات بأحجام مختلفة، وبعدين [[python3 report.py > r.txt]] وشوف إيه اللي ظهر على الشاشة وإيه اللي راح في الملف. وبعدين غيّر عمود النسبة لعمود فيه تاريخ آخر تعديل بالشكل [[2026-09-20 10:30]].`,
+          flag: "script",
+          deep: {
+            why: "تقرير متلزّق ([[video.mp4 2507812]]) محدش بيقراه. أعمدة مترتبة وأحجام مقروءة بتخلي الواحد يشوف المشكلة في ثانية.",
+            how: R`جوه [[{}]]: القيمة، وبعد [[:]] الشكل. [[<]] شمال، [[>]] يمين، [[^]] نص، والرقم العرض. [[.1f]] رقم عشري واحد، و [[,]] فواصل آلاف، و [[.1%]] بيضرب في 100 ويحط [[%]]. وتقدر تحط تعبير كامل بين قوسين: [[{(size / total if total else 0):>8.1%}]] عشان فولدر ملفاته كلها فاضية ميقسمش على صفر.
+
+[[{total=}]] (من Python 3.8) بيطبع الاسم والقيمة: [[total=2854563]]. مفيد للـ debug السريع.
+
+[[human()]] بتقسم على 1024 لحد ما الرقم يبقى أصغر من 1024. و [[sorted(..., key=lambda r: r[1], reverse=True)]] بيرتّب بالحجم من الأكبر. و [[rows[:5] ]] أول 5 بس.
+
+ولشريط تقدّم في سكربت طويل: [[print(f"\r{i}/{n}", end="", flush=True)]]: [[\r]] بيرجع لأول السطر، و [[end=""]] من غير سطر جديد، و [[flush=True]] يظهر حالًا.`,
+            when: "آخر أي سكربت بيلف على حاجات كتير: ملفات، روابط، صفوف.",
+            mistakes: R`العربي في أعمدة مترتبة: الترمنال بيعرضه من اليمين للشمال وعرض الحروف بيختلف، فالمحاذاة بتبوظ. خلّي الأعمدة اللي محتاجة محاذاة بالإنجليزي أو حط العربي في آخر عمود. وأسماء طويلة بتزق باقي السطر: قصّها زي [[short]]. والـ debug بـ print على stdout بيوسّخ الملف.`
+          },
+          teach: R`## السكربت ده بيعمل إيه؟
+
+بيلف على ملفات فولدر، ويرتّبها بالحجم، ويطبع أكبر ٥ في جدول بـ ٣ أعمدة (الاسم، والحجم مقروء، والنسبة من المجموع)، وتحته ملخص. اتشغّل على لينكس ([[docker run --rm python:3.13]]) على فولدر فيه ٧ ملفات عملتهم بأحجام معروفة بـ [[head -c]]، وعلى ويندوز في PowerShell 7.
+
+---
+
+## ١. [[human()]]: من bytes لحجم مقروء
+
+~~~python report.py
+def human(n: float) -> str:
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1024:
+            return f"{n:.0f} {unit}" if unit == "B" else f"{n:.1f} {unit}"
+        n /= 1024
+    return f"{n:.1f} TB"
+~~~
+
+- بتلف على الوحدات بالترتيب. لو الرقم أصغر من 1024 يبقى الوحدة دي مناسبة: رجّعه.
+- غير كده [[n /= 1024]] (يعني [[n = n / 1024]]) وجرّب الوحدة الأكبر.
+- [[:.0f]] رقم من غير كسور (البايت مفيهوش نص)، و [[:.1f]] رقم عشري واحد. **f** = fixed-point.
+- لو عدّى الـ GB، السطر الأخير يرجّع TB.
+
+مثال: 2500000 → أكبر من 1024 فنقسم → 2441.4 KB → أكبر فنقسم → 2.38 MB → [[2.4 MB]].
+
+---
+
+## ٢. الملفات مترتبة
+
+~~~python report.py
+folder = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+rows = sorted(((p.name, p.stat().st_size) for p in folder.iterdir() if p.is_file()), key=lambda r: r[1], reverse=True)
+total = sum(size for _, size in rows)
+~~~
+
+السطر الطويل من جوه لبرة:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[folder.iterdir()]] | كل حاجة جوه الفولدر |
+| [[if p.is_file()]] | الملفات بس، من غير فولدرات |
+| [[p.stat().st_size]] | حجم الملف بالـ byte. [[stat]] بيرجّع معلومات الملف من النظام |
+| [[(p.name, ...)]] | tuple: الاسم والحجم مع بعض |
+| [[sorted(..., key=lambda r: r[1])]] | رتّب. [[key]] بيقول «رتّب بإيه»، و [[lambda r: r[1] ]] دالة صغيرة من غير اسم بترجّع العنصر رقم 1 (الحجم) |
+| [[reverse=True]] | من الأكبر للأصغر |
+
+جربت نفس الفكرة على لستة صغيرة: [[sorted([("a",3),("b",9),("c",1)], key=lambda r: r[1], reverse=True)]] طلّع [[[('b', 9), ('a', 3), ('c', 1)] ]].
+
+و [[sum(size for _, size in rows)]]: لكل tuple، فكّه لاتنين وتجاهل الأول ([[_]])، واجمع الأحجام.
+
+---
+
+## ٣. الجدول: الـ format spec
+
+اللي بعد [[:]] جوه [[{}]] اسمه **format spec**، وبيقول القيمة تتكتب إزاي:
+
+~~~python report.py
+print(f"{'file':<26}{'size':>10}{'share':>8}")
+print("-" * 44)
+~~~
+
+| الشكل | معناه | جربته على [[ab]] |
+|---|---|---|
+| [[:<6]] | شمال، عرض 6 | [[[ab    ] ]] |
+| [[:>6]] | يمين، عرض 6 | [[[    ab] ]] |
+| [[:^6]] | في النص | [[[  ab  ] ]] |
+
+فالعناوين [[file]] و [[size]] و [[share]] بتاخد نفس عرض الأعمدة اللي تحتها، و 26 + 10 + 8 = 44، عشان كده الخط [["-" * 44]] (النص متكرر 44 مرة) طوله نفس طول السطر.
+
+~~~python report.py
+for name, size in rows[:5]:
+    short = name if len(name) <= 24 else name[:21] + "..."
+    print(f"{short:<26}{human(size):>10}{(size / total if total else 0):>8.1%}")
+~~~
+
+- [[rows[:5] ]]: أول ٥ بس.
+- [[name[:21] + "..."]]: أول 21 حرف وبعدهم [[...]]، يعني 24 حرف بالظبط، فالاسم الطويل ميزقّش الأعمدة.
+- [[(size / total if total else 0)]]: النسبة، ولو المجموع صفر (ملفات كلها فاضية) حط 0 بدل ما تقسم على صفر. جربت فولدر فيه ملفين فاضيين وطلع [[0.0%]] من غير error.
+- [[:>8.1%]]: يمين بعرض 8، و [[.1%]] اضرب في 100 وحط [[%]] برقم عشري واحد: [[0.876]] بقت [[87.6%]].
+
+---
+
+## ٤. الملخص و سطر الـ debug
+
+~~~python report.py
+print(f"{len(rows)} files, {total:,} bytes ({human(total)})")
+print(f"{total=} {len(rows)=}", file=sys.stderr)
+~~~
+
+- [[:,]]: فواصل الآلاف: [[2500000]] بقت [[2,500,000]].
+- [[{total=}]]: علامة [[=]] في الآخر بتطبع **الاسم والقيمة**: [[total=2853368]]. مفيد للـ debug.
+- [[file=sys.stderr]]: السطر ده مش جزء من التقرير، فيروح stderr.
+
+---
+
+## ٥. الناتج كله
+
+~~~text الناتج: python3 report.py
+total=2853368 len(rows)=7
+file                            size   share
+--------------------------------------------
+video_lecture.mp4             2.4 MB   87.6%
+photo.jpg                   332.0 KB   11.9%
+notes.pdf                    11.7 KB    0.4%
+a very long file name...       900 B    0.0%
+a.txt                          300 B    0.0%
+--------------------------------------------
+7 files, 2,853,368 bytes (2.7 MB)
+~~~
+
+سطر الـ debug ظهر **الأول** مع إنه آخر سطر في الكود: stderr بيظهر على طول، و stdout بيتجمّع ويطلع مرة واحدة لما الناتج مش رايح لترمنال حقيقي. ٧ ملفات بس الجدول ٥، لأن [[[:5] ]].
+
+ومع [[python3 report.py > r.txt]]: الشاشة فضل عليها [[total=2853368 len(rows)=8]] بس (8 لأن الشيل عمل [[r.txt]] الفاضي قبل ما السكربت يبدأ)، والتقرير كله في الملف. ونفس الكلام على ويندوز في PowerShell 7.
+
+---
+
+## ٦. الحل: عمود تاريخ بدل النسبة
+
+~~~python solCode
+from datetime import datetime
+...
+files = sorted((p for p in folder.iterdir() if p.is_file()), key=lambda p: p.stat().st_size, reverse=True)
+...
+    st = p.stat()
+    modified = datetime.fromtimestamp(st.st_mtime).strftime("%Y-%m-%d %H:%M")
+    print(f"{name:<26}{human(st.st_size):>10}{modified:>18}")
+~~~
+
+- الترتيب بقى على الـ Path نفسه بدل tuple، عشان نحتاج [[stat()]] تاني.
+- [[st.st_mtime]]: وقت آخر تعديل بالثواني من 1970 (اسمه Unix timestamp). **m** = modified.
+- [[datetime.fromtimestamp(...)]]: حوّله تاريخ ووقت بتوقيت الجهاز.
+- [[.strftime("%Y-%m-%d %H:%M")]]: **str**ing **f**ormat **time**: اكتبه بالشكل ده. [[%Y]] السنة، و [[%m]] الشهر، و [[%d]] اليوم، و [[%H]] الساعة (24)، و [[%M]] الدقيقة.
+- [[:>18]] عشان التاريخ 16 حرف ومسافتين قبله. والخط بقى 26 + 10 + 18 = 54.
+
+~~~text الناتج (photo.jpg اتغير تاريخها بـ touch -d)
+file                            size          modified
+------------------------------------------------------
+video_lecture.mp4             2.4 MB  2026-10-06 17:57
+photo.jpg                   332.0 KB  2026-09-20 10:30
+~~~
+
+---
+
+## الخلاصة
+
+| الشكل | النتيجة |
+|---|---|
+| [[{x:<26}]] / [[{x:>10}]] / [[{x:^6}]] | شمال / يمين / نص بعرض ثابت |
+| [[{x:.1f}]] | رقم عشري واحد |
+| [[{x:,}]] | فواصل آلاف |
+| [[{x:.1%}]] | نسبة مئوية |
+| [[{x=}]] | الاسم والقيمة |
+
+- عرض العناوين = عرض الأعمدة، والأسماء الطويلة تتقص.
+- التقرير على stdout، والـ debug على stderr.`,
+          lines: [
+            "sys.",
+            "Path.",
+            "دالة بتحوّل البايتات لحجم مقروء.",
+            "جرّب كل وحدة بالترتيب:",
+            "لو الرقم بقى أصغر من 1024...",
+            "...رجّعه بالوحدة دي (البايت من غير كسور).",
+            "قسّم وجرّب الوحدة الأكبر.",
+            "أكبر من كده.",
+            "الفولدر من الـ argument أو الحالي.",
+            "(الاسم، الحجم) لكل ملف، مترتبين من الأكبر.",
+            "المجموع.",
+            "عناوين الأعمدة بنفس العرض.",
+            "خط.",
+            "أكبر 5:",
+            "قصّ الاسم الطويل.",
+            "صف: شمال، يمين، نسبة مئوية (ومن غير قسمة على صفر).",
+            "خط.",
+            "الملخص بفواصل الآلاف.",
+            "سطر debug على stderr."
+          ],
+          sol: R`على فولدر فيه فيديو وصورة و pdf وملفات صغيرة طلع:
+
+[[file                            size   share]]
+[[video_lecture.mp4             2.4 MB   87.6%]]
+[[photo.jpg                   332.0 KB   11.9%]]
+[[notes.pdf                    11.7 KB    0.4%]]
+[[a very long file name...       900 B    0.0%]]
+[[7 files, 2,854,563 bytes (2.7 MB)]]
+
+ومع [[> r.txt]]: الشاشة فضل عليها سطر واحد بس [[total=2854563 len(rows)=8]] (8 لأن r.txt نفسه اتعمل قبل ما السكربت يبدأ)، والتقرير كله راح في الملف.
+
+بعد ما بدّلت النسبة بالتاريخ (الكود تحت):
+
+[[file                            size          modified]]
+[[photo.jpg                   332.0 KB  2026-09-20 10:30]]
+
+[[datetime.fromtimestamp(st.st_mtime)]] بيحوّل الوقت من ثواني لتاريخ بتوقيت جهازك، و [[strftime]] بيكتبه بالشكل اللي عايزه.`,
+          solCode: R`import sys
+from datetime import datetime
+from pathlib import Path
+def human(n: float) -> str:
+    for unit in ("B", "KB", "MB", "GB"):
+        if n < 1024:
+            return f"{n:.0f} {unit}" if unit == "B" else f"{n:.1f} {unit}"
+        n /= 1024
+    return f"{n:.1f} TB"
+folder = Path(sys.argv[1] if len(sys.argv) > 1 else ".")
+files = sorted((p for p in folder.iterdir() if p.is_file()), key=lambda p: p.stat().st_size, reverse=True)
+print(f"{'file':<26}{'size':>10}{'modified':>18}")
+print("-" * 54)
+for p in files[:5]:
+    st = p.stat()
+    name = p.name if len(p.name) <= 24 else p.name[:21] + "..."
+    modified = datetime.fromtimestamp(st.st_mtime).strftime("%Y-%m-%d %H:%M")
+    print(f"{name:<26}{human(st.st_size):>10}{modified:>18}")
+print("-" * 54)
+print(f"{len(files)} files, {human(sum(p.stat().st_size for p in files))}")`
         }
       ]
     }

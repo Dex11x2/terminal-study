@@ -1,839 +1,912 @@
 // تكملة تاب python: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/python/01.js (شرح حقول الدرس في أوله)
 MORE("python", [
     {
-      t: "أدوات السكربتات",
-      l: 2,
-      n: "argparse آمن افتراضيًا، و JSON و CSV و YAML و XML، والتواريخ في أسماء الملفات، و logging، و subprocess، و .env، و HTTP، و re",
+      t: "الملفات والفولدرات من سكربت",
+      l: 1,
+      n: "المسارات نسبةً لإيه، والبحث بـ glob و rglob، و open بـ utf-8 عشان العربي، و shutil للنسخ والنقل والمسح من غير كوارث",
       items: [
         {
-          cmd: "argparse --dry-run",
-          title: "options و --help، والسكربت آمن افتراضيًا",
-          desc: R`أول ما السكربت ياخد أكتر من argument أو فيه options، [[sys.argv]] بإيدك بيبقى لخبطة. [[argparse]] في المكتبة الأساسية: بتعرّف الـ arguments، وهو يعمل التحويل للأنواع ورسايل الخطأ و [[--help]].
+          cmd: "Path(__file__).parent",
+          title: "المسارات في سكربت: نسبةً لإيه؟",
+          desc: R`[[Path("template.md")]] مسار نسبي، يعني نسبةً للفولدر اللي انت واقف فيه ساعة التشغيل، مش الفولدر اللي فيه السكربت. فالسكربت يشتغل لما تشغّله من فولدره ويقع من أي مكان تاني.
 
-والقاعدة في أي سكربت بيمسح أو ينقل أو يعدّل: الافتراضي إنه يطبع هيعمل إيه بس (dry run)، والتنفيذ الحقيقي محتاج flag صريح زي [[--apply]]. غلطة في الأمر تبقى سطور على الشاشة مش ملفات ضاعت.
+الحل: الملفات اللي جنب السكربت توصلها بـ [[Path(__file__).resolve().parent]]، والملفات بتاعة المستخدم بـ [[Path.home()]]، وأي مسار جاي من المستخدم فيه [[~]] تعمله [[expanduser()]].
 
-كل خيارات argparse ومعاها typer في درس «argparse و typer» في تاب «Python و FastAPI».`,
-          example: R`import argparse
-from pathlib import Path
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    p = argparse.ArgumentParser(
-        description="Delete temp files in a folder.",
-        epilog="example: %(prog)s ~/Downloads --days 30 --apply",
-        allow_abbrev=False,
-    )
-    p.add_argument("folder", type=Path, help="the folder to clean")
-    p.add_argument("--days", type=int, default=30, help="older than N days (default: %(default)s)")
-    p.add_argument("--ext", nargs="+", default=[".tmp"], help="extensions to match")
-    mode = p.add_mutually_exclusive_group()
-    mode.add_argument("--dry-run", action="store_true", help="only print what would happen (default)")
-    mode.add_argument("--apply", action="store_true", help="really delete")
-    p.add_argument("-v", "--verbose", action="count", default=0)
-    return p.parse_args(argv)
-args = parse_args()
-print(args)
-print("APPLY" if args.apply else "DRY RUN", args.folder.expanduser(), args.days, args.ext, args.verbose)`,
-          try: R`سمّيه [[cli.py]] وجرّب: [[-h]]، و [[~/Downloads]] لوحده، و [[lab --ext .log .tmp -vv --apply]]، و [[lab --dry-run --apply]]، ومن غير فولدر، و [[lab --app]]. وبعد كل واحدة [[echo $?]] (في PowerShell [[$LASTEXITCODE]]). وبعدين شيل سطر [[allow_abbrev=False]] وجرّب [[lab --app]] تاني.`,
-          flag: "script",
-          deep: {
-            why: R`سكربت بيمسح ومفيش فيه dry run: أول تجربة على فولدر غلط هي آخر تجربة. ومن غير [[--help]] محدش (ولا انت بعد شهر) فاكر السكربت بياخد إيه.`,
-            how: R`[[add_argument("folder")]] من غير شرط = positional وإجباري. و [[type=Path]] و [[type=int]] بيحوّلوا، ولو التحويل فشل بيطبع رسالة ويخرج بـ 2.
-
-[[nargs="+"]] واحد أو أكتر في list. و [[action="count"]] بيعد: [[-vv]] بـ 2. و [[%(default)s]] في الـ help بيتبدل بالقيمة الافتراضية، و [[%(prog)s]] باسم السكربت، و [[epilog]] بيظهر في آخر الـ help (حط فيه مثال).
-
-[[add_mutually_exclusive_group()]]: [[--dry-run]] و [[--apply]] مع بعض error. والـ dry run هو الافتراضي لأن الكود بيسأل [[args.apply]] بس، و [[--dry-run]] موجود عشان اللي متعود يكتبه.
-
-[[allow_abbrev=False]]: argparse افتراضيًا بيقبل أي اختصار مش ملخبط، فـ [[--app]] بتتفهم [[--apply]]. في سكربت بيمسح ده مش عايزه.
-
-الشرطة في الاسم بتبقى underscore: [[--dry-run]] تبقى [[args.dry_run]]. و [[parse_args(argv)]] مع [[argv=None]] بيقرا [[sys.argv]]، وفي الاختبار تبعت list.`,
-            when: "أي سكربت فيه أكتر من argument، أو بيعمل حاجة مش بترجع.",
-            mistakes: R`الافتراضي تنفيذ وفيه [[--dry-run]] اختياري: هتنسى تكتبه مرة. و [[type=bool]] ([[bool("False")]] بـ True، استخدم [[store_true]]). و [[type=Path]] مش بيفك [[~]] لو المستخدم كتبها بين quotes ([["~/Downloads"]] بتوصل زي ما هي)، فاعمل [[expanduser()]] زي آخر سطر.`
-          },
-          lines: [
-            "argparse.",
-            "Path.",
-            "دالة بترجّع الـ arguments بعد ما تتفحص.",
-            "الـ parser:",
-            "الوصف بيظهر فوق في --help.",
-            "مثال بيظهر تحت في --help.",
-            "ممنوع الاختصارات (--app مش هتبقى --apply).",
-            "قفلة الـ parser.",
-            "positional إجباري، بيتحوّل Path.",
-            "رقم بقيمة افتراضية بتظهر في الـ help.",
-            "واحد أو أكتر في list.",
-            "مجموعة: واحد بس من اللي جواها.",
-            "عرض بس (وده الافتراضي أصلًا).",
-            "تنفيذ حقيقي.",
-            "-v و -vv و -vvv بتتعد.",
-            "اقرا sys.argv أو الـ list اللي اتبعتت.",
-            "نادي.",
-            "اطبع كل حاجة اتقرت.",
-            "الوضع والقيم."
-          ],
-          sol: R`[[-h]] طبع الـ usage، وفيه [[[--dry-run | --apply] ]] بالشكل ده عشان الاتنين في group واحد، وتحته الوصف والـ options و [[--days DAYS  older than N days (default: 30)]] وفي الآخر [[example: cli.py ~/Downloads --days 30 --apply]]، و exit 0.
-
-[[~/Downloads]] لوحده: [[DRY RUN /home/sara/Downloads 30 ['.tmp'] 0]] (الـ home بتاعك).
-[[lab --ext .log .tmp -vv --apply]]: [[APPLY lab 30 ['.log', '.tmp'] 2]].
-[[--dry-run --apply]]: [[error: argument --apply: not allowed with argument --dry-run]] و exit 2.
-من غير فولدر: [[error: the following arguments are required: folder]] و 2.
-[[--app]]: [[error: unrecognized arguments: --app]] و 2.
-
-ومن غير [[allow_abbrev=False]]، [[lab --app]] طلع [[APPLY lab 30 ['.tmp'] 0]]: اختصار نص كلمة شغّل وضع المسح.`
-        },
-        {
-          cmd: "json.load و json.dump",
-          title: "ملف إعدادات وملف حالة بـ JSON",
-          desc: R`سكربتات كتير محتاجة حاجتين: ملف إعدادات بيقراه (الفولدرات، عدد الأيام)، وملف حالة بيفتكر فيه حاجة من المرة اللي فاتت (آخر ID اتعالج، عدد مرات التشغيل، آخر backup).
-
-[[json.loads(text)]] من نص لـ dict و list، و [[json.dumps(obj)]] بالعكس. و [[ensure_ascii=False]] عشان العربي يتكتب عربي، و [[indent=2]] عشان الملف يتقري.
-
-وملف الحالة بيتكتب في ملف مؤقت وبعدين [[os.replace]]، عشان لو السكربت اتقفل في نص الكتابة، الملف القديم يفضل سليم.`,
-          example: R`import json
-import os
+API بتاع pathlib كله في درس «pathlib» في تاب «Python و FastAPI». هنا السؤال: الملف ده فين؟`,
+          example: R`#!/usr/bin/env python3
 import sys
+from datetime import datetime
 from pathlib import Path
-CONFIG = Path("config.json")
-STATE = Path("state.json")
-try:
-    config = json.loads(CONFIG.read_text(encoding="utf-8"))
-except json.JSONDecodeError as e:
-    sys.exit(f"error: {CONFIG}: {e.msg} (line {e.lineno}, column {e.colno})")
-print(config["folders"], config.get("keep_days", 7), config["owner"])
-state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {"runs": 0}
-state["runs"] += 1
-state["last_owner"] = config["owner"]
-tmp = STATE.with_suffix(".tmp")
-tmp.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
-os.replace(tmp, STATE)
-print(STATE.read_text(encoding="utf-8"))`,
-          try: R`اعمل [[config.json]] فيه [[{"folders": ["~/Downloads", "~/Desktop"], "keep_days": 30, "owner": "سارة"}]]. شغّل السكربت مرتين وبص على [[state.json]]. وبعدين حط فاصلة زيادة بعد [[30]] وشغّله. وفي الآخر جرّب في Python [[json.dumps({"o": "سارة"})]] من غير [[ensure_ascii=False]]، و [[json.loads(json.dumps({1: "a"}))]].`,
+HERE = Path(__file__).resolve().parent
+NOTES = Path.home() / "notes"
+template = HERE / "template.md"
+NOTES.mkdir(parents=True, exist_ok=True)
+today = NOTES / f"{datetime.now():%Y-%m-%d}.md"
+if not today.exists():
+    header = template.read_text(encoding="utf-8") if template.exists() else "# Notes\n"
+    today.write_text(header, encoding="utf-8")
+text = " ".join(sys.argv[1:]) or "(empty)"
+with today.open("a", encoding="utf-8") as f:
+    f.write(f"- {datetime.now():%H:%M} {text}\n")
+print(f"{today} ({len(today.read_text(encoding='utf-8').splitlines())} lines)")`,
+          try: R`حط السكربت في فولدر [[scripts]] وجنبه [[template.md]] فيه [[# يوميات]] وسطر فاضي. شغّله مرة من جوه الفولدر بـ [[python3 note.py خلصت درس pathlib]]، ومرة من [[/tmp]] بالمسار الكامل (على ويندوز من أي فولدر تاني، زي [[cd $env:TEMP]]). وبعدين اعمل سكربت فيه [[print(Path("template.md").exists(), Path.cwd())]] وشغّله من [[/tmp]].`,
           flag: "script",
           deep: {
-            why: R`سكربت بيعالج طلبات جديدة كل ساعة لازم يعرف وقف فين المرة اللي فاتت، وإلا هيعالج نفس الحاجات تاني. ولو ملف الحالة اتكتب نصه وبعدين الكهربا قطعت أو حد عمل Ctrl+C، التشغيل الجاي هيقع بـ [[JSONDecodeError]] ومحدش فاكر كان واقف فين.`,
-            how: R`[[read_text]] ثم [[json.loads]] هي نفسها [[json.load(f)]] على ملف مفتوح، اختار اللي يريحك.
+            why: R`أول ما السكربت يتشغّل من cron أو Task Scheduler أو من فولدر تاني، كل المسارات النسبية بتشاور على مكان غلط: cron بيبدأ في الـ home، و Task Scheduler ممكن يبدأ في [[C:\Windows\System32]]. والنتيجة [[FileNotFoundError]] أو، أسوأ، ملفات بتتكتب في مكان محدش بيبص فيه.`,
+            how: R`[[__file__]] مسار السكربت زي ما اتكتب في الأمر (ممكن يبقى نسبي). [[resolve()]] بيخليه كامل وبيفك الـ symlinks، فلو عامل لينك للسكربت في [[~/.local/bin]]، [[parent]] هيشاور على الفولدر الحقيقي اللي فيه الـ template.
 
-[[e.msg]] و [[e.lineno]] و [[e.colno]] في [[JSONDecodeError]] بيقولوا الغلط فين بالظبط، فالرسالة تبقى مفيدة بدل traceback.
+[[Path.home()]] الـ home على أي نظام ([[/home/sara]] أو [[C:\Users\sara]]). و [[/]] بيبني المسار: [[Path.home() / "notes"]].
 
-[[config.get("keep_days", 7)]] قيمة افتراضية لو المفتاح مش موجود، و [[config["owner"] ]] لو لازم يبقى موجود (يقع بـ KeyError لو ناقص، وده مقصود).
+[[mkdir(parents=True, exist_ok=True)]] زي [[mkdir -p]]: يعمل الفولدرات اللي فوقه، ومايعترضش لو موجود.
 
-الكتابة الآمنة: [[os.replace(tmp, STATE)]] بيستبدل الملف في خطوة واحدة (atomic) طالما الاتنين على نفس الـ disk، وبيشتغل على ويندوز كمان حتى لو STATE موجود (عكس [[os.rename]] على ويندوز). فأي حد بيقرا الملف بيلاقي يا القديم كامل يا الجديد كامل.
+[[f"{datetime.now():%Y-%m-%d}.md"]]: الـ f-string بيقبل شكل التاريخ بعد [[:]]، فاسم الملف بيبقى [[2026-10-01.md]].
 
-JSON مفيهوش تعليقات ولا فاصلة بعد آخر عنصر، فلو الملف هيعدّله بني آدم، TOML أنسب للإعدادات: [[tomllib.loads()]] في المكتبة الأساسية من Python 3.11 (قراية بس). أو YAML (الدرس الجاي).`,
-            when: "إعدادات بسيطة، وحالة السكربت بين مرة والتانية، وأي بيانات رايحة أو جاية من API.",
-            mistakes: R`[[STATE.write_text(...)]] على الملف نفسه مباشرة. ومفاتيح أرقام: JSON بيحوّلها نصوص، فـ [[state[1] ]] بقت [[state["1"] ]] بعد أول حفظ. و [[datetime]] في الـ dict: [[TypeError: Object of type datetime is not JSON serializable]]، خزّنه [[isoformat()]]. وسكربتين شغالين في نفس الوقت بيكتبوا نفس ملف الحالة (درس cron فيه [[flock]] للحالة دي).`
+الفتح بـ [["a"]] (append) بيضيف في آخر الملف من غير ما يمسح اللي فيه.`,
+            when: "أي سكربت بيقرا ملف جنبه (إعدادات، template، بيانات)، أو بيكتب في مكان ثابت، أو هيتجدول.",
+            mistakes: R`[[Path("~/notes")]] من غير [[expanduser()]]: Python مش بيفك [[~]]، فـ [[mkdir]] بيعمل فولدر اسمه حرفيًا [[~]] جوه الفولدر الحالي. جربتها فعلًا واتعمل [[./~/notes]]. وخطر تمسحه بـ [[rm -rf ~]] فتمسح الـ home كله، امسحه بـ [[rm -r ./~]]. وتاني غلطة: [[os.chdir]] في نص السكربت عشان «تصلّح» المسارات، فكل مسار نسبي بعدها بيتغير معناه.`
           },
+          teach: R`## السكربت ده بيعمل إيه؟
+
+دفتر يوميات صغير: كل مرة تشغّله بكلام، بيضيف سطر بالوقت في ملف اسمه تاريخ النهارده جوه [[~/notes]]. أول مرة في اليوم بيبدأ الملف من [[template.md]] اللي **جنب السكربت**. فيه ٣ أنواع مسارات: جنب السكربت، وفي الـ home، ونسبي. اتشغّل على لينكس ([[docker run --rm python:3.13]] بيوزر اسمه sara) وعلى ويندوز في PowerShell 7 (والـ home اتحوّل لفولدر تجربة عشان ميتعملش حاجة في الـ home الحقيقي).
+
+---
+
+## ١. المسارات التلاتة
+
+~~~python note.py
+HERE = Path(__file__).resolve().parent
+NOTES = Path.home() / "notes"
+template = HERE / "template.md"
+~~~
+
+### [[HERE = Path(__file__).resolve().parent]]
+
+من جوه لبرة:
+
+| الحتة | معناها |
+|---|---|
+| [[__file__]] | متغير جاهز فيه مسار ملف السكربت نفسه |
+| [[Path(...)]] | حوّله Path عشان نستخدم دواله |
+| [[.resolve()]] | خليه مسار كامل حقيقي: يفك [[..]] والـ symlinks |
+| [[.parent]] | الفولدر اللي فوقه، يعني الفولدر اللي فيه السكربت |
+
+الأسماء الكبيرة ([[HERE]] و [[NOTES]]) عرف في Python لثوابت مش هتتغير.
+
+حطيت في [[where.py]] جنب السكربت ٤ سطور: [[Path("template.md").exists()]] و [[Path.cwd()]]، وبعدين [[__file__]] و [[resolve()]] و [[parent]]، وشغّلته من [[/tmp]]:
+
+~~~text الناتج: cd /tmp && python3 ~/scripts/where.py
+False /tmp
+/home/sara/scripts/where.py
+/home/sara/scripts/where.py
+/home/sara/scripts
+~~~
+
+- [[Path.cwd()]] (**c**urrent **w**orking **d**irectory) طلع [[/tmp]]: الفولدر اللي **انت** واقف فيه. و [[Path("template.md")]] النسبي دوّر هناك فطلع [[False]].
+- [[__file__]] طلع المسار الكامل للسكربت، فـ [[parent]] هو [[/home/sara/scripts]] مهما كنت واقف فين.
+
+وليه [[resolve()]] لو [[__file__]] كامل أصلًا؟ عشان الـ symlink. عملت لينك [[~/.local/bin/where]] بيشاور على السكربت وشغّلته (المرة دي كـ root، فالـ home هو [[/root]]):
+
+~~~text الناتج
+False /tmp
+/root/.local/bin/where
+/root/scripts/where.py
+/root/scripts
+~~~
+
+[[__file__]] كان مسار اللينك، و [[resolve()]] وصل للملف الحقيقي، فـ [[parent]] جاب الفولدر اللي فيه الـ template فعلًا.
+
+### [[NOTES = Path.home() / "notes"]]
+
+[[Path.home()]] فولدر اليوزر على أي نظام ([[/home/sara]] أو [[C:\Users\ali]]). و [[/]] بين Path ونص مش قسمة، ده «ركّب المسار»: [[/home/sara/notes]]. وعلى ويندوز بيستخدم [[\]] لوحده.
+
+---
+
+## ٢. الفولدر والملف
+
+~~~python note.py
+NOTES.mkdir(parents=True, exist_ok=True)
+today = NOTES / f"{datetime.now():%Y-%m-%d}.md"
+~~~
+
+- [[mkdir]] يعمل الفولدر. [[parents=True]] يعمل اللي فوقه لو ناقص، و [[exist_ok=True]] مايعترضش لو موجود. زي [[mkdir -p]].
+- [[datetime.now()]] الوقت دلوقتي. وبعد [[:]] في الـ f-string شكل التاريخ: [[%Y-%m-%d]] = [[2026-10-06]]. فالملف [[notes/2026-10-06.md]].
+
+---
+
+## ٣. أول مرة في اليوم
+
+~~~python note.py
+if not today.exists():
+    header = template.read_text(encoding="utf-8") if template.exists() else "# Notes\n"
+    today.write_text(header, encoding="utf-8")
+~~~
+
+لو ملف النهارده مش موجود: اقرا الـ template لو موجود، غير كده عنوان افتراضي، واكتبه في الملف الجديد. [[write_text]] بيعمل الملف ويكتب فيه مرة واحدة.
+
+---
+
+## ٤. ضيف السطر
+
+~~~python note.py
+text = " ".join(sys.argv[1:]) or "(empty)"
+with today.open("a", encoding="utf-8") as f:
+    f.write(f"- {datetime.now():%H:%M} {text}\n")
+print(f"{today} ({len(today.read_text(encoding='utf-8').splitlines())} lines)")
+~~~
+
+- [[" ".join(sys.argv[1:])]]: الكلمات اللي بعد اسم السكربت متوصّلة بمسافة، فتكتب من غير quotes. ولو مفيش كلام: [["(empty)"]].
+- [[open("a")]]: **a**ppend، اكتب في الآخر من غير ما تمسح. و [[\n]] سطر جديد لازم بإيدك.
+- [[%H:%M]] الساعة والدقيقة.
+- السطر الأخير: [[splitlines()]] بيقسّم النص لسطور، و [[len]] عددهم.
+
+---
+
+## ٥. التشغيل من ٣ أماكن
+
+~~~text الناتج
+cd ~/scripts && python3 note.py خلصت درس pathlib  →  /home/sara/notes/2026-10-06.md (3 lines)
+cd /tmp && python3 ~/scripts/note.py from /tmp     →  /home/sara/notes/2026-10-06.md (4 lines)
+python3 ~/scripts/note.py                          →  /home/sara/notes/2026-10-06.md (5 lines)
+~~~
+
+~~~text ~/notes/2026-10-06.md
+# يوميات
+
+- 17:58 خلصت درس pathlib
+- 17:58 from /tmp
+- 17:58 (empty)
+~~~
+
+نفس الملف في التلاتة، والـ template اتقرا صح حتى من [[/tmp]]. (3 lines في الأول: العنوان، والسطر الفاضي، وأول ملاحظة.) وعلى ويندوز من [[$env:TEMP]] نفس الكلام: [[...\home\notes\2026-10-06.md (4 lines)]]، والعربي سليم.
+
+---
+
+## ٦. [[~]] و [[expanduser()]]
+
+~~~text الناتج: print(Path.home(), Path("~/notes"), Path("~/notes").expanduser())
+/home/sara ~/notes /home/sara/notes
+~~~
+
+Python مش بيفك [[~]] لوحده، دي شغلة الشيل. فلو المسار جاي من config أو من input، اعمله [[expanduser()]].
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| ملف جنب السكربت | [[Path(__file__).resolve().parent / "name"]] |
+| ملف في فولدر اليوزر | [[Path.home() / "name"]] |
+| مسار من المستخدم فيه [[~]] | [[Path(x).expanduser()]] |
+| الفولدر اللي واقف فيه دلوقتي | [[Path.cwd()]]، ومش مضمون في cron |
+
+- المسار النسبي نسبةً لـ [[cwd]]، مش لمكان السكربت.`,
           lines: [
-            "json.",
-            "os.replace.",
-            "sys.exit.",
-            "Path.",
-            "ملف الإعدادات (بيعدّله بني آدم).",
-            "ملف الحالة (بيكتبه السكربت).",
-            "حاول...",
-            "...تقرا الإعدادات.",
-            "لو الـ JSON بايظ:",
-            "رسالة بمكان الغلط بالظبط.",
-            "مفتاح إجباري، ومفتاح بقيمة افتراضية.",
-            "الحالة القديمة، أو حالة جديدة أول مرة.",
-            "عدّل.",
-            "عدّل.",
-            "ملف مؤقت جنبه.",
-            "اكتب فيه كله.",
-            "استبدل القديم بالجديد في خطوة واحدة.",
-            "اطبع النتيجة."
-          ],
-          sol: R`أول مرة: [[['~/Downloads', '~/Desktop'] 30 سارة]] وبعدين state.json فيه [["runs": 1]] و [["last_owner": "سارة"]] بالعربي. تاني مرة [["runs": 2]].
-
-بالفاصلة الزيادة: [[error: config.json: Expecting property name enclosed in double quotes (line 3, column 19)]] و exit 1 (عندي الملف كان متقسم على سطور، فالسطر والعمود بيشاوروا على الفاصلة التانية).
-
-[[json.dumps({"o": "سارة"})]] من غير ensure_ascii طلع [[{"o": "\u0633\u0627\u0631\u0629"}]]: صح و JSON سليم، بس مش مقروء في الملف.
-
-و [[json.loads(json.dumps({1: "a"}))]] رجّع [[{'1': 'a'}]]: المفتاح بقى نص. لاحظ إن [["~/Downloads"]] فضلت زي ما هي، فاعمل [[Path(f).expanduser()]] قبل ما تستخدمها.`
-        },
-        {
-          cmd: "csv و utf-8-sig",
-          title: "CSV يتفتح في Excel والعربي سليم",
-          desc: R`[[csv.DictWriter]] بيكتب list of dicts كـ CSV، و [[csv.DictReader]] بيقرا كل صف dict بأسماء الأعمدة. وافتح دايمًا بـ [[newline=""]] (الموديول هو اللي بيظبط نهايات السطور).
-
-مشكلة Excel على ويندوز: لو الملف utf-8 عادي، بيعرض العربي حروف غريبة. الحل [[encoding="utf-8-sig"]] وانت بتكتب: بيحط 3 bytes في أول الملف (BOM) Excel بيعرف منهم إنه utf-8. وبرضه [[utf-8-sig]] وانت بتقرا أي CSV جاي من Excel.
-
-وExcel في إعدادات أوروبية بيصدّر بـ [[;]] بدل [[,]] وبفاصلة عشرية [[150,5]]. [[csv.Sniffer]] بيعرف الفاصل لوحده. أساسيات csv و json في درس «csv و json» في تاب «Python و FastAPI».`,
-          example: R`import csv
-rows = [
-    {"name": "سارة", "city": "القاهرة", "total": 150.5},
-    {"name": "Ali, Jr.", "city": "Alex", "total": 80},
-]
-with open("report.csv", "w", newline="", encoding="utf-8-sig") as f:
-    w = csv.DictWriter(f, fieldnames=["name", "city", "total"])
-    w.writeheader()
-    w.writerows(rows)
-with open("report.csv", newline="", encoding="utf-8") as f:
-    print(list(next(csv.DictReader(f))))
-with open("report.csv", newline="", encoding="utf-8-sig") as f:
-    for row in csv.DictReader(f):
-        print(row["name"], float(row["total"]))
-with open("excel_export.csv", newline="", encoding="utf-8-sig") as f:
-    dialect = csv.Sniffer().sniff(f.read(2048), delimiters=",;\t")
-    f.seek(0)
-    for row in csv.DictReader(f, dialect=dialect):
-        print(dialect.delimiter, row["name"], float(row["total"].replace(",", ".")))`,
-          try: R`اعمل ملف زي اللي Excel بيصدّره: [[printf '\xef\xbb\xbfname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n' > excel_export.csv]] وشغّل السكربت. وبعدين [[xxd report.csv | head -2]] وشوف أول 3 bytes. على ويندوز PowerShell مفيش printf ولا xxd: اعمل الملف بـ [[python -c "open('excel_export.csv','wb').write('\ufeffname;city;total\r\nسارة;القاهرة;150,5\r\nOmar;Alex;80\r\n'.encode())"]]، وبص على الـ bytes بـ [[Format-Hex report.csv | Select-Object -First 2]]. ولو عندك Excel أو LibreOffice، افتح report.csv، وبعدين اكتبه بـ [[utf-8]] بدل [[utf-8-sig]] وافتحه تاني.`,
-          flag: "script",
-          deep: {
-            why: "أغلب الناس اللي هيستلموا تقرير السكربت هيفتحوه في Excel. لو العربي طلع رموز أو كل الأعمدة في عمود واحد، التقرير ملوش لازمة مهما كانت الأرقام صح.",
-            how: R`الـ BOM هو الحرف [[U+FEFF]] ومكتوب utf-8 كـ [[EF BB BF]]. Excel على ويندوز بيشوفه فيقرا الملف utf-8، ومن غيره بيقرا بـ encoding ويندوز فيطلع العربي [[Ø³Ø§Ø±Ø©]] وما شابه. باقي البرامج (Python و LibreOffice و Google Sheets) بتفهم الاتنين.
-
-لما تقرا ملف فيه BOM بـ [[utf-8]] بس، أول عمود اسمه بيبقى [['\ufeffname']] (الحرف ده مش بيبان لما تطبعه عادي، بيبان في repr)، و [[row["name"] ]] يطلع KeyError وانت شايف الاسم صح بعينك. [[utf-8-sig]] في القراية بيشيل الـ BOM لو موجود ومش بيعمل حاجة لو مش موجود، فاستخدمه دايمًا للقراية.
-
-[[newline=""]]: الـ csv بيكتب [[\r\n]] في آخر كل صف (ده المعيار)، ومن غير [[newline=""]] على ويندوز بيبقى [[\r\r\n]] فيظهر سطر فاضي بين كل صفين.
-
-الاسم اللي فيه فاصلة [["Ali, Jr."]] بيتكتب بين علامات تنصيص لوحده. ده سبب إنك متقسمش CSV بـ [[split(",")]].
-
-[[Sniffer().sniff(sample, delimiters=",;\t")]] بيخمّن الفاصل من أول جزء، و [[f.seek(0)]] يرجّع لأول الملف. كل القيم بتيجي نصوص، فـ [[float()]]، و [[replace(",", ".")]] للفاصلة العشرية الأوروبية.`,
-            when: "أي تقرير رايح لبني آدم. ولو محتاج تنسيق وألوان وأكتر من شيت، مكتبة [[openpyxl]] بتكتب xlsx بجد.",
-            mistakes: R`[[encoding="utf-8"]] للتقرير فالعربي يبوظ في Excel. وتقرا ملف Excel بـ [[utf-8]] فيطلع KeyError على أول عمود. وتنسى [[newline=""]]. و [[DictWriter]] بيرمي [[ValueError: dict contains fields not in fieldnames]] لو صف فيه مفتاح زيادة، و [[extrasaction="ignore"]] بيتجاهله.`
-          },
-          lines: [
-            "csv.",
-            "الصفوف:",
-            "dict لكل صف.",
-            "اسم فيه فاصلة.",
-            "قفلة الـ list.",
-            "اكتب بـ BOM عشان Excel.",
-            "writer بأسماء الأعمدة بالترتيب.",
-            "سطر العناوين.",
-            "كل الصفوف.",
-            "اقراه بـ utf-8 بس...",
-            "...واطبع أسماء الأعمدة.",
-            "اقراه صح بـ utf-8-sig.",
-            "كل صف dict.",
-            "القيم نصوص، فحوّل الرقم.",
-            "ملف جاي من Excel أوروبي.",
-            "خمّن الفاصل من أول 2KB.",
-            "ارجع لأول الملف.",
-            "اقرا بالفاصل اللي اتعرف.",
-            "الفاصل والاسم والرقم بعد ما الفاصلة العشرية بقت نقطة."
-          ],
-          sol: R`الناتج:
-
-[[['\ufeffname', 'city', 'total'] ]]: ده اللي بيحصل لو قريت بـ utf-8 بس.
-[[سارة 150.5]] و [[Ali, Jr. 80.0]]: بـ utf-8-sig كله تمام.
-[[; سارة 150.5]] و [[; Omar 80.0]]: الـ Sniffer عرف إن الفاصل [[;]].
-
-و [[xxd]] بيبدأ بـ [[efbb bf6e 616d 65]] يعني BOM وبعده [[name]]. وآخر الصفوف [[0d0a]] يعني [[\r\n]]. وعلى ويندوز [[Format-Hex]] طلّع نفس الـ bytes: [[EF BB BF 6E 61 6D 65]]، والسكربت طبع نفس السطور بالظبط.
-
-الملف بـ BOM بيتفتح في Excel على ويندوز والعربي سليم والأعمدة متقسمة. من غير BOM، Excel بيقراه بـ encoding ويندوز فالعربي يطلع رموز. (ده سلوك Excel المعروف، وأنا جربت هنا الـ bytes والقراية بـ Python بس.)`
-        },
-        {
-          cmd: "yaml.safe_load و ElementTree",
-          title: "ملفات YAML و XML",
-          desc: R`YAML شائع في ملفات الإعدادات (Docker Compose و GitHub Actions و Kubernetes) لأنه مقروء وفيه تعليقات. في Python محتاج [[pip install pyyaml]]، وبتقرا بـ [[yaml.safe_load]] دايمًا، مش [[yaml.load]].
-
-XML لسه موجود في sitemaps و RSS وملفات Office وأنظمة قديمة. [[xml.etree.ElementTree]] في المكتبة الأساسية: [[ET.parse]] يقرا، و [[findall]] و [[findtext]] يدوّروا. ولو الملف فيه namespace ([[xmlns=...]]) لازم تديله الـ namespace وانت بتدوّر، وإلا مش هيلاقي حاجة.`,
-          example: R`import xml.etree.ElementTree as ET
-from pathlib import Path
-import yaml
-cfg = yaml.safe_load(Path("sites.yaml").read_text(encoding="utf-8"))
-for site in cfg["sites"]:
-    print(site["name"], site["url"], site.get("timeout", cfg["defaults"]["timeout"]))
-print(cfg["country"], cfg["version"])
-Path("out.yaml").write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
-NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-root = ET.parse("sitemap.xml").getroot()
-print(root.tag)
-for url in root.findall("sm:url", NS):
-    print(url.findtext("sm:loc", namespaces=NS), url.findtext("sm:lastmod", default="-", namespaces=NS))
-print(len(root.findall("url")))`,
-          try: R`اعمل الملفين بالأوامر اللي في أول الحل (فيهم [[country: NO]] و [[version: 1.10]] قصد)، وسطّب [[pyyaml]] في venv، وشغّل السكربت. وبعدين جرّب [[yaml.safe_load("on: yes\nzip: 012\n")]] وصلّح [[country]] و [[version]] في الملف عشان يطلعوا نصوص. أوامر الحل bash ([[cat > file <<'EOF']])، فعلى ويندوز اعمل الملفين في VS Code والصق اللي بين سطر [[cat]] وسطر [[EOF]].`,
-          flag: "script",
-          deep: {
-            why: R`إعدادات السكربت لما بتكبر (مواقع، جداول، مستخدمين) بتبقى أسهل في YAML. و XML بيقابلك لما تسحب sitemap موقع عشان تشيّك على روابطه، أو تقرا export من نظام قديم.`,
-            how: R`[[safe_load]] بيطلّع dict و list و str و int و float و bool و None بس. [[yaml.load]] من غير Loader بقى error في PyYAML 6، والـ Loader الكامل ممكن ينفّذ كود Python من الملف ([[!!python/object/apply:os.system]])، فممنوع على أي ملف مش انت كاتبه.
-
-مفاجآت YAML (PyYAML بيتبع YAML 1.1): [[NO]] و [[no]] و [[off]] بقوا [[False]] (كود النرويج اتقرا False). [[on: yes]] بقى [[{True: True}]]، حتى المفتاح. [[1.10]] بقى رقم [[1.1]]. و [[012]] بقى [[10]] (octal). الحل: أي نص ممكن يتلخبط حطه بين علامات تنصيص [["NO"]] و [["1.10"]].
-
-[[safe_dump(..., allow_unicode=True, sort_keys=False)]]: العربي يفضل عربي والترتيب زي ما هو. بس التعليقات بتضيع، ولو محتاج تعدّل ملف YAML وتحافظ على تعليقاته استخدم [[ruamel.yaml]].
-
-XML: الـ namespace بيبقى جزء من اسم الـ tag: [[{http://www.sitemaps.org/schemas/sitemap/0.9}urlset]]. فإما تكتب الاسم كامل، أو تعمل dict [[NS]] وتستخدم [[sm:url]]. و [[findtext]] بيرجّع النص أو [[default]] لو مش موجود. وللملفات الضخمة [[ET.iterparse]] بيقرا جزء جزء.
-
-وXML جاي من برّه (رفعه مستخدم، أو من API مش بتاعك): استخدم [[defusedxml]]، لأن ElementTree نفسه مكتوب في التوثيق إنه مش آمن ضد ملفات معمولة مخصوص.`,
-            when: "YAML لإعدادات فيها مستويات وقوائم وبيعدّلها ناس. XML لما المصدر نفسه XML.",
-            mistakes: R`[[yaml.load]] على ملف من برّه. وقيم زي [[NO]] و [[on]] و [[1.10]] وأرقام تليفونات تبدأ بصفر من غير quotes. وتدوّر بـ [[findall("url")]] في ملف فيه namespace فيرجع list فاضية من غير أي error.`
-          },
-          lines: [
-            "XML في المكتبة الأساسية.",
-            "Path.",
-            "pip install pyyaml.",
-            "اقرا YAML لـ dict بأمان.",
-            "لف على القائمة:",
-            "قيمة الموقع أو الافتراضية من الملف.",
-            "قيم شكلها نص وطلعت حاجة تانية.",
-            "اكتب YAML تاني، والعربي عربي والترتيب زي ما هو.",
-            "الـ namespace اللي في الـ sitemap.",
-            "اقرا الملف وخد العنصر الرئيسي.",
-            "اسم الـ tag كامل بالـ namespace.",
-            "كل url، بالـ namespace.",
-            "الرابط، وتاريخ التعديل أو - لو مش موجود.",
-            "من غير namespace: ولا واحد."
-          ],
-          sol: R`الناتج:
-
-[[الموقع الرئيسي https://example.com 5]]
-[[api https://api.example.com/health 10]]
-[[False 1.1]]: الـ [[NO]] بقت False والـ [[1.10]] بقت 1.1.
-[[{http://www.sitemaps.org/schemas/sitemap/0.9}urlset]]
-[[https://example.com/ 2026-09-30]] و [[https://example.com/about 2026-08-01]] و [[https://example.com/blog/python -]]
-[[0]]: من غير namespace مالقاش ولا url.
-
-و [[yaml.safe_load("on: yes\nzip: 012\n")]] رجّع [[{True: True, 'zip': 10}]]. ومع [[country: "NO"]] و [[version: "1.10"]] رجعوا [['NO']] و [['1.10']]. و [[yaml.load("a: 1")]] من غير Loader: [[TypeError: load() missing 1 required positional argument: 'Loader']].`,
-          solCode: R`cat > sites.yaml <<'EOF'
-# sites to check
-defaults:
-  timeout: 5
-sites:
-  - name: الموقع الرئيسي
-    url: https://example.com
-  - name: api
-    url: https://api.example.com/health
-    timeout: 10
-country: NO
-version: 1.10
-EOF
-cat > sitemap.xml <<'EOF'
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://example.com/</loc><lastmod>2026-09-30</lastmod></url>
-  <url><loc>https://example.com/about</loc><lastmod>2026-08-01</lastmod></url>
-  <url><loc>https://example.com/blog/python</loc></url>
-</urlset>
-EOF`
-        },
-        {
-          cmd: "datetime وأسماء الملفات",
-          title: "التاريخ في أسماء الملفات، وعمر الملف بالأيام",
-          desc: R`سكربتات الأتمتة بتستخدم التاريخ في حاجتين: أسماء ملفات ([[backup_2026-10-01_161416.zip]]) عشان ميدوسوش على بعض ويترتبوا لوحدهم، وحسابات ([[الملف ده عمره كام يوم؟]]، [[امسح اللي أقدم من 30 يوم]]).
-
-[[strftime]] من تاريخ لنص بالشكل اللي انت عايزه، و [[strptime]] من نص لتاريخ، و [[timedelta]] فرق بين تاريخين، و [[datetime.fromtimestamp(p.stat().st_mtime)]] وقت آخر تعديل في ملف. المناطق الزمنية و zoneinfo في درس «datetime و zoneinfo» في تاب «Python و FastAPI».`,
-          example: R`from datetime import datetime, timedelta
-from pathlib import Path
-now = datetime.now()
-print(now.strftime("%Y-%m-%d_%H%M%S"))
-print(f"backup_{now:%Y%m%d}.zip")
-for p in sorted(Path(".").glob("*.csv")):
-    mtime = datetime.fromtimestamp(p.stat().st_mtime)
-    age = now - mtime
-    print(p.name, mtime.isoformat(" ", timespec="seconds"), f"{age.days} days old")
-cutoff = now - timedelta(days=30)
-print("cutoff:", cutoff.date())
-names = ["log_2026-09-30.txt", "log_2026-10-01.txt", "log_2026-01-15.txt"]
-print(sorted(names))
-day = datetime.strptime("log_2026-09-30.txt", "log_%Y-%m-%d.txt").date()
-print(day, day.strftime("%A"), (now.date() - day).days)
-print(sorted(["5-10-2026", "30-9-2026", "1-1-2027"]))`,
-          try: R`اعمل ملف قديم بـ [[touch -d "45 days ago" old_report.csv]] (في PowerShell: [[New-Item old_report.csv]] وبعدين [[(Get-Item old_report.csv).LastWriteTime = (Get-Date).AddDays(-45)]]) وشغّل السكربت. وبعدين اكتب دالة [[latest_backup(folder)]] بترجّع أحدث [[backup_*.zip]] من الاسم نفسه (مش من وقت التعديل)، وجرّبها على [[backup_2026-09-29.zip]] و [[backup_2026-10-01.zip]] و [[backup_2026-09-30.zip]].`,
-          flag: "script",
-          deep: {
-            why: R`backup باسم ثابت بيدوس على اللي قبله. واسم زي [[30-9-2026]] مبيترتبش صح. و «أقدم من 30 يوم» محتاجة تاريخ الملف مش تاريخ النهارده بس.`,
-            how: R`الشكل [[%Y-%m-%d]] (ISO) هو الوحيد اللي ترتيب الأسماء فيه هو ترتيب التواريخ، عشان السنة الأول والأرقام بأصفار ([[09]] مش [[9]]). فـ [[sorted(names)]] و [[ls]] بيرتّبوه صح من غير أي parsing.
-
-[[%H%M%S]] من غير [[:]] لأن ويندوز مبيقبلش [[:]] في اسم الملف.
-
-[[st_mtime]] ثواني من 1970 (Unix timestamp)، و [[fromtimestamp]] بيحوّلها لتوقيت جهازك. و [[now - mtime]] بيطلّع [[timedelta]]، و [[.days]] الأيام الكاملة (بيقرّب لتحت)، و [[total_seconds()]] للدقة. على لينكس [[st_ctime]] مش وقت الإنشاء (ده وقت تغيير الصلاحيات أو الاسم).
-
-[[strptime]] لازم الشكل يطابق بالظبط وإلا [[ValueError]]، فاعمله في try لو الأسماء ممكن تبقى مختلفة. و [[%A]] اسم اليوم بلغة الجهاز.
-
-[[datetime.now()]] بتوقيت الجهاز ومن غير timezone. على سيرفر (غالبًا UTC) وجهازك (القاهرة) نفس السكربت هيطلّع أسماء مختلفة، فلو ده مهم استخدم [[datetime.now(timezone.utc)]] في كل حتة.`,
-            when: "أي ملف السكربت بيعمله أكتر من مرة (backup، تقرير، log)، وأي تنضيف بالعمر.",
-            mistakes: R`[[%m]] (شهر) و [[%M]] (دقيقة) و [[%d]] و [[%D]]. و [[datetime.now().strftime("%Y-%m-%d %H:%M")]] في اسم ملف على ويندوز. وتقارن datetime فيه timezone بواحد من غير: [[TypeError: can't compare offset-naive and offset-aware datetimes]]. وأسماء بتنسيق [[d-m-Y]] فالترتيب يبوظ.`
-          },
-          lines: [
-            "datetime و timedelta.",
-            "Path.",
-            "الوقت دلوقتي.",
-            "شكل مناسب لاسم ملف، من غير :.",
-            "نفس الفكرة جوه f-string.",
-            "لكل ملف csv:",
-            "وقت آخر تعديل كتاريخ.",
-            "عمره.",
-            "الاسم، والوقت مقروء، والعمر بالأيام.",
-            "تاريخ من 30 يوم.",
-            "اليوم بس من غير وقت.",
-            "أسماء بتاريخ ISO.",
-            "ترتيب النصوص = ترتيب التواريخ.",
-            "طلّع التاريخ من الاسم.",
-            "التاريخ، واسم اليوم، وكام يوم فات.",
-            "ترتيب d-m-Y بايظ."
-          ],
-          sol: R`النهارده 1 أكتوبر 2026، فطلع:
-
-[[2026-10-01_161416]] و [[backup_20261001.zip]]
-[[old_report.csv 2026-08-17 16:14:16 45 days old]]
-[[cutoff: 2026-09-01]]
-[[['log_2026-01-15.txt', 'log_2026-09-30.txt', 'log_2026-10-01.txt'] ]]: مترتبين صح.
-[[2026-09-30 Wednesday 1]]
-[[['1-1-2027', '30-9-2026', '5-10-2026'] ]]: سنة 2027 جت الأول. ده سبب ISO.
-
-[[latest_backup]] (تحت) رجّعت [[backup_2026-10-01.zip]]. من الاسم أضمن من [[st_mtime]]، لأن النسخ أو الـ download بيغيّر وقت التعديل. وملف اسمه مش ماشي على الشكل بيتجاهل بدل ما يوقّع السكربت.`,
-          solCode: R`from datetime import datetime
-from pathlib import Path
-def latest_backup(folder: Path) -> Path | None:
-    dated = []
-    for p in folder.glob("backup_*.zip"):
-        try:
-            dated.append((datetime.strptime(p.name, "backup_%Y-%m-%d.zip"), p))
-        except ValueError:
-            continue
-    return max(dated)[1] if dated else None
-print(latest_backup(Path("backups")))`
-        },
-        {
-          cmd: "logging بدل print",
-          title: "سجل للسكربت: على الشاشة وفي ملف",
-          desc: R`[[print]] للنتيجة اللي السكربت معمول عشانها. أي حاجة تانية (بدأ إمتى، عمل إيه، تحذير، error) تروح [[logging]]: كل سطر بوقته ومستواه، يتطبع على stderr، ويتكتب في ملف كمان، وتقدر تخفّي التفاصيل أو تظهرها بـ [[-v]] من غير ما تمسح سطر.
-
-المستويات بالترتيب: [[DEBUG]] و [[INFO]] و [[WARNING]] و [[ERROR]] و [[CRITICAL]]. اللي تحت المستوى المختار مش بيظهر.`,
-          example: R`import logging
-import sys
-log = logging.getLogger("cleaner")
-def setup_logging(verbose: bool, logfile: str = "cleaner.log") -> None:
-    logging.basicConfig(
-        level=logging.DEBUG if verbose else logging.INFO,
-        format="%(asctime)s %(levelname)-7s %(name)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-        handlers=[logging.StreamHandler(), logging.FileHandler(logfile, encoding="utf-8")],
-    )
-setup_logging(verbose="-v" in sys.argv)
-log.debug("scanning %s", "/tmp/lab")
-log.info("deleted %d files, freed %.1f MB", 12, 48.31)
-log.warning("skipped %s: permission denied", "secret.txt")
-try:
-    total = 10 / 0
-except ZeroDivisionError:
-    log.exception("failed to compute the ratio")
-print("done")`,
-          try: R`شغّله بـ [[python3 logs.py 2>/dev/null]] وشوف إيه اللي فضل. وبعدين [[python3 logs.py -v 2>&1 >/dev/null]]. وبعدين [[wc -l cleaner.log]] و [[head -3 cleaner.log]]. شغّله كمان مرة وشوف الملف كبر ولا اتمسح.
-
-في PowerShell: [[python logs.py 2>$null]]، وبعدين [[python logs.py -v > $null]] (الـ stderr بيفضل على الشاشة لوحده)، وبعدين [[(Get-Content cleaner.log).Count]] و [[Get-Content cleaner.log -TotalCount 3]].`,
-          flag: "script",
-          deep: {
-            why: R`سكربت متجدول بيشتغل الساعة 2 بالليل وانت نايم. لما يفشل، مفيش غير الـ log تعرف منه حصل إيه وإمتى. و print من غير وقت ولا مستوى، ومتلخبط مع النتيجة، ولازم تمسحه قبل ما تسلّم.`,
-            how: R`[[logging.getLogger("cleaner")]] logger باسم بيظهر في كل سطر (في مشروع فيه موديولات [[getLogger(__name__)]]).
-
-[[basicConfig]] بيظبط الـ root logger مرة واحدة: المستوى، وشكل السطر ([[%(asctime)s]] الوقت، و [[%(levelname)-7s]] المستوى بعرض 7، و [[%(message)s]] الرسالة)، والـ handlers: [[StreamHandler()]] بيكتب على stderr افتراضيًا، و [[FileHandler]] في ملف بيضيف عليه ([["a"]]) مش بيمسحه.
-
-[[log.info("deleted %d files", 12)]] بالـ %-formatting مش f-string: الرسالة مش بتتبني أصلًا لو المستوى مقفول، والأدوات اللي بتجمّع logs بتعرف تجمّع الرسايل المتشابهة.
-
-[[log.exception()]] جوه except بيكتب ERROR ومعاه الـ traceback كامل. ده أهم سطر في أي سكربت متجدول.
-
-ملف log بيكبر للأبد، فـ [[logging.handlers.RotatingFileHandler(path, maxBytes=5_000_000, backupCount=3)]] بيقسمه. أو في cron سيب الـ log على stderr واعمل redirect لملف ([[>> log 2>&1]]) وخلّي logrotate يقسمه.`,
-            when: "أي سكربت بيتجدول أو بيشتغل أكتر من دقيقة. و print للنتيجة اللي حد هيقراها أو هيعملها pipe.",
-            mistakes: R`[[basicConfig]] بيشتغل أول مرة بس: لو أي import عمل logging قبله، الإعداد بتاعك بيتجاهل (فيه [[force=True]]). و [[log.error(e)]] بدل [[log.exception]] فالـ traceback يضيع. و f-string فيها بيانات كبيرة في [[log.debug]] بتتبني حتى والـ debug مقفول. وباسوردات أو tokens في الـ log.`
-          },
-          lines: [
-            "logging.",
             "sys.",
-            "logger باسم السكربت.",
-            "الإعداد في مكان واحد:",
-            "الإعداد الأساسي:",
-            "DEBUG لو -v، وإلا INFO.",
-            "شكل كل سطر.",
-            "شكل الوقت.",
-            "اكتب على stderr وفي ملف.",
-            "قفلة.",
-            "-v موجودة؟",
-            "تفاصيل، بتظهر مع -v بس.",
-            "معلومة عادية.",
-            "تحذير.",
-            "حاول...",
-            "...حاجة هتقع.",
-            "مسكتها:",
-            "ERROR ومعاه الـ traceback كامل.",
-            "النتيجة على stdout."
+            "التاريخ والوقت.",
+            "Path.",
+            "الفولدر اللي فيه السكربت نفسه، مهما كان مكان التشغيل.",
+            "فولدر في الـ home على أي نظام.",
+            "ملف جنب السكربت.",
+            "اعمل الفولدر لو مش موجود.",
+            "ملف النهارده: notes/2026-10-01.md.",
+            "أول مرة النهارده؟",
+            "خد الـ template لو موجود، أو عنوان افتراضي.",
+            "اكتبه.",
+            "الكلام اللي بعد اسم السكربت.",
+            "افتح للإضافة في الآخر.",
+            "سطر بالوقت والكلام.",
+            "اطبع المسار وعدد السطور."
           ],
-          sol: R`[[2>/dev/null]]: الشاشة عليها [[done]] بس. كل الـ logging راح stderr واتشال.
+          sol: R`شغّلته بـ HOME مؤقت. المرة الأولى من جوه الفولدر: [[.../notes/2026-10-01.md (3 lines)]]، والتانية من [[/tmp]] بالمسار الكامل: [[(4 lines)]]، والاتنين في نفس الملف:
 
-[[-v 2>&1 >/dev/null]] (stderr بس، و stdout اتشال):
+[[# يوميات]]
+(سطر فاضي)
+[[- 16:13 خلصت درس pathlib]]
+[[- 16:13 from /tmp]]
 
-[[2026-10-01 16:14:22 DEBUG   cleaner: scanning /tmp/lab]]
-[[2026-10-01 16:14:22 INFO    cleaner: deleted 12 files, freed 48.3 MB]]
-[[2026-10-01 16:14:22 WARNING cleaner: skipped secret.txt: permission denied]]
-[[2026-10-01 16:14:22 ERROR   cleaner: failed to compute the ratio]]
-[[Traceback (most recent call last):]] لحد [[ZeroDivisionError: division by zero]]
+يعني الـ template اتقرا صح حتى من [[/tmp]] لأن [[HERE]] مبني من [[__file__]].
 
-والملف بعد المرتين كان 17 سطر: المرة الأولى من غير DEBUG، والتانية بيه، والاتنين فيهم الـ traceback. يعني الملف بيكبر مع كل تشغيل ومش بيتمسح.`
+والسكربت التاني من [[/tmp]] طبع [[False /tmp]]: [[Path("template.md")]] دوّر في [[/tmp]] مش جنب السكربت. وده نفس اللي هيحصل في cron.
+
+وجربته على ويندوز كمان، من جوه الفولدر ومن [[$env:TEMP]]: نفس النتيجة، والملف اتعمل في [[C:\Users\...\notes\2026-10-02.md]] بالعربي سليم.`
         },
         {
-          cmd: "subprocess.run في سكربت",
-          title: "سكربت بيشغّل أوامر: git pull لكل المشاريع",
-          desc: R`ساعات الأداة الصح موجودة بالفعل كأمر: [[git]] و [[pg_dump]] و [[ffmpeg]] و [[rsync]]. السكربت بيلف ويشغّلها بـ [[subprocess.run]] ويقرا النتيجة.
+          cmd: "glob و rglob",
+          title: "لف على ملفات فولدر واختار اللي محتاجه",
+          desc: R`تلات طرق تلف بيهم على فولدر:
 
-القواعد: الأمر list ([[["git", "-C", path, "pull"] ]]) مش string، ومن غير [[shell=True]]. و [[capture_output=True, text=True]] عشان تقرا الناتج. و [[timeout]] عشان أمر معلّق ميعلّقش السكربت كله. وتفحص [[returncode]].
+[[folder.iterdir()]] كل اللي جوه الفولدر مباشرة (ملفات وفولدرات).
+[[folder.glob("*.md")]] اللي اسمه ماشي على pattern في الفولدر ده بس.
+[[folder.rglob("*.md")]] نفس الـ pattern في الفولدر وكل اللي تحته.
 
-التفاصيل والأمان (command injection) في درس «subprocess» في تاب «Python و FastAPI». هنا سكربت حقيقي بيعمل pull لكل المشاريع في فولدر.`,
+ومن أي Path تاخد [[name]] و [[stem]] و [[suffix]] و [[parent]]، ومن [[stat()]] الحجم ووقت التعديل. ده أساس أي سكربت بيرتّب أو ينضّف أو يعد.`,
+          example: R`import sys
+from collections import Counter
+from pathlib import Path
+root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").expanduser()
+files = [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts]
+by_ext = Counter(p.suffix.lower() or "(none)" for p in files)
+for ext, n in by_ext.most_common(4):
+    print(f"{ext:<8}{n:>4}")
+biggest = sorted(files, key=lambda p: p.stat().st_size, reverse=True)[:3]
+for p in biggest:
+    print(f"{p.stat().st_size:>9,}  {p.relative_to(root)}")
+print(sorted(p.name for p in root.glob("*.md")))
+print(sorted(p.name for p in root.rglob("*.md")))
+print(sorted(p.name for p in root.iterdir()))
+p = root / "img" / "x.PNG"
+print(p.name, p.stem, p.suffix, p.parent.name, p.suffix.lower() == ".png")`,
+          try: R`اعمل مشروع تجربة: [[mkdir -p proj/src proj/docs proj/img proj/.git]] و [[touch proj/src/a.py proj/src/b.py proj/src/c.py proj/docs/README.md proj/NOTES.md proj/img/x.PNG proj/img/y.png proj/img/z.jpg proj/Makefile]] وشغّل السكربت عليه. وبعدين اكتب سكربت يطبع الملفات اللي اتعدلت في آخر 24 ساعة بس، من غير ما يدخل [[.git]] و [[node_modules]] و [[.venv]] أصلًا.
+
+على ويندوز PowerShell: [[mkdir proj/src, proj/docs, proj/img, proj/.git]]، و [[New-Item]] بنفس أسماء الملفات مفصولة بفواصل بدل touch، وبدل [[touch -d "3 days ago" f]]: [[(Get-Item f).LastWriteTime = (Get-Date).AddDays(-3)]].`,
+          flag: "script",
+          deep: {
+            why: "«انقل كل الصور»، «امسح الـ logs القديمة»، «اعد ملفات كل نوع»، «هات أكبر ١٠ ملفات»: كلها بتبدأ بلفة على فولدر واختيار ملفات.",
+            how: R`الـ patterns: [[*]] أي حروف، و [[?]] حرف واحد، و [[[0-9] ]] حرف من مجموعة. و [[rglob("*.md")]] هو نفسه [[glob("**/*.md")]].
+
+الترتيب اللي بيطلعوا بيه مش مضمون، فاعمل [[sorted]] لو هتطبع أو تنقل. والتلاتة generators: لو هتنقل أو تمسح جوه نفس الفولدر وانت بتلف، حوّلهم list الأول.
+
+pathlib مش زي الشيل: [[glob("*")]] بيجيب الملفات المخفية كمان ([[.git]] و [[.venv]])، عشان كده [[".git" not in p.parts]]. و [[p.parts]] هي أجزاء المسار كـ tuple.
+
+[[suffix]] آخر امتداد بس: [[a.tar.gz]] امتداده [[.gz]]، و [[suffixes]] بيدّيك [[['.tar', '.gz'] ]]، و [[.bashrc]] امتداده فاضي. و [[Counter]] بيعد (درس «collections» في تاب «Python و FastAPI»).
+
+لفولدرات ضخمة زي node_modules: [[rglob]] بيدخل جوه كل حاجة وبعدين انت بتفلتر، وده بطيء. [[root.walk()]] (من Python 3.12، وقبلها [[os.walk]]) بيدّيك الفولدرات في كل مستوى، ولو شلت منها اسم مش هيدخله أصلًا: [[dirnames[:] = [d for d in dirnames if d not in SKIP] ]].`,
+            when: "أي سكربت بيشتغل على مجموعة ملفات.",
+            mistakes: R`[[p.suffix == ".jpg"]] فـ [[photo.JPG]] تتنسي: دايمًا [[lower()]]. و [[rglob]] على فولدر فيه node_modules أو .venv فياخد دقايق. و [[iterdir()]] وانت بتنقل ملفات لفولدرات جوه نفس الفولدر من غير [[sorted]] أو list. وعلى لينكس الـ glob حساس لحالة الحروف وعلى ويندوز لأ، فنفس السكربت بيجيب نتايج مختلفة.`
+          },
+          teach: R`## السكربت ده بيعمل إيه؟
+
+بيعمل «جرد» لفولدر مشروع: كام ملف من كل امتداد، وأكبر ٣ ملفات، وبعدين يقارن التلات طرق اللي بتلف بيهم على فولدر ([[glob]] و [[rglob]] و [[iterdir]])، وفي الآخر يفك اسم ملف لأجزائه. اتشغّل على مشروع التجربة اللي في «جرّب» (ومعاه ملف جوه [[.git]]، وحجم في 3 ملفات بـ [[head -c]]) على لينكس ([[docker run --rm python:3.13]]) وعلى ويندوز في PowerShell 7.
+
+~~~text شكل المشروع
+proj/
+  .git/config
+  Makefile
+  NOTES.md
+  docs/README.md
+  img/x.PNG   (50,000 byte)
+  img/y.png
+  img/z.jpg   (120,000 byte)
+  src/a.py    (3,000 byte)
+  src/b.py
+  src/c.py
+~~~
+
+---
+
+## ١. الفولدر وكل ملفاته
+
+~~~python scan.py
+root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").expanduser()
+files = [p for p in root.rglob("*") if p.is_file() and ".git" not in p.parts]
+~~~
+
+- [[.expanduser()]]: لو المسار فيه [[~]] فكّها (Python مش بيفكها لوحده).
+- [[root.rglob("*")]]: كل حاجة في الفولدر **وكل اللي تحته** بأي عمق. **r** = recursive.
+- [[p.is_file()]]: ملفات بس، من غير الفولدرات.
+- [[p.parts]]: أجزاء المسار كـ tuple: [[Path("proj/img/x.PNG").parts]] = [[('proj', 'img', 'x.PNG')]]. فـ [[".git" not in p.parts]] يعني «مش جوه فولدر اسمه .git». لازم، لأن [[rglob("*")]] بيجيب الملفات المخفية كمان (عكس الشيل).
+
+---
+
+## ٢. العد بـ [[Counter]]
+
+~~~python scan.py
+by_ext = Counter(p.suffix.lower() or "(none)" for p in files)
+for ext, n in by_ext.most_common(4):
+    print(f"{ext:<8}{n:>4}")
+~~~
+
+- [[p.suffix]]: الامتداد بالنقطة ([[.PNG]]). و [[.lower()]] عشان [[.PNG]] و [[.png]] يتعدّوا واحد.
+- [[or "(none)"]]: ملف زي [[Makefile]] امتداده نص فاضي، فنسمّيه [[(none)]].
+- [[Counter(...)]] من [[collections]]: بيعد كل قيمة اتكررت كام مرة.
+- [[.most_common(4)]]: أكتر ٤، كل واحد [[(القيمة، العدد)]].
+
+~~~text الناتج
+.py        3
+.md        2
+.png       2
+(none)     1
+~~~
+
+---
+
+## ٣. أكبر ٣
+
+~~~python scan.py
+biggest = sorted(files, key=lambda p: p.stat().st_size, reverse=True)[:3]
+for p in biggest:
+    print(f"{p.stat().st_size:>9,}  {p.relative_to(root)}")
+~~~
+
+- رتّب بالحجم من الأكبر، وخد أول ٣.
+- [[:>9,]]: يمين بعرض 9 وفواصل آلاف.
+- [[p.relative_to(root)]]: المسار من غير [[proj/]] في أوله.
+
+~~~text الناتج (لينكس)
+  120,000  img/z.jpg
+   50,000  img/x.PNG
+    3,000  src/a.py
+~~~
+
+وعلى ويندوز نفس الأرقام بس [[img\z.jpg]].
+
+---
+
+## ٤. التلات طرق جنب بعض
+
+~~~python scan.py
+print(sorted(p.name for p in root.glob("*.md")))
+print(sorted(p.name for p in root.rglob("*.md")))
+print(sorted(p.name for p in root.iterdir()))
+~~~
+
+~~~text الناتج
+['NOTES.md']
+['NOTES.md', 'README.md']
+['.git', 'Makefile', 'NOTES.md', 'docs', 'img', 'src']
+~~~
+
+| الطريقة | بتدوّر فين | بتجيب إيه |
+|---|---|---|
+| [[glob("*.md")]] | الفولدر ده بس | اللي ماشي على الـ pattern |
+| [[rglob("*.md")]] | الفولدر وكل اللي تحته | اللي ماشي على الـ pattern |
+| [[iterdir()]] | الفولدر ده بس | كل حاجة، ملفات وفولدرات، و [[.git]] كمان |
+
+الـ pattern: [[*]] أي عدد حروف، و [[?]] حرف واحد. و [[rglob("*.md")]] هو نفسه [[glob("**/*.md")]] ([[**]] = أي عدد فولدرات)، وجربتها وطلّعت نفس اللستة.
+
+و [[sorted]] ليه؟ لأن الترتيب اللي بيطلعوا بيه حسب النظام ومش مضمون.
+
+### حالة الحروف
+
+[[rglob("*.MD")]] بحروف كبيرة: على لينكس رجّع [[[] ]] (فاضية)، وعلى ويندوز رجّع [[['NOTES.md', 'README.md'] ]]. لينكس بيفرّق بين الكبير والصغير وويندوز لأ.
+
+---
+
+## ٥. أجزاء الاسم
+
+~~~python scan.py
+p = root / "img" / "x.PNG"
+print(p.name, p.stem, p.suffix, p.parent.name, p.suffix.lower() == ".png")
+~~~
+
+~~~text الناتج
+x.PNG x .PNG img True
+~~~
+
+| الخاصية | القيمة | معناها |
+|---|---|---|
+| [[name]] | [[x.PNG]] | الاسم كامل |
+| [[stem]] | [[x]] | من غير الامتداد |
+| [[suffix]] | [[.PNG]] | الامتداد زي ما هو |
+| [[parent.name]] | [[img]] | اسم الفولدر اللي فوقه |
+
+و [[suffix]] آخر امتداد بس: [[a.tar.gz]] امتداده [[.gz]]، و [[suffixes]] رجّع [[['.tar', '.gz'] ]]، و [[.bashrc]] امتداده [['']] (النقطة في الأول مش امتداد).
+
+---
+
+## ٦. الحل: آخر 24 ساعة من غير الفولدرات التقيلة
+
+~~~python solCode
+SKIP = {".git", "node_modules", ".venv", "__pycache__"}
+cutoff = time.time() - 24 * 3600
+recent = []
+for dirpath, dirnames, filenames in root.walk():
+    dirnames[:] = [d for d in dirnames if d not in SKIP]
+    for name in filenames:
+        p = dirpath / name
+        if p.stat().st_mtime >= cutoff:
+            recent.append(p)
+~~~
+
+- [[{...}]] بأسماء بس = **set**: لستة من غير تكرار، والسؤال [[in]] فيها سريع.
+- [[time.time()]]: الوقت دلوقتي بالثواني، و [[24 * 3600]] عدد ثواني اليوم. فـ [[cutoff]] = «من 24 ساعة».
+- [[root.walk()]] (من Python 3.12): بيلف فولدر فولدر، ولكل واحد بيدّيك ٣ حاجات: [[dirpath]] مساره، و [[dirnames]] أسماء الفولدرات اللي جواه، و [[filenames]] أسماء الملفات.
+- [[dirnames[:] = [...] ]]: ده سر الحل. [[[:] ]] معناها «غيّر محتوى اللستة نفسها» مش «اعمل لستة جديدة»، و [[walk]] بيدخل بعد كده **بس** في الفولدرات اللي فضلت فيها. فـ node_modules مش بيتلف عليه أصلًا، مش بيتلف وبعدين يتفلتر.
+- [[st_mtime >= cutoff]]: اتعدّل بعد الحد ده.
+
+ضفت [[node_modules]] و [[.venv]] فيهم ملفات جديدة، وخليت 4 ملفات قديمة بـ [[touch -d "3 days ago"]]:
+
+~~~text الناتج (لينكس)
+img/x.PNG
+img/z.jpg
+NOTES.md
+img/y.png
+src/a.py
+5 files changed in the last 24h
+~~~
+
+ولا ملف من node_modules ولا .venv. وعلى ويندوز بـ [[(Get-Item f).LastWriteTime = (Get-Date).AddDays(-3)]] على ملف واحد بس، طلع 8 ملفات من 9، والقديم مش منهم.
+
+---
+
+## الخلاصة
+
+- [[iterdir]] كل اللي جوه مباشرة، و [[glob]] بـ pattern هنا، و [[rglob]] بـ pattern في كل اللي تحته.
+- كلهم بيجيبوا المخفي: استبعد [[.git]] بإيدك.
+- [[suffix.lower()]] دايمًا، والحروف الكبيرة بتفرق على لينكس بس.
+- فولدرات ضخمة؟ [[walk()]] وشيل اللي مش عايزه من [[dirnames]].`,
+          lines: [
+            "sys.",
+            "Counter للعد.",
+            "Path.",
+            "الفولدر من الـ argument، وفك ~ لو موجودة.",
+            "كل الملفات بأي عمق، من غير اللي جوه .git.",
+            "عد كل امتداد (بحروف صغيرة).",
+            "أكتر 4 امتدادات:",
+            "الامتداد والعدد.",
+            "أكبر 3 ملفات.",
+            "لكل واحد:",
+            "الحجم بفواصل، والمسار نسبةً للفولدر.",
+            "glob: في الفولدر ده بس.",
+            "rglob: في كل اللي تحته.",
+            "iterdir: كل اللي جواه مباشرة.",
+            "Path لملف واحد.",
+            "الاسم، ومن غير امتداد، والامتداد، والفولدر اللي فوقه."
+          ],
+          sol: R`على المشروع ده (وحطيت حجم في a.py و x.PNG و z.jpg):
+
+[[.py        3]] و [[.md        2]] و [[.png       2]] و [[(none)     1]] (الـ Makefile)
+[[  120,000  img/z.jpg]] و [[   50,000  img/x.PNG]] و [[    3,000  src/a.py]]
+[[['NOTES.md'] ]] من glob، و [[['NOTES.md', 'README.md'] ]] من rglob
+[[['.git', 'Makefile', 'NOTES.md', 'docs', 'img', 'src'] ]] من iterdir، لاحظ [[.git]] ظاهر.
+[[x.PNG x .PNG img True]]
+
+وحل التمرين تحت بـ [[Path.walk()]]. على نفس المشروع ومعاه [[node_modules]] و [[.venv]] (فيهم ملفات جديدة) وملفات اتعدلت من 3 أيام بـ [[touch -d "3 days ago"]]، طبع الخمسة دول: [[img/x.PNG]] و [[img/z.jpg]] و [[NOTES.md]] و [[img/y.png]] و [[src/a.py]] (مترتبين بوقت التعديل، والملفات اتعملت في نفس الثانية تقريبًا، فالترتيب عندك ممكن يختلف) وبعدين [[5 files changed in the last 24h]]، ومادخلش node_modules ولا .venv خالص. لو عندك Python أقدم من 3.12: [[os.walk(root)]] بنفس الشكل بس [[dirpath]] بيبقى string.
+
+وعلى ويندوز نفس الأرقام، بس المسارات بـ [[\]] ([[img\z.jpg]])، و [[rglob("*.MD")]] لقى [[NOTES.md]] و [[README.md]] لأن ويندوز مش حساس لحالة الحروف، وعلى لينكس نفس السطر رجّع لستة فاضية.`,
+          solCode: R`import sys
+import time
+from pathlib import Path
+SKIP = {".git", "node_modules", ".venv", "__pycache__"}
+root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").expanduser()
+cutoff = time.time() - 24 * 3600
+recent = []
+for dirpath, dirnames, filenames in root.walk():
+    dirnames[:] = [d for d in dirnames if d not in SKIP]
+    for name in filenames:
+        p = dirpath / name
+        if p.stat().st_mtime >= cutoff:
+            recent.append(p)
+for p in sorted(recent, key=lambda p: p.stat().st_mtime, reverse=True):
+    print(p.relative_to(root))
+print(f"{len(recent)} files changed in the last 24h")`
+        },
+        {
+          cmd: "open() و encoding=\"utf-8\"",
+          title: "اقرا واكتب ملفات نصية والعربي ميبوظش",
+          desc: R`[[with open(path, "w", encoding="utf-8") as f:]] بيفتح الملف، و [[with]] بيقفله لوحده حتى لو حصل error. الـ mode: [["r"]] قراية (الافتراضي)، و [["w"]] كتابة بتمسح القديم، و [["a"]] إضافة في الآخر، و [["x"]] كتابة بس لو الملف مش موجود، و [["rb"]] و [["wb"]] للملفات الـ binary.
+
+وأهم حاجة في الدرس: [[encoding="utf-8"]] دايمًا. من غيرها Python بيستخدم encoding الجهاز، وده utf-8 على لينكس وماك، بس على ويندوز بيبقى الـ code page بتاع الجهاز: [[cp1256]] على ويندوز عربي، و [[cp1252]] على ويندوز إنجليزي (وده مبيعرفش يكتب عربي أصلًا). فنفس السكربت يكتب عربي سليم عندك ويطلّع رموز غريبة أو يقع عند زميلك.`,
+          example: R`from pathlib import Path
+p = Path("ar.txt")
+with open(p, "w", encoding="utf-8") as f:
+    f.write("السلام عليكم\n")
+    f.write("سطر تاني\n")
+with open(p, "a", encoding="utf-8") as f:
+    print("سطر بـ print", file=f)
+with open(p, encoding="utf-8") as f:
+    for n, line in enumerate(f, 1):
+        print(n, line.rstrip("\n"))
+print(p.read_bytes()[:8])
+print(p.read_text(encoding="cp1256")[:12])
+with open("once.txt", "x", encoding="utf-8") as f:
+    f.write("created once\n")`,
+          try: R`شغّله مرتين وشوف الفرق. وبعدين جرّب اللي بيحصل لما الناتج يتكتب بـ encoding مش UTF-8 (ده اللي بيحصل على ويندوز لما تعمل redirect لملف): [[PYTHONIOENCODING=cp1252 python3 -c 'print("سلام")']]. في PowerShell: [[$env:PYTHONIOENCODING="cp1252"; python -c "print('سلام')"]] وبعدها [[Remove-Item Env:PYTHONIOENCODING]]. وفي الآخر اعمل ملف فيه BOM زي اللي Notepad و Excel بيعملوه: [[python -c "open('bom.txt','wb').write(b'\xef\xbb\xbfname\n')"]] (نفس السطر شغال في bash و PowerShell) واقراه بـ [[encoding="utf-8"]] وبـ [[encoding="utf-8-sig"]] واطبع [[repr]].`,
+          flag: "script",
+          deep: {
+            why: R`أشهر مشكلة في سكربتات بتتعامل مع عربي: ملف بيتفتح فيطلع [[ط§ظ„ط³ظ„ط§ظ…]] بدل «السلام»، أو السكربت يقع بـ [[UnicodeDecodeError]] أو [[UnicodeEncodeError]] على جهاز ويندوز. والسبب دايمًا ملف اتكتب بـ encoding واتقرا بـ encoding تاني.`,
+            how: R`الملف على الديسك bytes. الـ encoding هو اللي بيحوّل الحروف لـ bytes وبالعكس، و utf-8 بيكتب الحرف العربي في 2 bytes ([[b'\xd8\xa7\xd9\x84...']] في المثال).
+
+لو قريت bytes الـ utf-8 بـ [[cp1256]] (encoding ويندوز العربي القديم) مفيش error، بس كل حرف بيتقري حرفين غلط: [[ط§ظ„ط³ظ„ط§ظ…]]. لو شفت الشكل ده في أي مكان، اعرف إن utf-8 اتقرا كـ cp1256.
+
+الافتراضي من غير encoding هو [[locale.getpreferredencoding()]]. والحلول على ويندوز: اكتب encoding في كل open، أو شغّل بـ [[python -X utf8]]، أو اعمل متغير البيئة [[PYTHONUTF8=1]]. و PEP 686 بيخلي UTF-8 mode هو الافتراضي من Python 3.15 (اتأكدت على 3.15 RC: [[sys.flags.utf8_mode]] بقى 1 لوحده، وعلى 3.13 كان 0)، بس النسخة اللي على أجهزة الناس غالبًا أقدم، فاكتبها.
+
+ولو ويندوز عندك مفعّل فيه «Beta: Use Unicode UTF-8 for worldwide language support» من إعدادات اللغة، الافتراضي بيبقى UTF-8 من غير حاجة. جهازي كده: [[python -X utf8=0 -c "import locale; print(locale.getencoding())"]] طبع [[cp65001]] (يعني UTF-8). متعتمدش على ده برضه: جهاز زميلك غالبًا مش كده.
+
+[[utf-8-sig]]: Notepad القديم و Excel بيحطوا 3 bytes في أول الملف (BOM). [[utf-8]] بيقراهم حرف [[\ufeff]] فأول كلمة في الملف تبقى [['\ufeffname']] مش [['name']]، و [[utf-8-sig]] بيشيلهم.
+
+[[errors="replace"]] بيحط [[�]] مكان أي byte مش مفهوم بدل ما يقع، مفيد لـ logs ملخبطة.
+
+وضع النص بيحوّل [[\r\n]] لـ [[\n]] وانت بتقرا، وعلى ويندوز بيكتب [[\n]] كـ [[\r\n]]. والملفات الكبيرة: لف على [[f]] سطر سطر زي المثال بدل [[read()]].`,
+            when: "كل open وكل read_text و write_text. مفيش استثناء.",
+            mistakes: R`[["w"]] على ملف موجود بيمسح محتواه من غير ما يسأل، فلو قصدك تضيف استخدم [["a"]]، ولو مش عايز تدوس على حاجة استخدم [["x"]]. و [[f.write]] مش بيحط سطر جديد لوحده. وتقرا ملف 2GB بـ [[read_text()]] فالذاكرة تخلص. ومتنساش إن [[print]] ليه encoding هو كمان: على ويندوز الكونسول نفسه UTF-8، بس لما تعمل [[python script.py > out.txt]] الناتج بيتكتب بالـ code page بتاع الجهاز، فسكربت بيطبع عربي ممكن يقع بـ UnicodeEncodeError (زي اللي في «جرّب»). الحل [[PYTHONUTF8=1]] أو [[python -X utf8]].`
+          },
+          teach: R`## السكربت ده بيعمل إيه؟
+
+بيكتب ملف فيه عربي، ويضيف عليه، ويقراه سطر سطر، وبعدين يوريك الملف «من جوه» (bytes)، ويوريك شكل الغلطة المشهورة لما ملف UTF-8 يتقري بـ encoding غلط، وفي الآخر يجرّب mode بيرفض يكتب فوق ملف موجود. اتشغّل مرتين على لينكس ([[docker run --rm python:3.13]]) وعلى ويندوز في PowerShell 7 (Python 3.14)، والناتج واحد.
+
+---
+
+## ١. اكتب: [["w"]]
+
+~~~python op.py
+from pathlib import Path
+p = Path("ar.txt")
+with open(p, "w", encoding="utf-8") as f:
+    f.write("السلام عليكم\n")
+    f.write("سطر تاني\n")
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[open(p, "w", ...)]] | افتح الملف. التاني هو الـ **mode**: [["w"]] = write. لو الملف مش موجود يتعمل، ولو موجود **يتمسح محتواه** |
+| [[encoding="utf-8"]] | حوّل الحروف لـ bytes بطريقة UTF-8 |
+| [[with ... as f:]] | سمّي الملف المفتوح [[f]]، واقفله أول ما البلوك يخلص حتى لو حصل error |
+| [[f.write(...)]] | اكتب النص زي ما هو. مش بيزوّد سطر جديد، عشان كده [[\n]] بإيدك |
+
+---
+
+## ٢. ضيف: [["a"]]
+
+~~~python op.py
+with open(p, "a", encoding="utf-8") as f:
+    print("سطر بـ print", file=f)
+~~~
+
+[["a"]] = append: اكتب في **الآخر** من غير ما تمسح. و [[print(..., file=f)]] بيكتب في الملف بدل الشاشة، وبيزوّد [[\n]] لوحده.
+
+---
+
+## ٣. اقرا سطر سطر
+
+~~~python op.py
+with open(p, encoding="utf-8") as f:
+    for n, line in enumerate(f, 1):
+        print(n, line.rstrip("\n"))
+~~~
+
+- من غير mode = [["r"]] (قراية).
+- [[for line in f]]: الملف المفتوح بيتلف عليه سطر سطر، من غير ما يتحمّل كله في الذاكرة.
+- [[enumerate(f, 1)]]: بيدّي كل عنصر ومعاه رقم، يبدأ من 1. جربت [[list(enumerate(["a","b"], 1))]] وطلع [[[(1, 'a'), (2, 'b')] ]].
+- [[line.rstrip("\n")]]: كل سطر جاي ومعاه [[\n]] في آخره، و [[rstrip]] (**r**ight strip) بيشيله من اليمين، عشان print متطبعش سطر فاضي زيادة.
+
+~~~text الناتج
+1 السلام عليكم
+2 سطر تاني
+3 سطر بـ print
+~~~
+
+---
+
+## ٤. الملف من جوه: bytes
+
+~~~python op.py
+print(p.read_bytes()[:8])
+~~~
+
+[[read_bytes()]] بيقرا الملف من غير أي encoding، و [[[:8] ]] أول 8 bytes:
+
+~~~text الناتج
+b'\xd8\xa7\xd9\x84\xd8\xb3\xd9\x84'
+~~~
+
+[[b'...']] يعني bytes، و [[\xd8]] byte واحد مكتوب بالـ hex. الـ 8 دول هم أول ٤ حروف بس ([[السل]]): UTF-8 بيكتب كل حرف عربي في **2 bytes**. [[ا]] = [[\xd8\xa7]]، و [[ل]] = [[\xd9\x84]]. عشان كده [[len("السلام".encode())]] طلع 12 مش 6.
+
+والملف كله على لينكس 58 byte، وعلى ويندوز 61. الفرق 3 = عدد السطور: في وضع النص ويندوز بيكتب كل [[\n]] كـ [[\r\n]] (شفت الـ bytes [[13 10]] في آخر أول سطر)، ولما تقرا بيرجّعها [[\n]].
+
+---
+
+## ٥. نفس الـ bytes بـ encoding غلط
+
+~~~python op.py
+print(p.read_text(encoding="cp1256")[:12])
+~~~
+
+[[cp1256]] الـ encoding القديم بتاع ويندوز العربي. هو بيعتبر كل byte حرف لوحده، فكل حرف عربي (2 bytes) بيطلع حرفين غلط:
+
+~~~text الناتج
+ط§ظ„ط³ظ„ط§ظ…
+~~~
+
+مفيش error، وده الخطير. لو شفت الشكل ده ([[ط§ظ„]]...) في أي مكان، اعرف على طول: **ملف UTF-8 اتقرا كـ cp1256**.
+
+---
+
+## ٦. [["x"]]: اعمل بس لو مش موجود
+
+~~~python op.py
+with open("once.txt", "x", encoding="utf-8") as f:
+    f.write("created once\n")
+~~~
+
+أول تشغيل عمل الملف. التاني وقع:
+
+~~~text الناتج (آخر سطر)
+FileExistsError: [Errno 17] File exists: 'once.txt'
+~~~
+
+ولاحظ إن [[ar.txt]] فضل ٣ سطور مش ٦ (طلع [[3 ar.txt]] من [[wc -l]])، لأن [["w"]] مسحه في أول كل تشغيل.
+
+| الـ mode | الملف مش موجود | الملف موجود |
+|---|---|---|
+| [["r"]] | [[FileNotFoundError]] | يقرا |
+| [["w"]] | يعمله | **يمسحه** ويكتب |
+| [["a"]] | يعمله | يكتب في الآخر |
+| [["x"]] | يعمله | [[FileExistsError]] |
+| [["rb"]] / [["wb"]] | زي r و w بس bytes من غير encoding | |
+
+---
+
+## ٧. اللي في «جرّب»
+
+### الطباعة بـ encoding مش UTF-8
+
+[[PYTHONIOENCODING]] متغير بيئة بيحدد encoding الـ print. بـ [[cp1252]] (ويندوز الإنجليزي، ومفيهوش حروف عربي أصلًا):
+
+~~~text الناتج (لينكس و PowerShell 7)
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-3: character maps to <undefined>
+~~~
+
+[[position 0-3]] هي الأربع حروف بتوع «سلام».
+
+### الـ BOM
+
+~~~text الناتج
+encoding="utf-8"      →  '﻿name\n'
+encoding="utf-8-sig"  →  'name\n'
+~~~
+
+الـ 3 bytes [[\xef\xbb\xbf]] (اسمهم BOM) Notepad القديم و Excel بيحطوهم في أول الملف. [[utf-8]] بيقراهم حرف خفي [[﻿]] لازق في أول كلمة، و [[utf-8-sig]] بيشيلهم.
+
+### الـ encoding الافتراضي على الجهاز ده
+
+[[python -c "import locale; print(locale.getencoding())"]] على ويندوز ده طلع [[cp65001]] (يعني UTF-8) لأن إعداد «Beta: Use Unicode UTF-8» مفعّل. على أغلب أجهزة ويندوز التانية هيطلع [[cp1256]] أو [[cp1252]]. عشان كده اكتب [[encoding="utf-8"]] دايمًا ومتعتمدش على الجهاز.
+
+---
+
+## الخلاصة
+
+- الملف bytes، والـ encoding هو اللي بيحوّل. اكتب [[encoding="utf-8"]] في **كل** open و read_text و write_text.
+- [[ط§ظ„]] = UTF-8 اتقرا بـ cp1256. و [[﻿]] في أول كلمة = BOM، استخدم [[utf-8-sig]].
+- [["w"]] بيمسح، و [["a"]] بيضيف، و [["x"]] بيحمي.`,
+          lines: [
+            "Path.",
+            "الملف.",
+            "افتح للكتابة (بيمسح أي محتوى قديم).",
+            "اكتب سطر، و \\n لازم بإيدك.",
+            "سطر تاني.",
+            "افتح للإضافة في الآخر.",
+            "print تقدر تكتب في ملف.",
+            "افتح للقراية.",
+            "لف سطر سطر ومعاه رقمه من 1.",
+            "اطبع من غير الـ \\n اللي في آخر السطر.",
+            "أول 8 bytes زي ما هي على الديسك.",
+            "نفس الملف لو اتقرا بـ cp1256 (encoding ويندوز العربي).",
+            "x: اكتب بس لو الملف مش موجود.",
+            "اكتب."
+          ],
+          sol: R`أول مرة (نفس الناتج بالظبط على أوبونتو وعلى ويندوز بـ Python 3.14):
+
+[[1 السلام عليكم]] و [[2 سطر تاني]] و [[3 سطر بـ print]]
+[[b'\xd8\xa7\xd9\x84\xd8\xb3\xd9\x84']]
+[[ط§ظ„ط³ظ„ط§ظ…]]
+
+تاني مرة بيطبع نفس الكلام وبعدين يقع: [[FileExistsError: [Errno 17] File exists: 'once.txt']]. ده بالظبط فايدة [["x"]]. (و ar.txt رجع 3 سطور مش 6، لأن [["w"]] مسحه في الأول.)
+
+[[PYTHONIOENCODING=cp1252]]: [[UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-3: character maps to <undefined>]]. وده نفس اللي بيحصل لو كتبت عربي بـ [[write_text(..., encoding="cp1252")]].
+
+والـ BOM: [[utf-8]] رجّع [['\ufeffname\n']] و [[utf-8-sig]] رجّع [['name\n']]. لو قريت CSV جاي من Excel بـ utf-8 بس، أول عمود هيبقى اسمه [['\ufeffname']] و [[row["name"] ]] هيطلع KeyError.`
+        },
+        {
+          cmd: "shutil copy و move و rmtree",
+          title: "انسخ وانقل وامسح فولدرات من غير كوارث",
+          desc: R`[[shutil]] للعمليات اللي pathlib مبيعملهاش: [[copy2]] ينسخ ملف ومعاه وقت التعديل، و [[copytree]] ينسخ فولدر كامل (و [[ignore_patterns]] يستبعد حاجات)، و [[move]] ينقل ملف أو فولدر، و [[rmtree]] يمسح فولدر بكل اللي جواه.
+
+[[rmtree]] مفيهوش سلة محذوفات ولا سؤال. فأي سكربت بيمسح لازم يتأكد إن المسار جوه المكان المسموح، قبل ما يمسح.`,
           example: R`import shutil
-import subprocess
 import sys
 from pathlib import Path
-root = Path(sys.argv[1] if len(sys.argv) > 1 else "~/code").expanduser()
-if shutil.which("git") is None:
-    sys.exit("error: git is not installed")
-failed = []
-for repo in sorted(p.parent for p in root.glob("*/.git")):
-    r = subprocess.run(
-        ["git", "-C", str(repo), "pull", "--ff-only"],
-        capture_output=True, text=True, timeout=120,
-    )
-    out = (r.stdout if r.returncode == 0 else r.stderr).strip().splitlines()
-    print(f"{repo.name:<10}{'ok' if r.returncode == 0 else 'FAILED':<8}{out[-1] if out else ''}")
-    if r.returncode != 0:
-        failed.append(repo.name)
-if failed:
-    sys.exit(f"failed: {', '.join(failed)}")`,
-          try: R`جهّز repos تجربة بالأوامر اللي في الحل وشغّله مرتين. وبعدين عدّله: قبل الـ pull يشغّل [[git status --porcelain]]، ولو فيه تغييرات مش متعملها commit يطبع [[SKIP]] وعدد الملفات ومايعملش pull للـ repo ده.`,
-          flag: "script",
+src = Path("project")
+shutil.copy2(src / "app.py", src / "app.py.bak")
+shutil.copytree(src, "backup/project", dirs_exist_ok=True, ignore=shutil.ignore_patterns(".venv", "__pycache__", "*.bak"))
+shutil.move(src / "app.py.bak", "backup/app.py.bak")
+print(sorted(str(p) for p in Path("backup").rglob("*")))
+def safe_rmtree(target: Path, base: Path) -> None:
+    target, base = target.resolve(), base.resolve()
+    if target == base or base not in target.parents:
+        sys.exit(f"refusing to delete {target}: not inside {base}")
+    shutil.rmtree(target)
+    print("deleted", target.relative_to(base.parent))
+safe_rmtree(Path("backup/project"), Path("backup"))
+print(f"{shutil.disk_usage('.').free / 2**30:.1f} GB free")
+safe_rmtree(Path("backup/../.."), Path("backup"))`,
+          try: R`جهّز: [[mkdir -p project/__pycache__ project/.venv/lib && echo 'print(1)' > project/app.py]] (في PowerShell: [[mkdir project/__pycache__, project/.venv/lib]] وبعدين [['print(1)' | Set-Content project/app.py]]). شغّل السكربت. وبعدين اكتب [[echo NEW > project/app.py]] وشغّله تاني وبص على [[backup/app.py.bak]]. وجرّب في Python: [[Path("")]] بيطلع إيه، و [[Path("").resolve()]].`,
+          flag: "script danger",
           deep: {
-            why: "عندك ١٥ مشروع على الجهاز أو السيرفر، وعايز تحدّثهم كلهم الصبح وتعرف مين فشل. بإيدك: cd و git pull ١٥ مرة. بالسكربت: أمر واحد وملخص.",
-            how: R`[[root.glob("*/.git")]] بيلاقي كل فولدر جواه [[.git]] في مستوى واحد، و [[.parent]] الفولدر نفسه.
+            why: "سكربت backup أو تنضيف فيه rmtree على متغير غلط ممكن يمسح مشروعك أو الـ home كله في ثانية، ومفيش undo. الحماية لازم تبقى في الكود نفسه، مش في إنك «هتاخد بالك».",
+            how: R`[[copy2]] زي [[cp -p]]: المحتوى ووقت التعديل والصلاحيات. و [[copy]] المحتوى والصلاحيات بس. لو الهدف فولدر، الملف بيتنسخ جواه.
 
-[[git -C path]] بيشغّل git كأنه واقف في الفولدر ده، من غير ما السكربت يعمل cd. (أو [[cwd=repo]] في subprocess.run، نفس النتيجة.)
+[[copytree(src, dst)]] بيرفض لو dst موجود، إلا مع [[dirs_exist_ok=True]] (بيكتب فوق الملفات اللي بنفس الاسم). و [[ignore_patterns]] بأسماء أو patterns.
 
-[[--ff-only]]: pull ينجح بس لو مفيش تعارض. لو فيه commits عندك وعلى السيرفر، يفشل بدل ما يعمل merge commit أو يفتح editor يستنى حد يكتب رسالة.
+[[move]]: لو نفس الـ disk بيعمل rename سريع، ولو disk تاني بينسخ ويمسح. ولو الهدف ملف موجود بيكتب فوقه من غير ما يسأل، وده اللي هتشوفه في التمرين.
 
-[[timeout=120]]: لو git وقف يسأل عن باسورد هيقف للأبد. الأحسن كمان تمنعه يسأل: [[env={**os.environ, "GIT_TERMINAL_PROMPT": "0"}]] فيفشل على طول برسالة.
+[[safe_rmtree]]: [[resolve()]] الأول عشان [[..]] والـ symlinks يتفكوا ونقارن المسار الحقيقي. وبعدين [[base in target.parents]] يعني الهدف جوه base فعلًا، و [[target == base]] يمنع مسح base نفسه. [[backup/../..]] شكلها جوه backup بس هي فعلًا فوقه بفولدرين.
 
-stdout و stderr منفصلين: git بيكتب الأخطاء على stderr، فالسطر الأخير من الصح بيوضح اللي حصل.
+[[rmtree]] على ويندوز بيقع على ملفات read-only (زي اللي جوه [[.git/objects]]) بـ [[PermissionError]]، والحل [[onexc]] (Python 3.12+) تشيل read-only وتجرّب تاني. ولو عايز سلة محذوفات بجد: مكتبة [[send2trash]].
 
-لو هتحلل الناتج نفسه (مش تعرضه بس)، استخدم الأشكال المعمولة للبرامج زي [[--porcelain]] و [[--format]]، مش الرسايل اللي للبني آدمين: دي بتتغير بين النسخ وبتتترجم حسب لغة الجهاز.`,
-            when: "لما الأداة الخارجية هي الطريقة الصح. لو فيه مكتبة Python بتعمل الحاجة (shutil بدل cp، و pathlib بدل find، و requests بدل curl)، استخدمها.",
-            mistakes: R`[[subprocess.run(f"cd {repo} && git pull", shell=True)]]: فولدر فيه مسافة أو [[;]] في اسمه وكارثة. وتتجاهل [[returncode]] فالسكربت يقول تمام. وتقرا رسايل git بالإنجليزي على جهاز لغته عربي. ومن غير timeout على أمر بيكلم الشبكة.`
+[[disk_usage]] بيرجّع total و used و free بالبايت، مفيد تتأكد إن فيه مساحة قبل backup كبير.`,
+            when: "backup وتنضيف ونقل مشاريع. وأي rmtree، من غير استثناء، يبقى وراه فحص زي safe_rmtree ووضع dry-run.",
+            mistakes: R`[[shutil.rmtree(Path(folder))]] و [[folder]] طلع فاضي: [[Path("")]] هو [[.]]، يعني الفولدر الحالي كله. ومسار جاي من config أو argument من غير فحص. و [[move]] فوق ملف موجود. و [[copytree]] لفولدر جوه نفسه (backup جوه project) فيلف لحد ما المساحة تخلص.`
           },
+          teach: R`## السكربت ده بيعمل إيه؟
+
+بيعمل backup صغير لفولدر [[project]]: ينسخ ملف، وينسخ الفولدر كله من غير الحاجات اللي ملهاش لازمة، وينقل ملف، وبعدين يمسح فولدر **بعد ما يتأكد إنه في المكان المسموح**، وفي الآخر يحاول يمسح مسار بره المسموح فيرفض. اتشغّل في فولدر [[lab]] جواه [[project/app.py]] و [[project/__pycache__]] و [[project/.venv/lib]]، على لينكس ([[docker run --rm python:3.13]]) وعلى ويندوز في PowerShell 7.
+
+---
+
+## ١. [[shutil.copy2]]: انسخ ملف
+
+~~~python sh.py
+src = Path("project")
+shutil.copy2(src / "app.py", src / "app.py.bak")
+~~~
+
+[[shutil]] من **shell utilities**: العمليات اللي بتعملها في الشيل بـ cp و mv و rm. و [[copy2]] بينسخ المحتوى **ووقت التعديل** والصلاحيات. خليت [[app.py]] تاريخه [[2026-09-01 12:00]]، والنسخة طلعت بنفس التاريخ. ([[shutil.copy]] من غير 2 كان هيدّيها وقت النسخ.)
+
+---
+
+## ٢. [[shutil.copytree]]: انسخ فولدر كامل
+
+~~~python sh.py
+shutil.copytree(src, "backup/project", dirs_exist_ok=True, ignore=shutil.ignore_patterns(".venv", "__pycache__", "*.bak"))
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[copytree(src, "backup/project")]] | انسخ الفولدر بكل اللي جواه، واعمل [[backup/]] لو مش موجود |
+| [[dirs_exist_ok=True]] | لو الهدف موجود كمّل واكتب فوق الملفات اللي بنفس الاسم. من غيره بيقع بـ [[FileExistsError]] تاني مرة |
+| [[ignore=shutil.ignore_patterns(...)]] | متنسخش أي حاجة اسمها ماشي على الـ patterns دي |
+| [[".venv"]] و [["__pycache__"]] | فولدرات بتتعمل من تاني، ملهاش لازمة في backup |
+| [["*.bak"]] | أي ملف آخره [[.bak]]، فالنسخة اللي لسه عاملينها متتنسخش مرتين |
+
+---
+
+## ٣. [[shutil.move]]: انقل
+
+~~~python sh.py
+shutil.move(src / "app.py.bak", "backup/app.py.bak")
+print(sorted(str(p) for p in Path("backup").rglob("*")))
+~~~
+
+[[move]] زي [[mv]]: لو نفس الديسك بيغيّر الاسم بس (سريع)، ولو ديسك تاني بينسخ ويمسح الأصل. والسطر التاني بيطبع كل اللي في backup:
+
+~~~text الناتج (لينكس)
+['backup/app.py.bak', 'backup/project', 'backup/project/app.py']
+~~~
+
+مفيش [[.venv]] ولا [[__pycache__]] ولا [[.bak]] جوه [[backup/project]]. وعلى ويندوز نفس اللستة بـ [[\\]] ([[backup\\project]]): ده شكل طباعة الـ list، والمسار فيه [[\]] واحدة.
+
+### فخ: move بيكتب فوق من غير ما يسأل
+
+غيّرت [[app.py]] لـ [[NEW]] وشغّلت السكربت تاني، و [[cat backup/app.py.bak]] طلع:
+
+~~~text الناتج
+NEW
+~~~
+
+النسخة القديمة راحت من غير ولا كلمة.
+
+---
+
+## ٤. [[safe_rmtree]]: المسح بحماية
+
+~~~python sh.py
+def safe_rmtree(target: Path, base: Path) -> None:
+    target, base = target.resolve(), base.resolve()
+    if target == base or base not in target.parents:
+        sys.exit(f"refusing to delete {target}: not inside {base}")
+    shutil.rmtree(target)
+    print("deleted", target.relative_to(base.parent))
+~~~
+
+[[shutil.rmtree]] (**r**e**m**ove **tree**) بيمسح فولدر بكل اللي جواه، من غير سلة محذوفات ومن غير سؤال. عشان كده الدالة دي بتفحص الأول:
+
+### الخطوة ١: [[resolve()]]
+
+حوّل الاتنين لمسار كامل حقيقي، فـ [[..]] والـ symlinks يتفكّوا. من غيرها [[backup/../..]] شكلها بتبدأ بـ [[backup]].
+
+~~~text الناتج: Path("backup/../..").resolve() و Path("backup").resolve()
+/home/sara  /home/sara/lab/backup
+~~~
+
+### الخطوة ٢: [[target.parents]]
+
+[[parents]] كل الفولدرات اللي فوق المسار، لحد الجذر:
+
+~~~text الناتج: Path("/home/sara/lab/backup/project").parents
+['/home/sara/lab/backup', '/home/sara/lab', '/home/sara', '/home', '/']
+~~~
+
+فـ [[base in target.parents]] يعني «base واحد من الفولدرات اللي فوق الهدف»، يعني الهدف **جوه** base. لـ [[backup/project]] ده True. ولـ [[/home/sara]] طلع False.
+
+### الخطوة ٣: [[target == base]]
+
+يمنع مسح base نفسه (base مش من الـ parents بتاعته، بس نكتبها صريحة).
+
+لو أي شرط اتكسر: [[sys.exit]] برسالة و exit 1 قبل ما [[rmtree]] يتنادى.
+
+### التشغيل
+
+~~~text الناتج (لينكس)
+deleted backup/project
+929.9 GB free
+refusing to delete /home/sara: not inside /home/sara/lab/backup
+~~~
+
+و exit 1. [[relative_to(base.parent)]] بيطبع المسار من عند [[lab]]، عشان السطر يبقى قصير.
+
+---
+
+## ٥. [[shutil.disk_usage]]
+
+~~~python sh.py
+print(f"{shutil.disk_usage('.').free / 2**30:.1f} GB free")
+~~~
+
+[[disk_usage]] بيرجّع 3 أرقام بالـ byte:
+
+~~~text الناتج: print(shutil.disk_usage("."))
+usage(total=1081101176832, used=27657986048, free=998450835456)
+~~~
+
+[[2**30]] يعني 2 أُس 30 = [[1073741824]] = 1 GB، فالقسمة بتحوّل لجيجا. (الرقم في لينكس هنا كبير لأنه ديسك الماكينة الافتراضية بتاعة Docker، وعلى ويندوز طلع الفاضي في درايف C.)
+
+---
+
+## ٦. ليه الحماية دي مش رفاهية: [[Path("")]]
+
+~~~text الناتج
+Path("")                        →  PosixPath('.')    (وعلى ويندوز WindowsPath('.'))
+Path("").resolve() == Path.cwd() →  True
+~~~
+
+لو متغير جه فاضي من config أو argument، [[shutil.rmtree(Path(""))]] هيمسح **الفولدر اللي انت فيه**. الفحص بعد [[resolve()]] بيمسك ده.
+
+---
+
+## الخلاصة
+
+| الدالة | زي | ملاحظة |
+|---|---|---|
+| [[copy2]] | [[cp -p]] | بوقت التعديل |
+| [[copytree]] | [[cp -r]] | [[dirs_exist_ok]] و [[ignore_patterns]] |
+| [[move]] | [[mv]] | بيكتب فوق من غير سؤال |
+| [[rmtree]] | [[rm -rf]] | مفيش undo |
+| [[disk_usage]] | [[df]] | بالـ byte |
+
+- أي [[rmtree]] يسبقه [[resolve()]] وفحص إن الهدف جوه base.`,
           lines: [
-            "عشان تتأكد إن git موجود.",
-            "subprocess.",
-            "sys.",
+            "shutil.",
+            "sys للخروج.",
             "Path.",
-            "الفولدر اللي فيه المشاريع.",
-            "git مش متسطّب؟",
-            "رسالة واضحة بدل FileNotFoundError.",
-            "المشاريع اللي فشلت.",
-            "كل فولدر جواه .git:",
-            "شغّل:",
-            "list: البرنامج وكل argument لوحده.",
-            "امسك الناتج كنص، وأقصى وقت دقيقتين.",
-            "قفلة.",
-            "سطور stdout لو نجح، أو stderr لو فشل.",
-            "الاسم والحالة وآخر سطر.",
-            "فشل؟",
-            "سجّله.",
-            "لو فيه فشل:",
-            "اخرج بـ 1 ومعاك أسماءهم."
+            "الفولدر الأصلي.",
+            "نسخة من ملف ومعاها وقت التعديل.",
+            "انسخ الفولدر كله من غير .venv و __pycache__ و .bak.",
+            "انقل ملف.",
+            "اطبع اللي اتنسخ.",
+            "دالة مسح بحماية:",
+            "المسار الحقيقي للاتنين (من غير .. ولا symlinks).",
+            "لو الهدف هو base نفسه أو بره base:",
+            "ارفض واخرج.",
+            "امسح الفولدر بكل اللي فيه.",
+            "اطبع اللي اتمسح.",
+            "مسح مسموح: جوه backup.",
+            "المساحة الفاضية بالـ GB.",
+            "مسح مرفوض: المسار ده فوق backup."
           ],
-          sol: R`بعد ما جهزت repo اسمه [[api]] فيه commit جديد على الـ origin، و [[shop]] فيه commit هنا و commit هناك (diverged)، و [[notes]] فولدر عادي:
+          sol: R`أول تشغيل، وانا واقف في [[/home/sara/lab]] (الفولدر اللي فيه [[project]]):
 
-[[api       ok      Fast-forward]]
-[[shop      FAILED  fatal: Not possible to fast-forward, aborting.]]
-[[failed: shop]] و exit 1.
+[[['backup/app.py.bak', 'backup/project', 'backup/project/app.py'] ]]: من غير .venv ولا __pycache__.
+[[deleted backup/project]]
+[[69.3 GB free]] (الرقم على حسب جهازك)
+[[refusing to delete /home/sara: not inside /home/sara/lab/backup]] و exit 1. [[backup/../..]] طلعت الفولدر اللي فوق lab نفسه، والفحص مسكها.
 
-المرة التانية [[api]] بقى [[Already up to date.]] و shop لسه FAILED. و [[notes]] ماظهرش لأنه مش repo.
+وعلى ويندوز نفس النتيجة بـ [[\]]: [[['backup\\app.py.bak', 'backup\\project', ...] ]] و [[deleted backup\project]] و [[refusing to delete C:\Users\sara: not inside C:\Users\sara\lab\backup]].
 
-بعد التعديل، ومع ملف جديد في api و commit جديد على الـ origin:
+بعد [[echo NEW > project/app.py]] والتشغيل التاني: [[cat backup/app.py.bak]] طلع [[NEW]]. الـ move كتب فوق النسخة القديمة من غير ولا كلمة. لو النسخ القديمة مهمة، حط تاريخ في الاسم (درس «datetime وأسماء الملفات» في المستوى ٢) أو افحص [[exists()]] الأول.
 
-[[api       SKIP    1 uncommitted changes]]
-[[shop      FAILED  fatal: Not possible to fast-forward, aborting.]]
-
-و [[git log]] في api اتأكدت إنه ماتحدّثش. (جربته على لينكس بـ git 2.47، وعلى ويندوز بالتجهيز بتاع PowerShell اللي في الحل وطلع نفس السطور.)`,
-          solCode: R`# setup (في فولدر تجربة):
-#   for r in api shop; do git init -q -b main origin/$r && git -C origin/$r commit -q --allow-empty -m init && git clone -q origin/$r code/$r; done
-#   git -C origin/api commit -q --allow-empty -m "fix login"
-#   git -C origin/shop commit -q --allow-empty -m new && git -C code/shop commit -q --allow-empty -m local
-# نفس التجهيز في PowerShell:
-#   foreach ($r in "api", "shop") { git init -q -b main origin/$r; git -C origin/$r commit -q --allow-empty -m init; git clone -q origin/$r code/$r }
-#   git -C origin/api commit -q --allow-empty -m "fix login"
-#   git -C origin/shop commit -q --allow-empty -m new; git -C code/shop commit -q --allow-empty -m local
-import shutil
-import subprocess
-import sys
-from pathlib import Path
-def git(repo: Path, *args: str) -> subprocess.CompletedProcess:
-    return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, timeout=120)
-root = Path(sys.argv[1] if len(sys.argv) > 1 else "~/code").expanduser()
-if shutil.which("git") is None:
-    sys.exit("error: git is not installed")
-failed = []
-for repo in sorted(p.parent for p in root.glob("*/.git")):
-    changed = git(repo, "status", "--porcelain").stdout.splitlines()
-    if changed:
-        print(f"{repo.name:<10}{'SKIP':<8}{len(changed)} uncommitted changes")
-        continue
-    r = git(repo, "pull", "--ff-only")
-    out = (r.stdout if r.returncode == 0 else r.stderr).strip().splitlines()
-    print(f"{repo.name:<10}{'ok' if r.returncode == 0 else 'FAILED':<8}{out[-1] if out else ''}")
-    if r.returncode != 0:
-        failed.append(repo.name)
-if failed:
-    sys.exit(f"failed: {', '.join(failed)}")`
-        },
-        {
-          cmd: "os.environ و .env",
-          title: "الأسرار والإعدادات من البيئة مش من الكود",
-          desc: R`توكن API أو باسورد إيميل مكتوب جوه السكربت هيوصل git، وهيتبعت لأي حد بتبعتله السكربت. المكان الصح متغيرات البيئة: [[os.environ.get("API_TOKEN")]].
-
-وعشان متكتبش [[export]] كل مرة، ملف [[.env]] جنب السكربت فيه [[API_TOKEN=...]]، ومكتبة [[python-dotenv]] بتحمّله في [[os.environ]] بسطر واحد. والملف ده في [[.gitignore]] دايمًا.`,
-          example: R`import os
-import sys
-from dotenv import load_dotenv
-load_dotenv()
-API_URL = os.environ.get("API_URL", "http://localhost:8000")
-DEBUG = os.environ.get("DEBUG", "0").lower() in ("1", "true", "yes")
-TIMEOUT = float(os.environ.get("TIMEOUT", "10"))
-token = os.environ.get("API_TOKEN")
-if not token:
-    sys.exit("error: API_TOKEN is not set (put it in .env or export it)")
-print(API_URL, DEBUG, TIMEOUT, token[:4] + "...")`,
-          try: R`[[pip install python-dotenv]] في venv، واعمل [[.env]] فيه [[API_URL=https://api.example.com]] و [[API_TOKEN=sk_live_abc123]] و [[DEBUG=true]]. شغّل السكربت. وبعدين [[API_URL=http://staging DEBUG=0 python envs.py]]. وبعدين غيّر اسم [[.env]] وشغّله. ورجّعه وشغّل السكربت من فولدر تاني بمساره الكامل. وفي الآخر [[DEBUG=false python3 -c 'import os; print(bool(os.environ["DEBUG"]))']].
-
-الـ [[NAME=value command]] ده شكل bash. في PowerShell مفيش متغير لأمر واحد: [[$env:API_URL="http://staging"; $env:DEBUG="0"; python envs.py]]، وبعدها [[Remove-Item Env:API_URL, Env:DEBUG]] عشان ميفضلوش في الترمنال ده.`,
-          flag: "script",
-          deep: {
-            why: R`نفس السكربت بيشتغل على جهازك (API تجربة) وعلى السيرفر (API حقيقي) من غير ما تعدّل سطر، والأسرار عمرها ما تدخل git. وأي حد بيقرا الكود يعرف السكربت محتاج إيه من الأسماء.`,
-            how: R`[[os.environ]] dict فيه متغيرات البيئة، والقيم كلها نصوص. [[get(name, default)]] للاختياري، والإجباري تفحصه في الأول وتخرج برسالة واضحة بدل [[KeyError]] في نص الشغل.
-
-الـ bool: [[bool("false")]] بـ True لأن أي نص مش فاضي True. فلازم تقارن بقايمة زي المثال. والأرقام [[int()]] أو [[float()]].
-
-[[load_dotenv()]] بيدوّر على [[.env]] من فولدر السكربت ولفوق، وبيحمّل اللي فيه في [[os.environ]]. وأي متغير موجود فعلًا في البيئة بيكسب على اللي في الملف (إلا لو [[override=True]])، فتقدر تغيّر قيمة لتشغيلة واحدة من الترمنال.
-
-[[.env]] في .gitignore، وجنبه [[.env.example]] فيه الأسماء من غير القيم وده اللي يدخل git.
-
-من غير dotenv: لينكس وماك [[export API_TOKEN=...]] أو [[API_TOKEN=... python3 script.py]] لتشغيلة واحدة. PowerShell [[$env:API_TOKEN="..."]]. CMD [[set API_TOKEN=...]].
-
-لتطبيقات أكبر (FastAPI مثلًا) [[pydantic-settings]] بيقرا ويتحقق من الأنواع (درس «pydantic-settings» في تاب «Python و FastAPI»).`,
-            when: "أي توكن أو باسورد أو URL بيختلف بين جهازك والسيرفر.",
-            mistakes: R`commit لـ [[.env]] (ولو اتعمل، غيّر التوكن نفسه، مسحه من git مش كفاية). وطباعة التوكن كامل في log. و [[bool(os.environ["DEBUG"])]]. وسكربت في cron مش لاقي المتغيرات لأنها في [[~/.bashrc]]، و cron مبيقراهوش.`
-          },
-          lines: [
-            "os.",
-            "sys.",
-            "pip install python-dotenv.",
-            "حمّل .env في os.environ.",
-            "اختياري بقيمة افتراضية.",
-            "bool من نص.",
-            "رقم من نص.",
-            "إجباري:",
-            "مش موجود؟",
-            "اخرج برسالة بتقول تحطه فين.",
-            "اطبع، والتوكن مقصوص."
-          ],
-          sol: R`الناتج بالترتيب:
-
-[[https://api.example.com True 10.0 sk_l...]]: من .env.
-[[http://staging False 10.0 sk_l...]]: متغيرات الترمنال كسبت على .env.
-من غير .env: [[error: API_TOKEN is not set (put it in .env or export it)]] و exit 1.
-من فولدر تاني بالمسار الكامل: نفس السطر الأول. [[load_dotenv]] دوّر جنب السكربت مش في الفولدر الحالي.
-
-و [[bool(os.environ["DEBUG"])]] مع [[DEBUG=false]] طبع [[True]].`,
-          solCode: R`# .env  (ضيفه في .gitignore)
-API_URL=https://api.example.com
-API_TOKEN=sk_live_abc123
-DEBUG=true`
-        },
-        {
-          cmd: "requests و urllib مع timeout",
-          title: "HTTP من سكربت: JSON وتحميل ملفات",
-          desc: R`سكربتات كتير بتكلم الإنترنت: تجيب JSON من API، أو تحمّل ملف، أو تشيّك إن موقع شغال. فيه طريقتين:
-
-[[urllib.request]] في المكتبة الأساسية، فالسكربت بيشتغل على أي سيرفر من غير pip.
-[[requests]] ([[pip install requests]]) أسهل بكتير: [[r.json()]] و [[raise_for_status()]] و [[stream=True]] للملفات الكبيرة.
-
-وفي الاتنين: [[timeout]] دايمًا. من غيره، سيرفر مش بيرد هيخلي السكربت مستني للأبد.`,
-          example: R`import json
-import urllib.error
-import urllib.request
-from pathlib import Path
-import requests
-BASE = "http://localhost:8000"
-with urllib.request.urlopen(f"{BASE}/data.json", timeout=5) as r:
-    print(r.status, json.load(r))
-try:
-    urllib.request.urlopen(f"{BASE}/missing", timeout=5)
-except urllib.error.HTTPError as e:
-    print("urllib:", e.code, e.reason)
-r = requests.get(f"{BASE}/data.json", timeout=5)
-r.raise_for_status()
-print(r.status_code, r.json()["name"], r.headers["Content-Type"])
-r = requests.get(f"{BASE}/missing", timeout=5)
-print(r.status_code, r.ok)
-with requests.get(f"{BASE}/big.bin", stream=True, timeout=(3, 30)) as r:
-    r.raise_for_status()
-    with open("big.bin", "wb") as f:
-        for chunk in r.iter_content(chunk_size=64 * 1024):
-            f.write(chunk)
-print("downloaded", f"{Path('big.bin').stat().st_size:,}", "bytes")
-try:
-    requests.get("http://10.255.255.1", timeout=2)
-except requests.RequestException as e:
-    print("failed:", type(e).__name__)`,
-          try: R`جهّز سيرفر محلي: [[mkdir www && echo '{"name": "terminal-study", "version": 3}' > www/data.json && head -c 3000000 /dev/urandom > www/big.bin]] وبعدين [[python3 -m http.server 8000 --directory www]] في ترمنال تاني (درس «python -m http.server»). سطّب requests في venv وشغّل السكربت، وقيس وقته بـ [[time]].
-
-على ويندوز PowerShell: [[mkdir www]]، و [['{"name": "terminal-study", "version": 3}' | Set-Content www/data.json]]، و [[python -c "open('www/big.bin','wb').write(bytes(3000000))"]] (3 مليون byte أصفار)، والوقت بـ [[Measure-Command { python fetch.py }]] (fetch.py اسم السكربت عندك).`,
-          flag: "script",
-          deep: {
-            why: R`سكربت بيسحب أسعار أو بيانات كل ساعة، وفي مرة السيرفر التاني علّق: من غير timeout السكربت بيفضل مستني، والتشغيلة اللي بعدها بتبدأ جنبه، وبعد يومين عندك ٤٨ نسخة معلّقة.`,
-            how: R`urllib: [[urlopen]] بيرجّع response بتقرا منه، و [[json.load(r)]] بيقرا ويحوّل. وأي status من 400 لفوق بيرمي [[HTTPError]] (فيه [[code]] و [[reason]])، ومشاكل الاتصال (DNS، connection refused) بترمي [[URLError]].
-
-requests: مش بيرمي على 404 لوحده. [[r.ok]] و [[r.status_code]] تفحصهم بنفسك، أو [[raise_for_status()]] يرمي [[HTTPError]]. و [[r.json()]] بيرمي لو الرد مش JSON (صفحة error بـ HTML مثلًا).
-
-[[timeout=5]] في requests مش «أقصى وقت للطلب كله»: ده وقت الاتصال، ووقت أقصى بين أي حتتين بيانات. و [[timeout=(3, 30)]] اتصال 3 ثواني وقراية 30. ومن غير timeout خالص، requests بيستنى للأبد.
-
-[[stream=True]] و [[iter_content]]: الملف بيتكتب حتة حتة (64KB هنا) بدل ما 3GB يتحمّلوا في الذاكرة.
-
-[[requests.RequestException]] أبو كل الأخطاء (Timeout و ConnectionError و HTTPError)، فـ except واحد بيمسكهم.
-
-ولو هتبعت طلبات كتير لنفس الموقع: [[requests.Session()]] بيعيد استخدام الاتصال وبيحط headers مشتركة. ولو محتاج async أو HTTP/2، [[httpx]] (درس «httpx.AsyncClient» في تاب «Python و FastAPI»). والمحاولات التانية لما الطلب يفشل في درس «retry و backoff» في المستوى ٣.`,
-            when: "urllib لسكربت صغير على سيرفر من غير venv. requests لأي حاجة أكبر من طلب أو اتنين.",
-            mistakes: R`من غير timeout. و [[r.json()]] من غير ما تشيّك الـ status. و [[r.content]] لملف كبير فالذاكرة تخلص. ومواقع بترفض User-Agent بتاع urllib الافتراضي ([[Python-urllib/3.12]]) بـ 403، فحط User-Agent واضح باسم السكربت. وعلى ويندوز: سيرفر سامع على [[127.0.0.1]] بس (زي [[--bind 127.0.0.1]]) وانت بتكلّم [[localhost]]، ويندوز بيجرب [[::1]] الأول ويستنى ثانيتين قبل ما يرجع لـ 127.0.0.1، في كل طلب.`
-          },
-          lines: [
-            "json.",
-            "أخطاء urllib.",
-            "urllib.",
-            "Path.",
-            "pip install requests.",
-            "عنوان السيرفر.",
-            "اطلب، ومهلة 5 ثواني.",
-            "الـ status والـ JSON.",
-            "حاول...",
-            "...تطلب صفحة مش موجودة.",
-            "urllib بيرمي على 404:",
-            "الكود والسبب.",
-            "نفس الطلب بـ requests.",
-            "ارمي لو status غلط.",
-            "الـ status، وحقل من الـ JSON، وheader.",
-            "404 بـ requests...",
-            "...مش بيرمي، بتفحص بنفسك.",
-            "تحميل ملف كبير حتة حتة، اتصال 3 ثواني وقراية 30.",
-            "ارمي لو status غلط.",
-            "افتح ملف binary.",
-            "لف على الحتت (64KB).",
-            "اكتب.",
-            "حجم اللي اتحمّل.",
-            "حاول...",
-            "...تكلم IP مش بيرد.",
-            "أي خطأ في requests:",
-            "اسم الخطأ."
-          ],
-          sol: R`الناتج:
-
-[[200 {'name': 'terminal-study', 'version': 3}]]
-[[urllib: 404 File not found]]
-[[200 terminal-study application/json]]
-[[404 False]]
-[[downloaded 3,000,000 bytes]]
-[[failed: ConnectTimeout]]
-
-و [[time]] قال حوالي 2.2 ثانية، تقريبًا كلهم الـ timeout بتاع آخر طلب. من غير [[timeout=2]] كان هيستنى لحد ما النظام نفسه يستسلم (دقيقتين أو أكتر على لينكس).
-
-وعلى ويندوز نفس الست سطور بالظبط في 2.3 ثانية والسيرفر سامع على IPv6 ([[--bind ::1]]). بس لما شغّلته بـ [[--bind 127.0.0.1]] والسكربت بيكلّم [[localhost]]، الوقت بقى 12.5 ثانية: كل طلب من الخمسة خد ثانيتين زيادة (شوف «غلطات شائعة»).
-
-لو طلع [[ConnectionError]] أو [[Connection refused]] في أول طلب، السيرفر المحلي مش شغال أو على بورت تاني. ولو [[ModuleNotFoundError: No module named 'requests']] يبقى الـ venv مش متفعّل.`
-        },
-        {
-          cmd: "re في السكربتات",
-          title: "طلّع أرقام وإيميلات من ملفات بـ regex",
-          desc: R`[[re]] بيدوّر على أشكال في النص: أرقام تليفونات، إيميلات، تواريخ، أكواد. في السكربتات استخدامه الأشهر إنك تطلّع حاجة من ملفات كتير، أو تنضّف نص.
-
-الطريقة اللي بتشتغل مع بيانات حقيقية: خطوتين. regex واسع يلقط كل حاجة شكلها رقم، وبعدين دالة تنضّف (تشيل المسافات والشرط) وتتأكد بـ regex صارم. regex واحد عملاق بيحاول يعمل الاتنين بيبقى صعب يتقري وبيفوّت حالات.
-
-أساسيات re (groups و findall و sub) في درس «re» في تاب «Python و FastAPI».`,
-          example: R`import re
-import sys
-from pathlib import Path
-CANDIDATE = re.compile(r"\+?\d[\d\s-]{8,15}\d")
-MOBILE = re.compile(r"01[0125]\d{8}")
-EMAIL = re.compile(r"[\w.+-]+@[\w-]+(?:\.[\w-]+)+")
-def normalize(raw: str) -> str | None:
-    digits = re.sub(r"\D", "", raw)
-    if digits.startswith("20"):
-        digits = "0" + digits[2:]
-    return digits if MOBILE.fullmatch(digits) else None
-phones, emails = set(), set()
-for path in sorted(Path(sys.argv[1] if len(sys.argv) > 1 else ".").rglob("*.txt")):
-    text = path.read_text(encoding="utf-8", errors="replace")
-    phones.update(p for p in map(normalize, CANDIDATE.findall(text)) if p)
-    emails.update(e.lower() for e in EMAIL.findall(text))
-print(sorted(phones))
-print(sorted(emails))
-print(re.sub(r"\s+", " ", "  كلام    فيه   مسافات  ").strip())`,
-          try: R`اعمل فولدر [[inbox]] فيه ملفين: الأول فيه [[01012345678]] و [[Sara.Ali@Example.com]] و [[+20 112 345 6789]]، والتاني فيه [[omar@shop.eg]] و [[0122-555-1234]] و [[0101234]] (ناقص) و [[12345678901234]] (طويل) و [[010 1234 5678]] (نفس أول رقم بمسافات). شغّل السكربت. وبعدين عدّله يطبع كل رقم ومعاه أسماء الملفات اللي ظهر فيها.`,
-          flag: "script",
-          deep: {
-            why: R`عندك ٢٠٠ رسالة أو ملف export من نظام قديم وعايز لستة أرقام العملاء من غير تكرار. الأرقام مكتوبة بكل الأشكال: بمسافات، بشرط، بـ +20، من غير. بإيدك ساعات، والسكربت ثانية.`,
-            how: R`[[r"..."]] raw string: الـ [[\d]] توصل لـ re زي ما هي من غير ما Python يفهمها escape. اكتب كل الـ patterns كده.
-
-[[re.compile]] مرة واحدة بره الـ loop، واسم واضح للـ pattern.
-
-[[CANDIDATE]]: [[\+?]] علامة + اختيارية، و [[\d]] رقم، و [[[\d\s-]{8,15}]] من 8 لـ 15 رقم أو مسافة أو شرطة، وآخره رقم. واسع قصد.
-
-[[normalize]]: [[re.sub(r"\D", "", raw)]] بيشيل أي حاجة مش رقم. لو بادئ بـ [[20]] (كود مصر) بيبقى [[0]]. و [[MOBILE.fullmatch]] لازم النص كله يطابق: [[01]] وبعدها [[0]] أو [[1]] أو [[2]] أو [[5]] وبعدها 8 أرقام بالظبط. أي حاجة تانية None.
-
-[[findall]] من غير groups بيرجّع النص اللي طابق كله. لو فيه groups بيرجّع الـ groups بس، فـ [[(?:...)]] group مش بيتحسب، زي ما في EMAIL.
-
-[[set]] بيشيل التكرار لوحده، و [[e.lower()]] عشان [[Sara@X.com]] و [[sara@x.com]] واحد.
-
-[[\s+]] أي عدد مسافات أو tabs أو سطور، و [[re.sub]] بيبدّلهم بمسافة واحدة.`,
-            when: "تطلّع أو تتأكد من أشكال في نص. ولو الملف ليه شكل معروف (JSON و CSV و HTML)، استخدم الـ parser بتاعه مش regex.",
-            mistakes: R`[["\d"]] من غير r. والنقطة من غير escape في الإيميل ([[.]] يعني أي حرف). و [[search]] بدل [[fullmatch]] في التحقق فـ [[0101234567899999]] يعدّي. و [[.*]] greedy بياكل أكتر من اللازم. و regex للـ HTML.`
-          },
-          lines: [
-            "re.",
-            "sys.",
-            "Path.",
-            "واسع: أي حاجة شكلها رقم تليفون.",
-            "صارم: موبايل مصري 11 رقم.",
-            "إيميل (والـ group مش بيتلقط).",
-            "نضّف واتأكد:",
-            "سيب الأرقام بس.",
-            "لو بادئ بكود مصر...",
-            "...خليه يبدأ بـ 0.",
-            "رجّعه لو صح، وإلا None.",
-            "sets عشان التكرار.",
-            "كل ملفات txt:",
-            "اقرا، وأي byte بايظ يتبدل.",
-            "كل المرشحين، نضّفهم، وسيب الصح بس.",
-            "الإيميلات بحروف صغيرة.",
-            "الأرقام مترتبة.",
-            "الإيميلات مترتبة.",
-            "مسافات كتير بقت واحدة."
-          ],
-          sol: R`الناتج:
-
-[[['01012345678', '01123456789', '01225551234'] ]]
-[[['omar@shop.eg', 'sara.ali@example.com'] ]]
-[[كلام فيه مسافات]]
-
-[[+20 112 345 6789]] بقى [[01123456789]]، و [[0122-555-1234]] بقى [[01225551234]]، و [[010 1234 5678]] اتشال كتكرار. والناقص والطويل اترفضوا في [[fullmatch]].
-
-حل التعديل: بدل set، [[found = defaultdict(set)]] وجوه الـ loop [[found[p].add(path.name)]]. وطلع:
-
-[[01012345678 msg1.txt, msg2.txt]]
-[[01123456789 msg1.txt]]
-[[01225551234 msg2.txt]]`,
-          solCode: R`import re
-import sys
-from collections import defaultdict
-from pathlib import Path
-CANDIDATE = re.compile(r"\+?\d[\d\s-]{8,15}\d")
-MOBILE = re.compile(r"01[0125]\d{8}")
-def normalize(raw: str) -> str | None:
-    digits = re.sub(r"\D", "", raw)
-    if digits.startswith("20"):
-        digits = "0" + digits[2:]
-    return digits if MOBILE.fullmatch(digits) else None
-found = defaultdict(set)
-for path in sorted(Path(sys.argv[1] if len(sys.argv) > 1 else ".").rglob("*.txt")):
-    text = path.read_text(encoding="utf-8", errors="replace")
-    for p in filter(None, map(normalize, CANDIDATE.findall(text))):
-        found[p].add(path.name)
-for phone, files in sorted(found.items()):
-    print(phone, ", ".join(sorted(files)))`
+و [[Path("")]] طلع [[PosixPath('.')]] (وعلى ويندوز [[WindowsPath('.')]])، و [[Path("").resolve() == Path.cwd()]] طلع [[True]]. يعني [[rmtree(Path(""))]] بيمسح الفولدر اللي انت فيه. عشان كده الفحص بيتعمل على المسار بعد resolve.`
         }
       ]
     }

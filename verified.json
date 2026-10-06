@@ -3655,14 +3655,14 @@
   "on": "docker ubuntu-24.04 (Python 3.12.3) + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|@pytest.fixture": {
-  "hash": "f747cbcfcedc",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "b797086ed3fb",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
  "python|@pytest.mark.parametrize": {
-  "hash": "b6ceb7314666",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "589f555423e5",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
  "python|Dockerfile": {
   "hash": "6235ae6f6bb1",
@@ -3675,9 +3675,9 @@
   "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|TestClient و conftest": {
-  "hash": "0648082afeb6",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "52a68a8b3819",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv FastAPI 0.142 + docker python:3.13-slim"
  },
  "python|[project.scripts] و pipx": {
   "hash": "c0c69059b8c5",
@@ -3705,9 +3705,9 @@
   "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|breakpoint()": {
-  "hash": "b4cc8ef76918",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "3f5382f4b862",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim + python:3.12-slim"
  },
  "python|clean_old_files.py": {
   "hash": "35b498d19737",
@@ -3735,9 +3735,9 @@
   "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
  },
  "python|debugpy و launch.json": {
-  "hash": "f58a5c3af339",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "09ab88b4055b",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv debugpy 1.8.22 + docker python:3.13-slim; docs: VS Code UI"
  },
  "python|docker compose run --rm --no-deps": {
   "hash": "619004f3931f",
@@ -3785,9 +3785,9 @@
   "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
  },
  "python|monkeypatch": {
-  "hash": "492777a0b96f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "f78acea57826",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
  "python|notify.py": {
   "hash": "9c9abb6ca9bc",
@@ -3825,14 +3825,14 @@
   "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|pytest": {
-  "hash": "bfbd6a28055b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "3cccdf9b8eb2",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv pytest 9.1.1 + docker python:3.13-slim"
  },
  "python|pytest --cov": {
-  "hash": "d783992fa3f1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "2ec0767a4245",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv pytest-cov 7.1 + docker python:3.13-slim; docs: open/xdg-open"
  },
  "python|pytest لسكربت": {
   "hash": "39571804a74a",
@@ -3840,9 +3840,9 @@
   "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|pytest.ini": {
-  "hash": "a3d9b3d9dc09",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "21e1d1733872",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
  "python|python -m": {
   "hash": "87a63d6733fa",
@@ -3855,14 +3855,14 @@
   "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3); docs: playwright screenshot"
  },
  "python|python -m pdb": {
-  "hash": "4d4ec9eeae7b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "4ef3f7344f6e",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
  "python|python3 - <<'PY'": {
-  "hash": "894b7a3ba3a5",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "3524d5bb8614",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + win11 pwsh 7 / ps 5.1"
  },
  "python|python3 -m venv .venv": {
   "hash": "59e0eacfbd33",
@@ -3910,14 +3910,14 @@
   "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3) + ps 5.1 + cmd"
  },
  "python|tmp_path": {
-  "hash": "790316fc414e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "848addcf8701",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
  "python|unittest.mock.patch": {
-  "hash": "853bf7dece57",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "bea438250118",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 venv + docker python:3.13-slim"
  },
  "python|uptime_check.py": {
   "hash": "0b4e81db8ce9",
@@ -3930,9 +3930,9 @@
   "on": "docker python:3.13-slim fastapi + uvicorn 0.54 + win11 Python 3.14 venv pwsh/ps 5.1/cmd"
  },
  "python|uvicorn --reload": {
-  "hash": "5912ed32623f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "0faa2fd81a88",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim pinned fastapi/uvicorn + win11 Python 3.14 venv; docs: reload on Windows not confirmed"
  },
  "python|yaml.safe_load و ElementTree": {
   "hash": "abc2ff5a0c66",
