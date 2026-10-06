@@ -3645,14 +3645,14 @@
   "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "python|# /// script": {
-  "hash": "171236d8957e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "86a66969549f",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim uv 0.12.23 + win11 Python 3.14"
  },
  "python|#!/usr/bin/env python3": {
-  "hash": "7754f07d4bd7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "b60fcce39e84",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 (Python 3.12.3) + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|@pytest.fixture": {
   "hash": "f747cbcfcedc",
@@ -3665,14 +3665,14 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|Dockerfile": {
-  "hash": "588adbd6ae7e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "6235ae6f6bb1",
+  "date": "2026-10-06",
+  "on": "Docker Desktop build + compose"
  },
  "python|Path(__file__).parent": {
-  "hash": "1a0c106dbc7a",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "fc3fbff6f0b6",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|TestClient و conftest": {
   "hash": "0648082afeb6",
@@ -3680,29 +3680,29 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|[project.scripts] و pipx": {
-  "hash": "6994420494a3",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "c0c69059b8c5",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|argparse --dry-run": {
-  "hash": "118de0607b11",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "c7c50f4c5517",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 + ps 5.1 + cmd + docker python:3.13-slim"
  },
  "python|backup_zip.py": {
-  "hash": "2ef8bb0a86bf",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "b0ae5b2dfeab",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|bash ولا Python ولا PowerShell": {
-  "hash": "7ce2b1ade37a",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "8a97bb6c9ad0",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 pwsh 7 / ps 5.1 + win11 Python 3.14"
  },
  "python|batch_rename.py": {
-  "hash": "8e139b2057b3",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "0cd3dd142505",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|breakpoint()": {
   "hash": "b4cc8ef76918",
@@ -3710,29 +3710,29 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|clean_old_files.py": {
-  "hash": "83ce63978840",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "35b498d19737",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|concurrent.futures": {
-  "hash": "d81f01564f2c",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "979a3b4bd92f",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14"
  },
  "python|cron و Task Scheduler": {
-  "hash": "8551d743bbd7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "bc9f13f0f82e",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 cron + win11 schtasks /Query; docs: journalctl, schtasks /Create /Run"
  },
  "python|csv و utf-8-sig": {
-  "hash": "ae81e12fefb5",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "f6290b3c73ed",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim; docs: Excel display"
  },
  "python|datetime وأسماء الملفات": {
-  "hash": "1212d7774c10",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "0b2fd4a354e6",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
  },
  "python|debugpy و launch.json": {
   "hash": "f58a5c3af339",
@@ -3740,49 +3740,49 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|docker compose run --rm --no-deps": {
-  "hash": "44f79f050a95",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "619004f3931f",
+  "date": "2026-10-06",
+  "on": "Docker Desktop Compose v5.3.0 + postgres:16-alpine"
  },
  "python|externally-managed-environment": {
-  "hash": "277173681442",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "739a6cf9466f",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 (Python 3.12.3) pipx + docker python:3.13"
  },
  "python|find_duplicates.py": {
-  "hash": "ecc3e07e09c2",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "ee361bd14c00",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|glob و rglob": {
-  "hash": "85c6760b9fc1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "ed27d1b9e525",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|if __name__ == \"__main__\":": {
-  "hash": "1ea50851c3d9",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "eb00877ff8bc",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|input() و sys.argv": {
-  "hash": "fbb8c5641fbd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "8bb1f31d8acf",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3) + ps 5.1 + cmd"
  },
  "python|json.load و json.dump": {
-  "hash": "8b4b2411f864",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "82b136753425",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 + ps 5.1 BOM + docker python:3.13-slim"
  },
  "python|json_to_csv.py": {
-  "hash": "6cecb823c78e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "89fc2290a4d1",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv pwsh 7 / ps 5.1"
  },
  "python|logging بدل print": {
-  "hash": "b745f9ce5eee",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "7edfa76e7137",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
  },
  "python|monkeypatch": {
   "hash": "492777a0b96f",
@@ -3790,39 +3790,39 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|notify.py": {
-  "hash": "ac5aa1385798",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "9c9abb6ca9bc",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim aiosmtpd + win11 Python 3.14 venv; docs: real Gmail/Outlook TLS"
  },
  "python|open() و encoding=\"utf-8\"": {
-  "hash": "0c7f9acad314",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "39556caaeee2",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|organize_downloads.py": {
-  "hash": "dbbf5d6d1fc1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "5b31cd096acb",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|os.environ و .env": {
-  "hash": "5f4ead05f20f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "6dadf21dae34",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 python-dotenv 1.2.4 + docker python:3.13-slim"
  },
  "python|pip freeze": {
-  "hash": "2982c315d038",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "a4e8b783f4fa",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 venv + win11 pwsh 7 (Python 3.14.3) venv"
  },
  "python|pip install -r requirements.txt": {
-  "hash": "92ec2c1c291a",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "e4278765531e",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 venv + win11 pwsh 7 (Python 3.14.3) venv"
  },
  "python|print و f-strings للتقارير": {
-  "hash": "c8c3efd1dc90",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "80aa8141a82c",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|pytest": {
   "hash": "bfbd6a28055b",
@@ -3835,9 +3835,9 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|pytest لسكربت": {
-  "hash": "e84b9eb063f9",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "39571804a74a",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|pytest.ini": {
   "hash": "a3d9b3d9dc09",
@@ -3845,14 +3845,14 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|python -m": {
-  "hash": "6b4463202daf",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "87a63d6733fa",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3) + ps 5.1"
  },
  "python|python -m http.server": {
-  "hash": "e013fb674bb6",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "211274fb8ed3",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3); docs: playwright screenshot"
  },
  "python|python -m pdb": {
   "hash": "4d4ec9eeae7b",
@@ -3865,49 +3865,49 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|python3 -m venv .venv": {
-  "hash": "3519097476ba",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "59e0eacfbd33",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 (Python 3.12.3) + win11 pwsh 7 (Python 3.14.3) + ps 5.1 + cmd"
  },
  "python|python3 script.py": {
-  "hash": "edda995e8305",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "bc056e680491",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 (Python 3.12.3) + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|re في السكربتات": {
-  "hash": "7f653bbfa5dd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "5b4357fefc39",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
  },
  "python|requests و urllib مع timeout": {
-  "hash": "ce40088e77ae",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "6575749864df",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 + docker python:3.13-slim"
  },
  "python|resize_images.py": {
-  "hash": "7ec9110c7931",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "d70b056599f5",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim Pillow 12.3 + win11 Python 3.14 venv"
  },
  "python|retry و backoff": {
-  "hash": "fc83f07b3f87",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "b03f88527c83",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 pwsh"
  },
  "python|shutil copy و move و rmtree": {
-  "hash": "126a9b484ebe",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "b84566b77321",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3)"
  },
  "python|subprocess.run في سكربت": {
-  "hash": "0c3e501e48ac",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "074fa9ad6305",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 git 2.56 + docker python:3.13-slim"
  },
  "python|sys.exit و exit codes": {
-  "hash": "4f6e1605dceb",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "7a0ce60bc094",
+  "date": "2026-10-06",
+  "on": "docker python:3.13 + win11 pwsh 7 (Python 3.14.3) + ps 5.1 + cmd"
  },
  "python|tmp_path": {
   "hash": "790316fc414e",
@@ -3920,14 +3920,14 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|uptime_check.py": {
-  "hash": "e576dc279502",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "0b4e81db8ce9",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim + win11 Python 3.14 venv"
  },
  "python|uvicorn --proxy-headers": {
-  "hash": "cf1e9ec0cccc",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "66e16c5f4363",
+  "date": "2026-10-06",
+  "on": "docker python:3.13-slim fastapi + uvicorn 0.54 + win11 Python 3.14 venv pwsh/ps 5.1/cmd"
  },
  "python|uvicorn --reload": {
   "hash": "5912ed32623f",
@@ -3935,9 +3935,9 @@
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
  "python|yaml.safe_load و ElementTree": {
-  "hash": "075c48790493",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+  "hash": "abc2ff5a0c66",
+  "date": "2026-10-06",
+  "on": "win11 Python 3.14 pwsh 7 PyYAML 6.0.3 + docker python:3.13-slim"
  },
  "quality|--coverage": {
   "hash": "d0acdc43d003",
@@ -5168,6 +5168,161 @@
   "hash": "cab4985a9df4",
   "date": "2026-10-06",
   "on": "docker node:22-slim tsc error; JSON validated; docs: tasks UI"
+ },
+ "web|CORS": {
+  "hash": "52a963f04244",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages + curl.exe on local Express"
+ },
+ "web|Clear site data": {
+  "hash": "702b87086220",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: buttons"
+ },
+ "web|Command Menu": {
+  "hash": "2377cb430307",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: command names"
+ },
+ "web|Cookies": {
+  "hash": "72075261a7fb",
+  "date": "2026-10-06",
+  "on": "curl.exe on local Express + Chrome 154 headless (CDP) on local pages; docs: Application columns"
+ },
+ "web|Copy as cURL": {
+  "hash": "13bad8bc5034",
+  "date": "2026-10-06",
+  "on": "curl.exe on local Express; docs: menu"
+ },
+ "web|Device Toolbar": {
+  "hash": "ff072f6955bb",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: toolbar UI"
+ },
+ "web|Elements": {
+  "hash": "f2680ea97499",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: Elements UI"
+ },
+ "web|Hard Reload": {
+  "hash": "eefd6e72933b",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: menu items"
+ },
+ "web|Headers": {
+  "hash": "cf105cf5451a",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 curl + curl.exe on local Express"
+ },
+ "web|Lighthouse": {
+  "hash": "55b38a626555",
+  "date": "2026-10-06",
+  "on": "win11 npx lighthouse 13.5.0"
+ },
+ "web|Network": {
+  "hash": "c710f6614770",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: Network panel"
+ },
+ "web|Overrides": {
+  "hash": "57d8d98a3a6a",
+  "date": "2026-10-06",
+  "on": "docs: Local overrides"
+ },
+ "web|Performance و Coverage": {
+  "hash": "453ad046e4e5",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: panels"
+ },
+ "web|Recorder": {
+  "hash": "ba7c60bd68f2",
+  "date": "2026-10-06",
+  "on": "docs: Chrome DevTools Recorder"
+ },
+ "web|SEO من الترمنال": {
+  "hash": "92d3d8efec63",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 curl + curl.exe on local Express"
+ },
+ "web|Security headers و SSL": {
+  "hash": "48b3276f17f4",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 curl + curl.exe on local Express; docs: nginx, scanners"
+ },
+ "web|Sources و breakpoints": {
+  "hash": "b348747979e6",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: UI shortcuts"
+ },
+ "web|Status codes": {
+  "hash": "563b3462a1a6",
+  "date": "2026-10-06",
+  "on": "curl.exe on local Express + Chrome 154 headless (CDP) on local pages"
+ },
+ "web|Throttling و Blocking": {
+  "hash": "80eb4201aaca",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: menu names"
+ },
+ "web|Unexpected token '<'": {
+  "hash": "494714119a8d",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages"
+ },
+ "web|View Page Source و Inspect": {
+  "hash": "81caa220cb57",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages + curl.exe on local Express; docs: shortcuts"
+ },
+ "web|chrome://inspect": {
+  "hash": "cb2f95429637",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 --inspect; docs: inspect UI"
+ },
+ "web|curl -i / -v": {
+  "hash": "45b239643ff0",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 curl + curl.exe on local Express pwsh 7 / ps 5.1 / cmd"
+ },
+ "web|fetch من Console": {
+  "hash": "6fd5a601a972",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages"
+ },
+ "web|localStorage و JWT": {
+  "hash": "6172b2f79365",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages"
+ },
+ "web|playwright screenshot": {
+  "hash": "0aa5e21b8615",
+  "date": "2026-10-06",
+  "on": "win11 Playwright 1.63 CLI"
+ },
+ "web|أدوات جوجل": {
+  "hash": "0f1de6ce09db",
+  "date": "2026-10-06",
+  "on": "docs: Google Search Central"
+ },
+ "web|أوامر Console المفيدة": {
+  "hash": "981ed186a834",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages"
+ },
+ "web|تفاصيل الطلب": {
+  "hash": "55d4d5c7d5b4",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages; docs: request tabs"
+ },
+ "web|سيرفر محلي بدل file://": {
+  "hash": "92486cfa5e4d",
+  "date": "2026-10-06",
+  "on": "win11 python http.server + npx serve + Chrome 154 headless (CDP) on local pages"
+ },
+ "web|قراءة الأخطاء": {
+  "hash": "398d60fe7429",
+  "date": "2026-10-06",
+  "on": "Chrome 154 headless (CDP) on local pages"
  },
  "wsl|.wslconfig و wsl.conf": {
   "hash": "e4da4d55fe21",
