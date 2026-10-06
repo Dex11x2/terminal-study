@@ -27,6 +27,7 @@ Add a `teach: R\`...\`,` field to EVERY lesson in the file that doesn't have one
 
 Every output you show must come from actually running it: Linux in `docker run --rm ubuntu:24.04 ...` (check `docker info`; if Docker is down start it with PowerShell `Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"` and wait), Windows in `pwsh -NoProfile -c` and `powershell -NoProfile -c`, cmd via `cmd /c`. Say in the text where it ran. If something can't be run here (macOS, admin-only, destructive), say it comes from the official docs. If you find a wrong fact elsewhere in the lesson, fix it.
 
+Other agents work in parallel and share the scratchpad: keep ALL your scratch files in a subfolder named after your file (e.g. `scratchpad/bash-03/`), never in a shared folder like `scratchpad/teach/`.
 Never create anything that persists on the machine, even "harmless" test items: no scheduled tasks (`schtasks /create`, `Register-ScheduledTask`), services, registry values, users, shares, firewall rules or environment variables (`setx`). Show their syntax and quote real output already in the lesson's sol, or say it's from the docs. Never run a command that waits for input (a Y/N prompt) in the background.
 Never run destructive or system-changing commands on this machine; never global Docker cleanup (`docker system/volume/image prune`). Remove only containers you created.
 

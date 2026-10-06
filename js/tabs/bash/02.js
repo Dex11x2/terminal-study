@@ -53,6 +53,183 @@ sudo userdel -r olduser`,
             when: R`سكربت بيجهّز سيرفر (cloud-init أو Ansible) ومحتاج أوامر من غير أسئلة: useradd. يوزر محتاج Docker من غير sudo: [[usermod -aG docker]]. خدمة جديدة: [[useradd -r -M -s /usr/sbin/nologin]]. موظف في إجازة: [[usermod -L]] (أو أحسن، درس «passwd -l و chage»).`,
             mistakes: R`[[usermod -G]] من غير [[-a]]، فاليوزر يتشال من sudo ويتقفل برّه صلاحيات المدير؛ ولو ده يوزرك الوحيد على السيرفر هتحتاج console الاستضافة. و [[useradd]] من غير [[-m]] و [[-s]] على أوبونتو، فتلاقي يوزر من غير home وشيله sh. ونسيان إن الجروب الجديد محتاج login جديد، فتفضل تقول «ضفته ولسه docker بيقول permission denied». وإن جروب [[docker]] بيدّي صلاحيات root فعليًا (أي حد فيه يقدر يشغّل container بيركّب [[/]]).`
           },
+          teach: R`## الفكرة
+
+اليوزر على لينكس مش أكتر من سطور في ملفات نصية: سطر في [[/etc/passwd]] (اسمه ورقمه وفولدره وشيله)، وسطر في [[/etc/shadow]] (الباسورد)، وسطور في [[/etc/group]] (جروباته). [[useradd]] بيكتب السطور دي ويعمل فولدر الـ home، و [[usermod]] بيعدّلها. كل الناتج تحت اتطبع فعلًا في container أوبونتو 24.04 ([[docker run ubuntu:24.04]])، والأرقام عندك هتختلف.
+
+---
+
+## ١. [[sudo useradd -m -s /bin/bash -G sudo sara]]
+
+نفكّه حتة حتة:
+
+| الحتة | معناها |
+|---|---|
+| [[sudo]] | عمل يوزر بيكتب في ملفات النظام، فمحتاج صلاحية root |
+| [[useradd]] | اعمل يوزر جديد |
+| [[-m]] | create home: اعمل [[/home/sara]] وانسخ فيه ملفات [[/etc/skel]] |
+| [[-s /bin/bash]] | shell: الشيل اللي هيفتح لما تدخل |
+| [[-G sudo]] | Groups: جروبات «إضافية»، هنا [[sudo]] (اللي بيسمح باستخدام sudo على أوبونتو) |
+| [[sara]] | اسم اليوزر، ودايمًا في الآخر |
+
+الأمر مبيطبعش حاجة لو نجح. نشوف عمل إيه:
+
+~~~bash
+grep '^sara' /etc/passwd
+ls -la /home/sara
+~~~
+
+~~~text الناتج
+sara:x:1001:1003::/home/sara:/bin/bash
+-rw-r--r-- 1 sara sara  220 Mar 31  2024 .bash_logout
+-rw-r--r-- 1 sara sara 3771 Mar 31  2024 .bashrc
+-rw-r--r-- 1 sara sara  807 Mar 31  2024 .profile
+~~~
+
+التلات ملفات دول اتنسخوا من [[/etc/skel]] (skeleton = الهيكل)، ده «القالب» اللي أي home جديد بيتعمل منه. والسطر في passwd فيه الـ home والشيل اللي طلبناهم. (الحقول السبعة متشرحة بالتفصيل في درس «id و groups و getent».)
+
+### ليه [[-m]] و [[-s]] لازمين على أوبونتو؟
+
+لأن الافتراضي هناك مكتوب في [[/etc/default/useradd]]:
+
+~~~text الناتج: grep SHELL /etc/default/useradd
+SHELL=/bin/sh
+~~~
+
+ومفيش [[CREATE_HOME yes]] في [[/etc/login.defs]]، فلو كتبت [[useradd bare]] من غير flags:
+
+~~~text الناتج
+bare:x:1002:1004::/home/bare:/bin/sh
+ls: cannot access '/home/bare': No such file or directory
+~~~
+
+السطر بيقول الـ home هو [[/home/bare]]، بس الفولدر نفسه متعملش، والشيل [[sh]] الفقير.
+
+---
+
+## ٢. [[sudo passwd sara]]
+
+[[useradd]] مبيسألش عن باسورد، فالحساب بيتعمل والباسورد «مقفول». [[passwd]] (password) بيحطله باسورد، وبيسألك مرتين ومش بيعرض اللي بتكتبه:
+
+~~~text الناتج
+New password:
+Retype new password:
+passwd: password updated successfully
+~~~
+
+---
+
+## ٣. [[id sara]]
+
+~~~text الناتج
+uid=1001(sara) gid=1003(sara) groups=1003(sara),27(sudo)
+~~~
+
+- [[uid]] (User ID): رقم sara. النظام بيتعامل بالأرقام، والاسم للبني آدمين بس.
+- [[gid]] (Group ID): جروبها **الأساسي**. useradd عمل جروب بنفس اسمها (رقمه 1003)، لأن [[USERGROUPS_ENAB yes]] في [[/etc/login.defs]].
+- [[groups=]]: كل جروباتها: الأساسي + [[sudo]] (رقمه 27 ثابت على أوبونتو).
+
+---
+
+## ٤. [[sudo usermod -aG docker sara]]
+
+[[usermod]] (user modify) بيعدّل يوزر موجود. و [[-aG]] حرفين متجمّعين: [[-a]] (append = ضيف) و [[-G]] (الجروبات الإضافية). يعني «ضيف docker على اللي عندها».
+
+~~~text الناتج: id sara
+uid=1001(sara) gid=1003(sara) groups=1003(sara),27(sudo),1001(docker)
+~~~
+
+> الجروب لازم يكون موجود. لو مش موجود: [[usermod: group 'docker' does not exist]]، واعمله بـ [[sudo groupadd docker]].
+
+---
+
+## ٥ و ٦. الغلطة: [[sudo usermod -G devs sara]] من غير [[-a]]
+
+[[-G]] لوحدها معناها «جروباتها الإضافية هي دي **بس**»:
+
+~~~text الناتج: id sara
+uid=1001(sara) gid=1003(sara) groups=1003(sara),1002(devs)
+~~~
+
+[[sudo]] و [[docker]] اتشالوا. الأساسي ([[sara]]) فضل لأن [[-G]] مبتلمسش الجروب الأساسي. لو sara هي يوزرك الوحيد على السيرفر، كده انت قفلت نفسك برّه sudo.
+
+---
+
+## ٧. [[sudo usermod -aG sudo,docker sara]]
+
+أكتر من جروب بيتفصلوا بفاصلة **من غير مسافات**. ومع [[-a]] بيضيفهم على devs:
+
+~~~text الناتج: id sara
+uid=1001(sara) gid=1003(sara) groups=1003(sara),27(sudo),1001(docker),1002(devs)
+~~~
+
+### الجروب الجديد مش بيظهر في الجلسة المفتوحة
+
+جربتها: عملية شغالة كـ sara من قبل، وبعدين ضفتها لجروب جديد اسمه video2:
+
+~~~text الناتج
+old session:   sudo,docker,devs,sara
+new login:     sara sudo docker devs video2
+~~~
+
+الجروبات بتتحدد لحظة الـ login وبتتورث لكل أمر بتشغّله. فبعد [[usermod]] اليوزر لازم يخرج ويدخل تاني (أو [[newgrp docker]]).
+
+---
+
+## ٨. [[sudo useradd -r -M -s /usr/sbin/nologin myapp]]
+
+يوزر لخدمة (تطبيقك مثلًا) مش لبني آدم:
+
+| الحتة | معناها |
+|---|---|
+| [[-r]] | system account: رقم أقل من 1000 |
+| [[-M]] | متعملش home (عكس [[-m]]) |
+| [[-s /usr/sbin/nologin]] | ممنوع يفتح شيل |
+
+~~~text الناتج: getent passwd myapp
+myapp:x:999:999::/home/myapp:/usr/sbin/nologin
+~~~
+
+الرقم 999 (أوبونتو بيدّي حسابات النظام أرقام من 999 ونازل)، والفولدر مكتوب بس مش موجود.
+
+---
+
+## ٩ و ١٠. [[usermod -L]] و [[usermod -U]]
+
+[[-L]] (lock) بيحط [[!]] قدام الـ hash في [[/etc/shadow]]، و [[-U]] (unlock) بيشيلها. بصينا على أول ٢٠ حرف من سطرها:
+
+~~~text الناتج
+after -L:  sara:!$y$j9T$cxIDMiH
+after -U:  sara:$y$j9T$cxIDMiH.
+~~~
+
+الـ hash نفسه متغيرش، فالباسورد القديم بيرجع يشتغل. (القفل ده للباسورد بس، والدخول بمفتاح SSH بيفضل شغال: درس «passwd -l و chage».)
+
+---
+
+## ١١. [[sudo userdel -r olduser]]
+
+[[userdel]] بيمسح السطور، و [[-r]] (remove) بيمسح فولدر الـ home كمان:
+
+~~~text الناتج
+userdel: olduser mail spool (/var/mail/olduser) not found
+~~~
+
+دي مجرد ملاحظة إن مفيش صندوق بريد يتمسح، والأمر نجح (exit code 0).
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| يوزر لبني آدم | [[useradd -m -s /bin/bash -G sudo اسم]] ثم [[passwd اسم]] |
+| يوزر لخدمة | [[useradd -r -M -s /usr/sbin/nologin اسم]] |
+| ضيف جروب | [[usermod -aG جروب اسم]] (الـ [[-a]] متتنسيش) |
+| اقفل / افتح الباسورد | [[usermod -L]] / [[usermod -U]] |
+| امسح هو وفولدره | [[userdel -r اسم]] |
+
+وعلى فيدورا و RHEL جروب المديرين [[wheel]]. وعلى الماك اليوزرز مش في [[/etc/passwd]] أصلًا، فبتستخدم [[sysadminctl]] و [[dseditgroup]] (من الـ man pages بتاعة الماك، مش متجرّبة هنا).`,
           lines: [
             R`اعمل يوزر sara بـ home ([[-m]]) وشيل bash ([[-s]])، وفي جروب sudo ([[-G]]).`,
             R`ادّيها باسورد (useradd مبيسألش). من غيره الحساب مقفول.`,
@@ -113,6 +290,194 @@ sudo grep -E '^(root|sara):' /etc/shadow`,
             when: R`قبل ما تدّي حد صلاحية: [[getent group sudo]] و [[getent group docker]] مين فيهم دلوقتي. بعد ما تعمل يوزر: [[id اسمه]]. مراجعة أمنية لسيرفر: [[awk]] على [[/etc/passwd]] تشوف مين عنده شيل حقيقي، وأي UID تاني بـ 0 غير root مصيبة. ولما دخول بيفشل: [[passwd -S]] أو الحقل التاني في shadow تشوفه مقفول ولا لأ.`,
             mistakes: R`إنك تعدّل [[/etc/passwd]] أو [[/etc/shadow]] بإيدك بمحرر: غلطة في سطر ممكن تقفل الكل برّه. استخدم useradd و usermod و passwd، ولو مضطر [[sudo vipw]] و [[sudo vigr]] (بيقفلوا الملف ويفحصوه). و [[grep]] على passwd على جهاز داخل على LDAP، فتفتكر اليوزر مش موجود. وإنك تقرا [[id]] في جلسة قديمة وتفتكر الجروب متضافش.`
           },
+          teach: R`## الفكرة
+
+الأوامر دي «بتسأل» بس، مبتغيّرش حاجة: اليوزر ده رقمه إيه؟ في أنهي جروبات؟ وسطره في قاعدة اليوزرز شكله إيه؟ اتجربت كلها في container أوبونتو 24.04 فيه يوزر اسمه sara في جروبات sudo و docker و devs.
+
+---
+
+## ١. [[id sara]]
+
+~~~text الناتج
+uid=1001(sara) gid=1003(sara) groups=1003(sara),27(sudo),1001(docker),1002(devs)
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[uid=1001(sara)]] | User ID: رقم اليوزر، والاسم بين قوسين |
+| [[gid=1003(sara)]] | Group ID: الجروب **الأساسي**، وهو اللي ملفاتها الجديدة بتاخده |
+| [[groups=...]] | كل الجروبات: الأساسي والإضافية، كل واحد برقمه واسمه |
+
+ولو عايز حتة واحدة بس: [[id -u sara]] طبع [[1001]]، و [[id -gn sara]] طبع [[sara]] ([[-g]] الجروب الأساسي و [[-n]] بالاسم بدل الرقم).
+
+---
+
+## ٢. [[id -nG]]
+
+من غير اسم يوزر، [[id]] بيتكلم عنك انت، وعن **جلستك الحالية**. و [[-G]] كل الجروبات و [[-n]] بالأسامي:
+
+~~~text الناتج (كـ sara)
+sara sudo docker devs
+~~~
+
+الفرق المهم: [[id sara]] بيقرا من الملفات دلوقتي، و [[id]] لوحده بيقرا جروبات العملية اللي انت فيها، اللي اتحددت لحظة الـ login. لو اختلفوا، يبقى فيه جروب اتضاف بعد ما دخلت.
+
+---
+
+## ٣. [[groups sara]]
+
+~~~text الناتج
+sara : sara sudo docker devs
+~~~
+
+نفس المعلومة بالأسامي بس، وقبلها اسم اليوزر و [[:]].
+
+---
+
+## ٤. [[getent passwd sara]]
+
+[[getent]] (get entries) بيجيب سطر من «قاعدة بيانات» النظام، و [[passwd]] اسم القاعدة (اليوزرز):
+
+~~~text الناتج
+sara:x:1001:1003::/home/sara:/bin/bash
+~~~
+
+### نفك السطر: ٧ حقول بينهم [[:]]
+
+| # | القيمة | معناها |
+|---|---|---|
+| ١ | [[sara]] | الاسم |
+| ٢ | [[x]] | الباسورد مش هنا، في [[/etc/shadow]] |
+| ٣ | [[1001]] | UID: صفر = root، وأقل من 1000 حسابات نظام، و 1000 وطالع ناس |
+| ٤ | [[1003]] | GID الجروب الأساسي |
+| ٥ | فاضي | الوصف أو الاسم الكامل (GECOS) |
+| ٦ | [[/home/sara]] | فولدر الـ home |
+| ٧ | [[/bin/bash]] | الشيل |
+
+وللمقارنة، سطور حسابات نظام من نفس الجهاز:
+
+~~~text الناتج: getent passwd root www-data nobody
+root:x:0:0:root:/root:/bin/bash
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+~~~
+
+[[nologin]] في الآخر يعني الحساب ده ممنوع يفتح شيل.
+
+### ليه getent مش [[cat /etc/passwd]]؟
+
+getent بيسأل نفس المصادر اللي النظام بيسألها، والمصادر مكتوبة في [[/etc/nsswitch.conf]]:
+
+~~~text الناتج: grep -E '^(passwd|group|shadow):' /etc/nsswitch.conf
+passwd:         files
+group:          files
+shadow:         files
+~~~
+
+[[files]] يعني الملفات اللي في [[/etc]] بس. على جهاز شركة ممكن تلاقي [[files sss]] أو [[files ldap]]، وساعتها getent بيلاقي يوزرز الشركة و grep لأ.
+
+---
+
+## ٥. [[getent group sudo]]
+
+~~~text الناتج
+sudo:x:27:ubuntu,sara
+~~~
+
+٤ حقول: الاسم، و [[x]]، والرقم، والأعضاء مفصولين بفاصلة. والأعضاء هنا هما اللي sudo جروب **إضافي** ليهم؛ لو حد جروبه الأساسي sudo مش هيتكتب هنا.
+
+---
+
+## ٦. [[getent passwd nosuchuser; echo "exit: $?"]]
+
+- [[;]] نفّذ اللي بعدها مهما حصل.
+- [[$?]] الـ exit code بتاع آخر أمر (درس «$?»).
+
+~~~text الناتج
+exit: 2
+~~~
+
+مفيش سطر خالص، والـ exit code [[2]] معناه «مش لاقي». ده مفيد في سكربت: [[if getent passwd sara > /dev/null; then ...]].
+
+---
+
+## ٧. الـ awk: اليوزرز «الحقيقيين»
+
+~~~bash
+awk -F: '$3 >= 1000 && $3 < 60000 {print $1, $3, $7}' /etc/passwd
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[awk]] | برنامج بيمشي على الملف سطر سطر ويقسّم كل سطر لحقول |
+| [[-F:]] | Field separator: الحقول مفصولة بـ [[:]] |
+| [[$3]] | الحقل التالت (الـ UID). جوه awk مش متغير شيل، وعشان كده الكود كله بين single quotes |
+| [[$3 >= 1000 && $3 < 60000]] | الشرط: الرقم من 1000 لحد أقل من 60000 ([[&&]] = و) |
+| [[{print $1, $3, $7}]] | لو الشرط اتحقق: اطبع الاسم والرقم والشيل |
+
+ليه 1000 و 60000؟ دول [[UID_MIN]] و [[UID_MAX]] في [[/etc/login.defs]]، يعني المدى اللي useradd بيدّي منه أرقام للناس، فـ nobody (65534) مش هيظهر.
+
+~~~text الناتج
+ubuntu 1000 /bin/bash
+sara 1001 /bin/bash
+~~~
+
+[[ubuntu]] يوزر جاي جاهز في صورة Docker بتاعة أوبونتو 24.04.
+
+---
+
+## ٨. [[sudo grep -E '^(root|sara):' /etc/shadow]]
+
+[[-E]] regex موسّع، و [[^]] أول السطر، و [[(root|sara)]] واحد من الاتنين. ومحتاج sudo لأن الملف مقفول:
+
+~~~text الناتج: ls -l /etc/shadow
+-rw-r----- 1 root shadow 646 Oct  6 07:55 /etc/shadow
+~~~
+
+صاحبه root يقرا ويكتب، وجروب shadow يقرا، والباقي ولا حاجة. وأي يوزر عادي بياخد [[cat: /etc/shadow: Permission denied]].
+
+~~~text الناتج
+root:*:20713:0:99999:7:::
+sara:$y$j9T$xHwlIToiKV5Ro.o52HGwd/$Be9rOAOYKhIa2S85a.LlIceWYkcZQbxxpMOB8THBGoA:20732:0:99999:7:::
+~~~
+
+### نفك سطر sara
+
+| الحقل | القيمة | معناها |
+|---|---|---|
+| ١ | [[sara]] | الاسم |
+| ٢ | [[$y$j9T$...$...]] | الـ hash: [[$y$]] = yescrypt، و [[j9T]] إعداداته، وبعدها الـ salt (حتة عشوائية)، وبعدها الـ hash نفسه |
+| ٣ | [[20732]] | آخر تغيير للباسورد بعدد الأيام من 1970-01-01 |
+| ٤ | [[0]] | min: أقل عدد أيام قبل ما يغيّره تاني |
+| ٥ | [[99999]] | max: لازم يتغير كل كام يوم (99999 = عمليًا أبدًا) |
+| ٦ | [[7]] | warn: ينبّهه قبلها بكام يوم |
+| ٧ و ٨ و ٩ | فاضيين | inactive و expire وواحد محجوز |
+
+و 20732 يوم ده إمتى؟
+
+~~~bash
+date -d "1970-01-01 +20732 days" +%F
+~~~
+
+~~~text الناتج
+2026-10-06
+~~~
+
+يعني النهارده، اليوم اللي اتعمل فيه الباسورد. و [[*]] في سطر root معناها مفيش باسورد يتدخل بيه أصلًا؛ أوبونتو بيخليك تستخدم sudo.
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر |
+|---|---|
+| اليوزر ده في أنهي جروبات؟ | [[id اسم]] أو [[groups اسم]] |
+| جلستي أنا فيها إيه دلوقتي؟ | [[id]] أو [[id -nG]] |
+| سطر يوزر أو جروب | [[getent passwd اسم]] و [[getent group اسم]] |
+| مين في جروب sudo؟ | [[getent group sudo]] |
+| حالة الباسورد | سطره في [[/etc/shadow]] بـ sudo |
+
+وعلى الماك [[id]] و [[groups]] موجودين، بس مفيش [[getent]] ولا [[/etc/shadow]]: البديل [[dscl . -read /Users/اسم]] (من الـ man page، مش متجرّب هنا).`,
           lines: [
             R`رقم sara وجروبها الأساسي وكل جروباتها، من الملفات.`,
             R`أسامي جروبات «جلستك» انت دلوقتي ([[-n]] أسامي و [[-G]] كل الجروبات).`,
@@ -168,6 +533,130 @@ sudo gpasswd -d mona webteam`,
             when: R`فولدر موقع بيعدّل فيه أكتر من مطوّر، فولدر رفع ملفات بين يوزر الـ deploy وخدمة التطبيق، فولدر باك أب بيكتب فيه أكتر من سكربت. وأي حد محتاج «يقرا» اللوجات من غير sudo: [[gpasswd -a ali adm]] (جروب adm في أوبونتو بيقرا [[/var/log]]).`,
             mistakes: R`[[chmod 775]] من غير الـ 2، فالملفات الجديدة تتعمل بجروب صاحبها والفريق ميقدرش يعدّلها. وإنك تعمل [[chown -R]] أو [[chmod -R 775]] كل شوية تصلّح، بدل ما تحط setgid مرة. ونسيان إن [[gpasswd -M]] بيستبدل اللستة كلها. وإن العضو الجديد لازم يعمل login من جديد.`
           },
+          teach: R`## الفكرة
+
+المثال بيبني فولدر مشترك لفريق: جروب اسمه webteam، فيه ali و mona، وفولدر [[/srv/webteam]] أي حد منهم يعمل فيه ملف، التاني يقدر يعدّله. ٣ حاجات بتشتغل مع بعض: الجروب، وصلاحيات الفولدر، والـ setgid. اتجرب في container أوبونتو 24.04 فيه اليوزرين ali و mona.
+
+---
+
+## ١. [[sudo groupadd webteam]]
+
+[[groupadd]] بيضيف سطر جديد في [[/etc/group]] بأول رقم فاضي من 1000. مبيطبعش حاجة لو نجح.
+
+---
+
+## ٢ و ٣. [[sudo gpasswd -a ali webteam]]
+
+[[gpasswd]] (group password، الاسم قديم، بس بيدير الأعضاء) و [[-a]] (add) يضيف عضو واحد لجروب واحد:
+
+~~~text الناتج
+Adding user ali to group webteam
+Adding user mona to group webteam
+~~~
+
+> متتلخبطش مع [[usermod -a]]: هنا [[-a]] مالهاش فخ. [[gpasswd]] بيلمس الجروب ده بس، والجروبات التانية بتاعة ali زي ما هي.
+
+---
+
+## ٤. [[getent group webteam]]
+
+~~~text الناتج
+webteam:x:1008:ali,mona
+~~~
+
+الاسم، و [[x]]، والرقم (1008 هنا لأن الأرقام اللي قبله اتاخدت)، والأعضاء في الآخر. وفيه ملف تاني بيتحدّث معاه، [[/etc/gshadow]]، السطر فيه [[webteam:!::ali,mona]]: الـ [[!]] يعني الجروب ملوش باسورد، والحقل الفاضي بعده مديري الجروب (اللي [[gpasswd -A]] بيحطهم).
+
+---
+
+## ٥. [[sudo mkdir -p /srv/webteam]]
+
+[[/srv]] (service data) المكان المتعارف عليه لداتا السيرفر. و [[-p]] (parents) يعمل الفولدرات اللي قبله لو مش موجودة، ومايشتكيش لو الفولدر موجود.
+
+~~~text الناتج: ls -ld /srv/webteam
+drwxr-xr-x 2 root root 4096 Oct  6 07:55 /srv/webteam
+~~~
+
+ملك root وجروبه root، والفريق مش هيقدر يكتب فيه.
+
+---
+
+## ٦. [[sudo chgrp webteam /srv/webteam]]
+
+[[chgrp]] (change group) بيغيّر جروب الفولدر بس، والصاحب يفضل root:
+
+~~~text الناتج: ls -ld /srv/webteam
+drwxr-xr-x 2 root webteam 4096 Oct  6 07:55 /srv/webteam
+~~~
+
+بس صلاحيات الجروب لسه [[r-x]]، يعني يقرا بس.
+
+---
+
+## ٧ و ٨. [[sudo chmod 2775 /srv/webteam]]
+
+الرقم ده ٤ أرقام، نقراه من الشمال:
+
+| الرقم | لمين | معناه |
+|---|---|---|
+| [[2]] | خاص | setgid: الملفات الجديدة تاخد جروب الفولدر |
+| [[7]] | الصاحب (root) | rwx = 4+2+1 |
+| [[7]] | الجروب (webteam) | rwx: الفريق يعمل ويمسح ملفات |
+| [[5]] | الباقي | r-x = 4+1: يدخل ويقرا بس |
+
+~~~text الناتج: ls -ld /srv/webteam
+drwxrwsr-x 2 root webteam 4096 Oct  6 07:55 /srv/webteam
+~~~
+
+بص على خانة الجروب: [[rws]]. الـ [[s]] مكان الـ [[x]] معناها «x موجودة ومعاها setgid».
+
+### التجربة: ali تعمل ملف و mona تعدّله
+
+~~~bash
+su - ali -c "umask; echo v1 > /srv/webteam/plan.txt"
+su - mona -c "echo v2 >> /srv/webteam/plan.txt; cat /srv/webteam/plan.txt"
+ls -l /srv/webteam
+~~~
+
+[[su - ali -c "..."]] بيشغّل الأمر ده كـ ali (درس «su - و sudo -i»)، و [[>>]] بيضيف في آخر الملف.
+
+~~~text الناتج
+0002
+v1
+v2
+-rw-rw-r-- 1 ali webteam 6 Oct  6 07:55 plan.txt
+~~~
+
+- جروب الملف [[webteam]] مش [[ali]]: ده شغل الـ setgid.
+- والجروب عنده [[rw-]]: ده شغل الـ umask بتاع ali ([[0002]]، درس umask).
+- فـ mona قدرت تضيف [[v2]].
+
+من غير الـ 2 (فولدر [[775]] بس) الملف كان هيطلع [[ali ali]]، و mona تاخد Permission denied (متجرّبة، الناتج في الحل).
+
+---
+
+## ٩. [[sudo gpasswd -d mona webteam]]
+
+[[-d]] (delete) يشيل عضو:
+
+~~~text الناتج
+Removing user mona from group webteam
+~~~
+
+و [[getent group webteam]] بقى [[webteam:x:1008:ali]]. ولو mona كانت داخلة، جلستها المفتوحة لسه شايلة الجروب لحد ما تخرج (نفس فكرة الـ login في درس «useradd و usermod»).
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر | ليه |
+|---|---|---|
+| ١ | [[groupadd webteam]] | الجروب |
+| ٢ | [[gpasswd -a اسم webteam]] | الأعضاء واحد واحد |
+| ٣ | [[chgrp webteam الفولدر]] | الفولدر ملك الجروب |
+| ٤ | [[chmod 2775 الفولدر]] | الجروب يكتب + الملفات الجديدة تاخد جروب الفولدر |
+| ٥ | umask 002 عند الأعضاء | الملفات الجديدة الجروب يكتب فيها |
+
+وعلى الماك [[dseditgroup]] بدل groupadd و gpasswd، ومش محتاج setgid أصلًا: حسب الـ man page بتاعة [[open(2)]] هناك، الملف الجديد بياخد جروب الفولدر دايمًا (من الـ docs، مش متجرّب).`,
           lines: [
             R`اعمل جروب webteam.`,
             R`ضيف ali للجروب ([[-a]] add).`,
@@ -222,6 +711,156 @@ sudo usermod -e "" ali`,
             when: R`موظف ساب ولسه هتراجع ملفاته: [[usermod -e 1]] و [[-L]]. يوزر جديد بباسورد مؤقت: [[passwd -e]]. سياسة شركة «غيّر كل 90 يوم»: [[chage -M 90 -W 7]]. حساب متدرب لحد آخر السنة: [[chage -E 2026-12-31]]. وتشوف حالة الكل بسرعة: [[sudo passwd -S -a]].`,
             mistakes: R`الاعتماد على [[passwd -l]] لوحده لقفل حساب بيدخل بمفتاح SSH. و [[chage -E 0]]: الـ man page بتاعة shadow بتقول القيمة 0 ممكن تتفهم «من غير انتهاء»، فاستخدم 1 أو تاريخ. و [[-M 90]] على حساب خدمة أو حساب بتدخل بيه سكربتات، فيوم 91 يقف. ونسيان [[-m]] مع [[-M]]، فاليوزر يغيّر الباسورد مرتين ورا بعض ويرجع للقديم.`
           },
+          teach: R`## الفكرة
+
+كل حاجة في الدرس ده أرقام في سطر اليوزر في [[/etc/shadow]]: الـ hash، وتاريخ آخر تغيير، وكام يوم مسموح، وإمتى الحساب كله يقفل. [[passwd]] و [[chage]] و [[usermod -e]] بيغيّروا الأرقام دي بس. اتجرب على يوزر ali في container أوبونتو 24.04، والتاريخ يومها كان 2026-10-06.
+
+---
+
+## ١. [[sudo passwd -S ali]]
+
+[[-S]] (status) سطر واحد عن حالة الباسورد:
+
+~~~text الناتج
+ali P 2026-10-06 0 99999 7 -1
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ali]] | اليوزر |
+| [[P]] | Password: عنده باسورد شغال. ([[L]] = Locked مقفول، و [[NP]] = No Password من غير باسورد خالص) |
+| [[2026-10-06]] | آخر مرة الباسورد اتغير |
+| [[0]] | min: أقل أيام بين تغييرين |
+| [[99999]] | max: لازم يتغير كل كام يوم (99999 يعني عمليًا أبدًا) |
+| [[7]] | warn: تنبيه قبل الانتهاء بكام يوم |
+| [[-1]] | inactive: مفيش فترة سماح بعد الانتهاء |
+
+---
+
+## ٢. [[sudo passwd -l ali]]
+
+[[-l]] (lock):
+
+~~~text الناتج
+passwd: password changed.
+ali L 2026-10-06 0 99999 7 -1
+~~~
+
+السطر الأول رسالة عامة بتطلع مع أي تعديل، مش معناها الباسورد نفسه اتغير. والتاني (من [[passwd -S]]) بقى [[L]]. واللي حصل في shadow:
+
+~~~text الناتج: أول ١٢ حرف من سطر ali
+ali:!$y$j9T$
+~~~
+
+[[!]] اتحطت قدام الـ hash، فمفيش أي باسورد هيطابقه. والدخول بمفتاح SSH بيفضل شغال، لأنه مبيقارنش hash أصلًا.
+
+---
+
+## ٣. [[sudo passwd -u ali]]
+
+[[-u]] (unlock) بيشيل الـ [[!]]، فالحالة ترجع [[P]] والباسورد القديم يشتغل تاني.
+
+---
+
+## ٤. [[sudo passwd -e ali]]
+
+[[-e]] (expire) بيعتبر الباسورد منتهي:
+
+~~~text الناتج: passwd -S ali
+ali P 1970-01-01 0 99999 7 -1
+~~~
+
+خلّى تاريخ آخر تغيير **صفر**، يعني «اتغير يوم 1970-01-01». فأول ما ali يدخل، النظام يشوف إن الباسورد عدّى عليه أكتر من الـ max، ويقوله:
+
+~~~text الناتج (من الحل)
+You are required to change your password immediately (administrator enforced).
+~~~
+
+---
+
+## ٥. [[sudo chage -M 90 -m 1 -W 7 -E 2026-12-31 ali]]
+
+[[chage]] (change age) بيظبط المواعيد كلها مرة واحدة:
+
+| الحتة | معناها |
+|---|---|
+| [[-M 90]] | Maximum: لازم يغيّره كل ٩٠ يوم |
+| [[-m 1]] | minimum: مايغيّرهوش تاني قبل يوم، عشان ميرجعش للقديم على طول |
+| [[-W 7]] | Warning: ينبّهه قبلها بأسبوع |
+| [[-E 2026-12-31]] | Expire: الحساب **كله** يقفل في التاريخ ده |
+
+مبيطبعش حاجة. والسطر في shadow (من الحقل التالت):
+
+~~~text الناتج
+0:1:90:7::20818:
+~~~
+
+[[0]] آخر تغيير (لسه منتهي من الخطوة اللي فاتت)، و [[1]] min، و [[90]] max، و [[7]] warn، وفاضي inactive، و [[20818]] تاريخ انتهاء الحساب بالأيام من 1970، وده 2026-12-31.
+
+---
+
+## ٦. [[sudo chage -l ali]]
+
+[[-l]] (list) نفس الأرقام بكلام مقروء. وعشان ali لسه عليه [[passwd -e]]:
+
+~~~text الناتج
+Last password change                                    : password must be changed
+Password expires                                        : password must be changed
+Password inactive                                       : password must be changed
+Account expires                                         : Dec 31, 2026
+Minimum number of days between password change          : 1
+Maximum number of days between password change          : 90
+Number of days of warning before password expires       : 7
+~~~
+
+وبعد ما رجّعتله باسورد عادي ونفّذت نفس سطر chage:
+
+~~~text الناتج
+Last password change                                    : Oct 06, 2026
+Password expires                                        : Jan 04, 2027
+Password inactive                                       : never
+Account expires                                         : Dec 31, 2026
+~~~
+
+[[Jan 04, 2027]] = ٦ أكتوبر + ٩٠ يوم. لاحظ الفرق: **الباسورد** بينتهي (يغيّره ويكمّل)، و **الحساب** بينتهي (مفيش دخول خالص).
+
+---
+
+## ٧. [[sudo usermod -e 1 ali]]
+
+[[-e]] هنا (expire date) تاريخ انتهاء الحساب، و [[1]] يعني يوم واحد بعد 1970-01-01. يعني الحساب منتهي من زمان:
+
+~~~text الناتج
+Account expires                                         : Jan 02, 1970
+Your account has expired; please contact your system administrator.
+su: Authentication failure
+~~~
+
+السطرين التانيين لما root نفسه عمل [[su - ali]]: انتهاء الحساب بيتشيك مع أي طريقة دخول، حتى مفتاح SSH. وده الفرق عن [[passwd -l]].
+
+---
+
+## ٨. [[sudo usermod -e "" ali]]
+
+تاريخ فاضي يعني «مفيش انتهاء»:
+
+~~~text الناتج: chage -l ali | grep "Account expires"
+Account expires                                         : never
+~~~
+
+---
+
+## الخلاصة
+
+| عايز | الأمر | بيلمس إيه في shadow |
+|---|---|---|
+| أشوف الحالة | [[passwd -S]] أو [[chage -l]] | بيقرا بس |
+| أقفل الباسورد بس | [[passwd -l]] | [[!]] قدام الـ hash |
+| يغيّر الباسورد أول دخول | [[passwd -e]] | آخر تغيير = 0 |
+| سياسة كل ٩٠ يوم | [[chage -M 90 -m 1 -W 7]] | الحقول ٤ و ٥ و ٦ |
+| أقفل الحساب كله | [[usermod -e 1]] | الحقل ٨ |
+
+والماك مفيهوش [[chage]] ولا [[passwd -l]]: سياسات الباسورد هناك بـ [[pwpolicy]] (من الـ docs، مش متجرّب هنا).`,
           lines: [
             R`حالة الباسورد: P أو L أو NP، وتاريخ آخر تغيير.`,
             R`اقفل الباسورد ([[!]] قدام الـ hash). الدخول بالمفتاح لسه شغال.`,
@@ -284,6 +923,127 @@ sudo passwd -S root`,
             when: R`تجرّب صلاحيات يوزر: [[sudo -u www-data cat /var/www/app/.env]]. شغل كتير كـ root ورا بعض (تسطيب وتعديل إعدادات): [[sudo -i]] وبعدين [[exit]] أول ما تخلص. أداة خدمة: [[sudo -u postgres psql]]. يوزر جديد عايز تعرف يقدر يعمل إيه: [[sudo -l -U deploy]].`,
             mistakes: R`[[su sara]] من غير شرطة، فتفضل بالـ PATH والمتغيرات بتوعك وتحصل حاجات مش منطقية. وإنك تفضل في [[sudo -i]] وتنسى، فتعمل [[git clone]] أو [[npm install]] كـ root. وإنك تحاول تدّي root باسورد على أوبونتو «عشان su يشتغل»، وده باب زيادة. و [[sudo su -]]: بيشتغل، بس [[sudo -i]] نفس الحاجة وأوضح.`
           },
+          teach: R`## الفكرة
+
+كل الأشكال دي بتجاوب على سؤالين: هتبقى مين؟ وهتاخد «بيئة» مين (الفولدر الحالي و [[HOME]] والمتغيرات)؟ عشان نشوف الفرق، اتجربوا كلهم في container أوبونتو 24.04 من نفس المكان: فولدر [[/srv]] وفيه متغير [[MYVAR=hello]] عملناله [[export]]، وفي كل شكل طبعنا:
+
+~~~bash
+echo "whoami=$(whoami) pwd=$PWD HOME=$HOME MYVAR=$MYVAR"
+~~~
+
+[[whoami]] انت مين دلوقتي، و [[$PWD]] الفولدر الحالي، و [[$HOME]] فولدر الـ home.
+
+---
+
+## ١. [[su - sara]]
+
+[[su]] (switch user) بيطلب **باسورد sara** (مش باسوردك). والشرطة [[-]] معناها login shell: كأن sara لسه داخلة من الأول.
+
+~~~text الناتج
+whoami=sara pwd=/home/sara HOME=/home/sara MYVAR=
+~~~
+
+راحت فولدرها، و [[MYVAR]] فاضي لأن البيئة اتمسحت وبدأت من جديد من ملفاتها ([[.profile]] وغيره).
+
+### وللمقارنة: [[su sara]] من غير الشرطة
+
+~~~text الناتج
+whoami=sara pwd=/srv HOME=/home/sara MYVAR=hello
+~~~
+
+بقيت sara، بس فاضل في [[/srv]] ومعاك متغيراتك انت. خليط بين اليوزرين، وده مصدر مشاكل غريبة، فاستخدم الشرطة دايمًا.
+
+---
+
+## ٢. [[whoami; pwd]]
+
+[[;]] بيفصل أمرين في سطر واحد. ده اللي بيأكدلك انت مين وفين بعد السطر الأول: [[sara]] و [[/home/sara]].
+
+## ٣. [[exit]]
+
+بيقفل الشيل بتاع sara ويرجّعك للشيل اللي كنت فيه، بيوزرك انت. (Ctrl+D نفس الحاجة.)
+
+---
+
+## ٤ و ٥. [[sudo -i]]
+
+[[sudo]] بيطلب **باسوردك انت**، ويشيك إنك مسموحلك في [[/etc/sudoers]]. و [[-i]] (login) شيل root كامل، زي [[su -]] بالظبط بس من غير باسورد root:
+
+~~~text الناتج
+whoami=root pwd=/root HOME=/root MYVAR=
+~~~
+
+وعلى أوبونتو ده الطريق الوحيد لشيل root، لأن root نفسه ملوش باسورد (الخطوة ١٠).
+
+---
+
+## ٦ و ٧. [[sudo -s]]
+
+[[-s]] (shell): شيل root من غير login:
+
+~~~text الناتج
+whoami=root pwd=/srv HOME=/root MYVAR=
+~~~
+
+فاضل في [[/srv]]، بس [[HOME]] بقى [[/root]] و [[MYVAR]] اتمسح. ليه اتمسح؟ لأن sudo بيمسح معظم المتغيرات دايمًا (إعداد [[env_reset]] في sudoers)، حتى من غير [[-i]].
+
+---
+
+## ٨. [[sudo -u sara whoami]]
+
+[[-u sara]] (user) شغّل الأمر ده بس كـ sara مش root، وارجع على طول:
+
+~~~text الناتج (اتجربت بـ ali)
+ali
+~~~
+
+ونفس السطر بتاع البيئة: [[whoami=ali pwd=/srv HOME=/home/ali MYVAR=]]. ده اللي بتستخدمه مع يوزرات الخدمات: [[sudo -u postgres psql]].
+
+---
+
+## ٩. [[sudo -l]]
+
+[[-l]] (list): أنا مسموحلي بإيه؟ كـ sara (في جروب sudo):
+
+~~~text الناتج
+Matching Defaults entries for sara on server:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User sara may run the following commands on server:
+    (ALL : ALL) ALL
+~~~
+
+### نقرا الناتج
+
+- [[env_reset]]: امسح المتغيرات (ده اللي شفناه في [[MYVAR]]).
+- [[secure_path=...]]: الـ PATH الثابت اللي sudo بيدوّر فيه على الأوامر. [[~/.local/bin]] مش فيه، فأمر متسطب هناك يقول command not found مع sudo بس.
+- [[(ALL : ALL) ALL]]: تقدر تشغّل كأي يوزر ([[ALL]] الأولى) وأي جروب (التانية) أي أمر (التالتة). و [[server]] اسم الجهاز.
+
+ويوزر مش في sudo بياخد [[Sorry, user ali may not run sudo on server.]] (من الحل).
+
+---
+
+## ١٠. [[sudo passwd -S root]]
+
+~~~text الناتج
+root L 2026-09-17 0 99999 7 -1
+~~~
+
+[[L]] يعني باسورد root مقفول (درس «passwd -l و chage»). فـ [[su -]] على أوبونتو هيرد [[su: Authentication failure]] مهما كتبت.
+
+---
+
+## الخلاصة
+
+| الأمر | هتبقى | باسورد مين | الفولدر | المتغيرات |
+|---|---|---|---|---|
+| [[su sara]] | sara | sara | زي ما هو | بتوعك |
+| [[su - sara]] | sara | sara | home بتاعها | بتوعها |
+| [[sudo -i]] | root | انت | [[/root]] | root |
+| [[sudo -s]] | root | انت | زي ما هو | متمسحة |
+| [[sudo -u sara أمر]] | sara لأمر واحد | انت | زي ما هو | متمسحة |
+
+وعلى الماك نفس الأوامر بالظبط، و root مقفول هناك كمان، بس جروب المديرين اسمه [[admin]] (من الـ docs، مش متجرّب هنا).`,
           lines: [
             R`بقيت sara بكامل بيئتها (login shell). هيسألك باسورد sara.`,
             R`اتأكد: انت sara وفي فولدرها.`,
@@ -344,6 +1104,152 @@ sudo -u deploy sudo -n whoami`,
             when: R`يوزر deploy بيعمل restart لخدمة: القاعدة اللي فوق. فريق محتاج reload لـ Nginx بس: [[%webteam ALL=(root) /usr/bin/systemctl reload nginx]]. سكربت monitoring بيقرا لوج محمي: أمر [[cat]] لملف محدد. وبعد أي تعديل: [[sudo visudo -c]] و [[sudo -l -U اليوزر]].`,
             mistakes: R`[[sudo nano /etc/sudoers]] بدل visudo. و [[NOPASSWD: ALL]] لأي يوزر بيدخل من سكربت أو CI. وأمر من غير مسار كامل، أو بـ [[*]] في الـ arguments (بتطابق أي حاجة، حتى arguments خطيرة). واسم ملف فيه نقطة فيتجاهل وتقعد تدوّر ليه مش شغال. وإنك تختار (Q) في سؤال visudo بعد غلطة: بيحفظ الملف الغلط.`
           },
+          teach: R`## الفكرة
+
+عايزين يوزر [[deploy]] يقدر يعمل restart لتطبيق اسمه myapp بـ sudo من غير باسورد، ومايقدرش يعمل أي حاجة تانية. ده سطرين في ملف جوه [[/etc/sudoers.d/]]، و [[visudo]] هو اللي بيكتبهم بأمان. اتجرب في container أوبونتو 24.04، ومفيش systemd في الـ container، فعملت [[/usr/bin/systemctl]] وهمي بيطبع الكلام اللي جاله بس، عشان نشوف sudo سمح ولا لأ.
+
+---
+
+## ١. [[sudo visudo -f /etc/sudoers.d/deploy]]
+
+[[visudo]] بيفتح الملف في محرر (nano على أوبونتو)، و [[-f]] (file) الملف ده بدل [[/etc/sudoers]]. ولما تحفظ وتخرج، بيفحصه قبل ما يطبّقه.
+
+### السطرين اللي بتكتبهم
+
+~~~text /etc/sudoers.d/deploy
+Cmnd_Alias MYAPP = /usr/bin/systemctl restart myapp, /usr/bin/systemctl status myapp
+deploy ALL=(root) NOPASSWD: MYAPP
+~~~
+
+السطر الأول: [[Cmnd_Alias]] (command alias) اسم لمجموعة أوامر، الاسم بحروف كابيتال، والأوامر بمسارها الكامل ومفصولة بفاصلة.
+
+السطر التاني القاعدة نفسها:
+
+| الحتة | معناها |
+|---|---|
+| [[deploy]] | مين (و [[%webteam]] لجروب، الـ [[%]] معناها جروب) |
+| [[ALL]] | على أنهي جهاز: أي جهاز |
+| [[(root)]] | يشغّل الأوامر كـ root |
+| [[NOPASSWD:]] | من غير ما يسأل باسورد. النقطتين جزء منها |
+| [[MYAPP]] | الأوامر المسموحة: اللي في الـ alias |
+
+ولأن الأوامر مكتوبة بالـ arguments بتاعتها ([[restart myapp]])، دي بالظبط بس اللي مسموحة؛ [[stop myapp]] مش مسموح.
+
+### لو كتبت غلطة
+
+جربت سطر من غير النقطتين بعد NOPASSWD:
+
+~~~text الناتج
+/tmp/bad:1:41: syntax error
+deploy ALL=(root) NOPASSWD /usr/bin/true
+                                        ^
+~~~
+
+[[1:41]] السطر ١ والحرف ٤١، والـ [[^]] تحت مكان الغلطة. و visudo جوه المحرر بيسألك [[What now?]]: [[e]] تصلّح، و [[x]] تخرج من غير حفظ، و [[Q]] تحفظ الغلط (متختارهاش).
+
+---
+
+## ٢. [[sudo visudo -c]]
+
+[[-c]] (check) يفحص كل الملفات من غير ما يفتح محرر:
+
+~~~text الناتج
+/etc/sudoers: parsed OK
+/etc/sudoers.d/README: parsed OK
+/etc/sudoers.d/deploy: parsed OK
+~~~
+
+فحص الملف الأساسي، وكل ملف في [[sudoers.d]]. والسبب إن آخر سطر في [[/etc/sudoers]] هو:
+
+~~~text الناتج: grep -v '^#' /etc/sudoers (السطور المهمة)
+Defaults	env_reset
+Defaults	secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
+root	ALL=(ALL:ALL) ALL
+%admin ALL=(ALL) ALL
+%sudo	ALL=(ALL:ALL) ALL
+@includedir /etc/sudoers.d
+~~~
+
+[[%sudo ALL=(ALL:ALL) ALL]] هي اللي بتدّي جروب sudo كل حاجة، و [[@includedir]] بيقرا كل ملفات الفولدر.
+
+---
+
+## ٣. [[ls -l /etc/sudoers.d/]]
+
+~~~text الناتج
+-r--r----- 1 root root 1068 Jan 29  2024 README
+-r--r----- 1 root root  119 Oct  6 07:55 deploy
+~~~
+
+[[-r--r-----]] = [[0440]]: root والجروب root يقروا بس، ومحدش يكتب. sudo بيرفض أي ملف حد غير root يقدر يكتب فيه، لأن اللي يكتب فيه يقدر يدّي نفسه root.
+
+---
+
+## ٤. [[sudo -l -U deploy]]
+
+[[-l]] (list) و [[-U deploy]] لليوزر ده (محتاج root):
+
+~~~text الناتج
+User deploy may run the following commands on server:
+    (root) NOPASSWD: /usr/bin/systemctl restart myapp, /usr/bin/systemctl status myapp
+~~~
+
+sudo فك الـ alias وعرض الأوامر نفسها. (وفوقها سطور [[Matching Defaults]] زي درس «su - و sudo -i».)
+
+---
+
+## ٥. [[sudo -u deploy sudo -n systemctl restart myapp]]
+
+السطر فيه sudo مرتين:
+
+1. [[sudo -u deploy]]: احنا root، فبنشغّل اللي بعده كـ deploy عشان نجرّب صلاحياته.
+2. [[sudo -n systemctl restart myapp]]: ده deploy نفسه بيطلب sudo. و [[-n]] (non-interactive) يعني متسألش باسورد: لو محتاج باسورد افشل على طول، بدل ما تستنى حد يكتب.
+
+~~~text الناتج
+fake systemctl: restart myapp
+~~~
+
+اتنفّذ كـ root من غير باسورد (ده الـ systemctl الوهمي بيقول وصله إيه).
+
+---
+
+## ٦. [[sudo -u deploy sudo -n whoami]]
+
+~~~text الناتج
+sudo: a password is required
+~~~
+
+[[whoami]] مش في القاعدة، فـ sudo كان هيسأل باسورد، و [[-n]] خلاه يفشل (exit code 1). ونفس الرد لـ [[systemctl stop myapp]].
+
+---
+
+## الطريقة من غير محرر (الـ solCode)
+
+~~~bash
+echo 'deploy ALL=(root) NOPASSWD: /usr/bin/systemctl restart myapp' > /tmp/deploy
+sudo visudo -cf /tmp/deploy && sudo install -m 0440 -o root -g root /tmp/deploy /etc/sudoers.d/deploy
+~~~
+
+1. [[echo '...' > /tmp/deploy]] اكتب القاعدة في ملف مؤقت.
+2. [[visudo -cf /tmp/deploy]] افحصه (check + file). طبع [[/tmp/deploy: parsed OK]].
+3. [[&&]] كمّل بس لو الفحص نجح.
+4. [[install]] بينسخ الملف ويظبط الصلاحيات في خطوة واحدة: [[-m 0440]] (mode) و [[-o root]] (owner) و [[-g root]] (group).
+
+ده الشكل اللي تحطه في سكربت تجهيز سيرفر.
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| اكتب القاعدة | [[visudo -f /etc/sudoers.d/اسم]] (اسم من غير نقطة) |
+| افحص الكل | [[visudo -c]] |
+| الصلاحيات | [[0440]] ملك root |
+| اتأكد | [[sudo -l -U اليوزر]] |
+| جرّب من غير ما يعلّق | [[sudo -n]] |
+
+وعلى الماك visudo موجود بنفس الـ syntax، والفولدر [[/private/etc/sudoers.d]]، وجروب المديرين [[%admin]] (من الـ docs، مش متجرّب هنا).`,
           lines: [
             R`افتح ملف القواعد الخاص بـ deploy بأمان (هيتفحص لما تحفظ).`,
             R`افحص كل ملفات sudoers.`,
@@ -403,6 +1309,166 @@ sudo find / -xdev -perm -2000 -type f 2>/dev/null`,
             when: R`فولدر فريق: [[2775]]. فولدر الكل بيرمي فيه ملفات (uploads مؤقتة): [[1777]] زي [[/tmp]]. مراجعة أمنية دورية لسيرفر: الـ find وتقارنه بنسخة قديمة ([[> suid-list.txt]] وبعدين [[diff]]). و setuid بتاعك انت: تقريبًا أبدًا، استخدم sudo بقاعدة محددة.`,
             mistakes: R`[[chmod 777]] على فولدر مشترك من غير t، فأي حد يمسح شغل أي حد. و [[chmod u+s]] على سكربت وتستغرب إنه مش شغال كـ root. و [[chmod -R 755]] تفتكره شال الـ setgid من الفولدرات وهو مشالوش. و [[find / -perm 4000]] من غير الشرطة: بيدوّر على الصلاحيات دي «بالظبط» (4000 لوحدها)، فمش هيلاقي [[4755]].`
           },
+          teach: R`## الفكرة
+
+الصلاحيات العادية ٩ حروف (rwx للصاحب والجروب والباقي). فوقهم ٣ «bits» خاصة، كل واحدة ليها رقم قدام الأرقام التلاتة وحرف بيظهر مكان x:
+
+| الاسم | الرقم | الحرف | بيظهر فين |
+|---|---|---|---|
+| setuid | 4 | [[s]] | مكان x الصاحب |
+| setgid | 2 | [[s]] | مكان x الجروب |
+| sticky | 1 | [[t]] | مكان x الباقي |
+
+كل الناتج تحت من container أوبونتو 24.04.
+
+---
+
+## ١. [[ls -l /usr/bin/passwd /usr/bin/sudo]]
+
+~~~text الناتج
+-rwsr-xr-x 1 root root  64152 May 30  2024 /usr/bin/passwd
+-rwsr-xr-x 1 root root 282032 Sep 21 18:37 /usr/bin/sudo
+~~~
+
+[[rws]] في خانة الصاحب: setuid. يعني أي حد يشغّل البرنامج ده، بيشتغل بصلاحيات **صاحبه** (root). عشان كده انت كيوزر عادي تقدر تكتب [[passwd]] وتغيّر باسورك، والأمر يكتب في [[/etc/shadow]] اللي انت أصلًا مش قادر تقراه.
+
+---
+
+## ٢. [[ls -ld /tmp]]
+
+[[-d]] (directory) اعرض الفولدر نفسه مش اللي جواه:
+
+~~~text الناتج
+drwxrwxrwt 1 root root 4096 Oct  6 07:55 /tmp
+~~~
+
+الكل عنده rwx، بس آخر حرف [[t]]: sticky. معناها: كل واحد يمسح أو يغيّر اسم ملفاته **هو** بس. جربتها: ali عملت [[/tmp/ali.txt]]، و mona حاولت تمسحه:
+
+~~~text الناتج
+rm: cannot remove '/tmp/ali.txt': Operation not permitted
+~~~
+
+---
+
+## ٣ و ٤. [[sudo chmod 2775 /srv/shared]]
+
+بعد ما عملنا الفولدر بـ [[mkdir -p]]: الـ [[2]] setgid، و [[775]] العادية:
+
+~~~text الناتج: ls -ld /srv/shared
+drwxrwsr-x 2 root root 4096 Oct  6 07:56 /srv/shared
+~~~
+
+[[s]] في خانة الجروب. على فولدر معناها: أي ملف جديد جواه ياخد جروب الفولدر (درس «groupadd و gpasswd»).
+
+---
+
+## ٥. [[sudo chmod +t /srv/shared]]
+
+[[+t]] زوّد الـ sticky من غير ما تلمس الباقي (الشكل بالحروف بيضيف، مش بيستبدل):
+
+~~~text الناتج
+drwxrwsr-t 2 root root 4096 Oct  6 07:56 /srv/shared
+~~~
+
+ليه [[t]] صغيرة؟ لأن x بتاعة الباقي موجودة تحتها (775 فيها 5 = r-x). لو مكانتش موجودة كانت هتبقى [[T]] كابيتال.
+
+---
+
+## ٦. [[stat -c '%a %A %n' ...]]
+
+[[stat]] بيعرض معلومات الملف، و [[-c]] (format) بشكل انت تحدده:
+
+| الحتة | معناها |
+|---|---|
+| [[%a]] | الصلاحيات أرقام (access rights in octal) |
+| [[%A]] | الصلاحيات حروف زي ls |
+| [[%n]] | الاسم (name) |
+
+~~~text الناتج
+3775 drwxrwsr-t /srv/shared
+1777 drwxrwxrwt /tmp
+4755 -rwsr-xr-x /usr/bin/passwd
+~~~
+
+الرقم الأول هو جمع البتات الخاصة: [[3]] = 2 (setgid) + 1 (sticky)، و [[1]] sticky بس، و [[4]] setuid بس.
+
+---
+
+## ٧. [[sudo chmod g-s,-t /srv/shared]]
+
+[[g-s]] شيل s من الجروب، و [[-t]] شيل الـ sticky، والفاصلة بتجمع تعديلين في أمر:
+
+~~~text الناتج: stat -c '%a %A %n' /srv/shared
+775 drwxrwxr-x /srv/shared
+~~~
+
+### ليه بالحروف مش [[chmod 755]]؟
+
+جربت على فولدر عليه setgid:
+
+~~~text الناتج
+after chmod 755:    2755 drwxr-sr-x
+after chmod 00755:  755 drwxr-xr-x
+~~~
+
+GNU chmod بيحافظ على الـ setgid في الفولدرات لو كتبت ٣ أو ٤ أرقام، عشان متبوّظش فولدر مشترك بالغلط. لازم [[g-s]] أو ٥ أرقام.
+
+---
+
+## ٨. [[sudo find / -xdev -perm -4000 -type f 2>/dev/null]]
+
+| الحتة | معناها |
+|---|---|
+| [[find /]] | دوّر من أول الديسك |
+| [[-xdev]] | متعدّيش لـ filesystem تاني ([[/proc]] و [[/sys]] وديسكات متركّبة) |
+| [[-perm -4000]] | الـ setuid موجود، ومعاه أي صلاحيات تانية. الشرطة قبل الرقم هي اللي بتقول «ومعاه أي حاجة» |
+| [[-type f]] | ملفات بس |
+| [[2>/dev/null]] | ارمي رسايل الـ errors (stream رقم 2) في [[/dev/null]] |
+
+~~~text الناتج
+/usr/bin/mount
+/usr/bin/chsh
+/usr/bin/gpasswd
+/usr/bin/passwd
+/usr/bin/umount
+/usr/bin/newgrp
+/usr/bin/su
+/usr/bin/chfn
+/usr/bin/at
+/usr/bin/sudo
+~~~
+
+دي البرامج المعروفة اللي محتاجة root عشان تشتغل لليوزر العادي. ([[at]] ظهر لأني كنت مسطّبه في الـ container ده لدرس at.)
+
+---
+
+## ٩. [[sudo find / -xdev -perm -2000 -type f 2>/dev/null]]
+
+نفس الكلام لـ setgid:
+
+~~~text الناتج
+/usr/bin/expiry
+/usr/bin/chage
+/usr/bin/at
+/usr/sbin/unix_chkpwd
+/usr/sbin/pam_extrausers_chkpwd
+~~~
+
+[[chage]] مثلًا جروبه [[shadow]]، فبيقدر يقرا [[/etc/shadow]] (اللي جروبه shadow) من غير root كامل.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | تشوف |
+|---|---|---|
+| فولدر فريق | [[chmod 2775]] | [[drwxrwsr-x]] |
+| فولدر الكل يرمي فيه | [[chmod 1777]] | [[drwxrwxrwt]] |
+| تشيلهم | [[chmod g-s,-t]] (مش [[755]]) | |
+| الأرقام | [[stat -c '%a %A %n']] | [[3775]] |
+| فحص أمني | [[find / -xdev -perm -4000 -type f]] | |
+
+وعلى الماك نفس الحروف والأرقام، و [[/tmp]] هناك اختصار لـ [[/private/tmp]] وعليه t، و [[stat]] بتاع الماك (BSD) مفيهوش [[-c]]: المكافئ [[stat -f '%Mp%Lp %Sp %N']] ([[M]] رقم البتات الخاصة و [[L]] الرقم العادي) (من الـ man page، مش متجرّب هنا).`,
           lines: [
             R`[[s]] مكان x الصاحب: البرنامجين بيشتغلوا كـ root.`,
             R`[[t]] في الآخر: sticky، كل واحد يمسح ملفاته بس.`,
@@ -459,6 +1525,129 @@ echo 'umask 027' >> ~/.bashrc`,
             when: R`سيرفر فيه أسرار: [[027]] أو [[077]] لليوزر اللي بيعمل الباك أب. فولدر مشترك: [[002]]. خدمة بتكتب ملفات المفروض Nginx يقراها: [[UMask=0022]] أو [[0027]] مع جروب مشترك. سكربت بيعمل مفتاح أو ملف .env: [[umask 077]] في أوله (أو [[install -m 600]]).`,
             mistakes: R`إنك تحسبها طرح فتتوقع أرقام غلط. وإنك تحط umask في [[.bashrc]] وتستغرب إن الخدمة مش متأثرة. وإنك تفتكر الـ umask بيغيّر صلاحيات الملفات الموجودة، هو للجديدة بس. و [[umask 000]] «عشان المشاكل تخلص»: زي [[chmod 777]] لكل حاجة هتتعمل.`
           },
+          teach: R`## الفكرة
+
+أي برنامج بيعمل ملف بيطلب صلاحيات كاملة تقريبًا: [[666]] (rw للكل) للملف، و [[777]] للفولدر. والـ umask «قناع» بيشيل من الطلب ده قبل ما الملف يتعمل. كل الناتج تحت كيوزر عادي (ali) جوه [[~/lab]] في container أوبونتو 24.04.
+
+---
+
+## ١. [[umask]]
+
+من غير حاجة بيطبع القيمة الحالية:
+
+~~~text الناتج (كـ ali)
+0002
+~~~
+
+٤ أرقام: الأول للبتات الخاصة (setuid وغيره) وغالبًا صفر، والتلاتة الباقيين للصاحب والجروب والباقي. وكل رقم معناه «شيل الصلاحيات دي»:
+
+| الرقم | بيشيل |
+|---|---|
+| [[0]] | ولا حاجة |
+| [[2]] | w (الكتابة) |
+| [[7]] | rwx كلها |
+
+فـ [[0002]]: شيل الكتابة من «الباقي» بس. و root على نفس الجهاز طلعله [[0022]]. ليه الفرق؟ أوبونتو بيدّي اليوزر العادي 002 لأن جروبه الأساسي باسمه ومفيش حد تاني فيه ([[USERGROUPS_ENAB yes]] في [[/etc/login.defs]]).
+
+---
+
+## ٢. [[umask -S]]
+
+[[-S]] (symbolic) بيطبع العكس: اللي **فاضل** مش اللي بيتشال:
+
+~~~text الناتج
+u=rwx,g=rwx,o=rx
+~~~
+
+[[u]] الصاحب، و [[g]] الجروب، و [[o]] الباقي (others). الباقي ناقصه w، زي ما قلنا.
+
+---
+
+## ٣. [[umask 027]]
+
+من هنا ورايح في الشيل ده: [[0]] متشيلش حاجة من الصاحب، و [[2]] شيل الكتابة من الجروب، و [[7]] شيل كله من الباقي. مبيطبعش حاجة.
+
+## ٤. [[touch secret.txt && mkdir private]]
+
+[[touch]] يعمل ملف فاضي، و [[&&]] كمّل لو نجح، و [[mkdir]] فولدر.
+
+## ٥. [[ls -ld secret.txt private]]
+
+~~~text الناتج
+drwxr-x--- 2 ali ali 4096 Oct  6 07:56 private
+-rw-r----- 1 ali ali    0 Oct  6 07:56 secret.txt
+~~~
+
+### الحسبة
+
+| | الطلب | ناقص 027 | النتيجة |
+|---|---|---|---|
+| الملف | [[rw-rw-rw-]] (666) | الجروب يفقد w، والباقي يفقد كله | [[rw-r-----]] (640) |
+| الفولدر | [[rwxrwxrwx]] (777) | نفس الكلام | [[rwxr-x---]] (750) |
+
+الملف مفيهوش x أصلًا لأن البرنامج مطلبهاش، والـ umask عمره ما بيضيف صلاحية.
+
+---
+
+## ٦ و ٧. [[umask 077]] ثم [[touch key.txt && ls -l key.txt]]
+
+[[077]] شيل كل حاجة من الجروب والباقي:
+
+~~~text الناتج
+-rw------- 1 ali ali 0 Oct  6 07:56 key.txt
+~~~
+
+انت بس تقرا وتكتب: ده اللي تحتاجه لمفتاح أو ملف [[.env]].
+
+---
+
+## ٨. [[umask 022]]
+
+رجّعها للقيمة الشائعة: ملفات [[644]] وفولدرات [[755]]. والـ umask متغيّر في الشيل ده بس، فلو قفلت الترمنال كانت هترجع لوحدها.
+
+### «طرح» ده تبسيط
+
+جربت [[umask 033]] (شيل w و x من الجروب والباقي). لو طرح كان الملف هيطلع 633:
+
+~~~text الناتج
+drwxr--r-- 2 ali ali 4096 Oct  6 07:56 d033
+-rw-r--r-- 1 ali ali    0 Oct  6 07:56 f033
+~~~
+
+الملف [[644]] والفولدر [[744]]. الـ umask بيشيل **bits**: لو الـ bit مش موجود في الطلب (x في الملف) مفيش حاجة تتشال.
+
+### ليه umask مش برنامج؟
+
+~~~text الناتج: type umask
+umask is a shell builtin
+~~~
+
+builtin يعني جوه bash نفسه. لازم يبقى كده، لأن برنامج منفصل هيغيّر الـ umask بتاعه هو ويخلص، والشيل بتاعك هيفضل زي ما هو.
+
+---
+
+## ٩. [[echo 'umask 027' >> ~/.bashrc]]
+
+[[>>]] يضيف السطر في آخر [[~/.bashrc]] من غير ما يمسح اللي فيه (بـ [[>]] كان هيمسح الملف كله). و [[.bashrc]] بيتقري مع كل ترمنال تفاعلي جديد، فالقيمة تتثبت ليك:
+
+~~~text الناتج: tail -1 ~/.bashrc
+umask 027
+~~~
+
+بس الخدمات (systemd) مبتقراش [[.bashrc]]، ليها [[UMask=]] في ملف الخدمة.
+
+---
+
+## الخلاصة
+
+| umask | ملف | فولدر | امتى |
+|---|---|---|---|
+| [[022]] | 644 | 755 | الافتراضي لـ root |
+| [[002]] | 664 | 775 | يوزر أوبونتو العادي، وفولدرات الفريق |
+| [[027]] | 640 | 750 | سيرفرات |
+| [[077]] | 600 | 700 | أسرار ومفاتيح |
+
+وعلى الماك نفس الأمر والافتراضي [[0022]]، وهناك [[launchctl config user umask]] لو عايزها لكل البرامج مش الترمنال بس (من الـ docs، مش متجرّب هنا).`,
           lines: [
             R`القيمة الحالية بالأرقام.`,
             R`نفس القيمة بالحروف: الصلاحيات اللي فاضلة.`,
@@ -514,6 +1703,176 @@ sudo setfacl -b /srv/reports`,
             when: R`يوزر واحد زيادة على فولدر: [[setfacl -m u:اسمه:rwX]] ومعاه [[-d -m]]. سكربت باك أب بيوزر لوحده محتاج يقرا [[/var/www]]: [[setfacl -R -m u:backup:rX]] و [[-d]]. فولدر مشترك ليوزرز الـ umask بتاعهم 022: default ACL للجروب بيخلي الملفات الجديدة قابلة للكتابة للجروب مهما كان الـ umask.`,
             mistakes: R`ACL على الموجود ونسيان [[-d]] للجديد. و [[chmod]] على ملف عليه ACL فتقص الـ mask وتقفل الناس من غير ما تعرف ليه (بص على [[#effective]]). ونسخ الملفات بـ [[cp]] عادي لمكان تاني والـ ACL تضيع. وإنك متاخدش بالك من الـ [[+]] في [[ls -l]] وانت بتحقق ليه حد عنده صلاحية مش باينة.`
           },
+          teach: R`## الفكرة
+
+الفولدر [[/srv/reports]] ملك mona وصلاحياته [[750]]، يعني ali (مش صاحبه ولا في جروبه) ممنوع:
+
+~~~text الناتج: ls -ld /srv/reports ثم ls كـ ali
+drwxr-x--- 2 mona mona 4096 Oct  6 07:56 /srv/reports
+ls: cannot open directory '/srv/reports': Permission denied
+~~~
+
+عايزين ali بالذات يكتب فيه، من غير ما نغيّر الصاحب ولا الجروب. ده شغل الـ ACL (Access Control List): لستة قواعد إضافية متعلّقة في الملف. كله اتجرب في container أوبونتو 24.04.
+
+---
+
+## ١. [[sudo apt install acl]]
+
+الأوامر نفسها ([[setfacl]] و [[getfacl]]) في باكدج اسمه [[acl]]، مش موجود في صورة Docker ولا أوبونتو minimal.
+
+---
+
+## ٢. [[sudo setfacl -m u:ali:rwx /srv/reports]]
+
+| الحتة | معناها |
+|---|---|
+| [[setfacl]] | set file ACL |
+| [[-m]] | modify: ضيف قاعدة أو عدّلها |
+| [[u:ali:rwx]] | ٣ حتت بينهم [[:]]: النوع ([[u]] user، و [[g]] group)، والاسم، والصلاحيات |
+
+مبيطبعش حاجة. ودلوقتي ali بيقدر يعمل [[ls]] ويكتب.
+
+## ٣. [[sudo setfacl -m u:ali:rw /srv/reports/q3.txt]]
+
+نفس الفكرة على ملف جوه: ali يقرا ويكتب [[q3.txt]]. جربت [[echo more >> q3.txt]] كـ ali ونجح.
+
+---
+
+## ٤. [[ls -ld /srv/reports]]
+
+~~~text الناتج
+drwxrwx---+ 2 mona mona 4096 Oct  6 07:56 /srv/reports
+~~~
+
+حاجتين:
+
+- [[+]] في الآخر: الفولدر ده عليه ACL. لو شفتها، [[ls -l]] مش بيقولك الحكاية كلها.
+- خانة الجروب بقت [[rwx]] مع إن جروب mona لسه [[r-x]]. ليه؟ لما يبقى فيه ACL، الخانة دي بتعرض الـ **mask** مش الجروب. (الخطوة الجاية.)
+
+---
+
+## ٥. [[getfacl /srv/reports]]
+
+~~~text الناتج
+getfacl: Removing leading '/' from absolute path names
+# file: srv/reports
+# owner: mona
+# group: mona
+user::rwx
+user:ali:rwx
+group::r-x
+mask::rwx
+other::---
+~~~
+
+| السطر | معناه |
+|---|---|
+| السطر الأول | ملاحظة بس: بيكتب المسار من غير [[/]] عشان الناتج ينفع يترجّع في مكان تاني |
+| [[# ...]] | تعليقات: الملف وصاحبه وجروبه ([[-c]] بيشيلهم) |
+| [[user::rwx]] | صاحب الملف (الاسم فاضي = الصاحب) |
+| [[user:ali:rwx]] | القاعدة اللي ضفناها |
+| [[group::r-x]] | جروب الملف |
+| [[mask::rwx]] | أقصى صلاحية لأي قاعدة غير الصاحب و other |
+| [[other::---]] | الباقي |
+
+---
+
+## ٦. [[sudo setfacl -d -m u:ali:rwx /srv/reports]]
+
+القاعدة اللي فاتت على الفولدر نفسه، مش على الملفات اللي **هتتعمل** جواه بعدين. جربت: mona عملت [[before.txt]] قبل السطر ده، و [[after.txt]] بعده (والاتنين بـ umask 027):
+
+~~~text الناتج: ls -l /srv/reports
+-rw-rw----+ 1 mona mona  0 Oct  6 07:56 after.txt
+-rw-r-----  1 mona mona  0 Oct  6 07:56 before.txt
+~~~
+
+[[-d]] (default) عمل «وصفة» بتتنسخ لأي حاجة جديدة. و [[getfacl -c after.txt]]:
+
+~~~text الناتج
+user::rw-
+user:ali:rwx	#effective:rw-
+group::r-x	#effective:r--
+mask::rw-
+other::---
+~~~
+
+[[#effective:rw-]]: القاعدة بتقول rwx، بس الـ mask [[rw-]] فالفعلي rw. الـ mask اتحسب من الصلاحيات اللي البرنامج طلبها للملف (من غير x). ولاحظ إن الـ umask 027 اتجاهل: الملف طلع [[rw-rw----]] مش [[rw-r-----]]، لأن الـ default ACL بيحل محل الـ umask.
+
+---
+
+## ٧. [[sudo setfacl -R -m g:webteam:rX /srv/reports]]
+
+- [[-R]] (recursive) على الفولدر وكل اللي جواه دلوقتي.
+- [[g:webteam]] قاعدة لجروب.
+- [[X]] كابيتال: x للفولدرات بس (عشان يدخلوها)، ومش للملفات العادية.
+
+~~~text الناتج: getfacl -c /srv/reports/q3.txt
+user::rw-
+user:ali:rw-
+group::r--
+group:webteam:r--
+mask::rw-
+other::---
+~~~
+
+الملف خد [[r--]] من غير x، زي ما الـ [[X]] وعدت.
+
+---
+
+## ٨. [[sudo setfacl -x u:ali /srv/reports/q3.txt]]
+
+[[-x]] شيل قاعدة واحدة (من غير صلاحيات، الاسم بس كفاية):
+
+~~~text الناتج: getfacl -c /srv/reports/q3.txt
+user::rw-
+group::r--
+group:webteam:r--
+mask::r--
+other::---
+~~~
+
+سطر ali راح، والـ mask اتحسب تاني من اللي فاضل.
+
+### الفخ: [[chmod]] على ملف عليه ACL
+
+قبل الخطوة الجاية جربت [[chmod 750 /srv/reports]]:
+
+~~~text الناتج: getfacl -c /srv/reports
+user::rwx
+user:ali:rwx	#effective:r-x
+group::r-x
+group:webteam:r-x
+mask::r-x
+other::---
+~~~
+
+الـ 5 بتاعة الجروب راحت على الـ mask، فـ ali فقد الكتابة من غير أي رسالة.
+
+---
+
+## ٩. [[sudo setfacl -b /srv/reports]]
+
+[[-b]] (remove all) شيل كل الـ ACL، بما فيها الـ default:
+
+~~~text الناتج
+drwxr-x--- 2 mona mona 4096 Oct  6 07:56 /srv/reports
+~~~
+
+الـ [[+]] اختفت ورجعنا للـ rwx العادية.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| يوزر ياخد صلاحية | [[setfacl -m u:اسم:rwX مسار]] |
+| وعلى الحاجات الجديدة كمان | [[setfacl -d -m u:اسم:rwX مسار]] |
+| جروب على فولدر كامل | [[setfacl -R -m g:اسم:rX مسار]] |
+| أشوف القواعد | [[getfacl مسار]] (وبص على [[#effective]]) |
+| أشيل قاعدة / كله | [[setfacl -x u:اسم]] / [[setfacl -b]] |
+
+وعلى الماك مفيش setfacl: الـ ACL هناك بـ [[chmod +a "ali allow read,write" dir]] وبتتعرض بـ [[ls -le]] (من الـ man page بتاعة chmod على الماك، مش متجرّب هنا).`,
           lines: [
             R`سطّب أوامر الـ ACL لو مش موجودة.`,
             R`ادّي ali (يوزر، [[u:]]) rwx على الفولدر، من غير ما تغيّر صاحبه ولا جروبه.`,
@@ -570,6 +1929,121 @@ sudo chattr -a /var/log/myapp.log`,
             when: R`ملف إعدادات حساس مش المفروض يتغيّر غير وانت قاصد ([[/etc/resolv.conf]] لو برنامج كل شوية بيكتب فوقه، وانت عارف بتعمل إيه). لوج مهم: [[+a]] (بس logrotate هيفشل يلف الملف، فاعمل له استثناء أو متستخدمهاش على لوجات بتتلف). وفي التحقيق بعد اختراق: [[lsattr -R]] على [[/etc]] و [[~/.ssh]].`,
             mistakes: R`[[+i]] على ملف بيتحدّث لوحده (شهادة، .env، ملف apt) وتنسى، فتحديث يفشل بعد شهور ومحدش فاكر. و [[+a]] على لوج بيعمل له logrotate. وإنك تفتكر الـ flag بيتنقل مع الباك أب، ومش بيتنقل. و [[rm -rf]] بيفشل كـ root وتفضل تزوّد sudo، والحل [[lsattr]].`
           },
+          teach: R`## الفكرة
+
+[[chattr]] بيحط على الملف «علامة» متخزنة في الـ filesystem نفسه، والـ kernel بيشيكها قبل ما يسأل انت مين. فحتى root بيترفض لحد ما العلامة تتشال. اتجرب في container أوبونتو 24.04 بـ [[--privileged]] على ديسك ext4 صغير متركّب من ملف، لأن Docker من غير الصلاحية دي بيرفض chattr حتى لـ root.
+
+---
+
+## ١. [[echo "DB_PASS=secret" > .env]]
+
+ملف تجربة. و [[lsattr .env]] عليه دلوقتي:
+
+~~~text الناتج
+--------------e------- .env
+~~~
+
+كل خانة حرف لعلامة، والشرطة يعني مش موجودة. الـ [[e]] (extents) طريقة ext4 العادية في تخزين أي ملف، موجودة على كله تقريبًا ومالهاش دعوة بالحماية.
+
+---
+
+## ٢ و ٣. [[sudo chattr +i .env]] ثم [[lsattr .env]]
+
+[[chattr]] (change attributes)، و [[+]] ضيف، و [[i]] (immutable = ميتغيرش):
+
+~~~text الناتج
+----i---------e------- .env
+~~~
+
+الـ [[i]] ظهرت في خانتها.
+
+---
+
+## ٤. [[sudo rm -f .env]]
+
+[[-f]] (force) معناها «متسألش ومتشتكيش لو مش موجود»، بس مش بتعدّي الـ immutable:
+
+~~~text الناتج
+rm: cannot remove '.env': Operation not permitted
+~~~
+
+ولاحظ الرسالة: [[Operation not permitted]] مش [[Permission denied]]. الأولى معناها «العملية دي ممنوعة على الملف ده لأي حد»، والتانية «انت معندكش صلاحية». الفرق ده أول علامة إن السبب chattr.
+
+## ٥. [[echo "x" >> .env]]
+
+~~~text الناتج
+bash: line 8: .env: Operation not permitted
+~~~
+
+حتى الإضافة في الآخر. وجربت كمان، وكلهم اترفضوا بنفس الكلمتين:
+
+~~~text الناتج
+mv: cannot move '.env' to 'x': Operation not permitted
+chmod: changing permissions of '.env': Operation not permitted
+touch: cannot touch '.env': Operation not permitted
+~~~
+
+---
+
+## ٦. [[sudo chattr -i .env]]
+
+[[-]] شيل العلامة. [[lsattr]] رجع [[--------------e-------]]، وأي حاجة بقت مسموحة تاني.
+
+---
+
+## ٧ و ٨. [[sudo touch /var/log/myapp.log]] ثم [[sudo chattr +a ...]]
+
+[[a]] (append only): الإضافة في الآخر بس:
+
+~~~text الناتج: lsattr
+-----a--------e------- logs/myapp.log
+~~~
+
+(في التجربة كان الملف في فولدر [[logs]] على ديسك الـ ext4، نفس الفكرة.)
+
+---
+
+## ٩. [[echo "started" | sudo tee -a /var/log/myapp.log]]
+
+ليه [[tee]] ومش [[sudo echo "started" >> ملف]]؟ لأن [[>>]] بيعمله **الشيل بتاعك** قبل sudo، فالكتابة بتحصل بصلاحياتك انت. [[tee]] برنامج بيكتب في الملف بنفسه، فـ [[sudo tee]] بيكتب كـ root. و [[-a]] (append) يضيف بدل ما يكتب فوقه:
+
+~~~text الناتج
+started
+~~~
+
+[[tee]] بيطبع اللي وصله على الشاشة دايمًا، وكمان كتبه في الملف: نجح.
+
+## ١٠. [[echo "wipe" | sudo tee /var/log/myapp.log]]
+
+من غير [[-a]]، tee بيفتح الملف عشان يكتب فوقه:
+
+~~~text الناتج
+wipe
+tee: logs/myapp.log: Operation not permitted
+~~~
+
+[[wipe]] طلعت على الشاشة بس، والملف فضل فيه [[started]] بس. و [[rm]] كمان اترفض. ده بالظبط اللي عايزه في لوج: محدش يمسح اللي اتكتب.
+
+---
+
+## ١١. [[sudo chattr -a /var/log/myapp.log]]
+
+شيل العلامة في الآخر، وإلا أي حاجة بتلف اللوجات (logrotate) هتفشل عليه.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب | الحرف في lsattr |
+|---|---|---|
+| ملف ميتغيرش ولا يتمسح | [[chattr +i]] | [[i]] |
+| لوج يتزوّد بس | [[chattr +a]] | [[a]] |
+| تشيل | [[chattr -i]] / [[chattr -a]] | |
+| تشوف | [[lsattr ملف]] (و [[-d]] للفولدر نفسه) | |
+
+ولو root بياخد [[Operation not permitted]] على ملف عادي، [[lsattr]] أول حاجة.
+
+وعلى الماك مفيش chattr: البديل [[chflags uchg]] و [[sudo chflags schg]]، وبتتعرض بـ [[ls -lO]] (من الـ man page بتاعة chflags، مش متجرّب هنا).`,
           lines: [
             R`اعمل ملف تجربة.`,
             R`immutable: محدش يغيّره ولا يمسحه، حتى root.`,
@@ -622,6 +2096,85 @@ ps aux | grep node`,
             when: "تتأكد إن تطبيقك شغال: [[ps aux | grep node]]. تعرف الـ PID عشان توقف عملية معلّقة. تعرف مين بياكل الرام.",
             mistakes: "لما تعمل [[ps aux | grep node]]، هتلاقي سطر زيادة هو [[grep node]] نفسه، لأنه شغال في نفس اللحظة. فمتفتكرش إن node شغال لو ده السطر الوحيد. الأسهل: [[pgrep -a node]]، وده بيدوّر ومش بيظهر نفسه."
           },
+          teach: R`## الفكرة
+
+[[ps]] (process status) بياخد «صورة» للبرامج الشغالة في اللحظة دي ويطبعها جدول. للتجربة شغّلت في container أوبونتو 24.04 عملية node فاضية بتفضل شغالة، كيوزر ali:
+
+~~~bash
+node -e "setInterval(()=>{},1000)"
+~~~
+
+[[node -e]] (eval) شغّل الكود ده، و [[setInterval(()=>{},1000)]] دالة فاضية كل ثانية، فالبرنامج مبيخلصش.
+
+---
+
+## ١. [[ps aux]]
+
+[[aux]] تلات حروف متجمّعة من غير شرطة (طريقة BSD القديمة، و ps على لينكس فاهمها):
+
+| الحرف | معناه |
+|---|---|
+| [[a]] | all: عمليات كل اليوزرز مش انت بس |
+| [[u]] | user format: الأعمدة المفصّلة (مين، و CPU، و RAM) |
+| [[x]] | حتى العمليات اللي ملهاش ترمنال (الخدمات) |
+
+~~~text الناتج (أول سطور)
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0   2700  1152 ?        Ss   07:53   0:00 sleep infinity
+ali       3189  7.9  0.2 606572 47552 ?        Sl   07:56   0:00 node -e setInterval(()=>{},1000)
+root      3200  0.0  0.0   7896  3968 ?        R    07:56   0:00 ps aux
+~~~
+
+### نقرا الأعمدة
+
+| العمود | معناه |
+|---|---|
+| [[USER]] | مين مشغّلها |
+| [[PID]] | Process ID: رقمها، وده اللي [[kill]] محتاجه |
+| [[%CPU]] | نسبة المعالج في المتوسط من ساعة ما بدأت |
+| [[%MEM]] | نسبة الـ RAM |
+| [[VSZ]] | الذاكرة اللي «حجزتها» بالكيلوبايت (أغلبها مش مستخدم فعلًا) |
+| [[RSS]] | الذاكرة اللي في الـ RAM فعلًا بالكيلوبايت: 47552 تقريبًا 46 ميجا |
+| [[TTY]] | الترمنال اللي هي مربوطة بيه، و [[?]] يعني ملهاش |
+| [[STAT]] | الحالة: [[S]] نايمة مستنية، و [[R]] شغالة دلوقتي، و [[Z]] zombie (خلصت ولسه أبوها مقراش نتيجتها)، و [[l]] فيها threads، و [[s]] قايدة جلسة |
+| [[START]] و [[TIME]] | بدأت إمتى، وأكلت قد إيه وقت معالج |
+| [[COMMAND]] | الأمر اللي شغّلها |
+
+ولاحظ إن [[ps aux]] نفسه ظاهر في اللستة: كان شغال لحظة ما اتصوّرت. وفي الـ container العملية رقم 1 هي [[sleep infinity]]؛ على جهاز حقيقي رقم 1 هي systemd.
+
+---
+
+## ٢. [[ps aux | grep node]]
+
+[[|]] (pipe) ابعت ناتج ps لـ [[grep]]، و grep يسيب السطور اللي فيها [[node]] بس:
+
+~~~text الناتج
+ali       3189  1.5  0.2 606572 47552 ?        Sl   07:56   0:00 node -e setInterval(()=>{},1000)
+root      3215  0.0  0.0   3532  1664 ?        S    07:56   0:00 grep node
+~~~
+
+السطر التاني مش node: ده [[grep node]] نفسه. الاتنين شغالين في نفس اللحظة، و ps صوّر grep وكلمة node في أمره. فلو ده السطر الوحيد اللي طلع، يبقى node **مش** شغال.
+
+### من غير السطر الزيادة
+
+~~~text الناتج: pgrep -af node
+3189 node -e setInterval(()=>{},1000)
+~~~
+
+[[pgrep]] بيدوّر في العمليات ومبيظهرش نفسه، و [[-a]] اطبع الأمر كامل مع الـ PID، و [[-f]] دوّر في الأمر كله مش الاسم بس. والحيلة التانية [[grep [n]ode]]: الـ regex ده بيطابق «node»، بس أمر grep نفسه مكتوب فيه «[n]ode» فمش بيطابق نفسه.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| كل العمليات | [[ps aux]] |
+| عملية معينة | [[ps aux | grep اسم]] أو [[pgrep -af اسم]] |
+| الأكتر أكلًا للرام | [[ps aux --sort=-%mem | head -5]] |
+| الرقم بس | العمود التاني (PID) |
+
+وعلى الماك [[ps aux]] و [[pgrep]] موجودين بنفس المعنى، بس [[ps]] بتاع الماك (BSD) مفيهوش [[--sort]]؛ استخدم [[ps aux -m]] للترتيب بالرام و [[-r]] بالـ CPU (من الـ man page، مش متجرّب هنا).`,
           lines: [
             "process status: اعرض كل البرامج الشغالة. [[aux]] يعني كل البرامج بكل التفاصيل.",
             "نفسه، بس سيب بس اللي فيها node."
@@ -653,6 +2206,97 @@ uptime`,
             when: "السيرفر أو الموقع بطيء. build وقع بـ out of memory. عايز تعرف تطبيقك بياكل قد إيه.",
             mistakes: "الخوف لما تشوف الرام الفاضية قليلة. بص على available. وإنك مش عارف تخرج: q."
           },
+          teach: R`## الفكرة
+
+٣ أوامر بيجاوبوا على «الجهاز تقيل ليه؟»: [[htop]] شاشة لايف بالعمليات، و [[free -h]] الرام، و [[uptime]] الضغط على المعالج. الناتج تحت من container أوبونتو 24.04 على جهاز فيه ١٦ logical processor و ١٦ جيجا رام (Docker على WSL، فالأرقام بتاعة الجهاز كله).
+
+---
+
+## ١. [[htop]]
+
+شاشة بتتحدّث كل ثانية، مترتبة بالأكتر أكلًا للـ CPU. فوق: عداد لكل معالج و Mem و Swap و Load average، وتحت: جدول العمليات بنفس أعمدة [[ps]] تقريبًا. الأزرار المهمة:
+
+| الزرار | بيعمل |
+|---|---|
+| F6 (أو Shift+M) | رتّب بالرام |
+| F9 | ابعت إشارة لعملية (زي [[kill]]) |
+| H | خبّي الـ threads |
+| q أو F10 | اخرج |
+
+ولأن الشاشة دي تفاعلية مينفعش ألزق ناتجها، بس [[top]] (الجاي مع أي لينكس) عنده وضع بيطبع مرة واحدة: [[top -bn1]] ([[-b]] batch مش تفاعلي، و [[-n1]] مرة واحدة):
+
+~~~text الناتج: top -bn1 | head -8
+top - 07:56:40 up  1:21,  0 user,  load average: 0.23, 0.17, 0.07
+Tasks:   6 total,   1 running,   4 sleeping,   0 stopped,   1 zombie
+%Cpu(s):  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+MiB Mem :  15698.2 total,  14372.8 free,    903.0 used,    644.5 buff/cache
+MiB Swap:   4096.0 total,   4096.0 free,      0.0 used.  14795.2 avail Mem
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 3189 ali       20   0  608876  45980  35328 S   0.0   0.3   0:00.09 node
+~~~
+
+في سطر [[%Cpu(s)]]: [[us]] برامج اليوزرز، و [[sy]] الـ kernel، و [[id]] (idle) فاضي، و [[wa]] (wait) مستني الديسك. و [[RES]] هي [[RSS]] اللي في ps: الرام الحقيقية.
+
+---
+
+## ٢. [[free -h]]
+
+[[-h]] (human) بالوحدات المقروءة: [[Gi]] جيجا و [[Mi]] ميجا (بالـ 1024):
+
+~~~text الناتج
+               total        used        free      shared  buff/cache   available
+Mem:            15Gi       902Mi        14Gi        16Mi       644Mi        14Gi
+Swap:          4.0Gi          0B       4.0Gi
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[total]] | الرام كلها |
+| [[used]] | اللي البرامج واكلاه |
+| [[free]] | اللي مش مستخدم في أي حاجة خالص |
+| [[buff/cache]] | لينكس شايل فيه ملفات قريتها قبل كده عشان يسرّع |
+| [[available]] | اللي تقدر تستخدمه فعلًا: free + الـ cache اللي ينفع يتفضى |
+| [[Swap]] | مساحة على الديسك بيستلفها لما الرام تخلص (أبطأ بكتير) |
+
+على جهاز شغال بقاله أيام هتلاقي [[free]] صغير و [[buff/cache]] كبير، وده طبيعي. اللي يقلقك [[available]] لو قرّب من الصفر و [[used]] في سطر الـ Swap بيزيد.
+
+---
+
+## ٣. [[uptime]]
+
+~~~text الناتج
+ 07:56:40 up  1:21,  0 user,  load average: 0.23, 0.17, 0.07
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[07:56:40]] | الساعة دلوقتي |
+| [[up 1:21]] | شغال بقاله ساعة و ٢١ دقيقة من آخر تشغيل |
+| [[0 user]] | كام حد داخل بترمنال (في الـ container محدش) |
+| [[load average]] | ٣ أرقام: متوسط الضغط في آخر ١ و ٥ و ١٥ دقيقة |
+
+### الـ load ده كتير ولا قليل؟
+
+الرقم تقريبًا «كام عملية شغالة أو مستنية دورها على المعالج». قارنه بعدد المعالجات:
+
+~~~text الناتج: nproc
+16
+~~~
+
+[[0.23]] على ١٦ معالج يعني الجهاز فاضي تقريبًا. لو الرقم قرّب من [[16]] يبقى كل المعالجات مشغولة، ولو عدّاه بكتير يبقى فيه عمليات مستنية والجهاز هيبطأ. ولو الرقم الأول أكبر من التالت، الضغط بيزيد دلوقتي؛ ولو أصغر، بيقل.
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر | تبص على |
+|---|---|---|
+| مين واكل المعالج أو الرام؟ | [[htop]] (أو [[top]]) | أول سطور الجدول |
+| الرام فاضل فيها قد إيه؟ | [[free -h]] | [[available]] |
+| الجهاز مضغوط؟ | [[uptime]] و [[nproc]] | load average قصاد عدد المعالجات |
+
+وعلى الماك مفيش [[free]] ولا [[nproc]]: [[top -o mem]] للترتيب بالرام، و [[sysctl -n hw.ncpu]] لعدد المعالجات، و htop بـ [[brew install htop]]. و [[top]] بتاع الماك (BSD) flags بتاعته مختلفة، فـ [[top -bn1]] مش شغال هناك؛ المكافئ [[top -l 1]] (من الـ man page، مش متجرّب هنا).`,
           lines: [
             "شاشة لايف بالبرامج وقد إيه بتاكل من المعالج والرام. q للخروج.",
             "الرام: قد إيه مستخدم وقد إيه فاضي. [[-h]] human.",
@@ -689,6 +2333,117 @@ pkill -f "node server.js"`,
             when: "تطبيق معلّق. بورت مشغول بتطبيق قديم نسيته شغال (EADDRINUSE).",
             mistakes: "إنك تروح لـ [[kill -9]] على طول. جرّب [[kill]] العادي الأول وادّيله ثواني، ولو مسمعش الكلام ساعتها [[-9]]، لأن [[-9]] ممكن يسيب ملفات أو داتا متبوّظة. و [[pkill node]] هيقفل كل عمليات node على الجهاز، مش بتاعتك بس."
           },
+          teach: R`## الفكرة
+
+[[kill]] بيبعت **إشارة** (signal) لعملية برقمها. الإشارة رسالة صغيرة ليها اسم ورقم، والبرنامج بيتصرف على حسبها. اتجرب في container أوبونتو 24.04 على عمليات أنا مشغّلها للتجربة.
+
+### الإشارات اللي هتقابلها
+
+~~~text الناتج: kill -l 15 9 2 1
+TERM
+KILL
+INT
+HUP
+~~~
+
+[[-l]] (list) بيحوّل الرقم لاسم:
+
+| الرقم | الاسم | معناها | مين بيبعتها |
+|---|---|---|---|
+| 15 | TERM | terminate: «اقفل لو سمحت» | [[kill]] من غير رقم |
+| 9 | KILL | الـ kernel يوقفها فورًا | [[kill -9]] |
+| 2 | INT | interrupt | Ctrl+C |
+| 1 | HUP | hang up: الترمنال اتقفل | درس nohup |
+
+---
+
+## ١. [[kill 1234]]
+
+شغّلت [[node -e "setInterval(()=>{},1000)"]] في الخلفية وطلع رقمه 3272، وبعدين:
+
+~~~bash
+kill 3272
+ps -p 3272
+kill 3272
+~~~
+
+~~~text الناتج
+  PID TTY          TIME CMD
+bash: line 5: kill: (3272) - No such process
+~~~
+
+- [[kill 3272]] مبيطبعش حاجة لو نجح (exit code 0).
+- [[ps -p 3272]] ([[-p]] = PID ده بس) طبع سطر العناوين بس: العملية مش موجودة، والـ exit code بتاعه 1.
+- [[kill]] تاني على نفس الرقم: [[No such process]].
+
+TERM هي الإشارة الافتراضية، والبرنامج يقدر «يمسكها» ويعمل حاجة الأول (يحفظ، يقفل الاتصالات) قبل ما يخرج.
+
+---
+
+## ٢. [[kill -9 1234]]
+
+البرنامج يقدر كمان **يتجاهل** TERM. عملت عملية bash بتمسك TERM وتطنّشها:
+
+~~~bash
+bash -c 'trap "echo got TERM, ignoring" TERM; while :; do sleep 0.2; done' &
+~~~
+
+[[trap "..." TERM]] معناها «لما توصلك TERM نفّذ ده بدل ما تقفل»، و [[while :; do ...; done]] لوب مبيخلصش ([[:]] أمر بيرجع نجاح دايمًا). رقمها طلع 3239:
+
+~~~text الناتج: kill 3239
+got TERM, ignoring
+  PID STAT CMD
+ 3239 S    bash -c trap "echo got TERM, ignoring" TERM; while :; do sleep 0.2; done
+~~~
+
+لسه شغالة. هنا بس [[-9]]:
+
+~~~text الناتج: kill -9 3239
+bash: line 8:  3239 Killed                  bash -c 'trap "echo got TERM, ignoring" TERM; while :; do sleep 0.2; done'
+gone after -9
+~~~
+
+KILL مبتوصلش للبرنامج أصلًا: الـ kernel بيشيله من غير ما يسأله، فمحدش يقدر يتجاهلها، ومفيش فرصة يحفظ أي حاجة.
+
+### الـ exit code بيقولك اتقفلت بإيه
+
+~~~text الناتج
+exit status of -9 victim: 137
+exit status of TERM victim: 143
+~~~
+
+لما عملية تموت بإشارة، الشيل بيدّيها exit code = 128 + رقم الإشارة: 128+9 = 137، و 128+15 = 143. ولو شفت 137 في لوج Docker، غالبًا حد (أو نفاد الرام) عمل KILL.
+
+---
+
+## ٣. [[pkill -f "node server.js"]]
+
+[[pkill]] بيبعت الإشارة بالاسم بدل الرقم، و [[-f]] (full) يدوّر في سطر الأمر كله، مش اسم البرنامج بس (اللي هو [[node]] لوحده). الأحسن تتفرج الأول بـ [[pgrep]] بنفس الكلام:
+
+~~~text الناتج
+3250 node server.js
+pkill rc=0
+pgrep rc=1
+pkill none rc=1
+~~~
+
+1. [[pgrep -af "node server.js"]] وراني مين اللي هيتقفل.
+2. [[pkill -f "node server.js"]] قفله، و exit code 0 = لقى حاجة وبعتلها.
+3. [[pgrep]] بعدها مالقاش حاجة: exit code 1.
+4. [[pkill]] تاني مالقاش حاجة يقفلها: exit code 1، ومن غير أي رسالة.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| اقفل بأدب | [[kill PID]] |
+| مسمعش الكلام بعد ثواني | [[kill -9 PID]] |
+| بالاسم (اتفرج الأول) | [[pgrep -af كلام]] ثم [[pkill -f كلام]] |
+| اتأكد إنها راحت | [[ps -p PID]] |
+
+والماك نفس [[kill]] و [[pkill]] و [[pgrep]] ونفس أرقام الإشارات دي.`,
           lines: [
             "اطلب من البرنامج رقم 1234 يقفل بهدوء.",
             "[[-9]] اقفله غصب فورًا (لو الأول ماسمعش الكلام).",
@@ -722,6 +2477,98 @@ fg %1`,
             when: "حاجة بسيطة وسريعة عايز تشغّلها وتكمّل. ولما تشغّل حاجة وتفتكر إنك محتاج الترمنال: Ctrl+Z وبعدين [[bg]].",
             mistakes: "إنك تعمل Ctrl+Z وتفتكر البرنامج قفل. هو لسه موجود ومتجمّد وماسك البورت بتاعه، فلما تشغّله تاني يقولك البورت مشغول. شوف [[jobs]]. وإنك تفتكر إن [[&]] كفاية عشان حاجة تفضل شغالة على السيرفر."
           },
+          teach: R`## الفكرة
+
+الشيل بيشغّل الأمر ويستناه يخلص قبل ما يرجعلك الـ prompt، ده اسمه foreground (المقدمة). [[&]] بيقوله «متستناش»: الأمر يشتغل في الـ background (الخلفية) والـ prompt يرجع على طول. الناتج تحت من bash تفاعلي جوه container أوبونتو 24.04، والـ prompt فيه [[$]].
+
+---
+
+## ١. [[sleep 300 &]]
+
+[[sleep 300]] بيستنى ٣٠٠ ثانية ومبيعملش حاجة، و [[&]] في الآخر يوديه الخلفية:
+
+~~~text الناتج
+$ sleep 300 &
+[1] 3310
+$
+~~~
+
+- **[1]** رقم الـ **job**: رقم صغير خاص بالترمنال ده بس، بيبدأ من 1.
+- [[3310]] الـ **PID**: رقم العملية على الجهاز كله (درس ps)، اللي [[kill]] العادي بيستخدمه.
+- والـ prompt رجع على طول.
+
+---
+
+## ٢. [[jobs]]
+
+~~~text الناتج
+[1]+  Running                 sleep 300 &
+~~~
+
+| الحتة | معناها |
+|---|---|
+| **[1]** | رقم الـ job |
+| [[+]] | الـ job «الحالي»: اللي [[fg]] و [[bg]] هيشتغلوا عليه لو مكتبتش رقم. ([[-]] اللي قبله) |
+| [[Running]] | شغال. ([[Stopped]] يعني متجمّد) |
+| [[sleep 300 &]] | الأمر |
+
+و [[jobs -l]] بيزوّد الـ PID جنب الرقم.
+
+---
+
+## ٣. [[fg %1]]
+
+[[fg]] (foreground) يرجّع الـ job قدامك، و [[%1]] معناها «job رقم 1» (الـ [[%]] بتفرّق رقم الـ job عن الـ PID):
+
+~~~text الناتج
+$ fg %1
+sleep 300
+^C
+$ echo "rc=$?"
+rc=130
+~~~
+
+[[fg]] طبع الأمر، والترمنال بقى مشغول بيه تاني. Ctrl+C (اللي ظاهرة [[^C]]) قفلته، والـ exit code [[130]] = 128 + 2 (إشارة INT، درس kill).
+
+---
+
+## Ctrl+Z و [[bg]]: نسيت تكتب [[&]]
+
+شغّلت [[sleep 300]] من غير [[&]]، وبعدين Ctrl+Z:
+
+~~~text الناتج
+$ sleep 300
+^Z
+[1]+  Stopped                 sleep 300
+$ bg
+[1]+ sleep 300 &
+$ jobs
+[1]+  Running                 sleep 300 &
+$ kill %1
+$ jobs
+[1]+  Terminated              sleep 300
+~~~
+
+1. Ctrl+Z **مش** بيقفل ولا بيودّي الخلفية: بيجمّد العملية ([[Stopped]]). موجودة وماسكة الرام والبورت، بس مش بتشتغل.
+2. [[bg]] (background) بيصحّيها في الخلفية، والـ [[&]] ظهرت جنبها.
+3. [[kill %1]]: [[kill]] بيفهم [[%1]] كمان، فمش محتاج تدوّر على الـ PID.
+4. [[jobs]] بعدها قالك [[Terminated]] مرة أخيرة، وبعدين بيختفي.
+
+---
+
+## الخلاصة
+
+| عايز | اعمل |
+|---|---|
+| شغّل في الخلفية | [[أمر &]] |
+| شوف اللي في الخلفية | [[jobs]] |
+| رجّعه قدامك | [[fg]] أو [[fg %رقم]] |
+| جمّد اللي قدامك | Ctrl+Z |
+| كمّل المتجمّد في الخلفية | [[bg]] |
+| اقفل اللي قدامك | Ctrl+C |
+| اقفل job | [[kill %رقم]] |
+
+الـ jobs خاصة بالترمنال اللي هي فيه: ترمنال تاني [[jobs]] فيه فاضي، ولو قفلت الترمنال، اللي في الخلفية بيتقفل معاه (درس nohup). وعلى الماك نفس الكلام بالظبط في bash و zsh.`,
           lines: [
             "[[&]] في الآخر: شغّل الأمر في الخلفية وارجعلي الترمنال فاضي.",
             "اعرض البرامج اللي في الخلفية.",
@@ -754,6 +2601,105 @@ pm2 logs api`,
             when: "مهمة طويلة بتشغّلها مرة واحدة على السيرفر، زي باك أب كبير أو script استيراد داتا. وحتى هنا tmux غالبًا أحسن، لأنك تقدر ترجعلها وتشوفها.",
             mistakes: "استخدامه لتشغيل موقعك في الإنتاج. أول ما يوقع مش هيقوم لوحده، وممكن تقعد ساعات مش واخد بالك. ونسيان [[&]] فالترمنال يفضل مشغول."
           },
+          teach: R`## الفكرة
+
+لما الترمنال يتقفل (أو ssh يتقطع)، الشيل بيبعت لكل البرامج اللي شغّلها إشارة **HUP** (hang up = «السكة اتقفلت»)، والبرنامج العادي بيقفل لما تيجيله. [[nohup]] (no hang up) بيشغّل البرنامج وهو بيتجاهل الإشارة دي. اتجرب في container أوبونتو 24.04.
+
+---
+
+## التجربة: ٣ عمليات والترمنال يتقفل
+
+في bash تفاعلي شغّلت التلاتة، وبعدين بعت HUP للشيل نفسه (ده اللي بيحصل لما تقفل نافذة الترمنال):
+
+~~~text الناتج
+$ sleep 600 &
+[1] 3343
+$ nohup sleep 601 > out.log 2>&1 &
+[2] 3344
+$ nohup sleep 602 &
+[3] 3345
+$ nohup: ignoring input and appending output to 'nohup.out'
+$ Hangup
+~~~
+
+ومن ترمنال تاني بعدها:
+
+~~~text الناتج: ps -o pid,cmd -C sleep
+  PID CMD
+ 3343 [sleep] <defunct>
+ 3344 sleep 601
+ 3345 sleep 602
+~~~
+
+[[-C sleep]] (command) العمليات اللي اسمها sleep بس، و [[-o pid,cmd]] الأعمدة دي بس. اللي من غير nohup مات ([[defunct]] يعني خلص ومستني حد ينضّفه)، والاتنين بتوع nohup لسه شغالين.
+
+---
+
+## ١. [[nohup node server.js > out.log 2>&1 &]]
+
+نفكّه بالترتيب:
+
+| الحتة | معناها |
+|---|---|
+| [[nohup]] | شغّل اللي بعدي وهو بيتجاهل HUP |
+| [[node server.js]] | البرنامج نفسه |
+| [[> out.log]] | الناتج العادي (stdout) يروح الملف بدل الشاشة |
+| [[2>&1]] | والأخطاء (stream 2) تروح مكان ما 1 رايح، يعني نفس الملف (درس 2>&1) |
+| [[&]] | في الخلفية، عشان الترمنال يرجعلك |
+
+جربته بسيرفر node صغير بيطبع [[listening on 3000]]:
+
+~~~text الناتج: cat out.log
+listening on 3000
+~~~
+
+### ولو منسيتش التوجيه؟
+
+السطر التالت في التجربة ([[nohup sleep 602 &]]) طبع [[nohup: ignoring input and appending output to 'nohup.out']]: لما الناتج رايح لترمنال، nohup بيحوّله لوحده لملف [[nohup.out]] في الفولدر الحالي، لأن الترمنال هيتقفل ومش هيبقى فيه مكان يطلع فيه الكلام.
+
+---
+
+## ٢. [[pm2 start server.js --name api]]
+
+nohup بيحل مشكلة واحدة: قفل الترمنال. لكن لو التطبيق وقع بـ error أو السيرفر عمل restart، محدش هيشغّله تاني. [[pm2]] (process manager لـ Node، بيتسطب بـ [[npm install -g pm2]]) بيشغّله ويراقبه ويرجّعه لو وقع. و [[--name api]] اسم تنادي بيه بدل الرقم:
+
+~~~text الناتج (pm2 7.0.4)
+[PM2] Starting /app/server.js in fork_mode (1 instance)
+[PM2] Done.
+┌────┬────────┬───────────┬──────────┬────────┬──────┬───────────┬──────────┐
+│ id │ name   │ mode      │ pid      │ uptime │ ↺    │ status    │ mem      │
+│ 0  │ api    │ fork      │ 10046    │ 0s     │ 0    │ online    │ 13.8mb   │
+└────┴────────┴───────────┴──────────┴────────┴──────┴───────────┴──────────┘
+~~~
+
+(الجدول الحقيقي فيه أعمدة أكتر، شلت منها للعرض.) [[status online]] شغال، و [[↺]] عدد المرات اللي اتعمله restart.
+
+---
+
+## ٣. [[pm2 logs api]]
+
+بيعرض آخر سطور اللوج وبيفضل متابع (Ctrl+C للخروج):
+
+~~~text الناتج
+[TAILING] Tailing last 5 lines for [api] process (change the value with --lines option)
+/root/.pm2/logs/api-error.log last 5 lines:
+/root/.pm2/logs/api-out.log last 5 lines:
+0|api      | listening on 3000
+~~~
+
+pm2 بيحفظ ملفين لكل تطبيق في [[~/.pm2/logs]]: [[-out.log]] للناتج و [[-error.log]] للأخطاء. و [[0|api]] رقم التطبيق واسمه قدام كل سطر.
+
+---
+
+## الخلاصة
+
+| الموقف | الأداة |
+|---|---|
+| أمر طويل مرة واحدة وهتقفل الترمنال | [[nohup أمر > ملف 2>&1 &]] |
+| تطبيق Node لازم يفضل شغال | [[pm2 start ملف --name اسم]] |
+| أي خدمة على السيرفر | systemd (درس systemctl) أو Docker |
+
+وعلى الماك [[nohup]] و pm2 نفس الكلام، بس مفيش systemd (هناك launchd).`,
           lines: [
             "شغّل السيرفر في الخلفية ([[&]])، وفضّله شغال حتى لو قفلت الترمنال ([[nohup]])، والناتج والأخطاء في out.log.",
             "الطريقة الأحسن: [[pm2]] يشغّل التطبيق ويرجّعه لو وقع. [[--name api]] اسم تنادي بيه.",
@@ -789,6 +2735,119 @@ journalctl -u nginx -n 50 -f`,
             when: "بعد تعديل إعدادات Nginx: [[nginx -t]] وبعدين [[reload]]. خدمة وقعت ومش عارف ليه: [[status]] وبعدين [[journalctl -u]]. تسطيب حاجة جديدة وعايزها تشتغل مع السيرفر: [[enable --now]].",
             mistakes: "[[enable]] وتفتكر إنها اشتغلت، وهي هتشتغل بعد الريستارت الجاي بس. و [[restart nginx]] من غير [[nginx -t]] الأول، فلو فيه غلطة في الإعدادات، Nginx مش هيقوم تاني وكل مواقعك تقع."
           },
+          teach: R`## الفكرة
+
+على أوبونتو أول برنامج بيشتغل اسمه **systemd** (رقمه 1)، وهو اللي بيشغّل ويراقب كل الخدمات. [[systemctl]] (system control) هو اللي بتكلّمه بيه. container عادي مفيهوش systemd، فاتجرب في container أوبونتو 24.04 شغال بـ systemd كـ PID 1 ومتسطب فيه nginx.
+
+---
+
+## ١. [[sudo systemctl status nginx]]
+
+~~~text الناتج (أول سطور)
+● nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (/usr/lib/systemd/system/nginx.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-10-06 08:04:19 UTC; 1min 17s ago
+       Docs: man:nginx(8)
+   Main PID: 3250 (nginx)
+      Tasks: 17 (limit: 18825)
+     Memory: 11.6M (peak: 14.2M)
+        CPU: 48ms
+~~~
+
+| السطر | نقرا منه |
+|---|---|
+| [[●]] و [[nginx.service]] | اسم الوحدة (unit). الدايرة خضرا لو شغالة، وحمرا لو وقعت |
+| [[Loaded: ... nginx.service]] | مكان ملف وصف الخدمة |
+| [[enabled]] | بتقوم لوحدها مع تشغيل الجهاز. ([[disabled]] لأ) |
+| [[Active: active (running)]] | شغالة دلوقتي، ومن إمتى. ([[inactive (dead)]] واقفة، و [[failed]] وقعت) |
+| [[Main PID]] | رقم العملية الأساسية (درس ps) |
+| [[Tasks]] و [[Memory]] و [[CPU]] | عدد العمليات، والرام، ووقت المعالج اللي أكلته |
+
+وتحتهم بيبان آخر سطور اللوج بتاعها. والناتج بيفتح في pager، فـ [[q]] تخرج.
+
+---
+
+## ٢. [[sudo nginx -t && sudo systemctl reload nginx]]
+
+[[nginx -t]] (test) بيفحص ملفات الإعدادات من غير ما يطبّقها، و [[&&]] بيكمّل بس لو الفحص نجح:
+
+~~~text الناتج (إعدادات سليمة)
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+~~~
+
+و [[reload]] مبيطبعش حاجة: nginx قرا الإعدادات الجديدة من غير ما يقفل، فالزوار مبيتقطعوش. وبعدين حطيت سطر غلط في ملف إعدادات:
+
+~~~text الناتج (إعدادات فيها غلطة)
+2026/10/06 08:05:44 [emerg] 3309#3309: unknown directive "bad" in /etc/nginx/conf.d/x.conf:1
+nginx: configuration file /etc/nginx/nginx.conf test failed
+~~~
+
+الـ test فشل (exit code 1)، فـ [[&&]] منعت الـ reload، والموقع فضل شغال بالإعدادات القديمة. الرسالة بتقولك الملف ورقم السطر.
+
+---
+
+## ٣. [[sudo systemctl enable docker]]
+
+[[enable]] بيخلي الخدمة تقوم مع كل تشغيل للجهاز. Docker مش متسطب في الـ container، فاتجرب على nginx:
+
+~~~text الناتج: disable ثم enable
+Removed "/etc/systemd/system/multi-user.target.wants/nginx.service".
+Created symlink /etc/systemd/system/multi-user.target.wants/nginx.service → /usr/lib/systemd/system/nginx.service.
+~~~
+
+يعني «enable» في الحقيقة **لينك** (symlink) في فولدر [[multi-user.target.wants]]، والمعنى: «لما الجهاز يوصل لوضع التشغيل العادي (multi-user)، شغّل دي». وكان فيه سطرين زيادة [[Synchronizing state of nginx.service with SysV service script]]، دول عشان nginx ليه سكربت تشغيل قديم كمان، ومتقلقش منهم.
+
+ولخدمة مش موجودة:
+
+~~~text الناتج: sudo systemctl enable docker
+Failed to enable unit: Unit file docker.service does not exist.
+~~~
+
+و [[enable]] **مبيشغّلش** الخدمة دلوقتي. لده [[start]]، أو الاتنين مع بعض [[enable --now]]. تتأكد بـ:
+
+~~~text الناتج: systemctl is-enabled nginx; systemctl is-active nginx
+enabled
+active
+~~~
+
+---
+
+## ٤. [[journalctl -u nginx -n 50 -f]]
+
+systemd بيجمّع لوجات كل الخدمات، و [[journalctl]] بيقراها:
+
+| الحتة | معناها |
+|---|---|
+| [[-u nginx]] | unit: لوجات الخدمة دي بس |
+| [[-n 50]] | آخر ٥٠ سطر |
+| [[-f]] | follow: فضّل متابع واطبع الجديد أول ما يحصل (Ctrl+C للخروج) |
+
+بعد [[stop]] و [[start]] لـ nginx:
+
+~~~text الناتج: journalctl -u nginx -n 5 --no-pager
+Oct 06 08:05:45 server systemd[1]: Stopping nginx.service - A high performance web server and a reverse proxy server...
+Oct 06 08:05:45 server systemd[1]: nginx.service: Deactivated successfully.
+Oct 06 08:05:45 server systemd[1]: Stopped nginx.service - A high performance web server and a reverse proxy server.
+Oct 06 08:05:45 server systemd[1]: Starting nginx.service - A high performance web server and a reverse proxy server...
+Oct 06 08:05:45 server systemd[1]: Started nginx.service - A high performance web server and a reverse proxy server.
+~~~
+
+كل سطر: الوقت، واسم الجهاز ([[server]])، ومين كتب السطر (**systemd[1]** يعني systemd ورقمه 1)، والرسالة. و [[--no-pager]] اطبع على طول من غير pager.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| حالتها | [[systemctl status اسم]] |
+| تشغيل / إيقاف / إعادة | [[start]] / [[stop]] / [[restart]] |
+| إعدادات جديدة من غير قطع | [[nginx -t && systemctl reload nginx]] |
+| تقوم مع الجهاز وتشتغل دلوقتي | [[systemctl enable --now اسم]] |
+| لوجاتها | [[journalctl -u اسم -n 50 -f]] |
+
+ده لينكس بس. على الماك مفيش systemd: اللي بيدير الخدمات هناك launchd، وللحاجات اللي سطّبتها بـ brew فيه [[brew services list]] و [[brew services start nginx]] (من docs بتاعة Homebrew، مش متجرّب هنا).`,
           lines: [
             "Nginx شغال ولا واقف؟ وفيه مشاكل؟",
             "[[nginx -t]] اختبر الإعدادات، ولو سليمة ([[&&]]) طبّقها من غير ما تقطع الزوار.",
@@ -839,6 +2898,108 @@ systemctl suspend`,
             when: R`ريستارت مجدول للسيرفر بعد تحديث بـ [[+10]] ورسالة، عشان اللي داخلين يلحقوا يحفظوا. وإطفاء جهازك بعد تحميل كبير: [[sudo shutdown -h +120]] لو عارف هياخد قد إيه. ولو مش عارف، شغّل الاتنين كـ root: [[sudo sh -c 'apt full-upgrade -y; shutdown -h now']]، عشان sudo ميقفش يسألك على الباسورد بعد ساعة وانت مش موجود. ولو محتاج ريستارت في ميعاد يوم تاني، [[at]] (الدرس الجاي) أو cron.`,
             mistakes: R`[[shutdown -h now]] على السيرفر الغلط: بص على الـ prompt ([[\h]] في درس PS1) قبل أي أمر زي ده. و [[poweroff]] لـ VPS بدل [[reboot]]، فمش هيرجع غير من لوحة التحكم. وريستارت سيرفر من غير ما تتأكد إن خدماتك عليها [[enable]] (درس systemctl)، فيقوم والموقع واقع. ونسيان إن الريستارت بيقطع ssh: خليه آخر خطوة.`
           },
+          teach: R`## الفكرة
+
+[[shutdown]] بيطلب من systemd يطفي الجهاز أو يعمل ريستارت، دلوقتي أو في ميعاد. عشان ميطفيش جهاز حقيقي، اتجرب في container أوبونتو 24.04 شغال بـ systemd، و **اتجربت الجدولة والإلغاء بس**؛ السطور اللي بتطفي فعلًا (٥ و ٦ و ٧) شرحها من الـ man pages. والساعة في الـ container كانت 08:05 بتوقيت UTC.
+
+### أول حاجة: shutdown ده إيه أصلًا؟
+
+~~~text الناتج: ls -l /usr/sbin/shutdown /usr/sbin/reboot /usr/sbin/poweroff
+lrwxrwxrwx 1 root root 16 Jul 28 15:04 /usr/sbin/poweroff -> ../bin/systemctl
+lrwxrwxrwx 1 root root 16 Jul 28 15:04 /usr/sbin/reboot -> ../bin/systemctl
+lrwxrwxrwx 1 root root 16 Jul 28 15:04 /usr/sbin/shutdown -> ../bin/systemctl
+~~~
+
+التلاتة **لينكات** لـ [[systemctl]] (الـ [[l]] في أول الصلاحيات و [[->]] بتشاور على الأصل). يعني كلهم برنامج واحد بيشوف اتنادى باسم إيه ويتصرف على حسبه.
+
+---
+
+## ١. [[sudo shutdown -h 23:30]]
+
+| الحتة | معناها |
+|---|---|
+| [[sudo]] | الإطفاء محتاج root |
+| [[-h]] | halt، وعلى systemd معناها power off (يطفي خالص) |
+| [[23:30]] | الميعاد بنظام ٢٤ ساعة، بتوقيت الجهاز |
+
+~~~text الناتج
+Shutdown scheduled for Tue 2026-10-06 23:30:00 UTC, use 'shutdown -c' to cancel.
+~~~
+
+الأمر خلص على طول ورجّعلك الترمنال: الطلب اتسجّل عند systemd، فلو قفلت الترمنال الميعاد لسه قائم. والميعاد ممكن يبقى [[now]] أو [[+30]] (بعد ٣٠ دقيقة)، ومن غير ميعاد خالص بيبقى [[+1]].
+
+## ٢. [[shutdown --show]]
+
+بيقولك فيه حاجة متجدولة ولا لأ (من غير sudo):
+
+~~~text الناتج
+Shutdown scheduled for Tue 2026-10-06 23:30:00 UTC, use 'shutdown -c' to cancel.
+~~~
+
+## ٣. [[sudo shutdown -c]]
+
+[[-c]] (cancel) يلغي. مبيطبعش حاجة، و [[shutdown --show]] بعدها:
+
+~~~text الناتج
+No scheduled shutdown.
+~~~
+
+---
+
+## ٤. [[sudo shutdown -r +10 "Restarting for kernel update, save your work"]]
+
+| الحتة | معناها |
+|---|---|
+| [[-r]] | reboot: ريستارت مش إطفاء |
+| [[+10]] | بعد ١٠ دقايق من دلوقتي |
+| [[" ... "]] | رسالة بتتبعت لكل حد داخل على الجهاز بترمنال (زي ssh) |
+
+~~~text الناتج
+Reboot scheduled for Tue 2026-10-06 08:15:51 UTC, use 'shutdown -c' to cancel.
+~~~
+
+[[Reboot]] بدل Shutdown، والوقت = 08:05:51 + ١٠ دقايق بالظبط. (وألغيته بـ [[-c]] برضه.) وفي آخر ٥ دقايق قبل الميعاد النظام بيمنع أي login جديد.
+
+---
+
+## ٥. [[sudo shutdown -h now]]
+
+[[now]] يعني دلوقتي حالًا: systemd بيبعت TERM لكل الخدمات ويستناها تقفل بأدب، ولو واحدة اتأخرت (٩٠ ثانية افتراضيًا) KILL، وبعدين يطفي. على سيرفر بعيد ده معناه مش هترجّعه غير من لوحة تحكم الاستضافة.
+
+## ٦. [[sudo systemctl reboot]]
+
+نفس [[sudo reboot]]: ريستارت على طول من غير ميعاد ولا رسالة.
+
+## ٧. [[systemctl suspend]]
+
+sleep: الجهاز يفضل شغال على الرام بأقل كهربا ويصحى بكل حاجة مفتوحة. ومن غير sudo على جهاز desktop، لأن اليوزر القاعد قدام الجهاز مسموحله.
+
+---
+
+## في container أو WSL
+
+في container عادي من غير systemd (اللي اتجرب عليه باقي الدروس):
+
+~~~text الناتج: shutdown --show
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+~~~
+
+الأمر مالقاش systemd يكلّمه. الـ container بيتقفل بـ [[docker stop]]، و WSL من ويندوز بـ [[wsl --shutdown]].
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| اطفي في ميعاد | [[sudo shutdown -h 23:30]] أو [[+30]] |
+| ريستارت بعد شوية برسالة | [[sudo shutdown -r +10 "رسالة"]] |
+| فيه حاجة متجدولة؟ | [[shutdown --show]] |
+| الغي | [[sudo shutdown -c]] |
+| دلوقتي | [[sudo shutdown -h now]] / [[sudo reboot]] |
+
+وعلى الماك [[sudo shutdown -h +30]] و [[-r]] موجودين، بس الساعة [[2330]] من غير [[:]]، ومفيش [[-c]] ولا [[--show]]: الإلغاء بـ [[sudo killall shutdown]] لأن shutdown هناك بيفضل عملية شغالة مستنية (من الـ man page بتاعة shutdown على الماك، مش متجرّب هنا).`,
           lines: [
             R`اطفي الجهاز الساعة ١١:٣٠ بالليل ([[-h]] يعني power off).`,
             R`فيه إطفاء أو ريستارت متجدول؟ وإمتى؟`,
@@ -887,6 +3048,125 @@ atrm 2`,
             when: R`ريستارت بعد تحديث في وقت هادي: [[echo "systemctl reboot" | sudo at 03:00]]. شغلانة تقيلة بالليل مرة واحدة: import أو باك أب كبير. ولو عايز تفتكر إن فيه مهمة متجدولة، [[atq]] أول حاجة. وللحاجات اللي بتتكرر استخدم cron.`,
             mistakes: R`[[at -f script.sh]] لسكربت bash، فيتنفّذ بـ sh ويفشل في صمت. ونسيان توجيه الناتج، فمتعرفش نجح ولا فشل. وإن [[atd]] مش شغال (على سيرفر minimal أو container)، فالمهام تتراكم في [[atq]] ومحدش بيشغّلها. و [[at 3:00]] وانت فاكرها ٣ العصر: الساعة بنظام ٢٤، والعصر [[15:00]] أو [[3pm]]. و [[sudo]] جوه الأمر: المهمة مفيهاش ترمنال تكتب فيه باسورد، فجدول المهمة نفسها بـ [[sudo at]].`
           },
+          teach: R`## الفكرة
+
+[[at]] بياخد أوامر ويحفظها في ملف على الديسك بميعاد، وخدمة اسمها [[atd]] بتصحى في الميعاد وتشغّلها مرة واحدة وتمسح الملف. اتجرب في container أوبونتو 24.04 كيوزر ali من فولدر [[~/lab]]، والساعة كانت 08:03:35 بتوقيت UTC.
+
+---
+
+## ١. [[sudo apt install at]]
+
+بيسطّب أوامر [[at]] و [[atq]] و [[atrm]] وخدمة [[atd]] (الـ d في الآخر = daemon، يعني برنامج شغال في الخلفية).
+
+## ٢. [[systemctl status atd]]
+
+~~~text الناتج (container فيه systemd)
+● atd.service - Deferred execution scheduler
+     Loaded: loaded (/usr/lib/systemd/system/atd.service; enabled; preset: enabled)
+     Active: active (running) since Tue 2026-10-06 08:04:19 UTC; 1min 37s ago
+~~~
+
+[[enabled]] بتقوم مع الجهاز، و [[active (running)]] شغالة دلوقتي (درس systemctl). من غيرها المهام بتتجدول ومحدش بيشغّلها.
+
+---
+
+## ٣. [[echo "date > ~/lab/at-test.txt" | at now + 2 minutes]]
+
+[[at]] بيقرا الأوامر من الـ stdin، فبنبعتهاله بـ [[echo]] و [[|]]. والأمر نفسه بين double quotes عشان [[>]] يبقى **جوه** المهمة، مش يتنفّذ دلوقتي.
+
+~~~text الناتج
+warning: commands will be executed using /bin/sh
+job 1 at Tue Oct  6 08:05:00 2026
+~~~
+
+- السطر الأول تنبيه عادي: الأوامر هتتنفّذ بـ [[sh]] مش bash.
+- [[job 1]] رقم المهمة، و [[08:05:00]] ميعادها.
+
+ليه 08:05:00 مش 08:05:35؟ لأن at دقته بالدقيقة: [[now]] اتحسبت 08:03، وزائد دقيقتين. وبعد الميعاد:
+
+~~~text الناتج: cat ~/lab/at-test.txt
+Tue Oct  6 08:05:00 UTC 2026
+~~~
+
+اتنفّذت على أول الدقيقة بالظبط، واختفت من [[atq]].
+
+---
+
+## ٤. [[echo "$HOME/bin/backup.sh >> $HOME/logs/at.log 2>&1" | at 03:00]]
+
+- [[$HOME]] جوه double quotes بيتفك **دلوقتي** لـ [[/home/ali]]، فالمهمة بتتحفظ بالمسار الكامل.
+- [[>> ... 2>&1]] الناتج والأخطاء يتضافوا في لوج. من غيره at بيحاول يبعت الناتج إيميل، ومفيش إيميل، فبيضيع.
+- [[03:00]] الساعة ٣ الفجر، ولأنها عدّت النهارده بيجدولها بكرة:
+
+~~~text الناتج
+warning: commands will be executed using /bin/sh
+job 2 at Wed Oct  7 03:00:00 2026
+~~~
+
+---
+
+## ٥. [[atq]]
+
+at queue: المهام اللي مستنية:
+
+~~~text الناتج
+1	Tue Oct  6 08:05:00 2026 a ali
+2	Wed Oct  7 03:00:00 2026 a ali
+~~~
+
+الرقم، والميعاد، و [[a]] اسم الطابور (الافتراضي)، واليوزر.
+
+---
+
+## ٦. [[at -c 2 | tail -3]]
+
+[[-c]] (cat) اطبع السكربت اللي هيتنفّذ فعلًا في المهمة 2، و [[tail -3]] آخر ٣ سطور:
+
+~~~text الناتج
+}
+/home/ali/bin/backup.sh >> /home/ali/logs/at.log 2>&1
+
+~~~
+
+السطر اللي في النص هو أمرك، و [[$HOME]] اتفكت زي ما قلنا. والسكربت كله طويل، وأوله:
+
+~~~text الناتج: at -c 2 | head -5
+#!/bin/sh
+# atrun uid=1002 gid=1006
+# mail ali 0
+umask 2
+PWD=/home/ali/lab; export PWD
+~~~
+
+at حفظ الـ umask بتاعك، وكل متغيرات البيئة، وفي السطر ١٤ [[cd /home/ali/lab || {]]: المهمة هتشتغل من نفس الفولدر اللي جدولتها منه. ده الفرق عن cron اللي بيبدأ من الـ home ومتغيرات قليلة.
+
+---
+
+## ٧. [[atrm 2]]
+
+at remove: الغي المهمة 2. مبيطبعش حاجة، و [[atq]] بعدها فيه المهمة 1 بس.
+
+### ميعاد غلط
+
+~~~text الناتج: echo date | at 25:99
+Problem in minutes specification. Last token seen: 25:99
+Garbled time
+~~~
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| أمر بعد شوية | [[echo "أمر" | at now + 10 minutes]] |
+| أمر في ساعة معينة | [[echo "أمر >> لوج 2>&1" | at 03:00]] |
+| بكرة | [[at 9:00 tomorrow]] |
+| المستني | [[atq]] |
+| أشوف هيعمل إيه | [[at -c رقم]] |
+| ألغي | [[atrm رقم]] |
+
+وعلى الماك [[at]] موجود، بس الخدمة اللي بتشغّل المهام (atrun) مقفولة افتراضيًا، فالمهام بتفضل في [[atq]] من غير ما تتنفّذ لحد ما تشغّلها بـ launchctl (من الـ man page بتاعة atrun، مش متجرّب هنا).`,
           lines: [
             R`سطّب at وخدمة atd.`,
             R`اتأكد إن atd شغالة (q للخروج).`,
@@ -930,6 +3210,101 @@ timeout --foreground 10 watch -n 1 date`,
             when: R`متابعة تحميل أو نسخ كبير: [[watch -n 1 'ls -lh file.iso']]. مستني container يبقى healthy بعد [[docker compose up]]. بتراقب مساحة الديسك وانت بتمسح لوجات. بتجرّب cron وعايز تشوف الملف بيتكتب. ولو عايز تشغّل أمر لما ملف يتغير (مش تتفرج بس)، [[inotifywait]] في الدرس الجاي أنسب.`,
             mistakes: R`أمر فيه [[|]] من غير single quotes، فالـ pipe يشتغل على watch نفسه والشاشة تبوظ. واستخدام alias جوه watch. و [[-n 0.1]] على أمر تقيل زي [[du]] على فولدر كبير، فالجهاز يتعب. والاعتماد على [[watch -g ... && أمر]] في حاجة مهمة: Ctrl+C بيخرّج watch بـ 0 برضه، فالأمر اللي بعده هيتنفّذ. و [[timeout 10 watch ...]] من غير [[--foreground]]، فيعلّق.`
           },
+          teach: R`## الفكرة
+
+[[watch]] بيعيد أمر كل شوية ويرسم ناتجه مكان القديم، فالترمنال يبقى لوحة متابعة. اتجرب في container أوبونتو 24.04 ([[watch from procps-ng 4.0.4]])، والشاشة اتسجلت بـ [[script]] وشلت منها أكواد الرسم.
+
+---
+
+## ١. [[watch df -h]]
+
+[[df -h]] مساحة الديسكات (درس df)، و watch بيعيده كل ثانيتين (الافتراضي) لحد ما تدوس Ctrl+C. الشاشة شكلها كده:
+
+~~~text الشاشة
+Every 2.0s: df -h                                  server: Tue Oct  6 08:15:30 2026
+
+Filesystem      Size  Used Avail Use% Mounted on
+overlay        1007G   15G  941G   2% /
+tmpfs            64M     0   64M   0% /dev
+shm              64M     0   64M   0% /dev/shm
+/dev/sdd        1007G   15G  941G   2% /etc/hosts
+~~~
+
+السطر الأول هو العنوان: [[Every 2.0s:]] كل قد إيه، والأمر، وعلى اليمين اسم الجهاز ([[server]]) ووقت آخر تحديث. و [[-t]] بيشيله.
+
+---
+
+## ٢. [[watch -n 5 -d 'df -h / && free -h']]
+
+| الحتة | معناها |
+|---|---|
+| [[-n 5]] | interval: كل ٥ ثواني (وينفع [[0.5]]) |
+| [[-d]] | differences: علّم الحروف اللي اتغيرت من آخر مرة بخلفية معكوسة |
+| [[' ... ']] | السطر كله أمر واحد لـ watch |
+| [[df -h /]] | مساحة الديسك الأساسي بس |
+| [[&& free -h]] | وبعده الرام |
+
+### ليه الـ single quotes؟
+
+watch بيشغّل اللي اديتهوله بـ [[sh -c]]. من غير quotes، الشيل بتاعك هو اللي هيشوف [[&&]] الأول: هيشغّل [[watch -n 5 -d df -h /]] لوحده، ولما يخلص (بـ Ctrl+C) يشغّل [[free -h]] مرة. بالـ quotes الاتنين جوه watch. وعشان watch بيشغّل [[sh]] جديد، الـ aliases بتاعتك (زي [[ll]]) مش موجودة جواه.
+
+---
+
+## ٣. [[watch -n 1 'ls -l ~/Downloads | tail -5']]
+
+كل ثانية: [[ls -l]] الفولدر، و [[|]] ابعته لـ [[tail -5]] يسيب آخر ٥ سطور. watch بيقص الناتج اللي أطول من الشاشة، فـ [[tail]] بيخلي المهم يبان.
+
+---
+
+## ٤. [[watch -n 2 'docker ps --format "{{.Names}}: {{.Status}}"']]
+
+[[--format]] بيقول لـ docker يطبع إيه بالظبط: [[{{.Names}}]] اسم الـ container، و [[{{.Status}}]] حالته. ولاحظ الـ quotes: single برّه لـ watch، و double جوه لـ docker. على الجهاز اللي جربت عليه (من غير watch):
+
+~~~text الناتج
+teach-bash02: Up 10 minutes
+~~~
+
+---
+
+## ٥. [[watch -g 'ls ~/Downloads' && echo "new file arrived"]]
+
+[[-g]] (chgexit) بيخرج أول ما الناتج يتغير، فالأمر اللي بعد [[&&]] يتنفّذ. جربتها بفولدر فاضي، وملف اتعمل فيه بعد ثانيتين:
+
+~~~text الناتج
+after 2s
+movie.mp4
+new file arrived
+~~~
+
+watch خرج بعد ثانيتين، أول ما [[movie.mp4]] ظهر. بس خلي بالك: Ctrl+C كمان بيخرّج watch بـ 0، فالرسالة هتتطبع برضه.
+
+---
+
+## ٦. [[timeout --foreground 10 watch -n 1 date]]
+
+[[timeout 10]] بيقفل الأمر بعد ١٠ ثواني. و [[--foreground]] لازمة، وجربت من غيرها:
+
+~~~text الناتج: ps -o pid,stat,cmd -C watch بعد ٥ ثواني
+  PID STAT CMD
+10240 T    watch -n 1 date
+~~~
+
+[[T]] يعني Stopped: من غير [[--foreground]]، timeout بيشغّل watch في مجموعة عمليات منفصلة عن الترمنال، و watch أول ما يحاول يرسم على الترمنال بيتجمّد ومبيخرجش أبدًا. مع [[--foreground]] خرج بعد الوقت عادي.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| تابع أمر | [[watch أمر]] |
+| كل كام ثانية | [[-n ثواني]] |
+| علّم التغيير | [[-d]] |
+| أمر فيه [[|]] أو [[&&]] | حطه كله بين [[' ']] |
+| اخرج أول ما يتغير | [[watch -g 'أمر' && أمر_تاني]] |
+| لوقت محدد | [[timeout --foreground ثواني watch ...]] |
+
+وعلى الماك watch مش موجود أصلًا: [[brew install watch]]، وبعدها نفس الكلام.`,
           lines: [
             R`اعرض المساحة وحدّثها كل ثانيتين (الافتراضي). Ctrl+C للخروج.`,
             R`كل ٥ ثواني، وعلّم اللي اتغير ([[-d]])، ومساحة [[/]] والرام مع بعض. الـ single quotes عشان [[&&]] يبقى جوه watch.`,
@@ -977,6 +3352,139 @@ done`,
             when: R`تشغيل اختبارات أو lint أول ما تحفظ في مشروع مفيهوش watch mode. رفع ملف على السيرفر كل ما يتعدّل: [[rsync]] جوه اللوب. فولدر «inbox» على السيرفر: أول ما ملف يتحط فيه ([[close_write]] أو [[moved_to]]) سكربت يعالجه وينقله. ولو كل اللي عايزه إعادة تشغيل سيرفر Node، [[node --watch app.js]] أبسط.`,
             mistakes: R`مراقبة [[modify]] بدل [[close_write]]، فالأمر يشتغل كذا مرة في الحفظة الواحدة، وساعات على ملف لسه نصه مكتوب. ونسيان [[moved_to]]، فالمحررات اللي بتحفظ بملف مؤقت متتمسكش. و [[-r]] على مشروع فيه node_modules من غير [[--exclude]]. وإن الأمر جوه اللوب يكتب في نفس الفولدر اللي بتراقبه (build بيطلّع ملفات في src مثلًا)، فيعمل حدث جديد، واللوب يلف على نفسه للأبد. ونسيان [[-m]]، فيمسك أول حدث ويخرج.`
           },
+          teach: R`## الفكرة
+
+[[inotifywait]] بيطلب من الـ kernel «بلّغني بأي تغيير في الفولدر ده»، ويفضل نايم لحد ما حدث يحصل، فيطبعه في سطر. وانت بتربط السطور دي بأمر. اتجرب في container أوبونتو 24.04 على فولدر [[/proj]] فيه [[src]] و [[src/node_modules]] و [[.git]]، والتعديلات اتعملت من شيل تاني.
+
+---
+
+## ١. [[sudo apt install inotify-tools]]
+
+الباكدج فيه [[inotifywait]] (يستنى أحداث) و [[inotifywatch]] (يعدّها).
+
+---
+
+## ٢. [[inotifywait -m -r src/]]
+
+[[-m]] (monitor) متخرجش بعد أول حدث، و [[-r]] (recursive) راقب كل الفولدرات اللي جوه. وعملت من الشيل التاني: ملف [[a.txt]] ومسحته، وفولدر [[lib]] وجواه [[b.js]]:
+
+~~~text الناتج
+Setting up watches.  Beware: since -r was given, this may take a while!
+Watches established.
+src/ CREATE a.txt
+src/ OPEN a.txt
+src/ MODIFY a.txt
+src/ CLOSE_WRITE,CLOSE a.txt
+src/ DELETE a.txt
+src/ CREATE,ISDIR lib
+src/ OPEN,ISDIR lib
+src/ ACCESS,ISDIR lib
+src/ CLOSE_NOWRITE,CLOSE,ISDIR lib
+src/lib/ CREATE b.js
+src/lib/ OPEN b.js
+src/lib/ MODIFY b.js
+src/lib/ CLOSE_WRITE,CLOSE b.js
+~~~
+
+كل سطر ٣ حتت: الفولدر، والحدث، واسم الملف. وكتابة ملف واحد ([[echo hi > a.txt]]) عملت ٤ أحداث:
+
+| الحدث | معناه |
+|---|---|
+| [[CREATE]] | اتعمل |
+| [[OPEN]] | اتفتح |
+| [[MODIFY]] | اتكتب فيه (ممكن يتكرر كذا مرة في الحفظة الواحدة) |
+| [[CLOSE_WRITE]] | اتقفل بعد كتابة: **الحفظ خلص** |
+| [[DELETE]] | اتمسح |
+| [[ISDIR]] | الحاجة دي فولدر |
+
+ولاحظ: [[lib]] اتعمل **بعد** ما المراقبة بدأت، و [[b.js]] جواه اتمسك برضه: [[-r]] بيضيف الفولدرات الجديدة لوحده.
+
+---
+
+## ٣. السكربت: افحص كل ملف .js أول ما يتحفظ
+
+~~~bash
+inotifywait -q -m -r -e close_write,moved_to --exclude '(node_modules|\.git)' --format '%w%f' . |
+while read -r f; do
+  case "$f" in
+    *.js) echo "$(date +%T) $f" && node --check "$f" && echo "OK" ;;
+  esac
+done
+~~~
+
+### الحتة الأولى: inotifywait
+
+| الحتة | معناها |
+|---|---|
+| [[-q]] | quiet: من غير [[Setting up watches]] |
+| [[-m -r]] | فضل شغال، وكل الفولدرات |
+| [[-e close_write,moved_to]] | events: الحدثين دول بس. [[moved_to]] ملف اتنقل جوه الفولدر، لأن محررات كتير بتحفظ في ملف مؤقت وبعدين تغيّر اسمه |
+| [[--exclude '(node_modules|\.git)']] | regex: أي مسار فيه node_modules أو .git ميتراقبش أصلًا. [[\.]] نقطة حقيقية، و [[|]] أو |
+| [[--format '%w%f']] | شكل السطر: [[%w]] الفولدر و [[%f]] اسم الملف، يعني المسار بس |
+| [[.]] | الفولدر الحالي |
+| [[|]] في آخر السطر | pipe، والأمر مكمّل في السطر الجاي |
+
+### الحتة التانية: اللوب
+
+- [[while read -r f; do ... done]]: كل سطر بيوصل من الـ pipe يتحط في المتغير [[f]] ويتنفّذ اللي جوه. و [[-r]] متعاملش [[\]] كرمز خاص. اللوب مبيخلصش طول ما inotifywait شغال.
+- [[case "$f" in *.js) ... ;; esac]]: لو المسار بيخلص بـ [[.js]] نفّذ اللي بعد [[)]] لحد [[;;]]، وغير كده ولا حاجة. و [[esac]] هي case بالمقلوب، بتقفلها.
+- [[$(date +%T)]] الوقت ساعة:دقيقة:ثانية ([[%T]] = time).
+- [[node --check "$f"]]: افحص الـ syntax من غير ما تشغّل الملف.
+- [[&&]] بين الأوامر: [[OK]] تتطبع بس لو الفحص نجح.
+
+### اللي حصل
+
+عملت من الشيل التاني: [[app.js]] سليم، و [[bad.js]] فيه [[const = ;]]، و [[notes.txt]]، وملف جوه [[node_modules]]، وملف [[tmp.swp]] اتنقل لـ [[moved.js]]:
+
+~~~text الناتج
+08:04:26 ./src/app.js
+OK
+08:04:26 ./src/bad.js
+/proj/src/bad.js:1
+const = ;
+      ^
+
+SyntaxError: Unexpected token '='
+    at internalCompileFunction (node:internal/vm:73:18)
+    ...
+Node.js v18.19.1
+08:04:27 ./src/moved.js
+OK
+~~~
+
+- [[app.js]]: الوقت والمسار و OK.
+- [[bad.js]]: node طبع السطر الغلط و [[^]] تحت الغلطة، ومفيش OK لأن [[&&]] وقفت.
+- [[notes.txt]]: مفيش حاجة، [[case]] تجاهله.
+- اللي في [[node_modules]]: مفيش حاجة، [[--exclude]] منعه من الأول.
+- [[moved.js]]: اتمسك بـ [[moved_to]].
+
+والمسار بيبدأ بـ [[./]] لأننا راقبنا [[.]].
+
+---
+
+## حد الـ watches
+
+كل فولدر بيتراقب بياخد «watch» من رصيد اليوزر:
+
+~~~text الناتج: cat /proc/sys/fs/inotify/max_user_watches
+1048576
+~~~
+
+الرقم ده على kernel حديث (6.6)؛ على الأنظمة القديمة كان 8192، وساعتها [[-r]] على مشروع فيه node_modules كان بيطلّع [[upper limit on inotify watches reached]]. وده سبب تاني لـ [[--exclude]].
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| أتفرج على الأحداث | [[inotifywait -m -r فولدر]] |
+| الحفظ بس | [[-e close_write,moved_to]] |
+| من غير فولدرات معينة | [[--exclude 'regex']] |
+| المسار بس | [[--format '%w%f']] |
+| أنفّذ أمر | [[... | while read -r f; do ... done]] |
+
+وعلى الماك مفيش inotify أصلًا (ده جزء من kernel لينكس). البديل [[brew install fswatch]]، و [[fswatch -o src]] بيطبع سطر لكل دفعة تغييرات (من الـ README بتاع fswatch، مش متجرّب هنا).`,
           lines: [
             R`سطّب inotifywait.`,
             R`راقب src وكل اللي جواه ([[-r]])، واطبع كل حدث في سطر وفضل شغال ([[-m]]).`,
@@ -1025,6 +3533,126 @@ ls /nope; ding "ls"`,
             when: R`أي حاجة بتاخد أكتر من دقيقة وانت على جهازك: [[docker compose build]]، و [[npm install]] في مشروع كبير، و [[apt upgrade]]، ونسخ ملفات كبيرة. ومع [[watch -g]] أو [[inotifywait]]: «نبّهني لما الملف ده يظهر». وعلى السيرفر جرس [[printf '\a']]، ولو محتاج إشعار حقيقي على الموبايل، طلب [[curl]] لخدمة زي Telegram bot أو ntfy.`,
             mistakes: R`[[أمر && notify-send]] وتستنى إشعار لو فشل، و [[&&]] مبتكمّلش لو فشل؛ استخدم [[;]]. و [[local rc=$?]] مش أول حاجة في الفانكشن، فتمسك exit code أمر جواها. وفانكشن اسمها [[done]]. و notify-send في cron: مفيش جلسة desktop هناك فبيفشل في صمت. وإنك تتعوّد على الإشعارات وتنسى إن السيرفر مفيهوش.`
           },
+          teach: R`## الفكرة
+
+الدرس كله قايم على حاجة واحدة: تحط أمر التنبيه **بعد** الأمر الطويل بـ [[;]]، فيتنفّذ أول ما الطويل يخلص. والتنبيه يا إما إشعار على الشاشة ([[notify-send]])، أو صوت بيتكلم ([[spd-say]])، أو صوت جاهز ([[paplay]])، أو جرس الترمنال ([[printf '\a']]).
+
+> الإشعارات والأصوات محتاجة جلسة desktop، والتجربة هنا اتعملت في container أوبونتو 24.04 مفيهوش شاشة ولا صوت. فاللي اتجرب فعلًا: رسالة الـ error من غير desktop، والفانكشن [[ding]] وأرقام الـ exit code، والـ alias بتاع أوبونتو. وشكل الإشعار والصوت نفسه من الـ docs.
+
+---
+
+## ١. [[sudo apt install libnotify-bin speech-dispatcher pulseaudio-utils]]
+
+٣ باكدجات: [[libnotify-bin]] فيه [[notify-send]]، و [[speech-dispatcher]] فيه [[spd-say]]، و [[pulseaudio-utils]] فيه [[paplay]]. على أوبونتو Desktop غالبًا متسطبين.
+
+---
+
+## ٢. [[sleep 5; notify-send "Done" "sleep 5 finished"]]
+
+- [[sleep 5]] الأمر «الطويل» للتجربة.
+- [[;]] نفّذ اللي بعدي لما اللي قبلي يخلص، نجح أو فشل.
+- [[notify-send "عنوان" "نص"]]: أول كلام بين quotes العنوان (تقيل)، والتاني النص تحته.
+
+على desktop الإشعار بيطلع فوق الشاشة. ومن غير desktop (زي الـ container، أو ssh، أو WSL):
+
+~~~text الناتج
+Cannot autolaunch D-Bus without X11 $DISPLAY
+~~~
+
+notify-send مبيرسمش الإشعار بنفسه: بيبعت رسالة على D-Bus (القناة اللي برامج الـ desktop بتتكلم بيها) لخدمة الإشعارات، ومفيش هنا لا D-Bus ولا شاشة ([[DISPLAY]] فاضي).
+
+---
+
+## ٣. [[npm run build; notify-send -u critical "Build" "exit code: $?"]]
+
+- [[-u critical]] (urgency): الإشعار يفضل ظاهر لحد ما تقفله، بدل ما يختفي بعد ثواني.
+- [[$?]] الـ exit code بتاع آخر أمر خلص، يعني الـ build: [[0]] نجح، وأي رقم تاني فشل. وبيتفك قبل ما notify-send يشتغل، فالرقم بيتكتب في النص.
+
+---
+
+## ٤. [[spd-say "build finished"]]
+
+بيبعت الجملة لـ speech-dispatcher، وهو بينطقها بصوت (غالبًا بمحرك espeak-ng). من الـ docs، مش متجرّب هنا.
+
+## ٥. [[paplay /usr/share/sounds/freedesktop/stereo/complete.oga]]
+
+[[paplay]] (PulseAudio play) بيشغّل ملف صوت. والفولدر ده فيه أصوات النظام الجاهزة، و [[.oga]] صيغة صوت (Ogg). ومن أوبونتو 22.10 الصوت ماشي على PipeWire وبيفهم نفس الطلبات. من الـ docs، مش متجرّب هنا.
+
+---
+
+## ٦. [[sleep 3; alert]]
+
+[[alert]] مش أمر: ده alias جاي جاهز في [[~/.bashrc]] بتاع أوبونتو (بيتنسخ من [[/etc/skel/.bashrc]]):
+
+~~~text الناتج: grep 'alias alert' /etc/skel/.bashrc
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+~~~
+
+شكله صعب، بس هو حتتين:
+
+1. **الأيقونة**: [[$([ $? = 0 ] && echo terminal || echo error)]]. لو الأمر اللي قبل alert نجح ([[$?]] = 0) اطبع [[terminal]]، غير كده [[error]]، والكلمة دي اسم الأيقونة لـ [[-i]].
+2. **النص**: [[history|tail -n1]] آخر سطر كتبته (اللي هو [[sleep 3; alert]] برقمه)، و [[sed]] بيشيل منه حاجتين: الرقم اللي في أوله ([[s/^\s*[0-9]\+\s*//]])، و [[; alert]] اللي في آخره ([[s/[;&|]\s*alert$//]]). فاللي فاضل [[sleep 3]].
+
+و [[$?]] بتاعة alert صح لأنها أول حاجة بتتقري بعد [[;]] على طول.
+
+---
+
+## ٧. فانكشن [[ding]]
+
+~~~bash
+ding() { local rc=$?; notify-send "Finished (exit $rc)" "$*"; printf '\a'; return $rc; }
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ding() { ... }]] | عرّف فانكشن اسمها ding، والـ [[;]] قبل [[}]] لازمة في سطر واحد |
+| [[local rc=$?]] | امسك exit code الأمر اللي قبلها، **أول حاجة** قبل ما أي أمر جواها يغيّره. و [[local]] المتغير جوه الفانكشن بس |
+| [[notify-send "Finished (exit $rc)" "$*"]] | الإشعار: الرقم في العنوان، و [[$*]] كل الكلام اللي اتبعت للفانكشن في النص |
+| [[printf '\a']] | حرف الجرس (BEL، رقمه 7): الترمنال بيعمل صوت أو بيعلّم التاب، وبيعدّي حتى في ssh |
+| [[return $rc]] | رجّع نفس الـ exit code، عشان اللي بعدها يعرف الأمر الأصلي نجح ولا لأ |
+
+## ٨. [[ls /nope; ding "ls"]]
+
+في الـ container استبدلت notify-send بفانكشن بتطبع اللي وصلها، عشان نشوف الرقم:
+
+~~~text الناتج
+ls: cannot access '/nope': No such file or directory
+[notify-send] Finished (exit 2) ls
+after ding: 2
+~~~
+
+- [[ls]] فشل بـ exit code [[2]] (الملف مش موجود).
+- ding مسكت الـ 2 وحطته في العنوان، والنص [[ls]].
+- و [[echo $?]] بعد ding طبع [[2]] مش [[0]]: ده شغل [[return $rc]].
+
+وجرس [[printf '\a']] فعلًا حرف واحد:
+
+~~~text الناتج: printf '\a' | od -c
+0000000  \a
+~~~
+
+[[od -c]] (octal dump) بيعرض الحروف المخفية: حرف واحد اسمه [[\a]] (alert).
+
+### متسميهاش [[done]]
+
+~~~text الناتج: done() { echo hi; }
+bash: -c: line 1: syntax error near unexpected token $__btdone'
+~~~
+
+[[done]] كلمة محجوزة في bash (بتقفل اللوب)، فمينفعش تبقى اسم فانكشن.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| إشعار بعد أمر | [[أمر; notify-send "عنوان" "نص"]] |
+| إشعار يقولك نجح ولا فشل | [[أمر; alert]] أو [[أمر; ding "اسم"]] |
+| صوت | [[spd-say "كلام"]] أو [[paplay ملف.oga]] |
+| على سيرفر بـ ssh | [[أمر; printf '\a']] |
+
+وعلى الماك مفيش notify-send: الإشعار [[osascript -e 'display notification "Build finished" with title "Done"']]، والصوت [[say "build finished"]] و [[afplay]]، والجرس [[printf '\a']] شغال زي ما هو (من الـ docs، مش متجرّب هنا).`,
           lines: [
             R`سطّب الأدوات لو مش موجودة.`,
             R`استنى ٥ ثواني، وبعدين ([[;]]) إشعار بعنوان ونص.`,
@@ -1075,6 +3703,179 @@ echo 'fastfetch -l ubuntu_small -s OS:Uptime:Memory:Disk' >> ~/.bashrc`,
             when: R`أول ما تدخل VPS جديد، أو بتكتب issue أو بتسأل في جروب ومحتاج تقول جهازك فيه إيه، أو بتتأكد إن ترقية التوزيعة نجحت. وكتحية في أول الترمنال لو عاجبك، بشرط يكون صغير.`,
             mistakes: R`سطر [[neofetch]] من شرح قديم: على 26.04 مش موجود، وحتى لو موجود مبيتحدّثش. و [[add-apt-repository]] لأي PPA تلاقيه في شرح، من غير ما تتأكد إنه من صفحة المشروع الرسمية. و fastfetch كامل في [[.bashrc]] على سيرفر بتدخله بـ ssh كتير، فكل دخلة تستنى وتعدّي شاشة. وإنك تبعت الناتج كامل في مكان عام: فيه اسم اليوزر والجهاز و IP الداخلي ([[Local IP]]).`
           },
+          teach: R`## الفكرة
+
+[[fastfetch]] بيقرا معلومات الجهاز من ملفات النظام ([[/etc/os-release]] و [[/proc/meminfo]] وغيرهم) ويطبعها جنب لوجو التوزيعة. اتجرب في container أوبونتو 24.04 كيوزر ali، شغال على Docker فوق WSL، فالـ kernel والمعالج والرام بتوع الجهاز الحقيقي. والناتج تحت بـ [[--pipe]] (من غير ألوان) عشان يتنسخ.
+
+---
+
+## ١. [[sudo add-apt-repository ppa:zhangsongcui3371/fastfetch]]
+
+fastfetch مش في الـ repo الرسمي لأوبونتو 24.04، فبنضيف الـ PPA اللي صفحة المشروع بتشاور عليه:
+
+| الحتة | معناها |
+|---|---|
+| [[add-apt-repository]] | ضيف مصدر باكدجات لـ apt (في باكدج [[software-properties-common]]) |
+| [[ppa:]] | Personal Package Archive: repo على Launchpad بيعمله شخص أو فريق |
+| [[zhangsongcui3371/fastfetch]] | صاحب الـ PPA / اسمه |
+
+~~~text الناتج (آخر سطور)
+Description:
+Fastfetch is a neofetch-like tool for fetching system information and displaying them in a pretty way.
+
+https://github.com/fastfetch-cli/fastfetch
+More info: https://launchpad.net/~zhangsongcui3371/+archive/ubuntu/fastfetch
+Adding repository.
+~~~
+
+بيعرض وصف الـ PPA (من غير [[-y]] بيستناك تدوس Enter)، ويضيفه، ويعمل [[apt update]] لوحده.
+
+## ٢. [[sudo apt install fastfetch]]
+
+~~~text الناتج (آخر سطور)
+Unpacking fastfetch (2.69.0~noble) ...
+Setting up fastfetch (2.69.0~noble) ...
+~~~
+
+[[~noble]] يعني النسخة دي مبنية لأوبونتو 24.04 (اسمه Noble Numbat). وعلى 25.04 وأحدث الخطوة ١ مش محتاجاها.
+
+---
+
+## ٣. [[fastfetch]]
+
+~~~text الناتج (من غير اللوجو)
+ali@server
+----------
+OS: Ubuntu 24.04.5 LTS (Noble Numbat) x86_64
+Kernel: Linux 6.6.87.2-microsoft-standard-WSL2
+Uptime: 1 hour, 30 mins
+Packages: 832 (dpkg)
+Shell: bash 5.2.21
+Terminal: xterm
+CPU: AMD Ryzen 9 5900HX (16) @ 3.29 GHz
+GPU 1: AMD Radeon(TM) Graphics (495.77 MiB) [Integrated]
+GPU 2: NVIDIA GeForce RTX 3070 Laptop GPU (7.83 GiB) [Discrete]
+Memory: 996.66 MiB / 15.33 GiB (6%)
+Swap: 0 B / 4.00 GiB (0%)
+Disk (/): 14.95 GiB / 1006.85 GiB (1%) - overlay
+Local IP (eth0): 172.17.0.2/16
+Locale: C.UTF-8
+~~~
+
+كل سطر اسمه **module**:
+
+| السطر | معناه |
+|---|---|
+| [[ali@server]] | اليوزر @ اسم الجهاز |
+| [[OS]] | التوزيعة ونسختها، و [[x86_64]] نوع المعالج (64-bit Intel/AMD) |
+| [[Kernel]] | نسخة الـ kernel. [[microsoft-standard-WSL2]] لأنه شغال على WSL؛ على جهاز عادي بيخلص بـ [[generic]] |
+| [[Packages]] | عدد الباكدجات المتسطبة ([[dpkg]] مدير باكدجات أوبونتو) |
+| [[CPU ... (16)]] | المعالج، و 16 عدد الـ logical processors |
+| [[Memory]] | المستخدم / الكلي، و [[MiB]] و [[GiB]] بالـ 1024 |
+| [[Disk (/)]] | الديسك اللي عليه [[/]]: المستخدم / الكلي، ونوع الـ filesystem ([[overlay]] بتاع Docker) |
+| [[Local IP]] | الـ IP الداخلي. خد بالك منه لو هتنشر الناتج |
+
+---
+
+## ٤. [[fastfetch --logo none -s OS:Kernel:Uptime:CPU:Memory:Disk]]
+
+[[--logo none]] من غير لوجو، و [[-s]] (structure) الـ modules دي بس وبالترتيب ده، مفصولين بـ [[:]]:
+
+~~~text الناتج
+OS: Ubuntu 24.04.5 LTS (Noble Numbat) x86_64
+Kernel: Linux 6.6.87.2-microsoft-standard-WSL2
+Uptime: 1 hour, 30 mins
+CPU: AMD Ryzen 9 5900HX (16) @ 3.29 GHz
+Memory: 997.11 MiB / 15.33 GiB (6%)
+Disk (/): 14.95 GiB / 1006.85 GiB (1%) - overlay
+~~~
+
+(وكان فيه سطر [[Disk]] تاني لملف [[/etc/resolv.conf]] اللي Docker بيركّبه في الـ container؛ على جهاز عادي مش هيظهر.)
+
+---
+
+## ٥. [[fastfetch -l ubuntu_small]]
+
+[[-l]] (logo) لوجو باسمه، و [[--list-logos]] بيعرض الأسامي:
+
+~~~text الناتج (مع -s OS:Uptime)
+       ..;,; .,;,.        OS: Ubuntu 24.04.5 LTS (Noble Numbat) x86_64
+    .,lool: .ooooo,       Uptime: 1 hour, 30 mins
+   ;oo;:    .coool.
+ ....         ''' ,l;
+:oooo,            'oo.
+looooc            :oo'
+ '::'             ,oo:
+   ,.,       .... co,
+    lo:;.   :oooo; .
+     ':ooo; cooooc
+        '''  ''''
+~~~
+
+---
+
+## ٦. [[fastfetch --gen-config]]
+
+~~~text الناتج
+✓ Configuration file generated: /home/ali/.config/fastfetch/config.jsonc
+~~~
+
+ملف JSONC (JSON بتعليقات [[//]]) فيه لستة [[modules]] بالترتيب الافتراضي، تمسح منها اللي مش عايزه. ولو الملف موجود بيرفض: [[Error: file ... exists. Please remove it before generating a new one]].
+
+> لقيت في التجربة إن لو فولدر [[~/.config]] نفسه مش موجود (يوزر جديد على سيرفر)، fastfetch بيعمل الملف في [[~/fastfetch/config.jsonc]] بدل [[~/.config/fastfetch]]، وبعدين مبيقراهوش. اعمل [[mkdir -p ~/.config]] الأول.
+
+---
+
+## ٧. [[echo 'fastfetch -l ubuntu_small -s OS:Uptime:Memory:Disk' >> ~/.bashrc]]
+
+[[>>]] يضيف السطر في آخر [[.bashrc]]، فيتنفّذ مع كل ترمنال تفاعلي جديد.
+
+---
+
+## الحل (solCode)
+
+~~~bash
+mkdir -p ~/.config/fastfetch
+cat > ~/.config/fastfetch/config.jsonc <<'EOF'
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "logo": { "source": "ubuntu_small" },
+  // الأجزاء اللي هتظهر، بالترتيب
+  "modules": ["title", "separator", "os", "kernel", "uptime", "memory", "disk"]
+}
+EOF
+fastfetch
+~~~
+
+- [[cat > ملف <<'EOF' ... EOF]] (heredoc): كل السطور لحد [[EOF]] تتكتب في الملف، والـ quotes حوالين [[EOF]] بتمنع الشيل يفك أي [[$]] جوه (زي [[$schema]]).
+- [[$schema]] رابط وصف الملف، عشان المحرر يكمّلك ويصحّحك.
+- [[logo.source]] اللوجو.
+- [[// ...]] تعليق، مسموح لأن الملف JSONC مش JSON عادي.
+- [[modules]] السطور بالترتيب: [[title]] هو [[ali@server]]، و [[separator]] الخط اللي تحته.
+
+~~~text الناتج: fastfetch
+       ..;,; .,;,.        ali@server
+    .,lool: .ooooo,       ----------
+   ;oo;:    .coool.       OS: Ubuntu 24.04.5 LTS (Noble Numbat) x86_64
+ ....         ''' ,l;     Kernel: Linux 6.6.87.2-microsoft-standard-WSL2
+:oooo,            'oo.    Uptime: 1 hour, 30 mins
+looooc            :oo'    Memory: 998.30 MiB / 15.33 GiB (6%)
+ '::'             ,oo:    Disk (/): 14.95 GiB / 1006.85 GiB (1%) - overlay
+~~~
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| تسطيب على 24.04 | الـ PPA ثم [[apt install fastfetch]] |
+| الملخص كله | [[fastfetch]] |
+| أجزاء معينة | [[-s OS:Kernel:Memory]] |
+| من غير لوجو / لوجو صغير | [[--logo none]] / [[-l ubuntu_small]] |
+| ملف إعدادات | [[fastfetch --gen-config]] |
+
+وعلى الماك [[brew install fastfetch]] ونفس الـ flags، وبيعرض لوجو آبل ونوع الشريحة، والسطر بيتحط في [[~/.zshrc]] (من صفحة المشروع، مش متجرّب هنا).`,
           lines: [
             R`ضيف الـ PPA بتاع المشروع (وده بيعمل apt update لوحده).`,
             R`سطّب fastfetch منه.`,
