@@ -17,6 +17,7 @@ Add a `teach: R\`...\`,` field to EVERY lesson in the file that doesn't have one
 - If the lesson's example has several OS sections, cover each (at least a comparison table for the others).
 - Length follows the content: a one-word command gets a short teach; a long pipeline or a script gets a long one. Never pad.
 - Concept-only lessons (no runnable code) still get a teach that explains the idea step by step (a table where it helps).
+- If a lesson has an auto-graded exercise (`check`), explain the example and the concepts but never reveal `check.solution` or write code that solves the exercise.
 - Egyptian dialect like the rest of the site (يعني، هات، ليه), not فصحى. Technical terms stay English inside `[[ ]]`.
 
 ## Syntax reminders

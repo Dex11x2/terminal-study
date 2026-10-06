@@ -22,8 +22,9 @@ TAB("quality", {
   prompt: "~/myapp$ ",
   lab: R`mkdir -p ~/lab/quality && cd ~/lab/quality
 npm init -y
-npm i -D eslint prettier typescript vitest`,
-  labText: "اعمل مشروع تجربة وسطّب الأدوات dev dependencies. كل أداة هنا بتشتغل من الترمنال وفي CI بنفس الأمر.",
+npm pkg set type=module
+npm i -D eslint prettier typescript@6 vitest`,
+  labText: "اعمل مشروع تجربة وسطّب الأدوات dev dependencies. كل أداة هنا بتشتغل من الترمنال وفي CI بنفس الأمر. و typescript@6 مش 7 لأن typescript-eslint (في الدروس الجاية) لسه بيطلب أقل من 6.1.",
   levels: {"1":["البداية","lint و format و typecheck، والفرق بينهم"],"2":["المتوسط","الاختبارات، و husky و lint-staged قبل كل commit"],"3":["المتقدم","CI بيفحص كل حاجة، و monorepo بأكتر من تطبيق، و e2e بـ Playwright"]},
   categories: [
     {
@@ -64,6 +65,170 @@ tsc (typecheck) بيتأكد إن الأنواع ماشية مع بعض: بتب�
             when: "من أول يوم في أي مشروع JavaScript أو TypeScript. أسهل بكتير من إنك تضيفهم على مشروع فيه ألف ملف.",
             mistakes: R`تعتمد على الـ editor بس (VS Code بيعرض الأخطاء في الملفات المفتوحة)، والملفات التانية محدش بيبصلها. وتفتكر إن [[vite build]] نجح يبقى الأنواع سليمة، وهو بيشيل الأنواع من غير ما يفحصها. وتخلط الـ format مع الـ lint فتخلي eslint يفرض المسافات ويتخانق مع prettier: سيب الشكل لـ prettier لوحده.`
           },
+          teach: R`## الفكرة: أسامي قصيرة لأوامر طويلة
+
+المثال ده مش أوامر تكتبها في الترمنال، ده جزء من ملف [[package.json]]. خانة [[scripts]] فيها أسامي من عندك، وكل اسم قصاده أمر. ولما تكتب [[npm run lint]]، npm بيدوّر على [[lint]] في الخانة دي وينفّذ الأمر اللي قصاده.
+
+### ليه مش بنكتب [[npx]] جوه السكربتات؟
+
+لما npm يشغّل سكربت، بيضيف فولدر [[node_modules/.bin]] على الـ PATH مؤقتًا. والفولدر ده فيه نسخة من كل أداة سطّبتها في المشروع ([[eslint]] و [[prettier]] و [[tsc]] و [[vitest]]). فجوه السكربت تكتب [[eslint .]] على طول، وبيشتغل الـ eslint بتاع المشروع نفسه بالنسخة اللي في [[package.json]]، مش نسخة متسطّبة على الجهاز.
+
+---
+
+## السطور واحد واحد
+
+### [["format": "prettier --write ."]]
+
+[[prettier]] أداة الشكل. [[--write]] يعني «عدّل الملفات نفسها»، و [[.]] (نقطة) معناها الفولدر الحالي وكل اللي جواه. ده اللي بتشغّله على جهازك عشان يظبطلك الشكل.
+
+### [["format:check": "prettier --check ."]]
+
+نفس الأداة، بس [[--check]] مبيلمسش أي ملف: بيقارن بس، ولو فيه ملف شكله مختلف عن اللي prettier كان هيكتبه، يطبع اسمه ويخرج بـ exit code [[1]]. والـ [[:]] في الاسم مجرد عُرف (namespace)، [[format:check]] اسم زي أي اسم.
+
+> **exit code** رقم كل برنامج بيرجّعه لما يخلص: [[0]] يعني نجح، وأي رقم تاني يعني فشل. الـ CI و [[&&]] بيبصّوا على الرقم ده بس، مش على الكلام اللي اتطبع.
+
+### [["lint": "eslint . --max-warnings=0"]]
+
+[[eslint]] بيدوّر على أخطاء وعادات وحشة. القاعدة في eslint ليها مستويين: [[error]] بيفشّل الأمر، و [[warning]] لأ. و [[--max-warnings=0]] معناها «أقصى عدد warnings مسموح صفر»، فأي warning يبقى فشل.
+
+### [["lint:fix": "eslint . --fix"]]
+
+[[--fix]] بيصلّح لوحده القواعد اللي ليها تصليح آمن (زي [[let]] → [[const]])، والباقي بيطبعه.
+
+### [["typecheck": "tsc --noEmit"]]
+
+[[tsc]] هو TypeScript Compiler. عادةً بيفحص الأنواع وكمان يكتب ملفات [[.js]]؛ [[--noEmit]] بيقوله: افحص بس، متكتبش (emit = يطلّع) ولا ملف.
+
+### [["test": "vitest run"]]
+
+[[vitest]] بيشغّل الاختبارات. [[run]] يعني مرة واحدة واقفل. من غيرها، في ترمنال عادي بيفضل شغال مستني تحفظ (watch)، فالسكربت مبيخلصش أبدًا.
+
+### [["check": "npm run format:check && npm run lint && ..."]]
+
+[[&&]] معناها «لو اللي قبلي نجح (exit code [[0]])، شغّل اللي بعدي». فلو [[format:check]] وقع، الباقي مبيتشغّلش، والـ exit code النهائي بتاع الخطوة اللي وقعت. والترتيب من الأسرع للأبطأ: الشكل ثانية، والاختبارات ممكن دقايق.
+
+---
+
+## نجرّب: مشروع فاضي خطوة بخطوة
+
+اتشغّل على ويندوز (Node 24 و npm 11) في مشروع الـ lab: [[npm init -y]] و [[npm i -D eslint prettier typescript@6 vitest @eslint/js typescript-eslint]] والسكربتات اللي فوق. النسخ: ESLint 10.12 و Prettier 3.9 و TypeScript 6.0 و Vitest 5.0.
+
+### ١. أول [[npm run check]]
+
+~~~text الناتج
+> lab@1.0.0 format:check
+> prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> lab@1.0.0 lint
+> eslint . --max-warnings=0
+
+Oops! Something went wrong! :(
+
+ESLint: 10.12.0
+
+ESLint couldn't find an eslint.config.* file.
+~~~
+
+السطور اللي بتبدأ بـ [[>]] npm هو اللي بيطبعها: اسم السكربت والأمر اللي هيشغّله. الشكل عدّى، و eslint وقع قبل ما يفحص حاجة لأن من ESLint 9 مفيش إعدادات افتراضية، ورجع exit code [[2]] (الـ [[2]] في eslint معناها مشكلة في الإعداد نفسه، و [[1]] معناها لقى أخطاء في الكود). والـ [[&&]] وقّف الباقي.
+
+### ٢. بعد [[eslint.config.js]] (اللي في الحل)
+
+الملف ده مكتوب بـ [[import]] (ES Modules). و [[npm init -y]] في npm 11 بيكتب في [[package.json]] السطر [["type": "commonjs"]]، يعني Node هيقرا أي [[.js]] على إنه CommonJS ([[require]]). جرّبته كده وeslint وقع:
+
+~~~text الناتج
+Warning: Failed to load the ES module: .../eslint.config.js. Make sure to set "type": "module" in the nearest package.json file or use the .mjs extension.
+SyntaxError: Cannot use import statement outside a module
+~~~
+
+الحل اللي الرسالة نفسها بتقوله: [[npm pkg set type=module]] (السطر ده في أوامر الـ lab)، أو تسمّي الملف [[eslint.config.mjs]] ([[m]] = module).
+
+بعدها [[npm run lint]] بيعدّي ومبيطبعش حاجة (eslint لما ميلاقيش مشاكل بيسكت). اللي بعده [[tsc --noEmit]] ومفيش [[tsconfig.json]]:
+
+~~~text الناتج
+Version 6.0.3
+tsc: The TypeScript Compiler - Version 6.0.3
+
+COMMON COMMANDS
+...
+~~~
+
+يعني من غير tsconfig، tsc مش عارف يفحص إيه، فبيطبع الـ help ويخرج بـ [[1]].
+
+### ٣. بعد [[tsconfig.json]] وفولدر [[src]] لسه فاضي
+
+~~~text الناتج
+error TS18003: No inputs were found in config file '.../lab/tsconfig.json'. Specified 'include' paths were '["src"]' and 'exclude' paths were '[]'.
+~~~
+
+الـ tsconfig فيه [[include]] بيقول افحص [[src]] بس، ومفيش ولا ملف [[.ts]] هناك، فبرضه فشل (exit code [[2]]).
+
+### ٤. ملف في [[src]] ومفيش اختبارات
+
+~~~text الناتج
+No test files found, exiting with code 1
+
+include: **/*.{test,spec}.?(c|m)[jt]s?(x)
+~~~
+
+السطر الأخير هو النمط اللي vitest بيدوّر بيه: أي ملف اسمه فيه [[.test.]] أو [[.spec.]] وآخره [[ts]] أو [[js]] (أو [[tsx]] و [[mts]] وأخواتهم).
+
+### ٥. بعد [[src/sum.ts]] و [[src/sum.test.ts]]
+
+هنا [[format:check]] رجع وقع: [[[warn] src/sum.test.ts]] و [[[warn] tsconfig.json]]، لأني كتبتهم بعلامة تنصيص مفردة وفي سطر واحد. [[npm run format]] ظبطهم، وبعدها:
+
+~~~text الناتج
+> lab@1.0.0 test
+> vitest run
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+~~~
+
+والأمر كله خرج بـ [[0]]. ده اللي الـ CI عايز يشوفه.
+
+---
+
+## [[&&]] مش زي [[;]]
+
+جرّبت سكربت [["semi": "npm run fail ; npm run ok"]] (و [[fail]] بيخرج بـ 1):
+
+| | [[&&]] | [[;]] |
+|---|---|---|
+| لينكس (node:22-slim) | وقف، و exit code [[1]] | كمّل وطبع [[ok-ran]]، و exit code [[0]]: الفشل اتخبّى |
+| ويندوز | وقف، و exit code [[1]] | npm على ويندوز بيشغّل السكربتات بـ CMD، و CMD مبيفهمش [[;]]، فاتبعتت كـ arguments لأول أمر |
+
+يعني [[&&]] هي الوحيدة اللي بتشتغل صح على الاتنين.
+
+---
+
+## TypeScript 7 و typescript-eslint
+
+لو كتبت [[npm i -D typescript]] من غير رقم، npm بيجيب آخر نسخة، ووقت الكتابة دي TypeScript 7.0 (النسخة المكتوبة بـ Go). و [[typescript-eslint]] 8.71 لسه بيقول [[typescript >=4.8.4 <6.1.0]]، فلما تسطّبه بعدها:
+
+~~~text الناتج
+npm error code ERESOLVE
+npm error Found: typescript@7.0.2
+npm error peer typescript@">=4.8.4 <6.1.0" from typescript-eslint@8.71.1
+~~~
+
+عشان كده مشروع الـ lab بيسطّب [[typescript@6]]. ولو typescript-eslint اتحدّث بعد كده، شيل الرقم.
+
+---
+
+## الخلاصة
+
+| السكربت | الأداة | بيمسك إيه | بيعدّل ملفات؟ |
+|---|---|---|---|
+| [[format:check]] | prettier | الشكل | لأ |
+| [[lint]] | eslint | أنماط غلط ([[==]]، متغير مش مستخدم) | لأ |
+| [[typecheck]] | tsc | الأنواع | لأ |
+| [[test]] | vitest | السلوك: الناتج صح؟ | لأ |
+| [[format]] و [[lint:fix]] | prettier و eslint | بيصلّحوا | آه، على جهازك بس |
+
+والـ CI بيشغّل [[npm run check]] بالظبط زي ما انت بتشغّله.`,
           lines: [
             "بداية السكربتات في package.json.",
             "[[npm run format]]: رتّب شكل كل الملفات وعدّلها.",
@@ -77,7 +242,7 @@ tsc (typecheck) بيتأكد إن الأنواع ماشية مع بعض: بتب�
           ],
           sol: R`في مشروع الـ lab زي ما هو ([[npm init -y]] والأدوات بس)، [[npm run check]] بيعدّي [[format:check]] ([[All matched files use Prettier code style!]]) وبيقع في [[lint]] بـ [[ESLint couldn't find an eslint.config.* file.]]. من ESLint 9 لازم ملف config، ومفيش واحد افتراضي.
 
-بعد ما تعمل [[eslint.config.js]]، اللي بعده [[typecheck]]: من غير [[tsconfig.json]]، [[tsc --noEmit]] بيطبع صفحة الـ help ويخرج بـ 1، مش بيفحص حاجة. وبعد الـ tsconfig، [[vitest run]] من غير ملفات اختبار بيقول [[No test files found, exiting with code 1]].
+بعد ما تعمل [[eslint.config.js]] (و [[npm init -y]] في npm 11 بيكتب [["type": "commonjs"]]، فلازم [[npm pkg set type=module]] أو تسمّي الملف [[eslint.config.mjs]]، وإلا eslint يقع بـ [[Cannot use import statement outside a module]])، اللي بعده [[typecheck]]: من غير [[tsconfig.json]]، [[tsc --noEmit]] بيطبع صفحة الـ help ويخرج بـ 1، مش بيفحص حاجة. وبعد الـ tsconfig، [[vitest run]] من غير ملفات اختبار بيقول [[No test files found, exiting with code 1]].
 
 دا بالظبط الهدف: الـ [[&&]] بيوقف عند أول خطوة واقعة، فتصلّح واحدة واحدة بالترتيب. لو عايز الـ test يعدّي مؤقتًا لحد ما تكتب اختبارات حط [[vitest run --passWithNoTests]]. والغلط الشائع إنك تستخدم [[;]] بدل [[&&]] فكل الخطوات تشتغل و exit code النهائي يبقى بتاع آخر واحدة بس.`,
           solCode: R`// eslint.config.js
@@ -118,6 +283,144 @@ npx eslint --print-config src/index.ts`,
             when: "مع كل حفظ في VS Code (extension الـ ESLint)، وقبل كل commit (lint-staged)، وفي CI بـ [[--max-warnings=0]].",
             mistakes: R`warnings بتتراكم لحد ما محدش بيقراها: مية warning زي صفر، عشان كده [[--max-warnings=0]]. وفي مشروع حقيقي كان سكربت lint في تطبيق Next لسه [[next lint]] بعد ما Next شالها في النسخ الجديدة، فالسكربت نفسه بيقع: استخدم [[eslint .]] مباشرة. وملف [[.eslintrc]] القديم eslint 9 مبيقراهوش، فلو القواعد مش شغالة خالص شوف اسم الملف.`
           },
+          teach: R`## eslint بيعمل إيه في سطر واحد
+
+[[eslint]] بيقرا ملفاتك ويدوّر على أنماط معروفة إنها بتعمل bugs، ويطبع لكل مشكلة: السطر والعمود، ونوعها ([[error]] أو [[warning]])، والرسالة، واسم القاعدة. و [[npx]] قبله معناها «شغّل الـ eslint المتسطّب في المشروع ده» (من [[node_modules/.bin]]).
+
+كل اللي تحت اتشغّل على ويندوز في مشروع الـ lab بـ ESLint 10.12، والإعدادات هي إعدادات الحل في درس «سكربتات الفحص» وزيادة عليها ٣ قواعد:
+
+~~~text eslint.config.js (الجزء المهم)
+js.configs.recommended,
+...tseslint.configs.recommended,
+{ rules: { eqeqeq: "error", "prefer-const": "error", "no-console": "warn" } },
+~~~
+
+والملف اللي هنفحصه [[src/bad.ts]]:
+
+~~~text src/bad.ts
+import { sum } from "./sum";
+let unused = 1;
+let total = sum(1, 2);
+if (total == 3) {
+  console.log("three");
+}
+~~~
+
+---
+
+## ١. [[npx eslint .]]
+
+[[.]] يعني الفولدر الحالي وكل اللي جواه (ما عدا [[node_modules]] و [[.git]] واللي في [[ignores]]).
+
+~~~text الناتج
+~/lab/src/bad.ts
+  2:5   error    'unused' is never reassigned. Use 'const' instead  prefer-const
+  2:5   error    'unused' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  3:5   error    'total' is never reassigned. Use 'const' instead   prefer-const
+  4:11  error    Expected '===' and instead saw '=='                eqeqeq
+  5:3   warning  Unexpected console statement                       no-console
+
+✖ 5 problems (4 errors, 1 warning)
+  2 errors and 0 warnings potentially fixable with the $__bt--fix$__bt option.
+~~~
+
+### نقرا سطر
+
+| الجزء | معناه |
+|---|---|
+| [[2:5]] | سطر ٢، عمود ٥ (الحرف الخامس، أول حرف في [[unused]]) |
+| [[error]] | مستوى القاعدة. الـ error بيخلي الأمر يخرج بـ [[1]] |
+| الرسالة | إيه المشكلة، بالإنجليزي |
+| [[prefer-const]] | اسم القاعدة: دوّر بيه في الـ docs. ولو قبله [[@typescript-eslint/]] يبقى القاعدة جاية من plugin الـ TypeScript |
+
+والسطر الأخير بيقولك إن ٢ من الأخطاء (الاتنين [[prefer-const]]) ليهم تصليح أوتوماتيك. والأمر خرج بـ exit code [[1]] عشان فيه errors.
+
+---
+
+## ٢. [[npx eslint src/api/users.ts]]
+
+بدل [[.]] تدّيله مسار ملف (أو فولدر). مفيد وانت شغال على ملف واحد. جرّبته على [[src/sum.ts]] (ملف سليم): مطبعش أي حاجة وخرج بـ [[0]]. السكوت عند eslint معناه «تمام».
+
+---
+
+## ٣. [[npx eslint . --fix]]
+
+~~~text الناتج
+~/lab/src/bad.ts
+  2:7   error    'unused' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  4:11  error    Expected '===' and instead saw '=='          eqeqeq
+  5:3   warning  Unexpected console statement                 no-console
+~~~
+
+والملف نفسه اتغيّر: [[let unused]] بقت [[const unused]] و [[let total]] بقت [[const total]]. لاحظ إن [[unused]] بقى في عمود ٧ بدل ٥ لأن [[const]] أطول من [[let]] بحرفين.
+
+اللي فاضل eslint مبيلمسهوش عن قصد:
+- [[unused]]: تمسحه ولا نسيت تستخدمه؟ ده قرارك.
+- [[==]] لـ [[===]]: ممكن يغيّر السلوك ([[0 == ""]] بـ [[true]] و [[0 === ""]] بـ [[false]]).
+- [[console.log]]: يمكن مقصود.
+
+> [[--fix]] بيعدّل الملفات على طول. اعمل commit قبله أو بص على [[git diff]] بعده.
+
+---
+
+## ٤. [[npx eslint . --max-warnings=0]]
+
+عشان أوضّح الفرق، عملت ملف فيه warning بس: [[src/warn.ts]] فيه [[console.log("hi");]].
+
+~~~text من غير الفلاج
+~/lab/src/warn.ts
+  1:1  warning  Unexpected console statement  no-console
+
+✖ 1 problem (0 errors, 1 warning)
+~~~
+
+exit code [[0]]: الـ CI هيعدّي والـ warning هيفضل موجود.
+
+~~~text بـ --max-warnings=0
+ESLint found too many warnings (maximum: 0).
+
+~/lab/src/warn.ts
+  1:1  warning  Unexpected console statement  no-console
+~~~
+
+exit code [[1]]: الـ CI هيقع. ده اللي بيمنع الـ warnings تتراكم.
+
+---
+
+## ٥. [[npx eslint . --quiet]]
+
+على [[bad.ts]] الأصلي: نفس الأربع errors، والـ warning بتاع [[console]] اختفى، والملخص بقى [[✖ 4 problems (4 errors, 0 warnings)]]. يعني [[--quiet]] بيخفي الـ warnings من العرض بس، مش بيصلّح حاجة.
+
+---
+
+## ٦. [[npx eslint --print-config src/index.ts]]
+
+بيطبع JSON كبير فيه كل القواعد اللي هتتطبق على الملف ده بعد ما eslint يدمج كل الإعدادات. على [[src/bad.ts]] طلع ٩٣ قاعدة، ودي شوية منهم:
+
+~~~text الناتج (مختصر)
+"eqeqeq": [2, "always"]
+"prefer-const": [2, { "destructuring": "any", ... }]
+"no-console": [1, {}]
+"@typescript-eslint/no-unused-vars": [2]
+"no-unused-vars": [0, { ... }]
+~~~
+
+الرقم الأول هو المستوى: [[0]] = off، و [[1]] = warn، و [[2]] = error. ولاحظ إن [[no-unused-vars]] العادية [[0]] (مقفولة): typescript-eslint قفلها وشغّل نسخته [[@typescript-eslint/no-unused-vars]] لأنها فاهمة الأنواع. لما قاعدة «مش شغالة» وانت متأكد إنك كتبتها، ده أول أمر تجرّبه.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه | بيعدّل؟ | exit code لما فيه warnings بس |
+|---|---|---|---|
+| [[eslint .]] | يفحص كله | لأ | [[0]] |
+| [[eslint file]] | يفحص ملف | لأ | [[0]] |
+| [[--fix]] | يصلّح الآمن ويطبع الباقي | آه | [[0]] |
+| [[--max-warnings=0]] | أي warning = فشل | لأ | [[1]] |
+| [[--quiet]] | يخفي الـ warnings | لأ | [[0]] |
+| [[--print-config]] | يطبع القواعد الفعلية | لأ | - |
+
+وافتكر: [[1]] = لقى errors، و [[2]] = الإعداد نفسه بايظ.`,
           lines: [
             "افحص كل ملفات المشروع.",
             "افحص ملف واحد بس.",
@@ -128,9 +431,9 @@ npx eslint --print-config src/index.ts`,
           ],
           sol: R`على ملف فيه [[let unused = 1;]] و [[let total = sum(1, 2);]] و [[if (total == 3)]]، مع [[js.configs.recommended]] و [[typescript-eslint]] و قاعدتين [[eqeqeq]] و [[prefer-const]]، الناتج:
 
-[[2:5 error 'unused' is never reassigned. Use 'const' instead prefer-const]] و [[2:5 error 'unused' is assigned a value but never used @typescript-eslint/no-unused-vars]] و [[4:11 error Expected '===' and instead saw '==' eqeqeq]]، وفي الآخر [[✖ 4 problems (4 errors, 0 warnings)]] و [[2 errors and 0 warnings potentially fixable with the --fix option.]]
+[[2:5 error 'unused' is never reassigned. Use 'const' instead prefer-const]] و [[2:5 error 'unused' is assigned a value but never used @typescript-eslint/no-unused-vars]] و [[3:5 error 'total' is never reassigned. Use 'const' instead prefer-const]] و [[4:11 error Expected '===' and instead saw '==' eqeqeq]]، وفي الآخر [[✖ 4 problems (4 errors, 0 warnings)]] و [[2 errors and 0 warnings potentially fixable with the --fix option.]]
 
-بعد [[--fix]]: الـ [[let]] بقت [[const]] (دي آمنة)، بس المتغير المش مستخدم لسه موجود و [[==]] زي ما هو. الاتنين محتاجين قرار منك: يمكن المتغير لازم يتمسح ويمكن نسيت تستخدمه، و [[==]] لـ [[===]] ممكن يغيّر السلوك لو النوع مختلف.
+بعد [[--fix]]: الاتنين [[let]] بقوا [[const]] (دي آمنة)، بس المتغير المش مستخدم لسه موجود و [[==]] زي ما هو. الاتنين محتاجين قرار منك: يمكن المتغير لازم يتمسح ويمكن نسيت تستخدمه، و [[==]] لـ [[===]] ممكن يغيّر السلوك لو النوع مختلف.
 
 آخر كلمة في كل سطر هي اسم القاعدة، ودا اللي تدوّر عليه في الـ docs. ولو ما طلعش [[eqeqeq]] خالص، دي مش في [[recommended]]؛ ضيفها في [[rules]].`
         },
@@ -196,6 +499,177 @@ export default defineConfig([
             when: "أي مشروع Next أو React بـ TypeScript. ولو مشروع Node من غير React: نفس الملف من غير nextVitals و jsxA11y، وبـ [[js.configs.recommended]] من [[@eslint/js]].",
             mistakes: R`[[eslint@10]] مع [[eslint-config-next]]: وقت كتابة الدرس، [[eslint-plugin-react]] و [[eslint-plugin-jsx-a11y]] الـ peer dependency بتاعتهم لحد eslint 9، فـ npm بيرفض التسطيب بـ ERESOLVE: ثبّت [[eslint@9]] (وشوف لو اتحدّثوا). وتضيف [[jsxA11y.flatConfigs.recommended]] كامل (مش rules بس) فوق nextVitals، فـ eslint يقع قبل ما يفحص حاجة بـ [[Cannot redefine plugin "jsx-a11y"]] لأن Next سجّله قبلك. و [[no-floating-promises]] وتصلّحها بـ [[void]] في كل حتة من غير تفكير، فبتخبّي نفس الـ bug. ونسيان [[projectService]]، فكل القواعد الـ TypeChecked تقع بخطأ «You have used a rule which requires type information». وفي الانترفيو: «إيه الفرق بين floating promise و misused promise؟» الأولى Promise محدش مستنيه، والتانية Promise في مكان مستني قيمة عادية.`
           },
+          teach: R`## الملف ده بيعمل إيه
+
+ده ملف إعدادات eslint لمشروع Next بـ TypeScript. كله عبارة عن **array** (قايمة) من objects، وكل object بيقول «على الملفات دي، طبّق القواعد دي». eslint بيقرا القايمة من فوق لتحت، ولو اتنين قالوا حاجة مختلفة عن نفس القاعدة، **اللي تحت بيكسب**. ودي فكرة الملف كله: نبدأ بإعدادات جاهزة ونشدّد عليها تحت.
+
+اتشغّل على ويندوز (Node 24) في مشروع فيه [[next@16.3]] و [[eslint@9.39]] و [[eslint-config-next@16.3]] و [[typescript@6.0]] و [[typescript-eslint@8.71]]، و [[tsconfig.json]] فيه [[strict]] و [[jsx: "preserve"]].
+
+> [[eslint-config-next]] محتاج [[next]] نفسه متسطّب: من غيره eslint وقع بـ [[Cannot find module 'next/dist/compiled/babel/eslint-parser']]. في مشروع Next حقيقي ده مش مشكلة.
+
+---
+
+## السطور ١ لـ ٥: الـ imports
+
+~~~text
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import tseslint from "typescript-eslint";
+import jsxA11y from "eslint-plugin-jsx-a11y";
+import prettier from "eslint-config-prettier/flat";
+~~~
+
+[[import X from "package"]] يعني «هات اللي الباكدج دي بتصدّره وسمّيه X». والأقواس [[{ }]] في السطر الأول معناها «هات الحاجتين دول بأساميهم بالظبط».
+
+| الاسم | جاي منين | هو إيه |
+|---|---|---|
+| [[defineConfig]] | eslint نفسه | دالة بتلف الـ array. بتدّي autocomplete في VS Code، وبتفهم [[extends]] |
+| [[globalIgnores]] | eslint نفسه | فولدرات متتفحصش خالص |
+| [[nextVitals]] | [[eslint-config-next]] | إعدادات Next الجاهزة ([[core-web-vitals]] النسخة الأشد اللي بتهتم بسرعة الصفحة) |
+| [[tseslint]] | [[typescript-eslint]] | الـ parser اللي بيفهم TypeScript، وقواعده |
+| [[jsxA11y]] | [[eslint-plugin-jsx-a11y]] | قواعد الـ accessibility (a11y اختصار: a وبعدها ١١ حرف وبعدها y) |
+| [[prettier]] | [[eslint-config-prettier]] | مش قواعد: ده بيقفل قواعد الشكل |
+
+و [[.mjs]] في اسم الملف معناها «اقرا الملف ده كـ ES Module» حتى لو [[package.json]] مكتوب فيه [[commonjs]]، فالـ [[import]] تشتغل.
+
+---
+
+## [[export default defineConfig([ ... ]);]]
+
+[[export default]] يعني ده اللي الملف بيقدّمه لما eslint يعمله import. والباقي القايمة نفسها.
+
+---
+
+## [[...nextVitals,]]
+
+[[nextVitals]] نفسه array من كذا object. التلات نقط [[...]] (اسمها spread) بتفرد عناصره جوه قايمتنا، بدل ما تحط array جوه array.
+
+جواه plugins: [[react]] و [[react-hooks]] و [[jsx-a11y]] و [[import]] و [[@next/next]]. لما طبعت القواعد الفعلية بـ [[eslint --print-config app/Checkout.tsx]] لقيت [[react-hooks]] ٧.١ مشغّل ١٦ قاعدة، منهم [[rules-of-hooks]] و [[set-state-in-effect]]. بس [[exhaustive-deps]] جاية منه [[warn]]، وقواعد jsx-a11y ٦ بس وكلهم [[warn]]: [[alt-text]] و [[aria-props]] و [[aria-proptypes]] و [[aria-unsupported-elements]] و [[role-has-required-aria-props]] و [[role-supports-aria-props]].
+
+---
+
+## [[tseslint.configs.recommendedTypeChecked,]]
+
+قواعد typescript-eslint الموصى بيها، **ومعاها** القواعد اللي محتاجة تسأل TypeScript «النوع ده إيه؟». مثال: عشان تعرف إن [[saveOrder(id)]] بترجع Promise، لازم تعرف نوع الدالة، وده مش باين من شكل الكود.
+
+---
+
+## الـ object اللي فيه [[projectService]]
+
+~~~text
+{
+  languageOptions: {
+    parserOptions: {
+      projectService: true,
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+},
+~~~
+
+- [[languageOptions]]: إعدادات اللغة. و [[parserOptions]]: إعدادات الـ parser (اللي بيحوّل الكود لشجرة eslint بيفهمها).
+- [[projectService: true]]: لكل ملف، دوّر على أقرب [[tsconfig.json]] وابني منه برنامج TypeScript عشان القواعد تسأله عن الأنواع.
+- [[tsconfigRootDir]]: الفولدر اللي يبدأ منه. و [[import.meta.dirname]] معناها «الفولدر اللي الملف ده فيه» (موجودة في Node 20.11 وأحدث).
+
+جرّبت أشيل [[projectService: true]]، eslint وقع قبل ما يفحص:
+
+~~~text الناتج
+Error: Error while loading rule '@typescript-eslint/await-thenable': You have used a rule which requires type information, but don't have parserOptions set to generate type information for this file.
+~~~
+
+---
+
+## [[{ rules: jsxA11y.flatConfigs.recommended.rules },]]
+
+[[jsxA11y.flatConfigs.recommended]] إعداد كامل فيه حاجتين: [[plugins]] (تسجيل الـ plugin) و [[rules]] (القواعد). احنا بناخد [[.rules]] بس، لأن Next سجّل الـ plugin خلاص. جرّبت أحط الإعداد كله، ووقع:
+
+~~~text الناتج
+ConfigError: Config "jsx-a11y/recommended": Key "plugins": Cannot redefine plugin "jsx-a11y".
+~~~
+
+وبالسطر الصح، بقى فيه ٣١ قاعدة a11y شغالة بدل ٦.
+
+---
+
+## الـ object اللي فيه [[rules]]
+
+~~~text
+"@typescript-eslint/no-floating-promises": "error",
+"@typescript-eslint/no-misused-promises": "error",
+"react-hooks/exhaustive-deps": "error",
+~~~
+
+اسم القاعدة: اسم الـ plugin، وبعده [[/]]، وبعده اسم القاعدة. والقيمة [[off]] أو [[warn]] أو [[error]]. الاتنين الأوائل جايين [[error]] أصلًا من [[recommendedTypeChecked]]، فكتابتهم هنا تأكيد ووثيقة للفريق. التالتة كانت [[warn]] من Next، ولأن الـ object ده تحت، بقت [[error]].
+
+---
+
+## [[files]] و [[disableTypeChecked]]
+
+~~~text
+{
+  files: ["**/*.{js,mjs,cjs}"],
+  extends: [tseslint.configs.disableTypeChecked],
+},
+~~~
+
+[[files]] بيحدد الـ object ده يتطبق على مين. [[**]] يعني أي فولدر بأي عمق، و [[*]] أي اسم، و [[{js,mjs,cjs}]] أي امتداد من التلاتة. و [[extends]] يعني «حط الإعداد ده هنا». و [[disableTypeChecked]] بيقفل القواعد اللي محتاجة أنواع على ملفات الـ JS دي.
+
+ليه؟ لأن [[eslint.config.mjs]] نفسه ملف JS مش جوه [[tsconfig.json]]. شلت الـ object ده وجرّبت:
+
+~~~text الناتج
+nx/eslint.config.mjs
+  0:0  error  Parsing error: ...\eslint.config.mjs was not found by the project service. Consider either including it in the tsconfig.json or including it in allowDefaultProject
+~~~
+
+---
+
+## [[prettier,]] و [[globalIgnores(...)]]
+
+[[prettier]] في **الآخر** عشان يقفل أي قاعدة شكل اتفتحت فوق (اللي تحت بيكسب). و [[globalIgnores]] فولدرات متولّدة متتفحصش: [[.next]] (الـ build بتاع Next) و [[out]] و [[build]] و [[next-env.d.ts]] (Next بيكتبه لوحده).
+
+---
+
+## نشغّله على [[app/Checkout.tsx]] اللي في «جرّب»
+
+~~~text الناتج (الرسايل مختصرة)
+nx/app/Checkout.tsx
+  12:5   error    Promises must be awaited, end with a call to .catch, ...      @typescript-eslint/no-floating-promises
+  15:6   error    React Hook useEffect has a missing dependency: 'orderId' ...   react-hooks/exhaustive-deps
+  17:3   error    Promises must be awaited, end with a call to .catch, ...      @typescript-eslint/no-floating-promises
+  20:5   error    Visible, non-interactive elements with click handlers ...      jsx-a11y/click-events-have-key-events
+  20:5   error    Avoid non-native interactive elements. ...                     jsx-a11y/no-static-element-interactions
+  20:18  error    Promise-returning function provided to attribute where a void return was expected  @typescript-eslint/no-misused-promises
+  21:7   warning  Using $__bt<img>$__bt could result in slower LCP ...            @next/next/no-img-element
+  21:7   error    img elements must have an alt prop, ...                        jsx-a11y/alt-text
+
+✖ 8 problems (7 errors, 1 warning)
+~~~
+
+| السطر | الكود | القاعدة | الـ bug |
+|---|---|---|---|
+| ١٢ | [[fetch(...).then(...)]] جوه الـ effect من غير [[.catch]] | no-floating-promises | لو الطلب فشل، الخطأ بيضيع |
+| ١٥ | الـ deps فاضية | exhaustive-deps | الـ effect مش هيعيد لما [[orderId]] يتغير |
+| ١٧ | [[saveOrder(orderId);]] في جسم الـ component | no-floating-promises | بيتنادى مع كل render، والخطأ بيضيع |
+| ٢٠ | [[<div onClick=...>]] | click-events-have-key-events و no-static-element-interactions | مش شغال بالكيبورد |
+| ٢٠ | [[onClick={() => saveOrder(orderId)}]] | no-misused-promises | React مش بيستنى الـ Promise |
+| ٢١ | [[<img src="/logo.png" />]] | alt-text و no-img-element | قارئ الشاشة مش هيعرف الصورة دي إيه، و Next عايزك تستخدم [[next/image]] |
+
+وبعد الحل (الكود اللي تحت «جرّب»)، [[npx eslint app/Checkout.tsx]] مطبعش حاجة وخرج بـ [[0]].
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[...nextVitals]] | قواعد React و hooks و Next جاهزة |
+| [[recommendedTypeChecked]] و [[projectService]] | القواعد اللي بتفهم الأنواع، وتلاقي الـ tsconfig |
+| [[jsxA11y.flatConfigs.recommended.rules]] | الـ a11y كاملة، من غير تسجيل الـ plugin تاني |
+| [[rules]] بإيدك | نشدّد [[exhaustive-deps]] لـ error |
+| [[disableTypeChecked]] على JS | ملفات الإعداد مش في tsconfig |
+| [[prettier]] في الآخر | الشكل لـ prettier لوحده |
+
+والقاعدة اللي تمشي عليها في أي flat config: الأعم فوق، والأخص تحت.`,
           lines: [
             "defineConfig و globalIgnores من eslint نفسه.",
             "إعدادات Next: react و react-hooks و jsx-a11y و next، والقواعد المهمة لـ Core Web Vitals.",
@@ -286,6 +760,138 @@ git diff --stat`,
             when: "مرة واحدة [[--write .]] على المشروع كله في commit لوحده، وبعدها lint-staged بيظبط الملفات اللي بتتغير بس، و [[--check]] في CI.",
             mistakes: R`تعمل [[--write .]] على مشروع قديم في نفس الـ commit مع تعديل حقيقي، فالمراجع يلاقي ٣٠٠ ملف متغيرين ومش لاقي تعديلك. خليه commit لوحده اسمه [[style: format everything]]. وتحط [[--write]] في CI، فيعدّل الملفات على ماكينة CI ويعدّي، والمشروع عندك يفضل زي ما هو.`
           },
+          teach: R`## prettier بيعمل إيه
+
+[[prettier]] بياخد الكود، يرمي شكله كله، ويكتبه من الأول بقواعده هو. فمهما كتبت المسافات والتنصيص إزاي، الناتج واحد. وليه وضعين: يعدّل الملفات ([[--write]])، أو يفحص بس ويقولك مين مش متنسّق ([[--check]]).
+
+كل اللي تحت اتشغّل على ويندوز في مشروع الـ lab بـ Prettier 3.9. بوّظت [[src/sum.ts]] كده:
+
+~~~text src/sum.ts (متبوّظ)
+export   function sum(a:number,b:number){
+        return a+b}
+~~~
+
+---
+
+## ١. [[npx prettier --check .]]
+
+~~~text الناتج
+Checking formatting...
+[warn] src/sum.ts
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+~~~
+
+[[[warn]]] قبل كل ملف شكله مختلف. والأمر خرج بـ exit code [[1]]، وده اللي بيوقّع الـ CI. ولو كله تمام بيطبع [[All matched files use Prettier code style!]] ويخرج بـ [[0]]. و [[--check]] **مبيعدّلش** أي ملف، عشان كده هو اللي ينفع في CI.
+
+---
+
+## ٢. [[npx prettier --write .]]
+
+~~~text الناتج
+eslint.config.js 28ms (unchanged)
+package-lock.json 28ms (unchanged)
+package.json 2ms (unchanged)
+src/sum.test.ts 29ms (unchanged)
+src/sum.ts 9ms
+tsconfig.json 2ms (unchanged)
+~~~
+
+بيطبع كل ملف عدّى عليه والوقت اللي خده ([[ms]] = millisecond، جزء من ألف من الثانية). [[(unchanged)]] يعني الملف كان متنسّق ومتلمسش، واللي من غيرها هو اللي اتعدّل. والملف بقى:
+
+~~~text src/sum.ts بعد --write
+export function sum(a: number, b: number) {
+  return a + b;
+}
+~~~
+
+مسافة بعد [[:]]، ومسافتين للـ indent، و [[;]] في آخر الجملة، وكل ده من غير ما يغيّر معنى الكود.
+
+> لاحظ إن prettier عدّى على [[package.json]] و [[tsconfig.json]] كمان: بيفهم JSON و CSS و Markdown و YAML و HTML مش JS بس. وتجاهل [[node_modules]] لوحده لأنه بيقرا [[.gitignore]].
+
+---
+
+## ٣. [[npx prettier --write "src/**/*.{ts,tsx}"]]
+
+بدل [[.]] تدّيله نمط (glob) يحدد الملفات:
+
+| الحتة | معناها |
+|---|---|
+| [[src/]] | جوه فولدر src |
+| [[**/]] | في أي فولدر جوه، بأي عمق |
+| [[*]] | أي اسم ملف |
+| [[.{ts,tsx}]] | امتداده ts أو tsx |
+
+### ليه علامات التنصيص؟
+
+عشان prettier هو اللي يفهم النمط، مش الـ shell. جرّبته من غير تنصيص:
+
+~~~bash
+npx prettier --check src/**/*.{ts,tsx}
+~~~
+
+~~~text الناتج في Git Bash
+[error] No files matching the pattern were found: "src/**/*.tsx".
+~~~
+
+bash فك [[{ts,tsx}]] لنمطين منفصلين قبل ما prettier يشوفهم، ومفيش ملفات [[.tsx]]، فبعت النمط زي ما هو و prettier اشتكى (exit code [[2]]). وفي PowerShell 7 الوضع أوحش:
+
+~~~text الناتج في PowerShell
+ParserError:
+   | npx prettier --check src/**/*.{ts,tsx}
+   |                                  ~
+   | Missing argument in parameter list.
+~~~
+
+PowerShell فاكر إن الفاصلة جوه الأقواس جزء من كود PowerShell. ومع التنصيص الأمر اشتغل في الاتنين: [[All matched files use Prettier code style!]].
+
+---
+
+## ٤. [[npx prettier --list-different .]]
+
+~~~text الناتج
+src/sum.ts
+~~~
+
+نفس شغل [[--check]] (مبيعدّلش، وبيخرج بـ [[1]] لو فيه ملف مختلف)، بس بيطبع أسامي الملفات بس من غير [[[warn]]] ولا كلام. مفيد لو هتدّي الناتج لأمر تاني في سكربت.
+
+---
+
+## ٥. [[git diff --stat]]
+
+بعد [[--write]] بتبص Git شايف إيه اتغير. ضفت سطر متبوّظ ([[export   const double=(n:number)=>{ return n*2 }]]) وعملت [[--write .]]:
+
+~~~text الناتج
+ src/sum.ts | 3 +++
+ 1 file changed, 3 insertions(+)
+~~~
+
+[[--stat]] بيطبع ملخص: اسم كل ملف وعدد السطور اللي اتضافت ([[+]]) أو اتشالت ([[-]]). السطر الواحد بقى ٣ سطور:
+
+~~~text
+export const double = (n: number) => {
+  return n * 2;
+};
+~~~
+
+لو [[--stat]] طلّع عشرات الملفات وانت عدّلت ملف واحد، يبقى المشروع ما كانش متنسّق: اعمل commit للتنسيق لوحده.
+
+---
+
+## فخ ويندوز: CRLF
+
+بعد [[git checkout -- src/sum.ts]] على ويندوز، [[--check]] رجع قال [[[warn] src/sum.ts]] والملف شكله سليم! السبب: Git هنا متظبط بـ [[core.autocrlf=true]]، فكتب الملف بنهاية سطر CRLF (ويندوز)، و prettier من نسخة 2 الافتراضي عنده [[endOfLine: "lf"]]، فشايف كل سطر غلط. [[--write]] رجّعه LF. الحل الدائم في درس [[.editorconfig و .prettierrc]] وفي [[.gitattributes]].
+
+---
+
+## الخلاصة
+
+| الأمر | بيعدّل؟ | exit code لو فيه ملف مش متنسّق | فين |
+|---|---|---|---|
+| [[--check .]] | لأ | [[1]] | CI |
+| [[--write .]] | آه | [[0]] | جهازك |
+| [[--write "glob"]] | آه، الملفات دي بس | [[0]] | جهازك |
+| [[--list-different .]] | لأ | [[1]] | سكربتات |
+| [[git diff --stat]] | - | - | قبل الـ commit |`,
           lines: [
             "افحص كل الملفات، ومتعدّلش حاجة.",
             "رتّب كل الملفات وعدّلها.",
@@ -323,6 +929,157 @@ npx tsc --showConfig`,
             when: "في سكربت [[typecheck]]، وفي CI قبل الاختبارات، وقبل أي release. VS Code بيعرض نفس الأخطاء بس للملفات المفتوحة، و tsc بيفحص الكل.",
             mistakes: R`تفتكر إن [[npm run build]] نجح يبقى الأنواع سليمة، وده مش صح مع Vite. و [[skipLibCheck: false]] في مشروع كبير، فالفحص ياخد دقيقة بسبب ملفات الأنواع اللي في node_modules: خليها true. وفي monorepo تشغّل tsc في الجذر ومفيش tsconfig هناك، فيطبع الـ help بدل ما يفحص: شغّله في كل باكدج ([[pnpm -r run typecheck]]).`
           },
+          teach: R`## الفكرة
+
+[[tsc]] (TypeScript Compiler) بيقرا [[tsconfig.json]]، يجمع كل ملفات المشروع، ويتأكد إن الأنواع ماشية مع بعض. و [[--noEmit]] (emit = يطلّع) بيقوله: افحص بس، متكتبش ولا ملف [[.js]]، لأن الـ build بيعمله Vite أو Next.
+
+اتجرّب على ويندوز في مشروع Vite فيه [[src/n.ts]]:
+
+~~~text src/n.ts
+const n: number = "5";
+document.body.textContent = String(n);
+export {};
+~~~
+
+[[: number]] بيقول إن [[n]] رقم، وبعدين بنحط فيه [["5"]] وده نص (string). غلط واضح.
+
+---
+
+## الأول: Vite مش شايفه
+
+~~~text npx vite build
+vite v8.3.3 building client environment for production...
+✓ 4 modules transformed.
+dist/index.html                0.07 kB │ gzip: 0.09 kB
+dist/assets/index-MWD_-mWD.js  0.71 kB │ gzip: 0.41 kB
+✓ built in 114ms
+~~~
+
+نجح وخرج بـ [[0]]. Vite بيشيل الأنواع ([[: number]]) ويكمّل من غير ما يسأل هي صح ولا لأ، عشان يبقى سريع. عشان كده محتاج خطوة فحص لوحدها.
+
+---
+
+## ١. [[npx tsc --noEmit]]
+
+~~~text الناتج
+src/n.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[src/n.ts]] | الملف |
+| [[(1,7)]] | سطر ١، عمود ٧ (أول حرف في [[n]]) |
+| [[error TS2322]] | رقم الخطأ. [[TS2322]] = «النوع ده مينفعش يتحط في النوع ده». دوّر بالرقم لو الرسالة مش واضحة |
+| الرسالة | [[string]] مينفعش يتحط مكان [[number]] |
+
+وفي ترمنال عادي (مش ناتج متحوّل لملف) tsc بيطبعها بشكل أحلى: بألوان، وبيوريك السطر نفسه وتحته [[~]] على الغلط، وفي الآخر [[Found 1 error in src/n.ts:1]].
+
+### الـ exit code بيختلف بين النسخ
+
+| النسخة | خطأ أنواع | مفيش [[tsconfig.json]] |
+|---|---|---|
+| TypeScript 6.0 (ويندوز ولينكس [[node:22-slim]]) | [[2]] | [[1]] وبيطبع الـ help |
+| TypeScript 7.0 (النسخة المكتوبة بـ Go) | [[1]] | [[1]] وبيطبع الـ help |
+
+الاتنين مش صفر، فالـ CI و [[&&]] هيقفوا في الحالتين. متكتبش سكربت بيستنى رقم معين.
+
+---
+
+## ٢. [[npx tsc --noEmit -p apps/web/tsconfig.json]]
+
+[[-p]] اختصار [[--project]]: استخدم الـ tsconfig ده بدل اللي في الفولدر الحالي. جرّبته من فولدر فوق المشروع:
+
+~~~text الناتج
+vt/src/n.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+~~~
+
+المسار في الناتج بقى بيبدأ من الفولدر اللي انت فيه. ولو المسار غلط:
+
+~~~text الناتج
+error TS5058: The specified path does not exist: 'vt/nope.json'.
+~~~
+
+---
+
+## ٣. [[npx tsc --noEmit --watch]]
+
+~~~text الناتج
+8:31:51 PM - Starting compilation in watch mode...
+
+src/n.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+
+8:31:51 PM - Found 1 error. Watching for file changes.
+~~~
+
+وبيفضل شغال، ومع كل حفظ يعيد الفحص ويطبع النتيجة الجديدة. [[Ctrl+C]] يوقفه.
+
+---
+
+## ٤. [[npx tsc --noEmit --pretty false | grep -c "error TS"]]
+
+من جوه لبرة:
+
+1. [[--pretty false]]: من غير ألوان ومن غير السطور الزيادة، كل خطأ في سطر واحد. (tsc أصلًا بيعمل كده لوحده لما الناتج رايح لـ pipe، بس كتابتها بتضمن ده.)
+2. [[|]] (pipe): ابعت الناتج للأمر اللي بعدي بدل الشاشة.
+3. [[grep -c "error TS"]]: [[grep]] بيدوّر على السطور اللي فيها الكلام ده، و [[-c]] (count) بيطبع عددهم بس.
+
+~~~text الناتج
+1
+~~~
+
+[[grep]] أمر لينكس، وموجود في Git Bash. في PowerShell نفس الفكرة: [[(npx tsc --noEmit --pretty false | Select-String "error TS").Count]].
+
+---
+
+## ٥. [[npx tsc --showConfig]]
+
+بيطبع الإعدادات النهائية بعد ما يدمج [[extends]]، والأهم: قايمة الملفات اللي هيفحصها فعلًا. على مشروع الـ lab:
+
+~~~text الناتج (TypeScript 6.0)
+{
+    "compilerOptions": {
+        "strict": true,
+        "module": "esnext",
+        "moduleResolution": "bundler",
+        "target": "es2022",
+        "noEmit": true,
+        "skipLibCheck": true
+    },
+    "files": [
+        "./src/n.ts",
+        "./src/price.test.ts",
+        "./src/price.ts",
+        "./src/sum.test.ts",
+        "./src/sum.ts",
+        "./src/cart/cart.test.ts"
+    ],
+    "include": [
+        "src"
+    ]
+}
+~~~
+
+لو tsc مش بيمسك غلط في ملف، دوّر عليه في [[files]] هنا. مش موجود؟ يبقى [[include]] مش شايفه.
+
+---
+
+## TypeScript 7
+
+وقت الكتابة دي [[npm i -D typescript]] بيجيب 7.0، وده نسخة مكتوبة بـ Go (أسرع بكتير)، والأوامر اللي فوق كلها اشتغلت عليها بنفس الشكل. بس [[typescript-eslint]] لسه بيطلب أقل من 6.1، فلو بتستخدمه ثبّت [[typescript@6]] (درس «سكربتات الفحص»).
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[tsc --noEmit]] | يفحص المشروع، من غير ملفات |
+| [[-p file]] | بـ tsconfig معين |
+| [[--watch]] | يفضل شغال ويعيد مع كل حفظ |
+| [[--pretty false]] | خطأ في سطر، للـ grep والسكربتات |
+| [[--showConfig]] | الإعدادات والملفات الفعلية |
+
+و [[vite build]] أو [[npm run dev]] نجحوا مش معناها إن الأنواع سليمة: ده شغل [[tsc --noEmit]] لوحده.`,
           lines: [
             "افحص أنواع المشروع كله، ومتطلّعش ملفات.",
             "نفسه بـ tsconfig معين ([[-p]] project)، زي تطبيق جوه monorepo.",
@@ -334,7 +1091,7 @@ npx tsc --showConfig`,
 
 [[npx tsc --noEmit]] بيمسكه:
 
-[[src/n.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.]] ويخرج بـ 2. وبـ [[--pretty false]] مع [[grep -c "error TS"]] بيطبع [[1]].
+[[src/n.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.]] ويخرج بـ 2 (TypeScript 7 بيخرج بـ 1، والاتنين فشل). وبـ [[--pretty false]] مع [[grep -c "error TS"]] بيطبع [[1]].
 
 لو [[tsc]] طبع صفحة الـ help بدل ما يفحص، يبقى مفيش [[tsconfig.json]] في الفولدر. ولو ما مسكش الغلط، يبقى الملف مش جوه [[include]]، أو المشروع فيه [[tsconfig.json]] بـ [[references]] (قالب Vite الجديد)، وساعتها الصح [[tsc -b]] أو [[tsc --noEmit -p tsconfig.app.json]].`
         },
@@ -367,6 +1124,126 @@ insert_final_newline = true
             when: "أول يوم في أي مشروع، وأي مشروع عليه أكتر من شخص أو أكتر من نظام تشغيل.",
             mistakes: R`إعدادات prettier في [[.prettierrc]] وكمان في package.json تحت [[prettier]]، فواحد بس اللي بيتقري وتتلخبط أنهي. وتغيّر [[printWidth]] على مشروع قايم من غير [[prettier --write .]] في commit لوحده، فأول حد يلمس أي ملف يلاقي الملف كله اتغير في الـ diff.`
           },
+          teach: R`## الفكرة
+
+المثال ملفين مش أوامر: [[.editorconfig]] بيقراه المحرر وانت بتكتب، و [[.prettierrc]] بيقراه prettier لما يشتغل. الاتنين في جذر المشروع وبيدخلوا Git، فأي حد يعمل clone بياخد نفس الإعدادات. والنقطة في أول الاسم معناها ملف مخفي على لينكس والماك (عُرف ملفات الإعدادات).
+
+---
+
+## [[.editorconfig]] سطر سطر
+
+السطر اللي بيبدأ بـ [[#]] تعليق، والباقي [[مفتاح = قيمة]].
+
+### [[root = true]]
+
+المحرر بيدوّر على [[.editorconfig]] في فولدر الملف، وبعدين اللي فوقه، وفوقه، لحد ما يلاقي ملف فيه [[root = true]] فيقف. كده إعدادات فولدر برّه المشروع (زي فولدر الـ home) متدخلش.
+
+### [[[*]]]
+
+اللي بين الأقواس المربعة نمط ملفات، والإعدادات اللي تحته تخصّه. [[*]] يعني كل الملفات. وتقدر تزوّد قسم زي [[[*.md]]] تحته بإعدادات مختلفة.
+
+### الإعدادات الأربعة
+
+| الإعداد | القيمة | معناها |
+|---|---|---|
+| [[indent_style]] | [[space]] | الـ indent مسافات مش tab |
+| [[indent_size]] | [[2]] | مسافتين لكل مستوى |
+| [[end_of_line]] | [[lf]] | نهاية السطر LF |
+| [[insert_final_newline]] | [[true]] | سطر فاضي في آخر الملف |
+
+### LF و CRLF
+
+آخر كل سطر في الملف فيه حرف مخفي بيقول «سطر جديد». لينكس والماك بيكتبوا حرف واحد اسمه LF (Line Feed، [[\n]]). ويندوز بيكتب اتنين: CR (Carriage Return، [[\r]]) وبعده LF، يعني CRLF. لو كل واحد في الفريق بيكتب بنوع، Git بيشوف كل السطور اتغيرت وهي زي ما هي.
+
+---
+
+## [[.prettierrc]]
+
+~~~text .prettierrc
+{ "singleQuote": true, "semi": true, "printWidth": 100 }
+~~~
+
+| الاختيار | الافتراضي | هنا |
+|---|---|---|
+| [[singleQuote]] | [[false]]: تنصيص مزدوج [["hi"]] | [[true]]: مفرد [['hi']] |
+| [[semi]] | [[true]] | [[true]]: [[;]] في آخر كل جملة |
+| [[printWidth]] | [[80]] | [[100]] حرف قبل ما يكسر السطر |
+
+---
+
+## نجرّب: prettier بيقرا الاتنين
+
+اتجرّب على ويندوز بـ Prettier 3.9، على ملف [[a.js]]:
+
+~~~text a.js
+const s = "hi"
+function f(){
+return s}
+~~~
+
+~~~bash
+npx prettier a.js
+~~~
+
+من غير [[--write]] prettier بيطبع الناتج على الشاشة بس ومبيعدّلش الملف:
+
+~~~text الناتج
+const s = 'hi';
+function f() {
+  return s;
+}
+~~~
+
+التنصيص بقى مفرد ([[singleQuote]])، و [[;]] اتضافت ([[semi]])، والـ indent مسافتين. المسافتين دول جايين من [[.editorconfig]]: لما غيّرت [[indent_size = 4]] وشغّلت نفس الأمر:
+
+~~~text الناتج
+const s = 'hi';
+function f() {
+    return s;
+}
+~~~
+
+يعني prettier بيقرا [[indent_style]] و [[indent_size]] و [[end_of_line]] من [[.editorconfig]] لو [[.prettierrc]] مقالش حاجة عنهم. و [[npx prettier --find-config-path a.js]] بيطبع [[.prettierrc]]: الملف اللي هيتقري فعلًا.
+
+### [[end_of_line = lf]] في الواقع
+
+عملت ملف بنهاية سطر CRLF وشغّلت [[npx prettier --check crlf.js]]:
+
+~~~text الناتج
+[warn] crlf.js
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+~~~
+
+الملف شكله سليم بس نهاية السطر غلط، و prettier بيمسكها. ده بيحصل على ويندوز لو Git بيحوّل لـ CRLF ([[core.autocrlf=true]])، والحل في [[.gitattributes]] (تاب git).
+
+---
+
+## لو [[.prettierrc]] فيه غلط
+
+[[.prettierrc]] من غير امتداد prettier بيقراه كـ **YAML**، و JSON السليم YAML سليم كمان. عشان كده [[{ "singleQuote": true, }]] بفاصلة زيادة اشتغل عادي، وكمان [[{ singleQuote: true }]] من غير تنصيص. بس لو نسيت القوس:
+
+~~~text الناتج
+[error] Invalid configuration for file "ec/a.js":
+[error] YAML Error in ec/.prettierrc:
+[error] Flow map must end with a } at line 2, column 1:
+~~~
+
+وخرج بـ [[2]]، يعني مش بيتجاهله ويكمّل.
+
+---
+
+## VS Code
+
+ده من الـ docs ومش متجرّب هنا: VS Code مبيقراش [[.editorconfig]] لوحده، محتاج إضافة [[EditorConfig for VS Code]]. وبعدها شريط الحالة تحت على اليمين بيكتب [[Spaces: 2]] و [[LF]].
+
+---
+
+## الخلاصة
+
+| الملف | مين بيقراه | إمتى | فيه إيه |
+|---|---|---|---|
+| [[.editorconfig]] | المحرر، و prettier | وانت بتكتب، ولما prettier يشتغل | المسافات ونهاية السطر |
+| [[.prettierrc]] | prettier | لما prettier يشتغل | التنصيص و [[;]] وطول السطر |`,
           lines: [
             "ده الملف الرئيسي، متدوّرش على إعدادات في الفولدرات اللي فوق.",
             "الإعدادات اللي جاية لكل الملفات.",
@@ -380,172 +1257,7 @@ insert_final_newline = true
 
 ولو شغّلت [[npx prettier --write]] على ملف فيه [[const s = "hi"]] هيبقى [[const s = 'hi';]] بسبب [[singleQuote]] و [[semi]].
 
-لو Tab لسه بيكتب ٤ مسافات: VS Code محتاج إضافة [[EditorConfig for VS Code]] عشان يقرا [[.editorconfig]]، أو إعداد [[editor.detectIndentation]] أخد المسافات من الملف المفتوح. وخلي بالك إن الـ JSON في [[.prettierrc]] لازم يبقى سليم؛ لو فيه فاصلة زيادة prettier هيطلع error، مش هيتجاهله.`
-        }
-      ]
-    },
-    {
-      t: "الاختبارات",
-      l: 2,
-      n: "الكود بيعمل الصح فعلًا؟ vitest و jest، ونسبة الكود اللي اتختبر",
-      items: [
-        {
-          cmd: "vitest",
-          title: "شغّل الاختبارات مرة أو مع كل حفظ",
-          desc: R`[[vitest]] لوحده بيفتح وضع watch ويعيد الاختبارات مع كل حفظ، وده وانت شغال. [[vitest run]] بيشغّلهم مرة ويقفل بـ exit code، وده للـ CI والـ hooks. وتقدر تفلتر بملف أو باسم الاختبار.
-
-و [[--passWithNoTests]] بتخلي باكدج لسه ملهاش اختبارات متفشّلش الأمر.
-
-الدرس ده عن تشغيل الاختبارات. كتابتها نفسها (expect و mocks والوقت المزيّف) في فئة «تكتب اختبار» اللي بعد الفئة دي.`,
-          example: R`npx vitest
-npx vitest run
-npx vitest run src/cart
-npx vitest run -t "applies discount"
-npx vitest run --passWithNoTests
-npx vitest run --reporter=verbose`,
-          try: R`اكتب [[sum.test.ts]] فيه [[expect(sum(2, 2)).toBe(4)]]، شغّل [[vitest]]، وعدّل الدالة وشوف الاختبار بيقع قدامك من غير ما تعيد التشغيل.`,
-          deep: {
-            why: "lint و tsc بيقولوا الكود «سليم شكلًا». بس [[calculateTotal]] بترجع الرقم الصح؟ الخصم بيتحسب قبل الضريبة ولا بعدها؟ ده محدش يعرفه غير لو شغّلت الكود فعلًا بمدخلات معروفة وقارنت الناتج.",
-            how: R`vitest بيدوّر على ملفات [[*.test.ts]] و [[*.spec.ts]] (وأخواتهم js و tsx) ويشغّلها. جوه الملف: [[describe]] مجموعة، و [[it]] أو [[test]] اختبار واحد، و [[expect(x).toBe(y)]] الشرط.
-
-الفرق المهم: [[vitest]] من غير حاجة بيقعد شغال (watch) في ترمنال عادي، ويعيد الاختبارات المتأثرة بس لما تحفظ. بس لو لقى المتغير [[CI]] (موجود في GitHub Actions)، أو الترمنال مش تفاعلي، بيشتغل مرة ويقفل. عشان كده في السكربتات اكتب [[vitest run]] صريحة ومتعتمدش على التخمين.
-
-وبيستخدم إعدادات Vite نفسها (aliases و plugins)، فبيفهم TypeScript و JSX من غير إعداد. ولو محتاج DOM (اختبارات React components) بتحط [[environment: 'jsdom']] في [[vitest.config.ts]].
-
-[[-t]] بيفلتر بجزء من اسم الاختبار، والمسار بيفلتر بالملفات اللي مسارها فيه الكلمة دي. و [[--reporter=verbose]] بيطبع كل اختبار باسمه بدل ملخص لكل ملف.
-
-ولمشروع Node صغير من غير Vite، Node نفسه فيه [[node --test]] (في تاب Node).`,
-            when: "watch وانت بتكتب الكود. و [[run]] في [[scripts.test]] و CI و pre-push.",
-            mistakes: R`سكربت [["test": "vitest"]] من غير run، فـ [[npm run check]] في ترمنال عادي يقعد في watch ومبيكمّلش للخطوة اللي بعده، وتفتكره علّق. واختبارات بتعتمد على بعض أو على الترتيب (واحد بيسيب داتا والتاني بيعتمد عليها)، فتنجح لوحدها وتقع مع بعض. وتنسى [[await]] قبل [[expect(promise).rejects]]: في jest والنسخ القديمة الاختبار ممكن يعدّي وهو فاشل، و vitest 5 بقى يوقّعه برسالة «was not awaited».`
-          },
-          lines: [
-            "شغّل الاختبارات وسيبها تعيد مع كل حفظ (watch).",
-            "شغّلهم مرة واحدة واقفل، والـ exit code بيقول نجح ولا لأ.",
-            "الملفات اللي في مسارها src/cart بس.",
-            "الاختبارات اللي اسمها فيه الجملة دي بس ([[-t]]).",
-            "لو مفيش ملفات اختبار أصلًا، اعتبرها نجاح.",
-            "اطبع كل اختبار باسمه."
-          ],
-          sol: R`أول تشغيل بـ [[npx vitest]]: [[✓ src/sum.test.ts (1 test)]] و [[Test Files 1 passed (1)]] و [[Tests 1 passed (1)]]، وبعدين بيقعد مستني ([[Waiting for file changes...]]).
-
-لما تغيّر الدالة لـ [[a - b]] وتحفظ، بيعيد الاختبار لوحده ويطبع:
-
-[[FAIL src/sum.test.ts > adds two numbers]] و [[AssertionError: expected +0 to be 4 // Object.is equality]] وتحتها [[- 4]] و [[+ 0]]، وسهم على السطر اللي فيه [[toBe(4)]]. ترجّعها وتحفظ فيرجع أخضر.
-
-لو ما اتعادش لما حفظت: انت شغّلت [[vitest run]] مش [[vitest]]، أو شغّال في CI (هناك بيبقى run تلقائي). ولو قال [[No test files found]]، اسم الملف لازم يخلص بـ [[.test.ts]] أو [[.spec.ts]]. واكتب [[q]] عشان تخرج.`,
-          solCode: R`// src/sum.ts
-export function sum(a: number, b: number) {
-  return a + b;
-}
-
-// src/sum.test.ts
-import { expect, test } from 'vitest';
-import { sum } from './sum';
-
-test('adds two numbers', () => {
-  expect(sum(2, 2)).toBe(4);
-});`
-        },
-        {
-          cmd: "--coverage",
-          title: "الاختبارات غطّت كام في المية من الكود",
-          desc: R`[[--coverage]] بيعلّم كل سطر اتنفّذ وقت الاختبارات، ويطلّع جدول بالنسبة لكل ملف، وتقرير HTML تفتحه تشوف السطور الحمرا اللي محدش اختبرها.
-
-و thresholds بتخلي الأمر يفشل لو النسبة نزلت عن حد معين.`,
-          example: R`npm i -D @vitest/coverage-v8
-npx vitest run --coverage
-npx vitest run --coverage --coverage.thresholds.lines=80
-# افتح coverage/index.html في المتصفح
-npx jest --coverage`,
-          try: R`شغّل [[--coverage]] على مشروع الـ lab، وافتح التقرير، وادخل على ملف فيه if واتأكد إن الاتجاهين متغطّيين.`,
-          deep: {
-            why: "عندك ٥٠ اختبار وحاسس إنك مغطّي. بس يمكن كلهم بيختبروا الحالة السعيدة، وفرع الـ error في [[checkout]] عمره ما اتشغّل. التقرير بيوريك الأماكن اللي محدش لمسها.",
-            how: R`vitest بيستخدم V8 (محرك Node نفسه) يسجّل أنهي سطور وفروع اتنفّذت وقت الاختبارات. الناتج أربع نسب: [[Stmts]] الجمل، و [[Branch]] الفروع (كل if ليه اتجاهين)، و [[Funcs]] الدوال، و [[Lines]] السطور. والـ Branch أهمهم، لأن سطر فيه if ممكن يتحسب «متغطّي» واتجاه واحد بس اللي اتجرّب.
-
-التقرير بيتكتب في فولدر [[coverage/]] (حطه في [[.gitignore]])، وجواه [[index.html]]: تفتحه وتدخل على أي ملف تلاقي السطور اللي متنفّذتش بالأحمر.
-
-[[thresholds]] (في الأمر أو في [[vitest.config.ts]]) بيحوّل الرقم لشرط: لو السطور أقل من ٨٠٪، الأمر يرجع exit code 1 والـ CI يقع.
-
-و jest فيه نفس الفكرة بـ [[--coverage]] من غير تسطيب زيادة، و [[node --test --experimental-test-coverage]] لـ test runner بتاع Node.`,
-            when: "كل فترة تبص على التقرير تدوّر على كود مهم (الدفع، والصلاحيات) من غير اختبارات. و threshold في CI عشان النسبة متنزلش مع الوقت.",
-            mistakes: "تطارد ١٠٠٪ فتكتب اختبارات بتنفّذ الكود من غير ما تتأكد من حاجة. التغطية بتقول السطر اتشغّل، مش إنه اتختبر صح. و threshold عالي من أول يوم على مشروع قديم، فالـ CI يفضل أحمر والناس تقفله: ابدأ بالنسبة الحالية وزوّد."
-          },
-          lines: [
-            "سطّب مزوّد التغطية بتاع vitest (مرة واحدة).",
-            "شغّل الاختبارات وسجّل السطور اللي اتنفّذت: جدول في الترمنال وفولدر coverage.",
-            "نفسه، ويفشل لو السطور المتغطية أقل من ٨٠٪.",
-            "نفس الفكرة في jest، من غير تسطيب زيادة."
-          ],
-          sol: R`على دالة فيها [[if (coupon === 'SAVE10')]] واختبار واحد من غير كوبون، الجدول طلّع [[price.ts | 66.66 | 50 | 100 | 66.66 | 3]]، يعني نص الـ branches بس (الـ if ما اتدخلش) وسطر 3 مش متغطي. وفي [[coverage/index.html]] لما تفتح [[price.ts]] هتلاقي السطر ده أحمر، وجنب الـ if علامة إن الاتجاه ده ما اتجربش.
-
-بعد اختبار تاني بـ [['SAVE10']]: [[All files 100% Branches 100% ( 2/2 )]] و [[No files with missing coverage.]] والسطور كلها خضرا مع عدد مرات التنفيذ جنب كل سطر.
-
-الأخطاء الشائعة: [[MISSING DEPENDENCY Cannot find dependency '@vitest/coverage-v8']] لو نسيت السطر الأول. وملف ما ظهرش في التقرير خالص لأن محدش عمله import في أي اختبار؛ دا أخطر من ٠٪ لأنك مش شايفه (حط [[coverage.include]] عشان يظهر). وافتكر إن ١٠٠٪ هنا معناها إن الاتجاهين اتشغلوا، مش إنك اختبرت القيمة الصح في كل واحد.`,
-          solCode: R`// src/price.test.ts
-import { expect, test } from 'vitest';
-import { price } from './price';
-
-test('no coupon', () => {
-  expect(price(100)).toBe(100);
-});
-
-test('SAVE10 gives 10% off', () => {
-  expect(price(100, 'SAVE10')).toBe(90);
-});`
-        },
-        {
-          cmd: "jest",
-          title: "الاختبارات في مشروع قديم",
-          desc: R`jest الأقدم والأشهر، وهتلاقيه في مشاريع كتير (خصوصًا backend و React Native). الأوامر شبه vitest: [[jest]] مرة واحدة، و [[--watch]] مع كل حفظ، و [[-t]] بالاسم.
-
-بس jest مبيفهمش [[import]] لوحده، فمحتاج Babel أو [[--experimental-vm-modules]].`,
-          example: R`npx jest
-npx jest --watch
-npx jest src/auth -t "rejects expired token"
-npx jest --runInBand
-NODE_OPTIONS=--experimental-vm-modules npx jest
-npx cross-env NODE_OPTIONS=--experimental-vm-modules jest`,
-          try: R`في مشروع فيه [["type": "module"]] شغّل [[jest]] وشوف الخطأ ([[Must use import to load ES Module]] في jest 30، و [[Cannot use import statement outside a module]] في النسخ الأقدم)، وبعدين شغّله بـ [[NODE_OPTIONS]].`,
-          deep: {
-            why: "مش كل مشروع هتشتغل عليه هيبقى vitest. jest لسه في مشاريع كتير، ولازم تعرف تشغّله وتفهم مشاكله المشهورة.",
-            how: R`عكس vitest، [[jest]] من غير حاجة بيشغّل مرة ويقفل، و [[--watch]] هو اللي بيقعد، وبيعيد الاختبارات المتأثرة بالملفات اللي اتغيرت من آخر commit (عشان كده محتاج Git).
-
-jest اتعمل أيام CommonJS ([[require]]). لو مشروعك ES Modules ([[import]] و [["type": "module"]])، إما Babel أو ts-jest يحوّلوا الكود، أو تشغّل Node بـ [[--experimental-vm-modules]] فـ jest يستخدم دعم ESM اللي في Node. والمتغير [[NODE_OPTIONS]] بيوصّل الفلاج ده لـ Node اللي jest شغال جواه.
-
-الشكل [[VAR=value command]] بتاع bash، ومبيشتغلش في CMD ولا PowerShell. [[cross-env]] بيعمل نفس الحاجة على أي نظام، فلو في الفريق حد على ويندوز حطه في السكربت.
-
-[[--runInBand]] بيشغّل الملفات واحد ورا التاني في نفس الـ process بدل workers متوازية. أبطأ، بس بيحل مشاكل الاختبارات اللي بتستخدم نفس الداتابيز، ومفيد في CI على ماكينة ضعيفة.`,
-            when: "مشروع موجود بـ jest: كمّل بيه. مشروع جديد بـ Vite أو TypeScript: vitest أسهل (نفس الـ API تقريبًا، وبيفهم ESM و TS من غير إعداد).",
-            mistakes: R`في مشروع حقيقي سكربت الاختبار كان [[NODE_OPTIONS=--experimental-vm-modules jest]]، وده شغال على لينكس وماك، بس على ويندوز بيقع بـ «'NODE_OPTIONS' is not recognized»: الحل cross-env. واختبارات بتفتح اتصال داتابيز أو server ومتقفلهوش، فـ jest يفضل معلّق بعد ما يخلص ويطبع «did not exit»: اقفل الاتصال في [[afterAll]]، و [[--detectOpenHandles]] بيقولك مين اللي فاضل مفتوح.`
-          },
-          lines: [
-            "شغّل كل الاختبارات مرة واحدة.",
-            "سيبه شغال ويعيد الاختبارات المتأثرة مع كل حفظ.",
-            "ملفات src/auth بس، واختبار باسم معين.",
-            "شغّل الملفات واحد ورا التاني مش بالتوازي.",
-            "شغّل jest على كود ES Modules (bash بس).",
-            "نفسه بس بيشتغل على ويندوز كمان."
-          ],
-          sol: R`مع jest 30 على Node 22 في مشروع [["type": "module"]]:
-
-[[FAIL ./sum.test.js]] و [[Test suite failed to run]] و [[Must use import to load ES Module: .../sum.test.js]]، وتحته إقتراحات: Babel، أو [[transformIgnorePatterns]]، أو Node 24.9 وأحدث. في jest 29 وأقدم الرسالة المعروفة كانت [[SyntaxError: Cannot use import statement outside a module]]. نفس السبب: jest بيحاول يشغّل الملف كـ CommonJS.
-
-مع [[NODE_OPTIONS=--experimental-vm-modules npx jest]]: [[ExperimentalWarning: VM Modules is an experimental feature]] (عادي) وبعدها [[Tests: 1 passed, 1 total]].
-
-الغلط الشائع إنك تحط [[NODE_OPTIONS=...]] في سكربت package.json وزميلك على ويندوز CMD يقع بـ [['NODE_OPTIONS' is not recognized]]؛ دا شغل [[cross-env]]. وفي ملفات الـ ESM لو استخدمت [[jest.fn()]] أو [[jest.mock()]] من غير import هتاخد [[jest is not defined]]: اعمل [[import { jest } from "@jest/globals";]].`,
-          solCode: R`// package.json: "type": "module"
-// sum.js
-export const sum = (a, b) => a + b;
-
-// sum.test.js
-import { sum } from "./sum.js";
-test("adds", () => {
-  expect(sum(2, 2)).toBe(4);
-});
-
-// الترمنال
-npx jest
-NODE_OPTIONS=--experimental-vm-modules npx jest`
+لو Tab لسه بيكتب ٤ مسافات: VS Code محتاج إضافة [[EditorConfig for VS Code]] عشان يقرا [[.editorconfig]]، أو إعداد [[editor.detectIndentation]] أخد المسافات من الملف المفتوح. وخلي بالك إن [[.prettierrc]] لازم يبقى سليم: prettier بيقراه كـ YAML، ففاصلة زيادة بتعدّي، بس قوس ناقص بيطلّع [[Invalid configuration]] و [[YAML Error in .prettierrc]] ويخرج بـ 2، مش بيتجاهله.`
         }
       ]
     }

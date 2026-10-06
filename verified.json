@@ -3939,6 +3939,176 @@
   "date": "2026-10-02",
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
+ "quality|--coverage": {
+  "hash": "d0acdc43d003",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) Vitest 5.0.3 + coverage-v8, Jest 30.5"
+ },
+ "quality|.editorconfig و .prettierrc": {
+  "hash": "27e0794716ed",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) Prettier 3.9; docs: VS Code EditorConfig"
+ },
+ "quality|.husky/pre-commit و commit-msg": {
+  "hash": "3c2034a300a6",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + pwsh 7 / ps 5.1"
+ },
+ "quality|@axe-core/playwright": {
+  "hash": "40172741f14b",
+  "date": "2026-10-06",
+  "on": "win11 scratch project, Playwright 1.63 + axe-core 4.13.0"
+ },
+ "quality|HUSKY=0 و --no-verify": {
+  "hash": "3a905984990c",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + pwsh 7; docs: rebase -i"
+ },
+ "quality|Lighthouse CI": {
+  "hash": "1c81ccf87d3f",
+  "date": "2026-10-06",
+  "on": "win11 @lhci/cli 0.15.1 + system Chrome; docs: public storage"
+ },
+ "quality|Playwright في GitHub Actions": {
+  "hash": "1539c4ddbc9a",
+  "date": "2026-10-06",
+  "on": "docker postgres:18 + win11 scratch project, Playwright 1.63 CI=1; docs: real Actions run, prisma"
+ },
+ "quality|commitlint": {
+  "hash": "19ff3804f93d",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash commitlint 21.2"
+ },
+ "quality|describe و it و expect": {
+  "hash": "0d378e39d3e7",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3"
+ },
+ "quality|eslint": {
+  "hash": "dec5cba32ea4",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) ESLint 10.12, typescript-eslint 8.71"
+ },
+ "quality|eslint.config.mjs": {
+  "hash": "b9e2901773e1",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) eslint 9.39 + next 16.3.8"
+ },
+ "quality|getByRole و expect(page)": {
+  "hash": "9a38dce0e506",
+  "date": "2026-10-06",
+  "on": "win11 scratch project, Playwright 1.63"
+ },
+ "quality|git diff --exit-code": {
+  "hash": "2c29a36330c3",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + pwsh 7; docs: supabase gen types"
+ },
+ "quality|husky": {
+  "hash": "bc02cf05ff2c",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash husky 9.1.7 + node:22-slim"
+ },
+ "quality|jest": {
+  "hash": "1e72ffb95d78",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) + pwsh 7 + ps 5.1 + cmd, Jest 30.5 + node:22-slim TTY"
+ },
+ "quality|lint-staged": {
+  "hash": "75f5f9e2696f",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash lint-staged 17.6, eslint 10, prettier 3.9, tsc 6.0.3"
+ },
+ "quality|npm init playwright": {
+  "hash": "bdcd8b862e8f",
+  "date": "2026-10-06",
+  "on": "win11 scratch project, Playwright 1.63 + node:22-slim install --with-deps; docs: --ui, codegen"
+ },
+ "quality|playwright.config.ts": {
+  "hash": "7ff8d166603a",
+  "date": "2026-10-06",
+  "on": "win11 scratch project, Playwright 1.63"
+ },
+ "quality|pnpm -r و --filter": {
+  "hash": "4863539c376a",
+  "date": "2026-10-06",
+  "on": "node:22-slim pnpm 12.9.1"
+ },
+ "quality|prettier": {
+  "hash": "dde834740177",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) + pwsh 7, Prettier 3.9"
+ },
+ "quality|storageState": {
+  "hash": "2ee7ce532a18",
+  "date": "2026-10-06",
+  "on": "win11 scratch project, Playwright 1.63"
+ },
+ "quality|test.each و beforeEach": {
+  "hash": "6b1517a6bea8",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3"
+ },
+ "quality|toEqual و toThrow و rejects": {
+  "hash": "b6bc88c1c7b5",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3"
+ },
+ "quality|trace viewer و flaky": {
+  "hash": "2cdce7d8d6ef",
+  "date": "2026-10-06",
+  "on": "win11 scratch project, Playwright 1.63; docs: show-trace UI, --debug"
+ },
+ "quality|tsc --noEmit": {
+  "hash": "042452fb5a5f",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) + pwsh 7 + ps 5.1, TS 6.0.3/7.0.2 + node:22-slim"
+ },
+ "quality|vi.fn و vi.spyOn": {
+  "hash": "0b0f2531cf87",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3"
+ },
+ "quality|vi.mock": {
+  "hash": "ba3a4793f973",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3"
+ },
+ "quality|vi.useFakeTimers": {
+  "hash": "d206029946bf",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3"
+ },
+ "quality|vitest": {
+  "hash": "b0eaaf309770",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) Vitest 5.0.3 + node:22-slim TTY"
+ },
+ "quality|اختبار كويس": {
+  "hash": "d8960ba59b26",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3"
+ },
+ "quality|ترتيب الفحص في CI": {
+  "hash": "ea64003ffef9",
+  "date": "2026-10-06",
+  "on": "win11 local steps (pnpm 12.9.1) + actionlint; docs: Actions run"
+ },
+ "quality|خريطة الاختبارات": {
+  "hash": "77580c16ce3f",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash, vitest 5.0.3; docs: playwright"
+ },
+ "quality|سكربتات الفحص": {
+  "hash": "bf6e0c788fd8",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash (Node 24, npm 11) + node:22-slim"
+ },
+ "quality|فحص أسرع": {
+  "hash": "fc1730bd0b85",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + pwsh 7 / ps 5.1"
+ },
  "sec|.env اترفع على Git": {
   "hash": "f99d0f630304",
   "date": "2026-10-06",
