@@ -2435,258 +2435,288 @@
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
  },
  "zsh|*(.om[1,5])": {
-  "hash": "4ae718cd94d7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "0ab454528669",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  },
  "zsh|**/*.js": {
-  "hash": "e22947c2ec5a",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "8d947e08734f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 + bash globstar"
+ },
+ "zsh|Cmd+K": {
+  "hash": "c58d09c4a1e3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9; docs: Terminal.app/iTerm2 keys"
+ },
+ "zsh|Oh My Zsh": {
+  "hash": "585529142970",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  },
  "zsh|PROMPT": {
-  "hash": "917b77980e8b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "1df9257f8deb",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  },
  "zsh|Remote Login و Screen Sharing": {
-  "hash": "ac0ee36dadb8",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "007e420aa091",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts) (sshd); docs: systemsetup, vnc"
  },
  "zsh|ZSH_THEME و Powerlevel10k": {
-  "hash": "b8bbef337ce5",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "b5df3c520611",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 + Oh My Zsh; docs: p10k configure"
  },
  "zsh|alias vs function": {
-  "hash": "3e636c9aafc7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "29e095fcc0b0",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  },
  "zsh|autoload -Uz": {
-  "hash": "385b190be71f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "208d450c3d86",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  },
  "zsh|brew --cask": {
-  "hash": "fa5d752123d4",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "d7ce878685b4",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker Homebrew 7.0.8 for Linux; docs: macOS casks"
  },
  "zsh|brew install": {
-  "hash": "15f19bc92992",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "f169e9215c78",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker Homebrew 7.0.8 for Linux; docs: /opt/homebrew paths"
  },
  "zsh|brew list / info": {
-  "hash": "510199184d90",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "ab3666c1e12d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker Homebrew 7.0.8 for Linux"
  },
  "zsh|brew services": {
-  "hash": "3dce2006577f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "837eaec9a45a",
+  "date": "2026-10-06",
+  "on": "docs: brew services --help and source (no systemd)"
  },
  "zsh|brew upgrade": {
-  "hash": "044ed3ed9843",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "151952e2ea07",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker Homebrew 7.0.8 for Linux"
  },
  "zsh|caffeinate": {
-  "hash": "48331503a432",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "ac114af856f6",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only"
  },
  "zsh|chmod +a": {
-  "hash": "d6a33b546f79",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "491fb0aa02a7",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: chmod +a, ls -le"
  },
  "zsh|coreutils": {
-  "hash": "c85e7f9d15fd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "7be89c9213db",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker Homebrew 7.0.8 for Linux; docs: gsed on macOS"
  },
  "zsh|date -v": {
-  "hash": "9a421067dccd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "d4014efcaa85",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 GNU date; docs: BSD -v"
  },
  "zsh|defaults": {
-  "hash": "73f5810ac4aa",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "0a55fb304543",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only"
  },
  "zsh|diskutil": {
-  "hash": "7485d6ab4357",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "e1caba36813c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: diskutil, createinstallmedia"
  },
  "zsh|dns-sd و arp -a": {
-  "hash": "05bcd20c0725",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "44716202d311",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: dns-sd"
  },
  "zsh|dscl و sysadminctl": {
-  "hash": "cb7e994611de",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "a0cad24ca1e5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: dscl, sysadminctl"
  },
  "zsh|dseditgroup": {
-  "hash": "bb50b892ea32",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "889eb391efd0",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only"
  },
  "zsh|echo $SHELL": {
-  "hash": "f1470ce27d73",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "2405fa77cdc1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 + bash 5.2; docs: macOS bash 3.2"
  },
  "zsh|fdesetup و profiles": {
-  "hash": "499f3843d83f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "2316fa91d1cd",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: fdesetup, profiles"
  },
  "zsh|flush DNS": {
-  "hash": "2d136f4f7286",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "41993fd66167",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: dscacheutil, mDNSResponder"
  },
  "zsh|hello.zsh": {
-  "hash": "ec0b51db81be",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "846eee6350bc",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (+ bash)"
  },
  "zsh|ifconfig / route": {
-  "hash": "f547c248a961",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "ce458b9c1841",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: macOS output"
  },
  "zsh|ipconfig getifaddr": {
-  "hash": "96961cca9dce",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "aefdf109e786",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: ipconfig getifaddr"
  },
  "zsh|launchctl": {
-  "hash": "39274e239b74",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "83166837ac1c",
+  "date": "2026-10-06",
+  "on": "docs: launchctl(1), plutil(1); ubuntu-24.04 docker zsh 5.9 for id/grep/cat"
  },
  "zsh|launchd plist": {
-  "hash": "fffc4395fa80",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "0d1bf4d6008c",
+  "date": "2026-10-06",
+  "on": "plist parsed with Python plistlib; docs: launchd.plist(5), plutil(1)"
  },
  "zsh|lsof -i": {
-  "hash": "8363378292e7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "2a056549cc76",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  },
  "zsh|man بدل --help": {
-  "hash": "26a7caf03b71",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "265b23f449b9",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 + brew tlrc; docs: macOS ls/man"
  },
  "zsh|mdfind": {
-  "hash": "a7c8e7febe85",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "852d4e3b4d51",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only"
  },
  "zsh|networkQuality": {
-  "hash": "3310c4d5115f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "fe26a37fe473",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only; arithmetic in zsh"
  },
  "zsh|networksetup": {
-  "hash": "1cee1292b391",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "c6e6cfdf5433",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: networksetup, scutil, wdutil"
+ },
+ "zsh|no matches found": {
+  "hash": "cdb7218572c2",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 + bash"
  },
  "zsh|open": {
-  "hash": "db47d4f87ea9",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "fa8adf5fa42c",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only"
  },
  "zsh|osascript display notification": {
-  "hash": "50abd55c4d1b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "99da9ba2d089",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only"
  },
  "zsh|pbcopy / pbpaste": {
-  "hash": "9795dd23ac53",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "3877194ba405",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only; win11 pwsh Set/Get-Clipboard"
  },
  "zsh|pmset": {
-  "hash": "a1c76273d613",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "bef9537af638",
+  "date": "2026-10-06",
+  "on": "docs: macOS-only"
+ },
+ "zsh|report.zsh": {
+  "hash": "f094f618dd17",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (+ bash)"
  },
  "zsh|say": {
-  "hash": "cf23bc82f0f4",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "53ead52fcb59",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9; docs: say"
  },
  "zsh|sed -i ''": {
-  "hash": "38330dbc9623",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "7fc9ff059797",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 GNU sed; docs: BSD sed"
  },
  "zsh|setopt err_exit": {
-  "hash": "6e3f8abd57ba",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "3741bd5cb62e",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
+ },
+ "zsh|shasum": {
+  "hash": "683755375dde",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04; docs: macOS md5"
  },
  "zsh|socketfilterfw": {
-  "hash": "d072abf4c428",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "ca49269ab973",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: socketfilterfw"
  },
  "zsh|softwareupdate": {
-  "hash": "c0f473011099",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "0d70c3a04d4d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: softwareupdate, Rosetta"
+ },
+ "zsh|ssh-add": {
+  "hash": "538cd6b74001",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: Keychain, pbcopy"
  },
  "zsh|sw_vers": {
-  "hash": "f92ef3836fee",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "f9dda71ebc7c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 uname -m; docs: sw_vers"
  },
  "zsh|system_profiler و ioreg": {
-  "hash": "20e79000b35e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "de056307346f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: system_profiler, ioreg"
  },
  "zsh|tidy-downloads.zsh": {
-  "hash": "8c6bf462bccd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "ab6d6ca6bbd5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  },
  "zsh|tmutil": {
-  "hash": "fe52d0a77197",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "fde8b346f681",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: tmutil"
  },
  "zsh|top -o mem": {
-  "hash": "ca8366700c04",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "3f98e5bcd889",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 + htop via brew; docs: macOS top/vm_stat"
  },
  "zsh|xattr و quarantine": {
-  "hash": "d0d9cbd139ef",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "3e4b67b1be13",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (generic parts); docs: xattr, spctl, codesign"
  },
  "zsh|zsh arrays": {
-  "hash": "96e762bd7248",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "82af43f91d23",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9 (+ bash)"
  },
  "zsh|~/.zshrc": {
-  "hash": "3caeac1dd0ce",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (zsh 5.9), docs: macOS"
+  "hash": "bd422222669d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker zsh 5.9"
  }
 }

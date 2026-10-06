@@ -1,873 +1,1025 @@
 // تكملة تاب zsh: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/zsh/01.js (شرح حقول الدرس في أوله)
 MORE("zsh", [
     {
-      t: "الشبكة",
+      t: "شكّل zsh بتاعك",
       l: 2,
-      n: "",
+      n: "الـ prompt بإيدك من غير إضافات، وبعدين ثيمات جاهزة من Oh My Zsh و Powerlevel10k",
       items: [
         {
-          cmd: "networkQuality",
-          title: "اختبار سرعة النت (موجود في الماك)",
-          desc: R`[[networkQuality]] أداة من Apple مبنية في الماك من macOS Monterey (12)، بتعمل اختبار سرعة من الترمنال من غير ما تفتح موقع.
+          cmd: "PROMPT",
+          title: "اكتب الـ prompt بتاعك بإيدك",
+          desc: R`الـ prompt هو النص اللي zsh بيطبعه قبل كل أمر (زي [[sara shop %]])، وشكله متخزن في متغير اسمه [[PROMPT]] (نفس دور [[PS1]] في bash). بتكتب فيه نص عادي ورموز بتبدأ بـ [[%]]، و zsh بيبدّل كل رمز بقيمته كل مرة يطبع السطر: اسمك، والفولدر، والساعة، وكمان اسم الـ git branch.
 
-بتطبع 3 أرقام: Downlink وده سرعة التحميل، و Uplink سرعة الرفع (الاتنين بالـ Mbps)، و Responsiveness ودي قد إيه النت بيرد بسرعة وهو مضغوط، بتتقاس بالـ RPM (عدد الردود في الدقيقة، وكل ما تكبر أحسن). الرقم الأخير ده هو اللي بيبان في مكالمات الفيديو والألعاب: ممكن نت سريع يقطّع لو الـ Responsiveness واطية.
+الرموز الأساسية:
+• [[%n]] اسم اليوزر، و [[%m]] اسم الجهاز لحد أول نقطة (على الماك حاجة زي [[Saras-MacBook-Pro]])، و [[%M]] الاسم كامل.
+• [[%~]] الفولدر الحالي بمساره، والـ home بيتكتب [[~]]. و [[%1~]] آخر جزء بس (اسم الفولدر)، و [[%2~]] آخر جزئين.
+• [[%#]] بتطلع [[%]] لو انت يوزر عادي و [[#]] لو انت root، فتعرف من شكل السطر إنك شغال بصلاحيات كاملة.
+• [[%T]] الساعة بنظام 24 ([[14:05]])، و [[%*]] نفس الساعة بالثواني، و [[%D]] التاريخ بشكل سنة-شهر-يوم ([[26-10-02]]).
 
-الأمر بياخد حوالي 20 ثانية وبيستهلك داتا، فمتشغّلوش على نت محدود كتير.`,
-          example: "networkQuality",
-          try: "قارن النتيجة على الواي فاي وعلى الكابل.",
+الألوان: [[%F{green}]] بتبدأ لون للكلام اللي بعدها، و [[%f]] بترجّع اللون العادي. اللون بالاسم ([[black]] و [[red]] و [[green]] و [[yellow]] و [[blue]] و [[magenta]] و [[cyan]] و [[white]]) أو برقم من 0 لـ 255 لو الترمنال بيدعم 256 لون، زي [[%F{240}]] رمادي. و [[%B]] بتبدأ خط عريض و [[%b]] بتقفله. لو نسيت [[%f]] أو [[%b]] اللون هيكمّل على الأمر اللي بتكتبه.
+
+[[RPROMPT]] prompt تاني بيظهر على يمين نفس السطر، وبيختفي لوحده لو الأمر اللي بتكتبه طوّل ووصل له. مكان مناسب للساعة.
+
+اسم الـ branch: zsh جاي معاه أداة اسمها [[vcs_info]] بتعرف انت جوه repo ولا لأ. [[autoload -Uz vcs_info]] بتحمّلها (شرح autoload في مستوى ٣). [[precmd() { vcs_info }]] بتعرّف function اسمها [[precmd]]: الاسم وبعده [[()]]، والجسم بين [[{ }]]. والاسم ده خاص: zsh بيشغّلها قبل ما يطبع كل prompt، فاسم الـ branch بيتحدّث بعد كل أمر. [[zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f ']] بتحدد شكل الناتج: [[':vcs_info:git:*']] معناها «الإعداد ده لـ vcs_info جوه repo بتاع git»، و [[%b]] جوه formats معناها اسم الـ branch (مش bold هنا، دي رموز vcs_info نفسها). والناتج بيتحط في متغير اسمه [[vcs_info_msg_0_]]، وبيبقى فاضي برّه أي repo.
+
+[[setopt prompt_subst]] بتخلي zsh يفك المتغيرات جوه الـ PROMPT كل مرة يطبعه، زي [[$__{vcs_info_msg_0_}]] ([[$__{...}]] قيمة المتغير، زي [[$name]] بس بأقواس). وعشان كده الـ PROMPT بين علامات تنصيص مفردة [['...']]: المتغير بيتحفظ زي ما هو ويتفك وقت الطباعة. بعلامات مزدوجة [["..."]] الشيل بيفكه مرة واحدة وقت التعريف، والـ branch يفضل متجمّد على القديم.
+
+[[print -P]] بتطبع نص وهي بتفك رموز الـ prompt ([[-P]] = prompt)، فتجرّب بيها أي رمز من غير ما تغيّر حاجة. وكل اللي بتكتبه في الترمنال بيروح لما تقفله: عشان يفضل، حط السطور في [[~/.zshrc]]. ولو عندك Oh My Zsh، حطها بعد سطر [[source $ZSH/oh-my-zsh.sh]] أو خلي [[ZSH_THEME=""]]، وإلا الثيم هيكتب فوق الـ PROMPT بتاعك.`,
+          example: R`print -P '%n %m %~ %1~ %# %T %*'
+PROMPT='%B%F{green}%n%f%b %F{blue}%1~%f %# '
+RPROMPT='%F{240}%*%f'
+autoload -Uz vcs_info
+precmd() { vcs_info }
+setopt prompt_subst
+zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
+PROMPT='%B%F{green}%n%f%b %F{blue}%1~%f $__{vcs_info_msg_0_}%# '`,
+          try: R`اعمل prompt فيه اسم الفولدر بالأزرق واسم الـ branch بالأصفر، وادخل repo واعمل [[git switch -c test]] وشوف الـ branch اتغير لوحده، واخرج لفولدر عادي وشوف القوسين اختفوا. وبعدين خليه دايم في [[~/.zshrc]].`,
           deep: {
-            why: "قياس سرعة النت والـ latency بدون أي موقع خارجي. مبني في الماك (Monterey+).",
-            how: R`[[networkQuality]] بيعمل speed test وبيقولك: Upload، وDownload، والـ Responsiveness (RPM: عدد الـ round trips في الدقيقة وقت الضغط).
+            why: "الـ prompt بتشوفه قبل كل أمر، فلو فيه الفولدر والـ branch هتبطّل تكتب [[pwd]] و [[git status]] كل شوية عشان تعرف انت فين. ولما تكتبه بإيدك من غير إضافات، الترمنال بيفتح بسرعة وانت فاهم كل حرف فيه وتعرف تصلّحه.",
+            how: R`قبل كل سطر zsh بيشغّل [[precmd]]، وبعدين يقرا [[PROMPT]] ويبدّل كل رمز [[%]] بقيمته، ولو [[prompt_subst]] شغالة بيفك كمان [[$...]] و [[$(...)]] جواه. عشان كده vcs_info بيلحق يحط اسم الـ branch في [[vcs_info_msg_0_]] قبل الطباعة.
 
-[[-v]] verbose مع تفاصيل أكتر. [[-s]] sequential بدل parallel.
+رموز تانية مفيدة: [[%?]] الـ exit code بتاع آخر أمر، و [[%(?.ok.fail)]] شرط: لو آخر أمر نجح اطبع [[ok]] وإلا [[fail]]. فـ [[%(?.%F{green}.%F{red})%#%f]] بتخلي علامة [[%]] خضرا وتقلب حمرا لما أمر يفشل. و [[%K{blue}]] لون خلفية و [[%k]] بتقفله. و [[setopt transient_rprompt]] بتشيل الـ RPROMPT من السطور القديمة بعد Enter، فالنسخ من الترمنال يبقى أنضف.
 
-الـ Responsiveness مهم للـ video calls والـ gaming: مش بس السرعة، بس كم طلب بتعمله في وقت واحد.`,
-            when: "النت بطيء وعايز تعرف المشكلة. قبل مكالمة مهمة.",
-            mistakes: "[[networkQuality]] موجود من Monterey فصاعدًا. على الإصدارات الأقدم مش موجود."
+جوه formats بتاع vcs_info: [[%b]] الـ branch، و [[%r]] اسم الـ repo، و [[%s]] نوع الـ VCS ([[git]]). ولو عايزه يعلّم على التعديلات: [[zstyle ':vcs_info:*' check-for-changes true]] وبعدها [[%u]] بتطلع [[U]] لو فيه تعديلات مش staged و [[%c]] بتطلع [[S]] لو فيه staged. ده بيخلي الـ prompt أبطأ في repo ضخم.`,
+            when: "أول ما تتعود على الترمنال وتعرف انت عايز تشوف إيه قدامك. ولو عايز شكل جاهز بأيقونات وألوان كتير من غير ما تكتب حاجة، شوف الدرس الجاي.",
+            mistakes: R`تكتب الـ PROMPT بعلامات تنصيص مزدوجة فالـ branch يتجمّد على اللي كان وقت التعريف، أو تنسى [[setopt prompt_subst]] فيظهر [[$__{vcs_info_msg_0_}]] مكتوب بالنص. وتنسى [[%f]] أو [[%b]] فاللون يسيح على كل اللي بتكتبه. وتحط الـ PROMPT في [[~/.zshrc]] قبل سطر Oh My Zsh فالثيم يمسحه. ولو أداة تانية معرّفة [[precmd]] قبلك، تعريف جديد بنفس الاسم بيمسح بتاعها: الأأمن [[autoload -Uz add-zsh-hook]] وبعدها [[add-zsh-hook precmd vcs_info]]، دي بتضيف من غير ما تمسح.`
           },
-          lines: ["قياس سرعة النت والاستجابة، مبني في الماك."],
-          sol: R`[[networkQuality]] بياخد حوالي 20 ثانية وبعدين يطبع [[Uplink capacity]] و [[Downlink capacity]] بالـ Mbps، و [[Responsiveness]] بالـ RPM مع تقييم زي High أو Medium أو Low، وقيمة Idle Latency.
+          teach: R`## متغير واحد اسمه PROMPT، فيه نص ورموز
 
-المتوقع إن الكابل يطلع Responsiveness أعلى وسرعة أثبت من الواي فاي، خصوصًا لو بعيد عن الراوتر. لو الواي فاي أقل بكتير، المشكلة غالبًا في الإشارة مش الخط. و Responsiveness واطية مع سرعة عالية معناها إن النت بيعلق لما حد تاني بيحمّل. ولو قالك command not found يبقى نسختك أقدم من Monterey.
+الـ prompt مش حاجة سحرية: zsh قبل كل أمر بيقرا متغير اسمه [[PROMPT]]، ويبدّل كل رمز بيبدأ بـ [[%]] بقيمته، ويطبع الناتج. المثال ٨ سطور: نجرّب الرموز، ونبني prompt بسيط، وبعدين نضيف اسم الـ branch. كل الناتج اتشغّل في zsh 5.9 على أوبونتو 24.04 (Docker) كيوزر [[sara]] والجهاز اسمه [[sara-mbp.local]]، والرموز هي هي على الماك.
 
-(ده ماك بس، ومش متجرب هنا. اتأكدت من صفحة [[man networkQuality]]: [[-v]] تفاصيل أكتر، و [[-s]] الرفع والتحميل ورا بعض بدل مع بعض، وإنه بيستهلك من باقة النت.)`
-        },
-        {
-          cmd: "ifconfig / route",
-          title: "عناوينك والطريق",
-          desc: R`مفيش أمر [[ip]] على الماك، بداله [[ifconfig]] للكروت وعناوينها و [[route]] للطريق. كل كارت شبكة ليه اسم: [[en0]] غالبًا الواي فاي، و [[lo0]] الـ loopback (الجهاز بيكلم نفسه). في ناتج [[ifconfig en0]] السطر اللي بيبدأ بـ [[inet]] فيه الـ IP بتاعك على الشبكة.
+---
 
-[[route -n get default]] بيطبع الطريق الافتراضي، يعني الراوتر (gateway) اللي أي حاجة رايحة برا شبكتك بتعدّي عليه، و [[-n]] معناها اطبع أرقام من غير ما تحوّلها لأسامي. [[networksetup -listallhardwareports]] بيطبع كل كارت والاسم الحقيقي بتاعه (Wi-Fi أو Ethernet).
+## ١. [[print -P '%n %m %~ %1~ %# %T %*']]
 
-ملف [[/etc/hosts]] مكانه زي لينكس، وتعديله محتاج [[sudo]] لأنه ملف نظام.`,
-          example: R`ifconfig en0
-route -n get default
-networksetup -listallhardwareports
-sudo nano /etc/hosts`,
-          try: "اعرف IP جهازك على الشبكة من [[ifconfig en0]]، و IP الراوتر من [[route -n get default]].",
-          deep: {
-            why: "معلومات الشبكة التفصيلية على الماك. [[ifconfig]] هو المقابل لـ [[ip a]] في لينكس.",
-            how: R`[[ifconfig]] بيعرض كل الكروت وعناوينها. [[ifconfig en0]] كارت Wi-Fi فقط.
+[[print]] أمر zsh بيطبع زي [[echo]]، و [[-P]] (من prompt) بتخليه يفك رموز الـ prompt. فبتجرّب أي رمز من غير ما تغيّر حاجة. العلامات المفردة بتمنع الشيل يلمس النص قبل print. من جوه [[~/projects/shop]]:
 
-في الناتج: [[inet]] هو IPv4 الخاص. [[inet6]] هو IPv6. [[ether]] هو MAC address. [[status: active]] الكارت شغال.
+~~~zsh
+print -P '%n %m %~ %1~ %# %T %*'
+~~~
 
-[[netstat -rn]] جدول الـ routing (زي [[ip route]] في لينكس). الـ default route هو السطر اللي Destination بتاعه [[default]].
+~~~text الناتج
+sara sara-mbp ~/projects/shop shop % 9:31 9:31:43
+~~~
 
-الكروت الشائعة: [[en0]] Wi-Fi، [[en1]] Ethernet على بعض الماكات، [[lo0]] loopback.`,
-            when: "إيجاد عنوان الماك على الشبكة. troubleshooting شبكة.",
-            mistakes: "[[ifconfig]] على الماك يطلع كتير من الـ virtual interfaces. فلتر على اسم الكارت."
-          },
+| الرمز | طلع | معناه |
+|---|---|---|
+| [[%n]] | [[sara]] | اسم اليوزر (n من name) |
+| [[%m]] | [[sara-mbp]] | اسم الجهاز لحد أول نقطة (m من machine). [[%M]] طلع الكامل [[sara-mbp.local]] |
+| [[%~]] | [[~/projects/shop]] | الفولدر الحالي، والـ home مكتوب [[~]] |
+| [[%1~]] | [[shop]] | آخر جزء واحد بس من المسار. [[%2~]] طلع [[projects/shop]] |
+| [[%#]] | [[%]] | [[%]] ليوزر عادي و [[#]] لـ root |
+| [[%T]] | [[9:31]] | الساعة بنظام ٢٤ |
+| [[%*]] | [[9:31:43]] | الساعة بالثواني |
+
+---
+
+## ٢. [[PROMPT='%B%F{green}%n%f%b %F{blue}%1~%f %# ']]
+
+هنا بنحط قيمة في المتغير. [[=]] من غير مسافات حواليها (لو حطيت مسافة الشيل هيفتكر [[PROMPT]] أمر). نقرا القيمة حتة حتة:
+
+| الحتة | معناها |
+|---|---|
+| [[%B]] | ابدأ خط عريض (Bold) |
+| [[%F{green}]] | ابدأ لون الكلام (Foreground) أخضر |
+| [[%n]] | اسمك |
+| [[%f]] | ارجع للون العادي |
+| [[%b]] | اقفل العريض |
+| مسافة | مسافة عادية |
+| [[%F{blue}%1~%f]] | اسم الفولدر بالأزرق، وبعدين رجوع للون العادي |
+| [[ %# ]] | مسافة، و [[%]]، ومسافة قبل ما تكتب |
+
+كل رمز بيفتح حاجة ليه رمز بيقفلها (صغير بدل كبير). جربت أطبع القيمة بـ [[print -P "$PROMPT" | cat -v]] ([[cat -v]] بيعرض أكواد الألوان المخفية كنص):
+
+~~~text الناتج
+^[[1m^[[32msara^[[39m^[[0m ^[[34mshop^[[39m %
+~~~
+
+دي أكواد الترمنال: [[1m]] عريض، و [[32m]] أخضر، و [[34m]] أزرق، و [[39m]] لون عادي، و [[0m]] رجّع كل حاجة. يعني zsh ترجم [[%F{green}]] لكود الترمنال بتاعه. والـ prompt اللي هتشوفه: **sara** shop % بالألوان.
+
+---
+
+## ٣. [[RPROMPT='%F{240}%*%f']]
+
+[[RPROMPT]] (R من right) prompt على يمين نفس السطر. [[240]] رقم لون من ٢٥٦ لون (رمادي). جربته في ترمنال بيدعم ٢٥٦ لون ([[TERM=xterm-256color]]) فطلع الكود [[38;5;240]]، وفي ترمنال ٨ ألوان بس zsh اتجاهل اللون وطبع الساعة عادي. Terminal و iTerm2 على الماك بيدعموا ٢٥٦.
+
+---
+
+## ٤ لـ ٨: اسم الـ branch
+
+### ٤. [[autoload -Uz vcs_info]]
+
+[[vcs_info]] function جاية مع zsh بتعرف انت جوه repo (git أو غيره) ولا لأ. [[autoload]] بتسجّل اسمها وتحمّلها أول ما تتنادي. [[-U]] متستخدمش الـ aliases وانت بتحمّلها، و [[-z]] حمّلها بطريقة zsh العادية.
+
+### ٥. [[precmd() { vcs_info }]]
+
+تعريف function: الاسم، و [[()]]، والجسم بين [[{ }]]. اسم [[precmd]] محجوز: zsh بيشغّلها لوحده قبل ما يطبع كل prompt. فـ vcs_info بتشتغل بعد كل أمر وتجيب اسم الـ branch الجديد.
+
+### ٦. [[setopt prompt_subst]]
+
+[[setopt]] بتشغّل option. [[prompt_subst]] بتقول لـ zsh: «وانت بتطبع الـ PROMPT، فك المتغيرات اللي جواه كمان»، مش رموز [[%]] بس.
+
+### ٧. [[zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f ']]
+
+[[zstyle]] أداة إعدادات. [[':vcs_info:git:*']] معناها «الإعداد ده لـ vcs_info لما يكون repo بتاع git»، و [[formats]] اسم الإعداد، والقيمة هي الشكل: [[%b]] هنا معناها اسم الـ branch (رموز vcs_info نفسها، مش bold). النتيجة بتتحط في متغير اسمه [[vcs_info_msg_0_]]. جربت أشغّل precmd بإيدي وأطبع المتغير:
+
+~~~text الناتج
+msg=[%F{yellow}(main)%f ]
+~~~
+
+يعني المتغير شايل الشكل برموزه، والـ PROMPT هو اللي هيترجم الألوان.
+
+### ٨. [[PROMPT='... $__{vcs_info_msg_0_}%# ']]
+
+نفس الـ prompt بتاع سطر ٢، وقبل [[%#]] [[$__{vcs_info_msg_0_}]]: [[$__{...}]] قيمة المتغير، زي [[$name]] بس الأقواس بتحدد الاسم بالظبط. والعلامات **مفردة** عشان المتغير يتحفظ كنص ويتفك وقت الطباعة، كل مرة. الناتج (من غير ألوان):
+
+~~~text الناتج
+shop (main) %
+shop (test) %
+~ %
+~~~
+
+السطر الأول على main، والتاني بعد [[git switch -c test]]، والتالت في الـ home (مش repo) فالمتغير فاضي والقوسين اختفوا.
+
+---
+
+## الخلاصة
+
+| السطر | دوره |
+|---|---|
+| [[print -P '...']] | جرّب رموز من غير ما تغيّر حاجة |
+| [[PROMPT='...']] | الـ prompt الشمال |
+| [[RPROMPT='...']] | الـ prompt اليمين |
+| [[autoload -Uz vcs_info]] | حمّل أداة معلومات الـ repo |
+| [[precmd() { vcs_info }]] | حدّثها قبل كل prompt |
+| [[setopt prompt_subst]] | اسمح بالمتغيرات جوه الـ PROMPT |
+| [[zstyle ... formats ...]] | شكل اسم الـ branch |
+
+وكل ده بيروح لما تقفل الترمنال، إلا لو حطيته في [[~/.zshrc]].`,
           lines: [
-            "عناوين كارت الواي فاي (en0).",
-            "الراوتر الافتراضي (زي ip route).",
-            "أسامي كل الكروت، عشان تعرف الواي فاي en0 ولا en1.",
-            "ملف hosts نفس مكانه زي لينكس."
+            "جرّب الرموز من غير ما تغيّر حاجة: اسمك، والجهاز، والمسار، واسم الفولدر، و [[%]]، والساعة مرتين (من غير وبالثواني).",
+            "prompt جديد: اسمك عريض بالأخضر، واسم الفولدر بالأزرق، وبعدين [[%]] ومسافة. بيتطبق من السطر الجاي على طول.",
+            "الساعة بالثواني على يمين السطر بلون رمادي (240 من الـ 256 لون).",
+            "حمّل vcs_info اللي جاي مع zsh.",
+            "function بتشتغل قبل كل prompt وبتحدّث معلومات الـ repo.",
+            "اسمح بفك المتغيرات جوه الـ PROMPT كل مرة يتطبع.",
+            "شكل معلومة git: اسم الـ branch بين قوسين بالأصفر وبعده مسافة.",
+            "الـ prompt النهائي ومعاه الـ branch. العلامات المفردة هي اللي بتخلي الـ branch يتحدّث."
           ],
-          sol: R`[[ifconfig en0]] دوّر فيه على سطر [[inet 192.168.1.15 netmask 0xffffff00 broadcast 192.168.1.255]]: الرقم بعد inet هو IP جهازك. و [[route -n get default]] هيطبع سطر [[gateway: 192.168.1.1]]، ده الراوتر، ومعاه [[interface: en0]].
+          sol: R`جربت المثال ده بالحرف في zsh 5.9 على لينكس (الرموز نفسها على الماك)، كيوزر اسمه sara والجهاز اسمه [[sara-mbp.local]]: أول سطر طبع [[sara sara-mbp ~/projects/shop shop % 10:26 10:26:47]]. جوه repo على main الـ prompt بقى [[sara shop (main) %]] بالألوان، وعلى اليمين الساعة بالثواني. بعد [[git switch -c test]] الأمر اللي بعده طلع [[sara shop (test) %]] لوحده، وفي فولدر مش repo طلع [[sara Downloads %]] من غير قوسين.
 
-لو [[ifconfig en0]] مفيهوش سطر inet، يبقى en0 مش الكارت اللي انت متوصل بيه (مثلًا على Mac بكابل أو بعض الموديلات الواي فاي بيبقى en1)؛ [[route -n get default]] بيقولك الـ interface الصح في سطر interface، و [[networksetup -listallhardwareports]] يوريك أنهي en هو Wi-Fi. سطر [[inet6]] ده IPv6 مش هو المطلوب.
-
-(ده ماك بس: من صفحات [[man ifconfig]] و [[man route]] و [[man networksetup]] بتاعة Apple، والأرقام مثال. مش متجرب هنا.)`
+لو شفت [[$__{vcs_info_msg_0_}]] مكتوبة بالنص في الـ prompt، يبقى ناقص [[setopt prompt_subst]]. ولو الـ branch مش بيتغير بعد switch، يبقى الـ PROMPT متعرّف بعلامات مزدوجة أو [[precmd]] مش متعرّفة. (جربت الغلطتين في نفس الاختبار: من غير prompt_subst طلع النص زي ما هو، وبالعلامات المزدوجة فضل [[(main)]] بعد ما الـ branch اتغير.) ولما تحطهم في [[~/.zshrc]] اعمل [[source ~/.zshrc]] أو افتح ترمنال جديد.`,
+          solCode: R`# في آخر ~/.zshrc (بعد سطر oh-my-zsh لو موجود)
+autoload -Uz vcs_info
+precmd() { vcs_info }
+setopt prompt_subst
+zstyle ':vcs_info:git:*' formats '%F{yellow}(%b)%f '
+PROMPT='%B%F{green}%n%f%b %F{blue}%1~%f $__{vcs_info_msg_0_}%# '
+RPROMPT='%F{240}%*%f'
+# وبعدين في الترمنال
+source ~/.zshrc
+cd ~/projects/shop && git switch -c test`
         },
         {
-          cmd: "ipconfig getifaddr",
-          title: "الـ IP بتاعك",
-          desc: R`[[ipconfig getifaddr en0]] بيطبع الـ IP المحلي بتاع الكارت en0 (غالبًا الواي فاي) في سطر واحد من غير كلام زيادة، فينفع جوه سكربت. ده العنوان اللي جوه شبكة البيت، زي [[192.168.1.15]]، وهو اللي تفتح بيه سيرفر شغال على جهازك من موبايل على نفس الواي فاي.
+          cmd: "ZSH_THEME و Powerlevel10k",
+          title: "ثيمات جاهزة للـ prompt",
+          desc: R`لو مش عايز تكتب الـ prompt بإيدك، Oh My Zsh جاي معاه أكتر من 140 ثيم جاهز بتختار منهم بسطر [[ZSH_THEME]] في [[~/.zshrc]]. و Powerlevel10k ثيم مشهور من برّه بيسألك كام سؤال ويبنيلك prompt فيه الـ branch وحالة git ومدة آخر أمر وأيقونات.
 
-[[curl ifconfig.me]] بيسأل موقع برا عن العنوان اللي شايفك بيه، وده الـ IP العام بتاع الراوتر على النت. الاتنين مختلفين لأن الراوتر بيخبّي كل أجهزة البيت ورا عنوان عام واحد (NAT).
+تسطيب Oh My Zsh نفسه في درس «Oh My Zsh» في المستوى الأول. ثيماته في [[~/.oh-my-zsh/themes]]، كل ثيم ملف اسمه [[name.zsh-theme]]، واللي بتكتبه في [[ZSH_THEME]] هو الاسم من غير الامتداد، والافتراضي [[robbyrussell]]. وفيه قيم وأوامر خاصة:
+• [[ZSH_THEME="random"]] ثيم عشوائي مع كل ترمنال وبيطبع اسمه، و [[echo $RANDOM_THEME]] بتقولك هو مين.
+• [[ZSH_THEME=""]] من غير ثيم خالص، لو هتكتب [[PROMPT]] بإيدك (الدرس اللي فات).
+• [[omz theme use agnoster]] بتجرّب ثيم في الترمنال ده بس، و [[omz theme set agnoster]] بتكتبه في [[~/.zshrc]] بدالك وبتعمل نسخة احتياطي باسم [[~/.zshrc.bck]].
 
-خد بالك إن [[ipconfig]] على الماك أمر تاني خالص غير [[ipconfig]] بتاع ويندوز.`,
-          example: R`ipconfig getifaddr en0
-curl ifconfig.me`,
-          try: "اعرف الـ IP المحلي والعام.",
+في المثال [[^]] جوه grep معناها «أول السطر»، و [[|]] بتبعت ناتج ls لـ [[wc -l]] اللي بتعد السطور، يعني عدد ملفات الثيمات.
+
+Powerlevel10k بيتسطب كإضافة لـ Oh My Zsh: [[git clone --depth=1]] بينزّل آخر نسخة بس من غير تاريخ الـ commits كله. [[$__{ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}]] معناها «قيمة [[ZSH_CUSTOM]]، ولو مش متعرّف خد [[~/.oh-my-zsh/custom]]»، و [[:-]] هي اللي بتعمل «ولو فاضي خد دي». ده فولدر إضافاتك اللي Oh My Zsh مش بيلمسه وهو بيتحدّث. والقيمة [["powerlevel10k/powerlevel10k"]] معناها فولدر اسمه powerlevel10k وجواه ملف ثيم بنفس الاسم.
+
+[[exec zsh]] بتبدّل الشيل الحالي بواحد جديد بيقرا [[~/.zshrc]] من الأول. أول مرة Powerlevel10k بيفتح wizard اسمه [[p10k configure]] (وتشغّله تاني في أي وقت): يسألك شايف رموز معينة ولا لأ عشان يعرف الخط بتاعك، وبعدين تختار الشكل، ويحفظ اختياراتك في [[~/.p10k.zsh]] ويضيف سطر يقراه في آخر [[~/.zshrc]].
+
+Instant prompt من ضمن أسئلة الـ wizard: بيطبع الـ prompt فورًا وباقي [[~/.zshrc]] بيكمّل تحميل، وعشان كده بيحط block في أول الملف. أي حاجة في الـ zshrc بتسأل (باسورد أو [[y/n]]) لازم تتنقل فوق الـ block ده، لأن الإدخال تحته مقفول لحد ما التحميل يخلص.
+
+الأيقونات محتاجة خط فيه الرموز دي (Nerd Font). Powerlevel10k بيرشّح [[MesloLGS NF]]: ٤ ملفات (Regular و Bold و Italic و Bold Italic) من صفحته على GitHub، تسطّبهم بدبل كليك وتختار الخط في إعدادات الترمنال (Terminal أو iTerm2 أو VS Code). في iTerm2، [[p10k configure]] بيعرض يسطّبه لوحده. ومن غيره هتشوف مربعات مكان الأيقونات (درس «Nerd Font» في تاب اختصارات النظام بيشرح الخطوط دي).
+
+خد بالك: صفحة Powerlevel10k على GitHub مكتوب في أولها إن دعم المشروع محدود جدًا: مفيش features جديدة، ومعظم الـ bugs مش هتتصلح، وأسئلة المساعدة مش هيترد عليها. لسه شغال وناس كتير بتستخدمه، بس انت بتعتمد على حاجة مش بتتطور.`,
+          example: R`grep '^ZSH_THEME' ~/.zshrc
+ls ~/.oh-my-zsh/themes | wc -l
+omz theme use agnoster
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$__{ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+omz theme set powerlevel10k/powerlevel10k
+exec zsh
+p10k configure`,
+          try: R`جرّب ٣ ثيمات بـ [[omz theme use]] (مثلًا agnoster و af-magic و ys) وشوف الفرق. وبعدين سطّب MesloLGS NF وظبطه في الترمنال، وسطّب Powerlevel10k وكمّل [[p10k configure]] لحد الآخر.`,
           deep: {
-            why: "أسرع طريقة تعرف عنوانك على الـ Wi-Fi على الماك. سطر واحد.",
-            how: R`[[ipconfig getifaddr en0]] بيطبع عنوان Wi-Fi بس. [[en0]] هو الاسم الافتراضي للـ Wi-Fi على معظم الماكات. بعض الماكات [[en1]].
+            why: "الثيم بيوفّرلك وقت تظبيط: الـ branch وحالة git ونسخة Node أو Python والوقت بشكل مقروء من أول يوم. و Powerlevel10k بيجيب حالة git ببرنامج صغير شغال في الخلفية (gitstatus)، فالـ prompt بيفضل سريع حتى في repo كبير.",
+            how: R`Oh My Zsh وهو بيحمّل بيدوّر على الثيم في [[$ZSH_CUSTOM/themes]] الأول وبعدين في [[~/.oh-my-zsh/themes]]. فلو نسخت ثيم جاهز لـ custom وعدّلته، نسختك هي اللي بتتحمل ومش بتتمسح مع التحديث. وملف الثيم نفسه zsh عادي بيعرّف [[PROMPT]] و [[RPROMPT]] بنفس الرموز اللي في الدرس اللي فات.
 
-عنوانك العام (IP على النت): [[curl ifconfig.me]] أو [[curl ipinfo.io/ip]].
+Powerlevel10k بيكتب كل إعداداته في [[~/.p10k.zsh]] (ملف طويل وفيه شرح لكل جزء)، فتقدر تعدّل بإيدك: مثلًا تدوّر على [[POWERLEVEL9K_LEFT_PROMPT_ELEMENTS]] وتشيل أو تضيف عناصر. ونفس الملف فيه [[POWERLEVEL9K_INSTANT_PROMPT]]: [[verbose]] بيحذرك لو حاجة طبعت وقت التحميل، و [[quiet]] بيسكت التحذير، و [[off]] بيقفل الـ instant prompt خالص.
 
-ولو مش عارف اسم كارتك: [[networksetup -listallhardwareports]] بيعرض كل الكروت.`,
-            when: "شارك الـ URL مع موبايل على نفس الواي فاي. تعرف عنوانك على الشبكة.",
-            mistakes: "تستخدم [[en0]] وجهازك الـ Wi-Fi على [[en1]]. افحص بـ [[ifconfig]] أو [[networksetup]]."
+ولو عايز بديل مش مربوط بـ zsh: Starship، prompt واحد بيشتغل في zsh و bash و PowerShell بنفس ملف الإعدادات، ومحتاج Nerd Font برضه.`,
+            when: "لو عايز prompt مرتب بسرعة ومش فارق معاك تفهم كل رمز. ولو بتحب تتحكم في كل حرف، الدرس اللي فات أخف وأسرع.",
+            mistakes: R`تسطّب Powerlevel10k والخط مش متظبط في الترمنال، فالـ wizard يعرض رموز مكسورة وتختار إجابات غلط: ظبط الخط الأول. وتكتب [[PROMPT]] بتاعك في [[~/.zshrc]] وفيه ثيم شغال، فواحد يكتب فوق التاني. وتسيب سطر بيسأل باسورد تحت block الـ instant prompt، فالترمنال يبان واقف. وتكتب [[ZSH_THEME="powerlevel10k"]] من غير [[/powerlevel10k]] فيطلع [[[oh-my-zsh] theme 'powerlevel10k' not found]].`
           },
-          lines: ["عنوانك على الواي فاي في سطر واحد.", "عنوانك العام على النت."],
-          sol: R`[[ipconfig getifaddr en0]] بيطبع الـ IP المحلي بس، زي [[192.168.1.15]]. و [[curl ifconfig.me]] بيطبع الـ IP العام زي [[41.x.x.x]]، ومن غير سطر جديد في الآخر فالـ prompt بيلزق جنبه، ده طبيعي.
+          teach: R`## الثيم = ملف بيعرّف PROMPT بدالك
 
-الاتنين مختلفين لأن الراوتر بيعمل NAT. لو [[getifaddr en0]] مطبعش حاجة، يبقى الكارت ده مش متوصل، جرب [[en1]]. ولو [[curl ifconfig.me]] طبع IP غريب مش بتاع مزود النت، يبقى انت على VPN.
+الدرس اللي فات كتبنا [[PROMPT]] بإيدنا. الثيم ملف zsh جاهز بيعمل نفس الحاجة، و Oh My Zsh بيحمّله حسب سطر [[ZSH_THEME]]. المثال: نعرف الثيم الحالي، ونعدّ الثيمات، ونجرّب واحد، وبعدين نسطّب Powerlevel10k. السطور من ١ لـ ٥ اتشغّلت في zsh 5.9 على أوبونتو 24.04 (Docker) فيه Oh My Zsh، والـ wizard بتاع آخر سطر تفاعلي فمكتوب من صفحة المشروع.
 
-(جربت [[curl ifconfig.me]] على لينكس: طبع الـ IP من غير سطر جديد في الآخر فعلًا. [[ipconfig getifaddr]] ماك بس، من صفحة [[man ipconfig]] بتاعة Apple، مش متجرب هنا.)`
-        },
-        {
-          cmd: "flush DNS",
-          title: "امسح كاش الـ DNS",
-          desc: R`الـ DNS هو اللي بيحوّل اسم زي [[example.com]] لـ IP. الماك بيحفظ الردود دي فترة (كاش) عشان ميسألش كل مرة، فلو غيّرت سجل DNS لدومينك أو عدّلت [[/etc/hosts]]، ممكن يفضل يفتح العنوان القديم.
+---
 
-السطر ده أمرين مفصولين بـ [[;]] (نفّذ الأول وبعده التاني): [[dscacheutil -flushcache]] بيمسح كاش النظام، و [[killall -HUP mDNSResponder]] بيبعت إشارة HUP لخدمة الـ DNS بتاعة الماك فتعيد تحميل نفسها وترمي الكاش اللي معاها. الاتنين محتاجين [[sudo]]، فهيطلب باسورد الماك.
+## ١. [[grep '^ZSH_THEME' ~/.zshrc]]
 
-لو نجح مش بيطبع حاجة. والمتصفح نفسه عنده كاش منفصل، فممكن تحتاج تقفله وتفتحه.`,
-          example: "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder",
-          try: "نفّذه بعد أي تغيير DNS.",
-          deep: {
-            why: "بعد تعديل ملف hosts أو تغيير DNS، الماك بيحتفظ بالكاش القديم. flush بيمسحه.",
-            how: R`على أي macOS حديث (من Monterey لحد Tahoe 26): [[sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder]].
+[[grep]] بيطبع السطور اللي فيها الكلام. و [[^]] معناها «أول السطر»، فبيمسك السطر اللي **بيبدأ** بـ ZSH_THEME بس، مش التعليقات اللي فيها الكلمة في النص:
 
-على Monterey وما قبلها: نفس الأمر، بس الترتيب ممكن يختلف.
+~~~text الناتج
+ZSH_THEME="robbyrussell"
+~~~
 
-الأمر بياخد sudo. بعده بيكون التغيير فعّال فورًا في كل التطبيقات.
+---
 
-تحقق من إن DNS اتغيّر: [[nslookup example.com]] أو [[dig +short example.com]].`,
-            when: "بعد تعديل [[/etc/hosts]]. بعد تغيير DNS settings. لما موقع لسه بيفتح عنوان قديم.",
-            mistakes: "تعمل flush بدون sudo: مش هيشتغل أو هيطلع error. لازم sudo للاتنين."
-          },
-          lines: ["امسح كاش الـ DNS وأعد تحميل خدمة الـ DNS. الاتنين لازمين، وبـ sudo."],
-          sol: R`الأمر هيطلب باسورد الماك (عشان sudo)، وبعدها مش بيطبع أي حاجة، وده معناه إنه نجح. بعدها [[dscacheutil -q host -a name yourdomain.com]] أو افتح الموقع، المفروض ياخد الـ IP الجديد.
+## ٢. [[ls ~/.oh-my-zsh/themes | wc -l]]
 
-لو لسه بيفتح القديم: المتصفح نفسه عنده كاش (Chrome: chrome://net-internals/#dns ثم Clear host cache)، أو راوتر البيت عامل كاش، أو الـ TTL القديم عند الـ DNS بتاعك لسه مخلصش؛ اتأكد إن السجل اتغير فعلًا بـ [[dig @1.1.1.1 yourdomain.com]]. ولو ملف [[/etc/hosts]] فيه سطر للدومين ده، هو اللي بيكسب على أي DNS.
+[[ls]] بيطبع أسامي الملفات، كل اسم في سطر لما الناتج رايح لـ pipe. و [[|]] بتبعته لـ [[wc -l]] اللي بيعد السطور:
 
-(ده ماك بس: الأمر من صفحة دعم Apple عن مسح كاش الـ DNS، مش متجرب هنا.)`
-        },
-        {
-          cmd: "ssh-add",
-          title: "خلّي الماك يفتكر باسورد المفتاح",
-          desc: "مع [[--apple-use-keychain]] الباسورد بيتحفظ في Keychain فمش هتكتبه كل مرة، بشرط تضيف [[UseKeychain yes]] و [[AddKeysToAgent yes]] في [[~/.ssh/config]].",
-          example: R`ssh-keygen -t ed25519
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-pbcopy < ~/.ssh/id_ed25519.pub`,
-          try: "اعمل مفتاح، انسخه بـ pbcopy وضيفه في GitHub.",
-          deep: {
-            why: "على الماك، الـ SSH key بيتقفل بعد كل restart من غير [[ssh-add]]. وبيستفيد من Keychain عشان يحفظ الـ passphrase.",
-            how: R`[[ssh-add ~/.ssh/id_rsa]] بيضيف المفتاح للـ ssh-agent. هتسألك الـ passphrase مرة واحدة.
+~~~text الناتج
+143
+~~~
 
-[[ssh-add --apple-use-keychain ~/.ssh/id_rsa]] على الماك بيحفظ الـ passphrase في macOS Keychain. مش هيسأل بعدها.
+يعني ١٤٣ ملف. أول ٣ منهم: [[3den.zsh-theme]] و [[Soliah.zsh-theme]] و [[adben.zsh-theme]]. اللي بتكتبه في [[ZSH_THEME]] هو الاسم من غير [[.zsh-theme]].
 
-لازم تضيف في [[~/.ssh/config]] تحت [[Host *]] السطرين [[UseKeychain yes]] و [[AddKeysToAgent yes]].
+---
 
-[[ssh-add -l]] بيعرض المفاتيح المضافة. [[ssh-add -D]] بيمسح كلهم.`,
-            when: "أول مرة بعد إنشاء SSH key على ماك. بعد restart وإيجاد إن ssh بيطلب passphrase تاني.",
-            mistakes: "نسيان --apple-use-keychain فبعد كل restart تحتاج تضيف المفتاح تاني."
-          },
+## ٣. [[omz theme use agnoster]]
+
+[[omz]] أمر Oh My Zsh نفسه. [[theme use]] بتحمّل الثيم في الترمنال ده بس، ومش بتلمس [[~/.zshrc]]. جوه repo الـ prompt بقى (الأسهم اللي بين الأجزاء متشالة هنا):
+
+~~~text الشكل
+sara@sara-mbp  ~/projects/shop  test
+~~~
+
+بين الأجزاء دي agnoster بيحط أسهم ملونة وأيقونة branch، ودي رموز Powerline، محتاجة خط فيه الرموز دي، وإلا هتظهر مربعات فاضية. ولما الترمنال مكانش ضابط UTF-8 (أول تجربة في Docker)، agnoster طلع [[character not in range]]. ولو كتبت اسم غلط:
+
+~~~text الناتج
+omz::theme::use: nosuchtheme theme not found
+~~~
+
+---
+
+## ٤. [[git clone --depth=1 ... "$__{ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"]]
+
+### [[git clone URL folder]]
+
+بينزّل repo من GitHub في الفولدر اللي بعده. و [[--depth=1]] معناها «آخر commit بس»، من غير التاريخ كله، فالتنزيل أصغر.
+
+### المسار: [[$__{ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}]]
+
+| الحتة | معناها |
+|---|---|
+| [[$__{...}]] | قيمة متغير |
+| [[ZSH_CUSTOM]] | اسم المتغير: فولدر إضافاتك اللي Oh My Zsh مش بيلمسه وهو بيتحدّث |
+| [[:-]] | «لو المتغير فاضي أو مش موجود، خد اللي بعدي» |
+| [[$HOME/.oh-my-zsh/custom]] | القيمة البديلة |
+
+جربت أطبعه في نفس الشيل:
+
+~~~text الناتج
+/home/sara/.oh-my-zsh/custom/themes/powerlevel10k
+~~~
+
+والـ clone طبع [[Cloning into '/home/sara/.oh-my-zsh/custom/themes/powerlevel10k'...]]. المسار كله بين علامات تنصيص عشان لو فيه مسافة ميتقسمش.
+
+---
+
+## ٥. [[omz theme set powerlevel10k/powerlevel10k]]
+
+[[set]] (عكس [[use]]) بيكتب في [[~/.zshrc]] نفسه. والاسم [[powerlevel10k/powerlevel10k]] معناه: فولدر [[powerlevel10k]] (اللي عملناه في [[themes]])، وجواه ثيم بنفس الاسم.
+
+~~~text الناتج
+omz::theme::set: 'powerlevel10k/powerlevel10k' theme set correctly.
+~~~
+
+وبعدها [[grep '^ZSH_THEME' ~/.zshrc]] طلع:
+
+~~~text الناتج
+ZSH_THEME="powerlevel10k/powerlevel10k" # set by $__btomz$__bt
+~~~
+
+و [[ls ~/.zshrc*]] وراني ملف جديد [[~/.zshrc.bck]]: نسخة من الملف قبل التعديل.
+
+---
+
+## ٦. [[exec zsh]]
+
+[[exec]] بتبدّل الشيل الحالي ببرنامج تاني في نفس الترمنال، من غير ما تفتح شيل جوه شيل. فـ [[exec zsh]] = zsh جديد بيقرا [[~/.zshrc]] من الأول بالثيم الجديد. (الفرق عن [[source]]: الشيل الجديد بيبدأ نضيف، من غير بواقي الثيم القديم.)
+
+---
+
+## ٧. [[p10k configure]] (من الـ docs)
+
+أول مرة Powerlevel10k بيتحمّل بيفتح الـ wizard ده لوحده، و [[p10k configure]] بتفتحه تاني في أي وقت. بيسألك أسئلة بالحروف:
+
+1. أسئلة عن رموز معينة («Does this look like a diamond?»): عشان يعرف الخط بتاعك فيه الأيقونات ولا لأ.
+2. اختيار الشكل والألوان وعدد السطور.
+3. Instant prompt: يطبع الـ prompt فورًا وباقي الإعداد يكمّل بعده.
+4. في الآخر: يكتب اختياراتك في [[~/.p10k.zsh]] ويضيف سطر في [[~/.zshrc]] يقراه.
+
+و [[q]] في أي سؤال بتخرج من غير ما يغيّر حاجة.
+
+---
+
+## الخلاصة
+
+| عايز | الأمر |
+|---|---|
+| تعرف الثيم الحالي | [[grep '^ZSH_THEME' ~/.zshrc]] |
+| تجرّب ثيم في الترمنال ده بس | [[omz theme use NAME]] |
+| تثبّت ثيم (بيعدّل الـ zshrc ويعمل [[.zshrc.bck]]) | [[omz theme set NAME]] |
+| تسطّب ثيم من برّه | [[git clone]] في [[$ZSH_CUSTOM/themes]] |
+| تطبّق من الأول | [[exec zsh]] |
+| تغيّر شكل Powerlevel10k | [[p10k configure]] |`,
           lines: [
-            "اعمل زوج مفاتيح.",
-            "ضيف المفتاح للـ agent واحفظ الـ passphrase في Keychain، فمش هيسأل عليها تاني.",
-            "انسخ المفتاح العام عشان تحطه في GitHub أو السيرفر."
+            "اعرف الثيم الحالي: السطر اللي بيبدأ بـ ZSH_THEME.",
+            "عدد ملفات الثيمات اللي جاية مع Oh My Zsh.",
+            "جرّب agnoster في الترمنال ده بس. محتاج خط فيه رموز Powerline أو Nerd Font.",
+            "نزّل Powerlevel10k في فولدر الثيمات بتاعك (custom).",
+            R`اكتب [[ZSH_THEME="powerlevel10k/powerlevel10k"]] في [[~/.zshrc]] مكان القيمة القديمة.`,
+            "شيل جديد بيقرا الإعداد. أول مرة الـ wizard بيفتح لوحده.",
+            "افتح الـ wizard تاني في أي وقت عشان تغيّر الشكل."
           ],
-          sol: R`[[ssh-keygen -t ed25519]] هيسألك عن المكان (Enter للافتراضي) والـ passphrase، ويطبع [[Your public key has been saved in /Users/ali/.ssh/id_ed25519.pub]]. [[ssh-add --apple-use-keychain ~/.ssh/id_ed25519]] يطبع [[Identity added: ...]]. بعد [[pbcopy < ~/.ssh/id_ed25519.pub]] الصق في GitHub، Settings، SSH and GPG keys، New SSH key. التأكيد: [[ssh -T git@github.com]] يرد [[Hi username! You've successfully authenticated, but GitHub does not provide shell access.]]
+          sol: R`جربت الخطوات دي في zsh 5.9 على لينكس (Docker) بنفس Oh My Zsh اللي على الماك: [[grep '^ZSH_THEME' ~/.zshrc]] طبع [[ZSH_THEME="robbyrussell"]]، و [[ls ~/.oh-my-zsh/themes | wc -l]] طبع 143 (منهم [[example.zsh-theme]]). اسم غلط في [[omz theme use]] بيطبع [[nosuchtheme theme not found]]. وبعد الـ clone، [[omz theme set powerlevel10k/powerlevel10k]] طبع [['powerlevel10k/powerlevel10k' theme set correctly.]] وغيّر السطر لـ [[ZSH_THEME="powerlevel10k/powerlevel10k" # set by $__btomz$__bt]]، و [[type p10k]] قال إنها function جاية من [[custom/themes/powerlevel10k]]، يعني الثيم اتحمّل. ومع [[ZSH_THEME="random"]] كل ترمنال جديد طبع سطر زي [[[oh-my-zsh] Random theme 'awesomepanda' loaded]].
 
-لو لزقت ولقيت كلام طويل غريب يبدأ بـ [[-----BEGIN OPENSSH PRIVATE KEY-----]]، نسخت المفتاح الخاص بالغلط؛ متحطهوش في أي مكان، وانسخ الملف اللي بينتهي بـ [[.pub]]. ولو [[ssh -T]] قال [[Permission denied (publickey)]]، المفتاح مش متضاف في GitHub أو الـ agent مش شايفه ([[ssh-add -l]]).`,
-          solCode: R`ssh-keygen -t ed25519 -C "you@example.com"
-ssh-add --apple-use-keychain ~/.ssh/id_ed25519
-pbcopy < ~/.ssh/id_ed25519.pub
-ssh -T git@github.com`
+الـ wizard نفسه تفاعلي ومكمّلتوش هنا. حسب صفحة المشروع والكود بتاعه: أول سؤال [[Does this look like a diamond (rotated square)?]] وتحته رمز. لو شايف مربع فاضي أو علامة استفهام، الخط مش متظبط: دوس [[q]] تخرج من غير ما يغيّر حاجة، وظبط MesloLGS NF في الترمنال، وارجع [[p10k configure]]. وفي الآخر بيسألك [[Apply changes to ~/.zshrc?]] وبعدها بيكتب [[~/.p10k.zsh]].`
         }
       ]
     },
     {
-      t: "إدارة الماك: اليوزرز والصلاحيات والأمان",
-      l: 2,
-      n: "يوزرز وأدمن، وصلاحيات أدق من rwx، والبرامج اللي Gatekeeper بيمنعها، والفايروول والتشفير. أغلبها محتاج sudo، فاقرا التحذير قبل ما تنفّذ",
+      t: "Homebrew",
+      l: 1,
+      n: "مدير البرامج بتاع الماك، زي apt في أوبونتو",
       items: [
         {
-          cmd: "dscl و sysadminctl",
-          title: "اليوزرز على الماك: اعرضهم واعمل يوزر وامسحه",
-          desc: R`على الماك اليوزرز مش متسجلين في [[/etc/passwd]] زي لينكس، متسجلين في قاعدة اسمها Directory Services. [[dscl]] بيقرا منها، و [[sysadminctl]] أداة Apple اللي بتعمل يوزر جديد أو تمسحه من الترمنال.
+          cmd: "brew install",
+          title: "سطّب Homebrew وأي أداة",
+          desc: R`Homebrew هو مدير البرامج للماك، زي [[apt]] في أوبونتو: بتكتب اسم الأداة وهو ينزّلها ويسطّبها هي والحاجات اللي محتاجاها. مش بييجي مع الماك، فبتسطّبه مرة واحدة بأول سطر (من موقع brew.sh). [[curl]] بينزّل سكربت التسطيب، و [[$(...)]] بتحط اللي نزل كنص، و [[bash -c]] بتشغّل النص ده. فلاجات curl: [[-f]] يفشل لو السيرفر رد بـ error، و [[-s]] من غير شريط تقدم، و [[-S]] يطبع الخطأ لو حصل، و [[-L]] يتبع التحويلات.
 
-[[dscl]]: النقطة [[.]] بعده معناها «الجهاز ده»، و [[list /Users]] اطبع أسامي كل اليوزرز. هتلاقي لستة طويلة أغلبها بيبدأ بـ [[_]] زي [[_www]] و [[_spotlight]]: دول يوزرز الخدمات، محدش بيعمل بيهم login، وكل خدمة شغالة بيوزر لوحدها عشان لو اتخترقت متلمسش غير ملفاتها. [[grep -v '^_']] بتشيلهم: [[-v]] اطبع السطور اللي مش مطابقة، و [[^_]] السطر اللي أوله [[_]]. اللي بيفضل اليوزرز الحقيقيين ومعاهم [[root]] و [[daemon]] و [[nobody]] بتوع النظام. و [[list /Users UniqueID]] بتطبع جنب كل اسم رقمه (UID)، واليوزرز اللي بتعملهم من الإعدادات بيبدأوا من 501.
-
-[[read /Users/sara]] بتطبع بيانات يوزر واحد، وأغلبها كلام داخلي، فاكتب بعدها اللي عايزه بس: [[RealName]] الاسم الكامل، و [[UniqueID]] الـ UID، و [[NFSHomeDirectory]] فولدر الـ home، و [[UserShell]] الشيل. و [[id sara]] زي لينكس: الـ UID والجروبات، ولو لقيت فيهم [[80(admin)]] يبقى أدمن.
-
-[[sysadminctl]] (التعديل محتاج [[sudo]]):
-• [[-addUser ali]] اسم الدخول: حروف إنجليزي صغيرة من غير مسافات، وهو نفسه اسم فولدر [[/Users/ali]].
-• [[-fullName "Ali Hassan"]] الاسم اللي بيظهر في شاشة الدخول.
-• [[-password -]]: الشرطة مكان الباسورد معناها «اسألني»، فتكتبه في prompt ومش بيتسجل في [[~/.zsh_history]]. لو كتبت الباسورد نفسه في الأمر هيفضل في الـ history، وأي حد على الجهاز يقدر يشوفه بـ [[ps]] وهو شغال.
-• [[-admin]] يخليه أدمن. من غيرها بيبقى standard، وده الصح لأي حد مش محتاج يسطّب برامج للنظام أو يغيّر إعداداته.
-• [[-adminUser sara -adminPassword -]] أدمن موجود بيوافق على العملية، وفايدتها في الـ secure token تحت.
-• [[-deleteUser ali]] بيمسح اليوزر وفولدر الـ home بتاعه، و [[-keepHome]] بتسيب الفولدر.
-• [[-secureTokenStatus ali]] بيقولك اليوزر ده عنده secure token ولا لأ.
-
-Secure token: على Apple Silicon، اليوزر اللي معندوش secure token ميقدرش يفتح الديسك المتشفر بـ FileVault من شاشة البداية، ولا يوافق على تحديث macOS. أول يوزر عمل setup للجهاز بياخده لوحده. اليوزر اللي بتعمله من الترمنال بياخده بس لو أدمن عنده token وافق في نفس الأمر بـ [[-adminUser]]، زي سطر dev في المثال. والأسهل تعمل اليوزرز من System Settings ثم Users & Groups وانت داخل بيوزر عنده token، فالـ token بيتدّي لوحده.
-
-خطر: [[-deleteUser]] مالوش undo ومش بيسألك «متأكد؟». اعمل باك أب الأول (درس «tmutil»)، ومتمسحش اليوزر اللي انت داخل بيه.`,
-          example: R`dscl . list /Users | grep -v '^_'
-dscl . list /Users UniqueID | grep -v '^_'
-dscl . read /Users/sara RealName UniqueID NFSHomeDirectory UserShell
-id sara
-sudo sysadminctl -addUser ali -fullName "Ali Hassan" -password -
-sudo sysadminctl -addUser dev -fullName "Dev Admin" -password - -admin -adminUser sara -adminPassword -
-sysadminctl -secureTokenStatus dev
-sudo sysadminctl -deleteUser ali -keepHome`,
-          try: R`اعرض اليوزرز الحقيقيين على جهازك والـ UID بتاع كل واحد، واعرف انت أدمن ولا لأ من [[id]]. ولو عايز تجرّب الإنشاء: اعمل يوزر standard اسمه [[testuser]]، واتأكد إنه ظهر في dscl، واعرف عنده secure token ولا لأ، وبعدين امسحه.`,
-          flag: "danger",
+في آخر التسطيب هيطبع قسم [[Next steps]] فيه أوامر بتضيف brew للـ PATH. نفّذها، وإلا [[brew]] هيقولك command not found. بعدها [[brew install]] بتاخد اسم أداة أو أكتر، و [[@24]] بعد الاسم معناها نسخة رئيسية معينة (node 24). ومتشغّلش brew بـ [[sudo]]، هو أصلًا بيرفض.`,
+          example: R`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install tree htop wget
+brew install node@24`,
+          try: "سطّب tree و htop وجرب [[tree -L 2]].",
           deep: {
-            why: R`بتجهّز ماك لحد في البيت أو الشغل، أو عايز يوزر standard تشتغل بيه كل يوم وتسيب الأدمن للتسطيب بس، أو يوزر تجربة تجرّب عليه برنامج من غير ما يلمس ملفاتك. ومن الترمنال تعمل ده في سكربت لكذا جهاز، أو على ماك داخل عليه بـ ssh.`,
-            how: R`القاعدة المحلية متخزنة في ملفات plist تحت [[/var/db/dslocal]]، ودي محمية ومتعدلهاش بإيدك. [[dscl . -read]] و [[dscl . read]] نفس الحاجة، الشرطة اختيارية. وفيه [[dscl . -create]] بيعمل يوزر حتة حتة، بس [[sysadminctl]] بيعمل كله مرة واحدة: UID فاضي، وفولدر home، والـ token لو أدمن وافق، عشان كده هو اللي تستخدمه.
+            why: "Homebrew هو مدير الـ packages للماك. مش موجود على الماك افتراضيًا، بيتسطّب مرة واحدة.",
+            how: R`[[brew install node]] بيسطّب node. [[brew install git ffmpeg postgresql]] كذا package مرة واحدة.
 
-الجروبات بنفس الشكل: [[dscl . list /Groups]] كل الجروبات، و [[dscl . read /Groups/admin GroupMembership]] أعضاء جروب الأدمن (الدرس الجاي بيعدّل فيهم). و [[sudo sysadminctl -guestAccount off]] بيقفل يوزر الضيف. المقابل في لينكس [[useradd]] و [[userdel]] و [[getent passwd]] (درس «useradd و usermod» في تاب «bash»).`,
-            when: R`قبل ما تدّي الجهاز لحد، أو تعمل يوزر تجربة، أو تنضّف يوزرز قديمة. ولو جهاز واحد ومرة واحدة، شاشة Users & Groups أسهل وبتظبط الـ secure token لوحدها.`,
-            mistakes: R`تكتب الباسورد نفسه بعد [[-password]] فيفضل في الـ history. تعمل يوزر من الترمنال على Apple Silicon من غير [[-adminUser]] فميقدرش يفتح الجهاز بعد restart أو يحدّث النظام. تمسح يوزر من غير [[-keepHome]] وملفاته كان ليها لازمة. وتفتكر يوزرز [[_]] زيادة وتمسحهم: دول خدمات النظام نفسه، ومسحهم بيبوّظ حاجات زي Spotlight والطباعة.`
+Homebrew بيحط كل شئ في مسار واحد ([[/opt/homebrew]] على Apple Silicon، [[/usr/local]] على Intel). وبيتأكد إن مافيش package يأثر على الـ system packages بتاعة الماك.
+
+بعد تسطيب بعض الـ packages، Homebrew بيقولك «Caveats» (تنبيهات): أحيانًا محتاج تضيف شئ للـ PATH أو تشغّل أمر معين. اقراهم دايمًا.`,
+            when: "تسطيب أي أداة development على الماك.",
+            mistakes: R`نسيان إن PATH بحاجة لـ Homebrew prefix. على Apple Silicon لازم تضيف [[eval "$(/opt/homebrew/bin/brew shellenv)"]] في [[.zshrc]].`
           },
+          teach: R`## سطر يسطّب brew، وسطر يسطّب بيه أي حاجة
+
+Homebrew بيشتغل على الماك وعلى لينكس كمان بنفس الأوامر. عشان كده قدرت أشغّل المثال كله فعلًا: على أوبونتو 24.04 جوه Docker، كيوزر عادي اسمه [[sara]] (Homebrew 7.0.8). الفرق الوحيد المهم إن مكان التسطيب على لينكس [[/home/linuxbrew/.linuxbrew]]، وعلى الماك [[/opt/homebrew]] (Apple Silicon) أو [[/usr/local]] (Intel)، ودي من توثيق Homebrew.
+
+---
+
+## ١. سطر التسطيب
+
+~~~zsh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+~~~
+
+نفس فكرة سطر Oh My Zsh، من جوه لبرة:
+
+| الخطوة | الحتة | بتعمل إيه |
+|---|---|---|
+| ١ | [[curl -fsSL URL]] | تنزّل سكربت التسطيب وتطبعه ([[-f]] تفشل لو error، و [[-s]] من غير شريط تقدم، و [[-S]] اطبع الخطأ، و [[-L]] اتبع التحويل) |
+| ٢ | [[$(...)]] | تحط السكربت اللي نزل كنص هنا |
+| ٣ | [[/bin/bash -c "..."]] | تشغّل النص ده بـ bash. المسار الكامل [[/bin/bash]] عشان يشتغل بـ bash حتى لو انت في zsh |
+
+### اللي بيطبعه
+
+بيقول هيعمل إيه، ويطلب باسورد اليوزر بتاعك مرة (بيستخدم [[sudo]] عشان يعمل فولدر التسطيب بس)، وبعدين بينزّل. أهم جزء في الآخر:
+
+~~~text الناتج (آخره)
+==> Installation successful!
+...
+==> Next steps:
+- Run these commands in your terminal to add Homebrew to your PATH:
+    echo >> /home/sara/.zshrc
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"' >> /home/sara/.zshrc
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"
+~~~
+
+على ماك Apple Silicon نفس السطور بس المسار [[/opt/homebrew/bin/brew]].
+
+### ليه لازم الـ Next steps؟
+
+brew اتسطّب في فولدر مش في الـ PATH. قبلها جربت:
+
+~~~text الناتج
+zsh: command not found: brew
+~~~
+
+و [[brew shellenv zsh]] بيطبع سطور [[export]] بتظبط المتغيرات:
+
+~~~text الناتج (أهم سطرين)
+export HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew";
+export PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin$__{PATH+:$PATH}";
+~~~
+
+و [[eval "$(...)"]] بينفّذ السطور دي في الشيل الحالي. السطر اللي فيه [[>> ~/.zshrc]] بيحطه في الإعدادات عشان كل ترمنال جديد يعمله لوحده. بعدها [[which brew]] طلع [[/home/linuxbrew/.linuxbrew/bin/brew]].
+
+---
+
+## ٢. [[brew install tree htop wget]]
+
+[[install]] وبعدها اسم أو أكتر، مفصولين بمسافات. brew بيجيب كل باكدج **ومعاها الحاجات اللي محتاجاها** (dependencies):
+
+~~~text الناتج (جزء)
+==> Installing wget dependency: openssl@4
+==> Pouring openssl@4--4.0.3.x86_64_linux.bottle.tar.gz
+🍺  /home/linuxbrew/.linuxbrew/Cellar/openssl@4/4.0.3: 6,829 files, 30.2MB
+...
+==> Installing wget
+🍺  /home/linuxbrew/.linuxbrew/Cellar/wget/1.25.0_2: 92 files, 5.2MB
+==> Caveats
+==> htop
+htop requires root privileges to correctly display all running processes,
+so you will need to run $__btsudo htop$__bt.
+~~~
+
+| الكلمة | معناها |
+|---|---|
+| [[dependency]] | باكدج تانية الأداة محتاجاها، بتتسطب الأول |
+| [[bottle]] | نسخة متبنية جاهزة (بدل ما brew يبني من الكود) |
+| [[Pouring]] | «بيصب» الـ bottle، يعني بيفكها في مكانها |
+| [[Cellar]] | الفولدر اللي فيه كل باكدج بنسخها: [[Cellar/wget/1.25.0_2]] |
+| [[Caveats]] | تنبيهات لازم تقراها بعد التسطيب |
+
+جربت بعدها [[tree -L 2 -I node_modules]] في مشروع ([[-L 2]] مستويين بس، و [[-I]] تجاهل فولدر):
+
+~~~text الناتج
+.
+|-- index.js
+|-- notes.txt
+$__bt-- src
+    |-- api
+    |-- app.js
+    $__bt-- utils
+
+4 directories, 3 files
+~~~
+
+---
+
+## ٣. [[brew install node@24]]
+
+[[@24]] جزء من اسم الباكدج: نسخة 24 الرئيسية من node. اسم [[node]] لوحده بيبقى أحدث نسخة (وقت التجربة كانت 26). التسطيب طلع:
+
+~~~text الناتج (آخره)
+==> Installing node@24
+🍺  /home/linuxbrew/.linuxbrew/Cellar/node@24/24.21.0_1: 2,103 files, 105.9MB
+~~~
+
+وفي التجربة دي [[which node]] طلع [[/home/linuxbrew/.linuxbrew/bin/node]] على طول. بعض النسخ القديمة بتكون keg-only (مش بتتحط في الـ PATH عشان متتخانقش مع النسخة الأحدث)، وساعتها الـ Caveats بتقولك تضيف إيه. اقراها دايمًا.
+
+---
+
+## و [[sudo]]؟
+
+متكتبش [[sudo brew]]. جربت فالـ PATH بتاع sudo مكانش فيه brew أصلًا ([[sudo: brew: command not found]])، وبالمسار الكامل رفض:
+
+~~~text الناتج
+Error: Need to download https://formulae.brew.sh/api/... but cannot as root! Run $__btbrew update$__bt without $__btsudo$__bt first then try again.
+~~~
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| تسطيب brew (مرة واحدة) | سطر [[curl]] من brew.sh |
+| حطه في الـ PATH | سطور Next steps ([[eval "$(... brew shellenv zsh)"]]) |
+| تسطيب أدوات | [[brew install a b c]] |
+| نسخة رئيسية معينة | [[brew install node@24]] |
+| بعد كل تسطيب | اقرا [[Caveats]] |`,
           lines: [
-            R`اليوزرز الحقيقيين بس: [[grep -v]] بيشيل اللي أولهم [[_]] (يوزرز الخدمات).`,
-            R`نفس اللستة وجنب كل اسم الـ UID. بتوعك من 501 وطالع.`,
-            R`بيانات يوزر واحد: الاسم الكامل والـ UID والـ home والشيل.`,
-            R`الـ UID والجروبات. لو فيهم [[80(admin)]] يبقى أدمن.`,
-            R`اعمل يوزر standard. sudo هيسأل على باسوردك، وبعده sysadminctl يسأل على باسورد ali.`,
-            R`اعمل يوزر أدمن، و sara (أدمن عنده token) توافق، فـ dev ياخد secure token. هيسأل على باسورد sara كمان.`,
-            R`dev عنده secure token ولا لأ.`,
-            R`امسح ali وسيب فولدر [[/Users/ali]] زي ما هو.`
+            "سطّب Homebrew نفسه (مرة واحدة). بيطلب باسورد الماك.",
+            "سطّب ٣ أدوات مرة واحدة.",
+            "نسخة معينة من node (بعض الباكدجات بتحتاج تضيفها للـ PATH، اقرا الـ Caveats بعد التسطيب)."
           ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man dscl]] و [[man sysadminctl]] (والملخص بتاعه على ss64.com)، ودليل Apple للـ deployment عن secure token. على ماك عليه يوزر واحد، [[dscl . list /Users UniqueID | grep -v '^_']] بيطبع سطور زي [[daemon 1]] و [[nobody -2]] و [[root 0]] و [[sara 501]]. و [[id]] من غير اسم بيطبع بياناتك انت، زي [[uid=501(sara) gid=20(staff) groups=20(staff),12(everyone),61(localaccounts),80(admin),...]]: الـ [[80(admin)]] معناها إنك أدمن.
+          sol: R`بعد [[brew install tree htop]]، [[tree -L 2]] في فولدر مشروع بيطبع الفولدرات ومستوى واحد جواها، وفي الآخر سطر زي [[5 directories, 12 files]]. و [[htop]] بيفتح شاشة ملونة بالعمليات، q للخروج.
 
-[[sudo sysadminctl -addUser testuser -fullName "Test User" -password -]] بيسأل على باسورد sudo وبعدين باسورد اليوزر الجديد، وبيطبع سطور لوج أولها التاريخ واسم الأداة. بعدها [[dscl . list /Users UniqueID | grep testuser]] بيطبع [[testuser 502]]. [[sysadminctl -secureTokenStatus testuser]] هيقول إن الـ token [[DISABLED]] لأنك معملتوش بـ [[-adminUser]]، و [[ENABLED]] لو عملته. [[sudo sysadminctl -deleteUser testuser]] بيمسحه هو والـ home بتاعه، و dscl مش هيطبعه تاني.
+لو [[brew]] نفسه قال [[command not found]] بعد التسطيب، يبقى مشغّلتش السطرين اللي طبعهم في الآخر ([[eval "$(/opt/homebrew/bin/brew shellenv)"]] على Apple Silicon)، ودول بيضيفوا brew للـ PATH. على ماك Intel مكانه [[/usr/local/bin]] ومفيش المشكلة دي غالبًا. ولو [[tree]] طبع آلاف السطور، ضيف [[-I node_modules]].
 
-لو [[-addUser]] قال إن الاسم موجود، اختار اسم تاني أو امسح القديم. ولو نسيت [[sudo]] الأمر هيفشل بـ error صلاحيات.`,
-          solCode: R`dscl . list /Users UniqueID | grep -v '^_'
-id
-sudo sysadminctl -addUser testuser -fullName "Test User" -password -
-dscl . list /Users UniqueID | grep testuser
-sysadminctl -secureTokenStatus testuser
-sudo sysadminctl -deleteUser testuser`
+(أمر التسطيب و [[brew install tree htop wget]] و [[tree -L 2]] اتجربوا على Homebrew للينكس (أوبونتو 24.04 في Docker)، وطبع في Next steps سطر [[eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv zsh)"]]. مسار [[/opt/homebrew]] بتاع الماك من توثيق Homebrew.)`
         },
         {
-          cmd: "dseditgroup",
-          title: "خلّي يوزر أدمن أو شيلها منه",
-          desc: R`الأدمن على الماك هو أي يوزر عضو في جروب اسمه [[admin]] (رقمه 80). [[dseditgroup]] بيضيف يوزر لجروب أو يشيله منه، فبيه بتدّي صلاحية الأدمن أو تسحبها من الترمنال.
+          cmd: "brew --cask",
+          title: "برامج بواجهة",
+          desc: R`Homebrew فيه نوعين: formula ودي أدوات سطر أوامر زي git و tree، و cask ودي تطبيقات بواجهة رسومية زي VS Code و Docker Desktop و Chrome. [[--cask]] بتقول لـ brew إن الاسم ده تطبيق، فهو بينزّل ملف الـ dmg أو الـ pkg بنفسه ويحط التطبيق في [[/Applications]] من غير ما تسحب وتفلت بإيدك.
 
-[[-o edit]] العملية: عدّل الجروب. [[-a ali]] ضيف (add) ali، و [[-d ali]] شيله (delete). [[-t user]] نوع اللي بتضيفه: يوزر، لأن الجروب ممكن يبقى جواه جروب تاني. وآخر كلمة [[admin]] اسم الجروب. التعديل محتاج [[sudo]]، ومش بيطبع حاجة لو نجح.
-
-[[-o checkmember -m ali admin]] بيسأل: ali عضو في admin؟ ويرد بسطر أوله [[yes]] أو [[no]]. و [[dscl . read /Groups/admin GroupMembership]] بيطبع كل الأعضاء في سطر واحد.
-
-التغيير بيبان في الإعدادات على طول، بس الترمنال اللي ali فاتحه دلوقتي ممكن يفضل شايفه بالصلاحية القديمة لحد ما يفتح جلسة جديدة أو يعمل log out ويدخل تاني.
-
-النصيحة: اشتغل كل يوم بيوزر standard، وخلّي يوزر أدمن تاني للتسطيب وتغيير إعدادات النظام. برنامج خبيث شغال باسمك وانت standard ميقدرش يغيّر حاجة في النظام من غير باسورد الأدمن. وقبل ما تشيل الأدمن من نفسك، اتأكد إن فيه يوزر أدمن تاني شغال وانت عارف باسورده، وإلا مش هتلاقي حد يرجّعهالك.`,
-          example: R`dseditgroup -o checkmember -m ali admin
-dscl . read /Groups/admin GroupMembership
-sudo dseditgroup -o edit -a ali -t user admin
-id ali
-sudo dseditgroup -o edit -d ali -t user admin
-dseditgroup -o checkmember -m ali admin`,
-          try: R`اعرف مين أدمن على جهازك. ولو عندك يوزر تجربة (من درس «dscl و sysadminctl»)، خليه أدمن واتأكد بـ checkmember و [[id]]، وبعدين رجّعه standard.`,
-          flag: "danger",
+الاسم في brew مش دايمًا زي اسم التطبيق: VS Code اسمه [[visual-studio-code]] و Chrome اسمه [[google-chrome]]، فدوّر الأول بـ [[brew search --cask]]. ولو التطبيق متسطب قبل كده من dmg، brew هيرفض ويقولك إنه موجود. و [[brew uninstall --cask]] بتشيله.`,
+          example: R`brew install --cask visual-studio-code
+brew install --cask docker-desktop`,
+          try: "دوّر على تطبيق بتستخدمه بـ [[brew search --cask]] واعرف اسمه.",
           deep: {
-            why: R`تدّي حد صلاحية أدمن مؤقتة يسطّب برنامج وترجّعها، أو تحوّل يوزرك لـ standard بعد ما تعمل يوزر أدمن منفصل. ومن الترمنال تعملها على ماك داخل عليه بـ ssh من غير شاشة.`,
-            how: R`ملف [[/etc/sudoers]] على الماك فيه سطر [[%admin ALL = (ALL) ALL]]: أي عضو في جروب admin يقدر يستخدم sudo، و [[%]] قبل الاسم معناها جروب مش يوزر. وده نفس الجروب اللي شاشات الإعدادات بتطلب باسورد واحد منه. [[dseditgroup -o read admin]] بيطبع بيانات الجروب كلها. وفيه جروبات تانية بنفس الفكرة: [[staff]] (رقمه 20) فيه كل اليوزرز العاديين، و [[_developer]] بيسمح بأدوات الـ debugging بتاعة Xcode. المقابل في لينكس [[usermod -aG sudo ali]] و [[gpasswd -d ali sudo]] (درس «useradd و usermod» في تاب «bash»).`,
-            when: R`ماك جديد بيوزرين (أدمن و standard)، أو صلاحية مؤقتة لحد، أو مراجعة مين أدمن على أجهزة الفريق.`,
-            mistakes: R`تشيل الأدمن من آخر أدمن على الجهاز فتقفل على نفسك، والرجوع ساعتها محتاج Recovery. تكتب الاسم الكامل [["Ali Hassan"]] بدل اسم الدخول [[ali]]. تنسى [[sudo]] مع [[-o edit]] فالأمر يفشل. وتستغرب إن ali لسه مش قادر يستخدم sudo في الترمنال اللي كان فاتحه: افتح جلسة جديدة.`
-          },
-          lines: [
-            R`ali أدمن؟ بيرد بسطر أوله yes أو no.`,
-            R`كل أعضاء جروب admin.`,
-            R`خلّي ali أدمن: ضيفه لجروب admin.`,
-            R`اتأكد: [[80(admin)]] بقت في جروباته.`,
-            R`رجّع ali يوزر standard: شيله من admin.`,
-            R`اتأكد إن الرد بقى no.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man dseditgroup]] و [[man dscl]]، وشكل رد checkmember من سكربتات منشورة بتستخدمه. [[dscl . read /Groups/admin GroupMembership]] بيطبع حاجة زي [[GroupMembership: root sara]]. قبل الإضافة [[dseditgroup -o checkmember -m testuser admin]] بيطبع [[no testuser is NOT a member of admin]]، وبعد [[sudo dseditgroup -o edit -a testuser -t user admin]] (مش بيطبع حاجة) بيطبع [[yes testuser is a member of admin]]، و [[id testuser]] فيه [[80(admin)]]، وفي System Settings ثم Users & Groups هتلاقي تحت اسمه Admin. بعد [[-d]] كل ده بيرجع زي الأول.
+            why: "Homebrew Cask بيسطّب تطبيقات ذات واجهة رسومية (GUI apps) زي VS Code وGoogle Chrome وDocker.",
+            how: R`[[brew install --cask google-chrome]] بيسطّب Chrome. [[brew install --cask visual-studio-code docker-desktop iterm2]] كذا تطبيق.
 
-لو قالك إن اليوزر مش موجود، راجع الاسم: ده اسم الدخول القصير (اللي في [[/Users]])، مش الاسم الكامل.`,
-          solCode: R`dseditgroup -o checkmember -m testuser admin
-sudo dseditgroup -o edit -a testuser -t user admin
-dseditgroup -o checkmember -m testuser admin
-id testuser
-sudo dseditgroup -o edit -d testuser -t user admin`
+الفرق: [[brew install]] للـ CLI tools. [[brew install --cask]] للـ GUI apps.
+
+[[brew list --cask]] بيعرض الـ casks المسطّبة. [[brew uninstall --cask app-name]] بيشيله.
+
+وفيه موقع [[formulae.brew.sh]] للبحث عن الـ packages.`,
+            when: "تجهيز ماك جديد للتطوير. تسطيب Docker Desktop أو VS Code.",
+            mistakes: "[[brew install chrome]] مش شغال. الاسم الصح [[google-chrome]] وتاخده من الـ formulae.brew.sh."
+          },
+          teach: R`## نفس [[brew install]]، بس لتطبيق بواجهة
+
+الفرق كله في كلمة واحدة: [[--cask]]. من غيرها brew بيدوّر على **formula** (أداة سطر أوامر بتتبني وتتحط في [[Cellar]])، ومعاها بيدوّر على **cask** (تطبيق ماك جاهز بيتنزل من موقع الشركة ويتحط في [[/Applications]]).
+
+> الـ casks ماك بس. جربت على Homebrew للينكس (أوبونتو 24.04 في Docker) فرفض، فشرح الماك هنا من توثيق Homebrew.
+
+---
+
+## ١. [[brew install --cask visual-studio-code]]
+
+| الحتة | معناها |
+|---|---|
+| [[brew install]] | سطّب |
+| [[--cask]] | الاسم اللي جاي تطبيق، مش أداة |
+| [[visual-studio-code]] | اسم الـ cask (token): حروف صغيرة وشرطة بدل المسافة |
+
+على الماك، حسب توثيق Homebrew، brew بينزّل ملف التطبيق (zip أو dmg أو pkg)، ويتأكد من الـ checksum بتاعه، وينقل [[Visual Studio Code.app]] لـ [[/Applications]]. يعني نفس اللي كنت هتعمله بإيدك من الموقع.
+
+وعلى لينكس، التجربة طلعت:
+
+~~~text الناتج على لينكس
+Error: visual-studio-code: visual-studio-code: This cask requires macOS.
+~~~
+
+---
+
+## ٢. [[brew install --cask docker-desktop]]
+
+نفس الشكل. الاسم [[docker-desktop]] مش [[docker]]: لأن [[docker]] من غير cask اسم formula لأداة سطر الأوامر بس، من غير التطبيق ولا المحرك اللي بيشغّل الـ containers.
+
+---
+
+## الاسم الصح منين؟
+
+الاسم مش دايمًا اسم التطبيق. جربت على لينكس اسم غلط من غير cask:
+
+~~~zsh
+brew install chrome
+~~~
+
+~~~text الناتج
+Warning: No available formula with the name "chrome". Did you mean chroma or chrony?
+==> Searching for similarly named formulae and casks...
+==> Formulae
+chrome-cli
+chrome-devtools-mcp
+...
+~~~
+
+brew بيقترح أسامي قريبة. على الماك [[brew search --cask chrome]] بيطبع تحت [[==> Casks]] أسامي زي [[google-chrome]] (من الـ docs)، وده اللي تكتبه. وفيه موقع formulae.brew.sh تدوّر فيه من المتصفح.
+
+---
+
+## الخلاصة
+
+| | formula | cask |
+|---|---|---|
+| إيه هو | أداة سطر أوامر (git و tree و node) | تطبيق بواجهة (VS Code و Chrome و Docker Desktop) |
+| الأمر | [[brew install NAME]] | [[brew install --cask NAME]] |
+| بيتحط فين | [[Cellar]] جوه فولدر brew | [[/Applications]] |
+| على لينكس | شغال | لأ: [[This cask requires macOS]] |
+| تشيله | [[brew uninstall NAME]] | [[brew uninstall --cask NAME]] |`,
+          lines: ["برنامج بواجهة (GUI) بيتسطب بـ [[--cask]].", "Docker Desktop."],
+          sol: R`[[brew search --cask chrome]] مثلًا بيطبع تحت [[==> Casks]] أسامي زي [[google-chrome]] و [[google-chrome@beta]]. الاسم ده اللي تكتبه في [[brew install --cask google-chrome]]. و [[brew info --cask google-chrome]] يوريك النسخة والموقع الرسمي قبل ما تسطب.
+
+الاسم في brew مش دايمًا زي اسم التطبيق: VS Code اسمه [[visual-studio-code]]. ولو التطبيق متسطب قبل كده من dmg، brew هيقولك إن فيه app موجود بالفعل في Applications، إما امسحه الأول أو استخدم [[--force]] وانت عارف انت بتعمل إيه.
+
+(ده ماك بس: الأسماء ورسالة التطبيق الموجود من توثيق Homebrew، مش متجربة هنا.)`
         },
         {
-          cmd: "chmod +a",
-          title: "صلاحية ليوزر معين بالاسم (ACL على الماك)",
-          desc: R`صلاحيات [[rwx]] العادية فيها 3 خانات بس: صاحب الملف، والجروب، وباقي الناس. الـ ACL (Access Control List) بتخليك تدّي أو تمنع صلاحية ليوزر أو جروب معين بالاسم، وعلى الماك بتضيفها بـ [[chmod +a]] وتشوفها بـ [[ls -le]].
+          cmd: "brew upgrade",
+          title: "حدّث كل حاجة",
+          desc: R`Homebrew شغال بكتالوج: لستة بكل البرامج المتاحة ونسخها، متخزّنة عندك. [[brew update]] بتحدّث الكتالوج ده بس ومش بتلمس برامجك، زي [[apt update]]. [[brew outdated]] بتقارن اللي متسطب عندك بالكتالوج وتطبع اللي ليه نسخة أحدث، ولو مطبعتش حاجة يبقى كله محدّث.
 
-[[ls -le]]: [[-l]] اللستة الطويلة و [[-e]] اعرض الـ ACL. الملف اللي عليه ACL بيظهر جنب صلاحياته [[+]] (زي [[-rw-r--r--+]])، وتحته إدخالاته مترقمة من 0، زي [[0: user:ali allow read,write]]. هتلاقي في الـ home فولدرات زي Desktop و Documents عليها [[group:everyone deny delete]] من النظام نفسه، عشان محدش يمسح الفولدر أو يغيّر اسمه بالغلط.
+[[brew upgrade]] من غير اسم بتحدّث كل اللي في اللستة دي، ومع اسم ([[brew upgrade node]]) بتحدّث حاجة واحدة. و [[brew cleanup]] بتمسح النسخ القديمة والملفات المتنزلة اللي مبقتش محتاجها، وده ممكن يوفّر جيجات.
 
-الإدخال بيتكتب بين علامات تنصيص: مين، وبعدين [[allow]] (اسمح) أو [[deny]] (امنع)، وبعدين الصلاحيات مفصولة بفاصلة من غير مسافات.
-• مين: [[user:ali]] يوزر، أو [[group:staff]] جروب، و [[group:everyone]] جروب فيه الكل.
-• صلاحيات الملف: [[read]] و [[write]] و [[append]] (يكتب في الآخر بس، ميعدّلش القديم) و [[execute]] و [[delete]].
-• صلاحيات الفولدر: [[list]] (يشوف اللي جواه) و [[search]] (يوصل لملف جواه بالاسم) و [[add_file]] و [[add_subdirectory]] و [[delete_child]] (يمسح حاجة جواه).
-• للفولدر بس: [[file_inherit]] و [[directory_inherit]] بيخلوا الإدخال يتنسخ لوحده على أي ملف أو فولدر جديد يتعمل جواه.
-
-الأوامر:
-• [[chmod +a "..." file]] ضيف إدخال. ولو فيه إدخال لنفس الشخص، الصلاحيات بتتجمع فيه.
-• [[chmod -a "user:ali allow write" file]] شيل الصلاحية دي بس من الإدخال، والباقي يفضل.
-• [[chmod "-a#" 0 file]] شيل الإدخال رقم 0 كله. علامات التنصيص حوالين [[-a#]] عشان لو [[extended_glob]] شغال عندك، zsh بيعتبر [[#]] رمز glob ويطلع [[no matches found]] (درس «no matches found»).
-• [[chmod -N file]] امسح الـ ACL كلها.
-
-الترتيب بيفرق: الماك بيقرا الإدخالات من فوق لتحت، و [[+a]] بيحط [[deny]] قبل [[allow]] لوحده، فالمنع بيكسب. واللي الـ ACL متكلمتش عنه، الماك بيرجع فيه لـ [[rwx]] العادية. والـ ACL مش بتغلب حماية الخصوصية بتاعة الماك (TCC): برنامج ممنوع من Desktop في Privacy & Security هيفضل ممنوع.
-
-الفرق عن لينكس: لينكس بيستخدم POSIX ACL بأوامر [[setfacl]] و [[getfacl]] (درس «setfacl و getfacl» في تاب «bash»). الماك بيستخدم نوع تاني (شبه ويندوز و NFSv4): فيه [[deny]]، وفيه صلاحيات أدق زي [[delete]] و [[append]] لوحدهم، ومفيش setfacl خالص. فأوامر ACL مش بتتنقل بين النظامين.`,
-          example: R`ls -le ~
-touch notes.txt
-chmod +a "user:ali allow read,write" notes.txt
-chmod +a "group:everyone deny delete" notes.txt
-ls -le notes.txt
-chmod -a "user:ali allow write" notes.txt
-chmod "-a#" 0 notes.txt
-chmod -N notes.txt
-mkdir shared
-chmod +a "user:ali allow list,search,add_file,delete_child,file_inherit,directory_inherit" shared`,
-          try: R`اعمل ملف، وحط عليه [[group:everyone deny delete]]، وجرّب تمسحه بـ [[rm]]. وبعدين شيل الإدخال بـ [[chmod "-a#" 0]] وامسحه. ولو عندك يوزر تجربة (درس «dscl و sysadminctl»)، اديله [[read]] بس على ملف، وادخل بيه واتأكد إنه بيقرا ومش بيكتب.`,
+خد بالك: الترقية ممكن تنقل حاجة زي postgresql أو node لنسخة رئيسية جديدة وتبوّظ مشروع شغال. لو عايز تثبّت حاجة على نسختها: [[brew pin postgresql@16]].`,
+          example: R`brew update
+brew outdated
+brew upgrade
+brew cleanup`,
+          try: "اعرف إيه اللي محتاج تحديث عندك بـ [[brew outdated]].",
           deep: {
-            why: R`فولدر مشروع مشترك بين يوزرين على نفس الماك، أو ملف عايزه يتقري بس من يوزر معين، أو تحمي فولدر مهم من المسح بالغلط حتى منك. ولما برنامج يقولك Permission denied رغم إن [[rwx]] شكلها مظبوطة، غالبًا السبب ACL، و [[ls -le]] هو اللي هيوريهالك.`,
-            how: R`لكل صلاحية مطلوبة، أول إدخال بيتكلم عنها هو اللي بيحكم، فلو [[deny]] قبل [[allow]] المنع بيكسب. الترتيب اللي [[+a]] بيحافظ عليه: deny المحلي، وبعده allow المحلي، وبعدهم المتورّث (inherited) بنفس الترتيب. [[chmod +a# 2 "..."]] بيحط الإدخال في مكان بعينه، و [[chmod =a# 1 "..."]] بيكتب إدخال من جديد، والاتنين بيكسروا الترتيب الطبيعي لو مش واخد بالك.
+            why: "تحديث الـ packages المسطّبة. زي apt upgrade في لينكس.",
+            how: R`[[brew update]] بيجيب آخر لستة packages (تحديث Homebrew نفسه). [[brew upgrade]] بيحدّث كل المسطّبات.
 
-المسح بيتسمح من [[delete]] على الملف نفسه أو [[delete_child]] على الفولدر اللي هو فيه، بس [[deny delete]] صريحة على الملف بتمنعه حتى لو الفولدر سامح، وده اللي بيحمي Desktop. وفي Finder: Get Info ثم Sharing & Permissions لما تضيف يوزر بالـ [[+]] بيعمل ACL برضه.`,
-            when: R`فولدر مشترك بين أكتر من يوزر على نفس الجهاز، أو حماية فولدر من المسح، أو تحقيق في Permission denied غريب.`,
-            mistakes: R`تنسى إن ali محتاج يوصل للفولدرات اللي فوق الملف ([[search]] أو [[x]])، فالـ ACL على الملف لوحده مش بتفيده. تحط مسافة بعد الفاصلة بين الصلاحيات فـ chmod ممكن ميفهمهاش. تكتب [[-a#]] من غير علامات تنصيص و [[extended_glob]] شغال. تنقل أمر [[setfacl]] من شرح لينكس. وتعمل [[chmod -N]] على فولدرات الـ home الأساسية فتشيل الحماية اللي النظام حاطها.`
+[[brew upgrade node]] لـ package واحدة. [[brew outdated]] بيوريك اللي فيه تحديث.
+
+[[brew cleanup]] بيمسح النسخ القديمة وبيوفّر مساحة.
+
+وتقدر تعمل كل ده مرة واحدة: [[brew update && brew upgrade && brew cleanup]]. ممكن تحطها في cron أسبوعي.`,
+            when: "بانتظام عشان تفضل محدّث وآمن.",
+            mistakes: "تحديث قاعدة بيانات غير متوقع: [[brew upgrade postgresql]] ممكن يغيّر version رئيسية وبياناتك مش هتشتغل. اتأكد إيه اللي هيتحدّث."
           },
-          lines: [
-            R`الـ ACL على فولدرات الـ home: Desktop و Documents عليهم [[group:everyone deny delete]].`,
-            R`ملف تجربة.`,
-            R`ali يقرا ويكتب في الملف، حتى لو مش صاحبه ولا في جروبه.`,
-            R`محدش يقدر يمسح الملف، ولا انت نفسك (المنع بيكسب).`,
-            R`اتأكد: [[+]] جنب الصلاحيات، والإدخالات مترقمة والـ deny الأول.`,
-            R`شيل الكتابة بس من ali، والقراية تفضل.`,
-            R`شيل الإدخال رقم 0 (الـ deny) كله.`,
-            R`امسح الـ ACL كلها، والملف يرجع لـ rwx بس.`,
-            R`فولدر مشترك.`,
-            R`ali يشوف اللي جواه ويضيف ويمسح، والإدخال بيتنسخ لوحده على أي حاجة جديدة جواه.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man chmod]] (جزء ACL MANIPULATION OPTIONS) و [[man ls]]، والترقيم من 0 زي ناتج [[ls -le]] الحقيقي في مقالات The Eclectic Light Company. بعد [[chmod +a "group:everyone deny delete" notes.txt]]، [[ls -le notes.txt]] بيطبع سطر الملف وفيه [[-rw-r--r--+]]، وتحته [[0: group:everyone deny delete]]. [[rm notes.txt]] بيرفض ويطبع error صلاحيات، والملف بيفضل مكانه. بعد [[chmod "-a#" 0 notes.txt]] الـ [[+]] بتختفي و [[rm]] بيمسحه عادي.
+          teach: R`## ٤ خطوات بالترتيب: حدّث اللستة، شوف القديم، رقّي، نضّف
 
-خد بالك إن أمثلة صفحة man بترقّم الإدخالات من 1، والناتج الحقيقي بيبدأ من 0، فاعتمد على اللي [[ls -le]] بيطبعه عندك قبل [[-a#]]. ولو [[chmod -a# 0]] من غير علامات تنصيص قال [[no matches found]]، يبقى [[extended_glob]] شغال عندك.`,
-          solCode: R`touch notes.txt
-chmod +a "group:everyone deny delete" notes.txt
-ls -le notes.txt
-rm notes.txt
-chmod "-a#" 0 notes.txt
-rm notes.txt`
+الأوامر الأربعة دي بتتكتب بالترتيب ده بالظبط، وكل واحد بيعتمد على اللي قبله. جربتهم على Homebrew 7.0.8 على أوبونتو 24.04 (Docker)، بعد تسطيب جديد، فالنتايج كانت هادية. شكل الناتج لما يبقى فيه تحديثات من توثيق Homebrew، ومكتوب ده جنبه.
+
+---
+
+## ١. [[brew update]]
+
+brew عنده **كتالوج**: لستة بكل الباكدجات وآخر نسخة من كل واحدة، متخزنة عندك. [[update]] بتجيب أحدث نسخة من الكتالوج ده (ومن brew نفسه)، ومش بتلمس أي برنامج متسطّب:
+
+~~~text الناتج
+==> Updating Homebrew...
+Already up-to-date.
+~~~
+
+[[Already up-to-date]] يعني الكتالوج اللي عندك هو آخر واحد. ده زي [[apt update]] على أوبونتو.
+
+---
+
+## ٢. [[brew outdated]]
+
+بتقارن كل اللي متسطّب عندك بالكتالوج، وتطبع اللي ليه نسخة أحدث. في التجربة مطبعتش حاجة:
+
+~~~zsh
+brew outdated
+echo $?
+~~~
+
+~~~text الناتج
+0
+~~~
+
+مفيش ولا سطر، و exit code صفر: كله محدّث. ولما يكون فيه، كل سطر بيبقى شكله زي ده (من الـ docs):
+
+~~~text الشكل
+node (24.1.0) < 24.8.0
+~~~
+
+النسخة اللي عندك بين القوسين، و [[<]] يعني «أقدم من»، وبعدها النسخة الجديدة. وحسب [[brew outdated --help]]: النسخ بتتطبع بس لما الناتج رايح للشاشة، ولو بتبعته لـ pipe بيطبع الأسامي بس.
+
+> لو نسيت [[brew update]] الأول، المقارنة بتبقى مع كتالوج قديم وممكن متشوفش التحديثات الجديدة. (brew بيعمل update لوحده قبل install و upgrade لو بقاله فترة، بس متعتمدش على ده.)
+
+---
+
+## ٣. [[brew upgrade]]
+
+من غير اسم: رقّي **كل** حاجة ظهرت في outdated. ومع اسم ([[brew upgrade node]]) حاجة واحدة. في التجربة مفيش حاجة قديمة فخلص ساكت بـ exit code صفر.
+
+ولو عايز تمنع باكدج من الترقية: [[brew pin]]. جربتها:
+
+~~~zsh
+brew pin tree
+brew list --pinned
+brew unpin tree
+~~~
+
+~~~text الناتج
+tree
+~~~
+
+[[list --pinned]] بيطبع المتثبّت. و [[unpin]] بيرجّعها عادي.
+
+---
+
+## ٤. [[brew cleanup]]
+
+كل ترقية بتسيب النسخة القديمة في [[Cellar]]، وكمان ملفات التنزيل في الـ cache. [[cleanup]] بتمسح القديم ده. في التجربة مكانش فيه قديم فخلص من غير ما يطبع. على جهاز بقاله شهور من غير cleanup، بيطبع سطور [[Removing:]] لكل حاجة بيمسحها وفي الآخر المساحة اللي وفّرها (من الـ docs). ولو عايز تشوف هيمسح إيه من غير ما يمسح: [[brew cleanup -n]].
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه | زي أوبونتو |
+|---|---|---|
+| [[brew update]] | يحدّث الكتالوج بس | [[apt update]] |
+| [[brew outdated]] | يطبع اللي ليه نسخة أحدث (فاضي = كله تمام) | [[apt list --upgradable]] |
+| [[brew upgrade]] | يرقّي كله، أو حاجة واحدة بالاسم | [[apt upgrade]] |
+| [[brew cleanup]] | يمسح النسخ القديمة والتنزيلات | [[apt autoclean]] |
+| [[brew pin NAME]] | يمنع حاجة من الترقية | [[apt-mark hold]] |`,
+          lines: [
+            "حدّث كتالوج Homebrew (زي apt update).",
+            "إيه اللي فيه نسخة أحدث.",
+            "حدّث كله (زي apt upgrade).",
+            "امسح النسخ القديمة ووفّر مساحة."
+          ],
+          sol: R`[[brew outdated]] بيطبع سطر لكل حاجة قديمة زي [[node (24.1.0) < 24.8.0]]، ولو كله محدث مش بيطبع أي حاجة، وده معناه إنك تمام.
+
+اعمل [[brew update]] الأول، وإلا الأداة هتقارن بلستة قديمة ومش هتشوف التحديثات الجديدة. وخد بالك إن الـ casks اللي بتحدث نفسها (زي Chrome) ممكن متظهرش هنا، [[brew outdated --greedy]] بيعرضها. وقبل [[brew upgrade]] في يوم شغل مهم، فكّر إن ترقية postgresql أو node ممكن تغيّر سلوك مشروعك.
+
+(ده ماك بس: شكل [[brew outdated]] و [[--greedy]] و [[brew pin]] من توثيق Homebrew (بيطبع النسخ لما يكون في ترمنال، وبيطبع الأسامي بس لما الناتج رايح pipe)، مش متجرب هنا.)`
         },
         {
-          cmd: "xattr و quarantine",
-          title: "«App is damaged» والبرامج اللي Gatekeeper مانعها",
-          desc: R`أي ملف بتنزّله من المتصفح أو AirDrop أو شات، الماك بيحط عليه علامة مخفية اسمها [[com.apple.quarantine]]. أول مرة تفتح البرنامج، Gatekeeper (الحماية اللي بتتأكد إن البرنامج موقّع من مطوّر مسجل عند Apple ومتراجع منها، notarized) بيشيك عليه، ولو مش عاجبه بيمنعه برسالة زي [[“App” is damaged and can’t be opened]] أو [[Apple could not verify “App” is free of malware]]. [[xattr]] بيعرض العلامة دي ويشيلها، و [[spctl]] بيقولك رأي Gatekeeper.
+          cmd: "brew list / info",
+          title: "اعرف متسطب إيه",
+          desc: R`دول الأوامر اللي بتعرف بيها إيه اللي عندك وإيه المتاح. [[brew list]] بتطبع كل اللي سطّبته بـ brew، و [[--formula]] أو [[--cask]] بعدها تحصر النوع. [[brew search postgres]] بتدوّر في الكتالوج على أي اسم فيه الكلمة دي، فتعرف الاسم الصح (زي [[postgresql@16]]) قبل ما تسطّب.
 
-الـ extended attributes (اختصارها xattr) بيانات زيادة متخزنة مع الملف بعيد عن محتواه، زي نزل منين وإمتى. [[xattr -l]] بيطبع كل الـ attributes بأساميها وقيمها ([[-l]] الاسم والقيمة مع بعض). قيمة الـ quarantine شكلها [[0083;66fd1a2b;Safari;...]]: رقم flags، والوقت، والبرنامج اللي نزّله. [[-d com.apple.quarantine]] بيمسح الـ attribute ده بالاسم، و [[-r]] بيمشي على كل اللي جوه الفولدر، ولازمة هنا لأن [[.app]] فولدر فيه مئات الملفات (درس «.app و .dmg و .pkg» في تاب «الملفات وامتداداتها»). والفلاجات بتتلزق: [[-dr]] زي [[-d -r]]. البرنامج في [[/Applications]] غالبًا محتاج [[sudo]].
-
-[[spctl --assess -vv]] بيسأل Gatekeeper عن برنامج ([[-vv]] تفاصيل أكتر): [[accepted]] وتحته [[source=Notarized Developer ID]] يعني موقّع ومتراجع، و [[rejected]] يعني هيتمنع. و [[codesign -dvv]] بيطبع مين موقّع البرنامج: سطور [[Authority=]] فيها اسم المطوّر، و [[Signature=adhoc]] معناها إن البرنامج متوقّع على الجهاز اللي اتبنى عليه بس، ودي أشهر سبب لرسالة damaged على Apple Silicon مع برامج GitHub المفتوحة.
-
-الطريقة الرسمية قبل الترمنال: افتح البرنامج واترفض، وبعدين System Settings ثم Privacy & Security، وتحت في Security هتلاقي [[Open Anyway]] (بيفضل ظاهر حوالي ساعة بعد المحاولة)، وبعدها باسورد الماك. من macOS Sequoia (15) مبقاش ينفع تتخطى Gatekeeper بكليك يمين ثم Open زي زمان، لازم الإعدادات.
-
-خطر: شيل الـ quarantine بيقفل الحماية دي للبرنامج ده خالص. اعملها بس لبرنامج نزّلته من موقع المطوّر الرسمي أو من GitHub بتاع المشروع نفسه وانت عارف هو إيه. أشهر طريقة البرامج الخبيثة بتدخل بيها الماك إن حد يقولك «لو قالك damaged اكتب الأمر ده». برنامج crack أو من موقع تحميلات مجهول: امسحه، متشيلش العلامة.`,
-          example: R`spctl --assess -vv /Applications/Safari.app
-xattr -l ~/Downloads/Tool.dmg
-spctl --assess -vv /Applications/Tool.app
-codesign -dvv /Applications/Tool.app
-sudo xattr -dr com.apple.quarantine /Applications/Tool.app
-xattr -l /Applications/Tool.app`,
-          try: R`نزّل أي برنامج مجاني من موقعه الرسمي (أو أي ملف [[.dmg]])، وشوف علامة الـ quarantine عليه بـ [[xattr -l]]، وقارن رأي Gatekeeper فيه وفي Safari بـ [[spctl]]. متشيلش العلامة غير لو البرنامج اترفض وانت متأكد من مصدره.`,
-          flag: "danger",
+[[brew info node]] بتطبع النسخة المتاحة، ولو متسطبة فين مكانها وحجمها، والاعتماديات، وأي Caveats (تعليمات لازم تعملها بعد التسطيب). و [[brew uninstall wget]] بتشيل الأداة، ومن Homebrew 4.3 بتشيل لوحدها كمان الاعتماديات اللي اتسطبت معاها ومبقاش حد محتاجها (اللي كان [[brew autoremove]] بيعمله بإيدك).`,
+          example: R`brew list
+brew search postgres
+brew info node
+brew uninstall wget`,
+          try: "اعرض معلومات أي حاجة متسطبة عندك.",
           deep: {
-            why: R`برامج مفتوحة المصدر كتير مش موقّعة بشهادة Apple المدفوعة، فبتظهر damaged رغم إنها سليمة. لازم تعرف تفرّق بين ده وبين برنامج خطر فعلًا، وتعرف الطريق الرسمي بدل ما تنسخ أوامر من النت من غير ما تفهمها.`,
-            how: R`المتصفحات وبرامج الشات بتحط العلامة، لكن [[curl]] و [[git clone]] من الترمنال مش بيحطوها، عشان كده سكربت نزّلته بـ curl بيشتغل من غير Gatekeeper. Gatekeeper بيشيك على البرنامج المعلّم أول مرة بس، وبعد ما توافق بيفتكر.
+            why: "تعرف إيه المسطّب وأين ومتى آخر تحديث.",
+            how: R`[[brew list]] كل الـ packages المسطّبة. [[brew list --formula]] الـ CLI tools بس. [[brew list --cask]] الـ GUI apps.
 
-Notarization: المطوّر بيبعت البرنامج لـ Apple تفحصه أوتوماتيك وترجّعله تذكرة، و Gatekeeper بيدوّر على التذكرة دي. «damaged» على Apple Silicon غالبًا معناها توقيع adhoc أو توقيع اتكسر، و «could not verify» معناها موقّع بس مش notarized. [[xattr -c]] بيمسح كل الـ attributes مش الـ quarantine بس، فمتستخدمهوش هنا. ولما تسحب البرنامج من الـ [[.dmg]] لـ Applications، العلامة بتتنقل معاه على النسخة الجديدة.`,
-            when: R`برنامج من مصدر رسمي انت متأكد منه، والرسالة بتمنعه، و Open Anyway مش ظاهر أو البرنامج أدوات command line كتير جوه فولدر. مش لأي برنامج من موقع مجهول.`,
-            mistakes: R`تكتب [[xattr -d]] من غير [[-r]] فالعلامة تتشال من الفولدر بس وملفات جواه تفضل عليها. تستخدم [[sudo spctl --master-disable]] من شروحات قديمة: ده بيفتح اختيار Anywhere في الإعدادات ويقفل الحماية عن كل البرامج، ومن Sequoia لازم تأكيد من الإعدادات كمان، وفي الآخر انت شلت الحماية عن الجهاز كله عشان برنامج واحد. تشيل العلامة من الـ dmg بعد ما نقلت البرنامج. وتصدّق إن البرنامج بايظ فعلًا وتنزّله عشر مرات.`
+[[brew info node]] معلومات عن package: الـ version، وتاريخ آخر تحديث، والـ dependencies.
+
+[[brew deps --tree node]] يعرض الـ dependencies كشجرة.
+
+[[brew doctor]] بيشوف لو فيه مشاكل في إعداد Homebrew. مفيد لو حاجة مش شغالة.`,
+            when: "بعد مشاكل تسطيب. التأكد من version معين. مراجعة ما هو مسطّب.",
+            mistakes: "[[brew list]] بيطلع كتير. افلتر بـ [[brew list | grep git]]."
           },
-          lines: [
-            R`رأي Gatekeeper في برنامج بتاع Apple: accepted.`,
-            R`العلامات على ملف نزّلته: هتلاقي [[com.apple.quarantine]] ومين نزّله.`,
-            R`رأي Gatekeeper في البرنامج اللي بيترفض: rejected والسبب.`,
-            R`مين موقّع البرنامج، ولو [[Signature=adhoc]] يبقى مش موقّع من مطوّر مسجل.`,
-            R`شيل العلامة من البرنامج وكل اللي جواه. بعدها هيفتح من غير Gatekeeper، فاعملها لمصدر متأكد منه بس.`,
-            R`اتأكد إن [[com.apple.quarantine]] مبقاش موجود.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man xattr]] و [[man spctl]] وصفحة دعم Apple «Open a Mac app from an unknown developer» وإعلان Apple للمطورين عن تغيير Gatekeeper في Sequoia. [[spctl --assess -vv /Applications/Safari.app]] بيطبع [[/Applications/Safari.app: accepted]] وتحته [[source=Apple System]]. برنامج من مطوّر مسجل هتلاقي [[source=Notarized Developer ID]] وتحته [[origin=Developer ID Application:]] واسم المطوّر. و [[xattr -l]] على ملف نزّلته بيطبع سطر أوله [[com.apple.quarantine:]] وفيه اسم المتصفح، وممكن كمان [[com.apple.metadata:kMDItemWhereFroms]] وفيه اللينك اللي نزل منه.
+          teach: R`## ٤ أسئلة لـ brew: عندي إيه؟ فيه إيه؟ ده إيه؟ شيله
 
-لو البرنامج اترفض وانت متأكد من مصدره، بعد [[sudo xattr -dr com.apple.quarantine]] السطر ده مش هيظهر في [[xattr -l]] والبرنامج هيفتح. ولو xattr قال [[No such xattr: com.apple.quarantine]] يبقى العلامة مش موجودة أصلًا، والمشكلة حاجة تانية: البرنامج مش لمعالجك (Intel من غير Rosetta، درس «softwareupdate»)، أو فعلًا بايظ.`,
-          solCode: R`spctl --assess -vv /Applications/Safari.app
-xattr -l ~/Downloads/Tool.dmg
-spctl --assess -vv /Applications/Tool.app`
+كلهم قراية ما عدا الأخير. جربتهم على Homebrew 7.0.8 على أوبونتو 24.04 (Docker)، بعد ما سطّبت [[tree]] و [[htop]] و [[wget]] و [[node@24]]. الأوامر وشكل الناتج هما هما على الماك، والأرقام والأسامي هتختلف حسب اللي عندك.
+
+---
+
+## ١. [[brew list]]
+
+بتطبع كل باكدج متسطّبة، اسم في سطر:
+
+~~~text الناتج (أوله)
+brotli
+bzip2
+c-ares
+ca-certificates
+expat
+...
+~~~
+
+طلع ٣٦ اسم، مع إني سطّبت ٤ بس. الباقي dependencies اتسطبت معاهم. عشان تشوف اللي انت طلبته بس:
+
+~~~zsh
+brew leaves
+~~~
+
+~~~text الناتج
+htop
+node@24
+tree
+wget
+~~~
+
+[[leaves]] (الأوراق) يعني الباكدجات اللي مفيش حاجة تانية محتاجاها. و [[brew list --formula]] أو [[--cask]] بيحصروا النوع.
+
+---
+
+## ٢. [[brew search postgres]]
+
+بتدوّر في الكتالوج كله (مش اللي عندك بس) على أي اسم فيه الكلمة:
+
+~~~text الناتج
+check_postgres
+postgres-language-server
+postgresql-hll
+postgresql@12
+postgresql@13
+postgresql@14
+postgresql@15
+postgresql@16
+postgresql@17
+postgresql@18
+postgrest
+qt-postgresql
+postgis
+~~~
+
+كده عرفت إن الاسم الصح [[postgresql@16]] مثلًا، مش [[postgres]]. (على الماك بيطلع كمان قسم [[==> Casks]] للتطبيقات.)
+
+---
+
+## ٣. [[brew info node]]
+
+بطاقة الباكدج. جربتها على [[tree]] الأول لأنها قصيرة:
+
+~~~text الناتج
+==> tree: stable 2.3.2 (bottled)
+Display directories as trees (with optional color/HTML output)
+https://oldmanprogrammer.net/source.php?dir=projects/tree
+Installed (on request)
+From: https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/t/tree.rb
+License: GPL-2.0-or-later
+==> Installed Versions
+tree 2.3.2 (9 files, 223.4KB) [Linked]
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[stable 2.3.2]] | آخر نسخة في الكتالوج |
+| [[(bottled)]] | فيه نسخة جاهزة، مش هيبني من الكود |
+| [[Installed (on request)]] | متسطبة، وانت اللي طلبتها (مش dependency) |
+| [[From:]] | ملف الـ formula: وصفة التسطيب نفسها |
+| [[Installed Versions]] | النسخة اللي عندك، وعدد الملفات والحجم |
+| [[[Linked]]] | أوامرها متحطة في [[bin]] جوه فولدر brew، يعني في الـ PATH |
+
+ولـ [[node]]:
+
+~~~text الناتج (أوله)
+==> node: stable 26.10.0 (bottled), HEAD
+Open-source, cross-platform JavaScript runtime environment
+https://nodejs.org/
+Aliases: node.js, node@26, nodejs, npm
+Not installed
+...
+==> Installed Versions
+node@24 24.21.0_1 (2,103 files, 105.9MB) [Linked]
+==> Dependencies
+Required (20): abseil, ada-url, brotli, c-ares, ...
+~~~
+
+[[Not installed]] لأن [[node]] (اللي هو 26) مش متسطّب، اللي عندي [[node@24]]. و [[HEAD]] يعني ينفع تسطّب من آخر كود على GitHub. و [[Dependencies]] اللي هيتسطب معاه. وأي [[Caveats]] بتظهر في آخر البطاقة.
+
+اسم غلط:
+
+~~~text الناتج
+Error: No available formula with the name "nosuchthing".
+~~~
+
+---
+
+## ٤. [[brew uninstall wget]]
+
+~~~text الناتج (مختصر)
+Uninstalling /home/linuxbrew/.linuxbrew/Cellar/wget/1.25.0_2... (92 files, 5.2MB)
+Warning: The following may be wget configuration files and have not been removed!
+  /home/linuxbrew/.linuxbrew/etc/wgetrc
+==> Autoremoving 6 unneeded formulae:
+libidn2
+libpsl
+libunistring
+libxcrypt
+openssl@4
+util-linux
+~~~
+
+٣ حاجات حصلت:
+
+1. شال wget نفسه من [[Cellar]].
+2. **ساب** ملفات الإعداد (في [[etc]]) لو حبيت ترجع تسطّبه. تمسحها بإيدك لو عايز.
+3. شال لوحده الـ dependencies اللي مبقاش حد محتاجها. ده سلوك brew الجديد (من نسخة 4.3)؛ ولو المتغير [[HOMEBREW_NO_AUTOREMOVE]] متعرّف مش بيعمل كده، وساعتها [[brew autoremove]] بيعملها بإيدك. بعدها جربت [[brew autoremove -n]] ([[-n]] = وريني من غير ما تمسح) فمطبعش حاجة: مفيش بواقي.
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر |
+|---|---|
+| متسطّب عندي إيه (كله) | [[brew list]] |
+| اللي أنا طلبته بس | [[brew leaves]] |
+| الاسم الصح لحاجة | [[brew search WORD]] |
+| تفاصيل ونسخة و Caveats | [[brew info NAME]] |
+| شيل حاجة | [[brew uninstall NAME]] (وبيشيل الـ dependencies اللي مبقاش ليها لازمة) |`,
+          lines: ["المسطّب.", "دوّر على باكدج.", "تفاصيل باكدج ونسخته ومتسطب ولا لأ.", "شيل باكدج."],
+          sol: R`[[brew info tree]] (أو أي حاجة من [[brew list]]) بيطبع أول سطر زي [[==> tree: stable 2.3.2 (bottled)]]، ووصف والموقع الرسمي، و [[Installed (on request)]]، وتحت [[==> Installed Versions]] النسخة اللي عندك وعدد ملفاتها وحجمها زي [[tree 2.3.2 (9 files, 223.4KB) [Linked]]]، وقسم Dependencies لو ليها اعتمادات. على الماك مكانها بيبقى [[/opt/homebrew/Cellar/tree/2.3.2]].
+
+لو قالك [[Not installed]] يبقى الأداة مش متسطبة لسه، والمعلومات اللي فوق عن النسخة المتاحة. ولو كتبت اسم غلط هيقولك [[Error: No available formula with the name "..."]]، دوّر الأول بـ [[brew search]].
+
+(جربت الأوامر دي على Homebrew للينكس (أوبونتو 24.04 في Docker)، ونفس الأوامر ونفس الشكل على الماك. الأرقام هتختلف عندك.)`
         },
         {
-          cmd: "socketfilterfw",
-          title: "الفايروول بتاع الماك من الترمنال",
-          desc: R`الماك فيه firewall اسمه Application Firewall بيتحكم في الاتصالات الداخلة لكل برنامج (مين من برّه يقدر يكلّم برنامج على جهازك)، وغالبًا بيبقى مقفول على الأجهزة الجديدة. [[socketfilterfw]] هو الأمر بتاعه، ومكانه مش في الـ PATH، فبتكتب مساره كامل [[/usr/libexec/ApplicationFirewall/socketfilterfw]]. نفس الإعدادات في System Settings ثم Network ثم Firewall.
+          cmd: "brew services",
+          title: "خدمات في الخلفية (بديل systemctl)",
+          desc: R`فيه برامج زي Postgres و Redis و Nginx مش أوامر تشغّلها وتخلص، دي سيرفرات لازم تفضل شغالة في الخلفية. [[brew services]] بتديرهم على الماك زي [[systemctl]] على لينكس، ومن جوه بتعمل ده بملفات launchd (نظام الخدمات بتاع الماك).
 
-عشان المسار طويل، أول سطر في المثال بيحطه في متغير: [[fw=...]] من غير مسافات حوالين [[=]]، وبعدها [[$fw]] بتتبدل بالمسار في أي أمر. الخيارات:
-• [[--getglobalstate]] الفايروول شغال ولا لأ: [[Firewall is enabled. (State = 1)]] أو [[disabled]] مع [[State = 0]].
-• [[--setglobalstate on]] شغّله و [[off]] اقفله. أي تغيير محتاج [[sudo]].
-• [[--setstealthmode on]] stealth mode: الماك ميردش على ping ولا على محاولة اتصال ببورت مقفول، فاللي بيعمل scan للشبكة ميعرفش إن فيه جهاز أصلًا. البرامج اللي انت سامح لها بتشتغل عادي. و [[--getstealthmode]] بيقولك الحالة.
-• [[--listapps]] البرامج اللي ليها قاعدة، وكل واحد مسموح ولا ممنوع.
-• [[--add /Applications/Tool.app]] ضيف برنامج للستة، و [[--blockapp]] امنعه يستقبل اتصالات، و [[--unblockapp]] رجّعه، و [[--remove]] شيله من اللستة.
-• [[--setblockall on]] امنع كل الاتصالات الداخلة غير الأساسية (زي DHCP اللي بيجيبلك IP)، حتى للبرامج المسموحة، وده بيوقف Remote Login و Screen Sharing ومشاركة الملفات.
-• [[--setallowsigned on]] و [[--setallowsignedapp on]] بيسمحوا لوحدهم للبرامج الموقّعة (بتاعة النظام، والمتنزلة) من غير ما يسألك.
+[[start]] بتشغّل الخدمة دلوقتي وكمان بتسجّلها تقوم لوحدها مع كل login. [[stop]] بتوقفها وتلغي التسجيل. [[list]] بتطبع كل خدمة وحالتها: [[started]] شغالة، و [[none]] مش متسجلة، و [[error]] حاولت تقوم ووقعت. و [[@16]] جزء من اسم الباكدج، يعني نسخة 16 من postgres.
 
-الفايروول ده للاتصالات الداخلة بس: أي برنامج على جهازك يقدر يبعت لأي حتة برّه عادي، ولو عايز تتحكم في الطالع محتاج برنامج زي LuLu (مجاني ومفتوح المصدر) أو Little Snitch. وتحت منه فيه packet filter أقدم اسمه [[pf]]، بيتدار بـ [[pfctl]] وملف [[/etc/pf.conf]]، شبه iptables في لينكس، وتحتاجه بس لقواعد بالبورت والـ IP.
-
-خطر: تغيير الفايروول ممكن يقطع خدمات شغالة، زي Remote Login أو سيرفر تطوير بتفتحه من موبايلك على الواي فاي. ولو الماك بتاع شغل وعليه MDM (درس «fdesetup و profiles»)، الشركة ممكن تكون ماسكة الإعدادات دي وتغييرك يترجع.`,
-          example: R`fw=/usr/libexec/ApplicationFirewall/socketfilterfw
-$fw --getglobalstate
-sudo $fw --setglobalstate on
-sudo $fw --setstealthmode on
-$fw --getstealthmode
-$fw --listapps
-sudo $fw --add /Applications/Tool.app
-sudo $fw --blockapp /Applications/Tool.app
-sudo $fw --unblockapp /Applications/Tool.app`,
-          try: R`اعرف حالة الفايروول عندك. شغّله وشغّل stealth mode، ومن جهاز تاني على نفس الشبكة اعمل [[ping]] للماك قبل وبعد stealth mode.`,
-          flag: "danger",
+لو عايز الخدمة تشتغل دلوقتي بس من غير ما تقوم مع الجهاز كل مرة: [[brew services run]].`,
+          example: R`brew install postgresql@16
+brew services start postgresql@16
+brew services list
+brew services stop postgresql@16`,
+          try: "سطّب redis وشغّله بـ brew services واختبره بـ [[redis-cli ping]].",
           deep: {
-            why: R`على واي فاي عام (كافيه، مطار، سكن) أي حد على نفس الشبكة يقدر يوصل للبورتات المفتوحة على جهازك: سيرفر تطوير شغال على [[0.0.0.0]]، أو مشاركة ملفات نسيتها. الفايروول مع stealth mode بيقلل اللي ظاهر منك. ومن الترمنال تشغّله في سكربت تجهيز أي ماك جديد.`,
-            how: R`الـ Application Firewall بيشتغل بالبرنامج مش بالبورت: أول ما برنامج جديد يحاول يستقبل اتصال، الماك يسألك Allow أو Deny ويحفظ القرار مربوط بتوقيع البرنامج، فلو البرنامج اتعدّل ممكن يسألك تاني. من macOS Sequoia (15) الإعدادات مبقتش في ملف [[/Library/Preferences/com.apple.alf.plist]] زي زمان، فالسكربتات القديمة اللي بتكتب فيه بـ [[defaults]] مبقتش بتشتغل، والطريق socketfilterfw أو الإعدادات أو MDM. و [[sudo pfctl -s info]] بيقولك pf شغال ولا لأ.`,
-            when: R`أول ما تجهّز لابتوب هتشتغل بيه برّه البيت، أو بعد ما تكتشف إن سيرفر التطوير بتاعك ظاهر للشبكة.`,
-            mistakes: R`تفتكر الفايروول بيحميك من برنامج خبيث بيبعت داتا لبرّه: هو للداخل بس. تشغّل [[--setblockall on]] وتنسى، وبعدين Remote Login وسيرفر التطوير ميشتغلوش وانت مش عارف ليه. تكتب [[socketfilterfw]] من غير المسار فيقولك [[command not found]]. وتحط مسافة في [[fw = ...]] فـ zsh يفتكر [[fw]] أمر.`
+            why: "تشغيل وإيقاف خدمات زي PostgreSQL وRedis وMongoDB. على الماك بيشتغلوا كـ LaunchAgents.",
+            how: R`[[brew services list]] بيعرض الخدمات وحالتها. [[brew services start postgresql@16]] بيشغّلها. [[brew services stop]] بيوقّفها. [[brew services restart]] بيعيد تشغيل.
+
+[[brew services start postgresql@16]] كمان بيخليها تشتغل مع كل restart للماك.
+
+بديل: [[pg_ctl start]] أو [[redis-server]] بيشغّل مؤقتًا من غير ما يتسجّل كـ service.`,
+            when: "تشغيل قاعدة بيانات محلية. تشغيل Redis للتطوير.",
+            mistakes: "تحاول تشغّل postgresql القديم والجديد في نفس الوقت. بيتخانقوا على البورت."
           },
+          teach: R`## برنامج لازم يفضل شغال، و brew بيسجّله عند الماك
+
+Postgres مش أمر بيخلص ويرجعلك الـ prompt، ده سيرفر لازم يفضل شغال في الخلفية. على الماك، اللي بيشغّل البرامج دي وبيصحّيها مع الـ login اسمه **launchd**، وبيقرا ملفات إعداد اسمها plist. [[brew services]] بيكتبلك الملف ده ويكلّم launchd بدالك.
+
+> على لينكس [[brew services]] بيستخدم systemd بدل launchd. جربته جوه Docker ومشتغلش لأن الـ container مفيهوش systemd، فالكلام عن الماك هنا من [[brew services --help]] (اتطبعت فعلًا من نفس الـ brew) ومن كود brew services نفسه.
+
+---
+
+## ١. [[brew install postgresql@16]]
+
+تسطيب عادي زي أي باكدج (درس brew install). [[@16]] النسخة الرئيسية 16. الباكدج دي فيها «service»: وصفة بتقول brew يشغّل السيرفر إزاي.
+
+---
+
+## ٢. [[brew services start postgresql@16]]
+
+[[brew services --help]] بيقول عن [[start]]:
+
+~~~text من brew services --help
+start:
+  Start the service formula immediately and register it to launch at login (or boot).
+~~~
+
+يعني حاجتين: شغّلها **دلوقتي**، و**سجّلها** تقوم لوحدها مع كل login. على الماك ده بيعمل ملف في [[~/Library/LaunchAgents]] اسمه [[homebrew.mxcl.postgresql@16.plist]]، ويطبع (من كود brew):
+
+~~~text الشكل
+==> Successfully started $__btpostgresql@16$__bt (label: homebrew.mxcl.postgresql@16)
+~~~
+
+[[label]] اسم الخدمة عند launchd. ولو كتبت [[sudo brew services start]] بيتسجّل في [[/Library/LaunchDaemons]] ويقوم مع تشغيل الجهاز نفسه حتى من غير login، وده نادرًا ما تحتاجه على جهاز تطوير.
+
+---
+
+## ٣. [[brew services list]]
+
+جدول بأربع أعمدة (من كود brew services):
+
+~~~text الشكل
+Name          Status  User File
+postgresql@16 started sara ~/Library/LaunchAgents/homebrew.mxcl.postgresql@16.plist
+redis         none
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[Name]] | اسم الباكدج |
+| [[Status]] | الحالة (تحت) |
+| [[User]] | اليوزر اللي شغّالة بيه |
+| [[File]] | ملف الـ plist، بيظهر بس لو متسجّلة |
+
+والحالات:
+
+| الحالة | معناها |
+|---|---|
+| [[started]] | شغالة دلوقتي |
+| [[none]] | مش متسجّلة خالص |
+| [[stopped]] | متسجّلة بس مش شغالة، وآخر مرة قفلت عادي |
+| [[error]] + رقم | حاولت تقوم ووقعت، والرقم هو الـ exit code |
+| [[scheduled]] | متسجّلة تشتغل في مواعيد |
+
+لو شفت [[error]]، أشهر سبب إن حاجة تانية ماسكة البورت (5432 لـ Postgres)، زي Postgres تاني أو container.
+
+---
+
+## ٤. [[brew services stop postgresql@16]]
+
+~~~text من brew services --help
+stop:
+  Stop the service formula immediately and unregister it from launching at login (or boot).
+~~~
+
+بيوقفها **ويلغي** التسجيل، فمش هتقوم مع الـ login الجاي.
+
+---
+
+## الأوامر التانية من نفس الـ help
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[run]] | شغّلها دلوقتي **من غير** ما تسجّلها |
+| [[restart]] | وقّف وشغّل وسجّل |
+| [[kill]] | وقّفها دلوقتي بس تفضل متسجّلة |
+| [[info]] | تفاصيل الخدمات |
+| [[cleanup]] | امسح تسجيل الخدمات اللي مبقتش موجودة |
+
+---
+
+## الخلاصة
+
+| عايز | الأمر | زي لينكس |
+|---|---|---|
+| تشتغل دلوقتي وكل login | [[brew services start NAME]] | [[systemctl enable --now]] |
+| تشتغل دلوقتي بس | [[brew services run NAME]] | [[systemctl start]] |
+| توقف ومتقومش تاني | [[brew services stop NAME]] | [[systemctl disable --now]] |
+| الحالة | [[brew services list]] | [[systemctl status]] |`,
           lines: [
-            R`احفظ المسار الطويل في متغير اسمه fw.`,
-            R`الفايروول شغال ولا لأ (State 1 أو 0).`,
-            R`شغّل الفايروول.`,
-            R`شغّل stealth mode: الماك ميردش على ping والـ scan.`,
-            R`اتأكد إن stealth mode اشتغل.`,
-            R`البرامج اللي ليها قاعدة، ومسموح لها ولا لأ.`,
-            R`ضيف برنامج للستة.`,
-            R`امنع البرنامج يستقبل اتصالات من برّه.`,
-            R`رجّعه مسموح.`
+            "سطّب Postgres 16.",
+            "شغّله كخدمة دايمة (بتقوم مع الماك). زي systemctl enable --now.",
+            "الخدمات وحالتها.",
+            "وقّفه."
           ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man socketfilterfw]] وصفحات دعم Apple عن إعدادات الـ Firewall. [[$fw --getglobalstate]] بيطبع [[Firewall is disabled. (State = 0)]] على أغلب الأجهزة الجديدة، وبعد [[sudo $fw --setglobalstate on]] بيبقى [[Firewall is enabled. (State = 1)]]. [[--getstealthmode]] بيطبع سطر بيقول إن stealth mode شغال، وشكل الجملة بيختلف شوية بين النسخ.
+          sol: R`[[brew install redis]] وبعدين [[brew services start redis]] يطبع [[==> Successfully started $__btredis$__bt (label: homebrew.mxcl.redis)]]. [[brew services list]] يوريك redis بحالة [[started]]. و [[redis-cli ping]] يرد [[PONG]].
 
-من جهاز تاني: قبل stealth mode، [[ping 192.168.1.20]] (IP الماك من [[ipconfig getifaddr en0]]) بيرد بسطور [[64 bytes from 192.168.1.20]]. بعده بيطبع [[Request timeout]] على الماك ولينكس، أو [[Request timed out.]] على ويندوز، لأن الماك مبقاش بيرد. لو فضل بيرد، اتأكد إن الفايروول نفسه شغال: stealth mode من غيره ملوش تأثير.`,
-          solCode: R`fw=/usr/libexec/ApplicationFirewall/socketfilterfw
-$fw --getglobalstate
-sudo $fw --setglobalstate on
-sudo $fw --setstealthmode on
-$fw --getstealthmode
-ipconfig getifaddr en0`
-        },
-        {
-          cmd: "fdesetup و profiles",
-          title: "الديسك متشفر؟ والجهاز مُدار من شركة؟",
-          desc: R`سؤالين لازم تعرف إجابتهم لأي ماك: الديسك متشفر بـ FileVault (لو اتسرق محدش يقرا ملفاتك من غير باسورد)؟ والجهاز مسجل في MDM (نظام إدارة أجهزة الشركات، بيفرض إعدادات ويسطّب برامج ويقدر يقفل الجهاز)؟ [[fdesetup]] بيجاوب على الأول و [[profiles]] على التاني.
+لو ping قالت [[Could not connect to Redis at 127.0.0.1:6379: Connection refused]]، بص في [[brew services list]]: لو الحالة [[error]] يبقى فيه حاجة تانية ماسكة بورت 6379 (زي Redis في Docker)، اعرفها بـ [[lsof -i :6379]]. وخد بالك إن start بيخليها تقوم مع كل boot، ولو عايزها تشتغل دلوقتي بس استخدم [[brew services run redis]].
 
-[[fdesetup]]:
-• [[fdesetup status]] بيطبع [[FileVault is On.]] أو [[FileVault is Off.]]، وأثناء التشفير بيقول إنه شغال.
-• [[fdesetup isactive]] بيطبع [[true]] ويخرج بـ 0، أو [[false]] ويخرج بـ 1، فينفع جوه [[if]] في سكربت.
-• [[sudo fdesetup list]] اليوزرز اللي يقدروا يفتحوا الديسك من شاشة البداية بعد restart، كل واحد بالاسم وبعده فاصلة وبعدها GUID (رقم تعريف طويل). يوزر مش في اللستة دي ميقدرش يفتح الجهاز بعد restart لحد ما حد من اللستة يفتحه، ودي حكاية الـ secure token في درس «dscl و sysadminctl».
-• تشغيل FileVault الأسهل من System Settings ثم Privacy & Security ثم FileVault. واحفظ مفتاح الاسترجاع (recovery key) في مكان برّه الجهاز: لو نسيت الباسورد ومعاكش المفتاح، الداتا مش هترجع.
-
-[[profiles]]:
-• [[profiles status -type enrollment]] بيطبع سطرين: [[Enrolled via DEP: No]] (يعني الجهاز مش متسجل تلقائي باسم شركة من ساعة ما اتشرى، والاسم الجديد للخدمة دي Automated Device Enrollment)، و [[MDM enrollment: No]]. لو أي واحد فيهم [[Yes]] يبقى الجهاز مُدار.
-• [[sudo profiles list]] الـ configuration profiles المتسطبة: كل profile بيفرض إعدادات زي واي فاي أو VPN أو شهادات أو قيود. لو مفيش، بيطبع رسالة إن مفيش profiles.
-• نفس المعلومات في System Settings ثم General ثم Device Management (في نسخ أقدم Privacy & Security ثم Profiles).
-
-ليه يهمك: لو اشتريت ماك مستعمل ولقيته مسجل DEP باسم شركة، الشركة تقدر تقفله أو تمسحه حتى بعد ما تفرمته، فارجع للبايع قبل ما تدفع. ولو جهاز الشغل عليه MDM، إعدادات زي الفايروول والتحديثات ممكن تبقى في إيد الشركة، والـ MDM بيشوف معلومات زي البرامج المتسطبة وإعدادات الجهاز.`,
-          example: R`fdesetup status
-fdesetup isactive
-sudo fdesetup list
-profiles status -type enrollment
-sudo profiles list`,
-          try: R`اعرف جهازك متشفر ولا لأ، ومين يقدر يفتحه بعد restart، ومسجل في MDM ولا لأ. ولو FileVault مقفول على لابتوب، شغّله من الإعدادات واحفظ مفتاح الاسترجاع.`,
-          deep: {
-            why: R`لابتوب من غير FileVault لو اتسرق، اللي معاه يقدر يوصل للديسك ويقرا كل ملفاتك: مفاتيح SSH وملفات [[.env]] والكود. وماك مستعمل عليه MDM ممكن يتقفل في وشك بعد ما تشتريه.`,
-            how: R`على Apple Silicon والأجهزة Intel اللي فيها شريحة T2، الديسك متشفر بالهاردوير دايمًا، و FileVault بيربط مفتاح التشفير بباسوردك، فتشغيله بيخلص بسرعة ومش بيبطّأ الجهاز. [[fdesetup status -extended]] بيفضل يطبع التقدم أثناء التشفير على APFS. و [[sudo fdesetup enable]] بيشغّله من الترمنال ويطبع مفتاح الاسترجاع، بس الإعدادات أوضح. و [[profiles show -type enrollment]] بيطبع بيانات سيرفر الشركة لو الجهاز مسجل، و Apple حاطة عليه حد (حوالي 10 مرات كل 23 ساعة) فمتكرروش في لوب.`,
-            when: R`أول يوم على أي لابتوب، وقبل ما تشتري ماك مستعمل، وأول يوم في شغل جديد بجهاز الشركة.`,
-            mistakes: R`تشغّل FileVault وتختار إن مفتاح الاسترجاع ميتحفظش في أي حتة وبعدين تنسى الباسورد. تفتكر الفرمتة بتشيل MDM: تسجيل DEP مربوط برقم الجهاز التسلسلي عند Apple ومش بيروح بالفرمتة. وتعمل يوزر من الترمنال على Apple Silicon وتستغرب إنه مش ظاهر في شاشة البداية بعد restart: ده secure token.`
-          },
-          lines: [
-            R`FileVault شغال ولا لأ.`,
-            R`نفس السؤال بـ true أو false، للسكربتات.`,
-            R`اليوزرز اللي يقدروا يفتحوا الديسك بعد restart.`,
-            R`الجهاز متسجل في DEP أو MDM؟ No و No يعني جهاز شخصي مش مُدار.`,
-            R`الـ configuration profiles المتسطبة على الجهاز.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man fdesetup]] و [[man profiles]]. على لابتوب FileVault فيه شغال: [[fdesetup status]] بيطبع [[FileVault is On.]]، و [[fdesetup isactive]] بيطبع [[true]]، و [[sudo fdesetup list]] بيطبع سطر لكل يوزر زي [[sara,]] وبعدها الـ GUID. على ماك شخصي [[profiles status -type enrollment]] بيطبع [[Enrolled via DEP: No]] و [[MDM enrollment: No]]، و [[sudo profiles list]] بيقول إن مفيش profiles.
-
-لو لقيت يوزر بتدخل بيه مش في [[fdesetup list]]، يبقى معندوش secure token، وساعتها يوزر من اللستة لازم يفتح الجهاز بعد كل restart. ولو لقيت [[Yes]] في status على جهاز اشتريته مستعمل، كلّم البايع قبل أي حاجة.`
-        }
-      ]
-    },
-    {
-      t: "إدارة الماك: الشبكة والديسكات والصيانة",
-      l: 2,
-      n: "الواي فاي والـ DNS والأجهزة اللي حواليك، والدخول على الماك من بعيد، والفلاشات والتحديثات والباك أب والبطارية",
-      items: [
-        {
-          cmd: "networksetup",
-          title: "إعدادات الشبكة والواي فاي من الترمنال",
-          desc: R`[[networksetup]] بيعمل من الترمنال اللي بتعمله في System Settings ثم Network: يعرض الـ IP والـ DNS، ويغيّر الـ DNS، ويحط IP ثابت ويرجّعه تلقائي، ويقفل ويفتح الواي فاي. أوامر التغيير محتاجة يوزر أدمن، وأحيانًا root، فالأضمن تكتب قبلها [[sudo]]. قفل وفتح الواي فاي بيشتغل غالبًا من غيرها لو انت أدمن.
-
-الأمر بيتعامل مع حاجتين بأسامي مختلفة:
-• network service: الاسم اللي في الإعدادات زي [[Wi-Fi]] و [[Ethernet]] و [[Thunderbolt Bridge]]. [[-listallnetworkservices]] بتطبعهم، والنجمة [[*]] جنب اسم معناها إنه متقفل. أوامر [[-getinfo]] و [[-setdnsservers]] و [[-setmanual]] بتاخد الاسم ده، ولو فيه مسافة حطه بين علامات تنصيص.
-• hardware port: الكارت نفسه. [[-listallhardwareports]] بتطبع كل port وتحته [[Device]] زي [[en0]] (درس «ifconfig / route»). أوامر الواي فاي بتاخد [[en0]]، واسمها فيه airport من أيام ما الواي فاي في أجهزة Apple كان اسمه AirPort.
-
-الأوامر:
-• [[-getinfo Wi-Fi]] الـ IP والـ subnet mask والراوتر، وأول سطر بيقول DHCP (تلقائي) ولا Manual.
-• [[-getdnsservers Wi-Fi]] الـ DNS اللي انت حاطه بإيدك. لو قالك [[There aren't any DNS Servers set on Wi-Fi.]] يبقى الماك بياخد الـ DNS من الراوتر.
-• [[-setdnsservers Wi-Fi 1.1.1.1 8.8.8.8]] DNS بإيدك (Cloudflare، و Google احتياطي)، وكلمة [[empty]] مكان العناوين بترجّعه للي جاي من الراوتر. و [[scutil --dns]] بيطبع الـ DNS اللي النظام بيستخدمه فعلًا، و [[grep nameserver]] بيسيب سطور العناوين بس.
-• [[-setmanual Wi-Fi 192.168.1.50 255.255.255.0 192.168.1.1]] IP ثابت: العنوان، وبعده الـ subnet mask، وبعده الراوتر. مع IP ثابت الماك مبيبقاش واخد DNS من الراوتر، فحط DNS بإيدك معاه. و [[-setdhcp Wi-Fi]] بترجّع كله تلقائي.
-• [[-setairportpower en0 off]] تقفل الواي فاي و [[on]] تفتحه، وده أسرع حل لما الواي فاي يعلق.
-• [[-listpreferredwirelessnetworks en0]] الشبكات اللي الماك فاكرها وبيتصل بيها لوحده.
-• [[-setairportnetwork en0 "Home WiFi"]] اتصل بشبكة. لو اتصلت بيها قبل كده، الماك فاكر باسوردها في Keychain ومش محتاج تكتبه. ولو كتبت الباسورد بعد الاسم، هيتسجل في [[~/.zsh_history]] وأي حد على الجهاز يقدر يشوفه في [[ps]] وهو شغال، فالأأمن تتصل أول مرة من قايمة الواي فاي.
-
-قوة الإشارة والخصوصية: من macOS Sonoma 14.4 أداة [[airport]] القديمة (اللي كانت بتعرض الإشارة وتعمل scan) اتشالت وبقت بتطبع إنها deprecated، و Apple بتقول استخدم [[wdutil]]. [[sudo wdutil info]] بيطبع [[RSSI]] (قوة الإشارة بالـ dBm، وكل ما تقرب من 0 أحسن: حوالي -50 ممتازة و -80 ضعيفة)، و [[Noise]]، والقناة، و [[Tx Rate]] (سرعة الاتصال بالراوتر). ومن macOS Sequoia (15) اسم الشبكة (SSID) بقى معلومة خصوصية: [[-getairportnetwork en0]] ممكن يقولك [[You are not associated with an AirPort network.]] وانت متصل، و wdutil بيكتب [[<redacted>]] مكان الاسم.`,
-          example: R`networksetup -listallnetworkservices
-networksetup -listallhardwareports
-networksetup -getinfo Wi-Fi
-networksetup -getdnsservers Wi-Fi
-sudo networksetup -setdnsservers Wi-Fi 1.1.1.1 8.8.8.8
-scutil --dns | grep nameserver
-sudo networksetup -setdnsservers Wi-Fi empty
-sudo networksetup -setmanual Wi-Fi 192.168.1.50 255.255.255.0 192.168.1.1
-sudo networksetup -setdhcp Wi-Fi
-networksetup -setairportpower en0 off
-networksetup -setairportpower en0 on
-networksetup -listpreferredwirelessnetworks en0
-networksetup -setairportnetwork en0 "Home WiFi"
-sudo wdutil info`,
-          try: R`اعرف اسم كارت الواي فاي، والـ IP، والـ DNS الحالي. حط DNS بتاع Cloudflare، واتأكد منه بـ [[scutil --dns]] وبـ [[dig example.com]] (سطر SERVER)، وبعدين رجّعه [[empty]].`,
-          deep: {
-            why: R`بتغيّر الـ DNS لما بتاع مزود النت بطيء أو بيحجب مواقع، وتحط IP ثابت لماك شغال سيرفر صغير في البيت، وتعمل ده في سكربت أو على ماك داخل عليه بـ ssh. وأسرع من إنك تدوّر في الإعدادات كل مرة.`,
-            how: R`networksetup بيكتب في نفس إعدادات الشبكة اللي System Settings بتعرضها، فالتغيير بيبان هناك وبيفضل بعد restart. [[scutil --dns]] بيقرا الإعداد اللي اتطبق فعلًا، ولو VPN شغال ممكن تلاقي resolvers تانية قبل بتاعك. [[-createlocation]] و [[-switchtolocation]] بيحفظوا مجموعة إعدادات باسم (البيت والشغل) وتبدّل بينهم. و [[networksetup -help]] بيطبع كل الأوامر. المقابل في لينكس [[nmcli]] و [[resolvectl]] (دروس «nmcli» و «resolvectl» في تاب «bash»).`,
-            when: R`DNS بطيء أو محجوب، IP ثابت لجهاز في البيت، واي فاي معلّق محتاج off و on، أو سكربت بيجهّز ماك جديد.`,
-            mistakes: R`تكتب [[en0]] في أوامر الـ service ([[-getinfo en0]]) أو [[Wi-Fi]] في أوامر الواي فاي: الأولى بتاخد اسم الـ service والتانية اسم الكارت، والغلط بيطلع رسالة زي [[en0 is not a recognized network service.]]. تحط IP ثابت من غير DNS فالمواقع متفتحش رغم إن النت شغال. تختار IP ثابت جوه الرينج اللي الراوتر بيوزّعه فيتعارض مع جهاز تاني. وتقفل الواي فاي على ماك داخل عليه بـ ssh من نفس الواي فاي، فتقطع الفرع اللي قاعد عليه.`
-          },
-          lines: [
-            R`أسامي الـ services: Wi-Fi و Ethernet وغيرهم.`,
-            R`كل كارت واسمه (Device): عشان تعرف الواي فاي en0 ولا en1.`,
-            R`الـ IP والـ subnet mask والراوتر بتوع الواي فاي.`,
-            R`الـ DNS اللي انت حاطه بإيدك (أو رسالة إن مفيش).`,
-            R`حط DNS بإيدك: Cloudflare وبعده Google.`,
-            R`الـ DNS اللي النظام بيستخدمه فعلًا.`,
-            R`رجّع الـ DNS للي جاي من الراوتر.`,
-            R`IP ثابت: العنوان والـ mask والراوتر. حط DNS معاه.`,
-            R`رجّع كله تلقائي من الراوتر.`,
-            R`اقفل الواي فاي.`,
-            R`افتحه تاني.`,
-            R`الشبكات اللي الماك فاكرها.`,
-            R`اتصل بشبكة الماك فاكر باسوردها.`,
-            R`قوة الإشارة والـ Noise والقناة والسرعة (بديل airport).`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man networksetup]] و [[man wdutil]]، ومن Apple Community و Apple Developer Forums عن تغييرات Sonoma 14.4 و Sequoia. [[networksetup -listallhardwareports]] بيطبع لكل كارت [[Hardware Port: Wi-Fi]] وتحته [[Device: en0]] و [[Ethernet Address:]]. [[networksetup -getinfo Wi-Fi]] أوله [[DHCP Configuration]] وبعده [[IP address: 192.168.1.15]] و [[Subnet mask: 255.255.255.0]] و [[Router: 192.168.1.1]].
-
-[[-getdnsservers Wi-Fi]] أول مرة غالبًا [[There aren't any DNS Servers set on Wi-Fi.]]. بعد [[sudo networksetup -setdnsservers Wi-Fi 1.1.1.1]] (مش بيطبع حاجة)، [[scutil --dns | grep nameserver]] بيطبع [[nameserver[0] : 1.1.1.1]]، و [[dig example.com | grep SERVER]] بيطبع [[;; SERVER: 1.1.1.1#53(1.1.1.1)]]. بعد [[empty]]، [[-getdnsservers]] بيرجع للرسالة الأولى، و scutil بيرجع يطبع IP الراوتر.
-
-لو قالك [[Wi-Fi is not a recognized network service.]] يبقى الاسم عندك مختلف، شوفه من [[-listallnetworkservices]] واكتبه بالظبط.`,
-          solCode: R`networksetup -listallhardwareports
-networksetup -getinfo Wi-Fi
-networksetup -getdnsservers Wi-Fi
-sudo networksetup -setdnsservers Wi-Fi 1.1.1.1
-scutil --dns | grep nameserver
-dig example.com | grep SERVER
-sudo networksetup -setdnsservers Wi-Fi empty
-networksetup -getdnsservers Wi-Fi`
-        },
-        {
-          cmd: "dns-sd و arp -a",
-          title: "مين معاك على الشبكة (بأدوات الماك)",
-          desc: R`عايز تعرف الأجهزة اللي معاك على شبكة البيت: الطابعة، أو Raspberry Pi جديد، أو ماك تاني فاتح SSH. الماك جاي معاه أداتين: [[arp -a]] بيعرض الأجهزة اللي جهازك كلّمها قريب، و [[dns-sd]] بيسأل الأجهزة اللي بتعلن عن نفسها بـ Bonjour. استخدمهم على شبكتك انت بس، أو بإذن صاحب الشبكة.
-
-[[arp -a]]: ARP هو اللي بيحوّل IP لعنوان MAC (رقم الكارت الفعلي) جوه الشبكة المحلية، والماك بيحتفظ بجدول للعناوين اللي اتكلم معاها. [[-a]] اطبع الجدول كله، وكل سطر شكله [[? (192.168.1.1) at 1c:2b:3c:4d:5e:6f on en0]]: [[?]] مكان الاسم معناها إن مفيش اسم معروف للعنوان ده. [[-n]] بتمنعه يدوّر على أسامي فيبقى أسرع، و [[-i en0]] بتحصره على كارت واحد. الجدول فيه بس الأجهزة اللي جهازك كلّمها في آخر كام دقيقة، مش كل الشبكة.
-
-[[dns-sd]]: Bonjour (اسمه التقني mDNS و DNS-SD) هو اللي بيخلي الطابعات وأجهزة Apple يظهروا لوحدهم من غير ما تكتب IP: كل جهاز بيعلن على الشبكة «أنا اسمي كذا وعندي خدمة كذا». [[-B]] (browse) دوّر على نوع خدمة، والنوع بشكل [[_اسم._tcp]]:
-• [[_services._dns-sd._udp]] نوع خاص معناه «اطبع أنواع الخدمات الموجودة»، فتعرف تدوّر على إيه بعدها.
-• [[_ssh._tcp]] أجهزة فاتحة SSH (زي ماك عليه Remote Login)، و [[_smb._tcp]] مشاركة ملفات، و [[_ipp._tcp]] طابعات، و [[_airplay._tcp]] أجهزة AirPlay.
-الأمر مش بيخلص لوحده: بيفضل يطبع كل ما جهاز يظهر ([[Add]]) أو يختفي ([[Rmv]])، فبعد ثانيتين اقفله بـ Ctrl+C. و [[-G v4 sara-mbp.local]] بيجيب IPv4 بتاع جهاز من اسمه، وبرضه Ctrl+C.
-
-[[ping -c 3 sara-mbp.local]]: أي ماك ليه اسم بينتهي بـ [[.local]] (تلاقيه في System Settings ثم General ثم Sharing تحت Local hostname)، فتكلّمه بالاسم حتى لو الـ IP اتغير. [[-c 3]] ابعت 3 مرات واقف، من غيرها ping بيفضل شغال لحد Ctrl+C.
-
-عشان تمسح كل عنوان في الشبكة محتاج [[nmap]] ([[brew install nmap]] وبعدين [[nmap -sn 192.168.1.0/24]])، وده في درس «nmap -sn و arp-scan» في تاب «bash». ومن macOS Sequoia (15) فيه إذن اسمه Local Network: الأوامر اللي بتشغّلها من Terminal بتاخده لوحدها، لكن لو شغّالها من الترمنال اللي جوه VS Code أو برنامج تاني، البرنامج ده لازم يبقى مسموح له في System Settings ثم Privacy & Security ثم Local Network، وإلا الاتصال بأجهزة البيت ممكن يفشل.`,
-          example: R`arp -a
-arp -a -n -i en0
-dns-sd -B _services._dns-sd._udp
-dns-sd -B _ssh._tcp
-dns-sd -G v4 sara-mbp.local
-ping -c 3 sara-mbp.local`,
-          try: R`اعرف كام جهاز في جدول ARP عندك، وأنواع الخدمات اللي بتتعلن على شبكة البيت. ولو عندك ماك تاني أو Raspberry Pi فاتح SSH، لاقيه بـ [[dns-sd -B _ssh._tcp]] واعمله ping باسمه.`,
-          deep: {
-            why: R`عايز تدخل بـ ssh على Raspberry Pi جديد ومش عارف الراوتر اداله أنهي IP، أو تلاقي الطابعة، أو تتأكد إن مفيش جهاز غريب على الواي فاي بتاعك. arp و dns-sd موجودين في كل ماك من غير تسطيب.`,
-            how: R`mDNS بيشتغل على UDP بورت 5353 لكل الأجهزة على نفس الشبكة مرة واحدة (multicast)، ومش بيعدّي الراوتر لشبكة تانية. الخدمة اللي بتشغّله على الماك [[mDNSResponder]]، نفس اللي بتبعتلها HUP في درس «flush DNS». [[dns-sd -L "اسم الجهاز" _ssh._tcp]] بيطبع الجهاز والبورت لخدمة معينة. وتقدر تعلن عن خدمة بنفسك: [[dns-sd -R "My Site" _http._tcp . 8000]] بيخلي سيرفرك المحلي يبان في Bonjour طول ما الأمر شغال. المقابل في لينكس [[avahi-browse -a]] (درس «avahi-browse و .local» في تاب «bash»).`,
-            when: R`جهاز جديد على الشبكة ومش عارف عنوانه، طابعة مش ظاهرة، أو مراجعة سريعة لشبكة البيت.`,
-            mistakes: R`تفتكر [[arp -a]] بيوريك كل الأجهزة: ده بيوريك اللي جهازك كلّمه بس. تستنى dns-sd يخلص لوحده وهو مش بيخلص: Ctrl+C. تدوّر بـ Bonjour على جهاز ويندوز أو لينكس مش بيعلن عن نفسه (لينكس محتاج Avahi). تعمل scan لشبكة الشغل أو الكافيه من غير إذن: ممنوع في سياسات الشركات وأنظمة الحماية بتمسكه. وتعتمد على عنوان MAC للموبايلات: iPhone و Android بيستخدموا عنوان عشوائي لكل شبكة (Private Wi-Fi Address).`
-          },
-          lines: [
-            R`جدول ARP: الأجهزة اللي جهازك كلّمها قريب، بالـ IP والـ MAC.`,
-            R`نفس الجدول بأرقام بس ([[-n]]) وعلى كارت الواي فاي بس.`,
-            R`أنواع الخدمات اللي بتتعلن على الشبكة. Ctrl+C بعد ثانيتين.`,
-            R`الأجهزة اللي فاتحة SSH. Ctrl+C للخروج.`,
-            R`IPv4 بتاع جهاز من اسمه .local.`,
-            R`كلّم الجهاز باسمه 3 مرات واقف.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man arp]] و [[man dns-sd]]، وملاحظة Apple التقنية TN3179 عن Local Network. [[arp -a]] بيطبع سطر لكل عنوان زي [[? (192.168.1.1) at 1c:2b:3c:4d:5e:6f on en0 ifscope]]، وهتلاقي فيه كمان عناوين مش أجهزة: [[192.168.1.255]] بـ [[ff:ff:ff:ff:ff:ff]] ده الـ broadcast، و [[224.0.0.251]] ده عنوان Bonjour نفسه.
-
-[[dns-sd -B _services._dns-sd._udp]] بيطبع [[Browsing for _services._dns-sd._udp]] وتاريخ، وبعدين جدول أعمدته Timestamp و A/R و Flags و if و Domain و Service Type و Instance Name. في عمود Instance Name هتلاقي أسامي زي [[_ssh]] و [[_airplay]] و [[_ipp]]، وفي Service Type [[_tcp.local.]]. [[dns-sd -B _ssh._tcp]] بيطبع سطر [[Add]] لكل جهاز فاتح SSH وفي آخره اسمه. Ctrl+C بيرجّعلك الـ prompt.
-
-لو مطلعش أي جهاز، يا إما مفيش حاجة بتعلن عن نفسها، يا إما الراوتر عامل client isolation (شائع في شبكات الضيوف والكافيهات) فالأجهزة مش شايفة بعض أصلًا.`
-        },
-        {
-          cmd: "Remote Login و Screen Sharing",
-          title: "ادخل على الماك من جهاز تاني (SSH والشاشة)",
-          desc: R`Remote Login هو SSH server جاي مع الماك: لما تشغّله تقدر تدخل على ترمنال الماك من لابتوب ويندوز أو لينكس أو ماك تاني بـ [[ssh]]. و Screen Sharing بيوريك شاشة الماك نفسها وتتحكم فيها من جهاز تاني (بروتوكول VNC). الاتنين مقفولين افتراضيًا، والأسهل تشغّلهم من System Settings ثم General ثم Sharing.
-
-من الترمنال: [[sudo systemsetup -getremotelogin]] بيطبع [[Remote Login: On]] أو [[Off]]، و [[sudo systemsetup -setremotelogin on]] بيشغّله. حسب [[man systemsetup]] التشغيل والقفل محتاجين Full Disk Access، يعني الترمنال نفسه لازم يكون في System Settings ثم Privacy & Security ثم Full Disk Access، ومن غيرها بيطلع [[Turning Remote Login on or off requires Full Disk Access privileges.]]. Full Disk Access إذن واسع، فلو مش محتاجه غير للحتة دي، شغّل Remote Login من الإعدادات أحسن. [[-f]] في سطر القفل بتلغي سؤال «متأكد؟».
-
-في الإعدادات، جنب Remote Login زرار (i): هتلاقي أمر الاتصال مكتوب جاهز زي [[ssh sara@192.168.1.20]]، و Allow access for (خليها Only these users واختار اللي محتاجينها بس)، و [[Allow full disk access for remote users]] سيبها مقفولة إلا لو محتاجها.
-
-الاتصال: ويندوز 10 و 11 فيه [[ssh]] جاهز في PowerShell، ولينكس والماك نفس الأمر: [[ssh sara@192.168.1.20]]. IP الماك من [[ipconfig getifaddr en0]] (درس «ipconfig getifaddr»)، أو اسمه من [[scutil --get LocalHostName]] وبعده [[.local]]، وده بيشتغل لو الجهاز التاني بيفهم Bonjour (ماك آه، ولينكس اللي عليه Avahi، وويندوز مش دايمًا). وللشاشة: من ماك تاني [[open vnc://192.168.1.20]] بيفتح برنامج Screen Sharing ويسألك على يوزر وباسورد الماك. من ويندوز أو لينكس محتاج VNC viewer (زي TigerVNC أو RealVNC Viewer)، وتشغّل في إعدادات Screen Sharing ثم (i) [[VNC viewers may control screen with password]] بباسورد مختلف عن باسورد الماك. البورت 22 لـ SSH و 5900 لـ VNC.
-
-الأمان:
-• متفتحش 22 ولا 5900 على النت من الراوتر (port forwarding). من برّه البيت استخدم VPN زي Tailscale أو WireGuard.
-• ادخل بمفتاح مش باسورد: حط مفتاحك العام في [[~/.ssh/authorized_keys]] على الماك (درس «ssh-add»، ودرس «sshd_config» في تاب «VPS»). وبعد ما تتأكد إن الدخول بالمفتاح شغال، اقفل الباسورد بملف [[/etc/ssh/sshd_config.d/000-keys-only.conf]] فيه سطرين: [[PasswordAuthentication no]] و [[KbdInteractiveAuthentication no]]. سطر [[Include]] في [[/etc/ssh/sshd_config]] هو اللي بيقرا الفولدر ده، و [[sudo sshd -t]] بيفحص الإعدادات ومش بيطبع حاجة لو سليمة.
-• VNC بباسورد لوحده مش متأمن كويس مع الـ viewers العادية، فمرّره جوه SSH: [[ssh -L 5901:localhost:5900 sara@192.168.1.20]] وافتح الـ viewer على [[localhost:5901]] (درس «ssh -L» في تاب «bash»).
-
-خطر: Remote Login و Screen Sharing بيفتحوا باب على جهازك لأي حد على نفس الشبكة يعرف يوزر وباسورد. شغّلهم وقت ما تحتاجهم واقفلهم بعدها.`,
-          example: R`sudo systemsetup -getremotelogin
-sudo systemsetup -setremotelogin on
-ipconfig getifaddr en0
-scutil --get LocalHostName
-ssh sara@192.168.1.20
-open vnc://192.168.1.20
-grep Include /etc/ssh/sshd_config
-sudo nano /etc/ssh/sshd_config.d/000-keys-only.conf
-sudo sshd -t
-sudo systemsetup -setremotelogin -f off`,
-          try: R`شغّل Remote Login (من الإعدادات، أو بالأمر بعد ما تدّي Terminal صلاحية Full Disk Access)، وادخل على الماك من جهاز تاني على نفس الواي فاي بـ ssh. وبعدين اقفله لو مش محتاجه.`,
-          flag: "danger",
-          deep: {
-            why: R`ماك قديم في البيت بيتحول لسيرفر صغير (build أو ملفات) تدخل عليه من اللابتوب، أو تساعد حد في أهلك على جهازه من غير ما تروحله، أو تشغّل حاجة على ماكك وانت قاعد على جهاز الشغل.`,
-            how: R`Remote Login بيشغّل OpenSSH ([[sshd]]) عن طريق launchd، وكل اتصال جديد بيقرا الإعدادات من الأول، فملف جديد في [[sshd_config.d]] بيسري على الاتصال الجاي من غير restart. [[/etc/ssh/sshd_config]] نفسه تحديثات macOS ممكن ترجّعه للأصل، عشان كده إعداداتك في ملف لوحدها، واسمه بيبدأ بـ 000 لأن sshd بياخد أول قيمة يلاقيها والملفات بتتقري بالترتيب الأبجدي.
-
-لو [[-getremotelogin]] نفسه طلب Full Disk Access، اتأكد بطريقة تانية: [[nc -z localhost 22]] بيقول [[succeeded]] لو SSH شغال. Screen Sharing ماك لماك بيشفّر الاتصال لوحده، و Remote Management في نفس صفحة Sharing ده للي بيستخدموا Apple Remote Desktop.`,
-            when: R`ماك شغال سيرفر في البيت، مساعدة عن بعد لحد على نفس الشبكة (أو عن طريق VPN)، أو نقل ملفات بـ [[scp]] بين أجهزتك.`,
-            mistakes: R`تعمل port forwarding لـ 22 أو 5900 على الراوتر فبوتات النت تجرب باسوردات على جهازك طول اليوم. تسيب [[Allow full disk access for remote users]] شغالة من غير سبب. تقفل الدخول بالباسورد قبل ما تتأكد إن المفتاح شغال وانت داخل من بعيد، فتقفل على نفسك: سيب جلسة مفتوحة وجرّب من نافذة جديدة. تنسى إن الماك لما ينام SSH بيقع (درس «caffeinate» و «pmset»). وتنسى تدّي الترمنال Full Disk Access فتفتكر الأمر بايظ.`
-          },
-          lines: [
-            R`Remote Login شغال ولا لأ.`,
-            R`شغّله. محتاج إن Terminal ياخد Full Disk Access.`,
-            R`IP الماك على الواي فاي، عشان تتصل بيه.`,
-            R`اسم الماك على الشبكة، وتتصل بيه بـ [[.local]] بعده.`,
-            R`من الجهاز التاني: ادخل على الماك باليوزر sara.`,
-            R`من ماك تاني: افتح شاشة الماك ده بـ Screen Sharing.`,
-            R`اتأكد إن sshd_config بيقرا فولدر [[sshd_config.d]].`,
-            R`اعمل ملف يقفل الدخول بالباسورد (السطرين في الشرح فوق). بعد ما المفتاح يشتغل بس.`,
-            R`افحص إعدادات sshd: مفيش ناتج يعني سليمة.`,
-            R`اقفل Remote Login من غير سؤال ([[-f]]).`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man systemsetup]] وصفحات دعم Apple «Allow a remote computer to access your Mac» و «Turn screen sharing on or off». [[sudo systemsetup -getremotelogin]] بيطبع [[Remote Login: Off]]، وبعد التشغيل [[Remote Login: On]]. لو الترمنال معندوش Full Disk Access هتشوف رسالة إن Remote Login محتاج Full Disk Access ومش هيتغير حاجة.
-
-من ويندوز (PowerShell) أو لينكس: [[ssh sara@192.168.1.20]] أول مرة بيسأل [[Are you sure you want to continue connecting (yes/no/[fingerprint])?]]، اكتب [[yes]]، وبعدها باسورد sara، وتلاقي prompt الماك زي [[sara@sara-mbp ~ %]]. [[exit]] بيرجّعك. لو قال [[Connection refused]] يبقى Remote Login مقفول، ولو [[Operation timed out]] يبقى الـ IP غلط أو الفايروول بيمنع (درس «socketfilterfw»).
-
-ولما تقفله بـ [[-setremotelogin off]] من غير [[-f]]، هيسألك yes/no لأن الجلسات اللي داخلة بـ ssh هتقع.`,
-          solCode: R`# على الماك
-sudo systemsetup -setremotelogin on
-sudo systemsetup -getremotelogin
-ipconfig getifaddr en0
-# من الجهاز التاني (PowerShell أو ترمنال لينكس)
-ssh sara@192.168.1.20
-exit
-# على الماك لو خلصت
-sudo systemsetup -setremotelogin -f off`
-        },
-        {
-          cmd: "diskutil",
-          title: "الديسكات والفلاشات: اعرض وافرمت واعمل bootable",
-          desc: R`[[diskutil]] هو Disk Utility من الترمنال: بيعرض كل الديسكات المتوصلة، ويفرمت فلاشة، ويفصلها بأمان، ويفحص الديسك. أهم قاعدة: قبل أي مسح اعرف الـ identifier الصح ([[disk4]] مثلًا)، لأن رقم غلط معناه إنك تمسح ديسك تاني.
-
-[[diskutil list]] بيطبع كل ديسك بعنوان زي [[/dev/disk0 (internal, physical):]]:
-• [[internal]] جوه الجهاز و [[external]] متوصل من برّه (فلاشة أو هارد). [[physical]] ديسك حقيقي، و [[synthesized]] ديسك افتراضي APFS معمول جوه جزء من الديسك الحقيقي (هنا بتلاقي [[Macintosh HD]]).
-• تحت كل ديسك أجزاؤه (partitions) في عمود IDENTIFIER زي [[disk4s1]]: [[s1]] يعني أول جزء في disk4.
-• [[diskutil list external]] الخارجي بس، وده اللي تبدأ بيه قبل أي مسح.
-[[diskutil info disk4]] تفاصيل ديسك واحد: الاسم والحجم و [[Protocol: USB]] و [[Device Location: External]]، فتتأكد إنه الفلاشة. و [[diskutil apfs list]] بيعرض الـ APFS containers والـ volumes اللي جواها، ومعاها سطر [[FileVault]] لكل volume.
-
-[[diskutil eraseDisk ExFAT USB GPT disk4]] بيمسح الديسك كله ويعمله جزء واحد: [[ExFAT]] نوع الـ file system (بيتقري ويتكتب على ويندوز وماك ولينكس، ومفيهوش حد 4 جيجا للملف زي FAT32)، و [[USB]] الاسم اللي هيظهر، و [[GPT]] نوع جدول الأجزاء، وآخر حاجة الديسك نفسه. أنواع تانية: [[APFS]] لماك بس، و [[MS-DOS]] يعني FAT32 (لأجهزة قديمة وشاشات، والاسم ساعتها كابيتال لحد 11 حرف) ومعاه [[MBR]] بدل GPT. [[diskutil listFilesystems]] بيطبع كل الأسامي المسموحة.
-
-[[diskutil unmountDisk disk4]] بيفصل كل أجزاء الديسك من غير ما يطلّعه، ودي لازمة قبل [[dd]]. [[diskutil eject disk4]] بيفصله عشان تشيله بأمان. [[diskutil verifyVolume /]] بيفحص الـ file system بتاع ديسك النظام وهو شغال (زي First Aid في Disk Utility)، و [[repairVolume]] بيصلّح ديسك خارجي.
-
-فلاشة bootable:
-• macOS: نزّل الـ installer (درس «softwareupdate»)، وبعدين [[createinstallmedia]] اللي جوه التطبيق نفسه بيمسح الفلاشة ويعملها installer. بيسأل على باسوردك وبعدين [[Y]] للتأكيد، و Apple بتقول 32 جيجا كفاية لأي نسخة. [[\ ]] قبل المسافة في المسار معناها إن المسافة جزء من الاسم.
-• لينكس (ملف ISO): [[dd]] بينسخ الملف بايت بايت على الفلاشة. [[if=]] الملف اللي بيقرا منه، و [[of=]] اللي بيكتب فيه، و [[/dev/rdisk4]] (بـ r) نسخة raw من نفس الديسك أسرع بكتير من [[/dev/disk4]]، و [[bs=4m]] اكتب 4 ميجا في المرة، و [[status=progress]] اطبع التقدم كل ثانية. المسار بـ [[$HOME]] مش [[~]]، لأن zsh مش بيفك [[~]] بعد [[=]]. بعد ما يخلص الماك هيقولك إن الديسك مش مقروء، ده طبيعي: دوس Eject.
-
-خطر: eraseDisk و dd مالهمش undo ومش بيسألوك «متأكد؟»، و [[dd]] على identifier غلط بيكتب فوق ديسك تاني من غير أي تحذير. اعمل [[diskutil list external]] قبلها على طول (الرقم بيتغير لما تشيل وتركّب)، وخلي الفلاشة هي الحاجة الوحيدة المتوصلة.`,
-          example: R`# اعرف الديسكات
-diskutil list
-diskutil list external
-diskutil info disk4
-diskutil apfs list
-diskutil verifyVolume /
-# فرمت فلاشة (بيمسح كل اللي عليها)
-diskutil eraseDisk ExFAT USB GPT disk4
-diskutil eject disk4
-# فلاشة لينكس من ملف ISO
-diskutil unmountDisk disk4
-sudo dd if=$HOME/Downloads/ubuntu-24.04.3-desktop-amd64.iso of=/dev/rdisk4 bs=4m status=progress
-diskutil eject disk4
-# فلاشة تسطيب macOS
-sudo /Applications/Install\ macOS\ Tahoe.app/Contents/Resources/createinstallmedia --volume /Volumes/USB`,
-          try: R`وصّل فلاشة مفيهاش حاجة مهمة. اعرف الـ identifier بتاعها من [[diskutil list external]] واتأكد منه بـ [[diskutil info]]، وبعدين فرمتها ExFAT باسم USB واعملها eject.`,
-          flag: "danger",
-          deep: {
-            why: R`فلاشة جديدة جاية FAT32 ومش بتاخد ملف أكبر من 4 جيجا، أو عايز تسطّب لينكس على جهاز تاني، أو تعمل installer لماك بايظ. و Disk Utility بيخبّي حاجات (زي الفرق بين الديسك كله والـ volume) الترمنال بيوريهالك صريحة.`,
-            how: R`APFS بيقسم الديسك لـ container، وجوه الـ container كذا volume بيشاركوا نفس المساحة: System (للقراية بس) و Data (ملفاتك) و Preboot و Recovery و VM. عشان كده [[diskutil list]] بيوريك disk0 حقيقي و disk3 synthesized. [[/dev/diskN]] بيعدّي على كاش النظام، و [[/dev/rdiskN]] بيكتب على الديسك على طول، وده اللي بيخلي dd أسرع. ولو dd شغال من غير status، Ctrl+T بتطبعلك وصل لفين (الماك بيبعتله إشارة SIGINFO). المقابل في لينكس [[lsblk]] و [[fdisk]] و [[mkfs]] (درس «fdisk و mkfs و dd» في تاب «bash»).`,
-            when: R`فرمتة فلاشة أو هارد خارجي، فلاشة تسطيب لينكس أو macOS، أو فحص الديسك لما الماك يتصرف غريب.`,
-            mistakes: R`تعتمد على إن الفلاشة disk4 زي المرة اللي فاتت: الأرقام بتتغير. تكتب [[disk4s1]] في eraseDisk بدل [[disk4]]. تنسخ [[disk0]] أو رقم من شرح على النت من غير ما تبص على جهازك. تختار APFS لفلاشة هتتقري على ويندوز. وتكتب [[if=~/Downloads/x.iso]] في zsh فيقولك [[No such file or directory]] لأن [[~]] بعد [[=]] مش بيتفك إلا لو [[setopt magic_equal_subst]].`
-          },
-          lines: [
-            R`كل الديسكات وأجزاؤها. disk0 غالبًا الديسك الداخلي.`,
-            R`الديسكات الخارجية بس: ابدأ بيها قبل أي مسح.`,
-            R`تفاصيل disk4: اتأكد إنه USB و External وحجمه حجم الفلاشة.`,
-            R`الـ APFS containers والـ volumes وحالة FileVault.`,
-            R`افحص ديسك النظام وهو شغال (First Aid).`,
-            R`امسح disk4 كله واعمله ExFAT باسم USB. مفيش «متأكد؟».`,
-            R`افصل الفلاشة عشان تشيلها بأمان.`,
-            R`افصل أجزاء disk4 من غير ما تطلّعه، عشان dd يكتب عليه.`,
-            R`انسخ ISO لينكس على الفلاشة بايت بايت، والتقدم كل ثانية.`,
-            R`اطلّعها بعد ما dd يخلص.`,
-            R`اعمل فلاشة macOS Tahoe: باسوردك وبعدين Y عشان يمسح الفلاشة.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man diskutil]] و [[man dd]] وصفحة Apple «How to create a bootable installer for macOS». [[diskutil list external]] بيطبع حاجة زي [[/dev/disk4 (external, physical):]] وتحتها سطر الديسك كله بالحجم [[*32.0 GB]] و [[disk4]]، وسطر الجزء [[disk4s1]]. الرقم عندك ممكن يبقى غير 4. [[diskutil info disk4 | grep -E 'Device Location|Protocol|Disk Size']] بيطبع [[Device Location: External]] و [[Protocol: USB]] والحجم. [[grep -E]] بيسيب السطور اللي فيها أي كلمة من اللي بينهم [[|]].
-
-[[diskutil eraseDisk ExFAT USB GPT disk4]] بيطبع خطوات أولها [[Started erase on disk4]] وآخرها [[Finished erase on disk4]]، و [[ls /Volumes]] هيوريك [[USB]]. [[diskutil eject disk4]] بيطبع [[Disk disk4 ejected]].
-
-لو قال إن فيه volume مش راضي يتفصل، يبقى فيه برنامج فاتح ملف عليها أو ترمنال واقف جواها: اعمل [[cd ~]] واقفل Finder على الفلاشة وجرّب تاني.`,
-          solCode: R`diskutil list external
-diskutil info disk4 | grep -E 'Device Location|Protocol|Disk Size'
-diskutil eraseDisk ExFAT USB GPT disk4
-ls /Volumes
-diskutil eject disk4`
-        },
-        {
-          cmd: "softwareupdate",
-          title: "تحديثات macOS و Rosetta من الترمنال",
-          desc: R`[[softwareupdate]] بيعمل اللي في System Settings ثم General ثم Software Update: يدوّر على تحديثات macOS و Safari و Command Line Tools، وينزّلها ويسطّبها. ومنه كمان تنزّل installer كامل لنسخة macOS معينة، وتسطّب Rosetta.
-
-الأوامر:
-• [[-l]] (list) التحديثات المتاحة. كل تحديث ليه سطر [[Label:]] وده الاسم اللي هتكتبه في التسطيب، وتحته سطر [[Title]] فيه الحجم، و [[Action: restart]] لو محتاج restart. [[*]] قبل Label يعني recommended. ده الأمر الوحيد اللي مش محتاج صلاحية أدمن.
-• [[-i "Label"]] (install) نزّل وسطّب تحديث واحد باسمه، بين علامات تنصيص لأن فيه مسافات. [[-ia]] هي [[-i -a]]: سطّب كل المتاح (all). و [[--restart]] اعمل restart لوحدك لو التحديث محتاجه، من غيرها الأمر يخلص ويقولك تعمل restart.
-• [[-d]] (download) نزّل بس، وتسطّب بعدين من الإعدادات أو بـ [[-i]].
-• [[--history]] التحديثات اللي اتسطبت: الاسم والنسخة والتاريخ.
-• [[--list-full-installers]] نسخ macOS الكاملة المتاحة لجهازك، و [[--fetch-full-installer --full-installer-version 15.7.1]] بينزّل [[Install macOS Sequoia.app]] في Applications (أكتر من 10 جيجا)، وبيه تعمل فلاشة تسطيب (درس «diskutil»). من غير [[--full-installer-version]] بينزّل أحدث نسخة.
-• [[--install-rosetta --agree-to-license]] على Apple Silicon: Rosetta 2 بتشغّل برامج Intel (x86_64) على شريحة M، و [[--agree-to-license]] بتوافق على الترخيص من غير ما يسألك. على جهاز Intel ملوش لازمة.
-
-على Apple Silicon تحديث macOS نفسه محتاج موافقة يوزر عنده secure token (درس «dscl و sysadminctl»)، فممكن يسألك على باسوردك حتى مع sudo. و Apple قالت إن Rosetta هتفضل متاحة بشكل عام لحد macOS 27، وبعدها هتبقى لحاجات محدودة زي الألعاب القديمة، فلو أداة عندك لسه Intel بس، دوّر على نسخة arm64.
-
-خطر: [[--restart]] بيقفل البرامج ويعمل restart من غير ما يستناك، وأي شغل مش متحفظ ممكن يضيع. وأثناء تحديث النظام خلي اللابتوب على الشاحن.`,
-          example: R`softwareupdate -l
-softwareupdate --history
-sudo softwareupdate -i "macOS Sequoia 15.7.1-24G231"
-sudo softwareupdate -ia --restart
-softwareupdate --list-full-installers
-softwareupdate --fetch-full-installer --full-installer-version 15.7.1
-softwareupdate --install-rosetta --agree-to-license`,
-          try: R`اعرض التحديثات المتاحة وتاريخ التحديثات. ولو جهازك Apple Silicon، اعرف Rosetta متسطبة ولا لأ بـ [[arch -x86_64 /usr/bin/true]]، وسطّبها لو برنامج Intel محتاجها.`,
-          flag: "danger",
-          deep: {
-            why: R`تحديث من سكربت لأكتر من ماك، أو على ماك داخل عليه بـ ssh من غير شاشة، أو تنزّل installer كامل لنسخة بعينها لأن مشروعك أو Xcode محتاجها. و [[--history]] بتقولك إمتى اتسطب آخر تحديث أمني.`,
-            how: R`softwareupdate بيكلّم نفس خدمة التحديثات اللي الإعدادات بتستخدمها، فاللي بتنزّله من هنا بيظهر هناك والعكس. [[-r]] (recommended) بدل [[-a]] بيسطّب الـ recommended بس. [[--schedule]] بيقولك التحديث التلقائي في الخلفية شغال ولا لأ، و [[--background]] بيعمل check دلوقتي. وبعد [[xcode-select --install]]، تحديثات Command Line Tools بتظهر هنا باسم زي [[Command Line Tools for Xcode]] وبعده رقم النسخة.
-
-[[arch -x86_64]] بيشغّل البرنامج اللي بعده كـ Intel. [[/usr/bin/true]] برنامج مش بيعمل حاجة غير إنه ينجح، فلو اشتغل يبقى Rosetta موجودة، ولو طلع [[Bad CPU type in executable]] يبقى مش متسطبة.`,
-            when: R`قبل ما تبدأ شغل على ماك جديد، أو مرة في الأسبوع لو التحديث التلقائي مقفول، أو لما برنامج قديم يقولك محتاج Rosetta.`,
-            mistakes: R`تكتب الـ Label غلط أو من غير علامات تنصيص فيقولك مش لاقيه: انسخه من [[-l]] بالحرف. تشغّل [[-ia --restart]] وعندك شغل مفتوح. تستغرب إنه بيسأل على باسورد مع sudo على Apple Silicon: ده تأكيد اليوزر صاحب الـ token. و [[--fetch-full-installer]] في بعض النسخ (اتبلّغ عنه في 15.4) كان بيطلع [[Install failed with error: Update not found]] لأي نسخة: نزّل من App Store أو من صفحة Apple «How to download and install macOS».`
-          },
-          lines: [
-            R`التحديثات المتاحة: Label و Title لكل واحد.`,
-            R`التحديثات اللي اتسطبت قبل كده وتواريخها.`,
-            R`سطّب تحديث واحد. الاسم بالظبط زي سطر Label عندك (ده مثال).`,
-            R`سطّب كل المتاح، واعمل restart لوحدك لو محتاج. احفظ شغلك الأول.`,
-            R`نسخ macOS الكاملة المتاحة لجهازك.`,
-            R`نزّل installer كامل لنسخة 15.7.1 في Applications.`,
-            R`سطّب Rosetta 2 ووافق على الترخيص (Apple Silicon بس).`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man softwareupdate]]، ومن Apple Developer Forums (مشكلة fetch-full-installer في 15.4)، وتقارير إعلان Apple عن Rosetta. [[softwareupdate -l]] بيطبع [[Software Update Tool]] و [[Finding available software]]، وبعدها يا إما [[No new software available.]] يا إما لستة كل واحد فيها سطر [[* Label:]] وتحته [[Title:]] فيه [[Version]] و [[Size]] و [[Recommended: YES]]. [[--history]] بيطبع جدول أعمدته [[Display Name]] و [[Version]] و [[Date]].
-
-على Apple Silicon من غير Rosetta، [[arch -x86_64 /usr/bin/true]] بيطبع error فيه [[Bad CPU type in executable]]. بعد [[softwareupdate --install-rosetta --agree-to-license]] (بيطبع إنك وافقت على الترخيص وبعدين [[Install of Rosetta 2 finished successfully]])، نفس الأمر مش بيطبع حاجة، و [[&& echo "rosetta ok"]] بيطبع [[rosetta ok]]: [[&&]] معناها نفّذ اللي بعدي لو اللي قبلي نجح.`,
-          solCode: R`softwareupdate -l
-softwareupdate --history
-arch -x86_64 /usr/bin/true && echo "rosetta ok"
-softwareupdate --install-rosetta --agree-to-license
-arch -x86_64 /usr/bin/true && echo "rosetta ok"`
-        },
-        {
-          cmd: "tmutil",
-          title: "Time Machine من الترمنال (واستبعد node_modules)",
-          desc: R`Time Machine هو الباك أب المبني في الماك: بيعمل نسخة من كل حاجة على هارد خارجي أو على الشبكة كل ساعة. [[tmutil]] بيتحكم فيه من الترمنال: تبدأ باك أب، وتعرف آخر باك أب، وتستبعد فولدرات زي [[node_modules]] منه.
-
-الأوامر:
-• [[tmutil status]] فيه باك أب شغال دلوقتي ولا لأ: [[Running = 1]] يعني شغال، ومعاه المرحلة والنسبة.
-• [[tmutil startbackup --block]] ابدأ باك أب دلوقتي. [[--block]] بيخلي الأمر يستنى لحد ما الباك أب يخلص بدل ما يرجّعلك الـ prompt على طول، فينفع في سكربت قبل خطوة خطيرة.
-• [[tmutil latestbackup]] مسار آخر باك أب كامل، و [[tmutil listbackups]] كل الباك أبات. [[man tmutil]] بيقول إن أوامر كتير منه محتاجة root و Full Disk Access، فلو طلع error صلاحيات ضيف Terminal في System Settings ثم Privacy & Security ثم Full Disk Access.
-• [[tmutil addexclusion ~/projects/shop/node_modules]] متعملش باك أب للفولدر ده. ده استبعاد بيمشي مع الفولدر لو نقلته أو نسخته، ومش محتاج sudo. و [[tmutil isexcluded]] بيرد بسطر أوله [[Excluded]] أو [[Included]] بين أقواس مربعة، و [[removeexclusion]] بترجّعه للباك أب.
-
-ليه node_modules: فولدر فيه عشرات آلاف الملفات الصغيرة بترجع بـ [[npm install]] في دقيقة، وبيبطّأ كل باك أب ويملا الهارد. نفس الكلام لـ [[.venv]] و [[target]] و [[build]] و Docker. والـ glob بتاع zsh بيستبعدهم كلهم مرة واحدة: [[~/projects/*/node_modules]]، و [[*]] معناها أي اسم فولدر.
-
-local snapshots: لو Time Machine متظبط، الماك كمان بيعمل snapshot على الديسك الداخلي نفسه كل ساعة ويحتفظ بيها 24 ساعة، فتقدر ترجّع ملف حتى والهارد الخارجي مش متوصل. [[tmutil localsnapshot]] اعمل واحد دلوقتي (قبل تحديث أو تجربة خطيرة)، و [[tmutil listlocalsnapshots /]] اعرضهم ([[/]] يعني ديسك النظام)، و [[tmutil thinlocalsnapshots / 20000000000 4]] خلّي الماك يمسح snapshots لحد ما يفضّي حوالي 20 جيجا (الرقم بالبايت، و 4 أعلى درجة استعجال من 1 لـ 4). الماك بيمسحهم لوحده لما المساحة تقل، بس ده بيفيد لو برنامج بيقولك الديسك مليان.`,
-          example: R`tmutil status
-tmutil startbackup --block
-tmutil latestbackup
-tmutil listbackups
-tmutil addexclusion ~/projects/shop/node_modules
-tmutil addexclusion ~/projects/*/node_modules
-tmutil isexcluded ~/projects/shop/node_modules
-tmutil localsnapshot
-tmutil listlocalsnapshots /
-sudo tmutil thinlocalsnapshots / 20000000000 4`,
-          try: R`استبعد كل فولدرات [[node_modules]] في مشاريعك من Time Machine واتأكد بـ [[isexcluded]]. ولو Time Machine متظبط عندك، اعمل local snapshot واعرضه.`,
-          deep: {
-            why: R`الهارد باظ أو اللابتوب اتسرق أو مسحت فولدر بالغلط: Time Machine هو اللي بيرجّعلك كل حاجة. ومن الترمنال بتعمل باك أب قبل حاجة خطيرة (تحديث، مسح يوزر، فرمتة)، وتشيل الحاجات اللي بتطوّل الباك أب من غير فايدة.`,
-            how: R`الاستبعاد العادي (sticky) متسجل على الفولدر نفسه كـ extended attribute اسمه [[com.apple.metadata:com_apple_backup_excludeItem]]، عشان كده بيمشي معاه، وتشوفه بـ [[xattr -l]] (درس «xattr و quarantine»). [[-p]] استبعاد بالمسار و [[-v]] لديسك كامل، والاتنين محتاجين sudo. [[tmutil destinationinfo]] بيطبع الهارد المتظبط، و [[tmutil restore]] بيرجّع ملف من باك أب، و [[tmutil compare]] بيقارن الجهاز بآخر باك أب. و [[tmutil status]] مش مكتوب في كل نسخ man، بس موجود وبتستخدمه السكربتات كتير.`,
-            when: R`أول ما تجيب هارد للباك أب، وأول ما تعمل مشروع جديد فيه node_modules أو [[.venv]]، وقبل أي أمر خطير في الدروس دي.`,
-            mistakes: R`تفتكر local snapshots باك أب: هي على نفس الديسك، فلو الديسك باظ راحت معاه. تستبعد [[~/projects]] كله بدل node_modules بس فتخسر كودك. تشغّل listbackups وتلاقي error فتفتكر مفيش باك أب، والمشكلة Full Disk Access. تكتب [[~/projects/*/node_modules]] ومفيش ولا مشروع فيه node_modules فـ zsh يقول [[no matches found]]. وتعتمد على Time Machine لوحده لحاجة مهمة: خلّي نسخة برّه البيت كمان، وللكود Git remote.`
-          },
-          lines: [
-            R`فيه باك أب شغال دلوقتي ولا لأ.`,
-            R`ابدأ باك أب واستنى لحد ما يخلص.`,
-            R`مسار آخر باك أب كامل.`,
-            R`كل الباك أبات. لو error صلاحيات: Full Disk Access للترمنال.`,
-            R`استبعد node_modules بتاع مشروع واحد.`,
-            R`استبعد node_modules في كل مشاريعك مرة واحدة.`,
-            R`اتأكد إنه مستبعد.`,
-            R`اعمل local snapshot دلوقتي.`,
-            R`اعرض الـ snapshots اللي على ديسك النظام.`,
-            R`امسح snapshots لحد ما تفضّي حوالي 20 جيجا.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man tmutil]] وصفحات دعم Apple عن Time Machine. [[tmutil addexclusion ~/projects/*/node_modules]] مش بيطبع حاجة، و [[tmutil isexcluded]] على أي واحد منهم بيطبع سطر فيه كلمة Excluded بين أقواس مربعة وبعدها المسار، زي المثال اللي في صفحة man. ولو مشروع معندوش node_modules، الـ glob بيتجاهله، ولو مفيش ولا واحد zsh بيقول [[no matches found]].
-
-لو Time Machine متظبط: [[tmutil localsnapshot]] بيطبع [[Created local snapshot with date:]] وبعدها التاريخ بشكل [[2026-10-02-101500]] (سنة-شهر-يوم-ساعة دقيقة ثانية)، و [[tmutil listlocalsnapshots /]] بيطبع [[Snapshots for disk /:]] وتحتها أسامي زي [[com.apple.TimeMachine.2026-10-02-101500.local]]. ولو Time Machine مش متظبط خالص، الأوامر دي ممكن تفشل أو متطبعش snapshots.`,
-          solCode: R`tmutil addexclusion ~/projects/*/node_modules
-tmutil isexcluded ~/projects/*/node_modules
-tmutil localsnapshot
-tmutil listlocalsnapshots /`
-        },
-        {
-          cmd: "system_profiler و ioreg",
-          title: "البطارية والـ USB والهاردوير بالتفصيل",
-          desc: R`[[system_profiler]] بيطبع نفس اللي في تطبيق System Information: كل حاجة عن الهاردوير والسوفتوير، مقسمة لأنواع (data types). درس «sw_vers» عرض نوع الجهاز والشريحة؛ هنا البطارية والـ USB وإزاي تاخد الناتج JSON لسكربت، ومعاهم [[ioreg]] و [[sysctl]] للتفاصيل الأدق.
-
-system_profiler:
-• [[-listDataTypes]] بيطبع أسامي كل الأنواع، وكلها بتبدأ بـ [[SP]] وتنتهي بـ [[DataType]].
-• [[SPPowerDataType]] الطاقة والبطارية. تحت Health Information هتلاقي [[Cycle Count]] (عدد الدورات: كل ما تستهلك 100% من سعة البطارية، حتى لو على كذا مرة، تبقى دورة)، و [[Condition]] ([[Normal]]، أو [[Service Recommended]] يعني محتاجة تتغير)، و [[Maximum Capacity]] السعة دلوقتي كنسبة من وهي جديدة. [[grep -E]] بيطبع السطور اللي فيها أي كلمة من اللي بينهم [[|]].
-• [[-detailLevel mini]] تقرير كامل من غير معلومات شخصية زي الرقم التسلسلي، و [[>]] بتحطه في ملف، وده اللي تبعته لحد بيساعدك.
-• [[-json]] الناتج JSON بدل نص، وده اللي تستخدمه في سكربت. من macOS Sequoia (15) [[jq]] جاي مع الماك، و [[jq -r '.SPHardwareDataType[0].physical_memory']] بتطلع الرام بس: [[.SPHardwareDataType]] المفتاح، والـ 0 بين الأقواس المربعة يعني أول عنصر في اللستة، و [[-r]] اطبع النص من غير علامات تنصيص.
-• [[SPUSBDataType]] كان بيعرض أجهزة الـ USB المتوصلة، وفي macOS Tahoe (26) اتشال، والجديد [[SPUSBHostDataType]] بيعرض الـ controllers بس. الأضمن [[ioreg -p IOUSB]] اللي بيطبع شجرة أجهزة الـ USB على أي نسخة.
-
-ioreg بيعرض شجرة الأجهزة اللي الـ kernel شايفها (I/O Kit registry). [[-r -c AppleSmartBattery]] اعرض بس الحاجة اللي نوعها (class) البطارية وتفاصيلها، وفيها أرقام البطارية الخام زي [[CycleCount]]، وأسرع من system_profiler. و [[ioreg -l | grep -i cycle]] بيوصل لنفس الحاجة بس بيلف على الشجرة كلها. [[-p IOUSB]] بيعرض الشجرة من ناحية الـ USB بس.
-
-sysctl بيقرا قيم من الـ kernel، و [[-n]] اطبع القيمة بس من غير الاسم: [[hw.model]] رقم الموديل زي [[Mac14,2]] (بيه تدوّر على مواصفات جهازك بالظبط)، و [[hw.memsize]] الرام بالبايت، و [[machdep.cpu.brand_string]] اسم المعالج زي [[Apple M2]] أو اسم Intel كامل. و [[sysctl.proc_translated]] بيطبع [[1]] لو الترمنال نفسه شغال بـ Rosetta و [[0]] لو native، وعلى Intel مش موجود أصلًا.`,
-          example: R`system_profiler -listDataTypes
-system_profiler SPPowerDataType | grep -E 'Cycle Count|Condition|Maximum Capacity'
-system_profiler -detailLevel mini > ~/Desktop/mac-report.txt
-system_profiler -json SPHardwareDataType | jq -r '.SPHardwareDataType[0].physical_memory'
-ioreg -r -c AppleSmartBattery | grep -i cycle
-ioreg -p IOUSB
-sysctl -n hw.model hw.memsize
-sysctl -n machdep.cpu.brand_string
-sysctl -n sysctl.proc_translated`,
-          try: R`اعرف عدد دورات البطارية وحالتها والسعة القصوى، وقارن [[CycleCount]] من ioreg باللي في system_profiler. ولو جهازك Apple Silicon، اتأكد إن الترمنال مش شغال بـ Rosetta.`,
-          deep: {
-            why: R`بتشتري ماك مستعمل: عدد الدورات والسعة القصوى بيقولولك حالة البطارية الحقيقية. أو بتكتب سكربت جرد لأجهزة الفريق، أو بتطلب مساعدة وعايز تبعت مواصفات جهازك من غير الرقم التسلسلي.`,
-            how: R`system_profiler بطيء نسبيًا لأنه بيجمع من مصادر كتير، فحدد الـ data type دايمًا. وناتج [[-json]] شكله ثابت أكتر من النص اللي ممكن يتغير بين النسخ، فاستخدمه في السكربتات. ioreg بيقرا من الـ kernel مباشرة وأسرع، بس أسامي المفاتيح فيه داخلية ممكن تتغير. والبطاريات في لابتوبات Apple الحديثة معمولة تحتفظ بحوالي 80% من سعتها لحد 1000 دورة. المقابل في لينكس [[lsusb]] و [[lspci]] (درس «lsusb و lspci و lshw» في تاب «bash»).`,
-            when: R`شرا أو بيع ماك، بطارية بتخلص بسرعة، جرد أجهزة، أو قبل ما تطلب مساعدة في منتدى.`,
-            mistakes: R`تعتمد على [[SPUSBDataType]] في سكربت فيرجع فاضي على Tahoe. تعمل grep على الناتج النصي ولغة الجهاز مش إنجليزي فممكن الأسامي تبقى مترجمة، والـ JSON مفاتيحه ثابتة. تبعت تقرير كامل فيه الرقم التسلسلي لحد مش عارفه. وتحكم من رقم [[Maximum Capacity]] مرة واحدة: الرقم بيتحرك شوية بعد معايرة البطارية، فبص على اتجاهه مع الوقت. وعلى ماك ديسكتوب (Mac mini أو iMac) مفيش بطارية أصلًا، فـ grep مش هيطبع حاجة.`
-          },
-          lines: [
-            R`أسامي كل أنواع التقارير.`,
-            R`حالة البطارية: الدورات والحالة والسعة القصوى.`,
-            R`تقرير كامل من غير معلومات شخصية، في ملف على الـ Desktop.`,
-            R`الرام بس، من ناتج JSON بـ jq.`,
-            R`عدد الدورات من ioreg مباشرة (أسرع).`,
-            R`شجرة أجهزة الـ USB المتوصلة.`,
-            R`رقم الموديل والرام بالبايت، كل واحد في سطر.`,
-            R`اسم المعالج.`,
-            R`1 لو الترمنال شغال بـ Rosetta، و 0 لو native.`
-          ],
-          sol: R`ده ماك بس، مجربتوش هنا. المكتوب من [[man system_profiler]] و [[man ioreg]] و [[man sysctl]]، و Apple Community عن SPUSBDataType في Tahoe. على لابتوب، سطر grep بيطبع حاجة زي [[Cycle Count: 187]] و [[Condition: Normal]] و [[Maximum Capacity: 89%]]. و [[ioreg -r -c AppleSmartBattery | grep -i cycle]] بيطبع سطر فيه [["CycleCount" = 187]] (نفس الرقم)، ومعاه سطور تانية فيها كلمة cycle زي أقصى عدد دورات البطارية معمولة له.
-
-[[sysctl -n sysctl.proc_translated]] بيطبع [[0]] لو الترمنال native. لو طبع [[1]]، اقفل Terminal، واعمل Get Info عليه في Applications ثم Utilities، وشيل علامة Open using Rosetta، وافتحه تاني. وعلى جهاز Intel الأمر بيطبع error إن الاسم مش موجود، وده طبيعي.`
+(ده ماك بس: [[start]] و [[run]] و [[list]] وحالاتها من [[brew services --help]] وكود brew services نفسه، مش متجربة هنا لأن الـ container مفيهوش systemd ولا launchd. [[redis-cli ping]] و [[PONG]] نفس الكلام على أي نظام.)`
         }
       ]
     }
