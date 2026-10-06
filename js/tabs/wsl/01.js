@@ -64,6 +64,145 @@ wsl`,
             when: "أول حاجة على أي جهاز ويندوز للتطوير. قبل Git Bash وقبل أي حاجة تانية.",
             mistakes: "تنسى تشغّل PowerShell كمدير. وتفتكر إن يوزر ويندوز هو يوزر لينكس. و virtualization مقفول في BIOS فيطلع error غامض."
           },
+          teach: R`## الأول: الـ ٥ أوامر دول بيتكتبوا فين؟
+
+كل أوامر المثال بتبدأ بـ [[wsl]]، وده **برنامج ويندوز** (اسمه الكامل [[wsl.exe]])، يعني بيتكتب في PowerShell أو CMD، مش جوه لينكس. هو «الريموت» اللي ويندوز بيدير بيه لينكس: يسطّب، ويعرض، ويدخّلك.
+
+الأوامر اللي بتعرض بس ([[--version]] و [[--list --online]]) اتشغّلت فعلًا على لابتوب ويندوز 11 Home عليه WSL 2.6.3. أما [[--install]] فبيغيّر في ويندوز نفسه (بيفعّل مكونات ويطلب ريستارت)، فمتشغّلش هنا، وكلامه من docs مايكروسوفت (Microsoft Learn: Install WSL).
+
+---
+
+## ١. [[wsl --install]]
+
+### يعني إيه [[--install]]؟
+
+الحاجة اللي بتبدأ بشرطتين [[--]] اسمها **option** (اختيار) بالاسم الطويل. وفيه أسامي قصيرة بشرطة واحدة زي [[-d]] و [[-l]]. الاتنين نفس الفكرة: بتقول للبرنامج «اعمل الشغلانة دي».
+
+### بيعمل إيه بالظبط؟
+
+حسب الـ docs، أمر واحد بيعمل ٣ حاجات:
+
+1. يفعّل مكون ويندوز اسمه **Virtual Machine Platform** (المنصة اللي بتشغّل الماكينة الافتراضية الخفيفة بتاعة WSL 2).
+2. ينزّل WSL نفسه و kernel لينكس.
+3. ينزّل توزيعة أوبونتو (الافتراضية لو مقلتلوش غيرها).
+
+وبعدها يطلب **ريستارت**.
+
+### ليه كمدير (Run as administrator)؟
+
+لأن تفعيل مكون في ويندوز تغيير في النظام كله مش في يوزرك بس. من غير صلاحيات المدير الأمر هيفشل.
+
+---
+
+## ٢. [[wsl --list --online]]
+
+[[--list]] (اختصاره [[-l]]) معناه «اعرض التوزيعات»، و [[--online]] (اختصاره [[-o]]) معناه «من النت: اللي ممكن أسطّبه، مش اللي عندي». ده ناتج حقيقي (أول السطور):
+
+~~~powershell
+wsl --list --online
+~~~
+
+~~~text الناتج (أول ١٠ سطور)
+The following is a list of valid distributions that can be installed.
+Install using 'wsl.exe --install <Distro>'.
+
+NAME                            FRIENDLY NAME
+Ubuntu                          Ubuntu
+Ubuntu-26.04                    Ubuntu 26.04 LTS
+Ubuntu-24.04                    Ubuntu 24.04 LTS
+Ubuntu-22.04                    Ubuntu 22.04 LTS
+openSUSE-Tumbleweed             openSUSE Tumbleweed
+Debian                          Debian GNU/Linux
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[NAME]] | الاسم اللي **بتكتبه** في الأوامر ([[-d Ubuntu-24.04]]) |
+| [[FRIENDLY NAME]] | الاسم المقروء للبني آدم بس |
+
+و [[Ubuntu]] من غير رقم معناها «أحدث LTS عندهم»، فبتتغير مع الوقت. أما [[Ubuntu-24.04]] فثابتة. و LTS اختصار Long Term Support: نسخة بتاخد تحديثات أمان ٥ سنين، وهي اللي على السيرفرات.
+
+---
+
+## ٣. [[wsl --install -d Ubuntu-24.04]]
+
+[[-d]] اختصار [[--distribution]] (توزيعة). يعني «سطّب التوزيعة دي بالاسم ده بالظبط من عمود NAME». الاسم لازم يتكتب زي ما هو: [[ubuntu24]] أو [[Ubuntu 24.04]] بمسافة مش هيشتغلوا.
+
+ليه تحدد نسخة؟ عشان تبقى نفس نسخة السيرفر بتاعك، فاللي يشتغل عندك يشتغل هناك.
+
+---
+
+## ٤. [[wsl --version]]
+
+بيطبع نسخة كل حتة في WSL. ناتج حقيقي:
+
+~~~text الناتج
+WSL version: 2.6.3.0
+Kernel version: 6.6.87.2-1
+WSLg version: 1.0.71
+MSRDC version: 1.2.6353
+Direct3D version: 1.611.1-81528511
+DXCore version: 10.0.26100.1-240331-1435.ge-release
+Windows version: 10.0.26300.9550
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[WSL version]] | نسخة WSL نفسه، وبيتحدث بـ [[wsl --update]] |
+| [[Kernel version]] | نسخة kernel لينكس اللي مايكروسوفت بتبنيه |
+| [[WSLg]] | الـ g من GUI: تشغيل برامج لينكس بشباك على ويندوز |
+| [[MSRDC]] | Microsoft Remote Desktop Client، اللي WSLg بيستخدمه يعرض الشبابيك دي |
+| [[Direct3D]] و [[DXCore]] | توصيل كارت الشاشة للينكس |
+| [[Windows version]] | نسخة ويندوز ([[10.0.26300]] ده ويندوز 11، الرقم الداخلي لسه بيبدأ بـ 10) |
+
+> لو الأمر قال إن [[--version]] مش معروف، يبقى عندك WSL قديم جاي مع ويندوز نفسه. [[wsl --update]] بيجيب النسخة الجديدة من الـ Store.
+
+---
+
+## ٥. [[wsl]] لوحدها
+
+من غير أي option، [[wsl]] بتفتح shell التوزيعة **الافتراضية** (اللي عليها نجمة في [[wsl -l -v]]، الدرس الجاي)، في نفس الفولدر اللي انت واقف فيه في ويندوز. والـ prompt بيتغير من [[PS C:\Users\you>]] لحاجة زي [[you@PC:/mnt/c/Users/you$]].
+
+> لو عندك Docker Desktop، ممكن تلاقي توزيعة اسمها [[docker-desktop]] هي الافتراضية (ده اللي حاصل على الجهاز اللي جربنا عليه). دي بتاعة Docker، متشتغلش فيها. خلي أوبونتو الافتراضية بـ [[--set-default]] (الدرس الجاي).
+
+---
+
+## ٦. بعد الريستارت: أوامر «جرّب»
+
+[[uname -a]]: [[uname]] من Unix name، و [[-a]] من all يعني «اطبع كل المعلومات». الناتج ده حقيقي من أوبونتو 24.04 جوه Docker Desktop، و Docker Desktop نفسه شغال على kernel الـ WSL 2، فالـ kernel هو هو:
+
+~~~text الناتج
+Linux 3ce53e1e9b39 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[Linux]] | اسم الـ kernel |
+| [[3ce53e1e9b39]] | اسم الجهاز (هنا اسم الـ container، وعندك هيبقى اسم جهازك) |
+| [[6.6.87.2-microsoft-standard-WSL2]] | نسخة الـ kernel، والكلمة المهمة [[WSL2]] |
+| [[x86_64]] | المعالج 64-bit من عيلة Intel/AMD |
+
+و [[cat /etc/os-release]]: [[cat]] بيطبع ملف، والملف ده فيه اسم التوزيعة ونسختها:
+
+~~~text الناتج (سطرين منه)
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+VERSION_ID="24.04"
+~~~
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه | اتجرّب هنا؟ |
+|---|---|---|
+| [[wsl --install]] | يفعّل WSL وينزّل أوبونتو (كمدير + ريستارت) | لا، من الـ docs |
+| [[wsl --list --online]] | التوزيعات المتاحة | أيوه |
+| [[wsl --install -d اسم]] | توزيعة معينة بالاسم من عمود NAME | لا، من الـ docs |
+| [[wsl --version]] | نسخ WSL والـ kernel | أيوه |
+| [[wsl]] | ادخل التوزيعة الافتراضية | لا (الافتراضية هنا docker-desktop)، من الـ docs |
+
+- [[wsl]] ده برنامج ويندوز، بيتكتب في PowerShell.
+- يوزر وباسورد لينكس منفصلين عن ويندوز، والباسورد ده هو اللي [[sudo]] بيطلبه.`,
           lines: [
             "فعّل WSL ونزّل أوبونتو (PowerShell كمدير).",
             "التوزيعات المتاحة.",
@@ -97,6 +236,118 @@ wsl --status`,
             when: "بعد التسطيب تتأكد من الرقم 2. ولما تسطّب توزيعة تانية.",
             mistakes: "توزيعة قديمة على WSL 1 و Docker مش بيشتغل، وتدوّر في Docker."
           },
+          teach: R`## الأول: عندك إيه، وأنهي واحدة الافتراضية؟
+
+الدرس ده ٥ أوامر في PowerShell: واحد يعرض، واتنين يغيّروا، وواحد يفتح، وواحد يلخّص. اللي بيعرضوا اتشغّلوا على لابتوب ويندوز 11 Home عليه توزيعة واحدة بس ([[docker-desktop]] بتاعة Docker Desktop)، واللي بيغيّروا ([[--set-default]] و [[--set-version]]) متشغّلوش عشان منلمسش توزيعة Docker، وكلامهم من docs مايكروسوفت.
+
+---
+
+## ١. [[wsl -l -v]]
+
+### الحروف
+
+- [[-l]] اختصار [[--list]]: اعرض التوزيعات اللي عندك.
+- [[-v]] بعد [[-l]] اختصار [[--verbose]]: يعني «بالتفصيل» (الحالة والنسخة).
+
+> خد بالك: [[-v]] **لوحدها** ([[wsl -v]]) معناها [[--version]]، مش verbose. نفس الحرف بيتغير معناه حسب اللي قبله، وده مكتوب كده في [[wsl --help]].
+
+### الناتج
+
+~~~powershell
+wsl -l -v
+~~~
+
+~~~text الناتج على الجهاز ده
+  NAME              STATE           VERSION
+* docker-desktop    Running         2
+~~~
+
+وعلى جهاز فيه أوبونتو هتلاقي سطر زي [[* Ubuntu-24.04    Running    2]].
+
+| العمود | معناه |
+|---|---|
+| [[*]] | النجمة = التوزيعة **الافتراضية** (اللي [[wsl]] لوحدها بتفتحها) |
+| [[NAME]] | الاسم اللي بتكتبه في كل الأوامر التانية |
+| [[STATE]] | [[Running]] شغالة دلوقتي، [[Stopped]] واقفة (عادي، بتقوم أول ما تفتحها) |
+| [[VERSION]] | WSL 1 ولا 2 |
+
+### الفرق بين 1 و 2
+
+| | WSL 1 | WSL 2 |
+|---|---|---|
+| الفكرة | بيترجم أوامر لينكس لأوامر ويندوز | kernel لينكس حقيقي في VM خفيفة |
+| Docker و systemd | لا | أيوه |
+| سرعة الملفات جوه لينكس | أبطأ | أسرع بكتير |
+| سرعة ملفات ويندوز ([[/mnt/c]]) | أسرع | أبطأ |
+
+---
+
+## ٢. [[wsl --set-default Ubuntu-24.04]]
+
+[[--set-default]] (اختصاره [[-s]]) بيحط النجمة على التوزيعة دي. من هنا ورايح [[wsl]] لوحدها، وأيقونة «WSL» في Windows Terminal، بيفتحوها هي. مهم لو Docker Desktop خلى [[docker-desktop]] الافتراضية زي الجهاز اللي فوق. (من الـ docs، متشغّلش هنا.)
+
+---
+
+## ٣. [[wsl --set-version Ubuntu-24.04 2]]
+
+بياخد حاجتين بعده: **الاسم** ثم **رقم النسخة**. بيحوّل التوزيعة من 1 لـ 2 (أو العكس)، وبياخد دقايق حسب حجمها لأنه بينقل كل الملفات لديسك جديد. حسب الـ docs بيطبع [[Conversion in progress, this may take a few minutes.]] وبعدين [[The operation completed successfully.]].
+
+ولو الاسم غلط، ده الناتج الحقيقي (جربناه باسم مش موجود):
+
+~~~powershell
+wsl --set-version NoSuchDistro 2
+~~~
+
+~~~text الناتج
+There is no distribution with the supplied name.
+Error code: Wsl/Service/WSL_E_DISTRO_NOT_FOUND
+~~~
+
+يعني انسخ الاسم من عمود NAME بالظبط.
+
+---
+
+## ٤. [[wsl -d Debian]]
+
+[[-d]] اختصار [[--distribution]]: افتح التوزيعة دي بدل الافتراضية، من غير ما تغيّر النجمة. لو مش متسطبة هيطلع نفس الـ error بتاع [[WSL_E_DISTRO_NOT_FOUND]] اللي فوق (جربناه بـ [[wsl -d Ubuntu-24.04]] على الجهاز اللي مفيهوش أوبونتو).
+
+---
+
+## ٥. [[wsl --status]]
+
+~~~text الناتج
+Default Distribution: docker-desktop
+Default Version: 2
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Default Distribution]] | التوزيعة الافتراضية (نفس النجمة) |
+| [[Default Version]] | أي توزيعة **جديدة** هتتسطب كـ WSL كام |
+
+---
+
+## أوامر قريبة مفيدة
+
+| الأمر | الناتج الحقيقي |
+|---|---|
+| [[wsl -l -q]] | الأسامي بس، من غير جدول: [[docker-desktop]] (مفيد في السكربتات) |
+| [[wsl --list --running]] | الشغالين بس: [[docker-desktop (Default)]] |
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[wsl -l -v]] | التوزيعات وحالتها ونسختها، والنجمة على الافتراضية |
+| [[wsl --set-default اسم]] | غيّر الافتراضية |
+| [[wsl --set-version اسم 2]] | حوّلها WSL 2 |
+| [[wsl -d اسم]] | افتح واحدة معينة مرة واحدة |
+| [[wsl --status]] | الافتراضية ونسخة التوزيعات الجديدة |
+
+- الاسم دايمًا من عمود NAME بالحرف.
+- [[-v]] بعد [[-l]] = verbose، ولوحدها = version.`,
           lines: [
             "التوزيعات وحالتها ونسخة WSL لكل واحدة.",
             "الافتراضية.",
@@ -135,6 +386,120 @@ exit`,
             when: "مرة واحدة بعد التسطيب. ودي نفس خطوات تجهيز أي سيرفر، فاعتبرها تمرين.",
             mistakes: "تنسى build-essential وتستغرب إن bcrypt بيفشل. وتستخدم Node بتاع ويندوز من جوه WSL (بيشتغل بس بطيء وبيلخبط)."
           },
+          teach: R`## الأول: ده أوبونتو عادي، فالأوامر أوامر لينكس
+
+من هنا الأوامر بتتكتب **جوه أوبونتو** (الـ prompt شكله [[you@PC:~$]])، مش في PowerShell. الخطوات دي نفس تجهيز أي سيرفر جديد. الناتج اللي تحت حقيقي من أوبونتو 24.04 جوه Docker، بيوزر عملناه اسمه [[you]] عشان يبقى زي WSL. الفرق الوحيد إن صورة Docker أصغر من أوبونتو بتاع WSL، فهتسطّب حاجات أكتر.
+
+---
+
+## ١. [[whoami && pwd]]
+
+### الأمرين
+
+- [[whoami]] (who am I): أنا مين؟ بيطبع اسم اليوزر.
+- [[pwd]] (print working directory): أنا واقف فين؟
+
+### الرمز [[&&]]
+
+معناه «لو اللي قبلي نجح، شغّل اللي بعدي». فلو الأول فشل، التاني مش هيتنفذ. هنا مش فارقة أوي، بس هتشوف أهميتها في السطر الجاي.
+
+~~~text الناتج
+you
+/home/you
+~~~
+
+[[/home/you]] ده فولدرك في لينكس، واختصاره [[~]] (تيلدا). يعني [[cd ~]] و [[cd /home/you]] نفس الحاجة. وده جوه نظام ملفات لينكس، مش في [[C:]].
+
+---
+
+## ٢. [[sudo apt update && sudo apt upgrade -y]]
+
+### الحتت
+
+| الحتة | معناها |
+|---|---|
+| [[sudo]] | (superuser do) نفّذ الأمر بصلاحيات المدير (root). بيطلب **باسورد لينكس** اللي عملته أول مرة |
+| [[apt]] | مدير الحزم في أوبونتو: بيسطّب ويحدّث البرامج |
+| [[update]] | حدّث **القايمة** بس: إيه البرامج والنسخ المتاحة. مش بيسطّب حاجة |
+| [[upgrade]] | سطّب النسخ الجديدة فعلًا للي عندك |
+| [[-y]] | (yes) رد «أيوه» لوحدك على سؤال «Do you want to continue?» |
+
+و [[&&]] هنا مهمة: لو [[update]] فشل (مثلًا مفيش نت)، مش هيعمل [[upgrade]] بقايمة قديمة.
+
+~~~text آخر ناتج apt update
+Fetched 33.2 MB in 11s (2929 kB/s)
+Reading package lists...
+~~~
+
+[[Fetched 33.2 MB]] حجم القوايم اللي نزلت، مش برامج.
+
+---
+
+## ٣. [[sudo apt install -y build-essential curl git unzip]]
+
+[[install]] بعدها أسامي الحزم، مفصولة بمسافات، كلهم مرة واحدة:
+
+| الحزمة | فيها إيه | ليه |
+|---|---|---|
+| [[build-essential]] | [[gcc]] (مترجم C) و [[make]] وحاجات البناء | مكتبات Node «native» زي bcrypt و sharp بتتبني بيهم وقت [[npm install]] |
+| [[curl]] | تنزيل وطلبات HTTP من الترمنال | سكربتات تسطيب كتير (زي nvm) بتتنزل بيه |
+| [[git]] | Git | واضحة |
+| [[unzip]] | فك ملفات zip | أدوات بتنزل مضغوطة |
+
+~~~text الناتج (السطر المهم)
+0 upgraded, 143 newly installed, 0 to remove and 0 not upgraded.
+~~~
+
+١٤٣ حزمة عشان الصورة صغيرة جدًا، وكل حزمة بتجر الحزم اللي محتاجاها (dependencies). اتأكد إنهم اتسطبوا:
+
+~~~text النسخ اللي اتسطبت على أوبونتو 24.04
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+GNU Make 4.3
+git version 2.43.0
+curl 8.5.0 (x86_64-pc-linux-gnu) libcurl/8.5.0 ...
+~~~
+
+---
+
+## ٤. [[cat /etc/wsl.conf]]
+
+[[/etc]] الفولدر اللي فيه إعدادات النظام في لينكس، و [[wsl.conf]] ملف إعدادات التوزيعة دي بالذات (تفاصيله في درس [[.wslconfig و wsl.conf]]). في Docker مفيش الملف ده أصلًا، فالناتج كان:
+
+~~~text الناتج في Docker
+cat: /etc/wsl.conf: No such file or directory
+~~~
+
+وحسب docs مايكروسوفت، أوبونتو الجديد على WSL بييجي فيه:
+
+~~~text المتوقع في WSL (من الـ docs)
+[boot]
+systemd=true
+~~~
+
+يعني systemd (مدير الخدمات) شغال. ولو طلعلك [[No such file or directory]] في WSL، الملف لسه متعملش، وده مش غلط.
+
+---
+
+## ٥. [[exit]]
+
+بيقفل الـ shell. ممكن تديله رقم: [[exit 3]] معناها «خرجت بكود 3»، والصفر معناه نجاح وأي رقم تاني فشل (جربنا [[exit 3]] وطلع الكود [[3]]). ومن غير رقم بيخرج بكود آخر أمر.
+
+بعد [[exit]] الترمنال بيتقفل، بس WSL نفسه بيفضل شغال في الخلفية شوية (ثواني لحد دقيقة حسب الـ docs) وبعدين يقف لوحده لو مفيش حاجة شغالة.
+
+---
+
+## الخلاصة
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[whoami && pwd]] | أنا مين وفين ([[/home/you]] = [[~]]) |
+| [[sudo apt update && sudo apt upgrade -y]] | حدّث القايمة ثم البرامج |
+| [[sudo apt install -y build-essential curl git unzip]] | أدوات البناء والأساسيات |
+| [[cat /etc/wsl.conf]] | إعدادات التوزيعة |
+| [[exit]] | اخرج |
+
+- [[update]] بيحدث القايمة، و [[upgrade]] بيحدث البرامج. محتاج الاتنين.
+- باسورد [[sudo]] هو باسورد لينكس، مش ويندوز.`,
           lines: [
             "انت مين وفين (فولدرك في لينكس).",
             "حدّث النظام (زي السيرفر).",
@@ -170,6 +535,128 @@ wslpath -w ~/projects`,
             when: "نقل ملفات بين العالمين. فتح ناتج build في Explorer. مسار ويندوز في أمر لينكس.",
             mistakes: "تشتغل على المشروع من /mnt/c (العنصر الجاي). وتعدّل ملفات لينكس بأدوات ويندوز اللي بتغيّر line endings."
           },
+          teach: R`## الأول: طريقين، واحد من كل ناحية
+
+- من **لينكس**: ديسكات ويندوز ظاهرة تحت [[/mnt]]، فـ [[C:]] بقى [[/mnt/c]].
+- من **ويندوز**: لينكس ظاهر كفولدر شبكة اسمه [[\\wsl.localhost\Ubuntu-24.04]] (أو الاسم القديم [[\\wsl$\Ubuntu-24.04]]).
+
+الجهاز اللي جربنا عليه مفيهوش أوبونتو، فـ [[explorer.exe]] و [[wslpath]] كلامهم من docs مايكروسوفت. والباقي اتجرّب بأقرب طريقة حقيقية، ومكتوب تحت كل واحد اتعمل إزاي.
+
+---
+
+## ١. [[ls /mnt/c/Users]]
+
+### تحويل المسار في دماغك
+
+~~~text نفس الفولدر بطريقتين
+ويندوز:   C:\Users\you\Downloads
+لينكس:    /mnt/c/Users/you/Downloads
+~~~
+
+القاعدة: [[C:]] تبقى [[/mnt/c]] (حرف صغير)، و [[\]] تبقى [[/]]. و [[/mnt]] (من mount) الفولدر اللي لينكس بيركّب فيه الديسكات التانية.
+
+[[ls]] (list) بيعرض اللي جوه الفولدر. هتلاقي نفس الأسامي اللي ويندوز بيشوفها. على الجهاز ده [[Get-ChildItem C:\Users -Name]] في PowerShell طلع:
+
+~~~text الناتج (من غير فولدرات TEMP و UMFD اللي ويندوز بيعملها لوحده)
+7ossa
+Public
+~~~
+
+و [[ls /mnt/c/Users]] جوه WSL بيطلع نفس الأسامي دي.
+
+### الصلاحيات هناك شكلها غريب
+
+ملفات ويندوز معندهاش صلاحيات لينكس، فـ WSL بيعرضها كلها مفتوحة [[rwxrwxrwx]] (يعني 777). ركّبنا فولدر [[C:\Users\Public]] جوه container أوبونتو و [[ls -l]] طلع نفس الشكل:
+
+~~~text الناتج
+drwxrwxrwx 1 root root 4096 Feb 27  2026 AccountPictures
+drwxrwxrwx 1 root root 4096 Mar 21  2026 Adobe
+~~~
+
+ودي اللي بتخلي Git يفتكر إن الصلاحيات اتغيرت (درس [[Git و line endings]]).
+
+---
+
+## ٢. [[cd /mnt/c/Users/you/Downloads]]
+
+[[cd]] (change directory) ادخل الفولدر ده. غيّر [[you]] لاسم يوزر ويندوز بتاعك. ولو في المسار مسافة (زي [[Program Files]]) لازم علامات تنصيص: [[cd "/mnt/c/Program Files"]]، وإلا bash هيفتكرها كلمتين.
+
+---
+
+## ٣. [[explorer.exe .]]
+
+- [[explorer.exe]] هو Explorer بتاع ويندوز نفسه. أي برنامج [[.exe]] بيشتغل من bash (درس [[أوامر ويندوز من لينكس]]).
+- [[.]] (نقطة) معناها «الفولدر اللي أنا فيه دلوقتي».
+
+فالأمر بيفتح الفولدر الحالي في Explorer، حتى لو كان جوه لينكس زي [[~/projects]] (بيفتحه عن طريق [[\\wsl.localhost]]).
+
+---
+
+## ٤. [[wslpath -u 'C:\Users\you\Desktop']]
+
+[[wslpath]] أداة جاية مع WSL نفسه (مش حزمة بتتسطب)، عشان كده في container أوبونتو عادي طلع:
+
+~~~text الناتج في Docker
+bash: line 1: wslpath: command not found
+~~~
+
+جوه WSL، [[-u]] (من Unix) بتحوّل مسار ويندوز لمسار لينكس. وحسب الـ docs:
+
+~~~text الناتج (من الـ docs)
+/mnt/c/Users/you/Desktop
+~~~
+
+### ليه علامات التنصيص المفردة [[' ']]؟
+
+لأن [[\]] في bash رمز خاص (escape) وبياكل الحرف. جربناها في أوبونتو:
+
+~~~bash
+echo C:\Users\you\Desktop
+echo 'C:\Users\you\Desktop'
+~~~
+
+~~~text الناتج
+C:UsersyouDesktop
+C:\Users\you\Desktop
+~~~
+
+من غير تنصيص الـ [[\]] اختفت كلها. جوه [[' ']] bash مبيلمسش أي حاجة.
+
+---
+
+## ٥. [[wslpath -w ~/projects]]
+
+[[-w]] (من Windows) العكس: مسار لينكس لمسار ويندوز. حسب الـ docs:
+
+~~~text الناتج (من الـ docs)
+\\wsl.localhost\Ubuntu-24.04\home\you\projects
+~~~
+
+### نقرا المسار ده
+
+| الحتة | معناها |
+|---|---|
+| [[\\]] | بداية مسار شبكة (UNC) في ويندوز |
+| [[wsl.localhost]] | «السيرفر»: WSL على نفس الجهاز |
+| [[Ubuntu-24.04]] | اسم التوزيعة |
+| [[\home\you\projects]] | نفس [[/home/you/projects]] بس بـ [[\]] بدل [[/]] |
+
+ده نفس اللي بتكتبه في شريط عنوان Explorer عشان تشوف ملفات لينكس.
+
+---
+
+## الخلاصة
+
+| الأمر | الاتجاه |
+|---|---|
+| [[/mnt/c/...]] | ويندوز من جوه لينكس |
+| [[\\wsl.localhost\اسم\...]] | لينكس من جوه ويندوز |
+| [[explorer.exe .]] | افتح الفولدر الحالي في Explorer |
+| [[wslpath -u 'C:\...']] | ويندوز ← لينكس |
+| [[wslpath -w ~/...]] | لينكس ← ويندوز |
+
+- مسار ويندوز في bash يتحط بين [[' ']] عشان الـ [[\]].
+- الاتنين بيشوفوا بعض، بس الشغل اليومي يبقى في ناحية لينكس (الدرس الجاي).`,
           lines: [
             "يوزرز ويندوز من لينكس.",
             "Downloads بتاعك.",
@@ -205,6 +692,111 @@ df -h ~ /mnt/c`,
             when: "من أول مشروع. متبدأش على /mnt/c «مؤقتًا».",
             mistakes: "تنسخ node_modules مع المشروع. وتفتح المشروع من ويندوز بـ VS Code عادي (مش WSL extension) فالترمنال يبقى PowerShell."
           },
+          teach: R`## الأول: نفس المشروع، مكانين، سرعتين
+
+الفكرة كلها: الملف اللي جوه نظام ملفات لينكس لينكس بيقراه مباشرة. والملف اللي على [[/mnt/c]] كل فتحة ليه بتعدّي «حدود» بين لينكس وويندوز. ملف واحد مش هتحس، لكن [[node_modules]] فيه آلاف الملفات.
+
+### قسناها بجد
+
+مفيش أوبونتو WSL على الجهاز ده، فعملنا أقرب تجربة: Docker Desktop شغال على WSL 2، وفولدر من ديسك ويندوز اتركّب جوه container (بيعدّي نفس النوع من الحدود). مشروع فيه express و typescript و eslint (حوالي ٢٠٠٠ ملف في node_modules)، و [[npm ci]] مرتين في كل مكان والـ cache جاهز:
+
+~~~text الناتج (سطر real بس)
+== linux fs          real 0m1.310s
+== windows mount     real 0m7.893s
+== linux fs          real 0m1.583s
+== windows mount     real 0m7.924s
+~~~
+
+حوالي **٦ مرات** أبطأ. وقراءة حجم كل ملف (اللي [[git status]] بيعمل زيه) كانت أوضح: [[0.028s]] جوه لينكس قصاد [[4.101s]] على ديسك ويندوز. الرقم عندك هيختلف، بس الاتجاه هو هو.
+
+---
+
+## ١. [[mkdir -p ~/projects && cd ~/projects]]
+
+- [[mkdir]] (make directory) اعمل فولدر.
+- [[-p]] (parents): اعمل الفولدرات اللي في السكة لو مش موجودة، ومتشتكيش لو الفولدر موجود أصلًا. من غيرها التشغيل التاني هيطلع [[File exists]].
+- [[~/projects]] يعني [[/home/you/projects]].
+- [[&&]] لو اتعمل، ادخله بـ [[cd]].
+
+~~~text الناتج بعد pwd
+/home/you/projects
+~~~
+
+---
+
+## ٢. [[git clone git@github.com:USER/myapp.git]]
+
+[[git clone]] بينزّل نسخة من الريبو في فولدر جديد باسمه ([[myapp]]). والعنوان ده عنوان **SSH**:
+
+| الحتة | معناها |
+|---|---|
+| [[git@]] | اليوزر اللي بتدخل بيه على GitHub عن طريق SSH (دايمًا git) |
+| [[github.com:]] | السيرفر، والـ [[:]] بتفصله عن المسار |
+| [[USER/myapp.git]] | صاحب الريبو / اسم الريبو |
+
+محتاج مفتاح SSH جوه لينكس (درس [[أوامر ويندوز من لينكس]] بيوريك تنسخه لـ GitHub). وبيتعمل clone **هنا** جوه [[~/projects]]، مش في [[/mnt/c]].
+
+---
+
+## ٣. [[cd myapp && time npm ci]]
+
+- [[npm ci]] (clean install): بيمسح [[node_modules]] ويسطّب النسخ اللي في [[package-lock.json]] بالظبط. أنضف وأثبت من [[npm install]] للقياس.
+- [[time]] قبل أي أمر بيقيس هو خد قد إيه، وبيطبع ٣ أرقام في الآخر:
+
+~~~text شكل ناتج time (من التجربة فوق)
+real	0m12.031s
+user	0m1.968s
+sys	0m1.822s
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[real]] | الوقت اللي **انت** استنيته بساعة الحيطة. ده اللي تقارن بيه |
+| [[user]] | وقت المعالج في كود البرنامج نفسه |
+| [[sys]] | وقت المعالج في شغل الـ kernel (فتح ملفات، كتابة) |
+
+[[real]] أكبر بكتير من [[user]] + [[sys]] يعني البرنامج كان **مستني** (نت أو ديسك)، مش بيحسب. وده بالظبط اللي بيحصل على [[/mnt/c]].
+
+---
+
+## ٤. [[cp -r /mnt/c/Users/you/old-project ~/projects/]]
+
+- [[cp]] (copy) انسخ.
+- [[-r]] (recursive): انسخ الفولدر بكل اللي جواه. من غيرها [[cp]] بيرفض الفولدرات.
+- المصدر على ويندوز، والهدف [[~/projects/]] جوه لينكس.
+
+بعدها على طول: [[rm -rf node_modules && npm ci]] جوه المشروع الجديد، لأن الحزم اللي فيها binaries (زي esbuild و sharp) متبنية لويندوز ومش هتشتغل على لينكس.
+
+---
+
+## ٥. [[df -h ~ /mnt/c]]
+
+[[df]] (disk free) المساحة، و [[-h]] (human) بالجيجا. وبتديله مكانين فبيطبع سطر لكل واحد. ناتج حقيقي (container أوبونتو و [[C:]] متركّب فيه على [[/mnt/c]]):
+
+~~~text الناتج
+Filesystem      Size  Used Avail Use% Mounted on
+overlay        1007G   14G  942G   2% /
+C:\             302G  256G   47G  85% /mnt/c
+~~~
+
+- السطر التاني ديسك ويندوز الحقيقي: ٣٠٢ جيجا، فاضي ٤٧ ([[Get-PSDrive C]] في PowerShell قال نفس الرقم تقريبًا: [[Free (GB) 46.07]]).
+- السطر الأول ديسك لينكس الافتراضي: [[1007G]] يعني حوالي **١ تيرا**. ده **الحد الأقصى** اللي ملف الـ vhdx ممكن يكبر له، مش مساحة محجوزة فعلًا. هو بياخد من ديسك ويندوز على قد اللي بتكتبه.
+
+> يعني لينكس «شايف» ٩٤٢ جيجا فاضية، بس الحقيقة إن الحد هو الـ ٤٧ اللي فاضيين على [[C:]].
+
+---
+
+## الخلاصة
+
+| السطر | ليه |
+|---|---|
+| [[mkdir -p ~/projects && cd ~/projects]] | بيت المشاريع جوه لينكس |
+| [[git clone git@github.com:...]] | المشروع يتعمله clone هنا مباشرة |
+| [[time npm ci]] | قيس بنفسك ([[real]] هو المهم) |
+| [[cp -r /mnt/c/... ~/projects/]] | انقل القديم، وامسح [[node_modules]] وسطّب تاني |
+| [[df -h ~ /mnt/c]] | المساحة في الناحيتين |
+
+- الكود في [[~/projects]]، مش [[/mnt/c]]. الفرق في التجربة كان حوالي ٦ مرات.`,
           lines: [
             "فولدر المشاريع جوه لينكس.",
             "clone هنا.",
@@ -241,6 +833,96 @@ which code`,
             when: "كل مشروع. [[code .]] هي الطريقة الافتراضية لفتح أي حاجة.",
             mistakes: R`تفتح المشروع من File ثم Open Folder بمسار \\wsl$ من غير الـ extension. بطيء وملخبط. دايمًا من الترمنال أو من الأخضر تحت.`
           },
+          teach: R`## الأول: VS Code بيتقسم نصين
+
+الشباك (الواجهة) شغال على ويندوز، وفيه نص تاني اسمه **VS Code Server** بيتسطب جوه لينكس ويعمل كل الشغل: يقرا الملفات، ويشغّل الترمنال والـ extensions. الاتنين بيكلموا بعض. ده بيحصل بـ extension اسمها **WSL** من مايكروسوفت (الـ id بتاعها [[ms-vscode-remote.remote-wsl]]).
+
+الجهاز اللي جربنا عليه مفيهوش أوبونتو، فاللي جوه WSL من docs مايكروسوفت و VS Code. بس فتحنا سكربت [[code]] نفسه اللي WSL بيستخدمه، وده بيوضح الحكاية كلها.
+
+---
+
+## ١. [[code .]]
+
+- [[code]] أمر VS Code من الترمنال.
+- [[.]] الفولدر الحالي.
+
+أول مرة من جوه WSL بيطبع حسب الـ docs:
+
+~~~text الناتج (من الـ docs)
+Installing VS Code Server for x64...
+~~~
+
+وبعدين الشباك يفتح على ويندوز، وتحت شمال مكتوب [[WSL: Ubuntu-24.04]]. ده الدليل إنك «جوه».
+
+---
+
+## ٢. [[code ~/projects/myapp]]
+
+نفس الأمر بس بمسار بدل [[.]]: افتح الفولدر ده من أي مكان انت واقف فيه. [[~]] هنا فولدرك في لينكس.
+
+---
+
+## ٣. [[code --list-extensions | head]]
+
+- [[--list-extensions]] بيطبع أسامي الـ extensions المسطّبة، كل واحدة بالـ id بتاعها [[publisher.name]].
+- [[|]] (pipe) بيبعت الناتج للأمر اللي بعده بدل الشاشة.
+- [[head]] بيعرض أول ١٠ سطور بس.
+
+على ويندوز (PowerShell، VS Code 1.140.0) طلع أول ٥:
+
+~~~text الناتج على ويندوز
+21st-dev.21st-extension
+anthropic.claude-code
+bradlc.vscode-tailwindcss
+christian-kohler.npm-intellisense
+dalirnet.rtl-markdown
+~~~
+
+**والمهم:** نفس الأمر جوه WSL بيطبع extensions **تانية**: اللي متسطبة في VS Code Server جوه لينكس. عشان كده ESLint و Prettier بيتسطبوا مرة تانية في قسم «WSL: Ubuntu» في شاشة الـ Extensions.
+
+---
+
+## ٤. [[which code]]
+
+[[which]] بيقولك الأمر ده جاي منين (أول مكان في الـ PATH). جوه WSL، حسب الـ docs، الناتج مسار على ويندوز:
+
+~~~text الناتج (من الـ docs، المسار بيختلف حسب التسطيب)
+/mnt/c/Users/you/AppData/Local/Programs/Microsoft VS Code/bin/code
+~~~
+
+يعني [[code]] مش متسطب في لينكس. WSL بيضيف [[PATH]] بتاع ويندوز لـ PATH لينكس، فلينكس بيلاقي الملف ده. وده ملف حقيقي على ويندوز، أوله:
+
+~~~text bin/code (أول سطور منه)
+#!/usr/bin/env sh
+...
+SERVERDATAFOLDER=".vscode-server"
+...
+IN_WSL=false
+if [ -n "$WSL_DISTRO_NAME" ]; then
+	IN_WSL=true
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[#!/usr/bin/env sh]] | ده سكربت shell مش [[.exe]]، فلينكس يقدر يشغّله |
+| [[SERVERDATAFOLDER=".vscode-server"]] | VS Code Server بيتسطب في [[~/.vscode-server]] جوه لينكس |
+| [[$WSL_DISTRO_NAME]] | متغير WSL بيحطه في كل توزيعة. لو موجود يبقى احنا جوه WSL |
+
+فالسكربت يشوف إنه جوه WSL، يسطّب أو يشغّل الـ Server، ويفتح شباك ويندوز متوصل بيه.
+
+---
+
+## الخلاصة
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[code .]] | افتح الفولدر الحالي في VS Code «جوه WSL» |
+| [[code ~/projects/myapp]] | افتح فولدر معين |
+| [[code --list-extensions]] مع [[head]] | الـ extensions، وجوه WSL ليها قايمة منفصلة |
+| [[which code]] | [[code]] جاي من ويندوز عن طريق الـ PATH |
+
+- لو مش شايف [[WSL:]] تحت شمال، انت فاتح المشروع من ويندوز، والترمنال PowerShell.
+- افتح دايمًا بـ [[code .]] من bash.`,
           lines: [
             "افتح الفولدر الحالي في VS Code (جوه WSL).",
             "أو مسار معين.",
@@ -250,312 +932,6 @@ which code`,
           sol: R`أول مرة [[code .]] هيطبع [[Installing VS Code Server for x64...]] وبعدين يفتح VS Code على ويندوز. تحت شمال (Remote indicator) هتلاقي زرار أخضر أو أزرق مكتوب فيه [[WSL: Ubuntu-24.04]] (بالاسم اللي في [[wsl -l]]). ولو فتحت الترمنال بـ Ctrl+$__bt (زرار الـ backtick، اللي عليه حرف «ذ» في الكيبورد العربي) هتلاقيه bash والـ prompt بتاع لينكس، و [[which code]] جوه لينكس بيطبع مسار على [[/mnt/c/.../Microsoft VS Code/bin/code]].
 
 لو VS Code اتفتح من غير [[WSL:]] في الركن، يبقى امتداد WSL (بتاع مايكروسوفت) مش متسطب، أو فتحت الفولدر من ويندوز عن طريق [[\\wsl$]]، وساعتها الترمنال والـ extensions شغالين على ويندوز. ولو [[code]] قال command not found جوه لينكس، اقفل الترمنال وافتحه تاني، أو اتأكد إن VS Code متسطب بخيار «Add to PATH».`
-        }
-      ]
-    },
-    {
-      t: "الشغل اليومي وبين العالمين",
-      l: 2,
-      n: "ويندوز ولينكس بيكلموا بعض: أوامر وملفات وبورتات و Docker",
-      items: [
-        {
-          cmd: "أوامر ويندوز من لينكس",
-          title: ".exe بتشتغل من bash",
-          desc: "أي برنامج ويندوز بينفع يتنادي من bash بامتداده: [[notepad.exe]]، و [[clip.exe]] للكليب بورد، و [[powershell.exe -c]] لأمر PowerShell. والعكس: من PowerShell [[wsl ls -la]].",
-          example: R`cat ~/.ssh/id_ed25519.pub | clip.exe
-notepad.exe .env
-powershell.exe -c "Get-Date"
-cmd.exe /c "ipconfig | findstr IPv4"
-wslview https://github.com`,
-          try: "انسخ مفتاح SSH للكليب بورد بـ clip.exe والزقه في GitHub. ومن PowerShell جرّب [[wsl cat /etc/os-release]].",
-          deep: {
-            why: "مش كل حاجة ليها بديل لينكس: الكليب بورد، والمتصفح، وبرامج ويندوز. وأحيانًا محتاج أمر PowerShell من سكربت bash.",
-            how: R`WSL بيسمح بتشغيل أي ملف .exe من bash، وبيمرر له الـ stdin/stdout. فـ [[cat file | clip.exe]] بيحط محتوى الملف في كليب بورد ويندوز، و [[notepad.exe .env]] بيفتح الملف في Notepad (بيحوّل المسار لوحده).
-
-[[powershell.exe -c "أمر"]] بينفّذ PowerShell ويرجّع الناتج لـ bash، فتقدر تجيب معلومات ويندوز (IP الواي فاي، البطارية) في سكربت لينكس. و [[cmd.exe /c]] لأوامر CMD.
-
-[[wslview]] (من wslu، بتيجي مع أوبونتو) بيفتح URL أو ملف بالبرنامج الافتراضي في ويندوز، زي [[open]] على الماك. و [[wslu]] فيها أدوات تانية.
-
-العكس من PowerShell: [[wsl أمر]] بينفّذ في التوزيعة الافتراضية ويرجّع الناتج. [[wsl -d Ubuntu -u root]] بيوزر معين.
-
-الامتداد [[.exe]] لازم يتكتب. وملفات ويندوز لازم تبقى على مسار ويندوز بيوصله (البرنامج بتاع ويندوز مش شايف /home).`,
-            when: "نسخ للكليب بورد. فتح لينكات. سكربتات بتجمع الاتنين.",
-            mistakes: R`[[notepad.exe ~/file]] لملف جوه لينكس: Notepad بيفتحه عبر \\wsl$ بس لو حفظت ممكن يغيّر line endings. استخدم code أو nano.`
-          },
-          lines: [
-            "انسخ مفتاح SSH لكليب بورد ويندوز.",
-            "افتح ملف في Notepad.",
-            "أمر PowerShell من bash.",
-            "أمر CMD من bash.",
-            "افتح لينك في متصفح ويندوز."
-          ],
-          sol: R`[[cat ~/.ssh/id_ed25519.pub | clip.exe]] مش هيطبع حاجة، بس الكليب بورد بتاع ويندوز بقى فيه سطر يبدأ بـ [[ssh-ed25519 AAAA...]]. في GitHub: Settings ثم SSH and GPG keys ثم New SSH key، الزق واحفظ، و [[ssh -T git@github.com]] يرد [[Hi USER! You've successfully authenticated...]]. ومن PowerShell، [[wsl cat /etc/os-release]] يطبع بيانات أوبونتو جوه PowerShell.
-
-لو [[clip.exe]] قال command not found، يبقى [[appendWindowsPath=false]] في [[wsl.conf]] أو ويندوز مش في الـ PATH، استخدم [[/mnt/c/Windows/System32/clip.exe]]. وخد بالك إن clip.exe بيتعامل مع العربي غلط أحيانًا (بيطلع رموز) لأنه مش متوقع UTF-8، فللمفاتيح والإنجليزي بس. ولو [[wslview]] مش موجود سطّبه بـ [[sudo apt install wslu]].`
-        },
-        {
-          cmd: "إدارة WSL",
-          title: "shutdown و export و import",
-          desc: "WSL بيفضل شغال في الخلفية بعد ما تقفل الترمنال. [[--shutdown]] بيقفله كله (مفيد لتطبيق إعدادات أو تحرير رام). و [[--export]] بيحفظ التوزيعة كلها في ملف: باك أب كامل تنقله لجهاز تاني.",
-          example: R`wsl --shutdown
-wsl --terminate Ubuntu-24.04
-wsl --export Ubuntu-24.04 D:\backup\ubuntu.tar
-wsl --import Ubuntu-dev D:\wsl\dev D:\backup\ubuntu.tar
-wsl --unregister Ubuntu-dev`,
-          try: "اعمل export لتوزيعتك مرة في الشهر. لو WSL باظ، import في دقايق بدل ما تجهّز من الأول.",
-          deep: {
-            why: "WSL بياكل رام في الخلفية، والإعدادات مش بتتطبق غير بريستارت، وتوزيعة اتبوّظت محتاجة ترجع. والباك أب الكامل ملف واحد.",
-            how: R`[[--shutdown]] بيقفل كل التوزيعات والـ VM كلها. لازم بعد تعديل .wslconfig أو wsl.conf، وبيحرر الرام اللي WSL حاجزها. وبيقفل Docker لو جواه.
-
-[[--terminate اسم]] توزيعة واحدة.
-
-[[--export اسم ملف.tar]]: نظام الملفات كله في tar. ده باك أب كامل: الأدوات والإعدادات والمشاريع. و [[--import اسم_جديد مسار ملف.tar]] بيعمل توزيعة جديدة منه في المسار ده. تقدر تعمل نسخة من توزيعتك تجرّب فيها حاجة مدمرة وترميها بـ [[--unregister]].
-
-[[--unregister]] بيمسح التوزيعة نهائيًا بكل ملفاتها. مفيش سؤال.
-
-والـ import بيخلي اليوزر الافتراضي root، فبعده حط [[[user] default=اسمك]] في wsl.conf.
-
-الـ export مناسب كمان لنقل بيئتك لجهاز جديد: export، انسخ الملف، import.`,
-            when: "shutdown بعد أي تعديل إعدادات. export شهري وقبل أي تجربة كبيرة.",
-            mistakes: "--unregister على التوزيعة الغلط. مفيش رجوع غير من export."
-          },
-          lines: [
-            "اقفل كل حاجة (بعد تعديل إعدادات، أو لتحرير الرام).",
-            "اقفل توزيعة واحدة.",
-            "باك أب كامل للتوزيعة في ملف.",
-            "اعمل توزيعة جديدة من الباك أب في مسار معين.",
-            "امسح توزيعة نهائيًا."
-          ],
-          sol: R`[[wsl --export Ubuntu-24.04 D:\backup\ubuntu.tar]] هيكتب [[Export in progress, this may take a few minutes.]] وبعدين [[The operation completed successfully.]]، والملف حجمه بحجم اللي جوه التوزيعة (عادي يبقى كام GB). اتأكد إن فولدر [[D:\backup]] موجود قبلها، وإلا هيفشل. ولو [[wsl --import]] اشتغل، [[wsl -l -v]] هيوريك [[Ubuntu-dev]] جنب الأصلية.
-
-بعد import، التوزيعة الجديدة بتدخل كـ root افتراضيًا، لأن اليوزر الافتراضي مش جوه ملف الـ tar. حطه في [[/etc/wsl.conf]] (قسم user وتحته [[default=you]]) وبعدين [[wsl --terminate Ubuntu-dev]]. وخد بالك إن [[--unregister]] بيمسح التوزيعة والديسك بتاعها نهائيًا من غير سؤال.`
-        },
-        {
-          cmd: ".wslconfig و wsl.conf",
-          title: "الرام والمعالج و systemd",
-          desc: R`ملفين: [[%USERPROFILE%\.wslconfig]] على ويندوز لإعدادات WSL كله (رام، معالج، شبكة). و [[/etc/wsl.conf]] جوه كل توزيعة (اليوزر الافتراضي، systemd، الـ mounts). التغيير محتاج [[wsl --shutdown]].`,
-          example: R`[wsl2]
-memory=6GB
-processors=4
-swap=2GB
-networkingMode=mirrored
-
-# /etc/wsl.conf (inside Ubuntu)
-[boot]
-systemd=true
-[user]
-default=you
-[automount]
-options="metadata,umask=22,fmask=11"`,
-          try: "حط .wslconfig بنص رام جهازك، و [[wsl --shutdown]]، وافتح واعمل [[free -h]].",
-          flag: "script",
-          deep: {
-            why: "WSL افتراضيًا بياخد لحد ٥٠٪ من الرام، وممكن يبقى أكتر أو أقل من اللي تحتاجه. و systemd مش مفعّل في التوزيعات القديمة، فالخدمات مش بتشتغل.",
-            how: R`[[.wslconfig]] في فولدر يوزر ويندوز ([[C:\Users\اسمك\.wslconfig]]، تعمله لو مش موجود). قسم [[[wsl2]]]: [[memory]] أقصى رام، و [[processors]] عدد الأنوية، و [[swap]]. WSL بياخد اللي يحتاجه لحد الحد ده ويرجّعه (في النسخ الحديثة).
-
-[[networkingMode=mirrored]] (ويندوز 11): WSL بياخد نفس عناوين ويندوز، فـ localhost بيشتغل في الاتجاهين وبورتات لينكس بتظهر على الشبكة مباشرة، و VPN بيشتغل أحسن.
-
-[[/etc/wsl.conf]] جوه كل توزيعة: [[[boot] systemd=true]] لتشغيل systemd (لازم لـ Docker Engine وأي خدمة). [[[user] default]] اليوزر اللي بتدخل بيه. [[[automount] options]] بتتحكم في صلاحيات ملفات /mnt/c: [[metadata]] بتسمح بـ chmod عليهم، و [[umask]] الافتراضي.
-
-وفيه [[[interop]]] لتعطيل تشغيل .exe لو محتاج، و [[[network]]] لـ DNS.
-
-كل تعديل: [[wsl --shutdown]] وافتح تاني.`,
-            when: ".wslconfig على أي جهاز رامه ١٦ جيجا أو أقل. systemd=true دايمًا.",
-            mistakes: "memory كبيرة قوي فويندوز نفسه يتخنق. وتعدّل وتنسى shutdown."
-          },
-          lines: [
-            "قسم إعدادات WSL 2 (في .wslconfig على ويندوز).",
-            "أقصى رام.",
-            "عدد الأنوية.",
-            "swap.",
-            "لينكس ياخد نفس عناوين ويندوز (ويندوز 11).",
-            "قسم التشغيل (في wsl.conf جوه أوبونتو).",
-            "شغّل systemd.",
-            "قسم اليوزر.",
-            "اليوزر الافتراضي.",
-            "قسم الـ mounts.",
-            "صلاحيات لينكس على ملفات ويندوز."
-          ],
-          sol: R`بعد [[wsl --shutdown]] واستنى حوالي ٨ ثواني، افتح و [[free -h]]: لو جهازك 16GB وحطيت [[memory=8GB]]، هتلاقي [[total]] في سطر Mem حوالي [[7.7Gi]] أو [[7.8Gi]] (أقل شوية من الرقم لأن الكيرنل حاجز جزء). وسطر [[Swap]] هيبقى حوالي [[2.0Gi]] من [[swap=2GB]]. من غير الملف، الافتراضي نص رام ويندوز.
-
-لو الرقم متغيرش: الملف غالبًا اتحفظ [[.wslconfig.txt]] (فعّل «File name extensions» في Explorer تشوف)، أو مش في [[%UserProfile%]] يعني [[C:\Users\you]]، أو لسه فيه توزيعة شغالة (اتأكد بـ [[wsl --list --running]]). و [[networkingMode=mirrored]] محتاج ويندوز 11 22H2 أو أحدث، على ويندوز 10 بيتجاهله.`
-        },
-        {
-          cmd: "Docker مع WSL",
-          title: "Docker Desktop أو Engine جوه لينكس",
-          desc: "طريقتين: Docker Desktop على ويندوز مع تفعيل WSL integration (أسهل، وبيديك docker في bash)، أو تسطّب Docker Engine جوه أوبونتو مباشرة زي السيرفر (أخف ومجاني للشركات). في الحالتين الأوامر واحدة.",
-          example: R`docker version
-docker context ls
-sudo apt install -y docker.io docker-compose-v2
-sudo usermod -aG docker $USER
-sudo systemctl enable --now docker`,
-          try: "لو Docker Desktop: Settings ثم Resources ثم WSL integration وفعّل أوبونتو. لو Engine: لازم systemd=true في wsl.conf الأول.",
-          deep: {
-            why: "Docker على ويندوز بيشتغل جوه WSL 2 أصلًا. السؤال بس: تديره من Docker Desktop ولا تسطّبه جوه أوبونتو زي السيرفر.",
-            how: R`Docker Desktop: برنامج ويندوز بيعمل توزيعة WSL خاصة به (docker-desktop) وبيشغّل الـ daemon فيها. مع WSL integration مفعّلة، أمر [[docker]] جوه أوبونتو بيكلّم الـ daemon ده. سهل، وفيه واجهة، بس تقيل شوية ومدفوع للشركات الكبيرة.
-
-Docker Engine جوه أوبونتو: نفس تسطيب السيرفر ([[apt install docker.io]] أو السكربت الرسمي). محتاج [[systemd=true]] عشان الـ daemon يشتغل كخدمة. أخف، ومجاني، ونفس البيئة بالظبط زي الإنتاج. من ويندوز مش هتشوف الـ containers إلا من جوه WSL (أو بـ [[wsl docker ps]]).
-
-[[docker context ls]] بيوريك انت بتكلّم أنهي daemon.
-
-الـ volumes و bind mounts: مسارات لينكس سريعة، ومسارات /mnt/c بطيئة (نفس مشكلة المشروع).
-
-والبورتات: container على 3000 بيفتح من متصفح ويندوز على localhost:3000 في الحالتين.
-
-الاختيار: Desktop لو عايز واجهة وبساطة. Engine لو عايز نفس السيرفر وخفة.`,
-            when: "بعد ما تختار مكان المشروع. Engine جوه WSL هو الأقرب لتاب Docker والسيرفر.",
-            mistakes: "الاتنين مع بعض فتتلخبط الـ contexts. واحد بس. و Engine من غير systemd فالـ daemon مش بيقوم."
-          },
-          lines: [
-            "Docker شغال ومن أنهي مصدر.",
-            "الـ daemons المتاحة ومين المستخدم.",
-            "أو سطّب Engine جوه أوبونتو (محتاج systemd).",
-            "استخدمه من غير sudo (اخرج وادخل).",
-            "شغّله كخدمة."
-          ],
-          sol: R`مع Docker Desktop وبعد تفعيل Ubuntu في WSL integration: [[docker version]] جوه أوبونتو يطبع قسم [[Client]] وقسم [[Server: Docker Desktop ...]]، و [[docker context ls]] بيوريك context عليه نجمة. مع Engine جوه لينكس: [[Server: Docker Engine - Community]] أو نسخة أوبونتو، و [[systemctl status docker]] يقول [[active (running)]]. وفي الحالتين [[docker run hello-world]] يطبع [[Hello from Docker!]].
-
-أشهر رسالتين: [[permission denied while trying to connect to the Docker daemon socket]] يعني انت اتضفت لجروب docker بس الجلسة قديمة، اقفل الترمنال أو [[wsl --shutdown]] وافتح تاني. و [[Cannot connect to the Docker daemon at unix:///var/run/docker.sock]] يعني الـ daemon مش شغال: Docker Desktop مقفول، أو systemd مش مفعّل فـ [[systemctl]] نفسه بيقول [[System has not been booted with systemd]]. ومتشغّلش الاتنين (Desktop و Engine) مع بعض على نفس التوزيعة.`
-        },
-        {
-          cmd: "الشبكة والبورتات",
-          title: "localhost بيشتغل من الاتجاهين",
-          desc: "سيرفر على 3000 جوه WSL بيفتح من متصفح ويندوز على localhost:3000 لوحده. والعكس مع mirrored networking. بس من موبايل على نفس الواي فاي محتاج IP ويندوز والسيرفر يسمع على 0.0.0.0.",
-          example: R`ip addr show eth0 | grep inet
-cat /etc/resolv.conf
-powershell.exe -c "(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Wi-Fi).IPAddress"
-npm run dev -- --host 0.0.0.0
-curl -s localhost:3000 | head -3`,
-          try: "شغّل dev server بـ [[--host]] وافتحه من موبايلك على IP ويندوز. لو مفتحش، الفايروول بتاع ويندوز.",
-          deep: {
-            why: "السيرفر شغال جوه WSL وعايز تفتحه من متصفح ويندوز، ومن موبايلك، ومن Docker. كل حالة طريق مختلف.",
-            how: R`WSL 2 افتراضيًا (NAT mode) ليه شبكة داخلية و IP خاص ([[ip addr show eth0]])، بس ويندوز بيعمل forwarding لـ localhost لوحده: سيرفر على 3000 جوه لينكس بيفتح من ويندوز على localhost:3000. والعكس (خدمة على ويندوز من لينكس) بيحتاج IP ويندوز أو mirrored mode.
-
-من جهاز تاني على الشبكة (موبايل): الطلب بيوصل لـ IP ويندوز على الواي فاي (الأمر التالت بيجيبه من PowerShell). ويندوز مش بيوجّهه للينكس لوحده في NAT mode، محتاج [[netsh interface portproxy]] أو mirrored mode. ومع mirrored، لينكس بياخد IP ويندوز نفسه فبيشتغل مباشرة.
-
-والسيرفر لازم يسمع على [[0.0.0.0]] مش localhost بس، عشان كده [[--host 0.0.0.0]] لـ Vite. وفايروول ويندوز لازم يسمح بالبورت (بيسأل أول مرة).
-
-[[/etc/resolv.conf]] بيوريك DNS بتاع WSL، وده مصدر مشاكل مع VPN.
-
-Docker من جوه WSL بيشوف نفس localhost.`,
-            when: "اختبار من الموبايل. خدمة على ويندوز محتاجها من لينكس.",
-            mistakes: "dev server على localhost بس وتحاول من الموبايل. وتنسى فايروول ويندوز."
-          },
-          lines: [
-            "IP لينكس الداخلي.",
-            "DNS بتاع WSL.",
-            "IP ويندوز على الواي فاي (للموبايل).",
-            "اسمع على كل الكروت مش localhost بس.",
-            "جرّب من جوه."
-          ],
-          sol: R`Vite مع [[--host]] هيطبع سطرين: [[Local: http://localhost:5173/]] و [[Network: http://172.x.x.x:5173/]]. الـ IP ده (في NAT mode) عنوان لينكس الداخلي، والموبايل مش هيوصله. الموبايل لازم يفتح IP ويندوز على الواي فاي (زي [[192.168.1.20:5173]]) اللي بيطلع من الأمر التالت. في NAT mode ده مش هيشتغل لوحده: محتاج [[netsh interface portproxy]] من ويندوز يحوّل البورت للينكس. مع [[networkingMode=mirrored]] الـ Network URL هيبقى IP ويندوز نفسه.
-
-وبعد كده لو لسه مبيفتحش، الفايروول: جرّب من PowerShell كمدير قاعدة inbound للبورت ده، ومع mirrored لازم كمان تسمح في Hyper-V firewall بتاع WSL. وخد بالك إن [[curl localhost:3000]] من جوه لينكس بيشتغل حتى من غير [[--host]]، فده مش دليل إن الموبايل هيوصل. الدليل الحقيقي إن السطر [[Network:]] يظهر أصلًا.`
-        },
-        {
-          cmd: "Git و line endings",
-          title: "CRLF و LF وصلاحيات الملفات",
-          desc: "ويندوز بينهي السطر بـ CRLF ولينكس بـ LF. لو Git على ويندوز مضبوط بـ autocrlf، الملفات بتتغير كلها في diff. ومشروع على /mnt/c بيبان إن كل الملفات صلاحياتها اتغيرت. الحل إعدادات Git جوه WSL مستقلة.",
-          example: R`git config --global core.autocrlf input
-git config --global core.filemode false
-git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
-file src/index.js
-sed -i 's/\r$//' script.sh`,
-          try: "لو سكربت bash بيطلع [[bad interpreter: /bin/bash^M]] (أو في bash 5.1 وأحدث زي أوبونتو 24.04: [[cannot execute: required file not found]])، فيه CRLF. الأمر الأخير بيصلّحه.",
-          deep: {
-            why: "فتحت مشروع وكل الملفات modified في git status من غير ما تلمسها. أو سكربت bash بيطلع [[^M]]. الاتنين من الفرق بين ويندوز ولينكس في نهاية السطر والصلاحيات.",
-            how: R`ويندوز بيكتب نهاية السطر CRLF (حرفين)، ولينكس LF (حرف). Git على ويندوز غالبًا بـ [[core.autocrlf=true]]: بيحوّل لـ CRLF عند checkout ولـ LF عند commit. لو نفس المشروع اتفتح من WSL بإعداد مختلف، كل ملف يبان متعدل.
-
-الإعداد الصح في WSL: [[autocrlf=input]]: متحوّلش عند checkout (سيبها LF)، وحوّل أي CRLF لـ LF عند commit. والأفضل ملف [[.gitattributes]] في المشروع بـ [[* text=auto eol=lf]] يفرض ده على الكل.
-
-[[core.filemode=false]]: على /mnt/c الصلاحيات كلها 777، فـ Git بيشوف كل ملف اتغير mode بتاعه. الإعداد ده بيتجاهل الصلاحيات. (لو المشروع جوه لينكس مش محتاجه.)
-
-[[credential.helper]] بيخلي Git جوه WSL يستخدم Git Credential Manager بتاع ويندوز، فمش محتاج تسجّل GitHub تاني. أو استخدم SSH keys وخلاص.
-
-[[file]] بيقولك الملف فيه CRLF ولا LF. و [[sed 's/\r$//']] بيشيل الـ CR (أو [[dos2unix]]).`,
-            when: "أول ما تجهّز Git في WSL. ولما تشوف كل الملفات modified.",
-            mistakes: "تعمل commit لكل الملفات «المعدلة» فتبوّظ التاريخ لكل الفريق."
-          },
-          lines: [
-            "سيب LF عند checkout وحوّل CRLF لـ LF عند commit.",
-            "تجاهل تغيير الصلاحيات (لمشاريع على /mnt/c).",
-            "استخدم مدير credentials بتاع ويندوز.",
-            "الملف فيه CRLF ولا LF؟",
-            "شيل الـ CR من ملف."
-          ],
-          sol: R`[[file script.sh]] على الملف البايظ بيطبع [[Bourne-Again shell script, ASCII text executable, with CRLF line terminators]]. تشغيله بـ [[./script.sh]] بيطلع [[bad interpreter: /bin/bash^M]] في bash القديم، وفي bash 5.2 (أوبونتو 24.04) الرسالة بقت [[cannot execute: required file not found]]، ولو الـ shebang [[#!/usr/bin/env bash]] هيطلع [[/usr/bin/env: 'bash\r': No such file or directory]]. التلاتة نفس السبب: [[\r]] في آخر السطر الأول. جربنا الحالات دي كلها.
-
-بعد [[sed -i 's/\r$//' script.sh]]، [[file]] هيطبع نفس الكلام من غير [[with CRLF line terminators]] والسكربت يشتغل. عشان ميرجعش تاني: [[core.autocrlf input]] جوه WSL، وملف [[.gitattributes]] فيه [[*.sh text eol=lf]] في الريبو عشان يحمي كل الفريق، وفي VS Code غيّر CRLF لـ LF من شريط الحالة تحت يمين.`
-        },
-        {
-          cmd: "systemd والخدمات",
-          title: "Postgres و Redis جوه WSL",
-          desc: "مع [[systemd=true]] تقدر تشغّل خدمات زي السيرفر بالظبط: Postgres و Redis و Nginx بـ systemctl. من غيرها الخدمات بتتشغّل يدوي بـ service أو بتقفل مع الترمنال.",
-          example: R`systemctl is-system-running
-sudo apt install -y postgresql
-sudo systemctl enable --now postgresql
-sudo -u postgres psql -c "SELECT version();"
-sudo systemctl status postgresql --no-pager | head -5`,
-          try: "سطّب Postgres جوه WSL واتصل بيه من DBeaver على ويندوز على localhost:5432.",
-          deep: {
-            why: "Postgres للتطوير محتاج يشتغل كخدمة. من غير systemd، بتشغّله بإيدك كل مرة وبيقفل مع الترمنال.",
-            how: R`systemd هو اللي بيدير الخدمات في أوبونتو (تاب VPS). في WSL القديم مكانش موجود، والخدمات كانت بـ [[service اسم start]] يدوي. من 2022، [[systemd=true]] في wsl.conf بيشغّله، وأوبونتو 24.04 على WSL بييجي بيه مفعّل.
-
-[[systemctl is-system-running]] بيقولك running أو degraded (شغال بس خدمة فشلت) أو error لو systemd مش موجود.
-
-بعدها كل حاجة زي السيرفر: [[apt install postgresql]] وبيشتغل، و [[enable --now]] بيخليه يقوم مع WSL، و [[status]] و [[journalctl]].
-
-Postgres جوه WSL بيسمع على localhost، وويندوز بيشوف localhost:5432، فـ DBeaver على ويندوز بيتصل مباشرة. نفس الحاجة Redis و Nginx.
-
-الخدمات بتقوم لما WSL يقوم (أول ما تفتح ترمنال)، وبتقف مع [[wsl --shutdown]].
-
-وده بيخليك تتمرن على كل تاب VPS محليًا: Nginx و certbot (مش هيشتغل من غير دومين) و ufw و fail2ban.`,
-            when: "قاعدة بيانات و Redis للتطوير. وتمرين على إدارة السيرفر.",
-            mistakes: "Postgres جوه WSL و Postgres على ويندوز الاتنين على 5432 فيتخانقوا. واحد بس."
-          },
-          lines: ["systemd شغال؟", "سطّب Postgres.", "شغّله دلوقتي ومع كل مرة.", "اتأكد.", "الحالة."],
-          sol: R`[[systemctl is-system-running]] يطبع [[running]] أو [[degraded]] (يعني فيه خدمة واحدة فشلت، وده شائع وعادي في WSL). لو طبع [[offline]] أو [[System has not been booted with systemd]]، فعّل [[systemd=true]] الأول. [[SELECT version();]] يطبع سطر زي [[PostgreSQL 16.x (Ubuntu 16.x-...) on x86_64-pc-linux-gnu]] على أوبونتو 24.04.
-
-في DBeaver: Host [[localhost]] و Port [[5432]] و User [[postgres]]. أول محاولة غالبًا هتفشل بـ [[password authentication failed]]، لأن [[sudo -u postgres psql]] بيدخل بـ peer auth من غير باسورد، بس الاتصال من DBeaver بيجي على TCP ومحتاج باسورد. حطه بـ [[sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'dev'"]]. ولو [[Connection refused]] اتأكد إن مفيش Postgres تاني على ويندوز نفسه ماسك 5432.`
-        },
-        {
-          cmd: "مشاكل شائعة",
-          title: "DNS والوقت والديسك",
-          desc: R`تلات مشاكل بتقابل أغلب الناس في WSL. الأولى DNS: [[apt update]] بيفشل بـ [[Temporary failure resolving]] (خصوصًا مع VPN)، لأن WSL بيكتب [[/etc/resolv.conf]] لوحده. أول سطور المثال بتضيف لـ [[/etc/wsl.conf]] قسم [[[network]]] فيه [[generateResolvConf=false]] (بطّل تكتب الملف)، و [[tee -a]] بتضيف للملف بـ sudo، و [[<<'EOF']] بتكتب السطور اللي بعدها لحد EOF. بعدين تمسح الملف القديم وتكتب DNS عام زي 1.1.1.1. جرّب [[wsl --update]] الأول، لأن النسخ الحديثة حلت معظم ده.
-
-التانية الساعة: بعد sleep ساعة WSL ممكن تتأخر، فالتوكنات والشهادات تبان منتهية. [[hwclock -s]] بيظبطها من ساعة ويندوز. التالتة الديسك: لينكس عايش في ملف [[ext4.vhdx]] بيكبر ومش بيصغر لما تمسح. [[wsl --shutdown]] بيقفل WSL، وبعدين [[Optimize-VHD]] من PowerShell كمدير بيضغط الملف (محتاج Hyper-V، يعني ويندوز Pro)، والمسار بيختلف حسب توزيعتك.`,
-          example: R`sudo tee -a /etc/wsl.conf > /dev/null <<'EOF'
-[network]
-generateResolvConf=false
-EOF
-sudo rm /etc/resolv.conf && echo "nameserver 1.1.1.1" | sudo tee /etc/resolv.conf
-sudo hwclock -s
-wsl --shutdown
-Optimize-VHD -Path "$env:LOCALAPPDATA\Packages\CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc\LocalState\ext4.vhdx" -Mode Full`,
-          try: "لو [[apt update]] بيفشل بـ Temporary failure resolving، الحل الأول. لو الوقت غلط، [[hwclock -s]]. الأمر الأخير من PowerShell كمدير بعد shutdown.",
-          deep: {
-            why: "تلات مشاكل بتيجي لمعظم الناس بعد شهر: [[apt]] بيفشل فجأة، والوقت غلط، والديسك على ويندوز بيقل من غير سبب واضح.",
-            how: R`DNS: WSL بيولّد [[/etc/resolv.conf]] لوحده يشاور على ويندوز كـ DNS. مع VPN أو بعض الشبكات ده بيبوظ، فتطلع «Temporary failure in name resolution». الحل: [[generateResolvConf=false]] في wsl.conf، وبعدين تكتب الملف بإيدك بـ DNS عام. الـ [[tee]] مع heredoc عشان الملف محتاج sudo. وفي WSL الحديث [[dnsTunneling=true]] في .wslconfig مفعّل افتراضيًا وبيحل معظم مشاكل الـ VPN، فجرّب [[wsl --update]] الأول قبل ما تلمس resolv.conf. و mirrored networking بيساعد كمان.
-
-الوقت: بعد sleep/hibernate ساعة WSL ممكن تتأخر بالساعات، فـ JWT ينتهي و apt يشتكي من شهادات. [[hwclock -s]] بيمزامن من ساعة ويندوز. الحل الدائم [[wsl --shutdown]] أو تحديث WSL.
-
-الديسك: لينكس عايش في ملف [[ext4.vhdx]] بيكبر لما تكتب ومش بيصغر لما تمسح (زي كل virtual disks). بعد مسح node_modules كتير و docker prune، الملف لسه ٤٠ جيجا. [[Optimize-VHD]] من PowerShell كمدير (بعد shutdown) بيضغطه. المسار بيختلف حسب التوزيعة: هاته من الريجستري: [[(Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss | ? { $_.GetValue("DistributionName") -eq 'Ubuntu-24.04' }).GetValue("BasePath")]] (التسطيبات الجديدة في [[%LOCALAPPDATA%\wsl]] مش Packages). و Optimize-VHD محتاج Hyper-V (ويندوز Pro بس)، وعلى Home استخدم diskpart بـ compact vdisk. لو Optimize-VHD مش موجود (Home edition)، بديله [[diskpart]] بأوامر compact vdisk.`,
-            when: "DNS أول ما apt يفشل مع VPN. الوقت بعد sleep. الديسك كل كام شهر.",
-            mistakes: "تعدّل resolv.conf من غير generateResolvConf=false فيتكتب فوقه في أول ريستارت. و Optimize-VHD و WSL شغال."
-          },
-          lines: [
-            "ضيف لآخر wsl.conf (بـ sudo، و -a عشان متمسحش systemd واليوزر): متولّدش resolv.conf لوحدك.",
-            "القسم.",
-            "الإعداد.",
-            "نهاية الكتابة.",
-            "اكتب DNS عام بإيدك.",
-            "زامن الساعة من ويندوز.",
-            "اقفل WSL (قبل ضغط الديسك).",
-            "من PowerShell كمدير: اضغط ملف الديسك بتاع أوبونتو."
-          ],
-          sol: R`بعد إصلاح DNS، [[apt update]] هيكمّل بسطور [[Hit:]] و [[Get:]] بدل [[Temporary failure resolving 'archive.ubuntu.com']]. اتأكد بـ [[cat /etc/resolv.conf]]: لازم يبقى [[nameserver 1.1.1.1]] ويفضل كده بعد [[wsl --shutdown]]. لو رجع اتغير، يبقى [[generateResolvConf=false]] مش متحفظ صح في [[/etc/wsl.conf]]. بس قبل كل ده جرّب [[wsl --update]]، لأن dnsTunneling في النسخ الحديثة بيحل معظمها.
-
-الوقت: قارن [[date]] بساعة ويندوز. [[sudo hwclock -s]] في نسخ WSL كتير بيفشل بـ [[Cannot access the Hardware Clock]] لأن مفيش RTC حقيقي، وساعتها [[wsl --shutdown]] من PowerShell هو الحل المضمون. و [[Optimize-VHD]] محتاج Hyper-V PowerShell module (ويندوز Pro أو Enterprise)، وعلى Home هيقول الأمر مش معروف، استخدم [[diskpart]] بـ [[compact vdisk]]. ومسار ملف [[ext4.vhdx]] مش ثابت: التوزيعات اللي اتسطبت بـ [[wsl --install]] الحديث ممكن تبقى في [[%LOCALAPPDATA%\wsl\{GUID}]]، والمسار الصح في الريجستري [[HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss]] تحت [[BasePath]].`
         }
       ]
     }

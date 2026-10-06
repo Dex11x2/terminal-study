@@ -1239,20 +1239,300 @@
   "date": "2026-10-06",
   "on": "win11 cmd"
  },
+ "os|%localappdata%": {
+  "hash": "4bdefc3b131d",
+  "date": "2026-10-06",
+  "on": "win11 cmd + pwsh 7 + ps 5.1"
+ },
+ "os|%temp%": {
+  "hash": "3ec67ae4d303",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 + cmd; docs: cleanup"
+ },
+ "os|Activity Monitor": {
+  "hash": "976e8c479c99",
+  "date": "2026-10-06",
+  "on": "docs: macOS only"
+ },
+ "os|Alt+F2": {
+  "hash": "2f9ba0627b31",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (GLib.shell_parse_argv); docs: gnome-shell 46 source"
+ },
+ "os|Alt+Shift+Plus": {
+  "hash": "3db0e534229f",
+  "date": "2026-10-06",
+  "on": "win11 WT 1.24 defaults/settings read; docs: panes"
+ },
+ "os|ApplePressAndHoldEnabled": {
+  "hash": "7197182709bf",
+  "date": "2026-10-06",
+  "on": "docs: macOS only"
+ },
+ "os|Cmd+Option+C": {
+  "hash": "f867fe0888c9",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Cmd+Option+Esc": {
+  "hash": "1a689880815c",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Cmd+Shift+.": {
+  "hash": "df1bebd4f905",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Cmd+Shift+4": {
+  "hash": "60f0c800ed72",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Cmd+Shift+G": {
+  "hash": "61a6e1904144",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Cmd+Space": {
+  "hash": "fd72d13de114",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Cmd+Tab": {
+  "hash": "bb0b3299a5f7",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Console": {
+  "hash": "a3c07a5b5ae0",
+  "date": "2026-10-06",
+  "on": "docs: macOS only"
+ },
+ "os|Ctrl+Alt+T": {
+  "hash": "150fefb1e1c5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker gsettings get; docs: GNOME GUI"
+ },
+ "os|Ctrl+H": {
+  "hash": "ecd8d15eaad8",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker gsettings get; docs: GNOME GUI"
+ },
+ "os|Ctrl+Shift+C": {
+  "hash": "622fae1baf79",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Ctrl+Shift+Esc": {
+  "hash": "b900560dbc18",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Ctrl+Up": {
+  "hash": "3413b538317b",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Custom Shortcuts": {
+  "hash": "3e965284c124",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: GUI"
+ },
+ "os|Dev Drive": {
+  "hash": "243b19eae573",
+  "date": "2026-10-06",
+  "on": "win11 fsutil devdrv query; docs: creation"
+ },
+ "os|File name extensions": {
+  "hash": "6ab3bdcdd9c2",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Full Disk Access": {
+  "hash": "0db668c5208f",
+  "date": "2026-10-06",
+  "on": "docs: macOS only"
+ },
+ "os|Keychain Access": {
+  "hash": "e663cc9b49b0",
+  "date": "2026-10-06",
+  "on": "docs: macOS only"
+ },
  "os|Nerd Font": {
-  "hash": "2c0e0cceda87",
-  "date": "2026-10-02",
-  "on": "windows 11 (read-only), docs: Windows Terminal"
+  "hash": "1d5aab339afd",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 + ps 5.1 glyph code points; docs: install"
+ },
+ "os|New Terminal at Folder": {
+  "hash": "7c9a57093a08",
+  "date": "2026-10-06",
+  "on": "docs: macOS only"
+ },
+ "os|Option+Left": {
+  "hash": "6ccbe81a1522",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac) + iTerm2"
+ },
+ "os|PowerToys": {
+  "hash": "ab6f26b55bbf",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 winget show; docs: tools"
+ },
+ "os|PrtSc": {
+  "hash": "3afc1bd52cf9",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker gsettings get; docs: GNOME GUI"
+ },
+ "os|Space": {
+  "hash": "66669555c0ce",
+  "date": "2026-10-06",
+  "on": "docs: Apple (no Mac)"
+ },
+ "os|Super": {
+  "hash": "a19efe8bf797",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker gsettings get; docs: GNOME GUI"
+ },
+ "os|Super+Left": {
+  "hash": "751bf435ffb5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker gsettings get; docs: GNOME GUI"
+ },
+ "os|Super+PageDown": {
+  "hash": "bfff72f64702",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker gsettings get; docs: GNOME GUI"
+ },
+ "os|Win": {
+  "hash": "b29627544540",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Win+R": {
+  "hash": "0de190928414",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Win+Shift+S": {
+  "hash": "bb4a20193062",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Win+Tab": {
+  "hash": "9ccd47b65cc3",
+  "date": "2026-10-06",
+  "on": "docs: Microsoft"
+ },
+ "os|Win+V": {
+  "hash": "7d9e36873b1a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Win+X": {
+  "hash": "ee0fcb30cfea",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|Win+Z": {
+  "hash": "a87b23c82ec5",
+  "date": "2026-10-06",
+  "on": "docs: Microsoft"
  },
  "os|Win+`": {
-  "hash": "5a6de46fcdd9",
-  "date": "2026-10-02",
-  "on": "windows 11 (read-only), docs: Windows Terminal"
+  "hash": "d6045ff850d6",
+  "date": "2026-10-06",
+  "on": "win11 WT 1.24 defaults read-only + node; docs: key press"
  },
  "os|Windows Terminal settings.json": {
-  "hash": "22844aa7ce95",
-  "date": "2026-10-02",
-  "on": "windows 11 (read-only), docs: Windows Terminal"
+  "hash": "1ef1e8481567",
+  "date": "2026-10-06",
+  "on": "win11 WT 1.24 settings/defaults read-only + node JSON.parse"
+ },
+ "os|devmgmt.msc": {
+  "hash": "99eaf47af304",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|eventvwr.msc": {
+  "hash": "fc5110b5c510",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|gnome-control-center": {
+  "hash": "95999d8842e3",
+  "date": "2026-10-06",
+  "on": "docs: GUI only"
+ },
+ "os|gnome-disks": {
+  "hash": "d3f0ed9d7589",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (lsblk); docs: GUI"
+ },
+ "os|gnome-system-monitor": {
+  "hash": "dd19c84b3ee5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (exit codes); docs: GUI"
+ },
+ "os|gsettings": {
+  "hash": "469495268f65",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker dbus-run-session + schemas"
+ },
+ "os|ms-settings:": {
+  "hash": "2410bd672c17",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|ms-settings:developers": {
+  "hash": "3013658b44c0",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 + cmd mklink; docs: settings page"
+ },
+ "os|optionalfeatures": {
+  "hash": "ed8e3fc63ad6",
+  "date": "2026-10-06",
+  "on": "win11 Home pwsh 7; docs: window"
+ },
+ "os|regedit": {
+  "hash": "8b02970ae627",
+  "date": "2026-10-06",
+  "on": "win11 reg query; docs: editing"
+ },
+ "os|resmon": {
+  "hash": "d83ccdda69b3",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|rundll32 sysdm.cpl,EditEnvironmentVariables": {
+  "hash": "557be4214ded",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + pwsh 7; docs: window"
+ },
+ "os|services.msc": {
+  "hash": "78a32829e58d",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 + cmd; docs: GUI"
+ },
+ "os|shell:startup": {
+  "hash": "7c60dadb255a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|wf.msc": {
+  "hash": "cf052c909cf8",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|wt -d .": {
+  "hash": "4853d3656a33",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7 read-only; docs: GUI"
+ },
+ "os|xdg-open .": {
+  "hash": "256487a2f77d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker xdg-open/xdg-mime; docs: GUI"
  },
  "ps|$LASTEXITCODE": {
   "hash": "5f92172f28f3",
@@ -2433,6 +2713,76 @@
   "hash": "a2b52e665efe",
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
+ },
+ "wsl|.wslconfig و wsl.conf": {
+  "hash": "f7aad7bdd019",
+  "date": "2026-10-06",
+  "on": "docker on WSL2 defaults; docs: editing files"
+ },
+ "wsl|Docker مع WSL": {
+  "hash": "fd424c49a36f",
+  "date": "2026-10-06",
+  "on": "win11 docker version/context + ubuntu-24.04 docker; docs: systemctl"
+ },
+ "wsl|Git و line endings": {
+  "hash": "216ab2fc5e56",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker + win11 git config"
+ },
+ "wsl|VS Code": {
+  "hash": "70d792f565b1",
+  "date": "2026-10-06",
+  "on": "win11 code --list-extensions; docs: code . in WSL"
+ },
+ "wsl|systemd والخدمات": {
+  "hash": "ef0e963e82dd",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker postgresql 16; docs: systemctl enable"
+ },
+ "wsl|wsl --install": {
+  "hash": "01c10fb9fff8",
+  "date": "2026-10-06",
+  "on": "win11 Home wsl --version/--list --online; ubuntu-24.04 docker; docs: install"
+ },
+ "wsl|wsl -l -v": {
+  "hash": "09e47aec2ab8",
+  "date": "2026-10-06",
+  "on": "win11 Home read-only wsl commands; docs: set-default/set-version"
+ },
+ "wsl|أوامر ويندوز من لينكس": {
+  "hash": "83c50b66eafa",
+  "date": "2026-10-06",
+  "on": "win11 from Git Bash + ubuntu-24.04 docker; docs: clip.exe, notepad, wslview"
+ },
+ "wsl|أول دخول": {
+  "hash": "604eede731e5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: wsl.conf in WSL"
+ },
+ "wsl|إدارة WSL": {
+  "hash": "c75837af65ca",
+  "date": "2026-10-06",
+  "on": "docs: all five commands (wsl --help run)"
+ },
+ "wsl|الشبكة والبورتات": {
+  "hash": "a69ccbf3438f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 + node:22-slim docker, win11 pwsh; docs: portproxy, mirrored"
+ },
+ "wsl|فين تحط المشروع": {
+  "hash": "1a04415957c9",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim npm ci timing + ubuntu-24.04; docs: git clone ssh"
+ },
+ "wsl|مشاكل شائعة": {
+  "hash": "143de88bdc64",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker + win11 Home pwsh; docs: resolv.conf, shutdown, diskpart"
+ },
+ "wsl|ملفات ويندوز من لينكس": {
+  "hash": "fa397c3fdfbc",
+  "date": "2026-10-06",
+  "on": "win11 pwsh + ubuntu-24.04 docker bind mount; docs: explorer.exe, wslpath"
  },
  "zsh|*(.om[1,5])": {
   "hash": "0ab454528669",
