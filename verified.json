@@ -1714,6 +1714,451 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 (Git 2.43)"
  },
+ "nginx|Caddy": {
+  "hash": "fc9f85060328",
+  "date": "2026-10-06",
+  "on": "docker caddy:2.8 local_certs + whoami; docs: real issuance"
+ },
+ "nginx|HTTP/2 و HTTP/3": {
+  "hash": "fd7acaee2772",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31 self-signed + docker ubuntu-24.04 nginx 1.24; docs: h3 client, ufw"
+ },
+ "nginx|IP الزائر ورا Cloudflare": {
+  "hash": "bd11b11627e6",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nginx 1.24 (real Cloudflare list)"
+ },
+ "nginx|SPA": {
+  "hash": "26a14066cc55",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + nginx 1.24.0 + node backend"
+ },
+ "nginx|WebSockets": {
+  "hash": "8486bf97e4fe",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31 + whoami; docs: wscat Socket.io"
+ },
+ "nginx|acme-challenge": {
+  "hash": "af7a1122d4c8",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31; docs: real Let's Encrypt"
+ },
+ "nginx|basic auth": {
+  "hash": "50e145207778",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nginx 1.24 + apache2-utils"
+ },
+ "nginx|blue-green": {
+  "hash": "81f128f9baa0",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31 + 2x whoami; docs: systemctl reload"
+ },
+ "nginx|gzip": {
+  "hash": "351fbdb145a6",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6"
+ },
+ "nginx|htpasswd -B و $remote_user": {
+  "hash": "37213e1e1311",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nginx 1.24"
+ },
+ "nginx|location ^~ /downloads/": {
+  "hash": "6b89b4f7fedc",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6"
+ },
+ "nginx|location matching": {
+  "hash": "7d225ad9dbb6",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6 + node backend"
+ },
+ "nginx|nginx -t في container مؤقت": {
+  "hash": "370feb69aff4",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31"
+ },
+ "nginx|proxy_buffer_size": {
+  "hash": "a7ab59383380",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6 + node backend"
+ },
+ "nginx|rate limiting": {
+  "hash": "8edd91564f5b",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6 + node backend"
+ },
+ "nginx|redirects": {
+  "hash": "bad7a36ae7e0",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6 + self-signed cert"
+ },
+ "nginx|resolver 127.0.0.11": {
+  "hash": "cdf422b2639c",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31 x3 on user network"
+ },
+ "nginx|reverse proxy بعمق": {
+  "hash": "4bed6800b094",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + nginx 1.24.0 + node/Express backends"
+ },
+ "nginx|security headers": {
+  "hash": "9595540b4825",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6 + docker ubuntu-24.04 + nginx 1.24.0"
+ },
+ "nginx|الأوامر": {
+  "hash": "afbe08c0bf4e",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + nginx 1.24.0 + docker nginx:alpine 1.31.6"
+ },
+ "nginx|الملفات": {
+  "hash": "8868eb658e7b",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + nginx 1.24.0 (nginx -s reload instead of systemctl)"
+ },
+ "nginx|بلوك managed": {
+  "hash": "be63fe419e8e",
+  "date": "2026-10-06",
+  "on": "Git Bash + docker nginx:alpine 1.31 + privileged ubuntu inode demo"
+ },
+ "nginx|تشخيص Nginx": {
+  "hash": "b5bf3d6d1860",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nginx 1.24 + sudo"
+ },
+ "nginx|حدود و timeouts": {
+  "hash": "579c92a80bcd",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6; docs: slowloris timeouts"
+ },
+ "nginx|كاش الملفات الثابتة": {
+  "hash": "cca1e42ad024",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6"
+ },
+ "nginx|كذا موقع": {
+  "hash": "2bb3e940ba27",
+  "date": "2026-10-06",
+  "on": "docker nginx:alpine 1.31.6 + self-signed cert + docker ubuntu-24.04 + nginx 1.24.0"
+ },
+ "nginx|لوجات مخصصة": {
+  "hash": "06a32e35b477",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nginx 1.24 + jq"
+ },
+ "nginx|موقع static": {
+  "hash": "304a1c778f65",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + nginx 1.24.0"
+ },
+ "node|--host و Network URL": {
+  "hash": "3b4822d8c712",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) Vite 8.3; docs: Next -H, firewall rule"
+ },
+ "node|.env و متغيرات البيئة": {
+  "hash": "604bdaa4ab4d",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+ },
+ "node|.npmrc": {
+  "hash": "73e5d75b6105",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11"
+ },
+ "node|Buffer و encoding": {
+  "hash": "3a4ece1cc2f5",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|ERESOLVE و legacy-peer-deps": {
+  "hash": "34c71f7c2627",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17)"
+ },
+ "node|EventEmitter في Node": {
+  "hash": "f3dd897b68a6",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|NODE_ENV=production": {
+  "hash": "5af9310ce0a1",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim Express 5.2.1 + win11 pwsh 7 / ps 5.1 / cmd"
+ },
+ "node|Next.js CLI": {
+  "hash": "520763fd08a6",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim, Next.js 16.3.8"
+ },
+ "node|Next.js standalone": {
+  "hash": "b33a6e1bf374",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim, Next.js 16.3.8 + win11 pwsh"
+ },
+ "node|SIGINT و SIGTERM": {
+  "hash": "387c5011b6b3",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 process.kill; docs: Ctrl+C on Windows"
+ },
+ "node|^ و ~ في النسخ": {
+  "hash": "b66673bbc062",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17)"
+ },
+ "node|cloudflared": {
+  "hash": "400e5807d621",
+  "date": "2026-10-06",
+  "on": "docs: all (not run)"
+ },
+ "node|command injection": {
+  "hash": "2dbada6b71c8",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 cmd.exe exec"
+ },
+ "node|concurrently و wait-on": {
+  "hash": "dbe9bcb1b4e1",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) Vite 8.3"
+ },
+ "node|execFile و spawn": {
+  "hash": "59840fc5f64f",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|exit codes و process.exitCode": {
+  "hash": "8b67b5b78be8",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11"
+ },
+ "node|fs.watch": {
+  "hash": "9184b6a43618",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|fs/promises": {
+  "hash": "bcdd0e5809bc",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|ls / why / dedupe": {
+  "hash": "3a00b7e21b2a",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17)"
+ },
+ "node|migrate deploy قبل السيرفر": {
+  "hash": "32f6575b763e",
+  "date": "2026-10-06",
+  "on": "docker compose postgres:16 + node:22-slim, Prisma 7.10.0"
+ },
+ "node|ngrok": {
+  "hash": "1d93b25b497e",
+  "date": "2026-10-06",
+  "on": "docs: ngrok; jq/PowerShell lines on docs-shaped JSON"
+ },
+ "node|node --run": {
+  "hash": "a6ab339b5986",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17)"
+ },
+ "node|node --test": {
+  "hash": "574f458e0a8c",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+ },
+ "node|node --watch --env-file": {
+  "hash": "20f6d89029a7",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) tsx 4.23, TS 7.0; docs: nodemon"
+ },
+ "node|node -v": {
+  "hash": "eb93a3ccfc72",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) pwsh 7 + ps 5.1 + docker node:22-slim; docs: Mac"
+ },
+ "node|node مباشرة": {
+  "hash": "1546fd617f31",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) Git Bash + pwsh 7 + ps 5.1"
+ },
+ "node|node_modules بايظ": {
+  "hash": "738ea8851c92",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nvm Node 22/24; docs: NODE_MODULE_VERSION error"
+ },
+ "node|npm install": {
+  "hash": "739e24863bc4",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim; docs: -g"
+ },
+ "node|npm publish": {
+  "hash": "4ba0809092c2",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim npm 10.9 dry-run; docs: npm login, real publish"
+ },
+ "node|npm scripts": {
+  "hash": "6b11fad0678a",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + cmd"
+ },
+ "node|npm start ولا npm run dev": {
+  "hash": "fae6a2c5f9fe",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) Vite 8.3; docs: Next.js"
+ },
+ "node|npx": {
+  "hash": "7263b1f2bec0",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim; docs: create-next-app"
+ },
+ "node|npx tsx": {
+  "hash": "cf8794ea5761",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim; docs: compose exec"
+ },
+ "node|nvm": {
+  "hash": "3538da9a4fef",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nvm 0.40.3; docs: nvm-windows, Mac"
+ },
+ "node|outdated / update / audit": {
+  "hash": "aa8a74a0b83b",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17)"
+ },
+ "node|package-lock و npm ci": {
+  "hash": "55cbd366179e",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17)"
+ },
+ "node|package.json": {
+  "hash": "2a729e97a9a7",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) Git Bash + pwsh 7 + ps 5.1"
+ },
+ "node|path و import.meta.dirname": {
+  "hash": "04d005127e00",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|pnpm --filter": {
+  "hash": "55e61aab3913",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim pnpm 10.33.2; docs: origin/main form"
+ },
+ "node|pnpm -r و --parallel": {
+  "hash": "ddff806476ba",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim pnpm 10.33.2; docs: --stream"
+ },
+ "node|pnpm approve-builds": {
+  "hash": "886d1e8f0fd0",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim pnpm 10.33.2; docs: pnpm 11"
+ },
+ "node|pnpm و yarn": {
+  "hash": "c759b5451f5a",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim corepack; docs: yarn"
+ },
+ "node|pnpm-workspace.yaml و workspace:*": {
+  "hash": "a4c6f88a9520",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim pnpm 10.33.2 + win11 junction check"
+ },
+ "node|prisma db push": {
+  "hash": "6323ab969d89",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + postgres:16, Prisma 7.10.0"
+ },
+ "node|prisma db seed و studio": {
+  "hash": "0b2bdccb5eee",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + postgres:16, Prisma 7.10.0; docs: ssh -L"
+ },
+ "node|prisma generate": {
+  "hash": "4862054d4dde",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim, Prisma 7.10.0 + win11 pwsh"
+ },
+ "node|process.argv و parseArgs": {
+  "hash": "c84c7ca8088d",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 pwsh 7 / ps 5.1"
+ },
+ "node|webhook تيليجرام": {
+  "hash": "d40b4d44c482",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 pwsh with fake token; docs: success responses"
+ },
+ "node|worker_threads": {
+  "hash": "10094472d995",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|workspaces و link": {
+  "hash": "3cb52c0f26e9",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+ },
+ "node|إعادة الإرسال والتكرار": {
+  "hash": "3a533b27bceb",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + postgres:16, Prisma 7.10.0; docs: ngrok Replay UI"
+ },
+ "node|الإغلاق النضيف": {
+  "hash": "3061d6c3a74c",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim"
+ },
+ "node|البورت مشغول": {
+  "hash": "35cac09e6e94",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 pwsh 7 + cmd"
+ },
+ "node|التحقق من التوقيع": {
+  "hash": "c8d8882a1daf",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim"
+ },
+ "node|الذاكرة": {
+  "hash": "e86460d733c5",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 pwsh 7"
+ },
+ "node|الـ debugger": {
+  "hash": "66d9622ae960",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 --inspect; docs: inspector UI"
+ },
+ "node|الفولدرات: mkdir و readdir و rm": {
+  "hash": "8508e358d47e",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "node|المشكلة": {
+  "hash": "0e089b8c0233",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim Express 5 + win11 pwsh 7 / ps 5.1"
+ },
+ "node|سكربت Node كأداة": {
+  "hash": "e2e608728278",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 pwsh 7 / ps 5.1"
+ },
+ "node|لوج الـ webhooks": {
+  "hash": "6a98514d01db",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + win11 pwsh 7 / ps 5.1"
+ },
+ "node|مقدمة Node.js وتشغيل الملفات": {
+  "hash": "ad9e865ff6f3",
+  "date": "2026-10-06",
+  "on": "win11 (Node 24.19, npm 11.17) + docker node:22-slim"
+ },
  "os|%localappdata%": {
   "hash": "4bdefc3b131d",
   "date": "2026-10-06",

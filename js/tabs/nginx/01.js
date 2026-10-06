@@ -63,6 +63,176 @@ sudo tail -f /var/log/nginx/error.log`,
             when: "قبل أي تعديل: [[-T]] تشوف الحالة. وبعده [[-t]] وبعدين reload.",
             mistakes: "تعدّل ملف في sites-available مش مربوط في sites-enabled. وإعداد في location بيلغي نفس الإعداد في server (زي add_header) من غير ما تعرف."
           },
+          teach: R`## الفكرة: ملف واحد بيسحب الباقي
+
+الأوامر الـ ٦ دي كلها بتجاوب على سؤال واحد: «Nginx شغال بأنهي إعدادات، وجايبها منين؟». جربتها كلها على أوبونتو 24.04 جوه Docker بعد [[apt install nginx]] (النسخة [[nginx/1.24.0]]). الكونتينر مفيهوش systemd، فبدل [[systemctl reload nginx]] استخدمت [[nginx -s reload]]، وده نفس الشغل بالظبط.
+
+---
+
+## ١. قبل الأوامر: شكل nginx.conf من جوه
+
+ده [[/etc/nginx/nginx.conf]] بتاع أوبونتو بعد ما شلت التعليقات والسطور الفاضية:
+
+~~~text /etc/nginx/nginx.conf
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+error_log /var/log/nginx/error.log;
+include /etc/nginx/modules-enabled/*.conf;
+events {
+	worker_connections 768;
+}
+http {
+	sendfile on;
+	tcp_nopush on;
+	types_hash_max_size 2048;
+	include /etc/nginx/mime.types;
+	default_type application/octet-stream;
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+	ssl_prefer_server_ciphers on;
+	access_log /var/log/nginx/access.log;
+	gzip on;
+	include /etc/nginx/conf.d/*.conf;
+	include /etc/nginx/sites-enabled/*;
+}
+~~~
+
+### القاعدة الوحيدة في الكتابة
+
+كل سطر اسمه **directive** (أمر إعداد): اسم، وبعده قيمة أو أكتر، وفي الآخر [[;]]. والأوامر اللي جواها أوامر تانية اسمها **block** وبتتقفل بـ [[{ }]]. نسيان [[;]] هو أشهر غلطة في Nginx كله.
+
+### الـ ٣ مستويات
+
+| المستوى | أمثلة | معناه |
+|---|---|---|
+| main (بره أي أقواس) | [[user www-data]] و [[worker_processes auto]] | إعدادات البرنامج نفسه |
+| [[events { }]] | [[worker_connections 768]] | كل worker يمسك لحد 768 اتصال في نفس الوقت |
+| [[http { }]] | [[gzip on]] و [[access_log]] و [[include]] | كل حاجة تخص HTTP والمواقع |
+
+- [[user www-data]]: الـ workers بيشتغلوا باليوزر ده، مش root. عشان كده لازم [[www-data]] يقدر يقرا ملفات موقعك.
+- [[worker_processes auto]]: worker لكل core. على جهاز فيه 16 logical processor، [[ps -o pid,user,cmd -C nginx]] طلّع process واحد [[master]] شغال بـ root و 16 [[worker process]] شغالين بـ [[www-data]]. الـ master بيقرا الإعدادات ويدير، والـ workers هما اللي بيردوا على الطلبات.
+- [[include]]: «حط محتوى الملف ده هنا كأنه مكتوب في المكان ده». وده اللي بيربط الملفات ببعض.
+
+---
+
+## ٢. [[sudo nginx -t]]
+
+[[sudo]] لأن Nginx محتاج يقرا ملفات root بس اللي يقدر يقراها (الشهادات مثلًا). و [[-t]] من test: اقرا كل الإعدادات واتأكد إنها سليمة، **من غير** ما تغيّر حاجة في Nginx الشغال.
+
+~~~text الناتج
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+~~~
+
+السطر الأول: الصيغة سليمة. التاني: الاختبار كله نجح (الملفات المذكورة موجودة، والأسامي بتتحل). ولو فيه غلطة، بيقولك الملف ورقم السطر. جربت ملف فيه [[server { listen 80 }]] (ناقص [[;]]):
+
+~~~text الناتج
+[emerg] unexpected "}" in /etc/nginx/sites-enabled/bad:1
+nginx: configuration file /etc/nginx/nginx.conf test failed
+~~~
+
+[[emerg]] (من emergency) أخطر مستوى في اللوج: Nginx مش هيقبل الإعدادات دي.
+
+---
+
+## ٣. [[sudo nginx -T | grep -E "server_name|listen|root|proxy_pass"]]
+
+### [[nginx -T]] لوحده
+
+[[-T]] الكابيتال = [[-t]] + اطبع كل الإعدادات بعد ما تسحب كل الـ includes. وقبل كل ملف بيكتب سطر بيقولك اسمه:
+
+~~~text الناتج (السطور اللي بتبدأ بـ # configuration file بس)
+# configuration file /etc/nginx/nginx.conf:
+# configuration file /etc/nginx/mime.types:
+# configuration file /etc/nginx/sites-enabled/default:
+~~~
+
+فبتعرف كل إعداد جاي من أنهي ملف. على أوبونتو جديد الناتج كله حوالي 330 سطر، فمحتاجين نفلتر.
+
+### [[| grep -E "..."]]
+
+[[|]] (pipe) بيبعت ناتج الأمر اللي قبله للأمر اللي بعده. و [[grep]] بيطبع السطور اللي فيها كلمة معينة، و [[-E]] (extended regex) بيخلّي [[|]] جوه الكلام معناها «أو». يعني: اطبع أي سطر فيه server_name أو listen أو root أو proxy_pass.
+
+~~~text الناتج على أوبونتو جديد (مختصر)
+	listen 80 default_server;
+	listen [::]:80 default_server;
+	# listen 443 ssl default_server;
+	root /var/www/html;
+	server_name _;
+#	listen 80;
+#	server_name example.com;
+~~~
+
+السطور اللي بتبدأ بـ [[#]] تعليقات: [[-T]] بيطبع الملفات زي ما هي، و grep بيدوّر في النص، فبيمسكها هي كمان. الشغال فعلًا هو اللي من غير [[#]]: موقع واحد ([[default]]) بيسمع على 80 لـ IPv4 و IPv6 ([[[::]:80]])، والفولدر بتاعه [[/var/www/html]].
+
+---
+
+## ٤. [[ls -la /etc/nginx/sites-enabled/]]
+
+[[-l]] تفاصيل لكل ملف، و [[-a]] حتى المخفي:
+
+~~~text الناتج
+lrwxrwxrwx 1 root root   34 Oct  6 12:40 default -> /etc/nginx/sites-available/default
+~~~
+
+أول حرف [[l]] يعني link (اختصار، symlink)، والسهم [[->]] بيقولك بيشاور على فين. يعني الملف الحقيقي في sites-available، وده مجرد اختصار ليه. تشيل الاختصار، الموقع يقفل والملف لسه موجود.
+
+---
+
+## ٥. [[grep include /etc/nginx/nginx.conf]]
+
+~~~text الناتج
+include /etc/nginx/modules-enabled/*.conf;
+	include /etc/nginx/mime.types;
+	include /etc/nginx/conf.d/*.conf;
+	include /etc/nginx/sites-enabled/*;
+~~~
+
+| السطر | بيسحب إيه |
+|---|---|
+| [[modules-enabled/*.conf]] | modules إضافية (بره http، في main) |
+| [[mime.types]] | جدول الامتدادات: [[.css]] نوعها [[text/css]]، وهكذا |
+| [[conf.d/*.conf]] | أي ملف آخره [[.conf]]: إعدادات عامة (upstream، zones) |
+| [[sites-enabled/*]] | **كل** ملف، أي اسم: مواقعك |
+
+[[*]] معناها «أي اسم». والتلاتة الأخيرين جوه [[http { }]]، فأي ملف في الفولدرات دي كأنه مكتوب جوه http. عشان كده ملف الموقع بيبدأ بـ [[server {]] على طول من غير [[http]].
+
+---
+
+## ٦. [[sudo systemctl reload nginx]]
+
+[[systemctl]] بيتحكم في الخدمات على لينكس، و [[reload]] بيقول لـ Nginx «اقرا الإعدادات تاني». الـ master بيشغّل workers جداد بالإعدادات الجديدة، والقدام بيكمّلوا الطلبات اللي في إيدهم ويقفلوا. في الكونتينر [[nginx -s reload]] طبع:
+
+~~~text الناتج
+[notice] 2680#2680: signal process started
+~~~
+
+يعني الإشارة اتبعتت للـ master. ([[2680#2680]] رقم الـ process.)
+
+---
+
+## ٧. [[sudo tail -f /var/log/nginx/error.log]]
+
+[[tail]] بيطبع آخر سطور الملف، و [[-f]] (follow) بيفضل فاتح ويطبع أي سطر جديد أول ما يتكتب. تقفله بـ [[Ctrl+C]]. ده سطر حقيقي ظهر لما شلت صلاحية فولدر موقع:
+
+~~~text سطر من error.log
+2026/10/06 12:41:07 [crit] 2738#2738: *7 stat() "/var/www/example.com/html/" failed (13: Permission denied), client: 127.0.0.1, server: example.com, request: "GET / HTTP/1.1", host: "example.com"
+~~~
+
+بيقولك كل حاجة: المستوى ([[crit]])، والملف اللي فشل، والسبب ([[Permission denied]])، والزائر، وأنهي server block، والطلب نفسه.
+
+---
+
+## الخلاصة
+
+| الأمر | بيجاوب على |
+|---|---|
+| [[nginx -t]] | الإعدادات سليمة؟ |
+| [[nginx -T]] و grep | إيه الشغال فعلًا وجاي منين؟ |
+| [[ls -la sites-enabled]] | أنهي مواقع متفعّلة؟ |
+| [[grep include nginx.conf]] | nginx.conf بيسحب إيه؟ |
+| [[systemctl reload nginx]] | طبّق من غير قطع |
+| [[tail -f error.log]] | إيه اللي بيبوظ دلوقتي؟ |`,
           lines: [
             "الإعدادات سليمة؟",
             "الإعدادات النهائية بعد الدمج، مفلترة على المهم.",
@@ -109,6 +279,119 @@ sudo tail -f /var/log/nginx/error.log`,
             when: "أي موقع من غير backend. و landing pages.",
             mistakes: "[[root]] جوه location بيتضاف عليه مسار الـ location (root /var/www + /static/ = /var/www/static/)، لو مش عايز كده استخدم alias. وصلاحيات الفولدر."
           },
+          teach: R`## الفكرة: «لو حد طلب الدومين ده، قدّمله ملفات من الفولدر ده»
+
+المثال ده ملف موقع كامل، بيتحفظ في [[/etc/nginx/sites-available/example.com]]. جربته على أوبونتو 24.04 جوه Docker بنفس خطوات الـ solCode، والطلبات كلها بـ curl من جوه الكونتينر.
+
+~~~text /etc/nginx/sites-available/example.com
+server {
+    listen 80;
+    server_name example.com www.example.com;
+    root /var/www/example.com/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+~~~
+
+---
+
+## ١. [[server { ... }]]
+
+**server block** = موقع واحد. كل اللي جوه القوسين إعدادات الموقع ده بس. والملف بيبدأ بـ [[server]] على طول لأن nginx.conf بيسحبه جوه [[http { }]] (درس الملفات).
+
+## ٢. [[listen 80;]]
+
+البورت اللي البلوك بيستنى عليه. 80 هو بورت HTTP العادي، يعني لما تكتب [[http://example.com]] المتصفح بيروح 80 من غير ما تكتبه.
+
+## ٣. [[server_name example.com www.example.com;]]
+
+الدومينات اللي البلوك ده بيرد عليها، مفصولة بمسافة. Nginx بيعرفها من header اسمه [[Host]] المتصفح بيبعته مع كل طلب. فلو عندك ٣ مواقع كلهم على بورت 80، الـ Host هو اللي بيفرّق.
+
+## ٤. [[root /var/www/example.com/html;]]
+
+الفولدر اللي المسارات بتتحسب منه. Nginx بيلزق مسار الطلب في آخره:
+
+| الطلب | الملف اللي بيدوّر عليه |
+|---|---|
+| [[/about.html]] | [[/var/www/example.com/html/about.html]] |
+| [[/img/logo.png]] | [[/var/www/example.com/html/img/logo.png]] |
+| [[/]] | الفولدر نفسه، فبيروح لـ [[index]] |
+
+## ٥. [[index index.html;]]
+
+لما الطلب على فولدر (آخره [[/]])، قدّم الملف ده منه. [[/]] بيبقى [[index.html]]، و [[/docs/]] بيبقى [[docs/index.html]].
+
+## ٦. [[location / { ... }]]
+
+**location** = قواعد لمجموعة مسارات. و [[/]] بادئة كل المسارات، فده بلوك «كل الطلبات». (لما يبقى فيه كذا location، درس location matching بيشرح مين بيكسب.)
+
+## ٧. [[try_files $uri $uri/ =404;]]
+
+«جرّب الحاجات دي بالترتيب، وأول واحدة تنفع خلاص»:
+
+1. [[$uri]]: متغير فيه مسار الطلب (من غير [[?x=1]]). لو فيه **ملف** بالاسم ده، قدّمه.
+2. [[$uri/]]: لو فيه **فولدر** بالاسم ده، اتعامل معاه كفولدر (فيقدّم الـ index).
+3. [[=404]]: لو مفيش لا ده ولا ده، رد بـ 404.
+
+[[$]] قبل أي اسم في Nginx معناها متغير، و [[=]] قبل رقم معناها «رد بالكود ده».
+
+---
+
+## التجربة: الـ solCode سطر سطر
+
+~~~bash
+sudo mkdir -p /var/www/example.com/html
+echo '<h1>example</h1>' | sudo tee /var/www/example.com/html/index.html
+sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+curl -H "Host: example.com" http://127.0.0.1
+~~~
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[mkdir -p]] | يعمل الفولدر وكل الفولدرات اللي قبله لو مش موجودة |
+| [[echo ... sudo tee FILE]] | يكتب السطر في الملف. [[tee]] بدل [[>]] لأن [[sudo echo > file]] الـ [[>]] بيتنفذ بصلاحياتك انت مش root |
+| [[ln -s SRC DIR/]] | اختصار للملف في sites-enabled، وده اللي بيفعّل الموقع |
+| [[nginx -t && reload]] | [[&&]]: الـ reload يحصل بس لو الاختبار نجح |
+| [[curl -H "Host: example.com"]] | اطلب من السيرفر نفسه ([[127.0.0.1]]) وقوله إنك عايز example.com، من غير دومين حقيقي |
+
+## الناتج: كل الحالات اللي جربتها
+
+| الطلب | الرد |
+|---|---|
+| [[/]] بـ Host example.com | [[<h1>example</h1>]] |
+| [[/about.html]] بـ Host www.example.com | محتوى about.html (نفس البلوك، الاسم التاني) |
+| [[/docs]] (فولدر من غير [[/]]) | [[301 Moved Permanently]] و [[Location: http://example.com/docs/]] |
+| [[/docs/]] | [[docs/index.html]] |
+| [[/nope]] | [[404 Not Found]] |
+| [[/]] من غير Host | [[<title>Welcome to nginx!</title>]] (الموقع الـ default رد) |
+
+سطر [[/docs]] مهم: لما [[$uri/]] لقى فولدر والطلب ناقصه [[/]] في الآخر، Nginx بيحوّل الزائر للمسار بالشرطة عشان الروابط النسبية جوه الصفحة تشتغل صح.
+
+### تجربة الصلاحيات
+
+قفلت الفولدر بـ [[chmod 700 /var/www/example.com]] (صاحبه بس، و [[www-data]] مش صاحبه). الطلب رجع [[404 Not Found]]، وفي error.log:
+
+~~~text error.log
+[crit] stat() "/var/www/example.com/html/" failed (13: Permission denied)
+~~~
+
+يعني الملف موجود بس Nginx مش قادر يوصله. عشان كده لو شفت 404 أو 403 على ملف انت متأكد إنه موجود، بص في error.log قبل أي حاجة.
+
+---
+
+## الخلاصة
+
+~~~text
+listen        على أنهي بورت
+server_name   لأنهي دومين (من Host header)
+root          الملفات منين
+index         لو الطلب فولدر، أنهي ملف
+try_files     ملف؟ فولدر؟ وإلا 404
+~~~`,
           lines: [
             "بداية بلوك موقع.",
             "http.",
@@ -165,6 +448,84 @@ Next.js مش SPA بالمعنى ده (فيه سيرفر)، بتعمله proxy ع
             when: "أي React أو Vue أو Angular مبني static.",
             mistakes: "[[try_files $uri /index.html]] من غير [[$uri/]] فمسار فولدر يرجع index الرئيسي. وكاش index.html طويل فالمستخدمين يفضلوا على نسخة قديمة بتشاور على JS اتمسح."
           },
+          teach: R`## الفكرة: أي مسار مش ملف، رجّع index.html
+
+تطبيق React أو Vue بعد [[npm run build]] بيبقى فولدر فيه [[index.html]] وفولدر [[assets/]] فيه JS و CSS. صفحات زي [[/dashboard]] مش ملفات: JavaScript هو اللي بيرسمها بعد ما الصفحة تحمّل. فالمطلوب من Nginx: قدّم الملفات الموجودة، وأي حاجة تانية رجّع فيها index.html.
+
+جربته على أوبونتو 24.04 جوه Docker. التطبيق في التجربة كان كونتينر تاني اسمه [[ngx01-be]] على بورت 3000، فكتبت [[proxy_pass http://ngx01-be:3000;]] بدل [[127.0.0.1:3000]]، وده الفرق الوحيد.
+
+~~~text /etc/nginx/sites-available/app
+server {
+    listen 80;
+    server_name app.example.com;
+    root /var/www/app/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000;
+    }
+}
+~~~
+
+[[listen]] و [[server_name]] و [[root]] و [[index]] نفس درس الموقع الـ static. [[root]] هنا فولدر الـ build ([[dist]] في Vite، و [[build]] في Create React App).
+
+---
+
+## ١. [[try_files $uri $uri/ /index.html;]]
+
+نفس سطر الموقع الـ static بالظبط، الفرق في آخر خيار: بدل [[=404]] بقى [[/index.html]]. يعني لو مفيش ملف ولا فولدر بالاسم، Nginx بيقدّم [[/index.html]] (من نفس الـ root) والـ status بيفضل [[200]].
+
+ده اللي طلع لما طلبت كل مسار بـ [[curl -s -w "%{http_code} %{content_type}"]] ([[-w]] بيطبع معلومات عن الرد بعده: الكود والنوع):
+
+| الطلب | الكود والنوع | المحتوى |
+|---|---|---|
+| [[/]] | [[200 text/html]] | index.html |
+| [[/dashboard]] | [[200 text/html]] | index.html |
+| [[/users/42]] | [[200 text/html]] | index.html |
+| [[/assets/app.js]] | [[200 application/javascript]] | الملف الحقيقي |
+| [[/assets/missing.js]] | [[200 text/html]] | index.html (!) |
+| [[/api/users]] | [[200 application/json]] | رد التطبيق |
+
+ولما رجّعت آخر خيار [[=404]]، [[/dashboard]] طلع [[404]]: ده بالظبط اللي بيحصل للناس لما يرفعوا React من غير السطر ده ويعملوا ريفريش.
+
+### خد بالك من سطر [[/assets/missing.js]]
+
+ملف JS مش موجود رجع HTML بـ 200. المتصفح هيحاول ينفّذ HTML كأنه JavaScript ويطلع [[Unexpected token '<']]. عشان كده درس [[location ^~ /downloads/]] بيعمل بلوك منفصل للفولدرات اللي لازم ترجع 404 حقيقي.
+
+---
+
+## ٢. [[location /api/ { proxy_pass ...; }]]
+
+أي طلب أوله [[/api/]] بيروح للتطبيق بدل الملفات. **proxy_pass** = «ابعت الطلب ده لسيرفر تاني وهات رده للزائر». و [[/api/]] بيكسب على [[/]] لأنه بادئة أطول (درس location matching)، فطلبات الـ API مش بتوصل لـ try_files أصلًا.
+
+### الشرطة في آخر proxy_pass
+
+التطبيق في التجربة بيرجع المسار اللي وصله، فقارنت:
+
+| السطر | [[/api/users]] وصل للتطبيق كـ |
+|---|---|
+| [[proxy_pass http://ngx01-be:3000;]] | [[/api/users]] (كامل) |
+| [[proxy_pass http://ngx01-be:3000/;]] | [[/users]] (اتشال [[/api/]]) |
+
+القاعدة: لو بعد البورت فيه مسار (حتى لو [[/]] بس)، Nginx بيشيل جزء الـ location ويحط المسار ده مكانه. اختار حسب التطبيق: Express عامل routes بـ [[/api/...]]؟ من غير شرطة.
+
+### حاجة لاحظتها في رد التطبيق
+
+التطبيق شاف [[host: "ngx01-be:3000"]] و [[connection: "close"]]: [[proxy_pass]] لوحده مش بيبعت الدومين الأصلي ولا بيسيب الاتصال مفتوح. ده اللي درس reverse proxy بعمق بيصلّحه.
+
+---
+
+## الخلاصة
+
+| السطر | ليه |
+|---|---|
+| [[try_files $uri ...]] | الملفات الحقيقية (JS و CSS والصور) تتقدم زي ما هي |
+| [[... /index.html]] | أي مسار تاني يفتح التطبيق، و React Router يكمّل |
+| [[location /api/]] | الـ API يروح للتطبيق بدل index.html |`,
           lines: [
             "بداية.",
             "http.",
@@ -224,6 +585,137 @@ server {
             when: "كل تطبيق ورا Nginx. الـ keepalive لما يبقى فيه ضغط.",
             mistakes: R`trust proxy على Express من غير Nginx قدامه فأي حد يزوّر IP. ونسيان Connection "" فالـ keepalive مبيشتغلش.`
           },
+          teach: R`## الفكرة: Nginx واقف في النص، فلازم يحكي للتطبيق مين اللي جاي
+
+في الـ reverse proxy الزائر بيكلّم Nginx، و Nginx بيفتح طلب **جديد** للتطبيق. فالتطبيق من غير مساعدة شايف إن كل الطلبات جاية من Nginx نفسه. المثال بيحل ده بـ headers، وبيوفّر وقت بإنه يسيب الاتصالات بالتطبيق مفتوحة.
+
+### إزاي اتجرّب
+
+أوبونتو 24.04 جوه Docker فيه Nginx، وكونتينر تاني [[ngx01-be]] فيه سيرفر Node صغير على 3000 بيرجّع JSON فيه الـ headers اللي وصلته ورقم البورت اللي الاتصال جاي منه. فالسطر الوحيد اللي اتغيّر: [[server ngx01-be:3000;]] بدل [[127.0.0.1:3000]].
+
+~~~text /etc/nginx/sites-available/api
+upstream api {
+    server 127.0.0.1:3000;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    server_name api.example.com;
+
+    location / {
+        proxy_pass http://api;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+~~~
+
+---
+
+## ١. بلوك [[upstream api { }]]
+
+**upstream** = اسم لمجموعة سيرفرات التطبيق. بيتكتب بره [[server]] (جوه http).
+
+- [[server 127.0.0.1:3000;]]: عنوان نسخة من التطبيق. لو كتبت سطرين، Nginx بيوزّع الطلبات عليهم بالدور (round-robin).
+- [[keepalive 32;]]: سيب لحد ٣٢ اتصال فاضي مفتوحين مع التطبيق (لكل worker)، واستخدمهم تاني بدل ما تفتح اتصال TCP جديد كل طلب.
+
+و [[proxy_pass http://api;]] بيستخدم الاسم ده بدل العنوان.
+
+## ٢. الـ keepalive محتاج سطرين معاه
+
+- [[proxy_http_version 1.1;]]: Nginx افتراضيًا بيكلّم التطبيق بـ HTTP/1.0، اللي بيقفل الاتصال بعد كل طلب. 1.1 بيسمح يفضل مفتوح.
+- [[proxy_set_header Connection "";]]: [[proxy_set_header]] بيحط header في الطلب اللي رايح للتطبيق. هنا بيفضّي [[Connection]]، لأن Nginx لوحده بيبعت [[Connection: close]].
+
+### اتأكدت إزاي إن الاتصال بيتعاد؟
+
+شغّلت Nginx بـ worker واحد (عشان كل الطلبات تعدي من نفس الـ worker)، وبعت ٥ طلبات، وبصيت على البورت اللي التطبيق شايف الاتصال جاي منه:
+
+| | البورتات في الـ ٥ طلبات |
+|---|---|
+| بالسطرين | [[48934]] خمس مرات: اتصال واحد اتعاد |
+| من غيرهم | [[48938]] و [[48952]] و [[48968]] و [[48970]] و [[48974]]: اتصال جديد كل مرة، والتطبيق شاف [[connection: "close"]] |
+
+---
+
+## ٣. الـ headers الأربعة
+
+### [[Host $host]]
+
+[[$host]] الدومين اللي الزائر طلبه. من غير السطر ده، التطبيق بيشوف اسم الـ upstream. جربت [[proxy_pass]] لوحده والتطبيق شاف [[host: "ngx01-be:3000"]]. ومعاه شاف [[host: "api.example.com"]]. التطبيق محتاجه لما يبني روابط كاملة أو يفرّق بين دومينات.
+
+### [[X-Real-IP $remote_addr]]
+
+[[$remote_addr]] الـ IP اللي فاتح الاتصال مع Nginx، يعني الزائر. بنبعته في header اسمه [[X-Real-IP]].
+
+### [[X-Forwarded-For $proxy_add_x_forwarded_for]]
+
+نفس الفكرة بالـ header القياسي. [[$proxy_add_x_forwarded_for]] = قيمة [[X-Forwarded-For]] اللي جت مع الطلب (لو فيه) + فاصلة + [[$remote_addr]]. يعني بيضيف على القايمة. جربت أبعت [[X-Forwarded-For: 1.2.3.4]] بإيدي، والتطبيق استلم:
+
+~~~text الناتج
+"xff":"1.2.3.4, 127.0.0.1"
+~~~
+
+اللي على اليمين بس هو اللي Nginx شافه بنفسه. اللي على الشمال الزائر كتبه، وممكن يكون مزوّر. وده سبب الرقم [[1]] في Express تحت.
+
+### [[X-Forwarded-Proto $scheme]]
+
+[[$scheme]] = [[http]] أو [[https]] حسب ما الزائر جه بيه. التطبيق نفسه دايمًا بيستقبل http من Nginx، فده الطريق الوحيد إنه يعرف إن الزائر كان على https (للـ cookies الـ secure والتحويلات).
+
+### كل الحاجات مع بعض في رد التطبيق
+
+~~~text الناتج (مختصر)
+{"url":"/users","host":"api.example.com","xri":"127.0.0.1","xff":"127.0.0.1","proto":"http","conn":null}
+~~~
+
+[[127.0.0.1]] هنا لأن curl كان شغال جوه كونتينر Nginx نفسه. على سيرفر حقيقي هتلاقي IP الزائر.
+
+---
+
+## ٤. الـ solCode: Express يصدّق الـ headers
+
+~~~text server.js
+const express = require("express");
+const app = express();
+app.set("trust proxy", 1);
+app.get("/ip", (req, res) => res.json({ ip: req.ip, protocol: req.protocol }));
+app.listen(3000);
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[require("express")]] و [[express()]] | حمّل Express واعمل تطبيق |
+| [[app.set("trust proxy", 1)]] | صدّق proxy **واحد** قدامي: خد آخر IP في [[X-Forwarded-For]] |
+| [[app.get("/ip", ...)]] | لما حد يطلب [[/ip]]، رد بـ JSON |
+| [[req.ip]] و [[req.protocol]] | IP الزائر والبروتوكول، بعد ما Express يقرا الـ headers |
+| [[app.listen(3000)]] | اسمع على 3000 |
+
+شغّلته ورا Nginx وطلبت من كونتينر تالت IP بتاعه [[172.18.0.3]]:
+
+| | [[req.ip]] |
+|---|---|
+| من غير [[trust proxy]] | [[::ffff:172.18.0.2]] (ده Nginx) |
+| مع [[trust proxy 1]] | [[172.18.0.3]] (الزائر الحقيقي) |
+| مع [[trust proxy 1]] والزائر باعت [[X-Forwarded-For: 6.6.6.6]] | لسه الحقيقي، لأن Express بياخد آخر واحد بس |
+
+([[::ffff:]] قدام الـ IP معناها IPv4 مكتوب بصيغة IPv6، ونفس العنوان.)
+
+---
+
+## الخلاصة
+
+| الجزء | من غيره |
+|---|---|
+| [[upstream]] و [[keepalive]] | اتصال TCP جديد لكل طلب |
+| [[proxy_http_version 1.1]] و [[Connection ""]] | الـ keepalive مبيشتغلش |
+| [[Host]] | التطبيق شايف اسم الـ upstream |
+| [[X-Real-IP]] و [[X-Forwarded-For]] | كل الزوار IP واحد |
+| [[X-Forwarded-Proto]] | التطبيق فاكر كله http |
+| [[trust proxy 1]] | Express بيتجاهل الـ headers دي |`,
           lines: [
             "مجموعة سيرفرات باسم api.",
             "التطبيق.",
@@ -281,6 +773,145 @@ sudo tail -F /var/log/nginx/access.log`,
             when: "t قبل كل reload. T للتشخيص. V قبل ما تعتمد على module.",
             mistakes: "restart بدل reload. و -t بيستخدم صلاحيات اليوزر فممكن يقول ok وفيه ملف Nginx نفسه مش قادر يقراه (شهادة بصلاحيات غلط)."
           },
+          teach: R`## الفكرة: ٦ أوامر، كل واحد ليه وقت
+
+كلها اتجربت على أوبونتو 24.04 جوه Docker (Nginx 1.24.0). الكونتينر مفيهوش systemd، فـ [[systemctl reload nginx]] اتجرب بمعادله [[nginx -s reload]]، و restart اتجرب بـ [[nginx -s stop]] وبعده [[nginx]].
+
+---
+
+## ١. [[sudo nginx -t]]
+
+[[-t]] (test): اقرا الإعدادات وافحصها ومتغيّرش حاجة. لما تكون سليمة:
+
+~~~text الناتج
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+~~~
+
+وهو مش بيفحص الصيغة بس. لما مسحت كونتينر التطبيق اللي ملف الموقع بيشاور عليه بالاسم، نفس الأمر قال:
+
+~~~text الناتج
+[emerg] host not found in upstream "ngx01-ex" in /etc/nginx/sites-enabled/api:5
+nginx: configuration file /etc/nginx/nginx.conf test failed
+~~~
+
+يعني بيحاول يحل الأسامي كمان، وبيقولك الملف والسطر ([[api:5]]).
+
+---
+
+## ٢. [[sudo nginx -T > /tmp/nginx-full.conf]]
+
+[[-T]]: الاختبار + طباعة كل الإعدادات بعد الـ includes. و [[>]] بيحوّل الطباعة لملف بدل الشاشة. الملف طلع 330 سطر، وفيه علامة قبل كل ملف اتسحب:
+
+~~~text grep "^# configuration file" /tmp/nginx-full.conf
+# configuration file /etc/nginx/nginx.conf:
+# configuration file /etc/nginx/mime.types:
+# configuration file /etc/nginx/sites-enabled/api:
+# configuration file /etc/nginx/sites-enabled/app:
+# configuration file /etc/nginx/sites-enabled/default:
+# configuration file /etc/nginx/sites-enabled/example.com:
+~~~
+
+ملف واحد تقدر تفتحه أو تبعته لحد يساعدك. خد بالك إن سطرين «syntax is ok» مش بيروحوا الملف: دول بيتطبعوا على stderr، و [[>]] بيحوّل stdout بس.
+
+---
+
+## ٣. [[sudo systemctl reload nginx]]
+
+الـ master بيقرا الإعدادات من الأول. لو سليمة: workers جداد، والقدام بيكمّلوا الطلبات اللي في إيدهم ويقفلوا. لو فيها غلطة: الـ reload بيفشل والإعدادات القديمة تفضل شغالة:
+
+~~~text reload بملف ناقص ;
+[emerg] unexpected "}" in /etc/nginx/sites-enabled/bad:1
+~~~
+
+### reload ضد restart
+
+شغّلت curl في لوب (٤٠ طلب، كل واحد بعد التاني بـ 0.05 ثانية)، وفي النص مرة reload ومرة stop و start:
+
+~~~text reload
+200 200 200 200 200 200 200 200 200 200 ... 200   (الـ ٤٠ كلهم 200)
+~~~
+
+~~~text stop ثم start
+200 200 200 200 200 200 200 200 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 000 200 200 ...
+~~~
+
+[[000]] معناها curl ماوصلش لأي رد (الاتصال اترفض). ١٧ طلب ضاعوا في الثانية اللي Nginx كان واقف فيها.
+
+---
+
+## ٤. [[sudo nginx -s reopen]]
+
+[[-s]] (signal) بيبعت أمر لـ Nginx الشغال، و [[reopen]]: اقفل ملفات اللوج وافتحها من جديد. ليه؟ جربت أعمل اللي logrotate بيعمله، أغيّر اسم اللوج:
+
+~~~bash
+mv access.log access.log.1
+curl -s -o /dev/null http://127.0.0.1/
+ls
+~~~
+
+~~~text الناتج
+access.log.1
+error.log
+~~~
+
+مفيش [[access.log]] جديد! Nginx ماسك الملف نفسه مش اسمه، فكمّل يكتب في [[access.log.1]]. بعد [[nginx -s reopen]] وطلب كمان:
+
+~~~text الناتج
+-rw-r--r-- 1 www-data root   85 ... access.log
+-rw-r--r-- 1 www-data root 5610 ... access.log.1
+~~~
+
+ملف جديد فيه سطر واحد (85 byte). على السيرفر logrotate بيعمل الخطوة دي لوحده بعد اللف.
+
+---
+
+## ٥. [[nginx -V 2>&1 | tr ' ' '\n' | grep -E "..."]]
+
+نفكّه حتة حتة:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[nginx -V]] | الكابيتال: النسخة + كل الخيارات اللي Nginx اتبنى بيها (سطر طويل جدًا) |
+| [[2>&1]] | [[-V]] بيطبع على stderr (القناة 2)، و ده بيوديها لـ stdout (القناة 1) عشان الـ pipe ياخدها |
+| [[tr ' ' '\n']] | [[tr]] (translate) بيبدّل كل مسافة بسطر جديد، فكل خيار يبقى في سطر لوحده |
+| [[grep -E "version|...|brotli"]] | سيب السطور اللي فيها الكلمات دي بس |
+
+النتيجة على صورتين مختلفتين:
+
+| | أوبونتو 24.04 | [[nginx:alpine]] |
+|---|---|---|
+| النسخة | 1.24.0 | 1.31.6 |
+| [[--with-http_v2_module]] | موجود | موجود |
+| [[--with-http_v3_module]] | مش موجود | موجود |
+| brotli | مش موجود | مش موجود |
+
+ملحوظة: سطر [[version]] بيطلع [[version:]] لوحده، لأن [[tr]] قسم [[nginx version: nginx/1.24.0]] على المسافات والرقم بقى في سطر لوحده. لو عايز النسخة بس: [[nginx -v]] (صغيرة).
+
+---
+
+## ٦. [[sudo tail -F /var/log/nginx/access.log]]
+
+[[-F]] الكابيتال = [[-f]] (تابع السطور الجديدة) + لو الملف اتشال واتعمل واحد جديد بنفس الاسم، افتحه. فبعد اللف اللي فوق، [[-f]] كان هيفضل باصص على [[access.log.1]] القديم، و [[-F]] بيكمّل مع الجديد. وده سطر من اللوج:
+
+~~~text access.log
+127.0.0.1 - - [06/Oct/2026:12:43:19 +0000] "GET / HTTP/1.1" 200 615 "-" "curl/8.5.0"
+~~~
+
+IP الزائر، والوقت، والطلب، والـ status ([[200]])، وحجم الرد ([[615]] byte)، والـ referrer ([[-]] يعني مفيش)، والبرنامج اللي طلب.
+
+---
+
+## الخلاصة
+
+| الأمر | امتى |
+|---|---|
+| [[nginx -t]] | قبل كل reload |
+| [[nginx -T > file]] | لما تشخّص أو تبعت الإعدادات لحد |
+| [[systemctl reload nginx]] | تطبيق التعديل، من غير قطع |
+| [[nginx -s reopen]] | بعد لف اللوجات |
+| [[nginx -V]] | قبل ما تعتمد على module (http3، brotli) |
+| [[tail -F]] | متابعة لوج بيتلف |`,
           lines: [
             "اختبر.",
             "الإعدادات الكاملة في ملف (للتشخيص).",
@@ -298,536 +929,6 @@ sudo tail -F /var/log/nginx/access.log`,
 # في ترمنال تاني:
 sudo nginx -t && sudo systemctl reload nginx
 sudo systemctl restart nginx`
-        }
-      ]
-    },
-    {
-      t: "الأداء والتنظيم",
-      l: 2,
-      n: "ضغط، وكاش، وتحويلات، وأكتر من موقع، وحدود",
-      items: [
-        {
-          cmd: "gzip",
-          title: "ضغط الردود",
-          desc: "نص (HTML، CSS، JS، JSON) بيتضغط لربعه. Nginx بيضغط قبل الإرسال والمتصفح بيفك. [[gzip_types]] لازم تحدد الأنواع، لأن الافتراضي HTML بس. الصور والفيديو مضغوطة أصلًا ومش بتتحط.",
-          example: R`gzip on;
-gzip_vary on;
-gzip_min_length 1024;
-gzip_comp_level 5;
-gzip_types text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml;`,
-          try: R`في http block. بعدين [[curl -sI -H "Accept-Encoding: gzip" https://example.com/app.js | grep -i content-encoding]].`,
-          flag: "script",
-          deep: {
-            why: "ملف JS ٥٠٠ كيلو بيوصل في ١٢٠ كيلو. على الموبايل ده فرق ثواني. وبيتعمل مرة واحدة في الإعدادات.",
-            how: R`المتصفح بيبعت [[Accept-Encoding: gzip, br]] يقول إيه اللي بيفهمه. Nginx بيضغط الرد ويبعته مع [[Content-Encoding: gzip]]، والمتصفح بيفك.
-
-[[gzip on]] بيشغّله بس لـ text/html. [[gzip_types]] بيضيف الأنواع التانية: CSS و JS و JSON و SVG. خطوط woff2 مضغوطة أصلًا زي الصور. الصور (png، jpg) والفيديو مضغوطين أصلًا وضغطهم تاني بيضيّع معالج من غير فايدة، فمش بيتحطوا.
-
-[[gzip_min_length 1024]]: الملفات الأصغر من كيلو مش بتستاهل. [[gzip_comp_level 5]]: من ١ لـ ٩، بعد ٥ الفرق في الحجم صغير والمعالج بيزيد. [[gzip_vary on]]: بيضيف [[Vary: Accept-Encoding]] عشان الكاش (CDN) يحفظ نسختين.
-
-Brotli أحسن بـ ١٥٪ تقريبًا، بس محتاج module مش مبني في Nginx أوبونتو. لو عندك Cloudflare قدام الموقع بيعمله لوحده.
-
-الإعداد في [[http]] block ينطبق على كل المواقع.
-
-للملفات الثابتة الكبيرة: [[gzip_static on]] بيقدم ملف [[.gz]] مضغوط مسبقًا لو موجود جنب الأصلي (الـ build بيقدر يعملهم)، من غير ضغط في كل طلب.`,
-            when: "كل سيرفر، في http block، مرة واحدة.",
-            mistakes: "gzip_types من غير application/javascript فالـ JS مش بيتضغط. وتضغط ملفات مضغوطة."
-          },
-          lines: [
-            "شغّل الضغط.",
-            "ضيف Vary للكاش.",
-            "متضغطش الأصغر من كيلو.",
-            "مستوى ٥: توازن بين الحجم والمعالج.",
-            "الأنواع اللي تتضغط (الافتراضي HTML بس)."
-          ],
-          sol: R`الأمر المفروض يطبع [[content-encoding: gzip]] (بحروف صغيرة لو الموقع HTTP/2). ومعاه في الـ headers [[Vary: Accept-Encoding]] بسبب [[gzip_vary on]]. جربتها على ملف JS خمسة كيلو وطلع [[Content-Encoding: gzip]].
-
-لو مطلعش حاجة، شوف ٣ أسباب: الملف أصغر من [[gzip_min_length]] (1024 بايت) فمش بيتضغط، أو نوعه مش في [[gzip_types]] (شوف [[content-type]] في نفس الرد)، أو الطلب ماكانش فيه [[Accept-Encoding: gzip]].
-
-والغلط الشائع: الموقع ورا Cloudflare، فالرد اللي شايفه ضغطه Cloudflare بـ [[br]] أو [[zstd]] مش Nginx. واختبر على [[127.0.0.1]] على السيرفر نفسه عشان تتأكد من إعدادك انت.`
-        },
-        {
-          cmd: "كاش الملفات الثابتة",
-          title: "expires و immutable",
-          desc: "JS و CSS بأسامي فيها hash (app.a1b2c3.js) عمرها ما بتتغير: قول للمتصفح يحتفظ بيها سنة. HTML لأ، لأنه بيشاور على الأسامي الجديدة. الـ [[access_log off]] للملفات الثابتة بيوفر كتابة لوج لكل صورة.",
-          example: R`location ~* \.(js|css|woff2|png|jpg|svg)$ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-    access_log off;
-}
-
-location = /index.html {
-    add_header Cache-Control "no-cache";
-}`,
-          try: R`[[curl -sI https://example.com/assets/app.js | grep -iE "cache-control|expires"]] لازم يطلع max-age=31536000.`,
-          flag: "script",
-          deep: {
-            why: "المتصفح بيطلب نفس app.js في كل صفحة. لو قلتله «ده مش هيتغير سنة»، مش هيطلبه تاني. والزيارة التانية بتبقى لحظية.",
-            how: R`[[location ~* \.(js|css|...)$]]: regex غير حساس للحروف على الامتداد. [[expires 1y]] بيضيف [[Expires]] و [[Cache-Control: max-age=31536000]]. [[immutable]] بيقول للمتصفح «متتحققش حتى مع ريفريش»، ودي المتصفحات الحديثة بتحترمها.
-
-ده آمن بس لأن أدوات الـ build بتحط hash في الاسم: [[app.a1b2c3.js]]. تعديل في الكود = اسم جديد = ملف جديد. الاسم القديم فعلًا مش بيتغير أبدًا.
-
-[[index.html]] العكس: هو اللي بيشاور على الأسامي الجديدة، فلازم المتصفح يسأل عنه كل مرة. [[no-cache]] مش معناها «متحفظش»، معناها «احفظ بس اتحقق قبل ما تستخدم» (Nginx بيرد 304 لو متغيرش، رخيص). [[no-store]] هي اللي بتمنع الحفظ تمامًا.
-
-[[access_log off]] للملفات الثابتة: كل صفحة بتحمّل ٣٠ ملف، يعني ٣٠ سطر لوج مالهمش قيمة. اللوج يفضل للصفحات والـ API.
-
-[[location = /index.html]] بـ [[=]] تطابق تام عشان يكسب على الباقي.
-
-الـ headers دي بتشتغل مع CDN كمان: Cloudflare بيحترم Cache-Control.`,
-            when: "كل موقع فيه build بـ hash في الأسامي. لو مفيش hash (ملفات بأسامي ثابتة)، expires قصيرة (ساعة) أو هتفضل على القديم.",
-            mistakes: "expires 1y على ملفات من غير hash فالتحديث ميوصلش للناس. و add_header في location ده بيلغي security headers اللي في server (حل: include snippet في كل location، أو حطهم في http)."
-          },
-          lines: [
-            "الملفات بالامتدادات دي (regex غير حساس للحروف).",
-            "صالحة سنة.",
-            "ومتتحققش حتى مع ريفريش.",
-            "متسجلش كل صورة في اللوج.",
-            "قفلة.",
-            "index.html بالظبط.",
-            "احفظه بس اسأل قبل ما تستخدمه (304 لو متغيرش).",
-            "قفلة."
-          ],
-          sol: R`[[curl -sI .../assets/app.js | grep -iE "cache-control|expires"]] بيطبع تلات سطور: [[Expires:]] بتاريخ بعد سنة، و [[Cache-Control: max-age=31536000]] (من [[expires 1y]])، و [[Cache-Control: public, immutable]] (من [[add_header]]). جربتها وطلعت بالظبط كده.
-
-و [[index.html]] المفروض يطلع [[Cache-Control: no-cache]]، عشان المتصفح يسأل كل مرة ويشوف أسماء الملفات الجديدة بعد كل build.
-
-الغلط الشائع: مفيش [[Cache-Control]] خالص على JS لأن بلوك [[location /]] فيه [[add_header]] تاني، أو الطلب اتخدم من location تاني. وماتحطش [[immutable]] على ملفات أساميها ثابتة من غير hash (زي [[logo.png]])، لأن التحديث مش هيوصل للزوار لمدة سنة.`
-        },
-        {
-          cmd: "redirects",
-          title: "http لـ https، و www، ومسارات قديمة",
-          desc: "[[return 301]] أرخص من rewrite: بيرجّع التحويل من غير معالجة. server block منفصل لكل حالة: كل http يروح https، و www يروح من غير www (أو العكس، بس اختار واحد)، ومسار قديم لجديد.",
-          example: R`server {
-    listen 80;
-    server_name example.com www.example.com;
-    return 301 https://example.com$request_uri;
-}
-
-server {
-    listen 443 ssl;
-    server_name www.example.com;
-    return 301 https://example.com$request_uri;
-}
-
-location = /old-page {
-    return 301 /new-page;
-}
-
-location /blog/ {
-    return 301 https://blog.example.com$request_uri;
-}`,
-          try: R`[[curl -sI http://www.example.com/x | grep -iE "^HTTP|location"]]: 301 و Location بالـ https من غير www ونفس المسار.`,
-          flag: "script",
-          deep: {
-            why: "نفس الموقع على http و https و www ومن غير: ٤ عناوين لجوجل موقع واحد فيه محتوى مكرر، وللمستخدم كوكيز مختلفة. لازم عنوان واحد رسمي والباقي يحوّل ليه.",
-            how: R`[[return 301 URL]]: رد فوري بتحويل دائم. أرخص من [[rewrite]] لأن مفيش regex ولا معالجة. [[$request_uri]] المسار الأصلي بالـ query string، عشان [[http://www.example.com/page?x=1]] يروح [[https://example.com/page?x=1]] مش الرئيسية.
-
-البلوك الأول: أي http (للدومينين) يروح https. certbot بيعمل ده لوحده لما تختار redirect.
-
-التاني: https بالـ www يروح من غير www. لازم يبقى بلوك منفصل بـ ssl (وشهادة بتغطي www، certbot بتاخد الاتنين).
-
-301 دائم: المتصفح بيحفظه ومش بيسأل تاني، وجوجل بينقل الترتيب للجديد. 302 مؤقت: بيسأل كل مرة. 308 و 307 نفسهم بس بيحافظوا على POST كـ POST.
-
-[[location = /old-page]] لمسار واحد. [[location /blog/]] مع [[$request_uri]] بينقل قسم كامل لدومين تاني.
-
-وبعد التغيير: 301 بيتحفظ في المتصفح، فاختبر بـ curl أو نافذة خاصة.`,
-            when: "كل موقع: عنوان واحد رسمي. وعند نقل صفحات أو أقسام.",
-            mistakes: "301 على حاجة مؤقتة: المتصفح هيفضل يحوّل حتى بعد ما تشيله. و loop: www يحوّل لغير www واللي يحوّل لـ www."
-          },
-          lines: [
-            "بلوك http.",
-            "80.",
-            "الدومينين.",
-            "حوّل دائم لـ https من غير www بنفس المسار والـ query.",
-            "قفلة.",
-            "بلوك www على https.",
-            "443.",
-            "www بس.",
-            "حوّل لغير www.",
-            "قفلة.",
-            "مسار واحد بالظبط.",
-            "لمسار جديد.",
-            "قفلة.",
-            "قسم كامل.",
-            "لدومين تاني بنفس المسار.",
-            "قفلة."
-          ],
-          sol: R`الأمر بيطبع سطرين: [[HTTP/1.1 301 Moved Permanently]] و [[Location: https://example.com/x]]. يعني بروتوكول https، ومن غير www، ونفس المسار [[/x]]. جربتها بـ Host [[www.old.example.com]] وطلعت كده بالظبط.
-
-لو جرّبت [[?a=1]] في الآخر، [[$request_uri]] بينقله برضه: [[Location: https://example.com/x?a=1]].
-
-الأغلاط الشائعة: [[Location: https://example.com/]] من غير المسار: كاتب الرابط من غير [[$request_uri]]. و [[ERR_TOO_MANY_REDIRECTS]] في المتصفح: الموقع ورا Cloudflare بـ Flexible SSL فبيكلّم السيرفر http، و السيرفر يحوّله https تاني. خلّيه Full (strict). وخلّي بالك إن المتصفح بيحفظ الـ 301، فاختبر بـ curl مش بالمتصفح.`
-        },
-        {
-          cmd: "كذا موقع",
-          title: "server_name و default_server",
-          desc: "Nginx بيختار server block بالدومين اللي في header الـ Host. سيرفر واحد يشيل ١٠ مواقع. [[default_server]] هو اللي بيستقبل أي دومين مش متعرّف (أو IP مباشرة)، والأصح يرجع 444 (يقفل الاتصال) بدل ما يعرض موقعك الأساسي.",
-          example: R`server {
-    listen 80 default_server;
-    listen 443 ssl default_server;
-    server_name _;
-    ssl_reject_handshake on;
-    return 444;
-}
-
-server {
-    listen 443 ssl;
-    server_name example.com;
-    root /var/www/example.com;
-}
-
-server {
-    listen 443 ssl;
-    server_name shop.example.com;
-    location / { proxy_pass http://127.0.0.1:4000; }
-}`,
-          try: "[[curl -sI http://203.0.113.10]] بالـ IP مباشرة: المفروض مفيش رد (444). وبالدومين بيفتح.",
-          flag: "script",
-          deep: {
-            why: "سيرفر ٥ دولار يشيل موقعك ومدونتك و staging والـ API. Nginx بيفرّق بينهم بالدومين. والسؤال اللي بينساه الكل: مين بيرد لو حد كتب IP السيرفر مباشرة؟",
-            how: R`الطلب بييجي فيه header [[Host: shop.example.com]]. Nginx بيبص في كل server block عنده [[listen]] على نفس البورت، ويطابق [[server_name]]: تطابق تام الأول، وبعدين wildcard ([[*.example.com]])، وبعدين regex. لو مفيش تطابق: [[default_server]]، ولو محددتش واحد، أول بلوك في الملفات (بالترتيب الأبجدي).
-
-عشان كده بلوك default_server صريح: [[server_name _]] (اسم مش هيتطابق مع حاجة)، و [[return 444]]: كود خاص بـ Nginx بيقفل الاتصال من غير رد. فالبوتات اللي بتفحص بالـ IP بتلاقي حاجة صامتة، ومحدش يقدر يوصل موقعك بدومين تاني بيشاور على IP بتاعك.
-
-[[ssl_reject_handshake on]] لـ 443: يرفض TLS من الأصل لو الدومين مش معروف، فمفيش داعي لشهادة لبلوك default.
-
-كل موقع بعد كده بلوك بـ server_name بتاعه، static أو proxy لبورت مختلف.
-
-وكل دومين محتاج شهادة: [[certbot --nginx -d shop.example.com]] بيضيف الـ ssl لبلوكه.`,
-            when: "من تاني موقع على السيرفر. و default_server من أول موقع.",
-            mistakes: "مفيش default_server فموقعك الأساسي بيرد على أي دومين، وحد يقدر يشاور دومين تاني على سيرفرك ويظهر موقعك تحته. ونسيان listen 443 في البلوك الجديد."
-          },
-          lines: [
-            "بلوك الافتراضي.",
-            "http افتراضي.",
-            "https افتراضي.",
-            "اسم مش هيتطابق مع حاجة.",
-            "ارفض TLS لو الدومين مش معروف (مش محتاج شهادة).",
-            "اقفل الاتصال من غير رد.",
-            "قفلة.",
-            "الموقع الأول.",
-            "443.",
-            "دومينه.",
-            "static.",
-            "قفلة.",
-            "الموقع التاني.",
-            "443.",
-            "دومينه.",
-            "proxy لبورت تاني.",
-            "قفلة."
-          ],
-          sol: R`[[curl -sI http://203.0.113.10]] بالـ IP بيطبع [[curl: (52) Empty reply from server]] ومفيش أي header. ده [[return 444]]: Nginx قفل الاتصال من غير رد. جربتها ورجع exit code 52.
-
-وبالدومين ([[curl -sI https://example.com]] أو [[-H "Host: example.com"]]) بيرد عادي [[200]]. وعلى https بالـ IP، [[ssl_reject_handshake on]] بيخلّي curl يطلع [[SSL_ERROR_SYSCALL]] أو [[unrecognized name]] بدل ما يسرّب الشهادة وأسماء دوميناتك.
-
-الغلط الشائع: [[nginx -t]] يطلع [[a duplicate default server for 0.0.0.0:80]]: ملف [[default]] بتاع أوبونتو لسه متفعّل وفيه default_server. امسح الـ link بتاعه. ولو الدومين نفسه بقى بيرجع 444، يبقى [[server_name]] بتاعه غلط فاتلقفه الـ default.`
-        },
-        {
-          cmd: "location matching",
-          title: "الترتيب اللي Nginx بيقارن بيه",
-          desc: "أكتر حاجة بتلخبط: أنهي location بياخد الطلب. الترتيب: [[=]] تطابق تام يكسب فورًا، وبعدين أطول بادئة مطابقة: لو عليها [[^~]] بتكسب فورًا وتمنع regex، وبعدين regex [[~]] (حساس للحروف) و [[~*]] بالترتيب في الملف، وآخر حاجة أطول بادئة عادية.",
-          example: R`location = /health {
-    return 200 "ok";
-}
-
-location ^~ /static/ {
-    root /var/www;
-}
-
-location ~* \.(png|jpg)$ {
-    expires 30d;
-}
-
-location /api/ {
-    proxy_pass http://127.0.0.1:3000;
-}
-
-location / {
-    try_files $uri $uri/ /index.html;
-}`,
-          try: "اطلب [[/static/logo.png]]: بياخده ^~ مش الـ regex بتاع الصور. غيّر [[^~]] لـ عادي وشوف الفرق.",
-          flag: "script",
-          deep: {
-            why: "٥ locations في ملف واحد، وطلب واحد. أنهي واحد بياخده؟ الإجابة مش «الأول في الملف»، وفهمها بيحل نص مشاكل «الإعداد مش شغال».",
-            how: R`Nginx بيقارن الطلب بكل الـ locations بالترتيب ده:
-
-١. [[= /path]]: تطابق تام. لو اتطابق، خلاص فورًا. الأسرع، لـ /health و /favicon.ico و /index.html.
-
-٢. بادئات عادية و [[^~]]: بيلاقي أطول بادئة تطابق. لو الأطول دي عليها [[^~]]، خلاص، مش هيبص على regex.
-
-٣. regex [[~]] (حساس للحروف) و [[~*]] (مش حساس): بالترتيب في الملف، أول واحد يطابق يكسب.
-
-٤. لو مفيش regex طابق: أطول بادئة عادية من الخطوة ٢.
-
-في المثال: [[/static/logo.png]] بيطابق [[^~ /static/]] (بادئة) و [[~* \.(png|jpg)$]] (regex). من غير [[^~]] الـ regex كان هيكسب. مع [[^~]] البادئة بتكسب. عشان كده [[^~]] مفيدة للفولدرات اللي عايز تضمن إنها تتقدم من مكان معين.
-
-[[/api/]] و [[/]] الاتنين بادئات عادية، والأطول ([[/api/]]) بيكسب لطلبات الـ API.
-
-القاعدة العملية: [[=]] للمسارات الفردية، [[^~]] للفولدرات، regex للامتدادات، و [[/]] للباقي.`,
-            when: "أي ملف فيه أكتر من location. ولما إعداد في location «مش بيتطبق».",
-            mistakes: "regex للصور بيمسك ملفات من /api/ فيقدمها static. وتعتمد على ترتيب البادئات في الملف (مش مهم، الطول هو اللي بيفرق)."
-          },
-          lines: [
-            "تطابق تام: بيكسب فورًا.",
-            "رد مباشر.",
-            "قفلة.",
-            "بادئة بتمنع regex بعدها.",
-            "من الفولدر ده.",
-            "قفلة.",
-            "regex على الامتداد (مش هياخد /static/ بسبب ^~).",
-            "كاش.",
-            "قفلة.",
-            "بادئة عادية.",
-            "للتطبيق.",
-            "قفلة.",
-            "الباقي (أقصر بادئة).",
-            "SPA.",
-            "قفلة."
-          ],
-          sol: R`[[curl -sI .../static/logo.png]] بيتخدم من [[location ^~ /static/]]: الـ headers مفيهاش [[Expires]] بتاعة الصور. عشان أشوفها بعيني حطيت [[add_header X-Loc prefix]] في بلوك static و [[X-Loc regex]] في بلوك الصور: مع [[^~]] طلع [[X-Loc: prefix]].
-
-لما شلت [[^~]] وخليتها [[location /static/]] عادي، نفس الطلب طلع [[X-Loc: regex]]، وظهر [[Expires]] بتاع ٣٠ يوم. ده لأن Nginx بيلاقي أطول prefix، وبعدين يجرّب الـ regex بالترتيب، وأول regex يطابق بيكسب. [[^~]] بتقوله «لو الـ prefix ده هو الأطول، ماتجرّبش regex».
-
-و [[/health]] بيرجع [[ok]] على طول من [[location =]]، وده أول حاجة بتتقارن. الغلط الشائع: تفتكر الترتيب في الملف هو اللي بيحدد؛ الترتيب مهم بين الـ regex بس.`
-        },
-        {
-          cmd: "location ^~ /downloads/",
-          title: "ملفات للتحميل جنب SPA من غير ما ترجع index.html",
-          desc: "عندك SPA وجنبها فولدر فيه ملفات للتحميل (APK، zip، json). لو ملف مش موجود، [[try_files]] بتاع الـ SPA بيرجّع index.html بـ 200، فالموبايل ينزّل صفحة HTML باسم app.apk. بلوك [[^~]] للفولدر ده بـ [[try_files $uri =404]] بيرجّع 404 حقيقي، و [[types]] بيدّي كل ملف الـ MIME الصح.",
-          example: R`location ^~ /downloads/ {
-    types { application/vnd.android.package-archive apk; application/zip zip; application/json json; }
-    default_type application/octet-stream;
-    add_header Cache-Control "no-cache, must-revalidate";
-    try_files $uri =404;
-}
-location / { try_files $uri $uri/ /index.html; }`,
-          try: "اطلب ملف مش موجود: [[curl -sI https://example.com/downloads/nope.apk | head -3]]. قبل البلوك هتشوف 200 و text/html، وبعده 404.",
-          flag: "script",
-          deep: {
-            why: "الـ fallback بتاع الـ SPA ممتاز للصفحات، بس كارثة للملفات: أي ملف ناقص بيرجع «نجاح» ومحتواه HTML. المستخدم ينزّل ملف بايظ، وتطبيق الموبايل اللي بيشيك على نسخة جديدة من json يقرا HTML ويقع، وانت مش شايف أي 404 في اللوج.",
-            how: R`[[^~]] معناها: لو البادئة دي هي الأطول، خلاص اختارها ومتجرّبش أي location بـ regex. ده مهم لأن غالبًا عندك بلوك زي [[location ~* \.(js|css|json)$]] للكاش، ومن غير [[^~]] ملف [[/downloads/version.json]] هيروح للبلوك ده بدل بلوك التحميل.
-
-[[try_files $uri =404]]: الملف لو موجود يتقدّم، وإلا 404 على طول. مفيش رجوع لـ index.html.
-
-[[types { ... }]] جوه location بيستبدل جدول الـ MIME كله للمسار ده (مش بيضيف عليه). فأي امتداد مش مكتوب بياخد [[default_type]]، و [[application/octet-stream]] معناها «ملف للتحميل». عشان كده اكتب كل الامتدادات اللي بتقدمها هنا. نوع الـ APK الصح [[application/vnd.android.package-archive]]، ومن غيره أندرويد ممكن يحفظه كملف مجهول ميتفتحش.
-
-[[Cache-Control: no-cache]]: المتصفح يسأل السيرفر كل مرة (بـ ETag) قبل ما يستخدم النسخة المحفوظة، فلما ترفع APK جديد بنفس الاسم الكل ياخده.
-
-ولو الفولدر راكب من الهوست في container ([[./downloads:/usr/share/nginx/html/downloads:ro]]) بترفع الملف الجديد من غير rebuild.`,
-            when: "أي فولدر ملفات حقيقية جوه موقع SPA: تحميلات، وملفات نسخ للتطبيق، وصور مرفوعة.",
-            mistakes: "في مشروع حقيقي فولدر تحميل الـ APK كان تحت نفس [[location /]] بتاع الـ SPA، فالملف الناقص بيرجع index.html بـ 200 بدل 404. ونسيان [[json]] في [[types]] فملف النسخة يتقدّم octet-stream والتطبيق يرفض يقراه. ونسيان [[^~]] فبلوك regex للكاش يخطف الملفات."
-          },
-          lines: [
-            "كل اللي تحت /downloads/، و ^~ تمنع أي location بـ regex تخطفه.",
-            "الأنواع هنا: apk بنوع أندرويد، و zip، و json.",
-            "أي امتداد تاني: ملف للتحميل.",
-            "المتصفح يسأل كل مرة لو فيه نسخة أحدث.",
-            "الملف لو موجود، وإلا 404 حقيقي.",
-            "قفلة.",
-            "باقي الموقع SPA عادي."
-          ],
-          sol: R`قبل البلوك: [[curl -sI .../downloads/nope.apk | head -3]] بيطبع [[HTTP/1.1 200 OK]] و [[Content-Type: text/html]]: الـ SPA رجّعت index.html مكان ملف مش موجود، والموبايل هينزّل صفحة HTML باسم apk.
-
-بعد البلوك: [[HTTP/1.1 404 Not Found]]. وملف موجود فعلًا بيرجع [[200]] و [[Content-Type: application/vnd.android.package-archive]] و [[Cache-Control: no-cache, must-revalidate]]. جربت الحالتين.
-
-الغلط الشائع: تكتب البلوك من غير [[^~]]، فبلوك regex تاني (زي بتاع الكاش لـ [[\.(js|css|...)$]]) ياخد ملفات [[.json]] اللي جوه downloads. أو تكتب [[types { ... }]] وتنسى إنها بتلغي الـ mime types الافتراضية جوه البلوك ده بس، فحط كل الأنواع اللي هتحتاجها.`
-        },
-        {
-          cmd: "rate limiting",
-          title: "حد للطلبات من IP",
-          desc: "[[limit_req_zone]] بيعرّف منطقة في الذاكرة بتعد الطلبات لكل IP بمعدل معين. [[limit_req]] بيطبّقها على location، و [[burst]] بيسمح بدفعة قصيرة فوق المعدل، و [[nodelay]] يعالجها فورًا بدل ما يأخّرها. على login وعلى الـ API عمومًا.",
-          example: R`limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
-limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
-limit_conn_zone $binary_remote_addr zone=perip:10m;
-
-server {
-    location /api/ {
-        limit_req zone=api burst=20 nodelay;
-        limit_conn perip 20;
-        proxy_pass http://127.0.0.1:3000;
-    }
-    location /api/login {
-        limit_req zone=login burst=3 nodelay;
-        limit_req_status 429;
-        proxy_pass http://127.0.0.1:3000;
-    }
-}`,
-          try: R`الـ zones في http block. جرّب [[for i in $(seq 1 30); do curl -s -o /dev/null -w "%{http_code}\n" https://example.com/api/x; done]] وشوف 503 بتظهر (المسار ده من غير limit_req_status). وعلى /api/login هتلاقي 429.`,
-          flag: "script",
-          deep: {
-            why: "بوت بيجرّب ١٠٠٠ باسورد في الدقيقة على /login، أو scraper بيسحب الـ API. الحد في Nginx بيوقفهم قبل ما يوصلوا للتطبيق أصلًا، وأرخص من الحد في الكود.",
-            how: R`[[limit_req_zone]] في http: [[$binary_remote_addr]] المفتاح (IP الزائر بصيغة مضغوطة)، و [[zone=api:10m]] منطقة ذاكرة ١٠ ميجا (بتشيل حوالي ١٦٠ ألف IP)، و [[rate=10r/s]] المعدل.
-
-[[limit_req zone=api burst=20 nodelay]] في location: المعدل ١٠ في الثانية، بس بيسمح بدفعة لحد ٢٠ فوقه (صفحة بتعمل ١٥ طلب API مع بعض عادي). [[nodelay]] بيعالج الدفعة فورًا بدل ما يأخّر الطلبات (من غيرها بيطابقهم على المعدل بتأخير). اللي فوق الـ burst بيتقفل بـ 503 (أو 429 مع limit_req_status).
-
-[[login]] بمعدل ٥ في الدقيقة و burst 3 مع nodelay: ٤ محاولات ورا بعض، وبعدين محاولة كل ١٢ ثانية. كفاية لإنسان، مستحيل لـ brute force.
-
-[[limit_conn]]: عدد الاتصالات المتزامنة من IP، مفيد ضد اللي بيفتح مئات الاتصالات ويسيبها.
-
-الحدود بالـ IP بتضرب مستخدمين ورا NAT واحد (شركة). للـ API بحساب: الحد في التطبيق بالـ user id أدق.
-
-اللوج: [[limiting requests, excess: ...]] في error.log بيوريك مين اتقفل.`,
-            when: "login و password reset و register دايمًا. الـ API بمعدل واسع.",
-            mistakes: "rate من غير burst فأي صفحة بتعمل كذا طلب تتقفل. وتنسى إن الـ IP ورا Cloudflare هو IP Cloudflare (محتاج real_ip module)."
-          },
-          lines: [
-            "منطقة api: ١٠ طلبات في الثانية لكل IP، ١٠ ميجا ذاكرة (في http).",
-            "منطقة login: ٥ في الدقيقة.",
-            "منطقة للاتصالات المتزامنة.",
-            "الموقع.",
-            "الـ API.",
-            "طبّق api مع دفعة ٢٠ فوق المعدل، فورًا.",
-            "أقصى ٢٠ اتصال متزامن من IP.",
-            "للتطبيق.",
-            "قفلة.",
-            "login.",
-            "٥ في الدقيقة، ودفعة ٣ فوق الأولى (٤ ورا بعض).",
-            "رد 429 بدل 503.",
-            "للتطبيق.",
-            "قفلة.",
-            "قفلة."
-          ],
-          sol: R`على [[/api/x]]، الـ 30 طلب بسرعة بيطلعوا 200 في الأول وبعدين [[503]]. عندي: 23 طلب 200 و 7 طلبات 503 (الـ burst 20 زائد اللي بيتسمح بيه بمعدل 10r/s في الوقت ده). و [[error.log]] فيه [[limiting requests, excess: 20.360 by zone "api"]].
-
-على [[/api/login]]: أول 4 طلبات 200 (واحد عادي + burst 3) وبعدها [[429]] على طول: [[200 200 200 200 429 429 429 429]]، لأن المعدل 5 في الدقيقة و [[limit_req_status 429]].
-
-الغلط الشائع: كل الطلبات 200. غالبًا الموقع ورا Cloudflare و [[$binary_remote_addr]] هو IP بتاع Cloudflare مش الزائر، أو الـ location اللي بتطلبه مش اللي فيه limit_req. والعكس: كل الزوار بيتحجبوا مع بعض لنفس السبب، لأنهم كلهم جايين من كام IP بتوع Cloudflare (درس IP الزائر ورا Cloudflare).`
-        },
-        {
-          cmd: "security headers",
-          title: "add_header و server_tokens",
-          desc: "الـ headers اللي شرحناها في تاب الأمان، بتتحط هنا مرة واحدة لكل المواقع. و [[server_tokens off]] بيخبّي رقم نسخة Nginx من الردود وصفحات الخطأ. خد بالك: [[add_header]] في location بيلغي اللي في server، فحطهم في ملف include.",
-          example: R`server_tokens off;
-add_header X-Content-Type-Options "nosniff" always;
-add_header X-Frame-Options "DENY" always;
-add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; script-src 'self'" always;`,
-          try: "احفظه في [[/etc/nginx/snippets/security.conf]] و [[include snippets/security.conf;]] في كل server. وافحص على securityheaders.com.",
-          flag: "script",
-          deep: {
-            why: "نفس الـ headers من تاب الأمان. مكانها الطبيعي هنا، مرة واحدة، لكل المواقع. وفيه فخ في Nginx بيخليها تختفي من غير ما تعرف.",
-            how: R`[[server_tokens off]]: الرد بيقول [[Server: nginx]] بدل [[nginx/1.24.0]]، وصفحات الخطأ من غير نسخة. المهاجم مش بيعرف نسختك يدوّر على ثغراتها.
-
-[[add_header]] بـ [[always]] في الآخر: من غيرها الـ header بيتضاف على الردود الناجحة بس (2xx و 3xx)، ومش على 404 و 500. [[always]] على كل الردود.
-
-الفخ: [[add_header]] مش بيتورّث بشكل تراكمي. لو server فيه ٥ headers، و location فيه add_header واحد (زي Cache-Control للملفات الثابتة)، الـ location ده بيبعت الواحد بس والخمسة بيختفوا. الحل: الـ headers في ملف snippet، و [[include]] في كل location فيه add_header. أو تحطهم في http block وتتجنب add_header في locations.
-
-CSP هنا مثال بسيط: [[default-src 'self']] كل حاجة من نفس الدومين، الصور من أي https، السكربتات من نفس الدومين بس. لو الموقع بيحمّل fonts أو analytics من بره، لازم تضيفهم، وإلا هيتمنعوا. ابدأ بـ [[Content-Security-Policy-Report-Only]] وراقب console المتصفح.
-
-HSTS: بعد أول زيارة https، المتصفح مش هيجرّب http أبدًا لمدة سنة. متحطهاش قبل ما https يشتغل تمام على كل subdomain لو [[includeSubDomains]].`,
-            when: "snippet واحد في كل سيرفر، من أول موقع. وافحص بعد كل تغيير.",
-            mistakes: "add_header في location بيمسح الباقي وانت مش واخد بالك (securityheaders.com بيكشفها). و HSTS قبل ما https مستقر."
-          },
-          lines: [
-            "اخفي نسخة Nginx.",
-            "متخمّنش نوع الملف.",
-            "ممنوع في iframe.",
-            "الـ referrer للدومين بس بره الموقع.",
-            "امنع الكاميرا والميكروفون والموقع.",
-            "https دايمًا لسنة (بعد ما https يستقر).",
-            "مصادر المحتوى المسموحة (عدّلها لمصادرك)."
-          ],
-          sol: R`[[curl -sI https://example.com]] بيوري الـ headers كلها: [[X-Content-Type-Options: nosniff]] و [[X-Frame-Options: DENY]] و [[Referrer-Policy]] و [[Permissions-Policy]] و [[Strict-Transport-Security]] و [[Content-Security-Policy]]. و [[Server: nginx]] من غير رقم النسخة بسبب [[server_tokens off]]. وبسبب [[always]] بيظهروا حتى على 404.
-
-securityheaders.com بيدّي غالبًا [[A]] أو [[A+]]. ولو الموقع فيه سكربتات خارجية (Google Analytics مثلًا) هتلاقيها بتتمنع، وفي Console [[Refused to load the script ... Content Security Policy]]: ضيف الدومين ده في [[script-src]].
-
-الغلط الشائع: الـ headers ظاهرة على الصفحة الرئيسية ومش ظاهرة على مسار زي [[/assets/]]. ده لأن الـ location ده فيه [[add_header]] خاص بيه (زي Cache-Control)، وأي [[add_header]] في location بيلغي كل اللي ورثه من server. حط [[include snippets/security.conf;]] جوه الـ location ده كمان.`
-        },
-        {
-          cmd: "حدود و timeouts",
-          title: "client_max_body_size والمهل",
-          desc: "رفع صورة ٥ ميجا بيطلع 413؟ الافتراضي ١ ميجا. والتطبيق بياخد وقت في تقرير كبير فيطلع 504؟ الافتراضي ٦٠ ثانية. الحدود دي في server أو location، وارفعها للمسارات اللي محتاجاها بس.",
-          example: R`client_max_body_size 20m;
-client_body_timeout 30s;
-send_timeout 30s;
-
-location /api/upload {
-    client_max_body_size 200m;
-    proxy_request_buffering off;
-    proxy_pass http://127.0.0.1:3000;
-}
-
-location /api/reports {
-    proxy_read_timeout 300s;
-    proxy_pass http://127.0.0.1:3000;
-}`,
-          try: "ارفع ملف ٢ ميجا من غير الإعداد: 413 في المتصفح و«client intended to send too large body» في error.log.",
-          flag: "script",
-          deep: {
-            why: "413 لما المستخدم يرفع صورة من الموبايل، و 504 على تقرير بياخد دقيقتين. الاتنين حدود افتراضية معقولة لموقع عادي، ومش معقولة للمسارات دي.",
-            how: R`[[client_max_body_size]]: أقصى حجم للـ body (رفع ملفات، JSON كبير). الافتراضي 1m. لو اتعدّى: 413 و [[client intended to send too large body]] في error.log. في server كحد عام، وفي location الرفع حد أكبر. الرقم ده على Nginx بس، والتطبيق ليه حده (multer، body-parser).
-
-[[proxy_request_buffering off]] للرفع: افتراضيًا Nginx بيستقبل الملف كله ويحفظه مؤقتًا وبعدين يبعته للتطبيق. off بيمرره وهو بيوصل: أسرع وأقل ديسك للملفات الكبيرة.
-
-[[proxy_read_timeout]]: قد إيه Nginx يستنى رد التطبيق بين كل حتة والتانية. الافتراضي 60s، وبعدها 504. ارفعه للمسارات اللي فعلًا بطيئة (تقارير، تصدير)، بس مش عام: طلب معلّق عام بيحجز worker.
-
-[[client_body_timeout]] و [[send_timeout]]: مهل مع الزائر، تمنع اتصالات بطيئة تحجز موارد (Slowloris).
-
-وفيه [[proxy_connect_timeout]] (الاتصال بالتطبيق) و [[proxy_send_timeout]].
-
-الأصح للعمليات الطويلة: background job، والطلب يرجع فورًا بـ job id.`,
-            when: "أي رفع ملفات: حدد الحجم في Nginx والتطبيق. أي endpoint بطيء بطبيعته.",
-            mistakes: "client_max_body_size 0 (بلا حد) عام. و proxy_read_timeout 600 في http block لكل الموقع."
-          },
-          lines: [
-            "أقصى body ٢٠ ميجا عام.",
-            "مهلة استقبال الـ body.",
-            "مهلة الإرسال للزائر.",
-            "مسار الرفع.",
-            "٢٠٠ ميجا هنا بس.",
-            "مرر الملف وهو بيوصل بدل ما تخزنه الأول.",
-            "للتطبيق.",
-            "قفلة.",
-            "مسار بطيء بطبيعته.",
-            "استنى ٥ دقايق قبل 504.",
-            "للتطبيق.",
-            "قفلة."
-          ],
-          sol: R`من غير الإعداد (الافتراضي 1m) رفع ملف ٢ ميجا بيرجع [[413 Request Entity Too Large]]، والرد جاي من Nginx مش من التطبيق. و [[error.log]] فيه:
-
-[[client intended to send too large body: 2000000 bytes]]. جربتها بـ curl [[--data-binary]] وطلعت كده بالظبط.
-
-بعد [[client_max_body_size 20m]] و reload، نفس الملف بيعدّي للتطبيق. الغلط الشائع: تحط الإعداد في [[server]] بس، وبلوك [[location /api/upload]] فيه قيمة أصغر فهي اللي بتكسب. وفي المتصفح الـ 413 أحيانًا بيظهر كـ CORS error، لأن رد Nginx مافيهوش headers الـ CORS بتاعة التطبيق؛ افتح Network وشوف الـ status الحقيقي.`
-        },
-        {
-          cmd: "proxy_buffer_size",
-          title: "502 بعد تسجيل الدخول بس",
-          desc: "الموقع شغال، وأول ما تعمل login يطلع 502. التطبيق بيبعت كوكيز دخول كبيرة (JWT مقسوم على كذا كوكي زي Supabase)، و Nginx بيقرا headers الرد في buffer صغير (٤ أو ٨ كيلو). في error.log هتلاقي [[upstream sent too big header]]. تكبير الـ buffers بيحلها.",
-          example: R`location / {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_buffer_size 128k;
-    proxy_buffers 4 256k;
-    proxy_busy_buffers_size 256k;
-}`,
-          try: "[[sudo grep -c 'too big header' /var/log/nginx/error.log]] قبل التعديل وبعده، وجرّب login من نافذة incognito.",
-          flag: "script",
-          deep: {
-            why: "الـ 502 هنا مش معناه إن التطبيق واقع. التطبيق رد عادي، بس Nginx رفض الرد لأن الـ headers أكبر من المكان اللي حاجزه ليها. فلو دوّرت في لوجات التطبيق مش هتلاقي أي غلطة.",
-            how: R`[[proxy_buffer_size]]: الـ buffer اللي Nginx بيقرا فيه أول جزء من الرد، يعني الـ status والـ headers كلها. الافتراضي صفحة ذاكرة واحدة (٤ أو ٨ كيلو). رد فيه كذا [[Set-Cookie]] كل واحد فيه JWT ممكن يعدّي ١٠ كيلو بسهولة، فـ Nginx يقفل ويرجع 502.
-
-[[proxy_buffers 4 256k]]: عدد وحجم الـ buffers لجسم الرد. [[proxy_busy_buffers_size]]: الجزء اللي ممكن يكون بيتبعت للزائر وهو لسه بيتقري. وليه قاعدة: لازم يبقى أكبر من أو يساوي [[proxy_buffer_size]] وحجم buffer واحد من [[proxy_buffers]]، وأقل من مجموع [[proxy_buffers]] ناقص buffer واحد، وإلا [[nginx -t]] هيرفض.
-
-الاتجاه التاني: لما المتصفح نفسه يبعت كوكيز كبيرة، Nginx بيرجع [[400 Request Header Or Cookie Too Large]]. ده حله [[large_client_header_buffers 4 32k;]] في server block.
-
-الأرقام دي لكل اتصال، فمتحطهاش ضخمة في http كله من غير سبب. حطها في location التطبيق اللي عليه الـ auth.`,
-            when: "تطبيقات فيها Supabase auth أو NextAuth أو أي كوكيز JWT كبيرة ورا Nginx. وأي 502 التطبيق مش شايفه في لوجاته.",
-            mistakes: "في مشروع حقيقي (Next.js و Supabase ورا Nginx) كوكيز وتوكنات الـ auth الكبيرة كانت بتعمل 502 بعد الدخول، والحل كان السطور دي بالظبط. والغلطة الشائعة إنك تدوّر في التطبيق وتعيد تشغيله، والرسالة الحقيقية قاعدة في error.log بتاع Nginx."
-          },
-          lines: [
-            "location التطبيق.",
-            "للتطبيق.",
-            "مكان headers الرد: ١٢٨ كيلو بدل ٤ أو ٨.",
-            "٤ buffers لجسم الرد، كل واحد ٢٥٦ كيلو.",
-            "الجزء اللي بيتبعت للزائر وهو لسه بيتقري.",
-            "قفلة."
-          ],
-          sol: R`قبل التعديل: الـ login (أو أي رد فيه cookies كبيرة) بيرجع [[502 Bad Gateway]]، و [[grep -c 'too big header']] بيطلع رقم أكبر من صفر، والسطر نفسه: [[upstream sent too big header while reading response header from upstream]]. جربتها بـ backend بيبعت [[Set-Cookie]] 6 كيلو وطلع 502 بالظبط.
-
-بعد الإعداد و reload: نفس الطلب [[200]]، والعدّاد في اللوج مابيزيدش (الرقم القديم بيفضل زي ما هو، فقارن قبل وبعد التجربة مش صفر).
-
-ليه incognito: عشان تبدأ من غير cookies قديمة وتشوف أول login. الغلط الشائع: تكبّر [[large_client_header_buffers]] بدل [[proxy_buffer_size]]، ودي للطلب الجاي من المتصفح مش للرد الجاي من التطبيق. ولو الـ cookie نفسها بتكبر كل مرة (session فيها داتا كتير) صلّح التطبيق كمان.`
         }
       ]
     }

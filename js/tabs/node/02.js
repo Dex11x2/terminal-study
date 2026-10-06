@@ -1,1122 +1,1856 @@
 // تكملة تاب node: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/node/01.js (شرح حقول الدرس في أوله)
 MORE("node", [
     {
-      t: "monorepo بـ pnpm",
+      t: "الشغل اليومي",
       l: 2,
-      n: "كذا تطبيق وباكدج مشتركة في ريبو واحد: الربط، والفلترة، والتشغيل مع بعض، والـ builds المقفولة",
+      n: "البيئة، والبورتات، والمكتبات لما تبوظ، ومديرين الباكدجات التانيين",
       items: [
         {
-          cmd: "pnpm-workspace.yaml و workspace:*",
-          title: "باكدج مشتركة جوه نفس الريبو",
-          desc: R`[[pnpm-workspace.yaml]] بيقول أنهي فولدرات باكدجات. وأي تطبيق عايز الكود المشترك بيكتب [[workspace:*]] بدل رقم نسخة، فـ pnpm بيربطه لينك للفولدر المحلي بدل ما يدوّر على npm.
-
-والباكدج الداخلية ممكن تصدّر ملفات .ts مباشرة من غير build، والتطبيق اللي بيستوردها (Vite أو Next أو tsx) هو اللي بيترجمها.`,
-          example: R`# pnpm-workspace.yaml
-packages:
-  - "apps/*"
-  - "packages/*"
-
-# apps/web/package.json
-"dependencies": {
-  "@myapp/shared": "workspace:*"
-}
-
-# packages/shared/package.json (من غير build)
-"name": "@myapp/shared",
-"exports": { ".": "./src/index.ts", "./types": "./src/types.ts" }`,
-          try: "اعمل ريبو فيه apps/web و packages/shared، واربطهم بـ workspace:*، وشغّل [[pnpm install]]، وبعدين [[ls -l apps/web/node_modules/@myapp]] وشوف اللينك.",
-          flag: "script",
+          cmd: "node --test",
+          title: "الاختبارات من غير jest",
+          desc: "Node فيه test runner مبني (مستقر من Node 20). بتكتب [[test()]] من [[node:test]] و [[assert]] من [[node:assert/strict]]، في ملفات اسمها [[*.test.js]]، و [[node --test]] بيلاقيها ويشغّلها لوحده.",
+          example: R`node --test
+node --test --watch
+node --test --test-name-pattern="login"
+node --test --experimental-test-coverage`,
+          try: "اعمل math.test.js فيه test لدالة sum، وشغّله، وبعدين بوّظ الدالة وشوف الفشل.",
           deep: {
-            why: "عندك لعبة وسيرفر ولوحة أدمن، والتلاتة بيستخدموا نفس الأنواع ونفس الأسئلة. نسخ الكود بيخليه يتفرق، ونشره على npm تقيل. الـ workspace بيخليه مكان واحد وأي تعديل يبان في الكل فورًا.",
-            how: R`[[pnpm install]] في الجذر بيقرا pnpm-workspace.yaml، ويسطّب لكل باكدج، ويربط اللي مكتوب لها [[workspace:*]] بلينك لفولدرها. [[*]] معناها «أي نسخة موجودة هنا». ولو الاسم مش موجود في الـ workspace، pnpm بيرفض بدل ما ينزّل باكدج بنفس الاسم من npm، وده حماية.
-
-ولو نشرت باكدج على npm، pnpm بيبدّل [[workspace:*]] برقم النسخة الحقيقي وقت النشر.
-
-[[exports]] بيحدد إيه اللي مسموح يتستورد من الباكدج. هنا بيشاور على src/*.ts مباشرة: مفيش dist ولا build step. ده شغال لأن Vite و Next و tsx بيترجموا TS، إنما تطبيق Node عادي بيشغّل JS بس هيحتاج build للباكدج (أو tsx). وفي Next القديم ممكن تحتاج [[transpilePackages]].`,
-            when: "أول ما يبقى عندك تطبيقين أو أكتر بيشاركوا كود في نفس الريبو.",
-            mistakes: R`تستورد [[@myapp/shared/src/utils]] مباشرة وهو مش في exports، فيطلع [[ERR_PACKAGE_PATH_NOT_EXPORTED]]. وتضيف [[workspace:*]] في package.json وتنسى pnpm install فالتطبيق مش لاقي الباكدج.`
+            why: "مشروع صغير أو سكربت مش محتاج jest وإعداداته. الاختبارات موجودة جوه Node نفسه.",
+            how: "[[node --test]] بيدوّر على ملفات [[*.test.js]] و [[*.test.mjs]] وفولدر [[test]]، وكل ملف بيشتغل في process لوحده. [[--watch]] بيعيد مع كل تعديل. [[--test-name-pattern]] بيفلتر بالاسم. والـ coverage لسه experimental. ولو حطيته في [[scripts.test]]، [[npm test]] بيشغّله.",
+            when: "مكتبات ومنطق backend وسكربتات. لـ React components، Vitest أنسب.",
+            mistakes: "تنسى await مع test async فيعدّي وهو فاشل. وتستخدم assert العادي بدل strict."
           },
-          lines: [
-            "قايمة الفولدرات اللي فيها باكدجات.",
-            "كل فولدر جوه apps باكدج.",
-            "وكل فولدر جوه packages.",
-            "في التطبيق: المكتبات.",
-            "الكود المشترك من الـ workspace مش من npm.",
-            "قفلة.",
-            "اسم الباكدج المشتركة، وده اللي بيتستورد بيه.",
-            "المسموح يتستورد، ملفات TS مباشرة من غير build."
-          ],
-          sol: R`بعد [[pnpm install]]، [[ls -l apps/web/node_modules/@myapp]] بيطلّع:
+          teach: R`## اختبارات من غير ما تسطّب حاجة
 
-[[shared -> ../../../../packages/shared]]. دا symlink، مش نسخة. أي تعديل في [[packages/shared/src]] بيظهر في web على طول من غير install تاني. و [[workspace:*]] في package.json معناها «الباكدج اللي في الـ workspace، أيًا كانت نسختها».
+Node فيه أداة اختبارات جواه: [[node:test]] بتكتب بيها الاختبار، و [[node:assert/strict]] بتقارن بيها، و [[node --test]] بيلاقي الملفات ويشغّلها. اتشغّل على ويندوز 11 (Node 24.19)، والفرق في Node 22 اتجرّب على [[node:22-slim]].
 
-لو [[pnpm install]] قال [[ERR_PNPM_WORKSPACE_PKG_NOT_FOUND]] أو [[No matching version found for @myapp/shared]]: الاسم في [[dependencies]] مش مطابق للـ [[name]] في package.json بتاع shared، أو الفولدر مش داخل تحت [[packages:]] في pnpm-workspace.yaml. ولو web عمل import وقال [[Cannot find module '@myapp/shared']] رغم إن اللينك موجود، راجع [[exports]]: الـ path اللي بتعمله import لازم يكون متعرّف فيها.`,
-          solCode: R`# pnpm-workspace.yaml
-packages:
-  - "apps/*"
-  - "packages/*"
+---
 
-# packages/shared/package.json
-{ "name": "@myapp/shared", "version": "1.0.0", "exports": { ".": "./src/index.ts" } }
+## الملفات
 
-# apps/web/package.json
-{ "name": "@myapp/web", "version": "1.0.0", "dependencies": { "@myapp/shared": "workspace:*" } }`
-        },
-        {
-          cmd: "pnpm --filter",
-          title: "شغّل أمر في باكدج واحدة من الجذر",
-          desc: R`[[--filter]] بيوجّه الأمر لباكدج معينة بالاسم أو بمسار أو بـ glob، من غير ما تعمل cd. وبيقبل إضافات: [[...]] بعد الاسم معناها «ومعاها اللي بتعتمد عليه»، و [["[origin/main]"]] معناها «اللي اتغير من main».`,
-          example: R`pnpm --filter @myapp/server dev
-pnpm --filter "./apps/*" build
-pnpm --filter @myapp/web add zod
-pnpm --filter "@myapp/web..." build
-pnpm --filter "...[origin/main]" test`,
-          try: "في ريبو فيه أكتر من باكدج، ضيف مكتبة لتطبيق واحد بـ [[--filter]] واتأكد إنها اتكتبت في package.json بتاعه بس.",
-          deep: {
-            why: "في monorepo فيه ٥ باكدجات، مش عايز تبني الكل عشان تجرّب واحد، ولا تفضل تعمل cd رايح جاي. والـ CI مش لازم يختبر كل حاجة لو التغيير في باكدج واحدة.",
-            how: R`الفلتر بيختار باكدجات، والأمر اللي بعده بيتنفذ في كل واحدة منهم.
-
-بالاسم: [[@myapp/server]] من حقل name. بالمسار: [[./apps/*]] كل الفولدرات جوه apps (حطه بين علامات تنصيص عشان الشيل ميفكّوش).
-
-[[pnpm --filter X add zod]] بيضيف المكتبة لـ X بس. من غير الفلتر في الجذر، pnpm بيعترض لأن الجذر مش المكان الطبيعي للمكتبات.
-
-[[web...]]: web وكل الباكدجات اللي هي معتمدة عليها، فالـ build يطلع بالترتيب الصح (shared الأول). و [[...web]] العكس: web وكل اللي معتمد عليها.
-
-[["[origin/main]"]]: الباكدجات اللي ملفاتها اتغيرت من الـ commit ده. و [["...[origin/main]"]] بيضيف لهم كل اللي بيعتمد عليهم، ودي اللي تستخدمها في CI عشان تختبر اللي ممكن يتأثر بس.`,
-            when: "كل يوم في monorepo: dev لتطبيق واحد، وإضافة مكتبة لتطبيق واحد، وCI أسرع.",
-            mistakes: "تكتب الاسم غلط أو باسم الفولدر بدل name، فالفلتر مبيلاقيش حاجة ومبيعملش حاجة. اقرا الخرج: لو قال No projects matched، الفلتر غلط."
-          },
-          lines: [
-            "شغّل dev في السيرفر بس، بالاسم.",
-            "ابني كل التطبيقات اللي في apps، بالمسار.",
-            "ضيف مكتبة لتطبيق web بس.",
-            "ابني web ومعاها كل اللي هي معتمدة عليه.",
-            "اختبر اللي اتغير من main واللي بيعتمد عليه."
-          ],
-          sol: R`[[pnpm --filter @myapp/web add ms]] بيطبع [[+1]] وفي الآخر [[Done]]. و [[apps/web/package.json]] بقى فيه [["ms": "^2.1.3"]] جنب [["@myapp/shared": "workspace:*"]]، بينما [[apps/server/package.json]] و package.json بتاع الجذر ما اتغيروش ([[grep ms]] عليهم مش بيلاقي حاجة).
-
-الغلط الشائع: تعمل [[pnpm add ms]] في الجذر، و pnpm يرفض بـ [[ERR_PNPM_ADDING_TO_ROOT]] عشان يحميك؛ ولو فعلًا عايزها في الجذر (أداة زي prettier) استخدم [[-w]]. ولو الفلتر ما طابقش أي باكدج هيقول [[No projects matched the filters]]؛ الاسم لازم يطابق [[name]] في package.json مش اسم الفولدر، أو استخدم مسار زي [[--filter ./apps/web]].`
-        },
-        {
-          cmd: "pnpm -r و --parallel",
-          title: "نفس السكربت في كل الباكدجات",
-          desc: R`[[pnpm -r build]] بيشغّل build في كل باكدج عندها السكربت ده، بالترتيب الصح حسب مين معتمد على مين، واللي معندهاش بتتخطّى. و [[--parallel]] بيشغّلهم كلهم في نفس اللحظة من غير ترتيب، ودي اللي لازم مع سكربتات dev اللي مبتخلصش.
-
-و [[pnpm -r exec]] بينفّذ أمر عادي (مش سكربت) جوه فولدر كل باكدج.`,
-          example: R`pnpm -r build
-pnpm -r --stream test
-pnpm --parallel --filter "./apps/*" dev
-pnpm -r exec rm -rf dist .next
-pnpm -r --workspace-concurrency=1 build`,
-          try: "في الجذر اعمل سكربتات [[build: pnpm -r build]] و [[dev: pnpm --parallel --filter \"./apps/*\" dev]]، وشغّل الاتنين وقارن الخرج.",
-          deep: {
-            why: "سكربتات الجذر لازم متعرفش أسامي الباكدجات: [[pnpm build]] في الجذر ينادي [[pnpm -r build]]، والـ CI يشغّل pnpm build وخلاص. تضيف باكدج جديدة، تدخل لوحدها.",
-            how: R`[[-r]] (recursive) بيرتّب الباكدجات topologically: لو web معتمدة على shared، shared تتبني الأول. وبيشغّل كذا واحدة مع بعض لو مش معتمدين على بعض (الحد الافتراضي 4، أو عدد الأنوية لو أقل، و [[--workspace-concurrency=1]] واحدة واحدة لو الجهاز ضعيف أو اللوج متلخبط).
-
-[[--stream]] بيطبع الخرج أول بأول وقبله اسم الباكدج، بدل ما يجمّع خرج كل واحدة لما تخلص.
-
-ليه [[--parallel]] مع dev؟ الترتيب معناه «استنى shared تخلص وبعدين ابدأ web». سكربت dev بتاع shared (watch) عمره ما بيخلص، فـ web مش هتبدأ أبدًا. [[--parallel]] بيتجاهل الترتيب والحد ويشغّل الكل فورًا.
-
-[[exec]] بيشغّل أمر في فولدر كل باكدج. في مشروع حقيقي كان فيه سكربت clean: [[pnpm -r exec rm -rf node_modules dist .next && rm -rf node_modules]]، الجزء الأخير عشان الجذر نفسه، لأن [[-r]] مش بيشمل الجذر.`,
-            when: "build و test و typecheck في الجذر بـ -r. و dev بـ --parallel. و exec للتنضيف.",
-            mistakes: R`[[pnpm -r dev]] من غير --parallel، فأول باكدج فيها watch بتقفل الباقي. و [[rm -rf]] في سكربت بيتشغّل على ويندوز: سكربتات pnpm هناك بتشتغل بـ cmd اللي معندهوش rm، فاستخدم [[rimraf]] أو خليه في bash.`
-          },
-          lines: [
-            "ابني الكل بترتيب الاعتماديات.",
-            "اختبر الكل واطبع الخرج أول بأول باسم كل باكدج.",
-            "شغّل dev لكل التطبيقات في نفس اللحظة (لازم مع watch).",
-            "امسح ملفات الـ build جوه كل باكدج.",
-            "ابني واحدة واحدة (جهاز ضعيف أو لوج أوضح)."
-          ],
-          sol: R`[[pnpm build]] (يعني [[pnpm -r build]]) بيطبع [[Scope: 3 of 4 workspace projects]] وبيشغّل الـ build بالترتيب الصح: [[packages/shared build]] قبل [[apps/web build]] لأن web معتمد عليه، وكل باكدج بتخلص بـ [[Done]]. اللي ملوش علاقة ببعض ممكن يشتغل في نفس الوقت.
-
-[[pnpm dev]] (يعني [[pnpm --parallel --filter "./apps/*" dev]]) بيطبع [[Scope: 2 of 4]] وبيشغّل web و server في نفس الوقت، والسطور متداخلة: [[apps/web dev: ...]] و [[apps/server dev: ...]] ورا بعض. دا اللي محتاجه لسيرفرات dev مش بتخلص أبدًا.
-
-الفرق المهم: [[-r]] بيحترم ترتيب الاعتماديات وبيستنى، و [[--parallel]] بيتجاهل الترتيب وبيشغّل الكل. لو استخدمت [[-r dev]] مع سيرفرات مش بتخلص، باكدج معتمدة على shared ممكن متبدأش لأن shared dev مش بيخلص. والعكس: [[--parallel build]] ممكن يبني web قبل shared فيقع.`
-        },
-        {
-          cmd: "pnpm approve-builds",
-          title: "ليه prisma أو sharp ناقصين بعد التسطيب",
-          desc: R`من pnpm 10، سكربتات [[postinstall]] بتاعة المكتبات مش بتتشغّل افتراضيًا، عشان مكتبة مخترقة متشغّلش كود على جهازك وقت التسطيب. المكتبات اللي فعلًا محتاجة build (prisma و sharp و esbuild و bcrypt) لازم توافق عليها صراحة. في pnpm 10 التسطيب بيعدّي بتحذير والـ binary بيبقى ناقص، ومن pnpm 11 التسطيب نفسه بيفشل بـ [[ERR_PNPM_IGNORED_BUILDS]] لحد ما تقرر.
-
-[[pnpm approve-builds]] بيسألك عليهم ويكتب الموافقة في [[pnpm-workspace.yaml]]، والملف ده بيدخل Git فالفريق والـ CI ياخدوا نفس القرار.`,
-          example: R`pnpm install
-pnpm ignored-builds
-pnpm approve-builds
-git diff pnpm-workspace.yaml
-pnpm rebuild sharp`,
-          try: "في مشروع pnpm جديد سطّب esbuild (أو sharp@0.34؛ من sharp 0.35 مبقاش فيه سكربت install فمش هتطلع رسالة)، واقرا الرسالة اللي بتطلع، وشغّل [[pnpm approve-builds]]، واقرا اللي اتكتب في pnpm-workspace.yaml.",
-          deep: {
-            why: "هجمات supply chain كتير بتشتغل من postinstall: مكتبة اتخترقت، وأول ما حد يسطّبها بتسرق التوكنات من جهازه. pnpm قفل الباب ده افتراضيًا، والتمن إنك تفتحه بإيدك للمكتبات اللي تثق فيها.",
-            how: R`في التسطيب pnpm بيطبع أسامي المكتبات اللي سكربتاتها اتمنعت: تحذير في pnpm 10، وخطأ بيوقف التسطيب في pnpm 11 (الإعداد [[strictDepBuilds]] بقى true افتراضيًا). [[pnpm ignored-builds]] بيعرضهم تاني.
-
-[[approve-builds]] بيعرض القايمة تختار منها، وبيكتب في pnpm-workspace.yaml حاجة زي: [[allowBuilds: { prisma: true, sharp: true }]] (من pnpm 10.26، وقبلها كان اسمها [[onlyBuiltDependencies]]، واتشالت خالص في pnpm 11). و [[false]] بتقول «متسألنيش تاني عنها، ومتشغّلهاش».
-
-بعد الموافقة [[pnpm rebuild]] بيشغّل السكربتات اللي اتمنعت من غير ما يعيد التسطيب.
-
-المكتبات دي بتحتاج build لأن فيها كود native أو بتنزّل binary للنظام بتاعك: sharp بينزّل libvips، و esbuild بيجيب الـ binary الصح، وبعض نسخ Prisma بتنزّل engines.`,
-            when: "بعد أول pnpm install في مشروع جديد، أو لما مكتبة native تقع بخطأ إن ملف ناقص.",
-            mistakes: "تتجاهل التحذير، والتطبيق يقع وقت التشغيل بخطأ إن sharp مش لاقي ملف، فتقعد تدوّر في الكود. وتوافق على كل حاجة في القايمة من غير ما تقرا الأسامي، فترجع لنفس الخطر اللي pnpm كان بيحميك منه."
-          },
-          lines: [
-            "التسطيب بيطبع أسامي المكتبات اللي سكربتاتها اتمنعت (تحذير في pnpm 10، وفشل في 11).",
-            "اعرضهم تاني.",
-            "اختار اللي توافق عليه، ويتكتب في pnpm-workspace.yaml.",
-            "شوف اللي اتكتب قبل ما تعمله commit.",
-            "شغّل السكربت اللي كان اتمنع من غير إعادة تسطيب."
-          ],
-          sol: R`مع [[pnpm add esbuild]] في pnpm 10 هيطلع صندوق تحذير: [[Ignored build scripts: esbuild@0.28.2.]] و [[Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.]] و [[pnpm ignored-builds]] بيقول [[Automatically ignored builds during installation: esbuild]].
-
-[[pnpm approve-builds]] بيعرض قايمة تختار منها بالمسافة وتأكد بـ Enter (أو [[--all]] من غير أسئلة). بعدها بيشغّل الـ postinstall ([[esbuild postinstall$ node install.js]] و [[Done]])، و [[git diff pnpm-workspace.yaml]] بيوريك:
-
-[[allowBuilds:]] وتحتها [[esbuild: true]]. اعمل للملف commit عشان باقي الفريق والـ CI ياخدوا نفس القرار.
-
-ملاحظة: sharp من 0.35 مبقاش عنده سكربت install (بيعتمد على binaries جاهزة كـ optional dependencies)، فتسطيبه مش هيطلّع التحذير ده. لو عايز تشوفه مع sharp نفسها جرّب [[sharp@0.34]].`
-        }
-      ]
-    },
-    {
-      t: "Node runtime",
-      l: 2,
-      n: "المكتبات المبنية في Node: الملفات والمسارات، و process والإشارات، وتشغيل برامج تانية بأمان، و Buffer، و EventEmitter و worker_threads",
-      items: [
-        {
-          cmd: "fs/promises",
-          title: "تقرا وتكتب ملفات من غير ما تبوّظها",
-          desc: R`[[node:fs/promises]] هي النسخة الـ async من fs: [[readFile]] و [[writeFile]] و [[appendFile]] و [[rename]]، وكلها بترجّع promise تعملها [[await]]. ولو كتبت [[utf8]] في القراية بترجع نص، من غيرها بترجع Buffer.
-
-وحاجتين بيفرّقوا السكربت المحترم عن التاني: الملف اللي مش موجود بتتعامل معاه بـ [[err.code === "ENOENT"]] مش بتبلع أي error. والملف المهم (config أو داتا) بتكتبه في ملف مؤقت وبعدين [[rename]]، فلو العملية وقعت في النص الملف الأصلي ميبقاش نصه مكتوب.`,
-          example: R`import { readFile, writeFile, rename, appendFile } from "node:fs/promises";
-
-async function loadConfig(file) {
-  try {
-    return JSON.parse(await readFile(file, "utf8"));
-  } catch (err) {
-    if (err.code === "ENOENT") return { port: 3000 };
-    throw err;
-  }
+~~~text math.js
+export function sum(a, b) {
+  return a + b;
 }
+~~~
 
-async function saveJson(file, data) {
-  const tmp = file + ".tmp";
-  await writeFile(tmp, JSON.stringify(data, null, 2) + "\n");
-  await rename(tmp, file);
-}
+[[export]] بيخلي الدالة متاحة لملفات تانية (المشروع [["type": "module"]]).
 
-const config = await loadConfig("config.json");
-config.runs = (config.runs ?? 0) + 1;
-await saveJson("config.json", config);
-await appendFile("app.log", $__btrun $__{config.runs}\n$__bt);
-console.log(config);`,
-          try: R`احفظه كـ [[config-demo.mjs]] في فولدر فاضي وشغّله ٣ مرات: [[runs]] لازم يزيد و [[app.log]] يطول سطر كل مرة. وبعدين اكتب [[{bad]] في config.json وشغّله تاني، وقرر: الأحسن يرجع للقيم الافتراضية ولا يقع؟ وعدّل [[loadConfig]] بحيث الرسالة تقول اسم الملف البايظ.`,
-          flag: "script",
-          deep: {
-            why: R`أي سكربت أو سيرفر بيقرا config أو بيكتب نتيجة أو لوج. والغلطات هنا مش بتبان غير في أسوأ وقت: config بايظ السيرفر اشتغل بيه بالقيم الافتراضية من غير ما حد يعرف، أو ملف JSON فضل نصه مكتوب لأن الـ deploy قفل العملية وهي بتكتب.`,
-            how: R`[[readFile(file, "utf8")]] بيقرا الملف كله في الذاكرة ويرجّعه نص. ده تمام لـ config أو JSON صغير. لملف كبير (لوج بالجيجا أو CSV ضخم) القراية دي بتملى الرام، والحل streams (في «تاب Backend بـ Node»).
+~~~text math.test.js
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { sum } from "./math.js";
 
-الـ errors بتاعة fs فيها [[code]]: [[ENOENT]] مش موجود، و [[EACCES]] مفيش صلاحية، و [[EISDIR]] ده فولدر مش ملف. في المثال [[ENOENT]] بس هو اللي بيرجّع القيم الافتراضية، وأي حاجة تانية (زي JSON بايظ، اللي بيرمي [[SyntaxError]]) بتطلع لفوق وتوقف التشغيل، ودا اللي انت عايزه.
-
-[[writeFile]] بيمسح الملف ويكتب من الأول، فلو العملية اتقفلت في النص الملف بيفضل ناقص. الحل: اكتب [[config.json.tmp]] وبعدين [[rename]] على الاسم الأصلي. الـ rename على نفس الـ filesystem بيحصل مرة واحدة (atomic)، فأي حد بيقرا الملف هيلاقي النسخة القديمة كاملة أو الجديدة كاملة.
-
-[[appendFile]] بيضيف في آخر الملف وبيعمله لو مش موجود. و [[JSON.stringify(data, null, 2)]] بمسافتين عشان الملف يتقري ويبان كويس في git diff.
-
-ولقراية JSON ثابت وقت التحميل فيه كمان [[import cfg from "./config.json" with { type: "json" }]]، شغال في Node 22 الحديث و 24 من غير تحذير. بس ده بيتقري مرة واحدة ومش بيشوف تعديلات بعد التشغيل.`,
-            when: "config و seed data وملفات صغيرة بتقراها أو بتولّدها. الكتابة عن طريق ملف مؤقت لأي ملف لو اتبوّظ هتزعل عليه. و readFileSync مقبولة في أول سطور سكربت CLI، مش جوه route في سيرفر.",
-            mistakes: R`[[catch {}]] فاضي أو بيرجّع default لأي error، فـ config بايظ أو صلاحيات غلط بتعدّي بصمت. وتنسى [[utf8]] فتطبع [[<Buffer 7b 22 ...>]] بدل النص. و [[readFileSync]] جوه request handler بيوقف السيرفر كله لحد ما القراية تخلص.
-
-سؤال انترفيو: «إزاي تكتب ملف من غير ما يتبوّظ لو العملية وقعت؟»: ملف مؤقت على نفس الـ filesystem وبعدين rename، لأن الـ rename atomic والـ writeFile لأ.`
-          },
-          lines: [
-            "دوال الملفات الـ async من مكتبة Node المبنية.",
-            "دالة بتقرا الـ config.",
-            "حاول...",
-            "...اقرا الملف كنص وحوّله object.",
-            "لو حصل error...",
-            "...والملف مش موجود أصلًا: رجّع القيم الافتراضية.",
-            "أي error تاني (JSON بايظ، صلاحيات): ارميه لفوق.",
-            "قفلة الـ catch.",
-            "قفلة الدالة.",
-            "دالة بتكتب JSON بأمان.",
-            "اسم ملف مؤقت جنب الأصلي.",
-            "اكتب في المؤقت، منسّق بمسافتين وسطر جديد في الآخر.",
-            "وبعدين rename على الأصلي في خطوة واحدة.",
-            "قفلة.",
-            "اقرا الـ config (أو القيم الافتراضية).",
-            "عدّل فيه.",
-            "واحفظه.",
-            "ضيف سطر في آخر ملف اللوج (وبيعمله لو مش موجود).",
-            "اطبع الـ config."
-          ],
-          sol: R`التشغيلات التلاتة الأولى بتطبع [[{ port: 3000, runs: 1 }]] وبعدين 2 وبعدين 3، و [[app.log]] فيه [[run 1]] و [[run 2]] و [[run 3]] كل واحد في سطر. أول مرة الملف مكانش موجود فرجع [[ENOENT]] والدالة رجّعت القيم الافتراضية.
-
-مع [[{bad]] السكربت بيقع بـ [[SyntaxError: Expected property name or '}' in JSON at position 1]] و exit code 1. ودا الصح: config بايظ لازم يوقف التشغيل، مش يشتغل بالقيم الافتراضية وانت فاكر إن إعداداتك اتطبقت. المشكلة الوحيدة إن الرسالة مش بتقول أنهي ملف. الحل تحت بيفصل القراية عن الـ parse، ويرمي error جديد فيه اسم الملف ومعاه [[cause]] الأصلي.
-
-الغلط الشائع: تحط [[JSON.parse]] جوه نفس الـ try وتعمل [[catch { return defaults }]] لأي حاجة، فالملف البايظ يعدّي بصمت.`,
-          solCode: R`import { readFile } from "node:fs/promises";
-
-async function loadConfig(file) {
-  let text;
-  try {
-    text = await readFile(file, "utf8");
-  } catch (err) {
-    if (err.code === "ENOENT") return { port: 3000 };
-    throw err;
-  }
-  try {
-    return JSON.parse(text);
-  } catch (err) {
-    throw new Error($__bt$__{file} is not valid JSON: $__{err.message}$__bt, { cause: err });
-  }
-}
-
-console.log(await loadConfig("config.json"));
-// Error: config.json is not valid JSON: Expected property name or '}' in JSON at position 1 ...`
-        },
-        {
-          cmd: "path و import.meta.dirname",
-          title: "المسار نسبةً لمين؟",
-          desc: R`[[readFile("config.json")]] بيدوّر على الملف في الفولدر اللي انت شغّلت منه node ([[process.cwd()]])، مش الفولدر اللي فيه السكربت. عشان كده السكربت يشتغل من جوه فولدره ويقع من أي مكان تاني.
-
-الحل: ابني المسار من مكان الملف نفسه. في ESM ده [[import.meta.dirname]] (Node 20.11 وأحدث)، وفي CommonJS [[__dirname]]. و [[node:path]] بيركّب المسارات صح على لينكس وويندوز: [[join]] و [[resolve]] و [[basename]] و [[extname]].`,
-          example: R`import path from "node:path";
-import { readFile } from "node:fs/promises";
-
-const configPath = path.join(import.meta.dirname, "config.json");
-const config = JSON.parse(await readFile(configPath, "utf8"));
-console.log(config.port);
-
-console.log(path.basename("/srv/app/photo.final.png"));
-console.log(path.extname("photo.final.png"));
-console.log(path.parse("/srv/app/photo.png").name);
-console.log(path.join("uploads", "../../etc/passwd"));
-
-function safeJoin(root, userPath) {
-  const full = path.resolve(root, userPath);
-  if (!full.startsWith(root + path.sep)) throw new Error("path traversal: " + userPath);
-  return full;
-}
-console.log(safeJoin("/srv/uploads", "a/b.png"));
-console.log(safeJoin("/srv/uploads", "../../etc/passwd"));`,
-          try: R`حط السكربت و [[config.json]] فيه [[{"port":4000}]] في فولدر، واعمل [[cd /]] وشغّله بالمسار الكامل: لازم يطبع 4000. بعدين بدّل [[configPath]] بـ [["config.json"]] بس وشغّله من نفس المكان. وجرّب [[safeJoin]] بـ [["/etc/passwd"]] و [["../uploads-old/x.png"]].`,
-          flag: "script",
-          deep: {
-            why: R`«شغال لما أشغّله بإيدي ومش شغال من cron أو pm2 أو Docker»: غالبًا مسار نسبي، لأن الأدوات دي بتشغّل من فولدر تاني. والمسارات اللي فيها كلام جاي من اليوزر (اسم ملف مرفوع، أو [[?file=]] في URL) هي باب path traversal: اليوزر يبعت [[../../etc/passwd]] ويقرا أي ملف على السيرفر.`,
-            how: R`أي مسار نسبي في fs بيتحسب من [[process.cwd()]]، يعني الفولدر اللي الـ process اتشغّلت منه. [[import.meta.dirname]] بيرجّع فولدر الملف الحالي و [[import.meta.filename]] الملف نفسه (الاتنين في Node 20.11 وأحدث). قبلهم كنت بتكتب [[path.dirname(fileURLToPath(import.meta.url))]]، وهتلاقيها كتير في كود قديم.
-
-[[path.join]] بيلزق الأجزاء بالفاصل الصح ([[/]] على لينكس و [[\]] على ويندوز) وبيبسّط [[..]]. [[path.resolve]] بيطلّع مسار مطلق: بيبدأ من cwd، وأي جزء مطلق في النص بيبدأ من عنده من جديد، فـ [[path.resolve("/srv/uploads", "/etc/passwd")]] بترجع [[/etc/passwd]].
-
-[[basename]] اسم الملف، و [[extname]] الامتداد الأخير بس ([[.png]] من [[photo.final.png]])، و [[path.parse]] بيرجّع object فيه [[dir]] و [[name]] و [[ext]].
-
-[[safeJoin]] هو الحماية من path traversal: حوّل المسار لمطلق، واتأكد إنه لسه جوه الفولدر المسموح. والمقارنة مع [[root + path.sep]] مش [[root]] بس، عشان [[/srv/uploads-old]] بيبدأ بـ [[/srv/uploads]] كنص وهو فولدر تاني.`,
-            when: "أي ملف السكربت بيقراه جنبه (config، templates، seed data): من import.meta.dirname. وأي مسار فيه جزء جاي من اليوزر: safeJoin أو ما يشبهه، أو الأحسن متستخدمش اسم اليوزر خالص وخزّن باسم انت اللي عامله (uuid).",
-            mistakes: R`تركّب المسار بـ [[+ "/" +]] فيبوظ على ويندوز. وتفتكر [[path.join]] بتحمي من [[..]]: هي بتبسّطها بس، فـ [[path.join("uploads", "../../etc/passwd")]] بترجع [[../etc/passwd]] عادي. وتستخدم [[__dirname]] في ملف ESM فيطلع [[__dirname is not defined in ES module scope]].
-
-سؤال انترفيو: «إيه هو path traversal وإزاي تمنعه؟»: resolve لمسار مطلق وتأكد إنه جوه الفولدر المسموح، أو متبنيش المسار من كلام اليوزر أصلًا.`
-          },
-          lines: [
-            "مكتبة المسارات.",
-            "قراية الملفات.",
-            "مسار الـ config من فولدر الملف نفسه، مش من المكان اللي اتشغّل منه node.",
-            "اقراه وحوّله object.",
-            "اطبع البورت.",
-            "اسم الملف من غير الفولدر: photo.final.png.",
-            "الامتداد الأخير بس: .png.",
-            "الاسم من غير امتداد: photo.",
-            "join بيبسّط الـ .. بس مش بيحمي منها: الناتج ../etc/passwd.",
-            "دالة بتركّب مسار من كلام اليوزر بأمان.",
-            "حوّله لمسار مطلق.",
-            "لو خرج بره الفولدر المسموح: ارفض.",
-            "وإلا رجّعه.",
-            "قفلة.",
-            "مسموح: /srv/uploads/a/b.png.",
-            "مرفوض: بيرمي path traversal."
-          ],
-          sol: R`من [[/]] السكربت بيطبع 4000، لأن [[configPath]] مبني من [[import.meta.dirname]]. لما تبدّله بـ [["config.json"]] بس بيقع بـ [[ENOENT: no such file or directory, open 'config.json']]، لأنه بيدوّر في [[/]] (الـ cwd). ودي بالظبط مشكلة cron و pm2.
-
-[[safeJoin]] مع [["/etc/passwd"]] مرفوض: [[path.resolve]] بيبدأ من المسار المطلق ويطلّع [[/etc/passwd]]. و [["../uploads-old/x.png"]] مرفوض برضه، مع إن [[/srv/uploads-old/x.png]] بيبدأ بـ [[/srv/uploads]] كنص، لأننا بنقارن بـ [[/srv/uploads/]] بالفاصل. ولو شلت [[path.sep]] من المقارنة هتعدّي، ودا الغلط اللي عايزك تشوفه. أما [["a/../../uploads/c.png"]] فمسموح لأنه بعد التبسيط لسه جوه الفولدر.`,
-          solCode: R`import path from "node:path";
-
-function safeJoin(root, userPath) {
-  const full = path.resolve(root, userPath);
-  if (!full.startsWith(root + path.sep)) throw new Error("path traversal: " + userPath);
-  return full;
-}
-
-for (const input of ["a/b.png", "../../etc/passwd", "/etc/passwd", "../uploads-old/x.png", "a/../../uploads/c.png"]) {
-  try {
-    console.log("ok  ", safeJoin("/srv/uploads", input));
-  } catch (err) {
-    console.log("deny", err.message);
-  }
-}
-// ok   /srv/uploads/a/b.png
-// deny path traversal: ../../etc/passwd
-// deny path traversal: /etc/passwd
-// deny path traversal: ../uploads-old/x.png
-// ok   /srv/uploads/c.png`
-        },
-        {
-          cmd: "الفولدرات: mkdir و readdir و rm",
-          title: "فولدرات جوه فولدرات من غير أخطاء",
-          desc: R`[[mkdir(dir, { recursive: true })]] بيعمل الفولدر واللي قبله، ومبيزعلش لو موجود. و [[readdir]] مع [[recursive: true]] و [[withFileTypes: true]] بيلف على الشجرة كلها ويقولك ده ملف ولا فولدر. و [[rm]] مع [[recursive]] و [[force]] زي [[rm -rf]]. و [[glob]] من [[node:fs/promises]] بيدوّر بنمط زي [[**/*.csv]] من غير مكتبة.`,
-          example: R`import { mkdir, readdir, stat, rm, writeFile, glob } from "node:fs/promises";
-
-await mkdir("out/reports/2026", { recursive: true });
-await writeFile("out/reports/2026/jan.csv", "id,total\n1,50\n");
-await writeFile("out/notes.txt", "hi");
-
-const entries = await readdir("out", { recursive: true, withFileTypes: true });
-for (const e of entries) {
-  if (e.isFile()) console.log("file", e.parentPath + "/" + e.name);
-}
-
-const info = await stat("out/notes.txt");
-console.log(info.size, info.mtime instanceof Date);
-
-for await (const f of glob("out/**/*.csv")) console.log("glob", f);
-
-await rm("out", { recursive: true, force: true });
-await rm("out", { recursive: true, force: true });
-console.log("clean");`,
-          try: R`شغّله مرتين ورا بعض: المفروض ميطلعش أي error. بعدين شيل [[recursive: true]] من [[mkdir]] وشغّل، وشيل [[force: true]] من الـ [[rm]] التاني وشغّل، وسجّل الـ [[code]] بتاع كل error.`,
-          flag: "script",
-          deep: {
-            why: R`سكربتات التصدير والـ build والـ backup كلها بتعمل فولدرات وتلف على ملفات وتمسح. والنسخة «البسيطة» بتقع في أول مرة الفولدر مش موجود، أو تاني مرة لما يبقى موجود. الـ options دي بتخلي السكربت يتشغّل أي عدد مرات بنفس النتيجة (idempotent).`,
-            how: R`[[mkdir]] من غير [[recursive]] بيقع بـ [[ENOENT]] لو الأب مش موجود وبـ [[EEXIST]] لو الفولدر موجود. مع [[recursive: true]] الاتنين مش مشكلة، زي [[mkdir -p]].
-
-[[readdir]] لوحده بيرجّع أسامي بس في مستوى واحد. [[withFileTypes: true]] بيرجّع objects فيها [[isFile()]] و [[isDirectory()]] و [[name]] و [[parentPath]] (الفولدر اللي فيه). و [[recursive: true]] (من Node 20) بينزل في كل الفولدرات. والترتيب مش مضمون، فلو محتاجه رتّب بنفسك.
-
-[[stat]] بيرجّع الحجم بالبايت ([[size]]) ووقت آخر تعديل ([[mtime]] كـ Date) و [[isDirectory()]].
-
-[[glob]] async iterator فبتلف عليه بـ [[for await]]. كان experimental في أول Node 22، وبقى stable في نسخ 22 الحديثة و 24، فلو لقيت تحذير ExperimentalWarning حدّث Node أو استخدم مكتبة [[fast-glob]].
-
-[[rm]] مع [[recursive: true]] بيمسح الفولدر باللي فيه، و [[force: true]] بيخليه ميقعش لو مش موجود. نفس خطورة [[rm -rf]]: لو المسار جاي من متغير فاضي أو غلط، بيمسح اللي مكتوب.`,
-            when: "مجلد output قبل ما تكتب فيه، وتنضيف build أو ملفات مؤقتة، ولف على ملفات لتحويلها أو ضغطها أو رفعها.",
-            mistakes: R`[[existsSync]] قبل [[mkdir]] بدل [[recursive]]: كود أطول وبرضه ممكن يقع لو حاجة تانية عملت الفولدر في النص (race). و [[rm]] بمسار مبني من متغير ممكن يبقى فاضي. واستخدام [[fs.rmdir]] القديم بـ recursive، وده deprecated لصالح [[rm]].`
-          },
-          lines: [
-            "دوال الفولدرات والملفات.",
-            "اعمل الفولدر وكل اللي قبله، ومتزعلش لو موجود.",
-            "ملف CSV جوه الشجرة.",
-            "وملف في الأول.",
-            "كل الملفات والفولدرات تحت out، ومعاها نوع كل واحد.",
-            "لف عليهم...",
-            "...والملفات بس اطبعها بمسارها.",
-            "قفلة.",
-            "معلومات الملف.",
-            "الحجم بالبايت، وتاريخ آخر تعديل.",
-            "دوّر بنمط glob، و for await لأنه بيرجّع النتايج واحدة واحدة.",
-            "امسح الفولدر باللي فيه.",
-            "تاني مرة مش موجود، و force بيخليها متقعش.",
-            "اطبع."
-          ],
-          sol: R`الناتج في المرتين:
-
-[[file out/notes.txt]] و [[file out/reports/2026/jan.csv]] (الترتيب ممكن يختلف)، وبعدين [[2 true]] (الملف ٢ بايت)، و [[glob out/reports/2026/jan.csv]]، و [[clean]].
-
-من غير [[recursive]] في [[mkdir]]: [[ENOENT]] لأن [[out]] و [[out/reports]] مش موجودين. ولو عملتهم بإيدك وشغّلت تاني: [[EEXIST]]. ومن غير [[force]] في الـ rm التاني: [[ENOENT]] لأن الفولدر اتمسح في السطر اللي قبله.
-
-الغلط الشائع إنك تحل ده بـ [[if (!existsSync(...))]] قبل كل عملية. الـ options أقصر وأصح.`,
-          solCode: R`import { mkdir, rm } from "node:fs/promises";
-
-for (const fn of [
-  () => mkdir("x/y/z"),
-  () => mkdir("x/y/z", { recursive: true }).then(() => mkdir("x/y/z")),
-  () => rm("nope", { recursive: true }),
-]) {
-  await fn().catch((err) => console.log(err.code));
-}
-await rm("x", { recursive: true, force: true });
-// ENOENT
-// EEXIST
-// ENOENT`
-        },
-        {
-          cmd: "fs.watch",
-          title: "اعمل حاجة لما ملف يتغير",
-          desc: R`[[watch]] من [[node:fs/promises]] بيرجّع async iterator: كل ما ملف في الفولدر يتعمل أو يتعدل أو يتمسح بيدّيك event. [[recursive: true]] بيراقب الفولدرات اللي جوه (شغال على لينكس من Node 20)، و [[signal]] من AbortController بيوقف المراقبة.
-
-الأحداث مش نضيفة: الحفظ الواحد ممكن يطلّع أكتر من event، والنوع [[rename]] أو [[change]] بس. فبتعمل debounce وتعيد الشغل مرة واحدة.`,
-          example: R`import { watch } from "node:fs/promises";
-
-const ac = new AbortController();
-setTimeout(() => ac.abort(), 60_000);
-
-try {
-  for await (const event of watch("content", { recursive: true, signal: ac.signal })) {
-    console.log(event.eventType, event.filename);
-  }
-} catch (err) {
-  if (err.name !== "AbortError") throw err;
-}
-console.log("stopped watching");`,
-          try: R`اعمل فولدر [[content]] وشغّل السكربت، ومن ترمنال تاني اعمل ملف، وعدّله، وغيّر اسمه بـ [[mv]]، واحفظ ملف من VS Code. عدّ الأحداث في كل حالة. وبعدين اكتب نسخة بتعمل [[rebuild()]] مرة واحدة بعد ما التعديلات تهدى ٢٠٠ms، وبتتجاهل أي ملف مش [[.md]].`,
-          flag: "script",
-          deep: {
-            why: R`سكربت بيبني صفحات من ملفات Markdown، أو بيعيد توليد types لما schema تتغير، أو بيعالج أي ملف يتحط في فولدر inbox. محتاج تعرف إن ملف اتغير من غير ما تفحص الفولدر كل ثانية.`,
-            how: R`[[watch]] بيستخدم نظام التنبيهات بتاع الـ OS (inotify على لينكس، FSEvents على ماك)، فمش بيستهلك CPU وهو مستني. كل event فيه [[eventType]] ([[rename]] لما ملف يتعمل أو يتمسح أو اسمه يتغير، و [[change]] لما محتواه يتغير) و [[filename]] نسبة للفولدر اللي بتراقبه، وممكن يبقى null في حالات نادرة.
-
-المحررات بتحفظ بطرق مختلفة: بعضها يكتب ملف مؤقت ويعمل rename، فبتشوف rename بدل change، وأحيانًا event مرتين. عشان كده متعتمدش على نوع الحدث: اعتبر أي event «حاجة اتغيرت، راجع». والـ debounce (clearTimeout ثم setTimeout) بيجمع الأحداث اللي ورا بعض في شغلة واحدة.
-
-[[signal]] بيخلي [[ac.abort()]] يوقف الـ loop برمي [[AbortError]]، واللي بنمسكه ونكمّل. من غير signal الـ loop مبيخلصش والعملية فاضلة شغالة، ودا المطلوب في watcher بيشتغل طول الوقت.
-
-جوه Docker على ويندوز أو WSL مع bind mount الأحداث ممكن متوصلش خالص (نفس مشكلة nodemon في درس [[node --watch --env-file]]). ولمشروع كبير أو محتاج دقة على كل الأنظمة، مكتبة [[chokidar]] بتعالج الحالات دي. ولو عايز تعيد تشغيل السيرفر نفسه مع كل تعديل، ده [[node --watch]] مش fs.watch.`,
-            when: "أدوات تطوير صغيرة: rebuild أو regenerate أو copy لما ملف يتغير. مش لمعالجة ملفات في الإنتاج بالآلاف (استخدم queue).",
-            mistakes: R`تعمل الشغل التقيل مع كل event فيتنفّذ ٣ مرات لكل حفظ. وتعتمد على [[eventType === "change"]] فتفوّت المحررات اللي بتعمل rename. وتنسى إن [[filename]] نسبي للفولدر مش مسار كامل.`
-          },
-          lines: [
-            "watch في النسخة الـ async.",
-            "controller عشان نوقف المراقبة.",
-            "وقّفها بعد دقيقة (في الحقيقة: مع SIGINT مثلًا).",
-            "حاول...",
-            "...لف على الأحداث في content وكل اللي جواه...",
-            "...اطبع نوع الحدث واسم الملف.",
-            "قفلة الـ loop.",
-            "لما الـ abort يحصل بيرمي AbortError...",
-            "...ده متوقع، وأي error تاني ارميه.",
-            "قفلة.",
-            "اطبع بعد ما المراقبة تقف."
-          ],
-          sol: R`لما تعمل ملف بـ [[echo a > content/a.md]] هتشوف [[rename a.md]] (وأحيانًا [[change a.md]] وراه). التعديل بـ [[>>]]: [[change a.md]]. و [[mv content/a.md content/b.md]]: [[rename a.md]] و [[rename b.md]]. والحفظ من VS Code ممكن يطلّع حدث أو اتنين حسب الإعدادات. العدد بيختلف بين الأنظمة والنسخ، ودي النقطة.
-
-في الحل: أي حدث لملف [[.md]] بيلغي الـ timer القديم ويبدأ واحد جديد، فخمس تعديلات ورا بعض بتطلّع [[rebuild at ...]] مرة واحدة. والـ [[tmp.swp]] بيتجاهل. الغلط الشائع: تحط [[rebuild()]] جوه الـ loop مباشرة فيشتغل مع كل حدث.`,
-          solCode: R`import { watch } from "node:fs/promises";
-
-let timer;
-function rebuild() {
-  console.log("rebuild at", new Date().toISOString().slice(11, 19));
-}
-
-for await (const { filename } of watch("content", { recursive: true })) {
-  if (!filename || !filename.endsWith(".md")) continue;
-  clearTimeout(timer);
-  timer = setTimeout(rebuild, 200);
-}`
-        },
-        {
-          cmd: "process.argv و parseArgs",
-          title: "arguments سكربت الـ CLI من غير مكتبة",
-          desc: R`[[process.argv]] array: أول عنصر مسار node، والتاني مسار السكربت، والباقي اللي اليوزر كتبه، وكله نصوص. للـ flags زي [[--out file]] و [[-v]]، [[parseArgs]] من [[node:util]] (stable من Node 20) بيعمل الشغل من غير commander.
-
-وكمان في [[process]]: [[process.env]] متغيرات البيئة (درس [[.env و متغيرات البيئة]])، و [[process.cwd()]] الفولدر الحالي، و [[process.pid]] رقم العملية.`,
-          example: R`import { parseArgs } from "node:util";
-
-console.log(process.argv.slice(2));
-
-const { values, positionals } = parseArgs({
-  options: {
-    out: { type: "string", short: "o", default: "report.csv" },
-    verbose: { type: "boolean", short: "v" },
-    limit: { type: "string" },
-  },
-  allowPositionals: true,
+test("sum adds two numbers", () => {
+  assert.equal(sum(2, 3), 5);
 });
 
-const limit = Number(values.limit ?? 100);
-if (!Number.isInteger(limit)) {
-  console.error("--limit must be a number");
-  process.exit(2);
-}
-console.log({ values, positionals, limit });
-console.log(process.env.NODE_ENV ?? "development", process.cwd(), process.pid > 0);`,
-          try: R`احفظه كـ [[report.mjs]] وشغّله بـ [[node report.mjs orders.json -v --out=x.csv --limit 5]]، وبعدين بـ [[--limit abc]]، وبعدين بـ [[--colour]]، وبعدين [[node report.mjs a -- -v]]. واطبع [[echo $?]] بعد كل واحدة. وبعدين حوّل الـ error بتاع option غلط لرسالة usage واضحة بدل stack trace، وضيف [[-h]].`,
-          flag: "script",
-          deep: {
-            why: R`سكربتات الـ seed والتصدير والـ migration محتاجة parameters. قراية [[process.argv[2]]] بالترتيب بتنفع لـ argument واحد، وبعدها بتبقى هشة: اليوزر يكتب الـ flags بترتيب تاني أو [[--out=x]] بدل [[--out x]] فالسكربت يفهم غلط.`,
-            how: R`[[process.argv.slice(2)]] بيشيل مسار node والسكربت ويسيب اللي اليوزر كتبه. الشيل هو اللي بيقسّم على المسافات وبيشيل علامات التنصيص قبل ما Node يشوف حاجة.
+test("login rejects empty password", () => {
+  assert.equal("".length > 0, false);
+});
+~~~
 
-[[parseArgs]] بياخد وصف الـ options: [[type]] يا [[string]] يا [[boolean]]، و [[short]] الحرف المختصر، و [[default]]. وبيفهم [[--out x.csv]] و [[--out=x.csv]] و [[-o x.csv]] و [[-v]]. و [[allowPositionals]] بيسمح بـ arguments من غير اسم (زي اسم الملف) وبترجع في [[positionals]]. وأي حاجة بعد [[--]] بتتعامل كـ positional حتى لو بتبدأ بـ [[-]].
+| السطر | معناه |
+|---|---|
+| [[import { test } from "node:test"]] | هات دالة [[test]]. [[node:]] معناها موديول جاي مع Node مش من npm |
+| [[import assert from "node:assert/strict"]] | أدوات المقارنة، النسخة strict |
+| [[import { sum } from "./math.js"]] | الدالة اللي هنختبرها. [[./]] يعني من نفس الفولدر |
+| [[test("اسم", () => {...})]] | اختبار ليه اسم، والكود جوه الـ arrow function |
+| [[assert.equal(sum(2, 3), 5)]] | لو [[sum(2, 3)]] مش [[5]] بالظبط، الاختبار يفشل |
 
-من غير ما تقوله، [[strict]] شغال: option مش معروف أو string من غير قيمة بيرمي [[ERR_PARSE_ARGS_UNKNOWN_OPTION]] أو شبهه. ودا كويس (typo زي [[--colour]] مبيعدّيش بصمت)، بس امسكه واطبع usage.
+[[strict]] يعني المقارنة بـ [[===]]: [[assert.equal("5", 5)]] بيفشل. في النسخة العادية القديمة بيعدّي، ودي حاجة بتخبّي bugs.
 
-القيم كلها نصوص: [[type: "number"]] مش موجود، فبتحوّل بـ [[Number()]] وتتحقق بنفسك. و exit code 2 هو العرف لـ «استخدام غلط».
+---
 
-[[values]] object من غير prototype (بيتطبع Object: null prototype)، عادي تقرا منه زي أي object.`,
-            when: "أي سكربت فيه أكتر من argument أو flag. لو محتاج subcommands وhelp أوتوماتيك ومكمّلات، commander أو yargs.",
-            mistakes: R`[[if (process.argv[2] === "--verbose")]] فالترتيب يبقى إجباري. ونسيان إن [[--limit 5]] بيرجع [["5"]] نص فالمقارنة [[limit > 10]] تشتغل بالصدفة. وتسيب الـ error بتاع parseArgs يطلع stack trace لليوزر.`
-          },
+## ١. [[node --test]]
+
+~~~text الناتج
+✔ sum adds two numbers (0.6666ms)
+✔ login rejects empty password (0.1238ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.5935
+~~~
+
+- [[✔]] نجح، وجنبه الوقت.
+- [[tests 2]] / [[pass 2]] / [[fail 0]]: العدد والناجح والفاشل.
+- [[suites]] مجموعات اختبارات ([[describe]])، معندناش.
+- [[duration_ms]] الوقت كله، ومعظمه تشغيل process للملف (كل ملف اختبار بيشتغل في process لوحده).
+
+Node لقى الملف لوحده لأن اسمه بيخلص بـ [[.test.js]]. الأسامي اللي بيدوّر عليها: [[*.test.js]] و [[*-test.js]] و [[*_test.js]] وأي ملف جوه فولدر [[test]] (ومعاهم [[.mjs]] و [[.cjs]]).
+
+### لما يفشل
+
+غيّرت [[a + b]] لـ [[a - b]]:
+
+~~~text الناتج
+✖ sum adds two numbers (1.4841ms)
+✔ login rejects empty password (0.3774ms)
+ℹ tests 2
+ℹ pass 1
+ℹ fail 1
+...
+✖ failing tests:
+
+test at math.test.js:5:1
+✖ sum adds two numbers (1.4841ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+  -1 !== 5
+
+      at TestContext.<anonymous> (file:///C:/Users/ali/ltest/math.test.js:6:10)
+~~~
+
+[[-1 !== 5]]: الدالة رجّعت [[-1]] (2 - 3) والمتوقع [[5]]. و [[math.test.js:6:10]] مكان الـ assert اللي فشل. والأمر خرج بـ exit code 1، فالـ CI بيقف.
+
+### Node 22 قصاد 24
+
+على Node 22 لما الناتج مش رايح لترمنال (pipe أو ملف أو CI)، الشكل بيبقى TAP:
+
+~~~text الناتج (Node 22، من غير ترمنال)
+TAP version 13
+# Subtest: sum adds two numbers
+ok 1 - sum adds two numbers
+~~~
+
+على Node 24 طلع بالشكل اللي فوق ([[✔]]) حتى والناتج رايح لـ pipe.
+
+---
+
+## ٢. [[node --test --watch]]
+
+بيشغّل الاختبارات، ويفضل مستني، ومع أي تعديل في الملفات بيعيد:
+
+~~~text الناتج (بعد تعديل math.js)
+Restarted at 10/6/2026, 4:03:32 PM
+✖ sum adds two numbers (1.4855ms)
+...
+~~~
+
+Ctrl+C للخروج.
+
+---
+
+## ٣. [[node --test --test-name-pattern="login"]]
+
+بيشغّل الاختبارات اللي **اسمها** فيه [[login]] بس (والقيمة ممكن تبقى regex):
+
+~~~text الناتج
+✔ login rejects empty password (0.7253ms)
+ℹ tests 1
+ℹ pass 1
+~~~
+
+---
+
+## ٤. [[node --test --experimental-test-coverage]]
+
+[[coverage]] = نسبة الكود اللي الاختبارات شغّلته. و [[experimental]] يعني لسه مش stable.
+
+~~~text الناتج (آخره)
+ℹ start of coverage report
+ℹ ----------------------------------------------------------
+ℹ file      | line % | branch % | funcs % | uncovered lines
+ℹ ----------------------------------------------------------
+ℹ math.js   | 100.00 |   100.00 |  100.00 |
+ℹ ----------------------------------------------------------
+ℹ all files | 100.00 |   100.00 |  100.00 |
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[line %]] | نسبة السطور اللي اتنفذت |
+| [[branch %]] | نسبة الفروع (كل [[if]] ليه فرعين) |
+| [[funcs %]] | نسبة الدوال اللي اتنادت |
+| [[uncovered lines]] | أرقام السطور اللي ماتنفذتش |
+
+ملفات الاختبار نفسها مش بتتحسب، و 100% معناها كل سطر اتنفذ، مش إن كل حالة اتختبرت.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[node --test]] | لاقي ملفات الاختبار وشغّلها |
+| [[--watch]] | أعد مع كل تعديل |
+| [[--test-name-pattern="x"]] | الاختبارات اللي اسمها فيه x |
+| [[--experimental-test-coverage]] | نسبة التغطية |
+
+> حط [["test": "node --test"]] في scripts، و [[npm test]] يشغّله.`,
           lines: [
-            "parseArgs مبنية في Node.",
-            "اللي اليوزر كتبه بس (من غير node ومسار السكربت).",
-            "حلّل الـ arguments...",
-            "...الـ options المسموحة:",
-            "--out أو -o نص، وله قيمة افتراضية.",
-            "--verbose أو -v true/false.",
-            "--limit نص (مفيش نوع number).",
-            "قفلة الـ options.",
-            "واسمح بـ arguments من غير اسم (زي اسم الملف).",
-            "قفلة.",
-            "حوّل الرقم بنفسك، و 100 لو مش موجود.",
-            "لو مش رقم صحيح...",
-            "...اطبع السبب على stderr...",
-            "...واخرج بـ 2 (استخدام غلط).",
-            "قفلة.",
-            "اطبع اللي اتفهم.",
-            "من process كمان: البيئة، والفولدر الحالي، ورقم العملية."
+            "دوّر على ملفات الاختبار وشغّلها.",
+            "وأعد التشغيل مع كل تعديل.",
+            "الاختبارات اللي اسمها فيه login بس.",
+            "واطبع نسبة الكود اللي الاختبارات غطّته."
           ],
-          sol: R`الأول: [[values]] فيها [[verbose: true, out: 'x.csv', limit: '5']] (لاحظ [['5']] نص)، و [[positionals]] فيها [['orders.json']]، و [[limit: 5]]، و exit 0.
+          sol: R`الحل: [[math.js]] فيه [[sum]]، و [[math.test.js]] بـ [[node:test]] و [[node:assert/strict]]. [[node --test]] في الترمنال بيطبع [[✔ sum adds two numbers]] ومعاه الوقت، وتحت [[ℹ tests 1]] و [[ℹ pass 1]] و [[ℹ fail 0]]. (في Node 22 لو الناتج رايح لملف أو pipe بيطلع بشكل TAP: [[ok 1 - sum adds two numbers]]. في Node 24 بيفضل بالشكل ده في الحالتين.)
 
-[[--limit abc]]: [[--limit must be a number]] و exit 2. [[--colour]]: stack trace فيه [[ERR_PARSE_ARGS_UNKNOWN_OPTION]] و exit 1، ودا اللي هتصلّحه. [[a -- -v]]: [[verbose]] مش موجودة، و [[positionals]] فيها [['a', '-v']] لأن اللي بعد [[--]] مش flags. وكمان [[out: 'report.csv']] من الـ default.
+لما تبوّظ الدالة لـ [[a - b]]: [[✖ sum adds two numbers]] وتحتها [[Expected values to be strictly equal:]] و [[-1 !== 5]]، ومكان الـ assert في الملف، و [[fail 1]]، و exit code 1.
 
-بعد الحل: [[--colour]] بيطبع سطر السبب والـ usage ويخرج بـ 2، و [[-h]] بيطبع usage ويخرج بـ 0، ومن غير ملف بيخرج بـ 2.`,
-          solCode: R`import { parseArgs } from "node:util";
-
-const usage = "Usage: report [--out file] [--limit n] [-v] <input.json>";
-let args;
-try {
-  args = parseArgs({
-    options: {
-      out: { type: "string", short: "o", default: "report.csv" },
-      verbose: { type: "boolean", short: "v" },
-      limit: { type: "string" },
-      help: { type: "boolean", short: "h" },
-    },
-    allowPositionals: true,
-  });
-} catch (err) {
-  console.error(err.message + "\n" + usage);
-  process.exit(2);
+لو [[node --test]] ما لقاش الملف: الاسم لازم يطابق [[*.test.js]] أو [[*-test.js]] أو [[*_test.js]] أو يكون جوه فولدر [[test]]. ولو طلع [[Cannot use import statement outside a module]] ضيف [["type": "module"]] أو سمّي الملفات [[.mjs]].`,
+          solCode: R`// math.js
+export function sum(a, b) {
+  return a + b;
 }
 
-const { values, positionals } = args;
-if (values.help) {
-  console.log(usage);
-  process.exit(0);
-}
-if (positionals.length !== 1) {
-  console.error(usage);
-  process.exit(2);
-}
-console.log({ input: positionals[0], ...values });`
+// math.test.js
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { sum } from "./math.js";
+
+test("sum adds two numbers", () => {
+  assert.equal(sum(2, 3), 5);
+});`
         },
         {
-          cmd: "exit codes و process.exitCode",
-          title: "السكربت فشل، والـ CI فاكره نجح",
-          desc: R`الـ exit code هو الطريقة الوحيدة اللي CI أو bash أو Docker يعرفوا بيها إن سكربتك فشل: 0 نجاح، وأي رقم تاني فشل. Node بيخرج بـ 1 لوحده لو فيه exception أو promise اترفض من غير catch.
-
-وللخروج بفشل بنفسك: [[process.exitCode = 1]] أحسن من [[process.exit(1)]] في آخر السكربت. الأولانية بتسيب اللي فاضل يخلص (اللوج يتكتب، الاتصالات تتقفل) وتخرج بالرقم ده. التانية بتقفل فورًا، وممكن تقطع output لسه مكتبش.`,
-          example: R`const failed = ["a.csv"];
-if (failed.length) {
-  console.error($__bt$__{failed.length} file(s) failed$__bt);
-  process.exitCode = 1;
-}
-setTimeout(() => console.log("cleanup still runs"), 100);
-process.on("exit", (code) => console.log("exit with", code));`,
-          try: R`شغّله وبعدين [[echo $?]]. وبعدين قارن الأمرين دول: [[node -e 'process.stdout.write("x".repeat(5e6)); process.exit(0)' | wc -c]] ونفس الأمر بـ [[process.exitCode = 0]] بدل [[process.exit(0)]]. وجرّب [[node -e 'throw new Error("x")'; echo $?]].`,
-          flag: "script",
+          cmd: "node مباشرة",
+          title: "REPL و -e و --watch",
+          desc: "[[node]] لوحدها بتفتح REPL تجرّب فيه JavaScript. [[-e]] ينفّذ سطر. [[-p]] ينفّذ ويطبع الناتج. و [[--watch]] (من Node 18) بيعيد تشغيل الملف مع كل تعديل، بديل nodemon من غير تسطيب.",
+          example: R`node
+node -e "console.log(1 + 1)"
+node -p "require('./package.json').version"
+node --watch server.js
+node --check server.js`,
+          try: "افتح REPL وجرّب [[process.env.PATH.split(':')]] و [[os.cpus().length]] بعد [[const os = require('os')]].",
           deep: {
-            why: R`سكربت migration أو import فشل في نص الشغل وطبع error، بس خرج بـ 0، فالـ pipeline كمّل على deploy. أو سكربت بيطبع JSON كبير لـ [[jq]] والناتج بيوصل ناقص من غير سبب واضح. الاتنين مشاكل exit.`,
-            how: R`الأرقام المعروفة: 0 نجاح. 1 فشل عام (وده اللي Node بيستخدمه مع uncaught exception و unhandled rejection). 2 عرف لـ «استخدام غلط». 13 في Node معناه top-level await مخلصش (promise محدش هيحلّه). و [[128 + رقم الإشارة]] لو العملية اتقتلت بإشارة: 130 من Ctrl+C (SIGINT)، و 143 من SIGTERM، و 137 من SIGKILL (وغالبًا OOM killer في Docker).
+            why: "مش كل حاجة محتاجة ملف. تجرّب سطر JavaScript، أو تقرا قيمة من JSON، أو تشغّل السيرفر بحيث يعيد التشغيل مع كل تعديل.",
+            how: R`[[node]] لوحدها REPL (Read Eval Print Loop): بتكتب JavaScript وبيتنفذ سطر سطر. [[.exit]] أو Ctrl+D للخروج. مفيد تجرّب regex أو date أو API مكتبة.
 
-[[process.exit(n)]] بيوقف العملية حالًا: timers و I/O لسه مخلصوش بيتلغوا. والأخطر: لو stdout رايح لـ pipe أو ملف، الكتابة فيه async، فـ [[process.exit]] ممكن يقطعها. في التجربة اللي تحت الـ output بيوصل 65536 بايت بس من ٥ مليون.
+[[-e]] (eval) بينفّذ الكود اللي بين علامات التنصيص. [[-p]] (print) نفس الحاجة وبيطبع الناتج، فـ [[node -p "require('./package.json').version"]] بيطلّع النسخة من غير jq.
 
-[[process.exitCode = 1]] بيسجّل الرقم بس، والعملية بتخلص طبيعي لما مفيش شغل فاضل، وبتخرج بيه. ولو حصل error بعدها، الـ error بيكسب.
+[[--watch]] بيراقب الملف والملفات اللي بيستوردها، ويعيد التشغيل مع أي تعديل. بديل nodemon مبني في Node 18.11 وأحدث. و [[--watch-path]] لمراقبة فولدر معين.
 
-[[process.on("exit")]] بيتنادى قبل الخروج بالـ code، بس جواه sync بس: أي await أو setTimeout مش هيتنفّذ.`,
-            when: "أي سكربت في CI أو cron أو Docker: exitCode عند الفشل. process.exit للخروج الفوري الحقيقي (usage غلط في الأول، أو مهلة إغلاق خلصت).",
-            mistakes: R`[[catch (err) { console.error(err) }]] في آخر السكربت من غير exitCode، فالـ error يتطبع والـ CI يعدّي. و [[process.exit(0)]] في آخر سكربت بيطبع كتير لـ pipe فالناتج يتقطع. و async في [[on("exit")]].
-
-سؤال انترفيو: «exit code 137 معناه إيه؟»: 128 + 9، العملية اتقتلت بـ SIGKILL، وفي Docker ده غالبًا الذاكرة خلصت.`
+[[--check]] بيتأكد إن الملف syntax سليم من غير ما يشغّله.`,
+            when: "REPL لتجربة سريعة. -p في السكربتات. --watch في التطوير.",
+            mistakes: "double quotes جوه -e مع double quotes بره فتتعارض. استخدم double بره و single جوه: ده اللي بيشتغل في bash و PowerShell 7 و 5.1. العكس (single بره و double جوه) بيشتغل في bash، بس Windows PowerShell 5.1 بيشيل الـ double اللي جوه فالكود يوصل مكسور."
           },
+          teach: R`## ٥ طرق تكلّم بيها [[node]]
+
+من غير ملف ([[node]] و [[-e]] و [[-p]])، أو بملف بس بطريقة مختلفة ([[--watch]] و [[--check]]). اتشغّل على ويندوز 11 (Node 24.19) في Git Bash و PowerShell 7 و Windows PowerShell 5.1، في مشروع فيه package.json نسخته [[1.0.0]].
+
+---
+
+## ١. [[node]] لوحدها: الـ REPL
+
+REPL اختصار Read Eval Print Loop: «اقرا السطر، نفّذه، اطبع ناتجه، وارجع استنى». بيظهر:
+
+~~~text الناتج
+Welcome to Node.js v24.19.0.
+Type ".help" for more information.
+>
+~~~
+
+[[>]] معناها «مستنيك». جرّبت السطور دي واحد واحد:
+
+~~~text جلسة REPL
+> 1 + 1
+2
+> const os = require("os")
+undefined
+> os.cpus().length
+16
+> os.cpus.length
+0
+~~~
+
+| السطر | ليه الناتج كده |
+|---|---|
+| [[1 + 1]] | الـ REPL بيطبع ناتج أي expression لوحده من غير [[console.log]] |
+| [[const os = require("os")]] | [[require]] بيحمّل موديول [[os]] (معلومات الجهاز). تعريف متغير مالوش قيمة، فبيطبع [[undefined]] وده طبيعي |
+| [[os.cpus().length]] | [[os.cpus()]] بترجّع array فيها عنصر لكل logical processor، و [[.length]] عددهم. الجهاز ده ١٦ |
+| [[os.cpus.length]] | من غير [[()]] انت بتسأل عن الدالة نفسها مش ناتجها. [[.length]] للدالة = عدد الـ parameters بتاعتها = 0 |
+
+وللخروج: [[.exit]] أو Ctrl+D (على لينكس) أو Ctrl+C مرتين.
+
+---
+
+## ٢. [[node -e "console.log(1 + 1)"]]
+
+[[-e]] اختصار eval: نفّذ الكود ده.
+
+~~~text الناتج
+2
+~~~
+
+بيطبع لأن الكود فيه [[console.log]]. نفس الكلام من غيره [[node -e "1 + 1"]] مابيطبعش حاجة: اتحسب واترمى.
+
+---
+
+## ٣. [[node -p "require('./package.json').version"]]
+
+[[-p]] اختصار print: نفّذ **واطبع الناتج**.
+
+من جوه لبرة:
+
+1. [[require('./package.json')]]: [[require]] بيقرا ملف JSON ويحوّله object. [[./]] يعني من الفولدر اللي انت فيه.
+2. [[.version]]: هات الحقل [[version]] منه.
+3. [[-p]] يطبعه.
+
+~~~text الناتج
+1.0.0
+~~~
+
+ده بيطلّع أي قيمة من package.json من غير [[jq]]. وبيشتغل حتى لو المشروع [["type": "module"]]، لأن الكود اللي بعد [[-e]] و [[-p]] بيتعامل CommonJS افتراضيًا.
+
+### علامات التنصيص على ويندوز
+
+القاعدة: علامتين [[" "]] برا، ومفردة [[' ']] جوه. الأمر ده اشتغل في bash و PowerShell 7 و 5.1. لكن العكس (مفردة برا ودبل جوه):
+
+~~~powershell
+node -e 'console.log("dq inside")'
+~~~
+
+~~~text الناتج
+PowerShell 7:  dq inside
+PowerShell 5.1:
+console.log(dq inside)
+            ^^
+SyntaxError: missing ) after argument list
+~~~
+
+Windows PowerShell 5.1 شال علامات التنصيص الدبل اللي جوه وهو بيبعت الكلام لـ node، فالكود وصل مكسور. فالقاعدة الآمنة في كل الشيلات: دبل برا ومفردة جوه.
+
+---
+
+## ٤. [[node --watch server.js]]
+
+[[--watch]] بيشغّل الملف، ويراقبه هو وكل ملف بيستورده، ولما واحد يتغير يقفل العملية ويشغّلها تاني:
+
+~~~text الناتج (وبعد ما ضفت سطر في server.js)
+listening on 3919
+Change detected in 'C:\\Users\\ali\\w\\server.js'
+Restarting 'server.js'
+listening on 3919
+~~~
+
+ده بديل nodemon من غير تسطيب. وبيفضل شغال لحد Ctrl+C.
+
+---
+
+## ٥. [[node --check server.js]]
+
+[[--check]] بيقرا الملف ويتأكد إن الـ syntax سليم **من غير ما يشغّله**. ملف سليم: مفيش ناتج و exit 0. ملف فيه [[const x = ;]]:
+
+~~~text الناتج
+C:\Users\ali\myapp\broken.js:1
+const x = ;
+          ^
+
+SyntaxError: Unexpected token ';'
+~~~
+
+و exit 1. بيمسك غلطات الكتابة بس، مش الغلطات اللي بتحصل وقت التشغيل زي [[document is not defined]].
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه | بيطبع لوحده؟ |
+|---|---|---|
+| [[node]] | REPL سطر سطر | أيوه |
+| [[node -e "..."]] | نفّذ كود | لأ، لازم [[console.log]] |
+| [[node -p "..."]] | نفّذ واطبع | أيوه |
+| [[node --watch f.js]] | شغّل وأعد مع كل تعديل | |
+| [[node --check f.js]] | افحص الـ syntax بس | لو فيه غلطة |
+
+> دبل برا ومفردة جوه، وافتكر [[()]] لما تنادي دالة.`,
           lines: [
-            "نتيجة شغل (هنا ملف واحد فشل).",
-            "لو فيه فشل...",
-            "...اطبع السبب على stderr...",
-            "...وسجّل exit code 1 من غير ما تقفل فورًا.",
-            "قفلة.",
-            "شغل لسه فاضل، وهيتنفّذ لأننا مستخدمناش process.exit.",
-            "قبل الخروج مباشرة: اطبع الـ code."
+            "REPL: اكتب JavaScript وشوف الناتج. Ctrl+D للخروج.",
+            "نفّذ سطر.",
+            "نفّذ واطبع الناتج: النسخة من package.json.",
+            "شغّل وأعد التشغيل مع كل تعديل (بديل nodemon).",
+            "اتأكد إن الملف syntax سليم من غير تشغيل."
           ],
-          sol: R`الناتج: [[1 file(s) failed]] ثم [[cleanup still runs]] ثم [[exit with 1]]، و [[echo $?]] بيطبع 1. لو كنت كتبت [[process.exit(1)]] بدل exitCode، سطر الـ cleanup مكانش هيتطبع.
+          sol: R`[[process.env.PATH.split(':')]] بيرجّع array فيها كل فولدر في الـ PATH بالترتيب، زي [[[ '/root/.local/bin', '/usr/local/bin', '/usr/bin', ... ]]]. و [[const os = require('os')]] بيطبع [[undefined]] (ودا طبيعي في الـ REPL، الـ declarations مالهاش قيمة). و [[os.cpus().length]] بيرجّع عدد الأنوية، زي [[4]] أو [[8]].
 
-المقارنة: بـ [[process.exit(0)]] الـ [[wc -c]] بيطلّع 65536 (أو رقم تاني أقل من ٥ مليون حسب الجهاز)، وبـ [[process.exitCode = 0]] بيطلّع 5000000 كاملين. و [[throw]] بيطلّع 1.
+خلي بالك من الأقواس: [[os.cpus.length]] من غير [[()]] بيرجّع [[0]]، لأنه طول الدالة نفسها مش الـ array. غلطة بتحصل كتير. و [[.exit]] أو Ctrl+D مرتين للخروج.
 
-الغلط الشائع إنك تفتكر [[console.log]] sync دايمًا: على الترمنال أيوه، بس لما الـ output رايح لـ pipe ممكن يبقى async على لينكس.`,
-          solCode: R`node -e 'process.stdout.write("x".repeat(5e6)); process.exit(0)' | wc -c
-# 65536
-node -e 'process.stdout.write("x".repeat(5e6)); process.exitCode = 0' | wc -c
-# 5000000
-node -e 'throw new Error("x")' 2>/dev/null; echo $?
-# 1`
+وعلى ويندوز الفاصل في PATH هو [[;]] مش [[:]]، فالـ split هيرجّع عنصر واحد طويل. الصح اللي بيشتغل في الاتنين [[process.env.PATH.split(require('path').delimiter)]].`
         },
         {
-          cmd: "SIGINT و SIGTERM",
-          title: "Ctrl+C وإشارة الإغلاق في سكربت شغال",
-          desc: R`Ctrl+C بيبعت [[SIGINT]]، و Docker و pm2 و systemd و Kubernetes بيبعتوا [[SIGTERM]] لما عايزين يقفلوا العملية. من غير معالج Node بيقفل فورًا، والشغلة اللي في النص بتتقطع. [[process.on("SIGTERM", fn)]] بيخليك تخلص الشغلة الحالية الأول.
-
-الدرس ده عن الفكرة في أي سكربت أو worker. تطبيقها على سيرفر HTTP ([[server.close()]] و unhandled rejections) في درس [[الإغلاق النضيف]] في المستوى ٣.`,
-          example: R`let stopping = false;
-
-async function shutdown(signal) {
-  if (stopping) {
-    console.log("forced exit");
-    process.exit(1);
-  }
-  stopping = true;
-  console.log($__bt$__{signal}: finishing current job...$__bt);
-  setTimeout(() => process.exit(1), 10_000).unref();
-  await new Promise((r) => setTimeout(r, 500));
-  console.log("done, bye");
-  process.exit(0);
-}
-
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
-
-console.log("pid", process.pid);
-setInterval(() => { if (!stopping) console.log("working..."); }, 300);`,
-          try: R`شغّله واضغط Ctrl+C مرة واحدة، وبعدين شغّله واضغطها مرتين بسرعة. ومن ترمنال تاني: [[kill -TERM <pid>]] ثم [[kill -9 <pid>]]. وبعد كل مرة [[echo $?]].`,
-          flag: "script",
+          cmd: ".env و متغيرات البيئة",
+          title: "الإعدادات بره الكود",
+          desc: "الكود بيقرا [[process.env.PORT]]، والقيمة جاية من البيئة: من الترمنال، أو من ملف .env. Node 20 وأحدث بيقرا الملف مباشرة بـ [[--env-file]] من غير مكتبة dotenv.",
+          example: R`PORT=4000 node server.js
+node --env-file=.env server.js
+node -e "console.log(process.env.DATABASE_URL)"
+cp .env.example .env
+grep -v '^#' .env | cut -d= -f1`,
+          try: "اعمل .env فيه PORT=4000 وشغّل السيرفر بـ [[--env-file]] واتأكد إنه فتح على 4000.",
           deep: {
-            why: R`worker بيعالج طابور، أو سكربت import بيكتب في القاعدة: لو اتقفل في النص بيسيب صف نصه متسجّل، أو job اتاخدت ومخلصتش. ومع كل deploy بيحصل ده لو العملية مش بتسمع SIGTERM.`,
-            how: R`الإشارة رسالة من النظام للعملية. أشهرها: [[SIGINT]] (رقم 2) من Ctrl+C. [[SIGTERM]] (15) «اقفل بأدب»، ودي الافتراضية بتاعة [[kill]] و [[docker stop]]. [[SIGKILL]] (9) قفل إجباري من الكيرنل، ومفيش عملية تقدر تمسكه أو تتجاهله.
+            why: "الباسوردات والمفاتيح مينفعش تتكتب في الكود ولا تدخل Git. وبتختلف بين جهازك والسيرفر. بتتحط في البيئة، والكود بيقراها.",
+            how: R`[[process.env]] object فيه كل متغيرات البيئة اللي العملية اتشغّلت بيها. [[PORT=4000 node server.js]] بيضيف PORT للبيئة للأمر ده بس.
 
-أول ما تعمل [[process.on("SIGINT")]] Node بيبطّل يقفل لوحده مع الإشارة دي: انت مسؤول تخرج. عشان كده لازم [[process.exit]] في الآخر.
+ملف [[.env]] (سطر لكل متغير) مش بيتقري لوحده. تقليديًا مكتبة dotenv بتقراه وتحطه في process.env. من Node 20.6 فيه [[--env-file=.env]] مبني، من غير مكتبة. وفي Next.js الإطار بيقراه لوحده.
 
-الـ pattern: flag [[stopping]] يوقف أخد شغل جديد، وتستنى الشغلة الحالية تخلص، وتخرج بـ 0. ومهلة ([[setTimeout]] بـ [[unref]]) تخرج بـ 1 لو الشغلة علّقت، لأن Docker هيبعت SIGKILL بعد ١٠ ثواني بأي حال. وإشارة تانية وانت بتقفل معناها «اليوزر مستعجل»، فبتخرج فورًا.
+القيم كلها نصوص. [[process.env.PORT]] هي "4000" مش 4000، فحوّلها لو هتحسب بيها.
 
-من غير معالج، Node بيقفل بـ exit code 130 مع SIGINT و 143 مع SIGTERM (128 + رقم الإشارة). ومع SIGKILL دايمًا 137.
+[[.env.example]] بيدخل Git بالأسامي من غير قيم، و [[.env]] في .gitignore. والأمر الأخير بيطلّع أسامي المتغيرات من .env عشان تقارنها بالـ example.
 
-في Docker: لو الـ CMD بتاعك [[npm start]] أو shell script، الإشارة ممكن تروح لـ npm أو sh مش لـ node. ولو node هو PID 1 من غير init، بيتعامل مع الإشارات بشكل مختلف. التفاصيل في «تاب Docker»، والخلاصة: الـ CMD بصيغة الـ array اللي بتشغّل node مباشرة، مع [[--init]] أو tini. وعلى ويندوز SIGTERM مش مدعوم زي لينكس، و SIGINT بس اللي بيشتغل من الترمنال.`,
-            when: "أي عملية طويلة: سيرفر، worker، consumer لطابور، سكربت import. السكربت اللي بيخلص في ثانية مش محتاج.",
-            mistakes: R`تمسك SIGINT وتنسى [[process.exit]] فـ Ctrl+C يبطّل يشتغل. ومفيش مهلة فالإغلاق يعلّق لحد SIGKILL. وتحاول تمسك SIGKILL. و async شغل جوه [[process.on("exit")]] بدل معالج الإشارة.
-
-سؤال انترفيو: «graceful shutdown إزاي؟»: وقّف استقبال شغل جديد، خلّص الجاري بمهلة، اقفل الاتصالات، اخرج بالـ code الصح.`
+في Docker المتغيرات بتيجي من env_file أو -e. وعلى pm2 من ecosystem file أو .env.`,
+            when: "كل مشروع من أول يوم: .env و .env.example و .gitignore.",
+            mistakes: "متغير في .env والكود بيقراه undefined: نسيت --env-file أو dotenv، أو المتغير بعد ما الكود قراه. dotenv لازم في أول سطر قبل أي import بيستخدم البيئة."
           },
+          teach: R`## القيم بتيجي من برا الكود
+
+الكود بيقرا [[process.env.PORT]]، والقيمة جاية من البيئة اللي البرنامج اتشغّل فيها: من الترمنال، أو من ملف [[.env]] بـ [[--env-file]]. اتشغّل على ويندوز 11 (Node 24.19) في Git Bash و PowerShell، وعلى لينكس جوه [[node:22-slim]].
+
+---
+
+## السيرفر اللي بنجرّب عليه
+
+~~~text server.js
+import http from "node:http";
+const port = process.env.PORT || 3000;
+http.createServer((req, res) => res.end("ok\n")).listen(port, () => console.log("listening on " + port));
+~~~
+
+- [[process.env]] object فيه كل متغيرات البيئة.
+- [[process.env.PORT || 3000]]: [[||]] معناها «لو اللي على الشمال فاضي أو undefined، خد اللي على اليمين». يعني 3000 لو محدش حدد PORT.
+- السطر التالت: سيرفر بيرد بـ [[ok]] على أي طلب، ويسمع على البورت، ويطبع رسالة لما يقوم.
+
+وملف [[.env]]: سطر لكل متغير بالشكل [[اسم=قيمة]]، من غير مسافات حوالين [[=]]:
+
+~~~text .env
+# server
+PORT=3921
+DATABASE_URL=postgres://app:secret@localhost:5432/app
+~~~
+
+---
+
+## ١. [[PORT=4000 node server.js]]
+
+في bash، [[اسم=قيمة]] قبل الأمر على نفس السطر بيحط المتغير **للأمر ده بس**:
+
+~~~text الناتج (Git Bash، بـ PORT=3922)
+listening on 3922
+~~~
+
+PowerShell مش بيفهم الشكل ده. المقابل:
+
+~~~powershell
+$env:PORT = 3923
+node -e "console.log(process.env.PORT, typeof process.env.PORT)"
+Remove-Item Env:PORT
+~~~
+
+~~~text الناتج
+3923 string
+~~~
+
+[[$env:PORT]] بيحط المتغير للترمنال كله لحد ما يتقفل، عشان كده [[Remove-Item Env:PORT]] بيشيله. ولاحظ [[string]]: القيم كلها نصوص، حتى لو كتبتها رقم.
+
+---
+
+## ٢. [[node --env-file=.env server.js]]
+
+[[--env-file]] (من Node 20.6) بيقرا الملف قبل ما الكود يبدأ ويحط القيم في [[process.env]]، من غير مكتبة dotenv:
+
+~~~text الناتج
+listening on 3921
+~~~
+
+و [[curl localhost:3921]] رد [[ok]].
+
+### لو المتغير موجود في البيئة كمان
+
+~~~bash
+PORT=9999 node --env-file=.env -e "console.log(process.env.PORT)"
+~~~
+
+~~~text الناتج
+9999
+~~~
+
+البيئة بتكسب على الملف. فلو السيرفر فتح على بورت غير اللي في [[.env]]، اتأكد إن مفيش [[PORT]] متعرّف في الترمنال.
+
+### لو الملف مش موجود
+
+~~~text الناتج
+لينكس:  node: nope.env: not found
+ويندوز: C:\Program Files\nodejs\node.exe: nope.env: not found
+~~~
+
+بيقف على طول بـ exit code 9. ولو عايز الملف اختياري: [[--env-file-if-exists=nope.env]] بيطبع [[nope.env not found. Continuing without it.]] ويكمّل.
+
+---
+
+## ٣. [[node -e "console.log(process.env.DATABASE_URL)"]]
+
+~~~text الناتج
+من غير --env-file:  undefined
+مع --env-file=.env: postgres://app:secret@localhost:5432/app
+~~~
+
+الملف مش بيتقري لوحده. وجوده جنب الكود مش كفاية.
+
+---
+
+## ٤. [[cp .env.example .env]]
+
+[[cp]] (copy) بينسخ الملف. [[.env.example]] بيدخل Git وفيه الأسامي بقيم وهمية، و [[.env]] الحقيقي في [[.gitignore]]. أول ما حد يعمل clone ينسخه ويحط قيمه. في PowerShell: [[Copy-Item .env.example .env]] (و [[cp]] اختصار ليه هناك برضه).
+
+---
+
+## ٥. [[grep -v '^#' .env | cut -d= -f1]]
+
+من الشمال لليمين:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[grep -v '^#' .env]] | [[-v]] اعكس: كل السطور **إلا** اللي بتبدأ بـ [[#]] ([[^]] = أول السطر) |
+| [[|]] | ابعت الناتج للي بعده |
+| [[cut -d= -f1]] | قطّع كل سطر عند [[=]] ([[-d]] delimiter) وخد الحتة الأولى ([[-f1]] field 1) |
+
+~~~text الناتج
+PORT
+DATABASE_URL
+~~~
+
+الأسامي من غير القيم السرية، فتقارنها بـ [[.env.example]] أو تبعتها لحد. في PowerShell:
+
+~~~powershell
+Get-Content .env | Where-Object { $_ -notmatch '^#' } | ForEach-Object { ($_ -split '=')[0] }
+~~~
+
+نفس الناتج: [[Where-Object]] بيفلتر، و [[$_]] السطر الحالي، و [[-split '=']] بيقطّع، و [[[0]]] أول حتة.
+
+---
+
+## الخلاصة
+
+| عايز | bash | PowerShell |
+|---|---|---|
+| متغير لأمر واحد | [[PORT=4000 node server.js]] | [[$env:PORT=4000]] وبعدين الأمر |
+| اقرا .env | [[node --env-file=.env server.js]] | نفس الأمر |
+| مين يكسب | البيئة على الملف | نفس الكلام |
+
+> القيم نصوص دايمًا ([[Number(process.env.PORT)]] لو هتحسب)، و [[.env]] عمره ما يدخل Git.`,
           lines: [
-            "هل بدأنا نقفل؟",
-            "معالج واحد للإشارتين.",
-            "لو إشارة تانية وصلت واحنا بنقفل...",
-            "...اليوزر مستعجل...",
-            "...اخرج فورًا.",
-            "قفلة.",
-            "علّم إننا بنقفل (ومتاخدش شغل جديد).",
-            "اطبع أنهي إشارة.",
-            "مهلة ١٠ ثواني ثم خروج بفشل، و unref عشان متأخرش الخروج الطبيعي.",
-            "استنى الشغلة الحالية (هنا محاكاة بنص ثانية).",
-            "اطبع.",
-            "واخرج بنجاح.",
-            "قفلة.",
-            "Ctrl+C.",
-            "إشارة الإغلاق من Docker أو pm2 أو kill.",
-            "اطبع رقم العملية عشان تبعتلها kill.",
-            "شغل متكرر بيقف لما نبدأ نقفل."
+            "متغير للأمر ده بس.",
+            "اقرا .env مباشرة (Node 20.6+) من غير dotenv.",
+            "اقرا متغير من البيئة الحالية.",
+            "ابدأ ملفك من النموذج.",
+            "أسامي المتغيرات في .env من غير قيمها (للمقارنة أو المشاركة)."
           ],
-          sol: R`Ctrl+C مرة: [[SIGINT: finishing current job...]] وبعد نص ثانية [[done, bye]] و exit 0. مرتين بسرعة: بعد رسالة الـ SIGINT تطلع [[forced exit]] و exit 1.
+          sol: R`مع سيرفر بيقرا [[process.env.PORT || 3000]] و [[.env]] فيه [[PORT=4000]]: [[node --env-file=.env server.js]] بيطبع [[listening on 4000]]، و [[curl localhost:4000]] بيرد.
 
-[[kill -TERM]]: نفس الكلام بـ [[SIGTERM: ...]] و exit 0. [[kill -9]]: العملية بتموت من غير أي رسالة، والشيل بيقول [[Killed]] و [[echo $?]] بيطبع 137، لأن SIGKILL مبيوصلش للكود أصلًا.
+لو فتح على 3000: يا الكود بيقرا اسم تاني ([[process.env.port]] بحروف صغيرة مختلف)، يا نسيت [[--env-file]]، يا فيه [[PORT]] متعرّف في الترمنال أصلًا (القيمة اللي في البيئة بتكسب على الملف؛ اتأكد بـ [[echo $PORT]]).
 
-ولو شلت الـ [[process.on]] الاتنين: Ctrl+C بيقفل فورًا بـ 130، و SIGTERM بـ 143. الغلط الشائع: تتوقع إن الـ [[exit]] event بيتنادى مع SIGKILL، ودا مش بيحصل.`,
-          solCode: R`node worker.mjs &
-PID=$!
-kill -TERM $PID; wait $PID; echo $?
-# SIGTERM: finishing current job...
-# done, bye
-# 0
-node worker.mjs & PID=$!
-kill -9 $PID; wait $PID; echo $?
-# Killed
-# 137`
+ولو الملف مش موجود، Node بيقع على طول بـ [[node: nope.env: not found]]. لو عايز الملف يبقى اختياري استخدم [[--env-file-if-exists]] (في النسخ الحديثة). والغلط الشائع: [[PORT = 4000]] بمسافات أو في آخر السطر تعليق من غير مسافة قبله، فالقيمة تتقري غلط.`,
+          solCode: R`// server.js
+import http from "node:http";
+const port = process.env.PORT || 3000;
+http.createServer((req, res) => res.end("ok\n")).listen(port, () => console.log("listening on " + port));
+
+// الترمنال
+echo "PORT=4000" > .env
+node --env-file=.env server.js`
         },
         {
-          cmd: "execFile و spawn",
-          title: "شغّل git أو tar أو ffmpeg من Node",
-          desc: R`[[node:child_process]] بيشغّل برامج تانية. [[execFile(cmd, args)]] للأوامر القصيرة: بيستنى لحد ما تخلص ويرجّعلك stdout و stderr كنص، ومع [[promisify]] بتعمله await. [[spawn(cmd, args)]] للطويلة أو اللي output بتاعها كبير: بيرجّعلك الـ process نفسها و streams، و [[stdio: "inherit"]] بيخلي الـ output يظهر في ترمنالك مباشرة.
-
-في الاتنين الأمر لوحده والـ arguments في array. مفيش shell في النص.`,
-          example: R`import { execFile, spawn } from "node:child_process";
-import { promisify } from "node:util";
-
-const run = promisify(execFile);
-
-const { stdout } = await run("git", ["--version"]);
-console.log("git:", stdout.trim());
-
-try {
-  await run("ls", ["/no/such/dir"], { timeout: 5000 });
-} catch (err) {
-  console.log("failed:", err.code, err.stderr.trim());
-}
-
-const child = spawn("tar", ["-czvf", "backup.tgz", "uploads"], { stdio: "inherit" });
-child.on("error", (err) => console.error("could not start:", err.message));
-child.on("close", (code) => console.log("tar exited with", code));`,
-          try: R`اعمل فولدر [[uploads]] فيه ملف وشغّل السكربت. بعدين غيّر [["tar"]] لـ [["tarr"]] وشوف أنهي event اشتغل. وبعدين اكتب دالة [[sh(cmd, args)]] بـ spawn بترجّع promise: تنجح لو exit code صفر، وترمي error فيه الـ code لو لأ.`,
-          flag: "script",
+          cmd: "البورت مشغول",
+          title: "EADDRINUSE",
+          desc: "الرسالة الأشهر: [[listen EADDRINUSE: address already in use :::3000]]. يعني عملية تانية (غالبًا نسخة قديمة من سيرفرك) ماسكة البورت. تلاقيها وتقفلها، أو تشغّل على بورت تاني.",
+          example: R`lsof -i :3000
+kill -9 $(lsof -t -i :3000)
+npx -y kill-port 3000
+PORT=3001 npm run dev`,
+          try: "شغّل السيرفر مرتين في ترمنالين وشوف الرسالة، وبعدين اقفل الأول بـ kill-port.",
           deep: {
-            why: R`حاجات كتير أسهل تعملها بالبرنامج الجاهز: [[pg_dump]] للـ backup، و [[ffmpeg]] للفيديو، و [[git]] في سكربت release، و [[tar]] للضغط. وأي سكربت بيعمل كده محتاج يعرف الأمر فشل ولا نجح، ويشوف الـ output من غير ما يملى الرام.`,
-            how: R`[[execFile]] بيشغّل الملف مباشرة (من غير shell) وبيجمع الـ output كله في الذاكرة. لو الـ exit code مش صفر الـ promise بيترفض، والـ error فيه [[code]] (exit code) و [[stdout]] و [[stderr]]. و [[timeout]] بيقتل الأمر لو طوّل. وفيه [[maxBuffer]] (افتراضي ١ ميجا): لو الـ output أكبر، الأمر بيتقتل والـ promise بيترفض.
+            why: "شغّلت السيرفر، وقفلت الترمنال أو الـ hot reload وقع، والعملية القديمة لسه ماسكة البورت. اللي بعدها بتفشل بـ EADDRINUSE.",
+            how: R`نظام التشغيل بيسمح لعملية واحدة تسمع على بورت. الرسالة بتقولك أنهي بورت. [[lsof -i :3000]] بيقولك مين ماسكه ورقمها (PID).
 
-[[spawn]] مبيجمعش حاجة: [[child.stdout]] و [[child.stderr]] streams بتقرا منها وقت ما البيانات تيجي، أو [[stdio: "inherit"]] يوصّلهم بترمنالك. ودا المناسب لأمر بيطبع كتير أو شغال دقايق (build، backup، ffmpeg). وعايز تعرف النتيجة: [[close]] event بالـ code.
+[[lsof -t]] بيطلّع الرقم بس، و [[$( )]] بيحطه في kill. و [[-9]] هنا مقبول لأنها عملية تطوير معلّقة.
 
-لو البرنامج مش موجود: [[error]] event بـ [[ENOENT]] (وفي execFile الـ promise بيترفض بـ [[err.code === "ENOENT"]]). ومع spawn لازم تسمع [[error]]، وإلا العملية كلها تقع.
+[[npx kill-port 3000]] نفس الحاجة بأمر واحد، وبيشتغل على ويندوز كمان (على ويندوز lsof مش موجود، بدلها [[netstat -ano]] و [[taskkill]]).
 
-البيئة: الابن بياخد [[process.env]] بتاعك افتراضيًا. و [[cwd]] بيحدد الفولدر اللي يشتغل فيه، و [[env]] لو عايز تديله متغيرات مختلفة.
+الأسهل أحيانًا: شغّل على بورت تاني. لو الكود بيقرا [[process.env.PORT || 3000]]، [[PORT=3001 npm run dev]] بيحل.
 
-ولو محتاج shell فعلًا (pipes و globs): الدرس اللي بعده، وفيه ليه ده خطر.`,
-            when: "execFile: أمر قصير و output صغير (git rev-parse، ffprobe، convert). spawn: طويل أو output كبير أو محتاج تشوفه live. جوه API request: لأ لو ممكن، حطه في job.",
-            mistakes: R`تتجاهل الـ exit code فالـ backup «نجح» وهو فاضي. ومتسمعش [[error]] في spawn فبرنامج ناقص على السيرفر يوقّع التطبيق. و execFile لأمر بيطبع ميجات فيتقتل بسبب maxBuffer. و [[execSync]] جوه سيرفر بيوقف كل الطلبات لحد ما يخلص.`
+وفي الإنتاج، EADDRINUSE معناه غالبًا نسختين من التطبيق شغالين (pm2 و docker مثلًا)، وده لازم يتحقق مش يتقفل.`,
+            when: "كل ما تشوف الرسالة. وقبل ما تشغّل السيرفر لو مش متأكد.",
+            mistakes: "تقفل أي عملية على البورت من غير ما تشوف هي إيه. على السيرفر ممكن تقفل الإنتاج."
           },
+          teach: R`## EADDRINUSE: حد تاني ماسك البورت
+
+نظام التشغيل بيسمح لبرنامج واحد بس يسمع على البورت (على نفس العنوان). لو سيرفر قديم لسه شغال، الجديد بيقع. الدرس اتجرّب على لينكس جوه [[node:22-slim]] (بعد [[apt-get install lsof]]) وعلى ويندوز 11 على بورت 3917 بتاعي، عشان ماقفلش حاجة تانية على الجهاز.
+
+---
+
+## الرسالة
+
+شغّلت السيرفر مرتين:
+
+~~~text الناتج
+listening on 3000
+Error: listen EADDRINUSE: address already in use :::3000
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[EADDRINUSE]] | Error ADDRess IN USE: العنوان مستخدم |
+| [[listen]] | الخطوة اللي وقعت: السيرفر بيحاول يسمع |
+| [[:::3000]] | [[::]] كل العناوين (IPv6 وبيشمل IPv4)، و [[:3000]] البورت |
+| [[errno: -98]] | رقم الخطأ من لينكس. على ويندوز طلع [[-4091]] لنفس الخطأ |
+
+---
+
+## ١. [[lsof -i :3000]]
+
+[[lsof]] = list open files. في لينكس كل اتصال شبكة بيتعامل كملف، و [[-i :3000]] فلتر: اللي على بورت 3000.
+
+~~~text الناتج
+COMMAND PID USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
+node    227 root   18u  IPv6 2319332      0t0  TCP *:3000 (LISTEN)
+~~~
+
+| العمود | القيمة | معناها |
+|---|---|---|
+| [[COMMAND]] | node | اسم البرنامج. **بص عليه قبل ما تقفل** |
+| [[PID]] | 227 | Process ID، رقم العملية |
+| [[USER]] | root | بيوزر مين |
+| [[NAME]] | [[*:3000 (LISTEN)]] | كل العناوين، بورت 3000، بيسمع |
+
+---
+
+## ٢. [[kill -9 $(lsof -t -i :3000)]]
+
+من جوه لبرة:
+
+1. [[lsof -t -i :3000]]: [[-t]] (terse) بيطبع الـ PID بس:
+
+~~~text الناتج
+227
+~~~
+
+2. [[$( )]]: نفّذ اللي جوه وحط ناتجه مكانه، فالأمر بقى [[kill -9 227]].
+3. [[kill -9]]: ابعت signal رقم 9 (SIGKILL) يقفل العملية على طول من غير ما تنضّف.
+
+~~~text الناتج
+bash: line 1:   227 Killed                  node srv.js
+~~~
+
+وبعدها [[lsof -i :3000]] مابيطبعش حاجة. [[-9]] مقبول هنا لأنه سيرفر تطوير معلّق، بس في الإنتاج جرّب [[kill]] من غير رقم الأول (SIGTERM) عشان التطبيق يقفل نضيف.
+
+---
+
+## ٣. [[npx -y kill-port 3000]]
+
+باكدج بتعمل الخطوتين في أمر واحد، وعلى ويندوز كمان:
+
+~~~text الناتج (ويندوز، بورت 3917)
+Process on port 3917 killed
+~~~
+
+### على ويندوز بإيدك
+
+~~~powershell
+Get-NetTCPConnection -LocalPort 3917 -State Listen | Select-Object LocalAddress, LocalPort, OwningProcess
+~~~
+
+~~~text الناتج
+LocalAddress LocalPort OwningProcess
+------------ --------- -------------
+::                3917         42640
+~~~
+
+[[OwningProcess]] هو الـ PID. بعدها [[Get-Process -Id 42640]] يقولك اسمه، و [[Stop-Process -Id 42640]] يقفله. ومن CMD:
+
+~~~cmd
+netstat -ano | findstr :3917
+~~~
+
+~~~text الناتج
+  TCP    0.0.0.0:3917           0.0.0.0:0              LISTENING       36648
+  TCP    [::]:3917              [::]:0                 LISTENING       36648
+~~~
+
+آخر عمود الـ PID، و [[taskkill /PID 36648 /F]] يقفله.
+
+---
+
+## ٤. [[PORT=3001 npm run dev]]
+
+بدل ما تقفل حاجة، شغّل على بورت تاني. ده بيشتغل لأن الكود بيقرا [[process.env.PORT || 3000]]. في PowerShell: [[$env:PORT=3001; npm run dev]].
+
+---
+
+## الخلاصة
+
+| الخطوة | لينكس والماك | ويندوز |
+|---|---|---|
+| مين ماسك البورت | [[lsof -i :3000]] | [[Get-NetTCPConnection -LocalPort 3000]] أو [[netstat -ano | findstr :3000]] |
+| اقفله | [[kill -9 PID]] | [[Stop-Process -Id PID]] أو [[taskkill /PID PID /F]] |
+| أمر واحد | [[npx -y kill-port 3000]] | نفس الأمر |
+| أو بورت تاني | [[PORT=3001 npm run dev]] | [[$env:PORT=3001; npm run dev]] |
+
+> اقرا اسم البرنامج قبل ما تقفل. ولو [[lsof]] مطلّعش حاجة والبورت مشغول، البرنامج بيوزر تاني: [[sudo lsof -i :3000]].`,
           lines: [
-            "الدالتين من child_process.",
-            "promisify عشان execFile يبقى await.",
-            "نسخة promise من execFile.",
-            "شغّل git بـ argument في array واستنى النتيجة.",
-            "stdout نص، و trim يشيل السطر الجديد.",
-            "حاول...",
-            "...أمر هيفشل، ومهلة ٥ ثواني.",
-            "exit code مش صفر: الـ promise اترفض.",
-            "الـ exit code والـ stderr جوه الـ error.",
-            "قفلة.",
-            "أمر طويل: spawn والـ output يظهر في ترمنالك مباشرة.",
-            "البرنامج مش موجود أو مينفعش يتشغّل.",
-            "خلص: اطبع الـ exit code."
+            "مين ماسك 3000.",
+            "اقفله: -t يطلّع الرقم بس.",
+            "نفس الحاجة بأمر واحد (وعلى ويندوز كمان).",
+            "أو اشتغل على بورت تاني."
           ],
-          sol: R`الناتج: [[git: git version 2.x]]، ثم [[failed: 2 ls: cannot access '/no/such/dir': No such file or directory]]، ثم أسامي الملفات من tar ([[uploads/]] و [[uploads/a.txt]]) و [[tar exited with 0]]، والملف [[backup.tgz]] اتعمل.
+          sol: R`التاني بيقع على طول:
 
-مع [["tarr"]]: بيتطبع [[could not start: spawn tarr ENOENT]]، و [[close]] بيتنادى برضه بـ code سالب ([[-2]] على لينكس)، مش null ولا 1. عشان كده الـ error event هو اللي تعتمد عليه في «البرنامج مش موجود».
+[[Error: listen EADDRINUSE: address already in use :::3000]] (أو [[0.0.0.0:3000]] حسب الإعداد) ومعاها [[code: 'EADDRINUSE']] و [[port: 3000]].
 
-في الحل، tar على فولدر مش موجود بيطبع رسالته على الترمنال (inherit) والـ promise بيترفض بـ [[tar failed: code=2 signal=null]]. والغلط الشائع: [[resolve]] في [[exit]] أو [[close]] من غير ما تبص على الـ code.`,
-          solCode: R`import { spawn } from "node:child_process";
+[[lsof -i :3000]] بيطلّع السطر بتاع الأول: [[node 1564 you ... TCP *:3000 (LISTEN)]] والرقم التاني هو الـ PID. و [[npx -y kill-port 3000]] بيطبع [[Process on port 3000 killed]]، وبعدها [[lsof -i :3000]] مش بيطبع حاجة، وتقدر تشغّل التاني.
 
-function sh(cmd, args, opts = {}) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { stdio: "inherit", ...opts });
-    child.on("error", reject);
-    child.on("close", (code, signal) => {
-      if (code === 0) resolve();
-      else reject(new Error($__bt$__{cmd} failed: code=$__{code} signal=$__{signal}$__bt));
-    });
-  });
-}
-
-await sh("tar", ["-czf", "backup.tgz", "uploads"]);
-console.log("backup ok");
-await sh("tar", ["-czf", "backup2.tgz", "no-such-folder"]).catch((err) => console.error(err.message));
-await sh("tarr", ["status"]).catch((err) => console.error(err.code, err.message));`
+قبل ما تقتل، بص على اسم البرنامج في lsof: ممكن يبقى حاجة تانية مش سيرفرك القديم (Docker أو مشروع تاني). ولو [[lsof]] ما طلّعش حاجة والبورت لسه مشغول، شغّله بـ [[sudo]] لأن البرنامج ممكن يكون بيوزر تاني. وعلى ويندوز: [[netstat -ano | findstr :3000]].`
         },
         {
-          cmd: "command injection",
-          title: "exec بنص فيه كلام اليوزر",
-          desc: R`[[exec("wc -l " + name)]] بيبعت النص كله لـ shell ([[/bin/sh -c]])، والـ shell بيفهم [[;]] و [[&&]] و [[|]] و [[$()]]. فلو [[name]] جاي من اليوزر وفيه [[; rm -rf ~]]، ده أمر تاني بيتنفّذ بصلاحيات السيرفر. ودي command injection.
-
-الحل: [[execFile]] أو [[spawn]] بـ args array، فالكلام بيوصل للبرنامج كـ argument واحد حرفيًا من غير shell. وحتى كده، argument بيبدأ بـ [[-]] ممكن البرنامج يفهمه option (argument injection)، فبتحط [[--]] أو [[--end-of-options]] قبله.`,
-          example: R`import { exec, execFile } from "node:child_process";
-import { promisify } from "node:util";
-const sh = promisify(exec);
-const run = promisify(execFile);
-
-const name = "notes.txt; echo HACKED > pwned.txt";
-
-const bad = await sh($__btwc -l $__{name}$__bt);
-console.log("exec:", bad.stdout.trim());
-
-try {
-  await run("wc", ["-l", name]);
-} catch (err) {
-  console.log("execFile:", err.stderr.trim());
-}
-
-const ref = "--output=stolen.txt";
-await run("git", ["log", ref]);
-try {
-  await run("git", ["log", "--end-of-options", ref]);
-} catch (err) {
-  console.log("git:", err.stderr.trim().split("\n")[0]);
-}`,
-          flag: "script",
-          try: R`في فولدر تجربة فاضي: [[git init]]، واعمل commit فاضي ([[git commit --allow-empty -m init]])، واعمل [[notes.txt]] فيه سطرين، وشغّل السكربت. بعدين [[ls]]: هتلاقي ملفين محدش طلبهم. وبعدين اكتب [[countLines(name)]] و [[logFor(ref)]] آمنين، وجرّبهم بنفس المدخلات دي وبـ [["--help"]].`,
+          cmd: "outdated / update / audit",
+          title: "تحديث المكتبات بأمان",
+          desc: "[[outdated]] بيوريك ٣ أعمدة: الحالية، والمسموحة (Wanted) حسب ^ و ~، والأحدث (Latest). [[update]] بيحدّث لحد Wanted بس. للانتقال لنسخة رئيسية جديدة لازم تسطّبها بالاسم. و [[audit]] للثغرات.",
+          example: R`npm outdated
+npm update
+npm install react@latest react-dom@latest
+npm audit
+npm audit fix
+npx npm-check-updates -u`,
+          try: "شغّل [[npm outdated]] على مشروع قديم واقرا الأعمدة التلاتة. لاحظ إن Latest ممكن يكون أعلى من Wanted.",
           deep: {
-            why: R`أي feature بتشغّل برنامج على كلام جاي من اليوزر (اسم ملف مرفوع يتحوّل بـ ffmpeg أو ImageMagick، أو branch في أداة deploy، أو domain في أداة ping) ممكن تتحوّل لتنفيذ أوامر على السيرفر. دي من أخطر الثغرات لأن المهاجم بياخد shell بصلاحيات تطبيقك، ومن أول ما بتتقري في أي code review أو security audit.`,
-            how: R`[[exec]] و [[execSync]] و [[spawn]] مع [[shell: true]] كلهم بيشغّلوا [[/bin/sh -c "النص"]]. الـ shell بيحلّل النص: [[;]] بيفصل أوامر، و [[$(...)]] و backticks بينفّذوا، و [[>]] بيكتب ملفات. في المثال النص بقى [[wc -l notes.txt; echo HACKED > pwned.txt]]، أمرين.
+            why: "المكتبات بتتحدّث كل أسبوع. لو سبتها شهور، التحديث بيبقى مؤلم. ولو حدّثت كل حاجة مرة واحدة من غير فهم، حاجة هتبوظ.",
+            how: R`[[outdated]] بيعرض جدول: Current اللي عندك، Wanted أعلى نسخة مسموحة حسب ^ و ~ في package.json، Latest آخر نسخة نزلت. لو Wanted أقل من Latest، فيه major جديد.
 
-[[execFile("wc", ["-l", name])]] مفيهوش shell: Node بيشغّل wc مباشرة ويدّيله [[name]] كـ argument واحد، فـ wc بيدوّر على ملف اسمه حرفيًا [[notes.txt; echo HACKED > pwned.txt]] ومش بيلاقيه. مفيش escaping تعمله بإيدك وتغلط فيه.
+[[update]] بيرفع لـ Wanted بس ويحدّث الـ lock. آمن نسبيًا لأنه في حدود semver.
 
-بس الـ array مش بيحميك من إن البرنامج نفسه يفهم الـ argument كـ option. [[git log --output=stolen.txt]] بيكتب الـ log في ملف في أي مسار. والحل: [[--end-of-options]] في git (أو [[--]] في أغلب أدوات يونكس زي [[wc -l -- name]])، بعدها كل حاجة بتتعامل كاسم مش option. وكمان validation: allowlist للحروف ([[/^[\w.-]+$/]]) وارفض اللي بيبدأ بـ [[-]].
+major جديد: تسطّبه بالاسم [[react@latest]]، وتقرا changelog الأول، وتجرّب. مكتبات كتير ليها migration guide.
 
-في Node 24، [[spawn]] أو [[execFile]] مع [[shell: true]] و args array بيطلّع [[DEP0190]] DeprecationWarning لأن الـ args بتتلزق في النص من غير escaping، فهي نفس خطورة exec. وعلى ويندوز، تشغيل [[.bat]] أو [[.cmd]] بـ spawn من غير shell بقى بيرفض من تحديث أمني في 2024 لنفس السبب.`,
-            when: "دايمًا execFile أو spawn بـ array لما أي جزء من الأمر مش ثابت. exec مقبولة بس لأوامر ثابتة بالكامل انت كاتبها (زي سكربت build عندك). والأحسن لو فيه مكتبة Node بتعمل الشغل (sharp للصور مثلًا) متشغّلش برنامج خالص.",
-            mistakes: R`تعمل escaping بإيدك ([[replace(/;/g, "")]]) وتنسى [[$()]] أو [[|]] أو newline. وتحط [[shell: true]] في spawn «عشان الأمر يشتغل». وتفتكر إن الـ array كفاية وتنسى argument injection بـ [[-]].
+[[npx npm-check-updates -u]] بيعدّل package.json لآخر نسخ كل حاجة بما فيها major. قوي وخطير: استخدمه في branch وشغّل الاختبارات.
 
-سؤال انترفيو: «إيه الفرق بين exec و execFile؟»: exec بيعدّي على shell فعرضة لـ command injection ومحدود بـ buffer، و execFile بيشغّل البرنامج مباشرة بـ args منفصلة.`
+[[audit]] بيقارن الـ lock بقاعدة ثغرات. [[audit fix]] بيحدّث في حدود semver. لو الثغرة محتاجة major، بيقولك وميعملش، و [[--force]] بيعمل بس ممكن يكسر.`,
+            when: "outdated شهريًا. audit في CI. major updates واحدة واحدة في branch.",
+            mistakes: "[[audit fix --force]] على الإنتاج. وتحديث ١٠ مكتبات major مرة واحدة فمش عارف مين اللي كسر."
           },
+          teach: R`## ٣ أسئلة عن المكتبات
+
+[[outdated]]: فيه أحدث؟ [[update]]: حدّث في الحدود المسموحة. [[audit]]: فيه ثغرات؟ اتشغّل على ويندوز 11 (npm 11.17) في مشروع فيه [[express@4.18.2]] و [[ms@2.0.0]]، والاتنين مكتوبين بـ [[^]].
+
+---
+
+## ١. [[npm outdated]]
+
+~~~text الناتج
+Package  Current  Wanted  Latest  Location              Depended by
+express   4.18.2  4.22.3   5.2.1  node_modules/express  lout
+ms         2.0.0   2.1.3   2.1.3  node_modules/ms       lout
+~~~
+
+| العمود | معناه | express |
+|---|---|---|
+| [[Current]] | المتسطب دلوقتي | 4.18.2 |
+| [[Wanted]] | أعلى نسخة يسمح بيها المدى في package.json ([[^4.18.2]]) | 4.22.3 |
+| [[Latest]] | آخر نسخة منشورة | 5.2.1 |
+| [[Location]] | مكانها | |
+| [[Depended by]] | مين طالبها (هنا المشروع نفسه) | |
+
+لما Wanted أقل من Latest زي express، يبقى فيه major جديد (5) مش هتوصله بالتحديث العادي. و ms الاتنين متساويين، فالتحديث العادي يوصلها للآخر. والأمر بيخرج بـ exit code 1 لو فيه حاجة قديمة، فينفع يتحط في CI.
+
+---
+
+## ٢. [[npm update]]
+
+~~~text الناتج: npm outdated بعده
+Package  Current  Wanted  Latest  Location              Depended by
+express   4.22.3  4.22.3   5.2.1  node_modules/express  lout
+~~~
+
+express طلع لـ Wanted ووقف، و ms اختفت من الجدول لأنها بقت على الآخر. وخد بالك: package.json **ماتغيرش**، لسه [[^4.18.2]] و [[^2.0.0]]. اللي اتغير الـ lock و node_modules.
+
+---
+
+## ٣. [[npm install react@latest react-dom@latest]]
+
+الطريقة الوحيدة توصل لـ major جديد: تسطّبه بالاسم. على مشروعنا [[npm install express@latest]] خلّى [[npm ls express]] يقول [[express@5.2.1]] و package.json [[^5.2.1]]. و react و react-dom لازم يتحدّثوا **مع بعض** لأن نسخهم لازم تطابق. قبلها اقرا دليل الترقية.
+
+---
+
+## ٤. [[npm audit]]
+
+بيقارن كل نسخة في الـ lock بقاعدة الثغرات المعروفة:
+
+~~~text الناتج (جزء)
+body-parser  <=1.20.6 || 2.0.0-beta.1 - 2.0.2
+Severity: high
+body-parser vulnerable to denial of service when url encoding is enabled - https://github.com/advisories/GHSA-qwcr-r2fm-qrc7
+fix available via $__btnpm audit fix$__bt
+node_modules/body-parser
+  express  <=4.22.2 || 5.0.0-alpha.1 - 5.0.1
+  Depends on vulnerable versions of body-parser
+  ...
+
+7 vulnerabilities (3 low, 1 moderate, 3 high)
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[body-parser <=1.20.6]] | النسخ المصابة |
+| [[Severity: high]] | الخطورة: low / moderate / high / critical |
+| [[denial of service]] | نوع الثغرة: حد يقدر يوقّع السيرفر |
+| [[GHSA-...]] | رقم التحذير على GitHub، فيه التفاصيل |
+| [[fix available via npm audit fix]] | فيه نسخة آمنة جوه المدى المسموح |
+| [[Depends on vulnerable versions]] | express نفسه مش فيه الثغرة، بس جايب مكتبات فيها |
+
+انت ماسطّبتش body-parser؛ جت مع express. ([[npm why]] في الدرس الجاي.)
+
+---
+
+## ٥. [[npm audit fix]]
+
+~~~text الناتج
+changed 13 packages, and audited 69 packages in 2s
+
+found 0 vulnerabilities
+~~~
+
+غيّر ١٣ باكدج لنسخ آمنة **في حدود semver**، فـ express بقى 4.22.3 ومفيش major اتغير. لو الحل محتاج major، [[audit fix]] بيقولك ومش بيعمله، و [[--force]] بيعمله غصب ويكسر.
+
+---
+
+## ٦. [[npx npm-check-updates -u]]
+
+[[npm-check-updates]] (اختصاره ncu) أداة بتقارن package.json بآخر النسخ. من غير [[-u]] بتعرض بس:
+
+~~~text الناتج
+ ms  ^2.0.0  →  ^2.1.3
+
+Major   Potentially breaking API changes
+ express  ^4.18.2  →  ^5.2.1
+
+Run npx npm-check-updates -u to upgrade package.json
+~~~
+
+ومع [[-u]] (upgrade) بتكتب في package.json:
+
+~~~text package.json بعدها
+"express": "^5.2.1",
+"ms": "^2.1.3"
+~~~
+
+وبعدها لازم [[npm install]] عشان يتسطّبوا. قسّمت الـ majors لوحدها ([[Potentially breaking]] = ممكن تكسر)، فاعملها في branch وشغّل الاختبارات.
+
+---
+
+## الخلاصة
+
+| الأمر | بيغيّر package.json؟ | بيعدّي major؟ |
+|---|---|---|
+| [[npm outdated]] | لأ (بيعرض بس) | |
+| [[npm update]] | لأ | لأ |
+| [[npm i x@latest]] | أيوه | أيوه، لمكتبة واحدة |
+| [[npm audit fix]] | لأ غالبًا | لأ |
+| [[npm audit fix --force]] | ممكن | أيوه، من غير ما يسألك |
+| [[npx npm-check-updates -u]] | أيوه | أيوه، للكل |
+
+> major واحد في المرة، بعد ما تقرا الـ changelog.`,
           lines: [
-            "exec (بـ shell) و execFile (من غير).",
-            "promisify.",
-            "نسخة promise من exec.",
-            "ونسخة promise من execFile.",
-            "اسم ملف «جاي من اليوزر» فيه أمر مستخبي.",
-            "exec: الـ shell بينفّذ wc وبعدين echo، والملف pwned.txt بيتعمل.",
-            "اطبع: 2 notes.txt، كأن كل حاجة تمام.",
-            "حاول...",
-            "...execFile: الاسم كله argument واحد، ومفيش shell.",
-            "wc مش لاقي ملف بالاسم الغريب ده.",
-            "اطبع رسالة wc.",
-            "قفلة.",
-            "ref «جاي من اليوزر» بيبدأ بـ --.",
-            "حتى من غير shell: git فهمه option وكتب الـ log في stolen.txt.",
-            "حاول...",
-            "...--end-of-options: اللي بعده اسم مش option.",
-            "git رفض...",
-            "...اطبع أول سطر من الرفض.",
-            "قفلة."
+            "الجدول: الحالي والمسموح والأحدث.",
+            "حدّث في حدود ^ و ~.",
+            "major جديد لازم بالاسم.",
+            "الثغرات.",
+            "صلّح في حدود semver.",
+            "عدّل package.json لآخر نسخ الكل (في branch بس)."
           ],
-          sol: R`الناتج: [[exec: 2 notes.txt]] (كأن مفيش حاجة)، ثم [[execFile: wc: 'notes.txt; echo HACKED > pwned.txt': No such file or directory]]، ثم [[git: fatal: option '--output=stolen.txt' must come before non-option arguments]]. و [[ls]] بيوريك [[pwned.txt]] فيه [[HACKED]]، و [[stolen.txt]] فيه الـ git log. الأول command injection والتاني argument injection مع إنك مستخدمتش shell.
+          sol: R`على مشروع فيه [[express@4.18.2]] بـ [[^]]:
 
-في الحل: [[countLines("notes.txt")]] بترجع 2، والاسم اللي فيه [[;]] و [[--help]] مرفوضين قبل ما أي برنامج يشتغل. و [[logFor("HEAD")]] بيرجع الـ log، و [[--output=stolen.txt]] git بيرفضه ومفيش ملف بيتعمل.
+[[Package  Current  Wanted  Latest]] وتحتها [[express  4.18.2  4.22.3  5.2.1]]. Current المتسطب فعلًا، و Wanted أعلى نسخة يسمح بيها الـ [[^4.18.2]] في package.json، و Latest آخر نسخة منشورة. Latest أعلى من Wanted لأنها major جديدة (5)، و [[npm update]] هيوصل لـ 4.22.3 بس.
 
-الغلط الشائع إنك تصلّح الأول بس (exec لـ execFile) وتفتكر خلاص.`,
-          solCode: R`import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-const run = promisify(execFile);
+والنقلة لـ 5 قرار منك: [[npm i express@latest]] واقرا دليل الترقية، لأن فيه breaking changes. و [[npm audit]] على نفس المشروع طلّع ثغرات high في [[body-parser]] و [[cookie]] و [[qs]] كلها جاية من express القديم، و [[fix available via npm audit fix]] لأن النسخة الآمنة جوه نفس الـ major.
 
-async function countLines(name) {
-  if (!/^[\w.-]+$/.test(name) || name.startsWith("-")) throw new Error("bad file name: " + name);
-  const { stdout } = await run("wc", ["-l", "--", name]);
-  return Number.parseInt(stdout, 10);
-}
-
-async function logFor(ref) {
-  const { stdout } = await run("git", ["log", "--oneline", "-5", "--end-of-options", ref]);
-  return stdout;
-}
-
-console.log(await countLines("notes.txt"));
-for (const name of ["notes.txt; echo HACKED > pwned.txt", "--help"]) {
-  await countLines(name).catch((err) => console.log(err.message));
-}
-console.log(await logFor("HEAD"));
-await logFor("--output=stolen.txt").catch((err) => console.log(err.stderr.trim()));`
+الغلط الشائع: [[npm audit fix --force]] من غير ما تقرا، وهو ممكن ينقلك major جديدة ويكسر المشروع.`
         },
         {
-          cmd: "Buffer و encoding",
-          title: "بايتات مش حروف: utf8 و base64 و hex",
-          desc: R`[[Buffer]] هو البايتات الخام: اللي بيرجع من [[readFile]] من غير encoding، ومن الـ network، ومن crypto. والنص بيتحوّل لبايتات بـ encoding: [[utf8]] للكلام (الحرف العربي ٢ بايت)، و [[base64]] و [[base64url]] عشان تبعت بايتات جوه نص (JSON أو URL أو header)، و [[hex]] للـ hashes والـ debugging.
+          cmd: "ls / why / dedupe",
+          title: "مين جاب المكتبة دي",
+          desc: R`لما تسطّب مكتبة، هي بتجيب معاها مكتبات هي محتاجاها، وهكذا، فـ node_modules بيبقى فيه مئات المكتبات انت مسطّبتش غير كام واحدة منهم. الأوامر دي بتفهّمك الشجرة دي.
 
-يعني [[text.length]] عدد الحروف، و [[Buffer.byteLength(text)]] عدد البايتات، وفي العربي مش نفس الرقم.`,
-          example: R`const text = "سلام";
-const buf = Buffer.from(text, "utf8");
-console.log(buf);
-console.log(text.length, buf.length, Buffer.byteLength(text));
+[[npm ls --depth=0]] بيعرض المكتبات اللي انت سطّبتها مباشرة بس (المستوى الأول). [[npm ls lodash]] بيوريك كل مكان lodash موجود فيه في الشجرة ومين جابه. [[npm why lodash]] نفس المعلومة بشكل أوضح: «موجودة لأن مكتبة X محتاجاها، و X موجودة لأنك سطّبتها». ده مهم لما [[npm audit]] يقولك فيه ثغرة في مكتبة عمرك ما سمعت عنها.
 
-console.log(buf.toString("hex"));
-console.log(buf.toString("base64"));
-const bytes = Buffer.from([251, 255, 191]);
-console.log(bytes.toString("base64"), bytes.toString("base64url"));
-console.log(Buffer.from("2LPZhNin2YU=", "base64").toString("utf8"));
-
-console.log(buf.subarray(0, 3).toString("utf8"));
-
-const decoder = new TextDecoder("utf-8");
-const part1 = decoder.decode(buf.subarray(0, 3), { stream: true });
-const part2 = decoder.decode(buf.subarray(3));
-console.log(part1 + part2);`,
-          try: R`احسب عدد الحروف وعدد البايتات لـ «مرحبا يا عالم»، وحوّلها base64 وارجعها للنص واتأكد إنها زي الأصل. واطبع أول ٥ بايتات كنص وشوف إيه اللي بيطلع. وجرّب [[Buffer.from("zz", "hex")]] و [[btoa("سلام")]].`,
-          flag: "script",
+[[npm dedupe]] بيحاول يشيل النسخ المكررة من نفس المكتبة لو النسخ متوافقة، فـ node_modules يصغر. و [[du -sh node_modules]] بيطبع حجمه الكلي ([[-s]] المجموع بس، و [[-h]] بشكل مقروء).`,
+          example: R`npm ls --depth=0
+npm ls lodash
+npm why lodash
+npm dedupe
+du -sh node_modules`,
+          try: "اكتب [[npm why]] لأي مكتبة ظهرت في [[npm audit]] عشان تعرف انت مسطّبها ولا جاية مع مكتبة تانية.",
           deep: {
-            why: R`حدود الحجم في القاعدة والـ APIs بالبايت مش بالحروف: [[VARCHAR]] في MySQL بالحروف لكن حدود SMS و headers و S3 metadata بالبايت، فاسم عربي ٥٠ حرف ممكن يبقى ١٠٠ بايت. و base64 في كل حتة: Basic auth، و data URLs للصور، و JWT (base64url)، والملفات جوه JSON. ولو قطّعت بايتات في نص حرف عربي، يطلعلك [[�]] في الـ UI.`,
-            how: R`[[Buffer.from(text, "utf8")]] بيحوّل النص لبايتات. في UTF-8 الحروف الإنجليزية بايت واحد، والعربي ٢، والإيموجي ٤. [[buf.toString(enc)]] العكس. و [[console.log(buf)]] بيعرض البايتات hex: [[<Buffer d8 b3 d9 84 ...>]].
+            why: "npm audit بيقولك ثغرة في مكتبة عمرك ما سمعت عنها. جت منين؟ ومين محتاجها؟ من غير ما تعرف مش هتعرف تحلها.",
+            how: R`المكتبات ليها مكتبات. express محتاج ٣٠ مكتبة، وكل واحدة محتاجة غيرها. [[npm ls]] بيرسم الشجرة دي، و [[--depth=0]] المستوى الأول بس (اللي انت سطّبته).
 
-[[base64]] بيمثّل كل ٣ بايتات بـ ٤ حروف من (A-Z a-z 0-9 + /) و [[=]] في الآخر للتكملة، فالحجم بيزيد حوالي الثلث. [[base64url]] نفس الفكرة بـ [[-]] و [[_]] بدل [[+]] و [[/]] ومن غير [[=]]، عشان يتحط في URL أو اسم ملف من غير escaping، ودا اللي JWT بيستخدمه. [[hex]] كل بايت حرفين، ودا شكل الـ hashes ([[sha256]]).
+[[npm ls lodash]] بيوريك كل مكان lodash موجود فيه في الشجرة، ومن خلال مين. لو ظهرت ٣ مرات بنسخ مختلفة، ده طبيعي: npm بيسطّب نسخ متعددة لو المكتبات طلبت نسخ متعارضة.
 
-[[subarray]] بيقطّع بالبايت مش بالحرف. لو القطع جه في نص حرف، الـ toString بيحط [[�]] (replacement character) مكان البايت الناقص. ده بيحصل لما تقرا stream على دفعات وتعمل toString لكل دفعة. الحل [[TextDecoder]] بـ [[stream: true]]: بيحتفظ بالبايت الناقص لحد الدفعة الجاية. و [[setEncoding("utf8")]] على الـ streams بيعمل نفس الحاجة.
+[[npm why]] نفس المعلومة بشكل أوضح: «lodash موجود لأن X محتاجها، و X موجود لأنك سطّبته».
 
-[[Buffer]] subclass من [[Uint8Array]]، فأي API بتاخد Uint8Array (زي fetch و Web Crypto) بتاخده. و [[Buffer.concat]] بيلزق كذا buffer.`,
-            when: "ملفات binary (صور، PDF)، و crypto (hash و HMAC والتوقيعات)، و base64 للـ auth و data URLs، والتحقق من حجم بالبايت قبل ما تبعت.",
-            mistakes: R`[[btoa]] و [[atob]] مع نص عربي: بيرموا [[InvalidCharacterError]] لأنهم للـ Latin1 بس، فاستخدم Buffer. و [[Buffer.from("zz", "hex")]] بيرجع buffer فاضي من غير error، فـ hex بايظ بيعدّي بصمت. وتقارن [[text.length]] بحد بالبايت. و [[new Buffer()]] القديم deprecated وغير آمن، استخدم [[Buffer.from]] و [[Buffer.alloc]].
+[[dedupe]] بيحاول يقلل النسخ المكررة لو semver يسمح، فـ node_modules يصغر.
 
-سؤال انترفيو: «base64 تشفير؟»: لأ، encoding. أي حد يفكّه، ومش بيحمي أي حاجة.`
+وحل ثغرة في مكتبة فرعية: يا تحدّث المكتبة الأم، يا [[overrides]] في package.json تجبر نسخة معينة.`,
+            when: "بعد audit. لما node_modules ضخم. لما فيه نسختين من react في الشجرة (وده بيعمل errors غريبة).",
+            mistakes: "تحاول تحدّث مكتبة فرعية مباشرة بـ install، فتبقى في dependencies بتاعتك وتتلخبط الشجرة أكتر."
           },
+          teach: R`## شجرة node_modules
+
+انت بتسطّب مكتبتين، و node_modules بيبقى فيه عشرات. الأوامر دي بتقولك مين جاب مين. اتشغّلت على ويندوز 11 (npm 11.17) في مشروع فيه [[express@4.18.2]] و [[ms@2.0.0]] بس. ومكتبة [[ms]] (بتحوّل [["2 days"]] لملّي ثانية) مثال حلو لأن express نفسه محتاجها بنسختين.
+
+---
+
+## ١. [[npm ls --depth=0]]
+
+[[ls]] = list. و [[--depth=0]] أول مستوى بس: اللي انت سطّبته.
+
+~~~text الناتج
+lout@1.0.0 C:\Users\ali\lout
++-- express@4.18.2
+$__bt-- ms@2.0.0
+~~~
+
+السطر الأول المشروع نفسه ومكانه، و [[+--]] و [[$__bt--]] فروع الشجرة ([[$__bt--]] آخر فرع). من غير [[--depth=0]] بيرسم الشجرة كلها، ودي مئات السطور.
+
+---
+
+## ٢. [[npm ls lodash]]
+
+بيرسم بس الفروع اللي بتوصل للمكتبة دي. المشروع ده مفيهوش lodash، فجرّبتها على [[ms]]:
+
+~~~text الناتج: npm ls ms
+lout@1.0.0 C:\Users\ali\lout
++-- express@4.18.2
+| +-- debug@2.6.9
+| | $__bt-- ms@2.0.0 deduped
+| $__bt-- send@0.18.0
+|   $__bt-- ms@2.1.3
+$__bt-- ms@2.0.0
+~~~
+
+اقراها كده:
+
+- [[ms@2.0.0]] في الآخر: انت سطّبتها.
+- [[debug@2.6.9]] (جوه express) محتاج ms، و [[deduped]] معناها «بيستخدم نفس النسخة اللي فوق ومش متكررة».
+- [[send@0.18.0]] محتاج [[ms@2.1.3]]، نسخة تانية، فـ npm حطها جوه [[node_modules/send/node_modules/ms]] خاصة بيه.
+
+يعني نفس المكتبة موجودة بنسختين في نفس المشروع، وده طبيعي.
+
+---
+
+## ٣. [[npm why lodash]]
+
+نفس المعلومة بالعكس: من المكتبة لفوق، لحد [[the root project]]. ([[npm explain]] هو نفس الأمر.)
+
+~~~text الناتج: npm why cookie
+cookie@0.5.0
+node_modules/cookie
+  cookie@"0.5.0" from express@4.18.2
+  node_modules/express
+    express@"^4.18.2" from the root project
+~~~
+
+اقراها من فوق لتحت: cookie 0.5.0 موجودة لأن express طلب [[0.5.0]] بالظبط، و express موجود لأن المشروع طلب [[^4.18.2]]. فلو [[npm audit]] قال إن cookie فيها ثغرة، الحل تحديث express، مش تسطيب cookie لوحدها.
+
+ولمكتبة مش موجودة:
+
+~~~text الناتج: npm why lodash
+npm error No dependencies found matching lodash
+~~~
+
+و exit code 1.
+
+---
+
+## ٤. [[npm dedupe]]
+
+dedupe = de-duplicate: بيحاول يخلّي المكتبات تتشارك نسخة واحدة لو المدى بيسمح. على مشروعنا الشجرة بعده **زي ما هي**: [[ms@2.0.0]] و [[ms@2.1.3]] لسه موجودين. ليه؟ [[debug]] طالب [[2.0.0]] بالظبط و [[send]] طالب [[2.1.3]] بالظبط، ومفيش نسخة واحدة ترضي الاتنين. dedupe بيفيد لما الطلبات [[^]] ومتداخلة.
+
+---
+
+## ٥. [[du -sh node_modules]]
+
+[[du]] = disk usage. [[-s]] المجموع بس من غير كل فولدر، و [[-h]] human readable (بـ K و M و G).
+
+~~~text الناتج (Git Bash)
+3.5M	node_modules
+~~~
+
+في PowerShell:
+
+~~~powershell
+[math]::Round((Get-ChildItem node_modules -Recurse -File | Measure-Object Length -Sum).Sum / 1MB, 1)
+~~~
+
+~~~text الناتج
+2.1
+~~~
+
+ليه 3.5 و 2.1؟ PowerShell جمع أحجام الملفات نفسها (٦٢٢ ملف)، و [[du]] بيعد المساحة اللي اتحجزت على الديسك، والديسك بيحجز لكل ملف بلوكات (غالبًا ٤ كيلو)، فملف حجمه 300 byte بياخد 4K. الملفات الصغيرة الكتير بتفرق.
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر |
+|---|---|
+| سطّبت إيه بنفسي؟ | [[npm ls --depth=0]] |
+| المكتبة دي فين في الشجرة؟ | [[npm ls اسم]] |
+| مين جابها وليه؟ | [[npm why اسم]] |
+| قلّل التكرار | [[npm dedupe]] |
+| الحجم | [[du -sh node_modules]] |
+
+> نسختين من نفس المكتبة عادي. نسختين من [[react]] مش عادي (بيعمل errors غريبة)، و [[npm ls react]] بيكشفها.`,
           lines: [
-            "نص عربي، ٤ حروف.",
-            "حوّله بايتات UTF-8.",
-            "البايتات بالـ hex: <Buffer d8 b3 d9 84 d8 a7 d9 85>.",
-            "4 حروف، لكن 8 بايت.",
-            "نفس البايتات hex في نص واحد.",
-            "وبـ base64: 2LPZhNin2YU=",
-            "بايتات بتطلّع + و / في base64.",
-            "base64 فيه + / وبـ base64url بيبقوا - _ من غير =.",
-            "من base64 لبايتات لنص: سلام.",
-            "أول ٣ بايتات: حرف ونص، فالنص الناقص بيبقى �.",
-            "decoder بيفتكر البايتات الناقصة بين الدفعات.",
-            "الدفعة الأولى: بيطلّع س ويحتفظ بنص الحرف التاني.",
-            "الدفعة التانية: بيكمّل الحرف.",
-            "سلام كاملة من غير �."
+            "المكتبات اللي انت سطّبتها بس.",
+            "فين lodash في الشجرة.",
+            "مين محتاجها وليه.",
+            "قلّل النسخ المكررة.",
+            "node_modules حجمه كام."
           ],
-          sol: R`«مرحبا يا عالم»: 13 حرف (11 عربي ومسافتين) و 24 بايت (11 × 2 + 2). الـ base64 [[2YXYsdit2KjYpyDZitinINi52KfZhNmF]] ولما ترجعه بيطابق الأصل. أول ٥ بايتات كنص: [[مر�]]، حرفين كاملين ونص حرف.
+          sol: R`على مشروع فيه express 4 قديم، [[npm audit]] قال إن [[cookie <0.7.0]] فيها ثغرة. و [[npm why cookie]] رد:
 
-[[Buffer.from("zz", "hex")]] بيرجع [[<Buffer >]] فاضي من غير error. و [[btoa("سلام")]] بيرمي [[InvalidCharacterError]].
+[[cookie@0.5.0]] ← [[cookie@"0.5.0" from express@4.18.2]] ← [[express@"^4.18.2" from the root project]]. يعني انت ما سطّبتش cookie، هي جاية مع express. والحل مش إنك تسطّب cookie لوحدها، الحل تحدّث express.
 
-الغلط الشائع إنك تتوقع [[text.length]] يبقى 24، أو تفتكر إن [[subarray(0, 5)]] بيدّيك ٥ حروف.`,
-          solCode: R`const text = "مرحبا يا عالم";
-const buf = Buffer.from(text);
-console.log(text.length, buf.length); // 13 24
-
-const b64 = buf.toString("base64");
-console.log(b64);
-console.log(Buffer.from(b64, "base64").toString() === text); // true
-
-console.log(buf.subarray(0, 5).toString()); // مر�
-console.log(Buffer.from("ab").toString("hex"), Buffer.from("zz", "hex").length); // 6162 0`
+لو السلسلة انتهت بـ [[from the root project]] على طول تحت المكتبة نفسها، يبقى انت اللي مسطّبها في package.json. ولو [[npm why]] رجّع أكتر من مسار، يبقى مكتبات مختلفة طالباها بنسخ مختلفة، وساعتها [[npm dedupe]] ممكن يقلّل النسخ. ولو قال [[No dependencies found matching]] يبقى الاسم مكتوب غلط أو المكتبة مش متسطبة أصلًا.`
         },
         {
-          cmd: "EventEmitter في Node",
-          title: "on و emit و error event",
-          desc: R`كتير من Node مبني على [[EventEmitter]] من [[node:events]]: الـ streams، و [[http.Server]]، و [[child_process]] (الـ [[close]] و [[error]] اللي في درس [[execFile و spawn]])، و [[process]] نفسه. بتسجّل بـ [[on]] وبتعلن بـ [[emit]]، والفكرة والتنفيذ بإيدك في «تاب JavaScript» المستوى ٣ (درس [[EventEmitter]]).
-
-اللي خاص بـ Node: event اسمه [[error]] من غير listener بيوقّع العملية كلها. و [[once()]] بتحوّل event لـ promise تعملها await.`,
-          example: R`import { EventEmitter, once } from "node:events";
-
-class Importer extends EventEmitter {
-  run(rows) {
-    for (const row of rows) {
-      if (!row.id) {
-        this.emit("error", new Error("row without id"));
-        return;
-      }
-      this.emit("row", row);
-    }
-    this.emit("done", rows.length);
-  }
-}
-
-const imp = new Importer();
-imp.on("row", (row) => console.log("saved", row.id));
-imp.on("error", (err) => console.error("import failed:", err.message));
-
-setTimeout(() => imp.run([{ id: 1 }, { id: 2 }]), 0);
-const [count] = await once(imp, "done");
-console.log("total", count);
-
-new Importer().run([{}]);`,
-          try: R`شغّله: السطر الأخير لازم يوقّع العملية، ليه؟ بعدين جرّب [[await once(bus, "ready")]] على emitter بيعمل [[emit("error", ...)]] قبل ready، وسجّل listenerين على نفس الحدث واطبع حاجة قبل وبعد [[emit]] عشان تعرف sync ولا async.`,
-          flag: "script",
+          cmd: "node_modules بايظ",
+          title: "الحل الكلاسيكي",
+          desc: "أعراض: مكتبة موجودة ومش بتتلاقى، أو errors غريبة بعد pull، أو مكتبة native (bcrypt، sharp) بتقع. الحل غالبًا مسح node_modules والـ cache والتسطيب من الأول.",
+          example: R`rm -rf node_modules package-lock.json
+npm cache clean --force
+npm install
+npm rebuild
+npm cache verify`,
+          try: "جرّب [[npm rebuild]] الأول لو المشكلة في مكتبة native، قبل ما تمسح كل حاجة.",
           deep: {
-            why: R`هتقابل events في كل حتة في Node حتى لو عمرك ما كتبت class بيورّث EventEmitter: [[stream.on("data")]] و [[child.on("close")]] و [[server.on("error")]]. ولو مش عارف قاعدة الـ error event، سيرفر بيقع كله بسبب error في stream واحد.`,
-            how: R`[[emit(name, ...args)]] بينادي كل الـ listeners المسجّلين على الاسم ده، بالترتيب، sync: قبل ما [[emit]] يرجع. يعني listener تقيل بيأخّر اللي عمل emit.
+            why: "node_modules فيه آلاف الملفات، وبيتلخبط: تسطيب اتقطع في النص، أو تبديل نسخة Node، أو pull غيّر الـ lock. الأعراض غريبة ومش مرتبطة بكودك.",
+            how: R`أعراض المشكلة: [[Cannot find module]] لمكتبة موجودة في package.json، أو [[invalid ELF header]] / [[was compiled against a different Node.js version]] لمكتبة native.
 
-[[error]] ليه قاعدة خاصة: لو اتعمله emit ومفيش ولا listener عليه، الـ emit نفسه بيرمي الـ error، ولو محدش مسكه العملية بتقع. عشان كده أي stream أو socket أو child process لازم يبقى عليه [[on("error")]].
+المكتبات الـ native (bcrypt، sharp، better-sqlite3) فيها كود مترجم لنظامك ونسخة Node بتاعتك. لو بدّلت نسخة Node بـ nvm، الكود المترجم مبقاش متوافق. [[npm rebuild]] بيعيد ترجمتهم من غير ما يمسح حاجة، وده أول حاجة تجرّبها.
 
-[[once(emitter, name)]] من [[node:events]] بترجّع promise بيتحل أول ما الحدث يحصل، بـ array فيه الـ args. ولو [[error]] حصل الأول، الـ promise بيترفض. مفيد عشان تستنى [[ready]] أو [[close]] أو [[listening]] بـ await.
+لو مفيش فايدة: امسح node_modules والـ lock، ونضّف الكاش، وسطّب من الأول. مسح الـ lock بيغيّر النسخ، فلو المشروع مشترك امسح node_modules بس وشغّل [[npm ci]].
 
-[[emitter.once(name, fn)]] (method) listener بيشتغل مرة واحدة وبيتشال. و [[off]] أو [[removeListener]] يشيل listener. ولو سجلت أكتر من ١٠ على نفس الحدث بيظهر [[MaxListenersExceededWarning]]، وغالبًا ده leak (بتسجّل في كل request ومبتشيلش).`,
-            when: "استهلاك الـ events بتاعة Node (streams و child processes والسيرفر) دايمًا. وتعمل emitter بنفسك لـ class بيعلن عن تقدّم شغل طويل (import، upload). لإشعارات بين services أو كذا instance، queue أو Redis pub/sub مش EventEmitter.",
-            mistakes: R`مفيش [[on("error")]] على stream أو child process. وتفتكر [[emit]] async فتتوقع الكود اللي بعده يشتغل الأول. وتسجّل listener جوه request handler على object عام فيبقوا آلاف.`
+[[cache verify]] بيتأكد إن كاش npm سليم من غير ما يمسحه.`,
+            when: "errors في مكتبات مش في كودك. بعد تبديل نسخة Node. بعد pull كبير.",
+            mistakes: "مسح الـ lock في مشروع فريق فتغيّر نسخ الكل. ومسح node_modules قبل ما تجرّب rebuild."
           },
+          teach: R`## من الأخف للأتقل
+
+لما مكتبة تقع وانت ماغيرتش كودك، الحل بالترتيب: [[npm rebuild]] الأول، وبعدين تمسح node_modules، والـ lock في الآخر خالص. المثال مكتوب بترتيب المسح الكامل، والشرح بالترتيب الصح. اتجرّب على لينكس (ubuntu:24.04 جوه Docker مع nvm و Node 22 و 24)، لأن [[npm cache clean]] بيمسح كاش npm بتاع الجهاز كله وماينفعش يتجرّب على جهاز حد.
+
+---
+
+## ١. [[npm rebuild]]: جرّبه الأول
+
+بعض المكتبات (bcrypt و sharp و better-sqlite3) فيها كود C++ لازم يتبني (compile) لنظامك ونسخة Node بتاعتك. لو بدّلت النسخة، الكود المبني ممكن مايشتغلش، ودا شكل الرسالة (من الـ docs):
+
+~~~text الشكل
+was compiled against a different Node.js version using NODE_MODULE_VERSION 127.
+This version of Node.js requires NODE_MODULE_VERSION 137.
+~~~
+
+[[NODE_MODULE_VERSION]] رقم بيتغير مع كل major في Node:
+
+~~~bash
+node -p "process.versions.modules"
+~~~
+
+~~~text الناتج
+Node 22:  127
+Node 24:  137
+~~~
+
+[[npm rebuild]] بيعيد بناء المكتبات دي لنسختك من غير ما يمسح حاجة. جرّبته على better-sqlite3 بعد ما بدّلت من 22 لـ 24، وأول مرة وقع:
+
+~~~text الناتج
+npm error gyp ERR! find Python
+npm error gyp ERR! find Python checking if "python3" can be used
+npm error gyp ERR! find Python - executable path is ""
+~~~
+
+[[node-gyp]] الأداة اللي بتبني الكود ده، ومحتاجة Python و make و مترجم C++. بعد [[apt-get install python3 make g++]]:
+
+~~~text الناتج
+rebuilt dependencies successfully
+~~~
+
+> ملحوظة من نفس التجربة: better-sqlite3 13 اشتغل على 24 حتى قبل الـ rebuild. مش كل مكتبة native بتقع لما تبدّل النسخة، بس لما تقع، دي أول خطوة.
+
+---
+
+## ٢. [[rm -rf node_modules package-lock.json]]
+
+- [[rm]] = remove. [[-r]] recursive (الفولدر وكل اللي جواه)، و [[-f]] force (من غير أسئلة ولا error لو مش موجود).
+
+في مشروع فريق امسح [[node_modules]] بس وسيب الـ lock، وبعدها [[npm ci]]. مسح الـ lock معناه كل مكتبة تتحدّث لأعلى نسخة في المدى مرة واحدة، والمشكلة الأصلية تستخبى وسط تغييرات تانية.
+
+في PowerShell:
+
+~~~powershell
+Remove-Item -Recurse -Force node_modules
+~~~
+
+---
+
+## ٣. [[npm cache clean --force]]
+
+npm بيحتفظ بكل باكدج نزّلها في كاش (على ويندوز [[C:\Users\ali\AppData\Local\npm-cache]]، وعلى لينكس [[~/.npm/_cacache]]). [[clean]] بيمسحه كله، و [[--force]] لازمة لأن npm بيعتبر ده مش محتاج غالبًا:
+
+~~~text الناتج
+npm warn using --force Recommended protections disabled.
+~~~
+
+وبعدها كل تسطيب بينزّل من النت تاني. نادرًا ما الكاش يكون السبب.
+
+---
+
+## ٤. [[npm install]]
+
+بعد المسح بيسطّب من الأول:
+
+~~~text الناتج
+found 0 vulnerabilities
+~~~
+
+---
+
+## ٥. [[npm cache verify]]
+
+بيفحص الكاش ويشيل الحاجات البايظة أو اللي مالهاش لازمة، من غير ما يمسحه:
+
+~~~text الناتج (قبل clean)
+Cache verified and compressed (~/.npm/_cacache)
+Content verified: 4 (12243338 bytes)
+Index entries: 4
+Finished in 0.047s
+~~~
+
+~~~text الناتج (بعد clean)
+Content verified: 0 (0 bytes)
+Index entries: 0
+~~~
+
+[[Content verified: 4]] = ٤ باكدجات اتفحصت (حوالي ١٢ ميجا)، وبعد [[clean]] بقى صفر.
+
+---
+
+## الترتيب الصح
+
+| الخطوة | الأمر | بيلمس |
+|---|---|---|
+| ١ | [[npm rebuild]] | المكتبات الـ native بس |
+| ٢ | امسح [[node_modules]] و [[npm ci]] | node_modules |
+| ٣ | [[npm cache verify]] أو [[clean --force]] | كاش npm |
+| ٤ | امسح الـ lock و [[npm install]] | كل النسخ (آخر حل) |
+
+## الخلاصة
+
+اقرا الرسالة الأول: [[NODE_MODULE_VERSION]] يبقى rebuild، و [[gyp ERR! find Python]] يبقى ناقصك build tools، و [[Cannot find module]] لمكتبة موجودة في package.json يبقى node_modules ناقص.`,
           lines: [
-            "EventEmitter و once من events.",
-            "class بيعلن عن تقدّم شغله.",
-            "بيلف على الصفوف...",
-            "...لكل صف:",
-            "لو ناقصه id...",
-            "...أعلن error...",
-            "...ووقّف.",
-            "قفلة.",
-            "أعلن إن صف اتحفظ.",
-            "قفلة الـ loop.",
-            "أعلن إنه خلص ومعاه العدد.",
-            "قفلة الدالة.",
-            "قفلة الـ class.",
-            "instance.",
-            "listener لكل صف.",
-            "listener للـ error (من غيره العملية تقع).",
-            "ابدأ الشغل بعد ما نبدأ نستنى.",
-            "استنى done كـ promise، والـ args بترجع array.",
-            "اطبع العدد.",
-            "instance من غير error listener وصف ناقص: العملية بتقع."
+            "امسح المكتبات والـ lock (في مشروع فريق: node_modules بس).",
+            "نضّف كاش npm.",
+            "سطّب من الأول.",
+            "أعد ترجمة المكتبات native (جرّبه الأول لوحده).",
+            "اتأكد إن الكاش سليم."
           ],
-          sol: R`الناتج: [[saved 1]] و [[saved 2]] و [[total 2]]، وبعدين العملية بتقع بـ [[Error: row without id]] ومعاه [[Emitted 'error' event on Importer instance]] و exit 1. السبب: الـ Importer التاني ملوش [[on("error")]]، فالـ emit رمى الـ error. لو ضفت listener، الرسالة تتطبع وتكمّل.
+          sol: R`[[npm rebuild]] لما ينجح بيطبع [[rebuilt dependencies successfully]]. ودي خطوة أسرع وأخف من المسح، ومش بتلمس الـ lock.
 
-[[once(bus, "ready")]] لما [[error]] يحصل الأول بيترفض، والـ catch بيطبع [[once rejected: db down]]. والترتيب: [[before emit]] ثم الـ listenerين ثم [[after emit 2]]، لأن الـ emit sync.`,
-          solCode: R`import { EventEmitter, once } from "node:events";
+الحالة اللي بيحلها: غيّرت نسخة Node بـ nvm ومكتبة native زي bcrypt أو better-sqlite3 بتقع بـ [[was compiled against a different Node.js version using NODE_MODULE_VERSION 127. This version of Node.js requires NODE_MODULE_VERSION 137]] (الأرقام حسب النسخ). الـ rebuild بيعيد ترجمتها لنسختك الحالية. ولو المكتبة محتاجة build tools ومش موجودة هتلاقي errors من [[node-gyp]] زي [[gyp ERR! find Python]]، وساعتها سطّب [[build-essential]] و python.
 
-const bus = new EventEmitter();
-setTimeout(() => bus.emit("error", new Error("db down")), 10);
-
-try {
-  await once(bus, "ready");
-} catch (err) {
-  console.log("once rejected:", err.message);
-}
-
-bus.on("order", (o) => console.log("email for", o.id));
-bus.on("order", (o) => console.log("invoice for", o.id));
-console.log("before emit");
-bus.emit("order", { id: 7 });
-console.log("after emit", bus.listenerCount("order"));`
+لو [[npm rebuild]] ما حلّش، ساعتها [[rm -rf node_modules]] و [[npm install]] (من غير ما تمسح الـ lock في الأول). مسح [[package-lock.json]] آخر حل، لأنه بيحدّث كل المكتبات مرة واحدة ويخبّي السبب الحقيقي.`
         },
         {
-          cmd: "worker_threads",
-          title: "حساب تقيل من غير ما السيرفر يقف",
-          desc: R`Node بيشغّل الـ JavaScript بتاعك على thread واحد. أي حساب CPU تقيل (hash كتير، صورة، ملف ضخم بيتعمله parse) بيوقف كل حاجة تانية لحد ما يخلص: ولا request تترد ولا timer يشتغل. [[worker_threads]] بتشغّل الحساب ده على thread تاني ليه event loop بتاعه، وبتكلّمه بـ [[postMessage]].
+          cmd: "ERESOLVE و legacy-peer-deps",
+          title: "تعارض الـ peer dependencies",
+          desc: R`[[npm ERR! ERESOLVE unable to resolve dependency tree]] معناها مكتبة بتقول «أنا شغالة مع react 18» وانت عندك 19. [[--legacy-peer-deps]] بيخلي npm يتجاهل الكلام ده ويسطّب، وده بيخبي المشكلة مش بيحلها.
 
-الدرس ده الفكرة بس. إمتى worker ولا cluster ولا كذا نسخة ورا load balancer في «تاب Backend بـ Node».`,
-          example: R`import { Worker, isMainThread, parentPort, workerData } from "node:worker_threads";
-
-function fib(n) {
-  return n < 2 ? n : fib(n - 1) + fib(n - 2);
-}
-
-if (isMainThread) {
-  const tick = setInterval(() => console.log("main thread still responsive"), 200);
-  const worker = new Worker(new URL(import.meta.url), { workerData: 38 });
-  worker.once("message", (result) => {
-    console.log("fib =", result);
-    clearInterval(tick);
-  });
-  worker.once("error", (err) => console.error("worker crashed:", err));
-} else {
-  parentPort.postMessage(fib(workerData));
-}`,
-          try: R`شغّله وعدّ رسايل «still responsive». بعدين اكتب نسخة بتحسب [[fib(38)]] على الـ main thread مباشرة بنفس الـ [[setInterval]]، وقارن. وجرّب 40 بدل 38 في الاتنين.`,
-          flag: "script",
+الصح إنك تعرف مين المتعارض، وتحدّث المكتبة لنسخة بتدعم اللي عندك. ولو مفيش، [[overrides]] وانت عارف انت بتعمل إيه.`,
+          example: R`npm install
+npm explain react
+npm view react-day-picker peerDependencies
+npm install react-day-picker@latest
+npm install --legacy-peer-deps
+echo "legacy-peer-deps=true" >> .npmrc`,
+          try: "في مشروع تجربة سطّب react@19 وبعدين مكتبة قديمة معمولة لـ react 17، واقرا رسالة ERESOLVE لحد ما تفهم مين طالب إيه.",
           deep: {
-            why: R`سيرفر Node بيخدم آلاف الطلبات على thread واحد لأن أغلب الشغل انتظار (قاعدة، network) والانتظار مبيوقفش حاجة. بس request واحد بيعمل حساب تقيل بيوقف كل الباقيين. والـ async مش بيحل ده: [[async function]] فيها حساب sync لسه بتوقف الـ thread.`,
-            how: R`[[new Worker(file)]] بيشغّل الملف في thread جديد: V8 isolate لوحده، بذاكرته و event loop بتاعه. في المثال نفس الملف بيشتغل مرتين، و [[isMainThread]] بيفرّق: الـ main بيعمل worker، والـ worker بيحسب.
+            why: "الرسالة طويلة ومخيفة، فالناس بتنسخ أول حل على النت: legacy-peer-deps. التسطيب بيعدّي، والمشكلة بتظهر بعدين وقت التشغيل في شكل error ملهوش علاقة.",
+            how: R`الـ [[peerDependencies]] مش مكتبة المكتبة محتاجاها جواها، دي مكتبة لازم «انت» تكون مسطّبها، زي plugin لـ React محتاج React نفسه. المكتبة بتقول النسخ اللي اتجرّبت معاها.
 
-[[workerData]] بيوصل للـ worker وقت إنشائه، و [[parentPort.postMessage]] بيرجّع النتيجة، والـ main بيستقبلها بـ [[message]] event (EventEmitter تاني). الداتا بتتنسخ (structured clone) مش بتتشارك، زي Web Workers في المتصفح (في «تاب JavaScript»). ولمشاركة فعلية فيه [[SharedArrayBuffer]]، ونادرًا ما تحتاجه.
+من npm 7، npm بيسطّب الـ peers لوحده وبيرفض لو فيه تعارض. رسالة ERESOLVE فيها سطرين مهمين: [[Found:]] اللي عندك، و [[Could not resolve dependency: peer ...]] اللي المكتبة عايزاه ومين طالبه.
 
-إنشاء worker ليه تكلفة (عشرات الميلي ثانية وذاكرة)، فلو هتعمل ده مع كل request، استخدم pool (مكتبة زي [[piscina]]) بعدد قريب من [[os.availableParallelism()]].
+[[npm explain]] (هو نفسه npm why) بيوريك مين جايب الباكدج. و [[npm view ... peerDependencies]] بيوريك آخر نسخة من المكتبة بتدعم إيه، وغالبًا الحل تحديثها.
 
-والـ I/O مش محتاج workers: قراية ملفات و network و queries بتتعمل في الخلفية أصلًا (libuv). الـ worker للـ CPU بس.`,
-            when: "حساب CPU أكتر من عشرات الميلي ثانية جوه سيرفر: توليد PDF أو صور في الذاكرة، ضغط، parse لملفات كبيرة، hash كتير. لو ينفع يستنى، job في queue أحسن. ولو عايز كل الـ cores تخدم requests، كذا process (cluster أو pm2 أو كذا container) مش workers.",
-            mistakes: R`تستخدم worker لـ I/O (query أو fetch) فتزود تعقيد من غير فايدة. وتعمل worker جديد لكل request. وتفتكر إن الـ objects بتتشارك فتعدّل في object في الـ worker وتستنى التغيير يبان في الـ main.
-
-سؤال انترفيو: «Node single-threaded؟»: الـ JavaScript بتاعك على thread واحد، بس libuv عنده thread pool للـ I/O التقيل (fs و dns و crypto)، و worker_threads بتدّيك threads لكودك.`
+[[--legacy-peer-deps]] بيرجّع سلوك npm 6: يتجاهل الـ peers خالص. و [[--force]] أسوأ: بيسطّب نسخ متعارضة. لو مضطر، حط [[legacy-peer-deps=true]] في .npmrc بتاع المشروع بدل الفلاج، عشان جهازك والـ CI والـ Dockerfile يمشوا بنفس الطريقة ويطلعوا نفس الـ lock.`,
+            when: "أول ما تشوف ERESOLVE. اقرا الرسالة الأول، ودوّر على نسخة أحدث من المكتبة قبل أي فلاج.",
+            mistakes: "في مشروع حقيقي كان الـ Dockerfile فيه npm ci --legacy-peer-deps، فالـ build بيعدّي وتعارض النسخ متخبّي لحد ما يوقع وقت التشغيل. وغلطة تانية: الفلاج على جهازك بس، فالـ lock يطلع مختلف و npm ci في الـ CI يفشل."
           },
+          teach: R`## مكتبة بتقول «أنا مش مضمونة مع النسخة دي»
+
+[[peerDependencies]] مكتبات **انت** لازم تكون مسطّبها عشان المكتبة تشتغل، زي plugin لـ React محتاج React. والمكتبة بتكتب النسخ اللي اتجرّبت عليها. لو نسختك برا المدى، npm بيرفض بـ ERESOLVE. اتجرّب على ويندوز 11 (npm 11.17): [[react@19]] وبعدين [[react-day-picker@8.9.1]].
+
+---
+
+## ١. [[npm install]]: الرسالة
+
+~~~text الناتج
+npm error code ERESOLVE
+npm error ERESOLVE unable to resolve dependency tree
+npm error
+npm error While resolving: lpeer@1.0.0
+npm error Found: react@19.3.0
+npm error node_modules/react
+npm error   react@"^19.3.0" from the root project
+npm error
+npm error Could not resolve dependency:
+npm error peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from react-day-picker@8.9.1
+npm error node_modules/react-day-picker
+npm error   react-day-picker@"8.9.1" from the root project
+npm error
+npm error Fix the upstream dependency conflict, or retry this command with --force or --legacy-peer-deps to accept an incorrect (and potentially broken) dependency resolution.
+~~~
+
+اقرا ٣ حاجات بس:
+
+| السطر | معناه |
+|---|---|
+| [[Found: react@19.3.0]] | اللي عندك |
+| [[peer react@"^16.8.0 || ^17.0.0 || ^18.0.0"]] | اللي المكتبة بتقبله. [[||]] = «أو»، يعني 16 أو 17 أو 18 |
+| [[from react-day-picker@8.9.1]] | مين اللي طالب |
+
+19 مش في القايمة. والسطر الأخير بيقترح الفلاجين، وبيقولك بنفسه إن النتيجة [[incorrect (and potentially broken)]]: غلط وممكن تبوظ.
+
+---
+
+## ٢. [[npm explain react]]
+
+~~~text الناتج
+react@19.3.0
+node_modules/react
+  react@"^19.3.0" from the root project
+~~~
+
+react جاية من المشروع مباشرة، يعني انت اللي اخترت 19. لو كانت جاية من مكتبة تانية كانت هتظهر في السلسلة.
+
+---
+
+## ٣. [[npm view react-day-picker peerDependencies]]
+
+بيسأل الـ registry: المكتبة دي بتقبل إيه؟
+
+~~~text الناتج: npm view react-day-picker@8.9.1 peerDependencies
+{ react: '^16.8.0 || ^17.0.0 || ^18.0.0', 'date-fns': '^2.28.0' }
+~~~
+
+~~~text الناتج: npm view react-day-picker peerDependencies (آخر نسخة)
+{ react: '>=16.8.0', '@types/react': '>=16.8.0' }
+~~~
+
+~~~text الناتج: npm view react-day-picker@8 peerDependencies --json (آخر 8.x)
+"react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0",
+~~~
+
+يعني النسخ الأحدث (حتى جوه 8) ضافت 19. المشكلة في النسخة القديمة اللي اخترناها، مش في المكتبة.
+
+---
+
+## ٤. [[npm install react-day-picker@latest]]
+
+~~~text الناتج
+found 0 vulnerabilities
+~~~
+
+[[npm ls react-day-picker]] قال [[react-day-picker@10.0.2]]، من غير أي فلاج. ده الحل الصح في أغلب الحالات (ولو مش عايز تنقل major، [[@8]] كانت هتكفي).
+
+---
+
+## ٥. [[npm install --legacy-peer-deps]]
+
+[[legacy]] = قديم: «اتصرف زي npm 6 واتجاهل الـ peers خالص». على النسخة القديمة 8.9.1:
+
+~~~text الناتج
+found 0 vulnerabilities
+~~~
+
+عدّى. بس بص [[npm ls]] شايف إيه:
+
+~~~text الناتج
++-- react-day-picker@8.9.1
+| $__bt-- react@19.3.0 deduped invalid: "^16.8.0 || ^17.0.0 || ^18.0.0" from node_modules/react-day-picker
+$__bt-- react@19.3.0 invalid: ...
+
+npm error code ELSPROBLEMS
+~~~
+
+[[invalid]]: التعارض لسه موجود، الفلاج بس سكّت التسطيب. ممكن تشتغل وممكن تقع وقت التشغيل.
+
+---
+
+## ٦. [[echo "legacy-peer-deps=true" >> .npmrc]]
+
+- [[>>]] ضيف في آخر الملف (و [[>]] كان هيمسحه الأول).
+- [[.npmrc]] إعدادات npm للمشروع ده.
+
+بعدها [[npm config get legacy-peer-deps]] بيقول [[true]]، وكل [[npm install]] و [[npm ci]] (على جهازك والـ CI والـ Dockerfile) بيمشوا بنفس الإعداد، فالـ lock يطلع واحد.
+
+### على Windows PowerShell 5.1 خد بالك
+
+نفس السطر في PowerShell 5.1 كتب الملف UTF-16، و npm ماعرفش يقراه:
+
+~~~text الناتج
+npm warn Unknown project config "��l e g a c y - p e e r - d e p s ". ...
+false
+~~~
+
+في PowerShell 7 اتكتب UTF-8 واشتغل. وفي الاتنين ده شغال:
+
+~~~powershell
+Add-Content .npmrc "legacy-peer-deps=true"
+~~~
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| اقرا Found و peer و from | الرسالة نفسها |
+| مين جايب المكتبة | [[npm explain اسم]] |
+| النسخ الأحدث بتقبل إيه | [[npm view اسم peerDependencies]] |
+| الحل الصح | [[npm install اسم@latest]] (أو آخر نسخة في نفس الـ major) |
+| آخر حل | [[legacy-peer-deps=true]] في [[.npmrc]] المشروع |`,
           lines: [
-            "أدوات الـ workers.",
-            "حساب CPU تقيل عمدًا (recursion من غير cache).",
-            "الحالة الأساسية أو مجموع اللي قبلها.",
-            "قفلة.",
-            "لو ده الـ main thread...",
-            "...timer يثبت إن الـ main لسه بيرد.",
-            "شغّل نفس الملف في worker، وابعتله 38.",
-            "لما النتيجة توصل...",
-            "...اطبعها...",
-            "...ووقّف الـ timer (فالعملية تخلص).",
-            "قفلة.",
-            "لو الـ worker وقع.",
-            "وإلا (احنا جوه الـ worker)...",
-            "...احسب وابعت النتيجة للـ main.",
-            "قفلة."
+            "التسطيب اللي بيطلّع ERESOLVE: اقرا Found و Could not resolve.",
+            "مين جايب react وبأنهي نسخة.",
+            "المكتبة دي بتدعم أنهي نسخ من react.",
+            "الحل الصح غالبًا: نسخة أحدث بتدعم اللي عندك.",
+            "تجاهل الـ peers (بيخبي المشكلة).",
+            "لو مضطر: خليه إعداد للمشروع كله عشان الـ CI يمشي زي جهازك."
           ],
-          sol: R`بالـ worker: رسالتين أو تلاتة «main thread still responsive» (كل ٢٠٠ms والحساب بياخد حوالي نص ثانية) وبعدين [[fib = 39088169]]. الـ main كان فاضي يرد طول الوقت.
+          sol: R`مع [[react@19]] وبعدين [[react-day-picker@8.9.1]]:
 
-على الـ main مباشرة: [[fib = 39088169]] و [[fib: ~400ms]] ومفيش ولا رسالة، لأن الـ timer مقدرش يشتغل والـ thread مشغول، والحساب خلص قبل ما نلغي الـ interval. مع 40 الفرق أوضح: ثانية أو أكتر متوقف.
+[[npm error code ERESOLVE]] و [[ERESOLVE unable to resolve dependency tree]] و [[Found: react@19.3.0]] ([[react@"^19.3.0" from the root project]]) و [[Could not resolve dependency:]] و [[peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from react-day-picker@8.9.1]].
 
-الغلط الشائع إنك تحط [[async]] قدام [[fib]] وتفتكر ده هيحل المشكلة. الحساب sync ولسه هيوقف الـ thread.`,
-          solCode: R`function fib(n) {
-  return n < 2 ? n : fib(n - 1) + fib(n - 2);
+القراية: الـ Found هو اللي عندك، والـ peer هو اللي المكتبة بتقول إنها بتشتغل معاه. المكتبة دي ما اتجربتش على React 19. الحل الأول تشوف نسخة أحدث: [[npm view react-day-picker@8 peerDependencies]] بيوريك إن آخر 8.x ضافت [[^19.0.0]]، فـ [[npm i react-day-picker@8]] نجح من غير أي flag.
+
+[[--legacy-peer-deps]] بيسطّب وخلاص، والمكتبة ممكن تشتغل وممكن تقع وقت التشغيل. استخدمه لما تتأكد إن مفيش نسخة متوافقة وجرّبت بنفسك، مش كأول حل.`
+        },
+        {
+          cmd: "pnpm و yarn",
+          title: "بدائل npm و corepack",
+          desc: "نفس الفكرة بأوامر شبه متطابقة. pnpm أسرع وبيوفر مساحة (بيشارك المكتبات بين المشاريع). [[corepack]] بيدير نسخهم، وبييجي مع Node لحد 24 بس، ومن Node 25 بتسطّبه بـ [[npm i -g corepack]]. والمشروع بيحدد مديره في حقل [[packageManager]].",
+          example: R`corepack enable
+pnpm install
+pnpm add express
+pnpm dlx create-next-app
+npm pkg set packageManager=pnpm@9.12.0`,
+          try: "لو المشروع فيه pnpm-lock.yaml استخدم pnpm، ولو yarn.lock استخدم yarn. متخلطش، كل واحد ليه lock مختلف.",
+          deep: {
+            why: "مشروع هتشتغل عليه بيستخدم pnpm، أو عايز تسطيب أسرع ومساحة أقل. لازم تعرف الفرق وإزاي متخلطش.",
+            how: R`التلاتة بيقروا نفس package.json. الفرق في التسطيب والـ lock: npm بيعمل package-lock.json، و yarn بيعمل yarn.lock، و pnpm بيعمل pnpm-lock.yaml. المشروع بيستخدم واحد بس، وتعرفه من ملف الـ lock الموجود.
+
+pnpm بيحفظ كل نسخة من كل مكتبة مرة واحدة على الجهاز، و node_modules بتاع كل مشروع بيشاور عليها بلينكات. فمشروع جديد بيتسطّب في ثواني وبياخد مساحة قليلة جدًا. وكمان صارم: مكتبة مش في package.json مش هتقدر تستوردها حتى لو موجودة كفرعية.
+
+[[corepack]] (جاي مع Node لحد 24، ومن 25 بيتسطّب بـ npm i -g corepack) بيسطّب ويشغّل النسخة الصح من pnpm أو yarn حسب حقل [[packageManager]] في package.json. فمش محتاج تسطّبهم عام.
+
+الأوامر شبه بعض: [[pnpm add]] بدل install باسم، و [[pnpm dlx]] بدل npx، والباقي نفسه.`,
+            when: "pnpm لمشاريعك الجديدة لو عايز سرعة. والمشاريع الموجودة: اللي فيها.",
+            mistakes: R`npm install في مشروع pnpm: بيعمل package-lock جنب pnpm-lock وبيبوّظ node_modules. شوف الـ lock الأول.
+
+في مشروع حقيقي كان الـ CI فيه [[pnpm/action-setup]] بـ [[version: 10]]، وفي نفس الوقت [[packageManager]] في package.json بنسخة تانية، والاتنين لما يختلفوا الـ action بيفشل. سيب النسخة في packageManager بس، والـ action بيقراها لوحده. وفي مشروع تاني كان [[corepack enable]] في الـ CI من غير packageManager أصلًا، فكل run بياخد أي نسخة pnpm متاحة.`
+          },
+          teach: R`## نفس package.json، أداة تانية
+
+pnpm و yarn بيقروا نفس package.json زي npm، بس ليهم lock مختلف وطريقة تسطيب مختلفة. و [[corepack]] بيجيب النسخة الصح منهم. اتجرّب على لينكس جوه [[node:22-slim]] (corepack 0.36 جاي معاه)، لأن [[corepack enable]] بيكتب ملفات في فولدر Node على الجهاز (على ويندوز في [[C:\Program Files\nodejs]] ومحتاج أدمن).
+
+---
+
+## ١. [[corepack enable]]
+
+~~~bash
+which pnpm
+corepack enable
+which pnpm
+ls -l $(which pnpm)
+~~~
+
+~~~text الناتج
+(قبل: ولا حاجة)
+/usr/local/bin/pnpm
+lrwxrwxrwx 1 root root 41 Oct  6 13:14 /usr/local/bin/pnpm -> ../lib/node_modules/corepack/dist/pnpm.js
+~~~
+
+قبلها [[pnpm]] مش موجود. بعدها بقى فيه [[pnpm]] (و [[yarn]]) كـ symlink ([[->]] يعني بيشاور على) لسكربت تبع corepack. فلما تكتب [[pnpm]]، corepack هو اللي بيشتغل الأول ويقرر أنهي نسخة pnpm يشغّل.
+
+> corepack جاي مع Node لحد 24. من Node 25 مش جاي، ومحتاج [[npm i -g corepack]] الأول.
+
+---
+
+## بعدها على طول: آخر سطر في المثال [[npm pkg set packageManager=pnpm@9.12.0]]
+
+شغّلته قبل باقي الأوامر لأنه اللي بيحدد النسخة:
+
+~~~text package.json
+"packageManager": "pnpm@9.12.0"
+~~~
+
+~~~bash
+pnpm --version
+~~~
+
+~~~text الناتج
+9.12.0
+~~~
+
+corepack قرا الحقل، ونزّل pnpm 9.12.0 بالظبط وشغّلها. أي حد في الفريق مع [[corepack enable]] هياخد نفس النسخة. (عملت [[COREPACK_ENABLE_DOWNLOAD_PROMPT=0]] عشان مايسألش «أنزّل؟» جوه Docker.)
+
+---
+
+## ٢. [[pnpm install]]
+
+زي [[npm install]]: بيقرا package.json ويسطّب. بيعمل [[pnpm-lock.yaml]] بدل [[package-lock.json]].
+
+---
+
+## ٣. [[pnpm add express]]
+
+[[add]] بدل [[install اسم]]:
+
+~~~text الناتج
+Progress: resolved 66, reused 0, downloaded 66, added 66, done
+
+dependencies:
++ express 5.2.1
+
+Done in 2.9s
+~~~
+
+| الكلمة | معناها |
+|---|---|
+| [[resolved 66]] | حسب ٦٦ باكدج محتاجهم |
+| [[reused 0]] | ولا واحد كان موجود في المخزن (أول مرة على الجهاز ده) |
+| [[downloaded 66]] | نزّلهم كلهم |
+
+### node_modules بتاع pnpm شكله مختلف
+
+~~~text الناتج: ls -la node_modules
+.modules.yaml
+.pnpm
+express -> .pnpm/express@5.2.1/node_modules/express
+~~~
+
+- [[express]] بس على أول مستوى، مش الـ ٦٦. فلو كودك عمل [[import]] لمكتبة مش في package.json، pnpm مش هيلاقيها (npm كان هيلاقيها بالصدفة).
+- [[express]] لينك لـ [[.pnpm/express@5.2.1/...]]، والملفات نفسها لينكات لمخزن واحد على الجهاز. فالمشروع التاني اللي محتاج express 5.2.1 هيقول [[reused]] بدل [[downloaded]].
+
+---
+
+## ٤. [[pnpm dlx create-next-app]]
+
+[[dlx]] = download and execute، زي [[npx]] بالظبط. جرّبتها بـ [[pnpm dlx cowsay hi]] وطلعت نفس البقرة.
+
+---
+
+## لو غلطت وشغّلت npm في مشروع pnpm
+
+~~~text الناتج: npm install
+npm warn ERESOLVE overriding peer dependency
+npm warn While resolving: accepts@2.0.0
+npm warn Found: peer eslint-plugin-import@">=2.18.0" from eslint-config-standard@14.1.1
+npm warn node_modules/.pnpm/accepts@2.0.0/node_modules/accepts/node_modules/eslint-config-standard
+...
+~~~
+
+npm دخل جوه [[.pnpm]] وبدأ يقرا حاجات مش بتاعته، وعمل [[package-lock.json]] جنب [[pnpm-lock.yaml]]. امسح الـ lock الجديد ومتعملوش commit.
+
+---
+
+## الأوامر جنب بعض
+
+| npm | pnpm | yarn |
+|---|---|---|
+| [[npm install]] | [[pnpm install]] | [[yarn]] |
+| [[npm install express]] | [[pnpm add express]] | [[yarn add express]] |
+| [[npm install -D x]] | [[pnpm add -D x]] | [[yarn add -D x]] |
+| [[npm run dev]] | [[pnpm dev]] | [[yarn dev]] |
+| [[npx x]] | [[pnpm dlx x]] | [[yarn dlx x]] |
+| [[package-lock.json]] | [[pnpm-lock.yaml]] | [[yarn.lock]] |
+
+(عمود yarn من الـ docs، ماتجربش هنا.)
+
+## الخلاصة
+
+بص على ملف الـ lock قبل أي أمر، وثبّت الأداة ونسختها في [[packageManager]].`,
+          lines: [
+            "فعّل corepack اللي بيدير pnpm و yarn.",
+            "سطّب (زي npm install).",
+            "ضيف مكتبة (زي npm install express).",
+            "زي npx.",
+            "ثبّت مدير الباكدجات ونسخته للمشروع."
+          ],
+          sol: R`الإجابة إنك تبص على ملف الـ lock قبل أي أمر:
+
+[[package-lock.json]] يبقى [[npm ci]] أو [[npm install]]. [[pnpm-lock.yaml]] يبقى [[pnpm install]]. [[yarn.lock]] يبقى [[yarn]]. و [[bun.lock]] يبقى bun. وكمان حقل [["packageManager": "pnpm@9.12.0"]] في package.json بيقولك الأداة والنسخة، ومع [[corepack enable]] الأمر [[pnpm]] بيستخدم النسخة دي بالظبط.
+
+لو غلطت وعملت [[npm install]] في مشروع pnpm: هيتعمل [[package-lock.json]] جديد جنب [[pnpm-lock.yaml]]، والنسخ ممكن تختلف عن اللي الفريق شغال بيها. امسح الملف الجديد ومتعملوش commit. ولو المشروع فيه [[workspace:*]] npm غالبًا هيقع بـ [[Unsupported URL Type "workspace:"]]، ودي علامة إنه pnpm.`
+        },
+        {
+          cmd: "workspaces و link",
+          title: "مشروع فيه أكتر من باكدج",
+          desc: "monorepo: فولدر فيه api و web و shared. الـ workspaces بتخلي npm يسطّب الكل مرة واحدة ويربط shared بالباقي كلينك. و [[npm link]] لتجربة مكتبة بتطوّرها في مشروع تاني.",
+          example: R`npm init -w packages/shared
+npm install -w apps/api express
+npm run build --workspaces
+npm run dev -w apps/web
+npm link ../my-lib`,
+          try: R`اعمل مشروع فيه [[workspaces: ["apps/*", "packages/*"] ]] وشوف إن node_modules واحد في الجذر.`,
+          deep: {
+            why: "عندك API و web و كود مشترك بينهم (types، وvalidation). تنسخ المشترك في الاتنين؟ يتفرق. تنشره كباكدج؟ تقيل. الـ workspaces بيخليهم مشروع واحد.",
+            how: R`في package.json الجذر: [[workspaces: ["apps/*", "packages/*"] ]]. كل فولدر جواهم مشروع بـ package.json بتاعه. [[npm install]] في الجذر بيسطّب الكل في node_modules واحد، وبيعمل لينك لكل workspace باسمه، فـ [[apps/api]] بيستورد [[@myapp/shared]] كأنها مكتبة، وأي تعديل فيها بيظهر فورًا.
+
+[[-w]] (workspace) بيوجّه الأمر لمشروع فرعي: [[npm install -w apps/api express]] بيضيف express لـ api بس. [[--workspaces]] على الكل.
+
+[[npm link]] لحالة تانية: مكتبة بتطوّرها في فولدر منفصل وعايز تجرّبها في مشروع. بيعمل لينك من node_modules للفولدر بتاعها.
+
+للـ monorepos الكبيرة فيه أدوات فوق ده (Turborepo، Nx) بتشغّل الـ builds بالترتيب وبتعمل كاش.`,
+            when: "لما يبقى عندك كود مشترك بين مشروعين. وقبل كده، مشروع واحد أبسط.",
+            mistakes: "مشروع فرعي فيه node_modules خاص بيه بالغلط، فنسختين من react. وتنسى npm link بعد ما تخلص فيفضل المشروع بيشاور على فولدر محلي."
+          },
+          teach: R`## مشروع واحد فيه كذا باكدج
+
+[[workspaces]] حقل في package.json الجذر بيقول «الفولدرات دي مشاريع جوه المشروع». npm بيسطّب الكل في [[node_modules]] واحد ويعمل لينك لكل واحد باسمه. اتجرّب على ويندوز 11 (npm 11.17)، و [[npm link]] على لينكس جوه [[node:22-slim]] لأنه بيعمل لينك في فولدر الباكدجات العامة بتاع الجهاز.
+
+---
+
+## الأول: الجذر
+
+~~~powershell
+npm init -y
+npm pkg set "workspaces[0]=apps/*" "workspaces[1]=packages/*"
+~~~
+
+[[workspaces[0]]] أول عنصر في array اسمها workspaces. والنتيجة:
+
+~~~text package.json (الجذر)
+"workspaces": [
+  "apps/*",
+  "packages/*"
+]
+~~~
+
+[[*]] يعني «أي فولدر جوه». فـ [[apps/api]] و [[apps/web]] و [[packages/shared]] كلهم workspaces.
+
+---
+
+## ١. [[npm init -w packages/shared]]
+
+- [[-w]] اختصار [[--workspace]]: «الأمر ده لـ workspace معين».
+- [[init]] مع [[-w]] بيعمل الفولدر و package.json جواه (ضفت [[-y]] عشان مايسألش).
+
+~~~text الناتج
+added 1 package in 528ms
+~~~
+
+[[added 1 package]]: الباكدج الجديدة نفسها اتربطت في [[node_modules]] الجذر. وعملت بنفس الطريقة [[apps/api]] و [[apps/web]].
+
+---
+
+## ٢. [[npm install -w apps/api express]]
+
+express اتكتب في [[apps/api/package.json]] بس:
+
+~~~text apps/api/package.json
+"dependencies": {
+  "express": "^5.2.1"
 }
+~~~
 
-const tick = setInterval(() => console.log("main thread still responsive"), 200);
-console.time("fib");
-console.log("fib =", fib(38));
-console.timeEnd("fib");
-clearInterval(tick);
-// fib = 39088169
-// fib: 409.174ms   (ولا رسالة responsive)`
+بس اتسطّب في [[node_modules]] **الجذر**. و [[apps/api]] نفسها فيها [[package.json]] بس، من غير node_modules ولا lock.
+
+### اللينكات
+
+~~~powershell
+Get-ChildItem node_modules | Where-Object LinkType | Select-Object Name, LinkType, Target
+~~~
+
+~~~text الناتج
+Name   LinkType Target
+----   -------- ------
+api    Junction C:\Users\ali\mono\apps\api
+shared Junction C:\Users\ali\mono\packages\shared
+web    Junction C:\Users\ali\mono\apps\web
+~~~
+
+[[Junction]] نوع لينك لفولدرات على ويندوز (على لينكس symlink). يعني [[node_modules/shared]] مش نسخة، ده نفس الفولدر. جرّبت:
+
+~~~text packages/shared/index.js
+module.exports = { hello: (n) => "hello " + n };
+~~~
+
+~~~text apps/api/index.js
+const { hello } = require("shared");
+console.log(hello("api"));
+~~~
+
+~~~text الناتج: node apps/api/index.js
+hello api
+~~~
+
+[[require("shared")]] باسمها كأنها من npm، وأي تعديل في shared بيظهر على طول.
+
+### الشجرة
+
+~~~text الناتج: npm ls --depth=0
+mono@1.0.0 C:\Users\ali\mono
++-- api@1.0.0 -> .\apps\api
+| $__bt-- express@5.2.1
++-- shared@1.0.0 -> .\packages\shared
+$__bt-- web@1.0.0 -> .\apps\web
+~~~
+
+---
+
+## ٣. [[npm run build --workspaces]]
+
+[[--workspaces]] = شغّل السكربت في **كل** الـ workspaces (اللي عنده السكربت):
+
+~~~text الناتج
+> api@1.0.0 build
+> echo building $npm_package_name
+
+building $npm_package_name
+
+> web@1.0.0 build
+...
+> shared@1.0.0 build
+...
+~~~
+
+بالترتيب، واحد ورا التاني. ([[$npm_package_name]] اتطبع زي ما هو لأن السكربتات على ويندوز بتشتغل بـ cmd، ودا موضوع درس «npm scripts».) وفيه اختصار [[-ws]] بس npm 11 طلّع عليه تحذير إنه هيتشال، فاكتبها كاملة.
+
+---
+
+## ٤. [[npm run dev -w apps/web]]
+
+~~~text الناتج
+> web@1.0.0 dev
+> echo dev in web
+
+dev in web
+~~~
+
+[[-w]] بالمسار ([[apps/web]]) أو بالاسم ([[web]]).
+
+---
+
+## ٥. [[npm link ../my-lib]]
+
+حالة تانية: مكتبة في فولدر منفصل (مش workspace)، وعايز تجرّبها في مشروع قبل ما تنشرها.
+
+~~~text الناتج (node:22-slim)
+node_modules/my-lib -> ../../my-lib
+/usr/local/lib/node_modules/my-lib -> ../../../../w/my-lib
+~~~
+
+عمل لينكين: واحد في المشروع، وواحد في فولدر الباكدجات العامة للجهاز (ده سبب إني ماجربتهوش على ويندوز). ولما عدّلت [[my-lib/index.js]]:
+
+~~~text الناتج
+from my-lib v1
+from my-lib v2 (edited)
+~~~
+
+التعديل ظهر من غير أي تسطيب. ولما تخلص: [[npm unlink my-lib]] بيشيل اللينك من المشروع.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[npm init -y -w packages/shared]] | workspace جديد |
+| [[npm install -w apps/api express]] | مكتبة لـ workspace واحد (والتسطيب في الجذر) |
+| [[npm run build --workspaces]] | السكربت في الكل |
+| [[npm run dev -w apps/web]] | السكربت في واحد |
+| [[npm link ../my-lib]] | اربط فولدر برا المشروع |
+
+> التسطيب دايمًا من الجذر بـ [[-w]]. [[npm install]] جوه [[apps/api]] نفسها بيعمل lock و node_modules تانيين.`,
+          lines: [
+            "اعمل workspace جديد في packages/shared.",
+            "ضيف express لـ api بس.",
+            "ابني كل الـ workspaces.",
+            "شغّل dev في web بس.",
+            "اربط مكتبة من فولدر جنبك للتجربة."
+          ],
+          sol: R`بعد [[npm pkg set workspaces]] و [[npm init -w packages/shared]] و [[npm init -w apps/api]] و [[npm install -w apps/api ms]]:
+
+في الجذر [[node_modules]] واحد، وفيه [[ms]] نفسها، وفيه كمان [[api -> ../apps/api]] و [[shared -> ../packages/shared]] كـ symlinks. و [[apps/api]] فيها [[package.json]] بس، من غير node_modules. و [[package-lock.json]] واحد في الجذر.
+
+والـ [[ms]] اتكتبت في [[apps/api/package.json]] مش في package.json بتاع الجذر. أي باكدج تقدر تعمل [[import]] لـ [[shared]] باسمها كأنها متسطبة من npm.
+
+الغلط الشائع: تعمل [[npm install]] جوه [[apps/api]] نفسها، فيتعمل lock و node_modules تانيين جواها. التسطيب دايمًا من الجذر بـ [[-w]]. ولو apps/api عندها node_modules، غالبًا عشان نسخة مختلفة من مكتبة موجودة في الجذر، ودا عادي.`,
+          solCode: R`npm init -y
+npm pkg set "workspaces[0]=apps/*" "workspaces[1]=packages/*"
+npm init -y -w packages/shared
+npm init -y -w apps/api
+npm install -w apps/api ms
+ls -la node_modules | grep -E "api|shared|ms"`
+        },
+        {
+          cmd: ".npmrc",
+          title: "إعدادات npm و registries خاصة",
+          desc: "ملف إعدادات npm: في المشروع أو في [[~/.npmrc]]. فيه الـ registry، والتوكن للباكدجات الخاصة (GitHub Packages)، وإعدادات زي [[save-exact]] اللي بتخلي التسطيب بنسخ ثابتة من غير ^.",
+          example: R`npm config list
+npm config set save-exact true
+npm config get registry
+echo "//npm.pkg.github.com/:_authToken=TOKEN" >> ~/.npmrc
+echo "@myorg:registry=https://npm.pkg.github.com" >> .npmrc`,
+          try: "فعّل [[save-exact]] وسطّب مكتبة وشوف النسخة اتكتبت من غير ^.",
+          deep: {
+            why: "محتاج تغيّر سلوك npm: نسخ ثابتة، أو registry خاص للشركة، أو توكن لباكدجات خاصة على GitHub Packages.",
+            how: R`npm بيقرا الإعدادات من ٣ أماكن بالترتيب: [[.npmrc]] في المشروع، وبعدين [[~/.npmrc]] بتاعك، وبعدين الافتراضي. [[config list]] بيوريك النتيجة، و [[config set]] بيكتب في ملفك.
+
+[[save-exact=true]]: التسطيب يكتب [[4.18.2]] بدل [[^4.18.2]]. ناس كتير بتفضّله عشان مفيش مفاجآت.
+
+الباكدجات الخاصة: [[@myorg:registry=...]] في .npmrc بتاع المشروع بيقول «أي باكدج بتبدأ بـ @myorg هاتها من هنا». والتوكن في [[~/.npmrc]] بتاعك (مش في المشروع، عشان ميدخلش Git). وفي CI التوكن من secret.
+
+[[engine-strict=true]] بيخلي npm يرفض التسطيب لو نسخة Node مش مطابقة لـ engines، بدل مجرد تحذير.`,
+            when: "save-exact في مشاريعك. الـ registry والتوكن لما تستخدم باكدجات خاصة.",
+            mistakes: "التوكن في .npmrc بتاع المشروع وبيترفع على Git. دايمًا في ~/.npmrc أو متغير بيئة."
+          },
+          teach: R`## ملف إعدادات npm
+
+[[.npmrc]] سطور [[اسم=قيمة]]. npm بيقراه من مكانين أساسيين: [[.npmrc]] جنب package.json (المشروع)، و [[~/.npmrc]] في فولدر اليوزر (ليك انت في كل المشاريع). اتجرّب على لينكس جوه [[node:22-slim]] لأن أوامر المثال بتكتب في [[~/.npmrc]]، وعلى ويندوز 11 بإعداد المشروع بس.
+
+---
+
+## ١. [[npm config list]]
+
+~~~text الناتج (container جديد)
+; node bin location = /usr/local/bin/node
+; node version = v22.23.3
+; npm local prefix = /app
+; npm version = 10.9.9
+; cwd = /app
+; HOME = /root
+; Run $__btnpm config ls -l$__bt to show all defaults.
+~~~
+
+السطور اللي بتبدأ بـ [[;]] معلومات مش إعدادات. ومفيش إعدادات لأن مفيش [[.npmrc]] لسه. [[npm local prefix]] جذر المشروع اللي npm شايفه، و [[HOME]] فين [[~/.npmrc]].
+
+---
+
+## ٢. [[npm config set save-exact true]]
+
+بيكتب في [[~/.npmrc]] (الملف بتاعك):
+
+~~~text ~/.npmrc
+save-exact=true
+~~~
+
+وبعدها [[npm i ms]] كتب في package.json:
+
+~~~text package.json
+"ms": "2.1.3"
+~~~
+
+من غير [[^]]. ده بيأثر على اللي هتسطّبه بعد كده بس، مش على اللي موجود.
+
+### للمشروع بس
+
+على ويندوز جرّبتها كده:
+
+~~~powershell
+npm config set save-exact true --location=project
+~~~
+
+[[--location=project]] = اكتب في [[.npmrc]] المشروع مش ملفك. الملف اتعمل جنب package.json وفيه [[save-exact=true]]، و [[npm config get save-exact]] قال [[true]]. ده اللي بيدخل Git ويمشي على الفريق كله. وملفك الشخصي فين:
+
+~~~powershell
+npm config get userconfig
+~~~
+
+~~~text الناتج
+C:\Users\ali\.npmrc
+~~~
+
+---
+
+## ٣. [[npm config get registry]]
+
+~~~text الناتج
+https://registry.npmjs.org/
+~~~
+
+الـ registry الافتراضي اللي npm بينزّل منه.
+
+---
+
+## ٤. [[echo "//npm.pkg.github.com/:_authToken=TOKEN" >> ~/.npmrc]]
+
+- [[>>]] ضيف سطر في آخر الملف.
+- [[//npm.pkg.github.com/]] السطر ده يخص الـ registry ده بس.
+- [[:_authToken=]] التوكن اللي بيتبعت معاه. [[TOKEN]] هنا مكان التوكن الحقيقي.
+
+في [[~/.npmrc]] **بتاعك**، مش بتاع المشروع، عشان مايدخلش Git.
+
+---
+
+## ٥. [[echo "@myorg:registry=https://npm.pkg.github.com" >> .npmrc]]
+
+[[@myorg]] scope: أي باكدج اسمها بيبدأ بـ [[@myorg/]] تيجي من GitHub Packages، والباقي من npm العادي. ده في [[.npmrc]] المشروع لأن الفريق كله محتاجه، ومفيهوش أسرار.
+
+### بعد الاتنين
+
+~~~text الناتج: npm config list
+; "user" config from /root/.npmrc
+
+//npm.pkg.github.com/:_authToken = (protected)
+save-exact = true
+save-prefix = ""
+
+; "project" config from /app/.npmrc
+
+@myorg:registry = "https://npm.pkg.github.com"
+~~~
+
+- [[(protected)]]: npm مش بيطبع التوكن، كويس.
+- كل قسم مكتوب جاي منين ([[user]] و [[project]]).
+- [[save-prefix = ""]] npm ضافها لوحده مع [[save-exact]]: الحرف اللي قبل النسخة بقى فاضي بدل [[^]].
+
+و [[npm config get @myorg:registry]] رجّع [[https://npm.pkg.github.com]].
+
+> على Windows PowerShell 5.1 متكتبش في [[.npmrc]] بـ [[echo ... >>]]: الملف بيتكتب UTF-16 و npm مش بيعرف يقراه (اتجرّب في درس ERESOLVE). استخدم [[Add-Content .npmrc "..."]] أو [[npm config set ... --location=project]].
+
+---
+
+## الخلاصة
+
+| الإعداد | فين | ليه |
+|---|---|---|
+| [[save-exact=true]] | المشروع ([[--location=project]]) | قاعدة للفريق |
+| [[@myorg:registry=...]] | المشروع | الكل محتاجه ومفيهوش سر |
+| [[_authToken=...]] | [[~/.npmrc]] بتاعك أو متغير بيئة | سر |
+| [[engine-strict=true]] | المشروع | ارفض نسخة Node غلط |
+
+> في الـ repo استخدم [[_authToken=$__{NPM_TOKEN}]] والقيمة من البيئة.`,
+          lines: [
+            "كل الإعدادات الفعّالة ومصدرها.",
+            "النسخ تتكتب بالظبط من غير ^.",
+            "الـ registry الحالي.",
+            "توكن GitHub Packages في ملفك الشخصي (مش المشروع).",
+            "باكدجات @myorg تيجي من GitHub، ده في المشروع."
+          ],
+          sol: R`[[npm config set save-exact true --location=project]] بيكتب [[save-exact=true]] في [[.npmrc]] جنب package.json. وبعدها [[npm i ms]] كتب [["ms": "2.1.3"]] من غير [[^]]، و [[npm config get save-exact]] بيطبع [[true]].
+
+من غير [[--location=project]]، [[npm config set]] بيكتب في [[~/.npmrc]] بتاعك، فيأثر على كل مشاريعك وزمايلك مش هياخدوه. لو عايزها قاعدة للفريق، خليها في [[.npmrc]] المشروع واعملها commit.
+
+الغلط الشائع: تفتكر إن save-exact بيثبّت المكتبات الموجودة؛ هو بيأثر على اللي هتسطبه بعد كده بس. والـ lock هو اللي فعلًا بيثبّت كل النسخ. ومتحطش توكن حقيقي في [[.npmrc]] اللي في الـ repo، استخدم [[$__{NPM_TOKEN}]] والقيمة من البيئة.`
         }
       ]
     }

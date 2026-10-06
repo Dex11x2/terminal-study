@@ -62,6 +62,139 @@ node -p "typeof document"`,
             when: R`أي حاجة JavaScript برا المتصفح: سيرفر، أو سكربت بيعدّل ملفات، أو أداة build. وأي مشروع React أو Next.js بيحتاج Node عشان [[npm install]] و [[npm run dev]].`,
             mistakes: R`تستخدم [[document]] أو [[window]] أو [[localStorage]] في كود بيشتغل على Node، فيطلعلك [[ReferenceError]]. تكتب [[node app.js]] وانت مش في فولدر الملف فيطلعلك [[Cannot find module]]. وتكتب [[node app]] على ملف [[app.ts]] وتستنى يشتغل: TypeScript محتاج خطوة زيادة (درس «npx tsx»).`
           },
+          teach: R`## الفكرة في سطر
+
+[[node]] برنامج بتديله ملف JavaScript فيشغّله من أوله لآخره ويقفل. المثال فيه ٣ أوامر: واحد بيشغّل ملف، واتنين بيسألوا Node أسئلة صغيرة من غير ملف. كله اتشغّل على ويندوز 11 (Node 24.19) في PowerShell، وعلى لينكس جوه [[docker run --rm node:22-slim]]، والأوامر نفسها مكتوبة زي ما هي في الاتنين.
+
+---
+
+## ١. [[node app.js]]: شغّل ملف
+
+### الملف نفسه
+
+اعمل فولدر، وجواه ملف اسمه [[app.js]] فيه سطرين:
+
+~~~text app.js
+console.log("أول برنامج في Node!");
+console.log(2 + 3);
+~~~
+
+- [[console.log]] بيطبع اللي بين القوسين في الترمنال (في المتصفح كان بيطبع في الـ Console بتاع DevTools).
+- السطر الأول بيطبع نص (string) زي ما هو.
+- السطر التاني بيحسب [[2 + 3]] الأول وبعدين يطبع الناتج.
+
+### التشغيل
+
+افتح الترمنال **في نفس الفولدر** واكتب:
+
+~~~powershell
+node app.js
+~~~
+
+~~~text الناتج
+أول برنامج في Node!
+5
+~~~
+
+- [[node]] اسم البرنامج نفسه (اتسطّب مع Node.js).
+- [[app.js]] اسم الملف، و Node بيدوّر عليه **في الفولدر اللي انت واقف فيه**.
+
+Node قرا الملف، ونفّذ السطور بالترتيب، ولما خلصت مفيش حاجة مستنياها، فقفل ورجّعلك الترمنال.
+
+### لو انت في فولدر غلط
+
+نفس الأمر من الفولدر اللي فوقه:
+
+~~~text الناتج
+Error: Cannot find module 'C:\Users\ali\lab\app.js'
+~~~
+
+Node بيلزق اسم الملف على المكان اللي انت فيه ومش بيلاقيه. الحل: [[cd]] للفولدر الصح، أو اكتب المسار كله.
+
+### لو استخدمت حاجة من المتصفح
+
+ضيف سطر تالت [[console.log(document.title);]] وشغّل تاني:
+
+~~~text الناتج
+أول برنامج في Node!
+5
+C:\Users\ali\lab\app.js:3
+console.log(document.title);
+            ^
+
+ReferenceError: document is not defined
+    at Object.<anonymous> (C:\Users\ali\lab\app.js:3:13)
+    ...
+Node.js v24.19.0
+~~~
+
+اقرا الرسالة من فوق لتحت:
+
+| الجزء | معناه |
+|---|---|
+| السطرين الأولانيين | اتنفّذوا عادي قبل الغلطة |
+| [[app.js:3]] | الغلطة في السطر ٣ |
+| السهم [[^]] | بيشاور على الكلمة اللي عملت المشكلة |
+| [[ReferenceError]] | نوع الخطأ: اسم مش معروف |
+| [[document is not defined]] | الاسم [[document]] مش موجود هنا |
+| [[at ... app.js:3:13]] | السطر ٣، الحرف رقم ١٣ |
+
+يعني Node بينفّذ لحد ما يقابل غلطة ويقف، وكود المتصفح زي [[document]] مش موجود فيه لأن مفيش صفحة أصلًا.
+
+---
+
+## ٢. [[node -p "process.platform + ' ' + process.version"]]
+
+### [[-p]]
+
+[[-p]] اختصار print: «نفّذ الكود اللي بعدي واطبع ناتجه». الكود مكتوب بين علامتين تنصيص [[" "]] عشان الترمنال يعدّيه لـ Node كحتة واحدة.
+
+### [[process]]
+
+[[process]] object موجود في Node بس، فيه معلومات عن البرنامج الشغال والجهاز:
+
+- [[process.platform]]: نظام التشغيل، بـ اسم Node بيستخدمه.
+- [[process.version]]: نسخة Node.
+- [[+ ' ' +]]: بيلزق النصين وبينهم مسافة (المسافة بين علامتين تنصيص مفردة، عشان متتلخبطش مع الـ [[" "]] اللي برا).
+
+~~~text الناتج على ويندوز (PowerShell)
+win32 v24.19.0
+~~~
+
+~~~text الناتج على لينكس (node:22-slim)
+linux v22.23.3
+~~~
+
+| [[process.platform]] | النظام |
+|---|---|
+| [[win32]] | ويندوز (حتى لو 64 بت، الاسم تاريخي) |
+| [[linux]] | لينكس و WSL |
+| [[darwin]] | الماك (من الـ docs، ماتجربش هنا) |
+
+---
+
+## ٣. [[node -p "typeof document"]]
+
+[[typeof]] بيرجّع نوع القيمة كنص. ولو الاسم مش متعرّف خالص، بيرجّع [[undefined]] بدل ما يعمل error زي اللي شفناه فوق.
+
+~~~text الناتج (ويندوز ولينكس)
+undefined
+~~~
+
+نفس السطر [[typeof document]] في Console المتصفح بيرجّع [['object']]. ده الفرق كله في سطر: نفس اللغة، بس الحاجات اللي حواليها مختلفة.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[node app.js]] | شغّل الملف من أوله لآخره واقفل |
+| [[node -p "..."]] | نفّذ سطر JavaScript واطبع ناتجه |
+| [[process]] | موجود في Node بس: النظام والنسخة والمتغيرات |
+| [[document]] و [[window]] | موجودين في المتصفح بس |
+
+> اتأكد دايمًا إنك في فولدر الملف قبل [[node app.js]]، واقرا رقم السطر في أي error قبل أي حاجة تانية.`,
           lines: [
             R`بيشغّل الملف من أوله لآخره ويقفل.`,
             R`[[-p]] بينفّذ الكلام اللي بين علامتين التنصيص ويطبع الناتج: اسم نظام التشغيل ونسخة Node.`,
@@ -103,6 +236,141 @@ node -p "process.versions.v8"`,
             when: "أول ما تفتح مشروع جديد. قبل ما تبلّغ عن bug. لما مكتبة تطلع syntax error غريب.",
             mistakes: "نسخة على جهازك ونسخة تانية على السيرفر. حدد النسخة في Dockerfile أو .nvmrc والاتنين يمشوا عليها."
           },
+          teach: R`## ٤ أسئلة للجهاز عن Node
+
+كل سطر في المثال سؤال: نسخة Node كام؟ ونسخة npm؟ والـ node اللي بيشتغل جاي منين؟ ونسخة المحرك V8 اللي جواه؟ الأوامر اتشغّلت على ويندوز 11 (PowerShell 7 و 5.1) وعلى لينكس جوه [[docker run --rm node:22-slim]].
+
+---
+
+## ١. [[node -v]]
+
+[[-v]] اختصار version.
+
+~~~text الناتج
+ويندوز:  v24.19.0
+لينكس:   v22.23.3
+~~~
+
+### قراية الرقم
+
+النسخة بصيغة [[major.minor.patch]]:
+
+| الجزء | في [[v24.19.0]] | معناه |
+|---|---|---|
+| [[v]] | | بس حرف قبل الرقم |
+| major | 24 | الإصدار الكبير، ودا اللي بتقارنه بالمشروع |
+| minor | 19 | ميزات جديدة جوه نفس الإصدار |
+| patch | 0 | إصلاحات |
+
+والـ major الزوجي (20 و 22 و 24) بيبقى LTS (Long Term Support، يعني دعم طويل)، ودا اللي يتحط على السيرفرات.
+
+---
+
+## ٢. [[npm -v]]
+
+~~~text الناتج
+ويندوز (مع Node 24):  11.17.0
+لينكس (مع Node 22):   10.9.9
+~~~
+
+لاحظ إن npm ليه أرقام لوحده: Node 22 جاي بـ npm 10، و Node 24 جاي بـ npm 11. يعني لو زميلك على نسخة Node تانية، غالبًا npm كمان مختلف، وده ممكن يغيّر شكل [[package-lock.json]].
+
+---
+
+## ٣. [[which node]]: الملف جاي منين
+
+[[which]] أمر لينكس والماك: بيدوّر في الـ PATH (لستة الفولدرات اللي الشيل بيدوّر فيها على الأوامر) ويقولك أول ملف اسمه [[node]].
+
+~~~text الناتج على لينكس (node:22-slim)
+/usr/local/bin/node
+~~~
+
+| المسار | يعني Node متسطب منين |
+|---|---|
+| [[/usr/bin/node]] | apt (مدير باكدجات أوبونتو) |
+| [[/usr/local/bin/node]] | تسطيب يدوي أو image Docker الرسمية (زي هنا) |
+| فيه [[.nvm]] | nvm (الدرس الجاي) |
+| [[/opt/homebrew/...]] | brew على الماك (من الـ docs) |
+
+و [[which -a node]] بيطبع **كل** النسخ اللي في الـ PATH مش الأولى بس، ودي اللي تكشف لو عندك node متسطب مرتين.
+
+### على ويندوز
+
+PowerShell مفيهوش [[which]] (لو اشتغل عندك يبقى جاي من Git). المقابل:
+
+~~~powershell
+(Get-Command node).Source
+where.exe node
+~~~
+
+~~~text الناتج
+C:\Program Files\nodejs\node.exe
+C:\Program Files\nodejs\node.exe
+~~~
+
+- [[Get-Command node]] بيدوّر على الأمر، و [[.Source]] بيطلّع مكان الملف بس.
+- [[where.exe]] زي [[which -a]]: بيطبع كل اللي لقاه، سطر لكل واحد. لازم تكتب [[.exe]] في PowerShell، لأن [[where]] لوحدها اختصار لـ [[Where-Object]].
+
+---
+
+## ٤. [[node -p "process.versions.v8"]]
+
+[[process.versions]] (بـ s) object فيه نسخة كل حاجة جوه Node، و [[.v8]] منه نسخة المحرك اللي بيشغّل JavaScript.
+
+~~~text الناتج
+ويندوز (Node 24):  13.6.233.17-node.51
+لينكس (Node 22):   12.4.254.21-node.57
+~~~
+
+الرقم ده بيفرق لما مكتبة تقول «محتاج feature في V8 كذا»، أو لما syntax جديد يشتغل في Node 24 ومايشتغلش في 22.
+
+---
+
+## بعد ما تعرف النسخة: [[engines]]
+
+المشروع بيكتب النسخة اللي محتاجها في [[package.json]]:
+
+~~~text package.json
+"engines": { "node": ">=26" }
+~~~
+
+جرّبت مشروع فيه [[>=26]] على Node 24:
+
+~~~powershell
+npm install
+~~~
+
+~~~text الناتج
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'l2@1.0.0',
+npm warn EBADENGINE   required: { node: '>=26' },
+npm warn EBADENGINE   current: { node: 'v24.19.0', npm: '11.17.0' }
+npm warn EBADENGINE }
+
+up to date, audited 1 package in 559ms
+~~~
+
+[[warn]] مش [[error]]: npm حذّر وكمّل. ولما ضفت سطر [[engine-strict=true]] في [[.npmrc]] جنب package.json، نفس الأمر وقف:
+
+~~~text الناتج
+npm error code EBADENGINE
+npm error engine Not compatible with your version of node/npm: l2@1.0.0
+npm error notsup Required: {"node":">=26"}
+npm error notsup Actual:   {"node":"v24.19.0","npm":"11.17.0"}
+~~~
+
+---
+
+## الخلاصة
+
+| السؤال | لينكس والماك | ويندوز (PowerShell) |
+|---|---|---|
+| نسخة Node | [[node -v]] | [[node -v]] |
+| نسخة npm | [[npm -v]] | [[npm -v]] |
+| جاي منين | [[which node]] / [[which -a node]] | [[(Get-Command node).Source]] / [[where.exe node]] |
+| نسخة V8 | [[node -p "process.versions.v8"]] | نفس الأمر |
+
+> أول سطر في أي سؤال عن مشكلة Node: نسختك كام، والمشروع طالب كام في [[engines]].`,
           lines: [
             "نسخة Node.",
             "نسخة npm.",
@@ -144,6 +412,150 @@ nvm use`,
             when: "على جهازك دايمًا. على السيرفر الأسهل Docker بنسخة محددة، أو NodeSource repo.",
             mistakes: "تسطّب nvm وتفضل Node القديم من apt بيشتغل لأن الـ PATH بيلاقيه الأول. [[which -a node]] يوريك الاتنين."
           },
+          teach: R`## nvm بيعمل حاجة واحدة: بيغيّر الـ PATH
+
+كل نسخة Node بتتسطّب في فولدر لوحدها، و nvm بيغيّر أول فولدر في الـ PATH عشان كلمة [[node]] تشاور على النسخة اللي اخترتها. الأوامر اتشغّلت على لينكس: ubuntu:24.04 جوه Docker، بعد تسطيب nvm 0.40.3 بسكربته الرسمي. nvm نفسه سكربت bash، فمش موجود في PowerShell (ويندوز في آخر الدرس).
+
+---
+
+## ١. [[nvm ls]]
+
+[[ls]] اختصار list. أول مرة، قبل أي تسطيب:
+
+~~~text الناتج
+            N/A *
+iojs -> N/A (default)
+node -> stable (-> N/A) (default)
+unstable -> N/A (default)
+~~~
+
+[[N/A]] يعني not available: مفيش ولا نسخة. بعد ما سطّبنا 24 و 22:
+
+~~~text الناتج
+       v22.23.3 *
+       v24.21.0 *
+default -> 24 (-> v24.21.0 *)
+node -> stable (-> v24.21.0 *) (default)
+lts/* -> lts/krypton (-> v24.21.0 *)
+lts/iron -> v20.20.2 (-> N/A)
+lts/jod -> v22.23.3 *
+lts/krypton -> v24.21.0 *
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[v22.23.3 *]] | نسخة متسطبة. النجمة معناها «موجودة عندك» |
+| [[default -> 24]] | النسخة اللي أي ترمنال جديد بيبدأ بيها |
+| [[lts/jod]] و [[lts/krypton]] | كل LTS ليها اسم: jod هي 22، و krypton هي 24 |
+| [[(-> N/A)]] | الاسم معروف بس النسخة دي مش متسطبة |
+
+وفي ترمنال حقيقي nvm بيحط سهم [[->]] ولون قدام النسخة الشغالة دلوقتي.
+
+---
+
+## ٢. [[nvm install 24]]
+
+الرقم [[24]] لوحده معناه «آخر نسخة في خط 24».
+
+~~~text الناتج
+Downloading and installing node v24.21.0...
+Downloading https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.gz...
+Computing checksum with sha256sum
+Checksums matched!
+Now using node v24.21.0 (npm v11.19.0)
+Creating default alias: default -> 24 (-> v24.21.0 *)
+~~~
+
+1. نزّل الملف المضغوط من nodejs.org ([[linux-x64]] = لينكس على معالج 64 بت).
+2. [[checksum]]: حسب بصمة الملف وقارنها باللي على الموقع، عشان يتأكد إنه نزل سليم.
+3. فكّه في [[~/.nvm/versions/node/v24.21.0/]] (فولدرك انت، عشان كده مش محتاج sudo).
+4. بدّل ليه على طول، ولأنها أول نسخة عملها default.
+
+---
+
+## ٣. [[nvm use 24]]
+
+~~~text الناتج
+Now using node v24.21.0 (npm v11.19.0)
+~~~
+
+~~~bash
+which node
+~~~
+
+~~~text الناتج
+/root/.nvm/versions/node/v24.21.0/bin/node
+~~~
+
+المسار جوه [[.nvm]]: ده دليل إن الـ PATH اتغيّر. ([[/root]] لأن الـ container شغال بيوزر root؛ عندك هيبقى [[/home/اسمك]].) والتغيير ده **للترمنال ده بس**، أي ترمنال تاني مش هيحس بيه.
+
+---
+
+## ٤. [[nvm alias default 24]]
+
+[[alias]] يعني اسم مستعار. انت بتقول: الاسم [[default]] يشاور على 24.
+
+~~~text الناتج
+default -> 24 (-> v24.21.0 *)
+~~~
+
+ودا اللي بيخلي أي ترمنال جديد يبدأ بـ 24 بدل ما يبدأ من غير node.
+
+---
+
+## ٥. [[echo "24" > .nvmrc]]
+
+- [[echo "24"]] بيطبع [[24]].
+- [[>]] بيحوّل الطباعة لملف بدل الشاشة (وبيمسح الملف لو موجود).
+- [[.nvmrc]] اسم الملف اللي nvm بيدوّر عليه. النقطة في أوله بتخليه ملف مخفي في لينكس.
+
+النتيجة ملف في جذر المشروع فيه سطر واحد: [[24]]. وده يدخل Git عشان الفريق كله يشوفه.
+
+---
+
+## ٦. [[nvm use]] من غير رقم
+
+بدّلنا لـ 22 الأول، وبعدين جوه فولدر المشروع:
+
+~~~text الناتج
+Found '/proj/.nvmrc' with version <24>
+Now using node v24.21.0 (npm v11.19.0)
+~~~
+
+nvm لقى الملف، وقرا الرقم، وبدّل. لو مفيش [[.nvmrc]] هيقولك إنه ملقاش رقم.
+
+---
+
+## الأمر كله
+
+| الأمر | بيعمل إيه | بيأثر على |
+|---|---|---|
+| [[nvm ls]] | النسخ المتسطبة والأسامي | لا حاجة |
+| [[nvm install 24]] | نزّل آخر 24.x وبدّل ليها | فولدر [[~/.nvm]] |
+| [[nvm use 24]] | خلّي [[node]] = 24 | الترمنال ده بس |
+| [[nvm alias default 24]] | النسخة الافتراضية | كل ترمنال جديد |
+| [[echo "24" > .nvmrc]] | سجّل نسخة المشروع | المشروع (يدخل Git) |
+| [[nvm use]] | اقرا [[.nvmrc]] وبدّل | الترمنال ده بس |
+
+---
+
+## ويندوز والماك
+
+| النظام | الأداة |
+|---|---|
+| لينكس و WSL | nvm (اللي فوق) |
+| الماك | nvm نفسه بنفس الأوامر، في zsh (من الـ docs) |
+| ويندوز | nvm-windows: برنامج **تاني** بأوامر شبه دي: [[nvm list]] و [[nvm install 24]] و [[nvm use 24]]، ومش بيقرا [[.nvmrc]] (من الـ docs، ماتجربش هنا لأنه بيغيّر Node المتسطب على الجهاز). بديل تاني: fnm |
+
+> لو كتبت [[echo "24" > .nvmrc]] في Windows PowerShell 5.1، الملف بيتكتب UTF-16 ومعظم الأدوات مش هتعرف تقراه. استخدم [[Set-Content .nvmrc 24]] أو PowerShell 7.
+
+---
+
+## الخلاصة
+
+- [[nvm use]] للترمنال ده بس، و [[nvm alias default]] لكل ترمنال جديد.
+- [[.nvmrc]] في المشروع، و [[nvm use]] من غير رقم.
+- لو [[which node]] لسه بيقول [[/usr/bin/node]]، يبقى فيه node من apt قبل nvm في الـ PATH: [[which -a node]] هيوريك الاتنين.`,
           lines: [
             "النسخ المسطّبة، والمستخدمة عليها سهم.",
             "سطّب آخر 24.x.",
@@ -179,6 +591,150 @@ npm pkg get scripts`,
             when: "أول أمر في أي مشروع جديد. و [[npm pkg]] لما تعدّل حاجة من سكربت.",
             mistakes: "[[type: module]] في مشروع فيه [[require]]، أو العكس، فيطلع «Cannot use import statement outside a module». الاتنين مينفعش يتخلطوا في نفس الملف."
           },
+          teach: R`## ٤ أوامر، والملف بيتعدّل من غير ما تفتحه
+
+أول أمر بيعمل [[package.json]]، والتلاتة اللي بعده بيعدّلوا أو يقروا حقل منه. اتشغّلوا على ويندوز 11 (npm 11.17) في فولدر فاضي اسمه [[myapp]]، ونفس الأوامر بالظبط على لينكس.
+
+---
+
+## ١. [[npm init -y]]
+
+- [[npm]] مدير الباكدجات اللي جاي مع Node.
+- [[init]] يعني initialize: ابدأ مشروع.
+- [[-y]] يعني yes: «وافق على كل الإجابات الافتراضية»، من غيرها npm بيسألك ١٠ أسئلة واحد ورا التاني.
+
+~~~text الناتج
+Wrote to C:\Users\ali\myapp\package.json:
+
+{
+  "name": "myapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
+~~~
+
+### كل حقل بيقول إيه
+
+| الحقل | القيمة | معناه |
+|---|---|---|
+| [[name]] | [[myapp]] | اسم المشروع، خده من اسم الفولدر |
+| [[version]] | [[1.0.0]] | نسخة المشروع (major.minor.patch) |
+| [[description]] | فاضي | وصف، بيفرق لو هتنشر باكدج |
+| [[main]] | [[index.js]] | الملف اللي بيتحمّل لو حد عمل import للباكدج دي |
+| [[scripts]] | [[test]] | أوامر بتشغّلها بـ [[npm run]] (درس «npm scripts») |
+| [[keywords]] و [[author]] | فاضيين | للنشر بس |
+| [[license]] | [[ISC]] | رخصة مفتوحة شبه MIT |
+| [[type]] | [[commonjs]] | الملفات بتستخدم [[require]] (الشرح تحت) |
+
+وسكربت [[test]] الافتراضي: [[echo]] بيطبع رسالة، و [[&&]] معناها «لو اللي قبلي نجح نفّذني»، و [[exit 1]] بيخرج برقم 1 (يعني فشل). يعني [[npm test]] في مشروع جديد بيفشل لحد ما تحط اختبارات. و [[\"]] جوه JSON معناها علامة تنصيص جوه النص نفسه.
+
+---
+
+## ٢. [[npm pkg set type=module]]
+
+- [[pkg]] أمر npm بيقرا ويكتب في package.json.
+- [[set]] اكتب.
+- [[type=module]]: الحقل [[type]] قيمته [[module]].
+
+مش بيطبع حاجة، بس الملف بقى فيه [["type": "module"]] بدل [[commonjs]].
+
+### الفرق بين الاتنين
+
+~~~text CommonJS (الافتراضي القديم)
+const fs = require("fs");
+~~~
+
+~~~text ES modules (مع type: module)
+import fs from "node:fs";
+~~~
+
+جرّبت الاتنين في نفس المشروع. ملف فيه [[require]] والمشروع [[module]]:
+
+~~~text الناتج
+ReferenceError: require is not defined in ES module scope, you can use import instead
+This file is being treated as an ES module because it has a '.js' file extension and '...\package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+~~~
+
+والعكس، ملف فيه [[import]] والمشروع [[commonjs]]:
+
+~~~text الناتج
+SyntaxError: Cannot use import statement outside a module
+~~~
+
+الرسالة الأولى بتقولك الحل بنفسها: الامتداد بيكسب على الحقل. [[.mjs]] دايمًا ESM، و [[.cjs]] دايمًا CommonJS.
+
+---
+
+## ٣. [[npm pkg set engines.node=">=22"]]
+
+- [[engines.node]]: النقطة معناها «جوه». يعني حقل [[node]] جوه object اسمه [[engines]]، و npm بيعمله لو مش موجود.
+- [[">=22"]]: أكبر من أو يساوي 22. علامات التنصيص لازمة في bash، لأن [[>]] من غيرها معناها «حوّل الناتج لملف» والشيل هيعمل ملف اسمه [[=22]].
+
+~~~text اللي اتضاف في package.json
+"engines": {
+  "node": ">=22"
+}
+~~~
+
+جرّبته في PowerShell 7 و Windows PowerShell 5.1 بنفس الكتابة واشتغل في الاتنين.
+
+---
+
+## ٤. [[npm pkg get scripts]]
+
+[[get]] اقرا. بيطبع الحقل كـ JSON:
+
+~~~text الناتج
+{
+  "test": "echo \"Error: no test specified\" && exit 1"
+}
+~~~
+
+وممكن تقرا أكتر من حقل مرة واحدة: [[npm pkg get type name]] طبع:
+
+~~~text الناتج
+{
+  "type": "module",
+  "name": "myapp"
+}
+~~~
+
+---
+
+## الملف في الآخر
+
+~~~text package.json
+{
+  "name": "myapp",
+  "version": "1.0.0",
+  ...
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  }
+}
+~~~
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[npm init -y]] | اعمل الملف بالقيم الافتراضية |
+| [[npm pkg set type=module]] | المشروع يستخدم [[import]] |
+| [[npm pkg set engines.node=">=22"]] | المشروع محتاج Node 22 أو أحدث |
+| [[npm pkg get scripts]] | اقرا حقل من غير ما تفتح الملف |
+
+## الخلاصة
+
+- [[npm pkg set]] أأمن من التعديل بإيدك: مفيش فاصلة ناقصة أو زيادة تبوّظ الـ JSON ([[EJSONPARSE]]).
+- [[type]] بيحدد [[import]] ولا [[require]]، والامتداد [[.mjs]] / [[.cjs]] بيكسب عليه.`,
           lines: [
             "اعمل package.json بقيم افتراضية من غير أسئلة.",
             "خلّي المشروع ESM (import بدل require).",
@@ -215,6 +771,151 @@ npm uninstall nodemon`,
             when: "كل مكتبة جديدة. وبعد clone. و -D لأي أداة.",
             mistakes: "typescript في dependencies بدل -D، فالإنتاج يسطّبه من غير داعي. أو مكتبة التطبيق محتاجها في -D فالإنتاج يقع بـ module not found. و [[sudo npm install -g]] بيعمل ملفات ملك root."
           },
+          teach: R`## [[npm install]] بـ ٣ أشكال
+
+نفس الأمر بيعمل حاجات مختلفة حسب اللي بعده: من غير حاجة، أو باسم مكتبة، أو باسم مكتبة و [[-D]]. اتشغّلوا كلهم على ويندوز 11 (npm 11.17) في مشروع تجربة، و [[-g]] اتشرح من غير ما يتشغّل لأنه بيغيّر حاجة على الجهاز كله.
+
+---
+
+## ١. [[npm install]] لوحدها
+
+في مشروع لسه معمول بـ [[npm init -y]]:
+
+~~~text الناتج
+up to date, audited 1 package in 509ms
+
+found 0 vulnerabilities
+~~~
+
+| الكلمة | معناها |
+|---|---|
+| [[up to date]] | مفيش حاجة ناقصة تتسطّب |
+| [[audited 1 package]] | فحص باكدج واحدة (المشروع نفسه) ضد قاعدة الثغرات |
+| [[found 0 vulnerabilities]] | مفيش ثغرات معروفة |
+
+هنا مفيش مكتبات أصلًا. لكن في مشروع عملتله clone، ده أول أمر: بيقرا package.json ويسطّب كل اللي مكتوب فيه.
+
+---
+
+## ٢. [[npm install express]]
+
+~~~text الناتج
+added 68 packages, and audited 69 packages in 5s
+
+28 packages are looking for funding
+  run $__btnpm fund$__bt for details
+
+found 0 vulnerabilities
+~~~
+
+### ليه 68 مش 1؟
+
+express نفسه محتاج مكتبات (زي [[body-parser]] و [[debug]])، وهما محتاجين غيرهم. npm نزّل الشجرة كلها: 68 باكدج. و [[audited 69]] = الـ 68 + المشروع نفسه. و [[looking for funding]] مجرد إعلان إن فيه مكتبات بتقبل تبرعات، تقدر تتجاهله.
+
+### اللي اتغيّر في المشروع
+
+1. فولدر [[node_modules]] فيه الـ 68 باكدج.
+2. [[package-lock.json]] اتعمل (الدرس الجاي بعد الجاي).
+3. package.json اتضاف فيه:
+
+~~~text package.json
+"dependencies": {
+  "express": "^5.2.1"
+}
+~~~
+
+[[^5.2.1]] معناها «5.2.1 أو أحدث جوه 5». شرح [[^]] في درس «^ و ~ في النسخ».
+
+---
+
+## ٣. [[npm install -D typescript nodemon]]
+
+- [[-D]] اختصار [[--save-dev]]: سجّلهم في [[devDependencies]] مش [[dependencies]].
+- ممكن تكتب أكتر من اسم في نفس الأمر، بمسافة بينهم.
+
+~~~text الناتج
+added 28 packages, and audited 97 packages in 4s
+
+3 high severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+~~~
+
+و package.json بقى:
+
+~~~text package.json
+"dependencies": {
+  "express": "^5.2.1"
+},
+"devDependencies": {
+  "nodemon": "^3.1.14",
+  "typescript": "^7.0.2"
+}
+~~~
+
+الثغرات التلاتة جت مع مكتبات تبع nodemon، وده بيوريك إن كل مكتبة زيادة ممكن تجيب مشاكل معاها (درس «outdated / update / audit»).
+
+### الفرق بين القسمين
+
+| | [[dependencies]] | [[devDependencies]] |
+|---|---|---|
+| إمتى | التطبيق محتاجها وهو شغال | محتاجها وانت بتطوّر أو بتعمل build |
+| أمثلة | express و Prisma client و React | typescript و nodemon و eslint و vitest |
+| على السيرفر بـ [[npm ci --omit=dev]] | بتتسطب | **مش** بتتسطب |
+
+### الأدوات بتشتغل منين؟
+
+~~~text node_modules/.bin (جزء منه)
+nodemon
+nodemon.cmd
+nodemon.ps1
+tsc
+...
+~~~
+
+كل أداة ليها ملف في [[node_modules/.bin]]. على ويندوز ٣ نسخ من كل واحدة: من غير امتداد (لـ Git Bash)، و [[.cmd]] (لـ CMD)، و [[.ps1]] (لـ PowerShell). ودا الفولدر اللي [[npx]] و [[npm run]] بيدوّروا فيه.
+
+---
+
+## ٤. [[npm install -g pnpm]] (ماتشغّلش هنا)
+
+[[-g]] يعني global: سطّب في مكان عام على الجهاز مش في المشروع، عشان الأداة تشتغل من أي فولدر. المكان ده بتعرفه بـ:
+
+~~~powershell
+npm config get prefix
+~~~
+
+~~~text الناتج
+ويندوز:               C:\Users\ali\AppData\Roaming\npm
+لينكس (node:22-slim):  /usr/local
+~~~
+
+على لينكس [[/usr/local]] ملك root، فـ [[-g]] من غير صلاحيات بيقع بـ [[EACCES]]، والناس بتحل ده بـ [[sudo npm install -g]] وده بيعمل ملفات ملك root في فولدرك. الحل الأنضف nvm (بيسطّب في فولدرك). و [[-g]] للأدوات بس، مش لمكتبة مشروعك بيعملها [[import]].
+
+---
+
+## ٥. [[npm uninstall nodemon]]
+
+~~~text الناتج
+removed 26 packages, and audited 71 packages in 1s
+~~~
+
+شال nodemon و 25 باكدج كانوا جايين معاه ومحدش تاني محتاجهم، وشال سطره من [[devDependencies]] ومن الـ lock. typescript فضل.
+
+---
+
+## الخلاصة
+
+| الأمر | بيكتب في | إمتى |
+|---|---|---|
+| [[npm install]] | مش بيغيّر package.json | بعد clone أو pull |
+| [[npm install express]] | [[dependencies]] | مكتبة التطبيق محتاجها وهو شغال |
+| [[npm install -D tsc ...]] | [[devDependencies]] | أداة تطوير |
+| [[npm install -g pnpm]] | ولا حاجة في المشروع | أداة تشتغل من أي مكان |
+| [[npm uninstall x]] | بيشيلها من القسم اللي هي فيه | مكتبة مش محتاجها |
+
+> غلطت في القسم؟ [[npm i -D اسمها]] بتنقلها لـ devDependencies، و [[npm i اسمها]] بترجّعها لـ dependencies.`,
           lines: [
             "سطّب كل اللي في package.json (بعد clone).",
             "ضيف express لـ dependencies.",
@@ -256,11 +957,157 @@ npm install express@latest`,
             when: "لما تفهم الرموز، تقرا package.json وتعرف إيه ممكن يتغير. والـ lock هو اللي بيثبت فعليًا.",
             mistakes: "تحدّث major بـ [[npm update]] وتفتكر ده كفاية: update مش بيعدّي الـ ^. و [[@latest]] لمكتبة رئيسية من غير ما تقرا changelog."
           },
+          teach: R`## الرقم في package.json مش نسخة، ده مدى
+
+[[^4.18.2]] معناها «أي نسخة من كذا لكذا». الدرس بيفك الرموز، وبيوريك إزاي تسأل الـ registry (المخزن اللي npm بينزّل منه) عن النسخ. اتشغّل على ويندوز 11 (npm 11.17).
+
+---
+
+## الأول: semver
+
+النسخة ٣ أرقام [[MAJOR.MINOR.PATCH]] (semantic versioning):
+
+| الرقم | بيزيد لما | مثال من 4.18.2 |
+|---|---|---|
+| MAJOR | تغيير كاسر: كودك القديم ممكن يقف | 5.0.0 |
+| MINOR | ميزة جديدة من غير ما يكسر حاجة | 4.19.0 |
+| PATCH | إصلاح bug | 4.18.3 |
+
+### الرموز
+
+| المكتوب | المسموح | بالكلام |
+|---|---|---|
+| [[^4.18.2]] | من 4.18.2 لحد قبل 5.0.0 | ثبّت الـ major |
+| [[~4.18.2]] | من 4.18.2 لحد قبل 4.19.0 | ثبّت الـ minor |
+| [[4.18.2]] | 4.18.2 بس | بالظبط |
+| [[^0.7.1]] | من 0.7.1 لحد قبل 0.8.0 | قبل 1.0 الـ minor بيتعامل كأنه major |
+
+---
+
+## ١. [[npm view express versions --json | tail -5]]
+
+- [[npm view express]] بيسأل الـ registry عن معلومات express.
+- [[versions]] الحقل اللي فيه كل النسخ.
+- [[--json]] اطبعها JSON، سطر لكل نسخة.
+- [[|]] (pipe) ابعت الناتج للأمر اللي بعده بدل الشاشة.
+- [[tail -5]] اطبع آخر ٥ سطور بس.
+
+~~~text الناتج
+  "5.0.1",
+  "5.1.0",
+  "5.2.0",
+  "5.2.1"
+]
+~~~
+
+السطر الأخير هو القوس اللي بيقفل الـ array، فطلعوا ٤ نسخ بس. والقايمة كلها ٢٨٩ نسخة.
+
+[[tail]] مش موجود في PowerShell. المقابل:
+
+~~~powershell
+npm view express versions --json | Select-Object -Last 5
+~~~
+
+---
+
+## ٢. [[npm view express version]]
+
+[[version]] (من غير s) = آخر نسخة بس:
+
+~~~text الناتج
+5.2.1
+~~~
+
+وفيه سؤال مفيد مش في المثال: [[npm view express dist-tags]]
+
+~~~text الناتج
+{ latest: '5.2.1', 'latest-4': '4.22.3' }
+~~~
+
+الـ [[dist-tags]] أسامي بتشاور على نسخ: [[latest]] هي اللي بتتسطّب لو مقلتش نسخة، و [[latest-4]] آخر نسخة في خط 4، يعني خط 4 لسه بياخد إصلاحات.
+
+---
+
+## ٣. [[npm install express@4.18.2]]
+
+[[@]] بعد الاسم معناها «النسخة دي». المتسطب فعلًا 4.18.2 بالظبط، بس بص اتكتب إيه في package.json:
+
+~~~text package.json
+"express": "^4.18.2"
+~~~
+
+npm ضاف [[^]] لوحده. يعني أول [[npm install]] على جهاز تاني من غير lock ممكن يجيب 4.22.3. لو عايزها تتكتب من غير [[^]]: [[npm install express@4.18.2 --save-exact]] (أو [[save-exact]] في درس «.npmrc»).
+
+---
+
+## ٤. [[npm install express@^4]]
+
+[[^4]] = أي 4.x. npm بيختار **أعلى** نسخة بتطابق، ويكتب رقمها هي:
+
+~~~text package.json
+"express": "^4.22.3"
+~~~
+
+~~~powershell
+npm ls express
+~~~
+
+~~~text الناتج
+myapp@1.0.0 C:\Users\ali\myapp
+$__bt-- express@4.22.3
+~~~
+
+يعني اتكتب [[^4.22.3]] مش [[^4.0.0]].
+
+---
+
+## ٥. [[npm install express@latest]]
+
+[[latest]] الـ dist-tag اللي شفناه: آخر نسخة مهما كانت.
+
+~~~text package.json
+"express": "^5.2.1"
+~~~
+
+اتنقلنا من 4 لـ 5 في أمر واحد، وده major جديد: لازم تقرا دليل الترقية قبلها.
+
+---
+
+## اتأكد من أي مدى بنفسك
+
+[[npm view]] بيقبل مدى بعد [[@]] ويطبع كل النسخ اللي بتطابقه:
+
+~~~powershell
+npm view express@"~4.18.2" version
+npm view ms@"^0.7.1" version
+~~~
+
+~~~text الناتج
+express@4.18.2 '4.18.2'
+express@4.18.3 '4.18.3'
+ms@0.7.1 '0.7.1'
+ms@0.7.2 '0.7.2'
+ms@0.7.3 '0.7.3'
+~~~
+
+[[~4.18.2]] جاب 4.18.x بس، و [[^0.7.1]] جاب 0.7.x بس (مش 0.8 ولا 1.0)، زي ما الجدول فوق قال.
+
+---
+
+## الخلاصة
+
+| الأمر | المتسطب | المكتوب في package.json |
+|---|---|---|
+| [[express@4.18.2]] | 4.18.2 | [[^4.18.2]] |
+| [[express@^4]] | أعلى 4.x (4.22.3) | [[^4.22.3]] |
+| [[express@latest]] | آخر نسخة (5.2.1) | [[^5.2.1]] |
+
+> [[^]] بتقف عند الـ major، ودي اللي بتحميك من الكسر. والـ lock (الدرس الجاي) هو اللي بيثبّت النسخة فعلًا.`,
           lines: [
             "كل نسخ express كـ JSON، وآخر ٥.",
             "آخر نسخة بس.",
-            "سطّب النسخة دي بالظبط.",
-            "أي 4.x (بيتكتب ^4.0.0 في package.json).",
+            "سطّب النسخة دي بالظبط (بس npm بيكتبها ^4.18.2 في package.json).",
+            "أعلى 4.x موجودة، وبيكتب رقمها هي (زي ^4.22.3) في package.json.",
             "آخر نسخة مهما كانت (major جديد ممكن يكسر)."
           ],
           sol: R`[[npm view express versions --json]] رجّع عندي ٢٨٩ نسخة، وآخرهم [[5.0.0]] و [[5.0.1]] و [[5.1.0]] و [[5.2.0]] و [[5.2.1]]. و [[npm view express dist-tags]] بيوريك [[latest: 5.2.1]] و [[latest-4: 4.22.3]]، يعني لسه فيه تحديثات لخط 4.
@@ -292,6 +1139,137 @@ npm install --package-lock-only`,
             when: "ci دايمًا في الأتمتة. install لما تضيف أو تحدّث مكتبة.",
             mistakes: "package-lock في .gitignore. ومسحه «عشان يتصلّح»، ده بيخلي كل النسخ تتغير مرة واحدة."
           },
+          teach: R`## ملفين بيوصفوا المكتبات
+
+[[package.json]] بيقول المسموح ([[^5.2.1]])، و [[package-lock.json]] بيقول اللي اتسطّب فعلًا بالظبط. الأوامر اتشغّلت على ويندوز 11 (npm 11.17) في مشروع فيه express و typescript، والمشروع جوه git عشان [[git diff]].
+
+---
+
+## جوه الـ lock
+
+~~~text package-lock.json (أوله)
+{
+  "name": "myapp",
+  "lockfileVersion": 3,
+  "packages": {
+    "": {
+      "dependencies": { "express": "^5.2.1" },
+      "devDependencies": { "typescript": "^7.0.2" }
+    },
+    "node_modules/express": {
+      "version": "5.2.1",
+      "resolved": "https://registry.npmjs.org/express/-/express-5.2.1.tgz",
+      "integrity": "sha512-...",
+      ...
+~~~
+
+| الحقل | معناه |
+|---|---|
+| [[lockfileVersion: 3]] | شكل الملف (npm 7 وأحدث) |
+| [[""]] | المشروع نفسه، ونسخة من اللي في package.json |
+| [[node_modules/express]] | مكان المكتبة جوه node_modules |
+| [[version]] | النسخة اللي اتسطّبت بالظبط |
+| [[resolved]] | اتنزلت منين |
+| [[integrity]] | بصمة الملف ([[sha512]]). لو الملف اللي نزل بصمته مختلفة، npm بيرفض |
+| [[dev: true]] | مكتبة تبع devDependencies |
+
+---
+
+## ١. [[npm ci]]
+
+[[ci]] اختصار clean install:
+
+1. بيمسح [[node_modules]] كله.
+2. بيسطّب اللي في الـ lock **بالحرف**، من غير ما يحسب نسخ.
+3. **عمره ما بيعدّل** الـ lock ولا package.json.
+
+~~~text الناتج
+added 70 packages, and audited 71 packages in 5s
+~~~
+
+### لما الملفين مش متفقين
+
+ضفت [[cowsay]] في package.json بإيدي ([[npm pkg set]]) من غير تسطيب، وشغّلت [[npm ci]]:
+
+~~~text الناتج
+npm error code EUSAGE
+npm error $__btnpm ci$__bt can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with $__btnpm install$__bt before continuing.
+npm error Missing: cowsay@1.6.0 from lock file
+npm error Missing: get-stdin@8.0.0 from lock file
+...
+~~~
+
+[[in sync]] يعني متطابقين. [[npm ci]] وقف بدل ما يخمّن، ودا اللي انت عايزه على السيرفر. ومن غير lock خالص:
+
+~~~text الناتج
+npm error The $__btnpm ci$__bt command can only install with an existing package-lock.json or
+npm error npm-shrinkwrap.json with lockfileVersion >= 1.
+~~~
+
+---
+
+## ٢. [[npm ci --omit=dev]]
+
+[[--omit=dev]] = سيب الـ devDependencies.
+
+~~~text الناتج
+added 68 packages, and audited 69 packages in 1s
+~~~
+
+68 بدل 70: typescript (والباكدج اللي معاه لويندوز) ماتسطّبوش، ومفيش [[tsc]] في [[node_modules/.bin]] أصلًا. ده اللي بيتحط في Dockerfile الإنتاج.
+
+---
+
+## ٣. [[git diff package-lock.json | head]]
+
+- [[git diff]] بيوريك التغييرات اللي لسه ماتعملهاش commit.
+- [[package-lock.json]] في الملف ده بس.
+- [[| head]] أول ١٠ سطور (في PowerShell: [[| Select-Object -First 10]]).
+
+بعد ما الـ lock اتحدّث بـ cowsay:
+
+~~~text الناتج
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -9,6 +9,7 @@
+       "dependencies": {
++        "cowsay": "^1.6.0",
+         "express": "^5.2.1"
+       },
+~~~
+
+السطر اللي أوله [[+]] اتضاف، واللي أوله [[-]] اتشال. و [[git diff --stat]] قال [[445 +++]]: سطر واحد في package.json جاب ٤٤٥ سطر في الـ lock (cowsay ومكتباته). عشان كده بتبص على الـ lock قبل الـ commit: لو اتغيّر كتير وانت مضفتش حاجة، حد سطّب بنسخة npm تانية أو حدّث حاجة من غير ما يقصد.
+
+---
+
+## ٤. [[npm install --package-lock-only]]
+
+[[--package-lock-only]] = حدّث الـ lock من package.json ومتلمسش [[node_modules]].
+
+~~~text الناتج
+found 0 vulnerabilities
+~~~
+
+بعده الـ lock بقى فيه cowsay، و [[node_modules]] لسه مفيهوش cowsay. مفيد بعد ما تعدّل package.json بإيدك، وبعده [[npm ci]] يشتغل.
+
+---
+
+## مين بيعمل إيه
+
+| | [[npm install]] | [[npm ci]] |
+|---|---|---|
+| بيقرا | package.json والـ lock | الـ lock بس (ويقارنه بـ package.json) |
+| بيعدّل الـ lock | ممكن | أبدًا |
+| node_modules | بيكمّل على الموجود | بيمسحه ويبدأ من الأول |
+| لو مش متفقين | بيصلّح الـ lock | بيقف بـ EUSAGE |
+| إمتى | على جهازك لما تضيف أو تحدّث | CI و Docker والسيرفر |
+
+> على المشروع الصغير ده [[npm ci]] أخد بين ٢ و ٥ ثواني في كل مرة. الوقت مش الميزة؛ الميزة إنه بيطلّع نفس الـ node_modules في كل مكان.
+
+## الخلاصة
+
+- الـ lock يدخل Git دايمًا، ومتمسحوش «عشان يتصلّح».
+- [[npm ci]] في كل مكان أوتوماتيك، و [[--omit=dev]] للإنتاج.`,
           lines: [
             "سطّب بالظبط اللي في الـ lock، بعد مسح node_modules.",
             "نفسه من غير devDependencies (الإنتاج).",
@@ -318,6 +1296,141 @@ node --run test -- --watch`,
             when: "dev و lint و test على جهازك.",
             mistakes: "تعتمد عليه في سكربت ليه prebuild فالـ prebuild ميتنفذش."
           },
+          teach: R`## [[node --run]] = [[npm run]] من غير npm
+
+بيقرا [[scripts]] من package.json ويشغّل الأمر، بس من غير ما يحمّل npm. اتشغّل على ويندوز 11 (Node 24.19) في PowerShell 7 و Git Bash، في مشروع فيه السكربتات دي:
+
+~~~text package.json
+"scripts": {
+  "dev": "node --watch server.js",
+  "prebuild": "echo prebuild ran",
+  "build": "tsc --version",
+  "test": "node args.js",
+  "lint": "echo linting"
+}
+~~~
+
+و [[args.js]] سطر واحد بيطبع الـ arguments اللي وصلته:
+
+~~~text args.js
+console.log("args:", process.argv.slice(2));
+~~~
+
+[[process.argv]] array فيها مسار node ومسار الملف وبعدين الـ arguments، و [[.slice(2)]] بيشيل أول اتنين.
+
+---
+
+## ١. [[node --run dev]]
+
+- [[--run]] flag في Node 22 وأحدث: «شغّل السكربت اللي اسمه كذا».
+- [[dev]] اسم السكربت.
+
+بيشغّل [[node --watch server.js]] بالظبط زي [[npm run dev]]، وبيضيف [[node_modules/.bin]] للـ PATH، فـ [[tsc]] أو [[vite]] بيتلاقوا.
+
+---
+
+## ٢. [[node --run build]]: من غير prebuild
+
+~~~text الناتج: node --run build
+Version 7.0.2
+~~~
+
+~~~text الناتج: npm run build
+> myapp@1.0.0 prebuild
+> echo prebuild ran
+
+prebuild ran
+
+> myapp@1.0.0 build
+> tsc --version
+
+Version 7.0.2
+~~~
+
+فرقين:
+
+1. [[npm run]] شغّل [[prebuild]] لوحده قبل [[build]]، و [[node --run]] لأ.
+2. [[npm run]] بيطبع سطرين [[> myapp@1.0.0 build]] قبل كل سكربت، و [[node --run]] بيطبع ناتج الأمر بس.
+
+---
+
+## ٣. [[node --run test -- --watch]]
+
+[[--]] معناها «اللي بعدي مش ليك، عدّيه للسكربت».
+
+~~~text الناتج
+args: [ '--watch' ]
+~~~
+
+السكربت بقى [[node args.js --watch]]. نفس الكلام مع npm:
+
+~~~text الناتج: npm test -- --watch
+> myapp@1.0.0 test
+> node args.js --watch
+
+args: [ '--watch' ]
+~~~
+
+ومن غير [[--]] مع npm، الفلاج بيروح لـ npm نفسه:
+
+~~~text الناتج: npm test --watch
+npm warn Unknown cli config "--watch". This will stop working in the next major version of npm.
+
+> myapp@1.0.0 test
+> node args.js
+
+args: []
+~~~
+
+---
+
+## السرعة
+
+سكربت [[lint]] بيعمل [[echo]] بس، فالوقت كله وقت تشغيل الأداة نفسها:
+
+~~~powershell
+Measure-Command { npm run lint } | % TotalMilliseconds
+Measure-Command { node --run lint } | % TotalMilliseconds
+~~~
+
+- [[Measure-Command { ... }]] بيشغّل اللي بين القوسين ويرجّع الوقت.
+- [[| % TotalMilliseconds]]: [[%]] اختصار [[ForEach-Object]]، وبياخد خانة الوقت بالملّي ثانية بس.
+
+~~~text الناتج
+436.5673
+52.9225
+~~~
+
+حوالي ٤٤٠ms مقابل ٥٠ms. وفي bash بـ [[time]] طلع ٥٣٠ms مقابل ٥٠ms. الفرق ثابت تقريبًا (وقت تحميل npm)، فبيبان في السكربتات القصيرة اللي بتتشغّل كتير، ومش هيفرق في build بياخد دقيقة.
+
+---
+
+## لو السكربت مش موجود
+
+~~~text الناتج: node --run nope
+Missing script: "nope" for C:\Users\ali\myapp\package.json
+
+Available scripts are:
+  test: node args.js
+  dev: node --watch server.js
+  ...
+~~~
+
+وبيطلع بـ exit code 1. ولو Node أقدم من 22 هتلاقي [[bad option: --run]].
+
+---
+
+## الخلاصة
+
+| | [[npm run x]] | [[node --run x]] |
+|---|---|---|
+| [[pre]] و [[post]] | بيشغّلهم | لأ |
+| سطور [[> app@1.0.0 x]] | أيوه | لأ |
+| [[node_modules/.bin]] في الـ PATH | أيوه | أيوه |
+| متغيرات [[npm_package_*]] و [[npm_config_*]] | كلها | جزء صغير بس |
+| الوقت الزيادة | حوالي ٤٠٠ms عندي | حوالي ٥٠ms |
+
+> استخدمه لـ dev و lint و test على جهازك. ولو السكربت ليه [[pre]] لازم يشتغل، خليك على [[npm run]].`,
           lines: ["شغّل سكربت dev.", "شغّل build (من غير prebuild).", "مرر --watch للأمر اللي جوه test."],
           sol: R`عندي على سكربت بسيط [[echo linting]]: [[npm run lint]] أخد حوالي 130ms، و [[node --run lint]] حوالي 10ms. الفرق هو وقت تشغيل npm نفسه، فبيبان في السكربتات القصيرة اللي بتتشغل كتير، ومش هيفرق في build بياخد دقيقة.
 
@@ -350,6 +1463,150 @@ npm run lint --silent`,
             when: "كل أمر بيتكرر في المشروع. dev و build و test و lint و db:migrate.",
             mistakes: "نسيان [[--]] فالـ flag يروح لـ npm ويتجاهله. وأوامر لينكس في سكربت الفريق فيه ناس على ويندوز."
           },
+          teach: R`## [[scripts]] = أوامر ليها أسامي
+
+كل سطر في [[scripts]] اسم وأمر، و [[npm run الاسم]] بيشغّل الأمر. الأمثلة اتشغّلت على ويندوز 11 (npm 11.17) في PowerShell 7 و 5.1 و CMD، في مشروع فيه:
+
+~~~text package.json
+"scripts": {
+  "test": "node args.js",
+  "dev": "node --watch server.js",
+  "prebuild": "echo prebuild ran",
+  "build": "tsc --version",
+  "lint": "echo linting",
+  "prehello": "echo before hello",
+  "hello": "echo hello from npm"
+}
+~~~
+
+و [[args.js]] بيطبع الـ arguments اللي وصلته: [[console.log("args:", process.argv.slice(2));]].
+
+---
+
+## ١. [[npm run]] لوحدها
+
+~~~text الناتج
+Lifecycle scripts included in myapp@1.0.0:
+  test
+    node args.js
+available via $__btnpm run$__bt:
+  dev
+    node --watch server.js
+  build
+    tsc --version
+  ...
+~~~
+
+قسمين: [[Lifecycle scripts]] الأسامي الخاصة اللي npm عارفها (زي [[test]] و [[start]])، و [[available via npm run]] الباقي. أول أمر تكتبه في مشروع مش بتاعك.
+
+---
+
+## ٢. [[npm run dev]]
+
+بيشغّل [[node --watch server.js]]. وقبل التشغيل npm بيضيف [[node_modules/.bin]] لأول الـ PATH، فلو السكربت فيه [[tsc]] أو [[vite]] بيتلاقوا من المشروع حتى لو مش متسطبين global.
+
+---
+
+## ٣ و ٤. [[npm start]] و [[npm test]]
+
+[[start]] و [[test]] و [[stop]] و [[restart]] أسامي خاصة بتشتغل من غير كلمة [[run]]. أي اسم تاني لأ:
+
+~~~text الناتج: npm hello
+Unknown command: "hello"
+~~~
+
+---
+
+## ٥. [[npm run build -- --watch]]
+
+[[--]] معناها «اللي بعدي عدّيه للأمر اللي جوه السكربت». جرّبتها على [[test]] عشان الناتج يبان:
+
+~~~text الناتج: npm test -- --watch
+> myapp@1.0.0 test
+> node args.js --watch
+
+args: [ '--watch' ]
+~~~
+
+السطر [[> node args.js --watch]] بيوريك الأمر اللي اتنفّذ فعلًا. ومن غير [[--]]:
+
+~~~text الناتج: npm test --watch
+npm warn Unknown cli config "--watch". This will stop working in the next major version of npm.
+
+> myapp@1.0.0 test
+> node args.js
+
+args: []
+~~~
+
+npm خد [[--watch]] لنفسه وماعدّاهوش. والـ [[--]] اشتغلت زي ما هي في PowerShell 7 و Windows PowerShell 5.1 و CMD.
+
+---
+
+## ٦. [[npm run lint --silent]]
+
+[[--silent]] بيسكّت كلام npm (سطور [[> myapp@1.0.0 lint]]):
+
+~~~text الناتج
+linting
+~~~
+
+مفيد لما ناتج السكربت هيتبعت لأمر تاني أو لملف ومش عايز كلام npm يتلخبط معاه.
+
+---
+
+## [[pre]] و [[post]]
+
+[[npm run hello]]:
+
+~~~text الناتج
+> myapp@1.0.0 prehello
+> echo before hello
+
+before hello
+
+> myapp@1.0.0 hello
+> echo hello from npm
+
+hello from npm
+~~~
+
+انت مطلبتش [[prehello]]؛ npm شافه لأن اسمه [[pre]] + [[hello]] وشغّله الأول. ونفس الكلام [[posthello]] بعده. ولو [[prehello]] فشل، [[hello]] مش بيشتغل.
+
+---
+
+## السكربت بيشتغل في أنهي شيل؟
+
+| النظام | الشيل |
+|---|---|
+| لينكس والماك | [[sh]] |
+| ويندوز | [[cmd.exe]]، حتى لو انت كاتب الأمر من PowerShell |
+
+جرّبت سكربت [[rm -rf dist]] على ويندوز من غير Git في الـ PATH:
+
+~~~text الناتج
+> myapp@1.0.0 clean
+> rm -rf dist
+
+'rm' is not recognized as an internal or external command,
+operable program or batch file.
+~~~
+
+(ولو Git Bash في الـ PATH عندك هيشتغل بالصدفة، وزميلك اللي معندوش هيقع.) ونفس السبب: [[$npm_package_name]] جوه سكربت على ويندوز اتطبع زي ما هو، لأن [[$]] للمتغيرات في sh مش cmd. الحل: أوامر Node نفسها ([[node -e]])، أو مكتبات زي [[rimraf]] و [[cross-env]].
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[npm run]] | اعرض السكربتات |
+| [[npm run dev]] | شغّل سكربت باسمه |
+| [[npm start]] / [[npm test]] | الأسامي الخاصة من غير run |
+| [[npm run build -- --watch]] | عدّي flag للأمر اللي جوه |
+| [[npm run lint --silent]] | من غير كلام npm |
+
+> افتكر [[--]]، وافتكر إن ويندوز بيشغّل السكربتات بـ cmd.`,
           lines: [
             "اعرض كل السكربتات.",
             "شغّل سكربت dev.",
@@ -393,6 +1650,141 @@ npx cowsay "hi"`,
             when: "إنشاء مشاريع. أوامر أدوات المشروع (prisma، tsc، eslint، next). أدوات لمرة واحدة.",
             mistakes: "تسطّب prisma عام وتشغّله، فيبقى نسخة مختلفة عن اللي في المشروع ويطلع errors. استخدم npx."
           },
+          teach: R`## [[npx]] = شغّل أداة من npm
+
+[[npx اسم]] بيدوّر على الأداة في [[node_modules/.bin]] بتاع المشروع، ولو ملقاهاش بينزّلها في كاش ويشغّلها من غير ما تتسطّب. اتشغّل على ويندوز 11 (npm 11.17)، والسؤال التفاعلي وشكل الكاش على لينكس جوه [[docker run --rm node:22-slim]].
+
+---
+
+## ١. [[npx create-next-app@latest myapp]]
+
+- [[create-next-app]] باكدج وظيفتها تعمل مشروع Next جديد.
+- [[@latest]] هات آخر نسخة، مش أي نسخة قديمة موجودة في الكاش.
+- [[myapp]] اسم الفولدر اللي هيتعمل.
+
+ماعملتش مشروع Next كامل هنا (بينزّل مئات الميجا)، بس سألت الأداة عن نسختها بنفس الطريقة:
+
+~~~powershell
+npx -y create-next-app@latest --version
+~~~
+
+~~~text الناتج
+16.3.8
+~~~
+
+نزلت واشتغلت من غير تسطيب. أدوات الإنشاء دي بتتشغّل مرة واحدة في عمر المشروع، فمالهاش لازمة تتسطّب.
+
+---
+
+## ٢. [[npx prisma generate]]
+
+هنا الأداة **موجودة** في المشروع (في devDependencies)، فـ npx بيشغّل نسخة المشروع اللي في [[node_modules/.bin/prisma]]. ده المطلوب: نفس النسخة اللي في package.json.
+
+والخطر لو مش متسطبة. جرّبت [[npx prisma --version]] في container مفيهوش مشروع:
+
+~~~text الناتج
+npm warn exec The following package was not found and will be installed: prisma@8.0.0-rc.20
+~~~
+
+نزّل آخر نسخة على الـ registry (وكانت نسخة تجريبية [[rc]] كمان)، مش نسخة مشروعك. عشان كده الأدوات اللي بتلمس المشروع تتسطّب [[-D]] الأول.
+
+---
+
+## ٣. [[npx tsc --noEmit]]
+
+- [[tsc]] مترجم TypeScript (من باكدج [[typescript]] في المشروع).
+- [[--noEmit]] افحص الأنواع ومتطلّعش ملفات JS.
+
+ملف فيه [[const n: number = "x";]]:
+
+~~~text الناتج
+bad.ts(1,7): error TS2322: Type 'string' is not assignable to type 'number'.
+~~~
+
+[[(1,7)]] سطر ١ حرف ٧، و exit code 1، فينفع يتحط في CI يوقف الـ build.
+
+---
+
+## ٤. [[npx -y kill-port 3000]]
+
+- [[-y]] (yes) وافق على تنزيل الباكدج من غير سؤال.
+- [[kill-port]] باكدج صغيرة بتقفل البرنامج اللي ماسك بورت.
+
+جرّبتها على بورت 3917 كان شغال عليه سيرفر تجربة بتاعي (مش 3000، عشان ماقفلش حاجة تانية على الجهاز):
+
+~~~text الناتج
+Process on port 3917 killed
+~~~
+
+وبعدها [[netstat -ano]] مالقاش حاجة على البورت. التفاصيل في درس «البورت مشغول».
+
+---
+
+## ٥. [[npx cowsay "hi"]]
+
+~~~text الناتج
+ ____
+< hi >
+ ----
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+~~~
+
+### السؤال اللي بيظهر أول مرة
+
+من غير [[-y]] في ترمنال حقيقي (اتجرّب على لينكس):
+
+~~~text الناتج
+Need to install the following packages:
+cowsay@1.6.0
+Ok to proceed? (y)
+~~~
+
+[[(y)]] معناها الإجابة الافتراضية yes، فـ Enter بيكفي. ولو مفيش ترمنال تفاعلي (سكربت أو CI)، npx مش بيسأل: بيطبع تحذير وينزّل على طول:
+
+~~~text الناتج (من غير ترمنال)
+npm warn exec The following package was not found and will be installed: cowsay@1.6.0
+~~~
+
+### راحت فين؟
+
+~~~bash
+ls ~/.npm/_npx/*/node_modules
+npm ls -g --depth=0
+~~~
+
+~~~text الناتج (node:22-slim)
+ansi-regex
+ansi-styles
+camelcase
+...
+/usr/local/lib
++-- corepack@0.36.0
+$__bt-- npm@10.9.9
+~~~
+
+cowsay ومكتباتها في الكاش [[~/.npm/_npx]] (على ويندوز جوه [[npm-cache\_npx]])، ومش في الحاجات المتسطبة global ([[-g]]). المرة الجاية بتشتغل من الكاش من غير تنزيل.
+
+---
+
+## npx بيدوّر بالترتيب ده
+
+1. [[node_modules/.bin]] بتاع المشروع.
+2. الأدوات المتسطبة global.
+3. ملقاش؟ ينزّل في الكاش ويشغّل (بعد ما يسأل لو فيه ترمنال).
+
+## الخلاصة
+
+| الأمر | الأداة جاية منين |
+|---|---|
+| [[npx create-next-app@latest]] | تنزيل، آخر نسخة |
+| [[npx prisma]] / [[npx tsc]] | المشروع (لو متسطبة فيه) |
+| [[npx -y kill-port]] | تنزيل من غير سؤال |
+
+> npx بينزّل وينفّذ كود من النت: اتأكد من الاسم حرف حرف، فيه باكدجات بأسامي شبه المشهورة.`,
           lines: [
             "اعمل مشروع Next بآخر نسخة من الأداة من غير تسطيب.",
             "شغّل prisma بنسخة المشروع.",
@@ -431,6 +1823,123 @@ npm run build && npx vite preview --port 4173`,
             when: "أول ما تفتح مشروع حد تاني: اقرا scripts قبل ما تشغّل أي حاجة. وقبل أي deploy: السيرفر لازم يشغّل start.",
             mistakes: "في مشروع حقيقي كان ملف compose بتاع الإنتاج فيه NODE_ENV=development، فالتطبيق كان شغال بإعدادات التطوير على السيرفر من غير ما حد ياخد باله. وغلطة تانية: vite preview كسيرفر إنتاج، هو معمول للمعاينة بس."
           },
+          teach: R`## [[dev]] و [[build]] و [[start]] مجرد أسامي
+
+npm مش عارف يعني إيه «تطوير» و«إنتاج»؛ هو بيشغّل الأمر المكتوب قدام الاسم. فأول خطوة تقرا السكربتات. اتشغّل على ويندوز 11 في مشروع Vite 8 جديد ([[npm create vite@latest myvite -- --template vanilla]]). Next ماتعملش هنا، ورسايله من الـ docs ومن تجارب الدرس.
+
+---
+
+## ١. [[jq .scripts package.json]]
+
+[[jq]] أداة بتقرا JSON: [[.scripts]] معناها «هات الحقل scripts». بس [[jq]] مش متسطبة افتراضيًا على ويندوز ولا على أوبونتو، فالأسهل اللي شغال في كل مكان:
+
+~~~powershell
+npm pkg get scripts
+~~~
+
+~~~text الناتج
+{
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview"
+}
+~~~
+
+مفيش [[start]] خالص. خلي ده في دماغك.
+
+---
+
+## ٢. [[npm run dev]]
+
+~~~text الناتج
+> myvite@0.0.0 dev
+> vite
+
+  VITE v8.3.3  ready in 596 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[ready in 596 ms]] | السيرفر قام. Vite مش بيبني حاجة مقدمًا، بيحوّل كل ملف لما المتصفح يطلبه |
+| [[Local]] | الرابط على جهازك |
+| [[Network: use --host]] | مش مفتوح للشبكة (درس «--host و Network URL») |
+
+والصفحة اللي بيرجّعها فيها سطر [[<script type="module" src="/@vite/client">]]: ده كود التطوير اللي بيعمل HMR (تحديث الصفحة لوحدها لما تحفظ). مش حاجة تتبعت لزوار حقيقيين. والسيرفر بيفضل شغال لحد Ctrl+C.
+
+---
+
+## ٣. [[npm run build]]
+
+~~~text الناتج
+> myvite@0.0.0 build
+> vite build
+
+vite v8.3.3 building client environment for production...
+✓ 9 modules transformed.
+dist/index.html                  0.45 kB │ gzip: 0.29 kB
+dist/assets/index-CsUDhMuy.css   4.10 kB │ gzip: 1.46 kB
+dist/assets/index-CAoPt-vL.js    4.05 kB │ gzip: 1.77 kB
+✓ built in 165ms
+~~~
+
+- [[for production]] بيبني نسخة الإنتاج.
+- فولدر [[dist]] فيه ملفات عادية: HTML و CSS و JS.
+- [[index-CAoPt-vL.js]]: الحروف دي hash من محتوى الملف. لو الملف اتغيّر الاسم بيتغير، فالمتصفح مش هيستخدم نسخة قديمة من الكاش.
+- [[gzip: 1.77 kB]] حجمه لو السيرفر ضغطه وهو بيبعته.
+
+---
+
+## ٤. [[npm start]]
+
+~~~text الناتج
+npm error Missing script: "start"
+npm error
+npm error Did you mean one of these?
+npm error   npm star # Mark your favorite packages
+~~~
+
+Vite معندوش [[start]] لأن ناتجه ملفات ثابتة، بيقدّمها Nginx أو أي استضافة static. ([[npm star]] اقتراح npm لأقرب أمر في الاسم، مالوش علاقة.)
+
+وفي Next الوضع مختلف: [[start]] هو [[next start]] وبيشغّل سيرفر Node على ناتج الـ build. ولو نسيت الـ build بيقول [[Could not find a production build in the '.next' directory]] (من الـ docs).
+
+---
+
+## ٥. [[npm run build && npx vite preview --port 4173]]
+
+- [[&&]]: شغّل اللي بعدي لو اللي قبلي نجح بس. لو الـ build فشل، مفيش preview لنسخة قديمة.
+- [[vite preview]] سيرفر صغير بيقدّم فولدر [[dist]].
+- [[--port 4173]] البورت (وده الافتراضي بتاعه أصلًا).
+
+~~~text الناتج
+  ➜  Local:   http://localhost:4173/
+  ➜  Network: use --host to expose
+~~~
+
+والصفحة هنا بتشاور على [[/assets/index-CAoPt-vL.js]] (الملف المبني) مفيش [[/@vite/client]]. يعني بتشوف بالظبط اللي الزوار هيشوفوه. بس [[preview]] للمعاينة على جهازك، مش سيرفر إنتاج.
+
+---
+
+## dev قصاد الإنتاج
+
+| | [[npm run dev]] | [[build]] ثم [[start]] / static |
+|---|---|---|
+| الملفات | بتتحوّل وقت الطلب | متبنية مرة واحدة ومضغوطة |
+| تعديل الكود | الصفحة بتتحدث لوحدها | لازم build تاني |
+| رسايل الأخطاء | تفاصيل كاملة | مختصرة |
+| مكانه | جهازك | السيرفر |
+
+| الأداة | dev | الإنتاج |
+|---|---|---|
+| Vite | [[vite]] | [[vite build]] وبعدين [[dist]] على Nginx |
+| Next | [[next dev]] | [[next build]] وبعدين [[next start]] |
+| Express | [[node --watch server.js]] | [[node server.js]] |
+
+## الخلاصة
+
+اقرا [[scripts]] الأول ([[npm pkg get scripts]])، و [[npm run dev]] على جهازك بس.`,
           lines: [
             "اعرض السكربتات اللي في المشروع قبل ما تشغّل حاجة.",
             "سيرفر التطوير: بيراقب الملفات ويعيد البناء.",
@@ -443,618 +1952,6 @@ npm run build && npx vite preview --port 4173`,
 ودا الفرق: dev مبني للتعديل السريع، مش للسرعة ولا للأمان. عشان كده مينفعش تشغّل [[npm run dev]] على السيرفر.
 
 الأخطاء الشائعة: [[npm start]] من غير build في Next بيقول [[Could not find a production build in the '.next' directory]]. وفي Vite [[npm start]] بيقول [[Missing script: "start"]] لأن مفيش start، والمعاينة [[vite preview]] (على بورت 4173) ومش مخصصة للإنتاج؛ الإنتاج في Vite هو فولدر [[dist]] على Nginx أو أي static host.`
-        }
-      ]
-    },
-    {
-      t: "الشغل اليومي",
-      l: 2,
-      n: "البيئة، والبورتات، والمكتبات لما تبوظ، ومديرين الباكدجات التانيين",
-      items: [
-        {
-          cmd: "node --test",
-          title: "الاختبارات من غير jest",
-          desc: "Node فيه test runner مبني (مستقر من Node 20). بتكتب [[test()]] من [[node:test]] و [[assert]] من [[node:assert/strict]]، في ملفات اسمها [[*.test.js]]، و [[node --test]] بيلاقيها ويشغّلها لوحده.",
-          example: R`node --test
-node --test --watch
-node --test --test-name-pattern="login"
-node --test --experimental-test-coverage`,
-          try: "اعمل math.test.js فيه test لدالة sum، وشغّله، وبعدين بوّظ الدالة وشوف الفشل.",
-          deep: {
-            why: "مشروع صغير أو سكربت مش محتاج jest وإعداداته. الاختبارات موجودة جوه Node نفسه.",
-            how: "[[node --test]] بيدوّر على ملفات [[*.test.js]] و [[*.test.mjs]] وفولدر [[test]]، وكل ملف بيشتغل في process لوحده. [[--watch]] بيعيد مع كل تعديل. [[--test-name-pattern]] بيفلتر بالاسم. والـ coverage لسه experimental. ولو حطيته في [[scripts.test]]، [[npm test]] بيشغّله.",
-            when: "مكتبات ومنطق backend وسكربتات. لـ React components، Vitest أنسب.",
-            mistakes: "تنسى await مع test async فيعدّي وهو فاشل. وتستخدم assert العادي بدل strict."
-          },
-          lines: [
-            "دوّر على ملفات الاختبار وشغّلها.",
-            "وأعد التشغيل مع كل تعديل.",
-            "الاختبارات اللي اسمها فيه login بس.",
-            "واطبع نسبة الكود اللي الاختبارات غطّته."
-          ],
-          sol: R`الحل: [[math.js]] فيه [[sum]]، و [[math.test.js]] بـ [[node:test]] و [[node:assert/strict]]. [[node --test]] في الترمنال بيطبع [[✔ sum adds two numbers]] ومعاه الوقت، وتحت [[ℹ tests 1]] و [[ℹ pass 1]] و [[ℹ fail 0]]. (لو الناتج رايح لملف أو pipe بيطلع بشكل TAP: [[ok 1 - sum adds two numbers]].)
-
-لما تبوّظ الدالة لـ [[a - b]]: [[✖ sum adds two numbers]] وتحتها [[Expected values to be strictly equal:]] و [[-1 !== 5]]، ومكان الـ assert في الملف، و [[fail 1]]، و exit code 1.
-
-لو [[node --test]] ما لقاش الملف: الاسم لازم يطابق [[*.test.js]] أو [[*-test.js]] أو [[*_test.js]] أو يكون جوه فولدر [[test]]. ولو طلع [[Cannot use import statement outside a module]] ضيف [["type": "module"]] أو سمّي الملفات [[.mjs]].`,
-          solCode: R`// math.js
-export function sum(a, b) {
-  return a + b;
-}
-
-// math.test.js
-import { test } from "node:test";
-import assert from "node:assert/strict";
-import { sum } from "./math.js";
-
-test("sum adds two numbers", () => {
-  assert.equal(sum(2, 3), 5);
-});`
-        },
-        {
-          cmd: "node مباشرة",
-          title: "REPL و -e و --watch",
-          desc: "[[node]] لوحدها بتفتح REPL تجرّب فيه JavaScript. [[-e]] ينفّذ سطر. [[-p]] ينفّذ ويطبع الناتج. و [[--watch]] (من Node 18) بيعيد تشغيل الملف مع كل تعديل، بديل nodemon من غير تسطيب.",
-          example: R`node
-node -e "console.log(1 + 1)"
-node -p "require('./package.json').version"
-node --watch server.js
-node --check server.js`,
-          try: "افتح REPL وجرّب [[process.env.PATH.split(':')]] و [[os.cpus().length]] بعد [[const os = require('os')]].",
-          deep: {
-            why: "مش كل حاجة محتاجة ملف. تجرّب سطر JavaScript، أو تقرا قيمة من JSON، أو تشغّل السيرفر بحيث يعيد التشغيل مع كل تعديل.",
-            how: R`[[node]] لوحدها REPL (Read Eval Print Loop): بتكتب JavaScript وبيتنفذ سطر سطر. [[.exit]] أو Ctrl+D للخروج. مفيد تجرّب regex أو date أو API مكتبة.
-
-[[-e]] (eval) بينفّذ الكود اللي بين علامات التنصيص. [[-p]] (print) نفس الحاجة وبيطبع الناتج، فـ [[node -p "require('./package.json').version"]] بيطلّع النسخة من غير jq.
-
-[[--watch]] بيراقب الملف والملفات اللي بيستوردها، ويعيد التشغيل مع أي تعديل. بديل nodemon مبني في Node 18.11 وأحدث. و [[--watch-path]] لمراقبة فولدر معين.
-
-[[--check]] بيتأكد إن الملف syntax سليم من غير ما يشغّله.`,
-            when: "REPL لتجربة سريعة. -p في السكربتات. --watch في التطوير.",
-            mistakes: "double quotes جوه -e مع double quotes بره فتتعارض. استخدم single بره و double جوه."
-          },
-          lines: [
-            "REPL: اكتب JavaScript وشوف الناتج. Ctrl+D للخروج.",
-            "نفّذ سطر.",
-            "نفّذ واطبع الناتج: النسخة من package.json.",
-            "شغّل وأعد التشغيل مع كل تعديل (بديل nodemon).",
-            "اتأكد إن الملف syntax سليم من غير تشغيل."
-          ],
-          sol: R`[[process.env.PATH.split(':')]] بيرجّع array فيها كل فولدر في الـ PATH بالترتيب، زي [[[ '/root/.local/bin', '/usr/local/bin', '/usr/bin', ... ]]]. و [[const os = require('os')]] بيطبع [[undefined]] (ودا طبيعي في الـ REPL، الـ declarations مالهاش قيمة). و [[os.cpus().length]] بيرجّع عدد الأنوية، زي [[4]] أو [[8]].
-
-خلي بالك من الأقواس: [[os.cpus.length]] من غير [[()]] بيرجّع [[0]]، لأنه طول الدالة نفسها مش الـ array. غلطة بتحصل كتير. و [[.exit]] أو Ctrl+D مرتين للخروج.
-
-وعلى ويندوز الفاصل في PATH هو [[;]] مش [[:]]، فالـ split هيرجّع عنصر واحد طويل. الصح اللي بيشتغل في الاتنين [[process.env.PATH.split(require('path').delimiter)]].`
-        },
-        {
-          cmd: ".env و متغيرات البيئة",
-          title: "الإعدادات بره الكود",
-          desc: "الكود بيقرا [[process.env.PORT]]، والقيمة جاية من البيئة: من الترمنال، أو من ملف .env. Node 20 وأحدث بيقرا الملف مباشرة بـ [[--env-file]] من غير مكتبة dotenv.",
-          example: R`PORT=4000 node server.js
-node --env-file=.env server.js
-node -e "console.log(process.env.DATABASE_URL)"
-cp .env.example .env
-grep -v '^#' .env | cut -d= -f1`,
-          try: "اعمل .env فيه PORT=4000 وشغّل السيرفر بـ [[--env-file]] واتأكد إنه فتح على 4000.",
-          deep: {
-            why: "الباسوردات والمفاتيح مينفعش تتكتب في الكود ولا تدخل Git. وبتختلف بين جهازك والسيرفر. بتتحط في البيئة، والكود بيقراها.",
-            how: R`[[process.env]] object فيه كل متغيرات البيئة اللي العملية اتشغّلت بيها. [[PORT=4000 node server.js]] بيضيف PORT للبيئة للأمر ده بس.
-
-ملف [[.env]] (سطر لكل متغير) مش بيتقري لوحده. تقليديًا مكتبة dotenv بتقراه وتحطه في process.env. من Node 20.6 فيه [[--env-file=.env]] مبني، من غير مكتبة. وفي Next.js الإطار بيقراه لوحده.
-
-القيم كلها نصوص. [[process.env.PORT]] هي "4000" مش 4000، فحوّلها لو هتحسب بيها.
-
-[[.env.example]] بيدخل Git بالأسامي من غير قيم، و [[.env]] في .gitignore. والأمر الأخير بيطلّع أسامي المتغيرات من .env عشان تقارنها بالـ example.
-
-في Docker المتغيرات بتيجي من env_file أو -e. وعلى pm2 من ecosystem file أو .env.`,
-            when: "كل مشروع من أول يوم: .env و .env.example و .gitignore.",
-            mistakes: "متغير في .env والكود بيقراه undefined: نسيت --env-file أو dotenv، أو المتغير بعد ما الكود قراه. dotenv لازم في أول سطر قبل أي import بيستخدم البيئة."
-          },
-          lines: [
-            "متغير للأمر ده بس.",
-            "اقرا .env مباشرة (Node 20.6+) من غير dotenv.",
-            "اقرا متغير من البيئة الحالية.",
-            "ابدأ ملفك من النموذج.",
-            "أسامي المتغيرات في .env من غير قيمها (للمقارنة أو المشاركة)."
-          ],
-          sol: R`مع سيرفر بيقرا [[process.env.PORT || 3000]] و [[.env]] فيه [[PORT=4000]]: [[node --env-file=.env server.js]] بيطبع [[listening on 4000]]، و [[curl localhost:4000]] بيرد.
-
-لو فتح على 3000: يا الكود بيقرا اسم تاني ([[process.env.port]] بحروف صغيرة مختلف)، يا نسيت [[--env-file]]، يا فيه [[PORT]] متعرّف في الترمنال أصلًا (القيمة اللي في البيئة بتكسب على الملف؛ اتأكد بـ [[echo $PORT]]).
-
-ولو الملف مش موجود، Node بيقع على طول بـ [[node: nope.env: not found]]. لو عايز الملف يبقى اختياري استخدم [[--env-file-if-exists]] (في النسخ الحديثة). والغلط الشائع: [[PORT = 4000]] بمسافات أو في آخر السطر تعليق من غير مسافة قبله، فالقيمة تتقري غلط.`,
-          solCode: R`// server.js
-import http from "node:http";
-const port = process.env.PORT || 3000;
-http.createServer((req, res) => res.end("ok\n")).listen(port, () => console.log("listening on " + port));
-
-// الترمنال
-echo "PORT=4000" > .env
-node --env-file=.env server.js`
-        },
-        {
-          cmd: "البورت مشغول",
-          title: "EADDRINUSE",
-          desc: "الرسالة الأشهر: [[listen EADDRINUSE: address already in use :::3000]]. يعني عملية تانية (غالبًا نسخة قديمة من سيرفرك) ماسكة البورت. تلاقيها وتقفلها، أو تشغّل على بورت تاني.",
-          example: R`lsof -i :3000
-kill -9 $(lsof -t -i :3000)
-npx -y kill-port 3000
-PORT=3001 npm run dev`,
-          try: "شغّل السيرفر مرتين في ترمنالين وشوف الرسالة، وبعدين اقفل الأول بـ kill-port.",
-          deep: {
-            why: "شغّلت السيرفر، وقفلت الترمنال أو الـ hot reload وقع، والعملية القديمة لسه ماسكة البورت. اللي بعدها بتفشل بـ EADDRINUSE.",
-            how: R`نظام التشغيل بيسمح لعملية واحدة تسمع على بورت. الرسالة بتقولك أنهي بورت. [[lsof -i :3000]] بيقولك مين ماسكه ورقمها (PID).
-
-[[lsof -t]] بيطلّع الرقم بس، و [[$( )]] بيحطه في kill. و [[-9]] هنا مقبول لأنها عملية تطوير معلّقة.
-
-[[npx kill-port 3000]] نفس الحاجة بأمر واحد، وبيشتغل على ويندوز كمان (على ويندوز lsof مش موجود، بدلها [[netstat -ano]] و [[taskkill]]).
-
-الأسهل أحيانًا: شغّل على بورت تاني. لو الكود بيقرا [[process.env.PORT || 3000]]، [[PORT=3001 npm run dev]] بيحل.
-
-وفي الإنتاج، EADDRINUSE معناه غالبًا نسختين من التطبيق شغالين (pm2 و docker مثلًا)، وده لازم يتحقق مش يتقفل.`,
-            when: "كل ما تشوف الرسالة. وقبل ما تشغّل السيرفر لو مش متأكد.",
-            mistakes: "تقفل أي عملية على البورت من غير ما تشوف هي إيه. على السيرفر ممكن تقفل الإنتاج."
-          },
-          lines: [
-            "مين ماسك 3000.",
-            "اقفله: -t يطلّع الرقم بس.",
-            "نفس الحاجة بأمر واحد (وعلى ويندوز كمان).",
-            "أو اشتغل على بورت تاني."
-          ],
-          sol: R`التاني بيقع على طول:
-
-[[Error: listen EADDRINUSE: address already in use :::3000]] (أو [[0.0.0.0:3000]] حسب الإعداد) ومعاها [[code: 'EADDRINUSE']] و [[port: 3000]].
-
-[[lsof -i :3000]] بيطلّع السطر بتاع الأول: [[node 1564 you ... TCP *:3000 (LISTEN)]] والرقم التاني هو الـ PID. و [[npx -y kill-port 3000]] بيطبع [[Process on port 3000 killed]]، وبعدها [[lsof -i :3000]] مش بيطبع حاجة، وتقدر تشغّل التاني.
-
-قبل ما تقتل، بص على اسم البرنامج في lsof: ممكن يبقى حاجة تانية مش سيرفرك القديم (Docker أو مشروع تاني). ولو [[lsof]] ما طلّعش حاجة والبورت لسه مشغول، شغّله بـ [[sudo]] لأن البرنامج ممكن يكون بيوزر تاني. وعلى ويندوز: [[netstat -ano | findstr :3000]].`
-        },
-        {
-          cmd: "outdated / update / audit",
-          title: "تحديث المكتبات بأمان",
-          desc: "[[outdated]] بيوريك ٣ أعمدة: الحالية، والمسموحة (Wanted) حسب ^ و ~، والأحدث (Latest). [[update]] بيحدّث لحد Wanted بس. للانتقال لنسخة رئيسية جديدة لازم تسطّبها بالاسم. و [[audit]] للثغرات.",
-          example: R`npm outdated
-npm update
-npm install react@latest react-dom@latest
-npm audit
-npm audit fix
-npx npm-check-updates -u`,
-          try: "شغّل [[npm outdated]] على مشروع قديم واقرا الأعمدة التلاتة. لاحظ إن Latest ممكن يكون أعلى من Wanted.",
-          deep: {
-            why: "المكتبات بتتحدّث كل أسبوع. لو سبتها شهور، التحديث بيبقى مؤلم. ولو حدّثت كل حاجة مرة واحدة من غير فهم، حاجة هتبوظ.",
-            how: R`[[outdated]] بيعرض جدول: Current اللي عندك، Wanted أعلى نسخة مسموحة حسب ^ و ~ في package.json، Latest آخر نسخة نزلت. لو Wanted أقل من Latest، فيه major جديد.
-
-[[update]] بيرفع لـ Wanted بس ويحدّث الـ lock. آمن نسبيًا لأنه في حدود semver.
-
-major جديد: تسطّبه بالاسم [[react@latest]]، وتقرا changelog الأول، وتجرّب. مكتبات كتير ليها migration guide.
-
-[[npx npm-check-updates -u]] بيعدّل package.json لآخر نسخ كل حاجة بما فيها major. قوي وخطير: استخدمه في branch وشغّل الاختبارات.
-
-[[audit]] بيقارن الـ lock بقاعدة ثغرات. [[audit fix]] بيحدّث في حدود semver. لو الثغرة محتاجة major، بيقولك وميعملش، و [[--force]] بيعمل بس ممكن يكسر.`,
-            when: "outdated شهريًا. audit في CI. major updates واحدة واحدة في branch.",
-            mistakes: "[[audit fix --force]] على الإنتاج. وتحديث ١٠ مكتبات major مرة واحدة فمش عارف مين اللي كسر."
-          },
-          lines: [
-            "الجدول: الحالي والمسموح والأحدث.",
-            "حدّث في حدود ^ و ~.",
-            "major جديد لازم بالاسم.",
-            "الثغرات.",
-            "صلّح في حدود semver.",
-            "عدّل package.json لآخر نسخ الكل (في branch بس)."
-          ],
-          sol: R`على مشروع فيه [[express@4.18.2]] بـ [[^]]:
-
-[[Package  Current  Wanted  Latest]] وتحتها [[express  4.18.2  4.22.3  5.2.1]]. Current المتسطب فعلًا، و Wanted أعلى نسخة يسمح بيها الـ [[^4.18.2]] في package.json، و Latest آخر نسخة منشورة. Latest أعلى من Wanted لأنها major جديدة (5)، و [[npm update]] هيوصل لـ 4.22.3 بس.
-
-والنقلة لـ 5 قرار منك: [[npm i express@latest]] واقرا دليل الترقية، لأن فيه breaking changes. و [[npm audit]] على نفس المشروع طلّع ثغرات high في [[body-parser]] و [[cookie]] و [[qs]] كلها جاية من express القديم، و [[fix available via npm audit fix]] لأن النسخة الآمنة جوه نفس الـ major.
-
-الغلط الشائع: [[npm audit fix --force]] من غير ما تقرا، وهو ممكن ينقلك major جديدة ويكسر المشروع.`
-        },
-        {
-          cmd: "ls / why / dedupe",
-          title: "مين جاب المكتبة دي",
-          desc: R`لما تسطّب مكتبة، هي بتجيب معاها مكتبات هي محتاجاها، وهكذا، فـ node_modules بيبقى فيه مئات المكتبات انت مسطّبتش غير كام واحدة منهم. الأوامر دي بتفهّمك الشجرة دي.
-
-[[npm ls --depth=0]] بيعرض المكتبات اللي انت سطّبتها مباشرة بس (المستوى الأول). [[npm ls lodash]] بيوريك كل مكان lodash موجود فيه في الشجرة ومين جابه. [[npm why lodash]] نفس المعلومة بشكل أوضح: «موجودة لأن مكتبة X محتاجاها، و X موجودة لأنك سطّبتها». ده مهم لما [[npm audit]] يقولك فيه ثغرة في مكتبة عمرك ما سمعت عنها.
-
-[[npm dedupe]] بيحاول يشيل النسخ المكررة من نفس المكتبة لو النسخ متوافقة، فـ node_modules يصغر. و [[du -sh node_modules]] بيطبع حجمه الكلي ([[-s]] المجموع بس، و [[-h]] بشكل مقروء).`,
-          example: R`npm ls --depth=0
-npm ls lodash
-npm why lodash
-npm dedupe
-du -sh node_modules`,
-          try: "اكتب [[npm why]] لأي مكتبة ظهرت في [[npm audit]] عشان تعرف انت مسطّبها ولا جاية مع مكتبة تانية.",
-          deep: {
-            why: "npm audit بيقولك ثغرة في مكتبة عمرك ما سمعت عنها. جت منين؟ ومين محتاجها؟ من غير ما تعرف مش هتعرف تحلها.",
-            how: R`المكتبات ليها مكتبات. express محتاج ٣٠ مكتبة، وكل واحدة محتاجة غيرها. [[npm ls]] بيرسم الشجرة دي، و [[--depth=0]] المستوى الأول بس (اللي انت سطّبته).
-
-[[npm ls lodash]] بيوريك كل مكان lodash موجود فيه في الشجرة، ومن خلال مين. لو ظهرت ٣ مرات بنسخ مختلفة، ده طبيعي: npm بيسطّب نسخ متعددة لو المكتبات طلبت نسخ متعارضة.
-
-[[npm why]] نفس المعلومة بشكل أوضح: «lodash موجود لأن X محتاجها، و X موجود لأنك سطّبته».
-
-[[dedupe]] بيحاول يقلل النسخ المكررة لو semver يسمح، فـ node_modules يصغر.
-
-وحل ثغرة في مكتبة فرعية: يا تحدّث المكتبة الأم، يا [[overrides]] في package.json تجبر نسخة معينة.`,
-            when: "بعد audit. لما node_modules ضخم. لما فيه نسختين من react في الشجرة (وده بيعمل errors غريبة).",
-            mistakes: "تحاول تحدّث مكتبة فرعية مباشرة بـ install، فتبقى في dependencies بتاعتك وتتلخبط الشجرة أكتر."
-          },
-          lines: [
-            "المكتبات اللي انت سطّبتها بس.",
-            "فين lodash في الشجرة.",
-            "مين محتاجها وليه.",
-            "قلّل النسخ المكررة.",
-            "node_modules حجمه كام."
-          ],
-          sol: R`على مشروع فيه express 4 قديم، [[npm audit]] قال إن [[cookie <0.7.0]] فيها ثغرة. و [[npm why cookie]] رد:
-
-[[cookie@0.5.0]] ← [[cookie@"0.5.0" from express@4.18.2]] ← [[express@"^4.18.2" from the root project]]. يعني انت ما سطّبتش cookie، هي جاية مع express. والحل مش إنك تسطّب cookie لوحدها، الحل تحدّث express.
-
-لو السلسلة انتهت بـ [[from the root project]] على طول تحت المكتبة نفسها، يبقى انت اللي مسطّبها في package.json. ولو [[npm why]] رجّع أكتر من مسار، يبقى مكتبات مختلفة طالباها بنسخ مختلفة، وساعتها [[npm dedupe]] ممكن يقلّل النسخ. ولو قال [[No dependencies found matching]] يبقى الاسم مكتوب غلط أو المكتبة مش متسطبة أصلًا.`
-        },
-        {
-          cmd: "node_modules بايظ",
-          title: "الحل الكلاسيكي",
-          desc: "أعراض: مكتبة موجودة ومش بتتلاقى، أو errors غريبة بعد pull، أو مكتبة native (bcrypt، sharp) بتقع. الحل غالبًا مسح node_modules والـ cache والتسطيب من الأول.",
-          example: R`rm -rf node_modules package-lock.json
-npm cache clean --force
-npm install
-npm rebuild
-npm cache verify`,
-          try: "جرّب [[npm rebuild]] الأول لو المشكلة في مكتبة native، قبل ما تمسح كل حاجة.",
-          deep: {
-            why: "node_modules فيه آلاف الملفات، وبيتلخبط: تسطيب اتقطع في النص، أو تبديل نسخة Node، أو pull غيّر الـ lock. الأعراض غريبة ومش مرتبطة بكودك.",
-            how: R`أعراض المشكلة: [[Cannot find module]] لمكتبة موجودة في package.json، أو [[invalid ELF header]] / [[was compiled against a different Node.js version]] لمكتبة native.
-
-المكتبات الـ native (bcrypt، sharp، better-sqlite3) فيها كود مترجم لنظامك ونسخة Node بتاعتك. لو بدّلت نسخة Node بـ nvm، الكود المترجم مبقاش متوافق. [[npm rebuild]] بيعيد ترجمتهم من غير ما يمسح حاجة، وده أول حاجة تجرّبها.
-
-لو مفيش فايدة: امسح node_modules والـ lock، ونضّف الكاش، وسطّب من الأول. مسح الـ lock بيغيّر النسخ، فلو المشروع مشترك امسح node_modules بس وشغّل [[npm ci]].
-
-[[cache verify]] بيتأكد إن كاش npm سليم من غير ما يمسحه.`,
-            when: "errors في مكتبات مش في كودك. بعد تبديل نسخة Node. بعد pull كبير.",
-            mistakes: "مسح الـ lock في مشروع فريق فتغيّر نسخ الكل. ومسح node_modules قبل ما تجرّب rebuild."
-          },
-          lines: [
-            "امسح المكتبات والـ lock (في مشروع فريق: node_modules بس).",
-            "نضّف كاش npm.",
-            "سطّب من الأول.",
-            "أعد ترجمة المكتبات native (جرّبه الأول لوحده).",
-            "اتأكد إن الكاش سليم."
-          ],
-          sol: R`[[npm rebuild]] لما ينجح بيطبع [[rebuilt dependencies successfully]]. ودي خطوة أسرع وأخف من المسح، ومش بتلمس الـ lock.
-
-الحالة اللي بيحلها: غيّرت نسخة Node بـ nvm ومكتبة native زي bcrypt أو better-sqlite3 بتقع بـ [[was compiled against a different Node.js version using NODE_MODULE_VERSION 127. This version of Node.js requires NODE_MODULE_VERSION 137]] (الأرقام حسب النسخ). الـ rebuild بيعيد ترجمتها لنسختك الحالية. ولو المكتبة محتاجة build tools ومش موجودة هتلاقي errors من [[node-gyp]] زي [[gyp ERR! find Python]]، وساعتها سطّب [[build-essential]] و python.
-
-لو [[npm rebuild]] ما حلّش، ساعتها [[rm -rf node_modules]] و [[npm install]] (من غير ما تمسح الـ lock في الأول). مسح [[package-lock.json]] آخر حل، لأنه بيحدّث كل المكتبات مرة واحدة ويخبّي السبب الحقيقي.`
-        },
-        {
-          cmd: "ERESOLVE و legacy-peer-deps",
-          title: "تعارض الـ peer dependencies",
-          desc: R`[[npm ERR! ERESOLVE unable to resolve dependency tree]] معناها مكتبة بتقول «أنا شغالة مع react 18» وانت عندك 19. [[--legacy-peer-deps]] بيخلي npm يتجاهل الكلام ده ويسطّب، وده بيخبي المشكلة مش بيحلها.
-
-الصح إنك تعرف مين المتعارض، وتحدّث المكتبة لنسخة بتدعم اللي عندك. ولو مفيش، [[overrides]] وانت عارف انت بتعمل إيه.`,
-          example: R`npm install
-npm explain react
-npm view react-day-picker peerDependencies
-npm install react-day-picker@latest
-npm install --legacy-peer-deps
-echo "legacy-peer-deps=true" >> .npmrc`,
-          try: "في مشروع تجربة سطّب react@19 وبعدين مكتبة قديمة معمولة لـ react 17، واقرا رسالة ERESOLVE لحد ما تفهم مين طالب إيه.",
-          deep: {
-            why: "الرسالة طويلة ومخيفة، فالناس بتنسخ أول حل على النت: legacy-peer-deps. التسطيب بيعدّي، والمشكلة بتظهر بعدين وقت التشغيل في شكل error ملهوش علاقة.",
-            how: R`الـ [[peerDependencies]] مش مكتبة المكتبة محتاجاها جواها، دي مكتبة لازم «انت» تكون مسطّبها، زي plugin لـ React محتاج React نفسه. المكتبة بتقول النسخ اللي اتجرّبت معاها.
-
-من npm 7، npm بيسطّب الـ peers لوحده وبيرفض لو فيه تعارض. رسالة ERESOLVE فيها سطرين مهمين: [[Found:]] اللي عندك، و [[Could not resolve dependency: peer ...]] اللي المكتبة عايزاه ومين طالبه.
-
-[[npm explain]] (هو نفسه npm why) بيوريك مين جايب الباكدج. و [[npm view ... peerDependencies]] بيوريك آخر نسخة من المكتبة بتدعم إيه، وغالبًا الحل تحديثها.
-
-[[--legacy-peer-deps]] بيرجّع سلوك npm 6: يتجاهل الـ peers خالص. و [[--force]] أسوأ: بيسطّب نسخ متعارضة. لو مضطر، حط [[legacy-peer-deps=true]] في .npmrc بتاع المشروع بدل الفلاج، عشان جهازك والـ CI والـ Dockerfile يمشوا بنفس الطريقة ويطلعوا نفس الـ lock.`,
-            when: "أول ما تشوف ERESOLVE. اقرا الرسالة الأول، ودوّر على نسخة أحدث من المكتبة قبل أي فلاج.",
-            mistakes: "في مشروع حقيقي كان الـ Dockerfile فيه npm ci --legacy-peer-deps، فالـ build بيعدّي وتعارض النسخ متخبّي لحد ما يوقع وقت التشغيل. وغلطة تانية: الفلاج على جهازك بس، فالـ lock يطلع مختلف و npm ci في الـ CI يفشل."
-          },
-          lines: [
-            "التسطيب اللي بيطلّع ERESOLVE: اقرا Found و Could not resolve.",
-            "مين جايب react وبأنهي نسخة.",
-            "المكتبة دي بتدعم أنهي نسخ من react.",
-            "الحل الصح غالبًا: نسخة أحدث بتدعم اللي عندك.",
-            "تجاهل الـ peers (بيخبي المشكلة).",
-            "لو مضطر: خليه إعداد للمشروع كله عشان الـ CI يمشي زي جهازك."
-          ],
-          sol: R`مع [[react@19]] وبعدين [[react-day-picker@8.9.1]]:
-
-[[npm error code ERESOLVE]] و [[ERESOLVE unable to resolve dependency tree]] و [[Found: react@19.3.0]] ([[react@"^19.3.0" from the root project]]) و [[Could not resolve dependency:]] و [[peer react@"^16.8.0 || ^17.0.0 || ^18.0.0" from react-day-picker@8.9.1]].
-
-القراية: الـ Found هو اللي عندك، والـ peer هو اللي المكتبة بتقول إنها بتشتغل معاه. المكتبة دي ما اتجربتش على React 19. الحل الأول تشوف نسخة أحدث: [[npm view react-day-picker@8 peerDependencies]] بيوريك إن آخر 8.x ضافت [[^19.0.0]]، فـ [[npm i react-day-picker@8]] نجح من غير أي flag.
-
-[[--legacy-peer-deps]] بيسطّب وخلاص، والمكتبة ممكن تشتغل وممكن تقع وقت التشغيل. استخدمه لما تتأكد إن مفيش نسخة متوافقة وجرّبت بنفسك، مش كأول حل.`
-        },
-        {
-          cmd: "pnpm و yarn",
-          title: "بدائل npm و corepack",
-          desc: "نفس الفكرة بأوامر شبه متطابقة. pnpm أسرع وبيوفر مساحة (بيشارك المكتبات بين المشاريع). [[corepack]] بيدير نسخهم، وبييجي مع Node لحد 24 بس، ومن Node 25 بتسطّبه بـ [[npm i -g corepack]]. والمشروع بيحدد مديره في حقل [[packageManager]].",
-          example: R`corepack enable
-pnpm install
-pnpm add express
-pnpm dlx create-next-app
-npm pkg set packageManager=pnpm@9.12.0`,
-          try: "لو المشروع فيه pnpm-lock.yaml استخدم pnpm، ولو yarn.lock استخدم yarn. متخلطش، كل واحد ليه lock مختلف.",
-          deep: {
-            why: "مشروع هتشتغل عليه بيستخدم pnpm، أو عايز تسطيب أسرع ومساحة أقل. لازم تعرف الفرق وإزاي متخلطش.",
-            how: R`التلاتة بيقروا نفس package.json. الفرق في التسطيب والـ lock: npm بيعمل package-lock.json، و yarn بيعمل yarn.lock، و pnpm بيعمل pnpm-lock.yaml. المشروع بيستخدم واحد بس، وتعرفه من ملف الـ lock الموجود.
-
-pnpm بيحفظ كل نسخة من كل مكتبة مرة واحدة على الجهاز، و node_modules بتاع كل مشروع بيشاور عليها بلينكات. فمشروع جديد بيتسطّب في ثواني وبياخد مساحة قليلة جدًا. وكمان صارم: مكتبة مش في package.json مش هتقدر تستوردها حتى لو موجودة كفرعية.
-
-[[corepack]] (جاي مع Node لحد 24، ومن 25 بيتسطّب بـ npm i -g corepack) بيسطّب ويشغّل النسخة الصح من pnpm أو yarn حسب حقل [[packageManager]] في package.json. فمش محتاج تسطّبهم عام.
-
-الأوامر شبه بعض: [[pnpm add]] بدل install باسم، و [[pnpm dlx]] بدل npx، والباقي نفسه.`,
-            when: "pnpm لمشاريعك الجديدة لو عايز سرعة. والمشاريع الموجودة: اللي فيها.",
-            mistakes: R`npm install في مشروع pnpm: بيعمل package-lock جنب pnpm-lock وبيبوّظ node_modules. شوف الـ lock الأول.
-
-في مشروع حقيقي كان الـ CI فيه [[pnpm/action-setup]] بـ [[version: 10]]، وفي نفس الوقت [[packageManager]] في package.json بنسخة تانية، والاتنين لما يختلفوا الـ action بيفشل. سيب النسخة في packageManager بس، والـ action بيقراها لوحده. وفي مشروع تاني كان [[corepack enable]] في الـ CI من غير packageManager أصلًا، فكل run بياخد أي نسخة pnpm متاحة.`
-          },
-          lines: [
-            "فعّل corepack اللي بيدير pnpm و yarn.",
-            "سطّب (زي npm install).",
-            "ضيف مكتبة (زي npm install express).",
-            "زي npx.",
-            "ثبّت مدير الباكدجات ونسخته للمشروع."
-          ],
-          sol: R`الإجابة إنك تبص على ملف الـ lock قبل أي أمر:
-
-[[package-lock.json]] يبقى [[npm ci]] أو [[npm install]]. [[pnpm-lock.yaml]] يبقى [[pnpm install]]. [[yarn.lock]] يبقى [[yarn]]. و [[bun.lock]] يبقى bun. وكمان حقل [["packageManager": "pnpm@9.12.0"]] في package.json بيقولك الأداة والنسخة، ومع [[corepack enable]] الأمر [[pnpm]] بيستخدم النسخة دي بالظبط.
-
-لو غلطت وعملت [[npm install]] في مشروع pnpm: هيتعمل [[package-lock.json]] جديد جنب [[pnpm-lock.yaml]]، والنسخ ممكن تختلف عن اللي الفريق شغال بيها. امسح الملف الجديد ومتعملوش commit. ولو المشروع فيه [[workspace:*]] npm غالبًا هيقع بـ [[Unsupported URL Type "workspace:"]]، ودي علامة إنه pnpm.`
-        },
-        {
-          cmd: "workspaces و link",
-          title: "مشروع فيه أكتر من باكدج",
-          desc: "monorepo: فولدر فيه api و web و shared. الـ workspaces بتخلي npm يسطّب الكل مرة واحدة ويربط shared بالباقي كلينك. و [[npm link]] لتجربة مكتبة بتطوّرها في مشروع تاني.",
-          example: R`npm init -w packages/shared
-npm install -w apps/api express
-npm run build --workspaces
-npm run dev -w apps/web
-npm link ../my-lib`,
-          try: R`اعمل مشروع فيه [[workspaces: ["apps/*", "packages/*"] ]] وشوف إن node_modules واحد في الجذر.`,
-          deep: {
-            why: "عندك API و web و كود مشترك بينهم (types، وvalidation). تنسخ المشترك في الاتنين؟ يتفرق. تنشره كباكدج؟ تقيل. الـ workspaces بيخليهم مشروع واحد.",
-            how: R`في package.json الجذر: [[workspaces: ["apps/*", "packages/*"] ]]. كل فولدر جواهم مشروع بـ package.json بتاعه. [[npm install]] في الجذر بيسطّب الكل في node_modules واحد، وبيعمل لينك لكل workspace باسمه، فـ [[apps/api]] بيستورد [[@myapp/shared]] كأنها مكتبة، وأي تعديل فيها بيظهر فورًا.
-
-[[-w]] (workspace) بيوجّه الأمر لمشروع فرعي: [[npm install -w apps/api express]] بيضيف express لـ api بس. [[--workspaces]] على الكل.
-
-[[npm link]] لحالة تانية: مكتبة بتطوّرها في فولدر منفصل وعايز تجرّبها في مشروع. بيعمل لينك من node_modules للفولدر بتاعها.
-
-للـ monorepos الكبيرة فيه أدوات فوق ده (Turborepo، Nx) بتشغّل الـ builds بالترتيب وبتعمل كاش.`,
-            when: "لما يبقى عندك كود مشترك بين مشروعين. وقبل كده، مشروع واحد أبسط.",
-            mistakes: "مشروع فرعي فيه node_modules خاص بيه بالغلط، فنسختين من react. وتنسى npm link بعد ما تخلص فيفضل المشروع بيشاور على فولدر محلي."
-          },
-          lines: [
-            "اعمل workspace جديد في packages/shared.",
-            "ضيف express لـ api بس.",
-            "ابني كل الـ workspaces.",
-            "شغّل dev في web بس.",
-            "اربط مكتبة من فولدر جنبك للتجربة."
-          ],
-          sol: R`بعد [[npm pkg set workspaces]] و [[npm init -w packages/shared]] و [[npm init -w apps/api]] و [[npm install -w apps/api ms]]:
-
-في الجذر [[node_modules]] واحد، وفيه [[ms]] نفسها، وفيه كمان [[api -> ../apps/api]] و [[shared -> ../packages/shared]] كـ symlinks. و [[apps/api]] فيها [[package.json]] بس، من غير node_modules. و [[package-lock.json]] واحد في الجذر.
-
-والـ [[ms]] اتكتبت في [[apps/api/package.json]] مش في package.json بتاع الجذر. أي باكدج تقدر تعمل [[import]] لـ [[shared]] باسمها كأنها متسطبة من npm.
-
-الغلط الشائع: تعمل [[npm install]] جوه [[apps/api]] نفسها، فيتعمل lock و node_modules تانيين جواها. التسطيب دايمًا من الجذر بـ [[-w]]. ولو apps/api عندها node_modules، غالبًا عشان نسخة مختلفة من مكتبة موجودة في الجذر، ودا عادي.`,
-          solCode: R`npm init -y
-npm pkg set "workspaces[0]=apps/*" "workspaces[1]=packages/*"
-npm init -y -w packages/shared
-npm init -y -w apps/api
-npm install -w apps/api ms
-ls -la node_modules | grep -E "api|shared|ms"`
-        },
-        {
-          cmd: ".npmrc",
-          title: "إعدادات npm و registries خاصة",
-          desc: "ملف إعدادات npm: في المشروع أو في [[~/.npmrc]]. فيه الـ registry، والتوكن للباكدجات الخاصة (GitHub Packages)، وإعدادات زي [[save-exact]] اللي بتخلي التسطيب بنسخ ثابتة من غير ^.",
-          example: R`npm config list
-npm config set save-exact true
-npm config get registry
-echo "//npm.pkg.github.com/:_authToken=TOKEN" >> ~/.npmrc
-echo "@myorg:registry=https://npm.pkg.github.com" >> .npmrc`,
-          try: "فعّل [[save-exact]] وسطّب مكتبة وشوف النسخة اتكتبت من غير ^.",
-          deep: {
-            why: "محتاج تغيّر سلوك npm: نسخ ثابتة، أو registry خاص للشركة، أو توكن لباكدجات خاصة على GitHub Packages.",
-            how: R`npm بيقرا الإعدادات من ٣ أماكن بالترتيب: [[.npmrc]] في المشروع، وبعدين [[~/.npmrc]] بتاعك، وبعدين الافتراضي. [[config list]] بيوريك النتيجة، و [[config set]] بيكتب في ملفك.
-
-[[save-exact=true]]: التسطيب يكتب [[4.18.2]] بدل [[^4.18.2]]. ناس كتير بتفضّله عشان مفيش مفاجآت.
-
-الباكدجات الخاصة: [[@myorg:registry=...]] في .npmrc بتاع المشروع بيقول «أي باكدج بتبدأ بـ @myorg هاتها من هنا». والتوكن في [[~/.npmrc]] بتاعك (مش في المشروع، عشان ميدخلش Git). وفي CI التوكن من secret.
-
-[[engine-strict=true]] بيخلي npm يرفض التسطيب لو نسخة Node مش مطابقة لـ engines، بدل مجرد تحذير.`,
-            when: "save-exact في مشاريعك. الـ registry والتوكن لما تستخدم باكدجات خاصة.",
-            mistakes: "التوكن في .npmrc بتاع المشروع وبيترفع على Git. دايمًا في ~/.npmrc أو متغير بيئة."
-          },
-          lines: [
-            "كل الإعدادات الفعّالة ومصدرها.",
-            "النسخ تتكتب بالظبط من غير ^.",
-            "الـ registry الحالي.",
-            "توكن GitHub Packages في ملفك الشخصي (مش المشروع).",
-            "باكدجات @myorg تيجي من GitHub، ده في المشروع."
-          ],
-          sol: R`[[npm config set save-exact true --location=project]] بيكتب [[save-exact=true]] في [[.npmrc]] جنب package.json. وبعدها [[npm i ms]] كتب [["ms": "2.1.3"]] من غير [[^]]، و [[npm config get save-exact]] بيطبع [[true]].
-
-من غير [[--location=project]]، [[npm config set]] بيكتب في [[~/.npmrc]] بتاعك، فيأثر على كل مشاريعك وزمايلك مش هياخدوه. لو عايزها قاعدة للفريق، خليها في [[.npmrc]] المشروع واعملها commit.
-
-الغلط الشائع: تفتكر إن save-exact بيثبّت المكتبات الموجودة؛ هو بيأثر على اللي هتسطبه بعد كده بس. والـ lock هو اللي فعلًا بيثبّت كل النسخ. ومتحطش توكن حقيقي في [[.npmrc]] اللي في الـ repo، استخدم [[$__{NPM_TOKEN}]] والقيمة من البيئة.`
-        }
-      ]
-    },
-    {
-      t: "سكربتات التطوير",
-      l: 2,
-      n: "سيرفر بيعيد نفسه، و TypeScript من غير build، وكذا سيرفر في ترمنال واحد، وموقعك على الموبايل",
-      items: [
-        {
-          cmd: "node --watch --env-file",
-          title: "سيرفر تطوير بيعيد نفسه من غير مكتبات",
-          desc: R`زمان سكربت dev كان محتاج nodemon عشان يعيد التشغيل و dotenv عشان يقرا .env. من Node 20 وأحدث الاتنين جوه Node: [[--watch]] و [[--env-file]]. ولمشروع TypeScript، [[tsx watch]] بيعمل نفس الحاجة لملفات .ts.
-
-وفي الإنتاج مفيش watch: بتعمل build بـ tsc وتشغّل الـ JS، والمتغيرات جاية من البيئة مش من ملف.`,
-          example: R`"scripts": {
-  "dev": "node --watch --env-file=.env src/server.js",
-  "dev:ts": "tsx watch src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js",
-  "db:seed": "node --env-file=.env prisma/seed.js"
-}
-# جوه container على ويندوز (أحداث الملفات مش بتوصل)
-# nodemon --legacy-watch --watch src --ext js,json src/server.js`,
-          try: "حوّل سكربت dev في مشروع بيستخدم nodemon و dotenv لـ [[node --watch --env-file=.env]]، وشيل المكتبتين من package.json، واتأكد إن التعديل بيعيد التشغيل.",
-          flag: "script",
-          deep: {
-            why: "كل مكتبة زيادة في devDependencies نسخة تتحدّث وثغرة محتملة. الحاجتين دول بقوا في Node نفسه، فالسكربت أبسط والمشروع أخف.",
-            how: R`[[--watch]] بيراقب الملف اللي شغّلته وكل ملف بيستورده، وأول ما واحد يتغير بيقفل العملية ويشغّلها تاني. و [[--watch-path=src]] لو عايز تراقب فولدر بعينه.
-
-[[--env-file=.env]] بيقرا الملف قبل ما الكود يبدأ ويحط القيم في process.env. لو المتغير موجود في البيئة أصلًا، اللي في البيئة بيكسب. ولو الملف مش موجود، Node بيقف بخطأ، وده سبب إنك متحطوش في start بتاع الإنتاج.
-
-[[tsx]] بيشغّل TypeScript مباشرة: بيشيل الأنواع بـ esbuild وبيشغّل الـ JS، من غير ما يفحص الأنواع خالص (الفحص خطوة لوحدها في الـ CI). و [[tsx watch]] زي node --watch. في الإنتاج: [[tsc]] بيطلّع dist، و [[node dist/index.js]] بيشغّله، أسرع في البداية ومن غير devDependencies.
-
-nodemon لسه ليه مكان: جوه Docker على ويندوز أو WSL مع bind mount، أحداث تغيير الملفات مش بتوصل للـ container، فـ [[--legacy-watch]] (أو [[-L]]) بيخليه يفحص الملفات كل شوية (polling). و [[--ext]] بيحدد الامتدادات.`,
-            when: "أي مشروع Node جديد: node --watch للـ JS، و tsx watch للـ TypeScript. و nodemon -L لو الـ watch مش بيحس بالتعديل جوه container.",
-            mistakes: "‏--env-file في سكربت start على السيرفر، فالتطبيق بيقع لو .env مش موجود أو بياخد قيم قديمة منه. و tsx في الإنتاج بدل build، فالتشغيل أبطأ ومحتاج devDependencies على السيرفر."
-          },
-          lines: [
-            "بداية السكربتات في package.json.",
-            "JS: أعد التشغيل مع كل تعديل واقرا .env، من غير nodemon ولا dotenv.",
-            "TypeScript: نفس الفكرة بـ tsx.",
-            "الإنتاج: حوّل TS لـ JS في dist.",
-            "وشغّل الناتج، والمتغيرات من بيئة السيرفر.",
-            "سكربت لمرة واحدة بيقرا .env برضه.",
-            "قفلة."
-          ],
-          sol: R`الحل: [["dev": "node --watch --env-file=.env src/server.js"]]، و [[npm uninstall nodemon dotenv]]، وتشيل [[import "dotenv/config"]] أو [[require("dotenv").config()]] من أول الكود.
-
-لما تشغّل [[npm run dev]] وتعدّل ملف، هتشوف في الترمنال [[Restarting 'src/server.js']] والسيرفر يقوم تاني. و [[--watch]] بيراقب الملفات اللي السيرفر عملها import بس، فتعديل في README مش هيعمل restart.
-
-لو شلت dotenv والـ متغيرات بقت [[undefined]]: نسيت [[--env-file]] في سكربت تاني زي [[db:seed]] أو [[start]]. وخلي بالك إن [[--watch]] مش بيراقب [[.env]] نفسه في كل النسخ؛ لو غيّرت .env اعمل restart بإيدك أو ضيف [[--watch-path]]. ولو السطر قال [[bad option]]، نسخة Node قديمة (محتاج 20.6+ للـ env-file و 22 عشان الاتنين يبقوا stable).`
-        },
-        {
-          cmd: "npx tsx",
-          title: "شغّل ملف TypeScript على طول",
-          desc: R`سكربت إداري بـ TypeScript (فحص القاعدة، عمل أدمن، تنضيف داتا) مش محتاج build. [[npx tsx scripts/x.ts]] بيشغّله مباشرة وبيستخدم نفس الأنواع و Prisma client اللي في المشروع.
-
-ولو هتشغّله على السيرفر جوه container، اتأكد إن tsx والسكربت نفسه موجودين في الـ image أصلًا.`,
-          example: R`npx tsx scripts/check-db.ts
-npx tsx scripts/create-admin.ts --email you@example.com
-# في package.json: "db:validate": "tsx scripts/validate-schema.ts"
-npm run db:validate
-docker compose exec app ls scripts node_modules/.bin/tsx
-docker compose exec app npx tsx scripts/run-fix.ts`,
-          try: "اكتب scripts/hello.ts فيه type وسطر console.log، وشغّله بـ [[npx tsx]]، وبعدين حط فيه خطأ أنواع واضح ولاحظ إنه برضه بيشتغل.",
-          deep: {
-            why: "مشروعك TypeScript، والسكربتات الصغيرة عايزة تستورد من الكود نفسه. تكتبها JS تخسر الأنواع، وتعمل لها build كل مرة تعب. tsx بيشغّلها زي ما هي.",
-            how: R`tsx بيحوّل الـ TS لـ JS في الذاكرة بـ esbuild ويشغّله بـ Node، وبيفهم ESM و CommonJS والـ paths. مش بيفحص الأنواع، فالسكربت ممكن يشتغل وفيه خطأ أنواع، والفحص شغل tsc.
-
-[[npx tsx]] بيستخدم النسخة اللي في devDependencies. لو مش متسطّبة، npx هيسألك ينزّلها، ومن غير ترمنال تفاعلي (CI أو سكربت) مبيسألش أصلًا: بيفترض yes وينزّل آخر نسخة من النت من غير ما تاخد بالك، أو يفشل لو مفيش نت. عشان كده حطها في devDependencies، والأحسن سكربت في package.json زي [[db:validate]] عشان الفريق كله يشغّله بنفس الشكل.
-
-جوه container الإنتاج: الـ image غالبًا متبنية من غير devDependencies، أو standalone في Next، فلا tsx موجود ولا فولدر scripts. أول أمر docker في المثال بيتأكد قبل ما تعتمد عليه. الحلول: stage منفصلة للأدوات، أو تكتب السكربتات الحرجة .mjs عادية.
-
-[[ts-node]] البديل القديم: أبطأ لأنه بيفحص الأنواع، ومشاكله مع ESM كتير.`,
-            when: "سكربتات seed وفحص القاعدة والصيانة في مشروع TypeScript. مش لتشغيل السيرفر في الإنتاج.",
-            mistakes: "تفترض إن السكربت شغال عشان tsx مطلعش خطأ، وهو فيه خطأ أنواع. وتكتب في دليل التشغيل «docker compose exec app npx tsx ...» والـ image مفيهاش tsx ولا السكربت، فالأمر بيفشل يوم ما تحتاجه."
-          },
-          lines: [
-            "شغّل سكربت TS مباشرة.",
-            "ومرّر له arguments عادي.",
-            "نفس الحاجة من سكربت متسجّل في package.json.",
-            "قبل ما تعتمد عليه في الـ container: tsx والسكربت موجودين؟",
-            "شغّل السكربت جوه container التطبيق."
-          ],
-          sol: R`[[scripts/hello.ts]] فيه [[type User = { name: string; age: number }]] وسطر بيطبع. [[npx tsx scripts/hello.ts]] بيطبع [[hello Sara]].
-
-بعد ما تحط [[age: "28"]] (نص بدل رقم): [[tsx]] برضه بيشتغل ويطبع [[hello Sara string]] و exit 0. tsx بيشيل الأنواع ويشغّل، مش بيفحصها. نفس الملف مع [[npx tsc --noEmit --strict scripts/hello.ts]] بيقول [[error TS2322: Type 'string' is not assignable to type 'number'.]]
-
-الدرس: tsx للتشغيل السريع، و [[tsc --noEmit]] في CI أو قبل الـ commit للفحص. والغلط الشائع إنك تعتمد على إن «السكربت اشتغل» كدليل إن الأنواع صح.`,
-          solCode: R`// scripts/hello.ts
-type User = { name: string; age: number };
-const u: User = { name: "Sara", age: "28" };
-console.log("hello", u.name, typeof u.age);
-
-// الترمنال
-npx tsx scripts/hello.ts
-npx tsc --noEmit --strict scripts/hello.ts`
-        },
-        {
-          cmd: "concurrently و wait-on",
-          title: "كذا سيرفر في ترمنال واحد وبالترتيب",
-          desc: R`الباك إند والفرونت في مشروع واحد، ومش عايز تفتح ترمنالين. [[concurrently]] بيشغّل كذا أمر مع بعض بألوان وأسامي، و [[-k]] بيقفلهم كلهم لو واحد وقف. و [[wait-on]] بيستنى بورت أو URL يفتح قبل ما يشغّل الأمر اللي بعده.
-
-و [[cross-env]] بيحط متغير بيئة بطريقة شغالة على ويندوز ولينكس.`,
-          example: R`"scripts": {
-  "dev": "concurrently -k -n api,web -c blue,green \"npm:dev:api\" \"npm:dev:web\"",
-  "dev:api": "node --watch --env-file=.env api/server.js",
-  "dev:web": "wait-on tcp:127.0.0.1:4000 && cross-env VITE_API_URL=http://localhost:4000 vite --strictPort"
-}`,
-          try: "سطّب [[npm i -D concurrently wait-on cross-env]]، وحط السكربتات دي، وشغّل [[npm run dev]]، وبعدين Ctrl+C مرة واحدة واتأكد إن البورتين اتقفلوا.",
-          flag: "script",
-          deep: {
-            why: "من غير الأدوات دي: ترمنال للـ API وترمنال للفرونت، والفرونت بيقوم قبل الـ API فأول طلبات بتفشل، ولما تقفل واحد التاني بيفضل ماسك البورت.",
-            how: R`[[concurrently]] بيشغّل كل أمر في عملية لوحده وبيجمع الخرج في ترمنال واحد، وقبل كل سطر اسم العملية ([[-n]]) بلون ([[-c]]). و [[npm:dev:api]] اختصار لـ [[npm run dev:api]]، و [[npm:dev:*]] بيشغّل كل السكربتات اللي بتبدأ بـ dev:.
-
-[[-k]] (kill-others): أول ما عملية تخرج، الباقي يتقفل. من غيره لو الـ API وقع بخطأ، الفرونت يفضل شغال وانت فاكر كل حاجة تمام.
-
-[[wait-on]] بيفضل يحاول لحد ما المورد يبقى جاهز: [[tcp:127.0.0.1:4000]] بورت مفتوح، [[http://localhost:4000/health]] رد 2xx، أو ملف اتعمل. وبعدين [[&&]] بتشغّل اللي بعده.
-
-في مشروع حقيقي لتطبيق Electron كان نفس النمط: vite و [[wait-on tcp:5199 && electron .]]، عشان نافذة Electron متفتحش على صفحة فاضية قبل ما Vite يقوم.
-
-[[cross-env]]: سطر [[VITE_API_URL=... vite]] شغال في bash بس، وسكربتات npm على ويندوز بتشتغل بـ cmd. cross-env بيخليها تشتغل في الاتنين.`,
-            when: "مشروع فيه أكتر من عملية وقت التطوير: API وفرونت، أو Vite و Electron، أو سيرفر و worker.",
-            mistakes: R`[[wait-on tcp:localhost:4000]] وسيرفرك سامع على 127.0.0.1: من Node 17 localhost ممكن يتحل لـ ::1 (IPv6)، فـ wait-on يستنى للأبد. اكتب 127.0.0.1 صريح. وغلطة تانية: Vite لقى البورت مشغول فقام على بورت تاني، والـ wait-on لسه مستني البورت القديم، عشان كده [[--strictPort]] بيخليه يفشل بدل ما يغيّر.`
-          },
-          lines: [
-            "بداية السكربتات.",
-            "شغّل الاتنين مع بعض بأسامي وألوان، و -k يقفلهم سوا.",
-            "الـ API بيعيد نفسه مع كل تعديل.",
-            "استنى الـ API يفتح، وبعدين شغّل Vite بمتغير شغال على أي نظام، ومن غير ما يغيّر البورت.",
-            "قفلة."
-          ],
-          sol: R`[[npm run dev]] بيطبع سطور كل واحد بلونه واسمه: [[[api] api on 4000]] وبعدين [[[web]]] بيستنى لحد ما البورت يفتح، ويقوم Vite بـ [[VITE_API_URL]] مظبوط.
-
-Ctrl+C مرة واحدة: [[[api] npm run dev:api exited with code SIGINT]] و [[--> Sending SIGTERM to other processes..]] و [[[web] npm run dev:web exited with code SIGINT]]. وبعدها [[lsof -i :4000 -i :5173]] مش بيطبع حاجة: البورتين اتقفلوا.
-
-لو بعد Ctrl+C لقيت بورت لسه مفتوح، يبقى [[-k]] ناقصة، وبعدها [[npm run dev]] التاني هيقع بـ EADDRINUSE. ولو [[web]] فضل مستني للأبد، اتأكد إن الـ api فعلًا على [[127.0.0.1:4000]] (لو بيسمع على IPv6 بس أو بورت تاني [[wait-on]] مش هيلاقيه). و [[--strictPort]] بيخلي Vite يقع لو 5173 مشغول بدل ما يفتح على 5174 من غير ما تاخد بالك.`
-        },
-        {
-          cmd: "--host و Network URL",
-          title: "افتح موقعك من الموبايل وهو لسه على جهازك",
-          desc: R`سيرفر التطوير غالبًا بيسمع على localhost بس، فالموبايل مش شايفه. [[--host]] في Vite (أو [[-H 0.0.0.0]] في Next) بيخليه يسمع على كل الكروت، ويطبع سطر [[Network: http://192.168.1.x:5173]]. افتحه من موبايل على نفس الواي فاي.
-
-ولو الصفحة مش بتفتح: الفايروول على جهازك غالبًا هو اللي مانع.`,
-          example: R`npm run dev -- --host
-npm run dev -- -H 0.0.0.0
-ipconfig
-hostname -I
-# ويندوز (PowerShell أدمن): افتح البورت للشبكة الخاصة بس
-New-NetFirewallRule -DisplayName "dev 5173" -Direction Inbound -Protocol TCP -LocalPort 5173 -Profile Private -Action Allow`,
-          try: "شغّل مشروع Vite بـ [[--host]]، وافتح رابط Network من موبايلك، وعدّل كلمة في الصفحة وشوف الموبايل بيتحدّث لوحده.",
-          deep: {
-            why: "الموقع شكله تمام في DevTools بمقاس موبايل، وعلى الموبايل الحقيقي الكيبورد بيغطي الفورم، واللمس مختلف، والخط أصغر. التجربة على جهاز حقيقي قبل الرفع بتوفّر كتير.",
-            how: R`الـ [[--]] بتعدّي الفلاج للأداة نفسها مش لـ npm. Vite افتراضيًا على localhost بس، و [[--host]] بيخليه 0.0.0.0 (تقدر تحطها في vite.config: [[server.host: true]]). Next dev بيطبع Network لوحده غالبًا، و [[-H 0.0.0.0]] بيضمنها. ونفس الفلاج ده لازم جوه Docker، وإلا البورت المنشور مش هيوصل للسيرفر (شوف درس 127.0.0.1 و 0.0.0.0 في bash).
-
-عنوان جهازك على الشبكة: [[ipconfig]] على ويندوز (IPv4 Address)، و [[hostname -I]] على لينكس. الاتنين لازم على نفس الشبكة.
-
-ويندوز بيمنع الاتصالات الداخلة افتراضيًا، خصوصًا لو الشبكة متسجّلة Public. القاعدة في المثال بتفتح البورت على الشبكات الخاصة بس، فمش هيتفتح وانت على واي فاي كافيه.
-
-Next الجديد ممكن يحذّر أو يمنع طلبات التطوير الجاية من origin تاني (زي IP جهازك من الموبايل)، والحل تضيفه في [[allowedDevOrigins]] في next.config.`,
-            when: "قبل ما تسلّم أي صفحة للموبايل. ولما تورّي شغلك لحد جنبك من غير deploy.",
-            mistakes: R`الفرونت بيكلّم [[http://localhost:4000]] للـ API: على الموبايل localhost هو الموبايل نفسه، فالصفحة تفتح والداتا لأ. استخدم proxy في Vite أو مسار نسبي. وميزات زي الكاميرا والموقع محتاجة secure context: localhost بيتحسب آمن، إنما http على IP لأ، فمحتاج tunnel بـ HTTPS. وواي فاي الضيوف بيعزل الأجهزة عن بعض، فمفيش حاجة هتوصل مهما عملت.`
-          },
-          lines: [
-            "Vite: اسمع على كل الكروت واطبع رابط Network.",
-            "Next: نفس الحاجة.",
-            "عنوان جهازك على الشبكة (ويندوز).",
-            "عنوان جهازك على الشبكة (لينكس).",
-            "اسمح بالبورت في فايروول ويندوز على الشبكة الخاصة بس."
-          ],
-          sol: R`مع [[npm run dev -- --host]] Vite بيطبع سطرين: [[➜ Local: http://localhost:5173/]] و [[➜ Network: http://192.168.1.15:5173/]]. الموبايل على نفس الواي فاي بيفتح رابط Network، ولما تحفظ تعديل في الكود الصفحة على الموبايل بتتحدث لوحدها (HMR).
-
-لو الموبايل مش بيفتح: يا مش على نفس الشبكة (أو شبكة ضيوف معزولة)، يا فايروول ويندوز بيقفل البورت (ودا سطر [[New-NetFirewallRule]] في المثال، والشبكة لازم تكون Private مش Public). ولو بتشتغل في WSL، الـ IP اللي Vite طلّعه هو IP الـ WSL الداخلي؛ استخدم IP ويندوز من [[ipconfig]] مع [[networkingMode=mirrored]]، أو port forwarding.
-
-ولو الصفحة فتحت بس الـ API calls فشلت، يبقى الكود بيكلم [[localhost:4000]]، والـ localhost على الموبايل هو الموبايل نفسه. استخدم الـ proxy بتاع Vite أو IP الجهاز.`
         }
       ]
     }
