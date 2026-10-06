@@ -22,7 +22,7 @@ Add a `teach: R\`...\`,` field to EVERY lesson in the file that doesn't have one
 
 ## Syntax reminders
 
-`## ` / `### ` headings, `---`, code/output boxes with `~~~powershell` / `~~~bash` / `~~~cmd` / `~~~zsh` / `~~~text Title` ... `~~~` (never backticks: inside R`...` write a backtick as `$__bt` and `${` as `$__{`), tables `| a | b |` + `|---|---|`, lists `- ` / `1. `, notes `> `, `**bold**`, inline `[[code]]` (single line, balanced). In diagrams separate pieces by 2+ spaces so each keeps its column.
+`## ` / `### ` headings, `---`, code/output boxes with `~~~powershell` / `~~~bash` / `~~~cmd` / `~~~zsh` / `~~~text Title` ... `~~~` (never backticks: inside R`...` write a backtick as `$__bt` and `${` as `$__{`), tables `| a | b |` + `|---|---|`, lists `- ` / `1. ` (a sub-item under an item: two spaces then `- `), notes `> `, `**bold**`, inline `[[code]]` (single line, balanced). In diagrams separate pieces by 2+ spaces so each keeps its column.
 
 ## Facts must be real
 

@@ -40,6 +40,151 @@ console.log(s.toUpperCase(), s);`,
             when: "طول الوقت. بتفرق بالذات لما تنسخ داتا، أو تقارن، أو تبعت object لدالة، أو تتعامل مع أرقام كبيرة أو فلوس.",
             mistakes: R`تكتب [[new String("x")]] أو [[new Number(5)]]: دول objects مش primitives، و [[new String("a") === "a"]] بتطلع false. متستخدمهمش. وتحط id جاي من API كـ number وهو أكبر من MAX_SAFE_INTEGER، فيتقرّب ويبقى id تاني: خليه string. وفي الانترفيو: «كام نوع في JS؟» الإجابة ٨: سبعة primitives و object.`
           },
+          teach: R`## الفكرة في سطرين
+
+المثال بيعمل متغير من كل نوع من الأنواع التمانية في JS، وبعدين بيجرّب يعدّل حرف جوه string عشان يوريك إن الـ primitive مبيتعدّلش. كل الكلام هنا اتجرّب على Node 24.
+
+---
+
+## ١. السطور من ١ لـ ٨: متغير من كل نوع
+
+~~~text types.js
+let title = "JS";               // string
+let price = 99.5;               // number
+let big = 9007199254740993n;    // bigint
+let isActive = true;            // boolean
+let nothing;                    // undefined
+let empty = null;               // null
+let id = Symbol("id");          // symbol
+let user = { name: "Sara" };    // object
+~~~
+
+- [[let]] كلمة بتعرّف متغير (درس «let و const و var» تحت). و [[=]] معناها «حط القيمة اللي على اليمين في المتغير اللي على الشمال»، مش «يساوي» زي الرياضيات.
+- [[//]] بداية تعليق: JS بيتجاهل أي حاجة بعدها لآخر السطر.
+- [["JS"]]: نص (string). علامات التنصيص هي اللي بتقول «ده نص».
+- [[99.5]]: رقم (number). مفيش نوع منفصل للصحيح والعشري.
+- [[9007199254740993n]]: الـ [[n]] في الآخر بتخليه [[bigint]]، عدد صحيح من غير حد.
+- [[true]]: boolean، يا true يا false.
+- [[let nothing;]] من غير [[=]]: المتغير اتعمل بس ملوش قيمة، فـ JS بيحط فيه [[undefined]] لوحده.
+- [[null]]: انت اللي كاتبها بإيدك، ومعناها «مفيش قيمة، وأنا قاصد».
+- [[Symbol("id")]]: قيمة فريدة. الكلمة [["id"]] وصف للقراية بس.
+- [[{ name: "Sara" }]]: الأقواس المعقوفة بتعمل object، و [[name]] مفتاح و [["Sara"]] قيمته.
+
+نسأل [[typeof]] عن كل واحد (الأمر ده درسه اللي جاي):
+
+~~~text app.js
+console.log([title, price, big, isActive, nothing, empty, id, user].map(v => typeof v));
+~~~
+
+~~~text الناتج (Node 24)
+[
+  'string',    'number',
+  'bigint',    'boolean',
+  'undefined', 'object',
+  'symbol',    'object'
+]
+~~~
+
+لاحظ الخانة السادسة: [[null]] طلعت [['object']]. دي غلطة قديمة في اللغة، والدرس اللي جاي بيحكي قصتها.
+
+### ليه الـ bigint محتاج n؟
+
+جرّب نفس الرقم من غير [[n]]:
+
+~~~text app.js
+console.log(9007199254740993, Number.MAX_SAFE_INTEGER);
+~~~
+
+~~~text الناتج
+9007199254740992 9007199254740991
+~~~
+
+كتبت ...993 وطلع ...992. الـ number بيخزّن الأعداد الصحيحة بدقة لحد [[Number.MAX_SAFE_INTEGER]] بس (٩٠٠٧١٩٩٢٥٤٧٤٠٩٩١)، وبعده بيقرّب لأقرب رقم يقدر يمثّله. الـ bigint مفيهوش المشكلة دي.
+
+---
+
+## ٢. الفرق المهم: نسخة ولا نفس الحاجة؟
+
+ده مش في المثال، بس هو قلب الدرس:
+
+~~~text app.js
+let a = "x";
+let b = a;
+b = "y";
+console.log(a, b);
+
+const o1 = { n: 1 };
+const o2 = o1;
+o2.n = 2;
+console.log(o1);
+~~~
+
+~~~text الناتج
+x y
+{ n: 2 }
+~~~
+
+- مع الـ string: [[b = a]] نسخت القيمة، فتغيير [[b]] ملمسش [[a]].
+- مع الـ object: [[o2 = o1]] منسختش الـ object، الاتنين بقوا شايلين **reference** (عنوان) لنفس الـ object. فلما [[o2]] عدّل، [[o1]] شاف التعديل.
+
+---
+
+## ٣. آخر ٣ سطور: الـ string مبيتعدّلش
+
+~~~text app.js
+let s = "hi";
+s[0] = "H";
+console.log(s.toUpperCase(), s);
+~~~
+
+- [[s[0]]]: الأقواس المربعة بعد string بتجيب الحرف رقم 0 (العدّ بيبدأ من صفر).
+- [[s[0] = "H"]]: محاولة تغيّر الحرف الأول.
+- [[s.toUpperCase()]]: النقطة معناها «هات من s الـ method اللي اسمها toUpperCase»، والقوسين [[()]] معناهم «نفّذها».
+
+~~~text الناتج
+HI hi
+~~~
+
+السطر التاني متنفّذش ولا طلّع error: الحرف فضل [[h]]. و [[toUpperCase]] رجّعت string **جديد** [["HI"]]، والأصل [[s]] لسه [["hi"]]. ده معنى immutable: مفيش طريقة تعدّل string في مكانه.
+
+### طب ليه مطلعش error؟
+
+في الوضع العادي (sloppy mode) JS بيتجاهل التعديل بهدوء. لو حطيت [["use strict";]] في أول الملف (أو الملف ES module)، بيرمي error:
+
+~~~text الناتج مع "use strict" (Node 24)
+TypeError: Cannot assign to read only property '0' of string 'hi'
+~~~
+
+### و [["hi".length]] شغالة إزاي والـ primitive مش object؟
+
+~~~text app.js
+console.log("hi".length, new String("a") === "a", typeof new String("a"));
+~~~
+
+~~~text الناتج
+2 false object
+~~~
+
+- [[2]]: JS لفّ [["hi"]] مؤقتًا في object من نوع [[String]] (ده الـ autoboxing)، قرا منه [[length]]، ورماه.
+- [[new String("a")]] بيعمل object حقيقي مش string، عشان كده [[=== "a"]] طلعت false و [[typeof]] طلعت [['object']]. متكتبهاش في كودك.
+
+---
+
+## الخلاصة
+
+| النوع | مثال | primitive؟ |
+|---|---|---|
+| string | [["JS"]] | أيوة |
+| number | [[99.5]] | أيوة |
+| bigint | [[10n]] | أيوة |
+| boolean | [[true]] | أيوة |
+| undefined | متغير من غير قيمة | أيوة |
+| null | [[null]] | أيوة (رغم إن typeof بيقول object) |
+| symbol | [[Symbol("id")]] | أيوة |
+| object | [[{}]] و [[[]]] والدوال | لأ |
+
+- الـ primitive بيتنسخ وميتعدّلش، والـ methods بتاعته بترجّع قيمة جديدة.
+- الـ object بيتشارك بالـ reference: اتنين متغيرين ممكن يشاوروا على نفس الحاجة.`,
           lines: [
             R`string: بين [[""]] أو [['']] أو backticks.`,
             "number: الصحيح والعشري نوع واحد.",
@@ -90,6 +235,110 @@ new Date() instanceof Date  // true`,
             when: R`لما دالة بتقبل أكتر من شكل (string أو array)، ولما تفحص داتا جاية من برّه، ولما تكتب كود بيشتغل في المتصفح و Node ([[typeof window !== "undefined"]]).`,
             mistakes: R`تفحص الـ object بـ [[typeof x === "object"]] وتنسى إن null هتعدّي، فتقرا خاصية منها وتقع: [[x !== null && typeof x === "object"]]. وتفحص الـ array بـ typeof. وفي الانترفيو: «typeof NaN؟» number، و «typeof typeof 1؟» [["string"]].`
           },
+          teach: R`## الفكرة
+
+[[typeof]] كلمة (operator) بتحطها قبل أي قيمة، وبترجّعلك string فيه اسم نوعها. المثال سطور منفصلة، كل سطر سؤال، فالأسهل تجرّبهم واحد واحد في الـ Console أو في Node REPL (اكتب [[node]] في الترمنال من غير اسم ملف، وهيظهرلك [[>]] تكتب جنبه).
+
+---
+
+## ١. الأنواع العادية
+
+~~~text Node REPL
+> typeof "hi"
+'string'
+> typeof 42
+'number'
+> typeof NaN
+'number'
+> typeof undefined
+'undefined'
+~~~
+
+- الناتج نفسه string، عشان كده الـ REPL بيكتبه بين [['...']].
+- [[NaN]] اختصار Not a Number، ومع ذلك نوعه number. هي «رقم بايظ»: الناتج اللي بيطلع لما عملية حسابية تفشل (زي [[Number("abc")]]). فهي لسه جوه عالم الأرقام.
+
+---
+
+## ٢. الفخاخ: null و [] بيطلعوا object
+
+~~~text Node REPL
+> typeof null
+'object'
+> typeof {}
+'object'
+> typeof []
+'object'
+> typeof function () {}
+'function'
+~~~
+
+- [[typeof null]] بـ [['object']]: غلطة من أول نسخة من JS سنة ١٩٩٥ (القصة في «ازاي بيشتغل»)، ومحدش قدر يصلّحها عشان مواقع كتير معتمدة عليها.
+- [[{}]] object فاضي، و [[[]]] array فاضية. الاتنين [['object']]، يعني typeof **مبيفرّقش** بين object و array.
+- [[function () {}]] دالة من غير اسم. الدوال في الحقيقة objects، بس typeof بيديها اسم خاص [['function']] عشان تقدر تعرف إن القيمة دي ينفع تتنادي.
+
+---
+
+## ٣. متغير مش موجود أصلًا
+
+~~~text Node REPL
+> typeof notDeclared
+'undefined'
+> notDeclared
+Uncaught ReferenceError: notDeclared is not defined
+~~~
+
+[[notDeclared]] اسم عمرنا ما عرّفناه. لو كتبته لوحده، JS بيرمي ReferenceError (يعني «الاسم ده مش متعرّف»). لكن [[typeof]] بالذات بيسمح بيه ويرجّع [['undefined']] من غير error. ده كان بيتستخدم عشان تعرف الكود شغال في متصفح ولا لأ:
+
+~~~text Node REPL مقابل Chrome
+Node:    typeof window   →  'undefined'
+Chrome:  typeof window   →  'object'
+~~~
+
+(اتجرّب في Node 24 و Chrome 154 headless.)
+
+---
+
+## ٤. الأدوات الأدق: [[Array.isArray]] و [[instanceof]]
+
+~~~text Node REPL
+> Array.isArray([])
+true
+> new Date() instanceof Date
+true
+~~~
+
+- [[Array.isArray(x)]]: دالة جاهزة على [[Array]] بترد بـ true أو false: «القيمة دي array؟». دي الطريقة الصح بدل typeof.
+- [[new Date()]]: [[new]] بتعمل object جديد من «كلاس» اسمه [[Date]] (تاريخ ووقت دلوقتي).
+- [[instanceof Date]]: بيسأل «القيمة دي اتعملت من Date؟». وبيمشي على السلسلة كلها: [[[] instanceof Object]] برضه true لأن كل array object.
+
+---
+
+## ٥. حاجات زيادة اتجرّبت
+
+~~~text app.js
+console.log(typeof typeof 1, typeof 10n, typeof Symbol(), typeof class {}, typeof new Date(), typeof /a/);
+~~~
+
+~~~text الناتج (Node 24)
+string bigint symbol function object object
+~~~
+
+- [[typeof typeof 1]]: الـ typeof الجوانية بترجّع [["number"]]، وده string، فالبرانية بتقول [["string"]]. سؤال انترفيو مشهور.
+- [[class {}]] نوعها [["function"]]: الكلاس في JS دالة من جوه.
+- الـ Date والـ regex ([[/a/]]) الاتنين [["object"]].
+
+---
+
+## الخلاصة
+
+| عايز تعرف | استخدم | ليه مش typeof |
+|---|---|---|
+| string / number / boolean / undefined / bigint / symbol / function | [[typeof x === "..."]] | typeof بيشتغل صح هنا |
+| array | [[Array.isArray(x)]] | typeof بيقول object |
+| null | [[x === null]] | typeof بيقول object |
+| اتعمل من كلاس معين | [[x instanceof Date]] | typeof بيقول object |
+
+التمرين اللي تحت عايزك تجمع الأدوات دي في دالة واحدة. فكّر: لو سألت typeof الأول، هيحصل إيه مع null ومع array؟`,
           lines: [
             "string.",
             "number.",
@@ -162,6 +411,137 @@ const a = []; a === a // true: نفس الـ reference`,
             when: R`[[===]] في كل مقارنة. [[== null]] لو قاصد null أو undefined. ولمقارنة محتوى objects لازم تقارن الخصايص بنفسك أو تستخدم دالة deep equal (درس في المستوى ٣).`,
             mistakes: R`تقارن قيمة input بـ رقم: [[input.value === 5]] دايمًا false لأن value دايمًا string، حوّل الأول بـ [[Number()]]. وتفحص [[arr === []]] عشان تعرف فاضية: دايمًا false، استخدم [[arr.length === 0]]. وتدوّر على NaN بـ [[indexOf]]: مش هيلاقيها، و [[includes]] بتلاقيها.`
           },
+          teach: R`## الفكرة
+
+JS فيه طريقتين تسأل بيهم «الاتنين دول زي بعض؟»:
+
+- [[===]] (تلات علامات، strict equality): لو النوعين مختلفين، الإجابة false على طول. مفيش تحويل.
+- [[==]] (علامتين، loose equality): لو النوعين مختلفين، بيحوّل واحد منهم (أو الاتنين) لنوع تاني الأول، وبعدين يقارن. التحويل ده اسمه type coercion.
+
+وعكسهم [[!==]] و [[!=]]. كل السطور تحت اتشغّلت في Node 24 REPL، والنتايج زي التعليقات في المثال بالظبط.
+
+---
+
+## ١. نفس القيمة، نوعين مختلفين
+
+~~~text Node REPL
+> 1 === "1"
+false
+> 1 == "1"
+true
+~~~
+
+- [[1]] number و [["1"]] string. الـ [[===]] شاف نوعين مختلفين فقال false.
+- الـ [[==]] حوّل الـ string لرقم: [[Number("1")]] بـ 1، وبعدين [[1 == 1]] true.
+
+---
+
+## ٢. التحويلات اللي بتخدع
+
+~~~text Node REPL
+> 0 == ""
+true
+> "0" == false
+true
+~~~
+
+خطوة خطوة، زي ما [[==]] بيعمل:
+
+| السطر | الخطوة ١ | الخطوة ٢ | النتيجة |
+|---|---|---|---|
+| [[0 == ""]] | الـ string [[""]] يتحوّل رقم: [[Number("")]] بـ 0 | [[0 == 0]] | true |
+| [["0" == false]] | الـ boolean يتحوّل رقم: false بـ 0 | [["0" == 0]] ثم [["0"]] بـ 0 | true |
+
+اتأكدنا من التحويلات دي:
+
+~~~text app.js
+console.log(Number(""), Number(false), Number("0"));
+~~~
+
+~~~text الناتج
+0 0 0
+~~~
+
+---
+
+## ٣. null و undefined: قاعدة خاصة
+
+~~~text Node REPL
+> null == undefined
+true
+> null == 0
+false
+~~~
+
+- الـ spec (المواصفات الرسمية للغة) فيها سطر مخصوص: null و undefined بيساووا بعض بـ [[==]]، ومش بيساووا **أي حاجة تانية**.
+- عشان كده [[null == 0]] false، رغم إن [[Number(null)]] بـ 0. الـ null في [[==]] مبتتحوّلش لرقم أصلًا.
+- وده سبب إن [[x == null]] مقبولة: بتمسك null و undefined الاتنين ومفيش غيرهم.
+
+---
+
+## ٤. NaN مش بيساوي نفسه
+
+~~~text Node REPL
+> NaN === NaN
+false
+> Number.isNaN(NaN)
+true
+> Object.is(NaN, NaN)
+true
+~~~
+
+- NaN القيمة الوحيدة في JS اللي [[x === x]] بتاعها false. فمتفحصهاش بـ [[===]].
+- [[Number.isNaN(x)]]: دالة بتسأل «x هي NaN بالظبط؟».
+- [[Object.is(a, b)]]: زي [[===]] بفرقين: بتعتبر NaN زي نفسها، وبتفرّق بين [[0]] و [[-0]]:
+
+~~~text app.js
+console.log(Object.is(0, -0), 0 === -0, isNaN("hello"), Number.isNaN("hello"));
+~~~
+
+~~~text الناتج
+false true true false
+~~~
+
+لاحظ [[isNaN("hello")]] القديمة (من غير [[Number.]]) قالت true: حوّلت [["hello"]] لرقم الأول فبقت NaN. أما [[Number.isNaN]] مبتحوّلش، و [["hello"]] string مش NaN.
+
+---
+
+## ٥. الـ arrays والـ objects: بالـ reference
+
+~~~text Node REPL
+> [] === []
+false
+> const a = []; a === a
+true
+~~~
+
+- كل [[[]]] بتعمل array **جديدة** في مكان جديد في الذاكرة. فالسطر الأول بيقارن اتنين مختلفين، حتى لو شكلهم واحد.
+- [[const a = []; a === a]]: الـ [[;]] بتفصل جملتين في سطر واحد. [[a]] و [[a]] نفس الـ reference فـ true.
+
+ولما [[==]] يقارن array بـ string، بيحوّل الـ array لـ string بـ [[toString()]]:
+
+~~~text app.js
+console.log([1, 2] == "1,2", [] == "", String([1, 2]));
+~~~
+
+~~~text الناتج
+true true 1,2
+~~~
+
+---
+
+## الخلاصة
+
+| المقارنة | [[===]] | [[==]] |
+|---|---|---|
+| [[1]] و [["1"]] | false | true (تحويل) |
+| [[0]] و [[""]] | false | true |
+| [[null]] و [[undefined]] | false | true (قاعدة خاصة) |
+| [[null]] و [[0]] | false | false |
+| [[NaN]] و [[NaN]] | false | false |
+| [[[]]] و [[[]]] | false | false (reference) |
+
+استخدم [[===]] و [[!==]] دايمًا، و [[== null]] بس لو قاصد null أو undefined. ولـ NaN استخدم [[Number.isNaN]].`,
           lines: [
             "=== مبيحوّلش: number و string مش زي بعض.",
             "== حوّل الـ string لرقم وبعدين قارن.",
@@ -212,6 +592,152 @@ const isLoggedIn = !!"token";    // true`,
             when: R`[[??]] للقيم الافتراضية لما 0 أو "" قيم صحيحة (أرقام صفحات، أسعار، إعدادات). [[||]] لما أي falsy معناها «مفيش» فعلًا. وفحص الـ array بـ [[.length]] مش بالـ array نفسها.`,
             mistakes: R`[[if (arr)]] عشان تعرف الـ array فيها حاجة: دايمًا true. و [[price || 100]] والسعر ممكن يبقى 0. وفي React [[{items.length && <List />}]] بيعرض 0 على الشاشة لما الليستة فاضية: اكتب [[items.length > 0 &&]]. وفي الانترفيو: «عدّد القيم الـ falsy».`
           },
+          teach: R`## الفكرة
+
+[[if]] محتاج true أو false. لو اديته قيمة تانية (رقم، نص، array)، JS بيحوّلها لـ boolean الأول. القيم اللي بتتحوّل false اسمها **falsy**، والباقي **truthy**. المثال بيعرض الاتنين، وبعدين بيوريك أثرهم على [[||]] و [[??]]. اتشغّل كملف في Node 24.
+
+---
+
+## ١. أول سطرين: لف على قيم واطبع تحويلها
+
+~~~text truthy.js
+const values = [0, "", null, undefined, NaN, "0", " ", [], {}];
+for (const v of values) console.log(v, Boolean(v));
+~~~
+
+- [[const values = [...]]]: array فيها ٩ قيم مختارة: أول ٥ falsy، وآخر ٤ شكلهم «فاضي» بس truthy.
+- [[for (const v of values)]]: لف على عناصر الـ array، وكل لفة [[v]] بيبقى عنصر (درس «for...of»).
+- [[Boolean(v)]]: دالة بتحوّل أي قيمة لـ true أو false بنفس القاعدة اللي [[if]] بيستخدمها.
+
+~~~text الناتج
+0 false
+ false
+null false
+undefined false
+NaN false
+0 true
+  true
+[] true
+{} true
+~~~
+
+اقرا الناتج بالراحة:
+
+- السطر التاني باين فاضي: ده الـ string الفاضي [[""]]، [[console.log]] مبيحطش حوالين الـ strings علامات تنصيص.
+- السطر السادس [[0 true]]: ده الـ string [["0"]] مش الرقم 0. نص فيه حرف، فـ truthy.
+- السطر السابع: string فيه مسافة [[" "]]. فيه حرف (المسافة)، فـ truthy.
+- [[[]]] و [[{}]] truthy: أي object أو array حتى لو فاضي.
+
+القايمة الكاملة للـ falsy ٨ بس: [[false]] و [[0]] و [[-0]] و [[0n]] و [[""]] و [[null]] و [[undefined]] و [[NaN]].
+
+---
+
+## ٢. [[||]]: هات أول قيمة truthy
+
+~~~text truthy.js
+const input = "";
+const saved = 0;
+console.log(input || "Guest");   // "Guest"
+console.log(saved || 10);        // 10: الـ 0 ضاع
+~~~
+
+[[a || b]] بتشتغل كده: لو [[a]] truthy رجّعها هي، وإلا رجّع [[b]]. ومش بترجّع true أو false، بترجّع القيمة نفسها.
+
+~~~text الناتج
+Guest
+10
+~~~
+
+- [[""]] falsy، فاتاخد [["Guest"]]. ده اللي احنا عايزينه: اسم فاضي يبقى ضيف.
+- [[0]] falsy برضه، فاتاخد [[10]]. بس هنا الـ 0 كان قيمة صحيحة متخزنة (صفحة رقم 0، أو سعر 0)، و [[||]] رمتها.
+
+---
+
+## ٣. [[??]]: هات البديل لو null أو undefined بس
+
+~~~text truthy.js
+console.log(saved ?? 10);        // 0
+~~~
+
+~~~text الناتج
+0
+~~~
+
+[[??]] اسمها nullish coalescing. «nullish» يعني null أو undefined. بتبص على الاتنين دول بس، فالـ 0 عدّى زي ما هو. اتجرّب كمان:
+
+~~~text app.js
+console.log("" ?? "d", null ?? "d", undefined ?? "d");
+~~~
+
+~~~text الناتج
+ d d
+~~~
+
+أول قيمة [[""]] فضلت (اتطبعت فاضية)، والاتنين التانيين خدوا [["d"]].
+
+وفيه أخت ليها بتعيّن: [[x ??= 20]] يعني «لو x فاضية (null أو undefined) حط فيها 20»:
+
+~~~text app.js
+let opts = {};
+opts.limit ??= 20;
+opts.limit ??= 50;
+console.log(opts);
+~~~
+
+~~~text الناتج
+{ limit: 20 }
+~~~
+
+التانية متنفذتش لأن [[limit]] بقت 20 خلاص.
+
+---
+
+## ٤. فحص الـ array
+
+~~~text truthy.js
+const items = [];
+if (items) console.log("[] truthy دايمًا");
+if (items.length) console.log("فيه عناصر");
+~~~
+
+~~~text الناتج
+[] truthy دايمًا
+~~~
+
+- [[if (items)]] دخلت رغم إن الـ array فاضية: أي array truthy.
+- [[items.length]] بـ 0، والـ 0 falsy، فالـ if التانية مدخلتش. ده الفحص الصح.
+
+---
+
+## ٥. [[!!]]: حوّل لـ boolean
+
+~~~text truthy.js
+const isLoggedIn = !!"token";    // true
+~~~
+
+- [[!]] بتقلب: [[!"token"]] بـ false (لأن النص truthy).
+- [[!]] التانية بتقلب تاني: true. فـ [[!!x]] نفس [[Boolean(x)]] بس أقصر.
+
+~~~text app.js
+console.log(!"token", !!"token", !!"");
+~~~
+
+~~~text الناتج
+false true false
+~~~
+
+---
+
+## الخلاصة
+
+| التعبير | بيرجّع البديل لما الأولى... | [[0 ?? 10]] / [[0 || 10]] |
+|---|---|---|
+| [[a || b]] | falsy (أي واحدة من التمانية) | 10 |
+| [[a ?? b]] | null أو undefined بس | 0 |
+
+- الـ falsy ٨ بس، وأي حاجة تانية truthy حتى [["0"]] و [[[]]] و [[{}]].
+- لو 0 أو [[""]] قيمة صحيحة عندك، يبقى [[??]] مش [[||]].
+- التمرين اللي تحت بيختبر الفرق ده بالظبط على دالة [[pageSize]]: جرّب الاتنين وشوف أنهي اختبار بيقع.`,
           lines: [
             "array فيها قيم falsy وقيم بتخدع.",
             R`اطبع كل قيمة وتحويلها لـ boolean: الـ 5 الأولى false، والباقي true.`,
@@ -277,6 +803,156 @@ new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(19
             when: R`[[Number()]] للـ inputs والـ query params، مع فحص [[Number.isNaN]]. قروش كـ integers لأي فلوس، أو decimal library لو الحسابات معقدة. و [[Intl.NumberFormat]] للعرض بدل ما تركّب "ج.م" بإيدك.`,
             mistakes: R`[[toFixed]] بترجّع string، فلو جمعتها بعد كده هتلزق نصوص. و [[parseInt]] من غير radix. و [[Number("")]] بـ 0 فتفتكر اليوزر كتب صفر. وفي الانترفيو: «ليه 0.1 + 0.2 !== 0.3 وإزاي تقارنهم؟»، و [[[1, 10, 2].map(parseInt)]].`
           },
+          teach: R`## الفكرة
+
+المثال ٤ مجموعات: الكسور اللي مبتطلعش مظبوطة، وتحويل نص لرقم، وأكبر عدد صحيح مضمون، والفلوس. كل سطر اتشغّل في Node 24 REPL، والناتج زي التعليقات بالظبط.
+
+---
+
+## ١. ليه [[0.1 + 0.2]] مش 0.3؟
+
+~~~text Node REPL
+> 0.1 + 0.2
+0.30000000000000004
+~~~
+
+الكمبيوتر بيخزّن الأرقام بالـ binary (صفر وواحد). وزي ما [[1/3]] في العشري بتبقى 0.3333 لا نهائي، الـ 0.1 في الـ binary كسر لا نهائي، فبيتخزن **أقرب رقم ليها**. شوف الـ 0.1 الحقيقية المتخزنة بـ ٢٠ رقم عشري:
+
+~~~text app.js
+console.log((0.1).toFixed(20));
+~~~
+
+~~~text الناتج
+0.10000000000000000555
+~~~
+
+الفرق الصغير ده بيتجمّع، فالمجموع بيطلع أكبر من 0.3 بحتة صغيرة جدًا. الطريقة دي اسمها IEEE 754 (المعيار اللي أغلب اللغات ماشية عليه، مش JS بس).
+
+### الحل الأول: قرّب للعرض
+
+~~~text Node REPL
+> (0.1 + 0.2).toFixed(2)
+'0.30'
+~~~
+
+[[toFixed(2)]] بتقرّب لرقمين بعد العلامة. لاحظ الـ [[' ']]: الناتج **string** مش رقم. للعرض بس.
+
+### الحل التاني: قارن بفرق صغير
+
+~~~text Node REPL
+> Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON
+true
+~~~
+
+من جوه لبرة:
+
+1. [[0.1 + 0.2 - 0.3]]: الفرق بين اللي طلع واللي عايزه.
+2. [[Math.abs(...)]]: القيمة المطلقة (يشيل السالب لو موجود).
+3. [[Number.EPSILON]]: أصغر فرق بين 1 والرقم اللي بعده في الـ number، حوالي [[2.2e-16]].
+4. [[<]]: لو الفرق أصغر منه، اعتبرهم زي بعض.
+
+~~~text app.js
+console.log(Math.abs(0.1 + 0.2 - 0.3), Number.EPSILON);
+~~~
+
+~~~text الناتج
+5.551115123125783e-17 2.220446049250313e-16
+~~~
+
+[[e-17]] معناها «في ١٠ أس سالب ١٧»، يعني رقم صغير جدًا، وهو أصغر من الـ EPSILON فالمقارنة true.
+
+---
+
+## ٢. تحويل نص لرقم
+
+~~~text Node REPL
+> Number("42px")
+NaN
+> parseInt("42px", 10)
+42
+> Number("")
+0
+~~~
+
+- [[Number(x)]] صارمة: النص كله لازم يبقى رقم (مسموح مسافات في الأطراف بس). [["42px"]] فيه حروف، فـ NaN.
+- [[parseInt(text, 10)]]: بتقرا من الشمال لحد أول حرف مش رقم وتقف، فطلعت 42. والـ [[10]] هي الـ **radix** (الأساس): «اقرا الرقم ده بالعشري». من غيرها [[parseInt("0x1F")]] بتتقري hex.
+- [[Number("")]] بـ 0 مش NaN: ده الفخ. input فاضي هيبان كإن اليوزر كتب صفر.
+
+اتجرّب كمان:
+
+~~~text app.js
+console.log(parseInt("px42", 10), parseInt("42.9px", 10), parseFloat("3.5kg"), parseInt("0x1F"), parseInt("101", 2));
+~~~
+
+~~~text الناتج
+NaN 42 3.5 31 5
+~~~
+
+[[parseInt]] لو أول حرف مش رقم بترجّع NaN، وبتقطع الكسر. [[parseFloat]] بتاخد الكسر. و [[parseInt("101", 2)]] قرت 101 كـ binary فطلعت 5.
+
+---
+
+## ٣. أكبر عدد صحيح مضمون
+
+~~~text Node REPL
+> Number.MAX_SAFE_INTEGER
+9007199254740991
+> 2 ** 53 + 1
+9007199254740992
+> 2n ** 53n + 1n
+9007199254740993n
+~~~
+
+- [[**]] معناها «أس»: [[2 ** 53]] يعني ٢ أس ٥٣.
+- [[MAX_SAFE_INTEGER]] = ٢ أس ٥٣ ناقص ١. لحد هنا كل عدد صحيح متخزن مظبوط.
+- [[2 ** 53 + 1]] المفروض ...993 بس طلعت ...992: الـ number ملوش مكان للرقم ده، فقرّبه.
+- بالـ bigint (الـ [[n]] بعد كل رقم) الحساب مظبوط. ومينفعش تخلط النوعين:
+
+~~~text الناتج من تجربة 1n + 1 (Node 24)
+TypeError: Cannot mix BigInt and other types, use explicit conversions
+~~~
+
+---
+
+## ٤. الفلوس
+
+~~~text Node REPL
+> Math.round(19.99 * 100)
+1999
+~~~
+
+[[19.99 * 100]] لوحدها بتطلع [[1998.9999999999998]] (نفس مشكلة الـ binary). [[Math.round]] بتقرّب لأقرب عدد صحيح فتبقى 1999 قرش، وتخزّنها كده: الأعداد الصحيحة مفيهاش مشكلة الكسور.
+
+وللعرض:
+
+~~~text Node REPL
+> new Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" }).format(1999 / 100)
+'‏١٩٫٩٩ ج.م.‏'
+~~~
+
+من جوه لبرة:
+
+| الحتة | معناها |
+|---|---|
+| [[Intl]] | اختصار Internationalization: أدوات التنسيق حسب اللغة والبلد، جاهزة في JS |
+| [[new Intl.NumberFormat(...)]] | اعمل «منسّق أرقام» |
+| [["ar-EG"]] | اللغة عربي (ar) والبلد مصر (EG): أرقام هندي [[١٩٫٩٩]] وفاصلة عشرية مصري |
+| [[{ style: "currency", currency: "EGP" }]] | اعرضه فلوس، والعملة الجنيه المصري (EGP) |
+| [[.format(1999 / 100)]] | نسّق 19.99 |
+
+الناتج فيه علامات اتجاه مخفية (RLM) في الأول والآخر عشان النص يتعرض يمين لشمال صح. نفس الناتج بالظبط طلع في Chrome 154. ولو غيّرت [["ar-EG"]] لـ [["en-US"]] هيطلع [[EGP 19.99]].
+
+---
+
+## الخلاصة
+
+| المشكلة | الحل |
+|---|---|
+| [[0.1 + 0.2]] مش 0.3 | قرّب للعرض بـ [[toFixed]]، وقارن بـ [[Number.EPSILON]] |
+| نص لرقم | [[Number(x)]] + افحص [[Number.isNaN]]، و [[parseInt(x, 10)]] لو فيه وحدة زي px |
+| [[Number("")]] بـ 0 | افحص إن النص مش فاضي الأول |
+| أعداد أكبر من [[MAX_SAFE_INTEGER]] | [[bigint]] أو خليها string |
+| فلوس | خزّن قروش integer، واعرض بـ [[Intl.NumberFormat]] |`,
           lines: [
             "0.1 و 0.2 مالهمش تمثيل دقيق في binary، فالمجموع فيه فرق صغير.",
             R`[[toFixed]] بتقرّب للعرض، بس بترجّع string.`,
@@ -299,610 +975,6 @@ console.log(sum);                         // 0.9999999999999999
 console.log(19.99 * 100);                 // 1998.9999999999998
 console.log([1, 10, 2].map(parseInt));    // [1, NaN, NaN]
 console.log(["1", "10", "2"].map(Number)); // [1, 10, 2]`
-        }
-      ]
-    },
-    {
-      t: "المتغيرات والنصوص",
-      l: 1,
-      n: "const و let بدل var، والـ template literals، ودوال الـ strings اللي هتستخدمها كل يوم",
-      items: [
-        {
-          cmd: "let و const و var",
-          title: "تعرّف متغير بـ let ولا const ولا var؟",
-          desc: R`[[const]] لمتغير مش هيتعيّن تاني، و [[let]] لمتغير هيتغير (عداد مثلًا). و [[var]] الطريقة القديمة، ومتستخدمهاش في كود جديد.
-
-القاعدة العملية: ابدأ بـ [[const]] دايمًا، ولو احتجت تعيد التعيين غيّرها لـ [[let]].
-
-خد بالك: [[const]] بيمنع إعادة التعيين، مش التعديل. [[const user = {}]] وبعدين [[user.name = "Sara"]] مسموح، لأن المتغير لسه شايل نفس الـ object.`,
-          example: R`const PI = 3.14;
-let count = 0;
-count = count + 1;
-const user = { name: "Sara" };
-user.name = "Omar";          // مسموح: عدّلت جوه الـ object
-if (true) {
-  let inside = 1;
-  var leaky = 2;
-}
-console.log(leaky);          // 2: var مبيعرفش الـ block
-console.log(typeof inside);  // "undefined": let جوه الـ block بس
-PI = 3;                      // TypeError: Assignment to constant variable.`,
-          try: R`شغّل الكود في ملف [[vars.js]] بـ [[node vars.js]] واقرا الـ error في الآخر. وبعدين غيّر [[let inside]] لـ [[var inside]] وشوف الفرق في السطر اللي قبل الأخير.`,
-          flag: "script",
-          deep: {
-            why: R`[[var]] ليه مشاكل اتسببت في bugs سنين: مبيحترمش الـ blocks (if و for)، وبيتعرّف قبل سطره بقيمة undefined (hoisting)، وبيتضاف على [[window]] لو في الـ global. [[let]] و [[const]] جم في ES2015 عشان يحلّوا ده. و [[const]] بيقول لأي حد بيقرا الكود «القيمة دي مش هتتبدل»، فبيسهّل الفهم.`,
-            how: R`[[let]] و [[const]] block-scoped: عايشين بين أقرب [[{ }]] بس. [[var]] function-scoped: عايش في الدالة كلها، أو global لو برا أي دالة.
-
-الاتنين بيتعملهم hoisting برضه، بس في حالة مختلفة: الـ var بيتعرّف بقيمة undefined من أول الدالة، والـ let و const بيبقوا في TDZ (temporal dead zone) لحد سطرهم، ولو قريتهم قبله يطلع ReferenceError (درس hoisting في المستوى ٢).
-
-و [[const]] لازم تديله قيمة وقت التعريف، و [[const x;]] لوحدها SyntaxError.
-
-ولو عايز object ميتعدّلش فعلًا فيه [[Object.freeze]] (سطحي: بيجمّد المستوى الأول بس).`,
-            when: R`[[const]] لـ 90% من المتغيرات: الـ imports والدوال والـ objects والـ arrays اللي هتعدّل جواها. [[let]] للعدادات والقيم اللي بتتبني على مراحل. [[var]] لأ.`,
-            mistakes: R`تفتكر إن [[const]] معناه الـ object متجمّد فتستغرب إن التعديل عدّى. وتستخدم [[let]] لكل حاجة «احتياطي». وتعرّف متغير من غير أي كلمة ([[total = 5]]): في sloppy mode بيعمل global من غير ما تحس، وفي strict mode ReferenceError. وفي الانترفيو: «الفرق بين var و let و const؟» قول scope و hoisting و إعادة التعيين.`
-          },
-          lines: [
-            "ثابت: مش هيتعيّن تاني.",
-            "متغير هيتغير.",
-            R`إعادة تعيين، مسموحة مع [[let]].`,
-            R`[[const]] شايل reference لـ object.`,
-            "التعديل جوه الـ object مسموح، لأن المتغير لسه شايل نفس الـ object.",
-            "block جديد.",
-            R`[[let]] عايش جوه الـ block ده بس.`,
-            R`[[var]] بيطلع برا الـ block للدالة (أو الـ global).`,
-            "قفلة الـ block.",
-            R`[[leaky]] موجود برا الـ block.`,
-            R`[[inside]] مش موجود هنا، و [[typeof]] مبيرميش error.`,
-            R`إعادة تعيين [[const]]: TypeError والبرنامج يقف.`
-          ],
-          sol: R`[[node vars.js]] بيطبع [[2]] وبعدين [[undefined]]، وبعدين بيقع عند آخر سطر بـ [[TypeError: Assignment to constant variable.]] ومعاه اسم الملف ورقم السطر والعمود ([[vars.js:12]]). لاحظ إن اللي قبل السطر ده اتنفّذ عادي: دا runtime error مش syntax error.
-
-لما تغيّر [[let inside]] لـ [[var inside]]، السطر اللي قبل الأخير بيطبع [["number"]] بدل [["undefined"]]: الـ var بيطلع من الـ block لأن مجاله الدالة كلها (أو الملف)، مش الـ block. ده سبب إن var مبقتش تستخدم. ولو فاكر إن [[user.name = "Omar"]] المفروض يطلع error برضه: لأ، const بتمنع إعادة التعيين للمتغير، مش التعديل جوه الـ object.`
-        },
-        {
-          cmd: "template literals",
-          title: "تركّب نص فيه متغيرات أو على كذا سطر",
-          desc: R`النص بين backticks بدل علامات التنصيص اسمه template literal. جواه بتحط أي expression بين [[$__{ }]]، وممكن يبقى على كذا سطر من غير [[\n]].
-
-ده بدل [["Hi " + name + "!"]] اللي بيبقى صعب يتقري ويتنسى فيه مسافات.`,
-          example: R`const name = "Sara";
-const total = 1250.5;
-const msg = $__btأهلًا $__{name}، طلبك بـ $__{total.toFixed(2)} جنيه$__bt;
-const status = $__btالحالة: $__{total > 1000 ? "شحن مجاني" : "شحن 50 جنيه"}$__bt;
-const html = $__bt
-  <li class="item">
-    $__{name.toUpperCase()}
-  </li>$__bt;
-console.log(msg);
-console.log(status);`,
-          try: R`اعمل array فيها ٣ منتجات (اسم وسعر)، وركّب منها string فيه [[<ul>]] وجواه [[<li>]] لكل منتج بـ [[map]] و [[join("")]].`,
-          flag: "script",
-          deep: {
-            why: "بتركّب نصوص طول الوقت: رسايل، و URLs، و SQL في الأمثلة، و HTML صغير، و class names. الـ template literal بيخلي النص يتقري زي ما هيطلع بالظبط.",
-            how: R`كل [[$__{ }]] بيتحسب ويتحوّل لـ string (بـ String())، فالـ object هيطلع [["[object Object]"]] والـ array هتطلع عناصرها بفواصل. المسافات والسطور الجديدة جوه الـ backticks بتفضل زي ما هي.
-
-وفيه شكل متقدم اسمه tagged template: [[sql$__btSELECT ... $__{id}$__bt]]، الدالة [[sql]] بتاخد أجزاء النص والقيم لوحدهم، فتقدر تعمل escape للقيم. ده اللي بيستخدمه Prisma في [[$queryRaw]] و styled-components في CSS، و [[String.raw]] (اللي الموقع ده نفسه مكتوب بيه).`,
-            when: R`أي نص فيه متغير. للنص الثابت اكتب [[""]] أو [['']] عادي، وخليك على نوع واحد في المشروع (Prettier بيظبطها).`,
-            mistakes: R`تحط input من اليوزر في HTML بـ template literal وتعمله [[innerHTML]]: دي XSS (درس الـ DOM). وتركّب SQL بـ template literal عادي بقيم من اليوزر: SQL injection، استخدم parameters (تاب SQL و Prisma). وتحط object في [[$__{ }]] وتستغرب [object Object]: استخدم [[JSON.stringify]].`
-          },
-          lines: [
-            "متغير نص.",
-            "متغير رقم.",
-            R`المتغيرات جوه [[$__{ }]]، وأي expression ينفع حتى نداء method.`,
-            R`ternary جوه [[$__{ }]]: أي حاجة بترجّع قيمة.`,
-            "بداية نص على كذا سطر.",
-            "السطور والمسافات بتفضل زي ما هي.",
-            R`expression في النص المتعدد برضه.`,
-            "قفلة النص.",
-            "اطبع الرسالة.",
-            "اطبع الحالة."
-          ],
-          sol: R`الناتج لازم يبقى string واحد من غير فواصل: [[<ul><li>Mug: 120 جنيه</li><li>Shirt: 300 جنيه</li><li>Cap: 90 جنيه</li></ul>]].
-
-الغلطة الأشهر إنك تنسى [[join("")]]: الـ array جوه [[$__{}]] بتتحوّل لـ string بـ [[toString()]] اللي بتحط فواصل، فيطلعلك [[<li>Mug</li>,<li>Shirt</li>,<li>Cap</li>]] والفواصل دي بتظهر على الصفحة. وخلي بالك إن ده ينفع مع داتا انت كاتبها، لكن لو الأسامي جاية من يوزر وهتحطها في [[innerHTML]] يبقى XSS (درس textContent تحت).`,
-          solCode: R`const products = [
-  { name: "Mug", price: 120 },
-  { name: "Shirt", price: 300 },
-  { name: "Cap", price: 90 },
-];
-const html = $__bt<ul>$__{products.map((p) => $__bt<li>$__{p.name}: $__{p.price} جنيه</li>$__bt).join("")}</ul>$__bt;
-console.log(html);`
-        },
-        {
-          cmd: "string methods",
-          title: "أشهر دوال الـ strings اللي هتحتاجها",
-          desc: R`الـ strings immutable، فكل method بترجّع string جديد. أهمهم: [[trim]] و [[toLowerCase]] للتنضيف، و [[includes]] و [[startsWith]] للبحث، و [[split]] للتقطيع، و [[slice]] لجزء، و [[replaceAll]] للاستبدال، و [[padStart]] للتنسيق، و [[at(-1)]] لآخر حرف.
-
-وأي method بترجّع string ينفع تكمّل عليها: [[email.trim().toLowerCase()]].`,
-          example: R`const email = "  Sara@Example.com ";
-const clean = email.trim().toLowerCase();  // "sara@example.com"
-clean.includes("@")                         // true
-clean.startsWith("sara")                    // true
-clean.split("@")                            // ["sara", "example.com"]
-clean.slice(0, 4)                           // "sara"
-clean.slice(-3)                             // "com"
-clean.replaceAll(".", "_")                  // "sara@example_com"
-"7".padStart(3, "0")                        // "007"
-clean.at(-1)                                // "m"
-"a,b,,c".split(",").filter(Boolean)         // ["a", "b", "c"]
-[..."مرحبا"].reverse().join("")             // اقلب نص`,
-          try: R`اكتب دالة [[slugify(title)]] تحوّل [["  Hello World JS  "]] لـ [["hello-world-js"]] بـ trim و toLowerCase و split و join. وبعدين جرّب [[slugify("كورس جافاسكريبت")]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[slugify]] كمان على نص فيه مسافتين ورا بعض.`,
-          flag: "console",
-          deep: {
-            why: "تنضيف inputs (إيميل فيه مسافات أو حروف كبيرة)، وتقطيع URLs، وعمل slugs، وتنسيق أرقام الفواتير: كله string methods. ومعرفتها بتوفّر عليك regex في أغلب الحالات.",
-            how: R`[[slice(start, end)]] بياخد من start لحد قبل end، والأرقام السالبة بتتعد من الآخر. فيه [[substring]] القديمة بس slice أوضح.
-
-[[replace]] بيغيّر أول مرة بس لو بعتله string، و [[replaceAll]] بيغيّر الكل. ومع regex فيه flag [[g]]: [[s.replace(/\s+/g, "-")]].
-
-[[split("")]] بيقطع على UTF-16 code units، فالإيموجي والحروف المركبة بتتكسر. [[[...str]]] أو [[Array.from(str)]] بيقطع على code points وده أسلم. ولمقارنة نصوص بلغات مختلفة استخدم [[localeCompare]].
-
-و [[length]] بتعد code units برضه: [["😀".length]] بـ 2.`,
-            when: "تنضيف أي input قبل ما تحفظه، والبحث البسيط، وتكوين URLs و slugs، وتنسيق العرض.",
-            mistakes: R`تفتكر إن [[email.trim()]] غيّرت [[email]]: لأ، رجّعت واحد جديد، لازم تحطه في متغير. و [[replace]] وانت عايز الكل. وتقلب string بـ [[split("").reverse()]] فالإيموجي تبوظ. وفي الانترفيو: «اقلب string» و «اعرف لو palindrome» (تاب DSA).`
-          },
-          lines: [
-            "إيميل فيه مسافات وحروف كبيرة، زي ما اليوزر كتبه.",
-            "شيل المسافات من الطرفين وصغّر الحروف. الأصل متغيرش.",
-            "فيه @؟",
-            "بيبدأ بـ sara؟",
-            "قطّعه عند @ لـ array.",
-            "أول ٤ حروف: من index 0 لحد قبل index 4.",
-            "آخر ٣ حروف: السالب بيتعد من الآخر.",
-            R`استبدل كل النقط. [[replace]] كانت هتغيّر أول واحدة بس.`,
-            "كمّل بأصفار من الشمال لحد ٣ حروف: مفيدة لأرقام الفواتير.",
-            R`آخر حرف. [[at]] بتقبل سالب عكس [[clean[-1]]].`,
-            R`قطّع وشيل الفاضي: [[filter(Boolean)]] بيشيل الـ falsy.`,
-            R`[[...]] بيقطّع على الحروف الحقيقية، والـ reverse والـ join بيقلبوه.`
-          ],
-          sol: R`[[slugify("  Hello World JS  ")]] بترجّع [["hello-world-js"]]، و [[slugify("كورس جافاسكريبت")]] بترجّع [["كورس-جافاسكريبت"]]: toLowerCase مبتعملش حاجة للعربي، والمسافة بقت شرطة.
-
-لو عملت [[split(" ")]] والنص فيه مسافتين ورا بعض ([["Hello  World"]]) هيطلعلك [["hello--world"]] بشرطتين، لأن split عملت عنصر فاضي بين المسافتين. الحل [[split(/\s+/)]] (أي عدد مسافات) أو [[split(" ").filter(Boolean)]]. ولو نسيت [[trim]] الأول هيطلع شرطة في الأول والآخر.`,
-          solCode: R`const slugify = (title) => title.trim().toLowerCase().split(/\s+/).join("-");
-console.log(slugify("  Hello World JS  ")); // "hello-world-js"
-console.log(slugify("كورس جافاسكريبت"));    // "كورس-جافاسكريبت"
-console.log(slugify("Hello  World"));       // "hello-world"`,
-          check: {
-            lang: "js",
-            starter: R`function slugify(title) {
-  return title.toLowerCase();
-}`,
-            tests: R`test("'  Hello World JS  ' ← 'hello-world-js'", () => expect(slugify("  Hello World JS  ")).toBe("hello-world-js"));
-test("عربي: 'كورس جافاسكريبت' ← 'كورس-جافاسكريبت'", () => expect(slugify("كورس جافاسكريبت")).toBe("كورس-جافاسكريبت"));
-test("مسافتين ورا بعض ← شرطة واحدة: 'Hello  World' ← 'hello-world'", () => expect(slugify("Hello  World")).toBe("hello-world"));
-test("من غير trim هتطلع شرطة في الأول والآخر", () => expect(slugify(" JS ")).toBe("js"));`,
-            solution: R`const slugify = (title) => title.trim().toLowerCase().split(/\s+/).join("-");`
-          }
-        }
-      ]
-    },
-    {
-      t: "الدوال",
-      l: 1,
-      n: "تكتب دالة بأكتر من شكل، وتتعامل مع الباراميترات، وتبعت دوال لدوال",
-      items: [
-        {
-          cmd: "function و arrow",
-          title: "الفرق بين function و arrow function",
-          desc: R`فيه ٣ أشكال: function declaration ([[function add() {}]])، و function expression ([[const add = function () {}]])، و arrow function ([[const add = () => {}]]).
-
-الـ arrow أقصر، ولو الجسم expression واحد بيرجّعه من غير [[return]]. بس فيه فروق حقيقية مش شكل بس: الـ arrow مالهاش [[this]] بتاعتها (بتاخدها من برّه)، ومينفعش تتعمل بـ [[new]]، ومفيهاش [[arguments]].
-
-الاستخدام الشائع دلوقتي: arrow للـ callbacks والدوال الصغيرة، و function declaration للدوال الكبيرة على مستوى الملف.`,
-          example: R`function add(a, b) {
-  return a + b;
-}
-const multiply = function (a, b) {
-  return a * b;
-};
-const square = (x) => x * x;
-const toUser = (name) => ({ name, active: true });
-const logAll = (...items) => {
-  items.forEach((item) => console.log(item));
-};
-add(2, 3);        // 5
-square(4);        // 16
-toUser("Sara");   // { name: "Sara", active: true }`,
-          try: R`حوّل [[add]] لـ arrow في سطر واحد. وبعدين امسح القوسين اللي حوالين الـ object في [[toUser]] وشغّل: هيطلع SyntaxError (Unexpected token ':')، لأن JS فهم الـ [[{]] بداية جسم دالة. ولو سبت جوه [[{ name }]] بس، مش هيطلع error، بس الدالة هترجّع undefined. فكّر ليه.`,
-          flag: "script",
-          deep: {
-            why: "هتشوف الأشكال التلاتة في كل كود، ولازم تعرف تقراهم. والاختيار بينهم مش ذوق بس: فرق الـ this بيكسر كود حقيقي، والـ hoisting بيفرق في ترتيب الكود.",
-            how: R`الدوال في JS قيم (first-class): تتحط في متغير، وتتبعت كـ argument، وترجع من دالة، وليها خصايص ([[add.name]] و [[add.length]]).
-
-الـ function declaration بيتعملها hoisting كاملة، فتقدر تناديها قبل سطرها. الـ expression والـ arrow لأ، لأنهم متغيرات عادية (const) (درس hoisting).
-
-الـ arrow بجسم من غير [[{ }]] بترجّع الـ expression على طول (implicit return). ولو عايز ترجّع object لازم تلفّه في قوسين [[({ })]]، وإلا JS هيفتكر الـ [[{]] بداية جسم الدالة.
-
-وفرق الـ this هو الأهم: الدالة العادية الـ this بتاعتها بتتحدد وقت النداء، والـ arrow بتاخد this من المكان اللي اتكتبت فيه (درس this في المستوى ٢).`,
-            when: R`arrow في الـ callbacks ([[map]] و [[filter]] و [[then]] و event handlers) وأي دالة صغيرة. function declaration للدوال الكبيرة اللي عايز تحطها تحت في الملف. و method عادية (مش arrow) جوه الـ objects والـ classes لما محتاج this.`,
-            mistakes: R`ترجّع object من arrow من غير قوسين فترجع undefined. وتستخدم arrow كـ method في object وتستنى this تبقى الـ object. وتنسى [[return]] في arrow بجسم [[{ }]]: [[arr.map((x) => { x * 2 })]] بترجّع array كلها undefined. وفي الانترفيو: «الفرق بين arrow و regular function؟» قول this و arguments و new و hoisting.`
-          },
-          lines: [
-            "function declaration: ليها اسم وبتتعملها hoisting.",
-            R`[[return]] لازم في الجسم العادي.`,
-            "قفلة.",
-            "function expression: دالة من غير اسم متحطة في متغير.",
-            "الجسم زي العادي.",
-            R`قفلة، و [[;]] لأنه تعيين متغير.`,
-            R`arrow بـ expression واحد: بترجّعه من غير [[return]].`,
-            R`عشان ترجّع object لفّه في قوسين، وإلا [[{]] هتتفهم جسم دالة.`,
-            R`arrow بجسم كامل: هنا لو عايز ترجّع لازم [[return]]. و [[...items]] بيلم كل الـ arguments.`,
-            "لف على العناصر.",
-            "قفلة.",
-            "نداء عادي.",
-            "نفس الشكل مع الـ arrow.",
-            "رجّعت object جديد."
-          ],
-          sol: R`[[const add = (a, b) => a + b;]] وبترجّع 5 لـ [[add(2, 3)]]: من غير أقواس معقوفة الـ arrow بترجّع قيمة التعبير لوحدها من غير [[return]].
-
-من غير القوسين حوالين الـ object، JS بيشوف [[{]] بداية جسم دالة، فـ [[name, active: true]] جوه جسم دالة مالهاش معنى، والـ [[:]] هي اللي بتطلع SyntaxError (Unexpected token ':'). ولو سبت [[{ name }]] بس فده جسم دالة فيه سطر واحد هو التعبير [[name]]، ومفيش [[return]]، فالدالة بترجّع undefined من غير أي error. ده أخطر من الـ SyntaxError لأنه بيعدّي بهدوء. الحل: [[(name) => ({ name, active: true })]].`
-        },
-        {
-          cmd: "default و rest و spread",
-          title: "باراميتر ليه قيمة افتراضية، ودالة بتاخد أي عدد",
-          desc: R`[[function greet(name = "Guest")]] بتدي الباراميتر قيمة لو اتبعت [[undefined]] أو متبعتش خالص. و [[...nums]] (rest) بيلم أي عدد arguments في array. و [[...arr]] وقت النداء (spread) بيفرد الـ array arguments.
-
-ولما الدالة بتاخد إعدادات كتير، الأحسن تاخد object واحد وتفكّه (destructuring) بقيم افتراضية: [[function createUser({ name, role = "user" } = {})]]. كده الترتيب ميفرقش والنداء بيتقري لوحده.`,
-          example: R`function greet(name = "Guest", greeting = "Hi") {
-  return $__bt$__{greeting}, $__{name}$__bt;
-}
-greet();                   // "Hi, Guest"
-greet(undefined, "Hey");   // "Hey, Guest"
-greet(null);               // "Hi, null": الـ default للـ undefined بس
-function sum(...nums) {
-  return nums.reduce((a, b) => a + b, 0);
-}
-sum(1, 2, 3);              // 6
-const scores = [90, 75, 88];
-Math.max(...scores);       // 90
-function createUser({ name, role = "user", active = true } = {}) {
-  return { name, role, active };
-}
-createUser({ name: "Sara", active: false });`,
-          try: R`نادي [[createUser()]] من غير أي حاجة، وبعدين امسح [[= {}]] من الباراميتر ونادي تاني واقرا الـ error. وبعدين جرّب [[Math.max(...[])]] وشوف بترجّع إيه.`,
-          flag: "script",
-          deep: {
-            why: "دوال بباراميترات اختيارية في كل حتة: pagination (صفحة وحجم)، و fetch helpers، و formatters. من غير defaults هتكتب [[if (x === undefined) x = ...]] في أول كل دالة.",
-            how: R`الـ default بيتحسب وقت النداء مش وقت التعريف، فـ [[function f(list = [])]] بتعمل array جديدة كل مرة (عكس Python). وممكن يعتمد على باراميتر قبله: [[function f(a, b = a * 2)]].
-
-الـ default بيشتغل مع [[undefined]] بس، فـ null و 0 و "" بيعدّوا زي ما هم.
-
-[[...rest]] لازم يبقى آخر باراميتر، وهو array حقيقية (عكس [[arguments]] القديمة اللي array-like ومش موجودة في الـ arrow).
-
-الـ object parameter مع destructuring هو أنضف API: [[createUser({ name: "Sara", active: false })]] بتتقري لوحدها، عكس [[createUser("Sara", undefined, false)]]. و [[= {}]] في الآخر عشان لو اتنادت من غير arguments، التفكيك ميقعش على undefined.`,
-            when: R`default لأي باراميتر اختياري. rest لدوال زي [[sum]] و [[log]]. و object parameter لما الباراميترات أكتر من ٢ أو ٣، أو فيه أكتر من boolean.`,
-            mistakes: R`تبعت [[null]] وتستنى الـ default يشتغل. وتنسى [[= {}]] فالنداء الفاضي يرمي «Cannot destructure property». و [[Math.max(...hugeArray)]] بمئات الآلاف من العناصر ممكن يعدّي حد الـ arguments ويرمي RangeError: استخدم reduce. وباراميترات boolean ورا بعض ([[fn(true, false, true)]]) محدش فاهم معناها.`
-          },
-          lines: [
-            "باراميترين ليهم قيم افتراضية.",
-            "template literal بيركّبهم.",
-            "قفلة.",
-            "مفيش arguments: الاتنين خدوا الـ default.",
-            R`[[undefined]] صريحة بتشغّل الـ default برضه، فتقدر تسيب الأول وتبعت التاني.`,
-            R`[[null]] قيمة، فالـ default مبيشتغلش.`,
-            R`[[...nums]] بيلم أي عدد arguments في array.`,
-            "اجمعهم.",
-            "قفلة.",
-            R`[[nums]] بقت [[[1, 2, 3]]].`,
-            "array عادية.",
-            R`spread: فرد الـ array لـ arguments، زي [[Math.max(90, 75, 88)]].`,
-            R`object parameter متفكك، بقيم افتراضية، و [[= {}]] لو متبعتش حاجة.`,
-            "رجّع object بالـ shorthand.",
-            "قفلة.",
-            R`نداء بيتقري لوحده: [[role]] خدت "user".`
-          ],
-          sol: R`[[createUser()]] بترجّع [[{ name: undefined, role: "user", active: true }]]: الـ [[= {}]] خلّت الباراميتر object فاضي بدل undefined، والـ defaults اشتغلت.
-
-من غير [[= {}]] بيطلع [[TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.]] لأنك بتحاول تفك undefined. عشان كده أي دالة بتاخد options object خليها دايمًا [[= {}]].
-
-[[Math.max(...[])]] بترجّع [[-Infinity]] مش 0 ومش error: دي «القيمة المحايدة» للـ max (أي رقم أكبر منها). ولو عندك array ممكن تبقى فاضية افحص الطول الأول، وإلا هتعرض [[-Infinity]] لليوزر.`
-        },
-        {
-          cmd: "higher-order functions",
-          title: "دالة بتاخد دالة، أو بترجّع دالة",
-          desc: R`الدالة اللي بتاخد دالة كـ argument أو بترجّع دالة اسمها higher-order function. والدالة اللي بتتبعت اسمها callback.
-
-انت بتستخدمهم طول الوقت: [[map]] و [[filter]] و [[addEventListener]] و [[setTimeout]] كلهم بياخدوا callback. وتقدر تكتب بتوعك: دالة بترجّع دالة «متظبطة» بإعدادات معينة، زي [[multiplier(2)]] اللي بترجّع دالة بتضرب في 2.`,
-          example: R`function repeat(times, action) {
-  for (let i = 0; i < times; i++) action(i);
-}
-repeat(3, (i) => console.log("مرة", i));
-function multiplier(factor) {
-  return (x) => x * factor;
-}
-const double = multiplier(2);
-const triple = multiplier(3);
-double(5);                 // 10
-triple(5);                 // 15
-[1, 2, 3].map(double);     // [2, 4, 6]
-const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
-pipe(double, triple)(1);   // 6`,
-          try: R`اكتب [[withLog(fn)]] بترجّع دالة جديدة، بتطبع الـ arguments قبل ما تنادي fn وبتطبع الناتج بعدها. جرّبها على [[add]].`,
-          flag: "script",
-          deep: {
-            why: "بتخليك تفصل «إيه اللي بيتعمل» عن «امتى وإزاي»: [[repeat]] بتعرف تكرر، والـ callback بيقرر يعمل إيه. ودي أساس React (الـ handlers والـ hooks)، و middleware في Express، و debounce و memoize في المستوى ٣.",
-            how: R`عشان الدوال قيم، تقدر تحطها في متغير أو تبعتها أو ترجّعها زي أي رقم.
-
-لما [[multiplier(2)]] بترجّع الدالة الداخلية، الدالة دي لسه فاكرة [[factor]] حتى بعد ما multiplier خلصت. ده اسمه closure، وهو درس كامل في المستوى ٢.
-
-[[pipe]] بتركّب دوال ورا بعض: ناتج الأولى داخل التانية. و [[map(double)]] بتبعت الدالة نفسها من غير ما تناديها: لاحظ مفيش [[()]]. لو كتبت [[map(double())]] هتنادي double دلوقتي وتبعت ناتجها.`,
-            when: "لما عندك منطق بيتكرر والجزء اللي بيتغير سلوك مش قيمة: retry و logging و caching و validation. وفي React: custom hooks و HOCs.",
-            mistakes: R`تبعت [[fn()]] بدل [[fn]] كـ callback: [[button.addEventListener("click", save())]] بتنادي save فورًا وتبعت ناتجها. وتبعت دالة بتاخد باراميترات أكتر من اللي بيتبعتلها، زي [[["1","2"].map(parseInt)]] اللي بتبعت index كـ radix.`
-          },
-          lines: [
-            R`دالة بتاخد عدد مرات ودالة [[action]].`,
-            R`بتنادي [[action]] كل مرة وتبعتلها رقم المرة.`,
-            "قفلة.",
-            "الـ callback بيقرر هيعمل إيه كل مرة.",
-            "دالة بترجّع دالة.",
-            R`الدالة الراجعة فاكرة [[factor]] (closure).`,
-            "قفلة.",
-            "دالة جديدة بتضرب في 2.",
-            "ودالة تانية بتضرب في 3.",
-            "10.",
-            "15.",
-            R`بعت [[double]] نفسها لـ map، من غير [[()]].`,
-            "دالة بتركّب دوال: ناتج كل واحدة يدخل اللي بعدها.",
-            "1 × 2 × 3 = 6."
-          ],
-          sol: R`[[withLog(add)(2, 3)]] المفروض تطبع [[args: [2, 3]]] وبعدها [[result: 5]] وترجّع 5. الفكرة إن withLog بتاخد دالة وبترجّع دالة: rest [[...args]] بتلم أي عدد arguments، و [[fn.apply(this, args)]] بتبعتهم زي ما هما.
-
-الغلطة الشائعة إنك تنسى [[return r]] في الآخر: الـ log هيظهر صح، بس الدالة الجديدة هترجّع undefined وأي كود بيستخدم الناتج هيبوظ. والغلطة التانية إنك تنادي [[fn()]] وانت بتعرّف withLog (بدل ما ترجّع دالة) فتتنفّذ مرة واحدة بدري.`,
-          solCode: R`function withLog(fn) {
-  return function (...args) {
-    console.log("args:", args);
-    const result = fn.apply(this, args);
-    console.log("result:", result);
-    return result;
-  };
-}
-const add = (a, b) => a + b;
-const loggedAdd = withLog(add);
-loggedAdd(2, 3); // args: [ 2, 3 ] ثم result: 5`
-        }
-      ]
-    },
-    {
-      t: "المصفوفات",
-      l: 1,
-      n: "map و filter و reduce بدل اللوبات، و find و some، ومين بيعدّل الـ array ومين بيرجّع واحدة جديدة",
-      items: [
-        {
-          cmd: "map و filter و reduce",
-          title: "تحوّل وتفلتر وتجمع array من غير for",
-          desc: R`[[map]] بتحوّل كل عنصر وترجّع array جديدة بنفس الطول. [[filter]] بترجّع العناصر اللي الشرط بتاعها true بس. [[reduce]] بتجمع الـ array كلها في قيمة واحدة (مجموع، أو object، أو أي حاجة).
-
-التلاتة مبيعدّلوش الـ array الأصلية، وتقدر توصّلهم ورا بعض. ودول أكتر ٣ دوال هتكتبهم في React: [[items.map((item) => <Row key={item.id} />)]].
-
-و [[Object.groupBy]] (ES2024) بتقسّم array لمجموعات حسب مفتاح، بدل ما تكتب reduce بإيدك.`,
-          example: R`const orders = [
-  { id: 1, total: 250, status: "paid" },
-  { id: 2, total: 900, status: "pending" },
-  { id: 3, total: 400, status: "paid" },
-];
-const paid = orders.filter((o) => o.status === "paid");
-const totals = paid.map((o) => o.total);
-const revenue = totals.reduce((sum, t) => sum + t, 0);
-console.log(revenue); // 650
-const revenue2 = orders
-  .filter((o) => o.status === "paid")
-  .reduce((sum, o) => sum + o.total, 0);
-const byStatus = Object.groupBy(orders, (o) => o.status);`,
-          try: R`من نفس الـ orders اطلع: عدد الطلبات الـ pending، وأكبر total، و object شكله [[{ 1: 250, 2: 900, 3: 400 }]] بـ reduce. وبعدين اطبع [[byStatus]] وشوف شكله.`,
-          flag: "script",
-          deep: {
-            why: "أغلب الشغل على الداتا: فلتر المنتجات المتاحة، واعرض أسماء المستخدمين، واحسب إجمالي السلة. بالـ for هتكتب متغيرات مؤقتة و push و if، وبالدوال دي الكود بيقول «عايز إيه» مش «اعمله إزاي».",
-            how: R`الـ callback بياخد ٣ حاجات: العنصر، والـ index، والـ array نفسها. و [[reduce]] بياخد callback بـ (المجمّع، العنصر) وقيمة أولية.
-
-[[reduce]] من غير قيمة أولية بيستخدم أول عنصر كبداية، ولو الـ array فاضية بيرمي TypeError. عشان كده دايمًا ابعت القيمة الأولية.
-
-الدوال دي بتعمل array جديدة كل مرة، فـ [[filter]] ثم [[map]] بيلفّوا مرتين. ده مش مشكلة في ٩٩٪ من الحالات (آلاف العناصر بتخلص في أقل من ملي ثانية). لو الـ array ضخمة جدًا، reduce واحدة أو for loop عادي.
-
-[[forEach]] بتلف بس ومبترجّعش حاجة، ومينفعش توقفها بـ break. لو محتاج توقف، [[for...of]] أو [[some]] / [[find]].`,
-            when: R`[[map]] لما عايز نفس العدد بشكل تاني. [[filter]] لما عايز جزء. [[reduce]] لما عايز قيمة واحدة (مجموع، object بالـ id، تجميع). ولو reduce بقت معقدة ومش مفهومة، for loop عادي أوضح.`,
-            mistakes: R`تستخدم [[map]] عشان تلف بس ومتستخدمش الناتج: استخدم forEach أو for...of. وتنسى الـ return في callback بجسم [[{ }]]. وتنسى القيمة الأولية في reduce. وتعدّل العنصر جوه map ([[o.total *= 2]]): كده عدّلت الأصل لأن العناصر objects. وفي الانترفيو: «اكتب map بإيدك» (المستوى ٣).`
-          },
-          lines: [
-            "array فيها objects: شكل الداتا اللي بتيجي من API.",
-            "طلب مدفوع.",
-            "طلب مستني.",
-            "طلب مدفوع.",
-            "قفلة. الفاصلة بعد آخر عنصر مسموحة.",
-            "خد المدفوع بس: array فيها ٢.",
-            "حوّل كل طلب لرقم الـ total بتاعه.",
-            R`اجمعهم. [[sum]] بيبدأ من 0 وكل مرة بيزيد t.`,
-            "650.",
-            "نفس الحساب بسلسلة واحدة.",
-            "فلتر.",
-            "واجمع على طول من غير map.",
-            R`object فيه [[paid]] و [[pending]]، وكل واحد array طلباته.`
-          ],
-          sol: R`عدد الـ pending [[1]]، وأكبر total [[900]]، والـ object [[{ 1: 250, 2: 900, 3: 400 }]] (Node بيطبع المفاتيح بين quotes لأنها strings). و [[byStatus]] بيطبع [[[Object: null prototype] { paid: [ ...اتنين... ], pending: [ ...واحد... ] }]]: [[Object.groupBy]] بيرجّع object من غير prototype عشان مفتاح زي [["constructor"]] ميضربش.
-
-أشهر غلطة في الـ reduce إنك تنسى [[return acc]] جوه الـ callback، فتاني لفة الـ acc بيبقى undefined وتطلعلك [[TypeError: Cannot set properties of undefined]]. والتانية إنك تنسى القيمة الأولية [[{}]]، فأول acc يبقى أول order نفسه.`,
-          solCode: R`const orders = [
-  { id: 1, total: 250, status: "paid" },
-  { id: 2, total: 900, status: "pending" },
-  { id: 3, total: 400, status: "paid" },
-];
-const pendingCount = orders.filter((o) => o.status === "pending").length; // 1
-const maxTotal = Math.max(...orders.map((o) => o.total));                 // 900
-const totalsById = orders.reduce((acc, o) => {
-  acc[o.id] = o.total;
-  return acc;
-}, {});                                                                    // { 1: 250, 2: 900, 3: 400 }
-console.log(pendingCount, maxTotal, totalsById);
-console.log(Object.groupBy(orders, (o) => o.status));`
-        },
-        {
-          cmd: "find و some و includes",
-          title: "تدوّر على عنصر، أو تسأل «فيه واحد؟»",
-          desc: R`[[find]] بترجّع أول عنصر الشرط بتاعه true (أو undefined)، و [[findIndex]] مكانه (أو -1). و [[some]] بترجّع true لو عنصر واحد على الأقل حقق الشرط، و [[every]] لو كلهم. و [[includes]] بتسأل «القيمة دي موجودة؟».
-
-والفرق عن [[filter]]: التلاتة دول بيقفوا أول ما يلاقوا الإجابة، فأسرع لما تكون محتاج عنصر واحد أو نعم/لا.`,
-          example: R`const users = [
-  { id: 1, name: "Sara", admin: true },
-  { id: 2, name: "Omar", admin: false },
-  { id: 3, name: "Ali", admin: false },
-];
-users.find((u) => u.id === 2);       // { id: 2, name: "Omar", ... }
-users.find((u) => u.id === 9);       // undefined
-users.findIndex((u) => u.id === 2);  // 1
-users.findLast((u) => !u.admin);     // { id: 3, name: "Ali", ... }
-users.some((u) => u.admin);          // true: واحد على الأقل
-users.every((u) => u.admin);         // false: مش كلهم
-["js", "ts"].includes("ts");         // true
-[NaN].includes(NaN);                 // true
-[NaN].indexOf(NaN);                  // -1`,
-          try: R`اكتب [[const user = users.find(...)]] على id مش موجود، وبعدين [[user.name]] واقرا الـ error. صلّحه بـ [[user?.name]]. وبعدين جرّب [[users.includes({ id: 1, name: "Sara", admin: true })]] وفكّر ليه false.`,
-          flag: "script",
-          deep: {
-            why: "«هات المنتج ده من السلة»، «فيه منتج خلص؟»، «اليوزر ده admin؟»: أسئلة بتتسأل في كل شاشة. واستخدام filter وأخد [0] بيلف على الـ array كلها من غير لزمة.",
-            how: R`[[find]] و [[some]] و [[every]] و [[findIndex]] بيوقفوا أول ما الإجابة تبان (short-circuit). [[every]] على array فاضية بترجّع true، و [[some]] على فاضية false (منطقيًا: مفيش عنصر كسر الشرط).
-
-[[includes]] بتقارن بـ SameValueZero، زي === بس بتلاقي NaN. و [[indexOf]] بتقارن بـ === فمبتلاقيش NaN. الاتنين بيقارنوا الـ objects بالـ reference، فـ object جديد بنفس المحتوى مش هيتلاقى.
-
-[[findLast]] و [[findLastIndex]] (ES2023) بيدوّروا من الآخر.
-
-لو هتدوّر بالـ id كتير على array كبيرة، حوّلها Map مرة واحدة: [[new Map(users.map((u) => [u.id, u]))]]، والبحث بقى O(1) بدل O(n) (تاب DSA).`,
-            when: R`[[find]] لعنصر واحد. [[some]] / [[every]] لسؤال نعم/لا. [[includes]] لقيم بسيطة (strings و numbers). و Map أو Set لو البحث بيتكرر كتير.`,
-            mistakes: R`[[filter(...)[0]]] بدل find. وتنسى إن find ممكن ترجّع undefined وتقرا منها على طول. و [[if (arr.indexOf(x))]]: لو العنصر في المكان 0 هتبقى false، ولو مش موجود -1 هتبقى true. استخدم includes.`
-          },
-          lines: [
-            "ليستة مستخدمين.",
-            "admin.",
-            "مش admin.",
-            "مش admin.",
-            "قفلة.",
-            "أول واحد id بتاعه 2.",
-            R`مش موجود: [[undefined]]، فخلي بالك قبل ما تقرا منه.`,
-            "مكانه في الـ array.",
-            "دوّر من الآخر: آخر واحد مش admin.",
-            "فيه admin واحد على الأقل؟",
-            "كلهم admins؟",
-            "القيمة موجودة؟",
-            R`[[includes]] بتلاقي NaN.`,
-            R`[[indexOf]] مبتلاقيهاش لأنها بتستخدم ===.`
-          ],
-          sol: R`[[user.name]] على id مش موجود بتطلع [[TypeError: Cannot read properties of undefined (reading 'name')]]: find رجّعت undefined، ومفيش حاجة اسمها name جوه undefined. مع [[user?.name]] الناتج undefined من غير error. ولو عايز رسالة للمستخدم: [[user?.name ?? "مش موجود"]].
-
-[[users.includes({ id: 1, ... })]] بترجّع false حتى لو الخصايص نفسها: includes بتقارن بالـ reference (زي ===)، والـ object اللي كتبته في القوسين object جديد مختلف عن اللي في الـ array. لو عايز تدوّر بالمحتوى استخدم [[users.some((u) => u.id === 1)]].`
-        },
-        {
-          cmd: "sort و toSorted",
-          title: "ليه [10, 1, 2].sort() بتطلع [1, 10, 2]؟",
-          desc: R`[[sort()]] من غير دالة بتحوّل العناصر لـ strings وترتّبها كنصوص، فـ "10" قبل "2". للأرقام لازم تبعت دالة مقارنة: [[(a, b) => a - b]] تصاعدي.
-
-والأهم: [[sort]] و [[reverse]] و [[splice]] و [[push]] و [[pop]] و [[shift]] بيعدّلوا الـ array الأصلية (mutating). و ES2023 ضاف نسخ مبتعدّلش: [[toSorted]] و [[toReversed]] و [[toSpliced]] و [[with]]، وبيرجّعوا array جديدة. ودي اللي تستخدمها مع state في React.`,
-          example: R`[10, 1, 2].sort();                       // [1, 10, 2]: رتّب كنصوص
-[10, 1, 2].sort((a, b) => a - b);        // [1, 2, 10]
-const prices = [300, 100, 200];
-const sorted = prices.toSorted((a, b) => a - b);
-console.log(prices);                     // [300, 100, 200]: الأصل زي ما هو
-console.log(sorted);                     // [100, 200, 300]
-const names = ["Omar", "sara", "Ali"];
-names.toSorted((a, b) => a.localeCompare(b));  // ["Ali", "Omar", "sara"]
-const products = [{ name: "B", price: 50 }, { name: "A", price: 50 }];
-products.toSorted((a, b) => a.price - b.price || a.name.localeCompare(b.name));
-prices.with(0, 999);                     // [999, 100, 200]`,
-          try: R`رتّب [[products]] بالسعر تنازلي. وبعدين اعمل [[const x = prices.sort()]] واطبع [[prices]] و [[x === prices]]: هتلاقي sort عدّلت الأصل ورجّعت نفس الـ array.`,
-          flag: "script",
-          deep: {
-            why: "الترتيب في كل جدول وليستة. و sort اللي بتعدّل الأصل سبب bugs كتير في React: الـ state اتعدّلت في مكانها، فـ React مش شايف تغيير ومبيعملش render، أو الترتيب بيتغير في مكان تاني بيستخدم نفس الـ array.",
-            how: R`دالة المقارنة بترجّع رقم: سالب يعني a قبل b، وموجب يعني b قبل a، وصفر يعني زي بعض. [[a - b]] بتطلع كده بالظبط للأرقام. وللنصوص [[localeCompare]]، اللي بتفهم الحروف العربي والـ accents.
-
-من ES2019 الـ sort مضمون stable: العناصر المتساوية بتفضل بترتيبها الأصلي، فلو رتّبت بالاسم الأول وبعدين بالسعر، اللي بنفس السعر هيفضلوا مترتبين بالاسم. والأسهل تعمل الاتنين في دالة واحدة بـ [[||]]: لو السعر زي بعض (الفرق 0 falsy)، قارن بالاسم.
-
-الـ mutating methods: [[push]] و [[pop]] و [[shift]] و [[unshift]] و [[splice]] و [[sort]] و [[reverse]] و [[fill]]. والباقي (map و filter و slice و concat و toSorted...) بيرجّعوا جديد. و [[with(i, v)]] نسخة فيها عنصر واحد متغير.
-
-قبل ES2023 كان الحل [[[...arr].sort()]]: انسخ الأول وبعدين رتّب، وده لسه شغال.`,
-            when: R`[[toSorted]] و [[toReversed]] و [[with]] مع أي state أو داتا مشتركة. و [[sort]] العادية لما الـ array بتاعتك انت ومحدش تاني بيستخدمها.`,
-            mistakes: R`[[sort()]] على أرقام من غير دالة. ودالة مقارنة بترجّع boolean ([[a > b]]): مش هترتّب صح في كل الحالات. و [[state.items.sort(...)]] في React. وفي الانترفيو: «[[[10, 1, 2].sort()]] بتطلع إيه؟»، و «إيه الـ methods اللي بتعدّل الـ array؟».`
-          },
-          lines: [
-            "من غير دالة: الأرقام اتحوّلت نصوص، و «10» قبل «2» كنص.",
-            "دالة مقارنة: الفرق بيحدد الترتيب.",
-            "array أسعار.",
-            R`[[toSorted]] رجّعت array جديدة.`,
-            "الأصل متلمسش.",
-            "النسخة مترتبة.",
-            "أسماء بحروف كبيرة وصغيرة.",
-            R`[[localeCompare]] للنصوص، وبتتعامل مع الحروف الكبيرة والصغيرة والعربي صح.`,
-            "منتجين بنفس السعر.",
-            R`بالسعر، ولو زي بعض (0) [[||]] بتكمّل بالاسم.`,
-            "نسخة فيها أول عنصر متغير."
-          ],
-          sol: R`[[products.toSorted((a, b) => b.price - a.price)]]: الأغلى الأول (خد بالك إن [[b - a]] تنازلي و [[a - b]] تصاعدي). ولو في المثال السعرين متساويين (50 و 50) الترتيب هيفضل زي ما هو، لأن sort في JS مضمون stable من ES2019.
-
-[[const x = prices.sort()]] وبعدها [[prices]] بتطبع [[[100, 200, 300]]] و [[x === prices]] بـ true: sort رتّبت الأصل مكانه ورجّعت نفس الـ array، مش نسخة. ولاحظ إن الأرقام هنا طلعت صح صدفة لأنهم نفس عدد الخانات، بس [[[300, 100, 1000].sort()]] هتطلع [[[100, 1000, 300]]] لأن من غير compare function الترتيب كنصوص.`
-        },
-        {
-          cmd: "array destructuring و spread",
-          title: "تفك array لمتغيرات، وتنسخ وتدمج arrays",
-          desc: R`[[const [first, second] = arr]] بتاخد العناصر بالترتيب في متغيرات، ودي اللي بتشوفها في [[const [count, setCount] = useState(0)]]. وتقدر تسيب مكان فاضي عشان تتخطى عنصر، وتحط قيمة افتراضية، وتلم الباقي بـ [[...rest]].
-
-و [[[...a, ...b]]] بيعمل array جديدة فيها عناصر الاتنين، و [[[...a]]] نسخة. و [[[...new Set(arr)]]] أشهر طريقة تشيل التكرار.`,
-          example: R`const [first, second] = ["a", "b", "c"];
-const [, , third] = ["a", "b", "c"];
-const [head, ...rest] = [1, 2, 3, 4];      // head = 1, rest = [2, 3, 4]
-const [x = 0] = [];                        // x = 0
-let a = 1, b = 2;
-[a, b] = [b, a];                           // تبديل: a = 2, b = 1
-const merged = [...[1, 2], ...[3, 4], 5];  // [1, 2, 3, 4, 5]
-const copy = [...merged];
-const unique = [...new Set([1, 1, 2, 3, 3])]; // [1, 2, 3]
-const withNew = [...merged, 6];            // إضافة من غير push
-const rows = [[1, 2], [3, 4]];
-rows.flat();                               // [1, 2, 3, 4]`,
-          try: R`اكتب دالة [[removeAt(arr, i)]] بترجّع array جديدة من غير العنصر رقم i، بـ spread و slice (من غير splice). وبعدين اعملها بـ [[toSpliced]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[removeAt]] (النسخة بتاعة spread و slice).`,
-          flag: "script",
-          deep: {
-            why: R`destructuring بيخلّي الكود أقصر وأوضح من [[arr[0]]] و [[arr[1]]]، وهو أساس الـ hooks في React. والـ spread هو الطريقة المعتادة تضيف أو تشيل من array من غير ما تعدّل الأصل.`,
-            how: R`الـ destructuring بيشتغل مع أي iterable مش arrays بس: strings و Map و Set. وبيقرا بالترتيب، فالأسماء اللي بتختارها ملهاش علاقة بمحتوى العنصر.
-
-الـ default بيشتغل لو العنصر [[undefined]] بس. و [[...rest]] لازم يبقى آخر حاجة.
-
-التبديل [[[a, b] = [b, a]]] بيعمل array مؤقتة ويفكها. خد بالك: لو السطر اللي قبله مش مقفول بـ [[;]]، السطر اللي بيبدأ بـ [[[]] ممكن يتلزق فيه ويتفهم كـ index. عشان كده الأسلم تحط [[;]] أو تخلي Prettier يظبطها.
-
-الـ spread نسخة سطحية (shallow): العناصر اللي هي objects مش بتتنسخ، النسخة الجديدة بتشاور على نفس الـ objects (درس reference و copy). و [[flat(depth)]] بتفرد arrays جوه arrays لعمق معيّن، و [[flatMap]] بتعمل map وبعدين flat مستوى واحد.`,
-            when: R`في الـ hooks، وفي تبديل قيم، وفي إضافة عنصر لـ state: [[setItems([...items, newItem])]]. وشيل التكرار بـ Set.`,
-            mistakes: R`تفتكر إن [[[...arr]]] نسخة عميقة. وتنسى [[;]] قبل سطر بيبدأ بـ [[[]]. وتفك من undefined: [[const [a] = undefined]] بترمي TypeError. وفي الانترفيو: «شيل التكرار من array» و «بدّل متغيرين من غير متغير تالت».`
-          },
-          lines: [
-            "أول عنصرين بالترتيب.",
-            "الفواصل الفاضية بتتخطى عناصر: خدنا التالت بس.",
-            R`الأول في [[head]]، والباقي في array اسمها [[rest]].`,
-            R`العنصر مش موجود (undefined)، فأخد القيمة الافتراضية.`,
-            "متغيرين.",
-            "بدّلهم في سطر واحد.",
-            "دمج arrays.",
-            "نسخة جديدة (سطحية).",
-            R`[[Set]] بيشيل التكرار، والـ spread بيرجّعه array.`,
-            R`array جديدة فيها عنصر زيادة، والأصل متلمسش (عكس [[push]]).`,
-            "array جواها arrays.",
-            R`[[flat]] بتفردها مستوى واحد.`
-          ],
-          sol: R`[[removeAt(["a", "b", "c", "d"], 1)]] بترجّع [[["a", "c", "d"]]] والأصل زي ما هو. و [[arr.toSpliced(1, 1)]] بترجّع نفس الناتج في سطر واحد: هي splice بس من غير ما تعدّل الأصل.
-
-خلي بالك من index سالب: [[toSpliced(-1, 1)]] بتشيل آخر عنصر صح، لكن نسخة slice بتاعتك مع [[-1]] هتطلع array أطول من الأصل (لأن [[slice(0)]] بيرجّع كله). لو هتستخدم نسختك، افحص إن i بين 0 والطول.`,
-          solCode: R`const removeAt = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)];
-const letters = ["a", "b", "c", "d"];
-console.log(removeAt(letters, 1));     // ["a", "c", "d"]
-console.log(letters.toSpliced(1, 1));  // ["a", "c", "d"]
-console.log(letters);                  // ["a", "b", "c", "d"]: الأصل زي ما هو`,
-          check: {
-            lang: "js",
-            starter: R`const removeAt = (arr, i) => arr;`,
-            tests: R`test("removeAt(['a', 'b', 'c', 'd'], 1) ← ['a', 'c', 'd']", () => expect(removeAt(["a", "b", "c", "d"], 1)).toEqual(["a", "c", "d"]));
-test("الأصل زي ما هو", () => {
-  const letters = ["a", "b", "c"];
-  removeAt(letters, 0);
-  expect(letters).toEqual(["a", "b", "c"]);
-});
-test("بترجّع array جديدة مش نفس الـ reference", () => { const a = [1, 2]; expect(removeAt(a, 5) === a).toBe(false); });
-test("أول عنصر وآخر عنصر", () => expect([removeAt([1, 2, 3], 0), removeAt([1, 2, 3], 2)]).toEqual([[2, 3], [1, 2]]));
-test("index برا الحدود ← نسخة زي ما هي", () => expect(removeAt([1, 2, 3], 7)).toEqual([1, 2, 3]));`,
-            solution: R`const removeAt = (arr, i) => [...arr.slice(0, i), ...arr.slice(i + 1)];`
-          }
         }
       ]
     }

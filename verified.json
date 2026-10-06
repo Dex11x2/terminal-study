@@ -1974,6 +1974,556 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 (Git 2.43)"
  },
+ "js|&& و || و !": {
+  "hash": "adff64700c3c",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|== و ===": {
+  "hash": "a898d39cb48a",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
+ "js|CommonJS و ESM": {
+  "hash": "9414aeed5060",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|Date ومطبّاته": {
+  "hash": "d14de16bc892",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 pwsh 7 / ps 5.1 + docker node:22-slim TZ"
+ },
+ "js|EventEmitter": {
+  "hash": "fa0eb40cf959",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|FormData و URLSearchParams": {
+  "hash": "6f7781fb0d85",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + win11 Node 24.19"
+ },
+ "js|IndexedDB و BroadcastChannel": {
+  "hash": "c24e7b259cbd",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) on localhost idb 8.0.4 + win11 Node 24 fake-indexeddb; docs: iOS/Safari"
+ },
+ "js|IntersectionObserver": {
+  "hash": "16dc008fb8ad",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + local Node server"
+ },
+ "js|Intl.RelativeTimeFormat": {
+  "hash": "e77bc9025305",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|JSON": {
+  "hash": "c636ed1234cc",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome headless (playwright-core)"
+ },
+ "js|Map و Set": {
+  "hash": "9aa49dbc75f9",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|Object.keys و entries": {
+  "hash": "554667ac653c",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|Promise": {
+  "hash": "80b7b2370f6f",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|Promise.all بإيدك": {
+  "hash": "af417f28a1aa",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|Promise.all و allSettled": {
+  "hash": "f6067224ff4a",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + local server"
+ },
+ "js|ResizeObserver": {
+  "hash": "be41d97ac0fc",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + local Node server"
+ },
+ "js|UTC و Intl.DateTimeFormat": {
+  "hash": "22fe1a15dd99",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker node:22-slim"
+ },
+ "js|addEventListener": {
+  "hash": "8c42a6f77b80",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core)"
+ },
+ "js|array destructuring و spread": {
+  "hash": "dae81bdc9a9e",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|arrow و this": {
+  "hash": "c7df6f685a79",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 .cjs/.mjs + Chrome headless"
+ },
+ "js|async في loops": {
+  "hash": "e4f2586f6591",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome headless"
+ },
+ "js|async و await": {
+  "hash": "97b93eb7edf3",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + local server"
+ },
+ "js|blocking و الـ main thread": {
+  "hash": "4cd9a05a2148",
+  "date": "2026-10-06",
+  "on": "headless Chrome (playwright-core) + win11 Node 24; docs: Performance tab"
+ },
+ "js|break و continue": {
+  "hash": "10bf07ff191f",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|call و apply و bind": {
+  "hash": "9932f628fea6",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|class": {
+  "hash": "7477d17c65c1",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome headless"
+ },
+ "js|closure": {
+  "hash": "c212ca7e53c7",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|closures في loop": {
+  "hash": "ceecf092df8e",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|curry": {
+  "hash": "5dedc1d5d2e6",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|custom errors و cause": {
+  "hash": "9a3e2de0f4b9",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 (real ENOTFOUND + local server) + Chrome headless"
+ },
+ "js|date-fns و dayjs و Temporal": {
+  "hash": "c3e7ed114a67",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 (temporal polyfill, date-fns, dayjs); docs: Node 26/browser support"
+ },
+ "js|debounce و throttle": {
+  "hash": "ea13de10aa17",
+  "date": "2026-10-06",
+  "on": "headless Chrome (playwright-core) + win11 Node 24"
+ },
+ "js|debugger": {
+  "hash": "1dc1255267b6",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless (node inspect); docs: VS Code UI"
+ },
+ "js|deep equal": {
+  "hash": "295fe5b73142",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|default و rest و spread": {
+  "hash": "db09c52cbbc1",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|defer و async و module": {
+  "hash": "150b826dff3f",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core); docs: async analytics"
+ },
+ "js|drag and drop و progress": {
+  "hash": "4c48065ca9ec",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + local Node server (synthetic DragEvents); docs: dragover spec"
+ },
+ "js|dynamic import()": {
+  "hash": "68f7f796a52c",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core); docs: Vite chunking"
+ },
+ "js|event delegation": {
+  "hash": "d7a3b27a2905",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core)"
+ },
+ "js|event loop": {
+  "hash": "53b74b37f6ea",
+  "date": "2026-10-06",
+  "on": "win11 Node 24; docs: loupe/DevTools"
+ },
+ "js|extends و super": {
+  "hash": "36f6d7f11185",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|fetch و AbortController": {
+  "hash": "0c67cd27c8f3",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + local server + Chrome headless"
+ },
+ "js|find و some و includes": {
+  "hash": "ac0a4434e16a",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|for و while": {
+  "hash": "abfebe257b99",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|for...of و for...in": {
+  "hash": "9ba80ce3904b",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|function و arrow": {
+  "hash": "289c4a207607",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|groups و flags": {
+  "hash": "6cc7598f8b5f",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|higher-order functions": {
+  "hash": "e5e34fa82ede",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|hoisting و TDZ": {
+  "hash": "7786e2c51acb",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|if و else if": {
+  "hash": "9ebf7320cb0d",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|immutability": {
+  "hash": "c686d6334535",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|import و export": {
+  "hash": "6520c1cb2889",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|input type=file": {
+  "hash": "21f509789d84",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + local Node server"
+ },
+ "js|iterators و generators": {
+  "hash": "4c16b4ed53f4",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + local http server"
+ },
+ "js|let و const و var": {
+  "hash": "9587dcc07836",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
+ "js|manifest.webmanifest": {
+  "hash": "06885b28dc10",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) on localhost installability checks; docs: iOS, beforeinstallprompt"
+ },
+ "js|map و filter و reduce": {
+  "hash": "cbbf1e3d3aff",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|memory leaks": {
+  "hash": "988f9d6ca8c2",
+  "date": "2026-10-06",
+  "on": "headless Chrome (playwright-core) + win11 Node 24; docs: heap snapshot"
+ },
+ "js|microtasks و macrotasks": {
+  "hash": "dc0f4c152e7c",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|module pattern و IIFE": {
+  "hash": "c2bc84757bdc",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|null و undefined": {
+  "hash": "e593c7104bea",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|number و NaN": {
+  "hash": "76c393114558",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
+ "js|object destructuring و spread": {
+  "hash": "fc309090fe2b",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|object literal": {
+  "hash": "4a4c06924f6b",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|polyfills: map و bind": {
+  "hash": "d36394d098b2",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|primitives و objects": {
+  "hash": "ad2d6ec7ac69",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|prototype chain": {
+  "hash": "d407dc956dc5",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19; docs: console.dir"
+ },
+ "js|pseudocode": {
+  "hash": "db028f967734",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|pushState و popstate": {
+  "hash": "7f766cdd23a3",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + local Node server; docs: npx serve -s"
+ },
+ "js|querySelector": {
+  "hash": "3e05ba61a667",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core); docs: $0"
+ },
+ "js|reference و copy": {
+  "hash": "1661f7e263d2",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome headless (playwright-core)"
+ },
+ "js|regex: classes و quantifiers": {
+  "hash": "b240b21418c4",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|scope": {
+  "hash": "c5c3bf5b15fe",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome headless (playwright-core)"
+ },
+ "js|sort و toSorted": {
+  "hash": "d255a038681d",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|string methods": {
+  "hash": "6283784c8392",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
+ "js|switch ولا object lookup": {
+  "hash": "8c2f8469eb11",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|template literals": {
+  "hash": "d3362910dbf0",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|test و match و matchAll و replace": {
+  "hash": "37325b258668",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|textContent و classList": {
+  "hash": "90c93ffd7bf1",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core)"
+ },
+ "js|this": {
+  "hash": "b89677582baa",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome headless"
+ },
+ "js|truthy و falsy": {
+  "hash": "5c46fca324d2",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|try و catch و finally": {
+  "hash": "6064adff49be",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|typeof": {
+  "hash": "c4a8299c29e2",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
+ "js|visibilitychange و bfcache": {
+  "hash": "c8f5a80b123a",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) + local Node server (bfcache re-enabled)"
+ },
+ "js|vite-plugin-pwa و Serwist": {
+  "hash": "6c1d46291e64",
+  "date": "2026-10-06",
+  "on": "win11 Vite 8.3.3 + vite-plugin-pwa 2.0.0 + Chrome headless (playwright-core) on localhost; docs: Serwist, dev mode"
+ },
+ "js|إمتى regex غلط": {
+  "hash": "ce538ae762d2",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + headless Chrome (playwright-core)"
+ },
+ "js|اتوقع الناتج": {
+  "hash": "c2117ca311c7",
+  "date": "2026-10-06",
+  "on": "win11 Node 24"
+ },
+ "js|استراتيجيات الكاش": {
+  "hash": "d50c41c08515",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) on localhost online/offline"
+ },
+ "js|اعرض داتا من fetch": {
+  "hash": "1b0ef8cc3106",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core), real jsonplaceholder API"
+ },
+ "js|اقرا الـ error": {
+  "hash": "f79b20611bad",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
+ "js|المتغيرات والأنواع والعمليات": {
+  "hash": "878cb78566ba",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
+ "js|تمارين أساسيات ١": {
+  "hash": "368ea7d28009",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمارين أساسيات ٢": {
+  "hash": "fedc5e4f4192",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين charCount": {
+  "hash": "0275dca8a21e",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين countEvens": {
+  "hash": "a08d96755487",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين countVowels": {
+  "hash": "54e7f11eb098",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين factorial": {
+  "hash": "0d1668290bd7",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين fibonacci": {
+  "hash": "f9876bc4ff42",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين isPrime": {
+  "hash": "509aeee0a820",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين maxOf": {
+  "hash": "a7362c186fb6",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين reverse": {
+  "hash": "cf2b290d8482",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين secondLargest": {
+  "hash": "b424fde3f632",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين sumDigits": {
+  "hash": "ab7f12790ba2",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين sumTo": {
+  "hash": "82b3211d5313",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين table": {
+  "hash": "5b1b66b5b361",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|تمرين unique": {
+  "hash": "815039d55a41",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|دورة حياة الـ SW": {
+  "hash": "f2a943737934",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) on localhost"
+ },
+ "js|مقدمة الدوال function": {
+  "hash": "d5be5b86307c",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19"
+ },
+ "js|نسخة جديدة، حدّث": {
+  "hash": "e21dafa8a60f",
+  "date": "2026-10-06",
+  "on": "Chrome headless (playwright-core) on localhost"
+ },
+ "js|يعني إيه برنامج": {
+  "hash": "ee1b0e39a560",
+  "date": "2026-10-06",
+  "on": "win11 Node 24.19 + Chrome 154 headless"
+ },
  "mongo|$jsonSchema": {
   "hash": "1c118dd1b5e7",
   "date": "2026-10-06",

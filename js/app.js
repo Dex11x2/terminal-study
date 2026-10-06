@@ -101,8 +101,13 @@ function teachHTML(c){
       i--; out.push('<blockquote>'+q.join('<br>')+'</blockquote>');
     } else if (/^(- |\d+\. )/.test(l)){
       const ol = /^\d/.test(l), items = [];
-      for (; i < src.length && (ol ? /^\d+\. /.test(src[i]) : src[i].startsWith('- ')); i++) items.push('<li>'+inl(src[i].replace(/^(- |\d+\. )/, ''))+'</li>');
-      i--; out.push((ol?'<ol>':'<ul>')+items.join('')+(ol?'</ol>':'</ul>'));
+      // an indented "  - " right under an item is a sub-list of that item
+      for (; i < src.length && (ol ? /^\d+\. /.test(src[i]) : src[i].startsWith('- ') || /^ {2,}- /.test(src[i])); i++){
+        if (/^ {2,}- /.test(src[i]) && items.length) items[items.length-1].sub.push('<li>'+inl(src[i].replace(/^ +- /, ''))+'</li>');
+        else items.push({text: inl(src[i].replace(/^(- |\d+\. )/, '')), sub: []});
+        if (ol) for (; i+1 < src.length && /^ {2,}- /.test(src[i+1]); i++) items[items.length-1].sub.push('<li>'+inl(src[i+1].replace(/^ +- /, ''))+'</li>');
+      }
+      i--; out.push((ol?'<ol>':'<ul>')+items.map(x => '<li>'+x.text+(x.sub.length ? '<ul>'+x.sub.join('')+'</ul>' : '')+'</li>').join('')+(ol?'</ol>':'</ul>'));
     } else if (l.startsWith('|')){
       const rows = [];
       for (; i < src.length && src[i].startsWith('|'); i++) if (!/^\|[\s:|-]+\|\s*$/.test(src[i])) rows.push(src[i].trim().replace(/^\||\|$/g, '').split(/\|(?![^[]*\]\])/).map(x => inl(x.trim()))); // a | inside [[code]] isn't a cell border

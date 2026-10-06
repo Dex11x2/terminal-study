@@ -1,918 +1,1274 @@
 // تكملة تاب js: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/js/01.js (شرح حقول الدرس في أوله)
 MORE("js", [
     {
-      t: "Patterns",
-      l: 3,
-      n: "module pattern، و Observer بـ EventEmitter، و immutability، و iterators و generators",
+      t: "الـ objects",
+      l: 1,
+      n: "تبني objects وتقرا منها وتنسخها وتلف عليها، و Map و Set و JSON، وليه التعديل في مكان بيظهر في مكان تاني",
       items: [
         {
-          cmd: "module pattern و IIFE",
-          title: "تعمل state خاص ومتاح بس من دوال معينة",
-          desc: R`الـ IIFE دالة بتتعرّف وتتنادي في نفس اللحظة: [[(() => { ... })()]]. قبل الـ ES modules كانت الطريقة الوحيدة تعمل scope خاص في ملف، عشان متغيراتك متتلخبطش مع باقي الـ scripts في الصفحة.
+          cmd: "object literal",
+          title: "تعمل object وتقرا وتضيف وتمسح خصايص",
+          desc: R`الـ object مجموعة مفاتيح وقيم بين [[{ }]]. بتقرا بالنقطة [[product.price]]، أو بالأقواس [[product["in-stock"]]] لو المفتاح فيه شرطة أو مسافة أو في متغير.
 
-والـ module pattern: IIFE بترجّع object فيه الـ API العام بس، والمتغيرات الداخلية فاضلة في الـ closure، محدش يوصلها. النهاردة ES modules بتعمل ده لوحدها، بس هتشوف الـ pattern في كود قديم، وفي الـ bundles، وفي أسئلة الانترفيو.`,
-          example: R`const counter = (() => {
-  let count = 0;
-  const log = (msg) => console.log($__bt[counter] $__{msg}$__bt);
-  return {
-    inc() { count++; log(count); return count; },
-    reset() { count = 0; log("reset"); },
-  };
-})();
-counter.inc();          // [counter] 1
-counter.inc();          // [counter] 2
-counter.count;          // undefined: مخفي
-// نفس الفكرة بـ ES module: store.js
-let items = [];
-export const add = (x) => { items = [...items, x]; };
-export const getAll = () => items;`,
-          try: R`حوّل الـ counter لملف module: المتغير في أول الملف من غير export، والدوال بـ export. وبعدين اعمل import للملف من ملفين مختلفين واتأكد إنهم شايفين نفس الـ count (الـ module بيتنفّذ مرة واحدة).`,
+وفيه اختصارات هتشوفها في كل كود: [[{ name }]] بدل [[{ name: name }]] (shorthand)، و [[[key]: value]] لمفتاح اسمه في متغير (computed)، و [[describe() {}]] لـ method.
+
+ولو هتقرا خاصية ممكن متكونش موجودة، [[?.]] (optional chaining) بترجّع undefined بدل ما ترمي error.`,
+          example: R`const key = "color";
+const name = "Mug";
+const product = {
+  name,
+  price: 120,
+  [key]: "red",
+  "in-stock": true,
+  describe() {
+    return $__bt$__{this.name} بـ $__{this.price}$__bt;
+  },
+};
+product.price;            // 120
+product["in-stock"];      // true
+product[key];             // "red"
+product.size = "L";       // إضافة خاصية
+delete product.size;      // مسح خاصية
+"price" in product;       // true
+product.discount?.value;  // undefined من غير error`,
+          try: R`اطبع [[product.describe()]]. وبعدين جرّب [[product.discount.value]] من غير [[?.]] واقرا الـ error. وآخر حاجة: اعمل [[const f = product.describe; f()]] وشوف this راحت فين (هتفهمها في درس this).`,
           flag: "script",
           deep: {
-            why: "encapsulation: الـ state الداخلي متاح بس من دوال محددة، فمحدش يقدر يبوّظه من برّه. ودي فكرة أساسية في أي تصميم، وسؤال انترفيو شائع: «إزاي تعمل private variables في JS؟» (closures، أو #private في classes، أو module scope).",
-            how: R`الأقواس حوالين الدالة بتخليها expression، والأقواس اللي بعدها بتناديها. كل المتغيرات جوه بتعيش في الـ closure بتاع الـ methods اللي رجعت.
+            why: "كل حاجة تقريبًا objects: الـ user، والـ request، والـ props، والـ config، ورد الـ API. ومعظم الكود بيقرا ويبني objects.",
+            how: R`المفاتيح دايمًا strings أو symbols. لو كتبت [[{ 1: "a" }]] المفتاح بقى [["1"]]. عشان كده لو محتاج مفاتيح من أي نوع (objects أو أرقام حقيقية) استخدم Map.
 
-الـ module pattern ليه عيوب: مينفعش تعمل منه أكتر من instance (لو محتاج كذا واحد، دالة factory زي [[createCounter]] من درس closure)، وصعب تختبره أو تعمل reset للـ state بتاعه.
+ترتيب المفاتيح: الأرقام الصحيحة الأول بالترتيب التصاعدي، وبعدين الـ strings بترتيب الإضافة.
 
-الـ ES module نفسه singleton بنفس الطريقة: الملف بيتنفّذ مرة واحدة، وأي حد بيعمل import بياخد نفس الـ state. ده اللي بيخلي [[export const prisma = new PrismaClient()]] يشتغل كـ instance واحد في المشروع كله.
+[[?.]] بيوقف السلسلة أول ما يلاقي null أو undefined ويرجّع undefined. بيشتغل مع الـ methods كمان: [[user.getName?.()]]، ومع الأقواس: [[obj?.[key]]].
 
-الـ bundlers زي Vite لسه بيطلّعوا ملفات فيها IIFEs ساعات، عشان يضمنوا scope منفصل لو الملف اتحمّل كـ script عادي.`,
-            when: "في كود جديد: ES module بمتغيرات مش exported. IIFE لو بتكتب script صغير هيتحط في صفحة مباشرة (widget أو bookmarklet) أو محتاج async في مكان مفيهوش top-level await.",
-            mistakes: R`تنسى الـ [[;]] قبل سطر بيبدأ بـ [[(]]: السطر اللي قبله هيتنادي كدالة. وتعمل singleton لحاجة محتاجة instances كتير. و state global في module على سيرفر: مشترك بين كل الـ requests وكل اليوزرز.`
+[[in]] بيسأل «المفتاح موجود؟» حتى لو قيمته undefined، وبيدوّر في الـ prototype كمان. [[Object.hasOwn(obj, key)]] بيسأل عن الـ object نفسه بس.
+
+و [[delete]] بيشيل الخاصية فعلًا، مش زي [[obj.x = undefined]] اللي بيسيب المفتاح موجود وقيمته undefined.`,
+            when: R`النقطة في العادي. الأقواس لما المفتاح في متغير أو فيه حروف غريبة. [[?.]] لداتا ممكن تكون ناقصة (رد API)، مش في كل سطر.`,
+            mistakes: R`[[obj.key]] وانت قصدك [[obj[key]]] (المتغير): الأولى بتدوّر على مفتاح اسمه حرفيًا "key". وتحط [[?.]] في كل حتة فتخبّي bugs. و arrow function كـ method: this مش هتبقى الـ object. وتستخدم object كـ dictionary بمفاتيح من اليوزر: مفتاح زي [["__proto__"]] ممكن يعمل مشاكل (prototype pollution)، استخدم Map.`
           },
+          teach: R`## الفكرة في سطرين
+
+الـ object «شنطة» فيها حاجات ليها أسامي: كل حاجة **مفتاح** (key) و**قيمة** (value). المثال بيعمل object لمنتج اسمه product، وبعدين يقرا منه بكذا طريقة، ويضيف ويمسح، ويسأل «المفتاح ده موجود؟». كل الأرقام اللي تحت طالعة من تشغيل الكود في ملف [[app.js]] بـ Node 24 ([[node app.js]]) مع [[console.log]] حوالين كل سطر.
+
+---
+
+## ١. المتغيرين اللي فوق
+
+~~~text app.js
+const key = "color";
+const name = "Mug";
+~~~
+
+[[const]] بيعمل متغير مينفعش يتربط بقيمة تانية. الاتنين strings عادية، بس هنستخدمهم جوه الـ object بطريقتين مختلفتين: [[key]] كـ **اسم مفتاح**، و [[name]] كـ **قيمة**.
+
+---
+
+## ٢. بناء الـ object سطر سطر
+
+~~~text app.js
+const product = {
+  name,
+  price: 120,
+  [key]: "red",
+  "in-stock": true,
+  describe() {
+    return $__bt$__{this.name} بـ $__{this.price}$__bt;
+  },
+};
+~~~
+
+### [[{ }]]: object literal
+
+القوسين المعووجين بعد [[=]] معناهم «اعمل object جديد دلوقتي». و literal يعني إنك كاتب القيمة نفسها في الكود، زي ما [["Mug"]] string literal. وكل خاصية بتتفصل عن اللي بعدها بـ [[,]]. والفاصلة بعد آخر خاصية (trailing comma) مسموحة، وبتسهّل إضافة سطر جديد.
+
+### [[name,]]: الـ shorthand
+
+لما اسم المفتاح زي اسم المتغير بالظبط، مش لازم تكتبه مرتين. [[name,]] هي نفسها [[name: name,]]: مفتاح اسمه name، وقيمته قيمة المتغير name يعني [["Mug"]].
+
+### [[price: 120]]: الشكل العادي
+
+المفتاح على الشمال، و [[:]] ، والقيمة على اليمين. المفتاح من غير علامات تنصيص لأنه اسم عادي (حروف وأرقام و [[_]] و [[$]]).
+
+### [[[key]: "red"]]: الـ computed key
+
+الأقواس المربعة حوالين المفتاح معناها: «متاخدش الكلمة key حرفيًا، احسب قيمتها». قيمة [[key]] هي [["color"]]، فالخاصية اللي اتعملت اسمها color.
+
+### [["in-stock": true]]: مفتاح بحروف غريبة
+
+[[-]] في JS معناها طرح، فمينفعش تكتب [[in-stock: true]] من غير تنصيص. أي مفتاح فيه شرطة أو مسافة أو يبدأ برقم لازم يتكتب كـ string.
+
+### [[describe() { ... }]]: method
+
+دالة جوه object اسمها **method**. الشكل [[describe() {}]] اختصار لـ [[describe: function () {}]]. وجواها:
+
+- [[this]]: الـ object اللي الـ method اتنادت عليه. لما تكتب [[product.describe()]]، اللي قبل النقطة هو product، فـ [[this.name]] تبقى [["Mug"]].
+- [[$__bt...$__bt]] مع [[$__{...}]]: template literal (درس template literals)، بيحط القيم جوه النص.
+
+لو طبعت الـ object كله:
+
+~~~text الناتج: console.log(product)
+{
+  name: 'Mug',
+  price: 120,
+  color: 'red',
+  'in-stock': true,
+  describe: [Function: describe]
+}
+~~~
+
+لاحظ إن [[[key]]] بقت [[color]] فعلًا، و Node بيكتب [['in-stock']] بين تنصيص عشان فيها شرطة.
+
+---
+
+## ٣. القراية بـ ٣ طرق
+
+~~~text app.js
+product.price;            // 120
+product["in-stock"];      // true
+product[key];             // "red"
+~~~
+
+| الشكل | معناه | الناتج |
+|---|---|---|
+| [[product.price]] | النقطة: المفتاح اسمه حرفيًا price | [[120]] |
+| [[product["in-stock"]]] | الأقواس مع string: لازم هنا عشان الشرطة | [[true]] |
+| [[product[key]]] | الأقواس مع متغير: اسم المفتاح هو قيمة key | [[red]] |
+
+والفرق بين النقطة والأقواس مع المتغير هو أشهر لخبطة. جرّبتها:
+
+~~~text الناتج
+product.key        →  undefined
+product[key]       →  red
+~~~
+
+[[product.key]] بتدوّر على مفتاح اسمه حرفيًا [["key"]]، ومفيش. ولو حاولت تقرا بالنقطة مفتاح فيه شرطة:
+
+~~~text الناتج: product.in-stock
+ReferenceError: stock is not defined
+~~~
+
+JS فهمها [[product.in - stock]]: يعني اقرا خاصية اسمها in واطرح منها متغير اسمه stock، والمتغير ده مش موجود.
+
+---
+
+## ٤. إضافة ومسح خاصية
+
+~~~text app.js
+product.size = "L";       // إضافة خاصية
+delete product.size;      // مسح خاصية
+~~~
+
+- لو كتبت لخاصية مش موجودة، بتتعمل. فبعد السطر الأول [[product.size]] بقت [["L"]].
+- بس استنى: product معمول بـ [[const]]! [[const]] بيمنع إنك تربط **المتغير** بـ object تاني ([[product = {}]] غلط)، لكن مش بيمنع إنك تعدّل **جوه** الـ object.
+- [[delete]] بيشيل المفتاح نفسه. بعده [[product.size]] بترجع undefined و [["size" in product]] بترجع false.
+
+---
+
+## ٥. [[in]]: المفتاح موجود؟
+
+~~~text app.js
+"price" in product;       // true
+~~~
+
+[[in]] بترجّع true أو false. وفايدتها إنها بتفرّق بين «المفتاح مش موجود» و «موجود وقيمته undefined»:
+
+~~~text الناتج
+const p2 = { x: undefined };
+"x" in p2   →  true
+p2.x        →  undefined
+~~~
+
+---
+
+## ٦. [[?.]]: optional chaining
+
+~~~text app.js
+product.discount?.value;  // undefined من غير error
+~~~
+
+اتقرا من الشمال: [[product.discount]] مش موجودة، فقيمتها undefined. من غير [[?.]]، قراية [[.value]] من undefined بترمي error:
+
+~~~text الناتج: product.discount.value
+TypeError: Cannot read properties of undefined (reading 'value')
+~~~
+
+الرسالة بتقولك بالظبط: حاولت تقرا [['value']] من حاجة undefined. أما [[?.]] فمعناها «لو اللي على الشمال null أو undefined، وقّف هنا ورجّع undefined». فالسطر بيطلع [[undefined]] بهدوء.
+
+---
+
+## ٧. الـ method و this
+
+~~~text الناتج
+product.describe()   →  Mug بـ 120
+~~~
+
+ولو فصلت الدالة عن الـ object ([[const f = product.describe; f()]]) الناتج في Node كان [[undefined بـ undefined]]: النداء مبقاش قبله [[product.]]، فـ this مبقتش product. ده موضوع درس this.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل | تفتكر إيه |
+|---|---|---|
+| shorthand | [[{ name }]] | = [[{ name: name }]] |
+| computed key | [[{ [key]: v }]] | المفتاح = قيمة المتغير |
+| مفتاح غريب | [[{ "in-stock": v }]] | تنصيص، وتقراه بالأقواس |
+| method | [[describe() {}]] | this = اللي قبل النقطة |
+| قراية بمتغير | [[obj[key]]] | مش [[obj.key]] |
+| إضافة / مسح | [[obj.x = 1]] / [[delete obj.x]] | شغال مع const |
+| موجود؟ | [["x" in obj]] | true حتى لو القيمة undefined |
+| ممكن ناقص | [[obj.a?.b]] | undefined بدل TypeError |
+
+> المفاتيح دايمًا strings (أو symbols): [[Object.keys({ 1: "a" })]] طلعت [[[ '1' ]]] والنوع string.`,
           lines: [
-            "IIFE: دالة بتتنادي فورًا، والناتج في counter.",
-            "state خاص.",
-            "دالة مساعدة خاصة برضه.",
-            "الـ API العام.",
-            "بتعدّل الـ state الخاص.",
-            "ودي كمان.",
+            "اسم مفتاح في متغير.",
+            "متغير هنستخدمه shorthand.",
+            "بداية الـ object.",
+            R`shorthand: زي [[name: name]].`,
+            "مفتاح وقيمة عادي.",
+            R`computed key: اسم المفتاح قيمة المتغير، يعني [[color: "red"]].`,
+            "مفتاح فيه شرطة لازم بين علامات تنصيص.",
+            R`method بالشكل المختصر.`,
+            R`[[this]] هنا الـ object اللي اتنادت عليه الـ method.`,
+            "قفلة الـ method.",
             "قفلة الـ object.",
-            R`[[()]] في الآخر: النداء.`,
-            "1.",
+            "قراية بالنقطة.",
+            "قراية بالأقواس عشان الشرطة.",
+            "قراية بمتغير.",
+            "إضافة خاصية بعد الإنشاء (مسموح مع const).",
+            "مسح الخاصية.",
+            R`المفتاح موجود؟`,
+            R`[[discount]] مش موجودة، فـ [[?.]] وقفت ورجّعت undefined.`
+          ],
+          sol: R`[[product.describe()]] بتطبع [["Mug بـ 120"]]. و [[product.discount.value]] بتطلع [[TypeError: Cannot read properties of undefined (reading 'value')]] لأن discount مش موجودة، فانت بتقرا value من undefined.
+
+[[const f = product.describe; f()]] في ملف Node بترجّع [["undefined بـ undefined"]]: الدالة اتنادت من غير نقطة قبلها، فـ this مبقاش product. في ملف عادي (مش strict) this بيبقى globalThis ومفيهوش name ولا price. في Console المتصفح ممكن تشوف [[" بـ undefined"]] لأن [[window.name]] موجود وقيمته فاضية. ولو الكود strict (module أو class) هيطلع TypeError. التفاصيل في درس this.`
+        },
+        {
+          cmd: "object destructuring و spread",
+          title: "تفك خصايص في متغيرات، وتعمل نسخة معدّلة",
+          desc: R`[[const { name, email } = user]] بتطلّع الخصايص في متغيرات بنفس الاسم. وتقدر تغيّر الاسم [[{ name: fullName }]]، وتحط default [[{ role = "user" }]]، وتلم الباقي [[{ password, ...safeUser }]].
+
+و [[{ ...user, name: "New" }]] بتعمل object جديد فيه كل خصايص user، والـ name متغيرة. اللي بيتكتب في الآخر بيكسب. ودي الطريقة اللي بتعدّل بيها state في React.`,
+          example: R`const user = { id: 1, name: "Sara", email: "s@example.com", password: "x" };
+const { name, email } = user;
+const { name: fullName, role = "user" } = user;
+const { password, ...safeUser } = user;
+const updated = { ...user, name: "Sara Ali" };
+const userSettings = { lang: "en" };
+const settings = { theme: "light", lang: "ar", ...userSettings };
+function show({ name, address: { city } = {} }) {
+  return $__bt$__{name} من $__{city ?? "مكان مش معروف"}$__bt;
+}
+show(user);   // "Sara من مكان مش معروف"`,
+          try: R`اطبع [[safeUser]] واتأكد إن password مش فيه. وبعدين حط [[...userSettings]] في أول الـ object بدل آخره وشوف [[lang]] بقت إيه.`,
+          flag: "script",
+          deep: {
+            why: R`بتقلل التكرار ([[user.name]] و [[user.email]] في كل سطر)، وبتخلي باراميترات الدوال والـ props في React واضحة من أول سطر. و [[...rest]] أنضف طريقة تشيل خاصية حساسة قبل ما تبعت الداتا.`,
+            how: R`الـ destructuring بيدوّر على المفاتيح بالاسم (عكس الـ arrays بالترتيب). ولو المفتاح مش موجود القيمة undefined، والـ default بيشتغل.
+
+التفكيك المتداخل [[{ address: { city } }]] بيعمل متغير [[city]] بس، مش [[address]]. ولو address نفسها undefined هيرمي TypeError، عشان كده [[= {}]].
+
+الـ spread بينسخ الخصايص الخاصة بالـ object (own enumerable) بترتيبها، واللي بعده بيكتب فوقه. وهو shallow: [[updated.address]] هي نفس الـ object اللي في [[user.address]]. ومبينسخش getters كـ getters (بياخد قيمتها) ولا الـ prototype، فـ spread لـ instance من class بيطلّع object عادي من غير methods.`,
+            when: R`في باراميترات الدوال والـ props، ولما تاخد جزء من رد API، ولما تعدّل state: [[setUser({ ...user, name })]]. وللقيم الافتراضية: [[{ ...defaults, ...options }]].`,
+            mistakes: R`ترتيب الـ spread غلط فالـ defaults تمسح اختيارات اليوزر. وتفتكر إن [[{ ...user }]] نسخة عميقة وتعدّل [[copy.address.city]] فالأصل يتغير. وتفك من undefined فيرمي «Cannot destructure property 'x' of 'undefined' as it is undefined.». وتعمل [[const { password, ...rest }]] وتنسى إن [[password]] بقت متغير unused (عادي، أو سمّيه [[password: _]]).`
+          },
+          teach: R`## الفكرة في سطرين
+
+**destructuring** يعني «فك»: بدل ما تكتب [[const name = user.name]] و [[const email = user.email]] كل واحدة في سطر، بتكتب الشكل اللي عايزه على الشمال و JS يطلّع القيم. و **spread** ([[...]]) العكس تقريبًا: بيفرد خصايص object جوه object جديد. كل النواتج تحت من تشغيل المثال في [[app.js]] بـ Node 24.
+
+---
+
+## ١. الـ object اللي هنفك منه
+
+~~~text app.js
+const user = { id: 1, name: "Sara", email: "s@example.com", password: "x" };
+~~~
+
+object عادي فيه ٤ خصايص، منهم [[password]] اللي مش عايزينها تطلع برّه.
+
+---
+
+## ٢. فك بسيط
+
+~~~text app.js
+const { name, email } = user;
+~~~
+
+لما [[{ }]] تيجي **على شمال** [[=]] معناها مش «اعمل object»، معناها «فك». JS بيدوّر في user على مفتاح اسمه name ويحطه في متغير اسمه name، ونفس الكلام لـ email. التدوير **بالاسم** مش بالترتيب: لو كتبت [[{ email, name }]] هتاخد نفس القيم.
+
+~~~text الناتج: console.log(name, email)
+Sara s@example.com
+~~~
+
+---
+
+## ٣. تغيير الاسم والـ default
+
+~~~text app.js
+const { name: fullName, role = "user" } = user;
+~~~
+
+- [[name: fullName]]: اقرا المفتاح name، بس حطه في متغير اسمه **fullName**. اتعوّد تقراها «name ← fullName». ومفيش متغير اسمه name بيتعمل من السطر ده (وده كويس، لأن name معمول في السطر اللي فوق، ولو اتعمل تاني بـ const هيبقى SyntaxError).
+- [[role = "user"]]: user مفيهوش role، فالقيمة كانت هتبقى undefined، و [[=]] هنا معناها «لو undefined خد دي».
+
+~~~text الناتج: console.log(fullName, role)
+Sara user
+~~~
+
+---
+
+## ٤. [[...rest]]: لم الباقي
+
+~~~text app.js
+const { password, ...safeUser } = user;
+~~~
+
+[[password]] بيتفك لوحده، و [[...safeUser]] (لازم تكون الأخيرة) بتلم **كل اللي فضل** في object جديد:
+
+~~~text الناتج: console.log(password, safeUser)
+x { id: 1, name: 'Sara', email: 's@example.com' }
+~~~
+
+ده الشكل المعتاد عشان تشيل حقل حساس قبل ما ترجّع يوزر من API.
+
+---
+
+## ٥. spread: نسخة معدّلة
+
+~~~text app.js
+const updated = { ...user, name: "Sara Ali" };
+~~~
+
+هنا [[{ }]] **على يمين** [[=]]، يعني object جديد. و [[...user]] جواه معناها «انسخ كل خصايص user هنا»، وبعدين [[name: "Sara Ali"]] بتكتب فوق الـ name اللي اتنسخت:
+
+~~~text الناتج: console.log(updated, user.name)
+{ id: 1, name: 'Sara Ali', email: 's@example.com', password: 'x' } Sara
+~~~
+
+الأصل لسه [["Sara"]]: احنا معدّلناش user، عملنا object تاني.
+
+---
+
+## ٦. ترتيب الـ spread: الأخير بيكسب
+
+~~~text app.js
+const userSettings = { lang: "en" };
+const settings = { theme: "light", lang: "ar", ...userSettings };
+~~~
+
+الـ object بيتبني من الشمال لليمين: theme بـ light، و lang بـ ar، وبعدين [[...userSettings]] بتحط lang بـ en فوق ar:
+
+~~~text الناتج: console.log(settings)
+{ theme: 'light', lang: 'en' }
+~~~
+
+ولو عكست وحطيت [[...userSettings]] في الأول:
+
+~~~text الناتج
+{ lang: 'ar', theme: 'light' }
+~~~
+
+اختيار اليوزر اتمسح. ولاحظ كمان إن lang بقت أول مفتاح: المفتاح بياخد مكانه من أول مرة اتحط فيها، والقيمة من آخر مرة.
+
+---
+
+## ٧. فك جوه باراميتر دالة
+
+~~~text app.js
+function show({ name, address: { city } = {} }) {
+  return $__bt$__{name} من $__{city ?? "مكان مش معروف"}$__bt;
+}
+show(user);   // "Sara من مكان مش معروف"
+~~~
+
+نفكها من جوه لبرّه:
+
+1. [[{ name, ... }]] مكان الباراميتر: الدالة بتاخد object وتفكه على طول.
+2. [[address: { city }]]: فك متداخل. ادخل جوه address وطلّع city. المتغير اللي بيتعمل هو **city بس**، مفيش متغير اسمه address.
+3. [[= {}]]: لو address مش موجودة، اعتبرها object فاضي. من غيرها جرّبت:
+
+~~~text الناتج: نفس الدالة من غير = {}
+TypeError: Cannot read properties of undefined (reading 'city')
+~~~
+
+4. [[city ?? "مكان مش معروف"]]: [[??]] (nullish coalescing) بترجّع اللي على اليمين لو الشمال null أو undefined بس.
+
+~~~text الناتج
+show(user)                                         →  Sara من مكان مش معروف
+show({ name: "Omar", address: { city: "Cairo" } }) →  Omar من Cairo
+show()                                             →  TypeError: Cannot destructure property 'name' of 'undefined' as it is undefined.
+~~~
+
+الأخيرة لأن مفيش object خالص يتفك. لو عايزها تشتغل، حط [[= {}]] للباراميتر كله كمان.
+
+---
+
+## الخلاصة
+
+| الشكل | مكانه | معناه |
+|---|---|---|
+| [[const { a } = obj]] | شمال [[=]] | فك بالاسم |
+| [[{ a: b }]] | شمال | اقرا a وسمّيه b |
+| [[{ a = 1 }]] | شمال | default لو undefined |
+| [[{ a, ...rest }]] | شمال | الباقي في object جديد |
+| [[{ ...obj, a: 2 }]] | يمين | نسخة والأخير بيكسب |
+| [[{ a: { b } = {} }]] | باراميتر | فك متداخل بأمان |
+
+> الـ spread نسخة **سطحية**: لو جوه user فيه object تاني، النسخة والأصل بيشاوروا على نفس الـ object (الدرس الجاي).`,
+          lines: [
+            "object فيه خاصية حساسة.",
+            "متغيرين بنفس أسماء الخصايص.",
+            R`غيّر الاسم لـ [[fullName]]، و [[role]] مش موجودة فخدت الـ default.`,
+            R`شيل [[password]]، والباقي في [[safeUser]].`,
+            "object جديد بنفس الخصايص والاسم متغير. الأصل زي ما هو.",
+            "إعدادات اليوزر.",
+            R`الـ defaults الأول وبعدين اختيارات اليوزر فوقها: [[lang]] بقت "en".`,
+            R`تفكيك متداخل في الباراميتر، و [[= {}]] عشان لو address مش موجودة.`,
+            R`[[city]] undefined فـ [[??]] حطت البديل.`,
+            "قفلة.",
+            R`user مفيهوش address فالـ default اشتغل.`
+          ],
+          sol: R`[[safeUser]] بيطبع [[{ id: 1, name: "Sara", email: "s@example.com" }]] من غير password: الـ rest بياخد كل اللي فضل بعد اللي فكّيته. ودي الطريقة المعتادة تشيل حقل حساس قبل ما ترجّع اليوزر في API.
+
+لما [[...userSettings]] يبقى في الأول، [[lang]] بتبقى [["ar"]] بدل [["en"]]: في الـ object literal آخر قيمة لنفس المفتاح هي اللي بتكسب. فالقاعدة: الـ defaults الأول، وإعدادات اليوزر في الآخر عشان تغطّي عليها. لو عكست الترتيب اختيار اليوزر هيتجاهل وده bug صعب تلاحظه.`
+        },
+        {
+          cmd: "reference و copy",
+          title: "ليه لما عدّلت النسخة الأصل اتغير؟",
+          desc: R`المتغير اللي فيه object مش شايل الـ object نفسه، شايل reference (عنوان) ليه. [[const b = a]] مبتنسخش، بتخلي الاتنين يشاوروا على نفس الـ object.
+
+[[{ ...a }]] و [[Object.assign]] بيعملوا نسخة سطحية (shallow): المستوى الأول جديد، بس أي object أو array جوه لسه مشتركة. للنسخة العميقة (deep) استخدم [[structuredClone(a)]]، وهي موجودة في كل المتصفحات و Node.
+
+ونفس الكلام لما تبعت object لدالة: الدالة بتاخد نفس الـ reference، فأي تعديل جواها بيظهر برّه.`,
+          example: R`const a = { name: "Sara", tags: ["js"] };
+const b = a;
+b.name = "Omar";
+console.log(a.name);            // "Omar": a و b نفس الـ object
+const shallow = { ...a };
+shallow.tags.push("ts");
+console.log(a.tags);            // ["js", "ts"]: الـ array اللي جوه مشتركة
+const deep = structuredClone(a);
+deep.tags.push("react");
+console.log(a.tags);            // ["js", "ts"]: الأصل متلمسش
+console.log({ x: 1 } === { x: 1 }); // false
+function rename(obj) { obj.name = "X"; }
+rename(a);
+console.log(a.name);            // "X": الدالة عدّلت الأصل`,
+          try: R`جرّب [[structuredClone({ date: new Date(), fn() {} })]] واقرا الـ error: الدوال مبتتنسخش. وبعدين جرّبها من غير [[fn]] واتأكد إن الـ Date رجعت Date. قارن ده بـ [[JSON.parse(JSON.stringify(...))]].`,
+          flag: "script",
+          deep: {
+            why: R`أشهر مصدر bugs غريبة: «أنا معدّلتش الليستة دي!» بس عدّلت نسخة شايلة نفس الـ reference. وفي React الـ state لازم تتعمل جديدة، لأن React بيقارن بالـ reference ([[Object.is]])، فلو عدّلت في مكانها مش هيعمل render.`,
+            how: R`الـ primitives بتتنسخ بالقيمة، والـ objects (ومنها arrays والدوال) بتتنسخ بالـ reference. JS دايمًا pass by value، بس «القيمة» في حالة الـ object هي الـ reference نفسه. عشان كده الدالة تقدر تعدّل جوه الـ object، بس لو عملت [[obj = {}]] جوه الدالة المتغير اللي برّه مش هيتأثر.
+
+[[structuredClone]] بتستخدم نفس الخوارزمية اللي بتنقل الداتا بين workers: بتنسخ Date و Map و Set و RegExp و arrays متداخلة، وبتتعامل مع المراجع الدائرية (circular). ومبتنسخش الدوال ولا عناصر الـ DOM ولا الـ prototype (instance من class بترجع object عادي).
+
+[[JSON.parse(JSON.stringify(x))]] الحل القديم: بيضيّع undefined والدوال، والـ Date بتبقى string، و NaN بتبقى null، ويقع على circular.`,
+            when: R`نسخة سطحية للتعديل على المستوى الأول (أغلب تعديلات الـ state). [[structuredClone]] لما محتاج نسخة مستقلة تمامًا من داتا متداخلة. وفي React مع state متداخلة كبيرة ناس بتستخدم Immer.`,
+            mistakes: R`تعمل [[const copy = original]] وتفتكرها نسخة. وتعدّل object اتبعتلك كـ argument (دالة بتعدّل مدخلاتها اسمها impure، وده صعب تتبّعه). وتستخدم JSON للنسخ العميق مع Dates. وفي الانترفيو: «pass by value ولا reference؟» و «shallow vs deep copy».`
+          },
+          teach: R`## الفكرة في سطرين
+
+المتغير اللي فيه object مش شايل الـ object نفسه، شايل **reference**: عنوان بيقول «الـ object موجود هناك في الذاكرة». فلو نسخت المتغير، نسخت العنوان، والاتنين بيشاوروا على نفس الحاجة. المثال بيوري ٤ حالات: نسخ العنوان، ونسخة سطحية، ونسخة عميقة، ودالة بتعدّل اللي اتبعتلها. النواتج من تشغيله في Node 24.
+
+---
+
+## ١. [[const b = a]]: مش نسخة
+
+~~~text app.js
+const a = { name: "Sara", tags: ["js"] };
+const b = a;
+b.name = "Omar";
+console.log(a.name);            // "Omar"
+~~~
+
+السطر التاني مبيعملش object جديد. فيه object **واحد** في الذاكرة، وعليه اسمين: a و b.
+
+~~~text الناتج
+Omar
+a === b  →  true
+~~~
+
+[[===]] على objects بتسأل «نفس العنوان؟» مش «نفس المحتوى؟»، وهنا الجواب true.
+
+---
+
+## ٢. [[{ ...a }]]: نسخة سطحية (shallow)
+
+~~~text app.js
+const shallow = { ...a };
+shallow.tags.push("ts");
+console.log(a.tags);            // ["js", "ts"]
+~~~
+
+[[{ ...a }]] عملت object **جديد** ونسخت فيه خصايص a واحدة واحدة. بس قيمة tags نفسها reference لـ array، فاللي اتنسخ هو العنوان:
+
+~~~text الناتج
+shallow === a            →  false
+shallow.tags === a.tags  →  true
+a.tags بعد push          →  [ 'js', 'ts' ]
+~~~
+
+يعني المستوى الأول جديد (لو عملت [[shallow.name = "Mona"]] الأصل مش هيتأثر، جرّبتها و a.name فضلت Omar)، بس أي حاجة جوه مشتركة. و [[Object.assign({}, a)]] بتعمل نفس الحاجة بالظبط (tags برضه طلعت مشتركة).
+
+---
+
+## ٣. [[structuredClone(a)]]: نسخة عميقة (deep)
+
+~~~text app.js
+const deep = structuredClone(a);
+deep.tags.push("react");
+console.log(a.tags);            // ["js", "ts"]
+~~~
+
+[[structuredClone]] دالة جاهزة في المتصفحات و Node، بتنسخ كل مستوى، فالـ array اللي جوه بقت array جديدة:
+
+~~~text الناتج
+deep.tags === a.tags  →  false
+a.tags                →  [ 'js', 'ts' ]
+deep.tags             →  [ 'js', 'ts', 'react' ]
+~~~
+
+---
+
+## ٤. objects بنفس المحتوى مش متساويين
+
+~~~text app.js
+console.log({ x: 1 } === { x: 1 }); // false
+~~~
+
+كل [[{ }]] بتعمل object جديد بعنوان جديد. المحتوى نفسه، بس العنوانين مختلفين، فالناتج [[false]].
+
+---
+
+## ٥. دالة بتعدّل اللي اتبعتلها
+
+~~~text app.js
+function rename(obj) { obj.name = "X"; }
+rename(a);
+console.log(a.name);            // "X"
+~~~
+
+لما بتنادي [[rename(a)]]، الباراميتر obj بياخد **نسخة من العنوان**، فـ obj و a بيشاوروا على نفس الـ object، والتعديل باين برّه. الناتج [[X]].
+
+بس لو جوه الدالة غيّرت الباراميتر نفسه لـ object تاني:
+
+~~~text app.js
+function replace(obj) { obj = { name: "new" }; }
+replace(a);
+~~~
+
+a.name فضلت [[X]]: انت غيّرت النسخة المحلية من العنوان، مش الـ object. عشان كده بنقول JS دايمًا **pass by value**، والقيمة في حالة الـ object هي العنوان.
+
+---
+
+## ٦. حدود structuredClone و JSON
+
+~~~text الناتج: Node 24
+structuredClone({ date: new Date(), fn() {} })
+DataCloneError: fn() {} could not be cloned.
+~~~
+
+الدوال مبتتنسخش، فبيرمي error صريح. من غير fn، الـ Date بترجع Date حقيقية ([[instanceof Date]] بـ true). والطريقة القديمة:
+
+~~~text الناتج
+JSON.parse(JSON.stringify({ date: new Date("2026-01-01"), fn() {}, u: undefined, n: NaN }))
+{ date: '2026-01-01T00:00:00.000Z', n: null }    typeof date → string
+~~~
+
+fn و u اختفوا من غير ما حد يقولك، والـ Date بقت string، و NaN بقت null.
+
+---
+
+## الخلاصة
+
+| الكود | object جديد؟ | اللي جوه مشترك؟ |
+|---|---|---|
+| [[const b = a]] | لأ | كله مشترك |
+| [[{ ...a }]] / [[Object.assign({}, a)]] | أيوه | أيوه |
+| [[structuredClone(a)]] | أيوه | لأ (ومبينسخش الدوال) |
+| [[JSON.parse(JSON.stringify(a))]] | أيوه | لأ، بس بيبوّظ Date و undefined و NaN |
+
+> [[===]] على objects بتقارن العناوين، مش المحتوى.`,
+          lines: [
+            "object جواه array.",
+            "مش نسخة: b بيشاور على نفس الـ object.",
+            "التعديل من b...",
+            "...ظهر في a.",
+            "نسخة سطحية: object جديد، بس tags نفس الـ array.",
+            "التعديل على الـ array اللي جوه...",
+            "...ظهر في الأصل.",
+            "نسخة عميقة: كل حاجة جديدة.",
+            "التعديل على النسخة...",
+            "...الأصل متأثرش.",
+            "objects مختلفين حتى لو نفس المحتوى.",
+            "دالة بتعدّل الـ object اللي اتبعتلها.",
+            "ابعت a.",
+            "الأصل اتعدّل."
+          ],
+          sol: R`[[structuredClone({ date: new Date(), fn() {} })]] بتطلع [[DataCloneError]] ورسالتها [[fn() {} could not be cloned.]] (في Chrome قبلها [[Failed to execute 'structuredClone' on 'Window']]). من غير fn بيشتغل، و [[copy.date instanceof Date]] بـ true.
+
+مع [[JSON.parse(JSON.stringify(...))]] مفيش error، بس الـ fn بتختفي بهدوء، والـ Date بترجع string زي [["2026-01-01T00:00:00.000Z"]] (typeof بـ [["string"]])، وأي undefined بيضيع. يعني JSON «بينجح» وهو بيبوّظ الداتا، و structuredClone بيقولك صراحة. وده جواب سؤال «ليه structuredClone أحسن من JSON trick؟».`
+        },
+        {
+          cmd: "Object.keys و entries",
+          title: "تلف على object وتحوّله",
+          desc: R`[[Object.keys(obj)]] بترجّع array المفاتيح، و [[Object.values]] القيم، و [[Object.entries]] أزواج [[[key, value]]]. ومعاهم تقدر تستخدم map و filter على object.
+
+والعكس [[Object.fromEntries]]: بتاخد أزواج وترجّع object. فالحركة المشهورة: entries ثم map ثم fromEntries، عشان تعدّل كل القيم.`,
+          example: R`const prices = { mug: 120, shirt: 300, cap: 90 };
+Object.keys(prices);      // ["mug", "shirt", "cap"]
+Object.values(prices);    // [120, 300, 90]
+Object.entries(prices);   // [["mug", 120], ["shirt", 300], ["cap", 90]]
+for (const [item, price] of Object.entries(prices)) {
+  console.log(item, price);
+}
+const discounted = Object.fromEntries(
+  Object.entries(prices).map(([k, v]) => [k, v * 0.9])
+);
+const cheap = Object.fromEntries(Object.entries(prices).filter(([, v]) => v < 200));
+Object.hasOwn(prices, "mug"); // true`,
+          try: R`حوّل [[prices]] لـ array objects شكلها [[{ name: "mug", price: 120 }]]. وبعدين اعمل العكس. وجرّب [[for (const k in prices)]] وقارنها بـ Object.keys.`,
+          flag: "script",
+          deep: {
+            why: "الـ objects مفيهاش map و filter. ولما تيجيلك داتا شكلها dictionary (إعدادات، أو ترجمات، أو عدد لكل حالة)، دي الطريقة اللي تحوّلها بيها وتعرضها.",
+            how: R`التلاتة بيرجّعوا الخصايص الخاصة بالـ object بس (own) واللي enumerable، ومفاتيحها strings (مش symbols)، بنفس ترتيب المفاتيح.
+
+[[for...in]] القديمة بتلف على المفاتيح بس كمان بتدخل في الـ prototype chain، عشان كده كان لازم [[hasOwnProperty]] جواها. [[for...of]] مع [[Object.entries]] أنضف.
+
+[[Object.fromEntries]] بتقبل أي iterable أزواج، فـ [[Object.fromEntries(map)]] بيحوّل Map لـ object، و [[Object.fromEntries(new FormData(form))]] بيحوّل فورم لـ object (درس الـ DOM).
+
+و [[Object.hasOwn]] (ES2022) أحسن من [[obj.hasOwnProperty]]، لأن التانية ممكن متبقاش موجودة (object اتعمل بـ [[Object.create(null)]]) أو تتكتب فوقها.`,
+            when: R`عرض dictionary في ليستة، وتعديل كل القيم، وفلترة مفاتيح، وتحويل بين object و Map و FormData.`,
+            mistakes: R`[[for...in]] على array: بتلف على الـ indexes كـ strings ومعاها أي حاجة متضافة للـ prototype. استخدم for...of. وتفتكر إن [[Object.keys(obj).length]] بتعد كل حاجة: symbols لأ. و [[Object.entries]] على object كبير جوه loop كبيرة: بتعمل arrays جديدة كل مرة.`
+          },
+          teach: R`## الفكرة في سطرين
+
+الـ array عندها map و filter و for...of، والـ object معندوش. الحل: حوّل الـ object لـ array بـ [[Object.keys]] أو [[Object.values]] أو [[Object.entries]]، اشتغل عليها، ولو محتاج ترجع object استخدم [[Object.fromEntries]]. النواتج من تشغيل المثال في Node 24.
+
+---
+
+## ١. التلات دوال
+
+~~~text app.js
+const prices = { mug: 120, shirt: 300, cap: 90 };
+Object.keys(prices);
+Object.values(prices);
+Object.entries(prices);
+~~~
+
+[[Object]] هنا مش object بتاعك، ده الـ constructor الجاهز في JS، وعليه دوال مساعدة بتاخد الـ object كـ argument.
+
+~~~text الناتج
+[ 'mug', 'shirt', 'cap' ]
+[ 120, 300, 90 ]
+[ [ 'mug', 120 ], [ 'shirt', 300 ], [ 'cap', 90 ] ]
+~~~
+
+- keys: المفاتيح (strings دايمًا).
+- values: القيم.
+- entries: array، كل عنصر فيها array صغيرة من اتنين [[[key, value]]]. ودي اسمها «أزواج» (pairs).
+
+---
+
+## ٢. اللف على الأزواج
+
+~~~text app.js
+for (const [item, price] of Object.entries(prices)) {
+  console.log(item, price);
+}
+~~~
+
+[[for...of]] بتلف على عناصر الـ array، وكل عنصر هو [[["mug", 120]]]. و [[[item, price]]] هنا **array destructuring**: أول عنصر في item، والتاني في price.
+
+~~~text الناتج
+mug 120
+shirt 300
+cap 90
+~~~
+
+---
+
+## ٣. تعديل كل القيم: entries ← map ← fromEntries
+
+~~~text app.js
+const discounted = Object.fromEntries(
+  Object.entries(prices).map(([k, v]) => [k, v * 0.9])
+);
+~~~
+
+اتقرا من جوه لبرّه:
+
+### الخطوة ١: [[Object.entries(prices)]]
+
+الأزواج اللي شفناها فوق.
+
+### الخطوة ٢: [[.map(([k, v]) => [k, v * 0.9])]]
+
+لكل زوج: فكّه لـ k و v، ورجّع زوج جديد بنفس المفتاح والسعر بعد خصم ١٠٪.
+
+~~~text الناتج بعد map
+[ [ 'mug', 108 ], [ 'shirt', 270 ], [ 'cap', 81 ] ]
+~~~
+
+### الخطوة ٣: [[Object.fromEntries(...)]]
+
+العكس: بتاخد أزواج وترجّع object.
+
+~~~text الناتج: discounted
+{ mug: 108, shirt: 270, cap: 81 }
+~~~
+
+---
+
+## ٤. فلترة بالقيمة
+
+~~~text app.js
+const cheap = Object.fromEntries(Object.entries(prices).filter(([, v]) => v < 200));
+~~~
+
+نفس الحركة بس بـ filter. والجديد [[[, v]]]: الفاصلة من غير اسم قبلها معناها «اتخطى أول عنصر»، لأننا محتاجين القيمة بس.
+
+~~~text الناتج
+{ mug: 120, cap: 90 }
+~~~
+
+shirt اتشالت لأن 300 مش أقل من 200.
+
+---
+
+## ٥. [[Object.hasOwn]]
+
+~~~text app.js
+Object.hasOwn(prices, "mug"); // true
+~~~
+
+بتسأل «المفتاح ده موجود **على الـ object نفسه**؟». الفرق عن [[in]] بيبان مع حاجة موروثة:
+
+~~~text الناتج
+Object.hasOwn(prices, "mug")       →  true
+Object.hasOwn(prices, "toString")  →  false
+"toString" in prices               →  true
+~~~
+
+toString مش في prices، جاية من [[Object.prototype]] اللي كل object بيورث منه (درس prototype chain)، و [[in]] بتدوّر هناك كمان.
+
+---
+
+## ٦. حل «جرّب» (الـ solCode)
+
+~~~text app.js
+const list = Object.entries(prices).map(([name, price]) => ({ name, price }));
+const back = Object.fromEntries(list.map(({ name, price }) => [name, price]));
+~~~
+
+- [[({ name, price })]]: arrow بترجّع object، والقوسين حوالين [[{ }]] لازمين. من غيرهم JS هيفهم [[{]] كبداية جسم الدالة مش object.
+- الرجوع: كل object يتفك لـ name و price ويرجع زوج.
+
+~~~text الناتج
+[
+  { name: 'mug', price: 120 },
+  { name: 'shirt', price: 300 },
+  { name: 'cap', price: 90 }
+]
+{ mug: 120, shirt: 300, cap: 90 }
+~~~
+
+وبعدها الكود بيعمل [[Object.create({ inherited: 1 })]]: object جديد الـ prototype بتاعه فيه inherited، و [[Object.assign]] بتحط فيه الأسعار. والمقارنة:
+
+~~~text الناتج
+for...in: mug
+for...in: shirt
+for...in: cap
+for...in: inherited
+[ 'mug', 'shirt', 'cap' ]
+~~~
+
+[[for...in]] لفّت كمان على الموروث، و [[Object.keys]] لأ.
+
+---
+
+## الخلاصة
+
+| الدالة | بترجّع |
+|---|---|
+| [[Object.keys(o)]] | array المفاتيح |
+| [[Object.values(o)]] | array القيم |
+| [[Object.entries(o)]] | array أزواج [[[k, v]]] |
+| [[Object.fromEntries(pairs)]] | object من أزواج |
+| [[Object.hasOwn(o, k)]] | true لو المفتاح على الـ object نفسه |
+
+> ترتيب المفاتيح: الأرقام الصحيحة الأول تصاعدي، وبعدها الـ strings بترتيب الإضافة. [[Object.keys({ b: 1, 10: "x", a: 2, 2: "y" })]] طلعت [[[ '2', '10', 'b', 'a' ]]].`,
+          lines: [
+            "object أسعار.",
+            "المفاتيح.",
+            "القيم.",
+            R`أزواج [[[key, value]]].`,
+            "لف على الأزواج وفكّهم في متغيرين.",
+            "اطبع.",
+            "قفلة.",
+            R`ارجع object من أزواج...`,
+            "...بعد ما تعدّل كل قيمة بخصم ١٠٪.",
+            "قفلة.",
+            R`فلترة: [[[, v]]] بيتخطى المفتاح وياخد القيمة بس.`,
+            R`المفتاح ده موجود في الـ object نفسه؟`
+          ],
+          sol: R`[[Object.entries(prices).map(([name, price]) => ({ name, price }))]] بترجّع [[[{ name: "mug", price: 120 }, ...]]]، والعكس [[Object.fromEntries(list.map(({ name, price }) => [name, price]))]] بيرجّع [[{ mug: 120, shirt: 300, cap: 90 }]].
+
+على object عادي [[for...in]] و [[Object.keys]] بيطلعوا نفس المفاتيح. الفرق بيظهر لما الـ object ليه prototype فيه خصايص: [[for...in]] بتلف كمان على الخصايص الموروثة (القابلة للعد)، و [[Object.keys]] بتجيب اللي على الـ object نفسه بس. عشان كده [[Object.keys]] أو [[Object.entries]] هي الاختيار الآمن.`,
+          solCode: R`const prices = { mug: 120, shirt: 300, cap: 90 };
+const list = Object.entries(prices).map(([name, price]) => ({ name, price }));
+console.log(list);
+const back = Object.fromEntries(list.map(({ name, price }) => [name, price]));
+console.log(back); // { mug: 120, shirt: 300, cap: 90 }
+const child = Object.create({ inherited: 1 });
+Object.assign(child, prices);
+for (const k in child) console.log("for...in:", k); // mug shirt cap inherited
+console.log(Object.keys(child));                     // ["mug", "shirt", "cap"]`
+        },
+        {
+          cmd: "Map و Set",
+          title: "إمتى تستخدم Map و Set بدل object و array؟",
+          desc: R`[[Set]] مجموعة قيم مفيهاش تكرار، والسؤال [[has]] فيها سريع جدًا (O(1)) عكس [[includes]] على array (O(n)). و [[Map]] زي object بس المفتاح أي نوع (object أو رقم حقيقي)، وبتحافظ على ترتيب الإضافة، وعندها [[size]].
+
+ومن ES2025 الـ Set عندها عمليات المجموعات: [[union]] و [[intersection]] و [[difference]] و [[isSubsetOf]].`,
+          example: R`const visits = new Map();
+visits.set("/home", 1);
+visits.set("/about", 3);
+visits.get("/home");             // 1
+visits.has("/cart");             // false
+visits.size;                     // 2
+const userObj = { id: 1 };
+visits.set(userObj, "المفتاح object");
+for (const [path, count] of visits) console.log(path, count);
+const tags = new Set(["js", "ts", "js"]);
+tags.size;                       // 2
+tags.add("react").has("react");  // true
+const a = new Set([1, 2, 3]), b = new Set([2, 3, 4]);
+a.intersection(b);               // Set {2, 3}
+a.union(b);                      // Set {1, 2, 3, 4}
+a.difference(b);                 // Set {1}`,
+          try: R`اكتب دالة [[countWords(text)]] بترجّع Map فيها كل كلمة وعدد مرات ظهورها. وبعدين حوّل الناتج لـ object بـ [[Object.fromEntries]] واطبعه. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[countWords]] بترجّع Map، وبتتجاهل الحروف الكبيرة والمسافات الزيادة.`,
+          flag: "script",
+          deep: {
+            why: "مسائل كتير (في الشغل وفي الانترفيو) بتبقى «اتأكد إن ده مكررش» أو «عدّ كل حاجة ظهرت كام مرة» أو «هات العنصر بالـ id بسرعة». Set و Map بيحوّلوا حلول O(n²) لـ O(n) (تاب DSA).",
+            how: R`الاتنين hash tables من جوه، فالإضافة والبحث والمسح O(1) في المتوسط. وبيقارنوا المفاتيح بـ SameValueZero: زي === بس NaN بتساوي NaN. يعني objects بنفس المحتوى مفاتيح مختلفة.
+
+Map أحسن من object كـ dictionary لما: المفاتيح مش strings، أو بتضيف وتمسح كتير، أو المفاتيح جاية من اليوزر (object عنده مفاتيح موروثة زي [[toString]]، و [[__proto__]] خطر). و object أحسن لما الشكل ثابت ومعروف، أو هتعمله JSON (الـ Map بيطلع [[{}]] في JSON.stringify).
+
+وفيه [[WeakMap]] و [[WeakSet]]: المفاتيح objects بس، ومبيمنعوش الـ garbage collector يمسحها. مفيدين لو عايز تربط داتا بـ object (عنصر DOM مثلًا) من غير ما تسبب memory leak (المستوى ٣).`,
+            when: R`Set لإزالة التكرار، و «شفت ده قبل كده؟»، وعمليات المجموعات. Map للعد والـ caches والبحث بالـ id، وأي dictionary مفاتيحه ديناميكية.`,
+            mistakes: R`[[JSON.stringify(map)]] وتستغرب [[{}]]: حوّله الأول بـ [[Object.fromEntries]]. و [[map[key] = v]] بدل [[map.set]]: كده حطيت خاصية عادية على الـ object مش entry في الـ Map. واستخدام array مع includes جوه loop على داتا كبيرة.`
+          },
+          teach: R`## الفكرة في سطرين
+
+[[Map]] زي object بس معمولة مخصوص عشان تبقى «قاموس»: مفتاح من أي نوع وقيمته، بـ methods واضحة. و [[Set]] زي array بس مفيهاش تكرار، وسؤال «موجود؟» فيها سريع. النواتج من تشغيل المثال في Node 24، وهو فيه عمليات المجموعات الجديدة (ES2025) زي intersection.
+
+---
+
+## ١. Map: إنشاء وإضافة
+
+~~~text app.js
+const visits = new Map();
+visits.set("/home", 1);
+visits.set("/about", 3);
+~~~
+
+- [[new Map()]]: [[new]] بتعمل instance جديدة من الـ class الجاهز Map، فاضية.
+- [[set(key, value)]]: بتحط القيمة تحت المفتاح. لو المفتاح موجود بتستبدل قيمته. وبترجّع الـ Map نفسها:
+
+~~~text الناتج: console.log(visits.set("/home", 1))
+Map(1) { '/home' => 1 }
+~~~
+
+[[Map(1)]] يعني فيها عنصر واحد، والسهم [[=>]] في الطباعة معناه «المفتاح ده قيمته كذا».
+
+---
+
+## ٢. القراية والسؤال والعدد
+
+~~~text app.js
+visits.get("/home");             // 1
+visits.has("/cart");             // false
+visits.size;                     // 2
+~~~
+
+| السطر | بيعمل إيه | الناتج |
+|---|---|---|
+| [[get(k)]] | هات القيمة | [[1]] |
+| [[has(k)]] | المفتاح موجود؟ | [[false]] |
+| [[size]] | عدد العناصر (خاصية من غير قوسين) | [[2]] |
+
+ولو عملت [[get]] لمفتاح مش موجود، بترجع [[undefined]] (جرّبت [[visits.get("/cart")]]).
+
+---
+
+## ٣. مفتاح object
+
+~~~text app.js
+const userObj = { id: 1 };
+visits.set(userObj, "المفتاح object");
+~~~
+
+ده اللي object عادي ميقدرش يعمله: المفتاح نفسه object.
+
+~~~text الناتج: console.log(visits)
+Map(3) { '/home' => 1, '/about' => 3, { id: 1 } => 'المفتاح object' }
+~~~
+
+لو جرّبت نفس الحركة على object عادي، المفتاح بيتحوّل string:
+
+~~~text الناتج
+const o = {}; o[userObj] = 1; Object.keys(o)   →  [ '[object Object]' ]
+~~~
+
+وخلي بالك: الـ Map بتقارن المفاتيح بالعنوان (reference)، مش بالمحتوى:
+
+~~~text الناتج
+visits.get({ id: 1 })   →  undefined
+visits.get(userObj)     →  المفتاح object
+~~~
+
+[[{ id: 1 }]] الجديدة object تاني بعنوان تاني (درس reference و copy).
+
+---
+
+## ٤. اللف على Map
+
+~~~text app.js
+for (const [path, count] of visits) console.log(path, count);
+~~~
+
+كل عنصر في Map وانت بتلف عليها هو زوج [[[key, value]]]، فبنفكه بـ [[[path, count]]]. والترتيب هو ترتيب الإضافة:
+
+~~~text الناتج
+/home 1
+/about 3
+{ id: 1 } المفتاح object
+~~~
+
+---
+
+## ٥. Set: من غير تكرار
+
+~~~text app.js
+const tags = new Set(["js", "ts", "js"]);
+tags.size;                       // 2
+tags.add("react").has("react");  // true
+~~~
+
+- [[new Set([...])]]: بتاخد array (أو أي حاجة بتتلف عليها) وتشيل التكرار.
+
+~~~text الناتج: console.log(tags, tags.size)
+Set(2) { 'js', 'ts' } 2
+~~~
+
+- [[add]] بتضيف وترجّع الـ Set نفسها، فتقدر تكمّل عليها بـ [[.has]] في نفس السطر. الناتج [[true]].
+
+وأشهر استخدام: [[[...new Set([3, 1, 3, 2, 1])]]] طلعت [[[ 3, 1, 2 ]]]، يعني شيل التكرار من array وارجع array.
+
+---
+
+## ٦. عمليات المجموعات
+
+~~~text app.js
+const a = new Set([1, 2, 3]), b = new Set([2, 3, 4]);
+a.intersection(b);
+a.union(b);
+a.difference(b);
+~~~
+
+~~~text الناتج
+Set(2) { 2, 3 }          intersection: الموجود في الاتنين
+Set(4) { 1, 2, 3, 4 }    union: الكل من غير تكرار
+Set(1) { 1 }             difference: اللي في a ومش في b
+~~~
+
+وكل واحدة بترجّع Set **جديدة**: بعدهم a لسه [[Set(3) { 1, 2, 3 }]].
+
+---
+
+## ٧. فخين
+
+~~~text الناتج
+JSON.stringify(visits)       →  {}
+const m = new Map(); m["x"] = 1;  m.size → 0   m.get("x") → undefined
+~~~
+
+- JSON مبيعرفش Map، فبتطلع [[{}]] فاضية. حوّلها الأول بـ [[Object.fromEntries]].
+- [[m["x"] = 1]] حطت خاصية عادية على الـ object، مش entry في الـ Map. دايمًا [[set]] و [[get]].
+
+---
+
+## الخلاصة
+
+| | Map | Set |
+|---|---|---|
+| بتشيل | أزواج مفتاح وقيمة | قيم من غير تكرار |
+| إضافة | [[set(k, v)]] | [[add(v)]] |
+| قراية | [[get(k)]] | (مفيش، بتسأل بس) |
+| موجود؟ | [[has(k)]] | [[has(v)]] |
+| مسح | [[delete(k)]] | [[delete(v)]] |
+| العدد | [[size]] | [[size]] |
+| اللف | [[[k, v]]] بالترتيب | القيم بالترتيب |
+
+> في تمرين [[countWords]] اللي تحت هتحتاج [[get]] و [[set]] و [[has]] أو [[??]]: فكّر إيه اللي [[get]] بترجّعه أول مرة تشوف فيها كلمة.`,
+          lines: [
+            "Map فاضية.",
+            "ضيف مفتاح وقيمة.",
+            "كمان واحد.",
+            "اقرا بالمفتاح.",
+            "المفتاح موجود؟",
+            R`عدد العناصر (خاصية مش method).`,
+            "object عادي...",
+            "...ينفع يبقى مفتاح في Map، عكس الـ object.",
+            "Map بتتلف عليها بالترتيب وكل عنصر [key, value].",
+            "Set: التكرار اتشال لوحده.",
             "2.",
-            "الـ count مش موجود على الـ object.",
-            "متغير في الـ module من غير export: خاص بالملف.",
-            "دالة عامة بتعدّله.",
-            "ودالة بتقراه."
+            R`[[add]] بترجّع الـ Set نفسها فتقدر تكمّل عليها.`,
+            "مجموعتين.",
+            "المشترك.",
+            "الكل من غير تكرار.",
+            "اللي في a ومش في b."
           ],
-          sol: R`بـ module: [[let count = 0]] في أول الملف من غير export، والدوال بـ export. لو ملفين a و b عملوا import لـ inc وناديتها ٣ مرات من الاتنين، [[get()]] هترجّع 3، يعني الاتنين بيعدّوا على نفس العداد. ولو حطيت [[console.log]] في أول الملف هيطبع مرة واحدة بس مهما عملت import من كام ملف.
+          sol: R`لـ [["js is fun and JS is fast"]] الـ Map بتطلع [[Map(5) { 'js' => 2, 'is' => 2, 'fun' => 1, 'and' => 1, 'fast' => 1 }]]، و [[Object.fromEntries]] بتحوّلها لـ [[{ js: 2, is: 2, fun: 1, and: 1, fast: 1 }]] (fromEntries بتقبل أي حاجة بتتلف عليها وبتطلع أزواج، والـ Map كده).
 
-و [[import * as c from "./counter.js"]] وبعدين [[c.count]] بـ undefined: المتغير مش متصدّر فمش موجود برّه، زي [[counter.count]] في نسخة الـ IIFE. الغلطة الشائعة إنك تعمل [[export let count]] وتحاول تعمل [[count++]] من ملف تاني: هيطلع TypeError لأن الـ imports read-only، والتعديل لازم يبقى من جوه الـ module.`,
-          solCode: R`// counter.js
-let count = 0;
-export function inc() { return ++count; }
-export const get = () => count;
-// a.js
-import { inc } from "./counter.js";
-export const fromA = () => inc();
-// main.js
-import { fromA } from "./a.js";
-import { inc, get } from "./counter.js";
-fromA(); fromA(); inc();
-console.log(get()); // 3: نفس النسخة`
-        },
-        {
-          cmd: "EventEmitter",
-          title: "تعمل pub/sub: حد بيعلن، وأي حد مهتم بيسمع",
-          desc: R`الـ Observer pattern: object بيعلن عن أحداث ([[emit]])، وأي كود تاني يشترك فيها ([[on]]) ويلغي اشتراكه ([[off]]) من غير ما الطرفين يعرفوا بعض. ده اللي ورا [[addEventListener]] في المتصفح، و [[EventEmitter]] في Node، والـ stores زي Zustand.
-
-و «اكتب EventEmitter بإيدك» من أشهر أسئلة انترفيو JS العملية: بيختبر Map و Set و closures و this في سؤال واحد.`,
-          example: R`class Emitter {
-  #handlers = new Map();
-  on(event, fn) {
-    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
-    this.#handlers.get(event).add(fn);
-    return () => this.off(event, fn);
+السطر المهم [[m.set(w, (m.get(w) ?? 0) + 1)]]: أول مرة [[get]] بترجّع undefined فبنبدأ من 0. لو كتبت [[m.get(w) + 1]] من غير [[??]] هتطلع NaN لكل كلمة. ولو مش عامل [[toLowerCase]] هتلاقي [["JS"]] و [["js"]] كلمتين مختلفتين.`,
+          solCode: R`function countWords(text) {
+  const counts = new Map();
+  for (const word of text.toLowerCase().split(/\s+/).filter(Boolean)) {
+    counts.set(word, (counts.get(word) ?? 0) + 1);
   }
-  off(event, fn) {
-    this.#handlers.get(event)?.delete(fn);
-  }
-  emit(event, ...args) {
-    for (const fn of this.#handlers.get(event) ?? []) fn(...args);
-  }
-  once(event, fn) {
-    const off = this.on(event, (...args) => { off(); fn(...args); });
-    return off;
-  }
+  return counts;
 }
-const cart = new Emitter();
-const unsubscribe = cart.on("add", (item) => console.log("اتضاف", item));
-cart.once("add", () => console.log("أول منتج!"));
-cart.emit("add", "mug");
-unsubscribe();
-cart.emit("add", "cap");`,
-          try: R`ضيف [[listenerCount(event)]]. وبعدين خلي handler يرمي error وشوف الـ handlers اللي بعده بتشتغل ولا لأ، وصلّحها بـ try/catch جوه emit. وقارن بـ [[EventTarget]] المدمج: [[class Cart extends EventTarget]] و [[dispatchEvent(new CustomEvent("add", { detail: "mug" }))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الكلاس من المثال جاهز في المربع، ضيف [[listenerCount]] و try/catch جوه [[emit]].`,
-          flag: "script",
-          deep: {
-            why: "بيفصل اللي بيحصل عن اللي بيتفاعل معاه: السلة مش لازم تعرف إن فيه badge وإشعار و analytics مستنيين. وده أساس الـ events في المتصفح و Node و WebSockets والـ state management.",
-            how: R`Map من اسم الحدث لـ Set من الدوال: الـ Set بيمنع إن نفس الدالة تتسجّل مرتين، والمسح منه O(1).
-
-[[on]] بترجّع دالة unsubscribe (closure شايل event و fn)، ودي الطريقة المعتادة في المكتبات الحديثة، ومناسبة بالظبط للـ cleanup في useEffect.
-
-[[once]] بتسجّل wrapper بيشيل نفسه قبل ما ينادي الأصلي. المسح من Set وانت بتلف عليه آمن في JS.
-
-الـ emit متزامن: كل الـ handlers بتشتغل فورًا بالترتيب قبل ما emit ترجع، ولو واحد رمى error الباقي مش هيشتغل. Node EventEmitter نفس الكلام، وفيه حالة خاصة: [[emit("error")]] من غير listener بيرمي الـ error ويوقع البرنامج.
-
-في المتصفح [[EventTarget]] جاهز، وأي class يقدر يورث منه ويستخدم [[addEventListener]] و [[dispatchEvent]].`,
-            when: "مكونات مستقلة محتاجة تعرف إن حاجة حصلت: إشعارات، و plugins، و WebSocket messages، و state بسيط مشترك. ولو التدفق بقى معقد وصعب تتبّعه، state management واضح أحسن.",
-            mistakes: R`تنسى تلغي الاشتراك فيبقى memory leak (درس «memory leaks»). و handlers كتير بتعدّل نفس الـ state فالترتيب يفرق ومحدش فاهم. وتسمّي الأحداث strings عشوائية: خليها ثوابت. وفي الانترفيو افتكر: on و off و emit و once، وإن on بترجّع unsubscribe.`
-          },
-          lines: [
-            "الكلاس.",
-            "private: Map من اسم الحدث لـ Set دوال.",
-            "اشتراك.",
-            "أول مرة للحدث ده: اعمل Set.",
-            "ضيف الدالة.",
-            "رجّع دالة بتلغي الاشتراك.",
-            "قفلة.",
-            "إلغاء اشتراك.",
-            R`امسح لو موجود، و [[?.]] لو الحدث ملوش مشتركين.`,
-            "قفلة.",
-            "إعلان.",
-            R`نادي كل المشتركين بالـ arguments، و [[?? []]] لو مفيش.`,
-            "قفلة.",
-            "اشتراك لمرة واحدة.",
-            "wrapper بيشيل نفسه وبعدين ينادي الأصلي.",
-            "رجّع الإلغاء برضه.",
-            "قفلة.",
-            "قفلة الكلاس.",
-            "instance.",
-            "اشترك واحفظ دالة الإلغاء.",
-            "اشتراك لمرة واحدة.",
-            "الاتنين بيشتغلوا.",
-            "الغي الأول.",
-            "محدش بيسمع دلوقتي: مفيش حاجة بتتطبع."
-          ],
-          sol: R`[[listenerCount]] بترجّع [[this.#handlers.get(event)?.size ?? 0]]. في المثال قبل الـ emit بترجّع 2، وبعده 1 (الـ once شالت نفسها)، وبعد unsubscribe بترجّع 0، وآخر [[emit("add", "cap")]] مبيطبعش حاجة.
-
-لو أول handler رمى error من غير try/catch: الـ loop بتقف، الـ handlers اللي بعده مبتشتغلش، والـ error بيطلع لحد اللي نادى emit. بعد ما تلف كل نداء بـ try/catch جوه emit، الباقي بيشتغل عادي والـ error بيتسجل بس. و [[EventTarget]] المدمج بيعمل كده لوحده: [[dispatchEvent]] بيكمّل على باقي الـ listeners وبيبلّغ الـ error كـ uncaught (في Console أحمر) من غير ما يوقف اللي بعده، والـ detail بيوصل في [[e.detail]].`,
-          solCode: R`emit(event, ...args) {
-  for (const fn of this.#handlers.get(event) ?? []) {
-    try {
-      fn(...args);
-    } catch (err) {
-      console.error($__bthandler لـ "$__{event}" وقع:$__bt, err);
-    }
-  }
-}
-listenerCount(event) {
-  return this.#handlers.get(event)?.size ?? 0;
-}
-// والبديل المدمج
-class Cart extends EventTarget {}
-const cart = new Cart();
-cart.addEventListener("add", (e) => console.log("اتضاف", e.detail));
-cart.dispatchEvent(new CustomEvent("add", { detail: "mug" }));`,
+const counts = countWords("js is fun and JS is fast");
+console.log(counts);
+console.log(Object.fromEntries(counts)); // { js: 2, is: 2, fun: 1, and: 1, fast: 1 }`,
           check: {
             lang: "js",
-            starter: R`class Emitter {
-  #handlers = new Map();
-  on(event, fn) {
-    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
-    this.#handlers.get(event).add(fn);
-    return () => this.off(event, fn);
-  }
-  off(event, fn) {
-    this.#handlers.get(event)?.delete(fn);
-  }
-  emit(event, ...args) {
-    for (const fn of this.#handlers.get(event) ?? []) fn(...args);
-  }
-  once(event, fn) {
-    const off = this.on(event, (...args) => { off(); fn(...args); });
-    return off;
-  }
-  listenerCount(event) {}
+            starter: R`function countWords(text) {
+  const counts = new Map();
+  // ...
+  return counts;
 }`,
-            tests: R`test("listenerCount: 2 وبعد الـ once 1 وبعد unsubscribe 0", () => {
-  const cart = new Emitter(), counts = [];
-  const unsubscribe = cart.on("add", () => {});
-  cart.once("add", () => {});
-  counts.push(cart.listenerCount("add"));
-  cart.emit("add", "mug");
-  counts.push(cart.listenerCount("add"));
-  unsubscribe();
-  counts.push(cart.listenerCount("add"));
-  expect(counts).toEqual([2, 1, 0]);
-});
-test("event محدش سمعه ← 0 مش undefined", () => expect(new Emitter().listenerCount("nope")).toBe(0));
-test("handler بيرمي error: اللي بعده بيشتغل، و emit مبترميش", () => {
-  const e = new Emitter(), got = [];
-  e.on("x", () => { throw new Error("boom"); });
-  e.on("x", (v) => got.push(v));
-  e.emit("x", 42);
-  expect(got).toEqual([42]);
-});
-test("الـ arguments بتوصل للـ handlers", () => {
-  const e = new Emitter();
-  let sum = 0;
-  e.on("add", (a, b) => (sum = a + b));
-  e.emit("add", 2, 3);
-  expect(sum).toBe(5);
-});`,
-            solution: R`class Emitter {
-  #handlers = new Map();
-  on(event, fn) {
-    if (!this.#handlers.has(event)) this.#handlers.set(event, new Set());
-    this.#handlers.get(event).add(fn);
-    return () => this.off(event, fn);
+            tests: R`test("بترجّع Map", () => expect(countWords("a b") instanceof Map).toBe(true));
+test("'js is fun and JS is fast' ← { js: 2, is: 2, fun: 1, and: 1, fast: 1 }", () => expect(Object.fromEntries(countWords("js is fun and JS is fast"))).toEqual({ js: 2, is: 2, fun: 1, and: 1, fast: 1 }));
+test("مسافات زيادة مش كلمات: '  a   b a ' ← { a: 2, b: 1 }", () => expect(Object.fromEntries(countWords("  a   b a "))).toEqual({ a: 2, b: 1 }));
+test("نص فاضي ← Map فاضية", () => expect(countWords("").size).toBe(0));
+test("مفيش NaN: (m.get(w) ?? 0) + 1", () => expect([...countWords("x x x").values()]).toEqual([3]));`,
+            solution: R`function countWords(text) {
+  const counts = new Map();
+  for (const word of text.toLowerCase().split(/\s+/).filter(Boolean)) {
+    counts.set(word, (counts.get(word) ?? 0) + 1);
   }
-  off(event, fn) {
-    this.#handlers.get(event)?.delete(fn);
-  }
-  emit(event, ...args) {
-    for (const fn of this.#handlers.get(event) ?? []) {
-      try {
-        fn(...args);
-      } catch (err) {
-        console.error($__bthandler لـ "$__{event}" وقع:$__bt, err.message);
-      }
-    }
-  }
-  once(event, fn) {
-    const off = this.on(event, (...args) => { off(); fn(...args); });
-    return off;
-  }
-  listenerCount(event) {
-    return this.#handlers.get(event)?.size ?? 0;
-  }
+  return counts;
 }`
           }
         },
         {
-          cmd: "immutability",
-          title: "تعدّل داتا من غير ما تلمس الأصل",
-          desc: R`immutable update معناها: بدل ما تعدّل الـ object أو الـ array، تعمل نسخة جديدة فيها التعديل، والأجزاء اللي متغيرتش تفضل متشاركة. ده اللي React و Redux و Zustand بيطلبوه، لأنهم بيعرفوا إن حاجة اتغيرت بمقارنة الـ reference ([[prev !== next]]).
+          cmd: "JSON",
+          title: "تحوّل object لنص عشان تبعته أو تخزّنه، وترجّعه",
+          desc: R`JSON هو شكل النص اللي الـ APIs بتتكلم بيه. [[JSON.stringify(obj)]] بتحوّل لـ string، و [[JSON.parse(text)]] بترجّعه object.
 
-الأدوات: spread للـ objects والـ arrays، و [[map]] للتعديل، و [[filter]] للمسح، و [[toSorted]] و [[with]] بدل sort و [[arr[i] = x]]. و [[Object.freeze]] بيمنع التعديل فعلًا، بس سطحي.`,
-          example: R`const state = { user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] };
-const next = {
-  ...state,
-  items: state.items.map((it) => (it.id === 1 ? { ...it, qty: it.qty + 1 } : it)),
-};
-next.user === state.user;        // true: اللي متغيرش متشارك
-next.items === state.items;      // false: array جديدة
-next.items[1] === state.items[1]; // true: العنصر اللي متغيرش متشارك
-const removed = state.items.filter((it) => it.id !== 1);
-const added = [...state.items, { id: 3, qty: 1 }];
-const frozen = Object.freeze({ a: 1, nested: { b: 2 } });
-frozen.a = 99;                   // اتجاهل (TypeError في strict)
-frozen.nested.b = 99;            // اتغير: freeze سطحي`,
-          try: R`اكتب [[updateQty(state, id, qty)]] بترجّع state جديدة، واتأكد بـ === إن الأصل متغيرش وإن اللي متغيرش لسه متشارك. وبعدين اكتب [[deepFreeze(obj)]] بـ recursion. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: [[updateQty]] و [[deepFreeze]].`,
+JSON أضيق من JS: المفاتيح لازم بين [[""]]، ومفيش دوال ولا undefined ولا Date ولا Map. عشان كده الـ Date بتبقى string، ولما ترجّعها لازم تحوّلها بنفسك. و [[JSON.parse]] بترمي error لو النص بايظ، فحطها في try.`,
+          example: R`const order = { id: 7, items: ["mug"], createdAt: new Date("2026-01-01"), note: undefined };
+const text = JSON.stringify(order);
+// '{"id":7,"items":["mug"],"createdAt":"2026-01-01T00:00:00.000Z"}'
+JSON.stringify(order, null, 2);
+const back = JSON.parse(text);
+typeof back.createdAt;          // "string": الـ Date رجعت نص
+new Date(back.createdAt);
+try {
+  JSON.parse("{bad json}");
+} catch (err) {
+  console.log("JSON بايظ:", err.message);
+}`,
+          try: R`خزّن object في [[localStorage.setItem("cart", ...)]] من Console المتصفح، وقفل الصفحة وافتحها، ورجّعه بـ [[JSON.parse(localStorage.getItem("cart"))]]. وبعدين جرّب [[JSON.stringify({ a: 1n })]] واقرا الـ error.`,
           flag: "script",
           deep: {
-            why: "الـ bugs اللي سببها «حد عدّل الداتا دي من ورايا» من أصعب الأنواع في التتبّع. والـ immutability بتخلّي التغيير واضح: الـ reference الجديد = فيه تغيير. وده اللي بيخلي React.memo و useMemo و undo/redo و time-travel debugging ممكنين.",
-            how: R`الفكرة اسمها structural sharing: لما تعدّل عنصر واحد في array فيها ألف، مش بتنسخ الألف object، بتعمل array جديدة (ألف reference) والـ objects نفسها متشاركة إلا اللي اتغير. فالتكلفة أقل بكتير من deep clone.
+            why: "كل request و response بين الفرونت والباك JSON، و localStorage بيخزّن strings بس، والإعدادات والـ package.json JSON. والفرق بين JSON و JS objects سبب bugs كتير (الـ Dates بالذات).",
+            how: R`[[stringify]] بيتجاهل الخصايص اللي قيمتها undefined أو دالة أو symbol، وجوه array بيحطها null. و NaN و Infinity بيبقوا null. والـ Date بتتحوّل لأن عندها method اسمها [[toJSON]] بترجّع [[toISOString()]]، وتقدر تعمل toJSON لـ objects بتاعتك.
 
-كل مستوى في الطريق للحاجة اللي اتغيرت لازم يبقى جديد: الـ state، والـ items، والعنصر نفسه. أي مستوى تعدّله في مكانه هيكسر مقارنة الـ reference.
+الباراميتر التاني replacer (دالة أو array مفاتيح)، والتالت المسافات للتنسيق. و [[JSON.parse(text, reviver)]] بتاخد دالة بتعدّي على كل قيمة، ممكن تحوّل بيها الـ dates.
 
-[[Object.freeze]] بيخلي الخصايص read-only ويمنع الإضافة والمسح، في المستوى الأول بس. في strict mode أي محاولة تعديل بترمي TypeError، وده مفيد في التطوير عشان تمسك التعديلات الغلط.
+و [[res.json()]] في fetch هي JSON.parse على الـ body. ولو السيرفر رجّع HTML (صفحة error مثلًا) هتلاقي «Unexpected token '<'» (تاب المتصفح).
 
-لما الـ state بتبقى متداخلة جدًا والـ spreads بتكتر، مكتبة Immer بتخليك تكتب كأنك بتعدّل ([[draft.items[0].qty++]]) وهي بتعمل النسخ الـ immutable. و Redux Toolkit بيستخدمها جوّاه (createSlice)، و Zustand عنده middleware اختياري ليها ([[zustand/middleware/immer]]) لازم تسطّب immer وتلف بيه الـ store، ومن غيره لازم تعمل النسخ الـ immutable بنفسك.`,
-            when: "أي state في React أو store، وأي داتا مشتركة بين أجزاء كتير من الكود، ودوال utility (خليها pure: متعدّلش مدخلاتها).",
-            mistakes: R`[[state.items.push(x); setItems(state.items)]]: نفس الـ reference فمفيش render. وتنسخ المستوى الأول بس وتعدّل جوه: [[{ ...state }.user.name = "x"]] عدّل الأصل. وتعمل deep clone للـ state كلها مع كل تعديل: بطيء وبيكسر المقارنات. وتفتكر إن freeze عميق.`
+الـ BigInt بيرمي TypeError في stringify، والـ circular references بترمي «Converting circular structure to JSON».`,
+            when: "أي تبادل داتا مع API، أو تخزين في localStorage أو ملف، أو log منظم. والتنسيق بـ 2 مسافات للقراية والـ debugging بس.",
+            mistakes: R`تنسى [[JSON.stringify]] وانت بتبعت body في fetch، فيتبعت [["[object Object]"]]. و [[JSON.parse]] على داتا من برّه من غير try. وتقارن التاريخ اللي رجع من API كأنه Date وهو string. وتفتكر إن [[JSON.parse]] بتفحص الشكل: لأ، بترجّع أي حاجة، والفحص بتاعه Zod (تاب TypeScript).`
           },
+          teach: R`## الفكرة في سطرين
+
+الـ object عايش في ذاكرة البرنامج بس. عشان تبعته لسيرفر أو تخزّنه في ملف أو localStorage لازم يبقى **نص**. [[JSON.stringify]] بتحوّله نص، و [[JSON.parse]] بترجّع النص object. JSON = JavaScript Object Notation، يعني «طريقة كتابة objects زي JS» بس بقواعد أضيق. النواتج من Node 24، وحتة localStorage من Chrome headless.
+
+---
+
+## ١. object فيه حاجات مش JSON
+
+~~~text app.js
+const order = { id: 7, items: ["mug"], createdAt: new Date("2026-01-01"), note: undefined };
+~~~
+
+[[new Date("2026-01-01")]] بتعمل object تاريخ (أول يوم في ٢٠٢٦ الساعة 00:00 UTC). و note قيمتها undefined. الاتنين ملهمش مكان في JSON، وهنشوف بيحصلهم إيه.
+
+---
+
+## ٢. [[JSON.stringify]]: object ← نص
+
+~~~text app.js
+const text = JSON.stringify(order);
+~~~
+
+~~~text الناتج: console.log(text, typeof text)
+{"id":7,"items":["mug"],"createdAt":"2026-01-01T00:00:00.000Z"} string
+~~~
+
+لاحظ ٣ حاجات:
+
+1. المفاتيح بقت بين [[""]]: ده إجباري في JSON.
+2. [[note]] اختفت خالص: stringify بيتجاهل أي خاصية قيمتها undefined أو دالة.
+3. الـ Date بقت string بشكل ISO. الـ T بتفصل التاريخ عن الوقت، و [[.000]] ملّي ثانية، و Z يعني UTC.
+
+ولو الحاجات دي جوه array بتبقى null بدل ما تختفي، عشان الترتيب ميبوظش: [[JSON.stringify([undefined, () => 1, NaN])]] طلعت [[[null,null,null]]].
+
+---
+
+## ٣. نسخة منسقة للقراية
+
+~~~text app.js
+JSON.stringify(order, null, 2);
+~~~
+
+الباراميتر التاني (replacer) [[null]] يعني «متغيرش حاجة»، والتالت [[2]] عدد المسافات في كل مستوى:
+
+~~~text الناتج
+{
+  "id": 7,
+  "items": [
+    "mug"
+  ],
+  "createdAt": "2026-01-01T00:00:00.000Z"
+}
+~~~
+
+---
+
+## ٤. [[JSON.parse]]: نص ← object
+
+~~~text app.js
+const back = JSON.parse(text);
+typeof back.createdAt;          // "string"
+new Date(back.createdAt);
+~~~
+
+~~~text الناتج
+{ id: 7, items: [ 'mug' ], createdAt: '2026-01-01T00:00:00.000Z' }
+string
+2026-01-01T00:00:00.000Z
+~~~
+
+parse مبتعرفش إن النص ده كان Date، فبترجّعه string. لازم انت تعمل [[new Date(...)]] عليه عشان ترجع Date (و [[getFullYear()]] عليها طلعت 2026).
+
+---
+
+## ٥. نص بايظ
+
+~~~text app.js
+try {
+  JSON.parse("{bad json}");
+} catch (err) {
+  console.log("JSON بايظ:", err.message);
+}
+~~~
+
+- [[try { }]]: جرّب الكود ده.
+- [[catch (err) { }]]: لو رمى error، متوقعش البرنامج، تعالى هنا، و err هو الـ error.
+- [[err.message]]: نص الرسالة.
+
+~~~text الناتج
+JSON بايظ: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+~~~
+
+نوعه [[SyntaxError]]. والرسالة بتقولك: عند الحرف رقم 1 (العد بيبدأ من 0، يعني حرف b) كان متوقع اسم مفتاح بين تنصيص أو [[}]].
+
+ورسالتين هتشوفهم كتير:
+
+~~~text الناتج
+JSON.parse("[object Object]")   →  SyntaxError: "[object Object]" is not valid JSON
+JSON.parse("<!DOCTYPE html>")   →  SyntaxError: Unexpected token '<', "<!DOCTYPE html>" is not valid JSON
+~~~
+
+الأولى معناها إن حد خزّن object من غير stringify، والتانية إن السيرفر رجّع صفحة HTML بدل JSON.
+
+---
+
+## ٦. localStorage (حل «جرّب»)
+
+~~~text app.js
+localStorage.setItem("cart", JSON.stringify({ items: ["mug"], total: 120 }));
+const cart = JSON.parse(localStorage.getItem("cart")) ?? { items: [], total: 0 };
+~~~
+
+شغّلته في Chrome headless على صفحة من سيرفر محلي، وعملت reload بين السطرين:
+
+~~~text الناتج
+getItem("cart")  →  '{"items":["mug"],"total":120}'   (typeof: string)
+cart.items       →  ["mug"]
+getItem("nope")  →  null
+~~~
+
+localStorage بيخزّن strings بس. ولو المفتاح مش موجود [[getItem]] بترجع null، و [[JSON.parse(null)]] بترجع null، فـ [[??]] بتحط القيمة الافتراضية. ولو نسيت stringify:
+
+~~~text الناتج: setItem("bad", { items: ["mug"] }) وبعدين parse
+[object Object] | SyntaxError: "[object Object]" is not valid JSON
+~~~
+
+---
+
+## ٧. BigInt
+
+~~~text الناتج: JSON.stringify({ a: 1n })
+TypeError: Do not know how to serialize a BigInt
+~~~
+
+[[1n]] رقم BigInt (أرقام صحيحة كبيرة جدًا)، و JSON معندوش النوع ده، فبيرمي error بدل ما يخمّن.
+
+---
+
+## الخلاصة
+
+| الحاجة في JS | بعد stringify |
+|---|---|
+| مفتاح | بين [[""]] |
+| undefined أو دالة في object | بتختفي |
+| undefined أو دالة أو NaN في array | [[null]] |
+| NaN و Infinity | [[null]] |
+| Date | string ISO (ومترجعش Date لوحدها) |
+| BigInt | TypeError |
+
+> [[JSON.parse]] على أي نص جاي من برّه جوه [[try]] دايمًا.`,
           lines: [
-            "state متداخلة.",
-            "state جديدة.",
-            "انسخ المستوى الأول.",
-            R`[[items]] جديدة: العنصر المطلوب نسخة معدّلة، والباقي زي ما هو.`,
-            "قفلة.",
-            "user متغيرش فمتشارك.",
-            "items اتغيرت فجديدة.",
-            "العنصر التاني متغيرش فمتشارك.",
-            R`مسح immutable: [[filter]].`,
-            R`إضافة immutable: spread بدل push.`,
-            "object متجمّد.",
-            "التعديل مبيحصلش.",
-            "بس اللي جوه مش متجمّد."
-          ],
-          sol: R`[[updateQty(state, 1, 5)]]: [[state.items[0].qty]] لسه 1 و [[next.items[0].qty]] بـ 5. و [[next.user === state.user]] بـ true، و [[next.items === state.items]] بـ false، و [[next.items[1] === state.items[1]]] بـ true (اللي متغيرش متشارك)، و [[next.items[0] === state.items[0]]] بـ false (اتعمل object جديد).
-
-في [[deepFreeze]] جمّد الـ object الأول وبعدين ادخل جوه: كده لو فيه object بيشاور على نفسه، الـ [[Object.isFrozen]] هتوقف الـ recursion. لو جمّدت في الآخر بعد الـ recursion، object زي [[a.self = a]] هيعمل [[Maximum call stack size exceeded]]. وبعد deepFreeze [[f.nested.b = 99]] بتتجاهل بهدوء، وفي strict بتطلع [[TypeError: Cannot assign to read only property 'b']].`,
-          solCode: R`function updateQty(state, id, qty) {
-  return {
-    ...state,
-    items: state.items.map((it) => (it.id === id ? { ...it, qty } : it)),
-  };
-}
-function deepFreeze(obj) {
-  Object.freeze(obj);
-  for (const value of Object.values(obj)) {
-    if (typeof value === "object" && value !== null && !Object.isFrozen(value)) deepFreeze(value);
-  }
-  return obj;
-}
-const state = { user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] };
-const next = updateQty(state, 1, 5);
-console.log(state.items[0].qty, next.items[0].qty, next.user === state.user, next.items[1] === state.items[1]);
-// 1 5 true true`,
-          check: {
-            lang: "js",
-            starter: R`function updateQty(state, id, qty) {
-  const item = state.items.find((it) => it.id === id);
-  item.qty = qty;
-  return state;
-}
-function deepFreeze(obj) {
-  return Object.freeze(obj);
-}`,
-            tests: R`const make = () => ({ user: { name: "Sara" }, items: [{ id: 1, qty: 1 }, { id: 2, qty: 3 }] });
-test("الأصل ميتغيرش والجديد فيه qty 5", () => {
-  const state = make(), next = updateQty(state, 1, 5);
-  expect([state.items[0].qty, next.items[0].qty]).toEqual([1, 5]);
-});
-test("اللي اتغير بقى object جديد: state و items والعنصر", () => {
-  const state = make(), next = updateQty(state, 1, 5);
-  expect([next === state, next.items === state.items, next.items[0] === state.items[0]]).toEqual([false, false, false]);
-});
-test("اللي متغيرش لسه متشارك: user والعنصر التاني", () => {
-  const state = make(), next = updateQty(state, 1, 5);
-  expect([next.user === state.user, next.items[1] === state.items[1]]).toEqual([true, true]);
-});
-test("deepFreeze بتجمّد اللي جوه كمان", () => {
-  const f = deepFreeze({ a: 1, nested: { b: 2, list: [1] } });
-  expect([Object.isFrozen(f), Object.isFrozen(f.nested), Object.isFrozen(f.nested.list)]).toEqual([true, true, true]);
-});
-test("deepFreeze على object بيشاور على نفسه ميقعش (جمّد الأول وبعدين ادخل)", () => {
-  const a = { x: 1 };
-  a.self = a;
-  expect(Object.isFrozen(deepFreeze(a))).toBe(true);
-});`,
-            solution: R`function updateQty(state, id, qty) {
-  return {
-    ...state,
-    items: state.items.map((it) => (it.id === id ? { ...it, qty } : it)),
-  };
-}
-function deepFreeze(obj) {
-  Object.freeze(obj);
-  for (const value of Object.values(obj)) {
-    if (typeof value === "object" && value !== null && !Object.isFrozen(value)) deepFreeze(value);
-  }
-  return obj;
-}`
-          }
-        },
-        {
-          cmd: "iterators و generators",
-          title: "إزاي for...of بيشتغل، وتعمل sequence بتتحسب واحدة واحدة",
-          desc: R`أي object عنده method اسمها [[Symbol.iterator]] بترجّع iterator (object فيه [[next()]] بترجّع [[{ value, done }]]) يبقى iterable، وده اللي بيخلي [[for...of]] و [[...spread]] و destructuring يشتغلوا على arrays و strings و Map و Set.
-
-الـ generator ([[function*]]) أسهل طريقة تعمل iterator: كل [[yield]] بيطلّع قيمة ويوقف الدالة لحد ما حد يطلب اللي بعدها. فتقدر تعمل sequence طويلة أو لانهائية من غير ما تحسبها كلها. و ES2025 ضاف iterator helpers: [[map]] و [[filter]] و [[take]] و [[toArray]] مباشرة على الـ iterators.`,
-          example: R`function* range(start, end, step = 1) {
-  for (let i = start; i < end; i += step) yield i;
-}
-[...range(0, 5)];                   // [0, 1, 2, 3, 4]
-const it = range(0, 2);
-it.next();                          // { value: 0, done: false }
-it.next();                          // { value: 1, done: false }
-it.next();                          // { value: undefined, done: true }
-const playlist = {
-  songs: ["a", "b"],
-  *[Symbol.iterator]() { yield* this.songs; },
-};
-for (const song of playlist) console.log(song);
-range(0, Infinity).filter((n) => n % 2).take(3).toArray(); // [1, 3, 5]
-async function* pages(url) {
-  for (let next = url; next; ) {
-    const data = await fetch(next).then((r) => r.json());
-    yield data.items;
-    next = data.nextUrl;
-  }
-}`,
-          try: R`اكتب [[function* fibonacci()]] لانهائية، وخد أول ١٠ أرقام بـ [[.take(10).toArray()]]. وبعدين استخدم [[pages]] مع [[for await (const items of pages(url))]]. اكتب الحل في المربع اللي تحت ودوس «شغّل واختبر»: الاختبارات بتجرّب [[function* fibonacci()]] بـ [[next()]] مباشرة.`,
-          flag: "script",
-          deep: {
-            why: "بتفسّر إزاي for...of و spread بيشتغلوا على أي حاجة. والـ generators مفيدة للداتا الكبيرة أو اللانهائية (IDs، و pagination، و streams)، لأنك بتحسب اللي محتاجه بس. و async generators هي الطريقة النضيفة تلف على API بصفحات.",
-            how: R`iteration protocol: [[obj[Symbol.iterator]()]] بيرجّع iterator، و for...of بينادي [[next()]] لحد [[done: true]]. الـ arrays وغيرها عاملين كده جاهز.
-
-نداء [[range(0, 5)]] مبينفّذش أي حاجة: بيرجّع generator object. كل [[next()]] بيشغّل الدالة لحد أول [[yield]] ويوقف، والمتغيرات المحلية فاضلة. ده lazy evaluation. و [[yield*]] بيسلّم لـ iterable تاني.
-
-الـ iterator helpers (ES2025، موجودة في Node 22 والمتصفحات الحديثة) lazy كمان: [[filter]] و [[take]] مبيعملوش arrays وسطانية، فينفع تشتغل على [[range(0, Infinity)]] من غير ما البرنامج يقف. عكس Array methods اللي بتعمل array كاملة في كل خطوة.
-
-[[async function*]] بيعمل async iterator: next بترجّع Promise، وبتلف عليه بـ [[for await...of]]. Node streams و [[readline]] كمان async iterables، فتقدر تقرا ملف ضخم سطر سطر بـ for await. و [[Array.fromAsync]] بتجمّعه في array.
-
-والـ generators كانت أساس async/await قبل ما يبقى جزء من اللغة (مكتبة co).`,
-            when: "pagination من API، وقراية ملفات أو streams كبيرة، و sequences لانهائية، وتعريف iteration لـ data structure بتاعتك (tree أو linked list في تاب DSA).",
-            mistakes: R`تفتكر إن نداء الـ generator بيشغّله. وتلف على نفس الـ generator مرتين: التانية فاضية لأنه اتستهلك. وتعمل [[[...range(0, Infinity)]]]: البرنامج هيقف. و arrow function مينفعش تبقى generator.`
-          },
-          lines: [
-            R`[[function*]]: generator.`,
-            R`كل [[yield]] قيمة، والدالة بتوقف لحد ما حد يطلب اللي بعدها.`,
-            "قفلة.",
-            "spread بيطلب كل القيم.",
-            "generator object، لسه مشتغلش.",
-            "أول next: شغّل لحد أول yield.",
-            "التانية.",
-            R`خلص: [[done: true]].`,
-            "object عادي هنخليه iterable.",
-            "الداتا.",
-            R`method اسمها [[Symbol.iterator]] وهي generator، و [[yield*]] بيطلّع عناصر array.`,
-            "قفلة.",
-            "for...of شغال عليه.",
-            "iterator helpers: lazy، فالـ Infinity مش مشكلة.",
-            "async generator بيلف على API بصفحات.",
-            "لف لحد ما مفيش صفحة جاية.",
-            "هات الصفحة.",
-            "طلّع عناصرها.",
-            "اللينك بتاع الصفحة الجاية.",
-            "قفلة.",
+            R`object فيه Date و undefined، وهما مش JSON.`,
+            R`حوّله string: الـ note اختفت والـ Date بقت نص ISO.`,
+            "نسخة منسقة بمسافتين للقراية.",
+            "رجّع النص object.",
+            R`[[createdAt]] string دلوقتي مش Date.`,
+            "حوّلها Date بنفسك.",
+            "النص ممكن يبقى بايظ...",
+            "...فـ parse هترمي SyntaxError.",
+            "امسك الـ error.",
+            "رسالة واضحة بدل ما البرنامج يقع.",
             "قفلة."
           ],
-          sol: R`[[fibonacci().take(10).toArray()]] بترجّع [[[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]]]. الـ generator فيه [[while (true)]] بس مش بيعلّق، لأن كل [[yield]] بيوقف لحد ما حد يطلب القيمة الجاية، و take(10) بتطلب 10 بس. لو كتبت [[[...fibonacci()]]] البرنامج هيعلّق للأبد (أو يقع بـ out of memory) لأن spread بتطلب لحد done.
+          sol: R`بعد ما تقفل الصفحة وتفتحها، [[JSON.parse(localStorage.getItem("cart"))]] بيرجّعلك نفس الـ object. لو نسيت [[JSON.stringify]] في الـ setItem، localStorage هيخزن [["[object Object]"]] (لأنه بيخزن strings بس)، والـ parse بعدها هيطلع SyntaxError. ولو المفتاح مش موجود [[getItem]] بترجع null و [[JSON.parse(null)]] بترجع null، فاكتب [[?? []]] بعدها.
 
-مع [[for await (const items of pages(url))]]: كل لفة بتجيب صفحة، وبتقف لما [[nextUrl]] يبقى null. [[for await]] لازم تبقى جوه async function أو ESM (top-level). و [[take]] و [[toArray]] (iterator helpers) موجودين في Node 22 والمتصفحات الحديثة، فلو طلعلك [[take is not a function]] يبقى الـ runtime قديم.`,
-          solCode: R`function* fibonacci() {
-  let [a, b] = [0, 1];
-  while (true) {
-    yield a;
-    [a, b] = [b, a + b];
-  }
-}
-console.log(fibonacci().take(10).toArray()); // [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
-async function* pages(url) {
-  for (let next = url; next; ) {
-    const data = await fetch(next).then((r) => r.json());
-    yield data.items;
-    next = data.nextUrl;
-  }
-}
-for await (const items of pages("https://api.example.com/items?page=1")) {
-  console.log(items.length);
-}`,
-          check: {
-            lang: "js",
-            starter: R`function* fibonacci() {
-  // while (true) و yield
-}`,
-            tests: R`const first = (it, n) => { const out = []; for (const x of it) { if (out.length === n) break; out.push(x); } return out; };
-test("أول 10 ← 0 1 1 2 3 5 8 13 21 34", () => expect(first(fibonacci(), 10)).toEqual([0, 1, 1, 2, 3, 5, 8, 13, 21, 34]));
-test("next() بيرجّع { value, done: false }", () => {
-  const it = fibonacci();
-  it.next();
-  expect(it.next()).toEqual({ value: 1, done: false });
-});
-test("لانهائي: الـ 50 بيطلع 7778742049 من غير ما يخلص", () => {
-  const it = fibonacci();
-  let v;
-  for (let i = 0; i < 50; i++) v = it.next();
-  expect([v.value, v.done]).toEqual([7778742049, false]);
-});
-test("كل generator ليه حالته: اتنين مع بعض مستقلين", () => {
-  const a = fibonacci(), b = fibonacci();
-  a.next(); a.next(); a.next();
-  expect([a.next().value, b.next().value]).toEqual([2, 0]);
-});`,
-            solution: R`function* fibonacci() {
-  let [a, b] = [0, 1];
-  while (true) {
-    yield a;
-    [a, b] = [b, a + b];
-  }
-}`
-          }
-        }
-      ]
-    },
-    {
-      t: "APIs المتصفح",
-      l: 3,
-      n: "IntersectionObserver و ResizeObserver، ورفع الملفات بمعاينة و progress، ودورة حياة الصفحة و bfcache، و pushState",
-      items: [
-        {
-          cmd: "IntersectionObserver",
-          title: "تعرف إن عنصر ظهر على الشاشة إزاي؟ (infinite scroll و reveal)",
-          desc: R`[[IntersectionObserver]] بيقولك لما عنصر يدخل أو يخرج من الشاشة (أو من عنصر أب بيعمل scroll)، من غير ما تسمع لـ [[scroll]] وتحسب المقاسات بنفسك. بتعمله مرة بـ callback وخيارات، وبعدين [[observe(el)]] لأي عدد عناصر.
-
-أشهر استخدامين: infinite scroll (عنصر فاضي في آخر الليستة اسمه sentinel، أول ما يقرّب من الشاشة حمّل الصفحة الجاية)، وأنيميشن عند الظهور (ضيف كلاس لما الكارت يظهر، وبطّل تراقبه). و [[rootMargin: "300px"]] بيوسّع منطقة الشاشة ٣٠٠ بكسل، فالتحميل يبدأ قبل ما اليوزر يوصل للآخر. و [[threshold: 0.2]] يعني «لما ٢٠٪ من العنصر يظهر».`,
-          example: R`const feed = document.querySelector("#feed");
-const sentinel = document.querySelector("#sentinel");
-let page = 1, loading = false, done = false;
-async function loadMore() {
-  if (loading || done) return;
-  loading = true;
-  try {
-    const res = await fetch($__bt/api/posts?page=$__{page}$__bt);
-    const posts = await res.json();
-    if (posts.length === 0) done = true;
-    for (const p of posts) {
-      const li = document.createElement("li");
-      li.textContent = p.title;
-      feed.append(li);
-    }
-    page++;
-  } finally {
-    loading = false;
-  }
-  if (!done) { io.unobserve(sentinel); io.observe(sentinel); }
-}
-const io = new IntersectionObserver((entries) => {
-  if (entries[0].isIntersecting) loadMore();
-}, { rootMargin: "300px" });
-io.observe(sentinel);
-const reveal = new IntersectionObserver((entries, obs) => {
-  for (const e of entries) {
-    if (!e.isIntersecting) continue;
-    e.target.classList.add("visible");
-    obs.unobserve(e.target);
-  }
-}, { threshold: 0.2 });
-document.querySelectorAll(".reveal").forEach((el) => reveal.observe(el));`,
-          try: R`اعمل صفحة فيها [[<ul id="feed">]] وبعدها [[<div id="sentinel">]]، واستبدل الـ fetch بـ [[https://jsonplaceholder.typicode.com/posts?_page=$__{page}&_limit=5]]. افتح Network وانزل: الطلبات بتحصل إمتى؟ وبعدين شيل سطر [[unobserve/observe]] وخلي الـ limit 2 على شاشة كبيرة: التحميل بيكمّل لوحده ولا بيقف؟`,
-          flag: "script",
-          deep: {
-            why: "الطريقة القديمة: [[scroll]] listener بيشتغل عشرات المرات في الثانية، وجواه [[getBoundingClientRect()]] لكل عنصر، وده بيجبر المتصفح يحسب الـ layout كل مرة (layout thrashing، تاب HTML و CSS) فالـ scroll يقطّع على الموبايل. IntersectionObserver بيعمل الحساب ده جوه المتصفح بكفاءة ويناديك بس لما الحالة تتغير.",
-            how: R`الـ callback بيتنادى مرة أول ما تعمل observe (بالحالة الحالية)، وبعدين كل ما العنصر يعدّي threshold دخول أو خروج. كل entry فيه [[isIntersecting]] و [[intersectionRatio]] (نسبة الظاهر) و [[target]] و [[boundingClientRect]]. الـ callback بيشتغل async بعد الـ frame، مش أثناء الـ scroll.
-
-الفخ الشهير: لو الصفحة الأولى قصيرة والـ sentinel لسه ظاهر بعد التحميل، مفيش «تغيير» في الحالة (كان ظاهر وفضل ظاهر)، فالـ callback مش هيتنادى تاني والتحميل يقف. [[unobserve]] ثم [[observe]] بيجبره يبعت entry جديد بالحالة الحالية، فلو لسه ظاهر يحمّل الصفحة اللي بعدها.
-
-و [[loading]] بيمنع طلبين مع بعض (الـ callback ممكن يتنادى تاني قبل ما الأول يخلص)، و [[done]] بيوقف لما السيرفر يرجّع ليستة فاضية. و [[finally]] بيضمن إن loading يرجع false حتى لو الطلب فشل.
-
-في الـ reveal: [[unobserve]] بعد أول ظهور عشان الأنيميشن يحصل مرة، ومنراقبش عناصر خلاص. وللصور مش محتاج JS أصلًا: [[<img loading="lazy">]] بيعمل lazy loading لوحده.`,
-            when: R`infinite scroll، و lazy loading لحاجات تقيلة (فيديو، خرايط، iframes، charts)، وأنيميشن عند الظهور، وتحديد القسم الحالي في جدول المحتويات، و analytics «الإعلان اتشاف». وفي React فيه hooks جاهزة زي [[react-intersection-observer]]، أو [[useEffect]] + ref (تاب React).`,
-            mistakes: R`تنسى الفخ ده فالتحميل يقف على الشاشات الكبيرة. ومفيش حماية من التحميل المزدوج. وتنسى [[disconnect()]] لما الـ component يتشال (memory leak، درس memory leaks). و [[threshold: 1]] على عنصر أطول من الشاشة: عمره ما هيبقى ظاهر ١٠٠٪. وفي infinite scroll: الفوتر بقى مستحيل توصله، وزرار back بيرجّعك لأول الليستة؛ فكّر في زرار «حمّل أكتر» أو احفظ الصفحة في الـ URL.`
-          },
-          lines: [
-            "الليستة.",
-            "عنصر فاضي في آخرها: لما يظهر نحمّل.",
-            "رقم الصفحة، وحماية من طلبين مع بعض، ووقفة لما الداتا تخلص.",
-            "دالة التحميل.",
-            "بيحمّل فعلًا أو خلصنا: متعملش حاجة.",
-            "علّم إننا بنحمّل.",
-            R`[[try/finally]] عشان loading يرجع false مهما حصل.`,
-            "الصفحة الحالية.",
-            "حوّل الرد لـ array.",
-            "ليستة فاضية: مفيش أكتر.",
-            "ضيف كل بوست.",
-            "عنصر لكل بوست.",
-            "بـ textContent: آمن.",
-            "ضيفه.",
-            "قفلة.",
-            "الصفحة الجاية المرة الجاية.",
-            R`[[finally]]: بيتنفذ في النجاح والفشل.`,
-            "افتح الباب لتحميل جديد.",
-            "قفلة.",
-            R`الفخ: لو الـ sentinel لسه ظاهر، الـ observer مش هيبلّغ تاني. ده بيجبره يبلّغ بالحالة الحالية.`,
-            "قفلة.",
-            "الـ observer.",
-            R`[[isIntersecting]]: الـ sentinel دخل المنطقة.`,
-            R`[[rootMargin]]: ابدأ قبل الآخر بـ ٣٠٠ بكسل.`,
-            "ابدأ المراقبة (وبيتنادى مرة فورًا بالحالة الحالية).",
-            "observer تاني للأنيميشن.",
-            "ممكن كذا عنصر في نفس الـ callback.",
-            "مش ظاهر: عدّي.",
-            R`ضيف الكلاس (والـ CSS فيه transition).`,
-            "بطّل تراقبه: الأنيميشن مرة واحدة.",
-            "قفلة.",
-            "لما ٢٠٪ منه يظهر.",
-            R`راقب كل العناصر اللي عليها [[.reveal]].`
-          ],
-          sol: R`الطلبات بتحصل قبل ما توصل للآخر بشوية (الـ 300px)، وكل طلب بيضيف ٥ عناصر. ولما [[_page]] يعدّي 20 (١٠٠ بوست ÷ ٥) السيرفر بيرجّع [[[]]] فـ [[done = true]] والطلبات تقف.
-
-من غير سطر [[unobserve/observe]] وبـ limit 2 على شاشة كبيرة: بيحمّل الصفحة الأولى، والعنصرين مش مالين الشاشة، فالـ sentinel لسه ظاهر، وبيقف هنا. ولو عملت scroll بسيط لفوق ولتحت يحمّل تاني (لأن الحالة اتغيرت). ده بالظبط الـ bug اللي بيظهر على الشاشات الكبيرة بس ومحدش بيلاحظه على اللابتوب. مع السطر، بيحمّل لوحده لحد ما الشاشة تتملي.`
-        },
-        {
-          cmd: "ResizeObserver",
-          title: "مكوّن يتصرف حسب مقاسه هو، مش مقاس الشاشة",
-          desc: R`[[ResizeObserver]] بيناديك لما عنصر يتغير مقاسه، مهما كان السبب: الشاشة اتغيرت، أو sidebar اتقفل، أو المحتوى زاد. [[window.resize]] بيعرف مقاس الشاشة بس، والكارت ممكن يكون في عمود ضيق على شاشة كبيرة.
-
-الـ entry فيه [[contentBoxSize[0].inlineSize]] (العرض) و [[blockSize]] (الطول)، وفيه [[contentRect]] الأقدم بـ [[width]] و [[height]].
-
-قبل ما تكتب JS: لو كل اللي عايزه تغيير شكل حسب عرض الأب، [[@container]] في CSS بيعمل ده من غير JS (درس «container queries» في تاب HTML و CSS). ResizeObserver للحاجات اللي CSS ميقدرش عليها: canvas، و charts، وحساب عدد عناصر، ومحرر نص.`,
-          example: R`const card = document.querySelector(".card");
-const ro = new ResizeObserver((entries) => {
-  for (const entry of entries) {
-    const width = entry.contentBoxSize[0].inlineSize;
-    entry.target.dataset.size = width < 400 ? "s" : width < 700 ? "m" : "l";
-  }
-});
-ro.observe(card);
-const canvas = document.querySelector("canvas");
-new ResizeObserver(([entry]) => {
-  const { width, height } = entry.contentRect;
-  canvas.width = Math.round(width * devicePixelRatio);
-  canvas.height = Math.round(height * devicePixelRatio);
-  draw();
-}).observe(canvas.parentElement);
-function draw() {
-  const ctx = canvas.getContext("2d");
-  ctx.fillRect(0, 0, canvas.width / 2, canvas.height / 2);
-}`,
-          try: R`حط الكارت جوه div عرضه [[resize: horizontal; overflow: auto]] عشان تقدر تسحبه بالماوس، واكتب CSS لـ [[.card[data-size="s"]]] يخلي الصورة فوق النص. اسحب وشوف الـ data-size بيتغير في Elements. وبعدين اعمل نفس الشكل بـ [[container-type: inline-size]] و [[@container (width < 400px)]] من غير JS. أنهي أسهل؟`,
-          flag: "script",
-          deep: {
-            why: "الـ components بقت بتتحط في أماكن مختلفة: نفس الكارت في grid بـ ٤ أعمدة وفي sidebar ضيق. الـ media queries بتسأل عن الشاشة، والسؤال الصح «أنا عرضي كام». و canvas بالذات لازم تعرف مقاسه بالبكسل الحقيقي وإلا الرسمة تبقى مغبشة.",
-            how: R`المتصفح بيحسب المقاسات في الـ layout، وبعده (قبل الرسم) بيبعت للـ ResizeObservers التغييرات مرة في الـ frame. فمفيش حاجة زي resize event بيتنادى ١٠٠ مرة، ومش محتاج debounce غالبًا.
-
-[[contentBoxSize]] array لأن عنصر ممكن يتقسم (multi-column)، وعادةً [[[0]]]. و [[inlineSize]] العرض في الكتابة الأفقية (عربي أو إنجليزي). و [[borderBoxSize]] لو عايز المقاس بالـ padding والـ border.
-
-الـ canvas له مقاسين: الـ CSS (بيتحكم فيه الـ layout) والداخلي [[canvas.width]] (عدد البكسلات). لو الداخلي أقل، الرسمة بتتمط وتغبش. [[devicePixelRatio]] بـ 2 أو 3 على شاشات الموبايل، فبنضرب فيه. وتغيير [[canvas.width]] بيمسح الرسمة، فلازم [[draw()]] بعده.
-
-لو غيّرت جوه الـ callback حاجة بتغيّر مقاس نفس العنصر، ممكن تدخل loop، والمتصفح بيوقفها ويطبع [[ResizeObserver loop completed with undelivered notifications]] في الـ console. غالبًا مش خطر بس معناه إن التصميم بيتذبذب.`,
-            when: R`charts و canvas و محررات، و virtualized lists (تحسب كام صف يظهر)، و «اعرض ٣ tags والباقي +2». ولتغيير الشكل بس: container queries أولًا.`,
-            mistakes: R`ResizeObserver لحاجة CSS يقدر عليها. وتنسى [[ro.disconnect()]] لما العنصر يتشال. وتغيّر مقاس العنصر المراقب جوه الـ callback (loop). و [[canvas.width = el.clientWidth]] من غير devicePixelRatio فالرسمة مغبشة على الموبايل.`
-          },
-          lines: [
-            "الكارت.",
-            "observer واحد ينفع لكذا عنصر.",
-            "كل عنصر اتغير مقاسه.",
-            "العرض الجديد.",
-            R`[[data-size]] يستخدمه الـ CSS: [[.card[data-size="s"]]].`,
-            "قفلة الـ loop.",
-            "قفلة.",
-            "ابدأ المراقبة.",
-            "canvas.",
-            R`راقب الأب، و [[[entry]]] بتاخد أول entry.`,
-            "مقاسه بالـ CSS pixels.",
-            R`بالبكسلات الحقيقية: [[devicePixelRatio]] 2 أو 3 على الموبايل.`,
-            "والطول.",
-            "تغيير المقاس بيمسح الرسمة، فارسم تاني.",
-            "راقب أب الـ canvas.",
-            "رسمة بسيطة.",
-            "الـ context بتاع الرسم 2D.",
-            "ربع المساحة.",
-            "قفلة."
-          ],
-          sol: R`لما تسحب الـ div تحت 400px الـ [[data-size]] يبقى [["s"]] والـ CSS يقلب الترتيب، وبين 400 و 700 [["m"]]. التغيير بيحصل مع السحب نفسه من غير تأخير ومن غير debounce.
-
-نسخة CSS: [[.wrap { container-type: inline-size }]] على الأب، و [[@container (width < 400px) { .card { flex-direction: column } }]]. نفس النتيجة، ومفيش JS، وبتشتغل قبل ما الـ JS يتحمّل (من غير flash). عشان كده للشكل استخدم CSS، وخلي ResizeObserver للحاجات اللي محتاجة رقم في JS (الـ canvas مثلًا).`
-        },
-        {
-          cmd: "input type=file",
-          title: "تختار صور وتعاينها قبل الرفع إزاي؟",
-          desc: R`[[<input type="file">]] بيفتح اختيار الملفات. [[accept="image/png,image/jpeg,image/webp"]] أو [[accept="image/*"]] بيفلتر اللي يظهر (اقتراح بس، اليوزر يقدر يختار أي حاجة)، و [[multiple]] يسمح بأكتر من ملف، وعلى الموبايل [[capture="environment"]] بيفتح الكاميرا.
-
-[[input.files]] ليستة [[File]]: كل واحد فيه [[name]] و [[size]] (بالبايت) و [[type]] (MIME زي [["image/png"]]). و [[URL.createObjectURL(file)]] بيعمل URL مؤقت ([[blob:...]]) تحطه في [[img.src]] فتعرض الصورة من غير ما ترفعها، وبعد ما تخلص [[URL.revokeObjectURL(url)]] عشان الذاكرة.`,
-          example: R`// HTML: <input type="file" id="pics" accept="image/png,image/jpeg,image/webp" multiple> <div id="preview"></div>
-const input = document.querySelector("#pics");
-const preview = document.querySelector("#preview");
-const MAX = 2 * 1024 * 1024;
-let urls = [];
-input.addEventListener("change", () => {
-  urls.forEach((u) => URL.revokeObjectURL(u));
-  urls = [];
-  preview.replaceChildren();
-  for (const file of input.files) {
-    if (!file.type.startsWith("image/")) continue;
-    if (file.size > MAX) {
-      preview.append($__bt$__{file.name}: أكبر من 2MB. $__bt);
-      continue;
-    }
-    const url = URL.createObjectURL(file);
-    urls.push(url);
-    const img = document.createElement("img");
-    img.src = url;
-    img.alt = file.name;
-    img.width = 120;
-    preview.append(img);
-  }
-});`,
-          try: R`اختار ٣ صور منهم واحدة أكبر من 2MB وملف PDF (غيّر الـ accept لـ [[*/*]] عشان يظهر). إيه اللي اتعرض؟ وبعدين غيّر اسم ملف [[.txt]] لـ [[.png]] واختاره: [[file.type]] بيقول إيه؟ وآخر حاجة: اعرض تحت كل صورة حجمها بالـ KB ومقاسها بالبكسل ([[img.naturalWidth]] بعد [[img.onload]]).`,
-          flag: "script",
-          deep: {
-            why: "صورة بروفايل، وصور منتجات، ومرفقات. المعاينة قبل الرفع بتوفر وقت اليوزر والباندويدث، والفحص في المتصفح بيقول «الملف كبير» فورًا بدل ما يستنى رفع ٢٠ ميجا يترفض في الآخر.",
-            how: R`[[File]] نوع من [[Blob]] (داتا binary) ومعاه اسم وتاريخ تعديل. المتصفح مبيقراش الملف لما تختاره، بيدّيك reference بس. [[createObjectURL]] بيربط الـ reference ده بـ URL جوه الصفحة، فالـ img بيقرا من الديسك مباشرة، وده أسرع وأخف من [[FileReader.readAsDataURL]] (اللي بيحوّل الملف كله نص base64 في الذاكرة، أكبر بحوالي الثلث).
-
-كل URL بيفضل شايل الملف في الذاكرة لحد ما تعمل revoke أو الصفحة تتقفل، فلو اليوزر اختار صور ١٠ مرات من غير revoke، الذاكرة بتتراكم.
-
-[[file.type]] المتصفح بيخمّنه من الامتداد (مش من محتوى الملف)، و [[accept]] اقتراح لنافذة الاختيار. يعني الاتنين للراحة (UX) مش للأمان. السيرفر لازم يفحص الحجم وأول bytes في الملف (magic bytes) ويعيد تسمية الملف (درس «multer» في تاب Backend بـ Node، و «presigned URL» في تاب Cloud و DevOps). ولو عايز تصغّر الصورة قبل الرفع: ارسمها على canvas بمقاس أصغر و [[canvas.toBlob(cb, "image/webp", 0.8)]].`,
-            when: R`أي رفع ملفات. و [[multiple]] للمعارض والمرفقات. والتصغير في المتصفح للصور الكبيرة من الموبايل (١٢ ميجا بكسل) قبل ما ترفعها.`,
-            mistakes: R`تعتمد على accept أو file.type كأمان. و createObjectURL من غير revoke. و FileReader base64 لملفات كبيرة. وتعرض [[file.name]] بـ innerHTML (اسم الملف input من اليوزر: [["<img onerror=...>.png"]] اسم ملف قانوني). وتنسى إن اختيار نفس الملف مرتين مش بيطلق [[change]] (اعمل [[input.value = ""]] بعد ما تخلص).`
-          },
-          lines: [
-            "الـ input.",
-            "مكان المعاينة.",
-            "٢ ميجا بالبايت.",
-            "الـ URLs المؤقتة عشان نمسحها بعدين.",
-            R`[[change]]: اليوزر اختار ملفات.`,
-            "امسح الـ URLs القديمة من الذاكرة.",
-            "وفضّي الليستة.",
-            "وامسح المعاينات القديمة.",
-            R`[[input.files]]: ليستة File.`,
-            R`مش صورة (الـ accept اقتراح بس): عدّي.`,
-            R`[[size]] بالبايت.`,
-            R`رسالة كنص: [[append]] بنص آمن زي textContent.`,
-            "وكمّل للملف اللي بعده.",
-            "قفلة.",
-            R`[[blob:...]]: الصورة من الديسك من غير رفع.`,
-            "احفظه عشان revoke.",
-            "img جديد.",
-            "الـ src هو الـ blob URL.",
-            "alt باسم الملف (property مش HTML، فآمن).",
-            "عرض المعاينة.",
-            "اعرضه.",
-            "قفلة الـ loop.",
-            "قفلة."
-          ],
-          sol: R`الصورتين الصغيرين بيظهروا، والكبيرة بيظهر مكانها «اسمها: أكبر من 2MB.»، والـ PDF مش بيظهر خالص (اتنط بـ continue لأن type بتاعه [["application/pdf"]]).
-
-الـ [[.txt]] اللي اسمه [[.png]]: [[file.type]] بـ [["image/png"]]، والـ img بيظهر مكسور. ده الدليل إن النوع جاي من الامتداد، ودي بالظبط الحركة اللي حد هيعملها عشان يرفع حاجة مش صورة على السيرفر بتاعك.
-
-الحجم: [[(file.size / 1024).toFixed(0) + " KB"]]، والمقاس لازم يستنى التحميل: [[img.onload = () => caption.textContent += $__bt $__{img.naturalWidth}×$__{img.naturalHeight}$__bt]]. قبل الـ onload الـ naturalWidth بـ 0.`
-        },
-        {
-          cmd: "drag and drop و progress",
-          title: "تسحب ملف وترفعه بشريط تقدم إزاي؟",
-          desc: R`السحب والإفلات: على العنصر اللي هيستقبل اسمع لـ [[dragover]] واعمل [[preventDefault()]] (من غيرها المتصفح مش هيسمح بالإفلات هنا وهيفتح الملف في التاب)، و [[drop]] واعمل [[preventDefault()]] واقرا [[e.dataTransfer.files]] (نفس نوع [[input.files]]). و [[dragenter]] و [[dragleave]] عشان تغيّر الشكل.
-
-شريط التقدم: [[XMLHttpRequest]] عنده [[xhr.upload.onprogress]] بيقولك اترفع كام byte من كام. [[fetch]] مفيهوش حدث تقدم للرفع. فلحد النهارده لو عايز progress bar للرفع بتستخدم XHR (أو مكتبة زي axios، اللي هي XHR من تحت في المتصفح).`,
-          example: R`const zone = document.querySelector("#drop");
-const bar = document.querySelector("progress");
-zone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  zone.classList.add("over");
-});
-zone.addEventListener("dragleave", () => zone.classList.remove("over"));
-zone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  zone.classList.remove("over");
-  for (const file of e.dataTransfer.files) upload(file);
-});
-function upload(file) {
-  const fd = new FormData();
-  fd.append("file", file);
-  const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/api/upload");
-  xhr.upload.onprogress = (e) => {
-    if (e.lengthComputable) bar.value = e.loaded / e.total;
-  };
-  xhr.onload = () => console.log(xhr.status, xhr.responseText);
-  xhr.onerror = () => console.log("النت وقع");
-  xhr.send(fd);
-}`,
-          try: R`اعمل سيرفر Express صغير فيه [[POST /api/upload]] بـ multer (تاب Backend بـ Node)، وافتح DevTools ← Network ← Throttling ← «Slow 4G»، واسحب صورة ٥ ميجا. الشريط بيتحرك؟ وبعدين زوّد زرار «إلغاء» بيعمل [[xhr.abort()]]، و keyboard fallback: الـ zone يبقى [[<label>]] فيه [[<input type="file">]] مخفي، عشان اللي مبيستخدمش ماوس.`,
-          flag: "script",
-          deep: {
-            why: "رفع ملف كبير على نت بطيء من غير أي مؤشر، اليوزر بيفتكر إن الموقع علّق فيعمل refresh ويضيّع الرفع. والسحب والإفلات متوقع في أي dashboard أو محرر.",
-            how: R`[[dragover]] بيتنادى كل كام ملّي ثانية وانت ساحب فوق العنصر، و [[preventDefault]] فيه هي اللي بتقول للمتصفح «العنصر ده بيقبل drop». [[dragleave]] بيحصل كمان لما تعدّي فوق عنصر ابن جوه الـ zone، فالشكل ممكن يرمش؛ الحل عداد بـ dragenter/dragleave أو [[pointer-events: none]] على الأبناء وقت السحب.
-
-XHR بيبعت الـ body وبيطلق [[upload.progress]] كل ما جزء يخرج من الجهاز. [[lengthComputable]] بتبقى true لما الحجم الكلي معروف (مع FormData و File دايمًا معروف). والتقدم ده «اتبعت من الجهاز»، مش «السيرفر حفظه»؛ بعد ١٠٠٪ لسه فيه وقت لحد [[onload]].
-
-ليه fetch لأ؟ [[fetch]] بيدّيك download progress عن طريق [[res.body.getReader()]] (تقرا الرد chunk chunk). بس الرفع: المواصفات فيها streaming request body ([[body: ReadableStream]] مع [[duplex: "half"]])، وده مدعوم في Chromium بس ومحتاج HTTP/2، وحتى معاه اللي بتعدّه هو اللي الـ stream بتاعك سلّمه للمتصفح مش اللي وصل للشبكة فعلًا. فمفيش طريقة بسيطة ومضمونة. عشان كده XHR لسه موجود ومش deprecated.
-
-للملفات الكبيرة (فيديو): ارفع مباشرة لـ S3/R2 بـ presigned URL من غير ما تعدّي على سيرفرك (بـ XHR PUT برضه عشان الـ progress)، أو multipart/resumable uploads (tus) عشان لو النت قطع تكمّل.`,
-            when: R`أي رفع أكبر من كام ميجا، أو على موبايل. والسحب للـ dashboards والمحررات، مع input عادي دايمًا.`,
-            mistakes: R`تنسى preventDefault في dragover فالمتصفح يفتح الصورة بدل ما يرفعها. و progress بـ fetch. وتحط [[Content-Type]] بإيدك مع FormData. وتعتبر ١٠٠٪ نجاح قبل ما [[onload]] يقول status 200. ومفيش بديل للكيبورد والموبايل (السحب مش شغال على iOS Safari من الملفات). وفي الانترفيو: «إزاي تعمل progress bar لرفع ملف؟» الإجابة XHR upload.onprogress، وليه fetch مبيعملهاش.`
-          },
-          lines: [
-            "منطقة الإفلات.",
-            R`[[<progress>]]: قيمته من 0 لـ 1.`,
-            "وانت ساحب فوقها.",
-            R`لازم: من غيرها الـ drop مش هيحصل.`,
-            "شكل «سيبه هنا».",
-            "قفلة.",
-            "خرج برّه: رجّع الشكل.",
-            "أفلت.",
-            "امنع المتصفح يفتح الملف.",
-            "رجّع الشكل.",
-            R`[[dataTransfer.files]]: نفس [[input.files]].`,
-            "قفلة.",
-            "الرفع.",
-            "multipart body.",
-            R`الملف تحت اسم [[file]] (زي ما multer مستنيه).`,
-            "XHR عشان الـ progress.",
-            "POST على الـ endpoint.",
-            R`[[upload.onprogress]]: اترفع كام من كام.`,
-            "حدّث الشريط.",
-            "قفلة.",
-            R`[[onload]]: السيرفر رد (ممكن 4xx، افحص status).`,
-            R`[[onerror]]: مشكلة شبكة.`,
-            "ابعت.",
-            "قفلة."
-          ],
-          sol: R`مع Slow 4G والـ ٥ ميجا الشريط بيتحرك تدريجيًا على مدار ثواني، وبعد ما يوصل ١٠٠٪ فيه لحظة لحد ما [[onload]] يطبع [[200]] والرد (السيرفر لسه بيكتب الملف).
-
-الإلغاء: خزّن الـ xhr في متغير برّه، والزرار [[xhr.abort()]]، واسمع لـ [[xhr.onabort]] ورجّع الشريط 0. في Network الطلب هيظهر «(canceled)».
-
-الـ fallback: [[<label id="drop"><input type="file" hidden multiple> اسحب هنا أو اضغط للاختيار</label>]]، والضغط على الـ label بيفتح اختيار الملفات لوحده، و [[change]] على الـ input بتنادي نفس [[upload]]. كده الكيبورد (Tab ثم Enter) والموبايل شغالين.`
-        },
-        {
-          cmd: "visibilitychange و bfcache",
-          title: "تعرف إن اليوزر ساب الصفحة أو رجعلها إزاي؟",
-          desc: R`[[visibilitychange]]: الصفحة بقت مخفية (اليوزر غيّر التاب، أو صغّر، أو قفل الشاشة، أو ساب التطبيق على الموبايل) أو ظهرت تاني. ده آخر حدث مضمون تقريبًا على الموبايل، فأي حفظ مسودة أو إرسال analytics يبقى هنا، بـ [[navigator.sendBeacon]] اللي بيبعت حتى لو الصفحة بتتقفل.
-
-[[beforeunload]]: الحدث اللي يطلّع «متأكد إنك عايز تخرج؟». استخدمه بس لما فيه تغييرات مش محفوظة، وشيله أول ما تتحفظ.
-
-وbfcache (back/forward cache): لما اليوزر يضغط back، المتصفح بيرجّع الصفحة زي ما هي من الذاكرة (JS و state و scroll) من غير تحميل. [[pageshow]] بـ [[e.persisted === true]] بيقولك إنها رجعت من الـ bfcache، فحدّث الداتا اللي ممكن تكون قدمت.`,
-          example: R`const form = document.querySelector("#post-form");
-function warn(e) {
-  e.preventDefault();
-  e.returnValue = "";
-}
-form.addEventListener("input", () => window.addEventListener("beforeunload", warn));
-form.addEventListener("submit", () => window.removeEventListener("beforeunload", warn));
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState !== "hidden") return;
-  const draft = JSON.stringify(Object.fromEntries(new FormData(form)));
-  navigator.sendBeacon("/api/draft", draft);
-});
-window.addEventListener("pageshow", (e) => {
-  if (e.persisted) console.log("رجعت من الـ bfcache: حدّث السلة والإشعارات");
-});
-window.addEventListener("pagehide", (e) => console.log("pagehide، هتتحفظ في bfcache؟", e.persisted));`,
-          try: R`افتح الصفحة، واكتب في الفورم، وجرّب تقفل التاب: الرسالة ظهرت؟ اعمل submit وجرّب تاني. وبعدين روح لصفحة تانية وارجع بـ back وبص على Console (فعّل Preserve log). وآخر حاجة: DevTools ← Application ← Back/forward cache ← «Test back/forward cache»: الصفحة eligible؟ ولو لأ، إيه السبب اللي بيقوله؟`,
-          flag: "script",
-          deep: {
-            why: "اليوزر كتب بوست طويل وقفل التاب بالغلط. أو فتح الموبايل بعد ساعة ولقى السلة قديمة. أو الـ analytics بتقول إن نص الزيارات «ملهاش نهاية». كل ده دورة حياة الصفحة، وأغلب المواقع بتتعامل معاها غلط بـ [[unload]].",
-            how: R`[[beforeunload]]: [[preventDefault()]] هي الطريقة الحديثة، و [[returnValue = ""]] للمتصفحات القديمة. والرسالة نفسها بتاعة المتصفح ومتقدرش تغيّرها. وبيطلع بس لو اليوزر اتفاعل مع الصفحة قبل كده. وإضافة الـ listener بس وقت الحاجة مهمة لأن وجود beforeunload طول الوقت بيمنع الـ bfcache في بعض المتصفحات (Firefox مثلًا).
-
-[[unload]] متستخدمهاش: مش بتتنادى بشكل موثوق على الموبايل (النظام بيقفل التطبيق من غير ما يسأل)، ووجودها بيمنع الـ bfcache، و Chrome بيلغيها تدريجيًا. البديل [[visibilitychange]] (hidden) للحفظ، و [[pagehide]] لو محتاج لحظة الخروج نفسها.
-
-[[sendBeacon(url, data)]] بيبعت POST صغير (حوالي 64KB كحد) والمتصفح بيكمّله حتى لو الصفحة اتقفلت، ومبيرجّعش رد. البديل الحديث [[fetch(url, { method: "POST", body, keepalive: true })]].
-
-الـ bfcache بيجمّد الصفحة كلها: الـ timers واقفة، والـ promises متعلقة، ولما ترجع بتكمّل. أسباب إن الصفحة متدخلوش: [[unload]] listener، أو WebSocket أو IndexedDB transaction مفتوحين، أو (تاريخيًا) [[Cache-Control: no-store]] على الـ HTML. والـ DevTools test بيقولك السبب بالظبط.`,
-            when: R`حفظ مسودات، و analytics نهاية الزيارة، و pause للفيديو والـ polling لما التاب مخفي (توفير بطارية وrequests)، وتحديث داتا حساسة للوقت لما الصفحة ترجع (سلة، رصيد، إشعارات).`,
-            mistakes: R`[[unload]] لأي حاجة. و beforeunload متسجل على طول. و [[fetch]] عادي في visibilitychange من غير keepalive فيتلغي. وتفترض إن الصفحة «فتحت من جديد» لما اليوزر يرجع بـ back فمتحدّثش الداتا. و polling شغال في تاب مخفي طول اليوم.`
-          },
-          lines: [
-            "الفورم.",
-            "دالة التحذير (باسم عشان نقدر نشيلها).",
-            "الطريقة الحديثة.",
-            "للمتصفحات القديمة.",
-            "قفلة.",
-            "أول ما يكتب: فعّل التحذير (إضافة نفس الدالة مرتين مبتعملش حاجة).",
-            "اتحفظ: شيل التحذير.",
-            "التاب اتخفى أو ظهر.",
-            "يهمنا لما يتخفى بس.",
-            "المسودة كـ JSON.",
-            R`[[sendBeacon]]: بيكمّل حتى لو الصفحة اتقفلت.`,
-            "قفلة.",
-            "الصفحة ظهرت.",
-            R`[[persisted]]: رجعت من الـ bfcache، مش تحميل جديد.`,
-            "قفلة.",
-            R`[[pagehide]] بدل unload.`
-          ],
-          sol: R`قبل الـ submit: قفل التاب بيطلّع رسالة المتصفح «Leave site?» (أو بالعربي حسب لغة المتصفح)، ونصها ثابت. بعد الـ submit مفيش رسالة لأن الـ listener اتشال. لو مطلعتش خالص، غالبًا مكتبتش حاجة بجد (المتصفح بيطلب تفاعل).
-
-الـ back: Console فيها [[pagehide، هتتحفظ في bfcache؟ true]] وبعد الرجوع [[رجعت من الـ bfcache...]]. ولاحظ إن الـ input لسه فيه اللي كتبته والـ scroll مكانه: ده الـ bfcache.
-
-لو الـ test قال «not eligible» الأسباب الشائعة: listener على [[unload]] (من مكتبة أو analytics)، أو الصفحة مفتوحة من DevTools بطريقة معيّنة، أو WebSocket مفتوح. وفي الحالة دي back بتعمل تحميل كامل و [[persisted]] بـ false.`
-        },
-        {
-          cmd: "pushState و popstate",
-          title: "تغيّر الـ URL من غير تحميل صفحة جديدة إزاي؟ (راوتر صغير)",
-          desc: R`[[history.pushState(state, "", "/about")]] بيغيّر الـ URL في الشريط ويضيف خطوة في الـ history من غير ما يطلب الصفحة من السيرفر. و [[replaceState]] نفس الكلام بس بيستبدل الخطوة الحالية (للفلاتر والبحث). ومفيش حاجة بتتعرض لوحدها: انت اللي بترسم المحتوى المناسب.
-
-و [[popstate]] بيتنادى لما اليوزر يضغط back أو forward، فتقرا [[location.pathname]] وترسم. ده كل الـ SPA router (React Router و Next.js client navigation) من تحت: اعترض ضغطة اللينك، و pushState، وارسم، واسمع لـ popstate.`,
-          example: R`const content = document.querySelector("#content");
-const pages = { "/": "الرئيسية", "/about": "عننا", "/contact": "كلمنا" };
-function render(path) {
-  content.textContent = pages[path] ?? "404: الصفحة مش موجودة";
-  document.title = pages[path] ?? "مش موجود";
-}
-document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-link]");
-  if (!a || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
-  e.preventDefault();
-  const path = new URL(a.href).pathname;
-  if (path === location.pathname) return;
-  history.pushState({ path }, "", path);
-  render(path);
-});
-window.addEventListener("popstate", () => render(location.pathname));
-render(location.pathname);`,
-          try: R`اعمل [[index.html]] فيه ٣ لينكات [[<a href="/about" data-link>]] و [[<main id="content">]]، وشغّله بـ [[npx serve -s]] (الـ [[-s]] بيرجّع index.html لأي path). اتنقل، واضغط back و forward، واعمل refresh على [[/about]]. وبعدين شغّله بـ [[npx serve]] من غير [[-s]] واعمل refresh على [[/about]]: إيه اللي حصل؟ وجرّب Ctrl+Click على لينك.`,
-          flag: "script",
-          deep: {
-            why: "تحميل الصفحة كلها مع كل ضغطة بيضيّع الـ state (فيديو شغال، فورم نص مكتوب) وبيحمّل الـ JS والـ CSS تاني. الـ SPA بيغيّر الجزء اللي اتغير بس. بس اليوزر لسه متوقع إن back يشتغل، وإن اللينك يتنسخ ويتبعت، وإن refresh يرجّعه لنفس المكان، و pushState هو اللي بيحافظ على ده.",
-            how: R`[[pushState]] بيغيّر [[location]] ويضيف entry في الـ history stack ومبيطلقش أي event. [[popstate]] بيتنادى لما الـ entry الحالي يتغير بـ back/forward (أو [[history.back()]])، مش لما تعمل pushState بنفسك. عشان كده بتنادي [[render]] بإيدك بعد pushState.
-
-الـ [[state]] (أول argument) object بيتحفظ مع الـ entry وبيرجعلك في [[e.state]] وقت popstate، مفيد لحاجات زي مكان الـ scroll. لازم يبقى قابل للنسخ (structured clone): مفيش دوال ولا عناصر DOM.
-
-شرط اللينك: [[e.button !== 0]] (مش الزرار الشمال) وأزرار Ctrl/Cmd/Shift معناها «افتح في تاب جديد»، فسيبها للمتصفح. و [[data-link]] عشان اللينكات الخارجية أو التحميلات تفضل عادية.
-
-السيرفر: لما اليوزر يعمل refresh على [[/about]]، المتصفح بيطلب [[/about]] من السيرفر فعلًا. لو السيرفر مش عارفه هيرد 404. لازم أي path مش ملف يرجّع [[index.html]] (درس «SPA» في تاب Nginx: [[try_files $uri /index.html]]).
-
-وفيه Navigation API الأحدث ([[navigation.addEventListener("navigate", ...)]]) بيعترض كل التنقلات في مكان واحد بدل click و popstate. دعمه اتسع في 2025/2026، بس اتأكد من caniuse قبل ما تعتمد عليه من غير fallback.`,
-            when: R`لما تبني SPA صغير من غير framework، أو تحط الفلاتر والتابات في الـ URL ([[replaceState]]). وفي React/Next استخدم الراوتر بتاعهم، بس افهم إن ده اللي تحته.`,
-            mistakes: R`تستنى popstate بعد pushState. ومتعملش render في الأول ([[render(location.pathname)]]) فالـ refresh يعرض صفحة فاضية. والسيرفر مش راجع index.html. وتعترض Ctrl+Click. وتنسى [[document.title]] والـ focus (قارئات الشاشة مش هتعرف إن الصفحة اتغيرت: حرّك الـ focus للعنوان الجديد). و pushState لكل حرف في البحث فالـ back يبقى ١٠٠ خطوة (استخدم replaceState).`
-          },
-          lines: [
-            "المكان اللي هنرسم فيه.",
-            "الصفحات: path ← محتوى.",
-            "ارسم حسب الـ path.",
-            R`[[??]] للـ 404.`,
-            "والعنوان في التاب.",
-            "قفلة.",
-            "listener واحد للّينكات كلها (event delegation).",
-            R`لينك داخلي عليه [[data-link]].`,
-            "مش لينك، أو Ctrl/Cmd/Shift/زرار تاني: سيبه للمتصفح.",
-            "امنع التحميل.",
-            R`الـ path من اللينك (href بيبقى URL كامل).`,
-            "نفس الصفحة: متضيفش خطوة.",
-            "غيّر الـ URL وضيف خطوة في الـ history.",
-            "ارسم بنفسك: pushState مبيعملش حاجة تانية.",
-            "قفلة.",
-            R`back/forward: ارسم الـ path الجديد.`,
-            "أول تحميل (أو refresh على أي path)."
-          ],
-          sol: R`مع [[serve -s]]: التنقل من غير تحميل (Network مفيهاش طلبات HTML جديدة)، و back/forward بيغيّروا المحتوى والعنوان، و refresh على [[/about]] بيرجّع «عننا» لأن السيرفر رجّع index.html والسطر الأخير رسم الـ path.
-
-من غير [[-s]]: refresh على [[/about]] بيطلع 404 من السيرفر نفسه، والـ JS بتاعك مشتغلش أصلًا. ده أشهر bug بعد نشر SPA، والحل في السيرفر مش في الـ JS.
-
-Ctrl+Click بيفتح تاب جديد عادي لأن الشرط سابه للمتصفح، والتاب الجديد بيطلب [[/about]] من السيرفر (فمحتاج [[-s]] برضه).`
+[[JSON.stringify({ a: 1n })]] بتطلع [[TypeError: Do not know how to serialize a BigInt]]: JSON معندوش نوع BigInt. الحل تحوّله لـ string بإيدك ([[String(v)]]) أو تستخدم replacer.`,
+          solCode: R`// في Console المتصفح
+localStorage.setItem("cart", JSON.stringify({ items: ["mug"], total: 120 }));
+// بعد reload
+const cart = JSON.parse(localStorage.getItem("cart")) ?? { items: [], total: 0 };
+cart.items; // ["mug"]`
         }
       ]
     }
