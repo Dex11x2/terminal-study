@@ -73,6 +73,145 @@ export default function App() {
             when: "أي واجهة فيها تفاعل وحالات كتير: لوحة تحكم، متجر، تطبيق فيه فورم وفلاتر. لصفحة ثابتة فيها كلام وصور بس، HTML و CSS كفاية.",
             mistakes: R`تسمّي الـ component بحرف صغير ([[welcomeBanner]])، فـ JSX يعتبره tag HTML مش موجود ومش بيظهر حاجة. تنسى الأقواس حوالين المتغير فيتطبع اسمه. تنسى تقفل الـ tag ([[<WelcomeBanner>]] من غير [[/>]]) فيطلعلك error. وتكتب [[return]] في سطر والـ JSX في السطر اللي بعده من غير قوسين: JavaScript بيعتبر الـ return خلصت ويرجّع [[undefined]].`
           },
+          teach: R`## الفكرة في سطرين
+
+المثال فيه دالتين: [[WelcomeBanner]] بترجّع عنوان فيه اسم، و [[App]] بتستخدمها مرتين. هنفك كل سطر، وبعدين نشوف الـ JSX بيتحوّل لإيه فعلًا، وإيه اللي بيظهر في الصفحة. كله اتشغّل في مشروع Vite 8.3 + React 19.2 + TypeScript، والصفحة اتفتحت في Chrome headless.
+
+---
+
+## ١. الـ component الأول: [[WelcomeBanner]]
+
+~~~text src/App.tsx
+function WelcomeBanner() {
+  const userName = "عبد الرحمن";
+  return <h1>أهلًا يا {userName}!</h1>;
+}
+~~~
+
+### [[function WelcomeBanner()]]
+
+دالة JavaScript عادية جدًا، مفيش فيها أي حاجة خاصة بـ React غير حاجتين:
+
+- **اسمها بيبدأ بحرف كبير** ([[W]]). ده مش ذوق، ده اللي بيخلي React تعرف إنها component مش عنصر HTML (هنجرّب ده تحت).
+- **بترجّع JSX**: وصف لحتة من الشاشة.
+
+القوسين [[()]] فاضيين لأن الـ component ده مش بياخد مدخلات. لما يبقى ليه مدخلات اسمها props (درس «props»).
+
+### [[const userName = "عبد الرحمن";]]
+
+متغير عادي جوه الدالة. أي JavaScript ينفع يتكتب هنا قبل الـ [[return]]: حسابات، أو شروط، أو نداء دوال.
+
+### [[return <h1>أهلًا يا {userName}!</h1>;]]
+
+ده أهم سطر. اللي بعد [[return]] **مش string** (مفيش علامات تنصيص)، ده JSX: كلام شكله HTML جوه ملف JavaScript.
+
+| الحتة | معناها |
+|---|---|
+| [[<h1>]] ... [[</h1>]] | عنصر HTML عادي: عنوان كبير |
+| [[أهلًا يا ]] | نص ثابت بيتكتب زي ما هو |
+| [[{userName}]] | الأقواس المعقوفة معناها «هنا قيمة JavaScript»، فبيتحط مكانها «عبد الرحمن» |
+| [[!]] | نص ثابت تاني |
+
+---
+
+## ٢. الـ component التاني: [[App]]
+
+~~~text src/App.tsx
+export default function App() {
+  return (
+    <main>
+      <WelcomeBanner />
+      <WelcomeBanner />
+    </main>
+  );
+}
+~~~
+
+- [[export default]]: [[export]] يعني «طلّع الدالة دي برا الملف عشان ملف تاني يقدر يستخدمها»، و [[default]] يعني «دي الحاجة الأساسية في الملف»، فاللي بيستوردها يكتب [[import App from './App']] من غير أقواس معقوفة. والملف اللي بيستورده هو [[src/main.tsx]].
+- [[return (]]: الـ JSX هنا كذا سطر، فبيتحط بين قوسين. من غيرهم، لو كتبت [[return]] لوحدها في سطر، JavaScript بيحط [[;]] لوحده بعدها والدالة ترجّع [[undefined]].
+- [[<main>]]: حرف صغير، يعني عنصر HTML حقيقي. شغلته يلم اللي جواه، لأن الـ component لازم يرجّع عنصر واحد من برا.
+- [[<WelcomeBanner />]]: حرف كبير، يعني «نادي الـ component اللي اسمه كده وحط اللي بيرجّعه هنا». و [[/>]] معناها إن الـ tag قافل نفسه، لأن ملوش محتوى بين فتحة وقفلة. في JSX أي tag لازم يتقفل.
+- السطر المكرر: كل [[<WelcomeBanner />]] نسخة مستقلة. React بتنادي الدالة مرة لكل واحدة.
+
+---
+
+## ٣. JSX بيتحوّل لإيه؟
+
+المتصفح مبيفهمش JSX. Vite بيحوّله لـ JavaScript عادي قبل ما يبعته. ده نفس المثال بعد التحويل (طلّعناه بـ TypeScript بإعداد [[jsx: "react-jsx"]]، نفس إعداد قالب Vite). الناتج الحقيقي كاتب الحروف العربية كأكواد زي [[أه...]]، ورجّعناها عربي هنا عشان تتقري بس:
+
+~~~text الناتج بعد التحويل
+import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+function WelcomeBanner() {
+    const userName = "عبد الرحمن";
+    return _jsxs("h1", { children: ["أهلًا يا ", userName, "!"] });
+}
+export default function App() {
+    return (_jsxs("main", { children: [_jsx(WelcomeBanner, {}), _jsx(WelcomeBanner, {})] }));
+}
+~~~
+
+لاحظ الفرق:
+
+- [[<h1>]] بقت [[_jsxs("h1", ...)]]: **string** فيه اسم العنصر.
+- [[<WelcomeBanner />]] بقت [[_jsx(WelcomeBanner, {})]]: **الدالة نفسها** من غير علامات تنصيص.
+
+ده بالظبط سبب الحرف الكبير: الحرف الصغير بيتحوّل لاسم عنصر HTML، والكبير بيتحوّل لمتغير بيتدوّر عليه في الكود. والدوال [[jsx]] و [[jsxs]] بيرجّعوا objects بتوصف الشاشة، و React بتعمل منها عناصر DOM حقيقية.
+
+---
+
+## ٤. اللي ظهر في الصفحة
+
+ده الـ HTML اللي React حطته جوه [[<div id="root">]]:
+
+~~~text الناتج (Chrome)
+<main><h1>أهلًا يا عبد الرحمن!</h1><h1>أهلًا يا عبد الرحمن!</h1></main>
+~~~
+
+[[WelcomeBanner]] نفسه مش موجود في الـ HTML. الـ component اختفى وفضل اللي رجّعه بس.
+
+---
+
+## ٥. التجارب اللي في «جرّب»
+
+### من غير الأقواس: [[أهلًا يا userName!]]
+
+~~~text الناتج
+<main><h1>أهلًا يا userName!</h1><h1>أهلًا يا userName!</h1></main>
+~~~
+
+من غير [[{ }]] الكلمة بقت نص عادي، زي «أهلًا» بالظبط.
+
+### بحرف صغير: [[welcomeBanner]]
+
+~~~text الناتج
+<main><welcomebanner></welcomebanner><welcomebanner></welcomebanner></main>
+~~~
+
+~~~text الـ Console
+<welcomeBanner /> is using incorrect casing. Use PascalCase for React components, or lowercase for HTML elements.
+The tag <welcomeBanner> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.
+~~~
+
+React اعتبرته عنصر HTML اسمه [[welcomebanner]]، والمتصفح عمله عنصر فاضي مبيظهرش حاجة. و [[PascalCase]] يعني كل كلمة في الاسم أولها حرف كبير. و TypeScript ([[tsc]]) كمان رفضه:
+
+~~~text tsc
+error TS2339: Property 'welcomeBanner' does not exist on type 'JSX.IntrinsicElements'.
+~~~
+
+[[IntrinsicElements]] هي لستة عناصر HTML اللي TypeScript يعرفها، والاسم ده مش فيها.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| component | دالة اسمها بحرف كبير بترجّع JSX |
+| [[<h1>...</h1>]] في [[return]] | JSX، مش string. بيتحوّل لنداء [[jsx("h1", ...)]] |
+| [[{userName}]] | حط قيمة JavaScript هنا |
+| [[<WelcomeBanner />]] | استخدم component، و [[/>]] قفلة الـ tag |
+| حرف صغير | عنصر HTML، حرف كبير: component |
+| [[export default]] | الـ component الأساسي في الملف، و [[main.tsx]] بيستورده |`,
           lines: [
             R`تعريف component: دالة عادية، اسمها بحرف كبير.`,
             R`متغير عادي جوه الدالة.`,
@@ -125,6 +264,109 @@ function Counter() {
             when: "أي واجهة فيها تفاعل وبيانات بتتغير: dashboards، ومتاجر، وفورمات كتير، ولوحات أدمن. لصفحة ثابتة (landing فيها نص وصور) React ممكن تبقى زيادة، و HTML و CSS كفاية، أو Next.js بيطلّعها static.",
             mistakes: R`تفتكر إن React framework كامل: هي مكتبة للواجهة بس. الراوتنج، وجلب البيانات، والـ state العام مكتبات تانية (React Router و TanStack Query و Zustand) أو framework زي Next.js. وتعدّل الـ DOM بإيدك جوه component ([[document.getElementById('x').style.color = 'red']]): React مش هتعرف، وأول render ممكن يمسح تعديلك. ولو محتاج تلمس الـ DOM فعلًا، فيه [[useRef]] في المستوى التاني.`
           },
+          teach: R`## الفكرة: نفس العداد بطريقتين
+
+المثال بيعمل نفس الحاجة مرتين: زرار عليه رقم، وكل ضغطة تزوّده واحد. المرة الأولى JavaScript عادي بيلمس الـ DOM بإيده، والتانية React. الفرق بينهم هو الدرس كله. جزء JavaScript العادي اتشغّل في Node 24 بـ jsdom (مكتبة بتعمل DOM وهمي)، وجزء React في مشروع Vite 8.3 + React 19.2 في Chrome headless.
+
+---
+
+## ١. من غير React
+
+~~~text vanilla.js
+button.addEventListener('click', () => {
+  count++
+  label.textContent = String(count)
+})
+~~~
+
+المثال مفترض إن [[button]] و [[label]] عناصر جبتهم قبل كده بـ [[document.querySelector]]، و [[count]] متغير [[let]] بيبدأ بصفر.
+
+- [[addEventListener('click', ...)]]: «لما حد يضغط على الزرار، نفّذ الدالة دي».
+- [[() => { ... }]]: arrow function، دالة من غير اسم بتتبعت كـ قيمة.
+- [[count++]]: زوّد المتغير واحد. ده بيغيّر **البيانات** بس، الشاشة لسه زي ما هي.
+- [[label.textContent = String(count)]]: انت بنفسك بتروح للعنصر وتكتب فيه الرقم الجديد. [[textContent]] هو النص اللي جوه العنصر، و [[String()]] بيحوّل الرقم لنص.
+
+بعد ضغطتين:
+
+~~~text الناتج (jsdom)
+<button id="b">+</button><span id="label">2</span>
+~~~
+
+شغال. بس لاحظ إن فيه **خطوتين**: تغيّر البيانات، وتفتكر تغيّر الشاشة. لو الرقم ده ظاهر في ٣ أماكن (العنوان، والسلة، والـ badge)، لازم تفتكر الـ ٣. ولو نسيت واحد، الشاشة بتعرض رقم غلط.
+
+---
+
+## ٢. بـ React
+
+~~~text Counter.tsx
+function Counter() {
+  const [count, setCount] = useState(0)
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+~~~
+
+### [[const [count, setCount] = useState(0)]]
+
+[[useState]] دالة من React (لازم [[import { useState } from 'react']] فوق) بترجّع array فيها حاجتين، و [[const [a, b] = ...]] ده array destructuring: بياخد أول عنصر في [[count]] والتاني في [[setCount]].
+
+| الاسم | هو إيه |
+|---|---|
+| [[count]] | القيمة الحالية. أول مرة [[0]] لأننا بعتنا [[0]] |
+| [[setCount]] | الدالة اللي بتغيّر القيمة وبتقول لـ React «ارسم تاني» |
+
+(تفاصيل [[useState]] كلها في درسها في القسم الجاي.)
+
+### [[return <button onClick={...}>{count}</button>]]
+
+- [[onClick={() => setCount(count + 1)}]]: لما الزرار يتضغط، اطلب إن [[count]] تبقى القيمة + 1. مفيش ولا كلمة عن الـ DOM.
+- [[{count}]]: اعرض القيمة جوه الزرار.
+
+### الـ JSX ده بيبقى إيه؟
+
+الـ component بيرجّع object بيوصف الشاشة، مش عنصر DOM. ده اللي طبعناه بـ [[console.log]] لنفس الزرار في Node:
+
+~~~text الناتج (Node)
+{
+  '$$typeof': Symbol(react.transitional.element),
+  type: 'button',
+  key: null,
+  ref: null,
+  props: { onClick: [Function: onClick], children: 0 }
+}
+~~~
+
+[[type]] اسم العنصر، و [[props]] فيها الـ [[onClick]] والمحتوى ([[children: 0]]). و [[$$typeof]] علامة React بتستخدمها عشان تتأكد إن الـ object ده عنصر React فعلًا. الـ objects دي هي اللي الناس بتسميها **virtual DOM**.
+
+---
+
+## ٣. اللي بيحصل مع كل ضغطة
+
+1. الضغطة بتنادي [[setCount(1)]].
+2. React بتحفظ القيمة الجديدة وتنادي [[Counter()]] **من الأول**. ده اسمه render.
+3. المرة دي [[useState]] بترجّع [[1]]، فالـ JSX بقى [[<button>1</button>]].
+4. React بتقارن الوصف الجديد بالقديم: نفس الزرار، النص بس اللي اتغير. فبتغيّر النص ده بس في الـ DOM.
+
+والناتج الحقيقي في الصفحة بعد كل ضغطة:
+
+~~~text الناتج (Chrome)
+initial        <button>0</button>
+after click 1  <button>1</button>
+after click 2  <button>2</button>
+after click 3  <button>3</button>
+~~~
+
+انت مكتبتش ولا سطر بيلمس الـ DOM. ولو الرقم ظاهر في ٣ أماكن، كلهم بيقروا من نفس [[count]]، فمستحيل يختلفوا. ده معنى [[UI = f(state)]]: الشاشة ([[UI]]) نتيجة دالة ([[f]]) في البيانات ([[state]]).
+
+---
+
+## الخلاصة
+
+| | من غير React | بـ React |
+|---|---|---|
+| لما البيانات تتغير | بتغيّرها، وتعدّل الـ DOM بإيدك | بتغيّرها بـ [[setCount]] بس |
+| مين بيعدّل الـ DOM | انت | React، بعد ما تقارن القديم بالجديد |
+| لو الرقم في كذا مكان | لازم تفتكرهم كلهم | كلهم بيتحسبوا من نفس الـ state |
+| الـ component | | دالة بتتنادى من الأول مع كل تغيير |`,
           lines: [
             "الطريقة القديمة: تسمع للضغطة بإيدك.",
             "تزوّد المتغير.",
@@ -170,6 +412,171 @@ npm run preview`,
             when: "أي مشروع React بيشتغل في المتصفح بس (SPA): لوحة أدمن، أو dashboard، أو تطبيق جوه Electron أو Capacitor. لو محتاج SEO وصفحات بتترسم على السيرفر، Next.js أنسب (تاب Next.js).",
             mistakes: R`تحط secret في [[VITE_API_SECRET]] وتفتكر إنه مستخبي: هو جوه الـ JS اللي أي حد بينزّله. الأسرار مكانها السيرفر بس. وفي مشروع حقيقي كان الإنتاج شغال بـ [[vite preview --host 0.0.0.0]]، و Vite نفسه بيقول إن preview مش معمول لسيرفر إنتاج: اعمل build وقدّم [[dist]] بـ Nginx (تاب nginx) أو من Docker. وتنسى إن SPA محتاجة السيرفر يرجّع [[index.html]] لأي مسار، وإلا refresh على [[/products/5]] يطلع 404.`
           },
+          teach: R`## الفكرة: ٦ أوامر، ٣ منهم مرة واحدة في عمر المشروع
+
+أول ٣ أوامر بيعملوا المشروع وبينزّلوا اللي محتاجه، وآخر ٣ هتستخدمهم كل يوم. كله اتشغّل على ويندوز 11 بـ Node 24.19 و npm 11.17 في PowerShell، يوم ما اتكتب الدرس [[create-vite]] كان 9.2.1، و Vite 8.3.3، و React 19.2.8، و TypeScript 6.0.
+
+---
+
+## ١. [[npm create vite@latest my-app -- --template react-ts]]
+
+### من جوه لبرة
+
+| الحتة | معناها |
+|---|---|
+| [[npm create vite]] | [[npm create X]] اختصار لـ «نزّل باكدج اسمها [[create-X]] وشغّلها». يعني بيشغّل [[create-vite]] |
+| [[@latest]] | آخر إصدار، مش نسخة قديمة متكيّشة عندك |
+| [[my-app]] | اسم الفولدر اللي هيتعمل |
+| [[--]] | «اللي بعدي مش لـ npm، عدّيه للأداة نفسها» |
+| [[--template react-ts]] | قالب React + TypeScript. و [[react]] من غير [[-ts]] يبقى JavaScript |
+
+~~~text الناتج
+> npx
+> create-vite my-app --template react-ts --no-interactive
+
+◇  Scaffolding project in C:\Users\ali\...\my-app...
+└  Done. Now run:
+
+  cd my-app
+  npm install
+  npm run dev
+~~~
+
+[[Scaffolding]] يعني «ببني الهيكل»: نسخ ملفات القالب بس، من غير ما ينزّل حاجة. و [[npm create]] شغّل [[npx create-vite]] زي ما قلنا.
+
+> في الترمنال العادي، [[create-vite]] ممكن يسألك أسئلة (القالب، وتنزّل وتشغّل دلوقتي ولا لأ). [[--template]] بيشيل سؤال القالب. والخيار [[--no-interactive]] بيمنع كل الأسئلة، وده اللي ضفناه هنا (عشان كده ظاهر في الناتج). و [[--help]] بيعرض كل القوالب: [[vanilla]] و [[vue]] و [[react]] و [[react-compiler]] و [[svelte]] وغيرهم.
+
+### الملفات اللي اتعملت
+
+~~~text my-app
+README.md
+index.html            الصفحة الوحيدة، فيها <div id="root"></div>
+package.json          اسم المشروع والـ scripts والمكتبات
+public/               ملفات بتتنسخ زي ما هي (favicon.svg)
+src/main.tsx          نقطة البداية: بيرسم App جوه root
+src/App.tsx           أول component
+src/index.css         الـ CSS العام
+tsconfig.json         إعدادات TypeScript (و tsconfig.app.json و tsconfig.node.json)
+vite.config.ts        إعدادات Vite (درس vite.config)
+~~~
+
+وده [[src/main.tsx]] كله:
+
+~~~text src/main.tsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+~~~
+
+- [[document.getElementById('root')]]: الـ div الفاضي اللي في [[index.html]]. و [[!]] في الآخر لـ TypeScript: «أنا متأكد إنه مش [[null]]».
+- [[createRoot(...)]]: «React، الـ div ده بتاعك».
+- [[.render(<App />)]]: ارسم App جواه.
+- [[<StrictMode>]]: وضع بيعمل فحوصات زيادة وقت التطوير بس (هتشوف أثره في درس useEffect).
+
+---
+
+## ٢. [[cd my-app]] و [[npm install]]
+
+[[cd]] بيدخلك الفولدر. و [[npm install]] (أو [[npm i]]) بيقرا [[package.json]] وينزّل كل اللي فيه في [[node_modules]]:
+
+~~~text الناتج
+added 27 packages, and audited 28 packages in 4s
+
+9 packages are looking for funding
+  run $__btnpm fund$__bt for details
+
+found 0 vulnerabilities
+~~~
+
+٢٧ باكدج بس: React و React DOM و Vite و TypeScript واللي محتاجينه. و [[found 0 vulnerabilities]] يعني مفيش ثغرات معروفة. وبيعمل كمان [[package-lock.json]]: الإصدارات بالظبط اللي اتنزلت، عشان أي حد ينزّل نفس النسخ.
+
+---
+
+## ٣. [[npm run dev]]
+
+[[npm run X]] بيشغّل الـ script اللي اسمه X في [[package.json]]. القالب فيه:
+
+~~~text package.json
+"scripts": {
+  "dev": "vite",
+  "build": "tsc -b && vite build",
+  "lint": "oxlint",
+  "preview": "vite preview"
+}
+~~~
+
+يعني [[npm run dev]] = [[vite]]:
+
+~~~text الناتج
+  VITE v8.3.3  ready in 291 ms
+
+  ➜  Local:   http://localhost:5791/
+  ➜  Network: use --host to expose
+~~~
+
+إحنا شغّلناه بـ [[--port 5791]] عشان ميتخانقش مع برامج تانية على الجهاز، ومن غيره البورت الافتراضي [[5173]]. افتح اللينك. [[ready in 291 ms]] لأن Vite مش بيجمّع المشروع، بيحوّل كل ملف وقت ما المتصفح يطلبه. و [[use --host to expose]] يعني السيرفر شغال على جهازك بس، وموبايلك على نفس الشبكة مش هيشوفه إلا بـ [[--host]]. والترمنال بيفضل مشغول، و Ctrl+C بيقفله.
+
+---
+
+## ٤. [[npm run build]]
+
+بيشغّل [[tsc -b && vite build]]: الأول [[tsc -b]] (TypeScript يفحص الأنواع، و [[-b]] اختصار build mode اللي بيقرا كل ملفات tsconfig)، و [[&&]] معناها «لو نجح كمّل»، وبعدين [[vite build]]:
+
+~~~text الناتج
+vite v8.3.3 building client environment for production...
+✓ 20 modules transformed.
+dist/index.html                   0.45 kB │ gzip:  0.29 kB
+dist/assets/react-CHdo91hT.svg    4.12 kB │ gzip:  2.06 kB
+dist/assets/vite-BF8QNONU.svg     8.70 kB │ gzip:  1.60 kB
+dist/assets/hero-CLDdwZDr.png    13.05 kB
+dist/assets/index-D64VDMd1.css    4.10 kB │ gzip:  1.47 kB
+dist/assets/index-BRDr3nmD.js   222.52 kB │ gzip: 69.27 kB
+✓ built in 282ms
+~~~
+
+| الحاجة | معناها |
+|---|---|
+| [[20 modules transformed]] | ٢٠ ملف (كودك و React نفسها) اتحوّلوا |
+| [[index-BRDr3nmD.js]] | كل الـ JavaScript في ملف واحد. [[BRDr3nmD]] ده الـ hash: بصمة من محتوى الملف |
+| [[222.52 kB]] | حجمه بعد التصغير، ومعظمه React DOM نفسها |
+| [[gzip: 69.27 kB]] | حجمه وهو بيتبعت مضغوط في الشبكة، وده اللي المستخدم بينزّله فعلًا |
+
+لو [[tsc]] لقى غلطة أنواع، الـ build بيقف ومفيش [[dist]]. ده الفرق المهم عن [[npm run dev]] اللي مش بيفحص الأنواع.
+
+---
+
+## ٥. [[npm run preview]]
+
+بيشغّل سيرفر صغير بيقدّم [[dist]] زي ما هي (افتراضيًا على 4173). جبنا الصفحة منه:
+
+~~~text الناتج
+<script type="module" crossorigin src="/assets/index-BRDr3nmD.js"></script>
+<link rel="stylesheet" crossorigin href="/assets/index-D64VDMd1.css">
+...
+<div id="root"></div>
+~~~
+
+لاحظ إن Vite كتب أسامي الملفات بالـ hash بنفسه جوه [[index.html]]، وإن المسارات بتبدأ بـ [[/]]. عشان كده فتح [[dist/index.html]] بدبل كليك بيطلع صفحة بيضا: [[/assets/...]] من [[file://]] بتدوّر في أول الديسك مش جنب الملف.
+
+---
+
+## الخلاصة
+
+| الأمر | إمتى | بيعمل إيه |
+|---|---|---|
+| [[npm create vite@latest my-app -- --template react-ts]] | مرة | ينسخ قالب المشروع |
+| [[cd my-app]] | مرة | يدخل الفولدر |
+| [[npm install]] | مرة (وبعد أي تغيير في المكتبات) | ينزّل [[node_modules]] |
+| [[npm run dev]] | كل يوم | سيرفر تطوير بتحديث لحظي، من غير فحص أنواع |
+| [[npm run build]] | قبل النشر | فحص أنواع ثم [[dist]] متصغّرة بأسامي فيها hash |
+| [[npm run preview]] | بعد الـ build | يجرّب [[dist]] محليًا، مش سيرفر إنتاج |`,
           lines: [
             "اعمل مشروع اسمه my-app بقالب React + TypeScript. الـ [[--]] بتعدّي الخيارات لـ Vite نفسه.",
             "ادخل فولدر المشروع.",
@@ -233,6 +640,232 @@ export default defineConfig(({ mode }) => {
             when: R`من أول يوم في أي SPA ليها backend منفصل. والـ base لما الفرونت يتنشر تحت مسار (لوحة أدمن على [[/admin]]، أو GitHub Pages على [[/repo-name/]]). والـ visualizer لما الـ build يطلع warning إن chunk أكبر من 500kB، أو قبل ما تضيف مكتبة تقيلة. والـ source maps المخفية لما يكون عندك error tracking (Sentry أو غيره).`,
             mistakes: R`تفتكر إن الـ proxy شغال في الإنتاج: [[vite build]] بيطلّع ملفات static، والـ proxy كان في dev server بس، فالـ [[/api]] يرجع 404 أو [[index.html]]. وتحط الـ API الحقيقي في [[VITE_API_URL]] وتفتكره سر: أي [[VITE_]] بيتكتب جوه الـ JS. وتعمل alias في Vite وتنسى tsconfig (أو العكس)، فالمحرر أو الـ build بيشتكي. و [[--mode analyze]] عشان تحلل الـ bundle: كده [[.env.production]] مبيتقريش والـ build بيطلع بقيم فاضية، والأسلم متغير زي [[ANALYZE=1]] زي المثال. و [[sourcemap: true]] في الإنتاج «عشان نعرف نعمل debug»: الكود كله بقى مكشوف. ومن غير [[base]] الموقع على [[/admin/]] بيفتح صفحة بيضا، لأن [[/assets/index.js]] بيرجع 404. وسؤال انترفيو: «ليه CORS error في الإنتاج بس؟» لأن في التطوير الـ proxy كان مخبّي إن الـ origins مختلفة.`
           },
+          teach: R`## الفكرة: ملف واحد بيرجّع object إعدادات
+
+[[vite.config.ts]] ملف TypeScript عادي، بيعمل [[export default]] لـ object إعدادات Vite بيقراه وهو بيشتغل. المثال بيظبط ٦ حاجات: الـ base، والـ plugins، والـ alias، والـ proxy، والـ source maps، وتقسيم الـ bundle. هنمشي عليه من فوق لتحت. كله اتجرّب في مشروع [[react-ts]] جديد على ويندوز 11 (Node 24.19، و Vite 8.3.3، و TypeScript 6.0.3)، بعد [[npm i -D rollup-plugin-visualizer @sentry/vite-plugin]].
+
+---
+
+## ١. الـ imports
+
+~~~text vite.config.ts
+import { defineConfig, loadEnv, type PluginOption } from 'vite'
+import react from '@vitejs/plugin-react'
+import { fileURLToPath, URL } from 'node:url'
+import { visualizer } from 'rollup-plugin-visualizer'
+import { sentryVitePlugin } from '@sentry/vite-plugin'
+~~~
+
+| الاسم | جاي منين | شغلته |
+|---|---|---|
+| [[defineConfig]] | [[vite]] | بيرجّع اللي تديهوله زي ما هو. فايدته الوحيدة إن المحرر يعرف أنواع الإعدادات ويكمّلك |
+| [[loadEnv]] | [[vite]] | يقرا ملفات [[.env*]] |
+| [[type PluginOption]] | [[vite]] | نوع (type) بس، و [[type]] قدامه معناها إنه بيتشال من الـ JavaScript النهائي |
+| [[react]] | [[@vitejs/plugin-react]] | الـ plugin اللي بيحوّل JSX ويشغّل Fast Refresh |
+| [[fileURLToPath]] و [[URL]] | [[node:url]] | أدوات Node. [[node:]] معناها «موديول جاي مع Node نفسه» |
+| [[visualizer]] | [[rollup-plugin-visualizer]] | بيرسم حجم كل ملف في الـ bundle |
+| [[sentryVitePlugin]] | [[@sentry/vite-plugin]] | بيرفع الـ source maps لـ Sentry |
+
+---
+
+## ٢. [[defineConfig(({ mode }) => { ... })]]
+
+~~~text vite.config.ts
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '')
+  return { ... }
+})
+~~~
+
+بدل ما نبعت object على طول، بنبعت **دالة**. Vite بيناديها ويديها object فيه [[mode]]، و [[({ mode })]] بتاخد الخانة دي بالـ destructuring.
+
+| الأمر | [[mode]] |
+|---|---|
+| [[npm run dev]] (يعني [[vite]]) | [[development]] |
+| [[npm run build]] (يعني [[vite build]]) | [[production]] |
+| [[vite build --mode staging]] | [[staging]] |
+
+### [[loadEnv(mode, process.cwd(), '')]]
+
+- [[mode]]: عشان يقرا [[.env]] و [[.env.<mode>]] (والـ [[.local]] بتوعهم).
+- [[process.cwd()]]: الفولدر اللي فيه ملفات الـ env (cwd = current working directory، الفولدر اللي انت شغّال منه).
+- [['']] (string فاضي): الـ prefix. لو كتبت [[VITE_]] هيرجّع اللي بيبدأ بيها بس. الفاضية معناها «كله»، فيرجّع كمان [[API_TARGET]] و [[SENTRY_AUTH_TOKEN]] و [[ANALYZE]]، ومعاهم متغيرات بيئة الجهاز نفسه.
+
+ليه مش [[import.meta.env]]؟ لأن ده بيتعمل للكود اللي جوه [[src]] بس، والـ config بيشتغل في Node قبله.
+
+---
+
+## ٣. [[base]]
+
+~~~text vite.config.ts
+base: env.BASE_PATH || '/',
+~~~
+
+[[||]] معناها «لو اللي على الشمال فاضي، خد اللي على اليمين». فلو مفيش [[BASE_PATH]]، الموقع على [[/]]. ولو [[BASE_PATH=/admin/]]، كل المسارات في [[index.html]] بتبقى [[/admin/assets/...]].
+
+---
+
+## ٤. [[plugins]]
+
+~~~text vite.config.ts
+plugins: [
+  react(),
+  env.ANALYZE === '1' && (visualizer({ filename: 'stats.html', gzipSize: true }) as PluginOption),
+  !!env.SENTRY_AUTH_TOKEN && sentryVitePlugin({ ... }),
+],
+~~~
+
+- [[react()]]: دايمًا.
+- [[cond && plugin]]: لو الشرط [[false]] العنصر بيبقى [[false]]، و Vite بيتجاهل أي [[false]] في الـ plugins. كده الـ plugin بيشتغل بس لما تطلبه.
+- [[env.ANALYZE === '1']]: [[===]] مقارنة صارمة، و القيمة [['1']] string لأن متغيرات البيئة دايمًا نصوص.
+- [[as PluginOption]]: «اعتبر ده من نوع PluginOption». بنحطها عشان نوع الـ visualizer مختلف شوية عن نوع Vite.
+- [[!!env.SENTRY_AUTH_TOKEN]]: [[!]] بتقلب لـ boolean معكوس، والتانية بترجّعه. النتيجة [[true]] لو فيه توكن، و [[false]] لو [[undefined]] أو فاضي. التوكن بيبقى موجود في CI بس.
+- [[filesToDeleteAfterUpload: ['./dist/**/*.map']]]: بعد الرفع امسح كل ملفات [[.map]] من [[dist]]. و [[**]] يعني «أي عدد فولدرات».
+
+---
+
+## ٥. [[resolve.alias]]
+
+~~~text vite.config.ts
+resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
+~~~
+
+من جوه لبرة:
+
+1. [[import.meta.url]]: عنوان ملف الـ config نفسه، شكله [[file:///C:/.../my-app/vite.config.ts]].
+2. [[new URL('./src', ...)]]: [[./src]] بالنسبة للعنوان ده، يعني [[file:///C:/.../my-app/src]].
+3. [[fileURLToPath(...)]]: يحوّله لمسار عادي [[C:\...\my-app\src]].
+4. [['@': ...]]: أي import بيبدأ بـ [[@]] يتبدّل بالمسار ده.
+
+ولازم TypeScript يعرف نفس الكلام، فضفنا في [[tsconfig.app.json]] جوه [[compilerOptions]]:
+
+~~~text tsconfig.app.json
+"paths": { "@/*": ["./src/*"] },
+~~~
+
+وبعدها [[import { API_URL } from '@/lib/api']] اشتغل في [[tsc]] وفي Vite. وعن [[baseUrl]] اللي هتلاقيه في مقالات قديمة جنب [[paths]]، جرّبناه:
+
+~~~text tsc 6.0.3 (اللي جاي مع القالب)
+error TS5101: Option 'baseUrl' is deprecated and will stop functioning in TypeScript 7.0.
+~~~
+
+~~~text tsc 7.0.2
+error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
+~~~
+
+يعني [[paths]] لوحدها. وفي Vite 8 بديل أقصر للـ alias كله: [[resolve: { tsconfigPaths: true }]]، جرّبناه مكان السطر ده والـ build عدّى، لأنه بيقرا [[paths]] من tsconfig.
+
+---
+
+## ٦. [[server.proxy]]
+
+~~~text vite.config.ts
+server: { proxy: { '/api': { target: env.API_TARGET || 'http://localhost:4000', changeOrigin: true } } },
+~~~
+
+- [[server]]: إعدادات [[npm run dev]] بس.
+- [['/api']]: أي طلب مساره بيبدأ بـ [[/api]].
+- [[target]]: ابعته للسيرفر ده ورجّع رده.
+- [[changeOrigin: true]]: غيّر header الـ [[Host]] لـ host الـ target.
+
+جرّبناه بسيرفر Node بيرجّع المسار والـ Host اللي وصلوله، على بورت 4791 بدل 4000 عشان ميتخانقش مع حاجة على الجهاز، وبعتنا [[API_TARGET=http://localhost:4791]]. وطلبنا من Vite (مش من الـ API):
+
+~~~text الناتج
+GET http://localhost:5793/api/products?page=2
+/api/products?page=2 host=localhost:4791
+~~~
+
+الطلب راح لبورت Vite، ورجع رد الـ API نفسه، و [[host]] بقى بتاع الـ API بسبب [[changeOrigin]]. والمتصفح شايف origin واحد، فمفيش CORS.
+
+---
+
+## ٧. [[build]]
+
+~~~text vite.config.ts
+build: {
+  sourcemap: 'hidden',
+  rolldownOptions: {
+    output: { codeSplitting: { groups: [
+      { name: 'react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
+      { name: 'charts', test: /node_modules[\\/](recharts|d3-[a-z-]+)[\\/]/ },
+    ] } },
+  },
+},
+~~~
+
+(في المثال كله سطر واحد، وقسمناه هنا عشان يتقري.)
+
+### [[sourcemap: 'hidden']]
+
+ملفات [[.map]] بتربط الكود المتصغّر بكودك الأصلي. [[hidden]] بيعملها من غير ما يكتب في آخر الـ JS سطر بيشاور عليها. قارنّا بـ [[sourcemap: true]]:
+
+~~~text grep -c sourceMappingURL dist/assets/*.js
+'hidden':  index-VyEluEqv.js:0   react-EV4rRv3L.js:0
+true:      index-VyEluEqv.js:1   react-EV4rRv3L.js:1
+~~~
+
+ومع [[true]] آخر الملف بقى [[//# sourceMappingURL=index-VyEluEqv.js.map]]، وده اللي بيخلي DevTools عند أي زاير ينزّل الكود الأصلي.
+
+### الـ regex في [[test]]
+
+[[/node_modules[\\/](react|react-dom|scheduler)[\\/]/]]:
+
+- [[/ ... /]]: regex في JavaScript.
+- [[node_modules]]: النص ده حرفيًا.
+- [[[\\/]]]: حرف واحد، يا [[\]] (ويندوز) يا [[/]] (لينكس والماك). الـ [[\\]] هي [[\]] واحدة متعملها escape.
+- [[(react|react-dom|scheduler)]]: واحدة من التلاتة، والخط الرأسي معناه «أو».
+
+و [[d3-[a-z-]+]] يعني [[d3-]] وبعدها حرف صغير أو [[-]] مرة أو أكتر ([[+]])، زي [[d3-scale]] و [[d3-shape]].
+
+### الناتج
+
+~~~text npm run build
+dist/index.html                   0.53 kB │ gzip:  0.32 kB
+dist/assets/index-D64VDMd1.css    4.10 kB │ gzip:  1.47 kB
+dist/assets/index-VyEluEqv.js     3.81 kB │ gzip:  1.22 kB │ map:    11.01 kB
+dist/assets/react-EV4rRv3L.js   218.84 kB │ gzip: 68.24 kB │ map: 1,044.05 kB
+~~~
+
+قبل الإعداد ده كان فيه ملف واحد [[index-BRDr3nmD.js]] بـ 222.52 kB. دلوقتي React لوحدها في [[react-*.js]] (218.84 kB)، وكودك في [[index-*.js]] (3.81 kB بس). لما تعدّل كودك وتنشر، الـ hash بتاع [[index]] بس اللي بيتغير، والمتصفح بيفضل مكيّش ملف React. والـ [[charts]] مطلعش لأن المشروع مفيهوش recharts.
+
+---
+
+## ٨. ملفات الـ env والـ modes
+
+~~~text .env.production
+VITE_API_URL=https://api.example.com
+~~~
+
+~~~text .env.staging
+VITE_API_URL=https://staging-api.example.com
+~~~
+
+وفي [[src/lib/api.ts]]: [[export const API_URL = import.meta.env.VITE_API_URL]]. ودوّرنا في الـ JS بعد كل build:
+
+~~~text الناتج
+npm run build                    →  https://api.example.com
+npx vite build --mode staging    →  https://staging-api.example.com
+~~~
+
+القيمة اتكتبت **جوه ملف الـ JS نفسه**، فأي حد بيفتح الموقع يقدر يقراها. و [[API_TARGET]] و [[SENTRY_AUTH_TOKEN]] مش هتلاقيهم، لأنهم من غير [[VITE_]] ومحدش استخدمهم في [[src]].
+
+### [[ANALYZE=1 npm run build]]
+
+[[ANALYZE=1]] قبل الأمر بيحط متغير بيئة للأمر ده بس (في bash و zsh. في PowerShell: [[$env:ANALYZE='1'; npm run build]]). طلع [[stats.html]] (حوالي 180 kB)، افتحه في المتصفح تلاقي treemap: مستطيل لكل ملف، ومساحته حجمه.
+
+---
+
+## الخلاصة
+
+| الإعداد | بيشتغل في | بيحل إيه |
+|---|---|---|
+| [[base]] | build | موقع تحت مسار فرعي زي [[/admin/]] |
+| [[plugins]] بـ [[&&]] | الاتنين | plugins بتشتغل بس لما تطلبها |
+| [[resolve.alias]] + [[paths]] | الاتنين + tsconfig | [[@/lib/api]] بدل [[../../../lib/api]] |
+| [[server.proxy]] | dev بس | [[/api]] يروح للـ backend من غير CORS |
+| [[sourcemap: 'hidden']] | build | maps لـ Sentry من غير ما المتصفح يطلبها |
+| [[codeSplitting.groups]] | build | React في ملف لوحدها يفضل مكيّش |
+| [[loadEnv(mode, cwd, '')]] | الـ config | يقرا كل المتغيرات، ومبيدخلش الـ bundle إلا [[VITE_]] |`,
           lines: [
             "defineConfig للأنواع، و loadEnv يقرا ملفات الـ env جوه الـ config.",
             "plugin الـ React: JSX و Fast Refresh.",
@@ -309,6 +942,141 @@ function Profile({ user }: { user: User }) {
             when: "في كل component. والتعليق جوه JSX بيتكتب [[{/* كده */}]] لأن [[//]] هيظهر كنص.",
             mistakes: R`ترجّع عنصرين جنب بعض من غير Fragment ("Adjacent JSX elements must be wrapped"). وتعرض object مباشرة [[{user}]] بدل خاصية منه. وتنسى تقفل [[<input>]] أو [[<br>]]. وتكتب [[if]] جوه [[{ }]]، والصح ternary أو تحسب القيمة قبل الـ return في متغير.`
           },
+          teach: R`## الفكرة: كل سطر في المثال قاعدة من قواعد JSX
+
+[[Profile]] component بياخد بيانات مستخدم ويعرض صورته وخانة Bio والحرفين الأولانيين من اسمه، وكلمة Admin لو هو أدمن. كل سطر فيه بيوريك قاعدة. عشان نشوف الناتج ضفنا [[App]] بيبعت [[{ name: 'sara', avatar: '/sara.png', isAdmin: true }]]، واتشغّل في Vite 8.3 + React 19.2 في Chrome headless.
+
+---
+
+## ١. نوع البيانات
+
+~~~text Profile.tsx
+type User = { name: string; avatar: string; isAdmin: boolean }
+function Profile({ user }: { user: User }) {
+~~~
+
+- [[type User = {...}]]: TypeScript بس، بيوصف شكل الـ object: [[name]] نص، و [[avatar]] نص (لينك الصورة)، و [[isAdmin]] boolean ([[true]] أو [[false]]).
+- [[({ user }: { user: User })]]: الـ component بياخد object واحد (الـ props)، و [[{ user }]] بتطلّع منه خانة [[user]]. والجزء بعد [[:]] نوع الـ props. التفاصيل في درس props.
+
+## ٢. JavaScript عادي قبل الـ return
+
+~~~text Profile.tsx
+const initials = user.name.slice(0, 2).toUpperCase()
+~~~
+
+[[slice(0, 2)]] بتاخد الحروف من 0 لحد قبل 2، يعني أول حرفين: [[sa]]. و [[toUpperCase()]] بتكبّرهم: [[SA]]. أي حساب معقد مكانه هنا، مش جوه الـ JSX.
+
+---
+
+## ٣. الـ JSX سطر سطر
+
+### [[<>]] و [[</>]]: الـ Fragment
+
+الـ component لازم يرجّع **عنصر واحد** من برا، لأن الـ JSX بيتحوّل لنداء دالة واحد، والدالة مبترجّعش قيمتين. الـ Fragment بيلم العناصر من غير ما يضيف [[<div>]] زيادة للصفحة.
+
+### [[<img src={user.avatar} alt={user.name} className="avatar" />]]
+
+- [[src={user.avatar}]]: قيمة JavaScript بين [[{ }]]. من غير أقواس هيبقى النص [[user.avatar]] حرفيًا.
+- [[className="avatar"]]: نص ثابت بين علامات تنصيص. و [[className]] بدل [[class]] لأن [[class]] كلمة محجوزة في JavaScript (بتعمل classes).
+- [[/>]]: [[<img>]] في HTML مالهاش قفلة، لكن في JSX لازم أي tag يتقفل.
+
+### [[<label htmlFor="bio">Bio</label>]]
+
+نفس الحكاية: [[for]] محجوزة (الـ for loop)، فبقت [[htmlFor]]. بتربط الـ label بالعنصر اللي [[id]] بتاعه [[bio]]، فلو ضغطت على كلمة Bio المؤشر يروح للخانة.
+
+### [[<textarea id="bio" defaultValue="" />]]
+
+[[defaultValue]]: قيمة أولى والمتصفح يمسك الباقي. (الفرق بينه وبين [[value]] في درس controlled input.)
+
+### [[<p style={{ color: 'gray', fontSize: 14 }}>{initials}</p>]]
+
+الـ [[{{ }}]] مش رمز جديد، هما حاجتين:
+
+- القوس الخارجي [[{ }]]: «هنا JavaScript».
+- القوس الداخلي [[{ color: 'gray', fontSize: 14 }]]: object عادي.
+
+والأسماء camelCase: [[fontSize]] بدل [[font-size]] (الشرطة مينفعش تبقى في اسم خاصية من غير علامات تنصيص). والرقم [[14]] React بتزوّد عليه [[px]] لوحدها.
+
+### [[{user.isAdmin ? <span>Admin</span> : null}]]
+
+مفيش [[if]] جوه [[{ }]]، لأن [[{ }]] بتاخد **expression** (حاجة ليها قيمة)، و [[if]] statement. فبنستخدم الـ ternary: [[شرط ? لو صح : لو غلط]]. و [[null]] معناها «متعرضش حاجة».
+
+---
+
+## ٤. الـ JSX ده بقى إيه؟
+
+ده الـ [[return]] بعد التحويل (بـ TypeScript، نفس إعداد Vite):
+
+~~~text الناتج بعد التحويل
+_jsxs(_Fragment, { children: [
+  _jsx("img", { src: user.avatar, alt: user.name, className: "avatar" }),
+  _jsx("label", { htmlFor: "bio", children: "Bio" }),
+  _jsx("textarea", { id: "bio", defaultValue: "" }),
+  _jsx("p", { style: { color: 'gray', fontSize: 14 }, children: initials }),
+  user.isAdmin ? _jsx("span", { children: "Admin" }) : null
+] })
+~~~
+
+(الناتج الحقيقي سطر واحد، وقسمناه.) لاحظ:
+
+- كل attribute بقى خانة في object. عشان كده اسمها لازم يبقى اسم خاصية JavaScript صالح.
+- اللي بين الفتحة والقفلة بقى [[children]].
+- الـ ternary فضل زي ما هو، لأنه أصلًا JavaScript. ولو حاولت تحط [[if]] مكانه هيبقى [[children: [if (...) ...]]] وده كود مش صالح.
+
+---
+
+## ٥. اللي ظهر في الصفحة
+
+~~~text الناتج (Chrome)
+<img alt="sara" class="avatar" src="/sara.png">
+<label for="bio">Bio</label>
+<textarea id="bio"></textarea>
+<p style="color: gray; font-size: 14px;">SA</p>
+<span>Admin</span>
+~~~
+
+(قسمناه سطور عشان يتقري.) React رجّعت [[className]] لـ [[class]]، و [[htmlFor]] لـ [[for]]، و [[fontSize: 14]] لـ [[font-size: 14px]]. ومفيش أي عنصر زيادة حوالين الكل: الـ Fragment مبيظهرش. ولما بعتنا [[isAdmin: false]] الـ [[<span>]] اختفى خالص، مفيش حتى عنصر فاضي.
+
+---
+
+## ٦. التجارب اللي في «جرّب»
+
+### [[class]] بدل [[className]]
+
+~~~text الـ Console
+Invalid DOM property $__btclass$__bt. Did you mean $__btclassName$__bt?
+~~~
+
+الصفحة نفسها طلعت زي ما هي (React 19 حطت [[class="avatar"]] برضه)، بس [[tsc]] رفضه:
+
+~~~text tsc
+Property 'class' does not exist on type 'DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>'. Did you mean 'className'?
+~~~
+
+يعني [[npm run dev]] شغال و [[npm run build]] هيقع.
+
+### [[{user}]] بدل [[{initials}]]
+
+الصفحة بقت فاضية خالص، والـ Console:
+
+~~~text الـ Console
+Objects are not valid as a React child (found: object with keys {name, avatar, isAdmin}). If you meant to render a collection of children, use an array instead.
+~~~
+
+React بتعرف ترسم نص ورقم وعناصر و arrays منهم، لكن object عادي مش عارفة تحوّله لإيه. والـ error ده وقّع الشجرة كلها، مش الـ [[<p>]] بس. و [[tsc]] كان مسكه: [[Type 'User' is not assignable to type 'ReactNode']]، و [[ReactNode]] هو نوع «أي حاجة React تعرف ترسمها».
+
+---
+
+## الخلاصة
+
+| HTML | JSX | ليه |
+|---|---|---|
+| [[class]] | [[className]] | [[class]] كلمة محجوزة |
+| [[for]] | [[htmlFor]] | [[for]] كلمة محجوزة |
+| [[style="font-size: 14px"]] | [[style={{ fontSize: 14 }}]] | object، camelCase، والرقم px |
+| [[<img>]] | [[<img />]] | أي tag لازم يتقفل |
+| أكتر من عنصر | [[<>...</>]] | الـ return قيمة واحدة |
+| [[if]] | [[? :]] أو متغير قبل الـ return | [[{ }]] بتاخد expression بس |`,
           lines: [
             "شكل بيانات المستخدم بـ TypeScript.",
             "component بياخد user في الـ props.",
@@ -359,6 +1127,125 @@ export default function App() {
             when: "أي بيانات الـ component محتاجها ومش هو صاحبها: النص، والبيانات اللي هيعرضها، والدوال اللي هينادي عليها لما حاجة تحصل (callbacks).",
             mistakes: R`تعدّل prop جوه الابن. وتنسخ prop في state ([[useState(props.value)]]) وتستغرب إن القيمة متحدثتش لما الأب غيّرها: [[useState]] بياخد القيمة الأولى بس، فاستخدم الـ prop مباشرة. وفي TypeScript تنسى [[?]] للـ prop الاختيارية، فكل اللي بيستخدم الـ component يضطر يبعتها.`
           },
+          teach: R`## الفكرة: الأب بيكتب attributes، والابن بيستلمهم object
+
+المثال فيه ٣ حتت: نوع الـ props ([[ButtonProps]])، والابن ([[Button]]) اللي بيستلمها، والأب ([[App]]) اللي بيبعتها. كله اتشغّل في Vite 8.3 + React 19.2 + TypeScript 6.0 في Chrome headless.
+
+---
+
+## ١. [[type ButtonProps]]: العقد بين الأب والابن
+
+~~~text Button.tsx
+type ButtonProps = {
+  label: string
+  variant?: 'primary' | 'ghost'
+  onClick: () => void
+}
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[label: string]] | نص، و**إجباري**: لو الأب نسيه TypeScript يعترض |
+| [[variant?:]] | [[?]] معناها اختياري: الأب يبعته أو لأ |
+| [['primary']] والخط الرأسي و [['ghost']] | union: القيمة لازم تبقى واحدة من النصين دول بالظبط، مش أي string |
+| [[onClick: () => void]] | دالة مبتاخدش حاجة ([[()]]) ومبترجّعش حاجة مهمة ([[void]]) |
+
+ده TypeScript بس، بيتشال من الـ JavaScript النهائي. شغلته إن الغلط يتمسك وانت بتكتب.
+
+---
+
+## ٢. [[Button]]: الابن
+
+~~~text Button.tsx
+function Button({ label, variant = 'primary', onClick }: ButtonProps) {
+  return <button className={$__btbtn btn-$__{variant}$__bt} onClick={onClick}>{label}</button>
+}
+~~~
+
+### الـ parameter
+
+React بتنادي [[Button(props)]] وبتبعتله object واحد فيه كل الـ attributes. والقوسين [[{ label, variant = 'primary', onClick }]] destructuring: بيطلّعوا كل خانة في متغير بنفس اسمها.
+
+و [[variant = 'primary']] قيمة افتراضية: لو [[props.variant]] جت [[undefined]] (الأب مبعتهاش)، تبقى [[primary]].
+
+### الـ [[className]]
+
+[[$__btbtn btn-$__{variant}$__bt]] ده template literal: نص بين علامتين [[$__bt]]، و [[$__{variant}]] جواه بتتبدّل بقيمة المتغير. فلو [[variant]] = [[ghost]] النص يبقى [[btn btn-ghost]]. وهو بين [[{ }]] لأنه JavaScript مش نص ثابت.
+
+### [[onClick={onClick}]]
+
+الشمال: الـ event بتاع عنصر [[<button>]]. اليمين: الدالة اللي الأب بعتها. يعني «لما الزرار يتضغط، نادي دالة الأب». الابن مش عارف الدالة بتعمل إيه، ومش محتاج يعرف.
+
+---
+
+## ٣. [[App]]: الأب
+
+~~~text App.tsx
+export default function App() {
+  return <Button label="Save" onClick={() => alert('saved')} />
+}
+~~~
+
+- [[label="Save"]]: النص بيتبعت بين علامات تنصيص.
+- [[onClick={() => alert('saved')}]]: أي حاجة مش نص (دالة، أو رقم، أو object) بتتبعت بين [[{ }]]. هنا arrow function لما تتنادى تعمل [[alert]].
+- [[variant]] مش مبعوتة، فهتاخد الافتراضي.
+
+### الـ props بتوصل شكلها إيه؟
+
+ده الـ object اللي React بتبعته للابن، طبعناه في Node لـ [[<Button label="Save" onClick={fn} disabled />]]:
+
+~~~text الناتج (Node)
+{ label: 'Save', onClick: [Function: fn], disabled: true }
+~~~
+
+لاحظ [[disabled]] من غير قيمة وصلت [[true]].
+
+---
+
+## ٤. الناتج بالـ solCode (٣ زراير)
+
+~~~text الناتج (Chrome)
+<button class="btn btn-primary">Save</button>
+<button class="btn btn-ghost">Cancel</button>
+<button class="btn btn-primary">Delete</button>
+~~~
+
+Save و Delete أخدوا [[btn-primary]] من القيمة الافتراضية، و Cancel أخد [[btn-ghost]] لأن الأب بعتها. ولما ضغطنا Save ظهر [[alert]] فيه [[saved]]: الابن نادى دالة الأب.
+
+---
+
+## ٥. [[variant="red"]]
+
+~~~text tsc
+error TS2322: Type '"red"' is not assignable to type '"primary" | "ghost" | undefined'.
+~~~
+
+اقرا الرسالة: النوع المسموح [[primary]] أو [[ghost]] أو [[undefined]] (الأخيرة جت من [[?]]). وفي الصفحة نفسها الزرار طلع [[class="btn btn-red"]] عادي، لأن Vite في التطوير بيشيل الأنواع من غير ما يفحصها. [[npm run build]] هو اللي بيشغّل [[tsc]] ويقع.
+
+---
+
+## ٦. الابن ميعدّلش الـ props
+
+جرّبنا [[props.label = 'x']] جوه component في وضع التطوير:
+
+~~~text الـ Console
+Cannot assign to read only property 'label' of object '#<Object>'
+~~~
+
+React عاملة freeze للـ object. ولو محتاج قيمة تتغير، دي state مش prop.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[<Button label="Save" />]] | الأب بيبعت، والنص بين علامات تنصيص |
+| [[onClick={fn}]] | أي حاجة غير النص بين [[{ }]] |
+| [[function Button({ label })]] | الابن بيستلم object ويعمل destructuring |
+| [[variant = 'primary']] | قيمة لو الأب مبعتش |
+| [[variant?:]] | prop اختيارية في TypeScript |
+| الـ props | قراية بس. التغيير يبقى state |`,
           lines: [
             "شكل الـ props بـ TypeScript.",
             "نص إجباري.",
@@ -418,6 +1305,114 @@ export default function Orders() {
             when: "Layouts، و Cards، و Modals، و Providers (زي [[<QueryClientProvider>]] اللي بيلف التطبيق كله)، وأي component شغلته «يلف» أو «يرتّب» محتوى.",
             mistakes: R`تستخدم [[React.Children.map]] و [[cloneElement]] عشان تعدّل الـ children من جوه: هش وبيبوظ لو حد لف الابن في div. وتلجأ لـ context أو store عام بدري، والمشكلة كانت محلولة بإنك تبعت JSX جاهز.`
           },
+          teach: R`## الفكرة: Card إطار، واللي جواه بييجي من برا
+
+[[Card]] بيرسم إطار ثابت (عنوان، ومكان للأزرار، وجسم)، ومش عارف إيه اللي هيتحط جواه. الأب هو اللي بيقرر. كله اتشغّل في Vite 8.3 + React 19.2 في Chrome headless.
+
+---
+
+## ١. [[import type { ReactNode } from 'react']]
+
+[[ReactNode]] نوع TypeScript معناه «أي حاجة React تعرف ترسمها»: نص، أو رقم، أو عنصر JSX، أو array منهم، أو [[null]]. و [[import type]] معناها إننا بنستورد نوع بس، فالسطر ده بيتشال كله من الـ JavaScript النهائي.
+
+---
+
+## ٢. [[Card]]
+
+~~~text Card.tsx
+function Card({ title, actions, children }: { title: string; actions?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="card">
+      <header>{title} {actions}</header>
+      <div className="card-body">{children}</div>
+    </section>
+  )
+}
+~~~
+
+### الـ props التلاتة
+
+| الاسم | النوع | جاي منين |
+|---|---|---|
+| [[title]] | [[string]] | attribute عادي: [[title="Orders"]] |
+| [[actions]] | [[ReactNode]] اختياري ([[?]]) | attribute قيمته JSX: [[actions={<button>Export</button>}]] |
+| [[children]] | [[ReactNode]] | **مش attribute**: أي حاجة بين [[<Card>]] و [[</Card>]] |
+
+[[children]] اسمها محجوز: React بتاخد اللي بين الفتحة والقفلة وتحطه في الخانة دي لوحدها. و [[actions]] اسم احنا اخترناه، prop عادية بس قيمتها JSX. يعني عندك «فتحتين»: واحدة اسمها [[children]] والتانية [[actions]].
+
+### الـ JSX
+
+- [[<header>{title} {actions}</header>]]: العنوان، ومسافة، وأي أزرار اتبعتت. ولو [[actions]] مبعتتش، بتبقى [[undefined]] ومبيترسمش حاجة.
+- [[<div className="card-body">{children}</div>]]: هنا بيتحط المحتوى اللي الأب كتبه.
+
+---
+
+## ٣. [[Orders]]: الأب
+
+~~~text Orders.tsx
+<Card title="Orders" actions={<button>Export</button>}><p>No orders yet.</p></Card>
+~~~
+
+- [[actions={<button>Export</button>}]]: JSX كـ قيمة. العنصر ده بيتعمل هنا في [[Orders]] ويتبعت جاهز.
+- [[<p>No orders yet.</p>]] بين [[<Card>]] و [[</Card>]]: ده [[children]].
+
+~~~text الناتج (Chrome)
+<section class="card">
+  <header>Orders <button>Export</button></header>
+  <div class="card-body"><p>No orders yet.</p></div>
+</section>
+~~~
+
+(مقسوم سطور عشان يتقري.) [[Card]] نفسه اختفى، والـ [[<button>]] اتحط في الـ header، والـ [[<p>]] في الجسم.
+
+---
+
+## ٤. الـ solCode: نفس Card بمحتوى مختلف
+
+~~~text الناتج (Chrome)
+<section class="card"><header>Orders <button>Export</button><button>Print</button></header>
+  <div class="card-body"><table><tbody><tr><td>#1001</td><td>250 EGP</td></tr></tbody></table></div></section>
+<section class="card"><header>New customer </header>
+  <div class="card-body"><form><input placeholder="Name" name="name"><button>Save</button></form></div></section>
+~~~
+
+- [[actions={<><button>Export</button><button>Print</button></>}]]: زرارين في prop واحدة، ملفوفين في Fragment ([[<>...</>]]) لأن القيمة لازم تبقى حاجة واحدة. والـ Fragment مبيظهرش في الـ HTML.
+- الكارت التاني من غير [[actions]]، فالـ header فيه العنوان ومسافة بس.
+- [[Card]] متغيرش ولا حرف.
+
+---
+
+## ٥. لو بعت array بدل Fragment
+
+[[actions={[<button>A</button>, <button>B</button>]}]] اترسم صح، بس الـ Console قال:
+
+~~~text الـ Console
+Each child in a list should have a unique "key" prop.
+~~~
+
+أي array من العناصر React بتعتبرها list ومحتاجة [[key]] لكل عنصر (درس key). الـ Fragment مش list، فمفيش تحذير.
+
+## ٦. لو نسيت [[children]]
+
+[[<Card title="Empty" />]]:
+
+~~~text tsc
+error TS2741: Property 'children' is missing in type '{ title: string; }' but required in type '{ title: string; actions?: ReactNode; children: ReactNode; }'.
+~~~
+
+لأن [[children]] في النوع من غير [[?]]، يعني إجبارية. ولو عايزها اختيارية: [[children?: ReactNode]].
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[<Card>...</Card>]] | اللي في النص بيوصل في [[children]] |
+| [[actions={<button />}]] | فتحة تانية: prop عادية قيمتها JSX |
+| [[ReactNode]] | النوع اللي يقبل أي حاجة تترسم |
+| أكتر من عنصر في prop | لفّهم في [[<>...</>]]، مش array |
+| [[Card]] | ميعرفش المحتوى، فينفع في أي صفحة |`,
           lines: [
             "نوع يقبل أي حاجة تترسم. [[import type]] لأنه type بس.",
             "Card بياخد عنوان، وفتحة اختيارية للأزرار، و children.",
@@ -491,6 +1486,114 @@ export default function Counter() {
             when: "أي قيمة بتتغير مع الوقت وبتأثر على اللي ظاهر، والـ component ده صاحبها: نص input، أو modal مفتوح ولا لأ، أو التاب المختار.",
             mistakes: R`تستنى [[count]] يتغير على السطر اللي بعد [[setCount]]. وتعدّل object أو array في مكانه ([[items.push]]) بدل ما تعمل نسخة جديدة (الدرس الجاي). وتكتب [[useState(expensive())]] فالحساب يحصل كل render ويترمي. وتخزّن في state حاجة تقدر تحسبها من state تانية (درس derived state).`
           },
+          teach: R`## الفكرة: ٤ مرات «زوّد واحد»، والنتيجة ٣
+
+المثال زرار، وكل ضغطة بتنادي [[setCount]] ٤ مرات. لو فاكر إن الرقم هيزيد ٤، الدرس ده هيوريك ليه لأ. اتشغّل في Vite 8.3 + React 19.2 في وضع التطوير (جوه [[<StrictMode>]] زي القالب) في Chrome headless.
+
+---
+
+## ١. [[import { useState } from 'react']]
+
+[[useState]] دالة من React. والأقواس [[{ }]] في الـ import معناها «هات الحاجة اللي اسمها كده بالظبط» (named import)، عكس [[export default]] اللي بيتستورد من غير أقواس.
+
+والدوال اللي بتبدأ بـ [[use]] اسمها **hooks**: دوال React بتديك قدرات جوه الـ component، وليها قاعدة: تتنادى في أول الـ component، مش جوه [[if]] ولا loop (ليه؟ تحت في رقم ٥).
+
+---
+
+## ٢. [[const [count, setCount] = useState(0)]]
+
+| الحتة | معناها |
+|---|---|
+| [[useState(0)]] | «اعمل خانة ذاكرة، وأول قيمة فيها 0» |
+| بيرجّع | array فيها عنصرين: القيمة الحالية، ودالة تغيّرها |
+| [[[count, setCount]]] | array destructuring: الأول في [[count]] والتاني في [[setCount]]. الأسماء انت بتختارها، والعادة [[x]] و [[setX]] |
+| [[const]] | المتغير مش هيتغير **في الـ render ده**. القيمة الجديدة بتيجي في render جديد |
+
+---
+
+## ٣. [[addFour]] سطر سطر
+
+~~~text Counter.tsx
+function addFour() {
+  setCount(count + 1)
+  setCount(count + 1)
+  setCount(c => c + 1)
+  setCount(c => c + 1)
+}
+~~~
+
+أهم معلومة: [[setCount]] **مبتغيّرش** [[count]]. بتحط طلب في طابور، و React بتنفّذ الطابور بعد ما الـ handler يخلص. و [[count]] في الضغطة الأولى قيمته [[0]] طول ما الدالة شغالة.
+
+فيه نوعين من الطلبات:
+
+- **قيمة**: [[setCount(count + 1)]] هي [[setCount(1)]]، يعني «خليها 1»، مهما كان اللي قبلها.
+- **دالة** (updater): [[setCount(c => c + 1)]] يعني «خد آخر قيمة في الطابور وزوّد عليها». و [[c => c + 1]] arrow function بتاخد [[c]] وترجّع [[c + 1]].
+
+React بتمشي على الطابور بالترتيب:
+
+| الطلب | قبله | بعده |
+|---|---|---|
+| [[setCount(0 + 1)]] | 0 | 1 |
+| [[setCount(0 + 1)]] | 1 | 1 (تاني «خليها 1») |
+| [[setCount(c => c + 1)]] | 1 | 2 |
+| [[setCount(c => c + 1)]] | 2 | 3 |
+
+---
+
+## ٤. اللي حصل فعلًا
+
+~~~text الناتج (Chrome، وضع التطوير)
+initial         <button>0</button>
+after click 1   <button>3</button>
+after click 2   <button>6</button>
+~~~
+
+~~~text الـ Console
+render 0
+render 0
+>> click 1
+render 3
+render 3
+>> click 2
+render 6
+render 6
+~~~
+
+([[>> click]] علامة احنا حطيناها في الـ log عشان تعرف فين الضغطة.)
+
+- **الرقم**: 3 مش 4، زي الجدول. والضغطة التانية بدأت من 3 فوصلت 6.
+- **عدد الـ renders**: الـ ٤ طلبات عملوا render **واحد** بقيمة 3، مش ٤ renders. ده اسمه **batching**: React بتجمّع كل الـ setState اللي في نفس الـ event.
+- **السطر المتكرر**: [[render 3]] ظهر مرتين لأن [[<StrictMode>]] في التطوير بينادي الـ component مرتين بنفس القيمة عشان يكشف الـ components اللي مش pure. ده render واحد اتنادى مرتين، مش اتنين. وفي الـ build العادي بيظهر مرة.
+
+### تجربة [[alert(count)]]
+
+حطينا [[alert(count)]] بعد آخر [[setCount]]:
+
+~~~text الناتج
+>> click 1   alert: 0
+>> click 2   alert: 3
+~~~
+
+في الضغطة الأولى، بعد ٤ مرات set، [[count]] لسه 0. ده معنى «الـ state snapshot»: كل render ليه نسخته الثابتة من القيم.
+
+---
+
+## ٥. الـ state محفوظة فين؟
+
+[[Counter]] دالة بتتنادى من الأول في كل render، فأي [[let]] جواها بيرجع لقيمته الأولى. [[useState]] مش بيحفظ جوه الدالة، React بتحفظ القيمة برا، في لستة خاصة بالـ component ده، بالترتيب: أول [[useState]] ليه الخانة الأولى، والتاني التانية. عشان كده لازم الـ hooks تتنادى بنفس الترتيب في كل render: لو واحد جوه [[if]] واتخطّى مرة، الخانات هتتلخبط.
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[useState(0)]] | خانة ذاكرة، أولها 0 |
+| [[setCount(x)]] | طلب: «خليها x» في الـ render الجاي |
+| [[setCount(c => c + 1)]] | طلب: «زوّد على آخر قيمة»، استخدمه لما الجديد معتمد على القديم |
+| batching | كل الـ set في نفس الـ event = render واحد |
+| [[count]] بعد [[setCount]] | لسه القديمة لحد الـ render الجاي |
+| log مرتين في التطوير | [[StrictMode]]، مش bug |`,
           lines: [
             "hook بيدّي الـ component ذاكرة.",
             "component عادي.",
@@ -545,6 +1648,124 @@ function SearchBox({ onSearch }: { onSearch: (q: string) => void }) {
             when: "أي تفاعل. والعادة في التسمية: [[handleX]] للدالة جوه الـ component، و [[onX]] للـ prop اللي بيستلمها ([[onSearch]] و [[onClose]]).",
             mistakes: R`[[onClick={setOpen(true)}]] بتتنادى وقت الرسم، فتعمل setState، فـ render، فتتنادى تاني: «Too many re-renders». الصح [[onClick={() => setOpen(true)}]]. وزرار جوه فورم من غير [[type="button"]] بيبعت الفورم. و [[div]] بـ onClick بدل [[button]]: مبيشتغلش بالكيبورد ولا بيوصل لقارئ الشاشة (تفاصيل الـ accessibility في تاب «HTML و CSS»، درس aria).`
           },
+          teach: R`## الفكرة: خانة بحث فيها ٣ events
+
+[[SearchBox]] فورم فيه خانة وزرارين. فيه ٣ events: الكتابة ([[onChange]])، والإرسال ([[onSubmit]])، والتفضية ([[onClick]]). عشان نشوفه شغال، الأب بعتله [[onSearch={q => console.log('onSearch:', JSON.stringify(q))}]] ([[JSON.stringify]] عشان المسافات والنص الفاضي يبانوا). اتشغّل في Vite 8.3 + React 19.2 في Chrome headless، والكتابة والضغط اتعملوا بـ Playwright (أداة بتتحكم في المتصفح من كود).
+
+---
+
+## ١. الـ import
+
+~~~text SearchBox.tsx
+import { useState, type FormEvent } from 'react'
+~~~
+
+[[useState]] دالة، و [[FormEvent]] نوع TypeScript بس (لاحظ [[type]] قدامه)، بيوصف الـ event اللي بيوصل لـ handler الفورم.
+
+## ٢. الـ props والـ state
+
+~~~text SearchBox.tsx
+function SearchBox({ onSearch }: { onSearch: (q: string) => void }) {
+  const [q, setQ] = useState('')
+~~~
+
+- [[onSearch]]: دالة الأب. نوعها [[(q: string) => void]]: بتاخد نص ومبترجّعش حاجة. اسمها بيبدأ بـ [[on]] لأنها بتتنادى لما حاجة **تحصل**.
+- [[q]]: النص اللي في الخانة، وبيبدأ فاضي [['']].
+
+---
+
+## ٣. [[handleSubmit]]
+
+~~~text SearchBox.tsx
+function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault()
+  onSearch(q.trim())
+}
+~~~
+
+- [[e]]: الـ event object، React بتبعته لأي handler لوحدها. و [[FormEvent<HTMLFormElement>]] معناها «event جاي من عنصر form». و [[< >]] هنا generic: نوع جوه نوع.
+- [[e.preventDefault()]]: «امنع اللي المتصفح بيعمله عادةً». واللي بيعمله مع أي فورم: يبعته لسيرفر ويعمل reload للصفحة.
+- [[q.trim()]]: [[trim]] بتشيل المسافات من أول النص وآخره.
+- [[onSearch(...)]]: بلّغ الأب.
+
+اسم [[handleSubmit]] بيبدأ بـ [[handle]]: العادة إن الدالة اللي جوه الـ component اسمها [[handleX]]، والـ prop اللي جاية من الأب [[onX]].
+
+---
+
+## ٤. الـ JSX
+
+~~~text SearchBox.tsx
+<form onSubmit={handleSubmit}>
+  <input value={q} onChange={e => setQ(e.target.value)} />
+  <button type="submit">Search</button>
+  <button type="button" onClick={() => setQ('')}>Clear</button>
+</form>
+~~~
+
+| السطر | الـ event | بيحصل إمتى |
+|---|---|---|
+| [[onSubmit={handleSubmit}]] | إرسال الفورم | ضغطة Search، **أو** Enter جوه الخانة |
+| [[onChange={e => setQ(e.target.value)}]] | تغيير الخانة | مع كل حرف. [[e.target]] العنصر نفسه، و [[.value]] النص اللي فيه |
+| [[onClick={() => setQ('')}]] | ضغطة | فضّي الخانة |
+
+لاحظ إن الـ events بتتكتب camelCase ([[onSubmit]] مش [[onsubmit]])، وبتاخد **دالة**. [[onSubmit={handleSubmit}]] بتبعت الدالة نفسها من غير أقواس. لو كتبت [[handleSubmit()]] هتتنادى وقت الرسم.
+
+و [[onClick={() => setQ('')}]]: هنا محتاجين نبعت argument ([['']])، فلفّيناها في arrow function. الـ arrow نفسها هي اللي بتتبعت، و [[setQ('')]] جواها بتتنادى وقت الضغط بس.
+
+---
+
+## ٥. اللي حصل
+
+كتبنا [[  react  ]] (بمسافات) ودوسنا Enter، وبعدين ضغطنا Search، وبعدين Clear:
+
+~~~text الـ Console
+>> typed
+onSearch: "react"
+>> click Search
+onSearch: "react"
+>> click Clear
+~~~
+
+- Enter و Search الاتنين نادوا [[onSubmit]]، والمسافات اتشالت.
+- Clear فضّى الخانة ومنادهاش، لأنه [[type="button"]].
+- الـ URL فضل [[?l=L09]] زي ما هو: مفيش reload.
+
+---
+
+## ٦. التجارب اللي في «جرّب»
+
+### من غير [[type="button"]] على Clear
+
+~~~text الـ Console
+>> click Clear
+onSearch: ""
+~~~
+
+أي [[<button>]] جوه [[<form>]] نوعه الافتراضي [[submit]]. فالضغطة فضّت الخانة **وكمان** بعتت الفورم، و [[onSearch]] اتنادت بنص فاضي. (فاضي مش [[react]]، لأن React خلّصت تفضية الخانة ورسمت قبل ما event الـ submit ييجي.)
+
+### من غير [[e.preventDefault()]]
+
+كتبنا [[react]] ودوسنا Enter:
+
+~~~text الناتج
+onSearch: "react"
+navigated: http://localhost:5791/?
+~~~
+
+[[onSearch]] اتنادت، وبعدها على طول المتصفح بعت الفورم بـ GET لنفس الصفحة: الـ URL بقى ينتهي بـ [[?]] (الخانة ملهاش [[name]] فمفيش حاجة بعد العلامة)، والصفحة عملت reload، فكل الـ state راحت والـ Console اتمسح. (في التجربة دي حتى الـ [[?l=L09c]] بتاعنا ضاع.)
+
+---
+
+## الخلاصة
+
+| الحاجة | معناها |
+|---|---|
+| [[onClick={fn}]] | ابعت الدالة، متنادهاش |
+| [[onClick={() => fn(x)}]] | لو محتاج argument |
+| [[e.target.value]] | النص اللي في الخانة |
+| [[e.preventDefault()]] | امنع الـ reload في الفورم |
+| [[onSubmit]] | بيشتغل بالزرار وبالـ Enter |
+| [[type="button"]] | أي زرار جوه فورم مش للإرسال |`,
           lines: [
             "useState، و FormEvent كـ type بس.",
             "component بياخد دالة من الأب تستلم كلمة البحث.",
@@ -598,6 +1819,135 @@ const moveTo = (city: string) =>
             when: "أي state فيها object أو array. والـ updater [[prev => ...]] أأمن لأنه بيشتغل على آخر قيمة حتى لو فيه تحديثات تانية في الطابور.",
             mistakes: R`[[todos.push(x); setTodos(todos)]]: نفس المرجع، فمفيش render. و [[setTodos(todos.sort())]]: [[sort]] عدّلت الـ state الأصلية قبل ما React تشوفها. و [[structuredClone]] للـ state كلها مع كل تعديل: شغال بس بيعمل نسخ ملهوش لازمة ويبوّظ memo لأن كل حاجة بقت جديدة.`
           },
+          teach: R`## الفكرة: ٤ عمليات، وكلها بترجّع نسخة جديدة
+
+المثال حتة من component (مش ملف كامل) فيها list مهام ([[todos]]) وبيانات مستخدم ([[user]])، و ٤ دوال: إضافة، وتعديل، ومسح، وتغيير حاجة جوه object جوه object. ولا دالة فيهم بتعدّل القديم: كلهم بيعملوا نسخة. عشان نجرّب، حطيناهم في component فيه زراير و checkboxes، واتشغّل في Vite 8.3 + React 19.2 في Chrome headless.
+
+---
+
+## ١. النوع والـ state
+
+~~~text Todos.tsx
+type Todo = { id: number; text: string; done: boolean }
+const [todos, setTodos] = useState<Todo[]>([])
+~~~
+
+[[useState<Todo[]>([])]]: [[< >]] بتقول لـ TypeScript نوع الـ state: [[Todo[]]] يعني array من [[Todo]]. لازمة هنا لأن [[[]]] الفاضية لوحدها مش بتقول هتشيل إيه.
+
+---
+
+## ٢. الإضافة: spread
+
+~~~text Todos.tsx
+const add = (text: string) =>
+  setTodos(prev => [...prev, { id: Date.now(), text, done: false }])
+~~~
+
+- [[prev => ...]]: الـ updater (من درس useState): [[prev]] هي آخر قيمة للـ state.
+- [[[...prev, x]]]: array **جديدة**. [[...]] (spread) بيفرد عناصر [[prev]] جواها، وبعدهم العنصر الجديد.
+- [[{ id: Date.now(), text, done: false }]]: [[Date.now()]] الوقت بالميلي ثانية، رقم مختلف كل مرة فينفع id في مثال. و [[text]] لوحدها اختصار لـ [[text: text]].
+
+ليه مش [[prev.push(x)]]؟ [[push]] بتعدّل نفس الـ array وترجّع طولها، فالمرجع (reference) هو هو، و React مش هتشوف تغيير.
+
+## ٣. التعديل: [[map]]
+
+~~~text Todos.tsx
+const toggle = (id: number) =>
+  setTodos(prev => prev.map(t => (t.id === id ? { ...t, done: !t.done } : t)))
+~~~
+
+[[map]] بتعدّي على كل عنصر وترجّع **array جديدة** باللي الدالة رجّعته:
+
+- لو ده العنصر المقصود ([[t.id === id]]): object جديد [[{ ...t, done: !t.done }]]، يعني انسخ كل خانات [[t]]، وبعدين اكتب [[done]] فوقها بالعكس ([[!]] بتقلب true و false).
+- غير كده: رجّع [[t]] نفسه. العناصر اللي متغيرتش بتفضل نفس الـ objects.
+
+## ٤. المسح: [[filter]]
+
+~~~text Todos.tsx
+const remove = (id: number) =>
+  setTodos(prev => prev.filter(t => t.id !== id))
+~~~
+
+[[filter]] بترجّع array جديدة فيها العناصر اللي الشرط بتاعها [[true]] بس. و [[!==]] «مش بيساوي»، فكله بيفضل ما عدا اللي [[id]] بتاعه ده.
+
+## ٥. object جوه object
+
+~~~text Todos.tsx
+const [user, setUser] = useState({ name: 'Sara', address: { city: 'Cairo' } })
+const moveTo = (city: string) =>
+  setUser(prev => ({ ...prev, address: { ...prev.address, city } }))
+~~~
+
+من جوه لبرة:
+
+1. [[{ ...prev.address, city }]]: نسخة من [[address]] و [[city]] الجديدة فوقها.
+2. [[{ ...prev, address: ... }]]: نسخة من [[user]]، و [[address]] الجديدة فوق القديمة.
+3. [[({ ... })]]: القوسين حوالين الـ object لازمين في arrow function، وإلا JavaScript هيفتكر [[{]] بداية جسم دالة.
+
+ليه نسخنا [[address]] كمان؟ لأن الـ spread بينسخ **مستوى واحد**. جرّبناها في Node:
+
+~~~text الناتج (Node)
+> const shallow = { ...prev }
+> shallow === prev, shallow.address === prev.address
+false true
+> const next = { ...prev, address: { ...prev.address, city: 'Alex' } }
+> next.address === prev.address, prev.address.city, next.address.city
+false Cairo Alex
+~~~
+
+[[shallow]] object جديد، بس [[address]] جواه **نفس** الـ object القديم. لو عدّلت فيه هتعدّل في القديم. بالنسخ في المستويين، القديم فضل [[Cairo]] والجديد [[Alex]].
+
+---
+
+## ٦. اللي حصل في المتصفح
+
+بعد كل خطوة طبعنا حالة الـ checkboxes ونص المستخدم:
+
+~~~text الناتج (النسخة الصح)
+after add x2         [false,false] Sara - Cairo
+toggle first         [true,false]  Sara - Cairo
+other state change   [true,false]  Sara - Cairo
+moveTo Alex          [true,false]  Sara - Alex
+remove last          [true]        Sara - Alex
+~~~
+
+([[other state change]] زرار بيغيّر state تانية خالص، ملهاش علاقة بالـ todos.)
+
+### تجربة «جرّب»: [[toggleBad]]
+
+~~~text Todos.tsx
+setTodos(prev => { prev.find(t => t.id === id)!.done = true; return prev })
+~~~
+
+[[find]] بترجّع أول عنصر الشرط بتاعه صح، و [[!]] بعدها لـ TypeScript: «متأكد إنه مش [[undefined]]». وبعدين عدّلنا [[done]] في **نفس** الـ object ورجّعنا **نفس** الـ array:
+
+~~~text الناتج (toggleBad)
+after add x2         [false,false]
+toggle first         [false,false]   ← الضغطة ملهاش أثر
+other state change   [true,false]    ← اتعلّم فجأة!
+~~~
+
+React قارنت [[prev]] باللي رجع بـ [[Object.is]]: نفس المرجع، فمعملتش render. بس البيانات اتغيرت فعلًا، فأول ما state تانية عملت render، الـ checkbox اتعلّم في لحظة ملهاش علاقة بالضغطة.
+
+---
+
+## الدوال اللي بتعدّل في المكان وبدايلها
+
+| بتعدّل القديم (متستخدمهاش على state) | بترجّع نسخة |
+|---|---|
+| [[push]] | [[[...prev, x]]] |
+| [[splice]] | [[filter]] أو [[slice]] |
+| [[sort]] | [[toSorted]] (ES2023) |
+| [[reverse]] | [[toReversed]] |
+| [[obj.x = 1]] | [[{ ...obj, x: 1 }]] |
+
+جرّبنا [[[3, 1, 2].toSorted()]] في Node 24: رجّعت [[[1, 2, 3]]] والأصلية فضلت [[[3, 1, 2]]].
+
+---
+
+## الخلاصة
+
+React مش بتفتش جوه الـ object، بتسأل سؤال واحد: «ده نفس المرجع ولا جديد؟». فأي تغيير لازم يطلّع object أو array جديدة، في كل مستوى في الطريق للحاجة اللي اتغيرت، والباقي يفضل زي ما هو.`,
           lines: [
             "شكل العنصر.",
             "array فاضية ونوعها محدد.",
@@ -652,6 +2002,105 @@ function Orders({ orders, isLoading, error }: { orders: Order[]; isLoading: bool
             when: "Loading و error و empty states في كل صفحة بتجيب بيانات، وأجزاء بتظهر حسب صلاحيات المستخدم.",
             mistakes: R`الـ [[0 &&]]. و hooks بعد early return. و ternary جوه ternary جوه ternary: اطلع بيها لمتغير قبل الـ return أو component صغير. وتنسى الـ empty state، فالمستخدم يشوف جدول فاضي ومش عارف هل لسه بيحمّل ولا مفيش بيانات.`
           },
+          teach: R`## الفكرة: ٤ حالات، و ٣ أدوات
+
+[[Orders]] بيعرض طلبات، والطلبات ليها ٤ حالات: بتحمّل، أو فيه خطأ، أو مفيش طلبات، أو فيه. المثال بيستخدم early return لأول اتنين، و ternary و [[&&]] للباقي. [[OrderTable]] مش متعرّف في المثال، فعملنا واحد بسيط بيرسم جدول. وعرضنا [[Orders]] بالـ ٤ حالات جنب بعض في Vite 8.3 + React 19.2 في Chrome headless.
+
+---
+
+## ١. الـ props
+
+~~~text Orders.tsx
+function Orders({ orders, isLoading, error }: { orders: Order[]; isLoading: boolean; error?: string }) {
+~~~
+
+[[orders]] لستة الطلبات، و [[isLoading]] بتحمّل ولا لأ، و [[error?]] رسالة خطأ اختيارية (لو مفيش خطأ بتبقى [[undefined]]).
+
+---
+
+## ٢. الـ early return
+
+~~~text Orders.tsx
+if (isLoading) return <p>Loading...</p>
+if (error) return <p role="alert">{error}</p>
+~~~
+
+[[if]] عادي، **قبل** الـ JSX الأساسي. لو الشرط صح، الـ component يرجّع حاجة صغيرة ويخلص، والباقي مبيتنفذش. ده بيخلي الـ JSX الأساسي نضيف ومش محتاج يفكر في الحالات دي.
+
+- [[if (error)]]: نص فاضي و [[undefined]] الاتنين falsy، فالشرط صح بس لو فيه رسالة فعلًا.
+- [[role="alert"]]: بيقول لقارئ الشاشة (برنامج المكفوفين) «اقرا ده على طول».
+
+## ٣. الـ ternary
+
+~~~text Orders.tsx
+{orders.length === 0 ? <p>No orders yet</p> : <OrderTable rows={orders} />}
+~~~
+
+[[شرط ? أ : ب]]: لو الشرط صح [[أ]]، غير كده [[ب]]. مناسب لما يبقى فيه اختيارين، وده expression فينفع جوه [[{ }]].
+
+## ٤. الـ [[&&]]
+
+~~~text Orders.tsx
+{orders.length > 0 && <p>{orders.length} orders</p>}
+~~~
+
+[[a && b]] في JavaScript: لو [[a]] falsy، النتيجة [[a]] نفسها. لو truthy، النتيجة [[b]]. يعني:
+
+- [[orders.length > 0]] = [[false]]: النتيجة [[false]]، و React مبترسمش [[false]].
+- = [[true]]: النتيجة الـ [[<p>]].
+
+مناسب لـ «حاجة أو ولا حاجة».
+
+---
+
+## ٥. الناتج للـ ٤ حالات
+
+~~~text الناتج (Chrome)
+loading    <p>Loading...</p>
+error      <p role="alert">Network error</p>
+empty      <section><p>No orders yet</p></section>
+data       <section><table><tbody><tr><td>A1</td><td>250</td></tr><tr><td>A2</td><td>90</td></tr></tbody></table><p>2 orders</p></section>
+~~~
+
+- [[loading]] و [[error]]: مفيش [[<section>]] أصلًا، الـ early return رجّع قبلها.
+- [[empty]]: الـ ternary اختار [[No orders yet]]، والـ [[&&]] رجّع [[false]] فمفيش حاجة.
+- [[data]]: الجدول، و [[2 orders]].
+
+---
+
+## ٦. تجربة «جرّب»: [[orders.length &&]]
+
+شلنا [[> 0]] وبعتنا array فاضية:
+
+~~~text الناتج
+bad-empty  <section><p>No orders yet</p>0</section>
+~~~
+
+[[0]] ظهر على الشاشة! لأن [[orders.length]] = [[0]]، و [[0]] falsy، فـ [[0 && ...]] رجّعت [[0]] نفسه، و React بترسم الأرقام. اللي مبيترسمش: [[false]] و [[null]] و [[undefined]] و [[true]] بس. الحل شرط boolean صريح ([[> 0]]) زي المثال الأصلي.
+
+---
+
+## ٧. hooks بعد الـ early return
+
+جرّبنا component فيه [[useState]] قبل الـ [[if]] و [[useState]] تاني بعده. أول render ([[isLoading]] = false) نادى الاتنين، ولما بقت true:
+
+~~~text الـ Console
+Rendered fewer hooks than expected. This may be caused by an accidental early return statement.
+~~~
+
+والصفحة كلها اختفت. React بتعدّ الـ hooks بالترتيب (درس useState)، والـ render ده نادى واحد بدل اتنين. القاعدة: كل الـ hooks فوق، والـ early returns بعدهم.
+
+---
+
+## الخلاصة
+
+| الأداة | إمتى | مثال |
+|---|---|---|
+| early return | حالة بتغيّر الشاشة كلها | [[if (isLoading) return <Spinner />]] |
+| ternary [[? :]] | اختيارين | فاضي ولا جدول |
+| [[&&]] | حاجة أو ولا حاجة | [[count > 0 && <Badge />]] |
+
+> [[&&]] مع رقم = خطر. خلي الشرط boolean.`,
           lines: [
             "شكل الطلب.",
             "component بياخد الطلبات وحالة التحميل والخطأ.",
@@ -704,6 +2153,99 @@ export default function People() {
             when: "أي [[map]] بيطلّع JSX. و React بتطلّع warning في الـ console لو نسيته.",
             mistakes: R`[[key={Math.random()}]] أو [[crypto.randomUUID()]] جوه الـ map: key جديد كل render، فكل عنصر بيتشال ويتعمل من الأول، والـ input بيفقد الـ focus مع كل حرف. وفي مشروع حقيقي كان فيه عشرات [[key={index}]]، منها list صور فيها زرار مسح لكل صورة: طول ما مفيش state جوه العنصر الغلط مش باين، وأول ما تضيف loading للصورة أو animation هيظهر على الصورة الغلط.`
           },
+          teach: R`## الفكرة: المثال فيه bug مقصود
+
+[[People]] بيعرض شخصين، وكل صف فيه خانة ملاحظة ليها state خاصة بيها. والـ [[key]] متحط غلط ([[key={i}]]) عشان تشوف المشكلة بعينك. اتشغّل في Vite 8.3 + React 19.2 في Chrome headless، والكتابة والضغط بـ Playwright.
+
+---
+
+## ١. [[Row]]: صف ليه ذاكرة
+
+~~~text People.tsx
+function Row({ name }: { name: string }) {
+  const [note, setNote] = useState('')
+  return <li>{name} <input value={note} onChange={e => setNote(e.target.value)} /></li>
+}
+~~~
+
+[[name]] جاي من الأب. [[note]] state خاصة بكل نسخة من [[Row]]: لو فيه صفين، فيه [[note]] اتنين منفصلين. والخانة controlled: قيمتها من [[note]] وكل حرف بيرجع لها (درس controlled input).
+
+## ٢. [[People]]: الـ list
+
+~~~text People.tsx
+const [people, setPeople] = useState([{ id: 1, name: 'Ali' }, { id: 2, name: 'Mona' }])
+~~~
+
+array فيها شخصين، كل واحد ليه [[id]] ثابت.
+
+~~~text People.tsx
+<button onClick={() => setPeople(p => p.slice(1))}>Remove first</button>
+~~~
+
+[[p.slice(1)]] بترجّع array **جديدة** من العنصر رقم 1 لآخرها، يعني من غير الأول. (الترقيم بيبدأ من 0.)
+
+~~~text People.tsx
+<ul>{people.map((p, i) => <Row key={i} name={p.name} />)}</ul>
+~~~
+
+- [[people.map((p, i) => ...)]]: [[map]] بتدّي الدالة العنصر ([[p]]) ورقمه في الـ array ([[i]]، اختصار index)، وبترجّع array من JSX، و React بترسمها ورا بعض.
+- [[key={i}]]: الغلط. المفتاح هو **المكان** مش **الشخص**.
+- [[key]] مش prop عادية: React بتاخدها لنفسها ومبتوصلش لـ [[Row]].
+
+---
+
+## ٣. اللي حصل بـ [[key={i}]]
+
+كتبنا [[hello]] جنب Ali وضغطنا Remove first:
+
+~~~text الناتج (Chrome)
+typed hello     ["Ali = \"hello\"","Mona = \"\""]
+remove first    ["Mona = \"hello\""]
+~~~
+
+Ali اتمسح، بس [[hello]] بقت جنب Mona! React بتطابق القديم بالجديد بالـ key:
+
+| key | قبل المسح | بعد المسح | React فهمت إيه |
+|---|---|---|---|
+| [[0]] | Ali، note = hello | Mona | «key 0 لسه موجود، يبقى نفس الصف». خلّت الـ state (hello) وغيّرت [[name]] بس |
+| [[1]] | Mona، note فاضية | (مش موجود) | «key 1 اختفى». شالت الصف التاني بالـ state بتاعته |
+
+يعني React مسحت الصف **الغلط**، لأن الـ key قالها إن اللي اختفى هو التاني.
+
+## ٤. بـ [[key={p.id}]]
+
+~~~text الناتج (Chrome)
+typed hello     ["Ali = \"hello\"","Mona = \"\""]
+remove first    ["Mona = \"\""]
+~~~
+
+| key | قبل | بعد | React فهمت إيه |
+|---|---|---|---|
+| [[1]] | Ali، hello | (مش موجود) | Ali اتشال، فشالت صفه بالـ hello |
+| [[2]] | Mona، فاضية | Mona | نفس الصف، بنفس الـ state |
+
+مظبوط، لأن الـ key ماشي مع **البيانات** مش مع المكان.
+
+## ٥. من غير [[key]] خالص
+
+~~~text الـ Console
+Each child in a list should have a unique "key" prop.
+
+Check the render method of $__btPeople$__bt.
+~~~
+
+ومن غير key React بتستخدم الترتيب، يعني نفس مشكلة [[key={i}]] بالظبط، بس على الأقل بتحذّرك. [[key={i}]] بيسكّت التحذير ويسيب الـ bug.
+
+---
+
+## الخلاصة
+
+| الـ key | النتيجة |
+|---|---|
+| [[p.id]] (من البيانات) | صح دايمًا |
+| [[i]] (الترتيب) | الـ state بتتنقل لعنصر تاني لو حصل مسح أو ترتيب أو إضافة في النص |
+| [[Math.random()]] جوه الـ map | key جديد كل render: كل صف بيتشال ويتعمل من الأول ويفقد الـ state والـ focus |
+| مفيش | تحذير، ونفس سلوك الترتيب |`,
           lines: [
             "صف فيه اسم وخانة ملاحظة.",
             "كل صف ليه state خاصة بيه.",
@@ -762,6 +2304,124 @@ export default function People() {
             when: "لما تحتاج القيمة وانت بتكتب: validation لحظي، أو زرار يتفعّل ويتقفل، أو search بيفلتر. ولو محتاجها وقت الإرسال بس، uncontrolled أبسط (المستوى التاني).",
             mistakes: R`[[trim()]] أو تنسيق في الـ onChange بيمنع المستخدم يكتب طبيعي. و [[value]] بتبدأ undefined. و [[value]] على checkbox بدل [[checked]]. والـ validation في المتصفح بس: السيرفر لازم يتحقق تاني، لأن أي حد يقدر يبعت request من غير الفورم.`
           },
+          teach: R`## الفكرة: خانتين في state، وزرار بيتفعّل منهم
+
+[[SignupForm]] فيه خانة إيميل و checkbox موافقة. القيمتين في state، فالزرار يقدر يقرر يتفعّل ولا لأ وانت بتكتب، و Reset يفضّيهم بسطر. اتشغّل في Vite 8.3 + React 19.2 في Chrome headless، والكتابة بـ Playwright حرف حرف زي الكيبورد.
+
+---
+
+## ١. الـ state
+
+~~~text SignupForm.tsx
+const [email, setEmail] = useState('')
+const [agreed, setAgreed] = useState(false)
+~~~
+
+قيمة لكل خانة: نص فاضي للإيميل، و [[false]] للـ checkbox.
+
+---
+
+## ٢. خانة الإيميل
+
+~~~text SignupForm.tsx
+<input type="email" value={email} onChange={e => setEmail(e.target.value)} />
+~~~
+
+الدايرة اللي بتحصل مع كل حرف:
+
+1. انت بتكتب حرف، والمتصفح بيغيّر الخانة.
+2. [[onChange]] بيتنادى، و [[e.target.value]] فيها النص الجديد كله.
+3. [[setEmail(...)]] بتحفظه في الـ state، و React بتعمل render.
+4. [[value={email}]] بيحط القيمة دي في الخانة.
+
+يعني الخانة بتعرض **اللي في الـ state بس**. ده معنى controlled: React هي اللي ماسكة القيمة، مش المتصفح.
+
+## ٣. الـ checkbox
+
+~~~text SignupForm.tsx
+<input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />
+~~~
+
+نفس الدايرة، بس الـ checkbox قيمته [[checked]] (true أو false) مش [[value]]. ولاحظ [[e.target.checked]] مش [[e.target.value]].
+
+---
+
+## ٤. الزرار
+
+~~~text SignupForm.tsx
+<button disabled={!email.includes('@') || !agreed}>Sign up</button>
+~~~
+
+من جوه لبرة:
+
+- [[email.includes('@')]]: النص فيه [[@]]؟ [[true]] أو [[false]].
+- [[!]] قدامها: اقلبها. يعني «مفيهوش @».
+- [[!agreed]]: «مش موافق».
+- [[||]]: «أو». فالزرار [[disabled]] لو الإيميل مفيهوش @ **أو** مش موافق.
+
+وده بيتحسب من جديد مع كل render، يعني مع كل حرف.
+
+## ٥. Reset
+
+~~~text SignupForm.tsx
+<button type="button" onClick={() => { setEmail(''); setAgreed(false) }}>Reset</button>
+~~~
+
+- [[type="button"]]: عشان ميبعتش الفورم (درس events).
+- [[() => { ...; ... }]]: arrow function فيها أكتر من سطر، فبين [[{ }]] و [[;]] بينهم. والاتنين set بيعملوا render واحد (batching).
+
+---
+
+## ٦. اللي حصل
+
+~~~text الناتج (Chrome)
+initial          email=""            checked=false  SignUp disabled=true
+typed sara       email="sara"        checked=false  SignUp disabled=true
+typed @x.com     email="sara@x.com"  checked=false  SignUp disabled=true
+checked          email="sara@x.com"  checked=true   SignUp disabled=false
+reset            email=""            checked=false  SignUp disabled=true
+~~~
+
+الزرار اتفعّل بس لما الشرطين اتحققوا، و Reset رجّع كله في ضغطة.
+
+---
+
+## ٧. تجربة «جرّب»: [[trim()]] في الـ onChange
+
+غيّرنا الخانة لـ [[type="text"]] والـ onChange لـ [[setEmail(e.target.value.trim())]]، وكتبنا [[a b]]:
+
+~~~text الناتج
+value after typing "a b": "ab"
+~~~
+
+بعد [[a]] ومسافة، الـ onChange استلم [[a ]] (بمسافة)، و [[trim]] شالها، فالـ state بقت [[a]]، فالخانة رجعت [[a]]. المسافة اتكتبت واتمسحت في نفس اللحظة. التنضيف مكانه وقت الإرسال (الـ solCode).
+
+---
+
+## ٨. تحذيرين هتشوفهم
+
+~~~text الـ Console
+You provided a $__btvalue$__bt prop to a form field without an $__btonChange$__bt handler. This will render a read-only field. ...
+~~~
+
+ده لما تكتب [[value="..."]] من غير [[onChange]]: الخانة مش هتتكتب فيها خالص.
+
+~~~text الـ Console
+A component is changing an uncontrolled input to be controlled. This is likely caused by the value changing from undefined to a defined value, ...
+~~~
+
+ده لما [[value={user?.name}]] تبدأ [[undefined]] (البيانات لسه موصلتش) وبعدين تبقى نص. [[value={undefined}]] بالنسبة لـ React يعني «مش controlled». الحل: [[value={user?.name ?? ''}]]، و [[??]] معناها «لو اللي قبلي [[null]] أو [[undefined]] خد اللي بعدي».
+
+---
+
+## الخلاصة
+
+| النوع | الـ prop | من الـ event |
+|---|---|---|
+| text و email و textarea و select | [[value]] | [[e.target.value]] |
+| checkbox و radio | [[checked]] | [[e.target.checked]] |
+
+> [[value]] + [[onChange]] دايمًا مع بعض، والقيمة الأولى عمرها ما تبقى [[undefined]].`,
           lines: [
             "فورم تسجيل.",
             "الإيميل في state.",
@@ -821,6 +2481,103 @@ export default function Shop() {
             when: "فلتر وجدول، أو تابات ومحتوى، أو فورم من كذا خطوة، أو أي حتتين في الشاشة لازم يفضلوا متزامنين.",
             mistakes: R`نسختين من نفس القيمة في مكانين، و [[useEffect]] بيحاول يزامنهم: هيفضلوا يتلخبطوا. وترفع كل حاجة لـ store عام «احتياطي» فكل تغيير صغير يعيد رسم نص التطبيق. والتسمية: الـ prop اسمها [[onQueryChange]] (حدث حصل)، مش [[setQuery]]، عشان الابن ميعرفش الأب بيخزّن إزاي.`
           },
+          teach: R`## الفكرة: الخانة والـ list إخوات، والقيمة عند الأب
+
+[[FilterBar]] فيه خانة بحث، و [[ProductList]] بيعرض المنتجات اللي اسمها فيه الكلمة. الاتنين محتاجين نفس الكلمة، فهي عند أبوهم [[Shop]]. استخدمنا [[PRODUCTS]] اللي في الـ solCode (٥ منتجات)، واتشغّل في Vite 8.3 + React 19.2 في Chrome headless.
+
+---
+
+## ١. [[FilterBar]]: من غير state
+
+~~~text Shop.tsx
+const FilterBar = ({ query, onQueryChange }: { query: string; onQueryChange: (q: string) => void }) =>
+  <input value={query} onChange={e => onQueryChange(e.target.value)} placeholder="Search" />
+~~~
+
+- الـ component هنا arrow function متخزنة في [[const]] بدل [[function]]. نفس الحاجة. والـ JSX بعد [[=>]] على طول من غير [[return]] ولا [[{ }]]، لأن الـ arrow اللي جسمها expression واحد بترجّعه لوحدها.
+- [[query]]: القيمة جاية من الأب، مش من [[useState]] هنا.
+- [[onQueryChange]]: دالة الأب. الخانة مش بتغيّر حاجة بنفسها، بتبلّغ بس: «المستخدم كتب كذا».
+- [[placeholder]]: النص الرمادي اللي بيظهر والخانة فاضية.
+
+يعني [[FilterBar]] controlled من الأب، زي ما الـ [[<input>]] controlled من الـ state.
+
+## ٢. [[ProductList]]
+
+~~~text Shop.tsx
+function ProductList({ query }: { query: string }) {
+  const visible = PRODUCTS.filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
+  return <ul>{visible.map(p => <li key={p.id}>{p.name}</li>)}</ul>
+}
+~~~
+
+من جوه لبرة في سطر الـ [[filter]]:
+
+1. [[p.name.toLowerCase()]]: اسم المنتج بحروف صغيرة ([[Phone]] تبقى [[phone]]).
+2. [[query.toLowerCase()]]: كلمة البحث بحروف صغيرة.
+3. [[.includes(...)]]: الاسم فيه الكلمة؟ فالبحث مش بيفرق بين كبير وصغير.
+4. [[PRODUCTS.filter(...)]]: array جديدة باللي الشرط صح ليهم بس.
+
+و [[visible]] بيتحسب وقت الرسم، مش state (درس derived state الجاي). وبعدين [[map]] لـ [[<li>]] بـ [[key={p.id}]].
+
+## ٣. [[Shop]]: صاحب الـ state
+
+~~~text Shop.tsx
+export default function Shop() {
+  const [query, setQuery] = useState('')
+  return (
+    <main>
+      <FilterBar query={query} onQueryChange={setQuery} />
+      <ProductList query={query} />
+    </main>
+  )
+}
+~~~
+
+- [[query]] هنا بس، مرة واحدة.
+- الخانة بتاخد القيمة و [[setQuery]] كـ [[onQueryChange]]. يعني لما الخانة تنادي [[onQueryChange('ph')]]، ده فعليًا [[setQuery('ph')]].
+- الـ list بتاخد نفس القيمة.
+
+### مع كل حرف
+
+1. [[FilterBar]] بينادي [[onQueryChange('p')]].
+2. [[Shop]] بيعمل render بـ [[query = 'p']].
+3. الاتنين بيترسموا تاني بنفس القيمة الجديدة. مستحيل يختلفوا.
+
+---
+
+## ٤. اللي حصل
+
+~~~text الناتج (Chrome)
+initial      ["Laptop","Phone","Headphones","Keyboard","Mouse"]
+typed "ph"   ["Phone","Headphones"]
+typed "PH"   ["Phone","Headphones"]
+cleared      ["Laptop","Phone","Headphones","Keyboard","Mouse"]
+~~~
+
+[[PH]] بحروف كبيرة طلّعت نفس النتيجة بسبب [[toLowerCase]] في الناحيتين.
+
+## ٥. تجربة «جرّب»: الـ state جوه الخانة
+
+بدّلنا [[FilterBar]] بـ [[FilterBarAlone]] (اللي في الـ solCode، فيه [[useState]] خاص بيه):
+
+~~~text الناتج (Chrome)
+initial      ["Laptop","Phone","Headphones","Keyboard","Mouse"]
+typed "ph"   ["Laptop","Phone","Headphones","Keyboard","Mouse"]
+~~~
+
+الكتابة شغالة في الخانة، بس الـ list مش حاسة. [[query]] بتاعة الخانة محبوسة جواها، و [[ProductList]] لسه بياخد [[query]] بتاعة [[Shop]] اللي فضلت فاضية. ومفيش طريقة في React إن أخ يكلم أخوه مباشرة.
+
+---
+
+## الخلاصة
+
+| الدور | مين | بياخد إيه |
+|---|---|---|
+| صاحب الـ state | أقرب أب مشترك ([[Shop]]) | [[useState]] |
+| اللي بيعرض | [[ProductList]] | القيمة كـ prop |
+| اللي بيغيّر | [[FilterBar]] | القيمة + دالة يبلّغ بيها ([[onQueryChange]]) |
+
+البيانات بتنزل كـ props، والتغييرات بتطلع كـ callbacks.`,
           lines: [
             "FilterBar مبقاش عنده state: بياخد القيمة ودالة التغيير من الأب.",
             "الخانة بتعرض query وتبلّغ الأب بأي تغيير.",
@@ -887,6 +2644,123 @@ function Cart({ items }: { items: Item[] }) {
             when: "أي قيمة معتمدة بالكامل على قيم تانية: مجاميع، وفلاتر، وعدادات، و [[isValid]] للفورم، و [[isEmpty]].",
             mistakes: R`[[useEffect]] كل شغلته setState لقيمة محسوبة. وتخزين الـ object المختار بدل الـ id. و state اسمها [[isEmpty]] جنب [[items]]. وتنسخ prop في state ([[useState(props.items)]]) فتفضل على القيمة الأولى للأبد.`
           },
+          teach: R`## الفكرة: state واحدة، و ٣ أرقام محسوبة
+
+[[Cart]] بيعرض إجمالي السلة بعد الخصم. فيه قيمة واحدة بس بتتغير من جوه الـ component: الكوبون اللي المستخدم بيكتبه. الباقي (المجموع، والخصم، والإجمالي) كله محسوب. وعشان نقارن، كتبنا كمان النسخة الغلط اللي في «جرّب» وشغّلنا الاتنين بنفس الخطوات في Vite 8.3 + React 19.2 (وضع التطوير) في Chrome headless.
+
+---
+
+## ١. الـ props والـ state
+
+~~~text Cart.tsx
+type Item = { price: number; qty: number }
+function Cart({ items }: { items: Item[] }) {
+  const [coupon, setCoupon] = useState('')
+~~~
+
+- [[items]]: جاية من الأب. كل عنصر سعره ([[price]]) وعدده ([[qty]]، اختصار quantity).
+- [[coupon]]: الـ state الوحيدة، لأنها الحاجة الوحيدة اللي مش ممكن تتحسب من حاجة تانية.
+
+## ٢. الحسابات
+
+~~~text Cart.tsx
+const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+const discount = coupon === 'SAVE10' ? subtotal * 0.1 : 0
+const total = subtotal - discount
+~~~
+
+### [[reduce]]
+
+[[items.reduce(fn, 0)]] بتلف على العناصر وتجمّعهم في قيمة واحدة. [[0]] قيمة البداية، والدالة بتاخد اللي اتجمع لحد دلوقتي ([[sum]]) والعنصر الحالي ([[i]])، وترجّع المجموع الجديد. لسلة فيها عنصر واحد [[{ price: 10, qty: 2 }]]:
+
+| الخطوة | [[sum]] | [[i.price * i.qty]] | الراجع |
+|---|---|---|---|
+| البداية | 0 | | |
+| العنصر الأول | 0 | 10 × 2 = 20 | 20 |
+
+### الخصم والإجمالي
+
+- [[coupon === 'SAVE10' ? subtotal * 0.1 : 0]]: لو الكوبون صح، الخصم ١٠٪ ([[0.1]])، غير كده صفر.
+- [[subtotal - discount]]: الإجمالي.
+
+التلاتة [[const]]: بيتحسبوا من الأول في **كل** render من أحدث [[items]] و [[coupon]]. مفيش حاجة محتاجة «تتحدّث».
+
+## ٣. العرض
+
+~~~text Cart.tsx
+<input value={coupon} onChange={e => setCoupon(e.target.value)} placeholder="Coupon" />
+<p>Total: {total.toFixed(2)}</p>
+~~~
+
+[[toFixed(2)]]: رقمين بعد العلامة العشرية كنص، فـ [[27]] تبقى [[27.00]].
+
+---
+
+## ٤. اللي حصل: الصح
+
+بدأنا بعنصر واحد (20)، ضفنا عنصر بـ 10، وكتبنا [[SAVE10]]. وحطينا [[console.log('render good', total)]] في الـ component:
+
+~~~text الـ Console (الصح)
+render good 20
+render good 20
+>> add item
+render good 30
+render good 30
+>> coupon SAVE10
+render good 27
+render good 27
+~~~
+
+كل تغيير = render واحد بالرقم الصح على طول. (كل سطر متكرر مرتين لأن [[<StrictMode>]] في التطوير بينادي الـ component مرتين، درس useState.) و 27 = 30 - 3.
+
+## ٥. اللي حصل: الغلط
+
+~~~text CartBad.tsx
+const [total, setTotal] = useState(0)
+useEffect(() => {
+  const subtotal = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+  setTotal(subtotal - (coupon === 'SAVE10' ? subtotal * 0.1 : 0))
+}, [items, coupon])
+~~~
+
+[[useEffect]] (درسه في القسم الجاي) بيشغّل الدالة **بعد** ما الشاشة تترسم، كل ما [[items]] أو [[coupon]] يتغيروا.
+
+~~~text الـ Console (الغلط)
+render bad 0
+render bad 0
+render bad 20
+render bad 20
+>> add item
+render bad 20
+render bad 20
+render bad 30
+render bad 30
+>> coupon SAVE10
+render bad 30
+render bad 30
+render bad 27
+render bad 27
+~~~
+
+كل تغيير بقى render **اتنين**، والأول بالرقم القديم:
+
+1. [[items]] اتغيرت، فـ render. [[total]] لسه 20، والشاشة اترسمت بـ 20.
+2. بعد الرسم الـ effect اشتغل وعمل [[setTotal(30)]].
+3. render تاني بـ 30.
+
+يعني فيه لحظة الشاشة بتقول 20 والسلة فيها 30. والأول خالص بيقول [[0]]. والكود أطول.
+
+---
+
+## الخلاصة
+
+| | محسوب ([[const]]) | state + effect |
+|---|---|---|
+| renders لكل تغيير | 1 | 2 |
+| الرقم في أول render | صح | قديم |
+| ممكن يبقى مش متزامن | لأ | لو حد نسي dependency |
+
+> السؤال قبل أي [[useState]]: «أقدر أحسبها من props أو state موجودة؟» لو أيوه، [[const]].`,
           lines: [
             "شكل العنصر في السلة.",
             "component السلة.",
@@ -946,6 +2820,145 @@ function Cart({ items }: { items: Item[] }) {
             when: "اتصالات (WebSocket و EventSource)، و listeners على window أو document، و timers، ومكتبات بتمسك DOM بنفسها (خرائط، أو charts مش React)، و analytics لما صفحة تظهر.",
             mistakes: R`تنسى الـ cleanup: listeners بتتكرر، واتصالات مفتوحة، و memory leak. و [[useEffect(async () => {...})]]: الدالة الـ async بترجع promise مش cleanup، فاعمل دالة async جوه وناديها. وتقفل تحذير الـ linter بـ [[eslint-disable-next-line react-hooks/exhaustive-deps]] (الدرس الجاي). وفي مشروع حقيقي كان فيه effect في الـ ProtectedRoute كل شغلته [[console.log]] لبيانات المستخدم مع كل تغيير صفحة: effect ملوش لازمة وبيطبع بيانات شخصية في الـ console.`
           },
+          teach: R`## الفكرة: «افتح اتصال» و «اقفله»
+
+[[ChatRoom]] بيفتح اتصال WebSocket بأوضة شات، ويضيف أي رسالة توصل للـ list. ولما الأوضة تتغير أو الـ component يتشال، لازم يقفل الاتصال القديم. ده كله في [[useEffect]] واحد. استخدمنا الأب اللي في الـ solCode (زرارين general و sales)، واتشغّل في Vite 8.3 + React 19.2 في Chrome headless مرتين: وضع التطوير ([[npm run dev]]) وبعد [[vite build]] ([[vite preview]]).
+
+---
+
+## ١. الـ state
+
+~~~text ChatRoom.tsx
+const [messages, setMessages] = useState<{ id: string; text: string }[]>([])
+~~~
+
+array رسايل، كل واحدة ليها [[id]] و [[text]]. النوع مكتوب جوه [[< >]] لأن [[[]]] الفاضية متقولش هتشيل إيه.
+
+## ٢. [[useEffect(دالة, [roomId])]]
+
+[[useEffect]] بياخد حاجتين:
+
+1. **دالة**: بتشتغل **بعد** ما React ترسم الشاشة.
+2. **dependency array** [[[roomId]]]: «شغّل الدالة تاني بس لو [[roomId]] اتغير».
+
+### جوه الدالة
+
+~~~text ChatRoom.tsx
+const socket = new WebSocket($__btwss://example.com/rooms/$__{roomId}$__bt)
+~~~
+
+[[WebSocket]] اتصال مفتوح على طول بين المتصفح والسيرفر، الاتنين يقدروا يبعتوا فيه في أي وقت. و [[wss://]] زي [[https://]] بس لـ WebSocket (الـ s للتشفير). والـ URL template literal فيه [[roomId]]، فكل أوضة ليها عنوان.
+
+~~~text ChatRoom.tsx
+socket.onmessage = e => setMessages(prev => [...prev, { id: crypto.randomUUID(), text: String(e.data) }])
+~~~
+
+- [[onmessage]]: دالة بتتنادى مع كل رسالة توصل، و [[e.data]] محتواها.
+- [[setMessages(prev => ...)]]: updater، لأن الدالة دي بتشتغل بعدين، و [[messages]] اللي شايفاها ممكن تبقى قديمة. [[prev]] دايمًا الأحدث.
+- [[crypto.randomUUID()]]: id عشوائي فريد للـ key، بيتعمل **وقت ما الرسالة توصل** مش وقت الرسم (درس key).
+- [[String(e.data)]]: حوّل المحتوى لنص.
+
+~~~text ChatRoom.tsx
+console.log('connect', roomId)
+~~~
+
+علامة عشان نشوف إمتى الـ effect اشتغل.
+
+### الـ cleanup: الدالة اللي بترجع
+
+~~~text ChatRoom.tsx
+return () => {
+  socket.close()
+  console.log('disconnect', roomId)
+}
+~~~
+
+الدالة اللي الـ effect بيرجّعها React بتحفظها وتناديها:
+
+- **قبل** ما الـ effect يشتغل تاني (الأوضة اتغيرت).
+- لما الـ component يتشال من الشاشة.
+
+وهي شايفة [[socket]] و [[roomId]] بتوع المرة دي (closure)، فبتقفل الاتصال **القديم** بالظبط.
+
+---
+
+## ٣. اللي حصل في التطوير
+
+ضغطنا sales، وبعدين sales تاني، وبعدين general (الـ WebSocket errors شلناها هنا، تحت):
+
+~~~text الـ Console (npm run dev)
+connect general
+disconnect general
+connect general
+>> click sales
+disconnect general
+connect sales
+>> click sales again
+>> click general
+disconnect sales
+connect general
+~~~
+
+- **أول ٣ سطور**: [[<StrictMode>]] في التطوير بيركّب الـ component، ويشيله، ويركّبه تاني. ده اختبار مقصود: لو الـ cleanup ناقص هتشوف اتصالين مفتوحين على طول.
+- **sales**: الـ cleanup القديم الأول ([[disconnect general]])، وبعدين الجديد ([[connect sales]]).
+- **sales تاني**: ولا سطر. [[roomId]] متغيرش ([[Object.is('sales', 'sales')]] = true)، فالـ effect مشتغلش.
+
+## ٤. بعد الـ build
+
+~~~text الـ Console (vite build + vite preview)
+connect general
+>> click sales
+disconnect general
+connect sales
+>> click sales again
+>> click general
+disconnect sales
+connect general
+~~~
+
+نفس الكلام من غير الـ mount التاني بتاع Strict Mode: [[connect general]] مرة واحدة في الأول.
+
+## ٥. الـ errors
+
+~~~text الـ Console
+WebSocket connection to 'wss://example.com/rooms/general' failed: WebSocket is closed before the connection is established.
+WebSocket connection to 'wss://example.com/rooms/general' failed: Error during WebSocket handshake: Unexpected response code: 404
+~~~
+
+[[example.com]] مش سيرفر شات، فالاتصال بيفشل بـ [[404]]. والأولى جت من Strict Mode: الـ cleanup قفل الاتصال الأول قبل ما يكمّل. عادي في التجربة.
+
+## ٦. من غير الـ cleanup
+
+شلنا الـ [[return]] كله:
+
+~~~text الـ Console (npm run dev)
+connect general
+connect general
+>> click sales
+connect sales
+>> click general
+connect general
+~~~
+
+ولا [[disconnect]]. يعني ٤ اتصالات مفتوحة، والرسايل كانت هتيجي من كل الأوض اللي فتحتها. ولاحظ إن Strict Mode بيّن المشكلة من أول ثانية: [[connect general]] مرتين ورا بعض.
+
+---
+
+## الخلاصة
+
+| الـ dependencies | الـ effect بيشتغل إمتى |
+|---|---|
+| مفيش array | بعد كل render |
+| [[[]]] | مرة بعد أول ظهور |
+| [[[roomId]]] | أول ظهور، وكل ما [[roomId]] يتغير |
+
+| الترتيب لما [[roomId]] يتغير |
+|---|
+| ١. render جديد والشاشة تترسم |
+| ٢. cleanup القديم (بالـ [[roomId]] القديم) |
+| ٣. الـ effect الجديد (بالـ [[roomId]] الجديد) |
+
+> أي effect بيفتح حاجة (اتصال، listener، timer) لازم يرجّع دالة تقفلها.`,
           lines: [
             "component بيتصل بغرفة شات.",
             "الرسايل، وكل واحدة ليها id بيتعمل وقت ما توصل.",
@@ -978,7 +2991,7 @@ function Cart({ items }: { items: Item[] }) {
         {
           cmd: "dependency array",
           title: "إمتى الـ effect يشتغل تاني، وليه بيلف في loop",
-          desc: R`كل قيمة من الـ component بتستخدمها جوه الـ effect (props، و state، ودوال ومتغيرات متعرّفة جوه الـ component) لازم تبقى في الـ dependencies. القاعدة دي eslint بيفرضها بـ [[react-hooks/exhaustive-deps]]، وسيبها شغالة.
+          desc: R`كل قيمة من الـ component بتستخدمها جوه الـ effect (props، و state، ودوال ومتغيرات متعرّفة جوه الـ component) لازم تبقى في الـ dependencies. القاعدة دي الـ linter بيفرضها بـ [[react-hooks/exhaustive-deps]] (في eslint، وفي oxlint اللي قالب Vite بيجي بيه دلوقتي)، وسيبها شغالة.
 
 المشكلة إن React بتقارن بالمرجع: object أو array أو دالة بتتعمل جديدة في كل render، فالـ effect بيشتغل مع كل render. ولو الـ effect بيعمل setState، عندك loop مبيخلصش.`,
           example: R`// غلط: options = {} بتتعمل object جديد كل render، فالـ effect بيلف للأبد
@@ -1014,6 +3027,122 @@ function useFetchJson(url: string, method = 'GET') {
             when: "مع كل effect و [[useMemo]] و [[useCallback]]. واعتبر تحذير الـ linter bug لحد ما تثبت العكس.",
             mistakes: R`[[eslint-disable-next-line react-hooks/exhaustive-deps]] عشان «الـ effect كان بيشتغل كتير»: بتخبّي المشكلة وبتعمل stale closure. وتحط [[props]] كلها أو object من context كـ dependency. ودالة متعرّفة في الـ component ومستخدمة في الـ effect ومش في الـ dependencies.`
           },
+          teach: R`## الفكرة: نفس الـ hook مرتين، واحد بيبعت طلب وواحد بيبعت ١٤٧٢
+
+المثال فيه custom hook (دالة بتبدأ بـ [[use]] وبتستخدم hooks تانية جواها) بيجيب JSON، مكتوب مرتين. الفرق الوحيد هو **إيه اللي في الـ dependencies**. شغّلنا الاتنين ٣ ثواني على [[/products.json]] (ملف في [[public]]) وعدّينا الطلبات، في Vite 8.3 + React 19.2 (وضع التطوير) في Chrome headless.
+
+---
+
+## ١. React بتقارن إزاي؟
+
+بعد كل render، React بتقارن كل dependency بقيمتها في المرة اللي فاتت بـ [[Object.is]]:
+
+| النوع | بيتقارن بـ | مثال |
+|---|---|---|
+| نص، رقم، boolean | القيمة | [['GET' === 'GET']] = true |
+| object، array، دالة | المرجع (مكانه في الذاكرة) | [[{} === {}]] = false |
+
+يعني أي [[{}]] أو [[[]]] أو [[() => {}]] بيتكتب **جوه** الـ component هو قيمة **جديدة** في كل render، حتى لو شكلها نفس الشكل.
+
+---
+
+## ٢. النسخة الغلط
+
+~~~text useFetchBad.ts
+function useFetchBad(url: string, options = {}) {
+  const [data, setData] = useState(null)
+  const load = useCallback(async () => {
+    setData(await (await fetch(url, options)).json())
+  }, [url, options])
+  useEffect(() => { load() }, [load])
+  return data
+}
+~~~
+
+### سطر سطر
+
+- [[options = {}]]: default parameter. لو اللي نادى الـ hook مبعتش [[options]]، تبقى [[{}]]. والمهم: الـ [[{}]] دي بتتعمل **جديدة** في كل نداء للـ hook، يعني كل render.
+- [[useCallback(fn, deps)]]: «رجّعلي نفس الدالة طول ما الـ deps متغيرتش». شغلته يثبّت مرجع الدالة.
+- [[await (await fetch(url, options)).json()]]: من جوه لبرة: [[fetch]] بيبعت الطلب، و [[await]] الأولى (الداخلية) بتستنى الرد، و [[.json()]] بتقرا الـ body كـ JSON، و [[await]] التانية بتستنى القراية. والنتيجة بتروح لـ [[setData]].
+- [[useEffect(() => { load() }, [load])]]: شغّل [[load]] كل ما [[load]] تتغير.
+
+### الدايرة
+
+1. render: [[options]] = [[{}]] جديد.
+2. [[useCallback]] شايف [[options]] اتغير، فبيرجّع [[load]] **جديدة**.
+3. [[useEffect]] شايف [[load]] اتغيرت، فبيشتغل ويبعت طلب.
+4. الرد بيوصل و [[setData]] بـ array جديدة (JSON بيتقرا كل مرة object جديد)، فـ render.
+5. ارجع لـ ١.
+
+~~~text الناتج (Chrome)
+requests in 3s: 1472
+~~~
+
+١٤٧٢ طلب في ٣ ثواني، ومبيقفش. والشاشة شكلها طبيعي خالص (نفس البيانات)، فمش هتاخد بالك إلا لو فتحت تاب Network.
+
+---
+
+## ٣. النسخة الصح
+
+~~~text useFetchJson.ts
+function useFetchJson(url: string, method = 'GET') {
+  const [data, setData] = useState(null)
+  useEffect(() => {
+    fetch(url, { method }).then(r => r.json()).then(setData)
+  }, [url, method])
+  return data
+}
+~~~
+
+- [[method = 'GET']]: بدل object كامل، القيمة البسيطة اللي محتاجينها. النص [['GET']] بيتقارن بالقيمة، فمش بيتغير.
+- [[fetch(url, { method })]]: الـ object اتعمل **جوه** الـ effect، فمش dependency أصلًا. و [[{ method }]] اختصار [[{ method: method }]].
+- [[.then(r => r.json()).then(setData)]]: نفس الخطوات بـ [[then]] بدل [[await]]: لما الرد يوصل اقرا JSON، ولما يتقري ابعته لـ [[setData]]. و [[then(setData)]] بتبعت الدالة نفسها، وهي هتتنادى بالنتيجة.
+- [[[url, method]]]: الاتنين نصوص.
+
+~~~text الناتج (Chrome)
+requests in 3s: 2
+~~~
+
+طلبين: واحد عادي وواحد من الـ mount التاني بتاع Strict Mode في التطوير.
+
+---
+
+## ٤. الـ linter بيقولك قبل ما يحصل
+
+قالب Vite بيجي بـ [[oxlint]] ([[npm run lint]])، وفيه نفس قاعدة [[react-hooks/exhaustive-deps]] اللي في eslint. على effect بيستخدم [[url]] ومش حاطه في الـ array:
+
+~~~text npx oxlint
+warning react-hooks(exhaustive-deps): React Hook useEffect has a missing dependency: 'url' help: Either include it or remove the dependency array.
+~~~
+
+## ٥. الـ timer اللي واقف على ١
+
+~~~text Timer.tsx
+useEffect(() => { const t = setInterval(() => setCount(count + 1), 500); return () => clearInterval(t) }, [])
+~~~
+
+[[setInterval(fn, 500)]] بينادي [[fn]] كل نص ثانية، و [[clearInterval]] بيوقفه في الـ cleanup. بعد حوالي ٣ ثواني، قارنّاه بنسخة فيها [[setCount(c => c + 1)]]:
+
+~~~text الناتج (Chrome)
+count + 1:       1
+c => c + 1:      6
+~~~
+
+الـ effect اشتغل مرة واحدة ([[[]]])، فالدالة اللي جواه شايفة [[count]] بتاع أول render للأبد، يعني [[0]]. فكل مرة بتقول «خليها 0 + 1». ده اسمه **stale closure**: دالة ماسكة قيم قديمة. و oxlint كان قال [[missing dependency: 'count']]. الحل مش إنك تضيف [[count]] (كده الـ interval هيتقفل ويتفتح كل نص ثانية)، الحل الـ updater: كده [[count]] مش مستخدمة جوه الـ effect أصلًا.
+
+---
+
+## الخلاصة
+
+| المشكلة | الحل |
+|---|---|
+| object أو array أو دالة بتتعمل في الـ render وداخلة الـ deps | اعملها جوه الـ effect |
+| ثابت ملوش علاقة بالـ props | طلّعه برا الـ component |
+| محتاج حتة من object | حط القيمة البسيطة ([[options.method]]) |
+| لازم مرجع ثابت | [[useMemo]] و [[useCallback]] بـ deps صح |
+| setState من القيمة القديمة | [[setX(prev => ...)]] |
+
+> تحذير [[exhaustive-deps]] اعتبره bug لحد ما تثبت العكس، ومتسكّتوش بـ [[eslint-disable]].`,
           lines: [
             "hook بياخد options ولو متبعتتش بياخد object فاضي جديد.",
             "الـ state.",
@@ -1072,6 +3201,103 @@ useEffect(() => setComment(''), [userId])
             when: "قبل ما تكتب أي effect اسأل: فيه نظام برا React؟ (شبكة، أو DOM برا الـ component، أو timer، أو مكتبة). لو لأ، غالبًا مكانه الـ render أو الـ handler.",
             mistakes: R`effects متسلسلة كل واحد بيعمل setState للي بعده. و «لما الصفحة تفتح» تعمل حاجة المفروض تحصل لما المستخدم يدوس. و [[setTimeout]] عشان «تجبر» render. و effect يزامن prop مع state.`
           },
+          teach: R`## الفكرة: ٣ أزواج «غلط وصح»
+
+المثال ٣ حالات، كل حالة فيها effect ملوش لازمة والبديل بتاعه. السطور حتت من components مش ملفات كاملة. عشان نشوف الفرق فعلًا، حطينا الحالة الأولى والتالتة في components حقيقية فيها [[console.log]] في الـ render، وشغّلناها في Vite 8.3 + React 19.2 (وضع التطوير، فكل سطر بيتكرر مرتين بسبب Strict Mode) في Chrome headless.
+
+السؤال اللي بيفرز الحالات: **هل فيه حاجة برا React؟** (شبكة، أو DOM برا الـ component، أو timer، أو مكتبة.) لو لأ، غالبًا مش محتاج effect.
+
+---
+
+## ١. قيمة محسوبة
+
+~~~text غلط
+const [visible, setVisible] = useState<Todo[]>([])
+useEffect(() => setVisible(todos.filter(t => !t.done)), [todos])
+~~~
+
+~~~text صح
+const visibleTodos = todos.filter(t => !t.done)
+~~~
+
+- [[todos.filter(t => !t.done)]]: المهام اللي [[done]] بتاعها [[false]]. [[!]] بتقلب.
+- في الغلط: state جديدة + effect كل شغلته ينسخ نتيجة الـ filter فيها كل ما [[todos]] يتغير.
+- في الصح: [[const]] بيتحسب في كل render.
+
+شغّلنا الاتنين جنب بعض على مهمتين (واحدة خلصانة)، وبعدين ضفنا مهمة:
+
+~~~text الـ Console
+effect version renders, visible = 0
+derived version renders, visible = 1
+effect version renders, visible = 1
+>> add todo
+effect version renders, visible = 1
+derived version renders, visible = 2
+effect version renders, visible = 2
+~~~
+
+(شلنا التكرار بتاع Strict Mode.) نسخة الـ effect اترسمت **مرتين** في كل مرة، والأولى بالرقم الغلط: [[0]] في الأول، و [[1]] بعد الإضافة والصح [[2]]. النسخة المحسوبة مرة واحدة بالرقم الصح.
+
+---
+
+## ٢. حاجة بسبب ضغطة
+
+~~~text غلط
+useEffect(() => { if (submitted) postOrder(cart) }, [submitted, cart])
+~~~
+
+~~~text صح
+function handleBuy() { postOrder(cart) }
+~~~
+
+- في الغلط: الضغطة بتعمل [[setSubmitted(true)]]، والـ effect «مستني» يشوف [[submitted]] بقت true عشان يبعت. و [[postOrder]] هنا دالة افتراضية بتبعت الطلب للسيرفر.
+- المشكلة: الـ effect مش عارف **ليه** [[submitted]] true. وهو كمان معتمد على [[cart]]: لو السلة اتغيرت و [[submitted]] لسه true، الطلب هيتبعت **تاني**.
+- في الصح: [[handleBuy]] هو الـ [[onClick]] بتاع زرار «اشتري». بيتنادى مرة لكل ضغطة، وانت عارف السبب بالظبط.
+
+القاعدة: لو الكود بيحصل **لأن المستخدم عمل حاجة**، مكانه الـ handler. لو بيحصل **لأن الـ component ظهر على الشاشة**، ده effect.
+
+---
+
+## ٣. تصفير state لما prop تتغير
+
+~~~text غلط
+useEffect(() => setComment(''), [userId])
+~~~
+
+~~~text صح
+<Profile userId={userId} key={userId} />
+~~~
+
+[[Profile]] فيه خانة تعليق ([[comment]] state). لما تفتح بروفايل مستخدم تاني، المفروض الخانة تبقى فاضية.
+
+- في الغلط: effect بيفضّيها كل ما [[userId]] يتغير.
+- في الصح: [[key={userId}]] على الـ component نفسه. [[key]] مش بس للـ lists: React بتعتبر [[<Profile key={1}>]] و [[<Profile key={2}>]] **اتنين مختلفين**. فلما الـ key يتغير بتشيل القديم بكل الـ state اللي جواه وتعمل جديد من الصفر.
+
+كتبنا [[hi]] في الخانة وبعدين بدّلنا لمستخدم 2:
+
+~~~text الـ Console (effect)
+>> switch to user 2
+Profile(effect) user 2 comment = "hi"
+Profile(effect) user 2 comment = ""
+~~~
+
+~~~text الـ Console (key)
+>> switch to user 2
+Profile(key) user 2 comment = ""
+~~~
+
+(من غير تكرار Strict Mode.) بالـ effect، بروفايل مستخدم 2 اترسم الأول **بتعليق مستخدم 1** ([[hi]])، وبعدين اتصلّح. بالـ key اترسم فاضي من أول مرة. وفي الحالتين الخانة في الآخر فاضية، الفرق في اللحظة اللي في النص وفي الـ render الزيادة.
+
+---
+
+## الخلاصة
+
+| لو عايز... | متعملش | اعمل |
+|---|---|---|
+| قيمة من state أو props | state + effect بيعمل set | [[const x = ...]] وقت الرسم |
+| حاجة لما المستخدم يدوس | effect مستني flag | في الـ handler |
+| تصفّر state الـ component لما prop تتغير | effect بيعمل set لكل state | [[key={prop}]] |
+| تتكلم مع حاجة برا React | | effect، ودي شغلته |`,
           lines: [
             "state زيادة للقيمة المفلترة.",
             "effect كل شغلته ينسخ قيمة محسوبة: render زيادة وقيمة قديمة للحظة.",
@@ -1127,6 +3353,116 @@ function UserCard({ id }: { id: number }) {
             when: "مشروع صغير فيه طلب أو اتنين. لو أكتر من كده، الكود ده (و cache، ومنع التكرار، و retry، وتحديث لما ترجع للتاب) بيتكتب في كل مكان، ووقتها TanStack Query (بعد كام درس) أو loaders بتاعة React Router أو server components في Next.js.",
             mistakes: R`[[useEffect(async () => ...)]]. ومفيش [[res.ok]] فالـ error page بتتعامل كأنها بيانات. و setState للـ error لما الطلب يتلغي بـ abort. وفي مشروع حقيقي كان فيه CartContext عامل cache بإيده «٥ ثواني» بـ [[lastLoadTime]] و loading و error في state: ده نفس اللي React Query بيعمله أحسن بسطر.`
           },
+          teach: R`## الفكرة: الطلب القديم ممكن يرجع بعد الجديد
+
+[[UserCard]] بيجيب مستخدم برقمه من [[/api/users/<id>]] ويعرض اسمه. المشكلة اللي بيحلها: لو الـ [[id]] اتغير والطلب القديم لسه مرجعش، مين يكسب؟ عشان نجرّب بجد عملنا API صغير بـ Node فيه تأخير مقصود: [[/api/users/1]] (Ali) بيرد بعد 1.5 ثانية، و [[/api/users/2]] (Mona) بعد 0.2 ثانية، وأي رقم مش موجود بيرجّع 404. ووصّلناه بـ [[server.proxy]] في Vite (درس vite.config)، وضغطنا 1 وبعدها 2 بسرعة، في Vite 8.3 + React 19.2 في Chrome headless.
+
+---
+
+## ١. شكل النتيجة
+
+~~~text UserCard.tsx
+const [result, setResult] = useState<{ id: number; user?: User; error?: string } | null>(null)
+~~~
+
+state واحدة فيها: الـ [[id]] اللي النتيجة دي **بتاعته**، والمستخدم لو نجح، أو رسالة خطأ لو فشل. و [[| null]] معناها «أو null»، وهي القيمة في الأول.
+
+ليه نخزّن الـ [[id]] مع النتيجة؟ عشان نعرف بعدين هل النتيجة اللي في إيدنا بتاعة الـ [[id]] الحالي ولا لأ.
+
+---
+
+## ٢. الـ effect
+
+### [[new AbortController()]]
+
+أداة بتلغي طلب. فيها حاجتين: [[controller.signal]] (إشارة بتتربط بالطلب)، و [[controller.abort()]] (اضغط زرار الإلغاء).
+
+### [[fetch(..., { signal: controller.signal })]]
+
+الطلب مربوط بالإشارة. لو حد نادى [[abort()]]، المتصفح بيقطع الطلب فعلًا، و [[fetch]] بترمي error اسمه [[AbortError]].
+
+### السلسلة
+
+~~~text UserCard.tsx
+.then(res => { if (!res.ok) throw new Error($__btHTTP $__{res.status}$__bt); return res.json() })
+.then((user: User) => setResult({ id, user }))
+.catch(err => { if (err.name !== 'AbortError') setResult({ id, error: err.message }) })
+~~~
+
+1. [[res.ok]]: [[true]] لو الـ status بين 200 و 299. [[fetch]] **مبترميش** error على 404 ولا 500، بترمي بس لو الشبكة نفسها وقعت. فبنفحص بإيدنا، و [[throw]] بيرمي error بنفسنا ([[HTTP 404]] مثلًا) فيروح للـ [[catch]].
+2. [[setResult({ id, user })]]: خزّن المستخدم **ومعاه الـ id اللي اتطلب عشانه**.
+3. [[.catch(...)]]: أي error في السلسلة. لو هو الإلغاء بتاعنا، تجاهله. غير كده خزّنه.
+
+### الـ cleanup
+
+~~~text UserCard.tsx
+return () => controller.abort()
+}, [id])
+~~~
+
+لما [[id]] يتغير، React بتنادي الـ cleanup بتاع الـ effect **القديم** الأول، فالطلب القديم يتلغي، وبعدين الـ effect الجديد يبعت طلب جديد.
+
+---
+
+## ٣. العرض
+
+~~~text UserCard.tsx
+if (result?.id !== id) return <p>Loading...</p>
+if (result.error) return <p role="alert">{result.error}</p>
+return <h2>{result.user?.name}</h2>
+~~~
+
+- [[result?.id]]: [[?.]] (optional chaining) معناها «لو [[result]] مش null هات [[id]]، غير كده [[undefined]]». فالشرط صح لو مفيش نتيجة، **أو** النتيجة بتاعة id تاني. في الحالتين: لسه بيحمّل.
+- الـ loading **محسوب** مش state، فمش محتاج تعمل [[setLoading(true)]] في أول الـ effect.
+
+---
+
+## ٤. اللي حصل
+
+~~~text الناتج (Chrome)
+start (id=3)                   id=3  <h2>Sara</h2>
+0.4s after clicking 1 then 2   id=2  <h2>Mona</h2>
+1.9s after                     id=2  <h2>Mona</h2>
+id=9 (404)                     id=9  <p role="alert">HTTP 404</p>
+~~~
+
+~~~text الشبكة
+request /api/users/1 failed: net::ERR_ABORTED
+request /api/users/2 finished
+~~~
+
+طلب 1 اتلغى وهو في الطريق ([[ERR_ABORTED]]، وفي DevTools بيتكتب [[(canceled)]])، فرده عمره ما وصل. و 404 طلع رسالة بدل ما يتعامل كبيانات.
+
+### من غير الـ cleanup (الشرط موجود)
+
+~~~text الناتج
+0.4s after clicking 1 then 2   id=2  <h2>Mona</h2>
+1.9s after                     id=2  <p>Loading...</p>
+~~~
+
+الطلبين كمّلوا. رد 2 وصل الأول واتعرض، وبعدين رد 1 وصل وعمل [[setResult({ id: 1, ... })]] فوقه. الشرط شاف [[1 !== 2]] فعرض Loading... وهيفضل كده للأبد. الشرط منع البيانات الغلط، بس مش كفاية.
+
+### من غير الاتنين
+
+~~~text الناتج
+0.4s after clicking 1 then 2   id=2  <h2>Mona</h2>
+1.9s after                     id=2  <h2>Ali</h2>
+~~~
+
+ده الـ race condition بعينه: الـ id = 2 والشاشة بتقول Ali، لأن الرد اللي وصل **آخر** هو اللي كسب، مش الطلب اللي اتبعت آخر.
+
+---
+
+## الخلاصة
+
+| الحماية | بتمنع إيه |
+|---|---|
+| [[AbortController]] في الـ cleanup | الرد القديم يوصل أصلًا (وبتوفّر الشبكة) |
+| [[id]] متخزّن مع النتيجة | عرض نتيجة id تاني، و loading من غير state |
+| [[res.ok]] | التعامل مع صفحة 404 أو 500 كأنها بيانات |
+| [[err.name !== 'AbortError']] | الإلغاء بتاعك يتعرض كـ error |
+
+> الكود ده بيتكتب في كل component بيجيب بيانات. لما يكتروا، TanStack Query بيعمل ده كله ومعاه cache.`,
           lines: [
             "شكل المستخدم.",
             "component بيعرض مستخدم برقمه.",
@@ -1187,6 +3523,131 @@ function UserCard({ id }: { id: number }) {
             when: "Focus و scroll ([[scrollIntoView]]) وقياس عنصر، و ids بتاعة timers و animation frames، وأي قيمة لازم تفضل بين الـ renders بس مش بتظهر.",
             mistakes: R`تستخدم ref لقيمة معروضة على الشاشة وتستغرب إنها مش بتتحدث. و [[useRef(new Something())]]: الـ constructor بيتنادى كل render والنتيجة بتترمي. والـ timer مبيتقفلش لما الـ component يتشال: ضيف effect cleanup يعمل [[clearInterval]]. وتقرا [[ref.current]] في أول render وتلاقيه null.`
           },
+          teach: R`## الفكرة: state للي ظاهر، و ref للي مستخبي
+
+[[Stopwatch]] ساعة إيقاف فيها ٣ حاجات محتاجة تتفكر بين الـ renders: الوقت ([[ms]]، ظاهر على الشاشة)، ورقم الـ interval ([[timerRef]]، مش ظاهر)، وعنصر خانة الملاحظة ([[noteRef]]، عنصر DOM). الأولى state، والاتنين التانيين refs. اتشغّل في Vite 8.3 + React 19.2 (وضع التطوير) في Chrome headless، والضغط بـ Playwright.
+
+---
+
+## ١. التلات hooks
+
+~~~text Stopwatch.tsx
+const [ms, setMs] = useState(0)
+const timerRef = useRef<number | null>(null)
+const noteRef = useRef<HTMLInputElement>(null)
+~~~
+
+| الاسم | النوع | ليه ده بالذات |
+|---|---|---|
+| [[ms]] | state | معروض على الشاشة، فتغييره لازم يعيد الرسم |
+| [[timerRef]] | ref شايل [[number]] أو [[null]] | الـ id بتاع الـ interval. محدش بيشوفه، فتغييره ميستاهلش render |
+| [[noteRef]] | ref شايل عنصر [[<input>]] | عشان نعمل [[focus()]] للخانة |
+
+### [[useRef]] بيرجّع إيه؟
+
+object شكله [[{ current: القيمة_الأولى }]]. نفس الـ object بالظبط في كل render، و [[current]] جواه بتقدر تغيّرها عادي ([[timerRef.current = 5]]). React مش بتراقبها، فتغييرها **مش** بيعمل render.
+
+و [[<number | null>]] نوع TypeScript: «فيها رقم أو null». وفي React 19، [[useRef<HTMLInputElement>(null)]] نوعه [[RefObject<HTMLInputElement | null>]]. جرّبنا [[noteRef.current.focus()]] من غير [[?.]] و [[tsc]] قال:
+
+~~~text tsc
+error TS18047: 'noteRef.current' is possibly 'null'.
+~~~
+
+---
+
+## ٢. [[start]]
+
+~~~text Stopwatch.tsx
+function start() {
+  if (timerRef.current !== null) return
+  timerRef.current = window.setInterval(() => setMs(m => m + 100), 100)
+}
+~~~
+
+- [[if (timerRef.current !== null) return]]: لو فيه timer شغال خلاص، اخرج. ده بيمنع timer تاني.
+- [[window.setInterval(fn, 100)]]: نادي [[fn]] كل 100 ميلي ثانية، وبيرجّع رقم (id) تقدر توقفه بيه بعدين. و [[window.]] قدامها عشان TypeScript يعرف إنها نسخة المتصفح اللي بترجّع [[number]] (نسخة Node بترجّع object).
+- [[setMs(m => m + 100)]]: updater، لأن الدالة دي بتتنادى بعدين كتير، و [[ms]] اللي شايفاها هتبقى قديمة (stale closure، درس dependency array).
+- [[timerRef.current = ...]]: احفظ الـ id. **مفيش render**.
+
+## ٣. [[stop]]
+
+~~~text Stopwatch.tsx
+function stop() {
+  if (timerRef.current !== null) clearInterval(timerRef.current)
+  timerRef.current = null
+  noteRef.current?.focus()
+}
+~~~
+
+- [[clearInterval(id)]]: وقّف الـ interval ده.
+- [[timerRef.current = null]]: علامة إنه واقف، عشان [[start]] تشتغل تاني.
+- [[noteRef.current?.focus()]]: حط المؤشر في خانة الملاحظة. [[?.]] لو [[current]] بـ [[null]] (الخانة مش موجودة) متعملش حاجة بدل ما تقع.
+
+## ٤. الـ JSX
+
+~~~text Stopwatch.tsx
+<>{(ms / 1000).toFixed(1)}s <button onClick={start}>Start</button> <button onClick={stop}>Stop</button> <input ref={noteRef} placeholder="Lap note" /></>
+~~~
+
+- [[(ms / 1000).toFixed(1)]]: ميلي ثانية لثواني، برقم عشري واحد.
+- [[ref={noteRef}]]: بيقول لـ React «حط عنصر الـ input ده في [[noteRef.current]]». React بتحطه بعد ما تعمل الـ DOM، وترجّعه [[null]] لو العنصر اتشال. عشان كده في أول render (قبل الـ DOM) القيمة لسه [[null]].
+
+---
+
+## ٥. اللي حصل
+
+ضغطنا Start مرتين ورا بعض، واستنينا حوالي ثانية، وبعدين Stop:
+
+~~~text الناتج (Chrome)
+initial                  0.0s  focused=BODY
+~1s after Start, Start   1.2s  focused=BUTTON
+after Stop               1.2s  focused=INPUT
+1s after Stop            1.2s  focused=INPUT
+~~~
+
+- Start التانية رجعت من أول سطر، فالوقت بيعدّ بسرعته العادية.
+- بعد Stop الوقت وقف، والمؤشر راح للخانة ([[INPUT]]).
+
+### من غير الـ [[if]]
+
+~~~text الناتج
+~1s after Start, Start   2.2s
+after Stop               2.3s
+1s after Stop            3.3s
+~~~
+
+Start التانية عملت interval تاني وكتبت الـ id بتاعه فوق الأول في [[timerRef.current]]. فالوقت بيجري بالضعف، و Stop وقّف التاني بس. الأول id بتاعه ضاع، ومحدش هيقدر يوقفه.
+
+### [[timerRef]] كـ state
+
+بدّلنا الـ ref بـ [[const [timer, setTimer] = useState<number | null>(null)]] وعدّينا الـ renders:
+
+~~~text الـ Console (state)
+>> Start
+render 3
+render 4
+>> Stop
+render 9
+render 10
+~~~
+
+~~~text الـ Console (ref)
+>> Start
+>> Stop
+~~~
+
+(كل render بيتطبع مرتين بسبب Strict Mode، وشلنا renders الـ ticks اللي هي نفسها في الاتنين.) بالـ state، Start و Stop كل واحد عمل render زيادة عشان رقم محدش شايفه. بالـ ref، ولا واحد.
+
+---
+
+## الخلاصة
+
+| | [[useState]] | [[useRef]] |
+|---|---|---|
+| بيرجّع | قيمة + دالة تغيير | [[{ current }]] |
+| التغيير بيعمل render؟ | أيوه | لأ |
+| تقراه وقت الرسم؟ | أيوه | لأ، في الـ handlers والـ effects بس |
+| بيتستخدم لـ | أي حاجة ظاهرة | timer ids، وعناصر DOM ([[ref={...}]])، وقيم داخلية |`,
           lines: [
             "ساعة إيقاف.",
             "الوقت المعروض: ده state لأنه ظاهر.",

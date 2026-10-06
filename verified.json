@@ -4869,6 +4869,106 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash + pwsh 7 / ps 5.1"
  },
+ "react|JSX": {
+  "hash": "b5a84dd09a74",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+ },
+ "react|UI = f(state)": {
+  "hash": "696d432acf06",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; vanilla part in Node 24 + jsdom"
+ },
+ "react|You Might Not Need an Effect": {
+  "hash": "6a1087a3f1cb",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; docs: submitted/handler case"
+ },
+ "react|children": {
+  "hash": "e419e1ddf6df",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+ },
+ "react|conditional rendering": {
+  "hash": "a25a43284b5e",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|controlled input": {
+  "hash": "b3f5d32cf2a4",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|dependency array": {
+  "hash": "89557418532e",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; oxlint"
+ },
+ "react|derived state": {
+  "hash": "72a7017f5b13",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|events": {
+  "hash": "79f4bd314667",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|immutable updates": {
+  "hash": "da549eec446f",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; Node 24"
+ },
+ "react|key": {
+  "hash": "98b5959efa2a",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|lifting state up": {
+  "hash": "353f1d6b3158",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|npm create vite": {
+  "hash": "d92445373f8c",
+  "date": "2026-10-06",
+  "on": "Windows 11 PowerShell, Node 24.19 / npm 11.17, create-vite 9.2.1 (create, install, dev, build, preview)"
+ },
+ "react|props": {
+  "hash": "e7ea1734051a",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+ },
+ "react|race condition": {
+  "hash": "1cb2c5ea2cc0",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome with a local delayed Node API"
+ },
+ "react|useEffect": {
+  "hash": "ef1da6768d87",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev and vite preview, headless Chrome"
+ },
+ "react|useRef": {
+  "hash": "b1b606e5d76a",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+ },
+ "react|useState": {
+  "hash": "710f0b840cbf",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev and vite preview, headless Chrome"
+ },
+ "react|vite.config": {
+  "hash": "6ba6dea4524b",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3.3 (build, --mode staging, ANALYZE=1, dev proxy against a local Node API); docs: Sentry upload"
+ },
+ "react|مقدمة React والـ Components": {
+  "hash": "0c85bd6c888b",
+  "date": "2026-10-06",
+  "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
+ },
  "sec|.env اترفع على Git": {
   "hash": "f99d0f630304",
   "date": "2026-10-06",
