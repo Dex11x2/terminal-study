@@ -40,6 +40,132 @@ MORE("sec", [
 
 في الانترفيو لو اتسألت «إزاي بتحمي بيانات المستخدمين؟»: ابدأ بـ minimization قبل التشفير. ده اللي بيبيّن إنك فاهم، مش حافظ أسماء خوارزميات.`
           },
+          teach: R`## الفكرة: كل عمود قرار
+
+المثال جدول [[customers]] متصمم بعقلية «خزّن أقل». مفيش فيه سطر صعب في الـ SQL نفسه، الصعب هو **ليه** كل عمود متكتب بالشكل ده. هنمشي عليه عمود عمود، وبعدين نشغّل الـ migration اللي في الحل. كل اللي تحت اتشغّل على PostgreSQL 16 في container ([[docker run postgres:16]]).
+
+---
+
+## ١. السطر الأول: [[CREATE TABLE customers (]]
+
+[[CREATE TABLE]] بيعمل جدول جديد، و [[customers]] اسمه، وبين القوسين الأعمدة، كل عمود في سطر: **الاسم** وبعده **النوع** وبعده **القيود** (constraints). والفاصلة [[,]] في آخر كل سطر بتفصل عمود عن اللي بعده، وآخر عمود من غيرها.
+
+## ٢. [[id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY]]
+
+| الحتة | معناها |
+|---|---|
+| [[bigint]] | رقم صحيح كبير (8 byte)، بيوصل لـ 9 كوينتليون |
+| [[GENERATED ALWAYS AS IDENTITY]] | الداتابيز هي اللي بتدّي الرقم: 1، 2، 3… |
+| [[PRIMARY KEY]] | الرقم ده مميز لكل صف ومينفعش يبقى NULL |
+
+و [[ALWAYS]] معناها إنك مش مسموحلك تكتب الرقم بإيدك. جرّبنا:
+
+~~~text الناتج
+ERROR:  cannot insert a non-DEFAULT value into column "id"
+DETAIL:  Column "id" is an identity column defined as GENERATED ALWAYS.
+~~~
+
+## ٣. [[email text UNIQUE NOT NULL]] و [[name text NOT NULL]]
+
+[[text]] نص من غير حد للطول. [[UNIQUE]]: مينفعش إيميلين زي بعض (الإيميل هو اللي اليوزر بيدخل بيه). [[NOT NULL]]: لازم يتكتب. دول PII بس **محتاجينهم فعلًا**: من غير إيميل مفيش login ولا فواتير. يعني الـ minimization مش معناه متخزنش PII خالص، معناه متخزنش اللي **مش محتاجه**.
+
+## ٤. [[birth_year smallint]] بدل تاريخ الميلاد
+
+[[smallint]] رقم صغير (2 byte، لحد 32767)، كفاية لسنة. والـ [[--]] بعده بداية **تعليق** في SQL، الداتابيز بتتجاهل اللي بعدها لآخر السطر.
+
+ليه السنة بس؟ لو الميزة «لازم فوق 18»، السنة كفاية تقريبًا، وتاريخ الميلاد الكامل مع الاسم بيعرّف الشخص أكتر بكتير (وبيستخدم في أسئلة استرجاع الحسابات). ولو عايز السن:
+
+~~~text الناتج
+  y   | approx_age
+------+------------
+ 1990 |         36
+~~~
+
+ده من [[SELECT extract(year FROM date '1990-05-01'), extract(year FROM now()) - 1990]]: [[extract(year FROM ...)]] بيطلّع السنة من تاريخ.
+
+## ٥. [[city text]]: نفس الفكرة
+
+المدينة كفاية للإحصائيات أو لحساب الشحن التقريبي. العنوان بالتفصيل بيتخزن مع **الطلب** وقت ما تحتاجه بس.
+
+## ٦. الدفع: [[payment_customer_id]] و [[card_last4 char(4)]]
+
+- [[payment_customer_id text]]: الـ id اللي بوابة الدفع (Paymob أو Stripe) بترجعهولك، زي [[cus_...]]. الكارت نفسه متخزن عندهم هم، وهم اللي عليهم PCI DSS (معيار أمان كروت الدفع).
+- [[char(4)]]: نص طوله **4 بالظبط**. لو حاولت تحط 5:
+
+~~~text الناتج
+ERROR:  value too long for type character(4)
+~~~
+
+يعني الداتابيز نفسها بتمنعك تخزن الكارت كامل في العمود ده بالغلط.
+
+## ٧. الرقم القومي: عمودين
+
+- [[national_id_enc text]]: الرقم **متشفّر في التطبيق** قبل ما يوصل للداتابيز ([[enc]] = encrypted). شكله [[v1:...:...:...]] (درس «تشفير عمود حساس» تحت).
+- [[national_id_idx text UNIQUE]]: **بصمة** [[HMAC]] للرقم ([[idx]] = index). نفس الرقم بيدّي نفس البصمة دايمًا، فتقدر تدوّر بيها وتمنع التكرار بالـ [[UNIQUE]] من غير ما تفك التشفير.
+
+## ٨. [[marketing_consent_at timestamptz]]
+
+[[timestamptz]] = timestamp with time zone، وقت بالظبط ومعاه المنطقة الزمنية. ليه وقت مش [[boolean]]؟ لأن القانون بيطلب تثبت **إمتى** وافق. لو [[NULL]] يبقى مش موافق، ولو رجع في موافقته ترجّعها [[NULL]].
+
+## ٩. [[created_at timestamptz NOT NULL DEFAULT now()]]
+
+[[DEFAULT now()]]: لو مكتبتش قيمة، الداتابيز تحط الوقت الحالي.
+
+### التشغيل
+
+جدول اتعمل، و [[\d customers]] في psql بيوريك الأعمدة والـ indexes:
+
+~~~text الناتج (مختصر)
+ birth_year           | smallint
+ card_last4           | character(4)
+ national_id_idx      | text
+ marketing_consent_at | timestamp with time zone
+Indexes:
+    "customers_pkey" PRIMARY KEY, btree (id)
+    "customers_email_key" UNIQUE CONSTRAINT, btree (email)
+    "customers_national_id_idx_key" UNIQUE CONSTRAINT, btree (national_id_idx)
+~~~
+
+لاحظ إن كل [[UNIQUE]] عمل index لوحده، وده اللي بيخلي البحث بالإيميل أو بالبصمة سريع.
+
+---
+
+## ١٠. الحل: migration يقلل جدول قديم
+
+الحل بيعمل جدول [[people]] «غلط» فيه [[birth_date]] و [[card_number]] و [[cvv]]، وبعدين يصلّحه:
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[BEGIN;]] | يبدأ transaction: يا كله يحصل يا ولا حاجة |
+| [[ALTER TABLE people ADD COLUMN birth_year smallint;]] | يضيف العمود الجديد (فاضي) |
+| [[UPDATE people SET birth_year = extract(year FROM birth_date);]] | يملاه من القديم |
+| [[ALTER TABLE ... DROP COLUMN birth_date, DROP COLUMN cvv, DROP COLUMN card_number;]] | يشيل الأعمدة الخطيرة في أمر واحد |
+| [[COMMIT;]] | يثبّت |
+
+الترتيب مهم: لازم تنقل الداتا **قبل** ما تمسح العمود. اتشغّل كده:
+
+~~~text الناتج
+BEGIN
+ALTER TABLE
+UPDATE 1
+ALTER TABLE
+COMMIT
+ id |  national_id   | birth_year
+----+----------------+------------
+  1 | 29005011234567 |       1990
+~~~
+
+[[UPDATE 1]] يعني صف واحد اتعدّل. ولاحظ إن [[national_id]] لسه موجود واضح: ده الخطوة الجاية (تشفيره).
+
+---
+
+## الخلاصة
+
+- اسأل لكل عمود: محتاجه لإيه؟ ينفع أقل منه؟
+- السنة بدل التاريخ، والمدينة بدل العنوان، و reference من بوابة الدفع بدل الكارت، و CVV ممنوع خالص.
+- الحساس اللي لازم يتخزن: متشفّر + بصمة HMAC للبحث.
+- الموافقة وقت مش checkbox.
+- [[DROP COLUMN]] بيشيل العمود من الجدول بس، مش من الباك أبات القديمة ولا اللوج.`,
           lines: [
             "جدول العملاء.",
             "id رقم بيزيد لوحده.",
@@ -107,6 +233,72 @@ Fines                Egypt up to EGP 5M; GDPR up to EUR 20M or 4% of global turn
 
 في الانترفيو: «إيه اللي GDPR بيأثر بيه على تصميمك؟» جاوب بالحاجات اللي بتتبني: حذف حقيقي بيشمل الملفات والخدمات التانية، وتصدير JSON، ومدد حفظ بـ job، وداتا متشفرة، ولوج من غير PII.`
           },
+          teach: R`## الفكرة: كل سطر قانون = حاجة تتبني
+
+المثال مش كود يتشغّل، ده جدول بـ 8 سطور، كل سطر فيه بند من القانون على الشمال وترجمته على اليمين. هنقرا كل سطر ونسأل: **ده محتاج مني أبني إيه؟** والتفاصيل القانونية ملخص للمطور مش استشارة، فالأرقام والمدد راجعها مع النص الرسمي ومع محامي.
+
+---
+
+## ١. [[Egypt Law 151/2020]]
+
+[[151/2020]] يعني القانون رقم 151 لسنة 2020. [[exec. regulations]] = اللائحة التنفيذية، وهي اللي بتقول التفاصيل العملية، واتصدرت نوفمبر 2025، ومعاها حوالي سنة لتوفيق الأوضاع. و [[PDPC]] = Personal Data Protection Center، «مركز حماية البيانات الشخصية»، الجهة اللي بتراقب.
+
+**تبني إيه:** ولا حاجة في السطر ده نفسه، بس هو اللي بيقولك إن الباقي بقى إلزامي.
+
+## ٢. [[Purpose & consent]]
+
+اجمع لغرض محدد ومكتوب، والبيانات الحساسة (صحة، دين، بيانات أطفال…) محتاجة موافقة **صريحة ومكتوبة**.
+
+**تبني إيه:** عمود وقت موافقة لكل غرض (زي [[marketing_consent_at]] في الدرس اللي فات)، وcheckbox مش متعلّم لوحده، وسياسة خصوصية بتقول الحقيقة.
+
+## ٣. [[Data subject rights]]
+
+«صاحب البيانات» هو اليوزر. حقوقه أربعة:
+
+| الحق | بالإنجليزي | اللي بيتبني |
+|---|---|---|
+| يعرف إيه اللي عندك عنه | access | زرار «نزّل بياناتي» (درس «تصدير الداتا») |
+| يصحح | correction | صفحة إعدادات يعدّل فيها |
+| يمسح | erasure | زرار «امسح حسابي» (درس «حذف الحساب») |
+| يعترض | objection | يوقف استخدام معين (زي التسويق) |
+
+## ٤. [[Breach]]
+
+Breach = تسريب. لازم تبلّغ الجهة الرقابية خلال **72 ساعة** (3 أيام) في القانونين، وبعدين اليوزرز المتأثرين.
+
+**تبني إيه:** 72 ساعة مش كفاية تعرف «إيه اللي اتسرّب ولمين» لو معندكش لوجات دخول وتغييرات صلاحيات. وكمان قايمة بالخدمات اللي بتبعتلها داتا (Sentry وخدمة الإيميل و S3).
+
+## ٥. [[Transfers abroad]]
+
+سيرفر في Frankfurt أو خدمة SaaS أمريكية = الداتا **خرجت بره مصر**، وده ليه شروط. **تبني إيه:** اختيار الـ region قرار تسأل فيه قبل ما تختار، مش بعد.
+
+## ٦. [[GDPR scope]]
+
+GDPR = General Data Protection Regulation، قانون الاتحاد الأوروبي. [[scope]] = نطاق تطبيقه: لو بتقدم خدمة لناس في أوروبا، بيطبق عليك حتى لو شركتك وسيرفرك في مصر.
+
+## ٧. [[GDPR in code]]
+
+الأرقام بين القوسين أرقام المواد (Art. = Article): 15 حق الوصول، و 17 حق المسح، و 20 حق النقل (portability = يخرج بياناته بصيغة يقراها برنامج، يعني JSON أو CSV مش PDF). والرد خلال **شهر**.
+
+## ٨. [[Fines]]
+
+الغرامات: لحد 5 مليون جنيه في القانون المصري (وفيه حبس في حالات)، ولحد 20 مليون يورو أو 4% من الإيراد العالمي، أيهما **أكبر**، في GDPR.
+
+---
+
+## الملخص في جدول واحد
+
+| البند | المدة/الرقم | اللي بيتبني في الكود |
+|---|---|---|
+| الموافقة | — | أعمدة وقت لكل غرض |
+| الوصول والنقل | شهر في GDPR | export JSON |
+| المسح | شهر في GDPR | حذف حقيقي + job للملفات |
+| التسريب | 72 ساعة | لوجات + قايمة processors |
+| النقل للخارج | — | قرار الـ region والخدمات |
+
+## الخلاصة
+
+القانون مش ورقة عند المحامي بس: هو 4 features (موافقة، تصدير، حذف، لوجات) و data map. والـ data map (جدول: الداتا، والغرض، والمكان، ومدة الحفظ) هو أول حاجة تعملها، لأن من غيره مش هتعرف ترد على أي طلب.`,
           lines: [
             R`القانون المصري: اللائحة التنفيذية صدرت نوفمبر 2025، وفيه حوالي سنة توفيق أوضاع، والجهة الرقابية مركز حماية البيانات.`,
             "اجمع لغرض محدد، وموافقة صريحة مكتوبة للبيانات الحساسة.",
@@ -155,6 +347,111 @@ COMMIT;`,
 
 في الانترفيو «إزاي تعمل delete account؟»: قسّم الداتا لـ مسح / anonymize / حفظ قانوني، و transaction، و outbox للملفات والخدمات، والباك أب بمدة حفظ، وجدول deleted_accounts للاسترجاع.`
           },
+          teach: R`## الفكرة: ٣ أنواع داتا، ٣ معاملات
+
+المثال سكربت psql بيمسح يوزر واحد. قبل الكود قسّم داتا اليوزر:
+
+| النوع | مثال | بيحصلها إيه |
+|---|---|---|
+| تتمسح معاه | الجلسات، لوجات الدخول، توكنات reset | [[DELETE]] (أو CASCADE) |
+| تفضل من غير صاحبها | الطلبات والفواتير (محاسبة وضرايب) | anonymize: الأرقام تفضل والاسم والعنوان يتشالوا |
+| بره الداتابيز | الصورة على S3، الإيميل في خدمة الإيميلات | تتسجل في قايمة و worker يمسحها بعد الـ commit |
+
+كل اللي تحت اتشغّل على PostgreSQL 16 في container، بالـ schema اللي في الحل: يوزر [[mona@example.com]] عنده جلستين وطلب ولوج دخول وصورة [[avatars/1.png]].
+
+---
+
+## ١. [[\set uid 1]]
+
+ده **مش SQL**، ده أمر خاص بـ psql (أي سطر بيبدأ بـ [[\]] أمر لـ psql نفسه). بيعمل متغير اسمه [[uid]] قيمته 1، وبعدين [[:uid]] في أي query بيتبدل بـ 1 قبل ما يتبعت للداتابيز. في التطبيق الحقيقي بدله [[$1]] (parameter) جوه transaction من الكود.
+
+## ٢. [[BEGIN;]] ... [[COMMIT;]]
+
+transaction: كل الأوامر اللي بينهم يا تنجح كلها يا ولا واحدة تتحسب. ليه مهم هنا؟ تخيّل إن الطلبات اتمسحت أسماؤها وبعدين [[DELETE]] فشل: يبقى عندك يوزر موجود وطلباته من غير اسم. مع الـ transaction ده مستحيل.
+
+## ٣. [[UPDATE orders SET ship_name = NULL, ship_address = NULL WHERE user_id = :uid;]]
+
+ده الـ anonymize: الطلب نفسه يفضل (رقمه وإجماليه وتاريخه للمحاسبة)، بس [[ship_name]] و [[ship_address]] يبقوا [[NULL]]. و [[WHERE user_id = :uid]] عشان نلمس طلبات اليوزر ده بس. **لازم ييجي قبل الـ DELETE**: بعد الحذف [[user_id]] هيبقى NULL ومش هتعرف طلبات مين دي.
+
+## ٤. [[INSERT INTO files_to_delete (key) SELECT avatar_key FROM users WHERE ...]]
+
+شكل [[INSERT ... SELECT]]: بدل [[VALUES (...)]]، الصفوف اللي هتتضاف جاية من [[SELECT]]. هنا بنجيب مفتاح صورة اليوزر ونحطه في جدول [[files_to_delete]]. و [[AND avatar_key IS NOT NULL]]: لو ملوش صورة، الـ SELECT يرجّع صفر صفوف ومفيش حاجة تتضاف (بدل صف فيه NULL).
+
+ليه مش نمسح الصورة من S3 على طول؟ لأن S3 بره الـ transaction: لو مسحت الصورة والـ transaction فشلت بعدها، الحساب رجع والصورة ضاعت. فبنكتب «مطلوب مسح الملف ده» **جوه** الـ transaction، و worker يمسحه **بعد** الـ commit. الأسلوب ده اسمه outbox.
+
+## ٥. [[INSERT INTO deleted_accounts (user_id) VALUES (:uid);]]
+
+سجل إن الـ id ده اتمسح. لو بعد شهر رجّعت باك أب قديم، اليوزر هيرجع معاه، فتلف على [[deleted_accounts]] وتعيد الحذف.
+
+## ٦. [[DELETE FROM users WHERE id = :uid;]]
+
+هنا الـ foreign keys بتشتغل لوحدها:
+
+- [[sessions]] و [[login_events]] معمولين [[ON DELETE CASCADE]]: صفوفهم بتتمسح مع اليوزر.
+- [[orders.user_id]] معمول [[ON DELETE SET NULL]]: الطلب يفضل و [[user_id]] يبقى NULL.
+
+### التشغيل
+
+[[psql -d test -f delete.sql]] ([[-d]] الداتابيز، [[-f]] الملف):
+
+~~~text الناتج
+BEGIN
+UPDATE 1
+INSERT 0 1
+INSERT 0 1
+DELETE 1
+COMMIT
+~~~
+
+[[INSERT 0 1]]: الرقم الأول دايمًا 0 في Postgres الحديث (كان OID زمان)، والتاني عدد الصفوف. وبعدين الـ checks اللي في الحل:
+
+~~~text الناتج
+ id | user_id | ship_name | ship_address | total
+----+---------+-----------+--------------+--------
+  1 |         |           |              | 350.00
+
+ users | sessions | events
+-------+----------+--------
+     0 |        0 |      0
+
+      key      |           queued_at
+---------------+-------------------------------
+ avatars/1.png | 2026-10-06 13:42:37.460241+00
+~~~
+
+الطلب موجود بـ 350 ومن غير أي حاجة تعرّف صاحبه، والجلستين واللوج اتمسحوا بالـ CASCADE، والصورة مستنية الـ worker.
+
+---
+
+## ٧. لو نسيت [[ON DELETE SET NULL]]
+
+جرّبنا جدول [[orders]] بـ [[REFERENCES users]] عادي من غير ON DELETE:
+
+~~~text الناتج
+BEGIN
+ERROR:  update or delete on table "users" violates foreign key constraint "orders_user_id_fkey" on table "orders"
+DETAIL:  Key (id)=(1) is still referenced from table "orders".
+ROLLBACK
+ count
+-------
+     1
+~~~
+
+الـ DELETE رفض، والـ [[COMMIT]] بقى [[ROLLBACK]] (رجوع)، واليوزر لسه موجود. وده أحسن من حذف نص. والعكس خطر: [[ON DELETE CASCADE]] على الطلبات كان هيمسح الفواتير.
+
+---
+
+## الخلاصة
+
+| الخطوة | ليه |
+|---|---|
+| anonymize الطلبات الأول | تفضل للمحاسبة من غير PII |
+| [[files_to_delete]] جوه الـ transaction | الملفات تتمسح بعد الـ commit بس |
+| [[deleted_accounts]] | تعيد الحذف لو رجّعت باك أب |
+| [[DELETE]] + CASCADE / SET NULL | الـ schema بتقرر مصير كل جدول |
+| [[BEGIN]]/[[COMMIT]] | مفيش حساب نص ممسوح |
+
+و soft delete ([[deleted_at]]) مش حذف حساب: الداتا كلها لسه موجودة.`,
           lines: [
             R`متغير في psql فيه id اليوزر. في التطبيق ده [[$1]] جوه transaction من الكود.`,
             "ابدأ transaction: يا كله يحصل يا ولا حاجة.",
@@ -223,6 +520,143 @@ DELETE FROM login_events e USING old WHERE e.id = old.id;`,
             when: R`التصدير: أول ما يبقى عندك يوزرز حقيقيين. والـ retention: لكل جدول بيكبر مع الوقت وفيه PII (events، و audit logs، و tokens، و notifications)، ومعاه المدة مكتوبة في سياسة الخصوصية.`,
             mistakes: R`[[DELETE ... WHERE created_at < ...]] مرة واحدة على ملايين صفوف: transaction طويلة جدًا، وlocks، و replication lag. تحط الـ retention بـ setInterval جوه سيرفر الـ API فيشتغل مرتين لو عندك instanceتين. التصدير فيه password_hash أو داتا يوزرز تانيين (مثلًا رسايل فيها اسم الطرف التاني بالكامل). ولينك التصدير من غير صلاحية وقت أو من غير auth.`
           },
+          teach: R`## الفكرة: query بتبني JSON، و query بتمسح على دفعات
+
+المثال جزئين: الأول [[SELECT]] بيرجّع كل داتا يوزر واحد كـ JSON object واحد (حق الوصول والنقل)، والتاني [[DELETE]] بيمسح لوجات الدخول الأقدم من 90 يوم، 5000 صف في المرة (الـ retention). اتشغّلوا على PostgreSQL 16 في container، على داتابيز درس «حذف الحساب» ومعاها يوزر [[sara@example.com]] (id 2) عندها طلبين، ويوزر [[omar@example.com]] (id 3) من غير طلبات.
+
+---
+
+## الجزء الأول: التصدير، من جوه لبرة
+
+### الخطوة ١: subquery بيختار الأعمدة
+
+~~~text
+(SELECT email, name, phone, created_at FROM users WHERE id = :uid) u
+~~~
+
+[[SELECT]] عادي جوه قوسين، والـ [[u]] بعد القوس **اسم مستعار** (alias) للنتيجة، عشان نقدر نشاور عليها. لاحظ إن الأعمدة **مختارة بالاسم**: مفيش [[password_hash]] ولا [[avatar_key]]. التصدير فيه اللي يخص اليوزر، مش أسرار السيستم.
+
+### الخطوة ٢: [[row_to_json(u)]]
+
+بياخد الصف ويحوّله JSON object، أسامي الأعمدة بقت keys:
+
+~~~text الناتج (لـ Omar)
+{"email":"omar@example.com","name":"Omar"}
+~~~
+
+### الخطوة ٣: [[json_agg(o ORDER BY o.created_at)]]
+
+[[json_agg]] (aggregate = تجميع) بياخد **كل الصفوف** ويعملهم JSON array واحد، و [[ORDER BY]] جواه بيرتب العناصر بالتاريخ.
+
+### الخطوة ٤: [[coalesce(..., '[]')]]
+
+لو اليوزر ملوش طلبات، [[json_agg]] على صفر صفوف بيرجّع [[NULL]] مش array فاضية. [[coalesce(a, b)]] بترجّع أول قيمة مش NULL:
+
+~~~text الناتج
+ without_coalesce | with_coalesce
+------------------+---------------
+                  | []
+~~~
+
+ليه يفرق؟ الكود اللي هيقرا الملف ([[data.orders.length]]) هيقع على [[null]] ويشتغل على [[[]]].
+
+### الخطوة ٥: [[json_build_object('profile', ..., 'orders', ..., 'exported_at', now())]]
+
+بيبني object من أزواج: key وبعده value. و [[AS export]] اسم العمود في الناتج.
+
+### التشغيل
+
+[[psql -qAt -f export.sql | python3 -m json.tool]]: [[-q]] quiet (من غير رسايل)، و [[-A]] من غير محاذاة الجدول، و [[-t]] من غير عناوين الأعمدة، فالناتج JSON صافي. و [[python3 -m json.tool]] بيرتبه (على ويندوز اسمه [[python]]):
+
+~~~text الناتج (Sara)
+{
+    "profile": {
+        "email": "sara@example.com",
+        "name": "Sara Adel",
+        "phone": "01012345678",
+        "created_at": "2026-10-06T13:42:54.463953+00:00"
+    },
+    "orders": [
+        { "id": 2, "total": 120.0, "ship_address": "5 Nile St, Giza", "created_at": "2026-09-01T00:00:00+00:00" },
+        { "id": 3, "total": 80.5, "ship_address": "5 Nile St, Giza", "created_at": "2026-09-20T00:00:00+00:00" }
+    ],
+    "exported_at": "2026-10-06T13:43:02.630372+00:00"
+}
+~~~
+
+(الطلبات اتجمعت في سطر للاختصار.) و Omar طلع [[ "orders" : [] ]].
+
+---
+
+## الجزء التاني: الـ retention
+
+### [[WITH old AS (...)]]
+
+[[WITH]] بيعمل CTE (Common Table Expression): نتيجة مؤقتة ليها اسم ([[old]]) تستخدمها في الأمر اللي بعدها. جواها:
+
+| الحتة | معناها |
+|---|---|
+| [[SELECT id FROM login_events]] | هات الـ ids بس |
+| [[WHERE created_at < now() - interval '90 days']] | الأقدم من 90 يوم. [[interval]] نوع «مدة»، و [[now() - interval]] تاريخ |
+| [[ORDER BY id LIMIT 5000]] | أقدم 5000 بس |
+
+### [[DELETE FROM login_events e USING old WHERE e.id = old.id;]]
+
+[[USING old]] بيدخّل الـ CTE في الـ DELETE كأنه join، و [[e]] اسم مستعار للجدول. يعني: امسح من [[login_events]] كل صف الـ id بتاعه موجود في [[old]].
+
+### ليه دفعات؟
+
+[[DELETE ... WHERE created_at < ...]] مرة واحدة على ملايين صفوف = transaction طويلة، بتمسك locks وبتكتب WAL كتير. الدفعات بتخلي كل مرة سريعة. جرّبنا على 200 صف بتواريخ من يوم لـ 200 يوم ([[generate_series(1, 200)]] بيولّد الأرقام 1 لـ 200):
+
+~~~text الناتج
+ old | total
+-----+-------
+ 111 |   200
+DELETE 111
+DELETE 0
+~~~
+
+ليه 111 مش 110؟ الأيام من 90 لـ 200 = 111 يوم، ويوم 90 اتحسب لأن [[now()]] وقت الـ DELETE بعد وقت الـ INSERT بأجزاء من الثانية. ولما غيّرنا [[LIMIT]] لـ 50:
+
+~~~text الناتج
+DELETE 50
+DELETE 50
+DELETE 11
+DELETE 0
+~~~
+
+ده بالظبط سلوك الـ job: يكرر لحد ما دفعة ترجع أقل من الـ LIMIT.
+
+---
+
+## الجزء التالت: الـ job في Node (الحل)
+
+| السطر | معناه |
+|---|---|
+| [[new pg.Pool({ connectionString: process.env.DATABASE_URL })]] | مجموعة اتصالات بالداتابيز من متغير بيئة |
+| [[RULES]] | لستة ثابتة: الجدول ومدة الحفظ |
+| [[for (const { table, keep } of RULES)]] | لف على كل قاعدة، و [[{ table, keep }]] بيفك الـ object لمتغيرين |
+| [[do { ... } while (n === 5000)]] | نفّذ مرة على الأقل، وكرر طول ما الدفعة كاملة |
+| [[$1::interval]] | المدة بتتبعت parameter، و [[::interval]] تحويل نوع |
+| [[$__{table}]] | اسم الجدول متلزق في النص: آمن هنا بس لأنه من [[RULES]] مش من يوزر |
+| [[({ rowCount: n } = await pool.query(...))]] | خد عدد الصفوف الممسوحة في [[n]]. القوسين حوالين السطر لازمين لما تفك object في متغير موجود |
+
+اتشغّل بـ [[DATABASE_URL=postgres://...@127.0.0.1:55432/test node run.mjs]] مرتين:
+
+~~~text الناتج
+{"job":"retention","table":"login_events","deleted":111}
+{"job":"retention","table":"password_resets","deleted":1}
+{"job":"retention","table":"login_events","deleted":0}
+{"job":"retention","table":"password_resets","deleted":0}
+~~~
+
+التشغيل التاني صفر: الـ job **idempotent**، تشغّله مرتين مفيش ضرر.
+
+## الخلاصة
+
+- التصدير: [[row_to_json]] للصف، و [[json_agg]] للصفوف، و [[coalesce(..., '[]')]] للفاضي، وأعمدة مختارة بالاسم.
+- الـ retention: CTE بـ LIMIT + [[DELETE ... USING]]، ويتكرر لحد ما يخلص.
+- الـ job يشتغل من scheduler مرة، مش [[setInterval]] في كل instance.`,
           lines: [
             R`id اليوزر (في التطبيق [[$1]]).`,
             "ابني object واحد فيه كل حاجة.",
@@ -239,7 +673,7 @@ DELETE FROM login_events e USING old WHERE e.id = old.id;`,
           ],
           sol: R`الـ export بيطلع object فيه [[profile]] (الإيميل والاسم والتليفون ووقت التسجيل) و [[orders]] كـ array و [[exported_at]]. ويوزر من غير طلبات بياخد [[orders]] كـ array فاضية مش null، بفضل الـ coalesce.
 
-مع 200 صف من 1 لـ 200 يوم: أول DELETE بيقول [[DELETE 110]] تقريبًا (كل اللي أقدم من 90 يوم، لأنهم أقل من 5000)، والتاني [[DELETE 0]]، والباقي حوالي 90. لو غيّرت الـ LIMIT لـ 50 هتشوف 50 ثم 50 ثم 10، وده اللي الـ job بيعمله.
+مع 200 صف من 1 لـ 200 يوم: أول DELETE بيقول [[DELETE 111]] (من يوم 90 لـ 200، لأنهم أقل من 5000، ويوم 90 نفسه بيتحسب لأن [[now()]] وقت الـ DELETE بعد وقت الـ INSERT بشوية)، والتاني [[DELETE 0]]، والباقي 89. لو غيّرت الـ LIMIT لـ 50 هتشوف 50 ثم 50 ثم 11 ثم 0، وده اللي الـ job بيعمله.
 
 الـ job تحت اتجرب على Postgres 16: أول تشغيل بيطبع عدد الممسوح لكل جدول، والتاني بيطبع 0. اسم الجدول متحط في الـ SQL من لستة ثابتة في الكود، مش من مدخل مستخدم، والمدة بتتبعت كـ parameter. شغّله من job scheduler مرة في اليوم (BullMQ أو cron على السيرفر)، مش من جوه كل instance.`,
           solCode: R`// retention.mjs
@@ -310,6 +744,142 @@ KMS و envelope encryption: الـ KMS بيحتفظ بـ master key عمره م�
 
 في الانترفيو «encryption at rest كفاية؟»: لأ، بيحمي من سرقة الديسك بس. application-level encryption بيحمي من الـ dump و SQL injection وأي حد عنده صلاحية قراية بس.`
           },
+          teach: R`## الفكرة: 3 دوال في ملف واحد
+
+المثال module اسمه [[pii-crypto.mjs]] بيصدّر 3 دوال: [[encrypt]] بتحوّل الرقم القومي لنص متشفّر، و [[decrypt]] بترجّعه، و [[blindIndex]] بتعمل بصمة ثابتة تدوّر بيها. كل اللي تحت اتشغّل بـ Node 24 على ويندوز (Git Bash و PowerShell).
+
+---
+
+## ١. السطر الأول: الـ import
+
+~~~text
+import { createCipheriv, createDecipheriv, createHmac, randomBytes } from "node:crypto";
+~~~
+
+[[node:crypto]] مكتبة جوه Node نفسه (الـ [[node:]] قبل الاسم بيقول «من Node مش من npm»)، فمفيش [[npm install]]. وبناخد منها 4 دوال بالاسم بين [[{ }]]:
+
+| الدالة | بتعمل إيه |
+|---|---|
+| [[randomBytes]] | bytes عشوائية آمنة (للـ IV) |
+| [[createCipheriv]] | تجهّز «مشفّر» بخوارزمية ومفتاح و IV |
+| [[createDecipheriv]] | نفس الكلام للفك |
+| [[createHmac]] | بصمة بمفتاح |
+
+## ٢. المفاتيح
+
+~~~text
+const KEY = Buffer.from(process.env.PII_KEY, "base64");
+~~~
+
+[[process.env.PII_KEY]] قيمة متغير البيئة. والمفتاح متخزن كـ **base64**: طريقة تكتب bytes عشوائية كحروف عادية تتحط في [[.env]]. [[Buffer.from(..., "base64")]] بيرجّعها bytes. نولّد مفتاح:
+
+~~~bash
+openssl rand -base64 32
+~~~
+
+~~~text الناتج (مثال، كل مرة مختلف)
+m915kkU9znVTgANKRnS5u9nF+Chj9/cteyRF66xo8I8=
+~~~
+
+44 حرف، ولما تفكهم ([[base64 -d | wc -c]]) يطلعوا **32 byte** = 256 bit، وده اللي [[aes-256]] محتاجه. و [[INDEX_KEY]] مفتاح **تاني** للبصمة: لو مفتاح واحد اتسرّب، التاني لسه سليم.
+
+---
+
+## ٣. [[encrypt(text)]]: من جوه لبرة
+
+### [[randomBytes(12)]]
+
+الـ IV (Initialization Vector): 12 byte عشوائي **جديد لكل قيمة**. مش سر، بس لازم ميتكررش مع نفس المفتاح. هو اللي بيخلي نفس الرقم يتشفّر بشكل مختلف كل مرة.
+
+### [[createCipheriv("aes-256-gcm", KEY, iv)]]
+
+- [[aes]]: الخوارزمية القياسية للتشفير.
+- [[256]]: طول المفتاح بالـ bit.
+- [[gcm]] (Galois/Counter Mode): طريقة تشغيل بتشفّر **وكمان** بتطلّع auth tag، بصمة 16 byte بتكشف أي تعديل.
+
+### [[Buffer.concat([c.update(text, "utf8"), c.final()])]]
+
+[[update]] بيشفّر النص (و [[utf8]] بيقول النص مكتوب إزاي)، و [[final]] بيقفل التشفير. و [[Buffer.concat]] بيلزق الناتجين.
+
+### الـ return: 4 حتت في string واحد
+
+~~~text
+["v1", iv, tag, data].join(":")
+~~~
+
+كل حتة بـ base64، و [[join(":")]] بيحط [[:]] بينهم. الناتج الحقيقي:
+
+~~~text الناتج
+v1:YSy10EzZu4rlFL6Y:WlOoyHDrfIUqvnWGVcuxlA==:DQwOgFQqu+7jXjKEKfw=
+~~~
+
+| الحتة | الطول | معناها |
+|---|---|---|
+| [[v1]] | — | نسخة المفتاح، عشان تغيّره بعدين |
+| [[YSy10EzZu4rlFL6Y]] | 16 حرف = 12 byte | الـ IV |
+| [[WlOo...xlA==]] | 24 حرف = 16 byte | الـ auth tag |
+| [[DQwO...Kfw=]] | 20 حرف = 14 byte | الرقم نفسه متشفّر (14 رقم = 14 byte) |
+
+---
+
+## ٤. [[decrypt(stored)]]
+
+1. [[stored.split(":")]] بيقسم الـ string، و [[const [ver, iv, tag, data] =]] بيحط كل حتة في متغير.
+2. لو [[ver]] مش [[v1]]: [[throw new Error]] يوقف بدل ما يفك بمفتاح غلط.
+3. [[createDecipheriv]] بنفس المفتاح والـ IV.
+4. [[d.setAuthTag(...)]]: إديله البصمة اللي اتخزنت.
+5. [[d.final()]] بيقارن البصمة بالمحسوبة. لو أي byte اتغير بيرمي error.
+
+## ٥. [[blindIndex]]
+
+[[createHmac("sha256", INDEX_KEY).update(text).digest("hex")]]: HMAC-SHA256 بالمفتاح التاني، والناتج [[hex]] (أرقام وحروف a-f). نفس المدخل = نفس الناتج دايمًا، ورقم مختلف برقم واحد = ناتج مختلف خالص:
+
+~~~text الناتج
+55e51050138378db11e9dd90277fa07d9e63f6f55fa14c86a82cbbfc6a484162   ← 29001011234567
+f6e0aab7daed03af6cd1e7f3f856a0c1fe3a3f594faf0f8a2cd9621ed5340ad0   ← 29001011234568
+~~~
+
+---
+
+## ٦. الاختبار ([[test.mjs]] في الحل)
+
+على Git Bash:
+
+~~~bash
+PII_KEY=$(openssl rand -base64 32) PII_INDEX_KEY=$(openssl rand -base64 32) node test.mjs
+~~~
+
+و [[VAR=value command]] بيحط المتغير للأمر ده بس. وفي PowerShell: [[$env:PII_KEY = "..."]] وبعدين [[node test.mjs]].
+
+~~~text الناتج
+v1:M0W8ht2LMs+0yjHt:uEJpFeI+ktblR4wA3GLVMA==:JSMx9jEhApD26GlbedI=
+same ciphertext? false
+decrypt: 29001011234567
+same index? true
+tampered: Unsupported state or unable to authenticate data
+~~~
+
+- [[same ciphertext? false]]: نفس الرقم مرتين = نصين مختلفين (IV جديد).
+- [[same index? true]]: البصمة ثابتة، فتدوّر بيها.
+- [[tampered]]: الاختبار عمل [[data[0] ^= 1]]، يعني قلب bit واحد في أول byte ([[^]] = XOR)، و [[final()]] رفض.
+
+ومن غير [[PII_KEY]]:
+
+~~~text الناتج
+TypeError [ERR_INVALID_ARG_TYPE]: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received undefined
+~~~
+
+ومفتاح 16 byte بس ([[openssl rand -base64 16]]): [[RangeError: Invalid key length]]. التطبيق بيقع بدل ما يشتغل غلط، ودي حاجة كويسة.
+
+## الخلاصة
+
+| | |
+|---|---|
+| الخوارزمية | [[aes-256-gcm]]: تشفير + كشف تعديل |
+| IV | 12 byte عشوائي جديد كل مرة، يتخزن مع النص |
+| الشكل المخزّن | [[v1:iv:tag:data]] |
+| البحث | HMAC بمفتاح تاني في عمود عليه UNIQUE |
+| المفاتيح | من KMS أو متغير بيئة، مش في Git ولا الداتابيز |`,
           lines: [
             R`دوال التشفير والـ HMAC والأرقام العشوائية من Node نفسه، مفيش مكتبة.`,
             R`مفتاح التشفير: 32 byte من متغير بيئة (أو من KMS وقت التشغيل). لو مش موجود السكربت بيقع على طول.`,
@@ -386,6 +956,128 @@ COMMIT;`,
             when: R`قبل أي نسخ من الإنتاج لأي مكان تاني: staging، و dev، و preview branches (خدمات زي Neon و Supabase بتعمل branches من الإنتاج بسهولة)، أو dump لمطوّر عشان يحل bug. ولو ينفع، الأحسن seed data مزيفة من الأول، والـ mask للحالات اللي محتاجة شكل الداتا الحقيقي.`,
             mistakes: R`تعمل mask على staging بعد الـ restore، والقيم القديمة تفضل في الـ WAL والباك أبات بتاعة staging. تنسى أعمدة زي [[notes]] أو [[metadata jsonb]] اللي فيها PII مستخبي، أو جداول زي audit_logs. تستخدم دومين حقيقي زي [[@test.com]] (ده دومين موجود!). وتنزّل dump الإنتاج على لابتوبك عشان تعمل له mask هناك: اعمله على سيرفر جوه نفس الشبكة.`
           },
+          teach: R`## الفكرة: انسخ، امسح الأسماء، انسخ تاني
+
+المثال ([[mask.sql]]) بيغيّر كل PII لقيم مزيفة، والحل سكربت bash بيلف حواليه: ينسخ الإنتاج لداتابيز مؤقتة، يعمل mask، ينسخ النتيجة لـ staging، يمسح المؤقتة. اتشغّل كله في container بتاع PostgreSQL 16، و «الإنتاج» داتابيز اسمها [[seclab_prod]] فيها 3 يوزرز (Mona و Sara و Omar) وطلبين.
+
+---
+
+## ١. [[mask.sql]] سطر سطر
+
+### [[BEGIN;]] ... [[COMMIT;]]
+
+يا الـ mask كله يحصل يا ولا حاجة.
+
+### [[UPDATE users SET email = 'user' || id || '@example.test',]]
+
+[[||]] في SQL معناها **لزق نصوص**. فيوزر 2 إيميله يبقى [[user2@example.test]]. ليه مبني على [[id]]؟ لأن [[email]] عليه [[UNIQUE]]. لو حطيت نفس الإيميل للكل:
+
+~~~text الناتج
+ERROR:  duplicate key value violates unique constraint "users_email_key"
+DETAIL:  Key (email)=(dup@example.test) already exists.
+~~~
+
+و [[.test]] دومين محجوز (RFC 2606) عمره ما هيوصل لحد.
+
+### [[name = 'User ' || id,]]
+
+نفس الفكرة: [[User 2]].
+
+### [[phone = CASE WHEN phone IS NULL THEN NULL ELSE ... END,]]
+
+[[CASE WHEN ... THEN ... ELSE ... END]] زي if جوه SQL. اللي ملوش تليفون يفضل NULL (عشان الداتا تفضل بنفس شكلها)، والباقي:
+
+| الحتة | معناها |
+|---|---|
+| [[id % 10000]] | باقي القسمة على 10000، رقم من 0 لـ 9999 |
+| [[::text]] | حوّله نص |
+| [[lpad(..., 4, '0')]] | كمّله أصفار من الشمال لـ 4 خانات: [[2]] يبقى [[0002]] |
+| [['0100000']] ولزق اللي فات | الناتج [[01000000002]]، 11 رقم زي الموبايل المصري |
+
+### [[avatar_key = NULL;]]
+
+الصور الحقيقية على S3 الإنتاج، و staging مالوش يشاور عليها.
+
+### [[UPDATE orders SET ship_name = 'Test User', ship_address = 'Test address';]]
+
+من غير [[WHERE]]: كل الصفوف. والأسعار والتواريخ متتلمسش، عشان التجربة تفضل واقعية.
+
+### [[TRUNCATE sessions, login_events;]]
+
+[[TRUNCATE]] بيفضّي الجدول كله مرة واحدة (أسرع من DELETE). الجلسات واللوجات مالهاش لازمة في staging.
+
+### [[SELECT count(*) AS leftover FROM users WHERE email NOT LIKE '%@example.test';]]
+
+check: [[LIKE]] بيطابق نمط، و [[%]] معناها «أي حاجة». فبنعدّ الإيميلات اللي **مش** منتهية بـ [[@example.test]]. لازم 0.
+
+التشغيل على النسخة المؤقتة:
+
+~~~text الناتج
+BEGIN
+UPDATE 3
+UPDATE 2
+TRUNCATE TABLE
+ leftover
+----------
+        0
+(1 row)
+
+COMMIT
+~~~
+
+---
+
+## ٢. الـ pipeline (الحل)
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[set -e]] | لو أي أمر فشل، السكربت يقف |
+| [[createdb app_mask_tmp]] | داتابيز مؤقتة فاضية |
+| [[pg_dump --no-owner "$PROD_URL" pipe psql -q app_mask_tmp]] | [[pg_dump]] بيطلع الإنتاج كـ SQL، والـ pipe بيدخّله في المؤقتة. [[--no-owner]]: من غير أوامر ملكية تفشل لو اليوزر مختلف |
+| [[psql -v ON_ERROR_STOP=1 -q -d app_mask_tmp -f mask.sql]] | شغّل الـ mask، ووقف عند أول خطأ |
+| [[pg_dump --no-owner app_mask_tmp pipe psql -q "$STAGING_URL"]] | انسخ النسخة الممسوحة لـ staging |
+| [[dropdb app_mask_tmp]] | امسح المؤقتة بكل ملفاتها |
+| [[pg_dump "$STAGING_URL" pipe grep -c "Mona" pipe-pipe echo ...]] | عدّ السطور اللي فيها اسم حقيقي |
+
+(في الجدول [[pipe]] مكان علامة [[|]].)
+
+### ليه [[ON_ERROR_STOP=1]]؟
+
+من غيره psql بيطبع الخطأ ويكمل السطر اللي بعده. جرّبنا الإيميل المكرر بيه: خرج بـ [[exit=3]]، فـ [[set -e]] يوقف السكربت قبل ما يعمل dump لنسخة نص ممسوحة.
+
+### ليه [[|| echo]] في الآخر؟
+
+[[grep -c]] بيطبع العدد، بس لما يلاقي **صفر** بيخرج بكود 1 (يعني «ملقيتش»)، و [[set -e]] كان هيعتبره فشل. [[||]] معناها «لو اللي قبلي فشل نفّذ ده». الناتج الحقيقي:
+
+~~~text الناتج
+0
+no real names left
+~~~
+
+وعلى الإنتاج نفسه [[pg_dump seclab_prod pipe grep -c Sara]] طلع [[2]] (في جدول users وجدول orders)، وعلى staging [[0]].
+
+والنتيجة على staging:
+
+~~~text الناتج
+ id |       email        |  name  |    phone    | avatar_key
+----+--------------------+--------+-------------+------------
+  1 | user1@example.test | User 1 |             |
+  2 | user2@example.test | User 2 | 01000000002 |
+  3 | user3@example.test | User 3 |             |
+~~~
+
+---
+
+## ٣. ليه داتابيز مؤقتة؟
+
+الـ [[UPDATE]] في Postgres مش بيكتب فوق الصف، بيعمل نسخة جديدة، والقديمة بتفضل في ملفات الداتابيز لحد [[VACUUM]]، وفي الـ WAL (سجل كل التغييرات). لو عملت restore على staging وبعدين mask، القيم الحقيقية لسه في ملفات staging. أما [[pg_dump]] فبيقرا القيم **الحالية** بس، فالنسخة اللي توصل staging نضيفة، والمؤقتة بتتمسح كلها بـ [[dropdb]].
+
+## الخلاصة
+
+- قيم مزيفة مبنية على الـ id: ثابتة ومش بتكسر UNIQUE.
+- دومين [[.test]] للإيميلات.
+- mask في داتابيز مؤقتة، و dump منها، مش على staging مباشرة.
+- [[ON_ERROR_STOP=1]] و [[set -e]] و check في الآخر.`,
           lines: [
             "كله في transaction: لو حاجة فشلت، مفيش نسخة نص ممسوحة.",
             "غيّر بيانات كل اليوزرز:",
@@ -444,6 +1136,118 @@ log.warn({ body: { email: "mona@example.com", password: "hunter2" } }, "login fa
 
 في الانترفيو: «إزاي تتعامل مع PII في اللوج؟» IDs مش بيانات، و pseudonymous refs، و redact كطبقة تانية، ومدة حفظ للوج، وسؤال: اللوج بيتبعت لأنهي خدمة وفي أنهي بلد.`
           },
+          teach: R`## الفكرة: logger بيخفي الحقول الحساسة لوحده
+
+المثال بيعمل logger بـ pino متظبط إنه يكتب [[[redacted]]] مكان أي باسورد أو إيميل أو تليفون، ودالة [[userRef]] بتحوّل id اليوزر لكود ثابت مش مربوط بالداتابيز. اتشغّل بـ Node 24 و pino 10 على ويندوز (Git Bash)، واسم الجهاز في الناتج اتغيّر لـ [[ALI-PC]].
+
+---
+
+## ١. الـ imports
+
+[[import pino from "pino";]]: مكتبة لوج سريعة بتكتب كل سطر JSON (محتاجة [[npm i pino]]). و [[createHmac]] من [[node:crypto]] جوه Node.
+
+## ٢. [[const log = pino({ redact: {...} })]]
+
+[[pino(options)]] بيرجّع logger. والـ option المهم [[redact]] (يعني «اشطب»):
+
+### [[paths: [...]]]
+
+لستة **مسارات** للحقول اللي تتشطب. المسار بيتقرا بالنقط:
+
+| المسار | بيطابق |
+|---|---|
+| [[*.password]] | [[password]] جوه أي object في المستوى الأول: [[body.password]]، [[user.password]] |
+| [[*.email]] | [[user.email]] و [[body.email]]، بس **مش** [[user.profile.email]] |
+| [[req.headers.authorization]] | الهيدر ده بالظبط (فيه التوكن) |
+| [[req.headers.cookie]] | الكوكيز (فيها الـ session) |
+
+الـ [[*]] = «أي key»، ومستوى واحد بس.
+
+### [[censor: "[redacted]"]]
+
+النص اللي بيتكتب مكان القيمة. من غيره الافتراضي [[[Redacted]]].
+
+## ٣. [[userRef]]
+
+~~~text
+const userRef = (id) => createHmac("sha256", process.env.LOG_SALT).update(String(id)).digest("hex").slice(0, 12);
+~~~
+
+من جوه لبرة:
+
+1. [[String(id)]]: الـ id رقم، و HMAC محتاج نص.
+2. [[createHmac("sha256", process.env.LOG_SALT)]]: HMAC بمفتاح من متغير البيئة [[LOG_SALT]].
+3. [[.update(...)]] يدخّل النص، و [[.digest("hex")]] يطلّع البصمة 64 حرف hex.
+4. [[.slice(0, 12)]]: أول 12 حرف بس، كفاية تفرّق اليوزرز في اللوج.
+
+النتيجة: يوزر 42 = [[7e00ac929d73]] كل مرة طالما [[LOG_SALT]] ثابت. تقدر تجمع لوجاته، ومن غير الـ salt محدش يعرف الـ ref ده بتاع مين.
+
+## ٤. سطور اللوج
+
+[[log.info(object, "message")]]: أول argument الحقول، والتاني الرسالة. و [[log.warn]] نفس الكلام بمستوى أعلى.
+
+### التشغيل
+
+~~~bash
+LOG_SALT=abc node logs.mjs
+~~~
+
+~~~text الناتج
+{"level":30,"time":1791294428868,"pid":35056,"hostname":"ALI-PC","user":{"id":"7e00ac929d73","email":"[redacted]","phone":"[redacted]"},"msg":"signup"}
+{"level":40,"time":1791294428869,"pid":35056,"hostname":"ALI-PC","body":{"email":"[redacted]","password":"[redacted]"},"msg":"login failed"}
+~~~
+
+| الحقل | معناه |
+|---|---|
+| [[level]] | 30 = info، و 40 = warn (و 50 = error) |
+| [[time]] | الوقت بالـ milliseconds من 1970 |
+| [[pid]] | رقم الـ process |
+| [[hostname]] | اسم الجهاز |
+| [[msg]] | الرسالة |
+
+الإيميل والتليفون والباسورد اتشطبوا، حتى في السطر التاني اللي فيه [[body]] كامل «بالغلط».
+
+---
+
+## ٥. الثغرة: مستوى أعمق
+
+زوّدنا [[log.info({ user: { profile: { email: "deep@example.com" } } }, "nested")]]:
+
+~~~text الناتج
+{"level":30,...,"user":{"profile":{"email":"deep@example.com"}},"msg":"nested"}
+~~~
+
+الإيميل ظاهر! [[*.email]] بيطابق [[user.email]] بس، و [[user.profile.email]] مستويين.
+
+## ٦. التصليح (الحل)
+
+~~~text
+const SENSITIVE = ["password", "token", "email", "phone", "nationalId"];
+...SENSITIVE.map((k) => $__bt*.$__{k}$__bt),
+...SENSITIVE.map((k) => $__bt*.*.$__{k}$__bt),
+~~~
+
+- [[SENSITIVE]]: لستة الأسامي مرة واحدة.
+- [[.map((k) => ...)]]: لكل اسم اعمل مسار. والـ backticks مع [[$__{k}]] template string بيحط الاسم جوه النص: [[*.email]] و [[*.*.email]].
+- [[...]] (spread): فك اللستة جوه الـ array.
+
+~~~text الناتج
+{"level":30,...,"user":{"profile":{"email":"[redacted]"}},"msg":"nested"}
+{"level":30,...,"user":{"id":"7e00ac929d73"},"msg":"profile updated"}
+~~~
+
+ومن غير [[LOG_SALT]] السكربت بيقع ([[The "key" argument must be of type string ... Received undefined]])، فمش هيطلع ref من غير مفتاح.
+
+> الـ redact شبكة أمان. الحل الأساسي إنك تكتب IDs وحقول محددة في اللوج، مش [[req.body]] أو [[user]] كامل.
+
+## الخلاصة
+
+| | |
+|---|---|
+| سجّل | ref اليوزر، الـ action، أرقام، أكواد أخطاء |
+| متسجلش | [[req.body]]، object اليوزر، query strings فيها توكن |
+| شبكة الأمان | [[redact]] بمسارات لكل مستوى |
+| Sentry | [[dataCollection]] في SDK 11، و [[beforeSend]] |`,
           lines: [
             "استورد pino.",
             R`و [[createHmac]] عشان نعمل ref ثابت لليوزر.`,
