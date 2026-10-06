@@ -1854,6 +1854,121 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 (Git 2.43)"
  },
+ "mongo|$jsonSchema": {
+  "hash": "1c118dd1b5e7",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|$lookup و $unwind": {
+  "hash": "4ab7ee8a44f2",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|MONGO_INITDB_ROOT_USERNAME": {
+  "hash": "d644c47187e4",
+  "date": "2026-10-06",
+  "on": "docker compose mongo:8"
+ },
+ "mongo|aggregate و $group": {
+  "hash": "f2ed4e30509b",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|compound index و ESR": {
+  "hash": "bb940b0da862",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|createIndex و explain": {
+  "hash": "ebab506b8d08",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|createUser": {
+  "hash": "77bfcfd32f1f",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12; docs: passwordPrompt"
+ },
+ "mongo|deleteOne و deleteMany": {
+  "hash": "c1950bf193a9",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|embed ولا reference": {
+  "hash": "e16f83604ebd",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|healthcheck بـ ping": {
+  "hash": "fc46a186d2a3",
+  "date": "2026-10-06",
+  "on": "docker compose mongo:8 + ubuntu-24.04"
+ },
+ "mongo|insertOne و find": {
+  "hash": "2fa81ddf5f30",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|mongodb:// و mongodb+srv://": {
+  "hash": "700619453789",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12; docs: Atlas srv"
+ },
+ "mongo|mongodump": {
+  "hash": "89f9764fbc55",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + docker mongo:8"
+ },
+ "mongo|mongorestore": {
+  "hash": "94fec282d7ca",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + docker mongo:8"
+ },
+ "mongo|mongosh": {
+  "hash": "31eabd42a35f",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|populate و N+1": {
+  "hash": "45e238f1e510",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + Mongoose 9.11 + mongo:8"
+ },
+ "mongo|show dbs و use": {
+  "hash": "a12522612ade",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|transactions و replica set": {
+  "hash": "23f22f1b68f8",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12 replica set + win11 Mongoose 9.11"
+ },
+ "mongo|updateOne": {
+  "hash": "508eb542f274",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|باك أب Mongo مجدول": {
+  "hash": "fa2b76dd5938",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + docker mongo:8; docs: rclone, crontab"
+ },
+ "mongo|بورت 27017": {
+  "hash": "b361386ddbda",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12 + ubuntu ss/nc; docs: ssh -L"
+ },
+ "mongo|حد الـ 16MB و bucket": {
+  "hash": "932f437d169b",
+  "date": "2026-10-06",
+  "on": "docker mongo:8 (8.3.11), mongosh 2.12"
+ },
+ "mongo|نقل Mongo لسيرفر تاني": {
+  "hash": "62f1213b334b",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash + docker mongo:8; docs: ssh/scp/Atlas"
+ },
  "nginx|Caddy": {
   "hash": "fc9f85060328",
   "date": "2026-10-06",
@@ -2593,6 +2708,96 @@
   "hash": "256487a2f77d",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker xdg-open/xdg-mime; docs: GUI"
+ },
+ "pg|BEGIN و ROLLBACK": {
+  "hash": "c0694574d835",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|EXPLAIN ANALYZE": {
+  "hash": "c3e971088808",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|VACUUM و ANALYZE": {
+  "hash": "331341158e8e",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|\\copy": {
+  "hash": "ef12f8e118b8",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|\\x و \\timing": {
+  "hash": "793e6cb7654b",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15); docs: .psqlrc"
+ },
+ "pg|connection string و .pgpass": {
+  "hash": "efa5b2ae984b",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15); docs: Windows pgpass.conf"
+ },
+ "pg|createdb / dropdb": {
+  "hash": "76e7089afe0c",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15); docs: --pwprompt"
+ },
+ "pg|docker-entrypoint-initdb.d": {
+  "hash": "0f6b6069b189",
+  "date": "2026-10-06",
+  "on": "docker compose docker postgres:16 (16.15)"
+ },
+ "pg|psql": {
+  "hash": "7d15060d6aa3",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|psql -tAc": {
+  "hash": "c37543bc0043",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|أوامر الـ backslash": {
+  "hash": "7a4c9695e85b",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|الإعدادات": {
+  "hash": "88ffe3e35a5b",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15); docs: systemctl restart"
+ },
+ "pg|الجلسات والأقفال": {
+  "hash": "2dd9f53a6edf",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|الحجم": {
+  "hash": "a708bd26da36",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|الـ indexes": {
+  "hash": "d99405451ce1",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|الوصول من بره": {
+  "hash": "34b9ebd109ea",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + postgresql 16; docs: SSH tunnel"
+ },
+ "pg|تشغيل SQL من ملف": {
+  "hash": "de4dee2b0508",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|يوزرز وصلاحيات": {
+  "hash": "09182f135dd8",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
  },
  "ps|$LASTEXITCODE": {
   "hash": "5f92172f28f3",
@@ -3533,6 +3738,196 @@
   "hash": "075c48790493",
   "date": "2026-10-02",
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
+ },
+ "sec|.env اترفع على Git": {
+  "hash": "f99d0f630304",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 git-filter-repo + win11 pwsh 7 / ps 5.1"
+ },
+ "sec|1. Broken Access Control": {
+  "hash": "5d9b9732fd3a",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1)"
+ },
+ "sec|2. SQL Injection": {
+  "hash": "c6d9047c98f4",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1) + psql"
+ },
+ "sec|3. XSS": {
+  "hash": "ecc0afaa2b24",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1) + DOMPurify/jsdom"
+ },
+ "sec|4. مصادقة سليمة": {
+  "hash": "6c408077cc6e",
+  "date": "2026-10-06",
+  "on": "bcrypt in Docker + psql"
+ },
+ "sec|5. إعدادات غلط": {
+  "hash": "b117e6dc7fab",
+  "date": "2026-10-06",
+  "on": "helmet vs default in Docker"
+ },
+ "sec|6. مكتبات فيها ثغرات": {
+  "hash": "31d765e2b3dd",
+  "date": "2026-10-06",
+  "on": "npm audit in Docker"
+ },
+ "sec|7. SSRF (بقت جزء من رقم 1)": {
+  "hash": "2d99346abf9b",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1) internal service"
+ },
+ "sec|8. Rate limiting": {
+  "hash": "dff43c576e1f",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1)"
+ },
+ "sec|CSRF": {
+  "hash": "a0a04ea1be55",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1) + Chrome (Playwright) SameSite test"
+ },
+ "sec|Command Injection": {
+  "hash": "4ae3de7e40f2",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1) + node:22 / python:3.12"
+ },
+ "sec|OWASP ZAP": {
+  "hash": "e7ab94ce51b2",
+  "date": "2026-10-06",
+  "on": "docker zaproxy baseline vs own nginx lab"
+ },
+ "sec|PII بره اللوج": {
+  "hash": "0a4a1fa2517d",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 pino 10.4; docs: Sentry"
+ },
+ "sec|PII: متخزنهاش أصلًا": {
+  "hash": "242dce3d0ff7",
+  "date": "2026-10-06",
+  "on": "docker postgres:16"
+ },
+ "sec|Path Traversal": {
+  "hash": "c128dce455d8",
+  "date": "2026-10-06",
+  "on": "pt server in Docker 127.0.0.1"
+ },
+ "sec|SSL Labs": {
+  "hash": "12fc6f9afdee",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 openssl + nmap vs nginx TLS lab; docs: ssllabs.com"
+ },
+ "sec|Zip Slip": {
+  "hash": "5b9bb7e4f617",
+  "date": "2026-10-06",
+  "on": "node:22 adm-zip + python:3.12 tarfile"
+ },
+ "sec|mask قبل staging": {
+  "hash": "67ebd969460b",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 pg_dump pipeline"
+ },
+ "sec|nmap": {
+  "hash": "23d654886b2a",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 nmap 7.94 vs own dind lab"
+ },
+ "sec|npm و Supply Chain": {
+  "hash": "5fd96c21b6ba",
+  "date": "2026-10-06",
+  "on": "npm ci/audit signatures/query in Docker"
+ },
+ "sec|openssl enc": {
+  "hash": "e25616a763dd",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 OpenSSL 3.0.13; docs: rclone"
+ },
+ "sec|ss -tlnp بعد compose": {
+  "hash": "0bf5a9c76b10",
+  "date": "2026-10-06",
+  "on": "docker:dind + docker ubuntu-24.04 nmap"
+ },
+ "sec|أسرار في build args": {
+  "hash": "24c12e85d3e7",
+  "date": "2026-10-06",
+  "on": "Docker 29 BuildKit on win11"
+ },
+ "sec|أسرار مكشوفة": {
+  "hash": "d629bc458bae",
+  "date": "2026-10-06",
+  "on": "gitleaks v8.30.1 in Docker"
+ },
+ "sec|إزاي تفكّر": {
+  "hash": "eafd83e3d4dc",
+  "date": "2026-10-06",
+  "on": "sec01 lab (Express 5 + Postgres 16, Docker, 127.0.0.1)"
+ },
+ "sec|الأساسيات": {
+  "hash": "5f5efdd77372",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + docker postgres:16"
+ },
+ "sec|البنية": {
+  "hash": "45f4ad41e892",
+  "date": "2026-10-06",
+  "on": "docker nginx + dind lab, Express 5.2 on win11 Node 24"
+ },
+ "sec|الجديد في 2025": {
+  "hash": "c7b003abc5ee",
+  "date": "2026-10-06",
+  "on": "npm ci vs install in Docker"
+ },
+ "sec|السكانرات في CI": {
+  "hash": "0ad18550d384",
+  "date": "2026-10-06",
+  "on": "docker npm audit, semgrep 1.178, trivy 0.75, actionlint; docs: GitHub runs"
+ },
+ "sec|الطبقات": {
+  "hash": "b9d239dbbd5e",
+  "date": "2026-10-06",
+  "on": "win11 Git Bash git + docker node"
+ },
+ "sec|القاعدة القانونية": {
+  "hash": "493e2665b5a5",
+  "date": "2026-10-06",
+  "on": "OWASP Juice Shop in Docker on 127.0.0.1"
+ },
+ "sec|القانون المصري و GDPR": {
+  "hash": "9333c1ed2a9b",
+  "date": "2026-10-06",
+  "on": "docs: legal concepts only"
+ },
+ "sec|المتابعة": {
+  "hash": "ec626d1f4aac",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 fail2ban 1.0.2; docs: Dependabot"
+ },
+ "sec|باقي القايمة": {
+  "hash": "0dc7da7e65c0",
+  "date": "2026-10-06",
+  "on": "docs: concepts only"
+ },
+ "sec|تشفير عمود حساس": {
+  "hash": "cdc8e9e0e2f3",
+  "date": "2026-10-06",
+  "on": "win11 Node 24 + openssl 3.5.8"
+ },
+ "sec|تصدير الداتا و retention": {
+  "hash": "99f416b9ae37",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 + win11 Node 24"
+ },
+ "sec|حذف الحساب": {
+  "hash": "2e472b961b57",
+  "date": "2026-10-06",
+  "on": "docker postgres:16"
+ },
+ "sec|فحص الـ headers": {
+  "hash": "cecce18cd0e6",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 curl vs nginx lab + win11 curl.exe; docs: securityheaders.com"
  },
  "sshc|Host * والأنماط": {
   "hash": "3ebe9cb10bbd",

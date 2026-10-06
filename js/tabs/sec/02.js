@@ -1,1712 +1,2077 @@
 // تكملة تاب sec: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/sec/01.js (شرح حقول الدرس في أوله)
 MORE("sec", [
     {
-      t: "البيانات الشخصية",
+      t: "OWASP Top 10: افهمها في كودك",
       l: 2,
-      n: "أي موقع فيه تسجيل بيخزن بيانات ناس: تخزن أقل، وتحذف وتصدّر لما يطلبوا، وتشفّر الحساس، ومتسرّبهاش لـ staging ولا اللوج",
+      n: "قايمة OWASP لأشهر الثغرات، آخر نسخة 2025. لكل واحدة: بتحصل إزاي، والكود الغلط، والصح. الرقم اللي في اسم الدرس ترتيب الشرح بس، ورقم OWASP الحقيقي (A01 لـ A10) مكتوب في عنوان كل درس: SQL و XSS و Command Injection تحت A05 Injection، و CSRF و SSRF و Path Traversal و Zip Slip تحت A01، و Rate limiting مش بند لوحده، ده دفاع تحت A07 و A06",
       items: [
         {
-          cmd: "PII: متخزنهاش أصلًا",
-          title: "أأمن داتا هي اللي معندكش",
-          desc: R`PII (Personally Identifiable Information) هي أي حاجة تعرّف شخص لوحدها أو مع حاجة تانية: الاسم، والإيميل، والتليفون، والعنوان، والرقم القومي، والـ IP، والموقع، والصور. وفيه نوع أخطر اسمه «بيانات حساسة»: الصحة، والبيانات البيومترية، والدين، والبيانات المالية، وبيانات الأطفال. القوانين بتشدد عليها أكتر.
+          cmd: "1. Broken Access Control",
+          title: "A01 أخطر واحدة: توصل لحاجة مش من حقك",
+          desc: "A01:2025 Broken Access Control، رقم 1 في القايمة. أشهر صورها اسمها IDOR: لما تغيّر id في الـ URL فتشوف داتا حد تاني. الـ API لازم يتأكد إن الحاجة دي بتاعتك، مش بس إنك مسجّل دخول. الغلط الشائع: بتتأكد إن فيه توكن، بس مش بتتأكد إن المورد ده بتاع صاحب التوكن.",
+          example: R`// غلط: أي مستخدم مسجّل يشوف أي طلب
+app.get("/api/orders/:id", auth, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  res.json(order);
+});
 
-أول قاعدة قبل أي تشفير: خزّن أقل (data minimization). لكل عمود اسأل: الميزة دي محتاجاه فعلًا؟ لو محتاج تتأكد إن السن فوق 18، خزّن [[birth_year]] أو حتى [[is_adult]] مش تاريخ الميلاد كامل. لو بتدفع أونلاين، الكارت يفضل عند بوابة الدفع (Paymob، Stripe) وانت معاك reference وآخر 4 أرقام بس. و CVV ممنوع يتخزن خالص بعد الدفع، حتى متشفّر (قواعد PCI DSS).
-
-اللي مش عندك مش ممكن يتسرّب، ومش محتاج تشفّره، ولا تحذفه، ولا تصدّره.`,
-          example: R`CREATE TABLE customers (
-  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  email text UNIQUE NOT NULL,
-  name text NOT NULL,
-  birth_year smallint,                 -- مش تاريخ الميلاد كامل لو محتاج السن بس
-  city text,                           -- مش العنوان بالتفصيل لو مش بتشحن
-  payment_customer_id text,            -- الكارت عند بوابة الدفع، وانت معاك reference بس
-  card_last4 char(4),                  -- للعرض بس: «Visa تنتهي بـ 4242»
-  national_id_enc text,                -- لو لازم قانونًا: متشفّر في التطبيق
-  national_id_idx text UNIQUE,         -- HMAC عشان تدوّر بيه من غير ما تفك
-  marketing_consent_at timestamptz,    -- الموافقة ليها وقت، مش checkbox متعلّم لوحده
-  created_at timestamptz NOT NULL DEFAULT now()
-);`,
-          try: R`افتح جدول الـ users (أو أي جدول فيه بيانات ناس) في آخر مشروع عملته. لكل عمود اكتب: محتاجه لإيه بالظبط؟ ينفع يتخزن أقل؟ لو اتسرّب يضر قد إيه؟ وبعدين اكتب migration واحد يقلل أخطر عمود عندك (مثلًا [[birth_date]] يبقى [[birth_year]]، أو تشيل عمود كارت أو CVV لو موجود).`,
+// صح: لازم يكون بتاعه هو
+app.get("/api/orders/:id", auth, async (req, res) => {
+  const order = await Order.findOne({
+    _id: req.params.id,
+    userId: req.user.id   // الفلتر ده هو الحماية
+  });
+  if (!order) return res.status(404).json({ error: "Not found" });
+  res.json(order);
+});`,
+          try: "في أي API عندك بيرجّع داتا بـ id: سجّل بيوزرين، وجرّب توصل لداتا اليوزر التاني بالـ id بتاعه. لو نجحت، عندك الثغرة دي.",
           flag: "script",
           deep: {
-            why: R`كل عمود PII بتخزنه بيزود 4 حاجات: خطر التسريب، وشغل الحذف والتصدير لما اليوزر يطلب، والتزامات قانونية (القانون المصري و GDPR بيطلبوا إنك تجمع اللي محتاجه لغرض محدد بس)، وقيمة الداتا عند اللي هيسرقها. أغلب التسريبات الكبيرة كانت داتا الشركة مكانتش محتاجاها أصلًا.`,
-            how: R`اعمل «data map»: جدول صغير فيه كل نوع داتا، ومحتاجينه لإيه، ومتخزن فين (الداتابيز، و S3، واللوج، و Sentry، وخدمة الإيميل، و analytics)، وبيتمسح إمتى، ومين بيوصله. من غيره مش هتعرف تحذف حساب ولا ترد على طلب تصدير.
+            why: "الأخطر في OWASP Top 10. مش بس تتأكد إن اليوزر logged in، لازم تتأكد إن المورد اللي بيطلبه بتاعه هو.",
+            how: R`IDOR: اليوزر يغيّر ID في الـ URL ويوصل لبيانات يوزر تاني.
 
-البدائل الشائعة: السن بدل تاريخ الميلاد، والمدينة بدل العنوان، و token من بوابة الدفع بدل الكارت، وآخر 4 أرقام للعرض. والرقم القومي لو القانون بيلزمك بيه (زي KYC في شغل مالي)، يتشفّر في التطبيق (درس «تشفير عمود حساس» تحت) ومعاه HMAC للبحث.
+الكود الغلط: بيتأكد إن فيه session بس ومش بيتأكد إن الـ order بتاع اليوزر ده.
 
-والموافقة على التسويق ليها عمود بوقت ([[marketing_consent_at]])، عشان تقدر تثبت إمتى وافق، ولما يرجع فيها تبقى NULL.`,
-            when: R`وانت بتصمم الـ schema، قبل ما يبقى فيه داتا. تقليل عمود بعد ما فيه ملايين صفوف واللوجات والباك أبات والـ exports كلها فيها نفس الداتا أصعب بكتير.`,
-            mistakes: R`«نخزنه يمكن نحتاجه بعدين»: ده بالظبط اللي القوانين بتمنعه، وبيحوّل أي تسريب لكارثة. تخزين CVV أو رقم الكارت كامل «متشفّر»: ممنوع خالص في CVV، والكارت كامل بيدخّلك في PCI DSS كله. وتفتكر إن الـ IP مش PII: في GDPR ممكن يبقى PII.
+الكود الصح: الـ query بيفلتر على userId مع _id، فمهما غيّر الـ id مش هيلاقي غير الأوامر بتاعته.
 
-في الانترفيو لو اتسألت «إزاي بتحمي بيانات المستخدمين؟»: ابدأ بـ minimization قبل التشفير. ده اللي بيبيّن إنك فاهم، مش حافظ أسماء خوارزميات.`
+مبدأ: أي resource بياخد identifier من اليوزر، لازم يبقى في الـ query شرط إنه بتاعه هو.`,
+            when: "في كل route بياخد id من الطلب.",
+            mistakes: "الاعتماد على إن الـ id صعب يتخمّن. المشكلة مش التخمين، المشكلة إن مفيش validation."
           },
-          teach: R`## الفكرة: كل عمود قرار
+          teach: R`## الفكرة: «مسجّل دخول» مش معناها «ده بتاعك»
 
-المثال جدول [[customers]] متصمم بعقلية «خزّن أقل». مفيش فيه سطر صعب في الـ SQL نفسه، الصعب هو **ليه** كل عمود متكتب بالشكل ده. هنمشي عليه عمود عمود، وبعدين نشغّل الـ migration اللي في الحل. كل اللي تحت اتشغّل على PostgreSQL 16 في container ([[docker run postgres:16]]).
+فيه سؤالين مختلفين: **انت مين؟** (authentication) و **ده بتاعك؟** (authorization). الكود الغلط في المثال بيسأل الأول بس. هنفكّه، وبعدين نشوف الفرق على معمل حقيقي.
 
 ---
 
-## ١. السطر الأول: [[CREATE TABLE customers (]]
+## ١. الكود الغلط سطر سطر
 
-[[CREATE TABLE]] بيعمل جدول جديد، و [[customers]] اسمه، وبين القوسين الأعمدة، كل عمود في سطر: **الاسم** وبعده **النوع** وبعده **القيود** (constraints). والفاصلة [[,]] في آخر كل سطر بتفصل عمود عن اللي بعده، وآخر عمود من غيرها.
-
-## ٢. [[id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY]]
+~~~javascript
+app.get("/api/orders/:id", auth, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  res.json(order);
+});
+~~~
 
 | الحتة | معناها |
 |---|---|
-| [[bigint]] | رقم صحيح كبير (8 byte)، بيوصل لـ 9 كوينتليون |
-| [[GENERATED ALWAYS AS IDENTITY]] | الداتابيز هي اللي بتدّي الرقم: 1، 2، 3… |
-| [[PRIMARY KEY]] | الرقم ده مميز لكل صف ومينفعش يبقى NULL |
+| [[app.get(...)]] | لو جالك طلب GET على المسار ده، شغّل اللي بعده |
+| [[/api/orders/:id]] | [[:id]] معناها «أي حاجة هنا اسمها id». [[/api/orders/42]] بيدّي [[id = "42"]] |
+| [[auth]] | middleware بيشتغل قبل الـ handler: لو مفيش توكن صح يرد 401 ويقف. لو فيه، بيحط اليوزر في [[req.user]] |
+| [[async (req, res) => ...]] | الـ handler. [[req]] الطلب و [[res]] الرد |
+| [[req.params.id]] | الـ id اللي في الـ URL، واللي **المستخدم بيكتبه** |
+| [[Order.findById(...)]] | Mongoose: هات الأوردر اللي الـ [[_id]] بتاعه كده، أيًا كان صاحبه |
+| [[res.json(order)]] | ابعته كـ JSON |
 
-و [[ALWAYS]] معناها إنك مش مسموحلك تكتب الرقم بإيدك. جرّبنا:
-
-~~~text الناتج
-ERROR:  cannot insert a non-DEFAULT value into column "id"
-DETAIL:  Column "id" is an identity column defined as GENERATED ALWAYS.
-~~~
-
-## ٣. [[email text UNIQUE NOT NULL]] و [[name text NOT NULL]]
-
-[[text]] نص من غير حد للطول. [[UNIQUE]]: مينفعش إيميلين زي بعض (الإيميل هو اللي اليوزر بيدخل بيه). [[NOT NULL]]: لازم يتكتب. دول PII بس **محتاجينهم فعلًا**: من غير إيميل مفيش login ولا فواتير. يعني الـ minimization مش معناه متخزنش PII خالص، معناه متخزنش اللي **مش محتاجه**.
-
-## ٤. [[birth_year smallint]] بدل تاريخ الميلاد
-
-[[smallint]] رقم صغير (2 byte، لحد 32767)، كفاية لسنة. والـ [[--]] بعده بداية **تعليق** في SQL، الداتابيز بتتجاهل اللي بعدها لآخر السطر.
-
-ليه السنة بس؟ لو الميزة «لازم فوق 18»، السنة كفاية تقريبًا، وتاريخ الميلاد الكامل مع الاسم بيعرّف الشخص أكتر بكتير (وبيستخدم في أسئلة استرجاع الحسابات). ولو عايز السن:
-
-~~~text الناتج
-  y   | approx_age
-------+------------
- 1990 |         36
-~~~
-
-ده من [[SELECT extract(year FROM date '1990-05-01'), extract(year FROM now()) - 1990]]: [[extract(year FROM ...)]] بيطلّع السنة من تاريخ.
-
-## ٥. [[city text]]: نفس الفكرة
-
-المدينة كفاية للإحصائيات أو لحساب الشحن التقريبي. العنوان بالتفصيل بيتخزن مع **الطلب** وقت ما تحتاجه بس.
-
-## ٦. الدفع: [[payment_customer_id]] و [[card_last4 char(4)]]
-
-- [[payment_customer_id text]]: الـ id اللي بوابة الدفع (Paymob أو Stripe) بترجعهولك، زي [[cus_...]]. الكارت نفسه متخزن عندهم هم، وهم اللي عليهم PCI DSS (معيار أمان كروت الدفع).
-- [[char(4)]]: نص طوله **4 بالظبط**. لو حاولت تحط 5:
-
-~~~text الناتج
-ERROR:  value too long for type character(4)
-~~~
-
-يعني الداتابيز نفسها بتمنعك تخزن الكارت كامل في العمود ده بالغلط.
-
-## ٧. الرقم القومي: عمودين
-
-- [[national_id_enc text]]: الرقم **متشفّر في التطبيق** قبل ما يوصل للداتابيز ([[enc]] = encrypted). شكله [[v1:...:...:...]] (درس «تشفير عمود حساس» تحت).
-- [[national_id_idx text UNIQUE]]: **بصمة** [[HMAC]] للرقم ([[idx]] = index). نفس الرقم بيدّي نفس البصمة دايمًا، فتقدر تدوّر بيها وتمنع التكرار بالـ [[UNIQUE]] من غير ما تفك التشفير.
-
-## ٨. [[marketing_consent_at timestamptz]]
-
-[[timestamptz]] = timestamp with time zone، وقت بالظبط ومعاه المنطقة الزمنية. ليه وقت مش [[boolean]]؟ لأن القانون بيطلب تثبت **إمتى** وافق. لو [[NULL]] يبقى مش موافق، ولو رجع في موافقته ترجّعها [[NULL]].
-
-## ٩. [[created_at timestamptz NOT NULL DEFAULT now()]]
-
-[[DEFAULT now()]]: لو مكتبتش قيمة، الداتابيز تحط الوقت الحالي.
-
-### التشغيل
-
-جدول اتعمل، و [[\d customers]] في psql بيوريك الأعمدة والـ indexes:
-
-~~~text الناتج (مختصر)
- birth_year           | smallint
- card_last4           | character(4)
- national_id_idx      | text
- marketing_consent_at | timestamp with time zone
-Indexes:
-    "customers_pkey" PRIMARY KEY, btree (id)
-    "customers_email_key" UNIQUE CONSTRAINT, btree (email)
-    "customers_national_id_idx_key" UNIQUE CONSTRAINT, btree (national_id_idx)
-~~~
-
-لاحظ إن كل [[UNIQUE]] عمل index لوحده، وده اللي بيخلي البحث بالإيميل أو بالبصمة سريع.
+المشكلة في سطر [[findById]]: مفيش أي ذكر لـ [[req.user]]. الـ [[auth]] اتأكد إنك مسجّل، وخلاص.
 
 ---
 
-## ١٠. الحل: migration يقلل جدول قديم
+## ٢. الكود الصح سطر سطر
 
-الحل بيعمل جدول [[people]] «غلط» فيه [[birth_date]] و [[card_number]] و [[cvv]]، وبعدين يصلّحه:
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[BEGIN;]] | يبدأ transaction: يا كله يحصل يا ولا حاجة |
-| [[ALTER TABLE people ADD COLUMN birth_year smallint;]] | يضيف العمود الجديد (فاضي) |
-| [[UPDATE people SET birth_year = extract(year FROM birth_date);]] | يملاه من القديم |
-| [[ALTER TABLE ... DROP COLUMN birth_date, DROP COLUMN cvv, DROP COLUMN card_number;]] | يشيل الأعمدة الخطيرة في أمر واحد |
-| [[COMMIT;]] | يثبّت |
-
-الترتيب مهم: لازم تنقل الداتا **قبل** ما تمسح العمود. اتشغّل كده:
-
-~~~text الناتج
-BEGIN
-ALTER TABLE
-UPDATE 1
-ALTER TABLE
-COMMIT
- id |  national_id   | birth_year
-----+----------------+------------
-  1 | 29005011234567 |       1990
+~~~javascript
+const order = await Order.findOne({
+  _id: req.params.id,
+  userId: req.user.id   // الفلتر ده هو الحماية
+});
+if (!order) return res.status(404).json({ error: "Not found" });
 ~~~
 
-[[UPDATE 1]] يعني صف واحد اتعدّل. ولاحظ إن [[national_id]] لسه موجود واضح: ده الخطوة الجاية (تشفيره).
+- [[findOne({...})]] بيدوّر على أول document يطابق **كل** الشروط اللي في الـ object.
+- [[_id: req.params.id]] الأوردر المطلوب.
+- [[userId: req.user.id]] **و** صاحبه هو اللي عامل الطلب. [[req.user.id]] جاي من التوكن اللي السيرفر اتأكد منه، مش من الـ URL ولا الـ body، فالمستخدم مش بيتحكم فيه.
+- [[if (!order)]] لو ملقاش، يا الأوردر مش موجود يا مش بتاعك. والرد في الحالتين [[404]]، فالمهاجم ميعرفش حتى إن الرقم ده موجود.
+- [[return]] قبل [[res.status]] عشان الكود ميكملش ويبعت رد تاني.
+
+ونفس الفكرة بـ SQL (اللي في كود الحل):
+
+~~~sql
+SELECT * FROM orders WHERE id = $1 AND user_id = $2
+~~~
+
+[[$1]] و [[$2]] أماكن بتتملي بالقيم [[req.params.id]] و [[req.user.id]] بالترتيب (شرحها في درس «2. SQL Injection»).
+
+---
+
+## ٣. جرّبناها على المعمل
+
+معمل Express و Postgres في Docker على [[localhost:3101]]، فيه الروتين: [[/bad/api/orders/:id]] (الغلط) و [[/api/orders/:id]] (الصح). أوردر 41 بتاع Ali، و 42 بتاع Sara. وهنطلب كل حاجة بتوكن Ali:
+
+~~~bash
+curl -s -w "  [%{http_code}]\n" http://localhost:3101/bad/api/orders/42 -H "Authorization: Bearer tok-ali"
+~~~
+
+[[-w]] (write-out) بيطبع حاجة بعد الرد، و [[%{http_code}]] رقم الحالة.
+
+| الطلب (بتوكن Ali) | الرد |
+|---|---|
+| [[/bad/api/orders/41]] | [[{"id":41,"user_id":123,"item":"Laptop","total":25000}  [200]]] |
+| [[/bad/api/orders/42]] | [[{"id":42,"user_id":124,"item":"Phone","total":12000}  [200]]] ← أوردر Sara |
+| [[/api/orders/41]] | [[{"id":41,"user_id":123,"item":"Laptop","total":25000}  [200]]] |
+| [[/api/orders/42]] | [[{"error":"Not found"}  [404]]] |
+| [[/api/orders/99]] (مش موجود) | [[{"error":"Not found"}  [404]]] |
+
+ولما Sara نفسها طلبت [[/api/orders/42]] بتوكنها رجعلها الأوردر بـ [[200]]. يعني الإصلاح مقفلش حاجة على صاحبها، قفل على غيره بس. ولاحظ إن 42 و 99 ردهم واحد بالظبط: المهاجم مش عارف يفرّق بين «موجود ومش بتاعك» و «مش موجود».
+
+---
+
+## ٤. فين تدوّر في كودك
+
+| علامة الخطر | ليه |
+|---|---|
+| [[findById(req.params.id)]] لوحده | مفيش شرط صاحب |
+| [[WHERE id = $1]] من غير [[user_id]] | نفس الكلام في SQL |
+| [[userId]] جاي من [[req.body]] | المستخدم بيكتبه بنفسه |
+| GET اتحمى و PUT و DELETE لأ | التعديل والمسح بيتنسوا |
 
 ---
 
 ## الخلاصة
 
-- اسأل لكل عمود: محتاجه لإيه؟ ينفع أقل منه؟
-- السنة بدل التاريخ، والمدينة بدل العنوان، و reference من بوابة الدفع بدل الكارت، و CVV ممنوع خالص.
-- الحساس اللي لازم يتخزن: متشفّر + بصمة HMAC للبحث.
-- الموافقة وقت مش checkbox.
-- [[DROP COLUMN]] بيشيل العمود من الجدول بس، مش من الباك أبات القديمة ولا اللوج.`,
+- [[auth]] بيقول انت مين، والشرط في الـ query بيقول ده بتاعك.
+- صاحب الداتا ييجي من التوكن ([[req.user.id]])، عمره ما ييجي من الطلب.
+- رد [[404]] واحد للي مش موجود وللي مش بتاعك.`,
           lines: [
-            "جدول العملاء.",
-            "id رقم بيزيد لوحده.",
-            "الإيميل: محتاجينه للدخول والفواتير، فبيتخزن.",
-            "الاسم: محتاجينه للفواتير والشحن.",
-            "سنة الميلاد بس، كفاية تعرف السن.",
-            "المدينة بس، لو مش محتاج عنوان شحن كامل.",
-            "reference من بوابة الدفع (زي customer id)، والكارت نفسه عندهم.",
-            "آخر 4 أرقام للعرض، ومفيش CVV ولا رقم كامل.",
-            "الرقم القومي لو القانون بيلزمك: نص متشفّر من التطبيق، مش الرقم نفسه.",
-            "بصمة HMAC للرقم عشان تدوّر بيه وتمنع التكرار من غير ما تفك التشفير.",
-            "وقت الموافقة على التسويق، و NULL يعني مش موافق.",
-            "وقت إنشاء الحساب.",
+            "الكود الغلط: route بياخد id، ومحمي بـ auth (يعني لازم تكون logged in).",
+            "بيجيب الطلب بالـ id زي ما هو، من غير ما يسأل بتاع مين.",
+            "ويرجعه. أي يوزر يقدر يشوف طلبات أي يوزر.",
+            "قفلة.",
+            "الكود الصح: نفس الـ route.",
+            "بيدوّر بشرطين.",
+            "الـ id المطلوب...",
+            "...وإنه بتاع اليوزر اللي عامل الطلب. ده الفلتر اللي بيحمي.",
+            "قفلة الشرط.",
+            "لو ملقاش (الطلب مش بتاعه)، 404 من غير ما يقول إنه موجود أصلًا.",
+            "رجّعه.",
             "قفلة."
           ],
-          sol: R`مثال لنتيجة المراجعة على جدول users عادي: [[email]] و [[name]] و [[password_hash]] محتاجينهم. [[birth_date]] كان عشان «فوق 18» بس، فيبقى [[birth_year]]. [[address]] بيستخدم في الشحن بس، فيتنقل لجدول الطلب نفسه ويتمسح بعد مدة. [[ip]] على كل صف: مالوش لازمة، يروح جدول login_events بمدة حفظ 90 يوم. و [[card_number]] أو [[cvv]] لو لقيتهم: دي أولوية قصوى، يتمسحوا فورًا ويتنقل الدفع لـ tokens من البوابة.
+          sol: R`اعمل يوزرين A و B، وخد توكن A، واطلب بيه أوردر بتاع B: [[curl -H "Authorization: Bearer $TOKEN_A" http://localhost:3000/api/orders/42]] حيث 42 أوردر B. الرد الصح [[404]] (أو [[403]])، مش داتا B. الـ 404 أحسن غالبًا لأنه مبيأكدش إن الأوردر موجود أصلًا.
 
-الـ migration تحت بيعمل ده في transaction واحدة. بعد ما تشغّله، [[SELECT * FROM people]] يوريك [[birth_year]] بـ 1990 ومفيش [[birth_date]] ولا [[card_number]] ولا [[cvv]].
+لو رجعلك داتا B يبقى عندك IDOR: الكود بيتأكد إنك داخل، بس مش بيتأكد إن الحاجة دي بتاعتك. الحل إن الاستعلام نفسه يشمل صاحب الداتا: [[WHERE id = $1 AND user_id = $2]] بالـ user id اللي جاي من التوكن، مش من الـ body أو الـ URL. وجرّب نفس الكلام على التعديل والمسح (PUT/DELETE)، لأنهم غالبًا اللي بيتنسوا.`,
+          solCode: R`# التوكن بتاع A، والأوردر 42 بتاع B
+curl -i -H "Authorization: Bearer $TOKEN_A" http://localhost:3000/api/orders/42
+# المتوقع: HTTP/1.1 404 Not Found
 
-خلي بالك إن DROP COLUMN مش بيمسح الداتا من الباك أبات القديمة ولا من اللوج ولا من أي export اتعمل قبل كده. عشان كده الـ data map مهم: الداتا في أماكن أكتر من الجدول.`,
-          solCode: R`CREATE TABLE people (id int PRIMARY KEY, birth_date date, national_id text, card_number text, cvv text);
-INSERT INTO people VALUES (1, '1990-05-01', '29005011234567', '4242424242424242', '123');
-
-BEGIN;
-ALTER TABLE people ADD COLUMN birth_year smallint;
-UPDATE people SET birth_year = extract(year FROM birth_date);
-ALTER TABLE people DROP COLUMN birth_date, DROP COLUMN cvv, DROP COLUMN card_number;
-COMMIT;
-
-SELECT * FROM people;`
+// الإصلاح: صاحب الداتا جزء من الاستعلام
+const { rows } = await db.query(
+  "SELECT * FROM orders WHERE id = $1 AND user_id = $2",
+  [req.params.id, req.user.id]
+);
+if (!rows.length) return res.status(404).json({ error: "Not found" });`
         },
         {
-          cmd: "القانون المصري و GDPR",
-          title: "إيه اللي القانون عايزه من كودك",
-          desc: R`مش محتاج تبقى محامي، بس محتاج تعرف القوانين بتطلب إيه من الكود. وأي تفاصيل قانونية هنا (أرقام، مدد، غرامات) راجعها مع محامي ومع النص الرسمي، لأنها بتتغير وبتتفسر.
+          cmd: "2. SQL Injection",
+          title: "A05 Injection: لما مدخل المستخدم يتحط في استعلام",
+          desc: "SQL Injection نوع من A05:2025 Injection. لو حطيت اللي المستخدم كتبه جوه نص الاستعلام مباشرة، هو يقدر يغيّر معنى الاستعلام. الحل الوحيد الكامل: parameterized queries، اللي بتبعت الاستعلام والقيم منفصلين، فالقيمة تفضل قيمة مهما كانت. متحاولش تنضّف المدخل بنفسك.",
+          example: R`// خطر: القيمة بتتلزق في الاستعلام
+const q = "SELECT * FROM users WHERE email = '" + email + "'";
+db.query(q);
 
-في مصر: قانون حماية البيانات الشخصية رقم 151 لسنة 2020. اللائحة التنفيذية اتأخرت سنين، واتصدرت في نوفمبر 2025 (قرار وزير الاتصالات وتكنولوجيا المعلومات رقم 816 لسنة 2025) ومعاها فترة توفيق أوضاع سنة تقريبًا، يعني الالتزام الفعلي بيبدأ حوالي آخر 2026. الجهة المسؤولة «مركز حماية البيانات الشخصية». بيطلب: غرض محدد وموافقة، وموافقة صريحة ومكتوبة للبيانات الحساسة وبيانات الأطفال، وحقوق لصاحب البيانات (يعرف، ويصحح، ويمسح، ويعترض)، وإبلاغ المركز عن أي تسريب خلال 72 ساعة، وشروط لنقل البيانات بره مصر، وتراخيص أو تصاريح من المركز لكتير من الشركات.
+// أمان: القيمة منفصلة ($1)
+db.query("SELECT * FROM users WHERE email = $1", [email]);
 
-GDPR (الاتحاد الأوروبي): بيطبق عليك حتى لو انت في مصر، لو بتقدم خدمة لناس في أوروبا أو بتتابع سلوكهم. أهم حقوقه اللي محتاجة كود: الوصول (Art. 15)، والمسح (Art. 17)، ونقل البيانات بصيغة يقراها جهاز (Art. 20). والرد على الطلب خلال شهر، وإبلاغ الجهة الرقابية عن التسريب خلال 72 ساعة.`,
-          example: R`Egypt Law 151/2020   exec. regulations Nov 2025, ~1 year to comply; regulator: PDPC
-Purpose & consent    collect for a stated purpose; explicit written consent for sensitive data
-Data subject rights  access, correction, erasure, objection: build a way to do each one
-Breach               notify the regulator within 72 hours (both laws), then affected users
-Transfers abroad     hosting outside Egypt has conditions: check before picking a cloud region
-GDPR scope           applies if you offer services to people in the EU, even from Egypt
-GDPR in code         access (15), erasure (17), portability (20); answer within one month
-Fines                Egypt up to EGP 5M; GDPR up to EUR 20M or 4% of global turnover`,
-          try: R`اعمل «data map» لمشروعك في جدول: نوع الداتا، ومحتاجينها لإيه، ومتخزنة فين (بما فيها Sentry وخدمة الإيميل و analytics والباك أب)، والسيرفر في أنهي بلد، وبتتمسح إمتى. وبعدين جاوب: لو يوزر بعتلك النهارده «امسح بياناتي» أو «ابعتلي بياناتي»، هتعمل إيه بالظبط وتاخد قد إيه؟`,
+// مع ORM (Prisma) آمن افتراضيًا
+await prisma.user.findUnique({ where: { email } });`,
+          try: "دوّر في كودك بـ grep على استعلامات فيها [[+]] أو backticks جواها متغيرات، ده أول مكان تبص فيه.",
           flag: "script",
           deep: {
-            why: R`القوانين دي بتحوّل حاجات «كويس لو عملناها» لالتزامات: لازم يبقى فيه طريقة للحذف والتصدير، ولازم تعرف تبلّغ عن تسريب في 3 أيام، يعني لازم يبقى عندك لوج يقولك إيه اللي اتسرّب ولمين. والشغل مع عملاء أوروبيين أو شركات كبيرة غالبًا بيطلب منك تثبت إنك ملتزم (DPA وأسئلة أمان) قبل ما يمضوا.`,
-            how: R`ترجمة القانون لكود:
+            why: "المهاجم يكتب SQL في الـ input وتطبيقك ينفّذه. ممكن يمسح قاعدة البيانات أو يسحب كل البيانات.",
+            how: R`الكود الغلط: بيبني الاستعلام بـ string concatenation. لو اليوزر كتب [[' OR '1'='1]] كإيميل، الاستعلام بيبقى يرجع كل الصفوف.
 
-الغرض والموافقة: عمود وقت الموافقة لكل نوع (تسويق، مشاركة مع طرف تالت)، وسياسة خصوصية بتقول الحقيقة عن اللي بتعمله.
+Parameterized queries: الاستعلام والبيانات بيتبعتوا منفصلين. قاعدة البيانات نفسها بتعرف إن [[email]] داتا ومش SQL.
 
-الحقوق: endpoint للتصدير، ومسار حذف حقيقي (الدروس الجاية)، وطريقة لتصحيح البيانات من الإعدادات.
-
-التسريب: لوجات دخول وتغييرات صلاحيات (A09 في «باقي القايمة»)، وخطة مين بيبلّغ مين، ومعاك قايمة بالـ processors (Sentry، و Resend، و S3) عشان تعرف الداتا راحت فين.
-
-النقل للخارج: اختيار region السيرفر قرار قانوني مش تقني بس. أي خدمة SaaS بتبعتلها داتا يوزرز (Sentry، analytics) تعتبر نقل.
-
-الغرامات: القانون المصري بيوصل لـ 5 مليون جنيه وفيه حبس في حالات البيانات الحساسة، و GDPR لـ 20 مليون يورو أو 4% من الإيراد العالمي، أيهما أكبر.`,
-            when: R`قبل ما تطلق أي منتج فيه تسجيل، وقبل ما تختار سيرفرات بره مصر أو تضيف خدمة طرف تالت بتشوف داتا اليوزرز، وأول ما تبدأ تبيع لعملاء في أوروبا.`,
-            mistakes: R`تنسخ privacy policy من موقع تاني وهي بتوصف حاجات مش بتعملها، أو مش بتذكر حاجات بتعملها. تفتكر إن القانون المصري «لسه مطبقش»: اللائحة صدرت وفترة التوفيق قربت تخلص. تفتكر إن GDPR مالوش علاقة بيك عشان انت في مصر. وتعتمد على كلامنا هنا في قرار قانوني: ده ملخص للمطور، مش استشارة.
-
-في الانترفيو: «إيه اللي GDPR بيأثر بيه على تصميمك؟» جاوب بالحاجات اللي بتتبني: حذف حقيقي بيشمل الملفات والخدمات التانية، وتصدير JSON، ومدد حفظ بـ job، وداتا متشفرة، ولوج من غير PII.`
+ORMs زي Prisma بيعملوا parameterized queries تلقائيًا. الخطر بييجي لو لجأت لـ raw queries.`,
+            when: "في أي مكان بتحط فيه بيانات من اليوزر في استعلام.",
+            mistakes: "الاعتماد على تنضيف المدخل يدويًا. استخدم parameterized queries وبس."
           },
-          teach: R`## الفكرة: كل سطر قانون = حاجة تتبني
+          teach: R`## الفكرة: الداتا لازم تفضل داتا
 
-المثال مش كود يتشغّل، ده جدول بـ 8 سطور، كل سطر فيه بند من القانون على الشمال وترجمته على اليمين. هنقرا كل سطر ونسأل: **ده محتاج مني أبني إيه؟** والتفاصيل القانونية ملخص للمطور مش استشارة، فالأرقام والمدد راجعها مع النص الرسمي ومع محامي.
-
----
-
-## ١. [[Egypt Law 151/2020]]
-
-[[151/2020]] يعني القانون رقم 151 لسنة 2020. [[exec. regulations]] = اللائحة التنفيذية، وهي اللي بتقول التفاصيل العملية، واتصدرت نوفمبر 2025، ومعاها حوالي سنة لتوفيق الأوضاع. و [[PDPC]] = Personal Data Protection Center، «مركز حماية البيانات الشخصية»، الجهة اللي بتراقب.
-
-**تبني إيه:** ولا حاجة في السطر ده نفسه، بس هو اللي بيقولك إن الباقي بقى إلزامي.
-
-## ٢. [[Purpose & consent]]
-
-اجمع لغرض محدد ومكتوب، والبيانات الحساسة (صحة، دين، بيانات أطفال…) محتاجة موافقة **صريحة ومكتوبة**.
-
-**تبني إيه:** عمود وقت موافقة لكل غرض (زي [[marketing_consent_at]] في الدرس اللي فات)، وcheckbox مش متعلّم لوحده، وسياسة خصوصية بتقول الحقيقة.
-
-## ٣. [[Data subject rights]]
-
-«صاحب البيانات» هو اليوزر. حقوقه أربعة:
-
-| الحق | بالإنجليزي | اللي بيتبني |
-|---|---|---|
-| يعرف إيه اللي عندك عنه | access | زرار «نزّل بياناتي» (درس «تصدير الداتا») |
-| يصحح | correction | صفحة إعدادات يعدّل فيها |
-| يمسح | erasure | زرار «امسح حسابي» (درس «حذف الحساب») |
-| يعترض | objection | يوقف استخدام معين (زي التسويق) |
-
-## ٤. [[Breach]]
-
-Breach = تسريب. لازم تبلّغ الجهة الرقابية خلال **72 ساعة** (3 أيام) في القانونين، وبعدين اليوزرز المتأثرين.
-
-**تبني إيه:** 72 ساعة مش كفاية تعرف «إيه اللي اتسرّب ولمين» لو معندكش لوجات دخول وتغييرات صلاحيات. وكمان قايمة بالخدمات اللي بتبعتلها داتا (Sentry وخدمة الإيميل و S3).
-
-## ٥. [[Transfers abroad]]
-
-سيرفر في Frankfurt أو خدمة SaaS أمريكية = الداتا **خرجت بره مصر**، وده ليه شروط. **تبني إيه:** اختيار الـ region قرار تسأل فيه قبل ما تختار، مش بعد.
-
-## ٦. [[GDPR scope]]
-
-GDPR = General Data Protection Regulation، قانون الاتحاد الأوروبي. [[scope]] = نطاق تطبيقه: لو بتقدم خدمة لناس في أوروبا، بيطبق عليك حتى لو شركتك وسيرفرك في مصر.
-
-## ٧. [[GDPR in code]]
-
-الأرقام بين القوسين أرقام المواد (Art. = Article): 15 حق الوصول، و 17 حق المسح، و 20 حق النقل (portability = يخرج بياناته بصيغة يقراها برنامج، يعني JSON أو CSV مش PDF). والرد خلال **شهر**.
-
-## ٨. [[Fines]]
-
-الغرامات: لحد 5 مليون جنيه في القانون المصري (وفيه حبس في حالات)، ولحد 20 مليون يورو أو 4% من الإيراد العالمي، أيهما **أكبر**، في GDPR.
+الاستعلام كود، والإيميل اللي المستخدم كتبه داتا. لو لزقتهم في string واحد، قاعدة البيانات مش هتعرف تفرّق بينهم، وأي علامة تنصيص في الإيميل هتقفل النص وتكمّل SQL. هنفك سطور المثال، وبعدين نجرّبها على معمل صغير عملناه: Express و Postgres في Docker على [[localhost:3101]]، فيه route غلط [[/bad/users]] و route صح [[/users]].
 
 ---
 
-## الملخص في جدول واحد
+## ١. السطر الغلط
 
-| البند | المدة/الرقم | اللي بيتبني في الكود |
-|---|---|---|
-| الموافقة | — | أعمدة وقت لكل غرض |
-| الوصول والنقل | شهر في GDPR | export JSON |
-| المسح | شهر في GDPR | حذف حقيقي + job للملفات |
-| التسريب | 72 ساعة | لوجات + قايمة processors |
-| النقل للخارج | — | قرار الـ region والخدمات |
-
-## الخلاصة
-
-القانون مش ورقة عند المحامي بس: هو 4 features (موافقة، تصدير، حذف، لوجات) و data map. والـ data map (جدول: الداتا، والغرض، والمكان، ومدة الحفظ) هو أول حاجة تعملها، لأن من غيره مش هتعرف ترد على أي طلب.`,
-          lines: [
-            R`القانون المصري: اللائحة التنفيذية صدرت نوفمبر 2025، وفيه حوالي سنة توفيق أوضاع، والجهة الرقابية مركز حماية البيانات.`,
-            "اجمع لغرض محدد، وموافقة صريحة مكتوبة للبيانات الحساسة.",
-            "حقوق صاحب البيانات: يعرف، ويصحح، ويمسح، ويعترض. لازم يبقى فيه طريقة لكل واحدة.",
-            "التسريب: بلّغ الجهة الرقابية خلال 72 ساعة في القانونين، وبعدها اليوزرز المتأثرين.",
-            "النقل بره مصر ليه شروط، فاسأل قبل ما تختار region السيرفر.",
-            "GDPR بيطبق عليك لو بتخدم ناس في أوروبا، حتى لو انت في مصر.",
-            "حقوق GDPR اللي محتاجة كود: الوصول والمسح والنقل، والرد خلال شهر.",
-            "الغرامات: لحد 5 مليون جنيه في مصر، ولحد 20 مليون يورو أو 4% من الإيراد العالمي في GDPR."
-          ],
-          sol: R`مثال data map لمشروع متجر صغير: الإيميل والاسم (حساب وفواتير، في Postgres، لحد ما يمسح الحساب)، وعنوان الشحن (للطلب بس، يتمسح من الطلب بعد 90 يوم من التسليم)، والتليفون (للمندوب، نفس المدة)، و IP الدخول (أمان، login_events، 90 يوم بـ job)، والصور (S3، مع الحساب)، والأخطاء (Sentry، فيها user id بس، الاحتفاظ حسب إعداد الخدمة)، والإيميلات (Resend، اسم وإيميل)، والباك أب (30 يوم وبيتمسح لوحده).
-
-الإجابة على «امسح بياناتي»: زرار في الإعدادات بيشغّل transaction الحذف (الدرس الجاي)، و job بيمسح الملفات ويشيل الإيميل من خدمة الإيميل، والباك أب بيخلص في 30 يوم. وعلى «ابعتلي بياناتي»: job بيعمل ملف JSON ويبعت لينك (درس «تصدير الداتا و retention»).
-
-لو إجابتك كانت «هفتح الداتابيز وأمسح بإيدي» أو «مش عارف الداتا دي فين كمان»، ده بالظبط اللي الـ data map بيكشفه.`
-        },
-        {
-          cmd: "حذف الحساب",
-          title: "زرار «امسح حسابي»: تمسح إيه، وتسيب إيه",
-          desc: R`App Store بيطلب من يونيو 2022 (Guideline 5.1.1(v)) إن أي app فيه إنشاء حساب يبقى فيه حذف حساب من جوه الـ app، سهل تلاقيه، ويمسح الحساب والبيانات فعلًا. «تعطيل» أو «تجميد» الحساب مش كفاية، ومش مسموح تطلب منه يتصل أو يبعت إيميل إلا في مجالات منظّمة زي البنوك والصحة. ولو فيه Sign in with Apple لازم تلغي التوكن بتاعه من Apple كمان. و Google Play بيطلب من 2024 مسار حذف جوه الـ app، ولينك ويب يطلب منه الحذف من غير ما يسطّب الـ app تاني، وتحطه في Data safety form. راجع الإرشادات الحالية للمتجرين قبل ما تسلّم، لأنها بتتحدث.
-
-الحذف الحقيقي مش [[DELETE FROM users]] بس. فيه داتا لازم تفضل (فواتير عشان الضرايب والمحاسبة)، فدي بتتعمل anonymize: تفضل الأرقام وتتشال أي حاجة تعرّف الشخص. والباقي يتمسح: الجلسات والتوكنات واللوجات المرتبطة. والملفات على S3 بتتحط في queue يمسحها worker. وتسجّل الـ id في جدول [[deleted_accounts]] عشان لو رجّعت باك أب قديم تعيد الحذف.`,
-          example: R`\set uid 1
-BEGIN;
-UPDATE orders SET ship_name = NULL, ship_address = NULL WHERE user_id = :uid;
-INSERT INTO files_to_delete (key)
-  SELECT avatar_key FROM users WHERE id = :uid AND avatar_key IS NOT NULL;
-INSERT INTO deleted_accounts (user_id) VALUES (:uid);
-DELETE FROM users WHERE id = :uid;
-COMMIT;`,
-          try: R`اعمل database تجربة فيها: [[users]]، و [[orders]] بـ [[user_id]] عليه [[ON DELETE SET NULL]]، و [[sessions]] و [[login_events]] بـ [[ON DELETE CASCADE]]، و [[files_to_delete]] و [[deleted_accounts]] (أو خد الـ schema من الحل). حط يوزر عنده طلبات وجلسات وصورة، وشغّل المثال بـ [[psql -d test -f delete.sql]]. وبعدين اتأكد بـ queries إن مفيش أي أثر لليوزر غير أرقام الطلبات.`,
-          flag: "script",
-          deep: {
-            why: R`المتاجر بترفض الـ app من غيره، والقوانين (القانون المصري و GDPR Art. 17) بتدّي اليوزر حق المسح. وحذف ناقص أخطر من مفيش حذف: اليوزر فاكر إن بياناته راحت، وهي لسه في S3 وخدمة الإيميل واللوج.`,
-            how: R`كل جدول فيه reference لليوزر لازم تقرر فيه: يتمسح معاه ([[ON DELETE CASCADE]] للجلسات والتوكنات والـ events)، ولا يفضل من غير صاحبه ([[ON DELETE SET NULL]] للطلبات والفواتير، مع مسح الاسم والعنوان منها). ده في «تاب SQL و Prisma» في درس [[ON DELETE]].
-
-كله في transaction واحدة (درس [[transaction]] هناك): لو خطوة فشلت مفيش حساب نص ممسوح.
-
-الملفات مش جوه الداتابيز، ومينفعش تمسحها جوه الـ transaction (لو الـ transaction فشلت بعد ما مسحت الصورة، ضاعت). فبتكتب مفاتيحها في [[files_to_delete]] جوه نفس الـ transaction، و worker بياخدها بعد الـ commit ويمسحها ويعيد لو فشل. نفس الطريقة لخدمات بره: شيل الإيميل من قايمة الإيميلات، واحذف الـ customer من Stripe لو مش محتاجه، وامسح اليوزر من analytics.
-
-الباك أب: مبتعدلش ملفات الباك أب. بتحدد مدة حفظ (مثلًا 30 يوم) وبتكتبها في سياسة الخصوصية، والداتا بتختفي لما الباك أب ينتهي. ولو رجّعت باك أب، شغّل الحذف تاني لكل id في [[deleted_accounts]].
-
-وفي الـ app: اطلب تأكيد (باسورد أو OTP) قبل الحذف، ووضّح إيه اللي هيتمسح وإيه اللي هيفضل (الفواتير) وليه.`,
-            when: R`من أول نسخة فيها تسجيل، خصوصًا لو هترفع على App Store أو Google Play. ولو فيه grace period (مثلًا 14 يوم يقدر يرجع فيها)، خليها واضحة، وبعدها الحذف يحصل أوتوماتيك بـ job.`,
-            mistakes: R`soft delete ([[deleted_at]]) وتسميه حذف: ده تعطيل، والداتا كلها موجودة. الـ soft delete مفيد للطلبات (درس [[DELETE]] في «تاب SQL و Prisma»)، مش لحذف حساب. تمسح الصف وتنسى S3 و Sentry وخدمة الإيميل والـ cache. تمسح الفواتير كمان والمحاسب يحتاجها. تخلي الحذف عن طريق «ابعتلنا إيميل» والـ app يترفض. وتمسح الملفات جوه الـ request قبل الـ commit.
-
-في الانترفيو «إزاي تعمل delete account؟»: قسّم الداتا لـ مسح / anonymize / حفظ قانوني، و transaction، و outbox للملفات والخدمات، والباك أب بمدة حفظ، وجدول deleted_accounts للاسترجاع.`
-          },
-          teach: R`## الفكرة: ٣ أنواع داتا، ٣ معاملات
-
-المثال سكربت psql بيمسح يوزر واحد. قبل الكود قسّم داتا اليوزر:
-
-| النوع | مثال | بيحصلها إيه |
-|---|---|---|
-| تتمسح معاه | الجلسات، لوجات الدخول، توكنات reset | [[DELETE]] (أو CASCADE) |
-| تفضل من غير صاحبها | الطلبات والفواتير (محاسبة وضرايب) | anonymize: الأرقام تفضل والاسم والعنوان يتشالوا |
-| بره الداتابيز | الصورة على S3، الإيميل في خدمة الإيميلات | تتسجل في قايمة و worker يمسحها بعد الـ commit |
-
-كل اللي تحت اتشغّل على PostgreSQL 16 في container، بالـ schema اللي في الحل: يوزر [[mona@example.com]] عنده جلستين وطلب ولوج دخول وصورة [[avatars/1.png]].
-
----
-
-## ١. [[\set uid 1]]
-
-ده **مش SQL**، ده أمر خاص بـ psql (أي سطر بيبدأ بـ [[\]] أمر لـ psql نفسه). بيعمل متغير اسمه [[uid]] قيمته 1، وبعدين [[:uid]] في أي query بيتبدل بـ 1 قبل ما يتبعت للداتابيز. في التطبيق الحقيقي بدله [[$1]] (parameter) جوه transaction من الكود.
-
-## ٢. [[BEGIN;]] ... [[COMMIT;]]
-
-transaction: كل الأوامر اللي بينهم يا تنجح كلها يا ولا واحدة تتحسب. ليه مهم هنا؟ تخيّل إن الطلبات اتمسحت أسماؤها وبعدين [[DELETE]] فشل: يبقى عندك يوزر موجود وطلباته من غير اسم. مع الـ transaction ده مستحيل.
-
-## ٣. [[UPDATE orders SET ship_name = NULL, ship_address = NULL WHERE user_id = :uid;]]
-
-ده الـ anonymize: الطلب نفسه يفضل (رقمه وإجماليه وتاريخه للمحاسبة)، بس [[ship_name]] و [[ship_address]] يبقوا [[NULL]]. و [[WHERE user_id = :uid]] عشان نلمس طلبات اليوزر ده بس. **لازم ييجي قبل الـ DELETE**: بعد الحذف [[user_id]] هيبقى NULL ومش هتعرف طلبات مين دي.
-
-## ٤. [[INSERT INTO files_to_delete (key) SELECT avatar_key FROM users WHERE ...]]
-
-شكل [[INSERT ... SELECT]]: بدل [[VALUES (...)]]، الصفوف اللي هتتضاف جاية من [[SELECT]]. هنا بنجيب مفتاح صورة اليوزر ونحطه في جدول [[files_to_delete]]. و [[AND avatar_key IS NOT NULL]]: لو ملوش صورة، الـ SELECT يرجّع صفر صفوف ومفيش حاجة تتضاف (بدل صف فيه NULL).
-
-ليه مش نمسح الصورة من S3 على طول؟ لأن S3 بره الـ transaction: لو مسحت الصورة والـ transaction فشلت بعدها، الحساب رجع والصورة ضاعت. فبنكتب «مطلوب مسح الملف ده» **جوه** الـ transaction، و worker يمسحه **بعد** الـ commit. الأسلوب ده اسمه outbox.
-
-## ٥. [[INSERT INTO deleted_accounts (user_id) VALUES (:uid);]]
-
-سجل إن الـ id ده اتمسح. لو بعد شهر رجّعت باك أب قديم، اليوزر هيرجع معاه، فتلف على [[deleted_accounts]] وتعيد الحذف.
-
-## ٦. [[DELETE FROM users WHERE id = :uid;]]
-
-هنا الـ foreign keys بتشتغل لوحدها:
-
-- [[sessions]] و [[login_events]] معمولين [[ON DELETE CASCADE]]: صفوفهم بتتمسح مع اليوزر.
-- [[orders.user_id]] معمول [[ON DELETE SET NULL]]: الطلب يفضل و [[user_id]] يبقى NULL.
-
-### التشغيل
-
-[[psql -d test -f delete.sql]] ([[-d]] الداتابيز، [[-f]] الملف):
-
-~~~text الناتج
-BEGIN
-UPDATE 1
-INSERT 0 1
-INSERT 0 1
-DELETE 1
-COMMIT
+~~~javascript
+const q = "SELECT * FROM users WHERE email = '" + email + "'";
+db.query(q);
 ~~~
-
-[[INSERT 0 1]]: الرقم الأول دايمًا 0 في Postgres الحديث (كان OID زمان)، والتاني عدد الصفوف. وبعدين الـ checks اللي في الحل:
-
-~~~text الناتج
- id | user_id | ship_name | ship_address | total
-----+---------+-----------+--------------+--------
-  1 |         |           |              | 350.00
-
- users | sessions | events
--------+----------+--------
-     0 |        0 |      0
-
-      key      |           queued_at
----------------+-------------------------------
- avatars/1.png | 2026-10-06 13:42:37.460241+00
-~~~
-
-الطلب موجود بـ 350 ومن غير أي حاجة تعرّف صاحبه، والجلستين واللوج اتمسحوا بالـ CASCADE، والصورة مستنية الـ worker.
-
----
-
-## ٧. لو نسيت [[ON DELETE SET NULL]]
-
-جرّبنا جدول [[orders]] بـ [[REFERENCES users]] عادي من غير ON DELETE:
-
-~~~text الناتج
-BEGIN
-ERROR:  update or delete on table "users" violates foreign key constraint "orders_user_id_fkey" on table "orders"
-DETAIL:  Key (id)=(1) is still referenced from table "orders".
-ROLLBACK
- count
--------
-     1
-~~~
-
-الـ DELETE رفض، والـ [[COMMIT]] بقى [[ROLLBACK]] (رجوع)، واليوزر لسه موجود. وده أحسن من حذف نص. والعكس خطر: [[ON DELETE CASCADE]] على الطلبات كان هيمسح الفواتير.
-
----
-
-## الخلاصة
-
-| الخطوة | ليه |
-|---|---|
-| anonymize الطلبات الأول | تفضل للمحاسبة من غير PII |
-| [[files_to_delete]] جوه الـ transaction | الملفات تتمسح بعد الـ commit بس |
-| [[deleted_accounts]] | تعيد الحذف لو رجّعت باك أب |
-| [[DELETE]] + CASCADE / SET NULL | الـ schema بتقرر مصير كل جدول |
-| [[BEGIN]]/[[COMMIT]] | مفيش حساب نص ممسوح |
-
-و soft delete ([[deleted_at]]) مش حذف حساب: الداتا كلها لسه موجودة.`,
-          lines: [
-            R`متغير في psql فيه id اليوزر. في التطبيق ده [[$1]] جوه transaction من الكود.`,
-            "ابدأ transaction: يا كله يحصل يا ولا حاجة.",
-            "الطلبات تفضل عشان المحاسبة، بس من غير اسم ولا عنوان.",
-            "سجّل مفتاح الصورة في قايمة الملفات اللي worker هيمسحها بعد الـ commit...",
-            "...لو اليوزر عنده صورة أصلًا.",
-            "سجّل إن الحساب ده اتمسح، عشان لو رجّعت باك أب قديم.",
-            R`امسح اليوزر: الجلسات والـ events بتتمسح بـ CASCADE، و [[orders.user_id]] بيبقى NULL.`,
-            "ثبّت كل التغييرات مرة واحدة."
-          ],
-          sol: R`بعد التشغيل: الطلبات موجودة بالـ total بتاعها، بس [[user_id]] و [[ship_name]] و [[ship_address]] كلهم NULL. [[sessions]] و [[login_events]] مفيهمش ولا صف لليوزر (الـ CASCADE مسحهم)، و [[files_to_delete]] فيه [[avatars/1.png]]، و [[deleted_accounts]] فيه الـ id.
-
-الغلط الشائع: لو [[orders.user_id]] من غير [[ON DELETE SET NULL]]، الـ DELETE هيفشل بـ foreign key violation والـ transaction كلها ترجع، ودي حاجة كويسة (أحسن من حذف نص). ولو عامل الـ FK بـ CASCADE على الطلبات، هتمسح الفواتير وده غالبًا ضد القانون المحاسبي.
-
-الـ schema والـ checks تحت، شغّلهم في database فاضية، وبعدين شغّل المثال، وبعدين الـ checks.`,
-          solCode: R`CREATE TABLE users (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, email text UNIQUE NOT NULL, name text NOT NULL, phone text, avatar_key text, created_at timestamptz NOT NULL DEFAULT now());
-CREATE TABLE sessions (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint NOT NULL REFERENCES users ON DELETE CASCADE);
-CREATE TABLE login_events (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE CASCADE, ip inet, created_at timestamptz NOT NULL DEFAULT now());
-CREATE TABLE password_resets (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint NOT NULL REFERENCES users ON DELETE CASCADE, created_at timestamptz NOT NULL DEFAULT now());
-CREATE TABLE orders (id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY, user_id bigint REFERENCES users ON DELETE SET NULL, ship_name text, ship_address text, total numeric(12,2) NOT NULL, created_at timestamptz NOT NULL DEFAULT now());
-CREATE TABLE files_to_delete (key text PRIMARY KEY, queued_at timestamptz NOT NULL DEFAULT now());
-CREATE TABLE deleted_accounts (user_id bigint PRIMARY KEY, deleted_at timestamptz NOT NULL DEFAULT now());
-
-INSERT INTO users (email, name, avatar_key) VALUES ('mona@example.com', 'Mona Ali', 'avatars/1.png');
-INSERT INTO sessions (user_id) VALUES (1), (1);
-INSERT INTO login_events (user_id, ip) VALUES (1, '41.33.1.10');
-INSERT INTO orders (user_id, ship_name, ship_address, total) VALUES (1, 'Mona Ali', '12 Tahrir St, Cairo', 350);
-
--- بعد ما تشغّل delete.sql:
-SELECT id, user_id, ship_name, ship_address, total FROM orders;
-SELECT (SELECT count(*) FROM users WHERE id = 1) AS users,
-       (SELECT count(*) FROM sessions WHERE user_id = 1) AS sessions,
-       (SELECT count(*) FROM login_events WHERE user_id = 1) AS events;
-SELECT * FROM files_to_delete;
-SELECT * FROM deleted_accounts;`
-        },
-        {
-          cmd: "تصدير الداتا و retention",
-          title: "ابعتله بياناته، وامسح القديم لوحده",
-          desc: R`حق الوصول ونقل البيانات (GDPR Art. 15 و 20، وحق العلم في القانون المصري) معناه عمليًا زرار «نزّل بياناتي» بيدّي اليوزر ملف JSON فيه كل حاجة عنه. Postgres يقدر يبني الـ JSON ده في query واحدة بـ [[json_build_object]] و [[json_agg]]. ولو الداتا كبيرة، اعمله job في الخلفية يطلّع الملف ويبعت لينك بيخلص بعد وقت قصير.
-
-والـ retention: كل نوع داتا ليه مدة، وبعدها يتمسح أوتوماتيك. لوجات الدخول 90 يوم، وتوكنات reset الباسورد يوم، والحسابات اللي متفعّلتش أسبوع. ده بيتعمل بـ job مجدول (زي job scheduler في BullMQ، في درس «background jobs» في «تاب بناء مشروع كامل»)، بيمسح على دفعات صغيرة عشان ميقفلش الجدول.`,
-          example: R`\set uid 1
-SELECT json_build_object(
-  'profile', (SELECT row_to_json(u) FROM (SELECT email, name, phone, created_at FROM users WHERE id = :uid) u),
-  'orders', (SELECT coalesce(json_agg(o ORDER BY o.created_at), '[]') FROM (SELECT id, total, ship_address, created_at FROM orders WHERE user_id = :uid) o),
-  'exported_at', now()
-) AS export;
-WITH old AS (
-  SELECT id FROM login_events
-  WHERE created_at < now() - interval '90 days'
-  ORDER BY id LIMIT 5000
-)
-DELETE FROM login_events e USING old WHERE e.id = old.id;`,
-          try: R`على نفس الـ database بتاعة درس «حذف الحساب»: حط يوزر وطلبين، وشغّل الـ export بـ [[psql -qAt -f export.sql | python3 -m json.tool]]. بعدين املى [[login_events]] بـ 200 صف بتواريخ قديمة ([[generate_series]])، وشغّل الـ DELETE أكتر من مرة وعدّ الصفوف كل مرة. وآخر حاجة اكتب job في Node بيلف على كذا جدول ويمسح لحد ما يخلص.`,
-          flag: "script",
-          deep: {
-            why: R`التصدير حق قانوني، والرد عليه يدوي كل مرة مش هيكمل. والـ retention بيقلل حجم أي تسريب: داتا اتمسحت من سنة مش ممكن تتسرق النهارده. وكمان بيصغّر الجداول والباك أبات.`,
-            how: R`[[row_to_json]] بيحوّل صف لـ object، و [[json_agg]] بيجمّع صفوف في array، و [[coalesce(..., '[]')]] عشان اليوزر اللي ملوش طلبات ياخد array فاضية مش null. صدّر الداتا اللي تخص اليوزر هو بس، مش الـ internal IDs والـ hashes (مفيش [[password_hash]] في الملف).
-
-الـ retention: الـ CTE بياخد أقدم 5000 id بس، والـ DELETE بيمسحهم. الـ job بيكرر لحد ما دفعة ترجع أقل من 5000. الدفعات بتخلي كل transaction قصيرة، فالـ locks والـ WAL ميتقلوش والتطبيق يفضل شغال. محتاج index على [[created_at]] عشان الـ WHERE يبقى سريع.
-
-التصدير الكبير: job بيكتب الملف لـ S3 ويبعت لليوزر لينك موقّع صلاحيته ساعات قليلة، والملف نفسه يتمسح بعد أيام. واطلب إعادة تسجيل دخول قبل التصدير، وحط rate limit عليه.
-
-وللجداول الضخمة جدًا (logs بالملايين يوميًا) الأسرع partitioning بالشهر: بتعمل [[DROP]] للـ partition القديم بدل DELETE.`,
-            when: R`التصدير: أول ما يبقى عندك يوزرز حقيقيين. والـ retention: لكل جدول بيكبر مع الوقت وفيه PII (events، و audit logs، و tokens، و notifications)، ومعاه المدة مكتوبة في سياسة الخصوصية.`,
-            mistakes: R`[[DELETE ... WHERE created_at < ...]] مرة واحدة على ملايين صفوف: transaction طويلة جدًا، وlocks، و replication lag. تحط الـ retention بـ setInterval جوه سيرفر الـ API فيشتغل مرتين لو عندك instanceتين. التصدير فيه password_hash أو داتا يوزرز تانيين (مثلًا رسايل فيها اسم الطرف التاني بالكامل). ولينك التصدير من غير صلاحية وقت أو من غير auth.`
-          },
-          teach: R`## الفكرة: query بتبني JSON، و query بتمسح على دفعات
-
-المثال جزئين: الأول [[SELECT]] بيرجّع كل داتا يوزر واحد كـ JSON object واحد (حق الوصول والنقل)، والتاني [[DELETE]] بيمسح لوجات الدخول الأقدم من 90 يوم، 5000 صف في المرة (الـ retention). اتشغّلوا على PostgreSQL 16 في container، على داتابيز درس «حذف الحساب» ومعاها يوزر [[sara@example.com]] (id 2) عندها طلبين، ويوزر [[omar@example.com]] (id 3) من غير طلبات.
-
----
-
-## الجزء الأول: التصدير، من جوه لبرة
-
-### الخطوة ١: subquery بيختار الأعمدة
-
-~~~text
-(SELECT email, name, phone, created_at FROM users WHERE id = :uid) u
-~~~
-
-[[SELECT]] عادي جوه قوسين، والـ [[u]] بعد القوس **اسم مستعار** (alias) للنتيجة، عشان نقدر نشاور عليها. لاحظ إن الأعمدة **مختارة بالاسم**: مفيش [[password_hash]] ولا [[avatar_key]]. التصدير فيه اللي يخص اليوزر، مش أسرار السيستم.
-
-### الخطوة ٢: [[row_to_json(u)]]
-
-بياخد الصف ويحوّله JSON object، أسامي الأعمدة بقت keys:
-
-~~~text الناتج (لـ Omar)
-{"email":"omar@example.com","name":"Omar"}
-~~~
-
-### الخطوة ٣: [[json_agg(o ORDER BY o.created_at)]]
-
-[[json_agg]] (aggregate = تجميع) بياخد **كل الصفوف** ويعملهم JSON array واحد، و [[ORDER BY]] جواه بيرتب العناصر بالتاريخ.
-
-### الخطوة ٤: [[coalesce(..., '[]')]]
-
-لو اليوزر ملوش طلبات، [[json_agg]] على صفر صفوف بيرجّع [[NULL]] مش array فاضية. [[coalesce(a, b)]] بترجّع أول قيمة مش NULL:
-
-~~~text الناتج
- without_coalesce | with_coalesce
-------------------+---------------
-                  | []
-~~~
-
-ليه يفرق؟ الكود اللي هيقرا الملف ([[data.orders.length]]) هيقع على [[null]] ويشتغل على [[[]]].
-
-### الخطوة ٥: [[json_build_object('profile', ..., 'orders', ..., 'exported_at', now())]]
-
-بيبني object من أزواج: key وبعده value. و [[AS export]] اسم العمود في الناتج.
-
-### التشغيل
-
-[[psql -qAt -f export.sql | python3 -m json.tool]]: [[-q]] quiet (من غير رسايل)، و [[-A]] من غير محاذاة الجدول، و [[-t]] من غير عناوين الأعمدة، فالناتج JSON صافي. و [[python3 -m json.tool]] بيرتبه (على ويندوز اسمه [[python]]):
-
-~~~text الناتج (Sara)
-{
-    "profile": {
-        "email": "sara@example.com",
-        "name": "Sara Adel",
-        "phone": "01012345678",
-        "created_at": "2026-10-06T13:42:54.463953+00:00"
-    },
-    "orders": [
-        { "id": 2, "total": 120.0, "ship_address": "5 Nile St, Giza", "created_at": "2026-09-01T00:00:00+00:00" },
-        { "id": 3, "total": 80.5, "ship_address": "5 Nile St, Giza", "created_at": "2026-09-20T00:00:00+00:00" }
-    ],
-    "exported_at": "2026-10-06T13:43:02.630372+00:00"
-}
-~~~
-
-(الطلبات اتجمعت في سطر للاختصار.) و Omar طلع [[ "orders" : [] ]].
-
----
-
-## الجزء التاني: الـ retention
-
-### [[WITH old AS (...)]]
-
-[[WITH]] بيعمل CTE (Common Table Expression): نتيجة مؤقتة ليها اسم ([[old]]) تستخدمها في الأمر اللي بعدها. جواها:
 
 | الحتة | معناها |
 |---|---|
-| [[SELECT id FROM login_events]] | هات الـ ids بس |
-| [[WHERE created_at < now() - interval '90 days']] | الأقدم من 90 يوم. [[interval]] نوع «مدة»، و [[now() - interval]] تاريخ |
-| [[ORDER BY id LIMIT 5000]] | أقدم 5000 بس |
+| [[SELECT * FROM users]] | هات كل الأعمدة ([[*]]) من جدول users |
+| [[WHERE email = '...']] | بس الصفوف اللي الإيميل فيها بالقيمة دي. في SQL النص بيتحط بين [[' ']] |
+| [[+ email +]] | لزق القيمة اللي جت من المستخدم جوه الـ string |
+| [[db.query(q)]] | ابعت النص كله لقاعدة البيانات تنفّذه |
 
-### [[DELETE FROM login_events e USING old WHERE e.id = old.id;]]
+لو المستخدم كتب [[ali@example.com]] الاستعلام بيبقى:
 
-[[USING old]] بيدخّل الـ CTE في الـ DELETE كأنه join، و [[e]] اسم مستعار للجدول. يعني: امسح من [[login_events]] كل صف الـ id بتاعه موجود في [[old]].
-
-### ليه دفعات؟
-
-[[DELETE ... WHERE created_at < ...]] مرة واحدة على ملايين صفوف = transaction طويلة، بتمسك locks وبتكتب WAL كتير. الدفعات بتخلي كل مرة سريعة. جرّبنا على 200 صف بتواريخ من يوم لـ 200 يوم ([[generate_series(1, 200)]] بيولّد الأرقام 1 لـ 200):
-
-~~~text الناتج
- old | total
------+-------
- 111 |   200
-DELETE 111
-DELETE 0
+~~~sql
+SELECT * FROM users WHERE email = 'ali@example.com'
 ~~~
 
-ليه 111 مش 110؟ الأيام من 90 لـ 200 = 111 يوم، ويوم 90 اتحسب لأن [[now()]] وقت الـ DELETE بعد وقت الـ INSERT بأجزاء من الثانية. ولما غيّرنا [[LIMIT]] لـ 50:
+ولو كتب [[' OR '1'='1]] (أول حرف علامة تنصيص):
 
-~~~text الناتج
-DELETE 50
-DELETE 50
-DELETE 11
-DELETE 0
+~~~sql
+SELECT * FROM users WHERE email = '' OR '1'='1'
 ~~~
 
-ده بالظبط سلوك الـ job: يكرر لحد ما دفعة ترجع أقل من الـ LIMIT.
+علامة التنصيص اللي كتبها قفلت النص بدري، و [[OR '1'='1']] بقى جزء من الشرط، وده صح دايمًا، فالشرط كله صح لكل صف.
 
 ---
 
-## الجزء التالت: الـ job في Node (الحل)
+## ٢. جرّبناه على المعمل
 
-| السطر | معناه |
-|---|---|
-| [[new pg.Pool({ connectionString: process.env.DATABASE_URL })]] | مجموعة اتصالات بالداتابيز من متغير بيئة |
-| [[RULES]] | لستة ثابتة: الجدول ومدة الحفظ |
-| [[for (const { table, keep } of RULES)]] | لف على كل قاعدة، و [[{ table, keep }]] بيفك الـ object لمتغيرين |
-| [[do { ... } while (n === 5000)]] | نفّذ مرة على الأقل، وكرر طول ما الدفعة كاملة |
-| [[$1::interval]] | المدة بتتبعت parameter، و [[::interval]] تحويل نوع |
-| [[$__{table}]] | اسم الجدول متلزق في النص: آمن هنا بس لأنه من [[RULES]] مش من يوزر |
-| [[({ rowCount: n } = await pool.query(...))]] | خد عدد الصفوف الممسوحة في [[n]]. القوسين حوالين السطر لازمين لما تفك object في متغير موجود |
-
-اتشغّل بـ [[DATABASE_URL=postgres://...@127.0.0.1:55432/test node run.mjs]] مرتين:
-
-~~~text الناتج
-{"job":"retention","table":"login_events","deleted":111}
-{"job":"retention","table":"password_resets","deleted":1}
-{"job":"retention","table":"login_events","deleted":0}
-{"job":"retention","table":"password_resets","deleted":0}
-~~~
-
-التشغيل التاني صفر: الـ job **idempotent**، تشغّله مرتين مفيش ضرر.
-
-## الخلاصة
-
-- التصدير: [[row_to_json]] للصف، و [[json_agg]] للصفوف، و [[coalesce(..., '[]')]] للفاضي، وأعمدة مختارة بالاسم.
-- الـ retention: CTE بـ LIMIT + [[DELETE ... USING]]، ويتكرر لحد ما يخلص.
-- الـ job يشتغل من scheduler مرة، مش [[setInterval]] في كل instance.`,
-          lines: [
-            R`id اليوزر (في التطبيق [[$1]]).`,
-            "ابني object واحد فيه كل حاجة.",
-            "بيانات الحساب: صف واحد يتحول لـ object.",
-            R`الطلبات كـ array مرتّبة، و array فاضية لو مفيش.`,
-            "وقت التصدير.",
-            "قفلة، والناتج عمود اسمه export.",
-            "الـ retention: هات دفعة من الصفوف القديمة...",
-            "...من جدول لوجات الدخول...",
-            "...اللي عدّى عليها 90 يوم...",
-            "...أقدم 5000 بس عشان الـ transaction تفضل قصيرة.",
-            "قفلة الـ CTE.",
-            "امسح الصفوف دي بس. الـ job بيكرر لحد ما يخلص."
-          ],
-          sol: R`الـ export بيطلع object فيه [[profile]] (الإيميل والاسم والتليفون ووقت التسجيل) و [[orders]] كـ array و [[exported_at]]. ويوزر من غير طلبات بياخد [[orders]] كـ array فاضية مش null، بفضل الـ coalesce.
-
-مع 200 صف من 1 لـ 200 يوم: أول DELETE بيقول [[DELETE 111]] (من يوم 90 لـ 200، لأنهم أقل من 5000، ويوم 90 نفسه بيتحسب لأن [[now()]] وقت الـ DELETE بعد وقت الـ INSERT بشوية)، والتاني [[DELETE 0]]، والباقي 89. لو غيّرت الـ LIMIT لـ 50 هتشوف 50 ثم 50 ثم 11 ثم 0، وده اللي الـ job بيعمله.
-
-الـ job تحت اتجرب على Postgres 16: أول تشغيل بيطبع عدد الممسوح لكل جدول، والتاني بيطبع 0. اسم الجدول متحط في الـ SQL من لستة ثابتة في الكود، مش من مدخل مستخدم، والمدة بتتبعت كـ parameter. شغّله من job scheduler مرة في اليوم (BullMQ أو cron على السيرفر)، مش من جوه كل instance.`,
-          solCode: R`// retention.mjs
-import pg from "pg";
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-
-const RULES = [
-  { table: "login_events", keep: "90 days" },
-  { table: "password_resets", keep: "1 day" },
-];
-
-export async function runRetention() {
-  for (const { table, keep } of RULES) {
-    let total = 0, n;
-    do {
-      ({ rowCount: n } = await pool.query(
-        $__btWITH old AS (SELECT id FROM $__{table} WHERE created_at < now() - $1::interval ORDER BY id LIMIT 5000)
-         DELETE FROM $__{table} t USING old WHERE t.id = old.id$__bt, [keep]));
-      total += n;
-    } while (n === 5000);
-    console.log(JSON.stringify({ job: "retention", table, deleted: total }));
-  }
-}`
-        },
-        {
-          cmd: "تشفير عمود حساس",
-          title: "الرقم القومي متشفّر في التطبيق، والمفتاح بره الداتابيز",
-          desc: R`تشفير الديسك اللي بتعمله الـ managed databases بيحميك لو حد سرق الهارد بس. أي حد معاه SQL (ثغرة injection، أو dump اتسرّب، أو نسخة staging، أو موظف) بيشوف الداتا واضحة. التشفير في التطبيق (application-level) معناه إن العمود متخزن نص مش مفهوم، والمفتاح عند التطبيق بس، فالـ dump لوحده مالوش قيمة.
-
-استخدم [[aes-256-gcm]] من [[node:crypto]]: بيشفّر وبيتأكد إن محدش عدّل النص (auth tag). و IV عشوائي جديد لكل قيمة. وحط رقم نسخة المفتاح ([[v1:]]) في أول النص عشان تقدر تغيّر المفتاح بعدين.
-
-المشكلة: مش هتعرف تعمل [[WHERE national_id = ...]] على نص متشفّر، لأن نفس الرقم بيطلع مختلف كل مرة. الحل «blind index»: عمود تاني فيه [[HMAC]] للرقم بمفتاح سري تاني، فتدوّر بيه (مطابقة كاملة بس، مش LIKE).
-
-المفتاح: من KMS (AWS KMS، أو Google Cloud KMS، أو Vault) أو secret manager، وأقل حاجة متغير بيئة مش في Git. و [[pgcrypto]] بديل جوه Postgres، بس المفتاح بيتبعت مع كل query للداتابيز، فممكن يظهر في لوجات الاستعلامات، وأي حد معاه SQL والمفتاح يفك.`,
-          example: R`import { createCipheriv, createDecipheriv, createHmac, randomBytes } from "node:crypto";
-const KEY = Buffer.from(process.env.PII_KEY, "base64");
-const INDEX_KEY = Buffer.from(process.env.PII_INDEX_KEY, "base64");
-
-export function encrypt(text) {
-  const iv = randomBytes(12);
-  const c = createCipheriv("aes-256-gcm", KEY, iv);
-  const data = Buffer.concat([c.update(text, "utf8"), c.final()]);
-  return ["v1", iv.toString("base64"), c.getAuthTag().toString("base64"), data.toString("base64")].join(":");
-}
-
-export function decrypt(stored) {
-  const [ver, iv, tag, data] = stored.split(":");
-  if (ver !== "v1") throw new Error("unknown key version");
-  const d = createDecipheriv("aes-256-gcm", KEY, Buffer.from(iv, "base64"));
-  d.setAuthTag(Buffer.from(tag, "base64"));
-  return Buffer.concat([d.update(Buffer.from(data, "base64")), d.final()]).toString("utf8");
-}
-
-export const blindIndex = (text) => createHmac("sha256", INDEX_KEY).update(text).digest("hex");`,
-          try: R`احفظ المثال في [[pii-crypto.mjs]]، واعمل مفتاحين بـ [[openssl rand -base64 32]]، وشغّل سكربت اختبار بـ [[PII_KEY=... PII_INDEX_KEY=... node test.mjs]]: شفّر نفس الرقم مرتين وقارن الناتجين، وفك واحد منهم، وقارن الـ blind index للرقم مرتين. وبعدين غيّر byte واحد في الجزء الأخير من النص المتشفّر وحاول تفكه. وآخر حاجة شغّله من غير [[PII_KEY]] خالص.`,
-          flag: "script",
-          deep: {
-            why: R`في أي تسريب، الفرق بين «اتسرّب عمود متشفّر» و «اتسرّبت 100 ألف رقم قومي» هو الفرق بين حادثة صغيرة وكارثة قانونية. والتشفير في التطبيق بيحمي الـ dumps والباك أبات والـ replicas ونسخ staging، اللي هي أكتر أماكن الداتا بتتسرّب منها.`,
-            how: R`GCM بيطلّع 3 حاجات: النص المتشفّر، والـ IV (12 byte عشوائي، مش سر بس لازم ميتكررش مع نفس المفتاح)، والـ auth tag (16 byte). بنخزنهم مع بعض في string واحد. وقت الفك، [[setAuthTag]] بيخلي [[final()]] يرمي error لو أي byte اتغير، فمحدش يقدر يعدّل القيمة من غير المفتاح.
-
-الـ blind index: [[HMAC-SHA256]] بمفتاح منفصل. لو استخدمت [[sha256]] من غير مفتاح، الرقم القومي 14 رقم وجزء كبير منه متوقع (تاريخ الميلاد والمحافظة)، فممكن تجرّب كل الاحتمالات وترجّع الأرقام من الـ hash. الـ HMAC من غير مفتاحه مالوش قيمة.
-
-KMS و envelope encryption: الـ KMS بيحتفظ بـ master key عمره ما بيطلع منه. التطبيق عنده data key متشفّر بالـ master key، وبيطلب من الـ KMS يفكه مرة وقت التشغيل ويحتفظ بيه في الذاكرة. لو حد سرق الكود والـ config من غير صلاحية الـ KMS، مش هيعرف يفك.
-
-تغيير المفتاح: اعمل [[v2]] بمفتاح جديد، والكتابة الجديدة بـ v2، و [[decrypt]] يقرا الاتنين، و job يعيد تشفير القديم تدريجيًا.`,
-            when: R`للأعمدة اللي تسريبها يضر بجد: الرقم القومي، وأرقام الحسابات، والبيانات الصحية، وتوكنات الـ OAuth لخدمات تانية. مش لكل عمود: الإيميل غالبًا محتاج تبحث بيه وتبعتله، فتشفيره تكلفته عالية وفايدته أقل.`,
-            mistakes: R`IV ثابت أو متكرر مع GCM: بيكسر التشفير بالكامل. المفتاح في نفس الـ repo أو نفس الداتابيز. [[sha256]] من غير مفتاح كـ «تشفير» للرقم القومي. تستخدم [[aes-256-cbc]] من غير MAC فحد يعدّل النص من غير ما تاخد بالك. تنسى إن التشفير بيمنع [[LIKE]] والترتيب والـ indexes العادية. وتطبع القيمة بعد الفك في اللوج.
-
-في الانترفيو «encryption at rest كفاية؟»: لأ، بيحمي من سرقة الديسك بس. application-level encryption بيحمي من الـ dump و SQL injection وأي حد عنده صلاحية قراية بس.`
-          },
-          teach: R`## الفكرة: 3 دوال في ملف واحد
-
-المثال module اسمه [[pii-crypto.mjs]] بيصدّر 3 دوال: [[encrypt]] بتحوّل الرقم القومي لنص متشفّر، و [[decrypt]] بترجّعه، و [[blindIndex]] بتعمل بصمة ثابتة تدوّر بيها. كل اللي تحت اتشغّل بـ Node 24 على ويندوز (Git Bash و PowerShell).
-
----
-
-## ١. السطر الأول: الـ import
-
-~~~text
-import { createCipheriv, createDecipheriv, createHmac, randomBytes } from "node:crypto";
-~~~
-
-[[node:crypto]] مكتبة جوه Node نفسه (الـ [[node:]] قبل الاسم بيقول «من Node مش من npm»)، فمفيش [[npm install]]. وبناخد منها 4 دوال بالاسم بين [[{ }]]:
-
-| الدالة | بتعمل إيه |
-|---|---|
-| [[randomBytes]] | bytes عشوائية آمنة (للـ IV) |
-| [[createCipheriv]] | تجهّز «مشفّر» بخوارزمية ومفتاح و IV |
-| [[createDecipheriv]] | نفس الكلام للفك |
-| [[createHmac]] | بصمة بمفتاح |
-
-## ٢. المفاتيح
-
-~~~text
-const KEY = Buffer.from(process.env.PII_KEY, "base64");
-~~~
-
-[[process.env.PII_KEY]] قيمة متغير البيئة. والمفتاح متخزن كـ **base64**: طريقة تكتب bytes عشوائية كحروف عادية تتحط في [[.env]]. [[Buffer.from(..., "base64")]] بيرجّعها bytes. نولّد مفتاح:
+[[-G]] بيخلي curl يحط الداتا في الـ URL كـ query string، و [[--data-urlencode]] بيعمل encoding للمسافات وعلامات التنصيص عشان توصل زي ما هي:
 
 ~~~bash
-openssl rand -base64 32
+curl -s -G http://localhost:3101/bad/users --data-urlencode "email=ali@example.com"
 ~~~
-
-~~~text الناتج (مثال، كل مرة مختلف)
-m915kkU9znVTgANKRnS5u9nF+Chj9/cteyRF66xo8I8=
-~~~
-
-44 حرف، ولما تفكهم ([[base64 -d | wc -c]]) يطلعوا **32 byte** = 256 bit، وده اللي [[aes-256]] محتاجه. و [[INDEX_KEY]] مفتاح **تاني** للبصمة: لو مفتاح واحد اتسرّب، التاني لسه سليم.
-
----
-
-## ٣. [[encrypt(text)]]: من جوه لبرة
-
-### [[randomBytes(12)]]
-
-الـ IV (Initialization Vector): 12 byte عشوائي **جديد لكل قيمة**. مش سر، بس لازم ميتكررش مع نفس المفتاح. هو اللي بيخلي نفس الرقم يتشفّر بشكل مختلف كل مرة.
-
-### [[createCipheriv("aes-256-gcm", KEY, iv)]]
-
-- [[aes]]: الخوارزمية القياسية للتشفير.
-- [[256]]: طول المفتاح بالـ bit.
-- [[gcm]] (Galois/Counter Mode): طريقة تشغيل بتشفّر **وكمان** بتطلّع auth tag، بصمة 16 byte بتكشف أي تعديل.
-
-### [[Buffer.concat([c.update(text, "utf8"), c.final()])]]
-
-[[update]] بيشفّر النص (و [[utf8]] بيقول النص مكتوب إزاي)، و [[final]] بيقفل التشفير. و [[Buffer.concat]] بيلزق الناتجين.
-
-### الـ return: 4 حتت في string واحد
-
-~~~text
-["v1", iv, tag, data].join(":")
-~~~
-
-كل حتة بـ base64، و [[join(":")]] بيحط [[:]] بينهم. الناتج الحقيقي:
 
 ~~~text الناتج
-v1:YSy10EzZu4rlFL6Y:WlOoyHDrfIUqvnWGVcuxlA==:DQwOgFQqu+7jXjKEKfw=
+[{"id":123,"email":"ali@example.com","name":"Ali"}]
 ~~~
 
-| الحتة | الطول | معناها |
-|---|---|---|
-| [[v1]] | — | نسخة المفتاح، عشان تغيّره بعدين |
-| [[YSy10EzZu4rlFL6Y]] | 16 حرف = 12 byte | الـ IV |
-| [[WlOo...xlA==]] | 24 حرف = 16 byte | الـ auth tag |
-| [[DQwO...Kfw=]] | 20 حرف = 14 byte | الرقم نفسه متشفّر (14 رقم = 14 byte) |
-
----
-
-## ٤. [[decrypt(stored)]]
-
-1. [[stored.split(":")]] بيقسم الـ string، و [[const [ver, iv, tag, data] =]] بيحط كل حتة في متغير.
-2. لو [[ver]] مش [[v1]]: [[throw new Error]] يوقف بدل ما يفك بمفتاح غلط.
-3. [[createDecipheriv]] بنفس المفتاح والـ IV.
-4. [[d.setAuthTag(...)]]: إديله البصمة اللي اتخزنت.
-5. [[d.final()]] بيقارن البصمة بالمحسوبة. لو أي byte اتغير بيرمي error.
-
-## ٥. [[blindIndex]]
-
-[[createHmac("sha256", INDEX_KEY).update(text).digest("hex")]]: HMAC-SHA256 بالمفتاح التاني، والناتج [[hex]] (أرقام وحروف a-f). نفس المدخل = نفس الناتج دايمًا، ورقم مختلف برقم واحد = ناتج مختلف خالص:
-
-~~~text الناتج
-55e51050138378db11e9dd90277fa07d9e63f6f55fa14c86a82cbbfc6a484162   ← 29001011234567
-f6e0aab7daed03af6cd1e7f3f856a0c1fe3a3f594faf0f8a2cd9621ed5340ad0   ← 29001011234568
-~~~
-
----
-
-## ٦. الاختبار ([[test.mjs]] في الحل)
-
-على Git Bash:
+يوزر واحد، طبيعي. دلوقتي نفس الطلب بالمدخل الخبيث:
 
 ~~~bash
-PII_KEY=$(openssl rand -base64 32) PII_INDEX_KEY=$(openssl rand -base64 32) node test.mjs
+curl -s -G http://localhost:3101/bad/users --data-urlencode "email=' OR '1'='1"
 ~~~
-
-و [[VAR=value command]] بيحط المتغير للأمر ده بس. وفي PowerShell: [[$env:PII_KEY = "..."]] وبعدين [[node test.mjs]].
 
 ~~~text الناتج
-v1:M0W8ht2LMs+0yjHt:uEJpFeI+ktblR4wA3GLVMA==:JSMx9jEhApD26GlbedI=
-same ciphertext? false
-decrypt: 29001011234567
-same index? true
-tampered: Unsupported state or unable to authenticate data
+[{"id":123,"email":"ali@example.com","name":"Ali"},{"id":124,"email":"sara@example.com","name":"Sara"}]
 ~~~
 
-- [[same ciphertext? false]]: نفس الرقم مرتين = نصين مختلفين (IV جديد).
-- [[same index? true]]: البصمة ثابتة، فتدوّر بيها.
-- [[tampered]]: الاختبار عمل [[data[0] ^= 1]]، يعني قلب bit واحد في أول byte ([[^]] = XOR)، و [[final()]] رفض.
+كل اليوزرز رجعوا. ولو المهاجم ضاف [[UNION SELECT]] (بيلزق نتيجة استعلام تاني تحت الأولاني) يقدر يسحب أعمدة مش المفروض تطلع خالص. في المعمل طلّعنا بيها عمود الباسورد مكان عمود الاسم:
 
-ومن غير [[PII_KEY]]:
+~~~text جزء من الناتج
+{"id":123,"email":"ali@example.com","name":"$2b$12$aL9/aIKO1hT9mH7tanGRPO..."}
+~~~
+
+ودي hashes بـ bcrypt (درس «4. مصادقة سليمة»)، فالضرر أقل، بس لو كانت متخزنة نص عادي كانت خلصت.
+
+### حتى من غير مهاجم: الكود بيقع
+
+يوزر عادي اسمه O'Brien:
+
+~~~bash
+curl -s -w " [%{http_code}]" -G http://localhost:3101/bad/users --data-urlencode "email=o'brien@x.com"
+~~~
 
 ~~~text الناتج
-TypeError [ERR_INVALID_ARG_TYPE]: The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received undefined
+{"error":"syntax error at or near \"brien\""} [500]
 ~~~
 
-ومفتاح 16 byte بس ([[openssl rand -base64 16]]): [[RangeError: Invalid key length]]. التطبيق بيقع بدل ما يشتغل غلط، ودي حاجة كويسة.
+[[-w]] (write-out) بيطبع بعد الرد حاجة نختارها، و [[%{http_code}]] رقم الحالة. الـ [[500]] ورسالة الخطأ دي بتقول للمهاجم إن المدخل بيتلزق في SQL، فهي أول علامة بيدوّر عليها.
 
-## الخلاصة
+### أسوأ من القراية: أوامر كاملة
 
-| | |
-|---|---|
-| الخوارزمية | [[aes-256-gcm]]: تشفير + كشف تعديل |
-| IV | 12 byte عشوائي جديد كل مرة، يتخزن مع النص |
-| الشكل المخزّن | [[v1:iv:tag:data]] |
-| البحث | HMAC بمفتاح تاني في عمود عليه UNIQUE |
-| المفاتيح | من KMS أو متغير بيئة، مش في Git ولا الداتابيز |`,
-          lines: [
-            R`دوال التشفير والـ HMAC والأرقام العشوائية من Node نفسه، مفيش مكتبة.`,
-            R`مفتاح التشفير: 32 byte من متغير بيئة (أو من KMS وقت التشغيل). لو مش موجود السكربت بيقع على طول.`,
-            R`مفتاح تاني منفصل للـ blind index.`,
-            "دالة التشفير.",
-            "IV عشوائي جديد لكل قيمة، 12 byte المقاس المعتاد لـ GCM.",
-            R`اعمل cipher بـ [[aes-256-gcm]].`,
-            "شفّر النص.",
-            R`خزّن النسخة والـ IV والـ tag والنص في string واحد مفصول بـ [[:]].`,
-            "قفلة.",
-            "دالة الفك.",
-            "فصّل الأجزاء الأربعة.",
-            "لو نسخة مفتاح مش معروفة، وقّف.",
-            "اعمل decipher بنفس المفتاح والـ IV.",
-            R`حط الـ tag عشان [[final()]] يتأكد إن محدش عدّل حاجة.`,
-            R`فك وارجع النص. لو اتعدّل، [[final()]] بيرمي error.`,
-            "قفلة.",
-            R`blind index: [[HMAC]] بالمفتاح التاني، نفس المدخل بيدّي نفس الناتج دايمًا فتقدر تدوّر بيه.`
-          ],
-          sol: R`هتشوف حاجة زي [[v1:uuOQ...:6Yje...==:xvWB...]]، و [[same ciphertext? false]] لأن كل مرة IV جديد، و [[decrypt: 29001011234567]]، و [[same index? true]]، و [[tampered: Unsupported state or unable to authenticate data]]: الـ auth tag كشف التعديل.
+مكتبة [[pg]] لما تبعتلها string من غير parameters بتسمح بأكتر من أمر مفصولين بـ [[;]]. فالمدخل ده:
 
-ومن غير [[PII_KEY]]: السكربت بيقع أول ما يتحمّل بـ TypeError من [[Buffer.from(undefined)]]. ده سلوك كويس: التطبيق ميشتغلش من غير مفتاح بدل ما يخزّن داتا مش متشفّرة. ولو المفتاح مش 32 byte هتاخد [[Invalid key length]].
+~~~text المدخل
+'; UPDATE users SET balance = 0 WHERE id = 124; --
+~~~
 
-لو [[same ciphertext]] طلعت true، يبقى الـ IV ثابت، ودي أخطر غلطة في GCM.
+[[;]] قفلت الاستعلام الأولاني، و [[UPDATE]] أمر جديد، و [[--]] بداية تعليق في SQL فبيلغي علامة التنصيص اللي الكود بيحطها في الآخر. بعدها رصيد Sara في المعمل بقى:
 
-في الداتابيز: بتخزّن [[encrypt(id)]] في [[national_id_enc]] و [[blindIndex(id)]] في [[national_id_idx]] (عليه UNIQUE)، وتدوّر بـ [[WHERE national_id_idx = $1]] وتبعت [[blindIndex(input)]].`,
-          solCode: R`// test.mjs
-import { encrypt, decrypt, blindIndex } from "./pii-crypto.mjs";
+~~~text الناتج
+{"id":124,"email":"sara@example.com","name":"Sara","balance":0}
+~~~
 
-const a = encrypt("29001011234567");
-const b = encrypt("29001011234567");
-console.log(a);
-console.log("same ciphertext?", a === b);
-console.log("decrypt:", decrypt(a));
-console.log("same index?", blindIndex("29001011234567") === blindIndex("29001011234567"));
-
-const parts = a.split(":");
-const data = Buffer.from(parts[3], "base64");
-data[0] ^= 1;
-parts[3] = data.toString("base64");
-try {
-  decrypt(parts.join(":"));
-} catch (e) {
-  console.log("tampered:", e.message);
-}`
-        },
-        {
-          cmd: "mask قبل staging",
-          title: "نسخة الإنتاج لـ staging، من غير بيانات الناس",
-          desc: R`«خلينا ناخد نسخة من الإنتاج على staging عشان نجرّب على داتا حقيقية» طلب منطقي، بس staging غالبًا أضعف في الحماية، وعليه ناس أكتر، وأحيانًا بيبعت إيميلات حقيقية. الحل: mask. تاخد نسخة في database مؤقتة، وتغيّر كل PII لقيم مزيفة ثابتة الشكل، وبعدين تعمل dump من النسخة الممسوحة وتحطها على staging.
-
-استخدم [[example.test]] للإيميلات: [[.test]] دومين محجوز مش هيوصل لحد حقيقي، فحتى لو staging بعت إيميل مش هيوصل. وسيب الأعمدة اللي مش PII (الأسعار، والتواريخ، والحالات) زي ما هي، عشان الداتا تفضل واقعية للتجربة. وفيه أدوات بتعمل ده بقواعد زي extension اسمه PostgreSQL Anonymizer، بس الفكرة واحدة.`,
-          example: R`BEGIN;
-UPDATE users SET
-  email = 'user' || id || '@example.test',
-  name = 'User ' || id,
-  phone = CASE WHEN phone IS NULL THEN NULL ELSE '0100000' || lpad((id % 10000)::text, 4, '0') END,
-  avatar_key = NULL;
-UPDATE orders SET ship_name = 'Test User', ship_address = 'Test address';
-TRUNCATE sessions, login_events;
-SELECT count(*) AS leftover FROM users WHERE email NOT LIKE '%@example.test';
-COMMIT;`,
-          try: R`خد database فيها يوزرز وطلبات (زي بتاعة درس «حذف الحساب»)، واعتبرها الإنتاج. اعمل database مؤقتة وانسخ فيها بـ [[pg_dump | psql]]، وشغّل الـ mask عليها، وبعدين انسخها لـ database تالتة اسمها staging وامسح المؤقتة. في الآخر دوّر في dump الـ staging على أي اسم أو إيميل حقيقي بـ [[grep]].`,
-          flag: "script",
-          deep: {
-            why: R`تسريبات كتير جت من نسخ staging أو dev أو من لابتوب مطوّر عليه dump الإنتاج، مش من الإنتاج نفسه. والقانون مش بيفرّق: داتا الناس اتسرّبت من عندك. وكمان staging بإيميلات حقيقية ممكن يبعت لعملاء حقيقيين إيميلات تجربة.`,
-            how: R`ليه database مؤقتة ومش نعمل mask على staging على طول؟ لأن الـ UPDATE في Postgres بيعمل نسخة جديدة من الصف والقديمة بتفضل في الملفات لحد الـ VACUUM، وكمان في الـ WAL. لما تعمل dump من المؤقتة (logical)، الـ dump فيه القيم الجديدة بس، والمؤقتة بتتمسح بالكامل.
-
-القيم المزيفة ثابتة ومبنية على الـ id: نفس اليوزر بياخد نفس الإيميل المزيف كل مرة، فالـ UNIQUE على الإيميل ميتكسرش، والـ bug اللي بتدور عليه في يوزر 1234 يفضل في يوزر 1234.
-
-الـ [[SELECT count(*) AS leftover]] check جوه الـ transaction: لو طلع أكبر من 0 عارف إن فيه حاجة فاتت. و [[ON_ERROR_STOP=1]] في psql بيوقف السكربت عند أول خطأ بدل ما يكمل ويعمل dump نص ممسوح.
-
-الـ TRUNCATE للجداول اللي مالهاش لازمة في staging أصلًا (الجلسات، واللوجات، والتوكنات). والجداول الجديدة: كل migration بيضيف عمود PII لازم يضيف سطره في سكربت الـ mask، فخليه جنب الـ migrations وراجعه في الـ PR.`,
-            when: R`قبل أي نسخ من الإنتاج لأي مكان تاني: staging، و dev، و preview branches (خدمات زي Neon و Supabase بتعمل branches من الإنتاج بسهولة)، أو dump لمطوّر عشان يحل bug. ولو ينفع، الأحسن seed data مزيفة من الأول، والـ mask للحالات اللي محتاجة شكل الداتا الحقيقي.`,
-            mistakes: R`تعمل mask على staging بعد الـ restore، والقيم القديمة تفضل في الـ WAL والباك أبات بتاعة staging. تنسى أعمدة زي [[notes]] أو [[metadata jsonb]] اللي فيها PII مستخبي، أو جداول زي audit_logs. تستخدم دومين حقيقي زي [[@test.com]] (ده دومين موجود!). وتنزّل dump الإنتاج على لابتوبك عشان تعمل له mask هناك: اعمله على سيرفر جوه نفس الشبكة.`
-          },
-          teach: R`## الفكرة: انسخ، امسح الأسماء، انسخ تاني
-
-المثال ([[mask.sql]]) بيغيّر كل PII لقيم مزيفة، والحل سكربت bash بيلف حواليه: ينسخ الإنتاج لداتابيز مؤقتة، يعمل mask، ينسخ النتيجة لـ staging، يمسح المؤقتة. اتشغّل كله في container بتاع PostgreSQL 16، و «الإنتاج» داتابيز اسمها [[seclab_prod]] فيها 3 يوزرز (Mona و Sara و Omar) وطلبين.
+يعني الثغرة دي مش «بيشوف داتا» بس، دي تعديل ومسح كمان.
 
 ---
 
-## ١. [[mask.sql]] سطر سطر
+## ٣. السطر الصح: [[$1]]
 
-### [[BEGIN;]] ... [[COMMIT;]]
-
-يا الـ mask كله يحصل يا ولا حاجة.
-
-### [[UPDATE users SET email = 'user' || id || '@example.test',]]
-
-[[||]] في SQL معناها **لزق نصوص**. فيوزر 2 إيميله يبقى [[user2@example.test]]. ليه مبني على [[id]]؟ لأن [[email]] عليه [[UNIQUE]]. لو حطيت نفس الإيميل للكل:
-
-~~~text الناتج
-ERROR:  duplicate key value violates unique constraint "users_email_key"
-DETAIL:  Key (email)=(dup@example.test) already exists.
+~~~javascript
+db.query("SELECT * FROM users WHERE email = $1", [email]);
 ~~~
 
-و [[.test]] دومين محجوز (RFC 2606) عمره ما هيوصل لحد.
+- [[$1]] مكان فاضي (placeholder) جوه الاستعلام، معناه «أول قيمة في الـ array». لو فيه تانية تبقى [[$2]] وهكذا.
+- [[[email]]] الـ array اللي فيه القيم بالترتيب.
+- مكتبة [[pg]] بتبعت الاستعلام لوحده والقيم لوحدها لـ Postgres (اسمها parameterized query أو prepared statement). Postgres بيفهم شكل الاستعلام **قبل** ما يشوف القيمة، فالقيمة مستحيل تغيّر الشكل. علامة التنصيص فيها بتفضل حرف عادي جوه الإيميل.
 
-### [[name = 'User ' || id,]]
+نفس المدخلات على [[/users]] (الـ route الصح):
 
-نفس الفكرة: [[User 2]].
+| المدخل | الرد |
+|---|---|
+| [[ali@example.com]] | [[[{"id":123,"email":"ali@example.com","name":"Ali"}] [200]]] |
+| [[' OR '1'='1]] | [[[] [200]]] |
+| [[o'brien@x.com]] | [[[] [200]]] |
+| [[UPDATE]] اللي فوق | [[[]]]، والرصيد متغيّرش |
 
-### [[phone = CASE WHEN phone IS NULL THEN NULL ELSE ... END,]]
+مفيش إيميل بالشكل ده، فالنتيجة فاضية. مفيش خطأ ومفيش تسريب، و O'Brien الحقيقي هيتلاقى عادي.
 
-[[CASE WHEN ... THEN ... ELSE ... END]] زي if جوه SQL. اللي ملوش تليفون يفضل NULL (عشان الداتا تفضل بنفس شكلها)، والباقي:
+> الـ placeholder في [[pg]] (Postgres) [[$1]]، وفي [[mysql2]] و SQLite علامة [[?]]. الفكرة واحدة.
+
+---
+
+## ٤. Prisma
+
+~~~javascript
+await prisma.user.findUnique({ where: { email } });
+~~~
+
+- [[prisma.user]] الجدول، و [[findUnique]] هات صف واحد بعمود unique.
+- [[{ email }]] اختصار لـ [[{ email: email }]] في JavaScript.
+
+Prisma بتبني الاستعلام بـ parameters لوحدها (من الـ docs بتاعتها، مجرّبناهاش في المعمل). الخطر الوحيد [[$queryRawUnsafe]] اللي بياخد string جاهز زي الكود الغلط بالظبط.
+
+---
+
+## ٥. كود الحل: دوّر على اللزق في مشروعك
+
+~~~bash
+grep -rnE '(query|execute|raw)\(.*(\+|\$\{)' --include=*.js --include=*.ts --exclude-dir=node_modules .
+~~~
 
 | الحتة | معناها |
 |---|---|
-| [[id % 10000]] | باقي القسمة على 10000، رقم من 0 لـ 9999 |
-| [[::text]] | حوّله نص |
-| [[lpad(..., 4, '0')]] | كمّله أصفار من الشمال لـ 4 خانات: [[2]] يبقى [[0002]] |
-| [['0100000']] ولزق اللي فات | الناتج [[01000000002]]، 11 رقم زي الموبايل المصري |
+| [[-r]] و [[-n]] | جوه كل الفولدرات، واطبع رقم السطر |
+| [[-E]] | regex موسّع |
+| [[(query|execute|raw)\(]] | اسم دالة من دول وبعدها قوس. [[\(]] قوس حرفي |
+| [[.*]] | أي حاجة |
+| [[(\+|\$\{)]] | علامة [[+]] (لزق) أو بداية متغير في template string |
+| [[--include]] و [[--exclude-dir]] | ملفات js و ts بس، ومن غير node_modules |
 
-### [[avatar_key = NULL;]]
-
-الصور الحقيقية على S3 الإنتاج، و staging مالوش يشاور عليها.
-
-### [[UPDATE orders SET ship_name = 'Test User', ship_address = 'Test address';]]
-
-من غير [[WHERE]]: كل الصفوف. والأسعار والتواريخ متتلمسش، عشان التجربة تفضل واقعية.
-
-### [[TRUNCATE sessions, login_events;]]
-
-[[TRUNCATE]] بيفضّي الجدول كله مرة واحدة (أسرع من DELETE). الجلسات واللوجات مالهاش لازمة في staging.
-
-### [[SELECT count(*) AS leftover FROM users WHERE email NOT LIKE '%@example.test';]]
-
-check: [[LIKE]] بيطابق نمط، و [[%]] معناها «أي حاجة». فبنعدّ الإيميلات اللي **مش** منتهية بـ [[@example.test]]. لازم 0.
-
-التشغيل على النسخة المؤقتة:
+لازم الـ regex بين علامات تنصيص مفردة [['...']]: لو حطيته بين [["..."]] الـ shell بيلعب في [[$]] و [[\]]، وجرّبناها بالمزدوجة وطلعت [[grep: Unmatched ( or \(]]. على ملف تجربة فيه السطرين الغلط وسطر بـ [[$1]] (Git Bash على ويندوز) الأمر مسك الغلط بس:
 
 ~~~text الناتج
-BEGIN
-UPDATE 3
-UPDATE 2
-TRUNCATE TABLE
- leftover
-----------
-        0
-(1 row)
-
-COMMIT
+sqlg/a.js:1:db.query("SELECT * FROM users WHERE email = '" + email + "'");
+sqlg/a.js:2:db.query($__btSELECT * FROM users WHERE email = '$__{email}'$__bt);
 ~~~
 
 ---
-
-## ٢. الـ pipeline (الحل)
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[set -e]] | لو أي أمر فشل، السكربت يقف |
-| [[createdb app_mask_tmp]] | داتابيز مؤقتة فاضية |
-| [[pg_dump --no-owner "$PROD_URL" pipe psql -q app_mask_tmp]] | [[pg_dump]] بيطلع الإنتاج كـ SQL، والـ pipe بيدخّله في المؤقتة. [[--no-owner]]: من غير أوامر ملكية تفشل لو اليوزر مختلف |
-| [[psql -v ON_ERROR_STOP=1 -q -d app_mask_tmp -f mask.sql]] | شغّل الـ mask، ووقف عند أول خطأ |
-| [[pg_dump --no-owner app_mask_tmp pipe psql -q "$STAGING_URL"]] | انسخ النسخة الممسوحة لـ staging |
-| [[dropdb app_mask_tmp]] | امسح المؤقتة بكل ملفاتها |
-| [[pg_dump "$STAGING_URL" pipe grep -c "Mona" pipe-pipe echo ...]] | عدّ السطور اللي فيها اسم حقيقي |
-
-(في الجدول [[pipe]] مكان علامة [[|]].)
-
-### ليه [[ON_ERROR_STOP=1]]؟
-
-من غيره psql بيطبع الخطأ ويكمل السطر اللي بعده. جرّبنا الإيميل المكرر بيه: خرج بـ [[exit=3]]، فـ [[set -e]] يوقف السكربت قبل ما يعمل dump لنسخة نص ممسوحة.
-
-### ليه [[|| echo]] في الآخر؟
-
-[[grep -c]] بيطبع العدد، بس لما يلاقي **صفر** بيخرج بكود 1 (يعني «ملقيتش»)، و [[set -e]] كان هيعتبره فشل. [[||]] معناها «لو اللي قبلي فشل نفّذ ده». الناتج الحقيقي:
-
-~~~text الناتج
-0
-no real names left
-~~~
-
-وعلى الإنتاج نفسه [[pg_dump seclab_prod pipe grep -c Sara]] طلع [[2]] (في جدول users وجدول orders)، وعلى staging [[0]].
-
-والنتيجة على staging:
-
-~~~text الناتج
- id |       email        |  name  |    phone    | avatar_key
-----+--------------------+--------+-------------+------------
-  1 | user1@example.test | User 1 |             |
-  2 | user2@example.test | User 2 | 01000000002 |
-  3 | user3@example.test | User 3 |             |
-~~~
-
----
-
-## ٣. ليه داتابيز مؤقتة؟
-
-الـ [[UPDATE]] في Postgres مش بيكتب فوق الصف، بيعمل نسخة جديدة، والقديمة بتفضل في ملفات الداتابيز لحد [[VACUUM]]، وفي الـ WAL (سجل كل التغييرات). لو عملت restore على staging وبعدين mask، القيم الحقيقية لسه في ملفات staging. أما [[pg_dump]] فبيقرا القيم **الحالية** بس، فالنسخة اللي توصل staging نضيفة، والمؤقتة بتتمسح كلها بـ [[dropdb]].
 
 ## الخلاصة
 
-- قيم مزيفة مبنية على الـ id: ثابتة ومش بتكسر UNIQUE.
-- دومين [[.test]] للإيميلات.
-- mask في داتابيز مؤقتة، و dump منها، مش على staging مباشرة.
-- [[ON_ERROR_STOP=1]] و [[set -e]] و check في الآخر.`,
+- مدخل المستخدم عمره ما يتلزق في نص الاستعلام، لا بـ [[+]] ولا بـ template string.
+- [[$1]] والقيم في array: Postgres بيعرف الشكل قبل القيمة، فالقيمة متقدرش تغيّره.
+- التنضيف بإيدك (تشيل علامات التنصيص) بيتكسر وبيبوّظ أسامي زي O'Brien. الـ parameters هي الحل.`,
           lines: [
-            "كله في transaction: لو حاجة فشلت، مفيش نسخة نص ممسوحة.",
-            "غيّر بيانات كل اليوزرز:",
-            R`إيميل مزيف ثابت مبني على الـ id، على دومين [[.test]] اللي مش هيوصل لحد.`,
-            "اسم مزيف.",
-            "تليفون مزيف بنفس الشكل، واللي كان NULL يفضل NULL.",
-            "امسح مفتاح الصورة (الصور الحقيقية على S3 الإنتاج مش هتتنسخ أصلًا).",
-            "بيانات الشحن في الطلبات، والأسعار والتواريخ زي ما هي.",
-            "الجلسات واللوجات مالهاش لازمة في staging: فضّيها.",
-            "check: عدد الإيميلات اللي لسه حقيقية، لازم 0.",
-            "ثبّت."
+            "الغلط: لزق الإيميل جوه الاستعلام كنص. لو الإيميل فيه علامة تنصيص، بيبقى جزء من الـ SQL.",
+            "وتنفيذه.",
+            "الصح: الاستعلام فيه [[$1]] كمكان فاضي، والقيمة بتتبعت لوحدها في array. قاعدة البيانات عمرها ما هتعتبرها SQL.",
+            "أو ORM زي Prisma، وده بيعمل نفس الحاجة لوحده."
           ],
-          sol: R`الـ mask بيطبع [[UPDATE]] بعدد الصفوف، و [[TRUNCATE TABLE]]، و [[leftover]] بـ 0. بعدها [[SELECT email, name, phone FROM users]] على staging بيطلع [[user1@example.test]] و [[User 1]] و [[01000000001]].
+          sol: R`الأمر اللي بيدوّر: [[grep -rnE "(query|execute|raw)\(.*(\+|\$__{)" --include=*.js --include=*.ts --exclude-dir=node_modules .]]. كل سطر بيطلع معناه إن فيه استعلام بيتبني بلزق نص، زي [[db.query("SELECT * FROM users WHERE email = '" + email + "'")]] أو template string فيها [[$__{email}]]. المشروع السليم المفروض ميطلعش فيه ولا سطر.
 
-و [[pg_dump seclab_staging | grep -c "Mona"]] بيطلع 0. لو طلع أكتر، فيه عمود أو جدول نسيته في السكربت (دوّر في النتيجة تلاقيه فين).
-
-الغلط الشائع: تشغّل الـ mask على staging بعد ما تعمل restore عليه مباشرة. النتيجة في الـ SELECT هتبان سليمة، بس القيم القديمة لسه في ملفات الداتابيز والـ WAL لحد ما تتمسح. الـ pipeline تحت بيعمل mask في database مؤقتة وينسخ الناتج بس.`,
-          solCode: R`set -e
-createdb app_mask_tmp
-pg_dump --no-owner "$PROD_URL" | psql -q app_mask_tmp
-psql -v ON_ERROR_STOP=1 -q -d app_mask_tmp -f mask.sql
-pg_dump --no-owner app_mask_tmp | psql -q "$STAGING_URL"
-dropdb app_mask_tmp
-pg_dump "$STAGING_URL" | grep -c "Mona" || echo "no real names left"`
+كل واحد تلاقيه حوّله لـ parameters: [[db.query("SELECT * FROM users WHERE email = $1", [email])]]، أو استخدم الـ ORM (Prisma مثلًا). خد بالك من حاجتين: Prisma نفسها فيها [[$queryRawUnsafe]] وده بيلزق النص زي الأول بالظبط، أما [[$queryRaw]] بالـ tagged template فأمان. وأسماء الأعمدة والجداول مينفعش تبقى parameters، فلو المستخدم بيختار عمود الترتيب، قارن باللي جاي بقايمة مسموحة (allowlist).`
         },
         {
-          cmd: "PII بره اللوج",
-          title: "اللوج و Sentry ميبقوش نسخة تانية من الداتابيز",
-          desc: R`اللوج بيتبعت لخدمات بره (Datadog، و Loki، و Sentry)، وبيتحفظ مدة طويلة، ومحدش بيعمله حذف لما اليوزر يمسح حسابه، وناس كتير بتشوفه. فأي إيميل أو تليفون أو توكن اتكتب فيه بقى متسرّب لكل دول، وخارج أي طلب حذف أو تصدير.
+          cmd: "3. XSS",
+          title: "A05 Injection: لما تعرض مدخل المستخدم كـ HTML",
+          desc: "XSS في نسخة 2025 جوه A05 Injection، زي SQL Injection بالظبط: مدخل المستخدم بيتفسّر ككود. لو عرضت كلام المستخدم في الصفحة كـ HTML، ممكن يحط فيه سكربت يشتغل عند أي زائر. React بيهرب النصوص لوحده، فأنت آمن طول ما مش بتستخدم [[dangerouslySetInnerHTML]]. لو محتاج تعرض HTML من المستخدم (محرر نصوص مثلًا)، نضّفه بـ [[DOMPurify]]. وكوكي الـ session HttpOnly عشان لو حصل XSS التوكن ميتسرقش.",
+          example: R`// خطر: HTML من المستخدم زي ما هو
+element.innerHTML = comment.text;
+<div dangerouslySetInnerHTML={{ __html: comment.text }} />
 
-القاعدة: سجّل IDs مش بيانات. وحتى الـ id ممكن تبدّله بـ [[HMAC]] ثابت، فتقدر تتبع يوزر واحد في اللوج من غير ما يبقى مربوط بالداتابيز مباشرة. وكطبقة أمان تانية، [[redact]] في pino (شوف درس [[pino]] في «تاب Backend بـ Node») بيخفي الحقول اللي بالأسامي دي لو حد سجّلها بالغلط. وفي Sentry: [[dataCollection: { userInfo: false, cookies: false }]] (SDK 11) وفلتر [[beforeSend]] (درس «Sentry» في «تاب بناء مشروع كامل»).`,
-          example: R`import pino from "pino";
-import { createHmac } from "node:crypto";
+// أمان: نص عادي
+element.textContent = comment.text;
+<div>{comment.text}</div>   // React يهرب ده لوحده
 
-const log = pino({
-  redact: {
-    paths: ["*.password", "*.token", "*.email", "*.phone", "*.nationalId", "req.headers.authorization", "req.headers.cookie"],
-    censor: "[redacted]",
-  },
-});
-const userRef = (id) => createHmac("sha256", process.env.LOG_SALT).update(String(id)).digest("hex").slice(0, 12);
-
-log.info({ user: { id: userRef(42), email: "mona@example.com", phone: "01012345678" } }, "signup");
-log.warn({ body: { email: "mona@example.com", password: "hunter2" } }, "login failed");`,
-          try: R`[[npm i pino]] واحفظ المثال في [[logs.mjs]] وشغّله بـ [[LOG_SALT=abc node logs.mjs]]. بعدين زوّد سطر: [[log.info({ user: { profile: { email: "deep@example.com" } } }, "nested")]]، وشوف الإيميل ده اتخفى ولا لأ. صلّحها. وبعدين دوّر في كودك بـ grep على [[console.log(req.body]] و [[console.log(user]].`,
+// لو لازم HTML: نضّفه
+import DOMPurify from "dompurify";
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} />`,
+          try: "دوّر في مشروع React بتاعك على [[dangerouslySetInnerHTML]]، وشوف مصدر الـ HTML موثوق ولا لأ.",
           flag: "script",
           deep: {
-            why: R`اللوج أكتر مكان PII بيتسرّب منه من غير ما حد ياخد باله، لأن محدش بيعتبره «داتابيز». ولما اليوزر يطلب مسح بياناته، مش هتعرف تمسحها من 6 شهور لوج في 3 خدمات. فالحل الوحيد العملي إنها متدخلش أصلًا.`,
-            how: R`[[redact]] في pino (بيستخدم مكتبة fast-redact) بيحوّل كل path لكود سريع بيغيّر القيمة قبل ما السطر يتكتب. [[*.email]] معناها «أي key في المستوى الأول جواه email»، يعني [[user.email]] و [[body.email]]، بس مش [[user.profile.email]]. كل مستوى أعمق محتاج path بتاعه ([[*.*.email]]). عشان كده الـ redact شبكة أمان، مش الحل الأساسي.
+            why: "لو بتعرض محتوى كتبه يوزر في صفحة HTML من غير تنضيف، المهاجم يحط script بيشتغل عند أي حد يفتح الصفحة.",
+            how: R`[[element.innerHTML = comment.text]]: لو comment.text فيه [[<img src=x onerror=alert(1)>]] الكود هيشتغل. (وسم script نفسه مش بيشتغل مع innerHTML، بس الـ event handlers زي onerror بتشتغل).
 
-[[userRef]]: HMAC بمفتاح ([[LOG_SALT]]) بيدّي نفس الـ 12 حرف لنفس اليوزر دايمًا. تقدر تجمّع كل لوجات يوزر واحد، ولما تحتاج تعرف هو مين فعلًا تحسبه من الـ id في الداتابيز وتقارن. ولو اليوزر اتمسح، الـ ref في اللوج مبقاش بيشاور على حد.
+[[element.textContent]] بيحطه كنص حرفي مش HTML. المتصفح مش هيفسّره.
 
-في Sentry SDK 11: [[dataCollection: { userInfo: false, cookies: false }]] بيمنع الـ IP والكوكيز وبيانات اليوزر، ولازم تكتبه بنفسك لأن 11 بيجمعهم افتراضيًا. الخيار القديم [[sendDefaultPii]] (نسخة 10 وقبلها، وكان false افتراضيًا) نسخة 11 بتتجاهله من غير أي تحذير. و [[beforeSend(event)]] بيدّيك الـ event قبل ما يتبعت: امسح [[event.user.email]] و [[event.request.data]] لو فيه form بيانات شخصية، وارجع الـ event. وافتكر إن رسالة الـ error نفسها ممكن يبقى فيها PII لو كتبتها كده: [[new Error("User " + email + " not found")]].`,
-            when: R`من أول سطر لوج في المشروع. وراجع أي لوج بيطبع object كامل (req.body، و user، و الـ response) لأن الـ object ده هيكبر بحقول جديدة ومحدش هيفتكر اللوج.`,
-            mistakes: R`[[console.log(req.body)]] في login أو signup، فالباسوردات في اللوج. تسجيل الـ query string كامل وفيه [[?token=]] أو [[?email=]]. [[logger.info(user)]] للـ object كله. الاعتماد على redact بس وهو مبيغطيش المستويات الأعمق. و Sentry من غير [[dataCollection]] في نسخة 11 (بيبعت الـ IP والكوكيز افتراضيًا)، أو تفتكر إن [[sendDefaultPii: false]] لسه شغال فيها.
+React آمن افتراضيًا. الخطر الوحيد [[dangerouslySetInnerHTML]].
 
-في الانترفيو: «إزاي تتعامل مع PII في اللوج؟» IDs مش بيانات، و pseudonymous refs، و redact كطبقة تانية، ومدة حفظ للوج، وسؤال: اللوج بيتبعت لأنهي خدمة وفي أنهي بلد.`
+لو محتاج تعرض HTML حقيقي من اليوزر: استخدم DOMPurify لتنضيفه.`,
+            when: "في كل مكان بتعرض فيه محتوى كتبه يوزر.",
+            mistakes: "الاعتماد على regex أو blacklist. سهل تتجاوزها."
           },
-          teach: R`## الفكرة: logger بيخفي الحقول الحساسة لوحده
+          teach: R`## الفكرة: نص المستخدم يتعرض كنص، مش ككود
 
-المثال بيعمل logger بـ pino متظبط إنه يكتب [[[redacted]]] مكان أي باسورد أو إيميل أو تليفون، ودالة [[userRef]] بتحوّل id اليوزر لكود ثابت مش مربوط بالداتابيز. اتشغّل بـ Node 24 و pino 10 على ويندوز (Git Bash)، واسم الجهاز في الناتج اتغيّر لـ [[ALI-PC]].
+XSS زي SQL Injection بالظبط، بس المكان الصفحة بدل قاعدة البيانات: لو حطيت كلام المستخدم في الـ HTML زي ما هو، المتصفح هيفسّر أي وسم جواه، وممكن يشتغل سكربت عند أي حد يفتح الصفحة. المثال بيوريك الغلط والصح في JavaScript عادي وفي React. جرّبنا الرندر على معمل Express على [[localhost:3101]] فيه [[/bad/comments]] (بيطبع الكومنت خام) و [[/comments]] (بيهرب الحروف).
 
 ---
 
-## ١. الـ imports
+## ١. السطر الغلط
 
-[[import pino from "pino";]]: مكتبة لوج سريعة بتكتب كل سطر JSON (محتاجة [[npm i pino]]). و [[createHmac]] من [[node:crypto]] جوه Node.
-
-## ٢. [[const log = pino({ redact: {...} })]]
-
-[[pino(options)]] بيرجّع logger. والـ option المهم [[redact]] (يعني «اشطب»):
-
-### [[paths: [...]]]
-
-لستة **مسارات** للحقول اللي تتشطب. المسار بيتقرا بالنقط:
-
-| المسار | بيطابق |
-|---|---|
-| [[*.password]] | [[password]] جوه أي object في المستوى الأول: [[body.password]]، [[user.password]] |
-| [[*.email]] | [[user.email]] و [[body.email]]، بس **مش** [[user.profile.email]] |
-| [[req.headers.authorization]] | الهيدر ده بالظبط (فيه التوكن) |
-| [[req.headers.cookie]] | الكوكيز (فيها الـ session) |
-
-الـ [[*]] = «أي key»، ومستوى واحد بس.
-
-### [[censor: "[redacted]"]]
-
-النص اللي بيتكتب مكان القيمة. من غيره الافتراضي [[[Redacted]]].
-
-## ٣. [[userRef]]
-
-~~~text
-const userRef = (id) => createHmac("sha256", process.env.LOG_SALT).update(String(id)).digest("hex").slice(0, 12);
+~~~javascript
+element.innerHTML = comment.text;
 ~~~
 
-من جوه لبرة:
+- [[element]] عنصر في الصفحة، و [[.innerHTML]] محتواه كـ **HTML**: أي وسم في النص بيتحوّل لعنصر حقيقي.
+- لو [[comment.text]] = [[<img src=x onerror="alert(document.cookie)">]]، المتصفح بيعمل صورة مصدرها [[x]] (مش موجود)، فبيقع في الخطأ ويشغّل [[onerror]]. ساعتها السكربت بيقرا [[document.cookie]] (الكوكيز بتاعة الزائر) ويبعتها للمهاجم.
 
-1. [[String(id)]]: الـ id رقم، و HMAC محتاج نص.
-2. [[createHmac("sha256", process.env.LOG_SALT)]]: HMAC بمفتاح من متغير البيئة [[LOG_SALT]].
-3. [[.update(...)]] يدخّل النص، و [[.digest("hex")]] يطلّع البصمة 64 حرف hex.
-4. [[.slice(0, 12)]]: أول 12 حرف بس، كفاية تفرّق اليوزرز في اللوج.
+> وسم [[<script>]] نفسه مش بيشتغل مع [[innerHTML]]، بس الـ event handlers زي [[onerror]] و [[onload]] بتشتغل، فالثغرة موجودة.
 
-النتيجة: يوزر 42 = [[7e00ac929d73]] كل مرة طالما [[LOG_SALT]] ثابت. تقدر تجمع لوجاته، ومن غير الـ salt محدش يعرف الـ ref ده بتاع مين.
+نفس الغلط في React اسمه بيحذّرك:
 
-## ٤. سطور اللوج
+~~~jsx
+<div dangerouslySetInnerHTML={{ __html: comment.text }} />
+~~~
 
-[[log.info(object, "message")]]: أول argument الحقول، والتاني الرسالة. و [[log.warn]] نفس الكلام بمستوى أعلى.
+[[dangerouslySetInnerHTML]] بياخد object فيه مفتاح [[__html]]، وبيحط قيمته كـ HTML خام، فبيلغي حماية React.
 
-### التشغيل
+---
+
+## ٢. السطر الصح
+
+~~~javascript
+element.textContent = comment.text;
+~~~
+
+[[.textContent]] بيحط النص كـ **نص حرفي**: أي [[<]] بتتحوّل لرمز بيتعرض كـ «أصغر من» مش بداية وسم. المتصفح بيعرض الكلام زي ما هو وخلاص.
+
+في React أي نص جوه [[{ }]] بيتهرب لوحده:
+
+~~~jsx
+<div>{comment.text}</div>
+~~~
+
+### شفنا الفرق بالكود
+
+شغّلنا [[innerHTML]] و [[textContent]] و React على نفس المدخل في Node (بـ jsdom و react-dom، في Docker). المدخل: [[<img src=x onerror="alert(document.cookie)">]]:
+
+~~~text الناتج
+innerHTML   -> <img src="x" onerror="alert(document.cookie)">   | children: 1 IMG  onerror: alert(document.cookie)
+textContent -> &lt;img src=x onerror="alert(document.cookie)"&gt; | children: 0 #text
+React {text} -> <div>&lt;img src=x onerror=&quot;alert(document.cookie)&quot;&gt;</div>
+React dangerously -> <div><img src=x onerror="alert(document.cookie)"></div>
+~~~
+
+- [[innerHTML]]: اتعمل عنصر [[IMG]] حقيقي (children: 1)، والـ [[onerror]] اتسجّل: دي الثغرة.
+- [[textContent]]: صفر children، مجرد نص. [[<]] بقت [[&lt;]].
+- React [[{text}]]: نفس الهروب. [[&lt;]] و [[&quot;]] يعني [[<]] و [["]] اتحوّلوا لرموز بتتعرض كنص.
+- React [[dangerouslySetInnerHTML]]: رجّع الـ [[<img>]] حي تاني: الثغرة بقت موجودة.
+
+### وعلى السيرفر كمان
+
+خزّنّا كومنت فيه نفس الـ [[<img ...>]] وطلبنا الصفحتين:
+
+~~~text /bad/comments
+<p><img src=x onerror="alert(document.cookie)"></p>
+~~~
+
+~~~text /comments
+<p>&lt;img src=x onerror=&quot;alert(document.cookie)&quot;&gt;</p>
+~~~
+
+الدالة اللي بتهرب في الكود بتبدّل [[&]] و [[<]] و [[>]] و [["]] و [[']] برموزها. أهم حاجة إن الهروب يحصل **وقت العرض** (output encoding)، مش وقت التخزين.
+
+---
+
+## ٣. لو لازم HTML من المستخدم
+
+محرر نصوص (bold و لينكات) بيطلّع HTML حقيقي عايزينه يشتغل. ساعتها ننضّفه بـ DOMPurify:
+
+~~~jsx
+import DOMPurify from "dompurify";
+<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} />
+~~~
+
+[[DOMPurify.sanitize]] بيسيب الوسوم الآمنة ويشيل اللي بتشغّل كود. جرّبناه (في Node):
+
+| المدخل | الناتج بعد sanitize |
+|---|---|
+| [[<img src=x onerror="...">]] | [[<img src="x">]] (شال [[onerror]]) |
+| [[<b>bold</b> <a href="javascript:alert(1)">click</a>]] | [[<b>bold</b> <a>click</a>]] (شال اللينك الخبيث) |
+| [[<script>alert(1)</script><p onclick="steal()">hi</p>]] | [[<p>hi</p>]] (شال الـ script والـ onclick) |
+
+الوسوم الآمنة فضلت، والخطر اتشال.
+
+---
+
+## ٤. مكان بيتنسي: اللينكات
+
+حتى لو بتعرض النص صح، [[<a href={user.website}>]] خطر لو اليوزر حط [[javascript:alert(1)]]. React الحديثة بتمنع ده فعلًا (جرّبناها: بتبدّل الـ href بتحذير)، بس الأأمن إنك تتأكد إن اللينك بيبدأ بـ [[https://]] بنفسك.
+
+---
+
+## الخلاصة
+
+- اعرض كلام المستخدم كنص ([[textContent]] أو [[{value}]] في React)، مش [[innerHTML]].
+- [[dangerouslySetInnerHTML]] بيلغي حماية React: استخدمه بس بعد [[DOMPurify.sanitize]].
+- الـ HTML ممكن يوصل من API مش من الفورم، فالهروب وقت العرض هو الضمان.`,
+          lines: [
+            "الغلط: حط نص اليوزر كـ HTML. لو فيه وسم زي img بـ onerror، الكود اللي فيه هيشتغل.",
+            "نفس الغلط في React (الاسم نفسه بيحذّرك).",
+            "الصح: حطه كنص. أي وسوم بتظهر ككلام عادي.",
+            "الصح في React: الـ JSX بيهرب النص لوحده.",
+            "لو لازم تعرض HTML من اليوزر: استورد DOMPurify.",
+            "نضّفه الأول، وبعدين اعرضه."
+          ],
+          sol: R`[[grep -rn "dangerouslySetInnerHTML" src/]]: لو مطلعش حاجة، React بيعمل escape لكل نص بتعرضه بـ [[{value}]]، وانت في أمان من ناحية دي. لو طلع، شوف الـ HTML ده جاي منين: لو من ملف انت كاتبه أو من محتوى ثابت، مفيش مشكلة. لو من المستخدم أو من API خارجي (كومنت، وصف منتج، رد AI)، لازم يعدّي على [[DOMPurify.sanitize()]] قبل ما يتعرض.
+
+الغلطة الشائعة إنك تفكر إن الـ validation على الفورم كفاية: الـ HTML ممكن يوصل قاعدة البيانات من API مباشرة. وفيه مكان تاني بيتنسي: [[href={user.website}]]، لأن React مش بيمنع [[javascript:]] في اللينكات بشكل كامل، فاتأكد إن اللينك بيبدأ بـ [[https://]].`
+        },
+        {
+          cmd: "Command Injection",
+          title: "A05 Injection: لما مدخل المستخدم يوصل للـ shell",
+          desc: R`نفس فكرة SQL Injection، بس المرة دي اللي بيتنفّذ أوامر على السيرفر نفسه. لو بتشغّل برنامج خارجي (ffmpeg، ImageMagick، git، ping) وبتبني الأمر كـ string فيه حاجة جاية من المستخدم، [[exec]] بيدّي الـ string كله لـ [[/bin/sh]]. ساعتها [[;]] و [[|]] و [[&&]] و [[$(...)]] بيشتغلوا، واليوزر يقدر يشغّل أي أمر بصلاحيات الـ process بتاعك: يقرا [[.env]]، أو ينزّل backdoor.
+
+الحل: [[execFile]] أو [[spawn]] باسم البرنامج لوحده، والـ arguments في array، ومن غير shell. كل عنصر في الـ array بيوصل للبرنامج كـ argument واحد حرفيًا مهما كان فيه، لأن مفيش shell يفسّر الرموز. وفي Python نفس الكلام: [[subprocess.run(["prog", arg])]] بـ list و [[shell=False]] (ودا الافتراضي)، مش string مع [[shell=True]].
+
+والأحسن من الاتنين: لو فيه مكتبة بتعمل نفس الشغل جوه اللغة ([[sharp]] بدل ImageMagick، و [[fs.rm]] بدل [[rm -rf]])، استخدمها ومتشغّلش برنامج خارجي أصلًا.`,
+          example: R`import { exec, execFile } from "node:child_process";
+import { promisify } from "node:util";
+const execP = promisify(exec);
+const execFileP = promisify(execFile);
+const host = process.argv[2] ?? "example.com";
+
+// خطر: الـ string كله بيروح لـ /bin/sh
+const bad = await execP("echo pinging " + host);
+console.log("exec:", bad.stdout.trim());
+
+// أمان: البرنامج لوحده والـ args في array، ومفيش shell
+const good = await execFileP("echo", ["pinging", host]);
+console.log("execFile:", good.stdout.trim());`,
+          try: R`احفظ المثال في [[cmd.mjs]] (هو بيستخدم [[echo]] بدل [[ping]] عشان التجربة تبقى آمنة وسريعة). شغّله بـ [[node cmd.mjs 'x; echo HACKED; id -un']] وبعدين [[node cmd.mjs '$(whoami)']]، وقارن سطر [[exec]] بسطر [[execFile]]. بعدين اكتب نفس التجربة في Python بـ [[subprocess.run]] مرة بـ [[shell=True]] ومرة بـ list.`,
+          flag: "script",
+          deep: {
+            why: R`أي feature بتلف على أداة command line (تحويل فيديو، ضغط صور، عمل PDF، ping لسيرفر، git clone لريبو اليوزر) ممكن تتحول لـ Remote Code Execution، وده أخطر حاجة ممكن تحصل: المهاجم بيبقى جوه السيرفر بصلاحياتك. وفي نسخة 2025 دي جزء من A05 Injection زي SQL و XSS بالظبط: مدخل المستخدم بيتفسّر ككود.`,
+            how: R`[[exec(cmd)]] بيشغّل [[/bin/sh -c cmd]] (أو [[cmd.exe]] على Windows). الـ shell هو اللي بيفهم [[;]] كـ «أمر جديد» و [[$(...)]] كـ «شغّل ده وحط الناتج هنا». فلو [[host]] فيه [[x; echo HACKED]]، الـ shell بيشوف أمرين.
+
+[[execFile(file, args)]] و [[spawn(file, args)]] بيعملوا [[execve]] مباشرة: البرنامج بياخد الـ array زي ما هو، كل عنصر argument. مفيش حد يفسّر [[;]]، فهي مجرد حرف في النص.
+
+بس خلي بالك: [[spawn(cmd, { shell: true })]] و [[execFile]] مع [[shell: true]] بيرجّعوا الـ shell تاني، يعني نفس خطر [[exec]].
+
+وفي Python: [[subprocess.run("echo " + x, shell=True)]] خطر، و [[subprocess.run(["echo", x])]] آمن. و [[os.system]] دايمًا بيستخدم shell، فمتستخدمهوش مع مدخل مستخدم.`,
+            when: R`في أي مكان فيه [[child_process]] أو [[subprocess]] أو [[os.system]] أو backticks في Ruby/PHP ([[shell_exec]] و [[system]]). دوّر عليهم بـ grep في كودك، ولكل واحد اسأل: فيه حاجة هنا جاية من المستخدم؟ حتى اسم ملف رفعه اليوزر يعتبر مدخل مستخدم.`,
+            mistakes: R`تحاول تهرّب المدخل بنفسك بإنك تحطه بين علامات تنصيص: [[exec('convert "' + name + '"')]]، واسم الملف فيه [["]] أو [[$(...)]] فيعدّي. استخدم args array وخلاص.
+
+Argument injection: حتى مع [[execFile]]، لو المدخل بيبدأ بـ [[-]] البرنامج هيفهمه option مش قيمة. مثلًا [[execFile("git", ["log", userInput])]] واليوزر بعت [[--output=/some/path]]، و git هيكتب ملف في المكان ده (جرّبناها وحصلت). الحل: حط [[--]] قبل مدخلات اليوزر ([[execFile("git", ["log", "--", userInput])]]) عشان البرنامج يعرف إن اللي بعدها قيم مش options، واعمل validation (مثلًا hostname بـ regex أو [[new URL]]).
+
+في الانترفيو: «ليه execFile أأمن من exec؟» الإجابة اللي بيدوروا عليها: مش عشان بتفلتر حاجة، عشان مفيش shell خالص بيفسّر المدخل، وكل عنصر في الـ array argument واحد. وضيف حكاية الـ [[--]] كـ bonus.`
+          },
+          teach: R`## الفكرة: مين اللي بيقرا الأمر، البرنامج ولا الـ shell؟
+
+لما تشغّل برنامج خارجي، فيه طريقتين: تدّي الأمر كـ string لـ [[/bin/sh]] (الـ shell) اللي بيفسّر الرموز، أو تدّي اسم البرنامج والـ arguments منفصلين من غير shell خالص. المثال بيشغّل [[echo]] (بدل [[ping]] عشان التجربة آمنة وسريعة) بالطريقتين، وبيوريك إن الرموز بتشتغل في الأولى بس.
+
+---
+
+## ١. أول سطور المثال
+
+~~~javascript
+import { exec, execFile } from "node:child_process";
+import { promisify } from "node:util";
+const execP = promisify(exec);
+const execFileP = promisify(execFile);
+const host = process.argv[2] ?? "example.com";
+~~~
+
+- [[exec]] و [[execFile]] من [[node:child_process]]: الاتنين بيشغّلوا برامج، بس بطريقتين مختلفين (الفرق تحت).
+- [[promisify]] بيحوّل دالة بـ callback لدالة بترجّع Promise عشان نستخدم [[await]].
+- [[process.argv[2]]] أول argument بعد اسم السكربت (argv 0 = node، argv 1 = الملف). ده بيمثّل حاجة جاية من المستخدم.
+- [[?? "example.com"]] لو مفيش argument، استخدم القيمة دي. [[??]] معناها «لو اللي قبلي null أو undefined».
+
+---
+
+## ٢. السطر الخطر vs الآمن
+
+~~~javascript
+const bad  = await execP("echo pinging " + host);
+const good = await execFileP("echo", ["pinging", host]);
+~~~
+
+| | [[exec]] | [[execFile]] |
+|---|---|---|
+| بياخد | string واحد | اسم برنامج + array arguments |
+| بيشغّل | [[/bin/sh -c "النص كله"]] | البرنامج مباشرة ([[execve]]) |
+| مين بيفسّر [[;]] و [[$(...)]] | الـ shell | محدش، حروف عادية |
+
+[[execFile("echo", ["pinging", host])]]: كل عنصر في الـ array بيوصل لـ [[echo]] كـ argument واحد حرفي، مهما كان فيه.
+
+---
+
+## ٣. جرّبناها (في Docker، node:22)
+
+### مدخل فيه أوامر زيادة
 
 ~~~bash
-LOG_SALT=abc node logs.mjs
+node cmd.mjs 'x; echo HACKED; id -un'
 ~~~
 
 ~~~text الناتج
-{"level":30,"time":1791294428868,"pid":35056,"hostname":"ALI-PC","user":{"id":"7e00ac929d73","email":"[redacted]","phone":"[redacted]"},"msg":"signup"}
-{"level":40,"time":1791294428869,"pid":35056,"hostname":"ALI-PC","body":{"email":"[redacted]","password":"[redacted]"},"msg":"login failed"}
+exec: pinging x
+HACKED
+root
+execFile: pinging x; echo HACKED; id -un
 ~~~
 
-| الحقل | معناه |
-|---|---|
-| [[level]] | 30 = info، و 40 = warn (و 50 = error) |
-| [[time]] | الوقت بالـ milliseconds من 1970 |
-| [[pid]] | رقم الـ process |
-| [[hostname]] | اسم الجهاز |
-| [[msg]] | الرسالة |
+- [[exec]]: الـ shell شاف [[;]] فنفّذ **3 أوامر**: [[echo pinging x]]، وبعده [[echo HACKED]] (طبع HACKED)، وبعده [[id -un]] (طبع اسم اليوزر، هنا [[root]]). ده execution كامل لأوامر المهاجم.
+- [[execFile]]: سطر واحد، والمدخل كله ظهر كنص بعد [[pinging]]. محدش فسّر [[;]].
 
-الإيميل والتليفون والباسورد اتشطبوا، حتى في السطر التاني اللي فيه [[body]] كامل «بالغلط».
+### مدخل بـ [[$(...)]]
+
+~~~bash
+node cmd.mjs '$(whoami)'
+~~~
+
+~~~text الناتج
+exec: pinging root
+execFile: pinging $(whoami)
+~~~
+
+[[$(...)]] معناها للـ shell «شغّل اللي جوه وحط ناتجه هنا». [[exec]] شغّل [[whoami]] وحط [[root]]. [[execFile]] طبع النص زي ما هو.
+
+> لازم تحط المدخل بين علامات تنصيص مفردة [['...']]، وإلا الـ shell بتاعك انت هو اللي هيفسّر [[;]] قبل ما node يشوفه، والتجربة مش هتبيّن الفرق.
+
+### نفس الكلام عبر HTTP
+
+ضفنا للمعمل route بيعمل [[exec("echo pinging " + host)]] و route تاني بـ [[execFile]]. بمدخل [[x; id -un; cat /etc/hostname]]:
+
+~~~text /bad/ping
+pinging x
+root
+b61b92bb9ffc
+~~~
+
+~~~text /ping
+pinging x; id -un; cat /etc/hostname
+~~~
+
+يعني أي feature بتلف على أداة (ping، تحويل فيديو، git) بتبقى Remote Code Execution لو اتبنت بـ [[exec]] + لزق.
 
 ---
 
-## ٥. الثغرة: مستوى أعمق
+## ٤. Python
 
-زوّدنا [[log.info({ user: { profile: { email: "deep@example.com" } } }, "nested")]]:
+نفس القاعدة: [[shell=True]] خطر، list آمن.
+
+~~~python
+bad  = subprocess.run("echo pinging " + host, shell=True, capture_output=True, text=True)
+good = subprocess.run(["echo", "pinging", host], capture_output=True, text=True)
+~~~
+
+جرّبناه (python:3.12) بمدخل [[x; echo HACKED]]:
 
 ~~~text الناتج
-{"level":30,...,"user":{"profile":{"email":"deep@example.com"}},"msg":"nested"}
+shell=True: pinging x
+HACKED
+list: pinging x; echo HACKED
 ~~~
 
-الإيميل ظاهر! [[*.email]] بيطابق [[user.email]] بس، و [[user.profile.email]] مستويين.
+[[os.system]] دايمًا shell، فمتستخدمهوش مع مدخل مستخدم.
 
-## ٦. التصليح (الحل)
+---
 
-~~~text
-const SENSITIVE = ["password", "token", "email", "phone", "nationalId"];
-...SENSITIVE.map((k) => $__bt*.$__{k}$__bt),
-...SENSITIVE.map((k) => $__bt*.*.$__{k}$__bt),
-~~~
+## ٥. فخّ لطيف: argument injection
 
-- [[SENSITIVE]]: لستة الأسامي مرة واحدة.
-- [[.map((k) => ...)]]: لكل اسم اعمل مسار. والـ backticks مع [[$__{k}]] template string بيحط الاسم جوه النص: [[*.email]] و [[*.*.email]].
-- [[...]] (spread): فك اللستة جوه الـ array.
+حتى مع [[execFile]]، لو المدخل بيبدأ بـ [[-]] البرنامج هيفهمه option. [[execFile("git", ["log", userInput])]] واليوزر بعت [[--output=/path]]، git هيكتب ملف هناك. الحل: حط [[--]] قبل مدخلات اليوزر ([[execFile("git", ["log", "--", userInput])]]) عشان البرنامج يعرف إن اللي بعدها قيم مش options.
 
-~~~text الناتج
-{"level":30,...,"user":{"profile":{"email":"[redacted]"}},"msg":"nested"}
-{"level":30,...,"user":{"id":"7e00ac929d73"},"msg":"profile updated"}
-~~~
-
-ومن غير [[LOG_SALT]] السكربت بيقع ([[The "key" argument must be of type string ... Received undefined]])، فمش هيطلع ref من غير مفتاح.
-
-> الـ redact شبكة أمان. الحل الأساسي إنك تكتب IDs وحقول محددة في اللوج، مش [[req.body]] أو [[user]] كامل.
+---
 
 ## الخلاصة
 
-| | |
-|---|---|
-| سجّل | ref اليوزر، الـ action، أرقام، أكواد أخطاء |
-| متسجلش | [[req.body]]، object اليوزر، query strings فيها توكن |
-| شبكة الأمان | [[redact]] بمسارات لكل مستوى |
-| Sentry | [[dataCollection]] في SDK 11، و [[beforeSend]] |`,
+- [[execFile]]/[[spawn]] باسم البرنامج و array arguments، من غير shell. مش بيفلتر حاجة، بس مفيش shell يفسّر الرموز.
+- [[exec]] و [[shell: true]] و [[os.system]] بيرجّعوا الـ shell، فخطر مع أي مدخل مستخدم.
+- الأحسن لو فيه مكتبة بتعمل الشغل جوه اللغة ([[sharp]] بدل ImageMagick، [[fs.rm]] بدل [[rm -rf]])، استخدمها.`,
           lines: [
-            "استورد pino.",
-            R`و [[createHmac]] عشان نعمل ref ثابت لليوزر.`,
-            "اعمل الـ logger.",
-            R`[[redact]]: خطوط دفاع للحقول الحساسة.`,
-            R`الحقول دي في أي object في المستوى الأول، وهيدرز الـ auth والكوكيز.`,
-            R`بدل القيمة اكتب «[redacted]».`,
-            "قفلة الـ redact.",
-            "قفلة الـ logger.",
-            R`ref ثابت لليوزر: HMAC للـ id بمفتاح، أول 12 حرف كفاية للتجميع.`,
-            "لوج تسجيل: الـ ref بيظهر، والإيميل والتليفون بيتخفوا.",
-            "لوج دخول فاشل: الإيميل والباسورد بيتخفوا حتى لو حد سجّل الـ body كله بالغلط."
+            R`[[exec]] (بيستخدم shell) و [[execFile]] (من غير shell).`,
+            R`[[promisify]] عشان نستخدمهم بـ [[await]].`,
+            R`نسخة [[exec]] بترجّع Promise فيها [[stdout]] و [[stderr]].`,
+            R`نفس الكلام لـ [[execFile]].`,
+            R`المدخل: أول argument للسكربت، وده بيمثّل حاجة جاية من المستخدم.`,
+            R`الغلط: بيلزق المدخل في string، و [[/bin/sh]] بيفسّر أي [[;]] أو [[$(...)]] فيه.`,
+            R`اطبع الناتج: هتلاقي أوامر زيادة اتنفّذت.`,
+            R`الصح: اسم البرنامج لوحده، والمدخل عنصر في array. بيوصل لـ echo كـ argument واحد حرفيًا.`,
+            R`اطبع الناتج: المدخل ظاهر زي ما هو، ومحصلش حاجة تانية.`
           ],
-          sol: R`أول سطرين بيطلعوا زي: [[{"user":{"id":"7e00ac929d73","email":"[redacted]","phone":"[redacted]"},"msg":"signup"}]] و [[{"body":{"email":"[redacted]","password":"[redacted]"},"msg":"login failed"}]]. والـ id نفسه (42) مش ظاهر، الـ ref بس، وبيطلع نفس القيمة كل تشغيل طالما [[LOG_SALT]] ثابت.
+          sol: R`مع [[node cmd.mjs 'x; echo HACKED; id -un']] هتشوف:
 
-السطر الـ nested بيطلع الإيميل واضح: [[{"user":{"profile":{"email":"deep@example.com"}}}]]، لأن [[*.email]] بيطابق مستوى واحد بس. التصليح تحت: تولّد الـ paths لمستويين من لستة واحدة. وبعدين بتشوف «[redacted]» في المستوى التاني كمان. الأحسن من كده إنك متسجلش object فيه profile أصلًا.
+[[exec: pinging x]] وبعده سطر [[HACKED]] وبعده اسم اليوزر اللي شغّال بيه (زي [[root]] أو اسمك). يعني الـ shell نفّذ 3 أوامر. وسطر [[execFile: pinging x; echo HACKED; id -un]] سطر واحد، والمدخل مطبوع كنص.
 
-الـ grep في كودك: كل [[console.log(req.body)]] أو [[log.info(user)]] بيطبع object كامل، غيّره لـ IDs وحقول محددة.`,
-          solCode: R`import pino from "pino";
-import { createHmac } from "node:crypto";
+ومع [[node cmd.mjs '$(whoami)']]: سطر exec هيبقى [[exec: pinging root]] (الـ shell شغّل whoami وحط الناتج)، و execFile هيطبع [[$(whoami)]] حرفيًا.
 
-const SENSITIVE = ["password", "token", "email", "phone", "nationalId"];
-const log = pino({
-  redact: {
-    paths: [
-      ...SENSITIVE.map((k) => $__bt*.$__{k}$__bt),
-      ...SENSITIVE.map((k) => $__bt*.*.$__{k}$__bt),
-      "req.headers.authorization",
-      "req.headers.cookie",
-    ],
-    censor: "[redacted]",
-  },
+لو شغّلت الأمر من غير علامات تنصيص مفردة، الـ shell بتاعك انت هو اللي هيفسّر [[;]] قبل ما node يشوف حاجة، والتجربة مش هتبيّن الفرق. لازم [['...']] حوالين المدخل.
+
+في Python نفس النتيجة بالظبط: [[shell=True]] بيطبع [[HACKED]] في سطر لوحده، والـ list بتطبع المدخل كنص.`,
+          solCode: R`# cmd.py  ->  python3 cmd.py 'x; echo HACKED'
+import subprocess, sys
+
+host = sys.argv[1]
+
+bad = subprocess.run("echo pinging " + host, shell=True, capture_output=True, text=True)
+print("shell=True:", bad.stdout.strip())
+
+good = subprocess.run(["echo", "pinging", host], capture_output=True, text=True, check=True)
+print("list:", good.stdout.strip())`
+        },
+        {
+          cmd: "Path Traversal",
+          title: "A01 لما اسم الملف يطلّعك بره الفولدر",
+          desc: R`عندك route بيقرا ملف باسم جاي من المستخدم ([[/files/:name]] أو [[?file=]]). المهاجم يبعت [[../../.env]] فيطلع من فولدر الـ uploads ويقرا أسرارك، أو [[../../../etc/passwd]]. و Express بيفك الـ encoding في الـ params، فـ [[..%2F.env]] بتوصل للكود بتاعك [[../.env]] حتى لو المتصفح أو curl بينضّفوا [[../]] العادية.
+
+[[path.join]] مش حماية: هو بيرتّب المسار بس، و [[path.join("uploads", "../.env")]] بيرجّع [[.env]] بكل أدب. الحماية: [[path.resolve(BASE, name)]] يديك المسار الكامل النهائي، وبعدين اتأكد إنه بيبدأ بـ [[BASE + path.sep]]. لو مش كده ارفض.
+
+والأحسن من الفحص: متستخدمش اسم المستخدم في المسار أصلًا. خزّن الملف باسم [[randomUUID()]] واحفظ الاسم الأصلي في الداتابيز، زي ما في درس [[multer]] في «تاب Backend بـ Node». ودي في OWASP 2025 تحت A01 Broken Access Control، زي SSRF (شوف درس «7. SSRF (بقت جزء من رقم 1)» فوق، مش هنكررها هنا).`,
+          example: R`import express from "express";
+import path from "node:path";
+import fs from "node:fs/promises";
+const app = express();
+const BASE = path.resolve("uploads");
+
+// غلط: ..%2F.env بتتفك لـ ../.env وتطلع بره الفولدر
+app.get("/bad/:name", async (req, res) => {
+  res.send(await fs.readFile(path.join(BASE, req.params.name), "utf8"));
 });
-const userRef = (id) => createHmac("sha256", process.env.LOG_SALT).update(String(id)).digest("hex").slice(0, 12);
 
-log.info({ user: { profile: { email: "deep@example.com" } } }, "nested");
-log.info({ user: { id: userRef(42) } }, "profile updated");`
-        }
-      ]
-    },
-    {
-      t: "أدوات الفحص",
-      l: 3,
-      n: "أدوات مشروعة تشغّلها على مشاريعك انت لتكتشف الثغرات قبل غيرك",
-      items: [
-        {
-          cmd: "فحص الـ headers",
-          title: "أول وأسرع فحص",
-          desc: "الأمر بيطبع headers الحماية الموجودة. لتقرير بدرجة: securityheaders.com. الناقص منهم تضيفه في Nginx بـ [[add_header]] أو بـ helmet في Express. أهمهم HSTS (يجبر HTTPS) و CSP (يحدد السكربتات المسموحة، وده أقوى حماية ضد XSS).",
-          example: R`curl -sI https://example.com | grep -iE "strict-transport|content-security|x-frame|x-content-type|referrer-policy|permissions-policy"`,
-          try: "افحص موقعك على securityheaders.com واستهدف درجة A.",
-          flag: "term",
-          deep: {
-            why: "أسرع فحص تعمله من غير أي أداة: هل سيرفري بيبعت الـ security headers المهمة؟",
-            how: R`الأمر بياخد ثانية ويوريك كل header مهم موجود. اللي مش موجود يبقى ناقص.
+// صح: حل المسار الكامل، واتأكد إنه لسه جوه الفولدر
+app.get("/files/:name", (req, res) => {
+  const full = path.resolve(BASE, req.params.name);
+  if (!full.startsWith(BASE + path.sep)) return res.status(400).end();
+  res.sendFile(full);
+});
 
-أهمهم: [[Strict-Transport-Security]] بيجبر HTTPS. [[Content-Security-Policy]] بيمنع XSS. [[X-Frame-Options: DENY]] بيمنع clickjacking. [[X-Content-Type-Options: nosniff]] بيمنع MIME confusion.
-
-لو عايز درجة شاملة: securityheaders.com. تضيف headers ناقصة في Nginx بـ [[add_header]] في الـ server block.`,
-            when: "بعد كل deploy. واجعله جزء من checklist الرفع.",
-            mistakes: "CSP بتحتاج تعرف كل مصدر بيحمّل منه. ابدأ بـ [[Content-Security-Policy-Report-Only]]."
-          },
-          lines: ["الـ headers بس، وفلتر على headers الأمان الستة. اللي ناقص ضيفه في Nginx أو helmet."],
-          sol: R`securityheaders.com بيديك درجة من A+ لـ F ولستة بالـ headers الموجودة (أخضر) والناقصة (أحمر). موقع من غير أي إعداد بياخد غالبًا F أو D. عشان توصل A، لازم يبقى موجود: [[Strict-Transport-Security]]، [[Content-Security-Policy]]، [[X-Frame-Options]] (أو [[frame-ancestors]] في الـ CSP)، [[X-Content-Type-Options: nosniff]]، [[Referrer-Policy]]، و [[Permissions-Policy]].
-
-في Express [[helmet()]] بيحط معظمهم مرة واحدة، والناقص غالبًا [[Permissions-Policy]] تضيفه بنفسك. في Nginx بـ [[add_header ... always;]]. خد بالك: الـ CSP اللي helmet بيحطها ممكن تكسر سكريبتات خارجية أو inline، فافتح الـ Console بعد ما تفعّلها. والموقع لازم يكون على الإنترنت عشان الأداة توصله، ومش هتقدر تفحص localhost.`
-        },
-        {
-          cmd: "SSL Labs",
-          title: "فحص الـ HTTPS",
-          desc: "ssllabs.com/ssltest بيدّي درجة لإعدادات الـ SSL بتاعتك، ويقولك لو بتدعم بروتوكولات قديمة ضعيفة. استهدف A. certbot بيظبط أغلب ده لوحده، بس الفحص بيطمّنك.",
-          example: R`# تاريخ انتهاء الشهادة من الترمنال
-echo | openssl s_client -connect example.com:443 -servername example.com 2>/dev/null | openssl x509 -noout -dates`,
-          try: "افحص موقعك على SSL Labs واعرف درجتك.",
-          flag: "term",
-          deep: {
-            why: "HTTPS مش كل حاجة. إعدادات الـ TLS نفسها ممكن تكون ضعيفة.",
-            how: R`SSL Labs بيجرّب كل cipher suites وprotocols وcertificate chain، وبيدّيك درجة من A+ لـ F.
-
-أشهر المشاكل: دعم TLS 1.0 أو 1.1 (قديمين). شهادة منتهية. Cipher suites ضعيفة.
-
-certbot مع Nginx بيحط إعدادات معقولة، بس ممكن تحتاج تظبط [[ssl_protocols]] في Nginx.`,
-            when: "بعد تجهيز HTTPS لأول مرة. وكل ٣ شهور تتأكد إن certbot جدّد.",
-            mistakes: "تكتفي بـ certbot وتفتكر كل حاجة تمام. إعدادات TLS الافتراضية في Nginx القديمة ممكن ضعيفة."
-          },
-          lines: ["نفس أمر bash: اتصل HTTPS، خد الشهادة، واطبع تاريخ بدايتها ونهايتها."],
-          sol: R`SSL Labs بياخد دقيقة أو اتنين وبيطلع درجة من A+ لـ F. سيرفر متظبط بـ Let's Encrypt و certbot و Nginx حديث بياخد A عادة، وعشان A+ محتاج [[Strict-Transport-Security]] بـ [[max-age]] طويل (6 شهور أو أكتر). التقرير فيه أربع أجزاء: الشهادة، دعم البروتوكولات، تبادل المفاتيح، والـ ciphers.
-
-الأسباب المعتادة لدرجة أقل: TLS 1.0 أو 1.1 لسه مفعّلين (حدّد [[ssl_protocols TLSv1.2 TLSv1.3;]])، سلسلة الشهادة ناقصة (استخدم [[fullchain.pem]] مش [[cert.pem]])، أو ciphers قديمة. لو الدرجة T يبقى الشهادة مش موثوقة (self-signed أو الدومين مش مطابق)، و F يبقى فيه ثغرة معروفة.`
-        },
-        {
-          cmd: "OWASP ZAP",
-          title: "سكانر ثغرات مجاني",
-          desc: "أشهر سكانر مجاني (بديل Burp Suite المدفوع). الـ Automated Scan بيزحف على موقعك ويجرّب ثغرات شائعة ويطلعلك تقرير. شغّله على مواقعك بس. ابدأ بالـ Passive scan (بيراقب من غير ما يهاجم) قبل الـ Active. متشغّلش Active scan على موقع إنتاج فيه مستخدمين، لأنه بيبعت طلبات كتير وممكن يعمل بيانات وهمية.",
-          example: R`docker run -t ghcr.io/zaproxy/zaproxy:stable \
-  zap-baseline.py -t https://your-own-site.com`,
-          try: "شغّل ZAP baseline على موقع تجربة بتاعك (مش إنتاج) واقرا التقرير.",
-          flag: "term",
-          deep: {
-            why: "بعد ما تأمّن الكود، محتاج تختبر من بره: ZAP بيجرّب هجمات معروفة ويقولك إيه اللي نجح.",
-            how: R`ZAP أداة مجانية من OWASP. بتشغّله وتوجّهه لموقعك، وهو بيزحف ويجرّب ثغرات شائعة. بعدين تقرير مع الأولويات.
-
-Passive Scan بيراقب فقط (بدون هجوم)، مناسب على الإنتاج. Active Scan بيبعت طلبات فعلية، لازم على بيئة تجربة بس. الـ Docker command baseline scan بيعمل passive فقط.`,
-            when: "قبل كل إطلاق كبير، على بيئة staging. مش على الإنتاج.",
-            mistakes: "تشغّله على الإنتاج بـ Active Scan. ممكن يكتب داتا وهمية ويبعت طلبات كتير."
-          },
-          lines: [
-            "شغّل ZAP من Docker (الشرطة المايلة في الآخر: الأمر مكمّل في السطر اللي بعده).",
-            "فحص baseline (passive، مش بيهاجم) على موقعك انت."
-          ],
-          sol: R`الـ baseline بيزحف على الموقع دقيقة تقريبًا ويفحص بشكل passive بس (مش بيهاجم)، وفي الآخر بيطبع سطر لكل قاعدة: [[PASS]]، [[WARN-NEW]]، أو [[FAIL-NEW]]، وملخص زي [[FAIL-NEW: 0 FAIL-INPROG: 0 WARN-NEW: 8 WARN-INPROG: 0 INFO: 0 IGNORE: 0 PASS: 58]]. الـ WARN المعتادة على موقع جديد: CSP مش موجودة، X-Content-Type-Options ناقص، الكوكي من غير SameSite أو HttpOnly، و Server بيفشي النسخة.
-
-لو عايز تقرير تقراه براحتك، ضيف [[-v $(pwd):/zap/wrk -r report.html]] فيتحفظ [[report.html]] عندك. خد بالك: الـ exit code بيبقى 2 لو فيه WARN، وده عادي، مش معناه إن الأداة فشلت. ومتشغّلوش على سيرفر مش بتاعك، ولا الـ full scan على الإنتاج لأنه بيبعت طلبات كتير ممكن تغيّر داتا.`
-        },
-        {
-          cmd: "nmap",
-          title: "إيه المفتوح على سيرفرك",
-          desc: "بيوريك البورتات المفتوحة زي ما العالم شايفها. المفروض تلاقي 22 و 80 و 443 بس. لو لقيت بورت قاعدة بيانات (5432 أو 27017) مفتوح للعالم، دي مشكلة كبيرة: اقفله في الفايروول وخلّي التطبيق يوصله على 127.0.0.1. على سيرفراتك انت بس.",
-          example: R`nmap -sV 203.0.113.10
-nmap -p- 203.0.113.10`,
-          try: "اعمل scan لسيرفرك، واتأكد إن مفيش بورت قاعدة بيانات مفتوح.",
-          flag: "term",
-          deep: {
-            why: "بعد كل تغيير في الفايروول أو Docker، تتأكد إن مفيش بورت مفتوح بالغلط. شرحناه في bash المستوى ٣.",
-            how: R`[[-sV]] بيحاول يعرف البرنامج ونسخته على كل بورت، وده بيوريك الـ attack surface من وجهة نظر المهاجم.
-
-على سيرفراتك انت بس، ومن جهازك مش من السيرفر، عشان تشوف الصورة الحقيقية من بره.`,
-            when: "بعد أي تغيير في ufw أو إضافة خدمة جديدة.",
-            mistakes: "تشغيله على أي حاجة مش ملكك."
-          },
-          lines: ["افحص البورتات المشهورة واعرف البرنامج ونسخته على كل واحد.", "افحص كل الـ 65535 بورت."],
-          sol: R`على سيرفر متظبط، [[nmap -Pn -p- your-server-ip]] (أو البورتات المشهورة بس من غير [[-p-]]) لازم يطلع [[22/tcp open ssh]] و [[80/tcp open http]] و [[443/tcp open https]] بس، والباقي [[filtered]] (الفايروول بيرمي الطلب) أو [[closed]]. أي [[5432]] أو [[3306]] أو [[6379]] أو [[27017]] حالته [[open]] معناه إن قاعدة البيانات مكشوفة للإنترنت.
-
-شغّله من جهازك مش من السيرفر نفسه: من جوه السيرفر كل حاجة هتبان مفتوحة لأنك بتكلم localhost. ولو قاعدة البيانات في Docker وطالعة open رغم إن ufw مفعّل، ده مش خطأ في ufw، Docker بيعدّي عليه: شوف درس «ss -tlnp بعد compose» في نفس التاب.`
-        },
-        {
-          cmd: "السكانرات في CI",
-          title: "افحص مع كل push",
-          desc: "تحط الفحص في الـ pipeline فيتشغّل لوحده. [[npm audit]] يفشل الـ build لو فيه ثغرة عالية، [[gitleaks]] يفشّل الـ build لو فيه سر (ولمنعه قبل الـ commit حطه pre-commit hook)، و [[Semgrep]] بيفحص الكود نفسه على أنماط خطيرة. Trivy بيفحص Docker images.",
-          example: R`# في GitHub Actions
-npm audit --audit-level=high
-docker run -v $(pwd):/src semgrep/semgrep semgrep --config auto
-trivy image myapp:latest`,
-          try: "ضيف [[npm audit --audit-level=high]] كخطوة في GitHub Actions لمشروع عندك.",
-          flag: "term",
-          deep: {
-            why: "الأمان مش بتعمله مرة وتنسى. لما تضيفه في الـ pipeline، كل push بيتفحص أوتوماتيك.",
-            how: R`[[npm audit --audit-level=high]] يفشل الـ build لو ثغرة high أو critical. فمحدش يرفع كود بمكتبات خطيرة.
-
-Semgrep بيحلل الكود نفسه ويدوّر على patterns خطيرة. [[--config auto]] بيختار rules حسب اللغة.
-
-Trivy بيفحص Docker images. كل package في الـ image بيقارنها بـ CVE database.`,
-            when: "في GitHub Actions. خليهم يشتغلوا على كل PR.",
-            mistakes: "تحط السكانرات وتـignore كل الـ warnings. خصص وقت أسبوعي لمراجعة الـ findings."
-          },
-          lines: [
-            "فشّل الـ build لو فيه ثغرة high أو critical.",
-            "Semgrep بيفحص الكود نفسه على أنماط خطيرة، والقواعد بتتختار حسب اللغة.",
-            "Trivy بيفحص الـ Docker image: كل package في النظام جواها."
-          ],
-          sol: R`الخطوة: [[- run: npm audit --audit-level=high]] بعد [[npm ci]] في الـ workflow. لو فيه ثغرة high أو critical الأمر بيرجع exit code 1 والـ job يبقى أحمر ❌، ولو الموجود moderate أو low بس بيعدّي ✅ مع إنه بيطبعهم في اللوج.
-
-الغلطة الشائعة إن الـ CI يفضل أحمر بسبب ثغرة في devDependency ملهاش علاقة بالإنتاج، فالفريق يبطّل يبص عليه. الحل: [[npm audit --audit-level=high --omit=dev]] يفحص مكتبات الإنتاج بس. وخليه جزء من الـ PR مش خطوة لوحدها بعد الـ merge، عشان الثغرة توقف الـ PR قبل ما تدخل.`,
-          solCode: R`name: security
-on: [push, pull_request]
-jobs:
-  audit:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm audit --audit-level=high --omit=dev`
-        }
-      ]
-    },
-    {
-      t: "أسرار وبورتات على السيرفر",
-      l: 3,
-      n: "اللي بيتسرّب من غير ما تاخد بالك: build args، و .env في Git، وبورتات Docker، والباك أب",
-      items: [
-        {
-          cmd: "أسرار في build args",
-          title: "السر اللي اتبعت وقت البناء بيفضل جوه الـ image",
-          desc: "أي قيمة بتبعتها بـ [[--build-arg]] وبيستخدمها [[RUN]] بتتسجل في تاريخ الـ image، وأي حد معاه الـ image يقراها بـ [[docker history]]. متغيرات [[NEXT_PUBLIC_]] و [[VITE_]] عادي، لأنها أصلًا بتتحط في ملفات JavaScript اللي بتروح للمتصفح. أسرار السيرفر مكانها وقت التشغيل بس. ولو محتاج سر وقت البناء (توكن npm خاص)، استخدم [[--secret]].",
-          example: R`docker history --no-trunc myapp:latest | grep -iE "key|secret|password|token"
-docker image inspect myapp:latest --format '{{json .Config.Env}}'
-docker build --build-arg NEXT_PUBLIC_API_URL=https://api.example.com -t myapp .
-docker build --secret id=npmrc,src=$HOME/.npmrc -t myapp .
-# وجوه الـ Dockerfile:
-# RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci`,
-          try: "ابني image تجربة فيها [[ARG TOKEN]] و [[RUN echo done]] بعده، بـ [[--build-arg TOKEN=abc123]]، وبعدين [[docker history --no-trunc]]: هتلاقي abc123.",
-          deep: {
-            why: "الـ image بتتنقل: على registry، أو لجهاز تاني، أو لزميل. لو فيها مفتاح بوابة الدفع أو باسورد قاعدة البيانات، كل اللي يوصلها وصل للمفاتيح. ومحدش بيفكر يفتح تاريخ الـ image غير اللي بيدوّر على كده.",
-            how: R`[[ARG]] قيمة وقت البناء. بس أي [[RUN]] بعدها بيتسجل في الـ history ومعاه قيم الـ ARGs اللي كانت متاحة. و [[ENV]] أسوأ: بتفضل في إعدادات الـ image ([[inspect]] بيطلّعها) وفي كل container.
-
-الفرق المهم في Next.js و Vite: [[NEXT_PUBLIC_*]] و [[VITE_*]] لازم تتبعت وقت البناء لأنها بتتكتب جوه ملفات الـ JS، وأي زائر يقدر يشوفها في DevTools. فهي مش أسرار أصلًا (زي anon key بتاع Supabase). إنما [[SERVICE_ROLE_KEY]] أو [[DATABASE_URL]] أو مفتاح الدفع: [[env_file]] في compose أو [[--env-file]] وقت التشغيل، والتطبيق يقراهم من process.env على السيرفر.
-
-[[--secret id=npmrc,src=...]] مع [[RUN --mount=type=secret]] (BuildKit): الملف بيبقى متاح للأمر ده بس وقت البناء، ومبيتسجلش في أي طبقة ولا في الـ history.
-
-وحتى في multi-stage: السر في مرحلة الـ builder مش هيبان في الـ image النهائية، بس بيفضل في كاش البناء على الجهاز اللي بنى.
-
-لو لقيت سر في image اتنشرت: غيّره (امسح الـ image مش كفاية، ممكن حد نزّلها).`,
-            when: "مراجعة أي Dockerfile أو سكربت deploy فيه [[--build-arg]]، وقبل ما ترفع image على registry.",
-            mistakes: "في مشروع حقيقي سكربت الـ deploy كان بيبعت أسرار السيرفر (مفاتيح بوابة الدفع و service role) كـ [[--build-arg]]، وكمان بيطبع قيمها في اللوج عشان «يتأكد». وفي مشروع تاني [[DATABASE_URL]] كان build ARG فاتحفظ في الـ image بالباسورد. الصح: اطبع أسامي المتغيرات بس ([[docker exec app env | cut -d= -f1]])."
-          },
-          lines: [
-            "دوّر في تاريخ الـ image كامل على أي حاجة شكلها سر.",
-            "متغيرات ENV المحفوظة في الـ image.",
-            "متغير عام (بيروح للمتصفح أصلًا): عادي كـ build-arg.",
-            "سر وقت البناء: يتركّب كملف مؤقت ومبيتسجلش."
-          ],
-          sol: R`[[docker history --no-trunc test-img]] هيطلع سطر زي [[RUN |1 TOKEN=abc123 /bin/sh -c echo done]]. يعني قيمة الـ ARG اتسجلت في تاريخ الـ image، وأي حد يعمل pull للـ image يقدر يشوفها، حتى لو ما اتكتبتش في أي ملف. ولو ملقيتهاش، يبقى غالبًا مفيش RUN بعد الـ ARG، أو BuildKit بيعرض التاريخ بشكل مختلف، وده مش معناه إنها آمنة.
-
-الحل للأسرار اللي محتاجها وقت البناء (زي توكن npm private): [[RUN --mount=type=secret,id=npm_token]] وتبني بـ [[docker build --secret id=npm_token,env=NPM_TOKEN .]]، فالسر بيبقى متاح للأمر ده بس ومش بيتسجل. والأسرار اللي محتاجها وقت التشغيل مكانها [[environment]] أو [[env_file]] في compose، مش في البناء خالص.`,
-          solCode: R`# Dockerfile (تجربة)
-FROM alpine
-ARG TOKEN
-RUN echo done
-
-# بناء وفحص
-docker build --build-arg TOKEN=abc123 -t test-img .
-docker history --no-trunc test-img | grep abc123`
-        },
-        {
-          cmd: ".env اترفع على Git",
-          title: "ملف الأسرار اتعمله commit: تعمل إيه بالترتيب",
-          desc: "أول خطوة مش في Git: غيّر كل مفتاح كان في الملف، لأنه خلاص اتسرب. بعدها [[git rm --cached]] يوقف التتبع والملف يفضل عندك، و [[.gitignore]] يمنعه يرجع. والتاريخ القديم لسه فيه الملف، فمسحه من التاريخ خطوة إضافية، مش بديل عن تغيير المفاتيح.",
-          example: R`git log --all --oneline -- .env
-git show a1b2c3d:.env | cut -d= -f1
-git rm --cached .env
-echo ".env" >> .gitignore
-git add .gitignore && git commit -m "stop tracking .env"
-git push`,
-          try: "في repo تجربة: اعمل commit لـ .env فيه [[API_KEY=test]]، ونفّذ الخطوات، وبعدين [[git log --all -- .env]]: لسه ظاهر في التاريخ. ده اللي لازم تفهمه.",
-          deep: {
-            why: "الغلطة الشائعة: تعمل [[git rm --cached]] وتفتكر إن الموضوع اتقفل. الملف لسه في كل commit قديم، ولو الريبو اترفع على GitHub فالبوتات ممكن تكون نسخته في دقايق. المفاتيح هي اللي لازم تتغير.",
-            how: R`[[git log --all --oneline -- .env]]: كل commit لمس الملف، في كل الـ branches. أقدم واحد هو إمتى بدأ التسريب.
-
-[[git show a1b2c3d:.env | cut -d= -f1]]: أسامي المتغيرات بس في النسخة دي من غير القيم، دي قايمة المفاتيح اللي لازم تتغير. غيّرها كلها: باسورد قاعدة البيانات، ومفاتيح الـ APIs، و JWT secret (كل اليوزرز هيعملوا login تاني)، ومفاتيح الدفع. وحدّث [[.env]] على السيرفر بالجديد.
-
-[[git rm --cached .env]]: شيله من Git والملف يفضل على جهازك. و [[.gitignore]] عشان [[git add .]] ميرجعوش.
-
-مسح التاريخ (اختياري، وبعد تغيير المفاتيح): [[git filter-repo --path .env --invert-paths]] بيعيد كتابة كل الـ commits من غيره، وبعدين [[git push --force]]. ده بيكسر أي نسخة عند حد تاني، ومش بيوصل للـ forks ولا لنسخ حد نزّلها قبل كده. عشان كده تغيير المفاتيح هو الحل، والمسح نضافة بس.
-
-وبعدين [[gitleaks git .]] (الدرس الأول في التاب) يتأكد إن مفيش حاجة تانية.`,
-            when: "أول ما تكتشف إن .env أو أي ملف فيه أسرار اتعمله commit، حتى لو الريبو private.",
-            mistakes: "تغيّر مفتاح واحد وتنسى الباقي. و [[.env.example]] فيه القيم الحقيقية لأنه اتنسخ من [[.env]]. وتعمل force push بتاريخ جديد وتسيب المفاتيح القديمة شغالة."
-          },
-          lines: [
-            "كل commit لمس .env في كل الـ branches.",
-            "أسامي المتغيرات في نسخة قديمة (من غير القيم): دي اللي هتغيّرها.",
-            "شيله من Git وسيبه على جهازك.",
-            "امنعه يرجع.",
-            "احفظ التغيير.",
-            "ارفع."
-          ],
-          sol: R`بعد الخطوات، [[git ls-files .env]] بيطلع فاضي (الملف مبقاش متتبّع) والملف لسه موجود على جهازك. بس [[git log --all --oneline -- .env]] لسه بيطبع الـ commit القديم، و [[git show <hash>:.env]] لسه بيوريك [[API_KEY=test]]. يعني أي حد عنده clone أو شاف الـ repo على GitHub عنده المفتاح.
-
-عشان كده الخطوة الأولى في الحقيقة مش git خالص: غيّر كل مفتاح كان في الملف عند مقدم الخدمة. مسح التاريخ ([[git filter-repo --path .env --invert-paths]] وبعدين force push) خطوة إضافية بعدها، ومش بتلغي النسخ اللي اتعملها clone ولا الـ forks ولا الكاش عند GitHub. الغلطة الشائعة إنك تفتكر إن [[git rm --cached]] حلّ المشكلة.`,
-          solCode: R`mkdir leak-test && cd leak-test && git init
-echo "API_KEY=test" > .env
-git add .env && git commit -m "oops"
-git rm --cached .env
-echo ".env" >> .gitignore
-git add .gitignore && git commit -m "stop tracking .env"
-git log --all --oneline -- .env    # لسه ظاهر
-git show HEAD~1:.env               # API_KEY=test`
-        },
-        {
-          cmd: "ss -tlnp بعد compose",
-          title: "مين من الـ containers مفتوح للنت فعلًا",
-          desc: "Docker بيفتح أي بورت في [[ports:]] على كل العناوين وبيعدّي من ufw. فبعد أي [[compose up]]، شوف مين بيسمع على [[0.0.0.0]]: المفروض 80 و 443 (و 22) بس. أي قاعدة بيانات أو API هناك مكشوفة. الحل [[127.0.0.1:5000:5000]] أو تشيل [[ports]] خالص.",
-          example: R`docker compose up -d
-sudo ss -tlnp | grep -E "0\.0\.0\.0|\[::\]"
-docker compose ps --format "table {{.Service}}\t{{.Ports}}"
-nmap -Pn -p 22,80,443,3000,5000,5432,6379,27017 203.0.113.10`,
-          try: "على سيرفر التجربة شغّل Redis منشور على [[6379:6379]] و ufw مفعّل، واعمل nmap من جهازك: هتلاقيه open. غيّرها لـ 127.0.0.1:6379:6379 وجرّب تاني.",
-          deep: {
-            why: "ufw بيديك إحساس إن كل حاجة مقفولة غير اللي فتحته، و Docker بيكسر الإحساس ده بصمت. Redis من غير باسورد أو Mongo مكشوف بيتلاقوا ويتخترقوا في ساعات، لأن فيه بوتات بتعمل scan للنت كله على البورتات دي.",
-            how: R`[[ss -tlnp]]: كل بورت TCP بيسمع، ومين البرنامج. مع Docker هتلاقي [[docker-proxy]] على البورتات المنشورة. العنوان [[0.0.0.0]] أو [[::]] يعني كل الشبكات، و [[127.0.0.1]] يعني السيرفر نفسه بس.
-
-[[compose ps]] بالـ Ports بيوريك كل service ومنشورة إزاي: [[0.0.0.0:5432->5432/tcp]] مكشوفة، و [[127.0.0.1:5432->5432/tcp]] محلية.
-
-[[nmap]] من جهازك انت (مش من السيرفر) هو الاختبار الحقيقي: ده اللي الناس شايفاه. [[-Pn]] متعملش ping الأول.
-
-الحل: service محتاجة Nginx يوصلها بس؟ متنشرهاش خالص، Nginx يوصلها بالاسم جوه شبكة compose. محتاج توصلها من السيرفر نفسه (أو SSH tunnel)؟ [[127.0.0.1:5432:5432]].`,
-            when: "بعد أول compose up على أي سيرفر، وبعد أي تعديل في ports، وكجزء من preflight (تاب VPS).",
-            mistakes: "في مشروع حقيقي الباك إند كان ناشر [[5000:5000]] فالـ API متاح مباشرة من غير Nginx، يعني من غير rate limit ولا HTTPS. وفي مشروع تاني ملف الإنتاج كان فاتح Postgres على 5433 و Redis على 6379 للنت، و Redis من غير باسورد، و ufw شغال فالكل فاكر إنهم مقفولين."
-          },
-          lines: [
-            "شغّل الـ stack.",
-            "مين بيسمع على كل العناوين؟",
-            "كل service ومنشورة على أنهي عنوان.",
-            "من جهازك: البورتات دي مفتوحة للنت فعلًا؟"
-          ],
-          sol: R`مع [[ports: ["6379:6379"]]]، الـ nmap من جهازك هيطلع [[6379/tcp open redis]] حتى لو [[ufw status]] مش فيه قاعدة لـ 6379. ده لأن Docker بيضيف قواعد iptables خاصة بيه بتتنفذ قبل قواعد ufw. و [[ss -tlnp]] على السيرفر هيوريك [[0.0.0.0:6379]] (docker-proxy).
-
-بعد ما تغيّرها لـ [[127.0.0.1:6379:6379]] و [[docker compose up -d]]، [[ss -tlnp]] يطلع [[127.0.0.1:6379]]، والـ nmap من جهازك يطلع [[closed]] أو [[filtered]]. الأحسن من كده لو الـ API في نفس الـ compose: شيل [[ports]] خالص من Redis وقاعدة البيانات، والـ API يوصلهم باسم الـ service ([[redis:6379]]) على شبكة compose الداخلية. وخلّي في بالك إن Redis من غير باسورد ومفتوح للنت بيتلقط في دقايق.`
-        },
-        {
-          cmd: "openssl enc",
-          title: "تشفير الباك أب قبل ما يطلع من السيرفر",
-          desc: "الباك أب فيه قاعدة البيانات كلها، فلما يتخزن بره السيرفر (Google Drive، أو S3) لازم يبقى متشفر. [[openssl enc]] بيضغط ويشفّر في pipe واحد، والباسورد جاي من متغير بيئة ([[env:]]) مش من سطر الأوامر. وجرّب الفك قبل ما تحتاجه.",
-          example: R`export BACKUP_PASSPHRASE="$(cat /root/.backup-pass)"
-tar -czf - app.dump config.tar.gz | openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:BACKUP_PASSPHRASE -out backup.tar.gz.enc
-openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:BACKUP_PASSPHRASE -in backup.tar.gz.enc | tar -tzf -
-rclone copy backup.tar.gz.enc remote:backups/ && rclone check backup.tar.gz.enc remote:backups/ --one-way`,
-          try: "شفّر أي فولدر، وفكه في فولدر تاني بـ [[tar -xzf -]] بدل [[-tzf]]، وقارن بـ [[diff -r]].",
-          deep: {
-            why: "باك أب مش متشفر على خدمة تخزين هو نسخة كاملة من بيانات عملائك مستنية أي حد يوصل للحساب ده. والتشفير بيخلي تسريب الملف مش مهم طالما الباسورد في أمان.",
-            how: R`[[tar -czf -]]: اضغط الملفات واكتب الناتج على stdout ([[-]]) بدل ملف، فمفيش نسخة مش متشفرة بتتكتب على الديسك.
-
-[[openssl enc -aes-256-cbc]]: تشفير AES بمفتاح ٢٥٦ بت. [[-pbkdf2 -iter 200000]]: المفتاح بيتولّد من الباسورد بعد ٢٠٠ ألف دورة، فتخمين الباسورد بطيء جدًا. من غيرهم openssl بيستخدم طريقة قديمة ضعيفة وبيطلع تحذير. [[-salt]]: ملح عشوائي، فنفس الباسورد بيدّي ناتج مختلف كل مرة.
-
-[[-pass env:BACKUP_PASSPHRASE]]: الباسورد من متغير بيئة. لو كتبته [[-pass pass:xxx]]، أي يوزر على السيرفر يشوفه في [[ps aux]] وقت التشفير. وفيه كمان [[file:/path]].
-
-الفك: نفس الإعدادات بالظبط مع [[-d]]. أي اختلاف في [[-iter]] أو الـ cipher = [[bad decrypt]]. [[tar -tzf -]] بيعرض المحتوى من غير ما يفك، اختبار سريع إن الملف سليم.
-
-[[rclone check --one-way]]: يتأكد إن النسخة اللي اترفعت مطابقة فعلًا.
-
-الباسورد نفسه لازم يتحفظ بره السيرفر (password manager). لو السيرفر مات والباسورد كان عليه بس، الباك أب ملوش لازمة. وبدائل أحدث: [[age]] أو [[gpg -c]]، بيكشفوا لو الملف اتعدّل (CBC لوحده مبيكشفش).`,
-            when: "أي باك أب بيطلع من السيرفر. شغّله من cron بعد pg_dump (تاب VPS، باك أب قاعدة البيانات).",
-            mistakes: "في مشروع حقيقي السكربت كان بيستخدم [[-pass pass:$PASS]] فالباسورد بيبان في [[ps]]، ومكنش بيتأكد إن الرفع نجح ولا بينبّه لو فشل من cron، ومفيش اختبار فك أبدًا. باك أب عمرك ما جربت ترجّعه مش باك أب."
-          },
-          lines: [
-            "الباسورد في متغير بيئة من ملف root بس.",
-            "اضغط وشفّر في pipe واحد، ومفيش نسخة مكشوفة على الديسك.",
-            "اختبار: فك واعرض المحتوى من غير ما تفك فعلًا.",
-            "ارفع بره السيرفر واتأكد إن النسخة مطابقة."
-          ],
-          sol: R`التشفير بيطلع ملف [[backup.tar.gz.enc]] مش مقروء. فك التشفير في فولدر تاني بـ [[tar -xzf -]] بدل [[-tzf]] بيطلّع الملفات فعلًا، و [[diff -r]] بين الفولدر الأصلي والجديد المفروض ميطبعش حاجة ويرجع exit code صفر، ده معناه إن الباك أب رجع زي ما هو بالظبط.
-
-لو الباسورد غلط، [[openssl]] بيطبع [[bad decrypt]] والـ tar يطبع [[gzip: stdin: not in gzip format]]. ولو غيّرت [[-iter]] أو شلت [[-pbkdf2]] وقت الفك هيحصل نفس الخطأ، لأن المفتاح بيتحسب من الباسورد والإعدادات دي مع بعض. ودي الحكمة من التجربة: باك أب ماتجربش إنه بيرجع كأنه مش موجود، وباسورد التشفير لازم يكون محفوظ بره السيرفر وإلا هيضيع معاه.`,
-          solCode: R`export BACKUP_PASSPHRASE="test-pass-123"
-mkdir -p data && echo hello > data/a.txt
-tar -czf - data | openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt \
-  -pass env:BACKUP_PASSPHRASE -out data.tar.gz.enc
-mkdir -p restore
-openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 \
-  -pass env:BACKUP_PASSPHRASE -in data.tar.gz.enc | tar -xzf - -C restore
-diff -r data restore/data && echo "backup OK"`
-        }
-      ]
-    },
-    {
-      t: "تشيك ليست قبل ما ترفع",
-      l: 3,
-      n: "راجعها قبل أي مشروع يروح إنتاج",
-      items: [
-        {
-          cmd: "الأساسيات",
-          title: "المصادقة والداتا",
-          desc: R`التشيك ليست دي لمصادقة المستخدمين وحماية البيانات، وكل بند مش متعمل ثغرة محتملة. الباسوردات تتخزن hashed بـ bcrypt أو argon2، لأنهم بطيئين عن قصد فتخمينها يبقى صعب، مش MD5 ولا SHA256. الـ JWT secret طويل وعشوائي ([[openssl rand -base64 32]]) وفي [[.env]] مش في الكود، لأن اللي يعرفه يقدر يعمل توكن لأي يوزر.
-
-IDOR معناها إن الـ route بيتأكد إنك عامل login بس، مش إن الحاجة دي بتاعتك، فتغيّر رقم في الرابط وتشوف طلب حد تاني. الاستعلامات parameterized (القيم بتتبعت لوحدها مش ملزوقة في نص الـ SQL) عشان SQL injection. والـ validation لازم يتعمل على السيرفر حتى لو الواجهة بتعمله، لأن أي حد يقدر يبعت طلب مباشرة من غير الواجهة. و rate limiting على login بيمنع حد يجرّب آلاف الباسوردات.`,
-          example: R`[ ] كل الباسوردات hashed بـ bcrypt/argon2
-[ ] JWT secret طويل وعشوائي وفي .env
-[ ] كل route محمي بيتأكد من الصلاحية مش بس الدخول (IDOR)
-[ ] كل الاستعلامات parameterized أو ORM
-[ ] كل مدخلات المستخدم عليها validation على السيرفر
-[ ] rate limiting على login و APIs الحساسة`,
-          try: "طبّق التشيك ليست دي على آخر مشروع رفعته.",
+app.listen(3000);`,
+          try: R`في فولدر فاضي: [[npm i express]]، واعمل [[uploads/a.txt]] فيه أي كلام، و [[.env]] جنب فولدر uploads فيه [[SECRET=1]]. احفظ المثال في [[server.mjs]] وشغّله. جرّب: [[curl localhost:3000/bad/..%2F.env]]، و [[curl localhost:3000/files/..%2F.env]]، و [[curl localhost:3000/files/a.txt]]، و [[curl --path-as-is localhost:3000/bad/../.env]]. وبعدين غيّر الشرط لـ [[full.startsWith(BASE)]] من غير [[path.sep]] وفكّر إيه اللي ممكن يعدّي.`,
           flag: "script",
           deep: {
-            why: "قبل ما ترفع أي موقع على الإنتاج، فيه حاجات أساسية لازم تتأكد منها. دي الـ checklist اللي لو عملتها بتحمي من أشهر طرق الاختراق.",
-            how: R`الباسوردات: bcrypt أو argon2 فقط، مش MD5 أو SHA256. لو بتعمل migration لقاعدة بيانات قديمة، الـ hashing قبل ما أي حاجة تانية.
+            why: R`أي ميزة تحميل أو عرض ملفات، أو تصدير تقارير، أو قوالب بالاسم، ممكن تبقى باب لقراية أي ملف على السيرفر: [[.env]] فيه مفتاح الداتابيز و JWT secret، والكود نفسه، ومفاتيح SSH. ولو الـ route بيكتب (رفع بالاسم الأصلي)، المهاجم يقدر يكتب على ملفات الكود نفسها.`,
+            how: R`[[path.resolve(BASE, name)]] بيبني المسار الكامل ويحل كل [[..]] و [[.]]، ولو [[name]] مسار مطلق زي [[/etc/passwd]] بيتجاهل BASE خالص. فبعده المسار اللي في إيدك هو اللي هيتقري فعلًا، وتقدر تسأل عليه سؤال واحد بسيط: بيبدأ بفولدري ولا لأ؟
 
-JWT secret: طويل (٣٢ بايت على الأقل)، عشوائي، ومش في الكود. [[openssl rand -base64 32]] بيولّد واحد. ولو غيّرت الـ secret (مثلًا بعد تسريب)، كل الـ tokens القديمة بتبقى invalid وكل اليوزرز يعملوا login تاني.
+ليه [[BASE + path.sep]] مش [[BASE]] بس؟ لأن [[/app/uploads-old/secret]] بيبدأ بـ [[/app/uploads]] برضه. الـ separator بيقفل الثغرة دي.
 
-كل route محمي: الفرق بين authenticated (logged in) وauthorized (مسموحلك). لو route بيتأكد بس إن في token بس مش بيتأكد من الصلاحيات، ده IDOR.
+[[res.sendFile(name, { root: BASE })]] في Express بيعمل الفحص ده لوحده وبيرد 403 لو فيه [[..]] بيطلع بره، وكمان بيرفض الـ dotfiles افتراضيًا. بس [[fs.readFile]] و [[fs.createReadStream]] ملهمش أي حماية.
 
-كل input بيتعمله validation على السيرفر: حتى لو الـ frontend بيعمل validation كمان.
+لو جوه الفولدر فيه symlinks ممكن يعملها حد، استخدم [[await fs.realpath(full)]] قبل الفحص، عشان الـ symlink ممكن يشاور بره.`,
+            when: R`أي مكان فيه [[fs.*]] أو [[sendFile]] أو [[open()]] في Python أو [[include]] و [[readfile]] في PHP والمسار فيه حاجة من الطلب: params، و query، واسم ملف مرفوع، وحتى حاجة متخزنة في الداتابيز لو اليوزر هو اللي كتبها. ونفس الفكرة في PHP موجودة في درس [[readfile]] في «تاب PHP و MySQL».`,
+            mistakes: R`تمسح [[../]] بـ replace: [[name.replace("../", "")]] بيمسح أول واحدة بس، و [[....//]] بتبقى [[../]] بعد المسح. أي blacklist كده بيتكسر.
 
-HTTPS على كل environments إلا localhost.`,
-            when: "قبل أي deploy للإنتاج. وبعد أي feature جديدة بتضيف authentication أو routes.",
-            mistakes: "تعتمد على الـ frontend validation لأي من دول. والـ JWT secret في الكود أو في GitHub."
+تفحص قبل الـ decode: لو بتفحص الـ URL الخام [[..%2F]] مش هتلاقي [[../]]، والكود بعدين بيفك الـ encoding. افحص المسار النهائي اللي هيتفتح فعلًا.
+
+تنسى Windows: هناك [[..\]] بتشتغل كمان. [[path.resolve]] بيتعامل معاها صح، الـ regex بتاعك غالبًا لأ.
+
+في الانترفيو لو اتسألت «إزاي تمنع path traversal؟»: متقولش «بفلتر النقط». قول: resolve للمسار النهائي، وتأكد إنه جوه الـ base بـ separator، والأحسن إن اليوزر ميتحكمش في المسار أصلًا (IDs بدل أسماء).`
           },
-          sol: R`الإجابة الكويسة إنك تمشي على كل بند بدليل مش بإحساس: الباسوردات بـ [[SELECT left(password,7) FROM users LIMIT 5]] (لازم تبدأ بـ [[$2b$]] أو [[$argon2id$]])، الـ JWT secret بـ [[echo -n "$JWT_SECRET" | wc -c]] (32 حرف عشوائي أو أكتر، مش "secret")، الـ IDOR بتجربة اليوزرين من درس Broken Access Control، الـ SQL بالـ grep من درس SQL Injection، والـ rate limit باللوب من درسه.
+          teach: R`## الفكرة: الاسم اللي من المستخدم ممكن يطلّعك بره الفولدر
 
-النتيجة المعتادة على أول مشروع: بندين أو تلاتة ناقصين، وأشهرهم validation على السيرفر لبعض الـ routes، و IDOR في التعديل أو المسح مع إن القراءة سليمة، ومفيش rate limit على reset password. اكتب اللي لقيته ورتبه بالخطورة وصلّح الأخطر الأول.`
+عندك route بيقرا ملف باسم جاي من المستخدم. المفروض يقرا من فولدر [[uploads]] بس، لكن لو المستخدم بعت [[../.env]] يطلع لفوق ويقرا أسرارك. المثال سيرفر صغير فيه route غلط [[/bad/:name]] و route صح [[/files/:name]]. جرّبناه في Docker على [[localhost:3102]]، وجنب فولدر [[uploads]] حطينا [[.env]] فيه [[SECRET=1]].
+
+---
+
+## ١. أول السطور
+
+~~~javascript
+import express from "express";
+import path from "node:path";
+import fs from "node:fs/promises";
+const app = express();
+const BASE = path.resolve("uploads");
+~~~
+
+- [[path]] للتعامل مع المسارات، [[fs/promises]] لقراية الملفات بـ await.
+- [[path.resolve("uploads")]] بيطلّع المسار الكامل لفولدر uploads مرة واحدة وقت التشغيل (مثلًا [[/app/uploads]]). ده الـ base المسموح.
+
+---
+
+## ٢. السطر الغلط
+
+~~~javascript
+app.get("/bad/:name", async (req, res) => {
+  res.send(await fs.readFile(path.join(BASE, req.params.name), "utf8"));
+});
+~~~
+
+- [[:name]] جزء من المسار بيكتبه المستخدم.
+- [[path.join(BASE, name)]] بيوصّل الفولدر بالاسم. **المشكلة**: [[path.join]] بيرتّب المسار بس، فـ [[path.join("/app/uploads", "../.env")]] بيطلّع [[/app/.env]] بكل أدب، بره الفولدر.
+
+Express بيفك الـ URL encoding في الـ params، فـ [[..%2F.env]] بتوصل للكود [[../.env]].
+
+---
+
+## ٣. السطر الصح
+
+~~~javascript
+app.get("/files/:name", (req, res) => {
+  const full = path.resolve(BASE, req.params.name);
+  if (!full.startsWith(BASE + path.sep)) return res.status(400).end();
+  res.sendFile(full);
+});
+~~~
+
+- [[path.resolve(BASE, name)]] بيبني المسار النهائي ويحل كل [[..]]. لو [[name]] مطلق زي [[/etc/passwd]] بيتجاهل BASE خالص.
+- [[full.startsWith(BASE + path.sep)]]: السؤال الوحيد، المسار النهائي لسه جوه فولدري؟ [[path.sep]] هو [[/]] (أو [[\]] على ويندوز).
+- ليه [[+ path.sep]] مش [[BASE]] لوحده؟ لأن [[/app/uploads-old/x]] بيبدأ بـ [[/app/uploads]] برضه، فمن غير الـ separator فولدر تاني اسمه قريب هيعدّي.
+
+---
+
+## ٤. جرّبناها على السيرفر
+
+~~~text الطلبات والردود
+/bad/a.txt                       -> hello from a.txt       [200]
+/bad/..%2F.env                   -> SECRET=1               [200]   ← تسريب!
+/bad/..%2F..%2F..%2Fetc%2Fhostname -> c31a1be0ce6f          [200]   ← طلع لـ /etc
+/files/a.txt                     -> hello from a.txt       [200]
+/files/..%2F.env                 -> (فاضي)                 [400]
+/files/..%2F..%2Fetc%2Fpasswd    -> (فاضي)                 [400]
+/weak/..%2Fuploads-old%2Fx       -> old secret             [200]   ← الشرط من غير path.sep
+/files/..%2Fuploads-old%2Fx      -> (فاضي)                 [400]
+~~~
+
+[[/bad]] قرا [[.env]] وحتى [[/etc/hostname]] بتاع الـ container. [[/files]] رد [[400]] على كل محاولة خروج. و [[/weak]] (نفس الكود بس شرطه [[startsWith(BASE)]] من غير separator) سمح بـ [[uploads-old]]: ده اللي الـ separator بيقفله.
+
+### فخّ في الاختبار نفسه
+
+~~~bash
+curl --path-as-is http://localhost:3102/bad/../.env   # 404
+~~~
+
+curl وبعض المتصفحات بيحلّوا [[../]] العادية قبل ما يبعتوا، فبيطلبوا [[/.env]] (و [[--path-as-is]] بيوقّف ده، فالـ router بيشوف [[..]] segments ومبيطابقش). عشان كده المهاجم بيستخدم [[%2F]]، واللي بيختبر بـ [[../]] عادية بيفتكر نفسه آمن وهو مش آمن.
+
+---
+
+## ٥. كود الحل: نفس الفكرة من غير سيرفر
+
+~~~javascript
+function safePath(name) {
+  const full = path.resolve(BASE, name);
+  if (!full.startsWith(BASE + path.sep)) throw new Error("bad path");
+  return full;
+}
+~~~
+
+جرّبناه على أسماء مختلفة:
+
+~~~text الناتج
+a.txt              join -> uploads/a.txt       | safe -> /app/uploads/a.txt
+../.env            join -> .env                | safe -> bad path
+/etc/passwd        join -> uploads/etc/passwd  | safe -> bad path
+sub/../a.txt       join -> uploads/a.txt       | safe -> /app/uploads/a.txt
+../uploads-old/x   join -> uploads-old/x       | safe -> bad path
+~~~
+
+عمود [[join]] بيوريك ليه [[path.join]] مش حماية (طلّع [[.env]] و [[uploads-old]])، وعمود [[safe]] بيرفضهم. لاحظ [[sub/../a.txt]] اتقبل لأنه في الآخر جوه uploads فعلًا.
+
+---
+
+## الخلاصة
+
+- [[path.join]] و مسح [[../]] بـ replace مش حماية، بيتكسروا.
+- [[path.resolve]] للمسار النهائي، وبعدين [[startsWith(BASE + path.sep)]].
+- افحص المسار بعد الـ decode، مش الـ URL الخام. والأأمن إن المستخدم ميتحكمش في الاسم أصلًا: خزّن بـ [[randomUUID()]] واحفظ الاسم الأصلي في الداتابيز.`,
+          lines: [
+            "استورد Express.",
+            "و path عشان نبني المسارات.",
+            R`و [[fs/promises]] عشان نقرا الملفات بـ await.`,
+            "السيرفر.",
+            R`المسار الكامل لفولدر الملفات المسموح، مرة واحدة وقت التشغيل.`,
+            R`الغلط: route بياخد اسم الملف من الـ URL...`,
+            R`...ويلزقه بـ [[path.join]] ويقراه. [[../.env]] هتطلع بره uploads وتقرا الأسرار.`,
+            "قفلة.",
+            "الصح: نفس الفكرة...",
+            R`...بس [[path.resolve]] بيدّينا المسار النهائي بعد حل أي [[..]].`,
+            R`لو مش بيبدأ بـ [[uploads/]] بالظبط (بالـ separator)، ارفض بـ 400.`,
+            R`دلوقتي بس ابعت الملف.`,
+            "قفلة.",
+            R`شغّل السيرفر على 3000.`
+          ],
+          sol: R`[[/bad/..%2F.env]] بيرجّع [[SECRET=1]]: Express فك [[%2F]] لـ [[/]]، و [[path.join]] حل [[..]] وطلع بره uploads.
+
+[[/files/..%2F.env]] بيرجّع 400 وجسم فاضي، و [[/files/a.txt]] بيرجّع محتوى الملف عادي.
+
+[[--path-as-is /bad/../.env]] بيرجّع 404: الـ router شايف [[..]] و [[.env]] كـ segments منفصلة، فالـ route مش بيطابق أصلًا. ومن غير [[--path-as-is]]، curl نفسه بيحل [[../]] قبل ما يبعت فبيطلب [[/.env]]. عشان كده المهاجمين بيستخدموا [[%2F]]، واللي بيختبر بـ [[../]] عادية بس بيفتكر إنه آمن وهو مش آمن.
+
+لو شلت [[path.sep]] من الشرط: [[..%2Fuploads-old%2Fx]] هيعدّي الفحص، لأن [[/.../uploads-old/x]] بيبدأ بـ [[/.../uploads]]. السكربت ده بيوريك كل الحالات من غير سيرفر.`,
+          solCode: R`import path from "node:path";
+
+const BASE = path.resolve("uploads");
+
+function safePath(name) {
+  const full = path.resolve(BASE, name);
+  if (!full.startsWith(BASE + path.sep)) throw new Error("bad path");
+  return full;
+}
+
+for (const name of ["a.txt", "../.env", "/etc/passwd", "sub/../a.txt", "../uploads-old/x"]) {
+  let result;
+  try { result = safePath(name); } catch (e) { result = e.message; }
+  console.log(name.padEnd(18), "join ->", path.join("uploads", name).padEnd(20), "| safe ->", result);
+}`
         },
         {
-          cmd: "البنية",
-          title: "السيرفر والنقل",
-          desc: R`حتى لو كودك سليم، السيرفر والطريق بينه وبين الزائر ممكن يكونوا الثغرة. HTTPS بيشفّر الطريق، و HTTP لازم يحوّل له، و certbot مع Nginx بيعمل الاتنين. الـ security headers (بـ helmet في Express أو من Nginx) بتقول للمتصفح يحمي الزائر، زي إنه ميفتحش الموقع غير بـ HTTPS، وموقع securityheaders.com بيديك درجة.
+          cmd: "Zip Slip",
+          title: "A01 ملف مضغوط بيكتب بره الفولدر",
+          desc: R`Path traversal بس في الكتابة. أسماء الملفات جوه zip أو tar بيختارها اللي عمل الملف، وممكن تبقى [[../../app/server.js]] أو [[../../../root/.ssh/authorized_keys]]. لو بتفك ملف مرفوع وبتكتب كل entry في [[path.join(dest, entry.name)]]، الملف ده هيتكتب بره فولدر الفك، على كودك أو إعداداتك. ودي بتوصل لـ Remote Code Execution بسهولة.
 
-[[.env]] بره Git، وأي سر اتعمله commit قبل كده اعتبره اتسرّب وغيّره. قاعدة البيانات تسمع على [[127.0.0.1]] بس، والفايروول يفتح 22 و 80 و 443 وبس. رسائل الأخطاء في الإنتاج عامة، لأن الـ stack trace بيوري المهاجم مسارات ونسخ مكتباتك. [[npm audit]] بيكشف المكتبات اللي فيها ثغرات معروفة. والباك أب لازم يكون اتجرّب إنه بيرجع فعلًا.`,
-          example: R`[ ] HTTPS مفعّل و HTTP بيحوّل له
-[ ] security headers (helmet أو Nginx)، درجة A على securityheaders.com
-[ ] .env بره Git، ومفيش أسرار في الكود ولا في تاريخ Git
-[ ] قاعدة البيانات على 127.0.0.1 مش مكشوفة للنت
-[ ] الفايروول: 22 و 80 و 443 بس
-[ ] رسائل الأخطاء عامة في الإنتاج (مفيش stack traces للمستخدم)
-[ ] npm audit نضيف، والمكتبات محدّثة
-[ ] باك أب شغال ومتجرّب إنه بيرجع`,
-          try: "اعمل scan بـ nmap لسيرفرك وتأكد من نقطة البورتات.",
+العلاج نفس درس «Path Traversal»: لكل entry اعمل [[path.resolve(DEST, name)]] واتأكد إنه جوه [[DEST + path.sep]]. وافحص كل الأسماء الأول قبل ما تكتب ولا ملف، عشان متسيبش نص أرشيف مفكوك لو لقيت واحد وحش في النص.
+
+المكتبات الحديثة بتحمي نفسها في دالة «فك كله»: [[adm-zip]] 0.6 في [[extractAllTo]] بيشيل الـ [[..]]، و [[zipfile.extractall]] في Python كمان. بس لو بتكتب الـ entries بإيدك (streaming بـ [[yauzl]] أو [[unzipper]] أو [[getEntries()]])، الحماية عليك انت. و [[tarfile]] في Python قبل 3.14 بيفك بره الفولدر افتراضيًا إلا لو قلتله [[filter="data"]].`,
+          example: R`import AdmZip from "adm-zip";
+import path from "node:path";
+import fs from "node:fs";
+const DEST = path.resolve("out");
+const entries = new AdmZip("upload.zip").getEntries();
+
+// افحص كل الأسماء الأول، قبل ما تكتب ولا ملف
+for (const e of entries) {
+  const target = path.resolve(DEST, e.entryName);
+  if (!target.startsWith(DEST + path.sep)) throw new Error("zip slip: " + e.entryName);
+}
+for (const e of entries) {
+  if (e.isDirectory) continue;
+  const target = path.resolve(DEST, e.entryName);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.writeFileSync(target, e.getData());
+}`,
+          try: R`في فولدر تجربة ([[npm i adm-zip]])، اعمل zip خبيث بـ Python: [[python3 -c "import zipfile; z=zipfile.ZipFile('upload.zip','w'); z.writestr('ok.txt','fine'); z.writestr('../../evil.txt','pwned'); z.close()"]] وشوفه بـ [[unzip -l upload.zip]]. شغّل نسخة غلط من المثال (من غير الـ loop الأولانية، وبـ [[path.join]]) وشوف [[evil.txt]] اتكتب فين. امسحه، وبعدين شغّل المثال زي ما هو. وآخر حاجة جرّب [[tarfile]] في Python بـ [[filter="data"]] ومن غيره.`,
           flag: "script",
           deep: {
-            why: "الأساسيات في الكود مش كافية. البنية نفسها (HTTPS، والـ headers، والـ secrets) لازم تبقى مظبوطة من الأول.",
-            how: R`HTTPS وHTTP redirect: certbot مع Nginx بيعمل الاتنين. أي طلب HTTP بيتحوّل لـ HTTPS أوتوماتيك.
+            why: R`أي ميزة «ارفع zip» (استيراد مشروع، رفع ثيم، رفع صور بالجملة، ملف Excel اللي هو zip من جوه، أو حتى backup بترجّعه) بتدّي المستخدم إنه يختار مسارات كتابة على السيرفر. الثغرة دي لاقوها في مكتبات فك كتير في لغات مختلفة لما اتنشرت سنة 2018، وده سبب إن المكتبات المشهورة ضافت حماية.`,
+            how: R`الـ zip بيخزّن اسم كل ملف كـ string، ومفيش حاجة في الـ format تمنع [[..]] أو مسار مطلق. الأداة اللي بتفك هي المسؤولة. [[unzip]] في لينكس بيشيل [[../]] وبيطبع تحذير، و adm-zip و zipfile برضه، بس ده سلوك أداة معينة مش ضمان.
 
-Security headers بـ helmet أو Nginx: [[Strict-Transport-Security]] و[[Content-Security-Policy]] وغيرهم. درجة A على securityheaders.com الهدف.
+في tar الموضوع أوسع: فيه symlinks و hardlinks. أرشيف ممكن يحط symlink اسمه [[out/link]] بيشاور على [[/etc]]، وبعدين ملف اسمه [[link/cron.d/x]]. عشان كده Python ضافت [[filter="data"]] (في 3.12، واتعمل backport لنسخ أقدم زي 3.11.4)، وبيرفض الـ symlinks اللي بتطلع بره والمسارات المطلقة والـ device files، وبقى الافتراضي في 3.14.
 
-[[.env]] بره Git وأكيد مفيش أسرار في الكود أو تاريخه. أي secret في GitHub حتى لو في commit قديم يتعامل معاه كمكشوف.
+وحط حد لحجم الفك وعدد الملفات: zip صغير ممكن يتفك لجيجات (zip bomb).`,
+            when: R`أي فك لأرشيف جاي من بره: رفع من المستخدم، أو تنزيل من URL، أو أرشيف من سيرفر تاني. حتى لو بتفكه في فولدر مؤقت، فولدر مؤقت بـ [[../../]] بيوصل لأي مكان.`,
+            mistakes: R`تفحص وانت بتكتب بدل قبلها: أول entry سليمة بتتكتب، والتالتة وحشة بترمي error، والفولدر فيه نص أرشيف. افحص الكل الأول، أو فك في فولدر مؤقت وانقله بعد ما يخلص.
 
-CORS مضبوط: فقط domains مسموح بيها، مش [[*]] مع credentials.
+تعتمد على إن «المكتبة بتحمي»: الحماية في [[extractAllTo]] مش في الـ loop اللي كتبتها انت بـ [[getEntries]]. ونسخ adm-zip القديمة (من أيام 2018) كان فيها الثغرة دي نفسها، فحدّث.
 
-Rate limiting على login وregistration وأي endpoint بياخد وقت.
-
-Database: يوزر بصلاحيات أقل ما ممكن، ومش root أو superuser.`,
-            when: "وانت بتجهّز السيرفر لأول مرة، مش بعد الرفع.",
-            mistakes: "CORS بـ [[*]] مع cookies. والـ database user بصلاحيات admin من الأصل."
+تستخدم [[tarfile.extractall()]] من غير filter في Python أقدم من 3.14. وتشغّل عملية الفك بيوزر عنده صلاحية كتابة على الكود: الأحسن الـ process يبقى بيوزر مالوش صلاحية غير على فولدر الفك.`
           },
-          sol: R`[[nmap]] من جهازك على IP السيرفر: المتوقع [[22]] و [[80]] و [[443]] بس open، وكل بورت قاعدة بيانات (5432، 3306، 6379، 27017) مش ظاهر أو [[filtered]]. وعلى السيرفر [[sudo ss -tlnp]] يأكد: قواعد البيانات على [[127.0.0.1]] أو جوه شبكة Docker بس، مش [[0.0.0.0]].
+          teach: R`## الفكرة: اسم الملف جوه الأرشيف بيختاره اللي عمله
 
-لو لقيت بورت الـ API زي [[3000]] open، يبقى التطبيق مكشوف مباشرة ومش لازم يعدّي على Nginx: اربطه على [[127.0.0.1:3000]] وسيب Nginx هو اللي على 80 و 443. ولو لقيت بورت قاعدة بيانات open، اقفله فورًا ودوّر في اللوجات على اتصالات غريبة، لأن الـ bots بتلف على البورتات دي طول الوقت.`
+Zip Slip هو Path Traversal بس في **الكتابة**. أسماء الملفات جوه zip أو tar نص عادي بيحدده صاحب الملف، وممكن يبقى [[../../evil.txt]]. لو فكيت الأرشيف وكتبت كل ملف في [[path.join(dest, name)]]، الملف هيتكتب بره فولدر الفك، على كودك مثلًا. المثال بـ [[adm-zip]]. جرّبنا الفك في Docker (node:22 و python:3.12) جوه [[/srv/app/work]].
+
+---
+
+## ١. أول السطور
+
+~~~javascript
+import AdmZip from "adm-zip";
+import path from "node:path";
+import fs from "node:fs";
+const DEST = path.resolve("out");
+const entries = new AdmZip("upload.zip").getEntries();
+~~~
+
+- [[adm-zip]] مكتبة بتقرا الـ zip. [[getEntries()]] بترجّع لستة الملفات اللي جواه **من غير ما تكتب حاجة**.
+- [[DEST]] المسار الكامل لفولدر الفك المسموح.
+
+عملنا zip خبيث بـ Python فيه ملفين:
+
+~~~text python3 -m zipfile -l upload.zip
+ok.txt            4
+../../evil.txt    5
+~~~
+
+الاسم [[../../evil.txt]] متخزّن كده فعلًا جوه الملف.
+
+---
+
+## ٢. اللفّة الأولى: افحص الكل قبل ما تكتب
+
+~~~javascript
+for (const e of entries) {
+  const target = path.resolve(DEST, e.entryName);
+  if (!target.startsWith(DEST + path.sep)) throw new Error("zip slip: " + e.entryName);
+}
+~~~
+
+نفس فحص درس «Path Traversal»: [[path.resolve]] للمسار النهائي، وبعدين اتأكد إنه جوه [[DEST + path.sep]]. مهم يحصل **قبل** أي كتابة، عشان متسيبش نص أرشيف مفكوك لو لقيت entry وحشة في النص.
+
+---
+
+## ٣. اللفّة الثانية: الكتابة
+
+~~~javascript
+for (const e of entries) {
+  if (e.isDirectory) continue;
+  const target = path.resolve(DEST, e.entryName);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.writeFileSync(target, e.getData());
+}
+~~~
+
+- [[isDirectory]]: الفولدرات بتتعمل مع الملفات فاعديها.
+- [[path.dirname(target)]] الفولدر اللي فوق الملف، و [[mkdirSync]] بـ [[recursive]] بيعمله.
+- [[e.getData()]] محتوى الملف.
+
+---
+
+## ٤. جرّبنا الغلط والصح
+
+النسخة الغلط (بـ [[path.join("out", name)]] ومن غير فحص):
+
+~~~text الناتج
+writing out/ok.txt
+writing ../evil.txt
+~~~
+
+[[ok.txt]] اتكتب في [[out/]]، و [[evil.txt]] اتكتب في [[/srv/app/evil.txt]] (فوق فولدر العمل بمستويين)، بره المكان المقصود خالص. ده الـ zip slip.
+
+النسخة الصح وقفت قبل أي كتابة:
+
+~~~text الناتج
+Error: zip slip: ../../evil.txt
+~~~
+
+حتى [[ok.txt]] متكتبش، لأن الفحص كله قبل الكتابة.
+
+---
+
+## ٥. المكتبات بتحمي في «فك الكل» بس
+
+[[adm-zip]] في [[extractAllTo]] بيشيل الـ [[..]]. بس لو بتكتب الـ entries بإيدك بـ [[getEntries]] (زي المثال)، الحماية عليك انت.
+
+### و tar في Python أوسع خطرًا
+
+tar فيه symlinks كمان. عملنا tar خبيث فيه [[../evil-tar.txt]]:
+
+~~~python
+t.extractall("tar-out", filter="data")
+~~~
+
+~~~text مع filter="data"
+blocked: '../evil-tar.txt' would be extracted to '/srv/app/work/evil-tar.txt', which is outside the destination
+~~~
+
+[[filter="data"]] (بقى الافتراضي في Python 3.14) بيرفض المسارات اللي بتطلع بره والـ symlinks والمطلقة. من غيره (جرّبناه على 3.12):
+
+~~~text من غير filter
+DeprecationWarning: Python 3.14 will, by default, filter extracted tar archives...
+~~~
+
+والملف [[evil-tar.txt]] اتكتب بره فعلًا. لاحظ إن tar بيفك اللي قبل الملف الوحش، فـ [[ok.txt]] بيتكتب قبل ما يتوقف، عكس كود JavaScript اللي بيفحص الكل الأول.
+
+---
+
+## الخلاصة
+
+- اسم الملف جوه الأرشيف مدخل مستخدم: [[path.resolve]] لكل entry واتأكد إنه جوه [[DEST + path.sep]].
+- افحص الكل قبل أول كتابة، أو فك في فولدر مؤقت وانقل بعد النجاح.
+- الحماية في [[extractAllTo]]/[[extractall(filter="data")]]، مش في الـ loop اللي كتبتها انت. وحط حد لحجم الفك وعدد الملفات (zip bomb).`,
+          lines: [
+            R`[[adm-zip]]: مكتبة بتقرا الـ zip وتدّيك الـ entries.`,
+            "path للمسارات.",
+            R`و [[fs]] للكتابة.`,
+            R`المسار الكامل لفولدر الفك.`,
+            R`اقرا الأرشيف وهات لستة الملفات اللي جواه (من غير ما تكتب حاجة).`,
+            R`أول لفّة: فحص بس.`,
+            R`المسار النهائي اللي الـ entry دي هتتكتب فيه.`,
+            R`لو طالع بره [[out/]]، وقّف كل حاجة قبل ما يتكتب ولا ملف.`,
+            "قفلة.",
+            R`تاني لفّة: الكتابة، وكل الأسماء اتفحصت خلاص.`,
+            R`الفولدرات بتتعمل مع الملفات، فاعديها.`,
+            "نفس المسار النهائي.",
+            R`اعمل الفولدرات اللي فوق الملف.`,
+            R`واكتب محتوى الملف.`,
+            "قفلة."
+          ],
+          sol: R`[[unzip -l upload.zip]] بيوريك entry اسمها [[../../evil.txt]] جنب [[ok.txt]]، يعني الاسم متخزن كده فعلًا جوه الملف.
+
+النسخة الغلط (بـ [[path.join("out", e.entryName)]] ومن غير فحص) بتكتب [[ok.txt]] في [[out/]] و [[evil.txt]] في الفولدر اللي فوق فولدر التجربة ([[out/../../]])، يعني بره المكان اللي قلت عليه خالص. ده بالظبط الـ zip slip.
+
+المثال زي ما هو بيقف بـ [[Error: zip slip: ../../evil.txt]] ومبيكتبش ولا ملف، حتى [[ok.txt]] مش هتلاقيه، لأن الفحص كله قبل الكتابة.
+
+في Python: [[extractall("tar-out", filter="data")]] بيرمي [[OutsideDestinationError]] (نوع من [[FilterError]]) وبيقولك الملف كان هيتكتب فين. ومن غير filter في Python 3.11، الملف بيتكتب بره فعلًا. وخلي بالك إن tarfile بيفك اللي قبل الملف الوحش، فـ [[ok.txt]] هتلاقيه في [[tar-out]].`,
+          solCode: R`# zipdemo.py: يعمل zip و tar خبيثين، ويفك الـ tar بأمان
+import io, tarfile, zipfile
+
+with zipfile.ZipFile("upload.zip", "w") as z:
+    z.writestr("ok.txt", "fine")
+    z.writestr("../../evil.txt", "pwned")
+
+with tarfile.open("evil.tar", "w") as t:
+    for name, data in [("ok.txt", b"fine"), ("../evil-tar.txt", b"pwned")]:
+        info = tarfile.TarInfo(name)
+        info.size = len(data)
+        t.addfile(info, io.BytesIO(data))
+
+with tarfile.open("evil.tar") as t:
+    try:
+        t.extractall("tar-out", filter="data")
+    except tarfile.FilterError as e:
+        print("blocked:", e)`
         },
         {
-          cmd: "المتابعة",
-          title: "بعد ما ترفع",
-          desc: R`الأمان مش حاجة بتعملها مرة يوم ما ترفع وتنساها: كل يوم بتتكتشف ثغرات جديدة في مكتبات ونظام انت بتستخدمه، والبوتات مش بتبطّل تجرّب. البنود دي هي الصيانة المستمرة.
-
-fail2ban بيحظر الـ IPs اللي بتجرّب تدخل SSH كتير، و [[sudo fail2ban-client status sshd]] بيأكد إنه شغال. unattended-upgrades بيسطّب تحديثات أمان النظام لوحده. اللوجات لازم حد يبص عليها، ولو مرة في الأسبوع، أو تنبيه يوصلك لما حاجة غريبة تزيد فجأة. Dependabot (من إعدادات GitHub) أو [[npm audit]] في CI بيقولولك أول ما مكتبة عندك يطلع فيها ثغرة. وأهم بند: خطة مكتوبة قبل ما تحتاجها، لو حصل اختراق هتغيّر أنهي مفاتيح وباسوردات بالترتيب، وهترجع باك أب إزاي.`,
-          example: R`[ ] fail2ban شغال ضد محاولات SSH
-[ ] تحديثات الأمان أوتوماتيك (unattended-upgrades)
-[ ] لوجات بتتراقب، وتنبيه لو حصل حاجة غريبة
-[ ] Dependabot أو npm audit في CI
-[ ] خطة لو حصل اختراق: تغيّر المفاتيح إزاي وترجع باك أب إزاي`,
-          try: "فعّل Dependabot على أهم repo عندك من إعدادات GitHub.",
+          cmd: "CSRF",
+          title: "A01: لما موقع تاني يبعت طلب باسمك",
+          desc: "CSRF مش بند لوحده في نسخة 2025، هو جوه A01 Broken Access Control. لو اليوزر عامل login عندك وفتح موقع مهاجم، الموقع ده ممكن يعمل form بيبعت POST لموقعك، والمتصفح بيبعت الكوكي بتاعتك معاه لوحده. الحماية: كوكي الـ session بـ [[SameSite=Lax]] أو [[Strict]]، وأي حاجة بتغيّر داتا تبقى POST/PUT/DELETE مش GET، وتتأكد من [[Origin]] على الطلبات دي. لو الـ auth بـ Authorization header مش كوكي، CSRF مش بتأثر عليك.",
+          example: R`// الكوكي: SameSite=Lax أقل حاجة
+res.cookie("session", token, { httpOnly: true, secure: true, sameSite: "lax" });
+// أي تغيير بـ POST، مش GET
+app.post("/api/transfer", auth, checkOrigin, transferHandler);
+function checkOrigin(req, res, next) {
+  if (req.get("origin") !== "https://example.com") return res.status(403).end();
+  next();
+}`,
+          try: "اعمل صفحة HTML على بورت تاني فيها form بيعمل POST لـ API بتاعك، وشوف الكوكي بتتبعت ولا لأ مع SameSite مختلفة.",
           flag: "script",
           deep: {
-            why: "الأمان مش حاجة بتعملها مرة واحدة. التهديدات بتتطور، وثغرات جديدة بتتكتشف، ومحتاج تظل متابع.",
-            how: R`fail2ban: يحظر أي IP بيجرّب كتير على SSH أو login. اتأكد إنه شغال: [[sudo fail2ban-client status sshd]].
-
-unattended-upgrades: تحديثات الأمان بتيجي لوحدها. اتأكد إنه مفعّل وبيشتغل. [[cat /var/log/unattended-upgrades/unattended-upgrades.log]].
-
-لوجات: بتتراقب وعندك تنبيه لو حصل حاجة غريبة. حتى لو مش automated، بص على لوجات Nginx وتطبيقك مرة في الأسبوع. كتير من الاختراقات بتتكشف بعد فترة لو حد بص على اللوجات.
-
-npm audit وDependabot: بانتظام وفي CI.
-
-Backups: بيتعملوا ومتحفظين بره السيرفر، ومجرّبة الاستعادة منهم. باك أب مش بيتجرّب مش باك أب فعلي.`,
-            when: "ضيف فيهم كل أسبوع أو كل ٢ أسبوع وقت ثابت.",
-            mistakes: "إنك تعمل كل ده مرة في الأول وتنسى. الأمان maintenance مستمر مش project له نهاية."
+            why: "الطلب جاي من متصفح اليوزر الحقيقي وبكوكيه الحقيقية، فالسيرفر مش هيفرّق بينه وبين طلب اليوزر نفسه.",
+            how: "المتصفح بيضيف الكوكيز لأي طلب رايح لدومينك، مهما كان مين اللي بدأه. [[SameSite=Lax]] (الافتراضي في Chrome) بيمنعها في POST الجاي من موقع تاني، و Strict بيمنعها حتى في اللينكات. التحقق من Origin طبقة تانية، و CSRF token طبقة تالتة للأنظمة القديمة.",
+            when: "أي تطبيق بيعتمد على كوكي session.",
+            mistakes: "عملية بتغيّر داتا على GET (زي /logout أو /delete?id=). و SameSite=None من غير سبب."
           },
-          sol: R`في GitHub: Settings ← Advanced Security (أو Code security في بعض الحسابات) ← فعّل Dependabot alerts و Dependabot security updates. خلال دقايق هتلاقي تاب Security ← Dependabot فيه تنبيه لكل مكتبة فيها ثغرة، ومع الـ security updates هيفتح PRs لوحده بالتحديث.
+          teach: R`## الفكرة: المتصفح بيبعت كوكيك لوحده
 
-عشان كمان تحديثات عادية بشكل منتظم، ضيف ملف [[.github/dependabot.yml]] زي اللي تحت، فيفتح PRs كل أسبوع. الغلطة الشائعة إنك تفعّله وبعدين تتجاهل الـ PRs لحد ما يبقوا عشرين: خليه weekly، والـ CI عندك يشغّل الاختبارات على كل PR، فتعمل merge للي نجح بسرعة.`,
-          solCode: R`# .github/dependabot.yml
-version: 2
-updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 5`
+لو انت عامل login عند موقعك، المتصفح بيحفظ كوكي الـ session. لما تفتح موقع مهاجم، الموقع ده يقدر يعمل form بيبعت POST لموقعك، والمتصفح بيلزق كوكيك عليه **لوحده**، فالسيرفر يفتكر إنه انت. المثال: الكوكي بـ [[SameSite]]، والتحويل محمي بفحص [[Origin]]. جرّبناه على معمل [[localhost:3101]] + صفحة مهاجمة على بورت تاني، بمتصفح حقيقي (Chrome عبر Playwright).
+
+---
+
+## ١. السطور
+
+~~~javascript
+res.cookie("session", token, { httpOnly: true, secure: true, sameSite: "lax" });
+
+app.post("/api/transfer", auth, checkOrigin, transferHandler);
+function checkOrigin(req, res, next) {
+  if (req.get("origin") !== "https://example.com") return res.status(403).end();
+  next();
+}
+~~~
+
+- [[httpOnly: true]]: JavaScript مش بيقدر يقرا الكوكي (بيحمي من XSS).
+- [[secure: true]]: تتبعت على HTTPS بس.
+- [[sameSite: "lax"]]: المتصفح **مش** بيبعت الكوكي مع POST جاي من موقع تاني. ده الدفاع الأساسي.
+- [[app.post(...)]]: التحويل POST (مش GET)، ومحمي بـ [[auth]] وبعده [[checkOrigin]].
+- [[checkOrigin]]: middleware بيقرا header [[Origin]] (المتصفح بيحطه لوحده وبيقول الطلب جه من أنهي موقع)، ولو مش موقعك يرد [[403]]. [[next()]] بيكمّل للـ handler.
+
+---
+
+## ٢. جرّبناها على المعمل
+
+عملنا [[attack.html]] فيه form بيعمل POST لـ transfer وبيبعت نفسه بـ JavaScript، وشغّلناه من بورت تاني. سجّلنا دخول على المعمل الأول (الكوكي اتحطّت)، وبعدين فتحنا الصفحة المهاجمة.
+
+### الـ route الغلط (من غير فحص Origin)
+
+curl بكوكي + Origin مهاجم:
+
+~~~text POST /bad/api/transfer   (Origin: http://evil.test)
+{"from":"ali@example.com","to":"attacker","amount":1000}   [200]
+~~~
+
+التحويل نجح باسم Ali. ده الهجوم.
+
+### الـ route الصح
+
+~~~text نفس الطلب على /api/transfer
+Origin: http://evil.test  -> [403]
+من غير Origin             -> [403]
+Origin: http://localhost:3101 (موقعنا) -> {"from":"ali@...","to":"sara","amount":50} [200]
+~~~
+
+فحص الـ Origin رفض الغريب وسمح لموقعنا بس.
+
+---
+
+## ٣. SameSite نفسه (في متصفح حقيقي)
+
+[[localhost:3101]] و بورت تاني على [[localhost]] نفس الـ site بالنسبة لـ SameSite (البورت مش بيفرق)، فعشان نشوف SameSite شغال فتحنا الصفحة المهاجمة من [[127.0.0.1]] (site مختلف فعلًا) والـ API على [[localhost]]:
+
+| الكوكي | الـ POST من 127.0.0.1 للـ API | النتيجة |
+|---|---|---|
+| [[sameSite: "lax"]] | المتصفح **ما بعتش** الكوكي | [[{"error":"Unauthorized"}]] |
+| [[sameSite: "none"]] (+ secure) | المتصفح بعت الكوكي | التحويل نجح باسم Ali |
+
+يعني مع [[lax]] الهجوم فشل من غير أي كود دفاع، لأن المتصفح نفسه حجب الكوكي. مع [[none]] الكوكي راحت، وساعتها [[checkOrigin]] هو اللي بيمسك (رد [[403]]).
+
+---
+
+## ٤. متى CSRF مش مشكلتك
+
+لو الـ auth بـ Authorization header (توكن بتبعته انت بـ JavaScript) مش بكوكي، المتصفح مش بيحط التوكن لوحده، فـ CSRF مش بتأثر. CSRF مشكلة الأنظمة اللي بتعتمد على كوكي session.
+
+---
+
+## الخلاصة
+
+- كوكي session: [[httpOnly]] + [[secure]] + [[sameSite: "lax"]] أقل حاجة.
+- أي حاجة بتغيّر داتا تبقى POST/PUT/DELETE، وافحص [[Origin]] عليها. عمرك ما تعمل تغيير بـ GET.
+- SameSite بيحجب الكوكي، وفحص Origin طبقة تانية. الاتنين مع بعض هم الدفاع.`,
+          lines: [
+            "كوكي session: JavaScript مش بيقراها، HTTPS بس، ومش بتتبعت مع POST من موقع تاني.",
+            "العملية الحساسة POST، ومحمية بـ auth وبفحص الـ Origin.",
+            "middleware بيفحص الطلب جاي منين.",
+            "لو الـ Origin مش دومينك، ارفض بـ 403.",
+            "كمّل للـ handler.",
+            "قفلة."
+          ],
+          sol: R`اعمل ملف [[attack.html]] فيه form بيعمل POST على [[http://localhost:3000/api/transfer]]، وشغّله من بورت تاني بـ [[npx serve -l 5000]]. اعمل login على الـ API الأول عشان الكوكي يتحط، وبعدين افتح الصفحة من البورت التاني. خد بالك إن localhost:3000 و localhost:5000 نفس الـ site بالنسبة لـ SameSite (البورت مش بيفرق)، فالكوكي هيتبعت في الحالتين، وهنا الـ [[checkOrigin]] هو اللي هيرد [[403]] لأن الـ Origin بقى [[http://localhost:5000]].
+
+عشان تشوف SameSite نفسه شغال، لازم site مختلف فعلًا: افتح الصفحة من [[http://127.0.0.1:5000]] والـ API على [[localhost]]. مع [[sameSite: "lax"]] الكوكي مش هيتبعت مع POST جاي من site تاني، فالـ API يرد 401. مع [[sameSite: "none"]] (ولازم معاها secure) هيتبعت. شوف ده في DevTools ← Network ← الطلب ← Cookies. الدرس: SameSite=Lax مع فحص Origin على كل POST هو الدفاع الأساسي، وعمره ما تعمل تغيير بـ GET.`,
+          solCode: R`<!-- attack.html: شغّله بـ npx serve -l 5000 -->
+<form action="http://localhost:3000/api/transfer" method="POST">
+  <input type="hidden" name="to" value="attacker">
+  <input type="hidden" name="amount" value="1000">
+</form>
+<script>document.forms[0].submit()</script>`
+        },
+        {
+          cmd: "4. مصادقة سليمة",
+          title: "A07 الباسوردات والتوكنات",
+          desc: "ده A07:2025 Authentication Failures. الباسورد لازم يتخزّن hashed بـ bcrypt أو argon2، أبدًا كنص. لو قاعدة بياناتك اتسربت، الـ hash ميرجّعش الباسورد. الـ JWT secret لازم يكون طويل وعشوائي وفي متغير بيئة. وحط rate limiting على login عشان تمنع تجربة باسوردات كتير.",
+          example: R`import bcrypt from "bcrypt";
+
+// عند التسجيل
+const hash = await bcrypt.hash(password, 12);
+
+// عند الدخول: مقارنة، مش فك تشفير
+const ok = await bcrypt.compare(password, user.passwordHash);
+if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+// رسالة واحدة للاتنين: متقولش "الإيميل غلط" أو "الباسورد غلط"`,
+          try: "اتأكد إن قاعدة بياناتك مفيهاش ولا باسورد واحد مكتوب صريح.",
+          flag: "script",
+          deep: {
+            why: "الباسورد لو اتخزّن زي ما هو وقاعدة البيانات اتسرقت، كل الأكاونتات في خطر.",
+            how: R`bcrypt بيعمل hash للباسورد: رقم طويل مش ممكن ترجّعه للباسورد الأصلي.
+
+[[cost factor 12]]: قد إيه الحساب بطيء. أبطأ = أصعب للمهاجم يجرّب ملايين الباسوردات.
+
+[[bcrypt.compare]] مش بيفك الـ hash. بيعمل hash للجديد بنفس الطريقة ويقارن.
+
+رسالة خطأ واحدة مهمة: قول «Invalid credentials» للاتنين من غير تفريق بين «الإيميل غلط» و«الباسورد غلط».`,
+            when: "في كل نقطة تسجيل دخول أو إنشاء أكاونت.",
+            mistakes: "MD5 أو SHA256 للباسوردات. دي سريعة جدًا. استخدم bcrypt أو argon2."
+          },
+          teach: R`## الفكرة: متخزّنش الباسورد، خزّن بصمته
+
+لو خزّنت الباسورد نص عادي وقاعدة بياناتك اتسربت، كل الحسابات راحت. الحل إنك تخزّن [[hash]]: رقم طويل بيتحسب من الباسورد، ومستحيل ترجّعه للباسورد الأصلي. المثال بـ bcrypt. جرّبنا bcrypt في Docker (node:22)، وفحصنا الباسوردات في Postgres بتاع المعمل.
+
+---
+
+## ١. السطور
+
+~~~javascript
+import bcrypt from "bcrypt";
+
+const hash = await bcrypt.hash(password, 12);              // عند التسجيل
+const ok   = await bcrypt.compare(password, user.passwordHash); // عند الدخول
+if (!ok) return res.status(401).json({ error: "Invalid credentials" });
+~~~
+
+- [[bcrypt.hash(password, 12)]]: بيحسب الـ hash. الرقم [[12]] هو الـ **cost factor**: قد إيه الحساب بطيء. كل ما زاد، أبطأ، فأصعب على المهاجم يجرّب ملايين الباسوردات. ده اللي بيتخزّن في الداتابيز.
+- [[bcrypt.compare(password, hash)]]: **مش** بيفك الـ hash (مفيش فك أصلًا). بياخد الباسورد المكتوب، يعمله hash بنفس الملح والـ cost المخزّنين جوه الـ hash القديم، ويقارن. بيرجّع true/false.
+- [[401]] برسالة **واحدة** للاتنين: متقولش «الإيميل غلط» ولا «الباسورد غلط»، عشان المهاجم ميعرفش الإيميل موجود ولا لأ.
+
+---
+
+## ٢. شكل الـ hash والسرعة
+
+~~~text الناتج (bcrypt.hash لنفس الباسورد بثلاث تكاليف)
+10  $2b$10$vfo1sQFTD5EUusoJzwqj6e...   طول 60   68ms
+12  $2b$12$.tqI5WMUUCtDggKOEuJHhO...   طول 60   238ms
+14  $2b$14$bfk0macUnfIdimRmEBvvGe...   طول 60   861ms
+~~~
+
+- كل hash بيبدأ بـ [[$2b$]] (نسخة bcrypt)، وبعده الـ cost ([[10]]/[[12]]/[[14]])، وطوله **ثابت 60 حرف** مهما كان الباسورد.
+- لاحظ الزمن بيتضاعف تقريبًا مع كل زيادة في الـ cost: ده المقصود. [[12]] (حوالي ربع ثانية) اختيار كويس دلوقتي.
+
+~~~text نفس الباسورد مرتين
+again: $2b$12$uw6tzUU1EVEU6t.npjP2we...
+~~~
+
+الهاش طلع مختلف عن المرة الأولى بنفس الباسورد: لأن bcrypt بيحط [[salt]] عشوائي جوه كل hash، فنفس الباسورد بيدّي hashes مختلفة، وده بيمنع جداول التخمين الجاهزة (rainbow tables).
+
+~~~text compare
+compare right: true
+compare wrong: false
+~~~
+
+### ليه مش MD5 أو SHA256؟
+
+~~~text
+md5:    5175053a7565b844c3377e82565d3319
+sha256: 42501b6b7e5fa502f3cbf1fc4b2558b476a1d5ae6c2b064c181ae4462ee422f4
+1M sha256: 990ms
+~~~
+
+مليون hash بـ SHA256 خدوا أقل من ثانية. يعني المهاجم يجرّب ملايين الباسوردات في ثواني. bcrypt بـ cost 12 بيخلي كل محاولة ربع ثانية، فالمليون بياخد أيام. السرعة هنا عيب مش ميزة.
+
+---
+
+## ٣. تأكّد من الداتابيز
+
+~~~sql
+SELECT id, email, left(password, 7) AS prefix, length(password) FROM users;
+~~~
+
+~~~text الناتج
+ id  |      email       | prefix  | length
+-----+------------------+---------+--------
+ 123 | ali@example.com  | $2b$12$ |     60
+ 124 | sara@example.com | $2b$12$ |     60
+~~~
+
+كلهم [[$2b$12$]] وطولهم 60: hashed صح. فحص سريع:
+
+~~~sql
+SELECT count(*) FROM users WHERE password NOT LIKE '$2b$%' AND password NOT LIKE '$argon2%';
+~~~
+
+طلع [[0]]: مفيش ولا باسورد غير مـ hashed. لو طلع أكبر من صفر أو لقيت hash طوله 32/64 حرف hex (MD5/SHA256)، لازم تصلّح.
+
+---
+
+## الخلاصة
+
+- خزّن [[bcrypt.hash]] أو argon2، عمرك ما تخزّن الباسورد ولا MD5/SHA.
+- [[bcrypt.compare]] بيقارن من غير فك. الـ cost بيخلي التخمين بطيء، والـ salt بيخلي كل hash فريد.
+- رسالة خطأ واحدة عامة، وعمود الباسورد عمره ما يرجع في أي response.`,
+          lines: [
+            "استورد bcrypt.",
+            "اعمل hash للباسورد بتكلفة 12 (كل ما تزيد، أبطأ وأصعب على المهاجم). ده اللي بيتخزن.",
+            "عند الدخول: قارن الباسورد المكتوب بالـ hash المتخزن. مفيش فك، bcrypt بيعمل hash ويقارن.",
+            "لو غلط: 401 برسالة واحدة عامة، متقولش «الإيميل مش موجود» ولا «الباسورد غلط»."
+          ],
+          sol: R`[[SELECT id, email, left(password, 7) FROM users LIMIT 5;]]: كل الباسوردات المفروض تبدأ بـ [[$2b$10$]] أو [[$2b$12$]] (bcrypt) أو [[$argon2id$]] (argon2)، وطولها ثابت (60 حرف لـ bcrypt) مهما كان الباسورد. تقدر تتأكد بـ [[SELECT count(*) FROM users WHERE password NOT LIKE '$2b$%' AND password NOT LIKE '$argon2%';]] والمفروض يطلع صفر.
+
+لو شفت باسورد مقروء، أو hash طوله 32 أو 64 حرف hex (يعني MD5 أو SHA-256 من غير salt)، يبقى لازم تصلّح: مينفعش تحوّل القديم لـ bcrypt من غير الباسورد الأصلي، فالحل إنك تعمل hash للباسورد بـ bcrypt أول ما اليوزر يعمل login صح، أو تجبر الكل يعمل reset. وخد بالك الـ select نفسه متسيبهوش في كود الـ API: عمود الباسورد عمره ما يرجع في أي response.`
+        },
+        {
+          cmd: "5. إعدادات غلط",
+          title: "A02 الافتراضيات الخطيرة",
+          desc: "ده A02:2025 Security Misconfiguration، وطلع لرقم 2 في نسخة 2025. صفحات الـ error اللي بتطبع تفاصيل السيرفر، وصلاحيات مفتوحة، ولوحات تحكم بباسورد افتراضي. في Express: شيل [[X-Powered-By]] عشان متعلنش إنك Express، فعّل [[helmet]] للـ security headers، ومتبعتش تفاصيل الأخطاء للمستخدم في الإنتاج.",
+          example: R`import helmet from "helmet";
+app.use(helmet());
+app.disable("x-powered-by");
+
+// في الإنتاج: رسالة عامة، والتفاصيل في اللوج بس
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: "Something went wrong" });
+});`,
+          try: "افتح Network على موقعك ودوّر على header اسمه [[X-Powered-By]] أو [[Server]] بيفشي إيه اللي شغال.",
+          flag: "script",
+          deep: {
+            why: "frameworks وبرامج بتيجي بإعدادات للتطوير مش للإنتاج. تغيير حاجات صغيرة يحسّن الأمان بشكل كبير.",
+            how: R`[[helmet]] مكتبة Express بتضيف أهم security headers في سطر واحد: CSP، وX-Frame-Options، وغيرهم.
+
+[[app.disable("x-powered-by")]]: شيل الـ header اللي يقول للمهاجم انت شغال بـ Express.
+
+Stack traces في الإنتاج: لو error handler بيرجع التفاصيل للمستخدم، المهاجم بيعرف أكتر. في الإنتاج: رسالة عامة، والتفاصيل في اللوج بس.`,
+            when: "قبل كل deploy للإنتاج.",
+            mistakes: "نسيان إن [[DEBUG=true]] أو [[NODE_ENV=development]] بيغيّر سلوك مكتبات كتير."
+          },
+          teach: R`## الفكرة: الإعدادات الافتراضية للتطوير، مش للإنتاج
+
+الـ frameworks بتيجي بإعدادات مريحة للتطوير: بتعلن اسمها في الـ headers، وبتطبع تفاصيل الأخطاء كاملة. في الإنتاج دي معلومات مجانية للمهاجم. المثال بيصلّح تلاتة في Express: يشيل [[X-Powered-By]]، يضيف security headers بـ helmet، ويرد رسالة عامة بدل الـ stack trace. جرّبناه في Docker (node:22): نسخة من غير إعداد ونسخة بـ helmet.
+
+---
+
+## ١. السطور
+
+~~~javascript
+import helmet from "helmet";
+app.use(helmet());
+app.disable("x-powered-by");
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: "Something went wrong" });
+});
+~~~
+
+- [[helmet()]]: middleware بيضيف أهم security headers في سطر واحد.
+- [[app.disable("x-powered-by")]]: بيشيل الـ header اللي بيقول للمهاجم إنك شغال Express. (helmet بيشيله برضه، فلو مستخدمه مش محتاج السطر ده).
+- الـ error handler: الـ **٤ parameters** ([[err, req, res, next]]) هي اللي بتخلي Express يعرف إنه للأخطاء. [[console.error(err)]] التفاصيل في اللوج بتاعك، و [[res.status(500)]] رسالة عامة للمستخدم من غير تفاصيل.
+
+---
+
+## ٢. الـ headers: قبل وبعد
+
+~~~text من غير إعداد: curl -sI http://localhost:3103/
+X-Powered-By: Express
+Content-Type: text/html; charset=utf-8
+...
+~~~
+
+[[X-Powered-By: Express]] بيقول للمهاجم على أي framework انت، فيعرف يدوّر على ثغرات نسخته.
+
+~~~text بعد helmet: curl -sI http://localhost:3104/
+Content-Security-Policy: default-src 'self';...
+Cross-Origin-Opener-Policy: same-origin
+Referrer-Policy: no-referrer
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+...
+~~~
+
+[[X-Powered-By]] اختفى، وظهرت headers بتحمي: [[X-Frame-Options]] بيمنع إن موقعك يتحط جوه iframe في موقع تاني (clickjacking)، [[X-Content-Type-Options: nosniff]] بيمنع المتصفح من تخمين نوع الملف، و [[Content-Security-Policy]] بيحدد مصادر السكربتات المسموحة.
+
+---
+
+## ٣. صفحة الخطأ بتفشي كتير
+
+طلبنا route بيقع (بيعمل [[JSON.parse]] لمدخل غلط). النسخة الافتراضية مع [[NODE_ENV=development]]:
+
+~~~text /crash?data={bad  (من غير error handler)
+<pre>SyntaxError: Expected property name or '}' in JSON at position 1
+   at JSON.parse (<anonymous>)
+   at file:///app/misconf.mjs:6:40
+   at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
+   ...
+~~~
+
+ده بيكشف مسارات الملفات على السيرفر، والمكتبات ونسخها، وأماكن في الكود. النسخة اللي فيها error handler:
+
+~~~text /crash?data={bad  (مع error handler)
+{"error":"Something went wrong"}   [500]
+~~~
+
+> حتى من غير error handler، Express بيخفي الـ stack لو [[NODE_ENV=production]] (جرّبناها: طلعت [[Internal Server Error]] بس). بس الأأمن إنك تحط handler بنفسك عشان تتحكم في الرد والـ logging.
+
+---
+
+## ٤. مش Express بس
+
+| التقنية | بيعلن إيه | العلاج |
+|---|---|---|
+| Express | [[X-Powered-By: Express]] | [[app.disable("x-powered-by")]] أو helmet |
+| Nginx | [[Server: nginx/1.24.0]] | [[server_tokens off;]] |
+| Next.js | [[X-Powered-By: Next.js]] | [[poweredByHeader: false]] في next.config |
+
+شيلهم مش لأنهم بيحموك لوحدهم، لكن عشان متسهّلش على السكانر يعرف نسختك ويدوّر على ثغرة معروفة فيها.
+
+---
+
+## الخلاصة
+
+- [[helmet()]] + [[app.disable("x-powered-by")]] سطرين بيحسّنوا الوضع كتير.
+- error handler بيرجّع رسالة عامة، والتفاصيل في اللوج بس.
+- [[NODE_ENV=production]] بيغيّر سلوك مكتبات كتير: اتأكد إنه متظبوط قبل أي deploy.`,
+          lines: [
+            "استورد helmet.",
+            "فعّله: بيضيف security headers الأساسية كلها.",
+            "شيل الـ header اللي بيقول إنك شغال بـ Express.",
+            "error handler عام (الـ ٤ parameters هي اللي بتخلي Express يعرف إنه للأخطاء).",
+            "سجّل التفاصيل الكاملة في اللوج بتاعك.",
+            "ورجّع للمستخدم رسالة عامة بس، من غير stack trace.",
+            "قفلة."
+          ],
+          sol: R`DevTools ← Network ← اختار أول طلب (الصفحة أو أي API) ← Headers ← Response Headers. في Express من غير أي إعداد هتلاقي [[X-Powered-By: Express]]، وفي Nginx من غير إعداد [[Server: nginx/1.24.0]] بالنسخة. نفس الكلام من الترمنال: [[curl -sI http://localhost:3000 | grep -iE "x-powered-by|server"]].
+
+الحل: في Express [[app.disable("x-powered-by")]] أو [[helmet()]] اللي بيشيله لوحده، وفي Nginx [[server_tokens off;]] فيبقى [[Server: nginx]] من غير نسخة. شيله مش لأنه بيحميك لوحده، لكن لأنه بيسهّل على أي سكانر يعرف إنت على نسخة فيها ثغرة معروفة. ولو شفت [[X-Powered-By: Next.js]] فده بيتقفل بـ [[poweredByHeader: false]] في [[next.config]].`
+        },
+        {
+          cmd: "6. مكتبات فيها ثغرات",
+          title: "A03 الكود اللي مكتبتوش انت",
+          desc: "في نسخة 2025 المكتبات القديمة أو اللي فيها ثغرات معروفة بقت جزء من A03 Software Supply Chain Failures. معظم كودك مكتبات، وأي ثغرة فيها بتبقى ثغرة فيك. [[npm audit]] بيقولك أنهي مكتبة فيها ثغرة معروفة ودرجة خطورتها. راجع اللي بيقترح تحديثه قبل [[--force]] لأنه ممكن يكسر حاجة. و Dependabot على GitHub بيعملك pull request أوتوماتيك بالتحديثات الأمنية.",
+          example: R`npm audit
+npm audit --omit=dev
+npm audit fix
+npm outdated`,
+          try: "شغّل [[npm audit]] على أكبر مشروع عندك وشوف كام ثغرة فيه.",
+          flag: "term",
+          deep: {
+            why: "معظم كودك مش بتكتبه انت. أي مكتبة فيها ثغرة هي ثغرة فيك.",
+            how: R`[[npm audit]] بيقارن مكتباتك بقاعدة GitHub Advisory Database. لو لاقى ثغرة بيقولك اسمها والمكتبة والخطورة والإصدار اللي بيصلّحها.
+
+[[npm audit fix]] بيحاول يحدّث تلقائيًا. إياك [[--force]] من غير ما تقرا.
+
+[[npm ci]] أحسن من [[npm install]] في الإنتاج: بيسطّب بالظبط الـ versions في package-lock.json من غير ما يحدّث حاجة.`,
+            when: "في CI: [[npm audit --audit-level=high]] يفشل الـ build لو ثغرة high. وفعّل Dependabot.",
+            mistakes: "تتجاهل [[npm audit]] لأن «الموقع شغال»."
+          },
+          teach: R`## الفكرة: معظم كودك مكتبات، وثغرتها ثغرتك
+
+مشروعك بيعتمد على مئات المكتبات، كل واحدة ممكن تعتمد على غيرها. لو واحدة فيها ثغرة معروفة، هي ثغرة فيك. [[npm audit]] بيقارن مكتباتك بقاعدة بيانات الثغرات المعروفة ويقولك فين المشكلة ودرجتها. جرّبناه في Docker (node:22, npm 10) على مشروع فيه نسخ قديمة عمدًا (express 4.17.1 و lodash و minimist).
+
+---
+
+## ١. السطور
+
+~~~bash
+npm audit            # كل المكتبات
+npm audit --omit=dev # مكتبات الإنتاج بس
+npm audit fix        # صلّح اللي ينفع بأمان
+npm outdated         # إيه اللي ليه نسخة أحدث
+~~~
+
+---
+
+## ٢. ناتج [[npm audit]]
+
+~~~text جزء من الناتج
+minimist  1.0.0 - 1.2.5
+Severity: critical
+Prototype Pollution in minimist - https://github.com/advisories/GHSA-xvch-5gv4-984h
+fix available via $__btnpm audit fix --force$__bt
+node_modules/minimist
+
+8 vulnerabilities (3 low, 4 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+To address all issues, run:
+  npm audit fix --force
+~~~
+
+لكل ثغرة: اسم المكتبة والنسخ المصابة، الخطورة ([[low]]/[[moderate]]/[[high]]/[[critical]])، لينك الـ advisory، ومكانها في الشجرة. في الآخر عدّاد، وسطرين بيقترحوا [[fix]] أو [[fix --force]]. الـ exit code كان [[1]] (مفيد في CI). على مشروع نضيف بيطبع [[found 0 vulnerabilities]].
+
+---
+
+## ٣. أنهي ثغرة تهمّك فعلًا؟
+
+مش كل ثغرة بنفس الخطورة عليك. ثغرة في أداة build بتشتغل على جهازك بس أقل خطورة من واحدة في مكتبة بتستقبل داتا المستخدمين في الإنتاج:
+
+~~~text npm audit --omit=dev
+7 vulnerabilities (3 low, 4 high)
+~~~
+
+الـ critical كان في [[minimist]] اللي كان devDependency، فاختفى من فحص الإنتاج (نزل من 8 لـ 7). [[--omit=dev]] بيوريك اللي في الإنتاج بس.
+
+في CI بتختار مستوى: [[npm audit --audit-level=high]] بيرجّع exit 1 لو فيه high أو أعلى. جرّبناه: [[--audit-level=critical --omit=dev]] رجّع [[0]] (اختفى الـ critical)، و [[--audit-level=high]] رجّع [[1]].
+
+---
+
+## ٤. [[npm outdated]] و [[fix]]
+
+~~~text npm outdated
+Package   Current  Wanted  Latest
+express    4.17.1  4.17.1   5.2.1
+minimist    1.2.5   1.2.5   1.2.8
+~~~
+
+- [[Current]] المسطّب، [[Wanted]] أحدث نسخة جوه حدود الـ semver في package.json، [[Latest]] آخر نسخة خالص.
+- [[Wanted]] = [[Current]] هنا لأن الحدود ضيقة؛ الوصول لـ express 5 نقلة major.
+
+الترتيب الصح: [[npm audit fix]] الأول (بيحدّث في حدود الـ semver ومش بيكسر). الباقي بص عليه بنفسك. **متعملش** [[npm audit fix --force]] من غير ما تقرا: هنا كان هيركّب [[express@4.22.3]] «outside the stated dependency range»، يعني ممكن ينقلك نسخة بتكسر المشروع.
+
+---
+
+## الخلاصة
+
+- [[npm audit]] بيقارن مكتباتك بقاعدة الثغرات؛ exit 1 لو فيه حاجة، فمفيد في CI.
+- [[npm audit fix]] آمن، و [[--force]] خطر (نقلات major). [[--omit=dev]] بيركّز على الإنتاج.
+- فعّل Dependabot على GitHub عشان ييجي بالتحديثات الأمنية تلقائيًا.`,
+          lines: [
+            "افحص كل المكتبات ضد قاعدة الثغرات المعروفة.",
+            "مكتبات الإنتاج بس (من غير devDependencies).",
+            "صلّح اللي ينفع يتصلّح بتحديث آمن.",
+            "إيه المكتبات اللي ليها نسخ أحدث."
+          ],
+          sol: R`[[npm audit]] بيطبع لكل ثغرة اسم المكتبة، الخطورة (low/moderate/high/critical)، ولينك الـ advisory، وسلسلة الاعتماد (مين جابها)، وفي الآخر سطر زي [[5 vulnerabilities (3 moderate, 2 high)]] وتحته [[To address all issues, run: npm audit fix]]. على مشروع نضيف [[found 0 vulnerabilities]].
+
+الترتيب الصح: [[npm audit fix]] الأول (بيحدّث في حدود الـ semver ومش بيكسر)، وبعدين شوف الباقي بنفسك. متعملش [[npm audit fix --force]] من غير ما تقرا، لأنه ممكن ينقلك لنسخة major جديدة وتكسر المشروع. وافهم إن مش كل ثغرة بتأثر عليك: ثغرة في أداة build بتشتغل على جهازك بس أقل خطورة بكتير من واحدة في مكتبة بتستقبل داتا المستخدمين في الإنتاج، وعشان كده [[npm audit --omit=dev]] بيوريك اللي في الإنتاج بس.`
+        },
+        {
+          cmd: "7. SSRF (بقت جزء من رقم 1)",
+          title: "A01 SSRF: لما السيرفر يجيب URL من المستخدم",
+          desc: "في نسخة 2025 دمجوا SSRF جوه A01 Broken Access Control، لأنها في الآخر وصول لحاجة مش من حقك. بتحصل لو عندك ميزة بتجيب صورة أو داتا من URL بيبعته المستخدم، فيحط عنوان داخلي زي [[169.254.169.254]] (اللي بيرجّع أسرار السيرفر على بعض المنصات) أو [[localhost]] فيوصل لخدمات جواك. الحل: اسمح بدومينات محددة بس، وامنع العناوين الداخلية.",
+          example: R`// خطر: بيجيب أي URL
+const data = await fetch(req.body.url);
+
+// أمان: قائمة بيضاء
+const allowed = ["images.example.com", "cdn.example.com"];
+const host = new URL(req.body.url).hostname;
+if (!allowed.includes(host)) {
+  return res.status(400).json({ error: "URL not allowed" });
+}
+const safe = await fetch(req.body.url, { redirect: "error" });`,
+          try: "لو عندك ميزة بتجيب من URL خارجي، اتأكد إنها بتفلتر الدومينات.",
+          flag: "script",
+          deep: {
+            why: "التطبيق بينفّذ طلبات لـ URLs من اليوزر. المهاجم يبعت URL داخلي يوصل لخدمات على نفس السيرفر.",
+            how: R`في OWASP 2025 دمجوا SSRF في Broken Access Control لأنها نفس المشكلة: اليوزر بيوصل لموارد مش مفروض.
+
+الكود الغلط: fetch لأي URL من اليوزر. المهاجم يبعت [[http://169.254.169.254/latest/meta-data/]] ويجيب credentials للـ cloud instance.
+
+الكود الصح: whitelist للـ domains المسموحة. أي URL مش فيها يترفض.`,
+            when: "أي feature بتعمل fetch لـ URL من اليوزر: upload by URL، وwebhook.",
+            mistakes: R`تستخدم regex للفلترة. سهل تتجاوزها. الأحسن whitelist، ومعاها [[redirect: "error"]] عشان الدومين المسموح ميحوّلكش لعنوان داخلي.`
+          },
+          teach: R`## الفكرة: خلّي السيرفر يجيب URL من المستخدم، يوصل لجواه
+
+SSRF (Server-Side Request Forgery): عندك ميزة بتجيب صورة أو داتا من URL بيبعته المستخدم. المهاجم يبعت عنوان داخلي بدل عنوان خارجي، فالسيرفر (اللي بيقدر يوصل لخدمات جواه) بيجيبها ويرجّعها له. المثال: fetch لأي URL (غلط)، وقائمة بيضاء (صح). جرّبناه على معمل فيه خدمة أدمن داخلية على [[127.0.0.1:9000]] بترجّع أسرار، مش منشورة لبرّه الـ container.
+
+---
+
+## ١. السطور
+
+~~~javascript
+const data = await fetch(req.body.url);   // خطر
+
+const allowed = ["images.example.com", "cdn.example.com"];
+const host = new URL(req.body.url).hostname;
+if (!allowed.includes(host)) return res.status(400).json({ error: "URL not allowed" });
+const safe = await fetch(req.body.url, { redirect: "error" });
+~~~
+
+- [[fetch(req.body.url)]]: بيطلب أي URL اليوزر بعته. ده الغلط.
+- [[new URL(url).hostname]]: بيطلّع اسم الدومين بس من الـ URL.
+- [[allowed.includes(host)]]: لازم يكون من قائمة ثابتة، وإلا [[400]].
+- [[redirect: "error"]]: لو الدومين المسموح حاول يحوّلك لعنوان تاني، اعتبرها خطأ. (عشان موقع مسموح ميحوّلكش لعنوان داخلي).
+
+---
+
+## ٢. الهجوم على الـ route الغلط
+
+الخدمة الداخلية مش متاحة من الهوست:
+
+~~~text من الهوست مباشرة
+curl http://localhost:9000/   ->   (فشل الاتصال، exit 7)
+~~~
+
+لكن عبر الـ route الغلط اللي بيـ fetch نيابة عنك:
+
+~~~text POST /bad/preview  {"url":"http://127.0.0.1:9000/"}
+{"service":"internal-admin","DB_PASSWORD":"labpass","JWT_SECRET":"super-secret-lab-key"}   [200]
+~~~
+
+السيرفر وصل للخدمة الداخلية وسحب أسرارها. وممكن المهاجم يستكشف الشبكة الداخلية (port scanning): بعت [[http://sec01-pg:6379/]] (بورт مقفول) فرجع [[ECONNREFUSED]]، و [[sec01-pg:5432]] (مفتوح) رجع نوع خطأ تاني، فبيعرف أنهي بورت مفتوح.
+
+> على بعض منصّات السحابة، [[http://169.254.169.254/]] بيرجّع بيانات الـ instance وأحيانًا مفاتيح مؤقتة. ده أشهر هدف لـ SSRF.
+
+---
+
+## ٣. القائمة البيضاء بترفض
+
+~~~text POST /preview
+http://127.0.0.1:9000/                     -> {"error":"URL not allowed"} [400]
+http://169.254.169.254/latest/meta-data/   -> {"error":"URL not allowed"} [400]
+https://images.example.com.evil.test/a.png -> {"error":"URL not allowed"} [400]
+https://images.example.com@127.0.0.1:9000/ -> {"error":"URL not allowed"} [400]
+not a url                                  -> {"error":"Bad URL"}         [400]
+~~~
+
+كلهم اترفضوا قبل أي fetch. لاحظ حالتين ماكرتين:
+- [[images.example.com.evil.test]]: دومين تاني خالص بس بيبدأ باسم المسموح. مقارنة النص كانت هتعدّيه، مقارنة [[hostname]] بالقائمة لأ.
+- [[images.example.com@127.0.0.1:9000]]: كل اللي قبل [[@]] في الـ URL هو «user info» مش الدومين؛ الدومين الحقيقي [[127.0.0.1]]. [[new URL().hostname]] بيطلّع [[127.0.0.1]] صح، فاترفض.
+
+---
+
+## ٤. كود الحل سطر سطر
+
+~~~javascript
+const ALLOWED = new Set(["images.example.com", "cdn.example.com"]);
+function checkUrl(input) {
+  let u;
+  try { u = new URL(input); } catch { return false; }
+  return u.protocol === "https:" && ALLOWED.has(u.hostname);
+}
+~~~
+
+- [[try { new URL(input) } catch { return false }]]: نص مش URL يترفض.
+- [[u.protocol === "https:"]]: بيرفض [[file:]] و [[http:]].
+- [[ALLOWED.has(u.hostname)]]: الدومين من قائمة ثابتة.
+
+جرّبناه:
+
+~~~text الناتج
+https://images.example.com/a.png         true   images.example.com
+http://169.254.169.254/latest/           false  169.254.169.254
+https://images.example.com.evil.net/     false  images.example.com.evil.net
+http://images.example.com/a.png          false  images.example.com   (http مرفوض)
+https://IMAGES.example.com/a.png         true   images.example.com   (الدومين case-insensitive)
+https://images.example.com@evil.net/     false  evil.net
+~~~
+
+---
+
+## الخلاصة
+
+- fetch لـ URL من المستخدم خطر؛ قارن [[new URL(u).hostname]] بقائمة ثابتة، مش بـ [[includes]] على النص.
+- اقفل الـ redirects ([[redirect: "error"]] أو [[manual"]]): موقع مسموح ممكن يحوّلك على عنوان داخلي.
+- لو لازم تسمح بأي دومين: حلّه لـ IP وارفض أي IP خاص (127.x، 10.x، 192.168.x، 169.254.x).`,
+          lines: [
+            "الغلط: اطلب أي URL اليوزر يبعته. ممكن يبعت عنوان داخلي زي metadata بتاع الـ cloud.",
+            "الصح: لستة الدومينات المسموحة بس.",
+            "طلّع الدومين من الـ URL.",
+            "لو مش في اللستة...",
+            "...ارفض.",
+            "قفلة.",
+            "دلوقتي بس اطلب، ومن غير ما تتبع redirects، وإلا الدومين المسموح يحوّلك لعنوان داخلي."
+          ],
+          sol: R`المطلوب تتأكد إن الميزة (preview للينك، رفع صورة من URL، webhook) بترفض أي URL مش في قايمة مسموحة. اختبرها بـ: [[http://127.0.0.1:5432]]، [[http://localhost/admin]]، [[http://169.254.169.254/latest/meta-data/]] (عنوان الميتاداتا في السحابة)، و [[file:///etc/passwd]]. المفروض كلهم يترفضوا بـ [[400]] قبل ما السيرفر يحاول يوصلهم.
+
+لو الفلتر بيقارن النص بس (زي [[url.includes("mysite.com")]]) هيعدّي [[http://mysite.com.evil.net]]، فقارن بـ [[new URL(u).hostname]] على قايمة ثابتة. ولو لازم تسمح بأي دومين، حل الدومين لـ IP وارفض أي IP خاص (127.x، 10.x، 192.168.x، 169.254.x)، واقفل الـ redirects ([[redirect: "manual"]]) لأن موقع مسموح ممكن يحوّلك على عنوان داخلي.`,
+          solCode: R`const ALLOWED = new Set(["images.example.com", "cdn.example.com"]);
+
+function checkUrl(input) {
+  let u;
+  try { u = new URL(input); } catch { return false; }
+  return u.protocol === "https:" && ALLOWED.has(u.hostname);
+}
+
+// checkUrl("https://images.example.com/a.png")      -> true
+// checkUrl("http://169.254.169.254/latest/")        -> false
+// checkUrl("https://images.example.com.evil.net/")  -> false`
+        },
+        {
+          cmd: "8. Rate limiting",
+          title: "دفاع لـ A07 و A06: امنع الإغراق والتخمين",
+          desc: "Rate limiting مش بند في OWASP Top 10، ده دفاع: A07 Authentication Failures بتعدّ brute force و credential stuffing اللي مبيتقفلوش بسرعة ثغرة، و A06 Insecure Design فيها «مفيش حد لعدد مرات التفاعل» (CWE-799). من غيره حد يقدر يجرّب آلاف الباسوردات، أو يغرق الـ API. حط حد على المحاولات، أشد على login و forgot-password. في الإنتاج ورا Nginx أو Cloudflare حط الـ limiting هناك كمان.",
+          example: R`import rateLimit from "express-rate-limit";
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,   // 15 دقيقة
+  limit: 5,                      // 5 محاولات للـ IP
+  message: { error: "Too many attempts, try later" }
+});
+app.post("/api/login", loginLimiter, loginHandler);`,
+          try: "جرّب تبعت لـ login بتاعك 10 طلبات ورا بعض بـ curl في لوب، وشوف بيرد بـ 429 ولا لأ.",
+          flag: "script",
+          deep: {
+            why: "بدون rate limiting، المهاجم يجرّب ملايين الباسوردات، أو يغرق السيرفر.",
+            how: R`Rate limiting بيحدد كام طلب مسموح من نفس الـ IP في وقت معين.
+
+في المثال: 5 محاولات login في 15 دقيقة. بعدها 429. وده بيخلي brute force مستحيل عمليًا.
+
+الحدود بتختلف: login و forgot-password أشد (5-10 محاولات). APIs العادية 100-500 في الدقيقة.
+
+في الإنتاج ورا Nginx أو Cloudflare: Nginx عنده [[limit_req_zone]]، وCloudflare عنده rate limiting rules.`,
+            when: "على كل login endpoint ومن الأول.",
+            mistakes: "Rate limiting على الـ IP بس. اليوزرز ورا NAT (شركات وجامعات) كلهم على نفس الـ IP."
+          },
+          teach: R`## الفكرة: حط سقف لعدد الطلبات
+
+من غير حد، المهاجم يجرّب ملايين الباسوردات على [[/login]]، أو يغرق الـ API بطلبات. Rate limiting بيحدد كام طلب مسموح من نفس المصدر في وقت معين، وبعدها بيرد [[429 Too Many Requests]]. المثال بـ [[express-rate-limit]]. جرّبناه على المعمل: route بـ limiter و route من غيره.
+
+---
+
+## ١. السطور
+
+~~~javascript
+import rateLimit from "express-rate-limit";
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,   // 15 دقيقة
+  limit: 5,                    // 5 محاولات للـ IP
+  message: { error: "Too many attempts, try later" }
+});
+app.post("/api/login", loginLimiter, loginHandler);
+~~~
+
+- [[windowMs]]: النافذة الزمنية بالمللي ثانية. [[15 * 60 * 1000]] = 15 دقيقة.
+- [[limit: 5]]: أقصى 5 طلبات من نفس الـ IP في النافذة.
+- [[message]]: الجسم اللي بيرجع مع [[429]].
+- الـ limiter middleware بيتحط **قبل** الـ handler على route الـ login بس (مش على الـ API كله).
+
+---
+
+## ٢. جرّبناها: 10 طلبات بباسورد غلط
+
+~~~bash
+for i in $(seq 1 10); do curl -s -o /dev/null -w "%{http_code}\n" -X POST .../api/login -d '{...wrong...}'; done
+~~~
+
+~~~text route من غير limiter (/bad/api/login)
+401 401 401 401 401 401 401 401 401 401
+~~~
+
+~~~text route بالـ limiter (/api/login)
+401 401 401 401 401 429 429 429 429 429
+~~~
+
+أول 5 محاولات ردت [[401]] (باسورد غلط)، وبعدها [[429]]: الـ limiter قفل. يعني brute force بقى غير عملي.
+
+### headers بترشدك
+
+~~~text أول محاولة
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 4
+~~~
+
+~~~text بعد ما خلص الرصيد
+HTTP/1.1 429 Too Many Requests
+X-RateLimit-Remaining: 0
+Retry-After: 899
+~~~
+
+[[Retry-After: 899]] يعني استنى 899 ثانية (آخر النافذة). لاحظ إنه **حتى الباسورد الصح** بيترد [[429]] بعد ما يخلص الرصيد: العدّاد بيعدّ كل الطلبات، مش الفاشلة بس.
+
+---
+
+## ٣. فخّان شائعان
+
+### ورا بروكسي
+
+لو السيرفر ورا Nginx أو Cloudflare، كل الطلبات جاية من IP البروكسي، فالـ limiter هيقفل على الناس كلهم مع بعض. الحل: [[app.set("trust proxy", 1)]] عشان Express يقرا IP العميل الحقيقي من header [[X-Forwarded-For]].
+
+### أكتر من instance
+
+في الإنتاج بأكتر من نسخة من التطبيق، الذاكرة مش مشتركة بينهم، فكل instance عنده عدّاده. العدّاد لازم يتخزّن في مكان مشترك زي Redis.
+
+---
+
+## ٤. الحدود بتختلف
+
+| الـ endpoint | حد معقول |
+|---|---|
+| login و forgot-password | 5–10 لكل 15 دقيقة (أشد) |
+| APIs عادية | 100–500 في الدقيقة |
+
+وفي الإنتاج، حط limiting على Nginx ([[limit_req_zone]]) أو Cloudflare كمان كطبقة قبل التطبيق.
+
+---
+
+## الخلاصة
+
+- حط limiter على login وforgot-password من الأول، أشد من باقي الـ API.
+- [[429]] بيقفل brute force والإغراق. راقب [[X-RateLimit-Remaining]] و [[Retry-After]].
+- ورا بروكسي فعّل [[trust proxy]]، وبأكتر من instance خزّن العدّاد في Redis.`,
+          lines: [
+            "استورد المكتبة.",
+            "اعمل limiter.",
+            "النافذة الزمنية: ١٥ دقيقة بالمللي ثانية.",
+            "أقصى عدد محاولات من نفس الـ IP في النافذة دي.",
+            "الرسالة اللي بترجع مع 429.",
+            "قفلة.",
+            "حط الـ limiter على route الـ login بس، قبل الـ handler."
+          ],
+          sol: R`بالـ limiter اللي في المثال (5 محاولات كل 15 دقيقة) لوب الـ 10 طلبات لازم يطبع [[401]] خمس مرات (باسورد غلط) وبعدين [[429]] خمس مرات. لو اتطبع 401 عشر مرات، يبقى الـ limiter مش متركّب على الـ route ده، أو متركّب بعد الـ handler.
+
+لو السيرفر ورا Nginx أو Cloudflare وكل الطلبات جاية من نفس الـ IP (IP البروكسي)، هيتقفل على الناس كلها مع بعض: لازم [[app.set("trust proxy", 1)]] عشان Express يقرا IP العميل الحقيقي. وفي الإنتاج بأكتر من instance، الذاكرة مش مشتركة بينهم، فالعداد يتخزن في Redis.`,
+          solCode: R`for i in $(seq 1 10); do
+  curl -s -o /dev/null -w "%{http_code}\n" -X POST http://localhost:3000/api/login \
+    -H "Content-Type: application/json" -d '{"email":"a@a.com","password":"wrong"}'
+done
+# المتوقع: 401 خمس مرات، وبعدين 429 خمس مرات`
+        },
+        {
+          cmd: "npm و Supply Chain",
+          title: "A03 متسيبش مكتبة تشغّل كود وقت التسطيب",
+          desc: "هجمات 2025 على npm (مكتبات مشهورة اتسرق حساب صاحبها ونزلت نسخة ملغومة) كانت بتشتغل من [[postinstall]]: مجرد [[npm install]] بيشغّل الكود. [[--ignore-scripts]] بيمنع ده، و [[npm audit signatures]] بيتأكد إن المكتبات متوقّعة من الـ registry فعلًا. وقبل ما تسطّب مكتبة، بص نزلت إمتى: نسخة عمرها ساعات خليك بعيد عنها.",
+          example: R`npm ci --ignore-scripts
+npm audit signatures
+npm config set ignore-scripts true
+npm view express time.modified`,
+          try: "شغّل [[npm audit signatures]] على مشروعك، وجرّب [[npm ci --ignore-scripts]] وشوف أنهي مكتبة كانت محتاجة scripts.",
+          flag: "term",
+          deep: {
+            why: "المكتبة اللي بتثق فيها ممكن تتخترق هي نفسها، وده اللي OWASP 2025 حطته A03.",
+            how: "install scripts بتشتغل بصلاحياتك وتقدر تقرا .env و ~/.npmrc وتسرق التوكنات. ignore-scripts بيقفلها. المكتبات اللي محتاجة build (bcrypt، sharp) هتحتاج تشغّل scripts بتاعتها بإيدك ([[npm rebuild bcrypt]]). والـ lock و npm ci بيضمنوا إن محدش يغيّر النسخ من تحتك.",
+            when: "في CI وعلى السيرفر دايمًا، وعلى جهازك لو بتجرّب مكتبات جديدة.",
+            mistakes: "تسطيب مكتبة من اسم شبه المشهورة (typosquatting). وتحديث كل حاجة لـ latest أول ما تنزل."
+          },
+          teach: R`## الفكرة: مجرد تسطيب مكتبة بيشغّل كودها
+
+مكتبات npm ممكن يكون ليها [[postinstall]] أو [[install]] script بيشتغل تلقائيًا وقت [[npm install]]، بصلاحياتك، فيقدر يقرا [[.env]] و [[~/.npmrc]] ويسرق توكناتك. هجمات 2025 على npm (مكتبات مشهورة اتسرق حساب صاحبها) اشتغلت بالطريقة دي. المثال بيوريك إزاي تقفلها وتتأكد. جرّبناه في Docker (node:22, npm 10) على مشروع فيه express و bcrypt و esbuild.
+
+---
+
+## ١. السطور
+
+~~~bash
+npm ci --ignore-scripts      # سطّب من الـ lock من غير تشغيل scripts
+npm audit signatures         # اتأكد إن المكتبات متوقّعة من الـ registry
+npm config set ignore-scripts true  # خلّيها الافتراضي
+npm view express time.modified      # آخر مرة اتنشر فيها حاجة
+~~~
+
+---
+
+## ٢. [[--ignore-scripts]]: مين كان محتاج scripts؟
+
+~~~text npm ci --ignore-scripts
+added 73 packages, and audited 74 packages in 23s
+found 0 vulnerabilities
+~~~
+
+سطّب عادي من غير ما يشغّل أي postinstall. عشان تعرف مين عنده scripts (قبل ما تشغّلها):
+
+~~~text npm query ":attr(scripts, [postinstall])"  و [install]
+esbuild 0.25.12  postinstall: node install.js
+bcrypt 6.0.0     install: node-gyp-build
+~~~
+
+دول اللي محتاجين scripts عشان بيبنوا أو بينزّلوا حاجة native. جرّبنا إنهم يشتغلوا بعد [[--ignore-scripts]]:
+
+~~~text
+bcrypt $2b$04$...   ✓ اشتغل
+esbuild let a = 1;   ✓ اشتغل
+~~~
+
+هنا اشتغلوا عادي (prebuilt binaries موجودة). عمومًا اللي بيبوظ غالبًا المكتبات دي، وبتلاقي الخطأ وقت التشغيل مش التسطيب. سيب [[ignore-scripts]] وشغّل الـ scripts للمكتبات دي بس.
+
+---
+
+## ٣. [[npm audit signatures]]
+
+~~~text الناتج
+audited 73 packages in 7s
+73 packages have verified registry signatures
+2 packages have verified attestations
+~~~
+
+ده بيتأكد إن اللي نزل عندك هو نفسه اللي اتنشر على الـ registry (توقيع من npm). لو طلع [[invalid]] أو [[missing]] فيه حاجة غلط تستاهل تبص عليها. الـ attestations دليل أقوى (بيربط المكتبة بالـ build اللي طلّعها على GitHub).
+
+---
+
+## ٤. بص على عمر النسخة
+
+~~~text npm view express time.modified
+2026-10-01T10:45:23.339Z
+~~~
+
+~~~text npm view express@5.2.1 time
+"5.2.1": "2025-12-01T20:49:43.268Z"
+~~~
+
+قاعدة مفيدة: نسخة عمرها ساعات خليك بعيد عنها لحد ما تثبت إنها سليمة؛ معظم النسخ الملغومة بتتشال بسرعة بعد ما تتكتشف. و typosquatting (اسم شبه المشهور) خطر تاني: اتأكد من اسم المكتبة بالظبط قبل ما تسطّبها.
+
+---
+
+## الخلاصة
+
+- [[--ignore-scripts]] (أو [[npm config set ignore-scripts true]]) بيقفل أخطر باب: كود بيشتغل وقت التسطيب.
+- [[npm query ":attr(scripts, [postinstall])"]] بيوريك مين محتاج scripts فعلًا، فتشغّلها لدول بس.
+- [[npm audit signatures]] بيتأكد من المصدر، وبص على عمر النسخة قبل ما تسطّب الجديد.`,
+          lines: [
+            "سطّب من الـ lock من غير ما تشغّل أي install scripts.",
+            "اتأكد من توقيعات المكتبات من الـ registry.",
+            "خلّيها الافتراضي على جهازك.",
+            "آخر مرة المكتبة اتنشر فيها حاجة."
+          ],
+          sol: R`[[npm audit signatures]] بيطبع حاجة زي [[audited 312 packages in 2s]] و [[312 packages have verified registry signatures]]، ولو فيه مكتبات عليها attestations هيقولك [[N packages have verified attestations]]. ده معناه إن اللي نزل عندك هو نفسه اللي اتنشر على الـ registry. لو طلعلك [[invalid]] أو [[missing]] فيه حاجة غلط وتستاهل تبص عليها.
+
+[[npm ci --ignore-scripts]] بيسطب من غير ما يشغّل أي [[postinstall]]. معظم المكتبات هتشتغل عادي. اللي بيبوظ غالبًا المكتبات اللي بتنزّل أو بتبني حاجة native وقت التسطيب، زي [[esbuild]] و [[sharp]] و [[bcrypt]] و [[prisma]]: هتلاقي خطأ وقت التشغيل مش وقت التسطيب. عشان تعرف مين عنده scripts قبل ما تشغّل: [[npm query ":attr(scripts, [postinstall])"]]. بعدها سيب ignore-scripts وشغّل الـ scripts للمكتبات دي بس (في pnpm ده [[allowBuilds]]).`
+        },
+        {
+          cmd: "باقي القايمة",
+          title: "A04 و A06 و A08 و A09 في سطر",
+          desc: R`قايمة OWASP Top 10 هي أشهر 10 أنواع ثغرات في تطبيقات الويب، والبنود دي من القايمة ملهاش مثال كود في الصفحة، فهنا معنى كل واحد وعلاجه في سطر.
+
+A04 أخطاء التشفير: البيانات بتتنقل من غير HTTPS، أو باسوردات بـ MD5 أو SHA1 (سريعين ومكسورين)، أو أسرار مكتوبة في الكود، أو توكنات معمولة بـ [[Math.random]] اللي ممكن تتوقّع. A06 تصميم مش آمن: الثغرة في فكرة الميزة نفسها، زي كوبون ينفع يتستخدم مالانهاية، فاسأل «لو حد استغلها؟» قبل ما تكتب. A08 سلامة الكود والبيانات: إنك تشغّل كود أو تحديث من غير ما تتأكد إنه نفس اللي اتنشر، زي GitHub Action متثبتة بتاج ممكن يتغير بدل الـ SHA. A09 اللوج والتنبيه: محاولات اختراق بتحصل ومحدش بيعرف لأن مفيش لوج أو مفيش حد بيبص.
+
+المرجع الكامل في owasp.org/Top10.`,
+          example: R`A04 Cryptographic Failures       HTTPS everywhere, no MD5/SHA1, secrets from env, strong random
+A06 Insecure Design              Think about abuse cases before coding: limits, business rules
+A08 Software/Data Integrity      Verify signatures, pin CI actions by SHA, no unsigned auto-updates
+A09 Logging & Alerting Failures  Log logins, failed auth, admin actions; alert on spikes`,
+          try: "اختار بند واحد وراجعه على آخر مشروع عملته.",
+          flag: "script",
+          deep: {
+            why: "الثغرات الكبيرة مش كلها SQL و XSS: بيانات متشفّرة غلط، أو تصميم مفيهوش حدود، أو اختراق محدش خد باله منه شهور.",
+            how: "A04: [[crypto.randomBytes]] مش Math.random للتوكنات، و HTTPS على كل حاجة. A06: اسأل «لو حد استخدم الميزة دي ١٠٠٠ مرة؟» قبل ما تكتبها. A08: ثبّت GitHub Actions بالـ SHA مش بالتاج. A09: سجّل كل login فاشل وكل تغيير صلاحيات، وحط تنبيه لو زادوا فجأة.",
+            when: "مراجعة أمان قبل الإنتاج.",
+            mistakes: "لوج فيه باسوردات أو توكنات. أو لوج محدش بيبص عليه."
+          },
+          teach: R`## الفكرة: البنود اللي مالهاش مثال كود
+
+قايمة OWASP Top 10 أشهر 10 أنواع ثغرات في الويب. البنود دي ملهاش مثال كود في الصفحة لأنها مفاهيم أوسع من سطر واحد، فهنا معنى كل واحد وعلاجه. المثال نفسه مجرد جدول تلخيص (نص، مش أمر بيتشغّل).
+
+---
+
+## الأربعة في جدول
+
+| البند | يعني إيه | العلاج |
+|---|---|---|
+| **A04** Cryptographic Failures | داتا بتتنقل من غير HTTPS، أو باسوردات بـ MD5/SHA1 (سريعين ومكسورين)، أو أسرار في الكود، أو توكنات بـ [[Math.random]] اللي بتتوقّع | HTTPS على كل حاجة، bcrypt/argon2 للباسوردات، الأسرار من [[.env]]، و [[crypto.randomBytes]] للتوكنات |
+| **A06** Insecure Design | الثغرة في فكرة الميزة نفسها، زي كوبون ينفع يتستخدم مالانهاية، أو أوردر بكمية سالبة | اسأل «لو حد استغلها؟» قبل ما تكتب: حدود، وقواعد شغل، واختبار حالات الإساءة |
+| **A08** Software/Data Integrity | تشغّل كود أو تحديث من غير ما تتأكد إنه نفس اللي اتنشر، زي GitHub Action متثبتة بتاج ممكن يتغيّر | ثبّت الـ actions بالـ SHA مش بالتاج، اتأكد من توقيع الـ webhooks، مفيش auto-update من غير توقيع |
+| **A09** Logging & Alerting Failures | محاولات اختراق بتحصل ومحدش بيعرف، لأن مفيش لوج أو محدش بيبص | سجّل الـ logins، وفشل المصادقة، وتغييرات الصلاحيات، ونبّه لو زادوا فجأة |
+
+---
+
+## ليه [[Math.random]] خطر في A04؟
+
+[[Math.random()]] بيولّد رقم شبه-عشوائي **متوقّع**: مش معمول للأمان، وممكن حد يتوقّع الأرقام الجاية. لتوكن reset باسورد أو session، استخدم [[crypto.randomBytes]] اللي بياخد عشوائية من نظام التشغيل.
+
+## أهم حاجة في A09: متسجّلش أسرار
+
+اللوج المفيد في فشل login فيه: الوقت، والـ IP، والإيميل، وإنه فشل. **ومش** فيه الباسورد نفسه ولا التوكن، لأن اللوجات بتتقرا وبتترفع لأدوات تانية.
+
+---
+
+## الخلاصة
+
+- الثغرات الكبيرة مش كلها SQL و XSS: تشفير غلط، تصميم من غير حدود، أو اختراق محدش خد باله منه.
+- لكل بند اسأل: اتطبّق عندي ولا لأ؟ الدليل إيه (أمر أو سطر كود)؟ والإصلاح لو ناقص؟
+- المرجع الكامل على owasp.org/Top10.`,
+          lines: [
+            "التشفير: HTTPS وخوارزميات قوية وأسرار بره الكود.",
+            "التصميم: فكّر في إساءة الاستخدام قبل الكود.",
+            "سلامة الكود والداتا: تحقق من التوقيعات وثبّت الـ actions.",
+            "اللوج والتنبيه: سجّل الأحداث الحساسة ونبّه عليها."
+          ],
+          sol: R`مثال لإجابة كويسة على A09 (Logging): على آخر مشروع، جرّب login بباسورد غلط وشوف اللوج. المفروض تلاقي سطر فيه الوقت، والـ IP، والإيميل، وإنه فشل، ومتلاقيش الباسورد نفسه ولا التوكن. لو ملقيتش حاجة خالص، يبقى لو حد جرّب ألف باسورد مش هتعرف.
+
+أي بند تختاره، الإجابة الكويسة فيها تلات حاجات: البند اتطبّق ولا لأ، الدليل (أمر جربته أو سطر في الكود)، والإصلاح لو ناقص. مثلًا A04 (Insecure Design): هل ممكن تعمل أوردر بكمية سالبة أو سعر جاي من الواجهة؟ A08 (Integrity): هل الـ webhook بيتأكد من التوقيع قبل ما يصدّق الداتا؟ الغلط الشائع إنك تقرا البند وتقول "أنا عامل كده" من غير ما تجرّب فعلًا.`
+        },
+        {
+          cmd: "الجديد في 2025",
+          title: "تحديثان مهمان في القايمة",
+          desc: "نسخة 2025 (اتثبتت رسميًا يناير 2026) ضافت تصنيفين جداد كانوا بيسببوا اختراقات كتير: [[Software Supply Chain Failures]] (A03)، يعني تعتمد على مكتبة أو أداة اتخترقت هي نفسها، وده أخطر من ثغرة في كودك لأنك مش شايفها، وعلاجه إنك تثبّت نسخ المكتبات وتفحصها. و [[Mishandling of Exceptional Conditions]] (A10)، يعني كودك مبيتعاملش صح مع الحالات الغريبة فيقع أو يتصرف غلط. كمان Security Misconfiguration طلعت لـ A02، و Injection (فيها SQL و XSS) نزلت لـ A05، و SSRF و CSRF بقوا جوه A01. المرجع الرسمي على owasp.org/Top10.",
+          example: R`# ثبّت نسخ المكتبات عشان متتغيرش تحتك
+npm ci        # بيستخدم package-lock.json بالظبط، مش بيحدّث
+# افحص إن مفيش مكتبة متعرفش مصدرها
+npm ls --all | head`,
+          try: "شغّل [[npm ci]] بدل [[npm install]] في سيرفر الإنتاج، وافهم الفرق.",
+          flag: "term",
+          deep: {
+            why: "OWASP بتحدّث القايمة على أساس بيانات اختراقات حقيقية. النسخة 2025 ضافت تصنيفين جداد.",
+            how: R`Software Supply Chain Failures (A03): هجمات بتاخد شكل مكتبات أو نسخ ملغومة. [[npm ci]] بدل [[npm install]] يمنع التحديثات غير المتوقعة.
+
+Mishandling of Exceptional Conditions (A10): كود بيقع أو بيتصرف غلط في حالات مش متوقعة. زي API بيرجع 500 مع stack trace لو الـ input غريب. الحماية: error handling شامل وtesting لـ edge cases.
+
+المرجع الرسمي: owasp.org/Top10`,
+            when: "وانت بتراجع أمان أي مشروع.",
+            mistakes: "الافتراض إن OWASP 2021 لسه الـ standard. النسخة 2025 هي الرسمية دلوقتي."
+          },
+          teach: R`## الفكرة: القايمة اتحدّثت، والترتيب اتغيّر
+
+OWASP بتحدّث القايمة على أساس بيانات اختراقات حقيقية. نسخة 2025 (اتثبتت رسميًا يناير 2026) ضافت تصنيفين جداد وغيّرت ترتيب القدامى. المثال بيوريك [[npm ci]]، أهم أمر عملي للتصنيف الجديد A03. جرّبناه في Docker (node:22, npm 10).
+
+---
+
+## ١. التغييرات
+
+| التصنيف | إيه الجديد |
+|---|---|
+| **A03** Software Supply Chain Failures | **جديد**: تعتمد على مكتبة أو أداة اتخترقت هي نفسها. أخطر من ثغرة في كودك لأنك مش شايفها |
+| **A10** Mishandling of Exceptional Conditions | **جديد**: كودك مبيتعاملش صح مع الحالات الغريبة فيقع أو يتصرف غلط |
+| Security Misconfiguration | طلع لـ **A02** |
+| Injection (SQL و XSS) | نزل لـ **A05** |
+| SSRF و CSRF | اندمجوا جوه **A01** Broken Access Control |
+
+---
+
+## ٢. [[npm ci]] vs [[npm install]]
+
+الدفاع العملي لـ A03 إنك تثبّت نسخ المكتبات بالظبط عشان متتغيّرش من تحتك:
+
+~~~bash
+npm ci        # بيستخدم package-lock.json بالظبط، مش بيحدّث
+npm ls --all | head   # شجرة كل المكتبات بما فيها مكتبات المكتبات
+~~~
+
+~~~text npm ci
+added 73 packages, and audited 74 packages
+found 0 vulnerabilities
+~~~
+
+[[npm ci]] بيقرا [[package-lock.json]] بس، بيمسح [[node_modules]] الأول، ويسطّب النسخ اللي في الـ lock حرفيًا. [[npm install]] ممكن يحدّث نسخ جوه الحدود ([[^1.2.0]] ممكن تبقى [[1.9.0]]) ويعدّل الـ lock.
+
+### جرّبنا حالات الفشل
+
+~~~text من غير lock file
+npm error The $__btnpm ci$__bt command can only install with an existing package-lock.json
+~~~
+
+~~~text package.json مش متوافق مع الـ lock (ضفنا lodash لـ package.json بس)
+npm error $__btnpm ci$__bt can only install packages when your package.json and
+npm error package-lock.json or npm-shrinkwrap.json are in sync.
+npm error Missing: lodash@4.18.1 from lock file
+~~~
+
+يعني [[npm ci]] بيقف ويصرخ لو فيه أي اختلاف، بينما [[npm install]] في نفس الحالة ركّب [[lodash]] وعدّل الـ lock من غير ما يسأل. ده بالظبط اللي عايزينه في الإنتاج: نفس الكود اللي جرّبته بالظبط، من غير مفاجآت.
+
+---
+
+## ٣. ليه ده أمان؟
+
+لو مكتبة اتخطفت ونزلت نسخة خبيثة بكرة، [[npm install]] ممكن يجيبها (لو جوه حدود الـ semver)، و [[npm ci]] لأ لأنه مقيّد بالـ lock. عشان كده الـ lock file لازم يكون في Git، ومن غيره [[npm ci]] مش هيشتغل أصلًا.
+
+---
+
+## الخلاصة
+
+- نسخة 2025 هي الرسمية دلوقتي؛ A03 (Supply Chain) و A10 (Exceptional Conditions) جداد، و Injection بقى A05.
+- في الإنتاج و CI استخدم [[npm ci]] مش [[npm install]]: بيثبّت النسخ من الـ lock ويقف لو فيه اختلاف.
+- خلّي الـ lock file في Git. المرجع على owasp.org/Top10.`,
+          lines: [
+            "سطّب بالظبط النسخ اللي في package-lock (للإنتاج و CI)، من غير أي تحديث مفاجئ.",
+            "شجرة كل المكتبات بما فيها مكتبات المكتبات، عشان تعرف إيه اللي داخل مشروعك فعلًا."
+          ],
+          sol: R`[[npm ci]] بيقرا [[package-lock.json]] بس ويسطب النسخ اللي فيه بالظبط، وبيمسح [[node_modules]] الأول، ولو الـ lock مش متوافق مع [[package.json]] بيقف بخطأ زي [[npm ci can only install packages when your package.json and package-lock.json are in sync]]. أما [[npm install]] فممكن يحدّث نسخ جوه الحدود ([[^1.2.0]] ممكن تبقى [[1.9.0]]) ويعدّل الـ lock.
+
+الفرق ده مهم للأمان: في الإنتاج عايز نفس الكود اللي جربته بالظبط. لو مكتبة اتخطفت ونزلت نسخة خبيثة بكرة، [[npm install]] ممكن يجيبها، و [[npm ci]] لأ. ولازم الـ lock file يبقى في Git، من غيره [[npm ci]] مش هيشتغل أصلًا ويقولك إنه محتاج lock file.`
         }
       ]
     }

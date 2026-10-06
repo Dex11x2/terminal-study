@@ -193,7 +193,11 @@ psql -U postgres -c "SELECT version();"
 ~~~text بورت غلط (مفيش حد بيسمع على 5433)
 psql: error: connection to server at "localhost" (::1), port 5433 failed: Connection refused
 	Is the server running on that host and accepting TCP/IP connections?
+connection to server at "localhost" (127.0.0.1), port 5433 failed: Connection refused
+	Is the server running on that host and accepting TCP/IP connections?
 ~~~
+
+([[localhost]] ليه عنوانين: [[::1]] في IPv6 و [[127.0.0.1]] في IPv4، فـ psql جرّب الاتنين.)
 
 ~~~text قاعدة مش موجودة
 psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  database "nope" does not exist
@@ -980,6 +984,7 @@ HINT:  COPY TO instructs the PostgreSQL server process to write a file. You may 
 ~~~text الناتج بيوزر مش superuser
 ERROR:  permission denied to COPY to a file
 DETAIL:  Only roles with privileges of the "pg_write_server_files" role may COPY to a file.
+HINT:  Anyone can COPY to stdout or from stdin. psql's \copy command also works for anyone.
 ~~~
 
 | | [[\copy]] | [[COPY]] |
@@ -1288,7 +1293,7 @@ dropdb: error: database removal failed: ERROR:  database "app_test" is being acc
 DETAIL:  There is 1 other session using the database.
 ~~~
 
-و [[dropdb --force app_test]] (من Postgres 13) بيقفل الجلسات دي ويمسح، وخرج بـ [[0]]. ولو القاعدة مش موجودة أصلًا:
+والرسالة دي مبتطلعش على طول: Postgres بيستنى حوالي ٥ ثواني يمكن الجلسة تقفل لوحدها (الأمر أخد [[5.036s]] بـ [[time]]). و [[dropdb --force app_test]] (من Postgres 13) بيقفل الجلسات دي ويمسح، وخرج بـ [[0]]. ولو القاعدة مش موجودة أصلًا:
 
 ~~~text الناتج
 dropdb: error: database removal failed: ERROR:  database "app_test" does not exist
@@ -1853,7 +1858,7 @@ psql: error: ... fe_sendauth: no password supplied
 psql **رفض يستخدم الملف**، لأن ملف باسوردات يقدر أي حد يقراه غلط أمني. وبعد [[chmod 600]]:
 
 ~~~text ls -l ~/.pgpass و psql -c "SELECT current_user, current_database();"
--rw------- 1 root root 52 Oct  6 13:50 /tmp/alihome/.pgpass
+-rw------- 1 root root 36 Oct  6 16:31 /tmp/alihome/.pgpass
  current_user | current_database
 --------------+------------------
  app_user     | app
@@ -2851,6 +2856,157 @@ VACUUM (VERBOSE) orders;`,
             when: "بعد استيراد أو حذف ضخم. لما n_dead_tup كبير. وقبل قياس أداء.",
             mistakes: "تقفل autovacuum «عشان بياخد موارد». والجدول يتضخم والاستعلامات تبطأ تدريجيًا."
           },
+          teach: R`## الفكرة: Postgres بيعلّم ومش بيمسح على طول
+
+لما تعمل [[DELETE]]، Postgres مش بيشيل الصف من الديسك. بيكتب عليه «ميت من transaction رقم كذا» وبيسيبه مكانه. و [[UPDATE]] نفس الحكاية: بيكتب نسخة **جديدة** من الصف ويعلّم القديمة ميتة. ليه؟ عشان أي جلسة تانية كانت بدأت تقرا قبل التعديل تفضل شايفة النسخة القديمة من غير ما تستنى (الفكرة دي اسمها **MVCC**: نسخ متعددة لنفس الصف). الصف الميت اسمه **dead tuple** ([[tuple]] اسم تاني للصف).
+
+المشكلة إن الصفوف الميتة بتفضل واخدة مكان. [[VACUUM]] هو اللي بيلف على الجدول ويعلّم مكانها «فاضي، استخدمه تاني». و [[ANALYZE]] حاجة تانية خالص: بيعدّ ويحسب إحصائيات عن القيم اللي في كل عمود، والـ planner (اللي بيختار Seq Scan ولا Index Scan) بيعتمد عليها.
+
+الناتج تحت من [[postgres:16]] جوه Docker: الأول على قاعدة [[app]] (جدول [[orders]] فيه ٢٠٠ ألف صف)، وبعدين على جدول [[big]] بمليون صف عشان الأرقام تبان.
+
+---
+
+## ١. [[VACUUM ANALYZE orders;]]
+
+~~~text الناتج
+VACUUM
+~~~
+
+سطر واحد بس، ومعناه خلص من غير مشاكل. الأمر بيعمل الاتنين ورا بعض على جدول [[orders]]: ينضّف الصفوف الميتة، وبعدين يحدّث الإحصائيات. ولو كتبت [[VACUUM ANALYZE;]] من غير اسم جدول بيعدّي على كل جداول القاعدة.
+
+قبلها كنت عملت [[UPDATE orders SET total = total WHERE id % 4 = 0;]] (تعديل مش بيغيّر حاجة فعليًا، بس Postgres بيكتب نسخة جديدة برضه)، وده اللي حصل في الإحصائيات قبل وبعد:
+
+~~~text SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'orders';
+ relname | n_live_tup | n_dead_tup
+---------+------------+------------
+ orders  |          0 |      50000
+~~~
+
+[[UPDATE 50000]] عمل ٥٠ ألف صف ميت، مع إن ولا قيمة اتغيرت. ([[n_live_tup]] صفر هنا لأن عدّاد الصفوف الحية كان لسه متحسبش من ساعة ما السيرفر قام، و ANALYZE هو اللي بيظبطه.) وبعد [[VACUUM ANALYZE orders]] الـ [[n_dead_tup]] بقى [[0]].
+
+---
+
+## ٢. مين محتاج تنضيف؟
+
+~~~text SQL
+SELECT relname, n_dead_tup, last_autovacuum, last_autoanalyze
+FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 10;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[pg_stat_user_tables]] | view فيه صف إحصائيات لكل جدول من جداولك |
+| [[relname]] | اسم الجدول |
+| [[n_dead_tup]] | عدد الصفوف الميتة اللي لسه متنضّفتش (تقريبي) |
+| [[last_autovacuum]] | آخر مرة الـ autovacuum نضّف الجدول ده لوحده |
+| [[last_autoanalyze]] | آخر مرة حدّث إحصائياته لوحده |
+| [[ORDER BY n_dead_tup DESC LIMIT 10]] | أكتر ١٠ جداول فيها صفوف ميتة |
+
+~~~text الناتج
+  relname  | n_dead_tup |        last_autovacuum        |       last_autoanalyze
+-----------+------------+-------------------------------+-------------------------------
+ users     |          5 |                               |
+ sessions  |          0 | 2026-10-06 16:32:09.475744+00 | 2026-10-06 16:32:09.481029+00
+ coupons   |          0 |                               |
+ orders    |          0 |                               |
+ ...
+~~~
+
+[[sessions]] كنت مسحت منه ١٨١ صف من ٣٠٠ (درس BEGIN)، فالـ autovacuum لاحظ ونضّفه لوحده، والوقت مكتوب. [[orders]] الخانة فاضية لأني نضّفته **بإيدي**: ده بيتسجل في عمود تاني اسمه [[last_vacuum]]:
+
+~~~text SELECT relname, n_dead_tup, last_vacuum, last_analyze FROM pg_stat_user_tables WHERE relname='orders';
+ relname | n_dead_tup |          last_vacuum          |         last_analyze
+---------+------------+-------------------------------+-------------------------------
+ orders  |          0 | 2026-10-06 16:32:43.312441+00 | 2026-10-06 16:32:43.513948+00
+~~~
+
+> الأعمدة دي بتتحدّث بتأخير ثانية تقريبًا، فلو سألت على طول بعد DELETE ممكن تلاقي الرقم لسه صفر.
+
+---
+
+## ٣. [[SHOW autovacuum;]]
+
+~~~text الناتج
+ autovacuum
+------------
+ on
+~~~
+
+**autovacuum** عملية في خلفية Postgres بتصحى كل دقيقة ([[autovacuum_naptime = 60]] ثانية)، وتشوف أي جدول عدد صفوفه الميتة عدّى حد معين وتنضّفه. الحد ده من إعدادين:
+
+~~~text SELECT name, setting FROM pg_settings WHERE name IN (...)
+              name              | setting
+--------------------------------+---------
+ autovacuum_naptime             | 60
+ autovacuum_vacuum_scale_factor | 0.2
+ autovacuum_vacuum_threshold    | 50
+~~~
+
+يعني الجدول بيتنضّف لما الميتين يعدّوا **50 + 20٪ من الجدول**. على جدول مليون صف ده ٢٠٠ ألف و٥٠ صف ميت. لازم تفضل [[on]]، والطبيعي إنك متلمسهوش.
+
+---
+
+## ٤. [[VACUUM (VERBOSE) big;]]: شوف عمل إيه
+
+جدول [[big]] فيه مليون صف، ومسحت نصهم:
+
+~~~text DELETE FROM big WHERE id % 2 = 0; وبعدها الإحصائيات والحجم
+DELETE 500000
+ relname | n_live_tup | n_dead_tup
+---------+------------+------------
+ big     |     500000 |     500000
+
+ pg_size_pretty
+----------------
+ 74 MB
+~~~
+
+نص مليون حي ونص مليون ميت، والحجم زي ما هو. دلوقتي الـ VACUUM بالتفاصيل. الخيارات بتتكتب بين قوسين، و [[VERBOSE]] يعني «احكيلي عملت إيه»:
+
+~~~text الناتج (أهم السطور)
+INFO:  vacuuming "lab.public.big"
+INFO:  finished vacuuming "lab.public.big": index scans: 0
+pages: 0 removed, 9408 remain, 9408 scanned (100.00% of total)
+tuples: 500000 removed, 500000 remain, 0 are dead but not yet removable
+...
+system usage: CPU: user: 0.13 s, system: 0.00 s, elapsed: 0.14 s
+INFO:  vacuuming "lab.pg_toast.pg_toast_24609"
+...
+VACUUM
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[pages: 0 removed, 9408 remain]] | الجدول ٩٤٠٨ صفحة (كل صفحة 8 kB)، ومتشالتش ولا صفحة من الملف |
+| [[9408 scanned (100.00% of total)]] | قرا الجدول كله |
+| [[tuples: 500000 removed]] | نضّف النص مليون صف الميتين |
+| [[500000 remain]] | الحيين |
+| [[0 are dead but not yet removable]] | ميتين بس فيه transaction مفتوحة لسه ممكن تشوفهم، فمينفعش يتشالوا. لو الرقم ده كبير دوّر على [[idle in transaction]] |
+| [[elapsed: 0.14 s]] | الوقت كله |
+| [[pg_toast...]] | الجدول الجانبي بتاع القيم الكبيرة (TOAST)، بيتنضّف معاه |
+
+### الحجم بعدها؟
+
+~~~text SELECT pg_size_pretty(pg_total_relation_size('big'));  بعد VACUUM ثم بعد VACUUM FULL
+ 74 MB
+ 37 MB
+~~~
+
+بعد [[VACUUM]] العادي الحجم **فضل 74 MB**: المكان بقى فاضي جوه الجدول، والصفوف الجاية هتتكتب فيه، بس الملف على الديسك ما صغرش. [[VACUUM FULL big;]] بيكتب الجدول من الأول في ملف جديد فنزل لـ 37 MB، بس طول ما هو شغال الجدول **مقفول تمامًا** (لا قراية ولا كتابة). عشان كده مش بتشغّله على الإنتاج غير في وقت صيانة.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[VACUUM t;]] | يخلي مكان الصفوف الميتة يتعاد استخدامه (الملف مش بيصغر) |
+| [[ANALYZE t;]] | يحدّث الإحصائيات للـ planner |
+| [[VACUUM ANALYZE t;]] | الاتنين، وده اللي تعمله بعد حذف أو استيراد ضخم |
+| [[VACUUM (VERBOSE) t;]] | نفسه وبيحكي اتشال كام صف |
+| [[VACUUM FULL t;]] | يصغّر الملف، بس بيقفل الجدول |
+| [[n_dead_tup]] و [[last_autovacuum]] | في [[pg_stat_user_tables]]: مين محتاج ومين اتنضّف إمتى |
+| [[SHOW autovacuum;]] | لازم [[on]] |`,
           lines: [
             "نضّف الجدول وحدّث إحصائياته.",
             "الجداول اللي فيها أكتر صفوف ميتة، وآخر مرة اتنضّفت.",
@@ -2859,7 +3015,7 @@ VACUUM (VERBOSE) orders;`,
           ],
           sol: R`بعد [[DELETE FROM big WHERE id % 2 = 0]] على مليون صف، [[pg_stat_user_tables]] طلّع [[n_live_tup = 500000]] و [[n_dead_tup = 500000]]. بعد [[VACUUM big;]] بقى [[n_dead_tup = 0]].
 
-بس الحجم فضل [[82 MB]] قبل وبعد. ودي النقطة المهمة: VACUUM العادي بيعلّم المساحة إنها فاضية لإعادة الاستخدام جوه الجدول، مش بيرجّعها للديسك. [[VACUUM FULL]] بيرجّعها بس بيقفل الجدول كله وهو شغال.
+بس الحجم فضل [[74 MB]] قبل وبعد (و [[VACUUM FULL big;]] نزّله لـ [[37 MB]]). ودي النقطة المهمة: VACUUM العادي بيعلّم المساحة إنها فاضية لإعادة الاستخدام جوه الجدول، مش بيرجّعها للديسك. [[VACUUM FULL]] بيرجّعها بس بيقفل الجدول كله وهو شغال.
 
 لو [[n_dead_tup]] لسه بصفر بعد الـ DELETE على طول: الإحصائيات بتتحدّث بتأخير بسيط، استنى ثانية. ولو لقيتها صفر من غير ما تعمل VACUUM يبقى الـ autovacuum سبقك، وهتلاقي [[last_autovacuum]] فيه وقت.`,
           solCode: R`DELETE FROM big WHERE id % 2 = 0;
@@ -2892,6 +3048,164 @@ SHOW config_file;`,
             when: "بعد التسطيب على أي سيرفر. وبعد ترقية الرام.",
             mistakes: "work_mem كبير جدًا (1GB) مع 100 اتصال: كل استعلام ممكن ياخد جيجا والسيرفر يخلص رام."
           },
+          teach: R`## الفكرة: تقرا الإعداد، تغيّره، وتعرف إمتى يشتغل
+
+Postgres فيه مئات الإعدادات (اسمها **parameters**): قد إيه رام للكاش، كام اتصال، إلخ. مكانها الأصلي ملف [[postgresql.conf]]، بس مش لازم تفتحه: من SQL تقدر **تقرا** أي إعداد بـ [[SHOW]]، و**تغيّره** بـ [[ALTER SYSTEM]]، و**تطبّقه** بـ [[pg_reload_conf()]]. والسؤال المهم في الدرس: التغيير ده بيشتغل إمتى؟ فورًا، ولا بعد ريستارت؟
+
+الناتج تحت من [[postgres:16]] جوه Docker (إعدادات الصورة الرسمية الافتراضية).
+
+---
+
+## ١. [[SHOW]]: القيمة دلوقتي
+
+~~~text SHOW shared_buffers; و SHOW work_mem;
+ shared_buffers
+----------------
+ 128MB
+
+ work_mem
+----------
+ 4MB
+~~~
+
+| الإعداد | معناه |
+|---|---|
+| [[shared_buffers]] | الكاش بتاع Postgres في الرام: صفحات الجداول اللي اتقرت بتفضل فيه، فالقراية الجاية من الذاكرة مش الديسك. مساحة واحدة متشاركة بين كل الاتصالات |
+| [[work_mem]] | الذاكرة اللي **عملية واحدة** جوه استعلام (ترتيب [[ORDER BY]] أو hash join) تاخدها قبل ما تنزل تكمّل على الديسك |
+
+[[128MB]] كاش على سيرفر فيه ٨ جيجا يعني أغلب الرام مش مستخدمة. والافتراضيات دي معمولة عشان Postgres يقوم على أي جهاز، مش عشان يبقى سريع.
+
+---
+
+## ٢. [[pg_settings]]: التفاصيل
+
+~~~text SQL
+SELECT name, setting, unit, context FROM pg_settings
+WHERE name IN ('shared_buffers','work_mem','max_connections','effective_cache_size');
+~~~
+
+[[pg_settings]] view فيه صف لكل إعداد، و [[IN (...)]] يعني «الاسم واحد من دول».
+
+~~~text الناتج
+         name         | setting | unit |  context
+----------------------+---------+------+------------
+ effective_cache_size | 524288  | 8kB  | user
+ max_connections      | 100     |      | postmaster
+ shared_buffers       | 16384   | 8kB  | postmaster
+ work_mem             | 4096    | kB   | user
+~~~
+
+### [[setting]] و [[unit]]
+
+هنا القيمة **رقم خام** والوحدة في عمود لوحدها. [[shared_buffers]] قيمته [[16384]] ووحدته [[8kB]] (حجم صفحة Postgres)، يعني 16384 × 8 kB = 131072 kB = 128 MB، نفس اللي SHOW قاله. و [[work_mem]] 4096 kB = 4 MB. و [[effective_cache_size]] 524288 × 8 kB = 4 GB.
+
+### [[context]]: أهم عمود
+
+بيقولك التغيير محتاج إيه عشان يشتغل:
+
+| [[context]] | معناه | أمثلة |
+|---|---|---|
+| [[postmaster]] | ريستارت كامل للسيرفر | [[shared_buffers]] و [[max_connections]] و [[listen_addresses]] |
+| [[sighup]] | reload كفاية (من غير ما حد يتفصل) | إعدادات اللوج والـ autovacuum |
+| [[user]] | reload، أو أي جلسة تغيّره لنفسها بـ [[SET]] | [[work_mem]] و [[effective_cache_size]] |
+
+([[postmaster]] اسم العملية الأم لـ Postgres، و [[sighup]] اسم الإشارة اللي بتقولها «اقري الإعدادات تاني».)
+
+---
+
+## ٣. [[ALTER SYSTEM SET work_mem = '32MB';]]
+
+~~~text الناتج
+ALTER SYSTEM
+~~~
+
+الأمر ده **مش** بيغيّر القيمة الشغالة. هو بيكتب السطر في ملف اسمه [[postgresql.auto.conf]] جنب الداتا. Postgres بيقرا [[postgresql.conf]] الأول وبعدين الملف ده، فاللي فيه بيكسب. بصيت عليه بعد التجربة:
+
+~~~text cat /var/lib/postgresql/data/postgresql.auto.conf
+# Do not edit this file manually!
+# It will be overwritten by the ALTER SYSTEM command.
+work_mem = '32MB'
+shared_buffers = '256MB'
+~~~
+
+(السطر التاني من الجزء ٦ تحت.) وأول سطرين بيقولولك متعدّلوش بإيدك.
+
+---
+
+## ٤. [[SELECT pg_reload_conf();]]
+
+~~~text الناتج
+ pg_reload_conf
+----------------
+ t
+~~~
+
+[[t]] يعني الإشارة اتبعتت للسيرفر «اقرا ملفات الإعدادات تاني». جربت [[SHOW work_mem;]] **في نفس اللحظة ونفس الجلسة** فلقيته لسه [[4MB]]: الـ reload بياخد لحظة. وبعد ثانية (الاستعلام ده شغّلته بعد ما غيّرت [[shared_buffers]] كمان في الجزء ٦، عشان كده ظاهر فيه):
+
+~~~text SELECT name, setting, pending_restart FROM pg_settings WHERE name IN ('shared_buffers','work_mem');
+      name      | setting | pending_restart
+----------------+---------+-----------------
+ shared_buffers | 16384   | t
+ work_mem       | 32768   | f
+~~~
+
+[[work_mem]] بقى 32768 kB = 32 MB، واشتغل من غير ريستارت لأن الـ context بتاعه [[user]]. و [[SHOW work_mem;]] من جلسة جديدة رجّع [[32MB]].
+
+---
+
+## ٥. [[SHOW config_file;]]: الملف فين؟
+
+~~~text الناتج
+               config_file
+------------------------------------------
+ /var/lib/postgresql/data/postgresql.conf
+~~~
+
+في Docker الملف جوه فولدر الداتا. على أوبونتو بتسطيب [[apt]] بيبقى في [[/etc/postgresql/16/main/postgresql.conf]]. عشان كده تسأل بدل ما تخمّن. و [[postgresql.auto.conf]] دايمًا في فولدر الداتا ([[SHOW data_directory;]]).
+
+---
+
+## ٦. الفخ: إعداد [[postmaster]]
+
+~~~text SQL
+ALTER SYSTEM SET shared_buffers = '256MB';
+SELECT pg_reload_conf();
+SHOW shared_buffers;
+~~~
+
+~~~text الناتج
+ shared_buffers
+----------------
+ 128MB
+~~~
+
+لسه 128MB! مش لأن الأمر فشل، لأن [[shared_buffers]] الـ context بتاعه [[postmaster]]: الكاش بيتحجز مرة واحدة لما السيرفر يقوم. وفي الجزء ٤ [[pending_restart]] بتاعه كان [[t]]، يعني «اتغيّر في الملف ومستني ريستارت». بعد [[docker restart]] للـ container:
+
+~~~text SHOW shared_buffers; بعد الريستارت
+ shared_buffers
+----------------
+ 256MB
+~~~
+
+على سيرفر لينكس عادي الريستارت هو [[sudo systemctl restart postgresql]]، وده بيفصل كل الاتصالات لحظة، فخليه في وقت هادي.
+
+### ولو عايز ترجّع الافتراضي
+
+[[ALTER SYSTEM RESET work_mem;]] بيشيل السطر من [[postgresql.auto.conf]]، و [[ALTER SYSTEM RESET ALL;]] بيفضّيه كله (وبعدها reload أو ريستارت حسب الإعداد). ولجلسة واحدة بس: [[SET work_mem = '64MB';]] بيغيّره ليك انت لحد ما تخرج، من غير ما يلمس حد تاني.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| القيمة الحالية | [[SHOW name;]] |
+| الوحدة ومحتاج إيه عشان يتغير | [[SELECT name, setting, unit, context FROM pg_settings WHERE ...]] |
+| تغيّر للسيرفر كله | [[ALTER SYSTEM SET name = 'value';]] (بيكتب في [[postgresql.auto.conf]]) |
+| تطبّق [[user]] / [[sighup]] | [[SELECT pg_reload_conf();]] |
+| تطبّق [[postmaster]] | ريستارت ([[pending_restart = t]] بيفكّرك) |
+| لجلستك بس | [[SET name = 'value';]] |
+| فين الملف | [[SHOW config_file;]] |`,
           lines: [
             "الكاش.",
             "ذاكرة كل استعلام.",
@@ -2942,6 +3256,170 @@ volumes:
             when: "بيئة تطوير أو staging بتتعمل من الصفر. للإنتاج اللي شغال: migrations حقيقية (الدرس الجاي في المستوى ٣).",
             mistakes: "في مشروع حقيقي فولدر الـ migrations نفسه كان متركّب على initdb.d، والكل فاكر إن أي migration جديدة هتتطبق مع الديبلوي. هي اتطبقت أول مرة بس، وأي ملف بعد كده محتاج تشغيل بإيدك أو سكربت migrate. وتغيّر [[POSTGRES_PASSWORD]] أو [[POSTGRES_INITDB_ARGS]] وتستنى يأثروا على volume موجود: مش هيحصل."
           },
+          teach: R`## الفكرة: «أول مرة بس»
+
+صورة [[postgres]] الرسمية فيها سكربت بيشتغل أول ما الـ container يقوم (اسمه **entrypoint**). السكربت ده بيبص على فولدر الداتا: لو **فاضي**، يعمل قاعدة جديدة من الصفر، ويشغّل أي ملف [[.sql]] أو [[.sh]] يلاقيه في [[/docker-entrypoint-initdb.d]] بالترتيب الأبجدي. لو الفولدر **فيه** داتا، يعدّي ده كله ويشغّل Postgres على طول. فالملفات دي وسيلة تجهّز القاعدة أول مرة (جداول وبيانات أولية)، مش طريقة تطبّق تعديلات بعد كده.
+
+جربت ملف الـ compose ده بالظبط على ويندوز بـ Docker Desktop (اسم المشروع [[pg01init]]، والباسورد من ملف [[.env]] فيه [[POSTGRES_PASSWORD=devpass]])، والناتج تحت حقيقي.
+
+---
+
+## ١. الملف سطر سطر
+
+~~~text compose.yml
+services:
+  postgres:
+    image: postgres:16
+~~~
+
+[[services:]] قايمة الـ containers، و [[postgres:]] اسم الخدمة (ده اللي بتكتبه في [[docker compose exec postgres ...]]). و [[image: postgres:16]] الصورة: النسخة 16 بالظبط، مش [[latest]]، عشان متتفاجئش بنسخة جديدة الداتا القديمة مش متوافقة معاها.
+
+~~~text environment
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: $__{POSTGRES_PASSWORD}
+      POSTGRES_DB: appdb
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+~~~
+
+| المتغير | بيعمل إيه (أول مرة بس) |
+|---|---|
+| [[POSTGRES_USER: app]] | يعمل superuser اسمه [[app]] بدل [[postgres]] |
+| [[POSTGRES_PASSWORD]] | باسورده. و [[$__{POSTGRES_PASSWORD}]] معناها «خد القيمة من ملف [[.env]] أو من البيئة»، فالباسورد مش مكتوب في الملف اللي بيترفع على git |
+| [[POSTGRES_DB: appdb]] | يعمل قاعدة اسمها [[appdb]] |
+| [[POSTGRES_INITDB_ARGS]] | خيارات زيادة لبرنامج [[initdb]] (اللي بيعمل فولدر الداتا من الصفر) |
+
+[[--auth-host=scram-sha-256]] بيحط طريقة [[scram-sha-256]] لكل اتصالات الشبكة ([[host]]) في [[pg_hba.conf]]. اتأكدت من الملف جوه الـ container:
+
+~~~text آخر سطرين من pg_hba.conf
+host    replication     all             ::1/128                 scram-sha-256
+host all all all scram-sha-256
+~~~
+
+حتى سطور localhost بقت بباسورد (من غيره كانت [[trust]] زي ما شفنا في درس psql).
+
+~~~text volumes و healthcheck
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 5s
+volumes:
+  pg_data:
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[pg_data:/var/lib/postgresql/data]] | volume اسمه [[pg_data]] مكان الداتا، فتفضل لو الـ container اتمسح |
+| [[./db/init:/docker-entrypoint-initdb.d]] | فولدر [[db/init]] اللي جنب الملف يظهر جوه بالاسم ده |
+| [[:ro]] | read-only: الـ container يقرا الملفات بس ومايعدّلش فيها |
+| [[test]] بـ [[CMD-SHELL]] | كل شوية شغّل [[pg_isready]] جوه الـ container (exit [[0]] = صاحي) |
+| [[interval: 5s]] | كل ٥ ثواني |
+| [[volumes: pg_data:]] في الآخر | تعريف الـ volume عشان compose يعمله |
+
+---
+
+## ٢. أول تشغيل: الفولدر فاضي
+
+في [[db/init/01-schema.sql]] جدول وصفين:
+
+~~~text db/init/01-schema.sql
+CREATE TABLE customers (id serial PRIMARY KEY, name text NOT NULL);
+INSERT INTO customers (name) VALUES ('Sara'), ('Omar');
+~~~
+
+~~~bash
+docker compose up -d
+docker compose ps
+docker compose logs postgres
+~~~
+
+~~~text ps
+pg01init-postgres-1 Up 8 seconds (healthy)
+~~~
+
+[[(healthy)]] جاية من الـ healthcheck. واللوج (السطور المهمة):
+
+~~~text logs
+CREATE DATABASE
+/usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/01-schema.sql
+CREATE TABLE
+INSERT 0 2
+PostgreSQL init process complete; ready for start up.
+LOG:  database system is ready to accept connections
+~~~
+
+بالترتيب: عمل [[appdb]]، شغّل الملف (ومعاه رد كل أمر)، وقال إن التجهيز خلص، وبعدين قام بشكل عادي. و [[\dt]] جوه [[appdb]]:
+
+~~~text docker compose exec -T postgres psql -U app -d appdb -c '\dt'
+ Schema |   Name    | Type  | Owner
+--------+-----------+-------+-------
+ public | customers | table | app
+~~~
+
+صاحب الجدول [[app]]، لأن الملفات بتتنفذ باليوزر اللي في [[POSTGRES_USER]].
+
+---
+
+## ٣. ضيف ملف تاني: مش هيتنفّذ
+
+حطيت [[db/init/02-more.sql]] فيه [[CREATE TABLE notes ...]] وعملت [[docker compose up -d]]: compose قال [[Running]] (مفيش حاجة اتغيرت في الـ container)، و [[\dt]] لسه فيه [[customers]] بس. وبعد [[docker compose restart]] اللوج قال:
+
+~~~text logs
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+~~~
+
+يعني «الفولدر فيه داتا، مش هعمل حاجة». الملف الجديد متجاهل، وهيفضل متجاهل.
+
+---
+
+## ٤. ابدأ من الصفر: [[down -v]]
+
+~~~bash
+docker compose down -v
+docker compose up -d
+~~~
+
+[[-v]] بيمسح الـ volumes كمان، يعني **كل الداتا راحت**. (على التجربة بس، عمره ما يتعمل على قاعدة فيها داتا حقيقية.) والمرة دي:
+
+~~~text logs
+running /docker-entrypoint-initdb.d/01-schema.sql
+running /docker-entrypoint-initdb.d/02-more.sql
+~~~
+
+~~~text \dt
+ public | customers | table | app
+ public | notes     | table | app
+~~~
+
+الاتنين بالترتيب الأبجدي، عشان كده الأرقام [[01-]] و [[02-]] في أول الاسم.
+
+---
+
+## ٥. ملف فيه error
+
+ضفت [[03-bad.sql]] فيه [[INSERT INTO nope VALUES (1);]] (جدول مش موجود)، و [[down -v]] و [[up -d]]:
+
+~~~text ps و logs
+pg01init-postgres-1 Exited (3) 5 seconds ago
+running /docker-entrypoint-initdb.d/03-bad.sql
+psql:/docker-entrypoint-initdb.d/03-bad.sql:1: ERROR:  relation "nope" does not exist
+~~~
+
+الـ container **وقع** ([[Exited (3)]])، لأن الـ entrypoint بيشغّل الملفات بـ [[ON_ERROR_STOP]] (درس «تشغيل SQL من ملف»). صلّح الملف، وامسح الـ volume تاني، لأن التجهيز وقف في النص وساب داتا ناقصة.
+
+---
+
+## الخلاصة
+
+| الحالة | اللي بيحصل |
+|---|---|
+| volume فاضي | initdb + اليوزر والقاعدة من المتغيرات + ملفات initdb.d بالترتيب |
+| volume فيه داتا | [[Skipping initialization]]: ولا حاجة من دول |
+| ملف جديد في initdb.d بعد كده | متجاهل. محتاج migration أو تشغيل بإيدك |
+| ملف فيه error أول مرة | الـ container بيقع، صلّح وامسح الـ volume |
+| تغيير [[POSTGRES_PASSWORD]] بعد كده | ملوش أثر: غيّر الباسورد بـ [[ALTER ROLE]] |`,
           lines: [
             "الخدمات.",
             "خدمة Postgres.",
