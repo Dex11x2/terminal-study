@@ -97,7 +97,7 @@
 | ١٠ | `git/01.js` (21)، و `git/02.js` (17) | [x] |
 | ١١ | `vps/01.js` (27)، و `vps/02.js` (25)، و `vps/03.js` (8) | [x] |
 | ١٢ | `docker/01.js` (22)، و `docker/02.js` (24)، و `docker/03.js` (11) | [x] |
-| ١٣ | `nginx/01.js` (15)، و `nginx/02.js` (13)، و `diag/01.js` (28) | [ ] |
+| ١٣ | `nginx/01.js` (15)، و `nginx/02.js` (13)، و `diag/01.js` (28) | [x] |
 | ١٤ | `node/01.js` (26)، و `node/02.js` (16)، و `node/03.js` (19) | [x] |
 | ١٥ | `pg/01.js` (18)، و `pg/02.js` (16)، و `mongo/01.js` + `mongo/02.js` (23) | [ ] |
 | ١٦ | `gha/01.js` + `gha/02.js` (24)، و `sec/01.js` (19)، و `sec/02.js` (19) | [ ] |

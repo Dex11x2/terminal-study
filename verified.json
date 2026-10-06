@@ -1239,6 +1239,146 @@
   "date": "2026-10-06",
   "on": "win11 cmd (username masked later)"
  },
+ "diag|500 من التطبيق": {
+  "hash": "620aa28e5e51",
+  "date": "2026-10-06",
+  "on": "docker compose Node 22 + Postgres 16 + Prisma 6"
+ },
+ "diag|502 Bad Gateway": {
+  "hash": "47743a99ec2d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab nginx + docker compose Node 22 + Postgres 16"
+ },
+ "diag|504 Gateway Timeout": {
+  "hash": "7d7d0f4f3c85",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab nginx + docker compose Node 22 + Postgres 16"
+ },
+ "diag|cron مشتغلش": {
+  "hash": "af99371cdb33",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab cron + rsyslog"
+ },
+ "diag|smoke test": {
+  "hash": "17f8b219a8ab",
+  "date": "2026-10-06",
+  "on": "client container -> nginx lab"
+ },
+ "diag|webhook مش واصل": {
+  "hash": "92ccfa9a9064",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab nginx + systemd app"
+ },
+ "diag|اعمل ده قبل ما تطلب مساعدة": {
+  "hash": "9c248bab84b1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab"
+ },
+ "diag|الإيميلات مش بتوصل": {
+  "hash": "5ee57c6d6992",
+  "date": "2026-10-06",
+  "on": "ubuntu container real SMTP/DNS; docs: compose logs"
+ },
+ "diag|البورت مقفول من بره بس": {
+  "hash": "976f1bcb9c22",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab + client (ufw, iptables, tcpdump)"
+ },
+ "diag|الدومين بيشاور على مين": {
+  "hash": "18752a7594da",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 container (real DNS)"
+ },
+ "diag|الديسك اتملى": {
+  "hash": "7c5b6d64a056",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab inner Docker, tmpfs; docs: system prune"
+ },
+ "diag|الرام خلصت": {
+  "hash": "deef0f64bfe0",
+  "date": "2026-10-06",
+  "on": "inner Docker --memory=20m, dmesg"
+ },
+ "diag|الساعة غلط": {
+  "hash": "b890723c7352",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab; docs: timesyncd restart"
+ },
+ "diag|السلّم": {
+  "hash": "e37f359aa281",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab + real DNS/HTTPS"
+ },
+ "diag|الـ container بيقع ويقوم": {
+  "hash": "313fbdde9efc",
+  "date": "2026-10-06",
+  "on": "docker compose on Docker Desktop"
+ },
+ "diag|الـ deploy كسر الموقع": {
+  "hash": "a3fa434ea090",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab inner Docker/Compose + git"
+ },
+ "diag|المعالج 100٪": {
+  "hash": "46f3711bb5d7",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab inner Docker"
+ },
+ "diag|الموقع بطيء مش واقع": {
+  "hash": "2975a1f9fa35",
+  "date": "2026-10-06",
+  "on": "ubuntu container + Postgres 16 pg_stat_statements + win11 Lighthouse"
+ },
+ "diag|الموقع مش بيفتح خالص": {
+  "hash": "f4876d83038b",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab + client container"
+ },
+ "diag|بعد reboot حاجات مقامتش": {
+  "hash": "deec17704291",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab restart; docs: pm2"
+ },
+ "diag|بوت بيضرب الموقع": {
+  "hash": "8369f37e7458",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab nginx + ufw + fail2ban"
+ },
+ "diag|بيفتح عند ناس ومش عند ناس": {
+  "hash": "650d5834ed83",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 container (real DNS)"
+ },
+ "diag|سيرفر مش فاكر عليه إيه": {
+  "hash": "37f093da25b1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab"
+ },
+ "diag|شك في اختراق": {
+  "hash": "0f8908b95144",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab planted artefacts"
+ },
+ "diag|شهادة SSL": {
+  "hash": "d06112fee362",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab (expired cert via openssl ca)"
+ },
+ "diag|فيه مساحة ولسه No space": {
+  "hash": "6cead209361f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 systemd container lab tmpfs inode limit, lsof +L1"
+ },
+ "diag|قاعدة البيانات مش بترد": {
+  "hash": "11049afc2d5c",
+  "date": "2026-10-06",
+  "on": "docker compose Node 22 + Postgres 16"
+ },
+ "diag|مش قادر أعمل SSH": {
+  "hash": "6512ec60a2c5",
+  "date": "2026-10-06",
+  "on": "OpenSSH server + client containers"
+ },
  "docker|-f و -p": {
   "hash": "5b93b216c9fe",
   "date": "2026-10-06",
