@@ -1244,15 +1244,55 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
  },
+ "docker|.dockerignore": {
+  "hash": "1f4ce8bc9a44",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
  "docker|0.0.0.0 جوه الـ container": {
   "hash": "16ae5cdff76f",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11); docs: Vite flags"
  },
+ "docker|CMD و ENTRYPOINT": {
+  "hash": "ead24b2d5b74",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|Dockerfile": {
+  "hash": "e2454005595e",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|ENV و ARG": {
+  "hash": "a10102d57b1a",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|Next.js standalone": {
+  "hash": "d88131fd6621",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash), Next 15.5.4"
+ },
+ "docker|SPA جوه nginx": {
+  "hash": "16a7e140e994",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) (stand-in build script)"
+ },
  "docker|Traefik labels": {
   "hash": "51b9d694e052",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash), traefik v3.7 + whoami; docs: real Let's Encrypt"
+ },
+ "docker|USER و HEALTHCHECK": {
+  "hash": "040965a384cf",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|alpine ولا slim": {
+  "hash": "aafe6a5f7d60",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash), bcrypt 5.1.1"
  },
  "docker|bind mount": {
   "hash": "67fd507a73e8",
@@ -1263,6 +1303,16 @@
   "hash": "7e5b3ac1339a",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11) + ubuntu-24.04 mount --bind"
+ },
+ "docker|build / tag / push": {
+  "hash": "e0d4469ec2a1",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash), local registry:2; docs: ghcr login/errors"
+ },
+ "docker|buildx و --platform": {
+  "hash": "73e7124f6a1c",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) (buildx create without --use)"
  },
  "docker|certbot في compose": {
   "hash": "0007cb3e5da5",
@@ -1299,6 +1349,26 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash + ubuntu-24.04"
  },
+ "docker|docker exec": {
+  "hash": "ae283f4731bf",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
+ },
+ "docker|docker logs": {
+  "hash": "e58420c9493f",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
+ },
+ "docker|docker run": {
+  "hash": "4e74dcb35be3",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|entrypoint.sh و exec": {
+  "hash": "d1c0151e0400",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
  "docker|env file": {
   "hash": "970f5ced49f4",
   "date": "2026-10-06",
@@ -1319,6 +1389,26 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11); docs: WATCHPACK_POLLING"
  },
+ "docker|image و container": {
+  "hash": "ebc76369279c",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
+ "docker|images / tags / rmi": {
+  "hash": "6033233c3c3a",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash); docs: image prune"
+ },
+ "docker|inspect / stats": {
+  "hash": "f61ac74b9628",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
+ },
+ "docker|multi-stage": {
+  "hash": "2c1abf6093cd",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
+ },
  "docker|networks": {
   "hash": "e79e4d4ed1f6",
   "date": "2026-10-06",
@@ -1334,10 +1424,20 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
  },
+ "docker|ps / stop / start / rm": {
+  "hash": "192feb8b3212",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash); docs: container prune"
+ },
  "docker|restart policies": {
   "hash": "78337838eb5d",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash); docs: after server reboot"
+ },
+ "docker|run --rm كأداة": {
+  "hash": "2179e413ac59",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
  "docker|volume external": {
   "hash": "cb45ea049a38",
@@ -1353,6 +1453,11 @@
   "hash": "12d1938289d1",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11), Compose v5.3.0"
+ },
+ "docker|أسرار وقت الـ build": {
+  "hash": "e510e54e3bdd",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
  },
  "docker|أوامر مفيدة": {
   "hash": "8546ca5aeda3",
@@ -1383,6 +1488,11 @@
   "hash": "41da8702553a",
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash), Compose v5.3.0, local bare git remote; docs: unfiltered prune"
+ },
+ "docker|الطبقات والكاش": {
+  "hash": "205b89cb99f4",
+  "date": "2026-10-06",
+  "on": "Docker Desktop 29.6.1 (win11, Git Bash)"
  },
  "docker|تنضيف": {
   "hash": "38da5a5bd2aa",

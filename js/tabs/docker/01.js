@@ -56,6 +56,158 @@ docker run --rm hello-world`,
             when: "أي تطبيق هتشغّله على سيرفر. قاعدة بيانات للتطوير من غير ما تسطّبها على جهازك. تجرّب نسخة Node مختلفة في ثانية.",
             mistakes: "إنك تفتكر إن التعديلات جوه الـ container بتفضل. متفضلش. أي حاجة لازم تعيش، تحطها في volume أو في الـ image نفسها من الـ Dockerfile."
           },
+          teach: R`## الفكرة في سطرين
+
+الـ **image** «قالب» ثابت: ملف فيه نظام لينكس صغير وبرنامج جاهز. والـ **container** نسخة **شغالة** من القالب ده. الأوامر الأربعة في المثال بتمشي معاك المشوار كله: تنزّل قالب، تتفرج عليه، تشغّل منه نسخة، وتتأكد إن Docker نفسه شغال.
+
+كل الأوامر هنا اتشغّلت على Docker Desktop 29 على ويندوز 11، ونفس الأوامر بالظبط بتتكتب في PowerShell و bash و الماك، لأن [[docker]] برنامج واحد مش أمر من أوامر الشيل.
+
+---
+
+## ١. [[docker pull nginx:alpine]]: نزّل القالب
+
+### نفك الاسم
+
+~~~text
+docker   pull   nginx  :  alpine
+  │       │       │         │
+  │       │       │         └─ الـ tag: أنهي نسخة من الـ image
+  │       │       └─ اسم الـ image (برنامج nginx، سيرفر ويب)
+  │       └─ الأمر الفرعي: هات من النت
+  └─ البرنامج نفسه
+~~~
+
+- [[pull]] يعني «اسحب»: نزّل الـ image من مخزن على النت اسمه **registry**. ولو مكتبتش عنوان مخزن، الافتراضي هو **Docker Hub** ([[docker.io]]).
+- [[nginx]] اسم الـ image. و [[alpine]] بعد النقطتين اسمه **tag**، وهنا معناه «النسخة المبنية على Alpine Linux»، وده لينكس صغير جدًا.
+
+### الناتج
+
+~~~text الناتج (مختصر)
+alpine: Pulling from library/nginx
+64c8194480fe: Pull complete
+e76228b47809: Pull complete
+...
+Digest: sha256:df221db836e1754089190208cee7eeda94f233197056426eda74a43ab1abeac2
+Status: Downloaded newer image for nginx:alpine
+docker.io/library/nginx:alpine
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Pulling from library/nginx]] | [[library]] هو المكان اللي فيه الـ images الرسمية على Docker Hub |
+| كل سطر برقم غريب + [[Pull complete]] | الـ image مش ملف واحد، هي **طبقات** (layers) فوق بعض، وكل طبقة بتتنزل لوحدها |
+| [[Digest: sha256:...]] | بصمة الـ image: رقم بيتحسب من محتواها، لو حرف اتغير البصمة تتغير |
+| [[docker.io/library/nginx:alpine]] | الاسم الكامل: المخزن / المكان / الاسم : الـ tag |
+
+ولو عملت [[pull]] تاني لنفس الحاجة، مش هيتنزل حاجة، وهتلاقي [[Image is up to date]].
+
+---
+
+## ٢. [[docker images]]: اللي عندك على الجهاز
+
+~~~bash
+docker images nginx:alpine
+~~~
+
+~~~text الناتج (Docker 29)
+IMAGE          ID             DISK USAGE   CONTENT SIZE   EXTRA
+nginx:alpine   df221db836e1       94.4MB         27.2MB
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[IMAGE]] | الاسم والـ tag |
+| [[ID]] | أول ١٢ حرف من البصمة، تقدر تستخدمه بدل الاسم |
+| [[DISK USAGE]] | واخدة قد إيه على الديسك بعد فك الضغط |
+| [[CONTENT SIZE]] | حجم التحميل المضغوط (اللي نزل من النت فعلًا) |
+| [[EXTRA]] | لو فيه [[U]] يعني فيه container بيستخدمها (In Use) |
+
+> النسخ الأقدم من Docker بتعرض عمود واحد اسمه [[SIZE]] بدل العمودين، والفكرة نفسها. و ٩٤ ميجا لسيرفر ويب كامل رقم صغير، لأن image [[alpine]] لوحدها ١٣ ميجا على الديسك و ٤ ميجا تحميل.
+
+---
+
+## ٣. [[docker run --rm nginx:alpine nginx -v]]: شغّل نسخة
+
+~~~text
+docker run   --rm          nginx:alpine          nginx -v
+   │          │                 │                    │
+   │          │                 │                    └─ الأمر اللي يتنفّذ جوه
+   │          │                 └─ من أنهي قالب
+   │          └─ امسح الـ container لما يخلص
+   └─ اعمل container جديد وشغّله
+~~~
+
+- [[run]] = اعمل container **جديد** من الـ image وشغّله. ولو الـ image مش عندك، بيعمل [[pull]] لوحده الأول.
+- [[--rm]] (remove): أول ما الـ container يخلص، امسحه. من غيرها بيفضل «جثة» واقفة في [[docker ps -a]].
+- أي حاجة **بعد** اسم الـ image هي الأمر اللي هيتشغّل جوه بدل الأمر الافتراضي. هنا [[nginx -v]] يعني «اطبع نسختك واخرج» بدل ما يشغّل السيرفر.
+
+~~~text الناتج
+/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
+/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
+...
+/docker-entrypoint.sh: Configuration complete; ready for start up
+nginx version: nginx/1.31.6
+~~~
+
+السطور اللي بتبدأ بـ [[/docker-entrypoint.sh]] ده سكربت تجهيز جوه الـ image بيشتغل قبل أي أمر (هتفهمه في درس «CMD و ENTRYPOINT»). وآخر سطر هو اللي طلبناه. اللي حصل في ثانية واحدة:
+
+1. اتعمل container من القالب.
+2. اشتغل جواه [[nginx -v]]، طبع النسخة، وخرج.
+3. لما الأمر خرج، الـ container وقف، و [[--rm]] مسحه.
+
+والـ image نفسها لسه موجودة في [[docker images]]، لأن مسح الـ container مبيلمسش القالب.
+
+---
+
+## ٤. [[docker run --rm hello-world]]: هل Docker شغال؟
+
+[[hello-world]] image رسمية صغيرة جدًا، شغلتها الوحيدة إنها تطبع رسالة وتخرج. ومكتبناش tag، فـ Docker بيفترض [[latest]]:
+
+~~~text الناتج (أول مرة)
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+...
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+~~~
+
+الرسالة نفسها بتشرح الخطوات، وفيها كلمتين مهمين:
+
+| الكلمة | معناها |
+|---|---|
+| **Docker client** | برنامج [[docker]] اللي بتكتبه في الترمنال. هو مجرد «ريموت»، مش هو اللي بيشغّل |
+| **Docker daemon** | البرنامج اللي شغال في الخلفية (اسمه [[dockerd]]) وهو اللي بينزّل ويشغّل فعلًا. على ويندوز والماك شغال جوه ماكينة لينكس صغيرة جوه Docker Desktop |
+| [[(amd64)]] | معمارية المعالج اللي اتنزلت النسخة بتاعتها (Intel/AMD 64-bit) |
+
+السطر الأول [[Unable to find image ... locally]] مش error: معناه «مش لاقيها عندي، هنزّلها»، وده بالظبط اللي [[run]] بيعمله لوحده.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[docker pull IMAGE:TAG]] | ينزّل القالب بس |
+| [[docker images]] | يعرض القوالب اللي عندك وحجمها |
+| [[docker run --rm IMAGE أمر]] | يعمل container جديد، ينفّذ الأمر، ويمسحه لما يخلص |
+
+~~~text
+image       القالب الثابت، بيتنزل مرة ويتخزن
+container   نسخة شغالة من القالب، ليها طبقة كتابة خاصة بيها
+--rm        امسح الـ container لما يخلص (الـ image بتفضل)
+tag         اسم النسخة بعد النقطتين، ومن غيره = latest
+~~~`,
           lines: [
             "نزّل image nginx بالنسخة الصغيرة alpine من Docker Hub.",
             "الصور اللي على جهازك، بحجمها.",
@@ -88,6 +240,141 @@ docker run -d --name db -e POSTGRES_PASSWORD=secret -p 127.0.0.1:5432:5432 postg
             when: "تجربة سريعة لأي برنامج من غير تسطيب. قاعدة بيانات للتطوير. وفي الإنتاج غالبًا compose بدل run.",
             mistakes: "[[-p 5432:5432]] لقاعدة بيانات على سيرفر: بتبقى مفتوحة للنت كله. دايمًا [[127.0.0.1:]] قبلها. وترتيب [[-p]] بالعكس."
           },
+          teach: R`## [[docker run]] = اعمل container جديد وشغّله
+
+الأمر نفسه واحد في التلات سطور، والفرق كله في الـ **flags** (الاختيارات اللي بتبدأ بشَرطة). القاعدة اللي لازم تتحفظ:
+
+~~~text
+docker run   [flags بتاعة Docker]   IMAGE   [أمر يتشغّل جوه]
+~~~
+
+اللي **قبل** اسم الـ image إعدادات لـ Docker، واللي **بعده** أمر بيتنفّذ جوه الـ container. اتشغّل كله على Docker Desktop 29 (ويندوز 11)، وبيتكتب زي ما هو في PowerShell و bash.
+
+---
+
+## ١. سيرفر ويب في الخلفية
+
+~~~bash
+docker run -d --name web -p 8080:80 nginx:alpine
+~~~
+
+| الجزء | اختصار إيه | بيعمل إيه |
+|---|---|---|
+| [[-d]] | detach (افصل) | شغّله في الخلفية ورجّعلي الترمنال |
+| [[--name web]] | | سمّيه [[web]] بدل اسم عشوائي زي [[quirky_turing]] |
+| [[-p 8080:80]] | publish (انشر) | بورت 8080 على جهازي يوصل لبورت 80 جوه الـ container |
+| [[nginx:alpine]] | | القالب |
+
+### [[-p 8080:80]] بالتفصيل
+
+اقراها دايمًا **«عندي : جوه»**. nginx جوه الـ container بيسمع على 80، بس الـ container معزول، فمحدش يوصله إلا لو فتحت باب. [[-p]] هي الباب: أي حد يكلّم جهازك على 8080 يتحوّل لـ 80 جوه.
+
+### الناتج
+
+~~~text الناتج
+1897ea7af3233e3165f284f7226573ec54b54d85f51d659b6fbeaf00cd3cb4cf
+~~~
+
+ده بس الـ **container ID** (رقمه الكامل)، ومعناه إنه اشتغل ورجّعلك الترمنال بسبب [[-d]]. نتأكد:
+
+~~~bash
+docker ps --filter name=web
+curl -s localhost:8080 | grep title
+~~~
+
+~~~text الناتج
+CONTAINER ID   IMAGE          COMMAND                  CREATED        STATUS                  PORTS                                     NAMES
+1897ea7af323   nginx:alpine   "/docker-entrypoint.…"   1 second ago   Up Less than a second   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   web
+<title>Welcome to nginx!</title>
+~~~
+
+عمود [[PORTS]]: [[0.0.0.0:8080->80/tcp]] يعني «كل عناوين الجهاز على 8080 رايحة لـ 80 جوه». [[0.0.0.0]] معناها كل الواجهات (الشبكة المحلية والنت لو السيرفر مكشوف)، و [[::]] نفس الكلام لـ IPv6.
+
+---
+
+## ٢. ترمنال جوه alpine
+
+~~~bash
+docker run -it --rm alpine sh
+~~~
+
+| الجزء | معناه |
+|---|---|
+| [[-i]] | interactive: سيب الـ stdin (الكيبورد) مفتوح للـ container |
+| [[-t]] | tty: اعمل ترمنال حقيقي، فيظهر prompt وتشتغل الأسهم و Ctrl+C |
+| [[-it]] | الاتنين مع بعض، ودايمًا بيتكتبوا كده |
+| [[--rm]] | امسحه لما تخرج |
+| [[sh]] | الأمر اللي يتشغّل جوه: الشيل. alpine مفيهاش bash |
+
+جوه هتلاقي prompt شكله [[/ #]] (الـ [[/]] مكانك، و [[#]] يعني انت root). ولما تكتب [[ls /]]:
+
+~~~text الناتج (جوه الـ container)
+bin    dev    etc    home   lib    media  mnt    opt    proc
+root   run    sbin   srv    sys    tmp    usr    var
+~~~
+
+ده نظام ملفات لينكس كامل، حتى لو جهازك ويندوز. و [[exit]] بيخرجك، والـ container بيقف ويتمسح بسبب [[--rm]].
+
+> [[-it]] محتاجة ترمنال حقيقي. لو بعت أوامر بـ pipe (زي [[echo ls | docker run -it ...]]) هيطلع [[cannot attach stdin to a TTY-enabled container because stdin is not a terminal]]. في الحالة دي شيل [[-t]] وسيب [[-i]] بس.
+
+---
+
+## ٣. قاعدة بيانات بمتغير بيئة وبورت مقفول
+
+~~~bash
+docker run -d --name db -e POSTGRES_PASSWORD=secret -p 127.0.0.1:5432:5432 postgres:16
+~~~
+
+### [[-e POSTGRES_PASSWORD=secret]]
+
+[[-e]] (environment) بيحط **متغير بيئة** جوه الـ container. صورة postgres الرسمية بتقرا المتغير ده أول مرة تقوم وتعمل بيه باسورد اليوزر [[postgres]]، ومن غيره بترفض تشتغل. نتأكد إنه وصل:
+
+~~~bash
+docker exec db env | grep POSTGRES
+~~~
+
+~~~text الناتج
+POSTGRES_PASSWORD=secret
+~~~
+
+### [[-p 127.0.0.1:5432:5432]]
+
+هنا [[-p]] فيها **تلات** أجزاء: [[عنوان:عندي:جوه]]. الجزء الأول [[127.0.0.1]] معناه «افتح البورت على الجهاز نفسه بس». على جهازنا 5432 كان مستخدم من قاعدة تانية، فجربناها على 5433 بدله ([[-p 127.0.0.1:5433:5432]]):
+
+~~~text الناتج: docker ps
+NAMES   STATUS         PORTS
+db      Up 3 seconds   127.0.0.1:5433->5432/tcp
+~~~
+
+قارن بـ web فوق: هناك [[0.0.0.0]] (مفتوح لأي حد)، وهنا [[127.0.0.1]] (الجهاز ده بس). على سيرفر، Docker بيفتح البورت في الفايروول لوحده، فقاعدة بيانات بـ [[-p 5432:5432]] بتبقى مكشوفة للنت كله.
+
+### آخر حاجة: [[postgres:16]]
+
+مفيش أمر بعد اسم الـ image، فبيشتغل الأمر الافتراضي بتاعها (سيرفر postgres). أول مرة الـ image بتتنزل لوحدها لأنها مش موجودة.
+
+---
+
+## لما حاجة تقع
+
+| الرسالة | السبب | الحل |
+|---|---|---|
+| [[Conflict. The container name "/web" is already in use]] | فيه container (حتى لو واقف) بنفس الاسم | [[docker rm -f web]] أو اسم تاني |
+| [[Bind for 0.0.0.0:8080 failed: port is already allocated]] | حاجة تانية ماسكة 8080 على جهازك | غيّر الرقم **الشمال** بس: [[-p 8081:80]] |
+
+---
+
+## الخلاصة
+
+| flag | معناه |
+|---|---|
+| [[-d]] | في الخلفية |
+| [[--name]] | اسم ثابت تتعامل بيه |
+| [[-p عندي:جوه]] | افتح بورت، و [[127.0.0.1:]] في الأول = للجهاز ده بس |
+| [[-e KEY=VALUE]] | متغير بيئة |
+| [[-it]] | ترمنال تفاعلي |
+| [[--rm]] | امسحه لما يقف |
+
+وكل ده **قبل** اسم الـ image. اللي بعده أمر بيتشغّل جوه.`,
           lines: [
             "في الخلفية، اسمه web، بورت 8080 عندك يروح لـ 80 جواه.",
             "ادخل alpine بترمنال تفاعلي، وامسحه لما تخرج.",
@@ -122,6 +409,133 @@ docker container prune`,
             when: "كل يوم: [[ps]] تشوف الحالة. [[restart]] بعد تغيير env. [[rm -f]] لتجارب خلصت.",
             mistakes: "إنك تستخدم [[docker kill]] كأنه stop. kill بيقتل فورًا من غير فرصة للإغلاق النضيف، وممكن يبوّظ بيانات. و [[rm]] لقاعدة بيانات من غير volume: البيانات راحت."
           },
+          teach: R`## الـ container ليه ٣ حالات
+
+~~~text
+           docker stop                 docker rm
+  شغال  ─────────────────▶  واقف  ─────────────────▶  ممسوح
+ (Up)   ◀─────────────────  (Exited)
+           docker start
+~~~
+
+الأوامر الستة في المثال بتنقّلك بين الحالات دي. كلها اتشغّلت على Docker Desktop 29 (ويندوز 11) على container nginx اسمه [[web]] من الدرس اللي فات، وبتتكتب زي ما هي في أي شيل.
+
+---
+
+## ١. [[docker ps]] و [[docker ps -a]]: مين موجود؟
+
+[[ps]] اسمها جاي من أمر لينكس القديم process status. من غير حاجة بيعرض **الشغالين بس**، و [[-a]] (all) بيعرض الكل حتى الواقف:
+
+~~~text الناتج: docker ps -a
+CONTAINER ID   IMAGE          STATUS          NAMES
+1897ea7af323   nginx:alpine   Up 22 minutes   web
+~~~
+
+(الجدول الحقيقي فيه كمان [[COMMAND]] و [[CREATED]] و [[PORTS]]، شلناهم هنا عشان يبان.)
+
+| العمود | معناه |
+|---|---|
+| [[CONTAINER ID]] | أول ١٢ حرف من الرقم الكامل. تقدر تكتب أول ٣ حروف بس ([[docker stop 189]]) لو مفيش غيره بيبدأ بيهم |
+| [[STATUS]] | [[Up ...]] شغال من قد إيه، أو [[Exited (رقم) ...]] واقف |
+| [[NAMES]] | الاسم اللي اديته بـ [[--name]] |
+
+---
+
+## ٢. [[docker stop web]]: وقّف بأدب
+
+~~~bash
+docker stop web
+docker ps -a --filter name=web
+~~~
+
+~~~text الناتج
+web
+NAMES   STATUS
+web     Exited (0) Less than a second ago
+~~~
+
+[[--filter name=web]] بيعرض اللي اسمه فيه [[web]] بس بدل الجدول كله. والرقم بين القوسين هو **exit code**: الرقم اللي البرنامج خرج بيه.
+
+### إيه اللي بيحصل جوه [[stop]]؟
+
+1. Docker بيبعت **إشارة** (signal) للعملية رقم 1 جوه الـ container: «اقفل نفسك». الإشارة الافتراضية اسمها [[SIGTERM]] (terminate). صورة nginx بالذات طالبة [[SIGQUIT]] بدلها، وتقدر تشوف ده بـ [[docker inspect --format '{{.Config.StopSignal}}' nginx:alpine]].
+2. بيستنى **١٠ ثواني** البرنامج يخلص اللي في إيده ويقفل.
+3. لو لسه عايش، بيبعت [[SIGKILL]]: قتل فوري مبيتردش.
+
+جربناها مرتين:
+
+| الـ container | وقت [[docker stop]] | الحالة بعدها |
+|---|---|---|
+| nginx (بيسمع الإشارة) | 0.8 ثانية | [[Exited (0)]] |
+| [[alpine sleep 600]] ([[sleep]] كـ PID 1 بيتجاهلها) | 10.9 ثانية | [[Exited (137)]] |
+
+> [[137]] = 128 + 9، و 9 رقم [[SIGKILL]]. يعني لما تشوف 137 افهم: «اتقتل بالعافية بعد ما المهلة خلصت». و [[0]] يعني قفل لوحده من غير مشاكل.
+
+---
+
+## ٣. [[docker start web]]: رجّعه زي ما كان
+
+~~~text الناتج: docker start web ثم docker ps
+web
+NAMES   STATUS                  PORTS
+web     Up Less than a second   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp
+~~~
+
+لاحظ إن البورت رجع لوحده من غير ما تكتب [[-p]]. الإعدادات كلها (البورتات، والمتغيرات، والـ volumes) محفوظة **في الـ container نفسه**، و [[start]] بيشغّل نفس الـ container مش واحد جديد. عشان كده:
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[docker start web]] | يشغّل container **موجود** وواقف |
+| [[docker run ... nginx:alpine]] | يعمل container **جديد** من الـ image |
+
+ولو كتبت [[run]] بنفس الاسم تاني هيقولك [[Conflict. The container name "/web" is already in use]].
+
+---
+
+## ٤. [[docker rm -f web]]: امسحه
+
+[[rm]] (remove) بيمسح الـ container، **مش** الـ image. بس مبيمسحش container شغال:
+
+~~~text الناتج: docker rm web وهو شغال
+Error response from daemon: cannot remove container "web": container is running: stop the container before removing or force remove
+~~~
+
+و [[-f]] (force) بتعمل الخطوتين مرة واحدة: توقفه وتمسحه، وبتطبع اسمه بس. وأي بيانات اتكتبت جوه الـ container ومش في volume بتروح معاه.
+
+---
+
+## ٥. [[docker container prune]]: امسح كل الواقفين
+
+[[prune]] يعني «قلّم»: بيمسح **كل** الـ containers الواقفة على الجهاز مرة واحدة، بتوعك وبتوع أي مشروع تاني، وبيسألك قبلها سؤال تأكيد تجاوب عليه بـ y أو N. وصفه من [[docker container prune --help]]:
+
+~~~text الناتج
+Usage:  docker container prune [OPTIONS]
+
+Remove all stopped containers
+
+Options:
+      --filter filter   Provide filter values (e.g. "until=<timestamp>")
+  -f, --force           Do not prompt for confirmation
+~~~
+
+مشغّلناهوش هنا لأنه كان هيمسح containers واقفة لمشاريع تانية على نفس الجهاز. لو عندك container واقف «مهم» (قاعدة بيانات بايتة مثلًا) هيروح. فاقرا [[docker ps -a]] الأول، أو امسح بالاسم.
+
+---
+
+## الخلاصة
+
+| الأمر | من | لـ |
+|---|---|---|
+| [[docker ps]] / [[ps -a]] | | يعرض الشغالين / الكل |
+| [[docker stop]] | شغال | واقف (إشارة، ١٠ ثواني، وبعدين قتل) |
+| [[docker start]] | واقف | شغال بنفس الإعدادات |
+| [[docker rm]] / [[rm -f]] | واقف / أي حالة | ممسوح |
+| [[docker container prune]] | كل الواقفين على الجهاز | ممسوحين |
+
+~~~text
+Exited (0)     قفل لوحده تمام
+Exited (137)   اتقتل بعد مهلة الـ 10 ثواني (128 + 9)
+~~~`,
           lines: [
             "الشغال.",
             "الكل حتى الواقف.",
@@ -161,6 +575,131 @@ docker logs web 2>&1 | grep -i error`,
             when: "أول حاجة لما container يقع أو يتصرف غريب. وأثناء التطوير بـ [[-f]].",
             mistakes: "لوجات بتكبر لحد ما تملى الديسك. حط حد في compose: [[logging: driver: json-file, options: max-size: 10m, max-file: 3]]. وتطبيق بيكتب لوجاته في ملف جوه الـ container فمفيش حاجة في [[docker logs]]."
           },
+          teach: R`## اللوجات = اللي البرنامج طبعه على الشاشة
+
+أي برنامج بيطبع على قناتين: **stdout** (standard output، الكلام العادي) و **stderr** (standard error، الأخطاء والتحذيرات). Docker بيمسك القناتين ويحفظهم لكل container، و [[docker logs]] بيقراهم. السطور الأربعة في المثال نفس الأمر بفلاتر مختلفة.
+
+جربناها على container nginx اسمه [[web]] (من درس «docker run») على Docker Desktop 29، وقبلها فتحنا الصفحة ٣ مرات وطلبنا صفحة مش موجودة [[/nope]] مرة.
+
+---
+
+## ١. [[docker logs web]]: كل اللوج
+
+~~~text الناتج (آخر ٦ سطور)
+172.17.0.1 - - [06/Oct/2026:12:02:23 +0000] "GET / HTTP/1.1" 200 896 "-" "curl/8.22.0" "-"
+172.17.0.1 - - [06/Oct/2026:12:02:29 +0000] "GET / HTTP/1.1" 200 896 "-" "curl/8.22.0" "-"
+172.17.0.1 - - [06/Oct/2026:12:02:29 +0000] "GET / HTTP/1.1" 200 896 "-" "curl/8.22.0" "-"
+172.17.0.1 - - [06/Oct/2026:12:02:29 +0000] "GET / HTTP/1.1" 200 896 "-" "curl/8.22.0" "-"
+172.17.0.1 - - [06/Oct/2026:12:02:29 +0000] "GET /nope HTTP/1.1" 404 153 "-" "curl/8.22.0" "-"
+2026/10/06 12:02:29 [error] 26#26: *5 open() "/usr/share/nginx/html/nope" failed (2: No such file or directory), client: 172.17.0.1, ...
+~~~
+
+### نقرا سطر زيارة
+
+| الحتة | معناها |
+|---|---|
+| [[172.17.0.1]] | مين اللي طلب. ده عنوان جهازك من ناحية شبكة Docker الداخلية |
+| الوقت بين القوسين المربعين | الوقت، و [[+0000]] يعني توقيت UTC مش توقيت مصر |
+| [[GET / HTTP/1.1]] | نوع الطلب والصفحة |
+| [[200]] | كود الرد: 200 تمام، 404 مش موجود |
+| [[896]] | حجم الرد بالـ byte |
+| [[curl/8.22.0]] | البرنامج اللي طلب (المتصفح هيكتب [[Mozilla/5.0 ...]]) |
+
+وآخر سطر مختلف: سطر [[error]] اللي بين قوسين من nginx بيقول إنه دوّر على ملف [[nope]] ومالقاهوش. السطر ده طالع على **stderr** مش stdout، وده هيفرق في السطر الرابع.
+
+---
+
+## ٢. [[docker logs -f --tail 100 web]]: تابع لايف
+
+| الجزء | معناه |
+|---|---|
+| [[-f]] | follow: متقفلش، واطبع أي سطر جديد أول ما يتكتب (زي [[tail -f]] في لينكس) |
+| [[--tail 100]] | ابدأ من آخر ١٠٠ سطر بس، مش من أول يوم |
+
+جربناها بـ [[--tail 1]]، وفي نفس الوقت طلبنا [[/live]] من ترمنال تاني:
+
+~~~text الناتج
+2026/10/06 12:02:29 [error] 26#26: *5 open() "/usr/share/nginx/html/nope" failed ...
+172.17.0.1 - - [06/Oct/2026:12:02:43 +0000] "GET /live HTTP/1.1" 404 153 "-" "curl/8.22.0" "-"
+2026/10/06 12:02:43 [error] 27#27: *6 open() "/usr/share/nginx/html/live" failed ...
+~~~
+
+أول سطر قديم (ده الـ tail)، والسطرين اللي بعده ظهروا لحظة الطلب. الأمر بيفضل ماسك الترمنال. [[Ctrl+C]] بيقفل **المتابعة** بس، والـ container نفسه لسه شغال.
+
+---
+
+## ٣. [[docker logs --since 10m web]]: آخر ١٠ دقايق
+
+[[--since]] بياخد مدة: [[10m]] دقايق، [[2h]] ساعات، [[30s]] ثواني. أو تاريخ ووقت زي [[2026-10-06T12:00]]. مفيد على سيرفر شغال من شهور واللوج فيه ملايين السطور.
+
+---
+
+## ٤. [[docker logs web 2>&1 | grep -i error]]: دوّر على الأخطاء
+
+ده أطول سطر، فنفكه بالترتيب:
+
+### الخطوة ١: الـ pipe [[|]]
+
+[[|]] بياخد ناتج الأمر اللي على شماله ويديه للي على يمينه. بس بياخد **stdout بس**. و [[docker logs]] بيطلّع سطور الـ container على نفس القناة اللي اتكتبت عليها: العادي على stdout، والأخطاء على stderr.
+
+### الخطوة ٢: من غير [[2>&1]] الـ grep مش شايف الأخطاء
+
+~~~bash
+docker logs web 2>/dev/null | grep -ci error
+~~~
+
+~~~text الناتج
+0
+~~~
+
+هنا رمينا stderr ([[2>/dev/null]]) عشان نشوف اللي واصل للـ pipe لوحده: صفر سطر فيه error، مع إن فيه سطر [[error]] اللي بين قوسين في اللوج. (و [[-c]] في grep بتعدّ السطور بدل ما تطبعها.)
+
+### الخطوة ٣: [[2>&1]] تضم القناتين
+
+| الرمز | معناه |
+|---|---|
+| [[2]] | رقم stderr (و [[1]] رقم stdout) |
+| [[>]] | وجّه |
+| [[&1]] | لنفس المكان اللي رايح له 1 |
+
+يعني «خلّي الأخطاء تمشي في نفس طريق الكلام العادي»، فالـ pipe ياخدهم الاتنين:
+
+~~~text الناتج: docker logs web 2>&1 | grep -i error
+2026/10/06 12:02:29 [error] 26#26: *5 open() "/usr/share/nginx/html/nope" failed (2: No such file or directory), client: 172.17.0.1, server: localhost, request: "GET /nope HTTP/1.1", host: "localhost:8080"
+~~~
+
+### الخطوة ٤: [[grep -i error]]
+
+[[grep]] بيطبع السطور اللي فيها الكلمة، و [[-i]] (ignore case) يعني [[error]] و [[ERROR]] و [[Error]] كلهم واحد.
+
+### نفس السطر في PowerShell
+
+[[2>&1]] شغالة زي ما هي، بس [[grep]] مش موجود، وبداله [[Select-String]]:
+
+~~~powershell
+docker logs web 2>&1 | Select-String -Pattern error
+~~~
+
+جربناها في PowerShell 7 وطلّعت نفس سطر الـ [[error]] اللي بين قوسين. و [[Select-String]] من غير حاجة مش بيفرّق بين كابيتال وسمول أصلًا، فمش محتاج [[-i]].
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[docker logs web]] | كل اللي اتطبع من ساعة ما الـ container اتعمل |
+| [[-f]] | تابع الجديد لايف (Ctrl+C يقفل المتابعة بس) |
+| [[--tail N]] | آخر N سطر |
+| [[--since 10m]] | من وقت معين |
+| [[2>&1]] وبعدها grep | ضم الأخطاء للعادي وفلتر |
+
+~~~text
+stdout (1)   الكلام العادي، والـ pipe بياخده
+stderr (2)   الأخطاء، ومحتاجة 2>&1 عشان توصل للـ pipe
+~~~
+
+والتطبيق لازم يطبع على الشاشة: لو بيكتب لوجاته في ملف جوه الـ container، [[docker logs]] هيطلع فاضي.`,
           lines: [
             "كل اللوج.",
             "آخر ١٠٠ سطر وتابع الجديد.",
@@ -194,6 +733,139 @@ docker exec -u root -it web sh`,
             when: "تشخيص: تشوف الملفات والمتغيرات. تشغّل psql أو redis-cli على القاعدة اللي في container. تشغّل migration مرة واحدة.",
             mistakes: "تصلّح مشكلة بتعديل جوه الـ container وتفتكر إنها اتحلت. بعد أول deploy المشكلة هترجع."
           },
+          teach: R`## [[exec]] = شغّل أمر جوه container **شغال بالفعل**
+
+[[docker run]] بيعمل container جديد. [[docker exec]] مبيعملش حاجة جديدة: بيدخل container موجود وشغال، ويشغّل جنب التطبيق برنامج إضافي. الشكل العام:
+
+~~~text
+docker exec   [flags]   اسم-الـ-container   الأمر
+~~~
+
+جربنا السطور على container nginx اسمه [[web]] و container postgres اسمه [[db]] (من درس «docker run»)، على Docker Desktop 29.
+
+---
+
+## ١. [[docker exec -it web sh]]: ترمنال جوه
+
+| الجزء | معناه |
+|---|---|
+| [[-i]] | سيب الكيبورد متوصل بالأمر |
+| [[-t]] | اعمل ترمنال (prompt وأسهم و Ctrl+C) |
+| [[web]] | أنهي container. اسمه أو أول حروف الـ ID |
+| [[sh]] | الأمر: الشيل. صور alpine مفيهاش [[bash]] |
+
+بيفتحلك prompt [[/ #]] جوه الـ container، وتقدر تلف براحتك:
+
+~~~text جوه الـ container
+/ # cat /etc/nginx/nginx.conf
+
+user  nginx;
+worker_processes  auto;
+...
+/ # exit
+~~~
+
+ولما تكتب [[exit]]، اللي بيموت هو [[sh]] بس، و nginx لسه شغال، و [[docker ps]] لسه بيوري [[web]] [[Up]].
+
+لو جربت [[bash]]:
+
+~~~text الناتج
+OCI runtime exec failed: exec failed: unable to start container process: exec: "bash": executable file not found in $PATH
+~~~
+
+يعني البرنامج ده مش موجود جوه الـ image. استخدم [[sh]].
+
+---
+
+## ٢. [[docker exec web ls /usr/share/nginx/html]]: أمر واحد من بره
+
+من غير [[-it]]: الأمر بيتنفّذ، الناتج بيتطبع عندك، وخلاص. مفيش دخول:
+
+~~~text الناتج
+50x.html
+index.html
+~~~
+
+[[/usr/share/nginx/html]] الفولدر اللي nginx بيقدّم منه الصفحات، و [[index.html]] هي صفحة «Welcome to nginx!».
+
+### فخ في Git Bash على ويندوز
+
+نفس السطر في Git Bash طلّع:
+
+~~~text الناتج في Git Bash
+ls: C:/Program Files/Git/usr/share/nginx/html: No such file or directory
+~~~
+
+Git Bash بيشوف أي كلمة بتبدأ بـ [[/]] على إنها مسار ويندوز، فبيحوّلها لمسار جوه فولدر Git **قبل** ما يبعتها لـ docker. الحل واحد من دول (الاتنين اتجربوا وطلّعوا [[50x.html]] و [[index.html]]):
+
+~~~bash
+MSYS_NO_PATHCONV=1 docker exec web ls /usr/share/nginx/html
+docker exec web ls //usr/share/nginx/html
+~~~
+
+[[MSYS_NO_PATHCONV=1]] متغير بيقفل التحويل للأمر ده بس، و [[//]] في الأول بتقوله «ده مش مسار ويندوز». أما PowerShell ولينكس والماك فمفيهمش المشكلة دي أصلًا.
+
+---
+
+## ٣. [[docker exec -it db psql -U postgres]]: افتح قاعدة البيانات
+
+| الجزء | معناه |
+|---|---|
+| [[db]] | container postgres |
+| [[psql]] | برنامج سطر الأوامر بتاع PostgreSQL، موجود جوه الـ image أصلًا |
+| [[-U postgres]] | ادخل باليوزر [[postgres]] (User) |
+
+بيفتحلك prompt [[postgres=#]] تكتب فيه SQL. جربناه بأمر واحد بدل الدخول التفاعلي:
+
+~~~bash
+docker exec db psql -U postgres -c 'select version();'
+~~~
+
+~~~text الناتج
+                                                       version
+----------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 16.15 (Debian 16.15-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit
+~~~
+
+[[-c]] (command) يعني «نفّذ الجملة دي واخرج». والفايدة: مش محتاج تسطّب psql على جهازك خالص.
+
+---
+
+## ٤. [[docker exec -u root -it web sh]]: ادخل كـ root
+
+[[-u]] (user) بيحدد اليوزر اللي الأمر يشتغل بيه. افتراضيًا [[exec]] بيستخدم نفس يوزر الـ container. في nginx:alpine ده أصلًا [[root]]:
+
+~~~bash
+docker exec web whoami
+docker exec -u root web whoami
+~~~
+
+~~~text الناتج
+root
+root
+~~~
+
+بس في image معمولة صح بـ [[USER node]] (درس «USER و HEALTHCHECK») هتدخل كـ [[node]]، وساعتها [[-u root]] هي اللي تخليك تسطّب أداة تشخيص زي [[apk add curl]].
+
+---
+
+## أهم قاعدة
+
+أي تعديل بتعمله بـ exec **مؤقت**: بيعيش في طبقة الكتابة بتاعة الـ container ده بس. أول ما الـ container يتمسح ويتعمل من الـ image تاني (deploy جديد، أو [[docker compose up]] بعد تغيير)، التعديل بيروح. التصليح الحقيقي في الكود أو الـ Dockerfile.
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[docker exec -it NAME sh]] | ترمنال جوه container شغال |
+| [[docker exec NAME أمر]] | أمر واحد وترجع |
+| [[docker exec -it db psql -U postgres]] | عميل القاعدة اللي جوه الـ image |
+| [[-u root]] | اشتغل كـ root |
+
+~~~text
+run    container جديد من image
+exec   أمر زيادة جوه container شغال (لو واقف: is not running)
+~~~`,
           lines: [
             "ترمنال جوه web (sh لأن alpine مفيهاش bash).",
             "نفّذ أمر واحد جواه من غير ما تدخل.",
@@ -228,6 +900,139 @@ docker image prune`,
             when: "قبل أي build للإنتاج: حدد نسخة الـ base image. وقبل push: tag بنسخة واضحة.",
             mistakes: "[[FROM node]] أو [[FROM node:latest]] في Dockerfile. بعد شهور Node 24 يطلع وتطبيقك يبوظ من غير ما تعمل حاجة."
           },
+          teach: R`## اسم الـ image له أجزاء
+
+قبل الأوامر، لازم تقرا الاسم صح:
+
+~~~text
+ghcr.io  /  user  /  myapi  :  1.2.0
+   │         │        │         │
+   │         │        │         └─ tag: النسخة (من غيره = latest)
+   │         │        └─ اسم الـ image
+   │         └─ الحساب أو المنظمة
+   └─ الـ registry (من غيره = docker.io يعني Docker Hub)
+~~~
+
+فـ [[nginx:alpine]] اسمها الكامل [[docker.io/library/nginx:alpine]]، و [[library]] هو حساب الصور الرسمية. كل اللي تحت اتشغّل على Docker Desktop 29 (ويندوز 11)، ونفس الكتابة في أي شيل.
+
+---
+
+## ١. [[docker images]]: اللي عندك
+
+~~~text الناتج (مختصر)
+IMAGE            ID             DISK USAGE   CONTENT SIZE   EXTRA
+nginx:alpine     df221db836e1       94.4MB         27.2MB   U
+node:22-alpine   0a7108bf6c7b        238MB         61.1MB   U
+node:22-slim     c3de60bf2f9d        329MB         82.5MB
+~~~
+
+[[U]] في عمود [[EXTRA]] يعني In Use: فيه container (شغال أو واقف) معمول منها.
+
+---
+
+## ٢. [[docker pull node:22-alpine]]: نسخة محددة
+
+الـ tag هنا [[22-alpine]]، ومعناه حاجتين مع بعض: **Node 22** و **مبنية على Alpine**. قارن:
+
+| الـ tag | جواه | الحجم على جهازنا |
+|---|---|---|
+| [[node:22-alpine]] | Node 22 على Alpine | 238MB |
+| [[node:22-slim]] | Node 22 على Debian مصغّرة | 329MB |
+| [[node:22]] | Node 22 على Debian كاملة بأدوات البناء | أكبر بكتير، حوالي الجيجا (منزلناهاش، الرقم من صفحتها على Docker Hub) |
+
+~~~text الناتج
+22-alpine: Pulling from library/node
+...
+Status: Image is up to date for node:22-alpine
+docker.io/library/node:22-alpine
+~~~
+
+[[Image is up to date]] لأنها كانت عندنا. أول مرة هتشوف [[Downloaded newer image]].
+
+### ليه مش [[latest]]؟
+
+[[latest]] **مجرد اسم tag** زي أي اسم، صاحب الـ image بيحطه على النسخة اللي هو عايزها. مش معناه «الأحدث» تلقائي. و [[node]] من غير tag النهارده Node 24 مثلًا، وبعد سنة حاجة تانية، فالـ build بتاعك يتغير لوحده. [[22-alpine]] بيثبّت الرقم الكبير على الأقل.
+
+---
+
+## ٣. [[docker tag myapp:latest myapp:1.2.0]]: اسم تاني
+
+[[tag]] هنا **أمر** مش جزء من اسم: بيدّي image موجودة اسم إضافي. الشكل [[docker tag الاسم-الموجود الاسم-الجديد]].
+
+السطر زي ما هو في المثال على جهاز لسه مبناش [[myapp]] بيطلّع:
+
+~~~text الناتج
+Error response from daemon: No such image: myapp:latest
+~~~
+
+فجربناه على image موجودة فعلًا:
+
+~~~bash
+docker tag nginx:alpine myweb:1.0
+docker images
+~~~
+
+~~~text الناتج
+IMAGE          ID             DISK USAGE   CONTENT SIZE   EXTRA
+myweb:1.0      df221db836e1       94.4MB         27.2MB   U
+nginx:alpine   df221db836e1       94.4MB         27.2MB   U
+~~~
+
+بص على عمود [[ID]]: **نفس الرقم**. يعني مفيش نسخة اتعملت والديسك مازادش ولا byte. هو ملصق تاني على نفس العلبة. وده اللي بتعمله قبل ما ترفع: تبني باسم، وتدّيها اسم فيه رقم النسخة.
+
+---
+
+## ٤. [[docker rmi nginx:alpine]]: امسح image
+
+[[rmi]] = remove image. ولو الاسم ده ملصق من اتنين، بيشيل الملصق بس:
+
+~~~text الناتج: docker rmi myweb:1.0
+Untagged: myweb:1.0
+~~~
+
+[[Untagged]] من غير [[Deleted]]، لأن [[nginx:alpine]] لسه بيشاور على نفس الطبقات. ولو فيه container معمول منها، بيرفض:
+
+~~~text الناتج: docker rmi nginx:alpine (و web معمول منها)
+Error response from daemon: conflict: unable to delete nginx:alpine (must be forced) - container 1897ea7af323 is using its referenced image df221db836e1
+~~~
+
+الحل: امسح الـ container الأول ([[docker rm -f web]])، وبعدين الـ image.
+
+---
+
+## ٥. [[docker image prune]]: الصور المعلّقة
+
+صورة **dangling** (معلّقة) هي image من غير اسم، بتظهر [[<none>:<none>]]. بتتولد لما تبني باسم موجود: الاسم بيروح للـ image الجديدة، والقديمة تفضل من غير اسم. [[docker image prune]] بيمسحهم **كلهم على الجهاز**، وبيسألك y/N الأول:
+
+~~~text الناتج: docker image prune --help
+Usage:  docker image prune [OPTIONS]
+
+Remove unused images
+
+Options:
+  -a, --all             Remove all unused images, not just dangling ones
+      --filter filter   Provide filter values (e.g. "until=<timestamp>")
+  -f, --force           Do not prompt for confirmation
+~~~
+
+مشغّلناهوش هنا لأنه بيمسح لكل المشاريع اللي على الجهاز. و [[-a]] أخطر بكتير: بيمسح **أي** image مفيش container بيستخدمها، يعني هتنزّل كل حاجة تاني.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[docker images]] | الصور اللي عندك |
+| [[docker pull name:tag]] | نزّل نسخة محددة |
+| [[docker tag قديم جديد]] | اسم إضافي لنفس الـ image (نفس الـ ID) |
+| [[docker rmi name:tag]] | شيل الاسم، وامسح الطبقات لو مفيش اسم تاني |
+| [[docker image prune]] | امسح الصور المعلّقة على الجهاز كله |
+
+~~~text
+latest   اسم tag عادي، مش «الأحدث»
+U        فيه container معمول من الـ image، و rmi هيرفض
+~~~`,
           lines: [
             "الصور عندك.",
             "نزّل نسخة محددة من Node.",
@@ -265,6 +1070,144 @@ docker stats --no-stream`,
             when: "container وقع ومش عارف ليه. تعرف IP container. تتأكد إن الـ volume مربوط صح. السيرفر بطيء ومين السبب.",
             mistakes: "تقرا JSON الـ inspect كله. استخدم [[--format]] أو jq على الجزء اللي محتاجه."
           },
+          teach: R`## سؤالين: «إنت متظبط إزاي؟» و «بتاكل قد إيه؟»
+
+[[docker inspect]] بيجاوب الأول: كل إعدادات وحالة الـ container في JSON. و [[docker stats]] بيجاوب التاني: المعالج والرام دلوقتي. جربناهم على [[web]] (nginx) و [[db]] (postgres) على Docker Desktop 29، وأوامر [[--format]] اتجربت كمان في PowerShell 7 وطلّعت نفس الناتج.
+
+---
+
+## ١. [[docker inspect web]]: كل حاجة
+
+~~~text الناتج (أول ٢٠ سطر من ٢٣٨)
+[
+    {
+        "Id": "1897ea7af3233e3165f284f7226573ec54b54d85f51d659b6fbeaf00cd3cb4cf",
+        "Created": "2026-10-06T11:58:18.787811997Z",
+        "Path": "/docker-entrypoint.sh",
+        "Args": [
+            "nginx",
+            "-g",
+            "daemon off;"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 388025,
+            "ExitCode": 0,
+            "Error": "",
+~~~
+
+**JSON** شكل لكتابة البيانات: الأقواس المعقوفة { } مجموعة خانات بأسامي، والمربعة [ ] قايمة. الأقسام اللي هتدور فيها:
+
+| القسم | فيه إيه |
+|---|---|
+| [[State]] | الحالة، و [[ExitCode]] لو وقف، و [[OOMKilled]] لو اتقتل عشان الرام خلصت |
+| [[Config]] | الـ image، والمتغيرات [[Env]]، والأمر [[Cmd]] |
+| [[NetworkSettings]] | الشبكات والـ IP والبورتات |
+| [[Mounts]] | الـ volumes والفولدرات المربوطة |
+
+٢٣٨ سطر كتير، فمحدش بيقراهم كلهم. هنا ييجي [[--format]].
+
+---
+
+## ٢. [[docker inspect --format '{{.State.Status}}' web]]: خانة واحدة
+
+[[--format]] بياخد **قالب** (template) بلغة Go. اللي بين [[{{ }}]] بيتبدّل بقيمة:
+
+| الحتة | معناها |
+|---|---|
+| [[{{ }}]] | «هنا حط قيمة» |
+| [[.]] | الـ JSON كله |
+| [[.State]] | ادخل قسم State |
+| [[.State.Status]] | ومنه خانة Status |
+
+~~~text الناتج
+running
+~~~
+
+يعني بتمشي على نفس الطريق اللي في الـ JSON فوق: [[State]] ثم [[Status]]. والعلامات المفردة [[' ']] حوالين القالب عشان الشيل ميلعبش في الأقواس. وتقدر تطلّع جزء كامل كـ JSON بـ [[json]]:
+
+~~~bash
+docker inspect --format '{{json .Config.Env}}' web
+~~~
+
+~~~text الناتج
+["PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin","NGINX_VERSION=1.31.6","PKG_RELEASE=1","DYNPKG_RELEASE=1","NJS_VERSION=1.0.1","NJS_RELEASE=1","ACME_VERSION=0.4.1"]
+~~~
+
+---
+
+## ٣. الـ IP: قالب فيه [[range]]
+
+~~~bash
+docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web
+~~~
+
+نفكه من جوه:
+
+1. [[.NetworkSettings.Networks]]: الشبكات اللي الـ container متوصل بيها. ممكن تبقى أكتر من واحدة، وكل واحدة باسمها ([[bridge]] مثلًا)، فمش تقدر تكتب [[.Networks.IPAddress]] مباشرة.
+2. [[{{range ...}}]]: «لف على كل واحدة فيهم». وجوه اللفة النقطة [[.]] بقت معناها الشبكة الحالية.
+3. [[{{.IPAddress}}]]: اطبع IP الشبكة الحالية.
+4. [[{{end}}]]: آخر اللفة.
+
+~~~text الناتج
+172.17.0.3
+~~~
+
+### الـ IP ده بيشتغل منين؟
+
+جربنا [[curl]] عليه من ويندوز ومن container تاني:
+
+~~~bash
+curl -s -m 3 http://172.17.0.3/
+docker run --rm alpine wget -qO- 172.17.0.3
+~~~
+
+| من فين | النتيجة |
+|---|---|
+| ويندوز (Git Bash) | [[curl]] خرج بكود [[28]] (timeout: مفيش رد في ٣ ثواني) |
+| container تاني على نفس الشبكة | رجّع الصفحة: [[<title>Welcome to nginx!</title>]] |
+
+ليه؟ على ويندوز والماك، Docker شغال جوه ماكينة لينكس صغيرة، وشبكة [[172.17.x.x]] جواها مش عند جهازك. على لينكس الحقيقي جهازك نفسه على الشبكة دي فالـ curl بيشتغل. ([[-m 3]] في curl يعني max time ٣ ثواني.) وفي الحالتين: من جهازك استخدم [[localhost]] والبورت اللي فتحته بـ [[-p]]، والـ IP ده بيتغير مع كل restart فمتبنيش عليه حاجة.
+
+---
+
+## ٤. [[docker stats --no-stream]]: الاستهلاك
+
+[[stats]] من غير حاجة بيفضل يحدّث كل ثانية زي Task Manager لحد Ctrl+C. و [[--no-stream]] لقطة واحدة ويخرج:
+
+~~~text الناتج (فلترناه على الاتنين بتوعنا)
+CONTAINER ID   NAME   CPU %     MEM USAGE / LIMIT     MEM %     NET I/O           BLOCK I/O     PIDS
+1897ea7af323   web    0.00%     12.94MiB / 15.33GiB   0.08%     5.51kB / 7.26kB   0B / 4.1kB    17
+b8f07d952b0e   db     0.02%     31.31MiB / 15.33GiB   0.20%     3.34kB / 900B     0B / 40.9MB   6
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[CPU %]] | نسبة المعالج. ممكن تعدّي 100% لو بيستخدم أكتر من core |
+| [[MEM USAGE / LIMIT]] | الرام المستخدمة / الحد. الحد هنا 15.33GiB لأن مفيش حد متحدد، فهو كل رام الماكينة الافتراضية بتاعة Docker |
+| [[MEM %]] | المستخدم من الحد |
+| [[NET I/O]] | اللي دخل / اللي خرج على الشبكة |
+| [[BLOCK I/O]] | قراية / كتابة على الديسك. postgres كتب 40.9MB وهو بيجهّز القاعدة أول مرة |
+| [[PIDS]] | عدد العمليات جوه. nginx فيه 17 لأنه بيشغّل worker لكل core |
+
+و [[MiB]] و [[GiB]] وحدات بـ 1024 (زي اللي ويندوز بيعرضه)، و [[kB]] بـ 1000.
+
+---
+
+## الخلاصة
+
+| الأمر | بيطلّع |
+|---|---|
+| [[docker inspect NAME]] | كل الإعدادات والحالة (JSON طويل) |
+| [[--format '{{.State.Status}}']] | خانة واحدة بمسارها في الـ JSON |
+| [[{{range ...}}...{{end}}]] | لف على قايمة (زي الشبكات) |
+| [[{{json ...}}]] | جزء كامل كـ JSON |
+| [[docker stats --no-stream]] | المعالج والرام والشبكة والديسك، لقطة واحدة |`,
           lines: ["كل تفاصيل الـ container كـ JSON.", "الحالة بس.", "الـ IP بس.", "استهلاك كل container، لقطة واحدة."],
           sol: R`[[docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web]] بيطبع IP زي [[172.17.0.2]]. و [[curl 172.17.0.2]] من جهاز لينكس بيرجّع صفحة nginx ([[<title>Welcome to nginx!</title>]]) من غير ما تعدّي على البورت 8080، لأن جهازك متوصل بشبكة Docker مباشرة. و [[--format '{{.State.Status}}']] بيطبع [[running]].
 
@@ -297,6 +1240,157 @@ docker run --rm -i alpine wc -l < notes.txt`,
             when: "hashes وباسوردات، وأدوات بنسخة محددة، وعميل قاعدة بيانات، وتجربة سريعة لنسخة لغة.",
             mistakes: "نسيان [[--rm]] فالـ containers الواقفة تتراكم في [[ps -a]]. وباسورد حقيقي في سطر الأمر: بيتحفظ في history وبيبان في [[ps]] لحظة التشغيل، فاكتب الأمر بمسافة في الأول (لو HISTCONTROL=ignorespace) أو خلّي الأداة تسألك عليه."
           },
+          teach: R`## الفكرة: الـ image كبرنامج بتستخدمه مرة وترميه
+
+بدل ما تسطّب Caddy أو Node قديمة على جهازك أو السيرفر، شغّل الـ image بتاعتها، خلّيها تعمل الشغلانة، و [[--rm]] يمسح الـ container. الـ image بس هي اللي بتفضل في الكاش.
+
+القاعدة من درس «docker run»: اللي **بعد** اسم الـ image هو الأمر اللي يتنفّذ جوه **بدل** الأمر الافتراضي. السطور الأربعة كلها اتشغّلت على Docker Desktop 29، في Git Bash وفي PowerShell 7، والفروق بينهم تحت.
+
+---
+
+## ١. hash لباسورد بأداة Caddy
+
+~~~bash
+docker run --rm caddy:2.8 caddy hash-password --plaintext 'secret'
+~~~
+
+| الجزء | معناه |
+|---|---|
+| [[caddy:2.8]] | image سيرفر Caddy نسخة 2.8 |
+| [[caddy hash-password]] | أمر جوه Caddy بيحوّل باسورد لـ hash |
+| [[--plaintext 'secret']] | الباسورد نفسه. العلامات المفردة عشان الشيل ميغيرش فيه حاجة |
+
+~~~text الناتج (مرتين ورا بعض)
+$2a$14$GGcvLqRDEKSAu55Ao.Unu.MkdJVENtNBZBOss8Af6enjYSOAynkr.
+$2a$14$WIwFMN5r7bUUemx.cfQks./OWXcvbgqNoeTYr.Pg.2T/hTbXdoU6O
+~~~
+
+### نقرا الـ hash
+
+| الحتة | معناها |
+|---|---|
+| [[$2a$]] | نوع الخوارزمية: bcrypt |
+| [[14$]] | الـ cost: كل رقم زيادة بيضاعف وقت الحساب، عشان التخمين يبقى بطيء |
+| أول ٢٢ حرف بعدها | الـ **salt**: كلام عشوائي بيتولد كل مرة |
+| الباقي | الـ hash نفسه |
+
+عشان كده نفس الباسورد طلّع نتيجتين مختلفين، وده طبيعي: الـ salt اتغير. وبعدها [[docker ps -a]] مفيهوش أي container من caddy، لأن [[--rm]] مسحه.
+
+---
+
+## ٢. سطر JavaScript على Node 20
+
+~~~bash
+docker run --rm node:20-alpine node -e "console.log(process.versions.node)"
+~~~
+
+- [[node -e "..."]]: [[-e]] (evaluate) يعني «نفّذ الكود ده» بدل ملف.
+- [[process.versions.node]]: نسخة Node اللي شغالة.
+
+~~~text الناتج
+20.20.2
+~~~
+
+حتى لو جهازك عليه Node 24 أو مفيهوش Node خالص. كده تجرّب كودك على أي نسخة في ثانية.
+
+---
+
+## ٣. اربط الفولدر الحالي: [[-v]] و [[-w]]
+
+~~~bash
+docker run --rm -v "$(pwd)":/work -w /work alpine sh -c "du -sh *"
+~~~
+
+نفكه:
+
+| الجزء | معناه |
+|---|---|
+| [[$(pwd)]] | الشيل بيشغّل [[pwd]] (print working directory) ويحط مكانها مسار الفولدر اللي انت فيه |
+| [[" "]] حواليها | لو المسار فيه مسافات (زي [[full stack road map]]) يفضل حتة واحدة |
+| [[-v مسار-عندي:/work]] | volume: الفولدر بتاعك يظهر جوه الـ container على [[/work]]. نفس الملفات مش نسخة |
+| [[-w /work]] | workdir: ابدأ الأمر من جوه [[/work]] |
+| [[sh -c "du -sh *"]] | [[sh -c]] بيشغّل سطر شيل، و [[du -sh *]] حجم كل حاجة (disk usage، [[-s]] مجموع، [[-h]] بالكيلو والميجا) |
+
+ليه [[sh -c]] ومش [[du -sh *]] مباشرة؟ لأن النجمة [[*]] لازم **شيل جوه الـ container** هو اللي يفكها لأسامي الملفات اللي هناك. لو كتبتها من غير [[sh -c]]، الشيل بتاعك على جهازك هيفكها قبل ما docker يشتغل.
+
+جربناه في فولدر فيه [[notes.txt]] (٣ سطور) وملف [[big.bin]] (٣٠٠ كيلو) وفولدر [[sub]]:
+
+~~~text الناتج
+296.0K	big.bin
+0	notes.txt
+52.0K	sub
+~~~
+
+> [[notes.txt]] طلع 0 لأن الملف ١٤ byte بس والفولدر جاي من ويندوز، فـ [[du]] بيعدّ البلوكات اللي ويندوز بيبلّغ عنها. على لينكس هتشوف [[4.0K]] (أصغر بلوك).
+
+### الفروق بين الشيلات
+
+| الشيل | السطر |
+|---|---|
+| bash على لينكس وماك | زي ما هو |
+| PowerShell | زي ما هو برضه ([[$(pwd)]] شغالة)، أو [[-v "$__{PWD}:/work"]] |
+| Git Bash على ويندوز | لازم [[MSYS_NO_PATHCONV=1]] في الأول |
+
+في Git Bash من غيرها طلع:
+
+~~~text الناتج في Git Bash
+docker: Error response from daemon: the working directory 'C:/Program Files/Git/work' is invalid, it needs to be an absolute path
+~~~
+
+لأن Git Bash حوّل [[/work]] لمسار جوه فولدر Git قبل ما يبعته (نفس الفخ اللي في درس «docker exec»).
+
+---
+
+## ٤. ابعت ملف على الـ stdin: [[-i]] و [[<]]
+
+~~~bash
+docker run --rm -i alpine wc -l < notes.txt
+~~~
+
+- [[< notes.txt]]: الشيل بتاعك بيفتح الملف ويدخّله على **stdin** (المدخل) بتاع الأمر.
+- [[-i]]: خلّي stdin متوصل بالـ container، وإلا الأداة جوه مش هتستلم حاجة.
+- [[wc -l]]: word count، و [[-l]] عدد السطور.
+- مفيش [[-t]]: مش محتاجين ترمنال تفاعلي، واحنا بنبعت ملف.
+
+~~~text الناتج
+3
+~~~
+
+الملف مادخلش الـ container كملف، وصل كـ «كلام داخل» بس. كده مش محتاج [[-v]] خالص.
+
+### في PowerShell
+
+[[<]] مش موجودة في PowerShell:
+
+~~~text الناتج في PowerShell
+The '<' operator is reserved for future use.
+~~~
+
+وبدلها ابعت الملف بـ pipe:
+
+~~~powershell
+Get-Content notes.txt | docker run --rm -i alpine wc -l
+~~~
+
+~~~text الناتج
+3
+~~~
+
+---
+
+## الخلاصة
+
+| الهدف | الشكل |
+|---|---|
+| أداة بأمر واحد | [[docker run --rm IMAGE:TAG أمر args]] |
+| الأداة تشوف ملفاتك | [[-v "$(pwd)":/work -w /work]] |
+| تبعت ملف واحد | [[-i]] و [[< file]] (أو Get-Content ومعاه pipe في PowerShell) |
+| نجمة أو pipe جوه | [[sh -c "..."]] |
+
+~~~text
+--rm    مفيش containers ميتة بتتراكم
+tag     اكتبه دايمًا (caddy:2.8) عشان النتيجة متتغيرش بعد سنة
+~~~`,
           lines: [
             "استخدم Caddy يولّد hash للباسورد، والـ container يتمسح بعدها.",
             "نفّذ سطر JavaScript على Node 20 من غير ما تسطّبها.",
@@ -308,654 +1402,6 @@ docker run --rm -i alpine wc -l < notes.txt`,
 و [[docker ps -a]] بعدها مش هيوري أي container من caddy، لأن [[--rm]] مسحه أول ما خلص. الـ image بس اللي فاضلة في [[docker images]]، وتقدر تمسحها بـ [[docker rmi caddy:2.8]] لو مش محتاجها.
 
 الغلط الشائع: تنسى [[--rm]]، فتلاقي بعد أسبوع عشرات الـ containers الـ Exited في [[docker ps -a]]. نضّفهم بـ [[docker container prune]].`
-        }
-      ]
-    },
-    {
-      t: "Dockerfile: اعمل image لتطبيقك",
-      l: 2,
-      n: "كل سطر في Dockerfile بيعمل طبقة، والترتيب بيفرق في السرعة",
-      items: [
-        {
-          cmd: "Dockerfile",
-          title: "أول Dockerfile لتطبيق Node",
-          desc: R`الـ Dockerfile ملف نصي فيه وصفة بناء الـ image: كل سطر تعليمة، و Docker بينفّذهم بالترتيب ويطلّع image تقدر تشغّلها في أي حتة. [[FROM node:22-alpine]] لازم أول سطر: بتبدأ من image جاهزة فيها Node على Alpine (لينكس صغير). [[WORKDIR /app]] بيعمل فولدر app ويدخله، فكل اللي بعده بيحصل جواه.
-
-[[COPY package*.json ./]] بينسخ package.json و package-lock.json بس الأول (النجمة يعني أي حاجة)، عشان خطوة التسطيب تتحفظ في الكاش ومتتعادش كل ما تعدّل الكود. [[RUN]] بينفّذ أمر وقت البناء: [[npm ci]] بيسطّب بالظبط اللي في package-lock، و [[--omit=dev]] من غير devDependencies. [[COPY . .]] بينسخ باقي المشروع. [[EXPOSE 3000]] توثيق بس إن التطبيق بيسمع على 3000، والفتح الحقيقي بـ [[-p]] وقت التشغيل.
-
-[[CMD ["node", "server.js"]]] الأمر اللي بيشتغل لما الـ container يقوم، والأقواس المربعة مهمة عشان node يستلم إشارة الإيقاف ويقفل بهدوء.`,
-          example: R`FROM node:22-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev
-COPY . .
-EXPOSE 3000
-CMD ["node", "server.js"]`,
-          try: "احفظه في مشروع Node بسيط، وابني بـ [[docker build -t myapi .]]، وشغّل بـ [[docker run -p 3000:3000 myapi]].",
-          flag: "script",
-          deep: {
-            why: "الـ image الجاهزة (nginx، postgres) بتيجي من Docker Hub. أما تطبيقك انت فمحتاج تعمله image بنفسك، والـ Dockerfile هو الوصفة.",
-            how: R`[[FROM]] لازم أول سطر: بتبدأ من image جاهزة فيها Node، مش من الصفر.
-
-[[WORKDIR /app]] بيعمل الفولدر ويدخله، وكل الأوامر بعده بتتنفذ فيه.
-
-[[COPY package*.json ./]] بينسخ package.json و package-lock.json بس. ليه دول لوحدهم؟ عشان الطبقة اللي بعدها (npm ci) تتخزن في الكاش ومتتعادش كل ما تغيّر الكود. الشرح الكامل في «الطبقات والكاش».
-
-[[RUN]] بينفّذ أمر وقت الـ build. [[npm ci]] بيسطّب بالظبط اللي في package-lock (أسرع وأثبت من npm install)، و [[--omit=dev]] من غير devDependencies.
-
-[[COPY . .]] ينسخ باقي الكود. [[EXPOSE 3000]] توثيق بس إن التطبيق بيسمع على 3000، مش بيفتح البورت، الفتح بـ [[-p]].
-
-[[CMD]] الأمر اللي يتشغّل لما الـ container يقوم. بالأقواس المربعة (exec form) عشان node يبقى العملية رقم 1 ويستلم إشارات الإغلاق.`,
-            when: "كل تطبيق هتشغّله بـ Docker محتاج Dockerfile في أول المشروع.",
-            mistakes: R`[[CMD npm start]] بدل [[CMD ["node", "server.js"]]]: npm بيبقى العملية 1 وبيبلع إشارة الإغلاق، فـ [[docker stop]] بيستنى ١٠ ثواني ويقتل. و [[COPY . .]] قبل npm ci، فكل تعديل في الكود يعيد التسطيب.`
-          },
-          lines: [
-            "ابدأ من صورة Node 22 على Alpine.",
-            "اعمل فولدر /app وادخله.",
-            "انسخ package.json و package-lock بس (عشان الكاش).",
-            "سطّب بالظبط اللي في lock، من غير devDependencies.",
-            "دلوقتي انسخ باقي الكود.",
-            "توثيق إن التطبيق على 3000.",
-            "الأمر اللي يتشغّل، بالشكل اللي يخلي node العملية رقم 1."
-          ],
-          sol: R`[[docker build -t myapi .]] بيطبع خطوات [[[1/5] FROM]] لحد [[[5/5] COPY . .]] وفي الآخر [[naming to docker.io/library/myapi:latest]]. و [[docker run -p 3000:3000 myapi]] بيطبع اللي التطبيق بيطبعه (زي [[listening on 3000]])، و [[curl localhost:3000]] بيرد.
-
-الأمر ماسك الترمنال لأنه من غير [[-d]]. [[Ctrl+C]] ممكن مايقفلوش لو التطبيق مش بيسمع SIGINT؛ ساعتها [[docker stop]] من ترمنال تاني.
-
-الأغلاط الشائعة: [[npm ci]] يفشل بـ [[The npm ci command can only install with an existing package-lock.json]]: اعمل [[npm install]] مرة على جهازك عشان يتولد الـ lock. و [[Cannot find module '/app/server.js']] يعني اسم الملف في CMD غلط أو الـ [[.dockerignore]] استبعده. و [[curl]] يرجع [[Connection reset]] يعني السيرفر بيسمع على 127.0.0.1 بس جوه الـ container (درس 0.0.0.0).`,
-          solCode: R`cat > server.js <<'EOF2'
-require("http").createServer((q, r) => r.end("hello\n")).listen(3000, () => console.log("listening on 3000"));
-EOF2
-echo '{"name":"api","version":"1.0.0"}' > package.json
-npm install --package-lock-only
-docker build -t myapi .
-docker run --rm -p 3000:3000 myapi`
-        },
-        {
-          cmd: "الطبقات والكاش",
-          title: "ليه package.json بيتنسخ الأول",
-          desc: "كل تعليمة بتعمل «طبقة» متخزنة. لما تعيد الـ build، Docker بيعيد استخدام الطبقات اللي مدخلاتها متغيرتش، ولحظة ما طبقة تتغير، كل اللي بعدها بيتعاد. عشان كده بننسخ package.json ونسطّب قبل ما ننسخ الكود: تعديل في الكود ميعيدش npm ci.",
-          example: R`docker build -t myapi .
-docker build -t myapi .
-docker history myapi
-docker build --no-cache -t myapi .`,
-          try: "ابني مرتين ورا بعض ولاحظ المرة التانية «CACHED» في كل خطوة وبتخلص في ثانية. غيّر سطر في الكود وابني تاني: هتلاقي npm ci لسه CACHED.",
-          deep: {
-            why: "الـ build الأول بياخد دقايق. من غير فهم الكاش، كل build بعده هياخد نفس الوقت. بالترتيب الصح، تعديل في الكود بيتبني في ثواني.",
-            how: R`كل تعليمة في الـ Dockerfile بتعمل طبقة (layer)، وكل طبقة بتتحفظ في الكاش على جهازك مع «بصمة» مدخلاتها.
-
-لما تعيد الـ build، Docker بيمشي على التعليمات بالترتيب، ولكل واحدة بيسأل: نفس التعليمة ونفس المدخلات؟ لو أيوه، ياخد الطبقة من الكاش (CACHED). أول ما يلاقي تعليمة اتغيرت، بيعيدها هي وكل اللي بعدها، حتى لو مش متغيرة.
-
-بالنسبة لـ COPY، «المدخلات» هي محتوى الملفات. عشان كده الترتيب: انسخ package.json (بيتغير نادرًا)، سطّب (طبقة تقيلة، بتفضل في الكاش)، وبعدين انسخ الكود (بيتغير كل مرة). تعديل في الكود بيعيد بس آخر طبقتين الخفاف.
-
-[[docker history]] بيوريك الطبقات وحجم كل واحدة، فتعرف إيه اللي مكبّر الـ image.
-
-و [[--no-cache]] بيتجاهل الكاش كله، مفيد لو عايز تجيب آخر تحديثات أمان من apt أو npm.`,
-            when: "وانت بتكتب أي Dockerfile: رتّب التعليمات من الأقل تغيرًا للأكتر.",
-            mistakes: "[[RUN apt-get update]] في طبقة و [[RUN apt-get install]] في طبقة تانية: الأولى بتتخزن في الكاش، فبعد شهور التانية بتسطّب من كتالوج قديم. حطهم في RUN واحد بـ [[&&]]."
-          },
-          lines: [
-            "ابني (المرة الأولى بتاخد وقت).",
-            "ابني تاني: كل خطوة CACHED.",
-            "الطبقات وحجم كل واحدة.",
-            "ابني من غير كاش خالص."
-          ],
-          sol: R`البناء التاني على طول بيطبع [[CACHED]] تحت [[[2/5] WORKDIR]] و [[[3/5] COPY package*.json]] و [[[4/5] RUN npm ci]] و [[[5/5] COPY . .]]، ويخلص في أقل من ثانية.
-
-بعد ما تغيّر سطر في [[server.js]]: [[2/5]] و [[3/5]] و [[4/5]] لسه [[CACHED]]، و [[5/5] COPY . .]] بس اللي اتنفذ من جديد. ده لأن [[package.json]] مااتغيرش، فطبقة [[npm ci]] زي ما هي. و [[docker history myapi]] بيوري كل طبقة وحجمها، وطبقة [[RUN npm ci]] هي التقيلة.
-
-الغلط الشائع: [[npm ci]] بيتنفذ كل مرة. ده معناه إن [[COPY . .]] جاي قبله في الـ Dockerfile، فأي تعديل في أي ملف بيكسر الكاش لكل اللي بعده. أو إن [[package-lock.json]] بيتغير كل مرة لأنك بتعمل [[npm install]] بدل [[npm ci]].`
-        },
-        {
-          cmd: ".dockerignore",
-          title: "متنسخش node_modules",
-          desc: "زي .gitignore بس للـ build. [[COPY . .]] بينسخ كل حاجة في الفولدر، بما فيها node_modules و .git و .env. ده بيبطّئ الـ build جدًا وممكن يحط أسرار جوه الـ image.",
-          example: R`node_modules
-.git
-.env
-*.log
-dist
-.next
-Dockerfile
-*compose*.y*ml`,
-          try: "ابني مرة من غير الملف ومرة بيه، وقارن الوقت وحجم الـ image في [[docker images]].",
-          flag: "script",
-          deep: {
-            why: "[[COPY . .]] بينسخ كل اللي في الفولدر. node_modules لوحده ممكن يبقى مئات الميجا وآلاف الملفات، وهيتسطب جوه الـ image تاني أصلًا. و .env فيه أسرار مينفعش تدخل image ممكن تترفع على registry.",
-            how: R`قبل ما الـ build يبدأ، Docker بيبعت الفولدر كله (اسمه build context) للـ daemon. لو الفولدر فيه node_modules و .git، ده ممكن يبقى جيجابايت بيتنقل قبل أول تعليمة حتى.
-
-[[.dockerignore]] بيقول إيه اللي ميتبعتش. صيغته شبه .gitignore، بس مش زيه بالظبط (الفرق تحت في الأخطاء).
-
-node_modules لازم يتستثنى لسببين: الحجم، وإن اللي على جهازك متبني لنظامك (ويندوز أو ماك)، ومكتبات فيها كود native مش هتشتغل على لينكس جوه الـ container. الصح إن npm ci جوه الـ container يسطّبها للينكس.
-
-.git بيكبّر الـ context من غير فايدة. .env أسرار. و dist أو .next ناتج build قديم ممكن يلخبط.`,
-            when: "في كل مشروع فيه Dockerfile، من أول يوم.",
-            mistakes: R`نسيانه، وبعدين تستغرب إن الـ build بطيء أو إن مكتبة native زي bcrypt بتطلع error جوه الـ container.
-
-وخد بالك إن الصيغة مش زي .gitignore بالظبط: في .dockerignore، [[*.png]] بتمسك الصور اللي في جذر المشروع بس، ومش بتدخل الفولدرات. عشان تمسك كل مكان لازم [[**/*.png]]. في مشروع حقيقي الملف كان فيه [[*.png]] عشان يشيل screenshots مرمية في الجذر، ودي صح. لكن لو حد «صلّحها» لـ [[**/*.png]] هتشيل صور [[public/]] واللوجو، ومحليًا كله يشتغل وجوه الـ container الصور تطلع 404. ونفس الفكرة: [[node_modules]] لوحدها بتمسك اللي في الجذر بس، وفي monorepo محتاج [[**/node_modules]]. ولو شاكك، ابني واعمل [[docker run --rm myapi ls public]] وشوف الملفات وصلت ولا لأ.`
-          },
-          lines: [
-            "المكتبات: هتتسطب جوه الصورة.",
-            "تاريخ Git: مالوش لازمة.",
-            "الأسرار: متدخلش الصورة أبدًا.",
-            "اللوجات.",
-            "ناتج build قديم.",
-            "ناتج build بتاع Next.",
-            "الـ Dockerfile نفسه مش محتاج يتنسخ.",
-            "ولا ملفات compose."
-          ],
-          sol: R`أول سطر في الـ build بيقولك حجم اللي اتبعت لـ Docker: [[transferring context: 62.93MB]] من غير الملف (لو node_modules عندك كبير هتلاقيه مئات الميجا)، و [[transferring context: 177B]] بيه. والفرق باين في الوقت، وفي [[docker images]] الـ image اللي من غير الملف أكبر لأن [[COPY . .]] نسخ node_modules بتاع جهازك فوق اللي [[npm ci]] سطّبه.
-
-وأخطر من الحجم: node_modules بتاعة ويندوز أو ماك جوه image لينكس بتبوّظ أي باكدج native، و [[.env]] بيدخل جوه الـ image.
-
-الغلط الشائع: الملف يتسمى [[dockerignore]] من غير نقطة، أو يتحط في فولدر غير الـ context (الفولدر اللي في آخر [[docker build ... .]])، فمايتقريش خالص والـ context يفضل كبير.`
-        },
-        {
-          cmd: "multi-stage",
-          title: "image صغيرة للإنتاج",
-          desc: "مرحلة أولى فيها كل أدوات الـ build (TypeScript، و devDependencies)، ومرحلة تانية نضيفة بتاخد الناتج بس. الـ image النهائية مفيهاش أدوات الـ build، فأصغر بكتير وأأمن.",
-          example: R`FROM node:22-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-FROM node:22-alpine
-WORKDIR /app
-ENV NODE_ENV=production
-COPY package*.json ./
-RUN npm ci --omit=dev
-COPY --from=build /app/dist ./dist
-USER node
-EXPOSE 3000
-CMD ["node", "dist/server.js"]`,
-          try: "ابني مشروع TypeScript بالطريقتين وقارن الحجم. الفرق ممكن يبقى مئات الميجا.",
-          flag: "script",
-          deep: {
-            why: "مشروع TypeScript أو Next.js محتاج أدوات كتير عشان يتبني، بس بعد الـ build مش محتاجها. لو سبتها في الـ image، بتبقى ضعف أو تلات أضعاف الحجم، وكل أداة زيادة ثغرة محتملة.",
-            how: R`الـ Dockerfile فيه أكتر من [[FROM]]، وكل واحدة مرحلة (stage) لوحدها. [[AS build]] بيدّي المرحلة اسم.
-
-المرحلة الأولى: بتسطّب كل الـ dependencies بما فيها devDependencies (TypeScript، والـ bundler)، وبتعمل [[npm run build]]، فبيطلع فولدر dist.
-
-المرحلة التانية بتبدأ من image نضيفة، وبتسطّب dependencies الإنتاج بس، وبعدين [[COPY --from=build /app/dist ./dist]]: بتاخد الناتج بس من المرحلة الأولى. كل الأدوات والكود المصدري في المرحلة الأولى بتترمي.
-
-الـ image النهائية هي آخر مرحلة بس. المرحلة الأولى بتفضل في الكاش على جهازك لكن مش بتتشحن.
-
-[[ENV NODE_ENV=production]] بيخلي مكتبات كتير (Express مثلًا) تشتغل في وضع الإنتاج الأسرع. و [[USER node]] عشان التطبيق ميشتغلش كـ root.`,
-            when: "أي مشروع فيه خطوة build: TypeScript، و Next.js، و Vite، و NestJS.",
-            mistakes: "تنسخ node_modules من مرحلة الـ build بدل ما تعمل npm ci --omit=dev تاني، فتاخد devDependencies معاك. و Next.js ليه إعداد خاص (output: standalone) بيصغّر الناتج أكتر."
-          },
-          lines: [
-            "المرحلة الأولى، اسمها build.",
-            "فولدر الشغل.",
-            "ملفات الباكدجات.",
-            "سطّب كل حاجة بما فيها devDependencies (محتاجين TypeScript).",
-            "الكود.",
-            "ابني: يطلع dist.",
-            "المرحلة التانية من صورة نضيفة.",
-            "فولدر الشغل.",
-            "وضع الإنتاج.",
-            "ملفات الباكدجات.",
-            "سطّب dependencies الإنتاج بس.",
-            "خد الناتج بس من المرحلة الأولى.",
-            "اشتغل كيوزر node مش root.",
-            "توثيق البورت.",
-            "شغّل الناتج المبني."
-          ],
-          sol: R`الـ image المتقسمة هتطلع أصغر بوضوح، لأن المرحلة الأخيرة فيها [[dist]] والـ dependencies بتاعة الإنتاج بس، من غير TypeScript والـ devDependencies والـ source. في مشروع Express عادي الفرق ممكن يبقى من حوالي 400-600MB لحوالي 150-250MB في عمود الحجم في [[docker images]]، والرقم بيعتمد على الـ devDependencies عندك (لو فيها Jest و ESLint و Prisma CLI الفرق هيبقى كبير).
-
-اتأكد إنها شغالة: [[docker run --rm myapi ls /app]] المفروض يوري [[dist]] و [[node_modules]] و [[package.json]] بس، من غير [[src]]. و [[docker run --rm myapi whoami]] يطبع [[node]].
-
-الغلط الشائع: [[Cannot find module '/app/dist/server.js']]: اسم الفولدر اللي [[tsc]] بيطلّع فيه مش [[dist]]، أو ملف [[server.ts]] في فولدر [[src]] فبيطلع [[dist/src/server.js]]. شوف [[outDir]] و [[rootDir]] في tsconfig.`
-        },
-        {
-          cmd: "ENV و ARG",
-          title: "إعدادات وقت الـ build ووقت التشغيل",
-          desc: "[[ARG]] قيمة بتتستخدم وقت الـ build بس ومبتفضلش في الـ image. [[ENV]] بتفضل في الـ image وبتوصل للتطبيق وقت التشغيل. الأسرار متتحطش في أي منهم: بتتبعت وقت التشغيل بـ [[-e]] أو env file.",
-          example: R`ARG NODE_VERSION=22
-FROM node:$__{NODE_VERSION}-alpine
-ENV NODE_ENV=production
-ENV PORT=3000
-EXPOSE 3000`,
-          try: "ابني بـ [[docker build --build-arg NODE_VERSION=20 -t myapi .]] وشوف النسخة اتغيرت بـ [[docker run --rm myapi node -v]].",
-          flag: "script",
-          deep: {
-            why: "محتاج تغيّر حاجات وقت الـ build (نسخة Node) وحاجات وقت التشغيل (البورت، والوضع)، ومحتاج تعرف إيه اللي بيفضل جوه الـ image وإيه اللي لأ.",
-            how: R`[[ARG]] متغير وقت الـ build بس. بتديه قيمة بـ [[--build-arg]]، وبعد ما الـ build يخلص بيختفي. مفيد لنسخة الـ base image أو لـ flags.
-
-وممكن تستخدمه في [[FROM]] لو عرّفته قبلها، زي المثال، وده الاستخدام الوحيد اللي ينفع فيه ARG قبل FROM.
-
-[[ENV]] بيتخزن في الـ image وبيبقى موجود في أي container منها، والتطبيق بيقراه من process.env. بتستخدمه للقيم الافتراضية اللي مش سرية.
-
-أي حاجة في ENV أو ARG بتبان في [[docker history]] وفي [[inspect]]. عشان كده الأسرار عمرها ما تتحط فيهم. الأسرار بتيجي وقت التشغيل من [[--env-file]] أو من secrets manager.`,
-            when: "ARG لنسخ الأدوات. ENV للقيم الافتراضية زي NODE_ENV و PORT.",
-            mistakes: "[[ENV DATABASE_URL=postgres://user:pass@...]] في Dockerfile. الباسورد بقى جزء من الـ image لأي حد ينزّلها."
-          },
-          lines: [
-            "متغير build بقيمة افتراضية.",
-            "استخدمه في اسم الصورة (الاستخدام الوحيد لـ ARG قبل FROM).",
-            "متغير بيئة بيفضل في الصورة ووقت التشغيل.",
-            "البورت الافتراضي.",
-            "توثيق."
-          ],
-          sol: R`[[docker run --rm myapi node -v]] بعد البناء بـ [[--build-arg NODE_VERSION=20]] بيطبع [[v20.x.x]]، ومن غيره بيطبع [[v22.x.x]] (عندي [[v22.23.3]]). ده لأن الـ ARG اتحط في سطر FROM، فاختار base image مختلفة.
-
-و [[docker run --rm myapi env | grep -E "NODE_ENV|PORT"]] بيوري [[NODE_ENV=production]] و [[PORT=3000]]: الـ ENV بيفضل في الـ image، لكن [[NODE_VERSION]] الـ ARG مش هيظهر كمتغير بتاعك (اللي هتلاقيه [[NODE_VERSION]] تاني بتاع صورة node نفسها).
-
-الغلط الشائع: تحط [[ARG NODE_VERSION]] بعد [[FROM]] وتستخدمه في FROM، فيطلع [[base name (node:-alpine) should not be blank]] أو [[invalid reference format]]. الـ ARG اللي FROM بيستخدمه لازم يبقى قبله.`
-        },
-        {
-          cmd: "USER و HEALTHCHECK",
-          title: "متشغّلش كـ root",
-          desc: "افتراضيًا التطبيق جوه الـ container بيشتغل كـ root. لو اتخترق، المهاجم root جوه الـ container. صور Node فيها يوزر جاهز اسمه node. و [[HEALTHCHECK]] بيخلي Docker يعرف التطبيق «شغال فعلًا» مش بس «العملية موجودة».",
-          example: R`FROM node:22-alpine
-WORKDIR /app
-COPY --chown=node:node package*.json ./
-RUN npm ci --omit=dev
-COPY --chown=node:node . .
-USER node
-EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
-  CMD wget -qO- http://localhost:3000/health || exit 1
-CMD ["node", "server.js"]`,
-          try: "شغّل الـ container وبعد نص دقيقة شوف [[docker ps]]: عمود STATUS هيقول healthy أو unhealthy.",
-          flag: "script",
-          deep: {
-            why: "لو التطبيق اتخترق وهو شغال كـ root، المهاجم root جوه الـ container، وفيه ثغرات بتخليه يخرج منه للسيرفر. و HEALTHCHECK بيحل مشكلة تانية: عملية Node ممكن تبقى شغالة بس التطبيق معلّق ومش بيرد.",
-            how: R`صور Node الرسمية فيها يوزر جاهز اسمه [[node]] برقم 1000. [[USER node]] بيخلي كل اللي بعده (وأهمهم CMD) يشتغل بيه. بس لازم الملفات تبقى مقروءة له، عشان كده [[COPY --chown=node:node]].
-
-الترتيب مهم: أي [[RUN]] محتاج صلاحيات (زي تسطيب باكدجات نظام) يبقى قبل [[USER]].
-
-[[HEALTHCHECK]] بيخلي Docker يشغّل أمر كل فترة جوه الـ container. لو رجع 0 الـ container healthy، لو رجع 1 unhealthy. [[--interval]] كل قد إيه، [[--timeout]] يستنى قد إيه، و [[--start-period]] مهلة في الأول التطبيق يقوم فيها من غير ما تتحسب.
-
-الحالة بتظهر في [[docker ps]]، و compose بيستخدمها في [[depends_on]] عشان ميشغّلش التطبيق غير لما القاعدة تبقى جاهزة فعلًا. بس Docker لوحده مش بيعيد تشغيل الـ unhealthy، ده محتاج أداة زي autoheal أو orchestrator.`,
-            when: "كل image للإنتاج: USER دايمًا. HEALTHCHECK لأي خدمة فيها endpoint للصحة.",
-            mistakes: "USER قبل RUN اللي محتاج root فيطلع permission denied. و HEALTHCHECK بـ curl في image alpine مفيهاش curl، استخدم wget."
-          },
-          lines: [
-            "الصورة.",
-            "فولدر الشغل.",
-            "ملفات الباكدجات الأول (عشان الكاش) ويوزر node صاحبها.",
-            "سطّب.",
-            "باقي الكود.",
-            "من هنا كل حاجة تشتغل كـ node مش root.",
-            "توثيق.",
-            "فحص كل ٣٠ ثانية، مهلة ٣ ثواني، وأول ١٠ ثواني متتحسبش. الشرطة المايلة: مكمّل في السطر الجاي.",
-            "الفحص نفسه: اطلب /health، ولو فشل ارجع 1 (unhealthy). wget لأن alpine مفيهاش curl.",
-            "شغّل التطبيق."
-          ],
-          sol: R`أول ما تشغّل، [[docker ps]] بيوري [[Up 2 seconds (health: starting)]]. وبعد الـ start-period وأول فحص ناجح: [[Up 35 seconds (healthy)]]. و [[docker exec api whoami]] بيطبع [[node]] مش [[root]].
-
-لو عايز تشوف تفاصيل الفحص: [[docker inspect --format '{{.State.Health.Status}}' api]] بيطبع [[healthy]]، و [[.State.Health.Log]] فيه آخر نتايج بالـ exit code والناتج.
-
-لو طلع [[unhealthy]]: غالبًا مسار [[/health]] مش موجود فـ [[wget]] بيطبع [[server returned error: HTTP/1.1 404 Not Found]] ويخرج بـ 1، أو التطبيق على بورت تاني. والغلط التاني الشائع: [[npm ci]] أو الكتابة في فولدر يفشل بـ [[EACCES]] بعد [[USER node]]، لأن الملفات اتنسخت ملك root من غير [[--chown=node:node]].`
-        },
-        {
-          cmd: "build / tag / push",
-          title: "ارفع الـ image على registry",
-          desc: "الـ registry مخزن للـ images (Docker Hub، أو GitHub Container Registry ghcr.io). بتبني على جهازك أو في CI، وترفع، والسيرفر ينزّل. الاسم لازم يبقى فيه اسم الـ registry والحساب.",
-          example: R`docker build -t ghcr.io/user/myapi:1.2.0 .
-docker login ghcr.io
-docker push ghcr.io/user/myapi:1.2.0
-docker pull ghcr.io/user/myapi:1.2.0`,
-          try: "اعمل token من GitHub بصلاحية write:packages، واعمل login بيه، وارفع image تجربة.",
-          deep: {
-            why: "عشان السيرفر يشغّل image بتاعتك، لازم توصله. إما يبنيها هو، أو تبنيها انت وترفعها على registry وهو ينزّلها.",
-            how: R`الـ registry سيرفر بيخزّن images. Docker Hub الأشهر، و GitHub Container Registry (ghcr.io) مجاني مع الـ repos بتاعتك، ومريح لأن نفس حساب GitHub.
-
-الاسم لازم يبدأ باسم الـ registry والحساب: [[ghcr.io/user/myapi:1.2.0]]. من غير ده Docker هيحاول يرفع على Docker Hub.
-
-[[login]] مرة واحدة. مع ghcr بتستخدم Personal Access Token فيه صلاحية write:packages، مش باسورد GitHub.
-
-[[push]] بيرفع الطبقات اللي مش موجودة على الـ registry بس، فبعد أول مرة الرفع بيبقى سريع. وعلى السيرفر [[pull]] بنفس الاسم.
-
-والأصح إن الـ build والـ push يحصلوا في GitHub Actions مع كل tag جديد، والسيرفر يعمل pull بس. كده السيرفر مش محتاج الكود ولا موارد الـ build.`,
-            when: "لما يبقى عندك أكتر من سيرفر، أو الـ build تقيل على السيرفر، أو عايز rollback سريع لنسخة قديمة.",
-            mistakes: "push بـ latest بس. لو النسخة الجديدة بايظة مش هتعرف ترجع للقديمة. دايمًا tag برقم نسخة أو hash الـ commit."
-          },
-          lines: [
-            "ابني باسم كامل: registry، وحساب، واسم، ونسخة.",
-            "ادخل على GitHub registry (بـ token فيه write:packages).",
-            "ارفع.",
-            "على السيرفر: نزّل."
-          ],
-          sol: R`[[docker login ghcr.io]] بيسألك Username (اسمك على GitHub) و Password (الـ token مش باسورد حسابك)، ويطبع [[Login Succeeded]].
-
-[[docker push ghcr.io/USER/myapi:1.2.0]] بيطبع سطر لكل طبقة بـ [[Pushed]] (أو [[Mounted from]] لو موجودة)، وفي الآخر [[1.2.0: digest: sha256:... size: ...]]. والـ package بيظهر في صفحة حسابك تحت Packages، Private افتراضيًا.
-
-الأغلاط الشائعة: [[denied: permission_denied: The token provided does not match expected scopes]] يعني الـ token ناقصه [[write:packages]]. و [[denied: installation not allowed to Write organization package]] لو الـ USER اسم org مش حسابك. والاسم لازم يبقى lowercase: [[ghcr.io/Ahmed/api]] بيترفض بـ [[repository name must be lowercase]].`
-        },
-        {
-          cmd: "buildx و --platform",
-          title: "ماك M1 والسيرفر amd64",
-          desc: "لو جهازك Mac بمعالج Apple (arm64) والسيرفر Intel/AMD (amd64)، الـ image اللي بتبنيها عندك مش هتشتغل على السيرفر (exec format error). [[--platform]] بيحدد المعمارية، و [[buildx]] يقدر يبني الاتنين في image واحدة.",
-          example: R`docker buildx ls
-docker buildx create --name multi --use
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/USER/myapi:1.2.0 --push .
-docker buildx imagetools inspect ghcr.io/USER/myapi:1.2.0
-docker build --platform linux/amd64 -t myapi:amd64 --load .`,
-          try: "ابني image لـ amd64 على جهازك، وشوف المعمارية بـ [[docker image inspect --format '{{.Architecture}}' myapi:amd64]].",
-          deep: {
-            why: "أشهر مفاجأة للي على ماك: الـ image اشتغلت عندك وعلى السيرفر بتقع فورًا بـ exec format error.",
-            how: R`[[docker build]] نفسه بقى buildx (BuildKit) افتراضيًا. [[--platform linux/amd64]] بيبني لمعمارية السيرفر حتى لو جهازك arm64، عن طريق محاكاة (أبطأ).
-
-لأكتر من معمارية مع بعض محتاج builder بيدعمها ([[buildx create]])، والناتج «manifest list» فيه نسخة لكل معمارية، والسيرفر بينزّل اللي تناسبه لوحده. الـ image المتعددة مش بتتحط في docker images عندك، فبتترفع مباشرة بـ [[--push]]. و [[--load]] لمعمارية واحدة تحطها عندك. و [[imagetools inspect]] بيوريك المعماريات اللي جوه.`,
-            when: "بتبني على Mac أو Raspberry Pi وبتشغّل على VPS عادي، أو العكس. وفي GitHub Actions مع setup-qemu و setup-buildx.",
-            mistakes: "تبني على الماك من غير --platform وترفع. والمحاكاة بطيئة جدًا مع npm ci الكبير، فالأحسن تبني في CI على amd64."
-          },
-          lines: [
-            "الـ builders الموجودة والمعماريات اللي بيدعموها.",
-            "اعمل builder جديد يدعم أكتر من معمارية واستخدمه.",
-            "ابني لـ amd64 و arm64 في image واحدة وارفعها.",
-            "اتأكد المعماريات اللي اترفعت.",
-            "معمارية السيرفر بس، والناتج عندك في docker images."
-          ],
-          sol: R`[[docker image inspect --format '{{.Architecture}}' myapi:amd64]] بيطبع [[amd64]]. وده اللي السيرفر محتاجه حتى لو انت على ماك M1 (اللي هيطلع عليه [[arm64]] من غير [[--platform]]).
-
-على ماك الـ build لـ amd64 هياخد وقت أطول بكتير، لأنه بيشغّل كل خطوة RUN من خلال emulation (QEMU/Rosetta). و [[docker buildx ls]] بيوري الـ builders والـ platforms اللي كل واحد يقدر يبنيها.
-
-الغلط الشائع: على جهاز مفيهوش emulation متسطّب، البناء لمعمارية تانية بيقع في أول RUN بـ [[exec /bin/sh: exec format error]]. ونفس الرسالة بتظهر على السيرفر لو شغّلت image arm64 على سيرفر amd64، وده أشهر سبب للـ container اللي بيموت أول ما يقوم.`
-        },
-        {
-          cmd: "CMD و ENTRYPOINT",
-          title: "إيه اللي بيتشغّل",
-          desc: "[[CMD]] الأمر الافتراضي، وتقدر تستبدله من [[docker run]]. [[ENTRYPOINT]] ثابت، واللي تكتبه في run بيتضاف عليه. الشكل بالأقواس المربعة (exec form) هو الصح: التطبيق بيبقى العملية رقم 1 وبيستلم إشارة الإغلاق.",
-          example: R`docker run --rm myapi
-docker run --rm myapi node -v
-docker run --rm --entrypoint sh myapi -c "ls /app"`,
-          try: "شغّل image بتاعتك بأمر مختلف عن CMD ولاحظ إنه اتنفذ بدل التطبيق.",
-          deep: {
-            why: "لازم تفهم إيه اللي بيتشغّل لما الـ container يقوم، وإزاي تغيّره من غير ما تعدّل الـ image، وليه شكل الكتابة بيفرق في الإغلاق.",
-            how: R`[[CMD]] الأمر الافتراضي. أي حاجة تكتبها في [[docker run image ...]] بعد اسم الـ image بتحل مكانه تمامًا. عشان كده [[docker run myapi node -v]] بيطبع النسخة بدل ما يشغّل السيرفر.
-
-[[ENTRYPOINT]] ثابت ومبيتغيرش من run. اللي تكتبه في run بيتضاف كـ arguments ليه. مفيد لو الـ image أداة (زي image بتشغّل psql): ENTRYPOINT هو الأداة، وانت بتديه arguments. و [[--entrypoint]] بيغيّره لو محتاج تدخل sh وتشخّص.
-
-الشكلين: exec form [[["node", "server.js"]]] بيشغّل node مباشرة كعملية 1. shell form [[node server.js]] بيشغّل [[/bin/sh -c "node server.js"]]، فـ sh هو العملية 1 و node ابنه. لما [[docker stop]] يبعت SIGTERM للعملية 1، sh مش بيوصّلها لـ node، فالتطبيق ميعرفش إنه بيتقفل، ويتقتل بعد ١٠ ثواني في نص أي حاجة.`,
-            when: "CMD لتطبيقك. ENTRYPOINT للأدوات. وعشان تشخّص image: [[--entrypoint sh]].",
-            mistakes: "shell form في CMD. و [[CMD npm start]]: npm نفسه بيبقى وسيط بيبلع الإشارة. شغّل node مباشرة."
-          },
-          lines: ["الأمر الافتراضي (CMD).", "استبدل CMD بأمر تاني.", "استبدل ENTRYPOINT نفسه بـ sh ونفّذ أمر."],
-          sol: R`[[docker run --rm myapi node -v]] بيطبع [[v22.x.x]] ويخرج، والسيرفر مااشتغلش خالص. أي حاجة بعد اسم الـ image بتحل محل [[CMD]] بالكامل.
-
-و [[docker run --rm --entrypoint sh myapi -c "ls /app"]] بيطبع محتوى [[/app]]: [[package.json]] و [[server.js]]... وده لأن [[--entrypoint]] غيّر البرنامج و [[-c "ls /app"]] بقت الـ arguments.
-
-الغلط الشائع: لو الـ Dockerfile فيه [[ENTRYPOINT ["node"]]]، فـ [[docker run myapi node -v]] هيشغّل [[node node -v]] ويطلع [[Cannot find module '/app/node']]. مع ENTRYPOINT اللي بعد اسم الـ image بيتضاف كـ arguments، فالصح [[docker run myapi -v]].`
-        },
-        {
-          cmd: "entrypoint.sh و exec",
-          title: "خطوة قبل التطبيق من غير ما تبوّظ الإغلاق",
-          desc: R`لو محتاج تعمل حاجة قبل ما السيرفر يقوم (migration، أو تجهيز ملف)، اعمل سكربت صغير يعملها، وآخر سطر فيه [[exec node server.js]]. الـ [[exec]] بتخلي node ياخد مكان الشيل نفسه، فيبقى هو العملية رقم 1 ويستلم SIGTERM، و [[docker stop]] يقفله نضيف بدل ما يستنى ١٠ ثواني ويقتله.`,
-          example: R`#!/bin/sh
-set -e
-node /app/scripts/migrate.mjs
-exec node server.js`,
-          try: "اعمل السكربت ده بسطر [[node server.js]] من غير exec، وقيس [[time docker stop api]]: هياخد ١٠ ثواني. ضيف exec وقيس تاني.",
-          flag: "script",
-          deep: {
-            why: "الـ CMD بالأقواس المربعة بيحل مشكلة الإشارات، بس أول ما تحتاج خطوتين (migrate وبعدين start) بتكتب سكربت، والسكربت بيرجّع المشكلة: الشيل بقى هو العملية 1.",
-            how: R`من غير exec: sh هو العملية رقم 1، و node ابنه. [[docker stop]] بيبعت SIGTERM للعملية 1 بس، والشيل مش بيوصّلها لـ node. بعد ١٠ ثواني Docker بيبعت SIGKILL، فالطلبات اللي شغالة بتتقطع واتصالات القاعدة مبتتقفلش نضيف.
-
-[[exec]] بتستبدل عملية الشيل بـ node في نفس المكان وبنفس رقم العملية. مفيش شيل تاني، و node هو اللي بيستلم الإشارة.
-
-[[set -e]] مهم هنا: لو الـ migration فشل، السكربت يقف والـ container يخرج بـ error، بدل ما التطبيق يقوم على schema قديمة.
-
-وفي الـ Dockerfile: [[COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/]] وبعدين [[ENTRYPOINT ["docker-entrypoint.sh"] ]]. ولو عايز السكربت يشغّل أي CMD، آخر سطر يبقى [[exec "$@"]].
-
-وبديل لو مش عايز تفكّر في ده: [[init: true]] في compose (أو [[--init]] في run) بيحط عملية صغيرة (tini) كـ PID 1 بتوصّل الإشارات وتلم العمليات الميتة.`,
-            when: "أي خطوة لازم تحصل قبل التطبيق وجوه الـ container: migrate، أو توليد config من متغيرات، أو انتظار خدمة.",
-            mistakes: R`في مشروع حقيقي الـ migration كان بيتشغّل أوتوماتيك مع كل تشغيل container على الإنتاج، وبتوكن إدارة كامل، وبعده [[|| echo "skipped"]] بيبلع أي فشل، فالتطبيق يقوم عادي على schema ناقصة. وكان فيه ملفين entrypoint مختلفين، واحد بيشاور على .js والتاني على .mjs.
-
-وغلطتين كلاسيك: السكربت من غير صلاحية تنفيذ فيطلع permission denied، أو اتكتب على ويندوز بنهايات سطور CRLF فيطلع «no such file or directory» مع إن الملف موجود (الـ \r لازقة في سطر الـ shebang).`
-          },
-          lines: [
-            "وقّف السكربت عند أول أمر يفشل.",
-            "الخطوة القبلية: مزامنة الـ schema.",
-            "node ياخد مكان الشيل ويبقى العملية رقم 1."
-          ],
-          sol: R`من غير [[exec]]: [[docker stop]] بياخد حوالي [[10]] ثواني بالظبط، و [[docker inspect --format '{{.State.ExitCode}}' api]] بيطبع [[137]] (اتقتل بـ SIGKILL). ده لأن [[sh]] هو PID 1 واستلم SIGTERM ومابعتهاش لـ node، فـ Docker استنى المهلة وقتله.
-
-مع [[exec node server.js]]: الـ stop بياخد أقل من ثانية (عندي 0.29 ثانية)، والـ exit code [[0]]، ولو التطبيق بيسمع SIGTERM هتلاقي رسالته في [[docker logs]]. لأن [[exec]] خلّى node ياخد مكان sh ويبقى هو PID 1.
-
-الغلط الشائع: السكربت يفشل بـ [[exec /entrypoint.sh: permission denied]] (نسيت [[chmod +x]]) أو [[no such file or directory]] مع إن الملف موجود: دي نهايات سطور CRLF من ويندوز، فالسطر الأول بقى [[#!/bin/sh\r]].`,
-          solCode: R`printf '#!/bin/sh\nset -e\necho migrate\nnode server.js\n' > entrypoint.sh
-chmod +x entrypoint.sh
-printf 'FROM myapi\nCOPY entrypoint.sh /entrypoint.sh\nENTRYPOINT ["/entrypoint.sh"]\n' > Dockerfile.ep
-docker build -f Dockerfile.ep -t myapi:ep .
-docker run -d --name api myapi:ep
-time docker stop api
-docker inspect --format '{{.State.ExitCode}}' api
-docker rm api
-sed -i 's/^node server.js/exec node server.js/' entrypoint.sh`
-        },
-        {
-          cmd: "alpine ولا slim",
-          title: "مكتبات native بتفشل في الـ build",
-          desc: R`Alpine صغيرة جدًا، بس بتستخدم musl بدل glibc ومفيهاش أدوات compile. مكتبات زي bcrypt محتاجة تتبني، فإما تسطّب أدوات البناء بـ [[apk add python3 make g++]]، أو تستخدم [[node:22-bookworm-slim]] اللي فيها glibc، والـ binaries الجاهزة (زي SWC بتاع Next و sharp) بتشتغل عليها على طول.
-
-القاعدة: ابدأ بـ alpine، ولو لقيت نفسك بتحارب مكتبات native روح لـ slim. وأدوات البناء تفضل في مرحلة الـ build بس.`,
-          example: R`FROM node:22-alpine AS deps
-RUN apk add --no-cache python3 make g++
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-FROM node:22-alpine
-RUN apk add --no-cache vips
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-USER node
-CMD ["node", "server.js"]`,
-          try: "في مشروع فيه bcrypt، ابني على alpine من غير سطر apk add واقرا الـ error، وبعدين ضيفه، وبعدين جرّب bookworm-slim من غيره وقارن الحجم في [[docker images]].",
-          flag: "script",
-          deep: {
-            why: R`أشهر error أول ما تنقل مشروع لـ alpine: [[gyp ERR! find Python]] أو [[Error loading shared library]]. المكتبة مش لاقية binary جاهز لـ musl، فبتحاول تتبني من الكود ومش لاقية أدوات.`,
-            how: R`مكتبات native (فيها C أو C++) بتنزل binary جاهز لو فيه واحد مناسب لنظامك. أغلب الـ binaries الجاهزة معمولة لـ glibc (Debian و Ubuntu). على alpine ممكن متلاقيش، فـ node-gyp يحاول يبني، ومحتاج [[python3 make g++]].
-
-[[--no-cache]] في apk معناها متحفظش فهرس الباكدجات جوه الـ image، فالطبقة تفضل صغيرة.
-
-الـ multi-stage هنا بيحل مشكلة الحجم: أدوات البناء (مئات الميجا) في مرحلة deps بس، والمرحلة النهائية بتاخد node_modules المبنية جاهزة. لو مكتبة محتاجة حاجة من النظام وقت التشغيل (زي vips لـ sharp لو متبنية عليه)، سطّب نسخة التشغيل بس، من غير [[-dev]].
-
-[[bookworm-slim]] أكبر بحوالي ٥٠ لـ ٨٠ ميجا، بس بتوفّر عليك كل ده. ولازم المرحلتين من نفس العيلة: node_modules المبنية على alpine مش هتشتغل على slim والعكس.`,
-            when: "bcrypt و sharp و canvas و sqlite3 وأي مكتبة فيها كود native. و Next.js لو شفت مشاكل SWC على alpine.",
-            mistakes: R`في مشروع حقيقي [[vips-dev]] (بأدوات التطوير والـ headers) كانت متسطّبة في مرحلة التشغيل، فكبّرت الـ image من غير لازمة. ومرحلة build على alpine ومرحلة تشغيل على slim، فالمكتبات تقع بـ error غريب وقت التشغيل. ونسخ node_modules من جهاز ويندوز بدل npm ci جوه الـ container.`
-          },
-          lines: [
-            "مرحلة deps على alpine.",
-            "أدوات البناء (للمكتبات native) في المرحلة دي بس، ومن غير كاش apk.",
-            "فولدر الشغل.",
-            "ملفات الباكدجات.",
-            "سطّب وابني المكتبات.",
-            "المرحلة النهائية نضيفة.",
-            "مكتبة تشغيل بس لو محتاجها (مش النسخة -dev).",
-            "فولدر الشغل.",
-            "خد node_modules المبنية جاهزة.",
-            "الكود.",
-            "يوزر عادي.",
-            "شغّل."
-          ],
-          sol: R`على alpine من غير [[apk add]] الـ build بيقع في [[npm ci]] بـ error طويل من [[node-gyp]]، أهم سطر فيه حاجة زي [[gyp ERR! find Python]] أو [[make: not found]] / [[g++: not found]]، وده لما npm مايلاقيش prebuilt binary لـ musl فيحاول يبني من الـ source. (مع نسخ bcrypt الجديدة ممكن الـ prebuilt يتلاقي وماتشوفش error، فجرّبه كمان مع [[npm ci --build-from-source]] عشان تشوف المشكلة.)
-
-بعد سطر [[apk add --no-cache python3 make g++]] الـ build بينجح. ومع [[node:22-bookworm-slim]] غالبًا بينجح من غير أي سطر زيادة لأن الباكدجات عندها prebuilt لـ glibc. وفي [[docker images]] الـ slim هتطلع أكبر من الـ alpine بشوية (عشرات الميجا)، والـ alpine اللي فيها أدوات البناء في المرحلة الأخيرة هتطلع الأكبر، وده ليه بنحطها في مرحلة deps بس.
-
-الغلط الشائع: تسطّب [[python3 make g++]] في المرحلة الأخيرة، فالـ image تكبر مئات الميجا من غير لازمة.`
-        },
-        {
-          cmd: "أسرار وقت الـ build",
-          title: "سر اتبعت وقت البناء وفضل جوه الـ image",
-          desc: R`أي قيمة بتبعتها بـ [[--build-arg]] وتستخدمها في ENV أو RUN بتفضل في الـ image، وأي حد معاه الـ image يقدر يقراها بـ [[docker history]] أو [[inspect]]. لو الـ build محتاج سر فعلًا (توكن npm لباكدج خاص مثلًا)، استخدم [[RUN --mount=type=secret]]: السر بيتركّب كملف في الخطوة دي بس ومبيتكتبش في أي طبقة.
-
-والأسرار اللي التطبيق محتاجها وهو شغال مكانها وقت التشغيل ([[env_file]])، مش وقت البناء أصلًا.`,
-          example: R`# syntax=docker/dockerfile:1.7
-FROM node:22-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci
-COPY . .
-ARG NEXT_PUBLIC_API_URL
-RUN npm run build`,
-          try: "ابني بـ [[docker build --secret id=npmrc,src=.npmrc -t myapp .]]، وبعدين [[docker history --no-trunc myapp]] ودوّر على التوكن: مش موجود. جرّب نفس التوكن كـ ARG واتفرّج عليه ظاهر.",
-          flag: "script",
-          deep: {
-            why: R`في Next.js و Vite متغيرات [[NEXT_PUBLIC_]] و [[VITE_]] لازم تكون موجودة وقت الـ build، فالناس بتتعود تبعت كل حاجة كـ build arg، ومعاها مفاتيح السيرفر. والـ image بتترفع على registry أو تتنقل، والمفاتيح معاها.`,
-            how: R`كل RUN بيستخدم ARG بيتسجّل في تاريخ الـ image بالقيمة. و [[ENV X=$X]] بيحفظ القيمة في إعدادات الـ image نفسها. الاتنين بيبانوا لأي حد يعمل pull.
-
-[[--mount=type=secret,id=npmrc,target=/root/.npmrc]] بيحط الملف في المسار ده وقت الأمر ده بس، وبعده بيختفي، ومش جزء من أي طبقة ولا بيأثر على الكاش. بتبعته من بره بـ [[docker build --secret id=npmrc,src=.npmrc]]، وفي compose تحت [[build: secrets:]].
-
-سطر [[# syntax=docker/dockerfile:1.7]] في أول الملف بيقول لـ BuildKit يستخدم نسخة parser محددة، فمميزات زي secret و cache mounts تشتغل حتى لو Docker على السيرفر قديم شوية.
-
-و [[NEXT_PUBLIC_API_URL]] مش سر أصلًا: قيمته بتتحط في JavaScript اللي بيروح للمتصفح. عشان كده عادي يبقى ARG. أي حاجة من غير NEXT_PUBLIC (مفتاح service role، أو HMAC بتاع الدفع، أو DATABASE_URL) مكانها env_file وقت التشغيل.`,
-            when: "توكن npm أو pip لباكدجات خاصة، أو SSH key لـ git clone خاص وقت البناء.",
-            mistakes: R`في مشروع حقيقي مفتاح service role بتاع قاعدة البيانات و HMAC secret بتاع بوابة الدفع كانوا بيتبعتوا كـ ARG و ENV في مرحلة الـ build، فبقوا محفوظين في طبقات الـ image وفي docker history. وفي مشروع تاني DATABASE_URL بالباسورد اتمرّر build arg. الحل: NEXT_PUBLIC بس وقت البناء، والباقي env_file. ولو سر اتسرّب في image اترفعت: غيّر السر نفسه، مسح الـ image مش كفاية.`
-          },
-          lines: [
-            "ابدأ من Node.",
-            "فولدر الشغل.",
-            "ملفات الباكدجات.",
-            "سطّب، وملف .npmrc (فيه التوكن) متركّب للخطوة دي بس ومش هيتحفظ.",
-            "الكود.",
-            "متغير عام مش سر، عادي يبقى ARG لأنه رايح للمتصفح أصلًا.",
-            "ابني."
-          ],
-          sol: R`مع [[--secret]]: [[docker history --no-trunc myapp | grep TOKEN]] مش بيطلّع حاجة، وسطر الـ RUN في الـ history شكله [[RUN /bin/sh -c npm ci # buildkit]] من غير أي أثر للملف. و [[docker run --rm myapp ls /root/.npmrc]] بيقول [[No such file or directory]]: الملف كان موجود وقت الخطوة دي بس.
-
-مع نفس التوكن كـ [[ARG]]: الـ history بيوريه صريح في سطرين: [[ARG TOKEN=TOKEN123]] و [[RUN |1 TOKEN=TOKEN123 /bin/sh -c ...]]. يعني أي حد معاه الـ image يقدر يقراه، حتى لو مسحت الملف في خطوة بعدها.
-
-الغلط الشائع: [[Dockerfile parse error ... unknown flag: mount]]: الـ builder القديم شغال. شغّل BuildKit ([[DOCKER_BUILDKIT=1]] أو Docker حديث) وحط سطر [[# syntax=docker/dockerfile:1.7]] أول الملف.`,
-          solCode: R`echo "//registry.npmjs.org/:_authToken=TOKEN123" > .npmrc
-docker build --secret id=npmrc,src=.npmrc -t myapp .
-docker history --no-trunc myapp | grep TOKEN123
-docker run --rm myapp ls /root/.npmrc`
-        },
-        {
-          cmd: "Next.js standalone",
-          title: "image صغيرة لتطبيق Next.js",
-          desc: R`[[output: "standalone"]] في next.config بيخلي [[next build]] يطلّع فولدر فيه [[server.js]] ومعاه بس المكتبات اللي التطبيق بيستخدمها فعلًا، بدل node_modules كله. في آخر مرحلة بتنسخ standalone و static و public، وتشغّل [[node server.js]].
-
-ولازم [[HOSTNAME=0.0.0.0]]، وإلا السيرفر ممكن يسمع على عنوان مش هو اللي البورت متوجّه له، ومحدش يوصله.`,
-          example: R`# next.config.ts:  output: "standalone"
-FROM node:22-bookworm-slim AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build && test -d .next/standalone
-
-FROM node:22-bookworm-slim
-WORKDIR /app
-ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0
-COPY --from=builder --chown=node:node /app/public ./public
-COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
-USER node
-EXPOSE 3000
-CMD ["node", "server.js"]`,
-          try: "ابني مشروع Next بالطريقة دي ومرة بـ node_modules كامل و next start، وقارن الحجم في [[docker images]].",
-          flag: "script",
-          deep: {
-            why: "مشروع Next عادي node_modules بتاعه ممكن يبقى نص جيجا. في الإنتاج التطبيق بيستخدم جزء صغير منه بس. standalone بيحسب الجزء ده وياخده لوحده.",
-            how: R`[[output: "standalone"]] بيخلي Next يتتبّع كل ملف التطبيق بيعمله import، وينسخ المكتبات دي بس في [[.next/standalone]]، ومعاها [[server.js]] صغير بيشغّل التطبيق من غير [[next start]].
-
-standalone مش بينسخ [[public]] ولا [[.next/static]] (Next بيفترض إن ممكن يروحوا CDN)، فبتنسخهم انت. نسيانهم معناه موقع من غير CSS ولا صور.
-
-server.js بيقرا [[PORT]] و [[HOSTNAME]]. Docker نفسه بيحط متغير HOSTNAME = id الـ container، فلو سبته، Next بيسمع على العنوان ده. [[HOSTNAME=0.0.0.0]] بيخليه يسمع على كل الواجهات.
-
-[[test -d .next/standalone]] بيوقّف الـ build بـ error واضح لو حد شال الإعداد من next.config، بدل ما الـ image تتبني ناقصة وتقع وقت التشغيل.
-
-[[NEXT_TELEMETRY_DISABLED=1]] بيقفل إرسال بيانات الاستخدام لـ Vercel وقت البناء. ولو الموقع شغال تحت مسار فرعي، [[basePath: "/myapp"]] في نفس الملف، ولازم يبقى موجود وقت الـ build.
-
-وأي متغير [[NEXT_PUBLIC_]] لازم يبقى موجود وقت الـ build (ARG)، لأنه بيتحط في JavaScript وقتها. env_file وقت التشغيل مش هيغيّره.`,
-            when: "أي تطبيق Next.js رايح Docker. standalone هو الطريقة الرسمية لكده.",
-            mistakes: R`في مشروع حقيقي سكربت الديبلوي كان بيعدّل next.config بـ sed على السيرفر عشان يضيف standalone، يعني الإعداد مش في git وأول clone جديد يبوّظه. ومتغيرات NEXT_PUBLIC في env_file وقت التشغيل، وتستغرب إنها undefined في المتصفح. ونسيان نسخ public أو static.`
-          },
-          lines: [
-            "مرحلة البناء. slim عشان SWC و sharp يشتغلوا من غير مشاكل musl.",
-            "فولدر الشغل.",
-            "ملفات الباكدجات.",
-            "سطّب كل حاجة (البناء محتاج devDependencies).",
-            "الكود.",
-            "اقفل telemetry بتاعة Next.",
-            "ابني، ووقّف بـ error لو فولدر standalone مطلعش.",
-            "المرحلة النهائية نضيفة.",
-            "فولدر الشغل.",
-            "وضع الإنتاج، والبورت، واسمع على كل الواجهات.",
-            "الملفات العامة (standalone مش بينسخها).",
-            "السيرفر والمكتبات اللي بيستخدمها بس.",
-            "ملفات CSS و JS الثابتة (برضه مش بتتنسخ لوحدها).",
-            "يوزر node مش root.",
-            "توثيق البورت.",
-            "شغّل server.js مباشرة."
-          ],
-          sol: R`الـ standalone المفروض يطلع أصغر بشكل واضح: الفولدر [[.next/standalone]] فيه بس الـ node_modules اللي السيرفر بيستخدمها فعلًا (اتحسبت بـ tracing)، مش كل الباكدجات. في مشروع Next صغير الفرق في [[docker images]] بيبقى في حدود مئات الميجا (مثلًا حوالي ٢٠٠-٣٠٠ ميجا قدام ٦٠٠ ميجا لـ 1GB للطريقة الكاملة)، والرقم بيعتمد على الـ dependencies بتاعتك.
-
-وتتأكد إنها شغالة: [[docker run -p 3000:3000 myapp]] بيطبع [[▲ Next.js]] و [[Ready in ...]]، والصفحات والصور تفتح.
-
-الأغلاط الشائعة: الصفحة تفتح من غير CSS و JS (404 على [[/_next/static/...]]) لأنك نسيت تنسخ [[.next/static]]. والصور من [[public]] مش ظاهرة لأنك نسيت [[public]]. و [[test -d .next/standalone]] بيفشل البناء لو [[output: "standalone"]] مش في next.config، وده مقصود.`
-        },
-        {
-          cmd: "SPA جوه nginx",
-          title: "موقع Vite أو React في image فيها nginx بس",
-          desc: R`مرحلة Node بتعمل [[npm run build]]، ومرحلة [[nginx:alpine]] بتاخد فولدر dist بس ومعاه ملف الإعدادات. الـ image النهائية فيها nginx وملفات ثابتة، من غير Node خالص.
-
-و [[daemon off;]] عشان nginx يفضل في الـ foreground. أي برنامج بيروح الخلفية لوحده، الـ container بيقفل أول ما يقوم، لأن العملية رقم 1 خرجت.`,
-          example: R`FROM node:22-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-ENV VITE_API_BASE_URL=""
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]`,
-          try: "ابني الـ image وشغّلها بـ [[-p 8080:80]]، وافتح صفحة فرعية مباشرة (مش من الرئيسية) واتأكد إنها مش 404: ده شغل try_files في nginx.conf.",
-          flag: "script",
-          deep: {
-            why: "موقع SPA بعد الـ build مجرد HTML و JS و CSS. مش محتاج Node عشان يتقدّم، و nginx أسرع وأخف بكتير. وكمان nginx نفسه يقدر يوجّه /api للباك إند، فالفرونت والـ API على نفس الدومين ومفيش CORS.",
-            how: R`المرحلة الأولى بتبني وتطلّع dist. المرحلة التانية بتبدأ من nginx:alpine (حوالي ٢٠ ميجا) وبتاخد dist بس.
-
-[[VITE_API_BASE_URL=""]]: متغيرات VITE بتتحط في الكود وقت البناء. فاضية يعني الطلبات تروح [[/api/...]] على نفس الدومين، و nginx.conf فيه [[location /api/]] بيعمل proxy_pass لـ [[http://backend:3000]] على شبكة compose.
-
-nginx.conf لازم فيه [[try_files $uri $uri/ /index.html]] عشان روابط الـ SPA تشتغل لما حد يفتحها مباشرة، و index.html من غير كاش، و /assets بكاش طويل. التفاصيل في تاب Nginx درس SPA.
-
-[[daemon off;]]: صورة nginx الرسمية فيها السطر ده أصلًا في CMD، فكتابته توضيح. بس الفكرة مهمة: الـ container عايش طول ما العملية رقم 1 عايشة. لو شغّلت nginx أو أي خدمة بالطريقة اللي بتفصل نفسها وتروح الخلفية، العملية الأصلية بتخرج فورًا والـ container يقفل بـ exit 0.`,
-            when: "أي فرونت SPA (Vite، و React، و Vue) رايح الإنتاج.",
-            mistakes: R`في مشروع حقيقي إعدادات nginx كانت مكتوبة بـ [[RUN echo '...']] جوه الـ Dockerfile (هروب علامات صعب ومش مقروء)، وفي نفس الوقت compose بيركّب nginx.conf من ملف، والاتنين بيسمعوا على بورتات مختلفة (8000 و 80)، فنسخة staging كانت شغالة بإعدادات غير الإنتاج. خلّي ملف واحد في git وانسخه بـ COPY. وغلطة تانية: تشغيل [[npm run dev]] في image الإنتاج.`
-          },
-          lines: [
-            "مرحلة البناء على Node.",
-            "فولدر الشغل.",
-            "ملفات الباكدجات.",
-            "سطّب.",
-            "الكود.",
-            "رابط الـ API فاضي: الطلبات تروح /api على نفس الدومين.",
-            "ابني: يطلع dist.",
-            "المرحلة النهائية: nginx بس.",
-            "الملفات المبنية في فولدر nginx.",
-            "إعدادات الموقع (SPA و proxy لـ /api).",
-            "توثيق البورت.",
-            "nginx في الـ foreground عشان الـ container يفضل عايش."
-          ],
-          sol: R`[[curl -i localhost:8080/products/5]] (أو فتحها مباشرة من المتصفح) بيرجع [[200]] ومحتوى [[index.html]]، والـ React Router هو اللي بيعرض الصفحة الصح.
-
-من غير [[try_files $uri $uri/ /index.html;]] (يعني بـ default.conf الأصلي بتاع nginx) نفس الرابط بيرجع [[404 Not Found]]، لأن nginx بيدوّر على ملف اسمه [[products/5]] في الفولدر ومش لاقيه. جربتها الاتنين: من غيره 404، ومعاه 200.
-
-الغلط الشائع: nginx.conf الخاص بيك مش واصل للـ image (غلط في مسار الـ COPY)، وتقدر تتأكد بـ [[docker run --rm IMAGE cat /etc/nginx/conf.d/default.conf]]. ولو الـ assets بترجع HTML بدل JS يبقى [[base]] في Vite غلط والمتصفح بيطلب [[/products/assets/...]].`,
-          solCode: R`cat > nginx.conf <<'EOF2'
-server {
-  listen 80;
-  root /usr/share/nginx/html;
-  location / { try_files $uri $uri/ /index.html; }
-}
-EOF2
-docker build -t myspa .
-docker run -d --name spa -p 8080:80 myspa
-curl -s -o /dev/null -w "%{http_code}\n" localhost:8080/products/5`
         }
       ]
     }
