@@ -1099,20 +1099,40 @@
   "date": "2026-10-02",
   "on": "windows 11 (read-only), docs: Windows Terminal"
  },
+ "ps|$LASTEXITCODE": {
+  "hash": "5f92172f28f3",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
+ },
+ "ps|$PROFILE": {
+  "hash": "9b743ce044dd",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + 5.1 (scratch profile file)"
+ },
+ "ps|$PSScriptRoot": {
+  "hash": "37ae3dddca5c",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
+ },
  "ps|$PSStyle": {
-  "hash": "7661c0ed2e76",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "8caa1f9e5903",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + 5.1"
  },
  "ps|$env:": {
-  "hash": "6a8a9dfc8eb6",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "ce6fe504dc52",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ubuntu-24.04; docs: SetEnvironmentVariable User"
+ },
+ "ps|& (call operator)": {
+  "hash": "689adbfaf143",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|-ErrorAction و $Error": {
-  "hash": "0e58c5f7c628",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "46ec60a98f8c",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|Add-LocalGroupMember": {
   "hash": "d63bad029793",
@@ -1125,14 +1145,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Compress-Archive": {
-  "hash": "77a1a7f2f39c",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "ee802d5919af",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|ConvertFrom-Json": {
-  "hash": "5c43d57a88b6",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "13457a549bce",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|ConvertTo-Json -Depth": {
   "hash": "42d2c68729a1",
@@ -1140,9 +1160,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Copy-Item": {
-  "hash": "bd121b96309a",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "568ff9044d77",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Enter-PSSession / Invoke-Command": {
   "hash": "a51318ede25c",
@@ -1150,14 +1170,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|ExecutionPolicy": {
-  "hash": "322cd64f5517",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "73db3c230c89",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + 5.1 (Set with -WhatIf)"
  },
  "ps|Export-Csv / ConvertTo-Json": {
-  "hash": "7d641b4e392c",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "23f7391548ee",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|FileSystemWatcher": {
   "hash": "c1497b5211fa",
@@ -1165,9 +1185,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|ForEach-Object": {
-  "hash": "06e42b2f43b3",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "e2ac580de597",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|Format-Volume / Clear-Disk": {
   "hash": "ca5a561e24b4",
@@ -1185,9 +1205,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Get-ChildItem": {
-  "hash": "7f9dcf27ca08",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "34d4cbfa6a17",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1; ubuntu-24.04"
  },
  "ps|Get-CimInstance": {
   "hash": "b079341efe45",
@@ -1195,19 +1215,19 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Get-Command": {
-  "hash": "59ad31707a29",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "84de352a081a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|Get-Command (which)": {
-  "hash": "98bb5238de51",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "3bdb37f47a01",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Get-Content": {
-  "hash": "df55d27d9814",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "b957045d74ae",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Get-Counter": {
   "hash": "be14b6e02255",
@@ -1215,19 +1235,19 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Get-FileHash": {
-  "hash": "e53eef73ab24",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "056c75a473e6",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ubuntu-24.04 sha256sum"
  },
  "ps|Get-Help": {
-  "hash": "6ac6dadea742",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "803b3fc0f589",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: -Online, Update-Help"
  },
  "ps|Get-Item": {
-  "hash": "d37a88a2bc84",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "7dfe052e8136",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1; ubuntu-24.04"
  },
  "ps|Get-LocalUser / New-LocalUser": {
   "hash": "fe59787753ec",
@@ -1235,9 +1255,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Get-Member": {
-  "hash": "0604dc70f988",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "096573dea7a1",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|Get-MpComputerStatus": {
   "hash": "353a358a0b3e",
@@ -1245,14 +1265,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Get-NetAdapter": {
-  "hash": "5fa93bb39619",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "3c374a0fb8f6",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: Restart/Disable/Enable (-WhatIf only)"
  },
  "ps|Get-NetIPAddress": {
-  "hash": "7ee7e1620475",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "67348fee1a58",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|Get-NetNeighbor + ping sweep": {
   "hash": "ef9a9c0613a9",
@@ -1260,14 +1280,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Get-NetTCPConnection": {
-  "hash": "aa103e89d244",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "723b9ba1315a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|Get-NetTCPConnection -State Listen": {
-  "hash": "e5c4b1c822bd",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "bb8667d33ad9",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|Get-PhysicalDisk": {
   "hash": "689b0cd6255a",
@@ -1280,14 +1300,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Get-Process / Stop-Process": {
-  "hash": "778e7a398eee",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "2dcc5797207b",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: -Name not run on purpose"
  },
  "ps|Get-Service": {
-  "hash": "5045c9868fa0",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "25ef57d49402",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: Restart-Service"
  },
  "ps|Get-WinEvent": {
   "hash": "1c4fc17c991d",
@@ -1295,14 +1315,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Group-Object": {
-  "hash": "a9798eb29980",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "7a8562e70c7a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|History والاختصارات": {
-  "hash": "5b299e4c5493",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "58177158b6da",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: keyboard shortcuts"
  },
  "ps|Import-Csv": {
   "hash": "516d95459e45",
@@ -1310,14 +1330,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Import-Module و dot-sourcing": {
-  "hash": "72da57888f1d",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "64bca85f6fbc",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|Invoke-RestMethod": {
-  "hash": "5129afe49c5b",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "fc272ef29b99",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 (GitHub API + local node server)"
  },
  "ps|Invoke-WebRequest -OutFile": {
   "hash": "04dbeffca9ef",
@@ -1340,9 +1360,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Measure-Object": {
-  "hash": "785ace2d4b1a",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "f2ddb4c22916",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|MessageBox / BurntToast": {
   "hash": "0a93724890b9",
@@ -1350,24 +1370,24 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Move-Item / Rename-Item": {
-  "hash": "e765aad7f610",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "bfe741ac832a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|New-Item": {
-  "hash": "f9777852a9dd",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "c8383351ba20",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|New-NetFirewallRule": {
-  "hash": "422f3a109b04",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "01ec2adf064f",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 view; docs: create/disable/remove"
  },
  "ps|New-NetIPAddress (static IP)": {
-  "hash": "9dc66e1082f0",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "dee9fb6e95ad",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 view + -WhatIf; docs: actual change"
  },
  "ps|New-SmbShare": {
   "hash": "42a418fb6c7a",
@@ -1385,19 +1405,19 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|PSScriptAnalyzer": {
-  "hash": "5b74cd7804df",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "c70b8106ec0a",
+  "date": "2026-10-06",
+  "on": "docker mcr.microsoft.com/powershell (pwsh 7.4.2, PSScriptAnalyzer 1.23.0); win11 pwsh-7.6 + ps-5.1 (Set-PSDebug)"
  },
  "ps|PredictionViewStyle": {
-  "hash": "a2b70f206c2a",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "af2b88a6191c",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: interactive prediction views"
  },
  "ps|Push-Location": {
-  "hash": "4764090e1a03",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "7bbd8aba92dd",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|RandomNumberGenerator (password)": {
   "hash": "3f4398dca9e0",
@@ -1410,14 +1430,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Remove-Item": {
-  "hash": "6f4c4b414e97",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "9f03a79b78a3",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: interactive prompt"
  },
  "ps|Resolve-DnsName": {
-  "hash": "272bd1d7dde3",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "abc77c1fb2c6",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + 5.1"
  },
  "ps|Restart-Computer -ComputerName": {
   "hash": "d0ed2bf42559",
@@ -1430,14 +1450,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Select-Object": {
-  "hash": "8d3750b49046",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "3f334de03a4a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|Select-String": {
-  "hash": "efd7488b9182",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "65a98c1bd93e",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Set-Clipboard / Get-Clipboard": {
   "hash": "9d07f9c15323",
@@ -1445,14 +1465,14 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Set-Content / Add-Content": {
-  "hash": "2803824d01b6",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "a72010028a97",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|Set-DnsClientServerAddress": {
-  "hash": "2b298957c17b",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "da6a5dd6e37a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 view + -WhatIf; docs: actual change"
  },
  "ps|Set-LocalUser / Remove-LocalUser": {
   "hash": "f83aab99a966",
@@ -1460,24 +1480,24 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Set-Location": {
-  "hash": "8de464d3f687",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "14617d224096",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1 + cmd; ubuntu-24.04"
  },
  "ps|Set-NetConnectionProfile": {
-  "hash": "6dc22330e0cd",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "633895854e69",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 Get only; docs: Set"
  },
  "ps|Set-PSReadLineOption -Colors": {
-  "hash": "d07af2d3c92b",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "41c8667b670b",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 (PSReadLine 2.4.5) + 5.1 (2.0.0)"
  },
  "ps|Sort-Object": {
-  "hash": "4f025bd17d12",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "ae939e45d18d",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|Start-BitsTransfer": {
   "hash": "c9b58c6ab4f8",
@@ -1490,39 +1510,39 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Start-Process": {
-  "hash": "63e7e7e03eda",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "dfdf9ba23784",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; docs: URL, -Verb RunAs, ii ."
  },
  "ps|Start-Transcript": {
-  "hash": "d613558eec79",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "5fa627ef70a2",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|Terminal-Icons": {
-  "hash": "a8f9b778fa91",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "c881da35901d",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 (Save-Module to temp); docs: Install-Module"
  },
  "ps|Test-NetConnection": {
-  "hash": "5743393f7b3d",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "5648f89bdc7c",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + 5.1 (localhost)"
  },
  "ps|Test-NetConnection -TraceRoute": {
-  "hash": "b5956dc2d869",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "45ef064e32d5",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|Test-Path": {
-  "hash": "8026a5ada9b0",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "47c3bd710fbb",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Verb-Noun": {
-  "hash": "00c780fb8d77",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "2c024b2b7e78",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1"
  },
  "ps|Wake-on-LAN": {
   "hash": "9fbe8933a780",
@@ -1530,9 +1550,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Where-Object": {
-  "hash": "78dff82a3341",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "f404d139027c",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|Win32_StartupCommand": {
   "hash": "481969bba5ae",
@@ -1540,9 +1560,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|Write-Host والـ output": {
-  "hash": "0545d83c8d07",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "70b7a2c2cdd7",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|Write-Progress": {
   "hash": "5101db754d42",
@@ -1550,9 +1570,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|[CmdletBinding()]": {
-  "hash": "6adf526f8b33",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "cb889c305d78",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1; docs: -Confirm"
  },
  "ps|[xml]": {
   "hash": "bae23caef706",
@@ -1560,9 +1580,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|array و hashtable": {
-  "hash": "51075f98bf74",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "eac2315f1304",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|backup.ps1": {
   "hash": "f74e708de462",
@@ -1580,9 +1600,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|cmd /c ... > log 2>&1": {
-  "hash": "85a7ec11ece3",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "5d5cb97daf85",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|disk-report.ps1": {
   "hash": "c6a4ac87448f",
@@ -1590,29 +1610,29 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|foreach / for / while": {
-  "hash": "aa1e20bb928d",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "f1ef1217666a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|function": {
-  "hash": "599dd93efabb",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "6b2ab9528db0",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|function prompt": {
-  "hash": "4e6e45a9d68b",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "b20512930f0c",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|hosts": {
-  "hash": "c6212a03f655",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "bf27b40b6f46",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 read only; docs: editing as admin"
  },
  "ps|if / switch": {
-  "hash": "8d9a08e90979",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "6d885bb87c8a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|new-project.ps1": {
   "hash": "91753587e428",
@@ -1620,9 +1640,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|oh-my-posh": {
-  "hash": "d8aba398f590",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "10c792c45611",
+  "date": "2026-10-06",
+  "on": "docs: ohmyposh.dev (only winget show run on win11)"
  },
  "ps|organize-downloads.ps1": {
   "hash": "a5b9018fd158",
@@ -1630,19 +1650,19 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|param()": {
-  "hash": "e78eb73b643f",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "cdcea7787cfb",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|pipeline function": {
-  "hash": "87785ea1cd44",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "702b01a6fe2a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|pwsh": {
-  "hash": "3a96b20bb7a6",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "2ec0cbd0576a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + ps 5.1; docs: winget install, Linux/Mac install"
  },
  "ps|rename-photos.ps1": {
   "hash": "61e5d6fb15a9",
@@ -1650,9 +1670,9 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|screenshots.ps1": {
-  "hash": "a097a9b03a4b",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "67e0ee9f6462",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6 + Chrome headless; docs: final ii line"
  },
  "ps|shutdown /s /t": {
   "hash": "e80ca9d86a36",
@@ -1660,24 +1680,24 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|splatting": {
-  "hash": "40f806b59fa8",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "3e0f1171e47c",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|ssh -L": {
-  "hash": "5226928c2186",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "08ad77b15586",
+  "date": "2026-10-06",
+  "on": "win11 OpenSSH -> ubuntu-24.04 container"
  },
  "ps|ssh / scp": {
-  "hash": "90b89c6a839f",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "13731bd57af3",
+  "date": "2026-10-06",
+  "on": "win11 OpenSSH 9.5 -> ubuntu-24.04 container sshd"
  },
  "ps|try / catch": {
-  "hash": "fad3438cdbd2",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "b13e54aa55e8",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|winget upgrade / export / import": {
   "hash": "d63897b5df9e",
@@ -1690,34 +1710,34 @@
   "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
  },
  "ps|أول سكربت .ps1": {
-  "hash": "19968d0ac469",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "484719064485",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1; docs: Set-ExecutionPolicy"
  },
  "ps|المتغيرات": {
-  "hash": "e9828a59778c",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "8344bcce0253",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|المتغيرات والأنواع": {
-  "hash": "9b4331a05861",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "aaac2f056f3a",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|النصوص (strings)": {
-  "hash": "981a1a3fb65c",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "3c4d8b3107a4",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|رموز PowerShell": {
-  "hash": "a26e328981ea",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "36e055e730bb",
+  "date": "2026-10-06",
+  "on": "win11 pwsh 7.6.6"
  },
  "ps|عوامل المقارنة": {
-  "hash": "5560bc4cba43",
-  "date": "2026-10-02",
-  "on": "pwsh-7.6, pwsh-5.1 (windows 11)"
+  "hash": "07dde670140b",
+  "date": "2026-10-06",
+  "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "python|# /// script": {
   "hash": "171236d8957e",

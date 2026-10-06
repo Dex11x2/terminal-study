@@ -6,6 +6,7 @@ Read `PLAN.md` first: current state, ordered remaining work, agreed rules. Updat
 
 - `js/tabs/<tab>/01.js, 02.js…`: a folder per tab, lessons split into ~1200-line files of whole categories (90% of edits). `01.js` calls `TAB()` and documents the lesson fields; the rest call `MORE("<tab>", [...])`. New file → add its `<script>` in `index.html` right after the tab's previous file.
 - Find lessons with the tool, not by reading files: `node tools/lesson.js <tab>` (categories, file:line per lesson), `node tools/lesson.js <tab> "<cmd>"` (that lesson's source and exact range), `node tools/lesson.js find "<text>"`.
+- When a tab's files grow past ~1200 lines (e.g. after teach sections), `node tools/resplit.js <tab>` re-chunks them and updates index.html (refuses if lessons would change). Never run it while an agent is editing that tab; it renumbers files.
 - Review log: `verified.json` via `node tools/verify.js` (summary), `todo <tab>` (lessons never verified or edited since), `mark <tab> "<cmd>"… --on "<where it ran>"` after actually running a lesson. Mark only what was really run; write `docs:` for doc-only parts.
 - `js/core.js`: `TAB()` registration. `js/app.js`: rendering, search, progress, OS boxes (`osBoxes`, `RUNS_IN`). `css/style.css`. `index.html`: tab cards and script list.
 - `tools/check.js` (content lint), `tools/build.js` (single file `dist/terminal.html`). Never read `dist/` or `vendor/`.
