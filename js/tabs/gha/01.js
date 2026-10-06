@@ -75,6 +75,143 @@ jobs:
             when: "أول workflow في أي مشروع. حتى لو الاختبارات قليلة، lint و build كفاية كبداية.",
             mistakes: "اختبار بيعتمد على حاجة على جهازك (ملف .env، أو قاعدة بيانات محلية) فيفشل في CI. و tab بدل مسافات في YAML."
           },
+          teach: R`## الفكرة: ملف بيقول لـ GitHub «لما يحصل كذا، اعمل كذا»
+
+الـ workflow ملف YAML بتحطه في الـ repo. GitHub بيقراه لوحده، ولما الحدث اللي فيه يحصل (push مثلًا) بيجهّز كمبيوتر فاضي، ويشغّل عليه الخطوات اللي كتبتها بالترتيب. هنفك الملف سطر سطر.
+
+---
+
+## الأول: YAML بيتقري إزاي؟
+
+YAML طريقة لكتابة بيانات بالمسافات بدل الأقواس. ٣ قواعد بس:
+
+| الشكل | معناه |
+|---|---|
+| [[key: value]] | اسم وقيمته |
+| سطر تحت سطر بمسافات أكتر | الحاجة اللي تحت «جوه» اللي فوقها |
+| [[- ]] في أول السطر | عنصر في قايمة (list) |
+
+والمسافات هي اللي بتحدد مين جوه مين، فلازم تبقى مسافات عادية مش Tab، وكل العناصر في نفس المستوى تبدأ من نفس العمود.
+
+---
+
+## ١. الاسم والأحداث
+
+~~~text .github/workflows/ci.yml
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+~~~
+
+- [[name: CI]]: الاسم اللي بيظهر في تاب Actions. اختياري، ومن غيره GitHub بيعرض مسار الملف.
+- [[on:]]: الأحداث اللي بتشغّل الملف. تحتها حدثين:
+- [[push:]] وتحته [[branches: [main] ]]: لما حد يعمل push على branch اسمها main بس. الأقواس المربعة في [[[main] ]] قايمة في سطر واحد، زي ما تكتب [[- main]] في سطر لوحده.
+- [[pull_request:]] من غير حاجة بعدها: أي pull request (لما يتفتح، أو يتعمله push جديد، أو يتقفل ويتفتح تاني).
+
+---
+
+## ٢. الـ job والماكينة
+
+~~~text
+jobs:
+  test:
+    runs-on: ubuntu-latest
+~~~
+
+- [[jobs:]] قايمة المهام. هنا مهمة واحدة.
+- [[test:]] اسم المهمة، انت اللي بتختاره. هو اللي بيظهر في صفحة الـ run وفي علامة الـ PR.
+- [[runs-on: ubuntu-latest]] الماكينة: GitHub بيعمل جهاز أوبونتو جديد خالص (اسمه **runner**)، والـ job بيشتغل عليه، وبعد ما يخلص بيترمي. [[latest]] يعني أحدث نسخة أوبونتو GitHub بيدعمها.
+
+---
+
+## ٣. الخطوات (steps)
+
+~~~text
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+~~~
+
+كل [[- ]] خطوة. والخطوات نوعين:
+
+| النوع | معناه |
+|---|---|
+| [[uses:]] | شغّل **action** جاهزة (كود حد كتبه). الشكل [[صاحبها/اسمها@النسخة]] |
+| [[run:]] | شغّل أمر عادي في الترمنال بتاع الـ runner (bash على أوبونتو) |
+
+بالترتيب:
+
+1. [[actions/checkout@v7]]: الماكينة فاضية، الخطوة دي بتنزّل كود الـ repo عليها (git clone للـ commit اللي شغّل الـ run). [[@v7]] رقم النسخة الكبيرة من الـ action.
+2. [[actions/setup-node@v7]]: بتسطّب Node. و [[with:]] هي الإعدادات (inputs) اللي بتديها للـ action: [[node-version: 24]] النسخة، و [[cache: npm]] احفظ كاش npm بين الـ runs عشان التسطيب يبقى أسرع (محتاج [[package-lock.json]] في الـ repo).
+3. [[npm ci]]: سطّب المكتبات بالظبط زي ما في [[package-lock.json]] (ci = clean install).
+4. [[npm run lint]]: شغّل الـ script اللي اسمه lint في package.json.
+5. [[npm test]]: شغّل الاختبارات.
+
+أي خطوة ترجع exit code مش صفر (يعني فشلت) الـ job بيقف، والخطوات اللي بعدها مش بتشتغل، والـ commit يتعلّم بعلامة حمرا.
+
+---
+
+## ٤. شكله وهو شغال
+
+الملف ده اتشغّل هنا على الجهاز بأداة [[act]] (بتشغّل الـ workflow جوه Docker، شرحها في درس debugging) على مشروع صغير فيه اختبار واحد. ده اللوج متقصّر:
+
+~~~text الناتج (act على Docker)
+[CI/test] ⭐ Run Main actions/checkout@v7
+[CI/test]   ✅  Success - Main actions/checkout@v7
+[CI/test] ⭐ Run Main actions/setup-node@v7
+[CI/test]   | Found in cache @ /opt/hostedtoolcache/node/24.21.0/x64
+[CI/test]   | Cache restored from key: node-cache-linux-x64-npm-1d0b8d25fc61...
+[CI/test] ⭐ Run Main npm ci
+[CI/test]   | up to date, audited 1 package in 276ms
+[CI/test] ⭐ Run Main npm run lint
+[CI/test]   | lint ok
+[CI/test] ⭐ Run Main npm test
+[CI/test]   | ✔ adds two numbers (0.760396ms)
+[CI/test]   | ℹ pass 1
+[CI/test]   | ℹ fail 0
+[CI/test] 🏁  Job succeeded
+~~~
+
+- [[CI/test]] يعني workflow اسمه CI و job اسمه test.
+- setup-node نزّلت Node [[24.21.0]]: انت كتبت [[24]] بس، فبتاخد أحدث 24.x.
+- [[Cache restored from key]]: المفتاح فيه hash من [[package-lock.json]]. لو الـ lock اتغيّر، المفتاح يتغيّر وكاش جديد يتعمل.
+
+وعلى GitHub نفسه (من الـ docs): تاب Actions بيعرض run باسم رسالة الـ commit، وجواه job اسمه [[test]] والخطوات بنفس الترتيب، وأولها [[Set up job]] اللي GitHub بيضيفها لوحده.
+
+---
+
+## ٥. قبل الـ push: افحص الملف
+
+الملف اتفحص هنا بـ [[actionlint]] (أداة بتفهم قواعد GitHub Actions مش YAML بس) في Docker:
+
+~~~bash
+docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:latest .github/workflows/ci.yml
+~~~
+
+مطبعش حاجة، يعني الملف سليم. ولو المسافات بايظة بيقولك السطر والعمود.
+
+---
+
+## الخلاصة
+
+| السطر | معناه |
+|---|---|
+| [[on:]] | إمتى يشتغل |
+| [[jobs: → test:]] | مهمة باسم |
+| [[runs-on:]] | على أنهي ماكينة |
+| [[steps:]] | الخطوات بالترتيب |
+| [[uses:]] | action جاهزة، و [[with:]] إعداداتها |
+| [[run:]] | أمر ترمنال عادي |
+
+> المكان لازم يبقى [[.github/workflows/]] بالظبط، والامتداد [[.yml]] أو [[.yaml]]، وإلا GitHub مش هيشوف الملف أصلًا.`,
           lines: [
             "اسم الـ workflow في تاب Actions.",
             "الأحداث اللي بتشغّله.",
@@ -135,6 +272,130 @@ jobs:
             when: "push و pull_request لكل مشروع. workflow_dispatch لأي حاجة عايز تشغّلها بإيدك. schedule للفحوصات.",
             mistakes: "schedule بتوقيت مصر. هو UTC، فـ 3 الفجر مصر هي [[0 1 * * *]] (أو 0 0 حسب التوقيت الصيفي). وفي مشروع حقيقي كان workflow بيبني APK كامل وفي paths بتاعه [[src/**]]، فأي تعديل صغير في الويب كان بيبني تطبيق أندرويد (دقايق كتير من الرصيد). خلّي paths على الملفات اللي فعلًا بتأثر على الناتج."
           },
+          teach: R`## الأول: ٤ كلمات
+
+| الكلمة | هي إيه | بتشتغل إزاي |
+|---|---|---|
+| **workflow** | الملف كله في [[.github/workflows/]] | بيبدأ لما حدث من اللي في [[on:]] يحصل |
+| **job** | مهمة جوه الـ workflow | كل job على ماكينة لوحدها، والـ jobs بتشتغل **مع بعض** (بالتوازي) |
+| **step** | خطوة جوه الـ job | بالترتيب، **على نفس الماكينة**، فالملفات اللي خطوة عملتها موجودة للي بعدها |
+| **runner** | الماكينة نفسها | جهاز جديد نضيف لكل job، وبيترمي بعده |
+
+المثال كله عن الجزء الأول: [[on:]]، يعني إمتى الـ workflow يشتغل. هنفكّه حدث حدث.
+
+---
+
+## ١. push مع فلاتر
+
+~~~text
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']
+~~~
+
+- [[branches: [main] ]]: الـ push على main بس، مش أي branch.
+- [[paths-ignore:]]: متشتغلش لو **كل** الملفات اللي اتغيّرت في الـ push دي بتطابق النمط. و [[**.md]] نمط (glob): [[**]] يعني «أي مسار، حتى جوه فولدرات»، فأي ملف آخره [[.md]] في أي مكان. يعني تعديل في README بس مش هيشغّل الاختبارات، لكن تعديل في README وملف JS هيشغّلها.
+- العلامات [[' ']] حوالين النمط لازمة: من غيرها YAML بيفهم [[*]] في أول القيمة كرمز خاص بيه (alias).
+
+---
+
+## ٢. pull_request بأنواع معينة
+
+~~~text
+  pull_request:
+    types: [opened, synchronize]
+~~~
+
+[[types]] بتختار أنهي حاجة في الـ PR تشغّله: [[opened]] لما يتفتح، و [[synchronize]] لما حد يعمل push جديد على الـ branch بتاعته. ولو مكتبتش types، الافتراضي (من الـ docs) [[opened]] و [[synchronize]] و [[reopened]].
+
+---
+
+## ٣. schedule: بميعاد
+
+~~~text
+  schedule:
+    - cron: '0 3 * * *'
+~~~
+
+[[cron]] ٥ خانات مفصولة بمسافات:
+
+~~~text خانات cron
+0    3    *    *    *
+│    │    │    │    └─ يوم في الأسبوع (0 = الأحد)
+│    │    │    └────── الشهر
+│    │    └─────────── اليوم في الشهر
+│    └──────────────── الساعة (0 لـ 23)
+└───────────────────── الدقيقة
+~~~
+
+[[*]] يعني «أي قيمة». فالسطر ده: الدقيقة 0 من الساعة 3، كل يوم، كل شهر، أي يوم في الأسبوع. **بتوقيت UTC**، يعني 5 الصبح في مصر في الشتا و 6 في الصيف. و [[- ]] قبل [[cron]] معناها إنها قايمة، فتقدر تحط أكتر من ميعاد.
+
+---
+
+## ٤. workflow_dispatch: زرار تشغيل بإيدك
+
+~~~text
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        options: [staging, production]
+~~~
+
+- [[workflow_dispatch:]] بيظهر زرار **Run workflow** في تاب Actions، وبيخليك تشغّله من الترمنال بـ [[gh workflow run]].
+- [[inputs:]] حقول بتتملي قبل التشغيل. هنا حقل اسمه [[env]].
+- [[type: choice]] قايمة اختيار، و [[options]] الاختيارات اللي فيها. وفيه أنواع تانية: [[string]] (نص)، و [[boolean]] (صح/غلط)، و [[number]]، و [[environment]].
+
+---
+
+## ٥. الحل: نقرا الـ input جوه job
+
+~~~text .github/workflows/hello.yml
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        options: [staging, production]
+        default: staging
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "env=$__{{ inputs.env }} event=$__{{ github.event_name }}"
+~~~
+
+الجديد هنا [[$__{{ }}]]: ده **expression**. GitHub بيحسب اللي جواه ويحط القيمة مكانه **قبل** ما الأمر يتبعت للشيل. [[inputs.env]] قيمة الحقل، و [[github.event_name]] اسم الحدث اللي شغّل الـ run. و [[default: staging]] القيمة اللي بتبقى مختارة في الزرار.
+
+اتشغّل هنا بـ [[act]] مرتين:
+
+~~~bash
+act workflow_dispatch --input env=production
+act push
+~~~
+
+~~~text الناتج
+| env=production event=workflow_dispatch
+| env= event=push
+~~~
+
+لاحظ التانية: في push مفيش inputs أصلًا، فـ [[inputs.env]] طلع فاضي، و [[default]] مبتشتغلش غير مع التشغيل اليدوي. لو الـ job محتاج قيمة في الحالتين اكتب [[$__{{ inputs.env || 'staging' }}]] ([[||]] يعني «لو الأولى فاضية خد التانية»).
+
+والزرار نفسه في الواجهة من الـ docs: بيظهر بس لما الملف يبقى على الـ default branch.
+
+---
+
+## الخلاصة
+
+| الحدث | بيشتغل إمتى |
+|---|---|
+| [[push]] | push، وتفلتره بـ [[branches]] و [[paths]] / [[paths-ignore]] |
+| [[pull_request]] | PR، وتفلتره بـ [[types]] |
+| [[schedule]] | بميعاد cron بتوقيت UTC |
+| [[workflow_dispatch]] | زرار أو [[gh workflow run]]، ومعاه [[inputs]] |`,
           lines: [
             "الأحداث.",
             "push...",
@@ -205,6 +466,141 @@ jobs:
             when: "run للأوامر البسيطة. uses للحاجات اللي ليها action ناضجة (setup، cache، docker، deploy).",
             mistakes: "action من حساب مجهول بمئات النجوم المزيفة. اقرا كودها أو استخدم الرسمية (actions/*, docker/*)."
           },
+          teach: R`## الفكرة: كل step يا كود جاهز يا أمر بتكتبه
+
+المثال ده قايمة steps (اللي بتتحط تحت [[steps:]] في أي job). كل [[- ]] خطوة، وفيه نوعين بس: [[uses]] و [[run]]. هنفكهم بالترتيب.
+
+---
+
+## ١. [[uses]]: action جاهزة
+
+~~~text
+- uses: actions/checkout@v7
+~~~
+
+الشكل [[صاحب/اسم@نسخة]]: الـ action دي repo على GitHub اسمه [[actions/checkout]]، و [[@v7]] الـ tag اللي هيتنزّل منه. GitHub بينزّل الكود ده ويشغّله. والـ checkout بالذات بيعمل clone للـ repo بتاعك على الماكينة، ومن غيره مفيش أي ملف من مشروعك هناك.
+
+~~~text
+- uses: actions/setup-node@v7
+  with:
+    node-version-file: .nvmrc
+    cache: npm
+~~~
+
+- [[with:]] بتدّي الـ action إعدادات (inputs). كل action ليها inputs مكتوبة في الـ README بتاعها.
+- [[node-version-file: .nvmrc]]: بدل ما تكتب النسخة هنا، اقراها من ملف [[.nvmrc]] في المشروع (سطر واحد زي [[24]]). كده جهازك والـ CI بيقروا من نفس المكان.
+- [[cache: npm]]: احفظ كاش npm بين الـ runs.
+
+لاحظ إن [[with:]] بادئة تحت [[uses]] مش تحت [[- ]]: هي جزء من نفس الخطوة.
+
+---
+
+## ٢. [[run]]: أمر في الترمنال
+
+~~~text
+- run: npm ci
+~~~
+
+أمر عادي بيتنفّذ في **bash** على أوبونتو (وفي PowerShell لو الماكينة ويندوز).
+
+---
+
+## ٣. خطوة باسم وأكتر من سطر
+
+~~~text
+- name: Build
+  run: |
+    npm run build
+    ls -la dist
+~~~
+
+- [[name:]] الاسم اللي بيظهر في اللوج بدل الأمر نفسه.
+- [[|]] بعد [[run:]] في YAML معناها: «اللي جاي نص بأكتر من سطر، وسيب السطور زي ما هي». كل السطور المبدوءة بمسافات أكتر من [[run:]] بتبقى سكربت واحد.
+- السطور بتتنفّذ في **نفس** الشيل، ورا بعض. ولو أمر فشل، الباقي مش بيتنفّذ (تحت هنشوف ليه).
+
+اتشغّل هنا بـ [[act]] على مشروع فيه [[.nvmrc]] مكتوب فيه [[24]]:
+
+~~~text الناتج
+[wf.yml/build] ⭐ Run Main Build
+[wf.yml/build]   | > gha-demo@1.0.0 build
+[wf.yml/build]   | > mkdir -p dist && cp index.js dist/
+[wf.yml/build]   | total 12
+[wf.yml/build]   | drwxr-xr-x 2 root root 4096 Oct  6 16:30 .
+[wf.yml/build]   | drwxr-xr-x 7 root root 4096 Oct  6 16:30 ..
+[wf.yml/build]   | -rw-r--r-- 1 root root   63 Oct  6 16:30 index.js
+[wf.yml/build]   ✅  Success - Main Build
+~~~
+
+الاسم في اللوج [[Build]] مش [[npm run build]]، وده فايدة [[name]].
+
+---
+
+## ٤. ليه أول أمر فاشل بيوقف الباقي؟
+
+لو مكتبتش [[shell:]]، الـ docs بتقول إن GitHub بيشغّل السكربت بـ [[bash -e]]. و [[-e]] يعني: أول أمر يرجع exit code مش صفر، اقفل. بس فيه استثناء: الـ pipe. جرّبنا نفس السكربت بالطريقتين في Docker على Ubuntu 24.04:
+
+~~~text s.sh
+false | true
+echo after-pipe
+false
+echo never
+~~~
+
+~~~text الناتج
+--- bash -e (الافتراضي):
+after-pipe
+exit=1
+--- bash --noprofile --norc -eo pipefail (لما تكتب shell: bash):
+exit=1
+~~~
+
+[[false]] أمر بيفشل دايمًا. في الأولى [[false | true]] عدّى لأن الـ pipe بياخد نتيجة آخر أمر بس ([[true]])، فـ [[after-pipe]] اتطبعت، ووقف عند [[false]] اللي بعدها. في التانية [[pipefail]] بيخلي أي أمر يفشل جوه الـ pipe يفشّل الـ pipe كله، فوقف من أول سطر. عشان كده [[npm test | tee log]] محتاج [[shell: bash]] على الخطوة.
+
+---
+
+## ٥. الملخص: [[$GITHUB_STEP_SUMMARY]]
+
+~~~text
+- run: echo "done" >> "$GITHUB_STEP_SUMMARY"
+~~~
+
+[[GITHUB_STEP_SUMMARY]] متغير بيئة فيه **مسار ملف**. أي Markdown تكتبه فيه، GitHub بيعرضه في صفحة الـ run تحت عنوان Summary. و [[>>]] يعني «ضيف في آخر الملف»، أما [[>]] بتمسح اللي فيه.
+
+والحل (solCode) بيكتب كذا سطر مرة واحدة:
+
+~~~text
+- name: Summary
+  run: |
+    {
+      echo "## Build report"
+      echo "- commit: $GITHUB_SHA"
+      echo "- node: $(node --version)"
+    } >> "$GITHUB_STEP_SUMMARY"
+~~~
+
+- [[{ ... }]] في bash بتجمّع كذا أمر، فالناتج بتاعهم كلهم يروح للملف بـ [[>>]] واحدة.
+- [[$GITHUB_SHA]] متغير جاهز فيه رقم الـ commit.
+- [[$(node --version)]] شغّل الأمر وحط ناتجه مكانه.
+
+في [[act]] الملخص طلع كده:
+
+~~~text الناتج
+[wf.yml/build]   ⚙  Summary - ## Build report
+- commit: 561defa636917144b95232b736838869ea7acb71
+- node: v24.21.0
+~~~
+
+ولما خطوة بعدها عملت [[cat "$GITHUB_STEP_SUMMARY"]] طلع فاضي: كل step ليها ملف ملخص جديد، و GitHub بيجمعهم كلهم في الصفحة في الآخر.
+
+---
+
+## الخلاصة
+
+- [[uses: صاحب/اسم@نسخة]]: شغّل action جاهزة، و [[with:]] إعداداتها.
+- [[run:]]: أمر bash (أو PowerShell على ويندوز).
+- [[run: |]]: سكربت بأكتر من سطر، كله في شيل واحد، وبيقف عند أول أمر يفشل.
+- [[name:]]: اسم الخطوة في اللوج.
+- [[$GITHUB_STEP_SUMMARY]]: ملف، اللي تكتبه فيه يظهر في صفحة الـ run.`,
           lines: [
             "action جاهزة: هات الكود.",
             "action جاهزة: Node.",
@@ -269,6 +665,100 @@ gh run rerun 1234567890 --failed`,
             when: "بعد كل push. ولما run يفشل. وفي سكربتات الأتمتة.",
             mistakes: "تشغّله بره فولدر الـ repo فيقولك مش عارف أنهي repo. [[-R user/repo]] بيحدده."
           },
+          teach: R`## الفكرة: نفس تاب Actions، بس في الترمنال
+
+[[gh]] برنامج GitHub الرسمي للترمنال. كل أمر في المثال شكله [[gh <حاجة> <فعل>]]: [[gh run list]] يعني «الـ runs، اعرضهم»، و [[gh workflow run]] يعني «الـ workflow، شغّله». الأوامر اللي بتقرا بس اتشغّلت هنا بـ gh 2.97.0 على الـ repo بتاع الموقع ده نفسه، واللي بتغيّر حاجة على GitHub (تشغيل وإعادة) مكتوبة من الـ docs.
+
+---
+
+## ١. [[gh auth login]]
+
+بتعملها مرة واحدة على الجهاز. بتسألك كام سؤال (GitHub.com ولا Enterprise، و HTTPS ولا SSH) وبتفتح المتصفح تأكد الدخول. بعدها [[gh auth status]] بيقولك انت داخل بأنهي حساب:
+
+~~~text الناتج
+github.com
+  ✓ Logged in to github.com account ali (keyring)
+  - Active account: true
+  - Git operations protocol: https
+~~~
+
+[[keyring]] يعني التوكن محفوظ في خزنة الباسوردات بتاعة النظام، مش في ملف نص.
+
+---
+
+## ٢. [[gh run list --limit 5]]
+
+[[run]] هو التشغيل الواحد للـ workflow. [[list]] اعرض، و [[--limit 5]] آخر ٥ بس (الافتراضي ٢٠). ده ناتج آخر ٣:
+
+~~~text الناتج
+STATUS  TITLE                       WORKFLOW  BRANCH  EVENT  ID           ELAPSED  AGE
+✓       Partial teach sections ...  check     main    push   37475231398  20s      about 2 hours ago
+✓       Rebuild dist                check     main    push   37472374306  18s      about 3 hours ago
+✓       Rebuild dist                check     main    push   37471970689  18s      about 3 hours ago
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[STATUS]] | [[✓]] نجح، [[X]] فشل، ودايرة لو لسه شغال |
+| [[TITLE]] | رسالة الـ commit اللي شغّلته |
+| [[WORKFLOW]] | اسم الـ workflow ([[name:]] في الملف) |
+| [[BRANCH]] و [[EVENT]] | على أنهي branch، وإيه اللي شغّله (push، pull_request...) |
+| [[ID]] | رقم الـ run. ده اللي بتديه للأوامر التانية |
+| [[ELAPSED]] و [[AGE]] | خد قد إيه، واتعمل من قد إيه |
+
+> لو بعت الناتج لأمر تاني ([[| grep]] مثلًا) [[gh]] بيشيل العناوين ويفصل الأعمدة بـ Tab عشان يبقى سهل تقطّعه.
+
+---
+
+## ٣. [[gh run view --log-failed]]
+
+[[view]] اعرض run واحد. من غير رقم بيسألك تختار من قايمة. و [[--log-failed]] اطبع لوج الـ steps اللي فشلت بس. هنشوف ناتجه الحقيقي في الدرس الجاي.
+
+---
+
+## ٤. [[gh run watch]]
+
+بيعرض الـ run الشغال دلوقتي ويحدّث الشاشة كل كام ثانية لحد ما يخلص (من الـ docs). مفيد بعد [[git push]] على طول: تفضل في الترمنال وتعرف النتيجة.
+
+---
+
+## ٥. [[gh workflow run deploy.yml -f env=staging]]
+
+- [[workflow run]] شغّل workflow بإيدك، زي زرار Run workflow. الملف لازم يكون فيه [[workflow_dispatch:]].
+- [[deploy.yml]] اسم الملف (أو اسم الـ workflow).
+- [[-f env=staging]] ([[-f]] من field): قيمة للـ input اللي اسمه [[env]]. لو فيه أكتر من input تكرر [[-f]].
+
+---
+
+## ٦. [[gh run rerun 1234567890 --failed]]
+
+- [[rerun]] أعد تشغيل run قديم. و [[1234567890]] الـ ID من [[run list]].
+- [[--failed]] أعد الـ jobs اللي فشلت بس، مش الكل، فبتوفّر دقايق.
+
+---
+
+## ٧. لو شغّلته بره الـ repo
+
+[[gh]] بيعرف الـ repo من فولدر git اللي انت واقف فيه (من الـ remote). بره أي repo:
+
+~~~text الناتج
+failed to determine base repo: failed to run git: fatal: not a git repository (or any of the parent directories): .git
+~~~
+
+الحل: ادخل فولدر الـ repo، أو حدده بـ [[-R user/repo]] في أي أمر.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[gh auth login]] | دخول مرة واحدة |
+| [[gh run list --limit 5]] | آخر الـ runs بحالتها والـ ID |
+| [[gh run view --log-failed]] | لوج الخطوات الفاشلة بس |
+| [[gh run watch]] | تابع run شغال |
+| [[gh workflow run X -f k=v]] | شغّل workflow يدوي بقيم |
+| [[gh run rerun ID --failed]] | أعد الـ jobs الفاشلة |`,
           lines: [
             "سجّل دخول مرة (بيفتح المتصفح).",
             "آخر ٥ runs.",
@@ -308,6 +798,90 @@ gh run download 1234567890`,
             when: "كل run أحمر. ومتعملش rerun قبل ما تقرا.",
             mistakes: "rerun ٣ مرات وتفتكر flaky. الفشل المتكرر ليه سبب. و«شغال على جهازي» مش تشخيص."
           },
+          teach: R`## الفكرة: من «الـ run أحمر» لـ «السطر ده هو السبب»
+
+الترتيب دايمًا واحد: أنهي run فشل؟ جواه أنهي job؟ وجوه الـ job أنهي step؟ وآخر سطور الـ step دي فيها السبب. الأوامر الأربعة بتمشي معاك بالترتيب ده. كلهم اتشغّلوا هنا على الـ repo بتاع الموقع ده نفسه (قراية بس)، وعلى run فشل فعلًا يوم ٣٠ سبتمبر.
+
+---
+
+## ١. [[gh run list --status failure --limit 3]]
+
+[[--status failure]] فلتر: الـ runs اللي فشلت بس.
+
+~~~text الناتج (متقصّر. لما يتبعت لـ pipe بيطلع من غير عناوين)
+completed  failure  Wire in the market and English tabs; add 121...  check  main-p1yvze  push          36672347634  18s  2026-09-30T05:12:26Z
+completed  failure  Fill the full-stack gaps: basics, empty levels...  check  main-p1yvze  pull_request  36644188848  9s   2026-09-29T23:15:13Z
+completed  failure  Point two lesson references at the lessons'...     check  main-p1yvze  push          36644183040  9s   2026-09-29T23:15:10Z
+~~~
+
+أول عمودين: [[completed]] يعني الـ run خلص، و [[failure]] النتيجة. والرقم الطويل هو الـ ID اللي هنستخدمه.
+
+---
+
+## ٢. [[gh run view ID --log-failed | tail -40]]
+
+- [[--log-failed]]: لوج الـ steps الفاشلة بس.
+- [[| tail -40]]: ابعت الناتج لـ [[tail]] اللي بيطبع آخر ٤٠ سطر. ليه الآخر؟ لأن الأداة اللي فشلت بتطبع السبب قبل ما تقفل على طول.
+
+ده جزء من الناتج الحقيقي:
+
+~~~text الناتج (متقصّر)
+check  UNKNOWN STEP  2026-09-30T05:12:40.1738066Z +          ]
+check  UNKNOWN STEP  2026-09-30T05:12:40.1755991Z ##[error]شغّل npm run build واعمل commit للـ dist
+check  UNKNOWN STEP  2026-09-30T05:12:40.1765168Z ##[error]Process completed with exit code 1.
+check  UNKNOWN STEP  2026-09-30T05:12:40.1893436Z Post job cleanup.
+~~~
+
+نقرا السطر:
+
+| الجزء | معناه |
+|---|---|
+| [[check]] | اسم الـ job |
+| [[UNKNOWN STEP]] | المفروض اسم الـ step، بس [[gh]] أحيانًا مبيعرفوش ويكتب كده. ادخل بـ [[gh run view ID]] من غير log تشوف أسامي الـ steps |
+| [[2026-09-30T05:12:40...Z]] | الوقت بتوقيت UTC ([[Z]]) |
+| الباقي | السطر نفسه من اللوج |
+
+والسطور اللي تهمك:
+- [[##[error]...]] رسالة error. الأولى هنا رسالة كتبها الـ workflow نفسه بـ [[::error::]] (درس «::error::»)، وبتقول الإصلاح بالظبط.
+- [[Process completed with exit code 1.]] الـ step رجعت 1، فاتعلّمت فاشلة.
+- السطر اللي فيه [[+          ]]]: آخر سطر من [[git diff]] اللي كان بيطبع الفرق.
+- [[Post job cleanup.]] وما بعدها: GitHub بينضّف، مش جزء من المشكلة.
+
+---
+
+## ٣. [[gh run view ID --json jobs -q '.jobs[] | {name, conclusion}']]
+
+- [[--json jobs]]: اطبع بيانات الـ jobs كـ JSON بدل الكلام.
+- [[-q]] (من query): فلتر بلغة jq جوه [[gh]] نفسه. [[.jobs[]]] كل job في القايمة، و [[{name, conclusion}]] خد منه الاسم والنتيجة بس.
+
+~~~text الناتج
+{"conclusion":"failure","name":"check"}
+~~~
+
+هنا job واحد. لكن في matrix فيها ٤ jobs هتشوف ٤ سطور، وتعرف على طول أنهي تركيبة بالظبط اللي فشلت.
+
+---
+
+## ٤. [[gh run download ID]]
+
+بينزّل الـ artifacts بتاعة الـ run (ملفات الـ workflow رفعها بـ [[upload-artifact]]، زي screenshots اختبار فشل) في الفولدر اللي انت فيه. على run مفيهوش artifacts:
+
+~~~text الناتج
+no valid artifacts found to download
+~~~
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر |
+|---|---|
+| أنهي run فشل؟ | [[gh run list --status failure]] |
+| أنهي job؟ | [[gh run view ID --json jobs -q ...]] |
+| ليه؟ | [[gh run view ID --log-failed]] وآخر ٤٠ سطر، ودوّر على [[##[error]]] |
+| عايز الملفات اللي طلعت؟ | [[gh run download ID]] |
+
+> اقرا قبل ما تعمل Re-run. الفشل اللي بيتكرر ليه سبب في السطور دي.`,
           lines: [
             "آخر ٣ runs فاشلة.",
             "آخر ٤٠ سطر من الـ steps الفاشلة في run معين.",
@@ -319,703 +893,6 @@ gh run download 1234567890`,
 ١. نسخة Node: [[node -v]] عندك قدام الرقم في step الـ [[Setup node]] في اللوج (بيكتب النسخة اللي نزّلها). لو مختلفين، حط [[node-version-file: .nvmrc]] عشان الاتنين يقروا من نفس المكان. ٢. المتغيرات: كل اسم في [[.env]] عندك لازم يبقى له secret أو env في الـ workflow. المتغير الناقص بيبقى فاضي، والغلط بيطلع على شكل [[undefined]] أو [[Invalid URL]] أو [[DATABASE_URL is not set]]. ٣. فروق البيئة: الـ runner لينكس فأسماء الملفات case-sensitive ([[import "./button"]] بيشتغل على ويندوز وماك ويفشل هنا لو الملف [[Button.tsx]])، والوقت UTC، ومفيش قاعدة بيانات ولا خدمات إلا لو عملتها بـ services. ٤. [[npm ci]] أصرم من [[npm install]]: لو package.json و package-lock.json مش متطابقين هيقولك [[npm ci can only install packages when your package.json and package-lock.json are in sync]].
 
 وأسهل طريقة تتأكد: شغّل نفس أوامر الـ CI عندك بالظبط ([[rm -rf node_modules && npm ci && npm test]]). الغلط الشائع إنك تعمل «Re-run» كذا مرة على أمل إنه ينجح؛ دا بيشتغل بس مع الاختبارات الـ flaky، وساعتها المشكلة في الاختبار نفسه.`
-        }
-      ]
-    },
-    {
-      t: "CI حقيقي",
-      l: 2,
-      n: "أسرار، وقاعدة بيانات في الاختبار، وكاش، و jobs بتعتمد على بعض",
-      items: [
-        {
-          cmd: "secrets و env",
-          title: "الأسرار متتكتبش في الملف",
-          desc: "الـ workflow ملف في Git، فأي سر فيه مكشوف. الأسرار بتتحط في Settings ثم Secrets، وبتتقري بـ [[secrets.NAME]]، و GitHub بيخبّيها في اللوج. و [[GITHUB_TOKEN]] موجود لوحده بصلاحيات على الـ repo ده.",
-          example: R`env:
-  NODE_ENV: test
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    env:
-      DATABASE_URL: $__{{ secrets.TEST_DATABASE_URL }}
-    steps:
-      - run: echo "$DATABASE_URL" | sed 's/:[^:@]*@/:***@/'
-      - run: npm test
-        env:
-          JWT_SECRET: $__{{ secrets.JWT_SECRET }}
-      - run: gh api repos/$__{{ github.repository }}/issues --jq '.[0].title'
-        env:
-          GH_TOKEN: $__{{ secrets.GITHUB_TOKEN }}`,
-          try: "ضيف secret اسمه TEST_VALUE، واطبعه في step: هتلاقيه [[***]] في اللوج.",
-          flag: "script",
-          deep: {
-            why: "الـ workflow في Git، وأي حد يقدر يقرا الـ repo (أو الـ fork) يشوفه. الباسوردات والمفاتيح لازم تبقى في مكان GitHub بيحميه.",
-            how: R`Settings ثم Secrets and variables ثم Actions. [[Secrets]] مشفّرة ومش بتتقري تاني بعد الحفظ، و GitHub بيبدّل قيمتها بـ [[***]] لو ظهرت في اللوج. [[Variables]] للقيم مش السرية (URL، اسم بيئة) وبتتقري بـ [[vars.NAME]].
-
-[[env]] على مستوى الـ workflow بيتطبق على كل حاجة، وعلى مستوى job على الـ job، وعلى step على الـ step بس. الأضيق بيكسب.
-
-[[secrets.GITHUB_TOKEN]] موجود لوحده في كل run: توكن مؤقت بصلاحيات على الـ repo ده (قراية الكود، كتابة packages، تعليق على PR). بينتهي مع الـ run. وصلاحياته بتتحدد بـ [[permissions]].
-
-الـ secrets مش بتوصل للـ workflows اللي بتشتغل من PR جاي من fork (حماية)، فاختبارات الـ PRs الخارجية مش هتلاقيها.
-
-والـ [[sed]] في المثال بيوريك إزاي تطبع URL بباسورد مخفي للتشخيص.
-
-وحاجة مهمة: لو سر اتسرب في اللوج مرة (طبعته بـ base64 مثلًا، GitHub مش هيمسكه)، غيّره.`,
-            when: "أي قيمة سرية. والـ Variables لكل حاجة بتختلف بين staging والإنتاج.",
-            mistakes: "تطبع secret بطريقة ملتوية عشان تشوفه فيتسرب. وتحط سر في env على مستوى الـ workflow وهو محتاج في step واحدة."
-          },
-          lines: [
-            "متغير لكل الـ workflow.",
-            "قيمته.",
-            "المهام.",
-            "مهمة.",
-            "ماكينة.",
-            "متغيرات الـ job ده.",
-            "سر من إعدادات الـ repo (بيظهر *** في اللوج).",
-            "الخطوات.",
-            "اطبع الـ URL بباسورد مخفي (للتشخيص).",
-            "الاختبارات.",
-            "متغير للـ step دي بس.",
-            "سر تاني.",
-            "استخدم GitHub API.",
-            "متغير للـ step.",
-            "التوكن الجاهز بتاع الـ run."
-          ],
-          sol: R`الـ step اللي بتطبع [[echo "value: $TEST_VALUE"]] هتطلّع في اللوج [[value: ***]]. GitHub بيدوّر على قيمة أي secret في اللوج ويستبدلها بـ [[***]]. و [[echo "length: $__{#TEST_VALUE}"]] بيطبع الطول الحقيقي (مثلًا [[length: 11]])، ودي طريقة آمنة تتأكد إن الـ secret وصل من غير ما تطبعه.
-
-لو طلع [[value: ]] فاضي و [[length: 0]]: اسم الـ secret مختلف (الأسماء بتتحول لـ uppercase، فـ [[secrets.TEST_VALUE]] لازم يطابق)، أو حاطط الـ secret في environment والـ job مش عامل [[environment:]]، أو الـ run جاي من pull request من fork، ودي الـ secrets مش بتتبعتلها أصلًا.
-
-والإخفاء مش حماية كاملة: لو طبعت الـ secret بعد تحويله ([[base64]] أو [[rev]] أو حرف حرف) هيظهر عادي. الإخفاء بيحميك من الغلطة، مش من حد عايز يسرّب.`,
-          solCode: R`jobs:
-  show:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "value: $TEST_VALUE"
-          echo "length: $__{#TEST_VALUE}"
-        env:
-          TEST_VALUE: $__{{ secrets.TEST_VALUE }}`
-        },
-        {
-          cmd: "base64 -d",
-          title: "ملف كامل جوه secret",
-          desc: "الـ secrets نص بس، بس أحيانًا محتاج ملف: مفتاح توقيع أندرويد (keystore)، أو شهادة .p12. الحل: تحوّل الملف لنص base64 على جهازك، تحطه في secret، وفي الـ workflow ترجّعه ملف بـ [[base64 -d]] في فولدر مؤقت.",
-          example: R`# على جهازك مرة واحدة (لينكس أو WSL أو Git Bash):
-base64 -w0 release.p12 > keystore.b64
-gh secret set ANDROID_KEYSTORE_BASE64 < keystore.b64
-rm keystore.b64
-# في الـ workflow:
-- name: Restore keystore
-  env:
-    KEYSTORE_BASE64: $__{{ secrets.ANDROID_KEYSTORE_BASE64 }}
-  run: |
-    echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.p12"
-    echo "RELEASE_KEYSTORE_FILE=$RUNNER_TEMP/release.p12" >> "$GITHUB_ENV"`,
-          try: "اعمل ملف صغير فيه أي كلام، حوّله base64 وحطه في secret بـ [[gh secret set]]، وفي workflow رجّعه واطبع [[sha256sum]] بتاعه وقارنه بالأصل.",
-          flag: "script",
-          deep: {
-            why: "مفتاح التوقيع لازم يبقى في الـ CI عشان يطلع APK موقّع، ومينفعش يبقى في الـ repo. والـ secret مش بيقبل ملفات، فبنحوّل الملف لنص ونرجّعه.",
-            how: R`[[base64 -w0]] بيحوّل أي ملف (حتى binary) لسطر نص واحد من حروف وأرقام. [[-w0]] يعني متكسّرش السطر. على الماك: [[base64 -i release.p12]]. وعلى PowerShell: [[[Convert]::ToBase64String([IO.File]::ReadAllBytes("release.p12"))]].
-
-[[gh secret set NAME < file]] بيرفع المحتوى كـ secret من غير ما تلزقه بإيدك في المتصفح (اللزق بإيدك ساعات بيزوّد مسافة أو سطر).
-
-في الـ workflow: الـ secret بيدخل كمتغير بيئة، و [[base64 -d]] بيرجّعه ملف. [[$RUNNER_TEMP]] فولدر مؤقت بيتمسح مع نهاية الـ job، فالمفتاح مش بيفضل في أي مكان.
-
-والسطر الأخير بيحط مسار الملف في [[$GITHUB_ENV]]، فالـ steps اللي بعدها (Gradle مثلًا) تلاقيه في متغير [[RELEASE_KEYSTORE_FILE]].
-
-حد الـ secret الواحد ٤٨ كيلو، والـ keystore عادة ٢ أو ٣ كيلو فمفيش مشكلة. والباسورد بتاعه في secret تاني منفصل.`,
-            when: "أي ملف سري محتاجه الـ build: keystore أندرويد، شهادة توقيع ويندوز، ملف service account.",
-            mistakes: R`[[certutil -encode]] على ويندوز بيضيف سطور BEGIN و END فالـ decode يطلع ملف بايظ. وفي مشروع حقيقي كان الـ workflow بيقول «لو الـ secret فاضي ابني debug»: الـ secret اتمسح مرة، والـ build نجح أخضر بس طلّع APK مش موقّع بالمفتاح الأصلي، فمكانش بيتسطّب كتحديث فوق النسخة اللي عند الناس. لو الإصدار لازم يبقى موقّع، افشل بـ [[::error::]] بدل ما تكمّل بهدوء.`
-          },
-          lines: [
-            "حوّل الملف لسطر base64 واحد.",
-            "ارفعه secret من الترمنال.",
-            "امسح النسخة النصية.",
-            "step باسم واضح.",
-            "متغيراتها.",
-            "الـ secret كمتغير بيئة.",
-            "أوامر.",
-            "رجّعه ملف في الفولدر المؤقت.",
-            "وخلّي مساره متاح للـ steps الجاية."
-          ],
-          sol: R`على جهازك: ملف فيه [[hello from terminal-study]] بيتحول لـ [[aGVsbG8gZnJvbSB0ZXJtaW5hbC1zdHVkeQo=]] و [[sha256sum note.txt]] بيطلّع [[ef14986c004127fe5bc10638ba798128dd8f9460b4286d7a97d9338e7113ef52]]. في الـ workflow بعد [[base64 -d]] نفس الـ hash بالظبط بيطلع قدام [[.../note.txt]]، ودا معناه إن الملف رجع byte by byte.
-
-لو الـ hash مختلف: غالبًا عملت [[base64]] من غير [[-w0]] ونسخت الناتج بإيدك فالـ line breaks اتلخبطت، أو استخدمت [[echo]] في ويندوز PowerShell فاتضاف BOM أو CRLF. ولو [[base64: invalid input]] يبقى الـ secret فيه حاجة زيادة (مسافة أو اقتباس). وأمان أكتر: خلي [[gh secret set NAME < file.b64]] يقرا من الملف بدل ما تلزق القيمة.`,
-          solCode: R`# على جهازك
-echo "hello from terminal-study" > note.txt
-sha256sum note.txt
-base64 -w0 note.txt > note.b64
-gh secret set NOTE_B64 < note.b64
-rm note.b64
-
-# .github/workflows/b64.yml
-name: B64
-on: [workflow_dispatch]
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Restore file
-        env:
-          NOTE_B64: $__{{ secrets.NOTE_B64 }}
-        run: |
-          echo "$NOTE_B64" | base64 -d > "$RUNNER_TEMP/note.txt"
-          sha256sum "$RUNNER_TEMP/note.txt"`
-        },
-        {
-          cmd: "matrix",
-          title: "نفس الاختبار على كذا نسخة",
-          desc: R`الـ matrix بيخلي job واحد يتكرر تلقائي على كذا قيمة بالتوازي، بدل ما تكتبه كذا مرة. هنا [[matrix]] فيه قايمتين: [[node: [22, 24]]] و [[os: [ubuntu-latest, windows-latest]]]، و GitHub بيعمل job لكل تركيبة، يعني 4 jobs.
-
-جوه الـ job بتوصل للقيمة الحالية بـ [[matrix.node]] و [[matrix.os]] جوه [[$__{{ }}]]: [[runs-on]] بياخد نظام التشغيل، و [[node-version]] في setup-node بياخد نسخة Node. [[strategy]] هو المكان اللي بيتكتب فيه الـ matrix. و [[fail-fast]] افتراضيًا true، يعني أول job يفشل الباقي يتلغي؛ [[false]] بتخلي الكل يكمّل فتعرف الفشل في نسخة واحدة ولا في كله.
-
-خد بالك إن كل job بياكل من دقايق الـ CI بتاعتك: 4 jobs في 3 دقايق يبقوا 12 دقيقة. ده مهم لمكتبة لازم تشتغل في كل مكان، أما تطبيق بيشتغل على نسخة واحدة في الإنتاج فاختبار واحد كفاية.`,
-          example: R`jobs:
-  test:
-    runs-on: $__{{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [22, 24]
-        os: [ubuntu-latest, windows-latest]
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: $__{{ matrix.node }}
-      - run: npm ci
-      - run: npm test`,
-          try: "المصفوفة دي بتعمل ٤ jobs. شوفهم في صفحة الـ run جنب بعض.",
-          flag: "script",
-          deep: {
-            why: "مكتبة بتنشرها لازم تشتغل على كذا نسخة Node. تطبيق فريقه على ويندوز وماك. بدل ٤ ملفات، matrix واحدة.",
-            how: R`[[strategy.matrix]] بياخد قوايم، وبيعمل job لكل تركيبة ممكنة: node 22 و 24 مع ubuntu و windows = ٤ jobs. كل job بتشوف قيمها في [[matrix.node]] و [[matrix.os]].
-
-[[fail-fast: true]] (الافتراضي): أول job تفشل، الباقي بيتلغي. مفيد توفّر دقايق. [[false]]: الكل يكمّل، فتعرف الفشل على نسخة واحدة ولا كلهم.
-
-[[include]] بيضيف تركيبة معينة بإعدادات إضافية، و [[exclude]] بيشيل تركيبة (زي windows مع node 22).
-
-[[max-parallel]] بيحدد كام job في نفس الوقت (الحساب المجاني ليه حد).
-
-الـ matrix بتضرب في وقت CI: ٤ jobs × ٣ دقايق = ١٢ دقيقة من رصيدك. للتطبيق (مش مكتبة)، نسخة واحدة هي اللي في الإنتاج كفاية.`,
-            when: "مكتبات. وتطبيق فيه كود يعتمد على النظام.",
-            mistakes: "matrix كبيرة لتطبيق عادي، فالـ CI بطيء ورصيد الدقايق بيخلص."
-          },
-          lines: [
-            "المهام.",
-            "مهمة.",
-            "نظام التشغيل من المصفوفة.",
-            "استراتيجية التشغيل.",
-            "لو واحد فشل، الباقي يكمّل.",
-            "المصفوفة.",
-            "نسختين Node.",
-            "نظامين. المجموع ٤ jobs.",
-            "الخطوات.",
-            "الكود.",
-            "Node.",
-            "إعداداته.",
-            "النسخة من المصفوفة.",
-            "سطّب.",
-            "اختبر."
-          ],
-          sol: R`صفحة الـ run هتعرض ٤ jobs بأسماء زي [[test (22, ubuntu-latest)]] و [[test (22, windows-latest)]] و [[test (24, ubuntu-latest)]] و [[test (24, windows-latest)]]، شغالين في نفس الوقت. الويندوز غالبًا أبطأ بدقيقة أو اتنين.
-
-الفايدة الحقيقية تظهر لما واحد بس يفشل، مثلًا ويندوز بسبب مسار مكتوب بـ [[/]] أو script في package.json بيستخدم [[rm -rf]]. ساعتها تعرف إن المشكلة في النظام مش في الكود. ومع [[fail-fast: false]] الباقيين بيكمّلوا، ولو شلتها أول فشل يلغي الباقي فتشوف [[The operation was canceled.]] على jobs ممكن كانت هتنجح.
-
-ولو اتعمل job واحد بس، راجع إن [[node]] و [[os]] تحت [[matrix:]] مش تحت [[strategy:]] مباشرة، وإن [[runs-on]] مكتوب [[$__{{ matrix.os }}]].`
-        },
-        {
-          cmd: "services",
-          title: "قاعدة بيانات للاختبارات",
-          desc: "الاختبارات محتاجة Postgres. [[services]] بيشغّل container جنب الـ job، والـ healthcheck بيخلي الـ steps تستنى لحد ما القاعدة تبقى جاهزة. الـ job بيوصلها على localhost.",
-          example: R`jobs:
-  test:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: app_test
-        ports: ['5432:5432']
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-retries 10
-    env:
-      DATABASE_URL: postgres://postgres:test@localhost:5432/app_test
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with: { node-version: 24, cache: npm }
-      - run: npm ci
-      - run: npx prisma migrate deploy
-      - run: npm test`,
-          try: "شغّل migrations على القاعدة دي قبل الاختبارات. لو migration فشلت في CI، هتعرف قبل الإنتاج.",
-          flag: "script",
-          deep: {
-            why: "اختبارات الـ API محتاجة قاعدة حقيقية، مش mock. و mocking قاعدة البيانات بيخبّي أخطاء SQL و migrations.",
-            how: R`[[services]] بيشغّل containers جنب الـ job قبل الـ steps، وبيقفلها في الآخر. كل خدمة بـ image و env و ports زي docker run.
-
-[[options]] بتاخد flags لـ docker: الـ healthcheck هنا مهم جدًا. Postgres بياخد ثواني يقوم، ومن غير health، أول step ممكن تحاول تتصل قبل ما يبقى جاهز وتفشل. GitHub بيستنى الـ service تبقى healthy قبل ما يبدأ الـ steps.
-
-[[>-]] في YAML: النص اللي بعده سطور مدمجة في سطر واحد (folded).
-
-من جوه الـ steps (اللي بتشتغل على الـ runner مباشرة)، الخدمة على [[localhost:5432]] لأن البورت مربوط. لو الـ job نفسه بيشتغل في container، بتوصلها باسمها [[postgres]].
-
-[[prisma migrate deploy]] قبل الاختبارات بيطبّق الـ schema على القاعدة الفاضية. ودي فايدة إضافية: الـ migrations بتتجرّب من الصفر في كل run.
-
-نفس الفكرة لـ Redis أو أي خدمة.`,
-            when: "أي اختبارات integration بتلمس قاعدة بيانات.",
-            mistakes: "نسيان healthcheck فالاختبارات تفشل أحيانًا بـ ECONNREFUSED (flaky). واستخدام قاعدة الإنتاج أو staging في CI."
-          },
-          lines: [
-            "المهام.",
-            "مهمة.",
-            "ماكينة.",
-            "خدمات جانبية.",
-            "اسمها postgres.",
-            "الصورة.",
-            "متغيراتها.",
-            "باسورد.",
-            "قاعدة تتعمل أول مرة.",
-            "اربط البورت على الـ runner.",
-            "flags لـ docker run (مدمجة في سطر).",
-            "فحص الجاهزية...",
-            "...كل ٥ ثواني...",
-            "...١٠ محاولات. الـ steps مش هتبدأ قبل ما تنجح.",
-            "متغيرات الـ job.",
-            "الاتصال بالقاعدة على localhost.",
-            "الخطوات.",
-            "الكود.",
-            "Node.",
-            "إعداداته في سطر.",
-            "سطّب.",
-            "طبّق الـ migrations على القاعدة الفاضية.",
-            "اختبر."
-          ],
-          sol: R`الحل: step [[npx prisma migrate deploy]] قبل [[npm test]] (زي المثال). لو كله سليم هتشوف في اللوج أسماء الـ migrations اللي اتطبقت و [[All migrations have been successfully applied.]]. وفي بداية الـ job step اسمها [[Initialize containers]] بتستنى الـ health check قبل ما تكمّل.
-
-لو في migration غلط (مثلًا [[ALTER TABLE]] على جدول مش موجود) هتفشل الـ step دي بالـ error بتاع Postgres ورقم الـ migration، والـ tests مش هتشتغل. ودا المطلوب: عرفت في الـ PR بدل ما تعرف في الإنتاج.
-
-أخطاء شائعة: [[Can't reach database server at localhost:5432]] يعني الـ [[ports]] مش موجودة، أو الـ job شغال جوه [[container:]] وساعتها الـ host يبقى اسم الـ service ([[postgres]]) مش localhost. ومن غير الـ [[--health-cmd]] الـ migrations ممكن تجري قبل ما Postgres يجهز فتفشل مرة وتنجح مرة.`,
-          solCode: R`    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with: { node-version: 24, cache: npm }
-      - run: npm ci
-      - run: npx prisma migrate deploy
-      - run: npm test`
-        },
-        {
-          cmd: "cache و artifacts",
-          title: "أسرع، واحتفظ بالناتج",
-          desc: "كل job ماكينة جديدة، فـ npm ci بيسطّب من الصفر. [[cache: npm]] في setup-node بيحفظ كاش npm بين الـ runs. و [[upload-artifact]] بيحفظ ملفات (build، تقارير، screenshots) تنزّلها من صفحة الـ run أو job تاني ياخدها.",
-          example: R`- uses: actions/cache@v6
-  with:
-    path: ~/.npm
-    key: npm-$__{{ hashFiles('package-lock.json') }}
-- run: npm run build
-- uses: actions/upload-artifact@v7
-  with:
-    name: dist
-    path: dist/
-    retention-days: 7
-- uses: actions/download-artifact@v8
-  with:
-    name: dist`,
-          try: "ارفع فولدر dist كـ artifact، وحمّله من صفحة الـ run: ده بالظبط اللي هيتعمله deploy.",
-          flag: "script",
-          deep: {
-            why: "npm ci من الصفر بياخد دقيقة أو اتنين في كل run. والـ build اللي عملته في job محتاجه في job تاني على ماكينة تانية.",
-            how: R`الكاش: [[actions/cache]] بيحفظ فولدر بمفتاح، وفي الـ run الجاي لو المفتاح موجود بيرجّعه. المفتاح هنا فيه [[hashFiles('package-lock.json')]]: لو الـ lock اتغير، مفتاح جديد وكاش جديد. [[restore-keys]] بيسمح بكاش قريب لو المطابق مش موجود.
-
-[[setup-node]] بـ [[cache: npm]] بيعمل ده لوحده لـ [[~/.npm]]، فمش محتاج actions/cache غالبًا. الكاش بيسرّع التنزيل، بس npm ci لسه بيفك ويسطّب.
-
-الـ artifacts: [[upload-artifact]] بيرفع ملفات لصفحة الـ run، تنزّلها من الواجهة أو [[gh run download]]. [[download-artifact]] في job تاني بينزّلها (لازم needs على الأول). [[retention-days]] بعدها بتتمسح (الافتراضي ٩٠ يوم وبتاكل من مساحة الحساب).
-
-استخدامات: ناتج build يتعمله deploy في job منفصل، وتقارير اختبار، و screenshots من Playwright لما اختبار يفشل، و coverage.
-
-الكاش بحد ١٠ جيجا للـ repo، والأقدم بيتمسح لوحده.`,
-            when: "cache دايمًا. artifacts لأي ناتج محتاج يعدّي بين jobs أو تشوفه بعدين.",
-            mistakes: "تعمل cache لـ node_modules نفسه بدل ~/.npm: بيتكسر مع تغيير نسخة Node أو النظام."
-          },
-          lines: [
-            "كاش يدوي.",
-            "إعداداته.",
-            "الفولدر اللي يتحفظ.",
-            "المفتاح: بيتغير لما الـ lock يتغير.",
-            "ابني.",
-            "ارفع ناتج الـ build لصفحة الـ run.",
-            "إعداداته.",
-            "اسم الـ artifact.",
-            "الفولدر.",
-            "يتمسح بعد أسبوع.",
-            "في job تاني: نزّله.",
-            "إعداداته.",
-            "بنفس الاسم."
-          ],
-          sol: R`بعد ما الـ run يخلص، انزل لآخر صفحة الـ Summary: هتلاقي قسم [[Artifacts]] فيه [[dist]] وحجمه. بتدوس عليه بينزل [[dist.zip]]، وجواه محتوى فولدر dist (الـ index.html والـ assets). دا نفس اللي هيتنشر، فافتحه وجرّبه لو محتاج.
-
-ولو ضفت [[actions/cache]]: أول run مكتوب فيه [[Cache not found for input keys: npm-...]]، والتاني [[Cache restored from key: npm-...]]، و [[npm ci]] بقى أسرع.
-
-أخطاء شائعة: [[No files were found with the provided path: dist/]] يعني الـ build طلّع في فولدر تاني ([[build]] أو [[out]]) أو الـ build نفسه فشل بصمت. و [[download-artifact]] في نفس الـ job مالوش لازمة، بيتستخدم في job تانية عاملة [[needs]] على الأولى. والـ artifact بيتمسح بعد [[retention-days]]، فمينفعش يبقى هو الباك أب بتاعك.`
-        },
-        {
-          cmd: "GITHUB_ENV و GITHUB_OUTPUT",
-          title: "قيمة من step للي بعدها",
-          desc: "كل step بتشتغل في شيل جديد، فـ [[export]] مش بيعدّي. عشان تحسب قيمة في step وتستخدمها بعدها، اكتب [[NAME=value]] في الملف [[$GITHUB_ENV]] فتبقى متغير بيئة في كل الـ steps الجاية. أو في [[$GITHUB_OUTPUT]] وتقراها بـ [[steps.ID.outputs.NAME]].",
-          example: R`- name: Stamp build
-  run: |
-    echo "BUILD_TIME=$(date +%s)000" >> "$GITHUB_ENV"
-    echo "VERSION=$__{{ github.run_number }}-$__{GITHUB_SHA::7}" >> "$GITHUB_ENV"
-- run: echo "build $VERSION at $BUILD_TIME"
-- id: meta
-  run: echo "size=$(du -sh dist | cut -f1)" >> "$GITHUB_OUTPUT"
-- run: echo "dist is $__{{ steps.meta.outputs.size }}"`,
-          try: "اعمل step بتكتب [[VERSION]] في GITHUB_ENV، وجرّب تطبعه في نفس الـ step (هيطلع فاضي) وفي اللي بعدها (هيطلع).",
-          flag: "script",
-          deep: {
-            why: "محتاج رقم نسخة أو وقت build أو مسار ملف تحسبه مرة وتستخدمه في كذا step. ومتغيرات الشيل بتموت مع نهاية الـ step.",
-            how: R`[[$GITHUB_ENV]] مسار ملف. GitHub بيقراه بعد كل step، وأي سطر [[NAME=value]] فيه بيبقى متغير بيئة للـ steps اللي بعدها في نفس الـ job. مش في نفس الـ step: هناك استخدم متغير شيل عادي.
-
-[[github.run_number]] رقم بيزيد ١ مع كل run للـ workflow ده (1، 2، 3)، و [[$__{GITHUB_SHA::7}]] أول ٧ حروف من الـ commit (قص نص في bash). مع بعض بيعملوا نسخة مقروءة زي [[42-a1b2c3d]] تعرف منها الـ run والـ commit. وفي أندرويد الـ run_number بيتحط كـ versionCode لأنه بيزيد دايمًا.
-
-[[$GITHUB_OUTPUT]] نفس الفكرة بس للـ outputs: الـ step لازم يبقى ليها [[id]]، والقيمة بتتقري بـ [[steps.meta.outputs.size]]. الفرق: الـ output ليه اسم مربوط بالـ step، ويقدر يعدّي لـ job تاني: [[outputs: { size: $__{{ steps.meta.outputs.size }} }]] على مستوى الـ job، والـ job التاني يقراه بـ [[needs.build.outputs.size]].
-
-قيمة فيها أكتر من سطر محتاجة شكل خاص: [[NAME<<EOF]] وبعدين السطور وبعدين [[EOF]].
-
-الشكلين القديمين: [[::set-env]] اتقفل خالص، و [[::set-output]] deprecated وبيطلّع تحذير. لو شفتهم في workflow قديم استبدلهم بدول.`,
-            when: "رقم نسخة، ووقت build، ومسار ملف اتعمل، وأي حاجة step بتحسبها والباقي محتاجها.",
-            mistakes: "تستخدم المتغير في نفس الـ step اللي كتبته فيها فيطلع فاضي. و [[export VERSION=...]] وتستغرب إنه اختفى في الـ step الجاية. وقيمة فيها سطر جديد من غير شكل EOF فالملف يتلخبط."
-          },
-          lines: [
-            "step باسم واضح.",
-            "أوامر.",
-            "وقت الـ build بالمللي ثانية، متاح من الـ step الجاية.",
-            "نسخة مقروءة: رقم الـ run وأول ٧ حروف من الـ commit.",
-            "step بعدها: المتغيرات موجودة.",
-            "step ليها id...",
-            "...بتكتب output اسمه size.",
-            "اقرا الـ output بالـ id."
-          ],
-          sol: R`الناتج في اللوج: الـ step الأولى بتطبع [[same step: []]] فاضي، والتانية بتطبع [[next step [1.2.3]]].
-
-السبب إن [[GITHUB_ENV]] مجرد ملف. الـ runner بيقراه بعد ما الـ step تخلص ويضيف اللي فيه لبيئة الـ steps اللي بعدها. أما الـ shell الحالي فمعندوش فكرة إن حاجة اتكتبت في ملف. لو محتاج القيمة في نفس الـ step، اعملها متغير عادي كمان: [[VERSION=1.2.3; echo "VERSION=$VERSION" >> "$GITHUB_ENV"]].
-
-الغلط الشائع التاني: [[echo "VERSION = 1.2.3"]] بمسافات، فيبقى اسم المتغير [["VERSION "]] بمسافة. أو [[>]] بدل [[>>]] فتمسح اللي اتكتب قبله. وخلي بالك إن [[$__{{ env.VERSION }}]] بيتحسب قبل ما الـ step تبدأ، فهو كمان هيطلع فاضي في نفس الـ step.`,
-          solCode: R`steps:
-  - run: |
-      echo "VERSION=1.2.3" >> "$GITHUB_ENV"
-      echo "same step: [$VERSION]"
-  - run: echo "next step [$VERSION]"`
-        },
-        {
-          cmd: "::error::",
-          title: "رسالة واضحة بدل فشل غامض",
-          desc: "سطر بيبدأ بـ [[::error::]] في اللوج، GitHub بيحوّله لرسالة حمرا فوق في صفحة الـ run. فبدل ما الـ deploy يفشل بـ error مش مفهوم لأن secret ناقص، افحص في أول الـ job واطبع الإصلاح بالظبط، وبعدين [[exit 1]].",
-          example: R`- name: Check secrets
-  env:
-    SSH_KEY: $__{{ secrets.DEPLOY_SSH_KEY }}
-    SSH_HOST: $__{{ secrets.DEPLOY_HOST }}
-  run: |
-    if [ -z "$SSH_KEY" ] || [ -z "$SSH_HOST" ]; then
-      echo "::error::DEPLOY_SSH_KEY or DEPLOY_HOST is missing in Settings > Secrets"
-      exit 1
-    fi
-    echo "::notice::secrets OK"
-- run: |
-    echo "::group::installed packages"
-    npm ls --depth=0
-    echo "::endgroup::"`,
-          try: "شغّل الـ step دي على repo مفيهوش الـ secrets، وشوف الرسالة في Annotations فوق في صفحة الـ run.",
-          flag: "script",
-          deep: {
-            why: "secret ناقص مش بيطلع error: بيبقى نص فاضي، والفشل بيحصل بعدها بخطوات بـ رسالة زي Load key: invalid format. رسالة واحدة واضحة في الأول بتوفّر نص ساعة.",
-            how: R`دي اسمها workflow commands: سطور بتطبعها بشكل معين و GitHub بيفهمها.
-
-[[::error::رسالة]] بتظهر حمرا في Annotations في صفحة الـ run، و [[::warning::]] صفرا، و [[::notice::]] زرقا. ممكن تربطها بملف وسطر: [[::warning file=src/app.js,line=10::رسالة]] فتظهر على الكود نفسه في الـ PR.
-
-[[::error::]] لوحدها مش بتفشّل الـ step، هي بس بتعرض. الـ [[exit 1]] هو اللي بيوقف.
-
-[[-z "$VAR"]] صح لو المتغير فاضي، وده اللي بيحصل لو الـ secret مش موجود.
-
-[[::group::]] و [[::endgroup::]] بيطوّوا اللوج اللي بينهم تحت عنوان، فاللوج الطويل يبقى مقروء.
-
-و [[::add-mask::$VALUE]] بتخلي أي قيمة (مش secret) تتخبى بـ *** في باقي اللوج، زي توكن جبته من API.`,
-            when: "أول step في أي job بيعتمد على secrets. وأي سكربت فحص عايز رسالته تبان.",
-            mistakes: "تكتب [[::error::]] وتنسى [[exit 1]] فالـ job يكمّل. وفي مشروع حقيقي كان الـ deploy بيفشل بـ scp error غريب لحد ما اتضاف الفحص ده واتضح إن DEPLOY_HOST مش متسجّل في الـ repo الجديد."
-          },
-          lines: [
-            "step الفحص.",
-            "متغيراتها.",
-            "المفتاح من secret (فاضي لو مش موجود).",
-            "السيرفر من secret.",
-            "أوامر.",
-            "لو أي واحد فاضي...",
-            "...اطبع رسالة حمرا فوق في صفحة الـ run بالإصلاح...",
-            "...ووقّف الـ job.",
-            "نهاية الشرط.",
-            "رسالة زرقا إن كله تمام.",
-            "step تانية.",
-            "ابدأ مجموعة مطوية في اللوج.",
-            "لوج طويل جواها.",
-            "اقفل المجموعة."
-          ],
-          sol: R`الـ run هيبقى أحمر، وفوق في صفحة الـ Summary قسم [[Annotations]] فيه [[1 error]] وتحته اسم الـ job والرسالة: [[DEPLOY_SSH_KEY or DEPLOY_HOST is missing in Settings > Secrets]]. غالبًا هتلاقي جنبها annotation تانية [[Process completed with exit code 1.]]. وجوه اللوج نفسه السطر ده بيبان بالأحمر مكتوب [[Error:]] قبله.
-
-وعلى repo فيه الـ secrets الـ step بتنجح وبيظهر [[secrets OK]] كـ notice في نفس القسم. والـ [[::group::]] في اللوج بيبان كسطر واحد مقفول [[installed packages]] بتدوس عليه يفتح.
-
-لو الرسالة ظهرت في اللوج بس مش في Annotations: غالبًا فيه مسافة قبل [[::error::]] أو كتبتها [[:error:]] بنقطتين بس. الـ runner بيدوّر على السطر بيبدأ بـ [[::]] بالظبط. ولو الـ step نجحت رغم الرسالة، يبقى نسيت [[exit 1]]: الـ annotation لوحدها مش بتفشّل حاجة.`
-        },
-        {
-          cmd: "git diff --quiet",
-          title: "الملف المولَّد لسه متزامن؟",
-          desc: "فيه ملفات بتتولّد من حاجة تانية: أنواع TypeScript من schema القاعدة، أو client من OpenAPI. لو حد غيّر المصدر ونسي يولّد، الكود يبقى كداب. في CI: ولّد تاني، و [[git diff --quiet]] يقولك الملف اتغير ولا لأ. لو اتغير، يبقى اللي في الـ repo قديم، فافشل.",
-          example: R`- run: npm run types:generate
-- name: Types in sync?
-  run: |
-    if git diff --quiet lib/database.types.ts; then
-      echo "types in sync"
-    else
-      git diff lib/database.types.ts
-      echo "::error::run npm run types:generate and commit the result"
-      exit 1
-    fi`,
-          try: "في repo تجربة: غيّر ملف متولّد بإيدك واعمل push، وشوف الـ step بتفشل وبتطبع الفرق.",
-          flag: "script",
-          deep: {
-            why: "الـ schema اتغيرت بـ migration، والأنواع فضلت قديمة، و TypeScript مبسوط لأنه مصدّق الأنواع. النتيجة: خطأ في الإنتاج في عمود اسمه اتغير. الفحص ده بيمسكها في الـ PR.",
-            how: R`[[git diff --quiet FILE]] بيقارن الملف بآخر commit ومش بيطبع حاجة. بيرجع 0 لو زي ما هو، و 1 لو اتغير. فـ if بتفرّق بين الحالتين. ([[--exit-code]] نفس الفكرة بس بيطبع الفرق.)
-
-لو اتغير: [[git diff]] من غير quiet بيطبع الفرق في اللوج عشان تشوف إيه اللي ناقص، و [[::error::]] بتقول الإصلاح، و [[exit 1]].
-
-توليد الأنواع من القاعدة محتاج قاعدة: [[services: postgres]] وتطبّق الـ migrations عليها الأول، وبعدين تولّد. فالفحص ده بيختبر حاجتين: إن الـ migrations بتشتغل من الصفر، وإن الأنواع متزامنة معاها.
-
-وحط الـ workflow ده على [[paths]] بتاعة الـ migrations والـ API بس، عشان مايشتغلش مع كل تعديل CSS.
-
-نفس الفكرة لأي ملف متولد: [[npx prettier --check .]]، أو lock file (npm ci بيعمل ده لوحده).`,
-            when: "أي مشروع فيه ملف بيتولّد من مصدر تاني وبيتعمله commit.",
-            mistakes: "[[git diff]] مش بيشوف الملفات الجديدة اللي مش في Git، فلو التوليد عمل ملف جديد الفحص يعدّي. [[git status --porcelain]] بيشوفها. وملف اتولّد على ويندوز بـ CRLF فبيبان متغير دايمًا: [[.gitattributes]] فيه [[* text=auto eol=lf]]."
-          },
-          lines: [
-            "ولّد الأنواع من جديد.",
-            "step الفحص.",
-            "أوامر.",
-            "لو الملف زي اللي في الـ commit...",
-            "...تمام.",
-            "لو اتغير...",
-            "...اطبع الفرق...",
-            "...وقول الإصلاح...",
-            "...وافشل.",
-            "نهاية الشرط."
-          ],
-          sol: R`لما تعدّل الملف المتولّد بإيدك وتعمل push، الـ step [[Types in sync?]] بتفشل ويظهر في اللوج الـ diff بين اللي الـ generator طلّعه واللي في الـ commit، زي:
-
-[[-export type A = 1;]] و [[+export type A = 2;]]، وبعدها annotation حمرا [[run npm run types:generate and commit the result]]. الـ generator كتب فوق تعديلك، فبقى فيه فرق عن الـ commit.
-
-لو الـ step نجحت رغم إنك غيّرت: غالبًا الملف مش متتبّع في git أصلًا (جديد أو في [[.gitignore]])، و [[git diff]] مش بيشوف الملفات الـ untracked. جرّبت دا: ملف جديد مش متضاف [[git diff --quiet]] رجّع 0 كأنه مفيش فرق، بينما [[git status --porcelain]] بيطلّعه بـ [[??]]. لو عايز تغطي الحالة دي استخدم [[test -z "$(git status --porcelain lib/)"]].`
-        },
-        {
-          cmd: "needs و if و concurrency",
-          title: "الترتيب والشروط",
-          desc: "الـ jobs بتشتغل بالتوازي إلا لو [[needs]] قال واحد يستنى التاني. [[if]] بيشغّل step أو job بشرط (على main بس، أو لو اللي قبله فشل). [[concurrency]] بيلغي run قديم لو جه push جديد على نفس الـ branch. و [[timeout-minutes]] عشان job معلّق ميفضلش ساعات.",
-          example: R`concurrency:
-  group: $__{{ github.workflow }}-$__{{ github.ref }}
-  cancel-in-progress: true
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps: [ { uses: actions/checkout@v7 }, { run: npm ci }, { run: npm test } ]
-  deploy:
-    needs: test
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "deploying"
-      - if: failure()
-        run: echo "deploy failed, alerting"`,
-          try: "اعمل push مرتين ورا بعض بسرعة وشوف الـ run الأول بيتلغي.",
-          flag: "script",
-          deep: {
-            why: "الـ deploy مينفعش يشتغل قبل الاختبارات، ولا على أي branch، ولا مرتين في نفس الوقت. التلات كلمات دول بيظبطوا ده.",
-            how: R`[[needs: test]]: الـ job ده يستنى test يخلص بنجاح. لو test فشل، deploy بيتخطى. [[needs: [a, b] ]] لأكتر من واحد.
-
-[[if]] على job أو step: تعبير بيتقيّم قبل التشغيل. [[github.ref == 'refs/heads/main']] على main بس. [[github.event_name == 'push']] مش من PR. وفيه دوال: [[success()]] الافتراضي، و [[failure()]] لو step قبلها فشلت (للتنبيهات)، و [[always()]] مهما حصل (للتنضيف)، و [[cancelled()]].
-
-[[concurrency]]: مجموعة باسم، و run جديد في نفس المجموعة بيلغي القديم لو [[cancel-in-progress: true]]. المجموعة هنا workflow + branch، فـ push جديد على نفس الـ branch بيلغي الـ CI بتاع اللي قبله (توفير). للـ deploy: نفس الفكرة بس [[cancel-in-progress: false]] عشان deploy شغال ميتقطعش، والجديد يستنى.
-
-[[timeout-minutes]]: الافتراضي ٦ ساعات. job معلّق بيحرق رصيدك. ١٠ لـ ٢٠ دقيقة للـ CI العادي.
-
-الـ steps المختصرة بالأقواس [[{ }]] هي نفس YAML بس في سطر واحد (flow style).`,
-            when: "needs في أي workflow فيه أكتر من job. if على الـ deploy. concurrency على الكل. timeout على الكل.",
-            mistakes: "deploy من غير if فيتعمل من PRs. و cancel-in-progress على deploy فتقطع deploy في النص."
-          },
-          lines: [
-            "التزامن.",
-            "المجموعة: workflow + branch.",
-            "run جديد يلغي القديم في نفس المجموعة.",
-            "المهام.",
-            "الاختبارات.",
-            "ماكينة.",
-            "أقصى ١٠ دقايق.",
-            "الخطوات في سطر واحد (نفس YAML بشكل مختصر).",
-            "الديبلوي.",
-            "يستنى test ينجح.",
-            "وعلى main، ومن push مش PR.",
-            "ماكينة.",
-            "الخطوات.",
-            "الديبلوي.",
-            "لو اللي قبلها فشلت...",
-            "...نبّه."
-          ],
-          sol: R`الـ run الأول بيبان رمادي بعلامة إلغاء، ولو فتحته هتلاقي annotation زي [[Canceling since a higher priority waiting request for 'CI-refs/heads/main' exists]]. التاني بيكمّل عادي. الـ group هنا اسم الـ workflow والـ ref، فأي run جديد على نفس الـ branch بيلغي القديم.
-
-ولأن [[deploy]] عليه [[needs: test]] والـ test اتلغى، الـ deploy بيبان [[skipped]]، مش بيشتغل بكود نصه قديم.
-
-لو الاتنين كمّلوا: غالبًا الـ push التاني جه بعد ما الأول خلص (الـ test سريع)، أو الـ [[concurrency]] مكتوبة جوه job مش على مستوى الـ workflow، أو الـ push على branches مختلفة فالـ group مختلف. وخلي بالك: [[cancel-in-progress: true]] مناسب للـ CI، بس للـ deploy غالبًا عايز [[false]] عشان متلغيش deploy في نصه.`
-        },
-        {
-          cmd: "jobs متوازية",
-          title: "lint و typecheck و test مع بعض",
-          desc: "بدل job واحد بياخد ٦ دقايق، ٣ jobs بالتوازي دقيقتين. كل واحد بيسطّب المكتبات (من الكاش)، فالتكرار رخيص. و job أخير بـ needs عليهم كلهم يبقى «الكل نجح».",
-          example: R`jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with: { node-version: 24, cache: npm }
-      - run: npm ci && npm run lint
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with: { node-version: 24, cache: npm }
-      - run: npm ci && npx tsc --noEmit
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with: { node-version: 24, cache: npm }
-      - run: npm ci && npm test
-  ok:
-    needs: [lint, typecheck, test]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "all green"`,
-          try: "في Settings ثم Branches، خلّي job اسمه ok مطلوب (required check) قبل الـ merge في main.",
-          flag: "script",
-          deep: {
-            why: "الـ PR بيستنى ٦ دقايق عشان lint اكتشف مسافة زيادة في الدقيقة الخامسة. بالتوازي، بتعرف في دقيقة.",
-            how: R`٣ jobs مستقلة، كل واحدة على ماكينة، بتبدأوا في نفس اللحظة. الأطول فيهم هو وقت الـ CI كله.
-
-كل واحدة بتعمل checkout و setup-node و npm ci: تكرار، بس مع الكاش ده ثواني، والتوازي بيوفر أكتر.
-
-الـ job الأخير [[ok]] بـ needs عليهم كلهم: بيشتغل بس لو التلاتة نجحوا. وليه؟ عشان في Settings ثم Branches ثم Branch protection، بتختار checks مطلوبة قبل الـ merge. لو حددت التلاتة، كل ما تضيف job لازم تحدّث الإعداد. لو حددت [[ok]] بس، تضيف وتشيل jobs براحتك.
-
-الـ [[with: { }]] شكل مختصر لـ inputs في سطر.
-
-ولمشروع كبير: job للـ build مرة واحدة يرفع artifact، والباقي يستخدموه بدل ما كل واحد يبني.`,
-            when: "لما الـ CI يعدّي ٣ دقايق. وقبل ما تفعّل branch protection.",
-            mistakes: "required checks بأسامي jobs بتتغير. و jobs متوازية من غير كاش فالتوفير يروح في التسطيب."
-          },
-          lines: [
-            "المهام (التلاتة بيبدأوا مع بعض).",
-            "lint.",
-            "ماكينة.",
-            "الخطوات.",
-            "الكود.",
-            "Node.",
-            "إعداداته.",
-            "سطّب و lint.",
-            "typecheck.",
-            "ماكينة.",
-            "الخطوات.",
-            "الكود.",
-            "Node.",
-            "إعداداته.",
-            "سطّب وافحص الأنواع.",
-            "test.",
-            "ماكينة.",
-            "الخطوات.",
-            "الكود.",
-            "Node.",
-            "إعداداته.",
-            "سطّب واختبر.",
-            "job «الكل نجح».",
-            "يستنى التلاتة.",
-            "ماكينة.",
-            "الخطوات.",
-            "اطبع. ده اللي تخليه required check."
-          ],
-          sol: R`الطريق: Settings ثم Rules ثم Rulesets (أو Branches ثم Add branch protection rule في الواجهة القديمة)، على [[main]]، فعّل [[Require status checks to pass]]، واكتب [[ok]] في البحث واختاره. بعدها أي PR ليه فحص فاشل زرار الـ Merge بيبقى مقفول ومكتوب إن الـ check المطلوب ما نجحش.
-
-لو [[ok]] مش ظاهر في البحث: لازم يكون اشتغل مرة على الأقل في الـ repo في آخر أسبوع. اعمل PR تجربة الأول.
-
-وفيه فخ مهم: لو [[lint]] فشل، [[ok]] بيبقى [[skipped]]، و GitHub بيعتبر الـ required check اللي اتعمله skip ناجح، فالـ PR ممكن يتعمله merge! الحل إن [[ok]] يشتغل دايمًا ويتأكد بنفسه من نتايج اللي قبله، زي الكود تحت. جرّب تكسر lint في PR وشوف إن الـ merge اتقفل فعلًا.`,
-          solCode: R`  ok:
-    needs: [lint, typecheck, test]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "results: $__{{ join(needs.*.result, ' ') }}"
-          test "$__{{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"`
-        },
-        {
-          cmd: "الأمان",
-          title: "permissions و pin و dependabot",
-          desc: "الـ action كود بيشتغل بصلاحيات على الـ repo بتاعك. [[permissions]] بيقلل صلاحيات GITHUB_TOKEN للي محتاجه بس. و pin بالـ commit SHA بدل tag يمنع إن حد يغيّر الـ action من تحتك. و Dependabot بيحدّث الـ actions زي المكتبات.",
-          example: R`permissions:
-  contents: read
-  packages: write
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0`,
-          try: "اعمل ملف [[.github/dependabot.yml]] فيه [[package-ecosystem: github-actions]] وشوف Dependabot بيفتح PRs لتحديث الـ actions.",
-          flag: "script",
-          deep: {
-            why: "الـ workflow بيشغّل كود ناس تانية (الـ actions) بتوكن ليه صلاحيات على الـ repo بتاعك. لو action اتخترقت أو اتغيرت، الكود ده بيشتغل عندك.",
-            how: R`[[permissions]]: افتراضيًا GITHUB_TOKEN ممكن يبقى ليه صلاحيات كتابة واسعة. [[contents: read]] بيقللها للقراية، وتضيف بس اللي محتاجه: [[packages: write]] لرفع images، و [[pull-requests: write]] للتعليق على PR. لو action اتخترقت، مش هتقدر تعدّل كودك.
-
-الـ pin: [[actions/checkout@v7]] بيشاور على tag اسمه v7، وصاحب الـ action يقدر يحرّكه لأي commit. [[@b4ffde65...]] بيشاور على commit بعينه مستحيل يتغير. والتعليق [[# v4.1.1]] عشان تعرف النسخة. ده اللي حصل فعلًا في هجمات على actions مشهورة.
-
-Dependabot: ملف [[.github/dependabot.yml]] بـ [[package-ecosystem: github-actions]] بيفتح PR كل ما فيه نسخة جديدة، وبيحدّث الـ SHA والتعليق مع بعض.
-
-وكمان: متستخدمش [[pull_request_target]] إلا لو فاهمه (بيدّي secrets لكود من fork). و [[workflow_dispatch]] inputs متتحطش في run مباشرة من غير quotes (injection).`,
-            when: "permissions في كل workflow من الأول. pin للـ actions غير الرسمية على الأقل. Dependabot في كل repo.",
-            mistakes: "[[permissions: write-all]] عشان «يشتغل». و action من حساب شخصي بـ @main."
-          },
-          lines: [
-            "صلاحيات التوكن.",
-            "قراية الكود بس.",
-            "وكتابة packages (لرفع images).",
-            "المهام.",
-            "مهمة.",
-            "ماكينة.",
-            "الخطوات.",
-            "checkout مثبّت على commit بعينه، والتعليق بيقول النسخة.",
-            "setup-node مثبّت كمان."
-          ],
-          sol: R`بعد ما تعمل push للملف، Dependabot بيعمل فحص ولو فيه actions قديمة بيفتح PRs بعناوين زي [[Bump actions/checkout from 6 to 7]]. ولو انت مثبّت بالـ SHA زي المثال، الـ PR بيغيّر الـ SHA ويحدّث التعليق [[# v7.0.1]] كمان.
-
-لو مفيش PRs: يا كل الـ actions محدّثة أصلًا (ودا كويس)، يا الفحص لسه ما اشتغلش. تقدر تشوف آخر فحص من Insights ثم Dependency graph ثم Dependabot. ولو [[directory]] غلط أو الملف فيه غلط YAML هيظهر error هناك.
-
-الغلط الشائع إنك تكتب [[package-ecosystem: github-actions]] وتفتكر إنه هيحدّث npm كمان. كل ecosystem محتاج entry لوحده، فضيف واحد لـ [[npm]] لو عايز.`,
-          solCode: R`# .github/dependabot.yml
-version: 2
-updates:
-  - package-ecosystem: github-actions
-    directory: "/"
-    schedule:
-      interval: weekly`
         }
       ]
     }

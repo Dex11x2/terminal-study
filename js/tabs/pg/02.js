@@ -1,1544 +1,854 @@
 // تكملة تاب pg: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/pg/01.js (شرح حقول الدرس في أوله)
 MORE("pg", [
     {
-      t: "الإنتاج: باك أب و migrations و Supabase",
-      l: 3,
-      n: "الداتا أغلى من الكود. الباك أب اللي متجرّبش مش باك أب",
+      t: "الإدارة: يوزرز وأداء وصيانة",
+      l: 2,
+      n: "التطبيق ميشتغلش بـ postgres، والاستعلام البطيء ليه سبب تقدر تشوفه",
       items: [
         {
-          cmd: "pg_dump بعمق",
-          title: "schema بس، أو data بس، أو جدول",
-          desc: "مش دايمًا محتاج القاعدة كلها. [[-s]] الهيكل بس، و [[-a]] البيانات بس، و [[-t]] جدول معين، و [[--exclude-table]] من غير جدول اللوجات الضخم. وصيغة [[-Fc]] بتسمح ترجّع أجزاء.",
-          example: R`pg_dump -U postgres -d app -s > schema.sql
-pg_dump -U postgres -d app -a -t users > users_data.sql
-pg_dump -U postgres -d app -Fc --exclude-table='*_logs*' -f app.dump
-pg_restore -l app.dump | head -20
-pg_restore -U postgres -d app_copy -t users app.dump
-pg_restore -U postgres -d app --clean --if-exists --no-owner app.dump`,
-          try: "اعمل dump بـ -Fc، واعرض محتواه بـ [[pg_restore -l]]، ورجّع جدول واحد بس في قاعدة تجربة.",
-          flag: "danger",
+          cmd: "BEGIN و ROLLBACK",
+          title: "UPDATE بإيدك على الإنتاج؟ جوه transaction",
+          desc: "أي UPDATE أو DELETE بإيدك على قاعدة حقيقية: ابدأ بـ [[BEGIN]]، نفّذ، اقرا عدد الصفوف اللي psql طبعه واتأكد بـ SELECT، وبعدين [[COMMIT]] لو تمام أو [[ROLLBACK]] لو فيه حاجة غلط. ومتسيبش الـ transaction مفتوحة: بتمسك locks.",
+          example: R`BEGIN;
+UPDATE users SET plan = 'pro' WHERE id = 42;
+SELECT id, plan FROM users WHERE id = 42;
+ROLLBACK;
+BEGIN;
+DELETE FROM sessions WHERE expires_at < now() - interval '30 days';
+COMMIT;`,
+          try: "على قاعدة تجربة: BEGIN، و DELETE FROM users من غير WHERE، و SELECT count(*)، وبعدين ROLLBACK وشوف كل الصفوف رجعت.",
           deep: {
-            why: "الباك أب الكامل مش دايمًا اللي محتاجه. عايز الهيكل بس لتجهيز قاعدة اختبار، أو جدول واحد اتمسح بالغلط، أو كل حاجة ما عدا جدول لوجات ٢٠ جيجا.",
-            how: R`[[-s]] (schema-only) بيطلّع CREATE TABLE و indexes و constraints من غير بيانات. [[-a]] (data-only) العكس. [[-t]] جدول معين، وممكن تكرره أو تستخدم pattern. [[--exclude-table]] العكس.
+            why: "DELETE أو UPDATE من غير WHERE (أو بـ WHERE غلط) هو أشهر كارثة بإيد بني آدم. من غير transaction مفيش undo غير الباك أب.",
+            how: R`psql افتراضيًا autocommit: كل أمر بيتحفظ لحظة ما يخلص. [[BEGIN]] بيفتح transaction، وكل اللي بعده مش نهائي ومحدش تاني شايفه.
 
-الصيغتين: النص العادي ([[> file.sql]]) بتقراه وترجّعه بـ psql. [[-Fc]] (custom) ملف مضغوط بفهرس، وده الأقوى: [[pg_restore -l]] بيعرض الفهرس، و [[-t]] في pg_restore بيرجّع جدول واحد من dump كامل، و [[-j 4]] بيرجّع بأربع عمليات متوازية.
+psql بيطبع [[UPDATE 3]]، يعني ٣ صفوف: لو متوقع واحد وطلع ٣٠٠٠ اعمل [[ROLLBACK]]. [[COMMIT]] بيثبّت. أي error جوه الـ transaction بيخليها aborted ولازم ROLLBACK.
 
-[[--clean --if-exists]] في pg_restore: امسح الجداول الموجودة الأول من غير error لو مش موجودة. لازمة لما ترجّع على قاعدة فيها بيانات.
-
-[[--no-owner]]: متحاولش تخلي الجداول ملك نفس اليوزر اللي في المصدر. لازمة لما اليوزرز مختلفين بين السيرفرين (وده دايمًا مع Supabase).
-
-pg_dump بياخد snapshot متماسك حتى لو القاعدة شغالة ومفيش قفل.`,
-            when: "-s لبيئات الاختبار. -t لاسترجاع جدول. -Fc للباك أب الدوري.",
-            mistakes: "نسخة pg_dump أقدم من السيرفر فيرفض. ونسيان --no-owner عند الترجيع على سيرفر تاني فيطلع errors صلاحيات."
+ولحماية إضافية حط [[\set ON_ERROR_ROLLBACK interactive]] في .psqlrc، أو [[\set AUTOCOMMIT off]] فكل أمر يستنى COMMIT.`,
+            when: "أي تعديل بيانات بإيدك على الإنتاج. وقبل EXPLAIN ANALYZE على UPDATE أو DELETE.",
+            mistakes: "تنسى الـ transaction مفتوحة وتروح، فتبقى idle in transaction ماسكة locks والموقع يعلّق. و COMMIT قبل ما تقرا عدد الصفوف."
           },
-          teach: R`## الفكرة: [[pg_dump]] مش لازم ياخد القاعدة كلها
+          teach: R`## الفكرة: «مسودة» قبل ما تحفظ
 
-[[pg_dump]] (من PostgreSQL dump، يعني «فرّغ القاعدة في ملف») بيكتب القاعدة كأوامر تقدر تعيد بيها بناءها. والفلاجات اللي في الدرس بتختار **إيه بالظبط** يتكتب: الهيكل بس، أو البيانات بس، أو جدول واحد، أو كله ما عدا جدول. وبعدين [[pg_restore]] بيرجّع اللي انت عايزه من الملف.
+عادةً psql بيحفظ كل أمر لحظة ما يخلص (اسمها autocommit). [[BEGIN]] بيقلب الوضع: كل اللي بعده يبقى **مسودة** جلستك بس شايفاها، لحد ما تقرر: [[COMMIT]] تحفظ، أو [[ROLLBACK]] ترمي المسودة كأن مفيش حاجة حصلت. المجموعة دي اسمها **transaction**.
 
-كل الأوامر دي اتشغّلت جوه container [[postgres:16]] (النسخة 16.15) على قاعدة اسمها [[app]] فيها ٣ جداول:
+الناتج تحت من psql على [[postgres:16]] جوه Docker، قاعدة [[app]] فيها [[users]] و [[sessions]] (٣٠٠ صف).
 
-~~~text القاعدة اللي جربنا عليها
-users      5 صفوف    (id primary key، و email unique)
-orders     5 صفوف    (user_id بيشاور على users.id)
-app_logs   100000 صف  (لوجات، مش عايزينها في الباك أب)
+---
+
+## الجزء الأول: تعديل وبعدين تراجع
+
+### [[BEGIN;]]
+
+~~~text الناتج
+BEGIN
 ~~~
 
-والفلاجات المشتركة في كل الأوامر:
+الـ transaction اتفتحت. وفي psql التفاعلي الـ prompt بيتغيّر من [[app=#]] لـ [[app=*#]]: النجمة دي من [[%x]] في إعداد الـ prompt الافتراضي ([[%/%R%x%#]])، ومعناها «فيه transaction مفتوحة».
 
-| الفلاج | معناه |
+### [[UPDATE users SET plan = 'pro' WHERE id = 42;]]
+
+| الحتة | معناها |
 |---|---|
-| [[-U postgres]] | اتصل كيوزر [[postgres]] (U من User) |
-| [[-d app]] | القاعدة اسمها [[app]] (d من database) |
+| [[UPDATE users]] | عدّل في جدول users |
+| [[SET plan = 'pro']] | خلّي عمود plan قيمته pro |
+| [[WHERE id = 42]] | في الصفوف اللي الـ id بتاعها 42 بس |
+
+~~~text الناتج
+UPDATE 1
+~~~
+
+**اقرا الرقم ده دايمًا.** [[1]] عدد الصفوف اللي اتعدّلت. لو متوقع ١ وطلع ٣٠٠٠، يبقى الـ WHERE غلط.
+
+### [[SELECT id, plan FROM users WHERE id = 42;]]
+
+~~~text الناتج
+ id | plan
+----+------
+ 42 | pro
+~~~
+
+جلستك شايفة التعديل. أي جلسة تانية لسه شايفة [[free]].
+
+### [[ROLLBACK;]]
+
+~~~text الناتج بعد ROLLBACK ونفس الـ SELECT
+ROLLBACK
+ id | plan
+----+------
+ 42 | free
+~~~
+
+التعديل اتلغى كأنه محصلش.
 
 ---
 
-## ١. الهيكل بس: [[-s]]
+## الجزء التاني: مسح حقيقي
 
-~~~bash
-pg_dump -U postgres -d app -s > schema.sql
-~~~
+قبل ما تمسح، عدّ اللي هيتمسح بنفس الـ WHERE:
 
-[[-s]] اختصار [[--schema-only]]: اكتب أوامر إنشاء الجداول والـ sequences والـ constraints، من غير ولا صف بيانات. و [[>]] بيحوّل الناتج من الشاشة لملف [[schema.sql]].
-
-لو بصيت جوه الملف:
-
-~~~bash
-grep -E "^CREATE|^ALTER TABLE" schema.sql
-~~~
-
-~~~text الناتج (أول سطور)
-CREATE TABLE public.app_logs (
-ALTER TABLE public.app_logs OWNER TO postgres;
-CREATE SEQUENCE public.app_logs_id_seq
-CREATE TABLE public.orders (
-...
-~~~
-
-و [[grep -c "^COPY" schema.sql]] طلّع [[0]]: مفيش ولا أمر [[COPY]] (اللي بيحمل البيانات)، يعني فعلًا هيكل بس. ده اللي محتاجه عشان تبني قاعدة اختبار فاضية بنفس الشكل.
-
----
-
-## ٢. بيانات جدول واحد: [[-a -t users]]
-
-~~~bash
-pg_dump -U postgres -d app -a -t users > users_data.sql
-~~~
-
-- [[-a]] اختصار [[--data-only]]: العكس، البيانات بس من غير [[CREATE TABLE]].
-- [[-t users]] (t من table): الجدول ده بس. ينفع تكرره ([[-t users -t orders]]) أو تكتب pattern زي [[-t 'order*']].
-
-الملف من جوه (من غير التعليقات):
-
-~~~text users_data.sql
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-...
-COPY public.users (id, email, name) FROM stdin;
-1	sara@example.com	Sara
-2	omar@example.com	Omar
-3	mona@example.com	Mona
-4	ali@example.com	Ali
-5	hana@example.com	Hana
-\.
-SELECT pg_catalog.setval('public.users_id_seq', 5, true);
-~~~
-
-نقرا الملف:
-
-| الجزء | معناه |
-|---|---|
-| سطور [[SET]] | إعدادات للجلسة اللي هترجّع الملف، زي «متعملش timeout» |
-| [[COPY ... FROM stdin;]] | «الصفوف جاية في السطور اللي تحت»، كل عمود مفصول بـ Tab |
-| [[\.]] | نهاية البيانات |
-| [[setval(..., 5, true)]] | خلّي الـ sequence بتاع [[id]] يكمّل من بعد 5، عشان أول INSERT جديد ميطلعش [[id]] مكرر |
-
-وفي أول الملف وآخره هتلاقي سطر [[\restrict]] و [[\unrestrict]] بكود عشوائي. دول اتضافوا في نسخ 16.10 وما بعدها كحماية: وهو بيرجّع الملف، psql بيرفض أوامر backslash تانية ممكن تكون اتدسّت في البيانات.
-
----
-
-## ٣. صيغة custom ومن غير اللوجات: [[-Fc --exclude-table]]
-
-~~~bash
-pg_dump -U postgres -d app -Fc --exclude-table='*_logs*' -f app.dump
-~~~
-
-نفكّه حتة حتة:
-
-### [[-Fc]]
-
-[[-F]] من format، و [[c]] من custom. بدل SQL نص، بيكتب ملف **مضغوط** (gzip) فيه **فهرس** بكل حاجة جواه. أول ٥ بايت في الملف [[PGDMP]]، وده توقيع الصيغة. الفهرس ده هو اللي بيخلي [[pg_restore]] يرجّع حتة من الملف من غير الباقي.
-
-### [[--exclude-table='*_logs*']]
-
-«متاخدش أي جدول اسمه بيطابق الـ pattern». و [[*]] معناها «أي حروف». والعلامات [[' ']] عشان الـ shell ميحاولش يفسّر [[*]] كأسماء ملفات.
-
-ليه [[*_logs*]] بنجمة في الآخر كمان؟ جرّبنا [[*_logs]] الأول، فالجدول [[app_logs]] اتشال، بس الـ sequence بتاعه [[app_logs_id_seq]] فضل في الملف لأن اسمه مش بينتهي بـ [[_logs]]. ولما رجّعنا الملف ده بـ [[--clean]] على [[app]] طلع:
-
-~~~text الناتج مع '*_logs'
-pg_restore: error: could not execute query: ERROR:  cannot drop sequence public.app_logs_id_seq because other objects depend on it
-...
-pg_restore: warning: errors ignored on restore: 2
-~~~
-
-بالنجمة التانية الـ pattern بيمسك الجدول والـ sequence بتاعه، والترجيع خلص من غير errors.
-
-### [[-f app.dump]]
-
-[[-f]] من file: اكتب في الملف ده. مع [[-Fc]] استخدم [[-f]] مش [[>]] (الاتنين بيشتغلوا، بس [[-f]] أوضح ومش بيعتمد على الـ shell).
-
-الأحجام في التجربة:
-
-~~~text ls -l
--rw-r--r-- 1 root root   5827 app.dump     من غير اللوجات
--rw-r--r-- 1 root root 456160 full.dump    القاعدة كلها
-~~~
-
-يعني الـ ١٠٠ ألف صف لوجات كانوا ٩٩٪ من حجم الباك أب.
-
----
-
-## ٤. نقرا الفهرس: [[pg_restore -l]]
-
-~~~bash
-pg_restore -l app.dump | head -20
-~~~
-
-[[-l]] من list: اعرض اللي جوه الملف من غير ما ترجّع حاجة. و [[| head -20]] أول ٢٠ سطر بس. الناتج نوعين سطور:
-
-~~~text الناتج (مختصر)
-;     Format: CUSTOM
-;     Dumped from database version: 16.15 (Debian 16.15-1.pgdg13+2)
-;     Dumped by pg_dump version: 16.15 (Debian 16.15-1.pgdg13+2)
-...
-218; 1259 16397 TABLE public orders postgres
-216; 1259 16386 TABLE public users postgres
-3434; 0 16386 TABLE DATA public users postgres
-3284; 2606 16393 CONSTRAINT public users users_pkey postgres
-3289; 2606 16404 FK CONSTRAINT public orders orders_user_id_fkey postgres
-~~~
-
-- السطور اللي بتبدأ بـ [[;]] تعليقات: الصيغة، ونسخة السيرفر اللي اتعمل منه، ونسخة [[pg_dump]].
-- كل سطر تاني «حاجة» في الملف: رقم في الفهرس، وأرقام داخلية، ونوعها ([[TABLE]] الجدول فاضي، و [[TABLE DATA]] صفوفه، و [[CONSTRAINT]] و [[FK CONSTRAINT]] و [[SEQUENCE]] و [[DEFAULT]])، والـ schema، والاسم، والمالك.
-
-لاحظ إن الجدول وبياناته والـ primary key بتاعه **٣ سطور منفصلة**. ده مهم في الخطوة الجاية.
-
----
-
-## ٥. جدول واحد من الملف: [[pg_restore -t]]
-
-~~~bash
-pg_restore -U postgres -d app_copy -t users app.dump
-~~~
-
-- [[-d app_copy]]: رجّع في القاعدة دي، ولازم تكون موجودة (عملناها الأول بـ [[createdb -U postgres app_copy]]).
-- [[-t users]]: من الفهرس كله، خد اللي اسمه [[users]] بس.
-
-النتيجة:
-
-~~~text psql -d app_copy -c "SELECT count(*) FROM users" -c "\d users"
+~~~text SELECT count(*) FROM sessions WHERE expires_at < now() - interval '30 days';
  count
 -------
-     5
-
-               Table "public.users"
- Column |  Type   | Collation | Nullable | Default
---------+---------+-----------+----------+---------
- id     | integer |           | not null |
- email  | text    |           | not null |
- name   | text    |           |          |
+   181
 ~~~
 
-الصفوف الخمسة رجعت، بس بص على [[\d users]]: مفيش [[Indexes:]] خالص (لا primary key ولا unique على email)، وعمود [[Default]] فاضي (الـ [[nextval]] بتاع الـ sequence مرجعش). ده لأن [[-t]] بيختار سطرين بس من الفهرس: [[TABLE]] و [[TABLE DATA]]، والباقي سطور تانية.
+[[now() - interval '30 days']] يعني «الوقت دلوقتي ناقص ٣٠ يوم»، و [[expires_at <]] قبله: sessions خلصت من أكتر من شهر. و [[interval]] نوع في Postgres معناه مدة.
 
-لو عايز الجدول بكل حاجته: [[pg_restore -l app.dump > list.txt]]، سيب سطور [[users]] بس، و [[pg_restore -L list.txt ...]]. و [[-L]] الكبيرة يعني «رجّع اللي في القايمة دي».
-
----
-
-## ٦. ترجيع كامل فوق قاعدة شغالة: [[--clean --if-exists --no-owner]]
-
-~~~bash
-pg_restore -U postgres -d app --clean --if-exists --no-owner app.dump
+~~~text BEGIN; و DELETE FROM sessions WHERE expires_at < now() - interval '30 days';
+BEGIN
+DELETE 181
 ~~~
 
-| الفلاج | بيعمل إيه |
-|---|---|
-| [[--clean]] | قبل ما يعمل كل حاجة، يعمل لها [[DROP]] الأول |
-| [[--if-exists]] | يكتب [[DROP ... IF EXISTS]]، فلو الحاجة مش موجودة ميطلعش error |
-| [[--no-owner]] | متكتبش [[ALTER ... OWNER TO]]، فالجداول تبقى ملك اليوزر اللي بيرجّع |
+[[DELETE 181]] نفس رقم العد بالظبط، يبقى تمام:
 
-جرّبناه على [[app]] نفسها (بالـ pattern الصح) والـ exit code كان [[0]] و [[\dt]] لسه فيه الـ ٣ جداول: [[users]] و [[orders]] اترجّعوا، و [[app_logs]] فضل زي ما هو لأنه مش في الملف أصلًا.
-
-> ده أخطر سطر في الدرس: [[--clean]] بيمسح الجداول الموجودة. لو اسم القاعدة غلط، أو الملف قديم، البيانات اللي اتضافت بعده راحت. خد dump جديد قبلها.
-
----
-
-## الخلاصة
-
-| عايز | الأمر |
-|---|---|
-| الهيكل بس | [[pg_dump -s]] |
-| البيانات بس | [[pg_dump -a]] |
-| جدول معين | [[-t اسم]] (في pg_dump و pg_restore) |
-| كله ما عدا | [[--exclude-table='pattern']]، وخلّي الـ pattern يمسك الـ sequence كمان |
-| ملف مضغوط بفهرس | [[-Fc -f ملف]] |
-| تشوف جوه الملف | [[pg_restore -l]] |
-| ترجّع فوق الموجود | [[--clean --if-exists --no-owner]] |
-
-و [[pg_restore -t]] بيرجّع الجدول وصفوفه بس، من غير الـ keys والـ indexes والـ defaults.`,
-          lines: [
-            "الهيكل بس.",
-            "بيانات جدول واحد بس.",
-            "كل حاجة ما عدا جداول اللوجات، بصيغة مضغوطة.",
-            "فهرس اللي جوه الـ dump.",
-            "رجّع جدول واحد بس منه.",
-            "خطر: رجّع كله فوق قاعدة فيها بيانات (بيمسح الموجود الأول)، ومتحاولش تطابق المالك. خد dump جديد قبلها."
-          ],
-          sol: R`[[pg_restore -l app.dump]] بيطبع الـ header ([[Format: CUSTOM]] و [[Dumped from database version: 16.13]]) وبعده قايمة فيها سطور زي [[TABLE public users postgres]] و [[TABLE DATA public users postgres]] و [[CONSTRAINT public users users_pkey postgres]] و [[FK CONSTRAINT public orders orders_user_id_fkey postgres]].
-
-[[pg_restore -d app_copy -t users app.dump]] بيرجّع الجدول والداتا ([[SELECT count(*)]] زي الأصل). بس لو عملت [[\d users]] هتلاقي إن الجدول من غير primary key ولا unique ولا default للـ id، لأن [[-t]] بيرجّع الجدول وداتاه بس، مش الـ constraints والـ indexes والـ sequence. دي المفاجأة اللي لازم تعرفها قبل ما تحتاجها في طوارئ.
-
-لو عايز كل حاجة تخص الجدول: [[pg_restore -l app.dump > list.txt]]، سيب السطور اللي فيها users وامسح الباقي، و [[pg_restore -L list.txt -d app_copy app.dump]]. وتذكّر إن [[app_copy]] لازم تبقى موجودة الأول بـ createdb.`,
-          solCode: R`pg_dump -U postgres -d app -Fc -f app.dump
-pg_restore -l app.dump | head -30
-createdb -U postgres app_copy
-pg_restore -U postgres -d app_copy -t users app.dump
-psql -U postgres -d app_copy -c "SELECT count(*) FROM users" -c "\d users"`
-        },
-        {
-          cmd: "ترجيع الباك أب",
-          title: "جرّبه قبل ما تحتاجه",
-          desc: R`باك أب عمرك ما رجّعته مش مضمون: ممكن يكون ناقص أو مكسور، وهتكتشف ده يوم ما تحتاجه. الاختبار: قاعدة جديدة فاضية، ترجّع فيها الباك أب، وتقارن بالأصل.
-
-[[createdb -U postgres app_restore_test]] بيعمل قاعدة فاضية جديدة ([[-U]] اليوزر اللي بيتصل). [[pg_restore -d app_restore_test]] بيرجّع ملف الـ dump (المعمول بـ [[-Fc]]) جواها، و [[--no-owner]] بيتجاهل مين كان صاحب الجداول في الأصل، فميطلعش error لو اليوزر ده مش موجود هنا. بعدين [[psql -c]] بينفّذ استعلام واحد ويخرج: [[count(*)]] على جدول مهم في النسخة وفي الأصل، ولو الأرقام قريبة (بفرق الصفوف اللي اتضافت بعد الباك أب) يبقى سليم. و [[dropdb]] بيمسح قاعدة التجربة في الآخر.
-
-خد بالك تكتب اسم قاعدة التجربة صح في [[dropdb]] و [[pg_restore]]: لو كتبت [[app]] بالغلط هتلمس قاعدة الإنتاج.`,
-          example: R`createdb -U postgres app_restore_test
-pg_restore -U postgres -d app_restore_test --no-owner app.dump
-psql -U postgres -d app_restore_test -c "SELECT count(*) FROM users;"
-psql -U postgres -d app -c "SELECT count(*) FROM users;"
-dropdb -U postgres app_restore_test`,
-          try: "حط الأوامر دي في سكربت يشتغل أسبوعيًا ويبعتلك رسالة لو الأعداد مختلفة.",
-          deep: {
-            why: "في يوم الكارثة مش وقت ما تكتشف إن الملف فاضي، أو النسخة مش متوافقة، أو الترجيع بياخد ٦ ساعات.",
-            how: R`الاختبار بسيط: قاعدة جديدة فاضية، pg_restore فيها، وقارن. [[count(*)]] على أهم جدولين بين الأصل والنسخة. لو الأرقام متطابقة (بفارق الصفوف الجديدة من وقت الـ dump)، الباك أب سليم.
-
-ده كمان بيقيس وقت الترجيع (RTO): لو أخد ساعة، تعرف إن الموقع هيقع ساعة في الكارثة، وتقرر ده مقبول ولا لأ.
-
-الأتمتة: سكربت أسبوعي بيعمل الخطوات دي ويبعتلك النتيجة (أو بيفشل بصوت عالي في CI). ده اللي الفرق بين «عندي باك أب» و«عندي باك أب شغال».
-
-وجرّب سيناريو استرجاع جدول واحد كمان، لأن ده الأشهر فعليًا: حد عمل DELETE من غير WHERE على جدول واحد.
-
-الباك أب على نفس السيرفر مش باك أب: ديسك يبوظ أو اختراق والاتنين بيروحوا. نسخة على S3 أو Backblaze أو سيرفر تاني.`,
-            when: "أسبوعيًا أوتوماتيك. وقبل أي عملية كبيرة على القاعدة.",
-            mistakes: "تجرّب الترجيع على قاعدة الإنتاج نفسها بـ --clean."
-          },
-          teach: R`## الفكرة: ترجّع الباك أب في مكان فاضي وتعدّ
-
-الاختبار ٥ أوامر: قاعدة فاضية جديدة، ترجّع فيها، تعدّ الصفوف فيها وفي الأصل، وتمسحها. كله اتشغّل جوه container [[postgres:16]] على قاعدة [[app]] فيها جدول [[users]] بـ ٥ صفوف، والملف [[app.dump]] معمول قبلها بـ [[pg_dump -Fc]] (شوف درس «pg_dump بعمق»).
-
----
-
-## ١. قاعدة فاضية: [[createdb]]
-
-~~~bash
-createdb -U postgres app_restore_test
-~~~
-
-[[createdb]] برنامج صغير جاي مع Postgres، بيعمل نفس شغل [[CREATE DATABASE]]. و [[-U postgres]] يتصل كيوزر [[postgres]]. لو نجح مش بيطبع حاجة (exit code [[0]]). ولو القاعدة موجودة قبل كده:
-
-~~~text الناتج لو الاسم موجود
-createdb: error: database creation failed: ERROR:  database "app_restore_test" already exists
-~~~
-
-وده كويس: مستحيل [[createdb]] يكتب فوق قاعدة موجودة.
-
----
-
-## ٢. الترجيع: [[pg_restore --no-owner]]
-
-~~~bash
-pg_restore -U postgres -d app_restore_test --no-owner app.dump
-~~~
-
-- [[-d app_restore_test]]: رجّع جوه القاعدة الفاضية دي (مش [[app]]!).
-- [[--no-owner]]: الـ dump فيه سطور زي [[ALTER TABLE public.users OWNER TO postgres]]. على سيرفر تاني اليوزر ده ممكن ميبقاش موجود، فالفلاج ده بيتجاهل السطور دي والجداول تبقى ملك اللي بيرجّع.
-- [[app.dump]]: الملف، وبيتكتب في الآخر من غير فلاج.
-
-نجح من غير ما يطبع حاجة، و exit code [[0]].
-
----
-
-## ٣ و ٤. العدّ في الاتنين: [[psql -c]]
-
-~~~bash
-psql -U postgres -d app_restore_test -c "SELECT count(*) FROM users;"
-psql -U postgres -d app -c "SELECT count(*) FROM users;"
-~~~
-
-[[-c]] من command: نفّذ الاستعلام ده واخرج، من غير ما تفتح psql التفاعلي. و [[count(*)]] عدد الصفوف.
-
-~~~text الناتج (الاتنين)
+~~~text COMMIT; و SELECT count(*) FROM sessions;
+COMMIT
  count
 -------
-     5
-(1 row)
+   119
 ~~~
 
-[[5]] و [[5]]: الباك أب سليم. على موقع شغال الأصل ممكن يبقى أكبر بشوية (ناس سجّلت بعد الـ dump)، وده طبيعي. اللي مش طبيعي إن النسخة تبقى [[0]] أو أقل بكتير.
+٣٠٠ ناقص ١٨١ = ١١٩. [[COMMIT]] حفظ، ودلوقتي كل الجلسات شايفة المسح.
 
 ---
 
-## ٥. التنضيف: [[dropdb]]
+## الجزء التالت: الغلطات اللي هتقابلها
 
-~~~bash
-dropdb -U postgres app_restore_test
+### ROLLBACK من غير BEGIN
+
+~~~text الناتج
+WARNING:  there is no transaction in progress
 ~~~
 
-عكس [[createdb]]: بيمسح القاعدة كلها من غير ما يسأل. عشان كده الاسم في السطر ده بالذات لازم يتقري مرتين قبل Enter.
+يعني الأمر اللي قبله اتحفظ خلاص (autocommit)، ومفيش حاجة ترجع.
 
----
+### error جوه الـ transaction
 
-## الحل (solCode): نفس الخطوات كسكربت
-
-### [[set -euo pipefail]]
-
-- [[-e]]: أي أمر يفشل، السكربت يقف.
-- [[-u]]: أي متغير مش متعرّف يبقى error بدل ما يتحسب فاضي.
-- [[-o pipefail]]: لو أمر في نص [[|]] فشل، الـ pipe كله يفشل.
-
-### [[DUMP=$(ls -1t ... | head -1)]]
-
-[[$( )]] بيشغّل الأمر اللي جواه ويحط ناتجه في المتغير. [[ls -1t]]: اعرض الملفات واحد في السطر ([[-1]]) مترتبين بالأحدث الأول ([[-t]] من time)، و [[head -1]] خد الأول. يعني [[DUMP]] = أحدث باك أب.
-
-### [[trap '...' EXIT]]
-
-[[trap]] بيقول: «لما السكربت يخلص لأي سبب ([[EXIT]])، نفّذ ده». هنا [[dropdb --if-exists]]، فقاعدة الاختبار بتتمسح حتى لو السكربت وقع في النص. و [[--if-exists]] عشان لو وقع قبل [[createdb]] ميطلعش error.
-
-### [[--exit-on-error]]
-
-من غيره [[pg_restore]] بيكمّل بعد أي error وفي الآخر يقول [[errors ignored on restore]]. بيه، أول error يوقفه، و [[set -e]] يوقف السكربت.
-
-### [[-tAc]]
-
-[[-t]] من غير عناوين الأعمدة، و [[-A]] من غير محاذاة ومسافات، و [[-c]] الاستعلام. فالناتج رقم صافي زي [[5]] ينفع يتحط في متغير ويتقارن.
-
-### [[if [ "$a" != "$b" ]; then]]
-
-لو الرقمين مختلفين: ابعت رسالة Telegram بـ [[curl]] واخرج بـ [[exit 1]] (فشل). غير كده اطبع [[restore ok]].
-
-شغّلنا السكربت فعلًا في الـ container بباك أب في [[/home/deploy/backups/db/app-2026-10-06.dump]]:
-
-~~~text التشغيل الأول
-restore ok: users 5 = 5
+~~~text BEGIN; و SELECT 1/0; و SELECT 1;
+BEGIN
+ERROR:  division by zero
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
 ~~~
 
-وبعدين ضفنا صف في [[app]] وشغّلناه تاني، فالأرقام بقت [[5]] و [[6]] ودخل الـ [[if]]. ومن غير ما نعرّف [[BOT_TOKEN]]:
-
-~~~text التشغيل التاني
-/tmp/restore-test.sh: line 11: BOT_TOKEN: unbound variable
-~~~
-
-ده شغل [[-u]]: السكربت وقف بفشل (exit code [[1]]) بدل ما يبعت لـ URL ناقص. وفي الحالتين [[psql -l]] بعدها ملقاش [[app_restore_test]]، يعني الـ [[trap]] مسحها. على السيرفر الحقيقي لازم [[BOT_TOKEN]] و [[CHAT_ID]] يبقوا متعرّفين في بيئة الـ cron.
+بعد أي error الـ transaction بتبوظ ([[aborted]])، وأي أمر بعدها بيترفض، حتى [[SELECT 1]]. الحل الوحيد [[ROLLBACK]] وتبدأ تاني.
 
 ---
 
 ## الخلاصة
 
-| الخطوة | الأمر |
+| الخطوة | ليه |
 |---|---|
-| قاعدة فاضية | [[createdb اسم_تجربة]] |
-| رجّع فيها | [[pg_restore -d اسم_تجربة --no-owner ملف]] |
-| قارن | [[count(*)]] في الاتنين |
-| نضّف | [[dropdb اسم_تجربة]] (وفي سكربت: [[trap]]) |
+| [[SELECT count(*) ... WHERE ...]] | تعرف هتأثر على كام صف |
+| [[BEGIN;]] | ابدأ مسودة |
+| [[UPDATE]] / [[DELETE]] | واقرا الرقم اللي بيطبعه |
+| [[SELECT]] | اتأكد بعينك |
+| [[COMMIT;]] أو [[ROLLBACK;]] | احفظ أو ارمي |
 
-الباك أب اللي عمرك ما رجّعته مجرد ملف. والاختبار ده هو اللي بيحوّله باك أب.`,
+> متسيبش [[app=*#]] مفتوحة وتقوم: الـ transaction المفتوحة ماسكة locks على الصفوف اللي عدّلتها، وأي حد تاني عايز يعدّلهم هيستنى (درس «الجلسات والأقفال»).`,
           lines: [
-            "قاعدة فاضية للاختبار.",
-            "رجّع فيها.",
-            "عدّ الصفوف في النسخة.",
-            "وفي الأصل. لازم يطابقوا.",
-            "امسح قاعدة الاختبار."
+            "ابدأ transaction: مفيش حاجة نهائية من هنا.",
+            "التعديل (psql بيطبع عدد الصفوف: اقراه).",
+            "اتأكد بعينك.",
+            "مش عاجبك؟ رجّع كل حاجة.",
+            "transaction جديدة.",
+            "امسح الـ sessions الأقدم من ٣٠ يوم.",
+            "العدد مظبوط؟ ثبّت."
           ],
-          sol: R`الحل سكربت بيعمل قاعدة مؤقتة، ويرجّع آخر dump، ويقارن العدد بالأصل، ويبعت رسالة لو مختلفين، ويمسح القاعدة المؤقتة في كل الحالات بـ [[trap]].
+          sol: R`الترتيب اللي هتشوفه: [[BEGIN]]، وبعدين [[DELETE 5]] (عدد صفوف الجدول)، و [[SELECT count(*)]] جوه نفس الـ transaction بيرجّع [[0]]، وبعد [[ROLLBACK]] نفس الـ SELECT بيرجّع [[5]] تاني. الـ prompt نفسه بيتغير لـ [[app=*#]] طول ما فيه transaction مفتوحة.
 
-لما يشتغل وكله تمام يطبع [[restore ok: users 5 = 5]]. وأي فرق بسيط مقبول لو الموقع شغال والناس بتسجّل بين وقت الـ dump ووقت العد، فالمقارنة الأدق إنك تقارن بعدد متسجّل وقت الـ dump، أو تقبل فرق صغير.
+الفكرة إن الـ DELETE اتعمل فعلًا بس محدش شافه غير جلستك لحد ما تعمل COMMIT. أي جلسة تانية كانت هتشوف ٥ صفوف طول الوقت.
 
-الغلط الشائع: السكربت ينجح بس لأن [[pg_restore]] طبع errors وكمّل (مثلًا [[role "app_user" does not exist]]). عشان كده [[--exit-on-error]] و [[--no-owner]]، وبنقارن أعداد فعلية مش بنصدّق الـ exit code بس. وجدوله في cron الأسبوعي: [[0 4 * * 0 /home/deploy/restore-test.sh]].`,
-          solCode: R`#!/usr/bin/env bash
-set -euo pipefail
-DUMP=$(ls -1t /home/deploy/backups/db/app-*.dump | head -1)
-TMP=app_restore_test
-trap 'dropdb -U postgres --if-exists "$TMP"' EXIT
-createdb -U postgres "$TMP"
-pg_restore -U postgres -d "$TMP" --no-owner --exit-on-error "$DUMP"
-a=$(psql -U postgres -d "$TMP" -tAc "SELECT count(*) FROM users")
-b=$(psql -U postgres -d app -tAc "SELECT count(*) FROM users")
-if [ "$a" != "$b" ]; then
-  curl -fsS -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
-    -d chat_id="$CHAT_ID" -d text="restore test: users $a != $b ($DUMP)"
-  exit 1
-fi
-echo "restore ok: users $a = $b"`
+الأخطاء الشائعة: تنسى BEGIN فالـ DELETE يتنفذ ويتحفظ فورًا (psql بيعمل autocommit)، وبعدها ROLLBACK بيطلّع [[WARNING:  there is no transaction in progress]]. أو تعمل error جوه الـ transaction فكل اللي بعده يترفض بـ [[current transaction is aborted]] لحد ما تعمل ROLLBACK. ولو في جدول تاني بيشاور على users بـ foreign key، الـ DELETE نفسه ممكن يترفض بـ [[violates foreign key constraint]].`
         },
         {
-          cmd: "سكربت migrations",
-          title: "كل ملفات الـ migration بالترتيب ومرة واحدة بس",
-          desc: R`من غير Prisma ولا أداة: سكربت بيلف على [[db/migrations/*.sql]] بالترتيب، ويسجّل كل ملف اتطبق في جدول [[schema_migrations]]، فيعدّي اللي اتطبق قبل كده. وكل ملف في transaction واحدة مع تسجيله، فلو فشل مفيش نص ملف.
+          cmd: "يوزرز وصلاحيات",
+          title: "يوزر للتطبيق بأقل صلاحيات",
+          desc: R`اليوزر [[postgres]] superuser: يقدر يمسح أي قاعدة ويقرا أي حاجة. لو تطبيقك متصل بيه والكود اتخترق (SQL injection مثلًا)، المهاجم ماسك كل حاجة. الحل يوزر خاص بالتطبيق، يقرا ويكتب في جداوله وبس. في Postgres اليوزر اسمه role، و [[CREATE ROLE ... LOGIN PASSWORD]] بيعمله ويسمحله يدخل بباسورد.
 
-و [[ON_ERROR_STOP]] مع [[set -e]] بيوقفوا عند أول فشل.`,
-          example: R`#!/usr/bin/env bash
-set -euo pipefail
-: "$__{DATABASE_URL:?DATABASE_URL missing}"
-PSQL=(psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1)
-"$__{PSQL[@]}" -c "CREATE TABLE IF NOT EXISTS schema_migrations (name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())"
-applied=0; skipped=0
-for f in db/migrations/*.sql; do
-  name=$(basename "$f")
-  if [ -n "$("$__{PSQL[@]}" -tAc "SELECT 1 FROM schema_migrations WHERE name = '$name'")" ]; then
-    skipped=$((skipped+1)); continue
-  fi
-  echo "--> $name"
-  { cat "$f"; echo; echo "INSERT INTO schema_migrations (name) VALUES ('$name');"; } \
-    | "$__{PSQL[@]}" --single-transaction -f -
-  applied=$((applied+1))
-done
-echo "applied: $applied  skipped: $skipped"`,
-          try: "في الـ lab اعمل ٣ ملفات [[001_]] و [[002_]] و [[003_]]، وشغّل السكربت مرتين: التانية كله skipped. بعدين حط error في ملف رابع وشوف إن الجدول بتاعه متعملش وإن اسمه مش في schema_migrations.",
+الصلاحيات طبقات لازم كلها: [[GRANT CONNECT ON DATABASE]] يدخل القاعدة، و [[USAGE ON SCHEMA public]] يشوف اللي جوه الـ schema، و [[SELECT, INSERT, UPDATE, DELETE ON ALL TABLES]] يقرا ويضيف ويعدّل ويمسح صفوف (من غير ما يقدر يمسح الجدول نفسه). و [[SEQUENCES]] لازمة عشان الـ id اللي بيزيد لوحده يشتغل مع INSERT.
+
+[[GRANT ... ON ALL TABLES]] بيطبّق على الجداول الموجودة دلوقتي بس، فـ [[ALTER DEFAULT PRIVILEGES]] بيدّي نفس الصلاحيات لأي جدول جديد هيتعمل بعدين. و [[readonly]] في الآخر يوزر للتقارير، [[SELECT]] بس. حط باسورد طويل عشوائي حقيقي مكان المثال.`,
+          example: R`CREATE ROLE app_user LOGIN PASSWORD 'strong-random-password';
+GRANT CONNECT ON DATABASE app TO app_user;
+GRANT USAGE ON SCHEMA public TO app_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO app_user;
+CREATE ROLE readonly LOGIN PASSWORD 'x';
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly;`,
+          try: "اعمل app_user واتصل بيه وجرّب [[DROP TABLE]]: المفروض يترفض.",
           flag: "script",
           deep: {
-            why: "النسخ واللصق في SQL editor ملف ملف بيتنسي فيه ملف، أو يتطبق مرتين، ومحدش عارف القاعدة دي عليها أنهي نسخة. السكربت بيخلي الإجابة في جدول.",
-            how: R`[[: "$__{DATABASE_URL:?...}"]] بيوقف السكربت برسالة لو المتغير مش موجود. و [[PSQL=(...)]] array فيها الأمر بخياراته، و [[-X]] بيتجاهل [[~/.psqlrc]] عشان إعداداتك الشخصية متأثرش على السكربت.
+            why: "التطبيق متصل بـ postgres (superuser) معناه أي SQL injection أو bug يقدر يمسح كل القواعد. يوزر بأقل صلاحيات بيحدد الضرر.",
+            how: R`في Postgres اليوزر اسمه role. [[CREATE ROLE ... LOGIN PASSWORD]] بيعمله ويسمحله يدخل.
 
-الجدول [[schema_migrations]] فيه اسم كل ملف اتطبق ووقته. [[-tAc]] بيسأل «الملف ده اتطبق؟»؛ لو رجع 1 نعدّيه.
+الصلاحيات طبقات: [[CONNECT]] على القاعدة، وبعدين [[USAGE]] على الـ schema (public غالبًا) عشان يشوف اللي فيه، وبعدين على الجداول نفسها [[SELECT, INSERT, UPDATE, DELETE]]. و [[SEQUENCES]] لازمة عشان الأعمدة SERIAL و identity تشتغل في INSERT.
 
-السطر اللي بين [[{ }]] بيبعت لـ psql الملف نفسه وبعده سطر INSERT باسمه، و [[-f -]] بيقرا من stdin. [[--single-transaction]] بيلف الاتنين في BEGIN و COMMIT: يا الملف كله والتسجيل، يا ولا حاجة.
+الفخ الأشهر: [[GRANT ... ON ALL TABLES]] بيطبّق على الجداول الموجودة دلوقتي بس. أول migration تعمل جدول جديد، app_user مش هيشوفه. [[ALTER DEFAULT PRIVILEGES]] بيحل ده: أي جدول جديد ياخد الصلاحيات دي لوحده. بس بيطبّق على الجداول اللي بيعملها اليوزر اللي نفّذ الأمر، فنفّذه بنفس اليوزر اللي بيشغّل الـ migrations.
 
-الترتيب من الـ glob أبجدي، عشان كده الأسماء بأرقام بطول ثابت ([[001_]] مش [[1_]]، وإلا [[10_]] تيجي قبل [[2_]]).
+يوزر readonly لأدوات التقارير و Metabase: SELECT بس.
 
-استثناء: [[CREATE INDEX CONCURRENTLY]] مينفعش جوه transaction، فملف زي ده محتاج يتشغّل لوحده من غير [[--single-transaction]].`,
-            when: "مشروع بـ SQL خام من غير ORM، أو Supabase من غير CLI، أو Makefile فيه [[make migrate]].",
-            mistakes: "في مشروع حقيقي سكربت migrations كان بيبعت SQL لـ [[/rest/v1/rpc/exec]] بمفتاح service_role: الدالة دي مش موجودة في Supabase أصلًا، ولو حد عملها يبقى فتح تنفيذ أي SQL من REST لأي حد معاه المفتاح. وفي نفس المشروع مكانش فيه جدول بيسجّل اللي اتطبق، فملف ممكن يتطبق مرتين، والـ connection string اتقري بـ [[read]] من غير [[-s]] فالباسورد ظهر على الشاشة. وفي مشروع تاني لوب الـ migrations كان من غير transaction، فملف فشل في النص ساب نصه متطبق."
+وفي Supabase الصلاحيات دي معمولة جاهزة، والـ Row Level Security طبقة فوقها.`,
+            when: "أول حاجة بعد ما تعمل القاعدة، قبل أول migration.",
+            mistakes: "GRANT من غير DEFAULT PRIVILEGES، وبعد أول migration التطبيق يطلع permission denied على الجدول الجديد. والـ migrations بيوزر مختلف عن اللي عمل ALTER DEFAULT."
           },
-          teach: R`## الفكرة: جدول بيفتكر إيه اللي اتطبق
+          teach: R`## الفكرة: مفاتيح على قد الشغل
 
-عندك فولدر [[db/migrations/]] فيه ملفات SQL مرقّمة، كل ملف تغيير في الـ schema. السكربت بيلف عليهم بالترتيب، ولكل ملف يسأل جدول اسمه [[schema_migrations]]: «اتطبق قبل كده؟». لو لأ، يطبّقه ويسجّل اسمه في نفس الـ transaction.
+اليوزر [[postgres]] معاه كل المفاتيح. التطبيق محتاج يقرا ويكتب صفوف وبس، فبنعمله يوزر (في Postgres اسمه **role**) وندّيله المفاتيح دي بالظبط. والصلاحيات في Postgres طبقات زي باب العمارة وباب الشقة وباب الأوضة: لازم كلهم يتفتحوا.
 
-السكربت اتشغّل فعلًا بـ bash جوه container [[postgres:16]]، على قاعدة فاضية اسمها [[lab]]، وفي الفولدر ٣ ملفات:
-
-~~~text db/migrations/
-001_a.sql        CREATE TABLE a (id int);
-002_b.sql        CREATE TABLE b (id int);
-003_a_name.sql   ALTER TABLE a ADD COLUMN name text;
-~~~
+كل الأوامر تحت اتنفّذت كـ [[postgres]] على [[postgres:16]] جوه Docker، قاعدة [[app]]، والتجربة بعدها باليوزرز الجداد.
 
 ---
 
-## السطر ١: [[#!/usr/bin/env bash]]
+## ١. اعمل اليوزر
 
-اسمه shebang: أول سطر بيقول للنظام يشغّل الملف بأنهي برنامج. [[/usr/bin/env bash]] يعني «دوّر على bash في الـ PATH وشغّل بيه».
-
-## السطر ٢: [[set -euo pipefail]]
+~~~text SQL
+CREATE ROLE app_user LOGIN PASSWORD 'strong-random-password';
+~~~
 
 | الحتة | معناها |
 |---|---|
-| [[-e]] | أي أمر يفشل يوقف السكربت |
-| [[-u]] | متغير مش متعرّف = error |
-| [[-o pipefail]] | لو أي أمر في [[|]] فشل، الـ pipe كله فشل |
-
----
-
-## السطر ٣: [[: "$__{DATABASE_URL:?DATABASE_URL missing}"]]
-
-من جوه لبرة:
-
-- [[$__{DATABASE_URL}]]: قيمة المتغير.
-- [[:?رسالة]]: لو المتغير مش موجود أو فاضي، اطبع الرسالة ووقّف السكربت.
-- [[:]] في أول السطر: أمر bash «مبيعملش حاجة». احنا محتاجينه بس عشان bash يحسب الـ [[$__{...}]] اللي بعده.
-
-شغّلناه من غير المتغير:
+| [[CREATE ROLE app_user]] | اعمل role اسمه app_user |
+| [[LOGIN]] | يقدر يتصل (role من غير LOGIN بيبقى «مجموعة» صلاحيات بس) |
+| [[PASSWORD '...']] | الباسورد، و Postgres بيخزنه متشفّر |
 
 ~~~text الناتج
-/tmp/migrate.sh: line 3: DATABASE_URL: DATABASE_URL missing
-~~~
-
-وبعدين عرّفناه: [[export DATABASE_URL=postgres://postgres@localhost/lab]].
-
----
-
-## السطر ٤: [[PSQL=(psql "$DATABASE_URL" -X -q -v ON_ERROR_STOP=1)]]
-
-[[( )]] بعد [[=]] بتعمل **array** في bash: قايمة كلمات. احنا بنحط فيها أمر psql بخياراته مرة واحدة عشان منكررهوش:
-
-| الحتة | معناها |
-|---|---|
-| [[-X]] | متقراش [[~/.psqlrc]]، عشان إعداداتك الشخصية متغيّرش سلوك السكربت |
-| [[-q]] | quiet: متطبعش [[CREATE TABLE]] و [[INSERT 0 1]] بعد كل أمر |
-| [[-v ON_ERROR_STOP=1]] | أول error في SQL يوقف psql ويطلع بـ exit code [[3]] (من غيره بيكمّل للسطر اللي بعده) |
-
-وبنستخدمها كده: [[$__{PSQL[@]}]]. و [[@]] بين القوسين المربعين معناها «كل عناصر الـ array»، والعلامات [[" "]] حواليها بتخلي كل عنصر يفضل كلمة لوحده حتى لو فيه مسافات.
-
-## السطر ٥: جدول السجل
-
-~~~sql
-CREATE TABLE IF NOT EXISTS schema_migrations (name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())
-~~~
-
-[[IF NOT EXISTS]] عشان التشغيل التاني ميفشلش. عمودين: [[name]] اسم الملف (و [[PRIMARY KEY]] بيمنع نفس الاسم يتسجّل مرتين)، و [[applied_at]] وقت التطبيق، بيتملى لوحده بـ [[now()]].
-
-## السطر ٦: [[applied=0; skipped=0]]
-
-عدادين، و [[;]] بتفصل أمرين في سطر واحد.
-
----
-
-## اللوب: السطور ٧ لـ ١٦
-
-### [[for f in db/migrations/*.sql; do]]
-
-[[*.sql]] اسمها glob: bash بيحوّلها لكل الملفات اللي بتنتهي بـ [[.sql]]، **مترتبة أبجديًا**. عشان كده الأرقام بطول ثابت: [[001_]] و [[002_]] و [[010_]]. لو كتبت [[1_]] و [[2_]] و [[10_]]، الترتيب الأبجدي هيحط [[10_]] قبل [[2_]].
-
-### [[name=$(basename "$f")]]
-
-[[basename]] بيشيل الفولدر من المسار: [[db/migrations/001_a.sql]] تبقى [[001_a.sql]]. ده اللي بيتسجّل.
-
-### الشرط: اتطبق قبل كده؟
-
-~~~bash
-if [ -n "$("$__{PSQL[@]}" -tAc "SELECT 1 FROM schema_migrations WHERE name = '$name'")" ]; then
-~~~
-
-من جوه لبرة:
-
-1. [[-tAc "SELECT 1 ..."]]: لو الاسم موجود يطبع [[1]]، ولو مش موجود ميطبعش حاجة. ([[-t]] من غير عناوين، و [[-A]] من غير مسافات.)
-2. [[$( )]] بياخد الناتج ده كنص.
-3. القوسين [ ] أمر اختبار في bash، و [[-n]] جواهم يعني «النص ده مش فاضي؟».
-
-جرّبناها: للاسم [[001_a.sql]] بعد ما اتطبق رجّعت [[1]]، ولاسم مش موجود رجّعت نص فاضي.
-
-### [[skipped=$((skipped+1)); continue]]
-
-[[$(( ))]] حساب أرقام في bash. و [[continue]] «سيب باقي اللفة دي وروح للملف اللي بعده».
-
-### قلب السكربت: الملف + تسجيله في transaction واحدة
-
-~~~bash
-{ cat "$f"; echo; echo "INSERT INTO schema_migrations (name) VALUES ('$name');"; } \
-  | "$__{PSQL[@]}" --single-transaction -f -
-~~~
-
-- [[{ ...; }]] بتجمع كذا أمر وناتجهم كله يطلع كأنه أمر واحد: محتوى الملف ([[cat]])، وسطر فاضي ([[echo]]) عشان لو آخر سطر في الملف مفيهوش newline، وسطر الـ [[INSERT]].
-- [[\]] في آخر السطر: الأمر مكمّل في السطر اللي تحت.
-- [[| ... -f -]]: [[-f]] يعني «اقرا SQL من ملف»، و [[-]] يعني الملف هو اللي داخل من الـ pipe.
-- [[--single-transaction]]: psql بيحط [[BEGIN]] قبل كل ده و [[COMMIT]] بعده. يا الملف وتسجيله ينجحوا مع بعض، يا ولا واحد فيهم.
-
----
-
-## التشغيل الحقيقي
-
-أول مرة:
-
-~~~text الناتج
---> 001_a.sql
---> 002_b.sql
---> 003_a_name.sql
-applied: 3  skipped: 0
-~~~
-
-تاني مرة:
-
-~~~text الناتج
-NOTICE:  relation "schema_migrations" already exists, skipping
-applied: 0  skipped: 3
-~~~
-
-الـ [[NOTICE]] جاية من [[IF NOT EXISTS]]، معلومة مش error.
-
-### ملف فيه غلط
-
-ضفنا [[004_bad.sql]] فيه سطرين: [[CREATE TABLE d (id int);]] وبعده [[SELECT * FROM nope;]] (جدول مش موجود):
-
-~~~text الناتج
---> 004_bad.sql
-psql:<stdin>:2: ERROR:  relation "nope" does not exist
-LINE 1: SELECT * FROM nope;
-                      ^
-exit=3
-~~~
-
-- [[psql:<stdin>:2]]: الغلط في السطر ٢ من اللي دخل من الـ pipe.
-- [[exit=3]]: ده رقم [[ON_ERROR_STOP]]، و [[pipefail]] و [[-e]] وقفوا السكربت.
-
-وبعدها:
-
-~~~text SELECT name, applied_at FROM schema_migrations
-      name      |          applied_at
-----------------+-------------------------------
- 001_a.sql      | 2026-10-06 13:39:50.471556+00
- 002_b.sql      | 2026-10-06 13:39:50.549345+00
- 003_a_name.sql | 2026-10-06 13:39:50.638578+00
-~~~
-
-و [[SELECT to_regclass('d')]] رجّع فاضي ([[NULL]]): الجدول [[d]] **متعملش** رغم إن سطره كان قبل الغلط. [[--single-transaction]] رجّع كل حاجة. تصلّح الملف وتشغّل السكربت تاني، فيطبّق [[004]] بس.
-
----
-
-## الخلاصة
-
-| الحتة | بتضمن إيه |
-|---|---|
-| [[schema_migrations]] | كل ملف يتطبق مرة واحدة بس |
-| أسماء بأرقام بطول ثابت | الترتيب صح |
-| [[ON_ERROR_STOP=1]] + [[set -e]] | أول غلط يوقف كل حاجة |
-| [[--single-transaction]] | مفيش نص ملف متطبق |
-
-واستثناء واحد: [[CREATE INDEX CONCURRENTLY]] مينفعش جوه transaction، فملف زي ده يتشغّل لوحده من غير [[--single-transaction]].`,
-          lines: [
-            "أي فشل يوقف السكربت.",
-            "لازم DATABASE_URL يبقى موجود.",
-            "أمر psql بخياراته مرة واحدة: وقف عند أول error، ومن غير psqlrc.",
-            "جدول بيسجّل الملفات اللي اتطبقت (لو مش موجود).",
-            "عدادات.",
-            "لف على الملفات بالترتيب الأبجدي.",
-            "اسم الملف من غير الفولدر.",
-            "الملف ده اتطبق قبل كده؟",
-            "عدّيه.",
-            "نهاية الشرط.",
-            "اطبع اسم الملف.",
-            "الملف وبعده تسجيله في الجدول...",
-            "...في transaction واحدة: الاتنين أو ولا حاجة.",
-            "عدّ.",
-            "نهاية اللوب.",
-            "الملخص."
-          ],
-          sol: R`أول تشغيل بـ ٣ ملفات:
-
-[[--> 001_a.sql]] و [[--> 002_b.sql]] و [[--> 003_a_name.sql]] وبعدين [[applied: 3  skipped: 0]]. التشغيل التاني: [[applied: 0  skipped: 3]] (ومعاه [[NOTICE: relation "schema_migrations" already exists, skipping]] ودي عادي).
-
-بملف رابع فيه [[CREATE TABLE d]] وبعده [[SELECT * FROM nope]]: الناتج [[--> 004_bad.sql]] و [[ERROR:  relation "nope" does not exist]] والسكربت بيقف بـ exit code 3. و [[SELECT name FROM schema_migrations]] لسه فيه الـ ٣ بس، و [[SELECT to_regclass('d')]] بيرجّع فاضي (NULL)، يعني الجدول d متعملش رغم إنه قبل السطر الغلط. دا شغل [[--single-transaction]]: الملف والـ INSERT في schema_migrations يا ينجحوا مع بعض يا لأ.
-
-لو لقيت الجدول d موجود، يبقى شلت [[--single-transaction]]. ولو لقيت 004 في schema_migrations، يبقى شلت [[ON_ERROR_STOP]] فـ psql كمّل بعد الـ error.`
-        },
-        {
-          cmd: "Prisma migrate",
-          title: "الـ schema بيتغير بأمان",
-          desc: "الـ migrations ملفات SQL مرقّمة بتتطبق بالترتيب، وPrisma بيسجّل في جدول [[_prisma_migrations]] إيه اللي اتطبق. [[migrate dev]] على جهازك بيعمل الملف ويطبّقه. [[migrate deploy]] على السيرفر بيطبّق اللي لسه متطبقش بس، من غير ما يولّد حاجة.",
-          example: R`npx prisma migrate dev --name add_orders_status
-npx prisma migrate status
-npx prisma migrate deploy
-npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script
-npx prisma migrate resolve --applied 20260925103000_add_orders_status
-npx prisma db pull`,
-          try: "عدّل schema.prisma، وشغّل [[migrate dev]]، وافتح ملف SQL اللي اتولّد واقراه قبل ما تعمله commit.",
-          deep: {
-            why: "تغيير الـ schema بإيدك على السيرفر معناه في يوم ما جهازك والسيرفر والفريق هيبقوا على schemas مختلفة ومحدش عارف الفرق. الـ migrations بتخلي التغيير كود له تاريخ.",
-            how: R`[[migrate dev]] على جهازك: بيقارن schema.prisma بحالة القاعدة، ويولّد ملف SQL في [[prisma/migrations/التاريخ_الاسم/migration.sql]]، ويطبّقه. ومن Prisma 7 مبقاش بيعمل generate لوحده: شغّل [[npx prisma generate]] بعده. اقرا الـ SQL المولّد دايمًا قبل commit: Prisma أحيانًا بيمسح عمود ويعمل واحد جديد بدل rename، وده بيضيّع بيانات.
-
-[[migrate deploy]] على السيرفر (في CI أو قبل تشغيل التطبيق): بيبص في جدول [[_prisma_migrations]] يشوف إيه اتطبق، ويطبّق الباقي بالترتيب. مش بيولّد ولا بيسأل. ده الوحيد اللي يتشغّل على الإنتاج.
-
-[[migrate status]] بيقولك فيه migrations لسه متطبقتش أو فيه واحدة فشلت في النص.
-
-[[migrate diff]] بيطلّع SQL الفرق بين حاجتين، مفيد تشوف إيه اللي migrate dev هيعمله قبل ما يعمله.
-
-[[migrate resolve]] لما migration فشلت في النص على الإنتاج: تصلّح بإيدك، وتقوله «اعتبرها اتطبقت».
-
-[[db pull]] العكس: يقرا القاعدة ويكتب schema.prisma، لقاعدة موجودة قبل Prisma.`,
-            when: "dev لكل تغيير على جهازك. deploy في pipeline الديبلوي قبل تشغيل النسخة الجديدة.",
-            mistakes: "[[migrate dev]] على الإنتاج (ممكن يعمل reset). و [[migrate reset]] على أي حاجة غير جهازك: بيمسح القاعدة."
-          },
-          teach: R`## الفكرة: schema.prisma هو الهدف، والـ migrations هي الطريق
-
-انت بتكتب شكل الجداول اللي عايزه في [[prisma/schema.prisma]]. و [[prisma migrate]] بيحسب الفرق بينه وبين القاعدة، ويكتبه ملف SQL، ويسجّل في جدول [[_prisma_migrations]] أنهي ملفات اتطبقت.
-
-كل اللي تحت اتشغّل فعلًا بـ Prisma 7.10.0 في container [[node:22-slim]] متوصّل بـ container [[postgres:16]]، على قاعدتين: [[shop]] (كأنها جهازك) و [[shop_prod]] (كأنها السيرفر). وفي Prisma 7 رابط القاعدة بيتكتب في [[prisma.config.ts]] جوه [[datasource: { url: env("DATABASE_URL") }]]، مش في schema.prisma.
-
-وكلمة [[npx]] في أول كل أمر: شغّل البرنامج [[prisma]] المتسطّب في [[node_modules]] بتاع المشروع.
-
----
-
-## ١. [[migrate dev --name add_orders_status]]
-
-بدأنا بموديل فيه [[id]] و [[amount]] بس، وعملنا أول migration اسمها [[init]]. بعدين ضفنا سطر:
-
-~~~text prisma/schema.prisma
-model Order {
-  id     Int @id @default(autoincrement())
-  amount Int
-  status String @default("pending")
-}
-~~~
-
-- [[migrate dev]]: قارن الـ schema بالقاعدة، اكتب ملف SQL بالفرق، وطبّقه. **على جهازك بس.**
-- [[--name add_orders_status]]: اسم يتحط في اسم الفولدر عشان تعرف الملف ده بيعمل إيه.
-
-~~~text الناتج
-Datasource "db": PostgreSQL database "shop", schema "public" at "pg02-db:5432"
-
-Applying migration $__bt20261006134857_add_orders_status$__bt
-
-prisma/migrations/
-  └─ 20261006134857_add_orders_status/
-    └─ migration.sql
-
-Your database is now in sync with your schema.
-~~~
-
-اسم الفولدر = التاريخ والساعة ([[20261006134857]] يعني 2026-10-06 13:48:57) + الاسم. التاريخ في الأول بيضمن الترتيب. والملف نفسه:
-
-~~~sql migration.sql
--- AlterTable
-ALTER TABLE "Order" ADD COLUMN     "status" TEXT NOT NULL DEFAULT 'pending';
-~~~
-
-وفي Prisma 7 [[migrate dev]] مبقاش بيعمل [[prisma generate]] لوحده، فشغّله بعدها عشان كود الـ client يشوف العمود الجديد.
-
----
-
-## ٢. [[migrate status]]
-
-بيقارن الفولدر [[prisma/migrations]] بجدول [[_prisma_migrations]] في القاعدة. على [[shop]]:
-
-~~~text الناتج
-2 migrations found in prisma/migrations
-
-Database schema is up to date!
-~~~
-
-وعلى [[shop_prod]] اللي لسه فاضية:
-
-~~~text الناتج
-Following migrations have not yet been applied:
-20261006134842_init
-20261006134857_add_orders_status
-
-To apply migrations in development run prisma migrate dev.
-To apply migrations in production run prisma migrate deploy.
+CREATE ROLE
 ~~~
 
 ---
 
-## ٣. [[migrate deploy]]
+## ٢. الطبقات الأربعة
 
-ده أمر السيرفر: بيطبّق الملفات اللي مش في [[_prisma_migrations]]، بالترتيب، من غير ما يولّد أي حاجة ومن غير ما يسأل. على [[shop_prod]]:
-
-~~~text الناتج
-Applying migration $__bt20261006134842_init$__bt
-Applying migration $__bt20261006134857_add_orders_status$__bt
-
-All migrations have been successfully applied.
+~~~text SQL
+GRANT CONNECT ON DATABASE app TO app_user;
+GRANT USAGE ON SCHEMA public TO app_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO app_user;
 ~~~
 
-والجدول اللي بيفتكر:
+[[GRANT ... ON ... TO ...]] يعني «ادّي الصلاحية دي، على الحاجة دي، لليوزر ده». وكل سطر طبّع [[GRANT]].
 
-~~~text SELECT migration_name, finished_at, applied_steps_count FROM _prisma_migrations
-          migration_name          |          finished_at          | applied_steps_count
-----------------------------------+-------------------------------+---------------------
- 20261006134842_init              | 2026-10-06 13:48:42.706253+00 |                   1
- 20261006134857_add_orders_status | 2026-10-06 13:48:57.531605+00 |                   1
-~~~
-
-لو [[finished_at]] فاضي، الـ migration بدأت ووقعت في النص.
-
----
-
-## ٤. [[migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script]]
-
-بيطلّع SQL الفرق **من غير ما يطبّق ولا يكتب ملف**:
-
-| الحتة | معناها |
-|---|---|
-| [[--from-config-datasource]] | نقطة البداية: القاعدة اللي في [[prisma.config.ts]] |
-| [[--to-schema prisma/schema.prisma]] | نقطة النهاية: الملف ده |
-| [[--script]] | اطبع SQL (من غيره بيطبع وصف بالكلام) |
-
-لما القاعدة والـ schema متطابقين طبع [[-- This is an empty migration.]]. وبعدين غيّرنا اسم [[amount]] لـ [[total]] في الـ schema:
-
-~~~text الناتج
--- AlterTable
-ALTER TABLE "Order" DROP COLUMN "amount",
-ADD COLUMN     "total" INTEGER NOT NULL;
-~~~
-
-ده بالظبط الفخ: Prisma مش فاهم إنها إعادة تسمية، فبيمسح العمود (والبيانات معاه) ويعمل واحد جديد. عشان كده بنعمل الملف بـ [[migrate dev --create-only]] (اكتب الملف ومتطبّقوش)، وفي أوله تحذير:
-
-~~~text الناتج
-  - You are about to drop the column $__btamount$__bt on the $__btOrder$__bt table. All the data in the column will be lost.
-~~~
-
-ونعدّل الملف بإيدنا لـ [[ALTER TABLE "Order" RENAME COLUMN "amount" TO "total";]].
-
----
-
-## ٥. [[migrate resolve --applied <اسم>]]
-
-بيكتب في [[_prisma_migrations]] إن الـ migration دي «اتطبقت»، من غير ما ينفّذها. بتستخدمه لما migration فشلت في النص على الإنتاج وانت صلّحت بإيدك. جرّبناه على [[shop_prod]]: عملنا الـ RENAME بإيدنا بـ psql، وبعدين:
-
-~~~text الناتج
-Migration 20261006134917_rename_amount marked as applied.
-~~~
-
-و [[migrate status]] بعدها قال [[Database schema is up to date!]]. ولو جرّبته على واحدة متسجّلة أصلًا:
-
-~~~text الناتج
-Error: P3008
-
-The migration $__bt20261006134857_add_orders_status$__bt is already recorded as applied in the database.
-~~~
-
----
-
-## ٦. [[db pull]]
-
-العكس خالص: بيقرا الجداول من القاعدة ويكتبها في [[schema.prisma]] (اسمها introspection). للمشاريع اللي القاعدة فيها موجودة قبل Prisma.
-
-~~~text الناتج
-✔ Introspected 1 model and wrote it into prisma/schema.prisma in 56ms
-~~~
-
-وخد بالك إنه **بيكتب فوق** schema.prisma، فاعمله commit قبلها.
-
----
-
-## الخلاصة
-
-| الأمر | فين | بيعمل إيه |
+| السطر | الطبقة | من غيرها |
 |---|---|---|
-| [[migrate dev]] | جهازك | يولّد ملف SQL ويطبّقه |
-| [[migrate dev --create-only]] | جهازك | يولّد بس، عشان تراجع وتعدّل |
-| [[migrate status]] | أي مكان | إيه اللي لسه |
-| [[migrate deploy]] | السيرفر و CI | يطبّق اللي لسه، من غير توليد |
-| [[migrate diff]] | أي مكان | يوريك SQL من غير ما يعمل حاجة |
-| [[migrate resolve --applied]] | الإنتاج بعد إصلاح يدوي | يسجّل إنها اتطبقت |
-| [[db pull]] | جهازك | القاعدة ← schema.prisma |
+| [[CONNECT ON DATABASE app]] | باب القاعدة | ميقدرش يتصل بيها |
+| [[USAGE ON SCHEMA public]] | باب الـ schema | ميشوفش الجداول اللي جواها |
+| [[SELECT, INSERT, UPDATE, DELETE ON ALL TABLES]] | الجداول | يقرا ويضيف ويعدّل ويمسح **صفوف** |
+| [[USAGE, SELECT ON ALL SEQUENCES]] | العدّادات | الـ id اللي بيزيد لوحده ([[serial]]) يفشل في INSERT |
 
-اقرا كل [[migration.sql]] قبل الـ commit، وخصوصًا لو فيه [[DROP]].`,
-          lines: [
-            "ولّد migration من تغيير schema.prisma وطبّقها محليًا.",
-            "إيه اللي اتطبق وإيه لأ.",
-            "على السيرفر: طبّق اللي لسه متطبقش، من غير توليد.",
-            "SQL الفرق بين القاعدة والـ schema، من غير تطبيق.",
-            "لو migration فشلت في النص وصلّحتها بإيدك: اعتبرها اتطبقت.",
-            "العكس: اقرا القاعدة واكتب الـ schema."
-          ],
-          sol: R`لما تضيف مثلًا [[status String @default("pending")]] وتشغّل [[npx prisma migrate dev --name add_orders_status]]، هيقولك إنه عمل فولدر زي [[prisma/migrations/20260930045902_add_orders_status/migration.sql]] و [[Your database is now in sync with your schema.]]. والملف فيه:
+لاحظ: مفيش [[DROP]] ولا [[ALTER]] ولا [[TRUNCATE]]. مسح الجدول نفسه أو تغيير شكله بيحتاج تبقى **صاحب** الجدول (owner).
 
-[[ALTER TABLE "Order" ADD COLUMN "status" TEXT NOT NULL DEFAULT 'pending';]] وده آمن.
+> على تسطيب جديد، [[CONNECT]] و [[USAGE ON SCHEMA public]] مدّيين لكل الناس (PUBLIC) أصلًا، بس كتابتهم بتخلّي السكربت يشتغل حتى لو حد قفلهم.
 
-الحالة اللي لازم تتعلم تمسكها: غيّر اسم عمود من [[amount]] لـ [[total]]. Prisma مش بيعرف إنه rename، فبيولّد [[DROP COLUMN "amount"]] و [[ADD COLUMN "total" INTEGER NOT NULL]]، وفي أول الملف تحذير [[All the data in the column will be lost]]. استخدم [[--create-only]] وعدّل الملف لـ [[ALTER TABLE "Order" RENAME COLUMN "amount" TO "total";]] قبل ما تطبّقه. وعلى جدول فيه داتا، [[ADD COLUMN ... NOT NULL]] من غير default هيفشل. و [[npx prisma migrate status]] في الآخر المفروض يقول [[Database schema is up to date!]].`
-        },
-        {
-          cmd: "تغييرات آمنة في الإنتاج",
-          title: "ADD COLUMN من غير ما توقّع الموقع",
-          desc: "بعض تعديلات الـ schema بتقفل الجدول لحد ما تخلص، وعلى جدول كبير ده دقايق الموقع فيها واقف. [[lock_timeout]] بيخلي الأمر يفشل بدل ما يستنى، و [[CONCURRENTLY]] بيبني index من غير قفل، والقيم الافتراضية الثابتة سريعة من Postgres 11.",
-          example: R`SET lock_timeout = '3s';
-ALTER TABLE orders ADD COLUMN notes text;
-ALTER TABLE orders ADD COLUMN status text NOT NULL DEFAULT 'pending';
-CREATE INDEX CONCURRENTLY idx_orders_notes ON orders (notes);
-ALTER TABLE orders ADD CONSTRAINT chk_amount CHECK (amount >= 0) NOT VALID;
-ALTER TABLE orders VALIDATE CONSTRAINT chk_amount;`,
-          try: "على جدول فيه مليون صف، قارن وقت ADD COLUMN بـ DEFAULT ثابت مقابل DEFAULT clock_timestamp(): الأول لحظي والتاني بيعيد كتابة الجدول (now() لحظية كمان لأنها بتتحسب مرة واحدة).",
-          flag: "script",
-          deep: {
-            why: "[[ALTER TABLE]] على جدول فيه ١٠ مليون صف ممكن يقفله ٥ دقايق، وكل طلب على الموقع يستنى، والاتصالات تتراكم، والموقع يقع. الـ migration نفسها صح، التوقيت والطريقة هما المشكلة.",
-            how: R`[[SET lock_timeout = '3s']] أول سطر في أي migration إنتاج: لو الأمر مقدرش ياخد الـ lock في ٣ ثواني (لأن استعلام طويل ماسك الجدول)، يفشل بدل ما يستنى ويعلّق كل اللي وراه. تعيد المحاولة بعدين.
+ونشوف النتيجة بـ [[\dp users]] (p من privileges):
 
-[[ADD COLUMN]] من غير default أو بـ default ثابت: لحظي، مش بيلمس الصفوف (Postgres 11+). بـ default بيتحسب لكل صف (volatile) زي [[clock_timestamp()]] أو [[gen_random_uuid()]]: بيعيد كتابة الجدول كله ([[now()]] مش منهم: بتتحسب مرة واحدة فلحظية). الحل: ضيف العمود من غير default، وبعدين حدّث على دفعات.
+~~~text الناتج (من غير آخر عمودين Column privileges و Policies)
+ Schema | Name  | Type  |     Access privileges
+--------+-------+-------+---------------------------
+ public | users | table | postgres=arwdDxt/postgres+
+        |       |       | app_user=arwd/postgres   +
+        |       |       | readonly=r/postgres
+~~~
 
-[[NOT NULL]] على عمود موجود: بيفحص كل الصفوف بقفل. الطريقة: CHECK constraint بـ [[NOT VALID]] (لحظي، بيطبّق على الصفوف الجديدة بس)، وبعدين [[VALIDATE CONSTRAINT]] (بيفحص القديمة من غير قفل قوي).
-
-[[CREATE INDEX CONCURRENTLY]]: مينفعش جوه transaction، و Prisma بيلف كل migration في transaction. الحل: migration منفصلة فيها الأمر ده لوحده من غير أي أمر تاني في نفس الملف، أو تعمل الـ index بإيدك خارج Prisma وتسجّله بـ migrate resolve.
-
-وأي migration بتمسح عمود: خطوتين في deployين. الأول الكود يبطّل يستخدمه، والتاني المسح.`,
-            when: "أي migration على جدول أكبر من كام مية ألف صف.",
-            mistakes: "RENAME COLUMN مباشرة: الكود القديم اللي لسه شغال لثواني أثناء الـ deploy هيقع. الاسم الجديد يتضاف ويتملى، والقديم يتشال بعدين."
-          },
-          teach: R`## الفكرة: الأمر صح، بس ممكن يقفل الجدول
-
-أي [[ALTER TABLE]] محتاج **قفل** (lock) على الجدول. لو القفل ده ماسك الجدول وقت طويل، كل [[SELECT]] و [[INSERT]] من الموقع بيستنوا وراه، والموقع يبان واقع. الـ ٦ سطور في المثال هما الطرق اللي بتخلي التغيير يا لحظي، يا من غير قفل قوي.
-
-جربناهم كلهم في container [[postgres:16]] على جدول [[orders]] فيه **مليون صف**، و [[\timing on]] شغال عشان كل أمر يطبع وقته.
+كل سطر [[مين=حروف/مين_ادّاها]]. والحروف: [[a]] INSERT (append)، [[r]] SELECT (read)، [[w]] UPDATE (write)، [[d]] DELETE، [[D]] TRUNCATE، [[x]] REFERENCES، [[t]] TRIGGER. فـ app_user عنده [[arwd]] بالظبط، و readonly [[r]] بس.
 
 ---
 
-## ١. [[SET lock_timeout = '3s';]]
+## ٣. الجداول اللي لسه هتتعمل
 
-[[SET]] بيغيّر إعداد للجلسة دي بس. و [[lock_timeout]] معناه: «لو مقدرتش تاخد القفل في ٣ ثواني، افشل».
+~~~text SQL
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO app_user;
+~~~
 
-ليه ده مهم؟ لأن [[ALTER TABLE]] بيستنى أي حد تاني ماسك الجدول. ولو استعلام طويل شغال، الـ ALTER يقف في الطابور، و**كل استعلام جديد يقف وراه**. يعني الـ ALTER نفسه بقى سبب الوقفة.
-
-جربناها: جلسة تانية فتحت transaction على [[orders]] واستنت ٨ ثواني، وفي نفس الوقت:
+[[ON ALL TABLES]] فوق اتطبّق على الجداول **الموجودة لحظتها** بس. الأمرين دول بيقولوا: «أي جدول أو sequence **هعمله أنا** بعد كده في public، ادّي app_user الصلاحيات دي عليه لوحده». وتشوفهم بـ [[\ddp]] (default privileges):
 
 ~~~text الناتج
-SET
-ERROR:  canceling statement due to lock timeout
-Time: 3000.547 ms (00:03.001)
+  Owner   | Schema |   Type   |   Access privileges
+----------+--------+----------+------------------------
+ postgres | public | sequence | app_user=rU/postgres
+ postgres | public | table    | app_user=arwd/postgres
 ~~~
 
-فشل بعد ٣ ثواني بالظبط بدل ما يعلّق الموقع. تعيد المحاولة بعد ما الاستعلام الطويل يخلص.
+عمود [[Owner]] مهم: القاعدة دي بتشتغل على الجداول اللي **postgres** يعملها. لو الـ migrations بتشتغل بيوزر تاني، نفّذ الأمر بيه هو. و [[U]] في الـ sequence معناها USAGE.
 
 ---
 
-## ٢. [[ADD COLUMN notes text]]
+## ٤. يوزر قراية بس
+
+~~~text SQL
+CREATE ROLE readonly LOGIN PASSWORD 'x';
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO readonly;
+~~~
+
+لأدوات التقارير و Metabase. (وحط باسورد حقيقي طبعًا.)
+
+---
+
+## ٥. نجرّب: الجدول ده اتعمل بعد كل الـ GRANTs
+
+~~~text SQL (كـ postgres)
+CREATE TABLE coupons2 (id serial PRIMARY KEY, code text);
+~~~
+
+### كـ app_user ([[psql -h localhost -U app_user -d app]])
 
 ~~~text الناتج
-ALTER TABLE
-Time: 4.132 ms
-~~~
-
-عمود من غير default: Postgres بيسجّله في الـ catalog (الفهرس اللي فيه شكل الجداول) بس، والصفوف القديمة مبتتلمسش. أي صف قديم لما يتقري، العمود ده يطلع [[NULL]].
-
-## ٣. [[ADD COLUMN status text NOT NULL DEFAULT 'pending']]
-
-~~~text الناتج
-ALTER TABLE
-Time: 1.450 ms
-~~~
-
-لحظي كمان، رغم إن فيه default و [[NOT NULL]]. من Postgres 11، الـ default **الثابت** بيتحفظ مرة واحدة في الـ catalog، وأي صف قديم بيترد بيه. قبل 11 كان بيعيد كتابة المليون صف.
-
-### بس مش أي default
-
-| الـ default | الوقت على مليون صف | ليه |
-|---|---|---|
-| [['pending']] | 1.450 ms | قيمة ثابتة |
-| [[now()]] | 3.953 ms | بتتحسب **مرة واحدة** وقت الأمر |
-| [[clock_timestamp()]] | 964.519 ms | بتتحسب **لكل صف** (volatile)، فلازم يكتب كل الصفوف |
-
-والدليل:
-
-~~~text SELECT count(DISTINCT c1), count(DISTINCT c2) FROM orders;
- count | count
--------+--------
-     1 | 338890
-~~~
-
-عمود [[now()]] فيه قيمة واحدة لكل الصفوف، وعمود [[clock_timestamp()]] فيه حوالي ٣٤٠ ألف قيمة مختلفة: اتحسبت وهو بيكتب كل صف. ثانية على مليون صف، يعني حوالي دقيقة ونص على ١٠٠ مليون، والجدول مقفول [[ACCESS EXCLUSIVE]] (أقوى قفل: حتى [[SELECT]] بيستنى).
-
----
-
-## ٤. [[CREATE INDEX CONCURRENTLY idx_orders_notes ON orders (notes);]]
-
-- [[CREATE INDEX]] العادي بيمنع الكتابة على الجدول لحد ما يخلص.
-- [[CONCURRENTLY]]: ابنيه والجدول شغال عادي. أبطأ (بيمر على الجدول مرتين) بس من غير وقفة.
-- [[idx_orders_notes]] اسم الـ index، و [[(notes)]] العمود.
-
-~~~text الناتج
-CREATE INDEX
-Time: 275.067 ms
-~~~
-
-والشرط المهم: مينفعش جوه transaction. جربنا:
-
-~~~text BEGIN; CREATE INDEX CONCURRENTLY ...
-ERROR:  CREATE INDEX CONCURRENTLY cannot run inside a transaction block
-~~~
-
-عشان كده في Prisma (اللي بيلف كل migration في transaction) بيتحط في migration لوحده، وفي سكربت migrations بيتشغّل من غير [[--single-transaction]].
-
----
-
-## ٥ و ٦. constraint على مرحلتين: [[NOT VALID]] ثم [[VALIDATE]]
-
-~~~sql
-ALTER TABLE orders ADD CONSTRAINT chk_amount CHECK (amount >= 0) NOT VALID;
-ALTER TABLE orders VALIDATE CONSTRAINT chk_amount;
-~~~
-
-- [[ADD CONSTRAINT chk_amount]]: قاعدة اسمها [[chk_amount]].
-- [[CHECK (amount >= 0)]]: أي صف لازم [[amount]] فيه صفر أو أكتر.
-- [[NOT VALID]]: طبّقها على الصفوف **الجديدة** بس، ومتفحصش القديمة دلوقتي. فالأمر لحظي: [[1.612 ms]].
-- [[VALIDATE CONSTRAINT]]: افحص القديمة دلوقتي. أخد [[45.459 ms]] على المليون صف، وبقفل أخف (الجدول يتقري ويتكتب فيه عادي وهو بيفحص).
-
-لو لقى صف بيكسر القاعدة، [[VALIDATE]] بيفشل والـ constraint بيفضل [[NOT VALID]]: تصلّح الصفوف وتعيد.
-
----
-
-## الحل (solCode): نفس التجربة خطوة خطوة
-
-~~~sql
-CREATE TABLE big AS SELECT g AS id FROM generate_series(1, 1000000) g;
-~~~
-
-[[generate_series(1, 1000000)]] بتطلّع الأرقام من ١ لمليون كصفوف، و [[g]] اسمها، و [[CREATE TABLE ... AS SELECT]] بيعمل جدول من النتيجة. وبعدين [[\timing on]] (أمر psql) يطبع وقت كل أمر، وباقي الأوامر هي الـ ٣ defaults اللي في الجدول فوق.
-
----
-
-## الخلاصة
-
-| التغيير | آمن؟ | الطريقة |
-|---|---|---|
-| أي migration إنتاج | | أول سطر [[SET lock_timeout]] |
-| عمود من غير default أو بـ default ثابت | لحظي | عادي |
-| عمود بـ default بيتحسب لكل صف | بيعيد كتابة الجدول | ضيفه من غير default وحدّث على دفعات |
-| index | | [[CONCURRENTLY]]، وبره أي transaction |
-| CHECK أو NOT NULL على بيانات قديمة | | [[NOT VALID]] وبعدين [[VALIDATE]] |
-| مسح أو إعادة تسمية عمود | | على deployين: الكود الأول، والـ schema بعده |`,
-          lines: [
-            "لو مقدرتش تاخد الـ lock في ٣ ثواني، افشل بدل ما تعلّق الموقع.",
-            "عمود جديد من غير default: لحظي.",
-            "default ثابت: لحظي كمان (Postgres 11+).",
-            "index من غير قفل الجدول.",
-            "constraint على الصفوف الجديدة بس (لحظي).",
-            "وبعدين افحص القديمة من غير قفل قوي."
-          ],
-          sol: R`على جدول مليون صف مع [[\timing]] الأرقام اللي طلعت:
-
-[[ADD COLUMN status text NOT NULL DEFAULT 'pending']] أخد [[2.5 ms]]. و [[ADD COLUMN c1 timestamptz DEFAULT now()]] أخد [[0.8 ms]]. و [[ADD COLUMN c2 timestamptz DEFAULT clock_timestamp()]] أخد [[626 ms]]، يعني مئات المرات أبطأ، لأنه بيعيد كتابة كل صف.
-
-والدليل: [[SELECT count(DISTINCT c1), count(DISTINCT c2) FROM big;]] رجّع [[1]] و حوالي [[332265]]. الـ now() اتحسبت مرة واحدة واتحفظت في الـ catalog، والـ clock_timestamp() اتحسبت لكل صف. وعلى جدول ١٠٠ مليون صف ده دقايق والجدول مقفول [[ACCESS EXCLUSIVE]]، يعني حتى الـ SELECT واقف.
-
-الغلط الشائع إنك تجرّب على جدول صغير فتلاقي الاتنين لحظيين. والـ [[SET lock_timeout = '3s']] قبلهم يخلي الـ ALTER يفشل بسرعة لو فيه transaction طويلة ماسكة الجدول، بدل ما يقف ويوقف الطابور وراه.`,
-          solCode: R`CREATE TABLE big AS SELECT g AS id FROM generate_series(1, 1000000) g;
-\timing on
-SET lock_timeout = '3s';
-ALTER TABLE big ADD COLUMN status text NOT NULL DEFAULT 'pending';
-ALTER TABLE big ADD COLUMN c1 timestamptz DEFAULT now();
-ALTER TABLE big ADD COLUMN c2 timestamptz DEFAULT clock_timestamp();
-SELECT count(DISTINCT c1), count(DISTINCT c2) FROM big;`
-        },
-        {
-          cmd: "Supabase CLI",
-          title: "القاعدة المحلية والـ migrations",
-          desc: "Supabase CLI بيشغّل نسخة كاملة من Supabase على جهازك بـ Docker، وبيدير الـ migrations زي Prisma: تعمل التغيير محليًا، ترفعه لمشروعك على Supabase بـ [[db push]]. و [[gen types]] بيطلّع أنواع TypeScript من الـ schema.",
-          example: R`supabase init
-supabase start
-supabase link --project-ref abcdefghijkl
-supabase migration new add_orders
-supabase db reset
-supabase db push
-supabase db pull
-supabase gen types typescript --linked > src/types/supabase.ts
-supabase db dump -f backup.sql`,
-          try: "شغّل [[supabase start]] وافتح Studio المحلي على localhost:54323. القاعدة على بورت 54322.",
-          deep: {
-            why: "تطوّر على قاعدة Supabase الحقيقية مباشرة؟ كل تجربة بتلمس الإنتاج. الـ CLI بيديك Supabase كامل على جهازك، والتغييرات بتترفع كـ migrations.",
-            how: R`التسطيب: مش بـ [[npm install -g supabase]] (مش مدعوم). يا إما [[npx supabase]] كل مرة، يا إما devDependency في المشروع ([[npm i -D supabase]]) فكل الفريق على نفس النسخة، يا إما [[brew install supabase/tap/supabase]] على الماك و [[scoop install supabase]] على ويندوز (بعد [[scoop bucket add supabase https://github.com/supabase/scoop-bucket.git]]).
-
-[[init]] بيعمل فولدر supabase/ فيه config و migrations. [[start]] بيشغّل بـ Docker كل حاجة: Postgres على 54322، و API على 54321، و Studio على 54323. أول مرة بينزّل صور كتير.
-
-[[link]] بيربط الفولدر بمشروعك على Supabase (الـ ref من الـ URL بتاع لوحة التحكم).
-
-الـ migrations: [[migration new اسم]] بيعمل ملف SQL فاضي تكتب فيه التغيير. [[db reset]] بيمسح القاعدة المحلية ويعيد تطبيق كل الـ migrations من الأول (وبيشغّل seed.sql)، فتتأكد إنهم بيشتغلوا من الصفر. [[db push]] بيطبّق الـ migrations اللي لسه متطبقتش على المشروع المربوط، وبيقرا من [[supabase/migrations]] بس، والأسماء لازم تبدأ بـ timestamp زي [[20260503000001_init.sql]] (ودي اللي [[migration new]] بيعملها).
-
-[[db pull]] العكس: لو عملت تغيير من لوحة التحكم، بيطلّعه كـ migration.
-
-[[gen types]] بيقرا الـ schema ويولّد أنواع TypeScript، فـ supabase-js يبقى typed بالكامل.
-
-[[db dump]] باك أب من المشروع المربوط.`,
-            when: "أي مشروع Supabase له أكتر من مطوّر أو له إنتاج حقيقي.",
-            mistakes: "في مشروع حقيقي الـ migrations كانت في [[database/migrations]] بأسماء [[01_...]]، و [[supabase db push]] قال مفيش حاجة يطبّقها: مبيشوفش غير [[supabase/migrations]] بأسماء timestamp. وفي نفس المشروع الدليل كان بيقول [[npm install -g supabase]] وده بيفشل. وتعدّل الـ schema من لوحة التحكم على الإنتاج وتنسى db pull، فالـ migrations مش بتمثّل الواقع. و db reset وانت فاكر إنه على الإنتاج (هو محلي بس، إلا لو كتبت [[--linked]]: ساعتها بيمسح قاعدة المشروع الحقيقي)."
-          },
-          teach: R`## الفكرة: Supabase كامل على جهازك، والتغييرات ملفات
-
-الـ CLI بيعمل حاجتين: يشغّل نسخة من Supabase على جهازك بـ Docker (Postgres و API و Studio)، ويدير فولدر [[supabase/migrations]] اللي فيه تغييرات الـ schema كملفات SQL، ويرفعها لمشروعك الحقيقي.
-
-اللي اتجرّب هنا: Supabase CLI نسخة 2.119.0 متسطّب بـ [[npm i -D supabase]] في container [[node:22-slim]]. [[init]] و [[migration new]] اشتغلوا فعلًا. [[start]] و [[db reset]] محتاجين Docker على نفس الجهاز، والـ container مفيهوش Docker، فطلّعوا رسالة الخطأ اللي تحت. و [[link]] و [[db push]] و [[db pull]] و [[gen types --linked]] و [[db dump]] محتاجين مشروع Supabase حقيقي وتوكن، فشرحهم من الـ docs الرسمية لـ Supabase CLI.
-
-> كل الأوامر تحت مكتوبة [[supabase ...]]. لو مسطّبه كـ devDependency زي ما عملنا، اكتب قبلها [[npx]] (يعني [[npx supabase init]]).
-
----
-
-## ١. [[supabase init]]
-
-~~~text الناتج
-Finished supabase init.
-~~~
-
-بيعمل فولدر [[supabase/]] في المشروع، وجواه [[config.toml]]: إعدادات النسخة المحلية. أهم سطور فيه:
-
-~~~text supabase/config.toml (مختصر)
-[api]
-port = 54321
-[db]
-port = 54322
-major_version = 17
-[studio]
-port = 54323
-~~~
-
-يعني الـ API على 54321، و Postgres على 54322، ولوحة Studio على 54323، والقاعدة المحلية Postgres 17 زي المشاريع الجديدة على Supabase. الملف ده بيتعمله commit.
-
-## ٢. [[supabase start]]
-
-بيشغّل كل الخدمات كـ containers. أول مرة بينزّل images كتير (دقايق). لما يخلص بيطبع الروابط والمفاتيح المحلية، و [[supabase status]] بيطبعهم تاني. من غير Docker:
-
-~~~text الناتج (جوه container مفيهوش Docker)
-failed to inspect container health: docker: command not found (podman also not found) — install Docker Desktop or Podman and ensure it is on PATH
-~~~
-
-يعني الحل تشغّل Docker Desktop الأول.
-
-## ٣. [[supabase link --project-ref abcdefghijkl]]
-
-[[--project-ref]] هو كود المشروع: الحروف اللي في رابط لوحة التحكم [[supabase.com/dashboard/project/<ref>]]. بعد الـ link كل الأوامر اللي بتكلّم «المشروع المربوط» بتعرف تروح فين. من غيره:
-
-~~~text الناتج (db push من غير link)
-Cannot find project ref. Have you run supabase link?
-~~~
-
----
-
-## ٤. [[supabase migration new add_orders]]
-
-~~~text الناتج
-Created new migration at supabase/migrations/20261006135218_add_orders.sql
-~~~
-
-ملف فاضي، اسمه = التاريخ والساعة ([[20261006135218]]) + الاسم اللي اديته. انت بتكتب جواه الـ SQL:
-
-~~~sql
-CREATE TABLE orders (id bigint generated always as identity primary key, total int not null);
-~~~
-
-والـ timestamp في الأول هو اللي بيحدد الترتيب، و [[db push]] مش بيشوف غير الملفات اللي بالشكل ده جوه [[supabase/migrations]].
-
-## ٥. [[supabase db reset]]
-
-بيمسح القاعدة **المحلية** ويطبّق كل الـ migrations من الأول، وبعدين [[supabase/seed.sql]] لو موجود. فايدته إنك تتأكد إن الملفات بتبني القاعدة من الصفر. ومع [[--linked]] بيعمل نفس الكلام على المشروع الحقيقي، يعني بيمسحه، فمتكتبهاش.
-
-## ٦. [[supabase db push]]
-
-بيطبّق على المشروع المربوط الملفات اللي لسه متطبقتش (Supabase بيسجّلهم في جدول [[supabase_migrations.schema_migrations]]، نفس فكرة [[_prisma_migrations]]). و [[--dry-run]] بيوريك هيطبّق إيه من غير ما يطبّق.
-
-## ٧. [[supabase db pull]]
-
-العكس: لو حد غيّر حاجة من لوحة التحكم، بيقارن المشروع بالملفات ويكتب الفرق كملف migration جديد.
-
----
-
-## ٨. [[supabase gen types typescript --linked > src/types/supabase.ts]]
-
-- [[gen types typescript]]: اقرا الجداول والأعمدة واكتبها types بـ TypeScript.
-- [[--linked]]: من المشروع المربوط (و [[--local]] من النسخة المحلية).
-- [[>]]: اكتب الناتج في الملف ده بدل الشاشة.
-
-وبعدين [[createClient<Database>(...)]] في supabase-js، فلو كتبت اسم عمود غلط الـ editor يعلّم عليه قبل ما تشغّل.
-
-## ٩. [[supabase db dump -f backup.sql]]
-
-باك أب SQL من المشروع المربوط في ملف ([[-f]] من file). من غير فلاجات بياخد الـ schema بس، و [[--data-only]] البيانات. وهو بيشغّل [[pg_dump]] جوه Docker، فمحتاج Docker برضه.
-
----
-
-## الخلاصة
-
-| الأمر | بيلمس إيه |
-|---|---|
-| [[init]] و [[migration new]] | ملفات على جهازك |
-| [[start]] و [[stop]] و [[db reset]] | النسخة المحلية (Docker) |
-| [[link]] | بيربط الفولدر بمشروع |
-| [[db push]] | المشروع الحقيقي: بيطبّق الجديد |
-| [[db pull]] و [[gen types --linked]] و [[db dump]] | المشروع الحقيقي: قراية بس |
-
-الدورة: [[migration new]] ← تكتب SQL ← [[db reset]] محليًا ← commit ← [[db push]].`,
-          lines: [
-            "اعمل فولدر supabase/ في المشروع.",
-            "شغّل Supabase كامل محليًا بـ Docker.",
-            "اربط بمشروعك على Supabase.",
-            "ملف migration جديد تكتب فيه SQL.",
-            "امسح المحلي وطبّق كل الـ migrations من الأول.",
-            "طبّق الجديد على المشروع المربوط.",
-            "تغييرات اتعملت من لوحة التحكم: هاتها كـ migration.",
-            "أنواع TypeScript من الـ schema.",
-            "باك أب من المشروع المربوط."
-          ],
-          sol: R`[[supabase start]] بيحتاج Docker شغال، وأول مرة بيسحب images كتير فبياخد دقايق. في الآخر بيطبع الـ URLs المحلية: الـ API على [[http://127.0.0.1:54321]]، والقاعدة [[postgresql://postgres:postgres@127.0.0.1:54322/postgres]]، و Studio على [[http://127.0.0.1:54323]]، ومعاهم الـ keys المحلية (شكل العرض بيتغير بين نسخ الـ CLI، بس البورتات دي الافتراضية). [[supabase status]] بيطبعهم تاني في أي وقت.
-
-افتح Studio هتلاقي مشروع فاضي شبه اللوحة الحقيقية. و [[psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "\dt"]] بيتصل بنفس القاعدة.
-
-المشاكل الشائعة: [[Cannot connect to the Docker daemon]] يعني Docker مش شغال. و [[port is already allocated]] يعني مشروع Supabase تاني شغال، اعمل [[supabase stop]] جوه فولدره أو غيّر البورتات في [[supabase/config.toml]]. و [[supabase stop]] بيحتفظ بالداتا، و [[supabase stop --no-backup]] بيمسحها.`
-        },
-        {
-          cmd: "Supabase Management API",
-          title: "SQL على Supabase بتوكن الحساب من غير psql",
-          desc: R`Supabase عندهم API لإدارة المشاريع، ومنه endpoint بينفّذ SQL: [[/v1/projects/REF/database/query]]. بتبعته بـ curl وتوكن حسابك، من غير باسورد القاعدة ومن غير psql.
-
-[[jq -Rs]] بيحوّل ملف SQL كامل لنص JSON سليم، بالسطور والعلامات.`,
-          example: R`read -rs SUPABASE_ACCESS_TOKEN; export SUPABASE_ACCESS_TOKEN
-jq -Rs '{query: .}' < db/ensure_schema.sql \
-  | curl -sS --fail-with-body -X POST "https://api.supabase.com/v1/projects/PROJECT_REF/database/query" \
-      -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
-      -H "Content-Type: application/json" --data @- | jq .`,
-          try: "اعمل توكن من Account ثم Access Tokens في لوحة Supabase، وشغّل الأمر على مشروع تجربة بملف فيه [[SELECT now();]]، وبعدين الغيه من نفس الصفحة.",
-          flag: "term",
-          deep: {
-            why: "أحيانًا مفيش psql ولا IPv6 ولا باسورد القاعدة معاك: CI، أو container صغير، أو سكربت على ويندوز. التوكن والـ API بيكفّوا.",
-            how: R`[[read -rs]] بيقرا التوكن من غير ما يظهر ولا يتسجّل في الـ history.
-
-[[jq -R]] (raw) بيقرا الملف كنص مش JSON، و [[-s]] (slurp) بيقراه كله كنص واحد. و [[{query: .}]] بيحطه في object. jq بيعمل escape للسطور والعلامات، فمش محتاج تبني JSON بإيدك.
-
-[[--data @-]] بيقرا الـ body من stdin (الـ pipe). والرد JSON: صفوف لو SELECT، و error برسالة Postgres لو SQL غلط. [[--fail-with-body]] بيخلي curl يرجع exit code مش صفر لو HTTP 400 ويطبع الرسالة برضه، فالسكربت يعرف.
-
-التوكن ده Personal Access Token: بيدي صلاحيات على كل المشاريع في حسابك، مش مشروع واحد. أقوى من service_role نفسه. مكانه جهازك أو secrets الـ CI، والأحسن توكن منفصل لكل استخدام تقدر تلغيه.`,
-            when: "سكربت أو CI محتاج يطبّق SQL وماعندهوش psql. للـ migrations المنتظمة Supabase CLI أحسن.",
-            mistakes: R`في مشروع حقيقي السكربت ده كان بيتشغّل تلقائي مع كل تشغيل container على الإنتاج، والتوكن الكامل متخزن في .env بتاع التطبيق ومتكرر في كذا مكان: أي حد يوصل للـ container يملك كل مشاريع الحساب. خليه خطوة يدوية أو في CI. وبناء الـ JSON بإيدك ([[{"query": "$SQL"}]]) بيبوظ من أول علامة تنصيص أو سطر جديد في الـ SQL؛ jq -Rs بيحل ده.`
-          },
-          teach: R`## الفكرة: SQL جوه طلب HTTP
-
-بدل ما تتصل بالقاعدة بـ psql وباسورد، بتبعت الـ SQL كـ JSON لـ API بتاع Supabase، ومعاه توكن حسابك، والـ API هو اللي بينفّذه ويرجّعلك النتيجة JSON. الأمر كله ٣ برامج ورا بعض: [[jq]] يجهّز الـ JSON، و [[curl]] يبعته، و [[jq]] تاني يعرض الرد.
-
-اتجرّب في container [[node:22-slim]] فيه jq 1.6 و curl. جزء [[jq]] اتشغّل كامل. والطلب اتبعت فعلًا لـ [[api.supabase.com]] بس بتوكن وهمي، فشفنا رد الرفض. الرد الناجح (بتوكن حقيقي) من الـ docs الرسمية لـ Supabase Management API.
-
----
-
-## السطر ١: [[read -rs SUPABASE_ACCESS_TOKEN; export SUPABASE_ACCESS_TOKEN]]
-
-- [[read]]: استنى اليوزر يكتب سطر، وحطه في المتغير ده.
-- [[-r]] (raw): متتعاملش مع [[\]] كرمز خاص، خد النص زي ما هو.
-- [[-s]] (silent): متعرضش اللي بيتكتب على الشاشة، زي خانة الباسورد.
-- [[export]]: خلّي المتغير متاح للبرامج اللي هتتشغّل بعده (زي [[curl]]).
-
-ليه مش [[SUPABASE_ACCESS_TOKEN=sbp_...]] على طول؟ لأن السطر ده هيتحفظ في [[~/.bash_history]] بالتوكن. [[read]] بيقرا من الكيبورد، فالتوكن مبيتكتبش في أي أمر.
-
----
-
-## السطر ٢: [[jq -Rs '{query: .}' < db/ensure_schema.sql]]
-
-الملف اللي جربنا بيه فيه سطرين، وفيه علامة تنصيص جوه الـ SQL:
-
-~~~text db/ensure_schema.sql
-CREATE TABLE IF NOT EXISTS notes (id int, body text);
-SELECT 'it''s ok' AS msg, now();
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[< db/ensure_schema.sql]] | ادّي jq الملف ده كمدخل |
-| [[-R]] (raw input) | المدخل نص عادي، مش JSON |
-| [[-s]] (slurp) | اقرا الملف كله كنص **واحد** بدل سطر سطر |
-| [[{query: .}]] | اعمل object فيه مفتاح [[query]] وقيمته [[.]]، والـ [[.]] في jq يعني «المدخل نفسه» |
-
-~~~text الناتج
-{
-  "query": "CREATE TABLE IF NOT EXISTS notes (id int, body text);\nSELECT 'it''s ok' AS msg, now();\n"
-}
-~~~
-
-لاحظ إن السطر الجديد بقى [[\n]]: jq عمل الـ escape لوحده. ولو بنيت الـ JSON بإيدك بـ [[echo "{\"query\": \"$SQL\"}"]]:
-
-~~~text الناتج
-parse error: Invalid string: control characters from U+0000 through U+001F must be escaped at line 2, column 33
-~~~
-
-الـ JSON باظ من أول سطر جديد. ده بالظبط اللي [[jq -Rs]] بيحلّه.
-
----
-
-## السطر ٣: [[| curl -sS --fail-with-body -X POST "https://api.supabase.com/v1/projects/PROJECT_REF/database/query" \]]
-
-- [[|]]: الـ JSON اللي طلع من jq يدخل curl.
-- [[-s]] (silent): من غير شريط التحميل. و [[-S]] (show-error): بس لو حصل error اطبعه.
-- [[--fail-with-body]]: لو الرد 400 أو أكتر، اطلع بـ exit code مش صفر (22)، **واطبع الـ body برضه** عشان تشوف السبب.
-- [[-X POST]]: نوع الطلب POST، يعني «ببعتلك داتا».
-- الرابط: [[/v1/projects/]] وبعدها كود مشروعك (الـ ref) وبعدها [[/database/query]].
-- [[\]] في آخر السطر: الأمر مكمّل تحت.
-
-## السطر ٤: [[-H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN"]]
-
-[[-H]] بيضيف header للطلب. [[Authorization: Bearer <توكن>]] الطريقة المعتادة تقول للـ API «أنا مين». و [[$SUPABASE_ACCESS_TOKEN]] بيتبدل بالقيمة اللي [[read]] قراها، جوه علامات [[" "]] عشان الـ shell يبدّله.
-
-## السطر ٥: [[-H "Content-Type: application/json" --data @- | jq .]]
-
-- [[Content-Type: application/json]]: الـ body اللي جاي JSON.
-- [[--data @-]]: [[--data]] هو الـ body، و [[@]] يعني «من ملف»، و [[-]] يعني «الملف هو الـ stdin»، يعني اللي جاي من jq في أول الـ pipe.
-- [[| jq .]]: الرد JSON في سطر واحد، و [[jq .]] بيعرضه مترتب وملوّن.
-
----
-
-## الرد
-
-بتوكن وهمي ([[sbp_fake]]) على مشروع مش موجود:
-
-~~~text الناتج
-curl: (22) The requested URL returned error: 401
-{
-  "message": "JWT could not be decoded"
-}
-~~~
-
-- [[401]]: مش متعرّف عليك، التوكن غلط.
-- [[(22)]] هو الـ exit code بتاع curl مع [[--fail-with-body]]، فسكربت فيه [[set -e]] هيقف هنا.
-- والـ body اتطبع برضه، وده فرق [[--fail-with-body]] عن [[-f]] اللي بيخفي الـ body.
-
-وبتوكن حقيقي (من الـ docs): الرد array (بين قوسين مربعين) فيها صفوف **آخر** statement، يعني هنا صف واحد [[{"msg": "it's ok", "now": "..."}]]، وأمر زي [[CREATE TABLE]] لوحده بيرجّع array فاضية. ولو الـ SQL فيه غلط: [[400]] والـ body فيه رسالة Postgres.
-
----
-
-## الخلاصة
-
-| الحتة | دورها |
-|---|---|
-| [[read -rs]] | التوكن ميظهرش ولا يتحفظ في الـ history |
-| [[jq -Rs '{query: .}']] | الملف كله ← JSON سليم |
-| [[curl --fail-with-body]] | يفشل بـ exit code ويوريك السبب |
-| [[Authorization: Bearer]] | التوكن |
-| [[--data @-]] | الـ body من الـ pipe |
-
-والتوكن ده Personal Access Token على **كل** مشاريع حسابك: مكانه جهازك أو secrets الـ CI، مش [[.env]] التطبيق.`,
-          lines: [
-            "اقرا التوكن من غير ما يظهر، وصدّره للأوامر اللي بعده.",
-            "حوّل ملف SQL كله لـ JSON فيه query...",
-            "...وابعته بـ POST (وافشل لو الرد error)...",
-            "...بتوكن الحساب...",
-            "...كـ JSON من الـ stdin، واعرض الرد بشكل مقروء."
-          ],
-          sol: R`لو التوكن صح، الـ [[jq .]] في الآخر بيطبع array فيها صف واحد: [[[ { "now": "2026-09-30 05:10:11.123456+00" } ]]]. الـ API بيرجّع نتيجة آخر statement كـ JSON، وأوامر زي CREATE TABLE بترجّع array فاضية [[[]]].
-
-لو التوكن غلط أو اتلغى هتاخد رد 401 وفيه رسالة Unauthorized، و [[--fail-with-body]] بيخلي curl يطلع بـ exit code غير صفر ويطبع الرد، فالسكربت يقف. ولو الـ SQL نفسه فيه غلط هتاخد رد 400 والـ body فيه رسالة Postgres. ولو كتبت الـ PROJECT_REF غلط هيقولك إن المشروع مش موجود أو مالكش صلاحية عليه.
-
-بعد ما تلغي التوكن من صفحة Access Tokens، نفس الأمر لازم يرجّع 401، ودي علامة إن الإلغاء اشتغل. والـ [[read -rs]] مش بيطبع حاجة وانت بتلزق، عشان التوكن ما يظهرش على الشاشة ولا في الـ history.`
-        },
-        {
-          cmd: "Supabase: الاتصال المباشر",
-          title: "psql على قاعدة Supabase",
-          desc: "قاعدة Supabase هي Postgres عادي، تقدر تدخلها بـ psql. في لوحة التحكم (زرار Connect) فيه ٣: مباشر [[db.REF.supabase.co:5432]] (IPv6 بس افتراضيًا)، و pooler (Supavisor) بـ session mode على 5432، و transaction mode على 6543. للأوامر الإدارية والـ migrations: المباشر أو session. للتطبيق serverless: transaction.",
-          example: R`psql "postgres://postgres.abcdefghijkl:PASSWORD@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
-psql "$SUPABASE_DB_URL" -c "\dt"
-pg_dump "$SUPABASE_DB_URL" -Fc --schema=public -f supabase.dump
-psql "$SUPABASE_DB_URL" -c "SELECT count(*) FROM pg_stat_activity;"`,
-          try: R`خد الـ connection string من زرار Connect فوق في لوحة Supabase، واتصل بـ psql، واعمل [[\dt]] وشوف جداولك.`,
-          deep: {
-            why: "لوحة Supabase فيها SQL editor، بس للباك أب والـ migrations وتحليل الأداء محتاج الأدوات الحقيقية. وقاعدتهم Postgres عادي.",
-            how: R`زرار Connect فوق في لوحة التحكم فيه الـ connection strings. اليوزر اسمه [[postgres.PROJECT_REF]] (مع الـ ref لأن الاتصال بيعدّي على pooler مشترك). والباسورد اللي حددته عند إنشاء المشروع.
-
-بورت [[5432]] على الـ pooler هو session mode: كل الميزات، للـ migrations و pg_dump وأي حاجة إدارية لو جهازك مفيهوش IPv6 (المباشر [[db.REF.supabase.co]] IPv6 بس). بورت [[6543]] transaction mode عبر Supavisor: للتطبيق، بس مش بيدعم prepared statements ولا بعض الميزات، عشان كده [[?pgbouncer=true]] مع Prisma.
-
-[[pg_dump]] بيشتغل عليها عادي. [[--schema=public]] عشان تاخد جداولك بس من غير schemas بتاعة Supabase (auth، storage) اللي ليها إدارة خاصة.
-
-[[pg_stat_activity]] بيوريك اتصالات تطبيقك، والخطة المجانية ليها حد اتصالات صغير، فده أول حاجة تشوفها لو ظهر too many connections.
-
-ونسخة pg_dump عندك لازم تبقى نفس نسخة Postgres في مشروعك أو أحدث (المشاريع الجديدة على 17)، وإلا بيرفض.`,
-            when: "باك أب خاص بيك بعيد عن باك أب Supabase. تحليل أداء. أي حاجة الـ SQL editor ميعملهاش.",
-            mistakes: "تستخدم بورت 6543 لـ pg_dump أو migrations فتطلع errors غريبة. الإداري على 5432. وفي مشروع حقيقي الـ container مكانش عارف يوصل لهوست القاعدة، والحل كان [[extra_hosts]] بـ IP ثابت و [[dns: 8.8.8.8]] في compose. ده بيشتغل لحد ما الـ IP يتغير. السبب الشائع إن [[db.REF.supabase.co]] عنوانه IPv6 بس وشبكة Docker الافتراضية IPv4، فالحل الأنضف رابط الـ pooler (IPv4) مش تثبيت IP."
-          },
-          teach: R`## الفكرة: Supabase = Postgres، فـ psql و pg_dump شغالين عليه عادي
-
-كل اللي محتاجه هو الـ connection string الصح من زرار **Connect** في لوحة Supabase. بعدها نفس أدوات Postgres اللي اتعلمتها.
-
-الرابط الحقيقي محتاج مشروع وباسورد، فالأوامر اتجرّبت على Postgres 16 في container، بنفس شكل الرابط ومتغير [[SUPABASE_DB_URL]] بيشاور عليه. شكل روابط Supabase نفسها والبورتات من الـ docs الرسمية لـ Supabase.
-
----
-
-## ١. نفك الـ connection string
-
-~~~text الرابط
-postgres://postgres.abcdefghijkl:PASSWORD@aws-0-eu-central-1.pooler.supabase.com:5432/postgres
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[postgres://]] | البروتوكول: ده رابط Postgres |
-| [[postgres.abcdefghijkl]] | اليوزر: [[postgres]] + نقطة + كود مشروعك. الكود لازم عشان الـ pooler مشترك بين مشاريع كتير وبيعرف مشروعك منه |
-| [[:PASSWORD]] | باسورد القاعدة اللي حطيته وانت بتعمل المشروع |
-| [[@aws-0-eu-central-1.pooler.supabase.com]] | الهوست: الـ pooler (اسمه Supavisor) في منطقة المشروع |
-| [[:5432]] | البورت. على الـ pooler: 5432 session mode، و 6543 transaction mode |
-| [[/postgres]] | اسم القاعدة، وفي Supabase دايمًا [[postgres]] |
-
-والـ ٣ اختيارات في زرار Connect:
-
-| النوع | الهوست والبورت | امتى |
-|---|---|---|
-| Direct | [[db.REF.supabase.co:5432]] | IPv6 بس، فلو شبكتك IPv4 مش هيشتغل |
-| Session pooler | [[...pooler.supabase.com:5432]] | migrations و pg_dump وأي شغل إداري، و IPv4 |
-| Transaction pooler | [[...pooler.supabase.com:6543]] | التطبيق serverless |
-
-### الباسورد فيه رموز؟
-
-لو الباسورد فيه [[@]] أو [[#]] أو [[/]]، الرابط بيتقري غلط. جربنا يوزر باسورده [[p@ss#1]]:
-
-~~~text psql "postgres://webuser:p@ss#1@localhost:5432/app"
-psql: error: could not translate host name "ss#1@localhost" to address: Name or service not known
-~~~
-
-psql فهم إن الباسورد [[p]] بس، وإن الهوست هو [[ss#1@localhost]]. الحل URL-encoding: [[@]] تتكتب [[%40]] و [[#]] تتكتب [[%23]]:
-
-~~~text psql "postgres://webuser:p%40ss%231@localhost:5432/app"
  current_user
 --------------
- webuser
+ app_user
+
+ count
+-------
+     5
 ~~~
 
----
+[[SELECT current_user]] بيقولك انت مين، و [[SELECT count(*) FROM users]] اشتغل. وبعدين:
 
-## ٢. [[psql "$SUPABASE_DB_URL" -c "\dt"]]
-
-بدل ما تلزق الرابط في كل أمر، بتحطه مرة في متغير ([[export SUPABASE_DB_URL="postgres://..."]])، والعلامات [[" "]] حوالين [[$SUPABASE_DB_URL]] عشان أي رمز في الباسورد ميتفسرش. و [[\dt]] (describe tables) بيعرض الجداول:
-
-~~~text الناتج
-          List of relations
- Schema |   Name   | Type  |  Owner
---------+----------+-------+----------
- public | app_logs | table | postgres
- public | orders   | table | postgres
- public | users    | table | postgres
+~~~text DROP TABLE users; و CREATE TABLE x (id int);
+ERROR:  must be owner of table users
+ERROR:  permission denied for schema public
 ~~~
 
-على Supabase هتشوف جداول [[public]] بتاعتك بس. جداول Supabase نفسها في schemas تانية ([[auth]] و [[storage]] ...)، و [[\dn]] بيعرضهم.
+ده المطلوب: ميقدرش يمسح جداول، ولا يعمل جداول (من Postgres 15 مفيش حد غير صاحب الـ schema يقدر يعمل جداول في public). والجدول الجديد؟
 
----
-
-## ٣. [[pg_dump "$SUPABASE_DB_URL" -Fc --schema=public -f supabase.dump]]
-
-- [[-Fc]]: الصيغة المضغوطة بفهرس (شوف «pg_dump بعمق»).
-- [[--schema=public]]: الـ schema ده بس. في Supabase ده مهم، لأن [[auth]] و [[storage]] بيديرهم Supabase، ولو رجّعتهم على مشروع تاني هيتخانقوا مع اللي موجود.
-- [[-f supabase.dump]]: الملف.
-
-نجح (exit code [[0]]) والملف طلع ٤٥٦ كيلو.
-
-ونسخة [[pg_dump]] لازم تبقى **نفس نسخة السيرفر أو أحدث**. جربنا [[pg_dump]] 16 على سيرفر 18:
-
-~~~text الناتج
-pg_dump: error: aborting because of server version mismatch
-pg_dump: detail: server version: 18.6 (Debian 18.6-1.pgdg13+2); pg_dump version: 16.15 (Debian 16.15-1.pgdg13+2)
+~~~text INSERT INTO coupons2 (code) VALUES ('NEW'); و SELECT * FROM coupons2;
+INSERT 0 1
+ id | code
+----+------
+  1 | NEW
 ~~~
 
-المشاريع الجديدة على Supabase بتشتغل Postgres 17، فمحتاج [[pg_dump]] 17 أو أحدث.
+اشتغل، والـ id اتولّد من الـ sequence، بفضل [[ALTER DEFAULT PRIVILEGES]] على الجداول والـ sequences.
 
----
-
-## ٤. [[psql "$SUPABASE_DB_URL" -c "SELECT count(*) FROM pg_stat_activity;"]]
-
-[[pg_stat_activity]] view فيه سطر لكل process شغال في السيرفر. الناتج على الـ container:
+### كـ readonly
 
 ~~~text الناتج
  count
 -------
-     6
+     5
+ERROR:  permission denied for table users
+ERROR:  permission denied for table coupons2
 ~~~
 
-٦ رغم إن مفيش غيرنا متصل؟ لأن العدد ده فيه processes Postgres الداخلية. لو قسّمته بـ [[backend_type]]:
-
-~~~text SELECT backend_type, count(*) FROM pg_stat_activity GROUP BY 1;
-         backend_type         | count
-------------------------------+-------
- client backend               |     1
- walwriter                    |     1
- autovacuum launcher          |     1
- logical replication launcher |     1
- background writer            |     1
- checkpointer                 |     1
-~~~
-
-الاتصالات الحقيقية هي [[client backend]] بس. فالأدق لعدّ اتصالات تطبيقك: [[WHERE backend_type = 'client backend']]. وده أول حاجة تبص عليها لو ظهر [[too many connections]]، لأن الخطة المجانية ليها حد صغير.
+الـ SELECT على users نجح، والـ UPDATE اترفض (ده المطلوب). بس [[SELECT * FROM coupons2]] اترفض كمان! لأن readonly خد [[GRANT ... ON ALL TABLES]] بس من غير [[ALTER DEFAULT PRIVILEGES]]، فأي جدول جديد مقفول قدامه. ده بالظبط الفخ اللي التطبيق كان هيقع فيه بعد أول migration.
 
 ---
 
 ## الخلاصة
 
-| عايز | استخدم |
+| الطبقة | الأمر |
 |---|---|
-| migrations و pg_dump وشغل إداري | Session pooler على 5432 (أو Direct لو عندك IPv6) |
-| التطبيق serverless | Transaction pooler على 6543 |
-| باك أب جداولك | [[pg_dump --schema=public]] بنسخة pg_dump زي السيرفر أو أحدث |
-| باسورد فيه رموز | URL-encode: [[%40]] و [[%23]] |
-| عدد الاتصالات | [[pg_stat_activity]] و [[backend_type = 'client backend']] |`,
+| يدخل | [[CREATE ROLE x LOGIN PASSWORD '...']] |
+| القاعدة | [[GRANT CONNECT ON DATABASE]] |
+| الـ schema | [[GRANT USAGE ON SCHEMA public]] |
+| الجداول الموجودة | [[GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES]] |
+| العدّادات | [[GRANT USAGE, SELECT ON ALL SEQUENCES]] |
+| الجداول الجاية | [[ALTER DEFAULT PRIVILEGES ... GRANT ...]] (بنفس يوزر الـ migrations) |
+| تتأكد | [[\dp جدول]] و [[\ddp]] |`,
           lines: [
-            "عبر الـ pooler بـ session mode (5432): ينفع لأي حاجة إدارية.",
-            "جداولك.",
-            "باك أب لـ schema public بس (من غير schemas بتاعة Supabase).",
-            "عدد الاتصالات (الخطة المجانية ليها حد)."
+            "يوزر جديد يقدر يدخل بباسورد.",
+            "يقدر يتصل بالقاعدة.",
+            "يقدر يشوف اللي في schema public.",
+            "يقرا ويكتب في الجداول الموجودة دلوقتي.",
+            "يستخدم الـ sequences (لازمة لأعمدة id التلقائية).",
+            "وأي جدول جديد ياخد نفس الصلاحيات لوحده.",
+            "ونفس الكلام للـ sequences الجديدة، وإلا INSERT في جدول جديد يفشل بـ permission denied for sequence.",
+            "يوزر تاني للتقارير.",
+            "قراية بس."
           ],
-          sol: R`بعد ما تلزق الـ URL وتكتب الباسورد مكان [[[YOUR-PASSWORD]]]، [[\dt]] بيطلّع جداول الـ schema [[public]] بس، زي [[public | todos | table | postgres]]. جداول Supabase نفسها في schemas تانية: [[\dt auth.*]] هتلاقي فيها [[users]] و [[sessions]] وغيرهم، و [[\dn]] بيعرض الـ schemas كلها ([[auth]] و [[storage]] و [[realtime]] و [[extensions]] ...).
+          sol: R`لما تتصل كـ app_user وتعمل [[DROP TABLE users;]] الرد: [[ERROR:  must be owner of table users]]. و [[SELECT count(*) FROM users]] بيشتغل عادي. ولو جرّبت [[CREATE TABLE x (id int);]] هتاخد [[ERROR:  permission denied for schema public]]، لأن من PG 15 اليوزر العادي مالوش CREATE على public.
 
-المشاكل الشائعة: [[password authentication failed for user "postgres"]] يعني الباسورد غلط، أو اليوزر مكتوب [[postgres]] بس مع pooler محتاج [[postgres.PROJECTREF]]. ولو الباسورد فيه رموز زي [[@]] أو [[#]] لازم تعملها URL-encode ([[%40]] و [[%23]]) وإلا الـ URL يتقري غلط. والـ direct connection ([[db.PROJECTREF.supabase.co]]) بقى IPv6 بس في أغلب المشاريع، فلو شبكتك IPv4 استخدم الـ pooler في session mode (بورت 5432) زي المثال.`
+دا بالظبط المطلوب: التطبيق يقرا ويكتب بس، ولو حد عمل SQL injection مش هيقدر يمسح جداول. الـ migrations تشتغل بيوزر تاني صاحب الجداول.
+
+لو الـ DROP اشتغل يبقى انت متصل بالـ owner أو superuser: اعمل [[SELECT current_user;]]. ولو الـ SELECT نفسه اترفض بـ [[permission denied for table users]] يبقى الجداول اتعملت بعد الـ GRANT، ودا اللي [[ALTER DEFAULT PRIVILEGES]] بيحله للجداول الجاية (بشرط تتعمل بنفس اليوزر اللي نفّذ الأمر).`,
+          solCode: R`-- كـ postgres
+CREATE ROLE app_user LOGIN PASSWORD 'secret';
+GRANT CONNECT ON DATABASE lab TO app_user;
+GRANT USAGE ON SCHEMA public TO app_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO app_user;
+
+-- من الترمنال
+psql -h localhost -U app_user -d lab -c "DROP TABLE users"
+-- ERROR:  must be owner of table users
+psql -h localhost -U app_user -d lab -c "SELECT count(*) FROM users"`
         },
         {
-          cmd: "connection pooling",
-          title: "ليه max_connections بيخلص",
-          desc: "كل اتصال Postgres بياخد رام (حوالي ١٠ ميجا). serverless والـ Next.js API routes بيفتحوا اتصالات كتير قصيرة. الـ pooler (PgBouncer أو Supabase pooler) بيمسك اتصالات قليلة للقاعدة ويوزّعها على آلاف اتصالات التطبيق.",
-          example: R`SELECT count(*), state FROM pg_stat_activity GROUP BY state;
-SHOW max_connections;
-psql "postgres://app_user:secret@localhost:6432/app"
-psql "postgres://postgres.abcdefghijkl:PASSWORD@aws-0-eu-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true"`,
-          try: "في Prisma مع Supabase: [[DATABASE_URL]] على 6543 بـ [[?pgbouncer=true]] للتطبيق، و [[DIRECT_URL]] على 5432 للـ migrations (في Prisma 7 الـ DIRECT_URL بيتحط في [[prisma.config.ts]] مش في schema.prisma).",
+          cmd: "connection string و .pgpass",
+          title: "متكتبش الباسورد كل مرة",
+          desc: "الـ URL فيه كل حاجة: يوزر وباسورد وسيرفر وبورت وقاعدة وخيارات. متغيرات [[PGHOST]] و [[PGUSER]] بتخلي psql يعرفهم لوحده. و [[~/.pgpass]] ملف فيه الباسوردات بصلاحية 600، فمفيش باسورد في الأوامر ولا الـ history.",
+          example: R`export PGHOST=localhost PGUSER=app_user PGDATABASE=app
+psql
+echo "localhost:5432:app:app_user:secret" >> ~/.pgpass && chmod 600 ~/.pgpass
+psql "postgres://app_user@localhost/app?sslmode=require"
+psql "$DATABASE_URL" -c "SELECT current_user, current_database();"`,
+          try: "اعمل .pgpass واتصل من غير ما يسألك باسورد.",
           deep: {
-            why: "Next.js على Vercel أو أي serverless: كل طلب ممكن يفتح اتصال جديد. ١٠٠ طلب متزامن = ١٠٠ اتصال، و Postgres عنده 100 افتراضي، وكل واحد بياخد رام. too many connections بعد ٥ دقايق.",
-            how: R`الاتصال بـ Postgres غالي: عملية كاملة على السيرفر لكل اتصال، وحوالي ١٠ ميجا رام، ووقت للفتح. الـ pooler برنامج في النص: التطبيق بيفتح عليه آلاف الاتصالات الرخيصة، وهو ماسك ٢٠ اتصال حقيقي للقاعدة وبيوزّع الاستعلامات عليهم.
+            why: "باسورد القاعدة في كل أمر بيتحفظ في الـ history ويبان في [[ps]]. ومحتاج طريقة واحدة الأدوات كلها تفهمها.",
+            how: R`كل أدوات Postgres (psql، pg_dump، createdb) بتقرا متغيرات البيئة [[PGHOST]] و [[PGPORT]] و [[PGUSER]] و [[PGDATABASE]] و [[PGPASSWORD]]. لو حددتهم، [[psql]] لوحدها بتتصل. بس [[PGPASSWORD]] في البيئة بيبان لأي عملية، فالأحسن .pgpass.
 
-[[transaction mode]]: الاتصال الحقيقي بيتخصص للتطبيق مدة transaction واحدة وبعدين يرجع للـ pool. أعلى كفاءة، بس مفيش state بين الـ transactions: prepared statements و SET session و LISTEN مش هيشتغلوا. [[session mode]]: الاتصال ملك التطبيق لحد ما يقفله، كل حاجة شغالة بس كفاءة أقل.
+[[~/.pgpass]] سطر لكل اتصال: [[host:port:database:user:password]]، و [[*]] في أي خانة يعني أي قيمة. لازم صلاحية [[600]] وإلا Postgres بيتجاهله. أي أداة بتلاقي سطر مطابق بتاخد الباسورد منه.
 
-PgBouncer على سيرفرك: بيسمع على 6432، وإعداداته [[pool_mode = transaction]] و [[default_pool_size = 20]]. و Supabase عندهم pooler جاهز على 6543.
+الـ connection string: [[postgres://]] أو [[postgresql://]]، وبعده user:password@host:port/dbname، وبعد [[?]] خيارات زي [[sslmode=require]] و [[connect_timeout=5]] و [[application_name=api]]. لو الباسورد فيه رموز خاصة ([[@]] أو [[#]]) لازم URL encoding.
 
-الاستعلام الأول في المثال بيوريك عدد الاتصالات بحالتها: لو [[idle]] كتير، التطبيق فاتح اتصالات ومش بيستخدمها، والـ pool size في الكود (Prisma connection_limit) أكبر من اللازم.`,
-            when: "أي serverless. وأي تطبيق بيعدّي ٥٠ اتصال متزامن. و Supabase من أول يوم.",
-            mistakes: "ترفع max_connections لـ 500 بدل pooler، فالرام تخلص. و prepared statements مع transaction mode من غير pgbouncer=true."
+[[application_name]] مفيد: بيظهر في pg_stat_activity فتعرف الاتصال ده من التطبيق ولا من سكربت.`,
+            when: ".pgpass على جهازك وعلى السيرفر لسكربتات الباك أب. PG* في CI.",
+            mistakes: ".pgpass بصلاحية 644 فبيتجاهل (مع WARNING سهل تفوّته). وباسورد فيه @ في الـ URL من غير encoding."
           },
-          teach: R`## الفكرة: اتصالات كتير رخيصة قدام، وقليلة غالية ورا
+          teach: R`## الفكرة: ٣ أماكن psql بيدوّر فيها على بيانات الاتصال
 
-كل اتصال بـ Postgres = process كامل على السيرفر وحوالي ١٠ ميجا رام. والسيرفر ليه حد ([[max_connections]]). الـ pooler برنامج بيقف في النص: التطبيق يفتح عليه اتصالات قد ما هو عايز، وهو ماسك عدد صغير ثابت من الاتصالات الحقيقية وبيوزّع الاستعلامات عليهم.
+لو مكتبتش [[-h]] و [[-U]] و [[-d]] والباسورد في الأمر، psql (وكل أدوات Postgres) بيدوّر عليهم في: **متغيرات البيئة** [[PG...]]، وملف [[~/.pgpass]] للباسورد، أو **connection string** واحد فيه كله. الدرس بيوريك التلاتة.
 
-اتجرّب فعلًا: container [[postgres:16]]، وقدامه container PgBouncer 1.26 (image [[edoburu/pgbouncer]]) على بورت 6432 بـ [[pool_mode = transaction]] و [[default_pool_size = 20]]. سطر Supabase من الـ docs الرسمية (محتاج مشروع حقيقي).
+الناتج تحت من bash جوه container بتاع [[postgres:16]]. اتصلت بعنوان الـ container على الشبكة ([[172.17.0.2]]، عنوان داخلي بتاع Docker) بدل localhost، لأن localhost جوه الصورة دي [[trust]] ومش بيطلب باسورد أصلًا، وأنا عايز أختبر الباسورد بجد. اليوزر [[app_user]] من الدرس اللي فات.
 
 ---
 
-## ١. [[SELECT count(*), state FROM pg_stat_activity GROUP BY state;]]
+## ١. متغيرات البيئة
 
-- [[pg_stat_activity]]: سطر لكل process في السيرفر.
-- [[state]]: حالة الاتصال: [[active]] بينفّذ استعلام دلوقتي، و [[idle]] متصل ومش بيعمل حاجة، و [[idle in transaction]] فاتح transaction ومستني (ودي أخطر واحدة لأنها ماسكة أقفال).
-- [[GROUP BY state]]: عدّ لكل حالة لوحدها.
+~~~bash
+export PGHOST=localhost PGUSER=app_user PGDATABASE=app
+psql
+~~~
 
-> الـ view ده فيه كمان processes Postgres الداخلية (عمود [[state]] بتاعها فاضي). عشان تعدّ الاتصالات بس زوّد [[WHERE backend_type = 'client backend']]، وده اللي استخدمناه في التجربة تحت.
+[[export]] بيعمل متغير بيئة يشوفه أي برنامج يتشغّل من الترمنال ده بعد كده. ونقدر نعرّف كذا واحد في سطر.
 
-## ٢. [[SHOW max_connections;]]
+| المتغير | بدل |
+|---|---|
+| [[PGHOST]] | [[-h]] |
+| [[PGPORT]] | [[-p]] |
+| [[PGUSER]] | [[-U]] |
+| [[PGDATABASE]] | [[-d]] |
+| [[PGPASSWORD]] | الباسورد (مش مستحب: أي برنامج تاني ممكن يقراه) |
+
+بعدها [[psql]] لوحدها بتعرف تتصل فين وبمين. بس لسه محتاجة باسورد:
+
+~~~text الناتج من غير باسورد
+Password for user app_user:
+psql: error: connection to server at "172.17.0.2", port 5432 failed: fe_sendauth: no password supplied
+~~~
+
+سأل، وملقاش حد يرد (التجربة كانت من سكربت)، ففشل. [[fe_sendauth]] يعني الـ frontend (psql) مبعتش باسورد.
+
+---
+
+## ٢. [[~/.pgpass]]: الباسورد في ملف
+
+~~~bash
+echo "localhost:5432:app:app_user:secret" >> ~/.pgpass && chmod 600 ~/.pgpass
+~~~
+
+### الحتة الأولى: السطر نفسه
+
+~~~text شكل السطر
+host:port:database:user:password
+localhost:5432:app:app_user:secret
+~~~
+
+٥ خانات بينها [[:]]. psql بيقارن الاتصال بكل سطر بالترتيب، وأول سطر يطابق ياخد الباسورد منه. و [[*]] في أي خانة يعني «أي قيمة». والـ host لازم يطابق اللي انت كاتبه بالحرف: [[localhost]] غير [[127.0.0.1]].
+
+### الحتة التانية: [[>>]]
+
+[[echo "..." >>]] بيضيف السطر **في آخر** الملف (ولو مش موجود بيعمله). [[>]] واحدة كانت هتمسح الملف وتكتب من الأول، فتضيّع الباسوردات القديمة.
+
+### الحتة التالتة: [[&& chmod 600]]
+
+[[&&]] شغّل اللي بعدي لو اللي قبلي نجح. و [[chmod 600]] بيخلي الملف تقراه وتكتبه انت بس. ليه؟ جربت الأول بـ [[644]] (الكل يقرا):
+
+~~~text الناتج بـ 644
+WARNING: password file "/tmp/alihome/.pgpass" has group or world access; permissions should be u=rw (0600) or less
+Password for user app_user:
+psql: error: ... fe_sendauth: no password supplied
+~~~
+
+psql **رفض يستخدم الملف**، لأن ملف باسوردات يقدر أي حد يقراه غلط أمني. وبعد [[chmod 600]]:
+
+~~~text ls -l ~/.pgpass و psql -c "SELECT current_user, current_database();"
+-rw------- 1 root root 36 Oct  6 16:31 /tmp/alihome/.pgpass
+ current_user | current_database
+--------------+------------------
+ app_user     | app
+~~~
+
+[[-rw-------]]: [[rw]] للصاحب بس، والباقي [[---]]. ودخل من غير ما يسأل.
+
+> على ويندوز الملف اسمه [[%APPDATA%\postgresql\pgpass.conf]] (من الـ docs الرسمية)، ومفيش chmod.
+
+---
+
+## ٣. [[sslmode=require]]
+
+~~~bash
+psql "postgres://app_user@localhost/app?sslmode=require"
+~~~
+
+الـ URL هنا من غير باسورد (هياخده من .pgpass). وبعد [[?]] بتيجي **خيارات** بالشكل [[اسم=قيمة]]، وبينهم [[&]] لو أكتر من واحد. [[sslmode=require]] يعني «شفّر الاتصال، ولو السيرفر مش بيدعم التشفير متتصلش». الـ container بتاعنا مفيهوش SSL:
+
+~~~text الناتج
+psql: error: connection to server at "172.17.0.2", port 5432 failed: server does not support SSL, but SSL was required
+~~~
+
+ده الصح: رفض بدل ما يبعت الباسورد مكشوف. السيرفرات المستضافة (Supabase و Neon و RDS) بتدعم SSL، وعلى النت لازم تستخدمه.
+
+---
+
+## ٤. جرّب [[DATABASE_URL]] بتاع مشروعك
+
+~~~bash
+psql "$DATABASE_URL" -c "SELECT current_user, current_database();"
+~~~
+
+[[$DATABASE_URL]] بيتبدّل بقيمة المتغير، و [[" "]] حواليه عشان لو فيه [[&]] أو [[?]] الـ shell ميفهمهمش غلط. جربته بـ URL فيه [[application_name=api]]:
+
+~~~text الناتج
+ current_user | current_database
+--------------+------------------
+ app_user     | app
+
+ application_name
+------------------
+ api
+~~~
+
+السطر التاني من [[pg_stat_activity]] لجلستي: الاسم ده بيظهر هناك، فتعرف أنهي اتصال من التطبيق وأنهي من سكربت.
+
+### باسورد فيه رموز
+
+~~~text الباسورد p@ss مكتوب زي ما هو في الـ URL
+psql: error: could not translate host name "ss@172.17.0.2" to address: Name or service not known
+~~~
+
+[[@]] هي اللي بتفصل الباسورد عن السيرفر، فأول [[@]] اتفهمت فاصل، والباقي [[ss@172.17.0.2]] بقى «اسم السيرفر». الحل URL encoding: [[@]] تتكتب [[%40]]، و [[#]] تتكتب [[%23]]، و [[:]] تتكتب [[%3A]].
+
+---
+
+## الخلاصة
+
+| المكان | امتى |
+|---|---|
+| [[PGHOST]] و [[PGUSER]] و [[PGDATABASE]] | سكربت أو CI بيتصل بنفس القاعدة كتير |
+| [[~/.pgpass]] بـ [[chmod 600]] | الباسورد على جهازك أو سكربت باك أب على السيرفر |
+| [[postgres://user:pass@host:port/db?opt=val]] | سطر واحد فيه كله، زي [[DATABASE_URL]] |
+| [[?sslmode=require]] | أي اتصال بيعدّي على النت |`,
+          lines: [
+            "حدد الاتصال في البيئة.",
+            "دلوقتي psql لوحدها بتتصل.",
+            "الباسورد في ملف بصلاحية 600، مفيش باسورد في الأوامر تاني.",
+            "اتصال بـ SSL إجباري.",
+            "جرّب الـ URL اللي في .env: مين انت وعلى أنهي قاعدة."
+          ],
+          sol: R`بعد ما تعمل الملف و [[chmod 600]]، [[psql -h localhost -U app_user -d app]] بيدخل على طول من غير [[Password for user app_user:]]. و [[SELECT current_user, current_database();]] بيرجّع [[app_user | app]].
+
+لو نسيت الـ chmod، psql بيطبع [[WARNING: password file "/home/you/.pgpass" has group or world access; permissions should be u=rw (0600) or less]] ويتجاهل الملف، فيسألك عن الباسورد تاني. ولو لسه بيسألك: السطر لازم يطابق بالظبط الـ host (لو كتبت [[localhost]] في الملف واتصلت بـ [[127.0.0.1]] مش هيطابق)، والبورت والقاعدة واليوزر. وتقدر تحط [[*]] في أي خانة.
+
+وخلي بالك: من غير [[-h]] psql بيتصل بالسوكت، ولو الـ auth هناك peer مش هيبص على الباسورد أصلًا.`,
+          solCode: R`echo "localhost:5432:app:app_user:secret" >> ~/.pgpass
+chmod 600 ~/.pgpass
+psql -h localhost -U app_user -d app -c "SELECT current_user, current_database();"`
+        },
+        {
+          cmd: "الوصول من بره",
+          title: "listen_addresses و pg_hba",
+          desc: "افتراضيًا Postgres بيسمع على localhost بس، وملف [[pg_hba.conf]] بيحدد مين يتصل منين وبأي طريقة. للوصول من جهازك للسيرفر الأصح SSH tunnel، مش فتح البورت.",
+          example: R`sudo -u postgres psql -c "SHOW listen_addresses;"
+sudo -u postgres psql -c "SHOW hba_file;"
+sudo tail -5 /etc/postgresql/16/main/pg_hba.conf
+ssh -N -L 5433:127.0.0.1:5432 deploy@203.0.113.10
+psql -h localhost -p 5433 -U app_user app`,
+          try: "افتح tunnel للسيرفر واتصل بـ DBeaver على localhost:5433 من غير ما تفتح 5432 في الفايروول.",
+          deep: {
+            why: "عايز تفتح قاعدة السيرفر من DBeaver على جهازك. الغريزة تفتح 5432 في الفايروول، ودي أخطر غلطة ممكن تعملها.",
+            how: R`طبقتين بيتحكموا في الوصول. [[listen_addresses]] في postgresql.conf: على إيه Postgres بيسمع، والافتراضي localhost بس. و [[pg_hba.conf]] (host-based authentication): جدول قواعد، كل سطر بيقول: نوع الاتصال (local أو host)، وأنهي قاعدة، وأنهي يوزر، ومن أنهي عنوان، وبأي طريقة (scram-sha-256، peer، reject). أول سطر يطابق هو اللي بيتطبق.
+
+الطريقة الآمنة للوصول من جهازك: SSH tunnel. Postgres يفضل على localhost، وانت بتوصله من خلال SSH كأنك على السيرفر. DBeaver بيدعم SSH tunnel مباشرة في إعدادات الاتصال، فمش محتاج حتى الأمر.
+
+لو لازم اتصال مباشر (سيرفر تطبيق تاني): [[listen_addresses = '*']]، وسطر في pg_hba للـ IP بتاعه بس بـ scram-sha-256، والفايروول يسمح للـ IP ده بس، و SSL إجباري ([[hostssl]] بدل host).
+
+بعد تعديل pg_hba: [[SELECT pg_reload_conf()]]. بعد listen_addresses: ريستارت.`,
+            when: "tunnel لأي وصول شخصي. فتح البورت بس لسيرفرات تانية بـ IP محدد.",
+            mistakes: "[[host all all 0.0.0.0/0 md5]] في pg_hba مع listen '*': القاعدة مفتوحة للنت كله. البوتات هتلاقيها في ساعات."
+          },
+          teach: R`## الفكرة: بابين قدام أي اتصال
+
+عشان حد يوصل لـ Postgres لازم يعدّي بابين: الأول [[listen_addresses]]: السيرفر **بيسمع** على أنهي كارت شبكة أصلًا. والتاني [[pg_hba.conf]]: لو وصلت، مسموحلك تدخل؟ وبأي طريقة تثبت إنك انت؟ والدرس بيوريك تقرا الاتنين، وبعدين الطريقة الآمنة توصل من جهازك من غير ما تفتح أي باب: SSH tunnel.
+
+أول ٣ سطور اتشغّلت على أوبونتو 24.04 جوه Docker بعد [[apt install postgresql]] (نزّل Postgres 16 بإعدادات أوبونتو). سطور الـ SSH محتاجة سيرفر حقيقي بعيد فمتشغّلتش هنا، وشكلها من الـ docs الرسمية لـ OpenSSH.
+
+---
+
+## ١. Postgres بيسمع على إيه؟
+
+~~~bash
+sudo -u postgres psql -c "SHOW listen_addresses;"
+~~~
+
+### [[sudo -u postgres]]
+
+[[sudo]] شغّل أمر بصلاحيات يوزر تاني، و [[-u postgres]] اليوزر ده هو يوزر لينكس اسمه [[postgres]] (التسطيب بيعمله). ليه؟ على أوبونتو الدخول المحلي بيستخدم طريقة اسمها **peer**: السيرفر بيسأل نظام التشغيل «مين يوزر لينكس اللي فاتح الاتصال؟» ولازم يطابق يوزر Postgres. جرّبت من غير sudo (كـ root، وبعدين كـ يوزر عادي):
+
+~~~text الناتج
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  Peer authentication failed for user "postgres"
+~~~
+
+### [[SHOW listen_addresses]]
+
+~~~text الناتج
+ listen_addresses
+------------------
+ localhost
+~~~
+
+[[localhost]] يعني السيرفر مش سامع غير الطلبات اللي جاية من نفس الجهاز. أي حد على النت يخبط على 5432 مش هيلاقي رد. ده الافتراضي وده الآمن.
+
+---
+
+## ٢. فين ملف القواعد؟
+
+~~~bash
+sudo -u postgres psql -c "SHOW hba_file;"
+~~~
+
+~~~text الناتج
+              hba_file
+-------------------------------------
+ /etc/postgresql/16/main/pg_hba.conf
+~~~
+
+[[hba]] من host-based authentication. والمسار فيه [[16]] (النسخة) و [[main]] (اسم الـ cluster). في Docker المكان مختلف ([[/var/lib/postgresql/data/pg_hba.conf]])، عشان كده السؤال أحسن من التخمين.
+
+---
+
+## ٣. نقرا القواعد
+
+~~~bash
+sudo tail -5 /etc/postgresql/16/main/pg_hba.conf
+~~~
+
+[[tail -5]] آخر ٥ سطور، و [[sudo]] لأن الملف مش متاح لأي حد. القواعد المهمة في الملف ده (من غير التعليقات):
+
+~~~text pg_hba.conf على أوبونتو 24.04
+local   all   postgres                  peer
+local   all   all                       peer
+host    all   all       127.0.0.1/32    scram-sha-256
+host    all   all       ::1/128         scram-sha-256
+~~~
+
+كل سطر ٥ خانات:
+
+| الخانة | المثال | معناها |
+|---|---|---|
+| النوع | [[local]] / [[host]] | socket على نفس الجهاز / اتصال شبكة (TCP) |
+| القاعدة | [[all]] | أي قاعدة |
+| اليوزر | [[postgres]] / [[all]] | أنهي يوزر |
+| العنوان | [[127.0.0.1/32]] | جاي منين ([[/32]] يعني العنوان ده بالظبط، و [[::1]] نفس الحاجة في IPv6). مش موجود في [[local]] |
+| الطريقة | [[peer]] / [[scram-sha-256]] | إزاي يثبت نفسه: اسم يوزر لينكس / باسورد متشفّر |
+
+Postgres بيمشي من فوق لتحت، و**أول سطر يطابق** هو اللي بيتطبّق. فـ [[psql -h localhost]] بيقع على سطر [[host ... 127.0.0.1/32]] فيطلب باسورد، ومن غير [[-h]] بيقع على [[local]] فيبقى peer. وأي اتصال مش مطابق لأي سطر بيترفض.
+
+بعد ما تعدّل الملف: [[SELECT pg_reload_conf();]] (رجّع [[t]] يعني اتقري تاني). أما [[listen_addresses]] فالـ context بتاعها [[postmaster]] في [[pg_settings]]، يعني محتاجة restart كامل.
+
+---
+
+## ٤. الطريقة الآمنة: SSH tunnel
+
+~~~bash
+ssh -N -L 5433:127.0.0.1:5432 deploy@203.0.113.10
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ssh deploy@203.0.113.10]] | ادخل السيرفر بيوزر deploy (العنوان مثال من الأرقام المحجوزة للتوثيق) |
+| [[-L]] | Local forward: افتح بورت على جهازي ووصّله بحاجة على السيرفر |
+| [[5433]] | البورت على جهازك |
+| [[127.0.0.1:5432]] | رايح فين **من وجهة نظر السيرفر**: Postgres على نفس السيرفر |
+| [[-N]] | متفتحش shell، اعمل الـ tunnel بس |
+
+اللي بيحصل: أي حاجة تتصل بـ [[localhost:5433]] على جهازك، ssh بياخدها متشفّرة جوه اتصال الـ SSH، ويسلّمها على السيرفر لـ [[127.0.0.1:5432]]. فـ Postgres شايف الاتصال جاي من localhost، وفضل [[listen_addresses = localhost]] وبورت 5432 مقفول في الفايروول. الأمر بيفضل واقف من غير ما يطبع حاجة، والـ tunnel شغال طول ما هو شغال.
+
+### اتصل من ترمنال تاني
+
+~~~bash
+psql -h localhost -p 5433 -U app_user app
+~~~
+
+[[-p 5433]] البورت المحلي بتاع الـ tunnel. ولاحظ إن [[app]] في الآخر من غير [[-d]]: psql بيفهم أول كلمة من غير flag إنها اسم القاعدة. واخترنا 5433 مش 5432 عشان لو عندك Postgres على جهازك ميتخانقوش على نفس البورت.
+
+---
+
+## الخلاصة
+
+| السؤال | الأمر | الآمن |
+|---|---|---|
+| بيسمع على إيه؟ | [[SHOW listen_addresses;]] | [[localhost]] |
+| القواعد فين؟ | [[SHOW hba_file;]] | |
+| مين يدخل وإزاي؟ | اقرا pg_hba.conf من فوق لتحت | [[scram-sha-256]] أو [[peer]]، ومفيش [[0.0.0.0/0]] |
+| طبّق تعديل pg_hba | [[SELECT pg_reload_conf();]] | |
+| أوصل من جهازي | [[ssh -N -L 5433:127.0.0.1:5432 user@server]] | من غير فتح 5432 |`,
+          lines: [
+            "Postgres بيسمع على إيه (localhost افتراضيًا).",
+            "فين ملف pg_hba.",
+            "آخر قواعد الوصول: مين يدخل منين وبإيه.",
+            "الطريقة الآمنة: tunnel، 5433 عندك يوصل لـ 5432 على السيرفر.",
+            "اتصل عبر الـ tunnel."
+          ],
+          sol: R`الأمر [[ssh -N -L 5433:127.0.0.1:5432 deploy@SERVER]] مش بيطبع حاجة وبيفضل واقف. دا الطبيعي: الـ tunnel شغال طول ما الأمر شغال. في DBeaver تحط Host [[localhost]] و Port [[5433]] واليوزر والباسورد بتوع Postgres، و Test Connection يقول Connected. ومن ترمنال تاني [[psql -h localhost -p 5433 -U app_user app]] يدخل.
+
+وتتأكد إن البورت مش مفتوح للعالم: من جهازك [[nc -zv SERVER 5432]] المفروض يفشل (timeout أو refused)، و [[SHOW listen_addresses;]] على السيرفر يفضل [[localhost]].
+
+المشاكل الشائعة: [[bind [127.0.0.1]:5433: Address already in use]] يعني عندك Postgres محلي أو tunnel قديم على البورت، غيّر الرقم. و DBeaver يقولك [[Connection refused]] لما الـ tunnel يكون وقع (قفلت الترمنال). والغلط الأخطر إنك تحل المشكلة بـ [[listen_addresses = '*']] وفتح 5432 في الفايروول.`
+        },
+        {
+          cmd: "الجلسات والأقفال",
+          title: "مين متصل ومين معلّق مين",
+          desc: "[[pg_stat_activity]] جدول فيه كل اتصال: بيعمل إيه، ومن إمتى، ومستني إيه. استعلام معلّق أو migration واقفة غالبًا بسبب lock. و [[pg_terminate_backend]] بيقفل اتصال.",
+          example: R`SELECT pid, usename, state, now() - query_start AS age, left(query, 60) FROM pg_stat_activity WHERE state <> 'idle' ORDER BY age DESC;
+SELECT count(*) FROM pg_stat_activity;
+SELECT pid, wait_event_type, wait_event, left(query, 60) FROM pg_stat_activity WHERE wait_event IS NOT NULL;
+SELECT pg_terminate_backend(12345);
+SHOW max_connections;`,
+          try: "افتح transaction في جلسة (BEGIN; UPDATE users ...) من غير COMMIT، وفي جلسة تانية جرّب نفس الـ UPDATE: هتتعلّق. شوفها في pg_stat_activity.",
+          deep: {
+            why: "الموقع علّق فجأة، أو migration واقفة من ١٠ دقايق. غالبًا استعلام ماسك lock والباقي مستنيه. لازم تشوف مين.",
+            how: R`[[pg_stat_activity]] صف لكل اتصال. [[state]]: active بينفّذ، idle مستني أوامر، [[idle in transaction]] فتح transaction ومعملش commit (وده خطر: ماسك locks ومش بيعمل حاجة). [[query]] آخر استعلام. و [[now() - query_start]] من إمتى.
+
+[[wait_event_type]] و [[wait_event]]: الاستعلام مستني إيه. [[Lock]] معناه مستني lock من اتصال تاني. [[pg_blocking_pids(pid)]] بيقولك مين ماسكه.
+
+السيناريو الكلاسيكي: transaction من التطبيق فضلت مفتوحة (bug أو اتصال اتقطع)، وماسكة lock على صف، وأي UPDATE للصف ده بيستنى، والاتصالات بتتراكم لحد max_connections والموقع يقع.
+
+[[pg_terminate_backend(pid)]] بيقفل الاتصال ويرجّع الـ transaction. [[pg_cancel_backend]] ألطف: يلغي الاستعلام الحالي بس.
+
+و [[max_connections]] (الافتراضي 100) لما يخلص، أي اتصال جديد بيفشل بـ too many connections، والحل pooling مش رفع الرقم.`,
+            when: "الموقع بطيء أو معلّق. قبل أي migration على جدول كبير. too many connections.",
+            mistakes: "terminate لاتصال الـ migration نفسه. وإنك تعالج too many connections برفع max_connections بدل pooler."
+          },
+          teach: R`## الفكرة: جدول فيه كل اللي متصلين دلوقتي
+
+[[pg_stat_activity]] مش جدول عادي، ده «view» بيتحسب لحظة ما تسأله: صف لكل اتصال مفتوح على السيرفر، فيه مين، وبيعمل إيه، ومن إمتى، ومستني إيه. ولما الموقع يعلّق، السبب غالبًا هنا: اتصال ماسك **lock** (قفل على صف أو جدول) والباقيين واقفين مستنيينه.
+
+عشان أوريك ده حقيقي، عملت على [[postgres:16]] جوه Docker ٣ جلسات:
+
+~~~text السيناريو
+جلسة 1:  BEGIN; UPDATE users SET plan = 'pro' WHERE id = 1;    ومن غير COMMIT
+جلسة 2:  UPDATE users SET plan = 'free' WHERE id = 1;          نفس الصف: هتستنى
+جلسة 3:  الاستعلامات اللي في المثال
+~~~
+
+---
+
+## ١. مين بيعمل إيه
+
+~~~text SQL
+SELECT pid, usename, state, now() - query_start AS age, left(query, 60)
+FROM pg_stat_activity WHERE state <> 'idle' ORDER BY age DESC;
+~~~
+
+نفكه:
+
+| الحتة | معناها |
+|---|---|
+| [[pid]] | process id: رقم الاتصال (كل اتصال process لوحده على السيرفر) |
+| [[usename]] | اليوزر (مكتوبة كده من غير r، اسم العمود كده) |
+| [[state]] | الحالة |
+| [[now() - query_start AS age]] | بقاله قد إيه في الاستعلام ده. و [[AS age]] اسم للعمود |
+| [[left(query, 60)]] | أول ٦٠ حرف من آخر استعلام، عشان الطويل ميبوّظش الشاشة |
+| [[WHERE state <> 'idle']] | [[<>]] يعني «لا يساوي»: سيب الاتصالات الفاضية |
+| [[ORDER BY age DESC]] | الأقدم الأول ([[DESC]] تنازلي) |
+
+~~~text الناتج
+ pid | usename  |        state        |       age       |                    left
+-----+----------+---------------------+-----------------+---------------------------------------------
+ 625 | postgres | idle in transaction | 00:00:02.996746 | UPDATE users SET plan = 'pro' WHERE id = 1;
+ 628 | postgres | active              | 00:00:01.986826 | UPDATE users SET plan = 'free' WHERE id = 1;
+ 630 | postgres | active              | 00:00:00        | SELECT pid, usename, state, now() - query_s
+~~~
+
+الحالات:
+
+| [[state]] | معناها |
+|---|---|
+| [[active]] | بينفّذ دلوقتي (أو واقف مستني lock جوه التنفيذ) |
+| [[idle]] | متصل وفاضي، مستني أمر |
+| [[idle in transaction]] | فتح BEGIN، عمل حاجة، ومستني من غير COMMIT. **ده الخطر** |
+
+جلسة 625 مش بتعمل حاجة، بس ماسكة قفل الصف. وجلسة 628 [[active]] بس في الحقيقة واقفة. والصف الأخير ده أنا (جلسة 3).
+
+---
+
+## ٢. كام اتصال؟
+
+~~~text SELECT count(*) FROM pg_stat_activity;
+ count
+-------
+     8
+~~~
+
+٨ مع إن فيه ٣ جلسات بس؟ لأن الـ view فيه كمان عمليات Postgres الداخلية: [[autovacuum launcher]] و [[checkpointer]] و [[background writer]] و [[walwriter]] وغيرهم (بتبان في عمود [[backend_type]]). الاتصالات بتاعتك نوعها [[client backend]].
+
+---
+
+## ٣. مين مستني إيه
+
+~~~text SQL
+SELECT pid, wait_event_type, wait_event, left(query, 60)
+FROM pg_stat_activity WHERE wait_event IS NOT NULL;
+~~~
+
+[[IS NOT NULL]] يعني «فيه قيمة» (مع NULL لازم [[IS]] مش [[=]]). الناتج فيه العمليات الداخلية كمان (نوعها [[Activity]]، وده طبيعي)، والمهم السطرين دول:
+
+~~~text الناتج (سطور الجلسات بس)
+ pid | wait_event_type |  wait_event   |                     left
+-----+-----------------+---------------+----------------------------------------------
+ 625 | Client          | ClientRead    | UPDATE users SET plan = 'pro' WHERE id = 1;
+ 628 | Lock            | transactionid | UPDATE users SET plan = 'free' WHERE id = 1;
+~~~
+
+| القيمة | معناها |
+|---|---|
+| [[Client / ClientRead]] | مستني العميل يبعت الأمر الجاي (الجلسة 1 مستنياك تكتب COMMIT) |
+| [[Lock / transactionid]] | مستني transaction تانية تخلص عشان تفك القفل |
+
+ومين بالظبط؟ [[pg_blocking_pids(pid)]] بترجع قايمة الـ pids اللي سادّين الطريق:
+
+~~~text SELECT pid, pg_blocking_pids(pid) FROM pg_stat_activity WHERE wait_event_type = 'Lock';
+ pid | pg_blocking_pids
+-----+------------------
+ 628 | {625}
+~~~
+
+[[{625}]] مصفوفة (array) فيها pid واحد: 625 هو اللي قافل على 628. ولو كذا حد مستني ورا بعض هتلاقي سلسلة، زي [[{581,594}]].
+
+---
+
+## ٤. اقفل الاتصال اللي سادد
+
+~~~text SQL
+SELECT pg_terminate_backend(625);
+~~~
+
+~~~text الناتج
+ pg_terminate_backend
+----------------------
+ t
+~~~
+
+[[t]] يعني اتقفل. واللي حصل في الجلستين:
+
+~~~text جلسة 2 (كانت واقفة)
+UPDATE 1
+~~~
+
+~~~text جلسة 1 (اللي اتقفلت)
+FATAL:  terminating connection due to administrator command
+server closed the connection unexpectedly
+~~~
+
+جلسة 2 كمّلت على طول. وجلسة 1 اتقطعت والـ UPDATE بتاعها **اترجع** (ROLLBACK)، لأنها معملتش COMMIT. لو عايز تلغي الاستعلام الحالي بس من غير ما تقفل الاتصال: [[pg_cancel_backend(pid)]].
+
+> متقفلش pid من غير ما تقرا هو بيعمل إيه: ممكن يكون migration لو اتقطعت في النص هتضطر تعيدها.
+
+---
+
+## ٥. [[SHOW max_connections;]]
 
 ~~~text الناتج
  max_connections
@@ -1546,353 +856,1199 @@ PgBouncer على سيرفرك: بيسمع على 6432، وإعداداته [[poo
  100
 ~~~
 
-[[100]] هو الافتراضي. والحل لما يخلص **مش** إنك ترفعه لـ 500: كل اتصال ليه رام، و ٥٠٠ process بيتخانقوا على نفس الـ CPU.
-
----
-
-## ٣. [[psql "postgres://app_user:secret@localhost:6432/app"]]
-
-نفس رابط القاعدة بالظبط، الفرق الوحيد البورت: [[6432]] (البورت المعتاد لـ PgBouncer) بدل [[5432]]. التطبيق مش محتاج يعرف إن فيه pooler.
-
-جربنا نتصل من خلاله ونسأل السيرفر هو على أنهي بورت:
-
-~~~text psql "postgres://app_user:secret@pg02-bouncer:6432/app" -c "select current_user, inet_server_port()"
- current_user | inet_server_port
---------------+------------------
- app_user     |             5432
-~~~
-
-احنا كلمنا 6432، بس اللي رد علينا Postgres على 5432 من ورا PgBouncer.
-
-### التجربة: ٥٠ عميل في نفس الوقت
-
-شغّلنا ٥٠ psql مع بعض، كل واحد بيعمل [[SELECT pg_sleep(3)]] (استنى ٣ ثواني)، وعدّينا الاتصالات على السيرفر وهم شغالين:
-
-~~~text عن طريق PgBouncer (6432)
- count | state
--------+--------
-    21 | active
-~~~
-
-~~~text مباشرة على Postgres (5432)
- count | state
--------+--------
-    51 | active
-    20 | idle
-~~~
-
-نقرا الأرقام:
-
-| الرقم | ليه |
-|---|---|
-| 21 مع PgBouncer | ٢٠ اتصال (الـ [[default_pool_size]]) + اتصالنا اللي بيعدّ. الـ ٣٠ الباقيين استنوا دورهم في طابور جوه PgBouncer، وبعضهم طبع [[NOTICE:  No server connection available in postgres backend, client being queued]] |
-| 51 مباشرة | كل عميل فتح process خاص بيه + اتصالنا |
-| 20 idle | دول اتصالات PgBouncer نفسه: خلّصوا شغلهم وفضلوا مفتوحين جاهزين للطلب الجاي |
-
-يعني مع الـ pooler السيرفر عمره ما شاف أكتر من ٢١ اتصال، حتى لو العملاء ٥٠ أو ٥٠٠.
-
----
-
-## ٤. [[...pooler.supabase.com:6543/postgres?pgbouncer=true]]
-
-نفس الفكرة بس الـ pooler بتاع Supabase (Supavisor):
-
-| الحتة | معناها |
-|---|---|
-| [[:6543]] | transaction mode |
-| [[:5432]] على نفس الهوست | session mode |
-| [[?pgbouncer=true]] | باراميتر لـ Prisma مش لـ Postgres: «في pooler بـ transaction mode، متستخدمش prepared statements» |
-
-### transaction mode مقابل session mode
-
-| | transaction | session |
-|---|---|---|
-| الاتصال الحقيقي ملكك امتى | طول transaction واحدة | لحد ما تقفل |
-| الكفاءة | أعلى | أقل |
-| [[SET]] و prepared statements و [[LISTEN]] | مش مضمونين (الاستعلام الجاي ممكن يروح لاتصال تاني) | شغالين |
-| مناسب لـ | التطبيق | migrations و pg_dump |
+ده أقصى عدد اتصالات. لما جلسات كتير تتعلّق ورا lock واحد، التطبيق بيفتح اتصالات جديدة لحد ما توصل ١٠٠، وبعدها أي اتصال جديد بيفشل بـ [[too many connections]].
 
 ---
 
 ## الخلاصة
 
-- [[max_connections]] حد للسيرفر، والحل لما يخلص pooler مش رقم أكبر.
-- التطبيق على الـ pooler (6432 عندك أو 6543 في Supabase)، والـ migrations على اتصال كامل (5432).
-- [[pg_stat_activity]] مع [[backend_type = 'client backend']] هو اللي يقولك الاتصالات الحقيقية كام، و [[idle]] كتير من غير pooler يعني الـ pool في كود التطبيق أكبر من اللازم.`,
+| السؤال | الأمر |
+|---|---|
+| مين شغال ومن إمتى؟ | [[pg_stat_activity]] مع [[state <> 'idle']] |
+| مين مستني lock؟ | [[wait_event_type = 'Lock']] |
+| مين سادد عليه؟ | [[pg_blocking_pids(pid)]] |
+| ألغي الاستعلام بس | [[pg_cancel_backend(pid)]] |
+| اقفل الاتصال وارجّع الـ transaction | [[pg_terminate_backend(pid)]] |
+| الحد الأقصى | [[SHOW max_connections;]] |
+
+> [[idle in transaction]] لمدة طويلة = اتصال ماسك أقفال ومش بيعمل حاجة. ده أول حاجة تدوّر عليها.`,
           lines: [
-            "الاتصالات بحالتها: idle كتير يعني الـ pool في الكود أكبر من اللازم.",
-            "الحد.",
-            "عبر PgBouncer على سيرفرك (6432).",
-            "عبر pooler بتاع Supabase (6543) بـ transaction mode."
+            "الاتصالات اللي بتعمل حاجة، مرتبة بالأقدم، مع أول 60 حرف من الاستعلام.",
+            "عدد الاتصالات.",
+            "مين مستني إيه (Lock يعني مستني اتصال تاني).",
+            "اقفل اتصال برقمه.",
+            "الحد الأقصى للاتصالات."
           ],
-          sol: R`الشكل الصح في [[.env]]: [[DATABASE_URL="postgres://postgres.PROJECTREF:PASS@aws-0-REGION.pooler.supabase.com:6543/postgres?pgbouncer=true"]] و [[DIRECT_URL="postgres://postgres.PROJECTREF:PASS@aws-0-REGION.pooler.supabase.com:5432/postgres"]]. التطبيق بيستخدم الأول (transaction mode)، و [[prisma migrate]] بيستخدم التاني (session mode)، لأن الـ migrations محتاجة جلسة كاملة وأقفال.
+          sol: R`الجلسة التانية بتفضل واقفة بعد الـ UPDATE من غير أي رسالة. و pg_stat_activity من جلسة تالتة بيطلّع حاجة زي:
 
-في Prisma 7 الـ URL بتاع CLI بيتحط في [[prisma.config.ts]] جوه [[datasource: { url: env("DIRECT_URL") }]]، والتطبيق بياخد [[DATABASE_URL]] من خلال الـ adapter في الكود.
+الجلسة الأولى بـ [[state = idle in transaction]] (خلصت الـ UPDATE ومستنية COMMIT)، والتانية بـ [[state = active]] و [[wait_event_type = Lock]] و [[wait_event = transactionid]] والـ query بتاعها هو الـ UPDATE. يعني التانية مستنية الـ transaction بتاعة الأولى تخلص.
 
-المشاكل اللي بتقول إنك عكستهم: [[prepared statement "s0" already exists]] يعني التطبيق على 6543 من غير [[pgbouncer=true]]. و [[migrate dev]] يعلّق أو يقول إنه مش قادر ياخد advisory lock يعني الـ migrations شغالة على 6543. و [[SELECT count(*), state FROM pg_stat_activity GROUP BY state]] مع pooling شغال المفروض يفضل رقم ثابت صغير حتى لو عندك functions كتير شغالة.`
+أول ما تعمل COMMIT أو ROLLBACK في الأولى، التانية تكمّل فورًا وتطبع [[UPDATE 1]]. الدرس: [[idle in transaction]] لفترة طويلة هو غالبًا سبب «القاعدة واقفة». ولو التانية ما اتعلقتش، يبقى الأولى مكانش فيها BEGIN (اتعملت commit لوحدها) أو الـ UPDATE التاني على صف مختلف. وحط [[SET lock_timeout = '5s';]] في التانية عشان تشوف [[canceling statement due to lock timeout]] بدل الانتظار للأبد.`,
+          solCode: R`-- جلسة 1
+BEGIN;
+UPDATE users SET plan = 'pro' WHERE id = 1;
+-- جلسة 2 (هتتعلق)
+UPDATE users SET plan = 'x' WHERE id = 1;
+-- جلسة 3
+SELECT pid, state, wait_event_type, wait_event, left(query, 50)
+FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();`
         },
         {
-          cmd: "الاستعلامات البطيئة",
-          title: "log_min_duration و pg_stat_statements",
-          desc: "بدل ما تخمّن أنهي استعلام بطيء، خلّي Postgres يسجّل أي استعلام أخد أكتر من حد معين. و [[pg_stat_statements]] بيجمّع إحصائيات كل الاستعلامات: مين اتنفّذ أكتر وأخد وقت أكتر في المجموع.",
-          example: R`ALTER SYSTEM SET log_min_duration_statement = '500ms';
+          cmd: "الحجم",
+          title: "إيه اللي واكل المساحة",
+          desc: R`لما الديسك يتملى أو القاعدة تبطأ، أول سؤال: مين واكل المساحة؟ [[pg_database_size('app')]] بيرجع حجم القاعدة كلها بالبايت، و [[pg_size_pretty]] بتحوّله لشكل مقروء زي [[245 MB]].
+
+السطر التاني بيجيب أكبر 10 جداول: [[pg_total_relation_size]] حجم الجدول بكل حاجته (البيانات والـ indexes والأعمدة الكبيرة)، و [[pg_statio_user_tables]] جدول نظام فيه جداولك انت بس، و [[ORDER BY ... DESC LIMIT 10]] رتّب من الأكبر وخد 10. التالت نفس الفكرة للـ indexes بـ [[pg_relation_size]] و [[pg_stat_user_indexes]]. و [[\dt+]] اختصار في psql بيعرض كل الجداول وحجمها في عمود Size.
+
+خد بالك: [[DELETE]] مش بيصغّر الملف على الديسك على طول؛ الصفوف بتتعلّم ميتة، و VACUUM بيخلي مكانها يتعاد استخدامه.`,
+          example: R`SELECT pg_size_pretty(pg_database_size('app'));
+SELECT relname, pg_size_pretty(pg_total_relation_size(relid)) AS size FROM pg_catalog.pg_statio_user_tables ORDER BY pg_total_relation_size(relid) DESC LIMIT 10;
+SELECT indexrelname, pg_size_pretty(pg_relation_size(indexrelid)) FROM pg_stat_user_indexes ORDER BY pg_relation_size(indexrelid) DESC LIMIT 10;
+\dt+`,
+          try: "شوف أكبر ٣ جداول في قاعدتك. غالبًا جدول لوجات أو sessions ممكن ينضّف.",
+          deep: {
+            why: "القاعدة كبرت من ٢ لـ ٢٠ جيجا، والباك أب بقى بطيء، والديسك بيقرّب يتملى. لازم تعرف مين.",
+            how: R`[[pg_database_size]] حجم قاعدة، و [[pg_size_pretty]] بيحوّل البايت لـ MB/GB.
+
+[[pg_total_relation_size]] حجم الجدول بكل حاجته: البيانات، والـ indexes، والـ TOAST (الأعمدة الكبيرة زي text و jsonb بتتخزن في جدول جانبي). [[pg_relation_size]] البيانات بس. والفرق بينهم بيقولك الـ indexes واكلة قد إيه.
+
+جداول النظام [[pg_stat_user_tables]] و [[pg_stat_user_indexes]] فيها كل جداولك و indexes بتاعتك مع إحصائيات، والاستعلامات في المثال بترتبهم بالحجم.
+
+[[\dt+]] و [[\di+]] اختصار بيعرض الحجم في العمود الأخير.
+
+أشهر المتهمين: جداول لوجات أو audit مبتتنضفش، و sessions قديمة، و indexes مش مستخدمة، و bloat (صفوف ميتة محتاجة VACUUM).`,
+            when: "شهريًا. ولما الباك أب أو الديسك يكبر فجأة.",
+            mistakes: "تمسح صفوف قديمة وتستغرب إن الحجم منقصش. DELETE بيعلّم الصفوف بس، و VACUUM بيحرر المساحة للاستخدام، و VACUUM FULL بس اللي بيرجّعها للنظام (وبيقفل الجدول)."
+          },
+          teach: R`## الفكرة: دوال بترجع حجم بالبايت، ودالة بتخليه مقروء
+
+Postgres فيه دوال جاهزة بتقيس حجم أي حاجة على الديسك: القاعدة كلها، أو جدول، أو index. كلها بترجع **بايت**، فبنلفها في [[pg_size_pretty]] عشان يبقى [[26 MB]] بدل [[27263503]]. والمثال ٣ استعلامات من الأكبر للأصغر: القاعدة، وبعدين الجداول، وبعدين الـ indexes.
+
+الناتج تحت من [[postgres:16]] جوه Docker، على قاعدة [[app]] أكبر جدول فيها [[orders]] بـ ٢٠٠ ألف صف.
+
+---
+
+## ١. حجم القاعدة كلها
+
+~~~text SQL
+SELECT pg_size_pretty(pg_database_size('app'));
+~~~
+
+من جوه لبره:
+
+~~~text pg_database_size('app') لوحدها
+ pg_database_size
+------------------
+         27263503
+~~~
+
+ده بالبايت. و [[pg_size_pretty]] بتقسم وتختار الوحدة المناسبة (bytes و kB و MB و GB و TB، وكل وحدة ١٠٢٤ من اللي قبلها):
+
+~~~text الناتج
+ pg_size_pretty
+----------------
+ 26 MB
+~~~
+
+27263503 ÷ 1024 ÷ 1024 ≈ 26.
+
+---
+
+## ٢. أكبر ١٠ جداول
+
+~~~text SQL
+SELECT relname, pg_size_pretty(pg_total_relation_size(relid)) AS size
+FROM pg_catalog.pg_statio_user_tables
+ORDER BY pg_total_relation_size(relid) DESC LIMIT 10;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[pg_catalog.pg_statio_user_tables]] | view فيه صف لكل جدول **انت** عامله (من غير جداول النظام). [[pg_catalog.]] اسم الـ schema اللي هو فيها |
+| [[relname]] | اسم الجدول (relation name) |
+| [[relid]] | رقم الجدول الداخلي (OID)، الدوال بتاخده بدل الاسم |
+| [[pg_total_relation_size(relid)]] | حجم الجدول **بكل حاجته**: البيانات والـ indexes و TOAST |
+| [[ORDER BY ... DESC]] | رتّب بالحجم الحقيقي بالبايت، من الأكبر |
+| [[LIMIT 10]] | أول ١٠ |
+
+ليه بنرتّب بالرقم مش بالـ [[size]]؟ لأن [[size]] نص، والنص بيترتّب حرف حرف، فـ [["80 kB"]] هتيجي قبل [["18 MB"]].
+
+~~~text الناتج
+  relname  | size
+-----------+-------
+ orders    | 18 MB
+ users     | 80 kB
+ products  | 64 kB
+ coupons   | 64 kB
+ staff     | 64 kB
+ coupons2  | 64 kB
+ sessions  | 64 kB
+ audit_log | 16 kB
+~~~
+
+[[orders]] واكل كل حاجة تقريبًا. و **TOAST** ده جدول جانبي Postgres بيحط فيه القيم الكبيرة (نص طويل أو jsonb كبير) أوتوماتيك.
+
+---
+
+## ٣. أكبر ١٠ indexes
+
+~~~text SQL
+SELECT indexrelname, pg_size_pretty(pg_relation_size(indexrelid))
+FROM pg_stat_user_indexes ORDER BY pg_relation_size(indexrelid) DESC LIMIT 10;
+~~~
+
+نفس الفكرة: [[pg_stat_user_indexes]] صف لكل index، و [[indexrelname]] اسمه، و [[pg_relation_size]] حجم الحاجة دي لوحدها.
+
+~~~text الناتج (أول سطور)
+  indexrelname   | pg_size_pretty
+-----------------+----------------
+ orders_pkey     | 4408 kB
+ users_email_key | 16 kB
+ sessions_pkey   | 16 kB
+~~~
+
+### البيانات ولا الـ indexes؟
+
+~~~text SQL
+SELECT pg_size_pretty(pg_relation_size('orders')) AS data,
+       pg_size_pretty(pg_indexes_size('orders')) AS indexes,
+       pg_size_pretty(pg_total_relation_size('orders')) AS total;
+~~~
+
+~~~text الناتج
+ data  | indexes | total
+-------+---------+-------
+ 14 MB | 4408 kB | 18 MB
+~~~
+
+14 MB بيانات + 4.3 MB index ≈ 18 MB. وده بيفسّر الـ 18 فوق.
+
+| الدالة | بتحسب |
+|---|---|
+| [[pg_relation_size]] | الحاجة دي لوحدها (بيانات الجدول بس، أو الـ index بس) |
+| [[pg_indexes_size]] | كل الـ indexes بتاعة الجدول |
+| [[pg_total_relation_size]] | الجدول + indexes + TOAST |
+| [[pg_database_size]] | القاعدة كلها |
+
+---
+
+## ٤. [[\dt+]]: الاختصار
+
+~~~text الناتج (أعمدة مختارة)
+   Name    |    Size
+-----------+------------
+ audit_log | 8192 bytes
+ orders    | 14 MB
+ users     | 48 kB
+~~~
+
+مترتب بالاسم مش بالحجم، والرقم من غير الـ indexes (لاحظ [[orders]] بـ 14 MB مش 18). و [[8192 bytes]] = صفحة واحدة: Postgres بيخزن كل حاجة في صفحات حجمها 8 kB، فأصغر جدول فيه بيانات بياخد صفحة.
+
+---
+
+## الخلاصة
+
+~~~text
+pg_size_pretty(...)            بايت ← kB/MB/GB
+pg_database_size('db')         القاعدة
+pg_total_relation_size('t')    الجدول بكل حاجته
+pg_relation_size('t')          البيانات بس
+\dt+  و  \di+                  نفس الكلام بسرعة في psql
+~~~
+
+> اترتّب بالرقم مش بالنص. ولو مسحت صفوف والحجم ما نقصش، ده طبيعي: درس VACUUM.`,
+          lines: ["حجم القاعدة كلها.", "أكبر ١٠ جداول (بيانات و indexes).", "أكبر ١٠ indexes.", "الجداول بحجمها."],
+          sol: R`الاستعلام بيرجّع [[relname | size]] مترتبين من الأكبر. في قاعدة التجربة كان [[big | 82 MB]] وبعده [[users | 48 kB]] و [[orders | 16 kB]]. في مشروع حقيقي غالبًا هتلاقي فوق جدول زي [[sessions]] أو [[audit_logs]] أو [[notifications]] بحجم أكبر من الداتا المهمة نفسها.
+
+خلي بالك إن [[pg_total_relation_size]] بيحسب الجدول والـ indexes والـ TOAST، فالرقم أكبر من اللي في [[\dt+]] (دا بيعرض الجدول بس). والقرار بعدها مش إنك تمسح وخلاص: حط سياسة (مثلًا امسح sessions المنتهية من ٣٠ يوم) بـ cron.
+
+المفاجأة الشائعة: تمسح نص الجدول والحجم ما يقلّش. دا طبيعي، [[VACUUM]] العادي بيخلي المساحة متاحة لإعادة الاستخدام جوه الجدول بس، ودا موضوع درس VACUUM.`
+        },
+        {
+          cmd: "الـ indexes",
+          title: "الاستعلام بطيء لأن مفيش index",
+          desc: R`من غير index، [[WHERE email = ...]] بيقرا الجدول كله. الـ index زي فهرس الكتاب. [[\di]] بيعرضهم، و [[pg_stat_user_indexes]] بيقولك مين بيتستخدم ومين لأ. الـ index اللي مش بيتستخدم بيبطّئ الكتابة من غير فايدة.`,
+          example: R`\di
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);
+CREATE INDEX CONCURRENTLY idx_orders_status_created ON orders (status, created_at DESC);
+SELECT indexrelname, idx_scan FROM pg_stat_user_indexes WHERE idx_scan = 0 AND indexrelname NOT LIKE '%pkey';
+DROP INDEX CONCURRENTLY idx_unused;`,
+          try: R`اعمل جدول بمليون صف بـ [[generate_series]]، وقيس استعلام WHERE قبل وبعد الـ index بـ [[\timing]].`,
+          deep: {
+            why: "نفس الاستعلام بياخد ٢ ثانية على مليون صف و ٢ ملي ثانية مع index. الفرق ألف مرة. ومعظم مشاكل الأداء index ناقص.",
+            how: R`الـ index هيكل منفصل (B-tree غالبًا) بيحفظ قيم عمود مرتبة مع مؤشر للصف. [[WHERE email = 'x']] من غيره: Seq Scan، بيقرا كل الصفوف. معاه: Index Scan، بيلاقي القيمة في الشجرة ويروح للصف مباشرة.
+
+الـ primary key و UNIQUE بيعملوا index لوحدهم. الـ foreign key لأ، وده أشهر index ناقص: [[orders.user_id]] من غير index معناه كل [[WHERE user_id = ...]] و كل JOIN على users بطيء.
+
+[[CONCURRENTLY]] بيبني الـ index من غير ما يقفل الجدول للكتابة، فالموقع شغال أثناء البناء. أبطأ ومينفعش جوه transaction، بس على الإنتاج إجباري.
+
+index مركب [[(status, created_at DESC)]] بيخدم [[WHERE status = 'paid' ORDER BY created_at DESC]]، والترتيب فيه مهم: العمود اللي بتساوي فيه الأول.
+
+الـ indexes مش مجانية: كل INSERT و UPDATE بيحدّثهم. [[idx_scan = 0]] معناه عمره ما اتستخدم من آخر reset للإحصائيات، وغالبًا يتشال.`,
+            when: "كل foreign key. كل عمود في WHERE أو ORDER BY متكرر. وبعد EXPLAIN يوريك Seq Scan على جدول كبير.",
+            mistakes: "CREATE INDEX من غير CONCURRENTLY على الإنتاج فيقفل الجدول دقايق. و index على كل عمود «احتياطي» فالكتابة تبطأ."
+          },
+          teach: R`## الفكرة: فهرس الكتاب
+
+عايز كل الطلبات بتاعة يوزر 42؟ من غير index، Postgres بيقرا الـ ٢٠٠ ألف صف واحد واحد ويشوف [[user_id]] بتاع كل صف (اسمها **Seq Scan**: قراية متتالية). الـ index نسخة مترتبة من قيم العمود، وجنب كل قيمة مكان الصف، فيروح على طول للقيمة اللي عايزها (**Index Scan**). زي فهرس آخر الكتاب بالظبط.
+
+الناتج تحت من [[postgres:16]] جوه Docker، على [[orders]] فيه ٢٠٠ ألف صف، و [[\timing on]] شغال.
+
+---
+
+## ١. [[\di]]: الموجود
+
+[[d]] describe و [[i]] indexes.
+
+~~~text الناتج (سطور orders و users)
+ Schema |      Name       | Type  |  Owner   |   Table
+--------+-----------------+-------+----------+-----------
+ public | orders_pkey     | index | postgres | orders
+ public | users_email_key | index | postgres | users
+ public | users_pkey      | index | postgres | users
+~~~
+
+كل جدول عنده [[_pkey]] (الـ primary key بيعمل index لوحده)، و [[users_email_key]] جه من [[UNIQUE]] على الإيميل. أما [[orders.user_id]] فعليه foreign key بس **مفيش** index: Postgres مش بيعمله لوحده للـ foreign key.
+
+---
+
+## ٢. قبل وبعد
+
+~~~text SELECT count(*) FROM orders WHERE user_id = 42; (مرتين، من غير index)
+ count
+-------
+ 40000
+Time: 31.178 ms
+Time: 17.108 ms
+~~~
+
+~~~text CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);
+CREATE INDEX
+Time: 133.024 ms
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[CREATE INDEX]] | اعمل index |
+| [[CONCURRENTLY]] | ابنيه والجدول شغال: INSERT و UPDATE مش هيقفوا وهو بيتبني |
+| [[idx_orders_user_id]] | اسمه. العُرف: idx_الجدول_العمود |
+| [[ON orders (user_id)]] | على أنهي جدول وأنهي عمود |
+
+~~~text نفس الـ count بعد الـ index
+ count
+-------
+ 40000
+Time: 2.051 ms
+~~~
+
+من 17 لـ 2 مللي ثانية. والفرق بيكبر كل ما الجدول يكبر، لأن الـ Seq Scan وقته بيزيد مع عدد الصفوف، والـ index تقريبًا لأ. وعشان تتأكد إنه اتستخدم فعلًا:
+
+~~~text EXPLAIN SELECT count(*) FROM orders WHERE user_id = 42;
+   ->  Index Only Scan using idx_orders_user_id on orders  (cost=0.29..844.02 rows=40213 width=0)
+         Index Cond: (user_id = 42)
+~~~
+
+[[Index Only Scan]] يعني جاوب من الـ index لوحده من غير ما يلمس الجدول (كل اللي محتاجه يعدّ). [[EXPLAIN]] ليه درس لوحده بعد ده.
+
+### ليه [[CONCURRENTLY]] مينفعش جوه BEGIN
+
+~~~text BEGIN; CREATE INDEX CONCURRENTLY x ON orders(total);
+ERROR:  CREATE INDEX CONCURRENTLY cannot run inside a transaction block
+~~~
+
+لأنه بيبني على كذا مرحلة، كل مرحلة transaction لوحدها. فشغّله لوحده، أو في migration متعلّمة إنها من غير transaction.
+
+---
+
+## ٣. index على عمودين
+
+~~~text SQL
+CREATE INDEX CONCURRENTLY idx_orders_status_created ON orders (status, created_at DESC);
+~~~
+
+بيخدم الاستعلام ده: «آخر ٢٠ طلب مدفوع»:
+
+~~~text EXPLAIN SELECT * FROM orders WHERE status = 'paid' ORDER BY created_at DESC LIMIT 20;  قبل (من غير سطر Workers Planned)
+ Limit  (cost=5260.91..5263.21 rows=20 width=38)
+   ->  Gather Merge  (cost=5260.91..9800.07 rows=39471 width=38)
+         ->  Sort  (cost=4260.90..4359.57 rows=39471 width=38)
+               Sort Key: created_at DESC
+               ->  Parallel Seq Scan on orders  (cost=0.00..3210.59 rows=39471 width=38)
+                     Filter: (status = 'paid'::text)
+~~~
+
+من تحت لفوق: اقرا الجدول كله ([[Seq Scan]])، صفّي المدفوع ([[Filter]])، رتّب كله ([[Sort]])، وخد ٢٠ ([[Limit]]).
+
+~~~text نفس الـ EXPLAIN  بعد
+ Limit  (cost=0.42..3.06 rows=20 width=38)
+   ->  Index Scan using idx_orders_status_created on orders  (cost=0.42..8869.32 rows=67100 width=38)
+         Index Cond: (status = 'paid'::text)
+~~~
+
+الـ index مترتب بـ status الأول، وجوه كل status مترتب بـ [[created_at DESC]] (الأحدث الأول). فيروح لأول [[paid]] ويقرا ٢٠ ويقف. مفيش Sort خالص، والـ [[cost]] (رقم تقديري نسبي) نزل من 5263 لـ 3.
+
+ترتيب الأعمدة مهم: العمود اللي بتعمل عليه [[=]] الأول، وبعده اللي بترتب بيه أو بتعمل عليه [[>]] و [[<]].
+
+---
+
+## ٤. indexes محدش بيستخدمها
+
+~~~text SQL
+SELECT indexrelname, idx_scan FROM pg_stat_user_indexes
+WHERE idx_scan = 0 AND indexrelname NOT LIKE '%pkey';
+~~~
+
+[[idx_scan]] عدد المرات اللي الـ index اتقري فيها. و [[NOT LIKE '%pkey']] سيب الـ primary keys ([[%]] يعني «أي حروف»). من جلسة جديدة:
+
+~~~text الناتج
+       indexrelname        | idx_scan
+---------------------------+----------
+ users_email_key           |        0
+ idx_orders_status_created |        0
+~~~
+
+[[idx_orders_user_id]] مش موجود لأنه اتقري مرة ([[idx_scan = 1]]). و [[idx_orders_status_created]] صفر لأني جربته بـ [[EXPLAIN]] بس، و EXPLAIN مش بينفّذ. و [[users_email_key]] صفر بس متمسحوش: ده بيمنع الإيميل المكرر، شغلته الحماية مش السرعة.
+
+> الإحصائيات دي بتتحدّث بتأخير بسيط، وفي نفس الجلسة اللي استخدمت فيها الـ index ممكن لسه تلاقيه صفر. اسأل من جلسة جديدة. والرقم بيتعد من آخر reset للإحصائيات، فقاعدة لسه شغالة من يومين مش مقياس.
+
+---
+
+## ٥. امسح index
+
+~~~text SQL
+DROP INDEX CONCURRENTLY idx_unused;
+~~~
+
+~~~text الناتج
+DROP INDEX
+~~~
+
+ليه نمسح؟ كل INSERT و UPDATE لازم يحدّث **كل** الـ indexes اللي على الجدول، فالـ index اللي محدش بيقراه بيبطّأ الكتابة وبياخد مساحة على الفاضي.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| تشوف الموجود | [[\di]] |
+| index على الإنتاج | [[CREATE INDEX CONCURRENTLY idx_t_col ON t (col);]] |
+| لاستعلام فلتر + ترتيب | [[(col_equal, col_sort DESC)]] |
+| تتأكد إنه اتستخدم | [[EXPLAIN]] وتدوّر على [[Index Scan]] |
+| مين مش مستخدم | [[pg_stat_user_indexes]] و [[idx_scan = 0]] |
+| تمسح | [[DROP INDEX CONCURRENTLY]] |
+
+> أول index تحطه: على كل عمود foreign key ([[orders.user_id]] وأمثاله).`,
+          lines: [
+            "الـ indexes الموجودة.",
+            "index على foreign key، من غير قفل الجدول.",
+            "index مركب لاستعلام بيفلتر بالحالة ويرتب بالتاريخ.",
+            "indexes عمرها ما اتستخدمت (غير الـ primary keys).",
+            "امسح واحد من غير قفل."
+          ],
+          sol: R`على جدول مليون صف من [[generate_series]] الأرقام اللي طلعت: [[SELECT count(*) FROM big WHERE user_id = 4242]] أخد حوالي [[30 ms]] من غير index، وإنشاء الـ index أخد [[393 ms]]، ونفس الاستعلام بعده بقى [[0.678 ms]].
+
+الأرقام عندك هتختلف حسب الجهاز، بس الفرق لازم يبقى عشرات المرات. ولو ما لقيتش فرق: يا الاستعلام بيرجّع جزء كبير من الجدول (Postgres بيفضّل الـ Seq Scan لو هترجع مثلًا ٣٠٪ من الصفوف)، يا الـ WHERE عامل حاجة على العمود زي [[lower(email)]] فالـ index العادي مش بيستخدم. واعمل [[ANALYZE big;]] بعد إنشاء الجدول عشان الـ planner يعرف حجمه.
+
+وخلي بالك: [[CREATE INDEX CONCURRENTLY]] مينفعش جوه BEGIN، هيقولك [[cannot run inside a transaction block]].`,
+          solCode: R`CREATE TABLE big AS
+  SELECT g AS id, (random() * 100000)::int AS user_id, md5(g::text) AS note
+  FROM generate_series(1, 1000000) g;
+ANALYZE big;
+\timing on
+SELECT count(*) FROM big WHERE user_id = 4242;
+CREATE INDEX idx_big_user ON big (user_id);
+SELECT count(*) FROM big WHERE user_id = 4242;`
+        },
+        {
+          cmd: "EXPLAIN ANALYZE",
+          title: "اقرا خطة الاستعلام",
+          desc: R`لما استعلام يبقى بطيء، [[EXPLAIN]] بيوريك Postgres ناوي ينفّذه إزاي (الخطة) من غير ما ينفّذه: هيقرا الجدول كله صف صف ([[Seq Scan]]) ولا هيستخدم index ويروح للصفوف المطلوبة على طول ([[Index Scan]]). الأرقام هنا تقديرات: [[cost]] رقم نسبي مش وقت، و [[rows]] عدد الصفوف المتوقع.
+
+[[EXPLAIN ANALYZE]] بينفّذ الاستعلام فعلًا ويضيف الأرقام الحقيقية: [[actual time]] بالمللي ثانية وعدد الصفوف الفعلي، وفي الآخر [[Execution Time]]. و [[(ANALYZE, BUFFERS, FORMAT TEXT)]] بيضيف كمان كام صفحة اتقرت من الذاكرة وكام من الديسك. الخطة شجرة: السطور اللي داخلة لجوه أكتر بتتنفّذ الأول.
+
+أشهر اكتشاف: [[Seq Scan]] على جدول كبير في عمود بتفلتر بيه، يعني ناقصه index. وخد بالك: ANALYZE بينفّذ بجد، فمع [[UPDATE]] أو [[DELETE]] لفّه في [[BEGIN]] و [[ROLLBACK]].`,
+          example: R`EXPLAIN SELECT * FROM orders WHERE user_id = 42;
+EXPLAIN ANALYZE SELECT * FROM orders WHERE user_id = 42;
+EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) SELECT o.*, u.email FROM orders o JOIN users u ON u.id = o.user_id WHERE o.status = 'paid';`,
+          try: "شغّل EXPLAIN ANALYZE على أبطأ استعلام عندك، ودوّر على Seq Scan على جدول كبير. ده مكان الـ index الناقص.",
+          deep: {
+            why: "«الاستعلام بطيء» مش تشخيص. EXPLAIN بيقولك بالظبط Postgres بيعمل إيه وأنهي خطوة بتاخد الوقت.",
+            how: R`[[EXPLAIN]] بيعرض الخطة من غير تنفيذ: تقديرات. [[EXPLAIN ANALYZE]] بينفّذ فعلًا ويعرض الأرقام الحقيقية جنب التقديرات. خد بالك: بينفّذ، فمع UPDATE أو DELETE لفّه في transaction واعمل ROLLBACK.
+
+الخطة شجرة، بتتقري من جوه لبره (الأكتر مسافة بادئة بيتنفذ الأول). كل سطر عقدة: نوعها، والتكلفة المقدرة [[cost=]]، والوقت الفعلي [[actual time=]]، وعدد الصفوف المتوقع [[rows=]] والفعلي.
+
+أهم أنواع: [[Seq Scan]] قراية الجدول كله (على جدول صغير طبيعي، على كبير مشكلة). [[Index Scan]] استخدام index. [[Index Only Scan]] أحسن، كل اللي محتاجه في الـ index. [[Nested Loop]] و [[Hash Join]] طرق الـ JOIN. [[Sort]] ترتيب، ولو [[external merge]] معناه work_mem مكفاش وبيرتب على الديسك.
+
+الفرق الكبير بين rows المتوقعة والفعلية معناه الإحصائيات قديمة: [[ANALYZE]].
+
+[[BUFFERS]] بيضيف كام صفحة اتقرت من الكاش (shared hit) ومن الديسك (read).
+
+ولقراية خطة معقدة: explain.dalibo.com، تلزق الناتج ويرسمه.`,
+            when: "أي استعلام أبطأ من ١٠٠ms. وقبل ما تضيف index، تتأكد إنه هيتستخدم.",
+            mistakes: "EXPLAIN ANALYZE على DELETE من غير transaction. وتقرا الـ cost كأنه وقت، ده رقم نسبي."
+          },
+          teach: R`## الفكرة: اسأل Postgres «هتعملها إزاي؟»
+
+قبل ما Postgres ينفّذ أي استعلام، جزء منه اسمه **planner** بيفكّر في كذا طريقة (يقرا الجدول كله؟ يستخدم index؟ يربط الجدولين إزاي؟) ويختار الأرخص. [[EXPLAIN]] قبل الاستعلام بيطبعلك الخطة اللي اختارها **من غير ما ينفّذ**. و [[EXPLAIN ANALYZE]] بينفّذ فعلًا ويحط جنب كل خطوة الوقت والعدد الحقيقي.
+
+الناتج تحت من [[postgres:16]] جوه Docker على [[orders]] (٢٠٠ ألف صف، عليه index على [[user_id]] وعلى [[(status, created_at)]] من الدرس اللي فات) و [[users]] (٥ صفوف).
+
+---
+
+## ١. [[EXPLAIN]]: الخطة بالتقديرات
+
+~~~text EXPLAIN SELECT * FROM orders WHERE user_id = 42;
+                                      QUERY PLAN
+---------------------------------------------------------------------------------------
+ Bitmap Heap Scan on orders  (cost=451.95..2694.61 rows=40213 width=38)
+   Recheck Cond: (user_id = 42)
+   ->  Bitmap Index Scan on idx_orders_user_id  (cost=0.00..441.89 rows=40213 width=0)
+         Index Cond: (user_id = 42)
+~~~
+
+### بتتقري إزاي؟
+
+الخطة **شجرة**. كل سطر فيه [[->]] خطوة، والأكتر مسافة على الشمال بيتنفّذ **الأول** وبيسلّم نتيجته للي فوقه. فهنا:
+
+1. [[Bitmap Index Scan on idx_orders_user_id]]: افتح الـ index وهات أماكن كل الصفوف اللي [[user_id = 42]] (و [[Index Cond]] الشرط اللي اتدوّر بيه في الـ index).
+2. [[Bitmap Heap Scan on orders]]: روح للجدول نفسه (اسمه **heap**) وهات الصفوف دي، مترتبة بمكانها على الديسك عشان يقرا كل صفحة مرة واحدة. و [[Recheck Cond]] بيتأكد من الشرط تاني على الصف.
+
+### الأرقام اللي بين القوسين
+
+| الرقم | معناه |
+|---|---|
+| [[cost=451.95..2694.61]] | تكلفة تقديرية **نسبية** (مش ثواني): الأول لحد أول صف، والتاني لحد آخر صف |
+| [[rows=40213]] | كام صف متوقع يطلع من الخطوة دي |
+| [[width=38]] | متوسط حجم الصف بالبايت |
+
+---
+
+## ٢. [[EXPLAIN ANALYZE]]: نفّذ وقيس
+
+~~~text EXPLAIN ANALYZE SELECT * FROM orders WHERE user_id = 42;
+ Bitmap Heap Scan on orders  (cost=451.95..2694.61 rows=40213 width=38) (actual time=2.195..23.864 rows=40000 loops=1)
+   Recheck Cond: (user_id = 42)
+   Heap Blocks: exact=1740
+   ->  Bitmap Index Scan on idx_orders_user_id  (cost=0.00..441.89 rows=40213 width=0) (actual time=1.933..1.934 rows=40000 loops=1)
+         Index Cond: (user_id = 42)
+ Planning Time: 0.046 ms
+ Execution Time: 25.588 ms
+~~~
+
+نفس الخطة وزاد قوس تاني [[(actual ...)]]:
+
+| الرقم | معناه |
+|---|---|
+| [[actual time=2.195..23.864]] | بالمللي ثانية: لحد أول صف، ولحد آخر صف |
+| [[rows=40000]] | الصفوف اللي طلعت **فعلًا**. قارنها بالمتوقع ([[40213]]): قريبين، يبقى الإحصائيات تمام |
+| [[loops=1]] | الخطوة دي اتنفّذت كام مرة |
+| [[Heap Blocks: exact=1740]] | قرا 1740 صفحة من الجدول (كل صفحة 8 kB) |
+| [[Planning Time]] | وقت اختيار الخطة |
+| [[Execution Time]] | وقت التنفيذ كله، ودا الرقم اللي بتقارن بيه |
+
+### وعلى عمود من غير index
+
+~~~text EXPLAIN ANALYZE SELECT * FROM orders WHERE total = 19.99;
+ Seq Scan on orders  (cost=0.00..4240.00 rows=4013 width=38) (actual time=0.010..30.704 rows=4000 loops=1)
+   Filter: (total = 19.99)
+   Rows Removed by Filter: 196000
+ Planning Time: 0.145 ms
+ Execution Time: 30.996 ms
+~~~
+
+[[Seq Scan]] قرا الجدول كله، و [[Rows Removed by Filter: 196000]] يعني قرا 196 ألف صف ورماهم عشان يرجّع 4000. الرقم ده الكبير جنب [[Seq Scan]] على جدول كبير هو علامة الـ index الناقص.
+
+---
+
+## ٣. [[(ANALYZE, BUFFERS, FORMAT TEXT)]] على JOIN
+
+~~~text SQL
+EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)
+SELECT o.*, u.email FROM orders o JOIN users u ON u.id = o.user_id WHERE o.status = 'paid';
+~~~
+
+الخيارات بين قوسين ومفصولة بفواصل: [[ANALYZE]] نفّذ، [[BUFFERS]] قولي قريت كام صفحة ومنين، [[FORMAT TEXT]] الشكل العادي (فيه كمان [[JSON]]). و [[o]] و [[u]] أسامي مختصرة للجدولين (aliases)، و [[o.*]] كل أعمدة orders.
+
+~~~text الناتج
+ Hash Join  (cost=1.11..4566.55 rows=67100 width=54) (actual time=0.103..41.830 rows=66666 loops=1)
+   Hash Cond: (o.user_id = u.id)
+   Buffers: shared hit=1741
+   ->  Seq Scan on orders o  (cost=0.00..4240.00 rows=67100 width=38) (actual time=0.014..25.463 rows=66666 loops=1)
+         Filter: (status = 'paid'::text)
+         Rows Removed by Filter: 133334
+         Buffers: shared hit=1740
+   ->  Hash  (cost=1.05..1.05 rows=5 width=24) (actual time=0.028..0.030 rows=5 loops=1)
+         Buckets: 1024  Batches: 1  Memory Usage: 9kB
+         Buffers: shared hit=1
+         ->  Seq Scan on users u  (cost=0.00..1.05 rows=5 width=24) (actual time=0.006..0.007 rows=5 loops=1)
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=181
+ Planning Time: 1.122 ms
+ Execution Time: 45.243 ms
+~~~
+
+من جوه لبره:
+
+1. [[Seq Scan on users u]]: اقرا الـ ٥ يوزرز.
+2. [[Hash]]: اعملهم جدول في الذاكرة بمفتاح [[id]] ([[Memory Usage: 9kB]]).
+3. [[Seq Scan on orders o]] مع [[Filter: (status = 'paid')]]: اقرا الطلبات وسيب المدفوع ([[66666]] صف).
+4. [[Hash Join]]: لكل طلب، دوّر على صاحبه في الـ hash بـ [[Hash Cond: (o.user_id = u.id)]].
+
+و [[Buffers: shared hit=1740]]: [[shared hit]] يعني الصفحات لقاها في كاش Postgres في الذاكرة، ولو فيه [[read=]] يبقى قرا من الديسك (أبطأ).
+
+### طب ليه Seq Scan وفيه index على status؟
+
+لأن المدفوع ثلث الجدول. لما الاستعلام هيرجّع جزء كبير، قراية الجدول كله بالترتيب أرخص من آلاف القفزات من الـ index للجدول. الـ planner اختار صح، و Seq Scan هنا مش مشكلة.
+
+---
+
+## ٤. تحذير: ANALYZE بينفّذ بجد
+
+~~~text SQL
+BEGIN;
+EXPLAIN ANALYZE DELETE FROM sessions WHERE expires_at < now();
+ROLLBACK;
+~~~
+
+من غير [[BEGIN]] و [[ROLLBACK]]، الـ DELETE هيمسح فعلًا وانت كنت «بتقيس» بس.
+
+---
+
+## الخلاصة
+
+| تشوف | معناه |
+|---|---|
+| [[Seq Scan]] + [[Rows Removed by Filter]] كبير على جدول كبير | ناقص index |
+| [[Index Scan]] / [[Bitmap Index Scan]] / [[Index Only Scan]] | الـ index اشتغل |
+| [[rows=]] المتوقع بعيد جدًا عن الفعلي | الإحصائيات قديمة: [[ANALYZE table;]] |
+| [[shared read]] كبير | بيقرا من الديسك مش الكاش |
+| [[Sort Method: external merge]] | الترتيب مكفاش في [[work_mem]] ونزل على الديسك |
+| [[Execution Time]] | الرقم اللي بتقارن بيه قبل وبعد |`,
+          lines: [
+            "الخطة بالتقديرات من غير تنفيذ.",
+            "الخطة بالأرقام الفعلية (بينفّذ).",
+            "مع عدد الصفحات المقروءة من الكاش والديسك، لاستعلام فيه JOIN."
+          ],
+          sol: R`على عمود من غير index هتشوف حاجة زي:
+
+[[Parallel Seq Scan on big (actual time=32.013..32.013 rows=0 loops=3)]] و [[Filter: (note = 'abc'::text)]] و [[Rows Removed by Filter: 333333]] و [[Execution Time: 43.563 ms]]. الـ [[Rows Removed by Filter]] الكبيرة هي الإشارة: قرينا مليون صف عشان نرجّع صفر.
+
+وعلى عمود عليه index: [[Bitmap Index Scan on idx_big_user]] مع [[Index Cond: (user_id = 4242)]] و [[Execution Time: 0.054 ms]]. أحيانًا تشوف [[Index Scan]] بدل Bitmap، الاتنين معناهم إن الـ index اشتغل.
+
+متقلقش من Seq Scan على جدول صغير أو استعلام بيرجّع أغلب الجدول، دا الصح. قارن كمان [[rows=]] المتوقعة بالـ actual: لو الفرق ضخم (متوقع 1 وطلع 50000) يبقى الإحصائيات قديمة و [[ANALYZE]] هيحسّن الخطة. وخلي بالك إن EXPLAIN ANALYZE بينفّذ الاستعلام فعلًا، فمع UPDATE أو DELETE حطه جوه BEGIN و ROLLBACK.`
+        },
+        {
+          cmd: "VACUUM و ANALYZE",
+          title: "الصيانة اللي بتحصل لوحدها (غالبًا)",
+          desc: "Postgres مش بيمسح الصفوف المحذوفة فورًا، بيعلّمها. [[VACUUM]] بينضّفها، و [[ANALYZE]] بيحدّث الإحصائيات اللي المخطط بيعتمد عليها. autovacuum بيعملهم لوحده، بس بعد حذف أو تحديث ضخم ممكن تحتاج تعملهم بإيدك.",
+          example: R`VACUUM ANALYZE orders;
+SELECT relname, n_dead_tup, last_autovacuum, last_autoanalyze FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 10;
+SHOW autovacuum;
+VACUUM (VERBOSE) orders;`,
+          try: "بعد ما تمسح نص جدول كبير، شوف n_dead_tup قبل وبعد VACUUM.",
+          deep: {
+            why: "مسحت مليون صف والجدول لسه بنفس الحجم والاستعلامات بطيئة. Postgres محتاج ينضّف.",
+            how: R`Postgres بيستخدم MVCC: لما تعمل UPDATE، مش بيعدّل الصف في مكانه، بيكتب نسخة جديدة ويعلّم القديمة ميتة. DELETE بيعلّم بس. ده بيخلي القراية والكتابة ميعطلوش بعض، بس الصفوف الميتة بتتراكم (bloat).
+
+[[VACUUM]] بيمشي على الجدول ويحرر مكان الصفوف الميتة لإعادة الاستخدام (مش للنظام). [[ANALYZE]] بيحسب إحصائيات عن توزيع القيم، والمخطط بيستخدمها يقرر Index Scan ولا Seq Scan. إحصائيات قديمة = خطط غلط.
+
+[[autovacuum]] عملية خلفية بتعمل الاتنين لوحدها لما نسبة الصفوف الميتة تعدّي حد. شغال افتراضيًا، ومتقفلوش أبدًا. بس بعد عملية ضخمة (حذف نص الجدول، أو استيراد كبير) اعمل [[VACUUM ANALYZE]] بإيدك بدل ما تستنى.
+
+[[n_dead_tup]] في pg_stat_user_tables بيقولك كام صف ميت، و [[last_autovacuum]] آخر مرة.
+
+[[VACUUM FULL]] بيعيد كتابة الجدول كله ويرجّع المساحة للنظام، بس بيقفل الجدول تمامًا. للطوارئ بس، أو pg_repack بديل من غير قفل.`,
+            when: "بعد استيراد أو حذف ضخم. لما n_dead_tup كبير. وقبل قياس أداء.",
+            mistakes: "تقفل autovacuum «عشان بياخد موارد». والجدول يتضخم والاستعلامات تبطأ تدريجيًا."
+          },
+          teach: R`## الفكرة: Postgres بيعلّم ومش بيمسح على طول
+
+لما تعمل [[DELETE]]، Postgres مش بيشيل الصف من الديسك. بيكتب عليه «ميت من transaction رقم كذا» وبيسيبه مكانه. و [[UPDATE]] نفس الحكاية: بيكتب نسخة **جديدة** من الصف ويعلّم القديمة ميتة. ليه؟ عشان أي جلسة تانية كانت بدأت تقرا قبل التعديل تفضل شايفة النسخة القديمة من غير ما تستنى (الفكرة دي اسمها **MVCC**: نسخ متعددة لنفس الصف). الصف الميت اسمه **dead tuple** ([[tuple]] اسم تاني للصف).
+
+المشكلة إن الصفوف الميتة بتفضل واخدة مكان. [[VACUUM]] هو اللي بيلف على الجدول ويعلّم مكانها «فاضي، استخدمه تاني». و [[ANALYZE]] حاجة تانية خالص: بيعدّ ويحسب إحصائيات عن القيم اللي في كل عمود، والـ planner (اللي بيختار Seq Scan ولا Index Scan) بيعتمد عليها.
+
+الناتج تحت من [[postgres:16]] جوه Docker: الأول على قاعدة [[app]] (جدول [[orders]] فيه ٢٠٠ ألف صف)، وبعدين على جدول [[big]] بمليون صف عشان الأرقام تبان.
+
+---
+
+## ١. [[VACUUM ANALYZE orders;]]
+
+~~~text الناتج
+VACUUM
+~~~
+
+سطر واحد بس، ومعناه خلص من غير مشاكل. الأمر بيعمل الاتنين ورا بعض على جدول [[orders]]: ينضّف الصفوف الميتة، وبعدين يحدّث الإحصائيات. ولو كتبت [[VACUUM ANALYZE;]] من غير اسم جدول بيعدّي على كل جداول القاعدة.
+
+قبلها كنت عملت [[UPDATE orders SET total = total WHERE id % 4 = 0;]] (تعديل مش بيغيّر حاجة فعليًا، بس Postgres بيكتب نسخة جديدة برضه)، وده اللي حصل في الإحصائيات قبل وبعد:
+
+~~~text SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'orders';
+ relname | n_live_tup | n_dead_tup
+---------+------------+------------
+ orders  |          0 |      50000
+~~~
+
+[[UPDATE 50000]] عمل ٥٠ ألف صف ميت، مع إن ولا قيمة اتغيرت. ([[n_live_tup]] صفر هنا لأن عدّاد الصفوف الحية كان لسه متحسبش من ساعة ما السيرفر قام، و ANALYZE هو اللي بيظبطه.) وبعد [[VACUUM ANALYZE orders]] الـ [[n_dead_tup]] بقى [[0]].
+
+---
+
+## ٢. مين محتاج تنضيف؟
+
+~~~text SQL
+SELECT relname, n_dead_tup, last_autovacuum, last_autoanalyze
+FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 10;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[pg_stat_user_tables]] | view فيه صف إحصائيات لكل جدول من جداولك |
+| [[relname]] | اسم الجدول |
+| [[n_dead_tup]] | عدد الصفوف الميتة اللي لسه متنضّفتش (تقريبي) |
+| [[last_autovacuum]] | آخر مرة الـ autovacuum نضّف الجدول ده لوحده |
+| [[last_autoanalyze]] | آخر مرة حدّث إحصائياته لوحده |
+| [[ORDER BY n_dead_tup DESC LIMIT 10]] | أكتر ١٠ جداول فيها صفوف ميتة |
+
+~~~text الناتج
+  relname  | n_dead_tup |        last_autovacuum        |       last_autoanalyze
+-----------+------------+-------------------------------+-------------------------------
+ users     |          5 |                               |
+ sessions  |          0 | 2026-10-06 16:32:09.475744+00 | 2026-10-06 16:32:09.481029+00
+ coupons   |          0 |                               |
+ orders    |          0 |                               |
+ ...
+~~~
+
+[[sessions]] كنت مسحت منه ١٨١ صف من ٣٠٠ (درس BEGIN)، فالـ autovacuum لاحظ ونضّفه لوحده، والوقت مكتوب. [[orders]] الخانة فاضية لأني نضّفته **بإيدي**: ده بيتسجل في عمود تاني اسمه [[last_vacuum]]:
+
+~~~text SELECT relname, n_dead_tup, last_vacuum, last_analyze FROM pg_stat_user_tables WHERE relname='orders';
+ relname | n_dead_tup |          last_vacuum          |         last_analyze
+---------+------------+-------------------------------+-------------------------------
+ orders  |          0 | 2026-10-06 16:32:43.312441+00 | 2026-10-06 16:32:43.513948+00
+~~~
+
+> الأعمدة دي بتتحدّث بتأخير ثانية تقريبًا، فلو سألت على طول بعد DELETE ممكن تلاقي الرقم لسه صفر.
+
+---
+
+## ٣. [[SHOW autovacuum;]]
+
+~~~text الناتج
+ autovacuum
+------------
+ on
+~~~
+
+**autovacuum** عملية في خلفية Postgres بتصحى كل دقيقة ([[autovacuum_naptime = 60]] ثانية)، وتشوف أي جدول عدد صفوفه الميتة عدّى حد معين وتنضّفه. الحد ده من إعدادين:
+
+~~~text SELECT name, setting FROM pg_settings WHERE name IN (...)
+              name              | setting
+--------------------------------+---------
+ autovacuum_naptime             | 60
+ autovacuum_vacuum_scale_factor | 0.2
+ autovacuum_vacuum_threshold    | 50
+~~~
+
+يعني الجدول بيتنضّف لما الميتين يعدّوا **50 + 20٪ من الجدول**. على جدول مليون صف ده ٢٠٠ ألف و٥٠ صف ميت. لازم تفضل [[on]]، والطبيعي إنك متلمسهوش.
+
+---
+
+## ٤. [[VACUUM (VERBOSE) big;]]: شوف عمل إيه
+
+جدول [[big]] فيه مليون صف، ومسحت نصهم:
+
+~~~text DELETE FROM big WHERE id % 2 = 0; وبعدها الإحصائيات والحجم
+DELETE 500000
+ relname | n_live_tup | n_dead_tup
+---------+------------+------------
+ big     |     500000 |     500000
+
+ pg_size_pretty
+----------------
+ 74 MB
+~~~
+
+نص مليون حي ونص مليون ميت، والحجم زي ما هو. دلوقتي الـ VACUUM بالتفاصيل. الخيارات بتتكتب بين قوسين، و [[VERBOSE]] يعني «احكيلي عملت إيه»:
+
+~~~text الناتج (أهم السطور)
+INFO:  vacuuming "lab.public.big"
+INFO:  finished vacuuming "lab.public.big": index scans: 0
+pages: 0 removed, 9408 remain, 9408 scanned (100.00% of total)
+tuples: 500000 removed, 500000 remain, 0 are dead but not yet removable
+...
+system usage: CPU: user: 0.13 s, system: 0.00 s, elapsed: 0.14 s
+INFO:  vacuuming "lab.pg_toast.pg_toast_24609"
+...
+VACUUM
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[pages: 0 removed, 9408 remain]] | الجدول ٩٤٠٨ صفحة (كل صفحة 8 kB)، ومتشالتش ولا صفحة من الملف |
+| [[9408 scanned (100.00% of total)]] | قرا الجدول كله |
+| [[tuples: 500000 removed]] | نضّف النص مليون صف الميتين |
+| [[500000 remain]] | الحيين |
+| [[0 are dead but not yet removable]] | ميتين بس فيه transaction مفتوحة لسه ممكن تشوفهم، فمينفعش يتشالوا. لو الرقم ده كبير دوّر على [[idle in transaction]] |
+| [[elapsed: 0.14 s]] | الوقت كله |
+| [[pg_toast...]] | الجدول الجانبي بتاع القيم الكبيرة (TOAST)، بيتنضّف معاه |
+
+### الحجم بعدها؟
+
+~~~text SELECT pg_size_pretty(pg_total_relation_size('big'));  بعد VACUUM ثم بعد VACUUM FULL
+ 74 MB
+ 37 MB
+~~~
+
+بعد [[VACUUM]] العادي الحجم **فضل 74 MB**: المكان بقى فاضي جوه الجدول، والصفوف الجاية هتتكتب فيه، بس الملف على الديسك ما صغرش. [[VACUUM FULL big;]] بيكتب الجدول من الأول في ملف جديد فنزل لـ 37 MB، بس طول ما هو شغال الجدول **مقفول تمامًا** (لا قراية ولا كتابة). عشان كده مش بتشغّله على الإنتاج غير في وقت صيانة.
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[VACUUM t;]] | يخلي مكان الصفوف الميتة يتعاد استخدامه (الملف مش بيصغر) |
+| [[ANALYZE t;]] | يحدّث الإحصائيات للـ planner |
+| [[VACUUM ANALYZE t;]] | الاتنين، وده اللي تعمله بعد حذف أو استيراد ضخم |
+| [[VACUUM (VERBOSE) t;]] | نفسه وبيحكي اتشال كام صف |
+| [[VACUUM FULL t;]] | يصغّر الملف، بس بيقفل الجدول |
+| [[n_dead_tup]] و [[last_autovacuum]] | في [[pg_stat_user_tables]]: مين محتاج ومين اتنضّف إمتى |
+| [[SHOW autovacuum;]] | لازم [[on]] |`,
+          lines: [
+            "نضّف الجدول وحدّث إحصائياته.",
+            "الجداول اللي فيها أكتر صفوف ميتة، وآخر مرة اتنضّفت.",
+            "autovacuum شغال؟ (لازم on).",
+            "نضّف بتفاصيل."
+          ],
+          sol: R`بعد [[DELETE FROM big WHERE id % 2 = 0]] على مليون صف، [[pg_stat_user_tables]] طلّع [[n_live_tup = 500000]] و [[n_dead_tup = 500000]]. بعد [[VACUUM big;]] بقى [[n_dead_tup = 0]].
+
+بس الحجم فضل [[74 MB]] قبل وبعد (و [[VACUUM FULL big;]] نزّله لـ [[37 MB]]). ودي النقطة المهمة: VACUUM العادي بيعلّم المساحة إنها فاضية لإعادة الاستخدام جوه الجدول، مش بيرجّعها للديسك. [[VACUUM FULL]] بيرجّعها بس بيقفل الجدول كله وهو شغال.
+
+لو [[n_dead_tup]] لسه بصفر بعد الـ DELETE على طول: الإحصائيات بتتحدّث بتأخير بسيط، استنى ثانية. ولو لقيتها صفر من غير ما تعمل VACUUM يبقى الـ autovacuum سبقك، وهتلاقي [[last_autovacuum]] فيه وقت.`,
+          solCode: R`DELETE FROM big WHERE id % 2 = 0;
+SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'big';
+SELECT pg_size_pretty(pg_total_relation_size('big'));
+VACUUM big;
+SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE relname = 'big';
+SELECT pg_size_pretty(pg_total_relation_size('big'));`
+        },
+        {
+          cmd: "الإعدادات",
+          title: "SHOW و ALTER SYSTEM",
+          desc: "إعدادات Postgres في [[postgresql.conf]]، بس ممكن تغيّرها من SQL بـ [[ALTER SYSTEM]] وتطبّقها بـ [[pg_reload_conf]] من غير ريستارت (لأغلبها). أهم إعدادين: [[shared_buffers]] (الكاش) و [[work_mem]] (لكل استعلام).",
+          example: R`SHOW shared_buffers;
+SHOW work_mem;
+SELECT name, setting, unit, context FROM pg_settings WHERE name IN ('shared_buffers','work_mem','max_connections','effective_cache_size');
+ALTER SYSTEM SET work_mem = '32MB';
 SELECT pg_reload_conf();
-sudo tail -f /var/log/postgresql/postgresql-16-main.log
-CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
-SELECT calls, round(mean_exec_time) AS ms, left(query, 80) FROM pg_stat_statements ORDER BY total_exec_time DESC LIMIT 10;
-SELECT pg_stat_statements_reset();`,
-          try: "فعّل اللوج على 500ms، استخدم الموقع شوية، واقرا اللوج: الاستعلامات اللي هتظهر هي أول حاجة تحطلها index.",
+SHOW config_file;`,
+          try: "شوف shared_buffers الحالي. الافتراضي 128MB صغير: على سيرفر ٤ جيجا خليه 1GB (محتاج ريستارت).",
           deep: {
-            why: "الموقع بطيء في أوقات معينة ومش عارف أنهي صفحة أو استعلام. بدل التخمين، خلّي Postgres يسجّل.",
-            how: R`[[log_min_duration_statement]] بيسجّل أي استعلام أخد أكتر من القيمة دي في لوج Postgres، مع النص الكامل والوقت. 500ms بداية كويسة، وعلى موقع سريع 100ms. [[0]] يسجّل كل حاجة (للتشخيص القصير بس، اللوج هيكبر بسرعة).
+            why: "Postgres بييجي بإعدادات لجهاز صغير من ٢٠ سنة. [[shared_buffers]] 128MB على سيرفر ٨ جيجا معناه معظم الرام مش بتتستخدم.",
+            how: R`[[SHOW]] بيعرض قيمة إعداد. [[pg_settings]] جدول فيه كل الإعدادات مع [[context]]: [[postmaster]] محتاج ريستارت، [[sighup]] reload كفاية، [[user]] ممكن يتغير في الجلسة.
 
-اللوج على أوبونتو في [[/var/log/postgresql/]]، وجوه Docker في [[docker logs db]].
+[[ALTER SYSTEM SET]] بيكتب في ملف [[postgresql.auto.conf]] اللي بيتقري بعد postgresql.conf ويغطي عليه، فمش محتاج تعدّل الملف الأصلي. وبعده [[pg_reload_conf()]] للإعدادات اللي sighup، أو [[systemctl restart postgresql]] للباقي.
 
-[[pg_stat_statements]] extension بيجمّع إحصائيات بشكل مختلف: لكل «شكل استعلام» (بيوحّد القيم)، عدد مرات التنفيذ ومتوسط الوقت والمجموع. الترتيب بـ [[total_exec_time]] بيوريك الاستعلامات اللي واكلة أكتر وقت إجمالًا، وأحيانًا ده استعلام سريع بيتنفذ ١٠ آلاف مرة مش الاستعلام البطيء. لازم [[shared_preload_libraries = 'pg_stat_statements']] في الإعدادات وريستارت، وبعدين CREATE EXTENSION.
+القيم اللي تبدأ بيها على سيرفر مخصص للقاعدة: [[shared_buffers]] ربع الرام. [[effective_cache_size]] تلات أرباع الرام (تقدير لكاش النظام، مش حجز). [[work_mem]] للترتيب والـ hash في كل استعلام، 16 لـ 64MB حسب عدد الاتصالات (بيتضرب في عدد العمليات المتزامنة). [[maintenance_work_mem]] لـ VACUUM و CREATE INDEX، 256MB وأكتر.
 
-[[reset()]] بيصفّر الإحصائيات عشان تقيس فترة معينة.
-
-في Supabase الـ extension مفعّلة، وفي لوحة التحكم تحت Reports ثم Query Performance.`,
-            when: "بعد أي شكوى من البطء. وشهريًا تبص على أعلى ١٠.",
-            mistakes: "log_min_duration_statement = 0 على الإنتاج وتنساه، فالديسك يتملى لوجات."
+موقع pgtune.leopard.in.ua بيحسبلك القيم من مواصفات السيرفر.`,
+            when: "بعد التسطيب على أي سيرفر. وبعد ترقية الرام.",
+            mistakes: "work_mem كبير جدًا (1GB) مع 100 اتصال: كل استعلام ممكن ياخد جيجا والسيرفر يخلص رام."
           },
+          teach: R`## الفكرة: تقرا الإعداد، تغيّره، وتعرف إمتى يشتغل
+
+Postgres فيه مئات الإعدادات (اسمها **parameters**): قد إيه رام للكاش، كام اتصال، إلخ. مكانها الأصلي ملف [[postgresql.conf]]، بس مش لازم تفتحه: من SQL تقدر **تقرا** أي إعداد بـ [[SHOW]]، و**تغيّره** بـ [[ALTER SYSTEM]]، و**تطبّقه** بـ [[pg_reload_conf()]]. والسؤال المهم في الدرس: التغيير ده بيشتغل إمتى؟ فورًا، ولا بعد ريستارت؟
+
+الناتج تحت من [[postgres:16]] جوه Docker (إعدادات الصورة الرسمية الافتراضية).
+
+---
+
+## ١. [[SHOW]]: القيمة دلوقتي
+
+~~~text SHOW shared_buffers; و SHOW work_mem;
+ shared_buffers
+----------------
+ 128MB
+
+ work_mem
+----------
+ 4MB
+~~~
+
+| الإعداد | معناه |
+|---|---|
+| [[shared_buffers]] | الكاش بتاع Postgres في الرام: صفحات الجداول اللي اتقرت بتفضل فيه، فالقراية الجاية من الذاكرة مش الديسك. مساحة واحدة متشاركة بين كل الاتصالات |
+| [[work_mem]] | الذاكرة اللي **عملية واحدة** جوه استعلام (ترتيب [[ORDER BY]] أو hash join) تاخدها قبل ما تنزل تكمّل على الديسك |
+
+[[128MB]] كاش على سيرفر فيه ٨ جيجا يعني أغلب الرام مش مستخدمة. والافتراضيات دي معمولة عشان Postgres يقوم على أي جهاز، مش عشان يبقى سريع.
+
+---
+
+## ٢. [[pg_settings]]: التفاصيل
+
+~~~text SQL
+SELECT name, setting, unit, context FROM pg_settings
+WHERE name IN ('shared_buffers','work_mem','max_connections','effective_cache_size');
+~~~
+
+[[pg_settings]] view فيه صف لكل إعداد، و [[IN (...)]] يعني «الاسم واحد من دول».
+
+~~~text الناتج
+         name         | setting | unit |  context
+----------------------+---------+------+------------
+ effective_cache_size | 524288  | 8kB  | user
+ max_connections      | 100     |      | postmaster
+ shared_buffers       | 16384   | 8kB  | postmaster
+ work_mem             | 4096    | kB   | user
+~~~
+
+### [[setting]] و [[unit]]
+
+هنا القيمة **رقم خام** والوحدة في عمود لوحدها. [[shared_buffers]] قيمته [[16384]] ووحدته [[8kB]] (حجم صفحة Postgres)، يعني 16384 × 8 kB = 131072 kB = 128 MB، نفس اللي SHOW قاله. و [[work_mem]] 4096 kB = 4 MB. و [[effective_cache_size]] 524288 × 8 kB = 4 GB.
+
+### [[context]]: أهم عمود
+
+بيقولك التغيير محتاج إيه عشان يشتغل:
+
+| [[context]] | معناه | أمثلة |
+|---|---|---|
+| [[postmaster]] | ريستارت كامل للسيرفر | [[shared_buffers]] و [[max_connections]] و [[listen_addresses]] |
+| [[sighup]] | reload كفاية (من غير ما حد يتفصل) | إعدادات اللوج والـ autovacuum |
+| [[user]] | reload، أو أي جلسة تغيّره لنفسها بـ [[SET]] | [[work_mem]] و [[effective_cache_size]] |
+
+([[postmaster]] اسم العملية الأم لـ Postgres، و [[sighup]] اسم الإشارة اللي بتقولها «اقري الإعدادات تاني».)
+
+---
+
+## ٣. [[ALTER SYSTEM SET work_mem = '32MB';]]
+
+~~~text الناتج
+ALTER SYSTEM
+~~~
+
+الأمر ده **مش** بيغيّر القيمة الشغالة. هو بيكتب السطر في ملف اسمه [[postgresql.auto.conf]] جنب الداتا. Postgres بيقرا [[postgresql.conf]] الأول وبعدين الملف ده، فاللي فيه بيكسب. بصيت عليه بعد التجربة:
+
+~~~text cat /var/lib/postgresql/data/postgresql.auto.conf
+# Do not edit this file manually!
+# It will be overwritten by the ALTER SYSTEM command.
+work_mem = '32MB'
+shared_buffers = '256MB'
+~~~
+
+(السطر التاني من الجزء ٦ تحت.) وأول سطرين بيقولولك متعدّلوش بإيدك.
+
+---
+
+## ٤. [[SELECT pg_reload_conf();]]
+
+~~~text الناتج
+ pg_reload_conf
+----------------
+ t
+~~~
+
+[[t]] يعني الإشارة اتبعتت للسيرفر «اقرا ملفات الإعدادات تاني». جربت [[SHOW work_mem;]] **في نفس اللحظة ونفس الجلسة** فلقيته لسه [[4MB]]: الـ reload بياخد لحظة. وبعد ثانية (الاستعلام ده شغّلته بعد ما غيّرت [[shared_buffers]] كمان في الجزء ٦، عشان كده ظاهر فيه):
+
+~~~text SELECT name, setting, pending_restart FROM pg_settings WHERE name IN ('shared_buffers','work_mem');
+      name      | setting | pending_restart
+----------------+---------+-----------------
+ shared_buffers | 16384   | t
+ work_mem       | 32768   | f
+~~~
+
+[[work_mem]] بقى 32768 kB = 32 MB، واشتغل من غير ريستارت لأن الـ context بتاعه [[user]]. و [[SHOW work_mem;]] من جلسة جديدة رجّع [[32MB]].
+
+---
+
+## ٥. [[SHOW config_file;]]: الملف فين؟
+
+~~~text الناتج
+               config_file
+------------------------------------------
+ /var/lib/postgresql/data/postgresql.conf
+~~~
+
+في Docker الملف جوه فولدر الداتا. على أوبونتو بتسطيب [[apt]] بيبقى في [[/etc/postgresql/16/main/postgresql.conf]]. عشان كده تسأل بدل ما تخمّن. و [[postgresql.auto.conf]] دايمًا في فولدر الداتا ([[SHOW data_directory;]]).
+
+---
+
+## ٦. الفخ: إعداد [[postmaster]]
+
+~~~text SQL
+ALTER SYSTEM SET shared_buffers = '256MB';
+SELECT pg_reload_conf();
+SHOW shared_buffers;
+~~~
+
+~~~text الناتج
+ shared_buffers
+----------------
+ 128MB
+~~~
+
+لسه 128MB! مش لأن الأمر فشل، لأن [[shared_buffers]] الـ context بتاعه [[postmaster]]: الكاش بيتحجز مرة واحدة لما السيرفر يقوم. وفي الجزء ٤ [[pending_restart]] بتاعه كان [[t]]، يعني «اتغيّر في الملف ومستني ريستارت». بعد [[docker restart]] للـ container:
+
+~~~text SHOW shared_buffers; بعد الريستارت
+ shared_buffers
+----------------
+ 256MB
+~~~
+
+على سيرفر لينكس عادي الريستارت هو [[sudo systemctl restart postgresql]]، وده بيفصل كل الاتصالات لحظة، فخليه في وقت هادي.
+
+### ولو عايز ترجّع الافتراضي
+
+[[ALTER SYSTEM RESET work_mem;]] بيشيل السطر من [[postgresql.auto.conf]]، و [[ALTER SYSTEM RESET ALL;]] بيفضّيه كله (وبعدها reload أو ريستارت حسب الإعداد). ولجلسة واحدة بس: [[SET work_mem = '64MB';]] بيغيّره ليك انت لحد ما تخرج، من غير ما يلمس حد تاني.
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| القيمة الحالية | [[SHOW name;]] |
+| الوحدة ومحتاج إيه عشان يتغير | [[SELECT name, setting, unit, context FROM pg_settings WHERE ...]] |
+| تغيّر للسيرفر كله | [[ALTER SYSTEM SET name = 'value';]] (بيكتب في [[postgresql.auto.conf]]) |
+| تطبّق [[user]] / [[sighup]] | [[SELECT pg_reload_conf();]] |
+| تطبّق [[postmaster]] | ريستارت ([[pending_restart = t]] بيفكّرك) |
+| لجلستك بس | [[SET name = 'value';]] |
+| فين الملف | [[SHOW config_file;]] |`,
           lines: [
-            "سجّل أي استعلام أبطأ من نص ثانية.",
-            "طبّق.",
-            "تابع اللوج.",
-            "فعّل extension الإحصائيات (بعد shared_preload_libraries وريستارت).",
-            "أعلى ١٠ استعلامات في الوقت الإجمالي، بعدد المرات والمتوسط.",
-            "صفّر عشان تقيس فترة جديدة."
+            "الكاش.",
+            "ذاكرة كل استعلام.",
+            "أهم ٤ إعدادات مع وحدتها وهل محتاجة ريستارت (context).",
+            "غيّر إعداد (بيتكتب في postgresql.auto.conf).",
+            "طبّق من غير ريستارت.",
+            "فين ملف الإعدادات."
           ],
-          sol: R`بعد ما تفعّله، أي استعلام أبطأ من نص ثانية بيظهر في اللوج كده:
+          sol: R`[[SHOW shared_buffers;]] على تثبيت جديد بيرجّع [[128MB]]. و في [[pg_settings]] هتلاقيه [[setting = 16384]] و [[unit = 8kB]] (يعني 16384 × 8kB = 128MB) و [[context = postmaster]]، ودي معناها إنه محتاج ريستارت.
 
-[[2026-09-30 04:57:27.272 UTC [25161] postgres@lab LOG:  duration: 702.895 ms  statement: SELECT pg_sleep(0.7), count(*) FROM users]]. فيه الوقت، والـ pid، واليوزر@القاعدة، والمدة، والاستعلام كامل. جرّب بنفسك بـ [[SELECT pg_sleep(0.7);]] عشان تتأكد إن الإعداد اشتغل قبل ما تستنى استعلام حقيقي.
+بعد [[ALTER SYSTEM SET shared_buffers = '1GB';]] و [[SELECT pg_reload_conf();]]، الـ SHOW لسه هيقول [[128MB]]، ودا الغلط الشائع: تفتكر الإعداد ما اتحفظش. [[SELECT pending_restart FROM pg_settings WHERE name = 'shared_buffers';]] هيقولك [[t]]. بعد [[sudo systemctl restart postgresql]] (أو ريستارت الـ container) هيبقى [[1GB]].
 
-خلي بالك: [[pg_reload_conf()]] بيبعت signal وبيطبق بعد لحظة، مش في نفس اللحظة. والـ [[pg_stat_statements]] مش هيشتغل من [[CREATE EXTENSION]] بس: أول SELECT منه هيقولك [[pg_stat_statements must be loaded via shared_preload_libraries]]. لازم تضيفه في [[shared_preload_libraries]] وتعمل ريستارت (في Supabase مفعّل جاهز). ولما تخلص رجّع اللوج بـ [[ALTER SYSTEM RESET log_min_duration_statement;]] أو سيبه على رقم أكبر، عشان حجم اللوج.`
+على العكس، [[work_mem]] الـ context بتاعه [[user]] فيتطبق بعد reload. و ALTER SYSTEM بيكتب في [[postgresql.auto.conf]] جوه مجلد الداتا، مش في postgresql.conf.`
         },
         {
-          cmd: "النقل بين سيرفرين",
-          title: "dump | psql عبر SSH",
-          desc: "نقل قاعدة من سيرفر لسيرفر، أو من Supabase لـ VPS، من غير ملف وسيط: pg_dump على مصدر بيطلع على pipe، و psql على الهدف بيقرا منه. والنسخ الكبيرة بملف مضغوط عبر scp.",
-          example: R`pg_dump "postgres://user:pass@old-server/app" | psql "postgres://user:pass@new-server/app"
-ssh deploy@old "pg_dump -U postgres app | gzip" | gunzip | psql -U postgres app
-pg_dump -Fc "$OLD_URL" -f app.dump && pg_restore -d "$NEW_URL" --no-owner --no-privileges app.dump
-psql "$NEW_URL" -c "SELECT count(*) FROM users;"`,
-          try: "انقل قاعدة تجربة بالطريقة الأولى وقارن عدد الصفوف في الاتنين.",
-          deep: {
-            why: "بتنقل من Hostinger لسيرفر أكبر، أو من Supabase لـ VPS، أو العكس. البيانات لازم توصل كاملة وصح.",
-            how: R`الـ pipe الأول: [[pg_dump]] بيكتب SQL على stdout، و [[psql]] بيقراه من stdin وينفّذه على الهدف. مفيش ملف وسيط، ومناسب لقاعدة لحد كام جيجا. لازم القاعدة على الهدف تكون موجودة وفاضية.
+          cmd: "docker-entrypoint-initdb.d",
+          title: "SQL بيتنفّذ أول مرة بس في Docker",
+          desc: R`صورة postgres الرسمية بتنفّذ أي ملف [[.sql]] أو [[.sh]] في [[/docker-entrypoint-initdb.d]] بالترتيب الأبجدي، بس أول مرة الـ volume يتعمل وهو فاضي. بعد كده الفولدر بيتجاهل تمامًا.
 
-الطريقة التانية لما السيرفر القديم مش متاح من جهازك مباشرة: ssh بينفّذ pg_dump هناك ويضغط، والناتج بيعدّي في SSH لجهازك، يتفك، ويدخل psql. كل ده streaming.
-
-التالتة الأثبت للقواعد الكبيرة: dump بصيغة custom لملف، وبعدين restore. [[--no-owner --no-privileges]] لأن اليوزرز على السيرفر الجديد مختلفين، وهتعمل GRANT من جديد.
-
-بعد النقل: عدّ الصفوف في أهم الجداول على الاتنين. وشغّل [[ANALYZE]] على الهدف عشان الإحصائيات. وحدّث DATABASE_URL في التطبيق.
-
-الـ downtime: أثناء النقل أي كتابة على القديم بتضيع. الأبسط وقف التطبيق، نقل، تشغيل على الجديد. للصفر downtime محتاج replication، وده موضوع أكبر.`,
-            when: "تغيير الاستضافة. ترقية Postgres بين نسخ رئيسية (dump من القديم و restore في الجديد أبسط من pg_upgrade).",
-            mistakes: "تنقل وانت التطبيق شغال بيكتب، فتفقد آخر دقايق. وتنسى ANALYZE فالاستعلامات بطيئة أول ساعة."
-          },
-          lines: [
-            "dump من القديم مباشرة في psql على الجديد (من غير ملف).",
-            "القديم مش متاح من جهازك: dump عبر SSH ومضغوط، يتفك ويدخل الجديد.",
-            "للقواعد الكبيرة: ملف custom وبعدين restore من غير مالكين وصلاحيات.",
-            "اتأكد من العدد على الجديد."
-          ],
-          sol: R`[[pg_dump "$OLD" | psql "$NEW"]] بيطبع سيل من [[SET]] و [[CREATE TABLE]] و [[ALTER TABLE]] و [[COPY 5]] لكل جدول، وأرقام [[setval]] للـ sequences. بعدها [[SELECT count(*) FROM users]] على الاتنين لازم يطلّع نفس الرقم (في التجربة [[5]] و [[5]]).
-
-قارن كذا جدول مش جدول واحد. والطريقة الأسرع إنك تقارن كل الجداول مرة واحدة:
-
-[[SELECT relname, n_live_tup FROM pg_stat_user_tables ORDER BY relname;]] (دا تقريبي، بس [[count(*)]] هو الدقيق).
-
-المشاكل الشائعة: [[role "app_user" does not exist]] لأن الـ dump فيه OWNER لأدوار مش موجودة على السيرفر الجديد، الحل تعمل الـ role الأول أو تستخدم [[--no-owner --no-privileges]]. وكمان إن القاعدة الجديدة لازم تبقى موجودة وفاضية قبلها، وإلا [[already exists]] errors. وخلي بالك إن الـ pipe مش بيقف عند أول error، فزوّد [[-v ON_ERROR_STOP=1]] على psql.`
-        },
-        {
-          cmd: "ترقية Postgres في Docker",
-          title: "من 16 لـ 18 من غير ما تضيّع الداتا",
-          desc: "تغيير [[postgres:16]] لـ [[postgres:18]] في compose مش ترقية: النسخة الجديدة مش بتقرا ملفات القديمة وهتقع. الطريق الأبسط: وقّف الكتابة، dump كامل بـ [[pg_dumpall]]، شغّل 18 على volume جديد، ورجّع. خلّي الـ volume القديم لحد ما تتأكد.",
-          example: R`docker compose stop api
-docker compose exec -T db pg_dumpall -U postgres > all-16.sql
-docker compose stop db
-docker run -d --name pg18 -e POSTGRES_PASSWORD=secret -v pgdata18:/var/lib/postgresql postgres:18
-docker exec -i pg18 psql -U postgres < all-16.sql
-docker exec pg18 psql -U postgres -c "SELECT version();"`,
-          try: "جرّبها على سيرفر التجربة، وقارن count(*) لأهم جدول قبل وبعد، وبعدين غيّر compose.yml للـ image والـ volume الجداد.",
-          deep: {
-            why: "كل نسخة رئيسية بتتدعم ٥ سنين بس (16 لحد نوفمبر 2028)، والنسخ الجديدة أسرع. بس ملفات البيانات مش متوافقة بين النسخ الرئيسية، فالترقية خطوة لازم تتعمل صح.",
-            how: R`النسخ الصغيرة (16.4 لـ 16.8) مجرد تغيير tag وريستارت. النسخ الرئيسية محتاجة نقل.
-
-[[pg_dumpall]] بياخد كل القواعد واليوزرز في ملف SQL واحد، و [[-T]] من غير TTY عشان الـ redirect. وقّف التطبيق الأول وإلا أي كتابة بعد الـ dump تضيع.
-
-من 18 مسار الـ volume بقى [[/var/lib/postgresql]]. استنى القاعدة الجديدة تقوم ([[pg_isready]]) قبل الترجيع، والـ error بتاع «role postgres already exists» عادي. للقواعد الضخمة [[pg_upgrade]] أسرع بس أعقد في Docker. بعد الترجيع اعمل [[ANALYZE]].`,
-            when: "لما نسختك تقرّب من نهاية الدعم، أو محتاج ميزة جديدة. ودايمًا بعد باك أب مجرَّب.",
-            mistakes: "تغيّر الـ tag بس وتعمل up. وتمسح الـ volume القديم قبل ما تتأكد. وتنسى إن extensions زي PostGIS لازم تكون موجودة في الـ image الجديدة."
-          },
-          lines: [
-            "وقّف التطبيق عشان مفيش كتابة تضيع.",
-            "dump لكل القواعد واليوزرز من القديمة ([[-T]] عشان الـ redirect).",
-            "وقّف القديمة (الـ volume بتاعها سليم للرجوع).",
-            "Postgres 18 على volume جديد، على المسار الجديد.",
-            "رجّع الـ dump فيها.",
-            "اتأكد من النسخة."
-          ],
-          sol: R`[[docker exec pg18 psql -U postgres -c "SELECT version();"]] المفروض يبدأ بـ [[PostgreSQL 18.]]. و [[count(*)]] لأهم جدول لازم يبقى نفس الرقم قبل وبعد (في تجربة من 16 لـ 17 كان [[1234]] قبل و [[1234]] بعد).
-
-أثناء الترجيع هتشوف [[ERROR:  role "postgres" already exists]]. دا طبيعي ومش مشكلة: [[pg_dumpall]] بيحاول يعمل كل الأدوار ومنهم postgres اللي موجود أصلًا. أي error تاني اقراه كويس.
-
-في compose.yml بعدها: غيّر [[image: postgres:18]]، وغيّر الـ volume لاسم جديد، ومع 18 خلي الـ mount على [[/var/lib/postgresql]] مش [[/var/lib/postgresql/data]]، لأن 18 غيّر مكان الداتا الافتراضي. الغلط الأشهر إنك تشاور 18 على الـ volume القديم بتاع 16، فالـ container يقع ومايقومش، واللوج يقولك إن ملفات الداتا من نسخة تانية (زي [[database files are incompatible with server]]) أو إنه مش لاقي داتا في المكان الجديد. سيب الـ volume القديم كام يوم كـ rollback قبل ما تمسحه.`
-        },
-        {
-          cmd: "الباك أب المجدول",
-          title: "cron وسكربت ونسخة بره السيرفر",
-          desc: "الباك أب اليومي سكربت بيعمل dump مضغوط بالتاريخ، يمسح الأقدم من أسبوعين، وينقل نسخة لمكان تاني (S3 أو سيرفر تاني)، لأن باك أب على نفس السيرفر بيروح معاه.",
-          example: R`#!/usr/bin/env bash
-set -euo pipefail
-DIR=/home/deploy/backups/db
-mkdir -p "$DIR"
-FILE="$DIR/app-$(date +%F).dump"
-pg_dump -U postgres -d app -Fc -f "$FILE"
-find "$DIR" -name 'app-*.dump' -mtime +14 -delete
-rclone copy "$FILE" s3:mybucket/db/ 2>>"$DIR/rclone.log"
-echo "backup ok: $FILE ($(du -h "$FILE" | cut -f1))"`,
-          try: "حطه في crontab بتاع deploy: [[0 3 * * * /home/deploy/db-backup.sh >> /home/deploy/backups/db/cron.log 2>&1]].",
+وبنفس الطريقة [[POSTGRES_INITDB_ARGS]] بيوصل لـ initdb أول مرة بس.`,
+          example: R`services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: $__{POSTGRES_PASSWORD}
+      POSTGRES_DB: appdb
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 5s
+volumes:
+  pg_data:`,
+          try: "حط ملف [[01-schema.sql]] في db/init، وشغّل compose وشوف الجدول. بعدين ضيف [[02-more.sql]] واعمل [[docker compose up -d]]: مش هيتنفّذ. [[docker compose down -v]] (على التجربة بس) وارفع تاني: هيتنفّذ.",
           flag: "script",
           deep: {
-            why: "باك أب بإيدك بيتنسي. السكربت ده مع cron بيضمن نسخة يومية، وينضّف القديم، ويبعت نسخة بره السيرفر.",
-            how: R`[[set -euo pipefail]] عشان لو pg_dump فشل السكربت يقف ومينضّفش القديم بناءً على نسخة فاشلة.
+            why: "عايز أي حد يعمل clone ويرفع compose يلاقي القاعدة فيها الـ schema والبيانات الأولية من غير خطوات بإيده.",
+            how: R`الـ entrypoint بتاع الصورة بيبص على فولدر البيانات: لو فاضي، بيشغّل [[initdb]] (ومعاه [[POSTGRES_INITDB_ARGS]])، ويعمل اليوزر والقاعدة من المتغيرات، ويشغّل ملفات initdb.d بالترتيب بـ psql (بـ ON_ERROR_STOP)، وبعدين يشغّل Postgres عادي. لو فيه بيانات، بيعدّي كل ده.
 
-الاسم بالتاريخ [[app-2026-09-25.dump]]، وصيغة [[-Fc]] مضغوطة وبتسمح باسترجاع جزئي.
+عشان كده الترقيم [[01-]] و [[02-]] مهم، وأي error في ملف بيوقف الـ container أول مرة (شوف [[docker compose logs postgres]]).
 
-[[find -mtime +14 -delete]] بيحتفظ بأسبوعين. للأمان أكتر: يومي لأسبوعين، وأسبوعي لشهرين، وشهري لسنة (سكربت أطول).
+[[--auth-host=scram-sha-256]]: الاتصالات بالشبكة تتطلب باسورد بـ scram بدل md5. و [[:ro]] الـ container يقرا الملفات بس.
 
-[[rclone]] أداة بتنقل ملفات لأي تخزين سحابي (S3، Backblaze B2، Google Drive) بعد إعداد مرة واحدة بـ [[rclone config]]. B2 أرخص خيار عمليًا. و [[2>>]] بيحفظ أخطاء الرفع في لوج منفصل.
-
-[[.pgpass]] لازم عشان pg_dump ميسألش باسورد. واليوزر اللي بيشغّل السكربت لازم يقدر يقرا القاعدة.
-
-في cron: المسار الكامل للسكربت، والناتج للوج. وراقب اللوج: باك أب بيفشل بصمت من شهر أسوأ من مفيش باك أب لأنك مطمّن.`,
-            when: "يوميًا الساعة ٣ الفجر (وقت الهدوء). ومع كل تغيير في القاعدة، جرّب الترجيع.",
-            mistakes: "النسخة بره السيرفر بتتعمل «بعدين». والباك أب شغال بس عمره ما اتراقب."
+الـ healthcheck بـ [[pg_isready]] بيرجع ناجح لما Postgres يقبل اتصالات، فالتطبيق يستنى بـ [[condition: service_healthy]]. وخلي بالك: أول مرة Postgres بيقوم مؤقت وقت تنفيذ ملفات init وبعدين يعيد التشغيل، فالـ healthcheck ممكن ينجح لحظة قبل الأوان؛ التطبيق لازم يعيد المحاولة على أي حال.`,
+            when: "بيئة تطوير أو staging بتتعمل من الصفر. للإنتاج اللي شغال: migrations حقيقية (الدرس الجاي في المستوى ٣).",
+            mistakes: "في مشروع حقيقي فولدر الـ migrations نفسه كان متركّب على initdb.d، والكل فاكر إن أي migration جديدة هتتطبق مع الديبلوي. هي اتطبقت أول مرة بس، وأي ملف بعد كده محتاج تشغيل بإيدك أو سكربت migrate. وتغيّر [[POSTGRES_PASSWORD]] أو [[POSTGRES_INITDB_ARGS]] وتستنى يأثروا على volume موجود: مش هيحصل."
           },
+          teach: R`## الفكرة: «أول مرة بس»
+
+صورة [[postgres]] الرسمية فيها سكربت بيشتغل أول ما الـ container يقوم (اسمه **entrypoint**). السكربت ده بيبص على فولدر الداتا: لو **فاضي**، يعمل قاعدة جديدة من الصفر، ويشغّل أي ملف [[.sql]] أو [[.sh]] يلاقيه في [[/docker-entrypoint-initdb.d]] بالترتيب الأبجدي. لو الفولدر **فيه** داتا، يعدّي ده كله ويشغّل Postgres على طول. فالملفات دي وسيلة تجهّز القاعدة أول مرة (جداول وبيانات أولية)، مش طريقة تطبّق تعديلات بعد كده.
+
+جربت ملف الـ compose ده بالظبط على ويندوز بـ Docker Desktop (اسم المشروع [[pg01init]]، والباسورد من ملف [[.env]] فيه [[POSTGRES_PASSWORD=devpass]])، والناتج تحت حقيقي.
+
+---
+
+## ١. الملف سطر سطر
+
+~~~text compose.yml
+services:
+  postgres:
+    image: postgres:16
+~~~
+
+[[services:]] قايمة الـ containers، و [[postgres:]] اسم الخدمة (ده اللي بتكتبه في [[docker compose exec postgres ...]]). و [[image: postgres:16]] الصورة: النسخة 16 بالظبط، مش [[latest]]، عشان متتفاجئش بنسخة جديدة الداتا القديمة مش متوافقة معاها.
+
+~~~text environment
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: $__{POSTGRES_PASSWORD}
+      POSTGRES_DB: appdb
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+~~~
+
+| المتغير | بيعمل إيه (أول مرة بس) |
+|---|---|
+| [[POSTGRES_USER: app]] | يعمل superuser اسمه [[app]] بدل [[postgres]] |
+| [[POSTGRES_PASSWORD]] | باسورده. و [[$__{POSTGRES_PASSWORD}]] معناها «خد القيمة من ملف [[.env]] أو من البيئة»، فالباسورد مش مكتوب في الملف اللي بيترفع على git |
+| [[POSTGRES_DB: appdb]] | يعمل قاعدة اسمها [[appdb]] |
+| [[POSTGRES_INITDB_ARGS]] | خيارات زيادة لبرنامج [[initdb]] (اللي بيعمل فولدر الداتا من الصفر) |
+
+[[--auth-host=scram-sha-256]] بيحط طريقة [[scram-sha-256]] لكل اتصالات الشبكة ([[host]]) في [[pg_hba.conf]]. اتأكدت من الملف جوه الـ container:
+
+~~~text آخر سطرين من pg_hba.conf
+host    replication     all             ::1/128                 scram-sha-256
+host all all all scram-sha-256
+~~~
+
+حتى سطور localhost بقت بباسورد (من غيره كانت [[trust]] زي ما شفنا في درس psql).
+
+~~~text volumes و healthcheck
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d appdb"]
+      interval: 5s
+volumes:
+  pg_data:
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[pg_data:/var/lib/postgresql/data]] | volume اسمه [[pg_data]] مكان الداتا، فتفضل لو الـ container اتمسح |
+| [[./db/init:/docker-entrypoint-initdb.d]] | فولدر [[db/init]] اللي جنب الملف يظهر جوه بالاسم ده |
+| [[:ro]] | read-only: الـ container يقرا الملفات بس ومايعدّلش فيها |
+| [[test]] بـ [[CMD-SHELL]] | كل شوية شغّل [[pg_isready]] جوه الـ container (exit [[0]] = صاحي) |
+| [[interval: 5s]] | كل ٥ ثواني |
+| [[volumes: pg_data:]] في الآخر | تعريف الـ volume عشان compose يعمله |
+
+---
+
+## ٢. أول تشغيل: الفولدر فاضي
+
+في [[db/init/01-schema.sql]] جدول وصفين:
+
+~~~text db/init/01-schema.sql
+CREATE TABLE customers (id serial PRIMARY KEY, name text NOT NULL);
+INSERT INTO customers (name) VALUES ('Sara'), ('Omar');
+~~~
+
+~~~bash
+docker compose up -d
+docker compose ps
+docker compose logs postgres
+~~~
+
+~~~text ps
+pg01init-postgres-1 Up 8 seconds (healthy)
+~~~
+
+[[(healthy)]] جاية من الـ healthcheck. واللوج (السطور المهمة):
+
+~~~text logs
+CREATE DATABASE
+/usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/01-schema.sql
+CREATE TABLE
+INSERT 0 2
+PostgreSQL init process complete; ready for start up.
+LOG:  database system is ready to accept connections
+~~~
+
+بالترتيب: عمل [[appdb]]، شغّل الملف (ومعاه رد كل أمر)، وقال إن التجهيز خلص، وبعدين قام بشكل عادي. و [[\dt]] جوه [[appdb]]:
+
+~~~text docker compose exec -T postgres psql -U app -d appdb -c '\dt'
+ Schema |   Name    | Type  | Owner
+--------+-----------+-------+-------
+ public | customers | table | app
+~~~
+
+صاحب الجدول [[app]]، لأن الملفات بتتنفذ باليوزر اللي في [[POSTGRES_USER]].
+
+---
+
+## ٣. ضيف ملف تاني: مش هيتنفّذ
+
+حطيت [[db/init/02-more.sql]] فيه [[CREATE TABLE notes ...]] وعملت [[docker compose up -d]]: compose قال [[Running]] (مفيش حاجة اتغيرت في الـ container)، و [[\dt]] لسه فيه [[customers]] بس. وبعد [[docker compose restart]] اللوج قال:
+
+~~~text logs
+PostgreSQL Database directory appears to contain a database; Skipping initialization
+~~~
+
+يعني «الفولدر فيه داتا، مش هعمل حاجة». الملف الجديد متجاهل، وهيفضل متجاهل.
+
+---
+
+## ٤. ابدأ من الصفر: [[down -v]]
+
+~~~bash
+docker compose down -v
+docker compose up -d
+~~~
+
+[[-v]] بيمسح الـ volumes كمان، يعني **كل الداتا راحت**. (على التجربة بس، عمره ما يتعمل على قاعدة فيها داتا حقيقية.) والمرة دي:
+
+~~~text logs
+running /docker-entrypoint-initdb.d/01-schema.sql
+running /docker-entrypoint-initdb.d/02-more.sql
+~~~
+
+~~~text \dt
+ public | customers | table | app
+ public | notes     | table | app
+~~~
+
+الاتنين بالترتيب الأبجدي، عشان كده الأرقام [[01-]] و [[02-]] في أول الاسم.
+
+---
+
+## ٥. ملف فيه error
+
+ضفت [[03-bad.sql]] فيه [[INSERT INTO nope VALUES (1);]] (جدول مش موجود)، و [[down -v]] و [[up -d]]:
+
+~~~text ps و logs
+pg01init-postgres-1 Exited (3) 5 seconds ago
+running /docker-entrypoint-initdb.d/03-bad.sql
+psql:/docker-entrypoint-initdb.d/03-bad.sql:1: ERROR:  relation "nope" does not exist
+~~~
+
+الـ container **وقع** ([[Exited (3)]])، لأن الـ entrypoint بيشغّل الملفات بـ [[ON_ERROR_STOP]] (درس «تشغيل SQL من ملف»). صلّح الملف، وامسح الـ volume تاني، لأن التجهيز وقف في النص وساب داتا ناقصة.
+
+---
+
+## الخلاصة
+
+| الحالة | اللي بيحصل |
+|---|---|
+| volume فاضي | initdb + اليوزر والقاعدة من المتغيرات + ملفات initdb.d بالترتيب |
+| volume فيه داتا | [[Skipping initialization]]: ولا حاجة من دول |
+| ملف جديد في initdb.d بعد كده | متجاهل. محتاج migration أو تشغيل بإيدك |
+| ملف فيه error أول مرة | الـ container بيقع، صلّح وامسح الـ volume |
+| تغيير [[POSTGRES_PASSWORD]] بعد كده | ملوش أثر: غيّر الباسورد بـ [[ALTER ROLE]] |`,
           lines: [
-            "أي فشل يوقف السكربت.",
-            "فولدر الباك أب.",
-            "اعمله لو مش موجود.",
-            "الاسم بالتاريخ.",
-            "dump مضغوط.",
-            "امسح الأقدم من أسبوعين.",
-            "انسخ لتخزين خارجي، والأخطاء في لوج.",
-            "اطبع النتيجة بالحجم."
+            "الخدمات.",
+            "خدمة Postgres.",
+            "نسخة محددة.",
+            "المتغيرات:",
+            "اليوزر.",
+            "الباسورد من .env.",
+            "القاعدة اللي تتعمل أول مرة.",
+            "خيارات لـ initdb: باسوردات الشبكة بـ scram (أول مرة بس).",
+            "التخزين:",
+            "البيانات في volume.",
+            "ملفات SQL تتنفّذ أول مرة بس، و ro للقراية.",
+            "فحص الصحة:",
+            "Postgres بيقبل اتصالات؟",
+            "كل ٥ ثواني.",
+            "تعريف الـ volumes.",
+            "volume البيانات."
           ],
-          sol: R`بعد ما تضيف السطر بـ [[crontab -e]]، [[crontab -l]] لازم يعرضه. وتاني يوم الصبح [[cron.log]] فيه سطر زي [[backup ok: /home/deploy/backups/db/app-2026-10-01.dump (1.2M)]]، و [[ls backups/db]] فيه ملف بتاريخ اليوم.
+          sol: R`أول [[docker compose up -d]] بفولدر فيه [[01-schema.sql]]: في [[docker compose logs postgres]] هتلاقي [[running /docker-entrypoint-initdb.d/01-schema.sql]]، و [[\dt]] بيطلّع جدولك.
 
-شغّل السكربت بإيدك الأول [[/home/deploy/db-backup.sh]] عشان تتأكد إنه شغال، بعدين استنى أول تشغيل من cron. ولازم تعمل [[chmod +x]] للسكربت.
+بعد ما تضيف [[02-more.sql]] و [[docker compose up -d]]: الجدول الجديد مش موجود. ولو عملت restart هتلاقي في اللوج [[PostgreSQL Database directory appears to contain a database; Skipping initialization]]. السكربتات بتشتغل مرة واحدة بس لما الـ volume يكون فاضي.
 
-المشاكل الشائعة في cron: السكربت يشتغل بإيدك ويفشل من cron لأن الـ PATH جوه cron قصير ([[pg_dump: command not found]] أو [[rclone: command not found]]) فاكتب المسار الكامل أو حط PATH في أول السكربت. و [[peer authentication failed]] لو cron بيشتغل بيوزر deploy وانت بتتصل كـ postgres من غير [[.pgpass]]. واعرف إن [[2>&1]] في آخر السطر هو اللي بيخلي الـ errors تتسجل، من غيره بتضيع.`
-        },
-        {
-          cmd: "الأمان",
-          title: "SSL وباسوردات و public schema",
-          desc: "الاتصال من بره لازم SSL. الباسوردات بصيغة SCRAM مش md5. و public schema افتراضيًا أي يوزر يقدر يعمل فيه جداول (اتغير في Postgres 15). و [[pg_hba]] بيحدد مين يدخل منين.",
-          example: R`SHOW ssl;
-SHOW password_encryption;
-SELECT usename, passwd LIKE 'SCRAM%' AS scram FROM pg_shadow;
-REVOKE CREATE ON SCHEMA public FROM PUBLIC;
-ALTER ROLE app_user PASSWORD 'new-strong-password';
-SELECT rolname, rolsuper FROM pg_roles WHERE rolsuper;`,
-          try: "اتأكد إن التطبيق مش متصل بيوزر superuser: [[SELECT current_user, usesuper FROM pg_user WHERE usename = current_user;]] من كود التطبيق.",
-          deep: {
-            why: "القاعدة فيها كل حاجة: المستخدمين، والطلبات، والدفعات. لو اتخترقت مفيش رجوع. الخمس فحوصات دي بتقفل أشهر الثغرات.",
-            how: R`[[ssl]]: لو on، الاتصالات من بره متشفّرة. الاتصال المحلي عبر socket مش محتاجه. مع Supabase و RDS مفعّل، وعلى VPS محتاج شهادة (self-signed كفاية للتشفير، أو من Let's Encrypt).
-
-[[password_encryption]]: لازم [[scram-sha-256]]، والـ md5 القديم ضعيف. لو غيّرتها، الباسوردات القديمة لازم تتعاد بـ ALTER ROLE عشان تتخزن بالصيغة الجديدة. الاستعلام على pg_shadow بيوريك مين لسه md5.
-
-[[public schema]]: قبل Postgres 15 أي يوزر يقدر يعمل جداول فيه. [[REVOKE CREATE ON SCHEMA public FROM PUBLIC]] بيقفل ده. Postgres 15+ عامله افتراضيًا.
-
-الـ superusers: المفروض postgres بس، واتصال التطبيق مش منهم. الاستعلام الأخير بيوريك مين superuser.
-
-وطبقات تانية: القاعدة على 127.0.0.1 أو خلف الفايروول، وباسوردات طويلة عشوائية، و pg_hba بيسمح لعناوين محددة، والباك أب مشفّر لو على تخزين خارجي.`,
-            when: "بعد التسطيب. وبعد أي تغيير في اليوزرز. وربع سنوي.",
-            mistakes: "نفس الباسورد للقاعدة في التطوير والإنتاج. وباسورد postgres الافتراضي في صورة Docker متغيرش."
-          },
-          lines: [
-            "SSL شغال؟",
-            "طريقة تخزين الباسوردات (لازم scram-sha-256).",
-            "مين لسه باسورده بالصيغة القديمة.",
-            "امنع أي يوزر يعمل جداول في public (Postgres 15+ عامله).",
-            "غيّر باسورد (بيتخزن بالصيغة الجديدة).",
-            "مين superuser (المفروض postgres بس)."
-          ],
-          sol: R`من كود التطبيق (مثلًا [[await prisma.$queryRaw]] أو route مؤقت) لازم الناتج يبقى [[current_user = app_user]] و [[usesuper = false]].
-
-لو طلع [[postgres | t]] يبقى التطبيق متصل بالـ superuser، ودا معناه إن أي SQL injection يقدر يعمل أي حاجة، حتى [[COPY ... TO PROGRAM]] اللي بيشغّل أوامر على السيرفر. الحل تعمل يوزر زي درس «يوزرز وصلاحيات» وتغيّر [[DATABASE_URL]].
-
-وخلي بالك إن على Supabase اليوزر [[postgres]] مش superuser حقيقي ([[usesuper]] بيطلع [[f]])، بس هو برضه صاحب الجداول ومعاه صلاحيات كتير، فبرضه مش المفروض يكون اللي في كود الـ backend لو تقدر.`,
-          solCode: R`SELECT current_user, usesuper FROM pg_user WHERE usename = current_user;
---  current_user | usesuper
--- --------------+----------
---  app_user     | f`
-        },
-        {
-          cmd: "Row Level Security",
-          title: "كل يوزر يشوف صفوفه بس",
-          desc: "في Supabase الـ frontend بيكلّم القاعدة مباشرة بالـ anon key، فالحماية الوحيدة هي RLS: policies بتحدد أنهي صفوف كل يوزر يقرا ويكتب. جدول في public من غير RLS معناه أي حد معاه الـ key يقرا الجدول كله.",
-          example: R`ALTER TABLE todos ENABLE ROW LEVEL SECURITY;
-CREATE POLICY todos_owner ON todos FOR ALL TO authenticated USING (user_id = (select auth.uid())) WITH CHECK (user_id = (select auth.uid()));
-SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';
-SELECT policyname, cmd, qual FROM pg_policies WHERE tablename = 'todos';`,
-          try: "فعّل RLS على جدول تجربة من غير policies، وجرّب تقرا منه بالـ anon key من supabase-js: هيرجع فاضي. ضيف الـ policy وجرّب تاني وانت عامل login.",
-          deep: {
-            why: "في تطبيق عادي الـ backend هو اللي بيفلتر بـ WHERE user_id. في Supabase مفيش backend في النص، فالقاعدة نفسها لازم تفلتر.",
-            how: R`[[ENABLE ROW LEVEL SECURITY]] بيقفل الجدول: من غير policies مفيش صف بيرجع لحد. [[CREATE POLICY]] بيفتح بشرط: [[USING]] للصفوف اللي يقدر يشوفها ويعدّلها ويمسحها، و [[WITH CHECK]] للصفوف اللي يقدر يكتبها (عشان محدش يعمل insert باسم حد تاني).
-
-[[auth.uid()]] رقم اليوزر من الـ JWT، وكتابتها [[(select auth.uid())]] بتخليها تتحسب مرة واحدة بدل كل صف (أسرع). [[TO authenticated]] للي عامل login بس.
-
-الـ superuser وصاحب الجدول والـ service_role key بيعدّوا RLS، عشان كده service_role عمره ما يروح للـ frontend. [[pg_tables.rowsecurity]] بيوريك أنهي جداول لسه مكشوفة، و Security Advisor في لوحة Supabase بينبّهك.`,
-            when: "كل جدول في public على Supabase، من أول migration. وفي Postgres عادي لو فيه multi-tenant.",
-            mistakes: "جدول جديد من SQL من غير ENABLE RLS. واختبار الـ policies من SQL editor كـ postgres فتعدّي كلها. و USING من غير WITH CHECK."
-          },
-          lines: [
-            "فعّل RLS: الجدول مقفول لحد ما تضيف policy.",
-            "policy: اليوزر اللي عامل login يشوف ويكتب الصفوف اللي user_id بتاعها هو بس.",
-            "أنهي جداول في public عليها RLS وأنهي لأ.",
-            "الـ policies الموجودة على الجدول وشروطها."
-          ],
-          sol: R`بعد [[ENABLE ROW LEVEL SECURITY]] من غير policies: [[supabase.from('todos').select()]] بيرجّع [[data: []]] و [[error: null]]، مش error. دي النقطة اللي بتلخبط الناس: RLS مش بيرفض، بيفلتر لحد ما مفيش صفوف.
-
-بعد الـ policy و login: بيرجّع صفوف اليوزر ده بس. ولو عملت logout ترجع array فاضية، لأن الـ policy لـ [[authenticated]] بس. ونفس السلوك تقدر تشوفه في Postgres عادي: يوزر مش owner بيعمل [[SELECT count(*) FROM todos]] يطلع [[0]]، وبعد policy بيشوف صفوفه بس، والـ owner بيشوف الكل.
-
-الأخطاء الشائعة: تجرّب من SQL Editor في اللوحة فتشوف كل الصفوف، لأنه بيشتغل كـ [[postgres]] اللي بيعدّي RLS. أو تستخدم الـ service_role key في الكود فكل حاجة تبان شغالة، وهو كده بيعدّي RLS خالص. ولو INSERT رجّع [[new row violates row-level security policy]] يبقى الـ [[user_id]] اللي بتبعته مش بتاع اليوزر اللي عامل login، ودا شغل [[WITH CHECK]].`
-        },
-        {
-          cmd: "pgcli",
-          title: "psql بإكمال تلقائي",
-          desc: R`[[pgcli]] بديل لـ [[psql]] بيكمّلك أسامي الجداول والأعمدة وانت بتكتب، وبيلوّن الـ SQL، فالكتابة أسرع وأقل غلط. بيتصل بـ Postgres بنفس الطريقة وبيفهم أوامر الـ backslash الأساسية زي [[\dt]].
-
-هو أداة Python، و [[pipx install pgcli]] بيسطّبها في بيئة لوحدها فمتلخبطش مكتبات Python التانية عندك. الاتصال بطريقتين: connection string زي [[postgres://app_user:secret@localhost/app]] (اليوزر:الباسورد@الجهاز/القاعدة)، أو فلاجات: [[-h]] الجهاز، و [[-p]] البورت (هنا 5433)، و [[-U]] اليوزر، وبعدهم اسم القاعدة.
-
-مفيد على جهازك، وعلى السيرفر psql العادي كفاية. وخد بالك إن الباسورد في الـ connection string بيتحفظ في الـ history، فالأحسن ملف [[~/.pgpass]].`,
-          example: R`pipx install pgcli
-pgcli postgres://app_user:secret@localhost/app
-pgcli -h localhost -p 5433 -U app_user app`,
-          try: "اتصل بـ pgcli واكتب [[SELECT * FROM us]] ودوس Tab.",
-          deep: {
-            why: "psql ممتاز، بس مفيهوش إكمال تلقائي لأسامي الجداول والأعمدة. pgcli بيضيف ده وألوان وتاريخ أحسن.",
-            how: R`أداة Python بتتكلم مع Postgres بنفس البروتوكول، وبتقبل نفس connection strings و PG* variables و .pgpass. وأوامر الـ backslash الأساسية شغالة فيها.
-
-الإكمال بيقرا الـ schema أول ما تتصل: تكتب اسم جدول جزئي وتدوس Tab، وبعد [[SELECT * FROM users WHERE]] بيقترح الأعمدة. وبيلوّن SQL.
-
-على السيرفر مش هتسطّبها غالبًا (محتاجة Python و pip)، وهناك psql كفاية. على جهازك مع tunnel للسيرفر هي أريح.
-
-بدائل بواجهة: DBeaver (مجاني، بيدعم SSH tunnel مباشرة)، و TablePlus، و pgAdmin.`,
-            when: "على جهازك للشغل اليومي مع القاعدة.",
-            mistakes: "تعتمد عليها بس وتنسى psql، وبعدين على السيرفر في طوارئ تتوه."
-          },
-          lines: ["سطّب.", "اتصل بـ URL.", "اتصل عبر tunnel."],
-          sol: R`لما تكتب [[SELECT * FROM us]] قايمة بتفتح تحت الكلام فيها [[users]] (وأي جدول بيبدأ بـ us). دوس Tab أو Enter يكمّلها. وبعد [[WHERE ]] هتقترح أسماء أعمدة الجدول ده بالذات، ودي الميزة الكبيرة عن psql.
-
-pgcli بيقبل نفس أوامر الـ backslash زي [[\dt]] و [[\d users]]، وبيلوّن الـ SQL وبيعرض النتايج في جدول مرتب.
-
-لو [[pipx: command not found]] نزّله الأول ([[sudo apt install pipx]] على أوبونتو). ولو الـ completion مش بيطلع أسماء الجداول، ممكن يكون لسه بيحمّلها في أول ثواني، أو إنك في قاعدة مفيهاش جداول في الـ search_path. وخلي بالك إن pgcli للشغل اليدوي بس، في السكربتات استخدم psql.`
+بعد [[docker compose down -v]] و [[up]] تاني: الاتنين اتنفذوا بالترتيب و [[\dt]] فيه الجدولين، بس كل الداتا القديمة راحت. لو السكربت نفسه فيه error الـ container بيقع في الـ init؛ صلّح الملف وامسح الـ volume تاني، لأن init نص مخلص ممكن يسيب الـ volume مش فاضي. ولو الملف مش بيتقري خالص اتأكد إن امتداده [[.sql]] أو [[.sh]] أو [[.sql.gz]] وإنه readable.`
         }
       ]
     }

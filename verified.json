@@ -1664,6 +1664,126 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
+ "gha|::error::": {
+  "hash": "6c59ced4e17e",
+  "date": "2026-10-06",
+  "on": "act; docs: Annotations UI"
+ },
+ "gha|GITHUB_ENV و GITHUB_OUTPUT": {
+  "hash": "64856a137c12",
+  "date": "2026-10-06",
+  "on": "act + docker ubuntu-24.04"
+ },
+ "gha|base64 -d": {
+  "hash": "028f01445eb7",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + act + pwsh 7 / ps 5.1; docs: gh secret set"
+ },
+ "gha|build و push image": {
+  "hash": "a4001779c430",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + actionlint; docs: buildx, ghcr"
+ },
+ "gha|cache و artifacts": {
+  "hash": "9a1477913bf0",
+  "date": "2026-10-06",
+  "on": "act cache@v6; docs: artifacts"
+ },
+ "gha|ci.yml": {
+  "hash": "aa223813f80b",
+  "date": "2026-10-06",
+  "on": "act 0.2.89 + actionlint 1.7.12; docs: Actions UI"
+ },
+ "gha|debugging": {
+  "hash": "3eba81ad3399",
+  "date": "2026-10-06",
+  "on": "yaml-lint + act 0.2.89 + actionlint 1.7.12 + gh read-only; docs: step debug, tmate"
+ },
+ "gha|deploy عبر SSH": {
+  "hash": "70977d9303a9",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 sshd container; docs: real server"
+ },
+ "gha|deploy على tag": {
+  "hash": "53509168253b",
+  "date": "2026-10-06",
+  "on": "act 0.2.89 + actionlint 1.7.12; docs: ghcr push, release"
+ },
+ "gha|environments و approval": {
+  "hash": "31ca74f0ec1d",
+  "date": "2026-10-06",
+  "on": "act --var + actionlint; docs: environments"
+ },
+ "gha|gh CLI": {
+  "hash": "a43f19ce0726",
+  "date": "2026-10-06",
+  "on": "gh 2.97.0 read-only; docs: workflow run, rerun, watch"
+ },
+ "gha|git diff --quiet": {
+  "hash": "2377e119b9c4",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 git"
+ },
+ "gha|jobs متوازية": {
+  "hash": "2809adce566b",
+  "date": "2026-10-06",
+  "on": "act; docs: branch protection"
+ },
+ "gha|matrix": {
+  "hash": "cf7e93241566",
+  "date": "2026-10-06",
+  "on": "act 0.2.89 + actionlint 1.7.12 (ubuntu only); docs: windows jobs"
+ },
+ "gha|needs و if و concurrency": {
+  "hash": "1529365c49ba",
+  "date": "2026-10-06",
+  "on": "act; docs: concurrency cancel"
+ },
+ "gha|rollback من Actions": {
+  "hash": "618404d406b4",
+  "date": "2026-10-06",
+  "on": "compose config + act 0.2.89 + actionlint 1.7.12; docs: real server"
+ },
+ "gha|schedule": {
+  "hash": "2b935a6e24be",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 + actionlint; docs: cron timing, Telegram"
+ },
+ "gha|secrets و env": {
+  "hash": "d596ef18437e",
+  "date": "2026-10-06",
+  "on": "act -s secrets; docs: gh api"
+ },
+ "gha|services": {
+  "hash": "4a6466cb62b7",
+  "date": "2026-10-06",
+  "on": "act + docker postgres:16-alpine; docs: prisma migrate"
+ },
+ "gha|uses و run": {
+  "hash": "b5913af15295",
+  "date": "2026-10-06",
+  "on": "act 0.2.89 + actionlint 1.7.12 + docker ubuntu-24.04; docs: Summary"
+ },
+ "gha|الأمان": {
+  "hash": "014c5b7ab566",
+  "date": "2026-10-06",
+  "on": "actionlint + git ls-remote; docs: Dependabot"
+ },
+ "gha|المفاهيم": {
+  "hash": "cf4f79053799",
+  "date": "2026-10-06",
+  "on": "act 0.2.89 + actionlint 1.7.12; docs: Run workflow, schedule"
+ },
+ "gha|قراية الفشل": {
+  "hash": "614f3ca4bb59",
+  "date": "2026-10-06",
+  "on": "gh 2.97.0 read-only"
+ },
+ "gha|نشر ملفات بـ scp": {
+  "hash": "de39527a970f",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 sshd container"
+ },
  "git|.gitattributes": {
   "hash": "66cc3a1d3eb9",
   "date": "2026-10-06",
@@ -2719,6 +2839,31 @@
   "date": "2026-10-06",
   "on": "docker postgres:16 (16.15)"
  },
+ "pg|Prisma migrate": {
+  "hash": "790ef870fbf6",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim + prisma@7 (7.10.0) + postgres:16"
+ },
+ "pg|Row Level Security": {
+  "hash": "0b6b8278f089",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15) simulated Supabase roles; docs: supabase-js"
+ },
+ "pg|Supabase CLI": {
+  "hash": "cd3a552e1e5b",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim supabase CLI 2.120.0; docs: link, push, pull, types, dump"
+ },
+ "pg|Supabase Management API": {
+  "hash": "8f0aaa17a34e",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim jq + curl (real 401); docs: success response"
+ },
+ "pg|Supabase: الاتصال المباشر": {
+  "hash": "5fa5c244c39a",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 + postgres:18; docs: Supabase hosts"
+ },
  "pg|VACUUM و ANALYZE": {
   "hash": "331341158e8e",
   "date": "2026-10-06",
@@ -2733,6 +2878,11 @@
   "hash": "793e6cb7654b",
   "date": "2026-10-06",
   "on": "docker postgres:16 (16.15); docs: .psqlrc"
+ },
+ "pg|connection pooling": {
+  "hash": "cb0a9d495ffb",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15) + pgbouncer 1.26; docs: Supabase pooler"
  },
  "pg|connection string و .pgpass": {
   "hash": "efa5b2ae984b",
@@ -2749,6 +2899,16 @@
   "date": "2026-10-06",
   "on": "docker compose docker postgres:16 (16.15)"
  },
+ "pg|pg_dump بعمق": {
+  "hash": "49fb4e650978",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|pgcli": {
+  "hash": "bdb679b4503e",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 pipx pgcli 4.7.1; docs: Windows/macOS install"
+ },
  "pg|psql": {
   "hash": "7d15060d6aa3",
   "date": "2026-10-06",
@@ -2764,10 +2924,25 @@
   "date": "2026-10-06",
   "on": "docker postgres:16 (16.15)"
  },
+ "pg|الأمان": {
+  "hash": "2956184ed1c1",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15) + docker ubuntu-24.04 postgresql-16"
+ },
  "pg|الإعدادات": {
   "hash": "88ffe3e35a5b",
   "date": "2026-10-06",
   "on": "docker postgres:16 (16.15); docs: systemctl restart"
+ },
+ "pg|الاستعلامات البطيئة": {
+  "hash": "b698db82686c",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 postgresql-16 + docker postgres:16 (16.15) pg_stat_statements"
+ },
+ "pg|الباك أب المجدول": {
+  "hash": "eb6c78e1c7f4",
+  "date": "2026-10-06",
+  "on": "docker ubuntu-24.04 postgresql-16, rclone, cron"
  },
  "pg|الجلسات والأقفال": {
   "hash": "2dd9f53a6edf",
@@ -2784,13 +2959,38 @@
   "date": "2026-10-06",
   "on": "docker postgres:16 (16.15)"
  },
+ "pg|النقل بين سيرفرين": {
+  "hash": "707c7a4b5ae9",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 x2 + docker ubuntu-24.04 sshd"
+ },
  "pg|الوصول من بره": {
   "hash": "34b9ebd109ea",
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 + postgresql 16; docs: SSH tunnel"
  },
+ "pg|ترجيع الباك أب": {
+  "hash": "fb84f9eac24f",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|ترقية Postgres في Docker": {
+  "hash": "330b23574dc0",
+  "date": "2026-10-06",
+  "on": "docker compose postgres:16 -> 18; docs: TTY without -T"
+ },
  "pg|تشغيل SQL من ملف": {
   "hash": "de4dee2b0508",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15)"
+ },
+ "pg|تغييرات آمنة في الإنتاج": {
+  "hash": "59751cf586da",
+  "date": "2026-10-06",
+  "on": "docker postgres:16 (16.15) (1M rows)"
+ },
+ "pg|سكربت migrations": {
+  "hash": "d5d31d0e477d",
   "date": "2026-10-06",
   "on": "docker postgres:16 (16.15)"
  },
