@@ -1,38 +1,53 @@
 {
+ "bash|#!/usr/bin/env bash": {
+  "hash": "591d8dbbef8f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac Homebrew path"
+ },
+ "bash|$$ في Makefile": {
+  "hash": "a9ebe67cad6f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, stubs"
+ },
  "bash|$( )": {
   "hash": "94a0d0a582f2",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|$(( ))": {
-  "hash": "ec2135f5bda4",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "2f2d899f3108",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac bc"
  },
  "bash|$1 و $# و $@": {
-  "hash": "747a1aaf73d9",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "ba058d5a42be",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|$?": {
-  "hash": "65e664b61a0c",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "60982bc97f5a",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|$__{#VAR} و $__{VAR:0:3}": {
-  "hash": "fa89c8451870",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "2b2c444ddd52",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|$__{VAR%.*} و $__{VAR##*.}": {
-  "hash": "466d3728c850",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "9793309b3982",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|$__{VAR/old/new} و $__{VAR,,}": {
-  "hash": "2f36d126ab35",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "49ea4cfc71ee",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac bash 3.2"
+ },
+ "bash|$__{VAR:-default}": {
+  "hash": "fbeadb124c82",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|& و jobs و fg": {
   "hash": "1150ae5efef8",
@@ -49,15 +64,25 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali); docs: zsh nomatch"
  },
+ "bash|/etc/hosts": {
+  "hash": "9b83479b12e5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: mac flush"
+ },
+ "bash|127.0.0.1 و 0.0.0.0": {
+  "hash": "e1417ca68852",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN); docs: mac lsof"
+ },
  "bash|2>&1": {
   "hash": "29b4ae5d3338",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali); docs: npm build line"
  },
  "bash|=~ و BASH_REMATCH": {
-  "hash": "b61420d04b68",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "bb8823e5f99c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|> و >>": {
   "hash": "ba6c20d286ab",
@@ -65,24 +90,29 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|LS_COLORS و --color": {
-  "hash": "c9309b480fd5",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "686cc5287abf",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; win11 pwsh; docs: Mac"
  },
  "bash|PS1": {
-  "hash": "5bca59dcb3e0",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "e8f017e0ed84",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: zsh"
+ },
+ "bash|VAR=value": {
+  "hash": "144355df7173",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|alias و .bashrc": {
-  "hash": "3b375ce65503",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "b069ea908511",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|arrays": {
-  "hash": "7f5212e444be",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "9ccffeebabe1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
  },
  "bash|at": {
   "hash": "e7ca2db9abb4",
@@ -90,34 +120,39 @@
   "on": "ubuntu-24.04 docker; docs: macOS"
  },
  "bash|avahi-browse و .local": {
-  "hash": "c7a261bc7de7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "094887f9c94c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN); docs: mac dns-sd"
  },
  "bash|awk": {
-  "hash": "cbc291de39bc",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "218e81fa4e5d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|backup.sh": {
-  "hash": "100f504c089b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "ec9e17603633",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user), shellcheck"
  },
  "bash|bat و eza": {
-  "hash": "869ce5134dbd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "78b3d495ea80",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: Mac/Windows"
  },
  "bash|case": {
-  "hash": "1fd4bb131458",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "af59cde3be5c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2) (docker compose lines replaced by echo)"
  },
  "bash|cat": {
   "hash": "532d3c3b3611",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali)"
+ },
+ "bash|cat > (نفس الـ inode)": {
+  "hash": "c947ba46f306",
+  "date": "2026-10-06",
+  "on": "Docker Desktop engine bind mount + ubuntu-24.04 nginx; docs: mac stat -f"
  },
  "bash|cd": {
   "hash": "7f2b52ad2153",
@@ -135,9 +170,9 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|chmod +x و ./": {
-  "hash": "053a58cfc7f1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "381e5f35b413",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac .zshrc"
  },
  "bash|chown": {
   "hash": "91e3ebeff4dd",
@@ -145,14 +180,14 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|cleanup-old.sh": {
-  "hash": "c7d68a2b52d6",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "567de1b1923b",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docs: mac"
  },
  "bash|convert-all.sh": {
-  "hash": "7bf820290908",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "98325321dc3f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user), ImageMagick 6.9.12; docs: mac"
  },
  "bash|cp": {
   "hash": "261f437fcc2c",
@@ -160,59 +195,79 @@
   "on": "ubuntu-24.04 (user ali); docs: mac message"
  },
  "bash|cron للسكربت": {
-  "hash": "16be0e827813",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "482ef7625a34",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user), cron daemon; docs: mac/launchd"
  },
  "bash|curl": {
-  "hash": "c45a4cde8658",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "e9ee1f780cf5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; win11 ps 5.1 + pwsh 7"
+ },
+ "bash|curl -w '%{http_code}'": {
+  "hash": "27f28a6f7e36",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (user ubuntu) curl 8.5.0, local http.server"
  },
  "bash|cut": {
-  "hash": "79967f72d64d",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "f2526d38788e",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|date +%F": {
-  "hash": "88414815db7a",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "e87564d20679",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2); docs: mac date -v"
  },
  "bash|declare -A": {
-  "hash": "80c247c99802",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "d75163f1db68",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac bash 3.2"
+ },
+ "bash|deploy.sh": {
+  "hash": "ef5846f313e5",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user), local git remote, stub docker; docs: compose/prune"
  },
  "bash|df / du": {
-  "hash": "669f33c1b3da",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "3c651de5d051",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: Mac"
  },
  "bash|diff": {
-  "hash": "6fed429e60e8",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "77548b907426",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "bash|dig": {
+  "hash": "3d0cec7b1327",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|disk-alert.sh": {
-  "hash": "e9f6a5c3ff62",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "8cdf42c9053a",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (clean container); docs: mac"
  },
  "bash|echo": {
   "hash": "4e6ff8b9accd",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali); docs: zsh"
  },
+ "bash|envsubst": {
+  "hash": "470c01551a1f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
+ },
  "bash|exit 0 و 1 و 2": {
-  "hash": "feff5beda20e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "8dd28368b451",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|export و env": {
-  "hash": "124696e0f147",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "23baca3e3332",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|fastfetch": {
   "hash": "7352ab12a2eb",
@@ -220,14 +275,14 @@
   "on": "ubuntu-24.04 docker (PPA); docs: macOS"
  },
  "bash|fdisk و mkfs و dd": {
-  "hash": "9db6b10f642e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "bc43fae7ddb0",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker on image files only; docs: Mac"
  },
  "bash|ffmpeg": {
-  "hash": "bdb8fe746ddc",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "4a21de325ca3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker ffmpeg 6.1.1; docs: Mac/Windows install"
  },
  "bash|file / stat": {
   "hash": "04782d93a2aa",
@@ -240,39 +295,44 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|find -print0 | while read": {
-  "hash": "3403b495aa0c",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "c8fe3fe9a100",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
  },
  "bash|for": {
-  "hash": "ce008a3059de",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "1c9bbf4cf1cf",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
  },
  "bash|free -h": {
-  "hash": "effeb84b3341",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "9ef44ba64947",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: dmesg OOM, Mac"
  },
  "bash|function": {
-  "hash": "7fbbe4e3d196",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "2b4c865256ba",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
  },
  "bash|fzf": {
-  "hash": "31529d3941bf",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "f80dcd2a263b",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (fzf 0.44.1); docs: keys, Mac/Windows"
  },
  "bash|getopts": {
-  "hash": "61fa086658e0",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "667e1a1fd01d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
  },
  "bash|grep": {
   "hash": "0eca2a4cf200",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali)"
+ },
+ "bash|grep -q || echo >>": {
+  "hash": "328a5aba13f4",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docker error on host Docker Desktop"
  },
  "bash|groupadd و gpasswd": {
   "hash": "5872ab8fbc23",
@@ -284,10 +344,15 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 (user ali)"
  },
+ "bash|heredoc و tee": {
+  "hash": "0e1a7e879a3b",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user) + sudo, logrotate -d"
+ },
  "bash|history": {
-  "hash": "d2fcf57af509",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "fe18ed79f287",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; win11 pwsh; docs: Ctrl+R, zsh"
  },
  "bash|id و groups و getent": {
   "hash": "57a1f62bef05",
@@ -295,19 +360,29 @@
   "on": "ubuntu-24.04 docker; docs: macOS dscl"
  },
  "bash|if": {
-  "hash": "f216f7c259bb",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "f4c3ddc40eef",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|inotifywait": {
   "hash": "8156d09dfadc",
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker; docs: macOS fswatch"
  },
+ "bash|ip a / ip route": {
+  "hash": "0fc49c342f38",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: mac"
+ },
  "bash|ip link و ip addr add": {
-  "hash": "d50cf7ea1edb",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "c8f8f8528392",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker NET_ADMIN"
+ },
+ "bash|jq": {
+  "hash": "dd7dbb1ecc71",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|kill": {
   "hash": "cd0f69ca8746",
@@ -325,14 +400,14 @@
   "on": "ubuntu-24.04 (user ali); docs: nginx line"
  },
  "bash|log() والألوان": {
-  "hash": "0a63255c249f",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "937d6bf83d2c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali) (tty via script); docs: mac"
  },
  "bash|log-cleanup.sh": {
-  "hash": "eafd6ffbb224",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "46bfeb39f61a",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docs: mac"
  },
  "bash|ls": {
   "hash": "2a40e40317b8",
@@ -345,14 +420,29 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|lsusb و lspci و lshw": {
-  "hash": "eaee899ef2bf",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "f1dcb79bdffa",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (WSL2 VM hardware); docs: sensors-detect, Mac"
+ },
+ "bash|make": {
+  "hash": "4fe2387eccde",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, docker stub; docs: mac make 3.81"
+ },
+ "bash|make VAR=value": {
+  "hash": "521845941e47",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, docker stub"
+ },
+ "bash|make help": {
+  "hash": "e7727e0d56c4",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (user ubuntu) GNU Make 4.3, mawk; docs: mac BSD grep/awk"
  },
  "bash|man / --help": {
-  "hash": "11e313eb09dc",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "5192065b477e",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker + ubuntu-26.04 (tealdeer)"
  },
  "bash|mkdir": {
   "hash": "c6c14721074c",
@@ -360,9 +450,9 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|mktemp": {
-  "hash": "7333f64dbc81",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "6b047f09d554",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docs: mac"
  },
  "bash|mv": {
   "hash": "09153e955b82",
@@ -374,35 +464,45 @@
   "date": "2026-10-06",
   "on": "docs: interactive (nano 7.2 checked)"
  },
+ "bash|nc": {
+  "hash": "2981c7fd0c76",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN)"
+ },
  "bash|nethogs": {
-  "hash": "916a5ef159f1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "ce303a9630ed",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (-t); docs: interactive screen"
  },
  "bash|new-project.sh": {
-  "hash": "f7909de7273b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "b840b701af30",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user), git 2.43; docs: mac"
  },
  "bash|nft و iptables -L": {
-  "hash": "fe2d8ed495a1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "5a090edd0987",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker NET_ADMIN"
  },
  "bash|nice و renice و ionice": {
-  "hash": "cec07f76fa42",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "ba62dffb58b3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (+SYS_NICE); win11 pwsh; docs: Mac"
+ },
+ "bash|nmap": {
+  "hash": "f845337908eb",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|nmap -sn و arp-scan": {
-  "hash": "90ddad539256",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "e8170522edea",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN)"
  },
  "bash|nmcli": {
-  "hash": "a73ad6095cac",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "5fb7c59db173",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker NetworkManager 1.46; docs: wifi, netplan try"
  },
  "bash|nohup": {
   "hash": "f91749fcc292",
@@ -414,15 +514,20 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker (D-Bus error, alias); docs: display/sound, macOS"
  },
+ "bash|openssl enc": {
+  "hash": "be39d42a5155",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (user ubuntu) OpenSSL 3.0.13; docs: mac LibreSSL"
+ },
  "bash|openssl s_client": {
-  "hash": "7d5002b00d1a",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "e47154c6ccff",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: mac LibreSSL"
  },
  "bash|organize.sh": {
-  "hash": "8612f0589776",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "6a71b9d37074",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docs: mac"
  },
  "bash|passwd -l و chage": {
   "hash": "059711c733f8",
@@ -430,14 +535,19 @@
   "on": "ubuntu-24.04 docker; docs: interactive prompt, macOS"
  },
  "bash|ping": {
-  "hash": "0cce3ac61538",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "e2dfc798de71",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: Mac/Windows flags"
+ },
+ "bash|preflight.sh": {
+  "hash": "481c40eb3320",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user) + root; docs: mac"
  },
  "bash|printf": {
-  "hash": "1f7aad9776d9",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "85aa9e870203",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|ps": {
   "hash": "a19572ce8b1d",
@@ -450,19 +560,19 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|read": {
-  "hash": "bbb6cc9459de",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "d4fd2902b9c3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2) (pty via script)"
  },
  "bash|rename.sh": {
-  "hash": "e4bec0bb06bf",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "8a55c83f40ee",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docs: mac"
  },
  "bash|resolvectl": {
-  "hash": "8b4463f3fa53",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "0f2f2404fa93",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker systemd-resolved; docs: mac"
  },
  "bash|rm": {
   "hash": "57cde877bfce",
@@ -470,29 +580,34 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|scp / rsync": {
-  "hash": "0d5fa96715e2",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "53846c9579fc",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: Mac"
  },
  "bash|sed": {
-  "hash": "6fe6ac599fe1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "16e32a869337",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; docs: mac sed -i"
  },
  "bash|select و confirm": {
-  "hash": "738aa6029f47",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "5f230ac787ff",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali) (tty via script); docs: mac"
  },
  "bash|set -a و .env": {
-  "hash": "70c7c2902d51",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "266699afdb24",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2); node line shown with child bash"
+ },
+ "bash|set -euo pipefail": {
+  "hash": "f341de833587",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user)"
  },
  "bash|set -x و PS4": {
-  "hash": "89ea164c8bbe",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "f89a8fa33a50",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "bash|setfacl و getfacl": {
   "hash": "b0c4da4db0f0",
@@ -504,15 +619,25 @@
   "date": "2026-10-06",
   "on": "ubuntu-24.04 docker; docs: macOS"
  },
+ "bash|setup-env.sh": {
+  "hash": "c1d02c9c0176",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+ },
+ "bash|shellcheck": {
+  "hash": "5d60f945d388",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2) (shellcheck 0.9.0)"
+ },
  "bash|shift و --help": {
-  "hash": "725424ad24e1",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "b5f231d62ab6",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali)"
  },
  "bash|shopt -s nullglob": {
-  "hash": "c7c9fa347e00",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "8247bed333a1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
  },
  "bash|shutdown": {
   "hash": "44907a6a55d6",
@@ -520,39 +645,49 @@
   "on": "ubuntu-24.04 docker with systemd: schedule/--show/-c; docs: now/reboot/suspend"
  },
  "bash|site-check.sh": {
-  "hash": "caed464ccca0",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "b9a5aa6ed619",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user); docs: mac"
+ },
+ "bash|sleep & wait": {
+  "hash": "9f7500d18a2c",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (user ubuntu) + docker stop timing; docs: certbot renew"
  },
  "bash|smbclient و mount -t cifs": {
-  "hash": "bfd91469bd84",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "3c70198a802e",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN) Samba 4.19; docs: Windows side, mac"
  },
  "bash|sort و uniq": {
-  "hash": "62f1e816e13d",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "bdae2e0b6ac0",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|source lib.sh": {
-  "hash": "c9d920a85c27",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "21cc13fcd032",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac"
  },
  "bash|ss / lsof": {
-  "hash": "16873fda9f05",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "1107a3b8814a",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; win11 pwsh"
  },
  "bash|ssh": {
-  "hash": "6494ac69c59e",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "b02d34794257",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (sshd on 127.0.0.1); docs: Mac"
+ },
+ "bash|ssh -L": {
+  "hash": "e8df40319310",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN) (sshd, Postgres 16)"
  },
  "bash|starship": {
-  "hash": "b066bcde10ad",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "205fadfc8005",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (starship 1.26.0); docs: zsh/PowerShell"
  },
  "bash|su - و sudo -i": {
   "hash": "285988324ca2",
@@ -570,9 +705,14 @@
   "on": "ubuntu-24.04 docker with systemd + nginx; docs: macOS"
  },
  "bash|tar": {
-  "hash": "335c27163b50",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "1287019930d1",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; win11 tar.exe; docs: Mac"
+ },
+ "bash|tcpdump": {
+  "hash": "9df4f180ad83",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN); docs: mac"
  },
  "bash|top / htop": {
   "hash": "a05fc8b01ec3",
@@ -585,14 +725,19 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|tr": {
-  "hash": "f44c0ca39f4b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "1627ffb5d3b6",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
+ },
+ "bash|traceroute / mtr": {
+  "hash": "afa0e00144f4",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker + win11 tracert; docs: mac"
  },
  "bash|trap": {
-  "hash": "ac37c6c8108d",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "8b0be12aac07",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (normal user)"
  },
  "bash|tree": {
   "hash": "f9502a2d60b0",
@@ -615,14 +760,14 @@
   "on": "ubuntu-24.04 docker; docs: visudo editor, macOS"
  },
  "bash|vmstat و iostat": {
-  "hash": "6f8c4dfe0ed0",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "2e4d8df901b7",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker idle; load numbers from earlier run; docs: Mac"
  },
  "bash|wakeonlan و ethtool": {
-  "hash": "6d9b3c1d16fd",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "076573c297aa",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (simulated LAN); docs: real NIC Wake-on, BIOS, mac"
  },
  "bash|watch": {
   "hash": "eee19dde370a",
@@ -635,14 +780,14 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|wget": {
-  "hash": "6f0a46dd27de",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "e002bc63381f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|wget -i و --limit-rate": {
-  "hash": "e0c937e1c45b",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "7363f122c05f",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker"
  },
  "bash|which / type": {
   "hash": "ea0375f5649b",
@@ -650,9 +795,9 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|while read": {
-  "hash": "90dc692e4ac7",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "a7db8f0b01d7",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2, user ali); docs: mac -W"
  },
  "bash|xargs": {
   "hash": "df1b6aa2fbac",
@@ -665,14 +810,14 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|zip / unzip": {
-  "hash": "c3914242a157",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "07828fe88d47",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker; win11 pwsh; docs: Mac"
  },
  "bash|zoxide": {
-  "hash": "9a3c80948a6d",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "8d53e0b633b6",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (zoxide 0.9.3); docs: zi"
  },
  "bash||": {
   "hash": "b5be5c60dca1",
@@ -680,9 +825,9 @@
   "on": "ubuntu-24.04 (user ali)"
  },
  "bash|أول سكربت": {
-  "hash": "c06d1320f77c",
-  "date": "2026-10-02",
-  "on": "ubuntu-24.04 (bash 5.2), docs: macOS"
+  "hash": "ca1335dc304d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 docker (bash 5.2)"
  },
  "cmd|%errorlevel% و !errorlevel!": {
   "hash": "2b0c85c2fa5e",
