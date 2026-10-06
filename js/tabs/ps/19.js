@@ -841,7 +841,7 @@ foreach ($file in Get-ChildItem $Path -File) {
 - الأقواس [[( )]] حوالين الأمر لازمة: القيمة الافتراضية لـ parameter لو أمر لازم تبقى بين أقواس عشان تتنفذ.
 
 ~~~text Join-Path $HOME "Downloads"
-C:\Users\7ossa\Downloads
+C:\Users\ali\Downloads
 ~~~
 
 ---
@@ -1355,7 +1355,7 @@ E    971412189184 52506542080
 Temp 275780575232 47749156864
 ~~~
 
-[[Temp]] ده مش ديسك: PowerShell 7 بيعمله لوحده وبيشاور على فولدر الـ TEMP ([[C:\Users\7ossa\AppData\Local\Temp\]])، فأرقامه هي أرقام C بالظبط. في 5.1 مش موجود أصلًا.
+[[Temp]] ده مش ديسك: PowerShell 7 بيعمله لوحده وبيشاور على فولدر الـ TEMP ([[C:\Users\ali\AppData\Local\Temp\]])، فأرقامه هي أرقام C بالظبط. في 5.1 مش موجود أصلًا.
 
 ### الخطوة ٢: الفلتر
 

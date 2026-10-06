@@ -532,7 +532,7 @@ ii $outDir`,
 - [[Join-Path]] بيلزق جزئين مسار ويحط [[\]] بينهم صح.
 
 ~~~text قيمة $outDir هنا
-C:\Users\7ossa\AppData\Local\Temp\shots
+C:\Users\ali\AppData\Local\Temp\shots
 ~~~
 
 ليه مش مسار ثابت زي [[C:\Users\ali\shots]]؟ لأن السكربت ده هيشتغل عند حد تاني اسمه مش ali.

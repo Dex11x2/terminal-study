@@ -103,7 +103,7 @@ echo Today is %date% and the time is %time%
 | [[%time%]] | الوقت دلوقتي، لحد جزء من مية من الثانية |
 
 ~~~text الناتج
-Hello, 7ossa!
+Hello, ali!
 Today is Tue 10/06/2026 and the time is 10:54:22.92
 ~~~
 

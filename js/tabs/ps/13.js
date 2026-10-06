@@ -931,7 +931,7 @@ shop
 | المتغيرات | بتفضل جوه الموديول | بتدخل السكربت بتاعك |
 | مناسب لـ | كود مشترك بين مشاريع | helpers جوه نفس المشروع |
 
-ولو حطيت الموديول في فولدر بنفس اسمه جوه واحد من فولدرات [[$env:PSModulePath]] (على الجهاز ده أولهم [[C:\Users\7ossa\OneDrive\Documents\PowerShell\Modules]] لـ PowerShell 7)، بيتحمّل لوحده أول ما تنادي أي فانكشن فيه، من غير Import-Module.
+ولو حطيت الموديول في فولدر بنفس اسمه جوه واحد من فولدرات [[$env:PSModulePath]] (على الجهاز ده أولهم [[C:\Users\ali\OneDrive\Documents\PowerShell\Modules]] لـ PowerShell 7)، بيتحمّل لوحده أول ما تنادي أي فانكشن فيه، من غير Import-Module.
 
 ---
 
@@ -1926,8 +1926,8 @@ exit $code
 **********************
 PowerShell transcript start
 Start time: 20261006094134
-Username: DEXTER\7ossa
-Machine: DEXTER (Microsoft Windows NT 10.0.26300.0)
+Username: ALI-PC\ali
+Machine: ALI-PC (Microsoft Windows NT 10.0.26300.0)
 Host Application: ...\pwsh.dll -NoProfile -File job.ps1
 PSVersion: 7.6.6
 ...

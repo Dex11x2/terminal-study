@@ -318,7 +318,7 @@ options="metadata,umask=22,fmask=11"`,
 | [[.wslconfig]] | على **ويندوز**: [[C:\Users\you\.wslconfig]] | الماكينة الافتراضية كلها: رام، معالج، swap، شبكة. لكل التوزيعات |
 | [[wsl.conf]] | جوه **كل توزيعة**: [[/etc/wsl.conf]] | التوزيعة دي بس: systemd، اليوزر، الـ mounts |
 
-ملحوظة: [[%USERPROFILE%]] في CMD (أو [[$env:USERPROFILE]] في PowerShell) هو فولدر يوزرك، وعلى الجهاز اللي جربنا عليه طلع [[C:\Users\7ossa]].
+ملحوظة: [[%USERPROFILE%]] في CMD (أو [[$env:USERPROFILE]] في PowerShell) هو فولدر يوزرك، وعلى الجهاز اللي جربنا عليه طلع [[C:\Users\ali]].
 
 الجهاز ده معندوش [[.wslconfig]] أصلًا ([[ls]] قال [[No such file or directory]])، ومعدّلناش فيه حاجة. فالقيم الافتراضية اتقاست فعلًا، والتعديلات نفسها من docs مايكروسوفت (Advanced settings configuration in WSL).
 
@@ -1298,7 +1298,7 @@ Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss | % { "{0} ->
 | [[-f]] | ركّب النص: [[{0}]] أول قيمة و [[{1}]] التانية |
 
 ~~~text الناتج على الجهاز ده
-docker-desktop -> \\?\C:\Users\7ossa\AppData\Local\Docker\wsl\main
+docker-desktop -> \\?\C:\Users\ali\AppData\Local\Docker\wsl\main
 ~~~
 
 عندك هيظهر سطر لأوبونتو. حط [[\ext4.vhdx]] في آخر مساره واستخدمه في [[-Path]].

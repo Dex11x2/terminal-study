@@ -962,7 +962,7 @@ icacls a.txt
 ~~~text الناتج على ويندوز 11 هنا (PowerShell 7 و 5.1)
 a.txt NT AUTHORITY\SYSTEM:(F)
       BUILTIN\Administrators:(F)
-      DEXTER\7ossa:(F)
+      ALI-PC\ali:(F)
 
 Successfully processed 1 files; Failed processing 0 files
 ~~~

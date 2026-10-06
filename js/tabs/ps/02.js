@@ -73,10 +73,10 @@ D:\
 ~~~text الناتج بعد Get-Location
 Path
 ----
-C:\Users\7ossa
+C:\Users\ali
 ~~~
 
-[[7ossa]] اسم اليوزر على الجهاز اللي اتجرب عليه. عندك هيطلع اسمك.
+[[ali]] اسم اليوزر على الجهاز اللي اتجرب عليه. عندك هيطلع اسمك.
 
 ---
 
@@ -84,8 +84,8 @@ C:\Users\7ossa
 
 | اكتب | راح فين | ملاحظة |
 |---|---|---|
-| [[cd ..]] | من [[C:\Users\7ossa]] لـ [[C:\Users]] | [[..]] الفولدر اللي فوق |
-| [[cd -]] | رجعني لـ [[C:\Users\7ossa]] بعد ما كنت في [[D:\]] | PowerShell 7 بس. في 5.1 طلع [[Cannot find path 'C:\Windows\-' because it does not exist.]] لأنه فهم [[-]] اسم فولدر |
+| [[cd ..]] | من [[C:\Users\ali]] لـ [[C:\Users]] | [[..]] الفولدر اللي فوق |
+| [[cd -]] | رجعني لـ [[C:\Users\ali]] بعد ما كنت في [[D:\]] | PowerShell 7 بس. في 5.1 طلع [[Cannot find path 'C:\Windows\-' because it does not exist.]] لأنه فهم [[-]] اسم فولدر |
 | [[cd \]] | جذر الدرايف اللي انت فيه | [[\]] لوحدها |
 
 ---
@@ -104,7 +104,7 @@ Name           Used (GB)     Free (GB) Provider      Root
 C                 255.76         45.55 FileSystem    C:\
 D                 569.92         59.31 FileSystem    D:\
 E                 904.70         48.90 FileSystem    E:\
-Temp              255.76         45.55 FileSystem    C:\Users\7ossa\AppData\Local\Temp\
+Temp              255.76         45.55 FileSystem    C:\Users\ali\AppData\Local\Temp\
 ~~~
 
 [[-PSProvider FileSystem]] يعني الدرايفات اللي فيها ملفات بس. و [[Temp]] مش ديسك حقيقي: ده اختصار PowerShell 7 بيعمله لفولدر الـ TEMP، عشان كده أرقامه نفس C.

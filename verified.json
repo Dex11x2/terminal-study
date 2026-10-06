@@ -875,9 +875,9 @@
   "on": "win11 cmd"
  },
  "cmd|cd": {
-  "hash": "5a4ac6e993a7",
+  "hash": "62261beec412",
   "date": "2026-10-06",
-  "on": "win11 cmd"
+  "on": "win11 cmd (username masked later)"
  },
  "cmd|chcp 65001": {
   "hash": "692036c89ee3",
@@ -1160,9 +1160,9 @@
   "on": "win11 cmd /b and /wait; docs: GUI forms"
  },
  "cmd|systeminfo / whoami": {
-  "hash": "4c7d8860795d",
+  "hash": "2087ef002e57",
   "date": "2026-10-06",
-  "on": "win11 cmd"
+  "on": "win11 cmd (username masked later)"
  },
  "cmd|takeown": {
   "hash": "c60f9c68d892",
@@ -1205,9 +1205,9 @@
   "on": "win11 cmd non-admin; docs: /config"
  },
  "cmd|where": {
-  "hash": "7ceb2de15881",
+  "hash": "2eb5e0da20ea",
   "date": "2026-10-06",
-  "on": "win11 cmd + ps 5.1"
+  "on": "win11 cmd + ps 5.1 (username masked later)"
  },
  "cmd|whoami /groups /priv": {
   "hash": "b5c932fccfb1",
@@ -1230,14 +1230,14 @@
   "on": "win11 cmd"
  },
  "cmd|أول ملف .bat": {
-  "hash": "0a2ce78a0d9e",
+  "hash": "8d42a0174b22",
   "date": "2026-10-06",
-  "on": "win11 cmd; docs: double-click"
+  "on": "win11 cmd; docs: double-click (username masked later)"
  },
  "cmd|رموز CMD": {
-  "hash": "f49879550b02",
+  "hash": "9b2d14a9bc2b",
   "date": "2026-10-06",
-  "on": "win11 cmd"
+  "on": "win11 cmd (username masked later)"
  },
  "os|%localappdata%": {
   "hash": "4bdefc3b131d",
@@ -1750,9 +1750,9 @@
   "on": "win11 pwsh 7.6.6 non-admin"
  },
  "ps|Group-Object": {
-  "hash": "7a8562e70c7a",
+  "hash": "e3e8d4ab92c4",
   "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6; ubuntu-24.04"
+  "on": "win11 pwsh 7.6.6; ubuntu-24.04 (username masked later)"
  },
  "ps|History والاختصارات": {
   "hash": "58177158b6da",
@@ -1765,9 +1765,9 @@
   "on": "win11 pwsh 7.6 + ps 5.1"
  },
  "ps|Import-Module و dot-sourcing": {
-  "hash": "64bca85f6fbc",
+  "hash": "ff47cf896b14",
   "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1"
+  "on": "win11 pwsh-7.6 + ps-5.1 (username masked later)"
  },
  "ps|Invoke-RestMethod": {
   "hash": "fc272ef29b99",
@@ -1895,9 +1895,9 @@
   "on": "win11 pwsh 7.6.6; ubuntu-24.04"
  },
  "ps|Set-Clipboard / Get-Clipboard": {
-  "hash": "8b65aacd3cb9",
+  "hash": "9ed558d2a5a8",
   "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 (clipboard restored)"
+  "on": "win11 pwsh 7.6 (clipboard restored) (username masked later)"
  },
  "ps|Set-Content / Add-Content": {
   "hash": "a72010028a97",
@@ -1915,9 +1915,9 @@
   "on": "win11 Home pwsh 7.6 -WhatIf; docs: changes/removal"
  },
  "ps|Set-Location": {
-  "hash": "14617d224096",
+  "hash": "782a6ef053f2",
   "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 + ps 5.1 + cmd; ubuntu-24.04"
+  "on": "win11 pwsh 7.6.6 + ps 5.1 + cmd; ubuntu-24.04 (username masked later)"
  },
  "ps|Set-NetConnectionProfile": {
   "hash": "633895854e69",
@@ -1950,9 +1950,9 @@
   "on": "win11 pwsh 7.6.6; docs: URL, -Verb RunAs, ii ."
  },
  "ps|Start-Transcript": {
-  "hash": "5fa627ef70a2",
+  "hash": "cc7af85e252d",
   "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1"
+  "on": "win11 pwsh-7.6 + ps-5.1 (username masked later)"
  },
  "ps|Terminal-Icons": {
   "hash": "c881da35901d",
@@ -2040,9 +2040,9 @@
   "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|disk-report.ps1": {
-  "hash": "d6f07d9ac9bc",
+  "hash": "fa486cbd4db1",
   "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + ps 5.1"
+  "on": "win11 pwsh 7.6 + ps 5.1 (username masked later)"
  },
  "ps|foreach / for / while": {
   "hash": "f1ef1217666a",
@@ -2080,9 +2080,9 @@
   "on": "docs: ohmyposh.dev (only winget show run on win11)"
  },
  "ps|organize-downloads.ps1": {
-  "hash": "ac5f6a261579",
+  "hash": "df927fa47d26",
   "date": "2026-10-06",
-  "on": "win11 pwsh 7.6 + ps 5.1"
+  "on": "win11 pwsh 7.6 + ps 5.1 (username masked later)"
  },
  "ps|param()": {
   "hash": "cdcea7787cfb",
@@ -2105,9 +2105,9 @@
   "on": "win11 pwsh 7.6 + ps 5.1"
  },
  "ps|screenshots.ps1": {
-  "hash": "67e0ee9f6462",
+  "hash": "45f758a1448c",
   "date": "2026-10-06",
-  "on": "win11 pwsh 7.6.6 + Chrome headless; docs: final ii line"
+  "on": "win11 pwsh 7.6.6 + Chrome headless; docs: final ii line (username masked later)"
  },
  "ps|shutdown /s /t": {
   "hash": "d1658d155c52",
@@ -2150,9 +2150,9 @@
   "on": "win11 pwsh 7.6 + ps 5.1; docs: 2 GB limit, hidden files"
  },
  "ps|أول سكربت .ps1": {
-  "hash": "484719064485",
+  "hash": "b868760bb93d",
   "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1; docs: Set-ExecutionPolicy"
+  "on": "win11 pwsh-7.6 + ps-5.1; docs: Set-ExecutionPolicy (username masked later)"
  },
  "ps|المتغيرات": {
   "hash": "8344bcce0253",
@@ -2165,9 +2165,9 @@
   "on": "win11 pwsh-7.6 + ps-5.1"
  },
  "ps|النصوص (strings)": {
-  "hash": "3c4d8b3107a4",
+  "hash": "c5563332cffc",
   "date": "2026-10-06",
-  "on": "win11 pwsh-7.6 + ps-5.1"
+  "on": "win11 pwsh-7.6 + ps-5.1 (username masked later)"
  },
  "ps|رموز PowerShell": {
   "hash": "36e055e730bb",
@@ -2474,6 +2474,51 @@
   "date": "2026-10-02",
   "on": "ubuntu-24.04 (python 3.12/3.13), windows python-3.14, pwsh-7.6"
  },
+ "sshc|Host * والأنماط": {
+  "hash": "3ebe9cb10bbd",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6)"
+ },
+ "sshc|LocalForward": {
+  "hash": "145c36eee271",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6)"
+ },
+ "sshc|ProxyJump": {
+  "hash": "620c369e01a3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6) (bastion + internal db) + win11 OpenSSH 9.5"
+ },
+ "sshc|keepalive و multiplexing": {
+  "hash": "90686d4623b9",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6) + win11 OpenSSH 9.5"
+ },
+ "sshc|known_hosts": {
+  "hash": "86cc4271d0b8",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6)"
+ },
+ "sshc|ssh-agent و forwarding": {
+  "hash": "71bb4a34d1de",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6); docs: Windows ssh-agent service"
+ },
+ "sshc|الأدوات بتقرا الملف": {
+  "hash": "11aa33490df3",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6) + win11 scp.exe; docs: code --remote, docker compose"
+ },
+ "sshc|الملف الأساسي": {
+  "hash": "88fbe6c1f9e6",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6) + win11 OpenSSH 9.5"
+ },
+ "sshc|مفاتيح متعددة": {
+  "hash": "d494f508893d",
+  "date": "2026-10-06",
+  "on": "ubuntu-24.04 containers (OpenSSH 9.6) (simulated GitHub); docs: real GitHub reply"
+ },
  "start|--help و man": {
   "hash": "90e4519d8edd",
   "date": "2026-10-05",
@@ -2590,9 +2635,9 @@
   "on": "win11 pwsh7 (ssh -V, hostname, ssh timeout); ubuntu-24.04; docs: OpenSSH login prompt/exit message"
  },
  "start|الصلاحيات rwx": {
-  "hash": "9fa1c5c46051",
+  "hash": "93375442c233",
   "date": "2026-10-05",
-  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1 (username masked later)"
  },
  "start|الـ API": {
   "hash": "7f5845b1b9de",
@@ -2645,9 +2690,9 @@
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|تدوّر على الخطأ": {
-  "hash": "5bdeb8eb58dc",
+  "hash": "45c0f308a297",
   "date": "2026-10-05",
-  "on": "win11 node24; docs: Google search operators"
+  "on": "win11 node24; docs: Google search operators (username masked later)"
  },
  "start|تسأل سؤال كويس": {
   "hash": "1430298e6e5c",
@@ -2680,9 +2725,9 @@
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1"
  },
  "start|متغيرات البيئة": {
-  "hash": "407e1a3e9e24",
+  "hash": "046fa6d46231",
   "date": "2026-10-05",
-  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1"
+  "on": "ubuntu-24.04; win11 pwsh7 + ps5.1 (username masked later)"
  },
  "start|محرر النصوص": {
   "hash": "8cbaa901df3d",
@@ -2714,10 +2759,295 @@
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
  },
- "wsl|.wslconfig و wsl.conf": {
-  "hash": "f7aad7bdd019",
+ "vscode|.code-snippets": {
+  "hash": "1c77fd50a248",
   "date": "2026-10-06",
-  "on": "docker on WSL2 defaults; docs: editing files"
+  "on": "JSON validated; docs: snippet expansion"
+ },
+ "vscode|.code-workspace": {
+  "hash": "80299ff9b0d6",
+  "date": "2026-10-06",
+  "on": "JSON validated + code --help; docs: workspaces"
+ },
+ "vscode|.vscode/extensions.json": {
+  "hash": "c8a361413849",
+  "date": "2026-10-06",
+  "on": "windows-11 JSON validated + code --list-extensions; docs: prompt"
+ },
+ "vscode|.vscode/settings.json": {
+  "hash": "5dab7b87c472",
+  "date": "2026-10-06",
+  "on": "windows-11 JSON validated; docs: behaviour"
+ },
+ "vscode|Alt+Click": {
+  "hash": "7191696c22ff",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Alt+Left": {
+  "hash": "cc06c2cf2a83",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Alt+Up / Shift+Alt+Down": {
+  "hash": "31e6d1915261",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+,": {
+  "hash": "bf284aef759a",
+  "date": "2026-10-06",
+  "on": "docs: settings docs"
+ },
+ "vscode|Ctrl+.": {
+  "hash": "51ec5a595d9d",
+  "date": "2026-10-06",
+  "on": "windows-11 TS 5.9 code fixes; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+/": {
+  "hash": "dfad6e672448",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Alt+I": {
+  "hash": "c78dc920ef66",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables (AI not run)"
+ },
+ "vscode|Ctrl+B": {
+  "hash": "d83506d371dc",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+D": {
+  "hash": "6698b15a5d92",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+G": {
+  "hash": "7c7f906d8b90",
+  "date": "2026-10-06",
+  "on": "windows-11 tsc 5.9.3; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+K Z": {
+  "hash": "b0bc35146c6a",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables + VS Code 1.140 UI strings"
+ },
+ "vscode|Ctrl+P": {
+  "hash": "8387507c6405",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+F": {
+  "hash": "c1bd487f16b4",
+  "date": "2026-10-06",
+  "on": "windows-11 bundled ripgrep 15.0.0; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+G": {
+  "hash": "5f1c2c130010",
+  "date": "2026-10-06",
+  "on": "windows-11 git partial staging; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+H": {
+  "hash": "e97164489e59",
+  "date": "2026-10-06",
+  "on": "windows-11 regex replace in node; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+K": {
+  "hash": "bea5b54fea52",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+M": {
+  "hash": "2cf38afca2dd",
+  "date": "2026-10-06",
+  "on": "windows-11 tsc output; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+O": {
+  "hash": "bf490823587f",
+  "date": "2026-10-06",
+  "on": "windows-11 TS 5.9 language service; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+P": {
+  "hash": "2bffe6b268a4",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+T": {
+  "hash": "fcee94b3f705",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Shift+V": {
+  "hash": "74a41eed7e9c",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables + markdown docs"
+ },
+ "vscode|Ctrl+Shift+X": {
+  "hash": "a43c02fcf1e5",
+  "date": "2026-10-06",
+  "on": "win11 code --list-extensions; docs: Extensions view"
+ },
+ "vscode|Ctrl+Shift+[": {
+  "hash": "a4d6c377b6fd",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Space": {
+  "hash": "07f36ce9bfde",
+  "date": "2026-10-06",
+  "on": "windows-11 lib.dom.d.ts signature; docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+Tab": {
+  "hash": "a892855245ea",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+\\": {
+  "hash": "b9418e3373ef",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Ctrl+`": {
+  "hash": "c116039264ee",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Emmet": {
+  "hash": "c57aafd4809e",
+  "date": "2026-10-06",
+  "on": "windows-11 emmet npm v2 expansions; docs: settings"
+ },
+ "vscode|F12": {
+  "hash": "3c40482c5690",
+  "date": "2026-10-06",
+  "on": "windows-11 TS 5.9 language service; docs: official VS Code keybinding tables"
+ },
+ "vscode|F2": {
+  "hash": "ad46938608db",
+  "date": "2026-10-06",
+  "on": "windows-11 TS 5.9 rename; docs: official VS Code keybinding tables"
+ },
+ "vscode|F5": {
+  "hash": "05b98feea311",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables + debugging docs"
+ },
+ "vscode|F9": {
+  "hash": "0ea0a6f9fb9d",
+  "date": "2026-10-06",
+  "on": "docs: debugging docs"
+ },
+ "vscode|JavaScript Debug Terminal": {
+  "hash": "6fbb2143b310",
+  "date": "2026-10-06",
+  "on": "windows-11 node --inspect; docs: js-debug"
+ },
+ "vscode|Merge Editor": {
+  "hash": "e02beed73256",
+  "date": "2026-10-06",
+  "on": "windows-11 git conflict markers; docs: UI"
+ },
+ "vscode|Ports": {
+  "hash": "f26dbd330a20",
+  "date": "2026-10-06",
+  "on": "docs: VS Code docs (needs Remote)"
+ },
+ "vscode|Profiles": {
+  "hash": "caabeec7b2b6",
+  "date": "2026-10-06",
+  "on": "win11 code --help; docs: Profiles UI"
+ },
+ "vscode|Reload Window": {
+  "hash": "5628c926ecf1",
+  "date": "2026-10-06",
+  "on": "docs: editor commands"
+ },
+ "vscode|Remote-SSH": {
+  "hash": "528b03d38d11",
+  "date": "2026-10-06",
+  "on": "win11 wsl -l -q + ubuntu-24.04 du; docs: Remote-SSH"
+ },
+ "vscode|Shift+Alt+F": {
+  "hash": "5f3b48ee3d47",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables + VS Code 1.140 UI strings"
+ },
+ "vscode|Shift+Alt+Right": {
+  "hash": "fbc62d8b53fe",
+  "date": "2026-10-06",
+  "on": "docs: official VS Code keybinding tables"
+ },
+ "vscode|Shift+F12": {
+  "hash": "e27a0f53f66b",
+  "date": "2026-10-06",
+  "on": "windows-11 TS 5.9 language service; docs: official VS Code keybinding tables"
+ },
+ "vscode|Timeline": {
+  "hash": "d998d45113ea",
+  "date": "2026-10-06",
+  "on": "docs: VS Code 1.140 defaults and UI strings"
+ },
+ "vscode|code --diff": {
+  "hash": "1164577a7f45",
+  "date": "2026-10-06",
+  "on": "bash/pwsh 7/ps 5.1 quoting test; docs: diff editor"
+ },
+ "vscode|code --disable-extensions": {
+  "hash": "394b0de51c3d",
+  "date": "2026-10-06",
+  "on": "win11 code --help; docs: flags, Bisect"
+ },
+ "vscode|code --goto": {
+  "hash": "381c96b34280",
+  "date": "2026-10-06",
+  "on": "win11 code --help, git config read; docs: --goto/--wait"
+ },
+ "vscode|code --list-extensions": {
+  "hash": "106c21bb2004",
+  "date": "2026-10-06",
+  "on": "win11 --list-extensions; ubuntu-24.04 xargs; pwsh ForEach; docs: install/uninstall"
+ },
+ "vscode|code .": {
+  "hash": "643a0703ee2c",
+  "date": "2026-10-06",
+  "on": "win11 code --version/--help; docs: opening windows, stdin (cli.js)"
+ },
+ "vscode|devcontainer.json": {
+  "hash": "fee56b4d2b49",
+  "date": "2026-10-06",
+  "on": "JSON validated + docker manifest inspect; docs: Dev Containers"
+ },
+ "vscode|files.exclude": {
+  "hash": "032afd3283d8",
+  "date": "2026-10-06",
+  "on": "windows-11 JSON validated, defaults from 1.140; docs: behaviour"
+ },
+ "vscode|keybindings.json": {
+  "hash": "76d0671290aa",
+  "date": "2026-10-06",
+  "on": "JSON validated + node; docs: shortcuts UI"
+ },
+ "vscode|launch.json": {
+  "hash": "9bebb3b0b9e4",
+  "date": "2026-10-06",
+  "on": "win11 node --inspect + docker node:22-slim; JSON validated; docs: debugger UI"
+ },
+ "vscode|launch.json لـ Next.js": {
+  "hash": "619a5a124237",
+  "date": "2026-10-06",
+  "on": "win11 npm 11 arg-passing demo; JSON validated; docs: Next.js debugging"
+ },
+ "vscode|tasks.json": {
+  "hash": "cab4985a9df4",
+  "date": "2026-10-06",
+  "on": "docker node:22-slim tsc error; JSON validated; docs: tasks UI"
+ },
+ "wsl|.wslconfig و wsl.conf": {
+  "hash": "e4da4d55fe21",
+  "date": "2026-10-06",
+  "on": "docker on WSL2 defaults; docs: editing files (username masked later)"
  },
  "wsl|Docker مع WSL": {
   "hash": "fd424c49a36f",
@@ -2775,14 +3105,14 @@
   "on": "docker node:22-slim npm ci timing + ubuntu-24.04; docs: git clone ssh"
  },
  "wsl|مشاكل شائعة": {
-  "hash": "143de88bdc64",
+  "hash": "fa05dd6512e1",
   "date": "2026-10-06",
-  "on": "ubuntu-24.04 docker + win11 Home pwsh; docs: resolv.conf, shutdown, diskpart"
+  "on": "ubuntu-24.04 docker + win11 Home pwsh; docs: resolv.conf, shutdown, diskpart (username masked later)"
  },
  "wsl|ملفات ويندوز من لينكس": {
-  "hash": "fa397c3fdfbc",
+  "hash": "6b0d56a51c5d",
   "date": "2026-10-06",
-  "on": "win11 pwsh + ubuntu-24.04 docker bind mount; docs: explorer.exe, wslpath"
+  "on": "win11 pwsh + ubuntu-24.04 docker bind mount; docs: explorer.exe, wslpath (username masked later)"
  },
  "zsh|*(.om[1,5])": {
   "hash": "0ab454528669",

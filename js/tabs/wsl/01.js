@@ -558,7 +558,7 @@ wslpath -w ~/projects`,
 [[ls]] (list) بيعرض اللي جوه الفولدر. هتلاقي نفس الأسامي اللي ويندوز بيشوفها. على الجهاز ده [[Get-ChildItem C:\Users -Name]] في PowerShell طلع:
 
 ~~~text الناتج (من غير فولدرات TEMP و UMFD اللي ويندوز بيعملها لوحده)
-7ossa
+ali
 Public
 ~~~
 

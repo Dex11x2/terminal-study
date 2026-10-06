@@ -64,7 +64,7 @@ New-Item -ItemType Directory $HOME\scripts -Force
 والناتج سطر بيوصف الفولدر اللي اتعمل:
 
 ~~~text الناتج
-    Directory: C:\Users\7ossa
+    Directory: C:\Users\ali
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
@@ -549,7 +549,7 @@ Total: 12 files, 3.1 MB
 ~~~
 
 ~~~text الناتج
-Path:	C:\Users\7ossa
+Path:	C:\Users\ali
 Done
 ~~~
 

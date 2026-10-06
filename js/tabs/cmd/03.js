@@ -343,8 +343,8 @@ where python
 ~~~
 
 ~~~text الناتج
-C:\Users\7ossa\AppData\Local\Microsoft\WindowsApps\python.exe
-C:\Users\7ossa\AppData\Local\Python\bin\python.exe
+C:\Users\ali\AppData\Local\Microsoft\WindowsApps\python.exe
+C:\Users\ali\AppData\Local\Python\bin\python.exe
 ~~~
 
 نسختين! اللي فوق هو اللي بيشتغل لما تكتب [[python]]، لأن فولدره جاي قبل التاني في الـ PATH. ولما كتبت [[python --version]] طبع [[Python 3.14.3]]، يعني الأولانية شغالة هنا (ده اختصار في فولدر WindowsApps، وعلى الجهاز ده بيشغّل Python حقيقي، والتفاصيل في الحل تحت). ولو طلع Python غير اللي انت سطّبته، المشكلة ترتيب الـ PATH.
@@ -352,8 +352,8 @@ C:\Users\7ossa\AppData\Local\Python\bin\python.exe
 ### استثناء صغير
 
 ~~~text الناتج بتاع where code
-C:\Users\7ossa\AppData\Local\Programs\Microsoft VS Code\bin\code
-C:\Users\7ossa\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd
+C:\Users\ali\AppData\Local\Programs\Microsoft VS Code\bin\code
+C:\Users\ali\AppData\Local\Programs\Microsoft VS Code\bin\code.cmd
 ~~~
 
 السطر الأول ملف [[code]] **من غير امتداد** (ده سكربت لـ Git Bash). CMD مش بيشغّل ملف من غير امتداد، فاللي بيشتغل فعلًا لما تكتب [[code]] في CMD هو [[code.cmd]] اللي تحته. يعني «أول سطر هو اللي بيشتغل» صح، بشرط يكون امتداده من [[PATHEXT]].

@@ -342,7 +342,7 @@ bash -c 'echo [$X]'
 في PowerShell [[$HOME]] متغير جاهز برضه (متغير PowerShell مش متغير بيئة، بس بيدّي نفس المعنى):
 
 ~~~text الناتج على جهازنا
-C:\Users\7ossa
+C:\Users\ali
 ~~~
 
 ### ٦. [[$env:Path]]
@@ -350,7 +350,7 @@ C:\Users\7ossa
 متغيرات **البيئة** في PowerShell ليها بادئة: [[$env:]] (env = environment، يعني «من ورقة البيئة»). فـ [[$env:Path]] قيمة PATH. والفاصل هنا [[;]] مش [[:]] (لأن [[:]] جزء من المسار نفسه زي [[C:]]). على جهازنا كانت ٣٢ فولدر في سطر طويل بيبدأ كده:
 
 ~~~text أول الناتج
-C:\Users\7ossa\bin;C:\Program Files\Git\ucrt64\bin;C:\Progra...
+C:\Users\ali\bin;C:\Program Files\Git\ucrt64\bin;C:\Progra...
 ~~~
 
 > [[echo $PATH]] من غير [[env:]] طبع **سطر فاضي**: PowerShell دوّر على متغير PowerShell عادي اسمه PATH وملقاهوش. ومش بيقول error.

@@ -244,7 +244,7 @@ Get-Clipboard | Sort-Object -Unique | Set-Clipboard`,
 ولما قريت الحافظة بعدها وأنا واقف في TEMP:
 
 ~~~text الناتج من Get-Clipboard
-C:\Users\7ossa\AppData\Local\Temp
+C:\Users\ali\AppData\Local\Temp
 ~~~
 
 ---
