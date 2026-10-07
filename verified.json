@@ -4194,6 +4194,76 @@
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 (Format-Hex)"
  },
+ "flutter|List و Map و Set": {
+  "hash": "e448e8341397",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|Stream": {
+  "hash": "b14be64d5647",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|async و await": {
+  "hash": "e5772132023d",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|class": {
+  "hash": "c61809936d7c",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|final و const": {
+  "hash": "664b48e5cf16",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|flutter create": {
+  "hash": "f886af0e23b7",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): create/--empty/pub get/analyze/test/build web"
+ },
+ "flutter|flutter doctor": {
+  "hash": "3f354fa6b503",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0); docs: flutter upgrade"
+ },
+ "flutter|flutter run": {
+  "hash": "5afb6ab2eb73",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): devices/run -d web-server + headless Chrome; docs: emulator/phone, --release"
+ },
+ "flutter|hot reload": {
+  "hash": "8ab2c5bb8169",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0) flutter run -d web-server + headless Chrome (r, R); docs: d, VS Code"
+ },
+ "flutter|named parameters": {
+  "hash": "8123edfb447d",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|named و factory": {
+  "hash": "ab6a8acf0e94",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|null safety": {
+  "hash": "d8d943ae8771",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|records و patterns": {
+  "hash": "c495dd85b1f6",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|مقدمة Dart ودالة main()": {
+  "hash": "e1d22914a3c6",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5)"
+ },
  "gha|::error::": {
   "hash": "6c59ced4e17e",
   "date": "2026-10-06",
@@ -9589,6 +9659,11 @@
   "date": "2026-10-07",
   "on": "pwsh 7.6 and Windows PowerShell 5.1 with Docker Desktop (Docker down simulated with DOCKER_HOST)"
  },
+ "rn|AsyncStorage": {
+  "hash": "01d1c7b48d0e",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (localStorage) + jest-expo mock"
+ },
  "rn|Expo Go و development build": {
   "hash": "33a83bfec459",
   "date": "2026-10-07",
@@ -9639,10 +9714,30 @@
   "date": "2026-10-07",
   "on": "windows: Expo SDK 57 web + headless Chrome; docs: native insets"
  },
+ "rn|SecureStore": {
+  "hash": "b3ba90087d4a",
+  "date": "2026-10-07",
+  "on": "jest-expo/RNTL 14 + Expo SDK 57 web (web shim); docs: Keychain/Keystore"
+ },
+ "rn|Stack": {
+  "hash": "ef31bec6b4f3",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web + jest-expo renderRouter; docs: native modal/swipe-back"
+ },
+ "rn|Stack.Protected": {
+  "hash": "89231d612c46",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (SecureStore web shim) + jest-expo/RNTL 14"
+ },
  "rn|StyleSheet": {
   "hash": "65e4fc054d9f",
   "date": "2026-10-07",
   "on": "windows: Expo SDK 57 web + headless Chrome, npx tsc --noEmit"
+ },
+ "rn|Tabs": {
+  "hash": "5c47e98afbb1",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (Chrome headless)"
  },
  "rn|TextInput": {
   "hash": "dee98ba57a68",
@@ -9664,6 +9759,16 @@
   "date": "2026-10-07",
   "on": "windows: create-expo-app@latest (SDK 57), npx expo start, npm run reset-project; docs: QR/Expo Go/a,i keys"
  },
+ "rn|expo-sqlite": {
+  "hash": "8a16a1c7e037",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (wa-sqlite + COOP/COEP); docs: native file storage"
+ },
+ "rn|file-based routing": {
+  "hash": "ac27686da578",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (Chrome headless) + tsc typed routes; docs: device deep links"
+ },
  "rn|flexbox في RN": {
   "hash": "74d27764f50e",
   "date": "2026-10-07",
@@ -9673,6 +9778,36 @@
   "hash": "774ebe6f70d0",
   "date": "2026-10-07",
   "on": "windows: expo install (--dev, --check, --fix), expo-doctor"
+ },
+ "rn|params": {
+  "hash": "2c7722e75be6",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (Chrome headless, fake API) + tsc"
+ },
+ "rn|pull to refresh و infinite": {
+  "hash": "f3c6e5ba97aa",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (infinite scroll) + jest-expo/RNTL 14; docs: pull-to-refresh on device"
+ },
+ "rn|react-hook-form + Controller": {
+  "hash": "fcc2318aa976",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web + jest-expo/RNTL 14 userEvent"
+ },
+ "rn|useMutation و invalidate": {
+  "hash": "063152bf4bd4",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (fake API delay and 500); docs: native Alert"
+ },
+ "rn|useQuery في RN": {
+  "hash": "12e21b2529bc",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (visibility refetch, offline via NetInfo); docs: AppState on device"
+ },
+ "rn|الكيبورد": {
+  "hash": "c09520e1a3b1",
+  "date": "2026-10-07",
+  "on": "Expo SDK 57 web (focus, input attrs); docs: keyboard avoiding on iOS/Android"
  },
  "sec|.env اترفع على Git": {
   "hash": "f99d0f630304",
