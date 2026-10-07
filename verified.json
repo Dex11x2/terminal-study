@@ -8309,6 +8309,11 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker)"
  },
+ "symbols|\"$name\"  (Kotlin و Dart)": {
+  "hash": "d60375b211a8",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.2.20; docs: Dart row"
+ },
  "symbols|#  -  **  ```  (Markdown)": {
   "hash": "76ce61c0ec90",
   "date": "2026-10-07",
@@ -8323,6 +8328,11 @@
   "hash": "1eae0082fa06",
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; tsc 7.0.2 for the private comparison"
+ },
+ "symbols|#include <>  و  \"\"": {
+  "hash": "4471cc362d1b",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
  },
  "symbols|$  و  _": {
   "hash": "0add70d39517",
@@ -8394,6 +8404,11 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker, git); npm in Git Bash; cmd /c + pwsh"
  },
+ "symbols|&x  و  int &r": {
+  "hash": "e0a79d8c2182",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
+ },
  "symbols|'text'  ضد  \"column\"": {
   "hash": "354c38de7a70",
   "date": "2026-10-07",
@@ -8424,6 +8439,16 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; Python 3.14 (Windows); bash in ubuntu:24.04 Docker"
  },
+ "symbols|*T  و  &x في Go": {
+  "hash": "0c47408ac35c",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go 1.25.14)"
+ },
+ "symbols|*args  و  **kwargs": {
+  "hash": "6b6db1258bcc",
+  "date": "2026-10-07",
+  "on": "windows-11 python-3.14"
+ },
  "symbols|+  و  +=  و  ++": {
   "hash": "1ea26603d045",
   "date": "2026-10-07",
@@ -8433,6 +8458,11 @@
   "hash": "58be9468595a",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|-> (نوع الراجع)": {
+  "hash": "1d0f48c857f0",
+  "date": "2026-10-07",
+  "on": "docker swift 6.4 + rust:slim 1.99 + kotlinc 2.2.20 + golang 1.25"
  },
  "symbols|.  و  ..": {
   "hash": "c01d2653c5a3",
@@ -8459,15 +8489,35 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; Python 3.14 (Windows); docs: VS Code Ctrl+/"
  },
+ "symbols|// في Python": {
+  "hash": "ee34d1f95f48",
+  "date": "2026-10-07",
+  "on": "windows-11 python-3.14"
+ },
  "symbols|2>  و  2>&1": {
   "hash": "69c4dffdac3b",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker, python3); npm 11.17 in Git Bash on Windows"
  },
+ "symbols|: والمسافات": {
+  "hash": "025a5938a5ce",
+  "date": "2026-10-07",
+  "on": "windows-11 python-3.14"
+ },
  "symbols|://  ?  &  =  #": {
   "hash": "0d947a74b2ba",
   "date": "2026-10-07",
   "on": "Node 24 (Windows)"
+ },
+ "symbols|:= (walrus)": {
+  "hash": "86bed2827c47",
+  "date": "2026-10-07",
+  "on": "windows-11 python-3.14"
+ },
+ "symbols|:= في Go": {
+  "hash": "d01e0dd4268e",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go 1.25.14)"
  },
  "symbols|;": {
   "hash": "ca2bc8843a81",
@@ -8483,6 +8533,11 @@
   "hash": "307a7c8e11ec",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker); docs: mysql line"
+ },
+ "symbols|<-": {
+  "hash": "765be4546435",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go 1.25.14)"
  },
  "symbols|<<EOF": {
   "hash": "6824524fd1f7",
@@ -8509,6 +8564,11 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows"
  },
+ "symbols|=>  ضد  ->": {
+  "hash": "7f8d532c5996",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24 + python-3.14; docker eclipse-temurin:21-jdk (java 21 + kotlinc 2.2.20)"
+ },
  "symbols|=>  و  .  و  ::  (PHP)": {
   "hash": "b44a08d2321a",
   "date": "2026-10-07",
@@ -8529,10 +8589,20 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows"
  },
+ "symbols|?.  و  ?:  و  !!": {
+  "hash": "12ef7321784c",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.2.20"
+ },
  "symbols|??  و  ??=": {
   "hash": "d737fba940f7",
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows"
+ },
+ "symbols|@Override": {
+  "hash": "30fb080ec86b",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk (java 21); docs: Spring annotations"
  },
  "symbols|@decorator": {
   "hash": "14013965fa3a",
@@ -8569,6 +8639,16 @@
   "date": "2026-10-07",
   "on": "Docker postgres:18 (psql 18.6); docs: MySQL -- rule"
  },
+ "symbols|String::length": {
+  "hash": "444f78731f69",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk (java 21 + kotlinc 2.2.20)"
+ },
+ "symbols|String?  و  x!": {
+  "hash": "454b2dd2068c",
+  "date": "2026-10-07",
+  "on": "docker swift:latest (swift 6.4, linux)"
+ },
  "symbols|[ ]  و  [[ ]]": {
   "hash": "695b16c56d6f",
   "date": "2026-10-07",
@@ -8584,6 +8664,16 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker); docs: the docker run line itself"
  },
+ "symbols|\\d  \\w  [ ]  ( )  {n}  |": {
+  "hash": "1da43f9a3301",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24"
+ },
+ "symbols|^  $  .  *  +  ?": {
+  "hash": "c8d651a9c61b",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24"
+ },
  "symbols|^1.2.3  و  ~1.2.3": {
   "hash": "757a14e0fe96",
   "date": "2026-10-07",
@@ -8593,6 +8683,11 @@
   "hash": "6e5ab557f723",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker, interactive bash + python3); python 3.14 on Windows"
+ },
+ "symbols|_ في Go": {
+  "hash": "c12215f0fe17",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go 1.25.14)"
  },
  "symbols|a && b  و  a || b": {
   "hash": "92ba7ef63e83",
@@ -8609,10 +8704,35 @@
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
  },
+ "symbols|cout <<  و  cin >>": {
+  "hash": "c0b449c3ed4a",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
+ },
+ "symbols|def f(x: int) -> str": {
+  "hash": "eec5ff6c49fa",
+  "date": "2026-10-07",
+  "on": "windows-11 python-3.14; mypy-2.4 in docker python:3.13-slim"
+ },
+ "symbols|f\"{x}\"": {
+  "hash": "67b5c78ff1e7",
+  "date": "2026-10-07",
+  "on": "windows-11 python-3.14"
+ },
  "symbols|f()  و  (a + b)": {
   "hash": "586e6c277e15",
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|int *p  و  *p": {
+  "hash": "beea9289b74c",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
+ },
+ "symbols|is  و  ==": {
+  "hash": "4c4d07977c2d",
+  "date": "2026-10-07",
+  "on": "windows-11 python-3.14"
  },
  "symbols|key: value  و  -  (YAML)": {
   "hash": "091afacfb5de",
@@ -8629,15 +8749,40 @@
   "date": "2026-10-07",
   "on": "tsc 7.0.2 --strict (lib dom) + Node 24.19 on Windows; docs: getElementById at runtime"
  },
+ "symbols|nums ...int": {
+  "hash": "1f73cc7d83f2",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go 1.25.14)"
+ },
  "symbols|obj.key  و  obj[key]": {
   "hash": "7f58bff958f3",
   "date": "2026-10-07",
   "on": "Node 24.19 on Windows"
  },
+ "symbols|p->name": {
+  "hash": "ebed2d18e3d5",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
+ },
+ "symbols|std::cout": {
+  "hash": "4f8c27f8699b",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
+ },
+ "symbols|template <typename T>": {
+  "hash": "7cdef3ebc1a2",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
+ },
  "symbols|x: number": {
   "hash": "63eb060f846d",
   "date": "2026-10-07",
   "on": "tsc 7.0.2 --strict + Node 24.19 on Windows"
+ },
+ "symbols|{ \"key\": value }": {
+  "hash": "51f51d357457",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24 + python-3.14"
  },
  "symbols|{ }": {
   "hash": "2265795a7776",
@@ -8658,6 +8803,11 @@
   "hash": "129581c192a3",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 (Docker); pwsh 7.6; docs: Mac"
+ },
+ "symbols|~ClassName()": {
+  "hash": "c45f9c789b73",
+  "date": "2026-10-07",
+  "on": "docker gcc:14 (gcc 14.4, linux)"
  },
  "ts|! (non-null)": {
   "hash": "548b6a281bb5",
