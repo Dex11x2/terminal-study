@@ -4434,6 +4434,11 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
  },
+ "go|const و iota": {
+  "hash": "7ba917612447",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14)"
+ },
  "go|copy و slices": {
   "hash": "16ba7f2c4c78",
   "date": "2026-10-07",
@@ -4443,6 +4448,31 @@
   "hash": "bf2e5077bf25",
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|fmt و Printf": {
+  "hash": "cff4fabef87e",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14)"
+ },
+ "go|go fmt و go vet": {
+  "hash": "5903b933ae1d",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14); staticcheck 0.8.1 via GOTOOLCHAIN=auto"
+ },
+ "go|go mod init": {
+  "hash": "a65bdf18d63c",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14)"
+ },
+ "go|go run و go build": {
+  "hash": "9533b2a4220d",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14); goimports via GOTOOLCHAIN=auto"
+ },
+ "go|go version": {
+  "hash": "0568f579f744",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14) + ubuntu:24.04 docker (tar install + PATH); docs: macOS/Windows outputs"
  },
  "go|if و for": {
   "hash": "7fdb013f7d42",
@@ -4454,10 +4484,25 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
  },
+ "go|string و rune و byte": {
+  "hash": "a0ac10b622ae",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14)"
+ },
  "go|switch": {
   "hash": "88f3a7af92eb",
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|var و :=": {
+  "hash": "06b0c90cca44",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14)"
+ },
+ "go|الأنواع والتحويل": {
+  "hash": "80c455705640",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14)"
  },
  "go|الدوال والقيم المتعددة": {
   "hash": "a84b6359639b",
@@ -4473,6 +4518,11 @@
   "hash": "0f22c3afe727",
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|مقدمة Go وكتابة أول برنامج": {
+  "hash": "38ccb0142bca",
+  "date": "2026-10-07",
+  "on": "golang:1.25 docker (Go 1.25.14)"
  },
  "js|&& و || و !": {
   "hash": "adff64700c3c",
