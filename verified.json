@@ -1,4 +1,24 @@
 {
+ "angular|@Component": {
+  "hash": "ebdc724f2930",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome + ng build (NG8001, NG8113, NG8109/NG8117)"
+ },
+ "angular|@defer": {
+  "hash": "3a81a6eb424e",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng build + ng serve --no-hmr headless Chrome, NG0751 with HMR"
+ },
+ "angular|@for و @let": {
+  "hash": "c418e5952bf1",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome, ng build (NG5002)"
+ },
+ "angular|@if و @switch": {
+  "hash": "a4b053a0d373",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome, ng build (TS2531)"
+ },
  "angular|Angular Material": {
   "hash": "3c7c3a35aad0",
   "date": "2026-10-07",
@@ -34,6 +54,26 @@
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright, Node 24 fake API)"
  },
+ "angular|bindings": {
+  "hash": "2f764bc85c14",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome + ng build (TS2551)"
+ },
+ "angular|directives": {
+  "hash": "46b0fb10f7e8",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome"
+ },
+ "angular|effect و linkedSignal": {
+  "hash": "cf91a50b0492",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome (localStorage, reload, NG0203)"
+ },
+ "angular|guards": {
+  "hash": "c3294ddb5973",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome"
+ },
  "angular|httpResource": {
   "hash": "e1a3aef804b7",
   "date": "2026-10-07",
@@ -44,25 +84,80 @@
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 + @angular/localize 22.2.1 (extract-i18n, build --localize, Chrome headless)"
  },
+ "angular|input() و output()": {
+  "hash": "0a6247eecfc9",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome, ng build (NG8008, TS2339, NG8118)"
+ },
  "angular|interceptors": {
   "hash": "6e2989c26827",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright, Node 24 fake API)"
+ },
+ "angular|lazy routes": {
+  "hash": "250f2dc244df",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng build + ng serve --no-hmr headless Chrome"
+ },
+ "angular|model()": {
+  "hash": "dc3cef935c73",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome, ng build (NG5002)"
+ },
+ "angular|ng generate": {
+  "hash": "5a324dfe118f",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular CLI 22.2.2: all example commands + try"
+ },
+ "angular|ng new": {
+  "hash": "a71134f12b54",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Angular CLI 22.2.2 (npx): ng version, ng new, ng serve + HMR edit, ng build; docs: npm i -g"
  },
  "angular|pipe و operators": {
   "hash": "fdc402b7bc80",
   "date": "2026-10-07",
   "on": "Windows 11, Node 24.19 + rxjs 7.8.2; solCode in Windows 11, Angular 22.2 + Chrome headless"
  },
+ "angular|pipes": {
+  "hash": "5a9b204656eb",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome, ng build (NG8004)"
+ },
+ "angular|provideRouter و routerLink": {
+  "hash": "9c0ce7de3e34",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome (NG04014)"
+ },
  "angular|reactive forms": {
   "hash": "53f4b3dcaa0b",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright + ng build)"
  },
+ "angular|resolvers": {
+  "hash": "ae70a2318f9f",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome with fake-backend interceptor"
+ },
+ "angular|route params": {
+  "hash": "c4a4aa48f5f8",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome (NG0950)"
+ },
+ "angular|services و inject()": {
+  "hash": "e170d4c43cad",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 ng serve + headless Chrome, ng build (NG2028), NG0203"
+ },
  "angular|signal forms": {
   "hash": "a4ad385d2f3e",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright)"
+ },
+ "angular|signal و computed": {
+  "hash": "8ed985e1fcc1",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19 scripts in Angular 22.2 project"
  },
  "angular|store بـ service و signals": {
   "hash": "a65a8b52537a",
