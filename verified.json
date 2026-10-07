@@ -9509,6 +9509,91 @@
   "date": "2026-10-07",
   "on": "pwsh 7.6 and Windows PowerShell 5.1 with Docker Desktop (Docker down simulated with DOCKER_HOST)"
  },
+ "rn|Expo Go و development build": {
+  "hash": "33a83bfec459",
+  "date": "2026-10-07",
+  "on": "windows: expo install expo-dev-client, expo run:android (fails at missing Android SDK); docs: Expo Go, eas build"
+ },
+ "rn|FlatList": {
+  "hash": "55a608f8b4dc",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome (5000-item solCode)"
+ },
+ "rn|Image و expo-image": {
+  "hash": "35f11c255208",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome (layout measured)"
+ },
+ "rn|NativeWind": {
+  "hash": "b15abf2b1407",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome (nativewind 4.2.7 + tailwindcss 3.4); docs: native"
+ },
+ "rn|New Architecture": {
+  "hash": "c52c2284ddc6",
+  "date": "2026-10-07",
+  "on": "windows: npx expo --version, npm ls, npx expo-doctor, newArchEnabled:false test"
+ },
+ "rn|Platform و الأبعاد": {
+  "hash": "c7d6ca9ac0c2",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome at 390/768/767; docs: iOS/Android shadows, fontScale"
+ },
+ "rn|Pressable": {
+  "hash": "445f3bcd22a4",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome; docs: android_ripple"
+ },
+ "rn|RN مش ويب": {
+  "hash": "389c986bbbb9",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome; docs: native crash for text outside Text"
+ },
+ "rn|RN ولا Flutter": {
+  "hash": "0a522d653e8e",
+  "date": "2026-10-07",
+  "on": "windows: create-expo-app@latest, npm create vite@latest --template react-ts; docs: flutter create"
+ },
+ "rn|ScrollView و SafeArea": {
+  "hash": "b3cd0c1ba18b",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome; docs: native insets"
+ },
+ "rn|StyleSheet": {
+  "hash": "65e4fc054d9f",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome, npx tsc --noEmit"
+ },
+ "rn|TextInput": {
+  "hash": "dee98ba57a68",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome; docs: mobile keyboards"
+ },
+ "rn|View و Text": {
+  "hash": "55cdc9013c61",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome, tsc"
+ },
+ "rn|app.json و prebuild": {
+  "hash": "eccc132dceab",
+  "date": "2026-10-07",
+  "on": "windows: app.config.ts + expo config, expo prebuild --platform android; docs: iOS Info.plist"
+ },
+ "rn|create-expo-app": {
+  "hash": "ba00788cca74",
+  "date": "2026-10-07",
+  "on": "windows: create-expo-app@latest (SDK 57), npx expo start, npm run reset-project; docs: QR/Expo Go/a,i keys"
+ },
+ "rn|flexbox في RN": {
+  "hash": "74d27764f50e",
+  "date": "2026-10-07",
+  "on": "windows: Expo SDK 57 web + headless Chrome (all try variants measured)"
+ },
+ "rn|npx expo install": {
+  "hash": "774ebe6f70d0",
+  "date": "2026-10-07",
+  "on": "windows: expo install (--dev, --check, --fix), expo-doctor"
+ },
  "sec|.env اترفع على Git": {
   "hash": "f99d0f630304",
   "date": "2026-10-06",
