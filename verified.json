@@ -4424,6 +4424,56 @@
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker, nginx access.log)"
  },
+ "go|& و * (pointers)": {
+  "hash": "c9c0e31f8acd",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|closures": {
+  "hash": "010c148d16eb",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|copy و slices": {
+  "hash": "16ba7f2c4c78",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|embedding": {
+  "hash": "bf2e5077bf25",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|if و for": {
+  "hash": "7fdb013f7d42",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|maps": {
+  "hash": "c9b002143c1c",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|switch": {
+  "hash": "88f3a7af92eb",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|الدوال والقيم المتعددة": {
+  "hash": "a84b6359639b",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|الـ Structs والـ Methods والـ Pointers": {
+  "hash": "22dd46b424e1",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|المصفوفات والـ Slices والـ Maps في Go": {
+  "hash": "0f22c3afe727",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
  "js|&& و || و !": {
   "hash": "adff64700c3c",
   "date": "2026-10-06",
