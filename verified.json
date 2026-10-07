@@ -2874,6 +2874,11 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
+ "dsa|BFS (level order)": {
+  "hash": "a4be5c965d13",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
  "dsa|Big-O": {
   "hash": "e20205061654",
   "date": "2026-10-07",
@@ -2881,6 +2886,11 @@
  },
  "dsa|Two Sum (hash map)": {
   "hash": "238f47757cf8",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
+ "dsa|adjacency list": {
+  "hash": "e02ad7a1b289",
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
@@ -2919,6 +2929,11 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows 11): example + solCode run, loops instrumented"
  },
+ "dsa|cycle detection": {
+  "hash": "53f7ea71cf01",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
  "dsa|fast/slow pointers": {
   "hash": "447b5a1360a0",
   "date": "2026-10-07",
@@ -2949,6 +2964,16 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
  },
+ "dsa|lowest common ancestor": {
+  "hash": "075f2d618672",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
+ "dsa|max depth": {
+  "hash": "1cef43e757db",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
  "dsa|memoization": {
   "hash": "9d0201b917b2",
   "date": "2026-10-07",
@@ -2978,6 +3003,11 @@
   "hash": "1db11f9ec797",
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|number of islands": {
+  "hash": "45859e779323",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
  "dsa|palindrome (two ends)": {
   "hash": "4bf19d3bda42",
@@ -3024,6 +3054,11 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
  },
+ "dsa|shortest path in grid (BFS)": {
+  "hash": "ff585b75a27a",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
  "dsa|sort comparator": {
   "hash": "8d965922869e",
   "date": "2026-10-07",
@@ -3039,6 +3074,16 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
  },
+ "dsa|topological sort (course schedule)": {
+  "hash": "f078c07762dc",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
+ "dsa|tree DFS (pre/in/post)": {
+  "hash": "689554ff09c5",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
  "dsa|two pointers (move the shorter)": {
   "hash": "4ae96d946102",
   "date": "2026-10-07",
@@ -3049,8 +3094,18 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
+ "dsa|validate BST": {
+  "hash": "daa19cfaa7e5",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
  "dsa|variable sliding window": {
   "hash": "e11e983c83e3",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
+ "dsa|walk nested JSON": {
+  "hash": "48d43e071148",
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
