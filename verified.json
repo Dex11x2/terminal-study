@@ -6514,6 +6514,16 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli 8.4.26 php -S + mysql:8.4; curl, curl.exe, pwsh 7.6"
  },
+ "php|MVC": {
+  "hash": "9f63301a634d",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (SQLite PDO, php -S, assert test) + composer:2 dump-autoload"
+ },
+ "php|OPcache": {
+  "hash": "d8bbc374e1d7",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (CLI and php -S); docs: PHP-FPM reload and production numbers"
+ },
  "php|PHPMailer": {
   "hash": "ff99556af02f",
   "date": "2026-10-07",
@@ -6523,6 +6533,11 @@
   "hash": "897dfa4be829",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl (Git Bash), curl.exe (pwsh)"
+ },
+ "php|PSR-4 autoload": {
+  "hash": "ce3ab762c542",
+  "date": "2026-10-07",
+  "on": "docker composer:2 (dump-autoload) + docker php:8.4-cli; docs: Windows/macOS case-insensitivity"
  },
  "php|array": {
   "hash": "bcea407c3787",
@@ -6539,10 +6554,25 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli 8.4.26 + pdo_mysql, mysql:8.4"
  },
+ "php|class": {
+  "hash": "8a6ab29441e5",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli"
+ },
+ "php|composer require": {
+  "hash": "904d72089b3e",
+  "date": "2026-10-07",
+  "on": "docker composer:2 (Composer 2.10.3, PHP 8.5.11)"
+ },
  "php|display_errors": {
   "hash": "ffc64ebaf450",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli 8.4.26 php -S; curl (Git Bash)"
+ },
+ "php|enum": {
+  "hash": "eca60a8b55f5",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli"
  },
  "php|fetch / fetchAll": {
   "hash": "314b2423f042",
@@ -6553,6 +6583,11 @@
   "hash": "c2ade3f307fd",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|front controller": {
+  "hash": "c97f66d804c9",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (php -S, curl from host)"
  },
  "php|function": {
   "hash": "d218ef520703",
@@ -6568,6 +6603,11 @@
   "hash": "48681bcf1836",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl; docs: alert() in browser"
+ },
+ "php|interface و abstract": {
+  "hash": "2c39b979b911",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli"
  },
  "php|interpolation": {
   "hash": "60b0224a057e",
@@ -6604,10 +6644,20 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl from Git Bash"
  },
+ "php|php artisan": {
+  "hash": "24a3ada6f83d",
+  "date": "2026-10-07",
+  "on": "docker composer:2 (create-project, Laravel 13.11.0 skeleton) + docker php:8.4-cli (artisan 13.35.0, SQLite); docs: composer run dev"
+ },
  "php|prepare / execute": {
   "hash": "326240374832",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli 8.4.26 + pdo_mysql, mysql:8.4"
+ },
+ "php|property hooks": {
+  "hash": "b5e956a7f5ab",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli"
  },
  "php|readfile": {
   "hash": "86d547c48781",
@@ -6624,6 +6674,11 @@
   "date": "2026-10-07",
   "on": "docker php:8.4-cli 8.4.26 php -S (+ php.ini-production), git status"
  },
+ "php|security checklist": {
+  "hash": "359187e18772",
+  "date": "2026-10-07",
+  "on": "docker ubuntu:24.04 (GNU grep) + git in composer:2 + Git Bash on Windows"
+ },
  "php|session_destroy": {
   "hash": "a0bc53c1007c",
   "date": "2026-10-07",
@@ -6638,6 +6693,11 @@
   "hash": "6260132d7b80",
   "date": "2026-10-07",
   "on": "docker php:8.4-cli 8.4.26 php -S; curl (Git Bash), curl.exe, pwsh 7.6 and powershell 5.1 Invoke-WebRequest"
+ },
+ "php|trait": {
+  "hash": "af57320f12cd",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli"
  },
  "php|try / catch": {
   "hash": "8afdacbe6ad8",
