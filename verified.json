@@ -9524,6 +9524,11 @@
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 curl vs nginx lab + win11 curl.exe; docs: securityheaders.com"
  },
+ "spring|@DataJpaTest": {
+  "hash": "cd46e051bfb9",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25, mvn test with Testcontainers (postgres:16-alpine)"
+ },
  "spring|@Entity": {
   "hash": "8491c1c2dde6",
   "date": "2026-10-07",
@@ -9549,10 +9554,25 @@
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25, Spring Boot 4.1.1) + postgres:18, curl from Windows host"
  },
+ "spring|@WebMvcTest": {
+  "hash": "c06ea6a1cab0",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25, mvn test"
+ },
+ "spring|Actuator": {
+  "hash": "48e890d54e1b",
+  "date": "2026-10-07",
+  "on": "Docker: app image + postgres:16-alpine via compose, curl"
+ },
  "spring|Comparator": {
   "hash": "d85e5dd5fe3a",
   "date": "2026-10-07",
   "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
+ },
+ "spring|Docker": {
+  "hash": "0b0ed756d2aa",
+  "date": "2026-10-07",
+  "on": "Docker: lesson Dockerfile built with eclipse-temurin:25-jre, compose (postgres:16-alpine)"
  },
  "spring|Flyway": {
   "hash": "2fc31bc35843",
@@ -9564,10 +9584,25 @@
   "date": "2026-10-07",
   "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), ./gradlew (Gradle 9.7.1)"
  },
+ "spring|HashMap من جوه": {
+  "hash": "5e41e8a36508",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25"
+ },
  "spring|JDK و JVM": {
   "hash": "ee0b6dd3092c",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|JUnit و Mockito": {
+  "hash": "6b6ca9379efd",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25, Spring Boot 4.1.1 project, mvn test"
+ },
+ "spring|JVM والـ GC": {
+  "hash": "cff917e54084",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25 (java Gc.java, -Xmx64m -Xlog:gc)"
  },
  "spring|JWT resource server": {
   "hash": "0363c318307b",
@@ -9588,6 +9623,11 @@
   "hash": "b1613dcb0a0d",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25, Spring Boot 4.1.1) + postgres:18, curl from Windows host"
+ },
+ "spring|LazyInitializationException": {
+  "hash": "0410cba054e6",
+  "date": "2026-10-07",
+  "on": "Docker: @SpringBootTest + Testcontainers, try on running app with postgres:16-alpine"
  },
  "spring|List و Map و Set": {
   "hash": "79457f586bb1",
@@ -9624,10 +9664,20 @@
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
  },
+ "spring|Testcontainers": {
+  "hash": "ef9c4e9a80f1",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25, mvn test with Testcontainers (postgres:16-alpine); docs: ryuk container"
+ },
  "spring|application.yaml و @ConfigurationProperties": {
   "hash": "829a74b31b3c",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25, Spring Boot 4.1.1) + postgres:18, curl from Windows host"
+ },
+ "spring|bean scopes": {
+  "hash": "2f3f28d9b68c",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25 mvn test (ScopesTest) + counter try against app container"
  },
  "spring|beans و DI": {
   "hash": "06419031d69e",
@@ -9648,6 +9698,11 @@
   "hash": "ae1d34bb034e",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|equals و hashCode": {
+  "hash": "64f7cc33fc17",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25"
  },
  "spring|extends و abstract": {
   "hash": "be2585c6c8e1",
@@ -9734,6 +9789,11 @@
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
  },
+ "spring|virtual threads": {
+  "hash": "4305440f4c38",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25 (java Vt.java) + app image with spring.threads.virtual.enabled"
+ },
  "spring|العلاقات": {
   "hash": "0d6db0e6e3fc",
   "date": "2026-10-07",
@@ -9748,6 +9808,11 @@
   "hash": "ca5f79faeefe",
   "date": "2026-10-07",
   "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1) + OpenJFX 25 + Xvfb; docs: look of the real window"
+ },
+ "spring|فخاخ @Transactional": {
+  "hash": "147e968627d5",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-25, @SpringBootTest + Testcontainers (postgres:16-alpine)"
  },
  "sshc|Host * والأنماط": {
   "hash": "3ebe9cb10bbd",
