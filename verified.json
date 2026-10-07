@@ -8224,6 +8224,11 @@
   "date": "2026-10-07",
   "on": "Windows 11: Capacitor 8.5.2 init, add android, sync, @capacitor/assets; docs: gradlew, adb, iOS"
  },
+ "real|Makefile": {
+  "hash": "fe191deef1b4",
+  "date": "2026-10-07",
+  "on": "GNU Make 4.4.1 in postgres:16 container with docker shim to real psql; docker compose config -q on Windows; docs: exec TTY"
+ },
  "real|Next.js dev في Docker": {
   "hash": "9154723fb0ca",
   "date": "2026-10-07",
@@ -8238,6 +8243,11 @@
   "hash": "26d9d1d3dd3f",
   "date": "2026-10-07",
   "on": "Windows 11 Git Bash (git, local bare remote) + Supabase CLI 2.120 via npx (init, migration new, db push --db-url against postgres:16 in Docker); docs: login, link"
+ },
+ "real|apply-migrations.sh": {
+  "hash": "51cc5cfe4043",
+  "date": "2026-10-07",
+  "on": "postgres:16 container (bash + psql 16), docker compose restart via fake docker"
  },
  "real|compose: Postgres محلي": {
   "hash": "8b6fd024fb35",
@@ -8279,6 +8289,11 @@
   "date": "2026-10-07",
   "on": "actionlint + script body over ssh to ubuntu-24.04 Docker-in-Docker server; docs: GitHub Actions run itself"
  },
+ "real|fix-docker.sh": {
+  "hash": "e8b6c3e45ac7",
+  "date": "2026-10-07",
+  "on": "Windows Docker Desktop compose project (nginx:alpine + redis:8-alpine), build without --pull; docs: --pull"
+ },
  "real|init-ssl.sh": {
   "hash": "27f8e811d2ca",
   "date": "2026-10-07",
@@ -8289,6 +8304,11 @@
   "date": "2026-10-07",
   "on": "node:22-slim container with a sudo user, Vite 8 + Electron 44 (window not opened); Windows CMD for launch.bat"
  },
+ "real|n8n_import.sh": {
+  "hash": "f4fa2dbed697",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 container (envsubst, jq 1.7) with fake docker; docker cp ownership on node:22-alpine as user node; docs: n8n import commands"
+ },
  "real|nginx-apply.sh": {
   "hash": "44f656bf68aa",
   "date": "2026-10-07",
@@ -8298,6 +8318,11 @@
   "hash": "567adcc6dee5",
   "date": "2026-10-07",
   "on": "nginx:alpine 1.31.6 + app container + curl on private Docker network (self-signed cert)"
+ },
+ "real|normalize-phones.mjs": {
+  "hash": "4f15db34d1bb",
+  "date": "2026-10-07",
+  "on": "node:22-slim (Node 22.23.3, pg 8.23.1) + postgres:16 on Docker network"
  },
  "real|preflight.sh": {
   "hash": "d477602ba166",
