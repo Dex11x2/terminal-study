@@ -2799,6 +2799,46 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
+ "dsa|Big-O": {
+  "hash": "e20205061654",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, loops instrumented"
+ },
+ "dsa|amortized O(1)": {
+  "hash": "ab3448afc0d2",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, push-by-push trace"
+ },
+ "dsa|anagram (char count)": {
+  "hash": "8a57e9f320df",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, Map trace"
+ },
+ "dsa|counting loops": {
+  "hash": "1324317283ae",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, loops instrumented"
+ },
+ "dsa|frequency count": {
+  "hash": "0756ff36f424",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, Map trace"
+ },
+ "dsa|palindrome (two ends)": {
+  "hash": "4bf19d3bda42",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, pointer trace"
+ },
+ "dsa|reverse in place": {
+  "hash": "d3637946c8ae",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, swap trace"
+ },
+ "dsa|space complexity": {
+  "hash": "64fcc568437d",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows 11): example + solCode run, recursion depth traced"
+ },
  "files|.7z و .rar و .xz": {
   "hash": "2dcc0174e7a9",
   "date": "2026-10-07",
