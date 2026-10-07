@@ -3244,6 +3244,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next.js 16.4.0 next start + fake Node API + Chrome headless network capture"
  },
+ "next|CSP nonce": {
+  "hash": "fd73e674bb8b",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0, build/start (Report-Only and enforce), curl + headless Chrome"
+ },
  "next|DAL": {
   "hash": "43fb44e9a455",
   "date": "2026-10-07",
@@ -3258,6 +3263,16 @@
   "hash": "d2ccd08fe6a9",
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4 build/start + Chrome via playwright (prefetch, replace/history), missing-Suspense build error; docs: prefetch off in dev"
+ },
+ "next|RSC مش SSR": {
+  "hash": "4e5d46bb2758",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0, build/start, curl (HTML, RSC payload, JS chunks)"
+ },
+ "next|SSG و SSR و ISR و CSR": {
+  "hash": "e7e14c203293",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0, build/start, curl TTFB"
  },
  "next|Server Components": {
   "hash": "646f02256a63",
@@ -3279,6 +3294,16 @@
   "date": "2026-10-07",
   "on": "windows-11 next16.4 + zod + headless Chrome + curl replay (bash, pwsh, powershell)"
  },
+ "next|action ولا route": {
+  "hash": "79e80ea4b06c",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0, build/start, headless Chrome"
+ },
+ "next|analytics و consent": {
+  "hash": "0fc6b1fd7276",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + @next/third-parties 16.4.0, build/start, headless Chrome (gtag requests with test ID)"
+ },
  "next|async component": {
   "hash": "b6dda70f4060",
   "date": "2026-10-07",
@@ -3298,6 +3323,16 @@
   "hash": "ebdb695e90ce",
   "date": "2026-10-07",
   "on": "Windows 11, create-next-app/next 16.4.0, Node 24.19 (Git Bash + pwsh): create, dev, Fast Refresh in Chrome, build, next info; docs: interactive prompts from CLI source"
+ },
+ "next|createNavigation": {
+  "hash": "e11abc81db08",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + next-intl 4.14.9, next start, curl + headless Chrome"
+ },
+ "next|env في Next": {
+  "hash": "f9a9a869a4b6",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + Zod 4.6, build/start, curl + headless Chrome; docs: .env.production precedence"
  },
  "next|error.tsx و not-found.tsx": {
   "hash": "d7d071c139aa",
@@ -3319,6 +3354,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 + Postgres 16 (Docker) + fetch/psql"
  },
+ "next|hydration mismatch": {
+  "hash": "899117c4f5a4",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 next dev (server TZ=UTC), headless Chrome (Africa/Cairo and UTC)"
+ },
  "next|layout.tsx": {
   "hash": "efa3280d4429",
   "date": "2026-10-07",
@@ -3334,6 +3374,36 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next.js 16.4.0 build/start + curl"
  },
+ "next|next upgrade": {
+  "hash": "4919c5a29f1f",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 project + create-next-app@15 (15.5.27) upgraded with @next/codemod@canary, npm outdated/audit, next typegen/build"
+ },
+ "next|next-intl": {
+  "hash": "3661946c2bb4",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + next-intl 4.14.9, next build/start + dev, curl"
+ },
+ "next|next/dynamic": {
+  "hash": "1cbe7932dbd0",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + recharts, build/start, headless Chrome (CDP), next experimental-analyze"
+ },
+ "next|next/font": {
+  "hash": "601fb85b0e11",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + Tailwind v4, build/start, headless Chrome (fonts, CLS with throttling)"
+ },
+ "next|next/image": {
+  "hash": "d42dcc810cba",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0, build/start, curl + headless Chrome; local image server instead of cdn.example.com"
+ },
+ "next|next/script": {
+  "hash": "d51d54bcb0c1",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0, build/start, headless Chrome; local mock scripts instead of third-party CDNs"
+ },
  "next|opengraph-image": {
   "hash": "048bc18e29e0",
   "date": "2026-10-07",
@@ -3343,6 +3413,11 @@
   "hash": "c8e238c6f82c",
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4 build/start + curl statuses, build errors"
+ },
+ "next|proxy مش حماية": {
+  "hash": "d70c7049aedd",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows 11: solCode grep/find/xargs on a sample project; docs: concept"
  },
  "next|proxy.ts": {
   "hash": "86e9fc6e0518",
@@ -3378,6 +3453,11 @@
   "hash": "0f4fb2b664b2",
   "date": "2026-10-07",
   "on": "Windows 11, Next.js 16.4.0 next start + Chrome headless, jose 6.2, bcryptjs 3.0"
+ },
+ "next|setRequestLocale": {
+  "hash": "88be1d356d10",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + next-intl 4.14.9, next build tables with/without setRequestLocale, curl"
  },
  "next|signUpEmail و signInEmail": {
   "hash": "4ab614392265",
@@ -3434,6 +3514,11 @@
   "date": "2026-10-07",
   "on": "windows-11 next16.4 + zod 4.6.5 + headless Chrome; docs: Prisma insensitive/P2025"
  },
+ "next|useTranslations": {
+  "hash": "30469e5ebf95",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 + next-intl 4.14.9, next build/start, curl; Intl.PluralRules in Node 24"
+ },
  "next|webhook": {
   "hash": "4564dbb9ef0e",
   "date": "2026-10-07",
@@ -3444,10 +3529,25 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 admin plugin + Postgres 16 (Docker) + Chrome headless + tsx script"
  },
+ "next|أكتر من نسخة": {
+  "hash": "dc55ef061a39",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0 standalone x2 instances, openssl (Git Bash), nginx:alpine in Docker, Node fetch timing"
+ },
  "next|الكاش من 14 لـ 16": {
   "hash": "e946feba4750",
   "date": "2026-10-07",
   "on": "windows-11 next16.4 dev/build, both models; docs: Next 14 behaviour"
+ },
+ "next|صفحة بطيئة": {
+  "hash": "4ba9d9f7c563",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0, build/start, curl TTFB (waterfall vs Promise.all), experimental-analyze"
+ },
+ "next|فين تنشر": {
+  "hash": "bee9a2eb294d",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4.0: npm run build, npm start -- -p, output export + serve; docs: pm2, vercel"
  },
  "nginx|Caddy": {
   "hash": "fc9f85060328",

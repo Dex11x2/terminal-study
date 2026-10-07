@@ -1,2937 +1,762 @@
 // تكملة تاب next: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/next/01.js (شرح حقول الدرس في أوله)
 MORE("next", [
     {
-      t: "Auth",
-      l: 2,
-      n: "session في cookie، والحماية جنب الداتا مش في الـ proxy، و Next كـ BFF قدام API منفصل",
+      t: "Layouts والملفات الخاصة",
+      l: 1,
+      n: "layout ثابت بيلف الصفحات، وملفات بأسماء محجوزة للتحميل والأخطاء والـ 404 والـ modals",
       items: [
         {
-          cmd: "session cookie",
-          title: "تسجيل الدخول: session في cookie من السيرفر",
-          desc: R`بعد ما تتأكد من الإيميل والباسورد في Server Action، اعمل session وحطها في cookie [[httpOnly]] (الـ JS في المتصفح ميقدرش يقراها) و [[secure]] و [[sameSite: "lax"]]. الـ session يا توكن موقّع (JWT بمكتبة [[jose]]) فيه الـ user id، يا id عشوائي لصف في جدول sessions.
-
-[[cookies()]] من [[next/headers]] (async من Next 15) بتقرا في أي server component، بس الكتابة ([[set]] و [[delete]]) في Server Actions و Route Handlers و proxy بس. وفيه مكتبات بتعمل كل ده: Auth.js و Better Auth و Clerk و Supabase Auth، بس لازم تفهم اللي بيحصل تحت.`,
-          example: R`// app/actions/auth.ts
-"use server";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { SignJWT } from "jose";
-import bcrypt from "bcryptjs";
-const key = new TextEncoder().encode(process.env.SESSION_SECRET);
-export async function login(_prev: { error?: string }, formData: FormData) {
-  const email = String(formData.get("email") ?? "").toLowerCase();
-  const user = await db.user.findUnique({ where: { email } });
-  const ok = user && (await bcrypt.compare(String(formData.get("password") ?? ""), user.passwordHash));
-  if (!user || !ok) return { error: "الإيميل أو الباسورد غلط" };
-  const token = await new SignJWT({ userId: user.id, role: user.role })
-    .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("7d")
-    .sign(key);
-  (await cookies()).set("session", token, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 7 });
-  redirect("/dashboard");
-}
-export async function logout() {
-  (await cookies()).delete("session");
-  redirect("/login");
-}`,
-          try: R`اعمل الـ login بمستخدم ثابت (من غير داتابيز)، وادخل، وافتح DevTools > Application > Cookies: هتلاقي [[session]] وعليها HttpOnly. اكتب [[document.cookie]] في الـ console: مش هتلاقيها. وخد التوكن والصقه في jwt.io: هتقدر تقرا الـ payload (موقّع مش مشفّر، فمتحطش فيه أسرار).`,
-          flag: "script",
-          deep: {
-            why: "التوكن في localStorage أي script في الصفحة يقدر يقراه (XSS، أو مكتبة npm مخترقة). والـ cookie الـ httpOnly المتصفح بيبعتها لوحده مع كل طلب، والـ JS ميقدرش يلمسها. وفي Next الـ server components بتقرا الـ cookie مباشرة، فالصفحة بتترسم وهي عارفة المستخدم من أول لحظة، من غير وميض «مش داخل» وبعدين «داخل».",
-            how: R`فيه نوعين sessions. stateless: JWT موقّع فيه الـ user id والدور والمدة. مفيش داتابيز مع كل طلب، بس مينفعش تلغيه قبل ما يخلص (لو غيّرت الدور أو عملت logout من كل الأجهزة). و database sessions: الـ cookie فيها id عشوائي، والبيانات في جدول. كل طلب query، بس تقدر تمسح الـ session فورًا. وممكن تجمع: JWT قصير والـ DAL يراجع الداتابيز في العمليات المهمة.
-
-الكتابة في الـ cookies مسموحة بس في Server Actions و Route Handlers و proxy، لأن الـ server component بيترسم وممكن يكون الـ response بدأ يتبعت (streaming) والـ headers خلاص اتبعتت. عشان كده refresh للتوكن مكانه proxy أو Route Handler، مش صفحة.
-
-[[sameSite: "lax"]] بيمنع المتصفح يبعت الـ cookie في POST جاي من موقع تاني. ومع حماية Next للـ Server Actions (بيقارن الـ Origin)، ده بيقفل CSRF.
-
-المكتبات: Auth.js (NextAuth v5) مشهورة ومرنة مع OAuth، و Better Auth أحدث و TypeScript-first وفيه plugins كتير، و Clerk و Supabase Auth خدمات جاهزة بواجهات. كلهم بيعملوا نفس الفكرة: cookie، وطريقة تقرا بيها الـ session على السيرفر. والـ hashing وقواعد الباسورد في تاب «الأمان».`,
-            when: "أي تطبيق فيه login وواجهته Next. ولو فيه API منفصل بيعمل الـ auth، Next بيخزّن التوكن بتاعه في cookie httpOnly برضه (درس BFF).",
-            mistakes: R`تحط التوكن في localStorage وتبعته من المتصفح. و cookie من غير [[httpOnly]]. و [[SESSION_SECRET]] قصير أو مكتوب في الكود. وتحط بيانات حساسة في الـ JWT payload (هو base64 مش تشفير). وتحاول [[cookies().set]] في server component فيطلع خطأ. وتنسى [[await]] قبل [[cookies()]] في Next 15 و 16.`
-          },
-          teach: R`## الفكرة: ٣ خطوات بعد ما الباسورد يطلع صح
-
-الملف ده فيه دالتين بيتنادوا من الفورم: [[login]] بتتأكد من الإيميل والباسورد، وتعمل توكن موقّع، وتحطه في cookie، وتحوّل. و [[logout]] بتمسح الـ cookie. كل الناتج تحت حقيقي: مشروع [[create-next-app]] جديد (Next.js 16.4.0، React 19.3، من غير [[cacheComponents]]) على ويندوز، و [[jose]] 6.2 و [[bcryptjs]] 3.0، والسيرفر [[next start]] على بورت 5830 بدل 3000، والمتصفح Chrome headless. ومكان [[db]] الحقيقي (Prisma) عملنا ملف صغير فيه مستخدمين في الذاكرة بنفس شكل [[db.user.findUnique]]، والباسورد متخزن hash بـ bcrypt.
-
----
-
-## ١. السطور الأولى: [[use server]] والـ imports
-
-~~~text app/actions/auth.ts
-"use server";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { SignJWT } from "jose";
-import bcrypt from "bcryptjs";
-~~~
-
-- [[use server]] في أول الملف معناها: كل دالة [[export]] هنا **Server Action**، يعني دالة بتتنفذ على السيرفر بس، والمتصفح بيناديها بطلب POST من غير ما يشوف كودها.
-- [[cookies]] من [[next/headers]]: بتقرا وتكتب الـ cookies بتاعة الطلب الحالي.
-- [[redirect]] من [[next/navigation]]: يحوّل المستخدم لصفحة تانية.
-- [[SignJWT]] من [[jose]]: بيعمل JWT (اختصار JSON Web Token): نص فيه داتا وتوقيع. و [[jose]] اختيرت لأنها شغالة في Node وفي الـ Edge runtime، عكس [[jsonwebtoken]] اللي محتاجة Node.
-- [[bcrypt]]: بيقارن الباسورد بالـ hash المتخزن.
-
----
-
-## ٢. السر: [[const key = new TextEncoder().encode(process.env.SESSION_SECRET)]]
-
-- [[process.env.SESSION_SECRET]]: متغير بيئة، حطيناه في [[.env.local]] (ملف Next بيقراه لوحده ومبيتبعتش للمتصفح لأن اسمه مش بادئ بـ [[NEXT_PUBLIC_]]).
-- [[new TextEncoder().encode(...)]]: [[jose]] عايزة السر bytes ([[Uint8Array]]) مش نص، فده بيحوّل النص لـ bytes.
-
-والسر نفسه عملناه كده (Git Bash):
-
-~~~bash
-echo "SESSION_SECRET=$(openssl rand -base64 32)" > .env.local
-~~~
-
-[[openssl rand -base64 32]] بيطلّع ٣٢ byte عشوائي مكتوبين base64 (٤٤ حرف). أي حد يعرف السر ده يقدر يعمل توكن لأي مستخدم، فمكانه متغيرات البيئة مش الكود.
-
----
-
-## ٣. توقيع الدالة: [[login(_prev, formData)]]
-
-~~~text
-export async function login(_prev: { error?: string }, formData: FormData) {
-~~~
-
-الدالة دي معمولة عشان تتنادى من [[useActionState]] في صفحة الـ login:
-
-~~~text app/login/page.tsx (الجزء المهم)
-const [state, action, pending] = useActionState(login, {});
-<form action={action}> ... {state.error && <p role="alert">{state.error}</p>}
-~~~
-
-[[useActionState]] بيبعت للـ action حاجتين: الـ state اللي فاتت (أول مرة [[{}]]) والفورم. فأول باراميتر [[_prev]] (الـ [[_]] في أوله عادة معناها «مش هستخدمه»)، والتاني [[formData]] من نوع [[FormData]]: كل [[input]] في الفورم باسمه.
-
-> ولما شغّلنا [[tsc]] على المثال زي ما هو، طلع خطأ: [[Argument of type '{}' is not assignable to parameter of type '{ error: string; }'. Property 'error' is missing]]. السبب: [[redirect]] نوعه [[never]] (مبيرجعش)، فـ TypeScript استنتج إن الدالة بترجّع [[{ error: string }]] دايمًا، والـ [[{}]] مفيهوش [[error]]. الحل: اكتب نوع الرجوع بإيدك [[: Promise<{ error?: string }>]] بعد الأقواس، وبعدها عدّى.
-
----
-
-## ٤. التحقق من الإيميل والباسورد
-
-~~~text
-const email = String(formData.get("email") ?? "").toLowerCase();
-const user = await db.user.findUnique({ where: { email } });
-const ok = user && (await bcrypt.compare(String(formData.get("password") ?? ""), user.passwordHash));
-if (!user || !ok) return { error: "الإيميل أو الباسورد غلط" };
-~~~
-
-من جوه لبرة:
-
-| الحتة | معناها |
-|---|---|
-| [[formData.get("email")]] | قيمة الـ input اللي اسمه [[email]]، أو [[null]] لو مش موجود |
-| [[?? ""]] | لو [[null]] خليها نص فاضي (بدل ما تبقى الكلمة [["null"]]) |
-| [[String(...)]] | [[get]] ممكن يرجّع ملف ([[File]])، فبنحوّلها نص |
-| [[.toLowerCase()]] | [[SARA@example.com]] و [[sara@example.com]] نفس الحساب |
-| [[user && (...)]] | لو مفيش مستخدم، متقارنش أصلًا ([[ok]] تبقى [[null]]) |
-| [[bcrypt.compare(pw, hash)]] | بيعمل hash للباسورد اللي اتكتب بنفس الـ salt ويقارن. بيرجّع [[true]] أو [[false]] |
-
-والرسالة واحدة للحالتين، عشان محدش يعرف من الرد إن الإيميل ده متسجل. جرّبنا باسورد غلط من المتصفح:
-
-~~~text الناتج
-wrong pw -> الإيميل أو الباسورد غلط
-~~~
-
-والـ [[return { error }]] ده هو اللي [[useActionState]] بيحطه في [[state]]، فالفورم بتعرض الرسالة. وجرّبنا كمان [[SARA@example.com]] بحروف كبيرة والباسورد الصح: دخل، بسبب [[toLowerCase]].
-
----
-
-## ٥. عمل التوكن: سلسلة [[SignJWT]]
-
-~~~text
-const token = await new SignJWT({ userId: user.id, role: user.role })
-  .setProtectedHeader({ alg: "HS256" })
-  .setExpirationTime("7d")
-  .sign(key);
-~~~
-
-كل سطر بيرجّع نفس الـ object، فبتكمّل عليه بنقطة (method chaining):
-
-1. [[new SignJWT({...})]]: الـ **payload**، يعني الداتا اللي جوه التوكن: مين المستخدم ودوره.
-2. [[.setProtectedHeader({ alg: "HS256" })]]: الـ **header** بيقول التوقيع معمول بإيه. [[HS256]] = HMAC بـ SHA-256: توقيع بسر واحد هو نفسه اللي بيتحقق بيه.
-3. [[.setExpirationTime("7d")]]: بيضيف [[exp]] للـ payload: وقت الانتهاء بعد ٧ أيام، بالثواني من ١٩٧٠.
-4. [[.sign(key)]]: بيحسب التوقيع بالسر، ويرجّع (Promise) النص النهائي: ٣ أجزاء بينهم نقط [[header.payload.signature]].
-
-خدنا التوكن من المتصفح وفكّينا أول جزئين من base64:
-
-~~~text الناتج
-header  {"alg":"HS256"}
-payload {"userId":"u_1","role":"USER","exp":1791962530}
-~~~
-
-يعني أي حد معاه التوكن **يقدر يقراه**. التوقيع بيمنع التعديل بس: لو غيّرت [[USER]] لـ [[ADMIN]]، التوقيع مش هيطابق والسيرفر هيرفضه (درس [[DAL]]). فمتحطش في الـ payload حاجة سرية.
-
----
-
-## ٦. حط الـ cookie: [[(await cookies()).set(...)]]
-
-~~~text
-(await cookies()).set("session", token, { httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * 7 });
-~~~
-
-- [[cookies()]] من Next 15 بقت async، فلازم [[await]]، والأقواس حواليها عشان نستنى الأول وبعدين ننادي [[.set]].
-- [[.set(name, value, options)]]: الاسم [[session]] والقيمة التوكن، والخيارات:
-
-| الخيار | معناه |
-|---|---|
-| [[httpOnly: true]] | الـ JavaScript في الصفحة ميقدرش يقراها. لو فيه XSS، التوكن مش هيتسرق |
-| [[secure: true]] | تتبعت على HTTPS بس ([[localhost]] المتصفح بيعتبره آمن، فشغالة في التطوير) |
-| [[sameSite: "lax"]] | متتبعتش مع POST جاي من موقع تاني، وده بيقفل أغلب CSRF |
-| [[path: "/"]] | تتبعت مع كل صفحات الموقع |
-| [[maxAge]] | عمرها بالثواني: ٦٠ × ٦٠ × ٢٤ × ٧ = 604800 = أسبوع، زي التوكن |
-
-ده اللي Chrome حطه فعلًا بعد الدخول، وبعده [[document.cookie]] من الصفحة نفسها:
-
-~~~text الناتج
-{ name: 'session', httpOnly: true, secure: true, sameSite: 'Lax', days: '7.00' }
-document.cookie = ""
-~~~
-
-الـ cookie موجودة والمتصفح بيبعتها مع كل طلب، بس الـ JS شايفها فاضية.
-
-> الكتابة في الـ cookies مسموحة هنا لأننا جوه Server Action. في server component (صفحة بتترسم) مش مسموح، لأن الرد ممكن يكون بدأ يتبعت.
-
----
-
-## ٧. [[redirect("/dashboard")]]
-
-بيرمي exception خاص Next بيفهمه ويحوّل المتصفح. عشان كده بيتكتب **برّه** أي [[try]]، وإلا الـ [[catch]] هيمسكه. بعد الدخول المتصفح راح على:
-
-~~~text الناتج
-url http://localhost:5830/dashboard
-h1 dash u_1
-~~~
-
----
-
-## ٨. [[logout]]
-
-~~~text
-export async function logout() {
-  (await cookies()).delete("session");
-  redirect("/login");
-}
-~~~
-
-[[delete]] بيبعت [[Set-Cookie]] بتاريخ قديم فالمتصفح يمسحها. ربطناها بزرار [[<form action={logout}>]] في الـ dashboard، وبعد الضغط:
-
-~~~text الناتج
-after logout http://localhost:5830/login []
-~~~
-
-القوسين الفاضيين في الآخر هما قايمة الـ cookies بعد الخروج: مفيش ولا واحدة.
-
-> ده JWT stateless: لو حد نسخ التوكن قبل الخروج، هيفضل صالح لحد [[exp]]، لأن السيرفر مش شايل ليستة بالتوكنات. ده الفرق عن database sessions (درس [[getSession]]).
-
----
-
-## الخلاصة
-
-| الخطوة | الكود | ليه |
-|---|---|---|
-| تحقق | [[bcrypt.compare]] | الباسورد متخزن hash مش نص |
-| رسالة واحدة | [[{ error: "الإيميل أو الباسورد غلط" }]] | محدش يعرف مين متسجل |
-| توكن | [[SignJWT]] + [[HS256]] + [[7d]] | موقّع (ميتعدلش) بس مقروء |
-| cookie | [[httpOnly]] و [[secure]] و [[lax]] | JS ميقراهاش، HTTPS بس، مش من مواقع تانية |
-| تحويل | [[redirect]] برّه try | بيرمي exception |
-| خروج | [[cookies().delete]] | بيمسح من المتصفح، مش بيلغي التوكن نفسه |`,
-          lines: [
-            "Server Actions.",
-            R`[[cookies]]: async من Next 15.`,
-            "التحويل بعد الدخول.",
-            R`[[jose]] بتشتغل في أي runtime (Node و Edge)، عكس [[jsonwebtoken]].`,
-            "مقارنة الباسورد بالـ hash.",
-            R`السر من البيئة كـ bytes. لازم ٣٢ حرف عشوائي على الأقل ([[openssl rand -base64 32]]).`,
-            R`بيتنادى من [[useActionState]]، فبياخد الـ state اللي فاتت الأول.`,
-            "الإيميل بحروف صغيرة زي ما اتخزن.",
-            "هات المستخدم.",
-            "قارن الباسورد لو المستخدم موجود.",
-            "نفس الرسالة للحالتين: متقولش «الإيميل مش موجود» عشان محدش يعرف مين متسجل.",
-            "اعمل توكن فيه الـ id والدور...",
-            "...بخوارزمية HS256...",
-            "...بيخلص بعد أسبوع...",
-            "...وموقّع بالسر.",
-            R`حط الـ cookie: [[httpOnly]] ضد XSS، و [[secure]] على HTTPS بس، و [[lax]] ضد أغلب CSRF، وعمرها أسبوع زي التوكن.`,
-            R`روح للـ dashboard. [[redirect]] برّه أي try.`,
-            "قفلة.",
-            "الخروج.",
-            "امسح الـ cookie.",
-            "روح للـ login.",
-            "قفلة."
-          ],
-          sol: R`بعد الدخول: في Application > Cookies صف [[session]] عليه HttpOnly و Secure و SameSite Lax وعمره ٧ أيام. و [[document.cookie]] بيرجّع [[""]] (أو cookies تانية مش هي)، لأن HttpOnly بيخبيها من الـ JS خالص. و Secure بتشتغل على [[http://localhost]] لأن المتصفح بيعتبره آمن، بس على IP أو دومين تاني من غير HTTPS الـ cookie مش هتتحط.
-
-والتوكن في jwt.io (أو [[atob]] على الجزء التاني): الـ header [[{"alg":"HS256"}]] والـ payload [[{"userId":"u_1","role":"USER","exp":...}]] مقروء لأي حد. التوقيع بيمنع التعديل، مش القراية. ولو TypeScript اعترض على [[useActionState(login, {})]]: حدد نوع رجوع الـ action [[Promise<{ error?: string }>]]، لأن الـ redirect بترمي فـ TS فاكر إن الدالة بترجّع [[{ error: string }]] دايمًا.`
-        },
-        {
-          cmd: "DAL",
-          title: "تحمي الصفحات والداتا فين بالظبط؟ (Data Access Layer)",
-          desc: R`الـ proxy بيعمل فحص سريع ومتفائل، والـ layout ممكن ميترسمش تاني. الحماية الحقيقية تبقى جنب الداتا: ملف (أو فولدر) [[lib/dal.ts]] عليه [[server-only]]، فيه [[verifySession()]] بتتحقق من الـ cookie بجد، وكل query بتجيب داتا خاصة بتناديها الأول وتفلتر بالـ userId.
-
-و [[verifySession]] ملفوفة في [[cache()]] من React، فلو الصفحة و ٣ كومبوننتات نادوها في نفس الطلب، بتتنفذ مرة واحدة.`,
-          example: R`// lib/dal.ts
-import "server-only";
-import { cache } from "react";
-import { cookies } from "next/headers";
-import { notFound, redirect } from "next/navigation";
-import { jwtVerify } from "jose";
-const key = new TextEncoder().encode(process.env.SESSION_SECRET);
-export const verifySession = cache(async () => {
-  const token = (await cookies()).get("session")?.value;
-  if (!token) redirect("/login");
-  try {
-    const { payload } = await jwtVerify(token, key, { algorithms: ["HS256"] });
-    return { userId: String(payload.userId), role: String(payload.role) };
-  } catch {
-    redirect("/login");
-  }
-});
-export async function getMyOrders() {
-  const { userId } = await verifySession();
-  return db.order.findMany({ where: { userId }, select: { id: true, status: true, totalCents: true } });
-}
-export async function requireAdmin() {
-  const session = await verifySession();
-  if (session.role !== "ADMIN") notFound();
-  return session;
-}`,
-          try: R`حط [[console.log("verify")]] جوه [[verifySession]]، ونادها من الصفحة ومن الـ layout ومن كومبوننت: هتطبع مرة واحدة في الطلب. وبعدين شيل [[cache]] وعدّ. وجرّب تفتح صفحة الـ dashboard بـ cookie مزوّرة (اللي عدّت من الـ proxy في درس [[proxy.ts]]): المرة دي هتتحول للـ login.`,
-          flag: "script",
-          deep: {
-            why: "لو الحماية في مكان واحد بعيد عن الداتا (الـ proxy أو الـ layout)، أي مسار تاني للداتا بيعدّي من غيرها: Server Action، أو Route Handler، أو صفحة جديدة حد نسي يحطها تحت الـ layout. لما كل query خاص بيسأل «مين؟» بنفسه، مستحيل تنسى.",
-            how: R`الفكرة من وثائق Next نفسها: طبقة واحدة هي اللي بتكلّم الداتابيز للداتا الخاصة، وكل دالة فيها بتعمل ٣ حاجات: تتحقق من الـ session، وتتحقق من الصلاحية على الحاجة دي بالذات، وترجّع DTO (الأعمدة اللي الواجهة محتاجاها بس، مش الـ row كله). والصفحات والـ actions والـ route handlers بينادوا الـ DAL، ومبيلمسوش [[db]] مباشرة.
-
-[[cache()]] من React بيعمل memoization طول الطلب الواحد بس (per request). ده مش كاش بين المستخدمين، فآمن تمامًا لبيانات المستخدم. عكس [[use cache]] اللي مشترك.
-
-ليه الـ layout مش كفاية؟ Next بيعمل partial rendering: في التنقل بين صفحتين تحت نفس الـ layout، الـ layout مبيتنفذش تاني. ولو الـ session انتهت، الصفحة الجديدة هتترسم من غير ما حد يتحقق. وكمان الصفحة ممكن تتطلب لوحدها (RSC request) من غير الـ layout.
-
-الـ proxy مكمّل: redirect سريع قبل ما أي حاجة تترسم (تجربة أحسن)، وبيقرا الـ cookie بس من غير داتابيز. والـ DAL هو الحماية.
-
-وفيه [[forbidden()]] و [[unauthorized()]] من [[next/navigation]] بيرجّعوا 403 و 401 بصفحات خاصة، بس لسه تجريبيين ومحتاجين [[experimental.authInterrupts]]. لحد ما يبقوا stable، [[notFound()]] أو [[redirect]] كفاية.`,
-            when: "أي مشروع فيه داتا خاصة بالمستخدم. ابدأ بالـ DAL من أول يوم: نقله بعدين معناه تلف على كل query في المشروع.",
-            mistakes: R`الـ auth في الـ layout بس، أو في الـ proxy بس. و [[db.order.findUnique({ where: { id } })]] من غير userId، فأي حد يغيّر الـ id في الـ URL يشوف طلبات غيره (IDOR). وترجّع الـ user row كله للكومبوننت بالـ passwordHash. و [[use cache]] على دالة بتقرا الـ session. وتنسى [[server-only]] فحد يعمل import للـ DAL من client component.`
-          },
-          teach: R`## الفكرة: دالة واحدة بتسأل «مين؟» قبل أي داتا خاصة
-
-[[verifySession]] بتقرا الـ cookie وتتحقق من التوقيع بجد، ولو فيه مشكلة بتحوّل للـ login. و [[getMyOrders]] و [[requireAdmin]] مبنيين عليها. اتشغّل في نفس مشروع درس [[session cookie]] (Next.js 16.4.0 من غير [[cacheComponents]]، [[next start]] على بورت 5830)، ومعاه [[proxy.ts]] بيشوف الـ cookie موجودة ولا لأ بس، وصفحة [[/dashboard]] فيها layout وصفحة وكومبوننت صغير، التلاتة بينادوا [[verifySession]]، والصفحة كمان بتنادي [[getMyOrders]]. وحطينا [[console.log("verify")]] أول سطر في [[verifySession]].
-
----
-
-## ١. [[import "server-only"]]
-
-سطر من غير أسماء: بيستورد package اسمها [[server-only]] (اتسطبت بـ [[npm i server-only]]). لو أي client component عمل import للملف ده (حتى بشكل غير مباشر)، الـ build بيقع. ده بيضمن إن السر وكود الداتابيز عمرهم ما يتبعتوا للمتصفح.
-
----
-
-## ٢. الـ imports الباقية
-
-| الـ import | من فين | بيعمل إيه هنا |
-|---|---|---|
-| [[cache]] | [[react]] | يخلي الدالة تتنفذ مرة واحدة في الطلب |
-| [[cookies]] | [[next/headers]] | يقرا الـ cookie |
-| [[notFound]] و [[redirect]] | [[next/navigation]] | 404، وتحويل |
-| [[jwtVerify]] | [[jose]] | يتحقق من توقيع التوكن ومدته |
-
-و [[key]] نفس السر اللي اتوقّع بيه التوكن في درس [[session cookie]]: لازم يبقى هو هو، وإلا كل التوكنات هتترفض.
-
----
-
-## ٣. [[verifySession]] من جوه لبرة
-
-### [[cache(async () => {...})]]
-
-[[cache]] بتاخد دالة وترجّع نسخة منها بتفتكر النتيجة **طول الطلب الواحد بس**. أول نداء بينفذ، وأي نداء تاني في نفس الطلب بياخد نفس النتيجة. والطلب اللي بعده بيبدأ من الأول، فمفيش داتا مستخدم بتوصل لمستخدم تاني.
-
-### [[(await cookies()).get("session")?.value]]
-
-- [[.get("session")]] بيرجّع object فيه [[name]] و [[value]]، أو [[undefined]] لو مفيش cookie بالاسم ده.
-- [[?.]] (optional chaining): لو اللي قبلها [[undefined]]، متكمّلش ورجّع [[undefined]] بدل ما يطلع خطأ.
-
-### [[if (!token) redirect("/login")]]
-
-مفيش cookie خالص؟ روح سجّل دخول.
-
-### [[jwtVerify(token, key, { algorithms: ["HS256"] })]]
-
-بيعمل ٣ حاجات: يتأكد إن التوقيع معمول بنفس السر، وإن [[exp]] لسه مجاش، وإن الخوارزمية من اللي في [[algorithms]]. لو أي واحدة غلط بيرمي error. و [[algorithms]] بتقفل هجمة قديمة: توكن header بتاعه [[{"alg":"none"}]] (من غير توقيع خالص).
-
-ولو نجح بيرجّع object فيه [[payload]]، و [[const { payload } = ...]] بتطلّع الخانة دي بس (destructuring).
-
-### [[return { userId: String(payload.userId), role: String(payload.role) }]]
-
-[[payload]] نوعه عام (أي حاجة)، فـ [[String()]] بتضمن إنهم نصوص. والدالة بترجّع الحاجتين دول بس.
-
-### [[catch { redirect("/login") }]]
-
-أي توكن مزوّر أو منتهي يوصل هنا. والـ [[redirect]] هنا جوه [[catch]] مش جوه [[try]]، فمحدش هيمسكه.
-
----
-
-## ٤. جرّبنا ٦ حالات بـ curl
-
-[[curl -s -o /dev/null -w "%{http_code} %{redirect_url}"]] يعني: متطبعش الصفحة، اطبع الـ status والمكان اللي بيحوّل عليه بس. و [[-H "Cookie: ..."]] بيبعت cookie بإيدنا. والتوكنات الحقيقية عملناها بسكربت صغير بـ [[SignJWT]] بنفس السر.
-
-~~~text الناتج
-بدون cookie                          307 http://localhost:5830/login
-session=anything                     307 http://localhost:5830/login
-توكن صحيح (u_1)                      200
-توكن صحيح بس منتهي من ساعة            307 http://localhost:5830/login
-توكن header بتاعه alg: none ودوره ADMIN   307 http://localhost:5830/login
-~~~
-
-مين وقف مين؟ عدّينا سطور [[verify]] في لوج السيرفر: الطلب الأول (من غير cookie) مطبعش [[verify]]، يعني الـ proxy هو اللي حوّله قبل ما الصفحة تترسم. الباقيين كلهم طبعوا [[verify]]: الـ proxy عدّاهم (فيه cookie اسمها [[session]]، وهو مش بيتحقق من حاجة)، و [[jwtVerify]] هو اللي رفض. ده بالظبط معنى «الـ proxy متفائل والـ DAL هو الحماية».
-
----
-
-## ٥. [[cache]] بيوفّر إيه فعلًا؟
-
-في طلب [[/dashboard]] واحد بتوكن صحيح، [[verifySession]] اتنادت ٤ مرات: الـ layout، والصفحة، والكومبوننت، و [[getMyOrders]].
-
-~~~text لوج السيرفر لطلب واحد
-مع cache      verify                      (مرة واحدة)
-من غير cache  verify verify verify verify  (٤ مرات)
-~~~
-
-مع JWT ده ٤ مرات فك توكن (رخيص). ومع database sessions ده ٤ queries على الداتابيز في كل صفحة.
-
----
-
-## ٦. [[getMyOrders]]: الفلتر جوه الـ query
-
-~~~text
-const { userId } = await verifySession();
-return db.order.findMany({ where: { userId }, select: { id: true, status: true, totalCents: true } });
-~~~
-
-- [[where: { userId }]] (اختصار [[userId: userId]]): طلبات المستخدم ده بس. مفيش طريقة تجيب طلبات حد تاني من الدالة دي.
-- [[select]]: الأعمدة دي بس. الجدول الوهمي عندنا فيه عمود [[secretNote]]، والناتج اللي اتعرض في الصفحة:
-
-~~~text الناتج
-[{"id":"o_1","status":"PAID","totalCents":25000}]
-~~~
-
-طلب واحد من اتنين (التاني بتاع الأدمن)، ومن غير [[secretNote]]. ده اسمه DTO: الواجهة بتاخد اللي محتاجاه بس.
-
----
-
-## ٧. [[requireAdmin]]
-
-~~~text
-const session = await verifySession();
-if (session.role !== "ADMIN") notFound();
-return session;
-~~~
-
-عملنا صفحة [[/admin]] بتناديها:
-
-~~~text الناتج
-/admin بتوكن USER    404
-/admin بتوكن ADMIN   <h1>admin u_2</h1>
-~~~
-
-[[notFound()]] بدل 403 عشان المستخدم العادي ميعرفش إن الصفحة موجودة أصلًا. والدور جاي من التوكن الموقّع، فمحدش يقدر يغيّره (حالة [[alg: none]] فوق كانت محاولة لده واترفضت).
-
-> لو [[cacheComponents: true]] شغال في [[next.config.ts]] (وقالب [[create-next-app]] 16.4 بيشغّله لوحده)، الـ build وقع عندنا على [[/admin]] بـ [[Next.js encountered uncached or runtime data during prerendering]]، لأن [[cookies()]] اتقرت برّه [[<Suspense>]]. الحل اللي الرسالة بتقترحه: الجزء اللي بينادي الـ DAL يبقى جوه [[<Suspense fallback={...}>]] (فئة Cache Components).
-
----
-
-## الخلاصة
-
-| الحتة | دورها |
-|---|---|
-| [[server-only]] | الملف ميوصلش للمتصفح |
-| [[cache()]] | تحقق واحد في الطلب مهما اتنادت |
-| [[jwtVerify]] + [[algorithms]] | التوقيع والمدة والخوارزمية |
-| [[redirect("/login")]] | مفيش توكن أو بايظ |
-| [[where: { userId }]] + [[select]] | الملكية جوه الـ query، وأعمدة قليلة |
-| [[notFound()]] | مش أدمن = الصفحة «مش موجودة» |
-| الـ proxy | فحص سريع للوجود بس، مش حماية |`,
-          lines: [
-            "لو client component عمله import بالغلط، الـ build يقع.",
-            R`[[cache]] من React: نفس النتيجة طول الطلب الواحد.`,
-            "الـ cookies.",
-            "redirect و notFound.",
-            "التحقق من التوقيع.",
-            "نفس السر اللي اتوقّع بيه.",
-            R`الدالة كلها جوه [[cache]]، فأي عدد نداءات في نفس الطلب = تحقق واحد.`,
-            "اقرا الـ cookie.",
-            "مفيش؟ روح login.",
-            "جرّب...",
-            R`...تتحقق من التوقيع والمدة. [[algorithms]] بتقفل هجمات تغيير الخوارزمية.`,
-            "رجّع المستخدم.",
-            "توكن مزوّر أو خلص...",
-            "...روح login.",
-            "قفلة.",
-            R`قفلة الـ [[cache]].`,
-            "أي داتا خاصة بتعدّي من هنا.",
-            "المستخدم الأول.",
-            "الفلتر بالـ userId جوه الـ query، والأعمدة المطلوبة بس (DTO).",
-            "قفلة.",
-            "للصفحات والـ actions بتاعة الأدمن.",
-            "المستخدم.",
-            "مش أدمن؟ 404 كأن الصفحة مش موجودة أصلًا.",
-            "رجّعه عشان تستخدم الـ id.",
-            "قفلة."
-          ],
-          sol: R`مع [[cache]]: [[verify]] بتطبع مرة واحدة في الطلب، حتى لو الـ layout والصفحة وكومبوننت جواها التلاتة نادوها (جربتها وطلعت مرة). من غير [[cache]]: ٣ مرات، يعني ٣ مرات فك توكن، أو ٣ queries لو database sessions.
-
-والـ cookie المزوّرة ([[session=anything]]): المرة دي [[/dashboard]] بترجع [[307]] لـ [[/login]]، لأن [[jwtVerify]] رمت والـ catch عمل [[redirect]]. الـ proxy عدّاها زي ما هو، والـ DAL وقفها. لو الصفحة فتحت بالـ cookie المزوّرة: الصفحة مش بتنادي [[verifySession]]، أو فيه مكان بيقرا الـ cookie بنفسه من غير تحقق.`
-        },
-        {
-          cmd: "BFF",
-          title: "Next قدام API منفصل: التوكن يفضل على السيرفر (BFF)",
-          desc: R`لو الـ backend منفصل (Express أو FastAPI)، ممكن تخلي Next «Backend For Frontend»: الـ server components والـ actions هما اللي بيكلّموا الـ API، والتوكن بتاع الـ API متخزن في cookie [[httpOnly]] عند Next، وعمره ما بيوصل للـ JavaScript في المتصفح.
-
-الطلب بيبقى: المتصفح ← Next (معاه الـ cookie) ← الـ API (بـ [[Authorization: Bearer]]). والـ client components اللي محتاجة داتا بتكلّم Server Action أو Route Handler في Next، مش الـ API مباشرة.`,
-          example: R`// lib/api.ts
-import "server-only";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const token = (await cookies()).get("access_token")?.value;
-  if (!token) redirect("/login");
-  const res = await fetch($__bt$__{process.env.API_URL}$__{path}$__bt, {
-    ...init,
-    headers: { "Content-Type": "application/json", Authorization: $__btBearer $__{token}$__bt },
-    cache: "no-store",
-  });
-  if (res.status === 401) redirect("/login");
-  if (!res.ok) throw new Error($__btAPI $__{res.status} $__{path}$__bt);
-  return (await res.json()) as T;
-}
-// app/orders/page.tsx
-const orders = await api<Order[]>("/orders");
-// app/actions/orders.ts ("use server")
-await api("/orders/" + id + "/cancel", { method: "POST" });`,
-          try: R`لو عندك API من تاب «Backend بـ Node»، اعمل login action بيكلّمه ويحط الـ access token في cookie، وبعدين صفحة بتعرض الطلبات بـ [[api()]]. افتح DevTools > Network: مش هتلاقي أي طلب للـ API من المتصفح، ولا التوكن في أي مكان يقدر JS يوصله.`,
-          flag: "script",
-          deep: {
-            why: "لما المتصفح بيكلّم الـ API مباشرة، التوكن لازم يبقى في JS (localStorage أو memory)، وده معرّض لـ XSS، ولازم CORS، والـ server components مش هتقدر تستخدمه. الـ BFF بيحل الاتنين: التوكن على السيرفر، والصفحات بتترسم بالداتا من أول لحظة.",
-            how: R`الـ login: Server Action بيبعت الإيميل والباسورد للـ API، ياخد access و refresh tokens، ويحطهم في cookies [[httpOnly]]. من هنا المتصفح مش شايف غير cookie بتاعة Next.
-
-المشكلة الصعبة: الـ refresh. الـ server component يقدر يقرا الـ cookie بس ميقدرش يكتبها. فلو الـ access token خلص وانت بترسم صفحة، مش هتقدر تحط الجديد. الحلول: الـ proxy يشيك على مدة التوكن (لو قربت تخلص يعمل refresh ويحط الـ cookie الجديدة في الرد) قبل ما الصفحة تترسم، أو Route Handler للـ refresh والـ client يناديه، أو access token عمره أطول شوية.
-
-الـ client components: لو محتاجة داتا بتتغير (بحث live)، تنادي Server Action أو Route Handler في Next، وده بيعمل [[api()]]. متخليش الـ client يعرف URL الـ API.
-
-والتكلفة: رحلة زيادة (المتصفح ← Next ← API)، فخلي Next والـ API في نفس الـ datacenter أو الشبكة. والـ API نفسه لسه لازم يتحقق من التوكن والصلاحيات: الـ BFF مش بديل عن الحماية في الـ API. وتفاصيل التصميم ده في تاب «بناء مشروع كامل».`,
-            when: "Next واجهة لـ API منفصل (Express أو FastAPI أو Laravel) عندك أو عند فريق تاني، وعايز SSR وتوكن مش مكشوف. لو Next هو الـ backend نفسه، مش محتاج ده: الـ DAL كفاية.",
-            mistakes: R`تحط الـ access token في [[NEXT_PUBLIC_]] أو في localStorage «عشان الـ client components». و [[cache: "force-cache"]] أو [[use cache]] على طلب فيه توكن مستخدم، فالداتا تتشارك. وتحاول تعمل refresh للتوكن جوه server component وتكتب cookie فيطلع خطأ. وتعمل proxy لكل الـ API بـ rewrites من غير ما تضيف التوكن، فمفيش فرق عن إن المتصفح يكلّمه مباشرة.`
-          },
-          teach: R`## الفكرة: دالة واحدة في Next هي الوحيدة اللي بتكلّم الـ API
-
-[[api()]] بتاخد مسار زي [[/orders]]، وتجيب التوكن من الـ cookie، وتبعت الطلب للـ API ومعاه التوكن، وترجّع الـ JSON. والصفحات والـ actions بينادوها. اتشغّل في مشروع Next.js 16.4.0 ([[next start]] على بورت 5830)، ومكان الـ API الحقيقي عملنا سيرفر Node صغير على بورت 5833 فيه ٣ مسارات: [[POST /login]] بيرجّع [[accessToken]]، و [[GET /orders]]، و [[POST /orders/:id/cancel]]، وبيرجّع 401 لأي طلب من غير [[Authorization: Bearer]] صح، وبيطبع سطر لكل طلب جاله.
-
----
-
-## ١. السطور الأولى
-
-- [[import "server-only"]]: الملف ده فيه التوكن، فلو client component استورده الـ build يقع.
-- [[cookies]] و [[redirect]]: زي الدرسين اللي فاتوا.
-
----
-
-## ٢. توقيع الدالة: [[api<T>(path, init = {}): Promise<T>]]
-
-| الحتة | معناها |
-|---|---|
-| [[<T>]] | generic: نوع بيتحدد وقت النداء. [[api<Order[]>("/orders")]] يعني «الرد array من Order» |
-| [[path: string]] | المسار في الـ API |
-| [[init: RequestInit = {}]] | نفس خيارات [[fetch]] ([[method]] و [[body]]...)، والافتراضي object فاضي |
-| [[Promise<T>]] | بترجّع (بعد [[await]]) حاجة من النوع [[T]] |
-
----
-
-## ٣. التوكن
-
-~~~text
-const token = (await cookies()).get("access_token")?.value;
-if (!token) redirect("/login");
-~~~
-
-الـ cookie [[access_token]] اتحطت وقت الـ login بـ [[httpOnly]]. وعملنا Server Action للـ login بيبعت الإيميل والباسورد لـ [[POST /login]] في الـ API، وياخد [[accessToken]] ويحطه:
-
-~~~text app/actions/orders.ts (جزء)
-(await cookies()).set("access_token", accessToken, { httpOnly: true, secure: true, sameSite: "lax", path: "/" });
-~~~
-
----
-
-## ٤. الطلب نفسه: [[fetch(...)]]
-
-~~~text
-const res = await fetch(API_URL + path, {
-  ...init,
-  headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-  cache: "no-store",
-});
-~~~
-
-(في المثال الـ URL والـ header مكتوبين template string، وده نفس الكلام.)
-
-- [[process.env.API_URL]]: عنوان الـ API ([[http://localhost:5833]] عندنا في [[.env.local]]). من غير [[NEXT_PUBLIC_]]، فالقيمة دي مبتتحطش في كود المتصفح أصلًا.
-- [[...init]]: spread: انسخ كل اللي اتبعت (زي [[method: "POST"]]) جوه الـ object ده.
-- [[headers]]: بعد الـ spread، فلو [[init]] فيه [[headers]] هيتبدّل بدول. و [[Authorization: Bearer <token>]] هو الشكل القياسي لبعت توكن.
-- [[cache: "no-store"]]: متكاشش الرد. ده داتا مستخدم معيّن، ولو اتكاش ممكن يتعرض لغيره.
-
----
-
-## ٥. الرد
-
-~~~text
-if (res.status === 401) redirect("/login");
-if (!res.ok) throw new Error("API " + res.status + " " + path);
-return (await res.json()) as T;
-~~~
-
-- [[401]] (Unauthorized): التوكن خلص أو اتلغى، فارجع login.
-- [[res.ok]] بيبقى [[true]] لو الـ status بين 200 و 299. غير كده [[throw]]، فأقرب [[error.tsx]] بيعرض صفحة الخطأ.
-- [[as T]]: بتقول لـ TypeScript «صدّقني، ده T». مش فحص حقيقي: لو الـ API رجّع شكل تاني، TS مش هيعرف.
-
-جرّبنا بـ curl، cookie قديمة ومن غير cookie خالص:
-
-~~~text الناتج
-access_token=old   307 http://localhost:5830/login
-بدون cookie        307 http://localhost:5830/login
-~~~
-
-ولوج الـ API في الحالة الأولى: [[GET /orders auth=Bearer old]]، يعني الطلب وصل للـ API، رجع 401، و [[api()]] حوّلت.
-
----
-
-## ٦. النداء من صفحة ومن action
-
-~~~text
-const orders = await api<Order[]>("/orders");                 // server component
-await api("/orders/" + id + "/cancel", { method: "POST" });   // Server Action
-~~~
-
-عملنا صفحة [[/orders]] بتعرض الطلبات وجنب كل واحد زرار «إلغاء» بيشغّل Server Action فيه السطر التاني و [[revalidatePath("/orders")]] (عشان الصفحة تترسم تاني بالحالة الجديدة). Chrome headless دخل وضغط إلغاء على [[o_1]]:
-
-~~~text الناتج في الصفحة
-o_1: PAID  o_2: PAID
-o_1: CANCELLED  o_2: PAID
-~~~
-
-ولوج الـ API (مين كلّمه):
-
-~~~text الناتج
-POST /login auth=none ua=node
-GET /orders auth=Bearer tok_sara_123 ua=node
-POST /orders/o_1/cancel auth=Bearer tok_sara_123 ua=node
-GET /orders auth=Bearer tok_sara_123 ua=node
-~~~
-
-[[ua=node]] (أول حروف الـ User-Agent): كل الطلبات جت من سيرفر Node (اللي هو Next)، مش من Chrome. والـ [[GET]] الأخير هو الرسم التاني بعد الإلغاء.
-
----
-
-## ٧. المتصفح شاف إيه؟
-
-جمّعنا كل الطلبات اللي Chrome عملها طول التجربة:
-
-~~~text الناتج
-[ 'localhost:5830 GET', 13 ], [ 'localhost:5830 POST', 2 ]
-document.cookie ""   localStorage keys []
-html has 5833? false   has token? false
-~~~
-
-- كل الطلبات لـ Next نفسه (الصفحات والـ JS والـ RSC، و ٢ POST هما الـ login والإلغاء). ولا طلب واحد لبورت 5833.
-- الـ cookie [[access_token]] موجودة وعليها HttpOnly، بس [[document.cookie]] فاضي، و localStorage فاضي.
-- الـ HTML النهائي مفيهوش عنوان الـ API ولا التوكن.
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[server-only]] | الملف اللي فيه التوكن ميوصلش للمتصفح |
-| التوكن في cookie [[httpOnly]] عند Next | JS ميقراهوش |
-| [[API_URL]] من غير [[NEXT_PUBLIC_]] | المتصفح ميعرفش عنوان الـ API |
-| [[Authorization: Bearer]] من السيرفر | الـ API بيتحقق زي ما هو |
-| [[cache: "no-store"]] | داتا مستخدم متتكاشش |
-| 401 → [[redirect("/login")]] | التوكن خلص (أو refresh في الـ proxy) |
-| [[as T]] | وعد مش فحص: Zod لو الـ API مش بتاعك |`,
-          lines: [
-            "على السيرفر بس: فيه التوكن.",
-            "الـ cookies.",
-            "التحويل.",
-            R`helper واحد لكل طلبات الـ API، و [[T]] نوع الرد.`,
-            R`التوكن من cookie [[httpOnly]] اتحطت وقت الـ login.`,
-            "مفيش؟ login.",
-            R`عنوان الـ API من متغير بيئة سيرفر (من غير [[NEXT_PUBLIC_]]): المتصفح مش محتاج يعرفه أصلًا.`,
-            "الخيارات اللي اتبعتت.",
-            "التوكن في الـ header من السيرفر.",
-            "داتا المستخدم متتكاشش.",
-            "قفلة.",
-            "التوكن خلص؟ login (أو refresh، في الشرح).",
-            "أي خطأ تاني يروح لـ error.tsx.",
-            R`الـ JSON. الـ [[as T]] وعد مش فحص: لو الـ API مش بتاعك افحصه بـ Zod.`,
-            "قفلة.",
-            "server component بيجيب الداتا مباشرة.",
-            "Server Action بيعمل تعديل: المتصفح بينادي الـ action، والـ action بيكلّم الـ API."
-          ],
-          sol: R`في Network هتلاقي كل الطلبات رايحة لـ [[localhost:3000]] (الصفحة، وطلبات الـ RSC، و POST الـ actions)، ومفيش أي طلب لعنوان الـ API. الطلب للـ API بيحصل من سيرفر Next، فهتشوفه في لوج الـ API نفسه مش في المتصفح.
-
-والتوكن: في Application > Cookies هتلاقي [[access_token]] عليها HttpOnly، و [[document.cookie]] مش بيرجّعها، ومش موجودة في localStorage. ولو دوّرت في Sources على عنوان الـ API أو قيمة التوكن: مش هتلاقيهم. لو لقيت طلبات من المتصفح للـ API مباشرة: فيه client component بيعمل fetch بنفسه، حوّله لـ Server Action أو Route Handler.`
-        }
-      ]
-    },
-    {
-      t: "مكتبات الـ auth",
-      l: 2,
-      n: "Better Auth مع Prisma: تسجيل ودخول، و session في السيرفر، و Google و GitHub، وأدوار وصلاحيات",
-      items: [
-        {
-          cmd: "better-auth",
-          title: "تركّب Better Auth مع Prisma في مشروع Next",
-          desc: R`الفئة اللي فاتت عملت الـ auth بإيدك عشان تفهمه. في الشغل الحقيقي أغلب مشاريع Next في ٢٠٢٦ بتستخدم مكتبة. التاب ده بيستخدم Better Auth: مكتبة TypeScript مفتوحة المصدر بتتخزن في داتابيزك انت، وفيها plugins لكل حاجة (أدوار، و 2FA، و organizations). وفريقها هو اللي ماسك Auth.js (NextAuth) من سبتمبر ٢٠٢٥، وهم نفسهم بينصحوا بـ Better Auth لأي مشروع جديد. و Auth.js v5 لسه beta على npm (النسخة المستقرة v4).
-
-التركيب ٤ خطوات: [[npm i better-auth]]، ومتغيرين في [[.env]]: [[BETTER_AUTH_SECRET]] (من [[openssl rand -base64 32]]) و [[BETTER_AUTH_URL]] (عنوان الموقع). وبعدين [[lib/auth.ts]] فيه الإعدادات، و [[npx auth@latest generate]] بيضيف الجداول لـ [[schema.prisma]]، وبعده [[npx prisma migrate dev]]. وآخر حاجة route handler واحد بيستقبل كل طلبات الـ auth على [[/api/auth/*]].`,
-          example: R`// lib/auth.ts
-import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { nextCookies } from "better-auth/next-js";
-import { db } from "@/lib/db";
-export const auth = betterAuth({
-  database: prismaAdapter(db, { provider: "postgresql" }),
-  emailAndPassword: { enabled: true, minPasswordLength: 10 },
-  plugins: [nextCookies()],
-});
-// app/api/auth/[...all]/route.ts
-import { auth } from "@/lib/auth";
-import { toNextJsHandler } from "better-auth/next-js";
-export const { GET, POST } = toNextJsHandler(auth);
-// lib/auth-client.ts (للـ client components)
-import { createAuthClient } from "better-auth/react";
-export const authClient = createAuthClient();`,
-          try: R`في مشروع الـ lab (مع Prisma من تاب «SQL و Prisma») ركّب المكتبة واعمل الملفات التلاتة، وشغّل [[npx auth@latest generate]] وبص على [[schema.prisma]]: إيه الـ models اللي اتضافت؟ وبعد الـ migrate اعمل حساب بـ curl: [[curl -X POST localhost:3000/api/auth/sign-up/email -H "Content-Type: application/json" -d '{"name":"Sara","email":"sara@example.com","password":"long-password-1"}']]. وافتح [[npx prisma studio]] وشوف الباسورد اتخزن فين. وجرّب تاني بباسورد ٥ حروف.`,
-          flag: "script",
-          deep: {
-            why: "الـ auth من الصفر فيه حاجات كتير لازم تتعمل صح: hashing، و sessions بتتلغي، و OAuth بـ state و PKCE، وربط الحسابات، وتأكيد الإيميل، وإعادة تعيين الباسورد، و rate limit على الدخول. أي غلطة في أي واحدة منهم ثغرة. المكتبة بتدّيك الحاجات دي متجرّبة على آلاف المشاريع، وانت بتركّز على الصلاحيات والداتا بتاعتك.",
-            how: R`[[betterAuth()]] بيعمل object واحد فيه كل حاجة: [[auth.handler]] (اللي [[toNextJsHandler]] بيلفه لـ GET و POST) و [[auth.api]] (نفس الـ endpoints كدوال تناديها من السيرفر مباشرة).
-
-الجداول: [[npx auth@latest generate]] بيقرا [[lib/auth.ts]] ويكتب ٤ models في الـ schema: [[User]] و [[Session]] و [[Account]] و [[Verification]]. الباسورد مش في جدول [[User]]: بيتخزن في [[Account]] على إنه حساب [[providerId: "credential"]]، و Google و GitHub حسابات تانية لنفس المستخدم. وده اللي بيخلي ربط الحسابات سهل. والـ hash افتراضيًا scrypt. ولو ضفت plugin بيحتاج أعمدة (زي admin)، شغّل generate تاني و migrate. (الـ CLI محتاج Prisma client متولّد، فلو بيقول module مش موجود اعمل [[npx prisma generate]] الأول.)
-
-الـ session: database session في جدول [[Session]]، و cookie اسمها [[better-auth.session_token]] (و [[__Secure-]] قبلها على HTTPS) عليها HttpOnly و SameSite=Lax. بتعيش ٧ أيام افتراضيًا وبتتجدد مع الاستخدام. يعني نفس اللي عملته بإيدك في درس [[session cookie]]، بس بجدول تقدر تمسح منه.
-
-[[nextCookies()]]: لما تنادي [[auth.api.signInEmail]] من Server Action، المكتبة بترجّع [[Set-Cookie]] في الرد الداخلي، والـ plugin ده بيحطها في [[cookies()]] بتاعة Next. من غيره الدخول بينجح والـ cookie متتحطش. ولازم يبقى آخر plugin في الـ array.
-
-وفيه حماية CSRF لوحدها: أي POST معاه cookies لازم يبقى [[Origin]] بتاعه هو [[BETTER_AUTH_URL]] أو في [[trustedOrigins]]، وإلا [[INVALID_ORIGIN]].`,
-            when: R`أي مشروع Next الـ backend بتاعه Next نفسه وعايز الداتا في داتابيزك. لو عايز واجهات جاهزة وإدارة مستخدمين من غير ما تشيل هم، خدمة زي Clerk (بتدفع مع عدد المستخدمين). ولو شغال على Supabase أصلًا، Supabase Auth. ولو الـ auth في API منفصل، درس [[BFF]] مش ده.`,
-            mistakes: R`تنسى [[BETTER_AUTH_SECRET]] في الإنتاج أو تحطه قصير. و [[BETTER_AUTH_URL]] غلط (http بدل https، أو localhost على السيرفر) فكل الطلبات ترجع [[INVALID_ORIGIN]] و OAuth يرجع على عنوان غلط. وتعدّل جداول الـ auth بإيدك بدل generate. وتنسى [[nextCookies()]] أو تحطه قبل plugins تانية فالدخول من Server Action «بينجح» والمستخدم مش داخل. وتفتكر إن تركيب المكتبة كفاية: الصلاحيات والفلترة بالـ userId لسه شغلك (الدرسين الجايين). وفي الانترفيو: «ليه مكتبة؟» الإجابة الكويسة مش «أسهل»، هي «الحاجات الصعبة (OAuth و sessions بتتلغي وربط الحسابات) متجرّبة، وانا فاهم اللي تحت».`
-          },
-          teach: R`## الفكرة: ٣ ملفات صغيرة، والمكتبة تعمل الباقي
-
-[[lib/auth.ts]] فيه الإعدادات (الداتابيز، والدخول بالباسورد)، و [[route.ts]] بيفتح كل endpoints المكتبة على [[/api/auth/*]]، و [[auth-client.ts]] للمتصفح. كل الناتج تحت حقيقي: مشروع Next.js 16.4.0 على ويندوز، و [[better-auth]] 1.7.7، و Prisma 7.10 مع PostgreSQL 16 في Docker (container اسمه [[teach-next03-pg]] على بورت 55832)، والسيرفر [[next start]] على بورت 5831 فـ [[BETTER_AUTH_URL=http://localhost:5831]].
-
----
-
-## ١. التركيب والمتغيرات
-
-~~~bash
-npm i better-auth
-echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)" >> .env
-echo "BETTER_AUTH_URL=http://localhost:3000" >> .env
-~~~
-
-- [[BETTER_AUTH_SECRET]]: السر اللي بيتوقّع بيه الـ cookies. [[openssl rand -base64 32]] = ٣٢ byte عشوائي. و [[>>]] يعني ضيف سطر في آخر الملف (مش امسح اللي فيه).
-- [[BETTER_AUTH_URL]]: عنوان الموقع. المكتبة بتستخدمه في روابط OAuth وفي حماية الـ Origin (تحت).
-
----
-
-## ٢. [[lib/auth.ts]] سطر سطر
-
-~~~text
-export const auth = betterAuth({
-  database: prismaAdapter(db, { provider: "postgresql" }),
-  emailAndPassword: { enabled: true, minPasswordLength: 10 },
-  plugins: [nextCookies()],
-});
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[betterAuth({...})]] | بيعمل الـ instance: object فيه [[auth.handler]] (للـ HTTP) و [[auth.api]] (نفس الـ endpoints كدوال) |
-| [[prismaAdapter(db, ...)]] | «اكتب واقرا بـ Prisma client ده». [[db]] هو نفس الـ client بتاع المشروع من [[lib/db.ts]] |
-| [[provider: "postgresql"]] | نوع الداتابيز، عشان الـ adapter يعرف يكتب queries مناسبة |
-| [[emailAndPassword.enabled]] | شغّل التسجيل والدخول بالإيميل والباسورد |
-| [[minPasswordLength: 10]] | أقل طول (الافتراضي ٨) |
-| [[plugins: [nextCookies()]]] | لما تنادي [[auth.api]] من Server Action، يحط الـ cookies في رد Next. لازم آخر واحد |
-
-و [[lib/db.ts]] عندنا (Prisma 7 محتاج driver adapter):
-
-~~~text lib/db.ts
-import { PrismaClient } from "@/lib/generated/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
-export const db = new PrismaClient({ adapter });
-~~~
-
----
-
-## ٣. [[route.ts]]: فولدر اسمه [[[...all]]]
-
-~~~text app/api/auth/[...all]/route.ts
-export const { GET, POST } = toNextJsHandler(auth);
-~~~
-
-- [[[...all]]] اسمه **catch-all segment**: الفولدر ده بيمسك أي مسار تحت [[/api/auth/]] مهما كان طوله: [[/api/auth/sign-up/email]] و [[/api/auth/get-session]] وكله.
-- [[toNextJsHandler(auth)]] بيرجّع object فيه دالتين [[GET]] و [[POST]] بالشكل اللي Next عايزه في route handler.
-- [[export const { GET, POST } = ...]]: destructuring و export في سطر واحد.
-
-وفي جدول الـ build ظهر كده:
-
-~~~text الناتج
-└ ƒ /api/auth/[...all]
-~~~
-
-[[ƒ]] = dynamic: بيشتغل مع كل طلب.
-
----
-
-## ٤. [[auth-client.ts]]
-
-[[createAuthClient()]] من [[better-auth/react]] بيعمل client للمتصفح فيه [[signIn]] و [[signUp]] و [[signOut]] و hook اسمه [[useSession]]. من غير URL لأنه بيكلّم نفس الموقع.
-
----
-
-## ٥. الجداول: [[npx auth@latest generate]]
-
-أول مرة شغّلناه، وقع:
-
-~~~text الناتج
-[#better-auth]: Couldn't read your auth config. Error: Cannot find module '@/lib/generated/prisma/client'
-~~~
-
-الـ CLI بيشغّل [[lib/auth.ts]] فعلًا عشان يقرا الإعدادات، و [[lib/auth.ts]] بيستورد [[lib/db.ts]]، وده بيستورد Prisma client لسه متولّدش. فالترتيب: [[npx prisma generate]] الأول، وبعدها:
-
-~~~bash
-npx prisma generate
-npx auth@latest generate
-~~~
-
-[[auth@latest]] يعني «شغّل آخر نسخة من package الـ CLI اسمها [[auth]]» (كانت 1.7.7). وضاف ٤ models في آخر [[schema.prisma]]:
-
-~~~text اللي اتضاف (مختصر)
-model User          id  name  email (unique)  emailVerified  image  createdAt  updatedAt   @@map("user")
-model Session       id  expiresAt  token (unique)  ipAddress  userAgent  userId → User      @@map("session")
-model Account       id  accountId  providerId  userId → User  accessToken  refreshToken ... password   @@map("account")
-model Verification  id  identifier  value  expiresAt                                        @@map("verification")
-~~~
-
-[[@@map("user")]] معناها: الـ model اسمه [[User]] في الكود، والجدول في الداتابيز اسمه [[user]].
-
----
-
-## ٦. [[npx prisma migrate dev --name auth]]
-
-بيقارن الـ schema بالداتابيز، ويكتب ملف SQL في [[prisma/migrations/<تاريخ>_auth/migration.sql]] وينفذه. أهم سطوره:
-
-~~~text migration.sql (مختصر)
-CREATE TABLE "user" (...)
-CREATE TABLE "session" (...)
-CREATE TABLE "account" (...)
-CREATE TABLE "verification" (...)
-CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
-ALTER TABLE "session" ADD CONSTRAINT "session_userId_fkey" ... ON DELETE CASCADE
-~~~
-
-[[ON DELETE CASCADE]]: لو المستخدم اتمسح، الـ sessions والـ accounts بتاعته بيتمسحوا معاه.
-
-> في Prisma 7، [[migrate dev]] مبقاش بيعمل generate لوحده، فشغّل [[npx prisma generate]] بعده (اتضافت للحل تحت).
-
----
-
-## ٧. أول حساب بـ curl
-
-~~~bash
-curl -X POST localhost:3000/api/auth/sign-up/email -H "Content-Type: application/json" -d '{"name":"Sara","email":"sara@example.com","password":"long-password-1"}'
-~~~
-
-- [[-X POST]] نوع الطلب، و [[-H]] header بيقول إن الـ body JSON، و [[-d]] الـ body نفسه.
-
-بـ [[-i]] (اطبع الـ headers كمان) على بورت 5831:
-
-~~~text الناتج
-HTTP/1.1 200 OK
-set-cookie: better-auth.session_token=1k6Mob...kSoFIs...%3D; Max-Age=604800; Path=/; HttpOnly; SameSite=Lax
-
-{"token":"1k6MobA3DIzbg9WQfs8PWRxTodRNGfLs","user":{"name":"Sara","email":"sara@example.com","emailVerified":false,"image":null,...}}
-~~~
-
-- التسجيل عمل **دخول** كمان: رجّع [[token]] وحط cookie.
-- اسم الـ cookie [[better-auth.session_token]]، وقيمتها التوكن ونقطة وتوقيع ([[%3D]] هي [[=]] مكتوبة URL-encoded).
-- [[Max-Age=604800]] = ٧ أيام بالثواني، و [[HttpOnly]] و [[SameSite=Lax]] زي اللي عملناه بإيدنا في درس [[session cookie]].
-- مفيش [[Secure]] لأن الـ URL [[http://localhost]]. على HTTPS الاسم بيبقى [[__Secure-better-auth.session_token]].
-
----
-
-## ٨. الداتابيز من جوه
-
-بدل Prisma Studio سألنا Postgres مباشرة بـ [[psql]]:
-
-~~~text الناتج: جدول account
- providerId | accountId = userId |   password (أول ٤٠ حرف)                  | length
- credential | t                  | abfe22fc3ee7bf8bd8193e45b879c857:3776318 |    161
-~~~
-
-~~~text الناتج: جدول session
- tok      | life   | userAgent   | ipAddress
- 1k6MobA3 | 7 days | curl/8.22.0 | 0000:0000:...:0000
-~~~
-
-- الباسورد مش في [[user]]: في [[account]] بـ [[providerId: credential]]. كل طريقة دخول (باسورد، Google، GitHub) صف في [[account]] لنفس المستخدم.
-- شكل الباسورد [[salt:hash]] بـ scrypt: ٣٢ حرف hex للـ salt (16 byte)، ونقطتين، و ١٢٨ حرف للـ hash (64 byte) = ١٦١.
-- الـ session في جدول: مدتها ٧ أيام، ومعاها الـ User-Agent والـ IP (هنا [[::1]] مكتوب كامل، يعني localhost على IPv6). ولأنها صف، مسحه = خروج فوري.
-
----
-
-## ٩. الأخطاء
-
-~~~text الناتج
-باسورد "short"                    400 {"message":"Password too short","code":"PASSWORD_TOO_SHORT"}
-نفس الإيميل تاني                    422 {"message":"User already exists. Use another email.","code":"USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL"}
-طلب رابع في أقل من ١٠ ثواني         429 {"message":"Too many requests. Please try again later."}
-Origin غريب ومعاه cookie           403 {"message":"Invalid origin","code":"INVALID_ORIGIN"}
-~~~
-
-- الـ 429: [[next start]] = production، والمكتبة بتشغّل rate limit في الإنتاج لوحدها، وعلى مسارات التسجيل والدخول ٣ طلبات كل ١٠ ثواني. بعد ما استنينا ١١ ثانية الطلب عدّى للفحص اللي بعده.
-- الـ 403: بعتنا [[Origin: https://evil.example]] ومعاه cookie. أي POST فيه cookies لازم الـ Origin بتاعه يبقى [[BETTER_AUTH_URL]] أو في [[trustedOrigins]]. ده حماية CSRF.
-
----
-
-## الخلاصة
-
-| الخطوة | الأمر أو الملف | بيعمل إيه |
-|---|---|---|
-| ١ | [[npm i better-auth]] + المتغيرين | المكتبة والسر والعنوان |
-| ٢ | [[lib/auth.ts]] | الإعدادات: Prisma، باسورد ≥ ١٠، [[nextCookies]] آخر plugin |
-| ٣ | [[npx prisma generate]] ثم [[npx auth@latest generate]] | ٤ models في الـ schema |
-| ٤ | [[migrate dev]] ثم [[prisma generate]] | الجداول في الداتابيز والـ client محدّث |
-| ٥ | [[app/api/auth/[...all]/route.ts]] | كل الـ endpoints على [[/api/auth/*]] |
-| ٦ | [[lib/auth-client.ts]] | للـ client components |
-
-والباسورد في [[account]] مش [[user]]، والـ session صف في جدول، و 429 و 403 معناهم إن الحماية شغالة.`,
-          lines: [
-            R`[[betterAuth]] بيعمل الـ instance اللي فيه كل حاجة.`,
-            "الـ adapter اللي بيخلي المكتبة تكتب وتقرا بـ Prisma.",
-            R`plugin بيخلي الـ cookies تتحط لما تنادي المكتبة من Server Action.`,
-            R`نفس Prisma client بتاع المشروع ([[lib/db.ts]]). Better Auth مش بيعمل اتصال لوحده.`,
-            R`[[auth]] ده اللي هتستورده في كل مكان على السيرفر.`,
-            "الداتابيز: Prisma على PostgreSQL.",
-            "دخول بالإيميل والباسورد، وأقل طول ١٠ (الافتراضي ٨).",
-            "آخر plugin في الليستة لازم يبقى ده.",
-            "قفلة.",
-            "الـ instance.",
-            "بيحوّل الـ handler لـ route handler بتاع Next.",
-            R`GET و POST لكل المسارات تحت [[/api/auth]]: sign-up و sign-in و get-session و callback بتاع OAuth وغيرهم.`,
-            R`الـ client بتاع React (فيه [[useSession]] و [[signIn]] و [[signOut]]).`,
-            "بيكلّم نفس الموقع افتراضيًا، فمش محتاج URL."
-          ],
-          sol: R`بعد generate هتلاقي ٤ models اتضافوا: [[User]] (الاسم والإيميل و [[emailVerified]])، و [[Session]] (فيها [[token]] و [[expiresAt]] و [[ipAddress]] و [[userAgent]])، و [[Account]]، و [[Verification]]، وكل واحد عليه [[@@map]] لاسم جدول صغير زي [[user]].
-
-الـ curl الأول بيرجّع JSON فيه [[token]] و [[user]] ([[emailVerified: false]])، لأن التسجيل بيعمل دخول لوحده. وفي Prisma Studio: صف في [[user]]، وصف في [[session]]، والباسورد مش في [[user]] خالص: هتلاقيه في [[account]] في عمود [[password]] بشكل [[salt:hash]] طويل، والـ [[providerId]] بتاعه [[credential]].
-
-الباسورد القصير بيرجّع [[{"message":"Password too short","code":"PASSWORD_TOO_SHORT"}]]. ولو نفس الإيميل تاني: [[USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL]].
-
-لو generate قال [[Cannot find module]] لـ Prisma client: اعمل [[npx prisma generate]] الأول. ولو الـ curl رجّع [[INVALID_ORIGIN]] أو [[MISSING_OR_NULL_ORIGIN]]: انت باعت cookie أو Origin مش مطابق لـ [[BETTER_AUTH_URL]]، وده الحماية شغالة صح.`,
-          solCode: R`npm i better-auth
-echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)" >> .env
-echo "BETTER_AUTH_URL=http://localhost:3000" >> .env
-npx prisma generate
-npx auth@latest generate
-npx prisma migrate dev --name auth
-npx prisma generate
-curl -X POST localhost:3000/api/auth/sign-up/email -H "Content-Type: application/json" -d '{"name":"Sara","email":"sara@example.com","password":"long-password-1"}'
-# {"token":"...","user":{"name":"Sara","email":"sara@example.com","emailVerified":false,...}}
-curl -X POST localhost:3000/api/auth/sign-up/email -H "Content-Type: application/json" -d '{"name":"Sara","email":"sara2@example.com","password":"short"}'
-# {"message":"Password too short","code":"PASSWORD_TOO_SHORT"}`
-        },
-        {
-          cmd: "signUpEmail و signInEmail",
-          title: "تسجيل ودخول وخروج من Server Actions بالمكتبة",
-          desc: R`[[auth.api]] فيه كل endpoint كدالة: [[signUpEmail]] و [[signInEmail]] و [[signOut]]. بتناديهم من Server Action وتبعتلهم [[headers: await headers()]] (عشان الـ IP والـ cookies)، و [[nextCookies()]] بيحط الـ cookie. ولو حصل خطأ (باسورد غلط، أو إيميل متسجل) بيرموا [[APIError]] من [[better-auth/api]] فيه [[status]] و [[body.code]].
-
-والفورم نفسها زي فئة Server Actions بالظبط: [[useActionState]] والـ action بترجّع [[{ error }]]. وفيه طريق تاني من المتصفح: [[authClient.signIn.email()]]، بس الـ Server Action بيشتغل من غير JavaScript وبيخلي الـ redirect على السيرفر.`,
-          example: R`// app/actions/auth.ts
-"use server";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { APIError } from "better-auth/api";
-import { auth } from "@/lib/auth";
-type State = { error?: string };
-export async function signUp(_prev: State, formData: FormData): Promise<State> {
-  try {
-    await auth.api.signUpEmail({
-      body: { name: String(formData.get("name") ?? ""), email: String(formData.get("email") ?? ""), password: String(formData.get("password") ?? "") },
-      headers: await headers(),
-    });
-  } catch (e) {
-    if (!(e instanceof APIError)) throw e;
-    return { error: e.body?.code === "PASSWORD_TOO_SHORT" ? "الباسورد لازم ١٠ حروف على الأقل" : "مش قادرين نعمل الحساب ده" };
-  }
-  redirect("/dashboard");
-}
-export async function signIn(_prev: State, formData: FormData): Promise<State> {
-  try {
-    await auth.api.signInEmail({
-      body: { email: String(formData.get("email") ?? ""), password: String(formData.get("password") ?? "") },
-      headers: await headers(),
-    });
-  } catch (e) {
-    if (e instanceof APIError) return { error: "الإيميل أو الباسورد غلط" };
-    throw e;
-  }
-  redirect("/dashboard");
-}
-export async function signOut() {
-  await auth.api.signOut({ headers: await headers() });
-  redirect("/login");
-}`,
-          try: R`اعمل صفحة [[/login]] فيها فورم بـ [[useActionState(signIn, {})]] وزرار خروج بيستخدم [[signOut]]. ادخل وافتح DevTools > Application > Cookies: إيه اسم الـ cookie وعليها إيه؟ وبعدين علّق [[nextCookies()]] في [[lib/auth.ts]] وجرّب تدخل تاني. وآخر حاجة: اعمل خروج وبص على جدول [[session]] في Prisma Studio.`,
-          flag: "script",
-          deep: {
-            why: R`الـ Server Action بيخلي فورم الدخول تشتغل حتى قبل ما الـ JS يحمّل، والـ redirect بيحصل على السيرفر، والأخطاء بترجع بنفس شكل أي فورم تانية في التطبيق. والمكتبة بتعمل الجزء الحساس: مقارنة الـ hash في وقت ثابت، وإنشاء session في الداتابيز، و cookie بالخيارات الصح.`,
-            how: R`[[auth.api.signInEmail({ body, headers })]] بيعمل نفس اللي بيعمله [[POST /api/auth/sign-in/email]]، بس من غير HTTP: بيدوّر على المستخدم، ويقارن الباسورد، ويعمل صف في [[session]]، ويرجّع [[Set-Cookie]]. و [[nextCookies()]] عبارة عن hook بعد كل endpoint: لو فيه [[Set-Cookie]] بيكتبها بـ [[cookies().set]] بتاع Next، وده مسموح لأننا جوه Server Action.
-
-[[headers]]: المكتبة محتاجاها عشان تعرف الـ IP والـ User-Agent (بيتخزنوا في الـ session) وعشان الـ rate limit. وفي [[signOut]] إجباري، لأنه بيقرا الـ cookie من الـ headers عشان يعرف أنهي session يمسح.
-
-الأخطاء: [[APIError]] فيه [[status]] كنص ([[UNAUTHORIZED]] أو [[UNPROCESSABLE_ENTITY]]) و [[body]] فيه [[message]] و [[code]]. المكتبة نفسها بترجّع رسالة واحدة للإيميل الغلط والباسورد الغلط ([[INVALID_EMAIL_OR_PASSWORD]])، فحافظ على ده في رسالتك.
-
-[[redirect]] برّه الـ try، لأنه بيرمي exception خاص، ولو جوه try هيتمسك كأنه خطأ. نفس القاعدة من فئة Server Actions.
-
-والتسجيل بيعمل دخول لوحده ([[autoSignIn]] افتراضيًا true). لو عايز تأكيد إيميل قبل الدخول: [[emailAndPassword.requireEmailVerification]] مع [[emailVerification.sendVerificationEmail]] (تاب «بناء مشروع كامل» فيه تصميم الإيميلات دي).`,
-            when: R`فورم التسجيل والدخول في أي تطبيق Next. استخدم [[authClient.signIn.email]] لو الفورم جوه client component معقدة (خطوات أو modal) ومحتاج [[onSuccess]] و [[onError]] في المتصفح.`,
-            mistakes: R`[[redirect("/dashboard")]] جوه الـ try فيتمسك وترجع «الإيميل أو الباسورد غلط» مع إن الدخول نجح. وتنسى [[headers]] في [[signOut]] فالخروج مبيعملش حاجة. وتطبع [[e.message]] للمستخدم كما هو. وتقول «الإيميل ده مش متسجل» في الدخول فحد يعرف مين عنده حساب. ونسيان [[nextCookies()]] (أشهر سؤال في الـ issues: «الدخول نجح بس الـ session فاضية»). وتعمل rate limit لوحدك وتنسى إن المكتبة عندها واحد شغال افتراضيًا في الإنتاج بس.`
-          },
-          teach: R`## الفكرة: ٣ Server Actions بينادوا المكتبة كدوال
-
-[[signUp]] و [[signIn]] بياخدوا الفورم ويبعتوها لـ [[auth.api]]، ولو المكتبة رمت خطأ بيرجّعوا رسالة، ولو نجح بيحوّلوا. و [[signOut]] بيمسح الـ session. اتشغّل في نفس مشروع درس [[better-auth]] (Next.js 16.4.0، و [[better-auth]] 1.7.7، و Postgres في Docker، و [[next start]] على بورت 5831)، ومعاه صفحة [[/login]] من الحل تحت وصفحة [[/signup]] بنفس الشكل، والمتصفح Chrome headless. وحطينا [[console.log]] في الـ catch عشان نشوف شكل الخطأ.
-
----
-
-## ١. الـ imports والنوع
-
-| السطر | ليه |
-|---|---|
-| [[use server]] | كل الدوال هنا Server Actions |
-| [[headers]] من [[next/headers]] | headers الطلب الحالي (فيها الـ cookies والـ IP والـ User-Agent) |
-| [[redirect]] | التحويل |
-| [[APIError]] من [[better-auth/api]] | نوع الخطأ اللي المكتبة بترميه، عشان نفرّقه عن أي خطأ تاني |
-| [[auth]] | الـ instance من [[lib/auth.ts]] |
-| [[type State = { error?: string }]] | شكل الـ state: يا فاضي يا فيه رسالة. و [[?]] معناها الخانة اختيارية |
-
-و [[: Promise<State>]] بعد كل دالة بيقول لـ TypeScript إنها بترجّع [[State]] صراحة، عشان [[useActionState(signIn, {})]] يقبل [[{}]] كأول قيمة (من غيره بيستنتج [[{ error: string }]]، زي ما شفنا في درس [[session cookie]]).
-
----
-
-## ٢. [[signUp]] من جوه لبرة
-
-### [[auth.api.signUpEmail({ body, headers })]]
-
-نفس [[POST /api/auth/sign-up/email]] اللي جربناه بـ curl، بس نداء دالة عادي من غير HTTP. بياخد:
-
-- [[body]]: [[name]] و [[email]] و [[password]]. كل واحد [[String(formData.get("x") ?? "")]]: هات قيمة الـ input، ولو [[null]] خليها نص فاضي، وحوّلها نص.
-- [[headers: await headers()]]: المكتبة بتاخد منها الـ IP والـ User-Agent وتحطهم في الـ session، وبتستخدمهم في الـ rate limit.
-
-### [[try { ... } catch (e) { ... }]]
-
-لو التسجيل فشل، المكتبة **بترمي** [[APIError]]. الـ [[catch]]:
-
-~~~text
-if (!(e instanceof APIError)) throw e;
-return { error: e.body?.code === "PASSWORD_TOO_SHORT" ? "الباسورد لازم ١٠ حروف على الأقل" : "مش قادرين نعمل الحساب ده" };
-~~~
-
-- [[instanceof APIError]]: هل الخطأ من المكتبة؟ لو لأ (الداتابيز وقعت مثلًا) [[throw e]] تاني، فيروح لـ [[error.tsx]].
-- [[e.body?.code]]: كود الخطأ. و [[? :]] (ternary): لو الكود ده، الرسالة الأولى، وإلا التانية.
-
-سجّلنا بباسورد [[short]] من الفورم. اللوج على السيرفر، وبعده اللي ظهر في الصفحة:
-
-~~~text الناتج
-signUp APIError BAD_REQUEST 400 {"message":"Password too short","code":"PASSWORD_TOO_SHORT"}
-signup short -> الباسورد لازم ١٠ حروف على الأقل
-~~~
-
-يعني [[APIError]] فيه [[status]] كنص ([[BAD_REQUEST]])، و [[statusCode]] كرقم (400)، و [[body]] فيه [[message]] و [[code]].
-
-### [[redirect("/dashboard")]] برّه الـ try
-
-لو التسجيل نجح، المكتبة عملت session، و [[nextCookies()]] حط الـ cookie، فنحوّل.
-
----
-
-## ٣. [[signIn]]: نفس الشكل، ورسالة واحدة
-
-~~~text
-} catch (e) {
-  if (e instanceof APIError) return { error: "الإيميل أو الباسورد غلط" };
-  throw e;
-}
-~~~
-
-باسورد غلط:
-
-~~~text الناتج
-signIn APIError UNAUTHORIZED 401 {"message":"Invalid email or password","code":"INVALID_EMAIL_OR_PASSWORD"}
-wrong pw -> الإيميل أو الباسورد غلط
-~~~
-
-المكتبة نفسها مش بتفرّق بين «الإيميل مش موجود» و «الباسورد غلط» (نفس الكود)، ورسالتنا كمان.
-
-> بين كل تجربة والتانية استنينا ١١ ثانية: [[next start]] = production، والمكتبة بتشغّل rate limit على الدخول والتسجيل (٣ طلبات كل ١٠ ثواني).
-
----
-
-## ٤. الدخول الصح: الـ cookie
-
-الباسورد الصح، والمتصفح راح [[/dashboard]] وظهر [[أهلًا Sara]]. الـ cookie في Chrome:
-
-~~~text الناتج
-{ name: 'better-auth.session_token', httpOnly: true, secure: false, sameSite: 'Lax', days: '7.00', value: 'mfx6IIWAlIw4...' }
-~~~
-
-[[secure: false]] لأننا على [[http://localhost]]. على HTTPS المكتبة بتحط [[Secure]] وبتغيّر الاسم لـ [[__Secure-better-auth.session_token]].
-
----
-
-## ٥. [[nextCookies()]]: جرّبنا من غيره
-
-علّقنا السطر في [[lib/auth.ts]] ([[plugins: [/* nextCookies() */]]])، وعملنا build تاني، ودخلنا بنفس الباسورد الصح:
-
-~~~text الناتج
-url after login http://localhost:5831/dashboard   form? 1   h1? 0
-NO COOKIE
-proxy /dashboard cookie? false
-~~~
-
-وعدد صفوف جدول [[session]] زاد واحد. يعني الدخول **نجح** في الداتابيز، والـ action مرماش خطأ، بس الـ cookie متحطتش: الـ proxy لقى مفيش cookie ورجّع صفحة الـ login (الفورم ظاهرة، ومفيش [[h1]] الـ dashboard). [[auth.api.signInEmail]] بيرجّع الـ [[Set-Cookie]] جوه نتيجة الدالة، و [[nextCookies()]] هو اللي بياخده ويكتبه بـ [[cookies().set]] بتاع Next.
-
----
-
-## ٦. [[signOut]]
-
-~~~text
-await auth.api.signOut({ headers: await headers() });
-redirect("/login");
-~~~
-
-الـ [[headers]] هنا إجبارية: منها المكتبة بتقرا الـ cookie وتعرف أنهي session تمسح. بعد الضغط على «خروج»:
-
-~~~text الناتج
-after signOut http://localhost:5831/login []
-عدد صفوف session: قبل الدخول 1، بعد الخروج 1
-~~~
-
-القوسين الفاضيين: مفيش cookies. والصف اللي اتعمل في الدخول اتمسح (الصف الباقي session تانية من تجربة curl).
-
-ولو حد احتفظ بالقيمة القديمة للـ cookie؟ بعتناها بنفسنا لـ [[/api/auth/get-session]]:
-
-~~~text الناتج
-old cookie get-session: 200 null
-~~~
-
-[[null]] = مفيش session، لأن الصف اتمسح. ده الفرق عن JWT في درس [[session cookie]].
-
----
-
-## ٧. ليه [[redirect]] برّه الـ try؟
-
-عملنا نسخة غلط فيها [[redirect]] جوه الـ [[try]] و [[catch]] من غير فحص، ودخلنا بالباسورد الصح:
-
-~~~text الناتج
-url http://localhost:5831/login-bad   alert: الإيميل أو الباسورد غلط   cookies: [ 'better-auth.session_token' ]
-~~~
-
-الـ cookie اتحطت (الدخول نجح)، بس [[redirect]] بيرمي exception خاص، والـ [[catch]] مسكه وفكره خطأ، فظهرت «الإيميل أو الباسورد غلط».
-
----
-
-## ٨. صفحة الـ login (الحل)
-
-- [[useActionState(signIn, {})]] بيرجّع ٣ حاجات: [[state]] (آخر حاجة رجعت من الـ action)، و [[action]] (تتحط في [[<form action>]])، و [[pending]] ([[true]] وهو بيبعت).
-- [[autoComplete="current-password"]]: بيخلي مدير الباسوردات في المتصفح يملا الخانة.
-- [[{state.error && <p role="alert">...}]]: لو فيه رسالة اعرضها. و [[role="alert"]] بيخلي قارئ الشاشة يقراها.
-
----
-
-## الخلاصة
-
-| الحاجة | ليه |
-|---|---|
-| [[auth.api.*]] من Server Action | نفس الـ endpoints من غير HTTP، والفورم تشتغل من غير JS |
-| [[headers: await headers()]] | الـ IP والـ cookies (وإجبارية في [[signOut]]) |
-| [[instanceof APIError]] | خطأ معروف = رسالة، غيره = [[throw]] |
-| رسالة واحدة في الدخول | محدش يعرف مين متسجل |
-| [[nextCookies()]] | من غيره الدخول بينجح والـ cookie متتحطش |
-| [[redirect]] برّه الـ try | وإلا الـ catch يمسكه |
-| [[signOut]] | بيمسح الصف، فالـ cookie القديمة متنفعش |`,
-          lines: [
-            "ملف Server Actions.",
-            R`[[headers()]] عشان نبعت الطلب للمكتبة.`,
-            "التحويل بعد النجاح.",
-            R`نوع الخطأ اللي المكتبة بترميه.`,
-            R`الـ instance من [[lib/auth.ts]].`,
-            R`الـ state اللي بترجع لـ [[useActionState]].`,
-            "التسجيل: بياخد الـ state اللي فاتت والفورم، وبيرجّع state جديدة.",
-            "جرّب...",
-            R`[[signUpEmail]]: نفس [[POST /api/auth/sign-up/email]] من غير HTTP.`,
-            R`الاسم والإيميل والباسورد من الفورم، و [[?? ""]] عشان [[null]] ميبقاش "null".`,
-            "الـ headers: الـ IP والـ User-Agent بيتخزنوا مع الـ session.",
-            "قفلة الطلب.",
-            "لو رمى...",
-            "أي خطأ مش من المكتبة (الداتابيز وقعت مثلًا) يروح لـ error.tsx.",
-            R`خطأ معروف: رسالة واضحة للباسورد القصير، ورسالة عامة لأي حاجة تانية.`,
-            "قفلة.",
-            R`نجح: الـ cookie اتحطت بـ [[nextCookies]]، فحوّل. برّه الـ try.`,
-            "قفلة.",
-            "الدخول بنفس الشكل.",
-            "جرّب...",
-            R`[[signInEmail]]: بيقارن الباسورد ويعمل session.`,
-            "الإيميل والباسورد.",
-            "الـ headers.",
-            "قفلة.",
-            "لو رمى...",
-            "رسالة واحدة للإيميل الغلط والباسورد الغلط.",
-            "غير كده ارمي.",
-            "قفلة.",
-            "داخل.",
-            "قفلة.",
-            "الخروج.",
-            R`بيمسح الـ session من الداتابيز والـ cookie. الـ headers إجبارية عشان يعرف أنهي session.`,
-            "روح الـ login.",
-            "قفلة."
-          ],
-          sol: R`بعد الدخول هتلاقي cookie اسمها [[better-auth.session_token]] (على localhost من غير [[__Secure-]])، عليها HttpOnly و SameSite=Lax وعمرها ٧ أيام. قيمتها token ونقطة وتوقيع، مش JWT تقدر تقراه.
-
-لما تعلّق [[nextCookies()]]: الـ action بيعدّي من غير خطأ، والـ redirect يحصل، بس الـ dashboard يرجّعك للـ login، لأن الـ Set-Cookie فضل جوه نتيجة الدالة ومحدش حطه في الرد. ودي بالظبط أشهر مشكلة.
-
-بعد الخروج: الصف بتاع الـ session اتمسح من جدول [[session]] (أو قل عددهم واحد)، والـ cookie اختفت. ولو نسخت قيمة الـ cookie القديمة وحطيتها بإيدك، [[getSession]] هيرجّع [[null]]، لأن الـ session مش موجودة في الداتابيز. ده الفرق عن الـ JWT اللي في درس [[session cookie]]: هناك التوكن القديم كان هيفضل صالح لحد ما يخلص.
-
-الغلط الشائع: تحط [[redirect]] جوه الـ try فتشوف «الإيميل أو الباسورد غلط» مع إن الـ cookie اتحطت.`,
-          solCode: R`// app/login/page.tsx
-"use client";
-import { useActionState } from "react";
-import { signIn } from "@/app/actions/auth";
-export default function LoginPage() {
-  const [state, action, pending] = useActionState(signIn, {});
+          cmd: "layout.tsx",
+          title: "جزء ثابت بيلف كل الصفحات اللي تحته",
+          desc: R`[[layout.tsx]] بياخد [[children]] ويلفها: الـ header والـ sidebar والـ footer. الـ layout اللي في [[app/layout.tsx]] (root layout) إجباري، وهو اللي فيه [[<html>]] و [[<body>]]. وأي فولدر تحت ممكن يبقى ليه layout بتاعه، والـ layouts بتتداخل: [[/dashboard/orders]] بتترسم جوه layout الـ dashboard جوه الـ root layout.
+
+أهم ميزة: لما تتنقل بين صفحتين تحت نفس الـ layout، الـ layout مبيترسمش تاني، والـ state اللي جواه (search box، أو sidebar مفتوح) بتفضل. ولو عايز العكس (يترسم من جديد مع كل صفحة، زي animation دخول)، فيه [[template.tsx]].`,
+          example: R`// app/layout.tsx
+import type { Metadata } from "next";
+import "./globals.css";
+export const metadata: Metadata = { title: "متجر الكتب" };
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <form action={action} className="grid max-w-sm gap-3">
-      <input name="email" type="email" autoComplete="email" required />
-      <input name="password" type="password" autoComplete="current-password" required />
-      <button disabled={pending}>{pending ? "بيدخل..." : "دخول"}</button>
-      {state.error && <p role="alert">{state.error}</p>}
-    </form>
+    <html lang="ar" dir="rtl">
+      <body>
+        <SiteHeader />
+        <main>{children}</main>
+      </body>
+    </html>
   );
-}`
-        },
-        {
-          cmd: "getSession",
-          title: "تعرف المستخدم في server components والـ actions والـ proxy",
-          desc: R`على السيرفر: [[auth.api.getSession({ headers: await headers() })]] بيرجّع [[{ user, session }]] أو [[null]]. ده بيعمل query للداتابيز، فلفّه في [[cache()]] جوه الـ DAL زي درس [[DAL]] بالظبط، والصفحات والـ actions بتنادي [[requireUser()]]. وفي client components: [[authClient.useSession()]].
-
-وفي [[proxy.ts]]: [[getSessionCookie(request)]] من [[better-auth/cookies]] بيشوف الـ cookie موجودة ولا لأ بس، من غير داتابيز. ده الفحص المتفائل السريع، والحماية الحقيقية في الـ DAL.`,
-          example: R`// lib/dal.ts
-import "server-only";
-import { cache } from "react";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-export const getSession = cache(async () => auth.api.getSession({ headers: await headers() }));
-export async function requireUser() {
-  const session = await getSession();
-  if (!session) redirect("/login");
-  return session.user;
 }
-export async function getMyOrders() {
-  const user = await requireUser();
-  return db.order.findMany({ where: { userId: user.id }, select: { id: true, status: true, totalCents: true } });
-}
-// proxy.ts
-import { NextResponse, type NextRequest } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
-export function proxy(request: NextRequest) {
-  if (!getSessionCookie(request)) return NextResponse.redirect(new URL("/login", request.url));
-  return NextResponse.next();
-}
-export const config = { matcher: ["/dashboard/:path*", "/account/:path*"] };`,
-          try: R`اعمل [[app/dashboard/page.tsx]] بيعرض [[user.name]] من [[requireUser()]] والطلبات من [[getMyOrders()]]. جرّب ٣ حالات: من غير cookie، و cookie اسمها [[better-auth.session_token]] بقيمة عشوائية (من DevTools)، و cookie حقيقية. في كل حالة: مين وقفك، الـ proxy ولا الـ DAL؟ وبعدين امسح صف الـ session من Prisma Studio وانت داخل واعمل refresh.`,
+// app/dashboard/layout.tsx
+export default function DashboardLayout({ children }: LayoutProps<"/dashboard">) {
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <section className="flex-1 p-6">{children}</section>
+    </div>
+  );
+}`,
+          try: R`حط [[<input placeholder="اكتب حاجة" />]] في layout الـ dashboard، واعمل صفحتين تحته بينهم Link. اكتب في الخانة واتنقل: الكلام فاضل. وبعدين غيّر اسم الملف لـ [[template.tsx]] وجرّب تاني: الكلام بيتمسح مع كل تنقل.`,
           flag: "script",
           deep: {
-            why: R`نفس درس الـ DAL: الحماية جنب الداتا عشان مفيش طريق للداتا يعدّي من غيرها. الفرق إن المكتبة بقت هي اللي بتتحقق من الـ session، وانت بتبني فوقها. ولأن الـ session في الداتابيز، لو مسحتها (خروج من كل الأجهزة، أو حساب اتقفل) أول طلب بعدها بيتقفل، عكس JWT.`,
-            how: R`[[getSession]] بيقرا الـ cookie من الـ headers، ويتحقق من التوقيع، ويجيب الـ session والمستخدم من الداتابيز، ولو الـ session عدّى عليها يوم ([[updateAge]]) بيمد مدتها. في server component مينفعش يكتب cookie، فالتجديد بيحصل في الداتابيز والـ cookie بتتحدث في أول action أو طلب لـ [[/api/auth]].
+            why: "كل صفحة في الموقع فيها نفس الـ header، وكل صفحات الـ dashboard فيها نفس الـ sidebar. من غير layouts هتكرر ده في كل صفحة، ومع كل تنقل كل ده هيترسم ويتحمّل تاني، والـ state اللي فيه تضيع.",
+            how: R`Next بيبني الصفحة من فوق لتحت: root layout، وجواه layout كل فولدر في الطريق، وفي الآخر الصفحة. وكل واحد بياخد اللي تحته في [[children]].
 
-[[cache()]] بيخلي كل النداءات في نفس الطلب (layout وصفحة و ٣ كومبوننتات) query واحد. ولو عايز تقلل الـ queries أكتر: [[session.cookieCache]] بيحط نسخة موقّعة من الـ session في cookie تانية لدقايق، وده معناه إن إلغاء الـ session بياخد لحد ما الكاش يخلص. وللعمليات الحساسة (تغيير الباسورد) ابعت [[query: { disableCookieCache: true }]].
+في التنقل، Next بيقارن الشجرة القديمة بالجديدة، والأجزاء المشتركة مبتتطلبش من السيرفر تاني ومبتترسمش (partial rendering). عشان كده الـ layout مبيوصلوش [[searchParams]]، ولو محتاج حاجة بتتغير مع كل صفحة، مكانها الصفحة أو client component بـ [[usePathname]].
 
-الـ proxy: في Next 16 بيشتغل على Node، فممكن تنادي [[auth.api.getSession]] جواه كمان، والوثائق بتقول كده. بس ده query مع كل طلب مطابق، بما فيهم الـ prefetch. [[getSessionCookie]] أسرع بكتير، وبيعرف اسم الـ cookie بـ [[__Secure-]] ومن غيرها. والـ [[matcher]] هنا على المسارات المحمية بس، عكس درس [[proxy.ts]].
+الـ layout server component افتراضيًا، فيقدر يبقى [[async]] ويجيب داتا (المستخدم الحالي مثلًا). بس خد بالك: الـ layout مبيترسمش تاني مع التنقل، فمتعتمدش عليه في فحص الصلاحيات (درس DAL في المستوى التاني).
 
-والـ server actions: نفس [[requireUser()]] أول سطر. والـ route handlers كمان. ومتستخدمش [[use cache]] على أي حاجة بتنادي [[getSession]].`,
-            when: R`[[requireUser]] في كل صفحة و action و route فيه داتا خاصة. [[useSession]] في الـ client بس للعرض (اسم في الـ navbar)، مش للحماية. و [[getSessionCookie]] في الـ proxy لتجربة أحسن (redirect قبل ما حاجة تترسم).`,
-            mistakes: R`تعتمد على [[getSessionCookie]] في الـ proxy كحماية: أي cookie بالاسم ده بتعدّي (وجرّبتها في التجربة). وتنادي [[getSession]] من غير [[headers]] فيرجع [[null]] دايمًا. وتنادي [[getSession]] مباشرة في ١٠ أماكن من غير [[cache]] فالصفحة تعمل ١٠ queries. و [[useSession]] في client component تخبي بيه زرار الأدمن وتفتكر إن ده حماية. وتشغّل [[cookieCache]] وتستغرب إن الـ ban مأثّرش لخمس دقايق.`
+[[template.tsx]] زي الـ layout بالظبط، بس بياخد key جديد مع كل تنقل، فبيتعمل من الأول والـ state بتاعته بتتمسح والـ effects بتشتغل تاني.
+
+وفي الـ root layout، Next بيحط [[<head>]] وجواه الـ meta بتاعة الـ charset والـ viewport لوحده، وبيضيف الـ title والـ description من [[metadata]]، فمتكتبش [[<head>]] بإيدك (تاب «HTML و CSS»).`,
+            when: "أي حاجة مشتركة بين كذا صفحة: navigation، و sidebar، و providers، و footer. و template لما تحتاج reset مع كل صفحة: animation دخول، أو فورم لازم يفضى.",
+            mistakes: R`تحط فحص «هل المستخدم داخل؟» في الـ layout بس: الـ layout مبيتنفذش تاني مع التنقل، والصفحة نفسها ممكن تتطلب لوحدها، فالفحص مكانه الصفحة أو الـ DAL. وتكتب [[<html>]] في layout تاني غير الـ root (إلا لو root layouts متعددة في groups). وتعمل الـ root layout كله [[use client]] عشان provider واحد، فكل الموقع يبقى client.`
           },
-          teach: R`## الفكرة: طبقتين، واحدة سريعة وواحدة بجد
+          teach: R`## الفكرة: layout بياخد الصفحة في [[children]] ويلفها
 
-في [[lib/dal.ts]]: [[getSession]] بتسأل المكتبة (والمكتبة بتسأل الداتابيز)، و [[requireUser]] بتحوّل للـ login لو مفيش، و [[getMyOrders]] بتجيب طلبات المستخدم ده بس. وفي [[proxy.ts]]: فحص سريع إن الـ cookie موجودة، من غير داتابيز. اتشغّل في نفس مشروع الدرسين اللي فاتوا ([[better-auth]] 1.7.7، و Postgres في Docker، و [[next start]] على بورت 5831)، وفيه صفحة [[/dashboard]] من الحل تحت ومعاها layout بينادي [[requireUser]] كمان. وحطينا [[console.log]] جوه [[getSession]] وجوه الـ proxy عشان نعرف مين اشتغل، وضفنا طلب [[o_sara]] لـ Sara وطلب [[o_other]] لمستخدم تاني.
-
----
-
-## ١. [[getSession]]: سطر واحد فيه ٣ حاجات
-
-~~~text
-export const getSession = cache(async () => auth.api.getSession({ headers: await headers() }));
-~~~
-
-من جوه لبرة:
-
-1. [[await headers()]]: headers الطلب الحالي، وفيها الـ cookie.
-2. [[auth.api.getSession({ headers })]]: المكتبة بتطلّع الـ cookie، وتتحقق من توقيعها، وتدوّر على الـ session في جدول [[session]]، وترجّع [[{ user, session }]] أو [[null]].
-3. [[cache(...)]]: نفس النتيجة لأي نداء تاني في نفس الطلب.
+المثال فيه layoutين: الـ root layout (اللي بيلف الموقع كله)، و layout للـ dashboard بيلف الصفحات اللي تحت [[/dashboard]] بس. هنقرا الاتنين، وبعدين نثبت بـ Chrome حقيقي (playwright على [[next build]] و [[next start]]، Next 16.4) إن الـ layout مبيترسمش تاني مع التنقل، وإن [[template.tsx]] عكسه.
 
 ---
 
-## ٢. [[requireUser]]
+## ١. الـ root layout: [[app/layout.tsx]]
 
-~~~text
-const session = await getSession();
-if (!session) redirect("/login");
-return session.user;
-~~~
+### [[import type { Metadata } from "next";]]
 
-بترجّع [[session.user]] (فيه [[id]] و [[name]] و [[email]] و [[emailVerified]]...). وبعد السطر التاني TypeScript عارف إن [[session]] مش [[null]]، لأن [[redirect]] مبيرجعش.
+[[import type]] بيجيب **نوع** TypeScript بس، مش كود. [[Metadata]] شكل الـ object بتاع العنوان والوصف.
 
----
+### [[import "./globals.css";]]
 
-## ٣. [[getMyOrders]]
+import من غير اسم: «حمّل الملف ده وخلاص». الـ CSS العام بيتعمله import مرة واحدة هنا، فيتطبق على كل الصفحات.
 
-[[where: { userId: user.id }]] جوه الـ query، و [[select]] بـ ٣ أعمدة. زي درس [[DAL]] بالظبط، الفرق إن [[user.id]] جاي من المكتبة.
+### [[export const metadata: Metadata = { title: "متجر الكتب" };]]
 
----
-
-## ٤. [[proxy.ts]]
-
-~~~text
-if (!getSessionCookie(request)) return NextResponse.redirect(new URL("/login", request.url));
-return NextResponse.next();
-~~~
-
-- [[getSessionCookie(request)]] من [[better-auth/cookies]]: بيدوّر على cookie اسمها [[better-auth.session_token]] (أو بـ [[__Secure-]] قبلها) ويرجّع قيمتها أو [[null]]. **مش** بيتحقق من حاجة.
-- [[new URL("/login", request.url)]]: بيعمل URL كامل لـ [[/login]] على نفس الدومين، لأن [[NextResponse.redirect]] عايز URL كامل.
-- [[NextResponse.next()]]: كمّل للصفحة.
-- [[matcher: ["/dashboard/:path*", "/account/:path*"]]]: الـ proxy يشتغل على المسارين دول وأي حاجة تحتهم بس ([[:path*]] = صفر أو أكتر من الأجزاء).
-
----
-
-## ٥. التلات حالات
-
-دخلنا بـ [[POST /api/auth/sign-in/email]] وخدنا الـ cookie الحقيقية، وبعدين طلبنا [[/dashboard]] ٣ مرات بـ [[fetch]] من Node و [[redirect: "manual"]] (متتبعش التحويل، وريني هو).
+Next بيدوّر على export اسمه [[metadata]] ويحوّله لـ tags في الـ [[<head>]]. وده اللي طلع في HTML أي صفحة:
 
 ~~~text الناتج
-no cookie      307 /login
-random         307 /login
-real           200  <h1>أهلًا Sara</h1> <li>o_sara: PAID</li>
+<head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>...
+<title>متجر الكتب</title>
 ~~~
 
-ولوج السيرفر لنفس الطلبات بالترتيب:
+الـ [[charSet]] والـ [[viewport]] Next حطهم لوحده، والـ [[title]] من الـ [[metadata]]. عشان كده مش بتكتب [[<head>]] بإيدك.
 
-~~~text الناتج
-proxy /dashboard cookie? false
-proxy /dashboard cookie? true
-getSession
-proxy /dashboard cookie? true
-getSession
-~~~
+### [[export default function RootLayout({ children }: LayoutProps<"/">)]]
 
-| الحالة | الـ proxy | [[getSession]] | مين وقفه |
-|---|---|---|---|
-| مفيش cookie | [[false]]، حوّل | متنداش | الـ proxy |
-| [[abc123.fake]] | [[true]]، عدّاها | [[null]] | الـ DAL |
-| cookie حقيقية | [[true]] | المستخدم | محدش: الصفحة ظهرت |
+- [[children]]: اللي تحت الـ layout ده. لو فاتح [[/dashboard/orders]]، الـ [[children]] هنا هي layout الـ dashboard وجواه صفحة الطلبات.
+- [[LayoutProps<"/">]]: نوع جاهز زي [[PageProps]]، بيعرف إن فيه [[children]] (ولو فيه slots، زي درس [[@slot]]، بيعرفها كمان).
 
-الحالة التانية هي الدليل: أي حد يحط cookie بالاسم ده يعدّي من الـ proxy. الحماية الحقيقية في [[requireUser]].
+### [[<html lang="ar" dir="rtl">]] و [[<body>]]
 
-وفي الحالة التالتة: الـ layout والصفحة و [[getMyOrders]] نادوا [[requireUser]] ٣ مرات، و [[getSession]] اتطبعت **مرة واحدة**، يعني query واحد على الداتابيز بفضل [[cache]]. وطلب [[o_other]] مظهرش لأنه مش بتاع Sara.
+الـ root layout **بس** هو اللي فيه [[<html>]] و [[<body>]]، وهو إجباري. [[lang="ar"]] اللغة (لقارئ الشاشة ومحركات البحث)، و [[dir="rtl"]] الاتجاه من اليمين للشمال. ولأنهم في HTML جاي من السيرفر، الصفحة بتظهر بالاتجاه الصح من أول لحظة.
+
+### [[<SiteHeader />]] ثم [[<main>{children}</main>]]
+
+الـ header فوق كل صفحة، والصفحة نفسها جوه [[<main>]].
 
 ---
 
-## ٦. امسح الـ session وانت داخل
+## ٢. layout الـ dashboard: [[app/dashboard/layout.tsx]]
 
-دخلنا تاني، وطلبنا الصفحة، ومسحنا صف الـ session بـ [[psql]]، وطلبنا تاني بنفس الـ cookie:
+### [[export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)]]
 
-~~~text الناتج
-before delete: 200
-DELETE 1
-after delete:  307 /login
+نفس الشكل، بس في فولدر [[dashboard]]، فبيلف اللي تحت [[/dashboard]] بس. ومفيهوش [[<html>]]، لأنه بيترسم **جوه** الـ root layout.
+
+### [[<div className="flex min-h-screen">]]
+
+Tailwind: [[flex]] يحط الولاد جنب بعض في صف، و [[min-h-screen]] أقل ارتفاع = طول الشاشة.
+
+### [[<Sidebar />]] و [[<section className="flex-1 p-6">{children}</section>]]
+
+الـ sidebar على جنب، والصفحة جنبه. [[flex-1]] «خد كل المساحة الفاضية»، و [[p-6]] مسافة داخلية.
+
+### الترتيب لما تفتح [[/dashboard/orders]]
+
+~~~text شكل الشجرة
+RootLayout            (app/layout.tsx)
+  DashboardLayout     (app/dashboard/layout.tsx)
+    Orders            (app/dashboard/orders/page.tsx)
 ~~~
 
-الـ cookie لسه سليمة وتوقيعها صح، بس الـ session مش في الداتابيز، فـ [[getSession]] رجّع [[null]]. ده اللي بيخلي «اخرج من كل الأجهزة» أو قفل حساب يشتغل فورًا. (لو [[session.cookieCache]] شغال، المكتبة بتصدّق نسخة في cookie لحد ما مدتها تخلص، فالمسح ياخد وقت.)
+كل واحد بياخد اللي تحته في [[children]].
 
 ---
 
-## ٧. في الـ client: [[authClient.useSession()]]
+## ٣. التجربة: الـ layout بيفضل، والـ template بيتعمل من الأول
 
-hook بيرجّع [[{ data, isPending }]]، و [[data]] فيه [[user]] و [[session]]. بيعمل طلب لـ [[/api/auth/get-session]] من المتصفح. استخدمه للعرض بس (اسم المستخدم في الـ navbar)، لأن أي حد يقدر يغيّر كود المتصفح.
+عملنا layout الـ dashboard زي الـ solCode (فيه [[<input>]] ولينكين)، وصفحتين [[orders]] و [[settings]]. السكربت بيفتح [[/dashboard/orders]]، ويكتب [[hello]] في الخانة، ويضغط لينك الإعدادات، ويقرا الخانة بعد ما الصفحة تتغير:
+
+~~~text الناتج مع layout.tsx
+h2: الإعدادات | input after navigation: "hello"
+~~~
+
+الصفحة اتغيرت (الـ [[h2]] بقى «الإعدادات»)، والكلام فاضل. ليه؟ لأن الصفحتين تحت نفس الـ layout، فـ Next بدّل الجزء اللي اتغير بس (الـ [[children]])، والـ layout نفسه بالـ DOM والـ state بتوعه زي ما هو. ده اسمه partial rendering.
+
+وبعدين غيّرنا اسم الملف لـ [[template.tsx]] (من غير ما نغيّر سطر) وعملنا build تاني:
+
+~~~text الناتج مع template.tsx
+h2: الإعدادات | input after navigation: ""
+~~~
+
+الخانة فضيت. الـ template بياخد key جديد مع كل تنقل، فـ React بيمسحه ويعمله من الأول.
 
 ---
 
 ## الخلاصة
 
-| المكان | الأداة | بيعمل إيه | حماية؟ |
-|---|---|---|---|
-| [[proxy.ts]] | [[getSessionCookie]] | الـ cookie موجودة؟ من غير داتابيز | لأ، تجربة أسرع بس |
-| الـ DAL | [[getSession]] + [[cache]] | تحقق كامل، query واحد في الطلب | أيوه |
-| الصفحات والـ actions | [[requireUser()]] | أول سطر | أيوه |
-| الـ query | [[where: { userId }]] | الملكية | أيوه |
-| client component | [[useSession()]] | العرض | لأ |`,
+| | [[layout.tsx]] | [[template.tsx]] |
+|---|---|---|
+| بيلف الصفحات اللي تحته | أيوة | أيوة |
+| مع التنقل بين صفحاته | بيفضل زي ما هو | بيتعمل من الأول |
+| الـ state اللي جواه | بتفضل | بتتمسح |
+| الاستخدام | header و sidebar و providers | animation دخول، أو فورم لازم يفضى |
+
+- الـ root layout إجباري، وهو بس اللي فيه [[<html>]] و [[<body>]].
+- [[metadata]] في الـ layout (أو الصفحة) بدل ما تكتب [[<head>]].
+- الـ layout مبيترسمش تاني مع التنقل، فمتحطش فيه فحص صلاحيات لوحده.`,
           lines: [
-            "الملف ده عمره ما يروح للمتصفح.",
-            R`[[cache]] من React: مرة واحدة في الطلب.`,
-            "الـ headers فيها الـ cookie.",
-            "التحويل.",
-            "الـ instance.",
-            R`الـ session أو [[null]]، ومتكاشة طول الطلب.`,
-            "الدالة اللي أي حاجة محمية بتناديها.",
-            "هات الـ session.",
-            "مفيش؟ login.",
-            R`رجّع المستخدم ([[id]] و [[name]] و [[email]] وأي عمود ضافه plugin).`,
+            "نوع الـ metadata (SEO، في المستوى التالت).",
+            "الـ CSS العام بيتعمله import مرة واحدة في الـ root layout.",
+            R`title افتراضي لكل الموقع. [[metadata]] بتتكتب في server components بس (layout أو page).`,
+            R`الـ root layout: [[children]] هنا هي الصفحة أو الـ layout اللي تحته.`,
+            "بداية الـ JSX.",
+            R`[[<html>]] و [[<body>]] بيتكتبوا هنا بس، مش في أي صفحة. واللغة والاتجاه من السيرفر، فمفيش ترعيشة.`,
+            "الـ body.",
+            "header موجود في كل الموقع، ومبيترسمش تاني مع التنقل.",
+            "مكان الصفحة الحالية.",
+            "قفلة body.",
+            "قفلة html.",
+            "قفلة الـ return.",
             "قفلة.",
-            "داتا خاصة بتعدّي من الـ DAL.",
-            "مين؟",
-            "الفلتر بالـ userId جوه الـ query، والأعمدة المطلوبة بس.",
-            "قفلة.",
-            "الـ proxy.",
-            R`[[getSessionCookie]]: بيدوّر على الـ cookie بالاسم بس.`,
-            "الدالة.",
-            "مفيش cookie؟ login قبل ما أي حاجة تترسم.",
-            "فيه؟ كمّل. والصفحة هتتحقق بجد.",
-            "قفلة.",
-            "المسارات المحمية بس."
+            R`layout تاني جوه [[app/dashboard]]: بيلف كل حاجة تحت [[/dashboard]] بس.`,
+            "بداية الـ JSX.",
+            "صف: sidebar والمحتوى.",
+            "الـ sidebar. لو فيه state (قايمة مفتوحة) بتفضل وانت بتتنقل بين صفحات الـ dashboard.",
+            "الصفحة (orders أو settings) بتتحط هنا.",
+            "قفلة div.",
+            "قفلة الـ return.",
+            "قفلة."
           ],
-          sol: R`من غير cookie: الـ proxy هو اللي بيحوّلك لـ [[/login]]، والصفحة متترسمش خالص.
+          sol: R`مع [[layout.tsx]]: تكتب «hello» وتدوس لينك الصفحة التانية، الصفحة تتغير والكلام يفضل في الخانة، لأن الـ layout مبيترسمش تاني والـ DOM بتاعه زي ما هو. جربتها بـ build و start وقريت قيمة الـ input بعد التنقل: [["hello"]].
 
-cookie بقيمة عشوائية: الـ proxy بيعدّيها (هو بيشوف الاسم بس)، والصفحة بتنادي [[requireUser]]، و [[getSession]] بيرجّع [[null]] لأن التوقيع غلط، فالـ DAL هو اللي بيحوّلك. ده الدليل إن الـ proxy مش حماية.
-
-cookie حقيقية: الصفحة بتعرض اسمك وطلباتك بس.
-
-لما تمسح صف الـ session من Prisma Studio وتعمل refresh: بتتحوّل للـ login فورًا، حتى والـ cookie لسه في المتصفح. الـ session اتلغت من السيرفر. (لو شغّلت [[cookieCache]]، هتفضل داخل لحد ما الكاش يخلص، وده المتوقع.)
-
-الغلط الشائع: تحط [[console.log]] في الـ proxy وتفتكر إن الحالة التانية اتقفلت هناك.`,
-          solCode: R`// app/dashboard/page.tsx
-import { requireUser, getMyOrders } from "@/lib/dal";
-export default async function Dashboard() {
-  const user = await requireUser();
-  const orders = await getMyOrders();
+ومع [[template.tsx]]: نفس الخطوات، والقيمة بعد التنقل [[""]]، لأن الـ template بياخد key جديد مع كل صفحة فبيتعمل من الأول. لو الكلام اتمسح مع الـ layout كمان: غالبًا اللينك [[<a>]] مش [[<Link>]] (reload كامل)، أو الصفحتين مش تحت نفس الـ layout.`,
+          solCode: R`// app/dashboard/layout.tsx (غيّر اسمه لـ template.tsx في التجربة التانية)
+import Link from "next/link";
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main>
-      <h1>أهلًا {user.name}</h1>
-      <ul>{orders.map((o) => <li key={o.id}>{o.id}: {o.status}</li>)}</ul>
-    </main>
-  );
-}`
-        },
-        {
-          cmd: "social login",
-          title: "دخول بـ Google و GitHub وربط الحسابات",
-          desc: R`[[socialProviders]] في الإعدادات: لكل provider [[clientId]] و [[clientSecret]] من لوحة المطورين (Google Cloud Console و GitHub OAuth Apps)، وتسجّل عندهم الـ callback: [[http://localhost:3000/api/auth/callback/google]] للتطوير، ونفسه بالدومين الحقيقي للإنتاج. وفي المتصفح: [[authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" })]].
-
-ربط الحسابات: المستخدم ممكن يبقى عنده باسورد و Google و GitHub، كلهم صفوف في [[Account]] لنفس [[User]]. وفيه طريقتين: ضمني (دخل بـ Google بنفس إيميل حساب موجود)، ودي المكتبة بتعملها بشروط أمان، وصريح: وهو داخل، يدوس «اربط GitHub» فيتنادي [[authClient.linkSocial]].`,
-          example: R`// lib/auth.ts (نفس الـ imports بتاعة درس better-auth)
-export const auth = betterAuth({
-  database: prismaAdapter(db, { provider: "postgresql" }),
-  emailAndPassword: { enabled: true, minPasswordLength: 10 },
-  socialProviders: {
-    google: { clientId: process.env.GOOGLE_CLIENT_ID!, clientSecret: process.env.GOOGLE_CLIENT_SECRET! },
-    github: { clientId: process.env.GITHUB_CLIENT_ID!, clientSecret: process.env.GITHUB_CLIENT_SECRET! },
-  },
-  account: { accountLinking: { enabled: true } },
-  plugins: [nextCookies()],
-});
-// app/login/social-buttons.tsx
-"use client";
-import { authClient } from "@/lib/auth-client";
-export function SocialButtons() {
-  return (
-    <div className="flex gap-2">
-      <button onClick={() => authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" })}>ادخل بـ Google</button>
-      <button onClick={() => authClient.signIn.social({ provider: "github", callbackURL: "/dashboard", errorCallbackURL: "/login" })}>ادخل بـ GitHub</button>
+    <div>
+      <input placeholder="اكتب حاجة" />
+      <Link href="/dashboard/orders">الطلبات</Link> <Link href="/dashboard/settings">الإعدادات</Link>
+      <section>{children}</section>
     </div>
   );
 }
-// app/settings/link-github.tsx ("use client")
-<button onClick={() => authClient.linkSocial({ provider: "github", callbackURL: "/settings" })}>اربط GitHub</button>`,
-          try: R`اعمل GitHub OAuth App (Settings > Developer settings > OAuth Apps) و callback [[http://localhost:3000/api/auth/callback/github]]، وحط الـ id والـ secret في [[.env]]. ادخل بـ GitHub وبص على جدول [[account]]. وبعدين: اعمل حساب بالإيميل والباسورد بنفس إيميل GitHub بتاعك (من غير ما تأكده)، واخرج، وادخل بـ GitHub. حصل إيه؟ وآخر حاجة: وانت داخل بالباسورد، استخدم [[linkSocial]] واربط GitHub.`,
-          flag: "script",
-          deep: {
-            why: "ناس كتير مش هتعمل حساب بباسورد جديد، لكن بتدوس «ادخل بـ Google» في ثانية. وكمان انت مش شايل باسورد لهم. بس الـ OAuth نفسه (state و PKCE وتبادل الـ code وقراية الإيميل) سهل تغلط فيه، والمكتبة بتعمله. والجزء اللي فعلًا محتاج تفهمه هو ربط الحسابات، لأن غلطه بيدّي حد تاني حسابك.",
-            how: R`الرحلة: [[signIn.social]] بيطلب [[/api/auth/sign-in/social]] فيرجع URL بتاع Google فيه state، والمتصفح يروح هناك. المستخدم يوافق، و Google يرجّعه على [[/api/auth/callback/google?code=...]]. المكتبة تتحقق من الـ state، وتبدّل الـ code بتوكنات، وتقرا الإيميل، وتعمل أو تلاقي [[User]]، وتضيف صف [[Account]] بـ [[providerId: "google"]]، وتعمل session وتحوّل على [[callbackURL]]. تفاصيل OAuth نفسه في تاب «بناء مشروع كامل» (درس OAuth).
-
-الربط الضمني: لو حد دخل بـ Google بإيميل موجود في [[User]] ومش مربوط بـ Google، Better Auth مبيربطش إلا لو: الـ provider قال الإيميل verified (أو الـ provider في [[trustedProviders]])، و الحساب المحلي نفسه [[emailVerified]] (الإعداد [[requireLocalEmailVerified]]، وافتراضيًا true). غير كده بيرجع خطأ [[account_not_linked]].
-
-ليه الشرط التاني؟ هجمة اسمها pre-account takeover: المهاجم يعمل حساب بإيميلك انت وباسورد يعرفه، من غير تأكيد. بعدين انت تدخل بـ Google، فلو اتربط تلقائي، المهاجم لسه معاه الباسورد وداخل على حسابك. فلو التسجيل بالباسورد عندك، شغّل تأكيد الإيميل.
-
-الربط الصريح: [[linkSocial]] من مستخدم داخل بيعمل نفس الرحلة، ويضيف الـ [[Account]] للمستخدم الحالي. [[listAccounts()]] بيرجّع الحسابات المربوطة، و [[unlinkAccount({ accountId })]] بيفكّ واحد (ومبيرضاش يفك آخر حساب، عشان المستخدم ميتقفلش برّه).
-
-والإنتاج: كل provider محتاج الـ callback بالدومين الحقيقي، و [[BETTER_AUTH_URL]] صح، وإلا Google يرجع [[redirect_uri_mismatch]].`,
-            when: "أي تطبيق للجمهور العام: Google تقريبًا دايمًا، و GitHub لأدوات المطورين. وسيب الإيميل والباسورد كاختيار لو فيه ناس معندهاش حساب Google أو مش عايزة تربطه.",
-            mistakes: R`[[trustedProviders]] فيها provider مبيتحققش من الإيميل (أو [[allowDifferentEmails: true]]) فحد يربط حسابك بإيميل مش بتاعه. وتسجيل بالباسورد من غير تأكيد إيميل مع ربط ضمني. وتنسى callback الإنتاج في لوحة Google. و [[clientSecret]] في متغير [[NEXT_PUBLIC_]]. وتستخدم نفس OAuth App للتطوير والإنتاج. وفي الانترفيو: «ليه منربطش الحسابات بالإيميل على طول؟» الإجابة pre-account takeover، والحل إن الإيميل يبقى متأكد في الناحيتين.`
-          },
-          teach: R`## الفكرة: زرار بيودّيك لـ Google، و Google بيرجّعك بكود
-
-[[socialProviders]] في [[lib/auth.ts]] بيعرّف المكتبة على Google و GitHub، والزراير بتنادي [[authClient.signIn.social]]. اتشغّل في نفس مشروع [[better-auth]] 1.7.7 ([[next start]] على بورت 5831) بـ [[clientId]] وهمي (مفيش OAuth App حقيقي هنا)، فجرّبنا الجزء اللي عندنا لحد ما المتصفح يخرج لـ GitHub أو Google، ووقفناه قبل ما يوصل هناك. الجزء اللي بعد كده (الموافقة والرجوع بالكود الحقيقي والربط) مكتوب من وثائق Better Auth.
-
----
-
-## ١. الإعدادات الجديدة
-
-~~~text
-socialProviders: {
-  google: { clientId: process.env.GOOGLE_CLIENT_ID!, clientSecret: process.env.GOOGLE_CLIENT_SECRET! },
-  github: { clientId: process.env.GITHUB_CLIENT_ID!, clientSecret: process.env.GITHUB_CLIENT_SECRET! },
-},
-account: { accountLinking: { enabled: true } },
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[clientId]] | رقم التطبيق بتاعك عند Google أو GitHub. مش سر، بيظهر في الـ URL |
-| [[clientSecret]] | السر: بيتبعت من السيرفر بس وقت تبديل الكود. مكانه [[.env]] من غير [[NEXT_PUBLIC_]] |
-| [[!]] بعد [[process.env.X]] | non-null assertion: «يا TypeScript، القيمة دي موجودة». لو المتغير مش متحط، TS مش هيقولك |
-| [[accountLinking.enabled]] | اسمح إن مستخدم واحد يبقى ليه أكتر من طريقة دخول (الافتراضي أصلًا [[true]]) |
-
----
-
-## ٢. الزراير: [["use client"]] و [[onClick]]
-
-الزراير محتاجة [[onClick]]، والـ events بتشتغل في client components بس، فأول سطر [[use client]].
-
-~~~text
-authClient.signIn.social({ provider: "github", callbackURL: "/dashboard", errorCallbackURL: "/login" })
-~~~
-
-- [[provider]]: أنهي واحد.
-- [[callbackURL]]: يروح فين في موقعك بعد ما الدخول ينجح.
-- [[errorCallbackURL]]: يروح فين لو فشل، ومعاه [[?error=...]].
-
----
-
-## ٣. اللي حصل لما دوسنا الزرار
-
-Chrome headless داس «ادخل بـ GitHub». أول حاجة، طلب لسيرفرنا:
-
-~~~text الناتج
-REQ POST http://localhost:5831/api/auth/sign-in/social {"provider":"github","callbackURL":"/dashboard","errorCallbackURL":"/login"}
-~~~
-
-والرد (جرّبناه بـ curl كمان) JSON فيه [[url]]، ومعاه cookie:
-
-~~~text الناتج
-set-cookie: better-auth.state=hiSy9B...%3D; Max-Age=300; Path=/; HttpOnly; SameSite=Lax
-{"url":"https://github.com/login/oauth/authorize?response_type=code&client_id=Iv1.demo123&state=hiSy9B...
-~~~
-
-والمتصفح راح على الـ URL ده. فكّينا الـ query string:
-
-~~~text الناتج: GitHub
-https://github.com/login/oauth/authorize
-    response_type = code
-    client_id = Iv1.demo123
-    state = 1tVODE6ul4QJskiY8f5cWxCdRpesM27J
-    scope = read:user user:email
-    redirect_uri = http://localhost:5831/api/auth/callback/github
-    code_challenge_method = S256
-    code_challenge = _afpVuV4izHopF14-ZffSlepo-JAZBO1A_M7kSXWsws
-~~~
-
-كل خانة ليها سبب:
-
-| الخانة | معناها |
-|---|---|
-| [[response_type=code]] | «رجّعلي كود» مش توكن. الكود بيتبدّل بتوكن من السيرفر بالسر |
-| [[client_id]] | مين التطبيق اللي بيطلب |
-| [[state]] | رقم عشوائي، المكتبة هتتأكد إنه رجع زي ما هو (ضد CSRF) |
-| [[scope]] | الصلاحيات: [[read:user]] (البروفايل) و [[user:email]] (الإيميل، حتى لو مخفي) |
-| [[redirect_uri]] | يرجّع فين. لازم يطابق اللي متسجل في لوحة GitHub **حرف بحرف** |
-| [[code_challenge]] + [[S256]] | PKCE: hash لرقم سري ([[codeVerifier]]) متخزن عند السيرفر بس. وقت التبديل بيتبعت الرقم نفسه، فلو حد سرق الكود من الـ URL ميقدرش يستخدمه |
-
-ونفس الكلام مع Google: [[https://accounts.google.com/o/oauth2/v2/auth]] و [[scope = email profile openid]] و [[redirect_uri = .../api/auth/callback/google]].
-
-### الـ state متخزن فين؟
-
-في جدول [[verification]] (ومعاه الـ cookie [[better-auth.state]] عمرها ٥ دقايق):
-
-~~~text الناتج
- identifier    | value                                                        | life
- auth-state:h… | {"callbackURL":"/dashboard","codeVerifier":"fzXod1pYnQ...    | 00:10:00
-~~~
-
-يعني الـ [[codeVerifier]] بتاع PKCE والـ [[callbackURL]] متخزنين عند السيرفر ١٠ دقايق.
-
-### لو حد بعت callback مزوّر
-
-~~~bash
-curl -i "localhost:5831/api/auth/callback/github?code=fake&state=forged"
-~~~
-
-~~~text الناتج
-HTTP/1.1 302 FOUND
-location: http://localhost:5831/api/auth/error?error=state_mismatch
-~~~
-
-الـ [[state]] مش موجود عندنا، فاترفض من غير ما المكتبة تكلّم GitHub أصلًا.
-
----
-
-## ٤. الرجوع الحقيقي (من الوثائق)
-
-لما المستخدم يوافق، GitHub بيرجّعه على [[/api/auth/callback/github?code=...&state=...]]. المكتبة: تتأكد من الـ state، تبدّل الـ code بـ access token (بالـ [[clientSecret]] و [[codeVerifier]])، تجيب الإيميل، تلاقي أو تعمل [[User]]، تضيف صف في [[account]] بـ [[providerId: "github"]] و [[accountId]] رقم حسابه على GitHub، تعمل session، وتحوّل على [[callbackURL]].
-
----
-
-## ٥. الربط بالإيميل (من الوثائق)
-
-| الحالة | النتيجة |
-|---|---|
-| إيميل جديد | [[User]] جديد + [[account]] بـ github |
-| إيميل موجود ومتأكد ([[emailVerified: true]]) والـ provider بيقول إن الإيميل متأكد | يتربط: صف [[account]] جديد لنفس المستخدم |
-| إيميل موجود ومش متأكد | يرفض: [[errorCallbackURL]] ومعاه [[?error=account_not_linked]] |
-
-الحالة التالتة هي الحماية من pre-account takeover: حد سجّل بإيميلك وباسورد يعرفه قبلك، فلو اتربط تلقائي هيفضل معاه باسورد لحسابك.
-
-والربط الصريح: [[authClient.linkSocial({ provider: "github", callbackURL: "/settings" })]] من مستخدم داخل. نفس الرحلة، والـ [[account]] بيتضاف للمستخدم الحالي، وافتراضيًا لازم إيميل GitHub يبقى نفس إيميله.
-
----
-
-## ٦. قبل الإنتاج
-
-- في لوحة GitHub (OAuth App) و Google Cloud Console: الـ callback بالدومين الحقيقي، نفس اللي ظهر في [[redirect_uri]] فوق بالظبط. أي اختلاف = [[redirect_uri_mismatch]].
-- [[BETTER_AUTH_URL]] هو اللي بيتبني منه [[redirect_uri]]، فلازم يبقى الدومين الحقيقي بـ https.
-- OAuth App منفصل للتطوير وللإنتاج.
-
----
-
-## الخلاصة
-
-| الحاجة | ليه |
-|---|---|
-| [[socialProviders]] | الـ id والسر لكل provider |
-| [[signIn.social]] | طلب لسيرفرك يرجّع URL، والمتصفح يروح له |
-| [[state]] + cookie [[better-auth.state]] | الرجوع لازم يكون لنفس الطلب ([[state_mismatch]] غير كده) |
-| [[code_challenge]] (PKCE) | الكود المسروق ميتبدّلش |
-| [[redirect_uri]] | لازم يطابق اللوحة حرف بحرف |
-| الربط | بإيميل متأكد في الناحيتين بس، وإلا [[account_not_linked]] |`,
-          lines: [
-            "الإعدادات بتاعة الدرس اللي فات، وفوقها حاجتين.",
-            "نفس الداتابيز.",
-            "الباسورد لسه موجود كاختيار.",
-            "الـ providers.",
-            "Google: الـ id والـ secret من Google Cloud Console.",
-            "GitHub: من OAuth App في إعدادات GitHub.",
-            "قفلة.",
-            R`الربط مسموح بالشروط الافتراضية (إيميل متأكد في الناحيتين). وده الافتراضي أصلًا، مكتوب عشان يبان.`,
-            R`[[nextCookies]] آخر واحد.`,
-            "قفلة.",
-            "الزراير لازم client component عشان onClick.",
-            "الـ client.",
-            "الكومبوننت.",
-            "بداية الـ JSX.",
-            "حاوية.",
-            R`[[signIn.social]]: بيحوّل المتصفح لـ Google، وبعد الموافقة يرجع على [[callbackURL]].`,
-            R`نفس الحاجة لـ GitHub، ولو حصل خطأ (رفض، أو [[account_not_linked]]) يرجع على [[errorCallbackURL]] ومعاه [[?error=]].`,
-            "قفلة.",
-            "قفلة.",
-            "قفلة.",
-            R`في صفحة الإعدادات لمستخدم داخل: [[linkSocial]] بيضيف GitHub لنفس المستخدم، بشرط إن إيميل GitHub هو نفس إيميله (إلا لو [[allowDifferentEmails]]).`
-          ],
-          sol: R`بعد أول دخول بـ GitHub: صف في [[user]] بإيميلك على GitHub، وصف في [[account]] فيه [[providerId: "github"]] و [[accountId]] هو رقم حسابك على GitHub، و [[accessToken]] بتاع GitHub، و [[password]] فاضي.
-
-التجربة التانية (حساب بالباسورد بنفس الإيميل ومش متأكد، وبعدين دخول بـ GitHub): الدخول بيفشل وبترجع على [[/login?error=account_not_linked]]. ده مش bug: المكتبة رافضة تربط لأن الحساب المحلي [[emailVerified: false]]، فممكن يكون حد تاني عامله بإيميلك. لو غيّرت [[emailVerified]] لـ true في Prisma Studio وجرّبت تاني، هيتربط ويبقى عندك صفين في [[account]] لنفس الـ [[userId]].
-
-الربط الصريح بـ [[linkSocial]] وانت داخل: بيرجعك على [[/settings]] وفيه صف [[account]] جديد لنفس المستخدم. ولو إيميل GitHub مختلف عن إيميل حسابك، الربط بيفشل بخطأ [[email_does_not_match]]، لأن افتراضيًا لازم نفس الإيميل، والمختلف محتاج [[allowDifferentEmails: true]]. وده قرار أمان مش ذوق.
-
-الغلط الشائع: [[redirect_uri_mismatch]] من GitHub أو Google، لأن الـ callback في اللوحة مش [[/api/auth/callback/github]] بالظبط أو فيه [[/]] زيادة.`
-        },
-        {
-          cmd: "أدوار وصلاحيات",
-          title: "أدوار وصلاحيات فوق المكتبة (admin plugin و access control)",
-          desc: R`الـ auth بيقولك «مين». الصلاحيات بتقولك «يقدر يعمل إيه». في Better Auth: [[createAccessControl]] بتعرّف الموارد والأفعال ([[order: ["read", "refund"]]])، و [[ac.newRole]] بيعمل دور من مجموعة أفعال، و plugin الـ [[admin]] بيضيف عمود [[role]] للمستخدم (ومعاه ban و impersonation). وعلى السيرفر: [[auth.api.userHasPermission]] بترجّع [[{ success }]].
-
-والفحص يبقى في الـ DAL جنب [[requireUser]]: [[requirePermission({ order: ["refund"] })]]. والصلاحية مش بديل عن الملكية: «support يقدر يشوف الطلبات» غير «العميل يشوف طلباته هو بس».`,
-          example: R`// lib/permissions.ts
-import { createAccessControl } from "better-auth/plugins/access";
-import { defaultStatements, adminAc } from "better-auth/plugins/admin/access";
-const statement = { ...defaultStatements, product: ["create", "update", "delete"], order: ["read", "refund"] } as const;
-export type Permissions = { [K in keyof typeof statement]?: (typeof statement)[K][number][] };
-export const ac = createAccessControl(statement);
-export const customer = ac.newRole({ order: ["read"] });
-export const support = ac.newRole({ order: ["read", "refund"] });
-export const admin = ac.newRole({ ...adminAc.statements, product: ["create", "update", "delete"], order: ["read", "refund"] });
-// lib/auth.ts: import { admin as adminPlugin } from "better-auth/plugins";
-// plugins: [adminPlugin({ ac, roles: { admin, customer, support }, defaultRole: "customer" }), nextCookies()]
-// lib/dal.ts (جنب requireUser)
-export async function requirePermission(permissions: Permissions) {
-  const user = await requireUser();
-  const { success } = await auth.api.userHasPermission({ body: { userId: user.id, permissions } });
-  if (!success) notFound();
-  return user;
-}
-// app/actions/orders.ts ("use server")
-export async function refundOrder(orderId: string) {
-  await requirePermission({ order: ["refund"] });
-  await db.order.update({ where: { id: orderId, status: "PAID" }, data: { status: "REFUNDED" } });
-  updateTag("orders");
-}`,
-          try: R`ضيف الـ plugin، وشغّل [[npx auth@latest generate]] و migrate وبص على الأعمدة الجديدة في [[user]] و [[session]]. اعمل ٣ مستخدمين، وخلي واحد [[support]] وواحد [[admin]] من Prisma Studio (عمود [[role]]). جرّب [[refundOrder]] بكل واحد فيهم. وبعدين في سكربت: [[auth.api.userHasPermission({ body: { role: "support", permissions: { product: ["delete"] } } })]].`,
-          flag: "script",
-          deep: {
-            why: R`[[if (user.role === "admin")]] متفرّق في ٣٠ مكان بيبوّظ أول ما يبقى عندك دور تالت: «support يقدر يرجّع فلوس بس ميقدرش يمسح منتجات». لما الأدوار معرّفة كصلاحيات في مكان واحد، والكود بيسأل عن الفعل مش عن اسم الدور، تغيير دور بيبقى سطر واحد، ومفيش action اتنسى.`,
-            how: R`[[statement]] هو كل الموارد والأفعال اللي في التطبيق. [[defaultStatements]] فيها موارد الـ admin plugin نفسه ([[user]] و [[session]]: create و list و set-role و ban و impersonate...)، و [[adminAc.statements]] هي صلاحيات الأدمن الافتراضية عليهم. لازم تحطهم في دور الأدمن بتاعك، وإلا الأدمن مش هيقدر يستخدم endpoints زي [[setRole]] و [[banUser]].
-
-[[userHasPermission]] بـ [[userId]] بيجيب دور المستخدم من الداتابيز ويشوفه في التعريف. وتقدر تبعت [[role]] بدل [[userId]] لو معاك الدور من الـ session. والدور بيتخزن في [[user.role]] كنص، وممكن أكتر من دور بفاصلة.
-
-الـ plugin بيضيف: [[role]] و [[banned]] و [[banReason]] و [[banExpires]] في [[user]]، و [[impersonatedBy]] في [[session]]. والمستخدم الـ banned مبيقدرش يدخل، والـ sessions بتاعته بتتمسح. وأول أدمن تعمله بإيدك (Prisma Studio أو seed)، وبعده الأدمن يقدر يدّي أدوار بـ [[auth.api.setRole]].
-
-في الواجهة: [[authClient.admin.checkRolePermission({ role, permissions })]] بيحسب محليًا من غير طلب، عشان تخبي زرار «استرجاع». ده UX بس، والسيرفر لسه بيفحص.
-
-الملكية: [[customer]] عنده [[order: ["read"]]]، بس [[getMyOrders]] لسه بتفلتر بـ [[userId]]. والـ support عنده read على كل الطلبات، فدالة تانية في الـ DAL من غير فلتر وعليها [[requirePermission]]. ولو فيه «فرق» أو «متاجر» (كل مستخدم دوره مختلف في كل متجر)، ده plugin [[organization]] مش admin.`,
-            when: R`أول ما يبقى فيه أكتر من نوعين مستخدمين (عميل وأدمن). لو دورين بس وعمرهم ما هيزيدوا، [[user.role === "ADMIN"]] في [[requireAdmin]] زي درس [[DAL]] كفاية. ولو صلاحيات لكل صف (المستخدم ده يعدّل المقال ده بس)، ده منطق ملكية في الـ query أو ABAC، مش أدوار.`,
-            mistakes: R`تخبي الزرار في الواجهة وتنسى الفحص في الـ action. وتعرّف دور [[admin]] من غير [[adminAc.statements]] فالأدمن ميقدرش يغيّر أدوار. وتدّي [[customer]] صلاحية [[order: ["read"]]] وتفتكر إنها بتفلتر بالملكية. وتفحص [[role === "admin"]] في مكان و [[userHasPermission]] في مكان تاني فيتناقضوا. وتنسى generate و migrate بعد ما تضيف الـ plugin فالـ [[role]] يطلع [[undefined]]. وفي الانترفيو: الفرق بين authentication و authorization، و RBAC مقابل ABAC، وليه «deny by default».`
-          },
-          teach: R`## الفكرة: الأدوار متعرّفة في ملف واحد، والكود بيسأل عن الفعل
-
-[[lib/permissions.ts]] بيقول إيه الموارد والأفعال، وكل دور يقدر يعمل إيه. والـ admin plugin بيضيف عمود [[role]] للمستخدم. و [[requirePermission]] في الـ DAL بتسأل: «المستخدم ده دوره يسمح بالفعل ده؟». اتشغّل في نفس مشروع [[better-auth]] 1.7.7 (Postgres في Docker، و [[next start]] على بورت 5831)، و ٣ مستخدمين: Sara (اتعملت قبل الـ plugin)، و Sam ([[support]])، و Adam ([[admin]]). وحطينا [[console.log]] في [[requirePermission]].
-
----
-
-## ١. [[statement]]: كل الموارد والأفعال
-
-~~~text
-const statement = { ...defaultStatements, product: ["create", "update", "delete"], order: ["read", "refund"] } as const;
-~~~
-
-- [[...defaultStatements]]: موارد الـ admin plugin نفسه ([[user]] و [[session]] بأفعال زي [[set-role]] و [[ban]] و [[impersonate]]). الـ [[...]] بينسخهم جوه الـ object.
-- [[product]] و [[order]]: مواردنا احنا، وكل واحد ليه array أفعال.
-- [[as const]]: من غيره TypeScript بيشوف [[order]] على إنه [[string[]]] (أي نص). معاه بيشوفه [["read" | "refund"]] بالظبط، فلو كتبت [["refnud"]] بالغلط يطلع خطأ وقت الكتابة.
-
----
-
-## ٢. النوع [[Permissions]]
-
-~~~text
-export type Permissions = { [K in keyof typeof statement]?: (typeof statement)[K][number][] };
-~~~
-
-من جوه لبرة:
-
-| الحتة | معناها |
-|---|---|
-| [[typeof statement]] | نوع الـ object اللي فوق |
-| [[keyof ...]] | أسماء المفاتيح: [["user" | "session" | "product" | "order"]] |
-| [[[K in ...]]] | mapped type: لف على كل مفتاح [[K]] |
-| [[?:]] | كل مفتاح اختياري |
-| [[(typeof statement)[K]]] | الـ array بتاع المفتاح ده، مثلًا [[readonly ["read", "refund"]]] |
-| [[[number]]] | نوع أي عنصر فيه: [["read" | "refund"]] |
-| [[[]]] في الآخر | array منهم |
-
-النتيجة: [[{ order?: ("read" | "refund")[]; product?: ("create" | "update" | "delete")[]; ... }]].
-
----
-
-## ٣. الأدوار
-
-~~~text
-export const ac = createAccessControl(statement);
-export const customer = ac.newRole({ order: ["read"] });
-export const support = ac.newRole({ order: ["read", "refund"] });
-export const admin = ac.newRole({ ...adminAc.statements, product: [...], order: ["read", "refund"] });
-~~~
-
-- [[createAccessControl]] بيعمل «المتحكم» من الـ statement، و [[ac.newRole]] بيعمل دور بمجموعة أفعال منه.
-- [[...adminAc.statements]]: صلاحيات الأدمن الافتراضية على [[user]] و [[session]]. من غيرها الأدمن مش هيقدر يستخدم [[setRole]] و [[banUser]].
-
-والربط في [[lib/auth.ts]]:
-
-~~~text
-plugins: [adminPlugin({ ac, roles: { admin, customer, support }, defaultRole: "customer" }), nextCookies()]
-~~~
-
-[[import { admin as adminPlugin }]]: الـ plugin اسمه [[admin]]، وعندنا دور اسمه [[admin]] برضه، فـ [[as]] بيدّي الـ import اسم تاني. و [[defaultRole]] دور أي مستخدم جديد.
-
----
-
-## ٤. الأعمدة الجديدة: generate و migrate
-
-~~~bash
-npx auth@latest generate
-npx prisma migrate dev --name admin
-npx prisma generate
-~~~
-
-قبل ما الـ schema يتحدّث، المكتبة نفسها طبعت تحذير لما اتحمّلت:
-
-~~~text الناتج
-ERROR [Better Auth]: Prisma schema mismatch
-  Missing columns
-    user.role
-    user.banned
-    user.banReason
-    user.banExpires
-    session.impersonatedBy
-~~~
-
-وبعد generate، الفرق في [[schema.prisma]]:
-
-~~~text الناتج
->   role       String?
->   banned     Boolean?  @default(false)
->   banReason  String?
->   banExpires DateTime?
->   impersonatedBy String?
-~~~
-
-[[String?]] يعني ممكن يبقى [[null]]. وسجّلنا Sam و Adam بعد الـ plugin، فالرد رجّع [[role: customer]] لكل واحد (الـ [[defaultRole]])، وغيّرنا أدوارهم بـ SQL:
-
-~~~text الناتج
- adam@example.com | admin   | f
- sam@example.com  | support | f
- sara@example.com |         | f
-~~~
-
-Sara فاضية ([[null]]) لأنها اتعملت قبل العمود.
-
----
-
-## ٥. [[requirePermission]]
-
-~~~text
-const user = await requireUser();
-const { success } = await auth.api.userHasPermission({ body: { userId: user.id, permissions } });
-if (!success) notFound();
-~~~
-
-[[userHasPermission]] بـ [[userId]] بيجيب دور المستخدم من الداتابيز ويشوف الدور ده فيه **كل** الأفعال المطلوبة. وبيرجّع [[{ error, success }]]، و [[const { success } = ...]] بتاخد [[success]] بس.
-
----
-
-## ٦. [[refundOrder]]
-
-~~~text
-await requirePermission({ order: ["refund"] });
-await db.order.update({ where: { id: orderId, status: "PAID" }, data: { status: "REFUNDED" } });
-updateTag("orders");
-~~~
-
-- أول سطر الصلاحية: الكود بيسأل عن **الفعل** [[refund]] مش عن اسم الدور.
-- [[where: { id, status: "PAID" }]]: حدّث الطلب ده **لو** حالته [[PAID]] بس.
-- [[updateTag("orders")]]: أي كاش متعلم بـ [[orders]] يتحدّث (فئة Cache Components).
-
-عملنا صفحة فيها زرار بيشغّل [[refundOrder]] على طلب، ودخلنا بكل مستخدم:
-
-~~~text الناتج
-sara@example.com   o_r1  POST 404  | db: PAID
-sam@example.com    o_r1  POST 200  | db: REFUNDED
-sam@example.com    o_r1  POST 500  | db: REFUNDED
-adam@example.com   o_r2  POST 200  | db: REFUNDED
-~~~
-
-~~~text لوج السيرفر
-requirePermission sara@example.com {"order":["refund"]} false
-requirePermission sam@example.com {"order":["refund"]} true
-requirePermission sam@example.com {"order":["refund"]} true
-~~~
-
-- Sara: [[false]]، فـ [[notFound()]] والطلب متغيرش. (دورها [[null]]، وده بيترفض زي [[customer]].)
-- Sam أول مرة: اترجع.
-- Sam تاني مرة على نفس الطلب: الصلاحية [[true]]، بس الـ [[where]] ملقاش صف [[PAID]]، فـ Prisma رمى:
-
-~~~text الناتج
-Error [PrismaClientKnownRequestError]: Invalid prisma.order.update() invocation:
-No record was found for an update.
-  code: 'P2025'
-~~~
-
-يعني مفيش استرجاع مرتين. في التطبيق الحقيقي امسك [[P2025]] ورجّع رسالة بدل 500.
-
----
-
-## ٧. السكربت (الحل): فحص الأدوار من غير مستخدمين
-
-[[userHasPermission]] بـ [[role]] بدل [[userId]] بيحسب من التعريف بس، من غير داتابيز:
-
-~~~text الناتج
-customer {"order":["refund"]} false
-support {"order":["refund"]} true
-support {"product":["delete"]} false
-admin {"product":["delete"]} true
-~~~
-
-والرد الخام لواحد منهم: [[{"error":null,"success":false}]].
-
-> شغّلناه أول مرة بـ [[npx tsx scripts/check-roles.ts]] ووقع: [[Top-level await is currently not supported with the "cjs" output format]]. مشروع [[create-next-app]] مفيش في [[package.json]] بتاعه [[type: module]]، فـ [[.ts]] بيتعامل كـ CommonJS، و [[await]] برّه أي دالة مش مسموح. الحل: امتداد [[.mts]] (TypeScript بنظام ES modules). ومن غير [[--env-file=.env]] السكربت اشتغل بس طبع تحذيرات إن [[BETTER_AUTH_URL]] ومفاتيح Google و GitHub مش موجودة، و [[DATABASE_URL]] كمان مش هيبقى موجود لأي فحص بـ [[userId]]. فالأمر الصح: [[npx tsx --env-file=.env scripts/check-roles.mts]] (اتعدّل في الحل).
-
----
-
-## الخلاصة
-
-| الحتة | دورها |
-|---|---|
-| [[statement]] + [[as const]] | كل الموارد والأفعال، بأنواع حرفية |
-| [[ac.newRole]] | الدور = مجموعة أفعال |
-| [[adminAc.statements]] | لازم في دور الأدمن عشان إدارة المستخدمين |
-| generate + migrate + generate | أعمدة [[role]] و [[banned]]... |
-| [[requirePermission]] | أول سطر في أي action حساس، وبيقرا الدور من الداتابيز |
-| [[where]] فيها الحالة | العملية متتكررش |
-| الملكية | لسه في الـ query ([[where: { userId }]])، الصلاحية مش بديل عنها |`,
-          lines: [
-            R`[[createAccessControl]] بتعرّف الموارد والأفعال.`,
-            "صلاحيات الـ admin plugin الافتراضية.",
-            R`كل حاجة في التطبيق: موارد الـ plugin، و [[product]] و [[order]] بأفعالهم. [[as const]] عشان الأنواع تبقى حرفية.`,
-            R`نوع بيتولد من الـ statement: [[{ order?: ("read" | "refund")[] ... }]]، فالغلط في اسم فعل بيطلع وقت الكتابة.`,
-            "الـ access controller.",
-            "العميل: يقرا الطلبات بس (والملكية في الـ query).",
-            "الدعم: يقرا ويرجّع فلوس.",
-            R`الأدمن: صلاحيات إدارة المستخدمين الافتراضية، وكل حاجة على المنتجات والطلبات.`,
-            "الدالة اللي الـ actions بتناديها.",
-            "داخل؟",
-            "دوره يقدر يعمل الفعل ده؟ (بيجيب الدور من الداتابيز).",
-            "لأ؟ 404، كأن الحاجة مش موجودة.",
-            "رجّع المستخدم.",
-            "قفلة.",
-            "action استرجاع الفلوس.",
-            "أول سطر: الصلاحية. مش الدور بالاسم.",
-            R`الحالة جوه الـ where: مينفعش ترجّع طلب مش مدفوع أو اترجع قبل كده.`,
-            R`حدّث كاش الطلبات (فئة Cache Components).`,
-            "قفلة."
-          ],
-          sol: R`بعد generate و migrate: [[user]] فيها [[role]] و [[banned]] و [[banReason]] و [[banExpires]]، و [[session]] فيها [[impersonatedBy]]. والمستخدمين الجداد [[role]] بتاعهم [[customer]].
-
-[[refundOrder]] بالـ customer: 404 (أو صفحة not-found)، والطلب متغيرش. بالـ support: الطلب بقى [[REFUNDED]]. بالأدمن: نفس الحاجة. ولو ناديته تاني على نفس الطلب، Prisma بيرمي [[P2025]] لأن مفيش صف [[PAID]]، وده المطلوب (مفيش استرجاع مرتين).
-
-السكربت بيرجّع [[{ error: null, success: false }]] لأن support مالوش [[product: ["delete"]]]. و [[{ role: "support", permissions: { order: ["refund"] } }]] بيرجّع [[success: true]].
-
-لو غيّرت الدور في Prisma Studio والمستخدم داخل، أول طلب بعدها بياخد الدور الجديد (لأن [[userHasPermission]] بـ [[userId]] بيقرا من الداتابيز). الغلط الشائع: تعرّف [[admin]] من غير [[...adminAc.statements]] وتستغرب إن [[setRole]] بيرجّع ممنوع للأدمن.`,
-          solCode: R`// scripts/check-roles.mts   (npx tsx --env-file=.env scripts/check-roles.mts)
-import { auth } from "@/lib/auth";
-import type { Permissions } from "@/lib/permissions";
-const cases: { role: "customer" | "support" | "admin"; permissions: Permissions }[] = [
-  { role: "customer", permissions: { order: ["refund"] } },
-  { role: "support", permissions: { order: ["refund"] } },
-  { role: "support", permissions: { product: ["delete"] } },
-  { role: "admin", permissions: { product: ["delete"] } },
-];
-for (const c of cases) {
-  const { success } = await auth.api.userHasPermission({ body: { role: c.role, permissions: c.permissions } });
-  console.log(c.role, JSON.stringify(c.permissions), success);
-}
-// customer {"order":["refund"]} false
-// support {"order":["refund"]} true
-// support {"product":["delete"]} false
-// admin {"product":["delete"]} true`
-        }
-      ]
-    },
-    {
-      t: "SEO و metadata",
-      l: 3,
-      n: "title و description لكل صفحة، وصور المشاركة، و sitemap و robots، كلهم من ملفات في app",
-      items: [
-        {
-          cmd: "metadata",
-          title: "title و description وصورة المشاركة لكل صفحة",
-          desc: R`في App Router مش بتكتب [[<head>]]: بتعمل [[export const metadata]] في أي [[layout.tsx]] أو [[page.tsx]] (server components بس)، و Next بيحوّلها لـ tags. الـ layout بيحط الافتراضي، والصفحة بتكمّل عليه أو تغيّره.
-
-أهم الحقول: [[title]] (ومعاه [[template]] عشان كل صفحة تبقى «اسمها | اسم الموقع»)، و [[description]]، و [[openGraph]] لشكل اللينك في واتساب وفيسبوك، و [[alternates.canonical]]، و [[metadataBase]] اللي بيخلي كل اللينكات النسبية كاملة. شرح الـ tags نفسها وليه مهمة في تاب «HTML و CSS».`,
-          example: R`// app/layout.tsx
-import type { Metadata } from "next";
-export const metadata: Metadata = {
-  metadataBase: new URL("https://books.example.com"),
-  title: { default: "متجر الكتب", template: "%s | متجر الكتب" },
-  description: "كتب عربي وإنجليزي بتوصل لحد باب البيت.",
-  openGraph: { siteName: "متجر الكتب", locale: "ar_EG", type: "website" },
-  twitter: { card: "summary_large_image" },
-};
-// app/about/page.tsx
-export const metadata: Metadata = {
-  title: "مين إحنا",
-  alternates: { canonical: "/about" },
-};
-// الناتج: <title>مين إحنا | متجر الكتب</title> و <link rel="canonical" href="https://books.example.com/about">`,
-          try: R`حط الـ metadata دي، وافتح [[/about]] واعمل View Source ودوّر على [[<title>]] و [[og:]]. وبعدين امسح [[metadataBase]] واعمل build وافتح View Source: هتلاقي الـ canonical بقى [[/about]] نسبي مش URL كامل. (التحذير بيطلع بس لما يكون فيه صورة OG أو twitter بمسار نسبي أو ملف opengraph-image.) وجرّب تحط [[export const metadata]] في ملف عليه [[use client]] واقرا الخطأ.`,
-          flag: "script",
-          deep: {
-            why: "جوجل بيعرض الـ title والـ description في النتايج، وواتساب وفيسبوك بيعرضوا صورة وعنوان من الـ og tags. صفحة من غيرهم بتظهر «Create Next App» أو لينك أزرق عريان، والناس مبتضغطش.",
-            how: R`Next بيجمع الـ metadata من الـ root layout لتحت لحد الصفحة، وكل مستوى بيعمل merge سطحي: لو الصفحة كتبت [[openGraph]]، بيبدّل الـ [[openGraph]] بتاع الـ layout كله، مش بيدمج جواه. فلو عايز تحتفظ بحاجات مشتركة، حطها في متغير واعمله spread.
-
-[[title.template]] بيتطبق على الصفحات اللي تحت الـ layout ده بس، مش على الـ layout نفسه. و [[title.absolute]] بيتجاهل الـ template.
-
-Next بيحط لوحده [[<meta charset>]] و [[<meta name="viewport">]]. ولو عايز تغيّر الـ viewport أو [[themeColor]]، ده في [[export const viewport]] منفصل.
-
-وفيه ملفات بأسماء خاصة بتتحول metadata لوحدها: [[favicon.ico]] (في [[app]] بس)، و [[icon.png]] و [[apple-icon.png]] و [[opengraph-image.png]] جوه [[app]] أو أي فولدر تحته، و Next بيحط الـ tags الصح.`,
-            when: "الـ layout: الافتراضي والـ template و metadataBase. كل صفحة ثابتة: title و description على الأقل. والصفحات الـ dynamic: الدرس الجاي.",
-            mistakes: R`تكتب [[<head>]] و [[<title>]] بإيدك في layout.tsx فيطلع مكرر أو يتجاهل. وتنسى [[metadataBase]] فصور المشاركة تطلع بـ localhost. وتحط [[metadata]] في client component (مش مسموح). ونفس الـ description لكل الصفحات: جوجل بيتجاهله ويكتب من عنده.`
-          },
-          teach: R`## الفكرة: object في ملف، و Next بيكتب الـ tags
-
-بدل ما تكتب [[<title>]] و [[<meta>]] بإيدك، بتعمل [[export const metadata]] في الـ layout (الافتراضي لكل الموقع) وفي الصفحة (اللي يخصها). اتشغّل في مشروع [[create-next-app]] جديد (Next.js 16.4.0) على ويندوز، والـ layout والصفحة زي المثال بالظبط، و [[next build]] و [[next start]] على بورت 5832، وقرينا الـ HTML بـ [[curl]].
-
----
-
-## ١. [[import type { Metadata } from "next"]]
-
-[[import type]] بيستورد **نوع** بس (مش كود بيتنفذ). و [[: Metadata]] بعد اسم المتغير بيخلي المحرر يكمّلك أسماء الحقول ويطلّع خطأ لو كتبت حقل غلط.
-
----
-
-## ٢. الـ layout خانة خانة
-
-| الحقل | معناه |
-|---|---|
-| [[metadataBase: new URL("https://books.example.com")]] | الدومين. أي رابط نسبي في الـ metadata ([[/about]]) بيتكمّل بيه |
-| [[title.default]] | الـ title لأي صفحة مكتبتش title |
-| [[title.template]] | شكل الـ title للصفحات اللي تحت. [[%s]] بيتبدّل باسم الصفحة |
-| [[description]] | الوصف تحت اللينك في جوجل |
-| [[openGraph]] | Open Graph: الـ tags اللي واتساب وفيسبوك ولينكدإن بيقروها. [[locale: "ar_EG"]] = عربي مصر |
-| [[twitter.card]] | شكل الكارت في X. [[summary_large_image]] = صورة كبيرة |
-
----
-
-## ٣. الصفحة
-
-~~~text app/about/page.tsx
-export const metadata: Metadata = {
-  title: "مين إحنا",
-  alternates: { canonical: "/about" },
-};
-~~~
-
-- [[title]] نص عادي، فالـ template بتاع الـ layout بيلفه.
-- [[alternates.canonical]]: «النسخة الأصلية من الصفحة دي هي الرابط ده». لو حد شارك [[/about?utm_source=x]]، جوجل يعرف إنها نفس الصفحة.
-
----
-
-## ٤. الناتج: [[curl -s localhost:5832/about]]
-
-~~~text الناتج (الـ tags بس)
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>مين إحنا | متجر الكتب</title>
-<meta name="description" content="كتب عربي وإنجليزي بتوصل لحد باب البيت."/>
-<link rel="canonical" href="https://books.example.com/about"/>
-<meta property="og:title" content="مين إحنا | متجر الكتب"/>
-<meta property="og:description" content="كتب عربي وإنجليزي بتوصل لحد باب البيت."/>
-<meta property="og:site_name" content="متجر الكتب"/>
-<meta property="og:locale" content="ar_EG"/>
-<meta property="og:type" content="website"/>
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="مين إحنا | متجر الكتب"/>
-<meta name="twitter:description" content="كتب عربي وإنجليزي بتوصل لحد باب البيت."/>
-~~~
-
-نقرا الناتج:
-
-- [[<title>]]: [[%s]] اتبدّل بـ «مين إحنا».
-- [[description]]: الصفحة مكتبتش واحد، فجه من الـ layout.
-- [[canonical]]: الصفحة كتبت [[/about]] نسبي، و [[metadataBase]] كمّله لـ URL كامل.
-- [[og:title]] و [[twitter:title]] و [[twitter:description]]: احنا مكتبناهمش خالص. Next ملاهم من [[title]] و [[description]].
-- [[viewport]]: Next بيحطه لوحده.
-
-والصفحة الرئيسية (مفيهاش metadata): [[<title>متجر الكتب</title>]]، يعني [[default]]، والـ template مش بيتطبق على الـ layout نفسه.
-
----
-
-## ٥. من غير [[metadataBase]]
-
-شيلنا السطر وعملنا build تاني:
-
-~~~text الناتج
-<link rel="canonical" href="/about"/>
-~~~
-
-الـ canonical بقى نسبي، ومفيش أي تحذير في الـ build. التحذير بيظهر بس لما يبقى فيه صورة OG بتحتاج URL كامل. صفحة منتج فيها [[opengraph-image]] (درس جاي) طلّعت في لوج السيرفر:
-
-~~~text الناتج
-⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:5832".
-~~~
-
-و [[og:image]] بقى [[http://localhost:5832/...]]، يعني واتساب هيحاول يجيب الصورة من localhost: مش هتظهر.
-
----
-
-## ٦. [[metadata]] في ملف [[use client]]
-
-~~~text الناتج (next build)
-Error: You are attempting to export "metadata" from a component marked with "use client", which is disallowed.
-"metadata" must be resolved on the server before the page component is rendered. Keep your page as a Server Component
-and move Client Component logic to a separate file.
-~~~
-
-الـ metadata لازم تتحسب على السيرفر قبل ما الصفحة تترسم. الحل: الصفحة تفضل server component، والجزء التفاعلي في ملف تاني عليه [[use client]].
-
----
-
-## الخلاصة
-
-| الحاجة | فين | ليه |
-|---|---|---|
-| [[metadataBase]] | root layout | الروابط النسبية تبقى كاملة، وصور المشاركة متطلعش localhost |
-| [[title.template]] | layout | كل صفحة اسمها وبعده اسم الموقع |
-| [[title]] و [[description]] | كل صفحة | جوجل والمشاركة |
-| [[alternates.canonical]] | كل صفحة | النسخ بـ query string متتحسبش تكرار |
-| [[og:title]] و [[twitter:*]] | Next بيملاهم | من [[title]] و [[description]] لو مكتبتهمش |
-| [[metadata]] | server components بس | [[use client]] = خطأ build |`,
-          lines: [
-            "النوع بيكمّلك الحقول ويمسك الغلط.",
-            "الافتراضي لكل الموقع.",
-            "الدومين. من غيره الـ canonical النسبي بيفضل نسبي، وصور الـ OG النسبية بتطلع بـ localhost (وده اللي بيطلّع تحذير في الـ build).",
-            R`[[default]] للصفحات اللي ملهاش title، و [[template]] للي ليها: [[%s]] مكان اسم الصفحة.`,
-            "وصف بيظهر تحت اللينك في جوجل.",
-            "شكل المشاركة. الصورة ممكن تيجي من ملف (درس opengraph-image).",
-            "كارت كبير في X.",
-            "قفلة.",
-            "صفحة بتكمّل على الـ layout.",
-            "اسمها بس، والـ template بيكمّل.",
-            R`الرابط الأصلي للصفحة، عشان النسخ بـ [[?utm=]] متتحسبش صفحات مكررة.`,
-            "قفلة."
-          ],
-          sol: R`View Source على [[/about]]: [[<title>مين إحنا | متجر الكتب</title>]]، و [[<link rel="canonical" href="https://books.example.com/about"/>]]، و [[og:title]] بنفس الـ title، و [[og:description]] و [[og:site_name]] و [[og:locale]] بـ [[ar_EG]] جايين من الـ layout، و [[twitter:card]] بـ [[summary_large_image]].
-
-من غير [[metadataBase]]: الـ canonical بقى [[href="/about"]] نسبي، ومفيش تحذير لأن مفيش صور. ولو الصفحة فيها صورة OG (زي درس opengraph-image) هتلاقي في اللوج [[metadataBase property in metadata export is not set]] ومعاه إنه هيستخدم localhost. و [[metadata]] في ملف عليه [[use client]]: الـ build بيقع بـ [[You are attempting to export "metadata" from a component marked with "use client", which is disallowed.]]`
-        },
-        {
-          cmd: "generateMetadata",
-          title: "metadata من الداتابيز لكل منتج ومقال",
-          desc: R`لما الـ title بيعتمد على الداتا (اسم المنتج)، بدل [[metadata]] بتعمل [[export async function generateMetadata({ params })]] وترجّع نفس الشكل. بتاخد نفس [[params]] و [[searchParams]] بتوع الصفحة.
-
-والصفحة و [[generateMetadata]] الاتنين محتاجين المنتج: لف دالة الجلب في [[cache()]] من React عشان الـ query يتنفذ مرة واحدة (ولو عليها [[use cache]] أو fetch، الـ dedupe بيحصل لوحده).`,
-          example: R`// app/products/[slug]/page.tsx
-import type { Metadata } from "next";
-import { cache } from "react";
-import { notFound } from "next/navigation";
-const getProduct = cache((slug: string) => db.product.findUnique({ where: { slug } }));
-export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const product = await getProduct(slug);
-  if (!product) return { title: "المنتج مش موجود" };
-  return {
-    title: product.name,
-    description: product.summary.slice(0, 155),
-    alternates: { canonical: $__bt/products/$__{slug}$__bt },
-    openGraph: { images: [{ url: product.imageUrl, width: 1200, height: 630 }] },
-  };
-}
-export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
-  if (!product) notFound();
-  return <ProductView product={product} />;
-}`,
-          try: R`حط [[console.log("query")]] جوه [[getProduct]] وافتح الصفحة: هتطبع مرة واحدة. شيل [[cache]]: مرتين. وبعدين بعد ما ترفع الموقع، ابعت اللينك لنفسك على واتساب أو جرّبه في أي أداة OG preview.`,
-          flag: "script",
-          deep: {
-            why: "صفحات المنتجات والمقالات هي اللي بتجيب زوار من جوجل ومن المشاركات. لو كلها title واحد («متجر الكتب»)، جوجل مش هيعرف يفرّق بينها، والمشاركة هتبان نفس الشكل لكل منتج.",
-            how: R`Next بينادي [[generateMetadata]] قبل ما يرسم الصفحة أو معاها. ومن Next 15.2 الـ metadata بقت بتتبعت streaming: للمتصفحات العادية، الصفحة مبتستناش [[generateMetadata]] وتبدأ تترسم، والـ tags بتتحط لما تجهز. وللـ bots اللي مبتنفذش JS (واتساب وفيسبوك و X و Bing، بتتعرف من الـ User-Agent)، Next بيستنى الـ metadata الأول عشان تبقى في [[<head>]]. أما Googlebot فبينفذ JS، فبياخد الـ metadata streaming عادي وبيقراها.
-
-[[cache()]] من React بيحفظ النتيجة لنفس الـ arguments طول الطلب الواحد. ولو الدالة عليها [[use cache]] (Cache Components)، ده كاش أقوى بين الطلبات، و [[cache()]] مش ضروري.
-
-وللـ hreflang في موقع بلغتين: [[alternates.languages]] (فئة i18n).
-
-ومع Cache Components، لو [[generateMetadata]] بتقرا حاجة dynamic (cookies)، لازم الصفحة يبقى فيها جزء dynamic جوه Suspense، وإلا Next بيطلّع خطأ. فخلي الـ metadata معتمدة على params وداتا متكاشة بس.`,
-            when: "أي صفحة dynamic segment: منتج، ومقال، وبروفايل عام، وقسم.",
-            mistakes: R`نفس الـ query مرتين من غير [[cache]]. وترمي error من [[generateMetadata]] لما المنتج مش موجود فالصفحة تقع بـ 500 بدل 404. وتقرا [[cookies]] في [[generateMetadata]] فالصفحة تبقى dynamic من غير لازمة. و description فاضي لما الداتا فيها [[null]].`
-          },
-          teach: R`## الفكرة: دالة بدل object، والاتنين بيجيبوا نفس المنتج
-
-[[generateMetadata]] بتاخد الـ [[params]] زي الصفحة، وتجيب المنتج، وترجّع metadata فيها اسمه. والصفحة نفسها بتجيب نفس المنتج. و [[cache]] بيخلي الاتنين query واحد. اتشغّل في مشروع Next.js 16.4.0 ([[next start]] على بورت 5832) بنفس الـ layout بتاع الدرس اللي فات، ومكان [[db]] ملف وهمي فيه منتج [[clean-code]] اسمه «Clean Code بالعربي» ووصفه طويل، وبيطبع [[query <slug>]] مع كل نداء.
-
----
-
-## ١. [[getProduct]]: [[cache]] حوالين arrow function
-
-~~~text
-const getProduct = cache((slug: string) => db.product.findUnique({ where: { slug } }));
-~~~
-
-- [[(slug: string) => ...]]: دالة بتاخد الـ slug وترجّع الـ query.
-- [[cache(...)]] من React: أول نداء بـ [[clean-code]] في الطلب بينفذ، وأي نداء تاني بنفس القيمة في **نفس الطلب** بياخد نفس الـ Promise.
-
----
-
-## ٢. توقيع [[generateMetadata]]
-
-~~~text
-export async function generateMetadata({ params }: PageProps<"/products/[slug]">): Promise<Metadata> {
-~~~
-
-| الحتة | معناها |
-|---|---|
-| [[export async function generateMetadata]] | اسم ثابت: Next بيدوّر عليه في [[page.tsx]] و [[layout.tsx]] |
-| [[{ params }]] | destructuring: من الـ props خد [[params]] بس |
-| [[PageProps<"/products/[slug]">]] | نوع جاهز Next بيولّده من المسار: فيه [[params: Promise<{ slug: string }>]] |
-| [[Promise<Metadata>]] | async، فبترجّع Promise فيها Metadata |
-
-والجسم:
-
-~~~text
-const { slug } = await params;
-const product = await getProduct(slug);
-if (!product) return { title: "المنتج مش موجود" };
-~~~
-
-[[params]] في Next 15 و 16 Promise، فلازم [[await]]. ولو المنتج مش موجود، رجّع title بسيط ومترميش error (الصفحة هي اللي هتعمل [[notFound()]]).
-
----
-
-## ٣. الـ metadata نفسها
-
-~~~text
-title: product.name,
-description: product.summary.slice(0, 155),
-alternates: { canonical: "/products/" + slug },
-openGraph: { images: [{ url: product.imageUrl, width: 1200, height: 630 }] },
-~~~
-
-(في المثال الـ canonical مكتوب template string، نفس المعنى.)
-
-- [[.slice(0, 155)]]: أول ١٥٥ حرف. جوجل بيقص الوصف الطويل في النتايج.
-- [[openGraph.images]]: صورة المشاركة، و [[width]] و [[height]] بيتكتبوا tags عشان المنصة تعرف المقاس من غير ما تحمّل الصورة.
-
-ده اللي طلع في [[curl localhost:5832/products/clean-code]]:
-
-~~~text الناتج
-<title>Clean Code بالعربي | متجر الكتب</title>
-<meta name="description" content="كتاب عن كتابة كود نضيف. كتاب عن كتابة كود نضيف. ... كتاب عن كتا"/>
-<link rel="canonical" href="https://books.example.com/products/clean-code"/>
-<meta property="og:image" content="https://books.example.com/img/clean-code.jpg"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-~~~
-
-الـ template كمّل الـ title، والوصف اتقص عند الحرف ١٥٥ (حتى لو في نص كلمة)، و [[metadataBase]] كمّل الـ canonical.
-
-> لو فيه ملف [[opengraph-image]] في نفس الفولدر (درس جاي) و [[generateMetadata]] رجّعت [[openGraph.images]] كمان، جرّبنا: اللي في [[generateMetadata]] هو اللي ظهر في [[og:image]]، والملف اتجاهل.
-
----
-
-## ٤. الصفحة
-
-~~~text
-const { slug } = await params;
-const product = await getProduct(slug);
-if (!product) notFound();
-~~~
-
-نفس النداء بنفس الـ slug. [[notFound()]] بيرمي، فبيوقّف الرسم ويرجّع 404.
-
----
-
-## ٥. [[cache]] بيوفّر query
-
-لوج السيرفر لطلب واحد على الصفحة:
-
-~~~text الناتج
-مع cache        query clean-code
-من غير cache    query clean-code
-                query clean-code
-~~~
-
-من غير [[cache]]، [[generateMetadata]] و الصفحة كل واحد عمل query.
-
----
-
-## ٦. منتج مش موجود: [[/products/nope]]
-
-~~~text الناتج
-HTTP 404
-document.title = 404: This page could not be found.
-~~~
-
-الـ status صح. والـ title في المتصفح جه من صفحة الـ 404 الافتراضية، مش من [[generateMetadata]] («المنتج مش موجود | متجر الكتب» موجود في الصفحة بس بعده). مش مشكلة: الـ 404 هي اللي بتقول لجوجل ميأرشفش، وكمان Next حط [[<meta name="robots" content="noindex"/>]].
-
----
-
-## ٧. الـ bots والـ streaming
-
-من Next 15.2، لو [[generateMetadata]] بطيئة، Next بيبدأ يبعت الصفحة للمتصفحات من غير ما يستناها، والـ tags بتيجي بعدين. وللـ bots اللي مبتشغّلش JS (بيعرفهم من الـ User-Agent) بيستنى ويحطها في [[<head>]]. جرّبنا ٤ User-Agents (Chrome و [[facebookexternalhit]] و WhatsApp و Googlebot): الـ [[<title>]] كان جوه [[<head>]] في الأربعة، لأن الداتا الوهمية بترجع فورًا فمفيش حاجة تستناها. الفرق بيبان مع query بطيء، وده من الوثائق.
-
----
-
-## الخلاصة
-
-| الحتة | ليه |
-|---|---|
-| [[generateMetadata({ params })]] | الـ title من الداتا، ونفس props الصفحة |
-| [[await params]] | Promise في 15 و 16 |
-| [[cache(getProduct)]] | الـ metadata والصفحة = query واحد |
-| مش موجود؟ title بسيط | مترميش error من الـ metadata |
-| [[.slice(0, 155)]] | جوجل بيقص الباقي |
-| [[openGraph.images]] | بتكسب على ملف [[opengraph-image]] لو الاتنين موجودين |`,
-          lines: [
-            "النوع.",
-            R`[[cache]] من React.`,
-            "404.",
-            "نفس الـ slug في نفس الطلب = query واحد، حتى لو اتنادت من الـ metadata والصفحة.",
-            R`[[async]] وبترجّع [[Metadata]]، وبتاخد نفس props الصفحة.`,
-            "الـ slug.",
-            "المنتج (من الكاش لو اتجاب).",
-            "مش موجود: title بسيط، والصفحة هي اللي هتنادي notFound.",
-            "metadata المنتج.",
-            "الاسم، والـ template بتاع الـ layout بيكمّل.",
-            "أول ١٥٥ حرف تقريبًا، لأن جوجل بيقص الباقي.",
-            "الرابط الأصلي.",
-            "صورة المشاركة بالمقاس المناسب.",
-            "قفلة.",
-            "قفلة.",
-            "الصفحة.",
-            "الـ slug.",
-            R`نفس النداء: [[cache]] بيرجّع نفس النتيجة.`,
-            "404.",
-            "اعرض.",
-            "قفلة."
-          ],
-          sol: R`مع [[cache]]: الـ log بيطلع مرة واحدة لكل فتحة صفحة، مع إن [[generateMetadata]] والصفحة الاتنين نادوا [[getProduct]]. من غير [[cache]]: مرتين. والـ title في View Source [[<title>اسم المنتج | متجر الكتب</title>]]، لأن الـ template بتاع الـ layout كمّل. والمنتج اللي مش موجود: 404، والتاب في المتصفح بيقول [[404: This page could not be found.]]: صفحة الـ 404 الافتراضية بتحط title بتاعها، وده اللي بيكسب على «المنتج مش موجود | متجر الكتب» (وفي الـ HTML الخام من غير JS الـ title بيبقى «متجر الكتب»). فالـ title بتاع الحالة دي مش مهم، المهم الـ 404.
-
-وفي واتساب أو أي OG preview لازم يظهر الاسم والوصف والصورة. لو الصورة مش ظاهرة: غالبًا [[metadataBase]] مش متظبط فالـ URL طالع [[localhost]]، أو الصورة مش 1200×630، أو واتساب لسه مكاش شكل قديم للينك (جرّب اللينك وفي آخره [[?v=2]]).`
-        },
-        {
-          cmd: "sitemap.ts و robots.ts",
-          title: "sitemap.xml و robots.txt من الكود",
-          desc: R`[[app/sitemap.ts]] بيرجّع array من الصفحات ([[url]] و [[lastModified]])، و Next بيطلّعها [[/sitemap.xml]]. ولأنه كود، بتجيب المنتجات والمقالات من الداتابيز، فالـ sitemap دايمًا محدّث. و [[app/robots.ts]] بيطلّع [[/robots.txt]]: مين مسموحله يأرشف إيه، وفين الـ sitemap.
-
-الاتنين Route Handlers جاهزة: بيتكاشوا وبيتبنوا وقت الـ build زي أي route، إلا لو استخدموا حاجة dynamic.`,
-          example: R`// app/sitemap.ts
-import type { MetadataRoute } from "next";
-const base = "https://books.example.com";
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = await db.product.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } });
-  return [
-    { url: base, changeFrequency: "daily", priority: 1 },
-    { url: $__bt$__{base}/about$__bt },
-    ...products.map((p) => ({ url: $__bt$__{base}/products/$__{p.slug}$__bt, lastModified: p.updatedAt })),
-  ];
-}
-// app/robots.ts
-import type { MetadataRoute } from "next";
-export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/dashboard", "/api", "/checkout"] },
-    sitemap: "https://books.example.com/sitemap.xml",
-  };
-}`,
-          try: R`اعمل الملفين وافتح [[/sitemap.xml]] و [[/robots.txt]] في المتصفح. وبعد ما ترفع الموقع، ضيف الـ sitemap في Google Search Console وشوف كام صفحة اتقرت.`,
-          flag: "script",
-          deep: {
-            why: "جوجل بيلاقي الصفحات من اللينكات، والصفحات اللي مفيش لينك ليها أو عميقة أوي ممكن ميوصلهاش. الـ sitemap بيديله القايمة كاملة ومعاها آخر تعديل. والـ robots بيمنعه يضيّع وقته على صفحات ملهاش لازمة زي الـ dashboard.",
-            how: R`[[sitemap.ts]] و [[robots.ts]] ملفات خاصة (metadata routes). Next بيحوّلهم Route Handlers بترجّع XML ونص بالـ Content-Type الصح. وزي أي route، لو مفيهمش حاجة dynamic بيتبنوا وقت الـ build. فلو المنتجات بتتضاف كل يوم، ضيف revalidate (أو [[use cache]] مع [[cacheLife]] في Cache Components)، وإلا الـ sitemap هيفضل زي ما كان وقت الـ build.
-
-جوجل بيقبل لحد ٥٠ ألف URL في الـ sitemap الواحد. لو أكتر، [[generateSitemaps]] بتقسّمه لكذا ملف بـ id.
-
-والموقع اللي بلغتين: كل عنصر في الـ sitemap ممكن يبقى فيه [[alternates.languages]] بروابط اللغات التانية.
-
-و [[robots.txt]] مش حماية: هو طلب مهذب للـ bots. الصفحات الخاصة لازم تبقى محمية بجد (auth)، و [[disallow]] مبيمنعش الأرشفة لو فيه لينكات من برّه، فللصفحات اللي متتأرشفش خالص استخدم [[robots: { index: false }]] في الـ metadata.`,
-            when: "أي موقع عام عايز زوار من جوجل. اعمل الاتنين قبل الإطلاق، وضيف الـ sitemap في Search Console.",
-            mistakes: R`sitemap static اتعمل مرة وقت الـ build ومبيتحدثش. و [[lastModified: new Date()]] لكل الصفحات فجوجل يبطّل يثق فيه. و [[disallow: "/"]] اتنسى من staging للإنتاج فالموقع كله يختفي من جوجل. وتحط صفحات private في الـ sitemap.`
-          },
-          teach: R`## الفكرة: دالتين بيرجّعوا داتا، و Next بيكتب الـ XML والنص
-
-[[app/sitemap.ts]] بيرجّع array من الصفحات، و [[app/robots.ts]] بيرجّع object بالقواعد. Next بيحوّلهم [[/sitemap.xml]] و [[/robots.txt]]. اتشغّل في مشروع Next.js 16.4.0 ([[next build]] و [[next start]] على بورت 5832)، ومكان [[db]] ملف وهمي فيه ٣ منتجات: [[clean-code]] و [[xss]] منشورين، و [[draft]] مش منشور.
-
----
-
-## ١. [[sitemap.ts]] سطر سطر
-
-### الأنواع والدومين
-
-- [[import type { MetadataRoute } from "next"]]: أنواع جاهزة. [[MetadataRoute.Sitemap]] = array من [[{ url, lastModified?, changeFrequency?, priority? }]].
-- [[const base = "https://books.example.com"]]: الـ sitemap لازم URLs كاملة. في مشروع حقيقي خليها من متغير بيئة.
-
-### الدالة
-
-~~~text
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-~~~
-
-لازم [[export default]] لأن Next بيدوّر على الـ default في الملف ده بالاسم ده. و [[async]] عشان بتكلّم الداتابيز.
-
-### المنتجات
-
-~~~text
-const products = await db.product.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } });
-~~~
-
-المنشور بس، وعمودين بس: الـ slug للـ URL، و [[updatedAt]] لآخر تعديل.
-
-### الـ array
-
-~~~text
-return [
-  { url: base, changeFrequency: "daily", priority: 1 },
-  { url: base + "/about" },
-  ...products.map((p) => ({ url: base + "/products/" + p.slug, lastModified: p.updatedAt })),
-];
-~~~
-
-(الـ URLs في المثال template strings، نفس المعنى.)
-
-- أول عنصرين صفحات ثابتة.
-- [[products.map(...)]] بيحوّل كل منتج لـ object. والقوسين حوالين [[({ ... })]] عشان arrow function ترجّع object (من غيرهم JS يفتكر [[{]] بداية جسم الدالة).
-- [[...]] قبل الـ map: spread، يفرد العناصر جوه الـ array الكبيرة بدل ما يحط array جوه array.
-
----
-
-## ٢. الناتج: [[/sitemap.xml]]
-
-~~~text الناتج
-HTTP/1.1 200 OK
-x-nextjs-cache: HIT
-content-type: application/xml
-
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url>
-<loc>https://books.example.com</loc>
-<changefreq>daily</changefreq>
-<priority>1</priority>
-</url>
-<url>
-<loc>https://books.example.com/about</loc>
-</url>
-<url>
-<loc>https://books.example.com/products/clean-code</loc>
-<lastmod>2026-09-30T10:00:00.000Z</lastmod>
-</url>
-<url>
-<loc>https://books.example.com/products/xss</loc>
-<lastmod>2026-10-01T08:30:00.000Z</lastmod>
-</url>
-</urlset>
-~~~
-
-| الـ tag | جاي منين |
-|---|---|
-| [[<urlset>]] | الغلاف الثابت، و [[xmlns]] بيقول إنه بروتوكول sitemaps |
-| [[<loc>]] | [[url]] |
-| [[<changefreq>]] و [[<priority>]] | للرئيسية بس، لأننا كتبناهم ليها بس (وجوجل غالبًا بيتجاهلهم) |
-| [[<lastmod>]] | [[lastModified]]، الـ [[Date]] اتكتب بصيغة ISO |
-
-و [[draft]] مش موجود لأن [[published: false]].
-
----
-
-## ٣. [[robots.ts]]
-
-~~~text
-rules: { userAgent: "*", allow: "/", disallow: ["/dashboard", "/api", "/checkout"] },
-sitemap: "https://books.example.com/sitemap.xml",
-~~~
-
-- [[userAgent: "*"]]: القاعدة دي لكل الـ bots. ولو عايز قواعد مختلفة لكل bot، [[rules]] تبقى array.
-- [[allow]] و [[disallow]]: مسموح كله ما عدا التلات مسارات دول وأي حاجة تحتهم.
-- [[sitemap]]: مكان الـ sitemap عشان أي bot يلاقيه.
-
-~~~text الناتج: /robots.txt (content-type: text/plain)
-User-Agent: *
-Allow: /
-Disallow: /dashboard
-Disallow: /api
-Disallow: /checkout
-
-Sitemap: https://books.example.com/sitemap.xml
-~~~
-
----
-
-## ٤. اتبنوا إمتى؟ جدول الـ build
-
-~~~text الناتج (جزء من next build)
-├ ○ /robots.txt
-└ ○ /sitemap.xml
-○  (Static)   prerendered as static content
-~~~
-
-[[○]] = static: اتعملوا مرة واحدة وقت الـ build، و [[x-nextjs-cache: HIT]] في الرد معناها إنه جاي من النسخة المتخزنة. يعني منتج جديد يتضاف بعد الـ build **مش هيظهر** في الـ sitemap غير بـ build جديد، أو لو ضفت [[export const revalidate = 3600]] (يتحدّث كل ساعة) في [[sitemap.ts]]، أو [[use cache]] و [[cacheLife]] لو [[cacheComponents]] شغال. جرّبنا السطر ده، والجدول بقى:
-
-~~~text الناتج
-Route (app)                           Revalidate  Expire
-└ ○ /sitemap.xml                              1h      1y
-~~~
-
-لسه static، بس Next هيعمله من جديد في الخلفية لو طلب جه بعد ما الساعة تعدّي.
-
----
-
-## الخلاصة
-
-| الملف | بيطلّع | فيه |
-|---|---|---|
-| [[app/sitemap.ts]] | [[/sitemap.xml]] ([[application/xml]]) | كل الصفحات العامة، و [[lastModified]] الحقيقي |
-| [[app/robots.ts]] | [[/robots.txt]] ([[text/plain]]) | مين يأرشف إيه، ومكان الـ sitemap |
-| [[○]] في الـ build | static | محتاج revalidate لو الداتا بتتغير |
-| [[disallow]] | طلب مهذب | مش حماية: الصفحات الخاصة محتاجة auth |`,
-          lines: [
-            "الأنواع الجاهزة.",
-            "الدومين (أو من متغير بيئة).",
-            R`الملف ده بيطلّع [[/sitemap.xml]].`,
-            "كل المنتجات المنشورة، الـ slug وآخر تعديل بس.",
-            "ليستة الصفحات.",
-            R`الرئيسية. [[changeFrequency]] و [[priority]] اختياريين وجوجل غالبًا بيتجاهلهم.`,
-            "صفحة ثابتة.",
-            R`صفحة لكل منتج، و [[lastModified]] الحقيقي عشان جوجل يعرف يرجع لإيه.`,
-            "قفلة.",
-            "قفلة.",
-            "الأنواع للملف التاني.",
-            R`بيطلّع [[/robots.txt]].`,
-            "رجّع...",
-            "...كل الـ bots مسموحلها كل حاجة ما عدا الصفحات الخاصة.",
-            "ومكان الـ sitemap.",
-            "قفلة.",
-            "قفلة."
-          ],
-          sol: R`[[/sitemap.xml]] بيرجّع XML ([[Content-Type: application/xml]]) فيه [[<urlset>]] وجواه [[<url>]] لكل صفحة: [[<loc>]] دايمًا، و [[<changefreq>]] و [[<priority>]] للرئيسية بس، و [[<lastmod>]] بتاريخ ISO لصفحات المنتجات. و [[/robots.txt]] شكله زي اللي تحت.
-
-وفي جدول الـ build الاتنين [[○ /sitemap.xml]] و [[○ /robots.txt]]: static اتبنوا وقت الـ build، فمنتج جديد مش هيظهر في الـ sitemap غير بـ build أو revalidate. وفي Search Console بعد إضافة الـ sitemap هتلاقي حالته Success وعدد الـ URLs اللي اكتشفها. لو اللينكات جوه الـ XML فيها [[localhost]]: الـ base جاي من متغير بيئة مش متظبط في الإنتاج.`,
-          solCode: R`User-Agent: *
-Allow: /
-Disallow: /dashboard
-Disallow: /api
-Disallow: /checkout
-
-Sitemap: https://books.example.com/sitemap.xml`
-        },
-        {
-          cmd: "opengraph-image",
-          title: "صورة مشاركة لكل منتج بتتولد بالكود",
-          desc: R`ملف [[opengraph-image.tsx]] جنب الصفحة بيولّد صورة المشاركة بالكود: بترجّع [[ImageResponse]] من [[next/og]] وجواه JSX و CSS (flexbox)، و Next بيحوّله PNG ويحط [[og:image]] للصفحة لوحده. كده كل منتج ليه صورة فيها اسمه وسعره من غير ما حد يصممها.
-
-ولو الصورة ثابتة، حط ملف [[opengraph-image.png]] (1200×630) في الفولدر وخلاص.`,
-          example: R`// app/products/[slug]/opengraph-image.tsx
-import { ImageResponse } from "next/og";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
-export const alt = "صورة المنتج";
-export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
-  const cairo = await readFile(join(process.cwd(), "assets/Cairo-Bold.ttf"));
-  return new ImageResponse(
-    (
-      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width: "100%", height: "100%", padding: 80, background: "#0f172a", color: "white", fontFamily: "Cairo" }}>
-        <div style={{ fontSize: 72 }}>{product?.name ?? "متجر الكتب"}</div>
-        <div style={{ fontSize: 40, color: "#fbbf24" }}>{product ? $__bt$__{product.priceCents / 100} ج.م$__bt : ""}</div>
-      </div>
-    ),
-    { ...size, fonts: [{ name: "Cairo", data: cairo, weight: 700 }] },
-  );
-}`,
-          try: R`اعمل الملف، ونزّل خط Cairo من Google Fonts وحطه في [[assets]]. افتح [[/products/x/opengraph-image]] مباشرة في المتصفح تشوف الصورة. وبعدين شيل [[fonts]] وشوف الحروف العربي بقت إيه. وجرّب جملة طويلة فيها عربي وإنجليزي وأرقام، واتأكد إن الترتيب طالع صح.`,
-          flag: "script",
-          deep: {
-            why: "لينك من غير صورة في واتساب أو لينكدإن بيتشاف أقل بكتير. وتصميم صورة لكل منتج من ألف منتج بإيدك مستحيل. التوليد بالكود بيعمل صورة متسقة لكل صفحة، وبتتحدث لوحدها لما الاسم أو السعر يتغير.",
-            how: R`[[ImageResponse]] مبنية على Satori (بيحوّل JSX و CSS لـ SVG) و Resvg (بيحوّل الـ SVG لـ PNG). مش متصفح كامل: flexbox وحاجات CSS أساسية بس، مفيش grid، وكل عنصر فيه أكتر من ابن لازم [[display: flex]]. والخطوط لازم تتبعت كـ bytes (TTF أو OTF أو WOFF، مش WOFF2).
-
-العربي: محتاج خط فيه حروف عربي، ودعم RTL في Satori محدود، فالجمل اللي فيها عربي وإنجليزي وأرقام ممكن ترتيبها يطلع غريب. اختبر النصوص الحقيقية، ولو فيه مشكلة خلي النص قصير والتصميم بسيط.
-
-Next بيعامل الملف كـ route: بيتبني وقت الـ build لو مفيهوش حاجة dynamic، أو مع الطلب. والـ URL اللي في [[og:image]] فيه hash، فلما المحتوى يتغير الـ URL يتغير (بس واتساب وفيسبوك نفسهم بيكاشوا الصور فترة).
-
-وفيه [[twitter-image.tsx]] بنفس الشكل لو عايز صورة مختلفة لـ X، ولو مش موجود بيستخدم الـ OG.`,
-            when: R`صفحات المنتجات والمقالات والبروفايلات العامة، وأي صفحة الناس بتشاركها. والصفحات الثابتة: ملف PNG واحد في [[app]] كفاية.`,
-            mistakes: R`تستخدم grid أو CSS مش مدعوم وتستغرب إن الصورة فاضية أو فيها خطأ. وتنسى الخط العربي فتطلع الحروف مقطّعة ومعكوسة، أو مربعات لو السيرفر مش واصل لـ Google Fonts. وتحمّل الخط من URL خارجي مع كل طلب بدل ملف محلي. وتنسى إن [[params]] هنا Promise في Next 16 زي الصفحة.`
-          },
-          teach: R`## الفكرة: ملف بيرجّع صورة، مكتوبة JSX
-
-[[opengraph-image.tsx]] جنب [[page.tsx]] بيرجّع [[ImageResponse]]: div فيه اسم المنتج وسعره، و Next بيحوّله PNG ويحط رابطه في [[og:image]] لوحده. اتشغّل في مشروع Next.js 16.4.0 ([[next start]] على بورت 5832) على ويندوز، والمنتج [[clean-code]] اسمه «Clean Code بالعربي» وسعره 25000 قرش، وخط Cairo Bold (TTF) نزّلناه من Google Fonts في [[assets/Cairo-Bold.ttf]]، و [[getProduct]] متكاشة بـ [[cache]] زي الدرس اللي فات.
-
----
-
-## ١. الـ imports
-
-| السطر | ليه |
-|---|---|
-| [[ImageResponse]] من [[next/og]] | بيحوّل JSX لصورة |
-| [[readFile]] من [[node:fs/promises]] | يقرا ملف الخط (async). [[node:]] قبل الاسم معناها module جاي مع Node |
-| [[join]] من [[node:path]] | يركّب مسار بالفاصل الصح على أي نظام (الـ backslash على ويندوز و [[/]] على لينكس) |
-
----
-
-## ٢. الـ exports التلاتة الثابتة
-
-~~~text
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
-export const alt = "صورة المنتج";
-~~~
-
-Next بيقراهم وبيكتبهم tags. [[1200×630]] هو المقاس اللي فيسبوك ولينكدإن وواتساب بيعرضوه كبير (نسبة 1.91 لـ 1).
-
----
-
-## ٣. الدالة
-
-~~~text
-export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
-  const cairo = await readFile(join(process.cwd(), "assets/Cairo-Bold.ttf"));
-~~~
-
-- [[params]] Promise زي الصفحة.
-- [[process.cwd()]]: الفولدر اللي السيرفر اشتغل منه (فولدر المشروع)، فالمسار [[<المشروع>/assets/Cairo-Bold.ttf]].
-- [[cairo]]: الخط كـ bytes ([[Buffer]]). الحجم عندنا 91664 byte.
-
----
-
-## ٤. الـ JSX
-
-~~~text
-<div style={{ display: "flex", flexDirection: "column", justifyContent: "center", width: "100%", height: "100%", padding: 80, background: "#0f172a", color: "white", fontFamily: "Cairo" }}>
-  <div style={{ fontSize: 72 }}>{product?.name ?? "متجر الكتب"}</div>
-  <div style={{ fontSize: 40, color: "#fbbf24" }}>{product ? (product.priceCents / 100) + " ج.م" : ""}</div>
-</div>
-~~~
-
-- [[style={{ ... }}]]: القوسين الخارجيين «ده JavaScript»، والداخليين object الـ CSS. والأسماء camelCase ([[flexDirection]] مش [[flex-direction]]).
-- [[display: "flex"]]: إجباري في أي div فيه أكتر من ابن. ده مش متصفح، ده Satori: بيفهم flexbox وجزء من CSS بس.
-- [[padding: 80]] من غير وحدة = 80px.
-- [[product?.name ?? "متجر الكتب"]]: لو مفيش منتج، اسم المتجر.
-- [[priceCents / 100]]: السعر متخزن قروش (رقم صحيح) عشان مفيش كسور في الحسابات، فـ 25000 = 250.
-
----
-
-## ٥. [[new ImageResponse(jsx, options)]]
-
-[[{ ...size, fonts: [{ name: "Cairo", data: cairo, weight: 700 }] }]]: المقاس، والخطوط المتاحة. [[name]] لازم يطابق [[fontFamily]] في الـ style.
-
----
-
-## ٦. الناتج
-
-~~~bash
-curl -s -D - -o og.png localhost:5832/products/clean-code/opengraph-image
-~~~
-
-~~~text الناتج
-content-type: image/png
-og.png: PNG image data, 1200 x 630, 8-bit/color RGBA
-~~~
-
-والصورة: خلفية كحلي، و «Clean Code بالعربي» أبيض بحروف متوصلة، وتحتها «250 ج.م» أصفر.
-
-ووسوم الصفحة نفسها (مع شيل [[openGraph.images]] من [[generateMetadata]]، لأنها لو موجودة بتكسب على الملف):
-
-~~~text الناتج
-<meta property="og:image" content="https://books.example.com/products/clean-code/opengraph-image?311007f04530720f"/>
-<meta property="og:image:type" content="image/png"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-<meta property="og:image:alt" content="صورة المنتج"/>
-<meta name="twitter:image" content="https://books.example.com/products/clean-code/opengraph-image?311007f04530720f"/>
-~~~
-
-- [[?311007f04530720f]]: hash، لما الملف يتغير الرابط يتغير، فالمنصات متعرضش صورة قديمة من الكاش بتاعها.
-- [[type]] و [[width]] و [[height]] و [[alt]] جايين من الـ exports التلاتة.
-- [[twitter:image]]: مفيش [[twitter-image.tsx]]، فاستخدم نفس الصورة.
-- الدومين من [[metadataBase]]. من غيره طلع [[http://localhost:5832/...]] ومعاه تحذير في اللوج.
-
-وفي جدول الـ build: [[ƒ /products/[slug]/opengraph-image]]، يعني بتتعمل مع الطلب لأنها معتمدة على الـ slug.
-
----
-
-## ٧. العربي: ٣ تجارب
-
-عملنا route تجربة بيرسم ٤ سطور: «كتاب»، و «كتاب Next.js 16»، و «250 ج.م»، و «سعر الكتاب 250 جنيه».
-
-| التجربة | النتيجة |
-|---|---|
-| مع Cairo في [[fonts]] | كل كلمة حروفها متوصلة وسليمة. بس ترتيب **الكلمات** من الشمال لليمين: «سعر» أول السطر على الشمال |
-| من غير [[fonts]] (و [[fontFamily: "Cairo"]] موجود) | الصورة طلعت، بس الحروف منفصلة ومعكوسة: «كتاب» بقت «باتك». Next جاب خط احتياطي وقت الطلب |
-| من غير [[fonts]] ومن غير [[fontFamily]] | الرد اتقطع من غير status ([[curl]] طبع [[000]])، واللوج: [[lookupType: 5 - substFormat: 3 is not yet supported]] |
-
-يعني: الخط العربي بتاعك لازم، والنص يبقى قصير وكل جزء في div لوحده.
-
----
-
-## الخلاصة
-
-| الحاجة | ليه |
-|---|---|
-| [[opengraph-image.tsx]] جنب الصفحة | Next بيحط [[og:image]] و [[twitter:image]] لوحده |
-| [[size]] و [[contentType]] و [[alt]] | بيتكتبوا tags |
-| [[display: "flex"]] | Satori مش متصفح |
-| [[fonts]] بخط عربي (TTF) | من غيره حروف مقطعة أو الصورة تقع |
-| [[metadataBase]] | الرابط يبقى الدومين مش localhost |
-| [[openGraph.images]] في الـ metadata | بيكسب على الملف لو الاتنين موجودين |`,
-          lines: [
-            R`[[ImageResponse]] بتحوّل JSX لصورة.`,
-            "قراية ملف الخط.",
-            "المسار.",
-            R`المقاس القياسي لصور المشاركة. Next بيحطه في [[og:image:width]] و [[og:image:height]].`,
-            "نوع الملف.",
-            R`نص بديل للصورة ([[og:image:alt]]).`,
-            R`بتاخد [[params]] زي الصفحة (Promise).`,
-            "الـ slug.",
-            "المنتج.",
-            "خط عربي كـ bytes. الخط الافتراضي مفيهوش عربي، فمن غيره Next بيجيب خط احتياطي من Google Fonts وقت الطلب والحروف بتطلع مقطّعة ومعكوسة (ولو السيرفر مش واصل للإنترنت، مربعات).",
-            "رجّع صورة...",
-            "قوس JSX.",
-            R`حاوية بـ flexbox. [[display: "flex"]] إجباري على أي div فيه أكتر من ابن.`,
-            "الاسم.",
-            "السعر.",
-            "قفلة.",
-            "قفلة القوس.",
-            "المقاس والخط.",
-            "قفلة.",
-            "قفلة."
-          ],
-          sol: R`[[/products/x/opengraph-image]] بيرجّع PNG مقاسه 1200×630، والصفحة نفسها فيها [[og:image]] بـ URL الملف ده وفي آخره hash، ومعاه [[og:image:width]] و [[og:image:height]] و [[og:image:alt]] لوحدهم.
-
-من غير [[fonts]]: الصورة بتطلع برضه، بس العربي حروفه منفصلة ومعكوسة («كتاب» بتبان «باتك»)، لأن Next جاب خط احتياطي من Google Fonts وقت الطلب و Satori مبيوصّلش الحروف العربي. ولو السيرفر مش واصل للإنترنت هتطلع مربعات. ومع Cairo الحروف متوصلة صح.
-
-والجملة المخلوطة: كل كلمة عربي سليمة، بس ترتيب الكلمات ماشي شمال لليمين زي الإنجليزي، فـ «كتاب Next.js 16» بتطلع «كتاب» على الشمال و «Next.js 16» على اليمين، و «سعر الكتاب 250 جنيه» بتتقري من الشمال. أما الكلمة الواحدة (حتى «ج.م» اللي فيها نقطة) بتطلع سليمة. الحل العملي: كل جزء (الاسم، والسعر، والعملة) في div لوحده وترتّبهم بـ flexbox، أو نص قصير من غير خلط. وخد بالك: لما شلنا [[fonts]] و [[fontFamily]] الاتنين، الصورة وقعت خالص: الرد اتقطع من غير status واللوج قال [[lookupType: 5 - substFormat: 3 is not yet supported]] (الخط الاحتياطي اللي اتجاب فيه حاجة Satori مبيدعمهاش). فالخط العربي بتاعك لازم دايمًا.`
-        },
-        {
-          cmd: "JSON-LD",
-          title: "JSON-LD للمنتج والمقال عشان rich results في جوجل",
-          desc: R`JSON-LD داتا منظمة بتوصف الصفحة بمفردات schema.org: «ده منتج، سعره كذا، ومتوفر، وتقييمه ٤.٦ من ٣٨ رأي». جوجل بيستخدمها في rich results: السعر والنجوم والتوفر تحت اللينك في النتايج، وتاريخ المقال وكاتبه. ومحركات الـ AI بتقراها كمان.
-
-في Next مفيش API خاص: [[<script type="application/ld+json">]] عادي جوه الصفحة (مش [[next/script]]، لأنه مش كود بيتنفذ)، ومحتواه [[JSON.stringify]] مع استبدال [[<]] بـ [[\u003c]]، لأن الداتا جاية من الداتابيز وممكن يبقى فيها [[</script>]]. والأنواع جاهزة في مكتبة [[schema-dts]].`,
-          example: R`// app/products/[slug]/page.tsx
-import type { Product, WithContext } from "schema-dts";
-import { notFound } from "next/navigation";
-export default async function ProductPage({ params }: PageProps<"/products/[slug]">) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
-  if (!product) notFound();
-  const jsonLd: WithContext<Product> = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: product.name,
-    image: [product.imageUrl],
-    description: product.summary,
-    sku: product.isbn,
-    offers: {
-      "@type": "Offer",
-      url: $__bthttps://books.example.com/products/$__{slug}$__bt,
-      price: (product.priceCents / 100).toFixed(2),
-      priceCurrency: "EGP",
-      availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-    },
-    aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: product.ratingAvg, reviewCount: product.reviewCount } : undefined,
-  };
-  return (
-    <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <ProductView product={product} />
-    </main>
-  );
-}`,
-          try: R`حط الـ JSON-LD في صفحة منتج، وخلّي اسم منتج في الداتابيز [[كتاب </script><script>alert(1)</script>]]. افتح الصفحة: فيه alert؟ اعمل View Source وشوف شكل الاسم جوه الـ JSON. وبعدين شيل [[.replace]] وجرّب تاني. وآخر حاجة: اعمل نسخة للمقالات بـ [[@type: "Article"]] ([[headline]] و [[datePublished]] و [[author]])، وبعد ما ترفع الموقع (أو بـ ngrok) جرّب اللينك في Rich Results Test بتاع جوجل.`,
-          flag: "script",
-          deep: {
-            why: "نتيجة فيها السعر والنجوم و «متوفر» بتاخد ضغطات أكتر بكتير من لينك أزرق عادي، ودي حاجة بتاخدها مجانًا من داتا عندك أصلًا. ومن غيرها جوجل بيحاول يخمّن من الـ HTML، وغالبًا مبيخمّنش.",
-            how: R`الـ [[<script type="application/ld+json">]] data block: المتصفح مبينفذوش، ومحدش بيقراه غير الـ crawlers. عشان كده مش محتاج [[next/script]]، ومش محتاج nonce حتى مع CSP صارم (الـ CSP بيطبّق على الـ scripts اللي بتتنفذ بس).
-
-ليه [[.replace(/</g, "\\u003c")]]؟ [[JSON.stringify]] مبيعملش escape لـ [[</script>]]. لو اسم المنتج فيه [[</script><script>...]]، المتصفح بيقفل الـ tag عند أول [[</script>]] وينفذ اللي بعده: XSS من حقل اسم منتج. و [[\u003c]] هو نفس الحرف جوه JSON، فالـ parser بتاع جوجل بيقراه [[<]] عادي، والمتصفح مش شايف tag.
-
-الحاجات اللي جوجل بيطلبها للـ Product rich result: [[name]]، وواحد على الأقل من [[offers]] أو [[review]] أو [[aggregateRating]]. و [[price]] رقم كنص من غير عملة، و [[priceCurrency]] كود ISO ([[EGP]])، و [[availability]] URL من schema.org. وللمقالات: [[Article]] أو [[NewsArticle]] أو [[BlogPosting]] مع [[headline]] و [[image]] و [[datePublished]] و [[author]] ([[Person]] فيه [[name]] و [[url]]). ومفيش ضمان إن جوجل يعرض الـ rich result حتى لو الداتا صح.
-
-القاعدة الأهم: الـ JSON-LD لازم يطابق اللي ظاهر في الصفحة. سعر في الـ JSON-LD غير اللي في الصفحة، أو تقييمات مش موجودة، ده مخالف لسياسات جوجل وممكن يعمل manual action على الموقع كله.
-
-ومكانه: الصفحة نفسها (المنتج والمقال)، و [[Organization]] و [[WebSite]] ممكن في الـ root layout أو الصفحة الرئيسية. و [[BreadcrumbList]] لمسار الصفحة.`,
-            when: "صفحات المنتجات، والمقالات، والوصفات، والفعاليات، والكورسات، والأسئلة الشائعة، وأي صفحة ليها نوع في schema.org وجوجل بيدعمه في rich results.",
-            mistakes: R`[[JSON.stringify]] من غير escape لـ [[<]]. و [[next/script]] أو [[<Script>]] للـ JSON-LD. و [[aggregateRating]] بـ [[reviewCount: 0]] أو تقييمات مخترعة. وسعر بالعملة جوه [[price]] ([[250 ج.م]]). وداتا مش ظاهرة في الصفحة. و [[@context]] ناقص. وتحط Product schema على صفحة قايمة فيها ٢٠ منتج (ده [[ItemList]]).`
-          },
-          teach: R`## الفكرة: object بيوصف المنتج، مطبوع JSON جوه script
-
-الصفحة بتبني object بمفردات schema.org ([[Product]] و [[Offer]] و [[AggregateRating]])، وتطبعه في [[<script type="application/ld+json">]]. المتصفح مبينفذوش، وجوجل بيقراه. اتشغّل في مشروع Next.js 16.4.0 ([[next start]] على بورت 5832)، ومكان [[db]] ملف وهمي فيه منتجين: [[clean-code]] (سعره 25000 قرش، متوفر، تقييمه 4.6 من 38)، و [[xss]] اسمه [[كتاب </script><script>alert(1)</script>]] ومفيش عليه تقييمات، والمتصفح Chrome headless.
-
----
-
-## ١. [[import type { Product, WithContext } from "schema-dts"]]
-
-[[schema-dts]] (اتسطبت بـ [[npm i schema-dts]]) فيها أنواع TypeScript لكل حاجة في schema.org. [[import type]] = أنواع بس، مفيش كود بيتبعت للمتصفح.
-
----
-
-## ٢. [[const jsonLd: WithContext<Product> = {...}]]
-
-[[WithContext<Product>]]: object من نوع [[Product]] ولازم فيه [[@context]]. لو كتبت حقل مش موجود في schema.org، أو نسيت [[@type]]، المحرر يعترض.
-
-| الحقل | القيمة | معناها |
-|---|---|---|
-| [[@context]] | [[https://schema.org]] | «المفردات اللي بستخدمها من هنا» |
-| [[@type]] | [[Product]] | نوع الحاجة |
-| [[name]] و [[description]] | من الداتابيز | لازم يطابقوا اللي ظاهر في الصفحة |
-| [[image]] | array فيها URLs كاملة | صور المنتج |
-| [[sku]] | الـ ISBN | رقم المنتج عندك |
-| [[offers]] | object نوعه [[Offer]] | العرض: السعر والتوفر |
-| [[aggregateRating]] | [[AggregateRating]] أو [[undefined]] | التقييم |
-
-والـ [[@]] في [[@context]] و [[@type]] جزء من الاسم في JSON-LD، عشان كده مكتوبين بين علامات تنصيص.
-
----
-
-## ٣. [[offers]] من جوه
-
-~~~text
-price: (product.priceCents / 100).toFixed(2),
-priceCurrency: "EGP",
-availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-~~~
-
-- [[priceCents / 100]] = 250، و [[.toFixed(2)]] بيحوّله نص برقمين عشريين: [["250.00"]]. رقم بس، من غير عملة ولا فاصلة.
-- [[EGP]]: كود الجنيه المصري في ISO 4217.
-- [[availability]]: مش «متوفر» كنص، URL من schema.org. و [[? :]] بيختار واحد منهم.
-
----
-
-## ٤. [[aggregateRating]] بشرط
-
-~~~text
-aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: product.ratingAvg, reviewCount: product.reviewCount } : undefined,
-~~~
-
-لو مفيش آراء، القيمة [[undefined]]، و [[JSON.stringify]] بيشيل أي خانة قيمتها [[undefined]] خالص. تقييم بـ [[reviewCount: 0]] مخالف لقواعد جوجل.
-
----
-
-## ٥. الطباعة: [[dangerouslySetInnerHTML]] و [[replace]]
-
-~~~text
-<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-~~~
-
-من جوه لبرة:
-
-1. [[JSON.stringify(jsonLd)]]: الـ object بقى نص JSON.
-2. [[.replace(/</g, "\\u003c")]]: [[/</g]] regex معناه «كل [[<]]» ([[g]] = global، مش أول واحد بس). وكل واحد بيتبدّل بالـ 6 حروف [[\u003c]]. في الكود مكتوبة بـ backslash اتنين، لأن جوه string في JS الـ backslash الواحد escape: [["\u003c"]] بـ backslash واحد هي نفسها [["<"]].
-3. [[dangerouslySetInnerHTML={{ __html: ... }}]]: «حط النص ده جوه الـ tag زي ما هو». React عادة بيعمل escape لأي نص، فلازم الطريقة دي عشان الـ JSON يفضل JSON. والاسم الطويل مقصود: عشان تفتكر إن ده خطر.
-
----
-
-## ٦. الناتج: منتج عادي
-
-~~~text الناتج (curl localhost:5832/products/clean-code، الوصف مختصر)
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Clean Code بالعربي","image":["https://books.example.com/img/clean-code.jpg"],"description":"كتاب عن كتابة كود نضيف. ...","sku":"9780132350884","offers":{"@type":"Offer","url":"https://books.example.com/products/clean-code","price":"250.00","priceCurrency":"EGP","availability":"https://schema.org/InStock"},"aggregateRating":{"@type":"AggregateRating","ratingValue":4.6,"reviewCount":38}}</script>
-~~~
-
-[[price]] نص [["250.00"]]، و [[ratingValue]] رقم. وفي منتج [[xss]] (من غير آراء) مفيش [[aggregateRating]] خالص.
-
----
-
-## ٧. ليه الـ [[replace]]؟ جرّبنا الهجمة
-
-### مع الـ replace الصح
-
-~~~text View Source
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"كتاب \u003c/script>\u003cscript>alert(1)\u003c/...
-~~~
-
-~~~text الناتج في Chrome
-alerts: 0 | h1: كتاب </script><script>alert(1)</script> | ld parsed name: كتاب </script><script>alert(1)</script>
-~~~
-
-مفيش [[<]] جوه الـ script، فالمتصفح مشافش [[</script>]]. و [[JSON.parse]] على محتوى الـ script رجّع الاسم الأصلي بالظبط: يعني جوجل هيقراه صح. والـ [[h1]] عرض الاسم نص عادي لأن React عمل له escape ([[&lt;]] في الـ HTML).
-
-### بـ backslash واحد بالغلط
-
-أول مرة كتبنا الملف، الـ backslash التاني ضاع وبقى [["\u003c"]]، وده في JS نفس [["<"]]، يعني الـ replace بيبدّل [[<]] بـ [[<]]: من غير أي حماية:
-
-~~~text View Source
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"كتاب </script><script>alert(1)</script>",...
-~~~
-
-~~~text الناتج في Chrome
-DIALOG: 1
-alerts: 1
-~~~
-
-المتصفح قفل الـ data block عند أول [[</script>]] جوه الاسم، واللي بعده بقى [[<script>]] حقيقي واتنفذ. XSS من حقل اسم منتج. فلما تنسخ السطر ده، اتأكد إن الـ backslash اتنين.
-
----
-
-## ٨. نسخة المقال (الحل)
-
-نفس الفكرة بـ [[@type: "Article"]]. جرّبناها بمقال وهمي:
-
-~~~text الناتج
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"أول مقال","image":["https://books.example.com/c.jpg"],"datePublished":"2026-10-01T09:00:00.000Z","dateModified":"2026-10-03T12:00:00.000Z","author":[{"@type":"Person","name":"Sara","url":"https://books.example.com/authors/sara"}]}</script>
-~~~
-
-[[.toISOString()]] بيكتب التاريخ بصيغة ISO 8601 ([[Z]] في الآخر = توقيت UTC)، وده اللي جوجل عايزه.
-
-> Rich Results Test بتاع جوجل محتاج URL على الإنترنت، فمتجرّبش هنا. اللي في الحل عنه من وثائق جوجل.
-
----
-
-## الخلاصة
-
-| الحاجة | ليه |
-|---|---|
-| [[<script type="application/ld+json">]] | data block: مبيتنفذش، فمش [[next/script]] ومش محتاج nonce |
-| [[WithContext<Product>]] من [[schema-dts]] | المحرر يمسك الحقول الغلط |
-| [[price]] نص رقم + [[priceCurrency]] | [["250.00"]] و [[EGP]] |
-| [[aggregateRating]] بشرط | مفيش آراء = مفيش تقييم |
-| [[.replace(/</g, "\\u003c")]] | backslash اتنين، وإلا مفيش حماية |
-| الداتا = اللي ظاهر | غير كده مخالف لقواعد جوجل |`,
-          lines: [
-            R`أنواع schema.org لـ TypeScript: بتكمّلك الحقول وتمسك الغلط.`,
-            "404.",
-            "الصفحة.",
-            "الـ slug.",
-            R`المنتج ([[getProduct]] متكاشة بـ [[cache]] زي درس generateMetadata).`,
-            "مش موجود؟ 404.",
-            R`[[WithContext<Product>]]: object من نوع Product وفيه [[@context]].`,
-            "المفردات من schema.org.",
-            "النوع.",
-            "الاسم زي ما هو ظاهر في الصفحة.",
-            "صورة أو أكتر (URLs كاملة).",
-            "الوصف.",
-            R`[[sku]]: الـ ISBN للكتب.`,
-            "العرض: السعر والتوفر.",
-            "نوعه.",
-            "لينك الصفحة.",
-            R`السعر كنص رقم بس: [[250.00]].`,
-            "العملة بكود ISO.",
-            "متوفر ولا لأ، كـ URL من schema.org.",
-            "قفلة.",
-            R`التقييم لو فيه آراء حقيقية بس، وإلا [[undefined]] و [[JSON.stringify]] بيشيله.`,
-            "قفلة.",
-            "الـ JSX.",
-            "main.",
-            R`data block. الـ [[replace]] بيحوّل كل [[<]] لـ [[\u003c]] عشان محدش يقفل الـ tag من جوه الداتا.`,
-            "الصفحة نفسها.",
-            "قفلة.",
-            "قفلة.",
-            "قفلة."
-          ],
-          sol: R`مع [[.replace]]: مفيش alert. في View Source هتلاقي الاسم [[كتاب </script><script>alert(1)</script>]] جوه الـ JSON، والـ h1 في الصفحة بيعرضه نص عادي (React عمله escape).
-
-من غير [[.replace]]: الـ alert بيظهر. المتصفح شاف [[</script>]] جوه الاسم فقفل الـ data block، واللي بعده بقى [[<script>]] حقيقي. ولو عندك CSP بـ nonce مقفول، السكربت المحقون مش هيتنفذ (مفيش عليه nonce)، وده بالظبط ليه الاتنين مع بعض.
-
-نسخة المقال: [[{ "@context": "https://schema.org", "@type": "Article", headline, image: [cover], datePublished: post.publishedAt.toISOString(), dateModified: post.updatedAt.toISOString(), author: [{ "@type": "Person", name, url }] }]].
-
-Rich Results Test بيطلّع «Product snippets» و «Merchant listings» صالحين، وممكن warnings زي [[shippingDetails]] أو [[hasMerchantReturnPolicy]] ناقصين: دول اختياريين للـ snippet ومحتاجهم لو عايز تظهر في Google Shopping. الخطأ الأحمر الشائع: [[price]] فيه عملة أو فاصلة.`,
-          solCode: R`// app/blog/[slug]/page.tsx
-import type { Article, WithContext } from "schema-dts";
-export default async function PostPage({ params }: PageProps<"/blog/[slug]">) {
-  const { slug } = await params;
-  const post = await getPost(slug);
-  if (!post) notFound();
-  const jsonLd: WithContext<Article> = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    image: [post.coverUrl],
-    datePublished: post.publishedAt.toISOString(),
-    dateModified: post.updatedAt.toISOString(),
-    author: [{ "@type": "Person", name: post.author.name, url: $__bthttps://books.example.com/authors/$__{post.author.slug}$__bt }],
-  };
-  return (
-    <article>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <h1>{post.title}</h1>
-    </article>
-  );
+// app/dashboard/orders/page.tsx
+export default function Orders() {
+  return <h2>الطلبات</h2>;
 }`
+        },
+        {
+          cmd: "loading.tsx",
+          title: "شاشة تحميل لكل صفحة من غير ما تكتب state",
+          desc: R`[[loading.tsx]] جنب [[page.tsx]] بيظهر فورًا لما المستخدم يدخل الصفحة، لحد ما الداتا توصل والصفحة تجهز. مفيش [[isLoading]] ولا state: Next بيلف الصفحة في [[<Suspense>]] والـ loading هو الـ fallback.
+
+الـ layout بيفضل ظاهر والتحميل بيبان في مكان الصفحة بس. والأحسن يبقى skeleton بنفس شكل المحتوى الحقيقي، مش spinner في النص، عشان الصفحة متتنططش لما المحتوى يوصل.`,
+          example: R`// app/products/loading.tsx
+export default function Loading() {
+  return (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {Array.from({ length: 8 }, (_, i) => (
+        <div key={i} className="h-64 animate-pulse rounded-lg bg-gray-200" />
+      ))}
+    </div>
+  );
+}
+// Next بيعمل كده لوحده:
+// <Layout>
+//   <Suspense fallback={<Loading />}>
+//     <ProductsPage />
+//   </Suspense>
+// </Layout>`,
+          try: R`في [[page.tsx]] بتاعة المنتجات حط [[await new Promise((r) => setTimeout(r, 3000))]] في الأول، وافتح الصفحة من لينك: هتلاقي الـ skeleton ظهر على طول والـ header ثابت. وبعدين امسح [[loading.tsx]] وجرّب تاني: الضغطة هتفضل ٣ ثواني من غير أي رد.`,
+          flag: "script",
+          deep: {
+            why: "من غير loading، المستخدم يضغط اللينك ومفيش حاجة تحصل لحد ما السيرفر يخلص، فيضغط تاني أو يفتكر الموقع واقف. الإحساس بالسرعة بييجي من رد فوري، حتى لو الداتا لسه جاية.",
+            how: R`[[loading.tsx]] بيتحوّل لـ [[<Suspense fallback={<Loading />}>]] حوالين الصفحة (وأي layout تحت نفس الفولدر). والـ Suspense ده هو اللي بيخلي Next يبعت HTML على دفعات (streaming): الـ layout والـ fallback الأول، وبعدين الصفحة لما تجهز في نفس الـ response.
+
+ومع الـ prefetch، الـ fallback بتاع الصفحات الـ dynamic بيتحمّل مقدمًا لما اللينك يظهر، فالضغطة بتعرضه فورًا من غير ما تستنى السيرفر.
+
+[[loading.tsx]] بيغطي الصفحة كلها. لو عايز الأجزاء السريعة تظهر والبطيئة بس هي اللي تستنى، استخدم [[<Suspense>]] بإيدك حوالين الكومبوننت البطيء (درس streaming في المستوى التاني).
+
+والـ fallback server component عادي، بس خليه خفيف ومن غير داتا.`,
+            when: R`أي صفحة بتجيب داتا ممكن تتأخر أكتر من ٣٠٠ ملّي ثانية تقريبًا. وحطه على مستوى الفولدر اللي محتاجه: loading واحد في [[app]] بيغطي كل الموقع بس بيخفي كل الصفحة.`,
+            mistakes: R`spinner صغير في نص صفحة فاضية، والمحتوى لما يوصل يزق كل حاجة (CLS). وتحط [[loading.tsx]] في [[app]] بس، فكل صفحة بتستخدم نفس الـ skeleton حتى لو شكلها مختلف. وتكتب [[useState(true)]] و [[useEffect]] للتحميل في صفحة server component: ملوش لازمة، والداتا بتيجي قبل الـ render أصلًا.`
+          },
+          teach: R`## الفكرة: ملف بالاسم ده بس، و Next يعمل الباقي
+
+[[loading.tsx]] كومبوننت عادي جدًا، والمهم **اسم الملف ومكانه**: جنب [[page.tsx]]. Next بيعرضه مكان الصفحة لحد ما تجهز. هنقرا الكومبوننت، وبعدين نشوف بالوقت (Next 16.4، [[next build]] و [[next start]]) إيه اللي بيظهر ولحد إمتى، مع صفحة منتجات بتستنى ٣ ثواني ([[await new Promise((r) => setTimeout(r, 3000))]]).
+
+---
+
+## ١. الكومبوننت سطر سطر
+
+### [[export default function Loading()]]
+
+[[export default]] لازم، والاسم [[Loading]] مش مهم. ومبياخدش props.
+
+### [[<div className="grid grid-cols-2 gap-4 md:grid-cols-4">]]
+
+Tailwind:
+
+| الـ class | معناه |
+|---|---|
+| [[grid]] | اعرض الولاد في شبكة |
+| [[grid-cols-2]] | عمودين |
+| [[gap-4]] | مسافة بين الخانات |
+| [[md:grid-cols-4]] | من الشاشات المتوسطة وأكبر: ٤ أعمدة |
+
+نفس الـ grid اللي صفحة المنتجات الحقيقية هتستخدمه، فلما المحتوى يوصل ياخد نفس المكان بالظبط ومفيش حاجة تتزق.
+
+### [[{Array.from({ length: 8 }, (_, i) => (]]
+
+[[Array.from]] بيعمل array جديد:
+
+- [[{ length: 8 }]]: طوله ٨.
+- [[(_, i) => ...]]: دالة بتتنادى لكل خانة. أول parameter القيمة (فاضية هنا، فسميناها [[_]] يعني «مش محتاجها»)، والتاني [[i]] رقم الخانة من ٠ لـ ٧.
+
+يعني ٨ عناصر JSX.
+
+### [[<div key={i} className="h-64 animate-pulse rounded-lg bg-gray-200" />]]
+
+- [[key={i}]]: React محتاج [[key]] لكل عنصر في ليستة.
+- [[h-64]] ارتفاع ثابت قد كارت المنتج، و [[rounded-lg]] حواف مدورة، و [[bg-gray-200]] رمادي فاتح.
+- [[animate-pulse]]: animation بتخلي الشفافية تروح وتيجي («بينبض»).
+
+ده اسمه **skeleton**: شكل المحتوى من غير المحتوى.
+
+---
+
+## ٢. اللي Next بيعمله: التعليق اللي في آخر المثال
+
+~~~text الشكل اللي Next بيبنيه
+<Layout>
+  <Suspense fallback={<Loading />}>
+    <ProductsPage />
+  </Suspense>
+</Layout>
+~~~
+
+[[<Suspense>]] من React: «لو اللي جوايا لسه مستني داتا، اعرض الـ [[fallback]] مكانه». و Next بيعمل اللفة دي لوحده لما يلاقي [[loading.tsx]]. الـ layout برّه الـ Suspense، فبيفضل ظاهر.
+
+---
+
+## ٣. التجربة الأولى: فتح الصفحة مباشرة (refresh)
+
+سكربت Node بيطلب [[/products]] ويطبع كل حتة (chunk) من الـ response وقت ما وصلت، وفيها كام skeleton:
+
+~~~text الناتج مع loading.tsx
+0.1s 2278B 8 skeleton
+0.1s 5543B 8 skeleton
+3.1s 125B 0 skeleton has products
+3.1s 1173B 0 skeleton has products
+3.1s 14B 0 skeleton
+~~~
+
+- عند ٠.١ ثانية وصل HTML فيه الـ layout و ٨ skeletons.
+- عند ٣.١ (بعد الـ ٣ ثواني بتوع الصفحة) وصل المحتوى الحقيقي **في نفس الـ response**. ده الـ streaming: السيرفر بيبعت على دفعات ومبيقفلش الاتصال لحد ما يخلص.
+- [[B]] = byte.
+
+ومن غير [[loading.tsx]]:
+
+~~~text الناتج من غير loading.tsx
+3.1s 1612B 0 skeleton has products
+3.1s 4729B 0 skeleton has products
+3.1s 14B 0 skeleton
+~~~
+
+ولا byte قبل ٣ ثواني: المتصفح بيبص على شاشة بيضا.
+
+---
+
+## ٤. التجربة التانية: الضغط على لينك
+
+فتحنا [[/about]] في Chrome، وضغطنا لينك المنتجات، وكل نص ثانية بنقرا: الـ URL، وعدد الـ skeletons، والـ nav موجود ولا لأ، وأول الـ [[<main>]]:
+
+~~~text الناتج مع loading.tsx
+0.1s {"url":"/products","skeletons":8,"nav":true,"main":""}
+...
+2.6s {"url":"/products","skeletons":8,"nav":true,"main":""}
+3.1s {"url":"/products","skeletons":0,"nav":true,"main":"صفحة 1، ترتيب new"}
+~~~
+
+الـ URL اتغير والـ skeleton ظهر **فورًا**، والـ nav (في الـ layout) فاضل طول الوقت. ليه فورًا من غير ما يستنى السيرفر؟ لأن الـ prefetch (درس Link) حمّل الـ [[loading.tsx]] مقدمًا لما اللينك ظهر.
+
+~~~text الناتج من غير loading.tsx
+0.1s {"url":"/about","skeletons":0,"nav":true,"main":"مين إحنا"}
+...
+2.6s {"url":"/about","skeletons":0,"nav":true,"main":"مين إحنا"}
+3.1s {"url":"/products","skeletons":0,"nav":true,"main":"صفحة 1، ترتيب new"}
+~~~
+
+٣ ثواني الصفحة القديمة فاضلة والـ URL متغيرش: الضغطة كأنها محصلتش. وده اللي بيخلي الناس تضغط تاني.
+
+---
+
+## الخلاصة
+
+| | من غير [[loading.tsx]] | مع [[loading.tsx]] |
+|---|---|---|
+| أول byte في الـ refresh | بعد ٣ ثواني | فورًا (layout + skeleton) |
+| الضغط على لينك | مفيش رد ٣ ثواني | الـ skeleton فورًا |
+| الـ layout | بيفضل | بيفضل |
+
+- [[loading.tsx]] = [[<Suspense fallback>]] حوالين الصفحة، Next بيعمله لوحده.
+- خلي الـ skeleton بنفس شكل ومقاس المحتوى الحقيقي.
+- بيغطي الصفحة كلها. لو عايز جزء بس يستنى، [[<Suspense>]] بإيدك (درس streaming).`,
+          lines: [
+            R`اسم الملف هو المهم ([[loading.tsx]])، واسم الكومبوننت أي حاجة.`,
+            "بداية الـ JSX.",
+            "نفس الـ grid اللي الصفحة الحقيقية هتستخدمه، فمفيش قفزة لما المحتوى يوصل.",
+            R`٨ خانات فاضية. [[Array.from]] بيعمل array بالطول ده.`,
+            R`كارت رمادي بـ [[animate-pulse]] (Tailwind) بنفس ارتفاع كارت المنتج.`,
+            "قفلة الـ map.",
+            "قفلة الـ grid.",
+            "قفلة الـ return.",
+            "قفلة."
+          ],
+          sol: R`مع [[loading.tsx]]: أول ما تدوس اللينك الـ header بيفضل ثابت، و ٨ كروت رمادي بتنبض بيظهروا مكان الصفحة على طول، وبعد ٣ ثواني المنتجات بتاخد مكانهم في نفس الـ grid من غير ما حاجة تتزق. ولو فتحت الصفحة بـ refresh، الـ HTML نفسه بيوصل على دفعتين في نفس الـ response: الـ skeleton الأول، والمنتجات بعد ٣ ثواني.
+
+من غير [[loading.tsx]]: الضغطة كأنها معملتش حاجة، الصفحة القديمة فاضلة ٣ ثواني، وبعدين الجديدة تظهر مرة واحدة. لو الـ skeleton مظهرش خالص: اتأكد إن الملف جنب [[page.tsx]] بتاعة المنتجات واسمه [[loading.tsx]] بالظبط، وإن الـ await جوه الصفحة مش جوه [[layout.tsx]] بتاع نفس الفولدر (الـ loading بيغطي اللي تحته بس).`
+        },
+        {
+          cmd: "error.tsx و not-found.tsx",
+          title: "صفحة خطأ و 404 لكل جزء في الموقع",
+          desc: R`[[error.tsx]] بيمسك أي خطأ بيحصل في الصفحة اللي جنبه (والحاجات اللي تحتها)، ويعرض بداله واجهة فيها زرار «جرّب تاني»، والـ layout بيفضل شغال. لازم يبقى client component ([[use client]]) لأنه React Error Boundary.
+
+و [[not-found.tsx]] بيظهر لما تنادي [[notFound()]]، أو لما حد يفتح URL مش موجود خالص (من [[app/not-found.tsx]]). ومعاه Next بيقول للمتصفح وجوجل إن الصفحة مش موجودة، مش بيرجّع 200 عادي.`,
+          example: R`// app/products/error.tsx
+"use client";
+import { useEffect } from "react";
+export default function ProductsError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+  return (
+    <div role="alert">
+      <p>حصلت مشكلة وإحنا بنجيب المنتجات.</p>
+      <button onClick={() => reset()}>جرّب تاني</button>
+    </div>
+  );
+}
+// app/not-found.tsx
+import Link from "next/link";
+export default function NotFound() {
+  return <div><h1>الصفحة دي مش موجودة</h1><Link href="/">ارجع للرئيسية</Link></div>;
+}`,
+          try: R`في [[app/products/page.tsx]] حط [[throw new Error("DB down")]] بعد سطر [[await searchParams]] (لو حطيته قبله، الـ build هيحاول يرسم الصفحة static ويقع بالخطأ نفسه)، وافتح الصفحة في dev: هتلاقي الـ overlay بتاع Next. اقفله وشوف [[error.tsx]]. وبعدين اعمل [[npm run build && npm start]] وافتحها: هتلاقي [[error.message]] بقى رسالة عامة ومعاه [[digest]] رقم، ودوّر على نفس الرقم في لوج الترمنال.`,
+          flag: "script",
+          deep: {
+            why: "من غير error boundary، خطأ واحد في جزء صغير (ويدجت التقييمات) بيوقّع الصفحة كلها وتظهر شاشة بيضا. و 404 من غير status صح بتخلي جوجل يأرشف صفحات «مش موجود» كأنها محتوى.",
+            how: R`[[error.tsx]] بيتحوّل لـ Error Boundary حوالين الصفحة جوه الـ layout بتاع نفس الفولدر. يعني بيمسك أخطاء الصفحة والكومبوننتات اللي تحتها، بس مش أخطاء الـ layout اللي جنبه: دي بيمسكها [[error.tsx]] اللي في الفولدر اللي فوق. وأخطاء الـ root layout نفسه محتاجة [[app/global-error.tsx]]، ولازم يكون فيه [[<html>]] و [[<body>]] بتوعه.
+
+في الإنتاج، الأخطاء اللي بتحصل في server components بتوصل للمتصفح من غير الرسالة الأصلية (عشان متسرّبش تفاصيل زي أسماء جداول)، وبيبقى معاها [[digest]] بس، والرسالة الكاملة في لوج السيرفر.
+
+[[reset()]] بيمسح الخطأ ويرسم الجزء ده تاني من غير ما يطلب داتا جديدة من السيرفر. ومن Next 16.3 فيه كمان [[retry()]] (كان اسمه [[unstable_retry()]] في 16.2) بيعمل refresh للداتا مع الـ reset، وده الأنسب لو الخطأ جه من server component (زي الداتابيز اللي كانت واقعة).
+
+[[notFound()]] بتدوّر على أقرب [[not-found.tsx]] فوقها. ولو اتنادت قبل ما الـ streaming يبدأ بترجع status 404، ولو بعده (جوه Suspense) الـ status بيبقى 200 بس Next بيحط [[<meta name="robots" content="noindex">]] عشان جوجل ميأرشفهاش.
+
+وأخطاء الفورمات المتوقعة (إيميل غلط) متترميش: رجّعها كقيمة (درس useActionState). الـ error.tsx للأخطاء اللي مش متوقعة بس.`,
+            when: R`[[error.tsx]] على الأقل في [[app]] وفي أي جزء مستقل (dashboard، و checkout). و [[not-found.tsx]] في [[app]] للموقع كله، وجنب الصفحات الـ dynamic لو عايز رسالة خاصة («المنتج مش موجود»).`,
+            mistakes: R`تنسى [[use client]] في error.tsx فالـ build يقع. وتعرض [[error.message]] للمستخدم وتستغرب إنه مختلف في الإنتاج. وتتوقع إن error.tsx يمسك خطأ في الـ layout اللي جنبه. وترمي error لغلط validation في فورم، فالمستخدم يشوف «حصلت مشكلة» بدل «الإيميل مش صحيح».`
+          },
+          teach: R`## الفكرة: ملفين بأسماء محجوزة، واحد للأخطاء وواحد للـ 404
+
+[[error.tsx]] بيظهر مكان الصفحة لو حصل فيها خطأ، و [[not-found.tsx]] بيظهر لو الصفحة مش موجودة. هنقرا الاتنين سطر سطر، وبعدين نرمي خطأ حقيقي في صفحة المنتجات ([[throw new Error("DB down")]] بعد [[await searchParams]]) ونشوفه في dev وفي الإنتاج. كله على Next 16.4.
+
+---
+
+## ١. [[app/products/error.tsx]] سطر سطر
+
+### [["use client";]]
+
+لازم. الـ error.tsx بيتحوّل لـ React Error Boundary، وده بيشتغل في المتصفح، وكمان فيه زرار بـ [[onClick]].
+
+### [[import { useEffect } from "react";]]
+
+هنستخدم effect عشان نسجّل الخطأ.
+
+### [[export default function ProductsError({ error, reset }: {...})]]
+
+Next بيدّيه حاجتين:
+
+| الـ prop | نوعه | إيه هو |
+|---|---|---|
+| [[error]] | [[Error & { digest?: string }]] | الخطأ نفسه، ومعاه [[digest]] اختياري ([[?]] = ممكن ميبقاش موجود) |
+| [[reset]] | [[() => void]] | دالة من غير parameters ومبترجعش حاجة: بتحاول ترسم الجزء ده تاني |
+
+و [[&]] في TypeScript معناها «النوعين مع بعض»: Error عادي وزيادة عليه [[digest]].
+
+### [[useEffect(() => { console.error(error); }, [error]);]]
+
+بعد ما الكومبوننت يترسم، اطبع الخطأ. و [[[error]]] معناها «اعمل كده تاني لو [[error]] اتغير». في الحقيقة هنا بتبعته لخدمة زي Sentry.
+
+### [[<div role="alert">]]
+
+[[role="alert"]] بيقول لقارئ الشاشة «اقرا ده على طول».
+
+### [[<p>حصلت مشكلة وإحنا بنجيب المنتجات.</p>]]
+
+رسالة ثابتة للمستخدم، مش [[error.message]] (هنشوف ليه تحت).
+
+### [[<button onClick={() => reset()}>جرّب تاني</button>]]
+
+بينادي [[reset]].
+
+---
+
+## ٢. [[app/not-found.tsx]]
+
+~~~text app/not-found.tsx
+import Link from "next/link";
+export default function NotFound() {
+  return <div><h1>الصفحة دي مش موجودة</h1><Link href="/">ارجع للرئيسية</Link></div>;
+}
+~~~
+
+مبياخدش props. ولأنه في [[app]] نفسه، بيغطي أي URL مش موجود في الموقع، وأي [[notFound()]] مفيش [[not-found.tsx]] أقرب منه:
+
+~~~text الناتج: curl localhost:5820/nope
+404
+<meta name="robots" content="noindex"/>
+<h1>الصفحة دي مش موجودة</h1>
+~~~
+
+status 404 حقيقي، و [[noindex]] لجوجل، والمحتوى بتاعنا.
+
+---
+
+## ٣. الخطأ في dev
+
+عشان نشوف القيم، زودنا للتجربة سطر في error.tsx بيعرض [[{error.message} | digest: {error.digest}]]. وفتحنا [[/products]] على [[next dev]]:
+
+~~~text الناتج في المتصفح
+alert: حصلت مشكلة وإحنا بنجيب المنتجات.DB down | digest: 2873126124جرّب تاني
+nav still there: true
+~~~
+
+- [[DB down]]: الرسالة الأصلية وصلت، لأننا في dev.
+- [[nav still there: true]]: الـ layout (اللي فيه الـ nav) لسه موجود، والـ error.tsx خد مكان الصفحة بس.
+
+وفي ترمنال dev، Next بيوريك السطر اللي رمى بالظبط:
+
+~~~text الناتج في ترمنال next dev
+    at Products (src\app\products\page.tsx:8:9)
+   7 |   const raw = await searchParams;
+>  8 |   throw new Error("DB down");
+     |         ^
+~~~
+
+(وفي المتصفح بيظهر كمان الـ overlay الأحمر بتاع Next فوق الصفحة، وبتقفله فتلاقي الـ error.tsx تحته.)
+
+---
+
+## ٤. الخطأ في الإنتاج
+
+[[next build]] و [[next start]]، ونفس الصفحة:
+
+~~~text الناتج
+curl -w "%{http_code}" → 500
+
+alert: حصلت مشكلة وإحنا بنجيب المنتجات.Minified React error #441; visit https://react.dev/errors/441 for the full message ... | digest: 2532823434جرّب تاني
+nav still there: true
+~~~
+
+- الـ status **500** (خطأ في السيرفر)، مش 200.
+- [[error.message]] **مبقاش «DB down»**. بقى رسالة React رقم 441، ومعناها «حصل خطأ في Server Components، والرسالة الأصلية اتشالت في الإنتاج». ليه؟ عشان رسالة الخطأ ممكن يبقى فيها أسامي جداول أو مسارات أو أسرار.
+- [[digest: 2532823434]]: رقم بيمثل الخطأ ده.
+
+وفي ترمنال [[next start]]:
+
+~~~text الناتج في ترمنال next start
+⨯ Error: DB down
+    at f_ (C:\Users\ali\...\.next\server\chunks\ssr\src_app_products_page_tsx_....js:55:32511) {
+  digest: '2532823434'
+}
+~~~
+
+نفس الرقم. فلو مستخدم بعتلك screenshot فيها الـ digest، تدوّر عليه في اللوج وتلاقي الخطأ الحقيقي. ولاحظ إن الـ stack بيشاور على ملف مضغوط في [[.next]] مش على [[page.tsx]]، لأن الإنتاج مبني من ملفات متصغّرة.
+
+---
+
+## ٥. لو الـ throw قبل [[await searchParams]]
+
+~~~text الناتج: next build
+Error occurred prerendering page "/products". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: DB down
+>  7 |   throw new Error("DB down");
+Export encountered an error on /products/page: /products, exiting the build.
+~~~
+
+Next بيحاول يرسم كل صفحة static وقت الـ build. الصفحة دي بتبقى dynamic **لما** توصل لـ [[await searchParams]]، فلو الـ throw قبلها، الخطأ بيحصل وقت الـ build نفسه والـ build بيقع.
+
+---
+
+## الخلاصة
+
+| | [[error.tsx]] | [[not-found.tsx]] |
+|---|---|---|
+| بيظهر لما | خطأ في الصفحة أو اللي تحتها | [[notFound()]] أو URL مش موجود |
+| [[use client]] | لازم | مش لازم |
+| props | [[error]] و [[reset]] | مفيش |
+| الـ status | 500 | 404 |
+
+- الـ layout بيفضل، والملف بياخد مكان الصفحة بس.
+- في الإنتاج [[error.message]] مش الرسالة الأصلية. اعرض رسالة ثابتة، وسجّل الـ [[digest]].
+- أخطاء الـ layout نفسه بيمسكها [[error.tsx]] اللي فوقه، والـ root layout محتاج [[global-error.tsx]].`,
+          lines: [
+            "لازم client: الـ Error Boundaries في React بتشتغل في المتصفح.",
+            "هنستخدم effect للّوج.",
+            R`بياخد [[error]]، و [[digest]] (رقم بيربط الخطأ باللوج على السيرفر)، و [[reset]].`,
+            "بعد ما يترسم...",
+            "...ابعت الخطأ لخدمة مراقبة (Sentry مثلًا) بدل console.",
+            "قفلة الـ effect.",
+            "بداية الـ JSX.",
+            R`[[role="alert"]] عشان قارئ الشاشة يقراه على طول.`,
+            R`رسالة للمستخدم، مش [[error.message]].`,
+            R`[[reset]] بيحاول يرسم الجزء ده تاني.`,
+            "قفلة.",
+            "قفلة الـ return.",
+            "قفلة.",
+            "404 عامة للموقع كله.",
+            R`[[not-found]] مبياخدش props.`,
+            "رسالة ولينك يرجّعه.",
+            "قفلة."
+          ],
+          sol: R`في dev: الـ overlay بتاع Next فيه «DB down» والسطر اللي رمى. اقفله هتلاقي [[error.tsx]] معروض مكان الصفحة، والـ layout والـ header زي ما هما.
+
+في الإنتاج: الـ status بقى 500، و [[error.message]] مبقاش «DB down». بقى الرسالة العامة بتاعة React، وعندي طلعت بشكلها المختصر [[Minified React error #441]]، ومعناها «حصل خطأ في الـ Server Components والرسالة الأصلية متشالة في الإنتاج». ومعاه [[digest]] رقم زي [[4031509841]]. وفي ترمنال [[npm start]] هتلاقي [[⨯ Error: DB down]] وتحته [[digest: '4031509841']]: نفس الرقم، وده اللي بيربط اللي المستخدم شافه باللوج.
+
+ولو حطيت الـ throw قبل [[await searchParams]]، الـ build بيقع بـ [[Error occurred prerendering page "/products"]]، لأن الصفحة لسه مش dynamic لحظة الـ throw فـ Next بيحاول يبنيها static. ولو شفت «DB down» نفسها في المتصفح: انت على dev مش start.`
+        },
+        {
+          cmd: "@slot و (.)",
+          title: "modal ليه URL: parallel و intercepting routes",
+          desc: R`Parallel routes: فولدر اسمه بيبدأ بـ [[@]] زي [[@modal]] بيبقى slot، والـ layout بياخده prop جنب [[children]] ويرسمه في المكان اللي يعجبه. كذا صفحة في نفس الوقت، كل واحدة ليها loading و error بتوعها.
+
+Intercepting routes: فولدر بيبدأ بـ [[(.)]] بيمسك التنقل لمسار تاني ويعرض نسخة تانية منه. مع بعض بيعملوا الـ modal المشهور: تضغط على صورة من الليستة تفتح في modal والـ URL يتغير لـ [[/photos/5]]، ولو عملت refresh أو بعت اللينك لحد، يفتح صفحة الصورة الكاملة.`,
+          example: R`// app/layout.tsx
+export default function RootLayout({ children, modal }: LayoutProps<"/">) {
+  return (
+    <html lang="ar" dir="rtl">
+      <body>
+        {children}
+        {modal}
+      </body>
+    </html>
+  );
+}
+// app/@modal/default.tsx
+export default function Default() {
+  return null;
+}
+// app/@modal/(.)photos/[id]/page.tsx
+export default async function PhotoModal({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <Modal><PhotoView id={id} /></Modal>;
+}
+// app/photos/[id]/page.tsx: نفس الصورة كصفحة كاملة لو الـ URL اتفتح مباشرة`,
+          try: R`اعمل الملفات دي، وصفحة [[app/page.tsx]] فيها ٣ لينكات لـ [[/photos/1]] و [[/photos/2]] و [[/photos/3]]. اضغط لينك: الصورة تفتح modal والـ URL يتغير. اعمل refresh: تفتح الصفحة الكاملة. وبعدين امسح [[default.tsx]] واعمل [[npm run build]]: الـ build هيقع، واقرا الرسالة، هتلاقيها بتعدّ كل URL في الموقع ملهاش حاجة يرسمها الـ slot.`,
+          flag: "script",
+          deep: {
+            why: "الـ modal العادي ملوش URL: متقدرش تبعته لحد، والـ refresh بيقفله، وزرار الرجوع بيخرّجك من الصفحة كلها بدل ما يقفله. ولوحات التحكم فيها أجزاء مستقلة (إحصائيات، وتنبيهات) كل واحد بيحمّل لوحده ولو واحد وقع الباقي يفضل.",
+            how: R`كل slot ليه شجرة routes لوحده جوه نفس الـ URL. في التنقل من جوه الموقع (soft navigation)، Next بيحدّث الـ slot اللي فيه تطابق ويسيب الباقي على آخر حالة. في الـ refresh أو فتح اللينك مباشرة (hard navigation)، Next مبيعرفش الحالة القديمة، فأي slot ملوش تطابق بيرسم [[default.tsx]].
+
+من Next 16 [[default.tsx]] إجباري لكل slot. و Next 16.4 بيفحص شكل الـ routes كله وقت الـ build (اسمه strict route matching، وشغال افتراضيًا)، فمن غيره الـ build بيقع بـ Turbopack و webpack الاتنين، والرسالة بتعدّ كل URL ملهاش page أو default في الـ slot. و [[children]] نفسه slot ضمني، فممكن تحتاج [[app/default.tsx]] كمان.
+
+الـ intercepting بيتكتب بالنسبة لمستوى الـ route segments مش الفولدرات: [[(.)]] نفس المستوى، و [[(..)]] مستوى فوق، و [[(...)]] من الـ root. والـ [[@modal]] مش segment، فـ [[app/@modal/(.)photos]] بيمسك [[app/photos]].
+
+الـ interception بيحصل في soft navigation بس. الـ refresh أو فتح اللينك في تاب جديد بيروح للصفحة الأصلية [[app/photos/[id]/page.tsx]]، فلازم تبقى موجودة.`,
+            when: "صورة أو منتج في modal من ليستة (زي انستجرام)، و login في modal، وسلة جانبية ليها URL. و parallel routes لوحدها للوحات فيها أجزاء مستقلة، أو لعرض حاجة مختلفة حسب الدور (slot للأدمن و slot للمستخدم).",
+            mistakes: R`تنسى [[default.tsx]] فالـ build يقع. وتنسى الصفحة الأصلية فالـ refresh يطلّع 404. وتقفل الـ modal بـ [[router.push("/")]] بدل [[router.back()]]، فالـ history يتلخبط. وتعمل modal بالطريقة دي لحاجة ملهاش لازمة يبقى ليها URL (تأكيد مسح مثلًا): state عادية أبسط.`
+          },
+          teach: R`## الفكرة: ٣ ملفات بيعملوا modal ليه URL
+
+المثال ٣ ملفات وتعليق: الـ root layout بياخد slot اسمه [[modal]]، و [[default.tsx]] بيقول «الـ slot فاضي»، وصفحة جوه [[(.)photos]] بتمسك التنقل لـ [[/photos/5]] وتعرضه modal. شغّلنا الملفات دي في مشروع Next 16.4 (بـ [[next build]] و [[next start]])، ومعاها صفحة [[/]] فيها ٣ لينكات، وصفحة الصورة الكاملة، و [[Modal]] client component بسيط بيقفل بـ [[router.back()]].
+
+---
+
+## ١. شجرة الملفات
+
+~~~text الشجرة
+app/
+  layout.tsx                    بياخد children و modal
+  page.tsx                      الرئيسية: لينكات للصور
+  photos/[id]/page.tsx          صفحة الصورة الكاملة
+  @modal/
+    default.tsx                 الـ slot فاضي
+    (.)photos/[id]/page.tsx     نفس الصورة بس في modal
+~~~
+
+| الرمز | اسمه | معناه |
+|---|---|---|
+| [[@modal]] | parallel route (slot) | فولدر مش بيظهر في الـ URL، والـ layout بياخده prop اسمه [[modal]] |
+| [[(.)]] | intercepting route | «لما حد يتنقل لـ [[photos]] اللي في نفس المستوى، اعرض ده بدلها» |
+| [[default.tsx]] | default | اللي يترسم في الـ slot لما مفيش حاجة مطابقة |
+
+---
+
+## ٢. الـ root layout
+
+### [[export default function RootLayout({ children, modal }: LayoutProps<"/">)]]
+
+[[children]] زي العادي (الصفحة). و [[modal]] جاي من فولدر [[@modal]]: اسم الـ prop هو اسم الفولدر من غير [[@]]. و [[LayoutProps]] عارف إن فيه [[modal]] لأن Next بيقرا الفولدرات.
+
+### [[{children}]] ثم [[{modal}]]
+
+الاتنين بيترسموا جنب بعض. أغلب الوقت [[modal]] فاضي ([[null]])، ولما الصورة تتفتح بيبقى فيه الـ modal فوق الصفحة.
+
+---
+
+## ٣. [[app/@modal/default.tsx]]
+
+~~~text app/@modal/default.tsx
+export default function Default() {
+  return null;
+}
+~~~
+
+[[return null]] يعني «متعرضش حاجة». ده اللي بيترسم في الـ slot لما تفتح أي صفحة مباشرة (refresh أو لينك من برّه) ومفيش في [[@modal]] حاجة ليها.
+
+---
+
+## ٤. [[app/@modal/(.)photos/[id]/page.tsx]]
+
+### [[export default async function PhotoModal({ params }: { params: Promise<{ id: string }> })]]
+
+صفحة عادية بـ [[params]]. النوع مكتوب بإيده هنا بدل [[PageProps]]، والاتنين صح.
+
+### [[const { id } = await params;]]
+
+الـ [[id]] من الـ URL، زي أي [[[id]]].
+
+### [[return <Modal><PhotoView id={id} /></Modal>;]]
+
+الصورة جوه modal. الـ [[Modal]] كومبوننت بتاعك ([[use client]]، وزرار الإغلاق بينادي [[router.back()]]).
+
+---
+
+## ٥. التجربة
+
+السكربت بيقرا بعد كل خطوة: الـ URL، ونص الـ modal لو موجود، والـ [[h1]] بتاع الصفحة اللي تحته:
+
+~~~text الناتج
+home: {"url":"/","modal":null,"h1":"أهلًا"}
+after click: {"url":"/photos/2","modal":"صورة 2 في modalاقفل","h1":"أهلًا"}
+after refresh: {"url":"/photos/2","modal":null,"h1":"صفحة الصورة 2 كاملة"}
+after close (router.back): {"url":"/","modal":null,"h1":"أهلًا"}
+~~~
+
+| الخطوة | اللي حصل | ليه |
+|---|---|---|
+| الضغط على «صورة 2» | الـ URL بقى [[/photos/2]]، والـ modal ظهر، والرئيسية ([[أهلًا]]) لسه تحته | تنقل من جوه الموقع (soft navigation): [[(.)photos]] مسك التنقل، و [[children]] فضل زي ما هو |
+| refresh | مفيش modal، والصفحة الكاملة ظهرت | فتح مباشر (hard navigation): مفيش interception، فـ [[app/photos/[id]/page.tsx]] اترسمت، و [[@modal]] رسم [[default.tsx]] |
+| زرار اقفل | رجعنا [[/]] من غير modal | [[router.back()]] رجّع خطوة في الـ history |
+
+وفي جدول الـ build ظهر الـ route ده جنب العادي:
+
+~~~text الناتج
+├ ƒ /(.)photos/[id]
+├ ƒ /photos/[id]
+~~~
+
+---
+
+## ٦. من غير [[default.tsx]]
+
+مسحناه وعملنا [[next build]]:
+
+~~~text الناتج
+⚠ Strict route matching is enabled by default. ...
+> Build error occurred
+Error: Turbopack build failed with 3 errors:
+Error: Interception routes must have a canonical route
+Error: Parallel route slots cannot render the same URLs
+- / is missing a matching page or default.tsx in @modal
+- /about is missing a matching page or default.tsx in @modal
+...
+Every URL matched by one slot must have a matching page or default.tsx in every sibling slot.
+Error: Unmatched app pages
+~~~
+
+والكلام ده معناه: لما حد يفتح [[/]] أو [[/about]] مباشرة، [[children]] عنده صفحة، بس [[@modal]] معندوش لا page ولا default، فمش عارف يرسم إيه. فـ Next 16.4 بيوقف الـ build وبيعدّ كل URL فيها المشكلة. و [[next build --webpack]] وقع بنفس الكلام. وأول سطر بيقول إن الفحص ده (strict route matching) شغال افتراضيًا.
+
+---
+
+## الخلاصة
+
+- [[@name]] = slot بيوصل للـ layout كـ prop بنفس الاسم، ومش جزء من الـ URL.
+- [[(.)]] = امسك التنقل لمسار في نفس المستوى، و [[(..)]] مستوى فوق، و [[(...)]] من الـ root.
+- الـ interception في التنقل من جوه الموقع بس. الـ refresh بيفتح الصفحة الأصلية، فلازم تبقى موجودة.
+- [[default.tsx]] لكل slot دايمًا، وإلا الـ build بيقع.
+- اقفل الـ modal بـ [[router.back()]].`,
+          lines: [
+            R`الـ root layout بياخد [[modal]] من فولدر [[@modal]] جنب [[children]]. الـ [[@]] مبيدخلش في الـ URL.`,
+            "بداية الـ JSX.",
+            "html.",
+            "body.",
+            "الصفحة العادية.",
+            "الـ slot: فاضي أغلب الوقت، وفيه الـ modal لما يتفتح.",
+            "قفلة body.",
+            "قفلة html.",
+            "قفلة الـ return.",
+            "قفلة.",
+            R`[[default.tsx]]: اللي يترسم في الـ slot لما مفيش حاجة مطابقة للـ URL الحالي.`,
+            R`[[null]]: مفيش modal.`,
+            "قفلة.",
+            R`[[(.)]] يعني «امسك [[/photos/[id]]] اللي في نفس المستوى» لما التنقل يحصل من جوه الموقع.`,
+            "خد الـ id.",
+            R`اعرض الصورة جوه modal فوق الصفحة الحالية. الـ Modal بيقفل بـ [[router.back()]].`,
+            "قفلة."
+          ],
+          sol: R`الضغطة على لينك الصورة بتفتح الـ modal فوق الرئيسية (محتوى الرئيسية لسه ظاهر تحته) والـ URL بقى [[/photos/2]]. والـ refresh على نفس الـ URL بيفتح [[app/photos/[id]/page.tsx]]: الصفحة الكاملة من غير modal، لأن الـ interception بيحصل في التنقل من جوه الموقع بس.
+
+من غير [[default.tsx]] (Next 16.4): [[next build]] بيقع، وبـ [[--webpack]] كمان. الرسالة بتقول [[/ is missing a matching page or default.tsx in @modal]] وتكرر السطر ده لكل صفحة في الموقع، وبعدها [[Every URL matched by one slot must have a matching page or default.tsx in every sibling slot.]] يعني لما تفتح أي صفحة مباشرة، الـ slot [[@modal]] ملوش حاجة يرسمها. وفوقها تحذير إن [[Strict route matching is enabled by default]]. ولو الضغطة فتحت الصفحة الكاملة بدل الـ modal: اتأكد إن فولدر [[(.)photos]] جوه [[@modal]]، وإن اللينك [[<Link>]] مش [[<a>]].`
         }
       ]
     }
