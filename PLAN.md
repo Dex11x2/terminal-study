@@ -1,6 +1,6 @@
 # الخطة: وصلنا لفين وفاضل إيه
 
-آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring خلصوا؛ angular و rn شغالين).
+آخر تحديث: ٦ أكتوبر ٢٠٢٦ (TypeScript و HTML/CSS و React و Next.js و API و SQL خلصوا؛ و Python API والملفات والرموز والقاموس خلصوا،  و apps و DSA و real و Go و .NET و PHP و Spring و Angular خلصوا؛ rn و flutter شغالين).
 
 أي جلسة جديدة تقرا الملف ده الأول، وبعد أي دفعة شغل تحدّثه: تشيل اللي خلص من «الشغل الجاي» وتضيفه في «اتعمل»، وتكتب أي حاجة ناقصة اكتشفتها.
 
@@ -128,7 +128,7 @@
 | ٤١ | `go/01-07.js` (54) | [x] (go اتقسم 11 ملف؛ golang:1.25 اتمسحت) |
 | ٤٢ | `dotnet/01-04.js` (55) | [x] (dotnet اتقسم 16 ملف؛ images الـ .NET اتمسحت) |
 | ٤٣ | `spring/01-04.js` (58) | [x] (spring اتقسم 16 ملف؛ image الـ JDK اتمسحت) |
-| ٤٤ | `angular/01-03.js` (51) | [ ] |
+| ٤٤ | `angular/01-03.js` (51) | [x] (angular اتقسم) |
 | ٤٥ | `rn/01-04.js` (56) | [ ] |
 | ٤٦ | `flutter/01-05.js` (61) | [ ] |
 | ٤٧ | `kotlin/01-06.js` (56) | [ ] |

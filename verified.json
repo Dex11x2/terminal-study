@@ -24,15 +24,35 @@
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 + @angular/material 22.2.2 (ng add, ng serve + Chrome headless/Playwright)"
  },
+ "angular|Angular ولا React؟": {
+  "hash": "f9ccbef634f8",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3 + React 19.3 / zustand 5.0.15 renderToString in Node"
+ },
  "angular|CDK": {
   "hash": "27f3662a35c9",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 + @angular/cdk 22.2.2 (ng serve + Chrome headless/Playwright mouse drag)"
  },
+ "angular|DI hierarchy؟": {
+  "hash": "0631c1045fd5",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3; docs: route providers, useClass by environment"
+ },
  "angular|HttpClient": {
   "hash": "923660d3ae28",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright, Node 24 fake API)"
+ },
+ "angular|HttpTestingController": {
+  "hash": "5291eb3aa555",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3"
+ },
+ "angular|NgModule": {
+  "hash": "53483643f4a5",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 NgModule app (ng build, ng serve + Chrome headless)"
  },
  "angular|NgRx Signal Store": {
   "hash": "e696d524858e",
@@ -49,6 +69,21 @@
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 + @angular/cdk/bidi (ng serve + Chrome headless/Playwright)"
  },
+ "angular|RxJS القديم في component": {
+  "hash": "104dd20f06e4",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 NgModule app ng serve + Chrome headless"
+ },
+ "angular|SSR و hydration": {
+  "hash": "6c95650c3e0a",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 ng new --ssr, ng build, node server.mjs + Chrome headless; docs: ng add on existing project"
+ },
+ "angular|TestBed و components": {
+  "hash": "8189b636854e",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3"
+ },
  "angular|async pipe و toSignal": {
   "hash": "c23643b0d854",
   "date": "2026-10-07",
@@ -58,6 +93,16 @@
   "hash": "2f764bc85c14",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 ng serve + headless Chrome + ng build (TS2551)"
+ },
+ "angular|change detection؟": {
+  "hash": "40a9b2f6eb2c",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3"
+ },
+ "angular|deploy": {
+  "hash": "3f36e016d7dd",
+  "date": "2026-10-07",
+  "on": "docker node:22-alpine (npm ci + ng build) + nginx:alpine image from the lesson nginx.conf, curl + Chrome; docs: multi-stage build"
  },
  "angular|directives": {
   "hash": "46b0fb10f7e8",
@@ -99,10 +144,20 @@
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 ng build + ng serve --no-hmr headless Chrome"
  },
+ "angular|lifecycle hooks؟": {
+  "hash": "d9b6845eee1a",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3"
+ },
  "angular|model()": {
   "hash": "dc3cef935c73",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 ng serve + headless Chrome, ng build (NG5002)"
+ },
+ "angular|ng build و environments": {
+  "hash": "e16357a0a82e",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 (ng g environments, ng build, --base-href in pwsh, ng serve + Chrome); docs: npx serve"
  },
  "angular|ng generate": {
   "hash": "5a324dfe118f",
@@ -113,6 +168,16 @@
   "hash": "a71134f12b54",
   "date": "2026-10-07",
   "on": "Windows 11, Node 24.19, Angular CLI 22.2.2 (npx): ng version, ng new, ng serve + HMR edit, ng build; docs: npm i -g"
+ },
+ "angular|ng test و Vitest": {
+  "hash": "73984c6417a6",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3"
+ },
+ "angular|ng update و migrations": {
+  "hash": "f4ac891ac302",
+  "date": "2026-10-07",
+  "on": "Windows Angular CLI 22.2.2 (ng update + migrations + git diff); docs: ng update @angular/core@17"
  },
  "angular|pipe و operators": {
   "hash": "fdc402b7bc80",
@@ -159,6 +224,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, Node 24.19 scripts in Angular 22.2 project"
  },
+ "angular|signals ولا RxJS؟": {
+  "hash": "b7daeaa31cc2",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 Vitest 5.0.3"
+ },
  "angular|store بـ service و signals": {
   "hash": "a65a8b52537a",
   "date": "2026-10-07",
@@ -173,6 +243,16 @@
   "hash": "fd2f66d944a8",
   "date": "2026-10-07",
   "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright + ng build)"
+ },
+ "angular|zoneless و OnPush": {
+  "hash": "c810aad8a930",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 ng serve + Chrome headless"
+ },
+ "angular|الأداء": {
+  "hash": "3120ce351332",
+  "date": "2026-10-07",
+  "on": "windows-11 node24 Angular 22.2.1 ng build --stats-json, esbuild-visualizer, budgets, NgOptimizedImage in Chrome headless"
  },
  "api|$transaction": {
   "hash": "c345ee4d16af",
