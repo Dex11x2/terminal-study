@@ -6014,6 +6014,56 @@
   "date": "2026-10-06",
   "on": "win11 Node 24.19 + Chrome 154 headless"
  },
+ "kotlin|List و Map و Set": {
+  "hash": "daa427bcd53e",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|if و when": {
+  "hash": "5f27b44a1b81",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|map و filter و reduce": {
+  "hash": "f0617fb48405",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|ranges و loops": {
+  "hash": "b603a7e53531",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|string templates": {
+  "hash": "8228e9beb172",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|val و var": {
+  "hash": "96d44ca7c27b",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|الدوال": {
+  "hash": "71c3630011ff",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|المتغيرات والـ Null Safety في Kotlin": {
+  "hash": "a07e91fbba94",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|تسطيب Kotlin": {
+  "hash": "6278f4c50d4f",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20; docs: sdk install kotlin, brew, Windows PATH"
+ },
+ "kotlin|مقدمة Kotlin وكتابة أول برنامج": {
+  "hash": "d40bf013db41",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
  "mongo|$jsonSchema": {
   "hash": "1c118dd1b5e7",
   "date": "2026-10-06",
