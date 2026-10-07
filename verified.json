@@ -8099,15 +8099,65 @@
   "date": "2026-10-07",
   "on": "Windows 11 Docker Desktop (two copies side by side, name:, -f, port conflict)"
  },
+ "real|dashboard_users.sh": {
+  "hash": "d94042993cc7",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (Docker-in-Docker postgres:16-alpine + nginx; nginx -s reload instead of systemctl)"
+ },
+ "real|deploy-run.sh": {
+  "hash": "5c7048a84248",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (Docker-in-Docker; latest/previous + rollback)"
+ },
+ "real|deploy-shared.sh": {
+  "hash": "eca65e4b5757",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 client -> ubuntu-24.04 server (sshd + git + php-cli) on private Docker network"
+ },
+ "real|deploy-static.sh": {
+  "hash": "32b8d3409f69",
+  "date": "2026-10-07",
+  "on": "node:22-slim client -> ubuntu-24.04 server (sshd + nginx) on private Docker network"
+ },
+ "real|deploy.sh": {
+  "hash": "255b3ea22b03",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (Docker-in-Docker, compose project + local git origin)"
+ },
+ "real|deploy.yml (SSH)": {
+  "hash": "6aec523c1ac6",
+  "date": "2026-10-07",
+  "on": "actionlint + script body over ssh to ubuntu-24.04 Docker-in-Docker server; docs: GitHub Actions run itself"
+ },
+ "real|init-ssl.sh": {
+  "hash": "27f8e811d2ca",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 + nginx:alpine + certbot/certbot 5.8.0 (--help, test -f); docs: real Let's Encrypt issuance"
+ },
  "real|launch.sh / launch.bat": {
   "hash": "b3148047b956",
   "date": "2026-10-07",
   "on": "node:22-slim container with a sudo user, Vite 8 + Electron 44 (window not opened); Windows CMD for launch.bat"
  },
+ "real|nginx-apply.sh": {
+  "hash": "44f656bf68aa",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (Docker-in-Docker, nginx:alpine with bind-mounted conf)"
+ },
+ "real|nginx.conf (Next.js)": {
+  "hash": "567adcc6dee5",
+  "date": "2026-10-07",
+  "on": "nginx:alpine 1.31.6 + app container + curl on private Docker network (self-signed cert)"
+ },
  "real|preflight.sh": {
   "hash": "d477602ba166",
   "date": "2026-10-07",
   "on": "ubuntu:24.04 container (all checks, nc listeners, sshd -T, --fix with a 16M file); docs: real swapon"
+ },
+ "real|renew-ssl.sh": {
+  "hash": "d5837e4d0ef4",
+  "date": "2026-10-07",
+  "on": "certbot/certbot 5.8.0 (renew, marker logic) + openssl s_client against nginx:alpine; docs: real renewal"
  },
  "real|server-map.sh": {
   "hash": "66dc7d15a36e",
@@ -8123,6 +8173,11 @@
   "hash": "4e01a5c04f94",
   "date": "2026-10-07",
   "on": "pwsh 7.6 and Windows PowerShell 5.1 with Chrome 154 (OK and FAIL cases)"
+ },
+ "real|update.sh": {
+  "hash": "b97eecc5e00d",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (Docker-in-Docker; success, no-op and rollback)"
  },
  "real|verify-docker.ps1": {
   "hash": "7a18c6e2f1c7",
