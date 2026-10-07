@@ -1249,6 +1249,11 @@
   "date": "2026-10-06",
   "on": "headless Chrome 154 (playwright, Windows)"
  },
+ "css|:has()": {
+  "hash": "ebcab04e9aeb",
+  "date": "2026-10-07",
+  "on": "headless Chrome, solCode + the other example rules; Tailwind 4.3.3 build output"
+ },
  "css|<!doctype html>": {
   "hash": "7bb7dc6df1f4",
   "date": "2026-10-06",
@@ -1263,6 +1268,16 @@
   "hash": "54f6e6370982",
   "date": "2026-10-06",
   "on": "headless Chrome 154 (playwright, Windows) + browserslist 4.29.3; docs: MDN Baseline badges"
+ },
+ "css|CLS": {
+  "hash": "40ea6db4ff44",
+  "date": "2026-10-07",
+  "on": "headless Chrome, PerformanceObserver layout-shift, image delayed 800ms"
+ },
+ "css|CSS nesting": {
+  "hash": "dc36b5f10b12",
+  "date": "2026-10-07",
+  "on": "headless Chrome, static HTML + CSSOM"
  },
  "css|CSS variables": {
   "hash": "dfc37c6658f0",
@@ -1294,6 +1309,11 @@
   "date": "2026-10-06",
   "on": "headless Chrome 154 (playwright, Windows), same-document and cross-document"
  },
+ "css|WCAG 2.2": {
+  "hash": "f97b6a513a80",
+  "date": "2026-10-07",
+  "on": "headless Chrome (playwright-core), static HTML"
+ },
  "css|a و button": {
   "hash": "417cd065d484",
   "date": "2026-10-06",
@@ -1304,10 +1324,20 @@
   "date": "2026-10-06",
   "on": "Vite 8 + Tailwind 4.3.3 build + Chrome headless on Windows 11"
  },
+ "css|aria": {
+  "hash": "361b96ac40d0",
+  "date": "2026-10-07",
+  "on": "headless Chrome (playwright-core), React 19 + Vite, accessibility tree via CDP"
+ },
  "css|auto-fit و minmax": {
   "hash": "ef055d37a83c",
   "date": "2026-10-06",
   "on": "Chrome headless on Windows 11"
+ },
+ "css|axe و Lighthouse": {
+  "hash": "32cbe9802644",
+  "date": "2026-10-07",
+  "on": "@playwright/test 1.63 + @axe-core/playwright 4.13 on Chrome; Lighthouse 13.5 CLI"
  },
  "css|box model": {
   "hash": "cce89bd4b505",
@@ -1329,10 +1359,25 @@
   "date": "2026-10-06",
   "on": "Node 24 (clsx 2.1.1, tailwind-merge 3.7.0, cn 0.4.0) + Vite/Tailwind 4.3.3 page in headless Chrome"
  },
+ "css|container queries": {
+  "hash": "e549695078ea",
+  "date": "2026-10-07",
+  "on": "headless Chrome, Vite + Tailwind 4.3.3 + React, plus plain CSS page"
+ },
  "css|containing block": {
   "hash": "c96063afb1a6",
   "date": "2026-10-06",
   "on": "headless Chrome 154 (playwright, Windows)"
+ },
+ "css|contrast ratio": {
+  "hash": "6fa83f786942",
+  "date": "2026-10-07",
+  "on": "headless Chrome (playwright-core), Tailwind 4.3.3 color values, prefers-contrast emulated; docs: macOS contrast setting"
+ },
+ "css|critical CSS": {
+  "hash": "c47261657163",
+  "date": "2026-10-07",
+  "on": "headless Chrome, CDP request priorities + paint timing, CSS delayed by the server"
  },
  "css|cva": {
   "hash": "4f6a0cd11051",
@@ -1374,6 +1419,11 @@
   "date": "2026-10-06",
   "on": "Chrome headless on Windows 11 (ltr and rtl)"
  },
+ "css|focus-visible": {
+  "hash": "c86c8b35e434",
+  "date": "2026-10-07",
+  "on": "headless Chrome (playwright-core), Vite + Tailwind 4.3.3 + React"
+ },
  "css|form و label": {
   "hash": "6a4a2026d73d",
   "date": "2026-10-06",
@@ -1399,10 +1449,20 @@
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core, DPR 1/2/3 and 375/1440/1920 viewports), Windows 11"
  },
+ "css|jsx-a11y و getByRole": {
+  "hash": "5c11dac84055",
+  "date": "2026-10-07",
+  "on": "ESLint 9.39 + eslint-plugin-jsx-a11y 6.10; Vitest 5 + jsdom + Testing Library + axe-core 4.14"
+ },
  "css|lang و dir": {
   "hash": "67897a6274dc",
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core), Windows 11"
+ },
+ "css|layout thrashing": {
+  "hash": "6f45fa527bc7",
+  "date": "2026-10-07",
+  "on": "headless Chrome, solCode as written + CDP LayoutCount"
  },
  "css|logical properties": {
   "hash": "f3d605f3f62f",
@@ -1419,10 +1479,20 @@
   "date": "2026-10-06",
   "on": "Chrome headless on Windows 11 (widths, touch emulation, prefers-color-scheme)"
  },
+ "css|meta و Open Graph": {
+  "hash": "2c6ddacbfa3d",
+  "date": "2026-10-07",
+  "on": "headless Chrome (title/meta/network); docs: WhatsApp, Google and X previews"
+ },
  "css|mobile-first": {
   "hash": "d177f3f29f68",
   "date": "2026-10-06",
   "on": "headless Chrome 154 (playwright, Windows), viewports 240-1440 and default font 16/20"
+ },
+ "css|motion": {
+  "hash": "b112f0bd342f",
+  "date": "2026-10-07",
+  "on": "headless Chrome, React + motion 14 + Tailwind 4.3.3, reduced motion emulated"
  },
  "css|next/font": {
   "hash": "c26d4443056e",
@@ -1514,6 +1584,11 @@
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core, Cairo and New York timezones); docs: mobile keyboards"
  },
+ "css|transition و @keyframes": {
+  "hash": "067c2225751e",
+  "date": "2026-10-07",
+  "on": "headless Chrome (playwright-core), reduced motion emulated"
+ },
  "css|variants": {
   "hash": "6febf5faae09",
   "date": "2026-10-06",
@@ -1528,6 +1603,11 @@
   "hash": "8e8fe8c771b4",
   "date": "2026-10-06",
   "on": "Chrome headless on Windows 11"
+ },
+ "css|إعلان تغيير الصفحة": {
+  "hash": "6c1224974a5f",
+  "date": "2026-10-07",
+  "on": "headless Chrome, React 19.3 + react-router 8.4 production build in StrictMode; docs: Next.js behaviour"
  },
  "css|احجز المكان": {
   "hash": "f2febacfc2b0",
@@ -1553,6 +1633,11 @@
   "hash": "5e0d53d6645d",
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core, 375px mobile), Windows 11"
+ },
+ "css|كيبورد وقارئ شاشة": {
+  "hash": "97792e9abc37",
+  "date": "2026-10-07",
+  "on": "headless Chrome for Tab/Shift+Tab/Enter/Space/Esc; docs: NVDA and VoiceOver shortcuts"
  },
  "css|مراحل الرسم": {
   "hash": "2ac82560447b",
