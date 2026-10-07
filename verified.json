@@ -2874,10 +2874,25 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
+ "dotnet|ASP.NET Core Identity": {
+  "hash": "56256c32730b",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18 (dotnet run app.cs), curl"
+ },
  "dotnet|ASP.NET Core و Blazor": {
   "hash": "a59a513d8b87",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401); docs: browser Network tab"
+ },
+ "dotnet|AsNoTracking و change tracking": {
+  "hash": "b24eaee567bc",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
+ },
+ "dotnet|BackgroundService": {
+  "hash": "ebb84c646efb",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
  },
  "dotnet|CancellationToken": {
   "hash": "1f685670160b",
@@ -2888,6 +2903,11 @@
   "hash": "d2fbb78a3ca1",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run di.cs + curl"
+ },
+ "dotnet|DbContext و Npgsql": {
+  "hash": "afdf87787325",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
  },
  "dotnet|Dockerfile لـ .NET": {
   "hash": "ca668c2af1c8",
@@ -2904,6 +2924,11 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:16-alpine (Npgsql 10.0.3)"
  },
+ "dotnet|HybridCache و output caching": {
+  "hash": "1482f369b335",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18 + redis:8-alpine, curl"
+ },
  "dotnet|IEnumerable و yield": {
   "hash": "b31e7bb63023",
   "date": "2026-10-07",
@@ -2914,10 +2939,25 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:16-alpine (EF Core 10 / Npgsql 10.0.3)"
  },
+ "dotnet|IHttpClientFactory": {
+  "hash": "ec2784ad4c9c",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0, curl (api.nuget.org)"
+ },
  "dotnet|ILogger": {
   "hash": "41a00f71d482",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine + curl"
+ },
+ "dotnet|Include و N+1": {
+  "hash": "85bcc980af97",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
+ },
+ "dotnet|JWT bearer": {
+  "hash": "d296bb36c6de",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18, curl"
  },
  "dotnet|Kestrel ورا Nginx": {
   "hash": "2d33aa2afe5f",
@@ -2929,6 +2969,11 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
  },
+ "dotnet|LINQ لـ SQL": {
+  "hash": "01e0844e9916",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
+ },
  "dotnet|List و Dictionary": {
   "hash": "550507a5b828",
   "date": "2026-10-07",
@@ -2938,6 +2983,11 @@
   "hash": "72a7e8a6362c",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine (Npgsql EF 10.0.3) + curl + curl.exe/Invoke-RestMethod (pwsh 7.6)"
+ },
+ "dotnet|NSubstitute و Moq": {
+  "hash": "28bd231cae6b",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0"
  },
  "dotnet|ProblemDetails": {
   "hash": "9e0f7b04182d",
@@ -2949,10 +2999,20 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
  },
+ "dotnet|WebApplicationFactory": {
+  "hash": "1723facd0581",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
+ },
  "dotnet|async deadlock": {
   "hash": "5f369166e052",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (dotnet run file.cs)"
+ },
+ "dotnet|authorization policies": {
+  "hash": "69537228095c",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18, curl"
  },
  "dotnet|boxing و stack و heap": {
   "hash": "d9fc0a0602b0",
@@ -2983,6 +3043,11 @@
   "hash": "25757822eb56",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401); docs: apt install (apt-cache policy only)"
+ },
+ "dotnet|dotnet ef migrations": {
+  "hash": "88d32890d788",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
  },
  "dotnet|dotnet new console": {
   "hash": "6829ba5f2701",
@@ -3054,6 +3119,11 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
  },
+ "dotnet|transactions و ExecuteUpdate": {
+  "hash": "7440ebbc671e",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
+ },
  "dotnet|validation": {
   "hash": "14dc23306762",
   "date": "2026-10-07",
@@ -3068,6 +3138,16 @@
   "hash": "89facfb95c35",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|xUnit": {
+  "hash": "743f65d994fe",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0"
+ },
+ "dotnet|العلاقات في EF": {
+  "hash": "eff1206f560d",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 + postgres:18"
  },
  "dsa|0/1 knapsack": {
   "hash": "3b51301da76f",

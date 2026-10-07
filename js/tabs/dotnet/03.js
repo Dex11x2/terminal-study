@@ -1,1087 +1,789 @@
 // تكملة تاب dotnet: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/dotnet/01.js (شرح حقول الدرس في أوله)
 MORE("dotnet", [
     {
-      t: "EF Core: الأساس",
-      l: 2,
-      n: "DbContext مع PostgreSQL أو SQL Server، و migrations، و العلاقات، و LINQ اللي بيتحول SQL",
+      t: "Classes و records و interfaces",
+      l: 1,
+      n: "properties و constructors، و records للداتا، و interfaces اسمية مش شكلية زي TS",
       items: [
         {
-          cmd: "DbContext و Npgsql",
-          title: "DbContext و DbSet: توصّل EF Core بـ PostgreSQL",
-          desc: R`EF Core هو الـ ORM الرسمي (زي Prisma في «تاب SQL و Prisma»). بتكتب classes عادية (entities)، و [[DbContext]] فيه [[DbSet<Product>]] لكل جدول، وبتكتب LINQ فبيتحول SQL.
+          cmd: "class و properties",
+          title: "تعمل class فيها properties و constructor وتحمي الـ state بتاعها",
+          desc: R`الـ class في C# شبه TS بس أصرم. الحقول بتبقى [[private]] عادة، والبيانات بتظهر برّه عن طريق properties: [[public decimal Balance { get; private set; }]] يعني أي حد يقرا، بس التعديل من جوه الـ class بس.
 
-الـ provider بيتحدد بالمكتبة: [[Npgsql.EntityFrameworkCore.PostgreSQL]] لـ Postgres و [[UseNpgsql]]، أو [[Microsoft.EntityFrameworkCore.SqlServer]] و [[UseSqlServer]] لـ SQL Server، أو SQLite للتجارب. باقي الكود زي ما هو تقريبًا.
+[[init]] بدل [[set]] يعني تتحط مرة وقت الإنشاء بس (زي [[readonly]] في TS). و [[required]] يعني اللي بيعمل object لازم يدّيها قيمة. والـ primary constructor [[class Account(string owner, decimal opening)]] (C# 12) بيوفر عليك كتابة constructor كامل.
 
-الـ conventions: property اسمها [[Id]] = primary key بـ identity، و [[CategoryId]] + [[Category]] = foreign key وعلاقة، و [[string]] non-nullable = [[NOT NULL]]. والباقي بتظبطه في [[OnModelCreating]] (Fluent API): أطوال، و precision للفلوس، و indexes.`,
-          example: R`dotnet package add Npgsql.EntityFrameworkCore.PostgreSQL
-dotnet package add Microsoft.EntityFrameworkCore.Design
-# Data/ShopDb.cs
-public class Product
+الـ access modifiers: [[public]] للكل، و [[private]] للـ class بس (الافتراضي للأعضاء)، و [[protected]] للي بيورثوا، و [[internal]] للمشروع ده بس (الافتراضي للـ classes).`,
+          example: R`var acc = new Account("Sara", 100m);
+acc.Deposit(50m);
+Console.WriteLine(acc);
+var u = new User { Email = "sara@x.com" };
+Console.WriteLine(u.Name);
+acc.Balance = 0; // error CS0272: the set accessor is inaccessible
+var bad = new User(); // error CS9035: Required member 'User.Email' must be set
+public class Account(string owner, decimal opening)
 {
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public decimal Price { get; set; }
-    public int CategoryId { get; set; }
-    public Category Category { get; set; } = null!;
-}
-public class ShopDb(DbContextOptions<ShopDb> options) : DbContext(options)
-{
-    public DbSet<Product> Products => Set<Product>();
-    public DbSet<Category> Categories => Set<Category>();
-    protected override void OnModelCreating(ModelBuilder b)
+    public string Owner { get; } = owner;
+    public decimal Balance { get; private set; } = opening;
+    public void Deposit(decimal amount)
     {
-        b.Entity<Product>().Property(p => p.Name).HasMaxLength(200);
-        b.Entity<Product>().Property(p => p.Price).HasPrecision(10, 2);
-        b.Entity<Product>().HasIndex(p => p.Name).IsUnique();
+        if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
+        Balance += amount;
     }
+    public override string ToString() => $"{Owner}: {Balance:0.00}";
 }
-# Program.cs + appsettings.Development.json
-builder.Services.AddDbContext<ShopDb>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Shop")));
-# "ConnectionStrings": { "Shop": "Host=localhost;Database=shop_dev;Username=shop;Password=shop" }`,
-          try: R`اعمل الـ entities دي في [[Shop.Api]] (ضيف [[Category]] بـ [[Id]] و [[Name]] و [[List<Product> Products]]) و Order و OrderItem، وسجّل الـ DbContext. ولو معندكش Postgres شغّله بـ Docker ([[docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=shop postgres:17-alpine]]). الخطوة الجاية: migrations.`,
-          flag: "script",
-          deep: {
-            why: R`أغلب شغل .NET backend بيعدي على EF Core. فهمه كويس (إيه اللي بيتحول SQL وإمتى، وإيه اللي بيتتبع) هو الفرق بين API سريع و API بيعمل ٥٠٠ query في الصفحة.`,
-            how: R`الـ [[DbContext]] بيمثل unit of work: جلسة مع الداتابيز فيها connection وقايمة بالـ entities اللي حمّلتها وحالتها (change tracker). [[AddDbContext]] بيسجله Scoped، فكل request ليه context منفصل، وده مهم لأن الـ DbContext مش thread-safe.
-
-[[DbSet<T>]] بيطبق [[IQueryable<T>]]: كل LINQ عليه بيتبني كـ expression tree ومش بيتنفذ لحد [[ToListAsync]] أو [[FirstOrDefaultAsync]] أو [[foreach]].
-
-الـ model بيتبني مرة من الـ conventions والـ attributes والـ Fluent API، ويتكاش. الـ navigation property ([[Category]]) بـ [[= null!]] لأنها non-nullable في الـ model (كل منتج ليه category) بس مش بتتحمل لوحدها، فالـ [[!]] بيسكّت التحذير. وجدول من غير DbSet (زي OrderItem لو مليهوش DbSet) بياخد اسم الـ class ([[OrderItem]]) بدل الجمع.
-
-Postgres و SQL Server: الفروق بتظهر في الأنواع ([[text]] مقابل [[nvarchar(max)]]، و [[timestamp with time zone]] مقابل [[datetime2]])، والـ identity، و [[Contains]] ([[LIKE]] في الاتنين)، وحاجات Postgres الخاصة زي arrays و jsonb و [[ILike]] عبر [[EF.Functions]].`,
-            when: R`EF Core للـ CRUD والـ queries العادية، وده ٩٠٪ من الشغل. للـ reports المعقدة أو الأداء الحرج: [[FromSql]] أو Dapper جنبه. و SQL Server لو الشركة على Microsoft stack و Azure، و Postgres لأغلب الباقي، والكود تقريبًا واحد.`,
-            mistakes: R`نسخ مختلفة من حزم EF (Npgsql 10.0.3 بيعتمد على EF 10.0.4، و Design 10.0.12): تحذير [[MSB3277]] ووقوع وقت التشغيل في الاختبارات بـ [[Could not load file or assembly 'Microsoft.EntityFrameworkCore.Relational, Version=10.0.12.0']]، حصلت هنا وحلها إضافة [[Microsoft.EntityFrameworkCore.Relational]] بنفس النسخة صراحة. و [[double]] للأسعار بدل [[decimal]] + [[HasPrecision]]. و DbContext Singleton. والـ connection string في appsettings.json المرفوع.`
-          },
-          lines: [
-            "الـ provider بتاع Postgres (بيجيب EF Core معاه).",
-            R`أدوات design-time عشان [[dotnet ef]] يشتغل.`,
-            "entity: class عادية.",
-            "بداية.",
-            R`[[Id]]: primary key بـ identity بالـ convention.`,
-            R`[[NOT NULL]] لأنها non-nullable.`,
-            R`[[numeric]] (هنحدد الـ precision تحت).`,
-            R`foreign key بالـ convention ([[<Navigation>Id]]).`,
-            R`navigation property. [[null!]] لأن EF هو اللي بيملاها.`,
-            "نهاية.",
-            "الـ context بياخد الإعدادات من الـ DI.",
-            "بداية.",
-            R`جدول [[Products]].`,
-            R`جدول [[Categories]].`,
-            "Fluent API.",
-            "بداية.",
-            R`[[character varying(200)]].`,
-            R`[[numeric(10,2)]]: فلوس.`,
-            R`unique index على الاسم.`,
-            "نهاية.",
-            "نهاية.",
-            R`تسجيل Scoped، والـ connection string من الإعدادات.`
-          ],
-          sol: R`لو كله تمام [[dotnet build]] بينجح والتطبيق بيقوم (EF مش بيكلم الداتابيز غير أول query، فلو الـ connection string غلط مش هتعرف غير مع أول request: [[Npgsql.NpgsqlException: Failed to connect to 127.0.0.1:5432]] أو [[28P01: password authentication failed for user "shop"]]).
-
-Order و OrderItem: [[public class Order { public int Id { get; set; } public required string CustomerEmail { get; set; } public DateTime CreatedAt { get; set; } = DateTime.UtcNow; public List<OrderItem> Items { get; set; } = []; }]] و [[OrderItem]] فيها [[OrderId]] و [[ProductId]] و [[Product]] و [[Quantity]] و [[UnitPrice]] (السعر وقت الطلب، مش السعر الحالي). و [[DateTime.UtcNow]] مش [[Now]]: Npgsql بيرفض [[DateTime]] من نوع Local في عمود [[timestamp with time zone]].`
-        },
-        {
-          cmd: "dotnet ef migrations",
-          title: "migrations: تغيّر الـ schema بأوامر متسجلة في git",
-          desc: R`بعد ما تعدّل الـ entities، [[dotnet ef migrations add Initial]] بيقارن الـ model بآخر snapshot ويطلّع ملف C# فيه [[Up]] (التغيير) و [[Down]] (الرجوع). و [[dotnet ef database update]] بيطبّق اللي ماتطبقش على الداتابيز ويسجله في جدول [[__EFMigrationsHistory]].
-
-الأداة نفسها [[dotnet-ef]] بتتسطب كـ tool: [[dotnet new tool-manifest]] ثم [[dotnet tool install dotnet-ef]]، فتتسجل في [[dotnet-tools.json]] مع المشروع (زي devDependency) وكل الفريق ياخد نفس النسخة بـ [[dotnet tool restore]].
-
-في الإنتاج متشغّلش [[database update]] من جهازك: طلّع SQL script ([[dotnet ef migrations script --idempotent]]) وراجعه، أو migration bundle (ملف تنفيذي)، وشغّله في الـ CI أو الـ deploy.`,
-          example: R`dotnet new tool-manifest
-dotnet tool install dotnet-ef
-dotnet ef migrations add Initial
-dotnet ef database update
-dotnet ef migrations list
-dotnet ef migrations add AddTagsAndSku
-dotnet ef migrations script --idempotent -o migrate.sql
-dotnet ef migrations bundle -o efbundle
-dotnet ef migrations remove`,
-          try: R`ضيف لـ [[Product]] property [[public string? Sku { get; set; }]] واعمل migration اسمها [[AddSku]]. افتح الملف واقرا [[Up]] و [[Down]]. وبعدين شغّل التطبيق وجرّب endpoint قبل ما تعمل [[database update]]: إيه الخطأ؟`,
-          deep: {
-            why: R`الـ schema جزء من الكود: لازم يتراجع في PR، ويتطبق بنفس الترتيب على جهازك والـ staging والإنتاج. من غير migrations كل واحد بيعدّل الجداول بإيده والبيئات بتختلف. نفس فكرة [[prisma migrate]] في «تاب SQL و Prisma».`,
-            how: R`كل migration ليها ملفين: [[<timestamp>_Name.cs]] (الـ Up و Down بـ [[MigrationBuilder]])، و [[.Designer.cs]] (الـ model وقتها)، وفيه ملف [[ShopDbModelSnapshot.cs]] بيتحدث مع كل migration وبيمثل الـ model الحالي. [[migrations add]] بيقارن الـ model من الكود بالـ snapshot.
-
-[[dotnet ef]] محتاج يعمل الـ DbContext وقت الـ design: بيشغّل [[Program.cs]] لحد [[Build()]] ويطلب الـ context من الـ DI، فلازم الـ connection string موجود في البيئة اللي هو فيها ([[ASPNETCORE_ENVIRONMENT=Development]]).
-
-[[--idempotent]] بيلف كل migration في [[IF NOT EXISTS]] على جدول الـ history، فالـ script ينفع يتشغل على أي نسخة من الداتابيز. والـ bundle ملف تنفيذي فيه الـ migrations، بتشغّله بـ connection string من غير SDK.
-
-[[migrations remove]] بيشيل آخر migration لو لسه مطبقتهاش. لو طبقتها: [[database update PreviousName]] الأول. وفي الـ many-to-many من غير join entity، EF بيعمل جدول [[ProductTag]] بأعمدة [[ProductsId]] و [[TagsId]] لوحده.`,
-            when: R`migration صغيرة لكل تغيير منطقي، باسم واضح ([[AddSkuToProducts]] مش [[Update3]]). في الإنتاج: script أو bundle في خطوة deploy منفصلة قبل ما التطبيق الجديد يقوم. و [[Database.Migrate()]] وقت الـ startup بس للمشاريع الصغيرة بـ instance واحدة (لو كذا instance قاموا مع بعض ممكن يتخانقوا).`,
-            mistakes: R`تعدّل migration اتطبقت خلاص بدل ما تعمل واحدة جديدة. وتمسح ملفات الـ migrations وتعمل Initial جديدة على داتابيز فيها داتا. و rename property فـ EF يفهمها drop + add فتضيع الداتا: راجع الـ Up دايمًا وحوّلها [[RenameColumn]]. وتغييرات بتقفل جداول كبيرة في الإنتاج (شوف «تاب PostgreSQL»: تغييرات آمنة في الإنتاج).`
-          },
-          lines: [
-            R`[[dotnet-tools.json]]: tools خاصة بالمشروع.`,
-            R`سطّب [[dotnet-ef]] بنسخة متسجلة في الملف.`,
-            R`أول migration: فولدر [[Migrations]] فيه الـ Up و Down والـ snapshot.`,
-            R`طبّق على الداتابيز (من الـ connection string في Development).`,
-            R`كل الـ migrations، والمش مطبقة عليها [[(Pending)]].`,
-            "migration تانية بعد تعديل الـ entities.",
-            "SQL script آمن يتشغل على أي نسخة، تراجعه وتشغّله في الإنتاج.",
-            "ملف تنفيذي فيه الـ migrations للـ CI و Docker.",
-            "شيل آخر migration (لو لسه متطبقتش)."
-          ],
-          sol: R`الـ Up فيها [[migrationBuilder.AddColumn<string>(name: "Sku", table: "Products", type: "text", nullable: true);]] والـ Down فيها [[DropColumn]]. nullable لأن [[string?]]؛ لو كانت [[string]] كان هيحط [[nullable: false, defaultValue: ""]] عشان الصفوف القديمة.
-
-قبل [[database update]] أي query على Products بتقع: [[Npgsql.PostgresException: 42703: column p.Sku does not exist]] والـ API بيرجع 500. لأن EF بيعمل [[SELECT]] بكل الأعمدة اللي في الـ model. ده حصل فعلًا وإحنا بنجرب الـ tab ده. بعد [[dotnet ef database update]] وتشوف [[migrations list]] مفيهاش Pending، كله يرجع يشتغل. الدرس: الـ migration لازم تتطبق قبل أو مع نشر الكود اللي بيعتمد عليها.`
-        },
-        {
-          cmd: "العلاقات في EF",
-          title: "one-to-many و many-to-many: navigation properties و foreign keys",
-          desc: R`العلاقة بتتكتب بـ navigation properties: [[Category]] فيها [[List<Product> Products]] و [[Product]] فيها [[Category Category]] و [[int CategoryId]] = one-to-many. و [[Product]] فيها [[List<Tag> Tags]] و [[Tag]] فيها [[List<Product> Products]] = many-to-many، و EF بيعمل جدول الربط لوحده.
-
-الإضافة بالـ navigation: [[order.Items.Add(new OrderItem { ... })]] و [[SaveChanges]] بيعمل الـ INSERTs بالترتيب الصح ويملى الـ foreign keys. أو بالـ Id مباشرة: [[new Product { CategoryId = 1 }]] من غير ما تحمّل الـ category.
-
-الـ [[OnDelete]] بيتحدد تلقائي: required relationship = [[CASCADE]]. غيّره لـ [[Restrict]] لو مش عايز مسح الـ category يمسح منتجاتها.`,
-          example: R`public class Category
+public class User
 {
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public List<Product> Products { get; set; } = [];
-}
-public class Tag
-{
-    public int Id { get; set; }
-    public required string Name { get; set; }
-    public List<Product> Products { get; set; } = [];
-}
-b.Entity<Product>()
-    .HasOne(p => p.Category)
-    .WithMany(c => c.Products)
-    .HasForeignKey(p => p.CategoryId)
-    .OnDelete(DeleteBehavior.Restrict);
-var pens = new Category { Name = "Pens" };
-pens.Products.Add(new Product { Name = "Blue pen", Price = 5.5m });
-db.Categories.Add(pens);
-await db.SaveChangesAsync();`,
-          try: R`ضيف [[Tags]] لـ Product و [[Tag]] entity واعمل migration، وافتحها: الجدول الوسيط اسمه إيه وأعمدته إيه؟ وبعدين ضيف tag «sale» لمنتج موجود من غير ما تحمّل كل الـ tags بتاعته.`,
-          flag: "script",
-          deep: {
-            why: R`أي app حقيقي علاقات: طلبات فيها أصناف، ومنتجات في أقسام، ومستخدمين ليهم أدوار. EF بيخليك تتعامل معاها كـ objects عادية، بس لازم تعرف هو بيعمل إيه في SQL عشان متتفاجئش بالـ cascade أو بـ query ناقصة.`,
-            how: R`EF بيكتشف العلاقة من الـ navigations في الناحيتين، ولو فيه [[CategoryId]] بيستخدمه كـ FK (لو مش موجود بيعمل shadow property بنفس الاسم). الـ Fluent API ([[HasOne]]/[[WithMany]]) مطلوب بس لما الـ conventions متكفيش (اسمين غريبين، أو تغيير الـ delete behavior).
-
-الـ many-to-many من غير class للربط: EF بيعمل جدول [[ProductTag]] بأعمدة [[ProductsId]] و [[TagsId]] ومفتاح مركب. لو محتاج أعمدة زيادة في الربط (زي [[AddedAt]]) اعمل entity للربط صريحة ([[ProductTag]]) بعلاقتين one-to-many.
-
-الـ navigations مش بتتحمل لوحدها: [[product.Category]] بيبقى null لحد ما تعمل [[Include]] أو projection (الـ category الجاية). وفيه lazy loading بس مقفول افتراضيًا ومش مستحسن في APIs.
-
-[[DeleteBehavior.Cascade]] بيحط [[ON DELETE CASCADE]] في الـ FK، و [[Restrict]] بيمنع المسح لو فيه أولاد. و [[SetNull]] للعلاقات الاختيارية.`,
-            when: R`one-to-many لأغلب العلاقات. many-to-many بسيطة للـ tags والـ roles. entity وسيطة لو الربط ليه داتا. و [[Restrict]] للـ lookups (Category، Country) عشان مسحة غلط متمسحش آلاف الصفوف. قارن بـ «one-to-many» و «many-to-many» و «ON DELETE» في «تاب SQL و Prisma».`,
-            mistakes: R`تحمّل الـ category كلها عشان تضيف منتج (استخدم [[CategoryId]]). وتسيب الـ cascade الافتراضي على علاقات مهمة. و navigation في الناحيتين وترجع الـ entity في JSON: [[A possible object cycle was detected]]. رجّع DTOs.`
-          },
-          lines: [
-            "الناحية الـ one.",
-            "بداية.",
-            "PK.",
-            "اسم.",
-            R`collection navigation: الـ many. [[= []]] عشان متبقاش null.`,
-            "نهاية.",
-            "tag.",
-            "بداية.",
-            "PK.",
-            "اسم.",
-            R`many-to-many مع [[Product.Tags]]: EF بيعمل جدول [[ProductTag]].`,
-            "نهاية.",
-            "Fluent API للعلاقة (في OnModelCreating).",
-            "المنتج ليه category واحدة.",
-            "والـ category ليها منتجات كتير.",
-            R`الـ FK صريح.`,
-            R`[[ON DELETE RESTRICT]] بدل CASCADE.`,
-            "category جديدة.",
-            "منتج جوه الـ navigation.",
-            "ضيف الـ category (والمنتج معاها).",
-            R`[[INSERT]] للـ category الأول، وبعدين المنتج بالـ [[CategoryId]] الجديد.`
-          ],
-          sol: R`الـ migration فيها [[CreateTable(name: "Tag", ...)]] و [[CreateTable(name: "ProductTag", columns: ProductsId, TagsId)]] بـ [[PrimaryKey("PK_ProductTag", x => new { x.ProductsId, x.TagsId })]] واتنين FK بـ Cascade، و index على [[TagsId]]. الجدول اسمه [[Tag]] مش [[Tags]] لأن مفيش [[DbSet<Tag>]]؛ ضيف DbSet أو [[ToTable("Tags")]] لو عايز الجمع.
-
-عشان تضيف tag من غير ما تحمّل tags المنتج: [[var product = await db.Products.FindAsync(1); var sale = await db.Set<Tag>().SingleAsync(t => t.Name == "sale"); product!.Tags.Add(sale); await db.SaveChangesAsync();]] الـ [[Tags]] فاضية في الذاكرة بس EF بيعمل [[INSERT INTO "ProductTag"]] للصف الجديد بس، مش بيمسح القديم، لأنه بيتتبع الإضافة مش الحالة الكاملة. لو الـ tag موجودة أصلًا على المنتج هتاخد duplicate key: حمّلها بـ [[Include]] الأول لو مش متأكد.`
-        },
-        {
-          cmd: "LINQ لـ SQL",
-          title: "الـ LINQ بيتحول SQL إزاي؟ projection و ToQueryString و الـ client evaluation",
-          desc: R`[[db.Products.Where(p => p.Price > 10).Select(p => new { p.Name })]] مش بيتنفذ في C#: EF بياخد الـ lambda كـ expression tree ويحوّلها لـ [[SELECT p."Name" FROM "Products" AS p WHERE p."Price" > 10]]. عشان كده مش أي C# ينفع جوه الـ Where: methods انت كاتبها أو حاجات ملهاش مقابل في SQL بترمي [[could not be translated]].
-
-أهم عادة: [[Select]] لـ DTO (projection). بيجيب الأعمدة المطلوبة بس، وبيعمل الـ JOINs لوحده لو استخدمت navigation ([[p.Category.Name]])، ومش بيتتبع حاجة. و [[ToQueryString()]] بيوريك الـ SQL من غير ما ينفذ.
-
-والـ async: [[ToListAsync]] و [[FirstOrDefaultAsync]] و [[CountAsync]] و [[AnyAsync]] من [[Microsoft.EntityFrameworkCore]].`,
-          example: R`var q = db.Products
-    .Where(p => p.Price > 5 && p.Name.Contains("pen"))
-    .OrderBy(p => p.Price)
-    .Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Category.Name));
-Console.WriteLine(q.ToQueryString());
-var list = await q.ToListAsync(ct);
-var total = await db.Products.CountAsync(p => p.Stock < 5, ct);
-var exists = await db.Products.AnyAsync(p => p.Name == "Blue pen", ct);
-var avgByCategory = await db.Products
-    .GroupBy(p => p.Category.Name)
-    .Select(g => new { Category = g.Key, Avg = g.Average(p => p.Price) })
-    .ToListAsync(ct);`,
-          try: R`اعمل method عادية [[static bool IsCheap(Product p) => p.Price < 10;]] واستخدمها جوه [[db.Products.Where(p => IsCheap(p))]]. إيه اللي حصل؟ صلّحها بطريقتين. وبعدين قارن الـ SQL بتاع [[db.Products.Select(p => p.Name)]] بـ [[db.Products.ToList().Select(p => p.Name)]].`,
-          flag: "script",
-          deep: {
-            why: R`الـ ORM بيخبي الـ SQL، وده مريح لحد ما الـ query تبقى بطيئة أو تقع في الإنتاج. لازم تبقى عارف تقرا LINQ وتتخيل الـ SQL، وتتأكد بـ [[ToQueryString]] أو اللوج.`,
-            how: R`[[DbSet<T>]] هو [[IQueryable<T>]]، و [[Where]] على [[IQueryable]] بتاخد [[Expression<Func<T, bool>>]] مش [[Func]]: شجرة بتوصف الكود مش كود متجمّع. الـ provider بيلف على الشجرة ويترجمها. [[Contains]] على string بقت [[LIKE]]، و [[ids.Contains(p.Id)]] بقت [[= ANY(@ids)]] في Postgres أو [[IN]]، و [[p.Category.Name]] بقت JOIN.
-
-الـ parameters: القيم من C# بتبقى parameters ([[@q_contains]]) مش بتتلزق في النص، فمفيش SQL injection. و [[FromSql($"... {x}")]] برضه بيحوّل الـ interpolation لـ parameters، أما [[FromSqlRaw]] مع string concatenation ففيه injection.
-
-EF Core بيسمح بـ client evaluation في آخر [[Select]] بس (مثلًا تنادي method على النتيجة). في Where أو OrderBy بيرمي [[InvalidOperationException: The LINQ expression ... could not be translated]]، أحسن من إنه يحمّل الجدول كله بهدوء زي EF6 زمان.
-
-أول ما تعمل [[AsEnumerable()]] أو [[ToList()]] الباقي بيتنفذ في الذاكرة. ده الفرق بين [[IQueryable]] و [[IEnumerable]] (سؤال انترفيو ثابت، آخر category).`,
-            when: R`projection لـ DTO في أي endpoint بيرجع داتا. تحميل الـ entity كاملة لما هتعدّل فيها و [[SaveChanges]]. SQL خام ([[FromSql]] أو [[SqlQuery]]) للـ reports والـ window functions اللي LINQ مبيعبّرش عنها كويس.`,
-            mistakes: R`[[ToList()]] بدري فالفلترة تحصل في الذاكرة. و method بتاعتك جوه Where. و [[Count()]] الـ sync بدل [[CountAsync]] في API. و [[FromSqlRaw("... " + input)]] (SQL injection). و [[string.Equals(a, b, StringComparison.OrdinalIgnoreCase)]] جوه Where (مش بيتترجم: استخدم [[EF.Functions.ILike]] في Postgres أو collation).`
-          },
-          lines: [
-            "query لسه متنفذتش.",
-            R`بيتحول [[WHERE p."Price" > 5.0 AND p."Name" LIKE '%pen%']]: الثوابت بتتكتب في الـ SQL، والمتغيرات بتبقى parameters.`,
-            R`[[ORDER BY]].`,
-            R`projection: [[p.Category.Name]] بيعمل [[INNER JOIN]] لوحده، والأعمدة المطلوبة بس.`,
-            "اطبع الـ SQL من غير تنفيذ.",
-            R`هنا بس بيروح للداتابيز، والـ token بيلغي الـ query لو الـ request اتلغى.`,
-            R`[[SELECT count(*)]] مش تحميل الصفوف.`,
-            R`[[SELECT EXISTS (...)]].`,
-            R`[[GROUP BY]] في SQL.`,
-            "التجميع.",
-            R`[[avg()]] في SQL.`,
-            "تنفيذ."
-          ],
-          sol: R`[[Where(p => IsCheap(p))]] بيرمي وقت التنفيذ: [[InvalidOperationException: The LINQ expression 'DbSet<Product>().Where(p => Program.IsCheap(p))' could not be translated. Either rewrite the query in a form that can be translated, or switch to client evaluation explicitly by inserting a call to 'AsEnumerable', 'AsAsyncEnumerable', 'ToList', or 'ToListAsync'.]] EF مش شايف جوه الـ method، شايف نداء بس. (ده لو الـ method static في class. لو كتبتها local function تحت الـ top-level statements، الـ build نفسه بيفشل قبل كده بـ [[error CS8110: An expression tree may not contain a reference to a local function]].)
-
-الحل الأول: اكتب الشرط inline [[Where(p => p.Price < 10)]]. التاني: خلي الـ method ترجع [[Expression<Func<Product, bool>>]]: [[static Expression<Func<Product, bool>> IsCheap => p => p.Price < 10;]] و [[Where(IsCheap)]]. (الـ AsEnumerable اللي الرسالة بتقترحه بيشتغل بس بيحمّل الجدول كله، فمش حل.)
-
-[[db.Products.Select(p => p.Name)]] الـ SQL [[SELECT p."Name" FROM "Products" AS p]]. و [[ToList().Select(...)]] الـ SQL [[SELECT p."Id", p."CategoryId", p."Name", p."Price", p."Sku", p."Stock" FROM "Products"]]: كل الأعمدة وكل الصفوف، والـ Select في الذاكرة.`
-        }
-      ]
-    },
-    {
-      t: "EF Core: الأداء والـ transactions",
-      l: 2,
-      n: "N+1 و Include، و AsNoTracking، و SaveChanges كـ transaction، و ExecuteUpdate",
-      items: [
-        {
-          cmd: "Include و N+1",
-          title: "N+1 queries: ليه الصفحة بتعمل ١٠١ query وإزاي Include بيحلها",
-          desc: R`N+1: query تجيب N عنصر، وبعدين query لكل عنصر عشان تجيب حاجة مرتبطة بيه. ١٠٠ category = ١٠١ query. في EF بيحصل لما تلف على نتيجة وتحمّل الـ navigation جوه الـ loop، أو مع lazy loading.
-
-الحلول: [[Include(c => c.Products)]] بيجيب الاتنين في query واحدة بـ JOIN. أو الأحسن غالبًا: projection بـ [[Select]] لشكل الرد اللي محتاجه، فـ EF يعمل الـ JOIN ويجيب الأعمدة المطلوبة بس. و [[AsSplitQuery()]] لو عندك كذا Include لـ collections والـ JOIN بقى بيضرب الصفوف في بعض (cartesian explosion).`,
-          example: R`var cats = await db.Categories.ToListAsync();
-foreach (var c in cats)
-    await db.Entry(c).Collection(x => x.Products).LoadAsync();
-var withProducts = await db.Categories
-    .Include(c => c.Products)
-    .AsNoTracking()
-    .ToListAsync();
-var summary = await db.Categories
-    .Select(c => new { c.Name, Count = c.Products.Count, MaxPrice = c.Products.Max(p => (decimal?)p.Price) })
-    .ToListAsync();
-var orders = await db.Orders
-    .Include(o => o.Items).ThenInclude(i => i.Product)
-    .AsSplitQuery()
-    .ToListAsync();`,
-          try: R`فعّل لوج [[Microsoft.EntityFrameworkCore.Database.Command]] على Information، واعمل endpoint بالنسخة الأولى (الـ loop) وعِد الـ [[Executed DbCommand]] في اللوج لـ request واحد. وبعدين بالـ Include، وبعدين بالـ projection. قارن عدد الـ queries والأعمدة.`,
-          flag: "script",
-          deep: {
-            why: R`N+1 هو أشهر مشكلة أداء في أي ORM. على جهازك بـ ١٠ صفوف مش هتحس بيها، وفي الإنتاج بـ ١٠٠٠ صف والداتابيز على سيرفر تاني (كل query فيها round trip) الصفحة بتاخد ثواني. وسؤال انترفيو ثابت (شوف «N+1» في «تاب SQL و Prisma» و «DataLoader و N+1» في «تاب APIs متقدمة»).`,
-            how: R`[[Include]] بيضيف LEFT JOIN و ORDER BY على الـ keys، و EF بيجمّع الصفوف لـ objects. [[ThenInclude]] للمستوى اللي بعده. ولو فيه أكتر من collection Include في نفس الـ query، الصفوف بتتضرب (١٠ items × ٥ payments = ٥٠ صف لكل order)، و EF بيحذرك في اللوج. [[AsSplitQuery]] بيعمل query لكل collection بدل JOIN واحد كبير.
-
-الـ projection: [[c.Products.Count]] بيتحول subquery [[(SELECT count(*) ...)]] جوه نفس الـ SELECT. ومفيش tracking لأن النتيجة مش entities. و [[(decimal?)p.Price]] في [[Max]] عشان لو category فاضية [[MAX]] بيرجع NULL وبدون الـ cast هترمي exception.
-
-الـ explicit loading ([[Entry(...).Collection(...).LoadAsync()]]) والـ lazy loading الاتنين بيعملوا query لكل مرة، ودول مصدر الـ N+1.`,
-            when: R`projection للـ reads اللي بترجع JSON (الأغلب). [[Include]] لما محتاج الـ entities نفسها (هتعدّل فيها، أو هتبني منها domain logic). [[AsSplitQuery]] مع كذا collection. وافحص عدد الـ queries في الـ integration tests أو باللوج.`,
-            mistakes: R`[[Include]] لكل حاجة «احتياطي» فتجيب نص الداتابيز. وتنسى الـ Include فالـ navigation تبقى null أو فاضية من غير error (ده أخطر من الـ exception). و lazy loading في API. وتفتكر إن Include بيفلتر: [[Include(c => c.Products.Where(p => p.Stock > 0))]] (filtered include) موجود بس بتفلتر الـ children مش الـ parents.`
-          },
-          lines: [
-            "query ١: كل الـ categories.",
-            "لكل واحدة...",
-            "...query لمنتجاتها: N query كمان. ده الـ N+1.",
-            R`query واحدة بـ [[LEFT JOIN]].`,
-            R`[[Include]] للـ collection.`,
-            "قراية بس، من غير tracking.",
-            "تنفيذ.",
-            "projection: query واحدة وأعمدة قليلة.",
-            R`[[Count]] و [[Max]] بيبقوا subqueries في SQL. الـ cast لـ [[decimal?]] عشان الـ category الفاضية.`,
-            "تنفيذ.",
-            "مستويين.",
-            R`[[Include]] ثم [[ThenInclude]] للمنتج جوه كل item.`,
-            "query لكل collection بدل JOIN كبير.",
-            "تنفيذ."
-          ],
-          sol: R`بـ ٢ category: الـ loop عمل ٣ queries ([[SELECT ... FROM "Categories"]] ثم [[SELECT ... FROM "Products" WHERE "CategoryId" = @p]] مرتين). مع ١٠٠ category هتبقى ١٠١. الـ Include عمل query واحدة: [[SELECT c."Id", c."Name", p."Id", p."CategoryId", p."Name", p."Price", p."Stock" FROM "Categories" AS c LEFT JOIN "Products" AS p ON c."Id" = p."CategoryId" ORDER BY c."Id"]]. والـ projection query واحدة برضه بس بترجع ٣ أعمدة بس لكل category وصف واحد لكل category مش صف لكل منتج.
-
-لو عدد الـ queries في اللوج مش مطابق، اتأكد إن [[Microsoft.EntityFrameworkCore.Database.Command]] على Information، وإنك بتعد سطور [[Executed DbCommand]] للـ request ده بس (الـ background service ممكن يضيف سطور في النص). و EF مفيهوش cache للـ queries: كل [[LoadAsync]] بيروح للداتابيز.`
-        },
-        {
-          cmd: "AsNoTracking و change tracking",
-          title: "change tracking: EF بيعرف منين إنك عدّلت حاجة؟ وإمتى AsNoTracking",
-          desc: R`أي entity بتتحمل من query عادية بتتسجل في الـ change tracker بتاع الـ DbContext مع نسخة من قيمها الأصلية. لما تعدّل property وتنادي [[SaveChangesAsync]]، EF بيقارن ويعمل [[UPDATE]] للأعمدة اللي اتغيرت بس. مفيش [[db.Update(p)]] ولا [[save(p)]] محتاجهم.
-
-الـ tracking ليه تكلفة (ذاكرة ومقارنة). لو بتقرا بس عشان ترجع JSON: [[AsNoTracking()]]، أو projection بـ [[Select]] (مش بيتتبع أصلًا). وفيه [[UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)]] على الـ context كله لو أغلب شغلك قراية.
-
-والـ entity اللي جاية من برّه (مش من query في الـ context ده) مش متتبعة: لو عدّلتها و SaveChanges مش هيحصل حاجة.`,
-          example: R`var p = await db.Products.FirstAsync(p => p.Id == 1);
-p.Price += 1;
-var tracked = db.ChangeTracker.Entries().Count();
-var state = db.Entry(p).State;
-var p2 = await db.Products.AsNoTracking().FirstAsync(p => p.Id == 2);
-p2.Price += 1;
-var saved = await db.SaveChangesAsync();
-Console.WriteLine($"{tracked} {state} {saved}");`,
-          try: R`شغّل الكود ده في endpoint وبص على اللوج: كام [[UPDATE]] اتعمل وأنهي أعمدة؟ وبعدين اعمل endpoint [[PUT /api/products/{id}]] بياخد DTO ويعدّل الاسم والسعر: مرة بتحميل الـ entity وتعديلها، ومرة بـ [[ExecuteUpdateAsync]] من غير تحميل. قارن الـ SQL.`,
-          flag: "script",
-          deep: {
-            why: R`اللي جاي من Prisma أو Mongoose متعود إن كل update صريح. في EF التعديل «السحري» ده مريح بس بيعمل مفاجآت: حاجات بتتحفظ من غير ما تقصد، أو مش بتتحفظ وانت فاكرها اتحفظت. وفي الـ reads التقيلة الـ tracking بيضيع ذاكرة ووقت على الفاضي.`,
-            how: R`كل entity متتبعة ليها state: [[Unchanged]] بعد التحميل، [[Modified]] لما تتغير property، [[Added]] بعد [[Add]]، [[Deleted]] بعد [[Remove]]، [[Detached]] لو مش متتبعة. [[SaveChanges]] بيعمل [[DetectChanges]] (يقارن القيم الحالية بالـ snapshot) وبعدين يولّد الـ SQL بالترتيب ويشغّله في transaction.
-
-الـ identity resolution: جوه نفس الـ context، نفس الصف بيرجع نفس الـ object. لو حمّلت منتج 1 مرتين هتاخد نفس الـ reference. مع [[AsNoTracking]] كل query بترجع objects جديدة (فيه [[AsNoTrackingWithIdentityResolution]] لو محتاج الاتنين).
-
-[[db.Update(entity)]] على entity مش متتبعة بيعلّمها كلها Modified ويعمل UPDATE لكل الأعمدة، وده مقبول لو جاية كاملة، بس بيكتب فوق تغييرات حد تاني. الأدق: حمّل وعدّل، أو [[ExecuteUpdateAsync]] مباشرة.
-
-الـ context عمره قصير (scoped = request): متخليهوش يعيش طويل لأن الـ tracker بيكبر وبيبطأ.`,
-            when: R`[[AsNoTracking]] أو projection لكل الـ GET endpoints. tracking لما هتعدّل: حمّل، عدّل، [[SaveChangesAsync]]. و [[ExecuteUpdateAsync]] و [[ExecuteDeleteAsync]] لتعديلات جماعية أو بسيطة من غير ما تحتاج الـ entity (الدرس الجاي).`,
-            mistakes: R`تعدّل entity اتحملت بـ [[AsNoTracking]] وتستنى الحفظ. و DbContext Singleton أو static فالـ tracker يكبر للأبد ويبقى stale. وتحمّل ١٠٠٠٠ entity بـ tracking عشان تعرضهم بس. و [[db.Update()]] على object جاي من الـ request كما هو فتكتب null فوق أعمدة الـ client مبعتهاش.`
-          },
-          lines: [
-            "query عادية: الـ entity متتبعة.",
-            R`تعديل في الذاكرة. الحالة بقت [[Modified]].`,
-            R`[[1]]: entity واحدة في الـ tracker.`,
-            R`[[Modified]].`,
-            R`[[AsNoTracking]]: مش متتبعة.`,
-            "التعديل ده EF مش شايفه.",
-            R`[[1]]: UPDATE واحد بس، للمنتج 1، لعمود [[Price]] بس.`,
-            R`[[1 Modified 1]].`
-          ],
-          sol: R`اللوج فيه [[UPDATE]] واحد: [[UPDATE "Products" SET "Price" = @p0 WHERE "Id" = @p1;]] للمنتج 1 بس، وعمود [[Price]] بس، والـ endpoint رجّع [[{"tracked":1,"state":3,"saved":1}]] (الـ [[3]] هو [[EntityState.Modified]]: الـ enum بيطلع رقم في JSON افتراضيًا، ولو عايز الاسم رجّع [[state.ToString()]]). المنتج 2 اتعدّل في الذاكرة بس ومحدش حفظه.
-
-الـ PUT بالتحميل: [[SELECT ... WHERE "Id" = @id LIMIT 1]] ثم [[UPDATE "Products" SET "Name" = @p0, "Price" = @p1 WHERE "Id" = @p2]] (لو القيم اتغيرت فعلًا؛ لو بعت نفس القيم مفيش UPDATE خالص). بـ [[ExecuteUpdateAsync(s => s.SetProperty(p => p.Name, dto.Name).SetProperty(p => p.Price, dto.Price))]] query واحدة [[UPDATE "Products" AS p SET "Name" = @p, "Price" = @p0 WHERE p."Id" = @id]]، وبترجع عدد الصفوف، فلو 0 ترجع 404.`
-        },
-        {
-          cmd: "transactions و ExecuteUpdate",
-          title: "SaveChanges و BeginTransaction و ExecuteUpdate: عمليات لازم تنجح كلها أو تفشل كلها",
-          desc: R`[[SaveChangesAsync]] لوحده transaction: كل الـ INSERT و UPDATE اللي فيه بينجحوا مع بعض أو يترجعوا مع بعض. فأغلب الوقت مش محتاج أكتر من إنك تعمل كل تعديلاتك وتنادي SaveChanges مرة واحدة.
-
-لو محتاج كذا SaveChanges أو SQL خام في نفس العملية: [[await using var tx = await db.Database.BeginTransactionAsync()]] وفي الآخر [[CommitAsync]]. لو حصل exception قبل الـ commit، الـ [[using]] بيعمل rollback لوحده.
-
-[[ExecuteUpdateAsync]] و [[ExecuteDeleteAsync]] (من EF Core 7) بيعملوا UPDATE أو DELETE مباشر في SQL من غير تحميل entities ومن غير change tracker. أسرع بكتير للعمليات الجماعية، بس مش بيعدّوا على [[SaveChanges]] فمحتاجين transaction صريحة لو معاهم حاجة تانية.`,
-          example: R`public async Task<OrderSummary> PlaceAsync(PlaceOrder cmd, CancellationToken ct)
-{
-    await using var tx = await db.Database.BeginTransactionAsync(ct);
-    var ids = cmd.Lines.Select(l => l.ProductId).ToList();
-    var products = await db.Products.Where(p => ids.Contains(p.Id)).ToDictionaryAsync(p => p.Id, ct);
-    var order = new Order { CustomerEmail = cmd.CustomerEmail };
-    foreach (var line in cmd.Lines)
-    {
-        if (!products.TryGetValue(line.ProductId, out var p) || p.Stock < line.Quantity)
-            throw new OutOfStockException(line.ProductId);
-        p.Stock -= line.Quantity;
-        order.Items.Add(new OrderItem { ProductId = p.Id, Quantity = line.Quantity, UnitPrice = p.Price });
-    }
-    db.Orders.Add(order);
-    await db.SaveChangesAsync(ct);
-    await tx.CommitAsync(ct);
-    return new OrderSummary(order.Id, order.CustomerEmail, order.Items.Sum(i => i.UnitPrice * i.Quantity), order.Items.Count);
-}
-await db.Products.Where(p => p.Stock < 5)
-    .ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock + 10), ct);`,
-          try: R`اطلب أوردر فيه منتجين، التاني مخزونه مش كفاية: اتأكد إن مخزون الأول متخصمش. وبعدين فكّر: لو طلبين جم في نفس اللحظة على آخر قطعة، الكود ده بيمنع إن الاتنين ينجحوا؟ جرّب تحل ده بـ atomic UPDATE: [[ExecuteUpdateAsync]] بشرط [[p.Stock >= qty]] وتفحص عدد الصفوف.`,
-          flag: "script",
-          deep: {
-            why: R`الطلب ده بيعمل ٣ حاجات: يخصم مخزون، ويعمل order، ويعمل items. لو واحدة فشلت والباقي اتحفظ، عندك مخزون ناقص من غير أوردر، أو أوردر من غير items. الـ transaction بتخلي العملية كلها atomic.`,
-            how: R`[[SaveChanges]] بيفتح transaction لو مفيش واحدة مفتوحة، ويبعت كل الـ statements (batched)، ويعمل commit. لو فيه transaction مفتوحة بـ [[BeginTransaction]] بيستخدمها. وأي exception قبل [[CommitAsync]] مع [[await using]] = rollback.
-
-الـ isolation الافتراضي في Postgres [[Read Committed]]: الـ transaction مش بتمنع اتنين يقروا نفس المخزون (5) ويخصموا الاتنين. الحلول: (١) atomic UPDATE بشرط: [[UPDATE ... SET "Stock" = "Stock" - @q WHERE "Id" = @id AND "Stock" >= @q]] وتشوف عدد الصفوف. (٢) optimistic concurrency: عمود version (في Postgres [[xmin]] عبر [[IsConcurrencyToken]] أو [[[Timestamp]]] في SQL Server) و EF بيرمي [[DbUpdateConcurrencyException]] لو حد عدّل قبلك. (٣) [[SELECT ... FOR UPDATE]] بـ [[FromSql]]. (٤) [[IsolationLevel.Serializable]] مع retry.
-
-[[ExecuteUpdateAsync]] بيتحول لـ UPDATE واحد، ومش بيحدّث الـ entities اللي في الذاكرة. و EF 10 بيسمح تبعتله lambda عادية فيها if بدل الـ expression بس.
-
-ولو بتستخدم retry strategy ([[EnableRetryOnFailure]]) لازم تلف الـ transaction اليدوية في [[db.Database.CreateExecutionStrategy().ExecuteAsync(...)]].`,
-            when: R`SaveChanges واحد يكفي لأغلب الحالات. [[BeginTransaction]] لما عندك كذا SaveChanges أو Execute أو SQL خام لازم يبقوا مع بعض. atomic UPDATE أو concurrency token لأي عداد أو مخزون أو رصيد. وقارن بـ «transaction» و «atomic UPDATE» و «SELECT FOR UPDATE» و «isolation levels» في «تاب SQL و Prisma».`,
-            mistakes: R`SaveChanges جوه loop (transaction و round trip لكل عنصر). وتفتكر إن الـ transaction بتحل race condition على المخزون (مش في Read Committed). وتعمل transaction طويلة فيها HTTP call لـ payment gateway: الـ locks بتفضل ماسكة. وتنسى [[CommitAsync]] فكله يترجع بهدوء.`
-          },
-          lines: [
-            "method في الـ OrderService.",
-            "بداية.",
-            R`transaction صريحة، و [[await using]] بيعمل rollback لو محصلش commit.`,
-            "IDs المنتجات المطلوبة.",
-            R`query واحدة بـ [[= ANY(@ids)]] بدل query لكل منتج، في dictionary.`,
-            "الأوردر الجديد.",
-            "لكل سطر.",
-            "بداية.",
-            "المنتج مش موجود أو المخزون مش كفاية؟",
-            "ارمي: الـ handler بيحوّله 409، والـ transaction بتترجع.",
-            "خصم في الذاكرة (متتبع).",
-            "item بسعر وقت الطلب.",
-            "نهاية.",
-            "ضيف الأوردر.",
-            "INSERTs و UPDATEs كلهم في نفس الـ transaction.",
-            "commit: من هنا بس التغييرات بقت حقيقية.",
-            "الملخص.",
-            "نهاية.",
-            R`UPDATE جماعي مباشر: [[SET "Stock" = p."Stock" + 10 WHERE p."Stock" < 5]].`,
-            "من غير تحميل ومن غير SaveChanges."
-          ],
-          sol: R`طلب [[{"lines":[{"productId":1,"quantity":2},{"productId":2,"quantity":5}]}]] والمنتج 2 مخزونه 3 بيرجع 409 [["title":"Out of stock","detail":"Product 2 is out of stock","productId":2]]، ومخزون المنتج 1 فضل زي ما هو (98 قبل وبعد). الخصم كان في الذاكرة بس، ومحصلش SaveChanges، والـ transaction اترجعت.
-
-الـ race: لأ، الكود ده مش بيمنعها. طلبين بيقروا [[Stock = 1]] مع بعض، والاتنين بيعدّوا الفحص، والاتنين بيكتبوا [[Stock = 0]]، فبعت قطعتين وعندك واحدة. الحل: [[var rows = await db.Products.Where(p => p.Id == id && p.Stock >= qty).ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock - qty), ct); if (rows == 0) throw new OutOfStockException(id);]] الداتابيز بتقفل الصف وقت الـ UPDATE، فالتاني بيستنى ويشوف القيمة الجديدة والشرط بيفشل. خليه جوه نفس الـ transaction مع إنشاء الأوردر.`
-        }
-      ]
-    },
-    {
-      t: "Auth",
-      l: 2,
-      n: "JWT bearer، و roles و policies، و ASP.NET Core Identity",
-      items: [
-        {
-          cmd: "JWT bearer",
-          title: "JWT bearer: تتحقق من التوكن في كل request",
-          desc: R`[[AddAuthentication().AddJwtBearer(...)]] من حزمة [[Microsoft.AspNetCore.Authentication.JwtBearer]] بيقرا [[Authorization: Bearer <token>]] من كل request، ويتحقق من التوقيع والـ issuer والـ audience والصلاحية، ولو سليم بيملى [[HttpContext.User]] بالـ claims. وبعدين [[RequireAuthorization()]] على الـ endpoint أو [[[Authorize]]] على الـ controller.
-
-التوكن نفسه بيتعمل في endpoint الـ login (أو من identity provider برّه زي Auth0 أو Entra أو Keycloak، وده الأفضل في الشركات). المثال بيعمله بـ [[JsonWebTokenHandler]] ومفتاح HMAC من الـ config.
-
-401 = مش عارفك (مفيش توكن أو غلط)، 403 = عارفك بس مش مسموحلك (الدرس الجاي).`,
-          example: R`builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = jwt.Issuer,
-        ValidAudience = jwt.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key)),
-    });
-public string Create(string userId, string email, IEnumerable<string> roles)
-{
-    var claims = new List<Claim> { new(JwtRegisteredClaimNames.Sub, userId), new(JwtRegisteredClaimNames.Email, email) };
-    claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
-    var now = clock.GetUtcNow().UtcDateTime;
-    return new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor
-    {
-        Issuer = _o.Issuer,
-        Audience = _o.Audience,
-        Subject = new ClaimsIdentity(claims),
-        NotBefore = now,
-        Expires = now.AddMinutes(_o.MinutesValid),
-        SigningCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_o.Key)), SecurityAlgorithms.HmacSha256)
-    });
+    public required string Email { get; init; }
+    public string Name { get; set; } = "guest";
 }`,
-          try: R`اعمل endpoint [[/dev/token]] (في Development بس) بيرجع توكن، وفكّ الـ payload بـ [[cut -d. -f2 | base64 -d]]. وبعدين: (١) ابعت request من غير توكن، (٢) بتوكن توقيعه متغير حرف، (٣) بتوكن منتهي (خلي [[MinutesValid]] سالب). بص على header الـ [[WWW-Authenticate]] في كل حالة.`,
+          try: R`ضيف لـ [[Account]] method اسمها [[Withdraw(decimal amount)]] بترمي [[InvalidOperationException]] لو الرصيد مش كفاية، و property محسوبة [[public bool IsEmpty => Balance == 0;]]. وجرّب تسحب أكتر من الرصيد.`,
           flag: "script",
           deep: {
-            why: R`أغلب APIs اللي بيكلمها SPA أو موبايل بتستخدم JWT. وفهم إيه اللي بيتفحص وفين بيخليك تعرف ليه الـ 401 طالع، وإيه الإعدادات اللي لو غلطت فيها يبقى أي حد يعمل توكن. الأساس في «jwt.sign و jwt.verify» في «تاب Backend بـ Node» وشكل التوكن في «تاب الانترفيو».`,
-            how: R`الـ JwtBearer handler بيشتغل من [[UseAuthentication]]. بيفك التوكن، ويتحقق من التوقيع بالمفتاح، ومن [[iss]] و [[aud]] (افتراضيًا [[ValidateIssuer]] و [[ValidateAudience]] و [[ValidateLifetime]] كلهم true)، ومن [[exp]] و [[nbf]] مع سماحية ٥ دقايق ([[ClockSkew]]). لو نجح بيعمل [[ClaimsPrincipal]].
+            why: R`الـ encapsulation مش كلام نظري: لو [[Balance]] ليها [[public set]]، أي حد في الكود يقدر يكتب [[acc.Balance = 1_000_000]] ويتخطى كل قواعد [[Deposit]]. الـ properties بتخليك تفتح القراية وتقفل الكتابة، وتضيف منطق بعدين من غير ما تكسر اللي بيستخدمها.`,
+            how: R`[[{ get; set; }]] اسمها auto-property: الـ compiler بيعمل private field مخفي و getter و setter. تقدر تكتب منطق فيهم لو محتاج، ومن C# 14 فيه كلمة [[field]] بتشاور على الـ field المخفي ده: [[set => field = value.Trim();]].
 
-لو فشل، الـ endpoint المحمية بترجع 401 و [[WWW-Authenticate: Bearer error="invalid_token", error_description="The token expired at '...'"]] أو [["The signature key was not found"]] (دي اللي بتطلع لما التوقيع ميطابقش أي مفتاح عنده، مش رسالة أوضح زي «التوقيع غلط»). من غير توكن خالص: [[WWW-Authenticate: Bearer]] بس.
+الـ object initializer [[new User { Email = "..." }]] بيشتغل مع [[set]] و [[init]]. وبعد الإنشاء [[init]] بيقفل. و [[required]] بيفرض إن الـ initializer يحط القيمة، وده بيحل مشكلة التحذير CS8618 للـ non-nullable properties من غير constructor.
 
-الـ claims: [[ClaimTypes.Role]] اسمه URI طويل، و [[JsonWebTokenHandler]] بيكتبه في التوكن زي ما هو (مش بيختصره لـ [[role]]). عند القراية الـ JwtBearer بيحوّل الأسماء القصيرة المعروفة ([[role]] و [[sub]] و [[email]]) للـ URIs (لأن [[MapInboundClaims]] true افتراضيًا)، فـ [[RequireRole]] و [[User.IsInRole]] بيشتغلوا سواء التوكن فيه [[role]] (من identity provider) أو الـ URI. ونفس الكلام [[sub]] بيبقى [[ClaimTypes.NameIdentifier]].
+الـ primary constructor parameters ([[owner]] و [[opening]]) موجودة في كل الـ class، ولو استخدمتها في method بتتحول لـ field مخفي. هنا بنحطهم في properties مرة واحدة. و [[override ToString]] زي [[toString]] في JS: اللي بيطلع لما تطبع الـ object.
 
-مع identity provider برّه متحطش مفتاح: [[o.Authority = "https://login.example.com"]] و [[o.Audience = "shop-api"]]، والـ handler بيجيب المفاتيح العامة من [[/.well-known/openid-configuration]] (JWKS) ويحدّثها لوحده.
-
-[[HMAC]] (مفتاح واحد للتوقيع والتحقق) مناسب لو نفس الـ API بيعمل ويتحقق. لو كذا service بتتحقق، RSA أو ECDSA (مفتاح خاص للتوقيع وعام للتحقق).`,
-            when: R`JWT للـ APIs اللي بيكلمها موبايل أو SPA على domain تاني أو services تانية. لـ SPA على نفس الـ domain، الـ cookie (HttpOnly) بـ Identity أبسط وأأمن ضد XSS. وقارن «JWT ولا session» في «تاب Backend بـ Node».`,
-            mistakes: R`مفتاح قصير أو في git (HMAC-SHA256 محتاج 32 byte على الأقل، والـ handler بيرمي لو أقصر). و [[ValidateLifetime = false]] أو [[ValidateIssuer = false]] عشان «الـ 401 يختفي». وتوكن صلاحيته شهور من غير refresh. وتحط داتا حساسة في الـ payload (مش مشفّر، مجرد base64). وتنسى [[UseAuthentication]] قبل [[UseAuthorization]].`
+و [[nameof(amount)]] بيرجع [[amount]] كـ string، ولو غيّرت اسم الـ parameter بالـ refactor الاسم بيتغير معاه.`,
+            when: R`class عادية لأي حاجة ليها سلوك وقواعد (Account، Order، Cart). [[init]] و [[required]] للـ DTOs والـ config. [[private set]] لأي state المفروض يتغير عن طريق methods بس.`,
+            mistakes: R`كل حاجة [[public { get; set; }]] (anemic model) والمنطق متفرق في services. وتنسى إن الافتراضي للـ class هو [[internal]] فمش باينة من مشروع تاني. وتعمل public fields بدل properties: الـ serializers و EF Core بيتعاملوا مع properties، والحقول العامة بتتجاهل غالبًا.`
           },
+          teach: R`## البرنامج ده بيعمل إيه؟
+
+بيعرّف class لحساب بنكي ([[Account]]) الرصيد بتاعه محمي: تقدر تقراه من أي حتة، بس متغيّروش غير عن طريق [[Deposit]] اللي بتفحص المبلغ. و class تانية ([[User]]) فيها property إجبارية. وآخر سطرين في الكود قبل التعريفات غلطات مقصودة، والـ compiler بيمسكهم. كل الناتج حقيقي من [[dotnet run]] جوه [[docker run --rm mcr.microsoft.com/dotnet/sdk:10.0]] (.NET 10.0.12، C# 14).
+
+---
+
+## ١. [[class Account]] من فوق لتحت
+
+~~~csharp account.cs
+public class Account(string owner, decimal opening)
+{
+~~~
+
+- [[public]]: مرئية من أي حتة، حتى من مشروع تاني. من غيرها تبقى [[internal]] (جوه المشروع ده بس).
+- [[class Account]]: نوع جديد اسمه Account.
+- [[(string owner, decimal opening)]]: primary constructor (C# 12): البارامترات اللي لازم تتبعت مع [[new]]. ومتاحة جوه الـ class كلها.
+- [[{]]: بداية جسم الـ class.
+
+### [[public string Owner { get; } = owner;]]
+
+ده **property**: شبه field بس ليه «باب» للقراية ([[get]]) و «باب» للكتابة ([[set]]).
+
+- [[{ get; }]]: باب قراية بس. مفيش [[set]]، فمحدش يقدر يغيّرها بعد الإنشاء.
+- [[= owner;]]: القيمة الأولى من بارامتر الـ constructor.
+
+### [[public decimal Balance { get; private set; } = opening;]]
+
+- [[get;]] من غير كلمة قبلها: بياخد الـ [[public]] بتاع الـ property، فأي حد يقرا.
+- [[private set;]]: باب الكتابة [[private]]: جوه الـ class دي بس.
+
+ليه مش field عادي؟ لأن الـ property بتخليك تقفل الكتابة وتسيب القراية. والـ [[{ get; set; }]] الفاضية دي اسمها auto-property: الـ compiler بيعمل field مخفي يشيل القيمة.
+
+### الـ method: [[Deposit]]
+
+~~~csharp account.cs
+    public void Deposit(decimal amount)
+    {
+        if (amount <= 0) throw new ArgumentOutOfRangeException(nameof(amount));
+        Balance += amount;
+    }
+~~~
+
+- [[void]]: مبترجعش قيمة.
+- [[if (amount <= 0)]]: الشرط بين أقواس، و [[<=]] أصغر من أو يساوي.
+- [[throw new ArgumentOutOfRangeException(...)]]: [[throw]] زي JS: ارمي exception ووقّف. و [[ArgumentOutOfRangeException]] نوع exception جاهز معناه «البارامتر قيمته برّه المسموح».
+- [[nameof(amount)]]: بيرجع النص [["amount"]]. ليه مش تكتبه بإيدك؟ لو غيّرت اسم البارامتر بالـ refactor، [[nameof]] بيتغير معاه، والنص الثابت لأ.
+- [[Balance += amount;]]: زوّد الرصيد. ده مسموح لأننا جوه الـ class ([[private set]]).
+
+جرّبت [[acc.Deposit(-5m)]]:
+
+~~~text الناتج
+Unhandled exception. System.ArgumentOutOfRangeException: Specified argument was out of the range of valid values. (Parameter 'amount')
+   at Account.Deposit(Decimal amount) in /w/l9/neg.cs:line 13
+~~~
+
+لاحظ [[(Parameter 'amount')]]: ده اللي [[nameof]] جابه.
+
+### [[public override string ToString() => $"{Owner}: {Balance:0.00}";]]
+
+- كل object في C# عنده method اسمها [[ToString]]، والافتراضية بترجع اسم النوع ([[Account]]). [[override]] معناها «بدّل النسخة الافتراضية بدي».
+- [[=>]]: الـ method سطر واحد (expression-bodied).
+- [[{Balance:0.00}]]: الـ [[:0.00]] format: رقمين بعد العلامة دايمًا.
+
+و [[Console.WriteLine(acc)]] بينادي [[ToString()]] لوحده.
+
+---
+
+## ٢. [[class User]]
+
+~~~csharp account.cs
+public class User
+{
+    public required string Email { get; init; }
+    public string Name { get; set; } = "guest";
+}
+~~~
+
+| الكلمة | معناها |
+|---|---|
+| [[required]] | اللي بيعمل [[new User]] لازم يدّي قيمة لـ [[Email]] |
+| [[init]] | بدل [[set]]: الكتابة مسموحة وقت الإنشاء بس، وبعدها تقفل |
+| [[{ get; set; }]] | قراية وكتابة عادي من أي حتة |
+| [[= "guest"]] | قيمة افتراضية لو محدش حط قيمة |
+
+---
+
+## ٣. استخدام الاتنين
+
+~~~csharp account.cs
+var acc = new Account("Sara", 100m);
+acc.Deposit(50m);
+Console.WriteLine(acc);
+var u = new User { Email = "sara@x.com" };
+Console.WriteLine(u.Name);
+~~~
+
+- [[new Account("Sara", 100m)]]: [[owner]] = Sara و [[opening]] = 100.
+- [[acc.Deposit(50m)]]: 100 + 50.
+- [[new User { Email = "..." }]]: الـ [[{ }]] بعد [[new]] اسمها object initializer: بتحط قيم في properties وقت الإنشاء. ده المكان الوحيد اللي [[init]] بيسمح فيه.
+
+~~~text الناتج
+Sara: 150.00
+guest
+~~~
+
+---
+
+## ٤. الغلطتين المقصودتين
+
+شغّلت الملف بالسطرين:
+
+~~~text الناتج: dotnet run
+cls.cs(6,1): error CS0272: The property or indexer 'Account.Balance' cannot be used in this context because the set accessor is inaccessible
+cls.cs(7,15): error CS9035: Required member 'User.Email' must be set in the object initializer or attribute constructor.
+The build failed. Fix the build errors and run again.
+~~~
+
+- [[acc.Balance = 0;]]: الـ [[set]] بتاع [[Balance]] [[private]]، وإحنا برّه الـ class. **accessor** يعني باب الـ get أو الـ set.
+- [[new User()]] من غير [[Email]]: [[required]] اتكسر.
+
+وغلطة تالتة جرّبتها: [[u.Email = "x";]] بعد الإنشاء:
+
+~~~text الناتج: build
+error CS8852: Init-only property or indexer 'User.Email' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor.
+~~~
+
+الثلاثة **أخطاء compile**: البرنامج مش بيتبني أصلًا. مش محتاج تختبر عشان تكتشفهم.
+
+---
+
+## ٥. التجربة: Withdraw و IsEmpty
+
+~~~csharp sol.cs
+public bool IsEmpty => Balance == 0;
+public void Withdraw(decimal amount)
+{
+    if (amount > Balance)
+        throw new InvalidOperationException($"Insufficient funds: balance {Balance:0.00}, requested {amount:0.00}");
+    Balance -= amount;
+}
+~~~
+
+- [[IsEmpty => Balance == 0]]: property **محسوبة**: مفيش قيمة متخزنة، الـ [[=>]] بتتحسب كل مرة حد يقرا [[IsEmpty]].
+- [[InvalidOperationException]]: exception معناه «العملية دي مينفعش دلوقتي بسبب حالة الـ object». مناسب هنا لأن المبلغ نفسه سليم، بس الرصيد مش كفاية.
+- [[try { ... } catch (InvalidOperationException ex) { ... }]]: زي JS، بس الـ [[catch]] بيحدد نوع الـ exception اللي يمسكه، و [[ex.Message]] الرسالة.
+
+~~~text الناتج
+Insufficient funds: balance 150.00, requested 500.00
+True
+~~~
+
+### [[=>]] ولا [[=]]؟
+
+جرّبت أكتبها [[public bool IsEmpty { get; } = Balance == 0;]]:
+
+~~~text الناتج: build
+error CS0236: A field initializer cannot reference the non-static field, method, or property 'Account.Balance'
+~~~
+
+ولما خليتها [[{ get; } = opening == 0;]] وسحبت الرصيد كله، طبعت [[False]] والنسخة بـ [[=>]] طبعت [[True]]: الـ [[=]] اتحسبت مرة واحدة وقت الإنشاء.
+
+---
+
+## ٦. زيادة من C# 14: كلمة [[field]]
+
+لو عايز منطق في الـ setter من غير ما تكتب field بإيدك:
+
+~~~csharp field.cs
+var t = new Tag { Name = "  dotnet  " };
+Console.WriteLine($"[{t.Name}]");
+class Tag { public string Name { get; set => field = value.Trim(); } = ""; }
+~~~
+
+~~~text الناتج
+[dotnet]
+~~~
+
+[[field]] هو الـ field المخفي، و [[value]] القيمة اللي اتبعتت للـ set، و [[.Trim()]] بتشيل المسافات من الطرفين.
+
+---
+
+## الخلاصة
+
+| الشكل | قراية | كتابة |
+|---|---|---|
+| [[{ get; }]] | الكل | وقت الإنشاء من جوه الـ class بس |
+| [[{ get; set; }]] | الكل | الكل |
+| [[{ get; private set; }]] | الكل | جوه الـ class بس |
+| [[{ get; init; }]] | الكل | وقت الإنشاء بس (object initializer) |
+| [[required ... { get; init; }]] | الكل | وقت الإنشاء، وإجباري |
+| [[=> expr]] | الكل، بتتحسب كل مرة | مفيش |
+
+- الـ state يتغير عن طريق methods بتفحص القواعد، مش [[public set]].
+- [[override ToString]] عشان الطباعة تبقى مفهومة.`,
           lines: [
-            R`الـ scheme الافتراضي: Bearer.`,
-            "إعدادات التحقق.",
+            R`[[new]] بالـ primary constructor.`,
+            "method بتغيّر الـ state بقواعدها.",
+            R`بيستخدم [[ToString]]: [[Sara: 150.00]].`,
+            R`object initializer: [[Email]] إجباري لأنها [[required]].`,
+            R`[[guest]]: القيمة الافتراضية.`,
+            R`خطأ compile: الـ setter [[private]].`,
+            R`خطأ compile: [[Email]] required ومتحطتش.`,
+            R`primary constructor: [[owner]] و [[opening]] متاحين في كل الـ class.`,
+            "بداية الـ class.",
+            R`property للقراية بس (مفيش set)، قيمتها من الـ constructor.`,
+            R`أي حد يقرا، والكتابة من جوه بس.`,
+            "method عامة.",
+            "بداية الـ method.",
+            R`guard: رمي exception لو القيمة غلط. [[nameof]] بيطلّع اسم الـ parameter.`,
+            R`التعديل الوحيد المسموح على [[Balance]].`,
+            "نهاية الـ method.",
+            R`expression-bodied member بـ [[=>]]، و [[:0.00]] format لرقمين عشريين.`,
+            "نهاية الـ class.",
+            "class تانية.",
             "بداية.",
-            R`لازم [[iss]] يساوي ده.`,
-            R`و [[aud]].`,
-            "المفتاح اللي اتوقّع بيه.",
-            "نهاية.",
-            R`method في [[TokenService]]: بتعمل التوكن.`,
-            "بداية.",
-            R`[[sub]] و [[email]] claims.`,
-            R`كل role كـ claim (بيطلع في الـ JSON باسم الـ URI الطويل، مش [[role]]).`,
-            R`[[TimeProvider]] بدل [[DateTime.UtcNow]] عشان تقدر تتحكم فيه في الاختبارات.`,
-            R`[[JsonWebTokenHandler]]: الـ handler الحديث (أسرع من [[JwtSecurityTokenHandler]] القديم).`,
-            "بداية.",
-            "المصدر.",
-            "الجمهور.",
-            "الـ claims.",
-            R`[[nbf]].`,
-            R`[[exp]].`,
-            R`توقيع HMAC-SHA256.`,
-            "بالمفتاح من الإعدادات.",
-            "نهاية.",
+            R`[[required]] + [[init]]: لازم تتحط وقت الإنشاء ومتتغيرش بعده.`,
+            "property عادية ليها default.",
             "نهاية."
           ],
-          sol: R`الـ payload بعد الفك: [[{"aud":"shop-api","iss":"shop-dev","exp":1790745678,"nbf":1790742078,"sub":"sara@x.com","email":"sara@x.com","iat":1790742078}]] (ومع admin بيبقى فيه [["http://schemas.microsoft.com/ws/2008/06/identity/claims/role":"admin"]]، لأن [[ClaimTypes.Role]] بيتكتب زي ما هو). أي حد يقدر يقراه، فمتحطش فيه أسرار.
+          sol: R`[[Withdraw(500m)]] على رصيد 150 بترمي [[System.InvalidOperationException: Insufficient funds: balance 150.00, requested 500.00]] (بالرسالة اللي كتبتها). و [[Withdraw(150m)]] بعدها بتخلي [[IsEmpty]] بـ [[True]].
 
-(١) من غير توكن: 401 و [[WWW-Authenticate: Bearer]]. (٢) توقيع متغير: 401 و [[WWW-Authenticate: Bearer error="invalid_token", error_description="The signature key was not found"]] (الرسالة مش «signature invalid»: الـ handler بيدور على مفتاح يطابق التوقيع ومبيلاقيش). (٣) منتهي: 401 و [[error_description="The token expired at '09/30/2026 03:54:30'"]]. لو التوكن المنتهي لسه شغال، افتكر الـ [[ClockSkew]] الافتراضي ٥ دقايق: خلي [[MinutesValid = -10]] أو [[ClockSkew = TimeSpan.Zero]]. ولو الـ token سليم ولسه 401، بص على ترتيب [[UseAuthentication]] و [[UseAuthorization]] (درس middleware).`
-        },
-        {
-          cmd: "authorization policies",
-          title: "roles و policies: مين مسموحله يعمل إيه",
-          desc: R`بعد ما عرفت المستخدم (authentication)، الـ authorization بيقرر. أبسط شكل: [[RequireAuthorization()]] = أي حد مسجل. بالـ role: [[.RequireAuthorization(p => p.RequireRole("admin"))]]. والأنضف: policies باسم بتتعرف مرة في [[AddAuthorizationBuilder().AddPolicy("Admin", p => p.RequireRole("admin"))]] وتستخدمها [[RequireAuthorization("Admin")]] أو [[[Authorize(Policy = "Admin")]]].
-
-الـ policy ممكن تبقى على claim ([[RequireClaim("plan", "pro")]])، أو شرط مخصص ([[RequireAssertion(ctx => ...)]])، أو handler كامل بياخد services من الـ DI.
-
-وملكية الـ resource («الأوردر ده بتاعك؟») مش role: بتفحصها جوه الـ endpoint أو بـ resource-based authorization ([[IAuthorizationService.AuthorizeAsync(User, order, "OwnsOrder")]]).`,
-          example: R`builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("Admin", p => p.RequireRole("admin"))
-    .AddPolicy("ProPlan", p => p.RequireClaim("plan", "pro", "enterprise"));
-g.MapPost("/", CreateProduct).RequireAuthorization("Admin");
-g.MapGet("/reports", GetReports).RequireAuthorization("ProPlan");
-app.MapGet("/me", (ClaimsPrincipal user) => new
+لاحظ إن [[IsEmpty]] مفيهاش [[{ get; }]]: الـ [[=>]] معناها property محسوبة بتتحسب كل مرة تتقري، مش متخزنة. ولو كتبت [[public bool IsEmpty { get; } = Balance == 0;]] بدل [[=>]] الـ compiler هيرفض بـ error CS0236 (الـ initializer مينفعش يقرا property تانية في نفس الـ object)، ولو لفّيت عليها بـ [[= opening == 0;]] هتبقى قيمة اتحسبت مرة وقت الإنشاء وفضلت [[False]] حتى بعد ما الرصيد بقى صفر، وده غلط شائع.`,
+          solCode: R`var acc = new Account("Sara", 150m);
+try { acc.Withdraw(500m); }
+catch (InvalidOperationException ex) { Console.WriteLine(ex.Message); }
+acc.Withdraw(150m);
+Console.WriteLine(acc.IsEmpty);
+public class Account(string owner, decimal opening)
 {
-    id = user.FindFirstValue(ClaimTypes.NameIdentifier),
-    email = user.FindFirstValue(ClaimTypes.Email),
-    isAdmin = user.IsInRole("admin")
-}).RequireAuthorization();
-app.MapGet("/api/orders/{id:int}", async (int id, ClaimsPrincipal user, ShopDb db) =>
-{
-    var order = await db.Orders.FindAsync(id);
-    if (order is null) return Results.NotFound();
-    return order.CustomerEmail == user.FindFirstValue(ClaimTypes.Email) || user.IsInRole("admin")
-        ? Results.Ok(order) : Results.NotFound();
-}).RequireAuthorization();`,
-          try: R`بتوكن user عادي جرّب [[POST /api/products]] (المتوقع 403)، وبتوكن admin (201). وبعدين جرّب تجيب أوردر بتاع user تاني. ليه المثال بيرجع 404 مش 403 في الحالة دي؟`,
-          flag: "script",
-          deep: {
-            why: R`أشهر ثغرة في APIs (رقم ١ في OWASP API Top 10) هي Broken Object Level Authorization: المستخدم يغيّر الـ id في الـ URL فيشوف داتا حد تاني. الـ roles مش بتحل دي. لازم تفهم الفرق بين «هل مسموحلك بالعملية» و «هل مسموحلك بالـ object ده». شوف «ownership (IDOR)» في «تاب Backend بـ Node» و «1. Broken Access Control» في «تاب الأمان».`,
-            how: R`[[UseAuthorization]] بيبص على الـ metadata بتاعة الـ endpoint المختار (policies و roles و [[AllowAnonymous]])، ويشغّل الـ requirements على [[HttpContext.User]]. مفيش user = 401 (challenge). فيه user بس الـ policy فشلت = 403 (forbid).
-
-الـ policy = قايمة requirements، كلهم لازم ينجحوا. [[RequireRole("a", "b")]] = أي واحد منهم. ولو حطيت [[RequireAuthorization]] مرتين بـ policies مختلفة، الاتنين لازم ينجحوا.
-
-تقدر تحط policy على الـ group كله: [[app.MapGroup("/admin").RequireAuthorization("Admin")]]، وتستثني endpoint بـ [[AllowAnonymous()]]. أو تعمل [[FallbackPolicy]] بتطلب auth لكل حاجة إلا المستثنى (أأمن: الافتراضي مقفول).
-
-[[ClaimsPrincipal user]] كـ parameter بياخد [[HttpContext.User]]. و [[FindFirstValue]] من [[System.Security.Claims]].`,
-            when: R`roles للأدوار الواسعة (admin، support). claims و policies للخطط والصلاحيات الدقيقة. فحص الملكية في كل endpoint بيجيب أو يعدّل resource بـ id. و [[FallbackPolicy]] مع [[RequireAuthenticatedUser]] في أي API داخلي.`,
-            mistakes: R`تعتمد على إن الـ frontend بيخبي الزرار. وتفحص الـ role بس وتنسى الملكية. وترجع 403 لـ object مش بتاعه فتأكدله إنه موجود (404 أأمن غالبًا). وتحط الـ roles في التوكن وتنسى إنها مش هتتحدث لحد ما التوكن يخلص.`
-          },
-          lines: [
-            "بيسجّل الـ authorization ويعرّف policies.",
-            R`policy باسم [[Admin]]: لازم role admin.`,
-            R`policy على claim: [[plan]] قيمته pro أو enterprise.`,
-            R`الـ endpoint محتاج الـ policy: user عادي = 403، مفيش توكن = 401.`,
-            "endpoint تاني بـ policy تانية.",
-            R`[[ClaimsPrincipal]]: الـ user الحالي من التوكن.`,
-            "بداية الـ anonymous object.",
-            R`[[sub]] بيتقري كـ [[NameIdentifier]].`,
-            "الإيميل.",
-            "role.",
-            R`أي user مسجل (من غير policy).`,
-            "فحص الملكية.",
-            "بداية.",
-            "هات الأوردر.",
-            "مش موجود.",
-            "بتاعه أو admin؟",
-            R`لو لأ: 404 كأنه مش موجود (مش 403).`,
-            "لازم يكون مسجل دخول الأول."
-          ],
-          sol: R`user عادي: [[POST /api/products]] بترجع 403 بـ ProblemDetails [["title":"Forbidden"]]، و admin بترجع 201 و [[Location: /api/products/4]]. من غير توكن خالص 401. ده اللي بيتفحص في الـ integration test في المستوى ٣.
-
-أوردر حد تاني بيرجع 404 عمدًا: لو رجعت 403 انت كده قلت للمهاجم «الأوردر رقم 1234 موجود، بس مش بتاعك»، فيقدر يعد الأوردرات ويعرف حجم البيزنس. 404 مبتكشفش حاجة. الأنضف إنك تحط الشرط في الـ query نفسها: [[db.Orders.Where(o => o.Id == id && o.CustomerEmail == email)]] فالـ object مش بيتحمل أصلًا.`
-        },
-        {
-          cmd: "ASP.NET Core Identity",
-          title: "ASP.NET Core Identity: تسجيل ودخول وباسوردات من غير ما تكتبهم بإيدك",
-          desc: R`Identity هو نظام المستخدمين الجاهز: جداول users و roles و claims في EF Core، و hashing للباسوردات (PBKDF2)، وقواعد قوة الباسورد، و lockout بعد محاولات فاشلة، وتأكيد الإيميل، و 2FA.
-
-من .NET 8 فيه [[MapIdentityApi<IdentityUser>()]] بيضيف endpoints جاهزة للـ APIs: [[/register]] و [[/login]] و [[/refresh]] و [[/confirmEmail]] و [[/forgotPassword]] و [[/manage/2fa]]. الـ login بيرجع يا cookie يا bearer token.
-
-مهم: الـ bearer token بتاع Identity مش JWT. ده token مشفّر بـ Data Protection بيفهمه نفس التطبيق بس. لو محتاج JWT يتفهم من services تانية، اعمله انت (الدرس اللي فات) أو استخدم identity provider.`,
-          example: R`#:sdk Microsoft.NET.Sdk.Web
-#:property PublishAot=false
-#:package Microsoft.AspNetCore.Identity.EntityFrameworkCore@10.0.12
-#:package Npgsql.EntityFrameworkCore.PostgreSQL@10.0.3
-#:package Microsoft.EntityFrameworkCore.Relational@10.0.12
-using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<AppDb>(o => o.UseNpgsql("Host=localhost;Database=shop_identity;Username=shop;Password=shop"));
-builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<AppDb>();
-var app = builder.Build();
-using (var scope = app.Services.CreateScope())
-    scope.ServiceProvider.GetRequiredService<AppDb>().Database.EnsureCreated();
-app.MapGroup("/account").MapIdentityApi<IdentityUser>();
-app.MapGet("/me", (ClaimsPrincipal user) => new { name = user.Identity!.Name }).RequireAuthorization();
-app.Run();
-class AppDb(DbContextOptions<AppDb> o) : IdentityDbContext<IdentityUser>(o);`,
-          try: R`شغّل الملف ده، وسجّل بباسورد ضعيف [["weak"]] واقرا الأخطاء. وبعدين سجّل بباسورد قوي، واعمل login، وخد الـ [[accessToken]] وجرّب [[/me]]. وفكّ التوكن بـ [[base64 -d]] زي JWT: بيطلع إيه؟`,
-          flag: "script",
-          deep: {
-            why: R`كتابة نظام users من الصفر (hashing صح، و lockout، و reset password، و 2FA) مكان ممتاز لثغرات. Identity متختبر من سنين. وفي الشركات هتلاقيه في أغلب مشاريع .NET اللي مش بتستخدم identity provider خارجي.`,
-            how: R`[[IdentityDbContext<IdentityUser>]] بيضيف جداول [[AspNetUsers]] و [[AspNetRoles]] و [[AspNetUserRoles]] و [[AspNetUserClaims]] و [[AspNetUserLogins]] و [[AspNetUserTokens]]، وبتعمل ليها migrations عادي. [[UserManager<T>]] و [[SignInManager<T>]] الـ services اللي بتستخدمها لو عايز endpoints بتاعتك.
-
-[[AddIdentityApiEndpoints]] بيسجّل Identity + cookie scheme + bearer token scheme. [[/login]] بيرجع [[{"tokenType":"Bearer","accessToken":"...","expiresIn":3600,"refreshToken":"..."}]]، أو cookie لو بعت [[?useCookies=true]]. الـ tokens محمية بـ Data Protection keys: لو عندك كذا instance لازم يتشاركوا نفس المفاتيح (تخزنها في Redis أو DB أو ملف مشترك)، وإلا التوكن اللي طلع من instance مش هيتفهم في التانية. ونفس الكلام لو المفاتيح اتمسحت مع الـ container.
-
-قواعد الباسورد والـ lockout بتتظبط في [[builder.Services.Configure<IdentityOptions>(o => ...)]].
-
-[[EnsureCreated]] في المثال للتجربة بس: بيعمل الجداول من غير migrations، ومينفعش تعمل migrations بعده. في مشروع حقيقي [[dotnet ef migrations add Identity]].`,
-            when: R`Identity لو التطبيق بيدير مستخدميه بنفسه (B2C صغير، لوحة تحكم). identity provider (Keycloak، Auth0، Entra ID، Cognito) لو فيه كذا تطبيق أو SSO أو متطلبات أمان عالية، والـ API ساعتها بيتحقق من JWT بس بـ [[Authority]]. وشوف «SSO للشركات» و «jose و JWKS» في «تاب APIs متقدمة».`,
-            mistakes: R`تعمل hashing بإيدك بـ SHA256 من غير salt. وتفتكر توكن Identity JWT وتحاول تتحقق منه في service تانية. وتنسى Data Protection keys في Docker فكل restart يطلّع المستخدمين (فيه warning في اللوج: [[Storing keys in a directory ... that may not be persisted outside of the container]]). و [[EnsureCreated]] في الإنتاج.`
-          },
-          lines: [
-            "claims.",
-            "Identity.",
-            "EF Identity stores.",
-            "EF Core.",
-            "builder.",
-            R`الـ DbContext بتاع Identity (connection string مكتوب هنا للتجربة بس).`,
-            "authorization.",
-            "Identity + bearer tokens + cookies.",
-            "الـ users في EF Core.",
-            "build.",
-            "scope مؤقت عشان الـ DbContext Scoped.",
-            R`بيعمل الجداول لو مش موجودة (للتجربة، مش migrations).`,
-            R`[[/account/register]] و [[/account/login]] وغيرهم.`,
-            "endpoint محمية بتقرا اسم الـ user.",
-            "run.",
-            R`[[IdentityDbContext]] فيه جداول AspNetUsers وأخواتها.`
-          ],
-          sol: R`الباسورد الضعيف: 400 و [["errors":{"PasswordTooShort":["Passwords must be at least 6 characters."],"PasswordRequiresNonAlphanumeric":[...],"PasswordRequiresDigit":[...],"PasswordRequiresUpper":[...]}]]. بباسورد [[Str0ng!Pass]] الـ register بيرجع 200 من غير body، والـ login بيرجع [[{"tokenType":"Bearer","accessToken":"CfDJ8F6H...","expiresIn":3600,"refreshToken":"..."}]]. و [[/me]] بالتوكن بيرجع [[{"name":"sara@x.com"}]]، ومن غيره 401.
-
-والفك بـ base64: مش هيطلع JSON. التوكن بيبدأ بـ [[CfDJ8]] (علامة Data Protection) وهو bytes مشفرة، مش header.payload.signature. عشان كده service تانية مش هتعرف تتحقق منه، والتطبيق نفسه لو اتعمله restart في container من غير ما تحفظ الـ keys، كل التوكنات القديمة هتبقى 401.`
-        }
-      ]
-    },
+    public string Owner { get; } = owner;
+    public decimal Balance { get; private set; } = opening;
+    public bool IsEmpty => Balance == 0;
+    public void Withdraw(decimal amount)
     {
-      t: "الاختبارات",
-      l: 3,
-      n: "xUnit، و NSubstitute و Moq للـ mocks، و WebApplicationFactory لاختبار الـ API كله",
-      items: [
-        {
-          cmd: "xUnit",
-          title: "xUnit: Fact و Theory و dotnet test",
-          desc: R`xUnit أشهر test framework في .NET (فيه كمان NUnit و MSTest). الاختبار method عليها [[[Fact]]]، ولو نفس الاختبار بقيم مختلفة [[[Theory]]] مع [[[InlineData(...)]]]. والفحص بـ [[Assert.Equal(expected, actual)]] و [[Assert.True]] و [[Assert.ThrowsAsync<T>]] و [[Assert.Contains]].
-
-الـ SDK فيه قالب [[dotnet new xunit]] (xUnit v2). النسخة الحالية xUnit v3، وليها قالب [[xunit3]] من حزمة [[xunit.v3.templates]]، ومشروع الاختبار فيها بيبقى exe وبيشتغل على Microsoft Testing Platform. الكود نفسه تقريبًا زي ما هو.
-
-[[dotnet test]] بيبني ويشغّل كل الاختبارات، ولكل class instance جديد لكل اختبار (فمفيش state بيتسرب بين الاختبارات)، والـ setup بيبقى في الـ constructor.`,
-          example: R`dotnet new install xunit.v3.templates
-dotnet new xunit3 -o Shop.Tests -f net10.0
-dotnet sln add Shop.Tests
-dotnet reference add Shop.Api --project Shop.Tests
-dotnet test
-dotnet test --project Shop.Tests --filter-method "*Unknown*"`,
-          try: R`اعمل مشروع الاختبار واكتب [[Theory]] لـ [[PriceFormatter.Format]] (من درس sln و NuGet) بـ ٣ قيم. وبعدين اكسر اختبار عمدًا وشوف شكل الفشل في الـ terminal.`,
-          deep: {
-            why: R`الـ API اللي مفيهوش اختبارات بيتكسر في كل refactor ومحدش بيعرف غير من المستخدمين. وفي الشركات الـ PR مش هيتدمج من غير اختبارات، والـ CI بيشغّل [[dotnet test]] على كل push (شوف «تاب GitHub Actions»).`,
-            how: R`[[dotnet test]] بيبني مشروع الاختبار (اللي عامل reference للمشروع الأصلي)، والـ test runner بيدوّر على الـ methods اللي عليها [[[Fact]]] أو [[[Theory]]] ويشغّلها. الـ classes المختلفة ممكن تشتغل بالتوازي، والاختبارات جوه نفس الـ class بالترتيب.
-
-في xUnit v3 بـ Microsoft Testing Platform: فيه [[global.json]] بيقول [["test": { "runner": "Microsoft.Testing.Platform" }]]، والفلترة بقت [[--filter-method]] و [[--filter-class]] بدل [[--filter]] القديمة. و [[TestContext.Current.CancellationToken]] بيتلغي لو الاختبار اتلغى، والـ analyzer بيحذرك (xUnit1051) لو مش بتبعته للـ async methods.
-
-الـ setup المشترك الغالي (داتابيز، سيرفر) بيبقى في fixture: [[IClassFixture<T>]] لكل الاختبارات في class، و [[ICollectionFixture<T>]] لكذا class. والـ async setup بـ [[IAsyncLifetime]] ([[InitializeAsync]] و [[DisposeAsync]]).
-
-الأسماء بالعرف بتوصف السلوك: [[Sends_receipt_when_payment_succeeds]] مش [[Test1]].`,
-            when: R`unit tests لمنطق الـ domain والـ services (سريعة، من غير I/O). integration tests للـ endpoints مع داتابيز حقيقية (درس WebApplicationFactory). ومتختبرش الـ framework نفسه (إن [[[Required]]] بيشتغل).`,
-            mistakes: R`[[async void]] في اختبار (الفشل مش بيتشاف): لازم [[async Task]]. و [[Assert.Equal(actual, expected)]] بالعكس فرسالة الفشل تلخبطك. واختبارات بتعتمد على بعض أو على الترتيب. واختبار بيستخدم [[DateTime.Now]] فينجح الصبح ويفشل بالليل: استخدم [[TimeProvider]] و [[FakeTimeProvider]].`
-          },
-          lines: [
-            "قوالب xUnit v3 (مرة واحدة على الجهاز).",
-            R`مشروع اختبار v3 على .NET 10 (الافتراضي في القالب net8.0).`,
-            "ضيفه للـ solution.",
-            "يقدر يشوف كود الـ API.",
-            R`كل الاختبارات: [[Test run summary: Passed! total: 8]].`,
-            "اختبارات معينة بالاسم (فلترة Microsoft Testing Platform)."
-          ],
-          sol: R`[[[Theory] [InlineData(19.5, "19.50 EGP")] [InlineData(0, "0.00 EGP")] [InlineData(1234.567, "1234.57 EGP")] public void Formats_prices(decimal price, string expected) => Assert.Equal(expected, PriceFormatter.Format(price));]]. خد بالك: [[InlineData]] مبيقبلش decimal literals ([[19.5m]]) لأن الـ attributes في C# مبتقبلش decimal، فبتكتب double والـ xUnit بيحوّل للـ parameter. جرّبناها: التلات حالات عدّوا (والمجموع بقى [[total: 11]] مع باقي اختبارات المشروع).
-
-الفشل شكله: [[failed Shop.Tests.ProductApiTests.Creating_a_product_needs_the_admin_role (270ms)]] وتحته [[Assert.Equal() Failure: Values differ]] و [[Expected: Created]] و [[Actual: Forbidden]] واسم الملف ورقم السطر، وفي الآخر [[Test run summary: Failed!]] و exit code غير صفر (فالـ CI بيقع). لو [[dotnet test]] مش لاقي اختبارات: اتأكد إن الـ class [[public]] والـ method [[public]] وعليها [[[Fact]]].`,
-          solCode: R`using Shop.Core;
-
-namespace Shop.Tests;
-
-public class PriceFormatterTests
-{
-    [Theory]
-    [InlineData(19.5, "19.50 EGP")]
-    [InlineData(0, "0.00 EGP")]
-    [InlineData(1234.567, "1234.57 EGP")]
-    public void Formats_prices(decimal price, string expected) =>
-        Assert.Equal(expected, PriceFormatter.Format(price));
-}`
-        },
-        {
-          cmd: "NSubstitute و Moq",
-          title: "mocks: تختبر service من غير payment gateway ولا إيميلات حقيقية",
-          desc: R`الـ service اللي بتاخد [[IPaymentGateway]] و [[IEmailSender]] في الـ constructor تقدر تختبرها بـ implementations مزيفة: بتقولها «لو اتنادت بالقيم دي رجّع true»، وبعدين تتأكد «اتنادت مرة بالقيم دي؟».
-
-NSubstitute: [[Substitute.For<IPaymentGateway>()]]، و [[.Returns(true)]]، و [[.Received(1).SendAsync(...)]]. Moq: [[new Mock<IPaymentGateway>()]]، و [[.Setup(...).ReturnsAsync(true)]]، و [[.Verify(..., Times.Once)]]. الاتنين بيعملوا نفس الحاجة، و NSubstitute syntax بتاعه أقصر. واللي بيخلي ده ممكن أصلًا هو إن الـ dependencies interfaces (درس interface).`,
-          example: R`public class CheckoutServiceTests
-{
-    private readonly IPaymentGateway _payments = Substitute.For<IPaymentGateway>();
-    private readonly IEmailSender _email = Substitute.For<IEmailSender>();
-    private readonly CheckoutService _sut;
-    public CheckoutServiceTests() => _sut = new CheckoutService(_payments, _email);
-    [Fact]
-    public async Task Sends_receipt_when_payment_succeeds()
-    {
-        _payments.ChargeAsync("sara@x.com", 150m, Arg.Any<CancellationToken>()).Returns(true);
-        var ok = await _sut.PayAsync("sara@x.com", 150m, TestContext.Current.CancellationToken);
-        Assert.True(ok);
-        await _email.Received(1).SendAsync("sara@x.com", "Paid 150.00 EGP", Arg.Any<CancellationToken>());
-    }
-    [Fact]
-    public async Task No_email_when_payment_fails()
-    {
-        _payments.ChargeAsync(default!, default, default).ReturnsForAnyArgs(false);
-        Assert.False(await _sut.PayAsync("sara@x.com", 150m, TestContext.Current.CancellationToken));
-        await _email.DidNotReceiveWithAnyArgs().SendAsync(default!, default!, default);
-    }
-}`,
-          try: R`اكتب [[CheckoutService]] (بتشحن الفلوس، ولو نجحت تبعت إيميل) وشغّل الاختبارين. وبعدين اكتب اختبار تالت: لو الـ payment رمى [[HttpRequestException]]، الـ service لازم ترمي نفس الـ exception ومتبعتش إيميل. استخدم [[.ThrowsAsync(...)]] من [[NSubstitute.ExceptionExtensions]]. واكتب واحد منهم بـ Moq للمقارنة.`,
-          flag: "script",
-          deep: {
-            why: R`الـ unit test لازم يبقى سريع ومحدد: لو بيكلم Stripe فعلًا هيبقى بطيء ومكلف وبيفشل لأسباب ملهاش علاقة بالكود. الـ mocks بتعزل الـ service وبتخليك تختبر حالات صعب تعملها في الحقيقة (الـ gateway واقع، أو رجّع رفض).`,
-            how: R`الاتنين بيولّدوا class وقت التشغيل (بـ Castle DynamicProxy) بتطبق الـ interface وبتسجل كل نداء. [[Returns]] بيحدد الرد لـ arguments معينة، و [[Arg.Any<T>()]] (أو [[It.IsAny<T>()]] في Moq) لأي قيمة. أي نداء مش متعرّف بيرجع default (false أو null أو Task مكتمل).
-
-[[Received(1)]] بيفحص إن النداء حصل مرة بالظبط بالقيم دي، ولو محصلش بيرمي exception فيه النداءات اللي حصلت فعلًا. [[DidNotReceiveWithAnyArgs]] إن محصلش نداء خالص.
-
-[[_sut]] (system under test) بيتعمل في الـ constructor، و xUnit بيعمل instance جديد لكل اختبار، فكل اختبار بـ mocks نضيفة.
-
-للـ classes (مش interfaces) الـ mocking بيشتغل على [[virtual]] members بس، وده سبب إضافي إن الـ dependencies تبقى interfaces. و [[DbContext]] متعملوش mock: استخدم داتابيز حقيقية في integration test (أو SQLite in-memory لو لازم).`,
-            when: R`mocks للـ dependencies اللي برّه حدودك: payment، email، SMS، HTTP APIs، الوقت ([[FakeTimeProvider]]). مش لكل حاجة: لو الـ service بتنادي class حسابات بحتة، استخدم الحقيقية. وكتير من الفرق بتفضّل integration tests للـ API وتقلل الـ mocks.`,
-            mistakes: R`تعمل mock للـ DbContext أو [[IQueryable]] (بيعدّي في الاختبار ويقع مع SQL الحقيقي). و verify على كل نداء فالاختبار يتكسر مع أي refactor (اختبر النتيجة، و verify على الـ side effects المهمة بس). ومعلومة بتتسأل: في ٢٠٢٣ Moq 4.20 ضاف SponsorLink (بيقرا إيميل الـ git وقت الـ build) واتشال بعد اعتراضات، وده خلى فرق كتير تنقل لـ NSubstitute.`
-          },
-          lines: [
-            "class الاختبارات.",
-            "بداية.",
-            "mock للـ payment.",
-            "mock للإيميل.",
-            "الـ service اللي بنختبرها.",
-            "instance جديد لكل اختبار = mocks جديدة.",
-            "اختبار.",
-            R`[[async Task]] مش void.`,
-            "بداية.",
-            "Arrange: الـ payment هيرجع true للقيم دي.",
-            R`Act: نادي الـ service بالـ token بتاع الاختبار.`,
-            "Assert: النتيجة.",
-            "Assert: الإيميل اتبعت مرة بالنص ده بالظبط.",
-            "نهاية.",
-            "اختبار تاني.",
-            "method.",
-            "بداية.",
-            "أي arguments = false.",
-            "رجّع false.",
-            "ومفيش إيميل خالص.",
-            "نهاية.",
-            "نهاية."
-          ],
-          sol: R`[[dotnet test]] بيطلع [[total: 5, succeeded: 5]] (الاختبارين + [[Theory]] بقيمتين لـ [[total <= 0]] + نسخة Moq). اختبار الـ exception: [[_payments.ChargeAsync(default!, default, default).ThrowsAsyncForAnyArgs(new HttpRequestException("gateway down"));]] ثم [[await Assert.ThrowsAsync<HttpRequestException>(() => _sut.PayAsync("a@b.c", 10m));]] و [[await _email.DidNotReceiveWithAnyArgs().SendAsync(default!, default!, default);]].
-
-بـ Moq: [[payments.Setup(p => p.ChargeAsync("sara@x.com", 150m, It.IsAny<CancellationToken>())).ReturnsAsync(true);]] و [[email.Verify(e => e.SendAsync("sara@x.com", It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);]]، والـ object بيتبعت بـ [[payments.Object]]. ولو الـ Received فشل (جرّبنا نغيّر النص المتوقع لـ [["Paid 150 EGP"]]) الرسالة: [[Expected to receive exactly 1 call matching: SendAsync("sara@x.com", "Paid 150 EGP", any CancellationToken) Actually received no matching calls.]] وتحتها [[Received 1 non-matching call (non-matching arguments indicated with '*' characters): SendAsync("sara@x.com", *"Paid 150.00 EGP"*, ...)]]. النجوم بتوريك الـ argument اللي مختلف بالظبط.`,
-          solCode: R`namespace Shop.Api.Services;
-
-public interface IPaymentGateway { Task<bool> ChargeAsync(string email, decimal amount, CancellationToken ct); }
-public interface IEmailSender { Task SendAsync(string to, string subject, CancellationToken ct); }
-
-public class CheckoutService(IPaymentGateway payments, IEmailSender email)
-{
-    public async Task<bool> PayAsync(string customer, decimal total, CancellationToken ct = default)
-    {
-        if (total <= 0) throw new ArgumentOutOfRangeException(nameof(total));
-        var ok = await payments.ChargeAsync(customer, total, ct);
-        if (ok) await email.SendAsync(customer, $"Paid {total:0.00} EGP", ct);
-        return ok;
+        if (amount > Balance)
+            throw new InvalidOperationException($"Insufficient funds: balance {Balance:0.00}, requested {amount:0.00}");
+        Balance -= amount;
     }
 }`
         },
         {
-          cmd: "WebApplicationFactory",
-          title: "WebApplicationFactory: تختبر الـ API كله بـ HTTP وداتابيز حقيقية",
-          desc: R`[[WebApplicationFactory<Program>]] (حزمة [[Microsoft.AspNetCore.Mvc.Testing]]) بيشغّل التطبيق بتاعك كله في الذاكرة، بنفس [[Program.cs]] ونفس الـ middleware والـ DI، ويديك [[HttpClient]] تبعت بيه requests حقيقية. مفيش بورت ولا شبكة، فسريع.
+          cmd: "record",
+          title: "record: object للداتا بيتقارن بالقيمة وبيتنسخ بـ with",
+          desc: R`[[public record Money(decimal Amount, string Currency);]] سطر واحد بيعملك class فيها properties للقراية بس ([[init]])، و constructor، و [[==]] بيقارن القيم مش الـ references، و [[ToString]] مقروء، و deconstruction.
 
-بتعدّل فيه اللي محتاجه للاختبار: environment اسمه [[Testing]]، و connection string لداتابيز اختبار، و [[ConfigureTestServices]] تشيل الـ background services أو تبدّل الـ payment gateway بـ fake.
+و [[with]] بيعمل نسخة معدّلة: [[a with { Amount = 250m }]] زي [[{ ...a, amount: 250 }]] في JS بالظبط. الأصل مبيتغيرش.
 
-الـ factory محتاجة توصل لـ [[Program]]. الـ top-level statements بتعمل [[Program]] internal، بس من .NET 10 الـ Web SDK بيولّد [[public partial class Program]] لوحده، فمش محتاج تكتب حاجة (لو كتبت [[public partial class Program;]] بإيدك الـ analyzer بيقولك إنها زيادة: ASP0027). في .NET 8 و 9 لازم تكتبها في آخر [[Program.cs]].`,
-          example: R`public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
-{
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.UseEnvironment("Testing");
-        builder.UseSetting("ConnectionStrings:Shop", "Host=localhost;Database=shop_test;Username=shop;Password=shop");
-        builder.UseSetting("Jwt:Key", "test-key-test-key-test-key-test-key-1234");
-        builder.ConfigureTestServices(services => services.RemoveAll<IHostedService>());
-    }
-    public async ValueTask InitializeAsync()
-    {
-        using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ShopDb>();
-        await db.Database.EnsureDeletedAsync();
-        await db.Database.EnsureCreatedAsync();
-        db.Products.Add(new Product { Name = "Blue pen", Price = 5.5m, Stock = 10, Category = new Category { Name = "Pens" } });
-        await db.SaveChangesAsync();
-    }
-}
-public class ProductApiTests(ApiFactory factory) : IClassFixture<ApiFactory>
-{
-    [Fact]
-    public async Task Unknown_product_returns_problem_details_404()
-    {
-        var res = await factory.CreateClient().GetAsync("/api/products/9999", TestContext.Current.CancellationToken);
-        Assert.Equal(HttpStatusCode.NotFound, res.StatusCode);
-        Assert.Equal("application/problem+json", res.Content.Headers.ContentType?.MediaType);
-    }
-}`,
-          try: R`اكتب اختبار [[Creating_a_product_needs_the_admin_role]]: نفس الـ POST تلات مرات (من غير توكن، وبتوكن user، وبتوكن admin) وتتأكد من 401 و 403 و 201. التوكن اعمله من [[TokenService]] اللي في [[factory.Services]]. وبعدين ضيف في آخر [[Program.cs]] سطر [[partial class Program { }]] (من غير [[public]]) وشوف الخطأ.`,
+الـ records هي الاختيار الطبيعي للـ DTOs (اللي بيدخل ويطلع من الـ API)، والـ value objects، ونتايج الدوال.`,
+          example: R`var a = new Money(100m, "EGP");
+var b = new Money(100m, "EGP");
+Console.WriteLine(a == b);
+Console.WriteLine(ReferenceEquals(a, b));
+var c = a with { Amount = 250m };
+Console.WriteLine(c);
+Console.WriteLine(a);
+var (amount, currency) = c;
+Console.WriteLine($"{amount} {currency}");
+public record Money(decimal Amount, string Currency);`,
+          try: R`اعمل [[record Address(string City, string Street)]] و [[record Customer(string Name, Address Address, List<string> Tags)]]. اعمل عميلين بنفس القيم وقارنهم بـ [[==]]. هل النتيجة زي ما توقعت؟ وبعدين اعمل [[with]] وغيّر الـ Tags في النسخة وشوف الأصل.`,
           flag: "script",
           deep: {
-            why: R`الـ unit tests مش بتختبر الـ routing والـ binding والـ validation والـ auth والـ EF mapping مع بعض، ودول مكان أغلب الـ bugs في API. اختبار integration واحد بيعدي على كل الطبقات بيمسك حاجات عشر unit tests مش هيمسكوها. نفس فكرة supertest في «تاب Backend بـ Node».`,
-            how: R`الـ factory بيشغّل [[Program.cs]] بـ [[TestServer]] بدل Kestrel: الـ [[HttpClient]] اللي بيرجع من [[CreateClient()]] بيبعت الـ requests في الذاكرة مباشرة للـ pipeline.
+            why: R`في JS بتقارن objects بـ [[JSON.stringify]] أو lodash، وبتنسخ بالـ spread. في C# الـ class العادية [[==]] بتاعها بيقارن الـ reference، فكتابة DTO بـ Equals و GetHashCode و ToString كانت ٥٠ سطر. الـ record بيعملهم كلهم، وبيشجّع immutability.`,
+            how: R`الـ compiler بيولّد: properties بـ [[get; init;]]، و constructor، و [[Deconstruct]]، و [[Equals]] و [[GetHashCode]] على كل الحقول، و [[==]] و [[!=]]، و [[ToString]] بالشكل [[Money { Amount = 250, Currency = EGP }]]، و method مخفية للنسخ بيستخدمها [[with]].
 
-[[UseSetting]] بيحط قيم configuration بدري كفاية إن [[Program.cs]] يشوفها وهو بيسجّل الـ services (زي [[GetConnectionString]] اللي بيتقري وقت [[AddDbContext]]). [[ConfigureTestServices]] بيشتغل بعد تسجيلات [[Program.cs]]، فتقدر تشيل أو تبدّل ([[RemoveAll<T>]] ثم [[AddSingleton<T>(fake)]]).
+الـ equality بتقارن كل property بـ [[Equals]] بتاعها. لو property نوعها record تانية يبقى المقارنة بالقيمة، لو [[List<T>]] يبقى بالـ reference. و [[with]] نسخة shallow: الـ list نفسها بتتشارك بين الأصل والنسخة.
 
-[[IClassFixture<ApiFactory>]] بيعمل factory واحدة لكل الاختبارات في الـ class (التطبيق بيقوم مرة). و [[IAsyncLifetime]] على الـ factory بيجهّز الداتابيز قبل أول اختبار. [[factory.Services]] هو الـ DI container الحقيقي، فتقدر تطلب منه services (بـ scope للـ scoped).
-
-الداتابيز: Postgres حقيقي أحسن من in-memory provider (اللي مبيعملش constraints ولا SQL حقيقي). في CI: service container في GitHub Actions، أو Testcontainers ([[Testcontainers.PostgreSql]]) بيقوّم Postgres في Docker لكل test run.`,
-            when: R`اختبار أو اتنين لكل endpoint: الحالة السعيدة، والـ validation، والـ auth (401 و 403)، و 404. الـ edge cases الكتير في unit tests على الـ service. وخلي الداتابيز تتعمل من الأول في كل run عشان الاختبارات متعتمدش على داتا قديمة.`,
-            mistakes: R`تستخدم in-memory provider وتفتكر إن الـ unique indexes اتختبرت. وتنسى [[public partial class Program;]] على .NET 8 أو 9، أو تكتب [[partial class Program]] من غير [[public]] فتقفله. وتسيب الـ BackgroundService شغال في الاختبارات فيعمل queries عشوائية. واختبارات بتعدّل نفس الصفوف بالتوازي من classes مختلفة. ونسخ EF مختلفة في مشروع الاختبار فيقع بـ [[ReflectionTypeLoadException]] (حصلت هنا: شوف درس DbContext).`
+[[record]] لوحدها = [[record class]] (reference type). و [[record struct]] نسخة value type. وتقدر تضيف methods و properties جوه الـ record عادي، وتعمل validation في constructor.`,
+            when: R`DTOs و requests و responses في الـ API، و events و messages، و value objects (Money، DateRange)، ونتايج زي [[Result<T>]]. مش للـ entities في EF Core: الـ entity ليها identity (Id) وبتتغير، والـ record equality بالقيمة بتلخبط الـ change tracker.`,
+            mistakes: R`record فيها [[List]] وتستنى إن [[==]] يقارن محتوى الـ list. و [[with]] وتفتكر إنها deep copy. واستخدام record كـ EF entity. وفي الانترفيو: «الفرق بين record و class؟» الـ equality بالقيمة، والـ immutability افتراضيًا، و [[with]]، و ToString جاهز.`
           },
+          teach: R`## البرنامج ده بيعمل إيه؟
+
+بيعرّف نوع للفلوس ([[Money]]) في سطر واحد كـ [[record]]، وبعدين يوريك اللي الـ record بيعمله لوحده: مقارنة بالقيمة، وطباعة مقروءة، ونسخة معدّلة بـ [[with]]، وفك القيم لمتغيرات. كل الناتج حقيقي من [[dotnet run]] جوه [[docker run --rm mcr.microsoft.com/dotnet/sdk:10.0]] (.NET 10.0.12).
+
+---
+
+## ١. التعريف (آخر سطر)
+
+~~~csharp money.cs
+public record Money(decimal Amount, string Currency);
+~~~
+
+- [[record]]: class بس الـ compiler بيكتبلك حاجات كتير جاهزة.
+- [[(decimal Amount, string Currency)]]: اسمها positional parameters. كل واحد بيبقى:
+  - بارامتر في الـ constructor.
+  - property عامة بنفس الاسم، [[{ get; init; }]]: تتقري، وتتكتب وقت الإنشاء بس.
+- [[;]] في الآخر بدل [[{ }]]: مفيش جسم، السطر ده كفاية.
+
+جرّبت [[a.Amount = 5;]] بعد الإنشاء:
+
+~~~text الناتج: build
+error CS8852: Init-only property or indexer 'Money.Amount' can only be assigned in an object initializer, or on 'this' or 'base' in an instance constructor or an 'init' accessor.
+~~~
+
+يعني الـ record immutable: مبيتغيرش بعد ما يتعمل.
+
+---
+
+## ٢. المقارنة
+
+~~~csharp money.cs
+var a = new Money(100m, "EGP");
+var b = new Money(100m, "EGP");
+Console.WriteLine(a == b);
+Console.WriteLine(ReferenceEquals(a, b));
+~~~
+
+~~~text الناتج
+True
+False
+~~~
+
+- [[a == b]]: الـ record بيعرّف [[==]] بنفسه: قارن كل property بالتانية. [[100 == 100]] و [[EGP == EGP]]، فـ [[True]]. (لو [[Money]] كانت class عادية كانت هتطلع [[False]]، درس value و reference.)
+- [[ReferenceEquals(a, b)]]: سؤال تاني خالص: «هما نفس الـ object في الذاكرة؟» لأ، اتنين [[new]]، فـ [[False]].
+
+وكمان [[a.GetHashCode() == b.GetHashCode()]] طلعت [[True]]. الـ hash code رقم بيتحسب من القيم، و [[Dictionary]] و [[HashSet]] بيستخدموه، فالـ record ينفع مفتاح فيهم من غير شغل.
+
+---
+
+## ٣. [[with]]
+
+~~~csharp money.cs
+var c = a with { Amount = 250m };
+Console.WriteLine(c);
+Console.WriteLine(a);
+~~~
+
+- [[a with { ... }]]: «اعمل نسخة جديدة من [[a]]، وغيّر فيها اللي بين الأقواس». زي [[{ ...a, amount: 250 }]] في JS.
+- [[a]] نفسه مبيتغيرش، ده الهدف.
+
+~~~text الناتج
+Money { Amount = 250, Currency = EGP }
+Money { Amount = 100, Currency = EGP }
+~~~
+
+الشكل ده هو الـ [[ToString]] اللي الـ record كتبه: اسم النوع وبعده كل property وقيمتها. وليه [[250]] مش [[250.00]]؟ لأن [[250m]] اتكتبت من غير خانات عشرية، والـ decimal بيطبع اللي اتكتب.
+
+---
+
+## ٤. الـ deconstruction
+
+~~~csharp money.cs
+var (amount, currency) = c;
+Console.WriteLine($"{amount} {currency}");
+~~~
+
+- [[var (amount, currency) = c;]]: فك [[c]] لمتغيرين بالترتيب بتاع التعريف: [[Amount]] ثم [[Currency]]. زي [[const { amount, currency } = c]] في JS، بس بالترتيب مش بالاسم.
+- ده شغال لأن الـ record عمل method مخفية اسمها [[Deconstruct]].
+
+~~~text الناتج
+250 EGP
+~~~
+
+---
+
+## ٥. اللي الـ compiler كتبه من السطر الواحد
+
+| الحاجة | بتعمل إيه | جرّبناها في |
+|---|---|---|
+| constructor | [[new Money(100m, "EGP")]] | ٢ |
+| properties بـ [[init]] | قراية، ومفيش تعديل بعد الإنشاء | ١ |
+| [[==]] و [[!=]] و [[Equals]] | مقارنة بالقيم | ٢ |
+| [[GetHashCode]] | hash من القيم | ٢ |
+| [[ToString]] | [[Money { Amount = ..., ... }]] | ٣ |
+| نسخ لـ [[with]] | نسخة معدّلة | ٣ |
+| [[Deconstruct]] | [[var (x, y) = ...]] | ٤ |
+
+---
+
+## ٦. التجربة: record جوه record، و List جوه record
+
+~~~csharp sol.cs
+var tags = new List<string> { "new" };
+var c1 = new Customer("Sara", new Address("Cairo", "Tahrir"), tags);
+var c2 = new Customer("Sara", new Address("Cairo", "Tahrir"), new List<string> { "new" });
+Console.WriteLine(c1 == c2);
+Console.WriteLine(c1.Address == c2.Address);
+...
+record Address(string City, string Street);
+record Customer(string Name, Address Address, List<string> Tags);
+~~~
+
+- [[new List<string> { "new" }]]: list فيها عنصر واحد (الـ [[{ }]] هنا collection initializer).
+- [[Address Address]]: property نوعها [[Address]] واسمها [[Address]]. عادي في C# الاسم والنوع يبقوا زي بعض.
+
+~~~text الناتج
+False
+True
+~~~
+
+### ليه [[False]]؟
+
+[[==]] بتاع [[Customer]] بيقارن كل property بالـ [[Equals]] بتاعها:
+
+| الـ property | نوعها | المقارنة | النتيجة |
+|---|---|---|---|
+| [[Name]] | [[string]] | بالقيمة | متساويين |
+| [[Address]] | record | بالقيمة | متساويين (السطر التاني [[True]]) |
+| [[Tags]] | [[List<string>]] | class عادية، بالـ reference | listين مختلفين، **مش** متساويين |
+
+ولما عملت [[c3]] بنفس الـ list [[tags]] بتاعة [[c1]]، [[c1 == c3]] طلعت [[True]]. وطباعة [[c1]] بتفضح الموضوع:
+
+~~~text الناتج
+Customer { Name = Sara, Address = Address { City = Cairo, Street = Tahrir }, Tags = System.Collections.Generic.List$__bt1[System.String] }
+~~~
+
+الـ List ملهاش [[ToString]] حلو، فبيطبع اسم نوعها بس.
+
+### [[with]] نسخة سطحية (shallow)
+
+~~~csharp sol.cs
+var copy = c1 with { Name = "Omar" };
+copy.Tags.Add("vip");
+Console.WriteLine(string.Join(",", c1.Tags));
+var safe = c1 with { Tags = [.. c1.Tags, "gold"] };
+Console.WriteLine($"{c1.Tags.Count} {safe.Tags.Count}");
+~~~
+
+~~~text الناتج
+new,vip
+2 3
+~~~
+
+- [[with]] نسخ الـ properties واحدة واحدة. و [[Tags]] reference، فاتنسخ **العنوان**: [[copy.Tags]] و [[c1.Tags]] list واحدة. فلما ضفنا [["vip"]] في النسخة ظهرت في الأصل.
+- [[string.Join(",", ...)]]: اربط العناصر بفاصلة، زي [[join]] في JS.
+- [[[.. c1.Tags, "gold"]]]: collection expression فيها spread ([[..]] زي [[...]] في JS): list **جديدة** فيها القديم + gold. فـ [[c1]] فضل 2 والنسخة 3.
+
+---
+
+## الخلاصة
+
+- [[record]] = class بيتقارن بالقيمة، و immutable، وطباعته مقروءة، وبيتنسخ بـ [[with]].
+- المقارنة بالقيمة بتنزل جوه الـ records التانية، بس الـ List بتتقارن بالـ reference.
+- [[with]] shallow: أي reference جوه بيتشارك بين الأصل والنسخة.`,
           lines: [
-            R`factory لـ [[Program]] (public لوحده من .NET 10).`,
-            "بداية.",
-            "تعديل الـ host قبل ما يقوم.",
-            "بداية.",
-            R`environment مش Development ولا Production.`,
-            "داتابيز منفصلة للاختبار.",
-            R`مفتاح JWT للاختبار (وبرضه [[Jwt:Issuer]] و [[Jwt:Audience]] في الكود الكامل).`,
-            R`شيل الـ BackgroundServices: [[RemoveAll]] من [[Microsoft.Extensions.DependencyInjection.Extensions]].`,
-            "نهاية.",
-            "قبل أول اختبار.",
-            "بداية.",
-            "scope للـ DbContext.",
-            "الـ context الحقيقي من الـ DI.",
-            "امسح.",
-            "واعمل الـ schema من الـ model.",
-            "seed.",
-            "احفظ.",
-            "نهاية.",
-            "نهاية.",
-            R`class الاختبارات بتاخد الـ factory كـ fixture.`,
-            "بداية.",
-            "اختبار.",
-            "method.",
-            "بداية.",
-            R`request حقيقي في الذاكرة.`,
-            "404.",
-            "و ProblemDetails.",
-            "نهاية.",
-            "نهاية."
+            "record بـ positional parameters.",
+            "نفس القيم، object تاني.",
+            R`[[True]]: مقارنة بالقيمة.`,
+            R`[[False]]: هما objectين مختلفين في الذاكرة فعلًا.`,
+            R`[[with]]: نسخة جديدة بـ Amount مختلف.`,
+            R`[[Money { Amount = 250, Currency = EGP }]].`,
+            "الأصل زي ما هو: 100.",
+            R`deconstruction زي [[const { amount, currency } = c]].`,
+            R`[[250 EGP]].`,
+            "التعريف كله: سطر واحد."
           ],
-          sol: R`الاختبار:
+          sol: R`العميلين هيطلعوا [[False]] مع إن كل القيم زي بعض. السبب: [[Address]] record فبتتقارن بالقيمة (تمام)، بس [[Tags]] نوعها [[List<string>]] وده class عادي، فبيتقارن بالـ reference، وكل عميل عنده list مختلفة. لو خليت الاتنين يشاوروا على نفس الـ list هتطلع [[True]].
 
-[[var anonymous = await client.PostAsJsonAsync("/api/products", body, ct);]] ثم [[client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(admin: false));]] ونفس الـ POST، ثم بتوكن admin. والـ asserts: [[Unauthorized]] و [[Forbidden]] و [[Created]]. والتوكن: [[using var scope = factory.Services.CreateScope(); scope.ServiceProvider.GetRequiredService<TokenService>().Create("u1", "u1@test.com", admin ? ["admin"] : []);]] لأن [[TokenService]] Scoped. عندنا الـ ٨ اختبارات عدّوا في ٣ ثواني تقريبًا مع Postgres حقيقي.
+وبعد [[var copy = c1 with { Name = "Omar" }; copy.Tags.Add("vip");]] هتلاقي [[c1.Tags]] فيها [[vip]] كمان، لأن [[with]] shallow: النسخة والأصل شايلين نفس الـ list. الحل: [[c1 with { Tags = [.. c1.Tags, "vip"] }]] يعمل list جديدة، أو تستخدم [[IReadOnlyList<string>]] وتمنع التعديل أصلًا.`,
+          solCode: R`var tags = new List<string> { "new" };
+var c1 = new Customer("Sara", new Address("Cairo", "Tahrir"), tags);
+var c2 = new Customer("Sara", new Address("Cairo", "Tahrir"), new List<string> { "new" });
+Console.WriteLine(c1 == c2);
+Console.WriteLine(c1.Address == c2.Address);
+var copy = c1 with { Name = "Omar" };
+copy.Tags.Add("vip");
+Console.WriteLine(string.Join(",", c1.Tags));
+var safe = c1 with { Tags = [.. c1.Tags, "gold"] };
+Console.WriteLine($"{c1.Tags.Count} {safe.Tags.Count}");
+record Address(string City, string Street);
+record Customer(string Name, Address Address, List<string> Tags);`
+        },
+        {
+          cmd: "interface",
+          title: "interface في C# غير TS: لازم الـ class تقول صراحة إنها بتطبقه",
+          desc: R`في TS أي object ليه نفس الشكل بيعدّي (structural typing). في C# لأ: الـ class لازم تكتب [[: INotifier]] صراحة (nominal typing). لو فيه class عندها نفس الـ methods بالظبط بس مكتبتش كده، مش هتعدّي.
 
-بعد [[partial class Program { }]] من غير [[public]]: [[error CS0122: 'Program' is inaccessible due to its protection level]] في مشروع الاختبار، لأن الـ partial بتاعك من غير modifier بيخلي الـ class كلها internal وبيلغي الـ public اللي الـ SDK بيولّده. شيله أو اكتبه [[public partial class Program;]] (وده اللي كان لازم دايمًا في .NET 8 و 9). جرّبناها على .NET 10: من غير أي سطر الـ factory شغالة. (بديل: [[InternalsVisibleTo]] في الـ csproj.)`,
-          solCode: R`[Fact]
-public async Task Creating_a_product_needs_the_admin_role()
+الـ interface عقد: أسماء methods و properties من غير تنفيذ. والكود بيعتمد على الـ interface مش على الـ class، فتقدر تبدّل التنفيذ (Email بـ SMS، أو fake في الاختبار). ودي الفكرة اللي الـ DI كله مبني عليها في المستوى ٢. الاسم بيبدأ بـ [[I]] بالعرف.
+
+والـ [[enum]] قايمة قيم ثابتة بأسماء، ووراها أرقام.`,
+          example: R`INotifier n = new EmailNotifier();
+n.Send("sara@x.com", "hi");
+Notify(new SmsNotifier(), "010", "code 1234");
+Notify(new Duck(), "x", "y"); // error CS1503: cannot convert from 'Duck' to 'INotifier'
+Console.WriteLine(Status.Paid);
+Console.WriteLine((int)Status.Paid);
+Console.WriteLine(Enum.Parse<Status>("Shipped"));
+static void Notify(INotifier notifier, string to, string msg) => notifier.Send(to, msg);
+public interface INotifier { void Send(string to, string message); }
+public class EmailNotifier : INotifier
 {
-    var ct = TestContext.Current.CancellationToken;
-    var client = factory.CreateClient();
-    var body = new CreateProduct("Red pen", 6m, 5, 1);
-    var anonymous = await client.PostAsJsonAsync("/api/products", body, ct);
-    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(admin: false));
-    var user = await client.PostAsJsonAsync("/api/products", body, ct);
-    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token(admin: true));
-    var admin = await client.PostAsJsonAsync("/api/products", body, ct);
-    Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
-    Assert.Equal(HttpStatusCode.Forbidden, user.StatusCode);
-    Assert.Equal(HttpStatusCode.Created, admin.StatusCode);
+    public void Send(string to, string message) => Console.WriteLine($"email to {to}: {message}");
 }
-
-private string Token(bool admin)
+public class SmsNotifier : INotifier
 {
-    using var scope = factory.Services.CreateScope();
-    var tokens = scope.ServiceProvider.GetRequiredService<TokenService>();
-    return tokens.Create("u1", "u1@test.com", admin ? ["admin"] : []);
+    public void Send(string to, string message) => Console.WriteLine($"sms to {to}: {message}");
+}
+public class Duck { public void Send(string to, string message) { } }
+public enum Status { Pending, Paid, Shipped }`,
+          try: R`اعمل [[abstract class Shape]] فيها [[abstract double Area()]] و method عادية [[Describe()]] بترجع [[$"{GetType().Name}: {Area():0.00}"]]، وورّثها لـ [[Circle]] و [[Rect]]. اعمل [[List<Shape>]] فيها الاتنين واطبع [[Describe()]] لكل واحد. إمتى تختار abstract class بدل interface؟`,
+          flag: "script",
+          deep: {
+            why: R`اللي جاي من TS بيتوقع إن أي حاجة بنفس الشكل تعدّي، ويتفاجئ بـ CS1503. الـ nominal typing قصده إن تطبيق العقد قرار واعي، مش صدفة إن اسمين اتشابهوا. والـ interfaces هي اللي بتخلي الـ DI والـ mocking في الاختبارات ممكنين.`,
+            how: R`الـ class تقدر تورث class واحدة بس ([[: BaseClass]]) وتطبق أي عدد interfaces ([[: Base, IA, IB]]). الـ interface ممكن يبقى فيها default implementation (من C# 8) بس نادرًا ما بتستخدم في كود التطبيقات.
+
+الـ [[abstract class]] ممكن يبقى فيها state (حقول) وكود مشترك و methods [[abstract]] لازم تتعمل [[override]]. و [[virtual]] method ليها تنفيذ افتراضي ممكن يتعمله [[override]]. و [[sealed]] بيمنع الوراثة. وفي C# الـ methods مش virtual افتراضيًا زي Java: لازم تكتب [[virtual]].
+
+الـ [[enum]] وراه [[int]] (0 و 1 و 2 بالترتيب)، والـ cast [[(Status)5]] مسموح حتى لو القيمة مش موجودة، فافحص بـ [[Enum.IsDefined]]. ولما يتبعت JSON بيطلع رقم افتراضيًا، إلا لو استخدمت [[JsonStringEnumConverter]].`,
+            when: R`interface لأي dependency ممكن يتبدل أو يتعمله mock (repository، email sender، payment gateway، clock). abstract class لما فيه كود مشترك حقيقي بين أنواع قريبة من بعض. ومتعملش interface لكل class «احتياطي»: class بتعمل حسابات بحتة ومالهاش side effects مش محتاجة.`,
+            mistakes: R`interface لكل class بتطابقها واحد لواحد من غير سبب. ووراثة عميقة ٥ مستويات بدل composition. وتنسى [[override]] فتعمل method جديدة بتخبّي القديمة (warning CS0114). وفي الانترفيو: «interface ولا abstract class؟» interface عقد من غير state وتقدر تطبق كذا واحد، و abstract class فيها state وكود مشترك ووراثة واحدة بس.`
+          },
+          teach: R`## البرنامج ده بيعمل إيه؟
+
+بيعرّف عقد اسمه [[INotifier]] («أي حد يقدر يبعت رسالة»)، واتنين بيطبقوه (Email و SMS)، ودالة بتشتغل مع أي واحد فيهم من غير ما تعرف مين. وفيه class اسمها [[Duck]] عندها نفس الـ method بالظبط بس **مقالتش** إنها بتطبق العقد، فالـ compiler بيرفضها. وفي الآخر [[enum]]. كل الناتج حقيقي من [[dotnet run]] جوه [[docker run --rm mcr.microsoft.com/dotnet/sdk:10.0]] (.NET 10.0.12).
+
+---
+
+## ١. العقد: [[interface]]
+
+~~~csharp notify.cs
+public interface INotifier { void Send(string to, string message); }
+~~~
+
+- [[interface]]: قايمة methods (و properties) **من غير تنفيذ**. مجرد «لازم يبقى عندك كذا».
+- [[INotifier]]: الـ [[I]] في الأول عرف في .NET لأي interface.
+- [[void Send(string to, string message);]]: الـ method: اسمها وبارامتراتها ونوع رجوعها، وبعدها [[;]] على طول من غير [[{ }]]. ومفيش [[public]]: كل حاجة في الـ interface public لوحدها.
+
+---
+
+## ٢. اللي بيطبقوا العقد
+
+~~~csharp notify.cs
+public class EmailNotifier : INotifier
+{
+    public void Send(string to, string message) => Console.WriteLine($"email to {to}: {message}");
+}
+~~~
+
+- [[: INotifier]]: الـ [[:]] بعد اسم الـ class معناها «بتطبق» (أو «بتورث» لو بعدها class). ده **التصريح** اللي الـ compiler مستنيه.
+- [[public void Send(...)]]: لازم نفس الاسم والبارامترات ونوع الرجوع، ولازم [[public]]. لو نسيتها الـ compiler هيقولك إن الـ class مطبقتش العقد.
+
+و [[SmsNotifier]] نفس الشكل بنص مختلف: تنفيذ تاني لنفس العقد.
+
+---
+
+## ٣. الاستخدام
+
+~~~csharp notify.cs
+INotifier n = new EmailNotifier();
+n.Send("sara@x.com", "hi");
+Notify(new SmsNotifier(), "010", "code 1234");
+...
+static void Notify(INotifier notifier, string to, string msg) => notifier.Send(to, msg);
+~~~
+
+- [[INotifier n = new EmailNotifier();]]: نوع المتغير هو الـ interface، والـ object من class بتطبقه. من خلال [[n]] تقدر تنادي اللي في العقد بس.
+- [[n.Send(...)]]: الـ object الحقيقي Email، فبيتنفذ كود الـ Email.
+- [[static void Notify(INotifier notifier, ...)]]: local function بتاخد **أي** [[INotifier]]. هي متعرفش ولا يهمها Email ولا SMS. و [[static]] هنا معناها إنها مش بتلمس متغيرات الكود اللي حواليها.
+
+~~~text الناتج
+email to sara@x.com: hi
+sms to 010: code 1234
+~~~
+
+---
+
+## ٤. [[Duck]]: نفس الشكل، مش نفس النوع
+
+~~~csharp notify.cs
+public class Duck { public void Send(string to, string message) { } }
+Notify(new Duck(), "x", "y");
+~~~
+
+~~~text الناتج: dotnet run
+i.cs(4,8): error CS1503: Argument 1: cannot convert from 'Duck' to 'INotifier'
+The build failed. Fix the build errors and run again.
+~~~
+
+- [[Argument 1]]: أول argument في النداء.
+- [[cannot convert from 'Duck' to 'INotifier']]: الدالة عايزة [[INotifier]]، و [[Duck]] مش واحد، حتى لو عندها [[Send]] بنفس الشكل.
+
+| | TypeScript | C# |
+|---|---|---|
+| النظام | structural: الشكل هو اللي يفرق | nominal: الاسم هو اللي يفرق |
+| [[Duck]] تعدّي؟ | أيوه | لأ، لازم [[: INotifier]] |
+
+(الملف ده اسمه [[i.cs]] في التجربة، والسطر ده اتشال عشان الباقي يشتغل.)
+
+---
+
+## ٥. الـ [[enum]]
+
+~~~csharp notify.cs
+public enum Status { Pending, Paid, Shipped }
+Console.WriteLine(Status.Paid);
+Console.WriteLine((int)Status.Paid);
+Console.WriteLine(Enum.Parse<Status>("Shipped"));
+~~~
+
+- [[enum]]: نوع قيمه أسماء ثابتة. ووراها أرقام [[int]] بالترتيب من 0: [[Pending = 0]] و [[Paid = 1]] و [[Shipped = 2]].
+- [[Status.Paid]]: القيمة، ولما تتطبع بيطلع اسمها.
+- [[(int)Status.Paid]]: الـ [[(int)]] قبل القيمة اسمه cast: «حوّلها لـ int».
+- [[Enum.Parse<Status>("Shipped")]]: من نص لـ enum. والـ [[<Status>]] بتقول «لأنهي enum».
+
+~~~text الناتج
+Paid
+1
+Shipped
+~~~
+
+### فخّين جرّبتهم
+
+~~~text الناتج
+(Status)5                       ->  5
+Enum.IsDefined((Status)5)       ->  False
+Enum.Parse<Status>("Lost")      ->  System.ArgumentException: Requested value 'Lost' was not found.
+~~~
+
+الـ cast من رقم مبيفحصش أي حاجة: [[(Status)5]] اتعمل عادي وطبع [[5]]. فلو الرقم جاي من برّه افحصه بـ [[Enum.IsDefined]]. و [[Parse]] بنص غلط بيرمي exception، وفيه [[Enum.TryParse]] زي [[int.TryParse]].
+
+---
+
+## ٦. التجربة: [[abstract class]]
+
+~~~csharp sol.cs
+List<Shape> shapes = [new Circle(5), new Rect(2, 3)];
+foreach (var s in shapes) Console.WriteLine(s.Describe());
+public abstract class Shape
+{
+    public abstract double Area();
+    public string Describe() => $"{GetType().Name}: {Area():0.00}";
+}
+public class Circle(double r) : Shape
+{
+    public override double Area() => Math.PI * r * r;
+}
+public class Rect(double w, double h) : Shape
+{
+    public override double Area() => w * h;
+}
+~~~
+
+### [[public abstract class Shape]]
+
+[[abstract]] على الـ class معناها «مينفعش تعمل منها object، دي أساس لغيرها». جرّبت [[new Shape()]]:
+
+~~~text الناتج: build
+error CS0144: Cannot create an instance of the abstract type or interface 'Shape'
+~~~
+
+### [[public abstract double Area();]]
+
+method من غير جسم، وأي class بتورث لازم تكتبها. يعني جزء «عقد» زي الـ interface.
+
+### [[public string Describe() => ...]]
+
+method **ليها** تنفيذ، وكل الـ classes اللي بتورث بتاخدها جاهزة. ده الفرق الكبير عن الـ interface: كود مشترك.
+
+- [[GetType().Name]]: اسم النوع الحقيقي للـ object وقت التشغيل ([[Circle]] مش [[Shape]]).
+- [[{Area():0.00}]]: بينادي [[Area]]، واللي بيتنفذ نسخة الـ class الحقيقية. ده اسمه polymorphism.
+
+### [[public class Circle(double r) : Shape]]
+
+- [[: Shape]]: بتورث [[Shape]].
+- [[public override double Area()]]: [[override]] معناها «دي نسختي من الـ method اللي في الأب». إجبارية في C#.
+- [[Math.PI * r * r]]: π نق².
+
+### [[List<Shape> shapes = [...]]]
+
+list نوعها [[Shape]] وجواها [[Circle]] و [[Rect]]، وده مسموح لأن الاتنين [[Shape]]. و [[foreach (var s in shapes)]] بيلف عليهم واحد واحد.
+
+~~~text الناتج
+Circle: 78.54
+Rect: 6.00
+~~~
+
+π × 5 × 5 = 78.539...، والـ [[:0.00]] قرّبها لـ [[78.54]]. و 2 × 3 = [[6.00]].
+
+### لو نسيت [[override]]
+
+كتبت [[public double Area() => r;]] في [[Circle]] من غير [[override]]:
+
+~~~text الناتج: build
+error CS0534: 'Circle' does not implement inherited abstract member 'Shape.Area()'
+warning CS0114: 'Circle.Area()' hides inherited member 'Shape.Area()'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword.
+~~~
+
+الـ compiler فهمها method **جديدة** بالصدفة نفس الاسم، مش تنفيذ للـ abstract. ومع method [[virtual]] (ليها تنفيذ في الأب) بيطلع التحذير CS0114 بس، والبرنامج بيتبني، وده أخطر: نداء [[Name()]] على متغير نوعه [[Shape]] هيشغّل نسخة الأب.
+
+---
+
+## الخلاصة
+
+| | [[interface]] | [[abstract class]] |
+|---|---|---|
+| فيها كود؟ | لأ (عمليًا) | أيوه، مشترك |
+| فيها state (حقول)؟ | لأ | أيوه |
+| الـ class تاخد كام واحد؟ | أي عدد | واحدة بس |
+| التطبيق | [[: INotifier]] | [[: Shape]] + [[override]] |
+
+- C# nominal: لازم تكتب [[: IName]]، الشكل لوحده مش كفاية.
+- الكود يعتمد على الـ interface، فتقدر تبدّل التنفيذ.
+- [[enum]] وراه أرقام، والـ cast مبيفحصش.`,
+          lines: [
+            "المتغير نوعه الـ interface، والـ object من class بتطبقه.",
+            "بينادي تنفيذ الـ Email.",
+            "أي class بتطبق INotifier تعدّي.",
+            R`خطأ compile: [[Duck]] عندها نفس الـ method بس مكتبتش [[: INotifier]].`,
+            R`[[Paid]]: اسم القيمة.`,
+            R`[[1]]: الرقم اللي وراها.`,
+            R`من string لـ enum: [[Shipped]].`,
+            R`local function بتاخد الـ interface مش class معينة.`,
+            "العقد: method من غير تنفيذ.",
+            R`[[: INotifier]] صراحة.`,
+            "بداية.",
+            "التنفيذ.",
+            "نهاية.",
+            "تنفيذ تاني لنفس العقد.",
+            "بداية.",
+            "التنفيذ.",
+            "نهاية.",
+            "نفس الشكل بس مش بتطبق الـ interface.",
+            "enum: Pending=0 و Paid=1 و Shipped=2."
+          ],
+          sol: R`الناتج: [[Circle: 78.54]] و [[Rect: 6.00]] (لو Circle بنص قطر 5 و Rect أبعاده 2 في 3). [[GetType().Name]] بيجيب اسم الـ class الحقيقية وقت التشغيل حتى لو المتغير نوعه [[Shape]]، و [[Area()]] بينادي الـ override الصح (polymorphism).
+
+لو نسيت [[override]] في [[Circle]] هيطلع error CS0534: 'Circle' does not implement inherited abstract member. ولو حاولت [[new Shape()]] هيطلع CS0144 لأن الـ abstract مينفعش يتعمل منه object.
+
+الـ abstract class هنا منطقية لأن [[Describe]] كود مشترك. لو مفيش كود مشترك، interface [[IShape]] أبسط، والـ class تقدر تطبق كذا interface لكن تورث class واحدة بس.`,
+          solCode: R`List<Shape> shapes = [new Circle(5), new Rect(2, 3)];
+foreach (var s in shapes) Console.WriteLine(s.Describe());
+public abstract class Shape
+{
+    public abstract double Area();
+    public string Describe() => $"{GetType().Name}: {Area():0.00}";
+}
+public class Circle(double r) : Shape
+{
+    public override double Area() => Math.PI * r * r;
+}
+public class Rect(double w, double h) : Shape
+{
+    public override double Area() => w * h;
 }`
-        }
-      ]
-    },
-    {
-      t: "شغل في الخلفية و caching و HttpClient",
-      l: 3,
-      n: "BackgroundService و IServiceScopeFactory، و HybridCache و output caching، و IHttpClientFactory",
-      items: [
-        {
-          cmd: "BackgroundService",
-          title: "BackgroundService: شغل دوري جوه نفس التطبيق",
-          desc: R`لو محتاج حاجة تشتغل في الخلفية (تنضيف كل ساعة، تقرير مخزون، consumer لـ queue)، اعمل class بتورث [[BackgroundService]] وتعمل override لـ [[ExecuteAsync(CancellationToken stoppingToken)]]، وسجّلها بـ [[AddHostedService<T>()]]. بتقوم مع التطبيق وبتقف معاه.
-
-الـ hosted service Singleton، فمينفعش تطلب [[ShopDb]] (Scoped) في الـ constructor. خد [[IServiceScopeFactory]] واعمل scope جديد في كل دورة.
-
-و [[PeriodicTimer]] أنضف من [[Task.Delay]] في loop: مبيتراكمش، وبيحترم الإلغاء.`,
-          example: R`public class LowStockReporter(IServiceScopeFactory scopes, ILogger<LowStockReporter> logger) : BackgroundService
-{
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(10));
-        do
-        {
-            try
-            {
-                await using var scope = scopes.CreateAsyncScope();
-                var db = scope.ServiceProvider.GetRequiredService<ShopDb>();
-                var low = await db.Products.CountAsync(p => p.Stock < 5, stoppingToken);
-                logger.LogInformation("Low stock products: {Count}", low);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                logger.LogError(ex, "Low stock check failed");
-            }
-        } while (await timer.WaitForNextTickAsync(stoppingToken));
-    }
-}
-builder.Services.AddHostedService<LowStockReporter>();`,
-          try: R`شغّل التطبيق وبص على اللوج كل ١٠ ثواني. وبعدين اطفي Postgres ([[sudo service postgresql stop]]) وشوف التطبيق بيعمل إيه، وشغّله تاني. وجرّب تشيل الـ try/catch وتعمل نفس التجربة.`,
-          flag: "script",
-          deep: {
-            why: R`حاجات كتير مش جزء من request: إيميلات متأخرة، وتنضيف توكنات منتهية، وsync مع API تاني. في Node بتحطها في cron أو worker منفصل. في .NET تقدر تحطها جوه نفس البروسيس بسهولة، وده كفاية لحد ما الشغل يكبر.`,
-            how: R`الـ host بينادي [[StartAsync]] لكل hosted service وقت الـ startup، و [[BackgroundService]] بينادي [[ExecuteAsync]] ويسيبها شغالة. وقت الإيقاف (Ctrl+C أو SIGTERM من Docker أو systemd) بيلغي [[stoppingToken]] ويستنى لحد [[HostOptions.ShutdownTimeout]] (٣٠ ثانية افتراضيًا).
-
-من .NET 8 أي exception مش ممسوك جوه [[ExecuteAsync]] بيوقف التطبيق كله ([[BackgroundServiceExceptionBehavior.StopHost]]) وبيسجل [[BackgroundService failed]]. عشان كده الـ try/catch جوه الـ loop مهم: دورة فشلت متوقعش السيرفر. والـ [[when (ex is not OperationCanceledException)]] عشان الإلغاء وقت الإيقاف يعدّي طبيعي.
-
-[[CreateAsyncScope]] بيعمل scope زي بتاع الـ request: DbContext جديد لكل دورة، وبيتعمله dispose في الآخر. و [[PeriodicTimer.WaitForNextTickAsync]] بيرجع false أو بيرمي لما الـ token يتلغي.
-
-لو التطبيق شغال على كذا instance، الـ background service بيشتغل على كل واحدة: محتاج lock موزع (Redis، أو [[pg_advisory_lock]]) أو scheduler خارجي.`,
-            when: R`شغل خفيف ودوري جوه API واحد. لشغل تقيل أو محتاج retries و scheduling حقيقي: queue (RabbitMQ، Azure Service Bus، SQS) مع worker منفصل ([[dotnet new worker]])، أو مكتبة زي Hangfire أو Quartz.NET. وللـ cron على السيرفر شوف «systemd timer» في «تاب VPS».`,
-            mistakes: R`تطلب DbContext في الـ constructor: [[Cannot consume scoped service 'ShopDb' from singleton]]. ومفيش try/catch فأول خطأ شبكة يقفل التطبيق كله. وتتجاهل [[stoppingToken]] فالإيقاف ياخد ٣٠ ثانية ويتقتل. وشغل تقيل CPU في الـ ExecuteAsync بيسرق من الـ requests.`
-          },
-          lines: [
-            R`بتورث [[BackgroundService]]، وبتاخد [[IServiceScopeFactory]] مش الـ DbContext.`,
-            "بداية.",
-            R`بتتنادى مرة وقت الـ startup، والـ token بيتلغي وقت الإيقاف.`,
-            "بداية.",
-            R`timer كل ١٠ ثواني، و [[using]] عشان يقفل.`,
-            R`[[do]]: أول دورة على طول من غير ما تستنى.`,
-            "بداية.",
-            "try جوه الـ loop.",
-            "بداية.",
-            "scope جديد لكل دورة = DbContext جديد.",
-            "الـ context من الـ scope.",
-            R`[[SELECT count(*) ... WHERE "Stock" < 5]].`,
-            "structured log.",
-            "نهاية.",
-            "أي خطأ إلا الإلغاء.",
-            "بداية.",
-            "سجّل وكمّل للدورة الجاية بدل ما تقع.",
-            "نهاية.",
-            R`استنى الـ tick الجاي، أو اخرج لما التطبيق يقف.`,
-            "نهاية.",
-            "نهاية.",
-            "تسجيل."
-          ],
-          sol: R`اللوج كل ١٠ ثواني: [[info: Shop.Api.Services.LowStockReporter[0] Low stock products: 1]] ومعاه الـ SQL لو EF Command على Information. بعد ما Postgres يقف: [[fail: ... Low stock check failed]] ومعاه [[Npgsql.NpgsqlException: Failed to connect to 127.0.0.1:5432]]، والتطبيق لسه شغال، والـ API نفسه بيرجع 500 للـ endpoints اللي محتاجة الداتابيز بس. أول ما Postgres يرجع، الدورة الجاية تنجح لوحدها.
-
-من غير الـ try/catch: أول فشل بيطلّع [[fail: Microsoft.Extensions.Hosting.Internal.Host[9] BackgroundService failed]] وبعدها [[The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost]] والتطبيق كله بيقف، حتى الـ endpoints اللي ملهاش علاقة. في الإنتاج systemd أو Docker هيعيد تشغيله، بس الأحسن متوصلش لكده.`
-        },
-        {
-          cmd: "HybridCache و output caching",
-          title: "caching: HybridCache للداتا و Output Cache للردود كاملة",
-          desc: R`[[HybridCache]] (حزمة [[Microsoft.Extensions.Caching.Hybrid]]، من .NET 9) هو الـ API الموصى بيه للـ cache: [[GetOrCreateAsync(key, factory)]] بيرجع من الـ cache أو بينادي الـ factory مرة واحدة حتى لو ١٠٠ request طلبوا نفس المفتاح مع بعض (stampede protection). وبيشتغل على طبقتين: ذاكرة محلية + distributed cache (Redis) لو سجلته.
-
-Output caching ([[AddOutputCache]] و [[.CacheOutput()]]) بيكاش الـ HTTP response كله على السيرفر: الـ endpoint مش بيتنادى أصلًا طول مدة الـ cache.
-
-وفيه [[IMemoryCache]] القديم (ذاكرة بس، من غير stampede protection)، والـ response caching (headers للـ browser و CDN زي [[Cache-Control]]).`,
-          example: R`builder.Services.AddHybridCache(o => o.DefaultEntryOptions = new() { Expiration = TimeSpan.FromMinutes(5) });
-builder.Services.AddOutputCache();
-app.UseOutputCache();
-app.MapGet("/products/{id:int}", async (int id, HybridCache cache, ShopDb db, CancellationToken ct) =>
-    await cache.GetOrCreateAsync($"product:{id}", async token =>
-        await db.Products.Where(p => p.Id == id)
-            .Select(p => new ProductDto(p.Id, p.Name, p.Price, p.Category.Name))
-            .FirstOrDefaultAsync(token),
-        tags: ["products"], cancellationToken: ct));
-app.MapPut("/products/{id:int}/price", async (int id, decimal price, ShopDb db, HybridCache cache) =>
-{
-    await db.Products.Where(p => p.Id == id).ExecuteUpdateAsync(s => s.SetProperty(p => p.Price, price));
-    await cache.RemoveAsync($"product:{id}");
-    return Results.NoContent();
-});
-app.MapGet("/time", () => DateTime.UtcNow.ToString("HH:mm:ss.fff"))
-    .CacheOutput(p => p.Expire(TimeSpan.FromSeconds(10)));`,
-          try: R`اعمل endpoint فيه [[await Task.Delay(200)]] جوه الـ factory وعداد بيزيد مع كل نداء للـ factory، واطلبه ٣ مرات وقيس الوقت ([[curl -w "%{time_total}"]]). وبعدين امسح المفتاح واطلبه تاني. وكمان اطلب [[/time]] مرتين ورا بعض.`,
-          flag: "script",
-          deep: {
-            why: R`أرخص query هي اللي متتعملش. صفحة المنتج بتتقري آلاف المرات وبتتغير مرة في اليوم. بس الـ cache من غير خطة invalidation بيعرض أسعار قديمة، والـ cache اللي بيفضى فجأة تحت ضغط بيخلي كل الـ requests تضرب الداتابيز مع بعض (stampede).`,
-            how: R`[[GetOrCreateAsync]]: يدوّر في الـ L1 (الذاكرة)، بعدين الـ L2 (لو فيه [[IDistributedCache]] متسجل زي Redis بـ [[AddStackExchangeRedisCache]])، ولو مش لاقي ينادي الـ factory، ولو كذا request على نفس المفتاح في نفس اللحظة واحد بس بينادي والباقي بيستنوا نتيجته. القيم بتتعمل serialize لما تروح L2.
-
-الـ tags ([["products"]]) بتخليك تمسح مجموعة مفاتيح مرة واحدة بـ [[RemoveByTagAsync("products")]]. و [[RemoveAsync(key)]] بعد أي تعديل. و [[LocalCacheExpiration]] ممكن تبقى أقصر من [[Expiration]] عشان النسخ المحلية على كذا سيرفر متفضلش قديمة كتير.
-
-Output cache: الـ middleware بيخزن الـ status والـ headers والـ body بمفتاح من الـ path والـ query، ويرجّعه من غير ما الـ endpoint يشتغل. افتراضيًا بيكاش GET و HEAD بـ 200 بس ومش بيكاش لو الـ request فيه auth. وفيه tags و [[IOutputCacheStore.EvictByTagAsync]]، ولو كذا instance تقدر تخزنه في Redis.
-
-الـ cache بيخزن نتيجة الـ factory حتى لو null، فمنتج مش موجود هيتكاش كـ null لنفس المدة (ده كويس ضد الـ spam، بس خليك عارف).`,
-            when: R`HybridCache لداتا بتتقري كتير ومش لازم تبقى لحظية (كتالوج، إعدادات، أسعار الصرف). Output cache لـ endpoints عامة من غير auth وبتتطلب كتير. [[Cache-Control]] headers للـ CDN والمتصفح (شوف «ETag و Cache-Control» في «تاب APIs متقدمة»). ومتكاشش داتا خاصة بمستخدم بمفتاح مفيهوش الـ user id.`,
-            mistakes: R`تنسى تمسح الـ cache بعد التعديل. ومفتاح cache مش فيه كل اللي بيأثر على النتيجة (اللغة، الـ tenant، الـ user). و [[IMemoryCache]] على كذا instance فكل سيرفر يعرض نسخة. وتكاش entities متتبعة من EF أو objects بتتعدّل بعد التخزين (الـ L1 بيرجع نفس الـ object لو [[ImmutableObject]]، وإلا نسخة).`
-          },
-          lines: [
-            "HybridCache بمدة افتراضية ٥ دقايق.",
-            "output cache services.",
-            "output cache middleware.",
-            "endpoint بيقرا من الـ cache الأول.",
-            R`المفتاح [[product:1]]، والـ factory بتتنادى بس لو مش موجود.`,
-            "الـ query.",
-            "projection لـ DTO (مش entity متتبعة).",
-            "تنفيذ بالـ token بتاع الـ factory.",
-            R`tag للمسح الجماعي، و token الـ request.`,
-            "تعديل.",
-            "بداية.",
-            "UPDATE مباشر.",
-            "امسح المفتاح عشان القراية الجاية تجيب الجديد.",
-            "204.",
-            "نهاية.",
-            "endpoint بسيط.",
-            "الرد كله متكاش ١٠ ثواني: الـ handler مش بيتنادى."
-          ],
-          sol: R`عندنا: أول request [[0.465s]] (الـ factory اشتغلت: 200ms delay + أول مرة)، والتاني [[0.0035s]]، والتالت [[0.0016s]]، والعداد [[{"dbCalls":1}]]. بعد [[RemoveAsync]] الـ request الجاي نادى الـ factory تاني والعداد بقى 2.
-
-[[/time]] مرتين ورا بعض بيرجع نفس الوقت بالظبط ([[04:28:34.703]] في الاتنين) لحد ما العشر ثواني يخلصوا، لأن الـ endpoint نفسه مش بيتنادى. لو لقيت الوقت بيتغير: اتأكد إن [[app.UseOutputCache()]] موجود، وإنك مش باعت [[Authorization]] header، وإن الـ middleware بعد [[UseCors]] وقبل الـ endpoints.`
-        },
-        {
-          cmd: "IHttpClientFactory",
-          title: "HttpClient صح: IHttpClientFactory و typed clients و retries",
-          desc: R`[[new HttpClient()]] في كل request غلطة مشهورة: كل واحد بيفتح connections جديدة، وتحت الضغط بتخلص الـ sockets. و HttpClient واحد static للأبد مشكلته إنه مش بيشوف تغيير الـ DNS.
-
-الحل: [[builder.Services.AddHttpClient<RatesClient>(c => c.BaseAddress = ...)]]. ده typed client: class بتاخد [[HttpClient]] في الـ constructor، والـ factory بيديها client جاهز بالإعدادات، والـ connections بتتشارك وبتتجدد لوحدها.
-
-وللـ resilience (retries، timeout، circuit breaker) فيه [[Microsoft.Extensions.Http.Resilience]]: [[.AddStandardResilienceHandler()]] سطر واحد فوق الـ AddHttpClient.`,
-          example: R`builder.Services.AddHttpClient<RatesClient>(c =>
-{
-    c.BaseAddress = new Uri("https://api.nuget.org/");
-    c.Timeout = TimeSpan.FromSeconds(5);
-});
-app.MapGet("/nuget", async (RatesClient c, CancellationToken ct) => await c.GetVersionAsync(ct));
-class RatesClient(HttpClient http)
-{
-    public async Task<string> GetVersionAsync(CancellationToken ct)
-    {
-        var doc = await http.GetFromJsonAsync<JsonElement>("v3/index.json", ct);
-        return doc.GetProperty("version").GetString()!;
-    }
-}`,
-          try: R`ضيف [[Microsoft.Extensions.Http.Resilience]] و [[.AddStandardResilienceHandler()]] على الـ client، وخلي الـ BaseAddress يشاور على حاجة مش موجودة ([[http://localhost:1/]]). بص على اللوج: كام محاولة اتعملت قبل ما يستسلم؟`,
-          flag: "script",
-          deep: {
-            why: R`أي API بيكلم APIs تانية: payment، شحن، SMS، AI. التعامل الغلط مع HttpClient بيوقع السيرفر تحت الضغط، وغياب الـ timeouts والـ retries بيخلي service تانية بطيئة توقف API بتاعك كله.`,
-            how: R`[[HttpClient]] نفسه wrapper خفيف، والتقيل هو الـ [[HttpMessageHandler]] (الـ connection pool). الـ factory بيعمل handlers ويعيد استخدامها لمدة (دقيقتين افتراضيًا) وبعدين يجددها عشان الـ DNS، ويدي كل typed client instance جديد من [[HttpClient]] فوق handler مشترك. الـ typed client نفسه بيتسجل Transient.
-
-[[GetFromJsonAsync<T>]] من [[System.Net.Http.Json]]: GET + فحص إن الـ status نجاح (وإلا [[HttpRequestException]]) + deserialize. و [[c.Timeout]] للـ request كله، و [[CancellationToken]] الـ request فوقه.
-
-[[AddStandardResilienceHandler]] (مبني على Polly v8) بيضيف: rate limiter، و timeout كلي (30 ثانية)، و retry (3 مرات بـ exponential backoff و jitter، على 5xx و 408 و 429 وأخطاء الشبكة)، و circuit breaker (لو نسبة الفشل عالية بيوقف المحاولات شوية)، و timeout لكل محاولة (10 ثواني).
-
-وفيه named clients ([[AddHttpClient("github", ...)]] و [[IHttpClientFactory.CreateClient("github")]]) لو مش عايز class.`,
-            when: R`دايمًا [[AddHttpClient]] في ASP.NET Core. typed client لكل API خارجي، والمنطق (URLs والـ DTOs) جواه مش متفرق. resilience handler على أي API برّه شبكتك، ومش على الـ POST اللي مش idempotent من غير Idempotency-Key (شوف «Idempotency-Key» في «تاب APIs متقدمة»).`,
-            mistakes: R`[[using var client = new HttpClient()]] في كل request (socket exhaustion). و typed client Singleton أو تتحقن في Singleton (بيمسك handler قديم للأبد، ومش بيشوف الـ DNS). ومفيش timeout (الافتراضي 100 ثانية). و retry على POST بيدفع فلوس فيدفع مرتين.`
-          },
-          lines: [
-            R`typed client: بيتسجل ومعاه الإعدادات.`,
-            "بداية.",
-            "كل الـ requests relative للـ URL ده.",
-            "timeout.",
-            "نهاية.",
-            R`الـ endpoint بياخد الـ client من الـ DI.`,
-            R`class عادية بتاخد [[HttpClient]] جاهز.`,
-            "بداية.",
-            "method.",
-            "بداية.",
-            "GET وفحص الـ status و JSON في سطر.",
-            R`[[3.0.0]]: نسخة الـ NuGet API.`,
-            "نهاية.",
-            "نهاية."
-          ],
-          sol: R`[[/nuget]] بيرجع [[3.0.0]]. مع [[AddStandardResilienceHandler]] و [[localhost:1]]: اللوج بيطلّع [[Execution attempt. Source: 'RatesClient-standard//Standard-Retry', Operation Key: '', Result: 'Connection refused (localhost:1)', Handled: 'True', Attempt: '0']] وبعدين Attempt 1 و 2 و 3 بتأخير بيزيد (٢ ثانية تقريبًا بـ jitter)، يعني ٤ محاولات (الأصلية + ٣ retries)، والـ request كله أخد حوالي ٩ ثواني عندنا، وبعدها [[HttpRequestException]] والـ endpoint بيرجع 500. خد بالك إن [[HttpClient.Timeout]] (5 ثواني في المثال) بيلف كل المحاولات، فلو سبته 5 هيقطع قبل ما الـ retries تخلص: مع الـ resilience handler كبّره أو سيب الـ handler هو اللي يتحكم في الـ timeouts.
-
-لو الـ API التاني وقع خالص، بعد كام request الـ circuit breaker بيفتح والطلبات بتفشل فورًا بـ [[BrokenCircuitException]] من غير ما تستنى، وده اللي بيحمي API بتاعك. الأرقام الدقيقة ممكن تختلف حسب نسخة المكتبة، فبص على [[HttpStandardResilienceOptions]] لو عايز تغيرها.`
         }
       ]
     }
