@@ -1,1425 +1,1167 @@
 // تكملة تاب php: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/php/01.js (شرح حقول الدرس في أوله)
 MORE("php", [
     {
-      t: "Laravel",
-      l: 3,
-      n: "الـ framework اللي أغلب شغل PHP بيطلبه: routes و Eloquent و validation و auth و API و queues و testing، وآخرها نشره على VPS",
+      t: "MySQL و PDO",
+      l: 2,
+      n: "جدول مظبوط من الأول، واتصال واحد، وكل قيمة من المستخدم بتروح في prepared statement",
       items: [
         {
-          cmd: "laravel new",
-          title: "ابدأ مشروع Laravel واعرف كل فولدر فيه بيعمل إيه",
-          desc: R`Laravel 13 (نزل مارس 2026) محتاج PHP 8.3 أو أحدث. فيه طريقتين تبدأ بيهم: [[laravel new shop]] بالـ installer، وده بيسألك على starter kit (React أو Vue أو Svelte أو Livewire أو من غير)، وعلى Pest ولا PHPUnit، وعلى القاعدة. أو [[composer create-project laravel/laravel shop]] من غير أي أسئلة، ودي بتنزّل الـ skeleton العادي.
+          cmd: "AUTO_INCREMENT و utf8mb4",
+          title: "جدول MySQL صح من أول مرة، وإيه المختلف عن Postgres",
+          desc: R`في MySQL الـ id بيتولّد بـ [[AUTO_INCREMENT]]، والـ bool بيبقى [[TINYINT(1)]]، والجدول [[ENGINE=InnoDB]] عشان الـ transactions والـ foreign keys. والأهم: الـ charset يبقى [[utf8mb4]] مش [[utf8]]. الـ [[utf8]] في MySQL نسخة ناقصة (٣ bytes للحرف) مبتشيلش الإيموجي وبعض الرموز.
 
-الاتنين بيعملوا نفس الحاجات: ملف [[.env]]، و [[APP_KEY]] عشوائي، وقاعدة SQLite في [[database/database.sqlite]]، ويشغّلوا الـ migrations الأولى. يعني المشروع شغال من أول دقيقة من غير MySQL.
-
-خريطة الفولدرات: [[app/]] فيه كودك ([[Models]] و [[Http/Controllers]])، و [[routes/web.php]] الصفحات، و [[routes/console.php]] أوامر الترمنال والـ scheduler، و [[database/]] فيه migrations و factories و seeders، و [[resources/views]] ملفات Blade، و [[config/]] الإعدادات، و [[storage/]] اللوجات والكاش والملفات المرفوعة، و [[bootstrap/app.php]] فيه الـ middleware والـ routing والـ exceptions. و [[public/]] هو الفولدر الوحيد اللي المفروض يبقى على الويب، وفيه [[index.php]] بس (نفس فكرة front controller في «Composer وتنظيم المشروع»).`,
-          example: R`composer global require laravel/installer
-laravel new shop
-cd shop
-php artisan --version
-php artisan about
-ls app/Models app/Http/Controllers routes database/migrations
-composer run dev`,
-          try: R`اعمل مشروع جديد بأي طريقة، وشغّل [[php artisan about]] واقرا أول قسمين. بعدين افتح [[localhost:8000]] و [[localhost:8000/up]]. وغيّر [[APP_NAME]] في [[.env]] لـ [[Shop]] وشغّل [[about]] تاني. آخر حاجة: شغّل [[php artisan config:cache]] وغيّر [[APP_NAME]] تاني وشوف [[about]] بيقول إيه، وفسّر.`,
-          deep: {
-            why: "Laravel هو اللي بيتطلب في أغلب إعلانات شغل PHP، ومشروع جديد صح (من غير ما تلزق فولدرات من مشروع قديم) بيوفّر عليك مشاكل إعدادات كتير. ولازم تعرف كل فولدر فيه إيه عشان تعرف تدوّر على أي حاجة، ومتحطش ملف في مكان غلط.",
-            how: R`[[laravel new]] نفسه غلاف حوالين [[composer create-project]] بيضيف الأسئلة ويسطّب الـ starter kit و npm. ولو معندكش PHP أصلًا، موقع Laravel بيدّيك سطر واحد من [[php.new]] بيسطّب PHP و Composer والـ installer.
-
-[[php artisan about]] بيطبع نسخة Laravel و PHP، والـ environment، والـ debug mode، والـ drivers (cache و database و queue و session). وده أول أمر تشغّله على أي سيرفر أو مشروع جديد عليك.
-
-[[composer run dev]] بيشغّل [[php artisan dev]]: السيرفر، و Vite، والـ queue worker، واللوجات، كلهم في ترمنال واحد. و [[/up]] route جاهز بيرجّع 200 لو التطبيق قام، وده اللي تحطه في أي uptime monitor.
-
-الـ config: كل ملف في [[config/]] بيقرا من [[.env]] بـ [[env('APP_NAME')]]، وانت في الكود بتقرا [[config('app.name')]] مش [[env()]]. ليه؟ لأن بعد [[config:cache]] ملف [[.env]] مبيتقراش خالص، والـ [[env()]] برّه [[config/]] هترجّع null.`,
-            when: "أي مشروع PHP جديد فيه login وقاعدة وأكتر من كام صفحة. وفي الانترفيو غالبًا هيسألوك عن رحلة الطلب ومكان كل حاجة، مش الأوامر.",
-            mistakes: R`تستخدم [[env('X')]] جوه controller أو service: شغال على جهازك وبيرجّع null على السيرفر بعد [[config:cache]]. وترفع [[.env]] على git (هو في [[.gitignore]] من الأول، متشيلوش). وتنسخ مشروع من غير [[php artisan key:generate]] فتاخد «No application encryption key». وتبدأ بـ MySQL من أول يوم وانت لسه بتتعلم: SQLite كفاية لحد ما تنشر.`
-          },
-          lines: [
-            R`سطّب الـ installer مرة واحدة على جهازك (بيتحط في [[~/.composer/vendor/bin]] أو [[~/.config/composer/vendor/bin]]، ولازم يبقى في الـ PATH).`,
-            "مشروع جديد، والـ installer بيسألك على الـ starter kit والـ tests والقاعدة.",
-            "ادخل المشروع.",
-            R`النسخة، مثلًا [[Laravel Framework 13.x]].`,
-            "ملخص البيئة: النسخ والـ drivers والـ debug mode.",
-            "أهم الفولدرات اللي هتشتغل فيها.",
-            "السيرفر و Vite والـ queue واللوجات مع بعض."
-          ],
-          sol: R`[[about]] بيطلّع قسم Environment فيه [[Application Name ... Laravel]] و [[Laravel Version ... 13.x]] و [[PHP Version ... 8.4.x]] و [[Environment ... local]] و [[Debug Mode ... ENABLED]]، وتحته قسم Cache و Drivers فيه [[Database ... sqlite]] و [[Queue ... database]] و [[Session ... database]].
-
-[[localhost:8000]] صفحة الترحيب، و [[/up]] صفحة صغيرة «Application up» بـ status 200. بعد تغيير [[APP_NAME]] الاسم بيتغيّر في [[about]] على طول، لأن [[.env]] بيتقرا مع كل تشغيل.
-
-بعد [[config:cache]]: الاسم الجديد مش هيظهر، و [[about]] هيكتب [[Config ... CACHED]]. الإعدادات اتجمعت في [[bootstrap/cache/config.php]] و [[.env]] مبقاش بيتقرا. [[php artisan config:clear]] يرجّع الوضع. والغلط الشائع: تفتكر إن التعديل في [[.env]] مشتغلش وتقعد تدوّر على bug، وده بالظبط اللي بيحصل على السيرفر لو نسيت تعمل [[config:cache]] تاني بعد تعديل [[.env]].`
-        },
-        {
-          cmd: "Route::resource",
-          title: "اربط الـ URL بـ controller، وخلّي Laravel يجيب الموديل من الـ id لوحده",
-          desc: R`الـ routes في [[routes/web.php]]. كل route: method و URL و action. والـ action غالبًا method في controller: [[Route::get('/posts/{post}', [PostController::class, 'show'])]].
-
-[[Route::resource('posts', PostController::class)]] سطر واحد بيعمل ٧ routes للـ CRUD كله بأسماء ثابتة: index و create و store و show و edit و update و destroy. و [[php artisan make:controller PostController --resource --model=Post]] بيعمل الكلاس بالـ ٧ methods فاضيين.
-
-route model binding: لو الـ route فيه [[{post}]] والـ method بتاخد [[Post $post]]، Laravel بيعمل [[Post::findOrFail($id)]] لوحده، ولو مش موجود 404 من غير ولا سطر منك. و [[{post:slug}]] بيدوّر بعمود تاني غير الـ id.`,
-          example: R`<?php
-// routes/web.php
-use App\Http\Controllers\PostController;
-use Illuminate\Support\Facades\Route;
-
-Route::get('/', [PostController::class, 'index'])->name('home');
-Route::resource('posts', PostController::class)->except(['index']);
-Route::get('/p/{post:slug}', [PostController::class, 'show'])->name('posts.slug');
-
-Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/stats', fn () => view('admin.stats'))->name('stats');
-});`,
-          try: R`اعمل موديل [[Post]] بـ migration فيه [[title]] و [[slug]] (unique)، و [[make:controller PostController --resource --model=Post]]. اكتب [[show(Post $post)]] بترجّع [[$post->title]]، وحط الـ routes دي. شغّل [[php artisan route:list --except-vendor]]، وافتح [[/posts/1]] و [[/posts/999]] و [[/p/<slug>]]، وبعدين [[/admin/stats]] وانت مش عامل login.`,
+لو جاي من PostgreSQL: مفيش [[RETURNING]] (الـ id الجديد من [[lastInsertId]])، والـ upsert اسمه [[ON DUPLICATE KEY UPDATE]]، والأسماء بتتقفل بـ backticks، والمقارنة النصية افتراضيًا مش حساسة لحالة الحروف. وأساسيات SQL نفسها في تاب «SQL و Prisma».`,
+          example: R`CREATE TABLE users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  is_admin TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO users (email, name, password_hash) VALUES ('ali@example.com', 'Ali', 'x')
+  ON DUPLICATE KEY UPDATE name = 'Ali';
+SELECT LAST_INSERT_ID();
+SHOW CREATE TABLE users;`,
+          try: R`شغّل MySQL في Docker ([[docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=secret -e MYSQL_DATABASE=myapp -p 127.0.0.1:3306:3306 mysql:8.4]])، واعمل الجدول، وضيف مستخدم اسمه فيه إيموجي. بعدين اعمل جدول تاني بـ [[CHARSET=utf8mb3]] وجرّب نفس الإيموجي واقرا [[Incorrect string value]]. وجرّب [[SELECT * FROM users WHERE email = 'ALI@EXAMPLE.COM']]: هيلاقيه.`,
           flag: "script",
           deep: {
-            why: "الـ routes هي خريطة التطبيق كله، وأول مكان أي حد بيفتحه في مشروع Laravel. والـ resource والـ binding بيشيلوا كود متكرر بيتنسى: كل show كانت هتبدأ بـ find ولو null ارجع 404، وكل واحدة منهم مكان لـ bug.",
-            how: R`الـ ٧ routes بتاعة resource: [[GET /posts]] index، و [[GET /posts/create]] create، و [[POST /posts]] store، و [[GET /posts/{post}]] show، و [[GET /posts/{post}/edit]] edit، و [[PUT/PATCH /posts/{post}]] update، و [[DELETE /posts/{post}]] destroy. والأسماء [[posts.index]] و [[posts.show]] وهكذا، فتكتب [[route('posts.show', $post)]] بدل ما تلزق URL بإيدك، ولو غيّرت الـ URL كل اللينكات تتغير لوحدها.
+            why: "الاستضافة المشتركة كلها تقريبًا MySQL أو MariaDB. وغلطة في إنشاء الجدول (utf8 بدل utf8mb4، أو MyISAM، أو latin1) بتبان بعد شهور: العربي بيتخزن علامات استفهام، أو الإيموجي بيوقّع الـ INSERT.",
+            how: R`الـ charset لازم يبقى [[utf8mb4]] في السلسلة كلها: القاعدة والجدول والعمود، والاتصال كمان ([[charset=utf8mb4]] في الـ DSN، الدرس الجاي). لو الاتصال latin1 والجدول utf8mb4، العربي بيتخزن مكسور (mojibake) ومحدش بيلاحظ غير لما يفتح القاعدة من برنامج تاني.
 
-[[Route::apiResource]] نفس الكلام من غير create و edit (مفيش فورم في API). و [[->only([...])]] و [[->except([...])]] بيقلّلوا.
+الـ collation بيحدد المقارنة والترتيب. أي collation آخره [[_ci]] مش حساس لحالة الحروف، فـ [[WHERE email = 'ALI@...']] بيلاقي [[ali@...]]. مريح للإيميل، ومفاجأة لو بتقارن tokens حساسة. MySQL 8 افتراضيه [[utf8mb4_0900_ai_ci]]، و MariaDB القديمة مبتعرفهوش، فـ dump من MySQL 8 يقع على الاستضافة بـ [[Unknown collation]]. [[utf8mb4_unicode_ci]] شغال على الاتنين.
 
-الفورم HTML مبيعرفش غير GET و POST، فـ Blade بيحط [[@method('DELETE')]] كـ hidden input وLaravel بيقراه.
+فروق عن Postgres هتقابلها: [[AUTO_INCREMENT]] بدل [[GENERATED ... AS IDENTITY]]. الأسماء المحجوزة بين backticks ([[$__btorder$__bt]]) مش علامات تنصيص مزدوجة. [[||]] في MySQL معناها OR، والدمج بـ [[CONCAT()]]. [[TIMESTAMP]] بيتحوّل حسب timezone الاتصال وليه حد سنة 2038، و [[DATETIME]] بيتخزن زي ما هو. ومفيش [[ILIKE]]، لأن [[LIKE]] أصلًا مش حساس للحروف مع [[_ci]].
 
-الـ binding بيطابق اسم الباراميتر في الـ URL مع اسم المتغير في الـ method بالظبط: [[{post}]] مع [[$post]]. ولو عايز كل الـ routes تدوّر بالـ slug افتراضيًا اعمل في الموديل [[getRouteKeyName()]] ترجّع [['slug']].
+الـ upsert: [[ON DUPLICATE KEY UPDATE]] بيشتغل لما الـ INSERT يخبط في [[UNIQUE]] أو [[PRIMARY KEY]]. الصيغة [[VALUES(name)]] جواه deprecated في MySQL 8، والبديل الجديد (alias للصف) MariaDB مبتفهمهوش، فالأبسط تبعت القيمة تاني كـ parameter.
 
-و [[->middleware('auth')]] بيحمي route أو group كامل: اللي مش عامل login بيتحوّل لـ route اسمه [[login]]، ولو مش موجود بياخد 500 (Route [login] not defined)، ولو الطلب JSON بياخد 401.`,
-            when: "أي صفحة أو endpoint جديد. resource لما فيه CRUD على نوع واحد، و routes عادية لأي حاجة مش CRUD (dashboard، بحث، webhook). و [[route:list]] أول أمر لما صفحة تطلع 404 وانت متأكد إنها موجودة.",
-            mistakes: R`تسمّي الباراميتر [[{id}]] والمتغير [[Post $post]]: الـ binding مش هيشتغل وهيجيلك موديل فاضي بـ id null، وأي حاجة بعدها غلط. وترتيب الـ routes: [[/posts/{post}]] قبل [[/posts/create]] (في routes عادية مش resource) فـ «create» يتعامل كأنه id. والـ binding بيجيب الموديل بس مش بيتأكد إن المستخدم ليه حق يشوفه: ده شغل الـ policy (IDOR). وفي الانترفيو: «إيه الفرق بين implicit و explicit binding؟» الأول بالاسم والنوع، والتاني بـ [[Route::model()]] أو [[Route::bind()]] في provider.`
+وكتير من الاستضافات MariaDB مش MySQL. متوافقين في الأغلب، بس فيه فروق: مثلًا [[ADD COLUMN IF NOT EXISTS]] شغال في MariaDB ومش موجود في MySQL 8.4.`,
+            when: "كل جدول جديد. ولجدول موجود: [[SHOW CREATE TABLE]] يوريك الـ engine والـ charset بتوعه في ثانية.",
+            mistakes: R`في مشروع حقيقي سكربت migration كان بيستخدم [[ALTER TABLE ... ADD COLUMN IF NOT EXISTS]]: شغال على MariaDB بتاعة الاستضافة، ويقع على MySQL لو نقلت. ونفس المشروع كان فيه صفحة أدمن بتعمل [[CREATE TABLE IF NOT EXISTS]] مع كل فتحة: تغييرات الجداول مكانها سكربت migration بيتشغّل مرة، مش كود الصفحة. و [[utf8]] بدل [[utf8mb4]]. و [[FLOAT]] للفلوس بدل [[DECIMAL(10,2)]] أو int بالقرش.`
           },
+          teach: R`## الأول: إحنا بنعمل إيه هنا؟
+
+المثال ٤ أوامر SQL: بيعمل جدول مستخدمين بالشكل الصح لـ MySQL، ويضيف فيه صف، ويسأل عن الـ id اللي اتولّد، ويعرض تعريف الجدول زي ما القاعدة فهمته. كل اللي تحت اتشغّل فعلًا على **MySQL 8.4.11** في Docker (صورة [[mysql:8.4]] الرسمية)، من جوه برنامج [[mysql]] (الـ client اللي بيكلم القاعدة من الترمنال).
+
+---
+
+## ١. [[CREATE TABLE users (...)]] عمود عمود
+
+~~~sql
+CREATE TABLE users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+~~~
+
+- [[CREATE TABLE users]]: اعمل جدول اسمه [[users]]. وكل اللي بين القوسين أعمدته، بينهم فاصلة.
+- [[INT]] رقم صحيح (٤ bytes). و [[UNSIGNED]] يعني «من غير إشارة»: موجب بس، فالمدى بقى من 0 لحد حوالي ٤.٣ مليار بدل نصهم. الـ id عمره ما هيبقى سالب، فليه نضيّع نص المدى؟
+- [[AUTO_INCREMENT]]: لو مبعتش قيمة للعمود ده، القاعدة تحط هي رقم أكبر من آخر رقم اتحط (1 وبعده 2 ...). ده بديل [[SERIAL]] أو [[GENERATED ... AS IDENTITY]] في Postgres.
+- [[PRIMARY KEY]]: المفتاح الأساسي، يعني العمود اللي بيميّز كل صف، ومينفعش يتكرر ولا يبقى فاضي.
+
+~~~sql
+  email VARCHAR(255) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+~~~
+
+- [[VARCHAR(255)]] نص طوله متغير، أقصاه 255 **حرف** (مش byte). و [[NOT NULL]] يعني القيمة لازمة، و [[UNIQUE]] يعني مينفعش إيميلين زي بعض، والقاعدة نفسها هي اللي بترفض، مش كود PHP.
+- [[password_hash]] 255 مش 60 عشان الخوارزمية ممكن تتغير لحاجة أطول (درس [[password_hash]] جاي).
+
+~~~sql
+  is_admin TINYINT(1) NOT NULL DEFAULT 0,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+~~~
+
+- MySQL مفيهوش نوع bool حقيقي: [[BOOLEAN]] نفسه بيتحوّل [[TINYINT(1)]]، يعني رقم صغير (byte واحد). و [[(1)]] هنا عرض العرض بس، مش الحجم. بنخزن 0 أو 1.
+- [[DEFAULT 0]]: لو مبعتش قيمة، تبقى 0. و [[DATETIME]] تاريخ ووقت بيتخزن زي ما هو، و [[DEFAULT CURRENT_TIMESTAMP]] يعني «وقت الإضافة» بيتحط لوحده.
+
+~~~sql
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ENGINE=InnoDB]] | محرك التخزين. InnoDB بيدعم transactions و foreign keys. القديم MyISAM مبيدعمهمش |
+| [[CHARSET=utf8mb4]] | الحروف بتتخزن UTF-8 كامل: لحد ٤ bytes للحرف، فالعربي والإيموجي يتخزنوا |
+| [[COLLATE=utf8mb4_unicode_ci]] | قواعد المقارنة والترتيب. [[ci]] = case-insensitive |
+
+و [[mb4]] = multi-byte 4، يعني لحد ٤ bytes. الـ [[utf8]] القديم في MySQL اسمه الحقيقي [[utf8mb3]] (لحد ٣ بس).
+
+---
+
+## ٢. الـ INSERT والـ upsert
+
+~~~sql
+INSERT INTO users (email, name, password_hash) VALUES ('ali@example.com', 'Ali', 'x')
+  ON DUPLICATE KEY UPDATE name = 'Ali';
+~~~
+
+[[INSERT INTO users (...)]] بيقول هتملى أنهي أعمدة، و [[VALUES (...)]] القيم بنفس الترتيب. الأعمدة اللي مكتبتهاش ([[id]] و [[is_admin]] و [[created_at]]) بتاخد الـ default بتاعها.
+
+[[ON DUPLICATE KEY UPDATE]]: لو الصف ده هيخبط في [[UNIQUE]] أو [[PRIMARY KEY]] (الإيميل موجود قبل كده)، متقعش بـ error، حدّث الصف الموجود بدل كده. ده اللي اسمه **upsert** (update أو insert). والسطر الواحد مقسوم على سطرين للقراية بس، الـ [[;]] هي اللي بتقفل الأمر.
+
+ولما شغّلت نفس الـ INSERT مرة تانية وبعدين بقيمة مختلفة، [[ROW_COUNT()]] (عدد الصفوف اللي اتأثرت بآخر أمر) قال:
+
+| الحالة | [[ROW_COUNT()]] |
+|---|---|
+| صف جديد اتضاف | 1 |
+| الإيميل موجود والاسم اتغيّر فعلًا | 2 |
+| الإيميل موجود ونفس القيمة | 0 |
+
+---
+
+## ٣. [[SELECT LAST_INSERT_ID()]]
+
+~~~text الناتج (أول تشغيل على جدول فاضي)
++------------------+
+| LAST_INSERT_ID() |
++------------------+
+|                1 |
++------------------+
+~~~
+
+[[LAST_INSERT_ID()]] بيرجّع آخر id اتولّد بـ AUTO_INCREMENT **في الاتصال ده بس**، فمستخدم تاني بيضيف في نفس اللحظة مش هيبوّظ رقمك. ده بديل [[RETURNING id]] في Postgres، وفي PHP اسمه [[lastInsertId()]].
+
+> لو شغّلت المثال تاني، الـ INSERT هيبقى update، و [[LAST_INSERT_ID()]] في اتصال جديد هيطلّع 0 لأن مفيش صف اتضاف.
+
+وحاجة شفتها في التجربة: بعد محاولتين upsert على إيميل موجود، الصف الجديد اللي بعدهم أخد id بـ **4** مش 2. كل محاولة INSERT بتحجز رقم AUTO_INCREMENT حتى لو اتحوّلت update، والرقم ده مبيرجعش.
+
+---
+
+## ٤. [[SHOW CREATE TABLE users]]
+
+بيعرض الجدول زي ما القاعدة خزّنته فعلًا. ده الناتج الحقيقي (بـ [[\G]] في آخر الأمر عشان يطلع رأسي بدل جدول عريض):
+
+~~~text الناتج
+CREATE TABLE $__btusers$__bt (
+  $__btid$__bt int unsigned NOT NULL AUTO_INCREMENT,
+  $__btemail$__bt varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  $__btname$__bt varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  $__btpassword_hash$__bt varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  $__btis_admin$__bt tinyint(1) NOT NULL DEFAULT '0',
+  $__btcreated_at$__bt datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY ($__btid$__bt),
+  UNIQUE KEY $__btemail$__bt ($__btemail$__bt)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+~~~
+
+لاحظ:
+- الأسماء بين backticks: دي طريقة MySQL لقفل الأسماء (Postgres بيستخدم علامات تنصيص مزدوجة).
+- [[UNIQUE]] بقى index اسمه [[email]]، يعني البحث بالإيميل سريع كمان.
+- [[AUTO_INCREMENT=2]]: الرقم الجاي اللي هيتدّى.
+- ده أسرع سؤال تسأله لأي جدول موجود: الـ engine والـ charset بتوعه إيه؟
+
+---
+
+## ٥. ليه utf8mb4 بالذات؟ (التجربة)
+
+إيموجي زي 😀 بياخد ٤ bytes. على جدول [[utf8mb4]]:
+
+~~~text الناتج
++----+---------------+-------------------+--------------+
+| id | name          | CHAR_LENGTH(name) | LENGTH(name) |
++----+---------------+-------------------+--------------+
+|  4 | سارة 😀         |                 6 |           13 |
++----+---------------+-------------------+--------------+
+~~~
+
+[[CHAR_LENGTH]] بيعد الحروف (٤ حروف عربي + مسافة + إيموجي = 6)، و [[LENGTH]] بيعد الـ bytes: كل حرف عربي 2، والمسافة 1، والإيموجي 4، يعني 8 + 1 + 4 = 13.
+
+نفس القيمة في جدول [[CHARSET=utf8mb3]]:
+
+~~~text الناتج
+ERROR 1366 (HY000) at line 2: Incorrect string value: '\xF0\x9F\x98\x80' for column 'name' at row 1
+~~~
+
+[[\xF0\x9F\x98\x80]] هي الـ ٤ bytes بتوع الإيموجي، والعمود مبيشيلش غير ٣.
+
+---
+
+## ٦. الـ [[_ci]] في المقارنة
+
+~~~sql
+SELECT id, email FROM users WHERE email = 'ALI@EXAMPLE.COM';
+~~~
+
+~~~text الناتج
++----+-----------------+
+| id | email           |
++----+-----------------+
+|  1 | ali@example.com |
++----+-----------------+
+~~~
+
+لقاه رغم إن الحروف كبيرة. ونفس السبب بيخلي [[UNIQUE]] يرفض [[ALI@EXAMPLE.COM]] لو [[ali@example.com]] موجود:
+
+~~~text الناتج
+ERROR 1062 (23000) at line 11: Duplicate entry 'ALI@EXAMPLE.COM' for key 'users.email'
+~~~
+
+وده مريح للإيميل، بس خليه في بالك لو بتقارن حاجة لازم تبقى حساسة للحروف.
+
+ليه [[utf8mb4_unicode_ci]] مش الافتراضي؟ السيرفر ده افتراضيه:
+
+~~~text الناتج (SELECT @@collation_server)
+utf8mb4_0900_ai_ci
+~~~
+
+ده موجود في MySQL 8 بس، و MariaDB اللي على استضافات كتير مبتعرفهوش. فلو كتبته صريح [[utf8mb4_unicode_ci]] الـ dump بيشتغل على الاتنين.
+
+---
+
+## الخلاصة
+
+| حاجة | MySQL | Postgres |
+|---|---|---|
+| id بيزيد لوحده | [[AUTO_INCREMENT]] | [[GENERATED ... AS IDENTITY]] |
+| الـ id الجديد | [[LAST_INSERT_ID()]] | [[RETURNING id]] |
+| upsert | [[ON DUPLICATE KEY UPDATE]] | [[ON CONFLICT ... DO UPDATE]] |
+| bool | [[TINYINT(1)]] | [[boolean]] |
+| قفل الأسماء | backticks | علامات تنصيص مزدوجة |
+
+وأهم ٣: [[ENGINE=InnoDB]]، و [[utf8mb4]] مش [[utf8]]، و [[SHOW CREATE TABLE]] عشان تتأكد.`,
           lines: [
-            "بداية الملف.",
-            "استيراد الـ controller.",
-            "والـ facade بتاع الـ routes.",
-            R`الصفحة الرئيسية، ولها اسم [[home]] تستخدمه في [[route('home')]].`,
-            R`٦ routes من الـ ٧ (من غير index لأننا عملناها في [[/]]).`,
-            R`binding بعمود [[slug]] بدل الـ id.`,
-            R`group: كله لازم login، وكله تحت [[/admin]]، وأسماؤه بتبدأ بـ [[admin.]].`,
-            R`route اسمه [[admin.stats]] على [[/admin/stats]].`,
-            "قفلة الـ group."
+            "جدول المستخدمين.",
+            "id رقم موجب بيزيد لوحده، وهو المفتاح.",
+            "الإيميل مطلوب ومينفعش يتكرر.",
+            "الاسم.",
+            "hash الباسورد، 255 عشان الخوارزمية ممكن تتغير.",
+            "bool في MySQL: 0 أو 1.",
+            "وقت الإنشاء بيتحط لوحده.",
+            "InnoDB، و utf8mb4 بـ collation شغال على MySQL و MariaDB.",
+            "ضيف مستخدم...",
+            "...ولو الإيميل موجود، حدّث الاسم بدل ما يقع.",
+            "آخر id اتولّد في الاتصال ده.",
+            "اعرض تعريف الجدول كامل (engine و charset)."
           ],
-          sol: R`[[route:list --except-vendor]] بيطلّع ٩ routes: [[GET|HEAD /]] home، و [[posts.create]] و [[posts.store]] و [[posts.show]] و [[posts.edit]] و [[posts.update]] و [[posts.destroy]]، و [[p/{post:slug}]] اسمه [[posts.slug]]، و [[admin/stats]] اسمه [[admin.stats]]. و [[PUT|PATCH]] بتظهر سطر واحد.
+          sol: R`الجدول بيتعمل و [[SELECT LAST_INSERT_ID()]] بيطلّع 1. المستخدم بالإيموجي بيتخزن ويرجع زي ما هو، و [[CHAR_LENGTH(name)]] لـ [['سارة 😀']] = 6 و [[LENGTH]] = 13 byte. (اتجربت على MySQL 8.4.11، وقبلها على MariaDB 10.11 بنفس النتايج.)
 
-[[/posts/1]] بيطبع العنوان. [[/posts/999]] صفحة 404 من غير ما تكتب أي حاجة. [[/p/<slug>]] نفس البوست. و [[/admin/stats]] وانت مش عامل login: خطأ 500 «Route [login] not defined» لأن مفيش starter kit لسه، ولما تسطّب واحد هيحوّلك لصفحة الـ login.
+جدول [[utf8mb3]]: [[ERROR 1366 (HY000): Incorrect string value: '\xF0\x9F\x98\x80' for column 'name' at row 1]] على MySQL 8.4 (و MariaDB بتكتب الكود [[22007]] واسم العمود بشكل مختلف شوية). الإيموجي 4 bytes و utf8mb3 مبيشيلش غير 3. و [[WHERE email = 'ALI@EXAMPLE.COM']] بيلاقي [[ali@example.com]] لأن [[_ci]] = case-insensitive، وده برضه معناه إن UNIQUE هيرفض الاتنين مع بعض.
 
-الغلط الشائع: [[show($id)]] بدل [[show(Post $post)]]، فبترجع تكتب [[findOrFail]] بإيدك، أو [[show(Post $p)]] باسم مختلف عن [[{post}]] فيجيلك موديل فاضي.`,
-          solCode: R`<?php
-
-namespace App\Http\Controllers;
-
-use App\Models\Post;
-
-class PostController extends Controller
-{
-    public function index()
-    {
-        return Post::latest()->pluck('title');
-    }
-
-    public function show(Post $post)
-    {
-        return $post->title;
-    }
-}`
+لو الإيموجي أو العربي رجع كلام مكسور زي [[Ø³Ø§Ø±Ø©]] من غير أي error، يبقى الجدول سليم والمشكلة في charset الاتصال: الـ client بعت UTF-8 على إنه latin1. في الترمنال [[mysql --default-character-set=utf8mb4]]، وفي PHP [[charset=utf8mb4]] في الـ DSN. وملاحظة: [[ON DUPLICATE KEY UPDATE]] بيحرق رقم AUTO_INCREMENT حتى لو معملش insert، فمتستغربش لو الـ ids فيها فجوات.`
         },
         {
-          cmd: "hasMany / belongsTo",
-          title: "اربط الموديلات ببعض: يوزر ليه بوستات، وبوست ليه تعليقات",
-          desc: R`في Eloquent كل جدول كلاس، والعلاقة method في الموديل بترجّع نوع العلاقة. المستخدم [[hasMany]] بوستات، والبوست [[belongsTo]] مستخدم، والبوست [[belongsToMany]] tags من خلال جدول وسيط.
+          cmd: "new PDO",
+          title: "اتصال واحد بالقاعدة بالإعدادات الصح",
+          desc: R`PDO الواجهة الموحدة في PHP لأي قاعدة: MySQL و PostgreSQL و SQLite. [[new PDO($dsn, $user, $pass, $options)]]، والـ DSN فيه نوع القاعدة والـ host والاسم و [[charset=utf8mb4]].
 
-وبعدها تستخدمها كأنها property: [[$user->posts]] بيرجّع Collection، و [[$post->user]] بيرجّع User واحد. أو كـ method تبني عليها query: [[$user->posts()->where('published', true)->count()]].
-
-الاتفاقية: البوست فيه عمود [[user_id]] (اسم الموديل + [[_id]])، و Laravel بيستنتجه لوحده. في الـ migration: [[$table->foreignId('user_id')->constrained()->cascadeOnDelete()]].`,
+تلات options مهمين: الأخطاء exceptions، والصفوف ترجع associative arrays، و [[EMULATE_PREPARES]] بـ false عشان الـ prepared statements تبقى حقيقية على سيرفر القاعدة. وحط الاتصال في دالة واحدة [[db()]]، فكل الموقع يستخدم نفس الاتصال في الطلب.`,
           example: R`<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-class Post extends Model
-{
-    protected $fillable = ['title', 'slug', 'body', 'published_at'];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+function db(): PDO {
+    static $pdo = null;
+    if ($pdo === null) {
+        $c = require dirname(__DIR__) . '/config.php';
+        $dsn = "mysql:host={$c['db_host']};dbname={$c['db_name']};charset=utf8mb4";
+        $pdo = new PDO($dsn, $c['db_user'], $c['db_pass'], [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ]);
     }
-
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class)->latest();
-    }
-
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class)->withTimestamps();
-    }
+    return $pdo;
 }`,
-          try: R`ضيف في [[User]] العلاقة العكسية [[posts(): HasMany]]. وفي [[php artisan tinker]]: هات أول يوزر، واعمله بوست بـ [[$user->posts()->create([...])]] من غير ما تكتب [[user_id]]، واطبع [[$user->posts()->count()]] و [[$user->posts->count()]] بعدها على طول. ليه الرقمين ممكن يختلفوا؟`,
+          try: R`حط الدالة في [[src/db.php]] ونادي [[db()->query('SELECT VERSION()')->fetchColumn()]]. بعدين غلّط الباسورد في الإعدادات وشوف الـ PDOException، ولاحظ إن الرسالة فيها اسم المستخدم والـ host: ده سبب إنها متتعرضش للزوار أبدًا.`,
           flag: "script",
           deep: {
-            why: "أي تطبيق حقيقي بياناته مترابطة: طلبات ومنتجات، ومستخدمين وأدوار. العلاقات في Eloquent بتخليك تكتب [[$order->items]] بدل JOIN في كل مكان، وبتحط الـ user_id لوحدها وقت الإنشاء، فمبتنساش تربط.",
-            how: R`الأنواع الأساسية: [[hasOne]] و [[belongsTo]] (واحد لواحد، والـ foreign key عند اللي بيعمل belongsTo)، و [[hasMany]] (واحد لكتير)، و [[belongsToMany]] (كتير لكتير بجدول وسيط اسمه أسماء الموديلين مفرد بالترتيب الأبجدي: [[post_tag]])، و [[hasManyThrough]] (البلد ليها بوستات عن طريق المستخدمين)، و [[morphMany]] (تعليقات على بوستات وفيديوهات بنفس الجدول).
+            why: "دوال [[mysql_*]] القديمة اتشالت من PHP 7. ومن غير دالة واحدة للاتصال، كل صفحة بتفتح اتصال بطريقتها وبإعدادات مختلفة، وتغيير الباسورد يبقى في عشر أماكن.",
+            how: R`الـ DSN: [[mysql:host=...;port=3306;dbname=...;charset=utf8mb4]]. من غير [[charset]] الاتصال ممكن ياخد charset السيرفر الافتراضي والعربي يتكسر.
 
-الـ property مقابل الـ method: [[$user->posts]] بتنفّذ query أول مرة وتحفظ النتيجة في الموديل، وأي مرة بعدها بترجّع نفس الـ Collection من الذاكرة. [[$user->posts()]] بترجّع query builder جديد، فـ [[->count()]] بيعمل [[SELECT COUNT(*)]] في القاعدة.
+[[new PDO]] بيرمي [[PDOException]] لو الاتصال فشل مهما كانت الإعدادات. ومن PHP 8 الافتراضي بقى [[ERRMODE_EXCEPTION]] لكل الـ queries، وقبلها كان silent: الـ query يفشل ويرجع false ومحدش يعرف. اكتبها صريحة.
 
-الإنشاء من خلال العلاقة: [[$user->posts()->create([...])]] بيحط [[user_id]] لوحده. و [[belongsToMany]] ليها [[attach]] و [[detach]] و [[sync([1, 2, 3])]] (بيخلي الجدول الوسيط فيه دول بس بالظبط).
+[[FETCH_ASSOC]]: الافتراضي [[FETCH_BOTH]] بيرجّع كل عمود مرتين (بالاسم وبالرقم)، فالـ array ضعف الحجم والـ JSON بيطلع غريب.
 
-وفي Laravel 13 تقدر تكتب [[$fillable]] كـ attribute فوق الكلاس: [[#[Fillable(['title', 'slug'])]]]، وده اللي في موديل [[User]] الجديد. الاتنين شغالين.`,
-            when: "كل ما يكون فيه foreign key في الجدول. ولو محتاج بيانات على العلاقة نفسها (الكمية في order_product مثلًا) [[->withPivot('qty')]].",
-            mistakes: R`تنسى إن [[$user->posts]] محفوظة: تضيف بوست وتعد [[$user->posts->count()]] فيطلع الرقم القديم؛ [[$user->refresh()]] أو [[$user->load('posts')]]. وتكتب العلاقة من غير return type فالـ IDE و Larastan ميعرفوش نوعها. وتنسى [[constrained()]] فالقاعدة تقبل [[user_id]] مش موجود. والأخطر: تستخدم العلاقة جوه loop من غير [[with()]] (الدرس الجاي).`
+[[EMULATE_PREPARES]]: افتراضي pdo_mysql إنه يعمل «محاكاة»: PHP نفسه بيحط القيم في الـ SQL (بـ escaping آمن طول ما الـ charset في الـ DSN) ويبعت نص واحد. بـ false، الـ SQL بيتبعت للسيرفر لوحده والقيم لوحدها. الفرق العملي: مع false مينفعش تكرر نفس الـ placeholder مرتين في query، ومع true [[LIMIT :n]] بيتحط بين علامات تنصيص لو مبعتوش int.
+
+[[static $pdo]]: المتغير بيفضل موجود بين نداءات الدالة في نفس الطلب، فأول نداء بيفتح الاتصال والباقي بياخدوه. وفي آخر الطلب الاتصال بيتقفل لوحده. وفي PHP 8.4 فيه [[PDO::connect()]] بترجّع كلاس خاص بالقاعدة ([[Pdo\MySql]]).`,
+            when: "مرة واحدة في ملف bootstrap، وكل الكود بينادي [[db()]]. لو المشروع كبر، الـ PDO بيتبعت للكلاسات في الـ constructor (المستوى الثالث).",
+            mistakes: R`في مشروع حقيقي الاتصال كان [[mysqli_connect]] في ملف إعدادات بيتعمله include في كل صفحة ومتغير global اسمه غريب، وبيانات القاعدة متكررة في ملفين، فتغيير الباسورد محتاج تفتكر الاتنين. وتعرض [[$e->getMessage()]] للزائر لما الاتصال يفشل. وتنسى [[charset=utf8mb4]] فالعربي يطلع [[????]]. وعلى Docker: [[localhost]] جوه الـ container هو الـ container نفسه، اكتب اسم service القاعدة.`
           },
-          lines: [
-            "بداية الملف.",
-            "الـ namespace بتاع الموديلات.",
-            "الكلاس الأساسي لأي موديل.",
-            "نوع علاقة belongsTo (للـ return type).",
-            "نوع belongsToMany.",
-            "نوع hasMany.",
-            R`موديل [[Post]] = جدول [[posts]] (جمع الاسم لوحده).`,
-            "فتحة الكلاس.",
-            "الأعمدة المسموح تتملى بـ create و fill (mass assignment).",
-            "العلاقة الأولى: البوست بتاع مين.",
-            "فتحة.",
-            R`بيدوّر في [[users]] بقيمة [[user_id]] اللي في البوست.`,
-            "قفلة.",
-            "العلاقة التانية: تعليقات البوست.",
-            "فتحة.",
-            R`[[comments.post_id]] = id البوست، ومترتبة الأحدث الأول.`,
-            "قفلة.",
-            "كتير لكتير.",
-            "فتحة.",
-            R`جدول وسيط [[post_tag]]، وبيملى [[created_at]] فيه كمان.`,
-            "قفلة.",
-            "قفلة الكلاس."
-          ],
-          sol: R`في tinker: [[$u = User::first();]] و [[$u->posts()->create(['title' => 'x', 'slug' => 'x', 'body' => '...']);]] بيرجّع موديل Post فيه [[user_id]] = id اليوزر من غير ما تكتبه.
+          teach: R`## الأول: الدالة دي بتعمل إيه؟
 
-لو كنت قريت [[$u->posts]] قبل الإنشاء، [[$u->posts->count()]] هيطلّع الرقم القديم (مثلًا 0)، و [[$u->posts()->count()]] الرقم الصح (1). الأولى Collection اتحمّلت مرة واتحفظت في الموديل، والتانية query جديدة. ولو مكنتش قريتها قبل كده، الاتنين هيطلعوا 1 لأن أول قراية حصلت بعد الإنشاء.
+[[db()]] بتفتح اتصال واحد بـ MySQL أول مرة تتنادى، وبعد كده بترجّع نفس الاتصال لأي حد يناديها في نفس الطلب. كل اللي تحت اتشغّل على **PHP 8.4.26** (صورة [[php:8.4-cli]] الرسمية + إضافة [[pdo_mysql]]) و **MySQL 8.4.11**، كل واحد في container على نفس الشبكة، فالـ host اسمه اسم الـ container.
 
-الغلط الشائع: تكتب [['user_id' => $u->id]] بإيدك في [[Post::create]] وتضيف [[user_id]] للـ [[$fillable]]، فتفتح باب إن أي طلب يحدد صاحب البوست.`,
-          solCode: R`// app/Models/User.php (جوه الكلاس)
-public function posts(): HasMany
-{
-    return $this->hasMany(Post::class);
+الملفات في التجربة:
+
+~~~text شكل الفولدر
+app/
+  config.php      الإعدادات (بره الموقع)
+  src/db.php      الدالة اللي في المثال
+  sol2.php        ملف التجربة
+~~~
+
+---
+
+## ١. [[function db(): PDO]]
+
+~~~php
+<?php
+function db(): PDO {
+~~~
+
+- [[<?php]] أول الملف: من هنا كود PHP.
+- [[function db()]] دالة اسمها [[db]] من غير parameters.
+- [[: PDO]] بعد القوسين اسمه return type: الدالة **لازم** ترجّع object من كلاس [[PDO]]. لو رجّعت حاجة تانية PHP يرمي [[TypeError]].
+- [[PDO]] = PHP Data Objects، الكلاس الجاهز في PHP اللي بيكلم أي قاعدة (MySQL و PostgreSQL و SQLite) بنفس الدوال.
+
+## ٢. [[static $pdo = null;]]
+
+~~~php
+    static $pdo = null;
+    if ($pdo === null) {
+~~~
+
+المتغير العادي جوه دالة بيتمسح أول ما الدالة تخلص. [[static]] بيخليه **يفضل** بين النداءات (طول الطلب): أول نداء قيمته [[null]] فيدخل الـ [[if]] ويفتح الاتصال، والنداءات اللي بعده بتلاقيه مليان فتعدّي الـ [[if]] على طول.
+
+و [[===]] مقارنة صارمة: القيمة والنوع الاتنين، فمش هتتلخبط بين [[null]] و [[0]] و [['']].
+
+اتأكدت إنه نفس الاتصال بجد:
+
+~~~php
+var_dump(db() === db());
+echo db()->query('SELECT CONNECTION_ID()')->fetchColumn(), " ",
+     db()->query('SELECT CONNECTION_ID()')->fetchColumn();
+~~~
+
+~~~text الناتج
+bool(true)
+13 13
+~~~
+
+[[CONNECTION_ID()]] رقم الاتصال عند MySQL، وطلع نفس الرقم في الندائين: اتصال واحد مش اتنين.
+
+## ٣. الإعدادات من ملف بره
+
+~~~php
+        $c = require dirname(__DIR__) . '/config.php';
+~~~
+
+نفكّها من جوه لبرة:
+
+| الحتة | معناها | قيمتها في التجربة |
+|---|---|---|
+| [[__DIR__]] | الفولدر اللي فيه الملف الحالي | [[/app/src]] |
+| [[dirname(...)]] | الفولدر اللي فوقه | [[/app]] |
+| [[.]] | دمج النصوص في PHP | [[/app/config.php]] |
+| [[require]] | نفّذ الملف ده، ولو مش موجود وقّف بـ fatal error | |
+
+و [[config.php]] آخره [[return [...]]]، فـ [[require]] بيرجّع الـ array دي ونحطها في [[$c]] (درس [[return config]] تحت).
+
+## ٤. الـ DSN
+
+~~~php
+        $dsn = "mysql:host={$c['db_host']};dbname={$c['db_name']};charset=utf8mb4";
+~~~
+
+DSN = Data Source Name: نص واحد بيقول لـ PDO يكلم مين. النص بين علامات تنصيص مزدوجة، فـ [[{$c['db_host']}]] بيتبدّل بقيمته (الأقواس [[{}]] لازمة لما المتغير array بمفتاح). في التجربة بقى:
+
+~~~text قيمة $dsn
+mysql:host=teach-php02-mysql;dbname=myapp;charset=utf8mb4
+~~~
+
+| الجزء | معناه |
+|---|---|
+| [[mysql:]] | نوع القاعدة، يعني استخدم driver اسمه [[pdo_mysql]] |
+| [[host=...]] | السيرفر |
+| [[dbname=...]] | اسم القاعدة |
+| [[charset=utf8mb4]] | الاتصال نفسه يبعت ويستقبل UTF-8 كامل |
+
+> [[host=localhost]] ليه معنى خاص في MySQL: بيحاول يوصل بملف socket على نفس الجهاز مش بالشبكة. جوه container مفيهوش MySQL طلع: [[SQLSTATE[HY000] [2002] No such file or directory]]. و [[127.0.0.1]] جوه container هو الـ container نفسه: [[Connection refused]]. في Docker اكتب اسم الـ service.
+
+## ٥. [[new PDO(...)]] والـ options
+
+~~~php
+        $pdo = new PDO($dsn, $c['db_user'], $c['db_pass'], [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ]);
+~~~
+
+[[new]] بيعمل object جديد من الكلاس، والـ constructor بياخد ٤ حاجات: الـ DSN، واليوزر، والباسورد، و array إعدادات. و [[::]] معناها «ثابت جوه الكلاس ده»، يعني [[PDO::ATTR_ERRMODE]] ثابت اسمه [[ATTR_ERRMODE]] متعرّف في [[PDO]]. و [[=>]] بتربط مفتاح بقيمة في الـ array.
+
+### [[ATTR_ERRMODE => ERRMODE_EXCEPTION]]
+
+أي query يفشل يرمي [[PDOException]] بدل ما يرجّع [[false]] ساكت. في PHP 8 ده بقى الافتراضي أصلًا (اتأكدت: [[getAttribute(PDO::ATTR_ERRMODE)]] على اتصال من غير options طلع exception)، بس كتابته صريحة بتوضح النية وبتحميك لو الكود اشتغل على PHP أقدم.
+
+### [[ATTR_DEFAULT_FETCH_MODE => FETCH_ASSOC]]
+
+نفس الصف بالـ mode الافتراضي ([[FETCH_BOTH]]) وبـ [[FETCH_ASSOC]]:
+
+~~~text الناتج: FETCH_ASSOC
+Array
+(
+    [id] => 1
+    [name] => Ali
+)
+~~~
+
+~~~text الناتج: FETCH_BOTH (الافتراضي)
+Array
+(
+    [id] => 1
+    [0] => 1
+    [name] => Ali
+    [1] => Ali
+)
+~~~
+
+كل عمود مرتين: بالاسم وبالرقم. عشان كده بنثبّت [[FETCH_ASSOC]] (associative = بمفاتيح أسماء).
+
+### [[ATTR_EMULATE_PREPARES => false]]
+
+افتراضي [[pdo_mysql]] إنه [[true]] (اتأكدت: [[bool(true)]] على اتصال من غير options)، يعني PHP بيحط القيم في نص الـ SQL بنفسه. بـ [[false]] الـ SQL والقيم بيتبعتوا للسيرفر منفصلين (درس [[prepare / execute]] الجاي بيشرح الفرق).
+
+## ٦. آخر الدالة
+
+~~~php
+    }
+    return $pdo;
 }
+~~~
 
-// php artisan tinker
-$u = User::first();
-$u->posts->count();          // 0 واتحفظت
-$u->posts()->create(['title' => 'x', 'slug' => 'x', 'body' => '...']);
-$u->posts->count();          // لسه 0
-$u->posts()->count();        // 1
-$u->load('posts')->posts->count(); // 1`
-        },
-        {
-          cmd: "with() و N+1",
-          title: "ليه الصفحة بتعمل 51 query بدل 2؟ (N+1 و eager loading)",
-          desc: R`N+1: بتجيب 50 بوست بـ query واحدة، وبعدين في الـ loop بتكتب [[$post->user->name]]، فكل لفة بتعمل query تجيب اليوزر. 1 + 50 = 51 query لصفحة واحدة. على جهازك مش هتحس، وعلى السيرفر مع قاعدة بعيدة كل query بـ 1 أو 2 ms فالصفحة تبقى بطيئة.
+قفلة الـ [[if]]، وبعدين رجّع الاتصال (الجديد أو المحفوظ)، وقفلة الدالة. ولما الطلب يخلص PHP بيقفل الاتصال لوحده.
 
-الحل eager loading: [[Post::with('user')->get()]] بيجيب البوستات، وبعدين كل اليوزرز اللي محتاجهم في query واحدة [[WHERE id IN (...)]]. يعني 2 query مهما كان العدد.
+---
 
-و [[withCount('comments')]] بيجيب عدد التعليقات كعمود [[comments_count]] من غير ما يحمّل التعليقات نفسها.`,
-          example: R`<?php
-use App\Models\Post;
-use Illuminate\Support\Facades\DB;
+## ٧. الـ solCode: نجرّب الاتصال
 
-DB::enableQueryLog();
-foreach (Post::latest()->take(50)->get() as $post) {
-    $post->user->name;
-}
-echo count(DB::getQueryLog()), " queries\n";
+~~~php
+<?php
+require __DIR__ . '/src/db.php';
+echo db()->query('SELECT VERSION()')->fetchColumn(), "\n";
+~~~
 
-DB::flushQueryLog();
-$posts = Post::with('user')->withCount('comments')->latest()->take(50)->get();
-foreach ($posts as $post) {
-    $post->user->name . ' ' . $post->comments_count;
-}
-echo count(DB::getQueryLog()), " queries\n";`,
-          try: R`اعمل 50 بوست بـ factory (الدرس بعد الجاي، أو [[Post::factory(50)->create()]] لو عندك). حط الكود ده في [[php artisan tinker]] وشوف الرقمين. بعدين ضيف في [[AppServiceProvider::boot()]] السطر [[Model::preventLazyLoading(! app()->isProduction());]] وشغّل أول loop تاني.`,
-          flag: "script",
-          deep: {
-            why: "N+1 أشهر مشكلة أداء في أي ORM (Eloquent و Prisma و Django)، وأشهر سؤال انترفيو Laravel بعد «إيه هو service container». والـ ORM بيخبّيها لأن [[$post->user]] شكلها property عادية.",
-            how: R`[[with('user')]] بيعمل [[select * from users where id in (1, 2, 3)]] ويوزّع النتايج على البوستات في الذاكرة. ومتداخل: [[with('comments.user')]]. ومشروط: [[with(['comments' => fn ($q) => $q->latest()->limit(3)])]]. وأعمدة معينة: [[with('user:id,name')]] (لازم الـ id).
+- [[require __DIR__ . '/src/db.php']]: حمّل الملف اللي فيه [[db()]].
+- [[db()->query(...)]]: [[->]] معناها «نادي method على الـ object ده». و [[query]] بينفّذ SQL ثابت ويرجّع statement.
+- [[->fetchColumn()]]: أول عمود من أول صف، يعني القيمة لوحدها.
+- [[echo a, b]]: الفاصلة بتطبع أكتر من حاجة، و [["\n"]] سطر جديد.
 
-[[load('user')]] نفس الفكرة بس على موديلات اتجابت خلاص (lazy eager loading)، مفيد لما القرار يتاخد بعد الـ query.
+~~~bash
+php sol2.php
+~~~
 
-[[Model::preventLazyLoading()]] بيخلي أي lazy loading يرمي [[LazyLoadingViolationException]] بدل ما يعدّي ساكت. تحطه في التطوير بس، فتكتشف الـ N+1 وانت بتكتب. و [[Model::shouldBeStrict()]] بيجمعه مع حاجتين تانيين (منع الأعمدة الغلط في fill، ومنع قراية عمود مجبتوش).
+~~~text الناتج
+8.4.11
+~~~
 
-وفي Laravel 13 فيه [[Model::automaticallyEagerLoadRelationships()]] بيكتشف العلاقة اللي بتتقرا في loop ويحمّلها للكل مرة واحدة. مفيد، بس [[with()]] الصريح لسه أوضح وهو اللي هيتسأل عليه.
+---
 
-وعشان تشوف الـ queries في المتصفح: Laravel Debugbar، أو Telescope، أو [[DB::listen]] في الـ provider.`,
-            when: "أي loop على موديلات فيه علاقة، وأي API Resource بيرجّع علاقة. قاعدة ثابتة: الـ controller يعمل [[with()]] لكل حاجة الـ view هتقراها.",
-            mistakes: R`تعمل [[with()]] لكل العلاقات «احتياطي» فتحمّل آلاف الصفوف مش محتاجها. وتعمل [[$post->comments->count()]] (بيحمّل كل التعليقات عشان يعدّهم) بدل [[withCount]]. وتنسى إن [[with('user:name')]] من غير [[id]] بيرجّع user null. وفي الانترفيو قول الأرقام: «51 query بقت 2»، واذكر إنك بتكتشفها بـ preventLazyLoading مش بالصدفة.`
-          },
-          lines: [
-            "بداية الكود (في tinker تقدر تلزقه من غير السطر ده).",
-            "موديل البوست.",
-            "الـ facade بتاع القاعدة.",
-            "ابدأ سجّل كل query.",
-            "50 بوست بـ query واحدة...",
-            "...وكل لفة query تجيب صاحب البوست (N).",
-            "قفلة الـ loop.",
-            R`هيطبع [[51 queries]].`,
-            "امسح السجل.",
-            "البوستات، واليوزرز في query، وعدد التعليقات جوه الـ query الأولى.",
-            "نفس الـ loop.",
-            "مفيش أي query هنا: كل حاجة في الذاكرة.",
-            "قفلة.",
-            R`هيطبع [[2 queries]].`
-          ],
-          sol: R`أول رقم [[51 queries]] (واحدة للبوستات و 50 لليوزرز)، وتاني رقم [[2 queries]]: البوستات ومعاها [[comments_count]] كـ subquery في نفس الـ SELECT، واليوزرز بـ [[where id in (...)]]. ولو كل البوستات لنفس اليوزر هيبقى الأول برضه 51، لأن Eloquent مبيعملش cache للعلاقة بين موديلات مختلفة.
+## ٨. لما الاتصال يفشل: الرسايل الحقيقية
 
-بعد [[preventLazyLoading]] أول loop بيرمي: [[Attempted to lazy load [user] on model [App\Models\Post] but lazy loading is disabled.]]. ودي بالظبط الفايدة: الغلطة بقت exception وانت بتكتب.
+| السبب | الرسالة في PHP 8.4 |
+|---|---|
+| باسورد غلط | [[SQLSTATE[HY000] [1045] Access denied for user 'myapp_user'@'172.19.0.3' (using password: YES)]] |
+| host مش موجود | [[getaddrinfo for teach-php02-nohost failed: Name or service not known]] |
+| القاعدة مش شغالة أو port غلط | [[SQLSTATE[HY000] [2002] Connection refused]] |
+| [[pdo_mysql]] مش متسطّب (صورة [[php:8.4-cli]] من غير الإضافة) | [[could not find driver]] |
 
-ملحوظة: [[preventLazyLoading]] مبيرميش لو الـ query رجّعت موديل واحد بس، فجرّبه على 2 بوست على الأقل.`
-        },
-        {
-          cmd: "scopes و $fillable",
-          title: "اكتب شرط الـ query مرة واحدة، واقفل الأعمدة اللي المستخدم ميقدرش يغيّرها",
-          desc: R`local scope: شرط بيتكرر (البوستات المنشورة، المنتجات اللي في المخزن) بتكتبه مرة في الموديل وتستخدمه كأنه method: [[Post::published()->latest()->get()]].
+والباسورد الغلط بالكامل:
 
-في Laravel 13 الطريقة الجديدة: method [[protected]] عليها attribute [[#[Scope]]]. والطريقة القديمة [[scopePublished($query)]] لسه شغالة، وهتلاقيها في أغلب المشاريع.
+~~~text الناتج
+Fatal error: Uncaught PDOException: SQLSTATE[HY000] [1045] Access denied for user 'myapp_user'@'172.19.0.3' (using password: YES) in /app/t2b.php:3
+Stack trace:
+#0 /app/t2b.php(3): PDO->__construct('mysql:host=teac...', 'myapp_user', Object(SensitiveParameterValue))
+#1 {main}
+  thrown in /app/t2b.php on line 3
+~~~
 
-mass assignment: [[Post::create($request->all())]] بيحط أي حقل جه في الطلب. لو المستخدم بعت [[is_admin=1]] أو [[user_id=5]] وهما في الجدول، اتكتبوا. عشان كده Eloquent رافض أي create من غير ما تقول الأعمدة المسموحة: [[$fillable]] (أو [[#[Fillable([...])]]] في 13). والعكس [[$guarded]]: كله مسموح ما عدا دول.`,
-          example: R`<?php
+بص على الـ stack trace: اسم اليوزر ظاهر، والـ IP، والمسار، بس الباسورد مكانه [[Object(SensitiveParameterValue)]]: PHP مخبّيه لأن الـ parameter متعلّم [[#[\SensitiveParameter]]]. برضه الرسالة دي مكانها اللوج، مش شاشة الزائر.
 
-namespace App\Models;
+---
 
-use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+## الخلاصة
 
-class Post extends Model
-{
-    protected $fillable = ['title', 'slug', 'body', 'published_at'];
-
-    protected function casts(): array
-    {
-        return ['published_at' => 'datetime'];
-    }
-
-    #[Scope]
-    protected function published(Builder $query): void
-    {
-        $query->whereNotNull('published_at')->where('published_at', '<=', now());
-    }
-
-    #[Scope]
-    protected function search(Builder $query, ?string $term): void
-    {
-        $query->when($term, fn ($q) => $q->where('title', 'like', "%{$term}%"));
-    }
-}`,
-          try: R`حط الموديل ده، وفي tinker: [[Post::published()->search('laravel')->toRawSql()]] واقرا الـ SQL. بعدين جرّب [[Post::create(['title' => 'a', 'slug' => 'a', 'body' => 'b', 'user_id' => 1, 'views' => 999])]] (ضيف عمود [[views]] للجدول لو مش موجود) وشوف الصف اتكتب إزاي.`,
-          flag: "script",
-          deep: {
-            why: "الـ scopes بتخلي «منشور» ليه تعريف واحد في المشروع: لو اتغيّر (بقى فيه [[is_hidden]] كمان) بتغيّره في مكان واحد بدل 12 controller. و [[$fillable]] خط دفاع قدام ثغرة حقيقية: GitHub اتخترق بيها سنة 2012 في Rails (mass assignment) وأي حد قدر يضيف مفتاحه لأي repo.",
-            how: R`الـ scope بياخد الـ Builder كأول باراميتر، وأي باراميترات بعده بتيجي من النداء: [[search('laravel')]]. و [[when($term, ...)]] بيطبّق الشرط لو [[$term]] مش فاضي بس، فالـ scope ينفع من غير بحث.
-
-global scope: شرط بيتطبّق على كل query للموديل من غير ما تنادي عليه، زي [[SoftDeletes]] اللي بيضيف [[whereNull('deleted_at')]] لوحده. وتلغيه بـ [[withoutGlobalScope]] أو [[withTrashed()]].
-
-الـ casts: [[published_at]] بيرجع Carbon بدل نص، فتكتب [[$post->published_at->diffForHumans()]]. و [['password' => 'hashed']] في موديل User بيعمل hash لوحده. و [['meta' => 'array']] لعمود JSON.
-
-[[$fillable]] بيتطبّق على [[create]] و [[fill]] و [[update]] بس. [[$post->user_id = 1; $post->save();]] بيعدّي عادي، لأنك انت اللي كتبته صراحة. والأعمدة اللي مش في [[$fillable]] بتتشال بصمت. و [[Model::preventSilentlyDiscardingAttributes()]] بيخليها exception في التطوير.
-
-والأأمن من الاتنين: متبعتش [[$request->all()]] أصلًا، ابعت [[$request->validated()]] (درس Form Request).`,
-            when: "scope لأي شرط اتكرر مرتين. و [[$fillable]] في كل موديل بيتعمل create من بيانات مستخدم. [[$guarded = []]] (كله مسموح) بس لو متأكد إنك دايمًا بتبعت validated.",
-            mistakes: R`تحط [[user_id]] أو [[role]] أو [[is_admin]] في [[$fillable]] عشان create اشتغل، ومعاها [[$request->all()]]: رجعت الثغرة. وتعمل [[$guarded = []]] في كل الموديلات عشان «الـ MassAssignmentException مزعجة». وتنسى إن الـ scope لازم يبدأ [[protected]] مع [[#[Scope]]]: لو [[public]] ممكن تناديه بالغلط على موديل بدل query. وفي الانترفيو: «إيه هو mass assignment وإزاي Laravel بيحميك؟».`
-          },
+| السطر | ليه |
+|---|---|
+| [[static $pdo]] | اتصال واحد للطلب كله |
+| [[require .../config.php]] | الأسرار في ملف واحد بره git |
+| [[charset=utf8mb4]] في الـ DSN | العربي والإيموجي سليمين في الطريق |
+| [[ERRMODE_EXCEPTION]] | مفيش غلطة بتعدّي ساكتة |
+| [[FETCH_ASSOC]] | الصف بأسماء الأعمدة بس |
+| [[EMULATE_PREPARES => false]] | prepared statements حقيقية على السيرفر |`,
           lines: [
             "بداية الملف.",
-            "الـ namespace.",
-            R`attribute الـ scope (Laravel 12 وأحدث).`,
-            "نوع الـ query builder.",
-            "الموديل الأساسي.",
-            "الكلاس.",
-            "فتحة.",
-            "الأعمدة المسموحة في create و update.",
-            "الـ casts: تحويل الأعمدة لأنواع PHP.",
-            "فتحة.",
-            R`[[published_at]] يرجع Carbon.`,
-            "قفلة.",
-            R`scope اسمه [[published]].`,
-            "فتحة.",
-            "ليه تاريخ نشر وجه وقته.",
-            "قفلة.",
-            R`scope بباراميتر: [[search($term)]].`,
-            "فتحة.",
-            R`الشرط بيتطبّق لو فيه كلمة بحث بس (والقيمة parameter مش ملزوقة).`,
-            "قفلة.",
-            "قفلة الكلاس."
-          ],
-          sol: R`[[toRawSql()]] بيطلّع حاجة زي: [[select * from "posts" where "published_at" is not null and "published_at" <= '2026-09-29 ...' and "title" like '%laravel%']]. و [[toRawSql]] بيحط القيم عشان تقراها بس، الـ query الحقيقي فيه [[?]] (prepared). ولو ناديت [[search(null)]] شرط الـ like بيختفي.
-
-الـ create بيعدّي من غير أي error، بس [[user_id]] و [[views]] مش هيتكتبوا: [[user_id]] هيبقى null (أو الـ insert هيفشل بـ NOT NULL constraint لو العمود مطلوب)، و [[views]] القيمة الافتراضية. الـ keys اللي مش في [[$fillable]] بتتشال بصمت.
-
-الغلط الشائع: تفتكر إن Laravel هيرمي exception للأعمدة الزيادة. هو بيرمي [[MassAssignmentException]] بس لما يكون مفيش [[$fillable]] خالص (أو [[$guarded = ['*']]]).`
-        },
-        {
-          cmd: "make:migration",
-          title: "غيّر شكل الجدول بملف في git بدل ما تعدّل في phpMyAdmin",
-          desc: R`الـ migration ملف PHP فيه [[up()]] (التغيير) و [[down()]] (الرجوع). [[php artisan migrate]] بيشغّل كل اللي ماتشغلش، وبيسجّل أساميهم في جدول [[migrations]]. فأي حد يعمل [[git pull]] و [[migrate]] بيوصل لنفس شكل القاعدة بالظبط، على جهازه أو على السيرفر.
-
-[[php artisan make:model Post -mfs]] بيعمل الموديل ومعاه migration و factory و seeder مرة واحدة. ولأي تعديل بعد كده ملف جديد: [[make:migration add_views_to_posts_table]]. متعدّلش migration اتشغّل على السيرفر.`,
-          example: R`<?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    public function up(): void
-    {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('title');
-            $table->string('slug')->unique();
-            $table->text('body');
-            $table->timestamp('published_at')->nullable()->index();
-            $table->timestamps();
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('posts');
-    }
-};`,
-          try: R`اعمل الـ migration ده وشغّل [[migrate]]. بعدين اعمل migration تاني يضيف [[unsignedInteger('views')->default(0)]] بعد [[body]]، وشغّل [[migrate:status]] و [[migrate]] و [[migrate:rollback]] و [[migrate:status]] تاني. إيه اللي اتغيّر في كل مرة؟`,
-          flag: "script",
-          deep: {
-            why: "من غير migrations كل مطوّر قاعدته شكل، والسيرفر شكل تالت، والـ deploy بيقع لأن عمود ناقص. الـ migration بيخلي شكل القاعدة جزء من الكود: بيتراجع في PR، وبيترجع مع git.",
-            how: R`الأنواع الأشهر: [[id()]] (bigint auto increment)، [[string]] (varchar 255)، [[text]]، [[integer]] و [[unsignedInteger]]، [[decimal('price', 10, 2)]] للفلوس (مش float)، [[boolean]]، [[json]]، [[timestamp]]، [[timestamps()]] (created_at و updated_at)، [[softDeletes()]]. والـ modifiers: [[nullable()]] و [[default()]] و [[unique()]] و [[index()]] و [[after('col')]] (MySQL بس).
-
-[[foreignId('user_id')->constrained()]] بيعمل عمود وقيد foreign key على [[users.id]]. و [[cascadeOnDelete()]] يمسح البوستات لما اليوزر يتمسح، و [[nullOnDelete()]] يخلي العمود null.
-
-تعديل عمود موجود: [[$table->string('title', 500)->change();]]، ولازم تكتب كل الـ modifiers تاني وإلا بيتشالوا.
-
-الأوامر: [[migrate]]، و [[migrate:status]] (اتشغل ولا لأ وفي أنهي batch)، و [[migrate:rollback]] (آخر batch)، و [[migrate:fresh --seed]] (يمسح كل الجداول ويبني من الأول ويملى، للتطوير بس)، و [[migrate --pretend]] (يطبع الـ SQL من غير ما ينفّذ). وعلى السيرفر [[migrate --force]] لأن في production بيسألك تأكيد.
-
-والجداول الافتراضية في المشروع الجديد: users و password_reset_tokens و sessions، و cache، و jobs و failed_jobs.`,
-            when: "أي تغيير في شكل القاعدة، حتى index واحد. والـ deploy بيشغّل [[migrate --force]] كل مرة.",
-            mistakes: R`تعدّل migration قديم بعد ما اتشغّل على السيرفر: السيرفر مش هيشغّله تاني لأنه متسجّل، والقاعدتين يختلفوا. و [[migrate:fresh]] على production (بيمسح كل البيانات). و [[float]] للفلوس. وتضيف عمود NOT NULL من غير default لجدول فيه بيانات فالـ migration يقع. و [[down()]] فاضية فالـ rollback ميرجّعش. وعلى جداول كبيرة في MySQL، إضافة index ممكن تقفل الجدول: اعملها في وقت هادي.`
-          },
-          lines: [
-            "بداية الملف.",
-            "كلاس الـ migration.",
-            "الـ Blueprint اللي بيوصف الأعمدة.",
-            "الـ facade بتاع الـ schema.",
-            "كلاس من غير اسم (anonymous) عشان متحصلش مشكلة أسماء متكررة.",
-            "فتحة.",
-            "التغيير.",
-            "فتحة.",
-            R`اعمل جدول [[posts]].`,
-            "id رقم بيزيد لوحده.",
-            "صاحب البوست، foreign key، ويتمسح معاه.",
-            "العنوان.",
-            "الـ slug، unique (وده بيعمل index لوحده).",
-            "النص الطويل.",
-            "تاريخ النشر، ممكن فاضي (مسودة)، وعليه index للفرز والفلترة.",
-            R`[[created_at]] و [[updated_at]].`,
-            "قفلة.",
-            "قفلة up.",
-            "الرجوع.",
-            "فتحة.",
-            "امسح الجدول.",
-            "قفلة.",
-            "قفلة الكلاس."
-          ],
-          sol: R`بعد الـ migration التاني، [[migrate:status]] بيوري ملف الـ views [[Pending]]. [[migrate]] بيشغّله ويكتب [[DONE]]، و [[status]] يبقى [[Ran]] في batch رقم أكبر. [[migrate:rollback]] بيرجّع آخر batch بس (ملف الـ views)، و [[status]] يرجع يقول Pending، والجدول من غير العمود.
-
-لازم [[down()]] في التاني تبقى [[$table->dropColumn('views');]]، وإلا الـ rollback هيقول DONE ومش هيشيل حاجة.
-
-ملحوظة: [[after('body')]] بيشتغل في MySQL و MariaDB بس. في SQLite (الافتراضي) بيتجاهله والعمود يتحط في الآخر.`,
-          solCode: R`<?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    public function up(): void
-    {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->unsignedInteger('views')->default(0)->after('body');
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('views');
-        });
-    }
-};`
-        },
-        {
-          cmd: "factories و db:seed",
-          title: "املى القاعدة ببيانات تجربة واقعية في ثانية",
-          desc: R`الـ factory بيوصف «بوست عشوائي» شكله إيه، بـ Faker لقيم واقعية. و [[Post::factory(50)->create()]] بيعمل 50 صف. و [[->for($user)]] بيربطهم بيوزر، و [[->has(Comment::factory(3))]] يعمل لكل بوست 3 تعليقات.
-
-الـ seeder كلاس بيستخدم الـ factories عشان يبني قاعدة تجربة كاملة، و [[php artisan db:seed]] بيشغّل [[DatabaseSeeder]]. و [[migrate:fresh --seed]] يبني القاعدة من الصفر ويملاها، وده أمر هتشغّله كل يوم في التطوير.
-
-والـ factories نفسها هي اللي بتستخدمها في الـ tests.`,
-          example: R`<?php
-
-namespace Database\Factories;
-
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
-
-class PostFactory extends Factory
-{
-    public function definition(): array
-    {
-        $title = fake()->sentence(4);
-
-        return [
-            'user_id' => User::factory(),
-            'title' => $title,
-            'slug' => Str::slug($title) . '-' . Str::random(5),
-            'body' => fake()->paragraphs(3, true),
-            'published_at' => fake()->optional(0.8)->dateTimeBetween('-1 year'),
-        ];
-    }
-
-    public function draft(): static
-    {
-        return $this->state(['published_at' => null]);
-    }
-}`,
-          try: R`اكتب [[DatabaseSeeder]] يعمل يوزر ثابت ([[test@example.com]]) ليه 10 بوستات، منهم 3 draft، وكل بوست ليه 2 تعليق، وكمان 5 يوزرز عشوائيين كل واحد ليه 3 بوستات. شغّل [[migrate:fresh --seed]]، وفي tinker اعد البوستات والتعليقات، و [[Post::published()->count()]].`,
-          flag: "script",
-          deep: {
-            why: "صفحة بتتجرّب على 3 صفوف كتبتهم بإيدك مش هتوريك pagination، ولا N+1، ولا عنوان طويل بيكسر التصميم. والـ tests محتاجة بيانات تتعمل في سطر. الـ factory بيعمل الاتنين من نفس التعريف.",
-            how: R`[[User::factory()]] جوه [[definition]] معناها: لو محدش حدد يوزر، اعمل واحد جديد. لكن [[->for($user)]] أو [[->create(['user_id' => $id])]] بيلغي ده.
-
-الـ states: [[draft()]] بيغيّر حقول معينة، فتكتب [[Post::factory()->draft()->create()]]. و [[->count(3)]] زي [[factory(3)]]. و [[->make()]] بيعمل موديل من غير ما يحفظ (للـ unit tests). و [[->sequence(['published_at' => null], ['published_at' => now()])]] بيبدّل بين القيم.
-
-العلاقات: [[User::factory()->has(Post::factory(3))->create()]]، أو بالاختصار السحري [[->hasPosts(3)]]. و [[Post::factory()->for($user)]] للعكس.
-
-[[fake()]] helper بيرجّع Faker، و [[fake('ar_EG')]] لبيانات عربي. و [[unique()]]: [[fake()->unique()->safeEmail()]].
-
-والـ seeder بينادي seeders تانية بـ [[$this->call([...])]]. و [[db:seed --class=ProductSeeder]] واحد بس.`,
-            when: "مع كل موديل جديد. seeders للتطوير والـ demo، وبيانات إنتاج أساسية (أدوار، إعدادات، دول) بتبقى في seeder منفصل تشغّله على السيرفر بـ [[--class]] أو في migration.",
-            mistakes: R`[[slug]] من [[sentence]] بس فيتكرر مع 500 بوست والـ unique يقع (عشان كده الـ random في الآخر). و [[bcrypt('password')]] جوه loop بطيء، والـ UserFactory الجاهز بيعمله static مرة واحدة. وتشغّل [[db:seed]] على production فيتعمل يوزر [[test@example.com]] بباسورد معروف. و factory لموديل من غير [[HasFactory]] trait.`
-          },
-          lines: [
-            "بداية الملف.",
-            "الـ namespace بتاع الـ factories.",
-            "عشان نعمل صاحب للبوست.",
-            "الكلاس الأساسي.",
-            "helpers النصوص.",
-            R`اسمه [[PostFactory]] فـ Laravel بيربطه بـ [[Post]] لوحده.`,
-            "فتحة.",
-            "شكل الصف العشوائي.",
-            "فتحة.",
-            "عنوان من 4 كلمات تقريبًا.",
-            "الصف.",
-            "يعمل يوزر جديد لو محدش حدد.",
-            "العنوان.",
-            "slug من العنوان ومعاه 5 حروف عشوائية عشان ميتكررش.",
-            "3 فقرات كنص واحد.",
-            "80% منشور في سنة فاتت، و20% null (draft).",
-            "قفلة المصفوفة.",
-            "قفلة definition.",
-            R`state: [[Post::factory()->draft()]].`,
-            "فتحة.",
-            "يغيّر حقل واحد.",
-            "قفلة.",
-            "قفلة الكلاس."
-          ],
-          sol: R`الأرقام: البوستات 10 + 15 = 25، والتعليقات 10 × 2 = 20 (لو اليوزرز العشوائيين من غير تعليقات). و [[Post::published()->count()]] = 7 من بوستات اليوزر الثابت + حوالي 80% من الـ 15 (بتختلف كل مرة لأن [[optional(0.8)]] عشوائي).
-
-الغلط الشائع: [[Post::factory(10)->create()]] من غير [[for($user)]] فكل بوست يعمل يوزر جديد: 10 يوزرز زيادة، وتلاقي في الجدول 16 يوزر بدل 6. أو [[published_at]] في المستقبل من الـ factory فالـ scope ميعدّهوش.`,
-          solCode: R`<?php
-
-namespace Database\Seeders;
-
-use App\Models\Comment;
-use App\Models\Post;
-use App\Models\User;
-use Illuminate\Database\Seeder;
-
-class DatabaseSeeder extends Seeder
-{
-    public function run(): void
-    {
-        $me = User::factory()->create(['email' => 'test@example.com']);
-
-        Post::factory(7)->for($me)->has(Comment::factory(2))->create();
-        Post::factory(3)->draft()->for($me)->has(Comment::factory(2))->create();
-
-        User::factory(5)->has(Post::factory(3))->create();
-    }
-}`
-        },
-        {
-          cmd: "make:request",
-          title: "اتأكد من بيانات الفورم في كلاس لوحده (Form Request و validation)",
-          desc: R`أبسط validation: [[$data = $request->validate([...])]] جوه الـ controller. لو فشل، Laravel بيرجّع للفورم ومعاه الأخطاء والقيم القديمة (ولو الطلب JSON بيرجّع 422 بالأخطاء). ولو نجح، [[$data]] فيها الحقول اللي عليها rules بس.
-
-لما الـ rules تكبر أو تتكرر بين store و update: Form Request. [[php artisan make:request StorePostRequest]] بيعمل كلاس فيه [[authorize()]] (مسموحله؟) و [[rules()]]. والـ controller بياخده كـ type: [[store(StorePostRequest $request)]]، والـ validation بيحصل قبل ما يدخل الـ method أصلًا.
-
-وجوه الـ method: [[$request->validated()]] بس، مش [[all()]].`,
-          example: R`<?php
-
-namespace App\Http\Requests;
-
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
-class StorePostRequest extends FormRequest
-{
-    public function authorize(): bool
-    {
-        return $this->user() !== null;
-    }
-
-    public function rules(): array
-    {
-        return [
-            'title' => ['required', 'string', 'min:3', 'max:200'],
-            'slug' => ['required', 'alpha_dash', Rule::unique('posts')->ignore($this->route('post'))],
-            'body' => ['required', 'string'],
-            'tags' => ['array', 'max:5'],
-            'tags.*' => ['integer', 'exists:tags,id'],
-            'cover' => ['nullable', 'image', 'max:2048'],
-        ];
-    }
-}`,
-          try: R`اعمل الـ request ده، و [[store(StorePostRequest $request)]] بترجّع [[$request->validated()]]. ابعت بـ curl: [[curl -s -X POST localhost:8000/api/posts -H 'Accept: application/json' -d 'title=ab&slug=a b&tags[]=999']] (حط الـ route في [[routes/api.php]] بعد [[php artisan install:api]]، وخلّي [[authorize]] ترجّع true مؤقتًا). اقرا الرد، وبعدين ابعت بيانات صح ومعاها [[user_id=1]].`,
-          flag: "script",
-          deep: {
-            why: "أي بيانات جاية من المستخدم لازم تتفحص قبل ما تلمس القاعدة، وده مكانها الطبيعي: كلاس واحد تقراه وتعرف الـ endpoint بيقبل إيه. والـ controller يفضل صغير ومبيشوفش غير بيانات سليمة.",
-            how: R`الترتيب: [[authorize()]] الأول، ولو false الرد 403. بعدين [[rules()]]، ولو فيه خطأ [[ValidationException]]: طلب عادي بيرجع redirect للصفحة اللي قبلها و [[$errors]] في Blade و [[old('title')]] في الفورم، وطلب بيقبل JSON بياخد 422 وشكله [[{"message": "...", "errors": {"title": ["..."]}}]].
-
-rules مهمة: [[required]] و [[nullable]] و [[sometimes]] (يتفحص لو موجود بس، مفيد في PATCH)، [[email]]، [[confirmed]] (لازم [[password_confirmation]])، [[unique:users,email]]، [[exists:tags,id]]، [[in:draft,published]] أو [[Rule::enum(Status::class)]]، [[image]] و [[mimes:pdf]] و [[max:2048]] (كيلوبايت للملفات)، [[date]] و [[after:today]]. و [[tags.*]] بيطبّق على كل عنصر في المصفوفة.
-
-[[Rule::unique('posts')->ignore($this->route('post'))]] عشان في update البوست نفسه ميتحسبش تكرار.
-
-تجهيز البيانات قبل الفحص: [[prepareForValidation()]] مثلًا تعمل slug من العنوان لو فاضي. ورسايل عربي: [[messages()]] و [[attributes()]]، أو ملفات lang.
-
-[[validated()]] بيرجّع الحقول اللي ليها rules بس، فـ [[user_id]] الزيادة بتتشال حتى لو في [[$fillable]]. ودي الحماية الحقيقية من mass assignment.`,
-            when: "Form Request لأي فورم فيه أكتر من 3 حقول أو بيتعمله store و update. [[$request->validate()]] للحاجات الصغيرة. والـ authorization الحقيقي (البوست ده بتاعه؟) في policy، ومن [[authorize()]] تقدر تنادي [[$this->user()->can('update', $this->route('post'))]].",
-            mistakes: R`[[Post::create($request->all())]] بعد الـ validation: الـ validation نجح بس [[all()]] فيها حقول زيادة. و [[unique]] من غير [[ignore]] في update فالتعديل يفشل بـ «already taken». و [[max:2]] على ملف فاكرها ميجا وهي كيلو. وتنسى [[Accept: application/json]] على route في [[web.php]] فترجعلك redirect 302 بدل 422 وتفتكر الـ API بايظ (routes الـ [[api/*]] في مشروع 13 جديد بترجّع JSON لوحدها، بس مشاريع أقدم لأ). وتعتمد على validation المتصفح أو React بس: أي حد يبعت بـ curl.`
-          },
-          lines: [
-            "بداية الملف.",
-            "الـ namespace.",
-            "الكلاس الأساسي.",
-            "helpers للـ rules المعقدة.",
-            "الكلاس.",
-            "فتحة.",
-            "مين مسموحله يبعت؟",
-            "فتحة.",
-            "أي حد عامل login (الملكية في policy).",
-            "قفلة.",
-            "القواعد.",
-            "فتحة.",
-            "المصفوفة.",
-            "لازم، نص، من 3 لـ 200 حرف.",
-            "حروف وأرقام و - و _ بس، ومش متكرر (ما عدا البوست ده نفسه في التعديل).",
-            "لازم.",
-            "مصفوفة، 5 عناصر بالكتير.",
-            "كل عنصر رقم وموجود في جدول tags.",
-            "صورة اختيارية، 2 ميجا بالكتير (الرقم بالكيلوبايت).",
-            "قفلة المصفوفة.",
-            "قفلة.",
-            "قفلة الكلاس."
-          ],
-          sol: R`أول طلب بيرجّع status 422 وJSON زي: [[{"message":"The title field must be at least 3 characters. (and 3 more errors)","errors":{"title":["The title field must be at least 3 characters."],"slug":["The slug field must only contain letters, numbers, dashes, and underscores."],"body":["The body field is required."],"tags.0":["The selected tags.0 is invalid."]}}]].
-
-الطلب الصح بيرجّع 200 و [[validated()]] فيها title و slug و body بس (و tags لو بعتها). [[user_id]] مش موجود لأن مفيش عليه rule.
-
-ولو بعت من غير [[Accept]] على [[/api/...]] هتاخد برضه 422 JSON، لأن [[bootstrap/app.php]] في مشروع Laravel 13 الجديد فيه [[shouldRenderJsonWhen]] لأي [[api/*]]. نفس الطلب على route في [[web.php]] بيرجّع 302 redirect للصفحة اللي قبلها.
-
-الغلط الشائع: تسيب [[authorize()]] زي ما [[make:request]] عملها: بترجّع false، فكل طلب ياخد 403 «This action is unauthorized.» ومش فاهم ليه.`,
-          solCode: R`// routes/api.php
-Route::post('/posts', [PostController::class, 'store']);
-
-// PostController
-public function store(StorePostRequest $request)
-{
-    return $request->validated();
-}`
-        },
-        {
-          cmd: "Blade components",
-          title: "اعمل layout واحد وقطع HTML بتتكرر (Blade layouts و components)",
-          desc: R`Blade هو محرك الـ views. [[{{ $post->title }}]] بيطبع مع escape (زي [[e()]] في الدروس اللي فاتت)، و [[@if]] و [[@foreach]] و [[@auth]] بدل [[<?php ?>]].
-
-الـ component: ملف في [[resources/views/components/]]، وبيتنادى زي tag HTML. [[components/layout.blade.php]] بيبقى [[<x-layout>]]، والمحتوى اللي جواه بيوصل كـ [[$slot]]. و [[@props]] بيعرّف الباراميترات، و [[$attributes]] فيه أي attribute زيادة (class مثلًا).
-
-ده الأسلوب الحديث للـ layouts. الأسلوب القديم [[@extends('layouts.app')]] و [[@section('content')]] و [[@yield]] لسه شغال وهتلاقيه في مشاريع كتير.`,
-          example: R`{{-- resources/views/components/layout.blade.php --}}
-@props(['title' => config('app.name')])
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="utf-8">
-    <title>{{ $title }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
-    @auth <p>أهلًا {{ auth()->user()->name }}</p> @endauth
-    <main>{{ $slot }}</main>
-</body>
-</html>
-
-{{-- resources/views/components/alert.blade.php --}}
-@props(['type' => 'info'])
-<div {{ $attributes->merge(['class' => "alert alert-$type"]) }}>{{ $slot }}</div>
-
-{{-- resources/views/posts/index.blade.php --}}
-<x-layout title="المقالات">
-    <x-alert type="success" class="mb-4">اتحفظ</x-alert>
-    @forelse ($posts as $post)
-        <a href="{{ route('posts.show', $post) }}">{{ $post->title }}</a>
-    @empty
-        <p>مفيش مقالات</p>
-    @endforelse
-    {{ $posts->links() }}
-</x-layout>`,
-          try: R`اعمل الـ 3 ملفات، و route بيرجّع [[view('posts.index', ['posts' => Post::latest()->paginate(10)])]]. افتح الصفحة واعمل view source. بعدين اعمل بوست عنوانه [[<script>alert(1)</script>]] وشوف بيظهر إزاي. وجرّب تبعت [[:type="$someVar"]] بدل [[type="success"]].`,
-          deep: {
-            why: "كل صفحة في الموقع ليها نفس الـ head والـ nav والـ footer. من غير layout هتنسخهم، وأول تعديل هتنسى صفحة. والـ components بتخلي الزرار والـ alert والكارت شكلهم واحد في كل حتة، زي React components بس على السيرفر.",
-            how: R`[[{{ }}]] بيعدّي على [[htmlspecialchars]]، و [[{!! !!}]] من غير escape: بس لـ HTML انت اللي عامله أو متنضّف. و [[@{{ }}]] بيطبع الأقواس زي ما هي (لـ Vue).
-
-الباراميترات: [[title="نص"]] بيوصل نص، و [[:title="$post->title"]] (بـ [[:]]) بيوصل تعبير PHP. وأي attribute مش في [[@props]] بيروح لـ [[$attributes]]، و [[merge]] بيدمج الـ class بدل ما يستبدله.
-
-الـ named slots: [[<x-slot:header>...</x-slot>]] وجوه الـ component [[{{ $header }}]]. و [[<x-forms.input>]] = ملف [[components/forms/input.blade.php]].
-
-class components: [[php artisan make:component Alert]] بيعمل كلاس PHP (منطق) ومعاه view. والـ anonymous (ملف Blade بس) كفاية في أغلب الحالات.
-
-directives مفيدة: [[@csrf]] و [[@method('PUT')]] في الفورم، و [[@error('title') {{ $message }} @enderror]]، و [[@can('update', $post)]]، و [[@include('partials.nav')]]، و [[@vite]] للـ CSS و JS. و [[$posts->links()]] بيطبع أزرار الصفحات (Tailwind افتراضيًا).
-
-الـ views بتتترجم لـ PHP عادي وتتحفظ في [[storage/framework/views]]، و [[view:cache]] بيترجمهم كلهم مرة واحدة وقت الـ deploy.`,
-            when: "أي تطبيق Laravel بيرجّع HTML من السيرفر (مع Livewire كمان). لو الواجهة React أو Vue عن طريق Inertia، Blade بيبقى ملف واحد بس فيه الـ root.",
-            mistakes: R`[[{!! $post->body !!}]] لمحتوى من المستخدم: XSS. لو محتاج HTML من محرر، نضّفه الأول بـ HTML Purifier أو ما شابه. و [[type="$var"]] من غير [[:]] فيوصل النص [[$var]] حرفيًا. و query جوه الـ view ([[Post::all()]] في Blade): صعب تلاقيه وأغلب الوقت N+1. و [[{{ $attributes }}]] منسي فالـ class اللي بتبعتها مبتظهرش.`
-          },
-          lines: [
-            R`تعليق Blade (مبيطلعش في الـ HTML): اسم الملف الأول.`,
-            "الـ props وقيمتها الافتراضية.",
-            "بداية الصفحة.",
-            "عربي ومن اليمين.",
-            "الـ head.",
-            "الترميز.",
-            "العنوان مع escape.",
-            "الـ CSS و JS من Vite.",
-            "قفلة.",
-            "الـ body.",
-            "بيظهر للي عامل login بس.",
-            "المحتوى اللي جوه الـ tag.",
-            "قفلة.",
-            "قفلة.",
-            "الملف التاني: component الـ alert.",
-            "props الـ alert.",
-            "الـ attributes الزيادة بتندمج مع الـ class.",
-            "الملف التالت: صفحة بتستخدمهم.",
-            "الصفحة كلها جوه الـ layout.",
-            "component بـ type و class زيادة.",
-            "loop، وليه فرع لو مفيش ولا عنصر.",
-            "لينك بالاسم، والـ binding بيحط الـ id.",
-            "لو فاضية.",
-            "رسالة.",
-            "قفلة.",
-            "أزرار الصفحات.",
-            "قفلة الـ layout."
-          ],
-          sol: R`الـ view source بيوري HTML كامل: [[<html lang="ar" dir="rtl">]] و [[<title>المقالات</title>]] و [[<div class="alert alert-success mb-4">اتحفظ</div>]]؛ الـ [[mb-4]] اتدمجت مع الـ class الأصلي بسبب [[merge]]. وتحت، لينكات كاملة زي [[http://localhost:8000/posts/58]] (الـ [[route()]] بيطلّع URL كامل من [[APP_URL]] والطلب)، و [[nav]] الـ pagination لو فيه أكتر من 10.
-
-البوست اللي عنوانه script بيظهر كنص [[<script>alert(1)</script>]] ومبيتنفّذش، وفي الـ source هتلاقيه [[&lt;script&gt;alert(1)&lt;/script&gt;]].
-
-[[type="$someVar"]] من غير [[:]] بيطلّع [[class="alert alert-$someVar"]] حرفيًا. مع [[:type="$someVar"]] بتوصل القيمة.
-
-ملحوظة: [[@vite]] محتاج [[npm run dev]] أو [[npm run build]]، وإلا الصفحة ترمي «Vite manifest not found».`
-        },
-        {
-          cmd: "starter kit و Gate و Policy",
-          title: "مين يعمل login، ومين يقدر يعدّل البوست ده؟ (auth و policies)",
-          desc: R`authentication (مين انت): متكتبهاش بنفسك. [[laravel new]] بيعرض starter kits رسمية: React أو Vue أو Svelte (عن طريق Inertia) أو Livewire. كلهم فيهم login و register و reset password و email verification و 2FA، والـ backend بتاعهم Laravel Fortify. وفيه نسخ منهم بـ WorkOS AuthKit (social login و passkeys). و Breeze القديم لسه بيشتغل بس مبقاش الاختيار الرسمي للمشاريع الجديدة من Laravel 12.
-
-authorization (مسموحلك؟): ده شغلك انت. Gate قاعدة عامة ([[Gate::define('view-admin', fn (User $u) => $u->is_admin)]]). و Policy كلاس لكل موديل فيه method لكل فعل: [[update(User $user, Post $post)]] ترجّع [[$user->id === $post->user_id]].
-
-وتتحقق بـ [[Gate::authorize('update', $post)]] في الـ controller (بيرمي 403)، أو [[@can('update', $post)]] في Blade، أو [[->can('update', 'post')]] على الـ route.`,
-          example: R`<?php
-
-namespace App\Policies;
-
-use App\Models\Post;
-use App\Models\User;
-
-class PostPolicy
-{
-    public function before(User $user, string $ability): ?bool
-    {
-        return $user->is_admin ? true : null;
-    }
-
-    public function update(User $user, Post $post): bool
-    {
-        return $user->id === $post->user_id;
-    }
-
-    public function delete(User $user, Post $post): bool
-    {
-        return $this->update($user, $post) && $post->comments()->doesntExist();
-    }
-}`,
-          try: R`[[php artisan make:policy PostPolicy --model=Post]] واكتب الـ policy دي. في [[update]] بتاعة الـ controller اكتب [[Gate::authorize('update', $post);]]. اعمل يوزرين في tinker وبوست لأول واحد، وجرّب [[$u2->can('update', $post)]] و [[$u1->can('update', $post)]]. وفي test أو بـ [[actingAs]] ابعت PUT كيوزر تاني وشوف الـ status.`,
-          flag: "script",
-          deep: {
-            why: "أشهر ثغرة في APIs هي IDOR: [[PUT /posts/7]] بيعدّي لأي حد عامل login، مش بس صاحب البوست. الـ policy بتحط قرار «مين يقدر» في مكان واحد لكل موديل، بدل if متفرقة في controllers تتنسى في واحد منهم.",
-            how: R`Laravel بيلاقي الـ policy لوحده بالاسم: [[App\Models\Post]] ← [[App\Policies\PostPolicy]]. غير كده تستخدم [[Gate::policy()]] أو attribute [[#[UsePolicy(PostPolicy::class)]]] على الموديل.
-
-[[before()]] بيتنفّذ قبل أي method: لو رجّع true أو false القرار خلص، ولو null يكمّل للـ method. مناسب للأدمن.
-
-methods من غير موديل: [[create(User $user)]] وتتنادى [[Gate::authorize('create', Post::class)]].
-
-لو اليوزر مش عامل login، الـ policy مبتتنداش أصلًا وبترجّع false، إلا لو الـ type بتاع اليوزر nullable ([[?User $user]]).
-
-في Form Request: [[authorize()]] ترجّع [[$this->user()->can('update', $this->route('post'))]]. وفي Blade: [[@can('delete', $post) <button>امسح</button> @endcan]]، بس ده إخفاء للزرار، والحماية الحقيقية في الـ controller.
-
-والأدوار الأكبر (admin و editor و viewer بصلاحيات في القاعدة) غالبًا بمكتبة spatie/laravel-permission.`,
-            when: "starter kit في أي مشروع فيه صفحات login. policy لكل موديل المستخدم بيملكه. Gate لقرارات مش مربوطة بموديل (لوحة الأدمن، ميزة مدفوعة).",
-            mistakes: R`تحمي الـ route بـ [[auth]] بس وتفتكر كده خلاص: ده بيقول مين انت مش مسموحلك ولا لأ. وتخفي الزرار بـ [[@can]] ومتتحققش في الـ controller. وتكتب [[$user->id == $post->user_id]] وواحد منهم نص والتاني رقم في قاعدة قديمة (استخدم [[===]] مع casts صح، أو [[$user->is($post->user)]]). وتسطّب starter kit على مشروع فيه كود قديم: الـ starter kits بتتسطب مع المشروع الجديد بس. وفي الانترفيو: «authentication vs authorization» و«إيه هو IDOR وإزاي تمنعه في Laravel».`
-          },
-          lines: [
-            "بداية الملف.",
-            "الـ namespace.",
-            "الموديل اللي بنحميه.",
-            "اليوزر اللي بيطلب.",
-            "الكلاس (من غير أي parent).",
-            "فتحة.",
-            "بيتنفّذ قبل أي فعل.",
-            "فتحة.",
-            "الأدمن مسموحله كل حاجة، وغيره null يعني كمّل للـ method.",
-            "قفلة.",
-            R`[[update]]: مين يعدّل البوست ده؟`,
-            "فتحة.",
-            "صاحبه بس.",
-            "قفلة.",
-            "الحذف.",
-            "فتحة.",
-            "صاحبه، وبشرط مفيش تعليقات.",
-            "قفلة.",
-            "قفلة الكلاس."
-          ],
-          sol: R`[[$u1->can('update', $post)]] بيرجّع true (صاحبه)، و [[$u2->can('update', $post)]] false. ولو [[is_admin]] مش عمود عندك، [[$user->is_admin]] هيبقى null فـ before بيرجّع null ويكمّل عادي.
-
-الـ PUT كيوزر تاني بيرجّع 403 «This action is unauthorized.» (أو JSON فيه نفس الرسالة لو الطلب JSON). ومن غير login خالص: 401 لـ JSON، أو redirect لـ login في الويب لو الـ route عليه [[auth]].
-
-وخلي بالك إن الـ Form Request بيتفحص قبل ما الـ controller يبدأ، فلو البيانات نفسها غلط (عنوان حرفين) هتاخد خطأ validation قبل ما توصل للـ policy؛ ابعت بيانات صح في الـ test عشان تختبر الـ 403 فعلًا.
-
-الغلط الشائع: تكتب [[Gate::authorize('update')]] من غير [[$post]] فتاخد 403 دايمًا، لأن Laravel بيدوّر على Gate اسمه update مش على الـ policy.`,
-          solCode: R`public function update(UpdatePostRequest $request, Post $post)
-{
-    Gate::authorize('update', $post);
-
-    $post->update($request->validated());
-
-    return redirect()->route('posts.show', $post);
-}
-
-// tests/Feature/PostPolicyTest.php (Pest)
-it('forbids editing someone else post', function () {
-    $post = Post::factory()->create();
-
-    $this->actingAs(User::factory()->create())
-        ->put(route('posts.update', $post), ['title' => 'xyz', 'slug' => 'x', 'body' => 'y'])
-        ->assertForbidden();
-});`
-        },
-        {
-          cmd: "Sanctum",
-          title: "اعمل API عليها login لتطبيق موبايل أو SPA (Laravel Sanctum)",
-          desc: R`[[php artisan install:api]] بيعمل [[routes/api.php]] (كل الـ routes فيه بتبدأ بـ [[/api]] ومن غير session و CSRF)، ويسطّب Sanctum، ويعمل جدول [[personal_access_tokens]].
-
-Sanctum بيدّيك طريقتين: tokens لتطبيقات الموبايل و clients برّه الموقع ([[$user->createToken('iphone')->plainTextToken]] والتطبيق يبعته في [[Authorization: Bearer ...]])، أو cookies و session لـ SPA على نفس الدومين (React أو Vue على [[app.example.com]] والـ API على [[api.example.com]]).
-
-والحماية: [[->middleware('auth:sanctum')]] على الـ routes، و [[$request->user()]] جوه بيرجّع صاحب الـ token.`,
-          example: R`<?php
-// routes/api.php
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Validation\ValidationException;
-
-Route::post('/tokens', function (Request $request) {
-    $data = $request->validate(['email' => 'required|email', 'password' => 'required', 'device' => 'required|string|max:100']);
-    $user = User::where('email', $data['email'])->first();
-    if (! $user || ! Hash::check($data['password'], $user->password)) {
-        throw ValidationException::withMessages(['email' => 'بيانات الدخول غلط']);
-    }
-    return ['token' => $user->createToken($data['device'], ['posts:write'])->plainTextToken];
-})->middleware('throttle:5,1');
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/me', fn (Request $request) => $request->user());
-    Route::delete('/tokens/current', fn (Request $request) => $request->user()->currentAccessToken()->delete());
-});`,
-          try: R`شغّل [[install:api]] وضيف [[HasApiTokens]] لموديل User. اعمل الـ routes دي، وخد token بـ [[curl -s localhost:8000/api/tokens -H 'Accept: application/json' -d 'email=test@example.com&password=password&device=cli']]. نادي [[/api/me]] من غيره ومعاه. بعدين امسحه بـ DELETE ونادي [[/me]] تاني. وافتح جدول [[personal_access_tokens]]: الـ token متخزن إزاي؟`,
-          flag: "script",
-          deep: {
-            why: "أي تطبيق موبايل (Flutter مثلًا) أو frontend منفصل محتاج API عليه login. Sanctum هو الحل الرسمي البسيط، وبيغطي أغلب الحالات من غير تعقيد OAuth و Passport.",
-            how: R`الـ token شكله [[5|AbC...]]: رقم الصف و [[|]] وسر عشوائي 40 حرف ووراه 8 حروف checksum. القاعدة بتخزن SHA-256 للسر بس، فلو القاعدة اتسرّبت الـ tokens متتستخدمش. عشان كده [[plainTextToken]] بيظهر مرة واحدة وقت الإنشاء.
-
-abilities: [[createToken('x', ['posts:write'])]] و [[$request->user()->tokenCan('posts:write')]]. والـ tokens مبتنتهيش افتراضيًا؛ [[expiration]] في [[config/sanctum.php]] بالدقايق.
-
-الـ SPA mode: [[$middleware->statefulApi()]] في [[bootstrap/app.php]]، والدومينات في [[SANCTUM_STATEFUL_DOMAINS]]، والـ SPA بتنادي [[/sanctum/csrf-cookie]] الأول، وبعدين [[/login]] عادي، والـ cookie بتتبعت مع كل طلب ([[withCredentials]]). مفيش token في localStorage يتسرق بـ XSS.
-
-[[throttle:5,1]] = 5 طلبات في الدقيقة لكل IP على الـ login، ضد التخمين. و [[Hash::check]] بيقارن بـ timing-safe.
-
-المقارنة: JWT (مكتبات برّه) token مش بيتخزن في القاعدة وبيتفحص بالتوقيع، فمينفعش تلغيه قبل ما ينتهي إلا بـ blacklist. Sanctum token بيتلغي بمسح الصف فورًا. و Passport لو محتاج تبقى OAuth2 server (تطبيقات برّه بتطلب إذن على حسابات يوزرزك).`,
-            when: "API لموبايل أو CLI أو شركاء ← tokens. SPA على نفس الدومين الأب ← cookie mode. «Login with my app» لأطراف تالتة ← Passport.",
-            mistakes: R`تحفظ الـ token في localStorage في SPA على نفس الدومين بدل cookie mode. وتنسى [[Accept: application/json]] فالـ auth الفاشل يحاول يعمل redirect لـ login بدل 401 (ولو مفيش route اسمه login: 500). وتسيب tokens من غير expiration ولا طريقة للمستخدم يلغيها. وترجّع اليوزر كله في [[/me]] من غير [[#[Hidden]]] أو Resource فيطلع أعمدة مش المفروض تطلع. وتلغي الـ throttle على route الـ login.`
-          },
-          lines: [
-            "بداية الملف.",
-            "الموديل.",
-            "الطلب.",
-            "مقارنة الباسورد.",
-            "الـ routes.",
-            "عشان نرجّع خطأ validation (422) لو الباسورد غلط.",
-            R`[[POST /api/tokens]]: login بيرجّع token.`,
-            "الإيميل والباسورد واسم الجهاز.",
-            "دوّر على اليوزر.",
-            "مش موجود أو الباسورد غلط.",
-            "نفس الرسالة في الحالتين (متقولش أنهي فيهم الغلط).",
-            "قفلة.",
-            "token بصلاحية واحدة، والنص بيظهر مرة واحدة بس.",
-            "5 محاولات في الدقيقة.",
-            "كل اللي جوه محتاج token.",
-            "اليوزر صاحب الـ token.",
-            "logout: امسح الـ token ده بس.",
+            "دالة بترجّع الاتصال.",
+            "متغير بيعيش بين النداءات في نفس الطلب.",
+            "أول مرة بس.",
+            "الإعدادات من ملف بره الموقع.",
+            "نوع القاعدة والـ host والاسم والـ charset.",
+            "افتح الاتصال.",
+            "أي غلطة = exception.",
+            "الصفوف arrays بأسماء الأعمدة.",
+            "prepared statements حقيقية على السيرفر.",
+            "قفلة الـ options.",
+            "قفلة الـ if.",
+            "رجّع نفس الاتصال.",
             "قفلة."
           ],
-          sol: R`أول curl بيرجّع [[{"token":"1|mSou...48 حرف"}]]. [[/api/me]] من غير header بيرجّع 401 و [[{"message":"Unauthenticated."}]]. مع [[-H 'Authorization: Bearer 1|x8Kd...']] بيرجّع اليوزر JSON من غير password و remember_token (بسبب Hidden في الموديل).
+          sol: R`[[db()->query('SELECT VERSION()')->fetchColumn()]] بيطبع نسخة القاعدة، زي [[8.4.x]] على MySQL أو [[10.11.14-MariaDB-...]] على MariaDB.
 
-بعد الـ DELETE (بيرجّع [[1]] أو 200)، نفس الـ token بيرجّع 401 تاني. وفي الجدول، عمود [[token]] فيه 64 حرف hex (SHA-256) مش النص اللي معاك، و [[abilities]] فيه [[["posts:write"]]].
+بباسورد غلط: [[Fatal error: Uncaught PDOException: SQLSTATE[HY000] [1045] Access denied for user 'myapp_user'@'localhost' (using password: YES)]] ومعاها المسار ورقم السطر. الرسالة فيها اسم المستخدم والـ host ومسارات ملفاتك، ودي معلومات لأي حد بيحاول يخترق. عشان كده في الإنتاج [[display_errors=0]] والـ exception يتسجل في اللوج والزائر يشوف رسالة عامة.
 
-الغلط الشائع: تجرّب باسورد غلط كذا مرة ورا بعض، فبعد 5 طلبات في نفس الدقيقة (والـ login الناجح بيتحسب منهم) الرد يبقى 429 «Too Many Attempts.»، ودي الـ throttle شغالة مش bug. ولو نسيت [[Accept: application/json]] في [[/api/me]] من غير token، في مشروع من غير starter kit هتاخد 500 «Route [login] not defined.» بدل 401: الـ middleware بيحاول يحوّلك لصفحة login. ولو نسيت [[HasApiTokens]] هتاخد «Call to undefined method createToken()».`
+الباسورد نفسه مش في الـ stack trace لأن PHP من 8.2 بيعلّم الـ parameter ده بـ [[#[\SensitiveParameter]]]. لو شايف [[could not find driver]] يبقى [[pdo_mysql]] مش متسطّب ([[php -m | grep pdo]])، ولو [[Connection refused]] يبقى القاعدة مش شغالة أو الـ port غلط.`,
+          solCode: R`<?php
+require __DIR__ . '/src/db.php';
+echo db()->query('SELECT VERSION()')->fetchColumn(), "\n";`
         },
         {
-          cmd: "API Resources و paginate",
-          title: "تحكّم في شكل الـ JSON اللي الـ API بترجّعه، وقسّمه صفحات",
-          desc: R`لو رجّعت الموديل على طول، الـ JSON بيبقى شكل الجدول بالظبط: أي عمود جديد يطلع للعالم، وأي تغيير في اسم عمود يكسر التطبيق. الـ API Resource كلاس بيحدد شكل الرد: [[php artisan make:resource PostResource]]، وفيه [[toArray()]] بترجّع الحقول اللي عايزها.
+          cmd: "prepare / execute",
+          title: "ابعت قيم المستخدم للقاعدة من غير SQL injection",
+          desc: R`القاعدة الذهبية: قيمة المستخدم عمرها ما تتلزق في نص الـ SQL. تكتب الـ SQL بـ placeholders زي [[:email]]، وتبعت القيم لوحدها في [[execute()]]. القاعدة بتستلم الأمر والقيم منفصلين، فأي [[' OR 1=1 --]] بيفضل نص عادي بيتدوّر عليه.
 
-[[PostResource::collection(Post::paginate(15))]] بيرجّع [[data]] و [[links]] و [[meta]] (الصفحة الحالية والإجمالي) من غير ما تكتب حاجة. و [[whenLoaded('user')]] بيحط العلاقة بس لو اتحمّلت بـ [[with()]]، فالـ resource مبيعملش N+1.`,
-          example: R`<?php
-
-namespace App\Http\Resources;
-
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class PostResource extends JsonResource
-{
-    public function toArray(Request $request): array
-    {
-        return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'slug' => $this->slug,
-            'excerpt' => str($this->body)->limit(120),
-            'published_at' => $this->published_at?->toIso8601String(),
-            'author' => new UserResource($this->whenLoaded('user')),
-            'comments_count' => $this->whenCounted('comments'),
-            'can_edit' => $request->user()?->can('update', $this->resource) ?? false,
-        ];
-    }
-}`,
-          try: R`اعمل [[PostResource]] و [[UserResource]] (id و name بس)، و route في api.php: [[Route::get('/posts', fn () => PostResource::collection(Post::with('user')->withCount('comments')->published()->latest()->paginate(5)));]]. افتح [[/api/posts]] و [[/api/posts?page=2]]، وبعدين شيل [[with('user')]] وشوف [[author]]. وجرّب [[simplePaginate]] و [[cursorPaginate]] بدل [[paginate]] وقارن [[meta]].`,
+وبعد [[INSERT]]، [[lastInsertId()]] بيرجّع الـ id الجديد، و [[rowCount()]] بعد [[UPDATE]] أو [[DELETE]] بيقولك كام صف اتغير.`,
+          example: R`$stmt = db()->prepare('SELECT id, name, password_hash FROM users WHERE email = :email');
+$stmt->execute(['email' => $email]);
+$user = $stmt->fetch();
+$stmt = db()->prepare('INSERT INTO posts (user_id, title) VALUES (:uid, :title)');
+$stmt->execute(['uid' => $user['id'], 'title' => $title]);
+$postId = (int) db()->lastInsertId();
+$stmt = db()->prepare('UPDATE posts SET title = :title WHERE id = :id AND user_id = :uid');
+$stmt->execute(['uid' => $user['id'], 'title' => $newTitle, 'id' => $postId]);
+echo $stmt->rowCount() === 1 ? 'اتعدّل' : 'مش بتاعك أو مش موجود';
+$stmt = db()->prepare('SELECT * FROM posts ORDER BY id DESC LIMIT :n');
+$stmt->bindValue(':n', 10, PDO::PARAM_INT);
+$stmt->execute();`,
+          try: R`اكتب النسخة الغلط عمدًا: [["SELECT * FROM users WHERE email = '$email'"]] وجرّب [[$email = "x' OR '1'='1"]]: هترجع كل المستخدمين. بعدين نفس القيمة مع [[prepare]]: صفر نتايج.`,
           flag: "script",
           deep: {
-            why: "الـ API عقد مع الـ frontend وتطبيق الموبايل: لازم يفضل ثابت حتى لو القاعدة اتغيرت. والـ Resource بيفصل الاتنين، وبيمنع تسريب أعمدة زي [[password]] أو [[internal_notes]] بالغلط.",
-            how: R`[[$this->title]] جوه الـ resource بيقرا من الموديل ([[$this->resource]]). والـ helpers: [[whenLoaded('rel')]]، و [[whenCounted('rel')]]، و [[when($cond, $value)]] (الحقل بيختفي لو الشرط false، مش null)، و [[mergeWhen]].
+            why: "SQL injection من أقدم وأخطر الثغرات: حد يكتب SQL مكان الإيميل، فيدخل من غير باسورد، أو يقرا الجداول كلها، أو يمسحها. والسبب دايمًا واحد: قيمة من برّه اتلزقت في نص الـ query.",
+            how: R`مع [[EMULATE_PREPARES = false]]: [[prepare]] بيبعت الـ SQL بالـ placeholders للسيرفر، فيفهمه ويجهّز خطته. [[execute]] بيبعت القيم بعدين كبيانات بس. مفيش أي طريقة القيمة تتفهم كأوامر، لأن الأوامر اتفهمت خلاص قبل ما القيمة توصل.
 
-الـ pagination: [[paginate(15)]] بيعمل query للعدد الكلي كمان ([[COUNT(*)]]) عشان [[meta.total]] و [[last_page]]. [[simplePaginate]] من غير العدد (أسرع، بس «التالي» و«السابق» بس). [[cursorPaginate]] بيستخدم [[WHERE id < آخر_id]] بدل OFFSET، فبيفضل سريع في الصفحة 10000 ومبيكررش صفوف لو فيه بيانات بتتضاف، بس مفيش «روح لصفحة 7». وده الأنسب للـ infinite scroll.
+[[execute(['email' => $email])]]: الـ key بالنقطتين أو من غيرها، الاتنين شغالين. وفيه placeholders بالترتيب [[?]] كمان: [[execute([$email])]].
 
-[[?page=2]] بيتقرا لوحده، و [[->withQueryString()]] بيحافظ على باقي الـ query (فلتر، بحث) في لينكات الصفحات.
+الـ placeholders للقيم بس. مينفعش لاسم جدول أو عمود أو [[ASC]] و [[DESC]]. لو الترتيب جاي من المستخدم، اعمل allowlist: [[$col = match ($_GET['sort'] ?? '') { 'price' => 'price', 'name' => 'name', default => 'id' };]] وبعدين حطه في الـ SQL. ولـ [[IN]] بعدد متغير: [[implode(',', array_fill(0, count($ids), '?'))]] وابعت [[$ids]] في execute.
 
-الرد بيتلف في [[data]] افتراضيًا. و [[->additional(['meta' => ...])]] لحقول زيادة، و [[->response()->setStatusCode(201)]] للـ store. وفي Laravel 13 فيه كمان JSON:API resources لو محتاج المواصفة دي بالظبط.`,
-            when: "أي endpoint بيرجّع موديل. [[paginate]] للوحات الأدمن (محتاج أرقام صفحات)، و [[cursorPaginate]] للـ feeds والموبايل.",
-            mistakes: R`[[return Post::all()]] في API: كل الأعمدة وكل الصفوف. و [[new UserResource($this->user)]] من غير [[whenLoaded]] فكل بوست يعمل query (N+1 مستخبي في الـ resource). و [[paginate(request('per_page'))]] من غير حد أقصى فحد يطلب مليون. و [[paginate]] على جدول فيه ملايين الصفوف والـ COUNT بيبقى أبطأ من الـ query نفسها.`
+[[LIMIT :n]]: [[execute]] بيبعت كل القيم كنصوص، ومع الـ emulation بتبقى [[LIMIT '10']] و MySQL يرفض. [[bindValue]] بـ [[PDO::PARAM_INT]] بيحلها في الحالتين.
+
+مع emulation مقفولة مينفعش نفس الاسم مرتين ([[:q OR :q]])، استخدم [[:q1]] و [[:q2]]. و [[lastInsertId]] بيرجّع نص، فـ [[(int)]]. و [[rowCount]] في MySQL بيعد الصفوف اللي اتغيرت فعلًا: UPDATE بنفس القيم القديمة بيرجّع 0.
+
+وخلي بالك: [[AND user_id = :uid]] في الـ UPDATE هي اللي بتمنع مستخدم يعدّل بوست حد تاني بتغيير الـ id في الرابط (IDOR).`,
+            when: "أي query فيه أي متغير، حتى لو القيمة من الجلسة أو من القاعدة نفسها. [[query()]] من غير prepare بس للـ SQL الثابت.",
+            mistakes: R`في مشروع حقيقي الـ login كان بيبني الـ query بـ [[mysqli_real_escape_string]] ولزق نصوص. الـ escaping بيحمي جوه علامات التنصيص بس: [[WHERE id = $id]] من غير تنصيص مفيهاش حماية خالص. ونفس المشروع كان بيحط كود الأدمن من الجلسة جوه الـ SQL على أساس «ده من الجلسة يبقى آمن»: عادة وحشة، ولو القيمة دي اتخزنت يومًا من مصدر غلط تبقى second-order injection. وتفتكر إن [[prepare]] بتحمي اسم العمود.`
           },
+          teach: R`## الأول: الفكرة في سطرين
+
+بدل ما تلزق قيمة المستخدم جوه نص الـ SQL، بتكتب مكانها علامة (placeholder) زي [[:email]]، وتبعت القيمة لوحدها بعدين. المثال بيعمل ٤ عمليات بالطريقة دي: SELECT و INSERT و UPDATE و SELECT بـ LIMIT.
+
+كل اللي تحت اتشغّل على PHP 8.4.26 و MySQL 8.4.11 بالـ [[db()]] بتاعة الدرس اللي فات، على جدول [[users]] فيه ٣ مستخدمين (Ali و سارة و Omar) وجدول [[posts]] فاضي. والقيم: [[$email = 'ali@example.com']] و [[$title = 'أول بوست']] و [[$newTitle = 'عنوان جديد']].
+
+---
+
+## ١. SELECT بـ placeholder
+
+~~~php
+$stmt = db()->prepare('SELECT id, name, password_hash FROM users WHERE email = :email');
+~~~
+
+- [[prepare]] بتبعت الـ SQL للسيرفر **من غير** قيم، والسيرفر بيفهمه ويجهّزه، ويرجّعلك object من نوع [[PDOStatement]] (اختصار statement = أمر جاهز للتنفيذ) بنحطه في [[$stmt]].
+- [[:email]] اسم placeholder: نقطتين وبعدها اسم انت بتختاره. القاعدة شايفاه «خانة فاضية»، مش نص.
+- علامات التنصيص المفردة حوالين الـ SQL في PHP معناها نص حرفي: مفيش متغيرات بتتبدّل جواه.
+
+~~~php
+$stmt->execute(['email' => $email]);
+$user = $stmt->fetch();
+~~~
+
+- [[execute]] بتبعت القيم: array مفتاحها اسم الـ placeholder (بالنقطتين أو من غيرها، اتجربوا الاتنين واشتغلوا).
+- [[fetch()]] بتجيب أول صف، أو [[false]] لو مفيش.
+
+~~~text الناتج (print_r($user))
+Array
+(
+    [id] => 1
+    [name] => Ali
+    [password_hash] => x
+)
+~~~
+
+## ٢. INSERT و [[lastInsertId()]]
+
+~~~php
+$stmt = db()->prepare('INSERT INTO posts (user_id, title) VALUES (:uid, :title)');
+$stmt->execute(['uid' => $user['id'], 'title' => $title]);
+$postId = (int) db()->lastInsertId();
+~~~
+
+نفس الطريقة بـ placeholderين. و [[$user['id']]] يعني «قيمة المفتاح [[id]] في الـ array». و [[lastInsertId()]] هو [[LAST_INSERT_ID()]] بتاع MySQL من الدرس الأول. بيرجّع إيه بالظبط؟
+
+~~~text الناتج (var_dump(db()->lastInsertId()))
+string(1) "1"
+~~~
+
+نص مش رقم. عشان كده [[(int)]] قبله: ده **cast**، يعني حوّل القيمة لـ int.
+
+## ٣. UPDATE مقفول على صاحب البوست
+
+~~~php
+$stmt = db()->prepare('UPDATE posts SET title = :title WHERE id = :id AND user_id = :uid');
+$stmt->execute(['uid' => $user['id'], 'title' => $newTitle, 'id' => $postId]);
+echo $stmt->rowCount() === 1 ? 'اتعدّل' : 'مش بتاعك أو مش موجود';
+~~~
+
+- الترتيب في الـ array مش مهم مع الأسماء: كل قيمة بتروح للـ placeholder اللي بنفس اسمها.
+- [[AND user_id = :uid]]: البوست يتعدّل بس لو صاحبه هو المستخدم الحالي. من غيرها أي حد يغيّر الـ id في الرابط يعدّل بوستات غيره (IDOR = Insecure Direct Object Reference).
+- [[rowCount()]] عدد الصفوف اللي اتغيرت. و [[? :]] (ternary) معناها «لو الشرط صح خد الأولى، وإلا التانية».
+
+جرّبت نفس الـ statement ٣ مرات:
+
+| التنفيذ | [[rowCount()]] | ليه |
+|---|---|---|
+| أول مرة بعنوان جديد | 1 | اتغيّر صف |
+| نفس القيم تاني | 0 | MySQL بيعد الصفوف اللي **اتغيرت فعلًا**، والعنوان هو هو |
+| [[uid]] = 2 (مستخدم تاني) | 0 | الشرط مش متحقق، فمحدش اتعدّل |
+
+يعني الـ 0 معناها «مفيش تغيير»، مش بالضرورة «مش موجود». وده سبب إن الرسالة في المثال عامة.
+
+> لاحظ إن [[execute]] اتنادت أكتر من مرة على نفس [[$stmt]]: تجهّز مرة وتنفّذ بقيم مختلفة كتير.
+
+## ٤. LIMIT بـ [[bindValue]]
+
+~~~php
+$stmt = db()->prepare('SELECT * FROM posts ORDER BY id DESC LIMIT :n');
+$stmt->bindValue(':n', 10, PDO::PARAM_INT);
+$stmt->execute();
+~~~
+
+[[bindValue]] بتربط قيمة بـ placeholder قبل التنفيذ، والـ parameter التالت النوع: [[PDO::PARAM_INT]] يعني ابعتها رقم. وبعدها [[execute()]] من غير array لأن القيمة اتربطت خلاص.
+
+ليه مش [[execute(['n' => 10])]] وخلاص؟ [[execute]] بتبعت كل القيم على إنها نصوص. جرّبت الاتنين:
+
+| الطريقة | [[EMULATE_PREPARES = false]] (إعدادنا) | [[EMULATE_PREPARES = true]] |
+|---|---|---|
+| [[execute(['n' => 10])]] | اشتغل | [[SQLSTATE[42000]: Syntax error ... near ''10'']] |
+| [[bindValue(..., PDO::PARAM_INT)]] | اشتغل | اشتغل |
+
+مع الـ emulation، PHP بيكتب القيمة في الـ SQL كنص [['10']]، و MySQL مبيقبلش [[LIMIT '10']]. فـ [[bindValue]] بـ int شغالة في الحالتين.
+
+~~~text الناتج (print_r($stmt->fetchAll()))
+Array
+(
+    [0] => Array
+        (
+            [id] => 1
+            [user_id] => 1
+            [title] => عنوان جديد
+        )
+
+)
+~~~
+
+## ٥. حاجات اتجربت عن الـ placeholders
+
+| الحالة | النتيجة |
+|---|---|
+| [[?]] بالترتيب: [[WHERE email = ?]] و [[execute(['sara@example.com'])]] | اشتغل، رجّع id 2 |
+| نفس الاسم مرتين [[name = :q OR email = :q]] (emulation مقفولة) | [[SQLSTATE[HY093]: Invalid parameter number]] |
+| نفس الحالة مع emulation | اشتغل |
+
+فمع إعدادنا: كل placeholder باسم مختلف ([[:q1]] و [[:q2]]).
+
+---
+
+## ٦. الـ solCode: injection بعينك
+
+~~~php
+$email = "x' OR '1'='1";
+$rows = db()->query("SELECT id, email FROM users WHERE email = '$email'")->fetchAll();
+~~~
+
+هنا علامات تنصيص مزدوجة، فـ [[$email]] بتتبدّل جوه النص. الـ SQL اللي وصل للقاعدة فعلًا:
+
+~~~text الـ SQL بعد الدمج
+SELECT id, email FROM users WHERE email = 'x' OR '1'='1'
+~~~
+
+الـ [[']] اللي في القيمة قفلت النص بدري، والباقي بقى SQL: [[email = 'x']] (غلط) **أو** [['1'='1']] (صح دايمًا)، فالشرط صح لكل صف.
+
+~~~php
+$stmt = db()->prepare('SELECT id, email FROM users WHERE email = :email');
+$stmt->execute(['email' => $email]);
+~~~
+
+هنا القاعدة استلمت الـ SQL الأول وفهمت إن فيه خانة واحدة، وبعدين جات القيمة كبيانات بس، فدوّرت على إيميل حرفيًا [[x' OR '1'='1]].
+
+~~~text الناتج
+بالدمج: 3
+بـ prepare: 0
+~~~
+
+3 = كل المستخدمين في الجدول، و 0 = مفيش حد بالإيميل الغريب ده.
+
+---
+
+## الخلاصة
+
+| الخطوة | الدالة | بترجّع |
+|---|---|---|
+| جهّز الـ SQL بخانات | [[prepare]] | [[PDOStatement]] |
+| ابعت القيم ونفّذ | [[execute([...])]] | true |
+| قيمة بنوع صريح | [[bindValue(':n', 10, PDO::PARAM_INT)]] | |
+| صف | [[fetch()]] | array أو false |
+| id جديد | [[lastInsertId()]] | **نص** |
+| كام صف اتغيّر | [[rowCount()]] | int |
+
+والقاعدة: أي قيمة جاية من برّه = placeholder. والـ placeholders للقيم بس، مش لأسماء الجداول والأعمدة.`,
           lines: [
-            "بداية الملف.",
-            "الـ namespace.",
-            "الطلب (عشان نعرف مين بيطلب).",
-            "الكلاس الأساسي.",
-            "الكلاس.",
-            "فتحة.",
-            "شكل كل عنصر.",
-            "فتحة.",
-            "المصفوفة.",
-            "الـ id.",
-            "العنوان.",
-            "الـ slug.",
-            "أول 120 حرف من النص.",
-            "التاريخ بصيغة ISO، أو null لو draft.",
-            "الكاتب بشكل UserResource، بس لو اتحمّل بـ with.",
-            "العدد بس لو اتعمل withCount.",
-            "هل اليوزر الحالي يقدر يعدّل (للـ frontend يعرض الزرار).",
-            "قفلة المصفوفة.",
-            "قفلة.",
-            "قفلة الكلاس."
+            "جهّز الـ query بـ placeholder اسمه email.",
+            "ابعت القيمة لوحدها.",
+            "صف واحد أو false.",
+            "INSERT بنفس الطريقة.",
+            "القيمتين منفصلين عن الـ SQL.",
+            "الـ id الجديد (بيرجع نص فبنحوّله).",
+            "UPDATE بشرط إن البوست بتاع المستخدم ده.",
+            "القيم.",
+            "كام صف اتغير.",
+            "LIMIT بـ placeholder.",
+            "اربطه كرقم صريح.",
+            "نفّذ من غير array لأن القيمة اتربطت."
           ],
-          sol: R`[[/api/posts]] بيرجّع [[{"data":[{"id":..,"title":"..","slug":"..","excerpt":"..","published_at":"2026-...T..:..:..+00:00","author":{"id":1,"name":".."},"comments_count":2,"can_edit":false}, ...5 عناصر],"links":{"first":"...?page=1","last":"...?page=N","prev":null,"next":"...?page=2"},"meta":{"current_page":1,"from":1,"last_page":N,"per_page":5,"to":5,"total":..,"links":[...],"path":"..."}}]].
+          sol: R`النسخة الغلط: [[SELECT id, email FROM users WHERE email = 'x' OR '1'='1']] بترجّع كل المستخدمين (3 من 3 في تجربتي). الـ [[']] اللي في الإيميل قفلت النص، والباقي بقى SQL: [['1'='1']] دايمًا true.
 
-من غير [[with('user')]] المفتاح [[author]] بيختفي خالص من كل عنصر (مش null). [[simplePaginate]]: [[meta]] من غير [[total]] و [[last_page]]. [[cursorPaginate]]: [[meta]] فيها [[next_cursor]] و [[prev_cursor]]، واللينك [[?cursor=eyJ...]] بدل [[?page=2]].
+نفس القيمة مع [[prepare]]: صفر نتايج. القاعدة دوّرت على إيميل حرفيًا [[x' OR '1'='1]]، ومفيش حد بالإيميل ده. الـ SQL اتبعت الأول لوحده والقيمة جات بعده كبيانات، فمستحيل تغيّر شكل الـ query.
 
-الغلط الشائع: تتوقع [[author: null]] وتكتب الـ frontend عليه، والمفتاح مش موجود أصلًا.`,
+لو النسخة الغلط رجّعت صفر برضه، غالبًا انت كاتب [["...email = '" . $email . "'"]] بس الـ [[$email]] نفسه اتعمله escape في مكان تاني، أو الجدول فاضي. جرّب على جدول فيه صفوف.`,
           solCode: R`<?php
-
-namespace App\Http\Resources;
-
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class UserResource extends JsonResource
-{
-    public function toArray(Request $request): array
-    {
-        return ['id' => $this->id, 'name' => $this->name];
-    }
-}`
+require __DIR__ . '/src/db.php';
+$email = "x' OR '1'='1";
+$rows = db()->query("SELECT id, email FROM users WHERE email = '$email'")->fetchAll();
+echo 'بالدمج: ', count($rows), "\n";      // كل المستخدمين
+$stmt = db()->prepare('SELECT id, email FROM users WHERE email = :email');
+$stmt->execute(['email' => $email]);
+echo 'بـ prepare: ', count($stmt->fetchAll()), "\n";  // 0`
         },
         {
-          cmd: "queue:work",
-          title: "ابعت الإيميل في الخلفية بدل ما المستخدم يستنى (queues و jobs)",
-          desc: R`بعض الشغل بطيء أو ممكن يفشل: إيميل، أو resize صور، أو نداء API برّه. لو عملته جوه الطلب، المستخدم بيستنى، ولو الـ SMTP وقع الطلب كله يقع. الحل queue: الطلب بيحط job في طابور ويرد على طول، وعملية تانية ([[php artisan queue:work]]) بتسحب الـ jobs وتنفّذها.
+          cmd: "fetch / fetchAll",
+          title: "هات النتايج بالشكل اللي محتاجه",
+          desc: R`[[fetch()]] صف واحد (أو false لو مفيش)، و [[fetchAll()]] كل الصفوف في array، و [[fetchColumn()]] أول عمود من أول صف (مثالي لـ COUNT). وتقدر تلف على الـ statement نفسه بـ [[foreach]].
 
-[[php artisan make:job ProcessCover]]، و [[ProcessCover::dispatch($post)]] بيحطه في الطابور. والمشروع الجديد بيستخدم driver [[database]] (جدول jobs موجود من الأول)، وفي الإنتاج غالبًا Redis.
-
-والإيميل نفسه: [[Mail::to($user)->queue(new PostPublished($post))]] بدل [[send]]، أو الـ Mailable يعمل [[implements ShouldQueue]].`,
-          example: R`<?php
-
-namespace App\Jobs;
-
-use App\Models\Post;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Storage;
-
-class ProcessCover implements ShouldQueue
-{
-    use Queueable;
-
-    public int $tries = 3;
-    public array $backoff = [10, 60];
-
-    public function __construct(public Post $post) {}
-
-    public function handle(): void
-    {
-        $path = $this->post->cover_path;
-        $image = imagecreatefromstring(Storage::disk('public')->get($path));
-        $thumb = imagescale($image, 400);
-        ob_start();
-        imagewebp($thumb, null, 80);
-        Storage::disk('public')->put("thumbs/{$this->post->id}.webp", ob_get_clean());
-    }
-}`,
-          try: R`اعمل job بسيط بيكتب في اللوج [[Log::info('job ran', ['post' => $this->post->id])]] وبيعمل [[sleep(2)]]. اعمله dispatch من route، وافتح الـ route: الرد جه بسرعة؟ بعدين شغّل [[php artisan queue:work --once]] وبص في [[storage/logs/laravel.log]]. وخلّي الـ job يرمي exception وشغّل الـ worker لحد ما يستسلم، وبعدين [[php artisan queue:failed]].`,
-          flag: "script",
-          deep: {
-            why: "زمن الرد بيفرق مع المستخدم، والـ worker بيعيد المحاولة لوحده لو خدمة برّه وقعت دقيقة. وده نفس الـ pattern في كل backend (BullMQ في Node، و Celery في Python)، فلو فهمته هنا فهمته في كل حتة.",
-            how: R`الـ job بيتحوّل لنص (serialize) ويتخزن. والموديل بيتخزن كـ id بس ([[SerializesModels]] جوه [[Queueable]])، فالـ worker بيجيبه من القاعدة تاني وقت التنفيذ بأحدث نسخة. ولو اتمسح في النص: [[ModelNotFoundException]]، أو [[public bool $deleteWhenMissingModels = true;]].
-
-[[$tries]] عدد المحاولات، و [[$backoff]] الانتظار بين كل محاولة بالثواني، و [[failed(Throwable $e)]] بيتنادى بعد آخر محاولة. والفاشل بيروح جدول [[failed_jobs]]: [[queue:failed]] تشوفه، و [[queue:retry all]] تعيده.
-
-[[queue:work]] عملية شغالة على طول ومحمّلة الكود في الذاكرة، فبعد أي deploy لازم [[php artisan queue:restart]] وإلا هتفضل تشغّل الكود القديم. وفي الإنتاج بيشتغل تحت systemd أو Supervisor (درس النشر)، مش في tmux.
-
-[[queue:work --queue=high,default]] أولويات. و Laravel Horizon لوحة و worker manager لو الـ driver Redis.
-
-و [[dispatch()->afterCommit()]] (أو [[after_commit]] في الإعدادات): متحطش الـ job غير لما الـ transaction تخلص، وإلا الـ worker ممكن يبدأ قبل ما الصف يتكتب.`,
-            when: "أي حاجة بتاخد أكتر من ثانية أو بتنادي خدمة برّه: إيميلات، إشعارات، webhooks خارجة، صور، تقارير، استيراد CSV. وحاجة لازم تحصل قبل الرد (خصم الرصيد مثلًا) متحطهاش في queue.",
-            mistakes: R`[[QUEUE_CONNECTION=sync]] في الإنتاج (الـ job بيتنفّذ جوه الطلب، فكأن مفيش queue). ونسيان [[queue:restart]] بعد الـ deploy. و job مش idempotent: اتنفّذ مرتين بعد retry فالعميل خد إيميلين أو اتخصم مرتين. وتبعت object كبير (ملف كامل) للـ job بدل path أو id. وفي الانترفيو: «إيه اللي يحصل لو الـ worker مات في نص job؟» الـ job بيرجع الطابور بعد [[retry_after]] ويتنفّذ تاني، عشان كده idempotency.`
-          },
-          lines: [
-            "بداية الملف.",
-            "الـ namespace.",
-            "الموديل.",
-            "الـ interface اللي بيقول «ده يروح الطابور».",
-            "الـ trait اللي فيه dispatch و delay والـ serialize.",
-            "التخزين.",
-            "الكلاس.",
-            "فتحة.",
-            "الـ trait.",
-            "3 محاولات بالكتير.",
-            "استنى 10 ثواني بعد أول فشل، و60 بعد التاني.",
-            "البوست بيتخزن كـ id ويتجاب تاني وقت التنفيذ.",
-            "الشغل نفسه.",
-            "فتحة.",
-            "مسار الصورة الأصلية.",
-            "افتحها.",
-            "صغّرها لعرض 400.",
-            "اكتب الناتج في الذاكرة...",
-            "...بصيغة WebP وجودة 80.",
-            "واحفظه على الـ disk العام.",
-            "قفلة.",
-            "قفلة الكلاس."
-          ],
-          sol: R`الـ route بيرد فورًا (من غير الـ 2 ثانية) لأن الـ job اتحط في جدول [[jobs]] بس. [[queue:work --once]] بيطبع سطر زي [[App\Jobs\... ....... RUNNING]] وبعده [[DONE]] بعد حوالي 2 ثانية، واللوج فيه [[local.INFO: job ran {"post":1}]].
-
-مع exception و [[$tries = 3]]: هتشوف [[FAIL]] 3 مرات (مع [[$backoff]] الـ worker بيستنى بينهم)، وبعدين [[queue:failed]] بيوري سطر فيه وقت الفشل والـ UUID و [[database@default]] واسم الـ job، والـ exception كاملة في عمود [[exception]] في جدول [[failed_jobs]].
-
-الغلط الشائع: [[QUEUE_CONNECTION=sync]] في [[.env]] فالـ route نفسه ياخد ثانيتين والـ worker ميلاقيش حاجة. أو تشغّل [[queue:work]] قبل ما تعدّل الكود ومتعملش restart فتفضل تشوف السلوك القديم.`,
-          solCode: R`<?php
-
-namespace App\Jobs;
-
-use App\Models\Post;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Log;
-
-class LogPost implements ShouldQueue
-{
-    use Queueable;
-
-    public int $tries = 3;
-
-    public function __construct(public Post $post) {}
-
-    public function handle(): void
-    {
-        sleep(2);
-        Log::info('job ran', ['post' => $this->post->id]);
-    }
+والـ fetch modes بتوفّر loops: [[FETCH_KEY_PAIR]] يعمل map من عمودين، و [[FETCH_COLUMN]] لستة عمود واحد، و [[FETCH_GROUP]] يجمّع حسب أول عمود.`,
+          example: R`$stmt = db()->prepare('SELECT id, name, city FROM users WHERE city = :city');
+$stmt->execute(['city' => 'Cairo']);
+foreach ($stmt as $row) {
+    echo $row['name'], "\n";
 }
-
-// routes/web.php
-Route::get('/dispatch', function () {
-    LogPost::dispatch(Post::first());
-    return 'queued';
-});`
-        },
-        {
-          cmd: "Schedule و Mail و Storage",
-          title: "شغّل مهام كل يوم، وابعت إيميل، وخزّن ملفات بنفس الكود محلي أو S3",
-          desc: R`الـ scheduler: بدل سطر cron لكل مهمة، سطر cron واحد على السيرفر بيشغّل [[php artisan schedule:run]] كل دقيقة، والمهام نفسها مكتوبة في [[routes/console.php]] وبتتراجع في git: [[Schedule::command('posts:publish-due')->everyMinute()]]. و [[php artisan schedule:list]] يوريك كل مهمة وإمتى هتشتغل.
-
-الإيميل: Mailable كلاس بموضوع و view. [[php artisan make:mail PostPublished --markdown=mail.post-published]]، و [[Mail::to($user)->queue(...)]]. وفي التطوير [[MAIL_MAILER=log]] (الافتراضي) فالإيميلات بتتكتب في اللوج بدل ما تتبعت.
-
-التخزين: [[Storage::disk('public')->put()]] أو [[$request->file('cover')->store('covers', 'public')]]. نفس الكود يشتغل على فولدر محلي أو S3 أو R2، بتغيير الـ disk في الإعدادات بس.`,
-          example: R`<?php
-// routes/console.php
-use App\Mail\WeeklyDigest;
-use App\Models\Post;
-use App\Models\User;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Schedule;
-
-Schedule::call(function () {
-    Post::whereNull('published_at')->where('publish_at', '<=', now())->update(['published_at' => now()]);
-})->everyMinute()->name('publish-due')->withoutOverlapping();
-
-Schedule::command('queue:prune-failed --hours=168')->daily();
-Schedule::command('model:prune')->dailyAt('03:10');
-
-Schedule::call(function () {
-    User::where('wants_digest', true)->each(fn (User $u) => Mail::to($u)->queue(new WeeklyDigest($u)));
-})->weeklyOn(5, '09:00')->timezone('Africa/Cairo')->onOneServer();`,
-          try: R`اكتب مهمة [[Schedule::call(fn () => Log::info('tick'))->everyMinute();]] وشغّل [[php artisan schedule:list]] وبعدين [[php artisan schedule:work]] دقيقتين وبص في اللوج. وبعدين: فورم رفع صورة يخزّنها بـ [[store('covers', 'public')]]، وشغّل [[php artisan storage:link]]، واعرضها بـ [[Storage::url($path)]].`,
+$user   = db()->query('SELECT * FROM users ORDER BY id LIMIT 1')->fetch();
+$all    = db()->query('SELECT id, name FROM users')->fetchAll();
+$total  = db()->query('SELECT COUNT(*) FROM users')->fetchColumn();
+$names  = db()->query('SELECT id, name FROM users')->fetchAll(PDO::FETCH_KEY_PAIR);
+$emails = db()->query('SELECT email FROM users')->fetchAll(PDO::FETCH_COLUMN);
+$byCity = db()->query('SELECT city, name FROM users')->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_COLUMN);`,
+          try: R`اعمل [[print_r]] لكل متغير واتفرّج على الشكل. بعدين جرّب [[fetch()]] على [[WHERE id = 999]] واعمل [[var_dump]]: هتلاقي [[bool(false)]] مش null.`,
           flag: "script",
           deep: {
-            why: "أي تطبيق فيه شغل دوري (تقارير، تنضيف، تذكيرات) وإيميلات وملفات مرفوعة. الـ scheduler بيخلي المهام في الكود بدل crontab على سيرفر محدش فاكره، والـ Storage بيخليك تنقل الملفات لـ S3 يوم ما السيرفر الواحد يبقى مش كفاية من غير ما تعدّل الكود.",
-            how: R`الـ cron الوحيد على السيرفر: [[* * * * * cd /var/www/shop/current && php artisan schedule:run >> /dev/null 2>&1]] (بيوزر الموقع، زي درس crontab في «تاب VPS»). وفي التطوير [[schedule:work]] بيعمل نفس الحاجة كل دقيقة.
+            why: "كل صفحة بتعرض بيانات محتاجة شكل معين: صف واحد لصفحة التفاصيل، ولستة للجدول، ورقم للعداد، و map للـ dropdown. اختيار الـ mode الصح بيوفّر loops تحويل.",
+            how: R`[[fetch]] بيرجّع false لما الصفوف تخلص أو مفيش نتيجة. فالشرط [[if (!$user)]] أو [[$stmt->fetch() ?: null]]، مش [[=== null]].
 
-[[withoutOverlapping()]]: لو المرة اللي فاتت لسه شغالة متبدأش تانية (بيحتاج cache driver). [[onOneServer()]]: لو عندك أكتر من سيرفر، واحد بس ينفّذ. و [[timezone('Africa/Cairo')]] للمهمة لوحدها، والـ app نفسه خليه UTC.
+[[FETCH_KEY_PAIR]]: query بعمودين بالظبط، الأول key والتاني value: [[[1 => 'Ali', 2 => 'Sara']]]. [[FETCH_COLUMN]]: عمود واحد في لستة. [[FETCH_GROUP | FETCH_COLUMN]]: كل مدينة key وتحتها لستة الأسماء اللي فيها. و [[FETCH_UNIQUE]] بيخلي أول عمود (الـ id) هو الـ key للصف كله.
 
-الإيميل: [[config/mail.php]] و [[MAIL_*]] في [[.env]] (SMTP، أو Postmark و Resend و SES). و Markdown mailables بيطلّعوا إيميل HTML متظبط لوحدهم. و [[Mail::fake()]] في الـ tests.
+[[fetchObject(User::class)]] أو [[FETCH_CLASS]] بيملى object من كلاسك بدل array. خلي بالك إن الـ properties بتتملي قبل الـ constructor افتراضيًا.
 
-الـ disks: [[local]] (في [[storage/app/private]]، مش على الويب)، و [[public]] (في [[storage/app/public]] ويظهر على الويب عن طريق symlink [[public/storage]] اللي بيعمله [[storage:link]])، و [[s3]]. والخاص بيتعرض بـ [[Storage::temporaryUrl($path, now()->addMinutes(5))]] (S3، أو local مع serve) أو route بيتحقق من الصلاحية ويرجّع [[Storage::download()]].`,
-            when: "scheduler لأي حاجة دورية. queue لأي إيميل. [[public]] disk للصور العامة، و [[local]] أو S3 private للفواتير والمستندات.",
-            mistakes: R`تنسى سطر الـ cron على السيرفر فولا مهمة بتشتغل ومحدش واخد باله. وتحط ملفات المستخدمين الخاصة في [[public]] disk فتبقى على رابط يتخمن. و [[store()]] باسم الملف الأصلي من المستخدم (استخدم الاسم العشوائي اللي بيعمله [[store]]). وتنسى [[storage:link]] على السيرفر فكل الصور 404. و [[Mail::send]] جوه الطلب مع SMTP بطيء.`
+الذاكرة: MySQL في PDO بيجيب النتيجة كلها لـ PHP أول ما تعمل execute (buffered)، فـ [[foreach]] و [[fetchAll]] قريبين في الذاكرة. لجدول ضخم (تصدير مليون صف) فيه وضع unbuffered، بس الأول اسأل نفسك محتاج كل ده ليه: غالبًا [[LIMIT]] و pagination.
+
+و [[query()]] من غير prepare مسموح بس لما الـ SQL ثابت ومفيهوش ولا متغير، زي كل سطور المثال ما عدا الأول.`,
+            when: "[[fetch]] لصفحة تفاصيل، و [[fetchAll]] لجدول صغير أو JSON، و [[fetchColumn]] للعد والوجود، و [[KEY_PAIR]] للـ select options.",
+            mistakes: R`[[SELECT *]] على جدول فيه عمود نص كبير أو [[password_hash]] وتبعته كله JSON للـ frontend. والـ N+1: query للبوستات وبعدين query لكل بوست يجيب صاحبه، ١٠١ query بدل واحد بـ JOIN. و [[if ($user === null)]] بعد [[fetch]].`
           },
+          teach: R`## الأول: نفس النتيجة بأشكال مختلفة
+
+بعد ما الـ query يتنفّذ، PDO يقدر يسلّمك النتيجة بأكتر من شكل: صف صف، أو كله مرة واحدة، أو رقم واحد، أو map جاهزة. المثال بيجرّب كل شكل. الناتج تحت حقيقي من PHP 8.4.26 و MySQL 8.4.11، على جدول [[users]] فيه:
+
+~~~text الجدول
+id  email             name   city
+1   ali@example.com   Ali    Cairo
+2   sara@example.com  سارة   Alex
+3   omar@example.com  Omar   Cairo
+~~~
+
+---
+
+## ١. اللف على الـ statement بـ [[foreach]]
+
+~~~php
+$stmt = db()->prepare('SELECT id, name, city FROM users WHERE city = :city');
+$stmt->execute(['city' => 'Cairo']);
+foreach ($stmt as $row) {
+    echo $row['name'], "\n";
+}
+~~~
+
+- الـ query فيه قيمة ([[Cairo]])، فـ [[prepare]] و [[execute]] زي الدرس اللي فات.
+- [[foreach ($stmt as $row)]]: الـ [[PDOStatement]] نفسه ينفع تلف عليه. كل لفة بتجيب الصف اللي بعده في [[$row]]، وكل صف associative array (بسبب [[FETCH_ASSOC]] في [[db()]]).
+- [[$row['name']]] قيمة عمود [[name]] في الصف ده.
+
+~~~text الناتج
+Ali
+Omar
+~~~
+
+---
+
+## ٢. باقي السطور: [[query()]] لأن الـ SQL ثابت
+
+باقي المثال مفيهوش ولا قيمة من برّه، فـ [[query()]] مباشرة من غير prepare. و [[query()]] بترجّع statement، فبنكمّل عليه بـ [[->]] على طول (method chaining).
+
+### [[fetch()]]: صف واحد
+
+~~~php
+$user   = db()->query('SELECT * FROM users ORDER BY id LIMIT 1')->fetch();
+~~~
+
+[[SELECT *]] = كل الأعمدة، و [[ORDER BY id LIMIT 1]] = أول واحد بالـ id.
+
+~~~text الناتج (print_r($user))
+Array
+(
+    [id] => 1
+    [email] => ali@example.com
+    [name] => Ali
+    [city] => Cairo
+    [password_hash] => x
+)
+~~~
+
+ولو مفيش صف؟ جرّبت [[WHERE id = 999]]:
+
+~~~text الناتج (var_dump)
+bool(false)
+~~~
+
+[[false]] مش [[null]]. فالفحص [[if (!$user)]]، مش [[=== null]].
+
+### [[fetchAll()]]: كل الصفوف
+
+~~~php
+$all    = db()->query('SELECT id, name FROM users')->fetchAll();
+~~~
+
+~~~text الناتج (print_r($all))
+Array
+(
+    [0] => Array
+        (
+            [id] => 1
+            [name] => Ali
+        )
+
+    [1] => Array
+        (
+            [id] => 2
+            [name] => سارة
+        )
+
+    [2] => Array
+        (
+            [id] => 3
+            [name] => Omar
+        )
+
+)
+~~~
+
+لستة (مفاتيحها 0 و 1 و 2)، وكل عنصر صف.
+
+### [[fetchColumn()]]: قيمة واحدة
+
+~~~php
+$total  = db()->query('SELECT COUNT(*) FROM users')->fetchColumn();
+~~~
+
+[[COUNT(*)]] بيعد الصفوف، و [[fetchColumn()]] بتجيب أول عمود من أول صف:
+
+~~~text الناتج (var_dump($total))
+int(3)
+~~~
+
+[[int]] مش نص، لأن الـ prepares الحقيقية بترجّع الأنواع زي ما هي من القاعدة.
+
+---
+
+## ٣. الـ fetch modes
+
+الـ mode بيتبعت لـ [[fetchAll()]] كـ ثابت من [[PDO]].
+
+### [[PDO::FETCH_KEY_PAIR]]: map من عمودين
+
+~~~php
+$names  = db()->query('SELECT id, name FROM users')->fetchAll(PDO::FETCH_KEY_PAIR);
+~~~
+
+العمود الأول بقى المفتاح، والتاني القيمة. لازم الـ SELECT فيه عمودين بالظبط:
+
+~~~text الناتج
+Array
+(
+    [1] => Ali
+    [2] => سارة
+    [3] => Omar
+)
+~~~
+
+ده الشكل اللي محتاجه لـ [[<select>]] في فورم: [[foreach ($names as $id => $name)]].
+
+### [[PDO::FETCH_COLUMN]]: لستة عمود واحد
+
+~~~php
+$emails = db()->query('SELECT email FROM users')->fetchAll(PDO::FETCH_COLUMN);
+~~~
+
+~~~text الناتج
+Array
+(
+    [0] => ali@example.com
+    [1] => omar@example.com
+    [2] => sara@example.com
+)
+~~~
+
+لاحظ الترتيب: أبجدي مش بالـ id. MySQL قرا الإيميلات من الـ index بتاع [[UNIQUE]] لأنه أسرع. من غير [[ORDER BY]] القاعدة مش مضطرة لأي ترتيب، فلو الترتيب مهم اكتبه.
+
+### [[FETCH_GROUP | FETCH_COLUMN]]: تجميع
+
+~~~php
+$byCity = db()->query('SELECT city, name FROM users')->fetchAll(PDO::FETCH_GROUP | PDO::FETCH_COLUMN);
+~~~
+
+[[|]] هنا **bitwise OR**: كل mode رقم، و [[|]] بيجمع الاتنين في رقم واحد فيه الاتنين. طبعت الأرقام:
+
+~~~text الناتج
+FETCH_GROUP   = 65536
+FETCH_COLUMN  = 7
+مع بعض        = 65543
+~~~
+
+[[FETCH_GROUP]] يعني «اجمع حسب أول عمود»، و [[FETCH_COLUMN]] يعني «وتحت كل مجموعة حط العمود التاني بس»:
+
+~~~text الناتج
+Array
+(
+    [Cairo] => Array
+        (
+            [0] => Ali
+            [1] => Omar
+        )
+
+    [Alex] => Array
+        (
+            [0] => سارة
+        )
+
+)
+~~~
+
+---
+
+## الخلاصة
+
+| محتاج | استخدم | بيرجّع |
+|---|---|---|
+| صف واحد (صفحة تفاصيل) | [[fetch()]] | array أو [[false]] |
+| كل الصفوف (جدول، JSON) | [[fetchAll()]] | لستة arrays |
+| رقم (COUNT، وجود) | [[fetchColumn()]] | قيمة أو [[false]] |
+| id → اسم (select) | [[fetchAll(PDO::FETCH_KEY_PAIR)]] | map |
+| لستة عمود واحد | [[fetchAll(PDO::FETCH_COLUMN)]] | لستة |
+| مجموعات | [[FETCH_GROUP]] + [[FETCH_COLUMN]] | map فيه لستات |
+| صفوف كتير من غير ما تحفظهم كلهم في متغير | [[foreach ($stmt as $row)]] | صف كل لفة |`,
           lines: [
-            "بداية الملف.",
-            "الإيميل.",
-            "البوست.",
-            "اليوزر.",
-            "الإيميلات.",
-            "الـ scheduler.",
-            "مهمة كود (closure).",
-            "انشر البوستات اللي ميعادها جه، بـ query واحدة.",
-            "كل دقيقة، باسم، ومتتداخلش مع نفسها.",
-            "امسح الـ jobs الفاشلة اللي عدّى عليها أسبوع.",
-            "امسح الموديلات القديمة (اللي عليها Prunable).",
-            "مهمة أسبوعية.",
-            "لكل يوزر مشترك إيميل في الطابور، على دفعات.",
-            "الجمعة 9 الصبح بتوقيت القاهرة، وعلى سيرفر واحد."
+            "query فيه قيمة من برّه، فـ prepare.",
+            "نفّذ.",
+            "لف على الصفوف واحد واحد.",
+            "كل صف associative array.",
+            "قفلة.",
+            "صف واحد (أو false).",
+            "كل الصفوف.",
+            "رقم واحد: عدد المستخدمين.",
+            "map: id لـ الاسم.",
+            "لستة إيميلات.",
+            "الأسماء متجمّعة حسب المدينة."
           ],
-          sol: R`[[schedule:list]] بيطلّع سطر زي [[* * * * *  Closure at: routes/console.php:10 .... Next Due: 30 seconds from now]]. و [[schedule:work]] بيطبع كل دقيقة [[Running [Callback] ... DONE]]، واللوج فيه سطرين [[local.INFO: tick]].
+          sol: R`الأشكال: [[$user]] صف واحد [[[id] => 1, [email] => ..., [name] => Ali ...]] (بمفاتيح أسماء الأعمدة بس بسبب [[FETCH_ASSOC]]). [[$all]] لستة صفوف [[[0] => [id => 1, name => Ali], [1] => ...]]. [[$total]] رقم واحد [[int(3)]]. [[$names]] قاموس [[[1] => Ali, [4] => سارة, ...]] (الـ id مفتاح). [[$emails]] لستة نصوص. و [[$byCity]] [[[Cairo] => [Ali, Omar], [Alex] => [سارة]]].
 
-الرفع: [[store]] بيرجّع حاجة زي [[covers/8fK2...jpg]] (اسم عشوائي 40 حرف والامتداد من نوع الملف الحقيقي). [[storage:link]] بيكتب [[The [public/storage] link has been connected to [storage/app/public].]]، و [[Storage::url($path)]] بيرجّع [[/storage/covers/8fK2...jpg]] والصورة تفتح.
+[[fetch()]] على [[WHERE id = 999]] بيرجّع [[bool(false)]] مش null. عشان كده [[if ($user === null)]] مش هتشتغل أبدًا؛ اكتب [[if (!$user)]] أو [[$stmt->fetch() ?: null]].
 
-الغلط الشائع: الصورة 404 لأن [[storage:link]] متعملش، أو [[APP_URL]] غلط فالرابط الكامل بيشاور على [[localhost]].`
+لو [[$total]] طلع [[string(1) "3"]] بدل int، ده PHP قديم (قبل 8.1) أو driver غير mysqlnd. ولو الصفوف فيها مفاتيح أرقام ونصوص مع بعض ([[[0] => 1, [id] => 1]]) يبقى نسيت [[ATTR_DEFAULT_FETCH_MODE]].`
         },
         {
-          cmd: "Pest",
-          title: "اكتب test بيبعت طلب حقيقي ويتأكد من الرد والقاعدة (Pest feature tests)",
-          desc: R`Pest هو framework الـ tests اللي Laravel بيعرضه في [[laravel new]]، ومبني فوق PHPUnit بشكل أقصر: [[it('...', function () { ... })]] و [[expect($x)->toBe(3)]]. والـ feature test بيبعت طلب HTTP جوه التطبيق (من غير سيرفر) ويتأكد من الـ status والـ JSON والقاعدة.
+          cmd: "beginTransaction",
+          title: "كذا عملية على القاعدة: يتموا كلهم يا ولا واحدة",
+          desc: R`الـ transaction بتخلي مجموعة queries وحدة واحدة: [[beginTransaction()]]، وبعدين الـ queries، وبعدين [[commit()]]. لو أي حاجة فشلت في النص، [[rollBack()]] بيرجّع كل اللي اتعمل كأنه محصلش.
 
-[[RefreshDatabase]] بيعمل migrate مرة ويلف كل test في transaction بيترجع، فكل test بيبدأ على قاعدة نضيفة. و [[phpunit.xml]] في المشروع الجديد بيستخدم SQLite في الذاكرة للـ tests.
-
-[[php artisan test]] يشغّلهم، و [[--filter]] لواحد، و [[--parallel]] على كذا process.`,
-          example: R`<?php
-
-use App\Models\Post;
-use App\Models\User;
-use Illuminate\Support\Facades\Mail;
-
-it('lists only published posts', function () {
-    Post::factory()->count(2)->create(['published_at' => now()->subDay()]);
-    Post::factory()->draft()->create();
-
-    $this->getJson('/api/posts')
-        ->assertOk()
-        ->assertJsonCount(2, 'data')
-        ->assertJsonPath('meta.total', 2);
-});
-
-it('validates the title', function () {
-    $this->actingAs(User::factory()->create())
-        ->postJson('/api/posts', ['title' => 'ab'])
-        ->assertUnprocessable()
-        ->assertJsonValidationErrors(['title', 'slug', 'body']);
-});
-
-it('stores a post for the current user', function () {
-    Mail::fake();
-    $user = User::factory()->create();
-
-    $this->actingAs($user)
-        ->postJson('/api/posts', ['title' => 'Hello Laravel', 'slug' => 'hello', 'body' => 'x'])
-        ->assertCreated();
-
-    expect($user->posts()->count())->toBe(1);
-    $this->assertDatabaseHas('posts', ['slug' => 'hello', 'user_id' => $user->id]);
-});`,
-          try: R`لو المشروع عامل بـ PHPUnit: [[composer remove phpunit/phpunit]] و [[composer require pestphp/pest pestphp/pest-plugin-laravel --dev -W]] و [[./vendor/bin/pest --init]]. فعّل [[RefreshDatabase]] في [[tests/Pest.php]]. اكتب الـ 3 tests دول على الـ API بتاعتك، وشغّل [[php artisan test]]. بعدين بوّظ الكود (شيل [[published()]] من الـ route) وشوف أنهي test بيقع وبيقول إيه.`,
+المثال: خصم من المخزن وتسجيل الطلب. من غير transaction ممكن المخزن ينقص والطلب ميتسجلش لو السيرفر وقع بينهم.`,
+          example: R`$pdo = db();
+$pdo->beginTransaction();
+try {
+    $stmt = $pdo->prepare('UPDATE products SET stock = stock - 1 WHERE id = :id AND stock > 0');
+    $stmt->execute(['id' => $productId]);
+    if ($stmt->rowCount() === 0) {
+        throw new RuntimeException('خلص من المخزن');
+    }
+    $pdo->prepare('INSERT INTO orders (user_id, product_id) VALUES (:u, :p)')
+        ->execute(['u' => $userId, 'p' => $productId]);
+    $pdo->commit();
+} catch (Throwable $e) {
+    $pdo->rollBack();
+    throw $e;
+}`,
+          try: R`حط [[throw new RuntimeException('test');]] قبل [[commit]] مباشرة، وشغّل، وبص على الجدولين: المخزن متغيرش والطلب متسجلش. شيل السطر وشغّل تاني.`,
           flag: "script",
           deep: {
-            why: "الـ feature tests بتختبر اللي المستخدم فعلًا بيعمله: طلب ورد. test واحد زي ده بيغطي routing و validation و policy و query و resource مرة واحدة، وبيخليك تعدّل وتعمل refactor وانت مطمن. وشركات كتير بتسأل في الانترفيو «بتكتب tests؟ وريني».",
-            how: R`[[tests/Pest.php]] فيه [[pest()->extend(Tests\TestCase::class)->use(Illuminate\Foundation\Testing\RefreshDatabase::class)->in('Feature');]]، فكل ملف في [[tests/Feature]] بيورث TestCase ويعمل refresh. سطر الـ [[use(RefreshDatabase)]] بيبقى متعلّق عليه في المشروع الجديد: شيل التعليق.
+            why: "أي عملية فيها أكتر من خطوة (فلوس، مخزن، حجز) لو وقفت في النص البيانات بتبقى متناقضة: فلوس اتخصمت ومفيش طلب. والـ transaction بتضمن إن ده مستحيل.",
+            how: R`MySQL افتراضيًا autocommit: كل query بيتحفظ لوحده. [[beginTransaction]] بيوقف ده لحد [[commit]] أو [[rollBack]]. والتغييرات جوه الـ transaction مش بتبان للاتصالات التانية غير بعد الـ commit.
 
-الطلبات: [[get]] و [[post]] و [[put]] و [[delete]]، و [[getJson]] و [[postJson]] بيحطوا [[Accept: application/json]]. [[actingAs($user)]] بيعمل login من غير فورم. والـ asserts: [[assertOk]] و [[assertCreated]] (201) و [[assertForbidden]] و [[assertUnprocessable]] (422) و [[assertRedirect]] و [[assertSee]] (HTML) و [[assertJsonPath('data.0.title', 'x')]] و [[assertDatabaseHas]] و [[assertDatabaseMissing]].
+[[beginTransaction]] قبل الـ try مقصود: لو اتنادى جوه وفشل، [[rollBack]] في الـ catch هيرمي exception تانية لأن مفيش transaction.
 
-الـ fakes: [[Mail::fake()]] ثم [[Mail::assertQueued(PostPublished::class)]]، و [[Queue::fake()]] و [[Queue::assertPushed]]، و [[Storage::fake('public')]] مع [[UploadedFile::fake()->image('a.jpg')]]، و [[Http::fake([...])]] لأي API برّه.
+الـ UPDATE المشروط [[stock > 0]] مع [[rowCount]] أهم من الـ transaction نفسها هنا: الفحص والخصم في خطوة واحدة جوه القاعدة. لو عملت SELECT الأول تشوف المخزن وبعدين UPDATE، طلبين في نفس اللحظة ممكن يشوفوا «فيه ١» ويخصموا الاتنين (race condition). ولو محتاج تقرا وتقرر في PHP: [[SELECT ... FOR UPDATE]] جوه الـ transaction بيقفل الصف لحد الـ commit.
 
-Pest زيادة: [[beforeEach]]، و datasets ([[->with([...])]]) لنفس الـ test بقيم كتير، و [[arch()]] tests ([[arch()->expect('App\Models')->toExtend(Model::class)]])، و [[--coverage]]. و Pest 5 (النسخة الحالية) محتاج PHP 8.4 أو أحدث، يعني أعلى من Laravel 13 نفسه (8.3)؛ على PHP 8.3 composer هيختار Pest 4.`,
-            when: "test لكل endpoint مهم: الحالة الناجحة، و validation، و «يوزر تاني مينفعش». وقبل ما تصلّح bug اكتب test بيقع بسببه الأول. وفي CI على كل PR («تاب GitHub Actions»).",
-            mistakes: R`tests من غير [[RefreshDatabase]] فبيعتمدوا على بعض وبيقعوا بترتيب مختلف. وتختبر على قاعدة التطوير (راجع [[DB_DATABASE]] في [[phpunit.xml]]). و [[post]] بدل [[postJson]] على route في [[web.php]] فيرجعلك 302 بدل 422 (routes الـ [[api/*]] في مشروع 13 جديد بترجّع JSON في الحالتين). وتنسى [[Mail::fake()]] فالـ tests تبعت إيميلات حقيقية لو [[MAIL_MAILER]] مش log. وتختبر التفاصيل الداخلية (الـ method اتنادت) بدل النتيجة (الصف اتكتب، الرد صح).`
+لازم الجداول InnoDB؛ MyISAM بيتجاهل الـ transactions بصمت. وأوامر زي [[CREATE]] و [[ALTER]] بتعمل commit ضمني في MySQL، فمتحطهاش جوه transaction.
+
+في مشروع حقيقي، سكربت تذكيرات كان بيسجّل كل إيميل اتبعت في جدول عليه UNIQUE على (العميل، النوع، التاريخ) بـ [[INSERT IGNORE]]: لو السكربت اتشغّل مرتين، القاعدة نفسها بتمنع التكرار. ده نفس المبدأ: خلّي القاعدة تضمن القاعدة.`,
+            when: "أي عملية بتكتب في أكتر من جدول أو أكتر من صف ولازم تبقى متسقة: طلب، تحويل رصيد، إنشاء حساب بإعداداته.",
+            mistakes: R`تبعت إيميل أو تنادي API دفع جوه الـ transaction: لو حصل rollback الإيميل راح خلاص، والـ transaction فضلت مفتوحة وقافلة صفوف وانت مستني الشبكة. اعمل الحاجات الخارجية بعد الـ commit. وتمسك الـ exception ومترميهاش تاني، فالطلب يبان إنه نجح. وجداول MyISAM قديمة.`
           },
+          teach: R`## الأول: الفكرة
+
+transaction = مجموعة أوامر بتتعامل كأنها أمر واحد: يا كلهم يتحفظوا ([[commit]])، يا كلهم يترجعوا ([[rollBack]]). المثال بيخصم قطعة من المخزن ويسجّل طلب، والاتنين مع بعض.
+
+اتشغّل على PHP 8.4.26 و MySQL 8.4.11. جهزت الجدولين من الـ solCode (لابتوب واحد، مخزنه 3)، وحطيت المثال في سكربت [[ex5.php]] بـ [[$productId = 1]] و [[$userId = 1]].
+
+---
+
+## ١. [[$pdo = db();]] و [[beginTransaction()]]
+
+~~~php
+$pdo = db();
+$pdo->beginTransaction();
+~~~
+
+- الاتصال في متغير، عشان كل الأوامر لازم تبقى على **نفس الاتصال**. الـ transaction ملك الاتصال.
+- MySQL عادةً autocommit: كل أمر بيتحفظ لوحده فورًا. [[beginTransaction()]] بتقفل ده لحد [[commit]] أو [[rollBack]].
+- ليه قبل الـ [[try]] مش جواه؟ لو اتنادت جوه وفشلت، الـ [[catch]] هينادي [[rollBack()]] على transaction مبدأتش. جرّبت [[rollBack()]] من غير transaction:
+
+~~~text الناتج
+Fatal error: Uncaught PDOException: There is no active transaction in /app/t5.php:1
+~~~
+
+فالغلطة الأصلية كانت هتضيع ورا غلطة تانية.
+
+---
+
+## ٢. [[try]]: الخصم المشروط
+
+~~~php
+try {
+    $stmt = $pdo->prepare('UPDATE products SET stock = stock - 1 WHERE id = :id AND stock > 0');
+    $stmt->execute(['id' => $productId]);
+~~~
+
+- [[try { ... }]]: نفّذ الكود ده، ولو أي سطر رمى exception اقفز على طول للـ [[catch]].
+- [[stock = stock - 1]]: القيمة الجديدة = القديمة ناقص واحد، والحساب بيحصل جوه القاعدة.
+- [[AND stock > 0]]: اخصم بس لو فيه مخزن. الفحص والخصم أمر واحد، فطلبين في نفس اللحظة مستحيل يخصموا آخر قطعة مرتين (race condition).
+
+~~~php
+    if ($stmt->rowCount() === 0) {
+        throw new RuntimeException('خلص من المخزن');
+    }
+~~~
+
+لو [[rowCount()]] = 0 يبقى الشرط ماتحققش (المخزن 0 أو المنتج مش موجود). [[throw new RuntimeException(...)]] بيعمل exception جديدة برسالة ويرميها، فالتنفيذ يقفز للـ [[catch]]. و [[RuntimeException]] كلاس جاهز في PHP لغلطات بتحصل وقت التشغيل.
+
+---
+
+## ٣. تسجيل الطلب و [[commit()]]
+
+~~~php
+    $pdo->prepare('INSERT INTO orders (user_id, product_id) VALUES (:u, :p)')
+        ->execute(['u' => $userId, 'p' => $productId]);
+    $pdo->commit();
+~~~
+
+[[prepare(...)]] بترجّع statement، فبنكمّل عليه [[->execute(...)]] على السطر اللي بعده من غير متغير. وبعدين [[commit()]]: احفظ كل اللي حصل من أول [[beginTransaction]]، ومن اللحظة دي بس الاتصالات التانية تشوف التغيير.
+
+---
+
+## ٤. [[catch (Throwable $e)]]
+
+~~~php
+} catch (Throwable $e) {
+    $pdo->rollBack();
+    throw $e;
+}
+~~~
+
+- [[Throwable]] أبو كل الغلطات في PHP ([[Exception]] و [[Error]] الاتنين)، فأي حاجة تقع (حتى [[TypeError]]) هتترجع.
+- [[$e]] الغلطة نفسها.
+- [[rollBack()]]: الغي كل اللي حصل في الـ transaction.
+- [[throw $e]]: ارمي نفس الغلطة تاني لفوق. إحنا رجعنا البيانات بس، مش «حلّينا» المشكلة، فاللي فوق (صفحة، أو handler عام) هو اللي يقرر يقول إيه للمستخدم.
+
+---
+
+## ٥. التجربة الحقيقية خطوة خطوة
+
+**أ. بـ [[throw new RuntimeException('test')]] قبل [[commit]]:**
+
+~~~text الناتج
+Fatal error: Uncaught RuntimeException: test in /app/ex5.php:14
+~~~
+
+~~~text الجدولين بعدها
+stock      3
+COUNT(*)   0
+~~~
+
+الـ UPDATE والـ INSERT اتنفّذوا جوه الـ transaction فعلًا، بس [[rollBack]] رجّعهم.
+
+**ب. من غير الـ throw:** المخزن بقى 2، وفيه طلب واحد... الـ id بتاعه **2**. الـ INSERT اللي اترجع في (أ) حجز الرقم 1، و AUTO_INCREMENT مبيرجعش أرقام.
+
+**ج. شغّلته لحد ما المخزن خلص:** بعد 3 طلبات، التشغيل الرابع:
+
+~~~text الناتج
+Fatal error: Uncaught RuntimeException: خلص من المخزن in /app/ex5.php:10
+~~~
+
+والمخزن وقف عند 0 (مانزلش -1)، والطلبات 3 بالظبط (ids 2 و 3 و 4).
+
+**د. نفس الكلام على جدول [[ENGINE=MyISAM]]:** INSERT جوه transaction وبعدين [[rollBack()]]، وعدّيت: الصف لسه موجود ([[1]]). MyISAM بيتجاهل الـ transactions بصمت ومن غير أي error.
+
+---
+
+## الخلاصة
+
+| الخطوة | ليه |
+|---|---|
+| [[beginTransaction()]] قبل [[try]] | الـ rollBack ميقعش على transaction مش موجودة |
+| UPDATE بشرط [[stock > 0]] + [[rowCount()]] | الفحص والخصم في خطوة واحدة |
+| [[throw]] لما الشرط يفشل | يروح للـ catch ويترجع كل حاجة |
+| [[commit()]] آخر سطر في [[try]] | الحفظ بيحصل بس لو كله نجح |
+| [[rollBack()]] ثم [[throw $e]] | رجّع البيانات، وسيب الغلطة توصل لفوق |
+
+ولازم الجداول InnoDB، والحاجات الخارجية (إيميل، API دفع) بعد الـ commit مش جواه.`,
           lines: [
-            "بداية الملف.",
-            "الموديل.",
-            "اليوزر.",
-            "الإيميلات.",
-            "أول test.",
-            R`2 بوست منشورين أكيد (الـ factory لوحده بيطلّع draft أحيانًا، فالـ test كان هيقع بالصدفة).`,
-            "و draft.",
-            "اطلب الـ API كـ JSON.",
-            "200.",
-            R`[[data]] فيها 2 بس.`,
-            R`و [[meta.total]] = 2.`,
+            "الاتصال.",
+            "ابدأ transaction (قبل الـ try).",
+            "حاول.",
+            "اخصم واحد بس لو فيه مخزن.",
+            "نفّذ.",
+            "مفيش صف اتغير = المخزن خلص.",
+            "ارمي exception فيروح للـ catch.",
             "قفلة.",
-            "test الـ validation.",
-            "يوزر عامل login.",
-            "ابعت عنوان قصير ومن غير الباقي.",
-            "422.",
-            "والأخطاء على الـ 3 حقول دول.",
-            "قفلة.",
-            "test الإنشاء.",
-            "أي إيميل مش هيتبعت فعلًا، وهيتسجّل عشان تتأكد منه.",
-            "يوزر.",
-            "كـ اليوزر ده...",
-            "...ابعت بيانات صح.",
-            "201.",
-            "البوست اتربط باليوزر.",
-            "والصف في القاعدة بالقيم دي.",
+            "سجّل الطلب.",
+            "بالقيم.",
+            "كله تمام: احفظ.",
+            "أي غلطة من أي نوع...",
+            "...ارجع في كل حاجة.",
+            "وارمي الغلطة تاني عشان اللي فوق يعرف.",
             "قفلة."
           ],
-          sol: R`[[php artisan test]] بيطبع حاجة زي: [[PASS  Tests\Feature\PostApiTest]] وتحتها [[✓ it lists only published posts]] و [[✓ it validates the title]] و [[✓ it stores a post for the current user]]، وفي الآخر [[Tests: 3 passed (11 assertions)]].
+          sol: R`مع [[throw]] قبل [[commit]]: السكريبت بيقع بـ [[Uncaught RuntimeException: test]]، و [[SELECT stock FROM products]] لسه 3، و [[SELECT COUNT(*) FROM orders]] = 0. الـ UPDATE والـ INSERT حصلوا فعلًا جوه الـ transaction، بس [[rollBack]] رجّعهم.
 
-بعد ما تشيل [[published()]]: أول test بيقع بـ «Failed to assert that the response count matched the expected 2» و [[Failed asserting that actual size 3 matches expected size 2.]] ومعاه اسم الـ test والسطر. ده بالظبط اللي عايزه: الـ test بيقولك إيه اتكسر مش بس إن حاجة اتكسرت.
+بعد ما تشيل السطر: [[stock]] بقى 2 وفيه طلب واحد. هتلاقي الـ id بتاعه 2 مش 1: الـ INSERT اللي اترجع حرق رقم AUTO_INCREMENT، والأرقام دي مبترجعش. متعتمدش على إن الـ ids متتالية.
 
-لازم الـ store يرجّع 201: [[PostResource]] مع [[->response()->setStatusCode(201)]]، أو إرجاع موديل اتعمل حالًا ([[wasRecentlyCreated]]) بيرجّع 201 لوحده. والغلط الشائع: [[assertCreated]] يقع بـ 200 لأنك رجّعت [[$request->validated()]] بدل البوست.`,
-          solCode: R`// tests/Pest.php
-pest()->extend(Tests\TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
-
-// PostController@store
-public function store(StorePostRequest $request)
-{
-    $post = $request->user()->posts()->create($request->validated());
-
-    return (new PostResource($post))->response()->setStatusCode(201);
-}`
-        },
-        {
-          cmd: "Larastan و Pint",
-          title: "خلّي الكود يتفحص ويتنسّق لوحده قبل ما يوصل الـ PR (PHPStan و Pint)",
-          desc: R`PHPStan بيقرا الكود من غير ما يشغّله ويلاقي bugs: method مش موجودة، أو null ممكن يوصل لمكان مش متوقعه، أو نوع غلط. زي [[tsc]] بالظبط بس لـ PHP. و Larastan إضافة بتفهّمه سحر Laravel (الـ facades، والعلاقات، و [[$post->user]]).
-
-Pint بيظبط التنسيق (مسافات، ترتيب الـ imports، الأقواس) على ستايل Laravel، وموجود في المشروع الجديد من الأول. [[./vendor/bin/pint]] يصلّح، و [[--test]] يفحص بس.
-
-الاتنين بيتحطوا في CI فأي PR فيه خطأ نوع أو تنسيق غلط بيقع قبل المراجعة.`,
-          example: R`composer require --dev larastan/larastan
-cat > phpstan.neon <<'EOF'
-includes:
-    - vendor/larastan/larastan/extension.neon
-parameters:
-    paths:
-        - app/
-    level: 5
-EOF
-./vendor/bin/phpstan analyse --memory-limit=1G
-./vendor/bin/pint --test
-./vendor/bin/pint --dirty`,
-          try: R`سطّب Larastan وشغّله على level 5. بعدين حط bug متعمد في controller: [[$post->titel]] (غلط إملائي)، و [[Post::find($id)->title]]. شغّله تاني واقرا الرسايل. ارفع لـ level 8 وشوف عدد الأخطاء اتغيّر إزاي. وبعدين بوّظ المسافات في ملف وشغّل [[pint --test]] ثم [[pint]].`,
-          deep: {
-            why: "PHP لغة dynamic، فأغلب الأخطاء بتظهر وقت التشغيل عند مستخدم. PHPStan بيطلّعها وقت الكتابة. و Pint بيشيل أي نقاش عن التنسيق من الـ code review. والاتنين بقوا متوقعين في أي فريق Laravel جاد، وسؤال «بتستخدم static analysis؟» بيتسأل.",
-            how: R`الـ levels من 0 لـ 10: 0 أساسيات (classes و functions موجودة)، و 5 أنواع الباراميترات، و 6 الـ return types الناقصة، و 8 null safety (بيشتكي من [[Post::find($id)->title]] لأن find ممكن ترجّع null)، و 9 و 10 صارمين على mixed. ابدأ بمستوى يطلّع أخطاء قليلة، وصلّحها، وارفع.
-
-مشروع قديم فيه مئات الأخطاء: [[phpstan analyse --generate-baseline]] بيحفظ الأخطاء الموجودة في [[phpstan-baseline.neon]] ويتجاهلها، فأي خطأ جديد بس هو اللي يوقع الـ CI.
-
-Larastan بيقرا الـ migrations عشان يعرف أعمدة كل موديل، فـ [[$post->titel]] بتطلع «Access to an undefined property». والـ return types على العلاقات ([[: HasMany]]) و generics في الـ docblocks ([[@return HasMany<Comment, $this>]]) بتساعده أكتر.
-
-Pint: [[pint.json]] لو عايز preset تاني ([[psr12]] أو [[per]]) أو تقفل rules. و [[--dirty]] على الملفات المتغيرة في git بس (أسرع قبل commit). وفي CI: [[pint --test]] بيطلع exit code 1 لو فيه ملف محتاج تنسيق.
-
-في GitHub Actions: job فيه [[composer install]] ثم [[vendor/bin/pint --test]] ثم [[vendor/bin/phpstan analyse]] ثم [[php artisan test]].`,
-            when: "من أول يوم في المشروع، وفي CI على كل PR. في مشروع قديم: baseline الأول، وبعدين ارفع المستوى تدريجيًا.",
-            mistakes: R`تشغّل PHPStan من غير Larastan على مشروع Laravel فيطلعلك مئات الأخطاء الوهمية عن الـ facades وتقفله. وتحط [[@phpstan-ignore]] على كل خطأ بدل ما تصلّحه. وتعمل [[pint]] على المشروع كله في نفس الـ PR اللي فيه feature، فالـ diff يبقى آلاف السطور ومحدش يعرف يراجع: اعمله PR لوحده. و level 9 من أول يوم على مشروع قديم فالفريق يكرهه.`
-          },
-          lines: [
-            "سطّب Larastan (ومعاه PHPStan) للتطوير بس.",
-            "اكتب ملف الإعدادات.",
-            "حمّل إضافة Larastan.",
-            "المسار ده.",
-            "الإعدادات.",
-            "الفولدرات اللي تتفحص.",
-            "فولدر app.",
-            "المستوى.",
-            "نهاية الملف.",
-            "افحص (المشاريع الكبيرة محتاجة ذاكرة أكتر من الافتراضي).",
-            "افحص التنسيق من غير تعديل (للـ CI).",
-            "نسّق الملفات المتغيرة في git بس."
-          ],
-          sol: R`على level 5، [[$post->titel]] بيطلع: [[Access to an undefined property App\Models\Post::$titel.]] ومعاه رقم السطر، والـ exit code 1. أما [[Post::find($id)->title]] مش هيظهر غير من level 8: [[Cannot access property $title on App\Models\Post|null.]] والحل [[findOrFail]] أو route model binding.
-
-على level 8 عدد الأخطاء غالبًا بيزيد كتير (return types ناقصة و null). ده طبيعي، ومتصلّحهمش كلهم مرة واحدة.
-
-[[pint --test]] بيطبع [[FAIL]] واسم الملف ونوع المشكلة (مثلًا [[binary_operator_spaces]])، و [[pint]] بعدها بيصلّح ويطبع [[FIXED]]. والغلط الشائع: تشغّل phpstan من غير [[phpstan.neon]] فيقولك «At least one path must be specified».`
-        },
-        {
-          cmd: "Laravel على VPS",
-          title: "انشر Laravel على سيرفرك: Nginx و php-fpm والـ cache والـ worker",
-          desc: R`على VPS (راجع «تاب VPS» للسيرفر نفسه و ufw و certbot، و «تاب Nginx» للـ server blocks): بتسطّب PHP-FPM بنفس النسخة اللي بتطوّر عليها، ومعاه extensions Laravel (mbstring و xml و curl و zip و bcmath و intl و mysql أو pgsql و sqlite3)، و Composer.
-
-أهم نقطة: [[root]] في Nginx بيشاور على [[public/]] مش على فولدر المشروع، وكل طلب مش ملف موجود بيروح لـ [[index.php]]. وPHP بيتكلم مع Nginx عن طريق socket الـ FPM.
-
-خطوات كل deploy: [[composer install --no-dev -o]]، و [[php artisan migrate --force]]، و [[php artisan optimize]] (بيعمل cache للـ config والـ routes والـ views والـ events)، و [[storage:link]] أول مرة، و [[queue:restart]]، و reload لـ FPM.`,
-          example: R`sudo apt install -y php8.4-fpm php8.4-{mbstring,xml,curl,zip,bcmath,intl,mysql,sqlite3} unzip
-cd /var/www/shop && git pull --ff-only
-composer install --no-dev --optimize-autoloader --no-interaction
-php artisan migrate --force
-php artisan storage:link
-php artisan optimize
-php artisan queue:restart
-sudo chown -R www-data:www-data storage bootstrap/cache
-sudo systemctl reload php8.4-fpm
-curl -fsS https://shop.example.com/up`,
-          try: R`على VPS تجربة (أو container Ubuntu): انشر مشروعك بالخطوات دي. اكتب server block لـ Nginx بـ [[root /var/www/shop/public;]] و [[try_files $uri $uri/ /index.php?$query_string;]] و [[fastcgi_pass unix:/run/php/php8.4-fpm.sock;]]. اعمل unit systemd للـ worker، وسطر cron للـ scheduler. وبعدين جرّب تفتح [[https://shop.example.com/.env]] و [[/../.env]] و [[/storage/logs/laravel.log]].`,
-          deep: {
-            why: "أغلب شغل Laravel في مصر بيتنشر على VPS أو استضافة، مش على منصة managed. ونشر غلط بيطلّع أسرار ([[.env]] على رابط)، أو كود قديم شغال بسبب cache أو worker ماتعملوش restart، أو صفحة 500 من غير لوج بسبب صلاحيات.",
-            how: R`Nginx (من docs Laravel 13 باختصار): [[server_name shop.example.com; root /var/www/shop/public; index index.php;]] و [[location / { try_files $uri $uri/ /index.php?$query_string; }]] و [[location ~ ^/index\.php(/|$) { fastcgi_pass unix:/run/php/php8.4-fpm.sock; fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name; include fastcgi_params; }]] و [[location ~ /\.(?!well-known).* { deny all; }]]. الـ PHP الوحيد اللي بيتنفّذ هو [[index.php]]، فلو حد رفع [[shell.php]] في [[public/storage]] مش هيشتغل. وبعدها certbot و headers الأمان من «تاب Nginx».
-
-[[.env]] على السيرفر: [[APP_ENV=production]] و [[APP_DEBUG=false]] (وإلا أي خطأ بيطلّع stack trace فيه أسرار) و [[APP_URL]] الصح و [[DB_*]] و [[QUEUE_CONNECTION=database]] أو redis. وصلاحياته [[chmod 640]].
-
-الصلاحيات: [[storage]] و [[bootstrap/cache]] لازم يتكتب فيهم من [[www-data]] (يوزر FPM)، وباقي الكود ملك يوزر الـ deploy ومش مسموح لـ FPM يكتب فيه.
-
-الـ worker بـ systemd (زي درس [[/etc/systemd/system/myapp.service]] في «تاب VPS»): [[ExecStart=/usr/bin/php /var/www/shop/artisan queue:work --sleep=3 --tries=3 --max-time=3600]] و [[User=www-data]] و [[Restart=always]]. و [[--max-time]] بيخلي الـ worker يقفل نفسه كل ساعة و systemd يقومه، ضد تسريب الذاكرة. أو Supervisor بنفس الفكرة لو ده الموجود.
-
-الـ scheduler: [[* * * * * cd /var/www/shop && php artisan schedule:run >> /dev/null 2>&1]] في crontab بتاع [[www-data]].
-
-[[optimize]] بيخلي [[.env]] مبيتقراش؛ أي تعديل فيه محتاج [[optimize]] تاني. و [[optimize:clear]] لو حاجة غريبة بتحصل.
-
-zero-downtime: الطريقة الأنضف فولدر لكل release ([[releases/2026...]]) و symlink [[current]] بيتنقل بعد ما كل حاجة تخلص، و [[storage]] و [[.env]] مشتركين. Deployer أو Envoy بيعملوها.`,
-            when: "أول نشر، وكل deploy بعده (حطهم في script واحد أو GitHub Actions). ولو مش عايز تدير سيرفر: Laravel Cloud أو Forge (Forge بيدير VPS بتاعك بنفس الخطوات دي).",
-            mistakes: R`[[root]] بيشاور على فولدر المشروع فـ [[/.env]] يفتح. و [[APP_DEBUG=true]] في الإنتاج. و [[chmod -R 777 storage]] بدل الـ owner الصح. ونسيان [[queue:restart]] فالـ worker شغال بكود أسبوع فات. ونسيان cron الـ scheduler. و [[composer install]] من غير [[--no-dev]] فأدوات التطوير على السيرفر. ونسخة PHP على السيرفر أقدم من اللي في [[composer.lock]] فـ composer يرفض. وتشغّل [[artisan]] كـ root فالملفات اللي بتتعمل في [[storage]] تبقى ملك root و FPM ميقدرش يكتب: خطأ 500 «Permission denied» في اللوج.`
-          },
-          lines: [
-            "PHP-FPM والـ extensions اللي Laravel محتاجها (غيّر mysql لـ pgsql لو Postgres).",
-            "اسحب آخر كود (من غير merge commits).",
-            "المكتبات من غير أدوات التطوير، و autoloader سريع.",
-            "طبّق الـ migrations من غير سؤال التأكيد.",
-            "symlink للملفات العامة (أول مرة بس، والمرات الجاية بيقولك موجود).",
-            "cache للـ config والـ routes والـ views والـ events.",
-            "قول للـ workers يقفلوا بعد الـ job الحالي، و systemd يقومهم بالكود الجديد.",
-            "FPM يقدر يكتب في دول بس.",
-            "امسح OPcache وخلّي FPM يقرا الكود الجديد.",
-            R`اتأكد إن التطبيق قام (200 من [[/up]]، و [[-f]] بيخلي curl يفشل لو 500).`
-          ],
-          sol: R`لو كله صح: [[curl /up]] بيرجّع 200، و [[systemctl status shop-worker]] بيقول [[active (running)]]، و [[php artisan about]] على السيرفر فيه [[Environment ... production]] و [[Debug Mode ... OFF]] و [[Config ... CACHED]] و [[Routes ... CACHED]] و [[Views ... CACHED]].
-
-[[/.env]] بيرجّع 403 (بسبب [[deny all]] للملفات اللي بتبدأ بنقطة) أو 404، ومش بيرجّع محتوى الملف أبدًا لأنه برّه [[public]] أصلًا. [[/../.env]] Nginx بيطبّعه لـ [[/.env]] فنفس النتيجة. و [[/storage/logs/laravel.log]] 404 لأن الـ symlink بيشاور على [[storage/app/public]] بس.
-
-الـ unit:
-
-[[[Unit] Description=shop queue worker After=network.target]] ثم [[[Service] User=www-data Restart=always ExecStart=/usr/bin/php /var/www/shop/artisan queue:work --sleep=3 --tries=3 --max-time=3600]] ثم [[[Install] WantedBy=multi-user.target]]، وبعدين [[daemon-reload]] و [[enable --now]].
-
-الغلط الشائع: صفحة 500 بيضا ومفيش لوج في [[storage/logs]]: غالبًا FPM مش قادر يكتب هناك؛ بص في لوج Nginx و [[journalctl -u php8.4-fpm]].`,
-          solCode: R`# /etc/nginx/sites-available/shop
-server {
-    listen 80;
-    server_name shop.example.com;
-    root /var/www/shop/public;
-    index index.php;
-    charset utf-8;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ ^/index\.php(/|$) {
-        fastcgi_pass unix:/run/php/php8.4-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
-        include fastcgi_params;
-        fastcgi_hide_header X-Powered-By;
-    }
-
-    location ~ /\.(?!well-known).* {
-        deny all;
-    }
-}
-
-# /etc/systemd/system/shop-worker.service
-[Unit]
-Description=shop queue worker
-After=network.target
-
-[Service]
-User=www-data
-Restart=always
-ExecStart=/usr/bin/php /var/www/shop/artisan queue:work --sleep=3 --tries=3 --max-time=3600
-
-[Install]
-WantedBy=multi-user.target
-
-# crontab -u www-data -e
-* * * * * cd /var/www/shop && php artisan schedule:run >> /dev/null 2>&1`
+لو المخزن نقص رغم الـ rollback، يبقى الجدول [[ENGINE=MyISAM]] (مبيدعمش transactions وبيتجاهل الـ rollback بصمت). اتأكد بـ [[SHOW CREATE TABLE products]] إنه InnoDB.`,
+          solCode: R`CREATE TABLE products (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), stock INT NOT NULL) ENGINE=InnoDB;
+CREATE TABLE orders (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id INT UNSIGNED, product_id INT UNSIGNED) ENGINE=InnoDB;
+INSERT INTO products (name, stock) VALUES ('Laptop', 3);
+-- شغّل السكريبت بالـ throw، وبعدين:
+SELECT stock FROM products;        -- 3
+SELECT COUNT(*) FROM orders;       -- 0`
         }
       ]
     }

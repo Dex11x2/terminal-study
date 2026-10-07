@@ -1,527 +1,1058 @@
 // تكملة تاب php: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/php/01.js (شرح حقول الدرس في أوله)
 MORE("php", [
     {
-      t: "أسئلة انترفيو",
-      l: 3,
-      n: "إجابات قصيرة تقولها بصوت عالي، وبعدها الأسئلة اللي غالبًا هتيجي وراها",
+      t: "الجلسات وتسجيل الدخول",
+      l: 2,
+      n: "الجلسة بتفتكر المستخدم بين الطلبات، والباسورد بيتخزن hash، وكل فورم بيغيّر حاجة محتاج token",
       items: [
         {
-          cmd: "strict comparison",
-          title: "إيه الفرق بين == و === في PHP؟ (== vs ===)",
-          desc: R`[[===]] بيقارن القيمة والنوع من غير أي تحويل، و [[==]] بيحوّل الطرفين لنوع مشترك الأول (type juggling). PHP 8 صلّح أسوأ حالة: [[0 == 'abc']] بقت false بعد ما كانت true.
+          cmd: "session_start",
+          title: "خلّي الموقع يفتكر المستخدم بين الصفحات",
+          desc: R`HTTP مبيفتكرش حاجة بين طلب والتاني. [[session_start()]] بيدّي المتصفح كوكي فيها id عشوائي ([[PHPSESSID]])، ويحفظ [[$_SESSION]] على السيرفر في ملف باسم الـ id ده. الطلب اللي بعده بيجيب الكوكي، فـ PHP يفتح نفس الملف ويرجّعلك نفس البيانات.
 
-بس لسه [['1' == '01']] و [['10' == '1e1']] و [[null == false]] كلهم true. والأخطر [['0e123' == '0e456']] true، لأن الاتنين أرقام بصيغة علمية قيمتها صفر، ودي ثغرة معروفة لما حد يقارن hashes بـ [[==]]. عشان كده بستخدم [[===]] دايمًا، و [[in_array]] بالـ strict، و [[hash_equals]] للأسرار، و [[match]] بدل [[switch]] لأن [[switch]] بيقارن بـ [[==]].`,
+ناديها في أول كل صفحة محتاجة الجلسة، وقبل أي طباعة (لأنها بتبعت header). وإعدادات الكوكي الآمنة تتحط مرة واحدة.`,
           example: R`<?php
-var_dump(0 == 'abc');
-var_dump('1' == '01', '10' == '1e1', 100 == '1e2');
-var_dump(null == false, [] == false, '0' == false);
-var_dump('0e123' == '0e456', '0e123' === '0e456');
-var_dump(in_array('1e1', ['10']), in_array('1e1', ['10'], true));`,
-          try: R`خمّن ناتج كل سطر قبل ما تشغّل، وبعدين شغّل وقارن. اللي غلطت فيه هو اللي هيتسأل عنه.`,
+session_start([
+    'cookie_httponly' => true,
+    'cookie_secure'   => true,
+    'cookie_samesite' => 'Lax',
+    'use_strict_mode' => true,
+]);
+$_SESSION['visits'] = ($_SESSION['visits'] ?? 0) + 1;
+echo "زرت الصفحة {$_SESSION['visits']} مرة\n";
+echo 'session id: ', session_id();`,
+          try: R`افتح الصفحة واعمل refresh: العدد بيزيد. افتح DevTools وشوف كوكي PHPSESSID وعلاماتها. امسحها من DevTools واعمل refresh: رجعت 1 بـ id جديد. ولو بتجرب على http بـ IP الشبكة وغالبًا العدد مش هيزيد: ده [[cookie_secure]]، خليها false في التطوير بس.`,
           flag: "script",
           deep: {
-            why: "السؤال بيكشف إذا كنت فاهم إن PHP بيحوّل الأنواع من وراك، وإذا كنت عارف إن ده مصدر bugs وثغرات حقيقية، مش بس حفظ «=== أدق».",
-            how: R`قواعد [[==]] باختصار: نصين رقميين بيتقارنوا كأرقام ([['1e3' == '1000']] true). رقم ونص مش رقمي: في PHP 8 الرقم بيتحوّل لنص ويتقارنوا كنصوص (قبل 8 كان النص بيتحوّل لرقم، فـ [['abc']] يبقى 0). و null و false و 0 و [[""]] و [[[]]] بيتساووا مع بعض في حالات كتير.
+            why: "من غير جلسة، الموقع ميعرفش إنك نفس الشخص اللي عمل login من ثانية. الجلسة هي الذاكرة: مين داخل، وسلة المشتريات، ورسايل «تم الحفظ».",
+            how: R`الـ handler الافتراضي files: كل جلسة ملف في [[session.save_path]] اسمه [[sess_]] + الـ id، وجواه [[$_SESSION]] متخزنة كنص. في آخر الطلب PHP بيكتبها تاني.
 
-الـ arrays: [[==]] نفس الـ keys والقيم، و [[===]] كمان نفس الترتيب ونفس الأنواع. الـ objects: [[==]] نفس الكلاس ونفس قيم الـ properties، و [[===]] نفس الـ object بالظبط (نفس الـ instance).
+الملف بيتقفل (lock) طول ما السكربت شغال. يعني لو صفحة فيها ٥ طلبات AJAX في نفس الوقت من نفس المستخدم، بيتنفذوا ورا بعض. لو الطلب بيقرا الجلسة بس، [[session_write_close()]] بعد القراية يفك القفل بدري.
 
-الناتج بالترتيب: false، ثم true true true، ثم true true true، ثم true false، ثم true false.`,
-            when: "أسئلة بعدها: «إيه اللي اتغير في PHP 8؟» «switch بيقارن بإيه؟» «in_array و array_search؟» «إمتى تستخدم == عن قصد؟» (نادرًا: مقارنة objects بالقيم).",
-            mistakes: R`«=== بيقارن مكان الذاكرة» (ده للـ objects بس). و«PHP 8 صلّح كل مشاكل ==» (لأ، صلّح النص-رقم بس). ونسيان إن [[switch]] و [[in_array]] من غير strict بيستخدموا [[==]].`
+الجلسات بتموت بعد [[session.gc_maxlifetime]] (افتراضي 1440 ثانية، يعني ٢٤ دقيقة من غير نشاط)، وتنضيفها بيحصل بالصدفة مع الطلبات أو بـ cron.
+
+الإعدادات: [[httponly]] يمنع JavaScript يقرا الكوكي (فـ XSS مبتسرقهاش)، و [[secure]] يبعتها على https بس، و [[samesite]] [[Lax]] مبتتبعتش مع POST جاي من موقع تاني، و [[use_strict_mode]] يرفض أي id معملهوش PHP بنفسه. نفس الإعدادات دي تقدر تحطها مرة في [[.user.ini]] على الاستضافة (تاب VPS، درس [[.user.ini]]).
+
+خزّن في الجلسة حاجات صغيرة: [[user_id]] مش صف المستخدم كله. والصلاحيات المهمة (أدمن؟ الاشتراك شغال؟) اقراها من القاعدة، عشان لو اتغيرت تتطبق فورًا.`,
+            when: "أي موقع فيه login، أو سلة، أو flash messages. الـ APIs اللي بتكلم موبايل غالبًا tokens بدل الجلسة (تاب APIs متقدمة).",
+            mistakes: R`في مشروع حقيقي كل ملف كان فيه سطر [[session_save_path]] بمسار فيه اسم حساب الاستضافة، متكرر في عشرات الملفات: مكانه سطر واحد في [[.user.ini]] أو bootstrap. و [[session_start]] بعد ما حاجة اتطبعت: [[headers already sent]]. وطلبات AJAX بطيئة وانت مش عارف إن السبب قفل الجلسة.`
           },
-          lines: [
-            "بداية كود PHP.",
-            "false في PHP 8 (كانت true في 7).",
-            "true و true و true: نصوص رقمية بتتقارن كأرقام.",
-            "true و true و true.",
-            "true (الاتنين صفر علمي)، و false مع ===.",
-            "true من غير strict، و false معاه."
-          ],
-          sol: R`الناتج بالترتيب: [[false]]، و [[true true true]]، و [[true true true]]، و [[true false]]، و [[true false]].
+          teach: R`## الأول: إزاي السيرفر بيفتكرك؟
 
-[[0 == 'abc']] false من PHP 8 (كانت true في 7، ودي أشهر سؤال). [['1' == '01']] و [['10' == '1e1']] و [[100 == '1e2']] true لأن النصين الرقميين بيتقارنوا كأرقام. [[null == false]] و [[[] == false]] و [['0' == false]] true لأنهم كلهم falsy. [['0e123' == '0e456']] true لأن الاتنين 0 × 10 أس حاجة = 0، ودي ثغرة حقيقية لما تقارن hashes بـ [[==]] (ده سبب [[hash_equals]]). و [[in_array]] من غير [[true]] بيستخدم [[==]] فلقى [['1e1']] في [[['10']]].
+كل طلب HTTP جديد بيوصل للسيرفر كأنه من حد غريب. [[session_start()]] بتحل ده بكوكي فيها رقم عشوائي: أول طلب PHP بيعمل الرقم ويبعته للمتصفح، والمتصفح بيرجّعه مع كل طلب بعد كده، و PHP بيفتح الملف اللي بنفس الرقم ويحط محتواه في [[$_SESSION]].
 
-لو خمّنت [[0 == 'abc']] true، انت فاكر PHP 7. الإجابة المختصرة في الانترفيو: [[===]] دايمًا، و [[in_array(..., true)]] و [[match]] بدل [[switch]].`
-        },
-        {
-          cmd: "Warning مقابل Error",
-          title: "إيه الفرق بين include و require؟ (include vs require)",
-          desc: R`الاتنين بيحطوا ملف PHP مكانهم وينفّذوه. الفرق وقت الفشل: [[include]] لو الملف مش موجود بيطلع Warning ويكمّل، و [[require]] بيرمي [[Error]] (في PHP 8، وقبلها كان fatal compile error) والصفحة بتقف لو محدش مسكه.
+جرّبت المثال كصفحة [[session.php]] على [[php -S]] (السيرفر المدمج في PHP 8.4.26) جوه Docker على البورت 5885، وفتحتها بـ curl في Git Bash وبـ [[curl.exe]] و [[Invoke-WebRequest]] في PowerShell.
 
-فأي ملف الصفحة متنفعش من غيره (إعدادات، اتصال بالقاعدة، دوال أساسية) بيبقى [[require]]. و [[_once]] بيتأكد إنه اتحمّل مرة واحدة في الطلب، عشان الدوال والكلاسات متتعرّفش مرتين. وفي مشروع حديث أغلب الـ requires بتختفي، لأن Composer autoload بيحمّل الكلاسات لوحده، ويفضل require واحد لـ [[vendor/autoload.php]].`,
-          example: R`<?php
-$x = include 'missing.php';
-var_dump($x);
-echo "كمّل\n";
-require 'missing.php';
-echo "مش هيتطبع\n";`,
-          try: R`شغّله واقرا الرسايل: Warning مرتين وبعدين [[bool(false)]] و «كمّل»، وبعدين [[Fatal error: Uncaught Error: Failed opening required]]. بعدين لف الـ require في [[try { } catch (Error $e) { }]] وشوف إنه بيتمسك.`,
-          flag: "script",
-          deep: {
-            why: "سؤال بسيط بيتسأل عشان يفتح كلام عن تنظيم المشروع، والـ autoloading، والأمان (file inclusion).",
-            how: R`الاتنين language constructs مش دوال، فالأقواس اختيارية. [[include]] بيرجّع قيمة: 1 افتراضيًا، أو اللي الملف عمله [[return]] (زي ملف الإعدادات)، أو false لو فشل.
+---
 
-[[_once]] بيحفظ المسار الكامل للملف بعد ما يتحلّ، فلو نفس الملف اتطلب بمسارين مختلفين بيتعرف إنه واحد. التكلفة صغيرة جدًا خصوصًا مع OPcache.
+## ١. [[session_start([...])]] والإعدادات
 
-المسار النسبي بيتدوّر عليه في [[include_path]] وفولدر السكربت اللي اتفتح، فالأمان إنك تكتب [[__DIR__]]. والخطر الأمني: [[include $_GET['page']]] = local file inclusion.`,
-            when: "أسئلة بعدها: «include_once إمتى؟» «ليه __DIR__؟» «autoloading بيشتغل إزاي؟» «LFI يعني إيه وتمنعه إزاي؟»",
-            mistakes: R`«require أسرع» (مفيش فرق يذكر). و«include للملفات المهمة عشان الموقع ميقعش» (يكمّل من غير اتصال بالقاعدة ويطلع أخطاء أسوأ). وتقول إن [[require]] في PHP 8 fatal مبيتمسكش: بقى [[Error]] وممكن يتمسك.`
-          },
+~~~php
+<?php
+session_start([
+    'cookie_httponly' => true,
+    'cookie_secure'   => true,
+    'cookie_samesite' => 'Lax',
+    'use_strict_mode' => true,
+]);
+~~~
+
+[[session_start]] بتاخد array إعدادات اختيارية، كل مفتاح فيها هو اسم إعداد [[session.]] في [[php.ini]] من غير الـ [[session.]]. الأربعة دول بيتحكموا في الكوكي:
+
+| الإعداد | بيعمل إيه في الكوكي | بيحمي من إيه |
+|---|---|---|
+| [[cookie_httponly]] | بيضيف [[HttpOnly]]: JavaScript ميقدرش يقراها ([[document.cookie]]) | XSS بيسرق الجلسة |
+| [[cookie_secure]] | بيضيف [[secure]]: المتصفح يبعتها على https بس | حد بيتجسس على شبكة http |
+| [[cookie_samesite]] | [[SameSite=Lax]]: متتبعتش مع POST جاي من موقع تاني | CSRF (درس جاي) |
+| [[use_strict_mode]] | لو جالك id مش عامله PHP، اعمل واحد جديد | session fixation |
+
+ولازم تتنادى **قبل أي طباعة**، لأنها بتبعت header ([[Set-Cookie]])، والـ headers بتتبعت قبل الـ body.
+
+---
+
+## ٢. العدّاد
+
+~~~php
+$_SESSION['visits'] = ($_SESSION['visits'] ?? 0) + 1;
+~~~
+
+من جوه لبرة:
+1. [[$_SESSION['visits']]]: قيمة محفوظة في الجلسة (أول مرة مش موجودة).
+2. [[?? 0]]: الـ null coalescing operator، يعني «لو مش موجودة أو null خد 0».
+3. [[+ 1]] وبعدين احفظ النتيجة في نفس المكان.
+
+[[$_SESSION]] array عادي، أي حاجة تحطها فيه PHP بيحفظها في آخر الطلب.
+
+~~~php
+echo "زرت الصفحة {$_SESSION['visits']} مرة\n";
+echo 'session id: ', session_id();
+~~~
+
+[[{...}]] جوه النص المزدوج عشان قيمة array بمفتاح، و [[session_id()]] بترجّع الرقم اللي في الكوكي.
+
+---
+
+## ٣. التشغيل بـ curl (Git Bash)
+
+curl من غير أي حاجة مبيحفظش كوكيز، فكل طلب هيبقى زائر جديد. [[-c jar.txt]] = احفظ الكوكيز اللي جاية في الملف ده، و [[-b jar.txt]] = ابعت الكوكيز اللي فيه. و [[-i]] = اطبع الـ headers كمان، و [[-s]] = من غير شريط التقدم.
+
+~~~bash
+curl -s -i -c jar.txt -b jar.txt localhost:5885/session.php
+~~~
+
+~~~text الناتج (أول طلب)
+HTTP/1.1 200 OK
+X-Powered-By: PHP/8.4.26
+Set-Cookie: PHPSESSID=ce411d1a612220e0c235ca2ca4eef3cb; path=/; secure; HttpOnly; SameSite=Lax
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+Content-type: text/html; charset=UTF-8
+
+زرت الصفحة 1 مرة
+session id: ce411d1a612220e0c235ca2ca4eef3cb
+~~~
+
+نقرا الـ headers:
+- [[Set-Cookie: PHPSESSID=...]]: الكوكي. [[PHPSESSID]] اسمها الافتراضي، والقيمة ٣٢ حرف hex (أرقام 0-9 وحروف a-f)، وبعدها العلامات اللي الإعدادات حطتها بالظبط.
+- [[Expires]] سنة 1981 و [[Cache-Control: no-store]]: PHP بيقول للمتصفح «متعملش cache للصفحة دي»، لأن فيها بيانات خاصة بالمستخدم.
+
+نفس الأمر مرتين كمان (من غير [[-i]]):
+
+~~~text الناتج
+زرت الصفحة 2 مرة
+session id: ce411d1a612220e0c235ca2ca4eef3cb
+زرت الصفحة 3 مرة
+session id: ce411d1a612220e0c235ca2ca4eef3cb
+~~~
+
+نفس الـ id، والعدد بيزيد.
+
+---
+
+## ٤. الجلسة على السيرفر
+
+[[session.save_path]] فاضي في صورة Docker، يعني PHP بيستخدم [[/tmp]]. بصيت جوه الـ container:
+
+~~~text الناتج (cat /tmp/sess_ce411d1a...)
+visits|i:3;
+~~~
+
+ده [[$_SESSION]] متخزن كنص: المفتاح [[visits]]، وبعد [[|]] القيمة: [[i:3]] يعني int قيمته 3. وأي حد معاه الـ id ده (الكوكي) يبقى «هو» عند السيرفر، عشان كده الكوكي دي أهم حاجة تتحمي.
+
+و [[session.gc_maxlifetime]] طلع [[1440]] ثانية، يعني الملف يبقى مرشح للمسح بعد ٢٤ دقيقة من غير استخدام.
+
+---
+
+## ٥. [[use_strict_mode]]: id مزيف
+
+~~~bash
+curl -s -i -b "PHPSESSID=attacker123456" localhost:5885/session.php
+~~~
+
+~~~text الناتج
+Set-Cookie: PHPSESSID=9b7b7c91e98b64fd7d5116d9b9151e42; path=/; secure; HttpOnly; SameSite=Lax
+session id: 9b7b7c91e98b64fd7d5116d9b9151e42
+~~~
+
+بعتنا id اخترعناه، و PHP رفضه وعمل واحد جديد. من غير [[use_strict_mode]] كان هيقبله ويعمل جلسة بالاسم ده، وده نص هجمة session fixation.
+
+---
+
+## ٦. [[cookie_secure]] على http: كل client بيتصرف إزاي
+
+السيرفر هنا http مش https، والكوكي [[secure]]. النتيجة بعد طلبين بنفس الجلسة:
+
+| الـ client | الطلب التاني | ليه |
+|---|---|---|
+| curl في Git Bash (8.22) | زرت الصفحة 2 مرة | curl بيعتبر localhost و 127.0.0.1 آمنين |
+| [[curl.exe]] بتاع ويندوز (8.21) | زرت الصفحة 2 مرة | نفس الكلام |
+| [[Invoke-WebRequest]] في PowerShell 7.6 و 5.1 | زرت الصفحة 1 مرة | حفظ الكوكي ([[Secure=True]]) بس رفض يبعتها على http |
+| المتصفح على [[localhost]] | بيزيد | المتصفحات بتعتبر localhost آمن |
+| المتصفح على [[http://192.168.x.x]] | ثابت 1 | مش آمن، فالكوكي مبتتبعتش |
+
+في PowerShell:
+
+~~~powershell
+$r = Invoke-WebRequest http://localhost:5885/session.php -SessionVariable s
+(Invoke-WebRequest http://localhost:5885/session.php -WebSession $s).Content
+~~~
+
+[[-SessionVariable s]] بيعمل متغير [[$s]] شايل الكوكيز (زي [[jar.txt]])، و [[-WebSession $s]] بيستخدمه في الطلب اللي بعده. و [[curl.exe]] (لازم [[.exe]] في Windows PowerShell 5.1، لأن [[curl]] هناك اسم تاني لـ [[Invoke-WebRequest]]):
+
+~~~powershell
+curl.exe -s -c jar.txt -b jar.txt http://localhost:5885/session.php
+~~~
+
+يعني [[cookie_secure]] شغال صح: الكوكي مش المفروض تمشي على http. في التطوير على IP الشبكة خليها [[false]]، وفي الإنتاج (https) [[true]] دايمًا.
+
+---
+
+## الخلاصة
+
+| حاجة | فين |
+|---|---|
+| الـ id | كوكي [[PHPSESSID]] في المتصفح |
+| البيانات | ملف [[sess_<id>]] على السيرفر |
+| القراية والكتابة | [[$_SESSION]] بعد [[session_start()]] |
+| الحماية | [[httponly]] و [[secure]] و [[samesite]] و [[use_strict_mode]] |
+
+و [[session_start()]] قبل أي [[echo]]، وفي الجلسة حاجات صغيرة زي [[user_id]] بس.`,
           lines: [
             "بداية الملف.",
-            "include لملف مش موجود: Warning.",
-            "bool(false).",
-            "بيكمّل عادي.",
-            "require لملف مش موجود: Error والصفحة وقفت.",
-            "مبيتنفّذش."
+            "ابدأ الجلسة بإعدادات آمنة.",
+            "JavaScript مش شايف الكوكي.",
+            "https بس.",
+            "متتبعتش مع POST من موقع تاني.",
+            "ارفض أي session id مش من عندنا.",
+            "قفلة.",
+            "عدّاد في الجلسة، بيزيد مع كل طلب.",
+            "اطبعه.",
+            "الـ id اللي في الكوكي."
           ],
-          sol: R`[[include]]: [[Warning: include(missing.php): Failed to open stream: No such file or directory]] و [[Warning: include(): Failed opening 'missing.php' for inclusion]]، وبعدين [[bool(false)]] (ده اللي [[include]] رجّعه) و [[كمّل]]. بعدين [[require]]: Warning نفس الأولى، وبعدها [[Fatal error: Uncaught Error: Failed opening required 'missing.php']] و [[مش هيتطبع]] مش هيظهر.
+          sol: R`أول مرة [[زرت الصفحة 1 مرة]] ومع كل refresh 2 و 3... و [[session id: 64d3b1b0...]] (32 حرف hex) ثابت. الـ response الأول فيه [[Set-Cookie: PHPSESSID=...; path=/; secure; HttpOnly; SameSite=Lax]]، وفي DevTools › Application › Cookies هتلاقي HttpOnly و Secure متعلّم عليهم و SameSite = Lax.
 
-في [[try { require 'missing.php'; } catch (Error $e) { }]]: بيطبع [[اتمسك: Error - Failed opening required 'missing.php' (include_path='.:/usr/share/php')]] والكود بيكمّل. من PHP 8 الـ [[require]] الفاشل بيرمي [[Error]]، مش fatal ميتمسكش زي زمان. الـ Warning الأول بيطلع برضه لأنه قبل الـ Error.
+بعد ما تمسح الكوكي: رجعت [[1]] بـ id جديد. البيانات لسه في ملف على السيرفر ([[/var/lib/php/sessions/sess_...]] على Debian/Ubuntu)، بس المتصفح نسي مفتاحها فبقى زائر جديد، والملف القديم هيتمسح بعدين بالـ garbage collection.
 
-الإجابة المختصرة: [[include]] للحاجات الاختيارية (Warning ويكمّل)، و [[require]] للي الصفحة متعيشش من غيره، و [[_once]] عشان الملف ميتحمّلش مرتين (دوال وكلاسات).`,
-          solCode: R`<?php
-try {
-    require 'missing.php';
-} catch (Error $e) {
-    echo 'اتمسك: ', get_class($e), ' - ', $e->getMessage(), "\n";
-}
-echo "كمّل\n";`
+على [[localhost]] العدد بيزيد رغم [[cookie_secure]]، لأن المتصفحات بتعتبر localhost آمن. على [[http://192.168.x.x:8000]] المتصفح بيرفض يخزن الكوكي، فكل طلب جلسة جديدة والعدد ثابت 1.`
         },
         {
-          cmd: "السيرفر مقابل المتصفح",
-          title: "إيه الفرق بين الـ sessions والـ cookies؟ (sessions vs cookies)",
-          desc: R`الكوكي بيانات صغيرة (حوالي 4KB) متخزنة في المتصفح وبتتبعت مع كل طلب، والمستخدم يقدر يقراها ويعدّلها. الـ session بيانات متخزنة على السيرفر، والمتصفح معاه بس كوكي فيها id عشوائي بيشاور عليها.
+          cmd: "password_hash",
+          title: "خزّن الباسورد بحيث حتى انت متعرفهوش",
+          desc: R`[[password_hash($password, PASSWORD_DEFAULT)]] بيطلّع hash فيه الخوارزمية والـ cost والـ salt في نص واحد، و [[password_verify()]] بتقارن. عمرك ما تخزن الباسورد نفسه، ولا [[md5]] ولا [[sha1]].
 
-فأي حاجة المستخدم ميقدرش يتحكم فيها (مين داخل، صلاحياته) مكانها الـ session، والكوكي لتفضيلات زي اللغة، أو لـ token «افتكرني» اللي الـ hash بتاعه في القاعدة. والـ session نفسها معتمدة على كوكي، فإعداداتها ([[HttpOnly]] و [[Secure]] و [[SameSite]]) هي اللي بتحميها.`,
-          example: R`<?php
-setcookie('lang', 'ar', ['expires' => time() + 86400 * 30, 'path' => '/', 'samesite' => 'Lax']);
-echo $_COOKIE['lang'] ?? 'لسه (الكوكي بتوصل من الطلب الجاي)';
-session_start();
-$_SESSION['user_id'] = 42;
-echo session_id();`,
-          try: R`افتح الصفحة مرتين وشوف [[$_COOKIE]] فاضي أول مرة. وفي DevTools غيّر قيمة [[lang]] بإيدك: اتغيرت. وحاول تغيّر [[user_id]]: مش موجود في المتصفح أصلًا.`,
-          flag: "script",
-          deep: {
-            why: "السؤال بيختبر فهمك لـ state في HTTP، وإيه اللي تثق فيه وإيه لأ.",
-            how: R`[[setcookie]] بيبعت header [[Set-Cookie]]، والمتصفح بيرجّعها من الطلب اللي بعده، عشان كده [[$_COOKIE]] فاضي في نفس الطلب.
-
-الـ session في PHP افتراضيًا ملفات على السيرفر. لو عندك أكتر من سيرفر ورا load balancer، الطلب ممكن يروح لسيرفر معندوش الملف، فالجلسات لازم تبقى في مخزن مشترك (Redis أو القاعدة) أو sticky sessions.
-
-البديل: tokens زي JWT، الـ state كلها جوه token موقّع مع العميل. مفيش مخزن على السيرفر، بس صعب تلغيه قبل ما يخلص (logout، حظر). للمواقع العادية الجلسة أبسط وأأمن.
-
-عمر الكوكي: من غير [[expires]] بتموت لما المتصفح يقفل. عمر الجلسة على السيرفر: [[gc_maxlifetime]].`,
-            when: "أسئلة بعدها: «لو عندك ٣ سيرفرات؟» «JWT ولا session؟» «HttpOnly بيحمي من إيه؟» «إزاي تمنع session hijacking و fixation؟»",
-            mistakes: R`«الـ session مش بتستخدم كوكي» (بتستخدم، إلا لو الـ id في الرابط وده خطر). وتخزين role أو user_id في كوكي عادية. و«الـ session آمنة دايمًا» من غير regenerate و HttpOnly و Secure.`
-          },
-          lines: [
-            "بداية الملف.",
-            "كوكي لغة لمدة ٣٠ يوم.",
-            "أول طلب: لسه مش موجودة.",
-            "ابدأ جلسة.",
-            "البيانات على السيرفر.",
-            "ده بس اللي في كوكي المتصفح."
-          ],
-          sol: R`أول طلب: [[لسه (الكوكي بتوصل من الطلب الجاي)]] والـ response فيه [[Set-Cookie: lang=ar; expires=...; Max-Age=2592000; path=/; SameSite=Lax]] و [[Set-Cookie: PHPSESSID=...]]. تاني طلب: [[ar]]. [[setcookie]] بيطلب من المتصفح يخزنها، و [[$_COOKIE]] بيتقرا من الطلب اللي جاي، فمش هيشوفها في نفس الطلب.
-
-في DevTools هتلاقي كوكيتين بس: [[lang=ar]] و [[PHPSESSID=ac2c53cc...]]. غيّر [[lang]] لـ [[en]] واعمل refresh: الصفحة هتطبع [[en]]، يعني أي حاجة في كوكي المستخدم يقدر يغيّرها. [[user_id]] مش موجود في المتصفح، اللي موجود مفتاح عشوائي بس والـ 42 في ملف الجلسة على السيرفر.
-
-الإجابة المختصرة: الكوكي = بيانات عند المتصفح، بيتبعت مع كل طلب، والمستخدم يقدر يقراه ويغيّره. الجلسة = بيانات على السيرفر، والكوكي فيه الـ id بس. أي حاجة ليها علاقة بالصلاحيات (مين المستخدم، admin ولا لا) في الجلسة.`
-        },
-        {
-          cmd: "SQL والقيم منفصلين",
-          title: "إيه الـ prepared statements وليه بتمنع SQL injection؟",
-          desc: R`prepared statement بيبعت الـ SQL للقاعدة بـ placeholders الأول، والقاعدة بتعمله parse وتجهّز خطته، وبعدين القيم بتتبعت لوحدها كبيانات. فمهما المستخدم كتب، مستحيل يتفهم كجزء من الأمر، لأن الأمر اتفهم خلاص قبل ما القيمة توصل.
-
-في PHP بعملها بـ PDO: [[prepare]] و [[execute]] بـ named params، مع [[EMULATE_PREPARES]] مقفولة. واللي مينفعش يبقى placeholder (اسم عمود، اتجاه الترتيب) بعمله allowlist. وفايدة جانبية: نفس الـ statement بيتنفّذ كذا مرة بقيم مختلفة.`,
-          example: R`<?php
-$email = "x' OR '1'='1";
-$bad = "SELECT * FROM users WHERE email = '$email'";
-echo $bad, "\n";
-$stmt = db()->prepare('SELECT * FROM users WHERE email = :email');
-$stmt->execute(['email' => $email]);`,
-          try: R`اطبع [[$bad]] واقراه: الشرط بقى [[OR '1'='1']] يعني كل الصفوف. والنسخة الـ prepared بتدوّر على إيميل حرفيًا [[x' OR '1'='1]] فمبترجعش حاجة.`,
-          flag: "script",
-          deep: {
-            why: "SQL injection لسه من أشهر الثغرات، والسؤال بيشوف إذا كنت فاهم السبب (الخلط بين الأمر والبيانات) مش حافظ الحل بس.",
-            how: R`مع الـ emulation (افتراضي pdo_mysql) PHP نفسه بيعمل escape للقيم ويحطها في الـ SQL ويبعت نص واحد. آمن طول ما الـ charset متحدد في الـ DSN، بس الأنضف إن القاعدة تستلمهم منفصلين.
-
-ليه [[mysqli_real_escape_string]] مش كفاية؟ بيحمي جوه علامات تنصيص بس: [[WHERE id = $id]] من غير تنصيص مفيهاش أي حماية، وسهل تنسى escape مرة واحدة من مية.
-
-الـ ORMs (Eloquent و Prisma) بتستخدم prepared statements، إلا في الـ raw queries: [[DB::raw]] أو [[whereRaw]] بقيمة ملزوقة = نفس المشكلة.
-
-second-order injection: قيمة اتخزنت بأمان، وبعدين اتقرت من القاعدة واتلزقت في query تاني. عشان كده «كل query فيه متغير = prepared»، مش «كل query فيه input».`,
-            when: "أسئلة بعدها: «mysqli_real_escape_string مش كفاية؟» «ORDER BY ديناميكي إزاي؟» «IN بعدد متغير؟» «الـ ORM بيحميك دايمًا؟»",
-            mistakes: R`«prepared statements بتعمل escape» (مع native prepares مفيش escape أصلًا، القيم منفصلة). و«بتحمي من XSS» (لأ خالص). و«ينفع placeholder لاسم الجدول».`
-          },
-          lines: [
-            "بداية الملف.",
-            "قيمة خبيثة من فورم.",
-            "الغلط: القيمة ملزوقة في نص الـ SQL.",
-            "اطبعه وشوف الشرط اتغير إزاي.",
-            "الصح: placeholder.",
-            "القيمة لوحدها كبيانات."
-          ],
-          sol: R`[[echo $bad]] بيطبع: [[SELECT * FROM users WHERE email = 'x' OR '1'='1']]. الـ [[']] اللي في الإيميل قفلت النص بدري، و [[OR '1'='1']] بقى شرط SQL حقيقي دايمًا true، فالـ query بيرجّع كل الصفوف (لو login، هيدخل بأول مستخدم وغالبًا ده الـ admin).
-
-النسخة الـ prepared بترجّع صفر صفوف: الـ SQL وصل القاعدة الأول فيه [[?]] مكان القيمة، والقاعدة جهّزت الخطة، وبعدين القيمة وصلت كبيانات، فبتدوّر على إيميل حرفيًا [[x' OR '1'='1]].
-
-في الانترفيو قول الجملة دي: «الـ prepared statement مش بيعمل escape، بيبعت الكود والبيانات منفصلين فالبيانات مستحيل تتنفّذ». وزوّد إن اسم العمود أو الجدول أو [[ASC/DESC]] مينفعش يبقى placeholder، ودول whitelist.`
-        },
-        {
-          cmd: "bcrypt بطيء + salt",
-          title: "بتخزن الباسوردات إزاي؟ وليه مش md5؟",
-          desc: R`بـ [[password_hash($p, PASSWORD_DEFAULT)]] وبتحقق بـ [[password_verify]]. الافتراضي bcrypt: خوارزمية بطيئة عمدًا بـ cost بيزيد مع الوقت (12 من PHP 8.4)، ومعاها salt عشوائي لكل باسورد، والاتنين متخزنين جوه نفس الـ hash.
-
-البطء بيخلي تخمين الباسوردات بعد تسريب القاعدة مكلّف جدًا، والـ salt بيخلي نفس الباسورد يطلع hash مختلف فالجداول الجاهزة ملهاش لازمة. [[md5]] و [[sha256]] سريعين جدًا، ودي بالظبط المشكلة. وبعد كل login ناجح [[password_needs_rehash]] بيحدّث الـ hash لو الإعدادات اتغيرت.`,
+العمود [[VARCHAR(255)]]: bcrypt النهارده ٦٠ حرف، بس [[PASSWORD_DEFAULT]] ممكن يتغير لخوارزمية أطول. و PHP 8.4 رفع الـ cost الافتراضي من 10 لـ 12.`,
           example: R`<?php
 $hash = password_hash('secret123', PASSWORD_DEFAULT);
+echo $hash, "\n";
 var_dump(password_verify('secret123', $hash));
-print_r(password_get_info($hash));`,
-          try: R`قيس الوقت: [[$t = microtime(true); password_hash('x', PASSWORD_DEFAULT); echo microtime(true) - $t;]] وقارنه بـ [[md5('x')]] في loop مليون مرة.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر فهمك للفرق بين hashing و encryption، وليه السرعة عيب هنا بالذات.",
-            how: R`hashing اتجاه واحد: مفيش طريقة ترجع الباسورد. encryption بيرجع بالمفتاح، فلو المفتاح اتسرق كل الباسوردات اتكشفت. عشان كده الباسورد hash مش encryption.
-
-GPU واحدة بتجرب مليارات md5 في الثانية، وبـ bcrypt cost 12 آلاف بس. ده الفرق بين كسر أغلب الباسوردات في ساعات وسنين.
-
-الـ salt مش سر: متخزن مع الـ hash. وظيفته إن كل hash يتكسر لوحده. الـ pepper (سر إضافي في الإعدادات مش في القاعدة) طبقة اختيارية.
-
-Argon2id ([[PASSWORD_ARGON2ID]]) بديل حديث بيستهلك ذاكرة كمان، ومتاح لو PHP متبني بيه. و bcrypt بيقرا أول 72 byte بس.`,
-            when: "أسئلة بعدها: «ليه مش sha256 مع salt؟» «hashing ولا encryption؟» «Argon2؟» «توكن استرجاع الباسورد بيتخزن إزاي؟» (hash sha256 لأنه عشوائي وطويل)",
-            mistakes: R`«بشفّر الباسورد» (بتعمله hash). و«md5 مع salt كفاية». و«لازم أخزن الـ salt في عمود لوحده». و[[==]] بين hashes.`
-          },
-          lines: [
-            "بداية الملف.",
-            "hash (bcrypt، cost 12، salt عشوائي).",
-            "true.",
-            "الخوارزمية والـ cost مقرية من الـ hash نفسه."
-          ],
-          sol: R`عندي [[password_hash('x', PASSWORD_DEFAULT)]] مرة واحدة أخدت حوالي 0.26 ثانية، ومليون [[md5('x')]] أخدوا حوالي 0.14 ثانية. يعني hash واحد bcrypt أبطأ من md5 واحد بأكتر من مليون مرة (الأرقام بتختلف حسب الجهاز، بس الفرق دايمًا بالملايين).
-
-ده المقصود: المستخدم مش هيحس بربع ثانية وقت الـ login، بس اللي سرق القاعدة ومعاه GPU بيجرّب مليارات md5 في الثانية، وبـ bcrypt آلاف بس. والـ salt العشوائي بيخلي كل hash لازم يتكسر لوحده، فـ rainbow tables ملهاش لازمة.
-
-و [[password_get_info]] بيطلّع [[[algo] => 2y]] و [[[algoName] => bcrypt]] و [[[cost] => 12]]. لو الوقت طلع أقل من 0.05 ثانية، غالبًا انت على PHP أقدم من 8.4 (الـ cost كان 10).`,
-          solCode: R`<?php
-$t = microtime(true);
-password_hash('x', PASSWORD_DEFAULT);
-printf("bcrypt مرة: %.3fs\n", microtime(true) - $t);
-$t = microtime(true);
-for ($i = 0; $i < 1_000_000; $i++) md5('x');
-printf("md5 مليون مرة: %.3fs\n", microtime(true) - $t);`
-        },
-        {
-          cmd: "escape حسب المكان",
-          title: "بتمنع XSS إزاي في PHP؟ (XSS prevention)",
-          desc: R`XSS إن حد يخلي موقعي يشغّل JavaScript بتاعه في متصفح زوّاري. الحماية الأساسية output escaping: أي بيانات مش مكتوبة في الكود بعمللها escape وقت الطباعة وحسب المكان: [[htmlspecialchars]] بـ [[ENT_QUOTES]] جوه HTML والـ attributes، و [[json_encode]] بالـ flags [[JSON_HEX_*]] جوه [[<script>]]، و [[urlencode]] جوه روابط، وأي لينك من المستخدم لازم يبدأ بـ [[https://]] عشان [[javascript:]].
-
-وفوقها طبقات: كوكي الجلسة [[HttpOnly]] فمتتسرقش حتى لو حصل XSS، و [[Content-Security-Policy]] بيمنع scripts غريبة. وفي Blade أو React الـ escaping أوتوماتيك، والخطر في الأماكن اللي بتقفله ([[{!! !!}]] و [[dangerouslySetInnerHTML]]).`,
-          example: R`<?php
-$name = '<img src=x onerror=alert(1)>';
-echo '<p>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</p>';
-echo '<script>const n = ' . json_encode($name, JSON_HEX_TAG | JSON_HEX_QUOT) . ';</script>';`,
-          try: R`اطبع [[$name]] من غير escape في صفحة وافتحها: هيطلع alert. وبعدين بالسطرين في المثال.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إذا كنت عارف إن الحماية وقت الإخراج مش الإدخال، وإن المكان بيفرق.",
-            how: R`الأنواع: stored (اتخزن في القاعدة واتعرض لكل الزوار، الأخطر)، و reflected (في الرابط واترد في الصفحة)، و DOM-based (JavaScript في الصفحة بياخد من الرابط ويحط في [[innerHTML]]).
-
-ليه مش تنضيف الإدخال؟ لأن نفس النص بيتعرض في HTML و JSON و إيميل وملف CSV، وكل مكان ليه escaping مختلف. والتنضيف بيبوّظ بيانات حقيقية (حد اسمه فيه [[<]]). فبتخزن زي ما هو وتعمل escape على حسب المكان.
-
-للـ HTML اللي المستخدم لازم يكتبه (محرر نصوص): مكتبة sanitizer زي HTML Purifier بـ allowlist للتاجات، مش [[strip_tags]].
-
-[[HttpOnly]] بيمنع سرقة الكوكي بس؛ الـ script لسه يقدر يعمل طلبات باسم المستخدم من جوه الصفحة. عشان كده الـ escaping هو الأساس.`,
-            when: "أسئلة بعدها: «أنواع XSS؟» «ليه مش strip_tags؟» «CSP بيعمل إيه؟» «HttpOnly بيحمي من إيه ومبيحميش من إيه؟»",
-            mistakes: R`«بفلتر الإدخال» كإجابة أساسية. و [[htmlspecialchars]] جوه [[<script>]] أو جوه [[onclick]]. و«React بيحميني» وانت بتستخدم [[dangerouslySetInnerHTML]].`
-          },
-          lines: [
-            "بداية الملف.",
-            "اسم خبيث.",
-            "جوه HTML: بيطلع نص.",
-            "جوه JavaScript: json_encode بالـ flags."
-          ],
-          sol: R`من غير escape ([[echo '<p>' . $name . '</p>';]]) الـ alert بيطلع: المتصفح شاف [[<img>]] حقيقي، الصورة [[x]] فشلت، فـ [[onerror]] اشتغل.
-
-بالسطرين اللي في المثال View Source بيبقى: [[<p>&lt;img src=x onerror=alert(1)&gt;</p>]] وبيظهر كنص، و [[<script>const n = "\u003Cimg src=x onerror=alert(1)\u003E";</script>]] ومفيش alert (الـ [[<]] و [[>]] بقوا [[\u003C]] و [[\u003E]]، و JavaScript بيرجّعهم حروف عادية جوه النص). كل مكان ليه escape بتاعه: HTML بـ [[htmlspecialchars]]، وجوه [[<script>]] بـ [[json_encode]] مع [[JSON_HEX_TAG]] عشان [[</script>]] جوه النص ميقفلش الـ tag.
-
-للانترفيو: الـ escape وقت الطباعة مش وقت الحفظ، لأن نفس القيمة ممكن تتطبع في HTML أو JSON أو CSV. وزوّد Content-Security-Policy كطبقة تانية، و [[htmlspecialchars]] مش كفاية جوه [[href]] ([[javascript:alert(1)]] مفيهاش ولا حرف يتعمله escape)، فالروابط لازم تتأكد إنها بتبدأ بـ [[https://]].`
-        },
-        {
-          cmd: "token + SameSite",
-          title: "بتمنع CSRF إزاي؟ (CSRF prevention)",
-          desc: R`CSRF إن موقع تاني يخلي متصفح المستخدم يبعت طلب لموقعي، والمتصفح بيبعت الكوكيز معاه، فالسيرفر يفتكره المستخدم. الحماية: token عشوائي في الجلسة بحطه hidden في كل فورم وبقارنه بـ [[hash_equals]] مع كل طلب بيغيّر حاجة. الموقع التاني ميقدرش يقراه بسبب same-origin policy.
-
-وطبقة تانية [[SameSite=Lax]] على الكوكي، ومفيش أي تغيير في البيانات بـ GET. ولو الـ API معتمد على Bearer token في header مش كوكي، CSRF مش مشكلة أصلًا، لأن المتصفح مبيبعتش الـ header ده لوحده.`,
-          example: R`<?php
-$_SESSION['csrf'] ??= bin2hex(random_bytes(32));
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $ok = hash_equals($_SESSION['csrf'], (string) ($_POST['csrf'] ?? ''));
-    if (!$ok) { http_response_code(403); exit; }
+var_dump(password_verify('wrong', $hash));
+if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+    $hash = password_hash('secret123', PASSWORD_DEFAULT);
 }`,
-          try: R`اعمل صفحة HTML على بورت تاني ([[php -S localhost:9000]]) فيها فورم بيبعت POST لموقعك على 8000 من غير token، وشوف الـ 403.`,
+          try: R`شغّل المثال مرتين وقارن الـ hash: مختلف كل مرة لنفس الباسورد، والاتنين بيعدّوا في [[password_verify]]. بعدين جرّب [[['cost' => 14]]] كـ option تالت وحس بالفرق في الوقت.`,
           flag: "script",
           deep: {
-            why: "بيختبر إذا كنت فاهم إن المتصفح بيبعت الكوكي لوحده، وإن ده أصل المشكلة.",
-            how: R`CSRF و XSS مختلفين: CSRF طلب من موقع تاني باسمك، و XSS كود شغال جوه موقعك. ولو فيه XSS، الـ CSRF token ملوش لازمة لأن الـ script يقدر يقراه من الصفحة.
+            why: "القواعد بتتسرّب: backup منسي، أو SQL injection، أو موظف. لو الباسوردات متخزنة زي ما هي أو بـ md5، كل الحسابات راحت، والناس بتستخدم نفس الباسورد في الإيميل والبنك. الـ hash البطيء بيخلي تخمين كل باسورد مكلّف جدًا.",
+            how: R`شكل الناتج: [[$2y$12$]] + ٢٢ حرف salt + ٣١ حرف hash. [[2y]] يعني bcrypt، و [[12]] الـ cost. [[password_verify]] بيقرا الخوارزمية والـ cost والـ salt من الـ hash نفسه، عشان كده مش محتاج تخزنهم لوحدهم.
 
-SameSite: [[Strict]] الكوكي مبتتبعتش من أي موقع تاني خالص (حتى لو ضغطت لينك، فتوصل مش داخل). [[Lax]] بتتبعت مع التنقل العادي GET بس. [[None]] بتتبعت دايمًا ولازم معاها [[Secure]].
+الـ salt عشوائي لكل hash، فنفس الباسورد لمستخدمين بيطلع hash مختلف، والجداول الجاهزة (rainbow tables) ملهاش لازمة.
 
-CORS مش حماية من CSRF: CORS بيمنع الموقع التاني يقرا الرد، مش يبعت الطلب. الفورم العادي بيتبعت من غير أي CORS.
+الـ cost لوغاريتمي: 12 يعني 2 أس 12 لفة. كل زيادة 1 بتضاعف الوقت. الهدف إن الـ login ياخد عشرات لمئات الـ milliseconds عندك، ويبقى تخمين مليارات الباسوردات مستحيل عمليًا. [[md5]] و [[sha256]] سريعين جدًا (مليارات في الثانية على GPU)، وده بالظبط العيب.
 
-double submit cookie: token في كوكي وفي الطلب والسيرفر يقارنهم، بديل لو مفيش جلسة على السيرفر.`,
-            when: "أسئلة بعدها: «CSRF vs XSS؟» «SameSite Lax vs Strict؟» «API بـ JWT محتاج CSRF؟» «CORS بيحمي؟»",
-            mistakes: R`«HTTPS بيحمي من CSRF». و«CORS بيحمي». وتغيير بيانات بـ GET. و[[==]] في مقارنة الـ token.`
+[[password_needs_rehash]] بعد login ناجح: لو الـ hash القديم بـ cost 10 (قبل PHP 8.4) أو خوارزمية أقدم، اعمل hash جديد واحفظه. كده الحسابات القديمة بتتحدث لوحدها.
+
+bcrypt بيقرا أول 72 byte بس ويتجاهل الباقي بصمت، والحرف العربي ٢ bytes. للـ tokens العشوائية الطويلة (remember me، reset password) [[hash('sha256', $token)]] كفاية وأسرع، لأنها مش كلمات بشر ممكن تتخمن.`,
+            when: "التسجيل، والـ login، وتغيير الباسورد. وأي سر المفروض تتحقق منه بس ومتعرفهوش.",
+            mistakes: R`في مشروع حقيقي توكن «افتكرني» كان متخزن في القاعدة زي ما هو، فأي تسريب للجدول = دخول بحساب أي حد عنده التوكن. خزّن [[hash('sha256', $token)]] وقارن بالـ hash. و [[md5($pass)]] أو [[sha1]] حتى مع salt. وعمود [[VARCHAR(60)]] بالظبط. ومقارنة hash بـ [[==]] بدل [[password_verify]].`
           },
+          teach: R`## الأول: hash مش تشفير
+
+التشفير ليه مفتاح بيرجّع النص الأصلي. الـ **hash** طريق في اتجاه واحد: من الباسورد تطلّع نص ثابت الطول، ومن النص ده مستحيل ترجع للباسورد. فبتخزن الـ hash، ولما المستخدم يكتب باسورد بتعمله hash بنفس الطريقة وتقارن. المثال بيعمل كده، وبيحدّث الـ hash القديم لو الإعدادات اتغيرت.
+
+اتشغّل كله بـ [[php ex7.php]] على PHP 8.4.26 (صورة [[php:8.4-cli]]).
+
+---
+
+## ١. [[password_hash('secret123', PASSWORD_DEFAULT)]]
+
+~~~php
+<?php
+$hash = password_hash('secret123', PASSWORD_DEFAULT);
+echo $hash, "\n";
+~~~
+
+- الـ parameter الأول الباسورد، والتاني الخوارزمية. [[PASSWORD_DEFAULT]] ثابت معناه «أحسن خوارزمية PHP شايفها افتراضيًا دلوقتي». قيمته في 8.4 طلعت [[2y]]، يعني bcrypt.
+
+~~~text الناتج (تشغيلين ورا بعض)
+$2y$12$3MZayHbEHAQ9EYEwro42zOsFJ1mieOjjfIXQuZgXbUrG/l2UrzAmC
+$2y$12$gYEeqCb4HorrwjvZY.D6TefnE/Ai77s0Z4vGw/MVkA8QrWhPdavG.
+~~~
+
+نفس الباسورد، ونتيجتين مختلفتين خالص. ليه؟ نفك الأول حتة حتة (طوله 60 حرف):
+
+~~~text شكل الـ hash
+$2y$  12$  3MZayHbEHAQ9EYEwro42zO  sFJ1mieOjjfIXQuZgXbUrG/l2UrzAmC
+ |    |    |                       |
+ |    |    salt (22 حرف)            الـ hash نفسه (31 حرف)
+ |    cost
+ الخوارزمية (bcrypt)
+~~~
+
+- **salt**: نص عشوائي PHP بيولّده لكل hash جديد ويخلطه بالباسورد. عشان كده كل مرة شكل. ومعناه إن اتنين مستخدمين بنفس الباسورد مش هيبقى ليهم نفس الـ hash، والجداول الجاهزة (rainbow tables) ملهاش لازمة.
+- **cost**: [[12]] يعني الخوارزمية بتلف 2 أس 12 = 4096 مرة. PHP 8.4 رفعه من 10 لـ 12.
+
+[[password_get_info($hash)]] بتقرالك الكلام ده من الـ hash نفسه:
+
+~~~text الناتج
+[algo] => 2y
+[algoName] => bcrypt
+[options] => Array ( [cost] => 12 )
+~~~
+
+---
+
+## ٢. [[password_verify]]
+
+~~~php
+var_dump(password_verify('secret123', $hash));
+var_dump(password_verify('wrong', $hash));
+~~~
+
+~~~text الناتج
+bool(true)
+bool(false)
+~~~
+
+[[password_verify]] بتقرا الخوارزمية والـ cost والـ salt من أول الـ hash، وتعمل hash للباسورد الجديد بنفسهم، وتقارن. عشان كده مش محتاج تخزن الـ salt في عمود لوحده: هو جوه النص أصلًا. و [[var_dump]] بيطبع النوع والقيمة ([[bool(true)]]).
+
+---
+
+## ٣. [[password_needs_rehash]]
+
+~~~php
+if (password_needs_rehash($hash, PASSWORD_DEFAULT)) {
+    $hash = password_hash('secret123', PASSWORD_DEFAULT);
+}
+~~~
+
+بتسأل: «الـ hash ده معمول بإعدادات أضعف من اللي بطلبها دلوقتي؟». لو آه، اعمل hash جديد (وفي الحقيقة احفظه في القاعدة). المكان الوحيد اللي معاك فيه الباسورد الأصلي هو لحظة الـ login الناجح، فده مكانها. جرّبت:
+
+| الـ hash | [[password_needs_rehash($h, PASSWORD_DEFAULT)]] |
+|---|---|
+| معمول بـ cost 12 (الافتراضي) | [[false]]، فالـ if مبيتنفّذش |
+| معمول بـ cost 10 (زي PHP قبل 8.4) | [[true]]: هيتحدّث |
+| معمول بـ cost 14 | [[true]] برضه! |
+| cost 14 ومعاه نفس الـ options [[['cost' => 14]]] | [[false]] |
+
+يعني الدالة بتقارن بالإعدادات اللي بتديهالها بالظبط، مش «أقوى ولا أضعف». ادّي [[password_hash]] و [[password_needs_rehash]] نفس الـ options دايمًا.
+
+---
+
+## ٤. الـ solCode: الـ cost بيعمل إيه في الوقت
+
+~~~php
+<?php
+foreach ([10, 12, 14] as $cost) {
+    $t = microtime(true);
+    $h = password_hash('secret123', PASSWORD_DEFAULT, ['cost' => $cost]);
+    printf("cost %d: %.3fs %s\n", $cost, microtime(true) - $t, substr($h, 0, 7));
+}
+~~~
+
+- [[foreach ([10, 12, 14] as $cost)]]: لف على التلات أرقام.
+- [[microtime(true)]]: الوقت دلوقتي بالثواني بكسور (float). نحفظه قبل، ونطرح بعد.
+- الـ parameter التالت لـ [[password_hash]]: [[['cost' => $cost]]] بيغيّر الـ cost.
+- [[printf]]: اطبع بقالب. [[%d]] رقم صحيح، و [[%.3f]] رقم عشري بـ ٣ أرقام بعد العلامة، و [[%s]] نص. والقيم بالترتيب بعد القالب.
+- [[substr($h, 0, 7)]]: أول ٧ حروف من الـ hash ([[$2y$12$]])، عشان نتأكد إن الـ cost اتطبّق.
+
+~~~text الناتج
+cost 10: 0.049s $2y$10$
+cost 12: 0.193s $2y$12$
+cost 14: 0.746s $2y$14$
+~~~
+
+كل +2 في الـ cost = الوقت تقريبًا × 4 (لأن كل +1 = ضعف اللفات). 0.19 ثانية مش مشكلة لمستخدم بيعمل login، بس هي كارثة لحد عايز يجرب مليار باسورد. وللمقارنة [[md5('secret123')]] بيطلع في جزء صغير من الـ millisecond ومن غير salt:
+
+~~~text الناتج
+string(32) "5d7845ac6ee7cfffafc5fe5f35cf666d"
+~~~
+
+ونفس الباسورد هيطلع نفس الـ md5 عند أي حد في العالم، فده مكتوب في جداول جاهزة.
+
+---
+
+## ٥. حد الـ 72 byte
+
+جرّبت باسوردين نفس أول 72 حرف ومختلفين بعدها:
+
+~~~php
+$a = str_repeat('a', 72);
+var_dump(password_verify($a . 'XYZ', password_hash($a . 'different', PASSWORD_DEFAULT)));
+~~~
+
+~~~text الناتج
+bool(true)
+~~~
+
+bcrypt بيتجاهل أي حاجة بعد أول 72 byte من غير ما يقول. في الحقيقة نادرًا ما بتفرق للباسوردات، بس خليه في بالك.
+
+---
+
+## الخلاصة
+
+| الدالة | امتى | بترجّع |
+|---|---|---|
+| [[password_hash($p, PASSWORD_DEFAULT)]] | التسجيل وتغيير الباسورد | نص 60 حرف (bcrypt) |
+| [[password_verify($p, $hash)]] | الـ login | true أو false |
+| [[password_needs_rehash($hash, PASSWORD_DEFAULT)]] | بعد login ناجح | true لو محتاج يتحدّث |
+
+والعمود [[VARCHAR(255)]]، ومفيش [[md5]] ولا [[sha1]] للباسوردات.`,
           lines: [
             "بداية الملف.",
-            "token للجلسة لو مش موجود.",
-            "على كل POST...",
-            "...قارن اللي جاي باللي في الجلسة بأمان.",
-            "مش مطابق: 403 ووقّف.",
+            "hash بالخوارزمية الافتراضية (bcrypt، cost 12).",
+            "[[$2y$12$...]] ستين حرف.",
+            "true.",
+            "false.",
+            "الـ hash قديم أو أضعف من الافتراضي الحالي؟",
+            "اعمله تاني واحفظه (بعد login ناجح).",
             "قفلة."
           ],
-          sol: R`الفورم من [[localhost:9000]] بيرجّع [[403]] وصفحة فاضية. ولو نفس الفورم على موقعك ومعاه الـ token: [[200]].
+          sol: R`كل تشغيل بيطبع hash شكله [[$2y$12$kkp1V.8Fx4xQz6jIPEE0..1XWSEW3o5...]] (60 حرف) وبعده [[bool(true)]] و [[bool(false)]]. التشغيل التاني بيطلّع hash مختلف تمامًا لنفس الباسورد، لأن فيه salt عشوائي جديد. [[$2y$]] = bcrypt، و [[12]] = الـ cost (الافتراضي في PHP 8.4، وكان 10 قبلها)، وبعدها 22 حرف salt والباقي الـ hash. [[password_verify]] بيقرا الـ salt والـ cost من الـ hash نفسه، فالاتنين بيعدّوا.
 
-خلي بالك إن [[localhost:9000]] و [[localhost:8000]] نفس الـ site في عين المتصفح (البورت مش بيفرق في SameSite)، فكوكي الجلسة وصلت عادي، والـ 403 هنا جاي من الـ token بس. عشان تشوف SameSite لوحدها لازم domain مختلف فعلًا (مثلًا [[127.0.0.1]] مقابل [[localhost]]). والمثال مفيهوش [[session_start()]]، فلازم تضيفها في أوله.
+بالـ cost: عندي 10 أخد حوالي 0.06 ثانية، و 12 حوالي 0.3، و 14 حوالي 1.2 ثانية. كل +1 = الوقت × 2. ولو خزّنت بـ [[['cost' => 14]]] وناديت [[password_needs_rehash($hash, PASSWORD_DEFAULT)]] من غير نفس الـ options، هترجع true وهتعيد الـ hash مع كل login. ادّي الدالتين نفس الـ options.
 
-للانترفيو: الـ token هو الحماية الأساسية لأن الموقع التاني ميقدرش يقراه، و [[SameSite=Lax]] طبقة تانية بتمنع الكوكي في الـ POST من site تاني. والـ GET عمره ما يغيّر حاجة.`,
-          solCode: R`<!-- attack.html: شغّله بـ php -S localhost:9000 -->
-<form method="post" action="http://localhost:8000/csrf.php">
-  <input type="hidden" name="id" value="42">
-  <button>اكسب جايزة</button>
-</form>`
-        },
-        {
-          cmd: "shared-nothing",
-          title: "اشرح دورة حياة الطلب في PHP (PHP request lifecycle)",
-          desc: R`في الإعداد المعتاد، Nginx أو Apache بيستقبل الطلب ويسلّمه لـ PHP-FPM، وده pool من العمليات (workers). worker فاضي بياخد الطلب، و PHP بيعمل compile للسكربت لـ opcodes (أو ياخدهم جاهزين من OPcache)، وينفّذه، ويبني الرد، ويبعته، وبعدين يمسح كل حاجة: المتغيرات والـ objects والاتصالات.
-
-ده اسمه shared-nothing: كل طلب معزول، ومفيش state في الذاكرة بين الطلبات. الميزة إن memory leak أو crash بيأثر على طلب واحد، والـ scaling سهل. والتمن إن أي حاجة لازم تعيش (جلسات، cache) بتروح لملفات أو القاعدة أو Redis، والـ bootstrap بيتكرر مع كل طلب، وده سبب OPcache. والاستثناء الحديث: FrankenPHP و RoadRunner و Swoole (و Laravel Octane فوقهم) بيخلوا التطبيق عايش في الذاكرة بين الطلبات.`,
-          example: R`<?php
-$hits = ($hits ?? 0) + 1;
-session_start();
-$_SESSION['hits'] = ($_SESSION['hits'] ?? 0) + 1;
-echo "متغير عادي: $hits | جلسة: {$_SESSION['hits']}";`,
-          try: R`افتح الصفحة ٥ مرات: المتغير العادي دايمًا 1، والجلسة بتزيد. ده الـ shared-nothing قدامك.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إذا كنت فاهم PHP بيشتغل إزاي فعلًا، وبيفرق عن Node إزاي، مش بس بتكتب كود.",
-            how: R`PHP-FPM: master process بيدير مجموعة workers. [[pm = dynamic]] بيزوّد وينقص العدد حسب الضغط، و [[pm.max_children]] أقصى عدد طلبات في نفس الوقت. worker واحد = طلب واحد في المرة. لو كلهم مشغولين، الطلبات الجديدة بتستنى.
-
-مقارنة بـ Node: Node عملية واحدة بـ event loop بتخدم آلاف الطلبات، والـ state في الذاكرة مشتركة بينهم (وممكن تسرّب بينهم). PHP كل طلب لوحده. عشان كده في PHP مفيش «متغير global بيفضل».
-
-الشغل الطويل (إيميلات، معالجة صور) مبيتعملش في الطلب: بيتحط في queue (جدول أو Redis)، و worker منفصل أو cron بيشتغل عليه.
-
-mod_php القديم: PHP جوه عملية Apache نفسها. أبسط بس بيستهلك ذاكرة أكتر، و FPM هو الشائع النهارده.`,
-            when: "أسئلة بعدها: «PHP-FPM vs mod_php؟» «background jobs بتتعمل إزاي؟» «OPcache بيعمل إيه؟» «مقارنة بـ Node؟» «Octane بيغيّر إيه ومحتاج تاخد بالك من إيه؟» (state بتفضل بين الطلبات)",
-            mistakes: R`«PHP بيعمل thread لكل طلب» (FPM عمليات). و«static variables بتفضل بين الطلبات». و«PHP بطيء لأنه interpreted» من غير ما تذكر OPcache.`
-          },
-          lines: [
-            "بداية الملف.",
-            "متغير عادي: بيبدأ من الصفر مع كل طلب.",
-            "افتح الجلسة.",
-            "الجلسة متخزنة بره الطلب، فبتزيد.",
-            "اطبع الاتنين."
-          ],
-          sol: R`خمس مرات: [[متغير عادي: 1 | جلسة: 1]] ثم [[1 | 2]] ثم [[1 | 3]] ثم [[1 | 4]] ثم [[1 | 5]]. [[$hits]] بيبدأ من الصفر مع كل طلب لأن PHP بيمسح كل حاجة في الآخر، والجلسة بتزيد لأنها متخزنة في ملف على السيرفر ومتربوطة بالكوكي.
-
-الإجابة النموذجية: الطلب بيوصل لـ Nginx، يحوّله لـ PHP-FPM، worker فاضي يشغّل [[index.php]] من أوله (OPcache بيوفّر الترجمة بس)، الكود بيقرا الطلب ويكلّم القاعدة ويطبع، الـ response يرجع، وكل المتغيرات والاتصالات بتتقفل. أي حاجة لازم تفضل بين الطلبات مكانها بره PHP: جلسة، قاعدة، Redis، ملف.
-
-لو [[$hits]] زاد عندك، انت شغّال على runtime زي FrankenPHP worker mode أو Swoole، ودول مش shared-nothing، وده بالظبط اللي بيعمل memory leaks وبيانات مستخدم بتتسرّب لمستخدم تاني لو مخدتش بالك.`
-        },
-        {
-          cmd: "spl_autoload_register",
-          title: "الـ autoloading في Composer بيشتغل إزاي؟",
-          desc: R`PHP فيه hook: لما الكود يستخدم كلاس مش متعرّف، بينادي الدوال المسجلة بـ [[spl_autoload_register]] تحمّله قبل ما يرمي Class not found. Composer بيسجّل دالة بتحوّل اسم الكلاس لمسار ملف حسب PSR-4: الـ prefix [[App\\]] مربوط بـ [[src/]]، فـ [[App\Models\User]] يبقى [[src/Models/User.php]].
-
-فأنا بعمل require واحد لـ [[vendor/autoload.php]] وخلاص، والكلاس بيتحمّل أول ما يتستخدم بس. وفي الإنتاج [[composer install --no-dev --optimize-autoloader]] بيبني classmap: array جاهز من كل كلاس لمساره، من غير بحث.`,
-          example: R`<?php
-spl_autoload_register(function (string $class): void {
-    $prefix = 'App\\';
-    if (!str_starts_with($class, $prefix)) return;
-    $file = __DIR__ . '/src/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
-    if (is_file($file)) require $file;
-});
-$repo = new App\Models\PostRepository();`,
-          try: R`حط المثال بدل [[vendor/autoload.php]] في مشروع الـ MVC وشوف إنه شغال. ده تقريبًا اللي Composer بيعمله لـ PSR-4.`,
-          flag: "script",
-          deep: {
-            why: "بيختبر إذا كنت فاهم الأداة اللي كل مشروع PHP حديث معتمد عليها، مش بس بتكتب [[require vendor/autoload.php]].",
-            how: R`Composer عنده ٣ أنواع: [[psr-4]] (namespace → فولدر، بيدوّر وقت الحاجة)، و [[classmap]] (بيمسح الفولدرات مرة ويعمل array)، و [[files]] (ملفات بتتحمّل دايمًا، للدوال لأن الدوال مفيهاش autoload).
-
-[[use]] مبيحمّلش حاجة، مجرد alias وقت الـ compile. التحميل بيحصل أول ما الكلاس يتستخدم فعلًا ([[new]]، أو static call، أو [[class_exists]]). أما [[instanceof]] فمبيحمّلش حاجة: لو الكلاس مش متحمّل بيرجّع false على طول.
-
-الـ autoloading case-sensitive على Linux لأن نظام الملفات كده، فاسم الملف لازم يطابق اسم الكلاس بالظبط.
-
-[[--optimize-autoloader]] بيحوّل PSR-4 لـ classmap؛ مع OPcache الـ lookup بيبقى array في الذاكرة. و [[--classmap-authoritative]] بيقول لو مش في الـ classmap يبقى مش موجود، من غير ما يدوّر على القرص.`,
-            when: "أسئلة بعدها: «PSR-4 vs classmap؟» «ليه بيشتغل على ويندوز ويقع على Linux؟» «use بيحمّل الكلاس؟» «dump-autoload إمتى؟»",
-            mistakes: R`«[[use]] بيعمل require». و«autoload بيحمّل كل الكلاسات في الأول». و commit لـ [[vendor/]].`
-          },
-          lines: [
-            "بداية الملف.",
-            "سجّل دالة PHP هينادي عليها لما كلاس ميبقاش موجود.",
-            R`الـ namespace اللي بنتعامل معاه (App\\).`,
-            "كلاس من namespace تاني: مش شغلنا.",
-            R`App\Models\PostRepository ← src/Models/PostRepository.php.`,
-            "لو الملف موجود حمّله.",
-            "قفلة.",
-            "الكلاس اتحمّل لوحده هنا."
-          ],
-          sol: R`الصفحة بتشتغل زي ما كانت بـ Composer. لو ضفت [[echo]] جوه الدالة هتشوف إنها بتتنادى مرة لكل كلاس أول ما يتستخدم: [[App\Models\PostRepository → src/Models/PostRepository.php]] وبعدين [[App\Controllers\PostController → src/Controllers/PostController.php]]، ومبتتناداش تاني لنفس الكلاس.
-
-الـ autoloader بيحمّل الكلاسات بس، فملفات الدوال ([[helpers.php]] فيه [[view]] و [[e]]، و [[db.php]]) لازم [[require]] بإيدك، وده اللي [[files]] في [[composer.json]] بيعمله. لو نسيتها هتاخد [[Call to undefined function view()]]. ولو اسم الكلاس ملوش ملف ([[Class "App\..." not found]])، الدالة بترجع من غير ما تعمل حاجة و PHP بيجرب الـ autoloader اللي بعدها.`,
+والعمود في القاعدة [[VARCHAR(255)]] مش [[CHAR(60)]]: لو PHP غيّر الـ default لـ argon2 مثلًا الطول هيزيد.`,
           solCode: R`<?php
-spl_autoload_register(function (string $class): void {
-    $prefix = 'App\\';
-    if (!str_starts_with($class, $prefix)) return;
-    $file = __DIR__ . '/src/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
-    if (is_file($file)) require $file;
-});
-require __DIR__ . '/src/helpers.php'; // الدوال مش بتتعمل autoload
-require __DIR__ . '/src/db.php';
-$c = new App\Controllers\PostController(new App\Models\PostRepository());
-echo $c->show(1);`
+foreach ([10, 12, 14] as $cost) {
+    $t = microtime(true);
+    $h = password_hash('secret123', PASSWORD_DEFAULT, ['cost' => $cost]);
+    printf("cost %d: %.3fs %s\n", $cost, microtime(true) - $t, substr($h, 0, 7));
+}`
         },
         {
-          cmd: "عقد، أساس، نسخ",
-          title: "الفرق بين interface و abstract class و trait؟",
-          desc: R`الـ interface عقد: أسماء methods من غير تنفيذ، والكلاس يقدر ينفّذ أكتر من واحد، وبستخدمه كنوع في الـ parameters عشان أبدّل التنفيذ (بوابة دفع حقيقية أو fake في الاختبار). الـ abstract class أساس مشترك: فيه كود و properties و methods ناقصة لازم الابن يكمّلها، والكلاس يورث من واحد بس. الـ trait مش نوع خالص: كود بيتنسخ جوه الكلاس وقت الـ compile، لمشاركة methods بين كلاسات ملهاش علاقة ببعض.
+          cmd: "session_regenerate_id",
+          title: "تسجيل دخول صح، وحماية الصفحات اللي وراه",
+          desc: R`بعد ما [[password_verify]] ينجح: [[session_regenerate_id(true)]] الأول، وبعدين احفظ [[user_id]] في الجلسة وحوّل. تغيير الـ id بيقفل هجمة session fixation: لو حد زرع id معروف في متصفح الضحية قبل الدخول، الـ id ده بيموت لحظة الدخول.
 
-القاعدة عندي: interface للعقد والنوع، و abstract لما فيه كود مشترك حقيقي بين أنواع من نفس العيلة، و trait لسلوك صغير بيتكرر، والتركيب (object جوه object) قبل الوراثة.`,
-          example: R`<?php
-interface Notifier { public function send(string $to, string $msg): void; }
-trait Logs { protected function log(string $m): void { echo "[log] $m\n"; } }
-abstract class BaseNotifier implements Notifier { use Logs; }
-final class SmsNotifier extends BaseNotifier {
-    public function send(string $to, string $msg): void { $this->log("sms to $to"); }
-}
-$n = new SmsNotifier();
-var_dump($n instanceof Notifier, $n instanceof BaseNotifier, $n instanceof Logs);`,
-          try: R`شغّله: [[true]] و [[true]] و [[false]]، الـ trait مش نوع. وحاول [[new BaseNotifier()]]: ممنوع.`,
-          flag: "script",
-          deep: {
-            why: "سؤال تصميم كلاسيكي: بيختبر إمتى تستخدم كل أداة، مش تعريفاتهم بس.",
-            how: R`interface: methods عامة بس، و constants، ومن PHP 8.4 ينفع يطلب properties بـ hooks ([[public string $name { get; }]]). مفيش state.
-
-abstract class: أي visibility، و constructor، و properties، و methods كاملة و abstract. وراثة واحدة.
-
-trait: copy-paste وقت الـ compile، فيه properties و methods و abstract methods. التعارض بـ [[insteadof]] و [[as]]. مبيتفحصش كنوع.
-
-الوراثة بتربط الابن بتفاصيل الأب (تغيير في الأب بيكسر الأبناء). التركيب بيخلي الكلاس ياخد object بينفّذ interface في الـ constructor، وده اللي بيخلي الاختبار والتبديل سهل (SOLID: dependency inversion).`,
-            when: "أسئلة بعدها: «multiple inheritance في PHP؟» «trait conflicts؟» «composition over inheritance يعني إيه؟» «interface فيه properties؟»",
-            mistakes: R`«trait زي interface». و«abstract class زي interface بس فيه كود» من غير ذكر الوراثة الواحدة. وتعمل abstract base لكل حاجة.`
-          },
-          lines: [
-            "بداية الملف.",
-            "العقد.",
-            "كود بيتنسخ.",
-            "أساس بينفّذ العقد وبياخد الـ trait.",
-            "كلاس حقيقي.",
-            "التنفيذ، وبيستخدم method من الـ trait.",
-            "قفلة.",
-            "object.",
-            "true و true و false."
-          ],
-          sol: R`الناتج [[bool(true) bool(true) bool(false)]]: الـ object نوعه [[Notifier]] و [[BaseNotifier]]، إنما [[Logs]] مش نوع. الـ trait اتنسخ جوه الكلاس وخلاص، فمينفعش تكتب [[function x(Logs $l)]]. و [[new BaseNotifier()]]: [[Error: Cannot instantiate abstract class BaseNotifier]].
-
-الإجابة النموذجية: interface = عقد من غير كود ([[implements]] كذا واحد). abstract class = أساس فيه كود وحالة، وراث واحد بس، ومينفعش يتعمل منه object. trait = كود بيتنسخ في كذا كلاس ملهمش علاقة ببعض، من غير نوع. ولو عايز تعرف الـ traits: [[class_uses($n)]] بيرجّع array فاضي لأنها بتشوف الكلاس نفسه بس، و [[class_uses(BaseNotifier::class)]] فيها [[Logs]].`
-        },
-        {
-          cmd: "PDO لأغلب المشاريع",
-          title: "PDO ولا mysqli؟ (PDO vs mysqli)",
-          desc: R`الاتنين بيدعموا prepared statements ومحدّثين. mysqli خاص بـ MySQL و MariaDB وفيه حاجات خاصة بيهم (زي [[multi_query]] والـ async queries)، وكان الأسهل للنقل من دوال [[mysql_*]] القديمة. PDO واجهة واحدة لأغلب القواعد (MySQL و PostgreSQL و SQLite و SQL Server...)، وفيه named placeholders ([[:email]])، و fetch modes مريحة، و exceptions افتراضي من PHP 8.
-
-فأنا بختار PDO لأي مشروع جديد. وفي مشروع قديم كان mysqli مع escape ولزق نصوص، والتحويل لـ prepared statements (بأي واحدة فيهم) كان أهم إصلاح أمني.`,
-          example: R`<?php
-$stmt = $mysqli->prepare('SELECT id, name FROM users WHERE email = ?');
-$stmt->bind_param('s', $email);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
-$stmt = $pdo->prepare('SELECT id, name FROM users WHERE email = :email');
+وكل صفحة محمية بتبدأ بدالة زي [[require_login()]]: لو مفيش [[user_id]] في الجلسة، حوّل لصفحة الدخول و [[exit]].`,
+          example: R`$stmt = db()->prepare('SELECT id, password_hash FROM users WHERE email = :email');
 $stmt->execute(['email' => $email]);
-$user = $stmt->fetch();`,
-          try: R`اكتب نفس الـ INSERT بالاتنين وقارن عدد السطور. وجرّب في mysqli شكل PHP 8.1: [[$stmt->execute([$email])]] من غير [[bind_param]].`,
+$user = $stmt->fetch();
+if (!$user || !password_verify($password, $user['password_hash'])) {
+    $error = 'الإيميل أو الباسورد غلط';
+} else {
+    session_regenerate_id(true);
+    $_SESSION['user_id'] = (int) $user['id'];
+    header('Location: /dashboard.php', true, 303);
+    exit;
+}
+function require_login(): int {
+    if (empty($_SESSION['user_id'])) { header('Location: /login.php'); exit; }
+    return $_SESSION['user_id'];
+}`,
+          try: R`اعمل login وقارن PHPSESSID في DevTools قبل وبعد: اتغيرت. بعدين افتح [[dashboard.php]] بـ curl من غير كوكي ([[curl -i localhost:8000/dashboard.php]]): لازم 302 ومفيش ولا حرف من محتوى الصفحة.`,
           flag: "script",
           deep: {
-            why: "بيختبر إذا كنت فاهم الخيارات، وإذا كنت عارف إن الأمان مش في اختيار المكتبة، في استخدام prepared statements.",
-            how: R`الفجوة قلّت: من PHP 8.1، [[mysqli_stmt::execute]] بيقبل array قيم، و 8.2 فيه [[mysqli_execute_query($sql, $params)]] في سطر. بس mysqli لسه placeholders بالترتيب [[?]] بس.
+            why: "الـ login هو الباب. أي غلطة فيه (رسالة بتفضح مين مسجّل، أو id الجلسة متغيرش، أو صفحة نسيت الحماية) بتدّي حد دخول مش بتاعه.",
+            how: R`نفس الرسالة للإيميل الغلط والباسورد الغلط، عشان محدش يعرف مين مسجّل عندك (user enumeration).
 
-PDO بيسهّل تغيير القاعدة من ناحية الكود (نفس الدوال)، بس SQL نفسه بيختلف بين MySQL و Postgres ([[AUTO_INCREMENT]]، [[RETURNING]]، الـ upsert)، فالتغيير مش ببلاش.
+session fixation: المهاجم ياخد id جلسة عادي من موقعك، ويخلي الضحية تستخدمه (رابط أو كوكي)، ويستنى الضحية تعمل login، وبعدين يستخدم نفس الـ id فيبقى داخل. [[session_regenerate_id(true)]] بيعمل id جديد وبيمسح ملف القديم ([[true]])، فالـ id اللي مع المهاجم بقى فاضي. و [[use_strict_mode]] بيقفل نص الهجمة من الأول.
 
-الاتنين فوق نفس الـ driver ([[mysqlnd]]) لـ MySQL، فالأداء تقريبًا واحد.`,
-            when: "أسئلة بعدها: «ORM ولا SQL مباشر؟» «PDO بيخليك تغيّر القاعدة بسهولة؟» «persistent connections؟» «EMULATE_PREPARES إيه؟»",
-            mistakes: R`«mysqli مش بيدعم prepared statements». و«PDO بيخليك تغيّر القاعدة من غير أي تعديل». و«PDO آمن لوحده» (لو لزقت نصوص في [[query()]] نفس الثغرة).`
+[[require_login]] في أول كل صفحة محمية، وكل endpoint في API الأدمن كمان، مش بس إنك تخبّي اللينك من الـ menu. وللأدمن: اقرا الـ role من القاعدة مع كل طلب.
+
+الحد من المحاولات: سجّل المحاولات الفاشلة لكل إيميل ولكل IP، وبعد ٥ مثلًا استنى دقايق. من غيرها أي حد يجرب آلاف الباسوردات.
+
+«افتكرني»: كوكي تانية عمرها طويل فيها token عشوائي ([[bin2hex(random_bytes(32))]])، والقاعدة فيها hash بتاعه بس. لما الجلسة تموت والكوكي موجودة، دوّر بالـ hash، ولو لقيته اعمل login وغيّر التوكن. والكوكي دي [[httponly]] و [[secure]].
+
+ولو فيه [[?redirect=]] بعد الدخول، اقبل مسار داخلي بس: بيبدأ بـ [[/]] والحرف التاني مش [[/]]، ومفيهوش [[\]] ولا tab ولا سطر جديد خالص (المتصفح بيقرا [[/\evil.com]] و [[?redirect=/%09/evil.com]] زي [[//evil.com]])، والأضمن allowlist لصفحات معروفة، وإلا بقى open redirect لموقع تاني.`,
+            when: "صفحة الـ login، وأول سطر في كل صفحة أو endpoint محمي.",
+            mistakes: R`تنسى [[exit]] في [[require_login]]: المتصفح بيتحوّل، بس محتوى الصفحة المحمية اتبعت في الرد. وتحط صف المستخدم كله (ومعاه الـ hash) في الجلسة. وفي مشروع حقيقي كوكي «افتكرني» كانت بتتعمل بـ secure = false، فممكن تتبعت على http وتتسرق من الشبكة.`
           },
+          teach: R`## الأول: المثال حتتين
+
+1. **الـ login نفسه**: دوّر على المستخدم بالإيميل، واتأكد من الباسورد، ولو تمام غيّر id الجلسة واحفظ رقم المستخدم وحوّله.
+2. **[[require_login()]]**: حارس بتحطه أول كل صفحة محمية.
+
+جرّبته كصفحتين [[login.php]] و [[dashboard.php]] على [[php -S]] (PHP 8.4.26) مع MySQL 8.4.11، وملف [[src/bootstrap.php]] فيه [[session_start]] بإعدادات الدرس اللي فات و [[db()]] و [[require_login()]]. والمستخدم [[ali@example.com]] باسورده [[secret123]] متخزن بـ [[password_hash]].
+
+---
+
+## ١. هات المستخدم بالإيميل
+
+~~~php
+$stmt = db()->prepare('SELECT id, password_hash FROM users WHERE email = :email');
+$stmt->execute(['email' => $email]);
+$user = $stmt->fetch();
+~~~
+
+نفس [[prepare / execute]]. بنجيب العمودين اللي محتاجينهم بس. و [[$user]] يا صف يا [[false]].
+
+## ٢. الشرط
+
+~~~php
+if (!$user || !password_verify($password, $user['password_hash'])) {
+    $error = 'الإيميل أو الباسورد غلط';
+~~~
+
+- [[!]] = not، و [[||]] = or.
+- يعني: «لو مفيش مستخدم، **أو** الباسورد مش مطابق». و [[||]] بيقف أول ما يلاقي حاجة صح (short-circuit)، فلو [[$user]] بـ [[false]]، [[password_verify]] مش هتتنادى أصلًا، وده كويس لأن [[$user['password_hash']]] على false كان هيبقى غلط.
+- الحالتين نفس الرسالة. جرّبت:
+
+~~~bash
+curl -s -d "email=ali@example.com&password=bad" localhost:5885/login.php
+curl -s -d "email=nobody@example.com&password=bad" localhost:5885/login.php
+~~~
+
+~~~text الناتج
+الإيميل أو الباسورد غلط
+الإيميل أو الباسورد غلط
+~~~
+
+[[-d]] بيبعت POST بالبيانات دي (زي الفورم بالظبط). ومن الرد مستحيل تعرف إن [[ali@]] مسجّل و [[nobody@]] لأ (user enumeration).
+
+## ٣. النجاح: ٤ سطور بالترتيب ده
+
+~~~php
+} else {
+    session_regenerate_id(true);
+    $_SESSION['user_id'] = (int) $user['id'];
+    header('Location: /dashboard.php', true, 303);
+    exit;
+}
+~~~
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[session_regenerate_id(true)]] | id جلسة جديد بنفس البيانات، و [[true]] = امسح ملف الـ id القديم من السيرفر |
+| [[$_SESSION['user_id'] = (int) ...]] | احفظ رقم المستخدم بس (مش الصف ومعاه الـ hash) |
+| [[header('Location: ...', true, 303)]] | رد بتحويل. [[true]] = استبدل أي Location قبلها، و [[303]] = «روح اعمل GET للمكان ده» |
+| [[exit]] | وقّف السكربت هنا |
+
+جرّبت الـ login بـ curl وجرة كوكيز ([[-c]] و [[-b]] زي درس الجلسة):
+
+~~~text الكوكي قبل الـ login
+ff75fb87852fd2b8526b33d6fa7532c9
+~~~
+
+~~~text الناتج (headers الـ login)
+HTTP/1.1 303 See Other
+Set-Cookie: PHPSESSID=bd7b57b76329d8bcd46fe5a597951e46; path=/; secure; HttpOnly; SameSite=Lax
+Location: /dashboard.php
+~~~
+
+الـ id اتغيّر. وبصيت في فولدر الجلسات على السيرفر:
+
+~~~text الناتج
+ls: cannot access '/tmp/sess_ff75fb87852fd2b8526b33d6fa7532c9': No such file or directory
+/tmp/sess_bd7b57b76329d8bcd46fe5a597951e46
+~~~
+
+~~~text محتوى الملف الجديد
+user_id|i:1;
+~~~
+
+الملف القديم اتمسح (بسبب [[true]])، فلو مهاجم كان زارع الـ id القديم في متصفحك (session fixation)، معاه دلوقتي مفتاح لملف مش موجود.
+
+---
+
+## ٤. [[require_login()]]
+
+~~~php
+function require_login(): int {
+    if (empty($_SESSION['user_id'])) { header('Location: /login.php'); exit; }
+    return $_SESSION['user_id'];
+}
+~~~
+
+- [[empty(...)]] بترجّع true لو المفتاح مش موجود أو قيمته فاضية (null أو 0 أو ''). ومبتطلّعش warning لو مش موجود.
+- مش داخل: حوّل ([[header]] من غير كود = 302) و [[exit]].
+- داخل: رجّع الرقم. و [[: int]] بيضمن إن اللي بينادي واخد رقم.
+
+والـ solCode بيستخدمها:
+
+~~~php
+<?php // public/dashboard.php
+require dirname(__DIR__) . '/src/bootstrap.php';
+$userId = require_login();
+?>
+<h1>أهلًا، رقمك <?= $userId ?></h1>
+~~~
+
+[[?>]] بيقفل PHP وبعده HTML عادي، و [[<?= ... ?>]] اختصار لـ [[<?php echo ... ?>]].
+
+~~~text الناتج (بالكوكي اللي بعد الـ login)
+<h1>أهلًا، رقمك 1</h1>
+~~~
+
+ومن غير كوكي:
+
+~~~bash
+curl -s -i localhost:5885/dashboard.php
+~~~
+
+~~~text الناتج
+HTTP/1.1 302 Found
+Location: /login.php
+Content-type: text/html; charset=UTF-8
+
+~~~
+
+والـ body فاضي. في PowerShell:
+
+~~~powershell
+curl.exe -s -i http://localhost:5885/dashboard.php
+$r = Invoke-WebRequest http://localhost:5885/dashboard.php -MaximumRedirection 0 -SkipHttpErrorCheck
+$r.StatusCode; $r.Headers.Location; $r.Content.Length
+~~~
+
+~~~text الناتج (PowerShell 7.6)
+302
+/login.php
+0
+~~~
+
+[[-MaximumRedirection 0]] = متتبعش التحويل (وإلا هيروح لـ login.php ويوريك صفحتها)، و [[-SkipHttpErrorCheck]] = متعتبرش الـ 302 error. وهيطبع سطر [[The maximum redirection count has been exceeded]] قبل النتيجة، وده عادي هنا.
+
+---
+
+## ٥. ليه [[exit]] مهمة: التجربة
+
+عملت صفحة حارسها من غير [[exit]]:
+
+~~~php
+<?php
+session_start();
+if (empty($_SESSION['user_id'])) { header('Location: /login.php'); }
+?>
+<h1>الأرباح السرية: 1,000,000</h1>
+~~~
+
+~~~text الناتج (curl -i من غير كوكي)
+HTTP/1.1 302 Found
+Location: /login.php
+<h1>الأرباح السرية: 1,000,000</h1>
+~~~
+
+[[header()]] بيحط header بس، مش بيوقف حاجة. المتصفح هيحوّل بسرعة ومش هتلاحظ، بس الصفحة كلها اتبعتت، و curl أو أي bot بيقراها. (في [[require_login]] من غير [[exit]]، الـ [[: int]] لحق الموقف: [[TypeError: require_login(): Return value must be of type int, null returned]]. متعتمدش على ده.)
+
+---
+
+## الخلاصة
+
+| الخطوة | ليه |
+|---|---|
+| نفس الرسالة للإيميل والباسورد الغلط | محدش يعرف مين مسجّل |
+| [[session_regenerate_id(true)]] قبل ما تحفظ أي حاجة | يقفل session fixation ويمسح الملف القديم |
+| [[user_id]] بس في الجلسة | الباقي من القاعدة |
+| [[header('Location: ...')]] + [[exit]] | التحويل header بس، و [[exit]] هي اللي بتوقف |
+| [[require_login()]] أول سطر في كل صفحة محمية | الحماية على السيرفر مش في الـ menu |`,
           lines: [
-            "بداية الملف.",
-            "mysqli: placeholder بالترتيب.",
-            "اربط القيمة ونوعها (s = string).",
+            "دوّر على المستخدم بالإيميل.",
             "نفّذ.",
-            "هات الصف.",
-            "PDO: placeholder بالاسم.",
-            "القيمة في execute.",
-            "هات الصف."
+            "صف أو false.",
+            "مش موجود، أو الباسورد غلط...",
+            "...نفس الرسالة في الحالتين.",
+            "نجح:",
+            "id جلسة جديد وامسح القديم.",
+            "احفظ id المستخدم بس.",
+            "حوّل للوحة.",
+            "وقّف.",
+            "قفلة.",
+            "حارس لكل صفحة محمية، بيرجّع id المستخدم.",
+            "مش داخل: حوّل ووقّف فورًا.",
+            "داخل: رجّع الـ id.",
+            "قفلة."
           ],
-          sol: R`الـ INSERT بـ mysqli: [[prepare]] بـ [[?]]، وبعدين [[bind_param('sss', $email, $name, $hash)]] (حرف لكل قيمة: s نص، i رقم)، وبعدين [[execute]]، و [[$mysqli->insert_id]]. بـ PDO: [[prepare]] بـ [[:email]]، و [[execute(['email' => ...])]]، و [[lastInsertId()]]. سطر أقل، ومفيش سلسلة أنواع تلخبطها.
+          sol: R`قبل الـ login الكوكي مثلًا [[PHPSESSID=b25539c3...]]، والـ response بتاع الـ login فيه [[303 See Other]] و [[Location: /dashboard.php]] و [[Set-Cookie: PHPSESSID=f710368c...]] جديدة. ده [[session_regenerate_id(true)]]: اللي كان عارف الـ id القديم (session fixation) مبقاش ليه لازمة، والملف القديم اتمسح بسبب [[true]].
 
-شكل PHP 8.1: [[$stmt->execute([$email])]] من غير [[bind_param]] شغال، و [[get_result()->fetch_assoc()]] بيرجّع [[[id] => 6, [name] => منى]]. ومن 8.2 فيه كمان [[$mysqli->execute_query($sql, [$email])]] في سطر واحد. يعني الفرق في الطول قلّ، والفرق الحقيقي: PDO بيشتغل مع MySQL و Postgres و SQLite بنفس الكود، وفيه named placeholders و fetch modes أكتر. mysqli لو محتاج حاجة خاصة بـ MySQL بس.`,
-          solCode: R`<?php
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-$mysqli = new mysqli('127.0.0.1', 'myapp_user', 'YOUR_DB_PASSWORD', 'myapp');
-$mysqli->set_charset('utf8mb4');
-$stmt = $mysqli->prepare('INSERT INTO users (email, name, password_hash) VALUES (?, ?, ?)');
-$stmt->bind_param('sss', $email, $name, $hash);
-$stmt->execute();
-echo $mysqli->insert_id, "\n";
+[[curl -i localhost:8000/dashboard.php]] من غير كوكي: [[HTTP/1.1 302 Found]] و [[Location: /login.php]] والـ body فاضي خالص. لو شفت محتوى الصفحة تحت الـ 302، يبقى نسيت [[exit]] بعد [[header]]: المتصفح هيحوّل، بس curl وأي bot هيقروا الصفحة كلها.
 
-$stmt = $pdo->prepare('INSERT INTO users (email, name, password_hash) VALUES (:email, :name, :hash)');
-$stmt->execute(['email' => $email, 'name' => $name, 'hash' => $hash]);
-echo $pdo->lastInsertId(), "\n";`
+وبإيميل أو باسورد غلط نفس الرسالة بالظبط [[الإيميل أو الباسورد غلط]] عشان محدش يعرف مين عنده حساب.`,
+          solCode: R`<?php // public/dashboard.php
+require dirname(__DIR__) . '/src/bootstrap.php'; // فيه session_start و db و require_login
+$userId = require_login();
+?>
+<h1>أهلًا، رقمك <?= $userId ?></h1>`
         },
         {
-          cmd: "PHP 8 → 8.5",
-          title: "إيه أهم الحاجات اللي اتضافت في PHP 8؟",
-          desc: R`PHP 8 خلّى اللغة أقرب لـ TypeScript. 8.0: named arguments و [[match]] و nullsafe [[?->]] و union types و constructor promotion و JIT، ومقارنات النص-رقم بقت أعقل. 8.1: enums و readonly properties و [[never]] و first-class callables. 8.2: readonly classes، والـ dynamic properties بقت deprecated. 8.3: typed class constants و [[json_validate]] و [[#[\Override]]]. 8.4: property hooks و asymmetric visibility ([[public private(set)]]) و [[array_find]] و [[new Foo()->bar()]] من غير أقواس، والـ bcrypt cost بقى 12. و 8.5 (نوفمبر 2025) جاب pipe operator [[|>]].
+          cmd: "CSRF token",
+          title: "امنع موقع تاني يبعت فورم باسم المستخدم",
+          desc: R`CSRF: موقع تاني فيه فورم مخفي بيعمل POST لموقعك، والمتصفح بيبعت كوكي الجلسة معاه أوتوماتيك، فالطلب بيعدّي كأن المستخدم هو اللي عمله. الحل: token عشوائي في الجلسة، بتحطه hidden في كل فورم، وبتقارنه مع كل POST. الموقع التاني ميعرفوش، فمبيقدرش يبعته.
 
-الأهم في الشغل اليومي: الأنواع في كل مكان مع [[strict_types]]، و enums بدل نصوص، و readonly للـ value objects، و [[match]] بدل [[switch]].`,
+[[SameSite=Lax]] على كوكي الجلسة طبقة تانية مهمة، بس الـ token هو الأساس.`,
           example: R`<?php
-enum Role: string { case Admin = 'admin'; case User = 'user'; }
-final class Account {
-    public function __construct(public readonly string $email, public private(set) Role $role = Role::User) {}
-    public function promote(): void { $this->role = Role::Admin; }
+function csrf_token(): string {
+    return $_SESSION['csrf'] ??= bin2hex(random_bytes(32));
 }
-$a = new Account(email: 'ali@example.com');
-$a->promote();
-echo $a->role->value, ' ', $a?->email, ' ', array_find([3, 8, 12], fn($n) => $n > 5);`,
-          try: R`عدّ كام ميزة من PHP 8.x في المثال (فيه ٧ على الأقل)، وحدد كل واحدة نزلت في أنهي نسخة.`,
+function csrf_ok(): bool {
+    $token = $_SESSION['csrf'] ?? '';
+    return $token !== '' && hash_equals($token, (string) ($_POST['csrf'] ?? ''));
+}
+?>
+<form method="post" action="/posts/delete.php">
+  <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+  <input type="hidden" name="id" value="42">
+  <button>امسح</button>
+</form>`,
+          try: R`في [[delete.php]] ضيف أول سطر: [[if (!csrf_ok()) { http_response_code(403); exit('الصفحة قديمة، ارجع وجرّب تاني'); }]]. ابعت الفورم عادي: شغال. ابعته بـ curl من غير token: 403. وجرّب تشيل [[$token !== '']] واعمل login من غير ما تفتح أي فورم، وابعت [[csrf=]] فاضي بنفس الكوكي: هيعدّي، ودي الثغرة اللي الشرط ده قافلها.`,
           flag: "script",
           deep: {
-            why: "بيختبر إذا كنت متابع اللغة وبتكتب PHP حديث، مش PHP 5 بتاع الدروس القديمة.",
-            how: R`الميزات في المثال: enum (8.1)، و constructor promotion (8.0)، و readonly (8.1)، و [[private(set)]] (8.4)، و named argument (8.0)، و [[?->]] (8.0)، و [[array_find]] (8.4)، و arrow function (7.4 بس بتتعد).
+            why: "المستخدم داخل على موقعك، وفتح لينك في تاب تاني. الصفحة دي فيها فورم بيتبعت لوحده لـ [[/posts/delete.php]]. المتصفح بيبعت الكوكي، والسيرفر شايف جلسة سليمة، فبيمسح. من غير token، موقعك مش قادر يفرّق.",
+            how: R`الموقع التاني يقدر يبعت طلبات لموقعك، بس مش قادر يقرا الردود ولا الـ HTML بتاع صفحاتك (same-origin policy). فالـ token اللي في الفورم بتاعك مستحيل يعرفه.
 
-الحاجات اللي اتشالت أو بقت deprecated مهمة كمان: dynamic properties (8.2)، و [[$__{var}]] جوه النصوص (8.2)، و implicitly nullable parameters (8.4).
+[[random_bytes(32)]] عشوائي آمن للتشفير، مش [[rand]] ولا [[uniqid]]. و [[??=]] بيعمله مرة واحدة للجلسة. token واحد للجلسة أبسط وبيشتغل مع أكتر من تاب، أما token جديد لكل طلب بيكسر التابات المفتوحة.
 
-JIT: بيفرق في الحسابات التقيلة، ونادرًا في موقع ويب أغلب وقته مستني القاعدة. ومقفول افتراضيًا من الأول (قبل 8.4 لأن [[opcache.jit_buffer_size]] كان 0، ومن 8.4 لأن [[opcache.jit=disable]])، فلو عايزه لازم تفعّله بنفسك.
+[[hash_equals]] بتقارن في وقت ثابت مهما كان مكان الاختلاف. والشرط [[$token !== '']] مهم: [[hash_equals('', '')]] = true، فجلسة جديدة مفيهاش token + فورم باعت token فاضي = عدّى.
 
-والنسخة اللي على السيرفر هي اللي بتحكم: كود 8.4 على استضافة 8.2 بيقع. [[php -v]] على السيرفر قبل ما تستخدم ميزة جديدة، و [[platform.php]] في Composer.`,
-            when: "أسئلة بعدها: «readonly ولا private(set)؟» «JIT بيفرق؟» «إيه اللي بقى deprecated؟» «بتشتغل على نسخة كام في الإنتاج وليه؟»",
-            mistakes: R`تخلط النسخ (enums في 8.0). و«JIT خلّى PHP أسرع ٣ مرات في الويب». وتذكر ميزات من غير ما تقول بتستخدمها في إيه.`
+لطلبات AJAX: حط الـ token في [[<meta name="csrf" content="...">]]، والـ JavaScript يبعته في header زي [[X-CSRF-Token]]، والسيرفر يقرا [[$_SERVER['HTTP_X_CSRF_TOKEN']]].
+
+[[SameSite=Lax]]: المتصفح مش بيبعت الكوكي مع POST من موقع تاني، بس بيبعتها مع GET عادي (لينك). عشان كده أي حاجة بتغيّر بيانات (مسح، خروج، دفع) لازم POST، عمرها ما تبقى لينك GET.
+
+في مشروع حقيقي فورم عام كان فيه CSRF token بالظبط كده مع honeypot وحد محاولات. بس endpoints الأدمن (JSON) كانت معتمدة على الجلسة لوحدها.`,
+            when: "كل فورم أو طلب بيغيّر حاجة وانت معتمد على كوكي للدخول. Laravel بيعمله لوحده ([[@csrf]]).",
+            mistakes: R`مسح أو خروج بـ لينك GET: لينك [[<a href="https://example.com/logout.php">]] في أي موقع أو إيميل بيخرّج اللي يدوس عليه، لأن [[SameSite=Lax]] بيبعت الكوكي مع التنقّل بـ GET. ومقارنة بـ [[==]]. وتعمل token جديد مع كل صفحة فالمستخدم اللي فاتح تابين يترفض. وتفتكر إن HTTPS بيحمي من CSRF: ملوش علاقة.`
           },
+          teach: R`## الأول: المشكلة اللي بنحلها
+
+انت داخل على موقعك، وفتحت صفحة في موقع تاني فيها فورم مخفي بيعمل POST لـ [[/posts/delete.php]]. المتصفح بيبعت كوكي جلستك مع الطلب لوحده، فسيرفرك شايف طلب من «انت». الحل: رقم سري (token) بيتحط في الجلسة وفي كل فورم بتاعك، والسيرفر يرفض أي POST مش جايب نفس الرقم. الموقع التاني ميقدرش يقرا صفحاتك، فمش هيعرف الرقم.
+
+المثال دالتين وفورم. جرّبتهم على [[php -S]] (PHP 8.4.26): الدالتين في [[src/bootstrap.php]]، والفورم في صفحة [[form.php]]، والـ solCode في [[public/posts/delete.php]]، ومعاهم الـ login من الدرس اللي فات.
+
+---
+
+## ١. [[csrf_token()]]
+
+~~~php
+function csrf_token(): string {
+    return $_SESSION['csrf'] ??= bin2hex(random_bytes(32));
+}
+~~~
+
+من جوه لبرة:
+
+| الحتة | معناها |
+|---|---|
+| [[random_bytes(32)]] | 32 byte عشوائيين من مصدر آمن للتشفير (مش [[rand()]] اللي ممكن يتوقّع) |
+| [[bin2hex(...)]] | حوّلهم نص hex: كل byte حرفين، فـ 32 byte = 64 حرف |
+| [[??=]] | «لو [[$_SESSION['csrf']]] مش موجود، حط فيه القيمة دي»، ولو موجود سيبه |
+| [[return]] | رجّع القيمة اللي في الجلسة (الجديدة أو القديمة) |
+
+يعني token واحد للجلسة كلها. فتحت الفورم مرتين بنفس الكوكي:
+
+~~~text الناتج
+value="cb6ffd858d0b31042ec75568a6448233394b7422cf687d080a6da885dc52d275"
+value="cb6ffd858d0b31042ec75568a6448233394b7422cf687d080a6da885dc52d275"
+~~~
+
+نفس القيمة، 64 حرف. فلو فاتح الموقع في تابين، الاتنين شغالين.
+
+## ٢. [[csrf_ok()]]
+
+~~~php
+function csrf_ok(): bool {
+    $token = $_SESSION['csrf'] ?? '';
+    return $token !== '' && hash_equals($token, (string) ($_POST['csrf'] ?? ''));
+}
+~~~
+
+- [[$token]]: الـ token المحفوظ، أو نص فاضي لو مفيش.
+- [[(string) ($_POST['csrf'] ?? '')]]: اللي جاي من الفورم، ولو مش موجود نص فاضي. و [[(string)]] عشان لو حد بعت [[csrf[]=x]] (array) ميوقّعش [[hash_equals]] بـ TypeError.
+- [[hash_equals(a, b)]]: مقارنة نصين بتاخد نفس الوقت مهما كان مكان أول اختلاف. [[===]] بتقف عند أول حرف مختلف، والفرق في الوقت ممكن يتقاس ويخمّن منه حرف حرف (timing attack).
+- [[&&]] = and: الاتنين لازم يبقوا صح.
+
+ليه [[$token !== '']]؟ عشان:
+
+~~~php
+var_dump(hash_equals('', ''));
+~~~
+
+~~~text الناتج
+bool(true)
+~~~
+
+جلسة لسه ملهاش token + فورم باعت token فاضي = متطابقين! جرّبت ده بجد تحت.
+
+## ٣. الفورم
+
+~~~php
+?>
+<form method="post" action="/posts/delete.php">
+  <input type="hidden" name="csrf" value="<?= csrf_token() ?>">
+  <input type="hidden" name="id" value="42">
+  <button>امسح</button>
+</form>
+~~~
+
+- [[?>]] نهاية PHP، والباقي HTML.
+- [[method="post"]]: المسح عمره ما يبقى GET (لينك)، لأن [[SameSite=Lax]] بيبعت الكوكي مع لينك GET من أي موقع.
+- [[type="hidden"]]: حقل مش ظاهر بس بيتبعت مع الفورم. [[name="csrf"]] هو اللي [[$_POST['csrf']]] بيقراه.
+- [[<?= csrf_token() ?>]]: اطبع الـ token جوه الـ HTML. (الـ token hex بس، فمش محتاج [[htmlspecialchars]]، بس أي قيمة تانية محتاجاها.)
+
+---
+
+## ٤. الـ solCode: [[delete.php]]
+
+~~~php
+<?php // public/posts/delete.php
+require dirname(__DIR__, 2) . '/src/bootstrap.php';
+if (!csrf_ok()) { http_response_code(403); exit('الصفحة قديمة، ارجع وجرّب تاني'); }
+$userId = require_login();
+$id = (int) ($_POST['id'] ?? 0);
+db()->prepare('DELETE FROM posts WHERE id = :id AND user_id = :uid')
+    ->execute(['id' => $id, 'uid' => $userId]);
+header('Location: /dashboard.php', true, 303);
+exit;
+~~~
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[dirname(__DIR__, 2)]] | اطلع فولدرين لفوق: من [[public/posts]] لجذر المشروع |
+| [[if (!csrf_ok()) {...}]] | token غلط: [[403]] (Forbidden) ورسالة ووقّف. [[exit('...')]] بتطبع النص وتوقف |
+| [[require_login()]] | لازم يكون داخل |
+| [[(int) ($_POST['id'] ?? 0)]] | الـ id رقم، ولو مش موجود 0 |
+| [[DELETE ... AND user_id = :uid]] | امسح بس لو البوست بتاعه |
+| [[header(..., 303)]] + [[exit]] | رجّعه للوحة (POST → Redirect → GET) |
+
+---
+
+## ٥. التجربة
+
+بعد login بجرة كوكيز [[j9.txt]] (البوست 42 بتاع المستخدم 1):
+
+~~~bash
+curl -s -i -b j9.txt -d "id=42" localhost:5885/posts/delete.php
+curl -s -o /dev/null -w "%{http_code}\n" -b j9.txt -d "csrf=abc&id=42" localhost:5885/posts/delete.php
+curl -s -i -b j9.txt -d "csrf=$T&id=42" localhost:5885/posts/delete.php
+~~~
+
+[[$T]] متغير shell فيه الـ token اللي قريته من الفورم، و [[-w "%{http_code}"]] بيطبع الـ status بس، و [[-o /dev/null]] بيرمي الـ body.
+
+| الطلب | الناتج |
+|---|---|
+| من غير token | [[HTTP/1.1 403 Forbidden]] و [[الصفحة قديمة، ارجع وجرّب تاني]] |
+| token غلط [[abc]] | [[403]] |
+| الـ token الصح | [[HTTP/1.1 303 See Other]] و [[Location: /dashboard.php]]، والبوست 42 اتمسح من الجدول |
+
+وفي PowerShell نفس الـ 403:
+
+~~~powershell
+curl.exe -s -o NUL -w "%{http_code}$__btn" -d "id=42" http://localhost:5885/posts/delete.php
+(Invoke-WebRequest http://localhost:5885/posts/delete.php -Method Post -Body @{id=42} -SkipHttpErrorCheck).StatusCode
+~~~
+
+~~~text الناتج
+403
+403
+~~~
+
+([[NUL]] هو [[/dev/null]] بتاع ويندوز، و [[-Body @{id=42}]] بيتبعت كفورم.)
+
+### من غير [[$token !== '']]
+
+شلت الشرط، وعملت login جديد **من غير ما أفتح أي فورم** (يعني الجلسة ملهاش token)، وبعت [[csrf=]] فاضي:
+
+~~~text الناتج
+HTTP/1.1 303 See Other
+Location: /dashboard.php
+~~~
+
+والبوست اتمسح فعلًا. ده بالظبط اللي موقع تاني كان يقدر يعمله. رجّعت الشرط: [[403]].
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[random_bytes(32)]] | token مستحيل يتخمّن |
+| [[??=]] | واحد للجلسة، فالتابات المتعددة شغالة |
+| [[type="hidden"]] في كل فورم POST | الفورم بتاعك بس اللي يعرفه |
+| [[hash_equals]] | مقارنة بوقت ثابت |
+| [[$token !== '']] | فاضي = فاضي مش نجاح |
+| أي تغيير بـ POST مش GET | [[SameSite=Lax]] بيحمي POST بس |`,
           lines: [
             "بداية الملف.",
-            "enum بقيم نصية.",
-            "كلاس ممنوع الوراثة منه.",
-            "promotion و readonly و asymmetric visibility في سطر.",
-            "الكلاس بس يغيّر الـ role.",
+            "دالة بترجّع token الجلسة.",
+            "لو مفيش، اعمل واحد عشوائي ٦٤ حرف واحفظه.",
             "قفلة.",
-            "named argument.",
-            "ترقية.",
-            "«admin ali@example.com 8»."
+            "دالة بتتأكد من الـ token اللي جاي.",
+            "الـ token المحفوظ.",
+            "لازم يكون موجود، ويطابق اللي في الفورم بمقارنة آمنة.",
+            "قفلة.",
+            "نهاية PHP.",
+            "فورم مسح، POST.",
+            "الـ token مخفي في الفورم.",
+            "الـ id اللي هيتمسح.",
+            "زرار.",
+            "قفلة الفورم."
           ],
-          sol: R`الناتج [[admin ali@example.com 8]]. الميزات: enum بقيمة نصية [[enum Role: string]] (8.1)، constructor promotion (8.0)، [[readonly]] (8.1)، [[private(set)]] asymmetric visibility (8.4)، enum كقيمة افتراضية [[= Role::User]] (8.1)، named arguments [[email:]] (8.0)، nullsafe [[?->]] (8.0)، [[array_find]] (8.4). دول 8.
+          sol: R`الفورم العادي: [[303]] لـ [[/dashboard.php]] والبوست اتمسح. [[curl -d "id=42" localhost:8000/posts/delete.php]] من غير token: [[403]] والنص [[الصفحة قديمة، ارجع وجرّب تاني]].
 
-الـ arrow function [[fn($n) => ...]] مش من 8، نزلت في 7.4، و [[: void]] من 7.1، و [[final]] قديمة خالص. لو حسبتهم يبقى عندك غلطة وهي بالظبط اللي الانترفيور بيدوّر عليها. ولو شغّلته على 8.3 هتاخد Parse error عند [[private(set)]]، لأن أول ميزة 8.4 بتوقف الملف كله.`
+من غير [[$token !== '']]: [[curl -d "csrf=&id=42"]] بكوكي جلسة عاملة login ولسه مفتحتش أي فورم بيعدّي بـ [[303]] والبوست بيتمسح، لأن [[$_SESSION['csrf']]] مش موجود فبقى [['']]، و [[hash_equals('', '')]] = true. يعني أي مستخدم داخل ومفتحش فورم لسه يتعمله CSRF بـ token فاضي. (ومن غير كوكي خالص الطلب بيعدّي فحص الـ token ويقف عند [[require_login]] بـ 302.) رجّع الشرط وهترجع 403.
+
+لو كل طلباتك بقت 403 حتى الفورم الصح، اتأكد إن [[session_start()]] متنادي في [[delete.php]] قبل [[csrf_ok()]]، وإن الفورم والـ delete على نفس الـ domain (الكوكي بتاعة الجلسة لازم توصل).`,
+          solCode: R`<?php // public/posts/delete.php
+require dirname(__DIR__, 2) . '/src/bootstrap.php'; // session_start + csrf_ok
+if (!csrf_ok()) { http_response_code(403); exit('الصفحة قديمة، ارجع وجرّب تاني'); }
+$userId = require_login();
+$id = (int) ($_POST['id'] ?? 0);
+db()->prepare('DELETE FROM posts WHERE id = :id AND user_id = :uid')
+    ->execute(['id' => $id, 'uid' => $userId]);
+header('Location: /dashboard.php', true, 303);
+exit;`
+        },
+        {
+          cmd: "session_destroy",
+          title: "خروج كامل: البيانات والكوكي وملف الجلسة",
+          desc: R`الخروج الصح ٣ خطوات: فضّي [[$_SESSION]]، وامسح كوكي الجلسة من المتصفح، و [[session_destroy()]] يمسح الملف من السيرفر. [[session_destroy]] لوحدها مبتمسحش الكوكي ولا [[$_SESSION]] في الطلب ده.
+
+والخروج نفسه POST بـ CSRF token، مش لينك.`,
+          example: R`<?php
+session_start();
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
+if (!csrf_ok()) { http_response_code(403); exit; }
+$_SESSION = [];
+$p = session_get_cookie_params();
+setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
+session_destroy();
+header('Location: /login.php', true, 303);
+exit;`,
+          try: R`اعمل login، وبعدين الخروج بفورم فيه زرار و token. في DevTools اتأكد إن PHPSESSID اتمسحت. وافتح فولدر الجلسات (لو محلي): الملف اتمسح.`,
+          flag: "script",
+          deep: {
+            why: "خروج ناقص معناه إن الجلسة لسه عايشة: على جهاز مشترك، اللي بعدك يرجع بـ Back أو بالكوكي القديمة ويلاقي نفسه داخل.",
+            how: R`[[$_SESSION = []]] بيفضّي البيانات في الطلب ده. [[setcookie]] بتاريخ قديم بيقول للمتصفح «امسح الكوكي دي». لازم نفس [[path]] و [[domain]] اللي اتعملت بيهم، عشان كده [[session_get_cookie_params()]]. و [[session_destroy()]] بيمسح ملف الجلسة من السيرفر. ده نفس المثال اللي في توثيق PHP الرسمي.
+
+لو فيه «افتكرني»: امسح التوكن من القاعدة وامسح الكوكي بتاعته كمان، وإلا أول صفحة بعد الخروج هتعمل login تاني لوحدها.
+
+والـ POST مهم: الخروج بـ GET معناه إن أي موقع أو إيميل يحط لينك لـ [[https://example.com/logout.php]] (أو يعمل redirect ليه) يخرّج اللي يدوس عليه من موقعك، لأن [[SameSite=Lax]] بيبعت الكوكي مع التنقّل بـ GET (و [[<img>]] كمان لو الكوكي [[SameSite=None]]). مش كارثة، بس مزعج، وبيبيّن إن فيه طلبات بتغيّر حالة بـ GET.`,
+            when: "زرار الخروج، وتغيير الباسورد (اخرج من كل الجلسات التانية)، وحذف الحساب.",
+            mistakes: R`في مشروع حقيقي الخروج كان لينك GET عادي. و [[session_destroy]] لوحدها وتفتكر الكوكي راحت. ونسيان توكن «افتكرني» فالخروج مبيخرّجش.`
+          },
+          teach: R`## الأول: الجلسة عايشة في ٣ أماكن
+
+| المكان | فيه إيه | بيتمسح بـ |
+|---|---|---|
+| [[$_SESSION]] في الطلب ده | البيانات وانت شغال | [[$_SESSION = []]] |
+| المتصفح | كوكي [[PHPSESSID]] | [[setcookie]] بتاريخ قديم |
+| السيرفر | ملف [[sess_...]] | [[session_destroy()]] |
+
+الخروج الصح بيمسح التلاتة. جرّبت المثال كصفحة [[logout.php]] على [[php -S]] (PHP 8.4.26)، وبدل سطر [[session_start();]] حطيت [[require]] لملف [[bootstrap.php]] من الدروس اللي فاتت (فيه [[session_start]] بالإعدادات الآمنة و [[csrf_ok()]] اللي المثال بيستخدمها).
+
+---
+
+## ١. افتح الجلسة، واقبل POST بـ token بس
+
+~~~php
+<?php
+session_start();
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); exit; }
+if (!csrf_ok()) { http_response_code(403); exit; }
+~~~
+
+- لازم [[session_start()]] الأول حتى للخروج: مينفعش تمسح جلسة مفتحتهاش.
+- [[$_SERVER['REQUEST_METHOD']]] نوع الطلب ([[GET]] أو [[POST]]...). مش POST؟ [[405]] = Method Not Allowed.
+- [[csrf_ok()]] من درس الـ CSRF: من غير token صح [[403]].
+
+~~~bash
+curl -s -o /dev/null -w "%{http_code}\n" -b j10.txt localhost:5885/logout.php
+curl -s -o /dev/null -w "%{http_code}\n" -b j10.txt -X POST localhost:5885/logout.php
+~~~
+
+~~~text الناتج
+405
+403
+~~~
+
+الأول GET عادي (زي لينك أو [[<img>]] في موقع تاني)، والتاني POST من غير token. و [[-X POST]] بيجبر curl يبعت POST من غير بيانات.
+
+---
+
+## ٢. [[$_SESSION = []]]
+
+~~~php
+$_SESSION = [];
+~~~
+
+فضّي الـ array. أي كود بعد السطر ده في نفس الطلب مش هيلاقي [[user_id]].
+
+## ٣. امسح الكوكي من المتصفح
+
+~~~php
+$p = session_get_cookie_params();
+setcookie(session_name(), '', time() - 42000, $p['path'], $p['domain'], $p['secure'], $p['httponly']);
+~~~
+
+- [[session_get_cookie_params()]]: array بإعدادات كوكي الجلسة الحالية. مثلًا من غير أي إعدادات:
+
+~~~text الناتج (print_r)
+Array
+(
+    [lifetime] => 0
+    [path] => /
+    [domain] => 
+    [secure] => 
+    [httponly] => 
+    [samesite] => 
+)
+~~~
+
+- [[session_name()]]: اسم الكوكي، [[PHPSESSID]] افتراضيًا.
+- [[setcookie(اسم، قيمة، وقت الانتهاء، path، domain، secure، httponly)]]: القيمة فاضية، ووقت الانتهاء [[time() - 42000]]. [[time()]] الوقت دلوقتي بالثواني، وناقص 42000 ثانية (حوالي ١١ ساعة ونص) يعني «انتهت من زمان»، والمتصفح بيمسح أي كوكي منتهية. الرقم نفسه مش مهم، المهم إنه في الماضي (ده الرقم اللي في توثيق PHP).
+- ليه نبعت الـ path والـ domain؟ المتصفح بيعتبر الكوكي «نفس الكوكي» بس لو الاسم والـ path والـ domain زي بعض. لو اختلفوا، هيعمل كوكي تانية ويسيب الأصلية.
+
+## ٤. [[session_destroy()]] والتحويل
+
+~~~php
+session_destroy();
+header('Location: /login.php', true, 303);
+exit;
+~~~
+
+[[session_destroy()]] بتمسح ملف الجلسة من السيرفر، وبعدها حوّل لصفحة الدخول ووقّف.
+
+---
+
+## ٥. التجربة كاملة
+
+login، وفتحت صفحة فيها فورم عشان آخد الـ token، وبصيت على ملف الجلسة:
+
+~~~text الناتج (محتوى /tmp/sess_6976556c...)
+user_id|i:1;csrf|s:64:"e7b193e7dd3f7f289a5c01fe6851457974afc4e83f0df204417bd89665b392c1";
+~~~
+
+[[s:64:"..."]] = string طوله 64. وبعدين الخروج بالـ token:
+
+~~~bash
+curl -s -i -c j10.txt -b j10.txt -d "csrf=$T" localhost:5885/logout.php
+~~~
+
+~~~text الناتج
+HTTP/1.1 303 See Other
+Set-Cookie: PHPSESSID=deleted; expires=Thu, 01 Jan 1970 00:00:01 GMT; Max-Age=0; path=/; secure; HttpOnly
+Location: /login.php
+~~~
+
+- PHP كتب القيمة [[deleted]] وتاريخ 1970 و [[Max-Age=0]]: كل ده معناه «امسحها دلوقتي». و [[secure; HttpOnly]] جت من [[$p]].
+- curl مسح الكوكي من [[j10.txt]] (بقى مفيهوش ولا سطر [[PHPSESSID]])، زي ما المتصفح بيعمل.
+- الملف على السيرفر:
+
+~~~text الناتج
+ls: cannot access '/tmp/sess_6976556c764cdb1534e3ecb3fd3c2f50': No such file or directory
+~~~
+
+ولو حد كان ناسخ الـ id القديم وبعته بإيده لـ [[dashboard.php]]: [[302]] لـ [[/login.php]]، لأن الملف اتمسح و [[use_strict_mode]] رفض الـ id.
+
+---
+
+## الخلاصة
+
+| الخطوة | السطر |
+|---|---|
+| POST بس | [[REQUEST_METHOD !== 'POST']] ⇒ 405 |
+| token صح | [[csrf_ok()]] ⇒ 403 |
+| البيانات | [[$_SESSION = []]] |
+| الكوكي | [[setcookie(session_name(), '', time() - 42000, ...)]] بنفس الـ params |
+| الملف | [[session_destroy()]] |
+| التحويل | [[header('Location: /login.php', true, 303)]] + [[exit]] |
+
+ولو فيه كوكي «افتكرني»، امسحها هي والتوكن بتاعها من القاعدة كمان.`,
+          lines: [
+            "بداية الملف.",
+            "افتح الجلسة الحالية.",
+            "POST بس، وإلا 405.",
+            "token صحيح بس، وإلا 403 زي درس CSRF.",
+            "فضّي البيانات.",
+            "إعدادات الكوكي (path و domain...).",
+            "امسح الكوكي من المتصفح بتاريخ قديم.",
+            "امسح ملف الجلسة من السيرفر.",
+            "حوّل لصفحة الدخول.",
+            "وقّف."
+          ],
+          sol: R`الـ response بتاع الخروج: [[303 See Other]] و [[Location: /login.php]] و [[Set-Cookie: PHPSESSID=deleted; expires=Thu, 01 Jan 1970 00:00:01 GMT; Max-Age=0; path=/; HttpOnly]]. تاريخ قديم = المتصفح يمسحها، فمش هتلاقيها في DevTools. وملف [[sess_...]] اختفى من فولدر الجلسات ([[php -r 'echo session_save_path();']] بيقولك فين، على Ubuntu [[/var/lib/php/sessions]]).
+
+لو فتحت [[/logout.php]] كرابط عادي: [[405]]، لأن الخروج بـ GET معناه إن أي [[<img src="/logout.php">]] في أي موقع يخرّجك. ولو الكوكي فضلت موجودة بعد الخروج، غالبًا الـ path أو الـ domain في [[setcookie]] مش زي اللي اتعملت بيهم، وده سبب إننا بناخدهم من [[session_get_cookie_params()]].`
         }
       ]
     }
