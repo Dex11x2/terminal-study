@@ -2024,6 +2024,11 @@
   "date": "2026-10-07",
   "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
  },
+ "data|ACID": {
+  "hash": "91ececd64775",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker psql"
+ },
  "data|B-tree index": {
   "hash": "b40f1ac8a367",
   "date": "2026-10-07",
@@ -2053,6 +2058,11 @@
   "hash": "861467ab3f3b",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
+ },
+ "data|Drizzle": {
+  "hash": "435b9ffdd7ad",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker + drizzle-orm 0.45 / drizzle-kit 0.31"
  },
  "data|EXISTS": {
   "hash": "2508a89df266",
@@ -2134,6 +2144,16 @@
   "date": "2026-10-07",
   "on": "postgres:18 in Docker (three concurrent psql sessions)"
  },
+ "data|SQL ولا NoSQL": {
+  "hash": "1663e58c6b84",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker (+ mongo:8 mongosh comparison)"
+ },
+ "data|Storage و Realtime": {
+  "hash": "a523e282e1fc",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker (storage.objects policies, publication) + supabase-js storage requests via fake fetch; docs: Realtime websocket delivery"
+ },
  "data|UNION و UNION ALL": {
   "hash": "2515cd374702",
   "date": "2026-10-07",
@@ -2199,6 +2219,16 @@
   "date": "2026-10-07",
   "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) + tsc on postgres:18 in Docker"
  },
+ "data|index trade-offs": {
+  "hash": "f575cd4640cc",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker psql"
+ },
+ "data|isolation anomalies": {
+  "hash": "bec6421c13be",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker + node pg (solCode, write-skew under SERIALIZABLE)"
+ },
  "data|isolation levels": {
   "hash": "26dfd88024a6",
   "date": "2026-10-07",
@@ -2249,20 +2279,50 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|policies و auth.uid()": {
+  "hash": "2cf8f80c1acb",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker with hand-made Supabase roles/auth.uid()"
+ },
+ "data|populate": {
+  "hash": "a6394dc969f5",
+  "date": "2026-10-07",
+  "on": "mongo:8 Docker + Mongoose 9.11 (Node/tsx)"
+ },
  "data|relation filters": {
   "hash": "b5da8709788f",
   "date": "2026-10-07",
   "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+ },
+ "data|replication و sharding": {
+  "hash": "92768eefa615",
+  "date": "2026-10-07",
+  "on": "postgres:18 primary + streaming replica in Docker"
+ },
+ "data|rpc": {
+  "hash": "58d2f504d267",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker (SQL); supabase-js rpc requests via fake fetch; docs: real Supabase API"
  },
  "data|schema.prisma": {
   "hash": "105c6d145a7e",
   "date": "2026-10-07",
   "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
  },
+ "data|seed بـ faker": {
+  "hash": "0444a18ccb5c",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker + Drizzle + @faker-js/faker 10.6"
+ },
  "data|self join": {
   "hash": "2600c65e83a0",
   "date": "2026-10-07",
   "on": "postgres:18 in Docker (psql)"
+ },
+ "data|supabase-js": {
+  "hash": "31b0a93675f5",
+  "date": "2026-10-07",
+  "on": "Node 24 + @supabase/supabase-js 2.117 with fake fetch (real requests, simulated responses); docs: real Supabase project/keys gateway behavior"
  },
  "data|transaction": {
   "hash": "d9c506039a50",
@@ -2283,6 +2343,11 @@
   "hash": "e5c4ec0a7c88",
   "date": "2026-10-07",
   "on": "Windows + Node 24, Prisma 7.10.0 (adapter-pg) on postgres:18 in Docker"
+ },
+ "data|الاستعلام بطيء": {
+  "hash": "f62892ff782b",
+  "date": "2026-10-07",
+  "on": "postgres:18 Docker with pg_stat_statements"
  },
  "data|البحث بالعربي": {
   "hash": "cd944e8b0606",
