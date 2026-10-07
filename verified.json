@@ -4194,10 +4194,35 @@
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 (Format-Hex)"
  },
+ "flutter|Container و Padding": {
+  "hash": "797a68a58c6a",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): flutter test"
+ },
+ "flutter|Expanded": {
+  "hash": "c171b60fcc7e",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): test + web-server/Chrome"
+ },
  "flutter|List و Map و Set": {
   "hash": "e448e8341397",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|Row و Column": {
+  "hash": "16b942f56f72",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): test + web-server/Chrome"
+ },
+ "flutter|Stack": {
+  "hash": "dac3599b1b1a",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): test + web-server/Chrome; docs: hit testing outside Clip.none"
+ },
+ "flutter|StatelessWidget": {
+  "hash": "7dd96d8025de",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): analyze + test + web-server/Chrome"
  },
  "flutter|Stream": {
   "hash": "b14be64d5647",
@@ -4213,6 +4238,16 @@
   "hash": "c61809936d7c",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|enhanced enum": {
+  "hash": "f104875c2a70",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
+ },
+ "flutter|extension": {
+  "hash": "1752c3de6c4d",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
  },
  "flutter|final و const": {
   "hash": "664b48e5cf16",
@@ -4234,10 +4269,25 @@
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): devices/run -d web-server + headless Chrome; docs: emulator/phone, --release"
  },
+ "flutter|generics": {
+  "hash": "d66a76522ecd",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
+ },
  "flutter|hot reload": {
   "hash": "8ab2c5bb8169",
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0) flutter run -d web-server + headless Chrome (r, R); docs: d, VS Code"
+ },
+ "flutter|initState و dispose": {
+  "hash": "d1d599d6b480",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): test + web-server/Chrome"
+ },
+ "flutter|mixin": {
+  "hash": "741da3dbb09d",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
  },
  "flutter|named parameters": {
   "hash": "8123edfb447d",
@@ -4258,6 +4308,21 @@
   "hash": "c495dd85b1f6",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|runApp": {
+  "hash": "62242c4ae78f",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): flutter test + web-server + headless Chrome"
+ },
+ "flutter|setState": {
+  "hash": "a283cb7bc674",
+  "date": "2026-10-07",
+  "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): analyze + test"
+ },
+ "flutter|try و on و rethrow": {
+  "hash": "775b224610f8",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
  },
  "flutter|مقدمة Dart ودالة main()": {
   "hash": "e1d22914a3c6",
