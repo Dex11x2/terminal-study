@@ -9524,6 +9524,21 @@
   "date": "2026-10-06",
   "on": "docker ubuntu-24.04 curl vs nginx lab + win11 curl.exe; docs: securityheaders.com"
  },
+ "spring|@SpringBootApplication": {
+  "hash": "95aafb55089c",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), Boot 4.1.1 (java -jar, --debug)"
+ },
+ "spring|Comparator": {
+  "hash": "d85e5dd5fe3a",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
+ },
+ "spring|Gradle": {
+  "hash": "d6d1414ba9f6",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), ./gradlew (Gradle 9.7.1)"
+ },
  "spring|JDK و JVM": {
   "hash": "ee0b6dd3092c",
   "date": "2026-10-07",
@@ -9534,10 +9549,30 @@
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
  },
+ "spring|List و Map و Set": {
+  "hash": "79457f586bb1",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
+ },
+ "spring|Optional": {
+  "hash": "0dcd54debcd3",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
+ },
  "spring|String": {
   "hash": "8a41a898528f",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|beans و DI": {
+  "hash": "06419031d69e",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), Boot 4.1.1 (curl, mvnw test)"
+ },
+ "spring|checked و unchecked": {
+  "hash": "6944875be85d",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
  },
  "spring|class و constructor": {
   "hash": "b9fe36ad4221",
@@ -9554,6 +9589,11 @@
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
  },
+ "spring|generics": {
+  "hash": "d8d012ec45cf",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
+ },
  "spring|interfaces": {
   "hash": "149b53ed3107",
   "date": "2026-10-07",
@@ -9563,6 +9603,21 @@
   "hash": "9b190c69f7c4",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JShell 25.0.4.1, piped input); docs: Tab completion, Ctrl+D"
+ },
+ "spring|lambdas": {
+  "hash": "d7a9ecd7e031",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
+ },
+ "spring|mvnw": {
+  "hash": "2dd4c3a66abf",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), Boot 4.1.1 web project, curl from Windows host"
+ },
+ "spring|pom.xml": {
+  "hash": "65e8cf1fbbca",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1) (mvn dependency:tree, help:evaluate)"
  },
  "spring|primitives و wrappers": {
   "hash": "055d97bd60db",
@@ -9579,20 +9634,45 @@
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
  },
+ "spring|start.spring.io": {
+  "hash": "4ab9b0fbdbb9",
+  "date": "2026-10-07",
+  "on": "curl in Git Bash; ./mvnw spring-boot:run in maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1)"
+ },
  "spring|static و final": {
   "hash": "b49b656f3e8c",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|streams": {
+  "hash": "69d9f6d0abb7",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
  },
  "spring|switch expressions": {
   "hash": "ef1c5562c1ac",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
  },
+ "spring|try-with-resources و custom exceptions": {
+  "hash": "79e93ac3f439",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1), java Main.java"
+ },
  "spring|var و final": {
   "hash": "3481f6e759f0",
   "date": "2026-10-07",
   "on": "docker maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1, Linux)"
+ },
+ "spring|تحزيم ونشر برنامج ديسكتوب بـ jpackage": {
+  "hash": "0a63245a0c68",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1) (jpackage app-image on Linux + Xvfb); docs: Windows --type exe with WiX"
+ },
+ "spring|تطبيقات ديسكتوب: واجهات JavaFX و Swing": {
+  "hash": "ca5f79faeefe",
+  "date": "2026-10-07",
+  "on": "maven:3.9-eclipse-temurin-25 (JDK 25.0.4.1) + OpenJFX 25 + Xvfb; docs: look of the real window"
  },
  "sshc|Host * والأنماط": {
   "hash": "3ebe9cb10bbd",

@@ -40,6 +40,195 @@ methods مفيدة: [[getOrDefault]]، و [[putIfAbsent]]، و [[merge(key, 1, I
             when: R`List لأي ليستة مرتبة. Set لما التكرار ممنوع أو محتاج [[contains]] سريع. Map للبحث بمفتاح والتجميع. [[List.of]] للثوابت ولما ترجع list من method ومش عايز حد يعدّل.`,
             mistakes: R`[[List.of(...)]] وبعدين [[add]]: [[UnsupportedOperationException]] وقت التشغيل مش compile. وتعتمد على ترتيب [[HashMap]] في تست فيعدّي عندك ويقع في CI. وتعدّل list وانت بتلف عليها بـ for-each: [[ConcurrentModificationException]] (استخدم [[removeIf]]). و [[map.get(k)]] بيرجع null لو مش موجود، فـ [[int n = map.get(k);]] ممكن يعمل NullPointerException.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل التلات أنواع الأساسية: [[List]] فيها tags، و [[Map]] فيها مخزون، و [[Set]] بتشيل التكرار. وبعدين يطبع منهم، ويلف على الـ map مرتبة، وفي الآخر يحاول يضيف عنصر لـ list ثابتة فيقع. الكود ده ملف واحد اتشغّل بـ [[java Main.java]] في الـ image [[maven:3.9-eclipse-temurin-25]] (JDK 25.0.4)، وده كل الناتج:
+
+~~~text الناتج
+[java, spring, jpa] java 3
+15 0
+2 true
+book=1
+pen=15
+Exception in thread "main" java.lang.UnsupportedOperationException
+	at java.base/java.util.ImmutableCollections.uoe(ImmutableCollections.java:159)
+	at java.base/java.util.ImmutableCollections$AbstractImmutableCollection.add(ImmutableCollections.java:164)
+	at Main.main(Main.java:14)
+~~~
+
+> [[void main()]] من غير class ولا [[import]]: ده الـ compact source file بتاع Java 25 (درس jshell و JDK في أول التاب). الملف ده بيعمل import لكل [[java.base]] لوحده، فـ [[List]] و [[HashMap]] و [[TreeMap]] جاهزين.
+
+---
+
+## ١. الـ List
+
+~~~java
+    List<String> tags = new ArrayList<>(List.of("java", "spring"));
+    tags.add("jpa");
+~~~
+
+نفكه من جوه لبرة:
+
+- [[List.of("java", "spring")]]: بيعمل list فيها عنصرين، بس **ثابتة** (immutable): مينفعش تضيف فيها ولا تمسح.
+- [[new ArrayList<>(...)]]: بيعمل [[ArrayList]] جديدة وينسخ فيها العناصر دي. دي بقى تتعدّل عادي. فالسطر ده الطريقة المعتادة لـ «list بقيم أولية وتتعدّل».
+- [[<>]] اسمها diamond: الـ compiler بيبص على الشمال ([[List<String>]]) ويفهم إن النوع [[String]]، فمش محتاج تكتب [[new ArrayList<String>]].
+- [[List<String> tags]]: نوع المتغير هو الـ interface ([[List]])، والقيمة هي التنفيذ ([[ArrayList]]). كده لو غيّرت التنفيذ بعدين، باقي الكود ميتأثرش.
+- [[<String>]]: الـ generic. الـ list دي فيها Strings بس، ولو حاولت تحط رقم الـ compiler هيرفض.
+- [[tags.add("jpa")]]: زي [[push]] في JS، بيضيف في الآخر.
+
+---
+
+## ٢. الـ Map: put و merge و putIfAbsent
+
+~~~java
+    Map<String, Integer> stock = new HashMap<>();
+    stock.put("pen", 10);
+    stock.merge("pen", 5, Integer::sum);
+    stock.putIfAbsent("book", 1);
+~~~
+
+- [[Map<String, Integer>]]: المفتاح String والقيمة Integer. ليه [[Integer]] مش [[int]]؟ لأن الـ generics بتقبل objects بس، فبنستخدم الـ wrapper (درس primitives و wrappers).
+- [[put("pen", 10)]]: حط القيمة 10 تحت المفتاح [["pen"]]. زي [[map.set]] في JS.
+- [[merge("pen", 5, Integer::sum)]]: لو المفتاح **مش موجود** حط 5، ولو **موجود** نادي الدالة على القيمة القديمة والجديدة: [[Integer.sum(10, 5)]] = 15. و [[Integer::sum]] ده method reference، يعني «الدالة [[sum]] اللي في [[Integer]]» (درس lambdas). ده أنضف شكل للعدّ: جرّبنا [[m.merge("x", 1, Integer::sum)]] مرتين على map فاضية فرجعت [[1]] وبعدين [[2]].
+- [[putIfAbsent("book", 1)]]: حط بس لو المفتاح مش موجود. [["book"]] مش موجود، فاتحط.
+
+---
+
+## ٣. الـ Set
+
+~~~java
+    Set<String> seen = new HashSet<>(List.of("a", "b", "a"));
+~~~
+
+الـ list فيها [["a"]] مرتين، و [[HashSet]] مبيقبلش تكرار، فبيفضل فيه [[a]] و [[b]] بس.
+
+---
+
+## ٤. الطباعة سطر سطر
+
+~~~java
+    IO.println(tags + " " + tags.get(0) + " " + tags.size());
+~~~
+
+~~~text الناتج
+[java, spring, jpa] java 3
+~~~
+
+- [[IO.println]]: الطباعة في Java 25 (زي [[console.log]]).
+- [[tags + " "]]: لما تجمع object مع String، Java بتنادي [[toString()]]، والـ collections بتطبع نفسها بشكل مقروء بين أقواس مربعة.
+- [[get(0)]]: العنصر رقم صفر، زي [[tags.at(0)]] في JS. و [[size()]] زي [[length]].
+
+~~~java
+    IO.println(stock.get("pen") + " " + stock.getOrDefault("cup", 0));
+~~~
+
+~~~text الناتج
+15 0
+~~~
+
+- [[get("pen")]]: [[15]] بعد الـ merge.
+- [[getOrDefault("cup", 0)]]: [["cup"]] مش موجود، فبدل null رجّع 0.
+
+ليه ده مهم؟ [[stock.get("cup")]] لوحدها بترجع [[null]]. ولو حطيتها في [[int]] البرنامج بيقع. جرّبنا [[int n = stock.get("cup");]]:
+
+~~~text الناتج
+Exception in thread "main" java.lang.NullPointerException: Cannot invoke "java.lang.Integer.intValue()" because the return value of "java.util.Map.get(Object)" is null
+~~~
+
+Java حاولت تحوّل [[Integer]] لـ [[int]] (unboxing) بإنها تنادي [[intValue()]] على null.
+
+~~~java
+    IO.println(seen.size() + " " + seen.contains("a"));
+~~~
+
+~~~text الناتج
+2 true
+~~~
+
+[[contains]] في الـ Set سريعة جدًا (O(1) في المتوسط)، عكس [[contains]] في الـ List اللي بتلف على العناصر كلها.
+
+---
+
+## ٥. اللف على Map مرتبة
+
+~~~java
+    for (var e : new TreeMap<>(stock).entrySet()) IO.println(e.getKey() + "=" + e.getValue());
+~~~
+
+من جوه لبرة:
+
+1. [[new TreeMap<>(stock)]]: نسخة من الـ map بس **مرتبة بالمفتاح**.
+2. [[.entrySet()]]: كل الأزواج (مفتاح وقيمة)، زي [[Object.entries]] في JS.
+3. [[for (var e : ...)]]: الـ for-each بتاع Java، زي [[for...of]]. و [[var]] خلّى الـ compiler يستنتج نوع [[e]] (هو [[Map.Entry<String, Integer>]]).
+4. [[e.getKey()]] و [[e.getValue()]]: المفتاح والقيمة.
+
+~~~text الناتج
+book=1
+pen=15
+~~~
+
+[["book"]] قبل [["pen"]] أبجديًا. لو طبعت الـ [[HashMap]] نفسها هنا طلعت [[{book=1, pen=15}]] بالصدفة، بس ده مش مضمون: الـ HashMap مبيوعدش بأي ترتيب.
+
+---
+
+## ٦. الـ list الثابتة بتقع وقت التشغيل
+
+~~~java
+    List<String> fixed = List.of("x", "y");
+    fixed.add("z");
+~~~
+
+الكود ده بيعدّي الـ compile عادي، لأن [[List]] فيها [[add]]. بس الـ object اللي رجع من [[List.of]] بيرفض:
+
+~~~text الناتج
+Exception in thread "main" java.lang.UnsupportedOperationException
+	at java.base/java.util.ImmutableCollections.uoe(ImmutableCollections.java:159)
+	at java.base/java.util.ImmutableCollections$AbstractImmutableCollection.add(ImmutableCollections.java:164)
+	at Main.main(Main.java:14)
+~~~
+
+نقرا الـ stack trace من تحت لفوق: [[Main.java:14]] هو سطر [[fixed.add]] في كودنا، وفوقه الـ [[add]] جوه [[ImmutableCollections]] (الـ class اللي [[List.of]] بيرجعه)، وهي اللي رمت [[UnsupportedOperationException]] ومن غير رسالة.
+
+---
+
+## ٧. الحل: [[wordCount]]
+
+~~~java
+static Map<String, Integer> wordCount(String text) {
+    Map<String, Integer> counts = new TreeMap<>();
+    for (String w : text.toLowerCase().split("\\s+")) {
+        counts.merge(w, 1, Integer::sum);
+    }
+    return counts;
+}
+~~~
+
+- [[static]]: الـ method مش محتاجة object عشان تتنادى.
+- [[text.toLowerCase()]]: كل الحروف صغيرة، فـ [[The]] و [[THE]] و [[the]] نفس الكلمة.
+- [[split("\\s+")]]: بيقسم بـ regex. [[\s]] يعني أي مسافة (space أو tab أو سطر جديد)، و [[+]] يعني واحدة أو أكتر. والـ [[\\]] لأن الـ backslash جوه String في Java لازم يتكتب مرتين.
+- [[counts.merge(w, 1, Integer::sum)]]: أول مرة الكلمة تظهر قيمتها 1، وبعد كده بتزيد 1.
+- [[TreeMap]]: عشان الناتج يطلع مرتب.
+
+~~~text الناتج
+{and=2, cat=1, dog=1, end=1, the=3}
+~~~
+
+---
+
+## الخلاصة
+
+| محتاج | استخدم | زي في JS |
+|---|---|---|
+| ليستة مرتبة بتتعدّل | [[new ArrayList<>()]] | array |
+| ليستة ثابتة | [[List.of(...)]] | [[Object.freeze([...])]] |
+| مفتاح وقيمة | [[new HashMap<>()]] | [[new Map()]] |
+| مفاتيح مرتبة | [[new TreeMap<>()]] | مفيش، بتعمل sort |
+| ترتيب الإضافة | [[new LinkedHashMap<>()]] | [[Map]] العادي |
+| من غير تكرار | [[new HashSet<>()]] | [[new Set()]] |
+
+- [[List.of]] و [[Map.of]] ثابتين، والغلطة بتظهر وقت التشغيل مش الـ compile.
+- [[map.get]] بترجع null لو المفتاح مش موجود: [[getOrDefault]] أأمن.
+- للعدّ: [[merge(key, 1, Integer::sum)]].`,
           lines: [
             "main.",
             R`list تتعدّل، بادئة بقيمتين. النوع الـ interface والقيمة ArrayList.`,
@@ -121,6 +310,189 @@ void main() {
             when: R`استخدمها في كل الـ collections. واكتبها لما عندك كود بيتكرر لكذا نوع (wrapper لـ response، أو result، أو صفحة). ومتعقدهاش: لو الـ signature محتاج ٣ wildcards عشان تفهمه، غالبًا في طريقة أبسط.`,
             mistakes: R`raw types: [[List list = new ArrayList();]] من غير [[<>]]: الـ compiler بيطلّع warning بس، والفحص كله راح، وده في كود قديم كتير. وتفتكر إن [[List<Object>]] بتاخد أي list: لأ، [[List<?>]] هي اللي بتاخد. و [[max(List<T>)]] مع list فاضية: [[IndexOutOfBoundsException]].`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+فيه ٣ حاجات generic: record اسمه [[Page<T>]] (صفحة من أي نوع) فيه method بتحوّل الصفحة لنوع تاني، و method اسمها [[max]] بتجيب أكبر عنصر من أي نوع ينفع يتقارن، و method اسمها [[sum]] بتجمع list من أي نوع أرقام. وفي الآخر سطر بيثبت إن الأنواع بتتمسح وقت التشغيل. اتشغّل بـ [[java Main.java]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25):
+
+~~~text الناتج
+Page[items=[task-1, task-2, task-3], page=1, total=3]
+9 z
+6.5
+true
+~~~
+
+---
+
+## ١. [[Page<T>]]: record بنوع متغير
+
+~~~java
+record Page<T>(List<T> items, int page, long total) {
+~~~
+
+- [[<T>]] بعد الاسم: **type parameter**. [[T]] اسم مؤقت لنوع هيتحدد لما حد يستخدم الـ record: [[Page<Integer>]] يبقى [[T]] = Integer، و [[Page<String>]] يبقى String.
+- [[List<T> items]]: العناصر من النوع ده. والاسم [[T]] مجرد عرف (Type)، وفيه كمان [[R]] (Result) و [[E]] (Element) و [[K]] و [[V]] (Key و Value).
+
+### الـ method اللي جواه
+
+~~~java
+    <R> Page<R> map(java.util.function.Function<T, R> fn) {
+        return new Page<>(items.stream().map(fn).toList(), page, total);
+    }
+~~~
+
+نقراها من الشمال:
+
+| الحتة | معناها |
+|---|---|
+| [[<R>]] | الـ method دي ليها نوع جديد خاص بيها اسمه R (نوع الناتج) |
+| [[Page<R>]] | بترجع صفحة من النوع الجديد |
+| [[Function<T, R> fn]] | بتاخد دالة بتحوّل T لـ R (درس lambdas). اسمها الكامل [[java.util.function.Function]] |
+| [[items.stream().map(fn).toList()]] | طبّق الدالة على كل عنصر واعمل list جديدة (درس streams) |
+| [[new Page<>(..., page, total)]] | صفحة جديدة بنفس رقم الصفحة والإجمالي. الـ [[<>]] استنتج [[Page<R>]] من نوع الرجوع |
+
+---
+
+## ٢. [[max]]: نوع بقيد
+
+~~~java
+static <T extends Comparable<T>> T max(List<T> list) {
+    T best = list.get(0);
+    for (T x : list) if (x.compareTo(best) > 0) best = x;
+    return best;
+}
+~~~
+
+- [[<T extends Comparable<T>>]]: T أي نوع، **بشرط** يكون بيعرف يقارن نفسه بنفسه. [[Comparable<T>]] interface فيه method واحدة [[compareTo]]، و [[Integer]] و [[String]] و [[LocalDate]] بينفذوه. وكلمة [[extends]] هنا معناها «من نوع» حتى لو Comparable interface.
+- [[T best = list.get(0)]]: نبدأ بأول عنصر.
+- [[x.compareTo(best) > 0]]: [[compareTo]] بترجع رقم موجب لو [[x]] أكبر، وصفر لو متساويين، وسالب لو أصغر. فلو [[x]] أكبر نحفظه.
+- نوع الرجوع [[T]]: لو بعتّ Integers هترجع Integer، من غير أي cast.
+
+~~~java
+    IO.println(max(List.of(3, 9, 4)) + " " + max(List.of("b", "z", "a")));
+~~~
+
+~~~text الناتج
+9 z
+~~~
+
+نفس الـ method اشتغلت مع أرقام ومع Strings (الـ Strings بتتقارن أبجديًا، فـ [["z"]] الأكبر).
+
+### لو النوع مبيعرفش يقارن؟
+
+جرّبنا [[max(List.of(new Object()))]]:
+
+~~~text الناتج
+Main.java:7: error: method max in class Main cannot be applied to given types;
+    IO.println(max(List.of(new Object())));
+               ^
+  required: List<T>
+  found:    List<Object>
+  reason: inference variable E has incompatible bounds
+    upper bounds: Comparable<T>,Object
+    lower bounds: Object
+~~~
+
+- [[required: List<T>]] و [[found: List<Object>]]: الـ method عايزة list من نوع Comparable، وانت بعت list من Object.
+- [[inference variable E]]: [[E]] هو الـ type parameter بتاع [[List.of]]. الـ compiler حاول يلاقي نوع واحد يرضي الشرطين (Comparable و Object) وملقاش.
+- الخلاصة: الغلطة اتمسكت **وقت الـ compile**، قبل ما البرنامج يشتغل. ده كل فايدة الـ generics.
+
+---
+
+## ٣. [[sum]]: الـ wildcard
+
+~~~java
+static double sum(List<? extends Number> nums) {
+    double s = 0;
+    for (Number n : nums) s += n.doubleValue();
+    return s;
+}
+~~~
+
+- [[?]] اسمها **wildcard**: «نوع معيّن مش هيهمني اسمه».
+- [[? extends Number]]: أي نوع تحت [[Number]]، يعني [[Integer]] أو [[Double]] أو [[Long]]...
+- [[n.doubleValue()]]: كل [[Number]] فيه الـ method دي، بتحوّله لـ double.
+
+~~~java
+    IO.println(sum(List.of(1, 2.5, 3L)));
+~~~
+
+~~~text الناتج
+6.5
+~~~
+
+[[1]] Integer و [[2.5]] Double و [[3L]] Long ([[L]] في الآخر يعني long). المجموع 6.5.
+
+### ليه مش [[List<Number>]] على طول؟
+
+في Java، [[List<Integer>]] **مش** نوع من [[List<Number>]]، حتى لو Integer نوع من Number. ده اسمه invariance. غيّرنا الـ signature لـ [[sum(List<Number> nums)]] وبعتنا [[List<Integer> ints = List.of(1, 2);]]:
+
+~~~text الناتج
+Main.java:8: error: method sum in class Main cannot be applied to given types;
+    IO.println(sum(ints));
+               ^
+  required: List<Number>
+  found:    List<Integer>
+  reason: argument mismatch; List<Integer> cannot be converted to List<Number>
+~~~
+
+ليه Java بتمنع ده؟ لو كان مسموح، الـ method كانت هتقدر تعمل [[nums.add(2.5)]] وتحط Double جوه list أصلها Integer. ومع [[? extends Number]] الإضافة نفسها ممنوعة. جرّبنا [[nums.add(2.5)]] على [[List<? extends Number>]]:
+
+~~~text الناتج
+Main.java:3: error: no suitable method found for add(double)
+    nums.add(2.5);
+        ^
+    method List.add(CAP#1) is not applicable
+      (argument mismatch; double cannot be converted to CAP#1)
+~~~
+
+[[CAP#1]] هو الاسم اللي الـ compiler اداه للنوع المجهول ورا الـ [[?]] (capture). هو عارف إنه «حاجة تحت Number»، بس مش عارف هي إيه بالظبط، فمش هيسمح تحط فيه Double. فالقاعدة: [[? extends]] للقراية بس.
+
+---
+
+## ٤. main
+
+~~~java
+    Page<Integer> ids = new Page<>(List.of(1, 2, 3), 1, 3);
+    Page<String> labels = ids.map(id -> "task-" + id);
+    IO.println(labels);
+~~~
+
+- [[ids]] صفحة أرقام. [[ids.map(id -> "task-" + id)]] بتاخد كل رقم وترجع String، فالـ compiler استنتج [[R]] = String، والنتيجة [[Page<String>]].
+- لو كتبت [[Page<Integer> labels = ids.map(...)]] كان هيرفض، لأن الدالة بترجع String.
+
+~~~text الناتج
+Page[items=[task-1, task-2, task-3], page=1, total=3]
+~~~
+
+### الـ type erasure
+
+~~~java
+    List<String> a = new ArrayList<>();
+    List<Integer> b = new ArrayList<>();
+    IO.println(a.getClass() == b.getClass());
+~~~
+
+~~~text الناتج
+true
+~~~
+
+[[getClass()]] بيرجع الـ class الحقيقي وقت التشغيل. الاتنين [[ArrayList]] بس، لأن الـ [[<String>]] و [[<Integer>]] اتفحصوا وقت الـ compile واتمسحوا. عشان كده مينفعش تكتب [[new T()]] ولا [[instanceof List<String>]].
+
+---
+
+## الخلاصة
+
+| الشكل | معناه |
+|---|---|
+| [[class Box<T>]] أو [[record Page<T>]] | نوع بيشتغل مع أي T |
+| [[<R> R convert(...)]] | method ليها نوع خاص بيها |
+| [[<T extends Comparable<T>>]] | أي T بشرط يعرف يتقارن |
+| [[List<? extends Number>]] | تقرا منها كـ Number، ومتضيفش |
+| [[List<? super Integer>]] | تضيف فيها Integer |
+| [[<>]] | الـ compiler يستنتج النوع |
+
+- [[List<Integer>]] مش [[List<Number>]]. الـ wildcard هو الحل.
+- الفحص كله وقت الـ compile، ووقت التشغيل الأنواع ممسوحة.`,
           lines: [
             R`record generic: [[T]] نوع العناصر.`,
             R`method generic جواه: [[<R>]] نوع جديد، و [[Function<T, R>]] دالة من T لـ R.`,
@@ -186,6 +558,186 @@ void main() {
             when: R`[[Comparator.comparing]] في أي ترتيب. وفي JPA الأحسن الداتابيز ترتب ([[ORDER BY]] أو [[Sort.by("createdAt")]] في Spring Data) بدل ما تجيب كله وترتب في Java.`,
             mistakes: R`[[(a, b) -> a.getBalance() - b.getBalance()]] مع [[long]] كبيرة: overflow وترتيب غلط؛ استخدم [[Long.compare]] أو [[comparingLong]]. وتنسى إن [[reversed()]] في نص سلسلة بيعكس كل اللي قبله مش آخر حقل بس. و [[remove]] جوه for-each.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+عنده ٣ users، بيرتبهم مرة بالسن، ومرة بالمدينة وجوه المدينة بالسن من الكبير للصغير. وبعدين يمسح منهم بشرط بالطريقة الصح ([[removeIf]])، وفي الآخر يجرّب الطريقة الغلط (مسح جوه for-each) فيقع. اتشغّل بـ [[java Main.java]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25):
+
+~~~text الناتج
+[Omar, Sara, Mona]
+[Mona, Omar, Sara]
+2
+Exception in thread "main" java.util.ConcurrentModificationException
+	at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1096)
+	at java.base/java.util.ArrayList$Itr.next(ArrayList.java:1050)
+	at Main.main(Main.java:15)
+~~~
+
+---
+
+## ١. الداتا
+
+~~~java
+record User(String name, int age, String city) {}
+
+    var users = new ArrayList<>(List.of(
+        new User("Sara", 27, "Cairo"),
+        new User("Omar", 22, "Alex"),
+        new User("Mona", 27, "Alex")));
+~~~
+
+- [[record User]]: class صغير فيه ٣ حقول، وليه accessors جاهزة: [[name()]] و [[age()]] و [[city()]] (درس records).
+- [[new ArrayList<>(List.of(...))]]: list بتتعدّل، لأن [[sort]] بيرتب **جوه** الـ list نفسها، و [[List.of]] لوحده ثابت ومبيقبلش ترتيب.
+- لاحظ إن سارة ومنى الاتنين ٢٧، وده مقصود عشان نشوف إيه اللي بيحصل للمتساويين.
+
+---
+
+## ٢. ترتيب بحقل واحد
+
+~~~java
+    users.sort(Comparator.comparingInt(User::age));
+    IO.println(users.stream().map(User::name).toList());
+~~~
+
+### [[User::age]]
+
+method reference: اختصار لـ [[u -> u.age()]]. يعني «هات السن من كل user».
+
+### [[Comparator.comparingInt(...)]]
+
+بيبني [[Comparator]] (حاجة بتقارن اتنين) من دالة بتطلّع رقم. الـ [[Int]] في الاسم معناه إن المفتاح [[int]]، فمفيش تحويل لـ Integer (boxing). ولو المفتاح String أو أي object تستخدم [[comparing]] من غير Int.
+
+### [[users.sort(...)]]
+
+بيرتب الـ list في مكانها. بعد كده بنطبع الأسماء بس: [[stream().map(User::name).toList()]] (درس streams).
+
+~~~text الناتج
+[Omar, Sara, Mona]
+~~~
+
+عمر (٢٢) الأول. وسارة قبل منى مع إن الاتنين ٢٧. ليه؟ لأن [[List.sort]] **stable**: لما عنصرين يتساووا، بيفضلوا بنفس ترتيبهم القديم، وسارة كانت قبل منى.
+
+---
+
+## ٣. ترتيب بحقلين، والتاني تنازلي
+
+~~~java
+    users.sort(Comparator.comparing(User::city).thenComparing(User::age, Comparator.reverseOrder()));
+~~~
+
+نفكه بالترتيب:
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[Comparator.comparing(User::city)]] | رتّب بالمدينة أبجديًا: Alex قبل Cairo |
+| [[.thenComparing(User::age, ...)]] | لو المدينة واحدة، رتّب بالسن |
+| [[Comparator.reverseOrder()]] | بس السن بالعكس: الكبير الأول |
+
+[[thenComparing]] بيتنادى بس لما الأول يقول «متساويين». فعمر ومنى (اسكندرية الاتنين) اترتبوا بالسن: منى ٢٧ قبل عمر ٢٢، وبعدين سارة لوحدها في القاهرة:
+
+~~~text الناتج
+[Mona, Omar, Sara]
+~~~
+
+---
+
+## ٤. المسح بشرط: [[removeIf]]
+
+~~~java
+    var adults = new ArrayList<>(users);
+    adults.removeIf(u -> u.age() < 25);
+    IO.println(adults.size());
+~~~
+
+- [[new ArrayList<>(users)]]: نسخة، عشان منلمسش الأصل.
+- [[removeIf(u -> u.age() < 25)]]: امسح كل user سنه أقل من ٢٥. الـ lambda بترجع true للي هيتمسح. زي [[filter]] في JS بس بالعكس، وبيعدّل الـ list نفسها.
+
+~~~text الناتج
+2
+~~~
+
+عمر (٢٢) اتمسح، وفضلت منى وسارة.
+
+---
+
+## ٥. الغلطة: [[remove]] جوه for-each
+
+~~~java
+    for (User u : users) if (u.age() > 25) users.remove(u);
+~~~
+
+~~~text الناتج
+Exception in thread "main" java.util.ConcurrentModificationException
+	at java.base/java.util.ArrayList$Itr.checkForComodification(ArrayList.java:1096)
+	at java.base/java.util.ArrayList$Itr.next(ArrayList.java:1050)
+	at Main.main(Main.java:15)
+~~~
+
+نقرا الـ stack trace:
+
+- [[for (User u : users)]] من جوه بيستخدم **iterator** ([[ArrayList$Itr]]): object بيمشي على العناصر واحد واحد بـ [[next()]].
+- الـ iterator ده حافظ عدد التعديلات اللي حصلت على الـ list (اسمه modCount). لما [[users.remove(u)]] مسحت منى، العدد اتغير.
+- في اللفة الجاية [[next()]] نادت [[checkForComodification]]، لقت العدد مش زي ما كان، فرمت [[ConcurrentModificationException]]. الاسم معناه «الـ list اتعدّلت وانت بتلف عليها»، مش ليه علاقة بالـ threads هنا.
+
+الحل: [[removeIf]] زي الخطوة اللي فاتت.
+
+---
+
+## ٦. الحل: ترتيب من غير حالة الحروف، و null
+
+~~~java
+    users.sort(Comparator.comparing(User::name, String.CASE_INSENSITIVE_ORDER));
+~~~
+
+[[comparing]] ليها شكل تاني بياخد باراميتر تاني: **comparator للمفتاح نفسه**. [[String.CASE_INSENSITIVE_ORDER]] comparator جاهز بيقارن من غير ما يفرق بين الحروف الكبيرة والصغيرة، فـ [["sara"]] بتترتب كأنها [["Sara"]].
+
+~~~java
+    users.sort(Comparator.comparingInt(User::age).reversed()
+        .thenComparing(User::name, String.CASE_INSENSITIVE_ORDER));
+~~~
+
+- [[comparingInt(User::age).reversed()]]: بالسن، و [[reversed()]] بتعكس **كل** اللي قبلها في السلسلة. هنا قبلها السن بس، فالسن بقى تنازلي.
+- [[.thenComparing(User::name, ...)]]: لو السن واحد، بالاسم.
+
+لو نسيت [[nullsLast]] وفيه user اسمه null:
+
+~~~text الناتج
+Exception in thread "main" java.lang.NullPointerException: Cannot read field "value" because "s1" is null
+	at java.base/java.lang.String$CaseInsensitiveComparator.compare(String.java:2140)
+~~~
+
+الـ comparator حاول يقرا حروف الاسم ([[value]] هو الحقل اللي جوه String) والاسم null. والحل:
+
+~~~java
+    users.sort(Comparator.comparing(User::name, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+~~~
+
+[[Comparator.nullsLast(...)]] بيلف الـ comparator: أي null يروح للآخر، والباقي يتقارن عادي.
+
+ناتج الحل كله:
+
+~~~text الناتج
+[Mona, Omar, sara]
+[Mona, sara, Omar]
+[Mona, Omar, sara, null]
+~~~
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| بحقل رقم | [[Comparator.comparingInt(User::age)]] |
+| بحقل أي نوع | [[Comparator.comparing(User::city)]] |
+| حقل تاني لو متساويين | [[.thenComparing(...)]] |
+| الحقل ده بس بالعكس | [[thenComparing(key, Comparator.reverseOrder())]] |
+| كل السلسلة بالعكس | [[.reversed()]] |
+| من غير حالة الحروف | [[String.CASE_INSENSITIVE_ORDER]] |
+| الـ null في الآخر | [[Comparator.nullsLast(...)]] |
+| مسح بشرط | [[list.removeIf(...)]] |
+
+- [[sort]] stable: المتساويين بيحافظوا على ترتيبهم.
+- متمسحش من list وانت بتلف عليها بـ for-each.`,
           lines: [
             "record بتلات حقول.",
             "main.",
@@ -266,6 +818,154 @@ void main() {
             when: R`callbacks وأي حاجة بتاخد سلوك: ترتيب، وفلترة، ومعالجة events. لو الـ lambda بقت أكتر من ٣ سطور، طلّعها method واستخدم method reference.`,
             mistakes: R`تعدّل متغير محلي من جوه lambda ([[count++]] جوه forEach): خطأ compile؛ استخدم stream بـ [[count()]] أو [[sum()]]. وتكتب interface جديد لكل lambda وفيه واحد جاهز في [[java.util.function]]. وتحط checked exception جوه lambda في stream: الـ interfaces الجاهزة مبتسمحش بيها (درس الأخطاء).`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل ٤ lambdas بالـ interfaces الجاهزة، وبعدين interface بتاعه هو ([[PriceRule]]) واتنين قواعد خصم يركّبهم على سعر، وفي الآخر lambda بتقرا متغير من برّه. اتشغّل بـ [[java Main.java]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25):
+
+~~~text الناتج
+6 true [] 5
+8500
+90
+~~~
+
+---
+
+## ١. الـ import
+
+~~~java
+import java.util.function.*;
+~~~
+
+[[java.util.function]] package فيه الـ interfaces الجاهزة للدوال. والـ [[*]] معناها «هات كل اللي فيه».
+
+---
+
+## ٢. functional interface بتاعك
+
+~~~java
+@FunctionalInterface
+interface PriceRule { long apply(long cents); }
+~~~
+
+- [[interface PriceRule]] فيه method واحدة بس من غير تنفيذ: [[apply]] بتاخد [[long]] وترجع [[long]]. أي interface بالشكل ده اسمه **functional interface**، وأي lambda بنفس الشكل (تاخد رقم وترجع رقم) ينفع تبقى PriceRule.
+- [[@FunctionalInterface]]: annotation اختيارية. بتخلي الـ compiler يتأكد إن فيه method abstract واحدة بس، فلو حد ضاف تانية يطلع خطأ.
+- [[cents]]: بنحسب الفلوس بالقروش في [[long]]، عشان الكسور العشرية ([[double]]) بتعمل أخطاء تقريب في الفلوس.
+
+---
+
+## ٣. الـ ٤ interfaces الجاهزة
+
+~~~java
+    Function<String, Integer> len = s -> s.length();
+    Predicate<Integer> isEven = n -> n % 2 == 0;
+    Supplier<List<String>> fresh = ArrayList::new;
+    BiFunction<Long, Long, Long> add = Long::sum;
+~~~
+
+| السطر | الـ interface | بياخد | بيرجع | بتناديه بـ |
+|---|---|---|---|---|
+| [[len]] | [[Function<String, Integer>]] | String | Integer | [[apply]] |
+| [[isEven]] | [[Predicate<Integer>]] | Integer | boolean | [[test]] |
+| [[fresh]] | [[Supplier<List<String>>]] | ولا حاجة | List | [[get]] |
+| [[add]] | [[BiFunction<Long, Long, Long>]] | اتنين Long | Long | [[apply]] |
+
+والرموز:
+
+- [[s -> s.length()]]: الـ lambda. الشمال الباراميتر، واليمين اللي بيرجع. سهم بشرطة واحدة [[->]]، مش [[=>]] زي JS.
+- [[n % 2 == 0]]: [[%]] باقي القسمة. لو الباقي صفر يبقى زوجي.
+- [[ArrayList::new]]: constructor reference، اختصار لـ [[() -> new ArrayList<>()]]. كل [[get()]] بترجع list جديدة فاضية.
+- [[Long::sum]]: static method reference، اختصار لـ [[(a, b) -> Long.sum(a, b)]].
+
+~~~java
+    IO.println(len.apply("spring") + " " + isEven.test(4) + " " + fresh.get() + " " + add.apply(2L, 3L));
+~~~
+
+~~~text الناتج
+6 true [] 5
+~~~
+
+[["spring"]] ٦ حروف، و ٤ زوجي، والـ list الجديدة فاضية فاتطبعت قوسين مربعين فاضيين، و ٢ + ٣ = ٥. و [[2L]] الـ [[L]] بتخلي الرقم long، لأن [[add]] مستني Long ورقم من غير L يبقى int.
+
+لاحظ إن في Java مفيش [[len("spring")]] زي JS: لازم تنادي اسم الـ method بتاعة الـ interface ([[apply]] أو [[test]] أو [[get]]). الـ lambda مش «دالة»، هي object بينفّذ الـ interface.
+
+---
+
+## ٤. تركيب قاعدتين
+
+~~~java
+    PriceRule tenOff = c -> c * 90 / 100;
+    PriceRule minus5 = c -> c - 500;
+    IO.println(minus5.apply(tenOff.apply(10_000)));
+~~~
+
+- نفس شكل الـ lambda ([[c -> ...]]) بقى [[PriceRule]] لأن ده النوع اللي على الشمال. الـ compiler بيبص على المكان اللي الـ lambda رايحة له (اسمه target type).
+- [[c * 90 / 100]]: خصم ١٠٪. الضرب الأول عشان القسمة على أرقام صحيحة متضيّعش الكسور.
+- [[10_000]]: الـ [[_]] جوه الرقم للقراية بس، هو 10000.
+- من جوه لبرة: [[tenOff.apply(10_000)]] = 9000، وبعدين [[minus5.apply(9000)]] = 8500.
+
+~~~text الناتج
+8500
+~~~
+
+---
+
+## ٥. الـ lambda بتقرا متغير من برّه
+
+~~~java
+    int discount = 10;
+    Function<Integer, Integer> apply = p -> p - discount;
+    IO.println(apply.apply(100));
+~~~
+
+~~~text الناتج
+90
+~~~
+
+الـ lambda «مسكت» [[discount]] (ده اسمه capture). والشرط: المتغير يبقى **effectively final**، يعني محدش غيّر قيمته بعد ما اتعمل. جرّبنا نضيف [[discount = 20;]] بعد سطر الـ lambda:
+
+~~~text الناتج
+Main.java:4: error: local variables referenced from a lambda expression must be final or effectively final
+    Function<Integer, Integer> apply = p -> p - discount;
+                                                ^
+~~~
+
+لاحظ إن الخطأ بيشاور على **سطر الـ lambda** مش سطر التغيير: المتغير بقى بيتغير، فالـ lambda مبقتش تقدر تمسكه. السبب إن Java بتنسخ القيمة جوه الـ lambda وقت ما بتتعمل، فلو سمحت بالتغيير هيبقى فيه نسختين مختلفتين.
+
+---
+
+## ٦. الحل: list من القواعد
+
+~~~java
+    List<PriceRule> rules = List.of(c -> c * 90 / 100, c -> c - 500);
+    long price = 10_000;
+    for (PriceRule r : rules) price = r.apply(price);
+    IO.println(price);
+~~~
+
+- [[List<PriceRule>]]: list من سلوكيات. كل lambda جواها بقت PriceRule.
+- الـ loop بيطبّق كل قاعدة على ناتج اللي قبلها.
+
+~~~text الناتج
+8500
+~~~
+
+[[price]] هنا بيتغير، بس ده مسموح لأنه **مش** متقري جوه lambda. الـ lambdas نفسها مش بتلمسه.
+
+---
+
+## الخلاصة
+
+| الشكل | يعني |
+|---|---|
+| [[x -> x * 2]] | lambda بباراميتر واحد |
+| [[(a, b) -> a + b]] | باراميترين |
+| [[() -> ...]] | من غير باراميترات |
+| [[String::length]] | method على الباراميتر نفسه |
+| [[Long::sum]] | static method |
+| [[ArrayList::new]] | constructor |
+
+- الـ lambda لازم تروح لـ interface فيه method واحدة، وبتتنادى باسم الـ method دي.
+- المتغيرات المحلية اللي بتقراها لازم متتغيرش.`,
           lines: [
             R`الـ interfaces الجاهزة للدوال.`,
             R`annotation بتتأكد إن فيه method واحدة.`,
@@ -339,6 +1039,184 @@ void main() {
             when: R`تحويل وفلترة وتجميع على داتا في الذاكرة. أما لو الداتا في الداتابيز، فلتر وجمّع هناك ([[WHERE]] و [[GROUP BY]] أو query method)، ومتجيبش ١٠٠ ألف صف عشان تعمل filter في Java.`,
             mistakes: R`تستخدم الـ stream مرتين: [[IllegalStateException: stream has already been operated upon or closed]]. وتعدّل حاجة برّه من جوه [[map]] أو [[forEach]] (side effects). و [[Collectors.toMap]] مع مفاتيح متكررة: [[IllegalStateException: Duplicate key]] إلا لو اديته merge function. و stream طويل ومعقد بدل for loop واضح: مش كل حاجة لازم تبقى stream.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+عنده ٤ طلبات، وبيطلع منهم ٤ أجوبة بالـ streams: مجموع المدفوع، وأسماء العملاء اللي عندهم طلبات كبيرة، ومجموع كل مدينة، وهل فيه طلب مش مدفوع. اتشغّل بـ [[java Main.java]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25):
+
+~~~text الناتج
+2500
+[Mona, Omar]
+{Alex=2000, Cairo=800}
+true
+~~~
+
+---
+
+## ١. الداتا
+
+~~~java
+record Order(String customer, String city, long total, boolean paid) {}
+
+    var orders = List.of(
+        new Order("Sara", "Cairo", 500, true),
+        new Order("Omar", "Alex", 1200, true),
+        new Order("Sara", "Cairo", 300, false),
+        new Order("Mona", "Alex", 800, true));
+~~~
+
+record فيه العميل والمدينة والمبلغ وهل اتدفع. و [[List.of]] هنا كفاية لأن الـ streams مبتعدّلش الـ list الأصلية، بتقرا منها بس.
+
+---
+
+## ٢. مجموع المدفوع: سطر واحد
+
+~~~java
+    long paidTotal = orders.stream().filter(Order::paid).mapToLong(Order::total).sum();
+~~~
+
+ده pipeline، بيتقرا من الشمال لليمين:
+
+| الخطوة | بتعمل إيه | اللي بيطلع منها |
+|---|---|---|
+| [[orders.stream()]] | حوّل الـ list لـ stream (مصدر) | الـ ٤ طلبات |
+| [[.filter(Order::paid)]] | سيب اللي [[paid()]] بتاعه true | سارة ٥٠٠، عمر ١٢٠٠، منى ٨٠٠ |
+| [[.mapToLong(Order::total)]] | خد المبلغ كرقم [[long]] | 500، 1200، 800 |
+| [[.sum()]] | اجمع (العملية النهائية) | 2500 |
+
+- [[Order::paid]] اختصار لـ [[o -> o.paid()]]، وبترجع boolean فتنفع شرط للـ filter.
+- [[mapToLong]] بدل [[map]]: بتطلّع stream أرقام primitive اسمه [[LongStream]]، وده اللي فيه [[sum()]]. الـ stream العادي مفيهوش sum.
+
+~~~text الناتج
+2500
+~~~
+
+---
+
+## ٣. أسماء العملاء الكبار
+
+~~~java
+    List<String> bigCustomers = orders.stream()
+        .filter(o -> o.total() >= 800)
+        .map(Order::customer)
+        .distinct()
+        .sorted()
+        .toList();
+~~~
+
+- [[filter(o -> o.total() >= 800)]]: عمر (١٢٠٠) ومنى (٨٠٠).
+- [[map(Order::customer)]]: خد الاسم بس. زي [[map]] في JS.
+- [[distinct()]]: شيل التكرار (مفيش هنا، بس لو سارة كان عندها طلبين كبار كانت هتظهر مرة).
+- [[sorted()]]: ترتيب طبيعي، والـ Strings أبجدي.
+- [[toList()]]: العملية النهائية. بترجع list **ثابتة** (Java 16+).
+
+~~~text الناتج
+[Mona, Omar]
+~~~
+
+### ليه بنعمل [[orders.stream()]] تاني؟
+
+الـ stream بيتستخدم **مرة واحدة**. جرّبنا نادينا [[count()]] مرتين على نفس الـ stream:
+
+~~~text الناتج
+3
+Exception in thread "main" java.lang.IllegalStateException: stream has already been operated upon or closed
+~~~
+
+الـ list نفسها تقدر تعمل منها streams كتير، بس كل stream لعملية نهائية واحدة.
+
+### lazy: مفيش حاجة بتحصل قبل العملية النهائية
+
+[[filter]] و [[map]] و [[distinct]] و [[sorted]] اسمهم عمليات وسيطة: بيوصفوا الشغل بس. أول ما [[toList()]] تتنادى، العناصر بتعدّي على السلسلة. ومن غير عملية نهائية الكود مش بيعمل أي حاجة.
+
+---
+
+## ٤. التجميع: [[groupingBy]]
+
+~~~java
+    Map<String, Long> byCity = orders.stream()
+        .collect(Collectors.groupingBy(Order::city, TreeMap::new, Collectors.summingLong(Order::total)));
+~~~
+
+[[collect(...)]] عملية نهائية بتاخد «طريقة تجميع» من [[Collectors]]. و [[groupingBy]] هنا ليها ٣ باراميترات:
+
+| الباراميتر | معناه |
+|---|---|
+| [[Order::city]] | المفتاح: جمّع حسب المدينة |
+| [[TreeMap::new]] | اعمل الناتج في [[TreeMap]] عشان المدن تطلع مرتبة |
+| [[Collectors.summingLong(Order::total)]] | قيمة كل مجموعة: مجموع المبالغ |
+
+بالأرقام: اسكندرية = ١٢٠٠ + ٨٠٠ = ٢٠٠٠، والقاهرة = ٥٠٠ + ٣٠٠ = ٨٠٠ (المجموع هنا مش بيبص على [[paid]]).
+
+~~~text الناتج
+{Alex=2000, Cairo=800}
+~~~
+
+ده نفس [[SELECT city, SUM(total) FROM orders GROUP BY city ORDER BY city]] في SQL. ولو كتبت [[groupingBy(Order::city)]] بباراميتر واحد بس، هتاخد [[Map<String, List<Order>>]]: الطلبات نفسها متجمعة.
+
+---
+
+## ٥. [[anyMatch]]
+
+~~~java
+    IO.println(orders.stream().anyMatch(o -> !o.paid()));
+~~~
+
+- [[!o.paid()]]: [[!]] يعني not، يعني «مش مدفوع».
+- [[anyMatch]]: true لو عنصر واحد على الأقل حقق الشرط، وبيقف أول ما يلاقي واحد. زي [[some]] في JS، وأخواتها [[allMatch]] (زي [[every]]) و [[noneMatch]].
+
+~~~text الناتج
+true
+~~~
+
+طلب سارة التاني (٣٠٠) مش مدفوع.
+
+---
+
+## ٦. الحل
+
+~~~java
+    Map<String, Long> perCustomer = orders.stream()
+        .collect(Collectors.groupingBy(Order::customer, TreeMap::new, Collectors.counting()));
+~~~
+
+نفس [[groupingBy]]، بس القيمة [[counting()]]: عدد العناصر، وبترجع [[Long]].
+
+~~~java
+    Order biggest = orders.stream().max(Comparator.comparingLong(Order::total)).orElseThrow();
+~~~
+
+- [[max(...)]] بتاخد Comparator (درس Comparator) وبترجع [[Optional<Order>]]، لأن لو الـ list فاضية مفيش أكبر.
+- [[orElseThrow()]]: طلّع القيمة، ولو فاضي ارمي exception (درس Optional).
+
+~~~java
+    String names = orders.stream().map(Order::customer).distinct().sorted().collect(Collectors.joining(", "));
+~~~
+
+[[Collectors.joining(", ")]] بيلزق الـ Strings بالفاصل، زي [[join(", ")]] في JS.
+
+~~~text الناتج
+{Mona=1, Omar=1, Sara=2}
+Order[customer=Omar, city=Alex, total=1200, paid=true]
+Mona, Omar, Sara
+~~~
+
+---
+
+## الخلاصة
+
+| في JS | في Java |
+|---|---|
+| [[arr.filter(f)]] | [[list.stream().filter(f)]] |
+| [[arr.map(f)]] | [[.map(f)]] |
+| [[reduce]] للمجموع | [[.mapToLong(f).sum()]] |
+| [[Array.from(new Set(arr))]] | [[.distinct()]] |
+| [[arr.some(f)]] | [[.anyMatch(f)]] |
+| [[arr.join(", ")]] | [[.collect(Collectors.joining(", "))]] |
+| [[reduce]] لتجميع | [[Collectors.groupingBy(...)]] |
+| النتيجة array | [[.toList()]] (ثابتة) |
+
+- لازم عملية نهائية، وإلا مفيش حاجة بتتنفذ.
+- كل stream مرة واحدة.`,
           lines: [
             "record للطلب.",
             "main.",
@@ -418,6 +1296,177 @@ void main() {
             when: R`نوع رجوع لـ methods ممكن متلاقيش (find و search و parse). مش للحقول، ولا باراميترات methods، ولا جوه collections (list فاضية أحسن من [[Optional<List>]])، ولا في الـ entities. Jackson بيعرف يحوّل Optional بس الـ DTOs الأحسن تبقى نوع عادي ممكن يبقى null.`,
             mistakes: R`[[if (opt.isPresent()) { opt.get() }]]: ده null check بشكل أطول؛ استخدم map و orElse. و method نوعها Optional وبترجع [[null]]: أسوأ الاتنين. و [[orElse(repository.save(...))]] وتستغرب إن الـ save بيتنفذ دايمًا: استخدم [[orElseGet]].`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيعمل داتابيز وهمية فيها اتنين users، و method اسمها [[findById]] بترجع [[Optional<User>]] بدل null. وبعدين يجرّب الحالات: موجود، ومش موجود، وموجود بس الحقل اللي عايزه null، وفي الآخر [[orElseThrow]] برسالة بتاعتنا. اتشغّل بـ [[java Main.java]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25):
+
+~~~text الناتج
+Sara
+guest
+no email
+found 1
+Exception in thread "main" java.util.NoSuchElementException: user 9 not found
+	at Main.lambda$main$1(Main.java:14)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at Main.main(Main.java:14)
+~~~
+
+---
+
+## ١. الداتا
+
+~~~java
+record User(long id, String name, String email) {}
+
+Map<Long, User> db = Map.of(1L, new User(1, "Sara", "sara@example.com"), 2L, new User(2, "Omar", null));
+~~~
+
+- [[Map.of(k1, v1, k2, v2)]]: map ثابتة بزوجين. [[1L]] الـ [[L]] عشان المفتاح [[Long]].
+- عمر إيميله [[null]]. ده مسموح لأن الـ null جوه الـ User، مش قيمة في الـ map. ([[Map.of]] نفسه بيرفض null كمفتاح أو قيمة.)
+- [[db]] متعرّفة برّه main: في الـ compact source file الحقول دي بتبقى حقول في الـ class المخفي.
+
+---
+
+## ٢. [[findById]]
+
+~~~java
+Optional<User> findById(long id) {
+    return Optional.ofNullable(db.get(id));
+}
+~~~
+
+- نوع الرجوع [[Optional<User>]]: صندوق يا فيه User يا فاضي. مجرد ما تشوف النوع ده تعرف إن «ممكن متلاقيش».
+- [[db.get(id)]]: بترجع User أو null.
+- [[Optional.ofNullable(...)]]: لو القيمة null اعمل صندوق فاضي، وإلا صندوق فيه القيمة. أخواتها: [[Optional.of(x)]] (لو x بـ null بترمي exception) و [[Optional.empty()]] (فاضي على طول). جرّبنا نطبعهم: [[Optional.ofNullable(null)]] بيطبع [[Optional.empty]]، و [[Optional.of("x")]] بيطبع [[Optional[x]]].
+
+---
+
+## ٣. [[map]] و [[orElse]]
+
+~~~java
+    IO.println(findById(1).map(User::name).orElse("guest"));
+    IO.println(findById(9).map(User::name).orElse("guest"));
+~~~
+
+خطوة خطوة لـ id = 1:
+
+| الخطوة | الناتج |
+|---|---|
+| [[findById(1)]] | Optional فيه User سارة |
+| [[.map(User::name)]] | [[Optional[Sara]]] |
+| [[.orElse("guest")]] | [[Sara]] |
+
+ولـ id = 9: [[findById(9)]] فاضي، و [[map]] على صندوق فاضي مبتعملش حاجة وبترجعه فاضي، و [[orElse]] بترجع البديل [["guest"]].
+
+~~~text الناتج
+Sara
+guest
+~~~
+
+ده بالظبط [[findById(9)?.name ?? "guest"]] في JS.
+
+---
+
+## ٤. [[map]] لما الحقل نفسه null
+
+~~~java
+    IO.println(findById(2).map(User::email).orElse("no email"));
+~~~
+
+عمر موجود، بس [[email()]] بترجع null. و [[map]] لما الدالة ترجع null بتحوّل الصندوق لفاضي، فـ [[orElse]] رجّعت البديل:
+
+~~~text الناتج
+no email
+~~~
+
+---
+
+## ٥. [[ifPresent]]
+
+~~~java
+    findById(1).ifPresent(u -> IO.println("found " + u.id()));
+~~~
+
+نفّذ الـ lambda لو فيه قيمة بس، ولو فاضي متعملش حاجة. بترجع void، يعني آخر السلسلة.
+
+~~~text الناتج
+found 1
+~~~
+
+---
+
+## ٦. [[orElseThrow]] برسالة بتاعتك
+
+~~~java
+    User u = findById(9).orElseThrow(() -> new NoSuchElementException("user 9 not found"));
+~~~
+
+- [[orElseThrow(...)]]: لو فيه قيمة رجّعها، ولو فاضي ارمي الـ exception اللي الـ lambda بتعمله.
+- [[() -> new ...]]: lambda من غير باراميترات (Supplier). مكتوبة كـ lambda عشان الـ exception ميتعملش غير لو احتجناه.
+
+~~~text الناتج
+Exception in thread "main" java.util.NoSuchElementException: user 9 not found
+	at Main.lambda$main$1(Main.java:14)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at Main.main(Main.java:14)
+~~~
+
+من تحت لفوق: [[main]] نادت [[orElseThrow]]، اللي نادت الـ lambda بتاعتنا ([[lambda$main$1]] هو الاسم اللي الـ compiler اداه للـ lambda التانية في main)، واللي عملت الـ exception. في Spring ده الشكل اللي هتكتبه في كل service، مع exception بيتحول لـ 404.
+
+### و [[get()]]؟
+
+جرّبنا [[Optional.empty().get()]]:
+
+~~~text الناتج
+Exception in thread "main" java.util.NoSuchElementException: No value present
+~~~
+
+نفس الـ exception بس برسالة مش مفيدة. [[get()]] من غير فحص بيضيّع فايدة الـ Optional.
+
+---
+
+## ٧. الحل: [[emailDomain]] من غير ولا if
+
+~~~java
+Optional<String> emailDomain(long id) {
+    return findById(id)
+        .map(User::email)
+        .filter(e -> e.contains("@"))
+        .map(e -> e.substring(e.indexOf('@') + 1));
+}
+~~~
+
+| الخطوة | لـ id = 1 | لـ id = 2 | لـ id = 9 |
+|---|---|---|---|
+| [[findById(id)]] | فيه سارة | فيه عمر | فاضي |
+| [[.map(User::email)]] | [[sara@example.com]] | فاضي (null) | فاضي |
+| [[.filter(e -> e.contains("@"))]] | فيه [[@]]، يفضل | فاضي | فاضي |
+| [[.map(e -> e.substring(...))]] | [[example.com]] | فاضي | فاضي |
+
+- [[filter]] على Optional: لو الشرط false يفضّيه.
+- [[e.indexOf('@')]]: مكان الـ [[@]] (رقم). و [['@']] بعلامة واحدة يعني حرف واحد ([[char]]) مش String.
+- [[substring(n + 1)]]: من بعد الـ [[@]] للآخر.
+
+~~~text الناتج
+Optional[example.com] Optional.empty Optional.empty
+~~~
+
+---
+
+## الخلاصة
+
+| عايز | اكتب |
+|---|---|
+| قيمة ممكن تبقى null | [[Optional.ofNullable(x)]] |
+| حوّل القيمة لو موجودة | [[.map(f)]] |
+| شرط | [[.filter(p)]] |
+| بديل ثابت | [[.orElse(x)]] |
+| بديل بيتحسب لو احتجته بس | [[.orElseGet(() -> ...)]] |
+| exception لو فاضي | [[.orElseThrow(() -> new ...)]] |
+| نفّذ لو موجود | [[.ifPresent(...)]] |
+
+- متستخدمش [[get()]] من غير فحص.
+- Optional لنوع الرجوع بس، مش للحقول ولا الباراميترات.`,
           lines: [
             "record فيه email ممكن يبقى null.",
             R`داتابيز وهمية. [[Map.of]] مبيقبلش null كقيمة، بس القيمة هنا User (وجواه null عادي).`,
@@ -507,6 +1556,184 @@ void main() {
             when: R`اعمل throw لـ unchecked في كودك للأخطاء المنطقية (not found، و validation، و conflict)، وخلي [[@ControllerAdvice]] يحوّلها لـ HTTP response (درس الأخطاء في المستوى ٢). وامسك الـ checked في الحدود (ملفات وشبكة) ولفّها أو تعامل معاها.`,
             mistakes: R`[[catch (Exception e) {}]] فاضي: الغلطة اختفت ومحدش هيعرف. وأقل منه سوءًا [[e.printStackTrace()]] في الإنتاج بدل logger. و [[throws Exception]] على كل method عشان الـ compiler يسكت. وتلف exception من غير الـ cause: [[new RuntimeException("failed")]] بدل [[new RuntimeException("failed", e)]] فتضيع السبب الأصلي.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+فيه method بتقرا ملف (ممكن ترمي [[IOException]] وهي checked)، و method بتحوّل String لرقم (ممكن ترمي [[NumberFormatException]] وهي unchecked). وبيجرّب الاتنين: الملف مش موجود، والـ String مش رقم، وبيوري [[finally]]. اتشغّل بـ [[java Main.java]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25) في فولدر مفيهوش [[missing.txt]]:
+
+~~~text الناتج
+no file: missing.txt
+8080
+For input string: "abc"
+finally runs always
+~~~
+
+---
+
+## ١. الـ imports
+
+~~~java
+import java.io.IOException;
+import java.nio.file.*;
+~~~
+
+- [[java.io.IOException]]: الـ exception الأم لكل أخطاء القراية والكتابة (ملفات وشبكة).
+- [[java.nio.file.*]]: [[Files]] (methods جاهزة للملفات) و [[Path]] (مسار ملف) و [[NoSuchFileException]]. و [[nio]] اختصار New I/O.
+
+---
+
+## ٢. method بترمي checked exception
+
+~~~java
+static String readConfig(Path path) throws IOException {
+    return Files.readString(path);
+}
+~~~
+
+- [[Files.readString(path)]]: اقرا الملف كله في String. الـ method دي مكتوب في الـ signature بتاعها [[throws IOException]].
+- [[throws IOException]] في الـ signature بتاعتنا: بنقول «أنا مش هتعامل مع الخطأ ده، اللي بيناديني هو اللي يتصرف».
+
+لو شلت [[throws IOException]]:
+
+~~~text الناتج
+Main.java:4: error: unreported exception IOException; must be caught or declared to be thrown
+    return Files.readString(path);
+                           ^
+~~~
+
+ده **خطأ compile**، البرنامج مش هيشتغل أصلًا. ده معنى checked: الـ compiler بيفحص إنك قررت: يا تمسكها (caught) يا تعلن عنها (declared).
+
+---
+
+## ٣. method بترمي unchecked exception
+
+~~~java
+static int parsePort(String raw) {
+    return Integer.parseInt(raw.strip());
+}
+~~~
+
+- [[raw.strip()]]: شيل المسافات من الأول والآخر.
+- [[Integer.parseInt(...)]]: حوّل لـ int. لو الـ String مش رقم بترمي [[NumberFormatException]]، وده تحت [[RuntimeException]]، يعني unchecked: مفيش [[throws]] ومفيش حد بيجبرك تمسكها.
+
+---
+
+## ٤. main: مسك الـ checked
+
+~~~java
+    try {
+        IO.println(readConfig(Path.of("missing.txt")));
+    } catch (NoSuchFileException e) {
+        IO.println("no file: " + e.getMessage());
+    } catch (IOException e) {
+        throw new UncheckedIOException(e);
+    }
+~~~
+
+- [[Path.of("missing.txt")]]: مسار لملف في الفولدر الحالي.
+- [[try { ... }]]: جرّب الكود ده.
+- [[catch (NoSuchFileException e)]]: لو حصل exception من النوع ده امسكه، و [[e]] هو الـ exception نفسه. [[NoSuchFileException]] نوع من [[IOException]] (بيورث منها).
+- [[e.getMessage()]]: رسالة الخطأ. هنا اسم الملف بس.
+- [[catch (IOException e)]]: أي IOException تانية (مثلًا مفيش صلاحية). مش عارفين نتصرف، فـ [[throw new UncheckedIOException(e)]]: بنلفها في exception unchecked وبنرميها، والـ [[e]] اللي جواها اسمه **cause**، فالسبب الأصلي مش بيضيع.
+
+~~~text الناتج
+no file: missing.txt
+~~~
+
+### الترتيب مهم
+
+الـ catch بيتجرب من فوق لتحت، وأول واحد يطابق هو اللي بيمسك. جرّبنا نحط [[IOException]] الأول:
+
+~~~text الناتج
+Main.java:11: error: exception NoSuchFileException has already been caught
+    } catch (NoSuchFileException e) {
+      ^
+~~~
+
+[[IOException]] أعم، فهتمسك [[NoSuchFileException]] قبل ما توصل للـ catch بتاعها، والـ compiler بيرفض كود عمره ما هيتنفذ. القاعدة: **الأخص الأول**.
+
+### لو شلت الـ try/catch خالص
+
+نفس خطأ «unreported exception» بس على سطر النداء:
+
+~~~text الناتج
+Main.java:7: error: unreported exception IOException; must be caught or declared to be thrown
+    IO.println(readConfig(Path.of("missing.txt")));
+                         ^
+~~~
+
+ولو كتبت [[void main() throws IOException]] الـ compile يعدّي، والبرنامج يقع وقت التشغيل:
+
+~~~text الناتج
+Exception in thread "main" java.nio.file.NoSuchFileException: missing.txt
+	at java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:92)
+	...
+	at java.base/java.nio.file.Files.readString(Files.java:3006)
+	at Main.main(Main.java:4)
+~~~
+
+(جرّبناها بنسخة أقصر فيها [[Files.readString]] جوه main على طول، وشلنا سطور من النص. [[UnixException]] لأنه اتشغّل على لينكس، وعلى ويندوز هتلاقي [[WindowsException]].)
+
+---
+
+## ٥. main: الـ unchecked و finally
+
+~~~java
+    IO.println(parsePort(" 8080 "));
+~~~
+
+~~~text الناتج
+8080
+~~~
+
+[[strip()]] شالت المسافات، و [[parseInt]] حوّلت.
+
+~~~java
+    try {
+        parsePort("abc");
+    } catch (NumberFormatException e) {
+        IO.println(e.getMessage());
+    } finally {
+        IO.println("finally runs always");
+    }
+~~~
+
+- مسكنا [[NumberFormatException]] مع إنها unchecked، لأننا عارفين نتصرف (اختياري، مش إجباري).
+- [[finally]]: بيتنفذ **دايمًا**: لو حصل exception أو لأ، ولو فيه [[return]] جوه الـ try.
+
+~~~text الناتج
+For input string: "abc"
+finally runs always
+~~~
+
+ولو مسكتهاش، البرنامج كان هيقع بـ:
+
+~~~text الناتج
+Exception in thread "main" java.lang.NumberFormatException: For input string: "abc"
+	at java.base/java.lang.NumberFormatException.forInputString(NumberFormatException.java:67)
+	at java.base/java.lang.Integer.parseInt(Integer.java:565)
+~~~
+
+---
+
+## ٦. الشجرة
+
+| النوع | تحت مين | checked؟ | أمثلة |
+|---|---|---|---|
+| [[Error]] | [[Throwable]] | لأ | [[OutOfMemoryError]]: متمسكهاش |
+| [[Exception]] | [[Throwable]] | أيوه | [[IOException]] و [[NoSuchFileException]] |
+| [[RuntimeException]] | [[Exception]] | لأ | [[NumberFormatException]] و [[NullPointerException]] و [[IllegalArgumentException]] |
+
+القاعدة: أي حاجة تحت [[RuntimeException]] (أو [[Error]]) unchecked، والباقي checked.
+
+---
+
+## الخلاصة
+
+- checked ([[IOException]]): الـ compiler بيجبرك: [[try/catch]] أو [[throws]].
+- unchecked (تحت [[RuntimeException]]): مش لازم، والغلطة بتظهر وقت التشغيل.
+- الـ catch الأخص قبل الأعم.
+- [[finally]] بيتنفذ دايمًا.
+- لو هتلف exception، ابعت الأصل معاها ([[new UncheckedIOException(e)]]).`,
           lines: [
             "الـ checked exception الأشهر.",
             R`[[Files]] و [[Path]] للملفات.`,
@@ -586,6 +1813,178 @@ void main() throws IOException {
             when: R`try-with-resources مع أي [[Closeable]] أو [[AutoCloseable]]، دايمًا. و custom exceptions لكل خطأ business ليه معنى: [[NotFoundException]] و [[InsufficientFundsException]] و [[DuplicateEmailException]]، عشان تتحول لـ 404 و 422 و 409 في مكان واحد.`,
             mistakes: R`تفتح stream أو reader وتقفله في آخر الـ try بإيدك: لو حصل exception قبله مش هيتقفل. و exception لكل حاجة صغيرة لحد ما يبقى عندك ٥٠ class. وتستخدم exceptions للـ flow العادي (زي «لو المستخدم مش موجود اعمل واحد»): الأبطأ والأصعب في القراية؛ استخدم Optional.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+جزئين: بيكتب ملف ويقرا أول سطر منه بـ reader بيتقفل لوحده (try-with-resources)، وبيعرّف exception بتاعه ([[InsufficientFundsException]]) فيه حقل زيادة، ويرميه ويمسكه. اتشغّل بـ [[java Main.java]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25):
+
+~~~text الناتج
+line 1
+missing 150 cents / 150
+~~~
+
+---
+
+## ١. الـ imports
+
+~~~java
+import java.io.*;
+import java.nio.file.*;
+~~~
+
+[[java.io]] فيه [[BufferedReader]] و [[IOException]]، و [[java.nio.file]] فيه [[Files]] و [[Path]].
+
+---
+
+## ٢. الـ exception بتاعك
+
+~~~java
+class InsufficientFundsException extends RuntimeException {
+    private final long missing;
+    InsufficientFundsException(long missing) {
+        super("missing " + missing + " cents");
+        this.missing = missing;
+    }
+    long missing() { return missing; }
+}
+~~~
+
+- [[extends RuntimeException]]: بيورث من RuntimeException، فبقى **unchecked** (درس checked و unchecked): اللي بينادي مش مجبر يكتب [[throws]].
+- [[private final long missing]]: معلومة زيادة غير الرسالة: المبلغ الناقص. اللي يمسك الـ exception يقدر يستخدمها كرقم (يعرضها، أو يرجعها في JSON) من غير ما يقرا الرسالة ويقطّعها.
+- [[super("missing " + missing + " cents")]]: بينادي constructor الأب ([[RuntimeException]]) بالرسالة. دي اللي [[getMessage()]] هترجعها. ولازم يبقى أول سطر في الـ constructor.
+- [[this.missing = missing]]: [[this.missing]] الحقل، و [[missing]] لوحدها الباراميتر.
+- [[long missing()]]: getter بنفس شكل الـ records.
+
+---
+
+## ٣. رمي الـ exception
+
+~~~java
+void withdraw(long balance, long amount) {
+    if (amount > balance) throw new InsufficientFundsException(amount - balance);
+}
+~~~
+
+[[throw new ...]] زي JS: اعمل الـ object وارميه. البرنامج بيسيب الـ method فورًا ويطلع لحد أول catch مناسب.
+
+---
+
+## ٤. main: try-with-resources
+
+~~~java
+void main() throws IOException {
+    Path file = Files.writeString(Path.of("notes.txt"), "line 1\nline 2\n");
+~~~
+
+- [[throws IOException]] على main: الكتابة والقراية ممكن ترمي IOException (checked)، ومش هنمسكها هنا.
+- [[Files.writeString(path, text)]]: بيكتب الملف (ويعمله لو مش موجود) وبيرجع الـ [[Path]] نفسه، فحفظناه في [[file]].
+- [[\n]] سطر جديد، فالملف فيه سطرين.
+
+~~~java
+    try (BufferedReader reader = Files.newBufferedReader(file)) {
+        IO.println(reader.readLine());
+    }
+~~~
+
+- [[try (...)]]: الأقواس بعد [[try]] هي الفرق. أي object بيتعمل جواها لازم يكون [[AutoCloseable]] (يعني فيه method اسمها [[close()]])، و Java بتنادي [[close()]] لوحدها أول ما الـ block يخلص، حتى لو حصل exception.
+- [[Files.newBufferedReader(file)]]: reader بيقرا الملف حتة حتة (buffered) بدل ما يحمّله كله.
+- [[reader.readLine()]]: السطر الأول من غير الـ [[\n]].
+- مفيش [[catch]] هنا ولا [[finally]]: الـ try ده وظيفته القفل بس.
+
+~~~text الناتج
+line 1
+~~~
+
+من غير try-with-resources كنت هتكتب [[reader.close()]] بإيدك في [[finally]]، ولو نسيته الملف يفضل مفتوح. ومع connections الداتابيز ده بيخلّص الـ pool ويهنّج التطبيق.
+
+---
+
+## ٥. main: مسك الـ exception بتاعك
+
+~~~java
+    try {
+        withdraw(100, 250);
+    } catch (InsufficientFundsException e) {
+        IO.println(e.getMessage() + " / " + e.missing());
+    }
+    Files.delete(file);
+~~~
+
+- [[withdraw(100, 250)]]: الرصيد ١٠٠ والمطلوب ٢٥٠، فـ [[amount - balance]] = ١٥٠.
+- [[catch (InsufficientFundsException e)]]: بنمسك النوع بتاعنا بالظبط، فنقدر ننادي [[e.missing()]].
+- [[Files.delete(file)]]: بيمسح ملف التجربة.
+
+~~~text الناتج
+missing 150 cents / 150
+~~~
+
+الجزء الأول من [[getMessage()]] (الرسالة اللي بعتناها لـ super)، والتاني من الحقل كرقم.
+
+---
+
+## ٦. ترتيب القفل لما يحصل exception
+
+الحل في «جرّب»: class بيطبع [["open"]] و [["close"]]:
+
+~~~java
+class Resource implements AutoCloseable {
+    Resource() { IO.println("open"); }
+    @Override public void close() { IO.println("close"); }
+}
+
+void main() {
+    try (var r = new Resource()) {
+        throw new IllegalStateException("boom");
+    } catch (IllegalStateException e) {
+        IO.println("caught: " + e.getMessage());
+    } finally {
+        IO.println("finally");
+    }
+}
+~~~
+
+- [[implements AutoCloseable]]: الـ class وعد إن فيه [[close()]]، فينفع في [[try (...)]].
+- [[@Override public void close()]]: تنفيذنا لـ close. لازم [[public]] لأنها في الـ interface public.
+
+~~~text الناتج
+open
+close
+caught: boom
+finally
+~~~
+
+الترتيب: الـ resource اتفتح، والـ exception اترمى، وبعدين **[[close]] الأول**، وبعدين [[catch]]، وبعدين [[finally]]. يعني جوه الـ catch الـ resource مقفول خلاص.
+
+### أكتر من resource، والـ close نفسه بيرمي
+
+جرّبنا اتنين resources ([[a]] و [[b]])، والـ body بيرمي، وكل [[close]] كمان بيرمي:
+
+~~~text الناتج
+open a
+open b
+close b
+close a
+caught: body failed
+suppressed: close failed b
+suppressed: close failed a
+~~~
+
+- القفل **بالعكس** من الفتح: [[b]] الأول (زي ما بتقفل الأبواب وانت خارج).
+- الـ exception اللي وصل للـ catch هو الأصلي ([[body failed]])، وأخطاء الـ close اتحطت جواه كـ suppressed، وبتجيبها بـ [[e.getSuppressed()]]. فمفيش خطأ بيضيع.
+
+---
+
+## الخلاصة
+
+| الحاجة | الشكل |
+|---|---|
+| قفل أوتوماتيك | [[try (var x = ...) { }]] مع أي [[AutoCloseable]] |
+| ترتيب القفل | بالعكس من الفتح، وقبل catch و finally |
+| exception بتاعك | [[class XException extends RuntimeException]] |
+| الرسالة | [[super(message)]] أو [[super(message, cause)]] |
+| معلومة زيادة | حقل [[final]] و getter |
+
+- أي ملف أو reader أو connection: try-with-resources دايمًا.
+- exception لكل خطأ business ليه معنى، عشان يتحول لـ HTTP status في مكان واحد في Spring.`,
           lines: [
             "الـ IO القديم (Reader).",
             R`[[Files]].`,
@@ -696,10 +2095,244 @@ public class DesktopApp extends Application {
 ليه مش [[java DesktopApp.java]] على طول زي باقي دروس Java؟ لأن JavaFX مش جوه الـ JDK. لو نزّلت الـ SDK من openjfx.io بتترجم وتشغّل كده:
 [[javac --module-path PATH_TO_FX/lib --add-modules javafx.controls -d out DesktopApp.java]]
 [[java --module-path PATH_TO_FX/lib --add-modules javafx.controls -cp out DesktopApp]]
-وطريقة الملف الواحد ([[java DesktopApp.java]]) مع JavaFX بتفشل بـ [[ClassNotFoundException: DesktopApp]] حتى لو ضفت الـ module-path، عشان كده بنترجم الأول.`,
+وطريقة الملف الواحد اشتغلت كمان مع JDK 25 و JavaFX 25 لو ضفت نفس الـ module-path: [[java --module-path PATH_TO_FX/lib --add-modules javafx.controls DesktopApp.java]]. بس أول ما البرنامج يبقى أكتر من ملف، الترجمة بـ javac الأول (أو Maven) هي الطريقة العادية.`,
             when: "أدوات داخلية لشركة، أو برامج نقاط بيع، أو برامج لازم تشتغل offline أو تتعامل مع ملفات وأجهزة متوصلة بالكمبيوتر. لو البرنامج محتاج يتفتح من أي مكان ومن الموبايل، غالبًا موقع ويب أنسب.",
             mistakes: R`تحاول [[java DesktopApp.java]] من غير JavaFX فيطلعلك [[package javafx.application does not exist]]. تحدّث الواجهة من thread تاني فيطلعلك [[IllegalStateException: Not on FX application thread]] أو الواجهة تتصرف غلط: استخدم [[Platform.runLater]]. وتعمل شغل تقيل جوه الـ lambda بتاعة الزرار، فالشباك كله يهنّج لحد ما يخلص.`
           },
+          teach: R`## البرنامج بيعمل إيه؟
+
+بيفتح شباك عنوانه «My first JavaFX app»، فيه كلام وتحته زرار. لما تدوس الزرار الكلام بيتغير. والحل فيه نفس البرنامج بـ Swing.
+
+> **اتجرّب إزاي؟** الشباك محتاج شاشة، والـ container مفيهوش. فترجمنا الكود بـ JDK 25 (الـ image [[maven:3.9-eclipse-temurin-25]]) مع JavaFX 25 من Maven Central، وشغّلناه على شاشة وهمية اسمها Xvfb (برنامج لينكس بيعمل شاشة في الذاكرة من غير ما تتعرض). البرنامج اشتغل من غير أخطاء، وبنسخة فيها سطور طباعة زيادة اتأكدنا من العنوان والمقاس وإن الزرار بيغيّر الكلام. شكل الشباك نفسه على الشاشة من الـ docs.
+
+---
+
+## ١. الـ imports: كل حاجة جاية منين
+
+~~~java
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+~~~
+
+| الـ class | الـ package | هو إيه |
+|---|---|---|
+| [[Application]] | [[javafx.application]] | الأساس اللي البرنامج بيورث منه |
+| [[Stage]] | [[javafx.stage]] | الشباك نفسه (العنوان وزراير القفل والتصغير) |
+| [[Scene]] | [[javafx.scene]] | المحتوى اللي جوه الشباك |
+| [[Button]] و [[Label]] | [[javafx.scene.control]] | عناصر (controls): زرار وكلام |
+| [[VBox]] | [[javafx.scene.layout]] | layout بيرص العناصر تحت بعض (V = Vertical) |
+
+الـ packages دي **مش** جوه الـ JDK. لو ترجمت من غير JavaFX:
+
+~~~text الناتج
+DesktopApp.java:1: error: package javafx.application does not exist
+import javafx.application.Application;
+                         ^
+DesktopApp.java:2: error: package javafx.scene does not exist
+import javafx.scene.Scene;
+                   ^
+~~~
+
+---
+
+## ٢. الكلاس
+
+~~~java
+public class DesktopApp extends Application {
+  @Override
+  public void start(Stage stage) {
+~~~
+
+- [[extends Application]]: البرنامج «نوع من» Application (درس extends و abstract). [[Application]] فيه method اسمها [[start]] abstract، يعني لازم انت تكتبها.
+- [[@Override]]: بتقول للـ compiler «أنا بكتب نسختي من method موجودة في الأب». لو كتبت الاسم غلط ([[strat]]) هيطلع خطأ بدل ما يعدّي ساكت.
+- [[start(Stage stage)]]: انت مش بتنادي start. JavaFX هو اللي بيناديها لما يجهز، وبيديك الشباك الأساسي في [[stage]].
+- الملف لازم اسمه [[DesktopApp.java]] لأن الكلاس [[public]].
+
+---
+
+## ٣. العناصر والزرار
+
+~~~java
+    Label message = new Label("Hello from JavaFX!");
+    Button button = new Button("Click me");
+    button.setOnAction(e -> message.setText("Button clicked!"));
+~~~
+
+- [[new Label("...")]]: كلام بيتعرض، والنص الأولي بين القوسين.
+- [[new Button("Click me")]]: زرار مكتوب عليه Click me.
+- [[setOnAction(...)]]: «لما الزرار يتضغط نفّذ ده». بتاخد lambda (درس lambdas):
+  - [[e]]: الـ event (معلومات عن الضغطة). مش مستخدم هنا بس لازم يتكتب.
+  - [[message.setText("Button clicked!")]]: غيّر كلام الـ Label. والـ lambda قادرة تشوف [[message]] لأنه متغير محلي محدش بيغيّره (effectively final).
+
+في التجربة ناديت [[button.fire()]] (بيعمل نفس الضغطة من الكود)، وبعدها [[message.getText()]] رجعت:
+
+~~~text الناتج
+after fire: Button clicked!
+~~~
+
+---
+
+## ٤. الـ layout والـ Scene
+
+~~~java
+    VBox root = new VBox(15, message, button);
+    Scene scene = new Scene(root, 360, 200);
+~~~
+
+- [[new VBox(15, message, button)]]: أول رقم المسافة بين العناصر (15 بيكسل)، وبعده العناصر بالترتيب: الكلام فوق، والزرار تحته. اسمه [[root]] لأنه أول عنصر في شجرة الشاشة.
+- [[new Scene(root, 360, 200)]]: المحتوى بمقاس 360 عرض × 200 طول.
+
+الشجرة كلها:
+
+~~~text شجرة الشاشة
+Stage (الشباك)
+  Scene (360 × 200)
+    VBox (root، مسافة 15)
+      Label  "Hello from JavaFX!"
+      Button "Click me"
+~~~
+
+في التجربة طبعنا الأماكن بعد العرض: الـ Label عند [[y=0]] والزرار عند [[y=31]]. يعني الكلام طوله حوالي 16 بيكسل + الـ 15 مسافة.
+
+---
+
+## ٥. عرض الشباك
+
+~~~java
+    stage.setTitle("My first JavaFX app");
+    stage.setScene(scene);
+    stage.show();
+  }
+~~~
+
+- [[setTitle]]: الكلام اللي في شريط الشباك فوق.
+- [[setScene(scene)]]: حط المحتوى في الشباك.
+- [[show()]]: اعرضه. من غيرها الشباك موجود في الذاكرة بس مش ظاهر.
+
+~~~text الناتج
+shown: My first JavaFX app 360.0x200.0 label=Hello from JavaFX! at x=0.0 y=0.0 button y=31.0
+~~~
+
+---
+
+## ٦. main و launch
+
+~~~java
+  public static void main(String[] args) {
+    launch(args);
+  }
+~~~
+
+[[launch(args)]] (method static في [[Application]]) هي اللي بتعمل كل الشغل: بتشغّل JavaFX، وتعمل object من [[DesktopApp]]، وتعمل الشباك الأساسي، وتنادي [[start]] عليه. وبتفضل مستنية لحد ما آخر شباك يتقفل، وبعدين البرنامج يخلص.
+
+---
+
+## ٧. الترجمة والتشغيل من الترمنال
+
+لو نزّلت JavaFX SDK من openjfx.io (أو jars من Maven Central زي ما عملنا):
+
+~~~bash
+javac --module-path PATH_TO_FX/lib --add-modules javafx.controls -d out DesktopApp.java
+java --module-path PATH_TO_FX/lib --add-modules javafx.controls -cp out DesktopApp
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[--module-path PATH_TO_FX/lib]] | فين ملفات JavaFX (الـ modules) |
+| [[--add-modules javafx.controls]] | استخدم module الـ controls، وهو بيجيب معاه [[javafx.graphics]] و [[javafx.base]] |
+| [[-d out]] | حط الـ [[.class]] في فولدر out |
+| [[-cp out]] | الـ classpath: دوّر على الكلاسات بتاعتي في out |
+
+وجرّبنا كمان طريقة الملف الواحد من غير javac: [[java --module-path fxlib --add-modules javafx.controls DesktopApp.java]] واشتغلت برضه على JDK 25.
+
+ولو حطيت JavaFX في الـ classpath بدل الـ module-path ([[java -cp "out:fxlib/*" DesktopApp]]):
+
+~~~text الناتج
+Error: JavaFX runtime components are missing, and are required to run this application
+~~~
+
+وفي التجربة، تحذيرات زي [[WARNING: A restricted method in java.lang.System has been called]] بتظهر مع JDK 25 لأن JavaFX بيحمّل مكتبات native. مش خطأ، وبتختفي لو زوّدت [[--enable-native-access=javafx.graphics]].
+
+---
+
+## ٨. الحل: نفس البرنامج بـ Swing
+
+~~~java
+import javax.swing.*;
+~~~
+
+Swing جوه الـ JDK ([[javax.swing]])، فمفيش أي حاجة تنزّلها: [[java SwingApp.java]] على طول.
+
+~~~java
+    SwingUtilities.invokeLater(() -> {
+~~~
+
+كل حاجة في الواجهة لازم تحصل على thread واحد اسمه Event Dispatch Thread. [[invokeLater]] بتاخد lambda (من غير باراميترات) وبتنفذها على الـ thread ده. ده المقابل لـ [[Platform.runLater]] في JavaFX.
+
+~~~java
+      JFrame frame = new JFrame("My first Swing app");
+      JLabel message = new JLabel("Hello from Swing!");
+      JButton button = new JButton("Click me");
+      button.addActionListener(e -> message.setText("Button clicked!"));
+~~~
+
+| Swing | JavaFX |
+|---|---|
+| [[JFrame]] (الشباك والعنوان) | [[Stage]] |
+| [[JLabel]] | [[Label]] |
+| [[JButton]] | [[Button]] |
+| [[addActionListener]] | [[setOnAction]] |
+
+~~~java
+      JPanel panel = new JPanel();
+      panel.add(message);
+      panel.add(button);
+      frame.add(panel);
+~~~
+
+[[JPanel]] حاوية. الـ layout الافتراضي بتاعها اسمه FlowLayout: بيرص العناصر **جنب بعض** في سطر، ومتوسطين. اتأكدنا: الـ layout طلع [[FlowLayout]]، والكلام عند [[x=70]] والزرار عند [[x=199]] في نفس السطر.
+
+~~~java
+      frame.setSize(360, 200);
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.setVisible(true);
+~~~
+
+- [[setSize]]: المقاس.
+- [[EXIT_ON_CLOSE]]: لما الشباك يتقفل، البرنامج كله يخلص. من غيرها الشباك يختفي والبرنامج يفضل شغال في الخلفية.
+- [[setVisible(true)]]: اعرض (زي [[show()]]).
+
+في التجربة [[button.doClick()]] غيّرت الكلام لـ [[Button clicked!]]. ولو شغّلت Swing من غير أي شاشة (container عادي):
+
+~~~text الناتج
+Exception in thread "AWT-EventQueue-0" java.awt.HeadlessException:
+No X11 DISPLAY variable was set,
+or no headful library support was found,
+but this program performed an operation which requires it.
+~~~
+
+[[AWT-EventQueue-0]] هو اسم الـ Event Dispatch Thread، و [[X11]] نظام الشاشات على لينكس. على ويندوز أو ماك عادي مش هتشوف ده.
+
+---
+
+## الخلاصة
+
+| | JavaFX | Swing |
+|---|---|---|
+| موجود في الـ JDK؟ | لأ، مكتبة OpenJFX | أيوه |
+| الشباك | [[Stage]] | [[JFrame]] |
+| المحتوى | [[Scene]] + layout | [[JPanel]] |
+| تحت بعض | [[VBox]] | [[BoxLayout]] أو [[GridLayout]] |
+| الزرار | [[setOnAction(e -> ...)]] | [[addActionListener(e -> ...)]] |
+| thread الواجهة | [[Platform.runLater]] | [[SwingUtilities.invokeLater]] |
+| البداية | [[launch(args)]] ← [[start]] | [[main]] على طول |
+
+- الشغل التقيل ميتعملش جوه lambda الزرار، وإلا الشباك يهنّج.
+- أي تحديث للواجهة من thread تاني يروح عن طريق [[runLater]] أو [[invokeLater]].`,
           lines: [
             R`[[Application]]: الأساس اللي أي برنامج JavaFX بيورث منه.`,
             R`[[Scene]]: المحتوى اللي جوه الشباك.`,
@@ -786,10 +2419,209 @@ jpackage --input dist --main-jar app.jar --name MyDesktopApp --type exe --win-sh
 
 jpackage بياخد كل اللي في فولدر [[--input]] (عشان كده بنحط الـ jar لوحده في dist، مش في فولدر فيه الكود كله)، ويعمل runtime بـ jlink، ويحطهم مع launcher (البرنامج اللي اليوزر بيدوس عليه) في installer. [[--win-shortcut]] بيعمل اختصار على الديسكتوب، و [[--win-dir-chooser]] بيخلي اليوزر يختار مكان التسطيب.
 
-ومن غير ما تحدد modules، jpackage بيحط runtime كبير فيه modules كتير. لو شغّلت [[jdeps --print-module-deps dist/app.jar]] هيقولك البرنامج محتاج إيه بالظبط (هنا [[java.base,java.desktop]])، وتبعتهم لـ jpackage بـ [[--add-modules java.desktop]]. في تجربة على Linux بـ JDK 21، فولدر app-image لنسخة Swing دي طلع حوالي 160 ميجا من غير تحديد، وحوالي 90 ميجا مع [[--add-modules java.desktop]]، والـ installer بيبقى أصغر لأنه مضغوط.`,
+ومن غير ما تحدد modules، jpackage بيحط runtime كبير فيه modules كتير. لو شغّلت [[jdeps --print-module-deps dist/app.jar]] هيقولك البرنامج محتاج إيه بالظبط (هنا [[java.base,java.desktop]])، وتبعتهم لـ jpackage بـ [[--add-modules java.desktop]]. في تجربة على Linux بـ JDK 25، فولدر app-image لنسخة Swing دي طلع حوالي 137 ميجا من غير تحديد، وحوالي 92 ميجا مع [[--add-modules java.desktop]]، والـ installer بيبقى أصغر لأنه مضغوط.`,
             when: "لما تسلّم برنامج ديسكتوب لناس مش مبرمجين: عميل، أو موظفين في شركة. للتجربة بينك وبين مبرمجين تانيين الـ jar كفاية.",
             mistakes: R`تبعت ملفات [[.class]] أو الكود نفسه لليوزر. تشغّل jpackage بـ [[--input .]] فيتحط في البرنامج كل اللي في الفولدر (الكود والـ bin وأي حاجة تانية). تحاول تعمل [[.exe]] من Linux أو Mac، أو من غير WiX فيطلعلك error إنه مش لاقي الأدوات. وتنسى [[--main-class]] في الـ jar فيطلعلك [[no main manifest attribute, in dist/app.jar]].`
           },
+          teach: R`## الأوامر بتعمل إيه؟
+
+٤ أوامر ورا بعض: تترجم [[SwingApp.java]]، وتجمع الناتج في ملف [[jar]]، وتجرّب الـ jar، وفي الآخر تعمل installer لويندوز بـ [[jpackage]]. أول ٣ أوامر والـ [[app-image]] اللي في «جرّب» اتشغّلوا على لينكس في [[maven:3.9-eclipse-temurin-25]] (JDK 25.0.4). الأمر الرابع ([[--type exe]]) لازم يتعمل على ويندوز ومعاه WiX، فناتجه من الـ docs.
+
+---
+
+## ١. [[javac -d bin SwingApp.java]]
+
+~~~bash
+javac -d bin SwingApp.java
+~~~
+
+- [[javac]]: الـ Java compiler. بيحوّل الكود لـ bytecode (ملفات [[.class]]) اللي الـ JVM بتشغّله.
+- [[-d bin]]: (d = directory) حط الناتج في فولدر [[bin]]، وبيعمله لو مش موجود.
+
+~~~text محتوى bin
+SwingApp.class
+~~~
+
+ملف واحد بس، حتى مع الـ lambdas اللي جوه الكود: الـ lambdas مش بتعمل ملفات [[.class]] منفصلة.
+
+---
+
+## ٢. [[jar --create ...]]
+
+~~~bash
+jar --create --file dist/app.jar --main-class SwingApp -C bin .
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[jar]] | أداة جوه الـ JDK بتعمل ملفات jar (هي zip في الحقيقة) |
+| [[--create]] | اعمل jar جديد |
+| [[--file dist/app.jar]] | اسمه ومكانه. فولدر [[dist]] بيتعمل لوحده |
+| [[--main-class SwingApp]] | الكلاس اللي فيه [[main]] |
+| [[-C bin]] | (C = change directory) خش فولدر bin الأول |
+| [[.]] | وخد كل اللي فيه |
+
+ليه [[-C bin .]] مش [[bin/SwingApp.class]]؟ لأن التانية هتحط الملف جوه الـ jar في مسار [[bin/SwingApp.class]]، والـ JVM هتدوّر على [[SwingApp.class]] في أول الـ jar. اللي جوه الـ jar ([[jar --list --file dist/app.jar]]):
+
+~~~text الناتج
+META-INF/
+META-INF/MANIFEST.MF
+SwingApp.class
+~~~
+
+و [[MANIFEST.MF]] ملف إعدادات الـ jar، وده اللي [[--main-class]] كتبه فيه:
+
+~~~text META-INF/MANIFEST.MF
+Manifest-Version: 1.0
+Created-By: 25.0.4.1 (Eclipse Adoptium)
+Main-Class: SwingApp
+~~~
+
+حجم الـ jar طلع 1406 بايت.
+
+---
+
+## ٣. [[java -jar dist/app.jar]]
+
+~~~bash
+java -jar dist/app.jar
+~~~
+
+[[-jar]] معناها «شغّل الـ jar ده»: Java بتقرا [[Main-Class]] من الـ manifest وتنادي [[main]] بتاعه. على جهاز عادي بيفتح شباك Swing. في الـ container جرّبناه على شاشة وهمية (Xvfb) وفضل شغال لحد ما قفلناه بعد ٦ ثواني، يعني مفيش أخطاء. ومن غير شاشة خالص بيطلع [[java.awt.HeadlessException]] (درس الواجهات).
+
+لو نسيت [[--main-class]] وعملت الـ jar:
+
+~~~text الناتج
+no main manifest attribute, in tmp/nomain.jar
+~~~
+
+Java مش عارفة تبدأ منين. (جرّبناها على jar اسمه [[tmp/nomain.jar]].)
+
+---
+
+## ٤. [[jpackage]]
+
+~~~bash
+jpackage --input dist --main-jar app.jar --name MyDesktopApp --type exe --win-shortcut --win-dir-chooser
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[--input dist]] | الفولدر اللي فيه الـ jar. كل اللي فيه بيتنسخ جوه البرنامج، عشان كده الـ jar لوحده فيه |
+| [[--main-jar app.jar]] | أنهي jar فيهم اللي فيه البداية (اسمه بس، من جوه [[--input]]) |
+| [[--name MyDesktopApp]] | اسم البرنامج والـ installer |
+| [[--type exe]] | نوع الناتج: installer ويندوز |
+| [[--win-shortcut]] | اعمل اختصار على الديسكتوب |
+| [[--win-dir-chooser]] | خلّي اليوزر يختار مكان التسطيب |
+
+الـ [[--type]] بيحدد النظام:
+
+| النظام | الأنواع | محتاج |
+|---|---|---|
+| Windows | [[exe]] و [[msi]] | WiX Toolset |
+| macOS | [[dmg]] و [[pkg]] | أدوات Xcode |
+| Linux | [[deb]] و [[rpm]] | [[fakeroot]] للـ deb، و [[rpmbuild]] للـ rpm |
+| أي نظام | [[app-image]] | ولا حاجة |
+
+جرّبنا [[--type exe]] على لينكس:
+
+~~~text الناتج
+Error: Invalid or unsupported type: [exe]
+~~~
+
+و [[--win-shortcut]] لوحده على لينكس:
+
+~~~text الناتج
+Error: Option [--win-shortcut] is not valid on this platform
+~~~
+
+يعني jpackage بيعمل installer للنظام اللي شغال عليه بس. وجرّبنا [[--type deb]] في الـ container:
+
+~~~text الناتج
+Bundler DEB Bundle skipped because of a configuration problem: Can not find fakeroot.
+~~~
+
+على ويندوز ومعاك WiX، الأمر بيطلّع [[MyDesktopApp-1.0.exe]] (من الـ docs). الـ [[1.0]] النسخة الافتراضية، وتغيّرها بـ [[--app-version]].
+
+---
+
+## ٥. [[--type app-image]]: البرنامج من غير installer
+
+ده اللي في «جرّب»، وبيشتغل على أي نظام:
+
+~~~bash
+jpackage --input dist --main-jar app.jar --name MyDesktopApp --type app-image
+~~~
+
+على لينكس عمل فولدر كده:
+
+~~~text MyDesktopApp
+bin/MyDesktopApp          البرنامج اللي بتشغّله (launcher)
+lib/app/app.jar           الـ jar بتاعك
+lib/app/MyDesktopApp.cfg  إعدادات الـ launcher
+lib/runtime/              Java runtime خاص بالبرنامج
+lib/libapplauncher.so
+lib/MyDesktopApp.png      الأيقونة الافتراضية
+~~~
+
+و [[MyDesktopApp.cfg]] فيه:
+
+~~~text الناتج
+[Application]
+app.mainjar=$APPDIR/app.jar
+
+[JavaOptions]
+java-options=-Djpackage.app-version=1.0
+~~~
+
+شغّلنا [[MyDesktopApp/bin/MyDesktopApp]] على الشاشة الوهمية واشتغل، من غير ما يستخدم Java الـ image: بيستخدم اللي في [[lib/runtime]]. على ويندوز البرنامج بيبقى [[MyDesktopApp\MyDesktopApp.exe]]، وعلى ماك [[MyDesktopApp.app]].
+
+### الحجم
+
+~~~text الناتج
+137M	MyDesktopApp
+~~~
+
+١٣٧ ميجا لبرنامج الـ jar بتاعه ١.٤ كيلو! كل ده الـ runtime. نسأل [[jdeps]] البرنامج محتاج إيه بالظبط:
+
+~~~bash
+jdeps --print-module-deps dist/app.jar
+~~~
+
+~~~text الناتج
+java.base,java.desktop
+~~~
+
+[[jdeps]] أداة في الـ JDK بتقرا الـ bytecode وتقول أنهي modules مستخدمة. نعيد الـ app-image بعد ما نمسح القديم، ونزوّد [[--add-modules java.desktop]]:
+
+~~~text الناتج
+92M	MyDesktopApp
+~~~
+
+وملف [[lib/runtime/release]] بيقول إيه اللي اتحط:
+
+~~~text الناتج
+JAVA_VERSION="25.0.4.1"
+MODULES="java.base java.datatransfer java.xml java.prefs java.desktop"
+~~~
+
+[[java.desktop]] جاب معاه الـ modules اللي هو محتاجها ([[java.datatransfer]] و [[java.xml]] و [[java.prefs]]) لوحده. والـ installer الحقيقي بيبقى أصغر لأنه مضغوط.
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر | الناتج |
+|---|---|---|
+| ترجمة | [[javac -d bin SwingApp.java]] | [[bin/SwingApp.class]] |
+| تجميع | [[jar --create --file dist/app.jar --main-class SwingApp -C bin .]] | [[dist/app.jar]] |
+| تجربة | [[java -jar dist/app.jar]] | الشباك (محتاج Java على الجهاز) |
+| برنامج بـ runtime | [[jpackage ... --type app-image]] | فولدر فيه launcher و runtime |
+| installer | [[jpackage ... --type exe]] على ويندوز | [[MyDesktopApp-1.0.exe]] |
+
+- الـ jar محتاج Java على جهاز اليوزر. jpackage لأ.
+- كل نظام installer بتاعه بيتعمل عليه.
+- [[--add-modules]] (من [[jdeps]]) بيصغّر الحجم كتير.`,
           lines: [
             R`ترجم [[SwingApp.java]]، و [[-d bin]] معناها حط الـ [[.class]] في فولدر bin.`,
             R`اعمل [[dist/app.jar]] من محتوى bin، واكتب فيه إن البداية من [[SwingApp]].`,
@@ -798,7 +2630,7 @@ jpackage بياخد كل اللي في فولدر [[--input]] (عشان كده �
           ],
           sol: R`بعد أول أمرين هتلاقي [[bin/SwingApp.class]] و [[dist/app.jar]] (حجمه أقل من 2 كيلو). [[java -jar dist/app.jar]] بيفتح نفس شباك Swing.
 
-[[--type app-image]] بيعمل فولدر اسمه [[MyDesktopApp]]، والبرنامج جواه: على Windows [[MyDesktopApp\MyDesktopApp.exe]]، وعلى Linux [[MyDesktopApp/bin/MyDesktopApp]]، وعلى Mac [[MyDesktopApp.app]]. دوس عليه: نفس الشباك، من غير ما يستخدم Java اللي على جهازك. حجم الفولدر حوالي 160 ميجا لأن جواه runtime كامل تقريبًا. أعد الأمر وزوّد [[--add-modules java.desktop]] (بعد ما تمسح الفولدر القديم) وهتلاقيه حوالي 90 ميجا.
+[[--type app-image]] بيعمل فولدر اسمه [[MyDesktopApp]]، والبرنامج جواه: على Windows [[MyDesktopApp\MyDesktopApp.exe]]، وعلى Linux [[MyDesktopApp/bin/MyDesktopApp]]، وعلى Mac [[MyDesktopApp.app]]. دوس عليه: نفس الشباك، من غير ما يستخدم Java اللي على جهازك. حجم الفولدر حوالي 140 ميجا لأن جواه runtime كامل تقريبًا. أعد الأمر وزوّد [[--add-modules java.desktop]] (بعد ما تمسح الفولدر القديم) وهتلاقيه حوالي 90 ميجا.
 
 والأمر الرابع على Windows بيطلّع [[MyDesktopApp-1.0.exe]] (1.0 هي النسخة الافتراضية، وتغيّرها بـ [[--app-version]]). لو طلعلك إنه مش لاقي WiX، سطّبه وزوّده للـ PATH وجرّب تاني.`
         }
@@ -859,6 +2691,200 @@ Maven بيحل الـ transitive dependencies (مكتبات المكتبات) ل
             when: R`كل ما تضيف مكتبة. واستخدم start.spring.io أو صفحة المكتبة على Maven Central عشان تجيب الإحداثيات الصح.`,
             mistakes: R`تكتب [[<version>]] لمكتبة الـ parent بيديرها فتكسر التوافق. وتحط مكتبة تست من غير [[<scope>test</scope>]] فتدخل في الـ jar النهائي. وتنسى [[runtime]] للـ driver ده مش غلط كبير بس بيوضح النية. وتنسخ dependency من مقالة قديمة لـ Boot 2 فيها [[javax.*]]: من Boot 3 كل حاجة بقت [[jakarta.*]].`
           },
+          teach: R`## الملف ده بيقول إيه؟
+
+[[pom.xml]] بيوصف المشروع لـ Maven: هو مين (الاسم والنسخة)، وبيورث إعداداته من مين (Spring Boot)، وبيستخدم Java كام، ومحتاج أنهي مكتبات. حطينا الملف ده لوحده في فولدر وشغّلنا عليه [[mvn dependency:tree]] في [[maven:3.9-eclipse-temurin-25]] (Maven 3.9 و JDK 25)، والنتايج تحت.
+
+و [[pom]] اختصار Project Object Model. والملف XML: كل حاجة بين tag بيفتح [[<name>]] و tag بيقفل [[</name>]].
+
+---
+
+## ١. البداية
+
+~~~xml
+<project>
+  <modelVersion>4.0.0</modelVersion>
+~~~
+
+- [[<project>]]: الـ tag اللي كل حاجة جواه.
+- [[<modelVersion>4.0.0</modelVersion>]]: نسخة **صيغة** الملف نفسه، مش نسخة مشروعك. ثابتة [[4.0.0]] في Maven 3.
+
+(الـ pom اللي start.spring.io بيعمله فيه كمان [[xmlns]] و [[xsi:schemaLocation]] على [[<project>]]: دول عشان الـ editor يعرف يكمّل ويفحص، و Maven مش محتاجهم.)
+
+---
+
+## ٢. الـ parent
+
+~~~xml
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>4.1.1</version>
+  </parent>
+~~~
+
+المشروع بيورث pom تاني جاهز، زي [[extends]] في Java. وأي مكتبة في Maven ليها ٣ إحداثيات:
+
+| الإحداثي | معناه | هنا |
+|---|---|---|
+| [[groupId]] | مين عاملها، عادة الدومين بالعكس | [[org.springframework.boot]] |
+| [[artifactId]] | اسمها | [[spring-boot-starter-parent]] |
+| [[version]] | نسختها | [[4.1.1]] (آخر نسخة مستقرة لما اتكتب الدرس، وهي اللي start.spring.io اداهالنا) |
+
+الـ parent بيديك جدول بإصدارات مئات المكتبات المجرّبة مع بعض (اسمه BOM = Bill of Materials). سألنا Maven عن قيمتين جاية من الـ parent:
+
+~~~bash
+mvn help:evaluate -Dexpression=postgresql.version -q -DforceStdout
+~~~
+
+~~~text الناتج
+42.7.13
+~~~
+
+إحنا مكتبناش رقم نسخة لـ PostgreSQL في أي حتة، وده اللي الـ parent حدده.
+
+---
+
+## ٣. مشروعك نفسه
+
+~~~xml
+  <groupId>com.example</groupId>
+  <artifactId>tasks-api</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+~~~
+
+نفس الـ ٣ إحداثيات بس لمشروعك. اسم الـ jar اللي هيطلع بيتعمل منهم: [[tasks-api-0.0.1-SNAPSHOT.jar]]. و [[SNAPSHOT]] معناها «نسخة لسه بتتطور»، ولما تعمل release بتشيلها ([[1.0.0]]).
+
+---
+
+## ٤. الإعدادات
+
+~~~xml
+  <properties>
+    <java.version>25</java.version>
+  </properties>
+~~~
+
+[[<properties>]] متغيرات. [[java.version]] property الـ parent بتاع Spring Boot بيقراها ويظبط بيها الـ compiler. اتأكدنا:
+
+~~~bash
+mvn help:evaluate -Dexpression=maven.compiler.release -q -DforceStdout
+~~~
+
+~~~text الناتج
+25
+~~~
+
+يعني الكود هيتعمل له compile لـ Java 25.
+
+---
+
+## ٥. المكتبات
+
+~~~xml
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+~~~
+
+- [[<dependencies>]] زي [[dependencies]] في package.json، وكل مكتبة في [[<dependency>]].
+- مفيش [[<version>]]: الـ parent بيحددها (4.1.1).
+- [[spring-boot-starter-webmvc]]: starter، يعني مكتبة فاضية تقريبًا وظيفتها تجيب مجموعة مكتبات مع بعض: Spring MVC و Tomcat و Jackson (JSON).
+
+~~~xml
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+~~~
+
+[[<scope>]] بيحدد المكتبة متاحة إمتى:
+
+| الـ scope | وقت الـ compile | وقت التشغيل | في التستات | زي في npm |
+|---|---|---|---|---|
+| [[compile]] (الافتراضي) | أيوه | أيوه | أيوه | dependencies |
+| [[runtime]] | لأ | أيوه | أيوه | مفيش |
+| [[test]] | للتستات بس | لأ | أيوه | devDependencies |
+| [[provided]] | أيوه | السيرفر بيوفرها | أيوه | peerDependencies تقريبًا |
+
+الـ driver بتاع PostgreSQL [[runtime]] لأن كودك مبيكتبش [[import org.postgresql...]] أبدًا: بيتكلم مع [[DataSource]] و JPA، والـ driver بيتحمّل وقت التشغيل.
+
+~~~xml
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
+~~~
+
+أدوات التست (JUnit و Mockito و AssertJ و MockMvc)، بـ [[test]] فمش هتدخل الـ jar النهائي.
+
+---
+
+## ٦. الشجرة: [[dependency:tree]]
+
+~~~bash
+mvn dependency:tree
+~~~
+
+ده جزء من الناتج (شلنا سطور جوه الفروع):
+
+~~~text الناتج
+[INFO] com.example:tasks-api:jar:0.0.1-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-webmvc:jar:4.1.1:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:4.1.1:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-jackson:jar:4.1.1:compile
+[INFO] |  |  \- org.springframework.boot:spring-boot-jackson:jar:4.1.1:compile
+[INFO] |  |     \- tools.jackson.core:jackson-databind:jar:3.1.5:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter-tomcat:jar:4.1.1:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-tomcat-runtime:jar:4.1.1:compile
+[INFO] |  ...
+[INFO] +- org.postgresql:postgresql:jar:42.7.13:runtime
+[INFO] |  \- org.checkerframework:checker-qual:jar:3.55.1:runtime
+[INFO] \- org.springframework.boot:spring-boot-starter-webmvc-test:jar:4.1.1:test
+[INFO] BUILD SUCCESS
+~~~
+
+نقرا سطر: [[groupId:artifactId:jar:version:scope]]. و [[+-]] و [[\-]] فروع الشجرة: كل مكتبة تحت اللي جابها. احنا كتبنا ٣ مكتبات بس، والباقي اسمه **transitive dependencies** (مكتبات المكتبات). و [[tomcat-embed-core]] جاية تحت [[spring-boot-starter-tomcat-runtime]] تحت [[spring-boot-starter-tomcat]] تحت الـ webmvc starter.
+
+ولاحظ [[tools.jackson.core]]: ده Jackson 3 اللي Spring Boot 4 بيستخدمه، بدل [[com.fasterxml.jackson.core:jackson-databind]] بتاع Boot 3.
+
+---
+
+## ٧. لو كتبت version غلط
+
+ضفنا [[<version>1.0</version>]] تحت [[spring-boot-starter-webmvc]] وعملنا [[mvn compile]]:
+
+~~~text الناتج
+[WARNING] The POM for org.springframework.boot:spring-boot-starter-webmvc:jar:1.0 is missing, no dependency information available
+[INFO] BUILD FAILURE
+[ERROR] Failed to execute goal on project tasks-api: Could not resolve dependencies for project com.example:tasks-api:jar:0.0.1-SNAPSHOT
+[ERROR] dependency: org.springframework.boot:spring-boot-starter-webmvc:jar:1.0 (compile)
+[ERROR] 	Could not find artifact org.springframework.boot:spring-boot-starter-webmvc:jar:1.0 in central (https://repo.maven.apache.org/maven2)
+~~~
+
+الـ version اللي بتكتبه بيكسب على الـ parent، و Maven راح يدوّر على [[1.0]] في Maven Central (الـ registry) وملقاهاش. والمكتبات اللي بتتحمّل بتتحفظ في [[~/.m2/repository]].
+
+---
+
+## الخلاصة
+
+| الجزء | زي في package.json |
+|---|---|
+| [[groupId]] و [[artifactId]] و [[version]] | [[name]] و [[version]] |
+| [[<parent>]] | مفيش: إصدارات جاهزة متوافقة |
+| [[<properties>]] | إعدادات ومتغيرات |
+| [[<dependencies>]] | [[dependencies]] |
+| [[<scope>test</scope>]] | [[devDependencies]] |
+| [[~/.m2/repository]] | [[node_modules]] بس واحد للجهاز كله |
+
+- متكتبش version لمكتبة الـ parent بيديرها.
+- [[dependency:tree]] أول حاجة تبص فيها لما مكتبة تتصرف غريب.`,
           lines: [
             "بداية ملف المشروع.",
             "نسخة صيغة الـ pom، ثابتة دايمًا 4.0.0.",
@@ -891,7 +2917,7 @@ Maven بيحل الـ transitive dependencies (مكتبات المكتبات) ل
             "قفلة المكتبات.",
             "قفلة الملف."
           ],
-          sol: R`في [[dependency:tree]] هتلاقي [[tomcat-embed-core]] تحت [[spring-boot-starter-tomcat]] تحت [[spring-boot-starter-webmvc]]، و Jackson تحت starter الـ JSON. مكتبتهمش لأن الـ starter جابهم (transitive). وفي Spring Boot 4 هتلاقي Jackson 3 ([[tools.jackson.core:jackson-databind]]) بدل [[com.fasterxml.jackson]] القديم.
+          sol: R`في [[dependency:tree]] هتلاقي [[tomcat-embed-core]] تحت [[spring-boot-starter-tomcat-runtime]] تحت [[spring-boot-starter-tomcat]] تحت [[spring-boot-starter-webmvc]]، و Jackson تحت [[spring-boot-starter-jackson]]. مكتبتهمش لأن الـ starter جابهم (transitive). وفي Spring Boot 4 هتلاقي Jackson 3 ([[tools.jackson.core:jackson-databind]]) بدل [[com.fasterxml.jackson]] القديم.
 
 ولما تكتب [[<version>1.0</version>]] على الـ starter: Maven هيحاول يجيب [[spring-boot-starter-webmvc:1.0]] ومش هيلاقيها، فالـ build يقع بـ [[Could not find artifact]]. ولو كتبت version موجودة بس مختلفة عن الـ parent، الـ build ممكن يعدّي ويقع وقت التشغيل بسبب عدم توافق. القاعدة: سيب الـ parent يحدد.`
         },
@@ -919,6 +2945,195 @@ java -jar target/tasks-api-0.0.1-SNAPSHOT.jar
             when: R`[[spring-boot:run]] أو زرار Run في IntelliJ وانت بتطوّر. [[test]] قبل كل push. [[package]] في الـ CI والـ Docker. و [[dependency:tree]] لما مكتبة تتصرف غريب.`,
             mistakes: R`تستخدم [[mvn]] المتسطّب على جهازك بدل [[./mvnw]] فتشتغل بنسخة مختلفة عن الـ CI. و [[-DskipTests]] كعادة فالتستات تبوظ ومحدش ياخد باله. وتنسى إن [[./mvnw]] محتاج صلاحية تشغيل على لينكس ([[chmod +x mvnw]]) لو اتنسخ من ويندوز. وتشغّل بـ JDK غلط: Maven بياخد [[JAVA_HOME]].`
           },
+          teach: R`## الأوامر دي بتعمل إيه؟
+
+دي الأوامر اليومية لمشروع Spring Boot بـ Maven: تشغّل، وتختبر، وتعمل jar وتشغّله، وتبص على المكتبات. جرّبناها كلها على مشروع من start.spring.io فيه Spring Web بس (Spring Boot 4.1.1، و [[artifactId]] اسمه [[tasks-api]])، وضفنا فيه controller صغير ([[/hello]]) وتستين، جوه [[maven:3.9-eclipse-temurin-25]] (JDK 25)، والبورت 8080 بتاع الـ container متوصّل بـ 5945 على الجهاز.
+
+---
+
+## ١. الأول: [[./mvnw]] نفسه
+
+- [[mvnw]] = Maven Wrapper: سكربت shell في فولدر المشروع. أول مرة بيشتغل بيقرا [[.mvn/wrapper/maven-wrapper.properties]] ويعرف النسخة المطلوبة، ويحمّلها في [[~/.m2/wrapper/dists]]، وبعدين يشغّلها.
+- [[./]] قبله: «الملف ده اللي في الفولدر الحالي»، لأن لينكس والماك مبيدوروش في الفولدر الحالي لوحدهم. على ويندوز: [[mvnw.cmd]] أو [[.\mvnw]] في PowerShell.
+
+~~~bash
+./mvnw --version
+~~~
+
+~~~text الناتج
+Apache Maven 3.9.16 (2bdd9fddda4b155ebf8000e807eb73fd829a51d5)
+Maven home: /root/.m2/wrapper/dists/apache-maven-3.9.16/56ba1f9f
+Java version: 25.0.4.1, vendor: Eclipse Adoptium, runtime: /opt/java/openjdk
+~~~
+
+- [[Maven home]] جوه [[.m2/wrapper]]: يعني دي النسخة اللي الـ wrapper حمّلها، مش Maven متسطّب.
+- [[Java version]]: Maven بيستخدم الـ JDK اللي في [[JAVA_HOME]] أو الـ PATH.
+
+---
+
+## ٢. [[./mvnw spring-boot:run]]
+
+~~~bash
+./mvnw spring-boot:run
+~~~
+
+[[spring-boot:run]] شكله [[plugin:goal]]: الـ plugin [[spring-boot]] (اللي في [[<build>]] في الـ pom)، والمهمة [[run]]: compile وشغّل من غير jar. الناتج (آخر سطور):
+
+~~~text الناتج
+[INFO] Attaching agents: []
+... Tomcat started on port 8080 (http) with context path '/'
+... Started TasksApplication in 5.816 seconds (process running for 7.071)
+~~~
+
+ومن الجهاز:
+
+~~~bash
+curl "localhost:5945/hello?name=Mona"
+~~~
+
+~~~text الناتج
+Good evening, Mona
+~~~
+
+التطبيق بيفضل شغال لحد ما توقفه بـ Ctrl+C.
+
+---
+
+## ٣. [[./mvnw test]] و [[-Dtest=...]]
+
+~~~bash
+./mvnw test
+~~~
+
+~~~text الناتج
+[INFO] Running com.example.tasks.GreetingServiceTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.458 s -- in com.example.tasks.GreetingServiceTest
+[INFO] Running com.example.tasks.TaskControllerTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s -- in com.example.tasks.TaskControllerTest
+[INFO] Running com.example.tasks.TasksApplicationTests
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 9.364 s -- in com.example.tasks.TasksApplicationTests
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+~~~
+
+- [[test]] هنا **phase** مش goal: Maven بيعدّي على كل اللي قبلها (compile الكود، و compile التستات) وبعدين يشغّل التستات.
+- [[Failures]] تست قال النتيجة غلط، و [[Errors]] تست وقع بـ exception.
+- لاحظ الوقت: التستين العاديين في أجزاء من الثانية، و [[TasksApplicationTests]] (اللي start.spring.io بيعمله، بيشغّل Spring كله) ٩ ثواني.
+
+~~~bash
+./mvnw test -Dtest=TaskControllerTest
+~~~
+
+~~~text الناتج
+[INFO] Running com.example.tasks.TaskControllerTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+~~~
+
+[[-D]] بيحط system property: [[-Dname=value]]. والـ property [[test]] بيقراها الـ plugin اللي بيشغّل التستات (Surefire) ويختار الـ class ده بس. وتقدر تكتب [[-Dtest=TaskControllerTest#helloUsesService]] لتست واحد (من docs الـ Surefire).
+
+---
+
+## ٤. [[./mvnw clean package -DskipTests]]
+
+~~~bash
+./mvnw clean package -DskipTests
+~~~
+
+phases بالترتيب:
+
+| الـ phase | بتعمل إيه |
+|---|---|
+| [[clean]] | تمسح فولدر [[target/]] كله |
+| [[validate]] | تتأكد إن الـ pom سليم |
+| [[compile]] | تترجم [[src/main/java]] |
+| [[test]] | التستات (اتخطت بسبب [[-DskipTests]]) |
+| [[package]] | تعمل الـ jar |
+
+~~~text الناتج
+[INFO] Tests are skipped.
+[INFO] Building jar: /w/web/target/tasks-api-0.0.1-SNAPSHOT.jar
+[INFO] Replacing main artifact /w/web/target/tasks-api-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] BUILD SUCCESS
+~~~
+
+السطر التالت هو الـ Spring Boot plugin: أخد الـ jar العادي (كودك بس) وعمل منه **fat jar** فيه كل المكتبات جوه فولدر [[BOOT-INF/]]. الحجم:
+
+~~~text ls -lh target (الحجم والاسم بس)
+19M  target/tasks-api-0.0.1-SNAPSHOT.jar
+4.7K target/tasks-api-0.0.1-SNAPSHOT.jar.original
+~~~
+
+[[.jar.original]] كودك قبل الـ repackage: ٤.٧ كيلو. والـ ١٩ ميجا معظمهم Tomcat و Spring و Jackson. الاسم [[artifactId-version.jar]] من الـ pom.
+
+---
+
+## ٥. [[java -jar target/tasks-api-0.0.1-SNAPSHOT.jar]]
+
+السيرفر مش محتاج Maven ولا الكود: Java والـ jar بس.
+
+~~~text الناتج
+ :: Spring Boot ::                (v4.1.1)
+... Starting TasksApplication v0.0.1-SNAPSHOT using Java 25.0.4.1 with PID 1
+... Tomcat started on port 8080 (http) with context path '/'
+... Started TasksApplication in 3.942 seconds (process running for 5.062)
+~~~
+
+([[...]] مكان التاريخ واسم الـ logger، شلناهم عشان السطر يبان.) أسرع من [[spring-boot:run]] لأن مفيش compile.
+
+ومع [[--server.port=9090]] (الحل في «جرّب»):
+
+~~~text الناتج
+... Tomcat started on port 9090 (http) with context path '/'
+~~~
+
+أي argument بيبدأ بـ [[--]] بعد اسم الـ jar Spring بيعتبره إعداد، وبيكسب على [[application.properties]].
+
+---
+
+## ٦. [[./mvnw dependency:tree]]
+
+goal من الـ dependency plugin: الشجرة كاملة ومين جاب مين (درس pom.xml). أول سطور:
+
+~~~text الناتج
+[INFO] com.example:tasks-api:jar:0.0.1-SNAPSHOT
+[INFO] +- org.springframework.boot:spring-boot-starter-webmvc:jar:4.1.1:compile
+[INFO] |  +- org.springframework.boot:spring-boot-starter:jar:4.1.1:compile
+[INFO] |  |  +- org.springframework.boot:spring-boot-starter-logging:jar:4.1.1:compile
+[INFO] |  |  |  +- ch.qos.logback:logback-classic:jar:1.5.38:compile
+~~~
+
+---
+
+## ٧. [[./mvnw versions:display-dependency-updates]]
+
+goal من الـ Versions plugin (Maven بيحمّله لوحده أول مرة). بيقارن الإصدارات اللي عندك بآخر إصدارات في Maven Central:
+
+~~~text الناتج
+[INFO] The following dependencies in Dependency Management have newer versions:
+[INFO]   ch.qos.logback:logback-classic ....................... 1.5.38 -> 1.6.5
+[INFO]   ch.qos.logback:logback-core .......................... 1.5.38 -> 1.6.5
+[INFO]   com.fasterxml.jackson.core:jackson-annotations ....... 2.21 -> 3.0-rc5
+~~~
+
+خلي بالك: في مشروع Spring Boot القايمة طويلة جدًا، لأنه بيعدّ كل مكتبة في جدول الـ parent حتى اللي مش بتستخدمها، وبيعرض نسخ تجريبية زي [[3.0-rc5]] (rc = release candidate). الطريقة الصح للتحديث إنك ترفع نسخة Spring Boot نفسها في [[<parent>]]، مش كل مكتبة لوحدها.
+
+---
+
+## الخلاصة
+
+| الأمر | زي في npm | بيعمل |
+|---|---|---|
+| [[./mvnw spring-boot:run]] | [[npm run dev]] | يشغّل من الكود |
+| [[./mvnw test]] | [[npm test]] | compile + كل التستات |
+| [[./mvnw test -Dtest=X]] | [[npm test -- X]] | تست class واحد |
+| [[./mvnw clean package -DskipTests]] | [[npm run build]] | fat jar في [[target/]] |
+| [[java -jar target/*.jar]] | [[node dist/index.js]] | تشغيل الإنتاج |
+| [[./mvnw dependency:tree]] | [[npm ls --all]] | شجرة المكتبات |
+| [[./mvnw versions:display-dependency-updates]] | [[npm outdated]] | الإصدارات الأحدث |
+
+- phases ([[test]] و [[package]]) بتعدّي على كل اللي قبلها. goals ([[plugin:goal]]) بتعمل حاجة واحدة.
+- استخدم [[./mvnw]] مش [[mvn]]، عشان كله يشتغل بنفس النسخة.`,
           lines: [
             "شغّل التطبيق وانت بتطوّر.",
             "شغّل كل التستات.",
@@ -928,7 +3143,7 @@ java -jar target/tasks-api-0.0.1-SNAPSHOT.jar
             "شجرة المكتبات ومين جاب مين.",
             "إيه المكتبات اللي ليها إصدارات أحدث."
           ],
-          sol: R`الـ jar بيطلع في [[target/]] باسم [[artifactId-version.jar]]، وحجمه غالبًا بين ٢٠ و ٦٠ ميجا حسب الـ starters، لأن فيه Tomcat و Spring وكل المكتبات. (هتلاقي كمان [[.jar.original]] صغير: ده كودك بس قبل الـ repackage.)
+          sol: R`الـ jar بيطلع في [[target/]] باسم [[artifactId-version.jar]]، وحجمه حوالي ٢٠ ميجا لمشروع فيه Spring Web بس (طلع 19M في تجربتنا على Boot 4.1.1)، وبيكبر مع كل starter، لأن فيه Tomcat و Spring وكل المكتبات. (هتلاقي كمان [[.jar.original]] صغير: ده كودك بس قبل الـ repackage.)
 
 مع [[--server.port=9090]] اللوج هيقول [[Tomcat started on port 9090]] بدل 8080: أي إعداد في [[application.yaml]] ينفع يتغير من الـ command line أو من environment variable ([[SERVER_PORT=9090]]) من غير ما تعيد build. ولو لقيت [[Port 8080 was already in use]]، فيه نسخة تانية شغالة.`
         },
@@ -967,6 +3182,172 @@ tasks.withType<Test> { useJUnitPlatform() }`,
             when: R`لو المشروع أو الفريق عنده اختيار موجود امشي عليه. في مشروع جديد: Maven لو عايز أبسط حاجة، و Gradle لو المشروع كبير أو multi-module أو عندك خبرة Kotlin.`,
             mistakes: R`تخلط Groovy DSL ([[build.gradle]] بـ [[implementation '...']]) و Kotlin DSL ([[build.gradle.kts]] بـ [[implementation("...")]]): الأمثلة على النت نصها ده ونصها ده. وتسطّب Gradle globally بإصدار مختلف عن الـ wrapper. وتنسى إن الـ jar في [[build/libs]] مش [[target]] وانت بتكتب Dockerfile.`
           },
+          teach: R`## الملف ده بيقول إيه؟
+
+[[build.gradle.kts]] بيقول نفس اللي الـ [[pom.xml]] في الدرس اللي فات بيقوله، بس كود Kotlin بدل XML: الـ plugins، ونسخة Java، ومنين تتحمّل المكتبات، والمكتبات نفسها. [[.kts]] = Kotlin Script. جبنا مشروع «Gradle - Kotlin» من start.spring.io (فيه Spring Web و PostgreSQL Driver)، وحطينا الملف ده مكان اللي جه معاه (الفرق الوحيد إن بتاع الموقع فيه كمان [[version = "0.0.1-SNAPSHOT"]])، وشغّلناه بـ [[./gradlew]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25). الـ wrapper حمّل Gradle 9.7.1 لوحده.
+
+---
+
+## ١. الـ plugins
+
+~~~kotlin
+plugins {
+    java
+    id("org.springframework.boot") version "4.1.1"
+    id("io.spring.dependency-management") version "1.1.7"
+}
+~~~
+
+- [[plugins { ... }]]: block. في Kotlin DSL أي [[name { }]] معناها «نادي [[name]] واديها الكود اللي جوه الأقواس».
+- [[java]]: plugin جوه Gradle نفسه: بيضيف tasks زي [[compileJava]] و [[test]] و [[jar]].
+- [[id("org.springframework.boot") version "4.1.1"]]: plugin من برّه، بالـ id والنسخة. ده بيضيف [[bootRun]] (زي [[spring-boot:run]]) و [[bootJar]] (الـ fat jar).
+- [[io.spring.dependency-management]]: بيقرا جدول الإصدارات (BOM) بتاع Spring Boot، فتكتب المكتبات من غير version. ده شغل الـ [[<parent>]] في Maven.
+
+---
+
+## ٢. الـ group و Java
+
+~~~kotlin
+group = "com.example"
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
+}
+~~~
+
+- [[group]]: زي [[groupId]]. واسم المشروع نفسه (زي [[artifactId]]) في ملف تاني اسمه [[settings.gradle.kts]]: [[rootProject.name = "tasks-api"]].
+- [[toolchain]]: «اعمل compile بـ Java 25»، حتى لو Gradle نفسه شغال بـ JDK تاني. لو مفيش JDK 25 على الجهاز، Gradle بيقول. هنا الـ image فيها JDK 25 أصلًا.
+
+---
+
+## ٣. منين والمكتبات
+
+~~~kotlin
+repositories { mavenCentral() }
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+~~~
+
+- [[mavenCentral()]]: نفس الـ registry بتاع Maven. Gradle بيستخدم نفس المكتبات.
+- كل مكتبة String واحد: [["group:artifact"]] (أو [["group:artifact:version"]]).
+- الكلمة اللي قبلها اسمها **configuration**، ودي المقابل للـ scope:
+
+| Gradle | Maven | متاحة فين |
+|---|---|---|
+| [[implementation]] | [[compile]] | الكود والتشغيل والتستات |
+| [[runtimeOnly]] | [[runtime]] | التشغيل بس |
+| [[testImplementation]] | [[test]] | كود التستات |
+| [[testRuntimeOnly]] | [[test]] (وقت التشغيل) | تشغيل التستات بس |
+
+- [[junit-platform-launcher]]: المكتبة اللي Gradle بيستخدمها عشان يلاقي التستات ويشغّلها. Gradle الحديث بيطلب إنك تضيفها بنفسك.
+
+---
+
+## ٤. التستات
+
+~~~kotlin
+tasks.withType<Test> { useJUnitPlatform() }
+~~~
+
+- [[tasks.withType<Test>]]: كل الـ tasks اللي نوعها [[Test]]. و [[<Test>]] هنا generic بتاع Kotlin، نفس فكرة Java.
+- [[useJUnitPlatform()]]: شغّل التستات بـ JUnit 5 أو أحدث (Spring Boot 4 بيجيب JUnit 6).
+
+---
+
+## ٥. [[./gradlew bootJar]] مرتين
+
+~~~bash
+./gradlew bootJar
+~~~
+
+أول مرة (آخر سطور الناتج):
+
+~~~text الناتج
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :resolveMainClassName
+> Task :bootJar
+
+BUILD SUCCESSFUL in 2m 17s
+4 actionable tasks: 4 executed
+~~~
+
+- [[Starting a Gradle Daemon]]: Gradle بيشغّل process في الخلفية يفضل شغال، عشان المرات الجاية ميبدأش من الصفر.
+- كل [[> Task :name]] task اتنفذت بالترتيب: compile الكود، ونسخ [[resources]]، و [[classes]] (task بتجمع اللي قبلها)، وتحديد الـ main class، وعمل الـ jar.
+- الدقيقتين معظمهم تحميل Gradle نفسه والمكتبات.
+
+تاني مرة:
+
+~~~text الناتج
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :resolveMainClassName UP-TO-DATE
+> Task :bootJar UP-TO-DATE
+
+BUILD SUCCESSFUL in 3s
+4 actionable tasks: 4 up-to-date
+~~~
+
+[[UP-TO-DATE]]: كل task عارفة مدخلاتها (الكود والمكتبات) ومخرجاتها، ومفيش حاجة اتغيرت، فمتعادتش. ده سبب إن Gradle أسرع في المشاريع الكبيرة. (Maven مع [[package]] بيعدّي على الـ phases كلها كل مرة.)
+
+~~~text ls -lh build/libs (الحجم والاسم بس)
+21M tasks-api.jar
+~~~
+
+الـ jar في [[build/libs/]] مش [[target/]]. والاسم [[tasks-api.jar]] من غير نسخة، لأننا شلنا سطر [[version]].
+
+---
+
+## ٦. شجرة المكتبات
+
+~~~bash
+./gradlew dependencies --configuration runtimeClasspath
+~~~
+
+[[runtimeClasspath]] = كل اللي هيبقى موجود وقت التشغيل ([[implementation]] + [[runtimeOnly]] ومكتباتهم). أول سطور:
+
+~~~text الناتج
+runtimeClasspath - Runtime classpath of source set 'main'.
++--- org.springframework.boot:spring-boot-starter-webmvc -> 4.1.1
+|    +--- org.springframework.boot:spring-boot-starter:4.1.1
+|    |    +--- org.springframework.boot:spring-boot-starter-logging:4.1.1
+|    |    |    +--- ch.qos.logback:logback-classic:1.5.38
+|    |    |    |    +--- ch.qos.logback:logback-core:1.5.38
+|    |    |    |    \--- org.slf4j:slf4j-api:2.0.17 -> 2.0.18
+~~~
+
+| الرمز | معناه |
+|---|---|
+| [[-> 4.1.1]] بعد مكتبة من غير نسخة | الـ dependency-management اختار النسخة دي |
+| [[2.0.17 -> 2.0.18]] | مكتبة طلبت 2.0.17، و Gradle اختار 2.0.18 لأن حد تاني طلبها (بياخد الأعلى) |
+| [[(*)]] | المكتبة دي اتعرضت فوق بفروعها، فمش هيكررها |
+| [[(c)]] | constraint: قيد على النسخة جاي من BOM، مش مكتبة اتطلبت |
+
+لاحظ الفرق عن Maven: Gradle بياخد **أعلى** نسخة مطلوبة، و Maven بياخد **الأقرب** في الشجرة.
+
+---
+
+## الخلاصة
+
+| Maven | Gradle (Kotlin DSL) |
+|---|---|
+| [[pom.xml]] | [[build.gradle.kts]] + [[settings.gradle.kts]] |
+| [[<parent>]] | plugin [[io.spring.dependency-management]] |
+| [[<java.version>]] | [[toolchain { languageVersion = ... }]] |
+| [[<scope>test</scope>]] | [[testImplementation(...)]] |
+| [[./mvnw spring-boot:run]] | [[./gradlew bootRun]] |
+| [[./mvnw package]] | [[./gradlew bootJar]] |
+| [[target/]] | [[build/libs/]] |
+| [[dependency:tree]] | [[dependencies --configuration runtimeClasspath]] |
+
+- [[UP-TO-DATE]] يعني Gradle مأعادش task مفيش حاجة اتغيرت فيها.
+- [[build.gradle]] (Groovy) و [[build.gradle.kts]] (Kotlin) نفس الفكرة بكتابة مختلفة شوية.`,
           lines: [
             "الـ plugins.",
             "دعم Java الأساسي.",
@@ -1018,11 +3399,194 @@ tree src
             when: R`كل مشروع جديد. ولو بتضيف feature لمشروع موجود، استخدم الموقع عشان تعرف اسم الـ starter الصح وبعدين ضيفه للـ pom.`,
             mistakes: R`تحط classes برّه الـ package الأساسي فـ Spring ميلاقيهاش (الـ endpoint يرجع 404 من غير أي خطأ). وتختار كل الـ dependencies «عشان لو احتجتها»: كل starter بيعمل auto-configuration، و JPA من غير داتابيز بيوقع التطبيق. وتنزّل مثال من النت بـ Spring Boot 2 و [[javax]].`
           },
+          teach: R`## الأوامر بتعمل إيه؟
+
+بدل ما تفتح الموقع وتدوس بالماوس، أول أمر بيطلب نفس الـ zip من start.spring.io بـ [[curl]]. وبعدين تفكه، وتبص على الهيكل، وتشغّل. الـ [[curl]] اتشغّل من Git Bash على ويندوز، والباقي جوه [[maven:3.9-eclipse-temurin-25]] (JDK 25، وسطّبنا فيه [[unzip]] و [[tree]] لأنهم مش موجودين في الـ image).
+
+---
+
+## ١. [[curl]]: طلب المشروع
+
+~~~bash
+curl https://start.spring.io/starter.zip -d type=maven-project -d javaVersion=25 -d groupId=com.example -d artifactId=tasks-api -d dependencies=web,data-jpa,postgresql,validation,flyway,actuator -o tasks-api.zip
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[curl URL]] | اطلب الرابط ده |
+| [[/starter.zip]] | الـ endpoint اللي بيرجّع المشروع كـ zip |
+| [[-d key=value]] | (d = data) ابعت قيمة مع الطلب. وجود [[-d]] بيخلي الطلب POST |
+| [[type=maven-project]] | Maven. والبديل [[gradle-project-kotlin]] أو [[gradle-project]] (Groovy) |
+| [[javaVersion=25]] | نسخة Java |
+| [[groupId]] و [[artifactId]] | إحداثيات مشروعك (درس pom.xml) |
+| [[dependencies=...]] | الـ starters، مفصولين بفاصلة من غير مسافات |
+| [[-o tasks-api.zip]] | (o = output) احفظ الرد في ملف بدل ما تطبعه |
+
+الـ dependencies اللي اخترناها:
+
+| الـ id | بيجيب |
+|---|---|
+| [[web]] | Spring MVC و Tomcat و Jackson: REST APIs |
+| [[data-jpa]] | Spring Data JPA و Hibernate: الداتابيز بالـ objects |
+| [[postgresql]] | الـ driver |
+| [[validation]] | [[@NotBlank]] و [[@Email]] (Jakarta Validation) |
+| [[flyway]] | migrations للداتابيز بملفات SQL |
+| [[actuator]] | [[/actuator/health]] وغيره للمراقبة |
+
+الملف اللي نزل: ١٥٧٦٨ بايت. ومن غير [[bootVersion]] الموقع بيختار آخر نسخة مستقرة، وهنا كانت Spring Boot 4.1.1.
+
+---
+
+## ٢. [[unzip ... && cd ...]]
+
+~~~bash
+unzip tasks-api.zip -d tasks-api && cd tasks-api
+~~~
+
+- [[unzip tasks-api.zip -d tasks-api]]: فك الـ zip في فولدر اسمه tasks-api (d = directory).
+- [[&&]]: نفّذ اللي بعدها بس لو اللي قبلها نجح. لو الفك فشل، مش هتدخل فولدر مش موجود.
+
+الملفات اللي طلعت:
+
+~~~text الناتج
+.gitattributes
+.gitignore
+.mvn/wrapper/maven-wrapper.properties
+HELP.md
+mvnw
+mvnw.cmd
+pom.xml
+src/main/java/com/example/tasks_api/TasksApiApplication.java
+src/main/resources/application.properties
+src/test/java/com/example/tasks_api/TasksApiApplicationTests.java
+~~~
+
+| الملف | هو إيه |
+|---|---|
+| [[pom.xml]] | ملف المشروع (درس pom.xml) |
+| [[mvnw]] و [[mvnw.cmd]] و [[.mvn/]] | الـ Maven wrapper للينكس والماك ولويندوز (درس mvnw) |
+| [[HELP.md]] | روابط docs للـ starters اللي اخترتها |
+| [[.gitignore]] | بيتجاهل [[target/]] وملفات الـ IDE |
+
+---
+
+## ٣. [[tree src]]
+
+~~~bash
+tree src
+~~~
+
+~~~text الناتج
+src
+├── main
+│   ├── java
+│   │   └── com
+│   │       └── example
+│   │           └── tasks_api
+│   │               └── TasksApiApplication.java
+│   └── resources
+│       ├── application.properties
+│       ├── db
+│       │   └── migration
+│       ├── static
+│       └── templates
+└── test
+    └── java
+        └── com
+            └── example
+                └── tasks_api
+                    └── TasksApiApplicationTests.java
+
+16 directories, 3 files
+~~~
+
+- [[src/main/java]]: الكود. الـ package [[com.example.tasks_api]] جاي من groupId + artifactId، والشرطة اتحولت [[_]] لأن [[-]] مش مسموحة في أسماء packages. ولو عايز [[com.example.tasks]] ابعت [[-d packageName=com.example.tasks]].
+- [[TasksApiApplication.java]]: الـ main class (الدرس الجاي).
+- [[src/main/resources]]: الملفات اللي مش كود: [[application.properties]] (الإعدادات، وجواه سطر واحد [[spring.application.name=tasks-api]])، و [[db/migration]] اتعمل عشان اخترنا Flyway (هنا هتحط ملفات زي [[V1__init.sql]])، و [[static]] و [[templates]] لصفحات HTML لو احتجتها.
+- [[src/test/java]]: التستات، وفيها تست جاهز [[contextLoads]] بيتأكد إن التطبيق بيقوم.
+- لو [[tree]] مش موجود عندك: على ويندوز [[tree /f src]] في CMD، أو استخدم [[find src]].
+
+---
+
+## ٤. [[./mvnw spring-boot:run]]: وبيقع!
+
+~~~bash
+./mvnw spring-boot:run
+~~~
+
+بالـ dependencies دي التطبيق مش هيقوم. آخر الناتج:
+
+~~~text الناتج
+... Tomcat initialized with port 8080 (http)
+... Exception encountered during context initialization - cancelling refresh attempt: ... Error creating bean with name 'dataSource' ... Failed to determine a suitable driver class
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
+~~~
+
+نقراها:
+
+- [[Description]]: Spring لقى JPA و Flyway فعايز DataSource (اتصال بداتابيز)، ومش لاقي [[url]] (عنوان الداتابيز).
+- [[Reason]]: من غير url مش عارف يختار driver.
+- [[Action]]: الحلول: داتابيز embedded (زي H2) في الـ classpath، أو تفعّل profile فيه الإعدادات.
+
+يعني الـ auto-configuration شغال بالظبط زي ما المفروض (الدرس الجاي). الحل [[spring.datasource.url]] (درس الإعدادات و JPA)، أو starter [[docker-compose]] مع [[compose.yaml]] فيه postgres.
+
+### ومشروع فيه Spring Web بس؟
+
+عملنا مشروع بـ [[dependencies=web]]، وشغّلناه، وطلبنا [[/]]:
+
+~~~text الناتج
+... Tomcat started on port 8080 (http) with context path '/'
+~~~
+
+~~~bash
+curl localhost:5945/
+~~~
+
+~~~text الناتج
+{"timestamp":"2026-10-07T17:48:25.367Z","status":404,"error":"Not Found","path":"/"}
+~~~
+
+([[5945]] لأن بورت 8080 بتاع الـ container متوصّل بـ 5945 على الجهاز.) [[curl]] خد الـ 404 كـ JSON. والمتصفح بيطلب HTML، فبيشوف صفحة «Whitelabel Error Page». طلبناها زيه بـ [[curl -H "Accept: text/html" localhost:5945/]]:
+
+~~~text الناتج
+<html><body><h1>Whitelabel Error Page</h1><p>This application has no explicit mapping for /error, so you are seeing this as a fallback.</p>...
+~~~
+
+404 لأن مفيش controller لسه. ده طبيعي، ومعناه إن Tomcat شغال.
+
+---
+
+## الخلاصة
+
+| الخطوة | الأمر |
+|---|---|
+| مشروع جديد | start.spring.io أو [[curl https://start.spring.io/starter.zip -d ...]] |
+| فكه | [[unzip ... -d folder]] |
+| الهيكل | [[src/main/java]] و [[src/main/resources]] و [[src/test/java]] |
+| شغّل | [[./mvnw spring-boot:run]] |
+
+- كل starter بتختاره بيعمل auto-configuration، و JPA من غير داتابيز بيوقع التطبيق.
+- الكود كله لازم تحت الـ package بتاع الـ main class.`,
           lines: [
             R`بيطلب zip من الموقع بالاختيارات: Maven و Java 25 والـ starters. (دي نفس اختيارات الواجهة.)`,
             "فك الملف وادخل الفولدر.",
             "شوف الهيكل.",
-            "شغّل."
+            "شغّل. بالـ dependencies دي هيقع بـ «Failed to configure a DataSource» لحد ما تدّيله عنوان داتابيز (شوف الحل)."
           ],
           sol: R`مع Spring Web بس: التطبيق بيقوم على 8080، و [[localhost:8080]] بيعرض «Whitelabel Error Page» بـ 404، لأن مفيش controller لسه. ده طبيعي ومعناه إن Tomcat شغال.
 
@@ -1059,6 +3623,171 @@ public class TasksApplication {
 
 في الانترفيو: «Spring Boot بيعمل auto-configuration إزاي؟» الإجابة: conditional beans بتتحمّل من قايمة في الـ jars ([[META-INF/spring/...AutoConfiguration.imports]])، وشروط على الـ classpath والـ beans والـ properties، وكودك بيكسب.`
           },
+          teach: R`## الكلاس ده بيعمل إيه؟
+
+ده كل اللي محتاجه عشان تطبيق Spring Boot يقوم: class عليه annotation واحدة، و [[main]] فيها سطر واحد. السطر ده بيعمل الـ objects كلها، ويشغّل Tomcat، ويوصّل الحاجات ببعض. حطيناه بالظبط في مشروع من start.spring.io (Spring Web بس، Spring Boot 4.1.1)، وشغّلناه بـ [[java -jar]] في [[maven:3.9-eclipse-temurin-25]] (JDK 25).
+
+---
+
+## ١. الـ package
+
+~~~java
+package com.example.tasks;
+~~~
+
+- [[package]]: «الكلاس ده في الفولدر [[com/example/tasks]]». أسماء الـ packages عادة الدومين بالعكس ([[example.com]] ← [[com.example]]) وبعده اسم المشروع.
+- ده **أهم سطر** في الملف: Spring بيدوّر على الكلاسات بتاعتك في الـ package ده وكل اللي تحته بس. أي controller في [[com.example.other]] مش هيتشاف.
+
+---
+
+## ٢. الـ imports
+
+~~~java
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+~~~
+
+[[SpringApplication]]: الكلاس اللي بيشغّل كل حاجة. و [[SpringBootApplication]]: الـ annotation. لاحظ إن الـ annotation في package اسمه [[autoconfigure]].
+
+---
+
+## ٣. [[@SpringBootApplication]]
+
+~~~java
+@SpringBootApplication
+public class TasksApplication {
+~~~
+
+الـ [[@]] قبل الاسم معناها annotation: علامة على الكلاس بيقراها Spring. والـ annotation دي ٣ في واحدة:
+
+| جواها | بتقول لـ Spring |
+|---|---|
+| [[@SpringBootConfiguration]] (نوع من [[@Configuration]]) | الكلاس ده ممكن يعرّف beans بـ [[@Bean]] (درس beans و DI) |
+| [[@ComponentScan]] | دوّر في الـ package ده وتحته على كلاسات عليها [[@Component]] و [[@Service]] و [[@RestController]]... واعمل منهم objects |
+| [[@EnableAutoConfiguration]] | شغّل الـ auto-configuration: اعمل الحاجات المعتادة حسب المكتبات الموجودة |
+
+---
+
+## ٤. [[main]]
+
+~~~java
+  public static void main(String[] args) {
+    SpringApplication.run(TasksApplication.class, args);
+  }
+}
+~~~
+
+- [[public static void main(String[] args)]]: نقطة البداية العادية في أي برنامج Java. [[args]] الـ arguments اللي بتتكتب بعد اسم البرنامج.
+- [[TasksApplication.class]]: الـ class نفسه كـ object. Spring بيبص على الـ annotations اللي عليه وعلى الـ package بتاعه، عشان يعرف يبدأ منين.
+- [[args]]: بيتبعتوا لـ Spring، فـ [[--server.port=9090]] أو [[--debug]] بيوصلوا.
+
+[[SpringApplication.run]] بيعمل بالترتيب:
+
+1. يقرا الإعدادات ([[application.properties]] والـ args والـ environment variables).
+2. يعمل الـ **ApplicationContext**: الحاوية اللي فيها كل الـ beans (الـ objects اللي Spring بيديرها).
+3. الـ component scan: يلاقي كلاساتك ويسجّلها.
+4. الـ auto-configurations: يقيّم شروط كل واحدة ويشغّل اللي اتحققت.
+5. يعمل الـ beans ويوصّلهم ببعض، ويشغّل Tomcat.
+
+الناتج:
+
+~~~text الناتج
+ :: Spring Boot ::                (v4.1.1)
+... Starting TasksApplication v0.0.1-SNAPSHOT using Java 25.0.4.1 with PID 1
+... No active profile set, falling back to 1 default profile: "default"
+... Tomcat initialized with port 8080 (http)
+... Starting Servlet engine: [Apache Tomcat/11.0.24]
+... Root WebApplicationContext: initialization completed in 2119 ms
+... Tomcat started on port 8080 (http) with context path '/'
+... Started TasksApplication in 3.942 seconds (process running for 5.062)
+~~~
+
+إحنا مكتبناش ولا سطر عن Tomcat. الـ auto-configuration لقى Tomcat في الـ classpath (جاي مع starter الويب) فشغّله. و [[run]] مبترجعش: البرنامج بيفضل شغال طول ما Tomcat شغال.
+
+---
+
+## ٥. «ليه اشتغل؟»: [[--debug]]
+
+~~~bash
+java -jar target/tasks-api-0.0.1-SNAPSHOT.jar --debug
+~~~
+
+[[--debug]] بيطبع تقرير اسمه CONDITIONS EVALUATION REPORT، فيه كل auto-configuration واتشغّلت ولا لأ وليه:
+
+~~~text الناتج
+CONDITIONS EVALUATION REPORT
+============================
+
+Positive matches:
+-----------------
+
+   AopAutoConfiguration matched:
+   ...
+   DispatcherServletAutoConfiguration matched:
+      - @ConditionalOnClass found required class 'org.springframework.web.servlet.DispatcherServlet' (OnClassCondition)
+      - found 'session' scope (OnWebApplicationCondition)
+   ...
+   TomcatServletWebServerAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'jakarta.servlet.ServletRequest', 'org.apache.catalina.startup.Tomcat', ...
+~~~
+
+| الشرط | معناه |
+|---|---|
+| [[@ConditionalOnClass]] | اشتغل لو الـ class ده موجود في الـ classpath (يعني المكتبة موجودة) |
+| [[OnWebApplicationCondition]] | اشتغل لو ده تطبيق ويب ([[session]] scope موجود بس في تطبيقات الويب) |
+| [[@ConditionalOnMissingBean]] | اشتغل لو انت معرّفتش bean من النوع ده بنفسك |
+| [[@ConditionalOnProperty]] | اشتغل لو إعداد معين قيمته كذا |
+
+والـ Negative matches: اللي ماشتغلتش وليه. مثلًا:
+
+~~~text الناتج
+Negative matches:
+-----------------
+
+   AopAutoConfiguration.AspectJAutoProxyingConfiguration:
+      Did not match:
+         - @ConditionalOnClass did not find required class 'org.aspectj.weaver.Advice' (OnClassCondition)
+~~~
+
+مكتبة AspectJ مش موجودة، فالجزء ده متعملش.
+
+### Spring بيجيب القايمة دي منين؟
+
+كل jar فيه auto-configurations فيه ملف [[META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports]]، وفيه أسماء الكلاسات سطر سطر. فتحنا اللي في [[spring-boot-webmvc-4.1.1.jar]]:
+
+~~~text الناتج
+org.springframework.boot.webmvc.autoconfigure.DispatcherServletAutoConfiguration
+org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration
+org.springframework.boot.webmvc.autoconfigure.WebMvcObservationAutoConfiguration
+...
+~~~
+
+في Spring Boot 4 كل تقنية في jar لوحدها ([[spring-boot-webmvc]] و [[spring-boot-tomcat]] و [[spring-boot-jackson]]...)، وكل واحد معاه الملف ده. عشان كده في مشروع Web بس، [[DataSourceAutoConfiguration]] مش موجودة في التقرير خالص (بحثنا عنها: صفر مرات): الـ jar بتاعها مش في المشروع أصلًا.
+
+وفي المشروع اللي فيه JPA (اتشغّل بـ [[./mvnw spring-boot:run -Dspring-boot.run.arguments=--debug]]، وده الشكل لما تشغّل من Maven):
+
+~~~text الناتج
+   DataSourceAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'javax.sql.DataSource', 'org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType' (OnClassCondition)
+      - @ConditionalOnMissingBean (types: io.r2dbc.spi.ConnectionFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+~~~
+
+الشرطين اتحققوا: المكتبات موجودة، ومفيش bean بتاع R2DBC (داتابيز reactive). فحاول يعمل DataSource، ووقع لأن مفيش url (درس start.spring.io).
+
+---
+
+## الخلاصة
+
+| الحاجة | بتعمل إيه |
+|---|---|
+| [[package com.example.tasks]] | الـ scan بيبدأ من هنا ولتحت |
+| [[@SpringBootApplication]] | configuration + component scan + auto-configuration |
+| [[SpringApplication.run(X.class, args)]] | يعمل الـ context والـ beans ويشغّل Tomcat |
+| [[--debug]] | تقرير الشروط: Positive و Negative matches |
+| [[@ConditionalOn...]] | الشروط اللي كل auto-configuration مستنياها |
+
+- الـ main class في أعلى package، وكل الكود تحته.
+- أي bean بتعرّفه بنفسك بيكسب على الافتراضي ([[@ConditionalOnMissingBean]]).`,
           lines: [
             R`الـ package الأساسي: كل الكود تحته.`,
             R`[[SpringApplication]] اللي بيشغّل كل حاجة.`,
@@ -1131,6 +3860,206 @@ public class HelloController {
             when: R`[[@Service]] للـ business logic، و [[@RestController]] للـ HTTP، و [[@Repository]] (أو interfaces بتورث من JpaRepository، مش محتاجة annotation) للداتابيز. و [[@Bean]] للحاجات من مكتبات تانية أو اللي محتاجة إعداد (Clock، و HTTP client، و ObjectMapper مخصوص).`,
             mistakes: R`field injection: [[@Autowired private GreetingService greetings;]]: شائع في الكود القديم، بس بيخبي الـ dependencies وبيمنع [[final]] وبيصعّب التست من غير Spring؛ استخدم الـ constructor. و circular dependency (A محتاج B و B محتاج A): Spring Boot بيرفضها افتراضيًا، والحل تصميم أحسن مش [[@Lazy]]. وتعمل [[new MyService()]] بإيدك فتلاقي كل حاجة جواه null ومفيش transactions.`
           },
+          teach: R`## الكود بيعمل إيه؟
+
+٣ classes: [[AppConfig]] بيعرّف ساعة ([[Clock]])، و [[GreetingService]] بتستخدم الساعة عشان تقول صباح الخير أو مساء الخير، و [[HelloController]] بيرد على [[GET /hello]] بالرسالة. ولا واحد فيهم بيعمل [[new]] للتاني: Spring هو اللي بيعمل الـ ٣ ويوصّلهم.
+
+اتجرّب كده: كل class في ملف لوحده في [[com.example.tasks]] (جنب [[TasksApplication]] من الدرس اللي فات)، في مشروع Spring Web بس على Spring Boot 4.1.1، واتشغّل في [[maven:3.9-eclipse-temurin-25]] (JDK 25) والبورت 8080 متوصّل بـ 5945 على الجهاز.
+
+> المثال مكتوب من غير [[package]] و [[import]] عشان يبقى قصير. في الملفات الحقيقية كل ملف أوله [[package com.example.tasks;]] وبعده الـ imports: [[java.time.Clock]] و [[java.time.LocalTime]]، و [[org.springframework.context.annotation.Bean]] و [[Configuration]]، و [[org.springframework.stereotype.Service]]، و [[org.springframework.web.bind.annotation.GetMapping]] و [[RequestParam]] و [[RestController]]. الـ IDE بيضيفهم لوحده.
+
+---
+
+## ١. [[AppConfig]]: bean من مكتبة مش بتاعتك
+
+~~~java
+@Configuration
+public class AppConfig {
+    @Bean
+    Clock clock() {
+        return Clock.systemUTC();
+    }
+}
+~~~
+
+- [[@Configuration]]: «الكلاس ده فيه تعريفات beans». الـ component scan بيلاقيه زي أي component.
+- [[@Bean]] على method: Spring بينادي الـ method دي مرة واحدة وقت البداية، والـ object اللي بترجعه بيتسجّل كـ bean. النوع [[Clock]] واسمه [[clock]] (اسم الـ method).
+- ليه [[@Bean]] مش [[@Component]]؟ لأن [[Clock]] class من Java نفسها، مش هتقدر تحط عليه annotation. فبتقول لـ Spring «اعمله كده».
+- [[Clock.systemUTC()]]: ساعة حقيقية بتوقيت UTC (توقيت جرينتش، مصر +3 في الصيف).
+
+---
+
+## ٢. [[GreetingService]]: بيطلب اللي محتاجه
+
+~~~java
+@Service
+public class GreetingService {
+    private final Clock clock;
+
+    public GreetingService(Clock clock) {
+        this.clock = clock;
+    }
+~~~
+
+- [[@Service]]: «اعمل object من الكلاس ده وسجّله كـ bean». هو [[@Component]] بالظبط، بس الاسم بيقول إنه business logic.
+- [[private final Clock clock]]: الـ dependency. [[final]] لأنها بتتحط مرة واحدة ومبتتغيرش.
+- الـ constructor بياخد [[Clock]]: ده **الطلب**. Spring وهو بيعمل [[GreetingService]] بيشوف إنها محتاجة Clock، يدوّر على bean من النوع ده، يلاقي اللي [[AppConfig]] عرّفه، ويبعته. ده اسمه **constructor injection**.
+- مفيش [[@Autowired]]: لو الكلاس فيه constructor واحد، Spring بيستخدمه لوحده.
+
+~~~java
+    public String greet(String name) {
+        int hour = LocalTime.now(clock).getHour();
+        return (hour < 12 ? "Good morning, " : "Good evening, ") + name;
+    }
+}
+~~~
+
+- [[LocalTime.now(clock)]]: الوقت دلوقتي **حسب الساعة دي**. لو كتبت [[LocalTime.now()]] من غير باراميتر، هتاخد ساعة الجهاز ومش هتقدر تغيّرها في التست.
+- [[.getHour()]]: الساعة من 0 لـ 23.
+- [[hour < 12 ? A : B]]: الـ ternary زي JS: لو الشرط صح A وإلا B.
+
+---
+
+## ٣. [[HelloController]]: الـ HTTP
+
+~~~java
+@RestController
+public class HelloController {
+    private final GreetingService greetings;
+
+    public HelloController(GreetingService greetings) {
+        this.greetings = greetings;
+    }
+~~~
+
+- [[@RestController]]: bean كمان، والـ methods بتاعته بترد على HTTP، واللي بترجعه بيبقى body الـ response (String كده زي ما هو، و object بيتحول JSON).
+- نفس الحكاية: الـ constructor بيطلب [[GreetingService]]، و Spring بيبعت الـ bean اللي عمله.
+
+ترتيب البناء اللي Spring بيعمله لوحده (حسب مين محتاج مين):
+
+~~~text مين محتاج مين
+Clock            (من AppConfig.clock())
+  └── GreetingService(clock)
+        └── HelloController(greetings)
+~~~
+
+~~~java
+    @GetMapping("/hello")
+    public String hello(@RequestParam(defaultValue = "world") String name) {
+        return greetings.greet(name);
+    }
+}
+~~~
+
+- [[@GetMapping("/hello")]]: أي [[GET /hello]] يروح للـ method دي.
+- [[@RequestParam]]: الباراميتر [[name]] جاي من الـ query string ([[?name=Sara]]). و [[defaultValue = "world"]]: لو مش موجود خده [["world"]] بدل ما يرجع 400.
+- الـ controller مش بيعمل أي logic: بيسلّم الشغل للـ service.
+
+---
+
+## ٤. التشغيل
+
+~~~bash
+curl -i "localhost:5945/hello?name=Sara"
+~~~
+
+~~~text الناتج
+HTTP/1.1 200
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 18
+Date: Wed, 07 Oct 2026 17:48:25 GMT
+
+Good evening, Sara
+~~~
+
+- [[-i]]: اطبع الـ headers كمان.
+- [[text/plain]]: لأن الـ method رجّعت String.
+- [[Good evening]]: الطلب اتعمل الساعة 17:48 بتوقيت UTC، يعني 17 مش أقل من 12.
+
+~~~bash
+curl "localhost:5945/hello"
+~~~
+
+~~~text الناتج
+Good evening, world
+~~~
+
+الـ [[defaultValue]] اشتغل.
+
+---
+
+## ٥. لو شلت [[@Service]]
+
+كتبنا [[// @Service]] (يعني بقت comment) وشغّلنا:
+
+~~~text الناتج
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Parameter 0 of constructor in com.example.tasks.HelloController required a bean of type 'com.example.tasks.GreetingService' that could not be found.
+
+
+Action:
+
+Consider defining a bean of type 'com.example.tasks.GreetingService' in your configuration.
+~~~
+
+- [[Parameter 0 of constructor in ...HelloController]]: أول باراميتر (العدّ من صفر) في constructor الـ controller.
+- [[required a bean of type ... that could not be found]]: محتاج GreetingService، ومفيش bean منها: من غير [[@Service]] الـ scan عدّى عليها ومعملهاش.
+- التطبيق **مقامش خالص**. ده كويس: الغلطة بتبان أول ما تشغّل، مش لما request يوصل.
+
+---
+
+## ٦. الحل: تست من غير Spring
+
+~~~java
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.*;
+import org.junit.jupiter.api.Test;
+
+class GreetingServiceTest {
+    @Test
+    void morningGreeting() {
+        Clock nineAm = Clock.fixed(Instant.parse("2026-09-30T09:00:00Z"), ZoneOffset.UTC);
+        var service = new GreetingService(nineAm);
+        assertThat(service.greet("Sara")).isEqualTo("Good morning, Sara");
+    }
+}
+~~~
+
+- [[import static ...assertThat]]: [[static]] import بيخليك تكتب [[assertThat(...)]] من غير اسم الكلاس قبلها. و AssertJ مكتبة جاية مع starter التست.
+- [[@Test]]: JUnit هيشغّل الـ method دي كتست. (التست مكانه [[src/test/java/com/example/tasks/]] وأوله [[package com.example.tasks;]] زي الكلاس اللي بيختبره.)
+- [[Instant.parse("2026-09-30T09:00:00Z")]]: لحظة معينة. الـ [[Z]] في الآخر يعني UTC.
+- [[Clock.fixed(instant, ZoneOffset.UTC)]]: ساعة **واقفة** على اللحظة دي دايمًا.
+- [[new GreetingService(nineAm)]]: هنا احنا اللي بنعمل [[new]] وبنبعت الساعة الوهمية. مفيش Spring خالص.
+- [[assertThat(x).isEqualTo(y)]]: لو x مش y التست يفشل.
+
+جوه [[./mvnw test]]:
+
+~~~text الناتج
+[INFO] Running com.example.tasks.GreetingServiceTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.458 s -- in com.example.tasks.GreetingServiceTest
+~~~
+
+أقل من نص ثانية، مقابل ٩ ثواني للتست اللي بيشغّل Spring كله ([[TasksApplicationTests]]). ده مكسب الـ constructor injection: الكلاس مش عارف ولا مهتم مين اللي بيبعتله الساعة.
+
+---
+
+## الخلاصة
+
+| الطريقة | إمتى |
+|---|---|
+| [[@Service]] و [[@Component]] و [[@Repository]] و [[@RestController]] على الكلاس | كلاساتك انت |
+| [[@Bean]] على method جوه [[@Configuration]] | objects من مكتبات تانية أو محتاجة إعداد |
+| constructor فيه الـ dependencies | الطريقة الصح للحقن، والحقول [[final]] |
+
+- Spring بيعمل كل bean مرة واحدة (singleton) ويبعته لكل اللي طالبه.
+- لو bean مطلوب ومش موجود، التطبيق مش بيقوم، والرسالة بتقولك مين طلب إيه.
+- في التست ابعت fake بنفسك بـ [[new]].`,
           lines: [
             R`[[@Configuration]]: class فيه تعريفات beans.`,
             "بداية الـ class.",
