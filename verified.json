@@ -8069,6 +8069,66 @@
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
  },
+ "real|Capacitor: موقع لـ APK": {
+  "hash": "15539c216c1f",
+  "date": "2026-10-07",
+  "on": "Windows 11: Capacitor 8.5.2 init, add android, sync, @capacitor/assets; docs: gradlew, adb, iOS"
+ },
+ "real|Next.js dev في Docker": {
+  "hash": "9154723fb0ca",
+  "date": "2026-10-07",
+  "on": "Windows 11 Docker Desktop, Next.js 16.4 on node:22-alpine (anonymous volumes, polling, up --build -V)"
+ },
+ "real|PWA محلي + screenshots": {
+  "hash": "8d643053e547",
+  "date": "2026-10-07",
+  "on": "Windows 11: Python 3.14 http.server + Playwright 1.63 screenshots, service worker in headless Chromium"
+ },
+ "real|SETUP: أول يوم": {
+  "hash": "26d9d1d3dd3f",
+  "date": "2026-10-07",
+  "on": "Windows 11 Git Bash (git, local bare remote) + Supabase CLI 2.120 via npx (init, migration new, db push --db-url against postgres:16 in Docker); docs: login, link"
+ },
+ "real|compose: Postgres محلي": {
+  "hash": "8b6fd024fb35",
+  "date": "2026-10-07",
+  "on": "Windows 11 Docker Desktop (postgres:16-alpine, compose up --wait, persistence, down -v) + pnpm 10 + Prisma 6.19 migrate dev"
+ },
+ "real|compose: نسخة تانية": {
+  "hash": "7fa47670bb97",
+  "date": "2026-10-07",
+  "on": "Windows 11 Docker Desktop (two copies side by side, name:, -f, port conflict)"
+ },
+ "real|launch.sh / launch.bat": {
+  "hash": "b3148047b956",
+  "date": "2026-10-07",
+  "on": "node:22-slim container with a sudo user, Vite 8 + Electron 44 (window not opened); Windows CMD for launch.bat"
+ },
+ "real|preflight.sh": {
+  "hash": "d477602ba166",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 container (all checks, nc listeners, sshd -T, --fix with a 16M file); docs: real swapon"
+ },
+ "real|server-map.sh": {
+  "hash": "66dc7d15a36e",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 container with nginx, python3, cron; docs: docker, pm2, systemctl on a real server"
+ },
+ "real|setup-vps.sh": {
+  "hash": "910fc7dc4f0c",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 container with NET_ADMIN and openssh-server, run twice; docs: Docker service start, SSH login"
+ },
+ "real|shots.ps1": {
+  "hash": "4e01a5c04f94",
+  "date": "2026-10-07",
+  "on": "pwsh 7.6 and Windows PowerShell 5.1 with Chrome 154 (OK and FAIL cases)"
+ },
+ "real|verify-docker.ps1": {
+  "hash": "7a18c6e2f1c7",
+  "date": "2026-10-07",
+  "on": "pwsh 7.6 and Windows PowerShell 5.1 with Docker Desktop (Docker down simulated with DOCKER_HOST)"
+ },
  "sec|.env اترفع على Git": {
   "hash": "f99d0f630304",
   "date": "2026-10-06",
