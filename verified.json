@@ -6419,6 +6419,86 @@
   "date": "2026-10-06",
   "on": "docker postgres:16 (16.15)"
  },
+ "php|$_GET / $_POST / $_SERVER": {
+  "hash": "0d09a1adb4fa",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl (Git Bash), curl.exe/Invoke-WebRequest (pwsh), curl.exe (powershell 5.1)"
+ },
+ "php|<?php ?>": {
+  "hash": "9a00bde9867c",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl"
+ },
+ "php|?? و ?->": {
+  "hash": "74acddf91d80",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|POST → Redirect → GET": {
+  "hash": "897dfa4be829",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl (Git Bash), curl.exe (pwsh)"
+ },
+ "php|array": {
+  "hash": "bcea407c3787",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|array_map / array_filter": {
+  "hash": "270133218226",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|foreach": {
+  "hash": "c2ade3f307fd",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|function": {
+  "hash": "d218ef520703",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|heredoc": {
+  "hash": "cab7656a917e",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|htmlspecialchars": {
+  "hash": "48681bcf1836",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl; docs: alert() in browser"
+ },
+ "php|interpolation": {
+  "hash": "60b0224a057e",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|match": {
+  "hash": "436056d21fd8",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|php -S": {
+  "hash": "3b760fbaae30",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26) php -S + curl from Git Bash"
+ },
+ "php|require_once": {
+  "hash": "9c0f945e36f8",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26) php -S -t public + curl"
+ },
+ "php|var_dump": {
+  "hash": "fadb405315dc",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
+ "php|مقدمة PHP والـ echo": {
+  "hash": "7fb319b5ecbf",
+  "date": "2026-10-07",
+  "on": "docker php:8.4-cli (PHP 8.4.26)"
+ },
  "ps|$LASTEXITCODE": {
   "hash": "5f92172f28f3",
   "date": "2026-10-06",
