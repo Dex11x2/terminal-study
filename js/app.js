@@ -126,11 +126,24 @@ function deepHTML(c){
   const part = (h, t) => t ? '<section><h4>'+h+'</h4>'+t.split(/\n\s*\n/).map(x => '<p>'+fmt(x.trim())+'</p>').join('')+'</section>' : '';
   return '<div class="deep">'+part('ليه موجود؟', d.why)+part('بيحصل إيه من جوه؟', d.how)+part('هتستخدمه إمتى؟', d.when)+part('غلطات شائعة', d.mistakes)+'</div>';
 }
-/* reference solution for the try task: hidden until the learner opens it */
+/* reference solution for the try task: hidden until the learner opens it.
+   When the lesson also has an auto-checked exercise, this solution usually solves it too,
+   so it stays locked until the exercise passes (chk:) or the learner gives up (reveal:). */
 function solHTML(c){
   const s = SOL[shell+'|'+c];
   if (!s) return '';
-  return '<details class="trysol"><summary>الحل والناتج المتوقع (افتحه بعد ما تجرب)</summary>'+descHTML(s.text)+(s.code ? osBoxes(s.code, c) || termBlock(s.code, c, 'script') : '')+'</details>';
+  const k = shell+':'+c, body = descHTML(s.text)+(s.code ? osBoxes(s.code, c) || termBlock(s.code, c, 'script') : '');
+  if (CHECK[shell+'|'+c] && store.get('chk:'+k)!=='1' && store.get('reveal:'+k)!=='1')
+    return '<details class="trysol locked"><summary>الحل والناتج المتوقع (مقفول لحد ما تحل التمرين)</summary>'+
+      '<p class="sol-lock">الحل ده بيحل التمرين اللي فوق كمان، فهيفتح لوحده أول ما كودك يعدّي الاختبارات. لو وقفت خالص وعايز تشوفه: <button type="button" class="sol-reveal">افتح الحل برضه</button></p>'+
+      '<div class="sol-body" hidden>'+body+'</div></details>';
+  return '<details class="trysol"><summary>الحل والناتج المتوقع (افتحه بعد ما تجرب)</summary>'+body+'</details>';
+}
+function solUnlock(sol){
+  if (!sol || !sol.classList.contains('locked')) return;
+  sol.classList.remove('locked');
+  sol.querySelector('.sol-lock').remove(); sol.querySelector('.sol-body').hidden = false;
+  sol.querySelector('summary').textContent = 'الحل والناتج المتوقع';
 }
 function breakHTML(c, ex){
   const b = BREAK[shell+'|'+c];
@@ -521,10 +534,11 @@ function chkPass(box, t, c){
   // in «اللي فاضل بس» the lesson would vanish with its result, so it's hidden on the next render instead
   if (art && !document.body.classList.contains('todo')) art.classList.add('is-done');
   if (!box.querySelector('.chk-ok')) box.querySelector('.chk-h').insertAdjacentHTML('beforeend', '<span class="chk-ok">✓ عدّى الاختبارات</span>');
+  if (art) solUnlock(art.querySelector('.trysol.locked'));
   updateProgress();
 }
 
-const BACKUP_KEYS = /^(done:|note:|fc:|srs:|exam:|chk:|code:|shell$|level$|brief$|todo$|theme$)/;
+const BACKUP_KEYS = /^(done:|note:|fc:|srs:|exam:|chk:|code:|reveal:|shell$|level$|brief$|todo$|theme$)/;
 function exportProgress(){
   const o = {}; store.keys().filter(k => BACKUP_KEYS.test(k)).forEach(k => o[k] = store.get(k));
   const a = document.createElement('a');
@@ -583,6 +597,12 @@ document.addEventListener('click', e => {
   if (ex){ examOpen(+ex.dataset.exam); return; }
   const run = e.target.closest('.chk-run');
   if (run){ chkRun(run.closest('.chk')); return; }
+  const sr = e.target.closest('.sol-reveal');
+  if (sr){
+    const art = sr.closest('article'), box = art && art.querySelector('.chk');
+    if (box) store.set('reveal:'+box.dataset.t+':'+box.dataset.c, '1');
+    solUnlock(sr.closest('.trysol')); return;
+  }
   const rs = e.target.closest('.chk-reset');
   if (rs){
     const box = rs.closest('.chk'), ta = box.querySelector('.chk-code');
