@@ -172,6 +172,7 @@
 
 كل `sol` في الدروس دي بيقول إنه من الـ docs. نجرّبها لما يبقى فيه الجهاز المناسب.
 
+- [ ] **محتاجة Android SDK (٧ أكتوبر):** دروس kotlin «مشروع Android» و «Gradle و libs.versions.toml» و «AndroidManifest و res» و «Activity و lifecycle» اتشرحت من الـ docs ومش متعلّم عليها. ممكن تتجرب بـ image فيها Android SDK (زي `ghcr.io/cirruslabs/android-sdk`) لو وافقت، أو على جهاز فيه Android Studio.
 - [x] **محتاجة toolchains مش متسطبة (٧ أكتوبر، اتجربت كلها في Docker نفس اليوم ما عدا AAPT2):** files «.java و .class و .jar» و «.c و .h و .cpp و .o» و «.go و go.mod» و «.php» و «.swift و .dart و .rs و .rb» و «pom.xml و build.gradle» و «AndroidManifest.xml و strings.xml» و «.csproj و .sln و appsettings.json»: الشرح اتكتب من الـ docs ومش متعلّم عليها في verified.json. تتجرب لما نوافق على images زي `eclipse-temurin` و `gcc` و `golang` و `php` و `rust` (ونفس القرار هيلزم لتابات اللغات: php و go و dotnet و spring و kotlin و swift و cpp و flutter). **القرار (٧ أكتوبر): وافقت تنزّل الـ images الرسمية لكل لغة، وتمسحها (docker rmi للـ tags اللي نزلت بس) بعد ما التاب يخلص.** وكيل كل تاب لغة: ينزّل الـ image اللي محتاجها، ويكتب في تقريره أسماء الـ images اللي نزّلها عشان القائد يمسحها بعد التاب.
 
 - [ ] **محتاجة ماك:** دروس zsh:

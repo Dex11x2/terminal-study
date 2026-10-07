@@ -6019,8 +6019,38 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|class": {
+  "hash": "42e0490c08d2",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|enum و sealed": {
+  "hash": "2be57983e527",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|exceptions و Result": {
+  "hash": "229a18fca1f1",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|extension functions": {
+  "hash": "2c85b008424c",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
  "kotlin|if و when": {
   "hash": "5f27b44a1b81",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|interface و الوراثة": {
+  "hash": "20b469daa102",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|lambdas": {
+  "hash": "35bb54653bfb",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
@@ -6029,8 +6059,18 @@
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
+ "kotlin|object و companion": {
+  "hash": "ea6623b306e5",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
  "kotlin|ranges و loops": {
   "hash": "b603a7e53531",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|scope functions": {
+  "hash": "ace850af534d",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
@@ -6046,6 +6086,11 @@
  },
  "kotlin|الدوال": {
   "hash": "71c3630011ff",
+  "date": "2026-10-07",
+  "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
+ },
+ "kotlin|الـ Data Classes والـ Lambdas": {
+  "hash": "ad786013e903",
   "date": "2026-10-07",
   "on": "docker eclipse-temurin:21-jdk + kotlinc 2.4.20"
  },
