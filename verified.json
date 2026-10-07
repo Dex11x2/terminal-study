@@ -9674,6 +9674,11 @@
   "date": "2026-10-07",
   "on": "windows: expo install expo-dev-client, expo run:android (fails at missing Android SDK); docs: Expo Go, eas build"
  },
+ "rn|Expo ولا bare": {
+  "hash": "674adf79f598",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 (create-expo-app, @react-native-community/cli init --skip-install, create-expo-module --help)"
+ },
  "rn|FlashList": {
   "hash": "a676f43e9075",
   "date": "2026-10-07",
@@ -9704,6 +9709,11 @@
   "date": "2026-10-07",
   "on": "windows: npx expo --version, npm ls, npx expo-doctor, newArchEnabled:false test"
  },
+ "rn|OTA إمتى مينفعش": {
+  "hash": "fa6e719011ae",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 expo-sdk-57 (@expo/fingerprint diffs); docs: store policy"
+ },
  "rn|Platform و الأبعاد": {
   "hash": "c7d6ca9ac0c2",
   "date": "2026-10-07",
@@ -9713,6 +9723,11 @@
   "hash": "445f3bcd22a4",
   "date": "2026-10-07",
   "on": "windows: Expo SDK 57 web + headless Chrome; docs: android_ripple"
+ },
+ "rn|RN بيشتغل إزاي من جوه": {
+  "hash": "b8b5b6ae0a11",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 expo-sdk-57 (expo export android .hbc header); docs: concept"
  },
  "rn|RN مش ويب": {
   "hash": "389c986bbbb9",
@@ -9778,6 +9793,31 @@
   "hash": "ba00788cca74",
   "date": "2026-10-07",
   "on": "windows: create-expo-app@latest (SDK 57), npx expo start, npm run reset-project; docs: QR/Expo Go/a,i keys"
+ },
+ "rn|eas build": {
+  "hash": "33fd0fe11f0d",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 expo-sdk-57 eas-cli-24.11 (--help, whoami, prebuild android, export android); docs: login/init/build/credentials/--local"
+ },
+ "rn|eas submit": {
+  "hash": "1a98e8d29eb4",
+  "date": "2026-10-07",
+  "on": "windows-11 eas-cli-24.11 (submit --help); docs: actual submit, Play/App Store steps"
+ },
+ "rn|eas update": {
+  "hash": "20e2cf9e9aec",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 expo-sdk-57 eas-cli-24.11 (expo-updates, prebuild, export android, --help); docs: publishing, rollout, device behavior"
+ },
+ "rn|eas.json": {
+  "hash": "da82ed999672",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 expo-sdk-57 eas-cli-24.11 (@expo/eas-json validation); docs: eas build:configure/init, server-side build"
+ },
+ "rn|env و app variants": {
+  "hash": "0487d4860ffd",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 expo-sdk-57 (expo config in bash + pwsh, export web + headless Chrome); docs: eas env:set"
  },
  "rn|expo-sqlite": {
   "hash": "8a16a1c7e037",
@@ -9859,6 +9899,11 @@
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19, Expo SDK 57: Jest solCode test + rotating fake backend"
  },
+ "rn|runtimeVersion": {
+  "hash": "a12249910e00",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 expo-sdk-57 (@expo/fingerprint generate/diff, prebuild with both policies); docs: eas fingerprint:compare"
+ },
  "rn|useMutation و invalidate": {
   "hash": "063152bf4bd4",
   "date": "2026-10-07",
@@ -9879,10 +9924,20 @@
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 (ICU 78.3) + web build in headless Chrome; docs: Hermes output, font loading"
  },
+ "rn|التوكن تحفظه فين": {
+  "hash": "458033baae9d",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 (JWT decode demo, single-flight refresh simulation); docs: SecureStore/Keychain/Keystore"
+ },
  "rn|الكيبورد": {
   "hash": "c09520e1a3b1",
   "date": "2026-10-07",
   "on": "Expo SDK 57 web (focus, input attrs); docs: keyboard avoiding on iOS/Android"
+ },
+ "rn|ليه القايمة بطيئة": {
+  "hash": "e19ebb29ca37",
+  "date": "2026-10-07",
+  "on": "windows-11 node-24.19 react-19.2.3 (render-count demo); docs: release build, Perf Monitor, Profiler"
  },
  "sec|.env اترفع على Git": {
   "hash": "f99d0f630304",

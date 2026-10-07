@@ -1,373 +1,765 @@
 // تكملة تاب rn: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/rn/01.js (شرح حقول الدرس في أوله)
 MORE("rn", [
     {
-      t: "البناء والنشر بـ EAS",
-      l: 3,
-      n: "eas.json والـ profiles، و EAS Build في السحابة، و Submit للمتاجر، والـ env والنسخ",
+      t: "الستايل و flexbox",
+      l: 1,
+      n: "StyleSheet، و flexbox بافتراضات مختلفة عن الويب، و Platform والأبعاد، و NativeWind لو بتحب Tailwind",
       items: [
         {
-          cmd: "eas.json",
-          title: "eas.json: تلات profiles للـ development و preview و production",
-          desc: R`EAS (Expo Application Services) بيعمل build لتطبيقك على سيرفرات Expo، فمش محتاج Android Studio ولا ماك عشان تطلّع ملف للمتجر. [[eas.json]] فيه profiles: [[development]] (development build فيه dev client)، و [[preview]] (APK أو build داخلي تبعته للفريق)، و [[production]] (للمتاجر).
+          cmd: "StyleSheet",
+          title: "StyleSheet: CSS من غير cascade ولا selectors",
+          desc: R`الستايل في RN objects بأسماء camelCase ([[backgroundColor]] مش [[background-color]])، والأرقام من غير وحدة (بتتحسب dp)، وفيه نسب مئوية كـ string ([['50%']]). [[StyleSheet.create]] بيجمعهم في مكان واحد تحت الـ component، وبيدّيك autocomplete وفحص للأنواع.
 
-[[eas build:configure]] بيعمل الملف، و [[eas init]] بيربط المشروع بحساب Expo ويحط [[projectId]] في app.json. محتاج حساب Expo (فيه خطة مجانية بعدد builds محدود في الشهر وطابور انتظار).`,
-          example: R`{
-  "cli": { "version": ">= 16.0.0", "appVersionSource": "remote" },
-  "build": {
-    "development": { "developmentClient": true, "distribution": "internal", "environment": "development" },
-    "preview": { "distribution": "internal", "android": { "buildType": "apk" }, "environment": "preview", "channel": "preview" },
-    "production": { "autoIncrement": true, "environment": "production", "channel": "production" }
+مفيش cascade ولا selectors ولا [[:hover]] ولا media queries. كل عنصر بياخد ستايله صريح. وعشان تدمج: array [[style={[styles.base, active && styles.active]}]]، والأخير بيكسب.`,
+          example: R`import { StyleSheet, Text, View } from 'react-native';
+
+export function Badge({ label, tone = 'info' }: { label: string; tone?: 'info' | 'danger' }) {
+  return (
+    <View style={[styles.badge, tone === 'danger' && styles.danger]}>
+      <Text style={styles.text}>{label}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  badge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: '#dbeafe',
   },
-  "submit": {
-    "production": { "android": { "track": "internal" } }
-  }
-}`,
-          try: R`في الـ lab شغّل [[npx eas-cli@latest build:configure]] (هيطلب login) وقارن الملف اللي اتعمل بالمثال. وجاوب: ليه [[preview]] عامل [[buildType: "apk"]] و [[production]] لأ؟`,
-          deep: {
-            why: R`من غير profiles، هتلاقي نفسك بتبعت للفريق build فيه الـ dev menu، أو بترفع للمتجر build بيكلم الـ staging API. الـ profiles بتخلي كل نوع build ليه إعدادات ثابتة ومتراجعة في Git.`,
-            how: R`[[developmentClient: true]] بيضيف [[expo-dev-client]] ويعمل debug build بيوصل بـ Metro. [[distribution: "internal"]] معناه build تتوزع برابط (APK على Android، و ad-hoc على iOS محتاج تسجيل UDID الأجهزة) مش للمتجر.
-
-Android: الـ production بيطلّع AAB (Android App Bundle) لأن Google Play بيطلبه، والـ APK للتوزيع المباشر. عشان كده preview بـ [[buildType: "apk"]]: تنزّله وتركّبه على طول.
-
-[[appVersionSource: "remote"]]: رقم الـ build (versionCode و buildNumber) بيتخزن عند EAS، و [[autoIncrement]] بيزوده كل build، فمش هتنسى تزوده وتترفض من المتجر لأن الرقم متكرر. الـ [[version]] اللي المستخدم بيشوفه (1.2.0) لسه في app.json وانت بتغيّره.
-
-[[environment]] بيقول أنهي EAS environment variables تتحمّل وقت الـ build (development أو preview أو production)، و [[channel]] بيربط الـ build بقناة EAS Update (القسم الجاي).
-
-مقدرتش أعمل build فعلًا (محتاج حساب Expo ومفاتيح المتاجر). الشكل ده من الـ docs ومن [[eas build --help]] على eas-cli 24.8 اللي ركّبته.`,
-            when: R`أول ما تحتاج development build أو تبعت نسخة لحد. والـ profiles ممكن تزيد: [[staging]] بـ API تاني، أو [[extends]] عشان تورّث من profile تاني.`,
-            mistakes: R`ترفع build بـ developmentClient للمتجر. و [[distribution: "internal"]] على iOS وتستغرب إن الموبايل مش راضي يركّب (الجهاز مش مسجل). وتزوّد versionCode بإيدك وكمان autoIncrement شغال. وتحط أسرار في [[env]] جوه eas.json وهو في Git.`
-          },
-          sol: R`الملف اللي [[build:configure]] بيعمله فيه التلات profiles وغالبًا [[appVersionSource: "remote"]] و [[autoIncrement]] في production و submit profile فاضي. الفرق إن مثالنا ضاف [[environment]] و [[channel]] و [[buildType: "apk"]] و [[track]].
-
-APK في preview عشان أي حد في الفريق يدوس على الرابط ويركّبه مباشرة. production بـ AAB لأن Play Store بيطلب AAB للتطبيقات الجديدة، وهو بيولّد APKs صغيرة مخصوصة لكل جهاز. AAB نفسه مينفعش يتركّب مباشرة على موبايل.`
-        },
-        {
-          cmd: "eas build",
-          title: "eas build: من الكود لملف APK أو AAB أو IPA، والمفاتيح",
-          desc: R`[[eas build -p android --profile preview]] بيرفع المشروع لسيرفرات EAS، اللي بتعمل [[npm install]] و [[prebuild]] و Gradle (أو Xcode للـ iOS)، وبيديك رابط للملف وصفحة فيها الـ logs.
-
-أول مرة، EAS بيسألك عن المفاتيح (credentials): على Android الـ keystore اللي بيوقّع التطبيق، وعلى iOS الشهادات والـ provisioning profiles (محتاج حساب Apple Developer مدفوع). سيب EAS يعملهم ويحفظهم، أو ارفع اللي عندك لو التطبيق موجود على المتجر قبل كده. و [[--local]] بيعمل نفس الـ build على جهازك لو عندك الأدوات.`,
-          example: R`npm i -g eas-cli
-eas login
-eas init
-eas build -p android --profile preview
-eas build -p android --profile production
-eas build -p ios --profile production
-eas build -p android --profile development --local
-eas credentials`,
-          try: R`اعمل preview build لـ Android من الـ lab، ونزّل الـ APK على موبايلك. وبعدين افتح صفحة الـ build في expo.dev وشوف مراحل الـ log: فين الـ prebuild؟ وفين Gradle؟ وكام دقيقة أخد؟`,
-          deep: {
-            why: R`بناء تطبيق iOS كان محتاج ماك و Xcode، و Android محتاج Android Studio و Gradle وإعدادات signing بتضيّع أيام. EAS بيخلي الـ build أمر واحد من أي جهاز (حتى ويندوز)، وده سبب كبير إن فرق الويب بقت تقدر تطلّع تطبيقات.`,
-            how: R`[[eas build]] بيعمل archive لمشروعك (محترم [[.gitignore]] و [[.easignore]])، ويرفعه. السيرفر بيشغّل: install، و [[expo prebuild]] (لو مفيش فولدرات native)، والـ config plugins، وبعدين [[./gradlew bundleRelease]] أو [[xcodebuild]]. و [[EXPO_PUBLIC_*]] بتتحط وقت الـ bundle هنا، من الـ EAS environment اللي في الـ profile.
-
-الـ keystore على Android: المفتاح اللي بيثبت إنك صاحب التطبيق. مع Google Play App Signing، جوجل ماسكة مفتاح التوقيع النهائي، وانت ماسك «upload key». لو ضاع الـ upload key ممكن تطلب reset من جوجل، بس لو مش مفعّل Play App Signing وضاع المفتاح، مش هتقدر تحدّث التطبيق أبدًا. EAS بيخزن المفاتيح، و [[eas credentials]] بيخليك تنزّل نسخة (خزّنها في مكان آمن).
-
-iOS: محتاج Apple Developer Program (سنوي)، و EAS بيعمل الشهادات والـ profiles عن طريق حسابك.
-
-[[--local]]: نفس الخطوات على جهازك، محتاج JDK و Android SDK (أو ماك و Xcode). و [[npx expo run:android --variant release]] أبسط منه لو عايز build محلي بسرعة.
-
-في «تاب Desktop و Mobile» فيه نفس الأفكار (keytool و versionCode و Play) لكن بـ Gradle يدوي، ومفيد تبص عليه عشان تفهم إيه اللي EAS بيعمله عنك.
-
-مقدرتش أشغّل [[eas build]] (محتاج حساب)، بس شغّلت [[npx expo export --platform android]] على الـ lab وطلّع Hermes bytecode bundle ([[.hbc]]، حوالي 3.8MB)، وده الجزء الـ JS من الـ build.`,
-            when: R`preview لكل feature محتاجة تتجرب على موبايلات الفريق. production قبل كل رفع للمتجر. development لما تضيف مكتبة native. ومع [[--auto-submit]] (أو EAS Workflows) الـ build بيترفع للمتجر لوحده.`,
-            mistakes: R`تمسح الـ keystore أو تعمل واحد جديد لتطبيق موجود على Play: المتجر هيرفض التحديث. و [[.env]] في [[.gitignore]] وتفتكر إن EAS هيشوفه (مش هيشوفه، استخدم EAS env). و build فشل وتقرا آخر سطر بس: الخطأ الحقيقي غالبًا فوق في مرحلة [[prebuild]] أو install. ومكتبة native جديدة ومعملتش development build جديد.`
-          },
-          lines: [
-            "ركّب EAS CLI (أو استخدم npx eas-cli@latest من غير تركيب).",
-            "ادخل بحساب Expo.",
-            "اربط المشروع بـ EAS (بيحط projectId في app.json).",
-            "APK داخلي تركّبه على طول.",
-            "AAB للـ Play Store.",
-            "IPA للـ App Store (محتاج حساب Apple Developer).",
-            "development build على جهازك من غير سيرفرات EAS.",
-            "إدارة المفاتيح: تنزّل نسخة أو ترفع مفتاح موجود."
-          ],
-          sol: R`هتلاقي في الـ log مراحل زي: Spin up build environment، و Install dependencies، و Prebuild (توليد فولدر android من app.json والـ plugins)، و Run gradlew، و Upload artifacts. أول build بياخد غالبًا من ١٠ لـ ٢٠ دقيقة على الخطة المجانية (فيه طابور)، والـ builds اللي بعدها أسرع لو فيه cache.
-
-لو الـ APK اتركّب بس بيقع أول ما يفتح: شوف [[adb logcat]] (في «تاب Desktop و Mobile»)، وغالبًا مكتبة native مش متوافقة (شغّل [[npx expo install --check]]) أو env variable ناقصة.`
-        },
-        {
-          cmd: "eas submit",
-          title: "eas submit: ترفع للـ Play Store والـ App Store",
-          desc: R`[[eas submit -p android --latest]] بياخد آخر production build ويرفعه لـ Google Play (على track زي [[internal]] أو [[production]])، و [[-p ios]] بيرفعه لـ App Store Connect و TestFlight. أو [[eas build --auto-submit]] بيعمل الاتنين ورا بعض.
-
-المتطلبات: على Play، أول رفع للتطبيق لازم يتعمل يدوي من Play Console مرة واحدة، وبعدين service account key (JSON) عشان EAS يرفع. على iOS، حساب Apple Developer و App Store Connect API key (EAS بيساعدك تعمله). وبعد الرفع فيه review من المتجر نفسه، ودي مش في إيدك.`,
-          example: R`eas submit -p android --latest --profile production
-eas submit -p ios --latest
-eas build -p android --profile production --auto-submit
-# Play Console: Internal testing -> Closed -> Open -> Production
-# App Store Connect: TestFlight -> App Review -> Release`,
-          try: R`اكتب checklist لأول نشر على Play: إيه اللي لازم يكون جاهز في Play Console قبل ما [[eas submit]] يشتغل؟ (فكّر في: الحساب، وصفحة المتجر، و Data safety، و privacy policy، والتقييم العمري، وأول AAB.)`,
-          deep: {
-            why: R`الـ build مش نهاية المشوار. الرفع للمتاجر فيه خطوات يدوية كتير بتتنسى، وأخطاء بتاخد أيام مراجعة. [[eas submit]] بيشيل جزء الرفع نفسه، بس لازم تعرف إيه اللي حواليه.`,
-            how: R`Android: Google Play Developer account (رسوم مرة واحدة). أول AAB بيترفع يدوي من Play Console عشان يتعمل التطبيق ويتقفل الـ package name. بعد كده EAS محتاج Google Service Account بصلاحية على التطبيق، والـ JSON key بيتحط في [[eas credentials]] أو [[serviceAccountKeyPath]] في submit profile. الـ tracks: internal (لحد ١٠٠ tester، من غير review طويل)، و closed و open testing، و production. الحسابات الشخصية الجديدة على Play عليها شرط closed testing لعدد من الـ testers لمدة قبل ما تقدر تنشر production (اتأكد من الشروط الحالية في Play Console لأنها بتتغير).
-
-iOS: Apple Developer Program (سنوي)، والتطبيق بيتعمل في App Store Connect. [[eas submit -p ios]] بيرفع لـ TestFlight، ومن هناك تبعت للـ review. Apple بتراجع كل نسخة، وبترفض لأسباب زي: صلاحيات من غير شرح، أو login بـ social من غير Sign in with Apple، أو تطبيق هو موقع ملفوف ومفيهوش قيمة كتطبيق.
-
-الحاجات المطلوبة في المتجرين: privacy policy URL، و Data safety (Play) و Privacy nutrition labels (Apple) بيقولوا بتجمع إيه، و screenshots، وتقييم عمري، و حذف الحساب من جوه التطبيق لو فيه تسجيل (مطلوب في الاتنين، وفيه درس [[حذف الحساب]] في «تاب الأمان»).
-
-مجربتش submit (محتاج حسابات مدفوعة)، والأوامر من [[eas submit --help]] على eas-cli 24.8.`,
-            when: R`بعد كل production build عايز يوصل للمستخدمين. ولأغلب التحديثات اللي JS بس، EAS Update (القسم الجاي) أسرع بكتير ومن غير review.`,
-            mistakes: R`تجرّب [[eas submit]] قبل ما ترفع أول AAB يدوي: «Google Play API: Package not found». وتنسى Data safety فالتطبيق يترفض. وترفع على production track على طول بدل internal. وتنسى زرار حذف الحساب.`
-          },
-          lines: [
-            "ارفع آخر build لـ Play بإعدادات profile الـ production في submit.",
-            "ارفع آخر build iOS لـ TestFlight.",
-            "build وبعده submit أوتوماتيك."
-          ],
-          sol: R`checklist معقول: (١) Google Play Developer account متفعّل. (٢) التطبيق متعمل في Play Console بنفس [[android.package]]. (٣) أول AAB مرفوع يدوي على internal testing. (٤) Store listing: اسم، ووصف، وأيقونة 512، و feature graphic، و screenshots. (٥) Privacy policy URL. (٦) Data safety form. (٧) Content rating questionnaire. (٨) Target audience. (٩) لو فيه تسجيل: طريقة حذف الحساب من التطبيق ومن رابط ويب. (١٠) Service account JSON بصلاحية release، ومتحط في [[eas credentials]] أو المسار في eas.json. بعدها [[eas submit -p android --latest]] يشتغل.`
-        },
-        {
-          cmd: "env و app variants",
-          title: "EAS env والـ app variants: staging و production على نفس الموبايل",
-          desc: R`الـ env variables في Expo نوعين: [[EXPO_PUBLIC_*]] بتتحط جوه الـ JS bundle (أي حد يقدر يشوفها)، والباقي بيتقري وقت الـ build بس في [[app.config.ts]] (مش جوه التطبيق). على جهازك بتيجي من [[.env]]، وعلى EAS بتتعرّف بـ [[eas env:set]] لكل environment (development و preview و production)، وبيتحمّلوا حسب [[environment]] في eas.json.
-
-والـ app variants: تغيّر [[name]] و [[android.package]] و [[ios.bundleIdentifier]] حسب الـ environment في app.config.ts، فتقدر تركّب «Tasks (Preview)» جنب «Tasks» على نفس الموبايل.`,
-          example: R`// app.config.ts
-import type { ExpoConfig } from 'expo/config';
-
-const variant = process.env.APP_VARIANT ?? 'production';
-const suffix = variant === 'production' ? '' : $__bt.$__{variant}$__bt;
-
-const config: ExpoConfig = {
-  name: variant === 'production' ? 'Tasks' : $__btTasks ($__{variant})$__bt,
-  slug: 'tasks',
-  version: '1.3.0',
-  runtimeVersion: { policy: 'appVersion' },
-  android: { package: $__btcom.example.tasks$__{suffix}$__bt },
-  ios: { bundleIdentifier: $__btcom.example.tasks$__{suffix}$__bt },
-};
-
-export default config;
-// eas env:set preview --name EXPO_PUBLIC_API_URL --value https://staging-api.example.com --visibility plaintext
-// eas env:set preview --name APP_VARIANT --value preview --visibility plaintext`,
-          try: R`اعمل الملف ده في الـ lab، وشغّل [[APP_VARIANT=preview npx expo config --type public]] ومرة من غير المتغير، وقارن [[name]] و [[android.package]]. وبعدين فكّر: ليه [[SENTRY_AUTH_TOKEN]] مينفعش يبدأ بـ [[EXPO_PUBLIC_]]؟`,
+  danger: { backgroundColor: '#fee2e2' },
+  text: { fontSize: 12, fontWeight: '600', color: '#1e293b' },
+});`,
+          try: R`شيل [[alignSelf: 'flex-start']] وشوف الـ badge بقى عرضه قد إيه. وبعدين جرّب تكتب [[padding: '10px']] أو [['background-color': 'red']] وشوف TypeScript قال إيه.`,
           flag: "script",
           deep: {
-            why: R`الفريق محتاج يجرّب على الـ staging من غير ما يمسح التطبيق الحقيقي من موبايله، والـ QA محتاج يعرف هو فاتح أنهي نسخة. ولو خلطت الـ env، هتلاقي production build بيكلم الـ staging API (أو العكس، وده أسوأ).`,
-            how: R`[[app.config.ts]] بيتنفذ في Node وقت [[expo start]] أو [[prebuild]] أو الـ build على EAS، فأي [[process.env]] متاح هناك (حتى الأسرار). الناتج (الـ config) بيتحط في التطبيق ([[Constants.expoConfig]])، فمتحطش سر في الناتج نفسه.
+            why: R`لو جاي من CSS، أول أسبوع هتدوّر على الـ cascade والـ classes. فهم إن كل حاجة صريحة ومحلية بيوفّر وقت، وبيوضّح ليه الـ design system في RN بيتعمل كـ components (Button و Card و AppText) مش كـ classes.`,
+            how: R`[[StyleSheet.create]] في RN الحديث بيرجّع نفس الـ object تقريبًا (مبقاش فيه تحويل لأرقام IDs زي زمان)، فالفايدة الأساسية: الأنواع، والتنظيم، وإن الـ object بيتعمل مرة واحدة برّه الـ render. الـ inline style [[style={{...}}]] شغال عادي ومش كارثة في الأداء، بس بيتعمل object جديد كل render.
 
-[[EXPO_PUBLIC_*]]: Metro بيبدّل [[process.env.EXPO_PUBLIC_API_URL]] بالقيمة حرفيًا في الكود. أي حاجة تانية في [[process.env]] جوه كود التطبيق هتبقى undefined. وده مقصود: عشان متسرّبش أسرار بالغلط.
+الأسماء: [[paddingHorizontal]] و [[paddingVertical]] و [[marginHorizontal]] اختصارات مش موجودة في CSS. والـ shorthand زي [[border: '1px solid red']] مش موجود: [[borderWidth]] و [[borderColor]] و [[borderStyle]]. والظل: [[boxShadow]] (string زي CSS، مدعوم من 0.76 على الـ New Architecture) أو القديم [[shadowColor]]/[[elevation]].
 
-EAS environments: [[eas env:set]] بيخزن المتغير على EAS بـ visibility: [[plaintext]] (بيظهر)، و [[sensitive]] (مخفي في الـ logs)، و [[secret]] (مش بيتقري برّه الـ build خالص). والـ build بياخد متغيرات الـ environment المكتوب في الـ profile. و [[eas env:pull]] بينزّلهم في [[.env.local]] للتطوير. و [[eas update]] محتاج [[--environment]] من SDK 55 عشان الـ bundle ياخد نفس القيم.
+[[StyleSheet.hairlineWidth]] أرفع خط الشاشة تقدر ترسمه. و [[StyleSheet.absoluteFill]] اختصار لـ [[position: 'absolute']] بكل الحواف 0.
 
-package مختلف = تطبيق مختلف بالنسبة للنظام (تخزين منفصل، وأيقونة منفصلة)، فتقدر تركّب الاتنين.
-
-مجربتش [[eas env:set]] (محتاج حساب)، والأوامر من [[eas env:set --help]] على eas-cli 24.8 ([[env:create]] بقت deprecated لصالح [[env:set]]).`,
-            when: R`أي مشروع فيه أكتر من backend (dev و staging و prod). و variants لو الفريق بيجرّب على موبايلاته الشخصية.`,
-            mistakes: R`سر في [[EXPO_PUBLIC_]] (API key لخدمة مدفوعة): أي حد يفك الـ APK ياخده. استخدم الـ backend كوسيط. و [[process.env[name]]] بمتغير: Metro مش هيبدّله. وتغيّر [[.env]] ومتعملش restart لـ [[expo start]]. وتغيّر [[android.package]] بتاع production بعد النشر.`
+الـ theme (فاتح/غامق): [[useColorScheme()]] بيرجّع [['light']] أو [['dark']]، وبتختار ألوانك منه. والقالب فيه [[use-theme]] hook بيعمل كده.`,
+            when: R`StyleSheet للستايلات الثابتة، و inline للحاجات اللي بتتحسب (عرض من state، لون من prop). ولو الفريق بيحب Tailwind: NativeWind (آخر درس في الـ category دي).`,
+            mistakes: R`[[fontSize: '16px']] أو [[padding: '10px']]: غلط، أرقام بس. وتستنى [[color]] على [[View]] يأثّر على الـ Text اللي جواه: مفيش وراثة. و [[margin: 'auto']] للتوسيط: استخدم [[alignItems]] و [[justifyContent]].`
           },
+          teach: R`## الفكرة: الستايل objects، والدمج array
+
+[[Badge]] شارة صغيرة (pill) بنوعين ألوان. الستايلات متجمعة تحت في [[StyleSheet.create]]، والـ component بيختار منها، ولو النوع [['danger']] بيضيف ستايل فوق الأساسي. مفيش classes ولا cascade: كل عنصر ستايله مكتوب عليه صريح.
+
+> اتجرّب على Expo SDK 57 على الويب في Chrome في صندوق عرضه 300، و [[npx tsc --noEmit]] للأخطاء.
+
+---
+
+## ١. [[export function Badge({ label, tone = 'info' }: { label: string; tone?: 'info' | 'danger' })]]
+
+- [[tone = 'info']]: قيمة افتراضية. لو مبعتش [[tone]] بيبقى [['info']].
+- [[tone?: 'info' | 'danger']]: النوع union: القيمة لازم واحدة من الاتنين دول بالظبط. لو كتبت [[tone="warning"]]، TypeScript يطلّع خطأ.
+
+---
+
+## ٢. [[<View style={[styles.badge, tone === 'danger' && styles.danger]}>]]
+
+[[style]] هنا array:
+
+1. [[styles.badge]]: الأساسي، دايمًا.
+2. [[tone === 'danger' && styles.danger]]: لو danger النتيجة [[styles.danger]]، غير كده [[false]]، و RN بيتجاهل الـ [[false]].
+
+الدمج من الشمال لليمين، واللي بعد بيكسب: [[styles.danger]] فيه [[backgroundColor]] بس، فبيغيّر اللون ويسيب الباقي زي ما هو.
+
+---
+
+## ٣. [[<Text style={styles.text}>{label}</Text>]]
+
+النص ليه ستايل لوحده. لو حطيت [[color]] على الـ View، النص **مش** هياخده: View مبيورّثش.
+
+---
+
+## ٤. [[const styles = StyleSheet.create({ ... })]]
+
+برّه الـ component، فالـ object بيتعمل مرة واحدة مش مع كل render. و [[StyleSheet.create]] بيخلي TypeScript يفحص كل ستايل.
+
+### [[badge]]
+
+| الخاصية | معناها |
+|---|---|
+| [[alignSelf: 'flex-start']] | العنصر ده بالذات ميتمدّش بعرض أبوه، ياخد قد محتواه |
+| [[paddingHorizontal: 10]] | padding يمين وشمال (اختصار مش موجود في CSS) |
+| [[paddingVertical: 4]] | padding فوق وتحت |
+| [[borderRadius: 999]] | رقم أكبر من نص الارتفاع = الطرفين نص دايرة (pill) |
+| [[backgroundColor: '#dbeafe']] | أزرق فاتح |
+
+### [[danger]] و [[text]]
+
+- [[danger: { backgroundColor: '#fee2e2' }]]: أحمر فاتح.
+- [[text: { fontSize: 12, fontWeight: '600', color: '#1e293b' }]]: خط صغير تقيل، لونه رمادي غامق.
+
+---
+
+## ٥. القياس
+
+~~~text الناتج (Chrome، الأب عرضه 300 وفيه padding 10)
+<Badge label="جديد" />:                width=43    height=24   bg=rgb(219, 234, 254)   padding=4px 10px   radius=999px
+<Badge label="ملغي" tone="danger" />:  width=48.1  height=24   bg=rgb(254, 226, 226)
+النص:                                  font-size=12px   font-weight=600   color=rgb(30, 41, 59)
+~~~
+
+- العرض 43 = 10 + عرض كلمة «جديد» (حوالي 23) + 10. الارتفاع 24 = 4 + 16 (سطر النص) + 4.
+- الـ danger أخد اللون الأحمر بس، والـ padding والـ radius زي ما هما.
+
+على الويب كمان RN بيحوّل كل ستايل لـ CSS class صغيرة (زي [[r-alignSelf-k200y]])، بس ده تفصيلة داخلية: انت مبتكتبش classes.
+
+---
+
+## ٦. التجربة الأولى: من غير [[alignSelf]]
+
+~~~text الناتج (Chrome)
+width=280   height=24
+~~~
+
+280 = 300 − 10 − 10، يعني اتمدّ بعرض أبوه كله. ليه؟ الأب View عمودي، و [[alignItems]] الافتراضي [[stretch]]: كل ولد بيتمدّ على المحور التاني (العرض). [[alignSelf]] بيكسر القاعدة دي للعنصر ده بس.
+
+---
+
+## ٧. التجربة التانية: ستايل غلط و TypeScript
+
+كتبت الستايلات دي في ملف وشغّلت [[npx tsc --noEmit]] ([[--noEmit]] = افحص الأنواع بس، متطلّعش ملفات):
+
+~~~text الكود
+a: { padding: '10px' },
+b: { 'background-color': 'red' },
+c: { fontWeight: 700 },
+d: { fontSize: '16px' },
+~~~
+
+~~~text الناتج
+BadBadge.tsx(4,8): error TS2322: Type '"10px"' is not assignable to type 'DimensionValue | undefined'.
+BadBadge.tsx(5,8): error TS2353: Object literal may only specify known properties, and ''background-color'' does not exist in type 'ViewStyle | ImageStyle | TextStyle'.
+BadBadge.tsx(7,8): error TS2322: Type 'string' is not assignable to type 'number'.
+~~~
+
+| السطر | ليه |
+|---|---|
+| [[padding: '10px']] | [[DimensionValue]] = رقم، أو نسبة string زي [['50%']]، أو [['auto']]. مفيش px |
+| [['background-color']] | الخاصية مش موجودة. الاسم [[backgroundColor]] |
+| [[fontWeight: 700]] | **مفيش خطأ**: النوع بيقبل 100 لحد 900 رقم أو string |
+| [[fontSize: '16px']] | [[fontSize]] رقم بس |
+
+و [[(4,8)]] يعني سطر 4 حرف 8 في الملف.
+
+---
+
+## الخلاصة
+
+| CSS | React Native |
+|---|---|
+| [[background-color]] | [[backgroundColor]] |
+| [[padding: 10px]] | [[padding: 10]] |
+| [[padding: 4px 10px]] | [[paddingVertical: 4, paddingHorizontal: 10]] |
+| [[class="badge danger"]] | [[style={[styles.badge, isDanger && styles.danger]}]] |
+| وراثة من الأب | مفيش (إلا Text جوه Text) |
+| [[:hover]] و media queries | مفيش: [[pressed]] و [[useWindowDimensions]] |`,
           lines: [
-            "نوع الـ config.",
-            "الـ variant من env (بيتقري وقت الـ build).",
-            "لاحقة للـ package في غير الإنتاج.",
-            "الـ config.",
-            "اسم مختلف يبان تحت الأيقونة.",
-            "نفس المشروع على EAS.",
-            "النسخة اللي بتظهر للمستخدم.",
-            "للـ EAS Update (القسم الجاي).",
-            "package مختلف = تطبيق منفصل على الموبايل.",
-            "نفس الكلام لـ iOS.",
+            "StyleSheet من react-native.",
+            "badge بنوعين ألوان.",
+            "بيرجّع JSX.",
+            R`array ستايلات: الأساسي، والـ danger لو الشرط صح ([[false]] بيتجاهل).`,
+            "النص.",
             "قفلة.",
-            "export default."
+            "قفلة الـ return.",
+            "قفلة الدالة.",
+            "كل الستايلات في مكان واحد برّه الـ component.",
+            "الـ badge.",
+            "ميتمدّش بعرض الأب: ياخد قد محتواه.",
+            "padding يمين وشمال.",
+            "padding فوق وتحت.",
+            "رقم كبير = pill كاملة.",
+            "لون الخلفية.",
+            "قفلة.",
+            "اللون البديل.",
+            "ستايل النص (مش بيتورث من الـ View).",
+            "قفلة."
           ],
-          sol: R`مع [[APP_VARIANT=preview]]: [[name: 'Tasks (preview)']] و [[android.package: 'com.example.tasks.preview']]. من غيره: [[Tasks]] و [[com.example.tasks]].
+          sol: R`من غير [[alignSelf: 'flex-start']] الـ badge بيتمدّ بعرض الأب كله، لأن افتراضي [[alignItems]] في RN هو [[stretch]] (زي الويب في flex column). [[alignSelf]] بيخلي العنصر ده بالذات ياخد قد محتواه.
 
-[[SENTRY_AUTH_TOKEN]] بيستخدمه الـ build عشان يرفع source maps لـ Sentry، يعني مكانه وقت الـ build بس. لو بقى [[EXPO_PUBLIC_]]، هيتحط نص صريح جوه الـ JS bundle في كل موبايل، وأي حد يقدر يستخدمه يرفع أو يمسح في مشروعك على Sentry. عرّفه كـ [[secret]] في EAS env.`
-        }
-      ]
-    },
-    {
-      t: "التحديثات OTA بـ EAS Update",
-      l: 3,
-      n: "تصلّح bug في JS وتوصّله للمستخدمين في دقايق من غير متجر، وتعرف إمتى مينفعش",
-      items: [
+[[padding: '10px']]: TypeScript بيقول إن النوع مش متوافق مع [[DimensionValue]]، ولو شغّلته من غير typecheck الـ padding مش هيتطبق. و [[background-color]]: TS بيقول إن الخاصية مش موجودة في [[ViewStyle]] (Object literal may only specify known properties).`
+        },
         {
-          cmd: "eas update",
-          title: "eas update: تبعت JS جديد للتطبيقات المتركبة من غير review",
-          desc: R`التطبيق فيه جزئين: native (اتبنى واتراجع في المتجر) و JS bundle. [[expo-updates]] بيخلي التطبيق يسأل سيرفر EAS وهو بيفتح: «فيه bundle أحدث لنسختي؟»، ولو فيه ينزّله ويستخدمه (افتراضيًا في الفتحة الجاية). [[eas update --channel production --environment production --message "fix"]] بيعمل export للـ JS ويرفعه.
+          cmd: "flexbox في RN",
+          title: "flexbox في RN: column افتراضي و flex: 1",
+          desc: R`كل [[View]] في RN هو flex container من غير ما تكتب [[display: flex]]، والفرق عن الويب في الافتراضيات: [[flexDirection]] افتراضيًا [[column]] (مش row)، و [[alignContent]] [[flex-start]]، و [[flexShrink]] 0. و [[flex: 1]] معناها «خد كل المساحة الفاضية» وده أكتر سطر هتكتبه.
 
-كل build مربوط بـ [[channel]] (من eas.json)، وكل update بيروح على branch، والـ channel بيشاور على branch. وفيه rollout بنسبة ([[--rollout-percentage 10]]) و rollback ([[eas update:republish]]).`,
-          example: R`npx expo install expo-updates
-eas update:configure
-eas update --channel preview --environment preview --message "تجربة شاشة الطلبات"
-eas update --channel production --environment production --message "fix: crash في السلة" --rollout-percentage 10
-eas update:list
-eas update:republish --group <update-group-id> --destination-channel production
-eas channel:rollout production --action view`,
-          try: R`اعمل preview build فيه [[expo-updates]] وركّبه. غيّر نص في شاشة، واعمل [[eas update --channel preview]]، واقفل التطبيق وافتحه مرتين. إمتى التغيير ظهر؟ وبعدين ضيف مكتبة native وحاول تعمل update: إيه اللي هيحصل للتطبيق المتركب؟`,
+باقي الـ properties زي CSS: [[justifyContent]] على المحور الأساسي، و [[alignItems]] على المحور التاني، و [[gap]] و [[flexWrap]] و [[position: 'absolute']].`,
+          example: R`import { Text, View } from 'react-native';
+
+export default function ChatScreen() {
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ height: 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 }}>
+        <Text>رجوع</Text>
+        <Text style={{ fontWeight: '600' }}>سارة</Text>
+        <Text>⋯</Text>
+      </View>
+      <View style={{ flex: 1, backgroundColor: '#f1f5f9' }} />
+      <View style={{ flexDirection: 'row', gap: 8, padding: 8 }}>
+        <View style={{ flex: 1, height: 44, borderRadius: 22, backgroundColor: '#e2e8f0' }} />
+        <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#2563eb' }} />
+      </View>
+    </View>
+  );
+}`,
+          try: R`شيل [[flex: 1]] من أول View (الجذر) وشوف الشاشة. وبعدين شيله من الـ View الرمادي في النص. وأخيرًا غيّر الـ footer لـ [[flexDirection: 'column']] وشوف إيه اللي اتكسر.`,
+          flag: "script",
           deep: {
-            why: R`bug في حساب السلة اكتشفته يوم الخميس بالليل: من غير OTA، بترفع build وتستنى review من Apple (ساعات لأيام) والمستخدمين ينزّلوا التحديث. مع EAS Update التصليح يوصل في دقايق. ده من أكبر مزايا RN/Expo قدام native و Flutter في الإنتاج.`,
-            how: R`[[eas update]] بيشغّل [[expo export]] (نفس اللي شغّلته في الـ lab للـ android والويب)، ويرفع الـ bundle والـ assets، ويسجّلهم كـ update group على branch. [[--environment]] بيحمّل EAS env variables عشان [[EXPO_PUBLIC_*]] تبقى نفس قيم الـ build (إجباري من SDK 55).
+            why: R`كل layout في RN flexbox، مفيش grid ولا float. أغلب مشاكل «الشاشة فاضية» أو «العنصر مش ظاهر» سببها [[flex: 1]] ناقص في مكان، أو إنك متوقع row والافتراضي column.`,
+            how: R`الـ layout بيتحسب بـ Yoga (مكتبة C++ من Meta بتطبق flexbox). [[flex: 1]] في RN مش زي [[flex: 1]] في CSS بالظبط: رقم موجب يعني [[flexGrow]] بالرقم ده و [[flexBasis: 0]]، و [[flexShrink]] بيفضل على الافتراضي 0 (ده من كود Yoga نفسه؛ على الويب react-native-web بيحوّلها [[flex: 1 1 0%]])، فالعناصر اللي عليها flex بتتقسم المساحة الفاضية بالنسبة (1 و 2 يعني تلت وتلتين).
 
-التطبيق وهو بيفتح بيبعت [[runtimeVersion]] و [[channel]] بتوعه. السيرفر بيرجّع آخر update على الـ branch المربوط بالـ channel ده، وبـ نفس الـ runtimeVersion بس (الدرس الجاي). افتراضيًا ([[checkAutomatically: ON_LOAD]] و [[fallbackToCacheTimeout: 0]]) التطبيق بيفتح بالـ bundle الموجود فورًا وبينزّل الجديد في الخلفية، فالتغيير بيظهر في الفتحة اللي بعدها. ولو عايز تطبّقه فورًا: [[Updates.checkForUpdateAsync()]] و [[fetchUpdateAsync()]] و [[reloadAsync()]] (مثلًا بعد ما تسأل المستخدم).
+عشان [[flex: 1]] تشتغل، الأب لازم يكون ليه حجم. الجذر بتاع الشاشة بياخد حجم الشاشة من الـ navigator، فأول View لازم [[flex: 1]] عشان يمدّ، وإلا ارتفاعه قد محتواه، والولد اللي عليه [[flex: 1]] جوه أب ارتفاعه صفر = صفر.
 
-الـ rollout: جزء من الأجهزة بياخد الـ update الجديد والباقي القديم، وتزوّد النسبة لو مفيش crashes. والـ rollback: [[update:republish]] لـ update قديم، أو [[eas update:roll-back-to-embedded]] يرجّع للـ bundle اللي جوه الـ build.
+[[position: 'absolute']] بيطلّع العنصر من الـ flow، ومكانه بالنسبة للأب المباشر (مفيش حاجة اسمها relative لازم تكتبها، كل حاجة relative افتراضيًا). و [[zIndex]] شغال بين الإخوات.
 
-والقانون: المتاجر بتسمح بتحديث JS/assets اللي مبيغيرش الغرض الأساسي للتطبيق. متستخدمش OTA عشان تعدّي feature كانت هتترفض في الـ review.
-
-مجربتش [[eas update]] نفسه (محتاج حساب)، بس جزء الـ export شغال في الـ lab، والـ flags من [[eas update --help]] على eas-cli 24.8.`,
-            when: R`bug fixes و تعديلات UI و نصوص و منطق JS. مش لأي تغيير native (مكتبة native جديدة، أو صلاحية، أو أيقونة، أو ترقية SDK): دول build جديد.`,
-            mistakes: R`update بـ JS بينادي مكتبة native مش موجودة في الـ build المتركب: crash عند كل المستخدمين. (الـ runtimeVersion موجود عشان يمنع ده.) وتنسى [[--environment]] فالـ API URL يبقى undefined. وتنشر 100% على طول من غير rollout. وتنسى إن المستخدم محتاج يفتح التطبيق مرتين عشان يشوف التحديث بالإعدادات الافتراضية.`
+على الـ RTL: [[flexDirection: 'row']] بيتقلب لوحده لما التطبيق يبقى RTL، وده من أهم مزايا RN مع العربي (درس RTL في المستوى ٢).`,
+            when: R`دايمًا. القاعدة العملية: الشاشة [[flex: 1]]، والجزء اللي بيتمدّ (المحتوى، أو الـ list) [[flex: 1]]، والباقي (header و footer) حجمه ثابت أو قد محتواه.`,
+            mistakes: R`تنسى [[flex: 1]] على الجذر فالشاشة فاضية أو الـ list مش بتعمل scroll. وتكتب [[display: 'flex']] (ملهاش لازمة) أو [[display: 'grid']] (مش موجود). وتستخدم [[width: '100%']] في row عشان عنصر ياخد الباقي: ده بيزق التاني برّه الشاشة، الصح [[flex: 1]]. و [[height: '100%']] جوه ScrollView: مفيش ارتفاع ثابت تتحسب منه النسبة.`
           },
+          teach: R`## الفكرة: شاشة شات = ٣ صفوف، واحد منهم بيتمدّ
+
+الشاشة مقسومة: header ارتفاعه ثابت فوق، ومنطقة الرسايل في النص بتاخد كل اللي فاضل، و footer تحت قد محتواه. كل ده بـ flexbox، ومن غير ما تكتب [[display: flex]] لأن كل View أصلًا flex.
+
+> اتجرّب على Expo SDK 57 على الويب في Chrome بشاشة 390×844 (من غير header للـ navigator)، وكل الأرقام من [[getBoundingClientRect]]. الـ layout على الموبايل بيتحسب بمكتبة Yoga بنفس القواعد.
+
+---
+
+## ١. الجذر: [[<View style={{ flex: 1 }}>]]
+
+[[flex: 1]] معناها «خد كل المساحة الفاضية عند أبوك». أبو أول View في الشاشة هو الـ navigator (أو الشاشة نفسها)، فالجذر بياخد الشاشة كلها.
+
+### [[flex: 1]] بالظبط إيه؟
+
+| | [[flexGrow]] | [[flexShrink]] | [[flexBasis]] |
+|---|---|---|---|
+| RN على الموبايل (Yoga) | 1 | 0 | 0 |
+| react-native-web (اتقاست) | 1 | 1 | 0% |
+
+الأهم [[flexBasis: 0]]: العنصر بيبدأ من حجم صفر على المحور الأساسي، وبعدين [[flexGrow]] بيدّيله نصيبه من المساحة الفاضية. فـ [[flex: 1]] و [[flex: 2]] جنب بعض = تلت وتلتين.
+
+---
+
+## ٢. الـ header
+
+~~~text ChatScreen.tsx
+<View style={{ height: 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16 }}>
+~~~
+
+| الخاصية | معناها هنا |
+|---|---|
+| [[height: 56]] | ارتفاع ثابت |
+| [[flexDirection: 'row']] | الأولاد جنب بعض. المحور الأساسي بقى الأفقي |
+| [[alignItems: 'center']] | على المحور **التاني** (الرأسي هنا): في النص |
+| [[justifyContent: 'space-between']] | على المحور **الأساسي** (الأفقي): أول واحد على طرف، وآخر واحد على الطرف التاني، والباقي متوزع بينهم |
+| [[paddingHorizontal: 16]] | 16 يمين وشمال |
+
+وجواه ٣ [[Text]]: «رجوع»، و «سارة» بخط [[fontWeight: '600']]، و «⋯» (زرار قايمة).
+
+---
+
+## ٣. منطقة الرسايل: [[<View style={{ flex: 1, backgroundColor: '#f1f5f9' }} />]]
+
+[[flex: 1]] تاني: خد كل اللي فاضل بعد الـ header والـ footer. و [[/>]] في الآخر يعني View فاضي من غير أولاد (هنا مكان الرسايل، في التطبيق الحقيقي FlatList).
+
+---
+
+## ٤. الـ footer
+
+~~~text ChatScreen.tsx
+<View style={{ flexDirection: 'row', gap: 8, padding: 8 }}>
+  <View style={{ flex: 1, height: 44, borderRadius: 22, backgroundColor: '#e2e8f0' }} />
+  <View style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: '#2563eb' }} />
+</View>
+~~~
+
+- row، ومسافة 8 بين الاتنين، و padding 8.
+- خانة الكتابة [[flex: 1]]: خد العرض الباقي.
+- زرار الإرسال [[width: 44]]: ثابت. و [[borderRadius: 22]] نص الـ 44 = دايرة.
+- مفيش ارتفاع للـ footer نفسه: قد محتواه.
+
+---
+
+## ٥. القياس
+
+~~~text الناتج (Chrome، 390x844)
+root:    y=0    w=390  h=844
+header:  y=0    w=390  h=56
+mid:     y=56   w=390  h=728
+footer:  y=784  w=390  h=60
+input:   x=8    y=792  w=322  h=44
+send:    x=338  y=792  w=44   h=44
+~~~
+
+| الرقم | جه منين |
+|---|---|
+| mid = 728 | 844 − 56 (header) − 60 (footer) |
+| footer = 60 | 8 + 44 + 8 |
+| input = 322 | 390 − 8 − 8 (padding) − 8 (gap) − 44 (الزرار) |
+| send x = 338 | 8 + 322 + 8 |
+
+---
+
+## ٦. التجربة: شيل [[flex: 1]] من ٣ أماكن
+
+~~~text من غير flex: 1 على الجذر
+root:    h=116
+header:  y=0   h=56
+mid:     y=56  h=0
+footer:  y=56  h=60
+~~~
+
+الجذر بقى طوله قد محتواه (56 + 0 + 60 = 116). مفيش مساحة فاضية، فالـ mid بـ [[flexBasis: 0]] فضل صفر، والـ footer طلع لفوق تحت الـ header على طول.
+
+~~~text من غير flex: 1 على الـ mid
+root:    h=844
+mid:     y=56  h=0
+footer:  y=56  h=60
+~~~
+
+الجذر لسه 844، بس مفيش حد بياخد الفاضي: الـ footer لزق في الـ header، وتحته 728 فاضيين.
+
+~~~text الـ footer بـ flexDirection: 'column'
+footer:  y=776  h=68
+input:   x=8  y=784  w=374  h=0
+send:    x=8  y=792  w=44   h=44
+~~~
+
+خانة الكتابة **اختفت** (ارتفاعها 0) مع إن مكتوب [[height: 44]]. ليه؟ [[flex: 1]] بيشتغل على المحور الأساسي، وفي column المحور الأساسي هو الارتفاع. فـ [[flexBasis: 0]] كسب على [[height]]، والـ footer ارتفاعه قد محتواه فمفيش مساحة فاضية تكبر فيها. وفي نفس الوقت عرضها بقى 374 (اتمدّت بـ [[stretch]] على المحور التاني)، والزرار نزل تحتها عند x=8. و 68 = 8 + 0 + 8 (gap) + 44 + 8.
+
+---
+
+## الخلاصة
+
+| القاعدة | ليه |
+|---|---|
+| الافتراضي [[column]] مش [[row]] | عكس الويب |
+| [[justifyContent]] = المحور الأساسي، [[alignItems]] = التاني | بيتبدلوا لما [[flexDirection]] يتغير |
+| [[flex: 1]] على الجذر | من غيره مفيش مساحة فاضية يتوزع منها |
+| [[flex: 1]] على الجزء اللي بيتمدّ بس | الـ header والـ footer حجمهم ثابت أو قد محتواهم |
+| [[flex: 1]] في row لعنصر ياخد الباقي | مش [[width: '100%']] اللي بيزق التاني برّه |`,
           lines: [
-            "المكتبة اللي جوه التطبيق وبتسأل عن التحديثات.",
-            R`بيضيف [[updates.url]] و [[runtimeVersion]] في app.json و [[channel]] في eas.json.`,
-            "update لقناة الـ preview.",
-            "update للإنتاج لـ 10% من الأجهزة الأول.",
-            "القايمة.",
-            "rollback: ترجّع update قديم كأنه الأحدث.",
-            "حالة الـ rollout على القناة."
+            "الـ components.",
+            "شاشة شات.",
+            "بيرجّع JSX.",
+            "الجذر ياخد الشاشة كلها.",
+            "header: ارتفاع ثابت، و row، والعناصر في النص رأسيًا ومتوزعة أفقيًا.",
+            "يمين/شمال حسب اتجاه اللغة.",
+            "العنوان.",
+            "زرار القايمة.",
+            "قفلة الـ header.",
+            R`منطقة الرسايل: [[flex: 1]] تاخد كل اللي فاضل.`,
+            "footer: row بمسافة بين العناصر.",
+            "خانة الكتابة تاخد العرض الباقي.",
+            "زرار الإرسال عرضه ثابت.",
+            "قفلة الـ footer.",
+            "قفلة الجذر.",
+            "قفلة الـ return.",
+            "قفلة الدالة."
           ],
-          sol: R`بالإعدادات الافتراضية: أول فتحة بعد الـ update التطبيق بيفتح بالقديم وبينزّل الجديد في الخلفية، والفتحة التانية بيظهر التغيير. لو عايزه يبان أسرع، اعمل [[checkForUpdateAsync]] و [[fetchUpdateAsync]] و [[reloadAsync]] بنفسك.
+          sol: R`من غير [[flex: 1]] على الجذر: الـ header والـ footer يظهروا ورا بعض فوق، والمنطقة الرمادية تختفي (ارتفاعها صفر)، لأن الجذر بقى ارتفاعه قد محتواه، فمفيش «مساحة فاضية» يوزعها.
 
-ولو ضفت مكتبة native وعملت update بنفس الـ runtimeVersion: التطبيق المتركب هياخد الـ JS الجديد اللي بيستورد module مش موجود، فيقع بـ «Cannot find native module» عند الناس. لو الـ runtimeVersion بسياسة [[fingerprint]] (أو زوّدت الـ version مع [[appVersion]])، الـ update هيتسجل لـ runtime جديد، والتطبيقات القديمة مش هتاخده أصلًا، وده الصح: المكتبة الـ native محتاجة build جديد.`
+من غير [[flex: 1]] على الـ View الرمادي: الـ footer يطلع لتحت الـ header على طول وتحته فراغ أبيض.
+
+و الـ footer بـ [[column]]: الزرار ينزل تحت، وخانة الكتابة تختفي (على الويب اتقاست ارتفاعها 0 مع إن مكتوب [[height: 44]])، لأن [[flex: 1]] بقى على المحور الرأسي: [[flexBasis: 0]] بيلغي الـ height، والـ footer ارتفاعه قد محتواه فمفيش مساحة فاضية تكبر فيها. وده بيوضّح إن [[flex]] بيشتغل على المحور الأساسي بس.`
         },
         {
-          cmd: "runtimeVersion",
-          title: "runtimeVersion: مين ياخد أنهي update، وليه ده بيمنع الـ crash",
-          desc: R`[[runtimeVersion]] عقد بين الـ build والـ update: «الـ JS ده متوافق مع الـ native ده». التطبيق بياخد updates بنفس الـ runtimeVersion بتاعه بس. لو غيّرت أي حاجة native، لازم الـ runtimeVersion يتغير، وإلا update جديد ممكن يوصل لـ build قديم ويوقعه.
+          cmd: "Platform و الأبعاد",
+          title: "Platform.OS و useWindowDimensions: كود لكل نظام وكل شاشة",
+          desc: R`[[Platform.OS]] بيقولك [['ios']] ولا [['android']] ولا [['web']]، و [[Platform.select({ ios: ..., android: ..., default: ... })]] بيختار قيمة. ولو الفرق كبير، اعمل ملفين: [[Button.ios.tsx]] و [[Button.android.tsx]]، و Metro هيختار المناسب لوحده.
 
-السياسات: [[{ policy: 'appVersion' }]] (الافتراضي بعد [[update:configure]]): الـ runtime هو [[version]] من app.json، فلازم تفتكر تزوّده مع كل تغيير native. [[{ policy: 'fingerprint' }]]: Expo بيحسب hash من كل حاجة native (المكتبات، والـ config، والـ plugins)، فبيتغير لوحده لما حاجة native تتغير. أو string ثابت بتديره بإيدك.`,
-          example: R`// app.json -> expo
-// "runtimeVersion": { "policy": "fingerprint" }
-// "updates": { "url": "https://u.expo.dev/<projectId>" }
-npx @expo/fingerprint fingerprint:generate --platform android
-eas fingerprint:compare
-eas update --channel production --environment production --message "fix: السعر بالعملة"
-eas build -p android --profile production`,
-          try: R`اكتب سيناريو: build 1.3.0 على المتجر بـ [[appVersion]]. ضفت [[expo-camera]] ونسيت تزوّد الـ version، وعملت [[eas update]]. إيه اللي هيحصل للمستخدمين؟ وإيه اللي كان هيحصل لو السياسة [[fingerprint]]؟`,
+ومفيش media queries: [[useWindowDimensions()]] بيدّيك [[width]] و [[height]] و [[fontScale]]، وبيتحدث لما الشاشة تلف أو تتقسم، فتعمل layout مختلف للتابلت بـ if عادي.`,
+          example: R`import { Platform, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+
+export function ProductGrid({ names }: { names: string[] }) {
+  const { width, fontScale } = useWindowDimensions();
+  const columns = width >= 768 ? 3 : 2;
+  const itemWidth = (width - 16 * (columns + 1)) / columns;
+  return (
+    <View style={styles.grid}>
+      {names.map((n) => (
+        <View key={n} style={[styles.card, { width: itemWidth }]}>
+          <Text numberOfLines={fontScale > 1.3 ? 2 : 1}>{n}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, padding: 16 },
+  card: {
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } },
+      android: { elevation: 3 },
+      default: { boxShadow: '0 2px 6px rgba(0,0,0,0.1)' },
+    }),
+  },
+});`,
+          try: R`شغّل التطبيق على الويب ([[w]] في expo start) وصغّر وكبّر نافذة المتصفح: عدد الأعمدة بيتغير؟ وبعدين كبّر حجم الخط من إعدادات الموبايل (Accessibility) وشوف [[fontScale]].`,
+          flag: "script",
           deep: {
-            why: R`أخطر غلطة في OTA: update بيوقع التطبيق عند كل المستخدمين، والأسوأ إن التصليح نفسه لازم يوصل بـ update تاني، ولو التطبيق بيقع قبل ما يلحق ينزّل، مفيش حل غير build جديد من المتجر. runtimeVersion هو خط الدفاع ده.`,
-            how: R`وقت الـ build، الـ runtimeVersion بيتحسب ويتحط جوه التطبيق. وقت [[eas update]]، بيتحسب تاني من المشروع الحالي ويتسجل مع الـ update. السيرفر بيدّي كل تطبيق الـ updates اللي بنفس القيمة بتاعته بس.
+            why: R`«كود واحد» مش معناه «مفيش فروق». الظل، وشكل الـ header، والكيبورد، والصلاحيات بيختلفوا. وفيه تابلت وموبايلات صغيرة ومستخدمين مكبّرين الخط لأقصى حد. لازم تعرف تتعامل مع ده من غير ما تكرر الشاشة.`,
+            how: R`[[Platform]] ثابت وقت التشغيل، و Metro بيعمل dead-code elimination للـ [[Platform.OS === 'ios']] في الـ build بتاع Android. وامتدادات الملفات: [[.ios.tsx]] و [[.android.tsx]] و [[.native.tsx]] (الاتنين) و [[.web.tsx]]، و الـ import بيكون من غير الامتداد ([[import { Button } from './Button']]). القالب نفسه فيه [[app-tabs.web.tsx]] و [[app-tabs.tsx]] بالشكل ده.
 
-[[appVersion]]: بسيط ومفهوم (1.3.0)، بس معتمد على إنك تفتكر. لو زوّدت [[version]] لكل release حتى لو JS بس، التطبيقات القديمة مش هتاخد updates الإصدار الجديد، وده ممكن يكون مقصود.
+[[useWindowDimensions]] أحسن من [[Dimensions.get('window')]] لأنه hook وبيعمل re-render لما الحجم يتغير (تلف الشاشة، أو split screen، أو الويب). [[fontScale]] حجم الخط اللي المستخدم اختاره: لو 1.5 يبقى كل [[fontSize]] بيتضرب في 1.5 تلقائيًا، فالتصميم لازم يستحمل.
 
-[[fingerprint]]: [[@expo/fingerprint]] (dependency في [[expo]] نفسه، شفتها في الـ lab) بيعمل hash من [[package.json]] للمكتبات الـ native، والـ config plugins، وملفات native لو موجودة، والـ app config اللي بيأثر على native. تغيير JS بس = نفس الـ fingerprint = الـ update يوصل. تغيير native = fingerprint جديد = محتاج build. [[eas fingerprint:compare]] بيوريك الفرق بين build و update أو بين commits.
-
-ومع الـ CI: فيه workflows بتقارن الـ fingerprint، ولو اتغير تعمل build، ولو لأ تعمل update بس.
-
-جربت ده في الـ lab بـ [[npx @expo/fingerprint fingerprint:generate]]: تعديل في ملف component (JS) طلّع نفس الـ hash بالظبط، وتغيير [[orientation]] في app.json (إعداد native) طلّع hash مختلف. و [[eas fingerprint:compare]] محتاج حساب فمجربتوش.`,
-            when: R`fingerprint لأغلب المشاريع الجديدة (بيشيل عنك التذكر). appVersion لو عايز تحكم واضح بالأرقام وفريقك منظّم. و string يدوي لو عندك فولدرات native بتعدّل فيها بإيدك.`,
-            mistakes: R`[[appVersion]] ومكتبة native جديدة من غير ما تزوّد [[version]]: crash بـ OTA. و [[fingerprint]] وتستغرب إن الـ update مش واصل للناس: حاجة native اتغيرت (حتى نسخة patch لمكتبة) فالـ runtime اختلف، ومحتاج build. وتعمل update قبل ما الـ build الجديد يتنشر فعلًا في المتجر.`
+الظل: iOS بيستخدم [[shadow*]]، و Android القديم [[elevation]]، و [[boxShadow]] الجديد (string زي CSS) شغال على الاتنين مع الـ New Architecture، فممكن تبسّط لـ [[boxShadow]] بس لو مش هتدعم حاجة قديمة.`,
+            when: R`[[Platform.select]] للفروق الصغيرة (ظل، padding، behavior الكيبورد). ملفات [[.ios]]/[[.android]] للفروق الكبيرة. و [[useWindowDimensions]] لأي layout بيتغير مع الحجم.`,
+            mistakes: R`[[Dimensions.get('window')]] برّه الـ component: القيمة بتتحسب مرة ومش بتتحدث. و [[if (Platform.OS === 'ios')]] منتشرة في كل حتة بدل ما تتجمع في component واحد. و [[allowFontScaling={false}]] على كل النصوص عشان التصميم ميبوظش: كده بتكسر الـ accessibility لناس محتاجاها فعلًا، الأحسن [[maxFontSizeMultiplier]].`
           },
+          teach: R`## الفكرة: grid بيعدّ أعمدته من عرض الشاشة، وظل لكل نظام
+
+[[ProductGrid]] بيعرض أسامي منتجات في كروت: عمودين على الموبايل و ٣ على التابلت. مفيش media queries، فبنسأل عن العرض بـ [[useWindowDimensions]] ونحسب بـ JavaScript عادي. والظل بيختلف بين iOS و Android، فبنختار بـ [[Platform.select]].
+
+> اتجرّب على Expo SDK 57 على الويب في Chrome: فتحت الصفحة بعرض 390، وبعدين غيّرت حجم النافذة لـ 768 و 767 وقست الكروت. على الويب [[Platform.OS]] بـ [['web']]، فظل iOS و Android من الـ docs.
+
+---
+
+## ١. الـ import
+
+[[Platform]] و [[StyleSheet]] و [[Text]] و [[useWindowDimensions]] و [[View]]، كلهم من [[react-native]].
+
+---
+
+## ٢. [[const { width, fontScale } = useWindowDimensions();]]
+
+[[useWindowDimensions()]] hook بيرجّع object فيه:
+
+| الخاصية | معناها |
+|---|---|
+| [[width]] و [[height]] | مقاس النافذة بالـ dp |
+| [[scale]] | كام بكسل حقيقي في الـ dp الواحد (2 أو 3 على أغلب الموبايلات) |
+| [[fontScale]] | حجم الخط اللي المستخدم اختاره في الإعدادات (1 = عادي) |
+
+وكلمة hook معناها إن الـ component بيعمل re-render لوحده لما المقاس يتغير (تلف الموبايل، أو split screen، أو تصغّر نافذة المتصفح). إحنا فكّينا [[width]] و [[fontScale]] بس.
+
+---
+
+## ٣. [[const columns = width >= 768 ? 3 : 2;]]
+
+768 أو أعرض (تابلت) = ٣ أعمدة، أصغر = ٢.
+
+---
+
+## ٤. [[const itemWidth = (width - 16 * (columns + 1)) / columns;]]
+
+من جوه لبرة:
+
+1. [[columns + 1]]: عدد المسافات. ٢ عمود = ٣ مسافات (شمال، وبينهم، ويمين).
+2. [[16 * (...)]]: كل مسافة 16، فده مجموعهم.
+3. [[width - ...]]: العرض الباقي للكروت.
+4. [[/ columns]]: نصيب الكارت الواحد.
+
+---
+
+## ٥. الـ JSX
+
+- [[{names.map((n) => ( ... ))}]]: كارت لكل اسم.
+- [[style={[styles.card, { width: itemWidth }]}]]: الستايل الثابت + العرض المحسوب. ده المكان الطبيعي للـ inline style: قيمة بتتحسب.
+- [[key={n}]]: الاسم نفسه مفتاح (لازم يكونوا مش متكررين).
+- [[numberOfLines={fontScale > 1.3 ? 2 : 1}]]: لو الخط مكبّر أكتر من 1.3 مرة اسمح بسطرين، غير كده سطر.
+
+---
+
+## ٦. الستايلات
+
+### [[grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, padding: 16 }]]
+
+row، و [[flexWrap: 'wrap']]: لما الصف يتملى، الكارت اللي بعده ينزل سطر جديد. ده grid بسيط من غير [[display: grid]] (مش موجود في RN).
+
+### [[...Platform.select({ ... })]]
+
+~~~text ProductGrid.tsx
+...Platform.select({
+  ios: { shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } },
+  android: { elevation: 3 },
+  default: { boxShadow: '0 2px 6px rgba(0,0,0,0.1)' },
+}),
+~~~
+
+1. [[Platform.select({...})]]: بيرجّع القيمة بتاعة النظام اللي شغال دلوقتي. على iOS الـ object الأول، على Android التاني، وعلى أي حاجة تانية (الويب) [[default]].
+2. [[...]] (spread): يفرد خصايص الـ object اللي رجع جوه ستايل [[card]]، كأنك كاتبها بإيدك.
+
+| النظام | الظل | الخصايص |
+|---|---|---|
+| iOS | لون وشفافية ونعومة وإزاحة | [[shadowColor]] و [[shadowOpacity]] و [[shadowRadius]] و [[shadowOffset]] |
+| Android (القديم) | رقم بيقول العنصر «عالي» قد إيه | [[elevation]] |
+| الويب (و iOS و Android مع الـ New Architecture) | string زي CSS | [[boxShadow]] |
+
+---
+
+## ٧. القياس
+
+~~~text الناتج (Chrome)
+عرض 390:  info="web 390x844 fontScale=1"   ٦ كروت في ٣ صفوف   عرض الكارت 171      x = 16, 203
+عرض 768:  info="web 768x1024 fontScale=1"  ٦ كروت في صفين     عرض الكارت 234.66   x = 16, 267, 517
+عرض 767:  info="web 767x1024 fontScale=1"  ٦ كروت في ٣ صفوف   عرض الكارت 359.5    x = 16, 392
+box-shadow في الكل: rgba(0, 0, 0, 0.1) 0px 2px 6px 0px
+~~~
+
+نحسبهم بالمعادلة:
+
+| العرض | الأعمدة | (العرض − 16 × (الأعمدة + 1)) ÷ الأعمدة |
+|---|---|---|
+| 390 | 2 | (390 − 48) ÷ 2 = 171 |
+| 768 | 3 | (768 − 64) ÷ 3 = 234.67 |
+| 767 | 2 | (767 − 48) ÷ 2 = 359.5 |
+
+- بكسل واحد (767 لـ 768) قلب الـ layout، ومن غير reload: [[useWindowDimensions]] عمل re-render.
+- [[x = 16, 203]]: 16 padding، والكارت التاني عند 16 + 171 + 16.
+- [[Platform.OS]] على الويب [['web']]، فـ [[Platform.select]] اختار [[default]] والظل جه من [[boxShadow]].
+- [[fontScale=1]] على الويب دايمًا تقريبًا. على الموبايل لما تكبّر الخط من الإعدادات بيبقى 1.3 أو أكتر (من الـ docs).
+
+---
+
+## ٨. لو الفرق كبير: ملفات لكل نظام
+
+بدل [[Platform.select]] في كل حتة، تعمل [[Button.ios.tsx]] و [[Button.android.tsx]] (أو [[Button.web.tsx]] و [[Button.tsx]])، وتستورد [[from './Button']] من غير امتداد، و Metro بيختار. القالب نفسه فيه [[app-tabs.tsx]] و [[app-tabs.web.tsx]] بالشكل ده.
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| تعرف النظام | [[Platform.OS]]: [['ios']] أو [['android']] أو [['web']] |
+| قيمة مختلفة لكل نظام | [[Platform.select({ ios, android, default })]] |
+| component مختلف خالص | ملفات [[.ios.tsx]] و [[.android.tsx]] و [[.web.tsx]] |
+| layout حسب المقاس | [[useWindowDimensions()]] جوه الـ component، مش [[Dimensions.get]] برّه |
+| احترام حجم الخط | [[fontScale]]، ومتقفلش [[allowFontScaling]] |`,
           lines: [
-            R`بصمة الـ native للمشروع الحالي (JSON فيه [[hash]] ومصادره). [[@expo/fingerprint]] جاي مع expo.`,
-            "قارن البصمة بين build و update أو commits.",
-            "لو البصمة زي الـ build: update يكفي.",
-            "لو اتغيرت: build جديد للمتجر."
+            "كل الأدوات من react-native.",
+            "grid منتجات.",
+            "عرض الشاشة ومقياس الخط، وبيتحدثوا لوحدهم.",
+            "تابلت 3 أعمدة، وموبايل 2.",
+            "عرض الكارت: العرض ناقص المسافات ومقسوم على الأعمدة.",
+            "بيرجّع JSX.",
+            "الـ grid.",
+            "لكل اسم.",
+            "كارت بالعرض المحسوب.",
+            "لو الخط كبير نسمح بسطرين.",
+            "قفلة الكارت.",
+            "قفلة الـ map.",
+            "قفلة الـ grid.",
+            "قفلة الـ return.",
+            "قفلة الدالة.",
+            "الستايلات.",
+            R`row و [[flexWrap]] بيعمل grid بسيط.`,
+            "الكارت.",
+            "padding.",
+            "زوايا.",
+            "خلفية.",
+            R`نفرد قيمة [[Platform.select]] جوه الستايل.`,
+            "ظل iOS.",
+            "ظل Android.",
+            R`الويب وأي حاجة تانية: [[boxShadow]].`,
+            "قفلة.",
+            "قفلة الكارت.",
+            "قفلة."
           ],
-          sol: R`مع [[appVersion]]: الـ build والـ update الاتنين runtime [[1.3.0]]، فالـ update بيوصل لكل المستخدمين. الـ JS الجديد بيستورد [[expo-camera]] اللي مش موجود في الـ native بتاع الـ build، فالشاشة (أو التطبيق كله لو الـ import في الـ root) بتقع بـ «Cannot find native module 'ExpoCamera'». التصليح: [[update:republish]] للـ update القديم فورًا، وبعدين build جديد بـ 1.4.0.
+          sol: R`على الويب: لما النافذة 768 أو أعرض بيبقى ٣ أعمدة، وأصغر بيبقى ٢، والكروت بتتظبط مع كل تغيير في الحجم من غير reload، لأن [[useWindowDimensions]] بيعمل re-render.
 
-مع [[fingerprint]]: إضافة [[expo-camera]] غيّرت الـ package.json والـ plugins، فالـ fingerprint اتغير، والـ update اتسجل لـ runtime جديد مفيش build عليه، فمحدش من المستخدمين خده. محدش وقع، وانت تعرف إنك محتاج build.`
-        }
-      ]
-    },
-    {
-      t: "أسئلة انترفيو",
-      l: 3,
-      n: "الأسئلة اللي بتتكرر في انترفيوهات React Native، بإجابة تقولها في دقيقة والأسئلة اللي بتيجي بعدها",
-      items: [
-        {
-          cmd: "RN بيشتغل إزاي من جوه",
-          title: "React Native بيشتغل إزاي من جوه؟ (threads و JSI و Fabric)",
-          desc: R`إجابة في دقيقة: «كودي JS/TS بيتعمله bundle بـ Metro ويشتغل على Hermes جوه التطبيق. React بيحسب شجرة الـ components على الـ JS thread. الـ New Architecture شالت الـ bridge القديم: JS بيكلم C++ مباشرة عن طريق JSI. Fabric هو الـ renderer: بيبني shadow tree في C++، و Yoga بيحسب الـ layout (flexbox)، وبعدين التغييرات بتتطبق على native views على الـ UI thread. و TurboModules هي الـ native modules (كاميرا، تخزين) بتتحمّل lazily وبـ types متولّدة. عشان كده الـ UI native حقيقي، والمنطق JS.»`,
-          example: R`# JS thread:   React render + منطقك + events handlers
-# UI thread:   رسم الـ native views + اللمس + Reanimated worklets
-# JSI:         JS <-> C++ مباشرة، sync أو async، من غير JSON
-# Fabric:      shadow tree في C++ + Yoga layout -> native views
-# TurboModules: native modules lazy بـ Codegen types
-# Hermes:      محرك JS بيشغّل bytecode متجهّز وقت الـ build`,
-          try: R`قول الإجابة بصوتك في دقيقة من غير ما تبص. وبعدين جاوب على السؤال اللي بعده: «ليه الـ scroll بيفضل شغال والتطبيق مش بيرد على الضغطات؟»`,
-          deep: {
-            why: R`بيختبر إنك فاهم الأداة مش بس بتستخدمها، وإن معلوماتك مش قديمة (الـ bridge). والإجابة دي بتفتح الباب لأسئلة الأداء اللي بعدها.`,
-            how: R`نقط لو اتسألت أكتر: Hermes بيعمل precompile للـ JS لـ bytecode وقت الـ build (الـ [[.hbc]] اللي طلع في [[expo export]] في الـ lab)، فالـ startup أسرع وذاكرة أقل من JIT. و Hermes V1 هو الجيل الجديد. الـ bridge القديم كان async و batched و JSON، فأي حاجة sync (قياس view) كانت مستحيلة. JSI بيسمح بـ host objects: JS ماسك reference لـ object في C++. و Fabric بيدعم concurrent React (transitions، و Suspense). و Codegen بيولّد الـ glue code من specs مكتوبة بـ TS.`,
-            when: R`أسئلة بتيجي بعدها: «إيه الفرق بين الـ bridge و JSI؟»، و «ليه الـ New Architecture مهمة للمكتبات؟»، و «إيه اللي بيحصل لما تدوس زرار؟» (native touch على الـ UI thread، يتبعت لـ JS، الـ handler يعمل setState، React يحسب، Fabric يطبّق)، و «Expo Go بيشغّل كودك إزاي من غير build؟» (فيه الـ native جاهز، وبيحمّل الـ JS bundle من Metro).`,
-            mistakes: R`«RN بيحوّل الكود لـ native» (لأ، الـ views native والكود JS). و «RN بيستخدم WebView» (ده Capacitor/Cordova). و «الـ bridge» كأنه الحاضر. و «RN single-threaded» (الـ JS thread واحد، بس فيه UI thread وغيره).`
-          },
-          sol: R`الإجابة على «الـ scroll شغال والضغطات لأ»: الـ scroll بيتعمل native على الـ UI thread، فمش محتاج JS. لكن [[onPress]] handler في JS، والـ JS thread مشغول (render تقيل، أو loop، أو JSON كبير بيتعمل له parse). فالضغطة بتستنى في الطابور. الحل: قلّل الشغل على الـ JS thread (memo، وتقسيم الشغل، و [[startTransition]] للتحديثات غير العاجلة)، وخلي الـ animations والـ gestures على الـ UI thread بـ Reanimated و gesture-handler.`
+ولما تكبّر الخط من الإعدادات، [[fontScale]] بيبقى أكبر من 1 (مثلًا 1.3 أو 1.5)، والنص بيكبر في كل التطبيق تلقائيًا، وأسماء المنتجات بتاخد سطرين بدل ما تتقص من أولها. لو شفت [[fontScale]] 1 دايمًا على الويب ده طبيعي، المتصفح مش بيبعته بنفس الطريقة.`
         },
         {
-          cmd: "ليه القايمة بطيئة",
-          title: "«القايمة بتقطّع وفيها بياض وانت بتعمل scroll»: تعمل إيه؟",
-          desc: R`إجابة في دقيقة: «أول حاجة أقيس على release build على موبايل متوسط، مش dev. بعدين أدوّر بالترتيب: (١) الـ renderItem تقيل؟ صور كبيرة، أو components كتير، أو حسابات في الـ render. (٢) re-renders زيادة؟ الـ Profiler يوريني لو كل الصفوف بتعيد رسم لما حاجة تتغير، وأصلّح بـ memo و callbacks ثابتة أو الـ React Compiler. (٣) keyExtractor ثابت من الـ id. (٤) الصور بحجم العرض و cache (expo-image). (٥) لو لسه، FlashList بدل FlatList عشان الـ recycling، مع getItemType لو فيه أنواع. والـ FlatList جوه ScrollView من أول الحاجات اللي أشوفها.»`,
-          example: R`# الترتيب:
-# 1. release build + Perf Monitor (JS FPS و UI FPS)
-# 2. React DevTools Profiler: مين بيعيد الرسم؟
-# 3. renderItem: صور بحجمها، ومفيش حسابات تقيلة، و memo
-# 4. keyExtractor ثابت، ومفيش FlatList جوه ScrollView
-# 5. FlashList + getItemType
-npx expo run:android --variant release`,
-          try: R`خد شاشة قايمة من مشروعك (أو شاشة المهام في الـ lab) وامشي على الـ checklist: قيس في release، وشوف الـ Profiler، ودوّر على الأخطاء الخمسة. اكتب أول حاجة لقيتها.`,
-          deep: {
-            why: R`أشهر سؤال عملي في انترفيوهات RN، لأن كل تطبيق فيه قوايم وكل فريق قابل المشكلة دي. الإجابة الكويسة بتبين إنك بتقيس الأول ومش بتجرب حلول عشوائية.`,
-            how: R`نقط لو اتسألت أكتر: JS FPS واطي و UI FPS عالي = المشكلة في JS (render). الاتنين واطيين = الـ native views تقيلة (ظلال كتير، أو صور ضخمة، أو nesting عميق). و [[windowSize]] و [[initialNumToRender]] و [[maxToRenderPerBatch]] في FlatList بتوازن بين البياض والذاكرة. و [[getItemLayout]] لو ارتفاع العنصر ثابت (FlatList بيقدر يقفز من غير ما يقيس). و [[removeClippedSubviews]] على Android. و FlashList v2 مش محتاجة estimatedItemSize.`,
-            when: R`أسئلة بتيجي بعدها: «إيه الفرق بين FlatList و FlashList؟» (unmount/mount مقابل recycling)، و «إيه مشكلة الـ state جوه عنصر في FlashList؟» (بيفضل مع الـ cell)، و «إمتى تستخدم ScrollView؟»، و «إزاي تعمل infinite scroll؟» (onEndReached + useInfiniteQuery + شرط isFetchingNextPage).`,
-            mistakes: R`«هحط FlashList» كأول وآخر إجابة من غير قياس. و «هقيس في dev». و «هعمل memo لكل حاجة». ونسيان الصور، وهي السبب في نص الحالات.`
-          },
-          lines: [
-            "release build محلي عشان القياس يبقى حقيقي."
-          ],
-          sol: R`إجابة قوية بتذكر: القياس على release، والتفرقة بين JS و UI FPS، وسبب واحد على الأقل من الخمسة بمثال (مثلًا «كان فيه [[onPress={() => ...}]] inline بيكسر الـ memo في كل صف»، أو «الصور كانت 3000px في مربع 80»). ولو لقيت في الـ lab إن [[TaskRow]] ملفوف في [[memo]] بس [[onPress]] بيتعمل inline في [[renderItem]]، يبقى ده بالظبط نوع الحاجة اللي بتقولها: مع الـ React Compiler شغال غالبًا مش هتفرق، ومن غيره الـ memo مالوش تأثير.`
-        },
-        {
-          cmd: "التوكن تحفظه فين",
-          title: "«هتحفظ التوكن فين في تطبيق الموبايل؟ وليه مش AsyncStorage؟»",
-          desc: R`إجابة في دقيقة: «access token و refresh token في expo-secure-store، يعني Keychain على iOS و Keystore على Android، لأنهم مشفّرين بمفاتيح النظام. AsyncStorage مش مشفّر، وأي حد عنده backup أو جهاز rooted يقراه. الـ access قصير العمر، والـ refresh أطول وبيتعمله rotation على السيرفر. في الـ client عندي API wrapper بيحط الـ Bearer، ولو رجع 401 بيعمل refresh مرة واحدة حتى لو فيه طلبات كتير مع بعض (single-flight)، ولو الـ refresh فشل بعمل sign out. وفي الخروج بمسح الاتنين وبقول للسيرفر يلغي الـ refresh.»`,
-          example: R`# access: SecureStore، عمر قصير (دقايق)
-# refresh: SecureStore، عمر أطول + rotation على السيرفر
-# 401 -> refresh واحد مشترك -> أعد الطلب مرة
-# refresh فشل -> signOut -> Stack.Protected يرجّع للـ login
-# logout -> امسح الاتنين + POST /api/auth/logout`,
-          try: R`قول الإجابة بصوتك، وبعدين جاوب: «طب لو حد عمل reverse engineering للـ APK، يقدر ياخد التوكن؟» و «ليه مش cookies زي الويب؟»`,
-          deep: {
-            why: R`سؤال بيجمع الأمان والشبكة والـ state في سؤال واحد، وبيبان منه لو انت نقلت عادات الويب (localStorage) للموبايل من غير تفكير.`,
-            how: R`نقط أكتر: SecureStore بيحمي البيانات وهي مخزّنة (at rest). وهي في الذاكرة وقت التشغيل، أي كود بيشتغل جوه تطبيقك يقدر يقراها. الـ reverse engineering للـ APK بيطلّع الكود والـ [[EXPO_PUBLIC_*]]، مش التوكنات (دي على جهاز المستخدم بس). و certificate pinning حماية إضافية ضد MITM في التطبيقات الحساسة (بنوك)، وليها تكلفة (لما الشهادة تتغير لازم update). والـ biometrics: [[requireAuthentication]] في SecureStore أو [[expo-local-authentication]] قبل عمليات حساسة. وعلى السيرفر: كشف إعادة استخدام الـ refresh token يلغي كل الجلسات.`,
-            when: R`أسئلة بتيجي بعدها: «إزاي تتعامل مع ٣ طلبات رجعوا 401 مع بعض؟» (درس [[refresh token]])، و «التطبيق يعرف إزاي إن المستخدم لسه داخل أول ما يفتح؟» (يقرا من SecureStore والـ splash ظاهرة، درس [[Stack.Protected]])، و «ليه مش cookies؟» (ممكن، بس RN networking مع cookies أقل وضوحًا، والـ Bearer header أبسط ومتحكم فيه، والـ backend بيدعم الاتنين).`,
-            mistakes: R`«AsyncStorage لأنه أسهل». و «Redux persist» (بيكتب في AsyncStorage). و «الـ JWT مشفّر فمش مشكلة» (الـ JWT signed مش encrypted، أي حد يقرا الـ payload). و «هحط الـ API secret في التطبيق».`
-          },
-          sol: R`«reverse engineering للـ APK»: بيطلّع الكود والـ assets وأي قيمة في الـ bundle (زي [[EXPO_PUBLIC_API_URL]])، بس التوكنات مش في الـ APK أصلًا، دي بتتعمل بعد الـ login وبتتخزن على جهاز المستخدم في Keychain أو Keystore. الخطر الحقيقي: سر ثابت حطيته في الكود (API key مدفوع)، وده لازم يبقى على السيرفر.
+          cmd: "NativeWind",
+          title: "NativeWind: تكتب classes بتاعة Tailwind في React Native",
+          desc: R`لو بتحب Tailwind في «تاب HTML و CSS» أو في مشاريع Next، [[NativeWind]] بيخليك تكتب [[className="flex-1 items-center bg-white dark:bg-slate-900"]] على components الـ RN، وبيحوّلها لـ style objects وقت الـ build.
 
-«ليه مش cookies؟»: ممكن، بس في RN مفيش sandbox المتصفح اللي بيدّي [[httpOnly]] قيمته (مفيش XSS بنفس المعنى، ومفيش [[document.cookie]])، والـ Bearer في header واضح وسهل تتحكم فيه وتختبره. المهم مكان التخزين وعمر التوكن والـ rotation، مش الشكل.`
-        },
-        {
-          cmd: "OTA إمتى مينفعش",
-          title: "«تقدر تصلّح أي bug بـ OTA update؟»",
-          desc: R`إجابة في دقيقة: «لأ. الـ OTA بيبدّل الـ JS bundle والـ assets بس. أي تغيير native محتاج build جديد ويعدّي على المتجر: مكتبة native جديدة أو ترقية نسختها، أو ترقية الـ Expo SDK أو RN، أو تغيير في app.json بيأثر على native (صلاحيات، وأيقونة، و splash، و package name)، أو config plugin. عشان أمنع update يوصل لـ build مش متوافق بستخدم runtimeVersion، ويفضّل بسياسة fingerprint عشان تتغير لوحدها. وبنشر بـ rollout بنسبة وعندي rollback بـ republish. وقانونيًا: المتاجر بتسمح بتحديثات JS مبتغيرش الغرض الأساسي للتطبيق.»`,
-          example: R`# OTA ينفع: bug في JS، نص، ستايل، منطق، صورة في assets
-# OTA مينفعش: مكتبة native، ترقية SDK، صلاحية جديدة، أيقونة، splash، package name
-# الحماية: runtimeVersion (fingerprint) + rollout % + republish للرجوع`,
-          try: R`صنّف الحاجات دي (OTA ولا build): تغيير لون زرار، و إضافة [[expo-camera]]، و تصليح حساب الخصم، و ترقية [[@shopify/flash-list]] من 2.0 لـ 2.3، و تغيير اسم التطبيق، و ترجمة جديدة في ملف JSON.`,
+النسخة المستقرة وقت كتابة الدرس (سبتمبر 2026) هي 4.x ومبنية على Tailwind v3، ونسخة 5 (مبنية على Tailwind v4) لسه release candidate. الإعداد محتاج babel و metro و tailwind config، فاتبع صفحة الـ installation بتاعة النسخة اللي هتركّبها بالظبط.`,
+          example: R`// بعد إعداد NativeWind 4 (tailwind.config.js و global.css و babel و metro)
+import { Pressable, Text, View } from 'react-native';
+
+export function EmptyState({ onRetry }: { onRetry: () => void }) {
+  return (
+    <View className="flex-1 items-center justify-center gap-3 bg-white p-6 dark:bg-slate-900">
+      <Text className="text-lg font-semibold text-slate-900 dark:text-white">مفيش نتايج</Text>
+      <Pressable onPress={onRetry} className="rounded-xl bg-blue-600 px-5 py-3 active:opacity-70">
+        <Text className="font-semibold text-white">جرّب تاني</Text>
+      </Pressable>
+    </View>
+  );
+}`,
+          try: R`اكتب نفس الكومبوننت بـ [[StyleSheet]] من غير NativeWind، وقارن: كام سطر؟ وإيه اللي محتاج تعمله بإيدك عشان [[dark:]] و [[active:]] يشتغلوا؟`,
+          flag: "script",
           deep: {
-            why: R`سؤال بيختبر إنك فاهم الحدود بين JS و native، وإنك اشتغلت على تطبيق في الإنتاج فعلًا، مش بس دروس. والإجابة الغلط هنا («أيوة أي حاجة») بتوقع تطبيقات حقيقية.`,
-            how: R`نقط أكتر: التطبيق بيحمّل الـ update في الفتحة اللي بعد النشر افتراضيًا. الـ assets (صور) بتتحدث مع الـ update. لو التطبيق وقع أول ما حمّل update جديد، [[expo-updates]] عنده error recovery بيرجع للـ bundle اللي قبله في حالات معينة، بس متعتمدش عليه. وفيه code signing للـ updates لو عايز تضمن إن محدش يقدر يبعت bundle مزوّر. والـ channels بتخليك تجرّب على preview الأول.`,
-            when: R`أسئلة بتيجي بعدها: «إزاي تعرف إن الـ update اللي نشرته مش بيوقع التطبيق؟» (rollout 10% و monitoring زي Sentry مع الـ update id، وبعدين زوّد)، و «المستخدم اللي مفتحش التطبيق شهر هياخد إيه؟» (آخر update لنفس الـ runtime)، و «إيه الـ runtimeVersion؟».`,
-            mistakes: R`«أي حاجة». و «OTA بيحتاج review» (مش بيحتاج، ده الهدف). ونسيان إن ترقية نسخة مكتبة native (حتى minor) تغيير native. و «هغيّر الأيقونة بـ OTA».`
+            why: R`فرق كتير بيستخدموا Tailwind على الويب، و NativeWind بيخليهم يشاركوا نفس الـ design tokens (الألوان، والمسافات) ونفس طريقة التفكير بين الموقع والتطبيق.`,
+            how: R`NativeWind بيحوّل الـ classes لـ style objects (جزء وقت الـ build بـ babel و metro، وجزء وقت التشغيل للحاجات اللي بتتغير زي [[dark:]] و [[active:]] والـ breakpoints). وبيضيف [[className]] كـ prop على components الـ RN عن طريق TypeScript declaration ([[nativewind-env.d.ts]]).
+
+مش كل Tailwind شغال: أي حاجة ملهاش مقابل في RN (grid، و hover على الموبايل، وبعض الـ selectors) مش هتشتغل أو ليها بديل. و [[active:]] بيشتغل على Pressable. والـ breakpoints ([[md:]]) بتتحسب من عرض الشاشة.
+
+جربته على الويب بس (nativewind 4.2.7 و tailwindcss 3.4 مع Expo SDK 57)، والـ classes اتطبقت بنفس قيم نسخة StyleSheet بالظبط، بس الوضع الغامق احتاج ظبط (التفاصيل في «الشرح خطوة بخطوة»). على الموبايل متجربش، والإعداد بيختلف بين 4 و 5، فالمرجع صفحة التركيب الرسمية لنسختك.`,
+            when: R`فريق بيستخدم Tailwind أصلًا، أو monorepo فيه موقع Tailwind. لو الفريق مرتاح لـ StyleSheet أو عنده design system كـ components، مش لازم تضيف طبقة تانية. وفيه بدايل تانية بنفس الفكرة زي Unistyles و Tamagui.`,
+            mistakes: R`تركّب 4 وتتبع docs بتاعة 5 أو العكس. وتنسى تضيف الملفات في [[content]] بتاع tailwind config فالـ classes مش بتتطبق من غير أي error. وتتوقع كل class من الويب يشتغل. وتخلط [[className]] و [[style]] على نفس العنصر وتستغرب مين كسب.`
           },
-          sol: R`تغيير لون زرار: OTA. إضافة [[expo-camera]]: build (مكتبة native وصلاحية جديدة). تصليح حساب الخصم: OTA. ترقية FlashList من 2.0 لـ 2.3: OTA، لأن FlashList v2 مكتوبة JS بالكامل ومفيهاش native code، والـ fingerprint مبيتغيرش (اتجرّب: نفس الـ hash قبل وبعد الترقية). بس لو المكتبة فيها native code (زي Reanimated أو expo-camera)، أي ترقية حتى minor = build. تغيير اسم التطبيق: build (الاسم native في Info.plist و strings.xml). ترجمة جديدة في JSON جوه المشروع: OTA (asset/JS).`
-        },
-        {
-          cmd: "Expo ولا bare",
-          title: "«Expo ولا React Native CLI (bare)؟ ومش Expo بيقيّدك؟»",
-          desc: R`إجابة في دقيقة: «Expo هو الـ framework الموصى بيه رسميًا من فريق React Native. الفكرة القديمة إن Expo بيقيّدك كانت صحيحة أيام Expo Go بس. دلوقتي مع development builds و config plugins تقدر تستخدم أي مكتبة native، وتكتب native modules بنفسك بـ Expo Modules API (Swift و Kotlin)، ولو محتاج تعدّل حاجة native بتكتب config plugin. ومعاك Expo Router و EAS Build و Update. الـ bare لسه منطقي لو عندك تطبيق native موجود بتضيف فيه RN، أو فريق native عايز يمسك الفولدرات بإيده، وحتى هنا تقدر تستخدم مكتبات Expo.»`,
-          example: R`# Expo (managed + CNG): app.json + plugins -> prebuild يولّد android/ios
-# development build: أي مكتبة native
-# Expo Modules API: تكتب native module بـ Swift/Kotlin
-# bare: android/ios في Git وانت بتعدّل فيهم بإيدك (وتقدر تستخدم expo modules برضه)
-npx create-expo-app@latest
-npx @react-native-community/cli init MyApp`,
-          try: R`قول الإجابة بصوتك، وبعدين جاوب: «عايز تضيف SDK دفع من بنك محلي ملوش مكتبة RN، هتعمل إيه في مشروع Expo؟»`,
-          deep: {
-            why: R`سؤال شائع جدًا خصوصًا من ناس خبرتهم RN قديمة. الإجابة بتبين إنك متابع التغييرات (CNG، و development builds، و New Architecture) مش حافظ آراء من ٢٠٢٠.`,
-            how: R`نقط أكتر: CNG (Continuous Native Generation) معناه الفولدرات الـ native ناتج مش مصدر، فترقية الـ SDK بقت أسهل بكتير. و Expo Modules API بيدّيك DSL بـ Swift و Kotlin لكتابة modules متوافقة مع الـ New Architecture من غير C++. و config plugin بيعدّل Gradle أو Info.plist أو AppDelegate وقت الـ prebuild. و [[npx expo prebuild]] لو عايز تشوف الفولدرات أو «تطلع» منها. وEAS اختياري: تقدر تعمل build بـ Gradle و Xcode عادي على مشروع Expo.`,
-            when: R`أسئلة بتيجي بعدها: «إيه الفرق بين Expo Go والـ development build؟»، و «إيه الـ config plugin؟»، و «إزاي بتعمل upgrade لـ SDK؟» ([[npx expo install expo@latest]] و [[--fix]] وقراية الـ changelog و [[expo-doctor]] وتجربة على build)، و «EAS مجاني؟».`,
-            mistakes: R`«Expo مينفعش معاه native code» (معلومة قديمة). و «Expo يعني Expo Go». و «bare أحسن في الأداء» (نفس RN ونفس الأداء). و «لازم EAS مع Expo».`
-          },
+          teach: R`## الفكرة: نفس الشاشة، مرة بـ classes ومرة بـ StyleSheet
+
+[[EmptyState]] شاشة «مفيش نتايج» فيها عنوان وزرار «جرّب تاني»، في نص الشاشة، وليها شكل غامق. المثال مكتوب بـ NativeWind ([[className]] بتاع Tailwind)، والـ solCode نفس الشاشة بـ [[StyleSheet]]. هنفك الـ classes واحدة واحدة ونقابل كل واحدة بالستايل اللي بتتحول له.
+
+> اتجرّب على Expo SDK 57 على الويب في Chrome: الـ solCode زي ما هو، والمثال بعد ما ركّبت nativewind 4.2.7 و tailwindcss 3.4.19 بخطوات صفحة التركيب. على Android و iOS متجربش (من الـ docs).
+
+---
+
+## ١. الإعداد (اللي التعليق في أول المثال بيتكلم عنه)
+
+NativeWind مش بيشتغل بمجرد التسطيب. دي الملفات اللي عملتها:
+
+~~~text الملفات
+tailwind.config.js    content: ['./src/**/*.{js,jsx,ts,tsx}'] و presets: [require('nativewind/preset')]
+global.css            @tailwind base; @tailwind components; @tailwind utilities;
+babel.config.js       presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel']
+metro.config.js       withNativeWind(getDefaultConfig(__dirname), { input: './global.css' })
+nativewind-env.d.ts   /// <reference types="nativewind/types" />
+src/app/_layout.tsx   import '../../global.css';
+~~~
+
+- [[content]]: الملفات اللي Tailwind بيدوّر فيها على أسامي الـ classes. لو ملفك مش فيها، الـ classes بتاعته مش هتتطبق ومن غير أي error.
+- [[jsxImportSource: 'nativewind']]: بيخلي JSX يعدّي على NativeWind، وده اللي بيخلي [[className]] على [[View]] يشتغل.
+- [[nativewind-env.d.ts]]: بيعرّف TypeScript إن [[className]] prop مقبول. وأول تشغيل لـ [[expo start]] ضافه لوحده في [[tsconfig.json]]:
+
+~~~text الناتج
+NativeWind made the following changes to your project to support TypeScript:
+  - Updated ./tsconfig.json to include the nativewind-env.d.ts file
+~~~
+
+و TypeScript 6 اشتكى من [[import '../../global.css']] (TS2882: مش لاقي تعريف لملف css)، فضفت [[declare module "*.css";]] في نفس الملف. بعدها [[npx tsc --noEmit]] عدّى.
+
+---
+
+## ٢. الـ View: [[className="flex-1 items-center justify-center gap-3 bg-white p-6 dark:bg-slate-900"]]
+
+| الـ class | بيتحول لـ | في الـ solCode |
+|---|---|---|
+| [[flex-1]] | [[flex: 1]] | [[box.flex]] |
+| [[items-center]] | [[alignItems: 'center']] | نفسه |
+| [[justify-center]] | [[justifyContent: 'center']] | نفسه |
+| [[gap-3]] | [[gap: 12]] (كل وحدة في Tailwind = 4) | [[gap: 12]] |
+| [[p-6]] | [[padding: 24]] | [[padding: 24]] |
+| [[bg-white]] | [[backgroundColor: '#fff']] | لون الـ light |
+| [[dark:bg-slate-900]] | نفس الخلفية بس لما الوضع غامق: [['#0f172a']] | [[dark ? '#0f172a' : '#fff']] |
+
+[[dark:]] اسمه variant: «طبّق الـ class دي بس في الحالة دي».
+
+---
+
+## ٣. العنوان: [[className="text-lg font-semibold text-slate-900 dark:text-white"]]
+
+- [[text-lg]]: [[fontSize: 18]] (ومعاها [[lineHeight: 28]]).
+- [[font-semibold]]: [[fontWeight: '600']].
+- [[text-slate-900]] و [[dark:text-white]]: اللون في الوضعين.
+
+---
+
+## ٤. الزرار
+
+~~~text EmptyState.tsx
+<Pressable onPress={onRetry} className="rounded-xl bg-blue-600 px-5 py-3 active:opacity-70">
+  <Text className="font-semibold text-white">جرّب تاني</Text>
+</Pressable>
+~~~
+
+| الـ class | معناها |
+|---|---|
+| [[rounded-xl]] | [[borderRadius: 12]] |
+| [[bg-blue-600]] | [[#2563eb]] |
+| [[px-5]] و [[py-3]] | [[paddingHorizontal: 20]] و [[paddingVertical: 12]] |
+| [[active:opacity-70]] | [[opacity: 0.7]] وانت ضاغط. ده بديل [[style={({ pressed }) => ...}]] |
+
+---
+
+## ٥. الـ solCode بـ StyleSheet
+
+اللي NativeWind بيعمله لوحده، هنا بإيدك:
+
+- [[const dark = useColorScheme() === 'dark';]]: [[useColorScheme()]] بيرجّع [['light']] أو [['dark']] حسب إعداد الجهاز، و [[dark]] بقى boolean.
+- [[style={[styles.box, { backgroundColor: dark ? '#0f172a' : '#fff' }]}]]: الستايل الثابت + اللون حسب الوضع.
+- [[style={({ pressed }) => [styles.btn, pressed && { opacity: 0.7 }]}]]: بديل [[active:]].
+- [[StyleSheet.create]] تحت فيه نفس القيم اللي في الجدول.
+
+---
+
+## ٦. القياس: النسختين جنب بعض
+
+~~~text الناتج (Chrome، 390x844)
+                 StyleSheet (solCode)        NativeWind (المثال)
+الخلفية          rgb(255, 255, 255)          rgb(255, 255, 255)
+padding / gap    24px / 12px                 24px / 12px
+العنوان          18px، 600، rgb(15, 23, 42)   18px، 600، rgb(15, 23, 42)، line-height 28px
+الزرار           -                           rgb(37, 99, 235)، padding 12px 20px، radius 12px
+وقت الضغط        opacity 0.7                 opacity 0.7
+الوضع الغامق      الخلفية rgb(15, 23, 42) والعنوان أبيض
+~~~
+
+- الضغطتين على «جرّب تاني» زوّدوا العداد 2 في الاتنين.
+- على الويب، NativeWind بيحط الـ classes نفسها في الصفحة ([[class="... rounded-xl bg-blue-600 px-5 py-3 active:opacity-70"]]) و CSS حقيقي. على الموبايل بيحوّلها style objects (من الـ docs).
+
+### الوضع الغامق: فرق لقيته في التجربة
+
+- نسخة StyleSheet: لما المتصفح بقى dark، الألوان اتقلبت على طول.
+- NativeWind بالإعداد الافتراضي ([[darkMode: 'media']]): [[dark:]] اشتغل مع وضع النظام، بس الصفحة رمت وقت التحميل [[Cannot manually set color scheme, as dark mode is type 'media'. Please use StyleSheet.setFlag('darkMode', 'class')]]، و Expo في وضع التطوير غطى الصفحة بطبقة الأخطاء فالزرار مبقاش بيستقبل ضغط.
+- مع [[darkMode: 'class']] في [[tailwind.config.js]]: الخطأ راح والضغط و [[active:]] اشتغلوا، بس [[dark:]] مبقاش يتبع النظام لوحده على الويب، لازم تقلبه انت (من [[colorScheme.set('dark')]]).
+
+يعني الإعداد الدقيق بيفرق بين النسخ والمنصات، وده بالظبط ليه الدرس بيقولك اتبع صفحة التركيب بتاعة نسختك.
+
+---
+
+## الخلاصة
+
+| | StyleSheet | NativeWind |
+|---|---|---|
+| إعداد | مفيش | ٥ ملفات + import |
+| الوضع الغامق | [[useColorScheme()]] وتختار اللون بإيدك | [[dark:]] |
+| وقت الضغط | [[style]] دالة بـ [[pressed]] | [[active:]] |
+| الطول | أطول (ستايلات تحت) | أقصر (كله على العنصر) |
+| مشاركة مع موقع Tailwind | لأ | نفس الـ classes والألوان |
+
+الاتنين بيوصلوا لنفس الستايل في الآخر. اختار NativeWind لو الفريق بيكتب Tailwind أصلًا.`,
           lines: [
-            "مشروع Expo (الموصى بيه).",
-            "مشروع RN من غير framework (نادرًا ما تحتاجه)."
+            "نفس components الـ RN.",
+            "empty state.",
+            "بيرجّع JSX.",
+            R`[[className]] بدل [[style]]: نفس Tailwind، و [[dark:]] للوضع الغامق.`,
+            "النص.",
+            R`[[active:]] بيشتغل وقت الضغط على Pressable.`,
+            "نص الزرار.",
+            "قفلة.",
+            "قفلة.",
+            "قفلة الـ return.",
+            "قفلة الدالة."
           ],
-          sol: R`SDK دفع ملوش مكتبة RN في مشروع Expo: (١) أكتب Expo Module صغير بـ Kotlin و Swift بيلف الـ SDK بتاع البنك ([[npx create-expo-module --local]])، ويعرض لـ JS دالة زي [[startPayment(amount)]]. (٢) لو الـ SDK محتاج إعدادات في Gradle أو Info.plist، أكتب config plugin (أو الـ module نفسه يجي بواحد). (٣) development build عشان أجرّب. مفيش حاجة من دي محتاجة أسيب Expo أو أعدّل في فولدر android بإيدي.`
+          sol: R`نسخة StyleSheet حوالي ٢٥ سطر بدل ١١، ولازم تعمل بنفسك: [[useColorScheme()]] عشان تختار ألوان الـ dark، و [[style={({ pressed }) => ...}]] على الـ Pressable بدل [[active:]]. وده بالظبط اللي NativeWind بيوفّره. في المقابل، StyleSheet مفيهوش أي إعداد ولا build step إضافي.`,
+          solCode: R`import { Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
+
+export function EmptyState({ onRetry }: { onRetry: () => void }) {
+  const dark = useColorScheme() === 'dark';
+  return (
+    <View style={[styles.box, { backgroundColor: dark ? '#0f172a' : '#fff' }]}>
+      <Text style={[styles.title, { color: dark ? '#fff' : '#0f172a' }]}>مفيش نتايج</Text>
+      <Pressable onPress={onRetry} style={({ pressed }) => [styles.btn, pressed && { opacity: 0.7 }]}>
+        <Text style={styles.btnText}>جرّب تاني</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  box: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 },
+  title: { fontSize: 18, fontWeight: '600' },
+  btn: { borderRadius: 12, backgroundColor: '#2563eb', paddingHorizontal: 20, paddingVertical: 12 },
+  btnText: { color: '#fff', fontWeight: '600' },
+});`
         }
       ]
     }
