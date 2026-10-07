@@ -1954,6 +1954,16 @@
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core), example + solCode HTML, Windows 11"
  },
+ "data|B-tree index": {
+  "hash": "b40f1ac8a367",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
+ "data|CASE WHEN": {
+  "hash": "f6a868bd0c55",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
  "data|CREATE TABLE": {
   "hash": "fd118ddb2ab8",
   "date": "2026-10-07",
@@ -1961,6 +1971,11 @@
  },
  "data|DELETE": {
   "hash": "861467ab3f3b",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|EXISTS": {
+  "hash": "2508a89df266",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
@@ -1974,8 +1989,23 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|INNER JOIN": {
+  "hash": "c97a821e3cd7",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
  "data|INSERT": {
   "hash": "4986045fb028",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|LATERAL": {
+  "hash": "9143f13b70d9",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
+ "data|LEFT JOIN": {
+  "hash": "3fdc7255bc9e",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
@@ -1986,6 +2016,16 @@
  },
  "data|NULL": {
   "hash": "544f5aa71e93",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|ON CONFLICT": {
+  "hash": "ca5ba118a426",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
+ "data|ON DELETE": {
+  "hash": "e9ca19ee8212",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
@@ -2004,6 +2044,16 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|SELECT FOR UPDATE": {
+  "hash": "05893edabeb6",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (three concurrent psql sessions)"
+ },
+ "data|UNION و UNION ALL": {
+  "hash": "2515cd374702",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
  "data|UPDATE": {
   "hash": "2bb714d709e2",
   "date": "2026-10-07",
@@ -2014,8 +2064,63 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
+ "data|WITH (CTE)": {
+  "hash": "59eceb48be48",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|atomic UPDATE": {
+  "hash": "6250c251c2bd",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (two psql sessions) + node:22-slim pg (20 concurrent requests)"
+ },
+ "data|composite index": {
+  "hash": "1983fd7eb5f5",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
+ "data|constraints": {
+  "hash": "348bf3c0a2f1",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
  "data|count و sum و avg": {
   "hash": "1a1f5e9e01a2",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|denormalization": {
+  "hash": "b4252a53e1ef",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|isolation levels": {
+  "hash": "26dfd88024a6",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (two concurrent psql sessions); docs: REPEATABLE READ check-then-insert"
+ },
+ "data|json_agg": {
+  "hash": "e696ae3100d3",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql) + node:22-slim pg"
+ },
+ "data|jsonb": {
+  "hash": "e5592db0357d",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql); disabled-seqscan cost on postgres:16"
+ },
+ "data|keyset pagination": {
+  "hash": "f443f6778039",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
+ "data|many-to-many": {
+  "hash": "262b76617102",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|normalization": {
+  "hash": "21363f789e3e",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },
@@ -2024,8 +2129,43 @@
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql); try/solCode in Node (Windows)"
  },
+ "data|one-to-many": {
+  "hash": "52c50f7908b7",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|one-to-one": {
+  "hash": "63624416e85c",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|self join": {
+  "hash": "2600c65e83a0",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
+ "data|transaction": {
+  "hash": "d9c506039a50",
+  "date": "2026-10-07",
+  "on": "node:22-slim + pg driver against postgres:18 in Docker"
+ },
+ "data|window functions": {
+  "hash": "cde2ace36104",
+  "date": "2026-10-07",
+  "on": "postgres:18 in Docker (psql)"
+ },
  "data|أنواع الأعمدة": {
   "hash": "381c246f3576",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|دوال التاريخ": {
+  "hash": "e31d5bd75d38",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|دوال النصوص": {
+  "hash": "bddabae30936",
   "date": "2026-10-07",
   "on": "docker postgres:18 (psql)"
  },

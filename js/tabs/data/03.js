@@ -34,6 +34,251 @@ PRIMARY KEY و UNIQUE بيعملوا index لوحدهم، والـ FK لأ. وف
             when: "أعمدة الـ FK، والأعمدة اللي في WHERE أو ORDER BY في استعلامات متكررة على جداول بتكبر. وبعد ما EXPLAIN يوريك Seq Scan على جدول كبير.",
             mistakes: R`في مشروع حقيقي كان فيه index على كل عمود تقريبًا في جدول اليوزرز، منهم أعمدة boolean زي «اتكلمناه على واتساب»؛ أغلبها عمره ما هيتستخدم، وكل واحد بيبطّأ كل كتابة. ودالة على العمود في WHERE. وإنشاء index على جدول كبير في الإنتاج من غير [[CONCURRENTLY]] فيقفل الكتابة.`
           },
+          teach: R`## الفكرة: نفس السؤال، مرة من غير فهرس ومرة بفهرس
+
+المثال تجربة بسيطة: نملا [[orders]] بـ ٢٠٠ ألف أوردر، ونسأل «كام أوردر في آخر ٢٤ ساعة؟»، ونقيس الوقت. بعدين نعمل index على [[created_at]] ونسأل نفس السؤال تاني. الفرق في الوقت هو الدرس كله.
+
+كل الناتج تحت حقيقي: اتشغّل في psql على [[postgres:18]] جوه Docker، على جداول المتجر بعد أمثلة الدروس اللي فاتت (يوزر واحد [[you@example.com]] وأوردر واحد قبل التجربة).
+
+---
+
+## ١. نملا الجدول: [[INSERT ... SELECT ... FROM generate_series]]
+
+~~~sql
+INSERT INTO orders (user_id, status, total, created_at)
+SELECT (SELECT id FROM users LIMIT 1), 'paid', (random() * 1000)::numeric(10,2), now() - random() * interval '365 days'
+FROM generate_series(1, 200000);
+~~~
+
+ده [[INSERT]] بس بدل [[VALUES]] فيه [[SELECT]]: كل صف بيطلع من الـ SELECT بيتحط في الجدول. نفكّه من جوه لبرة.
+
+### الخطوة ١: [[generate_series(1, 200000)]]
+
+دالة بترجّع جدول فيه أرقام من الأول للآخر، صف لكل رقم. على ٣ بس:
+
+~~~sql
+SELECT * FROM generate_series(1, 3);
+~~~
+
+~~~text الناتج
+ generate_series
+-----------------
+               1
+               2
+               3
+(3 rows)
+~~~
+
+احنا مش هنستخدم الرقم نفسه. هو موجود عشان الـ SELECT يتكرر ٢٠٠ ألف مرة، مرة لكل صف.
+
+### الخطوة ٢: الأعمدة الأربعة
+
+| الحتة | بتطلّع إيه |
+|---|---|
+| [[(SELECT id FROM users LIMIT 1)]] | subquery بين قوسين بترجّع قيمة واحدة: id أول يوزر. كل الأوردرات لنفس اليوزر |
+| [['paid']] | نص ثابت، الحالة |
+| [[(random() * 1000)::numeric(10,2)]] | [[random()]] رقم عشوائي من 0 لـ 1، ضربناه في 1000، و [[::]] معناها «حوّل للنوع ده»، فبقى فلوس بخانتين بعد العلامة |
+| [[now() - random() * interval '365 days']] | [[interval]] مدة زمنية. نسبة عشوائية من سنة، ونطرحها من دلوقتي، فيطلع وقت عشوائي في آخر سنة |
+
+نفس الـ SELECT على ٣ صفوف بس، عشان تشوف شكل الصفوف قبل ما تدخل:
+
+~~~text الناتج
+                  id                  | ?column? | total  |          created_at
+--------------------------------------+----------+--------+-------------------------------
+ c117c0f7-6ddb-462b-a573-6eadaac9241d | paid     | 235.51 | 2026-09-06 09:24:49.707519+00
+ c117c0f7-6ddb-462b-a573-6eadaac9241d | paid     | 518.66 | 2026-08-24 17:45:51.37398+00
+ c117c0f7-6ddb-462b-a573-6eadaac9241d | paid     | 250.96 | 2026-09-18 13:25:32.086125+00
+~~~
+
+و [[?column?]] اسم psql لعمود ملوش اسم. مش فارق هنا، لأن الـ INSERT بيحط القيم بالترتيب في الأعمدة اللي كتبناها في [[(user_id, status, total, created_at)]].
+
+~~~text الناتج
+INSERT 0 200000
+~~~
+
+[[INSERT 0 200000]]: الرقم الأخير عدد الصفوف اللي اتضافت. (الـ 0 في النص بقايا تاريخية، دايمًا 0.)
+
+---
+
+## ٢. [[\timing on]]
+
+ده مش SQL، ده أمر لـ psql نفسه (أي أمر بيبدأ بـ [[\]] بيتنفّذ في psql مش في السيرفر). بيخلّي psql يطبع تحت كل أمر سطر [[Time:]] بالمللي ثانية (ms = جزء من ألف من الثانية).
+
+~~~text الناتج
+Timing is on.
+~~~
+
+---
+
+## ٣. السؤال من غير index
+
+~~~sql
+SELECT count(*) FROM orders WHERE created_at > now() - interval '1 day';
+~~~
+
+[[count(*)]] بيعدّ الصفوف، و [[now() - interval '1 day']] = نفس اللحظة دي امبارح.
+
+~~~text الناتج
+ count
+-------
+   476
+(1 row)
+
+Time: 25.551 ms
+~~~
+
+٤٧٦ من ٢٠٠ ألف (حوالي ٢٠٠٠٠٠ ÷ ٣٦٥ ≈ ٥٥٠، قريب لأن التواريخ عشوائية). عشان نعرف **إزاي** اتحسب، نحط [[EXPLAIN ANALYZE]] قدامه (درس EXPLAIN ANALYZE في تاب PostgreSQL): بينفّذ ويوريك الخطة.
+
+~~~text EXPLAIN ANALYZE من غير index
+ Aggregate  (cost=1938.57..1938.58 rows=1 width=8) (actual time=24.980..24.982 rows=1.00 loops=1)
+   Buffers: shared hit=1870
+   ->  Seq Scan on orders  (cost=0.00..1935.45 rows=1247 width=0) (actual time=0.008..24.945 rows=476.00 loops=1)
+         Filter: (created_at > (now() - '1 day'::interval))
+         Rows Removed by Filter: 199525
+         Buffers: shared hit=1870
+ Planning Time: 0.055 ms
+ Execution Time: 24.998 ms
+~~~
+
+تتقري من تحت لفوق (الأكتر مسافة بيتنفّذ الأول):
+
+| السطر | معناه |
+|---|---|
+| [[Seq Scan on orders]] | Sequential Scan: قرا الجدول كله صف صف |
+| [[Filter: ...]] | الشرط اتطبّق على كل صف بعد ما اتقرا |
+| [[Rows Removed by Filter: 199525]] | قرا ٢٠٠ ألف ورمى ١٩٩٥٢٥ عشان يرجّع ٤٧٦. ده شكل الـ index الناقص |
+| [[Buffers: shared hit=1870]] | قرا ١٨٧٠ صفحة (كل صفحة 8 kB، يعني الجدول كله تقريبًا) |
+| [[Aggregate]] | الـ [[count]] نفسه، فوق الـ scan |
+
+---
+
+## ٤. [[CREATE INDEX orders_created_at_idx ON orders (created_at)]]
+
+| الحتة | معناها |
+|---|---|
+| [[CREATE INDEX]] | اعمل فهرس |
+| [[orders_created_at_idx]] | اسمه. العرف: جدول_عمود_idx، عشان لما تشوفه في EXPLAIN تعرفه |
+| [[ON orders (created_at)]] | على جدول orders، بقيم عمود created_at |
+
+مكتبناش نوع، فهو B-tree (الافتراضي). Postgres بيقرا الـ ٢٠٠ ألف قيمة مرة واحدة، يرتّبهم، ويبني الشجرة:
+
+~~~text الناتج
+CREATE INDEX
+Time: 67.258 ms
+~~~
+
+والفهرس ده ليه حجم على الديسك:
+
+~~~sql
+SELECT pg_size_pretty(pg_relation_size('orders')) tbl, pg_size_pretty(pg_relation_size('orders_created_at_idx')) idx;
+~~~
+
+~~~text الناتج
+  tbl  |   idx
+-------+---------
+ 15 MB | 4408 kB
+~~~
+
+حوالي ٣٠٪ من حجم الجدول عشان عمود واحد. وده التمن اللي في deep: مساحة، وكل INSERT لازم يحدّثه.
+
+---
+
+## ٥. نفس السؤال بعد الـ index
+
+~~~text الناتج
+ count
+-------
+   476
+(1 row)
+
+Time: 0.321 ms
+~~~
+
+نفس الـ ٤٧٦، والوقت من ٢٥ms لـ ٠.٣ms، يعني حوالي ٨٠ مرة أسرع. (أول مرة بعد الـ index أخدت 0.9ms، والتانية 0.3ms لأن الصفحات بقت في الكاش.) والخطة:
+
+~~~text EXPLAIN ANALYZE بعد الـ index
+ Aggregate  (cost=4456.43..4456.44 rows=1 width=8) (actual time=0.240..0.241 rows=1.00 loops=1)
+   Buffers: shared hit=418
+   ->  Bitmap Heap Scan on orders  (cost=1253.09..4289.77 rows=66667 width=0) (actual time=0.076..0.217 rows=476.00 loops=1)
+         Recheck Cond: (created_at > (now() - '1 day'::interval))
+         Heap Blocks: exact=414
+         Buffers: shared hit=418
+         ->  Bitmap Index Scan on orders_created_at_idx  (cost=0.00..1236.43 rows=66667 width=0) (actual time=0.037..0.038 rows=476.00 loops=1)
+               Index Cond: (created_at > (now() - '1 day'::interval))
+               Index Searches: 1
+               Buffers: shared hit=4
+ Planning Time: 0.035 ms
+ Execution Time: 0.258 ms
+~~~
+
+1. [[Bitmap Index Scan on orders_created_at_idx]]: نزل في الشجرة لأول قيمة أكبر من «امبارح»، ولمّ أماكن الـ ٤٧٦ صف. [[Buffers: shared hit=4]]: ٤ صفحات بس من الـ index (عمق الشجرة تقريبًا).
+2. [[Bitmap Heap Scan on orders]]: راح للجدول (اسمه heap) جاب الصفوف دي بس: [[Heap Blocks: exact=414]] صفحة بدل ١٨٧٠.
+3. [[Index Cond]] بدل [[Filter]]: الشرط اتدوّر بيه **جوه** الفهرس، مش بعد القراية.
+
+و [[rows=66667]] المتوقعة بعيدة عن ٤٧٦ الحقيقية لأن Postgres لسه معملش إحصائيات للجدول بعد الـ INSERT الكبير (بيعملها لوحده بعد شوية بـ autovacuum، أو بإيدك بـ [[ANALYZE orders;]]). و [[rows=476.00]] بكسور و [[Index Searches]] حاجات جديدة في Postgres 18؛ في 17 هتشوف [[rows=476]] بس.
+
+---
+
+## ٦. تجربة الـ try: الدالة على العمود
+
+~~~sql
+EXPLAIN ANALYZE SELECT count(*) FROM orders WHERE date(created_at) = current_date;
+~~~
+
+~~~text الناتج (مختصر)
+ Finalize Aggregate  (actual time=12.534..17.375 rows=1.00 loops=1)
+   ->  Gather  (actual time=12.444..17.371 rows=2.00 loops=1)
+         Workers Launched: 1
+         ->  Partial Aggregate  (actual time=10.502..10.503 rows=1.00 loops=2)
+               ->  Parallel Seq Scan on orders  (actual time=0.072..10.493 rows=85.50 loops=2)
+                     Filter: (date(created_at) = CURRENT_DATE)
+                     Rows Removed by Filter: 99915
+ Execution Time: 17.390 ms
+~~~
+
+رجع [[Seq Scan]] رغم إن الـ index موجود. الفهرس مترتب بقيم [[created_at]]، مش بنتيجة [[date(created_at)]]، فـ Postgres لازم يحسب الدالة لكل صف. و [[Parallel]] و [[Workers Launched: 1]] معناها إنه قسم القراية على عمليتين ([[loops=2]]، كل واحدة قرت نص الجدول)، و [[rows=85.50]] متوسط اللي طلع من كل واحدة.
+
+والحل: نفس المعنى كمدى على العمود نفسه:
+
+~~~sql
+EXPLAIN ANALYZE SELECT count(*) FROM orders WHERE created_at >= current_date AND created_at < current_date + 1;
+~~~
+
+~~~text الناتج (مختصر)
+   ->  Bitmap Heap Scan on orders  (actual time=0.042..0.159 rows=171.00 loops=1)
+         ->  Bitmap Index Scan on orders_created_at_idx  (actual time=0.024..0.024 rows=171.00 loops=1)
+               Index Cond: ((created_at >= CURRENT_DATE) AND (created_at < (CURRENT_DATE + 1)))
+ Execution Time: 0.186 ms
+~~~
+
+[[current_date]] النهارده الساعة ١٢ بالليل، و [[current_date + 1]] بكرة الساعة ١٢. و [[<]] مش [[<=]] عشان أوردر بكرة الساعة ١٢ بالظبط ميتحسبش. الاستعلامين رجّعوا نفس العدد ([[171]])، والفرق ١٧ms مقابل ٠.٢ms.
+
+ولو حاولت تعمل index على الدالة نفسها:
+
+~~~sql
+CREATE INDEX ON orders (date(created_at));
+~~~
+
+~~~text الناتج
+ERROR:  functions in index expression must be marked IMMUTABLE
+~~~
+
+[[IMMUTABLE]] يعني «نفس المدخل يطلّع نفس الناتج دايمًا». و [[date()]] على [[timestamptz]] مش كده، لأن اليوم بيفرق حسب الـ timezone بتاع الـ session (الساعة ١ بالليل في القاهرة لسه امبارح في UTC). عشان كده الحل اللي في deep بيثبّت المنطقة.
+
+---
+
+## الخلاصة
+
+| الخطوة | الوقت | الخطة |
+|---|---|---|
+| من غير index | ~٢٥ms | [[Seq Scan]] + [[Rows Removed by Filter: 199525]] |
+| بعد [[CREATE INDEX]] | ~٠.٣ms | [[Bitmap Index Scan]] + [[Index Cond]] |
+| دالة على العمود | ~١٧ms | [[Seq Scan]] تاني، الـ index اتجاهل |
+| نفس الشرط كمدى | ~٠.٢ms | [[Index Cond]] |
+
+- الـ index بيخدم الشرط لو مكتوب على **العمود نفسه** زي ما اتعمل عليه الفهرس.
+- [[Seq Scan]] على جدول كبير مع [[Rows Removed by Filter]] ضخم = غالبًا index ناقص.
+- الأرقام عندك هتختلف حسب الجهاز، بس الفرق بالأضعاف هيفضل.`,
           lines: [
             "ضيف ٢٠٠ ألف أوردر تجربة:",
             "لأول يوزر، مدفوعة، بمبلغ عشوائي، وتاريخ عشوائي في آخر سنة،",
@@ -82,6 +327,171 @@ DROP INDEX orders_user_id_idx;`,
             when: "لما استعلام متكرر فيه شرط مساواة على عمود + ترتيب أو مدى على عمود تاني. أشهرها: (user_id, created_at) و (status, created_at).",
             mistakes: R`ترتيب الأعمدة بالعكس. index لوحده على عمود موجود أصلًا في أول index مركب: في مشروع حقيقي كان فيه [[@@unique([userId, type])]] وجنبه [[@@index([userId])]]، والتاني ملوش لازمة لأن الـ unique المركب بيغطيه. و index مركب لكل تركيبة ممكنة من الأعمدة.`
           },
+          teach: R`## الفكرة: فهرس واحد على عمودين، والترتيب هو اللي بيحدد هيخدم مين
+
+المثال بيعمل index على [[(user_id, created_at DESC)]]، وبعدين يسأل ٣ أسئلة: واحد بيستخدم العمودين، وواحد على الأول بس، وواحد على التاني بس. ونشوف بـ [[EXPLAIN]] مين استفاد.
+
+الناتج تحت من [[postgres:18]] جوه Docker، بعد درس B-tree index: [[orders]] فيه ٢٠٠ ألف أوردر لنفس اليوزر، وعليه [[orders_created_at_idx]] من الدرس اللي فات و [[orders_user_id_idx]] من درس one-to-many.
+
+---
+
+## ١. [[CREATE INDEX orders_user_created_idx ON orders (user_id, created_at DESC)]]
+
+| الحتة | معناها |
+|---|---|
+| [[orders_user_created_idx]] | الاسم: الجدول والعمودين |
+| [[(user_id, created_at DESC)]] | عمودين بالترتيب ده. الفهرس بيترتب بـ [[user_id]] الأول، وجوه كل يوزر بـ [[created_at]] |
+| [[DESC]] | Descending: من الأحدث للأقدم. والافتراضي [[ASC]] (من الأقدم) |
+
+تخيّل الفهرس جدول مترتب كده:
+
+~~~text شكل الفهرس من جوه (تبسيط)
+user_id     created_at            مكان الصف
+user-A      2026-10-07 08:35      ...
+user-A      2026-10-07 08:20      ...
+user-A      2026-10-07 07:50      ...
+...
+user-B      2026-10-06 22:10      ...
+user-B      2026-09-30 11:00      ...
+~~~
+
+زي دليل التليفون: بالعيلة، وجوه كل عيلة بالاسم. لو عارف العيلة تروح لها على طول، وجواها الأسماء مترتبة. لو عارف الاسم بس، لازم تقلّب في كل العيلات.
+
+---
+
+## ٢. السؤال اللي بيستخدم العمودين
+
+~~~sql
+SELECT id, total FROM orders WHERE user_id = (SELECT id FROM users LIMIT 1) ORDER BY created_at DESC LIMIT 20;
+~~~
+
+- [[(SELECT id FROM users LIMIT 1)]]: subquery بترجّع id أول يوزر، عشان مش هنكتب الـ uuid الطويل بإيدينا.
+- [[ORDER BY created_at DESC LIMIT 20]]: أحدث ٢٠ أوردر.
+
+~~~text الناتج (أول ٣ صفوف من ٢٠)
+   id   | total
+--------+--------
+      2 |   0.00
+   6680 |  15.04
+ 148010 | 505.21
+...
+(20 rows)
+
+Time: 1.162 ms
+~~~
+
+والخطة بـ [[EXPLAIN ANALYZE]]:
+
+~~~text الناتج
+ Limit  (cost=1.43..2.61 rows=20 width=22) (actual time=0.022..0.040 rows=20.00 loops=1)
+   Buffers: shared hit=24
+   InitPlan 1
+     ->  Limit  (cost=0.00..1.01 rows=1 width=16) (actual time=0.005..0.006 rows=1.00 loops=1)
+           ->  Seq Scan on users  (cost=0.00..1.01 rows=1 width=16) (actual time=0.005..0.005 rows=1.00 loops=1)
+   ->  Index Scan using orders_user_created_idx on orders  (cost=0.42..11806.50 rows=200001 width=22) (actual time=0.022..0.037 rows=20.00 loops=1)
+         Index Cond: (user_id = (InitPlan 1).col1)
+ Execution Time: 0.055 ms
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[InitPlan 1]] | الـ subquery اتنفّذت مرة واحدة الأول، ونتيجتها اسمها [[(InitPlan 1).col1]] |
+| [[Index Scan using orders_user_created_idx]] | راح للفهرس المركب، لأول entry لليوزر ده |
+| [[Index Cond: (user_id = ...)]] | الشرط اتدوّر بيه جوه الفهرس |
+| مفيش سطر [[Sort]] | الصفوف خارجة من الفهرس مترتبة بالأحدث أصلًا، فمحتاجش يرتّب |
+| [[Limit ... rows=20.00]] | قرا ٢٠ entry ووقف، رغم إن اليوزر ليه ٢٠٠ ألف |
+
+---
+
+## ٣. شرط على العمود الأول بس
+
+~~~sql
+SELECT count(*) FROM orders WHERE user_id = (SELECT id FROM users LIMIT 1);
+~~~
+
+~~~text الناتج
+ count
+--------
+ 200001
+~~~
+
+الفهرس المركب **ينفع** هنا (الـ user_id أول عمود فيه)، بس Postgres في الوقت ده كان عنده كمان [[orders_user_id_idx]] الصغير على [[user_id]] لوحده، فاستخدمه:
+
+~~~text الناتج (مختصر)
+   ->  Index Only Scan using orders_user_id_idx on orders  (actual time=0.030..11.227 rows=200001.00 loops=1)
+         Index Cond: (user_id = (InitPlan 1).col1)
+         Heap Fetches: 105
+ Execution Time: 20.514 ms
+~~~
+
+[[Index Only Scan]] معناها إنه عدّ من الفهرس من غير ما يفتح الجدول (الـ [[count]] مش محتاج أي عمود تاني). و [[Heap Fetches: 105]] صفوف اضطر يتأكد منها في الجدول لأنها لسه جديدة.
+
+---
+
+## ٤. شرط على العمود التاني بس
+
+~~~sql
+SELECT count(*) FROM orders WHERE created_at > now() - interval '1 day';
+~~~
+
+~~~text الناتج (مختصر)
+   ->  Index Only Scan using orders_created_at_idx on orders  (actual time=0.014..0.042 rows=475.00 loops=1)
+         Index Cond: (created_at > (now() - '1 day'::interval))
+ Execution Time: 0.076 ms
+~~~
+
+استخدم [[orders_created_at_idx]] (فهرس التاريخ من الدرس اللي فات)، **مش** المركب. في المركب، التواريخ متفرقة جوه كل يوزر، فمفيش مكان واحد يبدأ منه.
+
+---
+
+## ٥. [[DROP INDEX orders_user_id_idx]]
+
+[[DROP INDEX]] بيمسح الفهرس (الداتا نفسها مبتتلمسش). مسحناه لأن أي استعلام كان بيستخدمه يقدر يستخدم المركب، لأن [[user_id]] أول عمود فيه. ده اسمه **leftmost prefix**: فهرس على [[(a, b)]] بيغني عن فهرس على [[(a)]] لوحده.
+
+~~~text الناتج
+DROP INDEX
+~~~
+
+وبعد المسح، سؤال الخطوة ٣ على اليوزر ده طلع [[Parallel Seq Scan]] مش الفهرس المركب. ده مش غلط: اليوزر ده عنده كل الـ ٢٠٠ ألف صف، فقراية الجدول على طول أرخص من المرور على الفهرس. مع يوزر تاني ليه أوردر واحد (جربناها جوه [[BEGIN]] و [[ROLLBACK]]):
+
+~~~text الناتج
+ Aggregate  (cost=6.19..6.20 rows=1 width=8)
+   ->  Index Only Scan using orders_user_created_idx on orders  (cost=0.42..6.19 rows=1 width=0)
+         Index Cond: (user_id = '13f8d8bb-4fcf-4825-b81d-01c376468ccc'::uuid)
+~~~
+
+يعني الـ planner بيختار حسب **كام صف متوقع يرجع**، مش بس حسب وجود فهرس.
+
+---
+
+## ٦. الترتيب العكسي: [[(created_at, user_id)]]
+
+الـ solCode بيجرّب الفهرس بالعكس جوه [[BEGIN]] و [[ROLLBACK]] (عشان يتلغي في الآخر):
+
+~~~text الناتج
+ Limit  (cost=1.43..2.75 rows=20 width=22)
+   InitPlan 1
+     ->  Limit  (cost=0.00..1.01 rows=1 width=16)
+           ->  Seq Scan on users  (cost=0.00..1.01 rows=1 width=16)
+   ->  Index Scan Backward using orders_created_at_idx on orders  (cost=0.42..13183.93 rows=200001 width=22)
+         Filter: (user_id = (InitPlan 1).col1)
+~~~
+
+[[Index Scan Backward]]: بيقرا فهرس التاريخ من الآخر (الأحدث)، و [[Filter]] (مش [[Index Cond]]) على [[user_id]]: يعني بيقرا أوردرات كل الناس بالأحدث ويرمي اللي مش بتاعة اليوزر. هنا كل الأوردرات بتاعته فخلص بسرعة، لكن ليوزر عنده أوردرات قليلة ممكن يلف على الجدول كله.
+
+---
+
+## الخلاصة
+
+| الاستعلام | فهرس [[(user_id, created_at DESC)]] بيخدمه؟ |
+|---|---|
+| [[WHERE user_id = ? ORDER BY created_at DESC]] | أيوه، كامل ومن غير Sort |
+| [[WHERE user_id = ?]] | أيوه (أول عمود) |
+| [[WHERE created_at > ?]] لوحده | لأ، محتاج فهرس على created_at |
+
+- المساواة ([[=]]) الأول، والترتيب أو المدى بعدها.
+- فهرس على [[(a)]] لوحده زيادة لو فيه فهرس بيبدأ بـ [[a]].
+- الـ planner ممكن يختار [[Seq Scan]] حتى والفهرس موجود، لو الشرط هيرجّع جزء كبير من الجدول.`,
           lines: [
             "index مركب: باليوزر، وجوه كل يوزر بالأحدث.",
             "أوردرات يوزر، الأحدث الأول: بيستخدم الـ index كله، ومن غير ترتيب.",
@@ -140,6 +550,154 @@ try {
             when: "أي كتابة متعددة الخطوات لازم تبقى وحدة واحدة.",
             mistakes: R`[[pool.query("BEGIN")]]: مش transaction، وممكن تسيب connection «idle in transaction». تنسى [[release()]] فالـ pool يخلص والتطبيق يعلّق. تنادي بوابة الدفع جوه الـ transaction. وتمسك الـ error من غير ROLLBACK.`
           },
+          teach: R`## الفكرة: ٤ أوامر SQL، يا يتحفظوا كلهم يا ولا واحد
+
+المثال دالة من Node بتعمل أوردر: صف في [[orders]]، وبند في [[order_items]]، وخصم من [[products.stock]]، وتحديث [[orders.total]]. الكود كله ملفوف في [[BEGIN]] و [[COMMIT]]، وأي error في النص بيروح لـ [[ROLLBACK]] فيتلغي كل اللي اتعمل.
+
+الناتج تحت حقيقي: الكود اتشغّل بمكتبة [[pg]] على [[node:22-slim]] في Docker، متوصل بـ [[postgres:18]]. المنتج Hoodie سعره 650 ومخزونه 8.
+
+---
+
+## ١. [[const client = await pool.connect()]]
+
+[[pool]] هو [[new pg.Pool(...)]]: مجموعة connections مفتوحة للقاعدة (الافتراضي لحد ١٠) بيتشاركها كل الطلبات. و [[pool.connect()]] بياخد **connection واحد** منهم ويديهولك لوحدك لحد ما ترجّعه.
+
+ليه مش [[pool.query]] زي باقي الكود؟ لأن الـ transaction عايشة على connection واحد. [[pool.query]] كل مرة بياخد أي connection فاضي، فممكن [[BEGIN]] يروح على واحد والـ INSERT على تاني. جربناها: ٢٠ طلب في نفس الوقت، كل واحد بيعمل [[pool.query("BEGIN")]] ثم INSERT ثم [[pool.query("ROLLBACK")]]:
+
+~~~text الناتج
+{ before: '200002', after: '200004' }
+~~~
+
+أوردرين اتحفظوا رغم إن كل طلب عمل ROLLBACK: الـ INSERT بتاعهم راح لـ connection مفيهاش BEGIN فاتحفظ لوحده. (الرقم بيختلف من تشغيل للتاني، وده اللي بيخليها bug صعب تمسكه.)
+
+---
+
+## ٢. [[try]] و [[catch]] و [[finally]]
+
+| الجزء | بيتنفّذ إمتى | فيه إيه هنا |
+|---|---|---|
+| [[try { ... }]] | الأول | كل أوامر الـ transaction |
+| [[catch (e) { ... }]] | لو أي سطر جوه try رمى error | [[ROLLBACK]] وبعدين [[throw e]] |
+| [[finally { ... }]] | **دايمًا**، نجح أو فشل | [[client.release()]] |
+
+[[throw e]] في الـ catch بيرمي نفس الـ error تاني للي نادى الدالة، عشان الـ route يعرف إن الأوردر فشل ويرجّع رسالة لليوزر. لو مسكته وسكتّ، الكود اللي برّه هيفتكر إنه نجح.
+
+و [[client.release()]] بيرجّع الـ connection للـ pool. لو نسيته، بعد ١٠ طلبات الـ pool يخلص وكل طلب جديد يستنى للأبد.
+
+---
+
+## ٣. [[await client.query("BEGIN")]]
+
+[[client.query(sql, values)]] بيبعت أمر SQL ويرجّع object فيه [[rows]] (الصفوف) و [[rowCount]] (عدد الصفوف اللي اتأثرت). و [[await]] معناها «استنى الرد قبل السطر اللي بعده».
+
+[[BEGIN]] بيبدأ transaction: من هنا لحد COMMIT أو ROLLBACK، أي تغيير مش باين لأي connection تاني، ومش متحفظ نهائي.
+
+---
+
+## ٤. الأوردر: [[INSERT ... RETURNING id]]
+
+~~~js
+const { rows } = await client.query("INSERT INTO orders (user_id) VALUES ($1) RETURNING id", [userId]);
+~~~
+
+- [[$1]]: مكان قيمة، والقيمة نفسها في الـ array اللي بعده ([[[userId]]]). الـ driver بيبعتها منفصلة عن النص، فمفيش SQL injection. [[$1]] أول عنصر، و [[$2]] التاني، وهكذا.
+- [[RETURNING id]]: رجّعلي الـ id اللي القاعدة ولّدته، عشان محتاجينه في البنود.
+- [[const { rows } = ...]]: اسمها destructuring: خد خانة [[rows]] من الـ object اللي رجع.
+
+~~~text rows
+[ { id: '200008' } ]
+~~~
+
+الـ id رجع **string** مش رقم: [[pg]] بيرجّع [[bigint]] كنص، لأن JavaScript number مبيشيلش أرقام [[bigint]] الكبيرة بدقة. فـ [[rows[0].id]] هو [['200008']].
+
+---
+
+## ٥. البند: [[INSERT ... SELECT]]
+
+~~~js
+await client.query("INSERT INTO order_items (order_id, product_id, quantity, unit_price) SELECT $1::bigint, id, $3::int, price FROM products WHERE id = $2", [rows[0].id, productId, qty]);
+~~~
+
+بدل [[VALUES]] فيه [[SELECT]] من [[products]]، عشان [[unit_price]] ييجي من عمود [[price]] في القاعدة، مش من الطلب. لو السعر جه من الـ frontend، أي حد يقدر يبعت سعر 1 جنيه.
+
+| الحتة | معناها |
+|---|---|
+| [[$1::bigint]] | الـ id بتاع الأوردر، و [[::bigint]] بيقول لـ Postgres نوعه (جوه SELECT ممكن ميعرفش نوع الـ parameter لوحده) |
+| [[id]] | id المنتج من الصف |
+| [[$3::int]] | الكمية |
+| [[price]] | السعر من جدول المنتجات |
+| [[WHERE id = $2]] | المنتج ده بس |
+
+~~~text الناتج
+INSERT order_items rowCount: 1
+~~~
+
+---
+
+## ٦. المخزون: الشرط والخصم في أمر واحد
+
+~~~js
+const r = await client.query("UPDATE products SET stock = stock - $1 WHERE id = $2 AND stock >= $1", [qty, productId]);
+if (r.rowCount === 0) throw new Error("OUT_OF_STOCK");
+~~~
+
+[[stock >= $1]] جوه الـ WHERE: لو المخزون مش كفاية، الصف مش هيتطابق ومش هيتعدل، فـ [[rowCount]] يبقى 0. ساعتها [[throw]] بيوديك للـ catch، والـ catch بيعمل ROLLBACK **للأوردر والبند اللي اتعملوا قبل كده**. (ليه ده أحسن من SELECT وبعدين UPDATE: الدرس الجاي.)
+
+و [[===]] مقارنة في JavaScript من غير تحويل أنواع.
+
+---
+
+## ٧. الإجمالي ثم [[COMMIT]]
+
+~~~js
+await client.query("UPDATE orders SET total = (SELECT sum(quantity * unit_price) FROM order_items WHERE order_id = $1) WHERE id = $1", [rows[0].id]);
+await client.query("COMMIT");
+~~~
+
+الـ subquery بتجمع [[quantity * unit_price]] (الكمية × السعر) لكل بنود الأوردر، والنتيجة بتتكتب في [[total]]. نفس [[$1]] اتستخدم مرتين في نفس الأمر، عادي.
+
+و [[COMMIT]] بيثبّت كل اللي فات مرة واحدة: من اللحظة دي باقي الـ connections شايفين الأوردر وبنوده والمخزون الجديد مع بعض.
+
+---
+
+## ٨. التلات سيناريوهات بأرقام حقيقية
+
+ضفنا سطرين بيطبعوا عدد الأوردرات والبنود والمخزون قبل وبعد كل محاولة:
+
+~~~text الناتج
+before: { orders: '200001', items: '0', hoodie_stock: 8 }
+created: 200008 [ { id: '200008', status: 'pending', total: '1300.00' } ]
+after ok: { orders: '200002', items: '1', hoodie_stock: 6 }
+
+error: test
+after test: { orders: '200002', items: '1', hoodie_stock: 6 }
+
+UPDATE products rowCount: 0
+error: OUT_OF_STOCK
+after out of stock: { orders: '200002', items: '1', hoodie_stock: 6 }
+~~~
+
+| المحاولة | اللي حصل جوه | النتيجة في القاعدة |
+|---|---|---|
+| ٢ قطعة، المخزون 8 | الـ ٤ أوامر نجحوا، COMMIT | أوردر + بند، المخزون 6، الإجمالي 2 × 650 = 1300 |
+| [[throw new Error("test")]] بعد البند (تجربة الـ try) | الأوردر والبند اتعملوا، وبعدين error | ولا حاجة اتغيرت |
+| ٥٠ قطعة | الأوردر والبند اتعملوا، والـ UPDATE رجّع 0 | ولا حاجة اتغيرت |
+
+ولاحظ الـ ids: الأوردر الناجح 200008، والمحاولتين الفاشلتين أخدوا 200009 و 200010 واترموا. الـ sequence مش جزء من الـ transaction، فالأرقام اللي اتصرفت مبترجعش، والأوردر الجاي هيبقى 200011.
+
+---
+
+## الخلاصة
+
+| الخطوة | الكود | ليه |
+|---|---|---|
+| ١ | [[pool.connect()]] | connection واحد للـ transaction كلها |
+| ٢ | [[BEGIN]] | ابدأ |
+| ٣ | الأوامر بـ [[client.query]] | كلها على نفس الـ client |
+| ٤ | [[throw]] لو حاجة غلط | يوديك للـ catch |
+| ٥ | [[COMMIT]] | ثبّت الكل مرة واحدة |
+| ٦ | [[ROLLBACK]] في catch ثم [[throw e]] | الغي الكل، وبلّغ اللي نادى |
+| ٧ | [[release()]] في finally | رجّع الـ connection مهما حصل |`,
           lines: [
             "خد connection واحد من الـ pool وامسكه.",
             "جرّب:",
@@ -217,6 +775,128 @@ if (r.rowCount === 0) throw new Error("OUT_OF_STOCK");`,
             when: "المخزون، والأرصدة، والأكواد اللي بتتستخدم مرة، والعدادات، وأي تغيير حالة.",
             mistakes: R`اقرا في JavaScript واكتب. تفتكر إن حطهم جوه transaction بيحل المشكلة. وفي مشروع حقيقي كان مسار الأوردر العادي مكتوب صح بـ updateMany وشرط [[gte]]، بس مسار تاني (رجوع أوردر ملغي لحالة مدفوع) بيخصم بـ [[update]] و [[decrement]] من غير شرط، فالمخزون ممكن يبقى بالسالب. كل مسار بيخصم لازم يتبع نفس القاعدة، و [[CHECK (stock >= 0)]] شبكة أمان.`
           },
+          teach: R`## الفكرة: «اقرا وبعدين اكتب» بيتكسر لما طلبين ييجوا مع بعض
+
+المثال فيه نفس العملية مرتين: خصم كمية من المخزون. المرة الأولى غلط (تقرا الرقم في JavaScript وتحسب وتكتب)، والتانية صح (القاعدة نفسها بتتأكد وتخصم في أمر واحد). هنفك الاتنين، وبعدين نشغّلهم بجد على ٢٠ طلب في نفس الوقت.
+
+الناتج تحت حقيقي: Node بمكتبة [[pg]] على [[node:22-slim]] و psql، متوصلين بـ [[postgres:18]] في Docker. [[db]] في المثال هو [[new pg.Pool(...)]].
+
+---
+
+## ١. الطريقة الغلط، سطر سطر
+
+~~~js
+const { rows } = await db.query("SELECT stock FROM products WHERE id = $1", [id]);
+~~~
+
+بيقرا المخزون الحالي. [[$1]] مكان القيمة، والقيمة في الـ array ([[[id]]]). و [[const { rows }]] بياخد الصفوف من النتيجة، فـ [[rows[0].stock]] هو الرقم.
+
+~~~js
+if (rows[0].stock < qty) throw new Error("OUT_OF_STOCK");
+~~~
+
+لو المخزون أقل من الكمية المطلوبة ([[qty]])، ارفض. لحد هنا شكله منطقي.
+
+~~~js
+await db.query("UPDATE products SET stock = $1 WHERE id = $2", [rows[0].stock - qty, id]);
+~~~
+
+المشكلة هنا: [[rows[0].stock - qty]] اتحسبت **في JavaScript** من رقم اتقرا من شوية، والـ UPDATE بيكتب الرقم ده جاهز. لو طلب تاني قرا نفس الرقم في الفترة دي، الاتنين هيكتبوا نفس النتيجة:
+
+| الوقت | الطلب A | الطلب B | المخزون في القاعدة |
+|---|---|---|---|
+| ١ | يقرا 1 | | 1 |
+| ٢ | | يقرا 1 | 1 |
+| ٣ | 1 ≥ 1 تمام | 1 ≥ 1 تمام | 1 |
+| ٤ | يكتب 0 | | 0 |
+| ٥ | | يكتب 0 | 0 |
+
+اتباعت قطعتين، والمخزون 0 مش -1، ومحدش أخد error. اسمها **lost update**: كتابة B مسحت أثر كتابة A.
+
+---
+
+## ٢. الطريقة الصح: أمر واحد
+
+~~~js
+const r = await db.query(
+  "UPDATE products SET stock = stock - $1 WHERE id = $2 AND stock >= $1 RETURNING stock",
+  [qty, id]
+);
+if (r.rowCount === 0) throw new Error("OUT_OF_STOCK");
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[SET stock = stock - $1]] | الطرح بيتعمل **جوه القاعدة** على القيمة الحالية لحظة الكتابة، مش على رقم قديم |
+| [[WHERE id = $2]] | المنتج ده |
+| [[AND stock >= $1]] | ولو المخزون لسه كفاية بس. الشرط والخصم في نفس الأمر |
+| [[RETURNING stock]] | رجّعلي المخزون الجديد بعد الخصم |
+| [[$1]] مرتين | نفس القيمة ([[qty]]) في مكانين، عادي |
+| [[r.rowCount]] | عدد الصفوف اللي اتعدلت فعلًا: 1 = اتباع، 0 = الشرط مطابقش يعني خلص |
+
+ليه ده آمن؟ الـ UPDATE بياخد **lock** على الصف. لو طلب تاني جه يعدّل نفس الصف، بيستنى لحد ما الأول يخلص، وبعدين Postgres بيعيد فحص [[stock >= $1]] على القيمة **الجديدة**.
+
+---
+
+## ٣. نشوفها بعينينا: نافذتين psql (تجربة الـ try)
+
+خلّينا المخزون 1، والنافذة الأولى بتعمل الخصم وتستنى ٣ ثواني قبل COMMIT ([[pg_sleep(3)]] بينيّم الـ session)، والتانية بتبدأ بعدها بثانية:
+
+~~~text نافذة 1
+BEGIN
+UPDATE products SET stock = stock - 1 WHERE name = 'Hoodie' AND stock >= 1;
+UPDATE 1
+SELECT pg_sleep(3);
+COMMIT
+~~~
+
+~~~text نافذة 2
+BEGIN
+UPDATE products SET stock = stock - 1 WHERE name = 'Hoodie' AND stock >= 1;
+UPDATE 0
+Time: 2011.810 ms (00:02.012)
+COMMIT
+SELECT stock FROM products WHERE name = 'Hoodie';
+ stock
+-------
+     0
+~~~
+
+- [[UPDATE 1]] في الأولى: صف واحد اتعدل، والمخزون بقى 0 (بس لسه مش باين لحد).
+- التانية **وقفت** ٢ ثانية (الوقت اللي فضل للأولى لحد COMMIT): ده الـ lock.
+- بعد COMMIT الأولى، التانية كمّلت وقالت [[UPDATE 0]]: أعادت فحص [[stock >= 1]] على القيمة الجديدة (0) فالشرط بقى false. الـ 0 ده هو [[rowCount === 0]] في الكود.
+- المخزون في الآخر 0 مش -1.
+
+---
+
+## ٤. ٢٠ طلب في نفس الوقت من Node
+
+المخزون 5، و ٢٠ عميل بيشتروا قطعة في نفس اللحظة ([[Promise.allSettled]] بيشغّل الـ ٢٠ مع بعض ويستنى الكل، ناجح أو فاشل):
+
+~~~text الناتج
+wrong: sold: 20 rejected: 0 stock now: 4
+right: sold: 5 rejected: 15 stock now: 0
+~~~
+
+| الطريقة | اتباع | اترفض | المخزون في الآخر |
+|---|---|---|---|
+| غلط (SELECT ثم SET بالرقم) | ٢٠ | ٠ | 4 |
+| صح (أمر واحد بشرط) | ٥ | ١٥ | 0 |
+
+الطريقة الغلط باعت ٢٠ قطعة من ٥، والمخزون لسه بيقول 4: أغلب الطلبات قرت 5 وكتبت 4. والصح باع ٥ بالظبط. وبطلبين بس مكانش الغلط بيظهر كل مرة (في تشغيلنا الأول الاتنين طلعوا صح بالصدفة)، وده اللي بيخلي الـ bug ده يعدّي من الاختبار ويظهر يوم العرض.
+
+---
+
+## الخلاصة
+
+| | الغلط | الصح |
+|---|---|---|
+| مين بيحسب الرقم الجديد | JavaScript | Postgres |
+| إمتى بيتفحص الشرط | قبل الكتابة بوقت | لحظة الكتابة، وتحت lock |
+| إزاي تعرف إنه خلص | [[if]] على رقم قديم | [[rowCount === 0]] |
+
+- أي «اقرا، اتأكد، اكتب» على عدّاد: حط الشرط في الـ WHERE والحساب في الـ SET.
+- الـ transaction لوحدها مش بتحل ده: الطريقة الغلط جوه BEGIN و COMMIT برضه بتبيع زيادة في الإعداد الافتراضي (READ COMMITTED).`,
           lines: [
             "اقرا المخزون.",
             "لو مش كفاية ارفض (بس الرقم ده ممكن يكون اتغير خلاص).",
@@ -266,6 +946,182 @@ COMMIT;`,
             when: "قرار من أكتر من خطوة على نفس الصفوف: موافقة على طلب، دفع، حجز مقعد، وأي «اقرا، اتأكد، اكتب» الشرط فيها مينفعش يتكتب في WHERE واحد.",
             mistakes: R`FOR UPDATE برّه transaction. تقرا الحالة قبل القفل وتبني عليها. تقفل بترتيب مختلف في أماكن مختلفة فيحصل deadlock. وتمسك القفل وانت بتنادي API خارجي.`
           },
+          teach: R`## الفكرة: اقفل الأول، اقرا، قرّر، اكتب، وبعدين فك
+
+المثال دفع أوردر رقم 5: نقفل صف الأوردر، ونتأكد إنه لسه [[pending]]، ونقفل المنتجات اللي فيه ونقرا مخزونها، ونخصم، ونعلّم الأوردر مدفوع. كله جوه transaction واحدة، فمحدش يقدر يعدّل الصفوف دي وإحنا في النص.
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker. جهّزنا الأوردر 5 بحالة [[pending]] وفيه بندين: Mug (كمية 1) و Hoodie (كمية 2)، والمخزون قبلها Mug 14 و Hoodie 8. النوافذ المتوازية اتعملت بـ psql شغالين في نفس الوقت.
+
+---
+
+## ١. [[BEGIN]]
+
+بداية الـ transaction. ده مهم جدًا هنا: القفل بتاع [[FOR UPDATE]] بيفضل لحد [[COMMIT]] أو [[ROLLBACK]] بس. من غير BEGIN، كل أمر transaction لوحده، فالقفل بيتفك أول ما الـ SELECT يخلص، ويبقى ملوش لازمة.
+
+---
+
+## ٢. [[SELECT status FROM orders WHERE id = 5 FOR UPDATE]]
+
+SELECT عادي، وفي آخره [[FOR UPDATE]]: «اقفل كل صف رجع، كأني هعدّله». أي transaction تانية عايزة تعمل UPDATE أو DELETE أو FOR UPDATE على الصف ده هتستنى.
+
+~~~text الناتج
+ status
+---------
+ pending
+(1 row)
+~~~
+
+القراية دي **بعد** القفل، فالـ [[pending]] ده مضمون يفضل pending لحد ما نخلص. الكود (في التطبيق) هنا بيتأكد: لو مش pending، ROLLBACK وارفض.
+
+---
+
+## ٣. نقفل المنتجات ونقرا مخزونها
+
+~~~sql
+SELECT p.id, p.stock, oi.quantity
+FROM order_items oi JOIN products p ON p.id = oi.product_id
+WHERE oi.order_id = 5
+ORDER BY p.id
+FOR UPDATE OF p;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[order_items oi JOIN products p ON p.id = oi.product_id]] | البنود مع منتجاتها. [[oi]] و [[p]] أسماء مختصرة (aliases) |
+| [[WHERE oi.order_id = 5]] | بنود الأوردر ده بس |
+| [[ORDER BY p.id]] | ترتيب ثابت للقفل (تحت هنشوف ليه) |
+| [[FOR UPDATE OF p]] | اقفل صفوف [[products]] بس. من غير [[OF p]] كان هيقفل صفوف order_items كمان |
+
+~~~text الناتج
+ id | stock | quantity
+----+-------+----------
+  2 |    14 |        1
+  4 |     8 |        2
+(2 rows)
+~~~
+
+الكود هنا بيتأكد إن كل [[stock]] أكبر من أو يساوي [[quantity]].
+
+---
+
+## ٤. الخصم: [[UPDATE ... FROM]]
+
+~~~sql
+UPDATE products p SET stock = p.stock - oi.quantity
+FROM order_items oi WHERE oi.order_id = 5 AND p.id = oi.product_id;
+~~~
+
+[[UPDATE ... FROM]] بتاعة Postgres: عدّل جدول بقيم من جدول تاني. [[FROM order_items oi]] بيجيب البنود، و [[p.id = oi.product_id]] بيربط كل منتج ببنده، فكل منتج بيتخصم منه الكمية بتاعته. أمر واحد بدل UPDATE لكل بند.
+
+~~~text الناتج
+UPDATE 2
+~~~
+
+[[UPDATE 2]]: صفين اتعدلوا (المنتجين).
+
+---
+
+## ٥. [[UPDATE orders SET status = 'paid' WHERE id = 5]] ثم [[COMMIT]]
+
+~~~text الناتج
+UPDATE 1
+COMMIT
+~~~
+
+بعد الـ COMMIT الأقفال كلها اتفكت، والمخزون:
+
+~~~text الناتج
+ id |  name   | stock
+----+---------+-------
+  1 | T-shirt |    40
+  2 | Mug     |    13
+  3 | Cap     |     0
+  4 | Hoodie  |     6
+~~~
+
+Mug من 14 لـ 13، و Hoodie من 8 لـ 6.
+
+---
+
+## ٦. تجربة الـ try: تلات نوافذ
+
+النافذة 1 قفلت الأوردر 5 بـ [[FOR UPDATE]] وفضلت ماسكاه ثانيتين قبل COMMIT ([[pg_sleep(2)]] بينيّم الـ session). النافذة 2 حاولت تقفل نفس الصف بعدها بنص ثانية:
+
+~~~text نافذة 2
+BEGIN
+SELECT id, status, total FROM orders WHERE id = 5 FOR UPDATE;
+ id | status |  total
+----+--------+---------
+  5 | paid   | 1410.00
+(1 row)
+
+Time: 1507.671 ms (00:01.508)
+~~~
+
+وقفت ١.٥ ثانية، اللي فضلوا للنافذة 1 لحد COMMIT، وبعدها رجعت. والنافذة 3 في نفس الوقت:
+
+~~~text نافذة 3
+SELECT id, status, total FROM orders WHERE id = 5;
+ id | status |  total
+----+--------+---------
+  5 | paid   | 1410.00
+(1 row)
+
+Time: 1.097 ms
+
+SELECT id, status, total FROM orders WHERE id = 5 FOR UPDATE NOWAIT;
+ERROR:  could not obtain lock on row in relation "orders"
+Time: 0.229 ms
+
+SELECT id, status FROM orders WHERE id IN (5, 6) FOR UPDATE SKIP LOCKED;
+ id | status
+----+--------
+  6 | paid
+(1 row)
+~~~
+
+| الأمر | عمل إيه والصف مقفول |
+|---|---|
+| [[SELECT]] عادي | رجع على طول (١ms). القراية العادية مش بتستنى الأقفال (MVCC: بتشوف آخر نسخة اتعملها COMMIT) |
+| [[FOR UPDATE]] | استنى لحد ما القفل اتفك |
+| [[FOR UPDATE NOWAIT]] | رمى error فورًا بدل ما يستنى |
+| [[FOR UPDATE SKIP LOCKED]] | عدّى الصف المقفول (5) ورجّع الباقي (6). ده أساس الـ job queues: كل worker ياخد صفوف غير اللي غيره ماسكها |
+
+---
+
+## ٧. ليه [[ORDER BY p.id]]: الـ deadlock
+
+جربنا transactionين بيقفلوا نفس المنتجين بترتيب عكس بعض: الأولى 2 ثم 4، والتانية 4 ثم 2:
+
+~~~text التانية
+SELECT id FROM products WHERE id = 2 FOR UPDATE
+ERROR:  deadlock detected
+DETAIL:  Process 250 waits for ShareLock on transaction 884; blocked by process 249.
+Process 249 waits for ShareLock on transaction 885; blocked by process 250.
+HINT:  See server log for query details.
+CONTEXT:  while locking tuple (0,57) in relation "products"
+COMMIT
+ROLLBACK
+~~~
+
+كل واحدة ماسكة منتج ومستنية التاني، فمفيش واحدة هتخلص أبدًا. Postgres بيكتشف ده بعد ثانية ([[deadlock_timeout]]) ويلغي واحدة منهم (كود الـ error [[40P01]])، والتانية بتكمل عادي. و [[DETAIL]] بيقول مين مستني مين. ولاحظ إن [[COMMIT]] بعد الـ error طبع [[ROLLBACK]]: الـ transaction بعد error بتبقى aborted، والـ COMMIT بيتحول ROLLBACK.
+
+لو كل الكود بيقفل المنتجات بنفس الترتيب ([[ORDER BY p.id]])، التانية هتستنى على أول منتج بدل ما تمسك واحد وتستنى التاني، فمفيش deadlock.
+
+---
+
+## الخلاصة
+
+| الخطوة | السطر | ليه |
+|---|---|---|
+| ١ | [[BEGIN]] | القفل عايش لحد آخر الـ transaction |
+| ٢ | [[FOR UPDATE]] على الأوردر | محدش يغيّر حالته، واقرا الحالة بعد القفل |
+| ٣ | [[ORDER BY p.id FOR UPDATE OF p]] | اقفل المنتجات بس، وبترتيب ثابت |
+| ٤ | [[UPDATE ... FROM]] | اخصم كل البنود في أمر واحد |
+| ٥ | [[COMMIT]] | ثبّت وفك الأقفال |
+
+- [[NOWAIT]] لو مش عايز تستنى، و [[SKIP LOCKED]] للـ queues.
+- خلّي الـ transaction اللي فيها أقفال قصيرة، ومن غير نداء لأي API برّه.`,
           lines: [
             "ابدأ transaction.",
             "اقفل صف الأوردر واقرا حالته (الكود يتأكد إنها pending).",
@@ -306,7 +1162,7 @@ COMMIT;
 BEGIN ISOLATION LEVEL SERIALIZABLE;
 SELECT count(*) FROM orders WHERE status = 'pending' AND user_id = (SELECT id FROM users LIMIT 1);
 INSERT INTO orders (user_id) SELECT id FROM users LIMIT 1;
-COMMIT;                                                  -- ممكن تفشل: could not serialize access (40001)`,
+COMMIT;                                                  -- واحدة من اتنين متزامنين هتفشل (هنا أو في الـ INSERT): 40001`,
           try: R`جرّب أول transaction في نافذة، وفي نافذة تانية عدّل المخزون بين السطرين. وبعدين كرر نفس الحكاية بـ [[BEGIN;]] عادي (READ COMMITTED): السطر التاني هيشوف الرقم الجديد.`,
           flag: "script",
           deep: {
@@ -325,6 +1181,142 @@ SERIALIZABLE في Postgres (SSI) مش بيقفل كل حاجة؛ بيراقب م
             when: "الافتراضي + atomic UPDATE + FOR UPDATE بيغطوا أغلب التطبيقات. REPEATABLE READ لتقرير من كذا استعلام لازم يبقوا من نفس اللحظة. SERIALIZABLE لقواعد معقدة بين صفوف كتير، ومعاه retry.",
             mistakes: R`تفتكر إن أي transaction = serializable. SERIALIZABLE من غير retry فاليوزر ياخد error عشوائي. و transactions طويلة في SERIALIZABLE فتتلغي كتير.`
           },
+          teach: R`## الفكرة: الـ transaction بتشوف صورة من القاعدة، والسؤال: الصورة دي بتتجدد إمتى؟
+
+المثال فيه transactionين. الأولى بـ [[REPEATABLE READ]] بتقرا المخزون مرتين وتثبت إن الرقم مبيتغيرش حتى لو حد غيّره. التانية بـ [[SERIALIZABLE]] بتعمل «اتأكد، وبعدين ضيف»، وبتوري إن Postgres بيلغي واحدة لو اتنين عملوا نفس الحكاية مع بعض.
+
+السطر الواحد مبيوريش حاجة؛ لازم نافذة تانية تغيّر في النص. فكل اللي تحت اتشغّل بـ psql في نافذتين في نفس الوقت على [[postgres:18]] في Docker، والنافذة الأولى فيها [[pg_sleep(1)]] (نام ثانية) بين القرايتين عشان التانية تلحق تعدّل.
+
+---
+
+## ١. [[BEGIN ISOLATION LEVEL REPEATABLE READ]]
+
+[[BEGIN]] لوحده بيبدأ بالمستوى الافتراضي [[READ COMMITTED]]. و [[ISOLATION LEVEL ...]] بعده بيختار مستوى تاني للـ transaction دي بس.
+
+| المستوى | الصورة (snapshot) بتتاخد إمتى |
+|---|---|
+| [[READ COMMITTED]] (الافتراضي) | من جديد مع **كل أمر** |
+| [[REPEATABLE READ]] | مرة واحدة، مع **أول أمر** في الـ transaction، وتفضل لحد الآخر |
+| [[SERIALIZABLE]] | زي REPEATABLE READ، وكمان بيراقب التعارضات ويلغي واحدة لو النتيجة مستحيلة لو كانوا اتنفذوا ورا بعض |
+
+---
+
+## ٢. القرايتين في REPEATABLE READ، والنافذة التانية بتزوّد في النص
+
+~~~text نافذة 1
+BEGIN ISOLATION LEVEL REPEATABLE READ;
+SELECT stock FROM products WHERE name = 'Hoodie';
+ stock
+-------
+     6
+SELECT pg_sleep(1);
+SELECT stock FROM products WHERE name = 'Hoodie';
+ stock
+-------
+     6
+~~~
+
+~~~text نافذة 2 (بين القرايتين)
+UPDATE products SET stock = stock + 5 WHERE name = 'Hoodie'
+UPDATE 1
+~~~
+
+التانية زوّدت 5 وخلصت (مفيش BEGIN، فالأمر اتعمله COMMIT لوحده)، يعني القاعدة فيها 11 دلوقتي. ومع ذلك القراية التانية في نافذة 1 قالت **6**: الـ transaction شايفة الصورة اللي اتاخدت عند أول SELECT. (المخزون كان 6 مش 8 لأن الدروس اللي فاتت خصمت منه، ونفس الفكرة: ٨ و ٨ في تعليق المثال.)
+
+### وبعدين لو حاولت تعدّل الصف ده؟
+
+~~~text نافذة 1
+UPDATE products SET stock = stock - 1 WHERE name = 'Hoodie';
+ERROR:  could not serialize access due to concurrent update
+ROLLBACK;
+~~~
+
+نافذة 1 شايفة 6، بس الصف الحقيقي بقى 11. لو Postgres سابها تكتب 5 كان هيمسح زيادة نافذة 2 (lost update). فبيرفض، وكود الـ error [[40001]] ([[serialization_failure]]). الحل الوحيد: ROLLBACK وإعادة الـ transaction كلها من أولها، فتاخد صورة جديدة فيها 11.
+
+---
+
+## ٣. نفس التجربة بـ [[BEGIN;]] العادي (READ COMMITTED)
+
+~~~text نافذة 1
+BEGIN;
+SELECT stock FROM products WHERE name = 'Hoodie';
+ stock
+-------
+    11
+SELECT pg_sleep(1);
+SELECT stock FROM products WHERE name = 'Hoodie';
+ stock
+-------
+    16
+COMMIT;
+~~~
+
+نافذة 2 زوّدت 5 تاني بين القرايتين، والقراية التانية شافتها على طول (11 ثم 16)، لأن كل SELECT بياخد صورة جديدة. ده اسمه **non-repeatable read**: نفس السؤال في نفس الـ transaction رجّع إجابتين.
+
+---
+
+## ٤. [[SERIALIZABLE]]: «اتأكد وبعدين ضيف» من نافذتين
+
+~~~sql
+BEGIN ISOLATION LEVEL SERIALIZABLE;
+SELECT count(*) FROM orders WHERE status = 'pending' AND user_id = (SELECT id FROM users LIMIT 1);
+INSERT INTO orders (user_id) SELECT id FROM users LIMIT 1;
+COMMIT;
+~~~
+
+الفكرة: التطبيق بيعدّ أوردرات اليوزر الـ pending، ولو تحت الحد يضيف واحد. [[INSERT ... SELECT id FROM users LIMIT 1]] بيضيف أوردر لأول يوزر (الحالة [[pending]] من الـ DEFAULT). شغّلنا الملف ده في نافذتين، التانية بعد الأولى بـ 0.3 ثانية، ومع [[pg_sleep(1)]] بين الـ SELECT والـ INSERT، و [[\set VERBOSITY verbose]] عشان psql يطبع كود الـ error:
+
+~~~text نافذة 1
+ count
+-------
+     2
+INSERT 0 1
+COMMIT
+~~~
+
+~~~text نافذة 2
+ count
+-------
+     2
+INSERT INTO orders (user_id) SELECT id FROM users LIMIT 1;
+ERROR:  40001: could not serialize access due to read/write dependencies among transactions
+DETAIL:  Reason code: Canceled on identification as a pivot, during write.
+HINT:  The transaction might succeed if retried.
+COMMIT;
+ROLLBACK
+~~~
+
+- الاتنين عدّوا 2. لو اتنفذوا ورا بعض فعلًا، التانية كانت هتشوف 3. فالنتيجة «الاتنين ضافوا وهما شايفين 2» مستحيلة في أي ترتيب، و Postgres لغى واحدة.
+- الـ error جه هنا عند الـ INSERT، مش عند COMMIT. ممكن ييجي عند أي أمر أو عند COMMIT، حسب إمتى Postgres اكتشف التعارض.
+- [[HINT: The transaction might succeed if retried]]: ده المطلوب منك في الكود، تعيدها.
+- [[COMMIT]] بعد الـ error طبع [[ROLLBACK]]: الـ transaction بعد أي error بتبقى aborted.
+
+### ونفس الملف بـ READ COMMITTED؟
+
+~~~text نافذتين بـ BEGIN العادي
+ count
+-------
+     3
+INSERT 0 1
+COMMIT
+(والتانية نفس الكلام بالظبط)
+~~~
+
+الاتنين عدّوا 3 والاتنين ضافوا، فبقى فيه أوردرين زيادة رغم إن كل واحد «اتأكد» الأول. ده اسمه **write skew**، و SERIALIZABLE بس هو اللي بيمسكه.
+
+---
+
+## الخلاصة
+
+| | READ COMMITTED | REPEATABLE READ | SERIALIZABLE |
+|---|---|---|---|
+| قرايتين لنفس الصف | ممكن يختلفوا | نفس الرقم | نفس الرقم |
+| تعدّل صف حد غيّره بعد صورتك | بيكتب على القيمة الجديدة | error [[40001]] | error [[40001]] |
+| اتنين «اتأكد وضيف» مع بعض | الاتنين بيضيفوا | الاتنين بيضيفوا | واحدة بتتلغي [[40001]] |
+| محتاج retry في الكود | لأ | أيوه | أيوه |
+
+- [[40001]] مش bug، ده Postgres بيقولك «عيد». الكود يعمل loop صغير (٣ محاولات مثلًا) على الـ transaction **كلها**.
+- أغلب التطبيقات: الافتراضي + atomic UPDATE + FOR UPDATE. وSERIALIZABLE للقواعد اللي بتتحقق بالعدّ أو بين صفوف كتير.`,
           lines: [
             "ابدأ transaction بـ snapshot ثابتة.",
             "اقرا المخزون.",
@@ -333,7 +1325,7 @@ SERIALIZABLE في Postgres (SSI) مش بيقفل كل حاجة؛ بيراقب م
             "ابدأ transaction بأعلى مستوى.",
             "اتأكد إن اليوزر معندوش أوردر pending.",
             "مفيش؟ ضيف واحد.",
-            "لو transaction تانية عملت نفس الحكاية في نفس الوقت، واحدة منهم هتفشل هنا."
+            "لو transaction تانية عملت نفس الحكاية في نفس الوقت، واحدة منهم هتفشل بـ 40001، هنا أو في الـ INSERT اللي قبله."
           ],
           sol: R`بـ REPEATABLE READ: السطرين هيرجّعوا نفس الرقم (8 و 8) حتى لو النافذة التانية زوّدت المخزون وعملت COMMIT بينهم، لأن الـ transaction بتشوف snapshot اتاخدت عند أول استعلام فيها. بـ [[BEGIN;]] العادي (READ COMMITTED): السطر التاني هيشوف الرقم الجديد (مثلًا 13 ثم 18 بعد +5)، لأن كل statement بياخد snapshot جديدة.
 
@@ -380,6 +1372,162 @@ ON CONFLICT (sku) DO NOTHING;`,
             when: "استيراد ومزامنة، وعدادات per-key، وسلة المشتريات، و webhooks.",
             mistakes: R`SELECT ثم INSERT في الكود. نفس المفتاح مرتين في batch واحد. و webhook بيتعالج مرتين فالعميل ياخد الكورس مرتين أو الرصيد يزيد مرتين.`
           },
+          teach: R`## الفكرة: INSERT بخطة بديلة لو الصف موجود
+
+INSERT العادي على قيمة UNIQUE موجودة بيفشل. [[ON CONFLICT]] بيقول لـ Postgres: «لو الصف ده هيتصادم مع صف موجود، متفشلش، اعمل كذا بداله». المثال بيضيف عمود [[sku]] فريد، وبعدين يوري الاختيارين: [[DO UPDATE]] (عدّل الموجود) و [[DO NOTHING]] (سيبه).
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker، على جدول [[products]] بتاع الدروس اللي فاتت.
+
+---
+
+## ١. [[ALTER TABLE products ADD COLUMN sku text UNIQUE]]
+
+[[ADD COLUMN]] بيضيف عمود [[sku]] (Stock Keeping Unit: كود المنتج اللي المخزن بيعرفه بيه، زي [[TS-BLK-M]] = تيشيرت أسود مقاس M) من نوع [[text]]. و [[UNIQUE]] بيعمل جنبه unique index لوحده:
+
+~~~text جزء من \d products
+ sku        | text                     |           |          |
+Indexes:
+    "products_sku_key" UNIQUE CONSTRAINT, btree (sku)
+~~~
+
+المنتجات القديمة الـ sku بتاعها NULL، وده مش بيكسر UNIQUE: الـ NULL مش بيتساوى مع NULL، فممكن يبقى فيه كذا صف بـ NULL.
+
+---
+
+## ٢. الـ upsert: سطر سطر
+
+~~~sql
+INSERT INTO products (sku, name, price, stock) VALUES ('TS-BLK-M', 'T-shirt black M', 250, 10)
+ON CONFLICT (sku) DO UPDATE
+SET price = EXCLUDED.price, stock = products.stock + EXCLUDED.stock
+RETURNING id, price, stock;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[INSERT ... VALUES (...)]] | المحاولة العادية: ضيف المنتج ده |
+| [[ON CONFLICT (sku)]] | لو فيه صف بنفس الـ [[sku]] (الـ conflict target). لازم يكون عليه UNIQUE أو PRIMARY KEY |
+| [[DO UPDATE SET ...]] | بدل الـ error، عدّل الصف الموجود |
+| [[EXCLUDED.price]] | السعر من الصف اللي **كنا بنحاول نضيفه** (اتسمى excluded لأنه اترفض) |
+| [[products.stock]] | المخزون في الصف **الموجود** في الجدول |
+| [[products.stock + EXCLUDED.stock]] | الموجود + الجاي |
+| [[RETURNING id, price, stock]] | رجّع الصف بعد ما يتضاف أو يتعدل |
+
+### أول مرة: مفيش صف، فـ INSERT عادي
+
+~~~text الناتج
+ id | price  | stock
+----+--------+-------
+  6 | 250.00 |    10
+(1 row)
+
+INSERT 0 1
+~~~
+
+### تاني مرة (وغيرنا السعر لـ 260 عشان نشوفه بيتحدث)
+
+~~~text الناتج
+ id | price  | stock
+----+--------+-------
+  6 | 260.00 |    20
+(1 row)
+
+INSERT 0 1
+~~~
+
+نفس الـ [[id]] (مفيش صف جديد)، السعر اتحدث للقيمة الجاية، والمخزون اتجمع: 10 + 10. و psql بيقول [[INSERT 0 1]] حتى لو اللي حصل UPDATE، لأن الأمر نفسه INSERT.
+
+### ليه [[products.stock]] مش [[stock]] بس؟
+
+~~~sql
+INSERT INTO products (sku, name, price) VALUES ('TS-BLK-M', 'T-shirt black M', 250)
+ON CONFLICT (sku) DO UPDATE SET stock = stock + 1;
+~~~
+
+~~~text الناتج
+ERROR:  column reference "stock" is ambiguous
+LINE 2: ON CONFLICT (sku) DO UPDATE SET stock = stock + 1;
+                                                ^
+~~~
+
+جوه [[DO UPDATE]] فيه صفين ليهم عمود [[stock]]: الموجود و [[EXCLUDED]]. فلازم تقول أنهي واحد. (الـ [[stock]] اللي على شمال [[=]] مفيهوش لبس: ده دايمًا عمود الصف اللي بيتعدل.)
+
+---
+
+## ٣. [[ON CONFLICT (sku) DO NOTHING]]
+
+~~~sql
+INSERT INTO products (sku, name, price) VALUES ('TS-BLK-M', 'T-shirt black M', 250)
+ON CONFLICT (sku) DO NOTHING;
+~~~
+
+~~~text الناتج
+INSERT 0 0
+~~~
+
+[[INSERT 0 0]]: صفر صفوف اتضافت، ومفيش error. الصف الموجود متلمسش. ولو كتبت [[RETURNING id]] مع DO NOTHING، هيرجّع صفر صفوف في الحالة دي، ودي الحيلة اللي في deep لمنع معالجة webhook مرتين: رجع صف؟ يبقى جديد. مرجعش؟ يبقى اتعالج قبل كده.
+
+ومن غير [[ON CONFLICT]] خالص:
+
+~~~text الناتج
+ERROR:  duplicate key value violates unique constraint "products_sku_key"
+DETAIL:  Key (sku)=(TS-BLK-M) already exists.
+~~~
+
+---
+
+## ٤. الأخطاء اللي هتقابلها
+
+### target ملوش UNIQUE
+
+~~~text ON CONFLICT (name) DO NOTHING
+ERROR:  there is no unique or exclusion constraint matching the ON CONFLICT specification
+~~~
+
+[[name]] مفيش عليه UNIQUE، فـ Postgres مش عارف «التصادم» هنا معناه إيه.
+
+### نفس المفتاح مرتين في نفس الأمر (تجربة الـ try)
+
+~~~sql
+INSERT INTO products (sku, name, price, stock)
+VALUES ('TS-BLK-L', 'T-shirt black L', 250, 5), ('TS-BLK-L', 'T-shirt black L', 250, 5)
+ON CONFLICT (sku) DO UPDATE SET stock = products.stock + EXCLUDED.stock;
+~~~
+
+~~~text الناتج
+ERROR:  ON CONFLICT DO UPDATE command cannot affect row a second time
+HINT:  Ensure that no rows proposed for insertion within the same command have duplicate constrained values.
+~~~
+
+الأمر الواحد مينفعش يعدّل نفس الصف مرتين. والـ [[HINT]] بيقول الحل: شيل التكرار من الـ VALUES قبل ما تبعت (اجمع الكميات في الكود). والأمر كله اتلغى، ولا حتى الصف الأول اتضاف.
+
+---
+
+## ٥. الـ ids اللي نطّت
+
+بعد كل التجارب دي ضفنا منتج جديد عادي:
+
+~~~text الناتج
+ id |   sku    |      name       | price  | stock
+----+----------+-----------------+--------+-------
+  6 | TS-BLK-M | T-shirt black M | 260.00 |    20
+ 12 | TS-BLK-S | T-shirt black S | 250.00 |     0
+~~~
+
+من 6 لـ 12 على طول. كل محاولة INSERT بتطلب رقم من الـ identity قبل ما تعرف إن فيه تصادم، حتى لو انتهت UPDATE أو DO NOTHING أو error، والرقم ده مبيرجعش. فجوات عادية، متعتمدش على الـ id كعدّاد.
+
+---
+
+## الخلاصة
+
+| الحالة | [[DO UPDATE]] | [[DO NOTHING]] | من غير ON CONFLICT |
+|---|---|---|---|
+| الصف مش موجود | INSERT | INSERT | INSERT |
+| الصف موجود | UPDATE عليه | ولا حاجة ([[INSERT 0 0]]) | [[duplicate key]] error |
+
+- [[EXCLUDED]] = الصف الجاي، واسم الجدول = الصف الموجود.
+- الـ conflict target لازم يطابق UNIQUE أو PRIMARY KEY.
+- كله أمر واحد atomic، فمفيش race بين «موجود؟» و «ضيف».`,
           lines: [
             "ضيف كود منتج فريد.",
             "حاول تضيف منتج بالكود ده،",
@@ -465,6 +1613,182 @@ ORDER BY day;`,
             when: "ترتيب جوه مجموعات، top-N لكل مجموعة، مجاميع تراكمية، ومقارنة صف باللي قبله.",
             mistakes: R`window function في WHERE. تنسى PARTITION BY فيبقى الترقيم على الجدول كله. تعادل القيم مع الـ frame الافتراضي. وتحسب ده في JavaScript بعد ما تجيب كل الأوردرات.`
           },
+          teach: R`## الفكرة: عمود جديد بيتحسب من صفوف جيرانك، والصفوف نفسها مبتتدمجش
+
+[[GROUP BY]] بيلم كل مجموعة في صف واحد. الـ window function بتسيب كل الصفوف زي ما هي، وتحط جنب كل صف رقم محسوب من مجموعته: ترتيبه جواها، أو مجموع اللي قبله. المثال فيه استعلامين: «آخر أوردر لكل يوزر» بـ [[ROW_NUMBER]]، و «مجموع الإيرادات التراكمي يوم بيوم» بـ [[SUM() OVER]].
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker. في lab المتجر كل الأوردرات ليوزر واحد، فالنتيجة مش بتوضح حاجة، فعملنا قاعدة صغيرة جنبها فيها ٦ أوردرات لـ ٣ يوزرز (10 و 20 و 30) عشان نشوف كل خطوة:
+
+~~~text orders (القاعدة الصغيرة)
+ id | user_id | status    | total  | created_at
+  1 |      10 | paid      | 300.00 | 2026-10-01 09:00
+  2 |      20 | paid      | 150.00 | 2026-10-01 14:00
+  3 |      10 | paid      | 200.00 | 2026-10-02 11:00
+  4 |      30 | pending   |  90.00 | 2026-10-02 18:00
+  5 |      20 | paid      | 500.00 | 2026-10-03 10:00
+  6 |      10 | cancelled | 120.00 | 2026-10-04 08:30
+~~~
+
+---
+
+## ١. الاستعلام الجوّاني: [[ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY created_at DESC)]]
+
+نفكّه من جوه:
+
+| الحتة | معناها |
+|---|---|
+| [[ROW_NUMBER()]] | دالة بتدّي كل صف رقم: 1، 2، 3... |
+| [[OVER (...)]] | الكلمة اللي بتخليها window function. اللي بين القوسين هو «الشباك» |
+| [[PARTITION BY user_id]] | قسّم الصفوف مجموعات، مجموعة لكل يوزر. الترقيم بيبدأ من 1 في كل مجموعة |
+| [[ORDER BY created_at DESC]] | رتّب جوه كل مجموعة بالأحدث، فالأحدث ياخد 1 |
+| [[AS rn]] | اسم العمود الجديد (row number) |
+
+لو شغّلنا الجزء الجوّاني لوحده:
+
+~~~text الناتج
+ id | user_id | total  |       created_at       | rn
+----+---------+--------+------------------------+----
+  6 |      10 | 120.00 | 2026-10-04 08:30:00+00 |  1
+  3 |      10 | 200.00 | 2026-10-02 11:00:00+00 |  2
+  1 |      10 | 300.00 | 2026-10-01 09:00:00+00 |  3
+  5 |      20 | 500.00 | 2026-10-03 10:00:00+00 |  1
+  2 |      20 | 150.00 | 2026-10-01 14:00:00+00 |  2
+  4 |      30 |  90.00 | 2026-10-02 18:00:00+00 |  1
+(6 rows)
+~~~
+
+الـ ٦ صفوف لسه موجودين (عكس GROUP BY)، وكل يوزر ترقيمه لوحده: اليوزر 10 عنده 1 و 2 و 3، و 20 عنده 1 و 2، و 30 عنده 1.
+
+ولو نسيت [[PARTITION BY]]، الترقيم بيبقى على الجدول كله:
+
+~~~text ROW_NUMBER() OVER (ORDER BY created_at DESC)
+ id | user_id | rn
+----+---------+----
+  6 |      10 |  1
+  5 |      20 |  2
+  4 |      30 |  3
+  3 |      10 |  4
+...
+~~~
+
+---
+
+## ٢. ليه subquery؟ ليه مش [[WHERE rn = 1]] على طول؟
+
+~~~text الناتج
+SELECT ..., ROW_NUMBER() OVER (...) AS rn FROM orders WHERE rn = 1;
+ERROR:  column "rn" does not exist
+
+SELECT ... FROM orders WHERE ROW_NUMBER() OVER (...) = 1;
+ERROR:  window functions are not allowed in WHERE
+~~~
+
+الترتيب اللي Postgres بينفّذ بيه: [[FROM]] ثم [[WHERE]] ثم [[GROUP BY]] ثم [[HAVING]] ثم الـ window functions ثم [[ORDER BY]] و [[LIMIT]]. وقت الـ WHERE، الـ [[rn]] لسه متحسبش. فبنحسبه جوه subquery، والـ subquery بتطلّع جدول عادي فيه عمود [[rn]]، ونفلتر عليه برّه:
+
+~~~sql
+SELECT id, user_id, total FROM (
+  ...
+) t
+WHERE rn = 1;
+~~~
+
+[[t]] اسم للـ subquery (Postgres بيقبلها من غير اسم من نسخة 16، بس النسخ الأقدم بتطلبه، فاكتبه دايمًا).
+
+~~~text الناتج
+ id | user_id | total
+----+---------+--------
+  6 |      10 | 120.00
+  5 |      20 | 500.00
+  4 |      30 |  90.00
+(3 rows)
+~~~
+
+أحدث أوردر لكل يوزر. والرقم في الـ WHERE هو اللي بيحدد كام صف لكل يوزر: [[rn = 1]] الأحدث بس، و [[rn = 2]] اللي قبله، وهكذا.
+
+وفي lab المتجر (٢٠٠ ألف أوردر ليوزر واحد) نفس الاستعلام رجّع صف واحد في حوالي ١٠٠ms، لأنه رقّم الـ ٢٠٠ ألف صف عشان يختار واحد.
+
+---
+
+## ٣. الاستعلام التاني: المجموع التراكمي
+
+### الجزء الجوّاني: إيراد كل يوم
+
+~~~sql
+SELECT date_trunc('day', created_at) AS day, sum(total) AS revenue
+FROM orders WHERE status = 'paid' GROUP BY 1
+~~~
+
+[[date_trunc('day', ...)]] بيقص الوقت لأول اليوم (الساعة 00:00)، فكل أوردرات اليوم الواحد بتبقى نفس القيمة. و [[GROUP BY 1]] معناها «جمّع بأول عمود في الـ SELECT» (اللي هو day).
+
+~~~text الناتج
+          day           | revenue
+------------------------+---------
+ 2026-10-01 00:00:00+00 |  450.00
+ 2026-10-02 00:00:00+00 |  200.00
+ 2026-10-03 00:00:00+00 |  500.00
+~~~
+
+يوم 1: 300 + 150. يوم 2: 200 بس (الـ 90 pending). يوم 4 مش موجود لأن أوردره cancelled.
+
+### برّه: [[SUM(revenue) OVER (ORDER BY day)]]
+
+[[SUM]] هنا مش aggregate عادي، لأن بعده [[OVER]]. ومن غير PARTITION BY، الشباك هو كل الصفوف، و [[ORDER BY day]] جوه OVER معناها «من أول صف لحد الصف الحالي»:
+
+~~~text الناتج
+          day           | revenue | running_total
+------------------------+---------+---------------
+ 2026-10-01 00:00:00+00 |  450.00 |        450.00
+ 2026-10-02 00:00:00+00 |  200.00 |        650.00
+ 2026-10-03 00:00:00+00 |  500.00 |       1150.00
+~~~
+
+450، وبعدين 450 + 200 = 650، وبعدين 650 + 500 = 1150. و [[ORDER BY day]] اللي في الآخر برّه بيرتّب **العرض**، مش الحساب.
+
+---
+
+## ٤. [[LAG]]: قيمة الصف اللي قبله (تجربة الـ try)
+
+~~~text LAG(revenue) OVER (ORDER BY day) AS prev_day
+          day           | revenue | prev_day
+------------------------+---------+----------
+ 2026-10-01 00:00:00+00 |  450.00 |
+ 2026-10-02 00:00:00+00 |  200.00 |   450.00
+ 2026-10-03 00:00:00+00 |  500.00 |   200.00
+~~~
+
+أول يوم ملوش قبله، فـ NULL (الخانة الفاضية). و [[LEAD]] العكس: الصف اللي بعده.
+
+---
+
+## ٥. فخ الـ frame مع القيم المتعادلة
+
+لما عملنا مجموع تراكمي بالتاريخ بس ([[created_at::date]]) على الأوردرات نفسها، فيه أوردرين في كل يوم:
+
+~~~text الناتج
+ id | total  | by_date_range | by_rows
+----+--------+---------------+---------
+  1 | 300.00 |        450.00 |  300.00
+  2 | 150.00 |        450.00 |  450.00
+  3 | 200.00 |        740.00 |  650.00
+  4 |  90.00 |        740.00 |  740.00
+  5 | 500.00 |       1240.00 | 1240.00
+  6 | 120.00 |       1360.00 | 1360.00
+~~~
+
+- [[by_date_range]] ([[SUM(total) OVER (ORDER BY created_at::date)]]): الافتراضي بياخد الصف الحالي **ومعاه كل صف متعادل معاه** في الترتيب، فالأوردرين 1 و 2 (نفس اليوم) أخدوا نفس المجموع 450.
+- [[by_rows]] (مع [[ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW]]): صف بصف بالظبط. [[UNBOUNDED PRECEDING]] = من أول الشباك، و [[CURRENT ROW]] = لحد الصف ده.
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[OVER ()]] | بتحوّل الدالة لـ window function: الصفوف متتدمجش |
+| [[PARTITION BY x]] | مجموعة لكل قيمة من x، والحساب بيبدأ من الأول في كل واحدة |
+| [[ORDER BY y]] جوه OVER | ترتيب الحساب، ومعاه الـ frame بيبقى «من الأول لحد هنا» |
+| [[ROW_NUMBER]] / [[LAG]] / [[SUM]] | ترقيم / الصف اللي قبله / مجموع |
+| subquery + WHERE برّه | الطريقة الوحيدة تفلتر على نتيجة window function |`,
           lines: [
             "الأوردر الأحدث لكل يوزر: برّه بنفلتر،",
             "وجوه بنحسب لكل أوردر،",
@@ -580,6 +1904,161 @@ LIMIT 20;`,
             when: "infinite scroll، و feeds، و APIs عامة، وأي جدول كبير بيكبر. والـ OFFSET للجداول الصغيرة اللي محتاجة أرقام صفحات.",
             mistakes: R`keyset على عمود مش فريد من غير tiebreaker، فصفوف بتضيع. ORDER BY مش مطابق للـ index ولا معكوسه بالكامل: اتجاهات مخلوطة (زي created_at DESC, id ASC على index (DESC, DESC)) أو أعمدة بترتيب غير ترتيب الـ index، فـ Postgres يعمل Sort بدل ما يقرا من الـ index (العكس الكامل ASC, ASC عادي، بيقرا الـ index بالعكس). وخلط الاتجاهات كمان بيخلّي الـ row comparison الواحدة غلط، لازم تتكتب a < x OR (a = x AND b > y). و OFFSET في infinite scroll على جدول بيتضاف فيه كل ثانية.`
           },
+          teach: R`## الفكرة: «عدّي ١٠٠ ألف» ولا «ابدأ من هنا»؟
+
+المثال بيقارن طريقتين للصفحات على [[orders]] (٢٠٠ ألف صف من درس B-tree index): [[OFFSET]] اللي بيعدّ ويرمي، و keyset اللي بيقول «هات اللي بعد آخر صف شفته». وبينهم index بنفس ترتيب الصفحات.
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker، مع [[\timing on]]. والجدول عليه وقتها [[orders_created_at_idx]] من الدرس ده والفهارس اللي بعده.
+
+---
+
+## ١. الطريقة البطيئة: [[LIMIT 20 OFFSET 100000]]
+
+~~~sql
+SELECT id, total, created_at FROM orders
+ORDER BY created_at DESC, id DESC
+LIMIT 20 OFFSET 100000;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[ORDER BY created_at DESC]] | الأحدث الأول |
+| [[, id DESC]] | لو أوردرين بنفس الوقت بالظبط، رتّبهم بالـ id. كده الترتيب ثابت ومفيش صفين «متعادلين» |
+| [[LIMIT 20]] | هات ٢٠ صف (حجم الصفحة) |
+| [[OFFSET 100000]] | بس الأول عدّي ١٠٠ ألف صف. ده الصفحة رقم ٥٠٠١ |
+
+| | الوقت |
+|---|---|
+| [[OFFSET 0]] | 1.5 ms |
+| [[OFFSET 100000]] | 132 ms |
+
+والخطة بتقول السبب:
+
+~~~text EXPLAIN ANALYZE (قبل الـ index الجديد)
+ Limit  (actual time=55.588..55.592 rows=20.00 loops=1)
+   ->  Incremental Sort  (actual time=0.060..52.821 rows=100020.00 loops=1)
+         Sort Key: created_at DESC, id DESC
+         Presorted Key: created_at
+         ->  Index Scan Backward using orders_created_at_idx on orders  (actual time=0.028..39.134 rows=100021.00 loops=1)
+ Execution Time: 55.612 ms
+~~~
+
+[[rows=100020.00]]: قرا ١٠٠٠٢٠ صف عشان يرجّع ٢٠. وكمان [[Incremental Sort]]: الفهرس الموجود مترتب بـ [[created_at]] بس ([[Presorted Key]])، فكان لازم يرتّب بالـ [[id]] جوه كل وقت متكرر.
+
+---
+
+## ٢. [[CREATE INDEX orders_created_id_idx ON orders (created_at DESC, id DESC)]]
+
+فهرس مركب بنفس أعمدة الـ ORDER BY وبنفس الاتجاهات بالظبط. دلوقتي الصفوف بتخرج من الفهرس مترتبة جاهزة:
+
+~~~text EXPLAIN ANALYZE (OFFSET 100000 بعد الـ index)
+ Limit  (actual time=35.553..35.561 rows=20.00 loops=1)
+   ->  Index Scan using orders_created_id_idx on orders  (actual time=0.011..32.770 rows=100020.00 loops=1)
+ Execution Time: 35.572 ms
+~~~
+
+الـ Sort اختفى، بس لسه [[rows=100020.00]]: الـ OFFSET لازم يعدّي على الـ ١٠٠ ألف صف واحد واحد ويرميهم. الفهرس مبيعرفش «الصف رقم ١٠٠ ألف» فين من غير ما يعدّ. فكل ما الصفحة تبعد، الوقت يزيد.
+
+---
+
+## ٣. أول صفحة
+
+~~~sql
+SELECT id, total, created_at FROM orders
+ORDER BY created_at DESC, id DESC
+LIMIT 20;
+~~~
+
+~~~text الناتج (أول ٣ وآخر صف)
+   id   | total  |          created_at
+--------+--------+-------------------------------
+      2 |   0.00 | 2026-10-07 08:35:01.394661+00
+   6680 |  15.04 | 2026-10-07 08:34:33.908094+00
+ 148010 | 505.21 | 2026-10-07 08:20:13.601142+00
+...
+ 112080 | 816.02 | 2026-10-07 07:02:53.352246+00
+(20 rows)
+
+Time: 0.279 ms
+~~~
+
+الـ API بيرجّع الصفوف دي، ومعاها **آخر صف**: [[created_at = '2026-10-07 07:02:53.352246+00']] و [[id = 112080]]. ده الـ cursor اللي العميل هيبعته عشان الصفحة الجاية.
+
+---
+
+## ٤. الصفحة اللي بعدها: [[WHERE (created_at, id) < (...)]]
+
+### الـ row comparison
+
+[[(a, b) < (x, y)]] بتقارن زي ترتيب القاموس: قارن أول عنصر، ولو متساويين قارن التاني:
+
+~~~sql
+SELECT (5, 9) < (6, 1) AS a, (6, 1) < (6, 3) AS b, (6, 3) < (6, 3) AS c;
+~~~
+
+~~~text الناتج
+ a | b | c
+---+---+---
+ t | t | f
+~~~
+
+- [[a]]: 5 أقل من 6، فخلاص true من غير ما يبص على التاني.
+- [[b]]: الأول متساوي (6 و 6)، فقارن التاني: 1 أقل من 3، true.
+- [[c]]: متساويين خالص، فمش «أقل»، false.
+
+يعني [[(created_at, id) < (T, N)]] = «أقدم من T، أو في نفس اللحظة T بالظبط و id أصغر من N». وده بالظبط معنى «اللي بعده» في ترتيب [[created_at DESC, id DESC]].
+
+### نحط الـ cursor بتاع الصفحة الأولى
+
+~~~sql
+SELECT id, total, created_at FROM orders
+WHERE (created_at, id) < ('2026-10-07 07:02:53.352246+00', 112080)
+ORDER BY created_at DESC, id DESC
+LIMIT 3;
+~~~
+
+~~~text الناتج
+   id   | total  |          created_at
+--------+--------+-------------------------------
+ 123469 | 759.71 | 2026-10-07 06:53:11.230796+00
+ 198690 | 302.50 | 2026-10-07 06:52:42.431377+00
+  71028 | 769.27 | 2026-10-07 06:52:08.843587+00
+~~~
+
+نفس الصفوف اللي [[OFFSET 20]] كان هيجيبها (جربناها وطلعت نفس الـ ٣). الفرق في الطريقة:
+
+~~~text EXPLAIN ANALYZE (keyset بالقيم اللي في المثال)
+ Limit  (actual time=0.008..0.016 rows=20.00 loops=1)
+   Buffers: shared hit=23
+   ->  Index Scan using orders_created_id_idx on orders  (actual time=0.008..0.014 rows=20.00 loops=1)
+         Index Cond: (ROW(created_at, id) < ROW('2026-03-01 10:00:00+00'::timestamp with time zone, 1234))
+ Execution Time: 0.023 ms
+~~~
+
+[[Index Cond: (ROW(created_at, id) < ROW(...))]]: الشرط اتدوّر بيه **جوه** الفهرس، فنزل لمكان الـ cursor على طول وقرا ٢٠ صف ووقف ([[rows=20.00]] مش ١٠٠ ألف). وده نفس الوقت تقريبًا مهما كانت الصفحة بعيدة. (القيم اللي في المثال [['2026-03-01 10:00:00+00']] و [[1234]] مجرد cursor تجريبي في نص السنة.)
+
+---
+
+## ٥. تفاصيل لو فاتتك هتلاقي صفوف مكررة أو ضايعة
+
+- انسخ الـ [[created_at]] **كامل** بالميكروثواني والـ [[+00]]. لو قصّيته لـ [['07:02:53']] هيبقى أصغر من القيمة الحقيقية، وصفوف هتتنط.
+- الـ [[id]] لازم يبقى في الـ cursor وفي الـ ORDER BY: من غيره، أوردرين بنفس الوقت بالظبط ممكن واحد منهم يقع بين صفحتين ويضيع.
+- اتجاهات الـ ORDER BY لازم تبقى نفس الاتجاه للعمودين (الاتنين DESC هنا)، عشان [[<]] الواحدة تبقى صح.
+
+---
+
+## الخلاصة
+
+| | OFFSET | keyset |
+|---|---|---|
+| الصفحة الجاية | [[OFFSET n]] | [[WHERE (created_at, id) < (آخر صف)]] |
+| بيقرا كام صف | n + 20 | 20 |
+| الصفحة ٥٠٠١ هنا | ~٣٥ إلى ١٣٠ms | أقل من ١ms |
+| صف اتضاف وانت بتقلّب | الصفوف تزحلق: تكرار أو صف فايت | مفيش تأثير |
+| «روح لصفحة ٥٧» | أيوه | لأ، «اللي بعده» بس |
+
+- الفهرس بنفس أعمدة واتجاهات الـ ORDER BY.
+- الـ cursor = قيم آخر صف شفته، كلها، بالدقة الكاملة.`,
           lines: [
             "الطريقة البطيئة:",
             "بترتيب الأحدث، والـ id لو الوقت متساوي،",
@@ -716,6 +2195,153 @@ SELECT body, depth FROM thread;`,
             when: "أي علاقة أب وابن من نفس النوع: مديرين، ردود، تصنيفات، فولدرات، referrals. ولو الشجرة كبيرة جدًا وبتتقري أكتر ما بتتكتب، فيه تصميمات تانية (materialized path أو extension [[ltree]]).",
             mistakes: R`INNER JOIN فالمدير الكبير أو التعليقات الأصلية تختفي. نفس الاسم من غير alias. اتجاه الـ ON معكوس فتطلع «مرؤوسين» بدل «مدير». استعلام لكل مستوى في الكود (الرد، وبعدين ردود الرد، وبعدين...)، وده N+1 على شكل شجرة. و WITH RECURSIVE من غير حد للعمق على داتا ممكن يكون فيها دايرة. وفي الانترفيو سؤال كلاسيكي: «هات الموظفين اللي مرتبهم أعلى من مرتب مديرهم»، والإجابة self join وشرط [[e.salary > m.salary]].`
           },
+          teach: R`## الفكرة: نفس الجدول مرتين، بدورين مختلفين
+
+جدول [[employees]] فيه الموظفين كلهم، والمدير موظف برضه. فعمود [[manager_id]] بيشاور على صف تاني **في نفس الجدول**. عشان نجيب «الموظف واسم مديره» في صف واحد، بنقرا الجدول مرتين باسمين مختلفين ونربطهم.
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker.
+
+---
+
+## ١. الجدول: [[manager_id bigint REFERENCES employees (id)]]
+
+~~~sql
+CREATE TABLE employees (
+  id         bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name       text NOT NULL,
+  manager_id bigint REFERENCES employees (id)
+);
+~~~
+
+| العمود | معناه |
+|---|---|
+| [[id]] | رقم الموظف، بيتولّد لوحده ([[GENERATED ALWAYS AS IDENTITY]]) |
+| [[name]] | اسمه، إجباري ([[NOT NULL]]) |
+| [[manager_id]] | رقم مديره. نفس نوع [[id]] ([[bigint]]) |
+| [[REFERENCES employees (id)]] | foreign key على **نفس الجدول**: لازم يكون id موجود فعلًا |
+
+ومفيش [[NOT NULL]] على [[manager_id]]، لأن المدير الكبير ملوش مدير. والـ FK بيمنع رقم مش موجود:
+
+~~~text INSERT INTO employees (name, manager_id) VALUES ('Ghost', 99);
+ERROR:  insert or update on table "employees" violates foreign key constraint "employees_manager_id_fkey"
+DETAIL:  Key (manager_id)=(99) is not present in table "employees".
+~~~
+
+---
+
+## ٢. الداتا
+
+~~~sql
+INSERT INTO employees (name, manager_id) VALUES ('Mona', NULL), ('Karim', 1), ('Hany', 1), ('Nour', 2);
+~~~
+
+الترتيب مهم: Mona الأول عشان تاخد [[id = 1]] قبل ما Karim و Hany يشاوروا عليها.
+
+~~~text SELECT * FROM employees;
+ id | name  | manager_id
+----+-------+------------
+  1 | Mona  |
+  2 | Karim |          1
+  3 | Hany  |          1
+  4 | Nour  |          2
+~~~
+
+يعني: Mona فوق، تحتها Karim و Hany، و Nour تحت Karim.
+
+---
+
+## ٣. كل موظف واسم مديره
+
+~~~sql
+SELECT e.name AS employee, m.name AS manager
+FROM employees e
+LEFT JOIN employees m ON m.id = e.manager_id
+ORDER BY e.id;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[FROM employees e]] | اقرا الجدول، وسمّي النسخة دي [[e]] (employee) |
+| [[LEFT JOIN employees m]] | واقرا نفس الجدول تاني، وسمّيها [[m]] (manager) |
+| [[ON m.id = e.manager_id]] | المدير هو الصف اللي الـ id بتاعه = manager_id بتاع الموظف |
+| [[e.name AS employee, m.name AS manager]] | العمودين اسمهم [[name]]، فالـ alias هو اللي بيفرّق، و [[AS]] بيدّي النتيجة أسماء واضحة |
+
+~~~text الناتج
+ employee | manager
+----------+---------
+ Mona     |
+ Karim    | Mona
+ Hany     | Mona
+ Nour     | Karim
+(4 rows)
+~~~
+
+خد Nour: [[e.manager_id = 2]]، فـ Postgres بيدوّر في [[m]] على [[id = 2]]، يلاقي Karim.
+
+### ليه [[LEFT]]؟
+
+نفس الاستعلام بـ [[JOIN]] عادي (INNER):
+
+~~~text الناتج
+ employee | manager
+----------+---------
+ Karim    | Mona
+ Hany     | Mona
+ Nour     | Karim
+(3 rows)
+~~~
+
+Mona اختفت: [[manager_id]] بتاعها NULL، فمفيش صف في [[m]] يطابقها، والـ INNER JOIN بيشيل أي صف ملوش شريك. الـ LEFT بيسيبها وبيحط NULL مكان المدير.
+
+### من غير aliases
+
+~~~text SELECT name FROM employees JOIN employees ON employees.id = employees.manager_id;
+ERROR:  table name "employees" specified more than once
+~~~
+
+Postgres مش هيعرف [[employees.id]] قصدك أنهي نسخة فيهم، فبيرفض. في الـ self join الـ alias إجباري.
+
+---
+
+## ٤. كل مدير وعدد اللي تحته
+
+~~~sql
+SELECT m.name AS manager, count(e.id) AS reports
+FROM employees m
+JOIN employees e ON e.manager_id = m.id
+GROUP BY m.name;
+~~~
+
+هنا البداية من المدير: [[m]] الأول، و [[e]] هم الموظفين اللي [[manager_id]] بتاعهم = id المدير. كل مدير بيطلع صف لكل موظف تحته، و [[GROUP BY m.name]] بيلمهم، و [[count(e.id)]] بيعدّهم.
+
+~~~text الناتج
+ manager | reports
+---------+---------
+ Karim   |       1
+ Mona    |       2
+(2 rows)
+~~~
+
+Hany و Nour مش ظاهرين لأن محدش تحتهم (INNER JOIN). ولو عايزهم يظهروا بـ 0: [[LEFT JOIN]] و [[count(e.id)]] (مش [[count(*)]]، لأنها بتعدّ صف الـ NULL كواحد).
+
+---
+
+## ٥. والعمق اللي مش معروف؟
+
+الـ JOIN الواحد بيطلع مستوى واحد: الموظف ومديره. مدير المدير محتاج JOIN تالت، ومدير مدير المدير رابع. ولما متعرفش العمق (سلسلة ردود، أو شجرة تصنيفات)، بتستخدم [[WITH RECURSIVE]] (CTE بتنادي نفسها): جزء بيبدأ بصف، وجزء بيتكرر ويعمل نفس الـ self join على نتيجة الخطوة اللي قبلها، لحد ما ميلاقيش صفوف جديدة. التفاصيل في deep، والتمرين اللي تحت عليها.
+
+---
+
+## الخلاصة
+
+| | كل موظف ومديره | كل مدير وعدده |
+|---|---|---|
+| البداية | [[FROM employees e]] | [[FROM employees m]] |
+| الربط | [[ON m.id = e.manager_id]] | [[ON e.manager_id = m.id]] |
+| النوع | [[LEFT JOIN]] عشان اللي فوق يظهر | [[JOIN]] + [[GROUP BY]] |
+
+- نفس الجدول مرتين = اسمين مختلفين (aliases)، وده إجباري.
+- الـ ON بيحدد الاتجاه: مين بيدوّر على مين.`,
           lines: [
             "جدول الموظفين:",
             "رقم كل موظف،",
@@ -787,7 +2413,7 @@ SELECT id FROM orders UNION SELECT email FROM users;`,
 
 لو بدّلت لـ UNION غالبًا النتيجة مش هتتغير، لأن مفيش صفين متطابقين في كل الأعمدة. بس Postgres عمل شغل زيادة يدوّر على تكرار مش موجود. ولو فيه منتج اتضاف مرتين بنفس الكمية في نفس الأوردر (مش ممكن هنا عشان الـ PRIMARY KEY)، UNION كان هيشيل واحد منهم من غير ما تاخد بالك.
 
-لو الـ error هو [[each UNION query must have the same number of columns]] يبقى عدد الأعمدة مختلف. ولو [[UNION types text and bigint cannot be matched]] يبقى محتاج [[::text]] على الـ id.`,
+لو الـ error هو [[each UNION query must have the same number of columns]] يبقى عدد الأعمدة مختلف. ولو [[UNION types bigint and text cannot be matched]] يبقى محتاج [[::text]] على الـ id.`,
           solCode: R`SELECT 'order' AS kind, id::text AS ref, created_at
 FROM orders WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com')
 UNION ALL
@@ -814,6 +2440,151 @@ LIMIT 5;`,
             when: "feeds وسجلات نشاط، وبحث في كذا جدول، ودمج جداول نفس الشكل، وإضافة صف «إجمالي» تحت تقرير. أما لو عايز أعمدة من جدول جنب أعمدة من جدول تاني، ده JOIN مش UNION.",
             mistakes: R`UNION من غير ALL على نتايج كبيرة فيبطأ على الفاضي، أو بيشيل صفوف حقيقية متطابقة (زي بندين بنفس القيمة). عدد أعمدة أو ترتيب مختلف فتلاقي الإيميل في عمود التاريخ. ORDER BY جوه جزء من غير أقواس. وفي الانترفيو: «إيه الفرق بين UNION و UNION ALL؟» الإجابة: ALL بيحتفظ بالتكرار ومش بيعمل sort أو hash، فأسرع.`
           },
+          teach: R`## الفكرة: نتيجتين تحت بعض في جدول واحد
+
+[[JOIN]] بيحط أعمدة جنب أعمدة. [[UNION]] بيحط **صفوف تحت صفوف**: بيشغّل كذا SELECT ويلزق نتايجهم في قايمة واحدة. المثال فيه ٤ استخدامات: feed نشاط من جدولين، والفرق بين [[UNION]] و [[UNION ALL]]، و [[EXCEPT]]، و error الأنواع.
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker، على lab المتجر (اليوزر [[you@example.com]] وأوردراته الـ ٢٠٠ ألف). وضفنا يوزر تاني [[new@example.com]] من غير أوردرات عشان [[EXCEPT]] يبقى ليه نتيجة.
+
+---
+
+## ١. الـ feed: جزء الأوردرات
+
+~~~sql
+SELECT 'order' AS kind, id::text AS ref, created_at
+FROM orders WHERE user_id = (SELECT id FROM users WHERE email = 'you@example.com')
+~~~
+
+| العمود | منين | ليه كده |
+|---|---|---|
+| [['order']] [[AS kind]] | نص ثابت | كل صف يقول هو حدث من أنهي نوع |
+| [[id::text]] [[AS ref]] | id الأوردر محوّل نص | عشان يتلزق تحت الإيميل (نص) في نفس العمود |
+| [[created_at]] | وقت الأوردر | عشان نرتب الكل بالوقت |
+
+و [[(SELECT id FROM users WHERE email = ...)]] بيجيب الـ uuid بتاع اليوزر من إيميله.
+
+## ٢. [[UNION ALL]] وجزء التسجيل
+
+~~~sql
+UNION ALL
+SELECT 'signup', email, created_at
+FROM users WHERE email = 'you@example.com'
+~~~
+
+نفس التلات أعمدة **بنفس الترتيب**: نوع، ونص، ووقت. الأسماء مش مكتوبة هنا لأن أسماء أعمدة النتيجة بتيجي من أول SELECT بس ([[kind]] و [[ref]] و [[created_at]]).
+
+## ٣. [[ORDER BY created_at DESC LIMIT 10]]
+
+مكتوبين مرة واحدة في الآخر، وبيتطبقوا على **النتيجة المدموجة كلها**، مش على الجزء التاني بس.
+
+~~~text الناتج
+  kind  |       ref       |          created_at
+--------+-----------------+-------------------------------
+ order  | 2               | 2026-10-07 08:35:01.394661+00
+ signup | you@example.com | 2026-10-07 08:35:01.365726+00
+ order  | 6680            | 2026-10-07 08:34:33.908094+00
+ order  | 148010          | 2026-10-07 08:20:13.601142+00
+...
+(10 rows)
+~~~
+
+حدث التسجيل اتحط في مكانه بالوقت وسط الأوردرات، لأن الترتيب على الكل.
+
+---
+
+## ٤. [[UNION]] ولا [[UNION ALL]]؟
+
+~~~sql
+SELECT status FROM orders UNION SELECT 'refunded';
+~~~
+
+~~~text الناتج
+  status
+----------
+ refunded
+ pending
+ paid
+(3 rows)
+~~~
+
+٢٠٠ ألف حالة دخلت، وطلع ٣ صفوف: [[UNION]] من غير ALL بيشيل أي صف مكرر (زي [[DISTINCT]] على النتيجة كلها). ولاحظ الترتيب عشوائي: من غير ORDER BY مفيش ترتيب مضمون.
+
+~~~sql
+SELECT status FROM orders UNION ALL SELECT 'refunded';
+~~~
+
+ده رجّع **200002** صف (عدّيناهم بـ [[count(*)]]): كل الحالات زي ما هي، والمتكرر يتكرر، و [['refunded']] في الآخر.
+
+وإزالة التكرار ليها تمن. خطة الـ UNION:
+
+~~~text EXPLAIN SELECT status FROM orders UNION SELECT 'refunded';
+ HashAggregate  (cost=20307.68..25042.11 rows=200002 width=32)
+   Group Key: orders.status
+   Planned Partitions: 4
+   ->  Append  (cost=0.00..4870.03 rows=200002 width=32)
+         ->  Seq Scan on orders  (cost=0.00..3870.01 rows=200001 width=5)
+         ->  Result  (cost=0.00..0.01 rows=1 width=32)
+~~~
+
+- [[Append]]: لزق النتيجتين تحت بعض. ده كل اللي [[UNION ALL]] بيعمله.
+- [[HashAggregate]] فوقه: جدول hash على النتيجة كلها عشان يلاقي التكرار. ده الشغل الزيادة بتاع [[UNION]].
+
+فالقاعدة: [[UNION ALL]] دايمًا، إلا لو عايز تشيل التكرار فعلًا.
+
+---
+
+## ٥. [[EXCEPT]]: اللي في الأول ومش في التاني
+
+~~~sql
+SELECT email FROM users
+EXCEPT
+SELECT u.email FROM users u JOIN orders o ON o.user_id = u.id;
+~~~
+
+الأول: كل الإيميلات. التاني: إيميلات اللي ليهم أوردر (الـ JOIN بيطلع صف لكل أوردر). [[EXCEPT]] بيطرح التاني من الأول (وبيشيل التكرار برضه):
+
+~~~text الناتج
+      email
+-----------------
+ new@example.com
+(1 row)
+~~~
+
+اليوزر الوحيد اللي معملش أوردرات. وأخوه [[INTERSECT]] بيرجّع اللي موجود في الاتنين.
+
+---
+
+## ٦. الأخطاء
+
+### أنواع مش متوافقة
+
+~~~text SELECT id FROM orders UNION SELECT email FROM users;
+ERROR:  UNION types bigint and text cannot be matched
+LINE 1: SELECT id FROM orders UNION SELECT email FROM users;
+                                           ^
+~~~
+
+العمود الأول في الجزء الأول [[bigint]] وفي التاني [[text]]، و Postgres مش هيحوّل لوحده. وده سبب [[id::text]] في الـ feed. (والـ error بيذكر نوع الجزء الأول الأول.)
+
+### عدد أعمدة مختلف
+
+~~~text SELECT 'order', id FROM orders UNION ALL SELECT 'signup' FROM users;
+ERROR:  each UNION query must have the same number of columns
+~~~
+
+---
+
+## الخلاصة
+
+| العملية | بترجّع | بتشيل التكرار؟ |
+|---|---|---|
+| [[UNION ALL]] | الأول + التاني زي ما هم | لأ، وأسرع |
+| [[UNION]] | الأول + التاني | أيوه (HashAggregate أو Sort) |
+| [[EXCEPT]] | اللي في الأول ومش في التاني | أيوه |
+| [[INTERSECT]] | اللي في الاتنين | أيوه |
+
+- نفس عدد الأعمدة، بنفس الترتيب، وبأنواع متوافقة ([[::text]] لو لأ).
+- أسماء الأعمدة من أول SELECT، و [[ORDER BY]] و [[LIMIT]] في الآخر على الكل.`,
           lines: [
             "أوردرات اليوزر كأحداث: نوع ثابت، والـ id كنص، والوقت.",
             "أوردرات اليوزر ده بس.",
@@ -924,7 +2695,7 @@ WHERE o.user_id = (SELECT id FROM users WHERE email = 'sara@example.com');`
 FROM orders o
 JOIN order_items oi ON oi.order_id = o.id
 JOIN products p ON p.id = oi.product_id
-WHERE o.id = 1
+WHERE o.id = (SELECT min(order_id) FROM order_items)
 GROUP BY o.id;
 SELECT o.id, string_agg(p.name, ', ' ORDER BY p.name) AS products,
        array_agg(p.id ORDER BY p.id) AS product_ids
@@ -976,6 +2747,179 @@ await pool.end();`,
             when: "endpoints بترجّع object ومعاه أولاده (أوردر وبنوده، بوست وتاجاته)، والتقارير اللي محتاجة «كل المنتجات في خانة واحدة»، وأي مكان بتعمل فيه reduce على صفوف JOIN في الكود.",
             mistakes: R`[[[null]]] لليوزرز اللي من غير أولاد. تنسى ORDER BY جوه json_agg فالبنود ترجع بترتيب عشوائي. الفلوس جوه JSON بقت float. [[GROUP BY o.id]] وبتختار عمود من جدول تاني مش بيعتمد على o.id فتاخد error. و json_agg على مئات الآلاف من الصفوف في صف واحد فيعمل رد ضخم بدل pagination.`
           },
+          teach: R`## الفكرة: لمّ صفوف البنود في خانة واحدة
+
+[[count]] و [[sum]] بيلمّوا المجموعة في رقم. [[json_agg]] و [[array_agg]] و [[string_agg]] بيلمّوها في **قايمة**: JSON array، أو Postgres array، أو نص مفصول بفواصل. فالأوردر اللي فيه ٣ بنود يطلع صف واحد جواه بنوده، جاهز يترجع من الـ API.
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker، على lab المتجر. الأوردر 5 فيه ٣ بنود (Mug و Hoodie و T-shirt)، والأوردر 6 فيه بند واحد.
+
+---
+
+## ١. المشكلة: الـ JOIN العادي
+
+~~~text JOIN من غير تجميع
+ id |  total  |  name   | quantity | unit_price
+----+---------+---------+----------+------------
+  5 | 2160.00 | Mug     |        1 |     110.00
+  5 | 2160.00 | Hoodie  |        2 |     650.00
+  5 | 2160.00 | T-shirt |        3 |     250.00
+~~~
+
+٣ صفوف، والـ [[id]] والـ [[total]] متكررين. الـ API عايز object واحد للأوردر وجواه array البنود.
+
+---
+
+## ٢. الاستعلام الأول، من جوه لبرة
+
+### [[json_build_object('product', p.name, 'qty', oi.quantity, 'price', oi.unit_price)]]
+
+بياخد أزواج: اسم المفتاح (نص) وبعده القيمة، ويعمل JSON object واحد للصف:
+
+~~~text الناتج لصف واحد
+ {"product" : "Mug", "qty" : 1, "price" : 110.00}
+~~~
+
+### [[json_agg(... ORDER BY p.name)]]
+
+aggregate زي [[sum]]: بياخد الـ object من كل صف في المجموعة ويحطهم في JSON array واحد. و [[ORDER BY p.name]] **جوه** القوسين بيرتّب العناصر جوه الـ array (من غيره الترتيب مش مضمون).
+
+### [[FROM ... JOIN ... JOIN ...]]
+
+[[orders o]] مع [[order_items oi]] (بنود الأوردر) مع [[products p]] (اسم كل منتج). نفس JOIN درس INNER JOIN.
+
+### [[WHERE o.id = (SELECT min(order_id) FROM order_items)]]
+
+أوردر واحد: أصغر رقم أوردر ليه بنود. (الأوردر 1 من الدروس الأولى اتمسح في درس ON DELETE، فلو كتبت [[o.id = 1]] مش هيرجع حاجة.)
+
+### [[GROUP BY o.id]]
+
+صف واحد لكل أوردر. و [[o.total]] مسموح في الـ SELECT من غير aggregate لأن [[o.id]] هو الـ primary key: Postgres عارف إن كل أعمدة [[orders]] ليها قيمة واحدة لكل id.
+
+~~~text الناتج
+ id |  total  |                                                                             items
+----+---------+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+  5 | 2160.00 | [{"product" : "Hoodie", "qty" : 2, "price" : 650.00}, {"product" : "Mug", "qty" : 1, "price" : 110.00}, {"product" : "T-shirt", "qty" : 3, "price" : 250.00}]
+(1 row)
+~~~
+
+صف واحد، والبنود مترتبة بالاسم (Hoodie ثم Mug ثم T-shirt).
+
+لكن عمود من جدول تاني مش جوه aggregate:
+
+~~~text SELECT o.id, p.name, json_agg(oi.quantity) ... GROUP BY o.id;
+ERROR:  column "p.name" must appear in the GROUP BY clause or be used in an aggregate function
+~~~
+
+الأوردر فيه ٣ أسماء، فـ Postgres مش عارف يحط أنهي واحد.
+
+---
+
+## ٣. [[string_agg]] و [[array_agg]]
+
+~~~sql
+SELECT o.id, string_agg(p.name, ', ' ORDER BY p.name) AS products,
+       array_agg(p.id ORDER BY p.id) AS product_ids
+...
+GROUP BY o.id ORDER BY o.id;
+~~~
+
+~~~text الناتج
+ id |       products       | product_ids
+----+----------------------+-------------
+  5 | Hoodie, Mug, T-shirt | {1,2,4}
+  6 | T-shirt              | {1}
+~~~
+
+| الدالة | الناتج | شكله |
+|---|---|---|
+| [[string_agg(p.name, ', ' ORDER BY p.name)]] | نص واحد، و [[', ']] الفاصل بين القيم | [[Hoodie, Mug, T-shirt]] |
+| [[array_agg(p.id ORDER BY p.id)]] | Postgres array (بيتكتب بـ [[{}]]) | [[{1,2,4}]] |
+
+---
+
+## ٤. اليوزر اللي ملوش أولاد: [[FILTER]] و [[COALESCE]]
+
+~~~sql
+SELECT u.email,
+       COALESCE(json_agg(o.id) FILTER (WHERE o.id IS NOT NULL), '[]') AS order_ids
+FROM users u LEFT JOIN orders o ON o.user_id = u.id
+GROUP BY u.email;
+~~~
+
+في الـ lab اليوزر [[you@example.com]] عنده ٢٠٠ ألف أوردر، فعشان الناتج يتقري زودنا [[AND o.id < 10]] على الـ ON. وفيه يوزر [[new@example.com]] من غير أوردرات.
+
+### من غير FILTER الأول
+
+~~~text json_agg(o.id) بس
+      email      |       order_ids
+-----------------+-----------------------
+ new@example.com | [null]
+ you@example.com | [2, 4, 5, 6, 7, 8, 9]
+~~~
+
+[[[null]]] مش [[[]]]: الـ [[LEFT JOIN]] بيرجّع لليوزر اللي ملوش أوردرات صف واحد كل أعمدة orders فيه NULL، و json_agg جمّع الـ NULL ده.
+
+### الحل خطوتين
+
+1. [[FILTER (WHERE o.id IS NOT NULL)]]: بعد أي aggregate، بيقول «متدخلش في الحساب غير الصفوف دي». فالصف الـ NULL مبيدخلش.
+2. بس json_agg على **صفر** صفوف بيرجّع NULL مش array فاضي:
+
+~~~text SELECT json_agg(x) FROM generate_series(1,0) x;
+ json_agg
+----------
+
+~~~
+
+فـ [[COALESCE(..., '[]')]] بياخد أول قيمة مش NULL: لو الـ json_agg رجّع NULL، خد [['[]']].
+
+~~~text الناتج
+      email      |       order_ids
+-----------------+-----------------------
+ new@example.com | []
+ you@example.com | [2, 4, 5, 6, 7, 8, 9]
+~~~
+
+---
+
+## ٥. اللي بيوصل لـ JavaScript
+
+نفس الاستعلام الأول من Node بمكتبة [[pg]] (على [[node:22-slim]]):
+
+~~~text الناتج
+{
+  id: '5',
+  total: '2160.00',
+  items: [
+    { product: 'Hoodie', qty: 2, price: 650 },
+    { product: 'Mug', qty: 1, price: 110 },
+    { product: 'T-shirt', qty: 3, price: 250 }
+  ],
+  product_ids: [ '1', '2', '4' ]
+}
+string object true number true
+~~~
+
+| العمود | النوع في JS | ليه |
+|---|---|---|
+| [[id]] | [['5']] string | [[bigint]]: [[pg]] بيرجّعه نص عشان الدقة |
+| [[total]] | [['2160.00']] string | [[numeric]] عمود عادي: نص عشان الدقة |
+| [[items]] | array جاهز | [[pg]] بيعمل parse للـ json لوحده |
+| [[price]] جوه items | [[650]] number | جوه JSON بقى رقم JSON، فالدقة والـ [[.00]] راحوا |
+| [[product_ids]] | array فيه strings | [[array_agg]] بقى JS array، والعناصر [[bigint]] فنصوص |
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| array of objects للـ API | [[json_agg(json_build_object(...) ORDER BY ...)]] |
+| نص للعرض أو CSV | [[string_agg(x, ', ' ORDER BY x)]] |
+| array أرقام | [[array_agg(x)]] |
+| [[[]]] بدل [[[null]]] مع LEFT JOIN | [[COALESCE(json_agg(...) FILTER (WHERE ... IS NOT NULL), '[]')]] |
+
+- [[ORDER BY]] جوه الـ aggregate هو اللي بيرتّب العناصر.
+- الفلوس جوه JSON بتبقى number في JS؛ لو فارقة، [[o.total::text]].`,
           lines: [
             "لكل أوردر: رقمه والـ total،",
             "وكل بنوده كـ JSON array، كل بند object فيه المنتج والكمية والسعر،",
@@ -983,7 +2927,7 @@ await pool.end();`,
             "من الأوردرات،",
             "مع بنودها،",
             "ومنتجاتها.",
-            "أوردر واحد.",
+            "أوردر واحد: أول أوردر ليه بنود (الأوردر 1 اتمسح في درس ON DELETE).",
             "صف واحد لكل أوردر.",
             "أسماء المنتجات في نص واحد بفاصلة،",
             "وأرقامها في array.",
@@ -1057,6 +3001,163 @@ LATERAL ولا ROW_NUMBER؟ ROW_NUMBER أبسط لما تكون عايز معظ�
             when: "top-N لكل مجموعة، وأحدث صف لكل حاجة، ولما محتاج كذا عمود من subquery مربوطة بالصف اللي برّه، وكمان مع دوال بترجّع جداول زي [[jsonb_array_elements]] و [[generate_series]].",
             mistakes: R`CROSS JOIN LATERAL لما عايز اليوزرز اللي من غير أوردرات يظهروا. من غير index على (user_id, created_at) فكل لفة Seq Scan وSort، وده أبطأ من ROW_NUMBER. ORDER BY برّه بس فالـ LIMIT جوه بياخد ٣ عشوائيين. وتعمل ده في الكود: loop على اليوزرز وفي كل لفة query، وده N+1.`
           },
+          teach: R`## الفكرة: subquery بتتشغّل مرة لكل صف، وشايفة الصف ده
+
+المثال بيجيب «آخر ٣ أوردرات لكل يوزر» و «آخر أوردر لكل يوزر». الطريقة: لكل يوزر في [[users]]، شغّل استعلام صغير على [[orders]] بالـ id بتاعه، و [[LATERAL]] هي الكلمة اللي بتسمح للاستعلام الصغير يشوف [[u.id]].
+
+الناتج تحت حقيقي من psql على [[postgres:18]] في Docker، على lab المتجر: يوزرين، Ali (الإيميل [[you@example.com]]، ليه ٢٠٠ ألف أوردر) و Sara (من غير أوردرات)، وعلى [[orders]] الـ index [[orders_user_created_idx]] على [[(user_id, created_at DESC)]] من درس composite index.
+
+---
+
+## ١. ليه مش subquery عادية؟
+
+نفس الفكرة من غير [[LATERAL]]:
+
+~~~sql
+SELECT u.name, o.id FROM users u
+CROSS JOIN (SELECT id FROM orders WHERE user_id = u.id LIMIT 3) o;
+~~~
+
+~~~text الناتج
+ERROR:  invalid reference to FROM-clause entry for table "u"
+DETAIL:  There is an entry for table "u", but it cannot be referenced from this part of the query.
+HINT:  To reference that table, you must mark this subquery with LATERAL.
+~~~
+
+الـ subquery العادية في [[FROM]] بتتحسب لوحدها، كأنها جدول مستقل، فمش شايفة [[u]] اللي جنبها. والـ [[HINT]] بيقولك الحل بالظبط.
+
+وفي [[SELECT]] (scalar subquery) هتتشاف [[u]]، بس لازم ترجّع قيمة واحدة:
+
+~~~text الناتج
+... (SELECT id FROM orders WHERE user_id = u.id ORDER BY created_at DESC LIMIT 3) ...
+ERROR:  more than one row returned by a subquery used as an expression
+
+... (SELECT id, total FROM orders WHERE user_id = u.id ORDER BY created_at DESC LIMIT 1) ...
+ERROR:  subquery must return only one column
+~~~
+
+[[LATERAL]] بيجمع الاتنين: شايفة الصف اللي برّه، وبترجّع جدول كامل (كذا صف وكذا عمود).
+
+---
+
+## ٢. الاستعلام الأول: [[CROSS JOIN LATERAL]]
+
+~~~sql
+SELECT u.name, o.id, o.total, o.created_at
+FROM users u
+CROSS JOIN LATERAL (
+  SELECT id, total, created_at FROM orders
+  WHERE user_id = u.id
+  ORDER BY created_at DESC
+  LIMIT 3
+) o
+ORDER BY u.name, o.created_at DESC;
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[FROM users u]] | لفّ على اليوزرز |
+| [[CROSS JOIN]] | اربط كل يوزر بكل صف طالع من اللي بعده، من غير شرط ON |
+| [[LATERAL (...)]] | الـ subquery دي تتشغّل مرة **لكل يوزر**، وتقدر تستخدم [[u]] |
+| [[WHERE user_id = u.id]] | أوردرات اليوزر ده بس |
+| [[ORDER BY created_at DESC LIMIT 3]] | الأحدث، و ٣ بس |
+| [[) o]] | اسم النتيجة، عشان نكتب [[o.id]] و [[o.total]] |
+| [[ORDER BY u.name, o.created_at DESC]] برّه | ترتيب العرض النهائي |
+
+~~~text الناتج
+ name |   id   | total  |          created_at
+------+--------+--------+-------------------------------
+ Ali  |      2 |   0.00 | 2026-10-07 08:35:01.394661+00
+ Ali  |   6680 |  15.04 | 2026-10-07 08:34:33.908094+00
+ Ali  | 148010 | 505.21 | 2026-10-07 08:20:13.601142+00
+(3 rows)
+
+Time: 2.592 ms
+~~~
+
+Ali ليه ٣ صفوف. و Sara **مش ظاهرة**: الـ subquery بتاعتها رجّعت صفر صفوف، و [[CROSS JOIN]] مع صفر صفوف = صفر صفوف (زي INNER JOIN).
+
+---
+
+## ٣. الاستعلام التاني: [[LEFT JOIN LATERAL ... ON true]]
+
+~~~sql
+SELECT u.name, last.id AS last_order, last.created_at
+FROM users u
+LEFT JOIN LATERAL (
+  SELECT id, created_at FROM orders WHERE user_id = u.id ORDER BY created_at DESC LIMIT 1
+) last ON true
+ORDER BY u.name;
+~~~
+
+- [[LEFT JOIN LATERAL]]: لو الـ subquery رجّعت صفر صفوف، اليوزر يفضل موجود والأعمدة NULL.
+- [[LIMIT 1]]: أحدث أوردر واحد.
+- [[last]]: اسم النتيجة.
+- [[ON true]]: الـ [[LEFT JOIN]] لازم ليه ON، والشرط الحقيقي جوه الـ subquery ([[user_id = u.id]])، فبنكتب [[true]] = «مفيش شرط زيادة». من غيرها:
+
+~~~text الناتج
+ERROR:  syntax error at or near ";"
+~~~
+
+والنتيجة:
+
+~~~text الناتج
+ name | last_order |          created_at
+------+------------+-------------------------------
+ Ali  |          2 | 2026-10-07 08:35:01.394661+00
+ Sara |            |
+(2 rows)
+~~~
+
+Sara ظهرت بخانات فاضية (NULL).
+
+---
+
+## ٤. ليه سريع: الـ index (تجربة الـ try)
+
+~~~text EXPLAIN ANALYZE (الاستعلام الأول، والـ index موجود)
+ Nested Loop  (actual time=0.036..0.044 rows=3.00 loops=1)
+   ->  Seq Scan on users u  (actual time=0.011..0.012 rows=2.00 loops=1)
+   ->  Limit  (actual time=0.012..0.015 rows=1.50 loops=2)
+         ->  Index Scan using orders_user_created_idx on orders  (actual time=0.012..0.014 rows=1.50 loops=2)
+               Index Cond: (user_id = u.id)
+ Execution Time: 0.073 ms
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Nested Loop]] | loop: لكل صف من فوق، نفّذ اللي تحت |
+| [[Seq Scan on users u ... rows=2.00]] | اليوزرين |
+| [[loops=2]] | الـ subquery اتنفّذت مرتين، مرة لكل يوزر |
+| [[rows=1.50]] | متوسط الصفوف في كل لفة: ٣ لـ Ali و ٠ لـ Sara، يعني ٣ ÷ ٢ |
+| [[Index Scan using orders_user_created_idx]] | لكل يوزر، نزل في الفهرس لأول entry بتاعه وقرا ٣ ووقف. ومفيش Sort لأن الفهرس مترتب بالأحدث |
+
+ونفس الاستعلام بعد [[DROP INDEX orders_user_created_idx]] (جوه [[BEGIN]] و [[ROLLBACK]] عشان يرجع):
+
+~~~text EXPLAIN ANALYZE (من غير الـ index المركب)
+ Nested Loop  (actual time=0.058..234.782 rows=3.00 loops=1)
+   ->  Seq Scan on users u  (actual time=0.011..0.014 rows=2.00 loops=1)
+   ->  Limit  (actual time=117.378..117.381 rows=1.50 loops=2)
+         ->  Index Scan Backward using orders_created_at_idx on orders  (actual time=117.377..117.380 rows=1.50 loops=2)
+               Filter: (user_id = u.id)
+               Rows Removed by Filter: 100000
+ Execution Time: 234.872 ms
+~~~
+
+استخدم فهرس التاريخ: بيمشي على **كل** الأوردرات بالأحدث ويفلتر اليوزر ([[Filter]] مش [[Index Cond]]). Ali لقى أوردراته على طول، لكن Sara ملهاش أوردرات، فمشي على الـ ٢٠٠ ألف كلهم عشان يتأكد ([[Rows Removed by Filter: 100000]] متوسط اللفتين). من ٠.٠٧ms لـ ٢٣٥ms.
+
+---
+
+## الخلاصة
+
+| | [[CROSS JOIN LATERAL]] | [[LEFT JOIN LATERAL ... ON true]] |
+|---|---|---|
+| يوزر من غير نتايج | بيختفي | بيظهر بـ NULL |
+| زي | INNER JOIN | LEFT JOIN |
+
+- [[LATERAL]] = subquery بتتشغّل لكل صف وشايفاه، وبترجّع جدول.
+- الـ [[ORDER BY ... LIMIT]] **جوه** الـ subquery هو اللي بيحدد «أعلى N»؛ اللي برّه للعرض بس.
+- من غير index على [[(user_id, created_at DESC)]]، كل لفة ممكن تلف على الجدول كله.`,
           lines: [
             "لكل يوزر وأوردراته:",
             "من اليوزرز،",
