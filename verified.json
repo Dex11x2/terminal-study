@@ -2799,6 +2799,21 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
+ "files|.7z و .rar و .xz": {
+  "hash": "2dcc0174e7a9",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker 7-Zip 23.01; docs: unrar"
+ },
+ "files|.apk و .aab و .ipa": {
+  "hash": "6887d96a1558",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker on a real F-Droid APK: file, unzip -l; docs: adb install"
+ },
+ "files|.app و .dmg و .pkg": {
+  "hash": "0a16f4785e7e",
+  "date": "2026-10-07",
+  "on": "python:3.13-slim docker (plistlib); docs: all macOS commands"
+ },
  "files|.bat و .cmd": {
   "hash": "055ec5dc5666",
   "date": "2026-10-07",
@@ -2814,10 +2829,30 @@
   "date": "2026-10-07",
   "on": "ubuntu:24.04 docker (cut, BOM, file); Windows Python 3.14 csv.DictReader; pwsh 7.6 + Windows PowerShell 5.1 Import-Csv; docs: Excel behaviour"
  },
+ "files|.db و .sqlite": {
+  "hash": "2bb0c8553d4f",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14 (SQLite 3.50.4) + Git Bash file/xxd; ubuntu-24.04 docker sqlite3 3.45.1"
+ },
+ "files|.deb و .rpm و .AppImage": {
+  "hash": "9d9ce82b27f0",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker: apt download, dpkg-deb -I/-c, ar t, apt install ./; docs: rpm"
+ },
+ "files|.dll و .so و .dylib": {
+  "hash": "6a8419228ce5",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker (file, ldd, xxd); pwsh 7.6; docs: otool"
+ },
  "files|.dockerignore": {
   "hash": "caa08416c842",
   "date": "2026-10-07",
   "on": "win11 Docker 29.6, node:22-alpine + alpine:latest"
+ },
+ "files|.docx و .xlsx": {
+  "hash": "80963eb54138",
+  "date": "2026-10-07",
+  "on": "python:3.13-slim docker (python-docx 1.2 / openpyxl 3.1.5); docs: LibreOffice sharedStrings layout"
  },
  "files|.editorconfig": {
   "hash": "c559eb1b652b",
@@ -2828,6 +2863,11 @@
   "hash": "c101a44ed3de",
   "date": "2026-10-07",
   "on": "Windows: Node 24 --env-file, dotenv 18.0.6, python-dotenv, git status in scratch repo; ubuntu:24.04 docker: bash set -a/source"
+ },
+ "files|.exe و .msi": {
+  "hash": "7b14fe3dea44",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker (wine64, file, xxd, sha256sum); pwsh 7.6 + powershell 5.1 (Get-FileHash, Format-Hex, Get-AuthenticodeSignature); docs: msiexec"
  },
  "files|.gitattributes": {
   "hash": "d10756d433b7",
@@ -2889,6 +2929,11 @@
   "date": "2026-10-07",
   "on": "docker node:22-alpine (Node 22, esbuild 0.28.2, jq)"
  },
+ "files|.mp4 و .webm و .mp3": {
+  "hash": "6257b7134bf8",
+  "date": "2026-10-07",
+  "on": "Windows ffmpeg/ffprobe 9.0.2 + Git Bash file/xxd"
+ },
  "files|.npmrc و .nvmrc": {
   "hash": "1667be0fb9ca",
   "date": "2026-10-07",
@@ -2899,10 +2944,20 @@
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker, openssl + keytool/JDK21) + Windows certutil (read-only) & pwsh Base64"
  },
+ "files|.pdf": {
+  "hash": "7d5237155258",
+  "date": "2026-10-07",
+  "on": "PyMuPDF on Windows; ubuntu-24.04 docker poppler 24.02; docs: soffice"
+ },
  "files|.pem و .crt و .key": {
   "hash": "34f791fadc0e",
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker, openssl) + Windows pwsh & Git Bash openssl 3.5.8"
+ },
+ "files|.png و .jpg": {
+  "hash": "335977e64614",
+  "date": "2026-10-07",
+  "on": "Windows Pillow 12.1 + Git Bash file/xxd; docs: magick/exiftool syntax"
  },
  "files|.ps1 و .psm1": {
   "hash": "0617ad8f1fcc",
@@ -2914,6 +2969,11 @@
   "date": "2026-10-07",
   "on": "docker ubuntu:24.04 (Python 3.12.3) + Windows 11 pwsh (Python 3.14)"
  },
+ "files|.service": {
+  "hash": "12e7cb5c086e",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker, systemd 255: systemd-analyze verify; docs: systemctl/journalctl"
+ },
  "files|.sh و .bash و .zsh": {
   "hash": "ed30a950e0ee",
   "date": "2026-10-07",
@@ -2923,6 +2983,16 @@
   "hash": "bf4a767678c7",
   "date": "2026-10-07",
   "on": "docker postgres:16 (psql -f, ON_ERROR_STOP, pg_dump --inserts)"
+ },
+ "files|.svg": {
+  "hash": "0438c5956a67",
+  "date": "2026-10-07",
+  "on": "Windows Git Bash file/wc + PyMuPDF render; docs: svgo"
+ },
+ "files|.tar و .gz و .tgz": {
+  "hash": "3ef2a5e8a014",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker (GNU tar, gzip/xz/bzip2/zstd sizes); cmd tar.exe; Git Bash gzip/xz/bzip2"
  },
  "files|.toml": {
   "hash": "5f589cebcddc",
@@ -2939,6 +3009,21 @@
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1"
  },
+ "files|.wasm": {
+  "hash": "dcf20db3c522",
+  "date": "2026-10-07",
+  "on": "Windows Node 24.19 + ubuntu-24.04 docker (file, xxd)"
+ },
+ "files|.webp و .avif و .gif و .ico": {
+  "hash": "9a95815e31f8",
+  "date": "2026-10-07",
+  "on": "Windows Pillow 12.1 + ffmpeg 9.0.2 + Git Bash file/xxd; docs: cwebp/avifenc/magick syntax"
+ },
+ "files|.woff2 و .ttf و .otf": {
+  "hash": "8f19947f2dc6",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker (fc-list, file, fonttools woff2, pyftsubset)"
+ },
  "files|.xml": {
   "hash": "997c2968dd13",
   "date": "2026-10-07",
@@ -2948,6 +3033,11 @@
   "hash": "3ef2e99534b7",
   "date": "2026-10-07",
   "on": "Windows: PyYAML 6.0.3 (Python 3.14 venv), js-yaml 5.4.3 + yaml 2.9.1 (Node 24), yamllint"
+ },
+ "files|.zip": {
+  "hash": "a107a4ef6cdf",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker (zip, unzip); pwsh 7.6 + powershell 5.1 Compress/Expand-Archive; cmd tar.exe"
  },
  "files|CSV إلى JSON": {
   "hash": "60c495c1ce99",
@@ -2999,6 +3089,11 @@
   "date": "2026-10-07",
   "on": "docker ubuntu:24.04, GNU Make 4.3"
  },
+ "files|README و LICENSE و CHANGELOG": {
+  "hash": "7e482e84cbdc",
+  "date": "2026-10-07",
+  "on": "docs: concept lesson, nothing to run"
+ },
  "files|UTF-8": {
   "hash": "cca7fb17a83c",
   "date": "2026-10-07",
@@ -3024,6 +3119,11 @@
   "date": "2026-10-07",
   "on": "win11 Docker 29.6 compose (postgres:16-alpine instead of 17, port 13000)"
  },
+ "files|crontab": {
+  "hash": "c2e49d0b487f",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 docker with cron running: crontab -l, install, bad-entry errors, jobs ran"
+ },
  "files|id_ed25519 و .pub": {
   "hash": "361b9c0f492d",
   "date": "2026-10-07",
@@ -3038,6 +3138,11 @@
   "hash": "ebfb98fde5bf",
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker, xxd + file) + Windows Format-Hex (pwsh 7 & 5.1)"
+ },
+ "files|nginx.conf": {
+  "hash": "37a50645bd1c",
+  "date": "2026-10-07",
+  "on": "docker nginx:alpine (nginx 1.31.6): nginx -t, live curl requests"
  },
  "files|package-lock.json": {
   "hash": "63b081bfdc82",
