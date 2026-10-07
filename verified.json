@@ -4204,10 +4204,25 @@
   "date": "2026-10-07",
   "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): test + web-server/Chrome"
  },
+ "flutter|Form و validator": {
+  "hash": "f6b70037223f",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44): analyze + test + web build in headless Chrome"
+ },
+ "flutter|FutureBuilder": {
+  "hash": "e8fa94b4a124",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44): analyze + test"
+ },
  "flutter|List و Map و Set": {
   "hash": "e448e8341397",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|ListView.builder": {
+  "hash": "6b88bb1a1b22",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44): analyze + widget test"
  },
  "flutter|Row و Column": {
   "hash": "16b942f56f72",
@@ -4269,20 +4284,40 @@
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): devices/run -d web-server + headless Chrome; docs: emulator/phone, --release"
  },
+ "flutter|fromJson و toJson": {
+  "hash": "190e0b3d9c14",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run"
+ },
  "flutter|generics": {
   "hash": "d66a76522ecd",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
+ },
+ "flutter|go_router": {
+  "hash": "75be737ffb43",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44, go_router 18.0.2): analyze + test + web build in headless Chrome"
  },
  "flutter|hot reload": {
   "hash": "8ab2c5bb8169",
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0) flutter run -d web-server + headless Chrome (r, R); docs: d, VS Code"
  },
+ "flutter|http": {
+  "hash": "3910377d5aa2",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5), http 1.6.0 against local fake API shaped like jsonplaceholder (real site unreachable)"
+ },
  "flutter|initState و dispose": {
   "hash": "d1d599d6b480",
   "date": "2026-10-07",
   "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): test + web-server/Chrome"
+ },
+ "flutter|json_serializable و freezed": {
+  "hash": "707b01ec2a66",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44, freezed 4.0.0-dev.3, json_serializable 6.14.1): build_runner + analyze + test"
  },
  "flutter|mixin": {
   "hash": "741da3dbb09d",
@@ -4304,10 +4339,25 @@
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
  },
+ "flutter|null safety بعمق": {
+  "hash": "81c3b5e53c7d",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
+ },
+ "flutter|patterns بعمق": {
+  "hash": "f3d6800b0a18",
+  "date": "2026-10-07",
+  "on": "docker dart:stable (Dart 3.13.5): dart run + dart analyze"
+ },
  "flutter|records و patterns": {
   "hash": "c495dd85b1f6",
   "date": "2026-10-07",
   "on": "docker dart:stable (Dart 3.13.5)"
+ },
+ "flutter|redirect": {
+  "hash": "897d267f4f43",
+  "date": "2026-10-07",
+  "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44, go_router 18.0.2): analyze + test + web build in headless Chrome"
  },
  "flutter|runApp": {
   "hash": "62242c4ae78f",
