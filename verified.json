@@ -5729,6 +5729,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, FastAPI 0.142 (Starlette 1.7); curl with Origin/preflight; docs: browser console message"
  },
+ "pyapi|Depends بيعمل إيه": {
+  "hash": "214af11fee6f",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 fastapi 0.142 + docker postgres:16-alpine"
+ },
  "pyapi|Depends و Annotated": {
   "hash": "40dda0261ab1",
   "date": "2026-10-07",
@@ -5748,6 +5753,11 @@
   "hash": "f514d45fe488",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker, mypy 2.4.0 --strict)"
+ },
+ "pyapi|Pydantic v2 عمل إيه": {
+  "hash": "f0af24e4e6fd",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 pydantic 2.13 (example, v1 deprecations, solCode, FastAPI 422)"
  },
  "pyapi|SQLAlchemy async": {
   "hash": "3923a203c03f",
@@ -5773,6 +5783,11 @@
   "hash": "4b4b97992f2a",
   "date": "2026-10-07",
   "on": "Windows 11, Python 3.14.3 venv"
+ },
+ "pyapi|async مش أسرع": {
+  "hash": "13221ec7b334",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 uvicorn 0.54 + docker postgres:16-alpine (load test, local 0.2s service instead of example.com)"
  },
  "pyapi|asyncpg": {
   "hash": "a2301b242e67",
@@ -5818,6 +5833,11 @@
   "hash": "5591206ff98c",
   "date": "2026-10-07",
   "on": "Windows Python 3.14.3 (venv + tzdata 2026e) + docker python:3.13-slim"
+ },
+ "pyapi|decorator بإيدك": {
+  "hash": "054bac9ee9d3",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 (example + solCode) + docker python:3.13-slim"
  },
  "pyapi|decorators": {
   "hash": "157599007f1b",
@@ -5884,6 +5904,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, Python 3.14.3 venv (example + solCode)"
  },
+ "pyapi|generator مقابل list": {
+  "hash": "c23b3ae65d60",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 (example + solCode on 1M-line log)"
+ },
  "pyapi|generators و yield": {
   "hash": "83c53f103f07",
   "date": "2026-10-07",
@@ -5913,6 +5938,16 @@
   "hash": "07376180e861",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|list و tuple و set و dict": {
+  "hash": "7d1a2591404c",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 (example + timeit)"
+ },
+ "pyapi|logging و profiling": {
+  "hash": "d87067ef9608",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 (logging example) + docker python:3.13-slim (cProfile, py-spy top/dump)"
  },
  "pyapi|match و case": {
   "hash": "8f038abb32d8",
@@ -6018,6 +6053,21 @@
   "hash": "bd1a9e5bb078",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|workers و GIL": {
+  "hash": "da82d7f097b8",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 venv (fastapi 0.142, --workers 4) + docker python:3.13-slim --cpus 4 + python3.14t"
+ },
+ "pyapi|الـ GIL": {
+  "hash": "7fe6e25cf7ae",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 + python3.14t (example + solCode); docs: C extension re-enabling GIL"
+ },
+ "pyapi|الـ default بيتحسب مرة": {
+  "hash": "37925e66e745",
+  "date": "2026-10-07",
+  "on": "windows-pwsh py3.14 (+ ruff B006/B008)"
  },
  "pyapi|الوراثة و super و MRO": {
   "hash": "2fd9943f26a8",
