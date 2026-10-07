@@ -359,6 +359,81 @@
   "date": "2026-10-07",
   "on": "Windows 11, Node 24.19, vitest 5.0.3, Prisma 7.10, Postgres 16 (Docker), dotenv 18 CLI; pwsh 7.6"
  },
+ "apps|./gradlew assembleDebug": {
+  "hash": "efa094435d81",
+  "date": "2026-10-07",
+  "on": "docker ubuntu:24.04 + OpenJDK 21 + Windows pwsh/powershell; docs: successful build"
+ },
+ "apps|adb": {
+  "hash": "ecc5cfc11811",
+  "date": "2026-10-07",
+  "on": "docker ubuntu:24.04 (adb 34, no device); docs: install/am/logcat/reverse"
+ },
+ "apps|android.yml": {
+  "hash": "44087581cc75",
+  "date": "2026-10-07",
+  "on": "actionlint (docker) + bash on ubuntu:24.04; docs: full run on GitHub"
+ },
+ "apps|app.isPackaged": {
+  "hash": "5a43c4b3d744",
+  "date": "2026-10-07",
+  "on": "Windows 11 pwsh 7 (dev + packaged exe); docs: Linux/mac paths"
+ },
+ "apps|build-exe.ps1": {
+  "hash": "5a41492d57bd",
+  "date": "2026-10-07",
+  "on": "Windows 11 pwsh 7 + powershell 5.1"
+ },
+ "apps|electron-builder": {
+  "hash": "280114414b84",
+  "date": "2026-10-07",
+  "on": "Windows 11 pwsh 7 (electron-builder 26.15.3, nsis + portable built, not installed)"
+ },
+ "apps|keytool": {
+  "hash": "88ad38dabd72",
+  "date": "2026-10-07",
+  "on": "docker ubuntu:24.04 + OpenJDK 21 + git; docs: assembleRelease"
+ },
+ "apps|launcher": {
+  "hash": "996ff6eadb54",
+  "date": "2026-10-07",
+  "on": "Windows 11 cmd (run.bat) + docker node:22-slim (run.sh)"
+ },
+ "apps|main.js": {
+  "hash": "dc4907831973",
+  "date": "2026-10-07",
+  "on": "Windows 11 pwsh 7 (Electron 44.6.0, dev and packaged)"
+ },
+ "apps|npm run dev": {
+  "hash": "7652a17c5a60",
+  "date": "2026-10-07",
+  "on": "Windows 11 pwsh 7 (concurrently + wait-on + Vite 8.3.3 + Electron 44.6.0)"
+ },
+ "apps|npx cap add android": {
+  "hash": "affc182b4449",
+  "date": "2026-10-07",
+  "on": "docker node:22-slim (Capacitor 8.5.2)"
+ },
+ "apps|npx cap open android": {
+  "hash": "0a504d48f6f9",
+  "date": "2026-10-07",
+  "on": "docker node:22-slim (error paths); docs: run on device"
+ },
+ "apps|npx cap sync android": {
+  "hash": "b171e60c3324",
+  "date": "2026-10-07",
+  "on": "docker node:22-slim (Capacitor 8.5.2, @capacitor/assets)"
+ },
+ "apps|npx electron .": {
+  "hash": "b7fb2efacb72",
+  "date": "2026-10-07",
+  "on": "Windows 11 pwsh 7 (Electron 44.6.0, hidden window)"
+ },
+ "apps|versionCode": {
+  "hash": "f7309312791e",
+  "date": "2026-10-07",
+  "on": "docker ubuntu:24.04 (grep/sed); docs: aapt"
+ },
  "bash|#!/usr/bin/env bash": {
   "hash": "591d8dbbef8f",
   "date": "2026-10-06",
@@ -2819,6 +2894,16 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows 11): example + solCode run, Map trace"
  },
+ "dsa|binary search": {
+  "hash": "22996c84d621",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|binary search on answer": {
+  "hash": "7d951244f5fa",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
  "dsa|call stack": {
   "hash": "03f0ed189917",
   "date": "2026-10-07",
@@ -2833,6 +2918,11 @@
   "hash": "1324317283ae",
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows 11): example + solCode run, loops instrumented"
+ },
+ "dsa|fast/slow pointers": {
+  "hash": "447b5a1360a0",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
  },
  "dsa|first unique (count + scan)": {
   "hash": "8d459d71ef7f",
@@ -2854,10 +2944,40 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
+ "dsa|lower bound (first/last)": {
+  "hash": "035eeeacf64b",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
  "dsa|memoization": {
   "hash": "9d0201b917b2",
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
+ },
+ "dsa|merge (dummy head)": {
+  "hash": "08d243258344",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|merge intervals": {
+  "hash": "c724655dbb7a",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|merge sort": {
+  "hash": "9121b02207c0",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|min stack": {
+  "hash": "91486cbe5cc2",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|monotonic stack": {
+  "hash": "1db11f9ec797",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
  },
  "dsa|palindrome (two ends)": {
   "hash": "4bf19d3bda42",
@@ -2869,6 +2989,16 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
+ "dsa|queue و deque": {
+  "hash": "b73e0c0088e2",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|quick sort": {
+  "hash": "fa0af3b1ffd8",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
  "dsa|read/write pointers": {
   "hash": "6e6199d565cd",
   "date": "2026-10-07",
@@ -2879,15 +3009,35 @@
   "date": "2026-10-07",
   "on": "Node 24.19.0 on Windows (example + solCode + instrumented trace)"
  },
+ "dsa|reverse (prev/curr)": {
+  "hash": "dd53f52f68ee",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
  "dsa|reverse in place": {
   "hash": "d3637946c8ae",
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows 11): example + solCode run, swap trace"
  },
+ "dsa|search insert position": {
+  "hash": "c5fb2d744eab",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
+ "dsa|sort comparator": {
+  "hash": "8d965922869e",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
+ },
  "dsa|space complexity": {
   "hash": "64fcc568437d",
   "date": "2026-10-07",
   "on": "Node 24.19.0 (Windows 11): example + solCode run, recursion depth traced"
+ },
+ "dsa|stack (matching brackets)": {
+  "hash": "b475a48cb96e",
+  "date": "2026-10-07",
+  "on": "Node 24.19.0 (Windows): example + solCode + instrumented trace"
  },
  "dsa|two pointers (move the shorter)": {
   "hash": "4ae96d946102",

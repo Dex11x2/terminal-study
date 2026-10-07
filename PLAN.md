@@ -120,9 +120,9 @@
 | ٣٣ | `pyapi/05-06.js` (25) | [x] (pyapi اتقسم: بقى 19 ملف) |
 | ٣٤ | `files/01-06.js` (92) | [x] (files اتقسم: بقى 21 ملف) |
 | ٣٥ | `symbols/01-04.js` (104) | [x] (symbols اتقسم) |
-| ٣٦ | `glossary/01.js` و `apps/01.js` (105) | [ ] (glossary خلص واتقسم 4 ملفات؛ apps/01 اتوقف في النص) |
+| ٣٦ | `glossary/01.js` و `apps/01.js` (105) | [x] (glossary و apps خلصوا واتقسموا) |
 | ٣٧ | `real/01-04.js` (40) | [ ] (01 و 02 اتوقفوا في النص) |
-| ٣٨ | `dsa/01-06.js` (~36) | [ ] (01 خلص؛ 02 و 04 اتوقفوا في النص) (فيها تمارين check: ماتقولش الحل) |
+| ٣٨ | `dsa/01-06.js` (~36) | [ ] (01-05 خلصوا؛ 06 شغال) (فيها تمارين check: ماتقولش الحل) |
 | ٣٩ | `dsa/07-11.js` (~30) | [ ] |
 | ٤٠ | `php/01-05.js` (74) | [ ] |
 | ٤١ | `go/01-07.js` (54) | [ ] |
@@ -202,7 +202,7 @@
 
 - [ ] TypeScript: ممكن تتحوّل JS وتشتغل على نفس المحرك من غير مكتبة كبيرة.
 - [ ] Python: محتاج Pyodide، وحجمه كبير. القرار لسه متاخدش.
-- [ ] **تمارين حلها ظاهر قبل ما تحاول (لقيتها ٧ أكتوبر):** في 17 تمرين من 154 الـ `check.solution` (أو أغلبه) مكتوب في الأجزاء اللي بتظهر على طول (المثال أو الشرح)، مش في الحل المستخبي. الكامل: data «WHERE» و «HAVING» و «LEFT JOIN» و «EXISTS». ووكلاء الشرح لقوا كمان: dsa «first unique (count + scan)» (نسخة الـ Map في المثال بتعدّي 3 tests من 6)، وdsa «group anagrams (key)» (مفتاح الـ sort في المثال بيعدّي كل الـ tests لأنها مش بتفرض مفتاح العدّ)، symbols «d  w  [ ]  ( )  {n}  |» (regex الموبايل في المثال هو الحل بالظبط)، و data «$queryRaw» (المثال هو الحل بتاريخ ثابت بدل المتغير) و «relation filters» (المثال + الحل المكتوب بيدّوا الإجابة). شبه كامل: data «ORDER BY و LIMIT» و «ON CONFLICT»، js «تمرين sumDigits» و «class» و «EventEmitter»، dsa «anagram (char count)» و «group anagrams (key)» و «queue و deque» و «lower bound (first/last)» و «search insert position» و «fast/slow pointers» و «merge (dummy head)» و «combination sum». الحل: نغيّر المطلوب في التمرين (أعمدة أو شرط أو جدول تاني) بحيث المثال يعلّم الفكرة والتمرين يطلب تطبيقها بشكل مختلف، ونحدّث الـ tests والـ solution. في dsa المثال هو الـ pattern نفسه فالتشابه طبيعي جزئيًا: راجع كل واحد بعينك. ابعت كل تاب لوكيل واحد بعد ما شرح التاب يخلص. سكربت الفحص اتكتب في scratchpad الجلسة (leak.js)؛ الأحسن نضيفه تنبيه في `tools/check.js`.
+- [ ] **تمارين حلها ظاهر قبل ما تحاول (لقيتها ٧ أكتوبر):** في 17 تمرين من 154 الـ `check.solution` (أو أغلبه) مكتوب في الأجزاء اللي بتظهر على طول (المثال أو الشرح)، مش في الحل المستخبي. الكامل: data «WHERE» و «HAVING» و «LEFT JOIN» و «EXISTS». ووكلاء الشرح لقوا كمان: dsa «monotonic stack» و «merge sort» و «search insert position» و «lower bound» و «binary search on answer» و «fast/slow pointers» و «sort comparator» (المثال أو نص «جرّب» قريب جدًا من الحل)، dsa «first unique (count + scan)» (نسخة الـ Map في المثال بتعدّي 3 tests من 6)، وdsa «group anagrams (key)» (مفتاح الـ sort في المثال بيعدّي كل الـ tests لأنها مش بتفرض مفتاح العدّ)، symbols «d  w  [ ]  ( )  {n}  |» (regex الموبايل في المثال هو الحل بالظبط)، و data «$queryRaw» (المثال هو الحل بتاريخ ثابت بدل المتغير) و «relation filters» (المثال + الحل المكتوب بيدّوا الإجابة). شبه كامل: data «ORDER BY و LIMIT» و «ON CONFLICT»، js «تمرين sumDigits» و «class» و «EventEmitter»، dsa «anagram (char count)» و «group anagrams (key)» و «queue و deque» و «lower bound (first/last)» و «search insert position» و «fast/slow pointers» و «merge (dummy head)» و «combination sum». الحل: نغيّر المطلوب في التمرين (أعمدة أو شرط أو جدول تاني) بحيث المثال يعلّم الفكرة والتمرين يطلب تطبيقها بشكل مختلف، ونحدّث الـ tests والـ solution. في dsa المثال هو الـ pattern نفسه فالتشابه طبيعي جزئيًا: راجع كل واحد بعينك. ابعت كل تاب لوكيل واحد بعد ما شرح التاب يخلص. سكربت الفحص اتكتب في scratchpad الجلسة (leak.js)؛ الأحسن نضيفه تنبيه في `tools/check.js`.
 
 ### ٥. أسئلة مفتوحة
 
