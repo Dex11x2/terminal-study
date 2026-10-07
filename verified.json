@@ -3059,6 +3059,161 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash + docker mongo:8; docs: ssh/scp/Atlas"
  },
+ "next|@slot و (.)": {
+  "hash": "488e080503e8",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + Chrome (modal, refresh, back), build without default.tsx (Turbopack and --webpack)"
+ },
+ "next|App Router": {
+  "hash": "27575c238a53",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + curl"
+ },
+ "next|Link و useRouter": {
+  "hash": "d2ccd08fe6a9",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + Chrome via playwright (prefetch, replace/history), missing-Suspense build error; docs: prefetch off in dev"
+ },
+ "next|Server Components": {
+  "hash": "646f02256a63",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 dev/build/start + Chrome console + curl (RSC payload)"
+ },
+ "next|Suspense و streaming": {
+  "hash": "e8a1d4a0ac78",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + Node stream timing, pwsh 7 and powershell 5.1 for the node -e line"
+ },
+ "next|[slug] و params": {
+  "hash": "bb6053bbf191",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + curl, tsc error, optional catch-all"
+ },
+ "next|action = endpoint عام": {
+  "hash": "2364e65ff8a1",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 + zod + headless Chrome + curl replay (bash, pwsh, powershell)"
+ },
+ "next|async component": {
+  "hash": "b6dda70f4060",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + curl timing (sequential vs Promise.all vs allSettled); docs: real db/API"
+ },
+ "next|children من السيرفر": {
+  "hash": "634312f17e65",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start/dev + Chrome, react-query 5 + next-themes 0.4"
+ },
+ "next|create-next-app": {
+  "hash": "ebdb695e90ce",
+  "date": "2026-10-07",
+  "on": "Windows 11, create-next-app/next 16.4.0, Node 24.19 (Git Bash + pwsh): create, dev, Fast Refresh in Chrome, build, next info; docs: interactive prompts from CLI source"
+ },
+ "next|error.tsx و not-found.tsx": {
+  "hash": "d7d071c139aa",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 dev + build/start + Chrome + curl (500/404, digest)"
+ },
+ "next|generateStaticParams": {
+  "hash": "c7bacb0fb7bd",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 build/start + curl"
+ },
+ "next|layout.tsx": {
+  "hash": "efa3280d4429",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + Chrome (layout vs template), metadata via curl"
+ },
+ "next|loading.tsx": {
+  "hash": "27492bc08c2a",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + Node stream timing + Chrome"
+ },
+ "next|page.tsx": {
+  "hash": "c8e238c6f82c",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + curl statuses, build errors"
+ },
+ "next|proxy.ts": {
+  "hash": "86e9fc6e0518",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 build/start + curl (bash, pwsh, powershell); docs: runtime forbidden in proxy"
+ },
+ "next|redirect و useOptimistic": {
+  "hash": "281c64e56460",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 + headless Chrome"
+ },
+ "next|revalidate و ISR": {
+  "hash": "6c9c97bc7a70",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 build/start + curl (local CMS stub)"
+ },
+ "next|route.ts": {
+  "hash": "d3911fdd5d50",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 build/start + curl"
+ },
+ "next|searchParams": {
+  "hash": "413068cdd7a6",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 dev (Chrome console) + build; zod 4.6 schema in Node"
+ },
+ "next|server-only": {
+  "hash": "46f0b489eb7a",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start + Chrome + curl, server-only build errors, NEXT_PUBLIC_ inlining"
+ },
+ "next|static shell و Suspense": {
+  "hash": "af91d1ebbb6b",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 cacheComponents build/start/dev + streaming fetch script"
+ },
+ "next|static و dynamic": {
+  "hash": "ef0dc5c8a482",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 build/start/dev + curl (bash, pwsh, powershell)"
+ },
+ "next|updateTag و revalidateTag": {
+  "hash": "2939d236c5a3",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 cacheComponents + headless Chrome + curl + Invoke-RestMethod (pwsh, powershell); docs: updateTag Server-Actions-only"
+ },
+ "next|use cache": {
+  "hash": "832dafba1ed7",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 cacheComponents build/start + curl; docs: cacheLife profiles"
+ },
+ "next|use client": {
+  "hash": "1f7548187346",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 build/start/dev + Chrome, chunk grep, directive errors"
+ },
+ "next|use server": {
+  "hash": "ff12e4b05977",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 start + headless Chrome (JS on/off)"
+ },
+ "next|use(promise)": {
+  "hash": "0594337b8b23",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next 16.4 / React 19.3 build/start + Chrome"
+ },
+ "next|useActionState": {
+  "hash": "4b4791171710",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 + zod 4.6.5 + headless Chrome; docs: Prisma insensitive/P2025"
+ },
+ "next|webhook": {
+  "hash": "4564dbb9ef0e",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 + stripe 23.0.0 signing script + curl; docs: Stripe CLI"
+ },
+ "next|الكاش من 14 لـ 16": {
+  "hash": "e946feba4750",
+  "date": "2026-10-07",
+  "on": "windows-11 next16.4 dev/build, both models; docs: Next 14 behaviour"
+ },
  "nginx|Caddy": {
   "hash": "fc9f85060328",
   "date": "2026-10-06",

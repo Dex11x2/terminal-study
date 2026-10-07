@@ -23,7 +23,7 @@ TAB("next", {
   lab: R`npx create-next-app@latest next-lab
 cd next-lab
 npm run dev`,
-  labText: "create-next-app بيسألك أسئلة: اختار TypeScript و Tailwind و App Router. كل تجارب التاب ده على المشروع ده.",
+  labText: "create-next-app بيسألك أسئلة: اختار TypeScript و Tailwind و App Router، وقول No لسؤال Cache Components (بنشغّله بإيدنا في فئة «Cache Components و use cache»). كل تجارب التاب ده على المشروع ده.",
   levels: {"1":["الأساس","routing بالفولدرات، و layouts، و server و client components"],"2":["الداتا","fetching، والكاش، و server actions، و route handlers، و auth، و middleware"],"3":["الإنتاج والانترفيو","SEO و metadata، و i18n، والأداء، والنشر، وأسئلة الانترفيو"]},
   categories: [
     {
@@ -34,11 +34,11 @@ npm run dev`,
         {
           cmd: "create-next-app",
           title: "تبدأ مشروع Next جديد وتفهم ملفاته",
-          desc: R`[[npx create-next-app@latest]] بيعملك مشروع Next.js جاهز: React و TypeScript و Tailwind و ESLint، وسكربتات [[dev]] و [[build]] و [[start]]. بيسألك كام سؤال، والإجابات الأسلم لمشروع جديد: TypeScript أيوة، و App Router أيوة، و [[src/]] على ذوقك، و import alias [[@/*]].
+          desc: R`[[npx create-next-app@latest]] بيعملك مشروع Next.js جاهز: React و TypeScript و Tailwind و ESLint، وسكربتات [[dev]] و [[build]] و [[start]]. بيسألك كام سؤال، والإجابات الأسلم لمشروع جديد: TypeScript أيوة، و App Router أيوة، و [[src/]] على ذوقك، و import alias [[@/*]]. ومن Next 16.4 فيه سؤال عن Cache Components إجابته الافتراضية أيوة: قول لأ دلوقتي، لأن دروس المستوى الأول والتاني مبنية على النموذج العادي، وبنشغّله بإيدنا في فئة «Cache Components».
 
 أهم الملفات: [[app/layout.tsx]] الهيكل اللي بيلف كل الصفحات، و [[app/page.tsx]] الصفحة الرئيسية ([[/]])، و [[public/]] للصور والملفات اللي بتتقدّم زي ما هي، و [[next.config.ts]] إعدادات Next. ولو اخترت [[src/]] كل ده بيبقى جوه [[src/app]]. و [[npm run dev]] بيشغّل على [[localhost:3000]].`,
           example: R`npx create-next-app@latest shop
-npx create-next-app@latest shop --ts --tailwind --eslint --app --src-dir --import-alias "@/*"
+npx create-next-app@latest shop --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --no-cache-components
 cd shop
 npm run dev
 ls src/app public
@@ -56,12 +56,267 @@ Next 16 محتاج Node 20.9 على الأقل، و TypeScript 5.1 أو أحدث
             when: "أي مشروع React محتاج SEO، أو صفحات بتترسم على السيرفر، أو backend صغير جنب الواجهة (فورمات و API). لو لوحة أدمن ورا login ومفيهاش SEO، Vite + React أبسط (تاب «React»).",
             mistakes: R`تبدأ بـ [[create-react-app]]: اتوقف رسميًا. وتختار Pages Router لمشروع جديد عشان التوتوريال قديم. وتشغّل [[npm run dev]] على السيرفر للإنتاج بدل [[build]] وبعده [[start]]. وتعمل فولدر [[app]] في الجذر وفولدر [[src/app]] كمان، فـ Next يقرا اللي في الجذر بس ويتجاهل التاني، وتستغرب إن صفحتك مش ظاهرة.`
           },
+          teach: R`## الفكرة: ٦ أوامر، أول اتنين بيعملوا نفس الحاجة
+
+أول سطرين طريقتين لعمل نفس المشروع (بأسئلة، أو من غير أسئلة)، وبعدهم بندخل المشروع ونشغّله ونبص على ملفاته. كله اتشغّل على ويندوز 11 بـ Node 24.19 و npm 11.17، ويوم ما اتكتب الدرس [[create-next-app]] و [[next]] كانوا 16.4.0، و React 19.3.
+
+---
+
+## ١. [[npx create-next-app@latest shop]]
+
+| الحتة | معناها |
+|---|---|
+| [[npx]] | «نزّل الباكدج دي مؤقتًا وشغّلها»، من غير ما تتسطب global (x يعني execute) |
+| [[create-next-app]] | الأداة الرسمية اللي بتعمل مشروع Next |
+| [[@latest]] | آخر إصدار، مش نسخة قديمة متكيّشة عندك |
+| [[shop]] | اسم الفولدر اللي هيتعمل |
+
+في الترمنال العادي بيسألك أسئلة واحد ورا التاني. الأسئلة دي من كود [[create-next-app]] 16.4 نفسه:
+
+| السؤال | نختار |
+|---|---|
+| Would you like to use the recommended Next.js defaults? | لأ، عشان نشوف الأسئلة ونختار بإيدنا |
+| TypeScript? | Yes |
+| Which linter? (ESLint أو Biome أو None) | ESLint |
+| React Compiler? | No (دلوقتي) |
+| Tailwind CSS? | Yes |
+| Your code inside a [[src/]] directory? | على ذوقك، الدروس بتستخدمه |
+| App Router? (recommended) | Yes |
+| Customize the import alias ([[@/*]])? | No، سيبه [[@/*]] |
+| Cache Components? | **No** (تحت ليه) |
+| AGENTS.md? | على ذوقك |
+
+> **سؤال Cache Components مهم:** من 16.4 الإجابة الافتراضية بتاعته أيوة. ولو اتشغّل، طريقة الكاش و static و dynamic بتتغير كلها، والأخطاء اللي هتشوفها هتبقى غير اللي في دروس المستويين الأول والتاني. فقول لأ دلوقتي، وفي فئة «Cache Components و use cache» هنشغّله بسطر واحد في [[next.config.ts]].
+
+---
+
+## ٢. نفس الحاجة بـ flags
+
+~~~bash
+npx create-next-app@latest shop --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --no-cache-components
+~~~
+
+كل flag إجابة سؤال، فمفيش أسئلة:
+
+| الـ flag | الإجابة |
+|---|---|
+| [[--ts]] | TypeScript (اختصار [[--typescript]]) |
+| [[--tailwind]] | Tailwind CSS |
+| [[--eslint]] | ESLint |
+| [[--app]] | App Router |
+| [[--src-dir]] | الكود جوه [[src/]] |
+| [[--import-alias "@/*"]] | [[@/]] بيشاور على [[src/]]، فتكتب [[import x from "@/lib/x"]] من أي مكان |
+| [[--no-cache-components]] | من غير Cache Components |
+
+والأسئلة اللي ملهاش flag بياخد فيها الافتراضي ويقولك. ده أول الناتج على ويندوز:
+
+~~~text الناتج
+Using defaults for unprovided options:
+
+  --no-react-compiler     No React Compiler (use --react-compiler for React Compiler)
+  --agents-md             AGENTS.md (use --no-agents-md for No AGENTS.md)
+  --no-agent-feedback     No agent feedback (use --agent-feedback for Agent feedback)
+
+Creating a new Next.js app in C:\Users\ali\...\shop.
+
+Using npm.
+
+Initializing project with template: app-tw
+~~~
+
+[[app-tw]] اسم القالب: App Router + Tailwind. ولما شغّلناه **من غير** [[--no-cache-components]]، السطر ده ظهر جوه نفس القايمة:
+
+~~~text الناتج من غير --no-cache-components
+  --cache-components      Cache Components (use --no-cache-components for No Cache Components)
+~~~
+
+وفي [[next.config.ts]] اتكتب [[cacheComponents: true]]. يعني الافتراضي اتشغّل لوحده، وعشان كده الـ flag ده في المثال.
+
+بعد كده بينزّل المكتبات:
+
+~~~text الناتج
+Installing dependencies:
+- next
+- react
+- react-dom
+
+Installing devDependencies:
+- @tailwindcss/turbopack
+- @types/node
+- @types/react
+- @types/react-dom
+- eslint
+- eslint-config-next
+- tailwindcss
+- typescript
+
+added 357 packages, and audited 358 packages in 34s
+...
+Generating route types...
+✓ Types generated successfully
+
+Initialized a git repository.
+
+Success! Created shop at C:\Users\ali\...\shop
+~~~
+
+- **dependencies**: اللي التطبيق محتاجه وهو شغال: [[next]] نفسه و [[react]] و [[react-dom]].
+- **devDependencies**: أدوات وقت التطوير بس: TypeScript، وأنواع الـ TypeScript ([[@types/...]])، و ESLint، و Tailwind.
+- [[Generating route types]]: Next بيعمل أنواع TypeScript من شكل الفولدرات (هتشوفها في [[PageProps]] في الدروس الجاية).
+- [[Initialized a git repository]]: المشروع بقى git repo وفيه أول commit.
+
+---
+
+## ٣. [[cd shop]]
+
+[[cd]] اختصار change directory: ادخل فولدر المشروع. كل الأوامر الجاية لازم تتشغّل من جوه.
+
+---
+
+## ٤. [[npm run dev]]
+
+[[npm run X]] بيشغّل الـ script اللي اسمه X في [[package.json]]. وده اللي اتكتب فيه:
+
+~~~text package.json
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "lint": "eslint"
+}
+~~~
+
+يعني [[npm run dev]] = [[next dev]]. شغّلناه بـ [[-p 5820]] (رقم بورت تاني عشان ميتخانقش مع برامج على الجهاز)، ومن غيره البورت [[3000]]:
+
+~~~text الناتج
+▲ Next.js 16.4.0 (Turbopack)
+- Local:         http://localhost:5820
+- Network:       http://172.29.160.1:5820
+✓ Ready in 3.5s
+○ Compiling / ...
+ GET / 200 in 646ms (next.js: 403ms, application-code: 243ms)
+ GET /about 200 in 48ms (next.js: 11ms, application-code: 37ms)
+ GET /nothing 404 in 209ms (next.js: 177ms, application-code: 32ms)
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[(Turbopack)]] | الـ bundler (اللي بيحوّل كودك لحاجة المتصفح يفهمها). Turbopack الافتراضي من Next 16 |
+| [[Local]] | افتحه من جهازك |
+| [[Network]] | عنوان جهازك على الشبكة، فموبايل على نفس الشبكة يقدر يفتحه |
+| [[○ Compiling / ...]] | dev مش بيبني كل الصفحات مقدمًا: بيبني الصفحة أول ما تتطلب |
+| [[GET / 200 in 646ms]] | أول طلب: ٦٤٦ ملّي ثانية، عشان كان بيبني |
+| [[GET /about 200 in 48ms]] | بعد ما اتبنت، الطلبات بقت أسرع بكتير |
+| [[GET /nothing 404]] | مفيش فولدر [[nothing]] فيه [[page.tsx]]، فـ 404 |
+
+والترمنال بيفضل مشغول طول ما السيرفر شغال، و Ctrl+C بيقفله.
+
+### الـ Fast Refresh
+
+جربنا بمتصفح Chrome حقيقي (playwright): فتحنا الصفحة، وحطينا رقم في متغير على [[window]]، وبعدين غيّرنا [[أهلًا]] لـ [[أهلًا يا عالم]] في [[page.tsx]] وحفظنا:
+
+~~~text الناتج
+before: أهلًا
+after: أهلًا يا عالم marker: 42
+~~~
+
+النص اتغير والرقم اللي على [[window]] لسه موجود، يعني الصفحة **متعملهاش reload**: Next بدّل الكومبوننت اللي اتغير بس. وفي ترمنال dev ظهر [[✓ Compiled in 32ms]].
+
+---
+
+## ٥. [[ls src/app public]]
+
+[[ls]] بيعرض اللي جوه الفولدرات (في PowerShell [[ls]] اسم تاني لـ [[Get-ChildItem]]، وهناك الأمر ده بالمسافة مبيطبعش حاجة خالص، لأن الكلمة التانية [[public]] بتتفهم فلتر على الأسامي مش فولدر تاني. جربناه في pwsh وطلع فاضي. اكتبها بفاصلة: [[ls src/app, public]]). ده الناتج في Git Bash على مشروع جديد:
+
+~~~text الناتج
+public:
+file.svg
+globe.svg
+next.svg
+vercel.svg
+window.svg
+
+src/app:
+favicon.ico
+globals.css
+layout.tsx
+page.tsx
+~~~
+
+| الملف | بيعمل إيه |
+|---|---|
+| [[src/app/layout.tsx]] | الهيكل اللي بيلف كل الصفحات، فيه [[<html>]] و [[<body>]] |
+| [[src/app/page.tsx]] | الصفحة الرئيسية [[/]] |
+| [[src/app/globals.css]] | الـ CSS العام، وفيه سطر Tailwind |
+| [[src/app/favicon.ico]] | أيقونة التاب |
+| [[public/]] | ملفات بتتقدّم زي ما هي: [[public/next.svg]] بتفتح من [[/next.svg]] |
+
+وفي جذر المشروع حاجات تانية: [[next.config.ts]] (إعدادات Next)، و [[tsconfig.json]] (فيه [[paths]] اللي بتخلي [[@/*]] تشاور على [[./src/*]])، و [[next-env.d.ts]] (Next بيكتبه لوحده، وأول سطر تعليق فيه بيقول [[This file should not be edited]])، و [[.next/]] (ناتج البناء، وموجود في [[.gitignore]])، و [[AGENTS.md]] (تعليمات لأدوات الـ AI، لو وافقت عليه).
+
+---
+
+## ٦. [[npx next info]]
+
+هنا [[npx]] بيشغّل [[next]] المتسطب في المشروع نفسه (مش بينزّل حاجة)، و [[info]] بيطبع معلومات البيئة:
+
+~~~text الناتج
+Operating System:
+  Platform: win32
+  Arch: x64
+  Version: Windows 11 Home Single Language
+  Available memory (MB): 32175
+  Available CPU cores: 16
+Binaries:
+  Node: 24.19.0
+  npm: 11.17.0
+Relevant Packages:
+  next: 16.4.0 // Latest available version is detected (16.4.0).
+  react: 19.3.0
+  react-dom: 19.3.0
+  typescript: 5.9.3
+~~~
+
+[[win32]] اسم ويندوز عند Node حتى لو 64 بت، و [[x64]] نوع المعالج. وسطر [[Latest available version is detected]] بيقولك إنك على آخر نسخة. لما تفتح issue على GitHub بتاع Next، الفورم بيطلب الناتج ده بالظبط.
+
+---
+
+## الحل: الصفحتين و [[npm run build]]
+
+بعد ما كتبنا [[page.tsx]] و [[about/page.tsx]] زي الـ solCode، [[curl localhost:5820/about]] رجّع [[<h1>مين إحنا</h1>]] في الـ HTML. وده ناتج [[npx next build]]:
+
+~~~text الناتج
+▲ Next.js 16.4.0 (Turbopack)
+  Creating an optimized production build ...
+✓ Compiled successfully in 3.5s
+  Running TypeScript ...
+  Finished TypeScript in 2.0s ...
+✓ Generating static pages using 6 workers (5/5) in 725ms
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+└ ○ /about
+
+○  (Static)  prerendered as static content
+~~~
+
+- [[Running TypeScript]]: الـ build بيفحص الأنواع، ولو فيه غلطة بيقف (dev مش بيعمل كده).
+- [[○]] يعني Static: الصفحة اترسمت HTML وقت الـ build، ومع كل طلب بيتبعت نفس الملف.
+- [[/_not-found]]: صفحة الـ 404 الافتراضية، Next بيضيفها لوحده.
+- [[6 workers]]: الـ build بيستخدم كذا process عشان يبني الصفحات مع بعض.
+
+## الخلاصة
+
+- [[npx create-next-app@latest]] بيعمل المشروع، وكل سؤال ليه flag. وقول **لأ** لـ Cache Components ([[--no-cache-components]]) لحد ما نوصل للفئة بتاعته.
+- [[npm run dev]] للتطوير (بيبني الصفحة لما تتطلب، و Fast Refresh من غير reload)، و [[npm run build]] ثم [[npm start]] للإنتاج.
+- الصفحة = فولدر جوه [[app]] فيه [[page.tsx]] بيعمل [[export default]].
+- [[npx next info]] أول حاجة تبعتها لما تسأل عن مشكلة.`,
           lines: [
             "بيسألك الأسئلة واحد واحد ويعمل فولدر اسمه shop.",
-            "نفس الحاجة من غير أسئلة: كل اختيار flag. مفيد في سكربت أو لما تبقى عارف عايز إيه.",
+            R`نفس الحاجة من غير أسئلة: كل اختيار flag. و [[--no-cache-components]] لازم تكتبه، لأن لو مكتبتهوش، Next 16.4 بيشغّل Cache Components لوحده.`,
             "ادخل المشروع.",
             R`شغّل dev server على [[localhost:3000]]. من Next 16 بيشتغل بـ Turbopack افتراضيًا.`,
-            R`هتلاقي [[layout.tsx]] و [[page.tsx]] و [[globals.css]] و [[favicon.ico]]، و public فيها صور SVG.`,
+            R`هتلاقي [[layout.tsx]] و [[page.tsx]] و [[globals.css]] و [[favicon.ico]]، و public فيها صور SVG. ده في bash و Git Bash، وفي PowerShell اكتبها بفاصلة: [[ls src/app, public]].`,
             "بيطبع نسخ Next و React و Node ونظامك. أول حاجة تبعتها لو بتسأل عن مشكلة أو بتفتح issue."
           ],
           sol: R`بعد ما تحفظ [[page.tsx]] المتصفح بيتحدث لوحده (Fast Refresh) من غير reload، والصفحة كلها بقت «أهلًا» بس. و [[/about]] بتفتح على طول لأن فولدر [[about]] جواه [[page.tsx]] بيعمل [[export default]] لكومبوننت. ولو عملت [[npm run build]] هتلاقي في الجدول [[○ /]] و [[○ /about]]: الاتنين static.
@@ -110,6 +365,151 @@ export default async function ProductPage({ params }: PageProps<"/products/[id]"
             when: R`App Router لأي حاجة جديدة. Pages Router لو بتصلّح مشروع قايم عليه، والنقل يبقى تدريجي: route route، والأسهل تبدأ بالصفحات الـ static.`,
             mistakes: R`تستورد [[useRouter]] من [[next/router]] جوه app فيطلع خطأ «NextRouter was not mounted»: الصح [[next/navigation]]. وتكتب [[getServerSideProps]] في app، و Next بيطلّع خطأ إنها مش مدعومة هناك. وتحط [[use client]] فوق كل صفحة عشان «تشتغل زي pages»، فتخسر أهم ميزة في App Router.`
           },
+          teach: R`## الفكرة: نفس الصفحة مكتوبة مرتين
+
+المثال صفحة منتج واحدة: الأول بـ Pages Router (النظام القديم)، وبعدين بـ App Router (الجديد). هنقرا كل واحدة سطر سطر، وبعدين نشغّلهم الاتنين في نفس المشروع ونشوف إيه اللي بيوصل للمتصفح فعلًا. كله اتشغّل على Next 16.4 على ويندوز، بـ [[next build]] و [[next start]] و [[curl]].
+
+---
+
+## ١. Pages Router: [[pages/products/[id].tsx]]
+
+### مكان الملف
+
+في Pages Router الملف نفسه هو الـ route: [[pages/products/[id].tsx]] يبقى [[/products/5]]. والقوسين المربعين [[[id]]] معناهم «أي قيمة هنا»، والقيمة بتوصل باسم [[id]].
+
+### [[export async function getServerSideProps({ params })]]
+
+- [[export]]: لازم تتصدّر عشان Next يلاقيها.
+- [[getServerSideProps]]: اسم محجوز. Next بيشغّل الدالة دي **على السيرفر** مع كل طلب، قبل ما يرسم الصفحة. (SSP = Server Side Props.)
+- [[{ params }]]: Next بيدّيها object فيه [[params]]، وجواه [[id]] من الـ URL.
+
+### [[const product = await getProduct(params.id);]]
+
+بتجيب المنتج. هنا [[params]] object عادي، فـ [[params.id]] بتشتغل على طول.
+
+### [[return { props: { product } };]]
+
+لازم ترجّع object فيه [[props]]. اللي جوه [[props]] Next بيدّيه للكومبوننت، **وكمان** بيكتبه JSON جوه الصفحة عشان المتصفح يستخدمه تاني.
+
+### [[export default function ProductPage({ product })]]
+
+الكومبوننت نفسه، دالة عادية (مش [[async]]) بتاخد [[product]] جاهز وترسمه.
+
+---
+
+## ٢. App Router: [[app/products/[id]/page.tsx]]
+
+### مكان الملف
+
+هنا الـ route **فولدر**: [[app/products/[id]/]]، والصفحة الملف اللي اسمه [[page.tsx]] جواه.
+
+### [[export default async function ProductPage({ params }: PageProps<"/products/[id]">)]]
+
+- الكومبوننت نفسه [[async]]: ده Server Component، ومسموح له يستنى داتا.
+- [[PageProps<"/products/[id]">]]: نوع TypeScript جاهز من Next، بتديله المسار فيعرف إن [[params]] جواها [[id]] من نوع string. مش محتاج import، Next بيولّده (شفنا [[Generating route types]] في درس create-next-app).
+
+### [[const { id } = await params;]]
+
+من Next 15 [[params]] بقت Promise، فلازم [[await]]. والقوسين [[{ id }]] بيطلّعوا [[id]] من الـ object (destructuring).
+
+### [[const product = await getProduct(id);]]
+
+الداتا بتتجاب **جوه الكومبوننت نفسه**. مفيش دالة منفصلة، ومفيش [[props]].
+
+### [[return <h1>{product.name}</h1>;]]
+
+نفس العرض بالظبط.
+
+---
+
+## ٣. شغّلناهم الاتنين في نفس المشروع
+
+حطينا صفحة الـ App Router في [[src/app/products/[id]/page.tsx]] (زي الـ solCode)، ونفس صفحة الـ Pages Router في [[src/pages/old/[id].tsx]]، وعملنا [[npx next build]]:
+
+~~~text الناتج
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+└ ƒ /products/[id]
+
+Route (pages)
+─ ƒ /old/[id]
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+~~~
+
+الاتنين عايشين مع بعض، وكل واحد في جدول. والاتنين [[ƒ]] يعني Dynamic: بيترسموا مع كل طلب، لأن الـ [[id]] مش معروف وقت الـ build.
+
+### الـ HTML: الاتنين واحد
+
+بعد [[next start]]، [[curl localhost:5820/products/5]] و [[curl localhost:5820/old/5]] الاتنين فيهم:
+
+~~~text الناتج
+<h1>كتاب 5</h1>
+~~~
+
+يعني الاتنين اترسموا على السيرفر. الفرق في اللي **اتبعت معاه**.
+
+### Pages Router بيبعت الداتا والكود
+
+صفحة [[/old/5]] فيها الـ script ده:
+
+~~~text الناتج
+<script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"product":{"name":"كتاب 5"}},"__N_SSP":true},"page":"/old/[id]","query":{"id":"5"},...}</script>
+~~~
+
+دي الـ [[props]] اللي رجعتها [[getServerSideProps]]، مكتوبة JSON. وفي [[.next/static/chunks]] (الملفات اللي بتروح للمتصفح) لقينا كود الكومبوننت نفسه:
+
+~~~text الناتج
+function({product:o}){return(0,t.jsx)("h1",{children:o.name})}
+~~~
+
+يعني المتصفح بينزّل الكومبوننت والداتا، ويشغّله تاني عشان يربطه بالصفحة (ده الـ hydration). أما [[getServerSideProps]] و [[getProduct]] فـ Next شالهم من الملف ده، لأنهم بيشتغلوا على السيرفر بس.
+
+### App Router بيبعت الناتج بس
+
+في صفحة [[/products/5]] مفيش [[__NEXT_DATA__]]. بدالها حاجة اسمها RSC payload (RSC = React Server Components)، وده الجزء بتاع الكومبوننت فيها:
+
+~~~text الناتج
+9:["$","h1",null,{"children":"كتاب 5"}]
+~~~
+
+ده **ناتج** الكومبوننت: «عنصر [[h1]] جواه كتاب 5». مش الكود. ودوّرنا على [[getProduct]] في كل [[.next/static]]: صفر نتايج. موجودة بس في [[.next/server]] (ملفات السيرفر).
+
+---
+
+## ٤. نفس المسار في الاتنين: خطأ
+
+عملنا [[src/pages/products/[id].tsx]] جنب [[src/app/products/[id]/page.tsx]]:
+
+~~~text الناتج
+Error: App Router and Pages Router both match path: /products/[id]
+Next.js does not support having both App Router and Pages Router routes matching the same path. Please remove one of the conflicting routes.
+~~~
+
+فلما تنقل صفحة من pages لـ app، امسح القديمة في نفس الخطوة.
+
+---
+
+## جدول المقارنة
+
+| | Pages Router | App Router |
+|---|---|---|
+| الفولدر | [[pages/]] | [[app/]] |
+| الـ route | الملف نفسه ([[[id].tsx]]) | فولدر وجواه [[page.tsx]] |
+| جلب الداتا | [[getServerSideProps]] منفصلة | جوه الكومبوننت [[async]] |
+| [[params]] | object عادي | Promise ([[await params]]) |
+| بيوصل للمتصفح | الكومبوننت + الداتا JSON | الناتج بس (RSC payload) |
+| التنقل | [[next/router]] | [[next/navigation]] |
+
+## الخلاصة
+
+- App Router لأي مشروع جديد، و Pages Router هتقابله في مشاريع قديمة.
+- في App Router الكومبوننت نفسه بيجيب الداتا، والكود بتاعه مبيروحش للمتصفح.
+- [[params]] Promise، فـ [[await]] دايمًا.
+- الاتنين ينفعوا مع بعض في نفس المشروع، بس مش لنفس المسار.`,
           lines: [
             R`دالة خاصة بتشتغل على السيرفر مع كل طلب، منفصلة عن الكومبوننت.`,
             "بتجيب الداتا.",
@@ -177,6 +577,136 @@ export default function AboutPage() {
             when: "مع كل صفحة جديدة. و route groups لما يبقى فيه أجزاء من الموقع شكلها مختلف: صفحات تسويق بـ header و footer، ولوحة تحكم بـ sidebar.",
             mistakes: R`تسمّي الملف [[index.tsx]] أو [[About.tsx]] زي Pages Router، فالصفحة متظهرش: لازم [[page.tsx]]. وتعمل [[page.tsx]] من غير [[export default]]، فيطلع خطأ إن الصفحة مش React component. ومجموعتين فيهم نفس المسار ([[(shop)/cart]] و [[(account)/cart]])، فالـ build يقع بخطأ إن الاتنين بيطلّعوا نفس الـ URL.`
           },
+          teach: R`## الفكرة: الـ URL هو مسار الفولدرات
+
+المثال جزئين: شجرة ملفات وجنب كل ملف الـ URL اللي بيطلّعه، وتحتها أبسط [[page.tsx]] ممكن. عملنا الشجرة دي كلها في مشروع Next 16.4 (جوه [[src/app]])، وعملنا [[next build]] و [[next start]]، وجربنا كل URL بـ [[curl]].
+
+---
+
+## ١. القاعدة: فولدر + [[page.tsx]] = صفحة
+
+| الملف | الـ URL | ليه |
+|---|---|---|
+| [[app/page.tsx]] | [[/]] | [[page.tsx]] مباشرة جوه [[app]] |
+| [[app/about/page.tsx]] | [[/about]] | فولدر [[about]] = حتة [[/about]] في الـ URL |
+| [[app/blog/page.tsx]] | [[/blog]] | نفس الفكرة |
+| [[app/blog/drafts/page.tsx]] | [[/blog/drafts]] | فولدر جوه فولدر = حتتين في الـ URL |
+
+كل فولدر اسمه **segment** (حتة من الـ URL بين علامتين [[/]]). والفولدر لوحده مش صفحة: لازم يبقى جواه ملف اسمه [[page]] بالظبط (بأي امتداد: [[.tsx]] أو [[.ts]] أو [[.jsx]] أو [[.js]]).
+
+---
+
+## ٢. ملف جنب الصفحة: [[app/blog/post-card.tsx]]
+
+اسمه مش [[page]]، فـ Next مبيعملوش URL. ده كومبوننت بتستخدمه صفحة المدونة، وحطيناه جنبها عشان قريب منها (ده اسمه colocation).
+
+---
+
+## ٣. فولدر بـ underscore: [[app/_lib/format.ts]]
+
+الـ [[_]] في أول اسم الفولدر بتشيله **هو وكل اللي جواه** من الراوتنج. عشان نتأكد، حطينا كمان [[app/_lib/secret/page.tsx]]، يعني فيه [[page.tsx]] حقيقي جوه [[_lib]].
+
+---
+
+## ٤. فولدر بين قوسين: [[app/(shop)/...]]
+
+ده اسمه **route group**. القوسين معناهم «الفولدر ده للتنظيم بس، متحطوش في الـ URL». فـ [[app/(shop)/cart/page.tsx]] بيبقى [[/cart]]، مش [[/(shop)/cart]].
+
+وفايدته الكبيرة: [[app/(shop)/layout.tsx]] بيلف الصفحات اللي جوه [[(shop)]] بس. حطينا فيه [[<div className="shop"><p>هيدر السلة</p>{children}</div>]].
+
+---
+
+## ٥. اللي طلع فعلًا
+
+### جدول الـ build
+
+~~~text الناتج
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ○ /blog
+├ ○ /blog/drafts
+├ ○ /cart
+├ ○ /checkout
+└ ƒ /products/[id]
+~~~
+
+([[/products/[id]]] من الدرس اللي فات.) لاحظ: مفيش [[/blog/post-card]]، ولا أي حاجة فيها [[_lib]]، و [[/cart]] و [[/checkout]] من غير [[(shop)]].
+
+### كل URL بـ curl
+
+[[curl -s -o /dev/null -w '%{http_code}' URL]] بيطبع الـ status بس: [[-s]] من غير شريط تقدّم، و [[-o /dev/null]] ارمي الصفحة نفسها، و [[-w '%{http_code}']] اطبع الكود. اتشغّل في Git Bash على ويندوز:
+
+~~~text الناتج
+/blog              200
+/blog/post-card    404
+/blog/drafts       200
+/_lib/format       404
+/_lib/secret       404
+/cart              200
+/(shop)/cart       404
+/checkout          200
+~~~
+
+- [[/blog/post-card]] بـ 404: الملف موجود، بس مش [[page]].
+- [[/_lib/secret]] بـ 404 مع إن فيه [[page.tsx]] جواه: الـ [[_]] أقوى.
+- [[/(shop)/cart]] بـ 404: القوسين مش جزء من الـ URL.
+
+و HTML صفحة [[/cart]] فيه الـ layout حوالين الصفحة:
+
+~~~text الناتج
+<div class="shop"><p>هيدر السلة</p><h1>السلة</h1>...</div>
+~~~
+
+---
+
+## ٦. الصفحة نفسها
+
+~~~text app/about/page.tsx
+export default function AboutPage() {
+  return <h1>مين إحنا</h1>;
+}
+~~~
+
+- [[export default]]: لازم. Next بيعمل import للملف وياخد الـ default export ويرسمه.
+- [[function AboutPage()]]: الاسم نفسه مش مهم لـ Next، اختار اسم واضح.
+- [[return <h1>مين إحنا</h1>;]]: JSX عادي (تاب «React»).
+
+ولو نسيت [[export default]] (جربنا [[export function X()]] بس)، الـ build بيقع في خطوة TypeScript:
+
+~~~text الناتج
+.next/types/validator.ts(133,31): error TS2344: Type 'typeof import(".../src/app/nopage/page")' does not satisfy the constraint 'AppPageConfig<"/nopage">'.
+Failed to type check.
+~~~
+
+الرسالة شكلها غريب، بس معناها: «الملف ده مش شكل صفحة»، لأن مفيهوش default export.
+
+---
+
+## ٧. مسارين لنفس الـ URL
+
+عملنا [[app/cart/page.tsx]] جنب [[app/(shop)/cart/page.tsx]]. الاتنين بيطلّعوا [[/cart]]:
+
+~~~text الناتج
+Error: Turbopack build failed with 1 error:
+./src/app/cart
+Error: You cannot have two parallel pages that resolve to the same path. Please check /(shop)/cart and /cart.
+~~~
+
+Next مش هيختار واحد لوحده، فالـ build بيقف.
+
+## الخلاصة
+
+| الشكل | في الـ URL؟ | الاستخدام |
+|---|---|---|
+| [[about/page.tsx]] | أيوة: [[/about]] | صفحة |
+| [[blog/post-card.tsx]] | لأ | كومبوننت جنب الصفحة |
+| [[_lib/]] | لأ، هو وكل اللي جواه | كود مساعد |
+| [[(shop)/]] | لأ، بس اللي جواه أيوة | تنظيم و layout لمجموعة صفحات |
+
+- الصفحة = فولدر + [[page.tsx]] فيه [[export default]].
+- مسارين بيطلّعوا نفس الـ URL = الـ build بيقع.`,
           lines: [
             R`الصفحة الرئيسية: [[page.tsx]] مباشرة جوه [[app]].`,
             R`فولدر [[about]] جواه page، فبقى [[/about]].`,
@@ -231,6 +761,120 @@ export default async function Docs({ params }: PageProps<"/docs/[...path]">) {
             when: "أي صفحة تفاصيل: منتج، ومقال، وبروفايل، وطلب. و catch-all للـ docs والمسارات اللي عمقها متغير.",
             mistakes: R`تنسى [[await]] فتلاقي [[slug]] بـ undefined، أو تكتب [[params.slug]] على طول من كود Next 14. وتعمل [[parseInt(id)]] من غير ما تتأكد إنه رقم، فـ [[/orders/abc]] تبعت NaN للداتابيز: افحص بـ Zod أو رجّع notFound. وترجّع [[<p>مش موجود</p>]] بدل [[notFound()]]، فالصفحة ترجع 200 وجوجل يأرشف صفحات فاضية.`
           },
+          teach: R`## الفكرة: فولدر واحد بيمسك أي قيمة
+
+المثال صفحتين: صفحة منتج بتقرا الـ [[slug]] من الـ URL، وصفحة docs بتقرا عدد أجزاء مش معروف. شغّلناهم في مشروع Next 16.4 بـ [[next build]] و [[next start]]، و [[getProduct]] من الـ solCode (بترجع منتج لـ [[red-shirt]] بس، و [[null]] لأي حاجة تانية).
+
+---
+
+## ١. اسم الفولدر: [[app/products/[slug]/]]
+
+القوسين المربعين معناهم «الحتة دي متغيرة». [[slug]] مجرد اسم انت اخترته (ممكن [[id]] أو [[name]])، وهو اللي هتلاقي بيه القيمة في الكود. وكلمة slug نفسها معناها الجزء المقروء في الـ URL، زي [[red-shirt]].
+
+---
+
+## ٢. صفحة المنتج سطر سطر
+
+### [[import { notFound } from "next/navigation";]]
+
+[[notFound]] دالة من Next. لما تناديها، Next بيوقف رسم الصفحة ويعرض صفحة 404 بـ status 404 حقيقي.
+
+### [[import { getProduct } from "@/lib/products";]]
+
+[[@/]] هو الـ import alias: بيشاور على [[src/]]. يعني الملف [[src/lib/products.ts]].
+
+### [[export default async function ProductPage({ params }: PageProps<"/products/[slug]">)]]
+
+[[PageProps]] بيعرف شكل [[params]] من اسم الفولدر. Next بيولّد الأنواع دي في [[.next/types/routes.d.ts]]، وده جزء منه بعد الـ build:
+
+~~~text .next/types/routes.d.ts
+"/docs/[...path]": { "path": string[]; }
+"/products/[slug]": { "slug": string; }
+~~~
+
+يعني [[slug]] نوعه string، و [[path]] (الصفحة التانية) array of strings.
+
+### [[const { slug } = await params;]]
+
+[[params]] Promise، فلازم [[await]]. ولو نسيتها (جربنا [[const { slug } = params;]] وشغّلنا [[npx tsc --noEmit]]، يعني «افحص الأنواع ومتطلّعش ملفات»):
+
+~~~text الناتج
+src/app/products/[slug]/page.tsx(4,11): error TS2339: Property 'slug' does not exist on type 'Promise<{ slug: string; }>'.
+~~~
+
+[[(4,11)]] يعني السطر ٤ العمود ١١. والرسالة: «انت بتدوّر على [[slug]] جوه Promise، والـ Promise نفسه مفيهوش [[slug]]».
+
+### [[const product = await getProduct(slug);]]
+
+بيجيب المنتج. والقيمة دايمًا string حتى لو الـ URL [[/products/5]].
+
+### [[if (!product) notFound();]]
+
+[[!product]] يعني «لو مفيش منتج» ([[null]]). ساعتها [[notFound()]] بترمي حاجة خاصة بتوقف الدالة، فالسطر اللي بعده مبيتنفذش. وعشان نوعها [[never]] («الدالة دي مبترجعش أبدًا»)، TypeScript عارف إن [[product]] بعدها مش [[null]].
+
+### [[return <h1>{product.name} - {product.price} ج.م</h1>;]]
+
+بيعرض الاسم والسعر.
+
+### اللي رجع فعلًا
+
+~~~text الناتج
+/products/red-shirt 200
+<h1>تيشيرت أحمر<!-- --> - <!-- -->350<!-- --> ج.م</h1>
+
+/products/blue 404
+<meta name="robots" content="noindex"/>
+~~~
+
+- [[<!-- -->]]: تعليقات HTML صغيرة React بيحطها بين النص الثابت والقيم اللي في [[{}]]، عشان لما المتصفح يعمل hydration يعرف كل حتة فين. مبتظهرش على الشاشة.
+- [[/products/blue]] رجعت 404 **في الـ status نفسه**، ومعاها [[noindex]] (جوجل ميأرشفهاش)، والصفحة فيها [[This page could not be found.]] (الـ 404 الافتراضية، لأن مفيش [[not-found.tsx]]).
+
+---
+
+## ٣. الـ catch-all: [[app/docs/[...path]/]]
+
+### [[[...path]]]
+
+التلات نقط معناهم «امسك كل اللي جاي، أي عدد أجزاء». فـ [[/docs/a/b/c]] بتيجي هنا، و [[path]] = [[["a", "b", "c"]]].
+
+### [[const { path } = await params;]]
+
+نفس الفكرة، بس [[path]] هنا array.
+
+### [[return <p>{path.join(" / ")}</p>;]]
+
+[[join(" / ")]] بيلزق عناصر الـ array ببعض وبينهم [[ / ]]:
+
+~~~text الناتج
+/docs/a/b/c 200
+<p>a / b / c</p>
+
+/docs 404
+~~~
+
+[[/docs]] لوحدها 404، لأن [[[...path]]] محتاج جزء واحد على الأقل. لو عايزها تشتغل كمان، اسم الفولدر [[[[...path]]]] (قوسين مربعين زيادة: optional catch-all). جربناه: [[/docs]] رجعت 200 و [[path]] كان [[undefined]]، و [[/docs/a/b]] رجعت [[["a","b"]]].
+
+---
+
+## ٤. جدول الـ build
+
+~~~text الناتج
+├ ƒ /docs/[...path]
+└ ƒ /products/[slug]
+~~~
+
+الاتنين [[ƒ]] (Dynamic): Next ميعرفش القيم وقت الـ build، فبيرسمهم مع كل طلب. (في المستوى التاني [[generateStaticParams]] بيخليك تقوله القيم مقدمًا.)
+
+## الخلاصة
+
+| اسم الفولدر | بيمسك | [[params]] |
+|---|---|---|
+| [[[slug]]] | جزء واحد: [[/products/red-shirt]] | [[{ slug: "red-shirt" }]] |
+| [[[...path]]] | جزء أو أكتر: [[/docs/a/b/c]] | [[{ path: ["a","b","c"] }]] |
+| [[[[...path]]]] | صفر أو أكتر: [[/docs]] كمان | [[path]] ممكن [[undefined]] |
+
+- [[await params]] دايمًا، والقيم strings.
+- [[notFound()]] مش [[<p>مش موجود</p>]]: الأولى بترجع 404 حقيقي، والتانية 200.`,
           lines: [
             R`[[notFound]] من [[next/navigation]]: بترمي حاجة Next بيفهمها ويعرض 404.`,
             "دالة بتجيب المنتج (من الداتابيز أو API).",
@@ -292,6 +936,128 @@ export default async function Products({ searchParams }: PageProps<"/products">)
             when: "أي حاجة المستخدم ممكن يحب يبعتها لحد أو يرجعلها: بحث، وفلاتر، وترتيب، ورقم صفحة، والتاب المفتوح.",
             mistakes: R`تكتب [[Number(query.page)]] من غير فحص فتبعت NaN. وتدوّر على [[searchParams]] في الـ layout (مش بيوصله). وتحط [[useSearchParams]] في كومبوننت فوق خالص في الصفحة من غير Suspense، فالـ build يقع أو الصفحة كلها تترسم في المتصفح. وتفتكر إن [[?q=]] محمي عشان «محدش هيكتب كده»: أي bot هيكتب.`
           },
+          teach: R`## الفكرة: الـ query string بيدخل، و Zod بينضّفه
+
+الـ URL [[/products?page=2&sort=price]] فيه جزء بعد علامة [[?]] اسمه query string: أزواج [[اسم=قيمة]] بينهم [[&]]. الصفحة بتستلمه في [[searchParams]]. المثال بيعمل حاجتين: يعرّف «الشكل المسموح» بـ Zod، وبعدين يقرا القيم ويفحصها في سطر واحد. شغّلنا الـ schema في Node، والصفحة (الـ solCode) في Next 16.4 بـ dev و build.
+
+---
+
+## ١. [[import * as z from "zod";]]
+
+Zod مكتبة فحص: بتوصف شكل الداتا، وبعدين تديها أي قيمة فتقولك مطابقة ولا لأ، وتحوّلها. [[* as z]] يعني «هات كل اللي في المكتبة تحت اسم [[z]]». (الإصدار اللي جربنا عليه zod 4.6.)
+
+---
+
+## ٢. الـ schema: [[const Query = z.object({...})]]
+
+[[z.object]] بيوصف object وكل مفتاح فيه ليه قاعدة. القاعدة بتتقري من الشمال لليمين، كل نقطة خطوة:
+
+### [[page: z.coerce.number().int().min(1).catch(1),]]
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[z.coerce.number()]] | حوّل القيمة لرقم. ليه؟ لأن أي حاجة في الـ URL بتيجي string: [["2"]] مش [[2]] |
+| [[.int()]] | لازم رقم صحيح، من غير كسور |
+| [[.min(1)]] | ١ أو أكتر |
+| [[.catch(1)]] | لو أي خطوة فشلت، **متطلّعش خطأ**: رجّع [[1]] |
+
+### [[sort: z.enum(["new", "price"]).catch("new"),]]
+
+[[z.enum]] يعني «واحدة من القيم دي بس». أي حاجة تانية تبقى [["new"]].
+
+### [[q: z.string().trim().max(100).optional().catch(undefined),]]
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[z.string()]] | لازم string (مش array) |
+| [[.trim()]] | شيل المسافات من الأول والآخر |
+| [[.max(100)]] | ١٠٠ حرف بالكتير |
+| [[.optional()]] | مش لازم يبقى موجود |
+| [[.catch(undefined)]] | لو بايظ، كأنه مش موجود |
+
+### جربنا الـ schema على قيم مختلفة
+
+كتبنا الـ schema في ملف [[.mjs]] وشغّلناه بـ Node، وطبعنا الداخل والخارج:
+
+~~~text الناتج
+{}                                          → {"page":1,"sort":"new"}
+{"page":"2","sort":"price","q":"  كتب  "}   → {"page":2,"sort":"price","q":"كتب"}
+{"page":"abc","sort":"hack"}                → {"page":1,"sort":"new"}
+{"page":"-5"}                               → {"page":1,"sort":"new"}
+{"page":"2.5"}                              → {"page":1,"sort":"new"}
+{"q":["a","b"]}                             → {"page":1,"sort":"new"}
+{"q":"xxxx...(101 حرف)"}                     → {"page":1,"sort":"new"}
+~~~
+
+- [["2"]] بقى [[2]] رقم، و [["  كتب  "]] اتنضّف لـ [["كتب"]].
+- [["abc"]] و [["-5"]] و [["2.5"]] كلهم بقوا [[1]]: [[abc]] مش رقم، و [[-5]] أقل من ١، و [[2.5]] مش صحيح.
+- [[q]] لما جه array (لو الـ URL فيه [[?q=a&q=b]]) أو أطول من ١٠٠ حرف، اتشال خالص.
+
+يعني مهما المستخدم (أو bot) كتب في الـ URL، اللي بيطلع دايمًا شكل واحد مضمون.
+
+---
+
+## ٣. الصفحة
+
+### [[export default async function Products({ searchParams }: PageProps<"/products">)]]
+
+[[searchParams]] بتوصل في props الصفحة، ونوعها حسب [[PageProps]]: [[Promise<Record<string, string | string[] | undefined>>]]. يعني Promise، وجواه object كل مفتاح فيه يا string، يا array لو اتكرر، يا [[undefined]].
+
+### [[const { page, sort, q } = Query.parse(await searchParams);]]
+
+من جوه لبرة:
+
+1. [[await searchParams]]: استنى الـ Promise، فيطلع object زي [[{ page: "abc", sort: "hack" }]].
+2. [[Query.parse(...)]]: افحصه وحوّله بالـ schema.
+3. [[const { page, sort, q } =]]: طلّع التلات قيم. بعد السطر ده TypeScript عارف إن [[page]] رقم و [[sort]] يا [["new"]] يا [["price"]].
+
+### [[const products = await getProducts({ page, sort, q, pageSize: 24 });]]
+
+دالة بتاعتك بتكلّم الداتابيز، بتاخد قيم مضمونة. [[pageSize: 24]] عدد المنتجات في الصفحة.
+
+### [[return <ProductGrid products={products} page={page} sort={sort} />;]]
+
+كومبوننت بيعرض النتيجة.
+
+---
+
+## ٤. شغّلنا الـ solCode
+
+الـ solCode نفس الفكرة من غير الداتابيز، وبيطبع القيم قبل وبعد. فتحنا الصفحة في Chrome (playwright) على [[npm run dev]]:
+
+~~~text الناتج في ترمنال npm run dev
+{ page: 'abc', sort: 'hack' } { page: 1, sort: 'new' }
+ GET /products?page=abc&sort=hack 200 in 118ms
+{ page: '2', tag: [ 'a', 'b' ] } { page: 2, sort: 'new' }
+ GET /products?page=2&tag=a&tag=b 200 in 67ms
+~~~
+
+- السطر بيتطبع **في ترمنال السيرفر**، لأن الصفحة server component.
+- [[tag=a&tag=b]]: المفتاح اتكرر، فوصل array [[[ 'a', 'b' ]]]. ده اللي قلنا عليه «string أو array».
+- و [[tag]] مش في الـ schema، فـ Zod شاله من الناتج.
+
+وفي console المتصفح (dev بس) ظهر نفس السطر وقبله كلمة [[Server]] في badge رمادي:
+
+~~~text الناتج في console المتصفح
+ Server   {page: abc, sort: hack} {page: 1, sort: new}
+~~~
+
+ده React بيعيد عرض لوج السيرفر في المتصفح عشان يسهّل الـ debugging. الكود نفسه اتنفذ على السيرفر. والصفحة عرضت [[صفحة 1، ترتيب new]].
+
+### جدول الـ build
+
+~~~text الناتج
+├ ƒ /products
+~~~
+
+[[ƒ]] يعني Dynamic: الصفحة بتقرا [[searchParams]]، والقيم دي مش معروفة غير مع الطلب، فبتترسم مع كل طلب.
+
+## الخلاصة
+
+- [[searchParams]] Promise، وكل قيمة string أو array أو [[undefined]]. **متثقش في النوع.**
+- [[z.coerce]] يحوّل، و [[.catch(قيمة)]] يدّي قيمة افتراضية بدل ما يرمي خطأ.
+- [[Query.parse(await searchParams)]] مرة واحدة في أول الصفحة، وبعدها كل حاجة مضمونة.
+- قراية [[searchParams]] بتخلي الصفحة [[ƒ]] Dynamic.`,
           lines: [
             R`Zod للفحص (تفاصيله في تاب «TypeScript»).`,
             "شكل الـ query المسموح.",
@@ -361,6 +1127,164 @@ export function ShopNav() {
             when: R`[[<Link>]] لأي تنقل داخلي. [[router.push]] بعد حدث (حفظ، أو اختيار من قايمة). [[router.replace]] للفلاتر والبحث. [[redirect]] على السيرفر. و [[<a>]] عادي للروابط الخارجية والملفات.`,
             mistakes: R`[[<a href="/about">]] جوه الموقع فكل تنقل reload. و [[import { useRouter } from "next/router"]] في App Router. و [[router.push]] جوه الـ render مش جوه event أو effect. و [[redirect()]] جوه [[try]] فالـ [[catch]] بيبلعه والتحويل ميحصلش. و [[onClick={() => router.push("/x")}]] على [[div]] بدل [[Link]]: مفيش prefetch، ومبيتفتحش في تاب جديد، ومش accessible.`
           },
+          teach: R`## الفكرة: لينكات بتبدّل الصفحة من غير ما تحمّلها من الأول
+
+المثال كومبوننت nav فيه لينكين وزرار بيغيّر الترتيب من الكود. هنقراه سطر سطر، وبعدين نشوف بـ Chrome حقيقي (playwright على [[next build]] و [[next start]]، Next 16.4) إيه الطلبات اللي بتطلع، وإزاي نعرف إن الصفحة معملتش reload.
+
+---
+
+## ١. السطور اللي فوق
+
+### [["use client";]]
+
+[[usePathname]] و [[useRouter]] و [[useSearchParams]] hooks، والـ hooks بتشتغل في المتصفح بس، فالملف لازم يبقى client component (درس use client).
+
+### [[import Link from "next/link";]]
+
+[[Link]] كومبوننت Next للينكات الداخلية.
+
+### [[import { usePathname, useRouter, useSearchParams } from "next/navigation";]]
+
+التلاتة من [[next/navigation]]. في Pages Router كان فيه [[next/router]]، وده مش شغال في App Router.
+
+---
+
+## ٢. التلات hooks
+
+| السطر | بيرجّع إيه | مثال |
+|---|---|---|
+| [[const pathname = usePathname();]] | المسار من غير الـ query | [["/products"]] |
+| [[const router = useRouter();]] | object فيه دوال التنقل | [[router.push]] و [[router.replace]] و [[router.back]] و [[router.refresh]] |
+| [[const searchParams = useSearchParams();]] | الـ query الحالي، للقراية بس | [[searchParams.get("sort")]] |
+
+---
+
+## ٣. دالة [[sortBy]] سطر سطر
+
+### [[const params = new URLSearchParams(searchParams.toString());]]
+
+من جوه لبرة:
+
+1. [[searchParams.toString()]]: حوّل الـ query الحالي لنص، زي [["page=2&q=كتب"]].
+2. [[new URLSearchParams(...)]]: اعمل منه نسخة **قابلة للتعديل** ([[URLSearchParams]] جاهزة في المتصفح). الـ [[searchParams]] اللي جاية من الـ hook للقراية بس.
+
+ليه ننسخ القديم بدل ما نبدأ فاضي؟ عشان لو فيه [[page]] أو [[q]] يفضلوا، ونغيّر [[sort]] بس.
+
+### [[params.set("sort", sort);]]
+
+[[set]] بيحط القيمة، ولو المفتاح موجود بيبدّله.
+
+### [[router.replace($__bt$__{pathname}?$__{params}$__bt, { scroll: false });]]
+
+- [[$__bt...$__bt]] (backticks) ده template string في JavaScript، و [[$__{...}]] بيحط قيمة جوه النص. [[params]] لما يتحط في نص بيتحوّل لوحده لـ [["sort=price"]]. فالناتج [["/products?sort=price"]].
+- [[router.replace]]: روح للـ URL ده **من غير ما تزوّد خطوة في الـ history**، فزرار الرجوع ميعديش على كل ترتيب جربته. ([[router.push]] بيزوّد خطوة.)
+- [[{ scroll: false }]]: متطلعش لأول الصفحة بعد التنقل.
+
+---
+
+## ٤. الـ JSX
+
+### [[<Link href="/products" className={pathname === "/products" ? "font-bold" : ""}>]]
+
+- [[href]]: رايح فين.
+- [[pathname === "/products" ? "font-bold" : ""]]: لو انت في الصفحة دي، حط class [[font-bold]] (Tailwind: خط تقيل). ده «اللينك الـ active».
+
+### [[<Link href="/cart" prefetch={false}>]]
+
+[[prefetch={false}]]: متحمّلش الصفحة دي مقدمًا.
+
+### [[<button onClick={() => sortBy("price")}>]]
+
+ضغطة الزرار بتنادي [[sortBy]].
+
+---
+
+## ٥. اللي حصل فعلًا في المتصفح
+
+حطينا الـ nav في الـ layout جوه [[<Suspense>]] زي الـ solCode، وزودنا عليه للتجربة لينك [[<Link href="/about">]] و [[<a href="/blog">]] عادي. وسجّلنا كل طلب (من غير ملفات الـ JS والـ CSS).
+
+### أول ما الصفحة فتحت
+
+~~~text الناتج
+document /
+fetch /products?_rsc=...   next-router-segment-prefetch: /_tree
+fetch /about?_rsc=...      next-router-segment-prefetch: /_tree
+fetch /products?_rsc=...   next-router-state-tree: ...metadata-only
+fetch /about?_rsc=...      next-router-segment-prefetch: /about/__PAGE__
+~~~
+
+- [[document /]]: الصفحة نفسها.
+- الباقي **prefetch**: محدش ضغط على حاجة لسه، و Next طلب الصفحات اللي لينكاتها ظاهرة. [[_rsc]] في الـ URL والـ header [[rsc: 1]] معناهم «عايز RSC payload مش HTML».
+- [[/_tree]]: شكل الـ routes بتاع الصفحة.
+- [[/about/__PAGE__]]: [[/about]] صفحة static ([[○]])، فاتحمّل محتواها كله مقدمًا.
+- [[/products]] dynamic ([[ƒ]])، فاتحمّل الـ metadata بس، مش المحتوى، لأن مفيش [[loading.tsx]] يتحمّل لحد عنده.
+- **مفيش ولا طلب لـ [[/cart]]**: ده [[prefetch={false}]].
+
+### ضغطنا لينك المنتجات
+
+قبل الضغطة حطينا [[window.__m = 1]] (رقم على الصفحة نفسها، بيضيع لو حصل reload):
+
+~~~text الناتج
+== after Link click (url http://localhost:5820/products, marker 1, bold class: font-bold):
+fetch /products?_rsc=...
+body p: صفحة 1، ترتيب new
+~~~
+
+- مفيش طلب [[document]]، طلب [[fetch]] واحد بالمحتوى.
+- [[marker 1]]: لسه موجود، يعني مفيش reload.
+- [[bold class: font-bold]]: اللينك بقى active.
+
+### ضغطنا «الأرخص الأول»
+
+~~~text الناتج
+history before sort 3
+== after sort button (url http://localhost:5820/products?sort=price, marker 1, history 3):
+fetch /products?sort=price&_rsc=...
+body p: صفحة 1، ترتيب price
+~~~
+
+- الـ URL بقى [[?sort=price]]، والصفحة اترسمت تاني على السيرفر بالقيمة الجديدة («ترتيب price»).
+- [[history.length]] (عدد الخطوات في تاريخ التاب) فضل ٣ قبل وبعد: ده [[replace]].
+
+### ضغطنا [[<a>]] العادي
+
+~~~text الناتج
+== after plain <a> (marker undefined):
+document /blog
+fetch /products?_rsc=...
+fetch /about?_rsc=...
+~~~
+
+[[document /blog]] = تحميل كامل، و [[marker undefined]] = كل حاجة على الصفحة اتمسحت. وبعدها الـ prefetch بدأ من الأول.
+
+---
+
+## ٦. من غير [[<Suspense>]]
+
+شلنا الـ Suspense من حوالين [[<ShopNav />]]:
+
+~~~text الناتج
+⨯ useSearchParams() should be wrapped in a suspense boundary at page "/404". Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+Error occurred prerendering page "/_not-found".
+Export encountered an error on /_not-found/page: /_not-found, exiting the build.
+~~~
+
+الصفحات الـ static بتترسم وقت الـ build، ووقتها مفيش query. [[useSearchParams]] بيقول لـ Next «الجزء ده محتاج المتصفح»، والـ Suspense هو اللي بيحدد «لحد فين». من غيره الـ build بيقع (هنا وقع على صفحة الـ 404 لأنها أول صفحة static اتبنت).
+
+---
+
+## الخلاصة
+
+| عايز | استخدم |
+|---|---|
+| لينك داخلي | [[<Link href>]] (prefetch + من غير reload) |
+| تنقل بعد حدث | [[router.push]] |
+| تغيّر فلتر أو ترتيب | [[router.replace]] + [[URLSearchParams]] |
+| المسار الحالي | [[usePathname()]] |
+| لينك خارجي أو ملف | [[<a>]] عادي |
+
+- الـ prefetch بيشتغل في [[next start]] بس، مش في dev.
+- [[useSearchParams]] في كومبوننت على صفحة static = لازم [[<Suspense>]] حواليه.`,
           lines: [
             "hooks التنقل بتشتغل في client component بس.",
             R`[[Link]] للروابط العادية.`,
@@ -454,6 +1378,106 @@ export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)
             when: "أي حاجة مشتركة بين كذا صفحة: navigation، و sidebar، و providers، و footer. و template لما تحتاج reset مع كل صفحة: animation دخول، أو فورم لازم يفضى.",
             mistakes: R`تحط فحص «هل المستخدم داخل؟» في الـ layout بس: الـ layout مبيتنفذش تاني مع التنقل، والصفحة نفسها ممكن تتطلب لوحدها، فالفحص مكانه الصفحة أو الـ DAL. وتكتب [[<html>]] في layout تاني غير الـ root (إلا لو root layouts متعددة في groups). وتعمل الـ root layout كله [[use client]] عشان provider واحد، فكل الموقع يبقى client.`
           },
+          teach: R`## الفكرة: layout بياخد الصفحة في [[children]] ويلفها
+
+المثال فيه layoutين: الـ root layout (اللي بيلف الموقع كله)، و layout للـ dashboard بيلف الصفحات اللي تحت [[/dashboard]] بس. هنقرا الاتنين، وبعدين نثبت بـ Chrome حقيقي (playwright على [[next build]] و [[next start]]، Next 16.4) إن الـ layout مبيترسمش تاني مع التنقل، وإن [[template.tsx]] عكسه.
+
+---
+
+## ١. الـ root layout: [[app/layout.tsx]]
+
+### [[import type { Metadata } from "next";]]
+
+[[import type]] بيجيب **نوع** TypeScript بس، مش كود. [[Metadata]] شكل الـ object بتاع العنوان والوصف.
+
+### [[import "./globals.css";]]
+
+import من غير اسم: «حمّل الملف ده وخلاص». الـ CSS العام بيتعمله import مرة واحدة هنا، فيتطبق على كل الصفحات.
+
+### [[export const metadata: Metadata = { title: "متجر الكتب" };]]
+
+Next بيدوّر على export اسمه [[metadata]] ويحوّله لـ tags في الـ [[<head>]]. وده اللي طلع في HTML أي صفحة:
+
+~~~text الناتج
+<head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>...
+<title>متجر الكتب</title>
+~~~
+
+الـ [[charSet]] والـ [[viewport]] Next حطهم لوحده، والـ [[title]] من الـ [[metadata]]. عشان كده مش بتكتب [[<head>]] بإيدك.
+
+### [[export default function RootLayout({ children }: LayoutProps<"/">)]]
+
+- [[children]]: اللي تحت الـ layout ده. لو فاتح [[/dashboard/orders]]، الـ [[children]] هنا هي layout الـ dashboard وجواه صفحة الطلبات.
+- [[LayoutProps<"/">]]: نوع جاهز زي [[PageProps]]، بيعرف إن فيه [[children]] (ولو فيه slots، زي درس [[@slot]]، بيعرفها كمان).
+
+### [[<html lang="ar" dir="rtl">]] و [[<body>]]
+
+الـ root layout **بس** هو اللي فيه [[<html>]] و [[<body>]]، وهو إجباري. [[lang="ar"]] اللغة (لقارئ الشاشة ومحركات البحث)، و [[dir="rtl"]] الاتجاه من اليمين للشمال. ولأنهم في HTML جاي من السيرفر، الصفحة بتظهر بالاتجاه الصح من أول لحظة.
+
+### [[<SiteHeader />]] ثم [[<main>{children}</main>]]
+
+الـ header فوق كل صفحة، والصفحة نفسها جوه [[<main>]].
+
+---
+
+## ٢. layout الـ dashboard: [[app/dashboard/layout.tsx]]
+
+### [[export default function DashboardLayout({ children }: LayoutProps<"/dashboard">)]]
+
+نفس الشكل، بس في فولدر [[dashboard]]، فبيلف اللي تحت [[/dashboard]] بس. ومفيهوش [[<html>]]، لأنه بيترسم **جوه** الـ root layout.
+
+### [[<div className="flex min-h-screen">]]
+
+Tailwind: [[flex]] يحط الولاد جنب بعض في صف، و [[min-h-screen]] أقل ارتفاع = طول الشاشة.
+
+### [[<Sidebar />]] و [[<section className="flex-1 p-6">{children}</section>]]
+
+الـ sidebar على جنب، والصفحة جنبه. [[flex-1]] «خد كل المساحة الفاضية»، و [[p-6]] مسافة داخلية.
+
+### الترتيب لما تفتح [[/dashboard/orders]]
+
+~~~text شكل الشجرة
+RootLayout            (app/layout.tsx)
+  DashboardLayout     (app/dashboard/layout.tsx)
+    Orders            (app/dashboard/orders/page.tsx)
+~~~
+
+كل واحد بياخد اللي تحته في [[children]].
+
+---
+
+## ٣. التجربة: الـ layout بيفضل، والـ template بيتعمل من الأول
+
+عملنا layout الـ dashboard زي الـ solCode (فيه [[<input>]] ولينكين)، وصفحتين [[orders]] و [[settings]]. السكربت بيفتح [[/dashboard/orders]]، ويكتب [[hello]] في الخانة، ويضغط لينك الإعدادات، ويقرا الخانة بعد ما الصفحة تتغير:
+
+~~~text الناتج مع layout.tsx
+h2: الإعدادات | input after navigation: "hello"
+~~~
+
+الصفحة اتغيرت (الـ [[h2]] بقى «الإعدادات»)، والكلام فاضل. ليه؟ لأن الصفحتين تحت نفس الـ layout، فـ Next بدّل الجزء اللي اتغير بس (الـ [[children]])، والـ layout نفسه بالـ DOM والـ state بتوعه زي ما هو. ده اسمه partial rendering.
+
+وبعدين غيّرنا اسم الملف لـ [[template.tsx]] (من غير ما نغيّر سطر) وعملنا build تاني:
+
+~~~text الناتج مع template.tsx
+h2: الإعدادات | input after navigation: ""
+~~~
+
+الخانة فضيت. الـ template بياخد key جديد مع كل تنقل، فـ React بيمسحه ويعمله من الأول.
+
+---
+
+## الخلاصة
+
+| | [[layout.tsx]] | [[template.tsx]] |
+|---|---|---|
+| بيلف الصفحات اللي تحته | أيوة | أيوة |
+| مع التنقل بين صفحاته | بيفضل زي ما هو | بيتعمل من الأول |
+| الـ state اللي جواه | بتفضل | بتتمسح |
+| الاستخدام | header و sidebar و providers | animation دخول، أو فورم لازم يفضى |
+
+- الـ root layout إجباري، وهو بس اللي فيه [[<html>]] و [[<body>]].
+- [[metadata]] في الـ layout (أو الصفحة) بدل ما تكتب [[<head>]].
+- الـ layout مبيترسمش تاني مع التنقل، فمتحطش فيه فحص صلاحيات لوحده.`,
           lines: [
             "نوع الـ metadata (SEO، في المستوى التالت).",
             "الـ CSS العام بيتعمله import مرة واحدة في الـ root layout.",
@@ -532,6 +1556,127 @@ export default function Loading() {
             when: R`أي صفحة بتجيب داتا ممكن تتأخر أكتر من ٣٠٠ ملّي ثانية تقريبًا. وحطه على مستوى الفولدر اللي محتاجه: loading واحد في [[app]] بيغطي كل الموقع بس بيخفي كل الصفحة.`,
             mistakes: R`spinner صغير في نص صفحة فاضية، والمحتوى لما يوصل يزق كل حاجة (CLS). وتحط [[loading.tsx]] في [[app]] بس، فكل صفحة بتستخدم نفس الـ skeleton حتى لو شكلها مختلف. وتكتب [[useState(true)]] و [[useEffect]] للتحميل في صفحة server component: ملوش لازمة، والداتا بتيجي قبل الـ render أصلًا.`
           },
+          teach: R`## الفكرة: ملف بالاسم ده بس، و Next يعمل الباقي
+
+[[loading.tsx]] كومبوننت عادي جدًا، والمهم **اسم الملف ومكانه**: جنب [[page.tsx]]. Next بيعرضه مكان الصفحة لحد ما تجهز. هنقرا الكومبوننت، وبعدين نشوف بالوقت (Next 16.4، [[next build]] و [[next start]]) إيه اللي بيظهر ولحد إمتى، مع صفحة منتجات بتستنى ٣ ثواني ([[await new Promise((r) => setTimeout(r, 3000))]]).
+
+---
+
+## ١. الكومبوننت سطر سطر
+
+### [[export default function Loading()]]
+
+[[export default]] لازم، والاسم [[Loading]] مش مهم. ومبياخدش props.
+
+### [[<div className="grid grid-cols-2 gap-4 md:grid-cols-4">]]
+
+Tailwind:
+
+| الـ class | معناه |
+|---|---|
+| [[grid]] | اعرض الولاد في شبكة |
+| [[grid-cols-2]] | عمودين |
+| [[gap-4]] | مسافة بين الخانات |
+| [[md:grid-cols-4]] | من الشاشات المتوسطة وأكبر: ٤ أعمدة |
+
+نفس الـ grid اللي صفحة المنتجات الحقيقية هتستخدمه، فلما المحتوى يوصل ياخد نفس المكان بالظبط ومفيش حاجة تتزق.
+
+### [[{Array.from({ length: 8 }, (_, i) => (]]
+
+[[Array.from]] بيعمل array جديد:
+
+- [[{ length: 8 }]]: طوله ٨.
+- [[(_, i) => ...]]: دالة بتتنادى لكل خانة. أول parameter القيمة (فاضية هنا، فسميناها [[_]] يعني «مش محتاجها»)، والتاني [[i]] رقم الخانة من ٠ لـ ٧.
+
+يعني ٨ عناصر JSX.
+
+### [[<div key={i} className="h-64 animate-pulse rounded-lg bg-gray-200" />]]
+
+- [[key={i}]]: React محتاج [[key]] لكل عنصر في ليستة.
+- [[h-64]] ارتفاع ثابت قد كارت المنتج، و [[rounded-lg]] حواف مدورة، و [[bg-gray-200]] رمادي فاتح.
+- [[animate-pulse]]: animation بتخلي الشفافية تروح وتيجي («بينبض»).
+
+ده اسمه **skeleton**: شكل المحتوى من غير المحتوى.
+
+---
+
+## ٢. اللي Next بيعمله: التعليق اللي في آخر المثال
+
+~~~text الشكل اللي Next بيبنيه
+<Layout>
+  <Suspense fallback={<Loading />}>
+    <ProductsPage />
+  </Suspense>
+</Layout>
+~~~
+
+[[<Suspense>]] من React: «لو اللي جوايا لسه مستني داتا، اعرض الـ [[fallback]] مكانه». و Next بيعمل اللفة دي لوحده لما يلاقي [[loading.tsx]]. الـ layout برّه الـ Suspense، فبيفضل ظاهر.
+
+---
+
+## ٣. التجربة الأولى: فتح الصفحة مباشرة (refresh)
+
+سكربت Node بيطلب [[/products]] ويطبع كل حتة (chunk) من الـ response وقت ما وصلت، وفيها كام skeleton:
+
+~~~text الناتج مع loading.tsx
+0.1s 2278B 8 skeleton
+0.1s 5543B 8 skeleton
+3.1s 125B 0 skeleton has products
+3.1s 1173B 0 skeleton has products
+3.1s 14B 0 skeleton
+~~~
+
+- عند ٠.١ ثانية وصل HTML فيه الـ layout و ٨ skeletons.
+- عند ٣.١ (بعد الـ ٣ ثواني بتوع الصفحة) وصل المحتوى الحقيقي **في نفس الـ response**. ده الـ streaming: السيرفر بيبعت على دفعات ومبيقفلش الاتصال لحد ما يخلص.
+- [[B]] = byte.
+
+ومن غير [[loading.tsx]]:
+
+~~~text الناتج من غير loading.tsx
+3.1s 1612B 0 skeleton has products
+3.1s 4729B 0 skeleton has products
+3.1s 14B 0 skeleton
+~~~
+
+ولا byte قبل ٣ ثواني: المتصفح بيبص على شاشة بيضا.
+
+---
+
+## ٤. التجربة التانية: الضغط على لينك
+
+فتحنا [[/about]] في Chrome، وضغطنا لينك المنتجات، وكل نص ثانية بنقرا: الـ URL، وعدد الـ skeletons، والـ nav موجود ولا لأ، وأول الـ [[<main>]]:
+
+~~~text الناتج مع loading.tsx
+0.1s {"url":"/products","skeletons":8,"nav":true,"main":""}
+...
+2.6s {"url":"/products","skeletons":8,"nav":true,"main":""}
+3.1s {"url":"/products","skeletons":0,"nav":true,"main":"صفحة 1، ترتيب new"}
+~~~
+
+الـ URL اتغير والـ skeleton ظهر **فورًا**، والـ nav (في الـ layout) فاضل طول الوقت. ليه فورًا من غير ما يستنى السيرفر؟ لأن الـ prefetch (درس Link) حمّل الـ [[loading.tsx]] مقدمًا لما اللينك ظهر.
+
+~~~text الناتج من غير loading.tsx
+0.1s {"url":"/about","skeletons":0,"nav":true,"main":"مين إحنا"}
+...
+2.6s {"url":"/about","skeletons":0,"nav":true,"main":"مين إحنا"}
+3.1s {"url":"/products","skeletons":0,"nav":true,"main":"صفحة 1، ترتيب new"}
+~~~
+
+٣ ثواني الصفحة القديمة فاضلة والـ URL متغيرش: الضغطة كأنها محصلتش. وده اللي بيخلي الناس تضغط تاني.
+
+---
+
+## الخلاصة
+
+| | من غير [[loading.tsx]] | مع [[loading.tsx]] |
+|---|---|---|
+| أول byte في الـ refresh | بعد ٣ ثواني | فورًا (layout + skeleton) |
+| الضغط على لينك | مفيش رد ٣ ثواني | الـ skeleton فورًا |
+| الـ layout | بيفضل | بيفضل |
+
+- [[loading.tsx]] = [[<Suspense fallback>]] حوالين الصفحة، Next بيعمله لوحده.
+- خلي الـ skeleton بنفس شكل ومقاس المحتوى الحقيقي.
+- بيغطي الصفحة كلها. لو عايز جزء بس يستنى، [[<Suspense>]] بإيدك (درس streaming).`,
           lines: [
             R`اسم الملف هو المهم ([[loading.tsx]])، واسم الكومبوننت أي حاجة.`,
             "بداية الـ JSX.",
@@ -588,6 +1733,150 @@ export default function NotFound() {
             when: R`[[error.tsx]] على الأقل في [[app]] وفي أي جزء مستقل (dashboard، و checkout). و [[not-found.tsx]] في [[app]] للموقع كله، وجنب الصفحات الـ dynamic لو عايز رسالة خاصة («المنتج مش موجود»).`,
             mistakes: R`تنسى [[use client]] في error.tsx فالـ build يقع. وتعرض [[error.message]] للمستخدم وتستغرب إنه مختلف في الإنتاج. وتتوقع إن error.tsx يمسك خطأ في الـ layout اللي جنبه. وترمي error لغلط validation في فورم، فالمستخدم يشوف «حصلت مشكلة» بدل «الإيميل مش صحيح».`
           },
+          teach: R`## الفكرة: ملفين بأسماء محجوزة، واحد للأخطاء وواحد للـ 404
+
+[[error.tsx]] بيظهر مكان الصفحة لو حصل فيها خطأ، و [[not-found.tsx]] بيظهر لو الصفحة مش موجودة. هنقرا الاتنين سطر سطر، وبعدين نرمي خطأ حقيقي في صفحة المنتجات ([[throw new Error("DB down")]] بعد [[await searchParams]]) ونشوفه في dev وفي الإنتاج. كله على Next 16.4.
+
+---
+
+## ١. [[app/products/error.tsx]] سطر سطر
+
+### [["use client";]]
+
+لازم. الـ error.tsx بيتحوّل لـ React Error Boundary، وده بيشتغل في المتصفح، وكمان فيه زرار بـ [[onClick]].
+
+### [[import { useEffect } from "react";]]
+
+هنستخدم effect عشان نسجّل الخطأ.
+
+### [[export default function ProductsError({ error, reset }: {...})]]
+
+Next بيدّيه حاجتين:
+
+| الـ prop | نوعه | إيه هو |
+|---|---|---|
+| [[error]] | [[Error & { digest?: string }]] | الخطأ نفسه، ومعاه [[digest]] اختياري ([[?]] = ممكن ميبقاش موجود) |
+| [[reset]] | [[() => void]] | دالة من غير parameters ومبترجعش حاجة: بتحاول ترسم الجزء ده تاني |
+
+و [[&]] في TypeScript معناها «النوعين مع بعض»: Error عادي وزيادة عليه [[digest]].
+
+### [[useEffect(() => { console.error(error); }, [error]);]]
+
+بعد ما الكومبوننت يترسم، اطبع الخطأ. و [[[error]]] معناها «اعمل كده تاني لو [[error]] اتغير». في الحقيقة هنا بتبعته لخدمة زي Sentry.
+
+### [[<div role="alert">]]
+
+[[role="alert"]] بيقول لقارئ الشاشة «اقرا ده على طول».
+
+### [[<p>حصلت مشكلة وإحنا بنجيب المنتجات.</p>]]
+
+رسالة ثابتة للمستخدم، مش [[error.message]] (هنشوف ليه تحت).
+
+### [[<button onClick={() => reset()}>جرّب تاني</button>]]
+
+بينادي [[reset]].
+
+---
+
+## ٢. [[app/not-found.tsx]]
+
+~~~text app/not-found.tsx
+import Link from "next/link";
+export default function NotFound() {
+  return <div><h1>الصفحة دي مش موجودة</h1><Link href="/">ارجع للرئيسية</Link></div>;
+}
+~~~
+
+مبياخدش props. ولأنه في [[app]] نفسه، بيغطي أي URL مش موجود في الموقع، وأي [[notFound()]] مفيش [[not-found.tsx]] أقرب منه:
+
+~~~text الناتج: curl localhost:5820/nope
+404
+<meta name="robots" content="noindex"/>
+<h1>الصفحة دي مش موجودة</h1>
+~~~
+
+status 404 حقيقي، و [[noindex]] لجوجل، والمحتوى بتاعنا.
+
+---
+
+## ٣. الخطأ في dev
+
+عشان نشوف القيم، زودنا للتجربة سطر في error.tsx بيعرض [[{error.message} | digest: {error.digest}]]. وفتحنا [[/products]] على [[next dev]]:
+
+~~~text الناتج في المتصفح
+alert: حصلت مشكلة وإحنا بنجيب المنتجات.DB down | digest: 2873126124جرّب تاني
+nav still there: true
+~~~
+
+- [[DB down]]: الرسالة الأصلية وصلت، لأننا في dev.
+- [[nav still there: true]]: الـ layout (اللي فيه الـ nav) لسه موجود، والـ error.tsx خد مكان الصفحة بس.
+
+وفي ترمنال dev، Next بيوريك السطر اللي رمى بالظبط:
+
+~~~text الناتج في ترمنال next dev
+    at Products (src\app\products\page.tsx:8:9)
+   7 |   const raw = await searchParams;
+>  8 |   throw new Error("DB down");
+     |         ^
+~~~
+
+(وفي المتصفح بيظهر كمان الـ overlay الأحمر بتاع Next فوق الصفحة، وبتقفله فتلاقي الـ error.tsx تحته.)
+
+---
+
+## ٤. الخطأ في الإنتاج
+
+[[next build]] و [[next start]]، ونفس الصفحة:
+
+~~~text الناتج
+curl -w "%{http_code}" → 500
+
+alert: حصلت مشكلة وإحنا بنجيب المنتجات.Minified React error #441; visit https://react.dev/errors/441 for the full message ... | digest: 2532823434جرّب تاني
+nav still there: true
+~~~
+
+- الـ status **500** (خطأ في السيرفر)، مش 200.
+- [[error.message]] **مبقاش «DB down»**. بقى رسالة React رقم 441، ومعناها «حصل خطأ في Server Components، والرسالة الأصلية اتشالت في الإنتاج». ليه؟ عشان رسالة الخطأ ممكن يبقى فيها أسامي جداول أو مسارات أو أسرار.
+- [[digest: 2532823434]]: رقم بيمثل الخطأ ده.
+
+وفي ترمنال [[next start]]:
+
+~~~text الناتج في ترمنال next start
+⨯ Error: DB down
+    at f_ (C:\Users\ali\...\.next\server\chunks\ssr\src_app_products_page_tsx_....js:55:32511) {
+  digest: '2532823434'
+}
+~~~
+
+نفس الرقم. فلو مستخدم بعتلك screenshot فيها الـ digest، تدوّر عليه في اللوج وتلاقي الخطأ الحقيقي. ولاحظ إن الـ stack بيشاور على ملف مضغوط في [[.next]] مش على [[page.tsx]]، لأن الإنتاج مبني من ملفات متصغّرة.
+
+---
+
+## ٥. لو الـ throw قبل [[await searchParams]]
+
+~~~text الناتج: next build
+Error occurred prerendering page "/products". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: DB down
+>  7 |   throw new Error("DB down");
+Export encountered an error on /products/page: /products, exiting the build.
+~~~
+
+Next بيحاول يرسم كل صفحة static وقت الـ build. الصفحة دي بتبقى dynamic **لما** توصل لـ [[await searchParams]]، فلو الـ throw قبلها، الخطأ بيحصل وقت الـ build نفسه والـ build بيقع.
+
+---
+
+## الخلاصة
+
+| | [[error.tsx]] | [[not-found.tsx]] |
+|---|---|---|
+| بيظهر لما | خطأ في الصفحة أو اللي تحتها | [[notFound()]] أو URL مش موجود |
+| [[use client]] | لازم | مش لازم |
+| props | [[error]] و [[reset]] | مفيش |
+| الـ status | 500 | 404 |
+
+- الـ layout بيفضل، والملف بياخد مكان الصفحة بس.
+- في الإنتاج [[error.message]] مش الرسالة الأصلية. اعرض رسالة ثابتة، وسجّل الـ [[digest]].
+- أخطاء الـ layout نفسه بيمسكها [[error.tsx]] اللي فوقه، والـ root layout محتاج [[global-error.tsx]].`,
           lines: [
             "لازم client: الـ Error Boundaries في React بتشتغل في المتصفح.",
             "هنستخدم effect للّوج.",
@@ -640,20 +1929,140 @@ export default async function PhotoModal({ params }: { params: Promise<{ id: str
   return <Modal><PhotoView id={id} /></Modal>;
 }
 // app/photos/[id]/page.tsx: نفس الصورة كصفحة كاملة لو الـ URL اتفتح مباشرة`,
-          try: R`اعمل الملفات دي، وصفحة [[app/page.tsx]] فيها ٣ لينكات لـ [[/photos/1]] و [[/photos/2]] و [[/photos/3]]. اضغط لينك: الصورة تفتح modal والـ URL يتغير. اعمل refresh: تفتح الصفحة الكاملة. وبعدين امسح [[default.tsx]] واعمل [[npm run build && npm start]] وافتح [[/]]: هتلاقي 404، لأن الـ slot ملوش حاجة يرسمها (الـ build العادي بـ Turbopack مش هيقع). ولو عملت [[next build --webpack]] هيقع بخطأ Missing required default.js.`,
+          try: R`اعمل الملفات دي، وصفحة [[app/page.tsx]] فيها ٣ لينكات لـ [[/photos/1]] و [[/photos/2]] و [[/photos/3]]. اضغط لينك: الصورة تفتح modal والـ URL يتغير. اعمل refresh: تفتح الصفحة الكاملة. وبعدين امسح [[default.tsx]] واعمل [[npm run build]]: الـ build هيقع، واقرا الرسالة، هتلاقيها بتعدّ كل URL في الموقع ملهاش حاجة يرسمها الـ slot.`,
           flag: "script",
           deep: {
             why: "الـ modal العادي ملوش URL: متقدرش تبعته لحد، والـ refresh بيقفله، وزرار الرجوع بيخرّجك من الصفحة كلها بدل ما يقفله. ولوحات التحكم فيها أجزاء مستقلة (إحصائيات، وتنبيهات) كل واحد بيحمّل لوحده ولو واحد وقع الباقي يفضل.",
             how: R`كل slot ليه شجرة routes لوحده جوه نفس الـ URL. في التنقل من جوه الموقع (soft navigation)، Next بيحدّث الـ slot اللي فيه تطابق ويسيب الباقي على آخر حالة. في الـ refresh أو فتح اللينك مباشرة (hard navigation)، Next مبيعرفش الحالة القديمة، فأي slot ملوش تطابق بيرسم [[default.tsx]].
 
-من Next 16 [[default.tsx]] إجباري لكل slot: الـ docs بتقول الـ build بيقع من غيره (وده بيحصل مع webpack)، ومع Turbopack الـ build بيعدّي والصفحات بترجع 404، فاعمله دايمًا. و [[children]] نفسه slot ضمني، فممكن تحتاج [[app/default.tsx]] كمان.
+من Next 16 [[default.tsx]] إجباري لكل slot. و Next 16.4 بيفحص شكل الـ routes كله وقت الـ build (اسمه strict route matching، وشغال افتراضيًا)، فمن غيره الـ build بيقع بـ Turbopack و webpack الاتنين، والرسالة بتعدّ كل URL ملهاش page أو default في الـ slot. و [[children]] نفسه slot ضمني، فممكن تحتاج [[app/default.tsx]] كمان.
 
 الـ intercepting بيتكتب بالنسبة لمستوى الـ route segments مش الفولدرات: [[(.)]] نفس المستوى، و [[(..)]] مستوى فوق، و [[(...)]] من الـ root. والـ [[@modal]] مش segment، فـ [[app/@modal/(.)photos]] بيمسك [[app/photos]].
 
 الـ interception بيحصل في soft navigation بس. الـ refresh أو فتح اللينك في تاب جديد بيروح للصفحة الأصلية [[app/photos/[id]/page.tsx]]، فلازم تبقى موجودة.`,
             when: "صورة أو منتج في modal من ليستة (زي انستجرام)، و login في modal، وسلة جانبية ليها URL. و parallel routes لوحدها للوحات فيها أجزاء مستقلة، أو لعرض حاجة مختلفة حسب الدور (slot للأدمن و slot للمستخدم).",
-            mistakes: R`تنسى [[default.tsx]]: مع webpack الـ build يقع، ومع Turbopack الـ build يعدّي والصفحات ترجع 404. وتنسى الصفحة الأصلية فالـ refresh يطلّع 404. وتقفل الـ modal بـ [[router.push("/")]] بدل [[router.back()]]، فالـ history يتلخبط. وتعمل modal بالطريقة دي لحاجة ملهاش لازمة يبقى ليها URL (تأكيد مسح مثلًا): state عادية أبسط.`
+            mistakes: R`تنسى [[default.tsx]] فالـ build يقع. وتنسى الصفحة الأصلية فالـ refresh يطلّع 404. وتقفل الـ modal بـ [[router.push("/")]] بدل [[router.back()]]، فالـ history يتلخبط. وتعمل modal بالطريقة دي لحاجة ملهاش لازمة يبقى ليها URL (تأكيد مسح مثلًا): state عادية أبسط.`
           },
+          teach: R`## الفكرة: ٣ ملفات بيعملوا modal ليه URL
+
+المثال ٣ ملفات وتعليق: الـ root layout بياخد slot اسمه [[modal]]، و [[default.tsx]] بيقول «الـ slot فاضي»، وصفحة جوه [[(.)photos]] بتمسك التنقل لـ [[/photos/5]] وتعرضه modal. شغّلنا الملفات دي في مشروع Next 16.4 (بـ [[next build]] و [[next start]])، ومعاها صفحة [[/]] فيها ٣ لينكات، وصفحة الصورة الكاملة، و [[Modal]] client component بسيط بيقفل بـ [[router.back()]].
+
+---
+
+## ١. شجرة الملفات
+
+~~~text الشجرة
+app/
+  layout.tsx                    بياخد children و modal
+  page.tsx                      الرئيسية: لينكات للصور
+  photos/[id]/page.tsx          صفحة الصورة الكاملة
+  @modal/
+    default.tsx                 الـ slot فاضي
+    (.)photos/[id]/page.tsx     نفس الصورة بس في modal
+~~~
+
+| الرمز | اسمه | معناه |
+|---|---|---|
+| [[@modal]] | parallel route (slot) | فولدر مش بيظهر في الـ URL، والـ layout بياخده prop اسمه [[modal]] |
+| [[(.)]] | intercepting route | «لما حد يتنقل لـ [[photos]] اللي في نفس المستوى، اعرض ده بدلها» |
+| [[default.tsx]] | default | اللي يترسم في الـ slot لما مفيش حاجة مطابقة |
+
+---
+
+## ٢. الـ root layout
+
+### [[export default function RootLayout({ children, modal }: LayoutProps<"/">)]]
+
+[[children]] زي العادي (الصفحة). و [[modal]] جاي من فولدر [[@modal]]: اسم الـ prop هو اسم الفولدر من غير [[@]]. و [[LayoutProps]] عارف إن فيه [[modal]] لأن Next بيقرا الفولدرات.
+
+### [[{children}]] ثم [[{modal}]]
+
+الاتنين بيترسموا جنب بعض. أغلب الوقت [[modal]] فاضي ([[null]])، ولما الصورة تتفتح بيبقى فيه الـ modal فوق الصفحة.
+
+---
+
+## ٣. [[app/@modal/default.tsx]]
+
+~~~text app/@modal/default.tsx
+export default function Default() {
+  return null;
+}
+~~~
+
+[[return null]] يعني «متعرضش حاجة». ده اللي بيترسم في الـ slot لما تفتح أي صفحة مباشرة (refresh أو لينك من برّه) ومفيش في [[@modal]] حاجة ليها.
+
+---
+
+## ٤. [[app/@modal/(.)photos/[id]/page.tsx]]
+
+### [[export default async function PhotoModal({ params }: { params: Promise<{ id: string }> })]]
+
+صفحة عادية بـ [[params]]. النوع مكتوب بإيده هنا بدل [[PageProps]]، والاتنين صح.
+
+### [[const { id } = await params;]]
+
+الـ [[id]] من الـ URL، زي أي [[[id]]].
+
+### [[return <Modal><PhotoView id={id} /></Modal>;]]
+
+الصورة جوه modal. الـ [[Modal]] كومبوننت بتاعك ([[use client]]، وزرار الإغلاق بينادي [[router.back()]]).
+
+---
+
+## ٥. التجربة
+
+السكربت بيقرا بعد كل خطوة: الـ URL، ونص الـ modal لو موجود، والـ [[h1]] بتاع الصفحة اللي تحته:
+
+~~~text الناتج
+home: {"url":"/","modal":null,"h1":"أهلًا"}
+after click: {"url":"/photos/2","modal":"صورة 2 في modalاقفل","h1":"أهلًا"}
+after refresh: {"url":"/photos/2","modal":null,"h1":"صفحة الصورة 2 كاملة"}
+after close (router.back): {"url":"/","modal":null,"h1":"أهلًا"}
+~~~
+
+| الخطوة | اللي حصل | ليه |
+|---|---|---|
+| الضغط على «صورة 2» | الـ URL بقى [[/photos/2]]، والـ modal ظهر، والرئيسية ([[أهلًا]]) لسه تحته | تنقل من جوه الموقع (soft navigation): [[(.)photos]] مسك التنقل، و [[children]] فضل زي ما هو |
+| refresh | مفيش modal، والصفحة الكاملة ظهرت | فتح مباشر (hard navigation): مفيش interception، فـ [[app/photos/[id]/page.tsx]] اترسمت، و [[@modal]] رسم [[default.tsx]] |
+| زرار اقفل | رجعنا [[/]] من غير modal | [[router.back()]] رجّع خطوة في الـ history |
+
+وفي جدول الـ build ظهر الـ route ده جنب العادي:
+
+~~~text الناتج
+├ ƒ /(.)photos/[id]
+├ ƒ /photos/[id]
+~~~
+
+---
+
+## ٦. من غير [[default.tsx]]
+
+مسحناه وعملنا [[next build]]:
+
+~~~text الناتج
+⚠ Strict route matching is enabled by default. ...
+> Build error occurred
+Error: Turbopack build failed with 3 errors:
+Error: Interception routes must have a canonical route
+Error: Parallel route slots cannot render the same URLs
+- / is missing a matching page or default.tsx in @modal
+- /about is missing a matching page or default.tsx in @modal
+...
+Every URL matched by one slot must have a matching page or default.tsx in every sibling slot.
+Error: Unmatched app pages
+~~~
+
+والكلام ده معناه: لما حد يفتح [[/]] أو [[/about]] مباشرة، [[children]] عنده صفحة، بس [[@modal]] معندوش لا page ولا default، فمش عارف يرسم إيه. فـ Next 16.4 بيوقف الـ build وبيعدّ كل URL فيها المشكلة. و [[next build --webpack]] وقع بنفس الكلام. وأول سطر بيقول إن الفحص ده (strict route matching) شغال افتراضيًا.
+
+---
+
+## الخلاصة
+
+- [[@name]] = slot بيوصل للـ layout كـ prop بنفس الاسم، ومش جزء من الـ URL.
+- [[(.)]] = امسك التنقل لمسار في نفس المستوى، و [[(..)]] مستوى فوق، و [[(...)]] من الـ root.
+- الـ interception في التنقل من جوه الموقع بس. الـ refresh بيفتح الصفحة الأصلية، فلازم تبقى موجودة.
+- [[default.tsx]] لكل slot دايمًا، وإلا الـ build بيقع.
+- اقفل الـ modal بـ [[router.back()]].`,
           lines: [
             R`الـ root layout بياخد [[modal]] من فولدر [[@modal]] جنب [[children]]. الـ [[@]] مبيدخلش في الـ URL.`,
             "بداية الـ JSX.",
@@ -675,7 +2084,7 @@ export default async function PhotoModal({ params }: { params: Promise<{ id: str
           ],
           sol: R`الضغطة على لينك الصورة بتفتح الـ modal فوق الرئيسية (محتوى الرئيسية لسه ظاهر تحته) والـ URL بقى [[/photos/2]]. والـ refresh على نفس الـ URL بيفتح [[app/photos/[id]/page.tsx]]: الصفحة الكاملة من غير modal، لأن الـ interception بيحصل في التنقل من جوه الموقع بس.
 
-من غير [[default.tsx]]: [[next build]] العادي (Turbopack) بيعدّي من غير أي تحذير، بس [[/]] وكل الصفحات التانية بترجع 404، لأن الـ slot [[@modal]] ملوش حاجة يرسمها لما تفتح الصفحة مباشرة. و [[next build --webpack]] بيقع: [[Missing required default.js file for parallel route at app/@modal]]. ولو الضغطة فتحت الصفحة الكاملة بدل الـ modal: اتأكد إن فولدر [[(.)photos]] جوه [[@modal]]، وإن اللينك [[<Link>]] مش [[<a>]].`
+من غير [[default.tsx]] (Next 16.4): [[next build]] بيقع، وبـ [[--webpack]] كمان. الرسالة بتقول [[/ is missing a matching page or default.tsx in @modal]] وتكرر السطر ده لكل صفحة في الموقع، وبعدها [[Every URL matched by one slot must have a matching page or default.tsx in every sibling slot.]] يعني لما تفتح أي صفحة مباشرة، الـ slot [[@modal]] ملوش حاجة يرسمها. وفوقها تحذير إن [[Strict route matching is enabled by default]]. ولو الضغطة فتحت الصفحة الكاملة بدل الـ modal: اتأكد إن فولدر [[(.)photos]] جوه [[@modal]]، وإن اللينك [[<Link>]] مش [[<a>]].`
         }
       ]
     },
@@ -724,6 +2133,130 @@ export default async function ProductsPage() {
             when: "الافتراضي لكل حاجة: الصفحات، و layouts، والحتت اللي بتعرض داتا. انقل لـ client بس الجزء اللي محتاج تفاعل أو APIs المتصفح.",
             mistakes: R`تحط [[use client]] فوق الصفحة كلها عشان زرار واحد، فكل الكود والمكتبات تروح للمتصفح. وتفتكر إن [[console.log]] في server component اتنفذ في المتصفح عشان شفته في الـ console: في dev بيتعاد عرضه هناك بعلامة «Server» بس، وهو اتنفذ على السيرفر، وفي الإنتاج بيظهر في لوجات السيرفر بس. وترجّع object فيه [[passwordHash]] من الداتابيز وتعدّيه لـ client component: الـ props بتتكتب في الصفحة وأي حد يقدر يقراها في View Source. استخدم [[select]].`
           },
+          teach: R`## الفكرة: الكومبوننت ده بيتنفذ على السيرفر، واللي بيوصل للمتصفح ناتجه بس
+
+المثال صفحة منتجات: بتكلّم الداتابيز مباشرة، وبتنسّق السعر، وجوه كل منتج زرار تفاعلي صغير. الملف مفيهوش أي directive، فهو Server Component. شغّلناه على Next 16.4، مع [[db]] تجريبي (array في الذاكرة بنفس شكل Prisma، فيه منتج مش منشور وعمود [[passwordHash]])، و [[formatPrice]] بـ [[Intl.NumberFormat]]، و [[AddToCart]] من الدرس الجاي.
+
+---
+
+## ١. الـ imports
+
+| السطر | ليه |
+|---|---|
+| [[import { db } from "@/lib/db";]] | الداتابيز مباشرة. مفيش API في النص، لأن الكود ده على السيرفر أصلًا |
+| [[import { formatPrice } from "@/lib/format";]] | دالة تنسيق. هي وأي مكتبة بتستخدمها بيفضلوا على السيرفر |
+| [[import { AddToCart } from "./add-to-cart";]] | client component (الملف بتاعه أوله [[use client]]). [[./]] يعني «في نفس الفولدر» |
+
+---
+
+## ٢. [[export default async function ProductsPage()]]
+
+[[async]]: الكومبوننت بيستنى داتا قبل ما يرجّع JSX. ده مسموح في Server Components بس.
+
+---
+
+## ٣. الـ query
+
+### [[const products = await db.product.findMany({...});]]
+
+[[findMany]] (شكل Prisma) بيرجّع كل الصفوف اللي بتطابق:
+
+- [[where: { published: true }]]: المنشور بس. المنتج التالت عندنا [[published: false]] فمش هيرجع.
+- [[select: { id: true, name: true, priceCents: true }]]: التلات أعمدة دول بس. [[passwordHash]] مش هيرجع.
+
+[[priceCents]] السعر بالقروش (٣٥٠٠٠ = ٣٥٠ جنيه): الفلوس بتتخزن أرقام صحيحة عشان الكسور العشرية في الكمبيوتر مش دقيقة.
+
+---
+
+## ٤. الـ JSX
+
+### [[{products.map((p) => (]] و [[<li key={p.id}>]]
+
+لف على المنتجات، وكل منتج [[<li>]] ليه [[key]] فريد.
+
+### [[{p.name}: {formatPrice(p.priceCents)}]]
+
+الاسم والسعر. [[formatPrice]] اتنفذت على السيرفر، فاللي وصل نص جاهز.
+
+### [[<AddToCart productId={p.id} />]]
+
+ده الحتة الوحيدة اللي هيبقى ليها JavaScript في المتصفح.
+
+---
+
+## ٥. اللي طلع: HTML
+
+[[curl localhost:5820/products]] بعد [[next build]] و [[next start]]:
+
+~~~text الناتج
+<li>كتاب Next<!-- -->: <!-- -->‏٣٥٠٫٠٠ ج.م.‏<div class="flex gap-2"><input type="number" min="1" value="1"/><button>ضيف للسلة</button></div></li>
+~~~
+
+- منتجين بس (المسودة اتشالت بالـ [[where]]).
+- [[٣٥٠٫٠٠ ج.م.]]: [[Intl.NumberFormat("ar-EG", { style: "currency", currency: "EGP" })]] نسّق [[35000 / 100]] بالأرقام العربي والعملة المصري.
+- الزرار نفسه ([[AddToCart]]) اترسم HTML كمان: الـ client components برضه بتترسم على السيرفر في أول تحميل.
+- دوّرنا على [[passwordHash]] في الصفحة كلها: صفر. الـ [[select]] منعه من البداية.
+
+## ٦. اللي طلع: RSC payload
+
+جوه نفس الصفحة فيه الـ RSC payload (وصف الشجرة اللي React بيستخدمه). ده الجزء بتاع الليستة:
+
+~~~text الناتج
+["$","ul",null,{"children":[["$","li","p1",{"children":["كتاب Next",": ","‏٣٥٠٫٠٠ ج.م.‏",["$","$L18",null,{"productId":"p1"}]]}], ...
+~~~
+
+- [[["$","li","p1",...]]]: عنصر [[li]] بـ key [[p1]]، جاهز.
+- [[["$","$L18",null,{"productId":"p1"}]]]: «هنا client component رقم [[L18]]، وخد الـ props دي». يعني المتصفح بياخد مكانه والـ props بتاعته، وبيحمّل الـ JS بتاعه.
+- مفيش أي أثر لـ [[ProductsPage]] ولا [[formatPrice]] ولا [[db]]: النتيجة بس.
+
+وفي [[.next/static/chunks]] (ملفات المتصفح) لقينا الـ AddToCart:
+
+~~~text الناتج
+e.s(["AddToCart",0,function({productId:e}){let[n,s]=(0,i.useState)(1),[u,a]=(0,i.useState)(!1); ...
+~~~
+
+ودوّرنا على [[ProductsPage]] و [[formatPrice]] في نفس الفولدر: مش موجودين.
+
+---
+
+## ٧. الـ [[console.log]] اتطبع فين؟
+
+حطينا [[console.log("render ProductsPage")]] في أول الكومبوننت:
+
+| فين | اللي ظهر |
+|---|---|
+| [[next dev]]: الترمنال | [[render ProductsPage]] ثم [[GET /products 200]] |
+| [[next dev]]: console المتصفح | نفس السطر وجنبه badge مكتوب فيه [[Server]] |
+| [[next build]] | [[render ProductsPage]] وسط سطور [[Generating static pages]] |
+| [[next start]]: الترمنال والمتصفح | ولا حاجة |
+
+- في dev الكود اتنفذ على السيرفر، و React **بيعيد عرض** اللوج في المتصفح بعلامة [[Server]] عشان يسهّل عليك.
+- في الـ build اتطبع لأن الصفحة اترسمت وقتها: الجدول قال [[○ /products]] (Static)، لأنها مبتقراش حاجة من الطلب.
+- في [[next start]] مفيش حاجة، لأن الصفحة HTML جاهز من وقت الـ build، والكومبوننت مبيتنفذش تاني أصلًا.
+
+---
+
+## ٨. [[useState]] في Server Component
+
+زودنا [[import { useState } from "react"]] و [[const [x] = useState(0);]] في الصفحة:
+
+~~~text الناتج: next build
+./src/app/products/page.tsx:1:10
+Error: You're importing a module that depends on $__btuseState$__bt into a React Server Component module. This API is only available in Client Components. To fix, mark the file (or its parent) with the $__bt"use client"$__bt directive.
+~~~
+
+الرسالة بتقترح [[use client]] على الملف، بس الحل الصح إنك تفصل الحتة اللي محتاجة state في كومبوننت لوحده، زي [[AddToCart]].
+
+## الخلاصة
+
+| Server Component يقدر | Server Component ميقدرش |
+|---|---|
+| [[async]] و [[await]] | [[useState]] و [[useEffect]] |
+| الداتابيز والملفات والأسرار | [[onClick]] و [[onChange]] |
+| مكتبات تقيلة من غير تكلفة على المتصفح | [[window]] و [[localStorage]] |
+
+- اللي بيوصل للمتصفح: HTML + الـ RSC payload (الناتج)، و JS الـ client components بس.
+- أي حاجة بتعدّيها لـ client component كـ prop بتتكتب في الصفحة، فاختار الأعمدة بـ [[select]].`,
           lines: [
             R`الداتابيز مباشرة (Prisma مثلًا، تفاصيله في تاب «SQL و Prisma»). مفيش API في النص.`,
             "دالة تنسيق. هي ومكتباتها بيشتغلوا على السيرفر ومش بيتبعتوا للمتصفح.",
@@ -786,6 +2319,128 @@ export function AddToCart({ productId }: { productId: string }) {
             when: R`لما الكومبوننت محتاج: state، أو effects، أو event handlers، أو APIs المتصفح، أو مكتبة بتستخدم الحاجات دي (أغلب مكتبات الـ UI والـ charts والـ animation)، أو context.`,
             mistakes: R`[[use client]] فوق [[page.tsx]] أو [[layout.tsx]] فكل الموقع يبقى client. وتكتبها في كل ملف «احتياطي». و [[localStorage.getItem]] في جسم الكومبوننت فيطلع «localStorage is not defined» على السيرفر. وتعدّي [[onClick={() => ...}]] من server component لـ client component فيطلع خطأ إن الدوال مينفعش تتبعت لـ Client Components.`
           },
+          teach: R`## الفكرة: سطر واحد بيقول «الملف ده بيروح المتصفح»
+
+المثال هو الزرار اللي الدرس اللي فات استخدمه: خانة كمية وزرار «ضيف للسلة». فيه state و events، فلازم يبقى client component. هنقراه سطر سطر، وبعدين نشوف على Next 16.4 (dev و build و start، و Chrome حقيقي بـ playwright) هو بيشتغل فين وإيه اللي بيحصل لو شلنا السطر الأول.
+
+---
+
+## ١. [["use client";]]
+
+- لازم يبقى **أول سطر** في الملف، قبل أي import.
+- string عادي بين علامتين، مش دالة ولا import. اسمه directive: تعليمة للـ bundler.
+- معناه: «الملف ده، وكل ملف بيعمله import، يدخلوا الـ JavaScript اللي بيتبعت للمتصفح».
+
+---
+
+## ٢. [[import { useState } from "react";]]
+
+[[useState]] hook من React، وهو سبب إن الملف لازم يبقى client (تاب «React» فيه الدرس بتاعه).
+
+---
+
+## ٣. [[export function AddToCart({ productId }: { productId: string })]]
+
+- [[export function]] مش [[export default]]: ده كومبوننت عادي مش صفحة، فبيتعمله import باسمه [[{ AddToCart }]].
+- [[productId]] جاي من الـ server component. والـ props اللي بتعدّي من server لـ client لازم تبقى **serializable** (تتحوّل نص وترجع زي ما هي): string ورقم و boolean و object و array و Date و Promise و JSX.
+
+جربنا نعدّي دالة من الصفحة (server) للزرار: [[<AddToCart productId={p.id} onAdd={() => console.log("x")} />]]:
+
+~~~text الناتج: next build
+Error occurred prerendering page "/products".
+Error: Event handlers cannot be passed to Client Component props.
+  {productId: "p1", onAdd: function onAdd}
+~~~
+
+الدالة كود على السيرفر، ومينفعش تتكتب في الصفحة وتتبعت.
+
+---
+
+## ٤. الـ state
+
+| السطر | معناه |
+|---|---|
+| [[const [qty, setQty] = useState(1);]] | الكمية، وأولها ١ |
+| [[const [added, setAdded] = useState(false);]] | اتضاف ولا لأ، وأوله لأ |
+
+[[useState]] بيرجّع حاجتين: القيمة، ودالة بتغيّرها وبتخلي React يرسم تاني.
+
+---
+
+## ٥. الـ JSX
+
+### [[<input type="number" min={1} value={qty} onChange={(e) => setQty(Number(e.target.value))} />]]
+
+من جوه لبرة:
+
+1. [[e.target.value]]: اللي اتكتب في الخانة، ودايمًا string حتى لو [[type="number"]].
+2. [[Number(...)]]: حوّله رقم.
+3. [[setQty(...)]]: خزّنه في الـ state.
+
+و [[value={qty}]] بيخلي الخانة تعرض الـ state (controlled input).
+
+### [[<button onClick={() => setAdded(true)} disabled={added}>]]
+
+- [[onClick]]: لما يتضغط، [[added]] تبقى [[true]].
+- [[disabled={added}]]: بعد الضغط الزرار يتقفل.
+
+### [[{added ? "اتضاف للسلة" : "ضيف للسلة"}]]
+
+[[? :]] (ternary): لو [[added]] اعرض الأول، غير كده التاني.
+
+---
+
+## ٦. شغّلناه
+
+### في المتصفح (next start)
+
+كتبنا ٣ في خانة أول منتج وضغطنا الزرار:
+
+~~~text الناتج
+before: ضيف للسلة disabled: false
+after: اتضاف للسلة disabled: true qty: 3
+~~~
+
+### الـ HTML جاي جاهز من السيرفر
+
+[[curl]] لنفس الصفحة فيه:
+
+~~~text الناتج
+<div class="flex gap-2"><input type="number" min="1" value="1"/><button>ضيف للسلة</button></div>
+~~~
+
+يعني الكومبوننت **اتنفذ على السيرفر كمان** وطلّع HTML بالقيم الأولى. وبعدين في المتصفح، الـ JS بتاعه بيوصل ويربط الـ [[onClick]] و [[onChange]] بالـ HTML الموجود (ده الـ hydration). عشان كده [[window]] و [[localStorage]] مينفعوش في جسم الكومبوننت: في المرة الأولى على السيرفر مش موجودين.
+
+### الكود في ملفات المتصفح
+
+| | الملف اللي فيه [[AddToCart]] |
+|---|---|
+| [[next start]] | ملف باسم عشوائي في [[_next/static/chunks]]، وجواه [[e.s(["AddToCart",0,function({productId:e}){let[n,s]=(0,i.useState)(1) ...]] |
+| [[next dev]] | ملف باسمه: [[src_app_products_add-to-cart_tsx_1f-z9dp-xib9i._.js]] |
+
+في الإنتاج الكود متصغّر (أسماء المتغيرات بقت [[e]] و [[n]] و [[s]])، بس اسم الـ export [[AddToCart]] والنصوص فضلوا. و [[ProductsPage]] (الصفحة الـ server) مش موجودة في أي ملف هناك.
+
+---
+
+## ٧. من غير [[use client]]
+
+مسحنا السطر الأول من الملف:
+
+~~~text الناتج: next build
+./src/app/products/add-to-cart.tsx:1:10
+Error: You're importing a module that depends on $__btuseState$__bt into a React Server Component module. This API is only available in Client Components. To fix, mark the file (or its parent) with the $__bt"use client"$__bt directive.
+~~~
+
+أي ملف من غير directive بيبقى server component، و [[useState]] مش مسموح هناك. و [[1:10]] = السطر ١ العمود ١٠، مكان [[useState]] في الـ import.
+
+---
+
+## الخلاصة
+
+- [[use client]] أول سطر، وبتحدد **حد**: الملف ده وكل اللي بيعمله import بقوا client.
+- الـ client component بيترسم HTML على السيرفر الأول، وبعدين بيعمل hydration في المتصفح.
+- الـ props من server لـ client لازم serializable، والدوال العادية لأ.
+- حطها في أصغر كومبوننت تفاعلي، مش فوق الصفحة.`,
           lines: [
             "أول سطر في الملف، قبل أي import. من هنا وتحت كله client.",
             "hooks مسموحة هنا.",
@@ -848,6 +2503,120 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             when: "Providers في الـ layout، و modals و tabs و accordions جواها محتوى من السيرفر، وأي wrapper تفاعلي حوالين داتا.",
             mistakes: R`تعمل [[import ServerThing from "./server-thing"]] جوه client component وتستغرب إن فيه خطأ أو إن الكود بقى بيتبعت للمتصفح. وتحط الـ providers في [[layout.tsx]] نفسه وتكتب فوقه [[use client]]. وتعمل [[new QueryClient()]] على مستوى الملف فالكاش يتشارك بين مستخدمين على السيرفر.`
           },
+          teach: R`## الفكرة: الـ client component بيستلم الـ server component جاهز، مبيستوردوش
+
+القاعدة: اللي بيتعمله [[import]] من ملف [[use client]] بيبقى client هو كمان. بس الـ client component يقدر **يستلم** server components جاهزين في [[children]]. المثال بيطبّق ده على أشهر حالة: الـ providers في الـ root layout. شغّلناه على Next 16.4 (مع [[@tanstack/react-query]] 5 و [[next-themes]] 0.4)، وجربنا الـ solCode (Toggle و Data) بالطريقتين.
+
+---
+
+## ١. [[app/providers.tsx]] سطر سطر
+
+### [["use client";]]
+
+الـ providers بتستخدم context و state، ودول client بس.
+
+### [[import { useState, type ReactNode } from "react";]]
+
+- [[useState]]: هنستخدمه بطريقة خاصة تحت.
+- [[type ReactNode]]: نوع «أي حاجة تترسم» (عنصر، نص، null، ليستة). كلمة [[type]] جوه الـ import معناها «ده نوع بس، متدخلوش في الـ JS».
+
+### [[import { QueryClient, QueryClientProvider } from "@tanstack/react-query";]]
+
+React Query: [[QueryClient]] هو الكاش، و [[QueryClientProvider]] بيوصّله لكل الكومبوننتات اللي تحته.
+
+### [[import { ThemeProvider } from "next-themes";]]
+
+مكتبة الـ dark mode.
+
+### [[export function Providers({ children }: { children: ReactNode })]]
+
+بياخد [[children]] من غير ما يعرف هي إيه.
+
+### [[const [queryClient] = useState(() => new QueryClient());]]
+
+- [[useState(() => ...)]]: لما تدّي [[useState]] دالة، React بينفّذها **مرة واحدة بس** أول ما الكومبوننت يتعمل، ويحتفظ بالنتيجة.
+- [[const [queryClient] =]]: بناخد القيمة بس، ومش محتاجين دالة التغيير.
+- ليه مش [[const queryClient = new QueryClient()]] برّه الكومبوننت؟ لأن الملف ده بيتنفذ على السيرفر كمان (SSR)، وأي متغير على مستوى الملف هناك بيتشارك بين **كل** الطلبات، يعني كاش مستخدم يبان لمستخدم تاني. جوه [[useState]] كل مستخدم ليه نسخة.
+
+### الـ JSX
+
+~~~text الشكل
+<QueryClientProvider client={queryClient}>
+  <ThemeProvider attribute="class">{children}</ThemeProvider>
+</QueryClientProvider>
+~~~
+
+provider جوه provider، وفي الآخر [[children]]. و [[attribute="class"]] معناها «حط اسم الثيم كـ class على [[<html>]]».
+
+---
+
+## ٢. [[app/layout.tsx]] (server)
+
+### [[import { Providers } from "./providers";]]
+
+الـ layout server component، وبيعمل import لـ client component. ده مسموح: server يقدر يستورد client، العكس هو اللي فيه مشكلة.
+
+### [[<html lang="ar" dir="rtl" suppressHydrationWarning>]]
+
+[[next-themes]] بيحط class على [[<html>]] قبل ما React يعمل hydration. فالـ HTML اللي جه من السيرفر هيبقى مختلف عن اللي في المتصفح في الـ attribute ده، و React هيطلّع تحذير. [[suppressHydrationWarning]] بيقوله «عارف، متحذرش»، وبيأثر على العنصر ده بس، مش اللي جواه. ولما شغّلنا الصفحة، [[<html>]] كان عليه [[class="light"]].
+
+### [[<body><Providers>{children}</Providers></body>]]
+
+الصفحات بتدخل في [[Providers]] كـ [[children]]. مين اللي ركّبهم؟ الـ layout، وهو server. فالصفحات بتفضل server components مع إنها جوه client component.
+
+---
+
+## ٣. التجربة: Toggle و Data
+
+[[Toggle]] client بيعرض [[children]] أو يخبيها، و [[Data]] server component [[async]] بيستنى نص ثانية ويرجّع [[<p>داتا من السيرفر</p>]].
+
+### الطريقة الصح: [[<Toggle><Data /></Toggle>]] في الصفحة
+
+~~~text الناتج (next start)
+html class: light | main: خبّيداتا من السيرفر
+after click: اعرض
+after 2nd click: خبّيداتا من السيرفر
+~~~
+
+الزرار شغال، والداتا بتختفي وترجع. ودوّرنا على [[داتا من السيرفر]] في ملفات [[_next/static/chunks]]: ولا ملف. يعني [[Data]] اتنفذ على السيرفر بس، ووصل للـ Toggle عنصر خلاص اترسم جوه الـ RSC payload.
+
+### الطريقة الغلط: [[import { Data } from "./data"]] جوه [[toggle.tsx]]
+
+الـ build عدّى، والـ HTML نفسه كان فيه الداتا:
+
+~~~text الناتج: curl
+<main><div><button>خبّي</button><p>داتا من السيرفر</p></div>...
+~~~
+
+بس في المتصفح:
+
+~~~text الناتج (next start)
+html class: light | main: خبّيداتا من السيرفر
+after click: خبّيداتا من السيرفر
+after 2nd click: خبّيداتا من السيرفر
+~~~
+
+الزرار مبيعملش حاجة، و [[داتا من السيرفر]] بقت موجودة في ملف واحد في [[_next/static/chunks]]: [[Data]] دخل bundle المتصفح. وفي [[next dev]] الـ console قال السبب:
+
+~~~text الناتج في console المتصفح (dev)
+<Data> is an async Client Component. Only Server Components can be async at the moment. This error is often caused by accidentally adding $__bt'use client'$__bt to a module that was originally written for the server.
+~~~
+
+[[Data]] ملوش [[use client]]، بس لأنه اتعمله import من ملف client بقى client، والـ client components مينفعش تبقى [[async]]. وفي الإنتاج مفيش رسالة خالص، الزرار بس بيبطّل يرد، ودي أصعب في الاكتشاف.
+
+---
+
+## الخلاصة
+
+| | [[<Client><Server /></Client>]] من ملف server | [[import Server]] جوه ملف client |
+|---|---|---|
+| [[Server]] بيتنفذ فين | السيرفر بس | المتصفح كمان (بقى client) |
+| الكود بتاعه في bundle المتصفح | لأ | أيوة |
+| [[async]] والداتابيز | شغالين | خطأ |
+
+- الـ client component يستلم server components في [[children]] أو أي prop من نوع JSX.
+- الـ providers: كومبوننت client صغير بياخد [[children]]، وتحطه في الـ root layout.
+- [[new QueryClient()]] جوه [[useState(() => ...)]]، مش على مستوى الملف.`,
           lines: [
             "الـ providers بتستخدم context و state، فلازم client.",
             R`[[ReactNode]] نوع أي حاجة تترسم.`,
@@ -872,7 +2641,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           ],
           sol: R`مرة الـ children: الـ Toggle بيعرض الداتا ويخبيها عادي، و [[Data]] اترسم على السيرفر ووصل للـ Toggle عنصر جاهز. الـ Toggle مبيعرفش إنه async أصلًا.
 
-مرة الـ import جوه ملف الـ Toggle: الـ build عدّى عندي والـ HTML اترسم، بس أول ما الصفحة تفتح في المتصفح بيطلع في الـ console: [[<Data> is an async Client Component. Only Server Components can be async at the moment. This error is often caused by accidentally adding 'use client' to a module that was originally written for the server.]] يعني [[Data]] دخل الـ bundle بتاع المتصفح وبقى client، والـ client components مينفعش تبقى async. ولو [[Data]] كان بيستخدم الداتابيز أو عليه [[server-only]]، الـ build نفسه كان هيقع.`,
+مرة الـ import جوه ملف الـ Toggle: الـ build عدّى عندي والـ HTML اترسم، بس الزرار مبقاش بيعمل حاجة. وفي [[npm run dev]] أول ما الصفحة تفتح بيطلع في الـ console (في الإنتاج مفيش رسالة، الزرار بس بيبطّل يرد): [[<Data> is an async Client Component. Only Server Components can be async at the moment. This error is often caused by accidentally adding 'use client' to a module that was originally written for the server.]] يعني [[Data]] دخل الـ bundle بتاع المتصفح وبقى client، والـ client components مينفعش تبقى async. ولو [[Data]] كان بيستخدم الداتابيز أو عليه [[server-only]]، الـ build نفسه كان هيقع.`,
           solCode: R`// app/toggle.tsx
 "use client";
 import { useState, type ReactNode } from "react";
@@ -927,6 +2696,125 @@ import { stripe } from "@/lib/payments"; // الـ build بيقع هنا، ود�
             when: R`[[server-only]] في كل ملف فيه اتصال بالداتابيز، أو مفاتيح، أو منطق auth، أو data access layer. و [[NEXT_PUBLIC_]] لحاجات عامة فعلًا: URL الموقع، ومفتاح Stripe الـ publishable، و Sentry DSN.`,
             mistakes: R`[[NEXT_PUBLIC_OPENAI_KEY]] عشان «الـ fetch من المتصفح مش شغال». الحل تعمل الطلب من السيرفر (Server Action أو Route Handler)، مش تكشف المفتاح. وتتوقع إن تغيير [[NEXT_PUBLIC_API_URL]] في [[.env]] على السيرفر هيتطبق من غير build. وتعدّي object الـ user كله لـ client component وفيه token أو hash.`
           },
+          teach: R`## الفكرة: قفل على ملفات السيرفر، وبادئة للمتغيرات العامة
+
+المثال ٣ ملفات: ملف دفع فيه مفتاح سري ومقفول بـ [[server-only]]، وملف فيه متغير عام بـ [[NEXT_PUBLIC_]]، وزرار client بيعمل import للاتنين. شغّلنا الملفات دي بالظبط على Next 16.4 (مع [[stripe]] 23)، وجربنا كمان التجربة اللي في «جرّب» خطوة خطوة. المتغيرات كانت في [[.env.local]]، والـ build قال إنه قراه: [[- Environments: .env.local]].
+
+---
+
+## ١. [[lib/payments.ts]]
+
+### [[import "server-only";]]
+
+import من غير اسم لباكدج [[server-only]] ([[npm i server-only]]). الباكدج مفيهاش كود تقريبًا، وشغلتها إنها توقّع الـ build لو الملف ده دخل bundle المتصفح.
+
+### [[import Stripe from "stripe";]]
+
+مكتبة الدفع.
+
+### [[export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);]]
+
+- [[process.env]]: object فيه متغيرات البيئة، و Next بيملاه من [[.env]] و [[.env.local]].
+- [[STRIPE_SECRET_KEY]]: من غير [[NEXT_PUBLIC_]]، فموجود على السيرفر بس.
+- [[!]] في الآخر لـ TypeScript: «أنا متأكد إنه مش [[undefined]]» (نوع أي متغير بيئة [[string | undefined]]).
+
+---
+
+## ٢. [[lib/public-config.ts]]
+
+### [[export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;]]
+
+[[NEXT_PUBLIC_]] في أول الاسم معناها «ده عام». وقت الـ build، Next بيدوّر على النص [[process.env.NEXT_PUBLIC_SITE_URL]] في الكود اللي رايح للمتصفح ويبدّله بالقيمة نفسها.
+
+---
+
+## ٣. [[components/checkout-button.tsx]]
+
+| السطر | النتيجة |
+|---|---|
+| [["use client";]] | الملف ده وكل اللي بيستورده رايحين المتصفح |
+| [[import { siteUrl } from "@/lib/public-config";]] | مسموح: قيمة عامة |
+| [[import { stripe } from "@/lib/payments";]] | ممنوع: [[payments.ts]] عليه [[server-only]] |
+
+حطينا الزرار في صفحة وعملنا [[next build]]:
+
+~~~text الناتج
+> Build error occurred
+Error: Turbopack build failed with 2 errors:
+./src/lib/payments.ts:1:1
+Error: You're importing a module that depends on "server-only". This API is only available in Server Components in the App Router, but you are using it in the Pages Router.
+> 1 | import "server-only";
+    | ^^^^^^^^^^^^^^^^^^^^^
+
+Import traces:
+  Client Component Browser:
+    ./src/lib/payments.ts [Client Component Browser]
+    ./src/components/checkout-button.tsx [Client Component Browser]
+    ./src/components/checkout-button.tsx [Server Component]
+~~~
+
+- الجملة [[but you are using it in the Pages Router]] غلط (إحنا في App Router)، متقفش عندها.
+- المهم الـ **Import trace**: بيتقري من تحت لفوق. الصفحة (server) استوردت [[checkout-button.tsx]]، وده client، فاستورد [[payments.ts]] في bundle المتصفح ([[Client Component Browser]]). فعرفت بالظبط أنهي import تشيله.
+- [[2 errors]]: التاني نفس المشكلة في [[Client Component SSR]] (نسخة الـ client component اللي بتترسم على السيرفر)، ومعاه رسالة أوضح: [['server-only' cannot be imported from a Client Component module]].
+
+الـ build وقع **قبل** ما أي ملف يتبعت. ده المطلوب.
+
+---
+
+## ٤. التجربة: من غير [[server-only]]
+
+ملف [[lib/secret.ts]] فيه [[export const key = process.env.MY_SECRET;]] (و [[MY_SECRET=sk_test_123456]] في [[.env.local]])، و client component بيطبعه ويعرضه.
+
+~~~text الناتج: curl (View Source)
+<p id="k">المفتاح: <!-- -->sk_test_123456</p>
+~~~
+
+~~~text الناتج في المتصفح (next start)
+[console log] key in component: undefined
+[pageerror] Minified React error #418; ... args[]=HTML ...
+on screen: المفتاح:
+~~~
+
+اللي حصل خطوة خطوة:
+
+1. على السيرفر، الـ client component اترسم HTML، وهناك [[process.env.MY_SECRET]] موجود، فالقيمة الحقيقية اتكتبت في الـ HTML.
+2. في المتصفح، Next مبيحطش المتغيرات اللي من غير [[NEXT_PUBLIC_]] في الـ JS، فـ [[key]] بقى [[undefined]].
+3. الـ HTML قال حاجة، والمتصفح رسم حاجة تانية، فـ React طلّع خطأ #418 (hydration mismatch: الـ HTML مش مطابق) ورسم نسخة المتصفح.
+
+النتيجة: الشاشة فاضية، **بس السر اتسرّب في الـ HTML** لأي حد يعمل View Source. ودوّرنا على [[sk_test_123456]] في ملفات [[_next/static/chunks]]: مش موجود. التسريب كان في الـ HTML بس.
+
+## ٥. نفس الملف مع [[server-only]]
+
+نفس الخطأ اللي في القسم ٣، والـ trace: [[secret.ts]] ثم [[show.tsx]] ثم [[page.tsx]].
+
+## ٦. نفس الملف بـ [[NEXT_PUBLIC_MY_SECRET]]
+
+~~~text الناتج
+[console log] key in component: pub_789
+on screen: المفتاح: pub_789
+~~~
+
+ومن ملفات [[_next/static/chunks]]:
+
+~~~text الناتج
+let t="pub_789";o.s(["Show",0,func...
+~~~
+
+القيمة مكتوبة **حرفيًا** في الـ JS. يعني أي حاجة [[NEXT_PUBLIC_]] عامة لأي زائر، ولو غيّرتها لازم build جديد.
+
+---
+
+## الخلاصة
+
+| | من غير بادئة | [[NEXT_PUBLIC_]] |
+|---|---|---|
+| على السيرفر | موجود | موجود |
+| في JS المتصفح | [[undefined]] | مكتوب حرفيًا وقت الـ build |
+| يتسرّب لو | client component عرضه (HTML) أو عدّيته prop | دايمًا عام |
+
+- [[import "server-only"]] في أول أي ملف فيه داتابيز أو مفاتيح أو auth: الغلط يبقى build واقع بدل سر متسرّب.
+- اقرا الـ Import trace من تحت لفوق عشان تلاقي الـ import الغلط.
+- متحطش [[NEXT_PUBLIC_]] على مفتاح سري عشان «كان undefined في المتصفح».`,
           lines: [
             R`باكدج صغير ([[npm i server-only]]) ملوش أي كود وقت التشغيل: شغلته إنه يوقّع الـ build لو اتعمله import من client.`,
             "مكتبة Stripe.",
@@ -985,6 +2873,134 @@ export default async function Dashboard() {
             when: "أي داتا بتتعرض في الصفحة. وكلّم الداتابيز مباشرة لو التطبيق هو صاحبها. لو فيه API منفصل (Express مثلًا)، كلّمه من السيرفر بـ fetch (درس BFF).",
             mistakes: R`تعمل Route Handler وتناديه بـ [[fetch("/api/products")]] من server component: رحلة HTTP زيادة لنفس السيرفر، والـ URL النسبي مبيشتغلش على السيرفر أصلًا. نادي الدالة مباشرة. و [[await]] ورا بعض لحاجات مستقلة. و [[useEffect]] مع [[fetch]] في client component لداتا كان ممكن تيجي من السيرفر.`
           },
+          teach: R`## الفكرة: الصفحة نفسها [[async]]، وبتبدأ كل الطلبات مع بعض
+
+المثال صفحة dashboard محتاجة ٣ حاجات مش معتمدة على بعض: آخر الطلبات، والإجمالي، وأخبار من API خارجي. بتبدأهم التلاتة في نفس اللحظة بـ [[Promise.all]] وبتستنى مرة واحدة. الداتابيز والـ API في المثال مش موجودين عندنا، فقسنا الفكرة نفسها بدوال بتستنى ثانية ([[setTimeout]]) على Next 16.4 بـ [[next build]] و [[next start]] و [[curl]].
+
+---
+
+## ١. [[export default async function Dashboard()]]
+
+server component [[async]]، فيقدر يعمل [[await]] جواه مباشرة. مفيش [[useEffect]] ولا state ولا loading بإيدك.
+
+---
+
+## ٢. [[const [orders, stats, news] = await Promise.all([...]);]]
+
+من جوه لبرة:
+
+1. جوه الـ array ٣ نداءات: كل نداء **بيبدأ الطلب على طول** وبيرجّع Promise (وعد بقيمة هتيجي بعدين).
+2. [[Promise.all([...])]]: Promise واحد بيخلص لما **التلاتة** يخلصوا، وقيمته array بالنتايج بنفس الترتيب.
+3. [[await]]: استنى الـ Promise ده.
+4. [[const [orders, stats, news] =]]: فك الـ array لتلات متغيرات بالترتيب.
+
+### التلات عناصر
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[db.order.findMany({ take: 10, orderBy: { createdAt: "desc" } })]] | آخر ١٠ طلبات: [[take]] العدد، و [[desc]] من الأحدث للأقدم |
+| [[db.order.aggregate({ _sum: { totalCents: true }, _count: true })]] | مجموع [[totalCents]] وعدد الطلبات في query واحد |
+| [[fetch("https://api.example.com/news", { headers: { Authorization: ... } }).then((r) => r.json())]] | طلب لـ API خارجي، و [[.then((r) => r.json())]] بيحوّل الرد لـ object |
+
+### [[Authorization: $__btBearer $__{process.env.NEWS_KEY}$__bt]]
+
+header فيه المفتاح. template string ([[$__bt...$__bt]]) و [[$__{...}]] بيحط قيمة المتغير جوه النص. والطلب ده من السيرفر، فـ [[NEWS_KEY]] (من غير [[NEXT_PUBLIC_]]) مبيوصلش للمتصفح أبدًا.
+
+---
+
+## ٣. الـ JSX
+
+### [[<Stats count={stats._count} totalCents={stats._sum.totalCents ?? 0} />]]
+
+[[??]] (nullish coalescing): «لو اللي على الشمال [[null]] أو [[undefined]]، خد اللي على اليمين». [[_sum.totalCents]] بيبقى [[null]] لو مفيش طلبات خالص، فبنبعت ٠.
+
+### [[<>...</>]]
+
+Fragment: بيلم كذا عنصر من غير ما يضيف [[div]] في الصفحة.
+
+---
+
+## ٤. قسنا: ورا بعض ولا مع بعض؟
+
+٣ دوال، كل واحدة بتستنى ثانية وترجع حرف. ٣ صفحات:
+
+~~~text صفحة wf-seq
+const a = await getA();
+const b = await getB();
+const c = await getC();
+~~~
+
+~~~text صفحة wf-all
+const [a, b, c] = await Promise.all([getA(), getB(), getC()]);
+~~~
+
+و [[curl -w "%{time_total}"]] بيطبع الوقت الكلي للطلب:
+
+~~~text الناتج
+wf-seq 200 3.071977s
+<p>ABC ورا بعض في 3038ms</p>
+wf-all 200 1.016607s
+<p>ABC بـ Promise.all في 1005ms</p>
+~~~
+
+- ورا بعض: ٣ ثواني. [[getB]] مبدأتش غير لما [[getA]] خلصت. ده اسمه **waterfall** (شلال: كل واحد مستني اللي قبله).
+- بـ [[Promise.all]]: ثانية. التلاتة بدأوا في نفس اللحظة، والوقت = أبطأ واحد فيهم.
+- الـ ٣٨ و ٥ ملّي ثانية الزيادة: وقت التايمرات نفسها والرسم.
+
+---
+
+## ٥. لو واحد وقع
+
+### [[Promise.all]]
+
+خلينا التالتة ترمي [[throw new Error("C وقعت")]]:
+
+~~~text الناتج
+wf-fail 500 1.083032s
+
+⨯ Error: C وقعت
+  digest: '236115339'
+~~~
+
+الصفحة كلها 500 (وكانت هتروح لأقرب [[error.tsx]] لو موجود)، مع إن A و B نجحوا.
+
+### [[Promise.allSettled]] (الـ solCode)
+
+[[allSettled]] مبيرميش خالص. بيستنى الكل، ويرجّع لكل واحد object: [[{ status: "fulfilled", value }]] لو نجح، أو [[{ status: "rejected", reason }]] لو وقع:
+
+~~~text الناتج
+wf 200 1.027043s
+<p>fulfilled, fulfilled, rejected في 1015ms</p>
+
+ترمنال next start:
+[ 'fulfilled', 'fulfilled', 'rejected' ]
+~~~
+
+الصفحة 200، والوقت برضه ثانية، وانت تقرر تعرض إيه مكان اللي وقع.
+
+### ليه [[await connection()]] في الـ solCode؟
+
+[[connection()]] من [[next/server]] بيقول لـ Next «الصفحة دي استنى طلب حقيقي». من غيرها الصفحة مبتقراش أي حاجة من الطلب، فـ Next بيبنيها static وقت الـ build. شلناها من [[wf-all]] وعملنا build:
+
+~~~text الناتج
+├ ○ /wf-all
+~~~
+
+بقت [[○]] Static: الثانية اتصرفت مرة واحدة وقت الـ build، وكل الزيارات بعدها بتاخد نفس الـ HTML بنفس الرقم. ومعاها [[ƒ]]، فالقياس بيتعمل مع كل طلب.
+
+---
+
+## الخلاصة
+
+| | الوقت لـ ٣ حاجات كل واحدة ثانية | لو واحدة وقعت |
+|---|---|---|
+| [[await]] ورا [[await]] | ٣ ثواني | الصفحة تقع |
+| [[Promise.all]] | ثانية | الصفحة تقع (500) |
+| [[Promise.allSettled]] | ثانية | الباقي يتعرض، وانت تقرر |
+
+- الـ server component [[async]] بيجيب الداتا بنفسه، والأسرار بتفضل على السيرفر.
+- الحاجات المستقلة: ابدأها مع بعض ([[Promise.all]]).
+- الداتا الثانوية اللي ممكن تقع: [[allSettled]]، أو كومبوننت لوحده جوه Suspense و error boundary.`,
           lines: [
             "الداتابيز مباشرة من الكومبوننت.",
             R`الصفحة [[async]].`,
@@ -1064,6 +3080,130 @@ async function Reviews({ productId }: { productId: string }) {
             when: "الأجزاء البطيئة أو الثانوية: تقييمات، وتوصيات، وإحصائيات، وأي حاجة من API خارجي مش مضمون. خلي المحتوى الأساسي (اللي بيتأرشف واللي المستخدم جاي عشانه) برّه الـ Suspense.",
             mistakes: R`Suspense حوالين الصفحة كلها فمفيش فرق عن loading.tsx. أو Suspense حوالين كل كومبوننت صغير فالصفحة تفضل تتنطط والـ fallbacks تظهر وتختفي. وتحط الـ Suspense جوه الكومبوننت اللي بيعمل await نفسه: لازم يبقى فوقه، في الأب. و fallback مقاسه مختلف عن المحتوى فالصفحة تتزق.`
           },
+          teach: R`## الفكرة: كل جزء بطيء في Suspense لوحده، والصفحة متستناش
+
+صفحة منتج فيها ٣ أجزاء: بيانات المنتج (سريعة)، والتقييمات (٣ ثواني)، والتوصيات (٥ ثواني). المثال بيبعت المنتج فورًا، وكل جزء بطيء بيوصل لما يجهز **في نفس الـ response**. شغّلناه على Next 16.4 ([[next build]] و [[next start]])، و [[getReviews]] بتستنى ٣ ثواني و [[Recommendations]] ٥، وقسنا الدفعات بسكربت الـ solCode.
+
+---
+
+## ١. الصفحة سطر سطر
+
+### [[import { Suspense } from "react";]]
+
+[[Suspense]] من React نفسها، مش من Next.
+
+### [[const { slug } = await params;]] و [[const product = await getProduct(slug);]]
+
+المنتج نفسه أساسي، فالصفحة **بتستناه** برّه أي Suspense. ده query سريع (بالـ primary key).
+
+### [[if (!product) notFound();]]
+
+قبل أي streaming، فالـ 404 بيبقى status حقيقي.
+
+### [[<ProductInfo product={product} />]]
+
+الجزء الأساسي، جاهز.
+
+### [[<Suspense fallback={<ReviewsSkeleton />}>]] و [[<Reviews productId={product.id} />]]
+
+- [[Suspense]] حد: «لو اللي جوايا لسه مستني، اعرض الـ [[fallback]] وكمّل الصفحة».
+- [[Reviews]] كومبوننت [[async]] بطيء. الصفحة نفسها **مش** بتعمل [[await]] عليه.
+
+### Suspense تاني للتوصيات
+
+مستقل عن الأول: كل واحد بيظهر لما هو يجهز.
+
+### [[async function Reviews({ productId })]]
+
+الجزء البطيء في كومبوننت لوحده، هو اللي بيجيب الداتا بتاعته. و [[await getReviews(productId)]] بيوقف الكومبوننت ده بس.
+
+---
+
+## ٢. سكربت الـ solCode
+
+~~~bash
+node -e 'const t=Date.now();fetch("http://localhost:3000/products/x").then(async r=>{for await(const c of r.body)console.log(((Date.now()-t)/1000).toFixed(1)+"s",c.length+"B")})'
+~~~
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[node -e '...']] | شغّل الكود ده من غير ملف (e = evaluate) |
+| [[const t=Date.now()]] | الوقت دلوقتي بالملّي ثانية |
+| [[fetch(...)]] | اطلب الصفحة |
+| [[for await(const c of r.body)]] | [[r.body]] stream: اقرا الـ response **حتة حتة** وقت ما بتوصل |
+| [[(Date.now()-t)/1000]] | الوقت من أول الطلب بالثواني، و [[toFixed(1)]] رقم عشري واحد |
+| [[c.length+"B"]] | حجم الحتة بالـ byte |
+
+جربنا نفس السطر في PowerShell 7 ([[pwsh]]) واشتغل زي ما هو، لكن في Windows PowerShell 5.1 بيقع بـ [[ReferenceError]]، لأنه بيشيل علامات [["]] اللي جوه الـ [['...']] قبل ما يبعتها لـ Node. هناك حط الكود في ملف [[.js]] وشغّله بـ [[node file.js]]. شغّلناه على البورت بتاعنا، وزودنا عليه للتوضيح إنه يقول الحتة فيها إيه:
+
+~~~text الناتج
+status 200 transfer-encoding: chunked
+0.1s 2428B منتج x | بنحمّل التقييمات | بنجهّز التوصيات
+0.1s 5921B منتج x | بنحمّل التقييمات | بنجهّز التوصيات
+3.1s 200B ممتاز
+3.1s 934B ممتاز
+5.1s 114B توصيات لـ
+5.1s 96B توصيات لـ
+5.1s 14B
+~~~
+
+- [[transfer-encoding: chunked]]: الـ header اللي بيقول للمتصفح «الرد جاي على دفعات، ومش عارف طوله الكلي». ده اللي HTTP بيسمح بيه، وهو أساس الـ streaming.
+- عند ٠.١: المنتج والاتنين fallbacks.
+- عند ٣.١: التقييمات. عند ٥.١: التوصيات.
+- كله **طلب واحد** و response واحد.
+
+---
+
+## ٣. جوه الدفعات
+
+### الدفعة الأولى
+
+~~~text الناتج
+<h1>منتج x</h1><!--$?--><template id="B:0"></template><p>بنحمّل التقييمات...</p><!--/$--><!--$?--><template id="B:1"></template><p>بنجهّز التوصيات...</p><!--/$-->
+~~~
+
+كل Suspense معلّم بتعليقات [[<!--$?-->]] و [[<!--/$-->]] («جزء لسه مستني»)، وجواه [[<template id="B:0">]] علامة مكانه، والـ fallback.
+
+### دفعة الـ ٣ ثواني
+
+~~~text الناتج
+<div hidden id="S:0"><ul><li>ممتاز</li><li>كويس</li></ul></div><script>$RB=[];$RV=function(a){...
+~~~
+
+- [[<div hidden id="S:0">]]: التقييمات نفسها HTML، بس مستخبية.
+- [[<script>]]: كود صغير بينقلها مكان [[B:0]] ويشيل الـ fallback.
+
+يعني المتصفح بيعرض كل جزء أول ما يوصل، حتى قبل ما JavaScript الصفحة الكبير يتحمّل.
+
+---
+
+## ٤. من غير الـ Suspense حوالين التقييمات
+
+شلناه وسبنا [[<Reviews>]] لوحده:
+
+~~~text الناتج
+status 200 transfer-encoding: chunked
+3.1s 2384B منتج x | بنجهّز التوصيات | ممتاز
+3.1s 5957B منتج x | بنجهّز التوصيات | ممتاز
+5.1s 114B توصيات لـ
+5.1s 925B توصيات لـ
+~~~
+
+ولا byte قبل ٣.١ ثانية (حتى الـ status نفسه اتطبع وقتها). ليه؟ React لما بيقابل كومبوننت مستني ومفيش Suspense فوقه، مبيعرفش يعرض إيه مكانه، فبيستنى. والتوصيات لسه جوه Suspense، فلسه بتيجي لوحدها عند ٥.
+
+---
+
+## الخلاصة
+
+| | أول حاجة توصل | التقييمات | التوصيات |
+|---|---|---|---|
+| Suspense حوالين الاتنين | ٠.١ ث (المنتج + fallbacks) | ٣.١ ث | ٥.١ ث |
+| من غير Suspense للتقييمات | ٣.١ ث | ٣.١ ث | ٥.١ ث |
+
+- [[<Suspense fallback>]] حوالين الكومبوننت البطيء، في **الأب** مش جوه الكومبوننت نفسه.
+- الكومبوننت البطيء بيجيب الداتا بتاعته بنفسه.
+- المحتوى الأساسي برّه الـ Suspense، والثانوي جواه.
+- لو كله وصل مرة واحدة: dev بيعمل compile أول مرة، أو proxy زي Nginx بيعمل buffering.`,
           lines: [
             R`[[Suspense]] من React نفسها.`,
             "الصفحة.",
@@ -1144,6 +3284,123 @@ export function ReviewsPanel({ reviewsPromise }: { reviewsPromise: Promise<Revie
             when: R`client component تفاعلي (فلتر، أو ترتيب، أو chart) بيعرض داتا مبدئية من السيرفر. و React Query لما الداتا نفسها بتتغير في المتصفح بعد التحميل.`,
             mistakes: R`[[use(fetch("/api/x"))]] جوه client component: Promise جديد كل render. و [[await]] في السيرفر وبعدين تبعت الداتا، فالميزة راحت. وتنسى الـ Suspense فالصفحة تستنى عند أقرب واحد فوق. وتبعت Promise بيرجّع حاجات مش serializable (class instance بـ methods).`
           },
+          teach: R`## الفكرة: السيرفر يبدأ الطلب، والـ client يستلم الـ Promise نفسه
+
+الـ server component بيبدأ يجيب التقييمات **من غير ما يستنى**، ويبعت الـ Promise كـ prop لـ client component. الـ client component بيفكّه بـ [[use()]] وبيبقى عنده فلتر تفاعلي. شغّلنا المثال على Next 16.4 و React 19.3 ([[next build]] و [[next start]] و Chrome بـ playwright)، و [[getReviews]] بتستنى ثانيتين وبترجع ٣ تقييمات (٥ و ٣ و ١ نجوم)، وبترمي خطأ لو الـ slug [[boom]].
+
+---
+
+## ١. الصفحة (server)
+
+### [[import { ReviewsPanel } from "./reviews-panel";]]
+
+server بيستورد client: مسموح.
+
+### [[const reviewsPromise = getReviews(slug);]]
+
+مفيش [[await]]. السطر ده **بيبدأ** الطلب على طول، والمتغير فيه Promise لسه مخلصش. الصفحة بتكمّل.
+
+### [[<Suspense fallback={<p>بنحمّل التقييمات...</p>}>]]
+
+لازم: [[use]] هيوقف الكومبوننت لحد ما الـ Promise يخلص، والـ Suspense هو اللي بيحدد إيه يظهر مكانه.
+
+### [[<ReviewsPanel reviewsPromise={reviewsPromise} />]]
+
+الـ Promise نفسه prop. React بيعرف يبعته: بيحط مكانه علامة في الـ RSC payload، ولما الـ Promise يخلص على السيرفر بيبعت القيمة في نفس الـ stream (زي درس streaming).
+
+---
+
+## ٢. [[reviews-panel.tsx]] (client)
+
+### [["use client";]] و [[import { use, useState } from "react";]]
+
+client عشان فيه [[select]] بـ state. و [[use]] من React 19.
+
+### [[({ reviewsPromise }: { reviewsPromise: Promise<Review[]> })]]
+
+النوع Promise لـ array من [[Review]].
+
+### [[const reviews = use(reviewsPromise);]]
+
+[[use]] بيفك الـ Promise:
+
+- لو لسه مخلصش: الكومبوننت **بيعمل suspend** (بيتوقف)، فأقرب Suspense يعرض الـ fallback.
+- لو خلص: بيرجّع القيمة، والكومبوننت يكمّل.
+- لو اترفض (rejected): بيرمي الخطأ، فيروح لأقرب error boundary.
+
+وعكس باقي الـ hooks، [[use]] ينفع جوه [[if]] أو loop.
+
+### [[const [minStars, setMinStars] = useState(1);]] و [[reviews.filter((r) => r.stars >= minStars)]]
+
+state للفلتر، والفلترة على الـ array اللي في المتصفح، من غير أي طلب.
+
+### الـ JSX
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[<select value={minStars} onChange={(e) => setMinStars(Number(e.target.value))}>]] | قايمة، وقيمتها string فبنحوّلها رقم |
+| [[{[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}+ نجوم</option>)}]] | ٥ اختيارات من array |
+| [[<ul>{shown.map((r) => <li key={r.id}>{r.text}</li>)}</ul>]] | التقييمات بعد الفلتر |
+
+---
+
+## ٣. التجربة
+
+~~~text الناتج: /products/book
+status 200
+0.6s بنحمّل التقييمات...
+2.8s 1+ نجوم2+ نجوم3+ نجوم4+ نجوم5+ نجومممتازعاديوحش
+after select 3+: ممتازعادي | requests: 0
+~~~
+
+- عند ٠.٦ ثانية: الصفحة ظاهرة ومكان التقييمات الـ fallback.
+- عند ٢.٨: الـ Promise خلص على السيرفر، والقيمة وصلت في نفس الـ response، و [[use]] رجّعها: القايمة والتلات تقييمات.
+- اخترنا «3+ نجوم»: فضل [[ممتاز]] و [[عادي]] ([[وحش]] نجمة واحدة)، و **صفر طلبات** على الشبكة.
+
+---
+
+## ٤. لو الـ Promise اترفض
+
+### من غير أي error boundary
+
+~~~text الناتج: /products/boom
+status 200
+0.6s ... بنحمّل التقييمات...
+[pageerror] Minified React error #441; ...
+2.8s This page couldn’t load
+     A server error occurred. Reload to try again.
+     Reload
+     ERROR 121798981
+~~~
+
+- الـ status **200**: الـ streaming كان بدأ وبعت الـ headers قبل ما الخطأ يحصل، فمينفعش يتغير.
+- [[#441]]: خطأ من Server Components والرسالة الأصلية متشالة في الإنتاج.
+- الصفحة **كلها** اتبدلت بصفحة Next الافتراضية، حتى الـ nav. يعني خطأ في جزء ثانوي وقّع كل حاجة.
+- [[121798981]] هو الـ digest، ونفسه في ترمنال [[next start]]: [[⨯ Error: reviews DB down]] و [[digest: '121798981']].
+
+### بعد [[error.tsx]] جنب الصفحة
+
+~~~text الناتج
+2.8s المنتجات السلة ... (الـ nav)
+     التقييمات مش متاحة دلوقتي.
+     جرّب تاني
+~~~
+
+الـ layout والـ nav فضلوا، والجزء بتاع الصفحة بس اتبدل. ولو عايز باقي الصفحة نفسها يفضل، حط ErrorBoundary (زي [[react-error-boundary]]) حوالين الـ Suspense بس.
+
+---
+
+## الخلاصة
+
+| الطريقة | الطلب بيبدأ إمتى | الصفحة بتستنى؟ | تفاعلي؟ |
+|---|---|---|---|
+| [[await]] في السيرفر وتبعت الداتا | على السيرفر | أيوة | أيوة |
+| [[useEffect]] + [[fetch]] في الـ client | بعد الـ hydration (متأخر) | لأ | أيوة |
+| تبعت الـ Promise + [[use()]] | على السيرفر بدري | لأ (Suspense) | أيوة |
+
+- الـ Promise لازم ييجي من برّه (server component). Promise جديد جوه الـ client كل render = suspend من غير نهاية.
+- [[use]] محتاج Suspense فوقه، و error boundary للأخطاء.
+- الداتا اللي بتتغير وانت على الصفحة (polling، infinite scroll): React Query.`,
           lines: [
             "Suspense.",
             "الـ client component.",
