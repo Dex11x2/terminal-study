@@ -1,4 +1,84 @@
 {
+ "angular|Angular Material": {
+  "hash": "3c7c3a35aad0",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 + @angular/material 22.2.2 (ng add, ng serve + Chrome headless/Playwright)"
+ },
+ "angular|CDK": {
+  "hash": "27f3662a35c9",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 + @angular/cdk 22.2.2 (ng serve + Chrome headless/Playwright mouse drag)"
+ },
+ "angular|HttpClient": {
+  "hash": "923660d3ae28",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright, Node 24 fake API)"
+ },
+ "angular|NgRx Signal Store": {
+  "hash": "e696d524858e",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 + @ngrx/signals 22.0.1 (ng serve + Chrome headless/Playwright)"
+ },
+ "angular|Observable و subscribe": {
+  "hash": "eed73332e7c9",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19 + rxjs 7.8.2 (node .mts)"
+ },
+ "angular|RTL": {
+  "hash": "e25c582b861f",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 + @angular/cdk/bidi (ng serve + Chrome headless/Playwright)"
+ },
+ "angular|async pipe و toSignal": {
+  "hash": "c23643b0d854",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright, Node 24 fake API)"
+ },
+ "angular|httpResource": {
+  "hash": "e1a3aef804b7",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright, Node 24 fake API)"
+ },
+ "angular|i18n": {
+  "hash": "e76c2507774d",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 + @angular/localize 22.2.1 (extract-i18n, build --localize, Chrome headless)"
+ },
+ "angular|interceptors": {
+  "hash": "6e2989c26827",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright, Node 24 fake API)"
+ },
+ "angular|pipe و operators": {
+  "hash": "fdc402b7bc80",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19 + rxjs 7.8.2; solCode in Windows 11, Angular 22.2 + Chrome headless"
+ },
+ "angular|reactive forms": {
+  "hash": "53f4b3dcaa0b",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright + ng build)"
+ },
+ "angular|signal forms": {
+  "hash": "a4ad385d2f3e",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright)"
+ },
+ "angular|store بـ service و signals": {
+  "hash": "a65a8b52537a",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright + ng build, Node 24 fake API)"
+ },
+ "angular|switchMap و debounceTime": {
+  "hash": "d8df600b47a3",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright) + Node 24 (node .mts solCode)"
+ },
+ "angular|typed forms و FormArray": {
+  "hash": "fd2f66d944a8",
+  "date": "2026-10-07",
+  "on": "Windows 11, Angular 22.2 (ng serve + Chrome headless/Playwright + ng build)"
+ },
  "api|$transaction": {
   "hash": "c345ee4d16af",
   "date": "2026-10-07",
