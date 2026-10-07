@@ -35,6 +35,141 @@ console.log(await bcrypt.compare("wrong", hash));
             when: "أي تسجيل بباسورد. وراجع الـ cost كل كام سنة مع تطور الأجهزة: عند login ناجح، لو الـ hash القديم الـ cost بتاعه أقل، اعمله hash جديد.",
             mistakes: R`في مشروع حقيقي كان الـ User model فيه حقل [[plainPassword]] جنب الـ hash، عشان endpoint للأدمن «يعرض الباسوردات»، وباسورد افتراضي ثابت للموظفين. ده بيلغي فايدة الـ hash تمامًا: أي تسريب يبقى كل الباسوردات. الصح: الأدمن يعمل reset ويبعت لينك، وعمره ما يشوف الباسورد. وفي مشاريع تانية كان [[bcrypt]] و [[bcryptjs]] الاتنين متسطبين: اختار واحد. وتستخدم [[md5]] أو [[sha256]] للباسوردات: سريعين زيادة عن اللزوم. وترجّع «الإيميل مش موجود» و «الباسورد غلط» كرسالتين مختلفتين، فحد يعرف مين عنده حساب.`
           },
+          teach: R`## دالتين بس: [[hash]] وقت التسجيل، و [[compare]] وقت الـ login
+
+وقت التسجيل بتاخد الباسورد وتطلع منه نص طويل (الـ hash) وتحفظ ده بس في الداتابيز. ووقت الـ login بتدّي [[compare]] الباسورد اللي اليوزر كتبه والـ hash المحفوظ، ويرجّعلك [[true]] أو [[false]]. عمرك ما بترجّع الباسورد الأصلي، ولا محتاج.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و [[bcrypt]] 6.0.0، في فولدر فيه:
+
+~~~bash
+npm init -y
+npm pkg set type=module
+npm i bcrypt
+~~~
+
+- [[npm pkg set type=module]] بيكتب [["type": "module"]] في package.json، فـ Node يقبل [[import]] و [[await]] في أول الملف (top-level await). من غيره احفظ الملف بامتداد [[.mjs]].
+
+---
+
+## ١. [[import bcrypt from "bcrypt"]]
+
+بيجيب المكتبة. [[bcrypt]] جواها كود C++ متجمّع (native addon)، فهي أسرع بكتير من [[bcryptjs]] المكتوبة JavaScript. نسخة 6 جاية بملفات جاهزة لويندوز ولينكس والماك، فالتسطيب مش محتاج compiler.
+
+---
+
+## ٢. [[await bcrypt.hash("MyS3cret!", 12)]]
+
+| الحتة | معناها |
+|---|---|
+| [["MyS3cret!"]] | الباسورد اللي اليوزر كتبه (هنا ثابت للتجربة) |
+| [[12]] | الـ **cost** (أو salt rounds): الحسبة بتتعاد [[2^12]] = ٤٠٩٦ مرة |
+| [[await]] | [[hash]] بترجّع Promise، والشغل التقيل بيحصل في thread تاني (thread pool بتاع libuv)، فالسيرفر فاضي يخدم طلبات تانية لحد ما يخلص |
+
+~~~text الناتج
+$2b$12$Cxy.ZJ6rZ006wMpTacj8/eBZII83ym6IOyYKq4Mx6d19ZWp3gTgVG
+~~~
+
+### نقرا الـ hash
+
+النص ده ٦٠ حرف، ومتقسّم بعلامة [[$]]:
+
+| الجزء | القيمة | معناه |
+|---|---|---|
+| [[2b]] | نسخة الـ algorithm | bcrypt النسخة الحالية |
+| [[12]] | الـ cost | اللي انت اديته |
+| أول ٢٢ حرف بعدها | [[Cxy.ZJ6rZ006wMpTacj8/e]] | الـ **salt**: ١٦ بايت عشوائي، مكتوبين بـ base64 مخصوص بتاع bcrypt |
+| آخر ٣١ حرف | [[BZII83ym6IOyYKq4Mx6d19ZWp3gTgVG]] | الـ hash نفسه |
+
+يعني الـ salt والـ cost محفوظين جوه النص. عشان كده عمود واحد في الداتابيز كفاية ([[passwordHash]])، و [[compare]] مش محتاج تديله salt. وتقدر تقرا الـ cost من hash قديم:
+
+~~~bash
+node -e "console.log(require('bcrypt').getRounds('\$2b\$12\$Cxy.ZJ6rZ006wMpTacj8/eBZII83ym6IOyYKq4Mx6d19ZWp3gTgVG'))"
+~~~
+
+~~~text الناتج
+12
+~~~
+
+(الـ [[\$]] عشان bash ميفتكرش [[$2b]] متغير.)
+
+---
+
+## ٣. [[console.log(hash)]]: ليه هيطلع مختلف عندك؟
+
+شغّلت نفس السطر مرتين في الـ solCode:
+
+~~~text الناتج
+$2b$12$/nhSopeDfT/ixNUBBQtwKetm/NAbQNvVC2tUidLsa2Me5f7qNAMt2
+$2b$12$epLr1ynjxqv0KRgWaMJSo.SF6n7NTd1CNGcnWhkPy6y7I3ohPkMjy
+~~~
+
+نفس الباسورد ونفس الـ cost، والناتج مختلف، لأن كل [[hash]] بيولّد salt جديد. فاتنين باسوردهم «123456» الـ hash بتاعهم مش زي بعض، وحد سرق الداتابيز ميقدرش يعرف إنهم نفس الباسورد ولا يستخدم جداول جاهزة (rainbow tables).
+
+والنتيجة المهمة: **متقارنش hash بـ hash**، ومتدوّرش بـ [[WHERE password_hash = ?]]. دوّر على اليوزر بالإيميل، وبعدين [[compare]].
+
+---
+
+## ٤. [[await bcrypt.compare("MyS3cret!", hash)]]
+
+[[compare]] بيقرا الـ salt والـ cost من الـ hash، ويعمل hash للباسورد الجديد بيهم، ويقارن النتيجة:
+
+~~~text الناتج
+true
+false
+~~~
+
+الأول [[true]] (الباسورد صح)، والتاني [["wrong"]] فـ [[false]]. ولو نسيت [[await]]:
+
+~~~text الناتج: console.log(bcrypt.compare("x", hash))
+Promise { <pending> }
+~~~
+
+و Promise دايمًا «truthy»، فـ [[if (bcrypt.compare(...))]] من غير await **أي باسورد هيعدّي**. دي غلطة بتحصل بجد.
+
+---
+
+## ٥. الـ solCode: التجربة والوقت
+
+~~~text الناتج
+false true true
+cost 10: 53.345ms
+cost 12: 211.382ms
+cost 14: 890.433ms
+~~~
+
+- [[a === b]] بـ [[false]] (salt مختلف)، و [[compare]] بـ [[true]] للاتنين.
+- [[console.time("label")]] بيبدأ ساعة باسم، و [[console.timeEnd("label")]] بيوقفها ويطبع الوقت. الاسم هنا template string: [[$__btcost $__{cost}$__bt]] بيبقى [["cost 12"]].
+- كل زيادة ١ في الـ cost بتضاعف الوقت (٥٣ ثم ٢١١ ثم ٨٩٠: تقريبًا ×٤ كل خطوتين). ١٢ هنا ربع ثانية تقريبًا: اليوزر مش هيحس بيها مرة في الـ login، والمهاجم بيدفعها مع كل تخمينة.
+
+---
+
+## ٦. حد الـ ٧٢ بايت
+
+~~~javascript
+const long = "a".repeat(72);
+const h = await bcrypt.hash(long, 4);
+console.log(await bcrypt.compare(long + "ANYTHING", h));
+~~~
+
+~~~text الناتج
+true
+~~~
+
+bcrypt بيبص على أول ٧٢ بايت بس، فأي حاجة بعدهم مش فارقة. باسورد بالطول ده نادر، بس حط [[max(72)]] في الـ validation عشان محدش يتفاجئ. (والحروف العربي بايتين في UTF-8، فالحد بالبايت مش بالحرف.)
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| التسجيل | [[passwordHash = await bcrypt.hash(password, 12)]] واحفظه |
+| الـ login | هات اليوزر بالإيميل، وبعدين [[await bcrypt.compare(password, user.passwordHash)]] |
+| الـ salt والـ cost | جوه الـ hash نفسه، مش محتاج عمود ليهم |
+| نفس الباسورد مرتين | hash مختلف، فمتقارنش hashes ببعض |
+| الـ cost | ١٠ لـ ١٢، وكل +١ = الوقت ×٢ |
+
+> [[await]] قبل [[compare]] مش اختياري: من غيره أي باسورد بيعدّي.`,
           lines: [
             "مكتبة bcrypt (native وسريعة). فيه كمان [[bcryptjs]] مكتوبة JavaScript بس، وأبطأ.",
             "اعمل hash بـ cost 12. async عشان الحسبة التقيلة متوقفش السيرفر.",
@@ -92,6 +227,123 @@ export function verifyAccessToken(token) {
             when: R`APIs لموبايل أو لأكتر من واجهة، أو أكتر من سيرفر. لموقع واحد على نفس الدومين، الـ session بكوكي ممكن تبقى أبسط وأأمن (درس [[express-session]]).`,
             mistakes: R`في مشروع حقيقي كان عمر الـ JWT [[3650d]]، يعني ١٠ سنين، و logout مبيلغيهوش: توكن اتسرق مرة يبقى دخول لـ ١٠ سنين. وفي مشروع تاني توكن تحميل الملفات (عمره ٣٠ يوم) كان موقّع بنفس سر الـ access token ونفس الـ issuer، فكان بيعدّي من [[verifyAccessToken]] كأنه توكن دخول. افصل بسر مختلف أو claim زي [[aud]] وتحقق منه. وتحط الدور في التوكن وتثق فيه: لو الأدمن اتشال، التوكن لسه بيقول ADMIN لحد ما ينتهي.`
           },
+          teach: R`## دالتين في ملف واحد: واحدة تعمل التوكن وواحدة تتحقق منه
+
+[[signAccessToken]] بتتنادى مرة بعد login ناجح وترجّع نص (التوكن). و [[verifyAccessToken]] بتتنادى مع كل طلب جاي (في [[requireAuth]]، الدرس الجاي) وترجّع اللي جوه التوكن، أو ترمي خطأ لو حد لعب فيه أو خلص.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و [[jsonwebtoken]] 9.0.3، مع [[config.js]] فيه سر تجربة:
+
+~~~javascript
+export const config = { JWT_SECRET: "test-secret-at-least-32-chars-long-xx" };
+~~~
+
+---
+
+## ١. الـ imports
+
+- [[import jwt from "jsonwebtoken"]]: المكتبة الأشهر لـ JWT في Node (اسمها الكامل JSON Web Token).
+- [[import { config } from "./config.js"]]: السر جاي من الـ config اللي اتحقق منه بـ zod (درس [[config.js بـ zod]])، مش مكتوب في الكود. الأقواس [[{ }]] معناها «هات الحاجة اللي اسمها config بالظبط من الملف».
+
+---
+
+## ٢. [[jwt.sign(payload, secret, options)]]
+
+~~~javascript
+jwt.sign({ sub: String(user.id), role: user.role }, config.JWT_SECRET, { expiresIn: "15m" })
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[{ sub: ..., role: ... }]] | الـ **payload**: البيانات اللي هتتحط في التوكن (اسمها claims) |
+| [[sub]] | اختصار subject: «التوكن ده عن مين». المعيار بيقول string، عشان كده [[String(user.id)]] بتحوّل [[7]] لـ [["7"]] |
+| [[role]] | الدور، claim من عندنا مش من المعيار |
+| [[config.JWT_SECRET]] | السر اللي التوقيع بيتحسب بيه. اللي معاه السر بس يقدر يعمل توكن صالح |
+| [[expiresIn: "15m"]] | ينتهي بعد ١٥ دقيقة. المكتبة بتحسب [[exp]] لوحدها. ينفع [["15m"]] و [["1h"]] و [["7d"]] أو رقم بالثواني |
+
+والـ algorithm الافتراضي [[HS256]] (HMAC مع SHA-256): نفس السر بيوقّع وبيتحقق.
+
+~~~text الناتج: signAccessToken({ id: 7, role: "USER" })
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3OTEzNTk0ODIsImV4cCI6MTc5MTM2MDM4Mn0.VWMSUPFeqxxcipVNPAFkXv6Wid6wYGsi0j6ffN2QM7M
+~~~
+
+### التوكن تلات حتت بينهم نقطة
+
+فكّيت كل حتة بـ [[Buffer.from(part, "base64url").toString()]]:
+
+| الحتة | بعد الفك |
+|---|---|
+| الأولى (header) | [[{"alg":"HS256","typ":"JWT"}]] |
+| التانية (payload) | [[{"sub":"7","role":"USER","iat":1791359482,"exp":1791360382}]] |
+| التالتة (signature) | ٤٣ حرف: ٣٢ بايت ناتج HMAC-SHA256، مش نص يتقري |
+
+- **base64url** طريقة تكتب بيها أي بايتات كحروف وأرقام و [[-]] و [[_]]، فتتبعت في header أو URL من غير مشاكل. ده **مش تشفير**: أي حد يفكّه.
+- [[iat]] (issued at) و [[exp]] (expiration) بالثواني من ١ يناير ١٩٧٠ (Unix time). الفرق بينهم [[1791360382 - 1791359482 = 900]] ثانية = ١٥ دقيقة بالظبط.
+
+والتعليق اللي في آخر المثال نفس الشكل، بأرقام أقدم ([[iat]] [[1790000000]]).
+
+---
+
+## ٣. جرّب الـ try: افك الـ payload من الترمنال
+
+~~~bash
+node -e "console.log(Buffer.from(process.argv[1], 'base64url').toString())" eyJzdWIiOiI3Iiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3OTEzNTk0ODIsImV4cCI6MTc5MTM2MDM4Mn0
+~~~
+
+~~~text الناتج
+{"sub":"7","role":"USER","iat":1791359482,"exp":1791360382}
+~~~
+
+- [[node -e "..."]]: شغّل الكود ده على طول من غير ملف.
+- [[process.argv[1]]]: مع [[-e]]، أول كلمة بعد الكود هي [[argv[1]]] (هنا الـ payload).
+
+نفس السطر اشتغل زي ما هو في PowerShell 7 و Windows PowerShell 5.1، لأن الكود جواه مفيهوش [["]].
+
+> من غير أي سر قرينا الـ id والدور. عشان كده عمرك ما تحط باسورد أو بيانات حساسة في JWT.
+
+---
+
+## ٤. [[jwt.verify(token, secret, { algorithms: ["HS256"] })]]
+
+بيعمل ٣ حاجات بالترتيب: يحسب التوقيع من أول حتتين بالسر ويقارنه بالحتة التالتة، ويتأكد إن [[exp]] لسه مجاش، ويتأكد إن الـ [[alg]] في الـ header من القايمة اللي اديتها. لو كله تمام بيرجّع الـ payload:
+
+~~~text الناتج
+{ sub: '7', role: 'USER', iat: 1791359482, exp: 1791360382 }
+~~~
+
+ولو لأ بيرمي خطأ. جرّبت كل حالة:
+
+| الحالة | الخطأ |
+|---|---|
+| غيّرت [[role]] لـ [[ADMIN]] في الـ payload وسبت التوقيع القديم | [[JsonWebTokenError: invalid signature]] |
+| توكن اتعمل بسر تاني | [[JsonWebTokenError: invalid signature]] |
+| header بيقول [[alg: none]] ومن غير توقيع | [[JsonWebTokenError: jwt signature is required]] |
+| توكن [[expiresIn: "1s"]] واستنيت ثانيتين | [[TokenExpiredError: jwt expired]] (ومعاه [[expiredAt]]) |
+| [["abc"]] | [[JsonWebTokenError: jwt malformed]] |
+
+ليه التعديل اتكشف؟ التوقيع اتحسب على [[header.payload]] القديم. أي حرف يتغير يطلّع توقيع مختلف تمامًا، ومن غير السر محدش يقدر يحسب التوقيع الجديد.
+
+### الفرق بين [[verify]] و [[decode]]
+
+~~~text الناتج: jwt.decode(forged)
+{ sub: '7', role: 'ADMIN', iat: 1791359482, exp: 1791360382 }
+~~~
+
+[[jwt.decode]] قرا التوكن المزوّر عادي ورجّع ADMIN، لأنه بيفك base64url بس ومبيتحققش من حاجة. استخدمه للعرض أو الـ debug بس، وعمره ما يتستخدم في auth.
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| شكل JWT | [[header.payload.signature]]، كل حتة base64url |
+| مين يقرا الـ payload | أي حد. موقّع مش مشفّر |
+| مين يعمل توكن صالح | اللي معاه [[JWT_SECRET]] بس |
+| [[expiresIn: "15m"]] | المكتبة تحط [[exp = iat + 900]] |
+| [[verify]] | توقيع + انتهاء + algorithm، وبيرمي لو أي حاجة غلط |
+| [[decode]] | قراية بس، ممنوع في الـ auth |
+
+> التوكن صالح لحد [[exp]] مهما حصل، فخلي عمر الـ access قصير، والتجديد بالـ refresh (درس [[access و refresh]]).`,
           lines: [
             "مكتبة jsonwebtoken.",
             "السر من config المتحقق منه.",
@@ -141,6 +393,148 @@ export function verifyAccessToken(token) {
             when: R`على كل router محتاج login. وخليه على مستوى الـ router ([[router.use(requireAuth)]] أو في [[app.use]]) عشان متنساش route.`,
             mistakes: R`في [[optionalAuth]] تبلع أي خطأ وتكمّل كزائر، وده صح. بس تنسخ نفس الـ catch لـ [[requireAuth]] بالغلط، فأي توكن بايظ يعدّي. وتقرا [[req.user.id]] في route مش عليه requireAuth فيقع بـ 500. وتحط اليوزر كله من الداتابيز في [[req.user]] ومعاه الـ hash، وبعدين route يرجّع [[req.user]] في الرد.`
           },
+          teach: R`## middleware بيحوّل header لـ [[req.user]]
+
+الطلب جاي ومعاه سطر [[Authorization: Bearer eyJ...]]. الدالة دي بتقرا السطر ده، وتتحقق من التوكن بـ [[verifyAccessToken]] (الدرس اللي فات)، ولو تمام تحط [[req.user]] وتنادي [[next()]] عشان الطلب يكمّل للـ route. ولو أي حاجة غلط ترمي [[AppError]] بـ 401، والـ error handler (درس [[error middleware]]) يحوّله لرد JSON.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1، سيرفر على بورت 5845 فيه [[AppError]] و [[errorHandler]] من درس [[error middleware]]، و route تجربة بيعمل توكن.
+
+---
+
+## ١. [[export async function requireAuth(req, res, next)]]
+
+- [[export]]: عشان تستورده في الملف اللي بيركّب الـ routes.
+- [[async]]: في Express 5، لو دالة async رمت خطأ، Express بيمسكه ويوديه للـ error handler لوحده (درس [[async errors في Express 5]]). فنقدر نكتب [[throw]] عادي.
+- [[(req, res, next)]]: شكل أي middleware. [[next]] هي «كمّل للي بعدي».
+
+---
+
+## ٢. [[const header = req.get("authorization") ?? ""]]
+
+- [[req.get("authorization")]]: هات header بالاسم ده. أسماء الـ headers مش حساسة لحالة الحروف، فـ [["authorization"]] و [["Authorization"]] واحد.
+- [[??]] (nullish coalescing): لو اللي على الشمال [[undefined]] أو [[null]] خد اللي على اليمين. من غير header هيبقى [[""]] بدل [[undefined]]، فالسطر الجاي ميقعش.
+
+---
+
+## ٣. [[const [scheme, token] = header.split(" ")]]
+
+[[split(" ")]] بيقطّع النص عند كل مسافة ويرجّع array. والأقواس المربعة على الشمال (destructuring) بتاخد أول عنصرين في متغيرين:
+
+~~~text الناتج
+"Bearer eyJhbGci..."  =>  scheme = "Bearer"   token = "eyJhbGci..."
+""                    =>  scheme = ""         token = undefined
+"Bearer"              =>  scheme = "Bearer"   token = undefined
+~~~
+
+[[Bearer]] معناها «حامل»: اللي معاه التوكن ده يتعامل كصاحبه. ده الاسم المتعارف عليه للنوع ده من التوكنات.
+
+---
+
+## ٤. [[if (scheme !== "Bearer" || !token) throw new AppError(401, "Login required")]]
+
+- [[!==]]: «مش بيساوي بالظبط».
+- [[||]]: «أو». لو الكلمة الأولى مش Bearer **أو** مفيش توكن.
+- [[!token]]: [[true]] لو [[token]] فاضي أو [[undefined]].
+
+من غير header خالص:
+
+~~~bash
+curl -i localhost:5845/api/tasks
+~~~
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 26
+...
+
+{"error":"Login required"}
+~~~
+
+والمقارنة حساسة لحالة الحروف: [[bearer eyJ...]] (b صغيرة) و [[Bearer: eyJ...]] (بنقطتين) الاتنين رجّعوا نفس الـ 401، لأن [[scheme]] بقت [["bearer"]] أو [["Bearer:"]].
+
+---
+
+## ٥. [[try { ... } catch { ... }]]
+
+~~~javascript
+let payload;
+try {
+  payload = verifyAccessToken(token);
+} catch {
+  throw new AppError(401, "Invalid or expired token");
+}
+~~~
+
+- [[let payload]] برّه الـ try، عشان المتغير يفضل موجود بعدها (المتغير اللي بيتعرّف جوه [[{ }]] بيموت لما تقفل).
+- [[verifyAccessToken]] بترمي [[JsonWebTokenError]] أو [[TokenExpiredError]] (شفناهم في الدرس اللي فات).
+- [[catch]] من غير [[(err)]]: مش محتاجين نعرف السبب. كل الأسباب ليها نفس الرد، فالمهاجم ميعرفش التوكن اتكشف ليه.
+
+~~~bash
+curl -i -H "Authorization: Bearer abc" localhost:5845/api/tasks
+~~~
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+...
+{"error":"Invalid or expired token"}
+~~~
+
+---
+
+## ٦. [[req.user = { id: Number(payload.sub), role: payload.role }]]
+
+[[sub]] اتحط في التوكن string ([["7"]])، و [[Number()]] بيرجّعه رقم ([[7]]) عشان يطابق الـ ids في الداتابيز. و [[req]] object عادي، فأي خاصية تحطها عليه بتوصل لكل اللي بعدك في نفس الطلب. وبعدها [[next()]].
+
+---
+
+## ٧. الـ solCode: ركّبه واستخدم [[req.user.id]]
+
+~~~javascript
+app.use("/api/tasks", requireAuth, tasksRouter);
+~~~
+
+[[app.use]] بياخد أكتر من middleware ورا بعض: أي طلب يبدأ بـ [[/api/tasks]] بيعدّي على [[requireAuth]] الأول، وبعدين الـ router. فكل routes المهام محمية بسطر واحد.
+
+بعتّ POST بتوكن يوزر 7، وحطيت في الـ body [[userId: 99]] كأني بحاول أعمل مهمة باسم حد تاني:
+
+~~~bash
+curl -i -X POST localhost:5845/api/tasks -H "Authorization: Bearer $T" -H "Content-Type: application/json" -d '{"title":"x","userId":99}'
+~~~
+
+~~~text الناتج
+HTTP/1.1 201 Created
+...
+{"id":1,"title":"x","userId":7}
+~~~
+
+[[userId]] طلع [[7]] مش [[99]]، لأن الـ controller بيبعت [[req.user.id]] للـ service ([[tasksService.create(req.user.id, req.body)]]) والـ service بتحط الـ userId بنفسها. الـ [[99]] اتجاهل. ([[$T]] متغير bash فيه التوكن.)
+
+---
+
+## ٨. من ويندوز
+
+~~~powershell
+curl.exe -i http://localhost:5845/api/tasks -H "Authorization: Bearer abc"
+Invoke-RestMethod http://localhost:5845/api/tasks -Headers @{ Authorization = "Bearer $T" }
+~~~
+
+- [[curl.exe]] رجّع نفس [[HTTP/1.1 401 Unauthorized]] في PowerShell 7 و 5.1.
+- [[-Headers @{ ... }]]: [[@{ }]] جدول (hashtable) فيه اسم الـ header وقيمته. وبالتوكن الصح رجّع [[user]] فيه [[id 7]] و [[role USER]] في الاتنين.
+- من غير توكن، [[Invoke-RestMethod]] بيرمي خطأ مع أي status 4xx. في 5.1 مسكته بـ [[try { ... } catch { $_.Exception.Response.StatusCode.value__; $_.ErrorDetails.Message }]] وطلع [[401]] و [[{"error":"Login required"}]].
+
+---
+
+## الخلاصة
+
+| الحالة | الرد |
+|---|---|
+| مفيش header، أو مش [[Bearer]] بالظبط | [[401]] [[Login required]] |
+| توكن بايظ أو منتهي أو بسر تاني | [[401]] [[Invalid or expired token]] |
+| توكن سليم | [[req.user = { id, role }]] والطلب يكمّل |
+
+> أي id بتستخدمه في الـ controller جاي من [[req.user]]، مش من [[req.body]] ولا [[req.query]].`,
           lines: [
             "async عشان أي throw يروح لـ error handler في Express 5.",
             "اقرا الـ header، ولو مش موجود خليه نص فاضي.",
@@ -208,6 +602,156 @@ sameSite ليها ٣ قيم: [[strict]] مبتتبعتش خالص مع أي طل
             when: "refresh tokens و session ids، وأي حاجة الـ JavaScript مش محتاج يقراها. وتفضيلات UI (اللغة والثيم) ممكن كوكي عادية أو localStorage.",
             mistakes: R`في مشروع حقيقي كان الـ cookie secret ليه fallback: [[COOKIE_SECRET || "change-me"]] ومعاه warning في اللوج. لو المتغير اتنسي في الإنتاج، أي حد يقدر يوقّع كوكيز. خلي config يقع بدل الـ fallback. و [[secure: true]] على localhost بـ http في متصفح مش بيعتبر localhost آمن، فالكوكي متتحفظش وانت مش فاهم ليه. و [[sameSite: "none"]] من غير [[secure]] فالمتصفح يرفضها. والواجهة بتعمل fetch من غير [[credentials: "include"]] فالكوكي مبتتبعتش أصلًا.`
           },
+          teach: R`## ٣ حاجات: تقرا الكوكيز، وتبعت كوكي، وتمسحها
+
+[[cookie-parser]] بيقرا الكوكيز اللي المتصفح بعتها. و [[res.cookie]] بيضيف للرد header اسمه [[Set-Cookie]] فيه الاسم والقيمة والإعدادات، والمتصفح بيحفظها ويرجّعها لوحده بعد كده. و [[res.clearCookie]] بيبعت نفس الـ header بتاريخ قديم، فالمتصفح يمسحها.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و cookie-parser 1.4.7، سيرفر على بورت 5846 فيه route [[POST /api/auth/login]] بيعمل [[res.cookie("refresh", "abc123", refreshCookieOptions)]]، والطلبات بـ [[curl]] من Git Bash.
+
+---
+
+## ١. [[app.use(cookieParser(config.COOKIE_SECRET))]]
+
+المتصفح بيبعت كل الكوكيز في header واحد نص: [[Cookie: refresh=abc123; theme=dark]]. [[cookieParser]] بيفكّه لـ object في [[req.cookies]]: [[{ refresh: "abc123", theme: "dark" }]].
+
+والسر اللي بتديهوله لنوع تاني اسمه **signed cookies** (تحت في ٦). من غيره [[req.cookies]] بس اللي بتشتغل.
+
+---
+
+## ٢. [[refreshCookieOptions]]: الإعدادات في object واحد
+
+ليه object منفصل؟ لأنك هتبعت نفس الكوكي من أكتر من مكان (login و refresh)، ولازم الإعدادات تبقى واحدة بالظبط، وإلا المتصفح يعتبرهم كوكيز مختلفة.
+
+| الإعداد | القيمة | معناها |
+|---|---|---|
+| [[httpOnly]] | [[true]] | الـ JavaScript في الصفحة ([[document.cookie]]) ميشوفهاش. المتصفح بس اللي بيبعتها |
+| [[secure]] | [[config.NODE_ENV === "production"]] | تتبعت على HTTPS بس. الشرط بيطلع [[true]] في الإنتاج و [[false]] على جهازك (http) |
+| [[sameSite]] | [["lax"]] | متتبعتش مع POST أو fetch جاي من موقع تاني |
+| [[path]] | [["/api/auth"]] | المتصفح يبعتها بس للعناوين اللي بتبدأ بـ [[/api/auth]] |
+| [[maxAge]] | [[30 * 24 * 60 * 60 * 1000]] | العمر بالملّي ثانية: ٣٠ يوم × ٢٤ ساعة × ٦٠ دقيقة × ٦٠ ثانية × ١٠٠٠ = [[2592000000]] |
+
+---
+
+## ٣. [[res.cookie("refresh", token, refreshCookieOptions)]]
+
+~~~bash
+curl -i -X POST localhost:5846/api/auth/login -c jar.txt
+~~~
+
+- [[-i]]: اطبع الـ headers مع الرد.
+- [[-c jar.txt]]: احفظ أي كوكي جاية في ملف (الـ cookie jar)، زي المتصفح.
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Set-Cookie: refresh=abc123; Max-Age=2592000; Path=/api/auth; Expires=Fri, 06 Nov 2026 07:54:10 GMT; HttpOnly; SameSite=Lax
+~~~
+
+نقرا الـ header:
+
+- [[Max-Age=2592000]]: Express حوّل الملّي ثانية لثواني (٣٠ يوم)، لأن الـ header بالثواني.
+- [[Expires=...]]: نفس العمر كتاريخ، للمتصفحات القديمة. الوقت بـ GMT.
+- [[HttpOnly]] و [[SameSite=Lax]] موجودين، و [[Secure]] **مش موجود** لأن [[NODE_ENV]] كان development.
+
+شغّلت نفس السيرفر بـ [[NODE_ENV=production]] على بورت 5847:
+
+~~~text الناتج
+Set-Cookie: refresh=abc123; Max-Age=2592000; Path=/api/auth; Expires=Fri, 06 Nov 2026 07:54:28 GMT; HttpOnly; Secure; SameSite=Lax
+~~~
+
+ظهر [[Secure]].
+
+---
+
+## ٤. الـ path بيعمل إيه فعلًا
+
+بعتّ الـ jar لعنوانين:
+
+~~~bash
+curl localhost:5846/api/auth/whoami -b jar.txt
+curl localhost:5846/api/other -b jar.txt
+~~~
+
+~~~text الناتج
+{"cookies":{"refresh":"abc123"},"signed":{}}
+{"cookies":{}}
+~~~
+
+[[-b jar.txt]] بيبعت الكوكيز اللي في الملف زي المتصفح، و curl احترم الـ [[Path]]: الكوكي راحت لـ [[/api/auth/whoami]] بس، و [[/api/other]] موصلهوش حاجة. فالـ refresh token مش بيتبعت مع كل طلب للـ API.
+
+---
+
+## ٥. [[res.clearCookie("refresh", { path: "/api/auth" })]]
+
+~~~text الناتج: بالـ path
+Set-Cookie: refresh=; Path=/api/auth; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+~~~
+
+~~~text الناتج: res.clearCookie("refresh") من غير path
+Set-Cookie: refresh=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+~~~
+
+المسح = نفس الاسم، قيمة فاضية، وتاريخ انتهاء فات (١ يناير ١٩٧٠). بس المتصفح بيعرف الكوكي بالاسم **و** الـ path **و** الـ domain مع بعض، فـ [[refresh]] على [[/]] غير [[refresh]] على [[/api/auth]]. النسخة اللي من غير path بتمسح كوكي مش موجودة، والأصلية بتفضل.
+
+وجرّبت أبعت [[maxAge: 1000]] لـ [[clearCookie]]: الـ header طلع بنفس [[Expires=Thu, 01 Jan 1970]]. Express 5 بيتجاهل [[maxAge]] و [[expires]] هنا.
+
+---
+
+## ٦. الكوكي الموقّعة: [[signed: true]]
+
+~~~javascript
+res.cookie("theme", "dark", { signed: true, path: "/api/auth" });
+~~~
+
+~~~text الناتج
+Set-Cookie: theme=s%3Adark.9CER6nKq5QVYOjSuM0cnkCXWougiovfbQ%2BsnaZ8gbqg; Path=/api/auth
+~~~
+
+- [[%3A]] هي [[:]] و [[%2B]] هي [[+]] بعد URL encoding. فالقيمة الحقيقية [[s:dark.9CER6n...]]: [[s:]] علامة إنها موقّعة، وبعدها القيمة [[dark]]، وبعد النقطة توقيع HMAC بالسر.
+- القيمة **مقرية** ([[dark]] باينة)، التوقيع بيمنع التعديل بس.
+
+رجّعتها زي ما هي، وبعدين غيّرت [[dark]] لـ [[light]] وسبت التوقيع:
+
+~~~text الناتج
+{"cookies":{},"signed":{"theme":"dark"}}
+{"cookies":{},"signed":{"theme":false}}
+~~~
+
+الموقّعة بتظهر في [[req.signedCookies]] مش [[req.cookies]]، والمعدّلة قيمتها [[false]].
+
+---
+
+## ٧. من ويندوز
+
+~~~powershell
+curl.exe -i -X POST http://localhost:5846/api/auth/login
+$r = Invoke-WebRequest -Method Post http://localhost:5846/api/auth/login -SessionVariable s
+$r.Headers["Set-Cookie"]
+Invoke-RestMethod http://localhost:5846/api/auth/whoami -WebSession $s
+~~~
+
+- [[curl.exe -i]] طبع نفس سطر [[Set-Cookie]].
+- [[-SessionVariable s]]: اعمل «جلسة» اسمها [[$s]] تحفظ الكوكيز (زي [[-c jar.txt]]). و [[-WebSession $s]] في الطلب الجاي تبعتها (زي [[-b]]).
+- في PowerShell 7 و 5.1 (مع [[-UseBasicParsing]] في 5.1) [[whoami]] رجّع [[{"cookies":{"refresh":"abc123"},"signed":{}}]].
+
+---
+
+## ٨. في المتصفح
+
+curl مبيطبقش [[HttpOnly]] لأنه مفيهوش JavaScript. في المتصفح: DevTools ثم Application ثم Cookies هتلاقي علامة في عمود HttpOnly، و [[document.cookie]] في الـ Console مش هيظهر فيه [[refresh]] (ده سلوك المتصفح من الـ docs، و curl مبيوريهوش).
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| [[cookieParser(secret)]] | [[req.cookies]] للعادية و [[req.signedCookies]] للموقّعة |
+| [[res.cookie(name, value, options)]] | بيبعت [[Set-Cookie]]، و [[maxAge]] بالملّي ثانية بيتحول [[Max-Age]] بالثواني |
+| [[httpOnly]] / [[secure]] / [[sameSite]] | JS ميقراهاش / HTTPS بس / مش مع طلبات مواقع تانية |
+| [[path]] | الكوكي بتتبعت للعناوين اللي تحته بس |
+| [[clearCookie]] | لازم نفس الـ path (والـ domain)، وإلا بيمسح كوكي تانية |
+
+> خلي الإعدادات في object واحد واستخدمه في [[res.cookie]] وفي [[clearCookie]] (بالـ path)، فميحصلش اختلاف.`,
           lines: [
             "cookie-parser بيقرا header الـ Cookie.",
             "[[req.cookies]] للعادية، والسر عشان [[req.signedCookies]] (الموقّعة).",
@@ -260,6 +804,178 @@ sameSite ليها ٣ قيم: [[strict]] مبتتبعتش خالص مع أي طل
             when: "أي API بـ JWT لواجهة ويب أو موبايل. في الموبايل الـ refresh بيتخزن في secure storage (Keychain و Keystore) بدل الكوكي.",
             mistakes: R`في مشروع حقيقي كان الـ backend بيحط الـ refresh في كوكي httpOnly (صح)، وكمان بيرجّعه في الـ body، والواجهة بتحفظه في [[localStorage]]. كده الـ httpOnly ملهاش لازمة: أي XSS يقرا localStorage وياخد توكن عمره ٣٠ يوم. ابعته في الكوكي بس. وفي نفس المشروع endpoint الـ refresh كان بيقبل التوكن من الكوكي أو header الـ Authorization أو الـ body: كل مصدر زيادة باب زيادة. ومن غير rotation، refresh مسروق شغال لحد ما ينتهي.`
           },
+          teach: R`## route واحد: كوكي قديمة تدخل، وكوكي جديدة و access جديد يطلعوا
+
+الواجهة بتنادي [[POST /api/auth/refresh]] لما الـ access يخلص. الـ route بيدوّر على الـ refresh اللي في الكوكي في الداتابيز، ولو سليم يلغيه ويطلّع واحد جديد (rotation)، ويرجّع access جديد.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و Prisma 7.10 على Postgres 16 في Docker، سيرفر على بورت 5845 فيه route login بيستخدم [[bcrypt.compare]] ويطلّع الكوكي، ويوزر تجربة [[sara@test.local]] (id 1). الجدول اللي بيتخزن فيه:
+
+~~~text prisma/schema.prisma
+model RefreshToken {
+  id        Int       @id @default(autoincrement())
+  tokenHash String    @unique
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+~~~
+
+- [[tokenHash String @unique]]: بنخزن الـ hash مش التوكن، و [[@unique]] بيعمل index فالبحث بيه سريع ومينفعش يتكرر.
+- [[revokedAt DateTime?]]: [[?]] يعني ممكن يبقى فاضي ([[null]]). فاضي = لسه شغال، وفيه تاريخ = اتلغى إمتى.
+
+و [[issueRefreshToken(userId)]] اللي المثال بيناديها (المثال مش بيعرضها):
+
+~~~javascript
+async function issueRefreshToken(userId) {
+  const token = crypto.randomBytes(32).toString("base64url");
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+  await prisma.refreshToken.create({ data: { tokenHash, userId, expiresAt: new Date(Date.now() + 30 * 24 * 3600 * 1000) } });
+  return token;
+}
+~~~
+
+[[crypto.randomBytes(32)]]: ٣٢ بايت عشوائي آمن (من [[node:crypto]])، و [[toString("base64url")]] بيحولهم نص ٤٣ حرف ينفع في كوكي.
+
+---
+
+## ١. [[router.post("/refresh", async (req, res) => { ... })]]
+
+مفيش [[requireAuth]] هنا، لأن السبب اللي الواجهة جاية عشانه إن الـ access **انتهى**.
+
+## ٢. [[const token = req.cookies.refresh]]
+
+الكوكي اللي اتعملت في الـ login، و [[cookieParser()]] لازم يكون متركّب. لو مش موجودة: [[throw new AppError(401, "No refresh token")]].
+
+~~~bash
+curl -i -X POST localhost:5845/api/auth/refresh
+~~~
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+{"error":"No refresh token"}
+~~~
+
+---
+
+## ٣. [[crypto.createHash("sha256").update(token).digest("hex")]]
+
+تلات خطوات في سلسلة (كل دالة بترجّع object تكمّل عليه):
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[createHash("sha256")]] | ابدأ hash بـ algorithm SHA-256 |
+| [[.update(token)]] | حط فيه التوكن |
+| [[.digest("hex")]] | خلّص ورجّع الناتج نص hex (٦٤ حرف من [[0-9]] و [[a-f]]) |
+
+نفس التوكن دايمًا بيدّي نفس الـ hash (مفيش salt هنا)، وده اللي محتاجينه عشان ندوّر بيه. وليه SHA-256 مش bcrypt؟ لأن التوكن ٣٢ بايت عشوائي، مستحيل يتخمّن، فمش محتاج دالة بطيئة.
+
+---
+
+## ٤. [[prisma.refreshToken.findUnique({ where: { tokenHash }, include: { user: true } })]]
+
+- [[{ tokenHash }]] اختصار [[{ tokenHash: tokenHash }]].
+- [[include: { user: true }]]: هات اليوزر صاحب التوكن في نفس الطلب، فيبقى عندك [[stored.user]] (محتاجينه عشان نعمل access بالدور بتاعه).
+
+## ٥. [[if (!stored || stored.revokedAt || stored.expiresAt < new Date()) throw ...]]
+
+تلات أسباب، أي واحد فيهم = 401 بنفس الرسالة:
+
+1. [[!stored]]: مش موجود في الجدول (توكن مزيف).
+2. [[stored.revokedAt]]: فيه تاريخ، يعني اتلغى.
+3. [[stored.expiresAt < new Date()]]: تاريخ الانتهاء قبل دلوقتي.
+
+---
+
+## ٦. الـ rotation: ٣ سطور
+
+~~~javascript
+await prisma.refreshToken.update({ where: { id: stored.id }, data: { revokedAt: new Date() } });
+const newToken = await issueRefreshToken(stored.user.id);
+res.cookie("refresh", newToken, refreshCookieOptions);
+~~~
+
+الغي القديم، واعمل جديد، وابعته في الكوكي بنفس الإعدادات (درس [[res.cookie]]). وفي الآخر [[res.json({ accessToken: signAccessToken(stored.user) })]].
+
+### التجربة: نفس الكوكي مرتين
+
+عملت login بـ [[-c jar.txt]]، وخدت قيمة الكوكي، ونديت [[/refresh]] بيها مرتين بـ [[-b "refresh=..."]]:
+
+~~~text الناتج: المرة الأولى
+HTTP/1.1 200 OK
+Set-Cookie: refresh=av25E1k4S6sVIw1li7g6dhdcBeC9ptRJFGUtFaxMgjc; Max-Age=2592000; Path=/api/auth; Expires=Fri, 06 Nov 2026 07:56:14 GMT; HttpOnly; SameSite=Lax
+{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIi..."}
+~~~
+
+~~~text الناتج: المرة التانية بنفس الكوكي القديمة
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid refresh token"}
+~~~
+
+وفي الجدول (بـ [[docker exec ... psql]]):
+
+~~~text الناتج
+ id |      hash16      | userId | revoked
+----+------------------+--------+---------
+  1 | 840b5b52a257616d |      1 | t
+  2 | 968ecfa95ecd7976 |      1 | f
+~~~
+
+الصف ١ (القديم) اتلغى، والصف ٢ (الجديد) شغال. والعمود فيه hash مش التوكن نفسه.
+
+> ملاحظة من التجربة: الـ access اللي رجع من الـ refresh كان **نفس** اللي رجع من الـ login حرف بحرف، لأن الاتنين اتعملوا في نفس الثانية فـ [[iat]] و [[exp]] واحد. ده طبيعي: الـ JWT بيتحسب من الـ payload والسر بس.
+
+---
+
+## ٧. الـ solCode: [[/logout-all]]
+
+~~~javascript
+const { count } = await prisma.refreshToken.updateMany({
+  where: { userId: req.user.id, revokedAt: null },
+  data: { revokedAt: new Date() },
+});
+~~~
+
+- عليه [[requireAuth]]: محتاج access سليم عشان نعرف مين.
+- [[updateMany]] بيعدّل كل الصفوف اللي بتطابق، ويرجّع [[{ count }]] (عدد اللي اتعدّل).
+- [[revokedAt: null]]: اللي لسه شغالة بس.
+
+عملت login مرتين زيادة (جهازين)، ونديت [[/logout-all]] بالـ access:
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Set-Cookie: refresh=; Path=/api/auth; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+{"revoked":3}
+~~~
+
+٣ = التوكن اللي فضل من التجربة اللي فاتت + ٢ login. وبعدها [[/refresh]] بكوكي جهاز تاني رجّع [[401]] [[{"error":"Invalid refresh token"}]].
+
+---
+
+## ٨. من ويندوز
+
+~~~powershell
+$r = Invoke-RestMethod -Method Post http://localhost:5845/api/auth/login -ContentType 'application/json' -Body '{"email":"sara@test.local","password":"Test-Pass-1"}' -SessionVariable s
+Invoke-RestMethod -Method Post http://localhost:5845/api/auth/refresh -WebSession $s
+~~~
+
+[[$s]] حفظ الكوكي ([[refresh]] و Path [[/api/auth]] و HttpOnly [[True]])، والـ refresh رجّع [[accessToken]] في PowerShell 7 و 5.1.
+
+---
+
+## الخلاصة
+
+| الخطوة | السطر |
+|---|---|
+| الكوكي موجودة؟ | [[req.cookies.refresh]] وإلا 401 |
+| دوّر بالـ hash | [[sha256]] ثم [[findUnique({ where: { tokenHash } })]] |
+| سليم؟ | موجود ومش ملغي ومش منتهي، وإلا 401 |
+| rotation | الغي القديم ([[revokedAt]]) واعمل جديد في الكوكي |
+| رد | access جديد في الـ body |
+| logout-all | [[updateMany]] على كل اللي [[revokedAt: null]] |
+
+> كل refresh token بيتستخدم مرة واحدة. والـ access tokens اللي طلعت قبل الـ logout بتفضل شغالة لحد [[exp]] (١٥ دقيقة).`,
           lines: [
             "endpoint التجديد. مش عليه requireAuth، لأن الـ access نفسه ممكن يكون انتهى.",
             "الـ refresh جاي في كوكي (محتاج cookie-parser).",
@@ -323,6 +1039,155 @@ app.post("/api/auth/login", async (req, res) => {
             when: "موقع واحد (SSR أو SPA) على نفس الدومين، وخصوصًا لو محتاج logout فوري أو «اطرد اليوزر ده دلوقتي». JWT أنسب للموبايل، وللخدمات اللي بتكلّم بعض، ولأكتر من سيرفر من غير store مشترك.",
             mistakes: R`MemoryStore في الإنتاج: express-session نفسه بيطبع warning، والناس بتتجاهله. و [[saveUninitialized: true]] فكل bot بيعمل session في الـ store. وتنسى [[trust proxy]] ورا Nginx، فالكوكي الـ secure متتبعتش والـ login «مش شغال» على السيرفر بس.`
           },
+          teach: R`## middleware بيدّي كل متصفح «درج» على السيرفر
+
+[[express-session]] بيحط على كل طلب object اسمه [[req.session]]. اللي تكتبه فيه بيتحفظ على السيرفر (في الـ store)، والمتصفح بياخد رقم الدرج بس (الـ session id) في كوكي. الطلب الجاي بنفس الكوكي بيلاقي نفس [[req.session]].
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و express-session 1.19، سيرفر على بورت 5846. و [[authService.checkPassword]] في التجربة دالة صغيرة بترجّع [[{ id: 7 }]] للإيميل والباسورد الصح، وترمي [[AppError(401)]] لأي حاجة تانية. و [[secure]] كان [[false]] (السيرفر http على جهازي)، وجرّبت [[true]] لوحده تحت.
+
+---
+
+## ١. [[app.use(session({ ... }))]]
+
+| الإعداد | معناه |
+|---|---|
+| [[secret]] | السر اللي بيتوقّع بيه الـ id في الكوكي، فمحدش يقدر يألّف id |
+| [[resave: false]] | متحفظش الـ session في الـ store تاني في آخر كل طلب لو متغيرتش |
+| [[saveUninitialized: false]] | متعملش session ولا كوكي لزائر لسه محطّتش له حاجة |
+| [[cookie: { ... }]] | إعدادات الكوكي، نفس كلام درس [[res.cookie]]. و [[7 * 24 * 3600 * 1000]] = ٧ أيام بالملّي ثانية |
+
+أثر [[saveUninitialized: false]] باين على طول: route عادي ([[GET /visit]]) رجّع [[200]] **من غير** أي [[Set-Cookie]].
+
+---
+
+## ٢. route الـ login سطر سطر
+
+### [[const user = await authService.checkPassword(req.body.email, req.body.password)]]
+
+لو الإيميل أو الباسورد غلط بترمي، و Express 5 بيودّي الخطأ للـ error handler:
+
+~~~text الناتج: باسورد غلط
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid email or password"}
+~~~
+
+ومفيش [[Set-Cookie]]، لأننا مكتبناش في الـ session حاجة.
+
+### [[await new Promise((resolve, reject) => req.session.regenerate((err) => (err ? reject(err) : resolve())))]]
+
+السطر الأطول. من جوه لبرة:
+
+1. [[req.session.regenerate(callback)]]: امسح الـ session الحالية واعمل واحدة جديدة بـ id جديد، ولما تخلص نادي الـ callback، ولو حصل خطأ ابعتهولها في [[err]].
+2. [[(err) => (err ? reject(err) : resolve())]]: الـ callback. [[? :]] (ternary) يعني «لو فيه err اعمل reject، وإلا resolve».
+3. [[new Promise((resolve, reject) => ...)]]: بيلف الـ callback ده في Promise.
+4. [[await]]: استنى لحد ما يخلص. ولو حصل reject الخطأ بيترمي هنا، فيوصل للـ error handler بدل ما يضيع جوه callback.
+
+طبعت [[req.sessionID]] قبل وبعد:
+
+~~~text الناتج
+sid before azRjv-_2UguZiDy0JXGcbCzOj1MNZ1dV after LCmX5eXw4fmL4-OivmoLozL-nKNHJssV
+~~~
+
+الـ id اتغيّر. ده اللي بيقفل session fixation: لو حد زرع id في متصفحك قبل الـ login، بعد الـ login بقى ملوش لازمة.
+
+### [[req.session.userId = user.id]]
+
+هنا بس الـ session بقى فيها حاجة، فبتتحفظ في الـ store والكوكي بتتبعت:
+
+~~~bash
+curl -i -X POST localhost:5846/api/auth/login -H "Content-Type: application/json" -d '{"email":"sara@test.local","password":"Test-Pass-1"}' -c sj.txt
+~~~
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Set-Cookie: connect.sid=s%3ALCmX5eXw4fmL4-OivmoLozL-nKNHJssV.VGrjsaiq0xJPXOjkzglh2C6cnzb4%2Fj57gPMBvnSkGVI; Path=/; Expires=Wed, 14 Oct 2026 07:57:32 GMT; HttpOnly; SameSite=Lax
+{"id":7}
+~~~
+
+- [[connect.sid]] الاسم الافتراضي للكوكي (من أيام مكتبة connect القديمة).
+- [[s%3A]] = [[s:]]، وبعدها الـ id ([[LCmX5e...]]، نفس اللي اتطبع بعد regenerate)، وبعد النقطة التوقيع. نفس شكل الـ signed cookie في درس [[res.cookie]].
+- [[7]] مش موجود في الكوكي خالص. هو في ذاكرة السيرفر.
+- [[Expires]] بعد ٧ أيام من وقت التجربة.
+
+---
+
+## ٣. الـ solCode: [[/me]] و [[/logout]]
+
+~~~text الناتج
+curl localhost:5846/api/auth/me -b sj.txt
+{"userId":7}
+~~~
+
+[[/me]] بيقرا [[req.session.userId]]، ولو مش موجود [[return res.status(401).json(...)]]. الـ [[return]] عشان الدالة تقف ومتكمّلش للسطر اللي بعده.
+
+و [[/logout]]:
+
+- [[req.session.destroy(cb)]]: امسح الـ session من الـ store.
+- [[if (err) return next(err)]]: لو فشل، ابعت الخطأ للـ error handler بإيدك (ده callback مش async، فـ Express مش هيمسكه لوحده).
+- [[res.clearCookie("connect.sid")]] و [[res.sendStatus(204)]]: امسح الكوكي، ورد [[204 No Content]] (نجح ومفيش body).
+
+~~~text الناتج
+HTTP/1.1 204 No Content
+Set-Cookie: connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+~~~
+
+وبعدها بعتّ **الكوكي القديمة** (كنت حافظ نسخة منها) لـ [[/me]]:
+
+~~~text الناتج
+HTTP/1.1 401 Unauthorized
+{"error":"Login required"}
+~~~
+
+الكوكي سليمة وموقّعة، بس الدرج اللي بتشاور عليه اتمسح. ده الـ logout الحقيقي اللي JWT ميقدرش يعمله.
+
+---
+
+## ٤. restart السيرفر
+
+عملت login، وقفلت السيرفر وشغّلته، وبعتّ نفس الكوكي: [[401]] [[Login required]]. الـ store الافتراضي ([[MemoryStore]]) في ذاكرة الـ process وراح معاها. وبـ [[NODE_ENV=production]] express-session طبع وهو بيقوم:
+
+~~~text الناتج
+Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+~~~
+
+---
+
+## ٥. [[secure: true]] على http، وورا proxy
+
+| التجربة | [[Set-Cookie]] |
+|---|---|
+| [[secure: true]] وطلب http عادي | **مفيش**، والرد [[200 {"id":7}]] عادي، فالـ login «نجح» ومفيش كوكي |
+| نفس الكلام + header [[X-Forwarded-Proto: https]] | برضه مفيش (Express مش بيصدّق الـ header) |
+| + [[app.set("trust proxy", 1)]] + نفس الـ header | ظهر، وفيه [[Secure]] |
+
+ده بالظبط اللي بيحصل ورا Nginx: Nginx عامل HTTPS ومكلّم Express بـ http، وبيبعت [[X-Forwarded-Proto: https]]. من غير [[trust proxy]]، الكوكي متتبعتش والـ login «مش شغال» على السيرفر بس.
+
+---
+
+## ٦. من ويندوز
+
+~~~powershell
+Invoke-RestMethod -Method Post http://localhost:5846/api/auth/login -ContentType 'application/json' -Body $b -SessionVariable s
+Invoke-RestMethod http://localhost:5846/api/auth/me -WebSession $s
+Invoke-WebRequest -Method Post http://localhost:5846/api/auth/logout -WebSession $s
+~~~
+
+([[$b]] فيه الـ JSON بتاع الإيميل والباسورد.) في PowerShell 7: [[{"userId":7}]]، وبعدين [[204]]، وبعدها [[/me]] رمى خطأ status [[401]].
+
+---
+
+## الخلاصة
+
+| | JWT | session |
+|---|---|---|
+| في الكوكي أو الـ header | البيانات نفسها موقّعة | id عشوائي موقّع بس |
+| البيانات فين | في التوكن | في الـ store على السيرفر |
+| logout | التوكن شغال لحد [[exp]] | [[destroy]] وخلاص |
+| كل طلب | حسبة توقيع | حسبة توقيع + lookup في الـ store |
+
+> [[regenerate]] بعد الـ login، و store حقيقي (Redis) في الإنتاج، و [[trust proxy]] لو ورا Nginx.`,
           lines: [
             "express-session.",
             "ركّبه كـ middleware.",
@@ -397,6 +1262,107 @@ router.delete("/users/:id", requireAuth, requireRole("ADMIN"), users.remove);`,
             when: "أي تطبيق فيه لوحة أدمن أو أنواع يوزرز. ابدأ بسيط (أدوار ثابتة)، وانقل لصلاحيات في الداتابيز لما العميل يطلب يعمل أدوار بنفسه.",
             mistakes: R`تخبي زرار «مسح» في الواجهة وتفتكر كده محمي: الـ endpoint لسه شغال لأي حد بـ curl. وترجّع 401 بدل 403 فالواجهة تعمل logout. وتقارن الدور بـ string مكتوب بإيدك في ٣٠ مكان ([["admin"]] مرة و [["ADMIN"]] مرة): اعمل constants.`
           },
+          teach: R`## دالة بترجّع middleware
+
+[[requireAuth]] بيجاوب «انت مين؟». [[requireRole]] بييجي بعده ويجاوب «دورك مسموحله بده؟». الاتنين في نفس السطر بتاع الـ route، فالحماية باينة وانت بتقرا الـ route.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1، على نفس سيرفر درس [[requireAuth]] (بورت 5845)، بتوكن ADMIN ليوزر 1 وتوكن USER ليوزر 7.
+
+---
+
+## ١. [[export const requireRole = (...roles) => (req, res, next) => { ... }]]
+
+السطر ده فيه سهمين، يعني دالة جوه دالة:
+
+| الحتة | معناها |
+|---|---|
+| [[(...roles) =>]] | الدالة الخارجية. [[...roles]] (rest parameter) بيلم كل الـ arguments في array: [[requireRole("ADMIN", "MANAGER")]] تبقى [[roles = ["ADMIN", "MANAGER"]]] |
+| [[(req, res, next) => { ... }]] | الدالة اللي بترجع: ده الـ middleware الحقيقي اللي Express هيناديه |
+
+ليه كده؟ لأن Express بينادي الـ middleware بـ [[(req, res, next)]] بس، ومفيش مكان نديله فيه الأدوار. فبنعمل «مصنع»: [[requireRole("ADMIN")]] بتتنفذ مرة وانت بتعرّف الـ route، وترجّع middleware فاكر [[roles]] (ده اسمه closure).
+
+---
+
+## ٢. جوه الـ middleware
+
+~~~javascript
+if (!req.user) throw new AppError(401, "Login required");
+if (!roles.includes(req.user.role)) throw new AppError(403, "Forbidden");
+next();
+~~~
+
+- السطر الأول حماية لو حد نسي [[requireAuth]] قبله: [[req.user]] مش موجود، فـ 401. جرّبت route عليه [[requireRole("ADMIN")]] لوحده من غير توكن: [[{"error":"Login required"}]].
+- [[roles.includes(x)]]: [[true]] لو [[x]] جوه الـ array. لو الدور مش فيها: **403**.
+- [[next()]]: مسموح، كمّل.
+
+### 401 ولا 403؟
+
+| | معناها | الواجهة تعمل إيه |
+|---|---|---|
+| 401 Unauthorized | مش عارف انت مين (مفيش توكن أو بايظ) | توديه صفحة login |
+| 403 Forbidden | عارفك، بس مش مسموحلك | تعرض «مش مسموح»، **من غير** logout |
+
+---
+
+## ٣. [[router.delete("/users/:id", requireAuth, requireRole("ADMIN"), users.remove)]]
+
+Express بينفّذهم بالترتيب من الشمال لليمين: requireAuth، وبعدين requireRole، وبعدين الـ handler. جرّبت التلات حالات:
+
+~~~bash
+curl -i -X DELETE localhost:5845/api/users/5 -H "Authorization: Bearer $ADMIN"
+curl -i -X DELETE localhost:5845/api/users/5 -H "Authorization: Bearer $USER_T"
+curl -i -X DELETE localhost:5845/api/users/5
+~~~
+
+~~~text الناتج (السطر الأول والـ body من كل رد)
+HTTP/1.1 200 OK            {"deleted":"5"}
+HTTP/1.1 403 Forbidden     {"error":"Forbidden"}
+HTTP/1.1 401 Unauthorized  {"error":"Login required"}
+~~~
+
+التالت وقف عند [[requireAuth]] ومَوصلش لـ [[requireRole]] أصلًا.
+
+وتوكن اتعمل بـ [[role: "admin"]] (حروف صغيرة) أخد [[403]]: [[includes]] بيقارن بالظبط، و [["admin"]] غير [["ADMIN"]].
+
+---
+
+## ٤. الصلاحيات بدل الأدوار: [[can(perm)]]
+
+~~~javascript
+const PERMISSIONS = {
+  ADMIN: ["tasks:read", "tasks:delete-any", "users:manage"],
+  USER: ["tasks:read"],
+};
+~~~
+
+object مفاتيحه الأدوار، وكل دور قدامه قايمة صلاحيات. الاسم [["users:manage"]] مجرد string، والـ [[:]] جواه اتفاق للتنظيم (الحاجة : العملية)، مش syntax.
+
+~~~javascript
+if (!PERMISSIONS[req.user?.role]?.includes(perm)) throw new AppError(403, "Forbidden");
+~~~
+
+نفكها من جوه لبرة:
+
+1. [[req.user?.role]]: [[?.]] (optional chaining) معناها «لو [[req.user]] موجود هات [[role]]، ولو مش موجود رجّع [[undefined]] من غير ما تقع».
+2. [[PERMISSIONS["USER"]]]: الأقواس المربعة بتجيب المفتاح باسم جوه متغير، فترجع قايمة صلاحيات الدور.
+3. [[?.includes(perm)]]: لو الدور مش في الجدول (القايمة [[undefined]]) رجّع [[undefined]] بدل ما يقع.
+4. [[!]] قدام الكل: لو النتيجة مش [[true]] (يعني [[false]] أو [[undefined]]) ارمي 403.
+
+ركّبت [[can("users:manage")]] على route تاني بنفس الشكل، والنتيجة نفس الجدول بالظبط: 200 للأدمن، و 403 لليوزر، و 401 من غير توكن. الفرق إن إضافة دور جديد ليه [[users:manage]] بقت سطر في [[PERMISSIONS]] بدل ما تلف على كل route.
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[requireRole(...roles)]] | مصنع بيرجّع middleware فاكر الأدوار المسموحة |
+| [[!req.user]] | نسيت requireAuth؟ 401 |
+| [[!roles.includes(role)]] | الدور مش مسموح: 403 |
+| [[can(perm)]] + [[PERMISSIONS]] | نفس الفكرة بالصلاحية بدل الدور |
+| الترتيب في الـ route | auth ثم role ثم handler |
+
+> الدور في الـ JWT بيفضل زي ما هو لحد ما التوكن ينتهي. والصلاحية على **نوع** العملية بس، أما «الحاجة دي بتاعتك؟» فده درس [[ownership (IDOR)]].`,
           lines: [
             "دالة بتاخد الأدوار المسموحة وترجّع middleware.",
             "مفيش يوزر أصلًا (نسيت requireAuth قبله): 401.",
@@ -449,6 +1415,102 @@ if (count === 0) throw new AppError(404, "Task not found");`,
             when: R`كل endpoint بياخد id من العنوان أو الـ body، من غير استثناء: القراية والتعديل والمسح والتحميل ([[/files/:id]]).`,
             mistakes: R`تتحقق في القراية وتنسى في PATCH و DELETE. وتاخد [[userId]] من الـ body بدل [[req.user.id]]. وفي مشروع حقيقي كان socket.io بيقبل [[userId]] من العميل عشان يدخّله غرفة الرسايل بتاعته، فأي حد يقدر يسمع رسايل أي حد (التفاصيل في درس [[socket.io]] في تاب «بناء مشروع كامل»). وتفتكر إن UUID كفاية.`
           },
+          teach: R`## الفرق كله في كلمة واحدة جوه الـ [[where]]
+
+المثال ٣ queries بـ Prisma: واحدة غلط (بتدوّر بالـ id بس)، واتنين صح (الـ id **و** صاحب المهمة في نفس الشرط). اللي بيخلي الصح صح إن السؤال للداتابيز نفسه بقى «هات المهمة دي **لو بتاعتي**».
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Prisma 7.10 على Postgres 16 في Docker، وسيرفر Express على بورت 5845 عليه [[requireAuth]]. يوزرين: سارة (id 1) وعمر (id 2)، وعمر عنده مهمة رقم 2 اسمها [["omar's secret"]]. كل الطلبات بتوكن سارة. وشغّلت الـ client بـ [[log: ["query"]]] فكل query بتطبع الـ SQL بتاعها.
+
+---
+
+## ١. الغلط: [[prisma.task.findUnique({ where: { id } })]]
+
+- [[prisma.task]]: جدول المهام. [[findUnique]]: هات صف واحد بحقل unique (هنا الـ id).
+- [[{ id }]] اختصار [[{ id: id }]]، والـ id جاي من العنوان ([[Number(req.params.id)]]).
+
+حطيته في route تجربة وطلبت مهمة عمر بتوكن سارة:
+
+~~~text الناتج
+HTTP/1.1 200 OK
+{"id":2,"title":"omar's secret","done":false,"createdAt":"2026-10-07T07:59:19.630Z","userId":2}
+~~~
+
+~~~text الـ SQL
+SELECT ... FROM "public"."Task" WHERE ("public"."Task"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+~~~
+
+الشرط فيه الـ id بس ([[1=1]] ده Prisma بيحطه وملوش معنى). ده الـ IDOR: سارة قرت مهمة مش بتاعتها بتغيير رقم.
+
+---
+
+## ٢. الصح: [[findFirst({ where: { id, userId: req.user.id } })]]
+
+- [[findFirst]]: هات أول صف يطابق أي شرط (مش لازم unique).
+- [[userId: req.user.id]]: الـ id من التوكن (درس [[requireAuth]])، مش من الطلب.
+
+~~~text الـ SQL
+SELECT ... WHERE ("public"."Task"."id" = $1 AND "public"."Task"."userId" = $2) LIMIT $3 OFFSET $4
+~~~
+
+الشرطين بقوا في نفس الـ SQL، فالداتابيز رجّعت [[null]]. وجرّبت [[findUnique({ where: { id, userId: req.user.id } })]]: طلّع **نفس الـ SQL** بالظبط ورجّع [[null]]. يعني [[findUnique]] بيقبل حقول زيادة جنب الـ unique (ده من Prisma 5).
+
+## ٣. [[if (!task) throw new AppError(404, "Task not found")]]
+
+[[null]] معناها «مش موجودة» أو «مش بتاعتك»، والرد واحد في الحالتين: **404**. لو رجّعت 403 للتانية، المهاجم يعرف إن الرقم ده موجود.
+
+---
+
+## ٤. التعديل والمسح: [[deleteMany]] و [[count]]
+
+~~~javascript
+const { count } = await prisma.task.deleteMany({ where: { id, userId: req.user.id } });
+if (count === 0) throw new AppError(404, "Task not found");
+~~~
+
+ليه [[deleteMany]] مش [[delete]]؟ [[delete]] و [[update]] بيرموا خطأ لو ملقوش الصف:
+
+~~~text الناتج: prisma.task.update({ where: { id: 99999 }, ... })
+P2025 An operation failed because it depends on one or more records that were required but not found. No record was found for an update.
+~~~
+
+إنما [[deleteMany]] و [[updateMany]] بيرجّعوا [[{ count }]] (عدد الصفوف اللي اتأثرت) ومبيرموش. والـ [[const { count } =]] بياخد الخانة دي من الـ object (destructuring).
+
+~~~text الناتج
+del other: { count: 0 }      DELETE ... WHERE ("id" = $1 AND "userId" = $2)
+upd other: { count: 0 }      UPDATE ... SET "title" = $1 WHERE ("id" = $2 AND "userId" = $3)
+del own:   { count: 1 }
+~~~
+
+مهمة عمر: [[count: 0]] فـ 404 ومحصلش حاجة. مهمة سارة نفسها: [[count: 1]] واتمسحت.
+
+---
+
+## ٥. التجربة من بره بـ curl
+
+~~~bash
+curl -i -X GET    localhost:5845/api/tasks/2 -H "Authorization: Bearer $SARA"
+curl -i -X PATCH  localhost:5845/api/tasks/2 -H "Authorization: Bearer $SARA" -H "Content-Type: application/json" -d '{"title":"hacked"}'
+curl -i -X DELETE localhost:5845/api/tasks/2 -H "Authorization: Bearer $SARA"
+~~~
+
+~~~text الناتج (التلاتة)
+HTTP/1.1 404 Not Found
+{"error":"Task not found"}
+~~~
+
+وبتوكن عمر نفس [[GET]] رجّع [[200]] والعنوان لسه [["omar's secret"]]: محصلوش تعديل.
+
+---
+
+## الخلاصة
+
+| | الشرط | مهمة حد تاني |
+|---|---|---|
+| غلط | [[where: { id }]] | 200 والبيانات |
+| قراية | [[findFirst]] بـ [[{ id, userId: req.user.id }]] | [[null]] ثم 404 |
+| تعديل / مسح | [[updateMany]] / [[deleteMany]] بنفس الشرط | [[count: 0]] ثم 404 |
+
+> أي id جاي من الطلب لازم يمشي ومعاه [[userId: req.user.id]] في نفس الـ [[where]]. والرد 404 مش 403.`,
           lines: [
             "بيدوّر بالـ id بس، فأي id يرجّع أي مهمة.",
             "الـ id ومعاه صاحبها في نفس الـ where. [[findFirst]] شغال، ومن Prisma 5 [[findUnique]] كمان بيقبل [[userId]] جنب الـ id.",
@@ -494,13 +1556,118 @@ app.use(helmet({
             when: "كل تطبيق Express، كأول middleware. ولو بيخدم HTML (SSR أو صفحات ثابتة) اشتغل على CSP بجد.",
             mistakes: R`تشيله كله عشان صورة مش ظاهرة، بدل ما تعدّل [[crossOriginResourcePolicy]] بس. في مشروع حقيقي كان فيه ٣ middlewares يدوي لفولدرات الـ uploads، كل واحد بيحط headers الـ CORS و CORP بإيده بنفس الكود المنسوخ، والأسهل إعداد helmet واحد و [[cors()]] واحد. وتفتكر إن helmet بيحمي من XSS و SQL injection في الكود: هو headers بس، والـ validation والـ escaping لسه شغلك.`
           },
+          teach: R`## سطر واحد بيغيّر الـ headers في كل رد
+
+[[app.use(helmet(...))]] middleware بيشتغل قبل أي route، وبيحط على الرد مجموعة headers بتقول للمتصفح يتصرف بحذر. الكود نفسه بسيط، فالشغل الحقيقي إنك تعرف تقرا الـ headers اللي طلعت.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و helmet 8.3، ٣ نسخ من نفس السيرفر فيها route [[/health]] بيرجّع [[{"ok":true}]]: من غير helmet، و [[helmet()]] الافتراضي، والإعداد اللي في المثال.
+
+---
+
+## ١. الكود
+
+- [[import helmet from "helmet"]]: المكتبة.
+- [[app.use(helmet({ ... }))]]: ركّبه **أول** middleware، عشان الـ headers تتحط على كل رد، حتى ردود الأخطاء.
+- [[crossOriginResourcePolicy: { policy: "cross-origin" }]]: غيّر إعداد واحد بس من الافتراضي، والباقي زي ما هو.
+
+---
+
+## ٢. من غير helmet
+
+~~~bash
+curl -I localhost:5845/health
+~~~
+
+[[-I]] (حرف I كبير): ابعت طلب HEAD، يعني «هات الـ headers بس من غير body».
+
+~~~text الناتج
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 11
+ETag: W/"b-Ai2R8hgEarLmHKwesT1qcY913ys"
+Date: Wed, 07 Oct 2026 08:04:10 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+~~~
+
+[[X-Powered-By: Express]] بيقول لأي حد إن السيرفر Express، معلومة ملهاش لازمة تديها لمهاجم.
+
+---
+
+## ٣. مع المثال
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: cross-origin
+Origin-Agent-Cluster: ?1
+Referrer-Policy: no-referrer
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-DNS-Prefetch-Control: off
+X-Download-Options: noopen
+X-Frame-Options: SAMEORIGIN
+X-Permitted-Cross-Domain-Policies: none
+X-XSS-Protection: 0
+Content-Type: application/json; charset=utf-8
+...
+~~~
+
+[[X-Powered-By]] اختفى، وظهر ١٢ header. ومع [[helmet()]] من غير options الفرق الوحيد كان [[Cross-Origin-Resource-Policy: same-origin]].
+
+### نقرا المهمين
+
+| الـ header | معناه |
+|---|---|
+| [[Content-Security-Policy]] (CSP) | الصفحة تحمّل منين. [[default-src 'self']] = من نفس الموقع بس، و [[script-src 'self']] = مفيش scripts من مواقع تانية ولا inline، و [[frame-ancestors 'self']] = محدش يحطك في iframe. مهم لصفحات HTML، وأقل أهمية لـ JSON |
+| [[Strict-Transport-Security]] (HSTS) | [[max-age=31536000]] ثانية = سنة: المتصفح يفتح الموقع HTTPS بس السنة دي، و [[includeSubDomains]] للـ subdomains كمان. المتصفح بيتجاهله على http عادي |
+| [[X-Content-Type-Options: nosniff]] | متخمّنش نوع الملف، التزم بـ [[Content-Type]] |
+| [[X-Frame-Options: SAMEORIGIN]] | نسخة أقدم من [[frame-ancestors]]: iframe من نفس الموقع بس (ضد clickjacking) |
+| [[Referrer-Policy: no-referrer]] | متبعتش العنوان اللي اليوزر جاي منه لما يدوس لينك لبره |
+| [[Cross-Origin-Resource-Policy]] (CORP) | مواقع تانية تقدر تعرض مواردك (صور، ملفات) ولا لأ |
+| [[Cross-Origin-Opener-Policy]] | نافذة مفتوحة من موقع تاني متقدرش توصل لنافذتك |
+| [[X-XSS-Protection: 0]] | بيقفل فلتر XSS قديم في المتصفحات كان هو نفسه بيعمل ثغرات |
+
+---
+
+## ٤. ليه [[cross-origin]]؟
+
+[[same-origin]] (الافتراضي) معناها: صفحة على origin تاني متعرضش صورة من الـ API ده. والـ origin = البروتوكول والدومين والبورت، فـ [[localhost:5173]] (الواجهة في التطوير) و [[localhost:3000]] (الـ API) origins مختلفة. لو الواجهة بتعرض صور مرفوعة من الـ API، المتصفح هيمنعها، فبتفتح الإعداد ده بس بدل ما تشيل helmet كله.
+
+اللي بيحصل في المتصفح (الصورة مبتظهرش، و Chrome بيكتب [[ERR_BLOCKED_BY_RESPONSE]]) سلوك متصفح من الـ docs، و curl مبيطبقهوش. اللي اتجرّب هنا هو الـ header نفسه: [[same-origin]] في الافتراضي، و [[cross-origin]] مع الإعداد.
+
+---
+
+## ٥. من ويندوز
+
+~~~powershell
+curl.exe -I http://localhost:5847/health
+(Invoke-WebRequest -Method Head http://localhost:5847/health).Headers['X-Frame-Options']
+~~~
+
+[[.Headers['اسم']]] بيجيب header واحد. طلع [[SAMEORIGIN]] في PowerShell 7، و [[Cross-Origin-Resource-Policy]] طلع [[cross-origin]] في 5.1 (مع [[-UseBasicParsing]]).
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| [[app.use(helmet())]] أول middleware | ١٢ header أمان، ومن غير [[X-Powered-By]] |
+| عدّل واحد بس | [[helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } })]] |
+| اقفل واحد | [[helmet({ contentSecurityPolicy: false })]] |
+| افحص | [[curl -I]] قبل وبعد |
+
+> helmet بيغيّر headers بس. مبيحميش من SQL injection ولا XSS في الكود بتاعك.`,
           lines: [
             "helmet.",
             "ركّبه أول middleware.",
             "الافتراضي [[same-origin]] بيمنع مواقع تانية تعرض صور أو ملفات من الـ API. لو الواجهة على دومين تاني وبتعرض صور مرفوعة، خليه cross-origin.",
             "قفلة."
           ],
-          sol: R`قبل helmet: headers قليلة و [[X-Powered-By: Express]]. بعده: [[X-Powered-By]] اختفى، وظهر [[Content-Security-Policy: default-src 'self';...]] و [[Strict-Transport-Security: max-age=31536000; includeSubDomains]] و [[X-Content-Type-Options: nosniff]] و [[X-Frame-Options: SAMEORIGIN]] و [[Referrer-Policy: no-referrer]] و [[Cross-Origin-Opener-Policy: same-origin]] و [[Cross-Origin-Resource-Policy: same-origin]] وغيرهم (حوالي ١٢ header).
+          sol: R`قبل helmet: headers قليلة و [[X-Powered-By: Express]]. بعده: [[X-Powered-By]] اختفى، وظهر [[Content-Security-Policy: default-src 'self';...]] و [[Strict-Transport-Security: max-age=31536000; includeSubDomains]] و [[X-Content-Type-Options: nosniff]] و [[X-Frame-Options: SAMEORIGIN]] و [[Referrer-Policy: no-referrer]] و [[Cross-Origin-Opener-Policy: same-origin]] و [[Cross-Origin-Resource-Policy: same-origin]] وغيرهم (١٢ header في helmet 8).
 
 الصورة: مع الافتراضي [[Cross-Origin-Resource-Policy: same-origin]]، صفحة على [[localhost:5173]] بتطلب صورة من [[localhost:3000]] (بورت مختلف = origin مختلف) والمتصفح بيرفض يعرضها، وفي Network بتشوف [[blocked:NotSameOrigin]] (أو ERR_BLOCKED_BY_RESPONSE في Chrome). مع [[{ policy: "cross-origin" }]] الـ header بيبقى [[cross-origin]] والصورة بتظهر.
 
@@ -539,6 +1706,132 @@ CORS مش حماية للسيرفر: curl و Postman والسيرفرات الت
             when: R`لما الواجهة والـ API على origins مختلفة (حتى لو بورت مختلف على localhost). لو الاتنين تحت نفس الدومين من ورا Nginx ([[/api]])، مش محتاج CORS خالص.`,
             mistakes: R`في مشروع حقيقي كان التحقق من الـ origin يدوي بـ [[origin.includes("myapp.com")]]، فـ [[https://myapp.com.evil.io]] بيعدّي، ومعاه [[Allow-Credentials: true]]، يعني موقع المهاجم يقرا بيانات اليوزر. وفي نفس الكود كان في التطوير بيرجّع [[*]] مع [[credentials: true]]، والمتصفح بيرفض الكومبينيشن ده أصلًا. استخدم array بمطابقة كاملة أو regex مقفول من الأول للآخر زي [[/^https:\/\/([a-z0-9-]+\.)?myapp\.com$/]]. و «CORS error» في الـ Console ساعات بيبقى 500 أو 404 طالع من غير headers، فبص على الـ status في Network الأول (درس «CORS» في تاب «المتصفح»).`
           },
+          teach: R`## الـ middleware بيرد على سؤال واحد: «الـ origin ده مسموح؟»
+
+المتصفح بيبعت مع الطلب header اسمه [[Origin]] فيه الموقع اللي الصفحة جاية منه. [[cors()]] بيقارنه بالقايمة: لو موجود يحط في الرد [[Access-Control-Allow-Origin]] بنفس القيمة، ولو مش موجود ميحطوش، والمتصفح هو اللي يمنع الصفحة تقرا الرد.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و cors 2.8.6، سيرفر على بورت 5848 و [[CORS_ORIGINS]] = [[["https://app.example.com", "https://example.com"]]]. curl مش متصفح، فبنبعت [[Origin]] بإيدنا بـ [[-H]] ونقرا الـ headers اللي رجعت. اللي المتصفح بيعمله بيها (يمنع أو يسمح) من مواصفات CORS.
+
+---
+
+## ١. إعدادات [[cors({ ... })]]
+
+| الإعداد | معناه |
+|---|---|
+| [[origin: config.CORS_ORIGINS]] | array: مطابقة كاملة مع واحد منهم. القيمة من غير [[/]] في الآخر |
+| [[credentials: true]] | يضيف [[Access-Control-Allow-Credentials: true]]، فالمتصفح يسمح بكوكيز مع الطلب ويقرا الرد |
+| [[methods: [...]]] | الـ methods اللي هتتقال في رد الـ preflight |
+| [[maxAge: 600]] | المتصفح يحفظ رد الـ preflight ٦٠٠ ثانية (١٠ دقايق) |
+
+---
+
+## ٢. طلب من origin مسموح
+
+~~~bash
+curl -i localhost:5848/api/tasks -H "Origin: https://example.com"
+~~~
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: https://example.com
+Vary: Origin
+Access-Control-Allow-Credentials: true
+~~~
+
+- [[Access-Control-Allow-Origin]] رجّع نفس الـ origin بالظبط (مش [[*]]، لأن [[credentials]] شغال).
+- [[Vary: Origin]]: بيقول لأي cache في النص إن الرد بيختلف حسب [[Origin]]، فميدّيش رد موقع لموقع تاني.
+
+## ٣. طلب من origin مش في القايمة
+
+~~~bash
+curl -i localhost:5848/api/tasks -H "Origin: https://example.com.evil.io"
+~~~
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Vary: Origin
+Access-Control-Allow-Credentials: true
+
+[{"id":1}]
+~~~
+
+مفيش [[Access-Control-Allow-Origin]]، فالمتصفح هيرفض يدّي الرد للصفحة. بس لاحظ: الرد **رجع** و السيرفر طبع [[GET from https://example.com.evil.io]] في اللوج. الطلب اتنفذ. CORS بيمنع القراية في المتصفح، مش التنفيذ على السيرفر. والـ array بيقارن بالظبط، فـ [[example.com.evil.io]] معدّاش (عكس [[origin.includes("example.com")]] اللي في قسم الأخطاء).
+
+---
+
+## ٤. الـ preflight: [[OPTIONS]]
+
+قبل [[POST]] بـ JSON، المتصفح بيسأل الأول. ده الطلب اللي بيبعته، كتبته بإيدي:
+
+~~~bash
+curl -i -X OPTIONS localhost:5848/api/tasks -H "Origin: https://example.com" -H "Access-Control-Request-Method: POST" -H "Access-Control-Request-Headers: content-type"
+~~~
+
+- [[Access-Control-Request-Method: POST]]: «عايز أبعت POST».
+- [[Access-Control-Request-Headers: content-type]]: «ومعاه الـ header ده».
+
+~~~text الناتج
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://example.com
+Vary: Origin, Access-Control-Request-Headers
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Methods: GET,POST,PATCH,DELETE
+Access-Control-Allow-Headers: content-type
+Access-Control-Max-Age: 600
+Content-Length: 0
+~~~
+
+- [[204]]: تمام ومفيش body. [[app.use(cors())]] رد على الـ OPTIONS لوحده من غير route.
+- [[Allow-Methods]] من [[methods]]، و [[Max-Age: 600]] من [[maxAge]].
+- [[Allow-Headers]]: من غير [[allowedHeaders]]، cors بيرجّع نفس الـ headers اللي اتطلبت. لما طلبت [[content-type,authorization]] رجّع [[content-type,authorization]].
+
+ونفس الـ preflight من [[https://evil.io]] رجّع [[204]] بس **من غير** [[Access-Control-Allow-Origin]]، فالمتصفح مش هيبعت الـ POST الحقيقي خالص.
+
+### ليه POST بـ JSON محتاج preflight و GET لأ؟
+
+الطلبات «البسيطة» (GET، أو POST بـ [[Content-Type]] من نوع فورم عادي) بتتبعت على طول. أي [[Content-Type: application/json]]، أو header زي [[Authorization]]، أو PATCH و DELETE، بيعدّوا على preflight الأول.
+
+---
+
+## ٥. [[fetch(..., { credentials: "include" })]] في الواجهة
+
+من غيره المتصفح مبيبعتش الكوكيز لـ origin تاني أصلًا. ومعاه لازم الرد يبقى فيه origin محدد (مش [[*]]) و [[Allow-Credentials: true]]، وده اللي شفناه في ٢.
+
+---
+
+## ٦. [[app.options("*", cors())]] في Express 5
+
+شغّلت السيرفر بالسطر ده زيادة، ووقع وهو بيقوم:
+
+~~~text الناتج
+PathError [TypeError]: Missing parameter name at index 1: *; visit https://git.new/pathToRegexpError for info
+~~~
+
+Express 5 مبقاش بيقبل [[*]] لوحدها كـ path. ومش محتاجها أصلًا: [[app.use(cors())]] بيرد على الـ preflight.
+
+---
+
+## ٧. من ويندوز
+
+~~~powershell
+curl.exe -i http://localhost:5848/api/tasks -H "Origin: https://example.com"
+(Invoke-WebRequest http://localhost:5848/api/tasks -Headers @{ Origin = "https://example.com" }).Headers['Access-Control-Allow-Origin']
+~~~
+
+نفس الـ headers، و [[Invoke-WebRequest]] رجّع [[https://example.com]] في PowerShell 7 و 5.1 (مع [[-UseBasicParsing]]).
+
+---
+
+## الخلاصة
+
+| الطلب | الرد | المتصفح |
+|---|---|---|
+| origin في القايمة | [[Allow-Origin: <نفسه>]] + [[Allow-Credentials]] | يدّي الرد للصفحة |
+| origin مش في القايمة | من غير [[Allow-Origin]] | الطلب اتنفذ، والصفحة متقراش الرد |
+| preflight مسموح | [[204]] + methods + headers + [[Max-Age]] | يبعت الطلب الحقيقي |
+| preflight مش مسموح | [[204]] من غير [[Allow-Origin]] | الطلب الحقيقي ميتبعتش |
+
+> CORS بيحمي اليوزر من مواقع تانية بتستخدم متصفحه. curl والسيرفرات مبيطبقوهوش، فحماية الـ API نفسه هي الـ auth.`,
           lines: [
             "باكدج cors.",
             "ركّبه قبل الـ routes.",
@@ -601,6 +1894,150 @@ app.use("/api/auth/login", loginLimiter);`,
             when: "كل API عام. والحد الأشد على: login، و register، و forgot password، و OTP، وأي endpoint بيبعت إيميل أو SMS أو بيكلّم AI (بتدفع عليه).",
             mistakes: R`في مشروع حقيقي كان [[ioredis]] و [[rate-limit-redis]] متسطبين، والـ limiter فعليًا بيعد في الذاكرة، ومع أكتر من نسخة كل واحدة بتعد لوحدها. وفي نفس المشروع limiter صفحات الـ CMS كان [[skip]] بتاعه بيعدّي كل GET، فبقى بيحمي الـ POST بس. و [[trust proxy: true]] بدل رقم. ونسيانه خالص ورا Nginx: أول مرة الموقع يتزحم، كل الزوار يتحظروا مع بعض لأنهم «IP واحد».`
           },
+          teach: R`## اتنين limiters: واحد واسع للـ API كله، وواحد ضيق للـ login
+
+كل limiter عداد لكل IP جوه نافذة وقت. الطلب بيزوّد العداد، ولو عدّى الحد الـ limiter بيرد 429 بنفسه ومبيوصّلش الطلب للـ route.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و express-rate-limit 8.7، بالكود ده بالظبط بس [[limit]] بتاع الـ login [[3]] بدل [[10]] (زي الـ try)، و route login بيرجّع 401 لأي باسورد غير [["ok"]]، و route [[/api/ip]] بيرجّع [[req.ip]]. نسختين: على بورت 5845 من غير [[trust proxy]]، وعلى 5846 بيه.
+
+---
+
+## ١. [[import { rateLimit } from "express-rate-limit"]]
+
+الأقواس [[{ }]]: import بالاسم (named import). ده الشكل اللي المكتبة بتنصح بيه في النسخ الجديدة.
+
+## ٢. [[app.set("trust proxy", 1)]]
+
+[[req.ip]] بيتقري من الاتصال نفسه. ورا Nginx، الاتصال جاي من Nginx، والـ IP الحقيقي في header [[X-Forwarded-For]] اللي Nginx بيحطه. [[1]] = «صدّق hop واحد قدامي». تحت في ٦ هنشوف ده بيعمل إيه بالظبط.
+
+---
+
+## ٣. [[apiLimiter]]
+
+~~~javascript
+rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: "draft-8", legacyHeaders: false })
+~~~
+
+| الإعداد | معناه |
+|---|---|
+| [[windowMs]] | النافذة بالملّي ثانية: ١٥ × ٦٠ × ١٠٠٠ = ١٥ دقيقة |
+| [[limit: 300]] | ٣٠٠ طلب لكل IP في النافذة |
+| [[standardHeaders: "draft-8"]] | ابعت headers [[RateLimit]] و [[RateLimit-Policy]] بالشكل الجديد |
+| [[legacyHeaders: false]] | متبعتش [[X-RateLimit-*]] القديمة |
+
+~~~bash
+curl -i localhost:5845/api/ip
+~~~
+
+~~~text الناتج
+HTTP/1.1 200 OK
+RateLimit: "300-in-15min"; r=299; t=900
+RateLimit-Policy: "300-in-15min"; q=300; w=900; pk=:YmIwY2Q1MTM2YWU1:
+{"ip":"::1"}
+~~~
+
+- [["300-in-15min"]] اسم السياسة.
+- [[r=299]] (remaining): فاضل ٢٩٩. و [[t=900]]: العداد يتصفّر بعد ٩٠٠ ثانية.
+- [[q=300]] (quota) الحد، و [[w=900]] (window) النافذة بالثواني، و [[pk]] بصمة مختصرة للـ key (الـ IP) مش الـ IP نفسه.
+- [[::1]] هو localhost بـ IPv6، و curl على ويندوز اتصل بيه.
+
+---
+
+## ٤. [[loginLimiter]]
+
+| الإعداد | معناه |
+|---|---|
+| [[limit: 10]] (٣ في التجربة) | محاولات قليلة |
+| [[skipSuccessfulRequests: true]] | الطلب اللي رده أقل من 400 ميتعدّش، فاليوزر اللي بيدخل صح عمره ما يقرّب من الحد |
+| [[message: { ... }]] | الـ body بتاع رد الـ 429. object، فبيترد JSON |
+
+ومفيهوش [[standardHeaders]]، فبياخد الافتراضي: الـ headers القديمة [[X-RateLimit-*]].
+
+## ٥. [[app.use("/api", apiLimiter)]] و [[app.use("/api/auth/login", loginLimiter)]]
+
+الاتنين قبل الـ routes. وطلب login بيعدّي على الاتنين، لأن [[/api/auth/login]] تحت [[/api]].
+
+### ٥ محاولات غلط ورا بعض
+
+~~~bash
+curl -i -X POST localhost:5845/api/auth/login -H "Content-Type: application/json" -d '{"password":"bad"}'
+~~~
+
+~~~text الناتج (المهم من كل رد)
+401  RateLimit: ...; r=298  X-RateLimit-Limit: 3  X-RateLimit-Remaining: 2  X-RateLimit-Reset: 1791361265
+401  RateLimit: ...; r=297  X-RateLimit-Remaining: 1
+401  RateLimit: ...; r=296  X-RateLimit-Remaining: 0
+429  RateLimit: ...; r=295  X-RateLimit-Remaining: 0  Retry-After: 900  {"error":"Too many login attempts, try again later"}
+429  RateLimit: ...; r=294  ...
+~~~
+
+- [[RateLimit: ...; r=]] بتاع الـ [[apiLimiter]] بينزل مع كل طلب (حتى الـ 429، لأنه اتعد قبلها).
+- [[X-RateLimit-*]] بتاعة الـ [[loginLimiter]]: الحد ٣، والباقي بينزل لصفر. و [[X-RateLimit-Reset]] وقت التصفير بالثواني من ١٩٧٠.
+- الرابعة: [[429 Too Many Requests]] و [[Retry-After: 900]] (استنى ٩٠٠ ثانية) والرسالة بتاعتنا.
+
+وبعدها بعتّ الباسورد الصح: برضه [[429]]. [[skipSuccessfulRequests]] بيمنع العد، بس لو الحد اتملى الـ limiter بيرد قبل ما الـ route يشتغل.
+
+---
+
+## ٦. [[trust proxy]] و [[X-Forwarded-For]]
+
+~~~bash
+curl localhost:5845/api/ip -H "X-Forwarded-For: 1.2.3.4"
+curl localhost:5846/api/ip -H "X-Forwarded-For: 1.2.3.4"
+curl localhost:5846/api/ip -H "X-Forwarded-For: 5.6.7.8"
+~~~
+
+~~~text الناتج
+{"ip":"::1"}
+{"ip":"1.2.3.4"}
+{"ip":"5.6.7.8"}
+~~~
+
+- من غير trust proxy (5845): [[req.ip]] الاتصال الحقيقي، والـ header اتجاهل. والمكتبة طبعت في اللوج (مرة واحدة لكل limiter، مع أول طلب فيه الـ header):
+
+~~~text الناتج
+ValidationError: The 'X-Forwarded-For' header is set but the Express 'trust proxy' setting is false (default). This could indicate a misconfiguration which would prevent express-rate-limit from accurately identifying users. ...
+  code: 'ERR_ERL_UNEXPECTED_X_FORWARDED_FOR',
+~~~
+
+- مع [[trust proxy 1]] (5846) **ومن غير proxy حقيقي**: [[req.ip]] بقى أي حاجة كتبتها. كل طلب بـ IP جديد = عداد جديد = عمره ما ياخد 429.
+
+يعني [[1]] صح بس لما فيه فعلًا proxy واحد قدامك بيكتب الـ header ده بنفسه. السيرفر المكشوف مباشرة يفضل [[false]].
+
+---
+
+## ٧. من ويندوز
+
+~~~powershell
+1..4 | ForEach-Object { curl.exe -s -o NUL -w "%{http_code}" -X POST http://localhost:5846/api/auth/login }
+~~~
+
+- [[1..4]] أرقام من ١ لـ ٤، و [[ForEach-Object { }]] بيشغّل اللي بين القوسين لكل واحد.
+- [[-o NUL]] ارمي الـ body (NUL في ويندوز زي [[/dev/null]])، و [[-w "%{http_code}"]] اطبع الـ status بس.
+
+~~~text الناتج
+401
+401
+401
+429
+~~~
+
+و [[Invoke-RestMethod]] على الـ 429 رمى خطأ، و [[$_.Exception.Response.Headers.RetryAfter.Delta.TotalSeconds]] طلع [[900]] (PowerShell 7).
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| [[windowMs]] + [[limit]] | كام طلب في كام وقت لكل IP |
+| [[standardHeaders: "draft-8"]] | [[RateLimit: "...; r=باقي; t=ثواني"]] |
+| من غيره | [[X-RateLimit-Limit]] / [[-Remaining]] / [[-Reset]] |
+| عدّى الحد | [[429]] + [[Retry-After]] + الـ [[message]] |
+| [[skipSuccessfulRequests]] | الناجح ميتعدّش |
+| [[trust proxy]] | لازم يطابق الحقيقة، وإلا [[X-Forwarded-For]] مزيف يلف على الحد |
+
+> العداد هنا في ذاكرة الـ process: كل نسخة من السيرفر ليها عداد، و restart بيصفّره. لأكتر من نسخة: Redis (درس [[rate-limit-redis]]).`,
           lines: [
             "الـ import بالاسم، الشكل الحديث.",
             "ثق في proxy واحد قدامك (Nginx)، فـ [[req.ip]] يبقى IP الزبون الحقيقي من [[X-Forwarded-For]].",
@@ -614,9 +2051,9 @@ app.use("/api/auth/login", loginLimiter);`,
             "ركّب العام على كل [[/api]].",
             "والأشد على login بس. الاتنين قبل الـ routes."
           ],
-          sol: R`أول ٣ محاولات غلط بيرجّعوا 401 عادي، والرابعة [[429 Too Many Requests]] و [[{"error":"Too many login attempts, try again later"}]]. والـ headers مع [[draft-8]] شكلها: [[RateLimit: "3-in-15min"; r=0; t=900]] (فاضل 0، والعداد يتصفّر بعد 900 ثانية) و [[RateLimit-Policy: "3-in-15min"; q=3; w=900; pk=:...:]] و [[Retry-After: 900]]. ولأن [[skipSuccessfulRequests]] شغال، الـ login الصح مبيتعدّش.
+          sol: R`أول ٣ محاولات غلط بيرجّعوا 401 عادي، والرابعة [[429 Too Many Requests]] و [[{"error":"Too many login attempts, try again later"}]]. والـ headers: [[loginLimiter]] مفيهوش [[standardHeaders]]، فبيبعت الشكل الافتراضي القديم [[X-RateLimit-Limit: 3]] و [[X-RateLimit-Remaining: 0]] و [[X-RateLimit-Reset]] (وقت التصفير بالثواني من ١٩٧٠)، ومع الـ 429 [[Retry-After: 900]]. وفي نفس الرد [[RateLimit: "300-in-15min"; r=295; t=900]] و [[RateLimit-Policy]] بتوع [[apiLimiter]]، لأن login تحت [[/api]] فبيتعد في الاتنين. عايز الشكل الجديد للـ login كمان؟ زوّد [[standardHeaders: "draft-8", legacyHeaders: false]] فيه. ولأن [[skipSuccessfulRequests]] شغال، الـ login الصح مبيتعدّش (بس لو الحد اتملى، حتى الباسورد الصح بياخد 429 لحد ما النافذة تخلص).
 
-[[X-Forwarded-For: 1.2.3.4]] من غير trust proxy: [[req.ip]] فاضل [[127.0.0.1]]، والمكتبة بتطبع تحذير [[ERR_ERL_UNEXPECTED_X_FORWARDED_FOR]]. ومع [[trust proxy]] بـ 1 ومن غير proxy حقيقي: [[req.ip]] بقى [[1.2.3.4]]، يعني أي حد يقدر يغيّر الـ IP بتاعه بـ header، ولو بعت IP مختلف كل مرة عمره ما هياخد 429.
+[[X-Forwarded-For: 1.2.3.4]] من غير trust proxy: [[req.ip]] فاضل [[::1]] (أو [[127.0.0.1]] لو اتصلت بـ IPv4)، والمكتبة بتطبع تحذير [[ERR_ERL_UNEXPECTED_X_FORWARDED_FOR]] (مرة واحدة لكل limiter). ومع [[trust proxy]] بـ 1 ومن غير proxy حقيقي: [[req.ip]] بقى [[1.2.3.4]]، يعني أي حد يقدر يغيّر الـ IP بتاعه بـ header، ولو بعت IP مختلف كل مرة عمره ما هياخد 429.
 
 الخلاصة: [[trust proxy]] لازم يطابق الحقيقة: 1 لو ورا nginx واحد أو load balancer واحد، و false لو السيرفر مكشوف مباشرة. غير كده الـ rate limit كله ملوش لازمة.`
         },
@@ -656,6 +2093,131 @@ Path traversal: اسم ملف جاي من اليوزر زي [[../../.env]]. مت
             when: "validation على كل حاجة داخلة، دايمًا. sanitize للـ HTML بس لما الحقل HTML فعلًا. والـ escape بيحصل تلقائي لو استخدمت الأدوات صح (React و Prisma)، وشغلك إنك متكسرش ده.",
             mistakes: R`تنضّف الـ body كله بـ DOMPurify فتبوّظ الباسوردات والتوكنات (في المشروع الحقيقي كانوا عاملين قايمة استثناءات للحقول الحساسة عشان كده بالظبط). وتعتمد على [[xss-clean]] وهو مش شغال. وتهرّب HTML وقت الحفظ وكمان وقت العرض، فاليوزر يشوف [[&lt;]] على الشاشة بدل [[<]].`
           },
+          teach: R`## ٣ أمثلة صغيرة، كل واحد بيقفل نوع هجوم في مكانه
+
+المثال مش route واحد، ده ٣ حتت: schema لبروفايل فيها حقل HTML بيتنضّف، وبحث بـ Prisma، و query في Mongo. كل حتة بتوري إن الحماية بتحصل في مكان محدد، مش بـ «نضّف كل حاجة».
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و zod 4.6 و isomorphic-dompurify 4.5 و Prisma 7.10 (Postgres 16 في Docker) و Mongoose 9.11 (Mongo 8 في Docker).
+
+---
+
+## ١. [[import DOMPurify from "isomorphic-dompurify"]]
+
+DOMPurify مكتبة بتشيل من HTML أي حاجة ممكن تشغّل JavaScript وتسيب التنسيق. أصلها للمتصفح، و [[isomorphic-dompurify]] نسخة بتشتغل في Node كمان (بتجيب DOM وهمي من [[jsdom]]).
+
+---
+
+## ٢. [[profileSchema]]
+
+~~~javascript
+const profileSchema = z.object({
+  name: z.string().trim().max(80),
+  bioHtml: z.string().max(5000).transform((html) => DOMPurify.sanitize(html)),
+});
+~~~
+
+- [[name]]: نص عادي. [[trim()]] بيشيل المسافات من الأول والآخر، و [[max(80)]] طول. مفيش تنضيف: React هيهرّبه وقت العرض.
+- [[bioHtml]]: الحقل ده HTML فعلًا (جاي من rich text editor). [[.transform(fn)]] بيشغّل الدالة على القيمة بعد ما تعدّي الـ validation، واللي ترجّعه هو اللي [[parse]] بيرجّعه.
+
+بعتّ:
+
+~~~text المدخل
+name:    "  Sara  "
+bioHtml: <p>Hi <b>there</b></p><img src=x onerror=alert(1)><script>alert(2)</script><a href="javascript:alert(3)">x</a> a < b <3
+~~~
+
+~~~text الناتج
+{
+  name: 'Sara',
+  bioHtml: '<p>Hi <b>there</b></p><img src="x"><a>x</a> a &lt; b &lt;3'
+}
+~~~
+
+| الحتة | اللي حصل |
+|---|---|
+| [[  Sara  ]] | اتشالت المسافات |
+| [[<p>]] و [[<b>]] | فضلوا: تنسيق مفيهوش خطر |
+| [[onerror=alert(1)]] | اتشال، والصورة فضلت |
+| [[<script>...</script>]] | اتشال كله |
+| [[href="javascript:..."]] | اتشال، و [[<a>]] فضل من غير لينك |
+| [[a < b <3]] | بقى [[&lt;]]: DOMPurify بيهرّب [[<]] اللي في النص |
+
+السطر الأخير هو ليه متعدّيش DOMPurify على **كل** الحقول: نص عادي زي «a < b» هيتحفظ [[a &lt; b]]، وباسورد فيه [[<]] هيتغيّر. نضّف الحقول اللي هي HTML بس.
+
+---
+
+## ٣. البحث بـ Prisma
+
+~~~javascript
+const search = String(req.query.q ?? "");
+const found = await prisma.task.findMany({ where: { userId: req.user.id, title: { contains: search } } });
+~~~
+
+- [[req.query.q ?? ""]]: لو مش مبعوت خد نص فاضي.
+- [[String(...)]]: [[?q=a&q=b]] بيوصل array [[["a","b"]]]، و [[String]] بيحوّله [["a,b"]]. كده مضمون إنه نص.
+- [[contains: search]]: العنوان فيه النص ده.
+
+جرّبت [[q]] = [[x'; DROP TABLE "Task"; --]]:
+
+~~~text الـ SQL
+... WHERE ("public"."Task"."userId" = $1 AND "public"."Task"."title"::text LIKE ('%' || $2 || '%')) OFFSET $3
+~~~
+
+~~~text الناتج
+0 1000
+~~~
+
+الـ [[$2]] parameter: النص اتبعت كقيمة منفصلة، فـ Postgres دوّر على عنوان فيه الكلام ده حرفيًا، ملقاش (٠)، والجدول لسه فيه ١٠٠٠ صف. مفيش تنضيف محتاج.
+
+---
+
+## ٤. Mongo: [[z.email().parse(req.body.email)]]
+
+[[express.json()]] بيحوّل الـ body لـ object، فاليوزر يقدر يبعت object مكان النص:
+
+~~~bash
+curl -X POST localhost:5849/raw -H "Content-Type: application/json" -d '{"email": {"$ne": null}}'
+~~~
+
+route [[/raw]] بيعمل [[User.findOne({ email: req.body.email })]] على طول:
+
+~~~text الناتج
+{"_id":"6ac5fe0a347edc1a9d38fc80","email":"admin@test.local","name":"Admin","__v":0}
+~~~
+
+[[$ne]] = «not equal»، فالـ query بقت «أول يوزر الإيميل بتاعه مش null»، ورجّع الأدمن (أول واحد اتعمل) من غير ما نعرف إيميله. نفس الطلب من PowerShell 7 بـ [[Invoke-RestMethod -Method Post ... -Body '{"email": {"$ne": null}}']] رجّع [[admin@test.local]].
+
+route [[/safe]] بيعمل [[z.email().parse]] الأول:
+
+~~~text الناتج
+HTTP/1.1 400 Bad Request
+{"error":"Invalid input","issues":{},"formErrors":["Invalid input: expected string, received object"]}
+~~~
+
+[[z.email()]] في zod 4 = نص وشكله إيميل. الـ object اترفض قبل ما يوصل للـ query، وإيميل حقيقي ([["sara@test.local"]]) رجّع سارة عادي. (الخطأ طلع في [[formErrors]] مش [[issues]] لأن الـ schema على القيمة نفسها مش على حقل جوه object.)
+
+### [[sanitizeFilter]]
+
+جرّبت الحل التاني: [[mongoose.set("sanitizeFilter", true)]] ونفس الـ query الخام:
+
+~~~text الناتج
+CastError: Cast to string failed for value "{ '$ne': null }" (type Object) at path "email" for model "User"
+~~~
+
+Mongoose لف الـ object في [[$eq]] (يعني «يساوي الـ object ده بالظبط»)، ولأن [[email]] في الـ schema [[String]] رمى [[CastError]]. يعني الـ query اترفضت، بس كـ 500 لو مش ماسكه. الـ validation بـ zod أوضح لأنها بترجّع 400.
+
+---
+
+## الخلاصة
+
+| الخطر | بيتقفل فين | في المثال |
+|---|---|---|
+| XSS من HTML اليوزر | تنضيف الحقل اللي هو HTML بس | [[transform(DOMPurify.sanitize)]] |
+| XSS من نص عادي | وقت العرض (React بيهرّب) | [[name]] من غير تنضيف |
+| SQL injection | parameters | Prisma: [[$2]] |
+| NoSQL injection | validation إن القيمة string | [[z.email().parse]] |
+
+> اتحقق وانت داخل، وهرّب وانت خارج، ونضّف الـ HTML بس.`,
           lines: [
             "DOMPurify بيشتغل في Node والمتصفح.",
             "schema لبروفايل.",
@@ -713,6 +2275,139 @@ export const update = async (userId, id, data) => {
             when: "أي backend بـ Postgres أو MySQL أو SQLite. البدائل: Drizzle (أقرب لـ SQL وأخف)، و Kysely، أو [[pg]] مباشرة لو عايز SQL صافي.",
             mistakes: R`في مشروع حقيقي كان [[db.js]] عامل singleton صح، بس فيه كمان [[setInterval]] كل دقيقتين يعمل [[SELECT 1]] ويعيد الاتصال بإيده. Prisma بيدير الـ pool لوحده، والكود ده زوّد تعقيد من غير فايدة. وترجّع نتيجة [[prisma.user.findUnique]] كلها في الرد ومعاها الـ hash. و [[await]] جوه loop على ١٠٠٠ عنصر بدل [[createMany]] أو شرط [[in]].`
           },
+          teach: R`## ملف service فيه ٣ دوال، كل واحدة query
+
+المثال [[services/tasks.service.js]]: دوال بتاخد [[userId]] وبيانات عادية، وتكلّم الداتابيز بـ [[prisma]]، وترجّع النتيجة. الـ controller يناديها ويرجّع اللي رجع كـ JSON. والـ solCode هو [[db.js]] اللي بيعمل الـ client.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Prisma 7.10 و [[@prisma/adapter-pg]]، على Postgres 16 في Docker (container باسم [[teach-api02-pg]] على بورت 54872)، وسيرفر Express على 5845 عليه [[requireAuth]] والـ routes بتنادي الـ service دي. الـ schema فيها [[model Task]] بـ [[id]] و [[title]] و [[done]] و [[createdAt]] و [[userId]].
+
+---
+
+## ١. الـ solCode الأول: [[db.js]]
+
+~~~javascript
+import { PrismaClient } from "./generated/prisma/client.js";
+import { PrismaPg } from "@prisma/adapter-pg";
+
+export const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+  log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"],
+});
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[./generated/prisma/client.js]] | الكود اللي [[npx prisma generate]] ولّده من الـ schema، في الفولدر اللي حددته في [[output]] |
+| [[PrismaPg]] | الـ driver adapter: Prisma 7 بيكلّم Postgres من خلال مكتبة [[pg]] |
+| [[connectionString: process.env.DATABASE_URL]] | عنوان الداتابيز من متغير بيئة، زي [[postgresql://user:pass@localhost:54872/app]] |
+| [[log: [...]]] | في التطوير اطبع كل query، وفي غيره الأخطاء بس |
+| [[export const prisma]] | instance واحد، وأي ملف يعمل [[import { prisma } from "./db.js"]] بياخد نفسه |
+
+الكود المتولّد ملفات [[.ts]] مش [[.js]]. فلما شغّلت بـ [[node]] عادي:
+
+~~~text الناتج
+ERR_MODULE_NOT_FOUND Cannot find module '...\generated\prisma\client.js' imported from ...\db.js
+~~~
+
+وبـ [[npx tsx server.js]] اشتغل، لأن tsx بيفهم TypeScript وبيلاقي [[client.ts]] لما تكتب [[client.js]].
+
+---
+
+## ٢. [[list]]
+
+~~~javascript
+export const list = (userId) =>
+  prisma.task.findMany({ where: { userId }, orderBy: { createdAt: "desc" }, select: { id: true, title: true, done: true } });
+~~~
+
+- [[(userId) => ...]] من غير [[{ }]]: الدالة بترجّع اللي بعد السهم على طول (Promise من Prisma).
+- [[findMany]]: هات كل الصفوف اللي تطابق.
+- [[where: { userId }]]: مهام اليوزر ده بس.
+- [[orderBy: { createdAt: "desc" }]]: الأحدث الأول (desc = descending، تنازلي).
+- [[select: { id: true, ... }]]: الحقول دي بس.
+
+~~~text الناتج: GET /api/tasks
+[{"id":4,"title":"learn prisma","done":false}]
+~~~
+
+~~~text الـ SQL في اللوج
+prisma:query SELECT "public"."Task"."id", "public"."Task"."title", "public"."Task"."done" FROM "public"."Task" WHERE "public"."Task"."userId" = $1 ORDER BY "public"."Task"."createdAt" DESC OFFSET $2
+~~~
+
+[[select]] اتحول لأعمدة محددة بدل [[*]]، فـ [[createdAt]] و [[userId]] مطلعوش في الرد. و [[$1]] و [[$2]] **parameters**: القيم بتتبعت منفصلة عن نص الـ SQL، فمهما اليوزر كتب مش هيتنفذ كـ SQL.
+
+---
+
+## ٣. [[create]]
+
+~~~javascript
+export const create = (userId, data) => prisma.task.create({ data: { ...data, userId } });
+~~~
+
+[[...data]] (spread) بينسخ كل الحقول اللي في [[data]]، وبعدها [[userId]]. ولأن [[userId]] جاي **بعد**، لو [[data]] فيها [[userId]] من اليوزر بيتكتب عليه. (وفي الأصل [[data]] جاية من validation فمش هيبقى فيها.)
+
+~~~text الناتج: POST /api/tasks {"title":"learn prisma"}
+HTTP/1.1 201 Created
+{"id":4,"title":"learn prisma","done":false,"createdAt":"2026-10-07T07:59:47.133Z","userId":1}
+~~~
+
+~~~text الـ SQL
+INSERT INTO "public"."Task" ("title","done","createdAt","userId") VALUES ($1,$2,$3,$4) RETURNING "public"."Task"."id", ...
+~~~
+
+[[create]] من غير [[select]] بيرجّع الصف كله، و [[RETURNING]] هو اللي بيجيبه في نفس الـ query. [[done]] و [[createdAt]] من الـ defaults اللي في الـ schema.
+
+---
+
+## ٤. [[update]]
+
+~~~javascript
+export const update = async (userId, id, data) => {
+  const { count } = await prisma.task.updateMany({ where: { id, userId }, data });
+  if (count === 0) throw new AppError(404, "Task not found");
+  return prisma.task.findUnique({ where: { id } });
+};
+~~~
+
+1. [[updateMany]] بالشرطين (درس [[ownership (IDOR)]]) ويرجّع [[{ count }]].
+2. [[count === 0]]: مش موجودة أو مش بتاعتك، فـ 404.
+3. [[updateMany]] مبيرجّعش الصف، فـ [[findUnique]] بيجيب النسخة الجديدة. هنا آمن بالـ id بس، لأننا لسه متأكدين إنها بتاعتك.
+
+~~~text الـ SQL
+UPDATE "public"."Task" SET "title" = $1 WHERE ("public"."Task"."id" = $2 AND "public"."Task"."userId" = $3)
+SELECT ... FROM "public"."Task" WHERE ("public"."Task"."id" = $1 AND 1=1) LIMIT $2 OFFSET $3
+~~~
+
+---
+
+## ٥. البيانات بتفضل بعد الـ restart
+
+قفلت السيرفر وشغّلته تاني، و [[GET /api/tasks]] رجّع [[[{"id":4,"title":"learn prisma 7","done":false}]]]، والمهمة الجديدة اللي بعدها أخدت [[id 5]]: العداد بيكمّل من الداتابيز مش من الصفر.
+
+---
+
+## ٦. الأخطاء ليها [[code]]
+
+عملت يوزر بإيميل موجود:
+
+~~~text الناتج
+Unique constraint failed on the constraint: $__btUser_email_key$__bt
+P2002
+~~~
+
+[[e.code]] بـ [[P2002]] = قيمة unique اتكررت، فحوّلها 409. و [[P2025]] (شفناه في درس الـ IDOR) = الصف مش موجود في update أو delete، فـ 404.
+
+---
+
+## الخلاصة
+
+| الدالة | Prisma | SQL |
+|---|---|---|
+| [[list]] | [[findMany]] + [[where]] + [[orderBy]] + [[select]] | [[SELECT cols ... WHERE ... ORDER BY]] |
+| [[create]] | [[create({ data })]] | [[INSERT ... RETURNING]] |
+| [[update]] | [[updateMany]] بشرط الملكية ثم [[findUnique]] | [[UPDATE ... WHERE id AND userId]] |
+
+> [[new PrismaClient]] في [[db.js]] بس، وكل الملفات تستورده. و [[select]] دايمًا لما ترجّع بيانات يوزر، عشان [[passwordHash]] ميطلعش في الرد.`,
           lines: [
             "الـ client الوحيد من db.js.",
             "مهام يوزر معين...",
@@ -768,6 +2463,151 @@ export const prisma = new PrismaClient({
             when: "أي عملية بتكتب في أكتر من جدول ولازم تفضل متسقة: أوردر، وتحويل رصيد، وكوبون، وتسجيل مع إنشاء بروفايل. وأي «اتأكد وبعدين اكتب» على حاجة ليها حد.",
             mistakes: R`في مشروع حقيقي كان التحقق من حد استخدام الكوبون [[count]] وبعدين [[create]] كخطوتين منفصلتين من غير transaction ولا شرط ذرّي، فطلبين في نفس اللحظة ممكن يعدّوا الحد. وتستخدم [[prisma]] بدل [[tx]] جوه الـ transaction بالغلط، فالـ query دي بره الـ transaction ومبترجعش مع الـ rollback. وتحط fetch لبوابة دفع جوه transaction فتفضل ماسكة اتصال ١٠ ثواني وتقع بـ timeout.`
           },
+          teach: R`## دالة بتلف ٣ queries في transaction واحدة
+
+[[redeemCoupon]] بتجيب الكوبون، وتزوّد عداد استخدامه بشرط إنه لسه مخلصش، وتسجّل إن اليوزر استخدمه. لو أي خطوة رمت خطأ، كل اللي اتعمل قبلها بيرجع.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Prisma 7.10 على Postgres 16 في Docker، والدالة جوه route [[POST /api/coupons/:code/redeem]] على بورت 5846 عليه [[requireAuth]]، و [[log: ["query"]]] شغال. الجدولين:
+
+~~~text prisma/schema.prisma
+model Coupon {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique
+  maxUses     Int
+  usedCount   Int          @default(0)
+  redemptions Redemption[]
+}
+
+model Redemption {
+  id       Int    @id @default(autoincrement())
+  userId   Int
+  couponId Int
+  user     User   @relation(fields: [userId], references: [id])
+  coupon   Coupon @relation(fields: [couponId], references: [id])
+}
+~~~
+
+---
+
+## ١. [[return prisma.$transaction(async (tx) => { ... })]]
+
+- [[$transaction]]: الـ [[$]] في أول الاسم علامة Prisma لدوال الـ client نفسه (مش جدول).
+- بتديله دالة async، و Prisma بيناديها بـ [[tx]]: client زي [[prisma]] بالظبط، بس كل query عليه بتمشي في نفس الـ transaction.
+- لو الدالة خلصت: **COMMIT** (احفظ كله)، واللي رجّعته بيرجع من [[$transaction]]. لو رمت: **ROLLBACK** (الغي كله) والخطأ بيترمي لبرّه.
+- [[return]] قدامها عشان [[redeemCoupon]] ترجّع نتيجة الـ transaction.
+
+---
+
+## ٢. [[const coupon = await tx.coupon.findUnique({ where: { code } })]]
+
+هات الكوبون بالكود، ولو مش موجود [[throw new AppError(404, "Coupon not found")]]:
+
+~~~text الناتج: POST /api/coupons/NOPE/redeem
+HTTP/1.1 404 Not Found
+{"error":"Coupon not found"}
+~~~
+
+---
+
+## ٣. [[updateMany]] بشرط: قلب الدرس
+
+~~~javascript
+const updated = await tx.coupon.updateMany({
+  where: { id: coupon.id, usedCount: { lt: coupon.maxUses } },
+  data: { usedCount: { increment: 1 } },
+});
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[usedCount: { lt: coupon.maxUses }]] | [[lt]] = less than: عدّل بس لو [[usedCount < maxUses]] |
+| [[usedCount: { increment: 1 }]] | زوّد ١ على القيمة **اللي في الداتابيز**، مش على رقم قريناه |
+
+~~~text الـ SQL
+UPDATE "public"."Coupon" SET "usedCount" = ("public"."Coupon"."usedCount" + $1) WHERE ("public"."Coupon"."id" = $2 AND "public"."Coupon"."usedCount" < $3)
+~~~
+
+الشرط والزيادة في جملة SQL واحدة. Postgres بيقفل الصف وهو بيعدّله، فطلب تاني جاي في نفس اللحظة بيستنى، ولما يكمّل بيشوف القيمة الجديدة، والشرط مبقاش متحقق. و [[updateMany]] (مش [[update]]) عشان يرجّع [[{ count }]] بدل ما يرمي لو الشرط فشل.
+
+## ٤. [[if (updated.count === 0) throw new AppError(409, "Coupon fully used")]]
+
+صفر يعني الكوبون خلص. **409 Conflict**: الطلب سليم بس بيتعارض مع حالة البيانات دلوقتي.
+
+## ٥. [[return tx.redemption.create({ data: { userId, couponId: coupon.id } })]]
+
+سجّل الاستخدام. وده آخر سطر، فلو نجح الدالة خلصت والـ transaction تعمل COMMIT.
+
+---
+
+## ٦. التجربة: طلبين في نفس اللحظة (الـ solCode)
+
+~~~bash
+curl -s -X POST localhost:5846/api/coupons/SAVE10/redeem -H "Authorization: Bearer $TOKEN" & curl -s -X POST localhost:5846/api/coupons/SAVE10/redeem -H "Authorization: Bearer $TOKEN"; wait
+~~~
+
+- [[&]] في bash: شغّل الأمر اللي قبلها في الخلفية وكمّل على طول، فالطلبين بيطلعوا مع بعض.
+- [[wait]]: استنى لحد ما اللي في الخلفية يخلص.
+
+~~~text الناتج (كوبون maxUses: 1)
+{"id":1,"userId":1,"couponId":1}{"error":"Coupon fully used"}
+~~~
+
+وفي لوج Prisma:
+
+~~~text الناتج
+prisma:query UPDATE "public"."Coupon" SET "usedCount" = ... WHERE (... AND "public"."Coupon"."usedCount" < $3)
+prisma:query INSERT INTO "public"."Redemption" ("userId","couponId") VALUES ($1,$2) RETURNING ...
+prisma:query COMMIT
+prisma:query UPDATE "public"."Coupon" SET "usedCount" = ... WHERE (... AND "public"."Coupon"."usedCount" < $3)
+prisma:query ROLLBACK
+~~~
+
+الأول عمل COMMIT، والتاني الـ UPDATE بتاعه ملقاش صف ([[count]] صفر)، فرمى 409 وحصل ROLLBACK.
+
+في PowerShell 7 نفس التجربة بـ [[1..2 | ForEach-Object -Parallel { curl.exe -s -X POST http://localhost:5846/api/coupons/PS1/redeem -H "Authorization: Bearer $env:TOKEN" }]] ([[-Parallel]] بيشغّل الاتنين مع بعض، وموجود في 7 بس): واحد رجّع redemption والتاني [[Coupon fully used]].
+
+### النسخة الغلط
+
+نفس الخطوات من غير transaction ولا شرط ذرّي: [[prisma.redemption.count]]، ولو أقل من [[maxUses]] اعمل [[create]] (وحطيت ٥٠ms بينهم عشان السباق يبان كل مرة):
+
+~~~text الناتج
+{"id":2,"userId":1,"couponId":2}{"id":3,"userId":1,"couponId":2}
+~~~
+
+الاتنين نجحوا. الطلبين عملوا [[SELECT COUNT(*)]] وشافوا صفر قبل ما أي واحد يعمل [[INSERT]].
+
+~~~text الناتج: الجدول بعد التجربتين
+  code  | usedCount | redemptions
+--------+-----------+-------------
+ SAVE10 |         1 |           1
+ WRONG1 |         0 |           2
+~~~
+
+---
+
+## ٧. الـ rollback بيرجّع اللي اتعمل فعلًا
+
+بعتّ توكن ليوزر رقم 999 (مش موجود) على كوبون [[maxUses: 5]]. الـ UPDATE نجح، والـ INSERT وقع لأن الـ [[userId]] مش موجود في جدول User:
+
+~~~text الناتج
+Foreign key constraint violated on the constraint: $__btRedemption_userId_fkey$__bt
+prisma:query ROLLBACK
+~~~
+
+والرد 500، و [[usedCount]] في الجدول فضل [[0]]: الزيادة اللي حصلت في الـ UPDATE اترجعت.
+
+---
+
+## الخلاصة
+
+| السطر | الدور |
+|---|---|
+| [[prisma.$transaction(async (tx) => ...)]] | كله أو ولا حاجة: COMMIT لو خلصت، ROLLBACK لو رمت |
+| [[tx]] جوه، مش [[prisma]] | أي query بـ [[prisma]] بتبقى برّه الـ transaction |
+| [[updateMany]] + [[lt]] + [[increment]] | الشرط والكتابة في UPDATE واحد، فطلبين ميعدّوش مع بعض |
+| [[count === 0]] | الشرط فشل: 409 |
+
+> الـ transaction لوحدها مش بتمنع السباق. اللي منعه إن الشرط جوه الـ UPDATE. ومتكلمش API خارجي جوه transaction.`,
           lines: [
             "استخدام كوبون ليه حد أقصى.",
             "كل اللي جوه transaction واحدة، و [[tx]] client مربوط بيها.",
@@ -828,6 +2668,158 @@ const recent = await Task.find().sort({ createdAt: -1 }).limit(50).populate({ pa
             when: "بيانات شكلها بيتغير كتير، أو مستندات متداخلة بتتقري مع بعض، أو مشروع قايم عليه. للبيانات المترابطة (فلوس وأوردرات وصلاحيات)، Postgres غالبًا اختيار أأمن.",
             mistakes: R`[[findOneAndUpdate]] من غير [[runValidators]] فبيانات غلط تتحفظ. و [[find()]] من غير [[limit]] على collection فيها مليون مستند. و [[findById]] جوه loop بدل populate أو [[$in]] (N+1). و transaction بتنسى [[session]] في عملية من عملياتها. وفي مشروع حقيقي كان [[pre("save")]] بيعمل hash للباسورد (صح)، بس الـ model نفسه كان فيه حقل للباسورد نص صريح جنبه (درس [[bcrypt]]).`
           },
+          teach: R`## ٣ خطوات: اتصل، وعرّف الشكل، واسأل
+
+[[mongoose.connect]] مرة واحدة. [[new mongoose.Schema]] بتقول المستند شكله إيه. [[mongoose.model]] بيطلّع منها [[Task]] اللي فيه [[find]] و [[create]]. وبعدين سطرين queries: مهام يوزر، وآخر ٥٠ مهمة ومعاها أصحابها.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Mongoose 9.11، على Mongo 8 في Docker (container باسم [[teach-api02-mongo]] على بورت 27845، و [[MONGO_URL]] = [[mongodb://localhost:27845/teach_api02_mg]])، ومعاه model [[User]] فيه [[name]] و [[email]] و [[passwordHash]] و ٥٠ يوزر تجربة.
+
+---
+
+## ١. [[await mongoose.connect(config.MONGO_URL)]]
+
+بيفتح pool اتصالات. الـ [[await]] قبل أي query وقبل [[app.listen]]، لأن Mongoose بيحوش (buffering) أي query قبل الاتصال ويستنى. جرّبت query من غير connect خالص:
+
+~~~text الناتج
+MongooseError: Operation $__bttasks.find()$__bt buffering timed out after 10000ms
+~~~
+
+استنى ١٠ ثواني وبعدين فشل، بدل ما يقولك على طول.
+
+---
+
+## ٢. [[taskSchema]]
+
+| الحقل | الإعداد | معناه |
+|---|---|---|
+| [[title]] | [[type: String, required: true]] | نص ولازم يبقى موجود |
+| | [[trim: true]] | يشيل المسافات قبل الحفظ |
+| | [[maxlength: 200]] | أقصى طول |
+| [[done]] | [[type: Boolean, default: false]] | لو مش مبعوت يبقى [[false]] |
+| [[userId]] | [[type: mongoose.Schema.Types.ObjectId]] | id مستند تاني (ObjectId: الـ id بتاع Mongo، ٢٤ حرف hex) |
+| | [[ref: "User"]] | المستند ده في model اسمه User، ودا اللي [[populate]] بيستخدمه |
+| | [[index: true]] | اعمل index على الحقل ده |
+
+و [[{ timestamps: true }]] (الـ argument التاني) بيضيف [[createdAt]] و [[updatedAt]] لوحده.
+
+## ٣. [[export const Task = mongoose.model("Task", taskSchema)]]
+
+[[model("Task", ...)]] بيربط الـ schema بـ collection اسمها [[tasks]] (Mongoose بيعمل الاسم صغير وجمع).
+
+~~~text الناتج: Task.create({ title: "  buy milk  ", userId })
+{
+  title: 'buy milk',
+  done: false,
+  userId: new ObjectId('6ac5fe463c3accb1b14687c7'),
+  _id: new ObjectId('6ac5fe463c3accb1b14687f9'),
+  createdAt: 2026-10-07T08:09:42.302Z,
+  updatedAt: 2026-10-07T08:09:42.302Z,
+  __v: 0
+}
+~~~
+
+[[trim]] شال المسافات، و [[done]] من الـ default، و [[_id]] Mongo عمله، و [[createdAt]] و [[updatedAt]] من [[timestamps]]، و [[__v]] رقم نسخة Mongoose بيستخدمه داخليًا.
+
+والـ index اتعمل فعلًا:
+
+~~~text الناتج: Task.collection.indexes()
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { userId: 1 }, name: 'userId_1' }
+]
+~~~
+
+### الـ validation
+
+~~~text الناتج: Task.create({ userId }) من غير title
+ValidationError | Task validation failed: title: Path $__bttitle$__bt is required. | required
+~~~
+
+~~~text الناتج: title طوله 201
+Task validation failed: title: Path $__bttitle$__bt ($__btxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...$__bt, length 201) is longer than the maximum allowed length (200).
+~~~
+
+و [[err.errors.title.kind]] = [[required]]: كل حقل غلط ليه مكان في [[err.errors]].
+
+---
+
+## ٤. [[Task.find({ userId: req.user.id }).sort({ createdAt: -1 }).limit(20).lean()]]
+
+سلسلة، كل دالة بتضيف حاجة على الـ query، ومحدش بيتنفذ لحد الـ [[await]]:
+
+| الحتة | معناها |
+|---|---|
+| [[find({ userId: req.user.id })]] | المستندات اللي [[userId]] بتاعها ده |
+| [[sort({ createdAt: -1 })]] | [[-1]] تنازلي (الأحدث الأول)، و [[1]] تصاعدي |
+| [[limit(20)]] | أول ٢٠ بس |
+| [[lean()]] | رجّع objects عادية |
+
+النتيجة ٢٠ مستند. بس خلي بالك من نوع الـ id: درس [[requireAuth]] بيعمل [[Number(payload.sub)]] لأن Postgres بيستخدم أرقام. في Mongo الـ id ObjectId، ولما جرّبت [[Task.find({ userId: 7 })]]:
+
+~~~text الناتج
+CastError Cast to ObjectId failed for value "7" (type number) at path "userId" for model "Task"
+~~~
+
+فمع Mongo خلي [[req.user.id]] النص زي ما هو ([[payload.sub]]) من غير [[Number]]. ونفس الـ CastError مع [[Task.findById("abc")]].
+
+### [[lean()]] بيفرق قد إيه؟
+
+على ١٠٠٠٠ مستند، مرتين:
+
+~~~text الناتج
+find(): 131.921ms
+find().lean(): 51.637ms
+find(): 118.022ms
+find().lean(): 44.419ms
+~~~
+
+حوالي مرتين ونص أسرع. من غير [[lean]] كل مستند object من نوع [[model]] فيه [[save]] ومتابعة للتغييرات، ومعاه object عادي ([[Object]]) و [[save]] بـ [[undefined]]. لو هترجّعه JSON بس، [[lean]].
+
+---
+
+## ٥. [[populate({ path: "userId", select: "name email" })]]
+
+بعدّ الـ queries بـ [[mongoose.set("debug", fn)]] (الدالة بتتنادى مع كل query):
+
+~~~text الناتج
+loop queries: 51
+populate queries: 2
+~~~
+
+- الـ loop ([[for]] على ٥٠ مهمة وجواه [[await User.findById(t.userId)]]): query للمهام و ٥٠ لليوزرز = ٥١. ده N+1.
+- [[populate]]: ٢ بس. ولما شغّلت [[mongoose.set("debug", true)]] على ٣ مهام، اللوج طبع:
+
+~~~text الناتج
+Mongoose: tasks.find({}, { sort: { createdAt: -1 }, limit: 3 })
+Mongoose: users.find({ _id: { '$in': [ ObjectId("6ac5..d1"), ObjectId("6ac5..d0"), ObjectId("6ac5..cf") ] }}, { projection: { name: 1, email: 1 } })
+~~~
+
+جمع كل الـ ids وجابهم في query واحدة بـ [[$in]] («واحد من دول»)، و [[select]] بقى [[projection]]: [[name]] و [[email]] بس. والنتيجة:
+
+~~~text الناتج: أول مهمة
+userId: {
+  _id: new ObjectId('6ac5fe463c3accb1b14687ea'),
+  name: 'user 35',
+  email: 'u35@test.local'
+}
+~~~
+
+[[userId]] بقى object اليوزر مكان الـ id، ومن غير [[passwordHash]] عشان الـ [[select]].
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| [[await connect]] قبل [[listen]] | وإلا الـ queries تستنى ١٠ ثواني وتفشل |
+| [[Schema]] | النوع و [[required]] و [[trim]] و [[maxlength]] و [[default]] و [[ref]] و [[index]] |
+| [[timestamps: true]] | [[createdAt]] و [[updatedAt]] لوحدهم |
+| [[find().sort().limit().lean()]] | الأحدث، عدد محدود، objects خفيفة |
+| [[populate]] + [[select]] | ٢ queries بدل N+1، والحقول اللي محتاجها بس |
+| الـ id | ObjectId string، مش [[Number]] |
+
+> الـ validation بتشتغل في [[create]] و [[save]]، ومش في [[updateOne]] و [[findOneAndUpdate]] إلا بـ [[runValidators: true]].`,
           lines: [
             "Mongoose.",
             "اتصل مرة واحدة وانت بتقوم، قبل listen.",
@@ -882,6 +2874,137 @@ cursor pagination: بدل «اقفز ٤٠»، «هات ٢٠ بعد العنصر 
             when: "أي قايمة ممكن تعدّي ١٠٠ عنصر. offset للوحات الأدمن والجداول بأرقام صفحات، و cursor للـ feeds والموبايل والجداول الكبيرة.",
             mistakes: R`في مشروع حقيقي الـ schema المشتركة للـ pagination كانت بتسمح بـ [[pageSize]] لحد ١٠٠٠، يعني صفحة واحدة ممكن تبقى تقيلة جدًا. خلي الحد الأقصى صغير. وتعدّي [[req.query.sort]] مباشرة لـ [[orderBy]]. و [[skip: page * limit]] بدل [[(page - 1) * limit]] فالصفحة الأولى تضيع.`
           },
+          teach: R`## جزئين: schema بتنضّف الـ query، و route بيجيب صفحة واحدة
+
+[[ListQuery]] بتاخد [[req.query]] (كله نصوص) وتطلّع أرقام وقيم مسموحة بس، أو ترمي خطأ. والـ route بيستخدم الأرقام دي يجيب ١٠ أو ٢٠ صف بدل كله، ومعاهم العدد الكلي عشان الواجهة ترسم أزرار الصفحات.
+
+اتشغّل على ويندوز 11 بـ Node 24.19 و Express 5.2.1 و zod 4.6 و Prisma 7.10 على Postgres 16 في Docker، سيرفر على بورت 5847 عليه [[requireAuth]] والـ errorHandler بتاع الـ solCode. حطيت ١٠٠٠ مهمة ليوزر واحد بـ SQL: [[task 1]] الأحدث و [[task 1000]] الأقدم، وكل تالت واحدة [[done]].
+
+---
+
+## ١. [[ListQuery]] سطر سطر
+
+كل اللي في الـ query string بيوصل نص: [[?page=3]] يبقى [[req.query.page === "3"]]. عشان كده:
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[z.coerce.number()]] | حوّل النص لرقم ([[Number("3")]])، ولو مش رقم يبقى خطأ |
+| [[.int().min(1)]] | رقم صحيح، ١ أو أكتر |
+| [[.max(100)]] | حجم الصفحة ميعدّيش ١٠٠ مهما اليوزر طلب |
+| [[.default(1)]] / [[.default(20)]] | لو مش مبعوت خالص خد القيمة دي |
+| [[z.enum(["createdAt", "title"])]] | القيمة لازم تبقى واحدة من دول بالظبط |
+| [[z.stringbool().optional()]] | حوّل [["true"]] و [["false"]] (وأخواتهم) لـ boolean حقيقي، و [[optional]] يعني ممكن ميتبعتش |
+
+ليه [[stringbool]] مش [[z.coerce.boolean()]]؟ لأن [[Boolean("false")]] بـ [[true]] (أي نص مش فاضي truthy). جرّبت:
+
+~~~text الناتج
+?done=false&limit=1  =>  total 667   (المهام اللي مش خلصانة)
+?done=yes&limit=1    =>  total 333   ("yes" اتفهمت true)
+?done=maybe          =>  400  "Invalid option: expected one of "true"|"1"|"yes"|"on"|"y"|"enabled"|"false"|"0"|"no"|"off"|"n"|"disabled""
+~~~
+
+---
+
+## ٢. [[const { page, limit, sort, done } = ListQuery.parse(req.query)]]
+
+[[parse]] يا يرجّع object نضيف بالأنواع الصح، يا يرمي [[ZodError]]. والـ [[{ }]] بتاخد الأربع قيم في متغيرات.
+
+## ٣. [[const where = { userId: req.user.id, ...(done !== undefined && { done }) }]]
+
+الحتة الغريبة [[...(cond && { done })]]:
+
+- لو [[done]] اتبعت: [[cond && { done }]] بترجّع [[{ done: false }]] مثلًا، و [[...]] بيفردها جوه [[where]].
+- لو مش مبعوت: بترجّع [[false]]، و [[...false]] جوه object مبيعملش حاجة.
+
+فالنتيجة [[{ userId: 1 }]] أو [[{ userId: 1, done: false }]]. وشرط الملكية موجود دايمًا.
+
+---
+
+## ٤. [[prisma.$transaction([ findMany, count ])]]
+
+الشكل الـ array من [[$transaction]] (درس [[$transaction]] فيه الشكل التاني): queries مستقلة بتتنفذ مع بعض، والنتيجة array بنفس الترتيب، فـ [[const [items, total] =]] بياخدهم.
+
+### [[findMany({ where, orderBy, skip, take })]]
+
+| الحتة | معناها |
+|---|---|
+| [[[{ [sort]: "desc" }, { id: "desc" }]]] | رتّب بالحقل المختار، ولو اتنين متساويين رتّب بالـ id. [[[sort]]] في الأقواس المربعة معناها «اسم المفتاح هو قيمة المتغير» |
+| [[skip: (page - 1) * limit]] | فوّت الصفحات اللي فاتت. صفحة ٣ و limit ١٠ = فوّت ٢٠ |
+| [[take: limit]] | خد ١٠ |
+
+~~~text الـ SQL
+SELECT ... FROM "public"."Task" WHERE "public"."Task"."userId" = $1 ORDER BY "public"."Task"."createdAt" DESC, "public"."Task"."id" DESC LIMIT $2 OFFSET $3
+SELECT COUNT(*) AS "_count$_all" FROM (SELECT "public"."Task"."id" FROM "public"."Task" WHERE "public"."Task"."userId" = $1 OFFSET $2) AS "sub"
+~~~
+
+[[take]] بقى [[LIMIT]] و [[skip]] بقى [[OFFSET]].
+
+## ٥. [[res.json({ items, page, limit, total, pages: Math.ceil(total / limit) })]]
+
+[[Math.ceil]] بيقرّب لفوق: ١٠٠٠ ÷ ٣ = ٣٣٣.٣ فـ [[334]] صفحة (الأخيرة فيها مهمة واحدة).
+
+~~~text الناتج: ?page=3&limit=10 (العناوين بس)
+{"first":"task 21","last":"task 30","page":3,"limit":10,"total":1000,"pages":100}
+~~~
+
+الصفحة التالتة = العناصر من ٢١ لـ ٣٠ بالظبط.
+
+---
+
+## ٦. القيم الممنوعة والـ solCode
+
+من غير فرع [[ZodError]] في الـ errorHandler، [[parse]] بيرمي خطأ مالوش [[status]] فيبقى 500. الـ solCode بيضيف في أوله:
+
+~~~javascript
+if (err instanceof ZodError) {
+  return res.status(400).json({ error: "Invalid input", issues: z.flattenError(err).fieldErrors });
+}
+~~~
+
+- [[instanceof ZodError]]: الخطأ جاي من zod؟
+- [[z.flattenError(err).fieldErrors]]: بيحوّل قايمة الأخطاء لـ object، كل حقل قدامه رسايله.
+
+~~~text الناتج
+?limit=5000      HTTP/1.1 400 Bad Request
+                 {"error":"Invalid input","issues":{"limit":["Too big: expected number to be <=100"]}}
+?sort=password   HTTP/1.1 400 Bad Request
+                 {"error":"Invalid input","issues":{"sort":["Invalid option: expected one of \"createdAt\"|\"title\""]}}
+~~~
+
+---
+
+## ٧. [[sort=title]]: ترتيب نصوص
+
+~~~text الناتج: ?sort=title&limit=3
+task 999, task 998, task 997
+~~~
+
+مش [[task 1000]] الأول، لأن الترتيب هنا حرف بحرف مش بالرقم: [["task 9..."]] أكبر من [["task 1..."]].
+
+---
+
+## ٨. من ويندوز
+
+~~~powershell
+Invoke-RestMethod "http://localhost:5847/api/tasks?page=3&limit=10" -Headers @{ Authorization = "Bearer $T" }
+~~~
+
+العنوان **لازم** بين علامتين تنصيص: [[&]] في PowerShell ليها معنى (في 5.1 «ممنوع هنا»، وفي 7 «شغّل في الخلفية»). في 7 و 5.1 رجّع [[page 3]] و [[limit 10]] و [[total 1000]] و [[pages 100]].
+
+---
+
+## الخلاصة
+
+| | |
+|---|---|
+| [[z.coerce.number()]] | الـ query نص، حوّله رقم |
+| [[.max(100)]] | الحد الأقصى من عندك |
+| [[z.enum]] للترتيب | مش أي عمود اليوزر يكتبه |
+| [[skip: (page - 1) * limit]] و [[take: limit]] | [[OFFSET]] و [[LIMIT]] |
+| [[{ id: "desc" }]] بعد الترتيب | ترتيب ثابت لو فيه تساوي |
+| [[ZodError]] في الـ errorHandler | 400 بدل 500 |
+
+> الصفحة ٩٠ بتطلب [[OFFSET 890]]: الداتابيز بتقرا ٨٩٠ صف وترميهم. للقوايم الطويلة جدًا استخدم cursor ([[where: { id: { lt: lastId } }]]).`,
           lines: [
             "schema للـ query.",
             "رقم الصفحة من ١، والافتراضي ١.",

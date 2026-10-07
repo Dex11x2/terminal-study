@@ -1,4 +1,174 @@
 {
+ "api|$transaction": {
+  "hash": "c345ee4d16af",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 Prisma 7.10 + Postgres 16 (Docker): example + solCode (concurrent curl, pwsh 7 ForEach-Object -Parallel)"
+ },
+ "api|Prisma client": {
+  "hash": "5ca97cb831a9",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 Prisma 7.10 + Postgres 16 (Docker), tsx: example + solCode"
+ },
+ "api|access و refresh": {
+  "hash": "d02355f4a4bc",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 Prisma 7.10 + Postgres 16 (Docker): example + solCode via curl and Invoke-RestMethod"
+ },
+ "api|app.get و app.post": {
+  "hash": "4d9019a2dd05",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 (solCode handlers, PUT 404), Git Bash curl"
+ },
+ "api|async errors في Express 5": {
+  "hash": "79dbaa814bb3",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 + 4.22.3, Git Bash curl; Express 4 crash also node:22-alpine Docker"
+ },
+ "api|backend و API": {
+  "hash": "02a540230411",
+  "date": "2026-10-07",
+  "on": "win11 Git Bash curl + pwsh 7 + powershell 5.1 (curl.exe, Invoke-RestMethod), Node 24.19 Express 5.2.1; docs: DevTools try"
+ },
+ "api|bcrypt": {
+  "hash": "81385854c5d9",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 (bcrypt 6.0.0): example + solCode"
+ },
+ "api|config.js بـ zod": {
+  "hash": "b45adab7992f",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 --env-file, zod 4.6.5"
+ },
+ "api|cors": {
+  "hash": "bd323042ae5b",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 cors 2.8.6: curl with Origin/preflight, curl.exe, Invoke-WebRequest; docs: browser console behaviour"
+ },
+ "api|error middleware": {
+  "hash": "2c213bfe133b",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 (incl. 3-arg handler), Git Bash curl"
+ },
+ "api|express()": {
+  "hash": "abe5a4ff4e47",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 and 4.22.3 (EADDRINUSE both), Git Bash curl"
+ },
+ "api|express-rate-limit": {
+  "hash": "0c27e47f5c43",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 express-rate-limit 8.7.1: example via curl, curl.exe/Invoke-RestMethod (pwsh 7)"
+ },
+ "api|express-session": {
+  "hash": "92029c00bee8",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 express-session 1.19: example + solCode via curl and Invoke-RestMethod (pwsh 7)"
+ },
+ "api|express-validator": {
+  "hash": "26280da973c0",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 express-validator 7.3.2 (example + solCode), Git Bash curl"
+ },
+ "api|express.Router": {
+  "hash": "ba3b5d0e6dd9",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 (example + solCode + both mistakes), Git Bash curl"
+ },
+ "api|express.json()": {
+  "hash": "87240ac32691",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 (ok/no CT/no body/bad/413/strict/form), Git Bash curl"
+ },
+ "api|helmet": {
+  "hash": "1ef748a4451c",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 helmet 8.3: curl -I, Invoke-WebRequest (pwsh 7, powershell 5.1); docs: browser CORP image blocking"
+ },
+ "api|jwt.sign و jwt.verify": {
+  "hash": "7b0a5117703c",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 (jsonwebtoken 9.0.3): example + try one-liners in Git Bash, pwsh 7, powershell 5.1"
+ },
+ "api|method و status و headers": {
+  "hash": "aa18a933390c",
+  "date": "2026-10-07",
+  "on": "win11 Git Bash curl -v/-i vs Express 5.2.1 + api.github.com"
+ },
+ "api|middleware": {
+  "hash": "0ad2f2fc52c0",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1, Git Bash curl + pwsh 7 + powershell 5.1 Invoke-RestMethod"
+ },
+ "api|mongoose": {
+  "hash": "5d94a0e7b1a9",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Mongoose 9.11 + Mongo 8 (Docker): example + try"
+ },
+ "api|node:http": {
+  "hash": "6c2448e08ab9",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 (example + solCode + type=commonjs error), Git Bash curl"
+ },
+ "api|ownership (IDOR)": {
+  "hash": "c9b9345bf510",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 Prisma 7.10 + Postgres 16 (Docker): example via script and curl"
+ },
+ "api|pagination": {
+  "hash": "17d8c4e02bfc",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 zod 4.6 Prisma 7.10 + Postgres 16 (Docker): example + solCode via curl, curl.exe/Invoke-RestMethod (pwsh 7, powershell 5.1)"
+ },
+ "api|req.params": {
+  "hash": "13df5750c8f6",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1, Git Bash curl"
+ },
+ "api|req.query": {
+  "hash": "8fcbe71a6aa5",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 (+ Express 4.22.3), Git Bash curl"
+ },
+ "api|requireAuth": {
+  "hash": "4fa2959e3833",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1: example + solCode via curl, curl.exe/Invoke-RestMethod (pwsh 7, powershell 5.1)"
+ },
+ "api|requireRole": {
+  "hash": "533dcd2a3c08",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1: example via curl"
+ },
+ "api|res.cookie": {
+  "hash": "d8749bf290ce",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 Express 5.2.1 cookie-parser 1.4.7: curl, curl.exe, Invoke-WebRequest (pwsh 7, powershell 5.1); docs: browser HttpOnly/DevTools"
+ },
+ "api|routes / controllers / services": {
+  "hash": "38941471c85c",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 with in-memory fake prisma; docs: real Prisma"
+ },
+ "api|sanitization": {
+  "hash": "dbef2e3fe75a",
+  "date": "2026-10-07",
+  "on": "Windows 11 Node 24.19 zod 4.6 isomorphic-dompurify 4.5 Prisma 7.10 + Postgres 16 (Docker) Mongoose 9.11/Mongo 8 (Docker): example + try"
+ },
+ "api|status codes": {
+  "hash": "9dc3742498cf",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 Git Bash curl; solCode run in Node fetch with absolute URLs"
+ },
+ "api|validate(schema)": {
+  "hash": "efff1a5fd77f",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 zod 4.6.5 (example + solCode), Git Bash curl"
+ },
+ "api|ترتيب الـ middleware": {
+  "hash": "6b57184613f7",
+  "date": "2026-10-07",
+  "on": "win11 Node 24.19 Express 5.2.1 helmet 8.3 cors 2.8 (stub auth/limiter), Git Bash curl"
+ },
  "bash|#!/usr/bin/env bash": {
   "hash": "591d8dbbef8f",
   "date": "2026-10-06",
@@ -3069,6 +3239,21 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4 build/start + curl"
  },
+ "next|BFF": {
+  "hash": "7c71707cbbb0",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 next start + fake Node API + Chrome headless network capture"
+ },
+ "next|DAL": {
+  "hash": "43fb44e9a455",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 next start + curl (forged/expired/alg-none tokens)"
+ },
+ "next|JSON-LD": {
+  "hash": "bb641b87cc2b",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 start + curl + Chrome headless (XSS test); docs: Rich Results Test"
+ },
  "next|Link و useRouter": {
   "hash": "d2ccd08fe6a9",
   "date": "2026-10-07",
@@ -3099,6 +3284,11 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4 build/start + curl timing (sequential vs Promise.all vs allSettled); docs: real db/API"
  },
+ "next|better-auth": {
+  "hash": "a0f648b63ae1",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 + Prisma 7.10 + Postgres 16 (Docker) + curl/psql"
+ },
  "next|children من السيرفر": {
   "hash": "634312f17e65",
   "date": "2026-10-07",
@@ -3114,10 +3304,20 @@
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4 dev + build/start + Chrome + curl (500/404, digest)"
  },
+ "next|generateMetadata": {
+  "hash": "1291254d323e",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 start + curl + Chrome headless; docs: metadata streaming for slow data"
+ },
  "next|generateStaticParams": {
   "hash": "c7bacb0fb7bd",
   "date": "2026-10-07",
   "on": "windows-11 next16.4 build/start + curl"
+ },
+ "next|getSession": {
+  "hash": "6d4e3132bed1",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 + Postgres 16 (Docker) + fetch/psql"
  },
  "next|layout.tsx": {
   "hash": "efa3280d4429",
@@ -3128,6 +3328,16 @@
   "hash": "27492bc08c2a",
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4 build/start + Node stream timing + Chrome"
+ },
+ "next|metadata": {
+  "hash": "c21eb0be48a2",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 build/start + curl"
+ },
+ "next|opengraph-image": {
+  "hash": "048bc18e29e0",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 start + curl (PNG output, og tags, font variants)"
  },
  "next|page.tsx": {
   "hash": "c8e238c6f82c",
@@ -3163,6 +3373,26 @@
   "hash": "46f0b489eb7a",
   "date": "2026-10-07",
   "on": "Windows 11, Next 16.4 build/start + Chrome + curl, server-only build errors, NEXT_PUBLIC_ inlining"
+ },
+ "next|session cookie": {
+  "hash": "0f4fb2b664b2",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 next start + Chrome headless, jose 6.2, bcryptjs 3.0"
+ },
+ "next|signUpEmail و signInEmail": {
+  "hash": "4ab614392265",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 + Postgres 16 (Docker) + Chrome headless"
+ },
+ "next|sitemap.ts و robots.ts": {
+  "hash": "af8c279e3f8c",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 build/start + curl; docs: Search Console"
+ },
+ "next|social login": {
+  "hash": "da4cdcfbea67",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 + Chrome headless (up to provider redirect, state_mismatch); docs: real OAuth callback, account linking, linkSocial"
  },
  "next|static shell و Suspense": {
   "hash": "af91d1ebbb6b",
@@ -3208,6 +3438,11 @@
   "hash": "4564dbb9ef0e",
   "date": "2026-10-07",
   "on": "windows-11 next16.4 + stripe 23.0.0 signing script + curl; docs: Stripe CLI"
+ },
+ "next|أدوار وصلاحيات": {
+  "hash": "9b2fa637e833",
+  "date": "2026-10-07",
+  "on": "Windows 11, Next.js 16.4.0 + better-auth 1.7.7 admin plugin + Postgres 16 (Docker) + Chrome headless + tsx script"
  },
  "next|الكاش من 14 لـ 16": {
   "hash": "e946feba4750",
