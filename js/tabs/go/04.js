@@ -1,1219 +1,669 @@
 // تكملة تاب go: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/go/01.js (شرح حقول الدرس في أوله)
 MORE("go", [
     {
-      t: "التزامن: goroutines و channels و context",
-      l: 2,
-      n: "تشغّل شغل بالتوازي بكلمة go وتستناه، وتبعت داتا بين الـ goroutines بالـ channels و select، وتحمي الداتا المشتركة بـ Mutex، وتلغي الشغل بـ context",
+      t: "البيانات: slices و maps و structs و pointers",
+      l: 1,
+      n: "array و slice وإزاي بيكبروا، والفخ بتاع الذاكرة المشتركة، و map، والـ pointers، و struct و methods، و embedding بدل الوراثة",
       items: [
         {
-          cmd: "الـ Goroutines والتزامن الخارق",
-          title: "goroutine: تشغّل دالة بالتوازي بكلمة go، وتستناها بـ WaitGroup",
-          desc: R`[[go f()]] بتشغّل f في goroutine جديدة وبترجع على طول من غير ما تستنى. الـ goroutine «thread خفيف» بيديره الـ runtime بتاع Go مش نظام التشغيل: بيبدأ بـ stack صغير (حوالي 2KB وبيكبر لو احتاج)، فتقدر تشغّل آلاف أو مئات الآلاف منهم من غير مشكلة. الـ threads العادية في نظام التشغيل أتقل بكتير.
+          cmd: "المصفوفات والـ Slices والـ Maps في Go",
+          title: "array و slice: الفرق بينهم، و len و cap و append",
+          desc: R`[[[3]int]] ده array: حجمه ثابت وجزء من النوع نفسه ([[[3]int]] و [[[4]int]] نوعين مختلفين). ولما تعمل [[b := a]] بيتنسخ كله. عشان كده نادرًا ما هتستخدمه مباشرة.
 
-الـ runtime بيوزّع الـ goroutines على عدد threads قد عدد أنوية المعالج ([[GOMAXPROCS]]). ولما goroutine تستنى شبكة أو ملف أو sleep، الـ scheduler بيشغّل غيرها مكانها.
+[[[]int]] (من غير رقم) ده slice، واللي هتستخدمه في ٩٩٪ من الوقت. الـ slice «شبّاك» على array مستخبي تحت (backing array)، وجوّاه ٣ حاجات: pointer لأول عنصر، و [[len]] (عدد العناصر اللي فيه)، و [[cap]] (المساحة المتاحة في الـ array اللي تحت من أول الشبّاك).
 
-أهم قاعدة: لما main تخلص البرنامج كله بيقفل، حتى لو فيه goroutines لسه شغالة. فلازم تستناهم. أبسط طريقة [[sync.WaitGroup]]:
-• [[wg.Add(1)]] قبل ما تشغّل كل goroutine.
-• [[defer wg.Done()]] جوّاها: «خلصت».
-• [[wg.Wait()]]: استنى لحد ما العدّاد يرجع صفر.
-ومن Go 1.25 فيه اختصار: [[wg.Go(func() { ... })]] بيعمل الـ ٣ دول لوحده.
+بتعمل slice بكذا طريقة:
+• [[[]string{"a", "b"}]]: بقيم. الأقواس [[{ }]] هنا معناها «القيم الأولية»، مش block كود.
+• [[make([]int, 0, 10)]]: فاضية (len 0) بمساحة 10 (cap). لو عارف الحجم تقريبًا ده بيوفّر.
+• [[var s []int]]: nil slice، و len بتاعها 0، و append عليها شغالة عادي.
 
-[[go func() { ... }()]]: دالة من غير اسم بتتشغّل goroutine. الـ [[()]] في الآخر بتناديها.
+[[append(s, x)]] بتضيف في الآخر وبترجّع slice جديدة، فلازم تكتب [[s = append(s, x)]]. لو فيه مساحة (len < cap) بتكتب في نفس الـ array. لو مفيش بتعمل array أكبر (تقريبًا الضعف للصغيرة) وتنسخ القديم فيه.
 
-المثال بيعمل ٣ «طلبات» كل واحد بياخد وقت مختلف. بالتوازي الوقت الكلي = أطول واحد (300ms)، مش مجموعهم (600ms).`,
-          example: R`package main
-
-import (
-  "fmt"
-  "sync"
-  "time"
-)
-
-func fetch(name string, d time.Duration) string {
-  time.Sleep(d)
-  return name + " done"
-}
-
-func main() {
-  start := time.Now()
-  jobs := map[string]time.Duration{
-    "users":  300 * time.Millisecond,
-    "orders": 200 * time.Millisecond,
-    "stock":  100 * time.Millisecond,
-  }
-
-  var wg sync.WaitGroup
-  for name, d := range jobs {
-    wg.Add(1)
-    go func() {
-      defer wg.Done()
-      fmt.Println(fetch(name, d))
-    }()
-  }
-  wg.Wait()
-
-  elapsed := time.Since(start).Round(100 * time.Millisecond)
-  fmt.Println("total:", elapsed)
-}`,
-          try: R`شيل [[wg.Wait()]] وشغّل: هيطبع إيه؟ وبعدين رجّعه، وغيّر الـ loop تستخدم [[wg.Go(func() { ... })]] بدل Add و Done (محتاج Go 1.25). وبعدين شغّل 100,000 goroutine كل واحدة بتعمل sleep ثانية، واطبع الوقت الكلي.`,
-          flag: "script",
-          deep: {
-            why: R`السيرفرات أغلب وقتها مستنية: داتابيز، أو API تاني، أو ملف. الـ goroutines بتخليك تكتب كود عادي من فوق لتحت (مش callbacks ولا async/await) والـ runtime هو اللي بيشغّل غيره وانت مستني. سيرفر net/http بيشغّل كل request في goroutine لوحده عشان كده.`,
-            how: R`[[time.Sleep(d)]] بيوقّف الـ goroutine دي بس مش البرنامج. و [[time.Since(start)]] المدة من start، و [[Round]] بيقرّبها عشان الرقم يبقى نضيف.
-
-ترتيب الطباعة هنا ثابت تقريبًا لأن المدد مختلفة (stock الأول). لكن من غير sleeps مختلفة الترتيب بين الـ goroutines مش مضمون خالص.
-
-الـ closure جوه الـ loop بيستخدم name و d. من Go 1.22 كل لفّة ليها متغيرات جديدة فكل goroutine بتشوف بتاعتها. قبل كده كانوا كلهم ممكن يشوفوا آخر قيمة.
-
-[[wg.Add(1)]] لازم قبل [[go]] مش جوّا الـ goroutine: لو جوّاها ممكن main توصل لـ Wait قبل ما الـ goroutine تلحق تعمل Add، فـ Wait ترجع على طول.
-
-الـ goroutine مبترجّعش قيمة. عشان ترجّع نتيجة استخدم channel (الدرس الجاي) أو اكتب في slice في مكان مختلف لكل goroutine.`,
-            when: R`شغل مستقل ممكن يمشي مع بعض: تنادي ٣ APIs مرة واحدة، أو تعالج صور، أو worker في الخلفية بيبعت إيميلات. مش لكل حاجة: لو الشغل صغير جدًا، تكلفة إنشاء الـ goroutine والتنسيق ممكن تبقى أكبر منه.`,
-            mistakes: R`main تخلص قبل الـ goroutines فالشغل يضيع من غير error. و [[time.Sleep]] كطريقة للاستنا (هشة: الجهاز البطيء هيفشل). و [[wg.Add]] جوّا الـ goroutine. وتبعت WaitGroup لدالة بالقيمة بدل pointer ([[wg *sync.WaitGroup]]) فـ Done بتشتغل على نسخة و Wait تعلّق للأبد (go vet بيمسكها). و goroutine leak: goroutine مستنية حاجة مش هتيجي أبدًا فبتفضل عايشة.`
-          },
-          teach: R`## البرنامج ده بيعمل إيه؟
-
-بيعمل ٣ «طلبات» وهمية، كل واحد بياخد وقت مختلف (300 و 200 و 100 ملي ثانية)، ويشغّلهم **مع بعض** في ٣ goroutines، ويستناهم كلهم، وبعدين يطبع الوقت الكلي. لو اشتغلوا ورا بعض كانوا هياخدوا 600ms، ومع بعض بياخدوا قد أطولهم: 300ms.
-
-كل الناتج اللي تحت حقيقي من [[go run .]] جوه [[docker run --rm golang:1.25]] (Go 1.25.14 على لينكس، جهاز فيه 16 logical processor)، في فولدر فيه [[main.go]] و [[go.mod]] مكتوب فيه [[go 1.25]].
-
----
-
-## ١. الـ imports
-
-~~~go main.go
-import (
-  "fmt"
-  "sync"
-  "time"
-)
-~~~
-
-- [[fmt]]: الطباعة.
-- [[sync]] اختصار synchronization (تزامن): فيه [[WaitGroup]] اللي هنستنى بيه، و [[Mutex]] (درس جاي).
-- [[time]]: المدد والوقت: [[time.Sleep]] و [[time.Now]] و [[time.Millisecond]].
-
----
-
-## ٢. [[fetch]]: طلب بطيء على سبيل التمثيل
-
-~~~go main.go
-func fetch(name string, d time.Duration) string {
-  time.Sleep(d)
-  return name + " done"
-}
-~~~
-
-- [[d time.Duration]]: نوع المدة في Go. هو في الحقيقة رقم صحيح بالـ **nanoseconds**، بس ليه طباعة حلوة ([[300ms]] و [[1.3s]]).
-- [[time.Sleep(d)]]: وقّف **الـ goroutine دي بس** المدة دي. باقي البرنامج شغال عادي. هنا بتمثّل استنا رد داتابيز أو API.
-- [[name + " done"]]: لزق نصين، فـ fetch("users", ...) بترجّع [[users done]].
-
----
-
-## ٣. الشغلانات في map
-
-~~~go main.go
-  start := time.Now()
-  jobs := map[string]time.Duration{
-    "users":  300 * time.Millisecond,
-    "orders": 200 * time.Millisecond,
-    "stock":  100 * time.Millisecond,
-  }
-~~~
-
-- [[start := time.Now()]]: احفظ اللحظة دي عشان نحسب المدة في الآخر.
-- [[map[string]time.Duration]]: map مفتاحه نص (اسم الشغلانة) وقيمته مدة.
-- [[300 * time.Millisecond]]: [[time.Millisecond]] ثابت قيمته مليون nanosecond، فالضرب بيطلّع مدة 300ms. ده الأسلوب العادي في Go لكتابة المدد.
-- الفاصلة بعد آخر عنصر إجبارية لما القفلة [[}]] تكون في سطر لوحدها.
-
-> ترتيب الـ map في الـ range عشوائي في Go. بس هنا مش فارق، لأن ترتيب الطباعة هيحدده مين **يخلص** الأول، مش مين بدأ الأول.
-
----
-
-## ٤. قلب الدرس: [[go]] و [[WaitGroup]]
-
-~~~go main.go
-  var wg sync.WaitGroup
-  for name, d := range jobs {
-    wg.Add(1)
-    go func() {
-      defer wg.Done()
-      fmt.Println(fetch(name, d))
-    }()
-  }
-  wg.Wait()
-~~~
-
-### [[var wg sync.WaitGroup]]
-
-الـ WaitGroup جواه **عدّاد** بيبدأ بصفر. القيمة الصفرية بتاعته جاهزة للاستخدام، فمش محتاج [[New]] ولا [[make]].
-
-### [[for name, d := range jobs]]
-
-لفّة على الـ map: كل لفّة [[name]] = المفتاح و [[d]] = المدة.
-
-### [[wg.Add(1)]]: «فيه goroutine جاية»
-
-بتزوّد العدّاد واحد. ولازم **قبل** [[go]]، في main نفسها: لو حطيتها جوه الـ goroutine، ممكن main توصل لـ [[wg.Wait()]] والعدّاد لسه صفر (الـ goroutine لسه ما اتشغلتش)، فـ Wait ترجع على طول.
-
-### [[go func() { ... }()]]
-
-نفكّها حتة حتة:
-
-- [[func() { ... }]]: دالة **من غير اسم** (function literal)، معمولة في مكانها.
-- [[()]] في الآخر: نادِ الدالة دي. من غيرها تبقى عرّفت دالة ومشغلتهاش (والـ compiler هيرفض).
-- [[go]] قبل النداء: شغّل النداء ده في **goroutine جديدة**، وارجع على طول من غير ما تستنى. يعني الـ loop بتلف ٣ لفّات في أجزاء من الثانية، وبتسيب ٣ goroutines شغالين في الخلفية.
-
-### جوه الـ goroutine
-
-- [[defer wg.Done()]]: [[defer]] معناها «نفّذ ده لما الدالة دي تخلص، مهما حصل». و [[Done()]] بتنقّص العدّاد واحد. فكل goroutine بتقول «خلصت» وهي خارجة.
-- [[fmt.Println(fetch(name, d))]]: اعمل الطلب واطبع نتيجته.
-
-### الدالة شايفة name و d إزاي؟
-
-الدالة اللي من غير اسم دي **closure**: بتشوف متغيرات اللفّة اللي اتعملت فيها. ومن Go 1.22 كل لفّة ليها [[name]] و [[d]] جداد، فكل goroutine ماسكة قيمها هي. (قبل 1.22 كانت كلها ممكن تشوف آخر قيمة. والسلوك ده بيتحدد بسطر [[go]] في [[go.mod]]، ودرس closures في المستوى الأول فيه التجربة.)
-
-### [[wg.Wait()]]
-
-استنى لحد ما العدّاد يرجع صفر. main واقفة هنا، والـ ٣ goroutines شغالين:
-
-~~~text الناتج (الزمن من البداية)
-100ms   stock done
-200ms   orders done
-300ms   users done      العدّاد بقى صفر، و Wait رجعت
-~~~
-
----
-
-## ٥. الوقت الكلي
-
-~~~go main.go
-  elapsed := time.Since(start).Round(100 * time.Millisecond)
-  fmt.Println("total:", elapsed)
-~~~
-
-- [[time.Since(start)]]: المدة من [[start]] لحد دلوقتي، زي [[time.Now().Sub(start)]].
-- [[.Round(100 * time.Millisecond)]]: قرّبها لأقرب 100ms. المدة الحقيقية بتطلع حاجة زي 300.6ms (وقت تشغيل الـ goroutines والطباعة)، والتقريب بيخليها [[300ms]] نضيفة.
-
-~~~text الناتج كله
-stock done
-orders done
-users done
-total: 300ms
-~~~
-
-ليه 300 مش 600؟ لأن الـ ٣ sleeps بيعدّوا **في نفس الوقت**. فالوقت الكلي = أطولهم.
-
----
-
-## ٦. لو شلت [[wg.Wait()]]
-
-مسحت السطر وشغّلت:
-
-~~~text الناتج
-total: 0s
-~~~
-
-بس كده. main ما استنتش، فطبعت الوقت (أقل من 50ms، فالتقريب بيطلّعه 0s) وخلصت. ولما main تخلص **البرنامج كله بيقفل**، والـ ٣ goroutines بيموتوا قبل ما يطبعوا حاجة، من غير أي error ولا تحذير.
-
----
-
-## ٧. الحل: [[wg.Go]] (Go 1.25)
-
-~~~go solCode
-var wg sync.WaitGroup
-for name, d := range jobs {
-  wg.Go(func() {
-    fmt.Println(fetch(name, d))
-  })
-}
-wg.Wait()
-~~~
-
-[[wg.Go(f)]] بتعمل التلاتة لوحدها: [[Add(1)]]، وتشغّل [[f]] في goroutine، وتنادي [[Done()]] لما f تخلص. لاحظ إن مفيش [[()]] بعد الدالة هنا، لأنك بتدّي الدالة نفسها لـ [[wg.Go]] وهي اللي بتشغّلها. الناتج نفسه بالظبط (جرّبته):
-
-~~~text الناتج
-stock done
-orders done
-users done
-total: 300ms
-~~~
-
-> [[wg.Go]] مش موجودة قبل Go 1.25: لو نسختك أقدم هتاخد [[wg.Go undefined]]، وساعتها استخدم Add و Done.
-
----
-
-## ٨. 100,000 goroutine
-
-~~~go solCode
-start := time.Now()
-var wg2 sync.WaitGroup
-for range 100_000 {
-  wg2.Go(func() { time.Sleep(time.Second) })
-}
-wg2.Wait()
-fmt.Println(time.Since(start))
-~~~
-
-- [[for range 100_000]]: لف 100,000 مرة من غير متغير (range على رقم من Go 1.22). و [[_]] جوه الرقم فاصل للقراية بس، زي الفاصلة.
-- كل goroutine بتنام ثانية.
-
-جرّبتها وزوّدت سطرين بيطبعوا [[runtime.GOMAXPROCS(0)]] (عدد الـ threads اللي بتشغّل كود Go في نفس اللحظة) وحجم الذاكرة وهما نايمين ([[runtime.ReadMemStats]]):
-
-~~~text الناتج
-GOMAXPROCS: 16 NumCPU: 16
-goroutines: 100001 StackInuse MB: 196 Sys MB: 268
-1.306465083s
-~~~
-
-نقرا الأرقام:
-
-| الرقم | معناه |
-|---|---|
-| [[GOMAXPROCS: 16]] | الـ runtime بيشغّل الـ goroutines على 16 thread بس، قد عدد الـ logical processors. ومن Go 1.25 لو الـ container محدود بـ CPU أقل، الرقم بينزل له لوحده |
-| [[goroutines: 100001]] | الـ 100,000 والـ main |
-| [[StackInuse MB: 196]] | الـ stacks كلها: 196 ميجا على 100,000 = حوالي **2KB** لكل goroutine |
-| [[Sys MB: 268]] | كل اللي البرنامج خده من نظام التشغيل |
-| [[1.306465083s]] | ثانية النوم + حوالي 0.3 ثانية لإنشاء 100,000 goroutine وجدولتهم |
-
-وده الفرق مع threads نظام التشغيل: الـ thread العادي في لينكس بيحجز stack حجمه ميجات، و 100,000 منهم تقيلين جدًا على أي جهاز.
-
----
-
-## ٩. أشهر غلطة: WaitGroup بالقيمة
-
-لو نقلت شغل الـ goroutine لدالة وبعتلها الـ WaitGroup **بالقيمة**:
-
-~~~go main.go
-func work(id int, wg sync.WaitGroup) {
-  defer wg.Done()
-  fmt.Println("work", id)
-}
-~~~
-
-الدالة بتاخد **نسخة** من الـ WaitGroup، فـ [[Done()]] بتنقّص عدّاد النسخة، وعدّاد main فاضل 1. [[go vet]] بيمسكها قبل ما تشغّل:
-
-~~~text الناتج: go vet .
-./main.go:8:22: work passes lock by value: sync.WaitGroup contains sync.noCopy
-./main.go:16:14: call of work copies lock value: sync.WaitGroup contains sync.noCopy
-~~~
-
-ولو شغّلت برضه:
-
-~~~text الناتج: go run .
-work 1
-fatal error: all goroutines are asleep - deadlock!
-
-goroutine 1 [sync.WaitGroup.Wait]:
-~~~
-
-main مستنية في Wait للأبد، ومفيش goroutine تانية عايشة، فالـ runtime بيوقف البرنامج. الحل: [[wg *sync.WaitGroup]] (pointer) وتنادي [[work(1, &wg)]]، أو أسهل: [[wg.Go]] من غير ما تبعته خالص.
-
----
-
-## الخلاصة
-
-| الحتة | بتعمل إيه |
-|---|---|
-| [[go f()]] | شغّل f في goroutine جديدة وارجع على طول |
-| [[go func() { ... }()]] | نفس الكلام لدالة من غير اسم، و [[()]] بتناديها |
-| [[var wg sync.WaitGroup]] | عدّاد بيبدأ بصفر |
-| [[wg.Add(1)]] | زوّد العدّاد، قبل [[go]] |
-| [[defer wg.Done()]] | نقّصه لما الـ goroutine تخلص |
-| [[wg.Wait()]] | استنى لحد ما يبقى صفر |
-| [[wg.Go(f)]] | التلاتة مرة واحدة (Go 1.25) |
-
-- main لما تخلص البرنامج كله بيقفل، فاستنى الـ goroutines دايمًا.
-- الوقت الكلي للشغل المتوازي = أطول واحد، مش المجموع.
-- الـ WaitGroup والـ Mutex مينفعش يتنسخوا: ابعتهم بـ pointer، و [[go vet]] بيمسكها.`,
-          lines: [
-            "باكدج main.",
-            "imports.",
-            "fmt.",
-            R`[[sync]]: WaitGroup و Mutex.`,
-            "time.",
-            "قفلة.",
-            "دالة بتمثّل طلب بطيء.",
-            "استنى المدة (الـ goroutine دي بس).",
-            "رجّع النتيجة.",
-            "قفلة.",
-            "main.",
-            "وقت البداية.",
-            "٣ شغلانات بمدد مختلفة.",
-            "300ms.",
-            "200ms.",
-            "100ms.",
-            "قفلة.",
-            R`WaitGroup بالقيمة الصفرية: جاهز.`,
-            "لف.",
-            "سجّل goroutine جاية، قبل go.",
-            R`شغّل دالة من غير اسم في goroutine: السطر ده بيرجع على طول.`,
-            "لما تخلص قول Done مهما حصل.",
-            "اعمل الشغل واطبع.",
-            R`قفلة الدالة، و [[()]] بتناديها.`,
-            "قفلة الـ loop.",
-            "استنى لحد ما كلهم يخلصوا.",
-            "المدة الكلية مقرّبة.",
-            "300ms مش 600ms.",
-            "قفلة."
-          ],
-          sol: R`الناتج:
-[[stock done]]
-[[orders done]]
-[[users done]]
-[[total: 300ms]]
-
-من غير [[wg.Wait()]]: بيطبع [[total: 0s]] بس، والـ goroutines بتتقفل مع البرنامج قبل ما تطبع.
-
-بـ [[wg.Go]] (الكود تحت) نفس الناتج بسطور أقل. و 100,000 goroutine بـ sleep ثانية بيخلصوا في حوالي ثانية وشوية (1.3s في تجربتي)، والذاكرة بتزيد كام مية ميجا بالكتير، لأن كل goroutine بتبدأ بـ stack صغير. نفس العدد من threads نظام التشغيل كان هيبقى أتقل بكتير.`,
-          solCode: R`var wg sync.WaitGroup
-for name, d := range jobs {
-  wg.Go(func() {
-    fmt.Println(fetch(name, d))
-  })
-}
-wg.Wait()
-
-start := time.Now()
-var wg2 sync.WaitGroup
-for range 100_000 {
-  wg2.Go(func() { time.Sleep(time.Second) })
-}
-wg2.Wait()
-fmt.Println(time.Since(start))`
-        },
-        {
-          cmd: "القنوات Channels والتواصل بين الـ Goroutines",
-          title: "channel: أنبوبة بتبعت داتا بين goroutines بأمان، و close و range",
-          desc: R`الـ channel أنبوبة ليها نوع: [[ch := make(chan int)]] بتنقل ints. والسهم [[<-]] بيوضّح اتجاه الداتا:
-• [[ch <- 5]]: ابعت 5 في الـ channel.
-• [[v := <-ch]]: استقبل قيمة من الـ channel.
-
-نوعين:
-• unbuffered ([[make(chan int)]]): الإرسال بيستنى لحد ما حد يستقبل، والاستقبال بيستنى لحد ما حد يبعت. يعني الاتنين بيتقابلوا في نفس اللحظة، وده بيزامن الـ goroutines.
-• buffered ([[make(chan string, 2)]]): فيها مكان لـ 2. الإرسال مش بيستنى غير لما تتملي.
-
-[[close(ch)]]: «مفيش حاجة تانية جاية». بعدها:
-• [[for v := range ch]] بتاخد كل اللي فاضل وتخرج لوحدها.
-• [[v, ok := <-ch]]: ok بـ false لما الـ channel مقفولة وفاضية، و v بالقيمة الصفرية.
-• الإرسال على channel مقفولة بيعمل panic. عشان كده اللي بيقفل هو اللي بيبعت.
-
-اتجاه في النوع: [[chan<- int]] «للإرسال بس»، و [[<-chan int]] «للاستقبال بس». بتحطهم في parameters الدوال عشان الـ compiler يمنع الغلط.
-
-الشعار المشهور في Go: «Don't communicate by sharing memory; share memory by communicating». بدل ما كذا goroutine يعدّلوا متغير واحد بأقفال، ابعت الداتا في channel وواحد بس يملكها في كل لحظة.`,
+القص: [[s[1:3]]] من العنصر 1 لحد قبل 3. و [[s[:2]]] من الأول، و [[s[3:]]] لحد الآخر.`,
           example: R`package main
 
 import "fmt"
 
-func produce(n int, out chan<- int) {
-  for i := 1; i <= n; i++ {
-    out <- i
-  }
-  close(out)
-}
-
-func square(in <-chan int, out chan<- int) {
-  for v := range in {
-    out <- v * v
-  }
-  close(out)
-}
-
 func main() {
-  nums := make(chan int)
-  squares := make(chan int)
-  go produce(4, nums)
-  go square(nums, squares)
-  for s := range squares {
-    fmt.Print(s, " ")
-  }
-  fmt.Println()
+  // array: الحجم جزء من النوع، والتعيين بينسخ كله
+  arr := [3]int{10, 20, 30}
+  copyArr := arr
+  copyArr[0] = 99
+  fmt.Println(arr, copyArr, len(arr))
 
-  buf := make(chan string, 2)
-  buf <- "a"
-  buf <- "b"
-  fmt.Println(len(buf), cap(buf))
-  close(buf)
-  fmt.Println(<-buf, <-buf)
-  v, ok := <-buf
-  fmt.Printf("%q %v\n", v, ok)
+  var s []int
+  fmt.Println(s == nil, len(s), cap(s))
+  for i := range 5 {
+    s = append(s, i*10)
+    fmt.Println(len(s), cap(s))
+  }
+  fmt.Println(s, s[1:3], s[:2], s[3:])
+
+  names := make([]string, 0, 10)
+  names = append(names, "Ali", "Sara")
+  fmt.Println(names, len(names), cap(names))
 }`,
-          try: R`شيل [[close(out)]] من square وشغّل واقرا الرسالة. وبعدين اكتب في main [[ch := make(chan int)]] ثم [[ch <- 1]] على طول (من غير goroutine تستقبل). وبعدين ضيف مرحلة تالتة للـ pipeline: [[sum(in <-chan int) int]] بتجمع المربعات.`,
+          try: R`اعمل slice بـ [[make([]int, 3)]] (من غير cap) واعمل append لـ 1 عليها، واطبعها. هتلاقي إيه في أولها؟ وبعدين جرّب [[s[5]]] على slice طولها 3 واقرا رسالة الـ panic.`,
           flag: "script",
           deep: {
-            why: R`الـ channels بتحل مشكلتين مع بعض: نقل الداتا بين goroutines، والتزامن (مين يستنى مين). الـ pipeline في المثال (produce ثم square ثم main) بيشتغل كل مرحلة بالتوازي مع التانية، وكل قيمة بتعدّي من مرحلة للي بعدها من غير أي lock.`,
-            how: R`main و produce و square شغالين مع بعض. produce بتبعت 1 وتستنى لحد ما square تاخده (unbuffered). square بتربّعه وتبعته وتستنى main. main بتطبعه. وهكذا.
+            why: R`الـ slice هي أكتر نوع بيانات هتستخدمه في Go: نتايج query، وقايمة طلبات، وأسطر ملف. ولو مش فاهم len و cap و append هتقع في أخطاء غريبة: عناصر بتتغيّر لوحدها، أو أصفار في أول القايمة.`,
+            how: R`الـ slice header نفسه (pointer و len و cap) حجمه صغير (24 بايت)، وده اللي بيتنسخ لما تبعت slice لدالة، مش العناصر. فالدالة تقدر تعدّل [[s[0]]] وتشوف التعديل بره، بس لو عملت append جوّاها والـ array اتغيّر، اللي بره مش هيشوف العنصر الجديد. عشان كده الدوال اللي بتضيف بترجّع الـ slice.
 
-لما produce تخلص بتقفل nums، فالـ range في square يخلص، فتقفل squares، فالـ range في main يخلص. السلسلة دي بتقفل نفسها بالترتيب.
+الـ cap في المثال بيبقى 1 ثم 2 ثم 4 ثم 4 ثم 8: لما المساحة تخلص، append بتعمل array ضعف الحجم. للـ slices الكبيرة (فوق 256 عنصر) النمو بيقل تدريجيًا لحد حوالي 1.25 مرة.
 
-[[len(buf)]] عدد اللي جوّا دلوقتي، و [[cap(buf)]] السعة.
+[[make([]int, 3)]] بتعمل slice فيها 3 أصفار (len = 3)، فـ append بتضيف بعدهم: [[[0 0 0 1]]]. لو عايز فاضية بمساحة: [[make([]int, 0, 3)]].
 
-Deadlock: لو كل الـ goroutines مستنية ومفيش حد هيتحرك، الـ runtime بيكتشف ده ويوقف البرنامج بـ [[fatal error: all goroutines are asleep - deadlock!]]. بس ده بيحصل لو كل الـ goroutines واقفة. في سيرفر فيه goroutines تانية شغالة، الـ goroutine اللي علّقت هتفضل معلّقة بصمت (leak).
-
-جدول لازم تحفظه:
-• إرسال أو استقبال على nil channel: بيستنى للأبد.
-• استقبال من channel مقفولة: القيمة الصفرية فورًا.
-• إرسال على مقفولة: panic.
-• close لـ channel مقفولة: panic.`,
-            when: R`pipelines، و worker pools (المستوى ٣)، وإشارات ([[done chan struct{}]])، ونتايج goroutines. لكن لو كل اللي محتاجه عدّاد أو map مشترك، Mutex أبسط (الدرس الجاي). مش كل حاجة لازم channel.`,
-            mistakes: R`تنسى close فالـ range يستنى للأبد. والمستقبِل هو اللي بيقفل فالمرسل يعمل panic. و unbuffered channel في نفس الـ goroutine (إرسال من غير مستقبل): deadlock. و buffered channel كبيرة عشان «تحل» deadlock: بتأجله بس.`
+الوصول لعنصر بره الطول بيعمل panic: [[index out of range [5] with length 3]]. Go بتشيك على الحدود دايمًا، فمفيش قراية ذاكرة غلط زي C.`,
+            when: R`slice لأي قايمة. array لما الحجم ثابت ومعروف (مفتاح تشفير [[[32]byte]]، أو إحداثيات). و [[make]] مع cap لما تعرف العدد تقريبًا (مثلًا بتحوّل 1000 صف لـ 1000 struct).`,
+            mistakes: R`تكتب [[append(s, x)]] من غير [[s =]]: الـ compiler بيرفضها ([[append(s, x) (value of type []int) is not used]])، بس [[t := append(s, x)]] وبعدين تكمّل على s بتعدّي وتلخبطك. و [[make([]int, n)]] وبعدين append فتلاقي n أصفار في الأول. وتفترض إن الدالة اللي عملت append على slice جاتلها غيّرت الـ slice الأصلية.`
           },
           teach: R`## البرنامج ده بيعمل إيه؟
 
-جزئين:
-
-1. **pipeline** من ٣ مراحل شغالين مع بعض: [[produce]] بتطلّع الأرقام 1 لـ 4، و [[square]] بتربّعهم، و [[main]] بتطبع. والمراحل متوصّلة بـ ٢ channels.
-2. **buffered channel** بسعة 2: نملاها، نقفلها، ونقرا منها لحد ما تفضى.
-
-الناتج كله من [[go run .]] جوه [[docker run --rm golang:1.25]] (Go 1.25.14 على لينكس).
+بيقارن الـ array بالـ slice: array بيتنسخ كله لما تعيّنه، وبعدين slice بتبدأ فاضية ونضيف عليها ٥ أرقام ونتفرج على [[len]] و [[cap]] بعد كل إضافة، وبعدين نقص منها، وفي الآخر slice محجوز لها مساحة من الأول بـ [[make]]. الناتج من [[go run .]] في [[golang:1.25]] على لينكس.
 
 ---
 
-## ١. [[produce]]: المرحلة الأولى
+## ١. الـ array
 
 ~~~go main.go
-func produce(n int, out chan<- int) {
-  for i := 1; i <= n; i++ {
-    out <- i
-  }
-  close(out)
-}
+  // array: الحجم جزء من النوع، والتعيين بينسخ كله
+  arr := [3]int{10, 20, 30}
+  copyArr := arr
+  copyArr[0] = 99
+  fmt.Println(arr, copyArr, len(arr))
 ~~~
 
-### [[out chan<- int]]
+- [[[3]int]]: array من **3** أرقام int بالظبط. الرقم بين [[[ ]]] جزء من النوع نفسه، فـ [[[3]int]] و [[[4]int]] نوعين مختلفين. جرّبت أعيّن واحد للتاني:
 
-- [[chan int]]: channel بتنقل قيم من نوع [[int]].
-- السهم [[<-]] بعد كلمة [[chan]] معناه **للإرسال بس** (send-only). الدالة دي تقدر تحط في [[out]] بس، ولو حاولت تقرا منها الـ compiler بيرفض. جرّبت أكتب [[v := <-out]] جوه دالة زي دي:
-
-~~~text الناتج: go run .
-./main.go:4:10: invalid operation: cannot receive from send-only channel chan<- int out (variable of type chan<- int)
+~~~text الناتج: go build
+./main.go:7:17: cannot use a (variable of type [3]int) as [4]int value in variable declaration
 ~~~
 
-### [[out <- i]]: الإرسال
+- [[{10, 20, 30}]]: القيم الأولية. الأقواس المعقوفة هنا مش block كود، دي «literal» يعني القيم مكتوبة بإيدك.
+- [[copyArr := arr]]: **نسخة كاملة** من التلات عناصر.
+- [[copyArr[0] = 99]]: [[[0]]] أول عنصر (العدّ من صفر). التعديل على النسخة بس.
+- [[len(arr)]]: عدد العناصر.
 
-السهم بيشاور **ناحية الـ channel**: «حط i جوه out». ولأن [[out]] هتبقى unbuffered (مفيهاش مكان)، السطر ده **بيستنى** لحد ما حد على الناحية التانية ياخد القيمة. يعني produce مبتسبقش اللي بعدها.
+~~~text الناتج
+[10 20 30] [99 20 30] 3
+~~~
 
-### [[close(out)]]
-
-بعد آخر رقم: «مفيش حاجة تانية جاية». القفل مش بيمسح اللي في الـ channel، هو بس بيقول للي بيستقبل إن الإرسال خلص. والعرف: **اللي بيبعت هو اللي بيقفل**، لأنه الوحيد اللي عارف إمتى خلص.
+الأصل لسه 10. وده سبب إنك نادرًا ما هتستخدم array مباشرة: حجمه ثابت وكل تعيين أو تمرير لدالة بينسخه كله.
 
 ---
 
-## ٢. [[square]]: المرحلة التانية
+## ٢. الـ slice: شبّاك على array
 
-~~~go main.go
-func square(in <-chan int, out chan<- int) {
-  for v := range in {
-    out <- v * v
-  }
-  close(out)
-}
-~~~
-
-- [[in <-chan int]]: السهم **قبل** [[chan]] = **للاستقبال بس** (receive-only). افتكرها كده: السهم طالع من الـ channel.
-- [[for v := range in]]: خد قيمة من [[in]] كل لفّة. لو مفيش قيمة دلوقتي استنى. ولما [[in]] تتقفل وتفضى، الـ loop تخلص لوحدها.
-- [[out <- v * v]]: ابعت المربع للمرحلة اللي بعدها.
-- [[close(out)]]: لما [[in]] تخلص، اقفل [[out]]. كده القفل بيتنقل في السلسلة.
-
----
-
-## ٣. [[main]]: بتوصّل المراحل وبتبقى آخر مرحلة
-
-~~~go main.go
-  nums := make(chan int)
-  squares := make(chan int)
-  go produce(4, nums)
-  go square(nums, squares)
-  for s := range squares {
-    fmt.Print(s, " ")
-  }
-  fmt.Println()
-~~~
-
-- [[make(chan int)]]: الـ channels لازم تتعمل بـ [[make]]. من غير رقم تاني = **unbuffered**.
-- [[nums]] و [[squares]] نوعهم [[chan int]] (الاتجاهين). ولما تبعتهم لـ produce و square، Go بتحوّلهم لوحدها للنوع اللي بالاتجاه.
-- [[go produce(4, nums)]] و [[go square(nums, squares)]]: كل مرحلة في goroutine لوحدها، و main نفسها هي المرحلة التالتة.
-- [[fmt.Print(s, " ")]]: [[Print]] من غير [[ln]] مش بتنزل سطر، فالأرقام بتيجي جنب بعض. و [[fmt.Println()]] بعد الـ loop بتنزل السطر.
-
-### القيمة بتمشي إزاي؟
-
-| الخطوة | اللي بيحصل |
-|---|---|
-| ١ | produce: [[nums <- 1]] وتستنى |
-| ٢ | square: تاخد 1 من nums، و [[squares <- 1]] وتستنى |
-| ٣ | main: تاخد 1 وتطبعه، و square تكمّل تاخد الرقم اللي بعده |
-| ٤ | نفس الكلام لـ 2 و 3 و 4، وكل مرحلة شغالة على رقم مختلف في نفس الوقت |
-| ٥ | produce خلصت: [[close(nums)]]، فالـ range في square يخلص |
-| ٦ | square: [[close(squares)]]، فالـ range في main يخلص |
-
-~~~text الناتج
-1 4 9 16
-~~~
-
-(فيه مسافة بعد 16 لأن كل رقم بيتطبع وبعده [[" "]].)
-
-### لو square نسيت [[close(out)]]
-
-شلتها وشغّلت:
-
-~~~text الناتج
-1 4 9 16
-fatal error: all goroutines are asleep - deadlock!
-
-goroutine 1 [chan receive]:
-main.main()
-	/w/l2a/main.go:23 +0x15b
-exit status 2
-~~~
-
-- المربعات اتطبعت عادي.
-- بعدها main واقفة في [[range squares]] مستنية قيمة جاية، و square خلصت ومقفلتش، و produce خلصت. يعني **كل** الـ goroutines واقفة ومحدش هيتحرك.
-- الـ runtime بيكتشف ده ويوقف البرنامج. وسطر [[goroutine 1]] اللي جنبه [[chan receive]] بين قوسين معناه: goroutine رقم 1 (main) واقفة على **استقبال** من channel، في السطر 23 (سطر الـ for).
-
----
-
-## ٤. buffered channel
-
-~~~go main.go
-  buf := make(chan string, 2)
-  buf <- "a"
-  buf <- "b"
-  fmt.Println(len(buf), cap(buf))
-~~~
-
-- [[make(chan string, 2)]]: الرقم التاني = حجم الـ **buffer**: مكان لقيمتين جوه الـ channel نفسها.
-- [[buf <- "a"]] و [[buf <- "b"]]: الإرسال **مش بيستنى** حد يستقبل، لأن فيه مكان. فينفع تعملهم في نفس الـ goroutine. التالتة كانت هتستنى (الـ buffer مليان).
-- [[len(buf)]]: عدد القيم اللي جوّا دلوقتي. و [[cap(buf)]] (capacity): السعة.
-
-~~~text الناتج
-2 2
-~~~
-
-### القفل والقراية بعده
-
-~~~go main.go
-  close(buf)
-  fmt.Println(<-buf, <-buf)
-  v, ok := <-buf
-  fmt.Printf("%q %v\n", v, ok)
-~~~
-
-- [[close(buf)]]: مفيش إرسال تاني. بس اللي جوّا **لسه موجود**.
-- [[<-buf]] لوحدها كـ expression: «استقبل قيمة». فالسطر ده بيقرا "a" وبعدين "b":
-
-~~~text الناتج
-a b
-~~~
-
-- [[v, ok := <-buf]]: شكل «comma ok» للاستقبال. الـ channel دلوقتي **مقفولة وفاضية**، فالاستقبال مش بيستنى: بيرجّع القيمة الصفرية للنوع ([[""]] للـ string) و [[ok]] = [[false]]. لو كانت فيها قيمة كان [[ok]] هيبقى [[true]].
-- [[fmt.Printf]]: طباعة بقالب. [[%q]] بيطبع النص بين علامات تنصيص (عشان تشوف إنه فاضي)، و [[%v]] القيمة بشكلها العادي، و [[\n]] سطر جديد.
-
-~~~text الناتج
-"" false
-~~~
-
----
-
-## ٥. اللي بيوقّع البرنامج
-
-جرّبت كل حالة لوحدها:
-
-### إرسال على unbuffered من غير مستقبل
-
-~~~go main.go
-ch := make(chan int)
-ch <- 1
-~~~
-
-~~~text الناتج
-fatal error: all goroutines are asleep - deadlock!
-
-goroutine 1 [chan send]:
-~~~
-
-[[chan send]]: main واقفة على **إرسال**، ومفيش أي goroutine تانية تستقبل.
-
-### إرسال على channel مقفولة
-
-~~~text الناتج
-panic: send on closed channel
-~~~
-
-### قفل channel مقفولة (أو nil)
-
-~~~text الناتج (كل سطر من برنامج لوحده)
-panic: close of closed channel
-panic: close of nil channel
-~~~
-
-| العملية | channel عادية | مقفولة | nil (مش معمولة بـ make) |
-|---|---|---|---|
-| إرسال [[ch <- v]] | بيستنى لو مفيش مكان | panic | بيستنى للأبد |
-| استقبال [[<-ch]] | بيستنى لو فاضية | القيمة الصفرية فورًا (بعد ما اللي جوّا يخلص) | بيستنى للأبد |
-| [[close(ch)]] | تمام | panic | panic |
-
----
-
-## ٦. الحل: مرحلة تالتة [[sum]]
-
-~~~go solCode
-func sum(in <-chan int) int {
-  total := 0
-  for v := range in {
-    total += v
-  }
-  return total
-}
-~~~
-
-- بتستقبل بس ([[<-chan int]]) وبترجّع [[int]].
-- [[total += v]]: زوّد v على total. والـ range بيخلص لما square تقفل.
-
-~~~go solCode
-nums := make(chan int)
-squares := make(chan int)
-go produce(4, nums)
-go square(nums, squares)
-fmt.Println(sum(squares))
-~~~
-
-هنا [[sum]] هي اللي بتستقبل بدل الـ for في main، ومش محتاجة [[go]] لأننا عايزين main تستنى نتيجتها:
-
-~~~text الناتج
-30
-~~~
-
-1 + 4 + 9 + 16 = 30.
-
----
-
-## الخلاصة
+[[[]int]] من غير رقم = slice. جوّاها ٣ حاجات بس:
 
 | الحتة | معناها |
 |---|---|
-| [[make(chan int)]] | unbuffered: الإرسال والاستقبال بيستنوا بعض |
-| [[make(chan string, 2)]] | buffered: الإرسال مش بيستنى غير لما تتملي |
-| [[ch <- v]] | ابعت |
-| [[v := <-ch]] | استقبل |
-| [[v, ok := <-ch]] | ok = false لو مقفولة وفاضية |
-| [[chan<- int]] | إرسال بس |
-| [[<-chan int]] | استقبال بس |
-| [[close(ch)]] | مفيش إرسال تاني، والـ range بيخلص |
+| pointer | عنوان أول عنصر في array مستخبي تحت (backing array) |
+| [[len]] | عدد العناصر اللي في الشبّاك |
+| [[cap]] | المساحة المتاحة في الـ array من أول الشبّاك لآخره |
 
-- اللي بيبعت هو اللي بيقفل، والقفل بيتنقل في الـ pipeline من مرحلة للي بعدها.
-- [[all goroutines are asleep - deadlock!]] معناها كل الـ goroutines واقفة، والسطر اللي تحتها بيقولك كل واحدة واقفة فين.`,
+### nil slice
+
+~~~go main.go
+  var s []int
+  fmt.Println(s == nil, len(s), cap(s))
+~~~
+
+- [[var s []int]] من غير قيمة: القيمة الصفرية للـ slice هي [[nil]] (مفيش array تحت أصلًا).
+- [[s == nil]]: الـ slice الوحيدة اللي بتتقارن بـ [[==]] هي مع nil.
+
+~~~text الناتج
+true 0 0
+~~~
+
+---
+
+## ٣. append وإزاي الـ cap بيكبر
+
+~~~go main.go
+  for i := range 5 {
+    s = append(s, i*10)
+    fmt.Println(len(s), cap(s))
+  }
+~~~
+
+- [[append(s, i*10)]]: ضيف القيمة في الآخر، و **بترجّع slice جديدة**. عشان كده [[s = ]] قدامها: من غيرها التغيير بيضيع. والـ compiler بيرفض لو نسيت تستخدم النتيجة خالص:
+
+~~~text الناتج: go build على append(s, 1) لوحدها
+./main.go:5:2: append(s, 1) (value of type []int) is not used
+~~~
+
+اللي بيحصل جوه append:
+
+- لو [[len < cap]]: فيه مكان فاضي، فبتكتب في نفس الـ array.
+- لو [[len == cap]]: مفيش مكان، فبتعمل array أكبر، تنسخ القديم فيه، وتضيف.
+
+~~~text الناتج
+1 1
+2 2
+3 4
+4 4
+5 8
+~~~
+
+| الإضافة | len | cap | اللي حصل |
+|---|---|---|---|
+| 0 | 1 | 1 | nil، فـ array جديد بمكان واحد |
+| 10 | 2 | 2 | مليان، فـ array ضعفه |
+| 20 | 3 | 4 | مليان، فـ ضعفه |
+| 30 | 4 | 4 | كان فيه مكان، نفس الـ array |
+| 40 | 5 | 8 | مليان، فـ ضعفه |
+
+الضعف ده للـ slices الصغيرة. بعد 256 عنصر النمو بيقل تدريجيًا لحد حوالي 1.25 مرة، والـ runtime بيقرّب للمقاسات اللي الـ allocator بتاعه بيدّيها. في تجربة أطول على نفس الجهاز الـ cap اتنقل من 512 لـ 848 ثم 1280 ثم 1792 ثم 2560.
+
+---
+
+## ٤. القص
+
+~~~go main.go
+  fmt.Println(s, s[1:3], s[:2], s[3:])
+~~~
+
+[[s[low:high]]]: من العنصر [[low]] لحد **قبل** [[high]]. ولو سيبت واحد منهم فاضي: من الأول أو لحد الآخر.
+
+| التعبير | العناصر | الناتج |
+|---|---|---|
+| [[s]] | كله | [[[0 10 20 30 40]]] |
+| [[s[1:3]]] | 1 و 2 | [[[10 20]]] |
+| [[s[:2]]] | 0 و 1 | [[[0 10]]] |
+| [[s[3:]]] | 3 للآخر | [[[30 40]]] |
+
+~~~text الناتج
+[0 10 20 30 40] [10 20] [0 10] [30 40]
+~~~
+
+القص مش بينسخ: الـ slice الجديدة شبّاك على **نفس** الـ array. وده فخ ليه درس لوحده («copy و slices»).
+
+---
+
+## ٥. [[make]] بمساحة محجوزة
+
+~~~go main.go
+  names := make([]string, 0, 10)
+  names = append(names, "Ali", "Sara")
+  fmt.Println(names, len(names), cap(names))
+~~~
+
+- [[make([]string, 0, 10)]]: اعمل slice نصوص، [[len]] = 0 (فاضية) و [[cap]] = 10 (مكان لـ 10 من غير ما تحتاج array جديد).
+- [[append]] بتاخد أكتر من قيمة مرة واحدة.
+
+~~~text الناتج
+[Ali Sara] 2 10
+~~~
+
+لو عارف إنك هتضيف حوالي 10 عناصر، الحجز من الأول بيوفّر النسخ وعمل arrays جديدة كل شوية.
+
+---
+
+## ٦. التجربة
+
+### [[make([]int, 3)]] من غير cap
+
+~~~go main.go
+s := make([]int, 3)
+s = append(s, 1)
+fmt.Println(s, len(s), cap(s))
+~~~
+
+~~~text الناتج
+[0 0 0 1] 4 6
+~~~
+
+الرقم التاني في make هو **الطول**، فالـ slice اتعملت فيها ٣ أصفار، والـ append ضافت **بعدهم**. لو عايزها فاضية بمساحة: [[make([]int, 0, 3)]]، ودي طلّعت [[[1] 1 3]].
+
+### عنصر بره الطول
+
+~~~go main.go
+s := []int{1, 2, 3}
+fmt.Println(s[5])
+~~~
+
+~~~text الناتج
+panic: runtime error: index out of range [5] with length 3
+
+goroutine 1 [running]:
+main.main()
+	/w/e4e/main.go:7 +0x17
+exit status 2
+~~~
+
+- Go بتشيك على الحدود في كل وصول، فمفيش قراية ذاكرة غلط زي C.
+- [[goroutine 1 [running]:]] وتحتها [[main.main()]] والسطر اللي فيه اسم الملف ورقم السطر ([[main.go:7]]): ده المكان اللي وقع.
+- [[exit status 2]]: البرنامج خرج بـ 2.
+- الـ compiler مبيمسكش ده للـ slices حتى لو الرقم مكتوب ثابت، لأن طول الـ slice بيتعرف وقت التشغيل. الـ array بس (حجمه في النوع) هو اللي بيتمسك وقت الـ build: [[a[5]]] على [[[3]int]] طلّعت [[invalid argument: index 5 out of bounds [0:3]]].
+
+---
+
+## الخلاصة
+
+| | array | slice |
+|---|---|---|
+| النوع | [[[3]int]] (الحجم جزء منه) | [[[]int]] |
+| الحجم | ثابت | بيكبر بـ append |
+| التعيين | نسخة كاملة | نسخة من الشبّاك بس، والعناصر مشتركة |
+| القيمة الصفرية | أصفار | [[nil]] |
+
+- [[s = append(s, x)]] دايمًا بالـ [[s =]].
+- [[make([]T, len, cap)]]: الرقم التاني طول (أصفار)، والتالت مساحة.
+- [[s[a:b]]] من a لحد قبل b، ومن غير نسخ.`,
           lines: [
             "باكدج main.",
             "import fmt.",
-            R`[[chan<- int]]: الدالة تقدر تبعت بس.`,
-            "من 1 لـ n.",
-            R`ابعت، واستنى لحد ما حد ياخد.`,
-            "قفلة.",
-            "خلصنا: اقفل عشان اللي بيستقبل يعرف.",
-            "قفلة.",
-            R`بتستقبل من in ([[<-chan]]) وتبعت في out.`,
-            "خد لحد ما in تتقفل.",
-            "ابعت المربع.",
-            "قفلة.",
-            "اقفل out.",
-            "قفلة.",
             "main.",
-            "channel للأرقام (unbuffered).",
-            "channel للمربعات.",
-            "المرحلة الأولى في goroutine.",
-            "المرحلة التانية في goroutine.",
-            "main هي المرحلة الأخيرة: خد لحد ما تتقفل.",
-            "اطبع.",
+            R`array من 3 أرقام. [[{ }]] هنا القيم الأولية.`,
+            "تعيين = نسخة كاملة.",
+            "التعديل على النسخة بس.",
+            "الأصلي متغيّرش.",
+            R`nil slice: موجودة ومفيهاش حاجة.`,
+            "true 0 0.",
+            "5 لفّات.",
+            "ضيف في الآخر، وخزّن النتيجة في s.",
+            "len و cap بعد كل إضافة.",
             "قفلة.",
-            "سطر جديد.",
-            "buffered بسعة 2.",
-            "مش بتستنى: فيه مكان.",
-            "ولا دي.",
-            "2 جوّا، والسعة 2.",
-            "اقفل: مفيش إرسال تاني.",
-            "اللي جوّا لسه بيتقري: a b.",
-            "فاضية ومقفولة.",
-            R`[[""]] و false.`,
+            R`الكل، ومن 1 لقبل 3، وأول اتنين، ومن 3 للآخر.`,
+            R`فاضية بمساحة 10.`,
+            R`append بتاخد أكتر من قيمة.`,
+            "2 عنصر ومساحة 10.",
             "قفلة."
           ],
           sol: R`الناتج:
-[[1 4 9 16 ]]
+[[[10 20 30] [99 20 30] 3]]
+[[true 0 0]]
+[[1 1]]
 [[2 2]]
-[[a b]]
-[["" false]]
+[[3 4]]
+[[4 4]]
+[[5 8]]
+[[[0 10 20 30 40] [10 20] [0 10] [30 40]]]
+[[[Ali Sara] 2 10]]
 
-من غير [[close(out)]] في square: المربعات بتتطبع، وبعدين:
-[[fatal error: all goroutines are asleep - deadlock!]]
-main مستنية في range على squares، ومحدش هيبعت ولا هيقفل.
-
-و [[ch <- 1]] من غير مستقبل: نفس الـ deadlock على طول، لأن unbuffered بتستنى حد ياخد.
-
-والمرحلة التالتة (الكود تحت) بترجّع [[30]] (1 + 4 + 9 + 16).`,
-          solCode: R`func sum(in <-chan int) int {
-  total := 0
-  for v := range in {
-    total += v
-  }
-  return total
-}
-
-nums := make(chan int)
-squares := make(chan int)
-go produce(4, nums)
-go square(nums, squares)
-fmt.Println(sum(squares))`
+وفي التجربة: [[make([]int, 3)]] + append بتطلع [[[0 0 0 1]]]، و [[s[5]]] بتعمل [[panic: runtime error: index out of range [5] with length 3]] والبرنامج بيقع ومعاه رقم السطر.`
         },
         {
-          cmd: "select",
-          title: "select: تستنى أكتر من channel مع بعض، و timeout، وإرسال من غير ما تستنى",
-          desc: R`[[select]] زي switch بس للـ channels: كل [[case]] عملية إرسال أو استقبال، والـ select بيستنى لحد ما واحدة منهم تبقى جاهزة وينفّذها. لو أكتر من واحدة جاهزة بيختار عشوائي.
+          cmd: "copy و slices",
+          title: "slice من slice بيشاركوا نفس الذاكرة: copy والباكدج slices",
+          desc: R`أهم فخ في الـ slices: [[b := a[1:3]]] مش نسخة. b شبّاك على نفس الـ array بتاع a، فلو غيّرت [[b[0]]] هتلاقي [[a[1]]] اتغيّر.
 
-أشهر استخدامات:
-• timeout: [[case <-time.After(200 * time.Millisecond):]]. [[time.After]] بترجّع channel بيوصلها قيمة بعد المدة. فاللي يوصل الأول يكسب: الرد ولا الوقت.
-• [[default]]: لو ولا case جاهز دلوقتي، نفّذ default على طول من غير استنا. كده تعمل إرسال «لو فيه مكان، وإلا ارمي».
-• loop بـ select جوّاها: worker بيسمع على كذا channel (شغل، أو ticker، أو إشارة قفل).
+والأسوأ: [[append]] على b. لو b فيها مساحة (cap أكبر من len) هتكتب العنصر الجديد فوق عنصر موجود في a من غير ما تحس.
 
-[[time.NewTicker(d)]] بيبعت في [[ticker.C]] كل d. لازم [[ticker.Stop()]] لما تخلص.
+الحلول:
+• [[copy(dst, src)]]: بتنسخ العناصر من src لـ dst (لحد أصغر طول فيهم) وترجّع عدد اللي اتنسخ. dst لازم تبقى محجوزة بالطول الصح ([[make([]int, len(src))]]).
+• [[slices.Clone(s)]]: نسخة مستقلة في سطر.
+• [[s[low:high:max]]]: القص بـ 3 أرقام بيحدد الـ cap، فأي append بعدها بتعمل array جديد.
 
-وفي المثال slowAPI بتعمل channel بسعة 1. ليه؟ لو الـ timeout كسب ومحدش استقبل، الـ goroutine اللي جوّاها هتبعت في الـ buffer وتخلص. لو كانت unbuffered كانت هتفضل مستنية حد يستقبل للأبد (goroutine leak).`,
+الباكدج [[slices]] (من Go 1.21) فيها اللي كنت بتكتبه بإيدك: [[slices.Sort]] و [[slices.Contains]] و [[slices.Index]] و [[slices.Max]] و [[slices.Reverse]] و [[slices.Equal]] (عشان [[==]] مش شغالة بين slices) و [[slices.SortFunc]] بدالة مقارنة.`,
           example: R`package main
 
 import (
   "fmt"
-  "time"
+  "slices"
 )
 
-func slowAPI(d time.Duration) <-chan string {
-  ch := make(chan string, 1)
-  go func() {
-    time.Sleep(d)
-    ch <- fmt.Sprintf("response after %v", d)
-  }()
-  return ch
-}
-
 func main() {
-  select {
-  case res := <-slowAPI(50 * time.Millisecond):
-    fmt.Println(res)
-  case <-time.After(200 * time.Millisecond):
-    fmt.Println("timeout")
-  }
+  a := []int{1, 2, 3, 4, 5}
+  b := a[1:3]
+  b[0] = 99
+  fmt.Println(a, b, len(b), cap(b))
 
-  select {
-  case res := <-slowAPI(time.Second):
-    fmt.Println(res)
-  case <-time.After(200 * time.Millisecond):
-    fmt.Println("timeout")
-  }
+  // b فيها مساحة، فالـ append بتكتب فوق a[3]
+  b = append(b, 77)
+  fmt.Println(a)
 
-  jobs := make(chan int, 1)
-  for i := range 3 {
-    select {
-    case jobs <- i:
-      fmt.Println("queued", i)
-    default:
-      fmt.Println("queue full, dropped", i)
-    }
-  }
+  c := make([]int, len(a))
+  n := copy(c, a)
+  c[0] = -1
+  fmt.Println(n, a[0], c[0])
 
-  ticker := time.NewTicker(30 * time.Millisecond)
-  defer ticker.Stop()
-  done := time.After(100 * time.Millisecond)
-  ticks := 0
-  for {
-    select {
-    case <-ticker.C:
-      ticks++
-    case <-done:
-      fmt.Println("ticks:", ticks)
-      return
-    }
-  }
+  d := slices.Clone(a[:2])
+  d = append(d, 1000)
+  fmt.Println(a, d)
+
+  nums := []int{5, 2, 8, 1}
+  slices.Sort(nums)
+  fmt.Println(nums, slices.Contains(nums, 8), slices.Index(nums, 5), slices.Max(nums))
 }`,
-          try: R`اكتب دالة [[firstOf(mirrors ...time.Duration) string]] بتنادي slowAPI لكل mirror بالتوازي وترجّع أول رد يوصل (أسرع سيرفر يكسب)، مع timeout كلي 500ms. جرّبها بـ [[firstOf(300*time.Millisecond, 80*time.Millisecond, 200*time.Millisecond)]].`,
+          try: R`اكتب دالة [[removeAt(s []int, i int) []int]] بتشيل عنصر من مكانه. جرّبها على [[a := []int{1, 2, 3, 4}]] بـ [[r := removeAt(a, 1)]] واطبع a و r. هتلاقي a اتغيّرت. صلّحها بحيث a متتلمسش، وبعدين قارن بـ [[slices.Delete]].`,
           flag: "script",
           deep: {
-            why: R`في السيرفر مينفعش تستنى للأبد: API تاني وقع، أو الداتابيز علّقت. من غير timeout الطلبات بتتراكم والسيرفر بيقع. و select هي الأداة اللي بتخليك تقول «استنى ده، أو ده، أو الوقت يخلص، أو الطلب يتلغي»، وده نفس اللي context بيعمله من جوّا (الدرس الجاي).`,
-            how: R`في select التاني الـ API بتاخد ثانية والـ timeout 200ms، فالـ timeout كسب. الـ goroutine اللي جوه slowAPI لسه شغالة، وبعد ثانية هتبعت في الـ buffer وتخلص لوحدها، لكن البرنامج هيكون قفل قبلها.
+            why: R`الـ bug ده بيحصل في الكود الحقيقي: دالة بتاخد جزء من slice وتضيف عليه، فداتا في مكان تاني تتغيّر. مفيش error ومفيش crash، بس رقم غلط في تقرير. لو فهمت الصورة (كلهم شبابيك على نفس الـ array) هتعرف إمتى تنسخ.`,
+            how: R`a عندها array من 5 عناصر. [[b := a[1:3]]] بيبدأ من العنصر 1، فـ len = 2 و cap = 4 (من 1 لآخر الـ array). [[b = append(b, 77)]] لقت مساحة، فكتبت في الخانة اللي بعد b، اللي هي [[a[3]]].
 
-[[case jobs <- i]] مع default: أول مرة فيه مكان (السعة 1)، التانية والتالتة الـ buffer مليان فـ default اتنفذت. ده نمط «load shedding»: لو الطابور مليان ارفض بدل ما تعلّق.
+[[slices.Clone(a[:2])]] عملت array جديد بالظبط على قد العنصرين، فأي append بعدها بتعمل array تالت، و a مش بتتأثر.
 
-في الـ loop الأخيرة: ticker كل 30ms و done بعد 100ms، فالـ ticks بتطلع 3 تقريبًا (30 و 60 و 90). [[return]] بتخرج من main كلها. [[break]] هنا كانت هتخرج من الـ select بس.
+[[slices.Sort]] بترتّب في مكانها (in place) ومبترجّعش حاجة. [[slices.Index]] بترجّع -1 لو مش موجود. و [[slices.Max]] بتعمل panic على slice فاضية.
 
-[[time.After]] في loop طويلة بيعمل timer جديد كل لفّة. من Go 1.23 الـ timers اللي محدش ماسكها بتتنضّف لوحدها، بس [[time.NewTimer]] مع Reset لسه أوضح في الـ loops.`,
-            when: R`timeouts على أي استنا، وإلغاء ([[case <-ctx.Done():]])، و workers بتسمع على أكتر من مصدر، وإرسال أو استقبال من غير استنا (default).`,
-            mistakes: R`[[break]] جوه select جوه for وانت عايز تخرج من الـ for (محتاج label أو return). و select من غير default ومن غير timeout على channel ممكن متجيش: علّقة. و unbuffered channel في goroutine ممكن محدش يستقبل منها بعد الـ timeout: leak. و default في loop من غير أي استنا: الـ CPU بيوصل 100٪.`
+لاحظ إن الـ string برضه بيتقص بنفس الطريقة ([[s[2:5]]]) بس مفيش مشكلة هنا لأن الـ strings مبتتغيرش.`,
+            when: R`انسخ ([[slices.Clone]] أو copy) لما تخزّن slice جاتلك من بره في struct، أو ترجّع جزء من داتا داخلية لحد بره، أو تعمل append على جزء مقصوص. واستخدم باكدج slices بدل ما تكتب loops للبحث والترتيب.`,
+            mistakes: R`[[copy(dst, src)]] و dst طولها 0 ([[var dst []int]] أو [[make([]int, 0, n)]]): بتنسخ صفر عناصر. و [[a == b]] بين slices: compile error، استخدم [[slices.Equal]]. وتحتفظ بـ slice صغيرة مقصوصة من slice ضخمة (ملف 100 ميجا): الـ array الكبير كله بيفضل في الذاكرة طول ما الصغيرة عايشة، فانسخها.`
           },
           teach: R`## البرنامج ده بيعمل إيه؟
 
-٤ استخدامات لـ [[select]] في برنامج واحد:
-
-1. رد بييجي قبل الـ timeout، فبيكسب.
-2. رد بطيء، فالـ timeout يكسب.
-3. طابور بسعة 1 بنحاول نحط فيه 3 حاجات من غير ما نستنى ([[default]]).
-4. loop بتعدّ ticks لحد ما وقت معيّن يخلص.
-
-الناتج كله من [[go run .]] جوه [[docker run --rm golang:1.25]] (Go 1.25.14 على لينكس).
+بيوريك الفخ: slice مقصوصة من slice تانية بتشاركها نفس الذاكرة، فالتعديل والـ append بيوصلوا للأصل. وبعدين ٣ طرق للنسخ ([[copy]] و [[slices.Clone]] والقص بـ ٣ أرقام)، وفي الآخر دوال جاهزة من باكدج [[slices]]. الناتج من [[go run .]] في [[golang:1.25]] على لينكس.
 
 ---
 
-## ١. [[slowAPI]]: API وهمية بترجّع channel
+## ١. القص مش نسخة
 
 ~~~go main.go
-func slowAPI(d time.Duration) <-chan string {
-  ch := make(chan string, 1)
-  go func() {
-    time.Sleep(d)
-    ch <- fmt.Sprintf("response after %v", d)
-  }()
-  return ch
+  a := []int{1, 2, 3, 4, 5}
+  b := a[1:3]
+  b[0] = 99
+  fmt.Println(a, b, len(b), cap(b))
+~~~
+
+- [[a[1:3]]]: من العنصر 1 لحد قبل 3، يعني العنصرين 2 و 3. بس b **شبّاك** على نفس الـ array بتاع a، مش array جديد.
+- [[b[0] = 99]]: أول خانة في b هي نفسها [[a[1]]].
+
+~~~text الناتج
+[1 99 3 4 5] [99 3] 2 4
+~~~
+
+### ليه cap(b) = 4؟
+
+الـ cap بيتحسب من أول الشبّاك لآخر الـ array اللي تحت، مش لآخر الشبّاك:
+
+| index في الـ array | 0 | 1 | 2 | 3 | 4 |
+|---|---|---|---|---|---|
+| a | 1 | 99 | 3 | 4 | 5 |
+| b | | [[b[0]]] | [[b[1]]] | مكان في الـ cap | مكان في الـ cap |
+
+يعني b شايفة عنصرين، بس قدامها مكان لـ 4.
+
+---
+
+## ٢. append على b بتكتب فوق a
+
+~~~go main.go
+  // b فيها مساحة، فالـ append بتكتب فوق a[3]
+  b = append(b, 77)
+  fmt.Println(a)
+~~~
+
+append شافت إن [[len(b) = 2]] أقل من [[cap(b) = 4]]، يعني فيه مكان، فكتبت 77 في الخانة اللي بعد b مباشرة، واللي هي **[[a[3]]]**:
+
+~~~text الناتج
+[1 99 3 77 5]
+~~~
+
+مفيش error ومفيش تحذير، الـ 4 اختفت بس. ده الـ bug اللي بيطلع رقم غلط في تقرير.
+
+---
+
+## ٣. [[copy]]
+
+~~~go main.go
+  c := make([]int, len(a))
+  n := copy(c, a)
+  c[0] = -1
+  fmt.Println(n, a[0], c[0])
+~~~
+
+- [[make([]int, len(a))]]: slice جديدة بـ array جديد، طولها زي a (5 أصفار).
+- [[copy(dst, src)]]: انسخ العناصر من src لـ dst. الترتيب **الهدف الأول** زي [[dst = src]]. بتنسخ لحد أصغر طول فيهم، وبترجّع عدد اللي اتنسخ.
+- [[c[0] = -1]]: التعديل في c بس، لأنهم على arrays مختلفة.
+
+~~~text الناتج
+5 1 -1
+~~~
+
+### dst طولها صفر
+
+[[copy]] بتشوف **len** مش cap. جرّبت [[var dst []int]] وبعدين [[copy(dst, x)]]:
+
+~~~text الناتج: fmt.Println(copy(dst, x), dst)
+0 []
+~~~
+
+صفر عناصر اتنسخت. عشان كده لازم [[make([]int, len(src))]] مش [[make([]int, 0, len(src))]].
+
+---
+
+## ٤. [[slices.Clone]]
+
+~~~go main.go
+  d := slices.Clone(a[:2])
+  d = append(d, 1000)
+  fmt.Println(a, d)
+~~~
+
+- [[slices.Clone(a[:2])]]: نسخة مستقلة من أول عنصرين، في array جديد **على قدهم بالظبط**.
+- فالـ append بعدها ملقتش مكان، فعملت array تالت، و a متلمستش.
+
+~~~text الناتج
+[1 99 3 77 5] [1 99 1000]
+~~~
+
+### القص بـ ٣ أرقام
+
+[[s[low:high:max]]]: الرقم التالت بيحدد لحد فين الـ cap. فـ [[x[0:1:1]]] شبّاك فيه عنصر واحد و cap = 1، فأي append بعده لازم تعمل array جديد:
+
+~~~go main.go
+x := []int{1, 2, 3}
+y := x[0:1:1]
+y = append(y, 50)
+fmt.Println(x, y, cap(x[0:1:1]))
+~~~
+
+~~~text الناتج
+[1 2 3] [1 50] 1
+~~~
+
+x فضلت [[[1 2 3]]]: الـ 50 راحت في array جديد.
+
+---
+
+## ٥. باكدج [[slices]]
+
+~~~go main.go
+  nums := []int{5, 2, 8, 1}
+  slices.Sort(nums)
+  fmt.Println(nums, slices.Contains(nums, 8), slices.Index(nums, 5), slices.Max(nums))
+~~~
+
+| الدالة | بتعمل إيه | هنا |
+|---|---|---|
+| [[slices.Sort(nums)]] | ترتّب **في مكانها** (in place)، ومبترجّعش حاجة | [[[1 2 5 8]]] |
+| [[slices.Contains(nums, 8)]] | موجود ولا لأ | [[true]] |
+| [[slices.Index(nums, 5)]] | مكانه، أو -1 لو مش موجود | [[2]] |
+| [[slices.Max(nums)]] | أكبر قيمة | [[8]] |
+
+~~~text الناتج
+[1 2 5 8] true 2 8
+~~~
+
+حاجتين جرّبتهم:
+
+- [[slices.Max]] على slice فاضية مبترجّعش صفر، بتوقع البرنامج:
+
+~~~text الناتج
+panic: slices.Max: empty list
+~~~
+
+- [[a == b]] بين slices مش مسموحة:
+
+~~~text الناتج: go build
+./main.go:8:14: invalid operation: a == b (slice can only be compared to nil)
+~~~
+
+البديل [[slices.Equal(a, b)]]: [[slices.Equal(x, []int{1, 2, 3})]] طلّعت [[true]].
+
+---
+
+## ٦. التجربة: [[removeAt]]
+
+### الشكل الساذج
+
+~~~go main.go
+func removeAtNaive(s []int, i int) []int {
+	return append(s[:i], s[i+1:]...)
 }
 ~~~
 
-- النوع الراجع [[<-chan string]]: channel **للاستقبال بس**. اللي نادى الدالة يقدر يستنى الرد منها، بس ميقدرش يبعت فيها.
-- [[make(chan string, 1)]]: buffered بسعة 1 (السبب في آخر الجزء ده).
-- [[go func() { ... }()]]: goroutine بتنام المدة وبعدين تبعت الرد. والدالة نفسها **بترجع على طول** بالـ channel، قبل ما الرد يجهز.
-- [[fmt.Sprintf]]: زي Printf بس بترجّع النص بدل ما تطبعه. و [[%v]] مع [[time.Duration]] بتطبعها بشكل [[50ms]] أو [[1s]].
+- [[s[:i]]]: اللي قبل i. و [[s[i+1:]...]]: اللي بعد i، مفرودين كقيم (الـ [[...]] زي [[sum(xs...)]]).
+- المشكلة: [[s[:i]]] شبّاك على array بتاع s، و cap بتاعه كبير، فـ append بتكتب فوق s نفسها.
 
-### ليه سعة 1؟
-
-لو الـ timeout كسب، محدش هيستقبل من [[ch]] تاني أبدًا. لو كانت unbuffered، سطر [[ch <- ...]] هيستنى حد ياخد **للأبد**، والـ goroutine تفضل عايشة في الذاكرة على الفاضي (اسمها **goroutine leak**). بسعة 1 الإرسال بيلاقي مكان، فالـ goroutine بتحط الرد وتخلص، والـ channel بتتمسح لما محدش يبقى ماسكها.
-
----
-
-## ٢. select بـ timeout: الرد يكسب
-
-~~~go main.go
-  select {
-  case res := <-slowAPI(50 * time.Millisecond):
-    fmt.Println(res)
-  case <-time.After(200 * time.Millisecond):
-    fmt.Println("timeout")
-  }
+~~~text الناتج: a := []int{1, 2, 3, 4}; r := removeAtNaive(a, 1)
+[1 3 4 4] [1 3 4]
 ~~~
 
-### بيتنفّذ إزاي؟
+r صح، بس a باظت: العناصر اتزقّت لورا والـ 4 الأخيرة فضلت مكانها.
 
-1. أول ما Go توصل للـ select، بتحسب الـ channels اللي في كل [[case]]: بتنادي [[slowAPI(50ms)]] (فالـ goroutine بتبدأ تنام)، وبتنادي [[time.After(200ms)]].
-2. [[time.After(d)]] بترجّع channel، والـ runtime بيبعت فيها الوقت الحالي بعد d.
-3. الـ select بيستنى لحد ما **أي** case تبقى جاهزة.
-4. عند 50ms الرد وصل، فـ [[case res := <-...]] اتنفذت: الـ [[:=]] هنا بتعرّف [[res]] وتحط فيه اللي اتستقبل.
-5. الـ case التانية **اتلغت**: الـ select بينفّذ case واحدة بس وبيخرج.
-
-~~~text الناتج
-response after 50ms
-~~~
-
-- [[case <-time.After(...)]] من غير [[:=]]: بنستقبل القيمة ونرميها، المهم إن الوقت جه.
-
----
-
-## ٣. select بـ timeout: الوقت يكسب
-
-~~~go main.go
-  select {
-  case res := <-slowAPI(time.Second):
-    fmt.Println(res)
-  case <-time.After(200 * time.Millisecond):
-    fmt.Println("timeout")
-  }
-~~~
-
-الـ API محتاجة ثانية، والـ timer 200ms، فالـ timer كسب:
-
-~~~text الناتج
-timeout
-~~~
-
-والـ goroutine اللي جوه slowAPI؟ لسه نايمة. بعد ثانية كانت هتحط الرد في الـ buffer وتخلص (ده فايدة السعة 1)، بس البرنامج كله هيكون خلص قبلها.
-
----
-
-## ٤. [[default]]: إرسال من غير استنا
-
-~~~go main.go
-  jobs := make(chan int, 1)
-  for i := range 3 {
-    select {
-    case jobs <- i:
-      fmt.Println("queued", i)
-    default:
-      fmt.Println("queue full, dropped", i)
-    }
-  }
-~~~
-
-- [[jobs := make(chan int, 1)]]: طابور فيه مكان لحاجة واحدة، ومحدش بيستقبل منه.
-- [[for i := range 3]]: i = 0 ثم 1 ثم 2.
-- [[case jobs <- i]]: case **إرسال**. جاهزة لو فيه مكان في الـ buffer.
-- [[default]]: لو ولا case جاهزة **دلوقتي**، نفّذ default على طول. من غير default الـ select كان هيستنى، وهنا كان هيعلّق للأبد.
-
-| i | الـ buffer قبلها | اللي اتنفذ |
-|---|---|---|
-| 0 | فاضي | [[case jobs <- i]] |
-| 1 | فيه 0 (مليان) | [[default]] |
-| 2 | لسه مليان | [[default]] |
-
-~~~text الناتج
-queued 0
-queue full, dropped 1
-queue full, dropped 2
-~~~
-
-ده نمط اسمه **load shedding**: السيرفر لو طابوره مليان يرفض الشغل الجديد على طول بدل ما يتقل ويعلّق.
-
----
-
-## ٥. ticker و loop بـ select
-
-~~~go main.go
-  ticker := time.NewTicker(30 * time.Millisecond)
-  defer ticker.Stop()
-  done := time.After(100 * time.Millisecond)
-  ticks := 0
-  for {
-    select {
-    case <-ticker.C:
-      ticks++
-    case <-done:
-      fmt.Println("ticks:", ticks)
-      return
-    }
-  }
-~~~
-
-- [[time.NewTicker(30ms)]]: بيرجّع [[*time.Ticker]]، وفيه حقل [[C]] (channel) بيوصلها قيمة كل 30ms، لحد ما تنادي [[Stop()]].
-- [[defer ticker.Stop()]]: وقّفه لما main تخلص.
-- [[done := time.After(100ms)]]: channel هتوصلها قيمة **مرة واحدة** بعد 100ms. خزّناها في متغير بره الـ loop، عشان لو كتبنا [[time.After]] جوه الـ select كل لفّة هتعمل timer جديد يبدأ من الصفر، ومش هيخلص أبدًا لأن الـ ticker بيكسب كل 30ms.
-- [[for { ... }]]: loop للأبد، وكل لفّة select.
-- [[case <-ticker.C:]]: tick وصل، زوّد العدّاد.
-- [[case <-done:]]: الوقت خلص، اطبع و [[return]].
-
-~~~text الناتج
-ticks: 3
-~~~
-
-3 لأن الـ ticks بتوصل عند 30 و 60 و 90، والـ 120 بعد الـ done. شغّلته ٥ مرات وطلع 3 كل مرة، بس على جهاز مشغول جدًا ممكن تطلع 2، لأن 90 قريبة من 100.
-
-### ليه [[return]] مش [[break]]؟
-
-[[break]] جوه select بتخرج من **الـ select بس**، مش من الـ for. جرّبت أبدّل [[return]] بـ [[break]] وزوّدت شرط يخرج بعد 10 ticks عشان البرنامج ميلفّش للأبد:
-
-~~~text الناتج
-ticks: 3
-still looping, ticks = 11
-~~~
-
-الـ break اتنفذت والـ loop كمّلت. وبعد كده [[done]] مش هتبعت تاني (time.After بتبعت مرة واحدة)، فكانت هتلف للأبد. عشان تخرج من الـ for: [[return]]، أو label فوق الـ for ([[loop:]]) و [[break loop]].
-
----
-
-## ٦. الحل: [[firstOf]]، أسرع سيرفر يكسب
+### الحل
 
 ~~~go solCode
-func firstOf(mirrors ...time.Duration) string {
-  results := make(chan string, len(mirrors))
-  for _, d := range mirrors {
-    go func() { results <- <-slowAPI(d) }()
-  }
-  select {
-  case r := <-results:
-    return r
-  case <-time.After(500 * time.Millisecond):
-    return "timeout"
-  }
+func removeAt(s []int, i int) []int {
+  out := make([]int, 0, len(s)-1)
+  out = append(out, s[:i]...)
+  return append(out, s[i+1:]...)
 }
 ~~~
 
-- [[mirrors ...time.Duration]]: الـ [[...]] قبل النوع = دالة **variadic**: تاخد أي عدد من القيم، وجوّاها [[mirrors]] بيبقى [[[]time.Duration]] (slice).
-- [[make(chan string, len(mirrors))]]: buffer قد عدد السيرفرات، عشان كل goroutine تقدر تبعت وتخلص حتى لو محدش استقبل منها (نفس فكرة السعة 1 فوق).
-- [[for _, d := range mirrors]]: [[_]] بترمي الـ index، و [[d]] المدة.
-- [[results <- <-slowAPI(d)]]: بتتقري من اليمين: [[<-slowAPI(d)]] استنى رد السيرفر ده، وبعدين [[results <-]] ابعته في results.
-- الـ select: أول رد في results يكسب، أو 500ms تخلص.
-
-جرّبتها:
-
-~~~go main.go
-fmt.Println(firstOf(300*time.Millisecond, 80*time.Millisecond, 200*time.Millisecond))
-fmt.Println(firstOf(time.Second, 900*time.Millisecond))
-~~~
+- [[make([]int, 0, len(s)-1)]]: slice جديدة فاضية بمكان لعنصر أقل من s.
+- ضيف اللي قبل i، وبعدين اللي بعده. كل الكتابة في array بتاع out.
 
 ~~~text الناتج
-response after 80ms
-timeout
+[1 2 3 4] [1 3 4]
 ~~~
 
-الأولى رجعت بعد 80ms (قِسته: [[80ms]])، مش بعد 300. والتانية كل السيرفرات أبطأ من 500ms فالـ timeout كسب.
+### [[slices.Delete]]
+
+~~~text الناتج: d := slices.Delete(a, 1, 2) و a = [1 2 3 4]
+[1 3 4 0] [1 3 4]
+~~~
+
+[[slices.Delete(s, i, j)]] بتشيل من i لحد قبل j **في نفس الـ slice**، ومن Go 1.22 بتصفّر الخانات اللي فضيت في الآخر (عشان القديم ميفضلش ماسك ذاكرة). استخدمها لما تكون عايز التعديل في مكانه.
 
 ---
 
 ## الخلاصة
 
-| الشكل | معناه |
+| عايز | استخدم |
 |---|---|
-| [[case v := <-ch:]] | لو وصل حاجة في ch، خدها في v |
-| [[case ch <- v:]] | لو فيه مكان في ch، ابعت v |
-| [[case <-time.After(d):]] | timeout بعد d |
-| [[default:]] | لو ولا حاجة جاهزة دلوقتي، متستناش |
-| [[time.NewTicker(d)]] | قيمة في [[.C]] كل d، ولازم [[Stop()]] |
+| جزء من slice تقرا منه بس | [[s[a:b]]] عادي |
+| نسخة مستقلة | [[slices.Clone(s)]] |
+| تنسخ في slice موجودة | [[copy(dst, src)]] و dst طولها كفاية |
+| جزء هتعمل عليه append من غير ما يلمس الأصل | [[s[a:b:b]]] أو Clone |
+| مقارنة | [[slices.Equal]] |
+| ترتيب وبحث | [[slices.Sort]] و [[slices.Contains]] و [[slices.Index]] |
 
-- الـ select بينفّذ case **واحدة** بس. ولو أكتر من واحدة جاهزة مع بعض بيختار عشوائي.
-- [[break]] جوه select بتخرج من الـ select بس: استخدم [[return]] أو label.
-- channel الرد اللي ممكن محدش يستقبل منها تبقى buffered، عشان الـ goroutine متعلّقش (leak).`,
+- slice من slice = نفس الـ array، فالتعديل والـ append ممكن يوصلوا للأصل.
+- [[copy]] بتشوف len مش cap.`,
           lines: [
             "باكدج main.",
             "imports.",
             "fmt.",
-            "time.",
-            "قفلة.",
-            "بترجّع channel للاستقبال بس.",
-            "سعة 1: عشان الـ goroutine متعلّقش لو محدش استقبل.",
-            "goroutine بتعمل الشغل.",
-            "استنى (كأنها API بطيئة).",
-            "ابعت الرد.",
-            "قفلة.",
-            "رجّع الـ channel على طول.",
+            R`[[slices]]: دوال جاهزة للـ slices.`,
             "قفلة.",
             "main.",
-            "select: استنى أول واحد يجهز.",
-            "الرد (50ms)...",
-            "...وصل الأول.",
-            "أو الوقت (200ms).",
-            "مش هنا.",
-            "قفلة.",
-            "تاني، بس الـ API بطيئة.",
-            "ثانية...",
-            "مش هنا.",
-            "200ms كسبت.",
-            "timeout.",
-            "قفلة.",
-            "طابور بسعة 1.",
-            "3 محاولات.",
-            "select فيه إرسال و default.",
-            "لو فيه مكان...",
-            "...اتحط.",
-            "لو مفيش: من غير استنا.",
-            "ارمي.",
-            "قفلة.",
-            "قفلة.",
-            "ticker كل 30ms.",
-            "وقّفه في الآخر.",
-            "إشارة بعد 100ms.",
-            "عدّاد.",
-            "loop للأبد.",
-            "select في كل لفّة.",
-            "tick...",
-            "...عدّ.",
-            "الوقت خلص...",
-            "اطبع.",
-            "اخرج من main.",
-            "قفلة الـ select.",
-            "قفلة الـ for.",
+            "slice فيها 5.",
+            "شبّاك على العنصرين 1 و 2، مش نسخة.",
+            "التعديل بيوصل لـ a.",
+            R`a بقت [[[1 99 3 4 5]]]، و len(b) = 2 و cap(b) = 4.`,
+            "append لقت مساحة...",
+            R`...فـ a بقت [[[1 99 3 77 5]]].`,
+            R`slice بنفس الطول.`,
+            "انسخ العناصر، و n عددهم.",
+            "عدّل النسخة.",
+            "5 و 1 و -1: الأصل متغيّرش.",
+            "نسخة مستقلة من أول اتنين.",
+            "append عليها مش بتلمس a.",
+            "اطبعهم.",
+            "slice أرقام.",
+            "رتّبها في مكانها.",
+            R`[[[1 2 5 8]]]، و true، و 2، و 8.`,
             "قفلة."
           ],
           sol: R`الناتج:
-[[response after 50ms]]
-[[timeout]]
-[[queued 0]]
-[[queue full, dropped 1]]
-[[queue full, dropped 2]]
-[[ticks: 3]]
+[[[1 99 3 4 5] [99 3] 2 4]]
+[[[1 99 3 77 5]]]
+[[5 1 -1]]
+[[[1 99 3 77 5] [1 99 1000]]]
+[[[1 2 5 8] true 2 8]]
 
-(الـ ticks ممكن تطلع 2 أو 3 على جهاز مشغول، لأن الأوقات قريبة من بعض.)
-
-firstOf (الكود تحت) بترجّع [[response after 80ms]]. السر إن كل الـ channels بسعة 1، فالـ goroutines التانية بتبعت وتخلص حتى لو محدش استقبل منها.`,
-          solCode: R`func firstOf(mirrors ...time.Duration) string {
-  results := make(chan string, len(mirrors))
-  for _, d := range mirrors {
-    go func() { results <- <-slowAPI(d) }()
-  }
-  select {
-  case r := <-results:
-    return r
-  case <-time.After(500 * time.Millisecond):
-    return "timeout"
-  }
+[[removeAt]] بالشكل الساذج [[append(s[:i], s[i+1:]...)]] بيرجّع [[[1 3 4]]] بس a بتبقى [[[1 3 4 4]]]: الـ append كتبت فوق الـ array بتاع a. الحل إنك تعمل slice جديدة (الكود تحت). و [[slices.Delete(a, 1, 2)]] كمان بتعدّل a في مكانها (بتزق العناصر وبتصفّر الخانة الأخيرة)، فاستخدمها لما تكون عايز ده.`,
+          solCode: R`func removeAt(s []int, i int) []int {
+  out := make([]int, 0, len(s)-1)
+  out = append(out, s[:i]...)
+  return append(out, s[i+1:]...)
 }`
         },
         {
-          cmd: "التزامن الآمن بـ WaitGroup و Mutex",
-          title: "data race: لما أكتر من goroutine يعدّلوا نفس المتغير، والحل Mutex أو atomic و go run -race",
-          desc: R`لو أكتر من goroutine بيقروا ويكتبوا نفس المتغير في نفس الوقت، ومفيش تنسيق بينهم، ده data race. [[counter++]] شكلها خطوة واحدة بس هي ٣: اقرا، زوّد، اكتب. لو اتنين قروا نفس القيمة مع بعض، الاتنين هيكتبوا نفس النتيجة وزيادة هتضيع. والنتيجة بتتغيّر من تشغيل للتاني، وده أصعب نوع bugs.
+          cmd: "maps",
+          title: "map: مفتاح وقيمة، و comma ok، والترتيب اللي بيتغيّر كل مرة",
+          desc: R`[[map[string]int]] جدول مفتاح وقيمة: المفتاح string والقيمة int. البحث والإضافة والمسح سريعين في المتوسط مهما كبر الـ map.
 
-الحلول:
-• [[sync.Mutex]]: قفل. [[mu.Lock()]] قبل ما تلمس الداتا، و [[mu.Unlock()]] بعدها. goroutine واحدة بس تقدر تبقى جوّا في كل لحظة، والباقي بيستنى. والعرف [[defer mu.Unlock()]] بعد Lock على طول.
-• [[sync.RWMutex]]: نفس الفكرة بس قرّايين كتير مع بعض ([[RLock]])، وكاتب واحد لوحده ([[Lock]]). مفيد لو القراية أكتر بكتير من الكتابة.
-• [[sync/atomic]]: لعدّاد أو flag بسيط: [[atomic.Int64]] و [[Add]] و [[Load]]. أسرع من Mutex بس لعملية واحدة بس.
-• أو متشاركش أصلًا: channel وصاحب واحد للداتا.
+• [[m := map[string]int{"apple": 5}]] بقيم، أو [[make(map[string]int)]] فاضي.
+• [[m["mango"] = 12]] إضافة أو تعديل.
+• [[m["kiwi"]]] لمفتاح مش موجود مش error: بيرجّع القيمة الصفرية (0).
+• عشان تفرّق بين «مش موجود» و «موجود وقيمته صفر»: [[v, ok := m["kiwi"]]]. ok بتبقى false لو مش موجود. ده اسمه «comma ok».
+• [[delete(m, key)]] و [[len(m)]].
+• [[for k, v := range m]]: الترتيب عشوائي ومتعمّد يتغيّر من تشغيل للتاني، عشان محدش يعتمد عليه. لو محتاج ترتيب: رتّب المفاتيح الأول [[slices.Sorted(maps.Keys(m))]] (Go 1.23+).
 
-والعرف: الـ Mutex يبقى حقل جوه الـ struct اللي بيحميه، فوق الحقول اللي بيحميها، والـ methods pointer receivers (نسخ Mutex بيكسره).
+المفتاح لازم يبقى نوع ينفع يتقارن بـ [[==]]: string و int و bool و struct فيه الأنواع دي. slice أو map مينفعوش يبقوا مفتاح.
 
-وأهم أداة: [[go run -race .]] (أو [[go test -race]]): بتراقب البرنامج وهو شغال، ولو لقت race بتطبع السطرين اللي عملوه. شغّلها في الاختبارات دايمًا.`,
+والـ map اللي متعرّف بـ [[var m map[string]int]] من غير make بيبقى nil: القراية منه شغالة وبترجّع صفر، بس الكتابة فيه بتعمل panic.`,
           example: R`package main
 
 import (
   "fmt"
-  "sync"
-  "sync/atomic"
+  "maps"
+  "slices"
 )
 
-type Counter struct {
-  mu sync.Mutex
-  m  map[string]int
-}
-
-func (c *Counter) Inc(key string) {
-  c.mu.Lock()
-  defer c.mu.Unlock()
-  c.m[key]++
-}
-
 func main() {
-  var wg sync.WaitGroup
-  unsafeTotal := 0
-  var atomicTotal atomic.Int64
-  c := Counter{m: make(map[string]int)}
+  stock := map[string]int{"apple": 5, "banana": 0}
+  stock["mango"] = 12
+  stock["apple"] += 3
 
-  for range 1000 {
-    wg.Add(1)
-    go func() {
-      defer wg.Done()
-      // data race: أكتر من goroutine بيكتبوا من غير قفل
-      unsafeTotal++
-      atomicTotal.Add(1)
-      c.Inc("visits")
-    }()
+  fmt.Println(stock["apple"], stock["kiwi"])
+  qty, ok := stock["banana"]
+  fmt.Println(qty, ok)
+  if _, ok := stock["kiwi"]; !ok {
+    fmt.Println("kiwi مش موجود")
   }
-  wg.Wait()
 
-  fmt.Println("unsafe:", unsafeTotal)
-  fmt.Println("atomic:", atomicTotal.Load())
-  fmt.Println("mutex:", c.m["visits"])
+  delete(stock, "banana")
+  fmt.Println(len(stock))
+
+  for _, k := range slices.Sorted(maps.Keys(stock)) {
+    fmt.Println(k, stock[k])
+  }
+
+  counts := make(map[string]int)
+  for _, w := range []string{"go", "is", "go"} {
+    counts[w]++
+  }
+  fmt.Println(counts)
+
+  var empty map[string]int
+  fmt.Println(empty["x"], len(empty))
 }`,
-          try: R`شغّل [[go run .]] كذا مرة وراقب رقم unsafe، وبعدين [[go run -race .]] واقرا التقرير. وبعدين امسح سطر unsafeTotal وشغّل -race تاني. وأخيرًا شيل [[c.mu.Lock()]] و [[defer c.mu.Unlock()]] من Inc وشغّل [[go run .]] من غير -race.`,
+          try: R`اكتب [[empty["x"] = 1]] في آخر main وشغّل واقرا الـ panic. وبعدين اكتب برنامج بياخد جملة ويطبع كل كلمة وعدد مرات ظهورها، مترتبين من الأكتر للأقل (استخدم [[strings.Fields]] و [[slices.SortFunc]]).`,
           flag: "script",
           deep: {
-            why: R`الـ race بيعدّي في الاختبار على جهازك ويظهر في الإنتاج تحت ضغط: رصيد غلط، أو عدّاد ناقص، أو map بيوقّع السيرفر كله. والكود شكله سليم. عشان كده Go عاملة race detector جوّا الأدوات، وفرق كتير بيشغّلوا كل الاختبارات بـ -race في CI.`,
-            how: R`[[unsafeTotal]] ممكن يطلع 1000 أحيانًا وأقل أحيانًا، حسب التوقيت وعدد الأنوية. وده بالظبط اللي بيخلي الـ race خطير: مش بيبان كل مرة.
+            why: R`الـ map هو الكاش، والعدّاد، والـ index السريع (بدل ما تلف على slice كلها تدوّر على user بالـ id)، وإزالة التكرار. هتستخدمه في كل برنامج تقريبًا.`,
+            how: R`[[stock["kiwi"]]] بيرجّع 0، و [[stock["banana"]]] بيرجّع 0 برضه. من غير comma ok مش هتعرف تفرّق. [[!ok]]: الـ [[!]] معناها «مش».
 
-[[-race]] بيبني البرنامج بتعليمات زيادة بتسجّل كل قراية وكتابة في الذاكرة ومين عملها، فلو اتنين goroutine لمسوا نفس المكان (وواحد منهم بيكتب) من غير ما يكون بينهم تزامن، بيطبع [[WARNING: DATA RACE]] ومكان الاتنين، وبيخرج بـ exit code 66. بيبطّأ البرنامج (٢ لـ ٢٠ مرة) ويزوّد الذاكرة، فمش للإنتاج، بس بيمسك الـ races اللي حصلت فعلًا وهو شغال، مش اللي ممكن تحصل.
+[[counts[w]++]] شغالة من غير ما تشيك: لو المفتاح مش موجود القيمة صفر، فبتبقى 1.
 
-الـ map بالذات: الكتابة فيه من أكتر من goroutine من غير قفل الـ runtime بيكتشفها غالبًا ويوقف البرنامج كله بـ [[fatal error: concurrent map writes]]، ودي مش panic تتمسك بـ recover.
+[[fmt.Println]] بتطبع الـ map بمفاتيح مترتبة (عشان الناتج يبقى ثابت)، بس [[range]] مش بيرتّب.
 
-[[atomic.Int64]] (من Go 1.19) نوع جاهز بقيمة صفرية مفيدة، أحسن من [[atomic.AddInt64(&x, 1)]] القديمة.`,
-            when: R`Mutex لأي داتا مشتركة فيها أكتر من حقل أو عملية مركّبة (map، أو رصيد مع سجل). RWMutex لكاش قرايته كتير. atomic لعدّاد أو flag واحد. و -race في كل [[go test]] في CI.`,
-            mistakes: R`تنسى Unlock في return بدري (استخدم defer). و Lock مرتين في نفس الـ goroutine (Mutex في Go مش reentrant): deadlock. وتنسخ struct فيه Mutex (value receiver): go vet بيقول [[passes lock by value]]. وتقفل وانت بتعمل حاجة بطيئة (HTTP call) فكل حاجة تستنى. وتفتكر إن القراية بس مش محتاجة قفل: قراية مع كتابة = race برضه.`
+الـ map بيتبعت للدوال كمرجع: لو الدالة عدّلت فيه، التعديل بيبان بره.
+
+الـ map مش آمن مع أكتر من goroutine بيكتبوا في نفس الوقت: الـ runtime بيكتشف ده ويوقف البرنامج كله بـ [[fatal error: concurrent map writes]]. الحل Mutex (المستوى ٢) أو [[sync.Map]] في حالات معينة.
+
+ولو القيمة struct مينفعش تعدّل حقل جوّاه مباشرة: [[m["a"].Count++]] compile error. اقرا القيمة في متغير، عدّلها، ورجّعها، أو خلي القيمة pointer [[map[string]*Item]].`,
+            when: R`بحث سريع بالمفتاح (users بالـ id)، وعدّ التكرار، وإزالة التكرار ([[map[string]bool]] أو [[map[string]struct{}]] اللي مبياخدش مساحة للقيمة)، والتجميع (group by).`,
+            mistakes: R`تكتب في nil map: [[panic: assignment to entry in nil map]] (حصلت كتير في structs فيها map محدش عمله make). وتعتمد على ترتيب range فالاختبار ينجح مرة ويفشل مرة. وتعمل [[if m[k] == 0]] وانت تقصد «مش موجود». وتكتب في map من أكتر من goroutine.`
           },
           teach: R`## البرنامج ده بيعمل إيه؟
 
-بيشغّل 1000 goroutine، وكل واحدة بتزوّد **٣ عدّادات** بواحد:
-
-- [[unsafeTotal]]: [[int]] عادي من غير أي حماية (ده الغلط).
-- [[atomicTotal]]: [[atomic.Int64]].
-- المفتاح [[visits]] في [[c.m]]: map جوه struct محمي بـ [[sync.Mutex]].
-
-وفي الآخر بيطبعهم. المفروض التلاتة يطلعوا 1000، بس الأول لأ. الناتج كله من [[go run .]] جوه [[docker run --rm golang:1.25]] (Go 1.25.14 على لينكس، 16 logical processor).
+مخزن فاكهة صغير في [[map]]: نضيف ونعدّل ونقرا، ونفرّق بين «مش موجود» و «موجود وقيمته صفر» بـ comma ok، ونمسح، ونطبع مترتب. وبعدين نعدّ كلمات، وفي الآخر nil map. الناتج من [[go run .]] في [[golang:1.25]] على لينكس.
 
 ---
 
@@ -1222,628 +672,1236 @@ func main() {
 ~~~go main.go
 import (
   "fmt"
-  "sync"
-  "sync/atomic"
+  "maps"
+  "slices"
 )
 ~~~
 
-- [[sync]]: فيه [[WaitGroup]] و [[Mutex]].
-- [[sync/atomic]]: باكدج جوه sync، فيه عمليات **atomic** (ذرّية): العملية بتحصل كلها مرة واحدة، ومحدش يقدر يدخل في نصها. واسمه في الكود [[atomic]] (آخر جزء من المسار).
+- [[maps]]: دوال للـ maps (هنستخدم منها [[maps.Keys]]).
+- [[slices]]: عشان نرتّب المفاتيح.
 
 ---
 
-## ٢. [[Counter]]: الداتا وقفلها مع بعض
+## ٢. إنشاء وإضافة وتعديل
 
 ~~~go main.go
-type Counter struct {
-  mu sync.Mutex
-  m  map[string]int
-}
+  stock := map[string]int{"apple": 5, "banana": 0}
+  stock["mango"] = 12
+  stock["apple"] += 3
 ~~~
 
-- [[mu sync.Mutex]]: الـ Mutex اختصار **mutual exclusion** (استبعاد متبادل): قفل goroutine واحدة بس تقدر تمسكه في المرة. القيمة الصفرية بتاعته قفل **مفتوح** جاهز، فمش محتاج تعمله.
-- العرف إن الـ Mutex يتحط **فوق** الحقول اللي بيحميها، عشان اللي يقرا الـ struct يعرف إن [[m]] متلمسش من غير [[mu]].
-
-~~~go main.go
-func (c *Counter) Inc(key string) {
-  c.mu.Lock()
-  defer c.mu.Unlock()
-  c.m[key]++
-}
-~~~
-
-- [[(c *Counter)]]: method بـ **pointer receiver**: [[c]] بيشاور على الـ Counter الأصلي، مش نسخة منه. ده مهم جدًا هنا (القسم ٨).
-- [[c.mu.Lock()]]: امسك القفل. لو goroutine تانية ماسكاه، استنى لحد ما تسيبه.
-- [[defer c.mu.Unlock()]]: سيب القفل لما Inc تخلص، حتى لو حصل panic أو return بدري. العرف تكتبها في السطر اللي بعد Lock على طول عشان متنساهاش.
-- [[c.m[key]++]]: زوّد القيمة. ده بيحصل وانت **لوحدك**، فمحدش هيكتب في الـ map معاك.
+- [[map[string]int]]: اقراها «map مفتاحه string وقيمته int».
+- [[{"apple": 5, "banana": 0}]]: قيم أولية، كل واحدة [[مفتاح: قيمة]].
+- [[stock["mango"] = 12]]: لو المفتاح مش موجود بيتضاف، ولو موجود بيتعدّل. نفس السطر للاتنين.
+- [[stock["apple"] += 3]]: اقرا 5، زوّد 3، اكتب 8.
 
 ---
 
-## ٣. main: التلات عدّادات
+## ٣. القراية ومشكلة الصفر
 
 ~~~go main.go
-  var wg sync.WaitGroup
-  unsafeTotal := 0
-  var atomicTotal atomic.Int64
-  c := Counter{m: make(map[string]int)}
+  fmt.Println(stock["apple"], stock["kiwi"])
 ~~~
 
-- [[unsafeTotal := 0]]: int عادي.
-- [[var atomicTotal atomic.Int64]]: نوع جاهز (من Go 1.19) جواه int64، ومبيتعدّلش غير بـ methods ذرّية. القيمة الصفرية = 0.
-- [[Counter{m: make(map[string]int)}]]: الـ map لازم يتعمل بـ [[make]] (الـ map الـ nil مينفعش يتكتب فيه). و [[mu]] مش مكتوب، فبياخد قيمته الصفرية: قفل مفتوح.
+~~~text الناتج
+8 0
+~~~
 
----
+[[kiwi]] مش موجود، ومع ذلك مفيش error: الـ map بيرجّع **القيمة الصفرية** للنوع (0 للـ int، و [[""]] للـ string، و [[false]] للـ bool). طب [[banana]] موجود وقيمته 0 برضه. إزاي تفرّق؟
 
-## ٤. الـ 1000 goroutine
+### comma ok
 
 ~~~go main.go
-  for range 1000 {
-    wg.Add(1)
-    go func() {
-      defer wg.Done()
-      // data race: أكتر من goroutine بيكتبوا من غير قفل
-      unsafeTotal++
-      atomicTotal.Add(1)
-      c.Inc("visits")
-    }()
+  qty, ok := stock["banana"]
+  fmt.Println(qty, ok)
+~~~
+
+لما تستقبل **قيمتين** من قراية map، التانية [[bool]] بتقول المفتاح موجود ولا لأ. الاسم [[ok]] عرف، مش كلمة محجوزة.
+
+~~~text الناتج
+0 true
+~~~
+
+موجود وقيمته صفر.
+
+~~~go main.go
+  if _, ok := stock["kiwi"]; !ok {
+    fmt.Println("kiwi مش موجود")
   }
-  wg.Wait()
 ~~~
 
-[[wg.Add(1)]] و [[go func() { ... }()]] و [[defer wg.Done()]] و [[wg.Wait()]] نفس اللي في درس الـ goroutines. الجديد ٣ سطور:
+- comma ok جوه جملة تمهيدية للـ if (درس «if و for»).
+- [[_]]: مش محتاجين القيمة، عايزين ok بس.
+- [[!ok]]: الـ [[!]] معناها «مش»، يعني «لو مش موجود».
 
-### [[unsafeTotal++]]: ليه مش آمنة؟
-
-شكلها خطوة واحدة، بس الجهاز بينفّذها ٣ خطوات:
-
-1. اقرا قيمة unsafeTotal من الذاكرة.
-2. زوّد عليها 1.
-3. اكتب النتيجة في الذاكرة.
-
-ولو goroutine A و B شغالين على أنوية مختلفة في نفس اللحظة:
-
-| A | B | unsafeTotal |
-|---|---|---|
-| قرت 41 | | 41 |
-| | قرت 41 | 41 |
-| كتبت 42 | | 42 |
-| | كتبت 42 | 42 |
-
-اتنين زوّدوا، والعدّاد زاد **واحد بس**. زيادة ضاعت. ده اسمه **data race**: أكتر من goroutine بيلمسوا نفس المتغير في نفس الوقت، وواحد منهم على الأقل بيكتب، ومفيش تزامن بينهم.
-
-### [[atomicTotal.Add(1)]]
-
-بتعمل الـ ٣ خطوات **كعملية واحدة** على مستوى المعالج، فمحدش يقدر يدخل في النص. وبترجّع القيمة الجديدة (احنا مش محتاجينها هنا).
-
-### [[c.Inc("visits")]]
-
-الزيادة جوه Lock و Unlock، فـ goroutine واحدة بس بتكتب في الـ map في كل لحظة.
+~~~text الناتج
+kiwi مش موجود
+~~~
 
 ---
 
-## ٥. الطباعة
+## ٤. المسح والطول
 
 ~~~go main.go
-  fmt.Println("unsafe:", unsafeTotal)
-  fmt.Println("atomic:", atomicTotal.Load())
-  fmt.Println("mutex:", c.m["visits"])
+  delete(stock, "banana")
+  fmt.Println(len(stock))
 ~~~
 
-- [[atomicTotal.Load()]]: اقرا القيمة بطريقة ذرّية. القراية كمان لازم تكون بـ Load مش مباشرة.
-- قراية [[c.m]] هنا من غير قفل وده تمام، لأن [[wg.Wait()]] خلصت، فمفيش ولا goroutine شغالة تكتب.
+- [[delete(map, key)]]: دالة مبنية في اللغة. ولو المفتاح مش موجود مبتعملش حاجة ومفيش error.
+- [[len(stock)]]: عدد المفاتيح. فضل apple و mango:
 
-شغّلته ٥ مرات وبصّيت على السطر الأول بس:
-
-~~~text الناتج (أول سطر من ٥ تشغيلات)
-unsafe: 992
-unsafe: 1000
-unsafe: 998
-unsafe: 993
-unsafe: 997
+~~~text الناتج
+2
 ~~~
-
-والسطرين التانيين [[atomic: 1000]] و [[mutex: 1000]] كل مرة. لاحظ التشغيلة التانية: [[1000]] صح بالصدفة. ده اللي بيخلّي الـ race خطير: بيعدّي في الاختبار ويبان في الإنتاج.
 
 ---
 
-## ٦. [[go run -race .]]: الـ race detector
+## ٥. اللف بترتيب
 
-[[-race]] بيبني البرنامج بتعليمات زيادة بتسجّل كل قراية وكتابة في الذاكرة، ومين عملها. ولو اتنين لمسوا نفس المكان من غير تزامن بينهم، بيطبع تقرير:
-
-~~~text الناتج: go run -race . (أول تقرير)
-==================
-WARNING: DATA RACE
-Read at 0x00c000120030 by goroutine 8:
-  main.main.func1()
-      /w/l4/main.go:31 +0x95
-
-Previous write at 0x00c000120030 by goroutine 9:
-  main.main.func1()
-      /w/l4/main.go:31 +0xa7
-
-Goroutine 8 (running) created at:
-  main.main()
-      /w/l4/main.go:28 +0x114
-
-Goroutine 9 (running) created at:
-  main.main()
-      /w/l4/main.go:28 +0x114
-==================
+~~~go main.go
+  for _, k := range slices.Sorted(maps.Keys(stock)) {
+    fmt.Println(k, stock[k])
+  }
 ~~~
 
-نقراه:
+### الأول: الترتيب العادي عشوائي
 
-| الجزء | معناه |
+[[for k := range m]] ترتيبه **بيتغيّر من تشغيل للتاني** بقصد، عشان محدش يبني كود على ترتيب مش مضمون. شغّلت نفس البرنامج (map فيه a لـ e) ٤ مرات:
+
+~~~text الناتج: ٤ تشغيلات لـ for k := range m
+d e a b c
+a b c d e
+a b c d e
+b c d e a
+~~~
+
+### نفك السطر من جوه لبرة
+
+1. [[maps.Keys(stock)]]: بترجّع المفاتيح كـ **iterator** (حاجة ينفع تلف عليها بـ range، مش slice)، وبنفس الترتيب العشوائي.
+2. [[slices.Sorted(...)]]: بتلف على الـ iterator، تجمع القيم في slice جديدة، وترتّبها. (الاتنين من Go 1.23.)
+3. [[range]] على الـ slice المترتبة، و [[stock[k]]] تجيب القيمة.
+
+~~~text الناتج
+apple 8
+mango 12
+~~~
+
+---
+
+## ٦. عدّاد كلمات
+
+~~~go main.go
+  counts := make(map[string]int)
+  for _, w := range []string{"go", "is", "go"} {
+    counts[w]++
+  }
+  fmt.Println(counts)
+~~~
+
+- [[make(map[string]int)]]: map فاضي جاهز للكتابة. (زي [[map[string]int{}]].)
+- [[counts[w]++]]: من غير ما تشيك إذا كان موجود. لو مش موجود القراية بترجّع 0، فبيبقى 1.
+- [[fmt.Println]] على map بتطبعه بمفاتيح **مترتبة** عشان الناتج يبقى ثابت. ده في الطباعة بس، مش في range.
+
+~~~text الناتج
+map[go:2 is:1]
+~~~
+
+---
+
+## ٧. nil map
+
+~~~go main.go
+  var empty map[string]int
+  fmt.Println(empty["x"], len(empty))
+~~~
+
+- [[var]] من غير [[make]]: القيمة الصفرية للـ map هي [[nil]].
+- القراية منه والـ len شغالين:
+
+~~~text الناتج
+0 0
+~~~
+
+### التجربة: الكتابة فيه
+
+~~~go main.go
+  empty["x"] = 1
+~~~
+
+~~~text الناتج
+panic: assignment to entry in nil map
+
+goroutine 1 [running]:
+main.main()
+	/w/e6a/main.go:8 +0xa8
+exit status 2
+~~~
+
+الحل [[empty = make(map[string]int)]] قبلها. وده بيحصل كتير مع struct فيه حقل map محدش عمله make.
+
+---
+
+## ٨. حاجات الـ compiler بيرفضها
+
+| الكود | الرسالة |
 |---|---|
-| [[Read at 0x00c000120030 by goroutine 8]] | goroutine 8 **قرت** من العنوان ده في الذاكرة (ده مكان unsafeTotal) |
-| [[main.main.func1()]] | جوه أول دالة من غير اسم في main ([[func1]]) |
-| [[main.go:31]] | السطر 31 = [[unsafeTotal++]] |
-| [[Previous write ... by goroutine 9]] | قبلها goroutine 9 **كتبت** في نفس المكان، ومفيش بينهم قفل |
-| [[created at: ... main.go:28]] | الاتنين اتعملوا من سطر [[go func()]] |
+| map مفتاحه [[[]int]] | [[invalid map key type []int]] |
+| [[m["a"].Count++]] و القيمة struct | [[cannot assign to struct field m["a"].Count in map]] |
 
-وفي آخر الناتج:
-
-~~~text الناتج (الآخر)
-unsafe: 885
-atomic: 1000
-mutex: 1000
-Found 2 data race(s)
-exit status 66
-~~~
-
-- [[Found 2 data race(s)]]: عدد التقارير (بيختلف من تشغيلة للتانية).
-- [[exit status 66]]: البرنامج بيخرج بـ 66 لو لقى race، فالـ CI بيفشل لوحده.
-- لاحظ: سطور atomic و Inc مطلعتش في التقرير، لأنها محمية.
-- و unsafe بقت 885: الـ race detector بيبطّأ البرنامج ويغيّر التوقيت.
-
-### بعد ما تمسح unsafeTotal
-
-مسحت سطرين unsafeTotal والتعليق وشغّلت [[-race]] تاني:
-
-~~~text الناتج: go run -race .
-atomic: 1000
-mutex: 1000
-~~~
-
-مفيش ولا تقرير، و exit 0.
+- المفتاح لازم يتقارن بـ [[==]]، والـ slice مبتتقارنش.
+- القيمة اللي في map مش متغير ليه عنوان ثابت (الـ map بينقل القيم لما يكبر)، فمينفعش تعدّل حقل جوّاها. اقرا في متغير، عدّل، واكتب تاني، أو خلي القيمة pointer.
 
 ---
 
-## ٧. من غير القفل في Inc
-
-شلت [[c.mu.Lock()]] و [[defer c.mu.Unlock()]] وشغّلت [[go run .]] (من غير -race) ٣ مرات:
-
-~~~text الناتج: أول مرتين
-fatal error: concurrent map writes
-
-goroutine 1006 [running]:
-~~~
-
-البرنامج كله وقع. الـ runtime بتاع Go بيراقب الـ maps لوحده، ولو لقى كتابتين مع بعض بيوقف كل حاجة، وده **fatal error** مش panic، فـ [[recover]] متقدرش تمسكه. والتالتة عدّت وطبعت [[mutex: 1000]] بالصدفة. يعني الكشف ده مش مضمون، و [[-race]] هو اللي بيمسكها كل مرة.
-
----
-
-## ٨. لو نسيت الـ pointer receiver
-
-غيّرت [[func (c *Counter) Inc]] لـ [[func (c Counter) Inc]] (value receiver). كده كل نداء بيشتغل على **نسخة** من الـ Counter، وجواها نسخة من القفل، فكل goroutine بتقفل قفل خاص بيها ومفيش حماية. [[go vet]] بيمسكها:
-
-~~~text الناتج: go vet .
-./main.go:14:9: Inc passes lock by value: demo.Counter contains sync.Mutex
-~~~
-
-([[demo]] هو اسم الـ module في go.mod.)
-
----
-
-## الخلاصة
-
-| الأداة | امتى |
-|---|---|
-| [[sync.Mutex]] + [[Lock]] / [[defer Unlock]] | داتا مركّبة (map، أو أكتر من حقل لازم يتغيّروا مع بعض) |
-| [[sync.RWMutex]] | نفس الكلام والقراية أكتر بكتير من الكتابة ([[RLock]] للقرّايين) |
-| [[atomic.Int64]] + [[Add]] / [[Load]] | عدّاد أو flag واحد |
-| [[go run -race .]] / [[go test -race]] | دايمًا وانت بتختبر: بيطبع السطرين اللي عملوا الـ race، و exit 66 |
-| [[go vet]] | بيمسك نسخ الـ Mutex (value receiver) |
-
-- [[x++]] مش عملية واحدة: اقرا، زوّد، اكتب.
-- الـ race ممكن يطلع النتيجة صح بالصدفة، فمتعتمدش على «اشتغل عندي».
-- الكتابة في map من أكتر من goroutine من غير قفل: [[fatal error: concurrent map writes]] والبرنامج كله يقع.`,
-          lines: [
-            "باكدج main.",
-            "imports.",
-            "fmt.",
-            "sync.",
-            R`[[sync/atomic]]: عمليات ذرّية.`,
-            "قفلة.",
-            "struct فيه الـ Mutex والداتا اللي بيحميها.",
-            "القفل: قيمته الصفرية جاهزة.",
-            "map مشترك.",
-            "قفلة.",
-            "pointer receiver: عشان منتنسخش القفل.",
-            "اقفل.",
-            "افتح لما الدالة تخلص.",
-            "عدّل وانت لوحدك.",
-            "قفلة.",
-            "main.",
-            "WaitGroup.",
-            "عدّاد عادي من غير حماية.",
-            R`عدّاد atomic.`,
-            "Counter بالـ map جاهز.",
-            "1000 لفّة.",
-            "سجّل.",
-            "goroutine.",
-            "Done في الآخر.",
-            R`race: [[++]] = اقرا + زوّد + اكتب، ومش محمية.`,
-            "زيادة ذرّية: آمنة.",
-            "زيادة بقفل: آمنة.",
-            "قفلة الـ goroutine.",
-            "قفلة الـ loop.",
-            "استنى الكل.",
-            "ممكن أقل من 1000.",
-            "1000 دايمًا.",
-            "1000 دايمًا.",
-            "قفلة."
-          ],
-          sol: R`[[go run .]] بيطبع حاجة زي:
-[[unsafe: 987]]
-[[atomic: 1000]]
-[[mutex: 1000]]
-والرقم الأول بيتغيّر من مرة للتانية (وممكن يطلع 1000 أحيانًا، وده اللي بيخلّي الـ race يعدّي من غير ما حد يلاحظ).
-
-[[go run -race .]] بيطبع [[WARNING: DATA RACE]] وتحتها [[Read at ... by goroutine 8:]] و [[Previous write at ... by goroutine 7:]] وكل واحدة فيها [[main.main.func1()]] ورقم سطر [[unsafeTotal++]]. وفي الآخر [[Found 2 data race(s)]] (العدد بيختلف من تشغيل للتاني) و [[exit status 66]].
-
-بعد ما تمسح unsafeTotal: -race مش بيطبع حاجة. ومن غير القفل في Inc: غالبًا [[fatal error: concurrent map writes]] والبرنامج كله بيقع.`
-        },
-        {
-          cmd: "context",
-          title: "context: تلغي شغل أو تحطله مهلة، وتعدّيه من الـ handler لحد الداتابيز",
-          desc: R`[[context.Context]] قيمة بتتعدّى كأول parameter لأي دالة بتعمل حاجة ممكن تطوّل (شبكة، داتابيز، شغل تقيل)، والعرف إن اسمه [[ctx]]. وظيفته يقول للدالة «بطّل، محدش مستني النتيجة دي».
-
-بتعمله:
-• [[context.Background()]]: الأصل الفاضي، في main أو الاختبارات.
-• [[context.WithTimeout(parent, 100*time.Millisecond)]]: بيتلغي لوحده بعد المدة.
-• [[context.WithCancel(parent)]]: بيتلغي لما تنادي cancel.
-الاتنين بيرجّعوا ctx جديد و [[cancel]]، و [[defer cancel()]] لازم دايمًا عشان الـ timer والموارد تتنضّف.
-
-جوه الدالة:
-• [[<-ctx.Done()]]: channel بتتقفل لما الـ ctx يتلغي، فتستخدمها في select.
-• [[ctx.Err()]]: السبب: [[context.DeadlineExceeded]] (المهلة خلصت) أو [[context.Canceled]] (حد ألغى).
-
-والأهم: الـ ctx بيتعدّى لتحت. في السيرفر كل request معاه [[r.Context()]]، وده بيتلغي لوحده لو اليوزر قفل الاتصال. فلو عدّيته للداتابيز ([[db.QueryContext(ctx, ...)]]) وللـ HTTP client، الـ query نفسها هتتلغي بدل ما تكمّل على الفاضي.
-
-ولو parent اتلغي، كل اللي اتعمل منه بيتلغي معاه.`,
-          example: R`package main
-
-import (
-  "context"
-  "errors"
-  "fmt"
-  "time"
-)
-
-// بتمثّل query بتاخد وقت، وبتسمع للإلغاء
-func query(ctx context.Context, d time.Duration) (string, error) {
-  select {
-  case <-time.After(d):
-    return "rows", nil
-  case <-ctx.Done():
-    return "", fmt.Errorf("query: %w", ctx.Err())
-  }
-}
-
-func main() {
-  ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
-  defer cancel()
-
-  res, err := query(ctx, 20*time.Millisecond)
-  fmt.Println(res, err)
-
-  _, err = query(ctx, time.Second)
-  fmt.Println(err, errors.Is(err, context.DeadlineExceeded))
-
-  ctx2, cancel2 := context.WithCancel(context.Background())
-  go func() {
-    time.Sleep(30 * time.Millisecond)
-    cancel2()
-  }()
-  _, err = query(ctx2, time.Second)
-  fmt.Println(err)
-}`,
-          try: R`اعمل handler في سيرفر بيعمل [[query(r.Context(), 5*time.Second)]]، وافتح الرابط بـ [[curl]] واضغط Ctrl+C بعد ثانية. اطبع الـ error في السيرفر: هتلاقي [[context canceled]] على طول، مش بعد 5 ثواني. (السيرفر في الدروس الجاية، والكود تحت.)`,
-          flag: "script",
-          deep: {
-            why: R`من غير context: يوزر بيقفل الصفحة، والسيرفر بيكمّل query بتاخد 10 ثواني و ٣ API calls على الفاضي. اضرب ده في ألف يوزر بيعملوا refresh وقت الضغط، وتلاقي السيرفر بيقع من شغل محدش مستنيه. context بيوقّف السلسلة كلها مرة واحدة.`,
-            how: R`الـ ctx الأول مهلته 100ms. الـ query الأولى بتخلص في 20ms فنجحت. التانية محتاجة ثانية، فالـ ctx اتلغي عند 100ms (من وقت إنشاءه)، و [[ctx.Err()]] رجّع DeadlineExceeded، والتغليف بـ [[%w]] خلّى errors.Is تلاقيه.
-
-ctx2 بيتلغي بعد 30ms من goroutine تانية، فالـ Err بقى Canceled.
-
-الـ context مش بيوقّف الكود لوحده: الدالة لازم تسمع ([[ctx.Done()]] في select، أو تعدّيه لمكتبة بتسمع زي database/sql و net/http). لو عندك loop تقيلة، شيك [[ctx.Err() != nil]] كل كام لفّة.
-
-[[context.WithValue]] بيحط قيمة في الـ ctx (زي request id أو اليوزر من الـ auth middleware)، بس للحاجات اللي بتعدّي الطبقات وبتخص الـ request، مش كطريقة تبعت parameters.
-
-go vet بيمسك [[the cancel function is not used on all paths]] لو نسيت cancel.`,
-            when: R`أي دالة بتعمل I/O أو ممكن تطوّل: خلي أول parameter [[ctx context.Context]]. في handlers استخدم [[r.Context()]]. في main و workers استخدم [[signal.NotifyContext]] (المستوى ٣) عشان Ctrl+C يلغي كل حاجة.`,
-            mistakes: R`تنسى [[defer cancel()]]. وتخزّن ctx في struct بدل ما تعدّيه كـ parameter. وتستخدم [[context.Background()]] جوه handler بدل [[r.Context()]] فالإلغاء ميوصلش. وتحط كل حاجة في WithValue. وتبعت nil كـ ctx (استخدم [[context.TODO()]] لو لسه مش عارف).`
-          },
-          teach: R`## البرنامج ده بيعمل إيه؟
-
-فيه دالة [[query]] بتمثّل query داتابيز بتاخد وقت، وبتسمع لـ context. و main بتجرّبها ٣ مرات:
-
-1. ctx مهلته 100ms، و query بتاخد 20ms: تنجح.
-2. نفس الـ ctx، و query محتاجة ثانية: المهلة تخلص قبلها.
-3. ctx تاني بيتلغي بإيدينا بعد 30ms.
-
-الناتج كله من [[go run .]] جوه [[docker run --rm golang:1.25]] (Go 1.25.14 على لينكس).
-
----
-
-## ١. الـ imports
-
-~~~go main.go
-import (
-  "context"
-  "errors"
-  "fmt"
-  "time"
-)
-~~~
-
-- [[context]]: النوع [[context.Context]] والدوال اللي بتعمله.
-- [[errors]]: فيها [[errors.Is]] اللي بتدوّر على error معيّن جوه error ملفوف.
-
----
-
-## ٢. [[query]]: دالة بتسمع للإلغاء
-
-~~~go main.go
-// بتمثّل query بتاخد وقت، وبتسمع للإلغاء
-func query(ctx context.Context, d time.Duration) (string, error) {
-  select {
-  case <-time.After(d):
-    return "rows", nil
-  case <-ctx.Done():
-    return "", fmt.Errorf("query: %w", ctx.Err())
-  }
-}
-~~~
-
-### [[ctx context.Context]]
-
-- [[context.Context]] **interface**: أي قيمة فيها methods [[Done()]] و [[Err()]] و [[Deadline()]] و [[Value()]].
-- العرف في Go: الـ ctx **أول parameter** واسمه [[ctx]]. أي دالة بتعمل I/O أو ممكن تطوّل بتاخده.
-- [[(string, error)]]: الدالة بترجّع قيمتين: النتيجة و error.
-
-### الـ select
-
-- [[case <-time.After(d):]]: الشغل «خلص» بعد d، فارجع [[rows]] و [[nil]] (مفيش error).
-- [[case <-ctx.Done():]]: [[ctx.Done()]] بترجّع channel **بتتقفل** لما الـ ctx يتلغي. والاستقبال من channel مقفولة بيرجع على طول (درس الـ channels)، فالـ case دي بتصحى أول ما الإلغاء يحصل.
-- اللي يحصل الأول يكسب.
-
-### [[fmt.Errorf("query: %w", ctx.Err())]]
-
-- [[ctx.Err()]]: **سبب** الإلغاء. واحد من اتنين:
-  - [[context.DeadlineExceeded]]: المهلة خلصت، ونصه [[context deadline exceeded]].
-  - [[context.Canceled]]: حد نادى cancel، ونصه [[context canceled]].
-- [[fmt.Errorf]]: بتعمل error جديد من قالب. و [[%w]] (w = wrap) بتحط الـ error الأصلي **جوّاه**، مش بس نصه. فبعدين [[errors.Is]] تقدر تلاقيه.
-
----
-
-## ٣. ctx بمهلة: [[context.WithTimeout]]
-
-~~~go main.go
-  ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
-  defer cancel()
-~~~
-
-- [[context.Background()]]: الـ ctx الأصل، فاضي، عمره ما بيتلغي. بتبدأ منه في main والاختبارات.
-- [[context.WithTimeout(parent, d)]]: بيعمل ctx **ابن** من parent، بيتلغي لوحده بعد d **من دلوقتي**. وبيرجّع حاجتين: الـ ctx الجديد، و [[cancel]] (دالة تلغيه بإيدك).
-- [[defer cancel()]]: لازم دايمًا، حتى لو المهلة هتخلص لوحدها. لو خلصت شغلك بدري، الـ timer اللي جوّا والارتباط بالـ parent بيفضلوا محجوزين لحد ما المهلة تخلص. [[cancel()]] بتنضّفهم على طول، ونداها أكتر من مرة مفيهوش مشكلة.
-
-### الـ query الأولى: 20ms
-
-~~~go main.go
-  res, err := query(ctx, 20*time.Millisecond)
-  fmt.Println(res, err)
-~~~
-
-20ms أقل من 100ms، فالـ [[time.After]] كسب:
-
-~~~text الناتج
-rows <nil>
-~~~
-
-[[<nil>]] هي طريقة طباعة error فاضي.
-
-### الـ query التانية: ثانية بنفس الـ ctx
-
-~~~go main.go
-  _, err = query(ctx, time.Second)
-  fmt.Println(err, errors.Is(err, context.DeadlineExceeded))
-~~~
-
-- [[_]]: مش محتاجين النتيجة. و [[err =]] (من غير [[:]]) لأن err متعرّف قبل كده.
-- المهلة محسوبة من وقت ما الـ ctx اتعمل، مش من وقت الـ query. فعدّى منها حوالي 20ms، وفاضل حوالي 80ms. الثانية مش هتلحق، فـ [[ctx.Done()]] اتقفلت.
-- [[errors.Is(err, context.DeadlineExceeded)]]: بتفك الـ error طبقة طبقة (اللي اتلف بـ [[%w]]) وتشوف هل جوّاه DeadlineExceeded.
-
-~~~text الناتج
-query: context deadline exceeded true
-~~~
-
-جرّبت أكتب [[%v]] بدل [[%w]]: النص طلع زي ما هو، بس [[errors.Is]] رجّعت false، لأن الـ error الأصلي مبقاش جوّاه، نصه بس:
-
-~~~text الناتج بـ %v
-query: context deadline exceeded false
-~~~
-
----
-
-## ٤. ctx بيتلغي بإيدنا: [[context.WithCancel]]
-
-~~~go main.go
-  ctx2, cancel2 := context.WithCancel(context.Background())
-  go func() {
-    time.Sleep(30 * time.Millisecond)
-    cancel2()
-  }()
-  _, err = query(ctx2, time.Second)
-  fmt.Println(err)
-~~~
-
-- [[context.WithCancel(parent)]]: ctx من غير مهلة، بيتلغي بس لما حد ينادي [[cancel2()]] (أو الـ parent يتلغي).
-- الـ goroutine بتستنى 30ms وتلغي. ده بيمثّل حاجة من بره: يوزر قفل الصفحة، أو Ctrl+C.
-- query كانت محتاجة ثانية، بس ctx2 اتلغي عند 30ms:
-
-~~~text الناتج
-query: context canceled
-~~~
-
-المرة دي السبب [[Canceled]] مش [[DeadlineExceeded]].
-
-> هنا مفيش [[defer cancel2()]] لأن الـ goroutine بتناديها دايمًا. بس في الكود الحقيقي اكتبها برضه.
-
----
-
-## ٥. الإلغاء بينزل لتحت
-
-لو الـ parent اتلغي، كل اللي اتعمل منه بيتلغي معاه، حتى لو مهلته لسه طويلة. جرّبت:
-
-~~~go main.go
-parent, cancel := context.WithCancel(context.Background())
-child, cancelChild := context.WithTimeout(parent, time.Hour)
-defer cancelChild()
-cancel()
-<-child.Done()
-fmt.Println(child.Err())
-~~~
-
-~~~text الناتج
-context canceled
-~~~
-
-الابن مهلته ساعة، بس اتلغي أول ما الأب اتلغي. وده اللي بيخلّي ctx واحد من الـ request يوقف الـ query والـ HTTP calls اللي تحته كلها.
-
----
-
-## ٦. [[go vet]] بيمسك cancel المنسية
-
-لو رميت cancel:
-
-~~~go main.go
-ctx, _ := context.WithTimeout(context.Background(), time.Second)
-~~~
-
-~~~text الناتج: go vet .
-./main.go:10:8: the cancel function returned by context.WithTimeout should be called, not discarded, to avoid a context leak
-~~~
-
-ولو فيه [[return]] بدري قبل [[defer cancel()]]:
-
-~~~text الناتج: go vet .
-./main.go:10:3: the cancel function is not used on all paths (possible context leak)
-./main.go:12:5: this return statement may be reached without using the cancel var defined on line 10
-~~~
-
-عشان كده [[defer cancel()]] في السطر اللي بعد WithTimeout على طول.
-
----
-
-## ٧. الحل: handler بيسمع لليوزر
+## ٩. التجربة: الكلمات مترتبة بالعدد
 
 ~~~go solCode
-http.HandleFunc("/report", func(w http.ResponseWriter, r *http.Request) {
-  res, err := query(r.Context(), 5*time.Second)
-  if err != nil {
-    log.Println("client gone:", err)
-    return
-  }
-  fmt.Fprintln(w, res)
+counts := map[string]int{}
+for _, w := range strings.Fields("go is simple and go is fast") {
+  counts[w]++
+}
+words := slices.Collect(maps.Keys(counts))
+slices.SortFunc(words, func(a, b string) int {
+  return cmp.Compare(counts[b], counts[a])
 })
-log.Fatal(http.ListenAndServe(":8080", nil))
+for _, w := range words {
+  fmt.Println(w, counts[w])
+}
 ~~~
 
-- [[http.HandleFunc("/report", ...)]]: أي طلب على [[/report]] تنفّذ الدالة دي (تفاصيل السيرفر في قسم الويب).
-- [[r.Context()]]: كل request معاه ctx، والسيرفر بيلغيه لوحده لو اليوزر قفل الاتصال.
-- [[query(r.Context(), 5*time.Second)]]: بنعدّيه لتحت، فالـ query بتسمع لليوزر.
-- [[log.Println]]: زي fmt.Println بس بيكتب على stderr ومعاه التاريخ والوقت.
-- [[fmt.Fprintln(w, res)]]: اكتب الرد لليوزر.
-- [[log.Fatal(http.ListenAndServe(":8080", nil))]]: شغّل السيرفر على port 8080، ولو وقع اطبع السبب واخرج.
+- [[strings.Fields(s)]]: بتقطّع النص على المسافات وترجّع [[[]string]].
+- [[slices.Collect(maps.Keys(counts))]]: اجمع المفاتيح في slice من غير ترتيب.
+- [[slices.SortFunc(words, func(a, b string) int {...})]]: رتّب بدالة مقارنة بترجّع رقم سالب لو a قبل b، وموجب لو بعدها، وصفر لو زي بعض.
+- [[cmp.Compare(x, y)]] (باكدج [[cmp]]): بترجّع -1 لو x أصغر، و 0 لو متساويين، و 1 لو أكبر. وكتبناها [[(counts[b], counts[a])]] **بالعكس** عشان الأكبر ييجي الأول.
+- الكود ده محتاج [[import]] لـ [[cmp]] و [[fmt]] و [[maps]] و [[slices]] و [[strings]].
 
-جرّبته جوه نفس الـ container: شغّلت السيرفر في الخلفية، وبدل ما أضغط Ctrl+C استخدمت [[curl --max-time 1]] اللي بيقفل الاتصال بعد ثانية (نفس اللي بيحصل لما اليوزر يقفل). وزوّدت المدة في سطر اللوج:
+شغّلته مرتين:
 
-~~~text الناتج (curl)
-curl: (28) Operation timed out after 1001 milliseconds with 0 bytes received
+~~~text الناتج: أول تشغيل
+go 2
+is 2
+and 1
+fast 1
+simple 1
 ~~~
 
-~~~text الناتج (السيرفر)
-2026/10/07 16:29:19 client gone: query: context canceled after 1s
+~~~text الناتج: تاني تشغيل
+go 2
+is 2
+simple 1
+and 1
+fast 1
 ~~~
 
-السيرفر عرف بعد ثانية، مش بعد 5. ولو كنت عدّيت [[context.Background()]] بدل [[r.Context()]]، الـ query كانت هتكمّل الـ 5 ثواني لحد مش موجود.
+الأعداد مترتبة صح، بس الكلمات اللي ليها نفس العدد ترتيبها بيتغيّر، لأنها جاية من map و [[SortFunc]] مش بتحافظ على ترتيبها. لو عايزه ثابت: لما العدد يتساوى قارن بالكلمة نفسها [[cmp.Compare(a, b)]].
 
 ---
 
 ## الخلاصة
 
-| الحتة | بتعمل إيه |
+| العملية | الكود |
 |---|---|
-| [[context.Background()]] | الأصل، في main والاختبارات |
-| [[context.WithTimeout(parent, d)]] | ابن بيتلغي لوحده بعد d من دلوقتي |
-| [[context.WithCancel(parent)]] | ابن بيتلغي لما تنادي cancel |
-| [[defer cancel()]] | دايمًا، بعد السطر على طول |
-| [[<-ctx.Done()]] | channel بتتقفل وقت الإلغاء، تستخدمها في select |
-| [[ctx.Err()]] | [[context deadline exceeded]] أو [[context canceled]] |
-| [[r.Context()]] | ctx الـ request، بيتلغي لو اليوزر مشي |
+| إنشاء | [[map[K]V{...}]] أو [[make(map[K]V)]] |
+| إضافة أو تعديل | [[m[k] = v]] |
+| قراية (مش موجود = صفر) | [[m[k]]] |
+| موجود ولا لأ | [[v, ok := m[k]]] |
+| مسح | [[delete(m, k)]] |
+| ترتيب المفاتيح | [[slices.Sorted(maps.Keys(m))]] |
 
-- الـ context مش بيوقّف كودك لوحده: دالتك لازم تسمع لـ [[ctx.Done()]]، أو تعدّيه لمكتبة بتسمع (database/sql و net/http).
-- لف الـ error بـ [[%w]] عشان [[errors.Is]] تلاقي السبب.
-- إلغاء الأب بيلغي كل الأبناء.`,
+- range على map ترتيبه عشوائي، و Println بس هي اللي بترتّب.
+- nil map: القراية تمام والكتابة panic.
+- كتابة من أكتر من goroutine في نفس الوقت محتاجة Mutex.`,
           lines: [
             "باكدج main.",
             "imports.",
-            "context.",
-            "errors.",
             "fmt.",
-            "time.",
-            "قفلة.",
-            R`[[ctx]] أول parameter بالعرف.`,
-            "استنى اللي يحصل الأول.",
-            "الشغل خلص.",
-            "نتيجة.",
-            "أو اتلغى.",
-            R`رجّع السبب ملفوف بـ [[%w]].`,
-            "قفلة.",
+            R`[[maps]]: دوال للـ maps.`,
+            "slices، عشان الترتيب.",
             "قفلة.",
             "main.",
-            "ctx بمهلة 100ms من دلوقتي.",
-            R`لازم: بينضّف الـ timer حتى لو خلصنا بدري.`,
-            "query سريعة (20ms).",
-            R`[[rows <nil>]].`,
-            "query محتاجة ثانية بنفس الـ ctx.",
-            "المهلة خلصت: DeadlineExceeded.",
-            "ctx بيتلغي بإيدنا.",
-            "goroutine...",
-            "...تستنى 30ms...",
-            "...وتلغي.",
+            "map بقيمتين أوليين.",
+            "إضافة مفتاح جديد.",
+            R`تعديل: [[+=]] على القيمة الموجودة (5 + 3).`,
+            "8، و kiwi مش موجود فبيرجّع 0 من غير error.",
+            "comma ok: القيمة وهل موجود.",
+            "0 true: موجود وقيمته صفر.",
+            "comma ok في جملة تمهيدية، و ok هنا false.",
+            "اطبع.",
             "قفلة.",
-            "query طويلة.",
-            R`[[query: context canceled]].`,
+            "امسح مفتاح.",
+            "2: apple و mango.",
+            "المفاتيح مترتبة أبجديًا.",
+            "اطبع المفتاح والقيمة.",
+            "قفلة.",
+            "map فاضي بـ make.",
+            "لف على الكلمات.",
+            "زوّد العدّاد: المفتاح الجديد بيبدأ من صفر.",
+            "قفلة.",
+            R`[[map[go:2 is:1]]].`,
+            "nil map: متعرّف من غير make.",
+            "القراية منه شغالة: 0 0.",
             "قفلة."
           ],
           sol: R`الناتج:
-[[rows <nil>]]
-[[query: context deadline exceeded true]]
-[[query: context canceled]]
+[[8 0]]
+[[0 true]]
+[[kiwi مش موجود]]
+[[2]]
+[[apple 8]]
+[[mango 12]]
+[[map[go:2 is:1]]]
+[[0 0]]
 
-وفي السيرفر (الكود تحت): أول ما تضغط Ctrl+C في curl، السيرفر بيطبع [[client gone: query: context canceled]] على طول. لو كنت عدّيت [[context.Background()]] بدل [[r.Context()]] كان هيكمّل 5 ثواني ويكتب رد لحد مش موجود.`,
-          solCode: R`http.HandleFunc("/report", func(w http.ResponseWriter, r *http.Request) {
-  res, err := query(r.Context(), 5*time.Second)
-  if err != nil {
-    log.Println("client gone:", err)
-    return
-  }
-  fmt.Fprintln(w, res)
+و [[empty["x"] = 1]] بتعمل [[panic: assignment to entry in nil map]]. الحل [[empty = make(map[string]int)]] قبلها.
+
+وعدّ الكلمات (الكود تحت): بنحط المفاتيح في slice ونرتّبها بـ [[slices.SortFunc]] بدالة بترجّع رقم سالب لو a قبل b. [[cmp.Compare(counts[b], counts[a])]] بالعكس عشان الأكبر الأول. والكلمات اللي ليها نفس العدد (go و is) ترتيبها بينهم مش ثابت، ولو عايزه ثابت قارن بالكلمة نفسها لما العدد يتساوى.`,
+          solCode: R`counts := map[string]int{}
+for _, w := range strings.Fields("go is simple and go is fast") {
+  counts[w]++
+}
+words := slices.Collect(maps.Keys(counts))
+slices.SortFunc(words, func(a, b string) int {
+  return cmp.Compare(counts[b], counts[a])
 })
-log.Fatal(http.ListenAndServe(":8080", nil))`
+for _, w := range words {
+  fmt.Println(w, counts[w])
+}`
+        },
+        {
+          cmd: "& و * (pointers)",
+          title: "الـ pointer: & بتجيب العنوان و * بتوصل للقيمة",
+          desc: R`Go بتبعت كل حاجة للدوال بالقيمة: الدالة بتاخد نسخة. فلو [[doubleValue(x)]] غيّرت n جوّاها، x بره مش هيتغيّر.
+
+الـ pointer متغير فيه عنوان متغير تاني في الذاكرة بدل القيمة نفسها:
+• [[&x]]: «عنوان x». النتيجة نوعها [[*int]] (pointer لـ int).
+• [[*p]]: «القيمة اللي في العنوان ده». بتقرا منها وتكتب فيها: [[*p = 100]] بتغيّر x نفسه.
+• [[*int]] في تعريف النوع معناها «pointer لـ int». نفس الرمز [[*]] بمعنيين: في النوع «pointer لـ»، وقدام متغير «القيمة اللي بيشاور عليها».
+
+القيمة الصفرية للـ pointer هي [[nil]] (مش بيشاور على حاجة). لو عملت [[*p]] و p بـ nil البرنامج بيقع بـ [[nil pointer dereference]].
+
+مع الـ structs مش محتاج تكتب [[(*p).Name]]: [[p.Name]] بتشتغل لوحدها.
+
+ومفيش في Go حسابات على العناوين ([[p + 1]]) زي C، فالـ pointers آمنة. وترجيع [[&c]] لمتغير محلي من دالة آمن تمامًا: الـ compiler بيلاحظ وبيحطه في مكان بيعيش بعد الدالة (escape analysis).`,
+          example: R`package main
+
+import "fmt"
+
+func doubleValue(n int) {
+  n *= 2
+}
+
+func doublePointer(n *int) {
+  *n *= 2
+}
+
+func newCounter() *int {
+  c := 0
+  return &c
+}
+
+func main() {
+  x := 10
+  doubleValue(x)
+  fmt.Println(x)
+  doublePointer(&x)
+  fmt.Println(x)
+
+  p := &x
+  *p = 100
+  fmt.Println(x, *p, p != nil)
+
+  c := newCounter()
+  *c++
+  fmt.Println(*c)
+
+  var missing *int
+  fmt.Println(missing == nil)
+}`,
+          try: R`اكتب [[swap(a, b *int)]] بتبدّل قيمتين، وجرّبها على متغيرين. وبعدين اكتب [[fmt.Println(*missing)]] في آخر main واقرا الـ panic كله، خصوصًا السطر اللي فيه [[main.go]].`,
+          flag: "script",
+          deep: {
+            why: R`هتقابل الـ pointers في Go كل يوم: [[*http.Request]] و [[*sql.DB]] و [[json.Unmarshal(data, &v)]] و methods بتعدّل الـ struct. ومن غير ما تفهم & و * مش هتفهم ليه التعديل وصل في مكان ومش وصل في مكان تاني.`,
+            how: R`[[n *= 2]] معناها [[n = n * 2]]. في doubleValue الـ n نسخة، ففي doublePointer الـ n عنوان، و [[*n *= 2]] بتضرب القيمة اللي في العنوان.
+
+[[p := &x]]: p نوعها [[*int]]. [[*p = 100]] كتبت في x. و [[p != nil]] true لأنها بتشاور على حاجة.
+
+[[*c++]] بتزوّد القيمة اللي c بيشاور عليها (مش العنوان).
+
+الـ pointer مش أسرع دايمًا: نسخ struct صغير (كام حقل) غالبًا أرخص من pointer، لأن الـ pointer ممكن يخلي المتغير يروح الـ heap ويزوّد شغل الـ garbage collector. القاعدة: pointer لما محتاج تعدّل، أو الـ struct كبير، أو محتاج «مفيش قيمة» (nil).
+
+[[new(int)]] بيعمل int جديد بصفر ويرجّع عنوانه، زي [[c := 0; return &c]].`,
+            when: R`لما الدالة لازم تعدّل حاجة جاتلها (Unmarshal و Scan بياخدوا pointers للسبب ده). و structs كبيرة أو فيها Mutex. و حقل اختياري في JSON ([[*string]] عشان تفرّق بين "" و مش موجود). والـ slices والـ maps مش محتاجين pointer عشان تعدّل عناصرهم.`,
+            mistakes: R`[[*p]] و p بـ nil: [[panic: runtime error: invalid memory address or nil pointer dereference]]، وأشهر سبب: struct جاي من دالة رجّعت [[nil, err]] وانت متشيكتش على err. وتنسى & في [[json.Unmarshal(data, v)]] فيطلع [[json: Unmarshal(non-pointer main.User)]]. وتعمل pointer لكل حاجة «عشان السرعة».`
+          },
+          teach: R`## البرنامج ده بيعمل إيه؟
+
+بيوريك الفرق بين إنك تبعت لدالة **نسخة** من رقم وإنك تبعتلها **عنوانه**: [[doubleValue]] بتضرب نسخة فالأصل مبيتغيرش، و [[doublePointer]] بتضرب الأصل نفسه. وبعدين pointer في متغير، ودالة بترجّع عنوان متغير محلي، و pointer فاضي ([[nil]]). الناتج من [[go run .]] في [[golang:1.25]] على لينكس.
+
+---
+
+## ١. الرمزين
+
+| الرمز | قدام إيه | معناه | مثال |
+|---|---|---|---|
+| [[&]] | متغير | «عنوانه في الذاكرة» | [[&x]] |
+| [[*]] | نوع | «pointer لـ» | [[*int]] = pointer لـ int |
+| [[*]] | متغير pointer | «القيمة اللي في العنوان ده» | [[*p = 100]] |
+
+نفس الـ [[*]] بمعنيين: في **النوع** معناها «pointer لـ»، وقدام **متغير** معناها «روح للعنوان وهات أو اكتب القيمة» (اسمها dereference).
+
+---
+
+## ٢. نسخة ولا عنوان
+
+~~~go main.go
+func doubleValue(n int) {
+  n *= 2
+}
+
+func doublePointer(n *int) {
+  *n *= 2
+}
+~~~
+
+- [[doubleValue(n int)]]: n نسخة. [[n *= 2]] يعني [[n = n * 2]] على النسخة، والنسخة بتتمسح لما الدالة تخلص.
+- [[doublePointer(n *int)]]: n نوعها [[*int]]، يعني جواها **عنوان** مش رقم.
+- [[*n *= 2]]: روح للعنوان، اضرب اللي هناك في 2، واكتبه هناك.
+
+~~~go main.go
+  x := 10
+  doubleValue(x)
+  fmt.Println(x)
+  doublePointer(&x)
+  fmt.Println(x)
+~~~
+
+- [[doubleValue(x)]]: اتبعت 10، والنسخة بقت 20 واتمسحت.
+- [[doublePointer(&x)]]: [[&x]] عنوان x. الدالة كتبت في العنوان ده، يعني في x نفسه.
+
+~~~text الناتج
+10
+20
+~~~
+
+---
+
+## ٣. pointer في متغير
+
+~~~go main.go
+  p := &x
+  *p = 100
+  fmt.Println(x, *p, p != nil)
+~~~
+
+- [[p := &x]]: p نوعها [[*int]] (جرّبت [[fmt.Printf("%T", p)]] وطلّع [[*int]]). [[%T]] بتطبع النوع.
+- [[*p = 100]]: اكتب 100 في العنوان، فـ x بقى 100.
+- [[*p]] في الطباعة: اقرا اللي في العنوان، 100.
+- [[p != nil]]: p بيشاور على حاجة فعلًا، فـ true.
+
+~~~text الناتج
+100 100 true
+~~~
+
+ولو طبعت [[p]] نفسه من غير [[*]] هتشوف العنوان بالـ hex (أرقام بأساس 16): مرة طلّع [[0xc000194008]] والمرة اللي بعدها [[0xc00011a008]]، يعني بيتغير كل تشغيل.
+
+---
+
+## ٤. ترجيع عنوان متغير محلي
+
+~~~go main.go
+func newCounter() *int {
+  c := 0
+  return &c
+}
+~~~
+
+- بترجّع [[*int]].
+- [[return &c]]: عنوان متغير محلي. في C ده bug (المتغير بيتمسح والعنوان بيشاور على زبالة). في Go **آمن**: الـ compiler بيشوف إن العنوان طالع بره الدالة فبيحط c في الـ heap (escape analysis، شفناها في درس closures).
+
+~~~go main.go
+  c := newCounter()
+  *c++
+  fmt.Println(*c)
+~~~
+
+- [[*c++]]: زوّد **القيمة** اللي c بيشاور عليها (0 تبقى 1). Go مفيهاش حسابات على العناوين، فمفيش معنى لـ «زوّد العنوان».
+
+~~~text الناتج
+1
+~~~
+
+ونفس الحاجة في سطر: [[new(int)]] بتعمل int جديد بصفر وترجّع عنوانه. [[q := new(int)]] و [[fmt.Println(*q)]] طلّعت [[0]].
+
+---
+
+## ٥. pointer فاضي: [[nil]]
+
+~~~go main.go
+  var missing *int
+  fmt.Println(missing == nil)
+~~~
+
+القيمة الصفرية لأي pointer هي [[nil]]: مش بيشاور على حاجة.
+
+~~~text الناتج
+true
+~~~
+
+### التجربة: [[*missing]]
+
+ضفت [[fmt.Println(*missing)]] كسطر أخير في main (السطر 35 في الملف):
+
+~~~text الناتج
+panic: runtime error: invalid memory address or nil pointer dereference
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x4986af]
+
+goroutine 1 [running]:
+main.main()
+	/w/e7b/main.go:35 +0x1ef
+exit status 2
+~~~
+
+اقراها من فوق لتحت:
+
+- [[invalid memory address or nil pointer dereference]]: حاولت تقرا من عنوان nil.
+- [[SIGSEGV]]: إشارة من نظام التشغيل اسمها segmentation violation، يعني البرنامج لمس ذاكرة مش بتاعته. و [[addr=0x0]]: العنوان صفر، يعني nil.
+- [[goroutine 1 [running]:]] وتحتها الدوال اللي كانت شغالة، الأحدث فوق. أول سطر من ملفاتك انت ([[main.go:35]]) هو المكان.
+
+أشهر سبب في الكود الحقيقي: دالة رجّعت [[nil, err]] وانت استخدمت القيمة من غير ما تشيك على err.
+
+---
+
+## ٦. لازم & لما الدالة هتكتب
+
+[[json.Unmarshal]] بتكتب في المتغير اللي تديهولها، فلازم عنوانه. جرّبت أبعت [[u]] من غير [[&]]:
+
+~~~text الناتج: go vet
+./main.go:12:23: call of Unmarshal passes non-pointer as second argument
+~~~
+
+~~~text الناتج: go run
+json: Unmarshal(non-pointer main.User) {}
+<nil> {Sara}
+~~~
+
+السطر الأول بـ [[u]]: error و u فاضي. التاني بـ [[&u]]: مفيش error ([[<nil>]]) و u اتملى. و [[go vet]] مسكها قبل التشغيل.
+
+---
+
+## ٧. الحل: [[swap]]
+
+~~~go solCode
+func swap(a, b *int) {
+  *a, *b = *b, *a
+}
+
+x, y := 1, 2
+swap(&x, &y)
+fmt.Println(x, y)
+~~~
+
+- [[a, b *int]]: الاتنين عناوين.
+- [[*a, *b = *b, *a]]: تعيين متعدد. Go بتحسب كل اللي على اليمين الأول (القيمتين 2 و 1)، وبعدين تكتبهم في العنوانين. فمش محتاج متغير مؤقت.
+- [[swap(&x, &y)]]: ابعت العنوانين.
+
+~~~text الناتج
+2 1
+~~~
+
+---
+
+## الخلاصة
+
+| الكود | معناه |
+|---|---|
+| [[&x]] | عنوان x |
+| [[*int]] | نوع: pointer لـ int |
+| [[*p]] | القيمة اللي p بيشاور عليها (قراية أو كتابة) |
+| [[nil]] | pointer مش بيشاور على حاجة |
+| [[new(T)]] | T جديد بصفر وعنوانه |
+
+- Go بتبعت نسخ، فالدالة اللي لازم تعدّل تاخد pointer.
+- ترجيع [[&local]] آمن.
+- [[*p]] و p بـ nil = panic، فشيك على err الأول.
+- الـ slices والـ maps مش محتاجين pointer عشان تعدّل عناصرهم.`,
+          lines: [
+            "باكدج main.",
+            "import fmt.",
+            "بتاخد نسخة من الرقم.",
+            "بتعدّل النسخة بس.",
+            "قفلة.",
+            R`بتاخد عنوان: [[*int]] = pointer لـ int.`,
+            R`[[*n]]: القيمة اللي في العنوان، اضربها في 2.`,
+            "قفلة.",
+            "بترجّع pointer.",
+            "متغير محلي.",
+            R`رجّع عنوانه بـ [[&]]: آمن في Go.`,
+            "قفلة.",
+            "main.",
+            "x = 10.",
+            "بعتنا نسخة...",
+            "...فـ x لسه 10.",
+            R`بعتنا العنوان بـ [[&x]]...`,
+            "...فـ x بقى 20.",
+            "p بيشاور على x.",
+            "الكتابة في العنوان = الكتابة في x.",
+            "100 100 true.",
+            "pointer لعدّاد جديد.",
+            "زوّد القيمة اللي بيشاور عليها.",
+            "1.",
+            R`pointer من غير قيمة: [[nil]].`,
+            "true.",
+            "قفلة."
+          ],
+          sol: R`الناتج:
+[[10]]
+[[20]]
+[[100 100 true]]
+[[1]]
+[[true]]
+
+[[swap]] (الكود تحت) بتبدّل القيمتين في السطر [[*a, *b = *b, *a]]، وبتتنادى [[swap(&x, &y)]].
+
+و [[*missing]] بتطبع:
+[[panic: runtime error: invalid memory address or nil pointer dereference]]
+[[[signal SIGSEGV: segmentation violation code=... addr=0x0 pc=...]]]
+وتحت [[goroutine 1 [running]:]] و [[main.main()]] وسطر زي [[/w/main.go:35 +0x1ef]] (لما السطر الجديد يبقى آخر سطر في main، يعني السطر 35): ده رقم السطر اللي وقع. اقرا الـ stack trace من فوق لتحت ودوّر على أول سطر من ملفاتك انت.`,
+          solCode: R`func swap(a, b *int) {
+  *a, *b = *b, *a
+}
+
+x, y := 1, 2
+swap(&x, &y)
+fmt.Println(x, y)`
+        },
+        {
+          cmd: "الـ Structs والـ Methods والـ Pointers",
+          title: "struct و methods: value receiver ولا pointer receiver؟",
+          desc: R`Go مفيهاش classes. بدلها [[struct]]: نوع بيجمع حقول بأسماء، و methods: دوال مربوطة بالنوع.
+
+[[type User struct { Name string; Score int }]]. الحقل اللي اسمه بيبدأ بحرف كبير exported (متاح بره الباكدج، وده اللي encoding/json بيشوفه)، والصغير خاص بالباكدج.
+
+بتعمل قيمة بـ [[User{Name: "Sara", Score: 10}]] (الحقول اللي متكتبتش بتاخد القيمة الصفرية). ولو عايز pointer على طول: [[&User{...}]].
+
+الـ method دالة قبل اسمها receiver بين قوسين:
+• [[func (u User) Label() string]]: value receiver. u نسخة، وأي تعديل عليها بيضيع.
+• [[func (u *User) AddPoints(n int)]]: pointer receiver. u بيشاور على الـ struct الأصلي، فالتعديل بيوصل.
+
+Go مفيهاش constructors. العرف دالة اسمها [[NewUser(...)]] بترجّع [[*User]] جاهز، لو فيه حاجة لازم تتجهز (map أو قيم افتراضية).
+
+ولو عندك [[u]] قيمة عادية وناديت [[u.AddPoints(5)]]، Go بتكتبها لوحدها [[(&u).AddPoints(5)]].`,
+          example: R`package main
+
+import "fmt"
+
+type User struct {
+  Name  string
+  Email string
+  Score int
+}
+
+func NewUser(name, email string) *User {
+  return &User{Name: name, Email: email}
+}
+
+func (u User) Label() string {
+  return fmt.Sprintf("%s (%d)", u.Name, u.Score)
+}
+
+func (u *User) AddPoints(pts int) {
+  u.Score += pts
+}
+
+// value receiver: u نسخة، فالتصفير ده مش هيوصل
+func (u User) ResetWrong() {
+  u.Score = 0
+}
+
+func main() {
+  u := User{Name: "Sara", Email: "sara@example.com", Score: 10}
+  u.AddPoints(5)
+  u.ResetWrong()
+  fmt.Println(u.Label())
+
+  p := NewUser("Ali", "ali@example.com")
+  p.AddPoints(3)
+  fmt.Println(p.Label(), p.Email)
+
+  var empty User
+  fmt.Printf("%+v\n", empty)
+}`,
+          try: R`ضيف struct اسمه [[Cart]] فيه [[Items []Item]] (و Item فيه Name و Price و Qty)، و method [[Add(item Item)]] بتضيف، و [[Total() float64]] بتحسب الإجمالي. قرّر أنهي فيهم pointer receiver وليه. وبعدين خلي Add value receiver وشوف إيه اللي هيحصل.`,
+          flag: "script",
+          deep: {
+            why: R`الـ struct هو الطريقة اللي بتوصف بيها أي حاجة في البرنامج: User و Order و Config و Server. وقرار value ولا pointer receiver بيحدد إذا كانت الـ method بتعدّل ولا لأ، وده أكتر سؤال بيتسأل في انترفيوهات Go.`,
+            how: R`[[u.ResetWrong()]] خدت نسخة من u وصفّرتها، والنسخة اتمسحت لما الدالة خلصت، فـ u لسه 15. go vet مش بيمسك ده، فخلي بالك.
+
+[[NewUser]] بترجّع [[&User{...}]]: عنوان struct جديد. و [[p.AddPoints(3)]] و [[p.Label()]] الاتنين شغالين على pointer: Go بتعمل [[*p]] لوحدها للـ value receiver.
+
+القواعد اللي الناس ماشية عليها:
+• لو أي method بتعدّل، خلي كل الـ methods pointer receivers (التوحيد بيمنع لخبطة الـ interfaces بعدين).
+• struct فيه [[sync.Mutex]] لازم pointer receiver (نسخ الـ Mutex بيكسره، و go vet بيمسك ده).
+• struct صغير ومبيتغيرش (زي [[time.Time]] أو نقطة x و y) value receiver تمام.
+
+[[%+v]] على struct فاضي: [[{Name: Email: Score:0}]] (النصوص الفاضية مش باينة).`,
+            when: R`pointer receiver: أي method بتعدّل، أو الـ struct كبير، أو فيه Mutex أو حاجة مينفعش تتنسخ. value receiver: أنواع صغيرة immutable. و [[NewX]] لما الـ struct محتاج تجهيز (map أو قيم افتراضية أو validation).`,
+            mistakes: R`تعدّل في value receiver وتستغرب إن التعديل ضاع. وتخلط: نص الـ methods value ونصها pointer. وتعمل [[NewUser]] للـ structs اللي القيمة الصفرية بتاعتها جاهزة أصلًا. وتنسى تعمل make للـ map اللي جوه struct فيقع في أول كتابة.`
+          },
+          teach: R`## البرنامج ده بيعمل إيه؟
+
+بيعرّف نوع [[User]] بـ ٣ حقول، ودالة [[NewUser]] بتجهّزه، و ٣ methods: واحدة بتقرا ([[Label]])، وواحدة بتعدّل صح ([[AddPoints]] بـ pointer receiver)، وواحدة بتحاول تعدّل وتفشل ([[ResetWrong]] بـ value receiver). الناتج من [[go run .]] في [[golang:1.25]] على لينكس.
+
+---
+
+## ١. تعريف الـ struct
+
+~~~go main.go
+type User struct {
+  Name  string
+  Email string
+  Score int
+}
+~~~
+
+- [[type User struct { ... }]]: عرّف نوع جديد اسمه User، وهو struct: مجموعة حقول بأسماء.
+- كل سطر: اسم الحقل ونوعه. والمسافات اللي بتصف الأنواع تحت بعض من [[go fmt]].
+- الحرف الكبير في [[Name]] و [[Email]] و [[Score]] معناه **exported**: متاح بره الباكدج، و [[encoding/json]] بيشوفه. لو كتبت [[name]] بحرف صغير يبقى خاص بالباكدج بس.
+
+---
+
+## ٢. [[NewUser]]: الـ constructor بالعرف
+
+~~~go main.go
+func NewUser(name, email string) *User {
+  return &User{Name: name, Email: email}
+}
+~~~
+
+- Go مفيهاش constructors. العرف دالة عادية اسمها [[New]] + اسم النوع.
+- [[User{Name: name, Email: email}]]: **struct literal** بأسماء الحقول. [[Score]] متكتبش فبياخد القيمة الصفرية 0.
+- [[&User{...}]]: اعمل struct جديد ورجّع **عنوانه**، فالنوع الراجع [[*User]].
+
+---
+
+## ٣. الـ methods والـ receiver
+
+الـ method دالة قبل اسمها قوسين فيهم **receiver**: المتغير اللي الـ method بتشتغل عليه، زي [[this]] أو [[self]] في لغات تانية بس بتسمّيه انت.
+
+### value receiver: [[(u User)]]
+
+~~~go main.go
+func (u User) Label() string {
+  return fmt.Sprintf("%s (%d)", u.Name, u.Score)
+}
+~~~
+
+- [[(u User)]]: u **نسخة** من الـ User اللي ناديت عليه.
+- [[fmt.Sprintf]]: زي Printf بس بترجّع النص بدل ما تطبعه. [[%s]] مكان نص و [[%d]] مكان رقم صحيح (درس «fmt و Printf»).
+- Label بتقرا بس، فالنسخة مش مشكلة.
+
+### pointer receiver: [[(u *User)]]
+
+~~~go main.go
+func (u *User) AddPoints(pts int) {
+  u.Score += pts
+}
+~~~
+
+- [[(u *User)]]: u **عنوان** الـ User الأصلي.
+- [[u.Score]]: Go بتكتبها لوحدها [[(*u).Score]]، فمش محتاج تكتب النجمة. والتعديل بيوصل للأصل.
+
+### value receiver بيحاول يعدّل
+
+~~~go main.go
+// value receiver: u نسخة، فالتصفير ده مش هيوصل
+func (u User) ResetWrong() {
+  u.Score = 0
+}
+~~~
+
+صفّرت النسخة، والنسخة اتمسحت لما الـ method خلصت. ومفيش أي تحذير: [[go vet]] على الملف ده مطلّعش حاجة.
+
+---
+
+## ٤. main
+
+~~~go main.go
+  u := User{Name: "Sara", Email: "sara@example.com", Score: 10}
+  u.AddPoints(5)
+  u.ResetWrong()
+  fmt.Println(u.Label())
+~~~
+
+- [[u]] قيمة عادية (مش pointer)، Score = 10.
+- [[u.AddPoints(5)]]: الـ method عايزة [[*User]] و u قيمة. Go بتاخد العنوان لوحدها: [[(&u).AddPoints(5)]]. فـ Score بقى 15.
+- [[u.ResetWrong()]]: اتبعتلها نسخة، وصفّرتها هي. u لسه 15.
+
+~~~text الناتج
+Sara (15)
+~~~
+
+~~~go main.go
+  p := NewUser("Ali", "ali@example.com")
+  p.AddPoints(3)
+  fmt.Println(p.Label(), p.Email)
+~~~
+
+- [[p]] نوعها [[*User]].
+- [[p.AddPoints(3)]]: الـ receiver pointer، و p pointer، فمباشرة.
+- [[p.Label()]]: Label عايزة قيمة و p pointer، فـ Go بتعمل [[(*p).Label()]] لوحدها.
+- [[p.Email]]: الحقول برضه من غير نجمة.
+
+~~~text الناتج
+Ali (3) ali@example.com
+~~~
+
+~~~go main.go
+  var empty User
+  fmt.Printf("%+v\n", empty)
+~~~
+
+- [[var empty User]]: struct كل حقوله بالقيمة الصفرية.
+- [[%+v]]: اطبع القيمة **بأسماء الحقول**. ([[%v]] لوحدها بتطبع القيم بس.) و [[\n]] سطر جديد لأن Printf مبتزودوش.
+
+~~~text الناتج
+{Name: Email: Score:0}
+~~~
+
+النصوص الفاضية مش باينة، فـ [[Name:]] وبعدها على طول [[Email:]].
+
+---
+
+## ٥. struct فيه Mutex لازم pointer
+
+[[sync.Mutex]] (قفل للـ goroutines، المستوى ٢) مينفعش يتنسخ. كتبت method بـ value receiver على struct فيه Mutex، و [[go vet]] مسكها:
+
+~~~text الناتج: go vet
+./main.go:13:9: Get passes lock by value: demo.Counter contains sync.Mutex
+~~~
+
+يعني vet مبيمسكش «تعديل ضاع» زي ResetWrong، بس بيمسك «نسخت قفل».
+
+---
+
+## ٦. التجربة: [[Cart]]
+
+~~~go solCode
+type Item struct {
+  Name  string
+  Price float64
+  Qty   int
+}
+
+type Cart struct {
+  Items []Item
+}
+~~~
+
+- [[Item]]: منتج بسعر عشري وكمية.
+- [[Cart]]: فيها حقل [[Items]] نوعه slice من Item. القيمة الصفرية nil slice، و append عليها شغالة، فمش محتاجين [[NewCart]].
+
+~~~go solCode
+func (c *Cart) Add(it Item) {
+  c.Items = append(c.Items, it)
+}
+~~~
+
+pointer receiver: [[append]] بترجّع slice جديدة، ولازم تتخزن في الحقل **الأصلي**.
+
+~~~go solCode
+func (c *Cart) Total() float64 {
+  total := 0.0
+  for _, it := range c.Items {
+    total += it.Price * float64(it.Qty)
+  }
+  return total
+}
+~~~
+
+- Total بتقرا بس، فـ value receiver كان هيشتغل. بس خليناها pointer عشان كل methods النوع تبقى شكل واحد.
+- [[float64(it.Qty)]]: تحويل الكمية لعشري عشان تتضرب في السعر.
+
+~~~go main.go
+var c Cart
+c.Add(Item{"tea", 25.5, 2})
+c.Add(Item{"sugar", 30, 1})
+fmt.Println(c.Total(), len(c.Items))
+~~~
+
+- [[Item{"tea", 25.5, 2}]]: literal **من غير أسماء**، القيم بترتيب الحقول. أقصر بس لازم تكتب كل الحقول، وبيبوظ لو حد زوّد حقل.
+- 25.5 × 2 + 30 × 1 = 81.
+
+~~~text الناتج
+81 2
+~~~
+
+### لو Add بقت value receiver
+
+عملت نسخة [[Cart2]] نفس الكود بس [[func (c Cart2) Add(...)]]:
+
+~~~text الناتج: c2.Add(...) ثم fmt.Println(c2.Total(), len(c2.Items))
+0 0
+~~~
+
+الإضافة حصلت في نسخة واتمسحت، والسلة الأصلية فضيت فاضية.
+
+---
+
+## الخلاصة
+
+| الحاجة | الكود |
+|---|---|
+| تعريف | [[type User struct { Name string }]] |
+| قيمة | [[User{Name: "Sara"}]] والباقي أصفار |
+| pointer على طول | [[&User{...}]] |
+| constructor بالعرف | [[func NewUser(...) *User]] |
+| method بتقرا | [[func (u User) Label() string]] |
+| method بتعدّل | [[func (u *User) AddPoints(n int)]] |
+
+- Go بتحوّل [[u.M()]] لـ [[(&u).M()]] أو [[(*p).M()]] لوحدها.
+- لو method واحدة بتعدّل، خلي الكل pointer receivers.
+- التعديل في value receiver بيضيع من غير أي تحذير.`,
+          lines: [
+            "باكدج main.",
+            "import fmt.",
+            "تعريف نوع struct اسمه User.",
+            "حقل exported (حرف كبير).",
+            "حقل تاني.",
+            "حقل رقم.",
+            "قفلة.",
+            R`constructor بالعرف: بترجّع [[*User]].`,
+            R`[[&User{...}]]: struct جديد وعنوانه. Score صفر لأنه متكتبش.`,
+            "قفلة.",
+            R`method بـ value receiver: [[(u User)]].`,
+            "بترجّع نص فيه الاسم والنقاط.",
+            "قفلة.",
+            R`method بـ pointer receiver: [[(u *User)]].`,
+            R`بتعدّل الـ struct الأصلي ([[u.Score]] = [[(*u).Score]]).`,
+            "قفلة.",
+            "value receiver بيحاول يعدّل.",
+            "بيصفّر نسخة.",
+            "قفلة.",
+            "main.",
+            "struct literal بأسماء الحقول.",
+            R`Go بتحوّلها [[(&u).AddPoints(5)]]: Score بقى 15.`,
+            "مش هتأثر.",
+            R`[[Sara (15)]].`,
+            "pointer من الـ constructor.",
+            "3 نقاط.",
+            R`[[Ali (3) ali@example.com]].`,
+            "struct بالقيم الصفرية.",
+            R`[[%+v]] بأسماء الحقول.`,
+            "قفلة."
+          ],
+          sol: R`الناتج:
+[[Sara (15)]]
+[[Ali (3) ali@example.com]]
+[[{Name: Email: Score:0}]]
+
+في الـ Cart (الكود تحت): [[Add]] لازم pointer receiver لأنها بتعمل append على Items، و [[Total]] ممكن تبقى value بس الأحسن تبقى pointer عشان التوحيد. لو خليت Add value receiver: الإضافة بتحصل على نسخة، فـ [[Total()]] هترجّع 0 والـ Items فاضية.`,
+          solCode: R`type Item struct {
+  Name  string
+  Price float64
+  Qty   int
+}
+
+type Cart struct {
+  Items []Item
+}
+
+func (c *Cart) Add(it Item) {
+  c.Items = append(c.Items, it)
+}
+
+func (c *Cart) Total() float64 {
+  total := 0.0
+  for _, it := range c.Items {
+    total += it.Price * float64(it.Qty)
+  }
+  return total
+}`
+        },
+        {
+          cmd: "embedding",
+          title: "embedding: تحط struct جوه struct بدل الوراثة",
+          desc: R`Go مفيهاش وراثة (inheritance). بدلها embedding: تحط نوع جوه struct من غير اسم حقل:
+[[type Admin struct { User; Level int }]]
+
+النتيجة: حقول و methods الـ User بتطلع لمستوى Admin (promoted). تكتب [[a.Name]] و [[a.Greet()]] بدل [[a.User.Name]]. والطريق الطويل لسه موجود.
+
+لو Admin عرّف method بنفس الاسم ([[Greet]])، بتاعته هي اللي بتتنادى، وتقدر توصل للأصلية بـ [[a.User.Greet()]].
+
+بس ده مش وراثة: Admin مش User. مينفعش تبعت Admin لدالة مستنية User. اللي يخليه يتعامل كأنه حاجة تانية هو الـ interfaces (المستوى ٢): لو Admin عنده الـ methods المطلوبة، بيحقق الـ interface.
+
+وبتلاقي embedding كتير في المكتبة القياسية: struct فيه [[sync.Mutex]] embedded فتكتب [[c.Lock()]] على طول، أو interfaces بتتجمع من بعض ([[io.ReadWriter]] = Reader + Writer).`,
+          example: R`package main
+
+import "fmt"
+
+type Audit struct {
+  CreatedBy string
+}
+
+func (a Audit) Describe() string {
+  return "created by " + a.CreatedBy
+}
+
+type User struct {
+  Name string
+}
+
+func (u User) Greet() string {
+  return "أهلًا " + u.Name
+}
+
+type Admin struct {
+  User
+  Audit
+  Level int
+}
+
+// Admin بيغطّي Greet بتاعة User، ولسه يقدر يناديها
+func (a Admin) Greet() string {
+  return a.User.Greet() + " (admin)"
+}
+
+func main() {
+  a := Admin{
+    User:  User{Name: "Mona"},
+    Audit: Audit{CreatedBy: "system"},
+    Level: 2,
+  }
+  fmt.Println(a.Name, a.Level)
+  fmt.Println(a.Greet())
+  fmt.Println(a.User.Greet())
+  fmt.Println(a.Describe())
+}`,
+          try: R`ضيف لـ Audit method اسمها [[Greet()]] كمان، وشيل Greet بتاعة Admin. شغّل واقرا الـ error. وبعدين اكتب دالة [[welcome(u User)]] وجرّب تبعتلها [[a]] ثم [[a.User]].`,
+          flag: "script",
+          deep: {
+            why: R`الوراثة العميقة (A يورث B يورث C) بتعمل كود صعب تتبعه وتغيّره. Go اختارت composition: تبني النوع من أجزاء صغيرة، وكل جزء ليه شغلانة واضحة، والـ interfaces هي اللي بتوحّد السلوك.`,
+            how: R`الحقل الـ embedded اسمه هو اسم النوع: [[a.User]] و [[a.Audit]]. عشان كده في الـ literal بتكتب [[User: User{...}]].
+
+لما Go تدوّر على [[a.Greet]] بتبدأ من Admin نفسه، ولو ملقتش تنزل مستوى (User و Audit). لو لقت نفس الاسم في نوعين على نفس المستوى، ومفيش واحد في Admin نفسه يحسم، بيبقى ambiguous: الـ compiler بيرفض الاستدعاء ([[ambiguous selector a.Greet]]) بس مش بيرفض التعريف.
+
+الـ method اللي اتطلعت لفوق لسه الـ receiver بتاعها User، مش Admin. فلو User.Greet نادت method تانية، هتنادي بتاعة User حتى لو Admin عامل واحدة بنفس الاسم. ده الفرق الأساسي عن الوراثة (مفيش virtual methods).
+
+الفاصلة في آخر كل سطر في الـ literal اللي على أكتر من سطر إجبارية (حتى آخر واحد)، عشان الـ compiler بيحط [[;]] لوحده في آخر السطر.`,
+            when: R`تشارك حقول وسلوك بين أنواع (timestamps، audit، id). تحط Mutex جوه struct. تلف نوع موجود وتغيّر method واحدة (زي ResponseWriter في الـ middleware، المستوى ٢).`,
+            mistakes: R`تفكّر فيها كوراثة وتبعت Admin لدالة مستنية User: [[cannot use a (variable of struct type Admin) as User value]]. وتعمل embed لـ pointer ([[*User]]) وتنسى تديله قيمة فأول وصول يعمل nil pointer panic. وتعمل embed لـ Mutex في struct exported فأي حد بره يقدر يعمل Lock عليه.`
+          },
+          teach: R`## البرنامج ده بيعمل إيه؟
+
+بيبني نوع [[Admin]] من حتتين جاهزين: [[User]] (فيه اسم و method ترحيب) و [[Audit]] (فيه مين عمله و method وصف). Admin بياخد حقولهم و methods بتوعهم كأنها بتاعته، ويغيّر الترحيب بس. الناتج من [[go run .]] في [[golang:1.25]] على لينكس.
+
+---
+
+## ١. الحتت الصغيرة
+
+~~~go main.go
+type Audit struct {
+  CreatedBy string
+}
+
+func (a Audit) Describe() string {
+  return "created by " + a.CreatedBy
+}
+
+type User struct {
+  Name string
+}
+
+func (u User) Greet() string {
+  return "أهلًا " + u.Name
+}
+~~~
+
+- struct عادي لكل واحد، وكل واحد عليه method بـ value receiver (درس structs).
+- [[+]] بين نصين بيلزقهم.
+
+---
+
+## ٢. الـ embedding
+
+~~~go main.go
+type Admin struct {
+  User
+  Audit
+  Level int
+}
+~~~
+
+- [[User]] و [[Audit]] مكتوبين **نوع من غير اسم حقل**. ده الـ embedding.
+- [[Level int]]: حقل عادي باسم ونوع.
+- الحقل الـ embedded ليه اسم برضه: **اسم النوع نفسه**. فـ [[a.User]] و [[a.Audit]] موجودين.
+
+### promotion
+
+حقول و methods الـ User و الـ Audit «بتطلع» لمستوى Admin:
+
+| تكتب | Go بتفهمها |
+|---|---|
+| [[a.Name]] | [[a.User.Name]] |
+| [[a.Describe()]] | [[a.Audit.Describe()]] |
+
+---
+
+## ٣. Admin بيغطّي Greet
+
+~~~go main.go
+// Admin بيغطّي Greet بتاعة User، ولسه يقدر يناديها
+func (a Admin) Greet() string {
+  return a.User.Greet() + " (admin)"
+}
+~~~
+
+- Admin عرّف method بنفس اسم واحدة طالعة من User. لما تنادي [[a.Greet()]]، Go بتدوّر في Admin **الأول**، فبتلاقي دي.
+- [[a.User.Greet()]]: الطريق الكامل للأصلية لسه شغال، فبنناديها ونزوّد عليها.
+
+---
+
+## ٤. main
+
+~~~go main.go
+  a := Admin{
+    User:  User{Name: "Mona"},
+    Audit: Audit{CreatedBy: "system"},
+    Level: 2,
+  }
+~~~
+
+- [[User: User{Name: "Mona"}]]: اسم الحقل ([[User]]، اسم النوع) وبعده قيمته (struct literal من نوع User).
+- **الفاصلة في آخر كل سطر إجبارية، حتى آخر واحد**. Go بتحط [[;]] لوحدها في آخر أي سطر ينفع يخلص فيه statement، والفاصلة بتمنعها. شيلت الفاصلة من آخر سطر:
+
+~~~text الناتج: go build
+./main.go:9:24: syntax error: unexpected newline in composite literal; possibly missing comma or }
+~~~
+
+~~~go main.go
+  fmt.Println(a.Name, a.Level)
+  fmt.Println(a.Greet())
+  fmt.Println(a.User.Greet())
+  fmt.Println(a.Describe())
+~~~
+
+| السطر | جاي منين | الناتج |
+|---|---|---|
+| [[a.Name, a.Level]] | Name طالع من User، و Level بتاع Admin | [[Mona 2]] |
+| [[a.Greet()]] | بتاعة Admin | [[أهلًا Mona (admin)]] |
+| [[a.User.Greet()]] | الأصلية بتاعة User | [[أهلًا Mona]] |
+| [[a.Describe()]] | طالعة من Audit | [[created by system]] |
+
+~~~text الناتج
+Mona 2
+أهلًا Mona (admin)
+أهلًا Mona
+created by system
+~~~
+
+---
+
+## ٥. ده مش وراثة
+
+### Admin مش User
+
+جرّبت دالة [[welcome(u User)]]:
+
+~~~text الناتج: go build على welcome(a)
+./main.go:20:10: cannot use a (variable of struct type Admin) as User value in argument to welcome
+~~~
+
+و [[welcome(a.User)]] شغالة، لأنك بتبعت الحقل اللي جوّاه وهو فعلًا User. اللي بيخلي أنواع مختلفة تتبعت لنفس الدالة هو الـ interfaces (المستوى ٢).
+
+### الـ method الطالعة لسه بتاعة User
+
+~~~go main.go
+func (u User) Hello() string { return "I am " + u.Kind() }
+func (u User) Kind() string  { return "user" }
+
+type Admin struct{ User }
+
+func (a Admin) Kind() string { return "admin" }
+~~~
+
+~~~text الناتج: fmt.Println(a.Kind(), "|", a.Hello())
+admin | I am user
+~~~
+
+[[a.Hello()]] هي [[a.User.Hello()]]، والـ receiver بتاعها User، فلما نادت [[Kind]] نادت بتاعة User مش بتاعة Admin. في لغة فيها وراثة كانت هتطلع «I am admin». ده الفرق الأساسي.
+
+---
+
+## ٦. التجربة: نفس الاسم في اتنين
+
+ضفت [[func (a Audit) Greet() string]] وشيلت Greet بتاعة Admin. دلوقتي User و Audit الاتنين عندهم Greet على نفس المستوى، ومفيش واحدة في Admin تحسم:
+
+~~~text الناتج: go build
+./main.go:35:17: ambiguous selector a.Greet
+~~~
+
+- التعريف نفسه عدّى، الخطأ في **الاستدعاء** بس ([[a.Greet()]]).
+- الـ compiler مبيختارش بالنيابة عنك. الحل: [[a.User.Greet()]] صريحة، أو تعرّف Greet على Admin (زي المثال الأصلي).
+
+---
+
+## الخلاصة
+
+| الحاجة | الكود |
+|---|---|
+| embed | [[type Admin struct { User; Level int }]] |
+| اسم الحقل الـ embedded | اسم النوع: [[a.User]] |
+| حقل أو method طالعين | [[a.Name]] و [[a.Describe()]] |
+| تغطية method | تعرّفها على Admin بنفس الاسم |
+| الوصول للأصلية | [[a.User.Greet()]] |
+| نفس الاسم في نوعين embedded | [[ambiguous selector]] لحد ما تحسم |
+
+- embedding = composition: Admin **فيه** User، مش **هو** User.
+- الـ method الطالعة الـ receiver بتاعها النوع الداخلي.
+- في literal على أكتر من سطر: فاصلة في آخر كل سطر.`,
+          lines: [
+            "باكدج main.",
+            "import fmt.",
+            "struct صغير لمعلومات الإنشاء.",
+            "حقل.",
+            "قفلة.",
+            "method على Audit.",
+            "بترجّع وصف.",
+            "قفلة.",
+            "struct للمستخدم.",
+            "حقل الاسم.",
+            "قفلة.",
+            "method على User.",
+            "ترحيب.",
+            "قفلة.",
+            "Admin مبني من أجزاء.",
+            "User embedded: من غير اسم حقل.",
+            "Audit embedded.",
+            "حقل عادي.",
+            "قفلة.",
+            "Admin بيعرّف Greet بتاعته.",
+            "بينادي الأصلية ويضيف عليها.",
+            "قفلة.",
+            "main.",
+            "literal على أكتر من سطر.",
+            "اسم الحقل الـ embedded = اسم النوع.",
+            "نفس الكلام.",
+            "والفاصلة في آخر كل سطر إجبارية.",
+            "قفلة.",
+            R`[[a.Name]] طالع من User.`,
+            "بتاعة Admin.",
+            "الأصلية بتاعة User.",
+            "طالعة من Audit.",
+            "قفلة."
+          ],
+          sol: R`الناتج:
+[[Mona 2]]
+[[أهلًا Mona (admin)]]
+[[أهلًا Mona]]
+[[created by system]]
+
+لما Audit و User الاتنين عندهم Greet ومفيش واحدة في Admin: [[a.Greet()]] بيطلع [[ambiguous selector a.Greet]]. الـ compiler مش بيختار بالنيابة عنك، فلازم تكتب [[a.User.Greet()]] أو تعرّف Greet على Admin.
+
+و [[welcome(a)]] بيطلع [[cannot use a (variable of struct type Admin) as User value in argument to welcome]]، و [[welcome(a.User)]] شغالة. يعني Admin مش User.`
         }
       ]
     }

@@ -4504,6 +4504,21 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
  },
+ "go|GOOS و GOARCH": {
+  "hash": "049da20e49da",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64) + app.exe on Windows 11; docs: PowerShell $env:GOOS"
+ },
+ "go|Gin و Echo و chi": {
+  "hash": "2c9b7434a8e8",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64) + chi v5.3.2, gin v1.12.0"
+ },
+ "go|ServeMux و PathValue": {
+  "hash": "ce27a1d685d6",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
+ },
  "go|any و type switch": {
   "hash": "e061c83a53ef",
   "date": "2026-10-07",
@@ -4529,6 +4544,11 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
  },
+ "go|database/sql و pgx": {
+  "hash": "b392cf730a06",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64) + pgx v5.11.0 + postgres:16"
+ },
  "go|defer و panic و recover": {
   "hash": "98636ecb154f",
   "date": "2026-10-07",
@@ -4538,6 +4558,11 @@
   "hash": "bf2e5077bf25",
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|encoding/json": {
+  "hash": "2ce0d6dba3a3",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
  },
  "go|errors.Is و errors.As": {
   "hash": "a568194c7128",
@@ -4569,10 +4594,30 @@
   "date": "2026-10-07",
   "on": "golang:1.25 docker (Go 1.25.14); goimports via GOTOOLCHAIN=auto"
  },
+ "go|go test -bench": {
+  "hash": "b2c41c930e79",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
+ },
+ "go|go test -fuzz": {
+  "hash": "6311bacf1bec",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
+ },
  "go|go version": {
   "hash": "0568f579f744",
   "date": "2026-10-07",
   "on": "golang:1.25 docker (Go 1.25.14) + ubuntu:24.04 docker (tar install + PATH); docs: macOS/Windows outputs"
+ },
+ "go|http.Client": {
+  "hash": "5164558585d4",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
+ },
+ "go|httptest": {
+  "hash": "f47e360ba282",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
  },
  "go|if و for": {
   "hash": "7fdb013f7d42",
@@ -4584,10 +4629,20 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (Go 1.25.14, linux)"
  },
+ "go|log/slog": {
+  "hash": "773bf696d672",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
+ },
  "go|maps": {
   "hash": "c9b002143c1c",
   "date": "2026-10-07",
   "on": "docker golang:1.25 (go1.25.14 linux/amd64)"
+ },
+ "go|middleware": {
+  "hash": "2b59061d69b8",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
  },
  "go|nil interface": {
   "hash": "0abd21a9642c",
@@ -4599,10 +4654,20 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (Go 1.25.14, linux)"
  },
+ "go|pprof": {
+  "hash": "7fadb5831c5d",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
+ },
  "go|select": {
   "hash": "4f9f2c7535d2",
   "date": "2026-10-07",
   "on": "docker golang:1.25 (Go 1.25.14 linux/amd64)"
+ },
+ "go|signal.NotifyContext و Shutdown": {
+  "hash": "e557b4649c35",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
  },
  "go|string و rune و byte": {
   "hash": "a0ac10b622ae",
@@ -4619,10 +4684,25 @@
   "date": "2026-10-07",
   "on": "golang:1.25 docker (Go 1.25.14)"
  },
+ "go|worker pool و errgroup": {
+  "hash": "c8ae622ae2c5",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64) + x/sync v0.17.0"
+ },
+ "go|أسئلة انترفيو Go": {
+  "hash": "14286fdda0b1",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64) + x/sync v0.17.0"
+ },
  "go|الأنواع والتحويل": {
   "hash": "80c455705640",
   "date": "2026-10-07",
   "on": "golang:1.25 docker (Go 1.25.14)"
+ },
+ "go|الاختبارات والـ Benchmarks بـ go test": {
+  "hash": "a569265068e2",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
  },
  "go|التزامن الآمن بـ WaitGroup و Mutex": {
   "hash": "345e9785a17b",
@@ -4659,6 +4739,21 @@
   "date": "2026-10-07",
   "on": "docker golang:1.25 (Go 1.25.14, linux)"
  },
+ "go|بناء خادم ويب REST API بـ net/http": {
+  "hash": "c42f55567986",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
+ },
+ "go|تحزيم تطبيق Go في Docker بـ Scratch بحجم 15 ميجا": {
+  "hash": "0973c2b1b874",
+  "date": "2026-10-07",
+  "on": "Docker Desktop 29.6.1 on Windows 11 (golang:1.25 build stage, scratch)"
+ },
+ "go|مشروع: REST API لمهام": {
+  "hash": "8ab0f152f7c6",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64) + Docker Desktop scratch build"
+ },
  "go|معالجة الأخطاء الصريحة بـ if err != nil": {
   "hash": "90b707740ef2",
   "date": "2026-10-07",
@@ -4668,6 +4763,11 @@
   "hash": "38ccb0142bca",
   "date": "2026-10-07",
   "on": "golang:1.25 docker (Go 1.25.14)"
+ },
+ "go|هيكل المشروع و env": {
+  "hash": "ea257b32cd4b",
+  "date": "2026-10-07",
+  "on": "docker golang:1.25 (Go 1.25.14, linux/amd64)"
  },
  "js|&& و || و !": {
   "hash": "adff64700c3c",
