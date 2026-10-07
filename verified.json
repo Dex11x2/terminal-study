@@ -7799,25 +7799,305 @@
   "date": "2026-10-05",
   "on": "ubuntu-24.04, pwsh 7.6, powershell 5.1; docs: macOS sw_vers/Darwin, winver window"
  },
+ "symbols|!  و  !!": {
+  "hash": "d62abe085a09",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, interactive bash + sudo)"
+ },
  "symbols|!==  و  <  >  <=  >=": {
   "hash": "625487b70695",
   "date": "2026-10-07",
   "on": "Node 24 on Windows 11"
  },
+ "symbols|!x  و  !!x": {
+  "hash": "a1c2e674955c",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|\"  و  '": {
+  "hash": "888bc758e931",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|#  و  #!": {
+  "hash": "daa1f9a59f42",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, python3)"
+ },
+ "symbols|#field": {
+  "hash": "1eae0082fa06",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; tsc 7.0.2 for the private comparison"
+ },
+ "symbols|$  و  _": {
+  "hash": "0add70d39517",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows (document/http stubbed); Python 3.14 (Windows)"
+ },
+ "symbols|$( )": {
+  "hash": "6a2d13b9be72",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, git + nodejs + procps)"
+ },
+ "symbols|$1  $@  $#  $0": {
+  "hash": "70ce1cdba862",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|$?  و  $!  و  $$": {
+  "hash": "4905181b91bd",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, procps); pwsh 7.6"
+ },
+ "symbols|$VAR  و  $__{VAR}": {
+  "hash": "df358fd69d6e",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|$__bt$__{x}$__bt": {
+  "hash": "583b010c098f",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; bash in ubuntu:24.04 Docker"
+ },
+ "symbols|%": {
+  "hash": "c588f35ed0c6",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
  "symbols|%VAR%  و  $env:VAR": {
-  "hash": "fccc2f6b7d4d",
+  "hash": "4f74a07bd762",
   "date": "2026-10-07",
   "on": "cmd /c, pwsh 7.6 -NoProfile, powershell 5.1 -NoProfile on Windows 11"
+ },
+ "symbols|&": {
+  "hash": "af60ed684162",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, interactive bash + python3)"
+ },
+ "symbols|&  |  ^  ~  <<  >>": {
+  "hash": "64ceb31cb23e",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows"
+ },
+ "symbols|&&  و  ||": {
+  "hash": "59013950746d",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, make); powershell 5.1; docs: npm test && git push"
+ },
+ "symbols|&>  و  /dev/null": {
+  "hash": "261c120219f2",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, git); npm in Git Bash; cmd /c + pwsh"
+ },
+ "symbols|( )  و  { }": {
+  "hash": "a8c91b1d1b1c",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|(( ))  و  $(( ))": {
+  "hash": "87cd21c89374",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|*  و  ?": {
+  "hash": "6c479ef450d8",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|**": {
+  "hash": "35b8ef7edf11",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows); bash in ubuntu:24.04 Docker"
+ },
+ "symbols|+  و  +=  و  ++": {
+  "hash": "1ea26603d045",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|-  و  --": {
+  "hash": "58be9468595a",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|.  و  ..": {
+  "hash": "c01d2653c5a3",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker); cmd /c for cd..; docs: code ."
+ },
+ "symbols|...": {
+  "hash": "d4a55b6df4b3",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows"
+ },
+ "symbols|./": {
+  "hash": "8847abb516ea",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker); pwsh 7.6; cmd /c"
+ },
+ "symbols|/  و  \\": {
+  "hash": "78d151e70d34",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker); pwsh 7.6 + powershell 5.1; Node 24 + Python 3.14 on Windows"
+ },
+ "symbols|//  و  /* */": {
+  "hash": "708c42ad5ac8",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows); docs: VS Code Ctrl+/"
+ },
+ "symbols|2>  و  2>&1": {
+  "hash": "69c4dffdac3b",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, python3); npm 11.17 in Git Bash on Windows"
+ },
+ "symbols|;": {
+  "hash": "ca2bc8843a81",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|; في آخر السطر": {
+  "hash": "de939b1c2ae7",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; docs: Java/C parts"
+ },
+ "symbols|<  و  <<<": {
+  "hash": "307a7c8e11ec",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker); docs: mysql line"
+ },
+ "symbols|<<EOF": {
+  "hash": "6824524fd1f7",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|<T>": {
+  "hash": "70df34fd1038",
+  "date": "2026-10-07",
+  "on": "tsc 7.0.2 --strict + Node 24.19 on Windows (useState/User stubbed)"
+ },
+ "symbols|<file>  [opt]  {a|b}  ...": {
+  "hash": "88a704ced052",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, git); docs: docker stop web"
  },
  "symbols|=  و  ==  و  ===": {
   "hash": "c1f9a6ae7efc",
   "date": "2026-10-07",
   "on": "Node 24 on Windows 11"
  },
+ "symbols|=>": {
+  "hash": "62d3882daa51",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows"
+ },
+ "symbols|>  و  >>": {
+  "hash": "4cd6be1d11c3",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|? :": {
+  "hash": "d9e51534f2aa",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows (n defined, return line run inside a function)"
+ },
+ "symbols|?.": {
+  "hash": "4f8fc32d03b2",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows"
+ },
+ "symbols|??  و  ??=": {
+  "hash": "d737fba940f7",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows"
+ },
+ "symbols|@decorator": {
+  "hash": "14013965fa3a",
+  "date": "2026-10-07",
+  "on": "Python 3.14 on Windows; docs: FastAPI/Angular/NestJS uses"
+ },
+ "symbols|A | B  و  A & B": {
+  "hash": "0bd863bb8017",
+  "date": "2026-10-07",
+  "on": "tsc 7.0.2 --strict + Node 24.19 on Windows (User defined)"
+ },
  "symbols|Alt+Shift": {
   "hash": "e977c8a61788",
   "date": "2026-10-07",
   "on": "Node 24 on Windows 11 + ubuntu:24.04 (Docker); docs: keyboard layout shortcuts"
+ },
+ "symbols|[ ]  و  [[ ]]": {
+  "hash": "695b16c56d6f",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|[abc]  و  [!a]": {
+  "hash": "537a6bc05747",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols|\\": {
+  "hash": "43169a11b539",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker); docs: the docker run line itself"
+ },
+ "symbols|^C  ^D  ^Z": {
+  "hash": "6e5ab557f723",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, interactive bash + python3); python 3.14 on Windows"
+ },
+ "symbols|a && b  و  a || b": {
+  "hash": "92ba7ef63e83",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|arr[0]  و  [a, b]": {
+  "hash": "613199e68465",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|f()  و  (a + b)": {
+  "hash": "586e6c277e15",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|name=value": {
+  "hash": "69855168e2bf",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, nodejs)"
+ },
+ "symbols|name?:  و  x!": {
+  "hash": "1c4ace4805d5",
+  "date": "2026-10-07",
+  "on": "tsc 7.0.2 --strict (lib dom) + Node 24.19 on Windows; docs: getElementById at runtime"
+ },
+ "symbols|obj.key  و  obj[key]": {
+  "hash": "7f58bff958f3",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows"
+ },
+ "symbols|x: number": {
+  "hash": "63eb060f846d",
+  "date": "2026-10-07",
+  "on": "tsc 7.0.2 --strict + Node 24.19 on Windows"
+ },
+ "symbols|{ }": {
+  "hash": "2265795a7776",
+  "date": "2026-10-07",
+  "on": "Node 24.19 on Windows; Python 3.14 (Windows)"
+ },
+ "symbols|{a,b}  و  {1..5}": {
+  "hash": "335bb4a98cf5",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker)"
+ },
+ "symbols||": {
+  "hash": "98bc95a3c213",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker, nodejs + procps)"
+ },
+ "symbols|~": {
+  "hash": "129581c192a3",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 (Docker); pwsh 7.6; docs: Mac"
  },
  "ts|! (non-null)": {
   "hash": "548b6a281bb5",
