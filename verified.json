@@ -4194,6 +4194,16 @@
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker) + windows pwsh 7.6/powershell 5.1 (Format-Hex)"
  },
+ "flutter|API client بالتوكن": {
+  "hash": "e5f6473501a9",
+  "date": "2026-10-07",
+  "on": "flutter test against fake Node API + MockClient, docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44) (http 1.6); docs: emulator/phone addresses"
+ },
+ "flutter|AsyncNotifier": {
+  "hash": "9f845816422f",
+  "date": "2026-10-07",
+  "on": "flutter test (fake repo + HTTP repo against fake Node API) in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44)"
+ },
  "flutter|Container و Padding": {
   "hash": "797a68a58c6a",
   "date": "2026-10-07",
@@ -4223,6 +4233,21 @@
   "hash": "6b88bb1a1b22",
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44): analyze + widget test"
+ },
+ "flutter|Notifier": {
+  "hash": "996302af8547",
+  "date": "2026-10-07",
+  "on": "flutter test in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44), flutter_riverpod 3.4.3"
+ },
+ "flutter|Provider و Bloc": {
+  "hash": "93f4a560a56d",
+  "date": "2026-10-07",
+  "on": "flutter test in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44) (provider 6.1.5, flutter_bloc 9.1.1)"
+ },
+ "flutter|ProviderScope و ref.watch": {
+  "hash": "8fd36658082a",
+  "date": "2026-10-07",
+  "on": "flutter test (widget + ProviderContainer) in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44), flutter_riverpod 3.4.3"
  },
  "flutter|Row و Column": {
   "hash": "16b942f56f72",
@@ -4284,6 +4309,16 @@
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44.0): devices/run -d web-server + headless Chrome; docs: emulator/phone, --release"
  },
+ "flutter|flutter test": {
+  "hash": "3c2e2a526900",
+  "date": "2026-10-07",
+  "on": "flutter test (widget, golden, coverage) in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44)"
+ },
+ "flutter|flutter_secure_storage": {
+  "hash": "35e2e9101313",
+  "date": "2026-10-07",
+  "on": "flutter test + web in headless Chrome, docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44) (flutter_secure_storage 11.2.0); docs: Keychain/Keystore"
+ },
  "flutter|fromJson و toJson": {
   "hash": "190e0b3d9c14",
   "date": "2026-10-07",
@@ -4314,10 +4349,20 @@
   "date": "2026-10-07",
   "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): test + web-server/Chrome"
  },
+ "flutter|integration_test": {
+  "hash": "ff1384ba37e4",
+  "date": "2026-10-07",
+  "on": "flutter analyze + same test body run as widget test, docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44); docs: running on emulator/Chrome device"
+ },
  "flutter|json_serializable و freezed": {
   "hash": "707b01ec2a66",
   "date": "2026-10-07",
   "on": "docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44, freezed 4.0.0-dev.3, json_serializable 6.14.1): build_runner + analyze + test"
+ },
+ "flutter|loading و error و empty": {
+  "hash": "d31ad266482e",
+  "date": "2026-10-07",
+  "on": "flutter test + web-server with headless Chrome, docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44)"
  },
  "flutter|mixin": {
   "hash": "741da3dbb09d",
@@ -4368,6 +4413,16 @@
   "hash": "a283cb7bc674",
   "date": "2026-10-07",
   "on": "docker cirruslabs/flutter:stable (Flutter 3.44.0): analyze + test"
+ },
+ "flutter|shared_preferences": {
+  "hash": "75317aaf1072",
+  "date": "2026-10-07",
+  "on": "flutter test + web-server with headless Chrome, docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44); docs: Android/iOS storage, binding error on device"
+ },
+ "flutter|sqflite": {
+  "hash": "5415376ed55d",
+  "date": "2026-10-07",
+  "on": "flutter test with sqflite_common_ffi in docker ghcr.io/cirruslabs/flutter:stable (Flutter 3.44) (sqflite 2.4.4)"
  },
  "flutter|try و on و rethrow": {
   "hash": "775b224610f8",
