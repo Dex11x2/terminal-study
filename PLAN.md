@@ -176,6 +176,7 @@
 
 - [ ] TypeScript: ممكن تتحوّل JS وتشتغل على نفس المحرك من غير مكتبة كبيرة.
 - [ ] Python: محتاج Pyodide، وحجمه كبير. القرار لسه متاخدش.
+- [ ] **تمارين حلها ظاهر قبل ما تحاول (لقيتها ٧ أكتوبر):** في 17 تمرين من 154 الـ `check.solution` (أو أغلبه) مكتوب في الأجزاء اللي بتظهر على طول (المثال أو الشرح)، مش في الحل المستخبي. الكامل: data «WHERE» و «HAVING» و «LEFT JOIN» و «EXISTS». شبه كامل: data «ORDER BY و LIMIT» و «ON CONFLICT»، js «تمرين sumDigits» و «class» و «EventEmitter»، dsa «anagram (char count)» و «group anagrams (key)» و «queue و deque» و «lower bound (first/last)» و «search insert position» و «fast/slow pointers» و «merge (dummy head)» و «combination sum». الحل: نغيّر المطلوب في التمرين (أعمدة أو شرط أو جدول تاني) بحيث المثال يعلّم الفكرة والتمرين يطلب تطبيقها بشكل مختلف، ونحدّث الـ tests والـ solution. في dsa المثال هو الـ pattern نفسه فالتشابه طبيعي جزئيًا: راجع كل واحد بعينك. ابعت كل تاب لوكيل واحد بعد ما شرح التاب يخلص. سكربت الفحص اتكتب في scratchpad الجلسة (leak.js)؛ الأحسن نضيفه تنبيه في `tools/check.js`.
 
 ### ٥. أسئلة مفتوحة
 

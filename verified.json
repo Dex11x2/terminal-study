@@ -1954,6 +1954,86 @@
   "date": "2026-10-06",
   "on": "Chrome headless (playwright-core), example + solCode HTML, Windows 11"
  },
+ "data|CREATE TABLE": {
+  "hash": "fd118ddb2ab8",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|DELETE": {
+  "hash": "861467ab3f3b",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|GROUP BY": {
+  "hash": "fe30695ed614",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|HAVING": {
+  "hash": "57d0b3304827",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|INSERT": {
+  "hash": "4986045fb028",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|LIKE و ILIKE": {
+  "hash": "778a8ba6cbd9",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|NULL": {
+  "hash": "544f5aa71e93",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|ORDER BY و LIMIT": {
+  "hash": "65f6137aa013",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|PRIMARY KEY": {
+  "hash": "f59e3a015d4b",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|SELECT": {
+  "hash": "e184f2117018",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|UPDATE": {
+  "hash": "2bb714d709e2",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|WHERE": {
+  "hash": "70a05af72cb3",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|count و sum و avg": {
+  "hash": "1a1f5e9e01a2",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|numeric للفلوس": {
+  "hash": "0a65f7202985",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql); try/solCode in Node (Windows)"
+ },
+ "data|أنواع الأعمدة": {
+  "hash": "381c246f3576",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
+ "data|مقدمة قواعد البيانات و SQL": {
+  "hash": "9e7070bf28b6",
+  "date": "2026-10-07",
+  "on": "docker postgres:18 (psql)"
+ },
  "diag|500 من التطبيق": {
   "hash": "620aa28e5e51",
   "date": "2026-10-06",
