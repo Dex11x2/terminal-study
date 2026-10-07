@@ -5079,6 +5079,11 @@
   "date": "2026-10-06",
   "on": "win11 Git Bash + pwsh 7 / ps 5.1"
  },
+ "react|ErrorBoundary": {
+  "hash": "233d0a1a4588",
+  "date": "2026-10-07",
+  "on": "Vite + React 19.3 + react-error-boundary 6.1 + React Router 8.4, headless Chrome (Win11)"
+ },
  "react|HydrationBoundary": {
   "hash": "22e701a4a775",
   "date": "2026-10-07",
@@ -5089,10 +5094,20 @@
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; tsc 6.0"
  },
+ "react|MSW": {
+  "hash": "71e295944b5c",
+  "date": "2026-10-07",
+  "on": "msw 3.0.2: setupServer in Vitest 5.0/jsdom; setupWorker in Vite dev, headless Chrome (Win11)"
+ },
  "react|RTK Query": {
   "hash": "3b3fa0b7fd97",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + RTK 2.13 + react-redux 9.3, Chrome headless (Windows)"
+ },
+ "react|RTL": {
+  "hash": "0f3daedb35bb",
+  "date": "2026-10-07",
+  "on": "Vite + React 19.3 + react-i18next 17 + Tailwind 4.3, headless Chrome (Win11)"
  },
  "react|React Router": {
   "hash": "5bc4db97ba89",
@@ -5108,6 +5123,11 @@
   "hash": "696d432acf06",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome; vanilla part in Node 24 + jsdom"
+ },
+ "react|Vitest + Testing Library": {
+  "hash": "711f19905d00",
+  "date": "2026-10-07",
+  "on": "Vitest 5.0 + jsdom 30 + RTL 16.3 + jest-dom 7.0 (Win11)"
  },
  "react|You Might Not Need an Effect": {
   "hash": "6a1087a3f1cb",
@@ -5134,6 +5154,11 @@
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
  },
+ "react|createPortal": {
+  "hash": "48398c4abda2",
+  "date": "2026-10-07",
+  "on": "Vite + React 19.3, headless Chrome (Win11)"
+ },
  "react|custom hook": {
   "hash": "34a345396a2f",
   "date": "2026-10-07",
@@ -5159,6 +5184,11 @@
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
  },
+ "react|getByRole و findBy": {
+  "hash": "5984030060e5",
+  "date": "2026-10-07",
+  "on": "Vitest 5.0 + jsdom + RTL 16.3 + TanStack Query 5.104 + msw 3.0 (Win11); docs: findBy timing"
+ },
  "react|immutable updates": {
   "hash": "da549eec446f",
   "date": "2026-10-06",
@@ -5168,6 +5198,11 @@
   "hash": "98b5959efa2a",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3 + React 19.2 dev, headless Chrome"
+ },
+ "react|lazy و Suspense": {
+  "hash": "952cd33db3a6",
+  "date": "2026-10-07",
+  "on": "vite build (8.3) + vite preview + React Router 8.4 + recharts 3.10, headless Chrome (Win11)"
  },
  "react|lifting state up": {
   "hash": "353f1d6b3158",
@@ -5214,10 +5249,20 @@
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + RHF 7.89 + zod 4.6.5, headless Chrome (401 and 500)"
  },
+ "react|react-i18next": {
+  "hash": "15500d1e06a3",
+  "date": "2026-10-07",
+  "on": "Vite 8.3 + React 19.3 + i18next 26.4 / react-i18next 17, headless Chrome (Win11); Intl.PluralRules in Node 24"
+ },
  "react|reducer + context": {
   "hash": "89f4b1806e88",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 dev, headless Chrome (full wizard from solCode)"
+ },
+ "react|renderHook": {
+  "hash": "a495741089b4",
+  "date": "2026-10-07",
+  "on": "Vitest 5.0 + jsdom + RTL 16.3 (fake timers) + TanStack Query 5.104 (Win11)"
  },
  "react|staleTime و gcTime": {
   "hash": "6ad771a87e49",
@@ -5228,6 +5273,11 @@
   "hash": "b30d83bc74b8",
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 dev, headless Chrome"
+ },
+ "react|unit ولا e2e في Next": {
+  "hash": "0ccc1fcbc6ef",
+  "date": "2026-10-07",
+  "on": "Vitest 5.0 (Node) + zod 4.6; @playwright/test 1.63 against a Node stub server, Chrome (Win11); docs: Next.js Server Action / next start"
  },
  "react|useContext": {
   "hash": "49620a35b67e",
@@ -5289,10 +5339,20 @@
   "date": "2026-10-07",
   "on": "Vite 8.3 + React 19.3 + TanStack Query 5.104 + react-error-boundary 6.1, Chrome headless (Windows)"
  },
+ "react|user-event": {
+  "hash": "2f49855748d6",
+  "date": "2026-10-07",
+  "on": "Vitest 5.0 + jsdom + user-event 14.6 + react-hook-form 7.89 + zod 4.6 + msw 3.0 (Win11)"
+ },
  "react|vite.config": {
   "hash": "6ba6dea4524b",
   "date": "2026-10-06",
   "on": "Windows 11, Vite 8.3.3 (build, --mode staging, ANALYZE=1, dev proxy against a local Node API); docs: Sentry upload"
+ },
+ "react|wrapper بالـ providers": {
+  "hash": "2faec7105898",
+  "date": "2026-10-07",
+  "on": "Vitest 5.0 + jsdom + TanStack Query 5.104 + React Router 8.4 + msw 3.0 (Win11)"
  },
  "react|zod مشتركة مع الـ API": {
   "hash": "fb2dcebaced0",
