@@ -118,9 +118,9 @@
 | ٣١ | `data/05-06.js` (21) و `pyapi/01.js` (14) | [x] (data اتقسم: بقى 17 ملف) |
 | ٣٢ | `pyapi/02-04.js` (37) | [x] |
 | ٣٣ | `pyapi/05-06.js` (25) | [x] (pyapi اتقسم: بقى 19 ملف) |
-| ٣٤ | `files/01-06.js` (92) | [x] (files اتقسم: بقى 21 ملف؛ 8 دروس لغات شرحها من الـ docs ولسه هتتجرب في Docker: files/08 و files/13) |
+| ٣٤ | `files/01-06.js` (92) | [x] (files اتقسم: بقى 21 ملف) |
 | ٣٥ | `symbols/01-04.js` (104) | [ ] |
-| ٣٦ | `glossary/01.js` و `apps/01.js` (105) | [ ] |
+| ٣٦ | `glossary/01.js` و `apps/01.js` (105) | [ ] (glossary خلص واتقسم 4 ملفات؛ apps لسه) |
 | ٣٧ | `real/01-04.js` (40) | [ ] |
 | ٣٨ | `dsa/01-06.js` (~36) | [ ] (فيها تمارين check: ماتقولش الحل) |
 | ٣٩ | `dsa/07-11.js` (~30) | [ ] |
@@ -172,7 +172,7 @@
 
 كل `sol` في الدروس دي بيقول إنه من الـ docs. نجرّبها لما يبقى فيه الجهاز المناسب.
 
-- [ ] **محتاجة toolchains مش متسطبة (٧ أكتوبر):** files «.java و .class و .jar» و «.c و .h و .cpp و .o» و «.go و go.mod» و «.php» و «.swift و .dart و .rs و .rb» و «pom.xml و build.gradle» و «AndroidManifest.xml و strings.xml» و «.csproj و .sln و appsettings.json»: الشرح اتكتب من الـ docs ومش متعلّم عليها في verified.json. تتجرب لما نوافق على images زي `eclipse-temurin` و `gcc` و `golang` و `php` و `rust` (ونفس القرار هيلزم لتابات اللغات: php و go و dotnet و spring و kotlin و swift و cpp و flutter). **القرار (٧ أكتوبر): وافقت تنزّل الـ images الرسمية لكل لغة، وتمسحها (docker rmi للـ tags اللي نزلت بس) بعد ما التاب يخلص.** وكيل كل تاب لغة: ينزّل الـ image اللي محتاجها، ويكتب في تقريره أسماء الـ images اللي نزّلها عشان القائد يمسحها بعد التاب.
+- [x] **محتاجة toolchains مش متسطبة (٧ أكتوبر، اتجربت كلها في Docker نفس اليوم ما عدا AAPT2):** files «.java و .class و .jar» و «.c و .h و .cpp و .o» و «.go و go.mod» و «.php» و «.swift و .dart و .rs و .rb» و «pom.xml و build.gradle» و «AndroidManifest.xml و strings.xml» و «.csproj و .sln و appsettings.json»: الشرح اتكتب من الـ docs ومش متعلّم عليها في verified.json. تتجرب لما نوافق على images زي `eclipse-temurin` و `gcc` و `golang` و `php` و `rust` (ونفس القرار هيلزم لتابات اللغات: php و go و dotnet و spring و kotlin و swift و cpp و flutter). **القرار (٧ أكتوبر): وافقت تنزّل الـ images الرسمية لكل لغة، وتمسحها (docker rmi للـ tags اللي نزلت بس) بعد ما التاب يخلص.** وكيل كل تاب لغة: ينزّل الـ image اللي محتاجها، ويكتب في تقريره أسماء الـ images اللي نزّلها عشان القائد يمسحها بعد التاب.
 
 - [ ] **محتاجة ماك:** دروس zsh:
   - `pmset` و `say` و `osascript`.

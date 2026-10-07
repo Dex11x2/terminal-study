@@ -2819,6 +2819,16 @@
   "date": "2026-10-07",
   "on": "Windows 11, cmd /c; docs: chcp/Arabic garbling"
  },
+ "files|.c و .h و .cpp و .o": {
+  "hash": "90566857c1a3",
+  "date": "2026-10-07",
+  "on": "Docker gcc:14 (GCC 14.4.0)"
+ },
+ "files|.csproj و .sln و appsettings.json": {
+  "hash": "7eb44b35a5f9",
+  "date": "2026-10-07",
+  "on": "Docker mcr.microsoft.com/dotnet/sdk:8.0 (SDK 8.0.425); docs: User Secrets"
+ },
  "files|.css": {
   "hash": "42803d5ee30a",
   "date": "2026-10-07",
@@ -2879,6 +2889,11 @@
   "date": "2026-10-07",
   "on": "win11 git 2.56 (Git Bash), throwaway repo"
  },
+ "files|.go و go.mod": {
+  "hash": "158317061275",
+  "date": "2026-10-07",
+  "on": "Docker golang:1.25 (Go 1.25.14) + ubuntu:24.04"
+ },
  "files|.html": {
   "hash": "763cde09e0ae",
   "date": "2026-10-07",
@@ -2888,6 +2903,11 @@
   "hash": "fdf81659f6fc",
   "date": "2026-10-07",
   "on": "Windows: Python 3.14 configparser; ubuntu:24.04 docker: PHP 8.3.6 parse_ini_file; git config"
+ },
+ "files|.java و .class و .jar": {
+  "hash": "d3e814b54aa6",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-21 (Temurin 21.0.12.1) + eclipse-temurin:17-jre + ubuntu:24.04"
  },
  "files|.js و .mjs و .cjs": {
   "hash": "09eda32e283c",
@@ -2954,6 +2974,11 @@
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (docker, openssl) + Windows pwsh & Git Bash openssl 3.5.8"
  },
+ "files|.php": {
+  "hash": "15b2b71a96db",
+  "date": "2026-10-07",
+  "on": "Docker php:8.3-cli (PHP 8.3.35, php -S + curl)"
+ },
  "files|.png و .jpg": {
   "hash": "335977e64614",
   "date": "2026-10-07",
@@ -2988,6 +3013,11 @@
   "hash": "0438c5956a67",
   "date": "2026-10-07",
   "on": "Windows Git Bash file/wc + PyMuPDF render; docs: svgo"
+ },
+ "files|.swift و .dart و .rs و .rb": {
+  "hash": "cc79dce69c84",
+  "date": "2026-10-07",
+  "on": "Docker swift:6.4, dart:stable (3.13.5), rust:1-slim (1.99.0), ruby:3.4-slim (3.4.11)"
  },
  "files|.tar و .gz و .tgz": {
   "hash": "3ef2a5e8a014",
@@ -3038,6 +3068,11 @@
   "hash": "a107a4ef6cdf",
   "date": "2026-10-07",
   "on": "ubuntu-24.04 docker (zip, unzip); pwsh 7.6 + powershell 5.1 Compress/Expand-Archive; cmd tar.exe"
+ },
+ "files|AndroidManifest.xml و strings.xml": {
+  "hash": "ed3961c515c7",
+  "date": "2026-10-07",
+  "on": "Python 3.14 Windows (XML parse checks); docs: AAPT2 build errors, Android 12 exported rule"
  },
  "files|CSV إلى JSON": {
   "hash": "60c495c1ce99",
@@ -3153,6 +3188,11 @@
   "hash": "8499c8713ed4",
   "date": "2026-10-07",
   "on": "win11 node24.19/npm11.17 (npm init/install/run/test/pkg get/view)"
+ },
+ "files|pom.xml و build.gradle": {
+  "hash": "5264cde7c30c",
+  "date": "2026-10-07",
+  "on": "Docker maven:3.9-eclipse-temurin-21 (Maven 3.9.16) + gradle:jdk21 (Gradle 9.8.0); Python 3.14 Windows"
  },
  "files|requirements.txt و pyproject.toml": {
   "hash": "3333bd7417ef",
@@ -3528,6 +3568,456 @@
   "hash": "813e9ccb1874",
   "date": "2026-10-06",
   "on": "win11 Git Bash (Git 2.56) + ubuntu-24.04 (Git 2.43)"
+ },
+ "glossary|0.0.0.0": {
+  "hash": "e4feefd93545",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx)"
+ },
+ "glossary|ACME / webroot challenge": {
+  "hash": "c3df6dce5608",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|APK / AAB": {
+  "hash": "9aad11ef04ef",
+  "date": "2026-10-07",
+  "on": "docs: Android docs"
+ },
+ "glossary|CDN": {
+  "hash": "83554497256d",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|CI / CD": {
+  "hash": "97e8ae0958b0",
+  "date": "2026-10-07",
+  "on": "gh CLI on this repo"
+ },
+ "glossary|CORS": {
+  "hash": "f0a46b236d11",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl against api.github.com)"
+ },
+ "glossary|CRLF / LF": {
+  "hash": "1bf72fd24531",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, file + bash)"
+ },
+ "glossary|Command Palette": {
+  "hash": "95a614d85dbe",
+  "date": "2026-10-07",
+  "on": "docs: concept (VS Code docs)"
+ },
+ "glossary|Conventional Commits": {
+  "hash": "7d89ddefadcd",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (scratch repo)"
+ },
+ "glossary|DNS": {
+  "hash": "331b5a7d82be",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, dnsutils)"
+ },
+ "glossary|Git hook / pre-commit": {
+  "hash": "92b9f77372c1",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (scratch repo)"
+ },
+ "glossary|HMAC": {
+  "hash": "7555c5d887ec",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, OpenSSL 3.0.13)"
+ },
+ "glossary|HTTP": {
+  "hash": "3fb9ff48862f",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|IP address": {
+  "hash": "24481ebdb2b2",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl ifconfig.me, masked) + ubuntu-24.04 (docker)"
+ },
+ "glossary|JWT / token": {
+  "hash": "ad53b052796e",
+  "date": "2026-10-07",
+  "on": "Windows Node 24"
+ },
+ "glossary|NAT": {
+  "hash": "20c38a4bccd7",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|ON_ERROR_STOP": {
+  "hash": "ae61ec30c20f",
+  "date": "2026-10-07",
+  "on": "docker postgres:16-alpine"
+ },
+ "glossary|OOM killer": {
+  "hash": "0ad493a126c1",
+  "date": "2026-10-07",
+  "on": "docker node:22-alpine --memory=64m; docs: dmesg line"
+ },
+ "glossary|ORM": {
+  "hash": "6cc4ddf1b7b4",
+  "date": "2026-10-07",
+  "on": "docs: prisma --version"
+ },
+ "glossary|PATH": {
+  "hash": "2d560b4d3bc9",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|PID 1": {
+  "hash": "7956001a46da",
+  "date": "2026-10-07",
+  "on": "docker node:22-alpine (docker stop timings)"
+ },
+ "glossary|RLS": {
+  "hash": "dec9b55b0fe8",
+  "date": "2026-10-07",
+  "on": "docker postgres:16-alpine"
+ },
+ "glossary|Run (Win+R) / .msc / .cpl": {
+  "hash": "b7f5b444d745",
+  "date": "2026-10-07",
+  "on": "docs: concept (Windows docs)"
+ },
+ "glossary|SSH key": {
+  "hash": "f04141069415",
+  "date": "2026-10-07",
+  "on": "Windows OpenSSH ssh-keygen (throwaway key)"
+ },
+ "glossary|TCP / UDP": {
+  "hash": "cdfe06ba4bbb",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx)"
+ },
+ "glossary|TLS / SSL / HTTPS": {
+  "hash": "e75ffc9f0bf6",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (openssl s_client)"
+ },
+ "glossary|TTL": {
+  "hash": "7971db1defac",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, dnsutils)"
+ },
+ "glossary|XSS": {
+  "hash": "ec069d168083",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|YAML": {
+  "hash": "0377adb5f301",
+  "date": "2026-10-07",
+  "on": "Docker Compose on Windows"
+ },
+ "glossary|artifact": {
+  "hash": "b8322e48757a",
+  "date": "2026-10-07",
+  "on": "docs: concept + upload/download-artifact"
+ },
+ "glossary|bind mount": {
+  "hash": "d1e38eae9d85",
+  "date": "2026-10-07",
+  "on": "Docker on Windows (node:22-alpine)"
+ },
+ "glossary|build arg / build secret": {
+  "hash": "6a2b20c26786",
+  "date": "2026-10-07",
+  "on": "Docker on Windows; docs: secret part"
+ },
+ "glossary|cache": {
+  "hash": "db48defafbac",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl, real cdnjs file)"
+ },
+ "glossary|certificate": {
+  "hash": "8dabfdb07bbd",
+  "date": "2026-10-07",
+  "on": "docker certbot/certbot + Git Bash openssl x509"
+ },
+ "glossary|connection pool": {
+  "hash": "4981da564bf1",
+  "date": "2026-10-07",
+  "on": "docker postgres:16-alpine"
+ },
+ "glossary|cron": {
+  "hash": "8d540f8a013b",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, cron)"
+ },
+ "glossary|daemon / service": {
+  "hash": "269e9ad865ad",
+  "date": "2026-10-07",
+  "on": "docs: systemctl (no systemd in container)"
+ },
+ "glossary|dependency": {
+  "hash": "c0662a283190",
+  "date": "2026-10-07",
+  "on": "Windows Node 24 (npm ls)"
+ },
+ "glossary|dump / restore": {
+  "hash": "36420bc4a066",
+  "date": "2026-10-07",
+  "on": "docker postgres:16-alpine (pg_dump -Fc + pg_restore)"
+ },
+ "glossary|environment variable": {
+  "hash": "815de7d891fc",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|exit code": {
+  "hash": "f2183be68f7a",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + pwsh"
+ },
+ "glossary|firewall": {
+  "hash": "6e1ca9cf40a4",
+  "date": "2026-10-07",
+  "on": "docs: ufw status"
+ },
+ "glossary|formatter": {
+  "hash": "2f702dd1d7e1",
+  "date": "2026-10-07",
+  "on": "Windows Node 24 (Prettier 3.9.9)"
+ },
+ "glossary|hash": {
+  "hash": "3796953de3a6",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|header": {
+  "hash": "58aecfa580be",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|healthcheck": {
+  "hash": "52562a6d8d65",
+  "date": "2026-10-07",
+  "on": "Docker on Windows (postgres:16-alpine + pg_isready)"
+ },
+ "glossary|idempotency": {
+  "hash": "6767f4b7dc5f",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|image / container": {
+  "hash": "3baeb7eec80f",
+  "date": "2026-10-07",
+  "on": "Docker 29 on Windows"
+ },
+ "glossary|index": {
+  "hash": "2827ae11cb4f",
+  "date": "2026-10-07",
+  "on": "docker postgres:16-alpine"
+ },
+ "glossary|inode": {
+  "hash": "6fe934110c31",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|keystore": {
+  "hash": "41887ed1e2c8",
+  "date": "2026-10-07",
+  "on": "docs: keytool (no JDK)"
+ },
+ "glossary|latency / TTFB": {
+  "hash": "7748ce50dc3b",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|lint / linter": {
+  "hash": "4eb4c6859505",
+  "date": "2026-10-07",
+  "on": "Windows Node 24 (ESLint 10.12.0)"
+ },
+ "glossary|load average": {
+  "hash": "13289e4884ef",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|localhost / loopback": {
+  "hash": "c04e2b53d235",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx)"
+ },
+ "glossary|lock file": {
+  "hash": "153c9bdff88e",
+  "date": "2026-10-07",
+  "on": "Windows Node 24"
+ },
+ "glossary|main / renderer": {
+  "hash": "4aad7711d67b",
+  "date": "2026-10-07",
+  "on": "Windows Node 24"
+ },
+ "glossary|migration": {
+  "hash": "f70c117e0689",
+  "date": "2026-10-07",
+  "on": "docs: prisma migrate status"
+ },
+ "glossary|monorepo / workspace": {
+  "hash": "b04ef7ad62f7",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows"
+ },
+ "glossary|multi-stage build": {
+  "hash": "c8025408ad1f",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows"
+ },
+ "glossary|package manager": {
+  "hash": "f9e76d5d7c98",
+  "date": "2026-10-07",
+  "on": "Windows npm 11.17.0 + ubuntu-24.04 (docker, apt)"
+ },
+ "glossary|permissions": {
+  "hash": "350b9bb2b02f",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|pip / requirements.txt": {
+  "hash": "9531833a4027",
+  "date": "2026-10-07",
+  "on": "docker python:3.13-slim"
+ },
+ "glossary|pipeline": {
+  "hash": "6272065240eb",
+  "date": "2026-10-07",
+  "on": "gh CLI on this repo"
+ },
+ "glossary|port": {
+  "hash": "39a72d468a43",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx)"
+ },
+ "glossary|process / PID": {
+  "hash": "ae23c634164f",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|prompt": {
+  "hash": "eab6c31cf66b",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, bash -i)"
+ },
+ "glossary|rate limiting": {
+  "hash": "311b8b43a3ca",
+  "date": "2026-10-07",
+  "on": "docker nginx:alpine (limit_req, 503 vs 429)"
+ },
+ "glossary|regex": {
+  "hash": "594d944719fd",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|registry": {
+  "hash": "6b40c96de7b2",
+  "date": "2026-10-07",
+  "on": "Docker 29 on Windows (hello-world pulled then removed)"
+ },
+ "glossary|reverse proxy": {
+  "hash": "f416eb7786ab",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx)"
+ },
+ "glossary|rollback": {
+  "hash": "bc054c3a0310",
+  "date": "2026-10-07",
+  "on": "git on this repo"
+ },
+ "glossary|root / sudo": {
+  "hash": "075e7b872d0d",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, sudo)"
+ },
+ "glossary|semver": {
+  "hash": "0ae213284ea6",
+  "date": "2026-10-07",
+  "on": "Windows Node 24 (npm view)"
+ },
+ "glossary|shared hosting / .htaccess": {
+  "hash": "781dfa73da70",
+  "date": "2026-10-07",
+  "on": "docs: concept + Apache docs"
+ },
+ "glossary|signal": {
+  "hash": "19cda2075491",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|smoke test": {
+  "hash": "14e581f060ee",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|staging": {
+  "hash": "44912320bde7",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl, httpbin basic-auth)"
+ },
+ "glossary|status code": {
+  "hash": "274bf01686aa",
+  "date": "2026-10-07",
+  "on": "Git Bash on Windows (curl)"
+ },
+ "glossary|stdin / stdout / stderr": {
+  "hash": "8b8e0f78bb1f",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker)"
+ },
+ "glossary|swap": {
+  "hash": "7195c3f90f32",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker on WSL2)"
+ },
+ "glossary|symlink": {
+  "hash": "0bdda3e5ad74",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx)"
+ },
+ "glossary|terminal / shell": {
+  "hash": "8e0a3f695739",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker) + pwsh 7.6.6 + powershell 5.1"
+ },
+ "glossary|transaction": {
+  "hash": "d64def78ac73",
+  "date": "2026-10-07",
+  "on": "docker postgres:16-alpine"
+ },
+ "glossary|tunnel": {
+  "hash": "a11556205881",
+  "date": "2026-10-07",
+  "on": "docs: ssh -L"
+ },
+ "glossary|typecheck": {
+  "hash": "8421127efe63",
+  "date": "2026-10-07",
+  "on": "Windows Node 24 (TypeScript 7.0.2)"
+ },
+ "glossary|upstream": {
+  "hash": "82a57b468884",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx)"
+ },
+ "glossary|venv": {
+  "hash": "d2575917be7d",
+  "date": "2026-10-07",
+  "on": "docker python:3.13-slim"
+ },
+ "glossary|volume": {
+  "hash": "8d02abafc29f",
+  "date": "2026-10-07",
+  "on": "Docker 29 on Windows"
+ },
+ "glossary|webhook": {
+  "hash": "dfef851ead39",
+  "date": "2026-10-07",
+  "on": "ubuntu-24.04 (docker, nginx access.log)"
  },
  "js|&& و || و !": {
   "hash": "adff64700c3c",

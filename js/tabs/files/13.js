@@ -329,7 +329,7 @@ typing_extensions==4.16.0
 
 المثال [[pom.xml]] لمشروع Java اسمه [[gym-api]] فيه مكتبتين: Gson (لـ JSON) و JUnit (للاختبارات). والحل فيه نفس المشروع بـ Gradle. هنقرا الملفين حتة حتة.
 
-> مفيش Java ولا Maven ولا Gradle على الجهاز اللي اتجرّب عليه، فأوامر [[mvn]] و [[gradle]] ونواتجها من docs الأدوات دي (maven.apache.org و docs.gradle.org). اللي اتجرّب فعلًا: إن [[pom.xml]] XML سليم، وقرايته بـ Python 3.14 على ويندوز (تحت).
+> كل الأوامر اتشغّلت فعلًا في Docker على مشروع فيه الـ [[pom.xml]] ده و [[src/main/java/com/gym/App.java]] بيطبع [[Hello من gym-api]]: Maven في الـ image الرسمية [[maven:3.9-eclipse-temurin-21]] (Maven 3.9.16 و JDK 21.0.12.1)، و Gradle في [[gradle:jdk21]] (Gradle 9.8.0). وقراية الـ pom بـ Python 3.14 على ويندوز (تحت).
 
 ---
 
@@ -378,7 +378,13 @@ typing_extensions==4.16.0
   </properties>
 ~~~
 
-إعدادات بأسامي. [[maven.compiler.release]] بيقول لـ plugin الـ compiler: اعمل compile لـ Java 21. لو الـ JDK اللي عندك أقدم من 21 البناء بيقع (الرسالة في الـ docs: [[release version 21 not supported]]).
+إعدادات بأسامي. [[maven.compiler.release]] بيقول لـ plugin الـ compiler: اعمل compile لـ Java 21. لو الـ JDK اللي عندك أقدم من الرقم ده البناء بيقع. جرّبناها بالعكس: طلبنا 25 والـ JDK اللي في الـ image نسخة 21 ([[mvn clean package -Dmaven.compiler.release=25]]، و [[-D]] بيغيّر property من الـ command line):
+
+~~~text الناتج (مختصر)
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.15.0:compile (default-compile) on project gym-api: Fatal error compiling: error: release version 25 not supported -> [Help 1]
+~~~
+
+نفس الرسالة اللي هتشوفها لو المشروع 21 والـ JDK عندك 17: [[release version 21 not supported]].
 
 ## ٤. [[<dependencies>]]
 
@@ -416,19 +422,56 @@ org.junit.jupiter:junit-jupiter:5.11.3 test
 
 ---
 
-## ٥. البناء (من الـ docs)
+## ٥. البناء
 
 ~~~bash
 mvn package
 ~~~
 
-[[mvn]] بيقرا الـ pom ويمشي على مراحل ثابتة اسمها lifecycle: [[validate]] ← [[compile]] ← [[test]] ← [[package]]. لما تطلب [[package]] كل اللي قبلها بيتعمل. أول مرة بينزّل المكتبات لـ [[~/.m2/repository]]، وفي الآخر:
+[[mvn]] بيقرا الـ pom ويمشي على مراحل ثابتة اسمها lifecycle: [[validate]] ← [[compile]] ← [[test]] ← [[package]]. لما تطلب [[package]] كل اللي قبلها بيتعمل. أول مرة بينزّل المكتبات والـ plugins لـ [[~/.m2/repository]] (مئات سطور [[Downloading]] و [[Downloaded]]، وخدت حوالي دقيقة). من غيرهم الناتج كان كده:
 
-~~~text الناتج (من الـ docs)
+~~~text الناتج (من غير سطور Downloading)
+[INFO] --------------------------< com.gym:gym-api >---------------------------
+[INFO] Building gym-api 1.4.0
+[INFO] --- resources:3.4.0:resources (default-resources) @ gym-api ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] --- compiler:3.15.0:compile (default-compile) @ gym-api ---
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file with javac [debug release 21] to target/classes
+[INFO] --- surefire:3.5.4:test (default-test) @ gym-api ---
+[INFO] No tests to run.
+[INFO] --- jar:3.5.0:jar (default-jar) @ gym-api ---
+[INFO] Building jar: /w/target/gym-api-1.4.0.jar
 [INFO] BUILD SUCCESS
 ~~~
 
+(شلنا السطور الفاضية وكام سطر [[[INFO]]] تانيين.)
+
+- كل [[--- x:رقم:goal ---]] = plugin بيشتغل في مرحلة: [[resources]] ينسخ ملفات [[src/main/resources]]، و [[compiler]] يعمل compile، و [[surefire]] يشغّل الاختبارات، و [[jar]] يعمل الأرشيف.
+- [[[debug release 21]]]: ده [[maven.compiler.release]] اللي في الـ pom.
+- الـ [[[WARNING]]] الاتنين معناهم إن الـ pom مش قايل الملفات مكتوبة بأنهي ترميز، فـ Maven استخدم ترميز الجهاز (UTF-8 هنا، بس على ويندوز ممكن يبقى غيره والحروف العربي تبوظ). الحل سطر في [[<properties>]]: [[<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>]] (ومشاريع Spring Boot بتاخده من الـ parent).
+
 والناتج في [[target/gym-api-1.4.0.jar]]: الاسم [[artifactId-version.jar]]. والمسارات ثابتة بالعُرف (convention): الكود في [[src/main/java]]، والاختبارات في [[src/test/java]]، والناتج في [[target/]]. عشان كده الـ pom مفيهوش أي مسار.
+
+~~~text ls target
+classes
+generated-sources
+gym-api-1.4.0.jar
+maven-archiver
+maven-status
+~~~
+
+وعشان تشوف المكتبات ومكتباتها (transitive dependencies):
+
+~~~text mvn dependency:tree (السطور المهمة)
+[INFO] com.gym:gym-api:jar:1.4.0
+[INFO] +- com.google.code.gson:gson:jar:2.11.0:compile
+[INFO] |  \- com.google.errorprone:error_prone_annotations:jar:2.27.0:compile
+[INFO] \- org.junit.jupiter:junit-jupiter:jar:5.11.3:test
+[INFO]    +- org.junit.jupiter:junit-jupiter-api:jar:5.11.3:test
+~~~
+
+Gson نفسه محتاج [[error_prone_annotations]]، فـ Maven نزّلها لوحده من غير ما تكتبها. والصيغة [[group:artifact:jar:version:scope]].
 
 ## ٦. نفس المشروع بـ Gradle (الـ solCode)
 
@@ -439,7 +482,22 @@ plugins {
 }
 ~~~
 
-[[plugins]]: نوع المشروع. [[java]] = مشروع Java عادي (compile و test و jar)، و [[application]] = فيه main وتقدر تشغّله بـ [[gradle run]].
+[[plugins]]: نوع المشروع. [[java]] = مشروع Java عادي (compile و test و jar)، و [[application]] = فيه main وتقدر تشغّله بـ [[gradle run]]. شغّلناه ([[gradle run --console=plain]]، و [[--console=plain]] عشان يطبع سطور عادية من غير ألوان وأنيميشن):
+
+~~~text الناتج
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :compileJava
+> Task :processResources NO-SOURCE
+> Task :classes
+
+> Task :run
+Hello من gym-api
+
+BUILD SUCCESSFUL in 21s
+2 actionable tasks: 2 executed
+~~~
+
+كل [[> Task :x]] مهمة، و [[NO-SOURCE]] = مفيش ملفات ليها فاتخطّت. والـ Daemon عملية بتفضل شغالة في الخلفية عشان المرة الجاية تبقى أسرع. و [[gradle build]] طلّع الـ jar في [[build/libs/gym-api-1.4.0.jar]]: نفس الاسم اللي Maven طلّعه، بس في [[build/]] بدل [[target/]].
 
 ~~~text
 group = "com.gym"
@@ -519,11 +577,11 @@ application { mainClass = "com.gym.App" }
             R`قفل [[dependencies]].`,
             R`قفل الـ root.`
           ],
-          sol: R`[[mvn package]] بيطبع سطور [[[INFO]]] كتير (أول مرة بينزّل المكتبات والـ plugins وده بياخد وقت) وفي الآخر [[[INFO] BUILD SUCCESS]]. وفي [[target/]] هتلاقي [[classes/]] و [[gym-api-1.4.0.jar]] (الاسم من [[artifactId]] و [[version]]).
+          sol: R`اتشغّل في Docker ([[maven:3.9-eclipse-temurin-21]]: Maven 3.9.16 و JDK 21.0.12.1). [[mvn package]] بيطبع سطور [[[INFO]]] كتير (أول مرة بينزّل المكتبات والـ plugins، خدت حوالي دقيقة) وتحذيرين [[[WARNING]]] عن الـ encoding، وفي الآخر [[[INFO] BUILD SUCCESS]]. وفي [[target/]] هتلاقي [[classes/]] و [[gym-api-1.4.0.jar]] (الاسم من [[artifactId]] و [[version]]).
 
-[[java -cp target/gym-api-1.4.0.jar com.gym.App]] بيشغّل الـ main ويطبع اللي فيها. أما [[java -jar target/gym-api-1.4.0.jar]] فبيقول [[no main manifest attribute, in target/gym-api-1.4.0.jar]]، لأن Maven مبيحطش [[Main-Class]] في الـ manifest غير لو ظبطت plugin (Spring Boot بيعمل ده لوحده).
+[[java -cp target/gym-api-1.4.0.jar com.gym.App]] بيشغّل الـ main ويطبع اللي فيها ([[Hello من gym-api]] في تجربتنا). أما [[java -jar target/gym-api-1.4.0.jar]] فبيقول [[no main manifest attribute, in target/gym-api-1.4.0.jar]]، لأن Maven مبيحطش [[Main-Class]] في الـ manifest غير لو ظبطت plugin (Spring Boot بيعمل ده لوحده).
 
-ونفس المشروع بـ Gradle (Kotlin DSL) شكله كده، ومعاه [[settings.gradle.kts]] فيه سطر واحد [[rootProject.name = "gym-api"]]. و [[gradle run]] (أو [[./gradlew run]]) بيبني ويشغّل [[com.gym.App]] ويطبع نفس الناتج:`,
+ونفس المشروع بـ Gradle (Kotlin DSL) شكله كده، ومعاه [[settings.gradle.kts]] فيه سطر واحد [[rootProject.name = "gym-api"]]. و [[gradle run]] (أو [[./gradlew run]]) بيبني ويشغّل [[com.gym.App]] ويطبع نفس الناتج (اتجرّب بـ Gradle 9.8.0 في [[gradle:jdk21]]، والـ jar في [[build/libs/]]):`,
           solCode: R`plugins {
     java
     application
@@ -801,7 +859,7 @@ Don\'t forget & come early        ← اللي Python قراه
 
 المثال ملف [[.csproj]] لمشروع ASP.NET Core Web API، والحل فيه [[appsettings.json]]. هنقرا الاتنين سطر سطر، ونشوف إعدادات .NET بتتقري منين وبأنهي ترتيب.
 
-> مفيش .NET SDK على الجهاز اللي اتجرّب عليه، فأوامر [[dotnet]] ونواتجها من docs مايكروسوفت (learn.microsoft.com). اللي اتجرّب فعلًا: الـ [[.csproj]] اتفحص كـ XML و [[appsettings.json]] كـ JSON بـ Python 3.14 على ويندوز، والاتنين سليمين.
+> كل أوامر [[dotnet]] اتشغّلت فعلًا في Docker في الـ image الرسمية [[mcr.microsoft.com/dotnet/sdk:8.0]] (SDK 8.0.425)، وترتيب الإعدادات اتجرّب ببرنامج صغير بيطبع القيم (تحت). والـ JSON اتفحص كمان بـ Python 3.14 على ويندوز. اللي من الـ docs بس: User Secrets.
 
 ---
 
@@ -853,11 +911,23 @@ Don\'t forget & come early        ← اللي Python قراه
 
 ومفيش أي سطر بيقول «الملفات دي تدخل المشروع»: في الـ SDK-style projects كل ملف [[.cs]] في الفولدر وفولدراته بيدخل لوحده.
 
-السطر ده بيتكتب بالأمر (من الـ docs):
+السطر ده بيتكتب بالأمر:
 
 ~~~bash
 dotnet add package Microsoft.EntityFrameworkCore --version 8.0.11
 ~~~
+
+جرّبناه على مشروع [[dotnet new webapi -n Gym.Api]]. الـ csproj اللي الـ template عمله كان فيه نفس الـ [[PropertyGroup]] بالظبط، و [[ItemGroup]] فيه مكتبتين. وبعد الأمر بقى كده:
+
+~~~text Gym.Api.csproj بعد dotnet add package
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.31" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+~~~
+
+السطر الجديد اتحط في النص: [[dotnet]] بيرتّب المكتبات أبجديًا. والأمر طبع سطور [[info :]] وآخرها [[log  : Restored /w/Gym.Api/Gym.Api.csproj (in 4.87 sec).]]: restore = نزّل المكتبة لـ [[~/.nuget/packages]].
 
 ---
 
@@ -896,7 +966,7 @@ dotnet add package Microsoft.EntityFrameworkCore --version 8.0.11
 - [[60]] من غير تنصيص: رقم.
 - [[AllowedHosts: "*"]]: أي اسم دومين مسموح يوصل للسيرفر.
 
-قرايناه بـ Python واتأكدنا إن الـ JSON سليم:
+قرايناه بـ Python واتأكدنا إن الـ JSON سليم (والـ [[appsettings.json]] اللي [[dotnet new webapi]] بيعمله هو قسم [[Logging]] و [[AllowedHosts]] بس، والباقي احنا ضفناه):
 
 ~~~text الناتج
 gym-api Host=localhost;Database=gym;Username=app;Password=dev
@@ -915,7 +985,7 @@ builder.Configuration["ConnectionStrings:Default"]  ← "Host=localhost;..."
 
 ## ٥. الإعدادات بتيجي منين (الترتيب)
 
-.NET بيقرا ٥ مصادر بالترتيب ده، و**الأخير يكسب** لو نفس المفتاح اتكرر (من الـ docs):
+.NET بيقرا ٥ مصادر بالترتيب ده، و**الأخير يكسب** لو نفس المفتاح اتكرر:
 
 | # | المصدر | إمتى |
 |---|---|---|
@@ -931,21 +1001,60 @@ builder.Configuration["ConnectionStrings:Default"]  ← "Host=localhost;..."
 ConnectionStrings__Default=Host=db;Password=REAL
 ~~~
 
-ده بيغطي على [[ConnectionStrings:Default]] اللي في الملف. عشان كده الباسورد الحقيقي في متغير بيئة على السيرفر، والملف فيه قيم تطوير بس.
+ده بيغطي على [[ConnectionStrings:Default]] اللي في الملف. جرّبنا الترتيب ببرنامج [[Program.cs]] فيه [[WebApplication.CreateBuilder(args)]] وبيطبع اسم البيئة و [[Jwt:Issuer]] و [[ConnectionStrings:Default]]، مع الـ [[appsettings.json]] ده و [[appsettings.Development.json]] فيه [[{ "Jwt": { "Issuer": "gym-api-dev" } }]]:
+
+| التشغيل | البيئة | [[Jwt:Issuer]] | [[ConnectionStrings:Default]] |
+|---|---|---|---|
+| عادي | [[Production]] | [[gym-api]] | [[Host=localhost;Database=gym;Username=app;Password=dev]] |
+| [[ASPNETCORE_ENVIRONMENT=Development]] | [[Development]] | [[gym-api-dev]] | زي الملف |
+| [[ConnectionStrings__Default="Host=db;Password=REAL"]] | [[Production]] | [[gym-api]] | [[Host=db;Password=REAL]] |
+| [[Jwt__Issuer=fromenv]] و [[--Jwt:Issuer=fromcli]] | [[Production]] | [[fromcli]] | زي الملف |
+
+- من غير ما تحدد بيئة، الافتراضي [[Production]]، فـ [[appsettings.Development.json]] مبيتقريش.
+- متغير البيئة غطّى على الملف، والـ command line غطّى على متغير البيئة: الأخير يكسب.
+- القيم اللي متغطّاش عليها (زي [[Jwt:ExpiresMinutes]] = [[60]]) بتفضل من الملف: الدمج بيحصل مفتاح مفتاح، مش ملف مكان ملف. عشان كده الباسورد الحقيقي في متغير بيئة على السيرفر، والملف فيه قيم تطوير بس.
 
 ---
 
-## ٦. باقي ملفات المشروع (من الـ docs)
+## ٦. باقي ملفات المشروع
+
+[[dotnet new webapi -n Gym.Api]] عمل الملفات دي:
 
 | الملف | فيه |
 |---|---|
 | [[Program.cs]] | نقطة البداية |
+| [[appsettings.json]] و [[appsettings.Development.json]] | الإعدادات |
+| [[Gym.Api.http]] | طلبات HTTP جاهزة تجرّبها من المحرر |
+| [[obj/]] | اتعمل على طول لأن الـ template بيعمل restore |
 | [[Gym.Api.csproj]] | المشروع (المثال) |
-| [[Gym.sln]] | بيجمّع كذا مشروع، بيتعدّل بـ [[dotnet sln add]] |
+| [[Gym.sln]] | بيجمّع كذا مشروع، بيتعدّل بـ [[dotnet sln add]] (اتعمل بـ [[dotnet new sln -n Gym]]) |
 | [[Properties/launchSettings.json]] | البورت والـ environment على جهازك |
 | [[bin/]] و [[obj/]] | ناتج البناء، في [[.gitignore]] |
 
-[[dotnet build]] بيطلّع [[bin/Debug/net8.0/Gym.Api.dll]]: الكود متحوّل لـ IL (Intermediate Language)، و [[dotnet Gym.Api.dll]] بيشغّله.
+[[dotnet sln Gym.sln add Gym.Api/Gym.Api.csproj]] طبع [[Project $__btGym.Api/Gym.Api.csproj$__bt added to the solution.]]، و [[.sln]] من جوه نص بالشكل ده (مش XML):
+
+~~~text Gym.sln (أول السطور)
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gym.Api", "Gym.Api\Gym.Api.csproj", "{9FA9A588-BBDB-4533-A55F-31F56DE028E2}"
+EndProject
+~~~
+
+الأرقام اللي بين [[{ }]] GUIDs: الأولاني نوع المشروع (C#)، والتاني رقم فريد للمشروع ده (هيطلع غيره عندك). عشان كده محدش بيعدّله بإيده.
+
+و [[dotnet build Gym.sln]]:
+
+~~~text الناتج (آخره)
+  Gym.Api -> /w/Gym.Api/bin/Debug/net8.0/Gym.Api.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+~~~
+
+الـ [[Gym.Api.dll]] فيه الكود متحوّل لـ IL (Intermediate Language)، و [[dotnet Gym.Api.dll]] بيشغّله. وجنبه في نفس الفولدر: [[Gym.Api]] (ملف تشغيل للينكس)، و [[Gym.Api.pdb]] (معلومات الـ debugging)، و [[Gym.Api.deps.json]] و [[Gym.Api.runtimeconfig.json]].
 
 ---
 
@@ -967,10 +1076,10 @@ ConnectionStrings__Default=Host=db;Password=REAL
             R`قفل.`,
             R`قفل الـ root.`
           ],
-          sol: R`[[dotnet new webapi -n Gym.Api]] (SDK 8) بيعمل [[Gym.Api.csproj]] فيه نفس [[PropertyGroup]] اللي في المثال، وفي الـ [[ItemGroup]] مكتبتين: [[Microsoft.AspNetCore.OpenApi]] و [[Swashbuckle.AspNetCore]]. وبعد [[dotnet add package]] اتضاف سطر:
+          sol: R`اتشغّل في Docker ([[mcr.microsoft.com/dotnet/sdk:8.0]]، SDK 8.0.425). [[dotnet new webapi -n Gym.Api]] بيعمل [[Gym.Api.csproj]] فيه نفس [[PropertyGroup]] اللي في المثال، وفي الـ [[ItemGroup]] مكتبتين: [[Microsoft.AspNetCore.OpenApi]] (8.0.31) و [[Swashbuckle.AspNetCore]] (6.6.2). وبعد [[dotnet add package]] اتضاف سطر:
 [[<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />]]
 و [[dotnet sln add]] بيطبع [[Project $__btGym.Api/Gym.Api.csproj$__bt added to the solution.]]
-و [[dotnet build Gym.sln]] بيخلص بـ [[Build succeeded.]] و [[0 Warning(s)]] و [[0 Error(s)]]، والناتج في [[Gym.Api/bin/Debug/net8.0/]]: [[Gym.Api.dll]] و [[Gym.Api.deps.json]] و [[Gym.Api.runtimeconfig.json]] و [[Gym.Api]] (ملف تشغيل للينكس).
+و [[dotnet build Gym.sln]] بيخلص بـ [[Build succeeded.]] و [[0 Warning(s)]] و [[0 Error(s)]]، والناتج في [[Gym.Api/bin/Debug/net8.0/]]: [[Gym.Api.dll]] و [[Gym.Api.pdb]] و [[Gym.Api.deps.json]] و [[Gym.Api.runtimeconfig.json]] و [[Gym.Api]] (ملف تشغيل للينكس).
 
 و [[appsettings.json]] اللي بيتعمل مع الـ webapi شبه ده (وده بعد ما ضفنا connection string و Jwt):`,
           solCode: R`{

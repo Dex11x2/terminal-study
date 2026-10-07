@@ -217,7 +217,7 @@ unzip -l hello.jar`,
           },
           teach: R`## الفكرة
 
-المثال بيمشي رحلة Java كاملة: ملف [[.java]] بتكتبه، يتحوّل لـ [[.class]]، يتشغّل، وبعدين يتحط في [[.jar]] ويتشغّل منه. كل النواتج اللي تحت اتشغّلت فعلًا في Docker: [[javac]] و [[java]] و [[jar]] في الـ image الرسمية [[eclipse-temurin:21-jdk]] (OpenJDK 21.0.12)، و [[file]] و [[xxd]] و [[unzip]] في [[ubuntu:24.04]] على نفس الملفات (الـ image بتاعة Java مفيهاش الأدوات دي).
+المثال بيمشي رحلة Java كاملة: ملف [[.java]] بتكتبه، يتحوّل لـ [[.class]]، يتشغّل، وبعدين يتحط في [[.jar]] ويتشغّل منه. كل النواتج اللي تحت اتشغّلت فعلًا في Docker: [[javac]] و [[java]] و [[jar]] بـ Temurin JDK 21.0.12.1 (نفس الـ JDK اللي في [[eclipse-temurin:21-jdk]]، اتشغّل من الـ image الرسمية [[maven:3.9-eclipse-temurin-21]] اللي مبنية عليها)، و [[file]] و [[xxd]] و [[unzip]] في [[ubuntu:24.04]] على نفس الملفات (الـ image بتاعة Java مفيهاش الأدوات دي).
 
 الملف [[Hello.java]]:
 
@@ -276,7 +276,14 @@ Hello.class: compiled Java class data, version 65.0
 - [[0000]]: minor version.
 - [[0041]]: major version بالـ hex: ٤×١٦ + ١ = 65.
 
-وده سبب [[UnsupportedClassVersionError]]: JVM نسخة 17 بتفهم لحد 61 بس، فلو قرت 65 بترفض (الجزء ده من docs الـ JVM، مجربناهوش على Java 17).
+وده سبب [[UnsupportedClassVersionError]]: JVM نسخة 17 بتفهم لحد 61 بس (17 + 44)، فلو قرت 65 بترفض. شغّلنا نفس [[Hello.class]] على Java 17 ([[eclipse-temurin:17-jre]]، OpenJDK 17.0.20.1):
+
+~~~text java Hello (على Java 17)
+Error: LinkageError occurred while loading main class Hello
+    java.lang.UnsupportedClassVersionError: Hello has been compiled by a more recent version of the Java Runtime (class file version 65.0), this version of the Java Runtime only recognizes class file versions up to 61.0
+~~~
+
+الرسالة بتقولك الرقمين: الملف 65.0 والـ JVM لحد 61.0. والحل: JVM أحدث، أو تعمل compile لنسخة أقدم ([[javac --release 17]]). و [[java -jar hello.jar]] بيطلّع نفس الرسالة بالظبط.
 
 ## ٥. [[jar cfe hello.jar Hello Hello.class]]
 
@@ -361,7 +368,7 @@ Hello.java  --javac-->  Hello.class  --jar-->  hello.jar
             R`بيشغّل الـ jar كله.`,
             R`الـ jar zip: ده اللي جواه.`
           ],
-          sol: R`الناتج الحقيقي (اتشغّل في Docker: [[eclipse-temurin:21-jdk]]، OpenJDK 21.0.12، و [[file]] و [[unzip]] في [[ubuntu:24.04]]):
+          sol: R`الناتج الحقيقي (اتشغّل في Docker: Temurin JDK 21.0.12.1 من [[maven:3.9-eclipse-temurin-21]]، و [[file]] و [[unzip]] في [[ubuntu:24.04]]):
 [[Hello.class  Hello.java]]
 [[Hello من Java]]
 [[Hello.class: compiled Java class data, version 65.0]]
@@ -407,7 +414,7 @@ gcc main.c -o app2`,
           },
           teach: R`## الفكرة
 
-٣ ملفات C بيتحوّلوا لبرنامج على خطوتين: كل [[.c]] لوحده يبقى [[.o]]، وبعدين الـ [[.o]] يتجمّعوا في برنامج. وآخر سطر بيوريك إيه اللي بيحصل لو نسيت ملف. مفيش gcc على الجهاز اللي اتكتب عليه الشرح، فالنواتج هي نواتج الدرس من gcc 14 على لينكس x86-64، ومطابقة لـ docs بتوع GCC.
+٣ ملفات C بيتحوّلوا لبرنامج على خطوتين: كل [[.c]] لوحده يبقى [[.o]]، وبعدين الـ [[.o]] يتجمّعوا في برنامج. وآخر سطر بيوريك إيه اللي بيحصل لو نسيت ملف. كل النواتج اتشغّلت فعلًا في Docker في الـ image الرسمية [[gcc:14]] (GCC 14.4.0 على لينكس x86-64)، و [[file]] و [[nm]] من نفس الـ image.
 
 الملفات:
 
@@ -451,6 +458,16 @@ int main(void) { printf("%d\n", add(2, 3)); return 0; }
 
 الناتج [[calc.o]] و [[main.o]]. الـ [[main.o]] فيه كود معالج حقيقي، بس فيه «خرم»: بينادي [[add]] ومش عارف عنوانها، لأنه شاف الـ declaration بس من [[calc.h]]. والـ compile نجح عادي لأن الـ declaration كفاية للـ compiler.
 
+تقدر تشوف الخرم بعينك بـ [[nm]] (بيعرض الأسامي اللي جوه ملف [[.o]]):
+
+~~~text nm main.o
+                 U add
+0000000000000000 T main
+                 U printf
+~~~
+
+[[U]] = undefined: «محتاجها ومش عندي»، و [[T]] = موجودة في جزء الكود ([[.text]]) عند العنوان ده. فـ [[main.o]] عنده [[main]] وناقصه [[add]] و [[printf]]، والـ linker هو اللي هيسدهم.
+
 ## ٣. [[gcc main.o calc.o -o app]]
 
 هنا gcc بيشغّل الـ **linker** ([[ld]]): بياخد الـ [[.o]] ويسد الخروم ([[add]] لقاها في [[calc.o]]، و [[printf]] في مكتبة C)، ويكتب برنامج واحد. [[-o app]] (output) = اسم الناتج. من غيره كان هيبقى [[a.out]].
@@ -467,7 +484,7 @@ int main(void) { printf("%d\n", add(2, 3)); return 0; }
 
 ~~~text الناتج
 calc.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped
-app:    ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, ...
+app:    ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, not stripped
 ~~~
 
 | الكلمة | معناها |
@@ -478,18 +495,22 @@ app:    ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked,
 | [[relocatable]] | [[.o]]: حتة لسه هتتجمّع، مش بتتشغّل |
 | [[executable]] | برنامج جاهز |
 | [[dynamically linked]] | بيستخدم مكتبة C الموجودة على الجهاز وقت التشغيل ([[.so]]) بدل ما ينسخها جواه |
+| [[interpreter /lib64/ld-linux-x86-64.so.2]] | البرنامج اللي بيحمّل المكتبات دي قبل ما [[app]] يبدأ (الـ dynamic loader) |
+| [[for GNU/Linux 3.2.0]] | أقل نسخة kernel لينكس يشتغل عليها |
 | [[not stripped]] | لسه فيه أسامي الدوال (مفيدة للـ debugging) |
 
 ## ٦. [[gcc main.c -o app2]]: نسينا [[calc.c]]
 
 ~~~text الناتج
+/usr/bin/ld: /tmp/ccr9uSjY.o: in function $__btmain':
 main.c:(.text+0xf): undefined reference to $__btadd'
 collect2: error: ld returned 1 exit status
 ~~~
 
-- الـ compile لـ [[main.c]] **نجح**.
+- الـ compile لـ [[main.c]] **نجح**: gcc عمله [[.o]] مؤقت في [[/tmp]] (اسمه عشوائي، [[ccr9uSjY.o]] هنا، وهيطلع غيره عندك) وبعدين ادّاه للـ linker.
+- [[/usr/bin/ld:]] في أول السطر = اللي بيتكلم هو الـ linker، و [[in function $__btmain']] = النداء الناقص جوه [[main]].
 - [[undefined reference to $__btadd']]: الـ linker ملقاش جسم [[add]] في أي ملف اتدّاله.
-- [[(.text+0xf)]]: [[.text]] جزء الكود في الملف، و [[0xf]] المكان (byte 15) اللي فيه النداء.
+- [[(.text+0xf)]]: [[.text]] جزء الكود في الملف، و [[0xf]] المكان (byte 15 من أول [[main]]) اللي المفروض يتكتب فيه عنوان [[add]] جوه تعليمة النداء ([[call]]).
 - [[collect2]] و [[ld returned 1]]: الغلط من الـ linker مش من الـ compiler. لما تشوف [[ld]] دوّر على ملف أو مكتبة ناقصة في أمر البناء، مش على غلط في الكود.
 
 ## الخلاصة
@@ -517,11 +538,12 @@ main.c --gcc -c--> main.o ┘
             R`[[.o]] اسمه relocatable (ناقص)، و [[app]] executable.`,
             R`من غير [[calc.c]]: الـ compile ينجح والـ link يفشل.`
           ],
-          sol: R`الناتج الحقيقي (gcc 14):
+          sol: R`الناتج الحقيقي (اتشغّل في Docker: [[gcc:14]]، GCC 14.4.0):
 [[5]]
 [[calc.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped]]
-[[app:    ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, ...]]
+[[app:    ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, not stripped]]
 وآخر أمر:
+[[/usr/bin/ld: /tmp/ccr9uSjY.o: in function $__btmain':]] (اسم الملف المؤقت بيتغير كل مرة)
 [[main.c:(.text+0xf): undefined reference to $__btadd']]
 [[collect2: error: ld returned 1 exit status]]
 لاحظ إن الغلط من [[ld]] (الـ linker)، مش من الـ compiler: الكود سليم بس ناقصه ملف.`
@@ -540,7 +562,7 @@ main.c --gcc -c--> main.o ┘
   [[require github.com/google/uuid v1.6.0]]: مكتبة ونسختها، و [[// indirect]] يعني مش انت اللي بتستخدمها مباشرة.
 • [[go.sum]]: lock file: لكل مكتبة hash بيضمن إن الكود اللي هيتنزل هو هو بالظبط (درس lock files). بيتعمله commit، ومبتعدّلوش بإيدك.
 
-الأوامر: [[go run .]] (يبني ويشغّل)، و [[go build -o app .]] (يطلّع برنامج واحد مفيهوش أي اعتماد على حاجة، تنقله على السيرفر وخلاص)، و [[go get pkg@version]] (يضيف مكتبة ويعدّل go.mod و go.sum)، و [[go mod tidy]] (يشيل اللي مش مستخدم ويضيف الناقص).`,
+الأوامر: [[go run .]] (يبني ويشغّل)، و [[go build -o app .]] (يطلّع برنامج واحد، وغالبًا static مفيهوش أي اعتماد على حاجة، تنقله على السيرفر وخلاص)، و [[go get pkg@version]] (يضيف مكتبة ويعدّل go.mod و go.sum)، و [[go mod tidy]] (يشيل اللي مش مستخدم ويضيف الناقص).`,
           example: R`go mod init example.com/gym
 cat go.mod
 go run .
@@ -550,7 +572,7 @@ go get github.com/google/uuid@v1.6.0
 cat go.sum`,
           try: R`في فولدر فاضي نفّذ أول سطرين، وبعدين اعمل [[main.go]] فيه [[package main]] و [[import "fmt"]] و [[func main() { fmt.Println("Hello من Go") }]] وكمّل المثال. (محتاج Go، أو Docker: [[docker run --rm -v "$PWD":/w -w /w golang:1.25 go run .]].) بعد [[go get]] افتح [[go.mod]] تاني وشوف إيه اللي اتضاف.`,
           deep: {
-            why: R`Go اتعمل في Google عشان مشاريع كبيرة تتبني بسرعة وتتنقل بسهولة. عشان كده البرنامج الناتج ملف واحد static ملوش أي اعتماد (حتى مش محتاج Go على السيرفر)، و [[go.mod]] بيحدد المكتبات بالظبط من غير أداة تانية زي npm.`,
+            why: R`Go اتعمل في Google عشان مشاريع كبيرة تتبني بسرعة وتتنقل بسهولة. عشان كده البرنامج الناتج ملف واحد، وغالبًا static ملوش أي اعتماد (مش محتاج Go على السيرفر؛ ولو بتستخدم [[net]] ابنيه بـ [[CGO_ENABLED=0]] عشان يفضل static)، و [[go.mod]] بيحدد المكتبات بالظبط من غير أداة تانية زي npm.`,
             how: R`[[go build]] بيقرا [[go.mod]]، وينزّل المكتبات (لو مش موجودة) في cache على جهازك، ويتأكد من الـ hash في [[go.sum]]، ويعمل compile لكل الـ packages ويعملهم link في ملف واحد. والـ cache بيخلي المرة التانية سريعة جدًا.`,
             when: R`APIs وأدوات command line وأي حاجة في عالم الـ cloud (Docker و Kubernetes نفسهم مكتوبين Go).`,
             mistakes: R`تنسى [[go mod init]] فيطلعلك [[go: go.mod file not found in current directory or any parent directory; see 'go help modules']]. تعدّل [[go.sum]] بإيدك أو متعملهوش commit. تحط ملفين في نفس الفولدر بـ package مختلفة ([[found packages main (main.go) and utils (u.go) in ...]] وبعد [[in]] مسار الفولدر). وتعمل commit للبرنامج الناتج.`
@@ -604,17 +626,33 @@ Hello من Go
 
 ## ٤. [[go build -o gym .]]
 
-نفس البناء، بس الناتج بيتحفظ: [[-o gym]] (output) = اسمه [[gym]]. على ويندوز اسمه يبقى [[gym.exe]]. ومبيطبعش حاجة لو نجح. حجمه طلع 2254524 byte (حوالي 2.2 MB) لبرنامج بيطبع سطر واحد، لأن Go بيحط جواه الـ runtime كله.
+نفس البناء، بس الناتج بيتحفظ: [[-o gym]] (output) = اسمه [[gym]]. على ويندوز اسمه يبقى [[gym.exe]]. ومبيطبعش حاجة لو نجح. حجمه طلع 2254540 byte (حوالي 2.2 MB، والرقم بيختلف شوية من جهاز لجهاز) لبرنامج بيطبع سطر واحد، لأن Go بيحط جواه الـ runtime كله.
 
 ## ٥. [[file gym]]
 
 ~~~text الناتج
-gym: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=ab484ba90c98fd263142349b66c4fb7f28a7441c, with debug_info, not stripped
+gym: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=f33cdedf0d4a4f119c59576d7d071fadc33affc5, with debug_info, not stripped
 ~~~
 
 [[BuildID]] بصمة البناء ده (هتطلع غيرها عندك)، و [[with debug_info, not stripped]] = فيه أسامي الدوال ومعلومات الـ debugging (عشان كده الحجم كبير شوية).
 
 الكلمة المهمة [[statically linked]]: كل حاجة البرنامج محتاجها جواه (قارن بـ [[dynamically linked]] في درس [[.c]]). فتنسخ الملف ده لأي سيرفر لينكس x86-64 ويشتغل، حتى لو مفيش Go عليه.
+
+بس خد بالك: ده مش مضمون دايمًا. جرّبنا برنامج تاني بيعمل [[import "net"]] (وبينادي [[net.LookupHost]]) في نفس الـ image، و [[ldd]] (بيعرض المكتبات اللي برنامج محتاجها) قال:
+
+~~~text ldd n1 (go build عادي)
+    linux-vdso.so.1 (0x00007fffd6f46000)
+    libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x0000764d6fd76000)
+    /lib64/ld-linux-x86-64.so.2 (0x0000764d6ff6f000)
+~~~
+
+يعني بقى dynamically linked ومحتاج [[libc.so.6]]. السبب: لما يكون فيه C compiler على الجهاز، Go بيشغّل cgo افتراضيًا ([[go env CGO_ENABLED]] طلّع [[1]])، وبعض الـ packages زي [[net]] بتستخدم مكتبة C بتاعة النظام. ولما بنيناه بـ [[CGO_ENABLED=0 go build -o n2 .]]:
+
+~~~text ldd n2
+    not a dynamic executable
+~~~
+
+رجع static. عشان كده في الـ Dockerfiles هتلاقي [[CGO_ENABLED=0]] كتير قبل [[go build]].
 
 ## ٦. [[go get github.com/google/uuid@v1.6.0]]
 
@@ -662,7 +700,7 @@ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+
 | [[go.sum]] | آه | [[go]] لوحده |
 | البرنامج ([[gym]]) | لأ | [[go build]] |
 
-- أداة واحدة ([[go]]) بتعمل كل حاجة، والناتج ملف واحد static.`,
+- أداة واحدة ([[go]]) بتعمل كل حاجة، والناتج ملف واحد (static، ولو استخدمت [[net]] ابنيه بـ [[CGO_ENABLED=0]]).`,
           lines: [
             R`بيعمل [[go.mod]] باسم المشروع.`,
             R`فيه [[module]] و [[go]] ونسخة.`,
@@ -900,7 +938,7 @@ Errors parsing bad.php
 dart run hello.dart
 cargo new app && cd app && cargo run
 ruby hello.rb`,
-          try: R`اختار لغة منهم واعمل [[hello]] بيها وشغّله (لو مش متسطّبة، Docker: [[docker run --rm -v "$PWD":/w -w /w swift:6.0 swift hello.swift]] و [[docker run --rm -v "$PWD":/w -w /w dart:stable dart run hello.dart]]). ولو عندك مشروع Flutter أو Rust افتح الفولدر وطلّع فيه الأربع حاجات: ملف الكود، وملف المشروع، والـ lock، وفولدر الناتج.`,
+          try: R`اختار لغة منهم واعمل [[hello]] بيها وشغّله (لو مش متسطّبة، Docker: [[docker run --rm -v "$PWD":/w -w /w swift:6.4 swift hello.swift]] و [[docker run --rm -v "$PWD":/w -w /w dart:stable dart run hello.dart]]). ولو عندك مشروع Flutter أو Rust افتح الفولدر وطلّع فيه الأربع حاجات: ملف الكود، وملف المشروع، والـ lock، وفولدر الناتج.`,
           deep: {
             why: R`كل لغة ليها نظام بناء ومكتبات خاص بيها، بس كلهم وصلوا لنفس الحل: ملف بيوصف المشروع، و lock file، وأداة واحدة بتعمل كل حاجة (cargo و dart و swift و go و npm).`,
             how: R`[[swift file.swift]] و [[dart run]] بيعملوا compile في الذاكرة ويشغّلوا (زي [[go run]]). [[cargo]] بيقرا [[Cargo.toml]] وينزّل المكتبات من crates.io ويبني في [[target/debug/]]. و Ruby زي Python: interpreter بيقرا الملف ويشغّله.`,
@@ -909,7 +947,7 @@ ruby hello.rb`,
           },
           teach: R`## الفكرة
 
-الدرس ده مش عن لغة واحدة، عن **نمط** بيتكرر في كل اللغات: ملف كود، وأداة بتشغّله، وملف بيعرّف المشروع، و lock file، وفولدر ناتج. المثال ٤ أوامر، كل واحد بيشغّل hello في لغة. جزء Ruby اتشغّل فعلًا في Docker ([[ruby:3.4]]، Ruby 3.4.11). Swift و Dart و Rust لسه مش متجرّبين هنا، فنواتجهم من docs كل لغة (swift.org و dart.dev و doc.rust-lang.org/cargo).
+الدرس ده مش عن لغة واحدة، عن **نمط** بيتكرر في كل اللغات: ملف كود، وأداة بتشغّله، وملف بيعرّف المشروع، و lock file، وفولدر ناتج. المثال ٤ أوامر، كل واحد بيشغّل hello في لغة. الأربعة اتشغّلوا فعلًا في Docker، كل لغة في الـ image الرسمية بتاعتها: [[swift:latest]] (Swift 6.4)، و [[dart:stable]] (Dart 3.13.5)، و [[rust:1-slim]] (cargo و rustc 1.99.0)، و [[ruby:3.4-slim]] (Ruby 3.4.11).
 
 ---
 
@@ -923,7 +961,7 @@ print("Hello من Swift")
 Hello من Swift
 ~~~
 
-[[swift]] لما تدّيله ملف بيعمله compile في الذاكرة ويشغّله (زي [[go run]]). Swift مش محتاج [[main]]: أول سطر في الملف هو البداية. على الماك جاي مع Xcode، وفيه نسخ للينكس وويندوز.
+[[swift]] لما تدّيله ملف بيعمله compile ويشغّله على طول (زي [[go run]]). ولاحظ: الـ image الـ [[slim]] بتاعة Swift فيها الـ runtime بس من غير compiler، فمحتاج الـ image الكاملة ([[swift:6.4]] أو [[swift:latest]]). Swift مش محتاج [[main]]: أول سطر في الملف هو البداية. على الماك جاي مع Xcode، وفيه نسخ للينكس وويندوز.
 
 ## ٢. [[dart run hello.dart]]
 
@@ -942,32 +980,63 @@ Dart محتاج [[main]] زي Java و Go. [[void]] = مبترجّعش حاجة. 
 ده ٣ أوامر في سطر، و [[&&]] معناها «لو اللي قبلي نجح، شغّلني». فلو [[cargo new]] فشل مش هيدخل الفولدر.
 
 - [[cargo]]: أداة Rust (زي [[go]] و [[npm]] مع بعض).
-- [[cargo new app]]: بيعمل فولدر [[app]] فيه:
+- [[cargo new app]]: بيعمل فولدر [[app]] ويطبع:
+
+~~~text الناتج
+    Creating binary (application) $__btapp$__bt package
+note: see more $__btCargo.toml$__bt keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+~~~
+
+[[binary (application)]] = برنامج بيتشغّل (مش مكتبة، المكتبة بـ [[cargo new --lib]]). والفولدر فيه:
 
 ~~~text app/
 Cargo.toml     تعريف المشروع (TOML): الاسم والنسخة والمكتبات
 src/main.rs    fn main() { println!("Hello, world!"); }
 .gitignore     فيه /target
+.git/          git repo جديد
 ~~~
 
-وبيعمل كمان git repo جديد في الفولدر.
+و [[Cargo.toml]] اللي اتعمل:
+
+~~~text Cargo.toml
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+~~~
+
+[[edition]] = نسخة قواعد اللغة اللي المشروع ماشي عليها، و [[[dependencies]]] فاضي لسه. والـ [[.git/]] اتعمل حتى والـ image مفيهاش برنامج [[git]] أصلًا: cargo بيعمله بنفسه.
 
 - [[cargo run]]: بيبني ويشغّل:
 
 ~~~text الناتج
-   Compiling app v0.1.0 (/home/ali/app)
-    Finished $__btdev$__bt profile [unoptimized + debuginfo] target(s) in 0.50s
+   Compiling app v0.1.0 (/w/app)
+    Finished $__btdev$__bt profile [unoptimized + debuginfo] target(s) in 0.80s
      Running $__bttarget/debug/app$__bt
 Hello, world!
 ~~~
 
 | السطر | معناه |
 |---|---|
-| [[Compiling app v0.1.0]] | بيبني المشروع ([[0.1.0]] النسخة اللي في [[Cargo.toml]]) |
+| [[Compiling app v0.1.0 (/w/app)]] | بيبني المشروع ([[0.1.0]] النسخة اللي في [[Cargo.toml]]، وبين القوسين مكانه: [[/w/app]] جوه الكونتينر) |
 | [[dev profile [unoptimized + debuginfo]]] | بناء للتطوير: سريع في البناء، بطيء شوية في التشغيل. [[cargo run --release]] العكس |
 | [[Running target/debug/app]] | مكان البرنامج الناتج: فولدر [[target/]]، وده في [[.gitignore]] |
 
-وأول ما تضيف مكتبة بيظهر [[Cargo.lock]].
+وبعد أول [[cargo run]] ظهر [[Cargo.lock]] جنب [[Cargo.toml]]، حتى من غير ولا مكتبة:
+
+~~~text Cargo.lock
+# This file is automatically @generated by Cargo.
+# It is not intended for manual editing.
+version = 4
+
+[[package]]
+name = "app"
+version = "0.1.0"
+~~~
+
+فيه المشروع نفسه بس دلوقتي، وكل مكتبة تضيفها بتتسجّل فيه بنسختها المضبوطة. وأول سطرين بيقولولك متعدّلوش بإيدك.
 
 ## ٤. [[ruby hello.rb]]
 
@@ -1005,7 +1074,7 @@ Hello من Ruby
             R`Rust: [[cargo new]] بيعمل مشروع فيه [[Cargo.toml]] و [[src/main.rs]]، و [[cargo run]] يبني ويشغّل.`,
             R`Ruby: interpreter زي Python.`
           ],
-          sol: R`[[swift hello.swift]] (الملف فيه [[print("Hello من Swift")]]) بيطبع [[Hello من Swift]]، و [[dart run hello.dart]] (فيه [[void main() { print("Hello من Dart"); }]]) بيطبع [[Hello من Dart]]. و [[cargo run]] في مشروع جديد بيطبع سطور [[Compiling app v0.1.0]] و [[Running $__bttarget/debug/app$__bt]] وبعدين [[Hello, world!]].
+          sol: R`[[swift hello.swift]] (الملف فيه [[print("Hello من Swift")]]) بيطبع [[Hello من Swift]]، و [[dart run hello.dart]] (فيه [[void main() { print("Hello من Dart"); }]]) بيطبع [[Hello من Dart]]. و [[cargo run]] في مشروع جديد بيطبع سطور [[Compiling app v0.1.0]] و [[Running $__bttarget/debug/app$__bt]] وبعدين [[Hello, world!]]، وبيظهر [[Cargo.lock]]. و [[ruby hello.rb]] (فيه [[puts "Hello من Ruby"]]) بيطبع [[Hello من Ruby]]. (اتشغّلوا في Docker: Swift 6.4 و Dart 3.13.5 و Rust 1.99.0 و Ruby 3.4.11.)
 
 وفي مشروع Flutter: الكود [[lib/main.dart]]، والمشروع [[pubspec.yaml]]، والـ lock [[pubspec.lock]]، والناتج [[build/]] و [[.dart_tool/]].`
         },
