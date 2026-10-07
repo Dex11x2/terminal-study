@@ -8489,6 +8489,16 @@
   "date": "2026-10-07",
   "on": "Windows 11: Capacitor 8.5.2 init, add android, sync, @capacitor/assets; docs: gradlew, adb, iOS"
  },
+ "real|Dockerfile (Next.js)": {
+  "hash": "982b9a4987e7",
+  "date": "2026-10-07",
+  "on": "docker-desktop-win (Next.js 16.4, node:22-alpine)"
+ },
+ "real|Dockerfile (Vite + nginx)": {
+  "hash": "eb2a0d65baa3",
+  "date": "2026-10-07",
+  "on": "docker-desktop-win (Vite 8.3, nginx:alpine + node backend in compose)"
+ },
  "real|Makefile": {
   "hash": "fe191deef1b4",
   "date": "2026-10-07",
@@ -8514,6 +8524,46 @@
   "date": "2026-10-07",
   "on": "postgres:16 container (bash + psql 16), docker compose restart via fake docker"
  },
+ "real|backup.bat": {
+  "hash": "715c1193189b",
+  "date": "2026-10-07",
+  "on": "windows-11 cmd (local bare origin instead of GitHub)"
+ },
+ "real|backup_mongodb.sh": {
+  "hash": "cd935bda92ae",
+  "date": "2026-10-07",
+  "on": "git-bash-win + mongo:8; pipefail demo on ubuntu-24.04"
+ },
+ "real|backup_offsite.sh": {
+  "hash": "dfa79d5a3746",
+  "date": "2026-10-07",
+  "on": "git-bash-win + postgres:16-alpine + rclone 1.75; restore on ubuntu-24.04"
+ },
+ "real|ci.yml: Postgres + Prisma": {
+  "hash": "02e37deac350",
+  "date": "2026-10-07",
+  "on": "actionlint 1.7.12 + run steps on win (Prisma 7.10, postgres:16); docs: GitHub run"
+ },
+ "real|ci.yml: monorepo": {
+  "hash": "613ecac78300",
+  "date": "2026-10-07",
+  "on": "actionlint 1.7.12 + run steps on win (pnpm 10.33, prettier, eslint 10, TS 6, vitest 5); docs: GitHub run"
+ },
+ "real|compose dev / prod": {
+  "hash": "2dec141800cd",
+  "date": "2026-10-07",
+  "on": "docker-desktop-win (dev bind mounts; prod with nginx-proxy:alpine); docs: prisma, acme-companion"
+ },
+ "real|compose.yml (Mongo)": {
+  "hash": "71b32dda69fb",
+  "date": "2026-10-07",
+  "on": "docker-desktop-win (mongo:7, compose v5.3)"
+ },
+ "real|compose.yml (app + nginx + certbot)": {
+  "hash": "3c60cb7aa8f4",
+  "date": "2026-10-07",
+  "on": "docker-desktop-win (compose v5.3, nginx:alpine, certbot/certbot); docs: cert issue"
+ },
  "real|compose: Postgres محلي": {
   "hash": "8b6fd024fb35",
   "date": "2026-10-07",
@@ -8528,6 +8578,11 @@
   "hash": "d94042993cc7",
   "date": "2026-10-07",
   "on": "ubuntu-24.04 (Docker-in-Docker postgres:16-alpine + nginx; nginx -s reload instead of systemctl)"
+ },
+ "real|db-schema-check.yml": {
+  "hash": "f5c4e575a357",
+  "date": "2026-10-07",
+  "on": "actionlint 1.7.12 + drift step in git-bash-win; docs: supabase gen types"
  },
  "real|deploy-run.sh": {
   "hash": "5c7048a84248",
@@ -8558,6 +8613,11 @@
   "hash": "e8b6c3e45ac7",
   "date": "2026-10-07",
   "on": "Windows Docker Desktop compose project (nginx:alpine + redis:8-alpine), build without --pull; docs: --pull"
+ },
+ "real|husky + commitlint": {
+  "hash": "0097a3829003",
+  "date": "2026-10-07",
+  "on": "git-bash-win (pnpm 10.33, husky 9.1.7, commitlint) + PowerShell 5.1 / pwsh 7 encoding check"
  },
  "real|init-ssl.sh": {
   "hash": "27f8e811d2ca",

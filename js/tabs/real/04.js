@@ -1,1654 +1,1712 @@
 // تكملة تاب real: الأقسام دي بتتضاف للتاب اللي اتعرّف في js/tabs/real/01.js (شرح حقول الدرس في أوله)
 MORE("real", [
     {
-      t: "سكربتات الصيانة",
-      l: 3,
-      n: "migrations بالترتيب، و Makefile، و dry-run قبل أي تعديل في البيانات، وإمتى متمسحش كل حاجة",
+      t: "سكربتات النشر",
+      l: 2,
+      n: "سكربت بأوامر فرعية، وتحديث بيرجع لوحده لو باظ، ونشر بـ docker run و rsync و Actions واستضافة مشتركة",
       items: [
         {
-          cmd: "apply-migrations.sh",
-          title: "تطبيق ملفات SQL بالترتيب بملخص نجاح وفشل",
-          desc: R`بدل ما تنسخ كل ملف SQL وتلصقه في SQL Editor بإيدك، السكربت بيعدّي على قايمة ملفات بالترتيب، وكل ملف في transaction لوحده. لو ملف فشل بيسألك تكمل ولا توقف، وفي الآخر بيطبع كام نجح وكام فشل.
+          cmd: "deploy.sh",
+          title: "سكربت واحد لكل أوامر السيرفر",
+          desc: R`بدل ما تحفظ أوامر compose و git، سكربت واحد بأوامر فرعية: [[./deploy.sh deploy]] و [[update]] و [[ssl]] و [[logs]] و [[status]] و [[restart]] و [[stop]]. كل أمر فرعي دالة صغيرة، والاختيار بـ [[case]].
 
-الأصلي كان بيبعت الـ SQL لـ REST endpoint بمفتاح service_role. النسخة دي بتستخدم psql مباشرة، ودا الصح.`,
+الـ deploy هنا بيبني الأول والموقع القديم لسه شغال، وبعدين يبدّل ويستنى الـ healthcheck.`,
           example: R`#!/usr/bin/env bash
-set -uo pipefail
-set -a; . ./.env.local; set +a
-: "$__{DATABASE_URL:?DATABASE_URL missing in .env.local}"
-migrations=(
-  01_add_courses_instructor_fkey.sql
-  02_fix_transactions_foreign_keys.sql
-  03_ensure_exams_module_id.sql
-)
-ok=0; fail=0
-for m in "$__{migrations[@]}"; do
-  f="database/migrations/$m"
-  [ -f "$f" ] || { echo "missing: $f"; fail=$((fail+1)); continue; }
-  echo "applying $m ..."
-  if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f "$f"; then
-    ok=$((ok+1))
-  else
-    fail=$((fail+1))
-    read -rp "failed. continue? (y/n): " choice
-    [ "$choice" = y ] || break
-  fi
-done
-echo "ok: $ok/$__{#migrations[@]}  failed: $fail"
-[ "$fail" -eq 0 ] && docker compose restart app`,
-          try: "على Postgres تجريبي اعمل تلات ملفات: الأول create table، والتاني فيه غلطة إملائية في SQL، والتالت insert. شغّل السكربت وجاوب n عند الفشل، وتأكد بـ psql إن الملف التاني مسابش أي أثر (بسبب --single-transaction).",
-          flag: "script",
-          deep: {
-            why: "النسخ واللصق في SQL Editor بيتلخبط فيه الترتيب، وبتنسى ملف، ومفيش سجل باللي اتعمل. سكربت بقايمة ثابتة بيتكرر بنفس الشكل على staging والإنتاج.",
-            how: R`[[set -uo pipefail]] من غير [[-e]] عن قصد: عايزين لو psql فشل السكربت يكمّل للـ else ويسألك، مش يقع.
-
-[[migrations=( ... )]] array بالترتيب اللي هيتطبق بيه. و [[$__{migrations[@]}]] بين علامات تنصيص بيطلّع كل عنصر لوحده.
-
-[[-v ON_ERROR_STOP=1]] بيخلي psql يقف عند أول خطأ ويرجع exit code غير صفر، من غيره بيكمّل الملف ويرجع 0. و [[--single-transaction]] بيلف الملف كله في BEGIN و COMMIT: يا يتطبق كله يا ولا حاجة.
-
-[[read -rp]] بيسأل ويستنى. و [[$((ok+1))]] حساب في bash. و [[$__{#migrations[@]}]] عدد العناصر.
-
-وآخر سطر: لو مفيش فشل، أعد تشغيل التطبيق عشان يشوف الـ schema الجديد. ولو فيه فشل، الـ exit code بتاع السكربت كله بيبقى 1.`,
-            when: "مشروع عنده ملفات SQL قديمة من غير أداة migrations. لو بتبدأ جديد، استخدم [[supabase db push]] أو Prisma migrate، لأنهم بيسجّلوا اللي اتطبق. psql في تاب PostgreSQL، و arrays في تاب bash.",
-            mistakes: R`في مشروع حقيقي كان السكربت بيبعت الـ SQL لـ [[/rest/v1/rpc/exec]]. الدالة دي مش موجودة في Supabase من الأول، ولو حد عملها يبقى فتح تنفيذ أي SQL من REST بمفتاح service_role. ده باب لأي حد معاه المفتاح يمسح القاعدة كلها.
-
-والمفتاح كان ظاهر في arguments بتاعة curl، يعني [[ps]] يوريه. والـ project ref مكتوب في السكربت. ومكانش فيه ON_ERROR_STOP، و [[head -n-1]] بيشتغل على GNU بس (مش ماك).
-
-ومفيش جدول بيسجّل الـ migrations اللي اتطبقت، فممكن ملف يتطبق مرتين. وسكربت تاني كان بيقرا connection string فيه باسورد بـ [[read]] من غير [[-s]]، فالباسورد بيظهر على الشاشة وبيتسجل في أي تسجيل للترمنال.`
-          },
-          teach: R`## الأول: السكربت بيعمل إيه
-
-عنده قايمة ملفات SQL مكتوبة بالترتيب. بيلف عليهم واحد واحد، ويبعت كل ملف لـ [[psql]] (برنامج Postgres اللي بيكلّم القاعدة من الترمنال) في transaction لوحده. ولو ملف فشل بيسألك تكمّل ولا توقف، وفي الآخر بيطبع ملخص، ولو كله نجح بيعمل restart للتطبيق.
-
-جربته جوه container من [[postgres:16]] (فيه bash و psql وقاعدة شغالة)، بالـ ٣ ملفات اللي في الـ try: الأول [[create table courses]]، والتاني [[create table exams]] وبعده سطر غلط [[ALTR TABLE ...]]، والتالت [[insert]]. و [[docker]] جوه الـ container كان سكربت وهمي بيطبع الأمر بس، عشان نشوف هل السطر الأخير اتنفّذ.
-
----
-
-## ١. [[#!/usr/bin/env bash]]
-
-أول سطر اسمه shebang: لما تشغّل الملف كبرنامج ([[./apply-migrations.sh]])، النظام بيقرا السطر ده عشان يعرف يشغّله بإيه. و [[/usr/bin/env bash]] معناها «دوّر على bash في الـ PATH وشغّل بيه»، أضمن من كتابة [[/bin/bash]] لأن مكانه بيختلف بين الأنظمة.
-
----
-
-## ٢. [[set -uo pipefail]]
-
-[[set]] بيغيّر إعدادات bash للسكربت ده:
-
-| الجزء | معناه |
-|---|---|
-| [[-u]] | أي متغير مش معرّف = خطأ والسكربت يقف، بدل ما يبقى نص فاضي في صمت |
-| [[-o pipefail]] | الـ pipe (أوامر متوصلة ببعض بعلامة الـ pipe) يعتبر فاشل لو أي أمر فيه فشل، مش الأخير بس |
-
-والمهم هنا اللي **مش** موجود: [[-e]] (اقف عند أول أمر يفشل). لو كانت موجودة، أول ما psql يفشل السكربت كان هيموت قبل ما يوصل للـ [[else]] اللي بيسألك. يعني شيلها عن قصد.
-
----
-
-## ٣. [[set -a; . ./.env.local; set +a]]
-
-٣ أوامر في سطر واحد، و [[;]] بتفصل بينهم:
-
-- [[set -a]]: من هنا ورايح، أي متغير يتعرّف يبقى export تلقائي (a = all export)، يعني البرامج اللي السكربت هيشغّلها تشوفه.
-- [[. ./.env.local]]: النقطة لوحدها هي الأمر [[source]]: «نفّذ الملف ده جوه الـ shell الحالي». وملف [[.env.local]] فيه سطور زي [[DATABASE_URL=postgres://...]]، فبتتحوّل متغيرات.
-- [[set +a]]: رجّع الإعداد زي ما كان (الـ [[+]] بتطفي، والـ [[-]] بتشغّل، بالعكس من المتوقع).
-
-ليه [[-a]] مهمة؟ جربت الفرق: من غيرها المتغير بيتعرّف في السكربت بس، والبرامج اللي بتتشغّل منه مش بتشوفه:
-
-~~~text من غير set -a ثم بيها
-child sees: []
-child sees: postgres://postgres:pw@localhost:5432/appdb
-~~~
-
----
-
-## ٤. [[: "$__{DATABASE_URL:?DATABASE_URL missing in .env.local}"]]
-
-من جوه لبرة:
-
-- [[$__{DATABASE_URL:?رسالة}]]: لو المتغير مش موجود أو فاضي، اطبع الرسالة واقف السكربت بخطأ. ولو موجود، رجّع قيمته.
-- [[:]] لوحدها أمر مبيعملش أي حاجة (no-op). موجودة عشان bash يفك الـ [[$__{...}]] وبس، من غير ما يحاول يشغّل القيمة كأمر.
-
-جربت [[.env.local]] من غير المتغير:
-
-~~~text الناتج
-apply-migrations.sh: line 4: DATABASE_URL: DATABASE_URL missing in .env.local
-exit=1
-~~~
-
----
-
-## ٥. القايمة: [[migrations=( ... )]]
-
-~~~bash
-migrations=(
-  01_add_courses_instructor_fkey.sql
-  02_fix_transactions_foreign_keys.sql
-  03_ensure_exams_module_id.sql
-)
-~~~
-
-[[( )]] بعد [[=]] بتعمل array (قايمة). كل اسم عنصر، والترتيب هنا هو ترتيب التطبيق. الأرقام [[01_]] و [[02_]] في أول الأسامي عشان الترتيب يبان ومحدش يحط ملف في غير مكانه.
-
-### [[ok=0; fail=0]]
-
-عدّادين: كام نجح وكام فشل.
-
----
-
-## ٦. اللوب: [[for m in "$__{migrations[@]}"; do]]
-
-- [[$__{migrations[@]}]]: كل عناصر القايمة. والعلامات [[" "]] حواليها بتخلي كل عنصر كلمة واحدة حتى لو فيه مسافة.
-- كل لفة، [[m]] بياخد اسم ملف.
-
-### [[f="database/migrations/$m"]]
-
-المسار الكامل للملف.
-
-### [[[ -f "$f" ] || { echo "missing: $f"; fail=$((fail+1)); continue; }]]
-
-- [[[ -f "$f" ]]]: هل ده ملف موجود؟
-- [[||]]: لو لأ، نفّذ اللي بعدها.
-- [[{ ...; }]]: مجموعة أوامر تتنفّذ مع بعض (لازم مسافة بعد [[{]] و [[;]] قبل [[}]]).
-- [[$((fail+1))]]: حساب أرقام في bash، يعني fail يزيد واحد.
-- [[continue]]: سيب باقي اللفة دي وروح للملف اللي بعده.
-
-جربت شلت الملف التالت:
-
-~~~text الناتج
-applying 01_add_courses_instructor_fkey.sql ...
-CREATE TABLE
-applying 02_fix_transactions_foreign_keys.sql ...
-CREATE TABLE
-ALTER TABLE
-missing: database/migrations/03_ensure_exams_module_id.sql
-ok: 2/3  failed: 1
-~~~
-
----
-
-## ٧. قلب السكربت: [[psql ...]]
-
-~~~bash
-if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 --single-transaction -f "$f"; then
-~~~
-
-| الجزء | معناه |
-|---|---|
-| [[psql "$DATABASE_URL"]] | اتصل بالقاعدة اللي في الرابط ده ([[postgres://user:pass@host:port/db]]) |
-| [[-v ON_ERROR_STOP=1]] | [[-v]] بيعرّف متغير لـ psql. ده بيقوله: أول خطأ، اقف وارجع exit code غير صفر |
-| [[--single-transaction]] | لف الملف كله في [[BEGIN]] و [[COMMIT]]: يا يتطبق كله يا ولا حاجة |
-| [[-f "$f"]] | نفّذ الأوامر اللي في الملف ده |
-
-و [[if أمر; then]] في bash معناها «لو الأمر رجع exit code صفر (نجح)».
-
-### ليه [[ON_ERROR_STOP]] مهم؟
-
-جربت ملف فيه [[select 1/0;]] وبعده [[select 2;]]:
-
-~~~text من غيره ثم بيه
-psql:/tmp/e.sql:1: ERROR:  division by zero
-2
-no stop exit=0
-psql:/tmp/e.sql:1: ERROR:  division by zero
-stop exit=3
-~~~
-
-من غيره psql كمّل للسطر اللي بعد الغلطة ورجع **0**، يعني السكربت كان هيقول «نجح». وبيه وقف ورجع [[3]] (الرقم اللي psql بيرجعه لما سكربت يقف على خطأ).
-
-### ليه [[--single-transaction]]؟
-
-ده أهم سطر في التجربة. شوف الملف التاني:
-
-~~~text الناتج (جاوبت n)
-applying 01_add_courses_instructor_fkey.sql ...
-CREATE TABLE
-applying 02_fix_transactions_foreign_keys.sql ...
-CREATE TABLE
-psql:database/migrations/02_fix_transactions_foreign_keys.sql:2: ERROR:  syntax error at or near "ALTR"
-LINE 1: ALTR TABLE exams ADD COLUMN module_id int;
-        ^
-ok: 1/3  failed: 1
-exit=1
-~~~
-
-psql طبع [[CREATE TABLE]] للـ exams، بس [[\dt]] (أمر psql بيعرض الجداول) بعدها:
-
-~~~text \dt
- Schema |  Name   | Type  |  Owner
---------+---------+-------+----------
- public | courses | table | postgres
-~~~
-
-مفيش [[exams]]. لأن الملف كله كان transaction واحدة، والغلطة عملت rollback لكل اللي قبلها في نفس الملف. فالملف مسابش نص متطبّق، وتقدر تصلّحه وتشغّله تاني.
-
----
-
-## ٨. لو نجح: [[ok=$((ok+1))]]
-
-زوّد عدّاد النجاح.
-
-## ٩. لو فشل: الـ [[else]]
-
-~~~bash
-fail=$((fail+1))
-read -rp "failed. continue? (y/n): " choice
-[ "$choice" = y ] || break
-~~~
-
-- [[read]] بيستنى سطر من الكيبورد ويحطه في المتغير [[choice]].
-  - [[-r]]: متعاملش مع [[\]] كحرف خاص (اقرا اللي اتكتب زي ما هو).
-  - [[-p "..."]]: اطبع السؤال ده الأول. (bash بيطبعه بس لو الإدخال جاي من ترمنال، عشان كده مش ظاهر في الناتج فوق لأني بعت الإجابة بـ [[echo n |]].)
-- [[[ "$choice" = y ] || break]]: لو الإجابة مش [[y]] بالظبط، [[break]] اخرج من اللوب كله.
-
-ولما جاوبت [[y]] كمّل للملف التالت:
-
-~~~text آخر الناتج مع y
-applying 03_ensure_exams_module_id.sql ...
-INSERT 0 1
-ok: 2/3  failed: 1
-exit=1
-~~~
-
-[[INSERT 0 1]] معناها: صف واحد اتضاف (الـ 0 رقم قديم ملوش لازمة دلوقتي).
-
----
-
-## ١٠. الملخص: [[echo "ok: $ok/$__{#migrations[@]}  failed: $fail"]]
-
-[[$__{#migrations[@]}]]: الـ [[#]] قبل الاسم معناها «عدد العناصر» = 3.
-
-## ١١. السطر الأخير: [[[ "$fail" -eq 0 ] && docker compose restart app]]
-
-- [[-eq]] مساواة أرقام (equal).
-- [[&&]] نفّذ الـ restart بس لو مفيش فشل، عشان التطبيق يقرا الـ schema الجديد.
-
-بعد ما صلّحت [[ALTR]] لـ [[ALTER]] على قاعدة نضيفة:
-
-~~~text الناتج
-applying 01_add_courses_instructor_fkey.sql ...
-CREATE TABLE
-applying 02_fix_transactions_foreign_keys.sql ...
-CREATE TABLE
-ALTER TABLE
-applying 03_ensure_exams_module_id.sql ...
-INSERT 0 1
-ok: 3/3  failed: 0
-(fake docker) docker compose restart app
-exit=0
-~~~
-
-وليه الـ exit كان [[1]] في حالة الفشل؟ لأن آخر أمر في السكربت هو [[[ "$fail" -eq 0 ]]]، ولما يبقى غلط بيرجّع 1، وده بيبقى exit code السكربت كله. فتقدر تكتب [[./apply-migrations.sh && echo done]].
-
----
-
-## ١٢. التشغيل تاني: نقطة الضعف
-
-شغّلته مرة تانية على نفس القاعدة:
-
-~~~text الناتج
-applying 01_add_courses_instructor_fkey.sql ...
-psql:database/migrations/01_add_courses_instructor_fkey.sql:1: ERROR:  relation "courses" already exists
-ok: 0/3  failed: 1
-~~~
-
-السكربت مش فاكر إيه اتطبق قبل كده. الحل يا إما الملفات تبقى بـ [[if not exists]]، يا إما أداة migrations بتسجّل اللي اتعمل في جدول (Prisma و supabase).
-
-| السطر | بيعمل إيه |
-|---|---|
-| [[set -uo pipefail]] | صارم في المتغيرات، ومن غير [[-e]] عشان يسأل |
-| [[set -a; . ./.env.local; set +a]] | اقرا الإعدادات واعملها export |
-| [[: "$__{X:?msg}"]] | اقف لو المتغير ناقص |
-| [[for m in "$__{arr[@]}"]] | لف على القايمة بالترتيب |
-| [[psql -v ON_ERROR_STOP=1 --single-transaction -f]] | كل ملف كله أو ولا حاجة، وexit غير صفر لو فشل |
-| [[read -rp ... ; break]] | اسأل، ووقف لو مش y |
-| [[[ "$fail" -eq 0 ] && restart]] | restart بس لو كله نجح |
-
-## الخلاصة
-
-- [[ON_ERROR_STOP=1]] من غيره psql بيرجّع 0 حتى لو فيه أخطاء.
-- [[--single-transaction]] بيمنع الملف النص متطبّق.
-- [[set -e]] متشالة عن قصد عشان الـ [[else]] تشتغل.
-- السكربت مبيسجّلش اللي اتطبق، فتشغيله مرتين بيفشل على أول ملف.`,
-          lines: [
-            "pipefail ومتغيرات لازم تبقى معرّفة، من غير -e عشان نسأل عند الفشل.",
-            "اقرا .env.local واعمل export.",
-            "لازم DATABASE_URL.",
-            "القايمة بالترتيب:",
-            "الملف الأول.",
-            "التاني.",
-            "التالت.",
-            "قفلة القايمة.",
-            "عدّادات.",
-            "لكل ملف:",
-            "المسار الكامل.",
-            "مش موجود؟ اعدّه فشل وكمّل.",
-            "اطبع اسمه.",
-            "طبّقه في transaction واحدة ووقف عند أول خطأ.",
-            "نجح: زوّد العدّاد.",
-            "فشل:",
-            "زوّد عدّاد الفشل.",
-            "اسأل.",
-            "أي حاجة غير y: وقّف.",
-            "قفلة الـ if.",
-            "قفلة اللوب.",
-            "الملخص.",
-            "كله نجح؟ أعد تشغيل التطبيق."
-          ],
-          sol: R`جربتها على Postgres: الملف الأول [[create table courses]]، التاني فيه [[create table exams]] وبعده [[ALTR TABLE ...]] غلط، والتالت insert. الناتج مع جواب [[n]]:
-
-[[applying 01_... CREATE TABLE]]
-[[applying 02_... CREATE TABLE]]
-[[ERROR:  syntax error at or near "ALTR"]]
-[[ok: 1/3  failed: 1]] والـ exit [[1]]، ومفيش restart للـ app.
-
-و [[\dt]] بعدها وراني [[courses]] بس، مفيش [[exams]]، رغم إن psql طبع [[CREATE TABLE]] ليه. ده [[--single-transaction]]: الملف كله transaction واحدة، فالغلطة رجّعت كل اللي قبلها في نفس الملف. والملف التالت ماتنفّذش لأنك قلت n.
-
-من غير [[--single-transaction]] كان [[exams]] هيفضل موجود والملف نص متطبّق، وتشغيله تاني هيقع على [[already exists]]. ومن غير [[ON_ERROR_STOP=1]]، psql كان هيكمّل بعد الغلطة ويرجّع exit 0.`
-        },
-        {
-          cmd: "Makefile",
-          title: "أسامي قصيرة موثّقة لكل أوامر المشروع",
-          desc: R`بدل ما تفتكر [[docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U ...]]، تكتب [[make migrate]]. و [[make help]] بيطبع كل الأوامر ووصف كل واحد، من التعليقات اللي بعد [[##]].
-
-ومع الـ Makefile هتقابل أهم مطبّات make: السطور لازم تبدأ بـ Tab، و [[$$]] بدل [[$]] للـ shell، وكل سطر بيتنفّذ في shell لوحده.`,
-          example: R`SHELL := /bin/bash
-COMPOSE := docker compose
-DBUSER := $(shell grep -E '^POSTGRES_USER=' .env | cut -d= -f2)
-PSQL := $(COMPOSE) exec -T postgres psql -v ON_ERROR_STOP=1 -U $(DBUSER) -d appdb
-.PHONY: help check up down logs migrate test shell-db
-help: ## القايمة دي
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-10s %s\n",$$1,$$2}'
-check: ## ملف compose سليم؟
-	$(COMPOSE) config -q && echo "compose OK"
-up: ## تشغيل
-	$(COMPOSE) up -d
-down: ## إيقاف (البيانات بتفضل)
-	$(COMPOSE) down
-logs: ## متابعة لوج التطبيق
-	$(COMPOSE) logs -f --tail=100 app
-migrate: ## كل الهجرات بالترتيب
-	@for f in db/migrations/*.sql; do echo "--> $$f"; $(PSQL) -1 -f /dev/stdin < $$f || exit 1; done
-test: ## التيستات
-	cd app && python -m pytest tests -q
-shell-db: ## psql جوه القاعدة
-	$(COMPOSE) exec postgres psql -U $(DBUSER) -d appdb`,
-          try: "في مشروع compose عندك اعمل Makefile بـ help و up و down و logs بس، وشغّل [[make help]]. بعدين بدّل الـ Tab في سطر بمسافات وشغّل [[make up]] وشوف رسالة missing separator.",
-          flag: "script",
-          deep: {
-            why: "كل مشروع فيه ١٠ أوامر طويلة بتتكتب كل يوم، ومحفوظة في دماغ شخص واحد أو في README محدش بيقراه. الـ Makefile بيحطهم في الريبو بأسامي قصيرة، والـ help بيوثّقهم لوحده.",
-            how: R`المتغيرات فوق: [[:=]] بيتحسب مرة واحدة وقت القراية. و [[$(shell ...)]] بينفّذ أمر ويحط الناتج، فـ DBUSER بيتقري من .env مرة واحدة.
-
-[[.PHONY]] بيقول لـ make إن الأسامي دي أوامر مش ملفات. من غيرها، لو فيه فولدر اسمه test، [[make test]] هيقول «up to date» ومش هيعمل حاجة.
-
-كل target: اسمه وبعده [[:]]، والسطور اللي تحته لازم تبدأ بـ Tab حقيقي. [[@]] في أول السطر بيخفي الأمر نفسه ويطبع الناتج بس.
-
-make بيفك [[$(VAR)]] الأول، فلو عايز [[$]] توصل للـ shell (زي [[$$f]] في اللوب) بتكتبها مرتين.
-
-[[help]] بيعمل grep على الـ Makefile نفسه ([[$(MAKEFILE_LIST)]]) على السطور اللي فيها [[## ]]، و awk بيطبع الاسم والوصف في عمودين.
-
-[[migrate]] بيعدّي على الملفات بترتيب الاسم، و [[-1]] بيطبّق كل ملف في transaction واحدة، و [[|| exit 1]] بيوقف عند أول فشل. وكل سطر بيتنفّذ في shell لوحده، فعشان كده [[cd app && ...]] في سطر واحد.`,
-            when: "أي مشروع فيه أوامر بتتكرر، خصوصًا compose وقواعد بيانات. على ويندوز make مش موجود غير في WSL أو Git Bash (بعد تسطيبه). compose في تاب Docker، و psql في تاب PostgreSQL.",
-            mistakes: R`في مشروع حقيقي كان [[DBUSER = $$(grep ...)]]. الـ [[$$]] بتوصل للـ shell كـ [[$(grep ...)]] زي ما هي، فالـ grep بيتنفّذ في كل مرة PSQL يتستخدم (جوه لوب الـ migrate يعني مع كل ملف). الصح [[$(shell ...)]] مع [[:=]]، فـ make نفسه يحسبها مرة واحدة.
-
-ولو ملف migration فشل في النص، الهجرات اللي قبله اتطبقت خلاص، ومكانش فيه transaction لكل ملف، فالملف اللي فشل ساب نصه متطبق. [[-1]] بيحل الجزء ده.
-
-و [[make test]] محلي كان محتاج بيئة Python مفعّلة، وإلا بيقول pytest not found. وأشهر غلطة في أي Makefile: المحرر حوّل الـ Tab لمسافات، فـ make يقول [[missing separator]]. في VS Code خلي الملف على Tabs.
-
-وكان فيه كمان targets لربط webhook تيليجرام بـ curl، بتقرا التوكن من .env بـ [[source .env]]. فكرة حلوة تحط فيها أي أمر API بتحتاجه كل كام يوم.`
-          },
-          teach: R`## الأول: Makefile يعني إيه
-
-[[make]] برنامج قديم أصله لبناء برامج C، بس الناس بتستخدمه كـ «قايمة أوامر» للمشروع. بتكتب ملف اسمه [[Makefile]] في جذر المشروع، فيه أسامي قصيرة (اسمها **targets**) وتحت كل اسم الأوامر بتاعته. ولما تكتب [[make migrate]]، make بيدوّر على [[migrate:]] في الملف وينفّذ اللي تحتها.
-
-جربته جوه container من [[postgres:16]] بعد [[apt-get install make]] (طلع [[GNU Make 4.4.1]])، بقاعدة اسمها [[appdb]] ويوزر [[appuser]]، وملفين migrations. و [[docker]] هناك كان سكربت صغير: أمر [[docker compose exec -T postgres psql ...]] بيحوّله لـ psql حقيقي على القاعدة اللي في نفس الـ container، وأي أمر تاني بيطبعه بس ([[(fake docker) ...]]). و [[docker compose config -q]] جربته بجد على ويندوز.
-
----
-
-## ١. المتغيرات فوق
-
-### [[SHELL := /bin/bash]]
-
-make بيشغّل الأوامر بـ [[/bin/sh]] افتراضيًا. السطر ده بيقوله استخدم bash.
-
-### [[:=]] ولا [[=]]؟
-
-في make فيه نوعين تعريف:
-
-| الشكل | امتى بيتحسب |
-|---|---|
-| [[X := ...]] | مرة واحدة، وقت قراية الملف |
-| [[X = ...]] | كل مرة [[$(X)]] يتستخدم |
-
-[[:=]] هنا أحسن، خصوصًا للسطر اللي بيشغّل أمر.
-
-### [[COMPOSE := docker compose]]
-
-اختصار. و [[$(COMPOSE)]] بعد كده بتتبدّل بـ [[docker compose]]. في make المتغير بيتقري بـ [[$( )]] (مش [[$X]] زي bash).
-
-### [[DBUSER := $(shell grep -E '^POSTGRES_USER=' .env | cut -d= -f2)]]
-
-من جوه لبرة:
-
-- [[grep -E '^POSTGRES_USER=' .env]]: هات السطر اللي بيبدأ ([[^]]) بـ [[POSTGRES_USER=]] من ملف [[.env]]: [[POSTGRES_USER=appuser]].
-- [[cut -d= -f2]]: قطّع السطر عند [[=]] ([[-d]] = delimiter) وخد الحتة التانية ([[-f2]] = field 2): [[appuser]].
-- [[$(shell ...)]]: دالة في make نفسه، بتشغّل الأمر وتحط الناتج مكانها.
-
-### [[PSQL := $(COMPOSE) exec -T postgres psql -v ON_ERROR_STOP=1 -U $(DBUSER) -d appdb]]
-
-أمر psql كامل جوه container اسمه [[postgres]]:
-
-| الجزء | معناه |
-|---|---|
-| [[exec]] | شغّل أمر جوه container شغال |
-| [[-T]] | من غير terminal وهمي (TTY)، لازم لما الإدخال جاي من ملف أو pipe |
-| [[-v ON_ERROR_STOP=1]] | اقف عند أول خطأ وارجع exit غير صفر |
-| [[-U $(DBUSER) -d appdb]] | اليوزر والقاعدة |
-
-و [[make -n]] (dry run: اطبع الأوامر من غير ما تنفّذها) بيوريك الشكل بعد التبديل:
-
-~~~text make -n migrate
-for f in db/migrations/*.sql; do echo "--> $f"; docker compose exec -T postgres psql -v ON_ERROR_STOP=1 -U appuser -d appdb -1 -f /dev/stdin < $f || exit 1; done
-~~~
-
----
-
-## ٢. [[.PHONY: help check up down logs migrate test shell-db]]
-
-make أصلًا بيفكّر في **ملفات**: [[make test]] معناها «اعمل الملف اللي اسمه test». فلو فيه فولدر أو ملف اسمه [[test]] جنب الـ Makefile، make بيقول خلاص موجود. جربت شلت سطر [[.PHONY]] وعملت فولدر [[test]]:
-
-~~~text الناتج
-make: 'test' is up to date.
-~~~
-
-ومنفّذش حاجة. [[.PHONY]] بتقوله «الأسامي دي أوامر، مش ملفات، نفّذها دايمًا».
-
----
-
-## ٣. شكل الـ target
-
-~~~text شكل الـ target
-help: ## القايمة دي
-<Tab>@grep ...
-~~~
-
-- الاسم وبعده [[:]].
-- [[## الوصف]]: لـ make ده مجرد تعليق ([[#]])، بس [[help]] بيستخدمه.
-- السطر اللي تحته **لازم يبدأ بـ Tab حقيقي**، مش مسافات. جربت بدّلت الـ Tab قبل [[$(COMPOSE) up -d]] بـ ٤ مسافات:
-
-~~~text الناتج
-M3:11: *** missing separator.  Stop.
-exit=2
-~~~
-
-[[M3]] اسم الملف و [[11]] رقم السطر. و [[cat -A]] بيوري الفرق: الـ Tab بيظهر [[^I]] والمسافات بتفضل مسافات:
-
-~~~text cat -A
-^I@grep -E '^[a-zA-Z_-]+:.*?## .*$$' ...
-    $(COMPOSE) up -d$
-~~~
-
-([[$]] في آخر كل سطر من [[cat -A]] معناها نهاية السطر.)
-
----
-
-## ٤. [[help]]: الـ Makefile بيقرا نفسه
-
-~~~bash
-@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "}{printf "  %-10s %s\n",$$1,$$2}'
-~~~
-
-### [[@]] في أول السطر
-
-make عادةً بيطبع الأمر قبل ما ينفّذه. [[@]] بتخفيه. من غيرها:
-
-~~~text من غير @
-grep -E '^[a-zA-Z_-]+:.*?## .*$' M4 | awk 'BEGIN{FS=":.*?## "}{printf "  %-10s %s\n",$1,$2}'
-  help       القايمة دي
-~~~
-
-### [[$$]]
-
-make بيفك أي [[$]] الأول. فعشان [[$]] توصل للـ shell زي ما هي، بتتكتب [[$$]]. وشوف السطر اللي فوق: [[$$1]] بقت [[$1]] و [[.*$$]] بقت [[.*$]].
-
-### [[$(MAKEFILE_LIST)]]
-
-متغير جاهز في make فيه اسم الـ Makefile اللي بيتقري. يعني الـ grep بيدوّر في الملف نفسه.
-
-### الـ regex: [[^[a-zA-Z_-]+:.*?## .*$]]
-
-- [[^[a-zA-Z_-]+]]: من أول السطر، حروف أو [[_]] أو [[-]] مرة أو أكتر (اسم target).
-- [[:]] النقطتين.
-- [[.*?## ]] أي حاجة لحد [[## ]].
-- [[.*$]] أي حاجة لآخر السطر.
-
-السطور اللي من غير [[## ]] (زي [[SHELL := ...]]) مش هتطابق. الـ grep لوحده:
-
-~~~text grep
-help: ## القايمة دي
-check: ## ملف compose سليم؟
-up: ## تشغيل
-~~~
-
-### الـ awk
-
-- [[BEGIN{FS=":.*?## "}]]: قبل ما تقرا أي سطر، خلي الفاصل بين الأعمدة (FS = Field Separator) هو النقطتين لحد [[## ]]. فـ [[help: ## القايمة دي]] بيتقسم لـ [[help]] و [[القايمة دي]].
-- [[printf "  %-10s %s\n",$1,$2]]: اطبع مسافتين، والاسم في خانة عرضها ١٠ ([[%-10s]]، والـ [[-]] معناها شمال)، والوصف، وسطر جديد ([[\n]]).
-
-~~~text make help
-  help       القايمة دي
-  check      ملف compose سليم؟
-  up         تشغيل
-  down       إيقاف (البيانات بتفضل)
-  logs       متابعة لوج التطبيق
-  migrate    كل الهجرات بالترتيب
-  test       التيستات
-  shell-db   psql جوه القاعدة
-~~~
-
-ولما تكتب [[make]] لوحدها بينفّذ **أول** target في الملف، وهو [[help]]، فطلع نفس الناتج. عشان كده [[help]] أول واحد.
-
----
-
-## ٥. [[check]] و [[up]] و [[down]] و [[logs]]
-
-### [[$(COMPOSE) config -q && echo "compose OK"]]
-
-[[docker compose config]] بيقرا ملف compose ويطبعه بعد ما يفهمه، و [[-q]] (quiet) من غير طباعة: بس exit code. جربته على ويندوز بملف سليم وبعدين بـ [[ports: 5432]] (لازم تبقى list):
-
-~~~text الناتج
-compose OK
-validating C:\Users\ali\...\compose.yml: services.postgres.ports must be a array
-exit=1
-~~~
-
-وبما إن make بيطبع الأمر قبل ما ينفّذه (مفيش [[@]]):
-
-~~~text make check
-docker compose config -q && echo "compose OK"
-compose OK
-~~~
-
-### الباقي
-
-| target | الأمر | معناه |
-|---|---|---|
-| [[up]] | [[docker compose up -d]] | شغّل كل الخدمات في الخلفية ([[-d]] = detached) |
-| [[down]] | [[docker compose down]] | وقّف وامسح الـ containers، والـ volumes (البيانات) بتفضل |
-| [[logs]] | [[docker compose logs -f --tail=100 app]] | آخر ١٠٠ سطر من لوج [[app]]، و [[-f]] (follow) كمّل تابع الجديد |
-
----
-
-## ٦. [[migrate]]: لوب shell جوه make
-
-~~~bash
-@for f in db/migrations/*.sql; do echo "--> $$f"; $(PSQL) -1 -f /dev/stdin < $$f || exit 1; done
-~~~
-
-- [[for f in db/migrations/*.sql]]: الـ [[*]] بيطلّع كل ملفات [[.sql]] **مترتبة بالاسم**، عشان كده الأسامي بتبدأ بـ [[001_]] و [[002_]].
-- [[$$f]]: متغير shell، فبـ [[$$]].
-- [[-1]]: اختصار [[--single-transaction]] في psql: الملف كله أو ولا حاجة.
-- [[-f /dev/stdin < $$f]]: الملف موجود على جهازك مش جوه الـ container، فبنبعته على الـ stdin ([[<]])، و psql بيقرا من [[/dev/stdin]] (الملف الخاص اللي هو الإدخال). وده سبب الـ [[-T]] في PSQL.
-- [[|| exit 1]]: لو ملف فشل، اقف ومتكمّلش الباقي.
-- كل ده في **سطر واحد** لأن make بيشغّل كل سطر في shell لوحده، فاللوب لازم يبقى في سطر.
-
-~~~text make migrate
---> db/migrations/001_notes.sql
-CREATE TABLE
---> db/migrations/002_created.sql
-ALTER TABLE
-exit=0
-~~~
-
-وتاني مرة:
-
-~~~text make migrate (مرة تانية)
---> db/migrations/001_notes.sql
-psql:/dev/stdin:1: ERROR:  relation "notes" already exists
-make: *** [Makefile:17: migrate] Error 1
-exit=2
-~~~
-
-وقف عند أول ملف بسبب [[exit 1]]، و make نفسه بيرجع [[2]] لما target يفشل. ولاحظ إن مفيش تسجيل للي اتطبق، فالملفات لازم تبقى بتتحمّل التكرار ([[if not exists]]) أو تشغّلها مرة بس.
-
----
-
-## ٧. [[test]]: [[cd app && python -m pytest tests -q]]
-
-- [[cd app &&]]: لازم في نفس السطر. لو كتبت [[cd app]] في سطر و [[pytest]] في سطر، التاني هيشتغل في shell جديد من فولدر الـ Makefile.
-- [[python -m pytest]]: شغّل pytest من بايثون اللي في الـ PATH، و [[-q]] ناتج مختصر.
-
-في الـ container مفيش فولدر [[app]]، فطلع:
-
-~~~text الناتج
-cd app && python -m pytest tests -q
-/bin/bash: line 1: cd: app: No such file or directory
-make: *** [Makefile:19: test] Error 1
-~~~
-
-[[/bin/bash]] في الرسالة هو الـ [[SHELL]] اللي حددناه فوق.
-
----
-
-## ٨. [[shell-db]]: psql تفاعلي
-
-~~~bash
-$(COMPOSE) exec postgres psql -U $(DBUSER) -d appdb
-~~~
-
-هنا **من غير** [[-T]]، عكس [[PSQL]]. الـ [[-T]] بيلغي الـ terminal، و psql من غير terminal مبيطبعش الـ prompt ([[appdb=#]]) ولا بيسيبك تستخدم الأسهم والتاريخ. لما بعتله [[\d notes]] بـ pipe (من غير terminal) طلّع الجدول بس من غير prompt:
-
-~~~text الناتج
-                          Table "public.notes"
-   Column   |           Type           | Collation | Nullable | Default
-------------+--------------------------+-----------+----------+---------
- id         | integer                  |           | not null |
- body       | text                     |           |          |
- created_at | timestamp with time zone |           |          | now()
-~~~
-
-والنسخة القديمة من الدرس كانت [[shell-db]] فيها [[$(PSQL)]] اللي فيه [[-T]]، فالـ psql «التفاعلي» كان من غير prompt. اتصلّحت. ([[docker compose exec]] بيعمل TTY افتراضيًا، ده من الـ docs؛ الترمنال اللي جربت منه مكانش فيه TTY أجرّبه.)
-
----
-
-| الحاجة | معناها |
-|---|---|
-| [[target: ## وصف]] | اسم أمر، والوصف لـ help |
-| Tab قبل كل أمر | غير كده [[missing separator]] |
-| [[@]] | متطبعش الأمر نفسه |
-| [[$(VAR)]] | متغير make |
-| [[$$]] | [[$]] توصل للـ shell |
-| [[:=]] | احسب مرة واحدة |
-| [[.PHONY]] | دي أوامر مش ملفات |
-| كل سطر shell لوحده | [[cd x && ...]] في نفس السطر |
-
-## الخلاصة
-
-- [[make]] من غير اسم بينفّذ أول target، فخلي [[help]] الأول.
-- Tab مش مسافات، و [[$$]] لأي [[$]] للـ shell.
-- [[-T]] للأوامر اللي بتاخد إدخال من ملف، ومن غيره للـ shell التفاعلي.
-- على ويندوز make مش موجود غير في WSL أو بعد تسطيبه.`,
-          lines: [
-            "كل الأوامر بـ bash مش sh.",
-            "اختصار لـ docker compose.",
-            "اليوزر من .env، يتحسب مرة واحدة.",
-            "أمر psql كامل جوه الـ container.",
-            "الأسامي دي أوامر مش ملفات.",
-            "help، والوصف بعد ##.",
-            "اطبع كل target ووصفه في عمودين.",
-            "check.",
-            "ملف compose سليم؟",
-            "up.",
-            "شغّل في الخلفية.",
-            "down.",
-            "وقّف (الـ volumes بتفضل).",
-            "logs.",
-            "تابع آخر ١٠٠ سطر من لوج app.",
-            "migrate.",
-            "كل ملف بالترتيب في transaction، ووقف عند أول فشل.",
-            "test.",
-            "ادخل app وشغّل pytest في نفس السطر.",
-            "shell-db.",
-            "افتح psql تفاعلي (من غير -T عشان يبقى فيه terminal)."
-          ],
-          sol: R`جربتها: [[make help]] طبع:
-
-[[  help       القايمة دي]]
-[[  up         تشغيل]]
-[[  down       إيقاف (البيانات بتفضل)]]
-[[  logs       متابعة لوج التطبيق]]
-
-الكلام ده جاي من التعليق بعد [[##]] في كل target. وبعد ما بدّلت الـ Tab قبل [[$(COMPOSE) up -d]] بـ ٤ مسافات، [[make up]] طبع [[Makefile:6: *** missing separator.  Stop.]] وexit 2. رقم السطر بيقولك فين.
-
-Make لازم Tab حقيقي قبل كل أمر، والمحررات كتير بتحوّله لمسافات لوحدها. في VS Code شوف تحت على اليمين ([[Spaces: 2]] أو [[Tab Size]])، أو [[cat -A Makefile]] هيوريك [[^I]] مكان كل Tab. ولو [[make: *** No rule to make target 'up']] يبقى اسم الـ target مكتوب غلط أو فيه مسافة قبل النقطتين.`
-        },
-        {
-          cmd: "n8n_import.sh",
-          title: "workflows الـ n8n من git بأسرار من .env",
-          desc: R`«الإعدادات ككود»: workflows الـ n8n محفوظة في git كملفات JSON من غير أي أسرار، وفيها placeholders زي [[$__{APP_URL}]]. السكربت بيملاها من .env بـ envsubst، ويعمل ملف credentials مؤقت بصلاحيات خاصة، ويستوردهم جوه container الـ n8n.
-
-وبينضّف الملفات المؤقتة من الجهاز ومن جوه الـ container حتى لو وقع في النص.`,
-          example: R`#!/usr/bin/env bash
+# ./deploy.sh deploy | update | ssl | logs [service] | status | restart | stop
 set -euo pipefail
-cd "$(dirname "$0")/.."
-set -a; . ./.env; set +a
-: "$__{INTERNAL_TOKEN:?need INTERNAL_TOKEN in .env}"
-export APP_URL="$__{APP_URL:-http://app:8080}"
-command -v envsubst >/dev/null || { echo "sudo apt install gettext-base"; exit 1; }
-TMP="$(mktemp -d)"; chmod 700 "$TMP"
-cleanup() { rm -rf "$TMP"; docker compose exec -T n8n rm -rf /tmp/wf /tmp/creds.json || true; }
-trap cleanup EXIT
-mkdir -p "$TMP/wf"
-for f in n8n/workflows/*.json; do
-  envsubst '$__{APP_URL} $__{CHAT_ID}' < "$f" > "$TMP/wf/$(basename "$f")"
-done
-if grep -rqE '\$\{[A-Z_]+\}' "$TMP/wf/"; then echo "unfilled placeholders"; exit 1; fi
-( umask 077; jq -n '[{id:"app-internal", name:"app internal", type:"httpHeaderAuth", data:{name:"authorization", value:("Bearer " + env.INTERNAL_TOKEN)}}]' > "$TMP/creds.json" )
-docker compose exec -T n8n sh -c 'umask 077; cat > /tmp/creds.json' < "$TMP/creds.json"
-docker compose exec -T n8n n8n import:credentials --input=/tmp/creds.json
-docker compose exec -T n8n mkdir -p /tmp/wf
-docker compose cp "$TMP/wf/." n8n:/tmp/wf/
-docker compose exec -T n8n n8n import:workflow --separate --input=/tmp/wf
-echo "imported: activate the workflows from the n8n UI"`,
-          try: R`جرّب envsubst لوحده: [[echo '{"url": "$__{APP_URL}", "x": "$__{HOME}"}' | APP_URL=http://app:8080 envsubst '$__{APP_URL}']]. لاحظ إن [[$__{HOME}]] فضل زي ما هو لأنه مش في القايمة. وبعدين شغّل n8n في Docker على جهازك وصدّر workflow واستورده بالسكربت.`,
+cd "$(dirname "$0")"
+
+require_env() {
+  [ -f .env ] || { echo ".env missing: cp .env.example .env && nano .env" >&2; exit 1; }
+}
+deploy() {
+  require_env
+  docker compose build
+  docker compose up -d --wait --wait-timeout 120
+  docker image prune -f >/dev/null
+  docker compose ps
+}
+update() {
+  [ -z "$(git status --porcelain)" ] || { echo "local changes on server:" >&2; git status --short; exit 1; }
+  git pull --ff-only origin main
+  deploy
+}
+
+case "$__{1:-}" in
+  deploy)  deploy ;;
+  update)  update ;;
+  ssl)     ./scripts/init-ssl.sh ;;
+  logs)    docker compose logs -f --tail=200 $__{2:-} ;;
+  status)  docker compose ps ;;
+  restart) docker compose restart ;;
+  stop)    docker compose down ;;
+  *)       sed -n '2p' "$0" >&2; exit 1 ;;
+esac`,
+          try: "حطه في مشروع compose صغير على سيرفر التجربة (أي app فيها healthcheck). جرّب [[./deploy.sh]] من غير argument، وبعدين [[deploy]]، وبعدين عدّل ملف على السيرفر وجرّب [[update]]: لازم يرفض.",
           flag: "script",
           deep: {
-            why: "workflows الـ n8n بتتعمل بالماوس في الواجهة، ولو السيرفر راح أو عايز نسخة تانية بتعيدها من الأول. تصديرها لـ git بيحلها، بس الملفات فيها روابط وتوكنات ومينفعش تترفع زي ما هي.",
-            how: R`[[export APP_URL="$__{APP_URL:-http://app:8080}"]] قيمة افتراضية لو مش موجودة في .env.
+            why: "على السيرفر إنت بتعمل نفس ٦ أو ٧ حاجات كل مرة. لو في سكربت، أي حد في الفريق يعمل deploy صح من غير ما يفتكر ترتيب الأوامر، ومتنساش خطوة وانت مستعجل.",
+            how: R`[[cd "$(dirname "$0")"]] بيخلي السكربت يشتغل من فولدره هو، فمش مهم انت واقف فين لما تشغّله.
 
-[[mktemp -d]] مع [[chmod 700]]: فولدر مؤقت محدش غيرك يقرا منه. و [[trap cleanup EXIT]] بتشغّل cleanup في آخر السكربت مهما حصل: بتمسح الفولدر على الجهاز، والملفات اللي اتنسخت جوه الـ container.
+[[build]] الأول وبعدين [[up -d]]: البناء بياخد دقايق، والموقع القديم فاضل شغال طول الوقت ده. [[up]] بعد كده بيبدّل الـ containers اللي الـ image بتاعتها اتغيرت بس، في ثواني.
 
-[[envsubst '$__{APP_URL} $__{CHAT_ID}']] بالقايمة دي بس بيبدّل المتغيرين دول. من غير قايمة، أي [[$]] في الـ JSON (و n8n بيستخدم [[$json]] كتير في expressions) هيتبدّل بفاضي ويبوّظ الـ workflow.
+[[--wait]] بيخلي compose يستنى لحد ما كل الخدمات تبقى running، واللي ليها healthcheck تبقى healthy، ولو عدّى [[--wait-timeout]] يفشل. ده بدل [[sleep 5]] اللي مش بيضمن حاجة.
 
-والـ grep بعدها بيدوّر على أي [[$__{VAR}]] لسه موجود، يعني placeholder نسيته في القايمة، ويوقف.
+update: [[git status --porcelain]] بيطبع أي ملف متغيّر، ولو طبع حاجة يبقى فيه تعديل يدوي على السيرفر، فالسكربت يقف بدل ما يمسحه أو يتلخبط. و [[--ff-only]] بيرفض أي merge، فلو السيرفر عليه commit مش على GitHub هتعرف.
 
-[[umask 077]] جوه subshell (الأقواس) بيخلي الملف اللي هيتعمل صلاحيته 600. و jq بيبني الـ JSON وبياخد التوكن من [[env.INTERNAL_TOKEN]]، فالتوكن مش بيبان في سطر الأوامر.
+[[$__{2:-}]] من غير علامات تنصيص عن قصد: لو مفيش اسم خدمة بيختفي خالص، فـ [[logs]] تعرض الكل و [[logs app]] تعرض app بس.
 
-ملف الـ credentials بيتبعت على الـ stdin لـ [[sh -c 'umask 077; cat > /tmp/creds.json']] جوه الـ container، فبيتكتب بيوزر الـ container نفسه وبصلاحية 600. و [[docker compose cp]] بينسخ فولدر الـ workflows، و [[n8n import:credentials]] و [[import:workflow --separate]] (ملف لكل workflow) بيستوردوا.`,
-            when: "أي أداة إعداداتها JSON أو YAML وعايز تحطها في git (n8n، و Grafana dashboards، و nginx templates). trap و mktemp في تاب bash، و compose cp في تاب Docker.",
-            mistakes: R`في مشروع حقيقي الـ trap كان بينضّف الجهاز بس. لو السكربت وقع بين [[cp]] و [[rm]]، ملف الـ credentials فيه التوكن كان بيفضل في /tmp جوه container الـ n8n. هنا cleanup بتمسح من الاتنين.
+و [[sed -n '2p' "$0"]] بيطبع السطر التاني من السكربت نفسه، اللي هو تعليق الاستخدام، فمش محتاج تكتب رسالة الاستخدام مرتين.
 
-ونسخة الدرس الأولى كانت بتنسخ ملف الـ credentials بـ [[docker compose cp]]. الـ cp بيعمل الملف جوه الـ container ملك root وبنفس الصلاحية 600، و n8n شغال بيوزر [[node]]: جربتها في container بيوزر node، فطلع [[Permission denied]] على القراية، والـ cleanup ماقدرش يمسحه ([[Operation not permitted]])، يعني التوكن كان هيفضل جوه. اتصلّحت بإن الملف يتكتب من جوه بـ [[cat]].
+ومش محتاج تعمل [[export $(cat .env | xargs)]]: compose بيقرا .env اللي جنبه لوحده.`,
+            when: "أي مشروع compose على VPS. ولما تضيف أمر جديد (backup مثلًا)، ضيفه هنا كدالة واسطر في الـ case.",
+            mistakes: R`في مشروع حقيقي كان [[export $(cat .env | xargs)]] بيبوظ أول ما قيمة فيها مسافة أو علامة تنصيص، وكان بيعمل [[down]] وبعدين [[build --no-cache]]، فالموقع يقع طول مدة البناء كلها، وبعدين [[sleep]] ثابت بدل healthcheck. ودالة ssl كانت بتبدّل nginx.conf ولو certbot فشل [[set -e]] بيوقف السكربت والملف يفضل متبدّل، لأن مكانش فيه trap يرجّعه. و update كان بيعمل pull من غير ما يتأكد إن مفيش تعديلات. والإيميل والدومين مكتوبين جوه السكربت.
 
-والـ grep بتاع الـ placeholders كان بيطبع بس ومبيوقفش، فـ workflow فيه [[$__{CHAT_ID}]] حرفيًا كان بيتستورد ويفشل بعدين وقت التشغيل.
-
-والـ workflows بتتستورد وهي متوقفة، ولازم تفعّلها من الواجهة. السكربت بيقول كده في الآخر عشان محدش يفتكر إنها شغالة.
-
-والنسخة الأصلية كانت بتبني الـ credentials بـ Python heredoc. jq أقصر، بس لو هتستخدمه متديلوش التوكن كـ [[--arg]] لأنه هيبان في [[ps]].`
+وفي مشروع تاني كان update بيعمل [[git reset --hard origin/main]]، فأي تعديل يدوي على السيرفر (إصلاح سريع مثلًا) بيتمسح من غير كلمة. وكان بيعدّل next.config.ts بـ sed على السيرفر نفسه، ومكانش فيه healthcheck بعد up.`
           },
-          teach: R`## الأول: الفكرة
+          teach: R`## الفكرة: ملف واحد، وأول كلمة بعده بتختار الشغلانة
 
-ملفات الـ workflows في git فيها [[$__{APP_URL}]] و [[$__{CHAT_ID}]] مكان القيم الحقيقية. السكربت بيعمل نسخة مؤقتة منهم بالقيم من [[.env]]، ويبني ملف credentials فيه التوكن، ويدخّلهم container الـ n8n ويستوردهم، وبعدين يمسح كل الملفات المؤقتة.
+السكربت ده زي «قايمة أوامر» للسيرفر: [[./deploy.sh deploy]] ينشر، و [[./deploy.sh logs app]] يعرض لوجات خدمة، وهكذا. جواه حاجتين بس: **دوال** (كل دالة شغلانة)، و **[[case]]** في الآخر بيبص على أول كلمة كتبتها ويشغّل الدالة المناسبة. هنمشي عليه بنفس ترتيب ما bash بيقراه.
 
-جربته في container [[ubuntu:24.04]] بعد ما سطّبت [[gettext-base]] (فيه envsubst) و [[jq]]. ومكانش عندي image الـ n8n، فـ [[docker]] كان سكربت وهمي: [[compose cp]] و [[exec]] بيشتغلوا على فولدر بيمثّل الـ container، و [[n8n import:...]] بيطبع الملف اللي وصله بس. والـ workflow للتجربة:
-
-~~~text n8n/workflows/notify.json
-{"name":"notify","nodes":[{"type":"n8n-nodes-base.httpRequest","parameters":{"url":"$__{APP_URL}/api/notify","body":"={{ $json.message }}"}},{"type":"n8n-nodes-base.telegram","parameters":{"chatId":"$__{CHAT_ID}"}}]}
-~~~
-
-لاحظ [[$json.message]]: دي expression بتاعة n8n نفسه، ولازم توصل زي ما هي.
+كل الناتج تحت متجرّب على أوبونتو 24.04 جوه Docker: container فيه Docker تاني (Docker in Docker) عامل نفسه سيرفر، ومشروع compose صغير اسمه [[myapp]] فيه خدمة [[app]] (nginx بيسمع على 3000) ليها healthcheck، وريبو git محلي عامل نفسه GitHub.
 
 ---
 
-## ١. البداية
+## ١. أول ٤ سطور: الإعداد
+
+~~~bash
+#!/usr/bin/env bash
+# ./deploy.sh deploy | update | ssl | logs [service] | status | restart | stop
+set -euo pipefail
+cd "$(dirname "$0")"
+~~~
+
+### [[#!/usr/bin/env bash]]
+
+اسمه **shebang**. لما تكتب [[./deploy.sh]]، النظام بيقرا أول سطر عشان يعرف يشغّل الملف بإيه. [[env]] بيدوّر على [[bash]] في الـ PATH بدل ما نكتب مكانه بالظبط ([[/bin/bash]] أو [[/usr/local/bin/bash]]).
+
+### السطر التاني: تعليق، بس ليه شغلانة
+
+أي سطر بيبدأ بـ [[#]] تعليق bash مش بينفّذه. بس التعليق ده بالذات هو «طريقة الاستخدام»، وهنشوف في الآخر إن السكربت بيطبعه هو نفسه لو كتبت أمر غلط.
 
 ### [[set -euo pipefail]]
 
-[[-e]] اقف عند أي أمر يفشل، [[-u]] متغير مش معرّف = خطأ، [[pipefail]] الـ pipe يفشل لو أي جزء فيه فشل. هنا [[-e]] موجودة لأن مفيش حاجة نسأل عنها: أي غلطة = وقّف.
+٣ مفاتيح أمان مع بعض:
 
-### [[cd "$(dirname "$0")/.."]]
-
-- [[$0]] مسار السكربت نفسه زي ما اتشغّل، مثلًا [[scripts/n8n_import.sh]].
-- [[dirname]] بيشيل اسم الملف ويسيب الفولدر: [[scripts]].
-- [[/..]] الفولدر اللي فوقه، يعني جذر المشروع.
-
-فالسكربت يشتغل صح من أي مكان تشغّله منه. جربته من [[/tmp]] واشتغل عادي.
-
-### [[set -a; . ./.env; set +a]]
-
-اقرا [[.env]] وكل متغير فيه يبقى export ([[set -a]])، عشان [[envsubst]] و [[jq]] (برامج منفصلة) يشوفوه.
-
-### [[: "$__{INTERNAL_TOKEN:?need INTERNAL_TOKEN in .env}"]]
-
-لو التوكن ناقص اقف برسالة. و [[:]] أمر فاضي عشان bash يفك الـ [[$__{}]] بس:
-
-~~~text الناتج (.env من غير التوكن)
-scripts/n8n_import.sh: line 5: INTERNAL_TOKEN: need INTERNAL_TOKEN in .env
-exit=1
-~~~
-
-### [[export APP_URL="$__{APP_URL:-http://app:8080}"]]
-
-[[:-]] (مش [[:?]]): لو [[APP_URL]] مش موجود خد القيمة الافتراضية. و [[app]] هنا اسم الخدمة في compose، فـ n8n يوصل للتطبيق من جوه شبكة Docker. و [[export]] عشان envsubst يشوفه.
-
-### [[command -v envsubst >/dev/null || { echo "sudo apt install gettext-base"; exit 1; }]]
-
-- [[command -v envsubst]] بيطبع مكان البرنامج لو موجود، ويفشل لو مش موجود.
-- [[>/dev/null]] ارمي الطباعة، احنا عايزين النجاح أو الفشل بس.
-- لو مش موجود: قول تسطّبه منين واقف.
-
-~~~text الناتج (من غير envsubst)
-sudo apt install gettext-base
-exit=1
-~~~
-
----
-
-## ٢. الفولدر المؤقت والتنضيف
-
-### [[TMP="$(mktemp -d)"; chmod 700 "$TMP"]]
-
-- [[mktemp -d]] بيعمل فولدر جديد باسم عشوائي ويطبع مساره: [[/tmp/tmp.HfcgTpwPTy]].
-- [[chmod 700]]: صاحبه بس يقرا ويكتب ويدخل، عشان التوكن هيتكتب جوه.
-
-~~~text ls -ld
-drwx------ 2 root root 4096 Oct  7 15:59 /tmp/tmp.5T7W64L1QV
-~~~
-
-[[drwx------]]: [[d]] فولدر، و [[rwx]] للصاحب، وبعدها [[------]] مفيش أي صلاحية للباقيين.
-
-### [[cleanup() { ... }]]
-
-~~~bash
-cleanup() { rm -rf "$TMP"; docker compose exec -T n8n rm -rf /tmp/wf /tmp/creds.json || true; }
-~~~
-
-دالة بتمسح الفولدر المؤقت على جهازك، والملفات اللي هتتحط جوه الـ container. و [[|| true]] عشان لو الـ container واقف، الفشل ميبوّظش التنضيف.
-
-### [[trap cleanup EXIT]]
-
-[[trap]] بيقول لـ bash «لما يحصل كذا، شغّل الأمر ده». و [[EXIT]] = السكربت بيخلص بأي طريقة: نجح، أو وقف بسبب [[set -e]]، أو [[exit 1]]. جربت خليت استيراد الـ workflows يفشل:
-
-~~~text الناتج
-(fake n8n) n8n import:workflow --separate --input=/tmp/wf
-Error: import failed
-(fake docker) exec n8n rm -rf /tmp/wf /tmp/creds.json
-exit=1
-~~~
-
-الـ cleanup اشتغل رغم الفشل، و [[ls -d /tmp/tmp.*]] بعدها قال مفيش، والـ container نضيف.
-
----
-
-## ٣. ملء الـ placeholders
-
-~~~bash
-mkdir -p "$TMP/wf"
-for f in n8n/workflows/*.json; do
-  envsubst '$__{APP_URL} $__{CHAT_ID}' < "$f" > "$TMP/wf/$(basename "$f")"
-done
-~~~
-
-- [[mkdir -p]] اعمل الفولدر (و [[-p]] من غير خطأ لو موجود).
-- اللوب على كل ملف [[.json]] في فولدر الـ workflows.
-- [[envsubst]] بيقرا نص من الـ stdin ([[< "$f"]])، ويبدّل المتغيرات بقيمها، ويطبع على الـ stdout ([[> ...]]).
-- [[basename "$f"]] اسم الملف من غير الفولدر، فالنسخة المتعبية تتحط بنفس الاسم في [[$TMP/wf]].
-
-### ليه القايمة [[ '$__{APP_URL} $__{CHAT_ID}' ]] مهمة؟
-
-العلامات المفردة [[' ']] عشان bash نفسه ميفكّش المتغيرات، ويبعتها لـ envsubst كنص: «بدّل دول بس». جربت أمر الـ try بالقايمة ومن غيرها (ضفت [[$json.msg]] زي اللي n8n بيستخدمه):
-
-~~~text بالقايمة ثم من غيرها
-{"url": "http://app:8080", "x": "$__{HOME}"}
-{"url": "http://app:8080", "x": "/root", "j": ".msg"}
-~~~
-
-من غير قايمة، [[$__{HOME}]] اتبدّل بـ [[/root]]، و [[$json]] اتبدّل **بفاضي** لأن مفيش متغير اسمه json، ففضل [[.msg]] بس. ده كان هيبوّظ كل expression في الـ workflow من غير أي رسالة.
-
-والناتج في السكربت: [[$__{APP_URL}]] بقى [[http://app:8080]] و [[$__{CHAT_ID}]] بقى [[-100555]]، و [[$json.message]] فضل زي ما هو.
-
----
-
-## ٤. [[if grep -rqE '\$\{[A-Z_]+\}' "$TMP/wf/"; then echo "unfilled placeholders"; exit 1; fi]]
-
-- [[grep -r]] دوّر في كل ملفات الفولدر، [[-q]] من غير طباعة (exit code بس)، [[-E]] regex موسّع.
-- الـ regex: [[\$]] علامة [[$]] حقيقية، [[\{]] قوس حقيقي، [[[A-Z_]+]] حروف كبيرة أو [[_]]، [[\}]] قفلة. يعني أي [[$__{SOMETHING}]] فضل في الملفات.
-- لو لقى: placeholder نسيته في قايمة envsubst، فاقف قبل ما تستورد workflow بايظ.
-
-جربت غيّرت [[$__{CHAT_ID}]] في الملف لـ [[$__{CHAT_IDD}]]:
-
-~~~text الناتج
-unfilled placeholders
-(fake docker) exec n8n rm -rf /tmp/wf /tmp/creds.json
-exit=1
-~~~
-
-و [[$json]] مش هيتمسك، لأنه حروف صغيرة ومن غير أقواس.
-
----
-
-## ٥. ملف الـ credentials
-
-~~~bash
-( umask 077; jq -n '[{id:"app-internal", ...value:("Bearer " + env.INTERNAL_TOKEN)}}]' > "$TMP/creds.json" )
-~~~
-
-### [[( ... )]] و [[umask 077]]
-
-- [[umask]] بيحدد الصلاحيات اللي **متتديش** للملفات الجديدة. [[077]]: الصاحب بس، فالملف يطلع [[600]] ([[rw-------]]).
-- الأقواس [[( )]] بتشغّل ده في subshell (نسخة منفصلة من الـ shell)، فالـ umask يتغيّر جوه بس ومياثرش على باقي السكربت.
-
-~~~text ls -l (ملف جوه الأقواس وملف عادي)
--rw------- 1 root root 2 Oct  7 15:59 creds.json
--rw-r--r-- 1 root root 2 Oct  7 15:59 normal
-~~~
-
-### [[jq -n '...']]
-
-- [[jq]] أداة JSON، و [[-n]] (null input) معناها «متقراش أي إدخال، ابني JSON من الصفر».
-- جوه: array فيها object واحد بالشكل اللي n8n مستنيه: [[id]] و [[name]] و [[type: httpHeaderAuth]] (توكن في header) و [[data]].
-- [[env.INTERNAL_TOKEN]]: jq بيقرا المتغير من البيئة مباشرة، فالتوكن مش مكتوب في سطر الأوامر ومش هيبان في [[ps]].
-- [[+]] بين نصين في jq بيلزقهم: [[Bearer tok_abc123]].
-
-~~~text creds.json
-[
-  {
-    "id": "app-internal",
-    "name": "app internal",
-    "type": "httpHeaderAuth",
-    "data": {
-      "name": "authorization",
-      "value": "Bearer tok_abc123"
-    }
-  }
-]
-~~~
-
----
-
-## ٦. الإدخال لـ n8n
-
-### [[docker compose exec -T n8n sh -c 'umask 077; cat > /tmp/creds.json' < "$TMP/creds.json"]]
-
-- [[< "$TMP/creds.json"]]: ابعت الملف على الـ stdin بتاع الأمر.
-- [[exec -T n8n]]: شغّل أمر جوه خدمة [[n8n]]، و [[-T]] من غير terminal عشان الإدخال جاي من ملف.
-- [[sh -c '...']]: جوه الـ container، [[cat]] بيقرا الـ stdin ويكتبه في [[/tmp/creds.json]] بـ umask 077.
-
-ليه مش [[docker compose cp]] زي باقي الملفات؟ لأن [[cp]] بيعمل الملف جوه ملك [[root]] بنفس صلاحية [[600]]، و n8n شغال بيوزر اسمه [[node]] (من توثيق الـ image). جربت ده في container [[node:22-alpine]] شغال بـ [[-u node]]:
-
-~~~text بعد docker cp
-uid=1000(node) gid=1000(node) groups=1000(node)
--rw-------    1 root     root             7 Oct  7 15:59 /tmp/creds.json
-cat: can't open '/tmp/creds.json': Permission denied
-rm: can't remove '/tmp/creds.json': Operation not permitted
-~~~
-
-يعني n8n مكانش هيقدر يقراه، والـ cleanup مكانش هيقدر يمسحه، والتوكن يفضل جوه. وبالطريقة دي:
-
-~~~text بعد sh -c 'umask 077; cat > ...'
--rw-------    1 node     node             7 Oct  7 16:00 /tmp/creds2.json
-secret
-rm exit=0
-~~~
-
-الملف ملك [[node]] و [[600]]، بيتقري وبيتمسح. ده كان غلط في نسخة الدرس واتصلّح.
-
-### [[n8n import:credentials --input=/tmp/creds.json]]
-
-أمر الـ CLI بتاع n8n بيستورد الـ credentials من الملف.
-
-### [[mkdir -p /tmp/wf]] ثم [[docker compose cp "$TMP/wf/." n8n:/tmp/wf/]]
-
-- الفولدر بيتعمل بيوزر الـ container، فيقدر يمسحه بعدين.
-- [[docker compose cp]] بينسخ من جهازك للـ container ([[n8n:]] قبل المسار معناها جوه خدمة n8n).
-- [[wf/.]] (بالنقطة): انسخ **محتوى** الفولدر، مش الفولدر نفسه، فالملفات تنزل في [[/tmp/wf/]] على طول. ملفات الـ workflows مش سرية وصلاحيتها عادية، فيوزر node يقدر يقراها.
-
-### [[n8n import:workflow --separate --input=/tmp/wf]]
-
-[[--separate]]: الـ input فولدر فيه ملف لكل workflow، مش ملف واحد فيه array.
-
-~~~text الناتج كله (n8n وهمي)
-(fake docker) exec n8n sh -c umask 077; cat > /tmp/creds.json
-(fake n8n) n8n import:credentials --input=/tmp/creds.json
-(fake docker) exec n8n mkdir -p /tmp/wf
-(fake docker) compose cp /tmp/tmp.HfcgTpwPTy/wf/. n8n:/tmp/wf/
-(fake n8n) n8n import:workflow --separate --input=/tmp/wf
-imported: activate the workflows from the n8n UI
-(fake docker) exec n8n rm -rf /tmp/wf /tmp/creds.json
-exit=0
-~~~
-
-آخر سطر هو الـ trap. ومع n8n حقيقي، الاستيراد بيطبع حاجة زي [[Successfully imported 3 workflows.]] (من الـ docs).
-
-### [[echo "imported: activate the workflows from the n8n UI"]]
-
-الـ workflows بتتستورد متوقفة، فلازم تفعّلها بإيدك.
-
----
-
-| الخطوة | الأمر |
+| المفتاح | معناه |
 |---|---|
-| إعدادات | [[set -a; . ./.env]] و [[:?]] و [[:-]] |
-| أدوات | [[command -v envsubst]] |
-| مكان آمن | [[mktemp -d]] و [[chmod 700]] |
-| تنضيف مضمون | [[trap cleanup EXIT]] |
-| ملء القيم | [[envsubst 'قايمة']] |
-| فحص | [[grep -rqE '\$\{[A-Z_]+\}']] |
-| أسرار | [[umask 077]] و [[jq -n ... env.X]] |
-| إدخال | [[exec -T ... cat >]] للسر، و [[compose cp]] للباقي |
-| استيراد | [[n8n import:credentials]] و [[import:workflow --separate]] |
+| [[-e]] | أي أمر يفشل (exit code مش 0) يوقف السكربت كله |
+| [[-u]] | استخدام متغير مش متعرّف يبقى خطأ بدل ما يبقى نص فاضي |
+| [[-o pipefail]] | في [[a | b]] لو [[a]] فشل، الـ pipe كله يعتبر فاشل (من غيره بيتحسب بـ [[b]] بس) |
 
-## الخلاصة
+من غير [[-e]] لو [[docker compose build]] فشل، السكربت هيكمّل ويعمل [[up]] على الـ image القديمة ويقولك كله تمام.
 
-- envsubst من غير قايمة بيبدّل كل [[$كلمة]]، حتى expressions الـ n8n.
-- [[trap ... EXIT]] بيضمن التنضيف حتى لو السكربت وقع.
-- [[docker cp]] بيعمل الملفات ملك root جوه الـ container؛ لو التطبيق بيوزر تاني، اكتب السر من جوه.
-- الـ workflows بتتستورد متوقفة.`,
-          lines: [
-            "وقّف عند أي خطأ.",
-            "ادخل جذر المشروع.",
-            "اقرا .env واعمل export.",
-            "لازم التوكن.",
-            "رابط التطبيق، بقيمة افتراضية.",
-            "envsubst موجود؟",
-            "فولدر مؤقت محدش يقراه غيرك.",
-            "دالة تنضّف الجهاز والـ container.",
-            "شغّلها في الآخر مهما حصل.",
-            "فولدر للـ workflows بعد التعبئة.",
-            "لكل workflow:",
-            "بدّل المتغيرين دول بس.",
-            "قفلة اللوب.",
-            "فيه placeholder لسه متملاش؟ وقّف.",
-            "ملف credentials بصلاحية 600، والتوكن من البيئة.",
-            "ابعته جوه الـ container على الـ stdin، فيتكتب بيوزر n8n وبصلاحية 600.",
-            "استورد الـ credentials.",
-            "فولدر جوه الـ container.",
-            "انسخ الـ workflows.",
-            "استوردهم، ملف لكل workflow.",
-            "فكّرني أفعّلهم."
-          ],
-          sol: R`جربت أمر envsubst:
+### [[cd "$(dirname "$0")"]]
 
-[[{"url": "http://app:8080", "x": "$__{HOME}"}]]
+من جوه لبرة:
 
-[[$__{APP_URL}]] اتبدّل لأنه في القايمة، و [[$__{HOME}]] فضل زي ما هو لأنه مش فيها. من غير القايمة، envsubst بيبدّل كل متغير موجود في البيئة، فـ [[$__{HOME}]] كان هيبقى [[/root]]، وأي متغير مش موجود بيبقى نص فاضي من غير أي تحذير.
+- [[$0]]: اسم السكربت زي ما اتكتب، مثلًا [[/opt/myapp/deploy.sh]].
+- [[dirname]]: بيشيل آخر حتة من المسار ويسيب الفولدر: [[/opt/myapp]].
+- [[$(...)]]: **command substitution**، نفّذ اللي جوه وحط ناتجه مكانه.
+- علامات التنصيص: عشان لو المسار فيه مسافة ميتقسمش.
 
-في السكربت الكامل، [[grep -rqE '\$\{[A-Z_]+\}']] بيمسك أي placeholder فضل مكتوب ([[unfilled placeholders]]) قبل الاستيراد. ولو الاستيراد نجح، n8n بيطبع حاجة زي [[Successfully imported 1 credential.]] و [[Successfully imported 3 workflows.]]، والـ workflows بتظهر في الواجهة Inactive لحد ما تفعّلها بإيدك.
-
-لو طلع [[envsubst: command not found]] سطّب [[gettext-base]]. ولو n8n قال [[Could not find workflows]] يبقى المسار في [[--input]] غلط أو [[docker compose cp]] ماوصلش الملفات. (جربت السكربت كله في container أوبونتو بـ docker وهمي بيمثّل container الـ n8n، فكل خطوة اتنفّذت ماعدا n8n نفسه؛ رسايل n8n دي من الـ docs.)`
-        },
-        {
-          cmd: "normalize-phones.mjs",
-          title: "سكربت يعدّل بيانات الإنتاج بأمان",
-          desc: R`أي سكربت بيعدّل بيانات حقيقية لازم يوريك اللي هيحصل الأول (dry-run) من غير ما يلمس حاجة، ومينفّذش غير لما تضيف [[--apply]] بنفسك. والحالات الغامضة بيتخطاها ويبلّغ عنها بدل ما يخمّن.
-
-والتعديلات كلها في transaction، فلو وقع في النص مفيش حاجة تتكتب.`,
-          example: R`// node --env-file=.env scripts/normalize-phones.mjs          → معاينة
-// node --env-file=.env scripts/normalize-phones.mjs --apply  → تنفيذ
-import pg from "pg";
-const normalize = p => { const d = p.replace(/\D/g, ""); return d.length === 11 && d.startsWith("01") ? "+2" + d : null; };
-const APPLY = process.argv.includes("--apply");
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
-await c.connect();
-try {
-  const { rows } = await c.query(
-    "SELECT id, phone FROM users WHERE phone IS NOT NULL AND phone NOT LIKE '+%' ORDER BY id");
-  console.log(APPLY ? "APPLY" : "DRY-RUN", "candidates:", rows.length);
-  let changed = 0, skipped = 0, conflicts = 0;
-  await c.query("BEGIN");
-  for (const u of rows) {
-    const next = normalize(u.phone);
-    if (!next) { skipped++; continue; }
-    const clash = await c.query(
-      "SELECT 1 FROM users WHERE phone=$1 AND id<>$2", [next, u.id]);
-    if (clash.rowCount) { conflicts++; continue; }
-    console.log(" ", u.phone, "->", next);
-    await c.query("UPDATE users SET phone=$1 WHERE id=$2", [next, u.id]);
-    changed++;
-  }
-  await c.query(APPLY ? "COMMIT" : "ROLLBACK");
-  console.log({ changed, skipped, conflicts });
-  if (!APPLY && changed) console.log("Run again with --apply to write.");
-} catch (e) {
-  await c.query("ROLLBACK"); throw e;
-} finally {
-  await c.end();
-}`,
-          try: "على Postgres تجريبي اعمل جدول users فيه أرقام بأشكال مختلفة (01012345678 و 010-1234-5678 و رقم ناقص، ورقمين هيبقوا نفس الرقم بعد التعديل). شغّل من غير [[--apply]] وراجع الناتج، وبعدين بـ [[--apply]]، وشغّله تالت مرة وتأكد إنه قال candidates: 0 للي اتعدّلوا.",
-          flag: "script",
-          deep: {
-            why: "سكربت «يصلّح» بيانات الإنتاج من غير معاينة هو أسرع طريقة تبوّظ آلاف الصفوف في ثانية. الـ dry-run بيخليك تشوف كل تغيير قبل ما يحصل، و --apply قرار واعي منك.",
-            how: R`[[node --env-file=.env]] (Node 20.6 وأحدث) بيقرا .env من غير مكتبة dotenv.
-
-[[process.argv.includes("--apply")]]: الافتراضي معاينة. لازم تكتب --apply بإيدك عشان يكتب.
-
-الاستعلام بيجيب المرشحين بس (أرقام مش بادئة بـ +). و [[normalize]] بترجع null لو الصيغة مش معروفة، فالسكربت يتخطاها ويعدّها في skipped بدل ما يخمّن.
-
-قبل أي تعديل بيشيك: فيه يوزر تاني عنده نفس الرقم بعد التعديل؟ لو أيوه، ده conflict: محتاج قرار بشري، فيتسجل ويتخطى.
-
-[[$1]] و [[$2]] parameters: القيم بتتبعت منفصلة عن الـ SQL، فمفيش SQL injection.
-
-كل حاجة جوه [[BEGIN]]. في الـ dry-run آخرها [[ROLLBACK]]، وفي الـ apply [[COMMIT]]. ولو حصل exception في النص، الـ catch بيعمل ROLLBACK فمفيش صفوف نص متعدّلة. و [[finally]] بيقفل الاتصال في كل الحالات.
-
-وفي الآخر ملخص بالأرقام: كام اتغيّر وكام اتخطى وكام تعارض.`,
-            when: "أي تعديل جماعي على بيانات حقيقية: تنظيف أرقام، ودمج حسابات، و seed لبيانات أولية. نفس الشكل (dry-run افتراضي) لأي سكربت بيمسح أو يعدّل. BEGIN و ROLLBACK في تاب PostgreSQL، و node --env-file في تاب Node.",
-            mistakes: R`في مشروع حقيقي السكربت الأصلي مكانش بيستخدم transaction، فلو وقع في النص (الاتصال اتقطع مثلًا) يسيب نص الصفوف متعدّلة ونصها لأ. اتضاف BEGIN و COMMIT هنا.
-
-وكان بيقرا .env بـ regex يدوي بدل [[node --env-file]]، ودا بيبوظ مع القيم اللي فيها علامات تنصيص أو [[=]].
-
-والفكرة نفسها ممتازة وكانت متكررة في سكربتات seed-admin و seed-demo في نفس المشروع. خليها قالب لأي سكربت بيعدّل بيانات.`
-          },
-          teach: R`## الأول: الفكرة
-
-السكربت بيحوّل أرقام الموبايل المصرية المكتوبة بأي شكل ([[010-1234-5678]] و [[0111 222 3333]]) لصيغة دولية واحدة ([[+201012345678]]). والمهم مش التحويل، المهم **الأمان**: الافتراضي معاينة، وكل حاجة في transaction، والحالات الغريبة بتتخطى.
-
-جربته بـ [[node:22-slim]] (Node 22.23.3 ومكتبة [[pg]] 8.23.1) على [[postgres:16]] في شبكة Docker، على جدول ده (عمود [[phone]] عليه [[unique]]):
-
-~~~text select id, phone from users
-1|01012345678
-2|010-1234-5678
-3|0101234
-4|0111 222 3333
-5|01122223333
-6|+201099999999
-7|
-~~~
-
-الصف ١ و ٢ نفس الرقم مكتوب بشكلين، و ٣ ناقص، و ٦ متعدّل أصلًا، و ٧ فاضي (NULL).
+النتيجة: السكربت بيدخل فولدر المشروع، فتقدر تشغّله من أي مكان ([[/opt/myapp/deploy.sh status]] من الـ home مثلًا) و [[docker compose]] هيلاقي [[compose.yml]] و [[.env]].
 
 ---
 
-## ١. التعليقين فوق: إزاي يتشغّل
+## ٢. دالة [[require_env]]
 
 ~~~bash
-node --env-file=.env scripts/normalize-phones.mjs          # معاينة
-node --env-file=.env scripts/normalize-phones.mjs --apply  # تنفيذ
-~~~
-
-- [[--env-file=.env]]: Node (من 20.6) بيقرا ملف [[.env]] ويحط اللي فيه في [[process.env]]، من غير مكتبة [[dotenv]].
-- [[.mjs]]: امتداد معناه ES module، فينفع [[import]] و [[await]] في أول الملف.
-
-من غير [[--env-file]] مفيش [[DATABASE_URL]]، فـ pg بيحاول الافتراضي (localhost):
-
-~~~text الناتج
-Error: connect ECONNREFUSED 127.0.0.1:5432
-~~~
-
----
-
-## ٢. [[import pg from "pg";]]
-
-مكتبة Postgres لـ Node ([[npm i pg]]).
-
-## ٣. دالة [[normalize]]
-
-~~~js
-const normalize = p => { const d = p.replace(/\D/g, ""); return d.length === 11 && d.startsWith("01") ? "+2" + d : null; };
-~~~
-
-- [[p => { ... }]]: دالة بتاخد [[p]] (الرقم زي ما هو).
-- [[p.replace(/\D/g, "")]]: [[/\D/]] regex معناه «أي حرف **مش** رقم» ([[\d]] رقم، و [[\D]] الكبيرة عكسها)، و [[g]] (global) كل مرة مش أول واحدة بس. يعني امسح الشرط والمسافات والأقواس.
-- [[d.length === 11 && d.startsWith("01")]]: رقم موبايل مصري = ١١ رقم بيبدأ بـ [[01]].
-- [[? "+2" + d : null]]: لو الشرط صح رجّع [[+2]] قبل الرقم ([[+20]] كود مصر، والـ [[0]] موجودة أصلًا في أول الرقم). لو لأ رجّع [[null]] = «مش عارف».
-
-~~~text الناتج (الرقم ← بعد المسح ← النتيجة)
-"010-1234-5678" -> "01012345678" -> +201012345678
-"0111 222 3333" -> "01112223333" -> +201112223333
-"0101234" -> "0101234" -> null
-"(010) 1234 5678" -> "01012345678" -> +201012345678
-~~~
-
-[[null]] مهمة: الدالة مبتخمّنش. الرقم الناقص مش هيتحوّل لحاجة غلط.
-
-## ٤. [[const APPLY = process.argv.includes("--apply");]]
-
-[[process.argv]] قايمة بكل اللي اتكتب في سطر الأوامر. جربت [[node argv.mjs --apply]] وطبعت من التاني ورايح:
-
-~~~text الناتج
-[ '/app/argv.mjs', '--apply' ]
-~~~
-
-و [[.includes("--apply")]] بترجع [[true]] لو موجودة. فالافتراضي ([[false]]) معاينة، ولازم تكتبها بإيدك عشان يكتب.
-
-## ٥. الاتصال
-
-~~~js
-const c = new pg.Client({ connectionString: process.env.DATABASE_URL });
-await c.connect();
-~~~
-
-[[pg.Client]] اتصال واحد بالقاعدة (مش pool)، وده المطلوب: الـ transaction لازم تبقى على **نفس** الاتصال. و [[await]] استنى لحد ما الاتصال يخلص.
-
----
-
-## ٦. [[try { ... } catch { ... } finally { ... }]]
-
-- [[try]]: الشغل كله.
-- [[catch (e)]]: لو أي سطر رمى خطأ.
-- [[finally]]: يتنفّذ في كل الحالات، نجح أو فشل.
-
-### المرشحين
-
-~~~js
-const { rows } = await c.query(
-  "SELECT id, phone FROM users WHERE phone IS NOT NULL AND phone NOT LIKE '+%' ORDER BY id");
-~~~
-
-- [[phone IS NOT NULL]]: سيب الفاضي (صف ٧).
-- [[NOT LIKE '+%']]: [[%]] في SQL أي حاجة، يعني «مش بادئ بـ +» (سيب صف ٦، متعدّل أصلًا).
-- [[ORDER BY id]]: ترتيب ثابت. من غيره Postgres مش ملزم بأي ترتيب، فلو رقمين هيبقوا نفس القيمة، مين يتعدّل ومين يبقى تعارض كان ممكن يختلف بين المعاينة والتنفيذ. **اتضاف في الدرس ده.**
-- [[const { rows } = ...]]: [[c.query]] بترجع object فيه [[rows]] (الصفوف) وحاجات تانية، والأقواس [[{ }]] بتطلّع [[rows]] بس.
-
-### [[console.log(APPLY ? "APPLY" : "DRY-RUN", "candidates:", rows.length);]]
-
-اطبع الوضع وعدد المرشحين: [[DRY-RUN candidates: 5]].
-
-### [[let changed = 0, skipped = 0, conflicts = 0;]] و [[await c.query("BEGIN");]]
-
-٣ عدّادات، وبعدين [[BEGIN]]: من هنا كل تعديل مؤقت لحد [[COMMIT]] أو [[ROLLBACK]].
-
----
-
-## ٧. اللوب
-
-~~~js
-for (const u of rows) {
-  const next = normalize(u.phone);
-  if (!next) { skipped++; continue; }
-~~~
-
-لكل صف [[u]] ([[u.id]] و [[u.phone]])، احسب الرقم الجديد. لو [[null]] ([[!next]] = مش موجود)، عدّه skipped وروح للي بعده.
-
-### التعارض
-
-~~~js
-const clash = await c.query(
-  "SELECT 1 FROM users WHERE phone=$1 AND id<>$2", [next, u.id]);
-if (clash.rowCount) { conflicts++; continue; }
-~~~
-
-- السؤال: فيه يوزر **تاني** ([[id<>$2]]، و [[<>]] = لا يساوي) رقمه بالفعل هو الرقم الجديد؟
-- [[$1]] و [[$2]]: parameters. القيم بتتبعت لوحدها في array ([[[next, u.id]]])، مش بتتلزق في نص الـ SQL، فمفيش SQL injection.
-- [[SELECT 1]]: مش محتاجين بيانات، بس هل فيه صف. و [[rowCount]] عدد الصفوف، و [[0]] في JS = false.
-- لو فيه: ده قرار بشري (أنهي حساب ياخد الرقم؟)، فعدّه conflict واتخطاه.
-
-### التعديل
-
-~~~js
-console.log(" ", u.phone, "->", next);
-await c.query("UPDATE users SET phone=$1 WHERE id=$2", [next, u.id]);
-changed++;
-~~~
-
-الـ UPDATE بيحصل **حتى في المعاينة**، جوه الـ transaction. ليه؟ عشان الصف ٢ لما ييجي دوره، الـ SELECT بتاع التعارض يشوف إن صف ١ بقى [[+201012345678]] خلاص (الـ transaction بتشوف تعديلاتها). ولولا كده المعاينة كانت هتقول إن الاتنين هيتعدّلوا، والتنفيذ يطلع غير كده.
-
-## ٨. [[await c.query(APPLY ? "COMMIT" : "ROLLBACK");]]
-
-- apply: [[COMMIT]] احفظ كل حاجة.
-- معاينة: [[ROLLBACK]] ارجع في كل حاجة، كأن مفيش حاجة حصلت.
-
-ثم الملخص، والتذكير لو في معاينة:
-
-~~~js
-console.log({ changed, skipped, conflicts });
-if (!APPLY && changed) console.log("Run again with --apply to write.");
-~~~
-
-[[{ changed, skipped, conflicts }]] اختصار لـ [[{ changed: changed, ... }]].
-
----
-
-## ٩. التشغيل
-
-### معاينة
-
-~~~text node --env-file=.env scripts/normalize-phones.mjs
-DRY-RUN candidates: 5
-  01012345678 -> +201012345678
-  0111 222 3333 -> +201112223333
-  01122223333 -> +201122223333
-{ changed: 3, skipped: 1, conflicts: 1 }
-Run again with --apply to write.
-exit=0
-~~~
-
-٥ مرشحين: ٣ هيتعدّلوا، و [[0101234]] اتخطى، و [[010-1234-5678]] تعارض مع صف ١. والجدول بعدها زي ما هو بالظبط.
-
-### [[--apply]]
-
-~~~text node --env-file=.env scripts/normalize-phones.mjs --apply
-APPLY candidates: 5
-  01012345678 -> +201012345678
-  0111 222 3333 -> +201112223333
-  01122223333 -> +201122223333
-{ changed: 3, skipped: 1, conflicts: 1 }
-~~~
-
-نفس أرقام المعاينة بالظبط. والجدول:
-
-~~~text بعد apply
-1|+201012345678
-2|010-1234-5678
-3|0101234
-4|+201112223333
-5|+201122223333
-6|+201099999999
-~~~
-
-### تالت مرة
-
-~~~text الناتج
-DRY-RUN candidates: 2
-{ changed: 0, skipped: 1, conflicts: 1 }
-~~~
-
-اللي اتعدّل مبقاش مرشح، وفضل اللي محتاج قرار منك. يعني السكربت آمن تشغّله أكتر من مرة (idempotent).
-
----
-
-## ١٠. [[catch]]: لو حصل خطأ في النص
-
-~~~js
-} catch (e) {
-  await c.query("ROLLBACK"); throw e;
-} finally {
-  await c.end();
+require_env() {
+  [ -f .env ] || { echo ".env missing: cp .env.example .env && nano .env" >&2; exit 1; }
 }
 ~~~
 
-- [[ROLLBACK]]: الغي أي تعديل حصل قبل الخطأ.
-- [[throw e]]: ارمي الخطأ تاني عشان يظهر والسكربت يخرج بـ exit code غير صفر.
-- [[c.end()]]: اقفل الاتصال، وإلا Node يفضل مستني.
+- [[name() { ... }]]: كده بتعرّف **دالة** في bash. مش بتتنفّذ دلوقتي، بتتنفّذ لما حد يكتب اسمها.
+- [[[ -f .env ]]]: اختبار: هل فيه **ملف** (f = file) اسمه [[.env]]؟ نجاح لو آه.
+- [[||]]: «لو اللي قبلي فشل، نفّذ اللي بعدي».
+- [[{ ...; ...; }]]: مجموعة أوامر تتنفّذ مع بعض (لازم مسافة بعد [[{]] و [[;]] قبل [[}]]).
+- [[>&2]]: ابعت الرسالة على **stderr** (قناة الأخطاء، رقم 2) مش stdout، عشان لو حد بيوجّه الناتج لملف، الخطأ يفضل ظاهر.
+- [[exit 1]]: اخرج بكود 1، يعني «فشل».
 
-جربت حطيت constraint بيرفض [[+201122223333]] (آخر رقم) وشغّلت بـ [[--apply]]:
+ليه موجودة؟ لأن [[.env]] مش في git (فيه باسوردات)، فأول نشر على سيرفر جديد هيبقى من غيره. بدل ما compose يطلّع خطأ غامض، السكربت بيقولك تعمل إيه. جربته من غير [[.env]]:
 
 ~~~text الناتج
-APPLY candidates: 5
-  01012345678 -> +201012345678
-  0111 222 3333 -> +201112223333
-  01122223333 -> +201122223333
-error: new row for relation "users" violates check constraint "teach_boom"
+.env missing: cp .env.example .env && nano .env
 ~~~
 
-أول تعديلين نجحوا، والتالت وقع. والجدول بعدها: **ولا صف اتغيّر**، حتى الأولين. ده الـ ROLLBACK.
+والـ exit code كان [[1]].
 
 ---
 
-| الحتة | ليه |
+## ٣. دالة [[deploy]]: قلب السكربت
+
+~~~bash
+deploy() {
+  require_env
+  docker compose build
+  docker compose up -d --wait --wait-timeout 120
+  docker image prune -f >/dev/null
+  docker compose ps
+}
+~~~
+
+### [[docker compose build]]
+
+بيبني الـ images الجديدة من الـ Dockerfile. **الموقع القديم لسه شغال** طول البناء، لأن البناء مش بيلمس الـ containers الشغالة.
+
+### [[docker compose up -d --wait --wait-timeout 120]]
+
+| الجزء | معناه |
 |---|---|
-| [[--apply]] لازم تكتبها | الافتراضي معاينة |
-| [[normalize]] بترجع [[null]] | متخمّنش |
-| [[ORDER BY id]] | المعاينة والتنفيذ نفس الترتيب |
-| SELECT التعارض قبل UPDATE | رقمين لنفس القيمة = قرار بشري |
-| [[$1]] و [[$2]] | مفيش SQL injection |
-| UPDATE حتى في المعاينة + [[ROLLBACK]] | المعاينة تشوف نفس اللي هيحصل |
-| [[catch]] فيه [[ROLLBACK]] | مفيش نص تعديل |
-| [[finally]] فيه [[c.end()]] | الاتصال يتقفل دايمًا |
+| [[up]] | شغّل الخدمات، وأي container الـ image بتاعته اتغيرت يتعمل من جديد (Recreate) |
+| [[-d]] | detached: اشتغل في الخلفية ورجّعلي الترمنال |
+| [[--wait]] | متخرجش غير لما الخدمات تبقى running، واللي ليها healthcheck تبقى **healthy** |
+| [[--wait-timeout 120]] | لو عدّت ١٢٠ ثانية ولسه مش healthy، افشل |
 
-## الخلاصة
-
-- أي سكربت بيعدّل بيانات حقيقية: معاينة افتراضي، و [[--apply]] بإيدك.
-- كله في transaction واحدة، والمعاينة بتعمل نفس الشغل وترجع فيه بـ ROLLBACK.
-- الحالات الغريبة بتتعدّ وتتخطى، مش بتتخمّن.`,
-          lines: [
-            "مكتبة Postgres.",
-            "حوّل الرقم لصيغة دولية، أو null لو الصيغة مش معروفة.",
-            "هل المستخدم كتب --apply؟",
-            "اتصال بالقاعدة من DATABASE_URL.",
-            "اتصل.",
-            "ابدأ try:",
-            "هات المرشحين...",
-            "...الأرقام اللي مش بادئة بـ +، بترتيب ثابت عشان المعاينة والتنفيذ يمشوا بنفس الترتيب.",
-            "اطبع الوضع وعدد المرشحين.",
-            "عدّادات.",
-            "ابدأ transaction.",
-            "لكل يوزر:",
-            "الرقم بعد التعديل.",
-            "صيغة مش معروفة؟ اتخطاه.",
-            "فيه حد تاني عنده نفس الرقم؟...",
-            "...بـ parameters مش string.",
-            "تعارض؟ متخمّنش، اتخطاه وعدّه.",
-            "اطبع التغيير.",
-            "اكتب جوه الـ transaction حتى في المعاينة، عشان رقمين بيتحولوا لنفس القيمة يبانوا تعارض من الـ dry-run. ومن غير --apply الـ ROLLBACK بيلغي كل ده.",
-            "عدّه.",
-            "قفلة اللوب.",
-            "apply: احفظ. dry-run: ارجع في كل حاجة.",
-            "الملخص.",
-            "فكّر المستخدم بـ --apply.",
-            "أي خطأ:",
-            "ارجع في كل حاجة وارمي الخطأ.",
-            "في كل الحالات:",
-            "اقفل الاتصال.",
-            "قفلة الـ try."
-          ],
-          sol: R`جربتها على جدول فيه [[01012345678]] و [[010-1234-5678]] (نفس الرقم) و [[0101234]] (ناقص) و [[0111 222 3333]] و [[01122223333]] و [[+201099999999]] (مش مرشّح):
-
-من غير [[--apply]]: [[DRY-RUN candidates: 5]]، و ٣ سطور تغيير، و [[{ changed: 3, skipped: 1, conflicts: 1 }]] و [[Run again with --apply to write.]]، والجدول ماتغيّرش.
-بـ [[--apply]]: نفس الأرقام بالظبط، والصفوف اتعدّلت لـ [[+2...]].
-التشغيل التالت: [[candidates: 2]] (الرقم الناقص والرقم اللي عليه تعارض بس) و [[changed: 0]]. يعني اللي اتعدّل مابقاش مرشح.
-
-لقيت مشكلة في النسخة الأصلية: كانت بتعمل [[UPDATE]] في الـ apply بس، فالـ dry-run ماكانش شايف إن [[01012345678]] و [[010-1234-5678]] هيبقوا نفس الرقم، وقال [[changed: 4, conflicts: 0]]، وبعدين الـ apply قال [[changed: 3, conflicts: 1]]. اتصلّحت إن الـ UPDATE يحصل دايمًا جوه الـ transaction، والـ ROLLBACK في المعاينة بيلغيه. فدلوقتي المعاينة بتوري نفس اللي هيحصل. التعارض ده محتاج قرار منك، أنهي حساب يفضل بالرقم.`
-        },
-        {
-          cmd: "fix-docker.sh",
-          title: "التعديلات مش ظاهرة: متمسحش كل حاجة",
-          desc: R`سكربت «الإصلاح» المشهور: وقّف كل حاجة، امسح الـ containers والصور، [[docker system prune -f]]، وابني من غير كاش. بيشتغل أحيانًا، بس بياخد وقت، وبيمسح حاجات مش تبعك، والأسوأ إنه مش بيقولك إيه كانت المشكلة.
-
-الصح إنك تمشي خطوة خطوة: التعديل وصل للـ image؟ وصل للـ container؟ السيرفر بيرجّعه؟ ولو لازم تبدأ من الصفر، امسح صور المشروع ده بس.`,
-          example: R`# 1) ابني الخدمة اللي اتغيّرت بس، وشوف هل قامت
-docker compose build --pull frontend
-docker compose up -d frontend
-docker compose ps
-docker compose logs --tail=50 frontend
-# 2) الملف الجديد جوه الـ container فعلًا؟
-docker compose exec frontend ls -la /usr/share/nginx/html
-# 3) السيرفر بيرجّع الجديد؟ لو أيوه يبقى كاش المتصفح
-curl -sI https://example.com/ | grep -iE 'cache-control|etag|last-modified'
-# 4) آخر حل: امسح صور المشروع ده بس وابني من الصفر
-docker compose down --rmi local
-docker compose build --no-cache
-docker compose up -d`,
-          try: "في مشروع compose تجريبي غيّر كلمة في الواجهة، وامشي الخطوات من ١ لـ ٣ وقف عند أول خطوة تلاقي فيها المشكلة. وبعدين افتح الموقع بـ Ctrl+Shift+R وشوف الفرق.",
-          flag: "danger",
-          deep: {
-            why: "«امسح وابني من الصفر» بيخبّي السبب الحقيقي، فالمشكلة ترجع تاني الأسبوع الجاي وتعيد نفس الـ ١٠ دقايق. وعلى سيرفر فيه أكتر من مشروع، [[system prune]] بيمسح حاجات مش بتاعتك.",
-            how: R`[[build --pull frontend]] بيبني الخدمة دي بس، و [[--pull]] بيجيب آخر نسخة من الـ base image. و [[up -d frontend]] بيعيد إنشاء الـ container لو الـ image اتغيّرت. [[ps]] و [[logs]] بيقولولك هل قام ولا وقع.
-
-[[exec ... ls -la]] بيوريك الملفات جوه الـ container بتاريخها. لو الملف القديم لسه هناك، المشكلة في الـ build (كاش طبقة، أو .dockerignore، أو COPY من فولدر غلط).
-
-[[curl -sI]] بيجيب الـ headers بس من السيرفر. لو الـ ETag أو Last-Modified اتغيّر، السيرفر بيرجّع الجديد والمشكلة في كاش المتصفح أو CDN، ومفيش أي حاجة في Docker محتاجة تتمسح.
-
-ولو فعلًا لازم تبدأ من الصفر: [[down --rmi local]] بيمسح الصور اللي compose بناها للمشروع ده بس (مش الصور اللي اتنزّلت زي postgres)، والـ volumes بتفضل.`,
-            when: "كل ما تلاقي نفسك بتقول «التعديل مش ظاهر». الأوامر لوحدها في تاب Docker، و curl -I في تاب التشخيص.",
-            mistakes: R`في مشروع حقيقي كان السكربت من غير [[set -e]]، فلو الـ build فشل بيكمّل ويشغّل الصور القديمة (أو ولا حاجة)، ويطبع اللوج كأن كل حاجة تمام.
-
-و [[docker system prune -f]] بيمسح كل container واقف وكل image مش مستخدمة على السيرفر كله، حتى لو تبع مشروع تاني واقف مؤقتًا.
-
-وأسماء الصور في [[docker rmi]] كانت مكتوبة بإيدك ومختلفة عن اللي في deploy.sh (المشروع اتغيّر اسمه)، فالمسح مكانش بيمسح حاجة أصلًا. [[down --rmi local]] بيعرف الأسامي لوحده.
-
-وفي الغالب السبب الحقيقي كان كاش المتصفح أو Nginx، مش Docker خالص. وكان بيستخدم [[docker-compose]] القديم.`
-          },
-          teach: R`## الأول: الفكرة
-
-التعديل بيعدّي على ٤ محطات: الكود ← الـ image ← الـ container ← المتصفح. السكربت ده مش «إصلاح»، ده **فحص** المحطات بالترتيب. أول محطة تلاقي فيها القديم، هي مكان المشكلة.
-
-جربته على ويندوز (Docker Desktop) في مشروع compose صغير اسمه [[teach-real04-fd]]: خدمة [[frontend]] مبنية من Dockerfile سطرين ([[FROM nginx:alpine]] و [[COPY site/ /usr/share/nginx/html/]]) وصفحة [[index.html]] فيها [[Hello v1]]، وخدمة [[db]] من [[redis:8-alpine]] عشان نشوف إن المسح مبيلمسهاش. والموقع على [[http://127.0.0.1:18089/]] بدل [[https://example.com/]]. وبعدين غيّرت الصفحة لـ [[Hello v2 changed]].
-
-الأسطر اللي بتبدأ بـ [[#]] تعليقات، بتقسّم الخطوات.
-
----
-
-## خطوة ٠: الغلطة الأشهر
-
-قبل أي حاجة، جربت [[docker compose up -d frontend]] من غير build بعد التعديل:
+وده ناتج النشر الناجح (آخر سطور):
 
 ~~~text الناتج
- Container teach-real04-fd-frontend-1 Running
-<h1>Hello v1</h1>
+ Container myapp-app-1  Recreate
+ Container myapp-app-1  Recreated
+ Container myapp-app-1  Starting
+ Container myapp-app-1  Started
+ Container myapp-app-1  Waiting
+ Container myapp-app-1  Healthy
 ~~~
 
-[[Running]]: compose شاف إن مفيش حاجة اتغيّرت في الـ image، فساب الـ container زي ما هو. الكود اتغيّر على جهازك بس، والـ image لسه القديمة.
-
----
-
-## ١. البناء والتشغيل
-
-### [[docker compose build --pull frontend]]
-
-- [[build]]: ابني الـ image من الـ Dockerfile.
-- [[frontend]]: الخدمة دي بس، مش كل المشروع (أسرع، ومبيلمسش الباقي).
-- [[--pull]]: قبل البناء، هات أحدث نسخة من الـ base image ([[nginx:alpine]]) من الإنترنت. ده كويس على السيرفر عشان التحديثات الأمنية. **أنا شغّلته من غير [[--pull]]** عشان مايحدّثش نسخة [[nginx:alpine]] اللي على الجهاز؛ سلوكه من الـ docs.
-
-~~~text الناتج (المهم منه)
-#6 CACHED
-#7 [2/2] COPY site/ /usr/share/nginx/html/
- Image teach-real04-fd-frontend Built
-~~~
-
-[[#6 CACHED]]: خطوة [[FROM]] متاخدة من الكاش (مفيش تغيير). [[#7]] الـ COPY اتنفّذت من جديد لأن الملفات اتغيّرت. لو كانت [[CACHED]] هي كمان، يبقى Docker مش شايف تعديلك (مثلًا [[.dockerignore]] مستبعده، أو الـ COPY من فولدر غلط).
-
-### [[docker compose up -d frontend]]
-
-[[-d]] في الخلفية. ولما الـ image تتغيّر، compose بيعمل container جديد:
+[[Waiting]] ثم [[Healthy]]: ده [[--wait]] شغال. وفي تجربة تانية الـ container كان بيقع أول ما يقوم، فـ [[--wait]] طلّع:
 
 ~~~text الناتج
- Container teach-real04-fd-frontend-1 Recreated
- Container teach-real04-fd-frontend-1 Starting
- Container teach-real04-fd-frontend-1 Started
+container myapp-app-1 exited (127)
 ~~~
 
-[[Recreated]] هي الكلمة اللي بتدوّر عليها.
+وخرج بـ 1، و [[set -e]] وقّف السكربت. من غير [[--wait]] كان هيقول «Started» ويخرج بنجاح والموقع واقع.
+
+### [[docker image prune -f >/dev/null]]
+
+كل build جديد بيسيب الـ image القديمة من غير اسم (اسمها [[<none>]]، ودي اسمها **dangling**). [[prune]] بيمسحهم، و [[-f]] (force) من غير ما يسألك y/N، و [[>/dev/null]] بيرمي الناتج (رقم المساحة اللي اتفضت). وخد بالك إنه بيمسح الـ dangling images بتاعة **كل** المشاريع على السيرفر، مش المشروع ده بس، ودي حاجة عادية على سيرفر إنتاج بس متعملهاش على جهازك.
 
 ### [[docker compose ps]]
 
+بيعرض حالة الخدمات في الآخر:
+
 ~~~text الناتج
-NAME                         IMAGE                      ...   SERVICE    CREATED          STATUS                  PORTS
-teach-real04-fd-db-1         redis:8-alpine             ...   db         17 seconds ago   Up 16 seconds           6379/tcp
-teach-real04-fd-frontend-1   teach-real04-fd-frontend   ...   frontend   2 seconds ago    Up Less than a second   127.0.0.1:18089->80/tcp
+NAME          IMAGE       COMMAND                  SERVICE   CREATED         STATUS                   PORTS
+myapp-app-1   myapp-app   "/docker-entrypoint.…"   app       5 seconds ago   Up 3 seconds (healthy)   80/tcp, 127.0.0.1:3000->3000/tcp
 ~~~
 
-| العمود | بتبص فيه على إيه |
+| العمود | معناه |
 |---|---|
-| [[IMAGE]] | [[teach-real04-fd-frontend]]: الاسم اللي compose بيديه للـ image = اسم المشروع + اسم الخدمة |
-| [[CREATED]] | [[2 seconds ago]]: الـ container جديد فعلًا |
-| [[STATUS]] | [[Up]] شغال. لو [[Restarting]] أو [[Exited]] يبقى بيقع وهو بيقوم |
-| [[PORTS]] | [[127.0.0.1:18089->80/tcp]]: بورت جهازك ← بورت جوه الـ container |
+| [[NAME]] | اسم الـ container: المشروع - الخدمة - رقم |
+| [[STATUS]] | [[Up 3 seconds (healthy)]]: شغال من ٣ ثواني والـ healthcheck بيعدّي |
+| [[PORTS]] | [[127.0.0.1:3000->3000/tcp]]: بورت 3000 على السيرفر نفسه بس، رايح لـ 3000 في الـ container |
 
-### [[docker compose logs --tail=50 frontend]]
-
-آخر ٥٠ سطر من لوج الخدمة. هنا nginx قام عادي:
-
-~~~text الناتج (آخر سطرين)
-frontend-1  | 2026/10/07 16:04:45 [notice] 1#1: start worker process 44
-frontend-1  | 2026/10/07 16:04:45 [notice] 1#1: start worker process 45
-~~~
-
-لو قايم بيقع، سبب الوقعة هيبقى هنا.
+النشر كله خد حوالي ٨ ثواني لأن المشروع صغير. في مشروع حقيقي البناء بياخد دقايق، والموقع شغال على القديم طولها.
 
 ---
 
-## ٢. [[docker compose exec frontend ls -la /usr/share/nginx/html]]
+## ٤. دالة [[update]]
 
-- [[exec frontend]]: شغّل أمر جوه الـ container الشغال.
-- [[ls -la]]: كل الملفات ([[-a]]) بالتفاصيل ([[-l]]): الصلاحيات والحجم والتاريخ.
-- [[/usr/share/nginx/html]]: الفولدر اللي nginx بيقدّم منه.
+~~~bash
+update() {
+  [ -z "$(git status --porcelain)" ] || { echo "local changes on server:" >&2; git status --short; exit 1; }
+  git pull --ff-only origin main
+  deploy
+}
+~~~
+
+### السطر الأول: السيرفر نضيف؟
+
+- [[git status --porcelain]]: بيطبع سطر لكل ملف متغيّر، بشكل ثابت مخصوص للسكربتات (porcelain). لو مفيش تغيير بيطبع ولا حاجة.
+- [[[ -z "..." ]]]: [[-z]] يعني zero length، نجاح لو النص فاضي.
+- لو مش فاضي: اطبع رسالة، واعرض الملفات بـ [[git status --short]]، واخرج.
+
+جربت أعدّل ملف وأعمل ملف جديد، [[git status --porcelain]] طبع:
 
 ~~~text الناتج
-total 16
-drwxr-xr-x    1 root     root          4096 Oct  7 16:04 .
-drwxr-xr-x    1 root     root          4096 Sep 22 21:19 ..
--rw-r--r--    1 root     root           497 Sep 15 14:18 50x.html
--rwxr-xr-x    1 root     root            26 Oct  7 16:04 index.html
+ M compose.yml
+?? newfile
 ~~~
 
-[[index.html]] تاريخه دلوقتي وحجمه [[26]] (طول [[<h1>Hello v2 changed</h1>]] + سطر جديد). و [[50x.html]] تاريخه قديم لأنه جاي من [[nginx:alpine]] نفسها. لو [[index.html]] كان لسه بتاريخ قديم، المشكلة في خطوة ١ ومتكمّلش.
-
----
-
-## ٣. [[curl -sI https://example.com/ | grep -iE 'cache-control|etag|last-modified']]
-
-### [[curl -sI]]
-
-- [[-s]] (silent) من غير شريط التحميل.
-- [[-I]] اطلب الـ headers بس (طلب HEAD)، مش الصفحة.
-
-### [[grep -iE '...']]
-
-- [[-i]] مش فارق كابيتال وسمول.
-- [[-E]] regex موسّع، و [[|]] جوه معناها «أو»: هات أي سطر فيه واحدة من التلاتة.
-
-قبل التعديل وبعده:
-
-~~~text قبل
-Last-Modified: Wed, 07 Oct 2026 16:04:25 GMT
-ETag: "6ac66d89-12"
-~~~
-
-~~~text بعد
-Last-Modified: Wed, 07 Oct 2026 16:04:41 GMT
-ETag: "6ac66d99-1a"
-~~~
-
-| الـ header | معناه |
-|---|---|
-| [[Last-Modified]] | آخر تعديل للملف على السيرفر |
-| [[ETag]] | بصمة للنسخة. في nginx هي وقت التعديل والحجم بالـ hex: [[12]] = 18 بايت ([[Hello v1]])، و [[1a]] = 26 بايت |
-| [[Cache-Control]] | المتصفح يحتفظ بالنسخة قد إيه. nginx الافتراضي مبيبعتهوش، عشان كده مطلعش |
-
-الـ ETag اتغيّر = السيرفر بيرجّع الجديد. فلو المتصفح لسه بيوريك القديم، المشكلة في كاش المتصفح أو CDN، و Ctrl+Shift+R (تحميل من غير كاش) بيوريك الجديد. ومفيش أي حاجة في Docker محتاجة تتمسح. ولو لقيت [[Cache-Control: max-age=31536000]] على [[index.html]] نفسه، ده السبب: المتصفح هيحتفظ بيه سنة.
-
----
-
-## ٤. آخر حل: من الصفر، بس للمشروع ده
-
-### [[docker compose down --rmi local]]
-
-- [[down]]: وقّف وامسح الـ containers والشبكة بتاعة المشروع.
-- [[--rmi local]]: وامسح كمان الصور اللي compose **بناها** (اللي ملهاش [[image:]] في ملف compose). الصور اللي اتنزّلت زي [[redis:8-alpine]] بتفضل.
-- من غير [[-v]]، الـ volumes (البيانات) بتفضل.
+[[M]] = Modified (متعدّل)، و [[??]] = untracked (ملف جديد git مش عارفه). وتشغيل [[./deploy.sh update]] ساعتها:
 
 ~~~text الناتج
- Container teach-real04-fd-db-1 Removed
- Container teach-real04-fd-frontend-1 Removed
- Image teach-real04-fd-frontend:latest Removing
- Network teach-real04-fd_default Removing
- Image teach-real04-fd-frontend:latest Removed
- Network teach-real04-fd_default Removed
+local changes on server:
+ M compose.yml
 ~~~
 
-و [[docker images]] قبل وبعد:
+وخرج بـ 1 من غير ما يلمس حاجة.
 
-~~~text قبل ثم بعد
-teach-real04-fd-frontend:latest
-redis:8-alpine
+### [[git pull --ff-only origin main]]
 
-redis:8-alpine
-~~~
-
-صورة المشروع اتمسحت و [[redis:8-alpine]] فضلت. قارن بـ [[docker system prune]] اللي بيمسح كل container واقف وكل image مش مستخدمة على الجهاز كله، تبع أي مشروع.
-
-### [[docker compose build --no-cache]]
-
-[[--no-cache]]: متستخدمش أي طبقة من الكاش، نفّذ كل خطوة من الأول. لاحظ إن الناتج مفيهوش [[CACHED]] غير على [[FROM]] (الـ base image نفسها موجودة على الجهاز):
-
-~~~text الناتج (المهم منه)
-#6 [1/2] FROM docker.io/library/nginx:alpine@sha256:df221db8...
-#6 CACHED
-#7 [2/2] COPY site/ /usr/share/nginx/html/
- Image teach-real04-fd-frontend Built
-~~~
-
-### [[docker compose up -d]]
-
-شغّل الكل تاني:
+[[pull]] = هات الجديد من [[origin]] (الريبو على GitHub) فرع [[main]] ودمجه. و [[--ff-only]] (fast-forward only): اقبل بس لو الفرع المحلي ورا الـ origin بخطوات، فيتحرك لقدام من غير merge commit. الناتج لما نجح:
 
 ~~~text الناتج
- Container teach-real04-fd-db-1 Started
- Container teach-real04-fd-frontend-1 Started
-<h1>Hello v2 changed</h1>
+Updating 3b6f64b..220fa21
+Fast-forward
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 ~~~
+
+وجربت أعمل commit على السيرفر نفسه (زي «hotfix» بإيدك) والـ origin فيه commit تاني، فـ git رفض:
+
+~~~text الناتج
+fatal: Not possible to fast-forward, aborting.
+~~~
+
+بـ exit [[128]]، و [[set -e]] وقّف السكربت قبل [[deploy]]. يعني السيرفر مش هيعمل merge لوحده ويخلط حاجات.
+
+### [[deploy]]
+
+نداء للدالة اللي فوق. يعني update = تأكد + pull + نفس خطوات النشر.
 
 ---
 
-| المحطة | الأمر | لو لقيت القديم |
+## ٥. الـ [[case]]: مين يتشغّل
+
+~~~bash
+case "$__{1:-}" in
+  deploy)  deploy ;;
+  update)  update ;;
+  ssl)     ./scripts/init-ssl.sh ;;
+  logs)    docker compose logs -f --tail=200 $__{2:-} ;;
+  status)  docker compose ps ;;
+  restart) docker compose restart ;;
+  stop)    docker compose down ;;
+  *)       sed -n '2p' "$0" >&2; exit 1 ;;
+esac
+~~~
+
+### [[$__{1:-}]]
+
+[[$1]] أول كلمة بعد اسم السكربت. بس مع [[set -u]]، لو شغّلته من غير ولا كلمة، [[$1]] لوحدها تبقى خطأ «unbound variable». [[:-]] معناها «لو مش موجود أو فاضي، استخدم القيمة اللي بعدي»، وهنا مفيش حاجة بعدها، فالقيمة نص فاضي من غير خطأ.
+
+### شكل الـ [[case]]
+
+[[case X in]] بيقارن X بكل نمط بالترتيب: [[deploy)]] نمط، وبعده الأوامر، و [[;;]] نهاية الفرع. أول نمط يطابق بيتنفّذ والباقي لأ. و [[esac]] هي [[case]] بالمقلوب، يعني نهايتها.
+
+### [[logs)]] و [[$__{2:-}]] من غير علامات تنصيص
+
+- [[-f]] (follow): فضّل تابع اللوجات الجديدة لحد ما تدوس Ctrl+C.
+- [[--tail=200]]: ابدأ بآخر ٢٠٠ سطر بس، مش اللوج كله من أول يوم.
+- [[$__{2:-}]]: الكلمة التانية (اسم الخدمة) لو موجودة. ومن غير علامات تنصيص **عن قصد**: لو مكتوبة [["$__{2:-}"]] وانت مكتبتش اسم خدمة، compose هياخد نص فاضي كاسم خدمة. جربتها كده وطلّع [[no such service: ]] وخرج بـ 1. من غير العلامات النص الفاضي بيختفي خالص.
+
+[[./deploy.sh logs app]] طلّع (آخر سطور):
+
+~~~text الناتج
+app-1  | 127.0.0.1 - - [07/Oct/2026:14:06:49 +0000] "GET /health HTTP/1.1" 200 3 "-" "Wget" "-"
+~~~
+
+كل سطر قدامه اسم الخدمة [[app-1]]، وده طلب الـ healthcheck كل ثانيتين.
+
+### الباقي
+
+| الأمر الفرعي | بيشغّل | معناه |
 |---|---|---|
-| الـ image | [[build frontend]] (شوف [[CACHED]] على الـ COPY) | [[.dockerignore]] أو COPY غلط |
-| الـ container | [[up -d]] و [[ps]] (شوف [[Recreated]] و [[CREATED]]) | ماعملتش build، أو بيقع (شوف [[logs]]) |
-| الملفات جوه | [[exec ... ls -la]] | الـ build مجابش الملف |
-| السيرفر | [[curl -sI]] (الـ ETag) | nginx أو proxy قدامه |
-| المتصفح | Ctrl+Shift+R | كاش، شوف [[Cache-Control]] |
+| [[ssl]] | [[./scripts/init-ssl.sh]] | سكربت أول شهادة (درس init-ssl.sh) |
+| [[status]] | [[docker compose ps]] | الحالة من غير ما تغيّر حاجة |
+| [[restart]] | [[docker compose restart]] | إعادة تشغيل نفس الـ containers (مش بيبني ولا بيقرا تعديلات compose.yml) |
+| [[stop]] | [[docker compose down]] | يوقف ويمسح الـ containers والـ network (الـ volumes والداتا بتفضل) |
+
+### [[*)]]: أي حاجة تانية
+
+[[*]] بيطابق أي نص، فده الفرع الافتراضي. [[sed -n '2p' "$0"]]: [[sed]] محرر نصوص، و [[-n]] متطبعش حاجة لوحدك، و [[2p]] اطبع السطر رقم ٢ (p = print)، و [[$0]] السكربت نفسه. يعني «اطبع تعليق الاستخدام». من غير argument:
+
+~~~text الناتج
+# ./deploy.sh deploy | update | ssl | logs [service] | status | restart | stop
+~~~
+
+وexit [[1]].
+
+---
+
+## ملخص الأوامر الفرعية
+
+| الأمر | الخطوات |
+|---|---|
+| [[deploy]] | [[.env]] موجود؟ ← build والقديم شغال ← up واستنى healthy ← امسح القديم ← اعرض الحالة |
+| [[update]] | السيرفر نضيف؟ ← pull بـ fast-forward بس ← deploy |
+| [[logs [service]]] | آخر ٢٠٠ سطر وتابع |
+| من غير حاجة أو غلط | اطبع سطر الاستخدام واخرج بـ 1 |
 
 ## الخلاصة
 
-- [[up -d]] من غير build مبيغيّرش حاجة لو الكود بس اللي اتغيّر.
-- اقف عند أول محطة فيها القديم، ده السبب.
-- لو الـ ETag اتغيّر، Docker سليم والمشكلة كاش.
-- [[down --rmi local]] بيمسح صور المشروع ده بس، مش زي [[system prune]].`,
+- **build قبل up**: الموقع ميقعش وقت البناء، و [[--wait]] بيضمن إن الجديد healthy مش بس «Started».
+- [[set -euo pipefail]] + [[--ff-only]] + فحص [[git status]] = السكربت يقف ويقولك بدل ما يكمّل غلط.
+- [[$__{1:-}]] عشان [[set -u]] ميزعّقش لما متكتبش حاجة، و [[$__{2:-}]] من غير تنصيص عشان يختفي لو فاضي.`,
           lines: [
-            "ابني الخدمة دي بس بأحدث base image.",
-            "شغّلها بالـ image الجديدة.",
-            "قامت؟",
-            "آخر ٥٠ سطر من لوجها.",
-            "الملفات جوه الـ container بتاريخها.",
-            "headers الكاش من السيرفر.",
-            "وقّف وامسح صور المشروع ده بس (الـ volumes بتفضل).",
-            "ابني من غير كاش.",
-            "شغّل."
+            "أي فشل يوقف السكربت.",
+            "اشتغل من فولدر السكربت نفسه.",
+            "دالة بتتأكد إن .env موجود...",
+            "...وإلا تقول تعمله إزاي وتخرج.",
+            "نهاية الدالة.",
+            "دالة النشر:",
+            "اتأكد من .env.",
+            "ابني الـ images الجديدة، والموقع القديم لسه شغال.",
+            "بدّل واستنى لحد ما الخدمات تبقى healthy (أقصى حاجة دقيقتين).",
+            "امسح الـ images القديمة اللي ملهاش اسم.",
+            "اعرض الحالة.",
+            "نهاية الدالة.",
+            "دالة التحديث:",
+            "لو فيه تعديلات يدوية على السيرفر، اعرضها واقف.",
+            "اسحب الجديد، ولو محتاج merge ارفض.",
+            "وانشر.",
+            "نهاية الدالة.",
+            "اختار حسب أول argument.",
+            "نشر.",
+            "تحديث من git ونشر.",
+            "أول شهادة SSL (سكربت منفصل).",
+            "اللوجات، لخدمة معينة لو اتكتبت.",
+            "الحالة.",
+            "restart لكل الخدمات.",
+            "اقفل المشروع.",
+            "أي حاجة تانية: اطبع سطر الاستخدام من السكربت نفسه واخرج بفشل.",
+            "نهاية الـ case."
           ],
-          sol: R`الإجابة النموذجية إنك تقف عند أول خطوة بتفشل:
+          sol: R`جربته على مشروع compose صغير فيه healthcheck:
 
-خطوة ١: [[docker compose ps]] لازم الـ frontend يبقى [[Up]] بوقت جديد ([[Up 5 seconds]]). لو [[Restarting]] أو [[Exited]] يبقى المشكلة في البناء أو الإقلاع، واللوج هيقولك.
-خطوة ٢: [[ls -la /usr/share/nginx/html]] جوه الـ container. لو تاريخ الملفات قديم أو الـ [[index-*.js]] نفس الاسم القديم، يبقى التعديل ماوصلش للـ image: غالبًا [[COPY]] بيجيب من فولدر غلط، أو [[.dockerignore]] بيستبعد حاجة، أو مانسيتش [[--build]] بس بنيت service تانية.
-خطوة ٣: [[curl -sI]] لو [[etag]] أو [[last-modified]] اتغيّروا، يبقى السيرفر بيرجّع الجديد والمشكلة كاش المتصفح أو CDN. وهنا Ctrl+Shift+R بيوريك الجديد. ولو [[index.html]] عليه [[max-age]] طويل، ده السبب الحقيقي.
+[[./deploy.sh]] من غير argument طبع سطر الاستخدام (السطر التاني في الملف) [[# ./deploy.sh deploy | update | ssl | logs [service] | status | restart | stop]] وخرج بـ 1.
+[[./deploy.sh deploy]] بنى وشغّل واستنى الـ healthcheck، وفي الآخر [[docker compose ps]] وحالته [[Up 5 seconds (healthy)]].
+بعد ما عدّلت [[compose.yml]] على «السيرفر»، [[./deploy.sh update]] رفض وطبع [[local changes on server:]] و [[ M compose.yml]] وخرج بـ 1 من غير ما يعمل pull.
 
-خطوة ٤ نادرًا ما تحتاجها، و [[--rmi local]] بيمسح الصور اللي compose بناها للمشروع ده (اللي ملهاش اسم محدد بـ [[image:]]) بس، مش volumes ولا مشاريع تانية زي [[docker system prune]]. (الخطوات دي نفس اللي جربتها في درس Dockerfile (Vite + nginx) لما قارنت الـ Cache-Control.)`
+الرفض ده مقصود: أي تعديل بإيدك على السيرفر هيضيع أو يعمل conflict مع [[git pull]]. الصح إنك ترجّعه ([[git checkout -- file]]) أو تنقله للريبو. ولو [[deploy]] قال [[.env missing]] يبقى ده أول نشر، و [[--wait]] لو فشل يبقى الـ healthcheck مش بيعدّي، فشوف [[./deploy.sh logs app]].`
+        },
+        {
+          cmd: "update.sh",
+          title: "تحديث بيبني الأول، ولو الجديد باظ يرجع لوحده",
+          desc: "الترتيب الصح لتحديث مشروع compose: تتأكد إن السيرفر نضيف، تسحب الجديد، تبني والقديم شغال، تبدّل وتستنى الـ healthcheck. ولو الجديد مقامش، السكربت يرجع للـ commit القديم ويبنيه ويشغّله، وبيكتب كل خطوة بالوقت.",
+          example: R`#!/usr/bin/env bash
+# ./update.sh   على السيرفر، من فولدر المشروع
+set -euo pipefail
+cd "$(dirname "$0")"
+log() { echo "[$(date '+%F %T')] $*"; }
+
+[ -z "$(git status --porcelain)" ] || { log "local changes on the server, stopping"; git status --short; exit 1; }
+OLD=$(git rev-parse --short HEAD)
+git fetch -q origin main
+[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ] || { log "already on latest ($OLD)"; exit 0; }
+git merge -q --ff-only origin/main
+NEW=$(git rev-parse --short HEAD)
+
+log "building $NEW, the site is still up on $OLD"
+docker compose build
+
+if docker compose up -d --wait --wait-timeout 120; then
+  log "live on $NEW"
+  docker image prune -f >/dev/null
+else
+  log "$NEW is unhealthy, rolling back to $OLD"
+  docker compose logs --tail=50
+  git reset -q --hard "$OLD"
+  docker compose build && docker compose up -d --wait
+  exit 1
+fi`,
+          try: "على مشروع تجربة: اعمل commit بيخلّي الـ healthcheck يفشل (مثلًا غيّر مسار /health) وادفعه، وشغّل [[./update.sh >> ~/update.log 2>&1]] (اللوج برّه فولدر المشروع، لأن ملف جديد جوه الريبو بيخلّي [[git status --porcelain]] يوقف السكربت). لازم تلاقي في اللوج إنه رجع للـ commit القديم والموقع لسه شغال.",
+          flag: "script",
+          deep: {
+            why: "أسوأ لحظة في النشر: الجديد مش شغال والقديم اتمسح. السكربت ده بيضمن إن فيه دايمًا نسخة شغالة: القديم فاضل شغال طول البناء، ولو الجديد فشل بيرجع لوحده.",
+            how: R`[[git fetch]] وبعدين مقارنة [[HEAD]] بـ [[origin/main]] بيخلي السكربت يعرف لو مفيش جديد فيخرج بهدوء، ودا مهم لو شغّلته من cron أو Actions.
+
+[[git merge --ff-only]] بيمشي لقدام بس. لو السيرفر عليه commit مش موجود على GitHub، هيرفض بدل ما يعمل merge commit على السيرفر.
+
+[[docker compose build]] بيبني الـ images الجديدة والـ containers القديمة لسه شغالة. وبعدين [[up -d --wait]] بيبدّل ويستنى الـ healthcheck. لو نجح يبقى تمام، ولو فشل (أو عدّت دقيقتين) ندخل في الـ else.
+
+الرجوع: [[git reset --hard "$OLD"]] هنا آمن لأننا اتأكدنا في الأول إن مفيش تعديلات يدوية. وإعادة البناء للقديم بتبقى سريعة لأن طبقاته لسه في الكاش.
+
+وفي الآخر [[exit 1]] حتى بعد الرجوع الناجح، عشان اللي شغّل السكربت (انت أو Actions) يعرف إن التحديث فشل.
+
+و [[log]] بيحط التاريخ والوقت قبل كل رسالة، فلو وجّهت الناتج لملف تعرف كل حاجة حصلت إمتى.
+
+وخد بالك: لو التحديث فيه migration غيّرت قاعدة البيانات، الرجوع للكود القديم مش بيرجّع الداتا. خلي الـ migrations متوافقة مع النسخة اللي قبلها.`,
+            when: "أي تحديث لمشروع compose على السيرفر، بإيدك أو من Actions. ولازم الخدمات يبقى ليها healthcheck، وإلا [[--wait]] هيستنى running بس.",
+            mistakes: R`في مشروع حقيقي كان السكربت لو [[git pull]] فشل يطبع warning ويكمّل، فينشر الكود القديم ويقول «تم». وكان بيعمل [[docker-compose down]] قبل البناء فالموقع يقع طول الـ build، وبيمسح images بأسامي مكتوبة بإيده مش مطابقة لأسامي compose فالمسح عمليًا مكانش بيحصل، وبيبني بـ [[--no-cache --pull]] كل مرة (بطيء على الفاضي)، وبعدين [[sleep 5]] بدل healthcheck. وكان بيستخدم [[docker-compose]] القديم (v1).
+
+ونسخة PowerShell من نفس السكربت كانت بتحط docker و git جوه [[try/catch]]، وده مش بيمسك فشل البرامج الخارجية في PowerShell 5.1؛ لازم تبص على [[$LASTEXITCODE]] بعد كل أمر.`
+          },
+          teach: R`## الفكرة: دايمًا فيه نسخة شغالة
+
+السكربت بيعمل التحديث على ٤ مراحل: يتأكد إن السيرفر نضيف، يعرف فيه جديد ولا لأ، يبني والقديم شغال، يبدّل ويستنى الـ healthcheck. ولو الجديد مقامش، يرجع للـ commit اللي كان شغال قبله. وكل خطوة بتتكتب في اللوج بالوقت.
+
+الناتج تحت كله حقيقي: اتجرّب على أوبونتو 24.04 جوه Docker (container فيه Docker تاني عامل نفسه السيرفر)، بمشروع compose فيه خدمة [[app]] ليها healthcheck بيطلب [[/health]] كل ثانيتين، وريبو git محلي عامل نفسه GitHub.
+
+---
+
+## ١. الإعداد ودالة [[log]]
+
+~~~bash
+#!/usr/bin/env bash
+# ./update.sh   على السيرفر، من فولدر المشروع
+set -euo pipefail
+cd "$(dirname "$0")"
+log() { echo "[$(date '+%F %T')] $*"; }
+~~~
+
+أول ٣ أوامر نفس درس deploy.sh: الـ shebang، و [[set -euo pipefail]] (أي فشل يوقف، ومتغير مش متعرّف خطأ، والـ pipe يفشل لو أي حتة فيه فشلت)، و [[cd]] لفولدر السكربت.
+
+### دالة [[log]] من جوه لبرة
+
+- [[date '+%F %T']]: [[%F]] التاريخ بشكل [[2026-10-07]]، و [[%T]] الوقت [[14:09:03]].
+- [[$(...)]]: حط ناتج [[date]] مكانه.
+- [[$*]]: كل الكلام اللي اتبعت للدالة كنص واحد.
+
+فـ [[log "hello"]] بتطبع [[[2026-10-07 14:09:03] hello]]. وده مهم لأن السكربت ده غالبًا بيتوجّه لملف لوج، ومن غير الوقت مش هتعرف التحديث حصل إمتى.
+
+---
+
+## ٢. السيرفر نضيف؟
+
+~~~bash
+[ -z "$(git status --porcelain)" ] || { log "local changes on the server, stopping"; git status --short; exit 1; }
+~~~
+
+[[git status --porcelain]] بيطبع سطر لكل ملف متعدّل أو جديد، و [[-z]] نجاح لو النص فاضي. لو فيه حاجة: سجّل، اعرض الملفات، واخرج بـ 1.
+
+ليه ده مهم هنا بالذات؟ لأن الـ rollback تحت بيعمل [[git reset --hard]]، وده بيمسح أي تعديل مش متعمله commit. الفحص ده بيضمن إن مفيش حاجة تتمسح غير اللي احنا جايبينه.
+
+> فخ: لو وجّهت اللوج لملف **جوه** فولدر المشروع ([[./update.sh >> update.log]])، الملف ده نفسه هيبان في [[--porcelain]] كـ [[?? update.log]] والسكربت هيوقف على طول. عشان كده اللوج برّه: [[>> ~/update.log]].
+
+---
+
+## ٣. فيه جديد؟
+
+~~~bash
+OLD=$(git rev-parse --short HEAD)
+git fetch -q origin main
+[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ] || { log "already on latest ($OLD)"; exit 0; }
+~~~
+
+### [[OLD=$(git rev-parse --short HEAD)]]
+
+[[HEAD]] هو الـ commit اللي السيرفر واقف عليه دلوقتي. [[rev-parse]] بيحوّل اسم زي [[HEAD]] لرقم الـ commit (الـ hash)، و [[--short]] أول ٧ حروف بس ([[d45043a]]). بنحفظه في [[OLD]] لأنه «النسخة السليمة» اللي هنرجعلها لو حاجة باظت.
+
+### [[git fetch -q origin main]]
+
+[[fetch]] بيجيب الجديد من GitHub ويحطه في [[origin/main]] **من غير ما يغيّر ملفاتك**. عكس [[pull]] اللي بيجيب ويدمج. و [[-q]] (quiet) من غير كلام.
+
+### المقارنة
+
+[[!=]] يعني «مش زي». لو [[HEAD]] زي [[origin/main]] يبقى مفيش جديد، فالسكربت يخرج بـ [[exit 0]] (نجاح، مش فشل) من غير ما يبني حاجة. جربته وفيش جديد:
+
+~~~text الناتج
+[2026-10-07 14:09:03] already on latest (d45043a)
+~~~
+
+ده بيخلي تشغيله من cron كل ٥ دقايق آمن: معظم المرات هيخرج في ثانية.
+
+---
+
+## ٤. اتحرّك للجديد
+
+~~~bash
+git merge -q --ff-only origin/main
+NEW=$(git rev-parse --short HEAD)
+~~~
+
+[[merge --ff-only origin/main]]: حرّك الفرع المحلي لـ [[origin/main]] بس لو ده مجرد «مشي لقدام» (fast-forward). لو السيرفر عليه commit مش موجود على GitHub، الأمر يفشل بـ [[fatal: Not possible to fast-forward, aborting.]] و [[set -e]] يوقف كل حاجة. ([[fetch]] + [[merge --ff-only]] هما نفس [[pull --ff-only]] متقسمين اتنين، عشان نقارن في النص.)
+
+وبعدها [[NEW]] رقم الـ commit الجديد.
+
+---
+
+## ٥. ابني والقديم شغال
+
+~~~bash
+log "building $NEW, the site is still up on $OLD"
+docker compose build
+~~~
+
+البناء بيعمل image جديدة بس، والـ container القديم شغال وبيرد على الناس طول الوقت ده.
+
+---
+
+## ٦. بدّل واستنى: [[if ... then ... else]]
+
+~~~bash
+if docker compose up -d --wait --wait-timeout 120; then
+  log "live on $NEW"
+  docker image prune -f >/dev/null
+else
+  ...
+fi
+~~~
+
+[[if]] في bash بيشغّل الأمر ويبص على الـ exit code: 0 يبقى [[then]]، غير كده يبقى [[else]]. ومهم: الأمر اللي جوه شرط [[if]] لو فشل، [[set -e]] **مش** بيوقف السكربت، وده اللي يخلّينا نوصل للـ else ونرجع.
+
+[[up -d --wait --wait-timeout 120]]: بدّل الـ containers اللي اتغيرت، واستنى لحد ما تبقى healthy، وأقصى حاجة ١٢٠ ثانية.
+
+### النجاح
+
+بعد push لـ commit سليم، اللوج:
+
+~~~text الناتج
+[2026-10-07 14:09:03] building 94609c5, the site is still up on d45043a
+[2026-10-07 14:09:09] live on 94609c5
+~~~
+
+٦ ثواني بين السطرين (مشروع صغير). وبعدها [[docker image prune -f]] بيمسح الـ image القديمة اللي بقت من غير اسم.
+
+---
+
+## ٧. الفشل: الرجوع
+
+~~~bash
+else
+  log "$NEW is unhealthy, rolling back to $OLD"
+  docker compose logs --tail=50
+  git reset -q --hard "$OLD"
+  docker compose build && docker compose up -d --wait
+  exit 1
+fi
+~~~
+
+| السطر | ليه |
+|---|---|
+| [[log ... rolling back]] | يكتب في اللوج إنه فشل وراجع لأنهي نسخة |
+| [[docker compose logs --tail=50]] | آخر ٥٠ سطر من لوجات الخدمات، **قبل** ما الـ container البايظ يتمسح، عشان تعرف السبب |
+| [[git reset -q --hard "$OLD"]] | رجّع الفرع والملفات للـ commit القديم بالظبط ([[--hard]] = الملفات كمان، مش التاريخ بس) |
+| [[build && up -d --wait]] | ابني القديم (سريع لأن طبقاته في الكاش) وشغّله. [[&&]] = نفّذ التاني بس لو الأول نجح |
+| [[exit 1]] | حتى لو الرجوع نجح، التحديث نفسه فشل، فاللي شغّل السكربت لازم يعرف |
+
+### التجربة الحقيقية
+
+عملت commit بيغيّر مسار الـ healthcheck لـ [[/nope]] (مش موجود، فبيرجع 404). اللوج:
+
+~~~text الناتج
+[2026-10-07 14:09:14] building 4607707, the site is still up on 94609c5
+container myapp-app-1 is unhealthy
+[2026-10-07 14:09:24] 4607707 is unhealthy, rolling back to 94609c5
+~~~
+
+وفي النص آخر اللوجات بتاعة الـ app، وفيها السبب بوضوح:
+
+~~~text الناتج
+app-1  | 127.0.0.1 - - [07/Oct/2026:14:09:20 +0000] "GET /nope HTTP/1.1" 404 153 "-" "Wget" "-"
+~~~
+
+وفي الآخر [[Container myapp-app-1  Healthy]] (القديم رجع)، والسكربت خرج بـ [[1]]. بعدها:
+
+~~~text الناتج
+$ git log --oneline -1
+94609c5 v4
+$ docker compose ps --format "{{.Name}} {{.Status}}"
+myapp-app-1 Up 2 seconds (healthy)
+~~~
+
+### ليه خد ١٠ ثواني مش ١٢٠؟
+
+[[--wait-timeout]] حد أقصى. الـ healthcheck في التجربة: كل ثانيتين ([[interval: 2s]]) ويعتبر الـ container **unhealthy** بعد ٣ فشلات ورا بعض ([[retries: 3]]). أول ما الحالة بقت unhealthy، [[--wait]] فشل على طول من غير ما يستنى باقي الدقيقتين.
+
+---
+
+## ملخص الخطوات
+
+| # | الخطوة | لو فشلت |
+|---|---|---|
+| ١ | السيرفر نضيف؟ | يقف بـ 1 |
+| ٢ | [[fetch]] وفيه جديد؟ | مفيش جديد: يخرج بـ 0 |
+| ٣ | [[merge --ff-only]] | السيرفر عليه commit محلي: يقف |
+| ٤ | [[build]] والقديم شغال | يقف، والقديم لسه شغال |
+| ٥ | [[up --wait]] | يرجع لـ [[$OLD]] ويبنيه ويخرج بـ 1 |
+
+## الخلاصة
+
+- **[[OLD]] اتحفظ قبل أي تغيير**، وده اللي بيخلّي الرجوع ممكن.
+- الأمر جوه [[if]] بيفشل من غير ما [[set -e]] يوقف السكربت، فالـ else بيشتغل.
+- الرجوع بيرجّع **الكود** بس. لو الجديد فيه migration غيّرت قاعدة البيانات، الداتا مش بترجع.
+- الـ origin لسه عليه الـ commit البايظ، فالتشغيل الجاي هيجرّبه تاني لحد ما تصلّحه وتعمل push.`,
+          lines: [
+            "أي فشل يوقف السكربت.",
+            "اشتغل من فولدر المشروع.",
+            "دالة بتطبع الرسالة ومعاها التاريخ والوقت.",
+            "لو فيه تعديلات يدوية على السيرفر، اقف.",
+            "احفظ الـ commit الحالي عشان نرجعله لو احتجنا.",
+            "هات آخر حاجة من GitHub من غير ما تغيّر الملفات.",
+            "لو احنا أصلًا على آخر نسخة، اخرج بهدوء.",
+            "امشي لقدام للجديد (ومن غير merge).",
+            "احفظ الـ commit الجديد.",
+            "رسالة.",
+            "ابني، والقديم لسه شغال.",
+            "بدّل واستنى الـ healthcheck. لو نجح...",
+            "...قول إنه شغال...",
+            "...ونضّف الـ images القديمة.",
+            "لو فشل...",
+            "...قول هيرجع لأنهي نسخة.",
+            "...اطبع آخر اللوجات عشان تعرف السبب.",
+            "...ارجع للكود القديم.",
+            "...ابنيه وشغّله.",
+            "...واخرج بفشل عشان اللي شغّله يعرف.",
+            "نهاية الـ if."
+          ],
+          sol: R`جربتها: ريبو origin محلي، وcommit بيغيّر مسار الـ healthcheck لملف مش موجود. [[./update.sh >> ../update.log 2>&1]] رجّع exit [[1]]، واللوج فيه:
+
+[[[2026-09-30 07:58:15] building b8fec57, the site is still up on a2f374e]]
+[[container upd-app-1 is unhealthy]]
+[[[2026-09-30 07:58:35] b8fec57 is unhealthy, rolling back to a2f374e]]
+
+وبعدها [[git log -1]] رجع [[a2f374e]] و [[docker compose ps]] بيقول [[(healthy)]]. يعني الموقع رجع للنسخة السليمة لوحده.
+
+لقيت فخ في التجربة نفسها: لو اللوج جوه فولدر المشروع ([[>> update.log]])، [[git status --porcelain]] بيشوف [[update.log]] كملف جديد فالسكربت بيقف على طول بـ [[local changes on the server, stopping]]. عشان كده الـ try بقى يكتب اللوج برّه المشروع ([[~/update.log]])، أو ضيف [[update.log]] لـ [[.gitignore]]. وخد بالك إن بعد الـ rollback الـ origin لسه عليه الـ commit البايظ، فالتشغيل الجاي هيجرّبه تاني لحد ما تصلّحه وتعمل push.`
+        },
+        {
+          cmd: "deploy-run.sh",
+          title: "نشر container واحد من غير compose",
+          desc: "لما المشروع container واحد، ممكن تنشره بـ [[docker build]] و [[docker run]] مباشرة. السكربت ده بيوريك اللي compose بيعمله من ورا الستارة: يحتفظ بالـ image القديمة باسم previous، يبني والموقع شغال، يبدّل، يستنى الـ health، ولو فشل يرجع للقديمة.",
+          example: R`#!/usr/bin/env bash
+set -euo pipefail
+NAME=myapp
+[ -f .env ] || { echo ".env missing" >&2; exit 1; }
+set -a; . ./.env; set +a
+run() { docker run -d --name "$NAME" -p 127.0.0.1:3000:3000 --env-file .env --restart unless-stopped "$1"; }
+healthy() { for i in $(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:3000/api/health && return 0; sleep 2; done; return 1; }
+
+docker image inspect "$NAME:latest" >/dev/null 2>&1 && docker tag "$NAME:latest" "$NAME:previous"
+docker build --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" -t "$NAME:latest" .
+
+docker rm -f "$NAME" 2>/dev/null || true
+run "$NAME:latest"
+
+if healthy; then
+  echo "live"; docker logs --tail 20 "$NAME"
+else
+  echo "new image is unhealthy, back to previous" >&2
+  docker logs --tail 50 "$NAME"
+  docker rm -f "$NAME"; run "$NAME:previous"
+  exit 1
+fi`,
+          try: "شغّله مرتين على سيرفر التجربة، وبعدين [[docker images myapp]]: لازم تلاقي latest و previous. بعدها بوّظ مسار /api/health في الكود وشغّله تالت: لازم يرجع للـ previous لوحده.",
+          flag: "script",
+          deep: {
+            why: "مش كل مشروع محتاج compose. ولو فهمت الخطوات دي بإيدك، هتفهم compose بيعمل إيه، وهتعرف تصلّح لما حاجة تقف في النص.",
+            how: R`[[set -a]] بيخلي أي متغير يتعرّف بعده يبقى export تلقائي، و [[. ./.env]] بيقرا الملف كأنه سكربت، و [[set +a]] بيقفل الوضع ده. كده متغيرات .env بقت متاحة للسكربت (محتاجينها للـ build-arg). وده أسلم من [[export $(cat .env | xargs)]] بس القيم اللي فيها مسافات لازم تبقى جوه علامات تنصيص في .env.
+
+وخد بالك من فرق مهم: [[docker run --env-file]] بياخد القيم حرفيًا بعلامات التنصيص لو موجودة، عكس compose اللي بيشيلها. فلو .env فيه [[KEY="abc"]] التطبيق هيشوف القيمة بالعلامات.
+
+[[docker tag latest previous]] قبل البناء بيحفظ النسخة الشغالة باسم تاني، فالبناء الجديد ميمسحهاش. وده الـ rollback بتاعك.
+
+[[-p 127.0.0.1:3000:3000]] بيفتح البورت على السيرفر نفسه بس، و Nginx اللي على السيرفر هو اللي يوصله. من غير [[127.0.0.1]] البورت بيبقى مفتوح للعالم حتى لو ufw قافله.
+
+[[healthy]] بيحاول ٣٠ مرة كل ثانيتين. [[curl -f]] بيفشل لو الرد مش 2xx.
+
+وفيه ثواني downtime بين [[rm -f]] و [[run]]، لأن اتنين containers مينفعش ياخدوا نفس البورت. لو محتاج صفر downtime، شغّل الجديد على بورت تاني وبدّل في Nginx (درس blue-green في تاب Nginx).`,
+            when: "مشروع container واحد وراه Nginx على السيرفر. ولو عندك قاعدة بيانات أو أكتر من خدمة، compose أسهل.",
+            mistakes: "في مشروع حقيقي كان السكربت بيمسح الـ image القديمة قبل البناء، فلو البناء فشل مفيش حاجة ترجعلها. وكان بيوقف الـ container قبل البناء، فالموقع يقع طول مدة الـ build. وكان بيطبع قيم متغيرات قاعدة البيانات ومفاتيح الدفع على الشاشة (وبالتالي في لوجات الـ CI) عشان «يتأكد إنها موجودة»؛ اطبع الأسماء بس. وكان بيبعت أسرار السيرفر كـ [[--build-arg]]، فبتتحفظ جوه الـ image وتبان في [[docker history]]. والصح إن [[NEXT_PUBLIC_*]] بس هي اللي تتبعت وقت البناء، والباقي وقت التشغيل بـ [[--env-file]]. و [[sleep 5]] مكان health check."
+          },
+          teach: R`## الفكرة: نفس شغل compose، بس بإيدك
+
+السكربت بينشر container واحد بأوامر Docker العادية: يحفظ الـ image الشغالة باسم [[previous]]، يبني الجديدة باسم [[latest]]، يبدّل الـ container، ويسأل [[/api/health]] لحد ما يرد. ولو مردش، يرجّع [[previous]].
+
+جربته على أوبونتو 24.04 جوه Docker (container فيه Docker تاني عامل نفسه السيرفر)، بـ image صغيرة مبنية على [[nginx:alpine]] بتسمع على 3000 وفيها ملف [[api/health]].
+
+---
+
+## ١. الإعداد وقراية [[.env]]
+
+~~~bash
+#!/usr/bin/env bash
+set -euo pipefail
+NAME=myapp
+[ -f .env ] || { echo ".env missing" >&2; exit 1; }
+set -a; . ./.env; set +a
+~~~
+
+- [[set -euo pipefail]]: أي فشل يوقف، والمتغير المش متعرّف خطأ، والـ pipe بيفشل لو أي جزء فيه فشل.
+- [[NAME=myapp]]: اسم واحد هنستخدمه للـ container وللـ image. في bash مفيش مسافات حوالين [[=]].
+- [[[ -f .env ] || {...}]]: لو الملف مش موجود اطبع على stderr ([[>&2]]) واخرج بـ 1.
+
+### [[set -a; . ./.env; set +a]]
+
+٣ أوامر على سطر واحد، و [[;]] بتفصل بينهم:
+
+| الأمر | معناه |
+|---|---|
+| [[set -a]] | a = allexport: أي متغير يتعرّف من دلوقتي يبقى [[export]] لوحده |
+| [[. ./.env]] | النقطة = [[source]]: نفّذ الملف ده جوه الـ shell الحالي، فكل سطر [[KEY=value]] فيه بيتعرّف كمتغير |
+| [[set +a]] | اقفل الوضع ده (الـ [[+]] بيقفل، والـ [[-]] بيفتح) |
+
+ليه؟ لأن السكربت محتاج [[$NEXT_PUBLIC_API_URL]] تحت في [[docker build]]. ملف [[.env]] في التجربة:
+
+~~~text .env
+NEXT_PUBLIC_API_URL=https://api.example.com
+DB_PASSWORD="s3cret"
+~~~
+
+---
+
+## ٢. دالتين مساعدتين
+
+### [[run]]: شغّل container
+
+~~~bash
+run() { docker run -d --name "$NAME" -p 127.0.0.1:3000:3000 --env-file .env --restart unless-stopped "$1"; }
+~~~
+
+| الجزء | معناه |
+|---|---|
+| [[docker run -d]] | شغّل container في الخلفية (detached) |
+| [[--name "$NAME"]] | سمّيه [[myapp]]، فنقدر نشيله بالاسم بعدين |
+| [[-p 127.0.0.1:3000:3000]] | بورت السيرفر:بورت الـ container. و [[127.0.0.1]] = السيرفر نفسه بس، فـ Nginx يوصله والإنترنت لأ |
+| [[--env-file .env]] | كل سطر في [[.env]] يبقى متغير بيئة جوه الـ container |
+| [[--restart unless-stopped]] | لو وقع أو السيرفر عمل reboot يقوم لوحده، إلا لو انت وقفته بإيدك |
+| [[$1]] | أول حاجة اتبعتت للدالة: اسم الـ image ([[myapp:latest]] أو [[myapp:previous]]) |
+
+وفيه فرق مهم اتأكدت منه: [[--env-file]] بياخد القيمة **بعلامات التنصيص**. بعد التشغيل:
+
+~~~text الناتج
+$ docker exec myapp printenv DB_PASSWORD
+"s3cret"
+~~~
+
+العلامات بقت جزء من الباسورد! فالـ [[.env]] اللي هيتقري بـ [[--env-file]] يتكتب من غير علامات (compose بيشيلها، [[docker run]] لأ). بس [[. ./.env]] فوق محتاج علامات لو القيمة فيها مسافة، فخلّي القيم من غير مسافات.
+
+### [[healthy]]: استنى لحد ما يرد
+
+~~~bash
+healthy() { for i in $(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:3000/api/health && return 0; sleep 2; done; return 1; }
+~~~
+
+- [[seq 1 30]]: بيطبع الأرقام من ١ لـ ٣٠، فاللوب بيلف ٣٠ مرة.
+- [[curl -fsS -o /dev/null URL]]: [[-f]] افشل لو الرد 400 أو أكتر، [[-s]] من غير progress، [[-S]] بس اطبع الخطأ لو حصل، [[-o /dev/null]] ارمي محتوى الرد.
+- [[&& return 0]]: لو curl نجح اخرج من الدالة بنجاح على طول.
+- [[sleep 2]]: وإلا استنى ثانيتين وجرّب تاني.
+- [[return 1]]: لو الـ ٣٠ محاولة خلصوا، فشل.
+
+يعني أقصى انتظار حوالي دقيقة (٣٠ × ٢ ثانية). وأول محاولة غالبًا بتفشل لأن الـ container لسه بيقوم:
+
+~~~text الناتج
+curl: (56) Recv failure: Connection reset by peer
+~~~
+
+ده عادي، المحاولة اللي بعدها نجحت.
+
+---
+
+## ٣. احفظ القديمة وابني الجديدة
+
+~~~bash
+docker image inspect "$NAME:latest" >/dev/null 2>&1 && docker tag "$NAME:latest" "$NAME:previous"
+docker build --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" -t "$NAME:latest" .
+~~~
+
+### السطر الأول
+
+- [[docker image inspect myapp:latest]]: بيطبع معلومات الـ image لو موجودة، ويفشل لو مش موجودة. هنا بنستخدمه كسؤال «موجودة؟» بس، فبنرمي الناتج والأخطاء: [[>/dev/null]] (stdout) و [[2>&1]] (ابعت stderr لنفس المكان).
+- [[&& docker tag latest previous]]: لو موجودة، اديها اسم تاني [[previous]]. الـ tag مش نسخة، ده اسم زيادة لنفس الـ image.
+
+في أول نشر خالص مفيش [[latest]]، فـ [[inspect]] بيفشل والـ tag مش بيحصل. وفشل أول أمر في [[a && b]] مش بيوقف السكربت مع [[set -e]] (bash بيعتبره شرط).
+
+### [[docker build]]
+
+- [[--build-arg NAME=value]]: قيمة بتتبعت للـ Dockerfile وقت البناء (الـ Dockerfile لازم فيه [[ARG NEXT_PUBLIC_API_URL]]). متغيرات [[NEXT_PUBLIC_*]] في Next.js بتتحط جوه كود المتصفح وقت البناء، فلازم تتبعت هنا. الأسرار لأ: الـ build-arg بيبان في [[docker history]].
+- [[-t myapp:latest]]: سمّي الناتج. الاسم [[latest]] بيتنقل للـ image الجديدة، والقديمة لسه ماسكة اسم [[previous]].
+- [[.]]: الـ build context، يعني الفولدر الحالي.
+
+بعد تشغيلين:
+
+~~~text الناتج
+$ docker images myapp --format "{{.Repository}}:{{.Tag}} {{.ID}}"
+myapp:latest 5a98954ff113
+myapp:previous 95b1f1527ad5
+~~~
+
+ID مختلف لكل واحدة: دول فعلًا two images.
+
+---
+
+## ٤. بدّل الـ container
+
+~~~bash
+docker rm -f "$NAME" 2>/dev/null || true
+run "$NAME:latest"
+~~~
+
+- [[docker rm -f]]: [[-f]] = وقّف وامسح حتى لو شغال. بيطبع اسم الـ container ([[myapp]]) لما ينجح.
+- [[2>/dev/null || true]]: في أول نشر مفيش container، فـ [[rm]] بيفشل. بنرمي رسالة الخطأ، و [[|| true]] بيخلي السطر ينجح عشان [[set -e]] ميوقفش.
+- [[run "$NAME:latest"]]: شغّل الجديد. [[docker run -d]] بيطبع الـ ID الطويل بتاع الـ container الجديد.
+
+بين السطرين دول الموقع واقف ثواني (مفيش حد بيسمع على 3000). مينفعش تشغّل الجديد الأول لأن اتنين containers مش هياخدوا نفس البورت.
+
+---
+
+## ٥. اتأكد، وإلا ارجع
+
+~~~bash
+if healthy; then
+  echo "live"; docker logs --tail 20 "$NAME"
+else
+  echo "new image is unhealthy, back to previous" >&2
+  docker logs --tail 50 "$NAME"
+  docker rm -f "$NAME"; run "$NAME:previous"
+  exit 1
+fi
+~~~
+
+### النجاح
+
+[[live]] وبعدها آخر ٢٠ سطر من لوج الـ container ([[docker logs --tail 20]])، وآخرهم كان طلب الـ health:
+
+~~~text الناتج
+live
+...
+172.17.0.1 - - [07/Oct/2026:14:10:49 +0000] "GET /api/health HTTP/1.1" 200 3 "-" "curl/8.5.0" "-"
+~~~
+
+[[172.17.0.1]] هو السيرفر نفسه من وجهة نظر الـ container (بوابة شبكة Docker الافتراضية).
+
+### الفشل
+
+مسحت [[api/health]] من الـ image وشغّلت تالت مرة. الـ ٣٠ محاولة كلهم طلّعوا:
+
+~~~text الناتج
+curl: (22) The requested URL returned error: 404
+~~~
+
+و [[(22)]] ده كود خطأ curl لما [[-f]] يلاقي رد 400 أو أكتر. بعدها:
+
+~~~text الناتج
+new image is unhealthy, back to previous
+~~~
+
+والسكربت خد ٦٦ ثانية وخرج بـ [[1]]. والحالة بعدها:
+
+~~~text الناتج
+$ docker ps --format "{{.Names}} {{.Image}} {{.Status}}"
+myapp myapp:previous Up Less than a second
+$ curl -s -o /dev/null -w "%{http_code}\n" 127.0.0.1:3000/api/health
+200
+~~~
+
+الموقع رجع على [[previous]].
+
+---
+
+## ملخص الخطوات
+
+| # | الخطوة | الأمر |
+|---|---|---|
+| ١ | اقرا [[.env]] | [[set -a; . ./.env; set +a]] |
+| ٢ | احفظ الشغالة | [[docker tag latest previous]] |
+| ٣ | ابني | [[docker build -t latest]] |
+| ٤ | بدّل | [[docker rm -f]] ثم [[docker run]] |
+| ٥ | استنى الـ health | ٣٠ × [[curl -f]] كل ثانيتين |
+| ٦ | فشل؟ | [[docker run previous]] و [[exit 1]] |
+
+## الخلاصة
+
+- الـ rollback هنا مجرد **اسم تاني** ([[previous]]) لنفس الـ image القديمة.
+- بعد rollback، [[latest]] هي البايظة. لو شغّلت السكربت تاني من غير ما تصلّح، هيعمل tag للبايظة كـ [[previous]].
+- [[--env-file]] بياخد علامات التنصيص حرفيًا، و [[--build-arg]] للقيم العامة بس.`,
+          lines: [
+            "أي فشل يوقف السكربت.",
+            "اسم الـ container والـ image.",
+            "لو .env مش موجود اقف.",
+            "اقرا .env وخلي كل متغيراته export، وبعدين اقفل الوضع ده.",
+            "دالة بتشغّل الـ container بالـ image اللي تديهالها: على localhost بس، بمتغيرات .env، ويقوم لوحده بعد reboot.",
+            "دالة بتحاول ٣٠ مرة كل ثانيتين لحد ما [[/api/health]] يرد بنجاح.",
+            "لو فيه latest، احفظها باسم previous.",
+            "ابني الجديدة، والمتغيرات العامة بس كـ build-arg.",
+            "شيل الـ container القديم (ومن غير خطأ لو مش موجود).",
+            "شغّل الجديد.",
+            "لو قام...",
+            "...قول واعرض آخر اللوجات.",
+            "لو مقامش...",
+            "...قول هيرجع.",
+            "...اعرض اللوجات عشان تعرف ليه.",
+            "...شيل الجديد وشغّل previous.",
+            "...واخرج بفشل.",
+            "نهاية الـ if."
+          ],
+          sol: R`جربتها بـ image صغيرة بترد على [[/api/health]]. أول تشغيلين طبعوا [[live]]، و [[docker images myapp]] فيها [[latest]] و [[previous]] (IDs مختلفة). بعد ما مسحت الـ health من الكود، التشغيل التالت استنى حوالي دقيقة (٣٠ محاولة كل ثانيتين) وطبع [[new image is unhealthy, back to previous]] وخرج بـ 1، و [[docker ps]] بيوريك [[myapp:previous]] شغال، و [[curl /api/health]] رجّع [[200]].
+
+فيه نقطة ضعف لازم تعرفها: بعد النشر الفاشل، [[myapp:latest]] بقى هو الـ image البايظة. لو شغّلت السكربت تاني من غير ما تصلّح، أول سطر هيعمل tag للبايظة كـ [[previous]] ويضيع السليمة. فبعد أي rollback صلّح الكود الأول، أو اعمل [[docker tag myapp:previous myapp:good]] كنسخة احتياطية.
+
+ولو [[docker run]] نفسه فشل (بورت مشغول أو أمر غلط في الـ image)، [[set -e]] بيوقف السكربت قبل الـ rollback والموقع يفضل واقف. ساعتها شغّل [[previous]] بإيدك.`
+        },
+        {
+          cmd: "deploy-static.sh",
+          title: "نشر موقع Vite ثابت على السيرفر من جهازك",
+          desc: "أبسط نشر لفرونت React أو Vite: تبني على جهازك، ترفع dist لفولدر جديد على السيرفر، وتحوّل رابط [[current]] عليه. Nginx بيقدّم من [[current]]، فالتبديل لحظي، والنسخ القديمة موجودة لو احتجت ترجع.",
+          example: R`#!/usr/bin/env bash
+# من جهازك، جوه فولدر الفرونت
+set -euo pipefail
+SERVER=deploy@203.0.113.10
+SITE=/var/www/example.com
+REL=$(date +%Y%m%d-%H%M%S)
+
+npm ci
+npm run build
+test -f dist/index.html
+
+ssh "$SERVER" "mkdir -p $SITE/releases/$REL"
+rsync -az --chmod=D755,F644 dist/ "$SERVER:$SITE/releases/$REL/"
+ssh "$SERVER" "ln -sfn $SITE/releases/$REL $SITE/current"
+ssh "$SERVER" "ls -1dt $SITE/releases/*/ | tail -n +6 | xargs -r rm -rf"
+curl -fsS -o /dev/null -w '%{http_code} https://example.com/\n' https://example.com/`,
+          try: "على سيرفر التجربة: [[sudo install -d -o deploy /var/www/example.com]]، وخلي [[root]] في Nginx يشاور على [[/var/www/example.com/current]]. انشر مرتين، وبعدين ارجع للنسخة الأولانية بـ [[ln -sfn]] على فولدرها واعمل refresh.",
+          flag: "script",
+          deep: {
+            why: "موقع static مش محتاج Docker ولا build على السيرفر. بس النسخ اليدوي بيسيب ملفات قديمة، ومفيهوش رجوع. الطريقة دي بتحل الاتنين.",
+            how: R`كل نشر في فولدر جديد باسم الوقت جوه [[releases]]، و [[current]] مجرد symlink بيشاور على واحد منهم. [[ln -sfn]]: [[-s]] رابط، و [[-f]] استبدل الموجود، و [[-n]] اعتبر الرابط القديم ملف ومتدخلش جواه. والرجوع = نفس الأمر على فولدر أقدم.
+
+[[rsync -az]] بيرفع بالضغط وبيحافظ على الملفات، و [[--chmod=D755,F644]] بيظبط الصلاحيات: الفولدرات 755 والملفات 644. Nginx (يوزر www-data) محتاج يقرا بس، فمش محتاج [[chown www-data]] طالما الملفات مقروءة للكل.
+
+[[test -f dist/index.html]] بيتأكد إن البناء طلّع حاجة فعلًا قبل ما ترفع فولدر فاضي.
+
+التنضيف: [[ls -1dt]] بيرتّب الفولدرات من الأحدث، و [[tail -n +6]] بياخد من السادس وانت نازل، يعني بيسيب آخر ٥ نسخ.
+
+ومش محتاج reload لـ Nginx: الملفات بتتقري من الديسك مع كل طلب، والـ reload لازم بس لو غيّرت إعدادات Nginx نفسها. اللي محتاج تظبطه في Nginx مرة واحدة: [[index.html]] بـ [[Cache-Control: no-cache]] والـ assets اللي في اسمها hash بكاش سنة (درس «كاش الملفات الثابتة» في تاب Nginx)، وده اللي بيخلي الناس تشوف الجديد من غير Ctrl+F5.
+
+على ويندوز rsync مش موجود في Git Bash، شغّل السكربت من WSL.`,
+            when: "مواقع Vite أو React أو أي static site على VPS فيه Nginx. ولو عايزها أوتوماتيك، نفس الخطوات تتحط في GitHub Actions.",
+            mistakes: "في مشروع حقيقي كان النشر [[scp -r dist/* root@...]]: الدخول بـ root، و [[*]] مش بتنقل الملفات المخفية، ومفيش مسح للقديم، فالفولدر بيكبر للأبد بملفات assets قديمة. وكان فيه خطوة [[chmod -R 755]] على كل حاجة، فكل الملفات بقت executable، والصح 644 للملفات و 755 للفولدرات. وكان بيمسح [[/var/cache/nginx/*]] عشان «يحل مشكلة الكاش»، وده ملوش لازمة من غير proxy_cache؛ المشكلة الحقيقية كانت في هيدرز index.html. ومكانش فيه أي نسخة ترجعلها لو البناء الجديد بايظ."
+          },
+          teach: R`## الفكرة: كل نشر في فولدر لوحده، و [[current]] بيشاور على واحد
+
+على السيرفر الشكل بيبقى كده:
+
+~~~text
+/var/www/example.com/
+  releases/
+    20261007-141455/     نسخة قديمة
+    20261007-141505/     آخر نسخة
+  current -> releases/20261007-141505
+~~~
+
+Nginx بيقدّم من [[current]]، و [[current]] مجرد **symlink** (اختصار بيشاور على فولدر تاني). النشر = ارفع فولدر جديد وحوّل السهم. الرجوع = حوّل السهم لفولدر أقدم.
+
+جربت السكربت كامل: «جهازك» container من [[node:22-slim]]، و «السيرفر» container أوبونتو 24.04 فيه [[sshd]] و [[nginx]] ويوزر [[deploy]]، الاتنين على شبكة Docker خاصة. غيّرت بس [[SERVER=deploy@srv]] و الـ curl الأخير لـ [[http://srv/]] لأن مفيش دومين حقيقي ولا https في التجربة.
+
+---
+
+## ١. المتغيرات
+
+~~~bash
+set -euo pipefail
+SERVER=deploy@203.0.113.10
+SITE=/var/www/example.com
+REL=$(date +%Y%m%d-%H%M%S)
+~~~
+
+- [[set -euo pipefail]]: أي أمر يفشل يوقف السكربت (مهم جدًا هنا: منرفعش build بايظ).
+- [[SERVER]]: بشكل [[user@host]]، اليوزر [[deploy]] على السيرفر. ([[203.0.113.10]] عنوان مخصوص للأمثلة في الـ docs، مش سيرفر حقيقي.)
+- [[SITE]]: فولدر الموقع على السيرفر.
+- [[REL]]: اسم النسخة. [[%Y%m%d]] سنة وشهر ويوم، و [[%H%M%S]] ساعة ودقيقة وثانية، فيطلع زي [[20261007-141455]]. والأسامي دي بتترتّب أبجديًا بنفس ترتيب الوقت.
+
+---
+
+## ٢. ابني على جهازك
+
+~~~bash
+npm ci
+npm run build
+test -f dist/index.html
+~~~
+
+- [[npm ci]]: ci = clean install. بيمسح [[node_modules]] ويسطّب **بالظبط** النسخ اللي في [[package-lock.json]]، ويفشل لو الـ lockfile مش متوافق مع [[package.json]]. ده الصح للبناء، عكس [[npm install]] اللي ممكن يحدّث الـ lockfile.
+- [[npm run build]]: بيشغّل سكربت [[build]] من [[package.json]] (في Vite: [[vite build]])، والناتج في [[dist/]].
+- [[test -f dist/index.html]]: نفس [[[ -f ... ]]]، بيسأل «الملف موجود؟». لو البناء طلّع فولدر فاضي، [[test]] بيرجع 1 و [[set -e]] بيوقف قبل ما نرفع حاجة. جربت build بيعمل [[dist]] فاضي، و [[test]] رجّع [[1]].
+
+---
+
+## ٣. ارفع لفولدر جديد
+
+~~~bash
+ssh "$SERVER" "mkdir -p $SITE/releases/$REL"
+rsync -az --chmod=D755,F644 dist/ "$SERVER:$SITE/releases/$REL/"
+~~~
+
+### [[ssh SERVER "command"]]
+
+[[ssh]] بيدخل السيرفر، ولو كتبت بعده أمر بين علامات تنصيص، بينفّذه هناك ويرجع. والمتغيرات [[$SITE]] و [[$REL]] بتتفك **على جهازك** قبل ما الأمر يتبعت (علامات تنصيص مزدوجة)، فالسيرفر بيستلم [[mkdir -p /var/www/example.com/releases/20261007-141455]]. و [[mkdir -p]] بيعمل الفولدرات اللي في النص لو مش موجودة، ومبيزعّقش لو موجودة.
+
+### [[rsync]]
+
+بينسخ ملفات من جهاز لجهاز فوق ssh:
+
+| الجزء | معناه |
+|---|---|
+| [[-a]] | archive: لف على الفولدرات كلها، وحافظ على الـ symlinks والتواريخ |
+| [[-z]] | اضغط البيانات وهي رايحة (أسرع على نت بطيء) |
+| [[--chmod=D755,F644]] | D = الفولدرات [[755]]، و F = الملفات [[644]] |
+| [[dist/]] | الـ [[/]] في الآخر مهمة: انسخ **محتوى** dist، مش فولدر اسمه dist |
+| [[SERVER:PATH]] | النقطتين معناها «المسار ده على الجهاز التاني» |
+
+الأرقام [[755]] و [[644]]: كل رقم لصنف (صاحب الملف، الجروب، الباقي)، و ٤ = قراية، ٢ = كتابة، ١ = تنفيذ (وللفولدر يعني تدخله). يعني الفولدرات: صاحبها كله والباقي يقرا ويدخل. والملفات: صاحبها يقرا ويكتب والباقي يقرا. Nginx من «الباقي» فبيقرا عادي. على السيرفر بعد الرفع:
+
+~~~text الناتج
+drwxr-xr-x 3 deploy deploy 4096 Oct  7 14:14 .
+-rw-r--r-- 1 deploy deploy    1 Oct  7 14:14 .well-known
+drwxr-xr-x 2 deploy deploy 4096 Oct  7 14:14 assets
+-rw-r--r-- 1 deploy deploy   40 Oct  7 14:14 index.html
+~~~
+
+[[drwxr-xr-x]] = 755 و [[-rw-r--r--]] = 644. ولاحظ إن الملف المخفي [[.well-known]] اتنقل كمان (عكس [[scp dist/*]]).
+
+---
+
+## ٤. حوّل السهم
+
+~~~bash
+ssh "$SERVER" "ln -sfn $SITE/releases/$REL $SITE/current"
+~~~
+
+[[ln]] بيعمل link، و [[ln -s TARGET NAME]] بيعمل symlink اسمه NAME بيشاور على TARGET:
+
+| الحرف | معناه |
+|---|---|
+| [[-s]] | symbolic link (مش hard link) |
+| [[-f]] | force: لو فيه حاجة بنفس الاسم، استبدلها |
+| [[-n]] | لو [[current]] نفسه symlink لفولدر، اتعامل معاه كملف ومتدخلش جواه |
+
+[[-n]] مش رفاهية. جربت من غيرها ([[ln -sf]] بس): [[current]] فضل بيشاور على النسخة القديمة، واتعمل link جديد **جوه** الفولدر القديم اسمه [[20261007-141505]]. يعني النشر «نجح» والموقع متغيّرش.
+
+بعد النشر:
+
+~~~text الناتج
+$ ls -l /var/www/example.com
+lrwxrwxrwx 1 deploy deploy   45 Oct  7 14:15 current -> /var/www/example.com/releases/20261007-141505
+drwxrwxr-x 7 deploy deploy 4096 Oct  7 14:15 releases
+~~~
+
+أول حرف [[l]] يعني link، والسهم بيقول بيشاور على إيه. والتبديل ده لحظي: الطلب اللي جاي بعده على طول بيقرا من الفولدر الجديد، و Nginx مش محتاج reload لأنه بيفتح الملفات مع كل طلب.
+
+---
+
+## ٥. امسح النسخ القديمة
+
+~~~bash
+ssh "$SERVER" "ls -1dt $SITE/releases/*/ | tail -n +6 | xargs -r rm -rf"
+~~~
+
+من الشمال لليمين (ده كله بيتنفّذ على السيرفر):
+
+1. [[ls -1dt releases/*/]]: [[-1]] اسم في كل سطر، و [[-d]] اعرض الفولدر نفسه مش اللي جواه، و [[-t]] رتّب بالوقت، الأحدث الأول. و [[*/]] الفولدرات بس.
+2. [[tail -n +6]]: اطبع من السطر **السادس** لحد الآخر. يعني كل حاجة ما عدا أول ٥ (الأحدث).
+3. [[xargs -r rm -rf]]: [[xargs]] بياخد السطور اللي جاياله ويحطها arguments لـ [[rm -rf]]. و [[-r]] لو مفيش سطور متشغّلش [[rm]] خالص.
+
+نشرت ٧ مرات ورا بعض، وفضل ٥:
+
+~~~text الناتج
+$ ls -1 /var/www/example.com/releases
+20261007-141455
+20261007-141457
+20261007-141500
+20261007-141503
+20261007-141505
+~~~
+
+---
+
+## ٦. اتأكد إن الموقع بيرد
+
+~~~bash
+curl -fsS -o /dev/null -w '%{http_code} https://example.com/\n' https://example.com/
+~~~
+
+- [[-f]]: افشل لو الرد 400 أو أكتر، فـ [[set -e]] يخلّي السكربت كله يفشل.
+- [[-sS]]: من غير progress، بس اطبع الأخطاء.
+- [[-o /dev/null]]: ارمي الصفحة.
+- [[-w '...']]: write-out: اطبع بعد ما تخلص. [[%{http_code}]] كود الرد، والباقي نص عادي.
+
+في التجربة طلّع:
+
+~~~text الناتج
+200 http://srv/
+~~~
+
+---
+
+## الرجوع لنسخة قديمة
+
+نفس أمر الخطوة ٤ على فولدر أقدم:
+
+~~~bash
+ssh deploy@203.0.113.10 "ln -sfn /var/www/example.com/releases/20261007-141455 /var/www/example.com/current"
+~~~
+
+جربته، والصفحة رجعت للنسخة القديمة على طول:
+
+~~~text الناتج
+<h1>build 2026-10-07T14:14:55.775Z</h1>
+~~~
+
+---
+
+## ملخص
+
+| # | الخطوة | فين |
+|---|---|---|
+| ١ | [[npm ci]] و [[npm run build]] و [[test -f]] | جهازك |
+| ٢ | [[mkdir -p releases/REL]] | السيرفر |
+| ٣ | [[rsync]] الملفات بصلاحيات 755 و 644 | من جهازك للسيرفر |
+| ٤ | [[ln -sfn]] يحوّل [[current]] | السيرفر |
+| ٥ | امسح كل حاجة بعد آخر ٥ | السيرفر |
+| ٦ | [[curl -f]] | جهازك |
+
+على ويندوز: [[rsync]] مش موجود في Git Bash، فشغّل السكربت من WSL.
+
+## الخلاصة
+
+- النشر = فولدر جديد + تحويل symlink، فمفيش لحظة الموقع فيها نص قديم ونص جديد.
+- [[-n]] في [[ln -sfn]] هي اللي بتخلّي التحويل يحصل فعلًا.
+- [[dist/]] بالـ [[/]] في الآخر = المحتوى، والملفات المخفية بتتنقل.`,
+          lines: [
+            "أي فشل يوقف السكربت.",
+            "السيرفر.",
+            "فولدر الموقع.",
+            "اسم النسخة: التاريخ والوقت.",
+            "سطّب المكتبات بالظبط زي الـ lockfile.",
+            "ابني.",
+            "اتأكد إن البناء طلّع index.html.",
+            "اعمل فولدر النسخة الجديدة على السيرفر.",
+            "ارفع dist جواه بصلاحيات مظبوطة.",
+            "حوّل current على النسخة الجديدة.",
+            "امسح كل النسخ ما عدا آخر ٥.",
+            "اتأكد إن الموقع بيرد، واطبع الكود."
+          ],
+          sol: R`بعد نشرين هتلاقي على السيرفر [[/var/www/example.com/releases/20260930-101500]] و [[.../20260930-103000]]، و [[ls -l /var/www/example.com]] بيوريك [[current -> /var/www/example.com/releases/20260930-103000]]. الـ curl في آخر السكربت بيطبع [[200 https://example.com/]].
+
+الرجوع: [[ln -sfn /var/www/example.com/releases/20260930-101500 /var/www/example.com/current]] وبعدين refresh، الموقع القديم بيظهر على طول من غير reload لـ Nginx. جربت تبديل الـ symlink ده محليًا: [[cat current/index.html]] طلّع [[v2]] وبعد [[ln -sfn]] على الأولانية طلّع [[v1]]. الـ [[-n]] مهم، من غيره [[ln]] بيعمل لينك جوه الفولدر القديم بدل ما يبدّله.
+
+لو Nginx رجّع [[404]] أو [[403]]، اتأكد إن [[root]] بيشاور على [[.../current]] (مش [[releases]])، وإن اليوزر بتاع Nginx يقدر يقرا ([[--chmod=D755,F644]]). والسكربت بيسيب آخر ٥ نسخ بس، فالرجوع لنسخة أقدم من كده مش هيبقى متاح.`
+        },
+        {
+          cmd: "deploy.yml (SSH)",
+          title: "كل push يدخل السيرفر ويحدّث لوحده",
+          desc: "أبسط CD: كل push على main، GitHub Actions يدخل السيرفر بـ SSH ويعمل pull وبناء وتشغيل، ويتأكد من الـ health. هنا البناء على السيرفر نفسه، عكس درس «deploy عبر SSH» في تاب GitHub Actions اللي بيبني image في Actions ويعمل لها pull.",
+          example: R`name: deploy
+on:
+  push:
+    branches: [main]
+concurrency:
+  group: production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: $__{{ secrets.DEPLOY_HOST }}
+          username: deploy
+          key: $__{{ secrets.DEPLOY_SSH_KEY }}
+          fingerprint: $__{{ secrets.DEPLOY_HOST_FINGERPRINT }}
+          script: |
+            set -e
+            cd /opt/myapp
+            git pull --ff-only origin main
+            docker compose build
+            docker compose up -d --wait --wait-timeout 120
+            docker image prune -f
+            curl -fsS http://127.0.0.1:3000/api/health`,
+          try: R`على ريبو تجربة وسيرفر تجربة: اعمل مفتاح جديد [[ssh-keygen -t ed25519 -f deploy_key -N ""]]، العام في authorized_keys بتاع deploy، والخاص في secret. هات البصمة بـ [[ssh-keyscan -t ed25519 203.0.113.10 | ssh-keygen -lf -]] وحط الجزء اللي بيبدأ بـ SHA256 في secret تاني. وبعدين ادفع commit وتابع الـ run.`,
+          flag: "script",
+          deep: {
+            why: "بدل ما تدخل السيرفر بإيدك بعد كل push، الـ workflow بيعمل نفس الأوامر. وأي فشل بيبان أحمر في GitHub بدل ما تكتشفه من عميل.",
+            how: R`[[concurrency: group: production]] بيخلي نشر واحد بس يشتغل في نفس الوقت. لو عملت push مرتين ورا بعض، التاني بيستنى الأول يخلص بدل ما الاتنين يعملوا pull وbuild على نفس الفولدر. و [[cancel-in-progress: false]] عشان متقطعش نشر في النص.
+
+[[appleboy/ssh-action]] بيدخل السيرفر بالمفتاح اللي في secret، وينفّذ الـ script هناك. و [[fingerprint]] هو بصمة مفتاح السيرفر: من غيرها الـ action بيصدّق أي سيرفر يرد على الـ IP ده (ممكن حد يتنصّت ويعمل نفسه سيرفرك).
+
+[[set -e]] أول سطر في الـ script عشان أي أمر يفشل يوقف ويخلّي الـ job أحمر. و [[--ff-only]] عشان لو السيرفر عليه commit محلي يرفض. و [[--wait]] بيستنى الـ healthcheck، والـ curl في الآخر تأكيد من برّه compose.
+
+[[timeout-minutes]] عشان لو حاجة علّقت (build واقف مثلًا) الـ job يقف بعد ربع ساعة بدل ٦ ساعات.
+
+والسيرفر محتاج يقدر يعمل pull من الريبو: deploy key (مفتاح قراية بس) مضاف في إعدادات الريبو، مش مفتاحك الشخصي.
+
+وخد بالك: البناء على سيرفر الإنتاج بياكل CPU ورام من الموقع وقت البناء. لو السيرفر صغير، الأحسن تبني الـ image في Actions وتعمل push لـ registry والسيرفر يعمل pull بس.`,
+            when: "مشروع صغير أو متوسط على VPS واحد، وعايز النشر يبقى تلقائي من غير registry.",
+            mistakes: "في مشروع حقيقي كان الـ workflow مربوط بفرع جانبي مش main، فكانوا بيعملوا merge ومحدش فاهم ليه مفيش نشر. ومكانش فيه concurrency فـ pushين ورا بعض بيعملوا build في نفس الوقت على نفس الفولدر، ومفيش fingerprint، ومفيش أي healthcheck بعد [[up -d]]: الـ job بيبقى أخضر حتى لو التطبيق بيقع بعد ثانيتين."
+          },
+          teach: R`## الفكرة: GitHub بيعمل اللي كنت بتعمله بإيدك
+
+الملف ده workflow في GitHub Actions (بيتحط في [[.github/workflows/deploy.yml]]). كل ما تعمل push على [[main]]، GitHub بيشغّل ماكينة Ubuntu، والماكينة دي بتدخل سيرفرك بـ SSH وتنفّذ ٧ أوامر: pull، build، up، تنضيف، وفحص.
+
+اللي اتجرّب: الملف عدّى [[actionlint]] (أداة بتفحص workflows) من غير أخطاء. والـ script نفسه اتشغّل فعلًا فوق SSH: container أوبونتو 24.04 عامل نفسه الـ runner، دخل بمفتاح ed25519 على container تاني عامل نفسه السيرفر (فيه Docker و compose ومشروع [[/opt/myapp]])، على شبكة Docker خاصة. الـ workflow الحقيقي على GitHub ما اتشغّلش هنا، فشكل صفحة الـ run من الـ docs.
+
+---
+
+## ١. الاسم والـ trigger
+
+~~~yaml
+name: deploy
+on:
+  push:
+    branches: [main]
+~~~
+
+- [[name]]: الاسم اللي بيظهر في تاب Actions.
+- [[on]]: إمتى يشتغل. [[push]] على فرع من [[branches]] بس، و [[[main]]] قايمة YAML فيها عنصر واحد. push على أي فرع تاني مش هيعمل نشر.
+
+YAML بيعتمد على المسافات: كل مستوى جوه اللي قبله بمسافتين، ومينفعش Tab.
+
+---
+
+## ٢. [[concurrency]]: نشر واحد في المرة
+
+~~~yaml
+concurrency:
+  group: production
+  cancel-in-progress: false
+~~~
+
+- [[group: production]]: أي run في نفس المجموعة بيستنى اللي قبله. لو عملت pushين ورا بعض، التاني بيبقى Pending لحد ما الأول يخلص.
+- [[cancel-in-progress: false]]: متلغيش اللي شغال. لو [[true]] كان هيوقف النشر الأول في النص (ممكن وهو بيعمل [[up]]).
+
+وخد بالك: GitHub بيحتفظ بـ run واحد بس مستني في المجموعة. لو عملت ٣ pushات، التالت بيلغي التاني اللي كان مستني، وده تمام لأن التالت فيه كل الجديد.
+
+---
+
+## ٣. الـ job
+
+~~~yaml
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[jobs:]] | الشغلانات. هنا واحدة اسمها [[deploy]] |
+| [[runs-on: ubuntu-latest]] | ماكينة Ubuntu جديدة من GitHub لكل run، وبتتمسح بعده |
+| [[timeout-minutes: 15]] | لو عدّت ربع ساعة يوقف. الافتراضي ٣٦٠ دقيقة (٦ ساعات) |
+| [[steps:]] | الخطوات بالترتيب |
+
+---
+
+## ٤. الخطوة: [[appleboy/ssh-action]]
+
+~~~yaml
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: $__{{ secrets.DEPLOY_HOST }}
+          username: deploy
+          key: $__{{ secrets.DEPLOY_SSH_KEY }}
+          fingerprint: $__{{ secrets.DEPLOY_HOST_FINGERPRINT }}
+~~~
+
+- [[- uses:]]: الـ [[-]] بيبدأ عنصر في قايمة الخطوات، و [[uses]] معناها «استخدم action جاهز». [[appleboy/ssh-action]] ريبو على GitHub، و [[@v1.0.3]] نسخة ثابتة منه عشان تحديث فيه ميكسرش نشرك فجأة.
+- [[with:]]: المدخلات بتاعة الـ action.
+- [[$__{{ secrets.X }}]]: قيمة من Settings ← Secrets في الريبو. مش بتظهر في الكود، و GitHub بيخبّيها بـ [[***]] لو اتطبعت في اللوج.
+
+| المدخل | فيه إيه |
+|---|---|
+| [[host]] | IP السيرفر أو الدومين |
+| [[username]] | اليوزر اللي هيدخل بيه ([[deploy]] مش root) |
+| [[key]] | المفتاح الخاص (private key) كله |
+| [[fingerprint]] | بصمة مفتاح **السيرفر**، عشان الـ action يتأكد إنه بيكلّم سيرفرك انت |
+
+### المفتاح والبصمة
+
+مفتاح جديد مخصوص للنشر:
+
+~~~bash
+ssh-keygen -t ed25519 -f deploy_key -N ""
+~~~
+
+[[-t ed25519]] نوع المفتاح، و [[-f deploy_key]] اسم الملف، و [[-N ""]] من غير passphrase (الـ action مش هيعرف يكتبها). بيعمل ملفين:
+
+~~~text الناتج
+Your identification has been saved in deploy_key
+Your public key has been saved in deploy_key.pub
+The key fingerprint is:
+SHA256:78aFgHfgPGJGEb36fJMHMTrwHd4otnfPRZQ2IT7qrd4 root@38467fd0c129
+~~~
+
+[[deploy_key]] (الخاص، أول سطر فيه [[-----BEGIN OPENSSH PRIVATE KEY-----]]) يروح كله في secret [[DEPLOY_SSH_KEY]]. و [[deploy_key.pub]] سطر واحد بيبدأ بـ [[ssh-ed25519 AAAA...]] يتضاف في [[/home/deploy/.ssh/authorized_keys]] على السيرفر.
+
+وبصمة السيرفر:
+
+~~~bash
+ssh-keyscan -t ed25519 203.0.113.10 | ssh-keygen -lf -
+~~~
+
+[[ssh-keyscan]] بيسأل السيرفر عن مفتاحه العام، و [[ssh-keygen -lf -]] بيحسب بصمته ([[-l]] = list fingerprint، و [[-f -]] اقرا من الـ pipe). على سيرفر التجربة:
+
+~~~text الناتج
+256 SHA256:N/8cvwxFJ0gwoTQEM+K1tJLf1njLA/Fk3SFCp1TqFHs teach-real02-lab (ED25519)
+~~~
+
+[[256]] حجم المفتاح بالـ bit، والجزء من [[SHA256:]] لحد قبل المسافة هو اللي يروح في [[DEPLOY_HOST_FINGERPRINT]]. شغّل الأمر ده وانت متأكد إنك بتكلّم سيرفرك (من جوه السيرفر نفسه أحسن).
+
+ليه البصمة؟ جربت ملف known_hosts فيه مفتاح غلط للسيرفر، و ssh رفض يكمّل:
+
+~~~text الناتج
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+~~~
+
+ده بالظبط اللي [[fingerprint]] بيعمله في الـ action: لو حد واقف في النص بيعمل نفسه سيرفرك، المفتاح مش هيطابق والـ job يقف قبل ما يبعت أي حاجة.
+
+---
+
+## ٥. الـ script اللي بيتنفّذ على السيرفر
+
+~~~yaml
+          script: |
+            set -e
+            cd /opt/myapp
+            git pull --ff-only origin main
+            docker compose build
+            docker compose up -d --wait --wait-timeout 120
+            docker image prune -f
+            curl -fsS http://127.0.0.1:3000/api/health
+~~~
+
+[[script: |]]: الـ [[|]] في YAML معناها «النص اللي تحت متعدد السطور، وسيب السطور زي ما هي». الـ action بيبعته للسيرفر ويشغّله.
+
+| السطر | ليه |
+|---|---|
+| [[set -e]] | أول أمر يفشل يوقف الباقي، والـ job يبقى أحمر |
+| [[cd /opt/myapp]] | فولدر المشروع على السيرفر |
+| [[git pull --ff-only origin main]] | هات الجديد، وارفض لو السيرفر عليه commit محلي |
+| [[docker compose build]] | ابني والموقع القديم شغال |
+| [[up -d --wait --wait-timeout 120]] | بدّل واستنى الـ healthcheck لحد دقيقتين |
+| [[docker image prune -f]] | امسح الـ images القديمة اللي من غير اسم |
+| [[curl -fsS .../api/health]] | تأكيد أخير من برّه compose. [[-f]] يفشل لو الرد 400 أو أكتر |
+
+### التشغيل الحقيقي فوق SSH
+
+نفس الـ script اتبعت بـ [[ssh -i deploy_key deploy@SERVER bash -s < body.sh]] (اللي الـ action بيعمله تقريبًا). النجاح:
+
+~~~text الناتج
+Updating ed13e02..d7a2a20
+Fast-forward
+ compose.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ app  Built
+ Container myapp-app-1  Recreate
+ Container myapp-app-1  Started
+ Container myapp-app-1  Waiting
+ Container myapp-app-1  Healthy
+Deleted Images:
+deleted: sha256:95b1f1527ad5...
+Total reclaimed space: 6B
+ok
+~~~
+
+[[ok]] في الآخر هو رد [[/api/health]]، والـ exit [[0]] (الـ job أخضر).
+
+ومرة قبلها الـ origin كان عليه commit بايظ (الـ healthcheck بيطلب مسار مش موجود):
+
+~~~text الناتج
+ Container myapp-app-1  Waiting
+container myapp-app-1 is unhealthy
+~~~
+
+exit [[1]]، و [[set -e]] منع [[prune]] و [[curl]] يتنفّذوا. على GitHub ده job أحمر. وخد بالك: هنا مفيش rollback، الـ container البايظ فاضل. لو عايز رجوع أوتوماتيك، خلّي الـ script يشغّل [[./update.sh]] (الدرس اللي قبل) بدل الأوامر دي.
+
+---
+
+## ملخص
+
+| الجزء | بيعمل إيه |
+|---|---|
+| [[on: push: branches: [main]]] | يشتغل مع كل push على main |
+| [[concurrency]] | نشر واحد في المرة، ومن غير ما يقطع اللي شغال |
+| [[timeout-minutes]] | ميعلّقش ٦ ساعات |
+| [[ssh-action]] + [[fingerprint]] | يدخل السيرفر الصح بس، بمفتاح من secret |
+| [[script]] | pull ← build ← up --wait ← prune ← curl |
+
+## الخلاصة
+
+- المفتاح الخاص في secret بس، والعام في [[authorized_keys]]، والبصمة بتحميك من سيرفر مزيّف.
+- [[set -e]] أول سطر في الـ script، وإلا أول أمر فاشل مش هيخلّي الـ job أحمر.
+- البناء على السيرفر سهل بس بياكل من CPU و RAM الموقع. لو السيرفر صغير، ابني في Actions وادفع لـ registry.`,
+          lines: [
+            "اسم الـ workflow.",
+            "بيشتغل على...",
+            "...push...",
+            "...على main بس.",
+            "نشر واحد بس في نفس الوقت:",
+            "اسم المجموعة.",
+            "متلغيش نشر شغال؛ الجديد يستنى.",
+            "الـ jobs.",
+            "job النشر.",
+            "ماكينة Ubuntu من GitHub.",
+            "لو عدّى ربع ساعة يقف.",
+            "الخطوات.",
+            "action بيدخل السيرفر بـ SSH وينفّذ أوامر.",
+            "إعداداته:",
+            "عنوان السيرفر من secret.",
+            "اليوزر.",
+            "المفتاح الخاص من secret.",
+            "بصمة السيرفر عشان يتأكد إنه بيكلّم السيرفر الصح.",
+            "الأوامر اللي هتتنفّذ على السيرفر:",
+            "أي فشل يوقف.",
+            "فولدر المشروع.",
+            "اسحب الجديد، ولو محتاج merge ارفض.",
+            "ابني.",
+            "بدّل واستنى الـ healthcheck.",
+            "نضّف الـ images القديمة.",
+            "تأكيد أخير إن التطبيق بيرد."
+          ],
+          sol: R`[[ssh-keygen -t ed25519 -f deploy_key -N ""]] بيعمل ملفين: [[deploy_key]] (الخاص، بيبدأ بـ [[-----BEGIN OPENSSH PRIVATE KEY-----]]، كله بيروح في secret [[DEPLOY_SSH_KEY]]) و [[deploy_key.pub]] (سطر واحد بيتضاف لـ [[/home/deploy/.ssh/authorized_keys]]). [[ssh-keygen -lf]] بيطبع حاجة زي [[256 SHA256:2lvtGXRU... (ED25519)]]. الجزء اللي بيبدأ بـ [[SHA256:]] هو اللي في [[DEPLOY_HOST_FINGERPRINT]].
+
+بعد الـ push، في تاب Actions الـ run بيطلّع لوج السيرفر: [[git pull]] ثم بناء compose ثم [[curl]] بيرجّع رد الـ health. لو كله عدّى علامة خضرا. وجرّب push تاني بسرعة: [[concurrency]] بيخلّي التاني يستنى الأول بدل ما يشتغلوا مع بعض.
+
+الأعطال الشائعة: [[ssh: handshake failed: ssh: unable to authenticate]] (المفتاح العام مش في authorized_keys، أو الخاص اتنسخ ناقص سطر)، و [[ssh: host key fingerprint mismatch]] (البصمة غلط، وده بالظبط اللي بتحميك منه). ومتحطش المفتاح الخاص في الريبو أبدًا. (ما شغّلتش workflow حقيقي، بس جربت ssh-keygen والبصمة.)`
+        },
+        {
+          cmd: "deploy-shared.sh",
+          title: "نشر على استضافة مشتركة بـ git pull وفحص سريع",
+          desc: "على الاستضافة المشتركة مفيش Docker ولا CI، بس غالبًا فيه SSH و git. فالنشر: السيرفر عليه clone للريبو وبيعمل pull، وبعدين [[php -l]] يتأكد إن مفيش syntax error، و curl يتأكد إن كل صفحة مهمة بترجع الكود الصح، بما فيها إن صفحة مش موجودة بترجع 404 فعلًا.",
+          example: R`#!/usr/bin/env bash
+# ~/.ssh/config فيه Host shared بالـ HostName و Port و User و IdentityFile
+set -euo pipefail
+SITE=https://example.com
+DIR=domains/example.com/public_html
+
+ssh shared "cd $DIR && git pull -q --ff-only origin main && git log --oneline -1"
+ssh shared "cd $DIR && for f in index.php login.php contact.php; do php -l \$f || exit 1; done"
+
+fail=0
+for u in / /login /contact /no-such-page; do
+  code=$(curl -s -o /dev/null --max-time 10 -w '%{http_code}' "$SITE$u" || true)
+  want=200; [ "$u" = /no-such-page ] && want=404
+  echo "$u -> $code (want $want)"
+  [ "$code" = "$want" ] || fail=1
+done
+exit $fail`,
+          try: "لو معاك استضافة فيها SSH: اعمل clone للريبو مكان public_html (بعد باك أب)، وظبط [[Host shared]] في [[~/.ssh/config]]، وشغّل السكربت. بعدين غيّر صفحة موجودة بحيث ترجع 500 وشوف السكربت يفشل.",
+          flag: "script",
+          deep: {
+            why: "على استضافة مشتركة الناس غالبًا بترفع بـ FTP وبتنسى ملفات. git pull بيضمن إن السيرفر نسخة من الريبو بالظبط، والفحص بيقولك في ثواني لو حاجة باظت قبل ما عميل يقولك.",
+            how: R`[[ssh shared]] بيستخدم الإعدادات اللي في [[~/.ssh/config]]: العنوان والبورت (الاستضافات المشتركة غالبًا على بورت غير 22) واليوزر والمفتاح، فالسكربت ميبقاش فيه أي بيانات دخول.
+
+الأوامر بين علامات التنصيص المزدوجة بتتفك على جهازك الأول: [[$DIR]] بتتحط قيمتها قبل ما تتبعت. أما [[\$f]] فالـ backslash بيمنع جهازك يفكها، فتوصل للسيرفر [[$f]] ويفكها هو جوه اللوب.
+
+[[php -l]] بيفحص syntax الملف من غير ما يشغّله. و [[|| exit 1]] بيخلي أول ملف فيه غلطة يوقف الـ ssh بفشل، و [[set -e]] عندك يوقف السكربت.
+
+[[curl -w '%{http_code}']] بيطبع كود الرد بس، و [[-o /dev/null]] بيرمي الصفحة نفسها، و [[--max-time 10]] عشان سيرفر بطيء ميعلّقش السكربت. ولو curl فشل خالص بيطبع 000، و [[|| true]] بيمنع [[set -e]] يوقف قبل ما نطبع النتيجة.
+
+وفحص صفحة مش موجودة مهم: مواقع كتير بترجع 200 لكل حاجة (soft 404)، وده بيضر في جوجل.`,
+            when: "مواقع PHP أو static على استضافة مشتركة فيها SSH و git.",
+            mistakes: "في مشروع حقيقي كان الاتصال بالسيرفر عن طريق سكربت Python وسيط بالباسورد بدل ssh مباشر بمفتاح. والملفات اللي مش في git (ملف الإعدادات، والفيديوهات، وصور العملاء المرفوعة) كانت محتاجة تتظبط على السيرفر بإيدك، وقاعدة البيانات ليها باك أب منفصل من لوحة الاستضافة، فـ git pull لوحده مش «نسخة كاملة». و curl كان من غير timeout، فمرة علّق على سيرفر بطيء."
+          },
+          teach: R`## الفكرة: نشر بأمرين ssh، وبعدين اختبار من برّه
+
+السكربت ده بيشتغل على جهازك، وبيعمل ٣ حاجات: يقول للسيرفر يعمل [[git pull]]، يقوله يفحص ملفات PHP، وبعدين يطلب كل صفحة مهمة بـ [[curl]] ويقارن كود الرد بالمتوقع. لو أي حاجة مش زي المتوقع يخرج بـ 1.
+
+جربته كامل: «الاستضافة» container أوبونتو 24.04 فيه [[sshd]] على بورت 2222 ويوزر [[u123]] (زي الاستضافات المشتركة)، والموقع ٣ ملفات PHP شغالين بـ [[php -S]]، و «جهازك» container تاني على نفس شبكة Docker الخاصة. غيّرت [[SITE]] بس لـ [[http://srv:8080]].
+
+---
+
+## ١. [[~/.ssh/config]]: بيانات الدخول برّه السكربت
+
+أول سطر في السكربت تعليق بيقول إن [[ssh shared]] معتمد على الملف ده:
+
+~~~text ~/.ssh/config
+Host shared
+  HostName srv
+  Port 2222
+  User u123
+  IdentityFile ~/.ssh/shared_key
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[Host shared]] | اسم مختصر انت اخترته. [[ssh shared]] هيستخدم الإعدادات اللي تحته |
+| [[HostName]] | العنوان الحقيقي (دومين أو IP) |
+| [[Port]] | البورت. الاستضافات المشتركة غالبًا مش على 22 |
+| [[User]] | اسم اليوزر بتاعك عند الاستضافة |
+| [[IdentityFile]] | المفتاح الخاص اللي هتدخل بيه |
+
+كده [[ssh shared]] = [[ssh -p 2222 -i ~/.ssh/shared_key u123@srv]]، والسكربت نفسه مفيهوش أي بيانات دخول، فتقدر تحطه في git.
+
+---
+
+## ٢. المتغيرات
+
+~~~bash
+set -euo pipefail
+SITE=https://example.com
+DIR=domains/example.com/public_html
+~~~
+
+- [[set -euo pipefail]]: أي أمر يفشل يوقف، ومتغير مش متعرّف خطأ.
+- [[SITE]]: الرابط اللي هنختبره.
+- [[DIR]]: فولدر الموقع على السيرفر. من غير [[/]] في الأول، يعني نسبة للـ home بتاعك هناك، لأن ssh بيبدأ في الـ home.
+
+---
+
+## ٣. [[git pull]] على السيرفر
+
+~~~bash
+ssh shared "cd $DIR && git pull -q --ff-only origin main && git log --oneline -1"
+~~~
+
+[[ssh HOST "commands"]] بينفّذ الأوامر على السيرفر ويرجّع الناتج والـ exit code. و [[&&]] بين الأوامر: كل واحد بيتنفّذ بس لو اللي قبله نجح.
+
+- [[git pull -q --ff-only origin main]]: هات الجديد بهدوء ([[-q]])، وارفض لو محتاج merge.
+- [[git log --oneline -1]]: اطبع آخر commit في سطر واحد، عشان تشوف بعينك السيرفر بقى على أنهي نسخة:
+
+~~~text الناتج
+74617db break contact
+~~~
+
+---
+
+## ٤. فحص الـ syntax على السيرفر
+
+~~~bash
+ssh shared "cd $DIR && for f in index.php login.php contact.php; do php -l \$f || exit 1; done"
+~~~
+
+### مين بيفك المتغيرات؟
+
+الكلام جوه [[" "]] بيعدّي على bash بتاع **جهازك** الأول:
+
+- [[$DIR]]: جهازك بيحط قيمتها، فالسيرفر بيستلم [[cd domains/example.com/public_html]].
+- [[\$f]]: الـ [[\]] بتقول لجهازك «متفكّهاش»، فالسيرفر بيستلم [[$f]] زي ما هي، وده متغير اللوب اللي هيتعرّف هناك. من غير الـ [[\]] جهازك كان هيحاول يفكها هو، ومع [[set -u]] بيقف بـ [[f: unbound variable]] (جربتها) لأن [[f]] مش متعرّف عندك.
+
+### اللوب
+
+[[for f in a b c; do ...; done]]: كرر الأوامر مرة لكل اسم، و [[f]] بياخد الاسم كل مرة.
+
+[[php -l FILE]]: l = lint. بيفحص الـ syntax من غير ما يشغّل الكود. و [[|| exit 1]]: لو ملف فيه غلطة، اخرج من الـ shell على السيرفر بـ 1، فـ [[ssh]] يرجع 1، و [[set -e]] على جهازك يوقف السكربت.
+
+كله تمام:
+
+~~~text الناتج
+No syntax errors detected in index.php
+No syntax errors detected in login.php
+No syntax errors detected in contact.php
+~~~
+
+وعملت commit فيه سطر ناقصه [[;]] في [[login.php]]:
+
+~~~text الناتج
+No syntax errors detected in index.php
+PHP Parse error:  syntax error, unexpected variable "$y" in login.php on line 3
+Errors parsing login.php
+~~~
+
+السكربت وقف هنا بـ exit [[1]]، و [[contact.php]] ماتفحصش أصلًا. ولاحظ إن الغلطة في السطر ٢ (ناقص [[;]]) بس PHP بيقول السطر ٣، لأنه ماعرفش إن الجملة خلصت غير لما لقى [[$y]].
+
+---
+
+## ٥. اختبار الصفحات من برّه
+
+~~~bash
+fail=0
+for u in / /login /contact /no-such-page; do
+  code=$(curl -s -o /dev/null --max-time 10 -w '%{http_code}' "$SITE$u" || true)
+  want=200; [ "$u" = /no-such-page ] && want=404
+  echo "$u -> $code (want $want)"
+  [ "$code" = "$want" ] || fail=1
+done
+exit $fail
+~~~
+
+### [[fail=0]]
+
+عدّاد: صفر يعني لسه مفيش مشكلة. مش بنعمل [[exit]] أول ما صفحة تفشل، عشان نشوف حالة **كل** الصفحات.
+
+### سطر الـ curl، من جوه لبرة
+
+| الجزء | معناه |
+|---|---|
+| [["$SITE$u"]] | الرابط كامل: [[https://example.com/login]] |
+| [[-s]] | من غير progress |
+| [[-o /dev/null]] | ارمي محتوى الصفحة |
+| [[--max-time 10]] | لو مخلصش في ١٠ ثواني اقطع |
+| [[-w '%{http_code}']] | اطبع كود الرد بس (200 أو 404 أو 500) |
+| [[|| true]] | لو curl نفسه فشل (السيرفر مش بيرد)، متخلّيش [[set -e]] يوقف |
+| [[code=$(...)]] | خزّن الناتج في [[code]] |
+
+لو السيرفر مش بيرد خالص، [[%{http_code}]] بيطبع [[000]].
+
+### المتوقع
+
+[[want=200]] لكل الصفحات، و [[[ "$u" = /no-such-page ] && want=404]]: لو دي الصفحة المش موجودة، المتوقع 404. ([[=]] جوه [[[ ]]] مقارنة نصوص.)
+
+### المقارنة
+
+[[[ "$code" = "$want" ] || fail=1]]: لو مختلفين، علّم إن فيه فشل. وفي الآخر [[exit $fail]]: 0 لو كله تمام، 1 لو فيه حاجة.
+
+كله تمام:
+
+~~~text الناتج
+/ -> 200 (want 200)
+/login -> 200 (want 200)
+/contact -> 200 (want 200)
+/no-such-page -> 404 (want 404)
+~~~
+
+exit [[0]]. وبعد commit بيخلّي [[contact.php]] يرجّع 500:
+
+~~~text الناتج
+/ -> 200 (want 200)
+/login -> 200 (want 200)
+/contact -> 500 (want 200)
+/no-such-page -> 404 (want 404)
+~~~
+
+exit [[1]]. الـ syntax سليم ([[php -l]] عدّاه) بس الصفحة بايظة وقت التشغيل، وده اللي بيمسكه الـ curl.
+
+### ليه نختبر صفحة مش موجودة؟
+
+مواقع كتير بترجّع الصفحة الرئيسية بـ 200 لأي رابط غلط (soft 404)، وجوجل بيعتبرها صفحات مكررة. السطر ده بيتأكد إن الغلط بيرجع 404 فعلًا. (مثال: [[php -S]] من غير router بيعمل كده، أي مسار مش موجود بيرجع [[index.php]].)
+
+---
+
+## الرجوع لو الفحص فشل
+
+الـ pull حصل قبل الفحص، فالموقع البايظ live دلوقتي. ارجع commit:
+
+~~~bash
+ssh shared "cd domains/example.com/public_html && git reset --hard HEAD~1"
+~~~
+
+[[HEAD~1]] = الـ commit اللي قبل الحالي (و [[HEAD~2]] اللي قبله بإتنين). في التجربة كان فيه ٢ commits بايظين فرجعت بـ [[HEAD~2]]:
+
+~~~text الناتج
+HEAD is now at 1a704f7 init
+~~~
+
+---
+
+## ملخص
+
+| # | الخطوة | فين | لو فشلت |
+|---|---|---|---|
+| ١ | [[git pull --ff-only]] | السيرفر | يقف |
+| ٢ | [[php -l]] لكل ملف | السيرفر | يقف عند أول ملف بايظ |
+| ٣ | [[curl]] لكل صفحة | جهازك | يكمّل ويطبع الكل، وفي الآخر exit 1 |
+
+## الخلاصة
+
+- [[~/.ssh/config]] بيشيل بيانات الدخول من السكربت.
+- جوه [["..."]] اللي رايح لـ ssh: [[$X]] بتتفك عندك، و [[\$X]] بتتفك على السيرفر.
+- [[php -l]] بيمسك أخطاء الكتابة، و curl بيمسك أخطاء التشغيل. محتاج الاتنين.`,
+          lines: [
+            "أي فشل يوقف السكربت.",
+            "رابط الموقع.",
+            "فولدر الموقع على السيرفر (نسبة للـ home).",
+            "على السيرفر: اسحب الجديد واطبع آخر commit.",
+            "على السيرفر: افحص syntax كل ملف مهم، وأول غلطة توقف.",
+            "عدّاد الفشل.",
+            "لف على الصفحات المهمة وصفحة مش موجودة.",
+            "كود الرد بس، بحد أقصى ١٠ ثواني.",
+            "المتوقع 200، إلا الصفحة المش موجودة متوقع 404.",
+            "اطبع النتيجة.",
+            "لو مش زي المتوقع علّم إنه فشل.",
+            "نهاية اللوب.",
+            "اخرج بـ 0 لو كله تمام، و 1 لو فيه حاجة غلط."
+          ],
+          sol: R`لو كله تمام، السكربت بيطبع آخر commit ([[a1b2c3d fix contact form]])، وبعده [[No syntax errors detected in index.php]] لكل ملف، وبعدين:
+
+[[/ -> 200 (want 200)]]
+[[/login -> 200 (want 200)]]
+[[/contact -> 200 (want 200)]]
+[[/no-such-page -> 404 (want 404)]] و exit [[0]].
+
+لو بوّظت صفحة بحيث ترجّع 500، السطر بتاعها هيبقى [[/contact -> 500 (want 200)]] والـ exit [[1]]. ولو الغلطة syntax، [[php -l]] بيمسكها قبل الـ curl، جربته على ملف ناقصه [[;]] وطلّع [[PHP Parse error: syntax error, unexpected variable "$x"]] و [[Errors parsing bad.php]] بـ exit 255، فالسكربت بيقف هنا.
+
+خد بالك إن [[git pull]] بيحصل الأول، فلو الفحص فشل الموقع بايظ فعلًا دلوقتي، ارجع بـ [[ssh shared "cd DIR && git reset --hard HEAD~1"]]. ولو [[/no-such-page]] رجّع 200، الاستضافة بتحوّل أي حاجة للصفحة الرئيسية، وده بيضر الـ SEO.`
         }
       ]
     }
