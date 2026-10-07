@@ -4,15 +4,35 @@
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 Express 5.2.1 Prisma 7.10 + Postgres 16 (Docker): example + solCode (concurrent curl, pwsh 7 ForEach-Object -Parallel)"
  },
+ "api|401 و 403 و 404": {
+  "hash": "52945e7d042d",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, vitest 5.0.3, supertest 7.3.1, Postgres 16 (Docker)"
+ },
+ "api|AsyncLocalStorage": {
+  "hash": "e0627bcd8ee5",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Express 5.2, pino 10, supertest 7, curl"
+ },
  "api|Prisma client": {
   "hash": "5ca97cb831a9",
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 Express 5.2.1 Prisma 7.10 + Postgres 16 (Docker), tsx: example + solCode"
  },
+ "api|Resend": {
+  "hash": "435eaa6cdb50",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, resend 6.32.1, real API with fake key (error path); docs: success response"
+ },
  "api|access و refresh": {
   "hash": "d02355f4a4bc",
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 Express 5.2.1 Prisma 7.10 + Postgres 16 (Docker): example + solCode via curl and Invoke-RestMethod"
+ },
+ "api|app و server": {
+  "hash": "2ee5adca1776",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Express 5.2.1, tsx 4.23; SIGTERM on Linux docker node:22-slim"
  },
  "api|app.get و app.post": {
   "hash": "4d9019a2dd05",
@@ -38,6 +58,11 @@
   "hash": "b45adab7992f",
   "date": "2026-10-07",
   "on": "win11 Node 24.19 --env-file, zod 4.6.5"
+ },
+ "api|connect-redis و lock": {
+  "hash": "3404094e3f51",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Express 5.2, express-session 1.19, connect-redis 10, redis 6.3, ioredis 6, Redis 8.10 in Docker, curl"
  },
  "api|cors": {
   "hash": "bd323042ae5b",
@@ -79,15 +104,30 @@
   "date": "2026-10-07",
   "on": "win11 Node 24.19 Express 5.2.1 (ok/no CT/no body/bad/413/strict/form), Git Bash curl"
  },
+ "api|factories": {
+  "hash": "138e3fb5ae98",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, vitest 5.0.3, jsonwebtoken 9.0.3, Prisma 7.10 on Postgres 16 (Docker)"
+ },
  "api|helmet": {
   "hash": "1ef748a4451c",
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 Express 5.2.1 helmet 8.3: curl -I, Invoke-WebRequest (pwsh 7, powershell 5.1); docs: browser CORP image blocking"
  },
+ "api|ioredis": {
+  "hash": "dcad9a931e76",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, ioredis 6.0, Redis 8.10 in Docker (up, down, restart mid-run)"
+ },
  "api|jwt.sign و jwt.verify": {
   "hash": "7b0a5117703c",
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 (jsonwebtoken 9.0.3): example + try one-liners in Git Bash, pwsh 7, powershell 5.1"
+ },
+ "api|maxmemory و persistence": {
+  "hash": "2926b25ac5a4",
+  "date": "2026-10-07",
+  "on": "Redis 8.10 in Docker (CONFIG SET eviction test, both redis.conf variants); pwsh/powershell Select-String"
  },
  "api|method و status و headers": {
   "hash": "aa18a933390c",
@@ -104,10 +144,30 @@
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 Mongoose 9.11 + Mongo 8 (Docker): example + try"
  },
+ "api|morgan": {
+  "hash": "0db8a6614626",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Express 5.2.1, morgan 1.12.1; grep/awk in Git Bash, PowerShell in pwsh 7.6 and powershell 5.1"
+ },
+ "api|msw و nock": {
+  "hash": "56be2d812b47",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, vitest 5.0.3, msw 2.15.0 (and 3.0.2), nock 15.0.1"
+ },
+ "api|multer": {
+  "hash": "f51efc673462",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Express 5.2.1, multer 2.4.0; curl (Git Bash) + curl.exe in pwsh 7.6 and powershell 5.1 + Invoke-RestMethod"
+ },
  "api|node:http": {
   "hash": "6c2448e08ab9",
   "date": "2026-10-07",
   "on": "win11 Node 24.19 (example + solCode + type=commonjs error), Git Bash curl"
+ },
+ "api|nodemailer": {
+  "hash": "278baaefe5bd",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, nodemailer 10.0.15, real Ethereal SMTP"
  },
  "api|ownership (IDOR)": {
   "hash": "c9b9345bf510",
@@ -118,6 +178,26 @@
   "hash": "17d8c4e02bfc",
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 Express 5.2.1 zod 4.6 Prisma 7.10 + Postgres 16 (Docker): example + solCode via curl, curl.exe/Invoke-RestMethod (pwsh 7, powershell 5.1)"
+ },
+ "api|pino": {
+  "hash": "82d1fd55b370",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, pino 10.4.0, pino-http 11.0.0, pino-pretty 13.2.0"
+ },
+ "api|pub/sub": {
+  "hash": "7a180659fc0c",
+  "date": "2026-10-07",
+  "on": "Redis 8.10 in Docker (redis-cli) + 3 Node 24 processes with ioredis 6"
+ },
+ "api|rate-limit-redis": {
+  "hash": "17357695309f",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, express-rate-limit 8.7, rate-limit-redis 6.0.1, ioredis 6, Redis 8.10 in Docker, curl, 2 instances"
+ },
+ "api|redis-cli": {
+  "hash": "18238170faac",
+  "date": "2026-10-07",
+  "on": "Windows 11 Git Bash + pwsh 7 + powershell 5.1, Redis 8.10 in Docker via docker exec"
  },
  "api|req.params": {
   "hash": "13df5750c8f6",
@@ -154,20 +234,65 @@
   "date": "2026-10-07",
   "on": "Windows 11 Node 24.19 zod 4.6 isomorphic-dompurify 4.5 Prisma 7.10 + Postgres 16 (Docker) Mongoose 9.11/Mongo 8 (Docker): example + try"
  },
+ "api|sharp": {
+  "hash": "905c6c00b0c8",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, sharp 0.35.5"
+ },
  "api|status codes": {
   "hash": "9dc3742498cf",
   "date": "2026-10-07",
   "on": "win11 Node 24.19 Express 5.2.1 Git Bash curl; solCode run in Node fetch with absolute URLs"
+ },
+ "api|streams و pipeline": {
+  "hash": "bb3e6483fde8",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19 (2M-row CSV, gzip pipeline); docs: Prisma createMany (fake db)"
+ },
+ "api|supertest": {
+  "hash": "a1aad80031ef",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, vitest 5.0.3, supertest 7.3.1, Prisma 7.10 on Postgres 16 (Docker)"
  },
  "api|validate(schema)": {
   "hash": "efff1a5fd77f",
   "date": "2026-10-07",
   "on": "win11 Node 24.19 Express 5.2.1 zod 4.6.5 (example + solCode), Git Bash curl"
  },
+ "api|worker_threads و cluster": {
+  "hash": "901b05bf2c94",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Express 5.2; docs: cluster/PM2"
+ },
+ "api|أنواع Redis": {
+  "hash": "ba4cb990feb9",
+  "date": "2026-10-07",
+  "on": "Redis 8.10 in Docker (redis-cli)"
+ },
+ "api|اختبار الـ webhook": {
+  "hash": "c935d580e4d2",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, vitest 5.0.3, supertest 7.3.1, Postgres 16 (Docker)"
+ },
  "api|ترتيب الـ middleware": {
   "hash": "6b57184613f7",
   "date": "2026-10-07",
   "on": "win11 Node 24.19 Express 5.2.1 helmet 8.3 cors 2.8 (stub auth/limiter), Git Bash curl"
+ },
+ "api|تصدير CSV و Excel": {
+  "hash": "b0f0d6cdf524",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Express 5.2, exceljs 4.4, curl; docs: Prisma cursor (fake db), opening in Excel"
+ },
+ "api|فاتورة PDF": {
+  "hash": "434449dde033",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, Playwright 1.63 Chromium, Express 5.2, curl; docs: font-less Docker without @font-face"
+ },
+ "api|قاعدة الاختبار": {
+  "hash": "3fff3f8a1f22",
+  "date": "2026-10-07",
+  "on": "Windows 11, Node 24.19, vitest 5.0.3, Prisma 7.10, Postgres 16 (Docker), dotenv 18 CLI; pwsh 7.6"
  },
  "bash|#!/usr/bin/env bash": {
   "hash": "591d8dbbef8f",

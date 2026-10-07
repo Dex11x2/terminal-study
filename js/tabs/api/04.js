@@ -17,6 +17,7 @@ redis-cli
 SET otp:7 482913 EX 300
 TTL otp:7
 # (integer) 300
+SET user:7:name Mona
 TTL user:7:name
 # (integer) -1   موجود ومن غير انتهاء
 TTL nope
@@ -41,12 +42,199 @@ redis-cli --scan --pattern 'sess:*' | head`,
             when: "وانت بتبني أو بتصلّح أي حاجة بتكتب في Redis: تشوف المفاتيح شكلها إيه، والـ TTL متظبط ولا لأ، وفيه حاجة بتكبر من غير ما تتمسح ولا لأ.",
             mistakes: R`[[KEYS *]] أو [[FLUSHALL]] على سيرفر الإنتاج، والتاني بيمسح كل حاجة بما فيها الـ queues والـ sessions. ومفاتيح من غير TTL لحاجات مؤقتة (OTP وكاش)، فالذاكرة تفضل تكبر لحد ما Redis يرفض الكتابة. وRedis مكشوف على النت من غير باسورد: فيه bots بتدوّر على البورت 6379 طول الوقت. خليه على شبكة داخلية أو [[127.0.0.1]]، وبـ [[requirepass]] أو ACL.`
           },
+          teach: R`## Redis = قاموس كبير في الرام
+
+كل حاجة في Redis عبارة عن **key** (اسم) و **value** (قيمة)، زي object في JavaScript بس عايش في process لوحده وكل السيرفرات بتاعتك بتكلمه. والمثال بيشغّل Redis، وبعدين بيكتب ويقرا مفاتيح ويشوف بتنتهي إمتى. كل الأوامر دي اتشغّلت على Redis 8.10 في Docker (الصورة [[redis:8-alpine]]) من Git Bash و PowerShell على ويندوز 11.
+
+---
+
+## ١. تشغيل Redis: [[docker run -d --name redis -p 6379:6379 redis:8-alpine]]
+
+| الحتة | معناها |
+|---|---|
+| [[docker run]] | شغّل container جديد من صورة |
+| [[-d]] | detached: في الخلفية، والترمنال يرجعلك |
+| [[--name redis]] | اسم الـ container، عشان تكلمه بيه بعد كده ([[docker stop redis]]) |
+| [[-p 6379:6379]] | البورت ٦٣٧٩ على جهازك يوصل للبورت ٦٣٧٩ جوه الـ container. الشمال جهازك، واليمين جوه |
+| [[redis:8-alpine]] | الصورة: Redis نسخة 8، مبني على Alpine Linux (صغير) |
+
+و ٦٣٧٩ هو البورت الافتراضي بتاع Redis. الأمر بيطبع id طويل للـ container وبس.
+
+---
+
+## ٢. [[redis-cli ping]]
+
+[[redis-cli]] = Redis Command Line Interface، البرنامج اللي بيكلّم السيرفر. و [[ping]] أبسط أمر: «انت صاحي؟».
+
+~~~text الناتج
+PONG
+~~~
+
+> على ويندوز [[redis-cli]] مش متسطب لوحده (جرّبنا: PowerShell مش لاقيه). بس هو موجود جوه الـ container، فاكتب [[docker exec redis redis-cli ping]] بدل [[redis-cli ping]]، وللـ shell التفاعلي [[docker exec -it redis redis-cli]] ([[-it]] = interactive + terminal، عشان تكتب جواه). وده ينطبق على كل [[redis-cli]] في دروس Redis.
+
+---
+
+## ٣. [[redis-cli]] لوحده: الـ shell التفاعلي
+
+من غير أمر بعده بيفتح prompt شكله [[127.0.0.1:6379>]] (العنوان والبورت اللي متصل بيهم)، وكل سطر بتكتبه أمر بيتنفّذ على طول. الأسطر الجاية كلها بتتكتب جواه. والأوامر مش case-sensitive ([[set]] زي [[SET]])، بس أسامي المفاتيح case-sensitive.
+
+---
+
+## ٤. [[SET otp:7 482913 EX 300]]
+
+| الحتة | معناها |
+|---|---|
+| [[SET]] | اكتب قيمة |
+| [[otp:7]] | اسم المفتاح: OTP (One-Time Password) بتاع اليوزر ٧ |
+| [[482913]] | القيمة. كل حاجة في Redis بتتخزن كنص، حتى الأرقام |
+| [[EX 300]] | EX = expire: امسحه لوحدك بعد ٣٠٠ ثانية (٥ دقايق) |
+
+~~~text الناتج
+OK
+~~~
+
+و [[:]] في الاسم مالهاش معنى عند Redis، هي اتفاق بين المبرمجين عشان المفاتيح تبقى مقروءة وتتدوّر بـ pattern: [[otp:*]] كل الـ OTPs، و [[user:7:*]] كل حاجات اليوزر ٧.
+
+---
+
+## ٥. [[TTL]]: فاضله قد إيه؟
+
+TTL = Time To Live: عدد الثواني الباقية قبل ما المفتاح يتمسح. جرّبنا التلات حالات:
+
+~~~text
+TTL otp:7
+(integer) 300
+SET user:7:name Mona
+OK
+TTL user:7:name
+(integer) -1
+TTL nope
+(integer) -2
+~~~
+
+| الرقم | معناه |
+|---|---|
+| رقم موجب | فاضل كذا ثانية |
+| [[-1]] | المفتاح موجود بس **ملوش** وقت انتهاء (اتعمل بـ SET من غير EX) |
+| [[-2]] | المفتاح **مش موجود** خالص (اتمسح أو عمره ما اتعمل) |
+
+و [[(integer)]] ده redis-cli بيقولك نوع الرد: رقم. و [[(nil)]] معناها «مفيش قيمة».
+
+ولما المدة تخلص: عملنا [[SET short 1 EX 1]] واستنينا ثانيتين:
+
+~~~text
+TTL short
+(integer) -2
+GET short
+(nil)
+~~~
+
+---
+
+## ٦. [[INCR views:post:1]]
+
+INCR = increment: زوّد واحد ورجّع القيمة الجديدة. لو المفتاح مش موجود بيعتبره صفر، فأول مرة بيرجّع [[1]]:
+
+~~~text الناتج (أول مرة ثم تاني مرة)
+(integer) 1
+(integer) 2
+~~~
+
+الأهم إنه **atomic**: Redis بينفّذ أمر واحد في المرة، فلو ١٠ سيرفرات عملوا INCR في نفس اللحظة الرقم هيزيد ١٠ بالظبط. لو كنت عملت GET وبعدين SET بالرقم الجديد من الكود، اتنين ممكن يقروا نفس الرقم وزيادة تضيع.
+
+---
+
+## ٧. [[SET lock:report 1 NX PX 10000]]
+
+- [[NX]] = Not eXists: اكتب **بس لو** المفتاح مش موجود.
+- [[PX 10000]] زي EX بس بالملّي ثانية: يتمسح بعد ١٠ ثواني.
+
+جرّبناه مرتين ورا بعض:
+
+~~~text
+SET lock:report 1 NX PX 10000
+OK
+SET lock:report 1 NX PX 10000
+(nil)
+PTTL lock:report
+(integer) 10000
+~~~
+
+الأولى [[OK]] (مسكت)، والتانية [[(nil)]] يعني «مكتبتش، فيه حد ماسك». و [[PTTL]] زي TTL بالملّي ثانية. ده أساس الـ lock اللي هنبنيه في درس [[connect-redis و lock]]: اللي ياخد OK بس هو اللي يشتغل.
+
+---
+
+## ٨. [[SCAN 0 MATCH user:* COUNT 100]]
+
+- [[0]] الـ cursor: من فين تبدأ. أول مرة دايمًا 0.
+- [[MATCH user:*]] المفاتيح اللي بتبدأ بـ [[user:]]. و [[*]] يعني «أي حاجة».
+- [[COUNT 100]] تقريبًا كام مفتاح يبص عليهم في الدفعة دي (رقم تقريبي مش حد مضبوط).
+
+~~~text الناتج
+1) "0"
+2) 1) "user:7:name"
+~~~
+
+الرد حتتين: (1) الـ cursor الجاي، و (2) المفاتيح اللي لقاها. الـ cursor رجع [[0]] يعني «خلصت اللفة». لو رجع رقم تاني، تبعته في SCAN الجاي وتكمّل. ليه كل اللفة دي بدل [[KEYS user:*]]؟ لأن KEYS بيلف على كل المفاتيح في أمر واحد، و Redis thread واحد، فكل الطلبات التانية بتستنى.
+
+---
+
+## ٩. [[UNLINK user:7:name]]
+
+بيمسح المفتاح ويرجّع عدد اللي اتمسح:
+
+~~~text الناتج (مرة، وبعدين نفس الأمر تاني)
+(integer) 1
+(integer) 0
+~~~
+
+الفرق عن [[DEL]]: المفتاح بيختفي فورًا في الحالتين، بس UNLINK بيحرر الذاكرة في الخلفية، فمسح قيمة ضخمة ميوقّفش السيرفر.
+
+---
+
+## ١٠. [[redis-cli --scan --pattern 'sess:*' | head]]
+
+ده بيتكتب في ترمنال جهازك، مش جوه الـ shell التفاعلي:
+
+- [[--scan]] بيعمل لفة SCAN كاملة لوحده (cursor ورا cursor لحد 0) ويطبع كل مفتاح في سطر.
+- [[--pattern 'sess:*']] زي MATCH. و [[' ']] عشان الـ shell ميحاولش يفسر [[*]] كأسماء ملفات.
+- [[| head]] خد أول ١٠ سطور بس.
+
+~~~text الناتج (بعد ما عملنا sess:abc و sess:def)
+sess:abc
+sess:def
+~~~
+
+### على ويندوز
+
+[[head]] مش موجود في PowerShell. جرّبنا ده في PowerShell 7 و Windows PowerShell 5.1 واشتغل:
+
+~~~powershell
+docker exec redis redis-cli --scan --pattern 'sess:*' | Select-Object -First 10
+~~~
+
+---
+
+## الخلاصة
+
+| الأمر | بيعمل إيه |
+|---|---|
+| [[SET k v EX n]] | اكتب ويتمسح بعد n ثانية ([[PX]] بالملّي) |
+| [[TTL k]] | الباقي: رقم، أو [[-1]] من غير انتهاء، أو [[-2]] مش موجود |
+| [[INCR k]] | عداد atomic |
+| [[SET k v NX PX n]] | اكتب بس لو فاضي (lock) |
+| [[SCAN]] / [[--scan]] | دوّر على دفعات، مش [[KEYS]] |
+| [[UNLINK k]] | امسح والذاكرة تتحرر في الخلفية |
+
+- [[-1]] و [[-2]] أكتر حاجة بتتلخبط: [[-1]] موجود ودايم، [[-2]] مش موجود.
+- [[SET]] من غير EX على مفتاح عليه TTL بيشيل الـ TTL (ده سؤال الـ «جرّب»).`,
           lines: [
             "شغّل Redis في Docker على البورت الافتراضي.",
             "اتأكد إنه شغال: لازم يرد PONG.",
             "افتح الـ shell التفاعلي.",
             "خزّن كود OTP يتمسح بعد ٥ دقايق.",
             "فاضله كام ثانية.",
+            "key عادي من غير EX.",
             "key من غير TTL.",
             "key مش موجود.",
             "عداد: بيزوّد واحد ويرجّع القيمة الجديدة، atomic.",
@@ -103,6 +291,149 @@ ZREVRANGE leaderboard 0 2 WITHSCORES`,
             when: "hash لأي object بتعدّل حقوله لوحده. و sorted set لأي حاجة فيها «أعلى» أو «آخر» أو «في آخر X دقيقة». و set لـ «موجود ولا لأ» والعد من غير تكرار. و string للكاش والعدادات.",
             mistakes: R`JSON في string لحاجة بتتعدّل حقل حقل (رصيد أو عداد جوه object) فيضيع تعديل مع التزامن. و list من غير LTRIM فتكبر للأبد. و [[HGETALL]] أو [[SMEMBERS]] أو [[LRANGE 0 -1]] على key فيه مليون عنصر: نفس مشكلة KEYS، أمر واحد بيوقّف الكل. استخدم [[HSCAN]] و [[SSCAN]] أو صفحات.`
           },
+          teach: R`## ٥ أنواع، وأول حرف في الأمر بيقولك النوع
+
+الأوامر في المثال كلها بتتكتب جوه [[redis-cli]]، واتشغّلت على Redis 8.10 في Docker. لاحظ الحرف الأول: [[H]] للـ hash، و [[L]] للـ list، و [[S]] للـ set، و [[Z]] للـ sorted set، والـ string ملهاش حرف ([[SET]] و [[GET]]). ولو نسيت مفتاح نوعه إيه، [[TYPE key]] بيقولك (جرّبنا: [[TYPE user:7]] رجّع [[hash]]، و [[TYPE leaderboard]] رجّع [[zset]]).
+
+---
+
+## ١. string: [[SET product:1:v1 '{"id":1,"name":"Mug"}' EX 300]]
+
+- القيمة JSON بين [[' ']] عشان redis-cli ياخدها حتة واحدة رغم المسافات والـ [[""]] اللي جواها.
+- [[v1]] في آخر الاسم: نسخة شكل البيانات. لو غيّرت شكل الـ JSON بعد كده تخليه [[v2]]، فالكاش القديم ميتقريش غلط.
+- [[EX 300]]: كاش لمدة ٥ دقايق.
+
+~~~text GET product:1:v1
+"{\"id\":1,\"name\":\"Mug\"}"
+~~~
+
+الـ [[\"]] دي redis-cli بيعرض بيها الـ [[""]] اللي جوه النص، القيمة نفسها JSON عادي. Redis مش فاهم إن ده JSON، بالنسباله نص وخلاص.
+
+---
+
+## ٢. hash: [[HSET user:7 name Mona plan pro credits 10]]
+
+hash يعني object جوه المفتاح: حقول وقيم. بعد اسم المفتاح بتكتب أزواج [[field value]]:
+
+| field | value |
+|---|---|
+| [[name]] | [[Mona]] |
+| [[plan]] | [[pro]] |
+| [[credits]] | [[10]] |
+
+~~~text الناتج
+(integer) 3
+~~~
+
+الـ [[3]] عدد الحقول **الجديدة** اللي اتضافت.
+
+### [[HINCRBY user:7 credits -3]]
+
+HINCRBY = Hash INCRement BY: زوّد حقل واحد بالرقم ده. والرقم سالب فبيقلّل:
+
+~~~text الناتج
+(integer) 7
+~~~
+
+ده الفرق عن JSON في string: عدّلت [[credits]] من غير ما تقرا الباقي ولا تكتبه، وفي أمر واحد atomic. و [[HGETALL user:7]] بيرجّع الكل كقايمة field ثم value:
+
+~~~text HGETALL user:7
+1) "name"
+2) "Mona"
+3) "plan"
+4) "pro"
+5) "credits"
+6) "7"
+~~~
+
+وفي Redis 7.4 وما بعده جرّبنا TTL لحقل لوحده: [[HEXPIRE user:7 60 FIELDS 1 credits]] رجّع [[1]] (اتظبط)، و [[HTTL user:7 FIELDS 1 credits]] رجّع [[60]]. ([[FIELDS 1]] يعني «جاي بعدي حقل واحد».)
+
+---
+
+## ٣. list: [[LPUSH]] و [[LTRIM]] و [[LRANGE]]
+
+- [[LPUSH recent:7 p3]]: L = Left، ضيف في **أول** القايمة. بيرجّع طول القايمة بعد الإضافة.
+- [[LTRIM recent:7 0 9]]: سيب العناصر من index صفر لـ ٩ (أول ١٠) وامسح الباقي.
+- [[LRANGE recent:7 0 -1]]: اقرا من صفر لآخر عنصر. و [[-1]] يعني «الأخير»، و [[-2]] اللي قبله، وهكذا.
+
+جرّبنا [[LPUSH recent:7 p3]] وبعده [[LPUSH recent:7 p4 p5]]:
+
+~~~text LRANGE recent:7 0 -1
+1) "p5"
+2) "p4"
+3) "p3"
+~~~
+
+الأحدث الأول، لأن كل LPUSH بيحط في الأول. و LTRIM بعد كل LPUSH بيخلي القايمة متعدّيش ١٠ مهما اليوزر اتفرج.
+
+---
+
+## ٤. set: [[SADD online:2026-09-29 u1 u2 u1]]
+
+set مجموعة من غير تكرار ومن غير ترتيب. ضفنا ٣ بس [[u1]] متكرر:
+
+~~~text
+SADD online:2026-09-29 u1 u2 u1
+(integer) 2
+SCARD online:2026-09-29
+(integer) 2
+~~~
+
+[[SADD]] رجّع [[2]] = عدد اللي اتضافوا فعلًا. و [[SCARD]] (CARDinality = عدد العناصر) برضه [[2]]. والتاريخ في اسم المفتاح عشان كل يوم ليه set لوحده.
+
+---
+
+## ٥. sorted set: [[ZADD]] و [[ZINCRBY]] و [[ZREVRANGE]]
+
+كل عنصر معاه **score** (رقم)، والعناصر دايمًا مترتبة بيه. في [[ZADD]] الـ score الأول وبعده العنصر:
+
+~~~text
+ZADD leaderboard 120 mona 300 ali 90 sara
+(integer) 3
+ZINCRBY leaderboard 50 sara
+"140"
+~~~
+
+سارة كانت ٩٠ وبقت ١٤٠. و [[ZREVRANGE leaderboard 0 2 WITHSCORES]]: REV = reverse، من الأعلى للأقل، والعناصر من صفر لـ ٢ (أول ٣)، و [[WITHSCORES]] هات الـ score مع كل عنصر:
+
+~~~text الناتج
+1) "ali"
+2) "300"
+3) "sara"
+4) "140"
+5) "mona"
+6) "120"
+~~~
+
+سارة طلعت فوق منى بعد الـ ٥٠ نقطة. ومن غير [[REV]] ([[ZRANGE]]) الترتيب من الأقل للأعلى.
+
+---
+
+## حل «جرّب»: sorted set والـ score هو الوقت
+
+جرّبنا كود الحل: [[p1]] اتضاف مرتين بوقتين مختلفين. أول [[ZADD]] بيرجّع [[1]] (جديد)، والتالت بيرجّع [[0]] (العنصر موجود، الـ score بس اتحدّث). و [[ZREMRANGEBYRANK recent:z 0 -6]] بيمسح من أول عنصر (الأقدم) لحد السادس من الآخر، يعني يسيب آخر ٥ (هنا رجّع [[0]] لأن فيه عنصرين بس):
+
+~~~text ZREVRANGE ... 0 -1
+1) "p1"
+2) "p2"
+~~~
+
+[[p1]] مرة واحدة وفي الأول لأنه الأحدث.
+
+---
+
+## الخلاصة
+
+| النوع | أوامر | استخدامه |
+|---|---|---|
+| string | [[SET]] [[GET]] [[INCR]] | كاش JSON، عداد |
+| hash | [[HSET]] [[HGET]] [[HINCRBY]] [[HGETALL]] | object بتعدّل حقوله لوحدها |
+| list | [[LPUSH]] [[LTRIM]] [[LRANGE]] | آخر N حاجة بالترتيب |
+| set | [[SADD]] [[SCARD]] [[SISMEMBER]] | من غير تكرار: مين أونلاين |
+| sorted set | [[ZADD]] [[ZINCRBY]] [[ZREVRANGE]] | ترتيب بـ score: الأوائل، أو بالوقت |
+
+- الأرقام اللي بترجع من الإضافة (HSET و SADD و ZADD) عدد العناصر **الجديدة**، مش الكل.
+- [[0 -1]] في أي range يعني «من الأول للآخر»، وخلي بالك منه على مفتاح ضخم.`,
           lines: [
             "string: كاش لمنتج كـ JSON لمدة ٥ دقايق.",
             "hash: بيانات يوزر في حقول.",
@@ -170,8 +501,156 @@ ioredis بيفضل يحاول يتصل في الخلفية لوحده، فلما
 
 و [[JSON.parse]] للكاش: تواريخ Prisma بترجع strings مش Date. لو الكود بيعمل [[order.createdAt.getTime()]] هيقع على القيمة الجاية من الكاش بس. ودي ملاحظة: ioredis في وضع صيانة، و node-redis (باكدج [[redis]]) هو اللي Redis نفسهم بينصحوا بيه للمشاريع الجديدة. ioredis لسه منتشر جدًا، و BullMQ مبني عليه.`,
             when: "أي كاش أو عداد مش أساسي. ولحاجات لازم تبقى صح (rate limit للـ login، أو lock على عملية دفع) قرر صريح: لو Redis وقع، تسمح ولا ترفض؟ (درس [[rate-limit-redis]]).",
-            mistakes: R`الإعدادات الافتراضية للكاش فوقعة Redis تعلّق كل الطلبات. ومفيش try/catch حوالين الكاش فخطأ Redis يبقى 500. و [[if (hit)]] بدل [[hit !== null]]: لو القيمة المتكاشة [[0]] أو [[""]] هتتعامل كأنها مش موجودة. وتكاش [[null]] (مش موجود) من غير ما تفكر: ده ممكن يبقى مفيد ضد طلبات كتير على id مش موجود، بس بـ TTL قصير. و [[new Redis()]] جوه الـ route فكل طلب اتصال جديد.`
+            mistakes: R`الإعدادات الافتراضية للكاش فوقعة Redis تعلّق كل الطلبات. ومفيش try/catch حوالين الكاش فخطأ Redis يبقى 500. وتعمل [[JSON.parse]] الأول وبعدين [[if (value)]]: لو القيمة المتكاشة [[0]] أو [[false]] أو [[""]] هتتعامل كأنها مش موجودة. اسأل على اللي راجع من Redis نفسه: [[hit !== null]]. وتكاش [[null]] (مش موجود) من غير ما تفكر: ده ممكن يبقى مفيد ضد طلبات كتير على id مش موجود، بس بـ TTL قصير. و [[new Redis()]] جوه الـ route فكل طلب اتصال جديد.`
           },
+          teach: R`## ملف واحد فيه حاجتين: الاتصال، ودالة كاش
+
+الملف بيعمل اتصال واحد بـ Redis للتطبيق كله، ومعاه دالة [[cached]]: «هات القيمة من Redis لو موجودة، وإلا هاتها من القاعدة واحفظها». والأهم إن أي مشكلة في Redis متوقّعش الطلب. جرّبناه على ويندوز 11 بـ Node 24 و ioredis 6.0 و Redis 8.10 في Docker، و [[config]] و [[logger]] جايين من ملفات المشروع (درس [[config.js بـ zod]] ودرس [[pino]]).
+
+---
+
+## ١. [[import { Redis } from "ioredis";]]
+
+[[ioredis]] باكدج بتتسطب بـ [[npm i ioredis]]. و [[{ Redis }]] بين أقواس معناها named export: بتاخد حاجة اسمها [[Redis]] بالظبط من جوه الباكدج. ده كلاس (قالب بتعمل منه objects بـ [[new]]).
+
+---
+
+## ٢. [[new Redis(config.REDIS_URL, {...})]]
+
+بيعمل client ويبدأ يتصل فورًا. الـ URL شكله [[redis://127.0.0.1:6379]] (أو [[redis://:password@host:6379]] لو فيه باسورد). والـ object التاني الإعدادات، وده قلب الدرس:
+
+| الإعداد | الافتراضي | هنا | معناه |
+|---|---|---|---|
+| [[enableOfflineQueue]] | [[true]] | [[false]] | لو مفيش اتصال: افشل فورًا بدل ما تستنى في طابور |
+| [[maxRetriesPerRequest]] | [[20]] | [[1]] | لو الاتصال اتقطع والأمر شغال، يتعاد مرة واحدة بس |
+| [[connectTimeout]] | [[10000]] | [[2000]] | محاولة الاتصال متاخدش أكتر من ٢ ثانية (بالملّي ثانية) |
+| [[commandTimeout]] | مفيش | [[500]] | أي أمر ياخد أكتر من نص ثانية يفشل |
+
+و [[export const]]: [[const]] متغير مش هيتعاد تعيينه، و [[export]] عشان أي ملف تاني يعمل [[import { redis }]] وياخد **نفس** الـ client.
+
+---
+
+## ٣. [[redis.on("error", ...)]]
+
+الـ client بيطلّع event اسمه [[error]] كل ما الاتصال يفشل. [[.on(اسم, دالة)]] معناها «لما الحدث ده يحصل نادي الدالة دي»، و [[(err) => ...]] دالة سهم بتاخد الخطأ. هنا بنسجّله warning بـ [[err.message]] بس (الرسالة من غير الـ stack الطويل). لما وقّفنا Redis طلع:
+
+~~~text سطر اللوج
+{"level":40,...,"err":"connect ECONNREFUSED 127.0.0.1:56390","msg":"redis error"}
+~~~
+
+[[level 40]] في pino يعني warn. و [[ECONNREFUSED]] = Connection Refused: مفيش حد بيسمع على البورت ده.
+
+---
+
+## ٤. [[export async function cached(key, ttlSec, load)]]
+
+[[async]] يعني الدالة بترجّع promise وتقدر تستخدم [[await]] جواها. بتاخد ٣ حاجات:
+
+- [[key]]: اسم المفتاح في Redis.
+- [[ttlSec]]: مدة الكاش بالثواني (sec = seconds).
+- [[load]]: **دالة** (مش قيمة) بتجيب الداتا من القاعدة. دالة عشان متتنادىش غير لو الكاش فاضي.
+
+### الخطوة ١: اقرا من الكاش
+
+~~~js
+try {
+  const hit = await redis.get(key);
+  if (hit !== null) return JSON.parse(hit);
+} catch (err) { logger.warn({ key, err: err.message }, "cache read skipped"); }
+~~~
+
+- [[redis.get(key)]] زي [[GET]] في redis-cli، بيرجّع النص أو [[null]] لو المفتاح مش موجود.
+- [[hit !== null]]: [[!==]] «مش بيساوي» من غير تحويل أنواع. ده بالظبط معنى «المفتاح موجود». والغلطة الشائعة إنك تعمل [[JSON.parse]] الأول وتسأل [[if (value)]]: ساعتها لو القيمة المتكاشة [[0]] أو [[false]] (قيم falsy، يعني JavaScript بيعتبرها «لأ» في الشرط) هتتحسب كأن الكاش فاضي. جرّبنا: [[JSON.stringify(0)]] بيطلع النص [["0"]]، وده نص مش فاضي، فالسؤال على [[hit]] نفسه هو الصح.
+- [[JSON.parse]] بيرجّع النص object.
+- [[try/catch]]: لو Redis واقع أو بطيء، [[redis.get]] بيرمي خطأ، فبنسجّله ونكمّل للقاعدة بدل ما الطلب يقع بـ 500.
+
+### الخطوة ٢: هات من القاعدة
+
+[[const value = await load();]] برّه أي try: لو القاعدة نفسها فشلت، ده خطأ حقيقي ولازم يطلع لـ error middleware.
+
+### الخطوة ٣: اكتب في الكاش
+
+[[redis.set(key, JSON.stringify(value), "EX", ttlSec)]] = [[SET key value EX 300]]. ioredis بياخد كل كلمة من الأمر كـ argument. و [[JSON.stringify]] لأن Redis بيخزن نص. وبرضه جوه try: فشل الكتابة مش سبب يفشّل الطلب.
+
+### الخطوة ٤: [[return value;]]
+
+---
+
+## ٥. السطر الأخير (comment): إزاي بتستخدمها
+
+~~~js
+const product = await cached($__btproduct:$__{id}:v1$__bt, 300, () => db.product.findUnique({ where: { id } }));
+~~~
+
+- [[$__btproduct:$__{id}:v1$__bt]] template string: [[$__{id}]] بيتحط مكانها قيمة [[id]]، فالمفتاح [[product:1:v1]].
+- [[() => db.product...]] دالة من غير arguments، و [[cached]] هي اللي تقرر تناديها ولا لأ.
+
+---
+
+## ٦. تشغيل كود الحل: ٣ حالات
+
+### Redis شغال
+
+~~~text الناتج
+0 61.2ms dbCalls=1
+1 1.3ms dbCalls=1
+2 1.2ms dbCalls=1
+~~~
+
+أول مرة من «القاعدة» (دالة بتستنى 50ms)، والمرتين التانيين من Redis في حوالي ١ms، و [[dbCalls]] فضل [[1]]. و [[performance.now()]] وقت بالملّي ثانية بكسور، و [[.toFixed(1)]] رقم عشري واحد.
+
+### ملاحظة لقيناها: أول أمر خالص بيتخطى الكاش
+
+حتى و Redis شغال، أول [[redis.get]] طلع معاه:
+
+~~~text
+"err":"Stream isn't writeable and enableOfflineQueue options is false","msg":"cache read skipped"
+~~~
+
+السبب إن السكربت بعت الأمر قبل ما الاتصال يخلص، ومع [[enableOfflineQueue: false]] مفيش طابور يستنى فيه. ده التمن المقصود: في سيرفر حقيقي الاتصال بيبقى جاهز قبل أول طلب بكتير، والأسوأ إن أول طلب يروح للقاعدة.
+
+### Redis واقف
+
+وجّهنا الـ URL لبورت مفيش عليه حاجة:
+
+~~~text الناتج (من غير سطور اللوج)
+0 58.4ms dbCalls=1
+1 62.4ms dbCalls=2
+2 63.6ms dbCalls=3
+~~~
+
+كل طلب راح القاعدة، ومع كل واحد سطرين warning ([[cache read skipped]] و [[cache write skipped]])، ومفيش ولا خطأ وصل للي نادى الدالة.
+
+### Redis وقع ورجع والسكربت شغال
+
+سكربت بيطلب كل نص ثانية، ووقّفنا الـ container في النص وشغّلناه تاني:
+
+~~~text الناتج (مختصر)
+5 1.5ms dbCalls=1 status=ready
+6 61.9ms dbCalls=2 status=reconnecting
+...
+18 62.0ms dbCalls=14 status=reconnecting
+READY event
+19 62.6ms dbCalls=15 status=ready
+20 2.0ms dbCalls=15 status=ready
+~~~
+
+[[redis.status]] بقى [[reconnecting]] والطلبات كملت من القاعدة، ولما Redis رجع ioredis اتصل لوحده (event [[ready]]) والكاش رجع يشتغل من غير restart. (الطلب ١٩ راح القاعدة لأن Redis الجديد كان فاضي.)
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| client واحد [[export]] | اتصال واحد للتطبيق كله |
+| [[enableOfflineQueue: false]] + [[commandTimeout]] | Redis واقع أو بطيء = فشل سريع، مش طلب معلّق |
+| [[on("error")]] | الأخطاء تتسجّل بدل «Unhandled error event» |
+| [[try/catch]] حوالين الكاش بس | Redis يقع، الموقع لأ |
+| [[hit !== null]] | القيم الفاضية تتحسب |
+
+- الكاش تحسين: لو اختفى، التطبيق أبطأ بس مش واقع.
+- الإعدادات دي للكاش بس. queue زي BullMQ محتاج العكس (يستنى وميضيّعش).`,
           lines: [
             "ioredis بالـ named export، الشكل اللي المكتبة بتنصح بيه.",
             "client واحد للكاش من الـ URL في config.",
@@ -184,7 +663,7 @@ ioredis بيفضل يحاول يتصل في الخلفية لوحده، فلما
             "wrapper: key ومدة ودالة بتجيب من القاعدة.",
             "جرّب الكاش.",
             "اقرا.",
-            "لقيته؟ رجّعه. ([[!== null]] عشان القيم زي 0 تتحسب.)",
+            "لقيته؟ رجّعه. ([[!== null]] يعني المفتاح موجود، حتى لو القيمة المتكاشة 0 أو false.)",
             "Redis فيه مشكلة؟ سجّل وكمّل.",
             "هات من القاعدة.",
             "اكتب في الكاش بالمدة، ولو فشل سجّل وكمّل.",
@@ -246,6 +725,156 @@ BullMQ بيطلب [[noeviction]] صريح ويحذّرك لو غيره، لأن 
             when: "أول ما Redis يطلع من جهازك لسيرفر حقيقي. واسأل نفس السؤال مع كل استخدام جديد: لو المفتاح ده اتمسح أو ضاع بعد restart، يحصل إيه؟",
             mistakes: R`كاش و BullMQ على نفس Redis بـ allkeys-lru: تحت الضغط Redis يمسح jobs. أو العكس: noeviction وكاش من غير TTL، فـ Redis يتملى وكل الكتابات تفشل بما فيها الـ queue والـ sessions. و Redis في Docker من غير volume مع AOF، فكل deploy يمسح الـ sessions. وفي الانترفيو: «Redis اتملى، إيه اللي بيحصل؟» الإجابة: حسب الـ policy، وافتراضيًا noeviction يعني الكتابة بتفشل.`
           },
+          teach: R`## جزئين: ٣ أوامر بتسأل، وملفين إعدادات
+
+أول ٣ سطور أوامر بتسأل Redis شغال على إيه دلوقتي. والباقي سطور من [[redis.conf]] (ملف إعدادات Redis)، مش أوامر: نسخة لـ Redis كاش، ونسخة لـ Redis فيه queues و sessions. كله اتجرّب على Redis 8.10 في Docker، والملفين اتحمّلوا فعلًا بـ [[redis-server /conf/cache.conf]].
+
+---
+
+## ١. [[redis-cli CONFIG GET maxmemory-policy]]
+
+[[CONFIG GET]] بيقرا إعداد من السيرفر وهو شغال. الرد سطرين: اسم الإعداد وقيمته:
+
+~~~text الناتج (Redis جديد)
+maxmemory-policy
+noeviction
+~~~
+
+[[noeviction]] هو الافتراضي: eviction يعني «طرد»، فـ noeviction = «مبمسحش حاجة لوحدي».
+
+---
+
+## ٢. [[redis-cli INFO memory | grep -E "used_memory_human|maxmemory_human"]]
+
+- [[INFO memory]] تقرير طويل عن الذاكرة، سطر لكل رقم بشكل [[name:value]].
+- [[| grep -E "a|b"]]: خد السطور اللي فيها a **أو** b بس. [[-E]] = Extended regex، وفيها [[|]] معناها «أو».
+- [[_human]]: نفس الرقم بوحدة مقروءة (M و G) بدل البايتات.
+
+~~~text الناتج
+used_memory_human:1.47M
+maxmemory_human:0B
+~~~
+
+[[used_memory]] اللي Redis واكله فعلًا. و [[maxmemory]] [[0B]] يعني **مفيش حد**: هيفضل ياكل لحد ما رام الجهاز تخلص.
+
+على ويندوز مفيش [[grep]]، وجرّبنا ده في PowerShell 7 و 5.1:
+
+~~~powershell
+docker exec redis redis-cli INFO memory | Select-String "used_memory_human|maxmemory_human"
+~~~
+
+---
+
+## ٣. [[redis-cli INFO stats | grep evicted_keys]]
+
+[[evicted_keys]] عدد المفاتيح اللي Redis مسحها لوحده عشان يعمل مكان، من ساعة ما السيرفر قام. على Redis جديد [[evicted_keys:0]]. لو الرقم ده بيزيد في الإنتاج، يبقى Redis بيمسح بيانات انت فاكرها موجودة.
+
+---
+
+## ٤. ملف الكاش
+
+~~~text redis.conf لكاش بس
+maxmemory 512mb
+maxmemory-policy allkeys-lru
+save ""
+appendonly no
+~~~
+
+| السطر | معناه |
+|---|---|
+| [[maxmemory 512mb]] | متعدّيش ٥١٢ ميجا |
+| [[maxmemory-policy allkeys-lru]] | لما توصل: امسح من **كل** المفاتيح ([[allkeys]]) الأقل استخدامًا مؤخرًا (LRU = Least Recently Used) |
+| [[save ""]] | اقفل الـ RDB snapshots (صورة من الداتا على الديسك كل فترة) |
+| [[appendonly no]] | واقفل الـ AOF (Append Only File: كل أمر كتابة يتسجّل في ملف) |
+
+يعني Redis ده لو عمل restart يبدأ فاضي، وده مقبول للكاش لأن الداتا الأصلية في القاعدة.
+
+---
+
+## ٥. ملف الـ queues والـ sessions
+
+~~~text redis.conf لـ BullMQ و sessions
+maxmemory 1gb
+maxmemory-policy noeviction
+appendonly yes
+appendfsync everysec
+~~~
+
+- [[noeviction]]: مهما حصل متمسحش حاجة. لو اتملى، ارفض الكتابة. ضياع job أسوأ من خطأ واضح.
+- [[appendonly yes]]: كل أمر بيتكتب في ملف، وبعد restart Redis بيعيد قرايته.
+- [[appendfsync everysec]]: fsync = «اجبر النظام يكتب على الديسك فعلًا». كل ثانية، فأقصى خسارة لو الجهاز وقع حوالي ثانية.
+
+ولما حمّلنا الملف ده، [[CONFIG GET save]] رجّع [[3600 1 300 100 60 10000]]: الـ RDB الافتراضي لسه شغال جنب الـ AOF. الرقم ده أزواج «ثواني وعدد تغييرات»: snapshot كل ساعة لو فيه تغيير واحد، أو كل ٥ دقايق لو ١٠٠، أو كل دقيقة لو ١٠٠٠٠.
+
+---
+
+## ٦. التجربة (كود الحل): Redis بيتملى
+
+### [[CONFIG SET maxmemory 2mb]] و [[allkeys-lru]]
+
+[[CONFIG SET]] بيغيّر الإعداد وهو شغال من غير restart (ومن غير ما يتحفظ في الملف).
+
+### سطر الـ loop
+
+~~~bash
+for i in $(seq 1 3000); do echo "SET junk:$i $(head -c 500 /dev/zero | tr '\0' x)"; done | redis-cli > /dev/null
+~~~
+
+من جوه لبرة:
+
+1. [[head -c 500 /dev/zero]]: ٥٠٠ بايت أصفار ([[/dev/zero]] ملف بيطلّع أصفار للأبد، و [[-c]] = bytes).
+2. [[| tr '\0' x]]: tr = translate، حوّل كل صفر لحرف [[x]]. فالقيمة ٥٠٠ حرف x.
+3. [[$( ... )]]: نفّذ اللي جوه وحط ناتجه مكانه.
+4. [[echo "SET junk:$i ..."]]: بيطبع أمر Redis كنص، و [[$i]] رقم اللفة.
+5. [[for i in $(seq 1 3000); do ...; done]]: [[seq]] بيطلّع الأرقام من ١ لـ ٣٠٠٠، واللفة بتتكرر لكل رقم.
+6. [[| redis-cli]]: كل الـ ٣٠٠٠ سطر داخلين redis-cli كأوامر.
+7. [[> /dev/null]]: ارمي الردود (٣٠٠٠ OK).
+
+ده bash، فشغّله في Git Bash أو جوه الـ container ([[docker exec redis sh -c '...']]، واحنا جرّبناه كده).
+
+### النتيجة مع allkeys-lru
+
+~~~text DBSIZE ثم evicted_keys
+937
+evicted_keys:2109
+~~~
+
+كتبنا ٣٠٠٠ والموجود [[937]] بس ([[DBSIZE]] = عدد المفاتيح). ليه مش ٣٠٠٠ × ٥٠٠ = ١.٥ ميجا تكفي؟ لأن كل مفتاح ليه تكلفة زيادة (الاسم، وهياكل Redis الداخلية) و Redis نفسه فاضي بياكل حوالي ١.٥ ميجا. وقبل التجربة كنا حاطين مفتاح [[keep:me]]: بعدها [[EXISTS keep:me]] رجّع [[0]]. اتمسح هو كمان، لأن allkeys معناها أي مفتاح.
+
+### النتيجة مع noeviction
+
+~~~bash
+redis-cli CONFIG SET maxmemory-policy noeviction
+for i in $(seq 1 300); do echo "SET more:$i ..."; done | redis-cli | grep -c OOM
+~~~
+
+~~~text الناتج
+272
+~~~
+
+من ٣٠٠ كتابة، ٢٨ عدّوا (لسه كان فيه مكان صغير) و ٢٧٢ رجعوا خطأ ([[grep -c]] = عِد السطور بدل ما تطبعها). وأي كتابة بعدها:
+
+~~~text الناتج
+(error) OOM command not allowed when used memory > 'maxmemory'.
+~~~
+
+OOM = Out Of Memory. والقراية لسه شغالة، ومفيش مفتاح اتمسح. وفي الآخر [[CONFIG SET maxmemory 0]] يشيل الحد.
+
+> لاحظ: لو عملت SET واحد صغير بعد ما تغيّر لـ noeviction على طول، ممكن يعدّي (جرّبنا وعدّى)، لأن الـ LRU كان لسه مفضّي مكان. عشان كده التجربة بتكتب ٣٠٠.
+
+---
+
+## الخلاصة
+
+| | كاش | queues و sessions |
+|---|---|---|
+| [[maxmemory-policy]] | [[allkeys-lru]] | [[noeviction]] |
+| لما يتملى | يمسح القديم ويكمّل | يرفض الكتابة بـ OOM |
+| persistence | ولا حاجة (أو RDB بس) | [[appendonly yes]] + [[everysec]] |
+| بعد restart | يبدأ فاضي، عادي | يرجع زي ما كان |
+
+- [[maxmemory 0]] (الافتراضي) = مفيش حد.
+- الاتنين يبقوا Redis منفصلين، لأن الـ policy على الـ instance كله.`,
           lines: [
             "الـ policy الحالية.",
             "الذاكرة المستخدمة والحد.",
@@ -270,6 +899,7 @@ for i in $(seq 1 3000); do echo "SET junk:$i $(head -c 500 /dev/zero | tr '\0' x
 redis-cli DBSIZE
 redis-cli INFO stats | grep evicted_keys
 redis-cli CONFIG SET maxmemory-policy noeviction
+for i in $(seq 1 300); do echo "SET more:$i $(head -c 500 /dev/zero | tr ' ' x)"; done | redis-cli | grep -c OOM
 redis-cli SET one-more x
 # (error) OOM command not allowed when used memory > 'maxmemory'.
 redis-cli CONFIG SET maxmemory 0`
@@ -321,6 +951,138 @@ export async function withLock(key, ttlMs, fn) {
             when: "sessions: أي تطبيق بيستخدم express-session وفيه أكتر من نسخة أو بيعمل deploy (يعني كلهم). والـ lock: شغل دوري أو تقيل لازم يتعمل مرة واحدة، ومش فيه فلوس.",
             mistakes: R`lock من غير TTL فأول crash يقفل الشغل ده للأبد. أو فك بـ [[DEL]] من غير ما تتأكد من الـ token. أو [[GET]] وبعدين [[SET]] في أمرين بدل [[SET NX]]: اتنين يعملوا GET مع بعض ويلاقوه فاضي ويمسكوا الاتنين. وتدّي connect-redis client بتاع ioredis فيقع بأخطاء غريبة. و sessions و كاش على Redis واحد بـ allkeys-lru، فتحت الضغط اليوزرز يخرجوا لوحدهم (درس [[maxmemory و persistence]]).`
           },
+          teach: R`## حاجتين منفصلتين في نفس الملف
+
+النص الأول بيخلي express-session يحفظ الـ sessions في Redis بدل ذاكرة الـ process. والنص التاني دالة [[withLock]]: «اشتغل بس لو محدش تاني شغال». جرّبنا الاتنين في سيرفر Express 5 على ويندوز 11 (Node 24، و connect-redis 10، و redis 6.3، و ioredis 6) و Redis 8.10 في Docker، وضفنا routes صغيرة للتجربة: [[POST /login]] بيحط [[userId]] في الـ session، و [[GET /me]] بيرجّعه أو 401، و [[POST /logout]].
+
+---
+
+## الجزء الأول: الـ sessions
+
+### ١. الـ imports
+
+~~~js
+import session from "express-session";
+import { RedisStore } from "connect-redis";
+import { createClient } from "redis";
+~~~
+
+- [[express-session]]: الـ middleware نفسه (درس [[express-session]]). import من غير [[{}]] = الـ default export.
+- [[{ RedisStore }]] من [[connect-redis]]: كلاس «store»، يعني المكان اللي express-session يكتب فيه ويقرا منه.
+- [[{ createClient }]] من باكدج [[redis]] (اسمه node-redis): العميل الرسمي بتاع Redis. connect-redis مكتوب عليه هو، مش على ioredis.
+
+### ٢. الـ client
+
+~~~js
+const sessionRedis = createClient({ url: config.REDIS_URL });
+sessionRedis.on("error", (err) => logger.error({ err }, "session redis"));
+await sessionRedis.connect();
+~~~
+
+- [[createClient]] بيعمل client **من غير** ما يتصل.
+- [[on("error")]] زي ioredis: من غيره أي قطع في الاتصال بيبقى «unhandled error» يوقّع الـ process.
+- [[await sessionRedis.connect()]]: هنا الاتصال بيحصل. [[await]] في أول الملف (top-level await) شغال في ES modules، فالسيرفر مش هيبدأ قبل ما Redis يبقى جاهز. وده الفرق عن ioredis اللي بيتصل لوحده.
+
+### ٣. [[app.set("trust proxy", 1)]]
+
+لو السيرفر ورا Nginx أو load balancer، الطلب بيوصل لـ Express كـ HTTP عادي. ده بيقوله «صدّق أول proxy قدامك» فيعرف إن الطلب الأصلي كان HTTPS، ومن غيره الكوكي الـ [[secure]] مش هتتبعت خالص.
+
+### ٤. [[session({...})]]: كل خيار
+
+| الخيار | القيمة | معناه |
+|---|---|---|
+| [[store]] | [[new RedisStore({ client, prefix: "sess:" })]] | احفظ في Redis، وكل مفتاح يبدأ بـ [[sess:]] |
+| [[name]] | [[sid]] | اسم الكوكي (الافتراضي [[connect.sid]] بيفضح إنك Express) |
+| [[secret]] | من config | بيوقّع الكوكي عشان محدش يزوّر id |
+| [[resave]] | [[false]] | متكتبش الـ session تاني لو متغيرتش |
+| [[saveUninitialized]] | [[false]] | زائر لسه محطّش حاجة في الـ session؟ متعملوش مفتاح |
+| [[cookie.httpOnly]] | [[true]] | JavaScript في المتصفح ميقدرش يقراها |
+| [[cookie.secure]] | في الإنتاج بس | تتبعت على HTTPS بس |
+| [[cookie.sameSite]] | [["lax"]] | متتبعتش مع طلبات POST جاية من مواقع تانية |
+| [[cookie.maxAge]] | [[7 * 24 * 3600 * 1000]] | عمرها بالملّي ثانية: ٧ أيام × ٢٤ ساعة × ٣٦٠٠ ثانية × ١٠٠٠ = ٦٠٤٨٠٠٠٠٠ |
+
+### اللي حصل فعلًا
+
+طلب عادي لـ [[/]] من غير login: مفيش [[Set-Cookie]]، و [[--scan --pattern 'sess:*']] رجّع صفر مفاتيح (ده [[saveUninitialized: false]]). وبعد [[curl -i -c jar.txt -X POST http://localhost:5855/login]]:
+
+~~~text الناتج (headers مختصرة)
+HTTP/1.1 200 OK
+Set-Cookie: sid=s%3ARfHZyJdCeHBuZyh4vfrfuryPJ_y38v52.0u%2BtkYhOTJwxxg0hzfRR%2FjoVeTOnBI0pTm75ZbUmUq4; Path=/; Expires=Wed, 14 Oct 2026 08:14:07 GMT; HttpOnly; SameSite=Lax
+
+{"ok":true}
+~~~
+
+([[-i]] اطبع الـ headers، و [[-c jar.txt]] احفظ الكوكي في ملف، و [[-b jar.txt]] ابعتها بعد كده.) قيمة الكوكي [[s:]] ثم الـ id ثم [[.]] ثم التوقيع ([[%3A]] هي [[:]] بعد الـ encoding). وفي Redis:
+
+~~~text
+sess:RfHZyJdCeHBuZyh4vfrfuryPJ_y38v52
+TTL → 604799
+GET → {"cookie":{"originalMaxAge":604800000,"expires":"2026-10-14T08:14:07.650Z","secure":false,"httpOnly":true,"path":"/","sameSite":"lax"},"userId":7}
+~~~
+
+المفتاح = [[sess:]] + الـ id اللي في الكوكي. والـ TTL [[604799]] ثانية = أسبوع إلا ثانية: connect-redis حسبه من [[expires]] بتاع الكوكي. والقيمة JSON فيه الكوكي وكل اللي حطيته في [[req.session]].
+
+ووقّفنا السيرفر (بالـ PID بتاعه) وشغّلناه تاني: [[/me]] بنفس الكوكي رجّع [[{"userId":7}]]، لأن الـ session في Redis مش في ذاكرة الـ process اللي ماتت. وبعد [[/logout]] ([[req.session.destroy]]): الرد فيه [[Set-Cookie: sid=; ... Expires=Thu, 01 Jan 1970]] (امسح الكوكي)، والمفتاح اختفى من Redis، و [[/me]] رجّع [[401 Unauthorized]].
+
+---
+
+## الجزء التاني: الـ lock
+
+### ٥. الـ Lua script
+
+~~~js
+const RELEASE = 'if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end';
+~~~
+
+Lua لغة صغيرة Redis بيشغّلها جواه، والسكربت كله بيتنفّذ كأمر واحد (محدش يدخل في النص). بالعربي: «لو قيمة المفتاح لسه التوكن بتاعي، امسحه، وإلا رجّع 0». و [[KEYS]] قايمة المفاتيح اللي اتبعتت للسكربت، و [[ARGV]] قايمة القيم، و [1] يعني أول عنصر (Lua بتعد من ١ مش صفر).
+
+### ٦. [[withLock(key, ttlMs, fn)]]
+
+~~~js
+const token = crypto.randomUUID();
+~~~
+
+[[crypto]] هنا الـ Web Crypto اللي موجود global في Node الحديث (من غير import)، و [[randomUUID()]] بيعمل id عشوائي زي [[098b0e9e-b66f-411a-bee6-ad882599e0a5]] (طلع كده عندنا). كل محاولة ليها توكن، عشان نعرف «الـ lock ده بتاعي أنا».
+
+~~~js
+if ((await redis.set(key, token, "PX", ttlMs, "NX")) !== "OK") return { skipped: true };
+~~~
+
+ده [[SET key token PX 10000 NX]] من درس [[redis-cli]]. الـ [[redis]] هنا client الـ ioredis بتاع الكاش. بيرجّع [[OK]] لو مسكنا، و [[null]] لو حد تاني ماسك، فبنرجّع [[{ skipped: true }]] من غير ما نشتغل.
+
+~~~js
+try { return { value: await fn() }; }
+finally { await redis.eval(RELEASE, 1, key, token); }
+~~~
+
+- [[try]] نفّذ الشغل ورجّع نتيجته جوه [[{ value }]].
+- [[finally]] بيتنفّذ **في كل الأحوال**: نجح الشغل أو رمى خطأ. فالـ lock بيتفك دايمًا.
+- [[redis.eval(script, 1, key, token)]]: شغّل السكربت. الرقم [[1]] معناه «أول argument بعدي مفتاح» (يروح KEYS)، والباقي يروح ARGV.
+
+### تشغيل كود الحل
+
+٣ نداءات مع بعض بـ [[Promise.all]] على نفس المفتاح، والشغل بياخد ٢٠٠ms:
+
+~~~text الناتج
+[ { value: 'A did it' }, { skipped: true }, { skipped: true } ]
+0
+~~~
+
+A مسك الأول، و B و C لقوه مقفول فاتخطوا. و [[redis.exists]] رجّع [[0]]: الـ [[finally]] فك الـ lock بعد ما A خلص.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[RedisStore]] + client من [[redis]] | الـ sessions تفضل بعد restart وتتشارك بين النسخ |
+| TTL المفتاح = [[maxAge]] الكوكي | Redis بيمسح المنتهي لوحده |
+| [[resave: false]] و [[saveUninitialized: false]] | مفيش كتابة ومفاتيح على الفاضي |
+| [[SET ... NX PX]] | واحد بس يمسك، ويتفك لوحده لو الـ process مات |
+| توكن + Lua في [[finally]] | متفكّش lock حد تاني |
+
+- connect-redis عايز client من [[redis]] (node-redis)، والكاش و الـ lock ممكن يفضلوا على ioredis.`,
           lines: [
             "express-session.",
             "الـ store بتاع Redis.",
@@ -366,8 +1128,11 @@ console.log(await redis.exists("lock:daily-report")); // 0`
 ومعاه تعد بحاجة غير الـ IP: [[keyGenerator]] يرجّع id اليوزر أو الـ API key، و [[limit]] ممكن يبقى دالة (الباقة المدفوعة حدها أعلى). والأساسيات (الحد العام، وحد login، و trust proxy) في درس [[express-rate-limit]].`,
           example: R`import { rateLimit, ipKeyGenerator } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
+import { Redis } from "ioredis";
 
-const redisStore = (prefix) => new RedisStore({ prefix, sendCommand: (command, ...args) => redis.call(command, ...args) });
+const rlRedis = new Redis(config.REDIS_URL, { maxRetriesPerRequest: 1, commandTimeout: 500 });
+rlRedis.on("error", (err) => logger.warn({ err: err.message }, "rate-limit redis"));
+const redisStore = (prefix) => new RedisStore({ prefix, sendCommand: (command, ...args) => rlRedis.call(command, ...args) });
 
 export const publicApiLimiter = rateLimit({
   windowMs: 60_000,
@@ -403,11 +1168,171 @@ export const loginLimiter = rateLimit({
 
 وفيه algorithms تانية (token bucket و sliding window) وحصص شهرية لكل key، ودي في تاب «APIs متقدمة».`,
             when: "أول ما يبقى عندك أكتر من نسخة، أو API key لشركاء، أو endpoint بتدفع على كل طلب فيه.",
-            mistakes: R`[[rate-limit-redis]] متسطّب والـ limiter من غير [[store]]، فهو لسه في الذاكرة (حصلت في مشروع حقيقي، درس [[express-rate-limit]]). ونفس الـ store لـ limiterين. و [[keyGenerator: (req) => req.ip]] من غير ipKeyGenerator. والـ limiter قبل الـ middleware اللي بيقرا الـ API key، فكله بيتعد بالـ IP. و Redis الـ rate limit بـ allkeys-lru تحت ضغط، فالعدادات بتتمسح والحد بيتلغي من غير ما حد يعرف.`
+            mistakes: R`[[rate-limit-redis]] متسطّب والـ limiter من غير [[store]]، فهو لسه في الذاكرة (حصلت في مشروع حقيقي، درس [[express-rate-limit]]). ونفس الـ store لـ limiterين. و [[keyGenerator: (req) => req.ip]] من غير ipKeyGenerator. والـ limiter قبل الـ middleware اللي بيقرا الـ API key، فكله بيتعد بالـ IP. و Redis الـ rate limit بـ allkeys-lru تحت ضغط، فالعدادات بتتمسح والحد بيتلغي من غير ما حد يعرف. وتدّي الـ store الـ client بتاع الكاش اللي فيه [[enableOfflineQueue: false]] (درس [[ioredis]]): الـ store بيحمّل الـ Lua script أول ما الـ limiter يتعمل، قبل ما الاتصال يجهز، فالتحميل بيفشل والـ limiter بيفضل مقفول لحد restart (جربناها: كل الطلبات عدّت ومفيش ولا 429، واللوج فيه [[async error during store initialization]]).`
           },
+          teach: R`## limiterين، وعدّادهم في Redis
+
+الملف بيعمل اتنين middleware: [[publicApiLimiter]] للـ API العام (حد في الدقيقة حسب الباقة)، و [[loginLimiter]] لتسجيل الدخول (١٠ محاولات فاشلة في ربع ساعة). الاتنين بيعدّوا في Redis فكل نسخ السيرفر شايفة نفس العداد. جرّبناه على ويندوز 11 بـ Node 24 و express-rate-limit 8.7 و rate-limit-redis 6.0 و ioredis 6 و Redis 8.10 في Docker، و [[config]] و [[logger]] من ملفات المشروع.
+
+---
+
+## ١. الـ imports
+
+- [[{ rateLimit, ipKeyGenerator }]] من [[express-rate-limit]]: الأولى بتعمل الـ middleware، والتانية بتجهّز الـ IP للعد (تحت).
+- [[{ RedisStore }]] من [[rate-limit-redis]]: مكان العد. من غيره express-rate-limit بيعد في ذاكرة الـ process.
+- [[{ Redis }]] من [[ioredis]].
+
+---
+
+## ٢. client لوحده للـ rate limit
+
+~~~js
+const rlRedis = new Redis(config.REDIS_URL, { maxRetriesPerRequest: 1, commandTimeout: 500 });
+~~~
+
+ليه مش نفس client الكاش بتاع درس [[ioredis]]؟ لأن ده فيه [[enableOfflineQueue: false]]. والـ RedisStore أول ما يتعمل بيبعت أمر [[SCRIPT LOAD]] (بيحمّل Lua script في Redis). الأمر ده بيتبعت والاتصال لسه مخلصش، فمع offline queue مقفول بيفشل فورًا، والـ store مبيحاولش تاني. جرّبناها: ٣ طلبات ورا بعض والحد ٢، والتلاتة رجعوا 200، واللوج:
+
+~~~text اللوج
+express-rate-limit: async error during store initialization. Error: Stream isn't writeable and enableOfflineQueue options is false
+express-rate-limit: error from store, allowing request without rate-limiting. ...
+~~~
+
+فهنا سايبين الطابور الافتراضي (الأمر يستنى الاتصال)، و [[commandTimeout: 500]] عشان لو Redis وقع بعدين الطلب ميعلّقش. جرّبنا ده: لما وقّفنا Redis، طلب الـ API العام عدّى 200 في حوالي نص ثانية، والـ login رجع 500 في نص ثانية، ولما Redis رجع الـ limiter رجع يعد ويرجّع 429 من غير restart.
+
+> لو Redis واقع **ساعة** ما السيرفر بيقوم، تحميل الـ script بيفشل والـ limiter بيفضل مقفول لحد restart (جرّبناها). فخلي السيرفر يقوم بعد Redis، أو اعمل له restart لو Redis كان واقع.
+
+---
+
+## ٣. [[redisStore(prefix)]]
+
+~~~js
+const redisStore = (prefix) => new RedisStore({ prefix, sendCommand: (command, ...args) => rlRedis.call(command, ...args) });
+~~~
+
+- دالة سهم بتاخد [[prefix]] وبترجّع store جديد. ليه دالة؟ لأن كل limiter لازم ياخد store instance لوحده.
+- [[{ prefix, ... }]]: اختصار [[prefix: prefix]].
+- [[sendCommand]]: rate-limit-redis مش مربوط بمكتبة معينة، فبتدّيله دالة «ابعت الأمر ده». [[(command, ...args)]]: [[...args]] (rest) بتلم باقي الـ arguments في array. و [[rlRedis.call(command, ...args)]] بيبعت أي أمر Redis بالاسم، و [[...args]] هنا (spread) بتفرد الـ array تاني.
+
+---
+
+## ٤. [[publicApiLimiter]]: كل خيار
+
+| الخيار | القيمة | معناه |
+|---|---|---|
+| [[windowMs]] | [[60_000]] | النافذة: ٦٠ ألف ملّي ثانية = دقيقة. [[_]] فاصل للقراية بس |
+| [[limit]] | دالة | الحد لكل نافذة: ٦٠٠ للـ pro و ٦٠ للباقي |
+| [[keyGenerator]] | دالة | «بنعد لمين؟» |
+| [[standardHeaders]] | [["draft-8"]] | ابعت headers [[RateLimit]] و [[RateLimit-Policy]] بالشكل الموحد |
+| [[legacyHeaders]] | [[false]] | متبعتش [[X-RateLimit-*]] القديمة |
+| [[identifier]] | [["public"]] | اسم السياسة جوه الـ headers |
+| [[store]] | [[redisStore("rl:public:")]] | العد في Redis، والمفاتيح بتبدأ بـ [[rl:public:]] |
+| [[passOnStoreError]] | [[true]] | Redis وقع؟ عدّي الطلب |
+
+### الـ [[limit]] كدالة
+
+[[(req) => (req.apiKey?.plan === "pro" ? 600 : 60)]]: [[?.]] (optional chaining) يعني «لو [[req.apiKey]] مش موجود رجّع undefined من غير خطأ». و [[شرط ? أ : ب]] لو الشرط صح أ وإلا ب. و [[req.apiKey]] بيتحط من middleware قبل الـ limiter (في كود الحل: بيقرا header [[X-API-Key]]).
+
+### الـ [[keyGenerator]]
+
+~~~js
+(req) => (req.apiKey ? $__btkey:$__{req.apiKey.id}$__bt : $__btip:$__{ipKeyGenerator(req.ip)}$__bt)
+~~~
+
+لو فيه API key العد عليه، وإلا على الـ IP. و [[ipKeyGenerator]] بيسيب IPv4 زي ما هو، وعنوان IPv6 بيحوّله لـ subnet (/56)، لأن أي حد عنده IPv6 معاه ملايين العناوين ويقدر يغيّر كل طلب. لو كتبت [[req.ip]] على طول، جرّبنا وطلع:
+
+~~~text الناتج
+ValidationError: Custom keyGenerator appears to use request IP without calling the ipKeyGenerator helper function for IPv6 addresses. This could allow IPv6 users to bypass limits.
+~~~
+
+وده تحذير في اللوج، مش crash.
+
+---
+
+## ٥. [[loginLimiter]]
+
+- [[15 * 60_000]]: ربع ساعة.
+- [[skipSuccessfulRequests: true]]: الطلب اللي رجع 2xx أو 3xx مبيتحسبش. جرّبنا ٣ محاولات 401 وواحدة 200، والعداد في Redis [["3"]].
+- [[passOnStoreError: false]]: Redis وقع؟ ارفض (الطلب بيرجع 500). أحسن من إن الـ login يبقى مفتوح للتخمين.
+- مفيش [[keyGenerator]]: الافتراضي بالـ IP (وهو أصلًا بيستخدم ipKeyGenerator).
+
+---
+
+## ٦. التشغيل الحقيقي (كود الحل، حد ٢ و ٥)
+
+### ٣ طلبات من غير key
+
+بـ [[curl -i http://localhost:5856/v1/data]]:
+
+~~~text الطلب الأول
+HTTP/1.1 200 OK
+RateLimit: "public"; r=1; t=60
+RateLimit-Policy: "public"; q=2; w=60; pk=:ZTFlODE3NTljODNm:
+{"ok":true}
+~~~
+
+~~~text التالت
+HTTP/1.1 429 Too Many Requests
+RateLimit: "public"; r=0; t=60
+RateLimit-Policy: "public"; q=2; w=60; pk=:ZTFlODE3NTljODNm:
+Retry-After: 60
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[r=1]] | remaining: فاضلك كام طلب |
+| [[t=60]] | الثواني لحد ما العداد يتصفّر |
+| [[q=2]] | quota: الحد |
+| [[w=60]] | window بالثواني |
+| [[pk]] | partition key: hash للمفتاح (مش الـ IP نفسه) |
+| [[Retry-After: 60]] | استنى ٦٠ ثانية |
+
+والـ body بتاع الـ 429: [[Too many requests, please try again later.]]
+
+### ٣ طلبات بـ [[-H "X-API-Key: pro_1"]]
+
+التلاتة 200، و [[RateLimit]] نزل [[r=4]] ثم [[r=3]] ثم [[r=2]]، و [[q=5]]: عدّاد تاني خالص.
+
+### في Redis
+
+~~~text redis-cli --scan --pattern 'rl:*'
+rl:public:key:pro_1
+rl:public:ip:::/56
+~~~
+
+[[::/56]]؟ لأن [[localhost]] على ويندوز راح لـ IPv6 ([[::1]])، و ipKeyGenerator حوّله لـ subnet. ولما بعتنا لـ [[127.0.0.1]] المفتاح بقى [[rl:public:ip:127.0.0.1]]، وقيمته عدد الطلبات ([["5"]] بعد ٥ طلبات) و [[PTTL]] بتاعه حوالي ٥٩ ألف ملّي ثانية: نفس النافذة.
+
+### نسختين
+
+شغّلنا نفس السيرفر على 5856 و 5857 وبعتنا بالتبادل:
+
+~~~text الناتج
+5856 200
+5857 200
+5856 429
+5857 429
+~~~
+
+الحد ٢ للاتنين مع بعض، لأن العداد واحد في Redis.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[RedisStore]] لكل limiter بـ prefix | عداد مشترك بين النسخ، ومنفصل لكل limiter |
+| client من غير [[enableOfflineQueue: false]] | الـ store يلحق يحمّل الـ script |
+| [[keyGenerator]] + [[ipKeyGenerator]] | عد بالـ API key أو بالـ IP (و IPv6 بالـ subnet) |
+| [[limit]] دالة | الحد حسب الباقة |
+| [[passOnStoreError]] | قرار: [[true]] للـ API العام، [[false]] للـ login |
+
+- [[RateLimit]] و [[Retry-After]] هما اللي العميل يقراهم عشان يبطّأ.`,
           lines: [
             "express-rate-limit، ومعاه دالة تجميع IPv6.",
             "الـ store بتاع Redis.",
+            "ioredis.",
+            "client للـ rate limit: الطابور الافتراضي شغال (عشان الـ store يلحق يجهز)، بس أي أمر بيفشل بعد نص ثانية.",
+            "سجّل أخطاء الاتصال.",
             "دالة بتعمل store جديد لكل limiter بـ prefix لوحده، وبتبعت الأوامر عن طريق ioredis.",
             "limiter للـ API العام.",
             "نافذة دقيقة.",
@@ -479,6 +1404,125 @@ socket.io على أكتر من سيرفر بيستخدم pub/sub ده من جو�
             when: "تبليغ كل النسخ بحدث لحظي: مسح كاش محلي، أو إعدادات اتغيرت، أو إشعار realtime. مش للشغل اللي لازم يتعمل (ده queue).",
             mistakes: R`تستخدم pub/sub كـ queue: الإيميل يتبعت لو فيه worker سامع ساعتها، وإلا يضيع من غير أي أثر. أو تعمل subscribe على نفس الـ client اللي بتستخدمه للكاش. أو تفتكر إن الرسالة بتروح لواحد بس: بتروح لكل المشتركين، فلو ٣ workers سامعين، الشغل هيتعمل ٣ مرات.`
           },
+          teach: R`## نسخة بتقول، وكل النسخ بتسمع
+
+الكود ده بيتحط في كل نسخة من السيرفر: كل نسخة عندها كاش في ذاكرتها ([[localCache]]، مثلًا [[Map]])، وسامعة على channel اسمه [[cache:invalidate]]. وأي نسخة تغيّر منتج تنادي [[invalidate(key)]]، فكل النسخ (هي كمان) تمسح نسختها المحلية. جرّبناه بـ ٣ processes منفصلة (A و B و C) على ويندوز 11 بـ Node 24 و ioredis 6 و Redis 8.10 في Docker.
+
+---
+
+## الأول: الفكرة في redis-cli (كود الحل)
+
+ترمنالين. في الأول:
+
+~~~bash
+redis-cli SUBSCRIBE news
+~~~
+
+~~~text الناتج
+1) "subscribe"
+2) "news"
+3) (integer) 1
+~~~
+
+يعني: «اشتركت في [[news]]، وده أول channel ليا». والـ shell بيفضل مستني رسايل ومبيرجعش (Ctrl+C يقفله). وفي التاني:
+
+~~~bash
+redis-cli PUBLISH news hello
+~~~
+
+~~~text الناتج في الترمنال التاني
+(integer) 1
+~~~
+
+[[1]] = عدد اللي استلموا. وفي الأول ظهر:
+
+~~~text الناتج في الترمنال الأول
+1) "message"
+2) "news"
+3) "hello"
+~~~
+
+نوع الحدث، والـ channel، والرسالة. ولما قفلنا المشترك وبعتنا [[PUBLISH news again]]: الرد [[(integer) 0]]، والرسالة دي راحت ومحدش هيشوفها أبدًا حتى لو اشترك بعدها. و [[PUBSUB NUMSUB news]] بيقولك كام واحد سامع دلوقتي ([[0]] عندنا).
+
+> على ويندوز من غير redis-cli: [[docker exec -it redis redis-cli SUBSCRIBE news]] في PowerShell، والتاني [[docker exec redis redis-cli PUBLISH news hello]].
+
+---
+
+## ١. اتصالين
+
+~~~js
+const pub = new Redis(config.REDIS_URL);
+const sub = pub.duplicate();
+~~~
+
+- [[pub]] للنشر ولأي أمر عادي ([[del]] و [[get]]...).
+- [[pub.duplicate()]] بيعمل client **جديد** (اتصال تاني) بنفس الإعدادات. ده [[sub]] للاشتراك بس.
+
+ليه اتنين؟ الاتصال اللي عمل SUBSCRIBE بيدخل «وضع المشترك». في البروتوكول القديم (RESP2) أي أمر عادي عليه بيترفض، و ioredis بيرمي [[Connection in subscriber mode, only subscriber commands may be used]] (من الكود بتاعه). ioredis 6 بيتكلم RESP3 افتراضيًا، وفيه الأمر العادي بيعدّي (جرّبنا [[sub.get]] ونجح)، بس فصلهم برضه أنضف: لو اتصال الكاش اتقطع أو اتعطل، الاشتراك ميتأثرش، والعكس.
+
+---
+
+## ٢. الاشتراك
+
+~~~js
+await sub.subscribe("cache:invalidate");
+sub.on("message", (channel, raw) => {
+  const { key } = JSON.parse(raw);
+  localCache.delete(key);
+});
+~~~
+
+- [[sub.subscribe(...)]] = [[SUBSCRIBE]]، و [[await]] لحد ما Redis يأكد.
+- [[sub.on("message", ...)]]: الدالة بتتنادى مع كل رسالة، وبتاخد اسم الـ channel ([[channel]]) والرسالة كنص ([[raw]] = خام، لسه متحوّلتش).
+- [[const { key } = JSON.parse(raw)]]: حوّل النص object، وخد منه الخاصية [[key]] في متغير بنفس الاسم (destructuring).
+- [[localCache.delete(key)]]: امسح من الكاش اللي في ذاكرة النسخة دي.
+
+---
+
+## ٣. [[invalidate(key)]]
+
+~~~js
+await pub.del(key);
+await pub.publish("cache:invalidate", JSON.stringify({ key }));
+~~~
+
+1. امسح من Redis نفسه (الكاش المشترك).
+2. [[publish]] = [[PUBLISH]]. الرسالة لازم نص، فـ [[JSON.stringify({ key })]] بيطلّع [[{"key":"product:1:v1"}]]. حطيناها JSON مش الـ key على طول عشان تقدر تضيف حقول بعدين من غير ما تكسر المشتركين.
+
+الترتيب مهم: المسح من Redis الأول، عشان النسخة اللي تستلم الرسالة وتروح تجيب القيمة من جديد متلاقيش القديمة في Redis.
+
+---
+
+## ٤. التجربة: ٣ processes
+
+خلّينا [[invalidate]] ترجّع ناتج [[publish]] عشان نشوفه، وكل نسخة تطبع لما تستلم. B هي اللي نادت [[invalidate("product:1:v1")]]:
+
+~~~text الناتج
+A subscribed
+C subscribed
+B subscribed
+B publish returned 3
+C got cache:invalidate {"key":"product:1:v1"} -> local keys now: []
+A got cache:invalidate {"key":"product:1:v1"} -> local keys now: []
+B got cache:invalidate {"key":"product:1:v1"} -> local keys now: []
+~~~
+
+- [[3]]: التلات نسخ استلموا، و B **منهم**: اللي بينشر بيستلم رسالته هو كمان لو مشترك، وده كويس هنا (نفس الكود يمسح عنده).
+- الترتيب بين C و A مش مضمون، كل واحد في process لوحده.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[pub]] و [[sub = pub.duplicate()]] | اتصال للأوامر، واتصال للاشتراك |
+| [[subscribe]] + [[on("message")]] | اسمع، ومع كل رسالة اعمل حاجة |
+| [[publish]] بيرجّع رقم | عدد اللي استلموا ([[0]] = محدش سامع) |
+| JSON في الرسالة | تقدر تزوّد حقول بعدين |
+
+- pub/sub مبيحفظش: اللي مش متصل ساعة الرسالة مش هيعرف. ينفع لمسح كاش أو إشعار لحظي، مش لشغل لازم يتعمل.
+- الرسالة بتروح **لكل** المشتركين، مش لواحد.`,
           lines: [
             "ioredis.",
             "client للنشر والأوامر العادية.",
@@ -556,6 +1600,131 @@ await pipeline(createReadStream("export.csv"), createGzip(), createWriteStream("
             when: "أي ملف ممكن يكبر: استيراد، وتصدير، ورفع، ولوجات. ولو الملف أكيد صغير (config أو JSON بـ كيلوبايتات)، readFile أبسط.",
             mistakes: R`[[multer.memoryStorage()]] للرفع الكبير، فكل ملف مرفوع في الرام (درس [[multer]]). و [[await]] لكل insert لوحده جوه الـ loop فالاستيراد ياخد ساعة. و [[.pipe()]] من غير error handling. وتقرا الـ upload كله في [[Buffer.concat]] عشان تحسب hash، والـ hash نفسه ينفع stream ([[crypto.createHash]] كـ Transform). وتعمل الاستيراد جوه الطلب نفسه فالـ request يعدّي timeout بتاع Nginx (٦٠ ثانية): الملفات الكبيرة بتروح job (درس [[background jobs]]) والـ API يرد 202.`
           },
+          teach: R`## حاجتين: استيراد سطر سطر، وضغط ملف
+
+دالة [[importUsers]] بتقرا CSV سطر سطر وتكتب اليوزرز في القاعدة كل ١٠٠٠ مرة واحدة. والسطر الأخير بيضغط ملف بـ gzip من غير ما يحطه في الذاكرة. جرّبنا كل ده على ويندوز 11 بـ Node 24: ملف حقيقي ٢ مليون سطر (٥٧.٨ ميجا) من كود الحل، و [[db]] مزيّف بيقلّد [[createMany]] بتاع Prisma (بيعد ويتجاهل الإيميل المكرر) عشان نشوف الدفعات من غير قاعدة.
+
+---
+
+## ١. الـ imports
+
+| الـ import | من | بيعمل إيه |
+|---|---|---|
+| [[createReadStream]] و [[createWriteStream]] | [[node:fs]] | يقرا/يكتب ملف حتة حتة (64KB افتراضيًا) |
+| [[createInterface]] | [[node:readline]] | يحوّل stream بايتات لسطور |
+| [[createGzip]] | [[node:zlib]] | stream بيضغط اللي داخله |
+| [[pipeline]] | [[node:stream/promises]] | يوصّل streams ورا بعض ويرجّع promise |
+
+و [[node:]] قبل الاسم معناها «module جاي مع Node»، مش باكدج من npm.
+
+---
+
+## ٢. [[createInterface({ input: createReadStream(path), crlfDelay: Infinity })]]
+
+من جوه لبرة:
+
+1. [[createReadStream(path)]]: stream بيقرا الملف حتة حتة.
+2. [[createInterface({ input })]]: بيلم الحتت ويطلّع سطور كاملة (السطر ممكن يتقسم على حتتين، وهو بيلزقهم).
+3. [[crlfDelay: Infinity]]: ملفات ويندوز آخر السطر فيها [[\r\n]] (CR = Carriage Return، و LF = Line Feed). القيمة دي بتضمن إن [[\r\n]] دايمًا تتحسب سطر واحد مش سطرين. جرّبنا ملف بـ [[\r\n]]: الإيميلات طلعت نضيفة من غير [[\r]] في آخرها.
+
+---
+
+## ٣. المتغيرات
+
+[[let batch = [], total = 0, header = true;]]: الدفعة الحالية، وعدد اللي اتكتب، وهل لسه أول سطر (العناوين). [[let]] لأنهم بيتغيروا.
+
+---
+
+## ٤. [[for await (const line of lines)]]
+
+[[for await]] بتلف على حاجة async: كل لفة بتستنى السطر الجاي. والأهم: السطر الجاي **مبيتقريش** غير لما جسم اللفة يخلص. فلو [[await db.user.createMany]] أخد وقت، القراية من الديسك بتقف وتستناه، وده الـ backpressure (الضغط الراجع: الأبطأ بيبطّأ الأسرع بدل ما الحاجات تتكوّم في الذاكرة).
+
+### جوه اللفة
+
+- [[if (header) { header = false; continue; }]]: أول سطر عناوين ([[id,email]])، فاقلب الـ flag و [[continue]] = «روح للفة الجاية».
+- [[const [, email] = line.split(",");]]: [[split(",")]] بيقسم السطر عند الفواصل لـ array، والأقواس المربعة على الشمال (array destructuring) بتوزّع عناصر الـ array على متغيرات: الفاصلة الفاضية في أولها معناها «سيب أول عنصر (الـ id)»، والتاني يروح في [[email]].
+- [[batch.push({ email })]]: ضيفه للدفعة. [[{ email }]] اختصار [[{ email: email }]].
+- [[if (batch.length === 1000)]]: الدفعة كملت؟ [[===]] مقارنة من غير تحويل أنواع.
+
+### كتابة الدفعة
+
+~~~js
+total += (await db.user.createMany({ data: batch, skipDuplicates: true })).count;
+batch = [];
+~~~
+
+[[createMany]] بيكتب الألف صف في أمر واحد ويرجّع [[{ count }]] (عدد اللي اتكتب فعلًا). و [[skipDuplicates: true]] يعني لو إيميل موجود (عليه unique) اتجاهله بدل ما الدفعة كلها تفشل. والسطر اللي بعده بيخلي [[batch]] array فاضية: دفعة جديدة، والقديمة مبقاش حد شايلها فالذاكرة بتتحرر.
+
+---
+
+## ٥. بعد اللفة
+
+[[if (batch.length) total += ...]]: آخر دفعة غالبًا أقل من ١٠٠٠ (لو الملف ٢٠٠١ سطر، فاضل ١). [[batch.length]] لوحده كشرط: صفر = false.
+
+جرّبنا ملف فيه ٢٠٠١ يوزر، آخر واحد إيميله متكرر:
+
+~~~text الناتج
+users.csv total 2000 createMany calls 3
+~~~
+
+٣ مرات للقاعدة (١٠٠٠ و ١٠٠٠ و ١)، والمكرر اتجاهل فالعدد ٢٠٠٠. لو كنا عملنا insert لكل سطر كان ٢٠٠١ مرة.
+
+---
+
+## ٦. [[await pipeline(createReadStream("export.csv"), createGzip(), createWriteStream("export.csv.gz"))]]
+
+بالترتيب: اقرا ← اضغط ← اكتب. كل حتة بتعدّي على التلاتة وتترمي، و [[pipeline]]:
+
+- بيستنى الكتابة لو أبطأ من القراية (backpressure).
+- لو أي واحد فشل بيقفل التلاتة ويرمي الخطأ، فـ [[await]] يمسكه في [[try/catch]].
+- الـ promise بيخلص لما الملف يتكتب كله.
+
+جرّبناه على ملف الـ ٢ مليون سطر، وجرّبنا ملف مش موجود:
+
+~~~text الناتج
+csv MB 57.8 gz MB 11.2
+caught: ENOENT ENOENT: no such file or directory, open '...\nope.csv'
+~~~
+
+الـ CSV اتضغط لحوالي الخُمس (نص متكرر بيتضغط كويس). و ENOENT = Error NO ENTry: الملف مش موجود، والخطأ وصل للـ [[catch]] بدل ما يعلّق.
+
+---
+
+## ٧. كود الحل: الفرق في الذاكرة بالأرقام
+
+### [[gen.mjs]]: كتابة ٢ مليون سطر
+
+~~~js
+if (!out.write($__bt$__{i},user$__{i}@x.com,$__{(i % 900) + 100}\n$__bt)) await once(out, "drain");
+~~~
+
+[[out.write]] بيرجّع [[false]] لما البافر بتاع الكتابة يتملى، و [[once(out, "drain")]] (من [[node:events]]) promise بيخلص لما البافر يفضى. و [[(i % 900) + 100]]: [[%]] باقي القسمة، فالمبلغ دايمًا بين ١٠٠ و ٩٩٩. و [[2_000_000]]: الـ [[_]] للقراية بس. وفي الآخر [[out.end()]] «خلصت» و [[once(out, "finish")]] استنى لحد ما اتكتب. أخد حوالي ١٢ ثانية والـ RSS ١٣٠ ميجا.
+
+### [[sum.mjs]] (readline) قصاد [[readFileSync]] و [[split]]
+
+~~~text الناتج: readline
+{ rows: 2000000, total: 1098930200, rssMB: 103 }
+~~~
+
+~~~text الناتج: readFileSync ثم split("\n")
+{ rows: 2000000, total: 1098930200, rssMB: 389 }
+~~~
+
+نفس المجموع بالظبط، بس الطريقة التانية أكلت حوالي ٤ أضعاف. RSS = Resident Set Size: الرام اللي الـ process ماسكها فعلًا، و [[/ 1e6]] بيحوّل البايت لميجا ([[1e6]] = مليون). الـ ١٠٣ ميجا معظمها Node نفسه ثابت مهما الملف كبر، أما الـ ٣٨٩ فبتكبر مع الملف: الملف كله نص، وبعدين array فيها ٢ مليون string. (الأرقام بتختلف من جهاز لجهاز وطريقة لطريقة: الـ ٥٧٩ و ٨٦ المكتوبين في باقي الدرس من تجربة تانية، بس الفرق دايمًا كبير.)
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[createReadStream]] + [[readline]] | سطر سطر، والذاكرة ثابتة |
+| [[for await]] | السطر الجاي يستنى اللي قبله يخلص (backpressure) |
+| دفعات ١٠٠٠ + [[createMany]] | رحلات قليلة للقاعدة، ومن غير ما الملف كله يبقى في الذاكرة |
+| [[pipeline]] | يوصّل streams ويقفل الكل ويرمي الخطأ لو حاجة فشلت |
+| [[write]] بيرجّع false ← [[drain]] | لو بتكتب بإيدك، استنى البافر |
+
+- [[split(",")]] هنا للتوضيح. CSV حقيقي فيه [[""]] وفواصل جوه القيم، فاستخدم parser زي [[csv-parse]].`,
           lines: [
             "القراية والكتابة كـ streams.",
             "readline: stream لسطور.",
@@ -663,6 +1832,133 @@ exceljs: [[WorkbookWriter({ stream: res })]] بيكتب الملف وهو بيت
             when: "أي تصدير من لوحة أدمن. CSV لو هيتفتح في أي برنامج أو هيتعمله import في نظام تاني. xlsx لو اليوزر هيشتغل عليه في Excel ومحتاج أرقام وتنسيق وعربي من اليمين.",
             mistakes: R`[[findMany()]] من غير حد ثم [[res.send(csv)]]. و CSV من غير BOM فالعربي بايظ في Excel. و [[join(",")]] من غير escaping فأول عنوان فيه فاصلة يكسر الأعمدة. و CSV injection. والتصدير من غير صلاحيات، أو بيصدّر كل الأعمدة بما فيها hash الباسورد. و [[new ExcelJS.Workbook()]] العادي لملف كبير: بيبني كل حاجة في الذاكرة الأول.`
           },
+          teach: R`## ٤ حتت بتتركّب ورا بعض
+
+1. [[ordersInBatches]]: بتجيب الطلبات من القاعدة ١٠٠٠ ١٠٠٠.
+2. [[cell]]: بتجهّز خانة واحدة عشان الـ CSV ميتكسرش ومحدش يحقن formula.
+3. [[toCsv]]: بتحوّل كل طلب لسطر.
+4. الـ routes: CSV بـ [[pipeline]]، و Excel بـ exceljs، والاتنين بيكتبوا في الرد وهما شغالين.
+
+جرّبنا الكود ده كما هو في Express 5 على ويندوز 11 (Node 24 و exceljs 4.4)، مع [[db]] مزيّف فيه ٢٥٠٠ طلب بيقلّد [[findMany]] بتاع Prisma (take و skip و cursor)، والطلب الأول ليوزر إيميله [[=HYPERLINK("http://evil.com","click")]]، و [[requireRole]] بيعدّي الكل.
+
+---
+
+## ١. [[async function* ordersInBatches(size = 1000)]]
+
+[[function*]] (بنجمة) = generator: دالة بتطلّع قيم واحدة ورا التانية بـ [[yield]] بدل [[return]] مرة واحدة. و [[async]] قبلها: بتقدر تعمل [[await]] جواها، واللي بيستخدمها بيلف عليها بـ [[for await]]. و [[size = 1000]] قيمة افتراضية.
+
+### الـ query
+
+~~~js
+db.order.findMany({ take: size, ...(cursor && { skip: 1, cursor: { id: cursor } }), orderBy: { id: "asc" }, include: { user: { select: { email: true } } } })
+~~~
+
+| الحتة | معناها |
+|---|---|
+| [[take: size]] | هات ١٠٠٠ بس |
+| [[...(cursor && {...})]] | أول مرة [[cursor]] فاضي فـ [[&&]] بيرجّع [[undefined]] و [[...undefined]] مبيضيفش حاجة. بعد كده بيضيف [[skip]] و [[cursor]] |
+| [[cursor: { id: cursor }]] | ابدأ من الطلب ده |
+| [[skip: 1]] | واتخطاه هو نفسه (اتبعت في الدفعة اللي فاتت) |
+| [[orderBy: { id: "asc" }]] | ترتيب ثابت تصاعدي، من غيره الـ cursor ملوش معنى |
+| [[include: { user: { select: { email: true } } }]] | هات اليوزر المرتبط، بس الإيميل بتاعه |
+
+### باقي اللفة
+
+- [[while (true)]] لفة من غير نهاية، والخروج منها بـ [[return]].
+- [[if (batch.length === 0) return;]]: مفيش صفوف تاني؟ خلصنا.
+- [[yield* batch]]: [[yield*]] (بنجمة) بتطلّع عناصر الـ array واحد واحد، كأنك كتبت [[yield]] لكل صف.
+- [[cursor = batch.at(-1).id]]: [[at(-1)]] آخر عنصر. الـ id بتاعه نقطة البداية للدفعة الجاية.
+
+والميزة: الـ generator بيقف عند كل [[yield]] لحد ما اللي بيقرا يطلب الصف الجاي. فالدفعة الجاية مبتتجابش غير لما الصفوف اللي قبلها تتكتب. في التجربة، ٢٥٠٠ صف عملوا ٤ نداءات [[findMany]]: ١٠٠٠ و ١٠٠٠ و ٥٠٠ وواحدة فاضية بتقول «خلصنا».
+
+---
+
+## ٢. [[cell(v)]]
+
+~~~js
+let s = String(v ?? "");
+if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+return /[",\n\r]/.test(s) ? $__bt"$__{s.replaceAll('"', '""')}"$__bt : s;
+~~~
+
+1. [[v ?? ""]]: [[??]] لو [[v]] بـ [[null]] أو [[undefined]] خد [[""]]. و [[String(...)]] حوّل أي حاجة لنص.
+2. الـ regex الأول: [[^]] في أوله يعني «بيبدأ بـ»، والأقواس المربعة بعدها يعني «حرف واحد من دول»: [[=]] أو [[+]] أو [[-]] (بالـ [[\]] قبلها لأنها جوه الأقواس ليها معنى) أو [[@]] أو tab أو CR. لو بيبدأ بيهم Excel بيعتبره formula، فبنحط [[']] قبله. [[.test(s)]] بترجّع true أو false.
+3. الـ regex التاني: فيه [[""]] أو فاصلة أو سطر جديد؟ يبقى لازم الخانة تتحط بين [[""]]، و [[replaceAll('"', '""')]] بيضاعف أي [[""]] جوه (ده قانون CSV).
+
+---
+
+## ٣. [[async function* toCsv(rows)]]
+
+- أول [[yield]]: سطر العناوين، وقبله حرف مش باين: الـ BOM (Byte Order Mark، الحرف U+FEFF). جرّبنا: أول ٣ بايتات في الملف النازل [[ef bb bf]]، ودي علامة UTF-8 اللي Excel على ويندوز بيحتاجها عشان يقرا العربي صح.
+- [[for await (const o of rows)]]: لف على الـ generator اللي فات.
+- [[.map(cell).join(",")]] على array فيها الخانات بالترتيب: و [[map(cell)]] عدّي كل واحدة على [[cell]]، و [[join(",")]] لزّقهم بفاصلة. و [[(o.amountCents / 100).toFixed(2)]]: المبلغ متخزن قروش، فبنقسم على ١٠٠ ونسيب رقمين عشريين.
+
+---
+
+## ٤. route الـ CSV
+
+~~~js
+res.attachment("طلبات-سبتمبر.csv");
+await pipeline(Readable.from(toCsv(ordersInBatches())), res);
+~~~
+
+- [[res.attachment(name)]]: بيحط [[Content-Type]] من الامتداد و [[Content-Disposition: attachment]] (نزّله كملف).
+- من جوه لبرة: [[ordersInBatches()]] ← [[toCsv(...)]] ← [[Readable.from(...)]] (حوّل الـ generator لـ readable stream) ← [[pipeline(..., res)]] (اكتبه في الرد، و [[res]] نفسه writable stream).
+
+بـ [[curl -s -D - -o orders.csv http://localhost:5855/api/admin/orders.csv]] ([[-D -]] اطبع الـ headers، و [[-o]] احفظ الـ body في ملف):
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Content-Type: text/csv; charset=utf-8
+Content-Disposition: attachment; filename="?????-??????.csv"; filename*=UTF-8''%D8%B7%D9%84%D8%A8%D8%A7%D8%AA-%D8%B3%D8%A8%D8%AA%D9%85%D8%A8%D8%B1.csv
+Transfer-Encoding: chunked
+~~~
+
+- [[filename=]] للمتصفحات القديمة: الـ header مينفعش فيه غير ASCII، فالعربي بقى [[?]].
+- [[filename*=UTF-8'']] الاسم الحقيقي بالـ percent-encoding، والمتصفحات الحديثة بتقرا ده.
+- [[Transfer-Encoding: chunked]]: مفيش [[Content-Length]]، لأن السيرفر مكانش يعرف الحجم وهو بيبعت. الرد بيتبعت حتت.
+
+~~~text أول ٣ سطور من orders.csv
+﻿id,email,amount_egp,status
+cm000001,"'=HYPERLINK(""http://evil.com"",""click"")",10.00,PENDING
+cm000002,mona@example.com,10.01,PENDING
+~~~
+
+الإيميل الخبيث بقى يبدأ بـ [[']] (مش formula)، وعشان فيه [[""]] و فواصل اتحط بين [[""]] واتضاعفت اللي جواه. والملف ٢٥٠١ سطر (عناوين + ٢٥٠٠).
+
+---
+
+## ٥. route الـ Excel
+
+| السطر | بيعمل إيه |
+|---|---|
+| [[new ExcelJS.stream.xlsx.WorkbookWriter({ stream: res, useStyles: true })]] | ملف xlsx بيتكتب في الرد وهو بيتبني. [[useStyles]] عشان التنسيق (numFmt) يشتغل |
+| [[addWorksheet("الطلبات", { views: [...] })]] | شيت باسم عربي. [[rightToLeft: true]] من اليمين، و [[state: "frozen", ySplit: 1]] الصف الأول ثابت |
+| [[ws.columns]] | array فيها كل عمود: [[header]] العنوان، و [[key]] اسم الحقل في الصف، و [[width]] العرض، و [[numFmt: "#,##0.00"]] رقم بفاصل آلاف ورقمين عشريين |
+| [[ws.addRow({...}).commit()]] | ضيف صف و [[commit]] = اكتبه في الـ stream وشيله من الذاكرة |
+| [[await wb.commit()]] | اقفل الملف، وده بيقفل الرد |
+
+جرّبنا: الرد [[Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet]] و [[filename="orders.xlsx"]]، والملف ٥٧٦٢٦ بايت. ومفتحناهوش في Excel، بس قريناه تاني بـ exceljs:
+
+~~~text الناتج (مختصر): اسم الشيت وعدد الصفوف والـ views، وبعدين numFmt ونوع خانة المبلغ C2
+الطلبات 2501 [{"workbookViewId":0,"rightToLeft":true,"state":"frozen","xSplit":0,"ySplit":1,"topLeftCell":"A2",...}]
+#,##0.00 number
+~~~
+
+اسم الشيت صح، و ٢٥٠١ صف، والاتجاه والتثبيت متسجلين، والمبلغ رقم حقيقي مش نص. والإيميل الخبيث في الـ XML جوه الملف متخزن كقيمة نص من غير عنصر [[<f>]] (اللي هو الـ formula)، فـ exceljs بيكتب النص كنص، والخطر الأكبر في الـ CSV.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| async generator + cursor | دفعات من القاعدة، والدفعة الجاية بس لما الرد يلحق |
+| [[cell]] | escaping لـ CSV + منع CSV injection بـ [[']] |
+| BOM في أول الملف | Excel يقرا العربي صح |
+| [[res.attachment]] | ينزل كملف، والاسم العربي في [[filename*]] |
+| [[pipeline(Readable.from(...), res)]] | stream للرد مع الـ backpressure |
+| [[WorkbookWriter]] + [[row.commit()]] | Excel كبير من غير ما يتبني كله في الذاكرة |`,
           lines: [
             "يحوّل generator لـ stream.",
             "pipeline.",
@@ -761,6 +2057,158 @@ router.get("/orders/:id/invoice.pdf", requireAuth, async (req, res) => {
             when: "أي PDF فيه تصميم أو عربي: فواتير وإيصالات وشهادات وتقارير. لـ PDF بسيط جدًا إنجليزي بس (label شحن)، pdfkit أخف. ولو عندك Next.js، ممكن تعمل الفاتورة صفحة عادية وتطبعها بنفس الطريقة.",
             mistakes: R`[[chromium.launch()]] جوه الـ route لكل طلب: بطء، وتحت الضغط الرام بتخلص. ونسيان [[page.close()]] فالصفحات تتراكم لحد ما المتصفح يقع. والخط من Google Fonts بلينك: السيرفر ممكن ميكونش عنده نت برّه، والطباعة تحصل قبل ما يتحمّل. وقيم اليوزر من غير escape. والعربي شكله صح على جهازك (عندك خطوط) وبايظ على السيرفر، فاختبر في Docker.`
           },
+          teach: R`## HTML في string، ومتصفح بيطبعه
+
+الملف فيه ٣ حتت: دوال صغيرة بتجهّز الكلام (خط، و escape، وفلوس)، ودالة [[invoiceHtml]] بتبني صفحة HTML للفاتورة، و [[renderInvoice]] بتخلي Chromium يطبع الصفحة دي PDF. جرّبناه على ويندوز 11 بـ Node 24 و Playwright 1.63 (Chromium اتسطب بـ [[npx playwright install chromium]])، وخط Noto Naskh Arabic من مشروع Noto الرسمي.
+
+---
+
+## ١. الـ imports والخط
+
+~~~js
+import { chromium } from "playwright";
+import { readFileSync } from "node:fs";
+const font = readFileSync("assets/fonts/NotoNaskhArabic-Regular.ttf").toString("base64");
+~~~
+
+- [[chromium]] من Playwright: بيشغّل متصفح Chromium من الكود.
+- [[readFileSync]] بيقرا ملف الخط كله (Buffer بايتات). هنا مقبول إنه sync لأنه بيحصل مرة واحدة وانت بتقوم، مش جوه طلب.
+- [[.toString("base64")]]: base64 طريقة تكتب بيها أي بايتات كحروف إنجليزي وأرقام، عشان نحطها جوه نص الـ HTML.
+
+---
+
+## ٢. [[esc]]: الـ escape
+
+~~~js
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", ... })[c]);
+~~~
+
+- [[/[&<>"']/g]]: أي حرف من الخمسة دول، و [[g]] = global (كله، مش أول واحد بس).
+- [[replace]] بدالة: كل حرف لقاه بيتبعت للدالة ([[c]]) واللي ترجّعه بيتحط مكانه.
+- الدالة بترجّع object فيه كل حرف وبديله، و [c] بعده بيجيب البديل بالحرف نفسه. يعني [[<]] تبقى [[&lt;]] (entity: طريقة HTML تكتب بيها الحرف كنص).
+
+جرّبنا باسم عميل [[منى <script>]]، والـ HTML اللي اتبنى فيه:
+
+~~~text جزء من الـ HTML
+<h1>فاتورة رقم INV-1042</h1><p>العميل: منى &lt;script&gt;</p>
+~~~
+
+فالمتصفح بيعرض [[<script>]] كحروف، ومبيعتبرهاش tag.
+
+---
+
+## ٣. [[money]]: [[Intl.NumberFormat]]
+
+[[Intl]] جزء من JavaScript لتنسيق الأرقام والتواريخ حسب اللغة. [[ar-EG]] = عربي مصر، و [[style: "currency", currency: "EGP"]] = فلوس بالجنيه. جرّبنا:
+
+~~~text الناتج
+money.format(150)    →  ١٥٠٫٠٠ ج.م.
+money.format(390.5)  →  ٣٩٠٫٥٠ ج.م.
+ar-EG-u-nu-latn      →  150.00 ج.م.
+~~~
+
+أرقام عربية شرقية والعلامة العشرية [[٫]]. و [[-u-nu-latn]] في آخر اسم اللغة معناها «numbering system: latin» لو عايز 150.00.
+
+---
+
+## ٤. [[invoiceHtml(o)]]: template string
+
+الدالة بترجّع string بين backticks، وجواها [[$__{...}]] بيتحط مكانها قيمة. الأهم فيها:
+
+| الحتة | ليه |
+|---|---|
+| [[<html lang="ar" dir="rtl">]] | اللغة عربي، والاتجاه من اليمين للشمال لكل الصفحة |
+| [[<meta charset="utf-8">]] | الحروف UTF-8 عشان العربي |
+| [[@font-face { font-family: "Naskh"; src: url(data:font/ttf;base64,...) }]] | خط اسمه Naskh، والملف نفسه جوه الـ URL ([[data:]] URL) فمش محتاج نت ولا خطوط على السيرفر |
+| [[font-family: "Naskh", sans-serif]] | استخدم الخط ده، ولو حرف مش فيه خد [[sans-serif]] |
+| [[text-align: start]] | الكلام يبدأ من «البداية»، واللي هي اليمين مع rtl |
+| [[esc(o.number)]] و [[esc(o.customer)]] | أي حاجة من اليوزر بتعدّي على esc |
+| [[o.items.map((it) => ...).join("")]] | لكل صنف [[<tr>]] (صف) فيه ٣ [[<td>]] (خانات)، و [[join("")]] بيلزّقهم من غير فاصل |
+
+---
+
+## ٥. [[const browser = await chromium.launch();]]
+
+بيشغّل Chromium **headless** (من غير شباك). عندنا أخد من ٠.٧ لـ ١.٢ ثانية، فبيتعمل مرة واحدة في أول الملف، مش مع كل فاتورة.
+
+---
+
+## ٦. [[renderInvoice(order)]]
+
+~~~js
+const page = await browser.newPage();
+try {
+  await page.setContent(invoiceHtml(order), { waitUntil: "load" });
+  await page.evaluate(() => document.fonts.ready);
+  return await page.pdf({ format: "A4", printBackground: true, margin: {...} });
+} finally { await page.close(); }
+~~~
+
+1. [[browser.newPage()]]: تاب جديد، خفيف.
+2. [[page.setContent(html, { waitUntil: "load" })]]: حط الـ HTML في التاب واستنى event الـ [[load]].
+3. [[page.evaluate(() => document.fonts.ready)]]: شغّل الكود ده **جوه المتصفح**. [[document.fonts.ready]] promise بيخلص لما كل الخطوط تتحمّل.
+4. [[page.pdf({...})]]: اطبع. [[format: "A4"]] مقاس الورقة، و [[printBackground: true]] اطبع الألوان والخلفيات (افتراضيًا الطباعة بتشيلها)، و [[margin]] الهوامش بالـ mm. بيرجّع Buffer.
+5. [[finally { await page.close(); }]]: اقفل التاب في كل الأحوال.
+
+### كود الحل
+
+~~~text الناتج
+launch ms 1218
+first render ms 226
+second render ms 172
+pdf bytes 58332 isBuffer true
+~~~
+
+الفاتورة نفسها حوالي ٢٠٠ms بعد ما المتصفح مفتوح، والملف بيبدأ بـ [[%PDF-1.4]]. وفتحنا الـ PDF: صفحة واحدة، والعنوان والجدول من اليمين، والحروف العربي متوصلة، و [[<script>]] ظاهر كنص، والمبالغ بأرقام عربية.
+
+### الخطوط اللي جوه الملف
+
+دوّرنا على [[/FontName]] جوه الـ PDF:
+
+~~~text الناتج
+/FontName /AAAAAA+SegoeUI-Bold
+/FontName /BAAAAA+NotoNaskhArabic-Regular
+/FontName /CAAAAA+SegoeUI
+~~~
+
+Noto Naskh embedded (و [[AAAAAA+]] معناها subset: الحروف المستخدمة بس). بس لاحظ Segoe UI: خط Noto Naskh Arabic فيه حروف عربي بس، فالكلام الإنجليزي ([[INV-1042]] و [[Mouse pad]]) خده الـ fallback ([[sans-serif]])، وده على ويندوز Segoe UI. على سيرفر لينكس هيبقى خط تاني. لو عايز الإنجليزي كمان ثابت في كل مكان، ضيف [[@font-face]] تاني لخط لاتيني وحطه في [[font-family]].
+
+---
+
+## ٧. الـ route
+
+~~~js
+res.type("pdf").attachment($__btinvoice-$__{order.number}.pdf$__bt).send(await renderInvoice(order));
+~~~
+
+- [[getForInvoice(req.user.id, req.params.id)]]: بيجيب الطلب **بتاع اليوزر ده بس** (ownership، درس [[ownership (IDOR)]]).
+- [[res.type("pdf")]] بيحط [[Content-Type: application/pdf]]، و [[attachment(...)]] اسم الملف، و [[send(buffer)]] بيبعت البايتات.
+
+جرّبناه بـ [[curl -s -D - -o inv.pdf]]:
+
+~~~text الناتج
+HTTP/1.1 200 OK
+Content-Type: application/pdf
+Content-Disposition: attachment; filename="invoice-INV-1042.pdf"
+Content-Length: 47418
+~~~
+
+هنا فيه [[Content-Length]] (مش chunked زي التصدير) لأن الـ PDF كله Buffer جاهز قبل ما يتبعت.
+
+> اللي مجرّبناهوش هنا: نفس الكود من غير [[@font-face]] جوه Docker لينكس من غير خطوط. شكل المربعات أو الخط البديل في الحالة دي من الـ docs وتجارب الناس، وجرّبه بنفسك قبل الإنتاج.
+
+---
+
+## الخلاصة
+
+| الحتة | ليه |
+|---|---|
+| [[chromium.launch()]] مرة واحدة | تقيل، والصفحات خفيفة |
+| [[newPage]] ثم [[close]] في [[finally]] | تاب لكل فاتورة ومفيش تسريب |
+| [[dir="rtl"]] + [[text-align: start]] | الاتجاه العربي |
+| [[@font-face]] بـ data URL + [[document.fonts.ready]] | نفس الخط في كل مكان، ومتطبعش قبل ما يتحمّل |
+| [[esc]] | اسم اليوزر يفضل نص، مش HTML |
+| [[Intl.NumberFormat("ar-EG")]] | فلوس بالعربي، و [[-u-nu-latn]] للأرقام الإنجليزي |`,
           lines: [
             "Playwright.",
             "قراية ملف الخط.",
@@ -845,6 +2293,115 @@ if (!isMainThread) {
             when: "worker_threads: حساب CPU لازم يرجع في نفس الطلب ومفيش مكتبة native بتعمله. cluster أو PM2: سيرفر VPS واحد عليه أكتر من core ومن غير Docker. نسخ ورا load balancer: الإنتاج الطبيعي. queue: أي حاجة تقيلة مش لازم الرد يستناها.",
             mistakes: R`worker جديد لكل طلب من غير حد. واستخدام النسخ الـ Sync ([[bcrypt.hashSync]] و [[crypto.pbkdf2Sync]] و [[fs.readFileSync]]) جوه routes. و cluster والتطبيق فيه state في الذاكرة. و [[JSON.parse]] لـ body ضخم (١٠٠ ميجا) بيوقّف الـ loop برضه، فحط [[limit]] على [[express.json]]. وفي الانترفيو: «worker_threads زي cluster؟» لأ: threads جوه نفس الـ process للحساب، و cluster نسخ من السيرفر كله للطلبات.`
           },
+          teach: R`## ملف واحد بيشتغل مرتين
+
+الملف ده بيتشغّل كسيرفر، ونفس الملف بيتشغّل تاني جوه worker يحسب. [[isMainThread]] هو اللي بيفرّق: في السيرفر [[true]]، وجوه الـ worker [[false]]. وفيه ٣ routes عشان نقيس: [[/blocking]] بيحسب في الـ thread الرئيسي، و [[/offloaded]] بيحسب في worker، و [[/ping]] خفيف. جرّبناه على ويندوز 11 بـ Node 24 و Express 5 (السيرفر على البورت 5856، و [[app]] بيتعمل جوه الـ [[else]])، على جهاز فيه ١٦ logical processor.
+
+---
+
+## ١. [[import { Worker, isMainThread, parentPort, workerData } from "node:worker_threads";]]
+
+| الاسم | إيه هو |
+|---|---|
+| [[Worker]] | كلاس: [[new Worker(file)]] بيشغّل الملف ده في thread جديد |
+| [[isMainThread]] | [[true]] لو الكود شغال في الـ thread الرئيسي |
+| [[parentPort]] | جوه الـ worker: القناة اللي بيكلّم بيها اللي شغّله |
+| [[workerData]] | جوه الـ worker: الداتا اللي اتبعتت له وهو بيبدأ |
+
+---
+
+## ٢. [[function fib(n) { return n < 2 ? n : fib(n - 1) + fib(n - 2); }]]
+
+Fibonacci بالـ recursion (الدالة بتنادي نفسها). مكتوبة بالطريقة البطيئة **عمدًا**: [[fib(38)]] بيعمل عشرات الملايين من النداءات، فبياخد حوالي نص ثانية CPU. والنتيجة [[39088169]].
+
+---
+
+## ٣. فرع الـ worker
+
+~~~js
+if (!isMainThread) {
+  parentPort.postMessage(fib(workerData.n));
+}
+~~~
+
+[[!]] = «مش». يعني لو احنا جوه worker: احسب الرقم اللي جالك في [[workerData.n]]، وابعت النتيجة بـ [[postMessage]]. وبعدها الـ worker مبقاش عنده شغل فبيخلص لوحده.
+
+> كل حاجة **برّه** الـ [[if]] بتتنفّذ في الـ worker كمان، لأنه بيشغّل الملف من أوله. عشان كده [[app]] و [[app.listen]] لازم يبقوا جوه الـ [[else]]، وإلا كل worker هيحاول يفتح السيرفر تاني.
+
+---
+
+## ٤. [[runInWorker(n)]]
+
+~~~js
+const runInWorker = (n) => new Promise((resolve, reject) => {
+  const w = new Worker(new URL(import.meta.url), { workerData: { n } });
+  w.once("message", resolve);
+  w.once("error", reject);
+});
+~~~
+
+- [[new Promise((resolve, reject) => ...)]]: promise بإيدك. [[resolve(x)]] = خلص بنجاح بالقيمة x، و [[reject(err)]] = فشل.
+- [[import.meta.url]]: عنوان الملف الحالي كـ URL ([[file:///C:/.../server.mjs]]). و [[new URL(...)]] بيحوّله object تقبله [[Worker]]. يعني «شغّل نفس الملف ده».
+- [[{ workerData: { n } }]]: ابعت [[n]] للـ worker.
+- [[w.once("message", resolve)]]: أول رسالة توصل = النتيجة، فالـ promise يخلص بيها. [[once]] بدل [[on]] لأننا مستنيين رسالة واحدة.
+- [[w.once("error", reject)]]: لو الكود جوه الـ worker رمى خطأ، الـ promise يترفض والـ route يرجّع خطأ.
+
+---
+
+## ٥. الـ routes
+
+- [[/blocking]]: [[res.json({ v: fib(38) })]] مباشرة. طول ما [[fib]] شغالة، الـ event loop واقف: ولا طلب تاني بيتقري.
+- [[/offloaded]]: [[await runInWorker(38)]]. الـ route بيستنى promise، والـ event loop فاضي يخدم غيره لحد ما الـ worker يرد.
+- [[/ping]]: بيرد على طول. ده المقياس: لو أخد وقت، يبقى السيرفر كان مشغول.
+
+---
+
+## ٦. كود الحل: client في process لوحده
+
+~~~js
+const heavy = fetch(url + path);
+await new Promise((r) => setTimeout(r, 50));
+const t = performance.now();
+await fetch(url + "/ping");
+~~~
+
+ابعت الطلب التقيل **من غير** [[await]] (يفضل شغال)، واستنى ٥٠ms عشان يوصل السيرفر ويبدأ، وبعدين قيس [[/ping]]. وفي الآخر [[await heavy]] عشان منسيبش طلب معلّق. شغّلناه مرتين:
+
+~~~text الناتج (تشغيل ١ ثم ٢)
+/blocking ping took 503 ms       /blocking ping took 661 ms
+/offloaded ping took 14 ms       /offloaded ping took 11 ms
+~~~
+
+مع [[/blocking]]، الـ ping استنى الحساب كله يخلص. مع [[/offloaded]]، رد في حوالي ١٠ms. والطلبين رجعوا نفس النتيجة [[{"v":39088169}]].
+
+وقسنا كل route لوحده من غير ping:
+
+~~~text الناتج
+/blocking alone took 516 ms
+/offloaded alone took 636 ms
+~~~
+
+الـ worker **مش** بيسرّع الحساب، بالعكس أبطأ بحوالي ١٠٠ms: تشغيل thread جديد بـ V8 لوحده وتحميل الملف والـ imports تاني. اللي كسبناه إن السيرفر فضل بيرد على غيره. ولو الـ client كان في نفس الـ process بتاع السيرفر، كان هو نفسه هيقف مع [[/blocking]] والأرقام تكدب.
+
+---
+
+## ٧. والـ ١٠٠ طلب مع بعض؟
+
+كل طلب = [[new Worker]] جديد = thread و V8 وذاكرة. الجهاز هنا فيه ١٦ logical processor ([[os.availableParallelism()]] رجّع [[16]])، فـ ١٠٠ worker هيتزاحموا على ١٦، وكل واحد ياخد أطول، والرام تكبر. الحل pool ثابت بعدد الـ cores (مكتبة [[piscina]]) والباقي يستنى دوره، أو queue.
+
+---
+
+## الخلاصة
+
+| | بيعمل إيه | إمتى |
+|---|---|---|
+| [[worker_threads]] | يشغّل حساب CPU في thread تاني | حساب لازم يرجع في نفس الطلب |
+| [[cluster]] / PM2 | نسخ من السيرفر كله على نفس الجهاز | VPS من غير Docker |
+| containers ورا load balancer | نسخ على أجهزة | الإنتاج العادي |
+| queue + worker process | الشغل يتعمل بعدين | الحاجة التقيلة اللي الرد مش لازم يستناها |
+
+- worker مش بيسرّع الحساب، بيحمي الـ event loop.
+- كل حاجة برّه [[if (!isMainThread)]] بتتنفّذ في الـ worker كمان.`,
           lines: [
             "worker_threads.",
             "حساب تقيل عمدًا (fibonacci بالـ recursion).",
@@ -928,6 +2485,144 @@ export async function chargeCard(amount) {
             when: "أي API هيتشغّل في الإنتاج وفيه أكتر من طبقة (routes و services). وكمان لحاجات زي tenant id في تطبيق multi-tenant، أو transaction تتشارك بين services.",
             mistakes: R`تحط الـ context في متغير global عادي ([[let currentUser]]): مع طلبين مع بعض، الأول بيشوف يوزر التاني، ودي ثغرة مش bug بس. و [[als.enterWith()]] بدل [[run]] من غير ما تفهمه: بيغيّر الـ context لباقي الـ sync code اللي بعده وممكن يسرّب لطلبات تانية. وتخزن حاجات تقيلة (الـ body كله) في الـ store. وفي الانترفيو: «إزاي تعمل request id لكل لوج في Node؟» الإجابة: AsyncLocalStorage، ومش global ولا تعدية req لكل دالة.`
           },
+          teach: R`## «شنطة» لكل طلب، وأي كود يقدر يفتحها
+
+أول middleware بيعمل object صغير للطلب (فيه الـ request id)، وبيشغّل باقي الطلب كله «جواه». بعد كده أي دالة في أي ملف تقدر تسأل «إيه الـ object بتاع الطلب اللي أنا شغالة فيه؟» من غير ما حد يعدّيلها [[req]]. والـ logger بيستخدم ده عشان يحط الـ id في كل سطر لوحده. جرّبنا المثال كما هو في Express 5 و pino 10 على ويندوز 11 بـ Node 24، على البورت 5857، مع [[requireAuthOptional]] بسيط بياخد اليوزر من header [[x-user]]، وجرّبنا كود الحل كمان.
+
+---
+
+## ١. الـ imports و [[new AsyncLocalStorage()]]
+
+- [[AsyncLocalStorage]] من [[node:async_hooks]]: الكلاس اللي بيعمل التخزين ده. ALS اختصار اسمه.
+- [[randomUUID]] من [[node:crypto]]: id عشوائي.
+- [[export const requestContext = new AsyncLocalStorage();]]: واحد بس للتطبيق كله، و [[export]] عشان الـ logger وأي ملف تاني يستورده. هو مش الـ object نفسه، هو «المخزن» اللي كل طلب ليه فيه درج لوحده.
+
+---
+
+## ٢. أول middleware
+
+~~~js
+const reqId = req.get("x-request-id") ?? randomUUID();
+res.setHeader("x-request-id", reqId);
+requestContext.run({ reqId }, next);
+~~~
+
+1. [[req.get("x-request-id")]]: لو Nginx أو الواجهة باعتين id، خده. [[??]]: لو مش موجود ([[undefined]]) اعمل واحد جديد.
+2. [[res.setHeader]]: رجّعه في الرد، عشان اللي عنده مشكلة يبعتهولك.
+3. [[requestContext.run(store, fn)]]: شغّل [[fn]] (هنا [[next]]، يعني باقي الطلب كله) ومعاها الـ store ده. أي حاجة async بتبدأ جوه [[fn]] (promise أو timer أو await) بتفضل شايفة نفس الـ store، وNode هو اللي بيتابع مين بدأ مين.
+
+ليه [[run]] تلف [[next]] بدل ما تحط الـ object في متغير؟ لأن متغير عادي واحد لكل التطبيق، و ١٠٠ طلب شغالين مع بعض هيكتبوا فيه فوق بعض.
+
+---
+
+## ٣. تاني middleware: ضيف اليوزر
+
+~~~js
+app.use(requireAuthOptional, (req, res, next) => {
+  const ctx = requestContext.getStore();
+  if (ctx) ctx.userId = req.user?.id ?? null;
+  next();
+});
+~~~
+
+- [[app.use(a, b)]]: middlewareين ورا بعض: الأول بيحط [[req.user]] لو فيه، والتاني بيكمّل.
+- [[getStore()]]: هات الـ object بتاع الطلب ده. ده نفس الـ object اللي اتعمل في [[run]]، فلو ضفت عليه حاجة كل الكود اللي بعدك هيشوفها.
+- [[if (ctx)]]: برّه أي [[run]] بيرجع [[undefined]].
+- [[req.user?.id ?? null]]: لو مفيش يوزر [[null]] (مش undefined، عشان يظهر في اللوج صريح).
+
+---
+
+## ٤. الـ logger: [[mixin]]
+
+~~~js
+export const logger = pino({
+  mixin: () => {
+    const ctx = requestContext.getStore();
+    return ctx ? { reqId: ctx.reqId, userId: ctx.userId } : {};
+  },
+});
+~~~
+
+[[mixin]] دالة pino بيناديها مع **كل** سطر لوج، واللي بترجّعه بيتدمج في السطر. هنا: لو احنا جوه طلب حط الـ id واليوزر، وإلا ولا حاجة.
+
+---
+
+## ٥. الـ service: مفيش [[req]] خالص
+
+~~~js
+export async function chargeCard(amount) {
+  logger.info({ amount }, "charging card");
+}
+~~~
+
+[[logger.info(object, message)]]: الـ object بيتدمج في السطر، والرسالة في [[msg]]. والـ service دي مش عارفة حاجة عن Express، ومع ذلك سطرها هيطلع ومعاه الطلب.
+
+---
+
+## ٦. التشغيل الحقيقي
+
+route [[POST /pay]] بيستنى ٢٠ms وبعدين ينادي [[chargeCard(150)]]، وفيه timer بيعمل لوج برّه أي طلب. طلبين بـ curl:
+
+~~~bash
+curl -i -X POST -H "x-request-id: req-123" -H "x-user: u7" http://localhost:5857/pay
+curl -i -X POST http://localhost:5857/pay
+~~~
+
+~~~text الـ headers اللي رجعت
+x-request-id: req-123
+x-request-id: 35c898e8-7045-452d-8396-be610d6f7436
+~~~
+
+الأول رجّعلنا الـ id بتاعنا، والتاني اتعمله UUID. واللوج (من غير [[time]] و [[pid]]، و [[hostname]] اتغيّر لـ ALI-PC):
+
+~~~text اللوج
+{"level":30,"hostname":"ALI-PC","msg":"timer outside any request"}
+{"level":30,"hostname":"ALI-PC","reqId":"req-123","userId":"u7","amount":150,"msg":"charging card"}
+{"level":30,"hostname":"ALI-PC","reqId":"35c898e8-7045-452d-8396-be610d6f7436","userId":null,"amount":150,"msg":"charging card"}
+~~~
+
+[[level 30]] = info في pino. السطر بتاع الـ timer من غير reqId (برّه [[run]])، والتانيين فيهم الطلب واليوزر رغم إن [[chargeCard]] متعرفش عنهم حاجة.
+
+### كود الحل: طلبين في نفس اللحظة
+
+كود الحل نسخة أصغر من غير pino: [[log]] بتطبع JSON فيه [[als.getStore()?.reqId]] ([[?.]] عشان برّه الطلب الـ store [[undefined]])، و [[chargeCard]] بتستنى وقت عشوائي لحد ٣٠ms، و [[supertest]] بيبعت طلبين A و B مع بعض بـ [[Promise.all]] من غير ما يفتح بورت. شغّلناه مرتين:
+
+~~~text التشغيل الأول
+{"reqId":"A","userId":"u1","msg":"start"}
+{"reqId":"B","userId":"u2","msg":"start"}
+{"reqId":"A","userId":"u1","msg":"charging"}
+{"reqId":"A","userId":"u1","msg":"done"}
+{"reqId":"B","userId":"u2","msg":"charging"}
+{"reqId":"B","userId":"u2","msg":"done"}
+{"msg":"outside any request"}
+~~~
+
+~~~text التشغيل التاني
+{"reqId":"A","userId":"u1","msg":"start"}
+{"reqId":"B","userId":"u2","msg":"start"}
+{"reqId":"B","userId":"u2","msg":"charging"}
+{"reqId":"B","userId":"u2","msg":"done"}
+{"reqId":"A","userId":"u1","msg":"charging"}
+{"reqId":"A","userId":"u1","msg":"done"}
+{"msg":"outside any request"}
+~~~
+
+الترتيب اتغيّر (الوقت عشوائي)، بس كل سطر لسه معاه الطلب واليوزر بتوعه. وآخر سطر من غير reqId: [[JSON.stringify]] بيشيل أي خاصية قيمتها [[undefined]].
+
+---
+
+## الخلاصة
+
+| الحتة | بتعمل إيه |
+|---|---|
+| [[new AsyncLocalStorage()]] | مخزن واحد للتطبيق |
+| [[run(store, next)]] في أول middleware | كل الطلب بيتنفّذ ومعاه الـ store بتاعه |
+| [[getStore()]] | هات الـ store من أي مكان، أو [[undefined]] برّه طلب |
+| [[mixin]] في pino | الـ id في كل سطر لوج لوحده |
+| [[x-request-id]] داخل وخارج | تربط لوج Nginx والتطبيق وشكوى اليوزر |
+
+- متحطش الـ context في متغير global عادي: طلبين مع بعض هيشوفوا بيانات بعض.
+- لازم يبقى أول middleware عشان كل اللي بعده يبقى جواه.`,
           lines: [
             "AsyncLocalStorage من Node.",
             "مولّد id.",
