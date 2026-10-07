@@ -38,6 +38,206 @@ TSV ([[.tsv]]): نفس الفكرة بس الفاصل [[Tab]] بدل الفاص�
             when: R`export و import بين الأنظمة، وتقارير للناس اللي بتستخدم Excel، وداتا جدولية بسيطة (صفوف بنفس الأعمدة). أما لو الداتا فيها مستويات (طلب جواه منتجات) استخدم JSON.`,
             mistakes: R`تقسم السطر بـ [[split(",")]] في الكود فأول اسم فيه فاصلة يبوّظ الأعمدة: استخدم مكتبة ([[csv]] في Python، و [[papaparse]] أو [[csv-parse]] في JS). تبني CSV بلزق النصوص من غير ما تنصّص القيم. تنسى الـ BOM والعميل يفتحه في Excel يلاقي العربي ملخبط. وتعمل import لرقم تليفون أو كود منتج كرقم فيضيع الصفر.`
           },
+          teach: R`## الفكرة: جدول مكتوب كنص عادي
+
+المثال مش أمر، ده **محتوى ملف**. احفظه باسم [[customers.csv]] وهنقراه سطر سطر، وبعدين نشوف ٣ برامج بتقراه: [[cut]] (اللي بيقسم غلط)، و Python و PowerShell (اللي بيقروه صح).
+
+CSV اختصار **Comma-Separated Values**، يعني «قيم مفصولة بفاصلة». مفيش فيه أنواع ولا ألوان ولا خلايا مدموجة: نص بس، وكل سطر صف.
+
+---
+
+## ١. سطر الـ header
+
+~~~text السطر الأول
+id,name,city,phone,notes
+~~~
+
+أول سطر غالبًا مش داتا، ده **أسامي الأعمدة** (header). هنا ٥ أعمدة، فكل صف بعده لازم يبقى فيه ٥ قيم بالظبط، يعني ٤ فواصل. الـ header مش إجباري في الصيغة، بس من غيره البرنامج اللي بيقرا مش هيعرف كل عمود اسمه إيه.
+
+---
+
+## ٢. صف عادي
+
+~~~text السطر التاني
+1,سارة أحمد,القاهرة,01012345678,عميلة جديدة
+~~~
+
+| العمود | القيمة |
+|---|---|
+| [[id]] | [[1]] |
+| [[name]] | [[سارة أحمد]] (المسافة جوه القيمة عادي، مش فاصل) |
+| [[city]] | [[القاهرة]] |
+| [[phone]] | [[01012345678]] |
+| [[notes]] | [[عميلة جديدة]] |
+
+رقم التليفون في الملف نص سليم بصفره. المشكلة بتحصل في البرنامج اللي بيقرا: Excel بيشوفه رقم فيشيل الصفر ويبقى [[1012345678]].
+
+---
+
+## ٣. الصف الصعب: فاصلة وعلامة تنصيص جوه القيمة
+
+~~~text السطر التالت
+2,"Ali, Jr.",الجيزة,01198765432,"قال ""شكرًا"""
+~~~
+
+### [["Ali, Jr."]]
+
+الاسم نفسه فيه فاصلة. لو اتكتب من غير تنصيص، البرنامج هيفتكره عمودين ([[Ali]] و [[Jr.]]) والصف يبقى ٦ أعمدة. عشان كده القيمة اتحطت بين [["]]: أي فاصلة جوه التنصيص جزء من النص.
+
+### [["قال ""شكرًا"""]]
+
+دي أصعب حتة. نفكها من برة لجوه:
+
+| الحتة | معناها |
+|---|---|
+| أول [["]] | بداية قيمة متنصصة |
+| [[قال ]] | نص عادي |
+| [[""]] | علامة تنصيص واحدة جوه النص (بتتكتب مرتين عشان متتفهمش نهاية القيمة) |
+| [[شكرًا]] | نص عادي |
+| [[""]] | علامة تنصيص تانية جوه النص |
+| آخر [["]] | نهاية القيمة |
+
+فالقيمة الحقيقية: [[قال "شكرًا"]].
+
+---
+
+## ٤. القيم الفاضية
+
+~~~text السطر الرابع
+3,منى,الإسكندرية,,
+~~~
+
+بعد [[الإسكندرية]] فيه فاصلتين ورا بعض [[,,]]، يعني قيمة فاضية بينهم (التليفون)، والفاصلة الأخيرة وراها مفيش حاجة، يعني الملاحظات فاضية. الصف لسه ٥ قيم.
+
+---
+
+## ٥. نقراه بـ [[cut]]: القسمة الغبية
+
+[[cut]] أداة لينكس بتقطع كل سطر. [[-d,]] يعني الفاصل (delimiter) هو [[,]]، و [[-f2]] يعني هات الـ field (العمود) رقم ٢. اتشغّل في [[docker run --rm ubuntu:24.04]]:
+
+~~~bash
+cut -d, -f2 customers.csv
+~~~
+
+~~~text الناتج
+name
+سارة أحمد
+"Ali
+منى
+~~~
+
+الصف التالت باظ: [[cut]] مبيعرفش التنصيص، فقسم عند أول فاصلة جوه [["Ali, Jr."]]. وده نفس اللي بيحصل لو كتبت [[split(",")]] في أي لغة.
+
+### نفس الكلام مع TSV
+
+لو الملف TSV (الفاصل Tab) فـ [[cut]] بيقسم على الـ Tab من غير [[-d]] أصلًا (الـ Tab هو الافتراضي)، والفاصلة جوه الاسم مبتضرّش:
+
+~~~bash
+printf 'id\tname\tcity\n1\tسارة\tالقاهرة\n2\tAli, Jr.\tالجيزة\n' > c.tsv
+cut -f2 c.tsv
+~~~
+
+~~~text الناتج
+name
+سارة
+Ali, Jr.
+~~~
+
+[[printf]] بيكتب النص، و [[\t]] جواه بتبقى Tab حقيقي، و [[\n]] سطر جديد.
+
+---
+
+## ٦. نقراه صح بـ Python
+
+~~~python
+import csv
+for r in csv.DictReader(open("customers.csv", encoding="utf-8")):
+    print(r["name"], "|", r["notes"])
+~~~
+
+- [[csv]]: مكتبة جاية مع Python، فيها parser بيفهم التنصيص.
+- [[DictReader]]: بيقرا أول سطر كأسامي، وكل صف بعده بيرجع **dict** (قاموس): [[r["name"]]] بدل [[r[1]]].
+- [[encoding="utf-8"]]: قوله صراحة إن الملف UTF-8. على ويندوز Python ممكن يفترض ترميز تاني (حسب إعدادات الجهاز) فالعربي يطلع ملخبط. على الجهاز اللي اتجرّب عليه ويندوز متظبط على UTF-8، فاشتغل حتى من غيرها، بس متعتمدش على ده.
+
+اتشغّل بـ Python 3.14 على ويندوز:
+
+~~~text الناتج
+سارة أحمد | عميلة جديدة
+Ali, Jr. | قال "شكرًا"
+منى |
+~~~
+
+الاسم سليم، و [[""]] اتحولت لـ [["]] واحدة، والملاحظات بتاعة منى نص فاضي.
+
+---
+
+## ٧. نقراه بـ PowerShell: [[Import-Csv]]
+
+~~~powershell
+$rows = Import-Csv customers.csv
+$rows | Format-Table
+$rows[1].name
+$rows[1].phone.GetType().Name
+~~~
+
+- [[Import-Csv]]: بيقرا الملف ويرجّع object لكل صف، وأسامي الخانات من الـ header.
+- [[$rows]]: متغير شايل الصفوف. [[$rows[1]]] الصف التاني (العد من صفر).
+- [[Format-Table]]: اعرضهم جدول.
+- [[.GetType().Name]]: نوع القيمة.
+
+~~~text الناتج (pwsh 7.6 و Windows PowerShell 5.1 نفس الكلام)
+id name      city       phone       notes
+-- ----      ----       -----       -----
+1  سارة أحمد القاهرة    01012345678 عميلة جديدة
+2  Ali, Jr.  الجيزة     01198765432 قال "شكرًا"
+3  منى       الإسكندرية
+
+Ali, Jr.
+String
+~~~
+
+لاحظ [[String]]: [[Import-Csv]] مبيخمّنش، كل قيمة نص، فالصفر اللي في أول التليفون فضل. ولو العربي طلع ملخبط في Windows PowerShell 5.1 (الملف UTF-8 من غير BOM)، زوّد [[-Encoding UTF8]].
+
+---
+
+## ٨. الـ BOM عشان Excel
+
+~~~bash
+printf '\xef\xbb\xbf' | cat - customers.csv > excel.csv
+file customers.csv excel.csv
+~~~
+
+- [[printf '\xef\xbb\xbf']]: بيكتب ٣ بايتات بالـ hex، ودول الـ BOM (Byte Order Mark): علامة في أول الملف بتقول «أنا UTF-8».
+- [[|]]: بيدّي الناتج ده للأمر اللي بعده.
+- [[cat - customers.csv]]: الـ [[-]] معناها «اللي جاي من الـ pipe»، فـ [[cat]] بيطبع الـ BOM وبعده الملف.
+- [[> excel.csv]]: احفظ الكل في ملف جديد.
+
+~~~text الناتج (ubuntu:24.04)
+customers.csv:  CSV Unicode text, UTF-8 text
+excel.csv: CSV Unicode text, UTF-8 (with BOM) text
+~~~
+
+Excel على ويندوز لما يلاقي الـ BOM بيقرا العربي صح. من غيره غالبًا بيفترض الترميز القديم ويطلّع [[Ø³Ø§Ø±Ø©]]. (Excel نفسه مش متجرّب هنا، ده سلوكه المعروف من وثائق Microsoft.)
+
+---
+
+## ٩. التمرين
+
+التمرين بيطلب parser لسطر واحد. الفكرة اللي محتاجها هي اللي في [[csv]] بالظبط: امشي حرف حرف، وافتكر انت «جوه تنصيص» ولا لأ. الفاصلة بتقسم بس وانت **بره** التنصيص، و [[""]] وانت **جوه** معناها حرف [["]] واحد. والقيمة الأخيرة متنساش تضيفها بعد ما السطر يخلص.
+
+---
+
+## الخلاصة
+
+| الحالة | بتتكتب إزاي |
+|---|---|
+| قيمة عادية | [[سارة]] |
+| فيها فاصلة أو سطر جديد | [["Ali, Jr."]] |
+| فيها [["]] | جوه تنصيص و [["]] مرتين: [["قال ""شكرًا"""]] |
+| فاضية | [[,,]] |
+| الفاصل Tab | TSV ([[.tsv]]) |
+
+ومتقسمش CSV بـ [[split]] أو [[cut]] أبدًا: استخدم مكتبة ([[csv]] في Python، و [[Import-Csv]] في PowerShell).`,
           lines: [
             R`الـ header: أسامي الأعمدة الخمسة مفصولة بـ [[,]].`,
             R`صف عادي. رقم التليفون هنا نص سليم، بس Excel هيشيل الصفر.`,
@@ -133,6 +333,230 @@ attribute ولا element؟ مفيش قاعدة إجبارية. العُرف: ا�
             when: R`لما الأداة أو النظام اللي بتتعامل معاه بيستخدمه (Android و Maven و .NET و SVG و RSS و sitemap و SOAP). أما لو بتصمم API أو ملف إعدادات جديد، فـ JSON أو YAML أبسط.`,
             mistakes: R`تحط سطر فاضي أو BOM قبل [[<?xml]] فيطلعلك [[XML declaration allowed only at the start of the document]]. تكتب [[<br>]] أو [[<img ...>]] من غير [[/]] زي HTML. تكتب [[&]] لوحدها في نص أو لينك ([[?a=1&b=2]] لازم [[?a=1&amp;b=2]]). تحط أكتر من root. وتستخدم [[&nbsp;]] (دي HTML بس، في XML استخدم [[&#160;]]).`
           },
+          teach: R`## الفكرة: شجرة مكتوبة بالتاجات
+
+المثال محتوى ملف اسمه [[order.xml]]: طلب من متجر. هنفكه سطر سطر، وبعدين نقراه بالكود (Python و PowerShell و [[xmllint]]) ونبوّظه عشان نشوف شكل الغلط.
+
+XML اختصار **eXtensible Markup Language**: «extensible» يعني انت اللي بتخترع أسامي التاجات ([[order]] و [[customer]] مش كلمات محجوزة)، و «markup» يعني نص عليه علامات (التاجات).
+
+---
+
+## ١. سطر الـ declaration
+
+~~~text السطر ١
+<?xml version="1.0" encoding="UTF-8"?>
+~~~
+
+- [[<?]] و [[?>]]: ده مش element، ده «تعليمات للـ parser» (processing instruction).
+- [[version="1.0"]]: نسخة XML. عمليًا دايمًا [[1.0]].
+- [[encoding="UTF-8"]]: الملف محفوظ بأنهي ترميز. لو كتبت عربي لازم الملف يبقى فعلًا UTF-8.
+
+لو موجود، لازم يبقى أول بايت في الملف. جرّبت أحط سطر فاضي قبله:
+
+~~~text الناتج (xmllint في ubuntu:24.04)
+order_blank.xml:2: parser error : XML declaration allowed only at the start of the document
+~~~
+
+---
+
+## ٢. التعليق
+
+~~~text السطر ٢
+<!-- طلب من المتجر -->
+~~~
+
+بيبدأ بـ [[<!--]] وبيخلص بـ [[-->]]، والـ parser بيرميه. مينفعش يبقى جواه [[--]].
+
+---
+
+## ٣. الـ root والـ attributes
+
+~~~text السطر ٣
+<order id="1024" status="paid">
+~~~
+
+| الحتة | اسمها | معناها |
+|---|---|---|
+| [[<order>]] | تاج فتح (start tag) | بداية element اسمه [[order]] |
+| [[id="1024"]] | attribute | معلومة صغيرة على الـ element: اسم و [[=]] وقيمة |
+| [[status="paid"]] | attribute تاني | الترتيب بين الـ attributes ملوش معنى |
+
+القيمة لازم بين [["]] أو [[']] حتى لو رقم. و [[order]] هنا هو الـ **root**: الـ element الوحيد اللي بيلف الملف كله، وآخر سطر [[</order>]] بيقفله.
+
+---
+
+## ٤. elements جوه elements
+
+~~~text السطور ٤ لـ ٧
+  <customer>
+    <name>سارة أحمد</name>
+    <email>sara@example.com</email>
+  </customer>
+~~~
+
+- [[<customer>]] فاتح، وجواه اتنين: [[name]] و [[email]].
+- [[<name>سارة أحمد</name>]]: تاج فتح، وبعده النص (text content)، وبعده تاج قفل بنفس الاسم وقبله [[/]].
+- [[</customer>]] بيتقفل بعد ما ولاده اتقفلوا. الترتيب ده إجباري.
+- المسافات اللي في أول السطور للقراية بس، الـ parser مش بيحتاجها (عكس YAML).
+
+---
+
+## ٥. الـ list والـ element الفاضي
+
+~~~text السطور ٨ لـ ١١
+  <items>
+    <item sku="TSH-01" qty="2" price="250"/>
+    <item sku="MUG-07" qty="1" price="120"/>
+  </items>
+~~~
+
+- XML مفيهوش list زي [[[ ]]] في JSON. الليستة هي نفس اسم الـ element متكرر جوه أب واحد.
+- [[<item ... />]]: element **فاضي** (self-closing). [[/>]] في الآخر يعني «فتحته وقفلته في نفس التاج»، زي [[<item ...></item>]]. في HTML ممكن تكتب [[<br>]] من غير قفل، في XML لأ.
+- كل الداتا هنا في attributes: [[sku]] (كود المنتج، Stock Keeping Unit)، و [[qty]] (الكمية، quantity)، و [[price]].
+
+---
+
+## ٦. الـ entity
+
+~~~text السطر ١٢
+  <note>توصيل بعد الساعة 5 &amp; اتصل قبلها</note>
+~~~
+
+[[&]] لوحدها ممنوعة في النص لأنها بداية entity. [[&amp;]] هي الطريقة الوحيدة تكتب بيها [[&]]، والـ parser بيرجّعها [[&]] وهو بيقرا (التفاصيل في الدرس الجاي).
+
+---
+
+## ٧. نص و attribute على نفس الـ element
+
+~~~text السطور ١٣ و ١٤
+  <total currency="EGP">620</total>
+</order>
+~~~
+
+[[total]] جواه نص [[620]] وعليه attribute [[currency]]. لاحظ إن [[620]] لسه **نص**: XML مفيهوش أرقام، البرنامج هو اللي بيحوّل. و [[</order>]] بيقفل الـ root، ومينفعش يبقى بعده أي element.
+
+---
+
+## ٨. نقراه بـ Python
+
+~~~python
+import xml.etree.ElementTree as ET
+r = ET.parse("order.xml").getroot()
+print(r.tag, r.attrib, r.get("id"))
+print(r.find("customer/name").text)
+print([i.get("sku") for i in r.findall("items/item")])
+print(sum(int(i.get("qty")) * int(i.get("price")) for i in r.iter("item")))
+print(r.find("note").text)
+~~~
+
+- [[xml.etree.ElementTree]]: مكتبة XML جاية مع Python، و [[as ET]] اسم مختصر ليها.
+- [[ET.parse(...)]]: بيقرا الملف ويبني الشجرة. [[.getroot()]] بيرجّع الـ root.
+- [[.tag]] اسم الـ element، و [[.attrib]] كل الـ attributes كـ dict، و [[.get("id")]] attribute واحد.
+- [[.find("customer/name")]]: أول element على المسار ده. [[.text]] النص اللي جواه.
+- [[.findall(...)]]: كلهم في ليستة. و [[.iter("item")]]: أي [[item]] في أي عمق.
+- [[int(...)]]: حوّل النص لرقم عشان نضرب.
+
+~~~text الناتج (Python 3.12 في ubuntu:24.04)
+order {'id': '1024', 'status': 'paid'} 1024
+سارة أحمد
+['TSH-01', 'MUG-07']
+620
+توصيل بعد الساعة 5 & اتصل قبلها
+~~~
+
+[[620]] = ٢×٢٥٠ + ١×١٢٠، يعني نفس الـ [[total]] اللي في الملف. و [[&amp;]] رجعت [[&]].
+
+---
+
+## ٩. نقراه بـ PowerShell: [[[xml]]]
+
+~~~powershell
+$x = [xml](Get-Content order.xml -Raw -Encoding UTF8)
+$x.order.id
+$x.order.customer.name
+$x.order.items.item | Format-Table sku, qty, price
+$x.order.total.'#text'
+$x.SelectSingleNode('/order/customer/name').InnerText
+~~~
+
+- [[Get-Content -Raw]]: اقرا الملف كله كنص واحد (من غير [[-Raw]] بيرجّع ليستة سطور). [[-Encoding UTF8]] عشان العربي في Windows PowerShell 5.1.
+- [[[xml]]]: حوّل النص لـ XML document. لو الملف مش well-formed هنا بيقع.
+- [[$x.order.customer.name]]: PowerShell بيخليك تمشي في الشجرة بالنقطة، والـ attributes كمان بالنقطة ([[.id]]).
+- [[.'#text']]: لما الـ element عليه attribute وجواه نص، النص اسمه [[#text]].
+- [[SelectSingleNode]]: بحث بـ XPath (تحت).
+
+~~~text الناتج (pwsh 7.6 و Windows PowerShell 5.1)
+1024
+سارة أحمد
+
+sku    qty price
+---    --- -----
+TSH-01 2   250
+MUG-07 1   120
+
+620
+سارة أحمد
+~~~
+
+---
+
+## ١٠. [[xmllint]]: فحص و XPath
+
+[[xmllint]] من حزمة [[libxml2-utils]] على أوبونتو. اتشغّل في [[ubuntu:24.04]] (libxml 2.9.14):
+
+~~~bash
+xmllint --noout order.xml
+xmllint --xpath 'string(/order/customer/name)' order.xml
+xmllint --xpath 'count(//item)' order.xml
+xmllint --xpath '//item/@sku' order.xml
+~~~
+
+- [[--noout]]: متطبعش الملف، افحصه بس. لو سليم مش بيطبع حاجة وكود الخروج [[0]].
+- [[--xpath]]: XPath لغة بحث في الشجرة. [[/order/customer/name]] مسار من الـ root. [[string(...)]] هات النص بس. [[//item]] أي [[item]] في أي مكان، و [[count]] عدّهم. [[@sku]] الـ attribute.
+
+~~~text الناتج
+سارة أحمد
+2
+ sku="TSH-01"
+ sku="MUG-07"
+~~~
+
+---
+
+## ١١. نبوّظه
+
+مسحت [[</name>]]:
+
+~~~text الناتج
+Python:     xml.etree.ElementTree.ParseError: mismatched tag: line 7, column 4
+xmllint:    order_noname.xml:7: parser error : Opening and ending tag mismatch: name line 5 and customer
+PowerShell: The 'name' start tag on line 5 position 6 does not match the end tag of 'customer'. Line 7, position 5.
+~~~
+
+الثلاثة بيشاوروا على سطر ٧ ([[</customer>]]): لحد هناك الـ parser فاكر إن [[email]] جوه [[name]]، فلما لقى قفلة [[customer]] و [[name]] لسه مفتوح عرف إن فيه غلط. و [[xmllint]] كمل وطلّع أخطاء تانية بسبب نفس الغلطة، فصلّح أول واحد الأول.
+
+وغيّرت [[&amp;]] لـ [[&]] لوحدها:
+
+~~~text الناتج
+Python:     not well-formed (invalid token): line 12, column 28
+xmllint:    parser error : xmlParseEntityRef: no name
+PowerShell: An error occurred while parsing EntityName. Line 12, position 29.
+~~~
+
+---
+
+## الخلاصة
+
+| الشكل | اسمه |
+|---|---|
+| [[<?xml ... ?>]] | declaration، أول حاجة في الملف |
+| [[<a> ... </a>]] | element بتاج فتح وتاج قفل |
+| [[<a/>]] | element فاضي |
+| [[x="..."]] | attribute، لازم متنصص |
+| [[<!-- -->]] | تعليق |
+| [[&amp;]] | entity لحرف [[&]] |
+
+والقواعد اللي لو اتكسرت الملف مبيتقريش: root واحد، وكل تاج يتقفل بالترتيب، والأسامي حساسة للحروف، و [[&]] و [[<]] ممنوعين لوحدهم في النص.`,
           lines: [
             R`الـ declaration: نسخة XML والترميز. لازم أول حاجة في الملف.`,
             R`تعليق [[<!-- -->]]: الـ parser بيتجاهله.`,
@@ -197,6 +621,168 @@ CDATA: لو عندك نص كبير مليان [[<]] و [[&]] (كود JavaScript 
             when: R`كل ما تكتب نص في XML فيه [[&]] (أكتر حاجة: لينكات فيها [[?a=1&b=2]] في sitemap أو RSS أو Android strings)، أو كود جوه XML (CDATA).`,
             mistakes: R`تهرّب [[&]] في الآخر بدل الأول فتلاقي [[&amp;lt;]]. تكتب [[&nbsp;]] فيطلعلك [[Entity 'nbsp' not defined]]. تحط [[--]] في تعليق فيطلعلك [[Double hyphen within comment]]. وفي Android [[strings.xml]] الـ [[']] لازم تتكتب [[\']] (ده قانون Android مش XML، درس AndroidManifest).`
           },
+          teach: R`## الفكرة: الحروف اللي ليها معنى بتتكتب بشكل تاني
+
+في XML الحرف [[<]] معناه «بداية تاج» و [[&]] معناه «بداية entity». فلو عايز تكتبهم كنص عادي، بتكتب بدالهم كلمة قصيرة بين [[&]] و [[;]] اسمها **entity**، والـ parser بيرجّعها للحرف الأصلي وهو بيقرا. المثال ملف [[product.xml]] فيه كل الأشكال دي، هنفكه سطر سطر وبعدين نقراه بالكود.
+
+---
+
+## ١. [[&amp;]]
+
+~~~text السطر ٣
+  <name>Tom &amp; Jerry Mug</name>
+~~~
+
+[[amp]] اختصار **ampersand** (اسم حرف [[&]]). البرنامج اللي بيقرا هيشوف [[Tom & Jerry Mug]]. دي أهم entity لأن [[&]] بتيجي كتير في الأسامي واللينكات ([[?a=1&b=2]]).
+
+---
+
+## ٢. [[&lt;]] و [[&gt;]]
+
+~~~text السطر ٤
+  <rule>price &lt; 100 and qty &gt; 0</rule>
+~~~
+
+[[lt]] = **less than** ([[<]])، و [[gt]] = **greater than** ([[>]]). لو كتبت [[<]] على طول، الـ parser هيفتكر [[< 100]] بداية تاج اسمه غلط. أما [[>]] لوحدها في النص مسموحة، بس الناس بتكتبها [[&gt;]] عشان الشكل يبقى متناسق.
+
+---
+
+## ٣. [[&quot;]] و [[&apos;]]
+
+~~~text السطر ٥
+  <quote title="He said &quot;hi&quot;">it&apos;s fine</quote>
+~~~
+
+- [[quot]] = **quotation mark** ([["]]). قيمة الـ attribute محطوطة بين [["]]، فلو جواها [["]] عادية هتقفل القيمة بدري. [[&quot;]] بتحل ده.
+- [[apos]] = **apostrophe** ([[']]). في النص مش لازمة (كان ممكن تكتب [[it's]] على طول)، هي هنا عشان تشوفها بس. بتبقى لازمة جوه attribute متنصص بـ [[']].
+
+---
+
+## ٤. الحرف برقمه
+
+~~~text السطر ٦
+  <arabic>&#1587;&#1604;&#1575;&#1605;</arabic>
+~~~
+
+[[&#]] وبعدها رقم الحرف في Unicode بالعشري. [[1587]] هو «س»، و [[1604]] «ل»، و [[1575]] «ا»، و [[1605]] «م»، فالنص «سلام». ونفس الكلام بالـ hex: [[&#x633;]] (الـ [[x]] معناها hex، و [[633]] بالـ hex = [[1587]] بالعشري). مفيد لحرف مش موجود على الكيبورد، زي المسافة اللي متتقسمش [[&#160;]] (اللي في HTML اسمها [[&nbsp;]]).
+
+---
+
+## ٥. element فاضي وتعليق
+
+~~~text السطور ٧ لـ ٩
+  <empty/>
+  <!-- تعليق: مينفعش يكون جواه شرطتين ورا بعض -->
+</product>
+~~~
+
+[[<empty/>]] ملوش نص خالص، و Python هيرجّع [[.text]] بتاعه [[None]] (لا حاجة). والتعليق الـ parser بيرميه.
+
+---
+
+## ٦. نقراه بـ Python ونشوف الـ entities اتفكت
+
+~~~python
+import xml.etree.ElementTree as ET
+for c in ET.parse("product.xml").getroot():
+    print(c.tag, repr(c.text), c.attrib)
+~~~
+
+- [[for c in root]]: اللف على الـ root بيرجّع ولاده واحد واحد. (ElementTree بيرمي التعليقات افتراضيًا، فمش هتظهر.)
+- [[repr(...)]]: اطبع القيمة بشكلها في Python (بالتنصيص)، عشان تفرّق بين نص فاضي و [[None]].
+- [[c.attrib]]: الـ attributes كـ dict.
+
+~~~text الناتج (Python 3.12 في ubuntu:24.04)
+name 'Tom & Jerry Mug' {}
+rule 'price < 100 and qty > 0' {}
+quote "it's fine" {'title': 'He said "hi"'}
+arabic 'سلام' {}
+empty None {}
+~~~
+
+كل entity رجعت حرفها: البرنامج عمره ما بيشوف [[&amp;]]، بيشوف [[&]].
+
+ونفس الكلام في PowerShell (pwsh 7.6 و 5.1):
+
+~~~powershell
+$p = [xml](Get-Content product.xml -Raw -Encoding UTF8)
+$p.product.ChildNodes | ForEach-Object { "{0} = [{1}]" -f $_.Name, $_.InnerText }
+~~~
+
+~~~text الناتج
+name = [Tom & Jerry Mug]
+rule = [price < 100 and qty > 0]
+quote = [it's fine]
+arabic = [سلام]
+empty = []
+#comment = [ تعليق: مينفعش يكون جواه شرطتين ورا بعض ]
+~~~
+
+[[ChildNodes]] بيرجّع كل الولاد ومنهم التعليق (اسمه [[#comment]])، و [[-f]] بيحط القيم مكان [[{0}]] و [[{1}]].
+
+---
+
+## ٧. CDATA: نص بيتقري زي ما هو
+
+لو حطيت كود فيه [[<]] و [[&&]] من غير escape:
+
+~~~text السطر الغلط
+  <code>if (a < b && c > d)</code>
+~~~
+
+~~~text الناتج
+Python:  not well-formed (invalid token): line 8, column 15
+xmllint: parser error : StartTag: invalid element name
+~~~
+
+الحل إنك تحطه جوه بلوك CDATA (Character DATA): بيبدأ بـ [[<![CDATA[]] وبيخلص بقوسين مربعين قافلين وبعدهم [[>]]. أي حاجة جواه نص حرفي، والـ parser مبيدوّرش فيه على تاجات ولا entities. بعد ما حطيته (السطر في الحل تحت)، Python طبع:
+
+~~~text الناتج
+code 'if (a < b && c > d) alert("ok");' {}
+~~~
+
+و PowerShell طبع نفس النص، و [[FirstChild.NodeType]] قال [[CDATA]]. يعني للبرنامج النص اللي جوه CDATA والنص المتهرّب بالـ entities نفس الحاجة بالظبط، الفرق في الكتابة بس.
+
+---
+
+## ٨. الأخطاء المشهورة
+
+| الغلطة | xmllint | PowerShell |
+|---|---|---|
+| [[&nbsp;]] (entity من HTML) | [[Entity 'nbsp' not defined]] | [[Reference to undeclared entity 'nbsp']] |
+| [[--]] جوه تعليق | [[Double hyphen within comment]] | [[An XML comment cannot contain '--']] |
+
+XML مبيعرفش غير الخمسة ([[amp]] و [[lt]] و [[gt]] و [[quot]] و [[apos]]) والأرقام. أي اسم تاني لازم يتعرّف في DTD، وده نادر.
+
+---
+
+## ٩. التمرين: الترتيب مهم
+
+التمرين بيطلب دالة بتعمل escape لنص عشان يتحط جوه XML. الفكرة اللي هتفرق: لو هرّبت [[<]] الأول بقت [[&lt;]]، وبعدين لما تهرّب [[&]] الـ [[&]] اللي في [[&lt;]] نفسها هتتهرّب وتبقى [[&amp;lt;]]. فـ [[&]] لازم تتعالج **الأول** قبل أي حرف تاني. وخلّي بالك إن الاستبدال لازم يمسك **كل** مرة الحرف ظهر فيها مش أول مرة بس.
+
+وفي الكود الحقيقي استخدم دالة جاهزة. مثلًا في PowerShell:
+
+~~~powershell
+[System.Security.SecurityElement]::Escape('Tom & "Jerry" <b>')
+~~~
+
+~~~text الناتج
+Tom &amp; &quot;Jerry&quot; &lt;b&gt;
+~~~
+
+---
+
+## الخلاصة
+
+| تكتب | عشان تطلع | ليه |
+|---|---|---|
+| [[&amp;]] | [[&]] | أهمهم، وأول واحد يتهرّب |
+| [[&lt;]] | [[<]] | عشان متتفهمش تاج |
+| [[&gt;]] | [[>]] | للتناسق |
+| [[&quot;]] | [["]] | جوه attribute بـ [["]] |
+| [[&apos;]] | [[']] | جوه attribute بـ [[']] |
+| [[&#1587;]] أو [[&#x633;]] | أي حرف برقمه | |
+| بلوك CDATA | نص كبير زي ما هو | كود جوه XML |`,
           lines: [
             R`الـ declaration.`,
             R`الـ root.`,
@@ -279,6 +865,148 @@ test("العربي ميتغيرش", () => expect(escapeXml("سلام")).toBe("س
             when: R`كل ما تكتب layout في Android، أو SVG لوحده في ملف، أو تقرا RSS أو docx أو أي XML من نظام كبير.`,
             mistakes: R`تستخدم بادئة من غير ما تعرّفها فيطلعلك [[Namespace prefix media on thumbnail is not defined]]. تغيّر حرف في الـ URI بتاع Android فكل الـ attributes تتجاهل. وتدوّر بالكود على التاج باسمه من غير namespace فترجعلك [[None]] وتفتكر الملف فاضي.`
           },
+          teach: R`## الفكرة: كل تاج ليه «اسم عيلة»
+
+المثال جزء من feed بصيغة Atom (زي RSS) فيه تاجات من عيلتين: تاجات Atom نفسها ([[feed]] و [[title]] و [[entry]])، وتاج من صيغة تانية اسمها Media RSS ([[thumbnail]]). الـ namespace هو اللي بيقول كل تاج تبع مين. احفظه في [[feed.xml]].
+
+---
+
+## ١. سطر الـ root: تعريف العيلتين
+
+~~~text السطر ٢
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+~~~
+
+شكلهم attributes، بس ليهم معنى خاص. نفكهم:
+
+### [[xmlns="http://www.w3.org/2005/Atom"]]
+
+[[xmlns]] اختصار **XML NameSpace**. من غير [[:]] بعدها يبقى ده الـ namespace **الافتراضي**: أي تاج من غير بادئة جوه [[feed]] (و [[feed]] نفسه) تبع العيلة دي.
+
+### [[xmlns:media="http://search.yahoo.com/mrss/"]]
+
+بعد [[:]] اسم بادئة (prefix): [[media]]. معناها «أي تاج أو attribute بيبدأ بـ [[media:]] تبع العيلة دي».
+
+### الـ URI ده لينك؟
+
+شكله لينك، بس الـ parser **عمره ما بيفتحه**. هو مجرد اسم فريد، والشكل ده عشان كل جهة تستخدم دومين بتملكه فمحدش ياخد نفس الاسم. لازم يتكتب حرف بحرف: [[https]] بدل [[http]] أو [[/]] زيادة في الآخر يبقى namespace تاني خالص.
+
+---
+
+## ٢. التاجات اللي من غير بادئة
+
+~~~text السطور ٣ لـ ٥
+  <title>مدونة المبرمج</title>
+  <entry>
+    <title>أول مقال</title>
+~~~
+
+[[title]] و [[entry]] من غير بادئة، فهما تبع الـ namespace الافتراضي (Atom). الـ [[title]] الأول عنوان الـ feed كله، والتاني عنوان المقال.
+
+---
+
+## ٣. التاج اللي ببادئة
+
+~~~text السطر ٦
+    <media:thumbnail url="https://example.com/1.png"/>
+~~~
+
+[[media:thumbnail]]: البادئة [[media]] والاسم المحلي (local name) [[thumbnail]]. لو صيغة تالتة عندها [[thumbnail]] بمعنى تاني، مفيش تعارض لأن عيلتها مختلفة. و [[url]] attribute عادي من غير بادئة.
+
+---
+
+## ٤. Python: الاسم الحقيقي للتاج
+
+~~~python
+import xml.etree.ElementTree as ET
+r = ET.parse("feed.xml").getroot()
+print(r.tag)
+print(r.find("title"))
+for e in r.iter():
+    print(e.tag)
+~~~
+
+~~~text الناتج (Python 3.12 في ubuntu:24.04)
+{http://www.w3.org/2005/Atom}feed
+None
+{http://www.w3.org/2005/Atom}feed
+{http://www.w3.org/2005/Atom}title
+{http://www.w3.org/2005/Atom}entry
+{http://www.w3.org/2005/Atom}title
+{http://search.yahoo.com/mrss/}thumbnail
+~~~
+
+الـ parser شال البادئة وحط الـ URI بين [[{ }]] قدام الاسم. ده الاسم الحقيقي. عشان كده [[find("title")]] رجّع [[None]]: هو بيدوّر على [[title]] **من غير** namespace، ومفيش تاج كده في الملف.
+
+### الحل: قاموس namespaces
+
+~~~python
+ns = {"a": "http://www.w3.org/2005/Atom", "media": "http://search.yahoo.com/mrss/"}
+print(r.find("a:title", ns).text, r.find("a:entry/media:thumbnail", ns).get("url"))
+~~~
+
+- [[ns]]: dict بيربط بادئة **انت** اخترتها بالـ URI. سمّيت Atom [[a]] مع إن الملف مفيهوش بادئة ليها: المهم الـ URI، مش الاسم.
+- [[find("a:title", ns)]]: Python بيحوّل [[a:title]] لـ [[{http://www.w3.org/2005/Atom}title]] ويدوّر.
+
+~~~text الناتج
+مدونة المبرمج https://example.com/1.png
+~~~
+
+---
+
+## ٥. PowerShell: نفس الفخ
+
+~~~powershell
+$f = [xml](Get-Content feed.xml -Raw -Encoding UTF8)
+$f.feed.title
+$f.DocumentElement.NamespaceURI
+"[" + $f.SelectSingleNode('/feed/title') + "]"
+$ns = New-Object System.Xml.XmlNamespaceManager($f.NameTable)
+$ns.AddNamespace('a', 'http://www.w3.org/2005/Atom')
+$ns.AddNamespace('media', 'http://search.yahoo.com/mrss/')
+$f.SelectSingleNode('/a:feed/a:title', $ns).InnerText
+$f.SelectSingleNode('//media:thumbnail', $ns).url
+~~~
+
+- المشي بالنقطة ([[$f.feed.title]]) بيتجاهل الـ namespace، فبيشتغل.
+- [[NamespaceURI]]: الـ URI بتاع الـ root.
+- XPath من غير namespace ([[/feed/title]]) رجّع لا حاجة، فالسطر طبع [[[]]] فاضي.
+- [[XmlNamespaceManager]]: نفس فكرة قاموس [[ns]] في Python، و [[AddNamespace]] بيضيف بادئة.
+
+~~~text الناتج (pwsh 7.6 و Windows PowerShell 5.1)
+مدونة المبرمج
+http://www.w3.org/2005/Atom
+[]
+مدونة المبرمج
+https://example.com/1.png
+~~~
+
+---
+
+## ٦. لو نسيت تعرّف البادئة
+
+مسحت [[xmlns:media="..."]] من السطر التاني:
+
+~~~text الناتج
+xmllint:    namespace error : Namespace prefix media on thumbnail is not defined
+Python:     xml.etree.ElementTree.ParseError: unbound prefix: line 6, column 4
+PowerShell: 'media' is an undeclared prefix. Line 6, position 6.
+~~~
+
+لاحظ إن [[xmllint --noout]] طبع الغلط بس كود الخروج كان [[0]]: الملف لسه XML سليم كـ «تاجات»، والغلط في طبقة الـ namespaces بس. Python و PowerShell رفضوه خالص.
+
+---
+
+## الخلاصة
+
+| الشكل | معناه |
+|---|---|
+| [[xmlns="URI"]] | العيلة الافتراضية لكل تاج من غير بادئة |
+| [[xmlns:p="URI"]] | بيعرّف البادئة [[p]] |
+| [[<p:tag>]] أو [[p:attr="..."]] | تاج أو attribute من عيلة [[p]] |
+| [[{URI}tag]] | الاسم الحقيقي اللي الكود بيشوفه |
+
+البادئة ملهاش معنى في نفسها، الـ URI هو المهم. وفي الكود لازم تدّي الـ parser الـ namespaces وانت بتدوّر.`,
           lines: [
             R`الـ declaration.`,
             R`[[xmlns]] الافتراضي لكل التاجات من غير بادئة، و [[xmlns:media]] بيعرّف البادئة [[media]].`,
@@ -353,6 +1081,156 @@ servers:
             when: R`ملفات إعدادات بيكتبها ويقراها بشر: Docker Compose و CI و Kubernetes و Ansible وإعدادات Spring و Flutter. أما تبادل داتا بين برامج (API) فـ JSON أأمن وأسرع.`,
             mistakes: R`Tab بدل مسافات ([[found character '\t' that cannot start any token]]): خلّي VS Code يحوّل الـ Tab لمسافات (ده الافتراضي في ملفات YAML). مسافة زيادة أو ناقصة ([[mapping values are not allowed here]]). تنسى المسافة بعد [[:]] أو بعد [[-]]. ونص فيه [[: ]] من غير تنصيص زي [[msg: Error: not found]]. والأخطر: قيم بتتقري بنوع غير اللي انت قاصده (درس «مشكلة النرويج»).`
           },
+          teach: R`## الفكرة: المسافات هي الأقواس
+
+المثال ملف إعدادات [[app.yaml]]. في JSON كنت هتكتب [[{ }]] و [[[ ]]] عشان تقول مين جوه مين، في YAML المسافات اللي في أول السطر هي اللي بتقول. هنفكه حتة حتة، وبعدين نحوّله JSON عشان نشوف الهيكل الحقيقي، ونبوّظه ٤ مرات.
+
+---
+
+## ١. التعليق ومفتاح قيمته object
+
+~~~yaml
+# إعدادات التطبيق
+app:
+  name: gym-portal
+  port: 3000
+  debug: false
+  version: "1.10"
+~~~
+
+- [[#]] لحد آخر السطر تعليق، الـ parser بيرميه.
+- [[app:]] ومفيش حاجة بعد [[:]]: يعني القيمة جاية في السطور اللي تحت.
+- السطور اللي داخلة بمسافتين كلها **جوه** [[app]]. كل واحد منهم [[key: value]]: مفتاح، و [[:]]، و **مسافة**، والقيمة.
+
+وكل قيمة YAML بيخمّن نوعها من شكلها:
+
+| السطر | النوع اللي اتقرا |
+|---|---|
+| [[name: gym-portal]] | نص (string) |
+| [[port: 3000]] | رقم صحيح (int) |
+| [[debug: false]] | boolean |
+| [[version: "1.10"]] | نص، عشان التنصيص. من غيره كان هيبقى الرقم [[1.1]] |
+
+---
+
+## ٢. مفتاح جديد في المستوى الأول، و null
+
+~~~yaml
+database:
+  host: localhost
+  password: null
+  pool: 10
+~~~
+
+[[database]] راجع لأول السطر (صفر مسافات)، فهو أخو [[app]] مش جواه. و [[null]] معناها «مفيش قيمة» (في Python بتبقى [[None]]).
+
+---
+
+## ٣. list بـ [[-]]
+
+~~~yaml
+admins:
+  - sara@example.com
+  - ali@example.com
+~~~
+
+[[-]] ومسافة في أول السطر = عنصر في list. فـ [[admins]] قيمته ليستة فيها نصين. والمسافة بعد [[-]] إجبارية زي اللي بعد [[:]]: جرّبت [[-sara]] من غير مسافة، PyYAML قرا [[admins]] كله نص واحد [['-sara - ali']] من غير ما يقول غلط.
+
+---
+
+## ٤. نفس الحاجة في سطر واحد (flow style)
+
+~~~yaml
+features: [login, booking]
+limits: {daily: 5, monthly: 100}
+~~~
+
+[[[ ]]] ليستة، و [[{ }]] object، والعناصر بينها [[,]]. ده شكل JSON تقريبًا بس من غير تنصيص إجباري. وفعلًا أي JSON سليم ينفع يتقري كـ YAML.
+
+---
+
+## ٥. list عناصرها objects
+
+~~~yaml
+servers:
+  - name: web-1
+    ip: 10.0.0.5
+  - name: web-2
+    ip: 10.0.0.6
+~~~
+
+دي أكتر حتة بتلخبط. كل [[-]] بيبدأ عنصر جديد، وأول مفتاح في العنصر بييجي على نفس سطر الـ [[-]]. السطر اللي بعده [[ip:]] داخل ٤ مسافات، يعني تحت حرف [[n]] بتاع [[name]] بالظبط، فهو في **نفس** الـ object. والنتيجة ليستة فيها object-ين.
+
+---
+
+## ٦. نحوّله JSON عشان نشوف الهيكل
+
+~~~python
+import yaml, json
+data = yaml.safe_load(open("app.yaml", encoding="utf-8"))
+print(json.dumps(data, ensure_ascii=False))
+~~~
+
+- [[yaml]]: مكتبة PyYAML (بتتسطّب بـ [[pip install pyyaml]]).
+- [[safe_load]]: اقرا YAML لـ dict و list عادية. «safe» يعني مش هيعمل objects من أنواع Python عشوائية لو الملف طلبها، فاستخدمه دايمًا بدل [[load]].
+- [[json.dumps]]: حوّل النتيجة لنص JSON. و [[ensure_ascii=False]] عشان أي عربي يفضل عربي مش [[س]].
+
+اتشغّل بـ PyYAML 6.0.3 على ويندوز (Python 3.14):
+
+~~~text الناتج
+{"app": {"name": "gym-portal", "port": 3000, "debug": false, "version": "1.10"}, "database": {"host": "localhost", "password": null, "pool": 10}, "admins": ["sara@example.com", "ali@example.com"], "features": ["login", "booking"], "limits": {"daily": 5, "monthly": 100}, "servers": [{"name": "web-1", "ip": "10.0.0.5"}, {"name": "web-2", "ip": "10.0.0.6"}]}
+~~~
+
+لاحظ إن [[10.0.0.5]] فضل نص (فيه أكتر من نقطة فمش رقم). و PowerShell مفيهوش أمر YAML جاهز ([[ConvertFrom-Yaml]] من module خارجي اسمه powershell-yaml)، فالأسهل على ويندوز Python أو Node.
+
+---
+
+## ٧. نبوّظه ٤ مرات
+
+| الغلطة | PyYAML 6.0.3 | js-yaml 5.4.3 (Node) |
+|---|---|---|
+| Tab قبل [[name]] | [[found character '\t' that cannot start any token]] (line 3) | [[tab characters must not be used in indentation (3:1)]] |
+| مسافة زيادة قبل [[port]] (٣ بدل ٢) | [[mapping values are not allowed here]] (line 4, column 8) | [[bad indentation of a mapping entry (4:8)]] |
+| [[pool:10]] من غير مسافة | [[could not find expected ':']] (line 11) | [[expected ':' after a mapping key (10:10)]] |
+| [[-sara]] من غير مسافة | مفيش غلط! القيمة بقت نص | نفس الكلام |
+
+### ليه المسافة الزيادة بتعمل [[mapping values are not allowed here]]؟
+
+[[port]] بقى داخل أكتر من [[name]] اللي فوقه، فالـ parser فهمه **تكملة** لقيمة [[name]]، يعني القيمة بقت [[gym-portal port]]. وبعدها لقى [[: ]] جوه قيمة نصية من غير تنصيص، وده ممنوع.
+
+### ليه [[pool:10]] غلط؟
+
+الـ [[:]] بتبقى فاصل بين مفتاح وقيمة **بس** لو بعدها مسافة. [[pool:10]] من غير مسافة نص واحد، والـ parser جوه object مستني [[مفتاح: قيمة]]، فلما السطر خلص من غير [[: ]] اشتكى. ولو [[pool:10]] كان لوحده في ملف، الملف كله كان هيتقري النص [['pool:10']] من غير أي غلط.
+
+---
+
+## ٨. [[yamllint]]
+
+~~~bash
+yamllint app.yaml
+~~~
+
+~~~text الناتج (yamllint من pip، على ويندوز)
+app.yaml
+  2:1       warning  missing document start "---"  (document-start)
+~~~
+
+[[2:1]] يعني سطر ٢ عمود ١، و [[warning]] تنبيه مش غلط: yamllint بيحب الملف يبدأ بـ [[---]] (علامة بداية مستند). ده ذوق، والملف سليم.
+
+---
+
+## الخلاصة
+
+| الشكل | معناه |
+|---|---|
+| [[key: value]] | مفتاح وقيمة، والمسافة بعد [[:]] إجبارية |
+| مسافتين أكتر من اللي فوق | جوه اللي فوق |
+| [[- x]] | عنصر في list |
+| [[[a, b]]] و [[{a: 1}]] | list و object في سطر واحد |
+| [[#]] | تعليق |
+| [[null]] أو [[~]] | مفيش قيمة |
+
+Tab ممنوع، والمسافات لازم تبقى متساوية بالظبط لكل اللي في نفس المستوى.`,
           lines: [
             R`مفتاح [[app]] قيمته object، فمفيش حاجة بعد [[:]] والسطور اللي تحته داخلة بمسافتين.`,
             R`مسافتين يعني جوه [[app]]. نص من غير تنصيص.`,
@@ -380,7 +1258,7 @@ servers:
 الأخطاء (رسايل PyYAML):
 • Tab: [[found character '\t' that cannot start any token]] ومعاها رقم السطر.
 • مسافة زيادة قبل [[port]]: [[mapping values are not allowed here]] على نفس السطر، لأن [[port]] بقى شكله تكملة لقيمة [[name]].
-• [[pool:10]] من غير مسافة: مش غلط! بيتقري مفتاح اسمه [[pool:10]] قيمته null، أو نص. وده أخطر من الغلط لأنه بيعدّي ساكت.
+• [[pool:10]] من غير مسافة: [[could not find expected ':']] على السطر اللي بعده. من غير المسافة [[pool:10]] بقى نص واحد مش مفتاح، والـ parser لسه مستني [[:]] ومسافة. ولو السطر ده لوحده في ملف مش هيبقى غلط خالص: الملف كله هيتقري النص [['pool:10']] ساكت، وده أخطر.
 
 و [[yamllint app.yaml]] بيقول تنبيه بس: [[2:1 warning missing document start "---" (document-start)]] (yamllint عايز [[---]] في الأول، وده ذوق مش غلط).`
         },
@@ -425,6 +1303,179 @@ hash: نص#مش تعليق`,
             when: R`[[|]] لأوامر [[run:]] في GitHub Actions، و [[command:]] الطويلة، والشهادات والمفاتيح في Kubernetes Secrets، ورسايل متعددة السطور. والتنصيص لأي قيمة فيها رموز أو ممكن تتفهم رقم أو boolean.`,
             mistakes: R`لون hex أو قناة Slack من غير تنصيص ([[#general]]) فتبقى تعليق والقيمة null. رسالة فيها [[: ]] من غير تنصيص فيطلعلك [[mapping values are not allowed here]]. مسار ويندوز في [["]] فـ [[\U]] يتفهم escape ويوقّع الملف. وتنسى إن [[|]] بيحط [[\n]] في الآخر فـ token أو باسورد يبقى في آخره سطر جديد ومش بيتطابق، استخدم [[|-]].`
           },
+          teach: R`## الفكرة: ٣ أشكال للنص في سطر، و ٣ للنص الطويل
+
+المثال ملف [[text.yaml]] فيه كل طرق كتابة النص. هنفك كل سطر، وبعدين نطبع القيمة الحقيقية اللي البرنامج بيشوفها بـ [[repr]] عشان السطور الجديدة والمسافات تبان.
+
+---
+
+## ١. نص من غير تنصيص (plain)
+
+~~~yaml
+plain: أهلًا بيك
+~~~
+
+أسهل شكل. المسافة جوه النص عادي. الممنوع: [[: ]] (نقطتين بعدهم مسافة) أو [[ #]] (مسافة بعدها شباك) جوه النص، أو إن النص يبدأ برمز ليه معنى في YAML زي [[-]] و [[[]] و [[{]] و [[#]] و [[&]] و [[*]].
+
+---
+
+## ٢. تنصيص مفرد: كل حاجة حرفية
+
+~~~yaml
+single: 'Ali''s gym: #1'
+~~~
+
+- جوه [[']] الـ [[: ]] و [[#]] مالهمش أي معنى، نص عادي.
+- مفيش escape خالص: [[\n]] جوه [[']] بتفضل شرطة مايلة وحرف n.
+- الحرف الوحيد المشكلة هو [[']] نفسه، فبيتكتب مرتين: [[Ali''s]] تبقى [[Ali's]].
+
+---
+
+## ٣. تنصيص مزدوج: فيه escape
+
+~~~yaml
+double: "سطر أول\nسطر تاني"
+~~~
+
+جوه [["]] الشرطة المايلة [[\]] بتبدأ escape زي JSON: [[\n]] سطر جديد حقيقي، و [[\t]] Tab، و [[\"]] علامة تنصيص، و [[\\]] شرطة واحدة.
+
+---
+
+## ٤. مسار ويندوز
+
+~~~yaml
+path: C:\Users\ali
+~~~
+
+من غير تنصيص الـ [[\]] حرف عادي، فالمسار سليم. لكن لو حطيته في [["]]:
+
+~~~yaml
+path: "C:\Users\ali"
+~~~
+
+~~~text الناتج
+PyYAML:  expected escape sequence of 8 hexadecimal numbers, but found 's'
+js-yaml: expected hexadecimal character (1:12)
+~~~
+
+[[\U]] جوه [["]] معناها «حرف Unicode برقمه، وبعدي ٨ أرقام hex»، ولقى [[sers]] فوقع. الحل: من غير تنصيص، أو [[']]، أو [["C:\\Users\\ali"]].
+
+---
+
+## ٥. [[|]]: النص بسطوره (literal)
+
+~~~yaml
+literal: |
+  السطر الأول
+  السطر التاني
+~~~
+
+[[|]] بعد المفتاح معناها «اللي تحت نص، وخد السطور زي ما هي». الـ parser بيشيل المسافات اللي في أول السطور (بقد مسافة أول سطر)، ويحط سطر جديد [[\n]] بين كل سطر والتاني، **وواحد كمان في الآخر**.
+
+---
+
+## ٦. [[>]]: السطور تتلزق (folded)
+
+~~~yaml
+folded: >
+  جملة طويلة
+  بتتكمل هنا
+~~~
+
+[[>]] معناها «الجملة دي طويلة، أنا قسمتها في الملف عشان القراية بس». كل سطر جديد بيتحوّل مسافة، وبرضه [[\n]] واحدة في الآخر. ولو سبت سطر فاضي جوه البلوك بيفضل سطر جديد حقيقي: جرّبت [[a]] و [[b]] وسطر فاضي و [[c]] وطلع [['a b\nc\n']].
+
+---
+
+## ٧. [[|-]]: من غير السطر الجديد اللي في الآخر
+
+~~~yaml
+strip: |-
+  من غير سطر جديد في الآخر
+~~~
+
+العلامة بعد [[|]] أو [[>]] اسمها chomping indicator (بتقول تعمل إيه في آخر النص):
+
+| العلامة | آخر النص |
+|---|---|
+| [[|]] أو [[>]] | [[\n]] واحدة بس |
+| [[|-]] أو [[>-]] | ولا [[\n]] (strip = شيل) |
+| [[|+]] أو [[>+]] | كل السطور الفاضية اللي في الآخر (keep = سيب) |
+
+جرّبت [[|+]] وتحته [[a]] وسطرين فاضيين، وطلعت القيمة [['a\n\n\n']].
+
+---
+
+## ٨. [[#]]: تعليق ولا جزء من النص؟
+
+~~~yaml
+comment: نص # ده تعليق
+hash: نص#مش تعليق
+~~~
+
+[[#]] بتبدأ تعليق **بس** لو قبلها مسافة (أو في أول السطر). في السطر الأول قبلها مسافة، فالقيمة [[نص]] بس. في التاني ملزوقة في الكلمة، فهي جزء من النص.
+
+---
+
+## ٩. نطبع القيم الحقيقية
+
+~~~python
+import yaml
+for k, v in yaml.safe_load(open("text.yaml", encoding="utf-8")).items():
+    print(k, "=>", repr(v))
+~~~
+
+- [[.items()]]: كل مفتاح وقيمته. و [[for k, v]] بيفك الاتنين في متغيرين.
+- [[repr(v)]]: اطبع النص بتنصيصه وبالـ [[\n]] ظاهرة، عشان تشوف السطور الجديدة اللي مش باينة.
+
+~~~text الناتج (PyYAML 6.0.3، و js-yaml 5.4.3 و yaml 2.9 في Node طلّعوا نفس القيم)
+plain => 'أهلًا بيك'
+single => "Ali's gym: #1"
+double => 'سطر أول\nسطر تاني'
+path => 'C:\\Users\\ali'
+literal => 'السطر الأول\nالسطر التاني\n'
+folded => 'جملة طويلة بتتكمل هنا\n'
+strip => 'من غير سطر جديد في الآخر'
+comment => 'نص'
+hash => 'نص#مش تعليق'
+~~~
+
+- [[single]] اتطبع بين [["]] لأن جواه [[']]، Python بيختار التنصيص اللي ميحتاجش escape.
+- [[path]] ظاهر بـ [[\\]] لأن [[repr]] بيهرّب الشرطة. القيمة الحقيقية فيها شرطة واحدة.
+- قارن [[literal]] (فيه [[\n]] في النص) و [[folded]] (مسافة بدلها) و [[strip]] (مفيش [[\n]] في الآخر).
+
+---
+
+## ١٠. الفخين اللي في التجربة
+
+~~~yaml
+color: #ff0000
+msg: Error: not found
+~~~
+
+~~~text الناتج (PyYAML، كل سطر في ملف لوحده)
+{'color': None}
+
+mapping values are not allowed here
+  in "msg.yaml", line 1, column 11
+~~~
+
+- [[color]]: [[ #ff0000]] قبلها مسافة، فبقت تعليق، والقيمة فاضية يعني [[None]]. ومفيش أي غلط يحذرك!
+- [[msg]]: [[Error: not found]] فيها [[: ]] تانية، فالـ parser فاكرها مفتاح جديد جوه قيمة، وده ممنوع.
+
+والحل للاتنين تنصيص: [[color: "#ff0000"]] و [[msg: "Error: not found"]].
+
+---
+
+## الخلاصة
+
+| الشكل | امتى |
+|---|---|
+| من غير تنصيص | نص عادي مفيهوش [[: ]] ولا [[ #]] ومش بيبدأ برمز |
+| [['...']] | فيه رموز، وعايزه حرفي (مسارات ويندوز كمان) |
+| [["..."]] | محتاج [[\n]] أو escape |
+| [[|]] | سكربت، شهادة، أي نص السطور فيه مهمة |
+| [[>]] | جملة طويلة متقسمة في الملف بس |
+| [[|-]] | زي [[|]] من غير [[\n]] في الآخر (tokens وباسوردات) |`,
           lines: [
             R`نص عادي من غير تنصيص.`,
             R`تنصيص مفرد: [[: ]] و [[#]] جواه آمنين، و [['']] معناها [[']] واحدة.`,
@@ -467,7 +1518,7 @@ hash: نص#مش تعليق`,
 • [[time: 12:30]] ← [[750]].
 • [[date: 2026-10-01]] ← تاريخ مش نص في PyYAML.
 • [[~]] و [[null]] وقيمة فاضية ← null.
-• [[1e3]] و [[.inf]] و [[0x1F]] ← أرقام.
+• [[.inf]] (ما لا نهاية) و [[0x1F]] (hex يعني 31) ← أرقام. و [[1e3]] ← [[1000]] في YAML 1.2، بس PyYAML بيسيبه نص لأن YAML 1.1 عايز نقطة وإشارة ([[1.0e+3]]).
 
 YAML 1.2 (من 2009، وماشي عليه js-yaml 4 و go-yaml v3 اللي Docker Compose و Kubernetes بيستخدموه) صلّح أغلب ده: [[true]] و [[false]] بس هما الـ boolean، ومفيش ستيني. بس انت مش دايمًا عارف الأداة بتقرا بأنهي نسخة.
 
@@ -491,6 +1542,171 @@ safe: "NO"`,
             when: R`كل ما تكتب في YAML: كودات (بلاد، منتجات، بريد)، أرقام نسخ، بورتات، أوقات، أو أي حاجة شكلها رقم بس هي مش للحساب. وخصوصًا في [[compose.yaml]] (البورتات والـ [[restart: "no"]]) و GitHub Actions (أرقام النسخ في [[node-version: "20"]]).`,
             mistakes: R`[[restart: no]] في compose من غير تنصيص (Docker بيطلب [["no"]] عشان متبقاش false). [[python-version: 3.10]] في GitHub Actions بيبقى [[3.1]] وتلاقي الـ CI بينزّل Python 3.1! اكتب [["3.10"]]. وتفتكر إن «اشتغل عندي» يكفي: نفس الملف ممكن يتقري صح بأداة وغلط بأداة تانية.`
           },
+          teach: R`## الفكرة: YAML بيخمّن النوع من شكل الكلمة
+
+أي قيمة من غير تنصيص الـ parser بيقارنها بليستة أشكال: لو شبه boolean تبقى boolean، لو شبه رقم تبقى رقم، وإلا نص. المشكلة إن الليستة دي مختلفة بين نسختين من YAML:
+
+| | YAML 1.1 (سنة 2005) | YAML 1.2 (سنة 2009) |
+|---|---|---|
+| boolean | [[yes]] و [[no]] و [[on]] و [[off]] و [[true]] و [[false]] بأي حروف | [[true]] و [[false]] بس |
+| أرقام بـ [[:]] | ستيني زي الساعة | مفيش، نص |
+| صفر في الأول | octal (أساس ٨) | رقم عادي |
+| مين ماشي عليها | PyYAML | js-yaml و go-yaml v3 (Docker Compose و Kubernetes) |
+
+هنقرا ملف [[norway.yaml]] اللي في المثال بالنسختين ونقارن سطر سطر.
+
+---
+
+## ١. نقراه بـ PyYAML (YAML 1.1)
+
+~~~python
+import yaml
+for k, v in yaml.safe_load(open("norway.yaml")).items():
+    print(k, "=>", repr(v))
+~~~
+
+~~~text الناتج (PyYAML 6.0.3 على ويندوز، و PyYAML 6.0.1 في ubuntu:24.04 نفس الكلام)
+countries => ['EG', 'SA', False]
+answer => True
+switch => True
+version => 1.1
+ports => 1342
+zip => 668
+time => 750
+empty => None
+tilde => None
+date => datetime.date(2026, 10, 1)
+safe => 'NO'
+~~~
+
+## ٢. ونقراه بـ js-yaml (YAML 1.2)
+
+~~~bash
+npx -y js-yaml norway.yaml
+~~~
+
+[[npx]] بيشغّل أداة من npm من غير ما تتسطّب على الجهاز، و [[-y]] يعني «وافق على التنزيل من غير ما تسألني». أداة [[js-yaml]] بتطبع الملف JSON:
+
+~~~text الناتج (js-yaml 5.4.3 على Node 24)
+{
+  "countries": [
+    "EG",
+    "SA",
+    "NO"
+  ],
+  "answer": "yes",
+  "switch": "on",
+  "version": 1.1,
+  "ports": "22:22",
+  "zip": 1234,
+  "time": "12:30",
+  "empty": null,
+  "tilde": null,
+  "date": "2026-10-01",
+  "safe": "NO"
+}
+~~~
+
+و [[yq]] (مبني على go-yaml v3، اتشغّل جوه [[ubuntu:24.04]]) طلّع نفس أنواع js-yaml.
+
+---
+
+## ٣. نفسّر كل سطر
+
+### [[countries: [EG, SA, NO]]]
+
+[[NO]] شكلها boolean في 1.1، فبقت [[False]]. كود النرويج اختفى من الليستة ومفيش أي غلط. ده سبب اسم المشكلة.
+
+### [[answer: yes]] و [[switch: on]]
+
+في 1.1 الاتنين [[True]]. في 1.2 الاتنين نص.
+
+### [[version: 1.10]]
+
+الاتنين قروه **رقم عشري**، والرقم [[1.10]] هو نفسه [[1.1]]. فالصفر ضاع في النسختين. ده مش خطأ في الـ parser، ده رقم فعلًا، وانت كنت قاصد نص.
+
+### [[ports: 22:22]]
+
+YAML 1.1 بيعتبر الأرقام اللي بينها [[:]] أرقام بالأساس ستين (sexagesimal)، زي الساعات والدقايق:
+
+~~~text الحساب
+22:22  =  22 × 60 + 22  =  1342
+12:30  =  12 × 60 + 30  =  750
+~~~
+
+وبيشترط إن كل جزء بعد الأول من [[0]] لـ [[59]] (زي الدقايق). فـ [[8080:80]] فضلت نص في PyYAML لأن [[80]] أكبر من [[59]]، لكن [[59:59]] بقت [[3599]]. يعني بورت شغال وبورت بايظ في نفس الملف! في 1.2 الاتنين نصوص.
+
+### [[zip: 01234]]
+
+في 1.1 الصفر في الأول معناه **octal** (أساس ٨):
+
+~~~text الحساب
+01234 (octal)  =  1×512 + 2×64 + 3×8 + 4  =  668
+~~~
+
+في 1.2 بقى [[1234]] رقم عادي، والصفر برضه ضاع.
+
+### [[empty:]] و [[tilde: ~]]
+
+قيمة فاضية و [[~]] الاتنين null في النسختين ([[None]] في Python).
+
+### [[date: 2026-10-01]]
+
+PyYAML قراه **تاريخ** ([[datetime.date]]) مش نص. js-yaml 5 سابه نص.
+
+### [[safe: "NO"]]
+
+متنصص، فنص في الكل. ده الحل.
+
+---
+
+## ٤. فخاخ تانية جرّبتها
+
+~~~yaml
+on:
+  push:
+mode: 0755
+python: 3.10
+restart: no
+~~~
+
+| السطر | PyYAML (1.1) | js-yaml (1.2) |
+|---|---|---|
+| [[on:]] كمفتاح | المفتاح نفسه بقى [[True]] | [["on"]] |
+| [[mode: 0755]] | [[493]] (octal) | [[755]] |
+| [[python: 3.10]] | [[3.1]] | [[3.1]] |
+| [[restart: no]] | [[False]] | [["no"]] |
+| [[1e3]] | النص [['1e3']] | [[1000]] |
+
+- [[on:]] ده أول سطر في أي GitHub Actions workflow. لو قريت الملف بـ PyYAML في سكربت هتلاقي المفتاح [[True]] مش [["on"]]. GitHub نفسه بيقراه صح (ده من سلوكه المعروف، مش متجرّب هنا).
+- [[0755]] صلاحيات ملفات لينكس مكتوبة octal. في PyYAML بقت [[493]] (وده فعلًا نفس الرقم بالعشري)، وفي 1.2 بقت [[755]] بالعشري، ولو اتستخدمت كصلاحيات هتبقى رقم غلط تمامًا. اكتبها [["0755"]] أو [[0o755]] (شكل 1.2، اللي PyYAML بيقراه نص).
+
+---
+
+## ٥. التمرين
+
+التمرين بيطلب دالة بتقول هل قيمة محتاجة تنصيص. فكّر فيها كـ ٤ أسئلة ورا بعض، أي واحد إجابته «آه» يبقى محتاجة:
+
+1. هل شكلها boolean أو null في **أي** نسخة؟ (الكلمات اللي في جدول أول الدرس بأي حروف، و [[~]]، والنص الفاضي)
+2. هل شكلها رقم؟ (بإشارة أو من غير، بكسور، بـ [[e]]، بصفر في الأول)
+3. هل شكلها أرقام بينها [[:]]؟
+4. هل فيها [[: ]] أو [[ #]]، أو بتبدأ برمز من رموز YAML؟
+
+خلي بالك إن السؤال «لازم تنصيص؟» مش «هيتقري إيه؟»: [[1e3]] PyYAML بيسيبه نص، بس js-yaml بيخليه رقم، فهو محتاج تنصيص.
+
+---
+
+## الخلاصة
+
+| القيمة | من غير تنصيص ممكن تبقى | اكتبها |
+|---|---|---|
+| [[NO]] و [[yes]] و [[on]] و [[off]] | boolean | [["NO"]] |
+| [[1.10]] و [[3.10]] | [[1.1]] و [[3.1]] | [["1.10"]] |
+| [[22:22]] و [[12:30]] | [[1342]] و [[750]] | [["22:22"]] |
+| [[01234]] و [[0755]] | [[668]] و [[493]] أو الصفر يضيع | [["01234"]] |
+| [[2026-10-01]] | تاريخ | [["2026-10-01"]] |
+
+القاعدة: أي قيمة عايزها نص وشكلها ممكن يتفهم حاجة تانية، نصّصها. التنصيص شغال في كل النسخ وكل الأدوات.`,
           lines: [
             R`[[NO]] من غير تنصيص: في YAML 1.1 بتبقى [[false]].`,
             R`[[yes]] ← [[true]] في YAML 1.1.`,
@@ -586,6 +1802,172 @@ services:
             when: R`Docker Compose فيه خدمات بنفس الإعدادات، و GitLab CI فيه jobs بنفس الـ setup، وأي YAML كبير فيه تكرار.`,
             mistakes: R`تستخدم [[*name]] قبل ما تعرّف [[&name]] فيطلعلك [[found undefined alias]]. تحط الحتة المشتركة في مفتاح عادي (مش [[x-]]) فـ Compose يشتكي [[additional properties ... not allowed]]. وتكتب [[<<: *common]] بعد المفاتيح وتفتكر إنه هيغطي عليها: المفاتيح اللي كتبتها بإيدك بتكسب دايمًا مهما كان ترتيبها.`
           },
+          teach: R`## الفكرة: سمّي الحتة مرة، واستخدمها كذا مرة
+
+المثال [[compose.yaml]] فيه خدمتين ([[api]] و [[worker]]) بنفس إعدادات الـ restart والـ logging. بدل ما تتكتب مرتين، اتكتبت مرة واحدة واتسمّت، وكل خدمة بتنسخها. هنفك الرموز التلاتة، وبعدين نشوف الملف بعد الفك بـ Docker Compose و Python.
+
+---
+
+## ١. [[&]]: الـ anchor (بيسمّي)
+
+~~~yaml
+x-common: &common
+  restart: unless-stopped
+  env_file: .env
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+~~~
+
+- [[x-common:]]: مفتاح عادي في YAML. الـ [[x-]] في أوله عُرف Docker Compose معناه «extension»، يعني Compose يتجاهله ومايعتبروش خدمة ولا إعداد غلط.
+- [[&common]] بعد المفتاح: **anchor** (مرساة) اسمه [[common]]. معناه «القيمة اللي جاية (الـ object كله اللي تحت) اسمها common».
+- اللي تحت عادي: [[restart]] (امتى الحاوية تقوم تاني، و [[unless-stopped]] يعني دايمًا إلا لو انت وقفتها)، و [[env_file]] (ملف المتغيرات)، و [[logging]] (اللوجات تتكتب [[json-file]] وأقصى حجم للملف [[10m]] يعني ١٠ ميجا).
+- [["10m"]] متنصص عشان يفضل نص.
+
+---
+
+## ٢. [[<<: *common]]: انسخ المفاتيح هنا
+
+~~~yaml
+services:
+  api:
+    <<: *common
+    image: gym-api:1.4
+    ports: ["3000:3000"]
+~~~
+
+نفكها من جوه لبرة:
+
+- [[*common]]: **alias** (اسم مستعار)، يعني «حط هنا القيمة اللي اسمها common»، يعني الـ object كله.
+- [[<<:]]: **merge key**. مفتاح خاص معناه «متحطش الـ object ده كقيمة، افرد مفاتيحه جوه الـ object اللي أنا فيه».
+
+فـ [[api]] كأنه مكتوب فيه [[restart]] و [[env_file]] و [[logging]]، وفوقهم [[image]] و [[ports]] بتوعه. و [["3000:3000"]] متنصص عشان ميبقاش رقم ستيني (درس «مشكلة النرويج»).
+
+---
+
+## ٣. الـ override
+
+~~~yaml
+  worker:
+    <<: *common
+    image: gym-worker:1.4
+    restart: "no"
+~~~
+
+[[worker]] أخد نفس الحتة، بس كتب [[restart]] بنفسه. القاعدة: [[<<]] بيضيف بس المفاتيح **اللي مش موجودة** في الـ object، فاللي انت كاتبه بإيدك بيكسب دايمًا، حتى لو كتبته قبل [[<<]]. جرّبت ده:
+
+~~~yaml
+base: &b {restart: always, tty: true}
+svc:
+  restart: "no"
+  <<: *b
+~~~
+
+~~~text الناتج (PyYAML)
+'svc': {'restart': 'no', 'tty': True}
+~~~
+
+و [["no"]] متنصصة عشان متبقاش [[false]].
+
+---
+
+## ٤. Docker Compose بيفك الملف: [[docker compose config]]
+
+~~~bash
+touch .env
+docker compose config
+~~~
+
+- [[touch .env]]: اعمل ملف [[.env]] فاضي، عشان [[env_file: .env]] بيقع لو الملف مش موجود.
+- [[docker compose config]]: اقرا [[compose.yaml]] وفكّ كل حاجة (anchors ومتغيرات) واطبع النتيجة النهائية. مبيشغّلش أي حاجة.
+
+~~~text الناتج (Docker Compose v5.3.0 على ويندوز، والجزء المهم بس)
+services:
+  api:
+    image: gym-api:1.4
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    ports:
+      - mode: ingress
+        target: 3000
+        published: "3000"
+        protocol: tcp
+    restart: unless-stopped
+  worker:
+    image: gym-worker:1.4
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    restart: "no"
+x-common:
+  ...
+~~~
+
+- الخدمتين فيهم [[logging]] كامل، يعني الـ merge اشتغل.
+- [[api]] أخد [[restart: unless-stopped]] من الحتة المشتركة، و [[worker]] احتفظ بـ [["no"]] بتاعته.
+- [[ports]] اتكتب بالشكل الطويل: [[target]] بورت الحاوية و [[published]] بورت جهازك.
+- [[env_file]] مش ظاهر لأن Compose قرا الملف وحط اللي فيه تحت [[environment]]. لما حطيت [[TZ=Africa/Cairo]] في [[.env]] ظهر [[environment: TZ: Africa/Cairo]] في الخدمتين.
+- Compose كمان بيضيف [[name]] للمشروع (اسم الفولدر) و [[networks]] افتراضية، وبيطبع [[x-common]] في الآخر زي ما هو.
+
+---
+
+## ٥. Python بيشوف نفس الحاجة
+
+~~~python
+import yaml, json
+data = yaml.safe_load(open("compose.yaml"))
+print(json.dumps(data["services"], indent=2))
+~~~
+
+الناتج (PyYAML 6.0.3): [[api]] و [[worker]] كل واحد فيهم [[restart]] و [[env_file]] و [[logging]] كامل و [[image]]، و [[worker]] فيه [[restart: "no"]]. يعني بعد القراية مفيش أي أثر للـ anchors، كأنك نسخت بإيدك.
+
+### بس مش كل parser بيدعم [[<<]]
+
+[[<<]] جزء من YAML 1.1، ومش جزء من YAML 1.2 الأساسي. جرّبت نفس الملف الصغير بتاع الـ override:
+
+| الأداة | النتيجة |
+|---|---|
+| PyYAML 6.0.3 | دمج المفاتيح |
+| js-yaml 5.4.3 (Node) | ساب مفتاح اسمه [["<<"]] قيمته الـ object، من غير دمج |
+| مكتبة [[yaml]] 2.9 (Node) | زي js-yaml، إلا لو اديتها الخيار [[merge: true]] |
+| Docker Compose | دمج |
+
+أما [[&]] و [[*]] لوحدهم (من غير [[<<]]) فشغالين في الكل: [[list: &l [1, 2]]] وبعدها [[copy: *l]] بيدّي [[[1, 2]]] في التلاتة.
+
+---
+
+## ٦. الأخطاء
+
+alias قبل الـ anchor بتاعه ([[a: *x]] وبعدها [[b: &x 1]]):
+
+~~~text الناتج
+PyYAML:    found undefined alias 'x'
+js-yaml:   unidentified alias "x" (1:5)
+yaml 2.9:  Unresolved alias (the anchor must be set before the alias): x
+~~~
+
+ولما غيّرت [[x-common]] لـ [[common]] من غير [[x-]]:
+
+~~~text الناتج
+validating ...\compose.yaml:  additional properties 'common' not allowed
+~~~
+
+---
+
+## الخلاصة
+
+| الرمز | اسمه | بيعمل إيه |
+|---|---|---|
+| [[&name]] | anchor | بيسمّي القيمة اللي بعده |
+| [[*name]] | alias | بيحط نفس القيمة هنا |
+| [[<<: *name]] | merge key | بيفرد مفاتيح الـ object هنا، والمفاتيح المكتوبة بإيدك بتكسب |
+| [[x-...]] | extension (عُرف Compose) | مفتاح Compose بيتجاهله |
+
+الـ anchor لازم يتعرّف فوق، وشغال في نفس الملف بس، و [[<<]] اتأكد إن الأداة بتدعمه.`,
           lines: [
             R`مفتاح [[x-]] (Compose بيتجاهله)، و [[&common]] بيسمّي الـ object اللي تحته [[common]].`,
             R`إعداد مشترك.`,
@@ -604,7 +1986,7 @@ services:
             R`صورة مختلفة.`,
             R`بيغطي على [[restart]] اللي جاي من [[common]]، و [["no"]] متنصصة عشان متبقاش false.`
           ],
-          sol: R`[[docker compose config]] بيطبع الخدمتين وكل واحدة فيها [[logging]] كامل ([[driver: json-file]] و [[max-size: 10m]])، و [[api]] فيها [[restart: unless-stopped]]، و [[worker]] فيها [[restart: 'no']]. وكمان [[x-common]] بيظهر في الآخر زي ما هو. و Python بيطبع نفس الكلام JSON: كل خدمة فيها [[restart]] و [[env_file]] و [[logging]] و [[image]].
+          sol: R`[[docker compose config]] بيطبع الخدمتين وكل واحدة فيها [[logging]] كامل ([[driver: json-file]] و [[max-size: 10m]])، و [[api]] فيها [[restart: unless-stopped]]، و [[worker]] فيها [[restart: "no"]] (Compose v5.3.0). و [[env_file]] مش هيظهر: Compose بيقرا الملف ويحط اللي فيه تحت [[environment]]، والملف فاضي. وكمان [[x-common]] بيظهر في الآخر زي ما هو. و Python بيطبع نفس الكلام JSON: كل خدمة فيها [[restart]] و [[env_file]] و [[logging]] و [[image]].
 
 ولو شلت [[x-]] وسميته [[common]] بس، [[docker compose config]] هيقول: [[additional properties 'common' not allowed]].`
         }
@@ -668,6 +2050,180 @@ email = "ali@example.com"`,
             when: R`[[pyproject.toml]] و [[Cargo.toml]] لما تشتغل بالأدوات دي. ولو بتصمم ملف إعدادات لأداتك، TOML اختيار ممتاز لو الإعدادات مش متداخلة أوي.`,
             mistakes: R`تكتب مفتاح عام بعد ما فتحت [[[database]]] فيتحط جوه الـ database. تنسى التنصيص على النصوص (مش زي INI و YAML). تكتب مسار ويندوز في [["]] فـ [[\U]] يتفهم escape ويقع، استخدم [[']]. وتكرر نفس الـ table [[[database]]] مرتين فيطلعلك غلط (لكن [[[[x]]]] بيتكرر عادي، ده معناه).`
           },
+          teach: R`## الفكرة: كل قيمة نوعها باين من شكلها
+
+المثال [[config.toml]]. TOML بيقرا سطر سطر: [[key = value]] بيتحط في «الـ table الحالي»، و [[[x]]] بيغيّر الـ table الحالي. ومفيش تخمين: النص لازم متنصص، والـ boolean حروف صغيرة بس. هنفك الملف حتة حتة، وبعدين نحوّله JSON بـ [[tomllib]] اللي جاي مع Python 3.11 وأحدث.
+
+---
+
+## ١. المفاتيح العامة والأنواع
+
+~~~toml
+# إعدادات التطبيق
+title = "Gym Portal"
+version = "1.10.0"
+debug = false
+port = 3000
+ratio = 0.75
+started = 2026-10-01T09:00:00Z
+~~~
+
+| السطر | النوع | ليه |
+|---|---|---|
+| [[title = "Gym Portal"]] | نص | بين [["]]، والتنصيص إجباري |
+| [[version = "1.10.0"]] | نص | رقم نسخة، لازم نص. ([[v = 1.10]] من غير تنصيص بيبقى الرقم [[1.1]] زي YAML) |
+| [[debug = false]] | boolean | [[true]] و [[false]] بحروف صغيرة بس |
+| [[port = 3000]] | رقم صحيح | |
+| [[ratio = 0.75]] | رقم عشري | |
+| [[started = 2026-...Z]] | تاريخ ووقت | شكل ISO 8601: [[T]] بين التاريخ والوقت، و [[Z]] يعني UTC (توقيت جرينتش) |
+
+المسافات حوالين [[=]] اختيارية، و [[#]] تعليق.
+
+---
+
+## ٢. array و inline table ونص حرفي
+
+~~~toml
+tags = ["web", "api"]
+owner = { name = "Sara", id = 1 }
+path = 'C:\Users\ali'
+~~~
+
+- [[[ ]]]: array (ليستة)، العناصر بينها [[,]].
+- [[{ }]]: **inline table**، يعني object في سطر واحد. جواه [[=]] مش [[:]] زي YAML و JSON.
+- [['...']]: نص **حرفي** (literal string): الـ [[\]] حرف عادي. لو كتبته في [["]] هيقع، جرّبت [[path = "C:\Users\ali"]] وطلع [[Invalid hex value (at line 1, column 13)]]، لأن [[\U]] جوه [["]] بداية رقم Unicode.
+
+---
+
+## ٣. [[[database]]]: table
+
+~~~toml
+[database]
+host = "localhost"
+pool = 10
+~~~
+
+[[[database]]] بين قوسين مربعين = **table** (زي object). كل السطور اللي بعده لحد الـ table اللي بعده بتروح جواه. الـ indentation ملوش أي معنى في TOML، فمفيش داعي تزق السطور.
+
+---
+
+## ٤. [[[database.replica]]]: table جوه table
+
+~~~toml
+[database.replica]
+host = "10.0.0.6"
+~~~
+
+النقطة معناها «جوه»: ده [[replica]] جوه [[database]]. و [[host]] هنا مختلف عن [[host]] اللي فوق، لأن كل واحد في table مختلف.
+
+---
+
+## ٥. [[[[admins]]]]: array of tables
+
+~~~toml
+[[admins]]
+name = "سارة"
+email = "sara@example.com"
+[[admins]]
+name = "علي"
+email = "ali@example.com"
+~~~
+
+قوسين مزدوجين = «ضيف **object جديد** في ليستة اسمها admins وادخل جواه». كل مرة تكتبها بيتعمل عنصر جديد. ده الفرق: [[[x]]] مينفعش يتكرر، [[[[x]]]] معمول عشان يتكرر.
+
+---
+
+## ٦. نحوّله JSON
+
+~~~python
+import tomllib, json
+data = tomllib.load(open("config.toml", "rb"))
+print(json.dumps(data, ensure_ascii=False, indent=2, default=str))
+~~~
+
+- [[tomllib]]: parser لـ TOML جاي مع Python 3.11+ (قراية بس، مفيش كتابة).
+- [[open(..., "rb")]]: [[r]] قراية و [[b]] binary. [[tomllib]] بيطلب الملف binary عشان هو اللي يقرا الـ UTF-8 بنفسه (TOML لازم يبقى UTF-8).
+- [[default=str]]: JSON مبيعرفش التاريخ، فأي قيمة مش عارف يحوّلها يعدّيها على [[str]] الأول.
+
+~~~text الناتج (Python 3.14 على ويندوز)
+{
+  "title": "Gym Portal",
+  "version": "1.10.0",
+  "debug": false,
+  "port": 3000,
+  "ratio": 0.75,
+  "started": "2026-10-01 09:00:00+00:00",
+  "tags": [
+    "web",
+    "api"
+  ],
+  "owner": {
+    "name": "Sara",
+    "id": 1
+  },
+  "path": "C:\\Users\\ali",
+  "database": {
+    "host": "localhost",
+    "pool": 10,
+    "replica": {
+      "host": "10.0.0.6"
+    }
+  },
+  "admins": [
+    {
+      "name": "سارة",
+      "email": "sara@example.com"
+    },
+    {
+      "name": "علي",
+      "email": "ali@example.com"
+    }
+  ]
+}
+~~~
+
+و [[repr(data["started"])]] طلع [[datetime.datetime(2026, 10, 1, 9, 0, tzinfo=datetime.timezone.utc)]]: تاريخ حقيقي بـ timezone، مش نص. و [[path]] ظاهر بـ [[\\]] لأن JSON بيهرّب الشرطة.
+
+---
+
+## ٧. الأخطاء ([[tomllib]])
+
+| اللي كتبته | الغلط |
+|---|---|
+| [[name = Sara]] | [[Invalid value (at line 1, column 8)]] (نص من غير تنصيص) |
+| [[debug = True]] | [[Invalid value (at line 1, column 9)]] (حرف كبير) |
+| نفس المفتاح مرتين | [[Cannot overwrite a value (at line 2, column 6)]] |
+| [[[db]]] مرتين | [[Cannot declare ('db',) twice (at line 3, column 4)]] |
+| [[z = 01234]] | [[Expected newline or end of document after a statement]] (الصفر في الأول ممنوع) |
+
+لاحظ إن TOML بيرفض بدل ما يخمّن: [[01234]] في YAML كان بيبقى [[668]] ساكت، هنا غلط صريح.
+
+### الفخ: مفتاح بعد table
+
+لما نقلت [[port = 3000]] لآخر الملف:
+
+~~~text الناتج
+False {'name': 'علي', 'email': 'ali@example.com', 'port': 3000}
+~~~
+
+[[False]] يعني [[port]] مبقاش في المستوى الأول، وراح جوه آخر admin، لأن آخر حاجة اتفتحت كانت [[[[admins]]]]. المفاتيح العامة لازم تبقى فوق قبل أي table.
+
+---
+
+## الخلاصة
+
+| الشكل | معناه |
+|---|---|
+| [[key = "text"]] | نص، والتنصيص إجباري |
+| [[key = 'C:\x']] | نص حرفي من غير escape |
+| [[true]] و [[false]] | boolean بحروف صغيرة بس |
+| [[2026-10-01T09:00:00Z]] | تاريخ ووقت حقيقي |
+| [[[name]]] | table، مرة واحدة بس |
+| [[[a.b]]] | table جوه table |
+| [[[[name]]]] | عنصر جديد في ليستة objects |
+| [[{ k = v }]] | table في سطر واحد |
+
+ومفيش null: لو مفيش قيمة متكتبش المفتاح.`,
           lines: [
             R`نص، ولازم متنصص في TOML.`,
             R`رقم نسخة كنص، فمفيش خوف يبقى [[1.1]] زي YAML.`,
@@ -742,6 +2298,141 @@ name = "Gym Portal"`,
             when: R`لما تعدّل [[php.ini]] (حجم الرفع [[upload_max_filesize]] مثلًا) أو [[my.cnf]] أو [[.gitconfig]]. أما لو بتعمل ملف إعدادات جديد لمشروعك، TOML أوضح وليه معيار.`,
             mistakes: R`تفتكر إن [[port]] رقم فتجمع عليه في Python فيطلعلك [['3306' + 1]] error: استخدم [[getint]]. تحط تنصيص حوالين القيمة فيفضل جزء منها في برنامج ومش في التاني. وتفتكر إن كل [[.conf]] صيغة INI فتكتب [[[server]]] في [[nginx.conf]].`
           },
+          teach: R`## الفكرة: أقسام ومفاتيح، وكل حاجة نص
+
+المثال [[app.ini]] فيه قسمين. INI (من initialization، يعني إعدادات بداية التشغيل) أبسط صيغة إعدادات: مفيش أنواع، ومفيش حاجة جوه حاجة، ومفيش معيار رسمي. عشان كده هنقرا نفس الملف ببرنامجين (Python و PHP) ونشوف إزاي كل واحد فهمه بطريقته.
+
+---
+
+## ١. التعليق والقسم الأول
+
+~~~text السطور ١ لـ ٥
+; إعدادات قاعدة البيانات
+[database]
+host = localhost
+port = 3306
+user = app
+~~~
+
+- [[;]] في أول السطر: تعليق، وده الشكل الأصلي في INI.
+- [[[database]]]: بداية **قسم** (section). كل [[key = value]] بعده تبعه لحد القسم اللي بعده.
+- [[host = localhost]]: مفتاح و [[=]] وقيمة. النص من غير تنصيص عادي.
+- [[port = 3306]]: شكله رقم، بس الصيغة مبتعرفش أرقام. هيوصل للبرنامج النص [[3306]]. (3306 البورت الافتراضي لـ MySQL.)
+
+---
+
+## ٢. القسم التاني والاختلافات
+
+~~~text السطور ٦ لـ ١٠
+[server]
+listen=8080
+debug = true
+# تعليق بالطريقة التانية
+name = "Gym Portal"
+~~~
+
+- [[listen=8080]] من غير مسافات حوالين [[=]]: نفس المعنى، الـ parser بيشيل المسافات.
+- [[debug = true]]: برضه نص [[true]]، والبرنامج يقرر يعتبره boolean.
+- [[#]]: تعليق في أغلب البرامج (Python بيقبل [[;]] و [[#]] الاتنين افتراضيًا).
+- [[name = "Gym Portal"]]: هنا الخلاف الكبير. هل التنصيص جزء من القيمة؟ كل برنامج وردّه.
+
+---
+
+## ٣. نقراه بـ Python: [[configparser]]
+
+~~~python
+import configparser
+c = configparser.ConfigParser()
+c.read("app.ini", encoding="utf-8")
+print(c.sections(), c["database"]["port"], c.getint("database", "port") + 1, repr(c["server"]["name"]))
+~~~
+
+- [[configparser]]: مكتبة INI جاية مع Python. و [[ConfigParser()]] بيعمل object فاضي.
+- [[c.read(...)]]: اقرا الملف. [[encoding="utf-8"]] عشان التعليق العربي.
+- [[c.sections()]]: أسامي الأقسام.
+- [[c["database"]["port"]]]: القيمة كنص.
+- [[c.getint(...)]]: هات القيمة وحوّلها رقم صحيح. وفيه [[getboolean]] و [[getfloat]].
+
+~~~text الناتج (Python 3.14 على ويندوز)
+['database', 'server'] 3306 3307 '"Gym Portal"'
+~~~
+
+- [[3306]] اتطبعت من غير تنصيص بس هي نص، و [[getint]] حوّلها فـ [[+ 1]] طلّع [[3307]].
+- [[name]] قيمته فيها علامات التنصيص نفسها: [['"Gym Portal"']]. [[configparser]] مبيشيلش التنصيص.
+
+ولو جمعت على النص من غير [[getint]]:
+
+~~~text الناتج
+TypeError: can only concatenate str (not "int") to str
+~~~
+
+وحاجات تانية جرّبتها: [[c.getboolean("server", "debug")]] رجّع [[True]] (بيفهم [[true]] و [[yes]] و [[on]] و [[1]])، و [[c.has_option("server", "DEBUG")]] رجّع [[True]] لأن [[configparser]] بيحوّل أسامي المفاتيح لحروف صغيرة.
+
+---
+
+## ٤. نفس الملف في PHP
+
+~~~bash
+php -r 'var_dump(parse_ini_file("app.ini", true));'
+~~~
+
+- [[php -r]]: شغّل كود PHP من سطر الأوامر.
+- [[parse_ini_file(..., true)]]: اقرا INI، و [[true]] معناها «رجّع الأقسام كمستويات»، من غيرها كل المفاتيح بتتحط في مستوى واحد.
+- [[var_dump]]: اطبع القيمة بنوعها وطولها.
+
+~~~text الناتج (PHP 8.3.6 في ubuntu:24.04، الجزء بتاع server)
+  ["server"]=>
+  array(3) {
+    ["listen"]=>
+    string(4) "8080"
+    ["debug"]=>
+    string(1) "1"
+    ["name"]=>
+    string(10) "Gym Portal"
+  }
+~~~
+
+- [[string(10) "Gym Portal"]]: PHP **شال** التنصيص (١٠ حروف من غير [["]]).
+- [[debug]] بقت [["1"]]: PHP بيحوّل [[true]] و [[on]] و [[yes]] لـ [["1"]].
+- [[port]] (في قسم database) طلع [[string(4) "3306"]]: نص برضه.
+
+| المفتاح | Python [[configparser]] | PHP [[parse_ini_file]] |
+|---|---|---|
+| [[port]] | [['3306']] | [["3306"]] |
+| [[debug]] | [['true']] | [["1"]] |
+| [[name]] | [['"Gym Portal"']] بالتنصيص | [["Gym Portal"]] من غير |
+
+نفس الملف، قراءتين. عشان كده متحطش تنصيص في INI إلا لو عارف البرنامج هيعمل فيه إيه.
+
+> PowerShell مفيهوش أمر INI جاهز، فلو احتجت تقرا INI على ويندوز استخدم Python.
+
+---
+
+## ٥. INI حقيقي عندك: [[.gitconfig]]
+
+~~~bash
+cat ~/.gitconfig
+git config --get user.name
+~~~
+
+- [[~]]: فولدر اليوزر بتاعك. [[.gitconfig]] إعدادات Git العامة.
+- [[git config --get user.name]]: هات قيمة [[name]] من قسم [[[user]]]. النقطة في [[user.name]] معناها «قسم user، مفتاح name».
+
+الناتج اسمك اللي سجّلته في Git (على الجهاز ده [[ali]]). و [[.gitconfig]] شكله INI بس بتاب قبل كل مفتاح، وده عادي لأن المسافات في الأول ملهاش معنى.
+
+---
+
+## الخلاصة
+
+| الشكل | معناه |
+|---|---|
+| [[[section]]] | بداية قسم |
+| [[key = value]] | إعداد، والقيمة نص دايمًا |
+| [[;]] أو [[#]] | تعليق |
+| [[.ini]] و [[.cfg]] و [[.cnf]] و [[.gitconfig]] | غالبًا INI |
+| [[.conf]] | أي ملف إعدادات، **مش** دايمًا INI ([[nginx.conf]] لأ) |
+
+التحويل للأرقام والـ boolean والتنصيص كله على البرنامج اللي بيقرا، فاعرفه الأول.`,
           lines: [
             R`[[;]] تعليق، وده الشكل الأصلي في INI.`,
             R`بداية قسم [[database]].`,
@@ -804,6 +2495,199 @@ export STRIPE_KEY=sk_test_123`,
             when: R`أي مشروع فيه باسورد أو key أو رابط قاعدة بيانات. وعلى السيرفر الحقيقي غالبًا مبتستخدمش [[.env]]: المنصة (Vercel و Railway و GitHub Actions secrets) بتحط المتغيرات مباشرة.`,
             mistakes: R`تعمل commit لـ [[.env]]: حتى لو مسحته بعدين، هو لسه في تاريخ Git وأي حد معاه الـ repo يقدر يجيبه، فلازم تغيّر كل الأسرار اللي فيه (rotate)، مش بس تمسحه. وتحط سر في متغير بيوصل للمتصفح ([[NEXT_PUBLIC_]] أو [[VITE_]]) فيبقى ظاهر لأي حد. وتكتب [[PORT = 3000]] بمسافات فـ [[source]] في bash يقول [[PORT: command not found]]. وتنسى إن القيمة نص: [[if (process.env.DEBUG)]] بتبقى true حتى لو القيمة [[false]] لأن [["false"]] نص مش فاضي.`
           },
+          teach: R`## الفكرة: متغيرات بيئة في ملف
+
+البرنامج بيقرا إعداداته من **متغيرات البيئة** (environment variables): أسامي وقيم النظام بيديها لأي برنامج وهو بيشتغل. [[.env]] مجرد ملف بتكتب فيه المتغيرات دي، وأداة (Node أو dotenv أو Compose) بتقراه وتحطها في البيئة قبل ما الكود يشتغل. هنفك المثال سطر سطر، وبعدين نقراه بـ ٤ أدوات.
+
+---
+
+## ١. سطر سطر
+
+~~~bash
+# إعدادات السيرفر
+NODE_ENV=production
+PORT=3000
+~~~
+
+- [[#]] في أول السطر: تعليق.
+- [[NODE_ENV=production]]: اسم و [[=]] وقيمة، **من غير مسافات**. الأسامي حروف كبيرة و [[_]] بالعُرف. [[NODE_ENV]] متغير مشهور: مكتبات كتير بتشتغل أسرع وبتطبع أخطاء أقل لما يبقى [[production]].
+- [[PORT=3000]]: شكله رقم، بس هيوصل للكود نص [["3000"]]. البيئة مفيهاش أنواع.
+
+~~~bash
+DATABASE_URL=postgresql://app:s3cret@localhost:5432/gym
+~~~
+
+رابط قاعدة بيانات. نفكه:
+
+| الحتة | معناها |
+|---|---|
+| [[postgresql://]] | نوع القاعدة (البروتوكول) |
+| [[app]] | اسم اليوزر |
+| [[:s3cret]] | الباسورد |
+| [[@localhost]] | السيرفر |
+| [[:5432]] | البورت (الافتراضي لـ PostgreSQL) |
+| [[/gym]] | اسم القاعدة |
+
+الباسورد جوه الرابط، وده بالظبط ليه الملف ده سري. ولاحظ إن فيه [[:]] و [[@]] و [[=]] ممكن، والأداة بتقسم عند **أول** [[=]] بس.
+
+~~~bash
+JWT_SECRET="a long random string # not a comment"
+APP_NAME='Gym Portal'
+EMPTY=
+export STRIPE_KEY=sk_test_123
+~~~
+
+- [["..."]]: القيمة فيها مسافات و [[#]]. جوه التنصيص الـ [[#]] جزء من القيمة مش تعليق. والتنصيص نفسه بيتشال.
+- [['...']]: نفس الفكرة بتنصيص مفرد.
+- [[EMPTY=]]: متغير موجود قيمته نص فاضي [[""]].
+- [[export ...]]: كلمة bash معناها «ابعت المتغير ده للبرامج اللي هتشتغل من هنا». بعض الأدوات بتقبلها وتشيلها، عشان نفس الملف يشتغل مع [[source]] في bash.
+
+---
+
+## ٢. Node من غير مكتبات: [[--env-file]]
+
+~~~bash
+node --env-file=.env -e 'console.log(process.env.PORT, typeof process.env.PORT, process.env.JWT_SECRET)'
+~~~
+
+- [[--env-file=.env]]: (Node 20.6 وأحدث) اقرا الملف ده وحطه في البيئة قبل ما الكود يشتغل.
+- [[-e '...']]: شغّل الكود ده على طول بدل ملف.
+- [[process.env]]: object فيه كل متغيرات البيئة. و [[typeof]] بيقول النوع.
+
+~~~text الناتج (Node 24 على ويندوز)
+3000 string a long random string # not a comment
+~~~
+
+[[string]]: الـ [[3000]] نص، لو عايزه رقم [[Number(process.env.PORT)]]. والـ [[#]] اللي جوه التنصيص فضلت. وطبعت كل المتغيرات:
+
+~~~text الناتج
+NODE_ENV "production"
+PORT "3000"
+DATABASE_URL "postgresql://app:s3cret@localhost:5432/gym"
+JWT_SECRET "a long random string # not a comment"
+APP_NAME "Gym Portal"
+EMPTY ""
+STRIPE_KEY "sk_test_123"
+~~~
+
+التنصيص المفرد اتشال، و [[export]] اتشالت.
+
+### مين بيكسب: الملف ولا البيئة؟
+
+~~~bash
+PORT=9999 node --env-file=.env -e 'console.log(process.env.PORT)'
+~~~
+
+[[PORT=9999]] قبل الأمر في bash معناها «شغّل الأمر ده والمتغير ده في بيئته». الناتج [[9999]]: المتغير اللي موجود فعلًا في البيئة بيكسب على اللي في الملف. ده اللي بيخلي السيرفر يقدر يغيّر أي قيمة من غير ما يلمس الملف.
+
+---
+
+## ٣. مكتبة [[dotenv]] و [[python-dotenv]]
+
+~~~javascript
+const r = require("dotenv").config();
+console.log(r.parsed);
+~~~
+
+[[config()]] بيقرا [[.env]] من الفولدر الحالي ويحطه في [[process.env]]، و [[r.parsed]] فيه اللي قراه. dotenv 18.0.6 طلّع نفس القيم السبعة بالظبط، وقبلها طبع سطر لوحده [[◇ injected env (7) from .env]] (تقدر تسكّته بـ [[config({ quiet: true })]]).
+
+~~~python
+from dotenv import load_dotenv
+import os
+load_dotenv()
+print(repr(os.environ["PORT"]), repr(os.environ["JWT_SECRET"]), repr(os.environ["APP_NAME"]))
+~~~
+
+~~~text الناتج (python-dotenv على Python 3.14)
+'3000' 'a long random string # not a comment' 'Gym Portal'
+~~~
+
+[[os.environ]] هو [[process.env]] بتاع Python. وبرضه كله نص.
+
+---
+
+## ٤. bash: [[set -a; source .env; set +a]]
+
+~~~bash
+set -a; source .env; set +a
+echo "$PORT|$JWT_SECRET|$APP_NAME|$EMPTY|$STRIPE_KEY"
+bash -c 'echo child sees: $DATABASE_URL'
+~~~
+
+- [[source .env]]: نفّذ الملف كأنه أوامر bash في نفس الـ shell. كل سطر [[KEY=value]] بيبقى متغير.
+- [[set -a]]: (a = allexport) أي متغير يتعمل من دلوقتي يتعمله export تلقائي، عشان البرامج اللي هتشغلها تشوفه. و [[set +a]] بيقفل الوضع ده.
+- [[bash -c]]: شغّل bash جديد (برنامج ابن) عشان نتأكد إنه شايف المتغير.
+
+~~~text الناتج (ubuntu:24.04)
+3000|a long random string # not a comment|Gym Portal||sk_test_123
+child sees: postgresql://app:s3cret@localhost:5432/gym
+~~~
+
+[[||]] في النص هي [[EMPTY]] الفاضية بين الفاصلين. ولو كتبت [[PORT = 3000]] بمسافات:
+
+~~~text الناتج
+bad.env: line 1: PORT: command not found
+~~~
+
+لأن bash فهم [[PORT]] اسم أمر، و [[=]] و [[3000]] arguments ليه.
+
+---
+
+## ٥. الفخ: [["false"]] نص مش فاضي
+
+~~~bash
+DEBUG=false node -e 'console.log(process.env.DEBUG ? "true!" : "false")'
+~~~
+
+~~~text الناتج
+true!
+~~~
+
+[[? :]] بيختار أول قيمة لو الشرط truthy. وأي نص مش فاضي truthy في JavaScript، حتى [["false"]]. قارن بالنص: [[process.env.DEBUG === "true"]].
+
+---
+
+## ٦. بره Git
+
+~~~bash
+echo .env >> .gitignore
+git status --short
+~~~
+
+- [[>>]]: ضيف في آخر الملف (مش [[>]] اللي بتمسح وتكتب).
+- [[git status --short]]: اعرض الملفات المتغيرة سطر لكل واحد. [[??]] يعني ملف جديد Git مش متابعه.
+
+~~~text الناتج قبل (repo تجربة فيه .env و .env.example)
+?? .env
+?? .env.example
+~~~
+
+~~~text الناتج بعد
+?? .env.example
+?? .gitignore
+~~~
+
+[[.env]] اختفى: Git بقى بيتجاهله. و [[.env.example]] (نفس المفاتيح بقيم وهمية أو فاضية) هو اللي بيتعمله commit.
+
+---
+
+## ٧. التمرين
+
+التمرين بيطلب parser لنص [[.env]]. القواعد كلها اللي شفناها فوق، فاكتبهم كخطوات لكل سطر: نضّف السطر (ومتنساش [[\r]] اللي في ملفات ويندوز)، اتجاهل الفاضي والتعليق، شيل [[export ]] لو في الأول، اقسم عند **أول** [[=]] بس (عشان الـ [[=]] اللي جوه الروابط)، وشيل التنصيص لو القيمة بتبدأ وتخلص بنفس العلامة.
+
+---
+
+## الخلاصة
+
+| الأداة | بتقراه إزاي |
+|---|---|
+| Node 20.6+ | [[node --env-file=.env app.js]] |
+| Node (مكتبة) | [[require("dotenv").config()]] |
+| Python | [[load_dotenv()]] من [[python-dotenv]] |
+| bash | [[set -a; source .env; set +a]] |
+| Docker Compose | [[env_file: .env]]، و [[.env]] اللي جنب الملف لوحده |
+
+كل القيم نصوص، والبيئة الموجودة بتكسب على الملف، و [[.env]] في [[.gitignore]] من أول دقيقة.`,
           lines: [
             R`متغير عادي: اسم و [[=]] وقيمة، من غير مسافات.`,
             R`شكله رقم بس هيوصل للكود نص [["3000"]].`,

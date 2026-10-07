@@ -2799,6 +2799,61 @@
   "date": "2026-10-06",
   "on": "Docker Desktop 29.6.1 (win11, Git Bash) + pwsh 7"
  },
+ "files|.csv و .tsv": {
+  "hash": "54fc02340cb8",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 docker (cut, BOM, file); Windows Python 3.14 csv.DictReader; pwsh 7.6 + Windows PowerShell 5.1 Import-Csv; docs: Excel behaviour"
+ },
+ "files|.env": {
+  "hash": "c101a44ed3de",
+  "date": "2026-10-07",
+  "on": "Windows: Node 24 --env-file, dotenv 18.0.6, python-dotenv, git status in scratch repo; ubuntu:24.04 docker: bash set -a/source"
+ },
+ "files|.ini و .cfg و .conf": {
+  "hash": "fdf81659f6fc",
+  "date": "2026-10-07",
+  "on": "Windows: Python 3.14 configparser; ubuntu:24.04 docker: PHP 8.3.6 parse_ini_file; git config"
+ },
+ "files|.toml": {
+  "hash": "5f589cebcddc",
+  "date": "2026-10-07",
+  "on": "Windows: Python 3.14 tomllib"
+ },
+ "files|.xml": {
+  "hash": "997c2968dd13",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 docker (xmllint, Python 3.12 ElementTree, --xpath); pwsh 7.6 + PowerShell 5.1 [xml]"
+ },
+ "files|.yaml و .yml": {
+  "hash": "3ef2e99534b7",
+  "date": "2026-10-07",
+  "on": "Windows: PyYAML 6.0.3 (Python 3.14 venv), js-yaml 5.4.3 + yaml 2.9.1 (Node 24), yamllint"
+ },
+ "files|XML entities و CDATA": {
+  "hash": "f776b5b0ef52",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 docker (Python 3.12 ElementTree, xmllint); pwsh 7.6 + PowerShell 5.1 [xml], SecurityElement::Escape"
+ },
+ "files|YAML anchors": {
+  "hash": "765dc7925f99",
+  "date": "2026-10-07",
+  "on": "Windows: docker compose v5.3.0 config, PyYAML 6.0.3, js-yaml 5.4.3, yaml 2.9.1"
+ },
+ "files|YAML النصوص": {
+  "hash": "2872ed7b28ec",
+  "date": "2026-10-07",
+  "on": "Windows: PyYAML 6.0.3, js-yaml 5.4.3, yaml 2.9.1"
+ },
+ "files|xmlns": {
+  "hash": "02964ba02ade",
+  "date": "2026-10-07",
+  "on": "ubuntu:24.04 docker (Python 3.12, xmllint); pwsh 7.6 + PowerShell 5.1 [xml] + XmlNamespaceManager"
+ },
+ "files|مشكلة النرويج": {
+  "hash": "254a988441b6",
+  "date": "2026-10-07",
+  "on": "Windows: PyYAML 6.0.3, js-yaml 5.4.3, yaml 2.9.1; ubuntu:24.04 docker: python3-yaml 6.0.1, yq v4.54.1; docs: GitHub Actions on: key"
+ },
  "gha|::error::": {
   "hash": "6c59ced4e17e",
   "date": "2026-10-06",
@@ -5654,35 +5709,135 @@
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
  },
+ "pyapi|APIRouter": {
+  "hash": "5c40a15cdabb",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142.2 (curl, TestClient, pwsh 7; deps.py written for the test)"
+ },
+ "pyapi|BackgroundTasks": {
+  "hash": "24aa2fa5f4c7",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142/uvicorn; curl, forced-kill test; docs: arq lines"
+ },
+ "pyapi|BaseModel و Field": {
+  "hash": "65c339d04b06",
+  "date": "2026-10-07",
+  "on": "Windows 11, Pydantic 2.13.5"
+ },
+ "pyapi|CORS و middleware": {
+  "hash": "c9af0986da7d",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142 (Starlette 1.7); curl with Origin/preflight; docs: browser console message"
+ },
+ "pyapi|Depends و Annotated": {
+  "hash": "40dda0261ab1",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142/uvicorn; curl (Git Bash) + Invoke-RestMethod in pwsh 7 and PowerShell 5.1"
+ },
  "pyapi|Enum": {
   "hash": "ed0004776928",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|HTTPException": {
+  "hash": "c8c60a50de2f",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142; curl + pwsh 7 and PowerShell 5.1"
  },
  "pyapi|Protocol و ABC": {
   "hash": "f514d45fe488",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker, mypy 2.4.0 --strict)"
  },
+ "pyapi|SQLAlchemy async": {
+  "hash": "3923a203c03f",
+  "date": "2026-10-07",
+  "on": "Windows 11, SQLAlchemy 2.1.3 + asyncpg against postgres:18 in Docker (echo=True)"
+ },
+ "pyapi|ThreadPoolExecutor و ProcessPoolExecutor": {
+  "hash": "2c7be4fb597e",
+  "date": "2026-10-07",
+  "on": "Windows 11, Python 3.14.3 (example + solCode)"
+ },
+ "pyapi|alembic": {
+  "hash": "3413256b1f33",
+  "date": "2026-10-07",
+  "on": "Windows 11 Git Bash (+ pwsh 7 / PowerShell 5.1 redirect), Alembic 1.20 against postgres:18 in Docker"
+ },
+ "pyapi|argparse و typer": {
+  "hash": "014ea0ba319a",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 (typer 0.27.3 in local venv) + docker python:3.13-slim (argparse)"
+ },
+ "pyapi|async def و await": {
+  "hash": "4b4b97992f2a",
+  "date": "2026-10-07",
+  "on": "Windows 11, Python 3.14.3 venv"
+ },
+ "pyapi|asyncpg": {
+  "hash": "a2301b242e67",
+  "date": "2026-10-07",
+  "on": "Windows 11, asyncpg 0.32 against postgres:18 in Docker"
+ },
+ "pyapi|auth dependency": {
+  "hash": "7163b9024929",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142 + PyJWT 2.15; curl (Git Bash)"
+ },
+ "pyapi|blocking في async": {
+  "hash": "57f0dd507a72",
+  "date": "2026-10-07",
+  "on": "Windows 11, Python 3.14.3 + FastAPI 0.142.2 (curl/xargs in Git Bash, PYTHONASYNCIODEBUG)"
+ },
  "pyapi|class و self": {
   "hash": "13f96e4f0494",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|collections": {
+  "hash": "98808aac8b64",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
  },
  "pyapi|comprehensions": {
   "hash": "b7d311e6bd73",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
  },
+ "pyapi|csv و json": {
+  "hash": "0712b69728e5",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+ },
  "pyapi|dataclass": {
   "hash": "9c5b9e049fe4",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
  },
+ "pyapi|datetime و zoneinfo": {
+  "hash": "5591206ff98c",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 (venv + tzdata 2026e) + docker python:3.13-slim"
+ },
  "pyapi|decorators": {
   "hash": "157599007f1b",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
+ },
+ "pyapi|def ولا async def": {
+  "hash": "c22201054594",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142.2 (Git Bash curl/xargs; pwsh 7 ForEach-Object -Parallel; Invoke-RestMethod in Windows PowerShell 5.1)"
+ },
+ "pyapi|dependency بـ yield": {
+  "hash": "8dd3d66a3c8b",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142 + asyncpg 0.32 against postgres:18 in Docker; curl"
+ },
+ "pyapi|dependency_overrides": {
+  "hash": "535f23cadd33",
+  "date": "2026-10-07",
+  "on": "Windows 11, pytest 9.1 + FastAPI TestClient (example + solCode)"
  },
  "pyapi|dict": {
   "hash": "3fc64478483f",
@@ -5694,25 +5849,65 @@
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker)"
  },
+ "pyapi|exception handlers": {
+  "hash": "bb24108469fe",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142/uvicorn; curl"
+ },
  "pyapi|f-strings": {
   "hash": "d856dc1706bc",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|fastapi dev": {
+  "hash": "16f3d64dc005",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142.2 (dev with reload, run --workers 2, pyproject entrypoint, /docs /openapi.json via curl)"
+ },
+ "pyapi|field_validator و model_validator": {
+  "hash": "50c7cdc3d413",
+  "date": "2026-10-07",
+  "on": "Windows 11, Pydantic 2.13.5 (example + solCode)"
  },
  "pyapi|for و range": {
   "hash": "ef731cb9a6dd",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
  },
+ "pyapi|functools": {
+  "hash": "62eca5ab86cf",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+ },
+ "pyapi|gather و TaskGroup": {
+  "hash": "c2e6bce11aee",
+  "date": "2026-10-07",
+  "on": "Windows 11, Python 3.14.3 venv (example + solCode)"
+ },
  "pyapi|generators و yield": {
   "hash": "83c53f103f07",
   "date": "2026-10-07",
   "on": "Windows 11 Python 3.14.3 + python:3.13-slim (Docker); solCode (resource) Linux only; docs: macOS ru_maxrss units"
  },
+ "pyapi|httpx.AsyncClient": {
+  "hash": "1d23332d5436",
+  "date": "2026-10-07",
+  "on": "Windows 11, httpx 0.28 + FastAPI against a local fake upstream; docs: httpbin.org"
+ },
  "pyapi|if و elif و else": {
   "hash": "91001047e384",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|import و packages": {
+  "hash": "204d61e032bb",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 (local venv with fastapi); circular import also on python:3.13-slim"
+ },
+ "pyapi|itertools": {
+  "hash": "212e4248476e",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
  },
  "pyapi|list": {
   "hash": "07376180e861",
@@ -5724,6 +5919,11 @@
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
  },
+ "pyapi|model_dump و model_validate": {
+  "hash": "46009d37f0c3",
+  "date": "2026-10-07",
+  "on": "Windows 11, Pydantic 2.13.5"
+ },
  "pyapi|mutable و immutable": {
   "hash": "0f3c6763860e",
   "date": "2026-10-07",
@@ -5733,6 +5933,46 @@
   "hash": "19b26a181951",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
+ },
+ "pyapi|path و query": {
+  "hash": "26f33cc0be2b",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142.2 (curl; Invoke-RestMethod in pwsh 7 and Windows PowerShell 5.1)"
+ },
+ "pyapi|pathlib": {
+  "hash": "db70189c6f2b",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+ },
+ "pyapi|pydantic-settings": {
+  "hash": "876bcaefaab7",
+  "date": "2026-10-07",
+  "on": "Windows 11, pydantic-settings 2.15.0 + FastAPI 0.142.2 (Git Bash and pwsh 7)"
+ },
+ "pyapi|re": {
+  "hash": "10fb34dc8451",
+  "date": "2026-10-07",
+  "on": "Windows Python 3.14.3 + docker python:3.13-slim"
+ },
+ "pyapi|redis cache": {
+  "hash": "8976dc1eecda",
+  "date": "2026-10-07",
+  "on": "Windows 11, redis-py 8.1 against redis:8-alpine in Docker + redis-cli"
+ },
+ "pyapi|redis rate limit": {
+  "hash": "d59253b65717",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142 + redis-py 8.1 against redis:8-alpine; curl + pwsh 7 + redis-cli MONITOR"
+ },
+ "pyapi|request body": {
+  "hash": "37cc99f1a3ed",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142.2 (curl; Invoke-RestMethod POST in pwsh 7 and Windows PowerShell 5.1)"
+ },
+ "pyapi|response model": {
+  "hash": "98f020b6dde4",
+  "date": "2026-10-07",
+  "on": "Windows 11, FastAPI 0.142.2 (curl, pwsh 7)"
  },
  "pyapi|scope و LEGB": {
   "hash": "a50afa4c2dd5",
@@ -5744,6 +5984,16 @@
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3, docker python:3.13-slim"
  },
+ "pyapi|subprocess": {
+  "hash": "4ada56fcf5ef",
+  "date": "2026-10-07",
+  "on": "docker python:3.13 (with git) + Windows pwsh Python 3.14.3 (ls/sleep from Git usr/bin)"
+ },
+ "pyapi|transactions": {
+  "hash": "e250600405ed",
+  "date": "2026-10-07",
+  "on": "Windows 11, asyncpg 0.32 + two psql sessions against postgres:18 in Docker"
+ },
  "pyapi|try و except": {
   "hash": "5fad969d9221",
   "date": "2026-10-07",
@@ -5753,6 +6003,11 @@
   "hash": "94d7cbc12bee",
   "date": "2026-10-07",
   "on": "windows-11 python 3.14.3 + mypy 2.4.0, docker python:3.13-slim"
+ },
+ "pyapi|uv و pyproject.toml": {
+  "hash": "bea5a1785494",
+  "date": "2026-10-07",
+  "on": "Windows uv 0.10.7 + Python 3.14.3 (pwsh/Git Bash, local project); docs: install script lines"
  },
  "pyapi|while و break و continue": {
   "hash": "6fa77d75a768",
