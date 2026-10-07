@@ -2879,10 +2879,30 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401); docs: browser Network tab"
  },
+ "dotnet|CancellationToken": {
+  "hash": "1f685670160b",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs, SIGINT via timeout -s INT"
+ },
+ "dotnet|DI و lifetimes": {
+  "hash": "d2fbb78a3ca1",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run di.cs + curl"
+ },
+ "dotnet|Func و Action": {
+  "hash": "2cd0d5716f12",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
+ },
  "dotnet|IEnumerable و yield": {
   "hash": "b31e7bb63023",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|ILogger": {
+  "hash": "41a00f71d482",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine + curl"
  },
  "dotnet|LINQ": {
   "hash": "36f6938b8171",
@@ -2894,10 +2914,35 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
  },
+ "dotnet|MapGet و MapGroup": {
+  "hash": "72a7e8a6362c",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine (Npgsql EF 10.0.3) + curl + curl.exe/Invoke-RestMethod (pwsh 7.6)"
+ },
+ "dotnet|ProblemDetails": {
+  "hash": "9e0f7b04182d",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine + curl"
+ },
+ "dotnet|Task و async": {
+  "hash": "dcc26c3c1e73",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
+ },
  "dotnet|class و properties": {
   "hash": "1c85d9dc6c21",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|configuration و options": {
+  "hash": "04321f559a80",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + dotnet user-secrets + curl; docs: Windows $env: syntax and %APPDATA% secrets path"
+ },
+ "dotnet|controllers": {
+  "hash": "c22943c3c553",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine + JwtBearer/dotnet user-jwts + curl"
  },
  "dotnet|dotnet --info": {
   "hash": "25757822eb56",
@@ -2909,10 +2954,25 @@
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401)"
  },
+ "dotnet|dotnet new webapi": {
+  "hash": "0efa3db54544",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + curl (Git Bash) + Invoke-RestMethod/curl.exe (pwsh 7.6); docs: default port 5000 outside Docker"
+ },
  "dotnet|dotnet run app.cs": {
   "hash": "72bec86a63b1",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401)"
+ },
+ "dotnet|exceptions و using": {
+  "hash": "87439b5d5043",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
+ },
+ "dotnet|extension methods": {
+  "hash": "8bc379319812",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
  },
  "dotnet|generics": {
   "hash": "0be619dbe3cd",
@@ -2923,6 +2983,11 @@
   "hash": "5422004bb58e",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (.NET 10.0.12)"
+ },
+ "dotnet|middleware pipeline": {
+  "hash": "b2cbf2b3cb6c",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine + JwtBearer/dotnet user-jwts + curl"
  },
  "dotnet|nullable reference types": {
   "hash": "0f487b340e1a",
@@ -2938,6 +3003,16 @@
   "hash": "e8740f1ea803",
   "date": "2026-10-07",
   "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401)"
+ },
+ "dotnet|switch expression": {
+  "hash": "addb0e037fe2",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux): dotnet run app.cs"
+ },
+ "dotnet|validation": {
+  "hash": "14dc23306762",
+  "date": "2026-10-07",
+  "on": "docker mcr.microsoft.com/dotnet/sdk:10.0 (SDK 10.0.401, linux) + postgres:16-alpine (AddValidation .NET 10) + curl"
  },
  "dotnet|value و reference types": {
   "hash": "86dd401e58d9",
